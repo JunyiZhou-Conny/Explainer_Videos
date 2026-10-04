@@ -3,16 +3,17 @@
 Picture before formula: two neighbouring worlds -> two output distributions -> a sliding ratio
 readout that never leaves [e^-eps, e^eps] -> only then Definition 1 as a caption for it.
 
-The pictured mechanism adds *logistic* noise of scale s = 5 to the count. Its log-density has slope
-at most 1/s everywhere, so for counts 41 vs 42 the log-ratio stays strictly inside +-0.2: a genuine
-eps = 0.2 mechanism with smooth curves (the Laplace kink is saved for S07).
+The pictured mechanism adds Laplace noise of scale lambda = 5 to the count (exponential tails, not a
+bell curve: S07 explains why). For counts 41 vs 42 the ratio of the two densities is exactly
+e^{+0.2} for t <= 41, e^{-0.2} for t >= 42 and moves between the two in [41, 42]: a genuine
+eps = 1/lambda = 0.2 mechanism whose ratio readout touches the band edges and never leaves it.
 """
 
 import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.components import database_rows, person_icon, ponder_card
+from explainer.components import database_rows, laplace_pdf, person_icon, ponder_card
 from explainer.scene import VoiceScene
 
 from common import ALICE, ANALYST_COLOR, EPS_COLOR, NARRATION, X_COLOR, XP_COLOR
@@ -24,8 +25,9 @@ COIN = S.GOLD
 COIN_RIM = "#9A7228"        # as in s02_map.py
 CHECK = S.TEAL
 A, B = 41.0, 42.0           # f(x), f(x')
-S_NOISE = 5.0               # logistic scale -> eps = 1/S_NOISE = 0.2
-EPS = 1.0 / S_NOISE
+LAM = 5.0                   # Laplace scale -> eps = 1/LAM = 0.2 (counts have sensitivity 1)
+EPS = 1.0 / LAM
+Y_TOP = 0.11                # y-range of the density plots (Laplace peak 1/(2 LAM) = 0.1)
 T0, T1 = 20.0, 63.0         # visible output range
 NAMES = ["Bob", "Carol", "Alice", "Dan", "Eve"]
 VALUES = ["no X", "has X", "no X", "no X", "has X"]
@@ -33,9 +35,8 @@ ALICE_ROW = 2
 
 
 def pdf(t, mu):
-    """Logistic density with scale S_NOISE (smooth, and eps-private for shifts of 1)."""
-    z = (np.asarray(t, dtype=float) - mu) / (2 * S_NOISE)
-    return 1.0 / (4 * S_NOISE) / np.cosh(z) ** 2
+    """Laplace density with scale LAM centred at mu (eps-private for shifts of 1)."""
+    return laplace_pdf(np.asarray(t, dtype=float), mu, LAM)
 
 
 def ratio(t):
@@ -199,7 +200,7 @@ class Definition(VoiceScene):
         top_y = 2.55
         m_x = mech_box(X_COLOR).move_to([-3.6, 0.8, 0])
         m_xp = mech_box(XP_COLOR).move_to([3.6, 0.8, 0])
-        ax1 = Axes(x_range=[T0, T1, 10], y_range=[0, 0.055, 0.055], x_length=11.0, y_length=2.5, tips=False,
+        ax1 = Axes(x_range=[T0, T1, 10], y_range=[0, Y_TOP, Y_TOP], x_length=11.0, y_length=2.5, tips=False,
                    axis_config={"color": S.GREY, "stroke_width": 2},
                    y_axis_config={"include_ticks": False}).move_to([0, -1.7, 0])
         ticks1 = VGroup(*[S.text(str(v), 20, S.GREY).next_to(ax1.c2p(v, 0), DOWN, buff=0.12)
@@ -210,20 +211,25 @@ class Definition(VoiceScene):
         foot = VGroup(S.text("paper's notation:", 20, S.GREY),
                       S.math(r"\mathcal{T} = \text{transcript},\ \ \mathrm{San} = \text{sanitizer}", size=28,
                              color=S.GREY)).arrange(DOWN, buff=0.1).move_to([0, 0.8, 0])
+        shape_note = VGroup(S.text("noise with exponential tails", 22, S.GREY),
+                            S.text("(its shape comes later)", 22, S.GREY)).arrange(DOWN, buff=0.08)
+        shape_note.move_to([-3.45, -1.2, 0])    # in the empty space left of the curves, right of the axis
 
         def plot_pair(ax):
-            cx = ax.plot(lambda t: pdf(t, A), x_range=[T0 + 0.5, T1 - 0.5, 0.05], color=X_COLOR, stroke_width=4)
+            # polyline through the samples (no smoothing), so the Laplace peaks stay sharp
+            cx = ax.plot(lambda t: pdf(t, A), x_range=[T0 + 0.5, T1 - 0.5, 0.05], color=X_COLOR, stroke_width=4,
+                         use_smoothing=False)
             cxp = ax.plot(lambda t: pdf(t, B), x_range=[T0 + 0.5, T1 - 0.5, 0.05], color=XP_COLOR,
-                          stroke_width=4)
+                          stroke_width=4, use_smoothing=False)
             fx = ax.get_area(cx, x_range=[T0 + 0.5, T1 - 0.5], color=X_COLOR, opacity=0.07)
             fxp = ax.get_area(cxp, x_range=[T0 + 0.5, T1 - 0.5], color=XP_COLOR, opacity=0.07)
             return cx, cxp, fx, fxp
 
         c1x, c1xp, a1x, a1xp = plot_pair(ax1)
 
-        def samples(mu, k):
-            u = rng.uniform(0.02, 0.98, size=k)
-            return np.clip(mu + S_NOISE * np.log(u / (1 - u)), T0 + 1, T1 - 1)
+        def samples(mu, k):  # Laplace draws by inverting the CDF
+            u = rng.uniform(0.02, 0.98, size=k) - 0.5
+            return np.clip(mu - LAM * np.sign(u) * np.log(1 - 2 * np.abs(u)), T0 + 1, T1 - 1)
 
         sx, sxp = samples(A, 18), samples(B, 18)
 
@@ -235,6 +241,7 @@ class Definition(VoiceScene):
                 for r in st.target[1]:
                     for m in r[2:]:
                         m.set_opacity(0)
+                st.target[3].scale(4 / 3)                 # keep the vdots at the 20 pt minimum
             self.play(MoveToTarget(db_x), MoveToTarget(db_xp),
                       lab_x.animate.scale(0.7).move_to([-5.2, top_y, 0]),
                       lab_xp.animate.scale(0.7).move_to([5.25, top_y, 0]), run_time=1.1)
@@ -273,16 +280,18 @@ class Definition(VoiceScene):
             dots = VGroup(*[d for d, _ in rain], *[d for d, _, _ in first])
             vo.wait_until("Because the mechanism")
             self.play(Create(c1x), Create(c1xp), run_time=1.5)
-            self.play(FadeIn(a1x), FadeIn(a1xp), dots.animate.set_opacity(0.25), run_time=0.6)
+            self.play(FadeIn(a1x), FadeIn(a1xp), dots.animate.set_opacity(0.25), FadeIn(shape_note),
+                      run_time=0.6)
             vo.wait_until("a whole distribution")
             self.play(Indicate(c1x, color=X_COLOR, scale_factor=1.04), Indicate(c1xp, color=XP_COLOR, scale_factor=1.04),
                       run_time=vo.remaining(0.8))
 
         # ============================================================ 2. slide t: the ratio stays in a band
-        ax2 = Axes(x_range=[T0, T1, 10], y_range=[0, 0.055, 0.055], x_length=8.6, y_length=3.4, tips=False,
+        ax2 = Axes(x_range=[T0, T1, 10], y_range=[0, Y_TOP, Y_TOP], x_length=8.6, y_length=3.4, tips=False,
                    axis_config={"color": S.GREY, "stroke_width": 2},
                    y_axis_config={"include_ticks": False}).move_to([-2.0, -0.8, 0])
         c2x, c2xp, a2x, a2xp = plot_pair(ax2)
+        NOTE2_POS = [-4.2, 0.65, 0]             # the note follows the curves, to their upper left
         tv = ValueTracker(33.0)
 
         def h2(t, mu):  # screen height of a curve at t on ax2
@@ -343,7 +352,8 @@ class Definition(VoiceScene):
                                      ticks1)),
                       ReplacementTransform(ax1, ax2), ReplacementTransform(c1x, c2x),
                       ReplacementTransform(c1xp, c2xp), ReplacementTransform(a1x, a2x),
-                      ReplacementTransform(a1xp, a2xp), FadeOut(out_lab1), run_time=0.9)
+                      ReplacementTransform(a1xp, a2xp), FadeOut(out_lab1),
+                      shape_note.animate.move_to(NOTE2_POS), run_time=0.9)
             self.play(FadeIn(marker, shift=UP * 0.2), GrowFromEdge(stick_x, DOWN), GrowFromEdge(stick_xp, DOWN),
                       run_time=0.5)
             vo.wait_until("compare the heights")
@@ -396,7 +406,7 @@ class Definition(VoiceScene):
         g_title2 = S.math(r"\ln(\text{ratio})", size=30, color=S.GREY).next_to(g_line, UP, buff=0.15)
 
         with self.voiceover(SAY[3]) as vo:
-            plot = VGroup(ax2, c2x, c2xp, a2x, a2xp, stick_x, stick_xp, marker)
+            plot = VGroup(ax2, c2x, c2xp, a2x, a2xp, stick_x, stick_xp, marker, shape_note)
             self.play(FadeOut(plot), FadeOut(VGroup(div, eq, num)),
                       ReplacementTransform(bar_x, defn[3]), ReplacementTransform(bar_xp, defn[5]),
                       FadeIn(defn[4]), run_time=1.5)

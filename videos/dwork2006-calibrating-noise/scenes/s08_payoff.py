@@ -360,8 +360,10 @@ class Payoff(VoiceScene):
             bump = bump_shape(x0 + length / 2, length / n, LAM, 0.6, y, half_width=14)
             p_lab = S.text(pct, 28, NOISE_COLOR).next_to([x0 + length + 0.4, y, 0], RIGHT, buff=0)
             rows.append(dict(line=line, ticks=ticks, truth=truth, labs=labs, name=name, bump=bump, pct=p_lab))
-        legend = VGroup(bump_shape(0, 0.04, LAM, 0.32, 0, half_width=12),
-                        S.text("noise of typical size 2, the same in every row", 26, S.GREY))
+        leg_txt = S.text("noise of typical size 2, the same for every", 26, S.GREY)
+        leg_n = S.math("n", size=36, color=S.GREY).next_to(leg_txt, RIGHT, buff=0.14)
+        leg_n.align_to(leg_txt[-2], DOWN)        # on the baseline of "every" (its 'r')
+        legend = VGroup(bump_shape(0, 0.04, LAM, 0.32, 0, half_width=12), VGroup(leg_txt, leg_n))
         legend.arrange(RIGHT, buff=0.25).to_edge(UP, buff=0.45)
         pct_head = S.text("noise ÷ answer", 20, S.GREY).next_to(rows[0]["pct"], UP, buff=0.35)
         pct_head.align_to(rows[0]["pct"], LEFT)
@@ -506,7 +508,8 @@ class Payoff(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             rel_sym.set_opacity(0)
-            self.play(FadeOut(card), FadeOut(n_lab), FadeIn(readouts), run_time=0.6)
+            self.play(FadeOut(card), FadeOut(n_lab), run_time=0.4)   # card gone before the readout
+            self.play(FadeIn(readouts), run_time=0.4)
             self.remove(bump0)
             bump = always_redraw(make_bump)
             self.add(bump)

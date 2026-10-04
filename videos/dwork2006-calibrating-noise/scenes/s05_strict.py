@@ -10,16 +10,11 @@ from explainer.scene import VoiceScene
 from common import ALICE, EPS_COLOR, NARRATION, X_COLOR, XP_COLOR
 
 SAY = NARRATION["S05"]
-S_LOG = 1.0                # logistic scale of the two output curves (beat 0), S04's family
+LAM0 = 2.0                 # Laplace scale of the two output curves (beat 0): equal scales, so the
+                           # densities cross at 41.5 and the best event is A = {t < 41.5}
 MU_X, MU_XP = 41.0, 42.0   # running example: f(x) = 41, f(x') = 42
 T0, T1 = 34.0, 49.0
 BAR_H = 1.7                # bar height that stands for probability 1/n
-
-
-def logistic_pdf(t, mu, s=S_LOG):
-    """Logistic density (the smooth private mechanism of S04), centred at mu with scale s."""
-    z = (np.asarray(t, dtype=float) - mu) / (2 * s)
-    return 1.0 / (4 * s) / np.cosh(z) ** 2
 
 
 def db_stack(names, values, width=3.0, row_h=0.5, size=24):
@@ -75,10 +70,11 @@ class WhyStrict(VoiceScene):
         axis = ax.x_axis
         out_lab = VGroup(S.text("output", 22, S.GREY), S.math("t", size=32, color=S.GREY))
         out_lab.arrange(RIGHT, buff=0.1).next_to(axis.get_right(), DOWN, buff=0.2).align_to(axis.get_right(), RIGHT)
-        p_x = lambda t: float(logistic_pdf(t, MU_X))
-        p_xp = lambda t: float(logistic_pdf(t, MU_XP))
-        c_x = ax.plot(p_x, x_range=[T0, T1, 0.02], color=X_COLOR, stroke_width=5)
-        c_xp = ax.plot(p_xp, x_range=[T0, T1, 0.02], color=XP_COLOR, stroke_width=5)
+        p_x = lambda t: float(laplace_pdf(t, MU_X, LAM0))
+        p_xp = lambda t: float(laplace_pdf(t, MU_XP, LAM0))
+        # polyline through the samples (no smoothing), so the Laplace peaks stay sharp
+        c_x = ax.plot(p_x, x_range=[T0, T1, 0.02], color=X_COLOR, stroke_width=5, use_smoothing=False)
+        c_xp = ax.plot(p_xp, x_range=[T0, T1, 0.02], color=XP_COLOR, stroke_width=5, use_smoothing=False)
         lab_x = S.math("M(x)", size=34, color=X_COLOR).next_to(ax.c2p(38.3, p_x(38.3)), UL, buff=0.1)
         lab_xp = S.math("M(x')", size=34, color=XP_COLOR).next_to(ax.c2p(44.7, p_xp(44.7)), UR, buff=0.1)
         mid = (MU_X + MU_XP) / 2

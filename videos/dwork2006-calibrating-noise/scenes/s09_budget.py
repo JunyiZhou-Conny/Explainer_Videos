@@ -8,7 +8,7 @@ from explainer.components import person_icon, ponder_card
 from explainer.scene import VoiceScene
 
 from common import (ALICE, ANALYST_COLOR, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR,
-                    XP_COLOR)
+                    XP_COLOR, budget_bar)
 from s02_map import map_chip
 
 SAY = NARRATION["S09"]
@@ -245,6 +245,20 @@ class Budget(VoiceScene):
                         color=S.WHITE, stroke_width=3)
 
         cancel = S.text("same in both worlds: cancels", 24, ANALYST)
+        cancel.move_to([(xs[2] + xs[4]) / 2, y_bot - 0.62, 0])
+
+        # the two people leave the ledger with it but stay on, labelled, until the analyst's factors have
+        # cancelled: the analyst (PURPLE) heads the "cancels" caption, the curator sits under its Laplace factor
+        an, cu = P["analyst"], P["curator"]
+        an.generate_target()
+        an.target[0].scale_to_fit_height(0.6)
+        an.target[1].next_to(an.target[0], DOWN, buff=0.1)
+        an.target.next_to(cancel, LEFT, buff=0.35)
+        an.target.shift(UP * (cancel.get_y() - 0.08 - an.target[0].get_y()))
+        cu.generate_target()
+        cu.target[0].scale_to_fit_height(0.6)
+        cu.target[1].next_to(cu.target[0], DOWN, buff=0.1)
+        cu.target.shift(np.array([xs[5], cancel.get_y() - 0.08, 0]) - cu.target[0].get_center())
 
         # step 2b: what is left, one Laplace ratio per answer
         comp_w = [widths[0], widths[1], widths[3], 0.3, widths[5], widths[6]]
@@ -290,17 +304,18 @@ class Budget(VoiceScene):
         rl.arrange(RIGHT, buff=0.2).to_edge(DOWN, buff=0.45)
 
         with self.voiceover(SAY[1]) as vo:
-            # shrink the ledger into a reference picture; its small captions ("histogram", "analyst", ...)
-            # would drop below 20 pt, so they fade and the f_i heads re-centre in their cards
+            # shrink the ledger into a reference picture; the query cards' sub-captions ("histogram", ...)
+            # would drop below 20 pt, so they fade and the f_i heads re-centre in their cards, while
+            # "analyst" / "curator" keep their full 22 pt size so the two people stay named
             L = self.ledger
             L.generate_target()
             T = L.target
-            T[0][1].set_opacity(0)          # "analyst"
-            T[1][1].set_opacity(0)          # "curator"
             for k in (2, 3, 4):             # query cards: hide the sub-caption, centre f_i
                 T[k][2].set_opacity(0)
                 T[k][1].move_to(T[k][0])
             T.scale(0.72).to_corner(UR, buff=0.6)
+            for k in (0, 1):                # "analyst", "curator": back to 22 pt under their icon
+                T[k][1].scale(1 / 0.72).next_to(T[k][0], DOWN, buff=0.1)
             self.play(MoveToTarget(L), FadeIn(title, shift=RIGHT * 0.2), run_time=1.0)
             vo.wait_until("Write the probability")
             self.play(Write(lhs_top), Write(eq), run_time=0.6)
@@ -311,26 +326,28 @@ class Budget(VoiceScene):
 
             vo.wait_until("The analyst's choice")
             self.play(Indicate(top[0], color=S.WHITE), Indicate(top[2], color=S.WHITE), run_time=0.8)
-            self.play(FadeOut(self.ledger), FadeOut(legend), run_time=0.5)
+            self.play(FadeOut(VGroup(*self.ledger[2:])), FadeOut(legend), MoveToTarget(an), MoveToTarget(cu),
+                      run_time=0.7)
             self.play(*[Transform(m, t) for m, t in zip([lhs_top, eq] + top, targets_top)], run_time=1.0)
             self.play(TransformFromCopy(lhs_top, lhs_bot), *[TransformFromCopy(a, b) for a, b in zip(top[:4], bot[:4])],
                       Create(bar_l), Create(bar_r), run_time=1.0)
             vo.wait_until("so in the ratio")
             strikes = VGroup(cancel_line("F1"), cancel_line("F2"))
-            cancel.move_to([(xs[2] + xs[4]) / 2, y_bot - 0.62, 0])
             ptrs = VGroup(*[Line(cancel.get_top() + UP * 0.04, VGroup(*col[n]).get_bottom() + DOWN * 0.06,
                                  color=ANALYST, stroke_width=1.5) for n in ("F1", "F2")])
             self.play(Create(strikes), run_time=0.6)
-            self.play(FadeIn(cancel), Create(ptrs), run_time=0.5)
+            self.play(FadeIn(cancel), Create(ptrs), Indicate(an[0], color=ANALYST_COLOR, scale_factor=1.2),
+                      run_time=0.5)
             vo.wait_until("leaving one Laplace")
-            self.play(FadeOut(VGroup(*col["F1"], *col["F2"], strikes, cancel, ptrs)), run_time=0.5)
+            # the analyst leaves with its factors; the curator, whose Laplace ratios remain, a beat later
+            self.play(FadeOut(VGroup(*col["F1"], *col["F2"], strikes, cancel, ptrs, an)), run_time=0.5)
             dots_mid = top[4]
             self.play(lhs_top.animate.set_x(cx_c[0]), lhs_bot.animate.set_x(cx_c[0]), bar_l.animate.set_x(cx_c[0]),
                       eq.animate.set_x(cx_c[1]),
                       top[1].animate.set_x(cx_c[2]), bot[1].animate.set_x(cx_c[2]),
                       top[3].animate.set_x(cx_c[4]), bot[3].animate.set_x(cx_c[4]),
                       dots_mid.animate.set_x(cx_c[5]), ReplacementTransform(bar_r, bars_c), FadeIn(dot_c),
-                      run_time=0.8)
+                      FadeOut(cu), run_time=0.8)
             self.play(LaggedStart(FadeIn(b_le), FadeIn(b1, shift=DOWN * 0.25), FadeIn(b_dot),
                                   FadeIn(b2, shift=DOWN * 0.25), FadeIn(b_dots), lag_ratio=0.2), run_time=1.0)
             self.play(FadeIn(delta, shift=UP * 0.1), run_time=0.6)
@@ -352,20 +369,13 @@ class Budget(VoiceScene):
 
     # ============================================================ 2. the privacy budget
     def budget_beat(self):
-        bar_l, bar_r, bar_y, bar_h = -2.4, 4.0, 1.4, 0.6
-        costs = [0.25, 0.3, 0.2, 0.25]
-        width = bar_r - bar_l
-        outline = Rectangle(width=width, height=bar_h, stroke_color=EPS_COLOR, stroke_width=2.5)
-        outline.move_to([(bar_l + bar_r) / 2, bar_y, 0])
-        segs = VGroup()
-        x = bar_l
-        for c in costs:
-            w = c * width
-            segs.add(Rectangle(width=w, height=bar_h, stroke_color=S.BG, stroke_width=2)
-                     .set_fill(EPS_COLOR, 0.9).move_to([x + w / 2, bar_y, 0]))
-            x += w
-        bar_lab = S.math(r"\text{privacy budget }", r"\varepsilon", size=38, color=EPS_COLOR)
-        bar_lab.next_to(outline, UP, buff=0.25)
+        # the shared budget bar: 8 equal segments, each answered query spends 2 of them (4 queries empty it)
+        bar_y = 1.4
+        bar = budget_bar(width=6.4, n=8, label_size=38)
+        bar.shift(np.array([0.8, bar_y, 0]) - bar.frame.get_center())
+        outline, segs, bar_lab = bar.frame, bar.segs, bar.label
+        per_q = 2
+        spent = [segs[len(segs) - per_q * (i + 1):len(segs) - per_q * i] for i in range(4)]  # drained from the right
         curator = VGroup(person_icon(S.WHITE, 0.8), S.text("curator", 22, S.GREY)).arrange(DOWN, buff=0.12)
         curator.move_to([5.4, bar_y - 0.1, 0])
 
@@ -375,10 +385,9 @@ class Budget(VoiceScene):
             f = card_frame(1.1, 0.62)
             qcards.append(VGroup(f, S.math(f"f_{i + 1}", size=32).move_to(f)).move_to([-5.6, yy, 0]))
         chips = []
-        for i, c in enumerate(costs):
-            w = c * width * 0.38
-            chip = Rectangle(width=w, height=0.3, stroke_width=0).set_fill(EPS_COLOR, 0.9)
-            chip.next_to(qcards[i], RIGHT, buff=0.25)
+        for i in range(4):
+            chip = spent[i].copy().scale(0.55)          # a miniature of the two segments this answer spent
+            chip.next_to(qcards[i], RIGHT, buff=0.2)
             lab = S.math(rf"\varepsilon_{i + 1}", size=28, color=EPS_COLOR).next_to(chip, RIGHT, buff=0.12)
             chips.append(VGroup(chip, lab))
         refused = S.text("refused", 30, NOISE_COLOR).next_to(curator, DOWN, buff=0.25)
@@ -403,14 +412,15 @@ class Budget(VoiceScene):
             keep = self.eps_glyph
             self.play(FadeOut(self.thm), FadeOut(VGroup(*[p for p in self.l3 if p is not keep])), run_time=0.7)
             self.play(ReplacementTransform(keep, bar_lab[1]), FadeIn(bar_lab[0]), run_time=0.9)
-            self.play(Create(outline), LaggedStart(*[GrowFromEdge(s, LEFT) for s in segs], lag_ratio=0.6),
+            self.play(Create(outline), LaggedStart(*[GrowFromEdge(s, LEFT) for s in segs], lag_ratio=0.3),
                       FadeIn(curator), run_time=1.4)
 
             vo.wait_until("Each answer spends")
+            per = vo.until("once it is spent", minimum=1.6) / 4     # the bar is empty right at "once it is spent"
             for i in range(4):
-                seg = segs[3 - i]
-                self.play(FadeIn(qcards[i], shift=RIGHT * 0.2), run_time=0.2)
-                self.play(ReplacementTransform(seg, chips[i][0]), FadeIn(chips[i][1]), run_time=0.4)
+                self.play(FadeIn(qcards[i], shift=RIGHT * 0.2), run_time=0.35 * per)
+                self.play(*[ReplacementTransform(s, c) for s, c in zip(spent[i], chips[i][0])],
+                          FadeIn(chips[i][1]), run_time=0.65 * per)
             vo.wait_until("once it is spent")
             self.play(FadeIn(qcards[4], shift=RIGHT * 0.2), run_time=0.3)
             self.play(Indicate(outline, color=NOISE_COLOR, scale_factor=1.03), run_time=0.5)
@@ -448,17 +458,11 @@ class Budget(VoiceScene):
         h_title = S.math(r"\text{histogram, }", "d", r"\text{ bins}", size=32).next_to(bars, UP, buff=0.55)
         h_title.set_x(bars.get_x())
 
-        bb_l, bb_r, bb_y = 0.9, 6.0, -2.2
-        bwid = bb_r - bb_l
-        b_outline = Rectangle(width=bwid, height=0.5, stroke_color=EPS_COLOR, stroke_width=2.5)
-        b_outline.move_to([(bb_l + bb_r) / 2, bb_y, 0])
-        slices = VGroup(*[Rectangle(width=bwid / d_small, height=0.5, stroke_color=S.BG, stroke_width=2)
-                          .set_fill(EPS_COLOR, 0.9) for _ in range(d_small)]).arrange(RIGHT, buff=0)
-        slices.move_to(b_outline)
-        b_lab = S.math(r"\text{total budget }", r"\varepsilon", size=32, color=EPS_COLOR)
-        b_lab.next_to(b_outline, UP, buff=0.25)
-        chips = VGroup(*[Rectangle(width=bw, height=0.12, stroke_width=0).set_fill(EPS_COLOR, 0.95)
-                         .next_to(b, UP, buff=0.08) for b in bars])
+        # the same budget bar, now cut into d equal parts: one per bin
+        bud = budget_bar(width=5.1, n=d_small, label_size=32)
+        bud.shift(np.array([3.45, -2.2, 0]) - bud.frame.get_center())
+        b_outline, slices, b_lab = bud.frame, bud.segs, bud.label
+        chips = VGroup(*[s.copy().scale(bw / s.width).next_to(b, UP, buff=0.08) for s, b in zip(slices, bars)])
         chip_lab = S.math(r"\varepsilon / d", r"\text{ each}", size=30, color=EPS_COLOR)
         chip_lab.next_to(chips[-1], UP, buff=0.25).shift(RIGHT * 0.4)
         q_noise = S.math(r"\text{noise per bin} = \;?", size=34, color=NOISE_COLOR).move_to(b_outline)
