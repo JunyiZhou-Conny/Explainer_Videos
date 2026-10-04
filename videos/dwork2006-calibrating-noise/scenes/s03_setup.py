@@ -4,7 +4,7 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.components import database_rows, laplace_pdf, person_icon
+from explainer.components import database_rows, person_icon
 from explainer.scene import VoiceScene
 
 from common import ALICE, NARRATION, NOISE_COLOR, SENS_COLOR, TRUTH_COLOR, X_COLOR
@@ -73,6 +73,16 @@ def table_icon(color=S.GREY, width=1.0, height=0.72, rows=4, cols=3) -> VGroup:
     return cells
 
 
+def smooth_pdf(t, mu, lam):
+    """A smooth bell (logistic, scale lam/2: same peak height 1/(2 lam) as Laplace(lam)).
+
+    Deliberately not the Laplace density: which distribution Y should have is the question this
+    scene asks, and the Laplace kink is S07's reveal (S04 pictures smooth curves too)."""
+    s = lam / 2
+    z = (np.asarray(t, dtype=float) - mu) / (2 * s)
+    return 1.0 / (4 * s) / np.cosh(z) ** 2
+
+
 def answer_token(sub: str = "", size=30) -> MathTex:
     """'f(x) + Y' (f(x) WHITE, Y RED); with sub='2' -> 'f_2(x) + Y_2'."""
     f = rf"f_{sub}(x)" if sub else "f(x)"
@@ -100,18 +110,19 @@ class Curator(VoiceScene):
         curator = person_icon(CURATOR, height=0.85).move_to([-1.25, 1.45, 0])
         curator_lab = S.text("curator", 26, CURATOR).next_to(curator, DOWN, buff=0.12)
 
-        analyst = person_icon(ANALYST, height=0.9).move_to([5.45, 0.5, 0])
+        analyst = person_icon(ANALYST, height=0.9).move_to([5.7, 0.5, 0])
         analyst_lab = S.text("analyst", 26, ANALYST).next_to(analyst, DOWN, buff=0.12)
 
-        q_arrow = Arrow([4.75, 1.35, 0], [-0.55, 1.35, 0], buff=0, color=S.GREY, stroke_width=4,
+        q_arrow = Arrow([5.0, 1.35, 0], [-0.55, 1.35, 0], buff=0, color=S.GREY, stroke_width=4,
                         max_tip_length_to_length_ratio=0.05, tip_length=0.22)
         q_lab = VGroup(S.text("query", 26, S.WHITE), S.math("f", size=40))
         q_lab.arrange(RIGHT, buff=0.15, aligned_edge=DOWN).next_to(q_arrow, UP, buff=0.12).set_x(2.3)
-        ex1 = VGroup(S.text("a number:", 22, S.GREY), S.math(r"f(x) = 41", size=32, color=S.GREY))
+        ex1 = VGroup(S.text("a number:", 22, S.GREY), S.math(r"f(x) = 41", size=30))
         ex1.arrange(RIGHT, buff=0.18)
-        ex2 = VGroup(S.text("a list:", 22, S.GREY), S.math(r"f(x) = (12,\, 7,\, 30,\, 2)", size=32, color=S.GREY))
+        ex2 = VGroup(S.text("a list:", 22, S.GREY), S.math(r"f(x) = (12,\, 7,\, 30,\, 2)", size=30))
         ex2.arrange(RIGHT, buff=0.18)
-        VGroup(ex1, ex2).arrange(DOWN, buff=0.22, aligned_edge=LEFT).move_to([2.8, 0.5, 0])
+        # left-aligned, clear of both the dashed boundary (x = 0.75) and the analyst (x >= 5.3)
+        VGroup(ex1, ex2).arrange(DOWN, buff=0.22, aligned_edge=LEFT).move_to([1.15, 0.45, 0], aligned_edge=LEFT)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.2) for r in db_rows], lag_ratio=0.15),
@@ -137,7 +148,7 @@ class Curator(VoiceScene):
         fx = S.math("f(x)", size=42, color=TRUTH_COLOR).move_to([-1.45, -0.45, 0])
         lock = lock_icon(S.GREY, 0.42).next_to(fx, RIGHT, buff=0.2)
         blob = noise_blob(0.36).move_to([-1.2, -1.3, 0])
-        a_arrow = Arrow([0.1, -0.45, 0], [4.75, -0.45, 0], buff=0, color=S.GREY, stroke_width=4,
+        a_arrow = Arrow([0.1, -0.45, 0], [5.0, -0.45, 0], buff=0, color=S.GREY, stroke_width=4,
                         max_tip_length_to_length_ratio=0.05, tip_length=0.22)
         out_spot = np.array([2.05, -0.45 + 0.42, 0])     # just outside the trusted boundary
         tok = answer_token().move_to(out_spot)
@@ -170,11 +181,11 @@ class Curator(VoiceScene):
             vo.wait_until("and releases")
             self.play(GrowArrow(a_arrow), run_time=0.5)
             self.play(TransformFromCopy(fx, tok[0]), FadeIn(tok[1]), TransformFromCopy(blob[1], tok[2]),
-                      run_time=0.9)
-            self.play(deliver(tok), run_time=1.0)
+                      run_time=0.8)
+            self.play(deliver(tok), run_time=0.9)
 
             vo.wait_until("Because the analyst")
-            for k, rt in (("2", 0.7), ("3", 0.55)):
+            for k, rt in (("2", 0.6), ("3", 0.5)):
                 q = S.math(f"f_{k}", size=34).next_to(q_arrow.get_start(), UP, buff=0.12).shift(LEFT * 0.4)
                 self.play(FadeIn(q, scale=0.6), run_time=0.25)
                 self.play(q.animate.move_to(q_arrow.get_end() + UP * 0.32 + RIGHT * 0.4), run_time=rt)
@@ -234,7 +245,7 @@ class Curator(VoiceScene):
         truth_tick = Line(ax.c2p(41, 0) + DOWN * 0.12, ax.c2p(41, 0) + UP * 0.12, color=TRUTH_COLOR,
                           stroke_width=3)
         truth_lab = S.math("f(x)", size=28, color=TRUTH_COLOR).next_to(truth_tick, DOWN, buff=0.08)
-        curve = always_redraw(lambda: ax.plot(lambda t: laplace_pdf(t, 41, lam_of(u.get_value())),
+        curve = always_redraw(lambda: ax.plot(lambda t: smooth_pdf(t, 41, lam_of(u.get_value())),
                                               x_range=[21, 61, 0.04], color=NOISE_COLOR, stroke_width=4))
         phrase = S.text("Calibrate the noise to the sensitivity", 40, S.WHITE,
                         t2c={"noise": NOISE_COLOR, "sensitivity": SENS_COLOR}).move_to([0, -3.0, 0])

@@ -562,6 +562,7 @@ class Separation(VoiceScene):
         qgrid = VGroup(*[mask_card([random_mask(grid_rng) for _ in range(N)]).scale(0.75) for _ in range(12)])
         qgrid.arrange_in_grid(rows=4, cols=3, buff=(0.22, 0.25)).move_to([4.95, 0.45, 0])
         links = VGroup(*[Line(sheet2.get_right(), c.get_left(), color=S.GREY, stroke_width=1.5) for c in qgrid])
+        links.set_z_index(-1)                                             # run behind the query cards
         all_lab = S.text("ready for all of them, at once", 24, S.GREY).move_to([3.3, -2.2, 0])
         breaks = x_mark(sheet2, width=8, pad=0.15)
 
@@ -682,7 +683,8 @@ class Separation(VoiceScene):
                     Arrow(n1.get_right(), n2.get_left(), buff=0.1, **kw),
                     Arrow(n2.get_right(), dots_.get_left(), buff=0.12, **kw),
                     Arrow(dots_.get_right(), nN.get_left(), buff=0.12, **kw)]
-            sig = VGroup(S.math(r"+\sigma", size=30).move_to(arrs[0].get_center() + np.array([-0.32, 0.3 * sgn, 0])),
+            off = np.array([-0.32, 0.3, 0]) if sgn > 0 else np.array([0.34, 0.22, 0])   # keep clear of labels
+            sig = VGroup(S.math(r"+\sigma", size=30).move_to(arrs[0].get_center() + off),
                          *[S.math(r"+\sigma", size=30).next_to(a, UP, buff=0.1) for a in arrs[1:]])
             return [n1, n2, dots_, nN], arrs, sig
 
@@ -837,6 +839,7 @@ class Separation(VoiceScene):
         fan(many, np.array([-5.4, R2 + 0.3, 0]), radius=3.0, spread=0.22)
         two_sheet = release_sheet(np.random.default_rng(4), w=1.0, h=1.2).move_to([-3.45, R2, 0])
         two_links = VGroup(*[Line(two_sheet.get_left(), c.get_right(), color=S.GREY, stroke_width=1.5) for c in many])
+        two_links.set_z_index(-1)
         line2 = VGroup(S.text("ONE private release for MOST queries", 32, S.WHITE),
                        S.text("→  impossible unless n is huge", 30, S.GREY)).arrange(DOWN, buff=0.14,
                                                                                    aligned_edge=LEFT)

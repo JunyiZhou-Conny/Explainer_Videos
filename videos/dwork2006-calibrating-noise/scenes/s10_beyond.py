@@ -26,7 +26,7 @@ TILE_XS = (-4.25, 0.0, 4.25)
 BIG_W, BIG_H = 13.0, 7.0
 HEADER_Y = 2.95
 COIN = S.GOLD          # Warner's coin, as in S11
-COIN_EDGE = "#A9782C"
+COIN_EDGE = "#A87B2C"
 
 # ------------------------------------------------------------------ tile 1: the network
 NAMES = "ABCDEFGHIJ"
@@ -170,6 +170,16 @@ def true_label():
         RIGHT, buff=0.14, aligned_edge=DOWN)
 
 
+def early(t):
+    """Rate function: done in the first 40% of the animation (clear the other tiles before the grow)."""
+    return smooth(min(1.0, 2.5 * t))
+
+
+def late(t):
+    """Rate function: only in the last 40% (bring the other tiles back once the shrink is mostly done)."""
+    return smooth(max(0.0, 2.5 * t - 1.5))
+
+
 def badge(num, color=S.WHITE, r=0.28):
     c = Circle(radius=r, color=color, stroke_width=3).set_fill(color, 0.12)
     return VGroup(c, S.text(str(num), 26, color).move_to(c))
@@ -198,14 +208,16 @@ class BeyondCounting(VoiceScene):
         header = S.text(" ".join(tile.cap_lines), 36, S.WHITE)
         header.next_to(b_t, RIGHT, buff=0.3)
         parts = split_glyphs(header, [tile.cap_lines[0] + " ", tile.cap_lines[1]])
-        self.play(FadeOut(others), FadeOut(title), Transform(frame, big), Transform(b, b_t),
+        self.play(FadeOut(others, rate_func=early), FadeOut(title, rate_func=early),
+                  Transform(frame, big), Transform(b, b_t),
                   Transform(cap[0], parts[0]), Transform(cap[1], parts[1]),
                   Transform(content, big_content), run_time=run_time)
 
     def collapse(self, tile, others, title, details, run_time=0.75):
         tile.saved_state[0].set_stroke(S.GREY)          # come back marked as "done"
         self.play(FadeOut(details), run_time=0.35)
-        self.play(Restore(tile), FadeIn(others), FadeIn(title), run_time=run_time)
+        self.play(Restore(tile), FadeIn(others, rate_func=late), FadeIn(title, rate_func=late),
+                  run_time=run_time)
 
     def light(self, tile):
         return AnimationGroup(tile[0].animate.set_stroke(S.WHITE, 3.5),
@@ -275,8 +287,8 @@ class BeyondCounting(VoiceScene):
         qb_pieces = ["how many ", "rows", " must you ", "change", " to ", "make P true", "?"]
         qa = S.text("".join(qa_pieces), 30, S.WHITE).move_to(caption)
         qb = S.text("".join(qb_pieces), 30, S.WHITE)
-        qb_tail = S.text("→  sensitivity 1", 30, SENS_COLOR)
-        VGroup(qb, qb_tail).arrange(RIGHT, buff=0.4).move_to(caption)
+        qb_tail = S.text("→  sensitivity 1", 28, SENS_COLOR)
+        VGroup(qb, qb_tail).arrange(RIGHT, buff=0.3).move_to(caption)
         qa_p, qb_p = split_glyphs(qa, qa_pieces), split_glyphs(qb, qb_pieces)
         for k in (1, 3, 5):
             qa_p[k].set_color(S.YELLOW)
@@ -301,18 +313,19 @@ class BeyondCounting(VoiceScene):
             self.play(Circumscribe(cut_lab, color=S.WHITE), run_time=1.0)
             vo.wait_until("when one link changes")
             self.play(edges[CHANGED].animate.set_stroke(ALICE, 7), rows[4][0].animate.set_stroke(ALICE, 3),
-                      rows[4][2].animate.set_color(ALICE), run_time=0.6)
+                      rows[4][2].animate.set_color(ALICE), run_time=0.5)
             gone = DashedLine(pos["D"], pos["I"], color=S.GREY, stroke_width=1.5, dash_length=0.08,
                               stroke_opacity=0.45)
             self.play(edges[CHANGED].animate.set_stroke(opacity=0), FadeIn(gone),
                       Transform(rows[4][3], value_text(False).move_to(rows[4][3])),
-                      run_time=0.8)
+                      run_time=0.6)
             self.play(Transform(cut_lab[1], one), Flash(cut_lab[1], color=ALICE, flash_radius=0.35),
-                      run_time=0.7)
+                      run_time=0.6)
             vo.wait_until("so it is one-sensitive")
             self.play(FadeIn(sens_tag, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("In general")
-            self.play(Indicate(qa_p[5], color=S.YELLOW), run_time=0.9)
+            self.play(ShowPassingFlash(Underline(qa_p[5], color=S.YELLOW, stroke_width=4, buff=0.06),
+                                       time_width=0.8), run_time=0.9)
             vo.wait_until("how many rows")
             self.play(*[Transform(qa_p[k], qb_p[k]) for k in (0, 2, 4, 6)],
                       *[FadeOut(qa_p[k], shift=UP * 0.25) for k in (1, 3, 5)],
@@ -320,7 +333,8 @@ class BeyondCounting(VoiceScene):
             self.remove(qa, *qa_p, *qb_p)
             self.add(qb)
             vo.wait_until("to make something true")
-            self.play(Indicate(qb_p[5], color=S.YELLOW), run_time=0.9)
+            self.play(ShowPassingFlash(Underline(qb_p[5], color=S.YELLOW, stroke_width=4, buff=0.06),
+                                       time_width=0.8), run_time=0.9)
             vo.wait_until("has sensitivity one")
             self.play(FadeIn(qb_tail, shift=LEFT * 0.2), run_time=0.6)
         details1 = VGroup(letters, rows, db_head, cut, cut_lab, sens_tag, qb, qb_tail, gone)
@@ -366,7 +380,7 @@ class BeyondCounting(VoiceScene):
             S.tex(r"then ", r"$S(f) \le 2\sigma$", r".", size=38),
         )
         lem[5][1].set_color(SENS_COLOR)
-        lem_note = S.tex(r"(``most'': prob.\ $\ge \frac{1+\alpha}{2}$)", size=30, color=S.GREY)
+        lem_note = S.tex(r"(``most'': prob.\ $\ge (1+\alpha)/2$)", size=30, color=S.GREY)
         lem_body = VGroup(lem_head, *lem).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
         lem_head.shift(UP * 0.1)
         lem_note.next_to(lem_body, DOWN, buff=0.35).align_to(lem_body, LEFT)
@@ -485,8 +499,8 @@ class BeyondCounting(VoiceScene):
         out_bits = released([False] * 8)
         out_l = S.text("released", 24, S.GREY).next_to(out_bits, DOWN, buff=0.18)
         coins = VGroup(*[coin().move_to([c.get_x(), -0.1, 0]) for c in out_bits])
-        flip_f = S.math(r"\Pr[\text{bit flips}]", r"=", r"\frac{1}{1+e^{", r"\varepsilon", r"/2",
-                        r"S(f)", r"}}", r"<", r"\tfrac12", size=38)
+        flip_f = S.math(r"\Pr[\text{bit flips}]", r"=", r"\frac{1}{1+e^{", r"\varepsilon", r"/(2",
+                        r"S(f)", r")}}", r"<", r"\tfrac12", size=38)
         flip_f[3].set_color(EPS_COLOR)
         flip_f[5].set_color(SENS_COLOR)
         flip_f.move_to([2.95, -1.45, 0])
@@ -527,13 +541,18 @@ class BeyondCounting(VoiceScene):
                       bits_now.animate.move_to(true_left), FadeIn(true_left_l), run_time=0.9)
             self.play(FadeIn(out_bits), FadeIn(out_l), FadeIn(flip_f, shift=UP * 0.15), run_time=0.7)
             cur = out_bits
-            for flips in draws[:3]:
+            for flips in draws[:2]:
                 self.play(Transform(cur, released(flips)), run_time=0.4)
                 self.wait(0.2)
+            vo.wait_until("a little below")
+            self.play(Transform(cur, released(draws[2])),
+                      Indicate(flip_f[7:], color=S.WHITE, scale_factor=1.3), run_time=0.9)
             vo.wait_until("Warner's coin again")
             self.play(LaggedStart(*[FadeIn(c, scale=0.5) for c in coins], lag_ratio=0.08),
                       FadeIn(warner, shift=UP * 0.15), run_time=0.8)
             for flips in draws[3:]:
+                if vo.remaining(0) < 0.6:                 # the coins flip while the line is spoken
+                    break
                 self.play(*[c.animate.stretch_to_fit_width(0.03) for c in coins], run_time=0.18)
                 self.play(*[c.animate.stretch_to_fit_width(0.34) for c in coins],
                           Transform(cur, released(flips)), run_time=0.27)
@@ -541,5 +560,5 @@ class BeyondCounting(VoiceScene):
         details3 = VGroup(bits_digits, true_left_l, out_bits, out_l, coins, flip_f, formula, thm, warner)
         self.collapse(t3, VGroup(tiles[0], tiles[1]), title, details3)
         self.play(LaggedStart(*[Indicate(VGroup(t[1], t[2]), color=S.WHITE, scale_factor=1.08)
-                                for t in tiles], lag_ratio=0.25), run_time=1.0)
-        self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
+                                for t in tiles], lag_ratio=0.25), run_time=0.8)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)

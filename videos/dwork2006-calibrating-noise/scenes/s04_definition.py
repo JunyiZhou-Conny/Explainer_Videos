@@ -21,6 +21,7 @@ SAY = NARRATION["S04"]
 
 ANALYST = S.PURPLE          # analyst / attacker role colour (as in S03)
 COIN = S.GOLD
+COIN_RIM = "#9A7228"        # as in s02_map.py
 CHECK = S.TEAL
 A, B = 41.0, 42.0           # f(x), f(x')
 S_NOISE = 5.0               # logistic scale -> eps = 1/S_NOISE = 0.2
@@ -82,11 +83,14 @@ def mech_box(color) -> VGroup:
     return VGroup(box, m, die)
 
 
-def coin_glyph(radius=0.24) -> VGroup:
-    c = Circle(radius=radius, stroke_color=interpolate_color(ManimColor(COIN), ManimColor(S.BG), 0.35),
-               stroke_width=3).set_fill(COIN, 0.9)
-    inner = Circle(radius=radius * 0.62, stroke_color=S.BG, stroke_width=1.5, stroke_opacity=0.5)
-    return VGroup(c, inner)
+def coin_glyph(radius=0.25, face="H") -> VGroup:
+    """Warner's coin, drawn as in S02 (s02_map.coin): gold disc, darker rim, H/T face."""
+    disc = Circle(radius=radius, stroke_width=0).set_fill(COIN, 1)
+    rim = Circle(radius=radius, stroke_color=COIN_RIM, stroke_width=3)
+    inner = Circle(radius=radius * 0.78, stroke_color=COIN_RIM, stroke_width=1.5)
+    g = VGroup(disc, rim, inner, S.text(face, radius * 85, S.BG, weight="BOLD").move_to(disc))
+    g.face = face
+    return g
 
 
 def cigarette() -> VGroup:
@@ -98,14 +102,42 @@ def cigarette() -> VGroup:
     return VGroup(filt, body, ash, smoke)
 
 
-def flip(coin, turns: int = 2):
-    """A coin toss: squash to edge-on and back, `turns` times."""
-    return Succession(*[coin.animate(rate_func=there_and_back).stretch(0.06, 0) for _ in range(turns)])
+def flip(coin, faces: str = "TH", run_time: float = 0.8, hop: float = 0.25):
+    """A coin toss as in S02 (s02_map.coin_flip): len(faces) half-turns, landing on faces[-1]."""
+    r = coin[0].width / 2
+    centre = coin.get_center().copy()
+    start = getattr(coin, "face", "H")
+    tmpl = {f: coin_glyph(r, f) for f in "HT"}
+    k = len(faces)
+
+    def upd(m, a):
+        ph = a * k
+        i = min(int(ph), k - 1)
+        fr = ph - i
+        face = faces[i] if fr >= 0.5 else (start if i == 0 else faces[i - 1])
+        m.become(tmpl[face].copy().move_to(centre + UP * hop * np.sin(np.pi * a)))
+        m.stretch(max(abs(np.cos(np.pi * fr)), 0.04), 1)
+
+    coin.face = faces[-1]
+    return UpdateFromAlphaFunc(coin, upd, run_time=run_time, rate_func=linear)
 
 
 def ponder_at(scene, question, seconds, pos, width=6.0) -> VGroup:
-    """pause_and_ponder, but placed at `pos` so the supporting picture stays visible."""
-    card = ponder_card(question, width=width).move_to(pos)
+    """pause_and_ponder, but placed at `pos` so the supporting picture stays visible.
+
+    A trailing ' ε?' in `question` is typeset as a YELLOW math epsilon (as in the formulas)."""
+    card = ponder_card(question, width=width)
+    if question.endswith(" ε?"):
+        old = card[2]
+        new = VGroup(S.text(question[:-3], 34), S.math(r"\varepsilon", size=40, color=EPS_COLOR),
+                     S.text("?", 34))
+        new[1].next_to(new[0], RIGHT, buff=0.17).align_to(new[0], DOWN)    # a word space before ε
+        new[2].next_to(new[1], RIGHT, buff=0.06).align_to(new[0], DOWN)
+        if new.width > width - 0.6:
+            new.scale_to_fit_width(width - 0.6)
+        new.move_to(old)
+        card.submobjects[2] = new
+    card.move_to(pos)
     scene.play(FadeIn(card, scale=0.95), run_time=0.6)
     bar = card[3]
     target = bar.copy().scale(0.001, about_point=bar.get_start())
@@ -197,8 +229,13 @@ class Definition(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(brace, brace_lab, neq, cnt_x, cnt_xp, tag_changed)), run_time=0.5)
-            self.play(db_x.animate.scale(0.5).move_to([-3.6, top_y, 0]),
-                      db_xp.animate.scale(0.5).move_to([3.6, top_y, 0]),
+            for st, cx in ((db_x, -3.6), (db_xp, 3.6)):   # thumbnails: drop the (now tiny) row text
+                st.generate_target()
+                st.target.scale(0.5).move_to([cx, top_y, 0])
+                for r in st.target[1]:
+                    for m in r[2:]:
+                        m.set_opacity(0)
+            self.play(MoveToTarget(db_x), MoveToTarget(db_xp),
                       lab_x.animate.scale(0.7).move_to([-5.2, top_y, 0]),
                       lab_xp.animate.scale(0.7).move_to([5.25, top_y, 0]), run_time=1.1)
             arr_dx = Arrow(db_x.get_bottom(), m_x.get_top(), buff=0.06, color=S.GREY, stroke_width=3,
@@ -222,7 +259,7 @@ class Definition(VoiceScene):
             self.play(*[FadeIn(num, shift=DOWN * 0.1) for _, _, num in first], FadeIn(foot), run_time=0.6)
             vo.wait_until("for now, a single")
             self.play(*[Indicate(num, color=num.get_color(), scale_factor=1.25) for _, _, num in first],
-                      run_time=0.8)
+                      run_time=0.6)
             # many more runs
             rain = []
             for vals, mbox, col, dy in ((sx[1:], m_x, X_COLOR, 0.09), (sxp[1:], m_xp, XP_COLOR, 0.22)):
@@ -232,11 +269,11 @@ class Definition(VoiceScene):
             order = rng.permutation(len(rain))
             self.play(FadeOut(VGroup(*[num for _, _, num in first])),
                       LaggedStart(*[rain[i][0].animate.move_to(rain[i][1]) for i in order], lag_ratio=0.06),
-                      run_time=2.2)
+                      run_time=1.4)
             dots = VGroup(*[d for d, _ in rain], *[d for d, _, _ in first])
             vo.wait_until("Because the mechanism")
-            self.play(Create(c1x), Create(c1xp), run_time=1.8)
-            self.play(FadeIn(a1x), FadeIn(a1xp), dots.animate.set_opacity(0.25), run_time=0.8)
+            self.play(Create(c1x), Create(c1xp), run_time=1.5)
+            self.play(FadeIn(a1x), FadeIn(a1xp), dots.animate.set_opacity(0.25), run_time=0.6)
             vo.wait_until("a whole distribution")
             self.play(Indicate(c1x, color=X_COLOR, scale_factor=1.04), Indicate(c1xp, color=XP_COLOR, scale_factor=1.04),
                       run_time=vo.remaining(0.8))
@@ -303,14 +340,14 @@ class Definition(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(db_x, db_xp, lab_x, lab_xp, arr_dx, arr_dxp, m_x, m_xp, foot, dots,
-                                     ticks1)), run_time=0.6)
-            self.play(ReplacementTransform(ax1, ax2), ReplacementTransform(c1x, c2x),
+                                     ticks1)),
+                      ReplacementTransform(ax1, ax2), ReplacementTransform(c1x, c2x),
                       ReplacementTransform(c1xp, c2xp), ReplacementTransform(a1x, a2x),
-                      ReplacementTransform(a1xp, a2xp), FadeOut(out_lab1), run_time=1.1)
+                      ReplacementTransform(a1xp, a2xp), FadeOut(out_lab1), run_time=0.9)
             self.play(FadeIn(marker, shift=UP * 0.2), GrowFromEdge(stick_x, DOWN), GrowFromEdge(stick_xp, DOWN),
-                      run_time=0.7)
+                      run_time=0.5)
             vo.wait_until("compare the heights")
-            self.play(TransformFromCopy(stick_x, bar_x), TransformFromCopy(stick_xp, bar_xp), run_time=1.1)
+            self.play(TransformFromCopy(stick_x, bar_x), TransformFromCopy(stick_xp, bar_xp), run_time=1.0)
             self.add(bar_x, bar_xp)
             self.play(FadeIn(div), FadeIn(eq), FadeIn(num), run_time=0.5)
             vo.wait_until("Slide t along")
@@ -416,20 +453,20 @@ class Definition(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(gauge, header, loss_brace, loss_lab, cap, small)),
-                      defn.animate.scale(0.62).move_to([0, 2.95, 0]), run_time=1.0)
+                      defn.animate.scale(0.62).move_to([0, 2.95, 0]), run_time=0.8)
             self.play(FadeIn(tree_title), FadeIn(alice), FadeIn(alice_lab), Create(a_line), FadeIn(coin1),
-                      run_time=0.7)
+                      run_time=0.5)
             self.play(LaggedStart(AnimationGroup(Create(e_h1), FadeIn(l_h1), FadeIn(leaf_truth)),
                                   AnimationGroup(Create(e_t1), FadeIn(l_t1), FadeIn(coin2)),
                                   AnimationGroup(Create(e_h2), FadeIn(l_h2), FadeIn(leaf_yes)),
                                   AnimationGroup(Create(e_t2), FadeIn(l_t2), FadeIn(leaf_no)),
-                                  lag_ratio=0.45), run_time=1.6)
+                                  lag_ratio=0.45), run_time=1.2)
             vo.wait_until("Pause and ponder")
-            self.play(flip(coin1), run_time=0.8)
+            self.play(flip(coin1, "TH"), run_time=0.8)
             vo.wait_until("how likely is she")
             self.play(Indicate(leaf_yes, color=S.WHITE, scale_factor=1.3), run_time=0.8)
             vo.wait_until("And if it is no")
-            self.play(flip(coin2), run_time=vo.remaining(0.6))
+            self.play(flip(coin2, "TH", run_time=vo.remaining(0.6)))
         card = ponder_at(self, "Warner's coin: what is its ε?", 12, pos=[3.4, -0.6, 0], width=5.9)
 
         # ============================================================ 5. the coin's epsilon
@@ -463,12 +500,11 @@ class Definition(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(card), run_time=0.5)
             g1, g2, g3 = glow(e_h1, XP_COLOR), glow(e_t1, XP_COLOR), glow(e_h2, XP_COLOR)
-            self.play(Create(g1), FadeIn(say_yes), run_time=0.7)
-            self.play(FadeIn(p_half, scale=1.3), run_time=0.4)
+            self.play(Create(g1), FadeIn(say_yes), FadeIn(p_half, scale=1.3), Write(VGroup(*r1[0:5])),
+                      run_time=1.0)
             vo.wait_until("or tails then heads")
-            self.play(Create(g2), run_time=0.4)
-            self.play(Create(g3), FadeIn(p_q1, scale=1.3), run_time=0.5)
-            self.play(Write(r1), run_time=1.1)
+            self.play(Create(g2), run_time=0.35)
+            self.play(Create(g3), FadeIn(p_q1, scale=1.3), Write(VGroup(*r1[5:])), run_time=0.7)
             vo.wait_until("If it is no")
             b2, b3 = glow(e_t1, X_COLOR), glow(e_h2, X_COLOR)
             self.play(FadeOut(VGroup(g1, g2, g3, p_half)), ReplacementTransform(say_yes, say_no),
@@ -555,7 +591,7 @@ class Definition(VoiceScene):
             self.play(FadeIn(attacker, shift=RIGHT * 0.3), FadeIn(att_lab), run_time=0.6)
             self.play(FadeIn(scr, shift=DOWN * 0.15), Write(wonder), run_time=0.8)
             vo.wait_until("By Bayes")
-            self.play(FadeIn(bayes_lab), Write(bayes), run_time=1.6)
+            self.play(FadeIn(bayes_lab), Write(bayes), run_time=1.0)
             vo.wait_until("your new odds")
             self.play(GrowFromCenter(new_b), FadeIn(new_l), run_time=0.6)
             vo.wait_until("your old odds")
@@ -605,6 +641,8 @@ class Definition(VoiceScene):
         stranger = database_rows(["stranger"], None, color=S.GREY, width=db7[1][ALICE_ROW][0].width,
                                  row_height=db7[1][ALICE_ROW][0].height, size=22)[0]
         stranger.move_to(row_alice7)
+        name_a = db7[1][ALICE_ROW][2]       # put 'stranger' on the same baseline as 'Alice'
+        stranger[2].shift(UP * (name_a.get_bottom()[1] - stranger[2][0].get_bottom()[1]))
         verdict1 = S.text("would happen even with Alice's row replaced", 28, S.WHITE)
         verdict2 = VGroup(S.text("✓", 30, CHECK), S.text("not a privacy breach", 30, CHECK)).arrange(RIGHT, buff=0.15)
         verdict = VGroup(verdict1, verdict2).arrange(DOWN, buff=0.15).move_to([0.6, -3.05, 0])

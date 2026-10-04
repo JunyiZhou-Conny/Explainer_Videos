@@ -189,7 +189,7 @@ SLOT_SPECS = [
     ("one definition", lambda: S.math(r"\varepsilon", size=34, color=EPS_COLOR), EPS_COLOR),
     ("one number", lambda: S.math("S(f)", size=30, color=SENS_COLOR), SENS_COLOR),
     ("one recipe", lambda: _recipe_tex(), NOISE_COLOR),
-    ("one limit", lambda: S.text("one-shot releases", 20, S.GREY), S.GREY),
+    ("one limit", lambda: S.text("one-shot", 22, S.GREY), S.GREY),
 ]
 
 
@@ -273,8 +273,10 @@ def handover_arrows(card: VGroup) -> tuple[VGroup, VGroup]:
         a = Arrow([PACK_X1 + 0.06, y, 0], e + LEFT * 0.04, buff=0, color=S.GREY, stroke_width=3,
                   tip_length=0.18, max_tip_length_to_length_ratio=0.12)
         lab = S.text(HANDOVER[i], 20, S.WHITE, line_spacing=0.8)
-        mid = a.point_from_proportion(0.45)
-        if i < 2:
+        mid = a.point_from_proportion(0.5)
+        if i == 0:
+            lab.next_to(mid, UP, buff=0.22)
+        elif i == 1:
             lab.next_to(mid, UP, buff=0.12)
         else:
             lab.next_to(mid, DOWN, buff=0.14)
@@ -355,12 +357,14 @@ class LineageBefore(VoiceScene):
         question = VGroup(q_box, q_text).move_to([-4.75, -1.45, 0])
         c1 = coin(0.28, "H").move_to([-4.55, -2.5, 0])
         private = S.text("in private", 20, S.GREY).move_to([-5.15, -3.22, 0])
-        a_heads = Arrow(c1.get_right() + UP * 0.08, [-3.05, -1.95, 0], buff=0.08, color=S.GREY,
+        a_heads = Arrow(c1.get_right() + UP * 0.08, [-2.75, -1.95, 0], buff=0.08, color=S.GREY,
                         stroke_width=3, tip_length=0.16)
-        a_tails = Arrow(c1.get_right() + DOWN * 0.08, [-3.05, -3.05, 0], buff=0.08, color=S.GREY,
+        a_tails = Arrow(c1.get_right() + DOWN * 0.08, [-2.75, -3.05, 0], buff=0.08, color=S.GREY,
                         stroke_width=3, tip_length=0.16)
-        l_heads = S.text("heads", 20, S.GREY).next_to(a_heads.point_from_proportion(0.55), UP, buff=0.12)
-        l_tails = S.text("tails", 20, S.GREY).next_to(a_tails.point_from_proportion(0.55), DOWN, buff=0.12)
+        l_heads = S.text("heads", 20, S.GREY).next_to(a_heads.point_from_proportion(0.42), UP + LEFT * 0.35,
+                                                      buff=0.06)
+        l_tails = S.text("tails", 20, S.GREY).next_to(a_tails.point_from_proportion(0.42), DOWN + LEFT * 0.35,
+                                                      buff=0.06)
         truth = S.text("tell the truth", 24, S.WHITE).next_to(a_heads.get_end(), RIGHT, buff=0.12)
         c2 = coin(0.22, "H").next_to(a_tails.get_end(), RIGHT, buff=0.1)
         say_yes = S.text("H → “yes”", 22, S.WHITE)
@@ -379,7 +383,7 @@ class LineageBefore(VoiceScene):
 
         answers, _ = rr_running_estimate()
         crowd = VGroup(*[person_icon(S.WHITE if answers[i] else S.GREY_DARK, 0.24) for i in range(36)])
-        crowd.arrange_in_grid(rows=6, cols=6, buff=(0.1, 0.07)).move_to([0.35, -2.05, 0])
+        crowd.arrange_in_grid(rows=6, cols=6, buff=(0.1, 0.07)).move_to([0.7, -2.05, 0])
         crowd_lab = VGroup(person_icon(S.WHITE, 0.22), S.text("said “yes”", 20, S.GREY)).arrange(RIGHT, buff=0.12)
         crowd_lab.next_to(crowd, DOWN, buff=0.14)
         ax, ax_labels, est_curve, true_line = rr_plot()
@@ -608,7 +612,7 @@ class LineageBefore(VoiceScene):
             q_vals.add(v)
             q_vals_noisy.add(vn)
             bx = 3.0
-            q_bars.add(self._err_bar(bx, y_q[j], 0.04, S.WHITE))
+            q_bars.add(self._err_bar(bx, y_q[j], 0.1, S.WHITE))
             q_bars_noisy.add(self._err_bar(bx, y_q[j], 0.55, NOISE_COLOR))
         for lab in q_labs:
             lab.align_to(db_lab, RIGHT)
@@ -731,7 +735,7 @@ class LineageBefore(VoiceScene):
         tag_leak = VGroup(S.text("✗", 22, NOISE_COLOR), S.text("a tiny chance of a large leak", 22, S.GREY)
                           ).arrange(RIGHT, buff=0.12)
         tags = VGroup(tag_sums, tag_leak).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
-        tags.next_to(sums, DOWN, buff=0.25).set_x(3.7)
+        tags.next_to(sums, DOWN, buff=0.25).set_x(4.3)
 
         packed = packed_positions(chips)
         frame_of = {k: (c[0][0] if k == "warner" else c[0]) for k, c in chips.items()}
@@ -808,7 +812,9 @@ class LineageBefore(VoiceScene):
 
     @staticmethod
     def _err_bar(x, y, half, color):
-        w = 0.07
-        return VGroup(Line([x - half, y, 0], [x + half, y, 0], color=color, stroke_width=3),
-                      Line([x - half, y - w, 0], [x - half, y + w, 0], color=color, stroke_width=3),
-                      Line([x + half, y - w, 0], [x + half, y + w, 0], color=color, stroke_width=3))
+        """An error bar: a dot (the answer) with whiskers of half-width `half`."""
+        w = 0.05
+        return VGroup(Line([x - half, y, 0], [x + half, y, 0], color=color, stroke_width=2.5),
+                      Line([x - half, y - w, 0], [x - half, y + w, 0], color=color, stroke_width=2.5),
+                      Line([x + half, y - w, 0], [x + half, y + w, 0], color=color, stroke_width=2.5),
+                      Dot([x, y, 0], radius=0.045, color=color))

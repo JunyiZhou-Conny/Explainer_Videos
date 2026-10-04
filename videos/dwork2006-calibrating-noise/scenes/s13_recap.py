@@ -96,8 +96,8 @@ class Recap(VoiceScene):
         f1[3].set_color(X_COLOR)
         f1[5].set_color(XP_COLOR)
         f1[9].set_color(EPS_COLOR)
-        f1.move_to(formula_anchor(p1))
-        c1 = pic_anchor(p1)
+        f1.move_to(formula_anchor(p1) + DOWN * 0.04)
+        c1 = pic_anchor(p1) + UP * 0.1
         base1 = Line(c1 + LEFT * 1.6 + DOWN * 0.4, c1 + RIGHT * 1.6 + DOWN * 0.4, color=S.GREY, stroke_width=2)
 
         def bump(mu, col):
@@ -153,18 +153,18 @@ class Recap(VoiceScene):
         masks = np.zeros((4, 8), int)
         for r in range(4):
             masks[r, rng.choice(8, int(rng.integers(2, 5)), replace=False)] = 1
-        cell = 0.2
+        cell = 0.23
         rows = VGroup(*[VGroup(*[Square(cell, stroke_color=S.BG, stroke_width=1)
                                  .set_fill(S.WHITE if v else S.GREY_DARK, 0.85 if v else 1) for v in b])
-                        .arrange(RIGHT, buff=0) for b in bits]).arrange(DOWN, buff=0.03)
+                        .arrange(RIGHT, buff=0) for b in bits]).arrange(DOWN, buff=0.05)
         over = VGroup(*[Square(cell * 0.86, stroke_color=MASK, stroke_width=2.2).move_to(rows[r][j])
                         for r in range(4) for j in np.flatnonzero(masks[r])])
         par = VGroup(*[S.text(str(int(np.dot(b, m) % 2)), 22, S.WHITE, font=S.FONT_SANS)
                        .next_to(rows[r], RIGHT, buff=0.14) for r, (b, m) in enumerate(zip(bits, masks))])
         pic4 = VGroup(rows, over, par)
-        pic4.move_to(pic_anchor(p4))
-        t4 = S.text("can’t answer most parity counts", 28, S.WHITE)
-        f4 = S.math(r"\text{unless}\quad n", r"\;\gtrsim\;", r"2^{d/4}", "/", r"\sqrt{\varepsilon}", size=40)
+        pic4.move_to(pic_anchor(p4) + UP * 0.04)
+        t4 = S.text("can’t answer most parity counts", 26, S.WHITE)
+        f4 = S.math(r"\text{unless}\quad n", r"\;\gtrsim\;", r"2^{d/4}", "/", r"\sqrt{\varepsilon}", size=38)
         f4[4][-1].set_color(EPS_COLOR)
         VGroup(t4, f4).arrange(DOWN, buff=0.18).move_to(formula_anchor(p4) + UP * 0.05)
 

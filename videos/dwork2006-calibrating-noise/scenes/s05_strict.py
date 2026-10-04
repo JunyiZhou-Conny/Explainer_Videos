@@ -73,7 +73,8 @@ class WhyStrict(VoiceScene):
         ax = Axes(x_range=[T0, T1, 1], y_range=[0, 0.27, 0.05], x_length=11.6, y_length=3.0,
                   tips=False, axis_config={"color": S.GREY, "stroke_width": 2}).shift(DOWN * 1.35)
         axis = ax.x_axis
-        out_lab = S.text("output t", 22, S.GREY).next_to(axis.get_right(), DOWN, buff=0.2)
+        out_lab = VGroup(S.text("output", 22, S.GREY), S.math("t", size=32, color=S.GREY))
+        out_lab.arrange(RIGHT, buff=0.1).next_to(axis.get_right(), DOWN, buff=0.2).align_to(axis.get_right(), RIGHT)
         p_x = lambda t: float(logistic_pdf(t, MU_X))
         p_xp = lambda t: float(logistic_pdf(t, MU_XP))
         c_x = ax.plot(p_x, x_range=[T0, T1, 0.02], color=X_COLOR, stroke_width=5)
@@ -151,7 +152,7 @@ class WhyStrict(VoiceScene):
         truth_x = {"Bob": "no", "Carol": "has", "Dev": "no", "Alice": "no"}
         truth_xp = dict(truth_x, Alice="has")
         slot_w, pair_gap, base_y = 0.76, 0.28, -2.15
-        cursor = -1.25
+        cursor = -1.4
         slot_x = {}
         bases, slot_labs, name_labs = VGroup(), VGroup(), VGroup()
         ell = None
@@ -169,7 +170,7 @@ class WhyStrict(VoiceScene):
             name_labs.add(S.text(p, 22, ALICE if p == "Alice" else S.WHITE)
                           .move_to([cursor + slot_w, base_y - 0.66, 0]))
             cursor += 2 * slot_w + pair_gap
-        chart_left = -1.25
+        chart_left = -1.4
         y_tick = VGroup(Line([chart_left - 0.12, base_y + BAR_H, 0], [chart_left + 0.02, base_y + BAR_H, 0],
                              color=S.GREY, stroke_width=2),
                         DashedLine([chart_left, base_y + BAR_H, 0], [cursor - pair_gap, base_y + BAR_H, 0],
@@ -253,8 +254,9 @@ class WhyStrict(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(tiny), LaggedStart(*[Indicate(n, color=S.WHITE, scale_factor=1.25)
                                                    for n in name_labs], lag_ratio=0.2),
-                      LaggedStart(*[Indicate(r, color=S.WHITE, scale_factor=1.04) for r in rows],
-                                  lag_ratio=0.2), run_time=1.6)
+                      # pulse each row's content (not its opaque box, which would hide the text)
+                      LaggedStart(*[AnimationGroup(*[Indicate(m, color=S.WHITE, scale_factor=1.2) for m in r[1:]])
+                                    for r in rows], lag_ratio=0.2), run_time=1.6)
             vo.wait_until("The ratio test")
             self.add(has_base, zero_x)
             self.play(FadeOut(VGroup(caption, stack, db_lab, n_lab, leg, sd_val, alice_box, others)),
@@ -306,12 +308,31 @@ class WhyStrict(VoiceScene):
         arr45 = CurvedArrow(nl.n2p(45) + UP * 0.18, nl.n2p(50) + UP * 0.18 + LEFT * 0.12, angle=-PI / 3,
                             color=XP_COLOR, stroke_width=4, tip_length=0.2)
         SPIKE = 2.2
-        spike40 = Rectangle(width=0.16, height=SPIKE, stroke_width=0).set_fill(X_COLOR, 0.95)
-        spike40.move_to(nl.n2p(40) + UP * SPIKE / 2)
-        spike50 = Rectangle(width=0.16, height=SPIKE, stroke_width=0).set_fill(XP_COLOR, 0.95)
-        spike50.move_to(nl.n2p(50) + UP * SPIKE / 2)
-        pr40 = S.math(r"\Pr = 1", size=30, color=X_COLOR).next_to(spike40, UP, buff=0.12)
-        pr50 = S.math(r"\Pr = 1", size=30, color=XP_COLOR).next_to(spike50, UP, buff=0.12)
+        LAMB = 1.3
+        yscale = 1.7 / laplace_pdf(0, 0, LAMB)
+        TS = np.arange(39.92, 50.0801, 0.02)
+
+        def profile(hs, col, fill, stroke):
+            """A density drawn over the number line: (filled area, outline); same points for every shape,
+            so a point mass can morph into a smooth bump."""
+            pts = [nl.n2p(t) + UP * h for t, h in zip(TS, hs)]
+            curve = VMobject(stroke_color=col, stroke_width=5, stroke_opacity=stroke).set_points_as_corners(pts)
+            area = Polygon(*pts, nl.n2p(TS[-1]), nl.n2p(TS[0]), stroke_width=0).set_fill(col, fill)
+            return VGroup(area, curve)
+
+        def spike(c, col):          # probability 1 at the rounded answer c
+            return profile([SPIKE * float(np.clip((0.09 - abs(t - c)) / 0.02, 0, 1)) for t in TS], col, 0.95, 0)
+
+        def bump(mu, col):          # Laplace noise around the true count mu
+            return profile([yscale * float(laplace_pdf(t, mu, LAMB)) for t in TS], col, 0.18, 1)
+
+        spike40 = spike(40, X_COLOR)
+        spike50 = spike(50, XP_COLOR)
+        pr40 = S.math(r"\Pr = 1", size=30, color=X_COLOR).next_to(nl.n2p(40) + UP * SPIKE, UP, buff=0.12)
+        pr50 = S.math(r"\Pr = 1", size=30, color=XP_COLOR).next_to(nl.n2p(50) + UP * SPIKE, UP, buff=0.12)
+        for sp in (spike40, spike50):   # grow straight up out of the axis
+            sp.save_state()
+            sp.stretch(1e-3, 1, about_edge=DOWN)
         zero50 = Line(nl.n2p(50) + RIGHT * 0.12, nl.n2p(50) + RIGHT * 0.36, color=X_COLOR, stroke_width=7)
         zero50_lab = S.math("0", size=30, color=X_COLOR).next_to(zero50, UP, buff=0.1)
         readout_a = VGroup(S.math(r"\Pr[\text{output } 50]\colon", size=36), S.math("1", size=40, color=XP_COLOR))
@@ -320,15 +341,6 @@ class WhyStrict(VoiceScene):
         readout = VGroup(*readout_a, *readout_b).arrange(RIGHT, buff=0.2).move_to([2.5, 1.95, 0])
         random_cap = S.text("to pass the ratio test, a mechanism must be random", 30, S.WHITE)
         random_cap.to_edge(DOWN, buff=0.45)
-        LAMB = 1.3
-        yscale = 1.7 / laplace_pdf(0, 0, LAMB)
-
-        def bump(mu, col):
-            pts = [nl.n2p(t) + UP * yscale * float(laplace_pdf(t, mu, LAMB)) for t in np.arange(40, 50.001, 0.02)]
-            curve = VMobject(stroke_color=col, stroke_width=5).set_points_as_corners(pts)
-            area = Polygon(*pts, nl.n2p(50), nl.n2p(40), stroke_width=0).set_fill(col, 0.18)
-            return VGroup(area, curve)
-
         bump44 = bump(44, X_COLOR)
         bump45 = bump(45, XP_COLOR)
 
@@ -348,7 +360,8 @@ class WhyStrict(VoiceScene):
             vo.wait_until("at the jump")
             self.play(Create(arr44), Create(arr45), run_time=0.8)
             vo.wait_until("one world gives")
-            self.play(GrowFromEdge(spike40, DOWN), GrowFromEdge(spike50, DOWN), FadeIn(pr40), FadeIn(pr50),
+            self.add(spike40, spike50)
+            self.play(Restore(spike40), Restore(spike50), FadeIn(pr40), FadeIn(pr50),
                       FadeIn(readout_a, shift=DOWN * 0.15), run_time=0.9)
             vo.wait_until("the other with probability zero")
             self.play(Create(zero50), FadeIn(zero50_lab), FadeIn(readout_b, shift=DOWN * 0.15),

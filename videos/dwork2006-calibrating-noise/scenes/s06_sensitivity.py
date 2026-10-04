@@ -14,9 +14,11 @@ SAY = NARRATION["S06"]
 # ---------------------------------------------------------------- histogram geometry
 H_LEFT, H_RIGHT = -6.3, -0.3     # x-extent of the histogram
 H_BASE = -2.45                   # baseline y
-UNIT = 0.25                      # height of one row (one count)
-COUNTS5 = [4, 6, 9, 6, 3]        # rows per bin, not counting Alice (she starts in bin 2)
+UNIT = 0.19                      # height of one row (one count)
+COUNTS5 = [5, 8, 13, 10, 4]      # rows per bin of the 5-bin histogram, not counting Alice
 BAR_FILL = 0.55
+# Alice's value in [0, 1): in B2 at d = 5, then B4 (her change), then her hops at d = 20 and d = 60
+ALICE_U = (0.33, 0.67, 0.32, 0.74)
 
 
 def db_stack(names, values, width=2.7, row_h=0.46, size=22):
@@ -52,46 +54,54 @@ def bin_x(d, j):
     return H_LEFT + w * (j + 0.5), w
 
 
-def envelope(d, seed):
-    """Integer bin counts of a smooth-ish population, drawn with d bins (deterministic)."""
+def bin_of(u, d):
+    return min(int(u * d), d - 1)
+
+
+def row_values(counts=COUNTS5, mu=0.5, sd=0.26, seed=4):
+    """Values in [0, 1) of the other rows (deterministic): exactly counts[j] of them in 5-bin j,
+    spread inside each bin along a smooth bell shape, so every finer histogram is the same data."""
     rng = np.random.default_rng(seed)
-    u = (np.arange(d) + 0.5) / d
-    h = 3.0 + 6.0 * np.exp(-((u - 0.5) / 0.22) ** 2) + rng.normal(0, 0.55, d)
-    return np.clip(np.round(h), 1, 10).astype(int)
-
-
-def bars(d, counts, opacity=BAR_FILL):
-    g = VGroup()
+    grid = np.linspace(0, 1, 4001)
+    dens = np.exp(-0.5 * ((grid - mu) / sd) ** 2)
+    vals = []
     for j, c in enumerate(counts):
-        cx, w = bin_x(d, j)
-        r = Rectangle(width=w * 0.8, height=c * UNIT, stroke_color=X_COLOR, stroke_width=1.5)
-        r.set_fill(X_COLOR, opacity).move_to([cx, H_BASE + c * UNIT / 2, 0])
-        g.add(r)
-    return g
+        a, b = j / 5, (j + 1) / 5
+        m = (grid >= a) & (grid <= b)
+        cdf = np.cumsum(dens[m])
+        cdf = (cdf - cdf[0]) / (cdf[-1] - cdf[0])
+        v = np.interp((np.arange(c) + 0.5) / c, cdf, grid[m]) + rng.normal(0, 0.05 / c, c)
+        vals += list(np.clip(v, a + 1e-3, b - 1e-3))
+    return np.sort(np.array(vals))
 
 
-def block_bar(j, count):
-    """Bin j of the 5-bin histogram drawn as a stack of unit blocks (one per row)."""
-    cx, w = bin_x(5, j)
-    g = VGroup()
-    for k in range(count):
-        b = Rectangle(width=w * 0.8, height=UNIT, stroke_color=X_COLOR, stroke_width=1.5)
-        b.set_fill(X_COLOR, BAR_FILL).move_to([cx, H_BASE + (k + 0.5) * UNIT, 0])
-        g.add(b)
-    return g
+ROW_U = row_values()
+STROKE = {5: 1.5, 20: 1.1, 60: 0.7}
 
 
-def alice_block(d, j, below):
-    """Alice's own row: a PINK unit block on top of bin j (which holds `below` other rows)."""
+def unit_block(d, j, k, color, opacity):
+    """One row drawn as a unit block: the (k+1)-th block from the bottom of bin j of a d-bin histogram."""
     cx, w = bin_x(d, j)
-    b = Rectangle(width=w * 0.8, height=UNIT, stroke_color=ALICE, stroke_width=2)
-    return b.set_fill(ALICE, 0.95).move_to([cx, H_BASE + (below + 0.5) * UNIT, 0])
+    b = Rectangle(width=w * 0.8, height=UNIT, stroke_color=color, stroke_width=STROKE[d] + (0.5 if color == ALICE else 0))
+    return b.set_fill(color, opacity).move_to([cx, H_BASE + (k + 0.5) * UNIT, 0])
+
+
+def layout(d, alice_u):
+    """The same rows binned into d bins: (one block per other row, Alice's block on top of her bin, counts)."""
+    counts = [0] * d
+    blocks = []
+    for u in ROW_U:
+        j = bin_of(u, d)
+        blocks.append(unit_block(d, j, counts[j], X_COLOR, BAR_FILL))
+        counts[j] += 1
+    ja = bin_of(alice_u, d)
+    return blocks, unit_block(d, ja, counts[ja], ALICE, 0.95), counts
 
 
 def hover(block):
     """Alice's icon hovering above her block, tethered to it."""
     icon = person_icon(ALICE, height=0.45).move_to(block.get_top() + UP * 0.75)
-    name = S.text("Alice", 22, ALICE).next_to(icon, RIGHT, buff=0.12)
+    name = S.text("Alice", 22, ALICE).next_to(icon, LEFT, buff=0.12)
     tether = DashedLine(icon.get_bottom() + DOWN * 0.04, block.get_top(), color=ALICE, stroke_width=2,
                         dash_length=0.06)
     return VGroup(tether, icon, name)
@@ -175,7 +185,7 @@ class Sensitivity(VoiceScene):
             self.play(TransformFromCopy(f_lab, dot_x), FadeIn(lab_fx), run_time=0.6)
             vo.wait_until("It depends on")
             self.play(Transform(rows[3][3], S.text("has X", 22, XP_COLOR).move_to(rows[3][3])),
-                      Transform(db_x, db_xp), *[Indicate(m, color=ALICE, scale_factor=1.05) for m in rows[3][:3]],
+                      Transform(db_x, db_xp), *[Indicate(m, color=ALICE, scale_factor=1.15) for m in rows[3][1:3]],
                       run_time=0.8)
             self.play(TransformFromCopy(f_lab, dot_xp), FadeIn(lab_fxp), run_time=0.8)
             seg = gap_seg(3.2, 4.6)
@@ -238,19 +248,20 @@ class Sensitivity(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(segs, s_lab, dot_xp, lab_fxp)), Transform(f_lab, count_lab),
                       Transform(db_x, S.math("x", size=42, color=X_COLOR).move_to(db_x, aligned_edge=LEFT)),
-                      *reset, run_time=0.9)
+                      *reset, run_time=0.8)
             self.play(ReplacementTransform(nl, nl2), FadeIn(nl2_labs), dot_x.animate.move_to(nl2.n2p(41)),
-                      lab_fx.animate.move_to(lx41), run_time=0.9)
+                      lab_fx.animate.move_to(lx41), run_time=0.8)
             vo.wait_until("one row changes")
             self.play(Transform(rows[3][3], S.text("has X", 22, XP_COLOR).move_to(rows[3][3])),
                       Transform(db_x, S.math("x'", size=42, color=XP_COLOR).move_to(db_x, aligned_edge=LEFT)),
                       run_time=0.6)
             lab_fxp.move_to(lx42)
             dot42 = Dot(nl2.n2p(42), radius=0.1, color=XP_COLOR)
-            self.play(TransformFromCopy(dot_x, dot42), FadeIn(lab_fxp), run_time=0.7)
-            self.play(Create(seg1), FadeIn(one, shift=UP * 0.1), run_time=0.6)
+            self.play(TransformFromCopy(dot_x, dot42), FadeIn(lab_fxp), run_time=0.6)
+            self.play(Create(seg1), FadeIn(one, shift=UP * 0.1), run_time=0.5)
+            self.play(TransformFromCopy(one, s_count[2]), FadeIn(s_count[:2]), run_time=0.7)
             vo.wait_until("Sensitivity one")
-            self.play(TransformFromCopy(one, s_count[2]), FadeIn(s_count[:2]), run_time=0.8)
+            self.play(Circumscribe(s_count, color=SENS_COLOR), run_time=vo.remaining(0.8))
 
         # ============================================================ 2. histograms: ponder
         defn_top = defn.copy().scale(0.85).move_to(UP * 2.85)
@@ -259,8 +270,9 @@ class Sensitivity(VoiceScene):
                             for j in range(5)])
         dividers = VGroup(*[DashedLine([H_LEFT + 1.2 * j, H_BASE, 0], [H_LEFT + 1.2 * j, H_BASE + 2.6, 0],
                                        color=S.GREY_DARK, stroke_width=1.5, dash_length=0.08) for j in range(6)])
-        blocks = [block_bar(j, c) for j, c in enumerate(COUNTS5)]
-        a_blk = alice_block(5, 1, COUNTS5[1])
+        blk5, a_blk, cnt5 = layout(5, ALICE_U[0])          # one unit block per row
+        assert cnt5 == COUNTS5
+        bin5 = [VGroup(*[b for b, u in zip(blk5, ROW_U) if bin_of(u, 5) == j]) for j in range(5)]
         alice = hover(a_blk)
         def d_label(n):
             g = VGroup(S.math("d", "=", str(n), size=44), S.text("bins", 28, S.GREY))
@@ -270,11 +282,7 @@ class Sensitivity(VoiceScene):
         d_grp = d_label(5)
         d_lab, d_word = d_grp
         rng = np.random.default_rng(6)
-        drops = []
-        for j, bb in enumerate(blocks):
-            for b in bb:
-                drops.append((b, rng.random()))
-        drops.sort(key=lambda t: t[1])
+        drops = sorted(((b, rng.random()) for b in blk5), key=lambda t: t[1])
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(stack, db_lab, db_x, machine, f_lab, arr_in, arr_out, nl2, nl2_labs, dot_x,
@@ -291,7 +299,7 @@ class Sensitivity(VoiceScene):
             vo.wait_until("if Alice's row changes")
             self.play(Wiggle(alice[1:]), run_time=1.0)
             vo.wait_until("how much can the whole")
-            self.play(*[Indicate(b, color=S.WHITE, scale_factor=1.0) for bb in blocks for b in bb],
+            self.play(*[Indicate(b, color=S.WHITE, scale_factor=1.0) for b in blk5],
                       Indicate(a_blk, color=S.WHITE, scale_factor=1.0), run_time=1.0)
             vo.wait_until("Does it depend")
             self.play(Indicate(d_lab, color=S.WHITE), FadeOut(dividers), run_time=1.0)
@@ -300,12 +308,12 @@ class Sensitivity(VoiceScene):
                          pos=[3.45, -0.3, 0])
 
         # ============================================================ 3. the answer: 2, in any dimension
-        a_tgt = alice_block(5, 3, COUNTS5[3])
+        a_tgt = layout(5, ALICE_U[1])[1]
         ghost = DashedVMobject(a_blk.copy().set_fill(opacity=0).set_stroke(ALICE, 2), num_dashes=16)
         minus = S.math("-1", size=34).next_to(ghost, UP, buff=0.12)
         plus = S.math("+1", size=34)
-        zeros = VGroup(*[S.math("0", size=30, color=S.GREY).next_to(blocks[j], UP, buff=0.12) for j in (0, 2, 4)])
-        expr = S.math(r"|-1|", "+", r"|+1|", "=", "2", size=56).move_to([3.5, -0.4, 0])
+        zeros = VGroup(*[S.math("0", size=30, color=S.GREY).next_to(bin5[j], UP, buff=0.12) for j in (0, 2, 4)])
+        expr = S.math(r"|{-1}|", "+", r"|{+1}|", "=", "2", size=56).move_to([3.5, -0.4, 0])
         expr[4].set_color(SENS_COLOR)
         defn_l1 = S.math(r"S(f)", "=", r"\max_{x,\,x'\ \text{neighbors}}", r"\big\|", r"f(x)", "-", r"f(x')",
                          r"\big\|_1", size=52).scale(0.85).move_to(defn_top)
@@ -318,18 +326,12 @@ class Sensitivity(VoiceScene):
         s_big[0].set_color(SENS_COLOR)
         s_big[2].set_color(SENS_COLOR)
 
-        # finer histograms (each bin of the coarser one splits into 4, then 3)
-        c20 = envelope(20, 11)
-        c60 = envelope(60, 12)
-        bars20 = bars(20, c20)
-        bars60 = bars(60, c60)
-
-        def hop(d, counts, j_from, j_to, arc):
-            """Alice leaves bin j_from and joins bin j_to; returns (animations, new block, labels)."""
-            blk = alice_block(d, j_to, counts[j_to])
-            mi = S.math("-1", size=28).next_to(alice_block(d, j_from, counts[j_from]), UP, buff=0.05)
-            pl = S.math("+1", size=28).next_to(blk.get_top() + UP * 0.75, LEFT, buff=0.32)
-            return blk, mi, pl
+        # finer histograms of the SAME rows: each bin splits into 4, then each of those into 3
+        def hop_labels(old, new):
+            """-1 where Alice's block left (on the remaining stack), +1 beside her icon at the new bin."""
+            mi = S.math("-1", size=28).next_to(old.get_bottom(), UP, buff=0.04)
+            pl = S.math("+1", size=28).next_to(new.get_top() + UP * 0.75 + RIGHT * 0.2, RIGHT, buff=0.08)
+            return mi, pl
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(card), run_time=0.5)
@@ -357,30 +359,28 @@ class Sensitivity(VoiceScene):
             vo.wait_until("And it is two")
             self.play(ReplacementTransform(VGroup(*expr[:3]), s_big[0]), ReplacementTransform(expr[3], s_big[1]),
                       ReplacementTransform(expr[4], s_big[2]), FadeOut(VGroup(minus, plus, zeros, ghost)),
-                      run_time=0.6)
-            # 5 -> 20 bins: every bin splits in four
-            self.remove(*[b for bb in blocks for b in bb])
-            self.add(*blocks)
-            b20 = alice_block(20, 13, c20[13])
-            self.play(*[ReplacementTransform(blocks[j], VGroup(*bars20[4 * j:4 * j + 4])) for j in range(5)],
-                      Transform(a_blk, b20), alice.animate.shift(b20.get_top() - a_blk.get_top()),
-                      Transform(d_grp, d_label(20)),
-                      run_time=1.0)
-            blk, mi, pl = hop(20, c20, 13, 6, PI / 2)
-            self.play(VGroup(a_blk, alice).animate(path_arc=PI / 2.5).shift(blk.get_center() - a_blk.get_center()),
-                      FadeIn(mi), run_time=0.8)
-            self.play(FadeIn(pl), Indicate(s_big, color=SENS_COLOR, scale_factor=1.08), run_time=0.5)
+                      run_time=0.5)
+            # 5 -> 20 bins: every bin splits in four; each row's block slides into its sub-bin
+            blk20, a20, _ = layout(20, ALICE_U[1])
+            self.play(*[Transform(b, t) for b, t in zip(blk5, blk20)], Transform(a_blk, a20),
+                      alice.animate.shift(a20.get_top() - a_blk.get_top()), FadeOut(bin_labs),
+                      Transform(d_grp, d_label(20)), run_time=0.9)
+            a20b = layout(20, ALICE_U[2])[1]
+            mi, pl = hop_labels(a20, a20b)
+            self.play(VGroup(a_blk, alice).animate(path_arc=PI / 2.5).shift(a20b.get_center() - a_blk.get_center()),
+                      FadeIn(mi), run_time=0.7)
+            self.play(FadeIn(pl), Indicate(s_big, color=SENS_COLOR, scale_factor=1.08), run_time=0.4)
+            self.wait(0.3)
             # 20 -> 60 bins: every bin splits in three
-            b60 = alice_block(60, 19, c60[19])
-            self.play(*[ReplacementTransform(bars20[j], VGroup(*bars60[3 * j:3 * j + 3])) for j in range(20)],
-                      Transform(a_blk, b60), alice.animate.shift(b60.get_top() - a_blk.get_top()),
-                      FadeOut(VGroup(mi, pl)),
-                      Transform(d_grp, d_label(60)),
-                      run_time=1.0)
-            blk, mi, pl = hop(60, c60, 19, 44, -PI / 2)
-            self.play(VGroup(a_blk, alice).animate(path_arc=-PI / 2.5).shift(blk.get_center() - a_blk.get_center()),
-                      FadeIn(mi), run_time=0.8)
-            self.play(FadeIn(pl), run_time=0.3)
+            blk60, a60, _ = layout(60, ALICE_U[2])
+            self.play(*[Transform(b, t) for b, t in zip(blk5, blk60)], Transform(a_blk, a60),
+                      alice.animate.shift(a60.get_top() - a_blk.get_top()), FadeOut(VGroup(mi, pl)),
+                      Transform(d_grp, d_label(60)), run_time=0.9)
+            a60b = layout(60, ALICE_U[3])[1]
+            mi, pl = hop_labels(a60, a60b)
+            self.play(VGroup(a_blk, alice).animate(path_arc=-PI / 2.5).shift(a60b.get_center() - a_blk.get_center()),
+                      FadeIn(mi), run_time=0.7)
+            self.play(FadeIn(pl), Indicate(s_big, color=SENS_COLOR, scale_factor=1.08), run_time=0.4)
             vo.wait_until("It does not depend")
             self.play(Circumscribe(s_big, color=SENS_COLOR), run_time=vo.remaining(0.8))
 
@@ -445,11 +445,12 @@ class Sensitivity(VoiceScene):
                       ans.animate.move_to([6.5, ax_y, 0]), FadeIn(cont), run_time=1.6, rate_func=linear)
             vo.wait_until("and with no cap")
             self.play(GrowArrow(huge), FadeIn(huge_lab), run_time=0.8)
-            self.play(Indicate(huge_lab, color=SENS_COLOR), Flash([6.5, ax_y, 0], color=SENS_COLOR), run_time=0.8)
+            self.play(Indicate(huge_lab, color=SENS_COLOR), Flash([6.5, ax_y, 0], color=SENS_COLOR), FadeOut(cont),
+                      run_time=0.8)
             vo.wait_until("The standard fix")
             self.play(Create(cap), FadeIn(cap_lab), run_time=0.7)
             self.play(LaggedStart(*[c.animate.shift(DOWN * 0.5).set_opacity(0) for c in cut_off], lag_ratio=0.01),
-                      FadeOut(cont), Transform(irows[3][3], capped_val), ans.animate.move_to([xv(1e6), ax_y, 0]),
+                      Transform(irows[3][3], capped_val), ans.animate.move_to([xv(1e6), ax_y, 0]),
                       run_time=1.2)
             self.play(ReplacementTransform(huge, s_cap), ReplacementTransform(huge_lab, s_cap_lab), run_time=0.8)
             proj.clear_updaters()

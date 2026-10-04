@@ -297,7 +297,7 @@ class Payoff(VoiceScene):
                       FadeIn(m_head[:2]), run_time=0.8)
             self.play(p_track.animate.set_value(POST_MAX), FadeIn(m_head[2:]), run_time=1.5)
             self.play(Flash([mx(POST_MAX), m_y, 0], color=EPS_COLOR, flash_radius=0.3), run_time=0.6)
-            self.play(Indicate(m_head[3], color=EPS_COLOR), run_time=vo.remaining(0.6))
+            self.play(Indicate(m_head[3], color=EPS_COLOR, scale_factor=1.08), run_time=vo.remaining(0.6))
         needle.clear_updaters()
 
         self.hosp = VGroup(icons, db_label, card, alice_lab, ans1, ans2, diff, arrow, cross)
@@ -515,13 +515,13 @@ class Payoff(VoiceScene):
             self.play(FadeIn(pure, scale=1.2), run_time=0.4)
 
             # ---- 5b. not Laplace's fault: the chain
-            # the noise picture stays up (dimmed) while the narrator says it is not Laplace's fault,
-            # so "pure noise" is readable; it clears when the chain starts
+            # the noise picture stays up while the narrator says it is not Laplace's fault, so
+            # "pure noise" stays readable; it clears when the chain starts
             vo.wait_until("This is not")
             not_lap = S.text("Not Laplace's fault: this holds for any ε-private mechanism M", 30, S.GREY)
             not_lap.to_edge(UP, buff=0.4)
             noise_pic = VGroup(readouts, rel, pure, line_grp, bump)
-            self.play(FadeIn(not_lap, shift=DOWN * 0.2), noise_pic.animate.set_opacity(0.5), run_time=0.8)
+            self.play(FadeIn(not_lap, shift=DOWN * 0.2), run_time=0.8)
 
             chain = hybrid_chain().move_to(UP * 1.35)
             nodes, arrows, steps, names = chain

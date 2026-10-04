@@ -40,7 +40,7 @@ SHOW: "42 − 41 = 1" written out; a red tag "Alice has condition X" with an arr
 PONDER(10 s, "Would rounding the count to the nearest ten protect Alice?")
 SAY: Subtract, and the researcher has learned something very specific about Alice, without seeing a single record. Before we go on, try to fix this yourself. Pause and ponder: would rounding the count to the nearest ten protect Alice? Pause the video if you need more time.
 
-SHOW: A number line 40–50 with the rounding cut at 45: "44 → 40"; with Alice, "45 → 50" (RED flash).
+SHOW: A number line 40–50 with a dashed rounding cut drawn between 44 and 45 (round half up): "x: 44" (BLUE) curves to "40"; with Alice, "x′: 45" (ORANGE) curves to "50" (RED flash). S05 reuses exactly this look.
 SAY: Most weeks, yes. But if the count goes from forty-four to forty-five, the rounded answer jumps from forty to fifty, and Alice is exposed again. Any fixed rule that ever changes its answer has a jump like that somewhere.
 
 SHOW: Everything fades except a large question mark; two short lines of text appear:
@@ -125,7 +125,7 @@ shared horizontal axis "output t" — BLUE and ORANGE curves, heavily overlappin
 SAY: Run the mechanism, the curator's randomized answering rule, in each world. Whatever the analyst gets to see, the paper calls the transcript; for now, a single noisy answer. Because the mechanism is random, each world gives a whole distribution of possible outputs.
 
 SHOW: A point t slides along the axis; vertical lines up to both curves; a live readout
-"BLUE height ÷ ORANGE height" (1.08 … 0.95 … 1.10) that stays inside a YELLOW band [e^{−ε}, e^{ε}].
+"BLUE height ÷ ORANGE height" (values near 1, e.g. 0.85 … 1.2) that stays inside a YELLOW band [e^{−ε}, e^{ε}].
 SAY: Pick any output t, and compare the heights of the two curves there. Slide t along and watch their ratio. A private mechanism keeps that ratio close to one everywhere: never above e to the epsilon, never below e to the minus epsilon.
 
 SHOW: Definition 1 written as a caption for what was just seen [Def. 1, p. 270]:
@@ -134,7 +134,7 @@ SHOW: Definition 1 written as a caption for what was just seen [Def. 1, p. 270]:
 note "small ε: e^ε ≈ 1 + ε".
 SAY: That is the paper's definition, which it calls epsilon-indistinguishability. The log of the ratio is the privacy loss at t. For every pair of neighbors, every analyst and every output, it must be at most epsilon in absolute value. The absolute value makes it symmetric: a ratio of two and a ratio of one half count the same. For small epsilon, e to the epsilon is about one plus epsilon.
 
-SHOW: PONDER(12 s, "Warner's coin: what is its ε?") — the coin diagram from S02 returns in a corner.
+SHOW: PONDER(12 s, "Warner's coin: what is its ε?") — the coin diagram from S02 returns on the left.
 SAY: Let's test it on Warner's coin from our map. Pause and ponder: if Alice's true answer is yes, how likely is she to say yes? And if it is no?
 
 SHOW: Table: "truth yes → says yes w.p. 1/2 + 1/4 = 3/4" · "truth no → says yes w.p. 1/4";
