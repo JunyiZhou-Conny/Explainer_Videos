@@ -517,7 +517,7 @@ class LineageBefore(VoiceScene):
                      ("", "02135", "9/17/43", "M", "cardiac"),
                      ("", "02141", "12/3/82", "F", "fracture")]
         hosp = mini_table(["name", "ZIP", "born", "sex", "diagnosis"], hosp_rows,
-                          [1.75, 0.9, 1.05, 0.55, 1.15])
+                          [1.75, 0.9, 1.05, 0.55, 1.25])     # wide enough for 'diagnosis' at 20 pt
         hosp.move_to([-3.55, -2.6, 0])
         blobs = VGroup(*[RoundedRectangle(width=w, height=0.11, corner_radius=0.05, stroke_width=0)
                          .set_fill(S.GREY, 0.9).move_to(hosp[r + 1][0][0])
@@ -778,7 +778,9 @@ class LineageBefore(VoiceScene):
             self.play(Indicate(sums[0:2], color=S.WHITE), FadeIn(tag_sums, shift=UP * 0.15), run_time=0.8)
             vo.wait_until("and its definition")
             self.play(FadeIn(tag_leak, shift=UP * 0.15), run_time=0.7)
-            self.wait(max(0.0, vo.time_until("This paper takes") - 2.9))
+            lead = vo.time_until("This paper takes") - 2.9
+            if lead > 0.1:
+                self.wait(lead)
             # the two caveats stay put, under where the card will appear, and later turn into its parts
             self.play(FadeOut(stage4_left), FadeOut(VGroup(sulq_big, sums)), run_time=0.7)
             self.play(FadeOut(axis), FadeOut(all_pins), *[frames[k].animate.set_stroke(S.GREY) for k in active],

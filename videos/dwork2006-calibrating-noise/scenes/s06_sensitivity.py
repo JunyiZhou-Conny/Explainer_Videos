@@ -275,7 +275,7 @@ class Sensitivity(VoiceScene):
         def d_label(n):
             g = VGroup(S.math("d", "=", str(n), size=44), S.text("bins", 28, S.GREY))
             g.arrange(RIGHT, buff=0.2, aligned_edge=DOWN)
-            return g.move_to([-5.6, 1.8, 0], aligned_edge=LEFT)
+            return g.move_to([-5.6, 2.0, 0], aligned_edge=LEFT)
 
         d_grp = d_label(5)
         d_lab, d_word = d_grp
@@ -334,7 +334,7 @@ class Sensitivity(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(card), run_time=0.5)
             self.add(ghost)
-            self.play(VGroup(a_blk, alice).animate.shift(UP * 0.35), run_time=0.5)
+            self.play(VGroup(a_blk, alice).animate.shift(UP * 0.25), run_time=0.5)
             self.play(VGroup(a_blk, alice).animate(path_arc=-PI / 2.5).shift(a_tgt.get_center() - a_blk.get_center()),
                       run_time=1.2)
             vo.wait_until("one count goes down")
@@ -496,15 +496,16 @@ class Sensitivity(VoiceScene):
             m.next_to(not_db, DOWN, buff=0.25)
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
+            self.play(Create(lbox), Create(rbox), run_time=0.8)          # "two things": two empty boxes
             vo.wait_until("Sensitivity is a property")
-            self.play(Create(lbox), Write(l_sym), FadeIn(l_txt), run_time=1.1)
+            self.play(Write(l_sym), FadeIn(l_txt), run_time=1.0)
             vo.wait_until("not of the particular")
             self.play(FadeIn(not_db), FadeIn(minis[0]), run_time=0.7)
             for m in minis[1:]:
                 self.play(Transform(minis[0], m), Indicate(l_sym, color=SENS_COLOR, scale_factor=1.05),
                           run_time=0.8)
             vo.wait_until("Epsilon is a choice")
-            self.play(Create(rbox), Write(r_sym), FadeIn(r_txt), FadeIn(slider), FadeIn(knob), run_time=0.8)
+            self.play(Write(r_sym), FadeIn(r_txt), FadeIn(slider), FadeIn(knob), run_time=0.8)
             self.play(knob.animate.move_to(slider.point_from_proportion(0.85)), run_time=0.5)
             self.play(knob.animate.move_to(slider.point_from_proportion(0.25)), run_time=0.5)
             vo.wait_until("Sensitivity is a fact")

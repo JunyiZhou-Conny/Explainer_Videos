@@ -165,7 +165,7 @@ class Recap(VoiceScene):
         pic4 = VGroup(rows, over, par)
         pic4.move_to(pic_anchor(p4) + UP * 0.04)
         t4 = S.text("can’t answer most parity counts", 26, S.WHITE)
-        f4 = S.math(r"\text{unless}\quad n", r"\;\gtrsim\;", r"2^{d/4}", "/", r"\sqrt{\varepsilon}", size=38)
+        f4 = S.math(r"\text{unless}\quad n", r"\gtrsim", r"2^{d/4}", "/", r"\sqrt{\varepsilon}", size=38)
         f4[4][-1].set_color(EPS_COLOR)
         VGroup(t4, f4).arrange(DOWN, buff=0.18).move_to(formula_anchor(p4) + UP * 0.05)
 
