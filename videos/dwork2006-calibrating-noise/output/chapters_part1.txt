@@ -1,8 +1,8 @@
 00:00 The differencing attack
 01:40 Where this paper sits
-03:45 The setup: a trusted curator
-04:39 Defining privacy
-07:23 Why so strict?
-08:31 Sensitivity
-10:12 The Laplace mechanism
-13:01 Privacy for individuals, accuracy for populations
+03:47 The setup: a trusted curator
+04:40 Defining privacy
+07:25 Why so strict?
+08:32 Sensitivity
+10:13 The Laplace mechanism
+13:04 Privacy for individuals, accuracy for populations

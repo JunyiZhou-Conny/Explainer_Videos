@@ -29,7 +29,7 @@ The next step after videos is interactivity — playgrounds where you have to *p
 
 | | Video | Papers | Length |
 | --- | --- | --- | --- |
-| 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~25 min, also cut in two parts |
+| 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~24 min, also cut in two parts (~15 + ~9 min) |
 
 Each video folder has: `output/*.mp4` (the video, plus part cuts), `output/*.srt` (subtitles),
 `output/chapters*.txt`, `script.md` (narration + visual plan), `digest.md` (paper notes),

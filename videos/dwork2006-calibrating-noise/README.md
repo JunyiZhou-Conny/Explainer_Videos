@@ -6,7 +6,7 @@ privacy and won the 2017 Gödel Prize.
 
 | file | what it is |
 | --- | --- |
-| `output/dwork2006-calibrating-noise.mp4` | the full video (1080p, narrated, ~25 min) |
+| `output/dwork2006-calibrating-noise.mp4` | the full video (1080p60, narrated, ~24 min) |
 | `output/dwork2006-calibrating-noise_part1.mp4` / `_part2.mp4` | the same video in two parts (definition → Laplace mechanism; budget → separation → legacy) |
 | `output/dwork2006-calibrating-noise.srt` | subtitles |
 | `output/chapters.txt` | chapter timestamps (paste into a YouTube/Bilibili description) |

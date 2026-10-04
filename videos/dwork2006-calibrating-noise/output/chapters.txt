@@ -1,13 +1,13 @@
 00:00 The differencing attack
 01:40 Where this paper sits
-03:45 The setup: a trusted curator
-04:39 Defining privacy
-07:23 Why so strict?
-08:31 Sensitivity
-10:12 The Laplace mechanism
-13:01 Privacy for individuals, accuracy for populations
-14:44 Many questions: the privacy budget
-16:21 Beyond counting
-17:30 Interactive vs one-shot releases
-20:17 What grew from this paper
+03:47 The setup: a trusted curator
+04:40 Defining privacy
+07:25 Why so strict?
+08:32 Sensitivity
+10:13 The Laplace mechanism
+13:04 Privacy for individuals, accuracy for populations
+14:48 Many questions: the privacy budget
+16:25 Beyond counting
+17:33 Interactive vs one-shot releases
+20:21 What grew from this paper
 22:32 Recap and questions

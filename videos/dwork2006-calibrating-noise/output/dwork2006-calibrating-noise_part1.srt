@@ -1,0 +1,1055 @@
+1
+00:00:00,000 --> 00:00:03,338
+Here is a hospital database, one row per
+patient.
+
+2
+00:00:03,338 --> 00:00:08,448
+A researcher asks an innocent question: how
+many patients have condition X?
+
+3
+00:00:08,448 --> 00:00:10,696
+The hospital releases no records.
+
+4
+00:00:10,696 --> 00:00:12,331
+It just says: forty-one.
+
+5
+00:00:12,567 --> 00:00:15,798
+A week later, one new patient, Alice, is
+admitted.
+
+6
+00:00:15,798 --> 00:00:17,478
+The researcher asks again.
+
+7
+00:00:17,478 --> 00:00:19,287
+The answer is now forty-two.
+
+8
+00:00:19,533 --> 00:00:24,534
+Subtract, and the researcher has learned
+something very specific about Alice, without
+
+9
+00:00:24,534 --> 00:00:25,887
+seeing a single record.
+
+10
+00:00:25,887 --> 00:00:28,357
+Before we go on, try to fix this yourself.
+
+11
+00:00:28,357 --> 00:00:32,828
+Pause and ponder: would rounding the count
+to the nearest ten protect Alice?
+
+12
+00:00:32,828 --> 00:00:35,064
+Pause the video if you need more time.
+
+13
+00:00:45,300 --> 00:00:46,332
+Most weeks, yes.
+
+14
+00:00:46,332 --> 00:00:51,621
+But if the count goes from forty-four to
+forty-five, the rounded answer jumps from
+
+15
+00:00:51,621 --> 00:00:54,394
+forty to fifty, and Alice is exposed again.
+
+16
+00:00:54,394 --> 00:00:59,231
+Any fixed rule that ever changes its answer
+has a jump like that somewhere.
+
+17
+00:00:59,467 --> 00:01:02,867
+So what would it even mean for a statistic
+to be private?
+
+18
+00:01:02,867 --> 00:01:05,909
+And if the fix is to add noise, how much is
+enough?
+
+19
+00:01:06,150 --> 00:01:12,014
+In 2006, Cynthia Dwork, Frank McSherry,
+Kobbi Nissim and Adam Smith answered both
+
+20
+00:01:12,014 --> 00:01:18,023
+questions in this paper: Calibrating Noise
+to Sensitivity in Private Data Analysis.
+
+21
+00:01:18,023 --> 00:01:24,177
+It founded what we now call differential
+privacy, and in 2017 it won the Gödel Prize.
+
+22
+00:01:24,417 --> 00:01:29,401
+This video covers its three big ideas: a
+definition of privacy, a number called
+
+23
+00:01:29,401 --> 00:01:32,870
+sensitivity, and a recipe for how much noise
+is enough.
+
+24
+00:01:32,870 --> 00:01:37,791
+Plus a surprising limit on what one
+published table can achieve, if it must be
+
+25
+00:01:37,791 --> 00:01:39,179
+private in this sense.
+
+26
+00:01:40,617 --> 00:01:43,518
+First, a map of where this paper comes from.
+
+27
+00:01:43,518 --> 00:01:48,464
+In 1965, Stanley Warner proposed randomized
+response for sensitive surveys.
+
+28
+00:01:48,464 --> 00:01:51,695
+In a popular version, you flip a coin in
+private.
+
+29
+00:01:51,695 --> 00:01:53,607
+Heads, you answer truthfully.
+
+30
+00:01:53,607 --> 00:01:57,431
+Tails, you flip again and say yes for heads,
+no for tails.
+
+31
+00:01:57,431 --> 00:02:02,970
+Any single yes could be the coin talking,
+yet over thousands of people the true rate
+
+32
+00:02:02,970 --> 00:02:04,487
+can still be estimated.
+
+33
+00:02:04,487 --> 00:02:06,004
+Keep this coin in mind.
+
+34
+00:02:06,250 --> 00:02:11,588
+Over the following decades, statisticians
+and computer scientists refined such tricks,
+
+35
+00:02:11,588 --> 00:02:16,554
+in two flavours: scramble the data going in,
+or scramble the answers coming out.
+
+36
+00:02:16,800 --> 00:02:21,118
+Meanwhile, the obvious fix, just remove the
+names, kept failing.
+
+37
+00:02:21,118 --> 00:02:26,382
+Latanya Sweeney showed that ZIP code, birth
+date and sex alone single out most
+
+38
+00:02:26,382 --> 00:02:32,387
+Americans, and in 1997 she linked supposedly
+anonymous hospital records to a public voter
+
+39
+00:02:32,387 --> 00:02:35,424
+list and found the governor of
+Massachusetts.
+
+40
+00:02:35,424 --> 00:02:41,092
+The lesson: privacy must be a property of
+the process, not of how the released table
+
+41
+00:02:41,092 --> 00:02:44,939
+looks, and it must hold whatever else the
+attacker knows.
+
+42
+00:02:45,184 --> 00:02:49,550
+Then, in 2003, Irit Dinur and Kobbi Nissim
+proved something sobering.
+
+43
+00:02:49,550 --> 00:02:54,738
+Answer too many questions too accurately,
+with errors much smaller than the square
+
+44
+00:02:54,738 --> 00:02:58,914
+root of n, and an attacker can rebuild
+almost the entire database.
+
+45
+00:02:58,914 --> 00:03:02,711
+Our subtraction was the two-question version
+of this attack.
+
+46
+00:03:02,711 --> 00:03:05,685
+Noise is the price of answering many
+questions.
+
+47
+00:03:05,934 --> 00:03:11,006
+The hopeful flip side: with a limited number
+of questions, modest noise is enough.
+
+48
+00:03:11,006 --> 00:03:16,202
+Dwork, Nissim and colleagues built this into
+a framework called SuLQ, for sub-linear
+
+49
+00:03:16,202 --> 00:03:19,047
+queries, which answers noisy sums like
+counts.
+
+50
+00:03:19,047 --> 00:03:21,089
+Remember that limit on questions.
+
+51
+00:03:21,089 --> 00:03:23,192
+This paper turns it into a budget.
+
+52
+00:03:23,434 --> 00:03:28,107
+But SuLQ only covered sums, and its
+definition tolerated a tiny chance of a
+
+53
+00:03:28,107 --> 00:03:28,792
+large leak.
+
+54
+00:03:28,792 --> 00:03:33,902
+This paper takes the leap: any function of
+the data, one clean definition, and one
+
+55
+00:03:33,902 --> 00:03:35,522
+simple rule for the noise.
+
+56
+00:03:35,522 --> 00:03:40,569
+Fittingly, it appeared at a cryptography
+conference, where the habit is to define
+
+57
+00:03:40,569 --> 00:03:44,682
+security against every possible attacker
+first, and then prove it.
+
+58
+00:03:47,033 --> 00:03:48,379
+Here is the setting.
+
+59
+00:03:48,379 --> 00:03:53,359
+A trusted server, the curator, holds a
+database x: n rows, one per person.
+
+60
+00:03:53,359 --> 00:03:59,013
+An analyst sends a query f, any function of
+the database that returns a number, or a
+
+61
+00:03:59,013 --> 00:04:00,089
+list of numbers.
+
+62
+00:04:00,333 --> 00:04:03,791
+The curator never releases the honest
+answer, f of x.
+
+63
+00:04:03,791 --> 00:04:07,770
+Instead it draws random noise, Y, and
+releases f of x plus Y.
+
+64
+00:04:07,770 --> 00:04:12,728
+Because the analyst can keep asking, this is
+called the interactive setting.
+
+65
+00:04:12,728 --> 00:04:18,274
+The alternative, publishing one sanitized
+table and walking away, is non-interactive.
+
+66
+00:04:18,274 --> 00:04:22,840
+At the end, the paper proves the first is
+fundamentally more powerful.
+
+67
+00:04:23,083 --> 00:04:27,558
+So everything hinges on one question: what
+distribution should Y have?
+
+68
+00:04:27,558 --> 00:04:30,050
+Too little noise, and Alice is exposed.
+
+69
+00:04:30,050 --> 00:04:32,351
+Too much, and the answer is useless.
+
+70
+00:04:32,351 --> 00:04:36,634
+The title gives the answer: calibrate the
+noise to the sensitivity.
+
+71
+00:04:36,634 --> 00:04:39,382
+But first, what does private actually mean?
+
+72
+00:04:40,717 --> 00:04:43,225
+The key move is to imagine two worlds.
+
+73
+00:04:43,225 --> 00:04:44,941
+In one, the database is x.
+
+74
+00:04:44,941 --> 00:04:48,770
+In the other, it is x prime: identical
+except for one row.
+
+75
+00:04:48,770 --> 00:04:49,628
+Say, Alice's.
+
+76
+00:04:49,628 --> 00:04:52,334
+Databases like this are called neighbors.
+
+77
+00:04:52,334 --> 00:04:57,483
+In the hospital, Alice was added; here, her
+row just says something different.
+
+78
+00:04:57,483 --> 00:05:01,048
+Either way, no single person's row should
+matter much.
+
+79
+00:05:01,284 --> 00:05:06,068
+Run the mechanism, the curator's randomized
+answering rule, in each world.
+
+80
+00:05:06,068 --> 00:05:11,434
+Whatever the analyst gets to see, the paper
+calls the transcript; for now, a single
+
+81
+00:05:11,434 --> 00:05:12,275
+noisy answer.
+
+82
+00:05:12,275 --> 00:05:17,576
+Because the mechanism is random, each world
+gives a whole distribution of possible
+
+83
+00:05:17,576 --> 00:05:18,094
+outputs.
+
+84
+00:05:18,334 --> 00:05:22,790
+Pick any output t, and compare the heights
+of the two curves there.
+
+85
+00:05:22,790 --> 00:05:25,185
+Slide t along and watch their ratio.
+
+86
+00:05:25,185 --> 00:05:30,639
+A private mechanism keeps that ratio close
+to one everywhere: never above e to the
+
+87
+00:05:30,639 --> 00:05:33,566
+epsilon, never below e to the minus epsilon.
+
+88
+00:05:33,800 --> 00:05:38,945
+That is the paper's definition, which it
+calls epsilon-indistinguishability.
+
+89
+00:05:38,945 --> 00:05:42,059
+The log of the ratio is the privacy loss at
+t.
+
+90
+00:05:42,059 --> 00:05:47,948
+For every pair of neighbors, every analyst
+and every output, it must be at most epsilon
+
+91
+00:05:47,948 --> 00:05:49,167
+in absolute value.
+
+92
+00:05:49,167 --> 00:05:54,785
+The absolute value makes it symmetric: a
+ratio of two and a ratio of one half count
+
+93
+00:05:54,785 --> 00:05:55,395
+the same.
+
+94
+00:05:55,395 --> 00:05:59,592
+For small epsilon, e to the epsilon is about
+one plus epsilon.
+
+95
+00:05:59,834 --> 00:06:02,670
+Let's test it on Warner's coin from our map.
+
+96
+00:06:02,670 --> 00:06:07,698
+Pause and ponder: if Alice's true answer is
+yes, how likely is she to say yes?
+
+97
+00:06:07,698 --> 00:06:08,730
+And if it is no?
+
+98
+00:06:21,567 --> 00:06:26,906
+If the truth is yes, she says yes three
+quarters of the time: heads, or tails then
+
+99
+00:06:26,906 --> 00:06:27,296
+heads.
+
+100
+00:06:27,296 --> 00:06:31,138
+If it is no, only the second coin can say
+yes: one quarter.
+
+101
+00:06:31,138 --> 00:06:36,412
+The worst ratio is three, so the coin
+satisfies the definition with epsilon equal
+
+102
+00:06:36,412 --> 00:06:39,082
+to the log of three, about one point one.
+
+103
+00:06:39,317 --> 00:06:42,922
+Now be the attacker, trying to tell the two
+worlds apart.
+
+104
+00:06:42,922 --> 00:06:48,362
+By Bayes' rule, your new odds are your old
+odds times exactly this ratio, so they move
+
+105
+00:06:48,362 --> 00:06:52,536
+by at most a factor of e to the epsilon,
+whatever you knew before.
+
+106
+00:06:52,536 --> 00:06:57,850
+Starting from fifty-fifty, epsilon one tenth
+leaves you at most fifty-two and a half
+
+107
+00:06:57,850 --> 00:07:01,012
+percent sure; epsilon one, at most seventy-
+three.
+
+108
+00:07:01,012 --> 00:07:04,618
+Epsilon is set by policy; the paper calls it
+the leakage.
+
+109
+00:07:04,867 --> 00:07:06,918
+Notice what this does not promise.
+
+110
+00:07:06,918 --> 00:07:11,984
+If a study reveals that smokers get more
+heart disease, and Alice smokes, people may
+
+111
+00:07:11,984 --> 00:07:13,915
+now think she is at higher risk.
+
+112
+00:07:13,915 --> 00:07:19,102
+That is not a privacy violation: the same
+lesson could be learned from everyone else's
+
+113
+00:07:19,102 --> 00:07:23,747
+data, so it would happen even if Alice's row
+were replaced by someone else's.
+
+114
+00:07:25,183 --> 00:07:28,212
+Why demand a ratio bound for every single
+output?
+
+115
+00:07:28,212 --> 00:07:33,403
+Cryptography often settles for something
+weaker: statistical distance, half the area
+
+116
+00:07:33,403 --> 00:07:34,825
+between the two curves.
+
+117
+00:07:34,825 --> 00:07:39,893
+Equivalently, the most the probability of
+any event can differ between the worlds.
+
+118
+00:07:39,893 --> 00:07:42,612
+The paper shows why that is not enough here.
+
+119
+00:07:42,850 --> 00:07:47,821
+Consider this mechanism: pick one row at
+random and publish it, word for word.
+
+120
+00:07:47,821 --> 00:07:52,792
+Change one person's row, and the output
+distribution moves by only one over n.
+
+121
+00:07:52,792 --> 00:07:57,826
+For a big database that is tiny, so by the
+averaged measure this looks private.
+
+122
+00:07:58,066 --> 00:08:01,269
+But every output is somebody's complete
+record.
+
+123
+00:08:01,269 --> 00:08:06,720
+The ratio test catches it: the output
+showing Alice's real value has probability
+
+124
+00:08:06,720 --> 00:08:09,922
+one over n in one world, and zero in the
+other.
+
+125
+00:08:09,922 --> 00:08:11,421
+The ratio is infinite.
+
+126
+00:08:11,666 --> 00:08:17,206
+Averages let catastrophes slip through, as
+long as each is rare for any single person.
+
+127
+00:08:17,206 --> 00:08:19,783
+A ratio bound rules them out everywhere.
+
+128
+00:08:19,783 --> 00:08:25,194
+It also settles our rounding question: at
+the jump, one world gives that answer with
+
+129
+00:08:25,194 --> 00:08:28,350
+probability one, the other with probability
+zero.
+
+130
+00:08:28,350 --> 00:08:31,442
+To pass this test, a mechanism has to be
+random.
+
+131
+00:08:32,883 --> 00:08:34,769
+So how much noise do we need?
+
+132
+00:08:34,769 --> 00:08:39,712
+It depends on a single property of the
+query: its sensitivity, the most that
+
+133
+00:08:39,712 --> 00:08:45,240
+changing one row can ever change the answer,
+over all pairs of neighboring databases,
+
+134
+00:08:45,240 --> 00:08:47,646
+including ones that do not exist yet.
+
+135
+00:08:47,883 --> 00:08:53,431
+For a counting query, like our hospital
+count, one row changes the answer by at most
+
+136
+00:08:53,431 --> 00:08:53,696
+one.
+
+137
+00:08:53,696 --> 00:08:54,752
+Sensitivity one.
+
+138
+00:08:55,000 --> 00:09:00,478
+Now a histogram: split the possible values
+of a row into d bins, and release how many
+
+139
+00:09:00,478 --> 00:09:01,638
+rows fall in each.
+
+140
+00:09:01,638 --> 00:09:06,923
+Before I show you, pause: if Alice's row
+changes, how much can the whole histogram
+
+141
+00:09:06,923 --> 00:09:07,954
+change in total?
+
+142
+00:09:07,954 --> 00:09:10,338
+Does it depend on the number of bins?
+
+143
+00:09:19,183 --> 00:09:24,773
+She moves out of one bin and into another:
+one count goes down by one, another goes up
+
+144
+00:09:24,773 --> 00:09:25,228
+by one.
+
+145
+00:09:25,228 --> 00:09:26,397
+Total change: two.
+
+146
+00:09:26,397 --> 00:09:31,272
+Adding up absolute changes across
+coordinates like this is the L1 norm, the
+
+147
+00:09:31,272 --> 00:09:34,911
+paper's way to measure sensitivity for lists
+of numbers.
+
+148
+00:09:34,911 --> 00:09:38,746
+And it is two whether there are five bins or
+five thousand.
+
+149
+00:09:38,746 --> 00:09:41,540
+It does not depend on the dimension at all.
+
+150
+00:09:41,783 --> 00:09:45,612
+Contrast that with: what is the largest
+income in the database?
+
+151
+00:09:45,612 --> 00:09:50,718
+One billionaire can move that answer by a
+billion, and with no cap there is no limit
+
+152
+00:09:50,718 --> 00:09:51,143
+at all.
+
+153
+00:09:51,143 --> 00:09:55,033
+The standard fix is to cap every value, say
+at a million, first.
+
+154
+00:09:55,033 --> 00:09:59,895
+Remember that trick: it is exactly what
+private deep learning does to gradients.
+
+155
+00:10:00,133 --> 00:10:01,753
+Two things to remember.
+
+156
+00:10:01,753 --> 00:10:07,669
+Sensitivity is a property of the function
+alone, not of the particular database, and
+
+157
+00:10:07,669 --> 00:10:09,570
+it is not chosen by policy.
+
+158
+00:10:09,570 --> 00:10:10,979
+Epsilon is a choice.
+
+159
+00:10:10,979 --> 00:10:12,528
+Sensitivity is a fact.
+
+160
+00:10:13,967 --> 00:10:15,111
+Now for the noise.
+
+161
+00:10:15,111 --> 00:10:20,386
+The paper uses the Laplace distribution:
+symmetric, sharply peaked, and falling off
+
+162
+00:10:20,386 --> 00:10:23,182
+exponentially with distance from the center.
+
+163
+00:10:23,182 --> 00:10:26,106
+Its width is set by a scale parameter,
+lambda.
+
+164
+00:10:27,150 --> 00:10:28,398
+Here is the trick.
+
+165
+00:10:28,398 --> 00:10:34,430
+Center one Laplace curve at f of x, forty-
+one, and another at f of x prime, forty-two:
+
+166
+00:10:34,430 --> 00:10:37,412
+the output distributions of our two worlds.
+
+167
+00:10:37,650 --> 00:10:40,975
+Now plot the log of their ratio for every
+output t.
+
+168
+00:10:40,975 --> 00:10:44,170
+To the left of forty-one, it is exactly
+constant.
+
+169
+00:10:44,170 --> 00:10:46,909
+To the right of forty-two, constant again.
+
+170
+00:10:46,909 --> 00:10:48,734
+In between, a straight ramp.
+
+171
+00:10:48,734 --> 00:10:54,342
+It never rises above one over lambda, and
+never falls below minus one over lambda: the
+
+172
+00:10:54,342 --> 00:10:56,168
+shift, divided by the scale.
+
+173
+00:10:56,817 --> 00:10:57,081
+Why?
+
+174
+00:10:57,081 --> 00:11:02,575
+On a log scale, a Laplace density is a tent
+whose sides have slope one over lambda,
+
+175
+00:11:02,575 --> 00:11:03,502
+never steeper.
+
+176
+00:11:03,502 --> 00:11:09,326
+Slide the tent over, and the gap between the
+tents can never exceed the slide times that
+
+177
+00:11:09,326 --> 00:11:09,723
+slope.
+
+178
+00:11:09,723 --> 00:11:15,151
+That is the whole design principle: privacy
+needs noise whose log density is never
+
+179
+00:11:15,151 --> 00:11:15,548
+steep.
+
+180
+00:11:16,284 --> 00:11:21,878
+In symbols: two distances to t can differ by
+at most the distance between the centers.
+
+181
+00:11:21,878 --> 00:11:27,016
+So the privacy loss of any output is at most
+the sensitivity divided by lambda.
+
+182
+00:11:27,016 --> 00:11:32,740
+Set lambda to the sensitivity over epsilon,
+and the ratio stays within e to the epsilon,
+
+183
+00:11:32,740 --> 00:11:35,667
+for every output and every pair of
+neighbors.
+
+184
+00:11:35,667 --> 00:11:37,489
+Privacy, proven in one line.
+
+185
+00:11:37,734 --> 00:11:43,052
+If the query returns several numbers, add
+independent Laplace noise to each.
+
+186
+00:11:43,052 --> 00:11:48,861
+The joint density then depends on the L1
+distance, which is exactly why sensitivity
+
+187
+00:11:48,861 --> 00:11:50,750
+is measured in the L1 norm.
+
+188
+00:11:50,750 --> 00:11:55,929
+That is Proposition 1: Laplace noise of
+scale S of f over epsilon in every
+
+189
+00:11:55,929 --> 00:11:56,699
+coordinate.
+
+190
+00:11:56,934 --> 00:12:02,331
+Pause and ponder: why not something simpler,
+like uniform noise anywhere between minus
+
+191
+00:12:02,331 --> 00:12:03,398
+ten and plus ten?
+
+192
+00:12:14,234 --> 00:12:15,407
+Look at the edges.
+
+193
+00:12:15,407 --> 00:12:20,689
+An output of fifty-one and a half is
+possible if the true count is forty-two, but
+
+194
+00:12:20,689 --> 00:12:25,841
+impossible if it is forty-one: the same
+infinite ratio that sank the random-row
+
+195
+00:12:25,841 --> 00:12:26,493
+mechanism.
+
+196
+00:12:26,493 --> 00:12:29,167
+Good noise must never rule an output out.
+
+197
+00:12:29,400 --> 00:12:31,633
+And why not the familiar bell curve?
+
+198
+00:12:31,633 --> 00:12:36,843
+On a log scale a Gaussian is a parabola,
+steeper and steeper, so the gap between two
+
+199
+00:12:36,843 --> 00:12:39,200
+shifted parabolas grows without bound.
+
+200
+00:12:39,200 --> 00:12:42,984
+In the tails the ratio explodes, and no
+single epsilon works.
+
+201
+00:12:42,984 --> 00:12:48,381
+Hold on to that Gaussian, though: it comes
+back, and it is the noise you would actually
+
+202
+00:12:48,381 --> 00:12:50,862
+use to train a neural network privately.
+
+203
+00:12:51,100 --> 00:12:57,110
+So here is the recipe in the title: noise
+scale equals sensitivity divided by epsilon.
+
+204
+00:12:57,110 --> 00:13:00,115
+A more sensitive question needs more noise.
+
+205
+00:13:00,115 --> 00:13:02,492
+Stronger privacy needs more noise.
+
+206
+00:13:04,033 --> 00:13:08,482
+Back to the hospital, with epsilon one half:
+Laplace noise of scale two.
+
+207
+00:13:08,482 --> 00:13:12,252
+Week one, the curator reports about forty-
+three point seven.
+
+208
+00:13:12,252 --> 00:13:16,330
+Week two, when the true count is forty-two,
+about forty point six.
+
+209
+00:13:16,330 --> 00:13:20,717
+Subtract as before, and Alice seems to have
+lowered the count by three.
+
+210
+00:13:20,717 --> 00:13:25,537
+A fifty-fifty guess about her can now move
+to at most about sixty-two percent.
+
+211
+00:13:25,783 --> 00:13:30,349
+Now look at what the noise scale depends on:
+the sensitivity and epsilon.
+
+212
+00:13:30,349 --> 00:13:32,162
+Not the size of the database.
+
+213
+00:13:33,000 --> 00:13:38,178
+With a hundred patients, noise of typical
+size two is a few percent of the answer.
+
+214
+00:13:38,178 --> 00:13:40,640
+With a million, it is a rounding error.
+
+215
+00:13:40,640 --> 00:13:45,943
+Alice is protected by noise that is large
+compared to her own contribution, which is
+
+216
+00:13:45,943 --> 00:13:48,658
+one, but tiny compared to the population's.
+
+217
+00:13:49,900 --> 00:13:51,711
+Privacy for individuals.
+
+218
+00:13:51,711 --> 00:13:53,597
+Accuracy for populations.
+
+219
+00:13:53,597 --> 00:13:55,105
+That is the bargain.
+
+220
+00:13:55,350 --> 00:13:57,575
+Here is one you can answer yourself.
+
+221
+00:13:57,575 --> 00:14:01,283
+Pause and ponder: the noise has size about
+one over epsilon.
+
+222
+00:14:01,283 --> 00:14:04,928
+What goes wrong if epsilon is much smaller
+than one over n?
+
+223
+00:14:17,766 --> 00:14:23,474
+The noise outgrows n, bigger than the count
+could ever be, and the answer is pure noise.
+
+224
+00:14:23,474 --> 00:14:25,290
+This is not Laplace's fault.
+
+225
+00:14:25,290 --> 00:14:30,869
+Any two databases are linked by a chain of
+at most n single-row changes, each changing
+
+226
+00:14:30,869 --> 00:14:36,252
+probabilities by at most e to the epsilon,
+so the ends differ by at most e to the n
+
+227
+00:14:36,252 --> 00:14:36,771
+epsilon.
+
+228
+00:14:36,771 --> 00:14:41,766
+If n epsilon is tiny, every database looks
+alike, and nothing can be learned.
+
+229
+00:14:41,766 --> 00:14:46,630
+This chain trick is called a hybrid
+argument, and it comes back at the end.
+

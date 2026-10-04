@@ -1,5 +1,5 @@
 00:00 Many questions: the privacy budget
-01:36 Beyond counting
+01:37 Beyond counting
 02:45 Interactive vs one-shot releases
-05:32 What grew from this paper
-07:47 Recap and questions
+05:33 What grew from this paper
+07:44 Recap and questions
