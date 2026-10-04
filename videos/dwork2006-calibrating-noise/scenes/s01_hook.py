@@ -86,8 +86,9 @@ class Hook(VoiceScene):
             alice_label.next_to(alice, DOWN, buff=0.1)
             vo.wait_until("Alice, is admitted")
             self.play(FadeIn(alice), FadeIn(alice_label), run_time=0.5)
+            # the label sits under her icon (not under its centre, which would overlap the icon)
             self.play(alice.animate.move_to(alice_slot),
-                      alice_label.animate.next_to(alice_slot, DOWN, buff=0.12),
+                      alice_label.animate.next_to(alice_slot + DOWN * alice.height / 2, DOWN, buff=0.1),
                       run_time=1.2)
             vo.wait_until("The researcher asks")
             self.play(ShowPassingFlash(card[0].copy().set_stroke(S.WHITE, 5), time_width=0.6),
@@ -141,24 +142,20 @@ class Hook(VoiceScene):
         drain(self, ponder, 10)                       # PONDER(10 s): silent timer
 
         # ---------------------------------------------------------- the rounding jump
+        # Exactly the number line S05 brings back (s05_strict.py, beat 3): same line, height, cut, dots,
+        # count labels and arrows. S01 only adds what its first showing needs: who x and x' are, a header,
+        # and the "jump" / "Alice exposed" call-outs.
+        NL_Y = -1.1
         nl = NumberLine(x_range=[40, 50, 1], length=10.4, color=S.GREY, stroke_width=2,
-                        include_ticks=True, tick_size=0.08).move_to(DOWN * 0.8)
+                        include_ticks=True, tick_size=0.08).move_to(UP * NL_Y)
         nl_labs = VGroup(*[S.text(str(v), 22, S.GREY).next_to(nl.n2p(v), DOWN, buff=0.18)
                            for v in range(40, 51)])
-        cut = DashedLine(nl.n2p(44.5) + DOWN * 0.25, nl.n2p(44.5) + UP * 2.6, color=S.GREY,
+        cut = DashedLine(nl.n2p(44.5) + DOWN * 0.25, nl.n2p(44.5) + UP * 2.1, color=S.GREY,
                          stroke_width=2, dash_length=0.1)
         cut_lab = S.text("rounding cut", 22, S.GREY).next_to(cut, UP, buff=0.1)
-        reg_y = nl.n2p(40)[1] + 1.55
-        reg40 = VGroup(Line([nl.n2p(40)[0] + 0.05, reg_y, 0], [nl.n2p(44.5)[0] - 0.1, reg_y, 0],
-                            color=S.GREY_DARK, stroke_width=3),
-                       S.text("rounds to 40", 24, S.GREY))
-        reg40[1].next_to(reg40[0], UP, buff=0.12)
-        reg50 = VGroup(Line([nl.n2p(44.5)[0] + 0.1, reg_y, 0], [nl.n2p(50)[0] - 0.05, reg_y, 0],
-                            color=S.GREY_DARK, stroke_width=3),
-                       S.text("rounds to 50", 24, S.GREY))
-        reg50[1].next_to(reg50[0], UP, buff=0.12)
+        nl_head = S.text("Round to the nearest ten", 34, S.WHITE).to_edge(UP, buff=0.55)
 
-        # same look as S05's return of this number line: x (BLUE) without Alice, x' (ORANGE) with her
+        # x (BLUE) without Alice, x' (ORANGE) with her
         dot_a = Dot(nl.n2p(41), color=X_COLOR, radius=0.1)
         dot_b = Dot(nl.n2p(42), color=XP_COLOR, radius=0.1)
 
@@ -177,12 +174,12 @@ class Hook(VoiceScene):
                             color=X_COLOR, stroke_width=4, tip_length=0.2)
         arr45 = CurvedArrow(nl.n2p(45) + UP * 0.18, nl.n2p(50) + UP * 0.18 + LEFT * 0.12, angle=-PI / 3,
                             color=XP_COLOR, stroke_width=4, tip_length=0.2)
-        exposed = S.text("Alice exposed", 30, S.RED).next_to(nl.n2p(50), UP, buff=2.25).shift(LEFT * 0.6)
+        exposed = S.text("Alice exposed", 30, S.RED).next_to(nl.n2p(50), UP, buff=1.2).shift(LEFT * 0.6)
         jump = S.text("jump", 26, S.RED).next_to(cut, UP, buff=0.1)
         rule_cap = S.text("Any fixed rule that ever changes its answer has a jump somewhere.", 28, S.WHITE)
         rule_cap.to_edge(DOWN, buff=0.45)
         same = VGroup(*[S.math("40", size=60, color=S.WHITE).move_to(p[0][2], aligned_edge=LEFT) for p in pair])
-        check = S.text("same answer", 26, S.GREEN).next_to(pair, DOWN, buff=0.3)
+        check = S.text("same answer", 26, S.WHITE).next_to(pair, DOWN, buff=0.3)   # GREEN means S(f)
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(ponder), Transform(pair[0][0][2], same[0]), Transform(pair[1][0][2], same[1]),
@@ -191,8 +188,8 @@ class Hook(VoiceScene):
             vo.wait_until("But if the count")
             self.play(FadeOut(VGroup(icons, db_title, legend, alice_label, pair, check)),
                       Create(nl), FadeIn(nl_labs), FadeIn(dot_a), FadeIn(dot_b), FadeIn(lab_a),
-                      FadeIn(lab_b), run_time=1.0)
-            self.play(Create(cut), FadeIn(cut_lab), FadeIn(reg40), FadeIn(reg50), run_time=0.6)
+                      FadeIn(lab_b), FadeIn(nl_head, shift=DOWN * 0.15), run_time=1.0)
+            self.play(Create(cut), FadeIn(cut_lab), run_time=0.6)
             vo.wait_until("forty-four to forty-five")
             # Alice's arrival now straddles the cut: 44 without her, 45 with her
             self.play(dot_a.animate.move_to(nl.n2p(44)), dot_b.animate.move_to(nl.n2p(45)),
@@ -227,8 +224,8 @@ class Hook(VoiceScene):
             self.play(Indicate(q2, color=S.WHITE, scale_factor=1.05), run_time=vo.remaining(0.6))
 
         # ---------------------------------------------------------- the paper
-        img, frame = paper_page(PAPER_P1, height=7.2)
-        page = Group(img, frame).to_edge(LEFT, buff=0.7).shift(DOWN * 0.15)
+        img, frame = paper_page(PAPER_P1, height=7.0)            # y in [-3.5, 3.5]: clear of the edge
+        page = Group(img, frame).to_edge(LEFT, buff=0.7)
         w, h = img.width, img.height
         ul = img.get_corner(UL)
         title_box = Rectangle(width=w * 0.80, height=h * 0.062, color=S.YELLOW, stroke_width=4)
@@ -240,10 +237,20 @@ class Hook(VoiceScene):
         info.next_to(page, RIGHT, buff=0.6).shift(UP * 0.6)
         if info.get_right()[0] > 6.6:
             info.scale_to_fit_width(6.6 - info.get_left()[0])
+        # one name at a time, as each is spoken: glyph runs of "Dwork · McSherry · Nissim · Smith"
+        name_runs = [(0, 5), (5, 14), (14, 21), (21, 27)]          # each name with the dot before it
+        if len(authors) == 27:
+            names = [VGroup(*authors[a:b]) for a, b in name_runs]
+        else:                                                      # unexpected glyph count: all at once
+            names = [authors]
+        name_anchors = ["Cynthia Dwork", "Frank McSherry", "Kobbi Nissim", "Adam Smith"]
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(qmark, qs)), FadeIn(page, shift=RIGHT * 0.5), run_time=1.0)
-            vo.wait_until("Cynthia Dwork")
-            self.play(FadeIn(authors, shift=LEFT * 0.2), run_time=0.8)
+            for nm, phrase in zip(names, name_anchors):
+                vo.wait_until(phrase)
+                self.play(FadeIn(nm, shift=LEFT * 0.15), run_time=0.5)
+            vo.wait_until("in this paper")
+            self.play(Indicate(frame, color=S.WHITE, scale_factor=1.02), run_time=0.8)
             vo.wait_until("Calibrating Noise")
             self.play(Create(title_box), FadeIn(venue), run_time=0.9)
             vo.wait_until("It founded")
@@ -264,11 +271,13 @@ class Hook(VoiceScene):
             n = S.text(num, 28, col).move_to(badge)
             lab = S.text(label, 32, S.WHITE).next_to(badge, RIGHT, buff=0.35)
             cards.add(VGroup(badge, n, lab))
-        cards.arrange(DOWN, buff=0.45, aligned_edge=LEFT).move_to(ORIGIN)
+        cards.arrange(DOWN, buff=0.6, aligned_edge=LEFT)
         tent = FunctionGraph(lambda t: 0.45 * np.exp(-abs(t) * 3.0), x_range=[-0.9, 0.9, 0.01],
                              color=S.RED, stroke_width=4)
-        heading = S.text("In this video", 30, S.GREY).to_edge(UP, buff=0.8)
-        cards.next_to(heading, DOWN, buff=0.7)
+        heading = S.text("In this video", 30, S.GREY)
+        # heading + list centred in the frame (the list used to hang from the top, bottom third empty)
+        VGroup(heading, cards).arrange(DOWN, buff=0.8).move_to(DOWN * 0.1)
+        cards.set_x(0)
         tent.next_to(cards[2], RIGHT, buff=0.4)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(Group(page, title_box, info)), run_time=0.8)

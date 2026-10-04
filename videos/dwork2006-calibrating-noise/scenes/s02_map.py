@@ -49,6 +49,10 @@ PAPERS = [
     ("sulq", 2, "SuLQ", "2005", (2005,), 5.75),
 ]
 WARNER_ICON = 0.52          # extra room inside the Warner chip for the coin badge
+# S02's own timeline staging: x-centres that keep a clear gap between neighbouring chips on the
+# crowded right end of the Attacks / Provable-noise lanes (PAPERS keeps the original values, which
+# nothing else reads; the packed layout shared with S12 does not depend on them).
+TIMELINE_X = {"sweeney": 2.76, "dn03": 5.08, "dn04": 3.62, "sulq": 5.8}
 
 
 def year_x(y: float) -> float:
@@ -325,6 +329,7 @@ class LineageBefore(VoiceScene):
         pins = {}
         for key, lane, name, year, years, xc in PAPERS:
             c = chips[key]
+            xc = TIMELINE_X.get(key, xc)
             x = xc if xc is not None else year_x(sum(years) / len(years))
             c.move_to([x, LANE_Y[lane] + CHIP_LIFT + CHIP_H / 2, 0])
             pins[key] = self._pin(c, lane, years)
@@ -393,8 +398,9 @@ class LineageBefore(VoiceScene):
         for m in (ax, ax_labels, est_curve, true_line):
             m.shift(shift)
         ax_title = S.text("estimated true rate", 20, S.GREY).next_to(ax, UP, buff=0.12).align_to(ax, LEFT)
-        x_lab = S.text("people asked", 20, S.GREY).next_to(ax_labels, DOWN, buff=0.08).align_to(ax, RIGHT)
-        true_lab = S.text("true rate", 20, S.GREY).next_to(true_line, UP, buff=0.06).align_to(ax, RIGHT)
+        x_lab = S.text("people asked", 20, S.GREY).next_to(ax_labels[-1], RIGHT, buff=0.35)
+        x_lab.align_to(ax_labels[-1], DOWN)
+        true_lab = S.text("true rate", 20, S.GREY).next_to(true_line, UP, buff=0.2).align_to(ax, RIGHT)
         badge = coin(0.24, "H")
 
         with self.voiceover(SAY[0]) as vo:
@@ -591,7 +597,7 @@ class LineageBefore(VoiceScene):
         bits = [1, 0, 1, 1, 0, 0, 1, 0]
         cw, x0 = 0.46, -3.0
         cx = [x0 + cw / 2 + i * cw for i in range(8)]
-        y_db, y_q, y_copy = -1.45, [-2.0, -2.38, -2.76], -3.3
+        y_db, y_q, y_copy = -1.4, [-1.92, -2.28, -2.64], -3.1
         db = VGroup(*[bit_cell(str(b), cw, 0.38, stroke=X_COLOR).move_to([cx[i], y_db, 0])
                       for i, b in enumerate(bits)])
         db[0][0].set_stroke(ALICE, 3)

@@ -133,10 +133,16 @@ def fmt_chapter(t: float) -> str:
 
 
 def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2):
-    """Break one narration clip into readable cues, timed proportionally to characters."""
-    wrapped = textwrap.wrap(text, width)
-    chunks = [" ".join(wrapped[i:i + lines]) for i in range(0, len(wrapped), lines)] or [text]
-    total = sum(len(c) for c in chunks)
+    """Break one narration clip into readable cues (<= 2 lines each), never across sentences,
+    timed proportionally to characters."""
+    import re
+
+    sentences = [x for x in re.split(r"(?<=[.!?])\s+", text) if x.strip()] or [text]
+    chunks = []
+    for sent in sentences:
+        wrapped = textwrap.wrap(sent, width)
+        chunks += [" ".join(wrapped[i:i + lines]) for i in range(0, len(wrapped), lines)]
+    total = sum(len(c) for c in chunks) or 1
     t, cues = start, []
     for c in chunks:
         dt = (end - start) * len(c) / total

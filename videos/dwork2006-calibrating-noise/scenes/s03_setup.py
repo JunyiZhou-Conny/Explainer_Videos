@@ -7,11 +7,10 @@ from explainer import style as S
 from explainer.components import database_rows, person_icon
 from explainer.scene import VoiceScene
 
-from common import ALICE, NARRATION, NOISE_COLOR, SENS_COLOR, TRUTH_COLOR, X_COLOR
+from common import ALICE, ANALYST_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, TRUTH_COLOR, X_COLOR
 
 SAY = NARRATION["S03"]
 
-ANALYST = S.PURPLE      # role colour for the analyst (later the attacker); not a semantic colour
 CURATOR = S.WHITE       # the curator knows the true answer (true answer = WHITE)
 NAMES = ["Bob", "Carol", "Alice", "Dan", "Eve"]
 VALUES = ["no X", "has X", "no X", "no X", "has X"]
@@ -110,8 +109,8 @@ class Curator(VoiceScene):
         curator = person_icon(CURATOR, height=0.85).move_to([-1.25, 1.45, 0])
         curator_lab = S.text("curator", 26, CURATOR).next_to(curator, DOWN, buff=0.12)
 
-        analyst = person_icon(ANALYST, height=0.9).move_to([5.7, 0.5, 0])
-        analyst_lab = S.text("analyst", 26, ANALYST).next_to(analyst, DOWN, buff=0.12)
+        analyst = person_icon(ANALYST_COLOR, height=0.9).move_to([5.7, 0.5, 0])
+        analyst_lab = S.text("analyst", 26, ANALYST_COLOR).next_to(analyst, DOWN, buff=0.12)
 
         q_arrow = Arrow([5.0, 1.35, 0], [-0.55, 1.35, 0], buff=0, color=S.GREY, stroke_width=4,
                         max_tip_length_to_length_ratio=0.05, tip_length=0.22)
@@ -186,9 +185,10 @@ class Curator(VoiceScene):
 
             vo.wait_until("Because the analyst")
             for k, rt in (("2", 0.6), ("3", 0.5)):
-                q = S.math(f"f_{k}", size=34).next_to(q_arrow.get_start(), UP, buff=0.12).shift(LEFT * 0.4)
+                # the new query travels just under the arrow, clear of its "query f" label
+                q = S.math(f"f_{k}", size=34).next_to(q_arrow.get_start(), DOWN, buff=0.14).shift(LEFT * 0.4)
                 self.play(FadeIn(q, scale=0.6), run_time=0.25)
-                self.play(q.animate.move_to(q_arrow.get_end() + UP * 0.32 + RIGHT * 0.4), run_time=rt)
+                self.play(q.animate.move_to([q_arrow.get_end()[0] + 0.4, q.get_y(), 0]), run_time=rt)
                 ans = answer_token(k).move_to(out_spot)
                 self.play(FadeOut(q, scale=0.5), Rotate(blob[0], angle=PI / 2),
                           FadeIn(ans, shift=RIGHT * 0.2), run_time=0.4)
