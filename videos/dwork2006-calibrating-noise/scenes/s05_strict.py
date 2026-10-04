@@ -4,16 +4,22 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.components import database_rows, gaussian_pdf, laplace_pdf
+from explainer.components import database_rows, laplace_pdf
 from explainer.scene import VoiceScene
 
 from common import ALICE, EPS_COLOR, NARRATION, X_COLOR, XP_COLOR
 
 SAY = NARRATION["S05"]
-SIG = 1.8                  # width of the two illustrative output curves (beat 1)
+S_LOG = 1.0                # logistic scale of the two output curves (beat 0), S04's family
 MU_X, MU_XP = 41.0, 42.0   # running example: f(x) = 41, f(x') = 42
 T0, T1 = 34.0, 49.0
 BAR_H = 1.7                # bar height that stands for probability 1/n
+
+
+def logistic_pdf(t, mu, s=S_LOG):
+    """Logistic density (the smooth private mechanism of S04), centred at mu with scale s."""
+    z = (np.asarray(t, dtype=float) - mu) / (2 * s)
+    return 1.0 / (4 * s) / np.cosh(z) ** 2
 
 
 def db_stack(names, values, width=3.0, row_h=0.5, size=24):
@@ -64,12 +70,12 @@ class WhyStrict(VoiceScene):
     def construct(self):
         # ============================================================ 0. statistical distance
         title = S.text("Why a ratio, for every output?", 44).to_edge(UP, buff=0.55)
-        ax = Axes(x_range=[T0, T1, 1], y_range=[0, 0.25, 0.05], x_length=11.6, y_length=3.0,
+        ax = Axes(x_range=[T0, T1, 1], y_range=[0, 0.27, 0.05], x_length=11.6, y_length=3.0,
                   tips=False, axis_config={"color": S.GREY, "stroke_width": 2}).shift(DOWN * 1.35)
         axis = ax.x_axis
         out_lab = S.text("output t", 22, S.GREY).next_to(axis.get_right(), DOWN, buff=0.2)
-        p_x = lambda t: float(gaussian_pdf(t, MU_X, SIG))
-        p_xp = lambda t: float(gaussian_pdf(t, MU_XP, SIG))
+        p_x = lambda t: float(logistic_pdf(t, MU_X))
+        p_xp = lambda t: float(logistic_pdf(t, MU_XP))
         c_x = ax.plot(p_x, x_range=[T0, T1, 0.02], color=X_COLOR, stroke_width=5)
         c_xp = ax.plot(p_xp, x_range=[T0, T1, 0.02], color=XP_COLOR, stroke_width=5)
         lab_x = S.math("M(x)", size=34, color=X_COLOR).next_to(ax.c2p(38.3, p_x(38.3)), UL, buff=0.1)
@@ -93,8 +99,9 @@ class WhyStrict(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(Write(title), run_time=1.0)
-            self.play(Create(axis), FadeIn(out_lab), Create(c_x), Create(c_xp), run_time=1.6)
-            self.play(FadeIn(lab_x), FadeIn(lab_xp), run_time=0.5)
+            self.play(Create(axis), FadeIn(out_lab), run_time=0.8)
+            self.play(Create(c_x), Create(c_xp), run_time=1.8)
+            self.play(FadeIn(lab_x, shift=RIGHT * 0.15), FadeIn(lab_xp, shift=LEFT * 0.15), run_time=0.7)
             vo.wait_until("statistical distance")
             self.play(Write(sd[0]), run_time=0.9)
             vo.wait_until("half the area")
@@ -200,13 +207,15 @@ class WhyStrict(VoiceScene):
             pointer.add_updater(follow)
             hl.add_updater(follow)
             self.play(FadeIn(pointer), FadeIn(hl), run_time=0.2)
-            self.play(spin.animate.set_value(11.0), run_time=1.8, rate_func=rate_functions.ease_out_cubic)
+            self.play(spin.animate.set_value(11.0), run_time=1.5, rate_func=rate_functions.ease_out_cubic)
             pointer.clear_updaters()
             hl.clear_updaters()
-            self.play(TransformFromCopy(rows[1], token), FadeIn(token_head), run_time=0.7)
+            self.play(TransformFromCopy(rows[1], token), FadeIn(token_head), run_time=0.6)
+            self.wait(0.3)
+            # the published row is one sample; its slot in the chart is one of n equally likely outputs
             self.play(token.animate.scale(0.5).move_to([slot_x[("Carol", "has")], base_y + BAR_H + 0.3, 0])
-                      .set_opacity(0), FadeOut(token_head),
-                      *[GrowFromEdge(bars_x[p], DOWN) for p in truth_x], FadeIn(leg[0]), run_time=0.8)
+                      .set_opacity(0), FadeOut(token_head), run_time=0.55)
+            self.play(*[GrowFromEdge(bars_x[p], DOWN) for p in truth_x], FadeIn(leg[0]), run_time=0.55)
             vo.wait_until("Change one person")
             self.play(FadeOut(VGroup(pointer, hl)),
                       Transform(rows[-1][3], S.text("has X", 24, XP_COLOR).move_to(rows[-1][3])),
@@ -217,6 +226,8 @@ class WhyStrict(VoiceScene):
             self.play(Write(sd_val), run_time=1.3)
             vo.wait_until("For a big database")
             self.play(FadeIn(tiny, shift=UP * 0.15), run_time=0.7)
+            vo.wait_until("by the averaged measure")
+            self.play(Indicate(sd_val[4], color=S.WHITE), run_time=1.0)
 
         # ============================================================ 2. the ratio is infinite
         has_x = slot_x[("Alice", "has")]
@@ -265,21 +276,23 @@ class WhyStrict(VoiceScene):
         line1 = S.text("Averages hide catastrophes", 40)
         line2 = S.text("that are rare for each person.", 40)
         avg = VGroup(line1, line2).arrange(DOWN, buff=0.2).move_to(UP * 1.4)
-        def1 = S.math(r"\left|\ln\frac{\Pr[M(x)=t]}{\Pr[M(x')=t]}\right|", r"\le", r"\varepsilon", size=48)
-        def1[2].set_color(EPS_COLOR)
+        # Definition 1, typeset and coloured exactly as in S04
+        def1 = S.math(r"\left|\,", r"\ln", r"\!\left(", r"{\Pr[M(x)=t]", r"\over", r"\Pr[M(x')=t]}",
+                      r"\right)", r"\,\right|", r"\le", r"\varepsilon", size=48)
+        def1[3].set_color(X_COLOR)
+        def1[5].set_color(XP_COLOR)
+        def1[9].set_color(EPS_COLOR)
         every = VGroup(S.text("for every output", 30, S.GREY), S.math("t", size=38, color=S.GREY))
         every.arrange(RIGHT, buff=0.12)
         rule = VGroup(def1, every).arrange(RIGHT, buff=0.5).next_to(avg, DOWN, buff=0.75)
-        # colour M(x) BLUE / M(x') ORANGE inside the fraction
-        num, den = frac_split(def1[0])
-        VGroup(*num[3:7]).set_color(X_COLOR)
-        VGroup(*den[3:8]).set_color(XP_COLOR)
+        rule_top = rule.copy().scale(0.8).to_edge(UP, buff=0.4)   # stays as the header of the rounding test
 
+        NL_Y = -1.1
         nl = NumberLine(x_range=[40, 50, 1], length=10.4, color=S.GREY, stroke_width=2,
-                        include_ticks=True, tick_size=0.08).move_to(DOWN * 0.8)
+                        include_ticks=True, tick_size=0.08).move_to(UP * NL_Y)
         nl_labs = VGroup(*[S.text(str(v), 22, S.GREY).next_to(nl.n2p(v), DOWN, buff=0.18)
                            for v in range(40, 51)])
-        cut = DashedLine(nl.n2p(44.5) + DOWN * 0.25, nl.n2p(44.5) + UP * 2.6, color=S.GREY,
+        cut = DashedLine(nl.n2p(44.5) + DOWN * 0.25, nl.n2p(44.5) + UP * 2.1, color=S.GREY,
                          stroke_width=2, dash_length=0.1)
         cut_lab = S.text("rounding cut", 22, S.GREY).next_to(cut, UP, buff=0.1)
         dot44 = Dot(nl.n2p(44), color=X_COLOR, radius=0.1)
@@ -292,7 +305,7 @@ class WhyStrict(VoiceScene):
                             color=X_COLOR, stroke_width=4, tip_length=0.2)
         arr45 = CurvedArrow(nl.n2p(45) + UP * 0.18, nl.n2p(50) + UP * 0.18 + LEFT * 0.12, angle=-PI / 3,
                             color=XP_COLOR, stroke_width=4, tip_length=0.2)
-        SPIKE = 2.3
+        SPIKE = 2.2
         spike40 = Rectangle(width=0.16, height=SPIKE, stroke_width=0).set_fill(X_COLOR, 0.95)
         spike40.move_to(nl.n2p(40) + UP * SPIKE / 2)
         spike50 = Rectangle(width=0.16, height=SPIKE, stroke_width=0).set_fill(XP_COLOR, 0.95)
@@ -301,11 +314,10 @@ class WhyStrict(VoiceScene):
         pr50 = S.math(r"\Pr = 1", size=30, color=XP_COLOR).next_to(spike50, UP, buff=0.12)
         zero50 = Line(nl.n2p(50) + RIGHT * 0.12, nl.n2p(50) + RIGHT * 0.36, color=X_COLOR, stroke_width=7)
         zero50_lab = S.math("0", size=30, color=X_COLOR).next_to(zero50, UP, buff=0.1)
-        readout = VGroup(S.math(r"\Pr[\text{output } 50]\colon", size=36),
-                         S.math("1", size=40, color=XP_COLOR), S.text("vs", 28, S.GREY),
-                         S.math("0", size=40, color=X_COLOR), S.math(r"\Rightarrow\ \infty", size=40,
-                                                                     color=S.RED)).arrange(RIGHT, buff=0.2)
-        readout.move_to([2.2, 2.75, 0])
+        readout_a = VGroup(S.math(r"\Pr[\text{output } 50]\colon", size=36), S.math("1", size=40, color=XP_COLOR))
+        readout_b = VGroup(S.text("vs", 28, S.GREY), S.math("0", size=40, color=X_COLOR),
+                           S.math(r"\Rightarrow\ \infty", size=40, color=S.RED))
+        readout = VGroup(*readout_a, *readout_b).arrange(RIGHT, buff=0.2).move_to([2.5, 1.95, 0])
         random_cap = S.text("to pass the ratio test, a mechanism must be random", 30, S.WHITE)
         random_cap.to_edge(DOWN, buff=0.45)
         LAMB = 1.3
@@ -329,19 +341,18 @@ class WhyStrict(VoiceScene):
             self.play(Write(def1), run_time=1.2)
             self.play(FadeIn(every, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("It also settles")
-            self.play(FadeOut(VGroup(avg, rule)), run_time=0.6)
-            self.play(Create(nl), FadeIn(nl_labs), run_time=0.9)
-            vo.wait_until("at the jump")
+            self.play(FadeOut(avg), Transform(rule, rule_top), run_time=0.8)
+            self.play(Create(nl), FadeIn(nl_labs), run_time=0.8)
             self.play(Create(cut), FadeIn(cut_lab), FadeIn(dot44), FadeIn(cnt44), FadeIn(dot45), FadeIn(cnt45),
                       run_time=0.6)
-            self.play(Create(arr44), Create(arr45), run_time=0.7)
+            vo.wait_until("at the jump")
+            self.play(Create(arr44), Create(arr45), run_time=0.8)
             vo.wait_until("one world gives")
             self.play(GrowFromEdge(spike40, DOWN), GrowFromEdge(spike50, DOWN), FadeIn(pr40), FadeIn(pr50),
-                      run_time=0.9)
+                      FadeIn(readout_a, shift=DOWN * 0.15), run_time=0.9)
             vo.wait_until("the other with probability zero")
-            self.play(Create(zero50), FadeIn(zero50_lab), run_time=0.6)
-            self.play(FadeIn(readout, shift=DOWN * 0.15), Flash(nl.n2p(50) + UP * 0.1, color=S.RED,
-                                                                 flash_radius=0.5), run_time=0.9)
+            self.play(Create(zero50), FadeIn(zero50_lab), FadeIn(readout_b, shift=DOWN * 0.15),
+                      Flash(nl.n2p(50) + UP * 0.1, color=S.RED, flash_radius=0.5), run_time=0.9)
             vo.wait_until("To pass this test")
             self.play(FadeOut(VGroup(arr44, arr45, cut, cut_lab, pr40, pr50, zero50, zero50_lab, readout)),
                       ReplacementTransform(spike40, bump44), ReplacementTransform(spike50, bump45),

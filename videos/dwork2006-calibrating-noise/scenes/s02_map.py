@@ -29,10 +29,10 @@ LANE_Y = [2.55, 1.6, 0.65]                    # timeline layout: lane lines
 LANE_X0, LANE_X1 = -4.55, 6.45
 CHIP_LIFT = 0.15                              # timeline layout: chip bottom above its lane
 PACK_Y = [2.3, 0.95, -0.4]                    # packed layout: lane lines (chips sit on them)
-PACK_X0, PACK_X1 = -6.5, 0.4                  # packed layout: chips right-aligned to PACK_X1
+PACK_X0, PACK_X1 = -6.5, 0.3                  # packed layout: chips right-aligned to PACK_X1
 ARROW_X1 = 3.0                                # packed layout: arrows end at the card
-CARD_W = 3.5
-CARD_CENTER = np.array([4.8, 0.95, 0])        # packed layout: the 2006 card
+CARD_W = 3.56
+CARD_CENTER = np.array([4.77, 0.95, 0])        # packed layout: the 2006 card
 HEADER_Y = -0.85                              # stage header line
 COIN_RIM = "#9A7228"
 CHIP_H = 0.62
@@ -102,6 +102,11 @@ def map_chip(name: str, year: str, icon_space: float = 0.0, size: float = 20) ->
     g = VGroup(frame, n, y)
     g.icon_space = icon_space
     return g
+
+
+def pulse(m, scale: float = 1.12):
+    """A there-and-back scale pulse (keeps colours, unlike Indicate)."""
+    return m.animate(rate_func=there_and_back).scale(scale)
 
 
 def chip_icon_point(chip: VGroup) -> np.ndarray:
@@ -216,7 +221,7 @@ def this_paper_card(n_slots: int = 3, width: float = CARD_W) -> VGroup:
                                 num_dashes=28)
         lab = S.text(label, 22, S.WHITE).move_to(box.get_left() + RIGHT * 0.14, aligned_edge=LEFT)
         s = sym()
-        room = slot_w - lab.width - 0.5
+        room = slot_w - lab.width - 0.38
         if s.width > room:
             s.scale(room / s.width)
         s.move_to(box.get_right() + LEFT * 0.14, aligned_edge=RIGHT)
@@ -333,13 +338,12 @@ class LineageBefore(VoiceScene):
                 active.clear()
             active.append(key)
             c[0].set_stroke(S.WHITE)
-            return AnimationGroup(
-                *dim,
-                LaggedStart(*[GrowFromCenter(d) for d in dots], lag_ratio=0.2),
-                *[Create(m) for m in p if not isinstance(m, Dot)],
-                GrowFromPoint(c, dots[0].get_center()),
-                *[Flash(d, color=S.WHITE, flash_radius=0.18, line_length=0.1) for d in dots],
-                run_time=run_time)
+            # a flat list (not an AnimationGroup): grouping would re-add the dimmed frames on top
+            # of their own text
+            return [*dim, *[GrowFromCenter(d) for d in dots],
+                    *[Create(m) for m in p if not isinstance(m, Dot)],
+                    GrowFromPoint(c, dots[0].get_center()),
+                    *[Flash(d, color=S.WHITE, flash_radius=0.18, line_length=0.1) for d in dots]]
 
         # ========================================================== 0 · Warner's coin
         header0 = stage_header("Warner 1965", "· randomized response")
@@ -394,7 +398,7 @@ class LineageBefore(VoiceScene):
                       LaggedStart(*[FadeIn(l, shift=RIGHT * 0.2) for l in lane_labels], lag_ratio=0.2),
                       run_time=2.2)
             vo.wait_until("In 1965")
-            self.play(show_chip("warner"), run_time=1.0)
+            self.play(*show_chip("warner"), run_time=1.0)
             self.play(FadeIn(header0, shift=RIGHT * 0.2), run_time=0.6)
             self.play(FadeIn(person, shift=UP * 0.2), FadeIn(question, shift=UP * 0.2), run_time=0.8)
             self.play(Indicate(q_text, color=S.WHITE, scale_factor=1.06), run_time=1.0)
@@ -426,7 +430,7 @@ class LineageBefore(VoiceScene):
             self.add(badge)
             self.play(Transform(chips["warner"], warner_wide),
                       badge.animate.move_to(chip_icon_point(warner_wide)), run_time=1.0)
-            self.play(Indicate(badge, color=S.YELLOW, scale_factor=1.3), run_time=vo.remaining(0.4))
+            self.play(pulse(badge, 1.35), run_time=vo.remaining(0.4))
         chips["warner"] = VGroup(chips["warner"], badge)
 
         stage0 = VGroup(header0, person, yes_bubble, which, c1, private, tree, crowd, crowd_lab,
@@ -473,8 +477,8 @@ class LineageBefore(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(stage0), run_time=0.6)
-            self.play(show_chip("sdc"), FadeIn(header1, shift=RIGHT * 0.2), run_time=1.0)
-            self.play(show_chip("egs", keep=True), run_time=0.8)
+            self.play(*show_chip("sdc"), FadeIn(header1, shift=RIGHT * 0.2), run_time=1.0)
+            self.play(*show_chip("egs", keep=True), run_time=0.8)
             self.play(FadeIn(egs, shift=UP * 0.2), run_time=0.7)
             self.play(Create(b_arc), Indicate(b1, color=S.WHITE), run_time=0.8)
             vo.wait_until("refined such")
@@ -539,7 +543,7 @@ class LineageBefore(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(stage1), run_time=0.6)
-            self.play(show_chip("sweeney"), FadeIn(header2, shift=RIGHT * 0.2),
+            self.play(*show_chip("sweeney"), FadeIn(header2, shift=RIGHT * 0.2),
                       FadeIn(hosp, shift=UP * 0.2), FadeIn(blobs, shift=UP * 0.2), FadeIn(hosp_title),
                       run_time=1.0)
             vo.wait_until("just remove the names")
@@ -548,7 +552,7 @@ class LineageBefore(VoiceScene):
             vo.wait_until("kept failing")
             self.play(Indicate(header2[1], color=S.WHITE, scale_factor=1.06), run_time=0.8)
             vo.wait_until("Latanya Sweeney")
-            self.play(Indicate(chips["sweeney"], color=S.WHITE, scale_factor=1.12), run_time=0.8)
+            self.play(pulse(chips["sweeney"], 1.15), run_time=0.8)
             vo.wait_until("ZIP code")
             self.play(Create(qi_box), run_time=0.8)
             vo.wait_until("single out most")
@@ -557,7 +561,7 @@ class LineageBefore(VoiceScene):
             self.play(Flash(pins["sweeney"][0], color=S.WHITE, flash_radius=0.25), run_time=0.7)
             vo.wait_until("linked supposedly")
             self.play(FadeOut(qi_box), Create(hl_h), run_time=0.7)
-            self.play(Indicate(hosp[3], color=ALICE, scale_factor=1.04), run_time=0.9)
+            self.play(pulse(hosp[3], 1.05), run_time=0.9)
             vo.wait_until("to a public voter")
             self.play(FadeIn(voter, shift=LEFT * 0.3), FadeIn(voter_title, shift=LEFT * 0.3), run_time=0.8)
             self.play(Create(hl_v), Create(join), run_time=0.6)
@@ -573,8 +577,7 @@ class LineageBefore(VoiceScene):
             self.play(FadeIn(lesson1b, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("and it must hold")
             self.play(FadeIn(lesson2, shift=UP * 0.2), GrowFromCenter(side_brace), run_time=0.8)
-            self.play(Indicate(VGroup(voter, voter_title), color=S.WHITE, scale_factor=1.03),
-                      run_time=vo.remaining(0.6))
+            self.play(pulse(VGroup(voter, voter_title), 1.04), run_time=vo.remaining(0.6))
         stage2 = VGroup(header2[0], unique, lessons, voter, voter_title, side_brace, blobs)
 
         # ========================================================== 3 · Dinur–Nissim reconstruction
@@ -626,15 +629,16 @@ class LineageBefore(VoiceScene):
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(stage2), run_time=0.6)
-            self.play(show_chip("dn03"), FadeIn(header3, shift=RIGHT * 0.2), run_time=1.0)
+            self.play(*show_chip("dn03"), FadeIn(header3, shift=RIGHT * 0.2), run_time=1.0)
             self.play(FadeIn(db, shift=UP * 0.15), FadeIn(db_lab), run_time=0.8)
             vo.wait_until("proved something")
             self.play(FadeIn(copy_q, shift=UP * 0.15), FadeIn(copy_lab), run_time=0.8)
             vo.wait_until("Answer too many")
             for j in range(3):
-                sel = VGroup(*[db[i] for i in queries[j]])
+                sel = [db[i][0] for i in queries[j]]
                 self.play(FadeIn(q_labs[j]), LaggedStart(*[GrowFromCenter(d) for d in q_rows[j]], lag_ratio=0.05),
-                          Indicate(sel, color=S.WHITE, scale_factor=1.08), run_time=0.55)
+                          *[b.animate(rate_func=there_and_back).set_stroke(S.WHITE, 4) for b in sel],
+                          run_time=0.55)
                 self.play(FadeIn(q_vals[j], shift=RIGHT * 0.15), run_time=0.3)
             vo.wait_until("with errors much")
             self.play(LaggedStart(*[Create(b) for b in q_bars], lag_ratio=0.2), run_time=0.6)
@@ -650,7 +654,7 @@ class LineageBefore(VoiceScene):
                       run_time=0.9)
             self.remove(one)
             self.play(Flash(copy_q[0], color=ALICE, flash_radius=0.4),
-                      Indicate(db[0], color=ALICE, scale_factor=1.15), run_time=0.8)
+                      pulse(db[0], 1.2), run_time=0.8)
             vo.wait_until("Noise is the price")
             self.play(*[Transform(q_bars[j], q_bars_noisy[j]) for j in range(3)],
                       *[Transform(q_vals[j], q_vals_noisy[j]) for j in range(3)], run_time=0.9)
@@ -697,16 +701,15 @@ class LineageBefore(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(stage3), run_time=0.6)
-            self.play(show_chip("dn04", 0.8), FadeIn(header4, shift=RIGHT * 0.2), run_time=0.8)
-            self.play(show_chip("sulq", 0.8, keep=True), run_time=0.8)
+            self.play(*show_chip("dn04", 0.8), FadeIn(header4, shift=RIGHT * 0.2), run_time=0.8)
+            self.play(*show_chip("sulq", 0.8, keep=True), run_time=0.8)
             self.play(FadeIn(track), FadeIn(q_word), FadeIn(n_lab), run_time=0.6)
             self.play(LaggedStart(*[Create(t) for t in ticks], lag_ratio=0.3), run_time=0.8)
             self.play(GrowFromCenter(k_brace), FadeIn(k_lab), FadeIn(limit, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("modest noise")
             self.play(FadeIn(noisy, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("Dwork, Nissim")
-            self.play(Indicate(chips["dn04"], color=S.WHITE, scale_factor=1.1),
-                      Indicate(chips["sulq"], color=S.WHITE, scale_factor=1.1), run_time=0.9)
+            self.play(pulse(chips["dn04"]), pulse(chips["sulq"]), run_time=0.9)
             vo.wait_until("called SuLQ")
             self.play(FadeIn(sulq_big, scale=0.8), run_time=0.6)
             self.play(FadeIn(sulq_full, shift=UP * 0.15), run_time=0.6)

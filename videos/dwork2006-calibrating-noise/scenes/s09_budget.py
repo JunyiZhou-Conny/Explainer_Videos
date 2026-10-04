@@ -180,7 +180,7 @@ class Budget(VoiceScene):
                       Indicate(qs[1][2], color=S.WHITE), run_time=1.0)
             self.play(Indicate(ans[1][1], color=S.WHITE), run_time=vo.remaining(0.5))
         self.ledger = VGroup(analyst, curator, *qs, *ans, *down, *diag, d_lab, q_dots, a_dots, strip, t_lab, box)
-        self.parts = dict(qs=qs, ans=ans, down=down, diag=diag, q_dots=q_dots)
+        self.parts = dict(qs=qs, ans=ans, down=down, diag=diag, q_dots=q_dots, analyst=analyst, curator=curator)
 
     # ============================================================ 1. Theorem 1: the ratio telescopes
     def theorem_beat(self):
@@ -287,8 +287,18 @@ class Budget(VoiceScene):
         rl.arrange(RIGHT, buff=0.2).to_edge(DOWN, buff=0.35)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(self.ledger.animate.scale(0.7).to_corner(UR, buff=0.3), FadeIn(title, shift=RIGHT * 0.2),
-                      run_time=1.0)
+            # shrink the ledger into a reference picture; its small captions ("histogram", "analyst", ...)
+            # would drop below 20 pt, so they fade and the f_i heads re-centre in their cards
+            L = self.ledger
+            L.generate_target()
+            T = L.target
+            T[0][1].set_opacity(0)          # "analyst"
+            T[1][1].set_opacity(0)          # "curator"
+            for k in (2, 3, 4):             # query cards: hide the sub-caption, centre f_i
+                T[k][2].set_opacity(0)
+                T[k][1].move_to(T[k][0])
+            T.scale(0.72).to_corner(UR, buff=0.5)
+            self.play(MoveToTarget(L), FadeIn(title, shift=RIGHT * 0.2), run_time=1.0)
             vo.wait_until("Write the probability")
             self.play(Write(lhs_top), Write(eq), run_time=0.6)
             sources = [P["qs"][0][1], P["down"][0], P["diag"][0], P["down"][1]]
@@ -372,15 +382,16 @@ class Budget(VoiceScene):
         x5 = x_mark(qcards[4], pad=0.05)
 
         dn = paper_card("Dinur & Nissim", 2003, "too many accurate answers ⇒ reconstruction", color=S.WHITE,
-                        width=4.6, size=24)
+                        width=5.8, size=26)     # year and idea lines are size - 6 = 20 pt
         dn.move_to([0.8, -1.0, 0])
         dn_arrow = Arrow(dn.get_top(), outline.get_bottom(), buff=0.12, color=S.GREY, stroke_width=3,
                          tip_length=0.16)
         dn_lab = S.text("limit on questions,\nnow explicit and measurable", 22, S.GREY, line_spacing=0.9)
         dn_lab.next_to(dn_arrow, LEFT, buff=0.25)
-        total = S.math(r"\varepsilon_1 + \varepsilon_2 + \varepsilon_3 + \varepsilon_4", r"\le", r"\varepsilon", size=30,
-                       color=EPS_COLOR)
-        total[1].set_color(S.WHITE)
+        total = S.math(r"\varepsilon_1", "+", r"\varepsilon_2", "+", r"\varepsilon_3", "+", r"\varepsilon_4",
+                       r"\le", r"\varepsilon", size=32, color=EPS_COLOR)
+        for k in (1, 3, 5, 7):
+            total[k].set_color(S.WHITE)
         total.move_to([-4.6, -1.6, 0])
         caption = S.text("refusing depends only on the queries' sensitivity, not the data", 24, S.GREY)
         caption.to_edge(DOWN, buff=0.45)
@@ -395,8 +406,8 @@ class Budget(VoiceScene):
             vo.wait_until("Each answer spends")
             for i in range(4):
                 seg = segs[3 - i]
-                self.play(FadeIn(qcards[i], shift=RIGHT * 0.2), run_time=0.25)
-                self.play(ReplacementTransform(seg, chips[i][0]), FadeIn(chips[i][1]), run_time=0.55)
+                self.play(FadeIn(qcards[i], shift=RIGHT * 0.2), run_time=0.2)
+                self.play(ReplacementTransform(seg, chips[i][0]), FadeIn(chips[i][1]), run_time=0.4)
             vo.wait_until("once it is spent")
             self.play(FadeIn(qcards[4], shift=RIGHT * 0.2), run_time=0.3)
             self.play(Indicate(outline, color=NOISE_COLOR, scale_factor=1.03), run_time=0.5)
@@ -405,14 +416,17 @@ class Budget(VoiceScene):
             vo.wait_until("That is the answer")
             dn_start = dn.copy().move_to([-9.5, -1.0, 0])
             self.play(ReplacementTransform(dn_start, dn), run_time=1.0, rate_func=smooth)
-            self.play(GrowArrow(dn_arrow), FadeIn(dn_lab), run_time=0.7)
+            self.play(GrowArrow(dn_arrow), FadeIn(dn_lab), run_time=0.6)
             vo.wait_until("the budget makes")
-            self.play(FadeIn(caption, shift=UP * 0.15), run_time=0.8)
-            self.play(LaggedStart(*[Indicate(c, color=S.WHITE, scale_factor=1.15) for c in chips], lag_ratio=0.25),
-                      run_time=1.2)
-            self.play(TransformFromCopy(VGroup(*[c[1] for c in chips]), total[0]), FadeIn(total[1:]),
-                      run_time=vo.remaining(0.6))
-        self.wait(0.2)
+            self.play(FadeIn(caption, shift=UP * 0.15), run_time=0.6)
+            # the spent pieces add up to the budget: each chip label flies into the sum
+            self.play(LaggedStart(*[AnimationGroup(Indicate(chips[i][0], color=S.WHITE, scale_factor=1.15),
+                                                   TransformFromCopy(chips[i][1], total[2 * i]))
+                                    for i in range(4)], lag_ratio=0.3),
+                      FadeIn(VGroup(total[1], total[3], total[5], total[7])),
+                      TransformFromCopy(bar_lab[1], total[8]), run_time=1.3)
+            self.play(Circumscribe(total, color=EPS_COLOR, buff=0.12), run_time=vo.remaining(0.8))
+        self.wait(0.6)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
 
     # ============================================================ 3-4. a histogram: d queries vs one

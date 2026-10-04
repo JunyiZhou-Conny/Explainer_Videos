@@ -255,7 +255,8 @@ class Payoff(VoiceScene):
             self.play(Create(ax), FadeIn(out_lab), run_time=0.7)
 
             vo.wait_until("Week one")
-            self.play(Indicate(card, color=S.WHITE, scale_factor=1.04), run_time=0.5)
+            # pulse the question only: Indicate on the whole card would paint its fill white
+            self.play(Indicate(card[2], color=S.WHITE, scale_factor=1.08), run_time=0.5)
             self.play(Create(pdf_a), FadeIn(area_a), Create(stem_a), FadeIn(lab_a), run_time=1.2)
             self.add(dot1)
             self.play(FadeIn(dot1, scale=0.5), run_time=0.3)
@@ -264,12 +265,12 @@ class Payoff(VoiceScene):
             self.play(TransformFromCopy(val1, ans1[1]), FadeIn(ans1[0]), run_time=0.7)
 
             vo.wait_until("Week two")
-            alice.move_to(alice_slot + RIGHT * 0.9)
-            alice_lab.next_to(alice, RIGHT, buff=0.12)
-            self.play(FadeIn(alice), FadeIn(alice_lab), run_time=0.3)
+            # Alice rises into her slot from below the grid (a sideways slide would cross the plot axis)
+            alice.move_to(alice_slot + DOWN * 0.6)
+            alice_lab.next_to(alice_slot, RIGHT, buff=0.12).shift(RIGHT * 0.1)
+            self.play(FadeIn(alice), FadeIn(alice_lab, shift=LEFT * 0.15), run_time=0.3)
             self.play(alice.animate.move_to(alice_slot),
-                      alice_lab.animate.next_to(alice_slot, RIGHT, buff=0.12).shift(RIGHT * 0.1),
-                      Indicate(card, color=S.WHITE, scale_factor=1.04),
+                      Indicate(card[2], color=S.WHITE, scale_factor=1.08),
                       run_time=0.9)
             self.play(Create(pdf_b), FadeIn(area_b), Create(stem_b), FadeIn(lab_b), run_time=1.1)
             self.add(dot2)
@@ -483,8 +484,12 @@ class Payoff(VoiceScene):
         eps_dn.add_updater(lambda m: m.set_value(1 / lam.get_value()))
         noise_dn = Integer(2, font_size=36, color=NOISE_COLOR, group_with_commas=True)
         noise_dn.add_updater(lambda m: m.set_value(int(round(lam.get_value()))))
-        r_eps = VGroup(S.math(r"\varepsilon =", size=36, color=EPS_COLOR), eps_dn,
-                       S.math(r"\ll \tfrac{1}{n} = 0.01", size=36, color=S.GREY)).arrange(RIGHT, buff=0.18)
+        # the "<<" is only revealed once epsilon has actually dropped to 0.001 (while it sweeps
+        # down from 0.5 the relation would be false)
+        rel_sym = S.math(r"\ll", size=36, color=S.GREY)
+        r_eps = VGroup(S.math(r"\varepsilon =", size=36, color=EPS_COLOR), eps_dn, rel_sym,
+                       S.math(r"\tfrac{1}{n} = 0.01", size=36, color=S.GREY)).arrange(RIGHT, buff=0.18)
+        r_eps[3].shift(RIGHT * 0.05)
         r_noise = VGroup(S.math(r"\text{noise} \approx", size=36, color=NOISE_COLOR), noise_dn).arrange(RIGHT, buff=0.18)
         readouts = VGroup(r_eps, r_noise).arrange(DOWN, buff=0.35, aligned_edge=LEFT).move_to([0, 1.9, 0])
         rel_head = S.text("released:", 28, S.GREY)
@@ -494,32 +499,36 @@ class Payoff(VoiceScene):
         pure = S.text("pure noise", 30, NOISE_COLOR).next_to(rel, DOWN, buff=0.35)
 
         with self.voiceover(SAY[5]) as vo:
+            rel_sym.set_opacity(0)
             self.play(FadeOut(card), FadeOut(n_lab), FadeIn(readouts), run_time=0.6)
             self.remove(bump0)
             bump = always_redraw(make_bump)
             self.add(bump)
-            self.play(lam.animate(rate_func=lambda t: t ** 3).set_value(1000), run_time=2.6)
+            self.play(lam.animate(rate_func=lambda t: t ** 3).set_value(1000), run_time=2.4)
             eps_dn.clear_updaters()
             noise_dn.clear_updaters()
-            self.play(FadeIn(rel, shift=UP * 0.15), run_time=0.4)
+            bump.clear_updaters()
+            self.play(rel_sym.animate.set_opacity(1), FadeIn(rel, shift=UP * 0.15), run_time=0.4)
             for d in draws[1:4]:
                 new = S.math(f"{d:,}".replace(",", "{,}"), size=40).move_to(rel_val, aligned_edge=LEFT)
-                self.play(Transform(rel_val, new), run_time=0.35)
+                self.play(Transform(rel_val, new), run_time=0.3)
             self.play(FadeIn(pure, scale=1.2), run_time=0.4)
 
             # ---- 5b. not Laplace's fault: the chain
+            # the noise picture stays up (dimmed) while the narrator says it is not Laplace's fault,
+            # so "pure noise" is readable; it clears when the chain starts
             vo.wait_until("This is not")
-            bump.clear_updaters()
             not_lap = S.text("Not Laplace's fault: this holds for any ε-private mechanism M", 30, S.GREY)
             not_lap.to_edge(UP, buff=0.4)
-            self.play(FadeOut(VGroup(readouts, rel, pure, line_grp, bump)), FadeIn(not_lap, shift=DOWN * 0.2),
-                      run_time=0.8)
+            noise_pic = VGroup(readouts, rel, pure, line_grp, bump)
+            self.play(FadeIn(not_lap, shift=DOWN * 0.2), noise_pic.animate.set_opacity(0.5), run_time=0.8)
 
             chain = hybrid_chain().move_to(UP * 1.35)
             nodes, arrows, steps, names = chain
             vo.wait_until("Any two databases")
+            self.play(FadeOut(noise_pic), run_time=0.4)
             self.play(FadeIn(nodes[0], shift=RIGHT * 0.2), FadeIn(names[0]),
-                      FadeIn(nodes[-1], shift=LEFT * 0.2), FadeIn(names[-1]), run_time=0.9)
+                      FadeIn(nodes[-1], shift=LEFT * 0.2), FadeIn(names[-1]), run_time=0.8)
             vo.wait_until("linked by a chain")
             seq = []
             for k in range(1, len(nodes) - 1):
@@ -562,7 +571,10 @@ class Payoff(VoiceScene):
             vo.wait_until("every database looks alike")
             alike = S.text("all databases look alike  ⇒  nothing can be learned", 34, S.WHITE)
             alike.next_to(approx, DOWN, buff=0.55)
-            self.play(LaggedStart(*[Indicate(nd, color=S.WHITE, scale_factor=1.06) for nd in nodes],
+            # pulse the frames together ("they all look alike"); Indicate on a whole mini database
+            # would paint its filled rows white
+            frames = VGroup(*[nd[0] for nd in nodes if isinstance(nd, VGroup) and len(nd) == 2])
+            self.play(LaggedStart(*[Indicate(f, color=S.WHITE, scale_factor=1.06) for f in frames],
                                   lag_ratio=0.12), run_time=1.0)
             self.play(FadeIn(alike, shift=UP * 0.15), run_time=0.7)
 
@@ -573,7 +585,7 @@ class Payoff(VoiceScene):
                          tag_txt)
             tag.move_to(not_lap)
             self.play(FadeOut(not_lap, shift=UP * 0.2), FadeIn(tag, shift=UP * 0.2), run_time=0.8)
-            self.play(Indicate(tag, color=S.WHITE, scale_factor=1.08), run_time=1.0)
+            self.play(Indicate(tag[1], color=S.WHITE, scale_factor=1.12), run_time=1.0)
             self.play(LaggedStart(*[Indicate(a, color=S.WHITE, scale_factor=1.15) for a in arrows], lag_ratio=0.2),
                       run_time=vo.remaining(1.0))
         self.wait(0.4)
