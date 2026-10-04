@@ -80,6 +80,13 @@ class Panel(VGroup):
             [c2p(t, f(t)) for t in ts])
 
 
+def area_under(panel, f, color, opacity=0.12, step=0.02):
+    """Light fill under a density on a panel (S08 draws its two worlds' Laplace curves this way)."""
+    ts = np.unique(np.round(np.r_[np.arange(panel.t0, panel.t1, step), panel.t1, A, B], 6))
+    pts = [panel.c2p(t, f(t)) for t in ts] + [panel.c2p(panel.t1, 0), panel.c2p(panel.t0, 0)]
+    return Polygon(*pts, stroke_width=0).set_fill(color, opacity)
+
+
 def probe_line(panel, tracker, y0, y1):
     """Vertical dashed line at t = tracker over a panel; built once, moved by an updater."""
     line = DashedLine(panel.c2p(panel.t0, y0), panel.c2p(panel.t0, y1), color=S.GREY, stroke_width=2,
@@ -173,8 +180,14 @@ class LaplaceMechanism(VoiceScene):
         top = Panel(T0, T1, 0, 0.6, 11.5, 2.4).move_to([0, 1.45, 0])
         dens_lab = S.text("density", 22, S.GREY).next_to(top.c2p(T0, 0.6), RIGHT, buff=0.15).shift(DOWN * 0.15)
         out_lab = S.math("t", size=30, color=S.GREY).next_to(top.c2p(T1, 0), RIGHT, buff=0.15)
-        pdf_a = top.plot(lambda t: laplace_pdf(t, A, LAM), kinks=[A], color=X_COLOR)
-        pdf_b = top.plot(lambda t: laplace_pdf(t, B, LAM), kinks=[B], color=XP_COLOR)
+        pdf_a = top.plot(lambda t: laplace_pdf(t, A, LAM), kinks=[A], color=X_COLOR, sw=4)
+        pdf_b = top.plot(lambda t: laplace_pdf(t, B, LAM), kinks=[B], color=XP_COLOR, sw=4)
+        area_a = area_under(top, lambda t: laplace_pdf(t, A, LAM), X_COLOR)
+        area_b = area_under(top, lambda t: laplace_pdf(t, B, LAM), XP_COLOR)
+        stem_a = DashedLine(top.c2p(A, 0), top.c2p(A, laplace_pdf(A, A, LAM)), color=X_COLOR, stroke_width=2,
+                            dash_length=0.06)
+        stem_b = DashedLine(top.c2p(B, 0), top.c2p(B, laplace_pdf(B, B, LAM)), color=XP_COLOR, stroke_width=2,
+                            dash_length=0.06)
         lab_a = S.math(r"f(x) = 41", size=34, color=X_COLOR).next_to(top.c2p(A, 0.5), LEFT, buff=0.35)
         lab_b = S.math(r"f(x') = 42", size=34, color=XP_COLOR).next_to(top.c2p(B, 0.5), RIGHT, buff=0.35)
         m_a = S.math("M(x)", size=32, color=X_COLOR).move_to(top.c2p(38.4, 0.17))
@@ -183,9 +196,9 @@ class LaplaceMechanism(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.play(Create(top), FadeIn(dens_lab), FadeIn(out_lab), run_time=1.0)
             vo.wait_until("Center one")
-            self.play(Create(pdf_a), FadeIn(lab_a, shift=DOWN * 0.1), run_time=1.3)
+            self.play(Create(pdf_a), FadeIn(area_a), Create(stem_a), FadeIn(lab_a, shift=DOWN * 0.1), run_time=1.3)
             vo.wait_until("and another")
-            self.play(Create(pdf_b), FadeIn(lab_b, shift=DOWN * 0.1), run_time=1.3)
+            self.play(Create(pdf_b), FadeIn(area_b), Create(stem_b), FadeIn(lab_b, shift=DOWN * 0.1), run_time=1.3)
             vo.wait_until("the output distributions")
             self.play(FadeIn(m_a, shift=UP * 0.1), FadeIn(m_b, shift=UP * 0.1), run_time=0.7)
             self.play(ShowPassingFlash(pdf_a.copy().set_stroke(X_COLOR, 9), time_width=0.5),
@@ -294,13 +307,8 @@ class LaplaceMechanism(VoiceScene):
                                max_tip_length_to_length_ratio=0.45)
 
         gap = always_redraw(gap_arrow)
-        gap_txt = S.math(r"\text{gap} =", size=32, color=EPS_COLOR).move_to([-5.9, 3.2, 0], aligned_edge=LEFT)
-        gap_num = always_redraw(lambda: DecimalNumber(gap_value(), num_decimal_places=2, include_sign=True,
-                                                      font_size=32, color=EPS_COLOR)
-                                .next_to(gap_txt, RIGHT, buff=0.12))
-        gap_note = S.math(r"|\text{gap}| \le \text{slide} \times 1/\lambda", size=32, color=EPS_COLOR)
-        gap_note.move_to([-2.6, 3.2, 0], aligned_edge=LEFT)
-        probe_top2 = probe_line(top, probe, 0, 0.6)
+        gap_note = S.math(r"|\text{gap}| \le \text{slide} \times 1/\lambda", size=34, color=EPS_COLOR)
+        gap_note.move_to([-5.75, 3.2, 0], aligned_edge=LEFT)
         probe_bot2 = probe_line(bot, probe, -1.15, 2)
         dot_g = always_redraw(lambda: Dot(bot.c2p(probe.get_value(), log_ratio(probe.get_value())),
                                           color=EPS_COLOR, radius=0.08))
@@ -308,7 +316,8 @@ class LaplaceMechanism(VoiceScene):
         principle.to_edge(UP, buff=0.4)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(ReplacementTransform(pdf_a, tent_a), FadeOut(pdf_b), FadeOut(VGroup(lab_a, lab_b, m_a, m_b)),
+            self.play(ReplacementTransform(pdf_a, tent_a), FadeOut(pdf_b),
+                      FadeOut(VGroup(lab_a, lab_b, m_a, m_b, area_a, area_b, stem_a, stem_b)),
                       FadeTransform(dens_lab, log_lab), run_time=1.4)
             vo.wait_until("On a log scale")
             self.play(ReplacementTransform(formula0, formula_log), run_time=1.0)
@@ -319,21 +328,21 @@ class LaplaceMechanism(VoiceScene):
             self.play(Indicate(VGroup(slope_l, slope_r), color=S.WHITE, scale_factor=1.1), run_time=0.9)
             vo.wait_until("Slide the tent")
             self.add(tent_b, gap)
-            self.play(FadeIn(gap_txt), FadeIn(gap_num), FadeIn(probe_top2), run_time=0.3)
             self.play(mu_b.animate.set_value(B), run_time=1.6)
             self.play(FadeIn(gap_note, shift=UP * 0.1), run_time=0.6)
             # the gap at each t is exactly the log ratio plotted below: sweep the probe through it
             self.play(FadeIn(probe_bot2), FadeIn(dot_g), run_time=0.3)
             self.play(probe.animate.set_value(45.5), run_time=vo.until("That is the whole", 2.0),
                       rate_func=smooth)
-            gap_num.clear_updaters()
-            self.play(FadeOut(VGroup(formula_log, gap_txt, gap_num, gap_note)),
-                      FadeIn(principle, shift=DOWN * 0.15), run_time=0.8)
+            self.play(FadeOut(VGroup(formula_log, gap_note)), run_time=0.35)
+            self.play(FadeIn(principle, shift=DOWN * 0.15), run_time=0.6)
             self.play(ShowPassingFlash(tent_a.copy().set_stroke(X_COLOR, 10), time_width=0.4),
                       ShowPassingFlash(tent_b.copy().set_stroke(XP_COLOR, 10), time_width=0.4),
                       run_time=vo.remaining(0.6))
-        for m in (tent_b, gap, gap_num, probe_top2, probe_bot2, dot_g):
+        for m in (tent_b, gap, probe_bot2, dot_g):
             m.clear_updaters()
+        # clear the plots between the two clips (the principle stays), so the proof starts on its first words
+        self.play(FadeOut(Group(*[m for m in self.mobjects if m is not principle])), run_time=0.5)
 
         # ============================================================ 4. the one-line proof
         fx, fxp = r"f(x)", r"f(x')"
@@ -415,9 +424,8 @@ class LaplaceMechanism(VoiceScene):
         every = S.text("for every output t and every pair of neighbors", 26, S.GREY).next_to(box, DOWN, buff=0.3)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(Group(*self.mobjects)), run_time=0.4)
-            self.play(Write(l1), Create(nl), FadeIn(dot_fx), FadeIn(dot_fxp), FadeIn(dot_t), run_time=1.0)
-            vo.wait_until("two distances to t")
+            self.play(FadeOut(principle), Write(l1), Create(nl), FadeIn(dot_fx), FadeIn(dot_fxp), FadeIn(dot_t),
+                      run_time=vo.until("two distances to t", 0.8))
             self.play(FadeIn(d_blue, shift=UP * 0.1), FadeIn(d_orng, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("at most the distance")
             self.play(Create(guide), Create(extra), FadeIn(extra_lab, shift=LEFT * 0.15), run_time=0.6)
@@ -428,6 +436,7 @@ class LaplaceMechanism(VoiceScene):
             self.play(tt.animate.set_value(44.5), run_time=2.0, rate_func=smooth)
             vo.wait_until("the sensitivity divided")
             self.play(Write(l3), FadeIn(sens, shift=LEFT * 0.2), run_time=1.0)
+            self.play(Indicate(l3[1], color=SENS_COLOR, scale_factor=1.15), run_time=1.0)
             vo.wait_until("Set lambda")
             for m in (dot_t, d_blue, d_orng, diff_num):
                 m.clear_updaters()
@@ -447,7 +456,7 @@ class LaplaceMechanism(VoiceScene):
         prop2[1].set_color(SENS_COLOR)
         prop2[3].set_color(EPS_COLOR)
         card = VGroup(prop_title, prop, prop2).arrange(DOWN, buff=0.3, aligned_edge=LEFT)
-        card.to_edge(LEFT, buff=0.8).shift(DOWN * 0.6)
+        card.to_edge(LEFT, buff=0.9).shift(DOWN * 0.6)
         frame = SurroundingRectangle(card, color=S.GREY, buff=0.3, corner_radius=0.12)
 
         plane = NumberPlane(x_range=[-3, 3, 1], y_range=[-3, 3, 1], x_length=4.4, y_length=4.4,
@@ -511,12 +520,15 @@ class LaplaceMechanism(VoiceScene):
         u_group = VGroup(u_axis, u_labs, u_box, u_title)
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
-            self.play(Create(u_axis), FadeIn(u_labs), run_time=0.8)
+            self.play(FadeOut(Group(*self.mobjects)), run_time=0.5)
+            self.play(Create(u_axis), FadeIn(u_labs), GrowFromEdge(u_box, DOWN), FadeIn(u_title), run_time=0.9)
             vo.wait_until("like uniform noise")
-            self.play(GrowFromEdge(u_box, DOWN), FadeIn(u_title), run_time=0.9)
-            card_u = ponder_at(self, "Why not uniform noise,\nanywhere between −10 and +10?",
-                               pos=[0, -2.0, 0], width=9.0)
+            self.play(Indicate(u_title, color=NOISE_COLOR, scale_factor=1.15), run_time=0.8)
+            vo.wait_until("anywhere between")
+            self.play(Indicate(u_labs[0], color=S.WHITE, scale_factor=1.3),
+                      Indicate(u_labs[2], color=S.WHITE, scale_factor=1.3), run_time=vo.remaining(0.8))
+        card_u = ponder_at(self, "Why not uniform noise,\nanywhere between −10 and +10?", pos=[0, -2.0, 0],
+                           width=9.0)
         drain(self, card_u, 10)                       # PONDER(10 s): silent timer
 
         # ============================================================ 7. the edges: an infinite ratio

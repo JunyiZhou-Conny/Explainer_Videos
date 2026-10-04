@@ -15,11 +15,11 @@ from explainer import style as S
 from explainer.components import database_rows, person_icon, ponder_card
 from explainer.scene import VoiceScene
 
-from common import ALICE, EPS_COLOR, NARRATION, X_COLOR, XP_COLOR
+from common import ALICE, ANALYST_COLOR, EPS_COLOR, NARRATION, X_COLOR, XP_COLOR
 
 SAY = NARRATION["S04"]
 
-ANALYST = S.PURPLE          # analyst / attacker role colour (as in S03)
+ANALYST = ANALYST_COLOR     # analyst / attacker role colour, shared by every scene
 COIN = S.GOLD
 COIN_RIM = "#9A7228"        # as in s02_map.py
 CHECK = S.TEAL
@@ -436,7 +436,9 @@ class Definition(VoiceScene):
         leaf_no = S.text("no", 32, S.WHITE).move_to([-1.3, -2.5, 0])
 
         def edge(a, b, label, up=True):
-            ln = Line(a.get_right() + RIGHT * 0.06, b.get_left() + LEFT * 0.1, color=S.GREY, stroke_width=3)
+            """A branch drawn like S02's coin diagram: a thin GREY arrow, labelled by its coin face."""
+            ln = Arrow(a.get_right() + RIGHT * 0.02, b.get_left() + LEFT * 0.02, buff=0.08, color=S.GREY,
+                       stroke_width=3, tip_length=0.16, max_tip_length_to_length_ratio=0.2)
             lab = S.math(label, size=34, color=S.GREY)
             lab.next_to(ln.get_center(), UL if up else DL, buff=0.06)
             return ln, lab
@@ -456,10 +458,10 @@ class Definition(VoiceScene):
                       defn.animate.scale(0.62).move_to([0, 2.95, 0]), run_time=0.8)
             self.play(FadeIn(tree_title), FadeIn(alice), FadeIn(alice_lab), Create(a_line), FadeIn(coin1),
                       run_time=0.5)
-            self.play(LaggedStart(AnimationGroup(Create(e_h1), FadeIn(l_h1), FadeIn(leaf_truth)),
-                                  AnimationGroup(Create(e_t1), FadeIn(l_t1), FadeIn(coin2)),
-                                  AnimationGroup(Create(e_h2), FadeIn(l_h2), FadeIn(leaf_yes)),
-                                  AnimationGroup(Create(e_t2), FadeIn(l_t2), FadeIn(leaf_no)),
+            self.play(LaggedStart(AnimationGroup(GrowArrow(e_h1), FadeIn(l_h1), FadeIn(leaf_truth)),
+                                  AnimationGroup(GrowArrow(e_t1), FadeIn(l_t1), FadeIn(coin2)),
+                                  AnimationGroup(GrowArrow(e_h2), FadeIn(l_h2), FadeIn(leaf_yes)),
+                                  AnimationGroup(GrowArrow(e_t2), FadeIn(l_t2), FadeIn(leaf_no)),
                                   lag_ratio=0.45), run_time=1.2)
             vo.wait_until("Pause and ponder")
             self.play(flip(coin1, "TH"), run_time=0.8)
@@ -488,8 +490,9 @@ class Definition(VoiceScene):
         r2.shift(RIGHT * (r1[3].get_x() - r2[3].get_x()))
         r4_box = SurroundingRectangle(r4, color=EPS_COLOR, buff=0.18, corner_radius=0.1)
 
-        def glow(ln, col):
-            return ln.copy().set_stroke(col, 7)
+        def glow(arr, col):
+            """The branch's shaft, lit in a world's colour (the arrow tip stays GREY)."""
+            return Line(arr.get_start(), arr.get_end() - arr.get_unit_vector() * 0.12, color=col, stroke_width=7)
 
         p_half = S.math(r"\tfrac12", size=40, color=XP_COLOR).next_to(leaf_truth, RIGHT, buff=0.15)
         say_yes = S.text("→ yes", 28, XP_COLOR).next_to(leaf_truth, DOWN, buff=0.1)

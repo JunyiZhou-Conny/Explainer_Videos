@@ -2,7 +2,7 @@
 
 Back to the S01 hospital with the Laplace mechanism switched on (epsilon = 0.5, scale 2), then
 why the noise does not grow with n, and what goes wrong when epsilon << 1/n (the hybrid argument;
-`hybrid_chain` below is reused by S11).
+S11's chain of databases is drawn in the same `mini_db` look: 4 rows, GREY arrows, steps above).
 """
 
 import numpy as np
@@ -62,7 +62,7 @@ def ponder_at(scene, question: str, seconds: float, pos=ORIGIN, **kw) -> VGroup:
     return card
 
 
-def mini_db(n_rows: int, changed: int, frame_color: str, width: float = 1.5,
+def mini_db(n_rows: int, changed: int, frame_color: str, width: float = 1.38,
             row_h: float = 0.3, changed_color: str = ALICE) -> VGroup:
     """A small database: n_rows rows, the first `changed` of them replaced (PINK; newest brightest).
 
@@ -77,7 +77,7 @@ def mini_db(n_rows: int, changed: int, frame_color: str, width: float = 1.5,
             col = changed_color
         else:
             box.set_fill(S.GREY_DARKER, 1)
-        icon = person_icon(col, height=row_h * 0.7).move_to(box.get_left() + RIGHT * 0.2)
+        icon = person_icon(col, height=row_h * 0.7).move_to(box.get_left() + RIGHT * 0.19)
         rows.add(VGroup(box, icon))
     rows.arrange(DOWN, buff=0)
     frame = SurroundingRectangle(rows, buff=0.06, color=frame_color, stroke_width=2.5,
@@ -85,7 +85,7 @@ def mini_db(n_rows: int, changed: int, frame_color: str, width: float = 1.5,
     return VGroup(frame, rows)
 
 
-def hybrid_chain(n_rows: int = 5, steps=(0, 1, 2, None, "n"), step_tex: str = r"\times\, e^{\varepsilon}",
+def hybrid_chain(n_rows: int = 4, steps=(0, 1, 2, None, "n"), step_tex: str = r"\times\, e^{\varepsilon}",
                  start_tex: str = r"x = x^{(0)}", end_tex: str = r"x^{(n)} = y",
                  start_color: str = X_COLOR, end_color: str = S.WHITE, changed_color: str = ALICE,
                  gap: float = 1.25, label_size: float = 34, step_color: str = EPS_COLOR) -> VGroup:
@@ -97,7 +97,7 @@ def hybrid_chain(n_rows: int = 5, steps=(0, 1, 2, None, "n"), step_tex: str = r"
     nodes = VGroup()
     for k in steps:
         if k is None:
-            nodes.add(S.math(r"\cdots", size=48, color=S.GREY))
+            nodes.add(S.math(r"\cdots", size=44, color=S.GREY))
         else:
             kk = n_rows if k == "n" else k
             col = start_color if k == 0 else (end_color if k == "n" else S.GREY)
@@ -163,14 +163,19 @@ class Payoff(VoiceScene):
 
     # ============================================================ 0. the hospital, privately
     def hospital_beat(self):
-        icons = hospital_grid(0.2).move_to([-4.45, 0.3, 0])
+        # the S01 picture, smaller: query card (S01's card, same width), "Hospital database" over
+        # the grid, the "has condition X" legend under it, Alice's name under her slot
+        cx = -4.2                                   # centre of the left column
+        card = query_card("How many patients\nhave condition X?")
+        card.move_to([cx, 3.45 - card.height / 2, 0])
+        db_label = S.text("Hospital database", 24, S.GREY).next_to(card, DOWN, buff=0.15)
+        icons = hospital_grid(0.2)
+        icons.next_to(db_label, DOWN, buff=0.15).set_x(cx)
         alice = icons[-1]
         patients = VGroup(*icons[:-1])
         alice_slot = alice.get_center()
-        db_label = S.text("Hospital database", 22, S.GREY).next_to(icons, DOWN, buff=0.22)
-        db_label.align_to(icons, LEFT)
-        card = query_card("How many patients\nhave condition X?", width=3.9)
-        card.next_to(icons, UP, buff=0.3).set_x(icons.get_x())
+        legend = VGroup(person_icon(ALICE, 0.22), S.text("has condition X", 20, S.GREY))
+        legend.arrange(RIGHT, buff=0.12).next_to(icons, DOWN, buff=0.2).align_to(icons, LEFT)
         alice_lab = S.text("Alice", 22, ALICE)
 
         # formula: epsilon -> noise scale
@@ -218,12 +223,12 @@ class Payoff(VoiceScene):
         # left column: released answers and the subtraction
         ans1 = VGroup(S.text("week 1", 22, S.GREY), S.math(f"{WEEK1:.1f}", size=46, color=X_COLOR))
         ans2 = VGroup(S.text("week 2", 22, S.GREY), S.math(f"{WEEK2:.1f}", size=46, color=XP_COLOR))
-        for g, x in ((ans1, -5.4), (ans2, -3.5)):
-            g.arrange(DOWN, buff=0.12).move_to([x, -1.95, 0])
+        for g, x in ((ans1, cx - 0.95), (ans2, cx + 0.95)):
+            g.arrange(DOWN, buff=0.12).move_to([x, -2.17, 0])
         diff = S.math(f"{WEEK2:.1f}", "-", f"{WEEK1:.1f}", "=", f"{WEEK2 - WEEK1:.1f}", size=44)
         diff[0].set_color(XP_COLOR)
         diff[2].set_color(X_COLOR)
-        diff.move_to([-4.45, -3.05, 0])
+        diff.move_to([cx, -3.08, 0])
 
         # belief meter (attacker starts at 50/50)
         m_left, m_right, m_y = 0.9, 6.2, -2.75
@@ -246,7 +251,7 @@ class Payoff(VoiceScene):
         m_head.arrange(RIGHT, buff=0.2).move_to([mx(0.5), -1.95, 0])
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(card, shift=RIGHT * 0.3), FadeIn(db_label),
+            self.play(FadeIn(card, shift=RIGHT * 0.3), FadeIn(db_label), FadeIn(legend),
                       LaggedStart(*[FadeIn(p, scale=0.6) for p in patients], lag_ratio=0.006),
                       run_time=1.6)
             self.play(Write(eps_eq), run_time=0.7)
@@ -265,11 +270,12 @@ class Payoff(VoiceScene):
             self.play(TransformFromCopy(val1, ans1[1]), FadeIn(ans1[0]), run_time=0.7)
 
             vo.wait_until("Week two")
-            # Alice rises into her slot from below the grid (a sideways slide would cross the plot axis)
-            alice.move_to(alice_slot + DOWN * 0.6)
-            alice_lab.next_to(alice_slot, RIGHT, buff=0.12).shift(RIGHT * 0.1)
-            self.play(FadeIn(alice), FadeIn(alice_lab, shift=LEFT * 0.15), run_time=0.3)
-            self.play(alice.animate.move_to(alice_slot),
+            # as in S01, Alice slides into the last slot from the right, her name under her
+            # (a short slide: the plot's axis starts just to the right of the grid)
+            alice.move_to(alice_slot + RIGHT * 0.75)
+            alice_lab.next_to(alice, DOWN, buff=0.12).set_y(legend[1].get_y())
+            self.play(FadeIn(alice), FadeIn(alice_lab), run_time=0.3)
+            self.play(alice.animate.move_to(alice_slot), alice_lab.animate.shift(LEFT * 0.75),
                       Indicate(card[2], color=S.WHITE, scale_factor=1.08),
                       run_time=0.9)
             self.play(Create(pdf_b), FadeIn(area_b), Create(stem_b), FadeIn(lab_b), run_time=1.1)
@@ -284,8 +290,8 @@ class Payoff(VoiceScene):
                       FadeIn(diff[1]), run_time=0.9)
             self.play(Write(diff[3:]), run_time=0.5)
             vo.wait_until("Alice seems")
-            arrow = CurvedArrow(diff.get_right() + RIGHT * 0.12, alice.get_bottom() + DOWN * 0.06,
-                                angle=0.9, color=ALICE, stroke_width=4, tip_length=0.18)
+            arrow = CurvedArrow(diff.get_right() + RIGHT * 0.12, alice_lab.get_right() + RIGHT * 0.1,
+                                angle=1.1, color=ALICE, stroke_width=4, tip_length=0.18)
             self.play(Create(arrow), run_time=0.8)
             self.play(Indicate(diff[4], color=ALICE), run_time=0.7)
             cross = strike(Square(0.42).move_to(arrow.point_from_proportion(0.5)), pad=0.0)
@@ -300,7 +306,7 @@ class Payoff(VoiceScene):
             self.play(Indicate(m_head[3], color=EPS_COLOR, scale_factor=1.08), run_time=vo.remaining(0.6))
         needle.clear_updaters()
 
-        self.hosp = VGroup(icons, db_label, card, alice_lab, ans1, ans2, diff, arrow, cross)
+        self.hosp = VGroup(icons, db_label, legend, card, alice_lab, ans1, ans2, diff, arrow, cross)
         self.plot = VGroup(ax, out_lab, pdf_a, area_a, stem_a, lab_a, pdf_b, area_b, stem_b, lab_b,
                            dot1, drop1, val1, dot2, drop2, val2)
         self.meter = VGroup(meter, m_ticks, m_labs, band, needle, m_head)
@@ -356,7 +362,7 @@ class Payoff(VoiceScene):
             rows.append(dict(line=line, ticks=ticks, truth=truth, labs=labs, name=name, bump=bump, pct=p_lab))
         legend = VGroup(bump_shape(0, 0.04, LAM, 0.32, 0, half_width=12),
                         S.text("noise of typical size 2, the same in every row", 26, S.GREY))
-        legend.arrange(RIGHT, buff=0.25).to_edge(UP, buff=0.3)
+        legend.arrange(RIGHT, buff=0.25).to_edge(UP, buff=0.45)
         pct_head = S.text("noise ÷ answer", 20, S.GREY).next_to(rows[0]["pct"], UP, buff=0.35)
         pct_head.align_to(rows[0]["pct"], LEFT)
 
@@ -519,7 +525,7 @@ class Payoff(VoiceScene):
             # "pure noise" stays readable; it clears when the chain starts
             vo.wait_until("This is not")
             not_lap = S.text("Not Laplace's fault: this holds for any ε-private mechanism M", 30, S.GREY)
-            not_lap.to_edge(UP, buff=0.4)
+            not_lap.to_edge(UP, buff=0.5)
             noise_pic = VGroup(readouts, rel, pure, line_grp, bump)
             self.play(FadeIn(not_lap, shift=DOWN * 0.2), run_time=0.8)
 
@@ -583,7 +589,7 @@ class Payoff(VoiceScene):
             tag = VGroup(RoundedRectangle(width=tag_txt.width + 0.6, height=tag_txt.height + 0.4, corner_radius=0.12,
                                           stroke_color=S.WHITE, stroke_width=2.5).set_fill(S.GREY_DARKER, 1),
                          tag_txt)
-            tag.move_to(not_lap)
+            tag.to_edge(UP, buff=0.45)
             self.play(FadeOut(not_lap, shift=UP * 0.2), FadeIn(tag, shift=UP * 0.2), run_time=0.8)
             self.play(Indicate(tag[1], color=S.WHITE, scale_factor=1.12), run_time=1.0)
             self.play(LaggedStart(*[Indicate(a, color=S.WHITE, scale_factor=1.15) for a in arrows], lag_ratio=0.2),

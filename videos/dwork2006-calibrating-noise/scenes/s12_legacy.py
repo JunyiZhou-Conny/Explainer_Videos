@@ -29,7 +29,7 @@ CARD_C = np.array([-2.37, 0.6, 0])            # this paper's card
 THUMB_X, THUMB_W, THUMB_H = 0.85, 0.86, 0.6   # thumbnails carried by the arrows
 DESC_X0, DESC_X1 = 1.4, 6.55                  # descendant cards
 ROW_Y = [3.1, 2.22, 1.34, 0.46, -0.42, -1.3, -2.18, -3.06]
-PANEL_C, PANEL_W, PANEL_H = np.array([-3.175, 0.0, 0]), 6.9, 6.7   # left edge -6.625 covers the map
+PANEL_C, PANEL_W, PANEL_H = np.array([-3.15, 0.0, 0]), 6.9, 6.7    # left edge -6.6 covers the map
 SLOT_COLORS = [EPS_COLOR, SENS_COLOR, NOISE_COLOR, S.GREY]
 SIG = 2.2                                     # Gaussian noise scale in the (eps, delta) panel
 T_LO, T_HI = 41.5 - SIG ** 2, 41.5 + SIG ** 2  # where its log-ratio leaves the band |.| <= 1
@@ -301,7 +301,8 @@ class Legacy(VoiceScene):
             self.play(FadeIn(p5["noise"], scale=0.5), FadeIn(p5["noise_lab"]), run_time=0.6)
             vo.wait_until("and track the budget")
             self.add(p5["bar"], p5["counter"])
-            self.play(FadeIn(p5["bar_lab"]), p5["step"].animate.set_value(10000), run_time=2.4, rate_func=linear)
+            self.play(FadeIn(p5["bar_lab"]), run_time=0.4)
+            self.play(p5["step"].animate.set_value(10000), run_time=2.2, rate_func=linear)
             p5["bar"].clear_updaters()
             p5["counter"].clear_updaters()
             vo.wait_until("If you train")
@@ -360,7 +361,7 @@ class Legacy(VoiceScene):
         census_tick = mark("✓", S.TEAL, 34)
         census = VGroup(S.text("US Census 2020: a fixed set of tables chosen in advance", 26, S.WHITE),
                         census_tick).arrange(RIGHT, buff=0.22)
-        a2 = S.text("ONE private release for MOST queries", 32, S.WHITE)
+        a2 = S.text("ONE private release that works for MOST queries", 32, S.WHITE)
         cross2 = mark("✗", NOISE_COLOR)
         b2 = VGroup(S.text("→  impossible unless n is huge", 30, S.GREY), cross2).arrange(RIGHT, buff=0.3)
         for m in (tick1, cross2):
@@ -372,7 +373,8 @@ class Legacy(VoiceScene):
         census_box.shift(RIGHT * 0.6)
         quant.move_to([0, 1.55, 0])
         census_frame = SurroundingRectangle(census, color=S.GREY, buff=0.14, corner_radius=0.08, stroke_width=2)
-        most = a2[20:24]   # "MOST"
+        _i = a2.text.replace(" ", "").index("MOST")    # Text drops spaces from its glyphs
+        most = a2[_i:_i + 4]
         cup = trophy(1.25)
         prize = VGroup(S.text("Gödel Prize 2017", 28, S.GOLD), S.text("TCC Test-of-Time Award 2016", 24, S.GREY)
                        ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
@@ -397,13 +399,13 @@ class Legacy(VoiceScene):
             self.play(FadeIn(cross2, scale=1.6), run_time=0.4)
             vo.wait_until("that is accurate for most")
             self.play(Indicate(most, color=S.WHITE, scale_factor=1.15), run_time=0.9)
-            self.play(pulse(cross2, 1.35), run_time=vo.remaining(0.6))
-        self.play(FadeIn(cup, shift=UP * 0.3), FadeIn(prize, shift=LEFT * 0.2), run_time=1.0)
-        self.play(pulse(cup, 1.1), run_time=0.8)
-        self.wait(0.8)
-        self.play(FadeIn(still_card, shift=UP * 0.2), run_time=1.0)
+            self.play(pulse(cross2, 1.35), run_time=0.6)
+            # the prizes arrive silently as the sentence ends (no narration about them) ...
+            self.play(FadeIn(cup, shift=UP * 0.3), FadeIn(prize, shift=LEFT * 0.2), run_time=vo.remaining(0.8))
+        # ... and the open problems right after it: a ~3 s tail instead of ~7 s of silence
+        self.play(FadeIn(still_card, shift=UP * 0.2), pulse(cup, 1.1), run_time=0.9)
         self.play(Indicate(still_1[8], color=EPS_COLOR, scale_factor=1.5), run_time=0.8)
-        self.wait(1.6)
+        self.wait(0.5)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
 
     # ================================================================== rows
@@ -475,7 +477,7 @@ class Legacy(VoiceScene):
         band.set_fill(EPS_COLOR, 0.13).move_to(ax.c2p((t0 + t1) / 2, 0))
         hi = DashedLine(ax.c2p(t0, 1), ax.c2p(t1, 1), color=EPS_COLOR, stroke_width=2.5)
         lo = DashedLine(ax.c2p(t0, -1), ax.c2p(t1, -1), color=EPS_COLOR, stroke_width=2.5)
-        lap = ax.plot(lambda t: abs(t - 42) - abs(t - 41), x_range=[t0, t1, 0.01], color=NOISE_COLOR, stroke_width=4)
+        lap = ax.plot(lambda t: abs(t - 42) - abs(t - 41), x_range=[t0, t1, 0.01], color=S.WHITE, stroke_width=4)
         gau = ax.plot(lambda t: (41.5 - t) / SIG ** 2, x_range=[t0, t1, 0.05], color=S.GREY, stroke_width=4)
         up = Arrow(ax.c2p(T_LO - 1.6, 1.15), ax.c2p(T_LO - 1.6, 2.05), buff=0, color=NOISE_COLOR, stroke_width=5,
                    tip_length=0.16)
@@ -484,9 +486,12 @@ class Legacy(VoiceScene):
         base = VGroup(band, hi, lo, lap, gau, up, dn)
         eps_hi = S.math(r"+\varepsilon", size=28, color=EPS_COLOR).next_to(ax.c2p(t1, 1), RIGHT, buff=0.08)
         eps_lo = S.math(r"-\varepsilon", size=28, color=EPS_COLOR).next_to(ax.c2p(t1, -1), RIGHT, buff=0.08)
-        y_lab = S.text("log of the ratio", 20, S.GREY).next_to(ax, UP, buff=0.05).align_to(ax, LEFT).shift(RIGHT * 0.1)
-        lap_lab = S.text("Laplace", 20, NOISE_COLOR).next_to(ax.c2p(48.5, -1), UP, buff=0.12)
-        gauss_lab = S.text("Gaussian", 20, S.WHITE).next_to(ax.c2p(38.6, (41.5 - 38.6) / SIG ** 2), DOWN, buff=0.22)
+        y_lab = S.text("log ratio", 20, S.GREY).next_to(ax, UP, buff=0.05).align_to(ax, LEFT).shift(RIGHT * 0.1)
+        # S07's keys, in free space: inside the band below the axis (left, where the Gaussian line is
+        # still above it), and above the band just right of the Gaussian's exit arrow
+        lap_lab = S.text("Laplace: stays inside", 20, S.WHITE).move_to(ax.c2p(t0, -0.5), aligned_edge=LEFT)
+        lap_lab.shift(RIGHT * 0.12)
+        gauss_lab = S.text("Gaussian: escapes", 20, S.GREY).move_to(ax.c2p(T_LO - 0.75, 1.62), aligned_edge=LEFT)
         ax2 = Axes(x_range=[t0, t1, 1], y_range=[0, 0.2, 0.1], x_length=5.6, y_length=1.45, tips=False,
                    axis_config={"color": S.GREY, "stroke_width": 2, "include_ticks": False}).move_to([-3.35, -1.25, 0])
         dens = ax2.plot(lambda t: gaussian_pdf(t, 41, SIG), x_range=[t0, t1, 0.05], color=X_COLOR, stroke_width=4)

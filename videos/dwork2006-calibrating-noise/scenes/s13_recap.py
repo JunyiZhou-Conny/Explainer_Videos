@@ -17,7 +17,8 @@ from common import (ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, PAPER_P1, SENS_COL
 
 SAY = NARRATION["S13"]
 
-MASK = S.PURPLE                      # a row's parity mask, as in S11
+MASK = S.WHITE                       # a row's parity mask: WHITE outlines, as in S11 (PURPLE = analyst)
+BIT_ON, BIT_OFF = S.GREY, S.GREY_DARKER   # S11's compact tables: a 1 bit is a GREY cell
 PANEL_W, PANEL_H = 6.4, 3.2
 PANEL_XY = [(-3.32, 1.75), (3.32, 1.75), (-3.32, -1.75), (3.32, -1.75)]
 CARD_W, CARD_SIZE = 11.6, 32
@@ -134,8 +135,8 @@ class Recap(VoiceScene):
         l_xp = S.math("f(x')", size=30, color=XP_COLOR).next_to(d_xp, DOWN, buff=0.12)
         pic2 = VGroup(nl2, gap, d_x, d_xp, l_x, l_xp).move_to(c2)
 
-        # --- 3: the Laplace mechanism (S07: Lap(S(f)/eps), S GREEN, eps YELLOW)
-        f3 = S.math(r"M(x)", "=", r"f(x)", "+", r"\mathrm{Lap}\big(", r"S(f)", "/", r"\varepsilon", r"\big)",
+        # --- 3: the Laplace mechanism (S07's Proposition 1 card: Lap\!\left(S(f)/eps\right), S GREEN, eps YELLOW)
+        f3 = S.math(r"M(x)", "=", r"f(x)", "+", r"\mathrm{Lap}\!\left(", r"S(f)", "/", r"\varepsilon", r"\right)",
                     size=42)
         f3[5].set_color(SENS_COLOR)
         f3[7].set_color(EPS_COLOR)
@@ -155,9 +156,9 @@ class Recap(VoiceScene):
             masks[r, rng.choice(8, int(rng.integers(2, 5)), replace=False)] = 1
         cell = 0.23
         rows = VGroup(*[VGroup(*[Square(cell, stroke_color=S.BG, stroke_width=1)
-                                 .set_fill(S.WHITE if v else S.GREY_DARK, 0.85 if v else 1) for v in b])
+                                 .set_fill(BIT_ON if v else BIT_OFF, 1) for v in b])
                         .arrange(RIGHT, buff=0) for b in bits]).arrange(DOWN, buff=0.05)
-        over = VGroup(*[Square(cell * 0.86, stroke_color=MASK, stroke_width=2.2).move_to(rows[r][j])
+        over = VGroup(*[Square(cell * 0.8, stroke_color=MASK, stroke_width=2.5).move_to(rows[r][j])
                         for r in range(4) for j in np.flatnonzero(masks[r])])
         par = VGroup(*[S.text(str(int(np.dot(b, m) % 2)), 22, S.WHITE, font=S.FONT_SANS)
                        .next_to(rows[r], RIGHT, buff=0.14) for r, (b, m) in enumerate(zip(bits, masks))])
@@ -215,7 +216,7 @@ class Recap(VoiceScene):
 
     # ================================================================ 2. test yourself
     def questions_beat(self):
-        head = S.text("Test yourself", 44, S.YELLOW).to_edge(UP, buff=0.35)
+        head = S.text("Test yourself", 44, S.YELLOW).to_edge(UP, buff=0.45)
 
         # --- question 1: the average of n numbers in [0, 1]
         card1 = question_card([r"Sensitivity of the average of $n$ numbers in $[0,\,1]$?"])

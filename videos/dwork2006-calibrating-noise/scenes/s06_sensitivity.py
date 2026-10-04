@@ -13,9 +13,9 @@ SAY = NARRATION["S06"]
 
 # ---------------------------------------------------------------- histogram geometry
 H_LEFT, H_RIGHT = -6.3, -0.3     # x-extent of the histogram
-H_BASE = -2.45                   # baseline y
-UNIT = 0.19                      # height of one row (one count)
-COUNTS5 = [5, 8, 13, 10, 4]      # rows per bin of the 5-bin histogram, not counting Alice
+H_BASE = -2.7                    # baseline y
+H_MAX = 3.1                      # screen height of the tallest stack (Alice included) in every view
+N_ROWS = 150                     # rows besides Alice: enough that even 60 bins read as a histogram
 BAR_FILL = 0.55
 # Alice's value in [0, 1): in B2 at d = 5, then B4 (her change), then her hops at d = 20 and d = 60
 ALICE_U = (0.33, 0.67, 0.32, 0.74)
@@ -58,32 +58,30 @@ def bin_of(u, d):
     return min(int(u * d), d - 1)
 
 
-def row_values(counts=COUNTS5, mu=0.5, sd=0.26, seed=4):
-    """Values in [0, 1) of the other rows (deterministic): exactly counts[j] of them in 5-bin j,
-    spread inside each bin along a smooth bell shape, so every finer histogram is the same data."""
-    rng = np.random.default_rng(seed)
-    grid = np.linspace(0, 1, 4001)
-    dens = np.exp(-0.5 * ((grid - mu) / sd) ** 2)
-    vals = []
-    for j, c in enumerate(counts):
-        a, b = j / 5, (j + 1) / 5
-        m = (grid >= a) & (grid <= b)
-        cdf = np.cumsum(dens[m])
-        cdf = (cdf - cdf[0]) / (cdf[-1] - cdf[0])
-        v = np.interp((np.arange(c) + 0.5) / c, cdf, grid[m]) + rng.normal(0, 0.05 / c, c)
-        vals += list(np.clip(v, a + 1e-3, b - 1e-3))
-    return np.sort(np.array(vals))
+def row_values(n=N_ROWS, mu=0.48, sd=0.28, floor=0.15):
+    """Values in [0, 1) of the other rows (deterministic): the quantiles of a smooth bell on a low
+    floor, so every histogram of them (5, 20 or 60 bins) has a smooth outline and no empty bins."""
+    grid = np.linspace(0, 1, 20001)
+    dens = np.exp(-0.5 * ((grid - mu) / sd) ** 2) + floor
+    cdf = np.cumsum(dens)
+    cdf = (cdf - cdf[0]) / (cdf[-1] - cdf[0])
+    return np.interp((np.arange(n) + 0.5) / n, cdf, grid)
 
 
 ROW_U = row_values()
-STROKE = {5: 1.5, 20: 1.1, 60: 0.7}
+COUNTS5 = [sum(bin_of(u, 5) == j for u in ROW_U) for j in range(5)]
+# one row = one block; the vertical scale is set per view so the tallest stack is H_MAX high
+# (an unlabelled count axis, rescaled as the bins get finer, like a density histogram)
+UNIT = {d: H_MAX / (max(sum(bin_of(u, d) == j for u in ROW_U) for j in range(d)) + 1) for d in (5, 20, 60)}
+STROKE = {5: 1.2, 20: 1.1, 60: 0.8}
 
 
 def unit_block(d, j, k, color, opacity):
     """One row drawn as a unit block: the (k+1)-th block from the bottom of bin j of a d-bin histogram."""
     cx, w = bin_x(d, j)
-    b = Rectangle(width=w * 0.8, height=UNIT, stroke_color=color, stroke_width=STROKE[d] + (0.5 if color == ALICE else 0))
-    return b.set_fill(color, opacity).move_to([cx, H_BASE + (k + 0.5) * UNIT, 0])
+    u = UNIT[d]
+    b = Rectangle(width=w * 0.8, height=u, stroke_color=color, stroke_width=STROKE[d] + (0.5 if color == ALICE else 0))
+    return b.set_fill(color, opacity).move_to([cx, H_BASE + (k + 0.5) * u, 0])
 
 
 def layout(d, alice_u):
@@ -101,7 +99,7 @@ def layout(d, alice_u):
 def hover(block):
     """Alice's icon hovering above her block, tethered to it."""
     icon = person_icon(ALICE, height=0.45).move_to(block.get_top() + UP * 0.75)
-    name = S.text("Alice", 22, ALICE).next_to(icon, LEFT, buff=0.12)
+    name = S.text("Alice", 22, ALICE).next_to(icon, UP, buff=0.06)    # above: clear of the bars' labels
     tether = DashedLine(icon.get_bottom() + DOWN * 0.04, block.get_top(), color=ALICE, stroke_width=2,
                         dash_length=0.06)
     return VGroup(tether, icon, name)
@@ -130,7 +128,7 @@ def money(v):
 class Sensitivity(VoiceScene):
     def construct(self):
         # ============================================================ 0. what is sensitivity?
-        names = ["Bob", "Carol", "Dev", "Alice"]
+        names = ["Bob", "Carol", "Dan", "Alice"]
         base_vals = ["no X", "has X", "no X", "no X"]
         stack, rows, dots = db_stack(names, base_vals)
         stack.move_to([-4.85, 0.95, 0])
@@ -268,7 +266,7 @@ class Sensitivity(VoiceScene):
         base_line = Line([H_LEFT - 0.1, H_BASE, 0], [H_RIGHT + 0.1, H_BASE, 0], color=S.GREY, stroke_width=2)
         bin_labs = VGroup(*[S.math(f"B_{j + 1}", size=30, color=S.GREY).move_to([bin_x(5, j)[0], H_BASE - 0.35, 0])
                             for j in range(5)])
-        dividers = VGroup(*[DashedLine([H_LEFT + 1.2 * j, H_BASE, 0], [H_LEFT + 1.2 * j, H_BASE + 2.6, 0],
+        dividers = VGroup(*[DashedLine([H_LEFT + 1.2 * j, H_BASE, 0], [H_LEFT + 1.2 * j, H_BASE + H_MAX + 0.2, 0],
                                        color=S.GREY_DARK, stroke_width=1.5, dash_length=0.08) for j in range(6)])
         blk5, a_blk, cnt5 = layout(5, ALICE_U[0])          # one unit block per row
         assert cnt5 == COUNTS5
@@ -277,7 +275,7 @@ class Sensitivity(VoiceScene):
         def d_label(n):
             g = VGroup(S.math("d", "=", str(n), size=44), S.text("bins", 28, S.GREY))
             g.arrange(RIGHT, buff=0.2, aligned_edge=DOWN)
-            return g.move_to([-5.6, 1.15, 0], aligned_edge=LEFT)
+            return g.move_to([-5.6, 1.8, 0], aligned_edge=LEFT)
 
         d_grp = d_label(5)
         d_lab, d_word = d_grp
@@ -292,7 +290,7 @@ class Sensitivity(VoiceScene):
             self.play(Create(base_line), FadeIn(dividers), FadeIn(bin_labs), run_time=0.9)
             self.play(FadeIn(d_grp), run_time=0.6)
             vo.wait_until("and release how many")
-            self.play(LaggedStart(*[FadeIn(b, shift=DOWN * 0.6) for b, _ in drops], lag_ratio=0.06),
+            self.play(LaggedStart(*[FadeIn(b, shift=DOWN * 0.6) for b, _ in drops], lag_ratio=0.02),
                       run_time=2.2)
             self.play(FadeIn(a_blk, shift=DOWN * 0.6), run_time=0.4)
             self.play(FadeIn(alice[1:], shift=DOWN * 0.2), Create(alice[0]), run_time=0.6)
@@ -393,12 +391,12 @@ class Sensitivity(VoiceScene):
 
         tag = S.text("illustration", 20, S.GREY)
         tag = VGroup(SurroundingRectangle(tag, color=S.GREY, buff=0.08, corner_radius=0.05, stroke_width=1.5), tag)
-        tag.to_corner(UL, buff=0.45)
+        tag.to_corner(UL, buff=0.58)        # inside the safe area (x >= -6.6)
         q_txt = S.text("What is the largest income in the database?", 32)
         q_box = SurroundingRectangle(q_txt, color=S.GREY, buff=0.2, corner_radius=0.12, stroke_width=2)
         q_box.set_fill(S.GREY_DARKER, 1)
         query = VGroup(q_box, q_txt).move_to([0.6, 2.75, 0])
-        inames = ["Bob", "Carol", "Dev", "Erin", "Femi"]
+        inames = ["Bob", "Carol", "Dan", "Erin", "Femi"]
         incomes = [52e3, 81e3, 38e3, 64e3, 45e3]
         irows = database_rows(inames, [money(v) for v in incomes], color=S.GREY, width=2.9, row_height=0.5,
                               size=22)
@@ -492,7 +490,7 @@ class Sensitivity(VoiceScene):
         knob.move_to(slider.point_from_proportion(0.5))
         not_db = S.text("does not depend on the actual database", 26, S.GREY).next_to(lbox, DOWN, buff=0.35)
         mini_vals = [["no X", "has X", "no X"], ["has X", "has X", "no X"], ["no X", "no X", "has X"]]
-        minis = [database_rows(["Bob", "Carol", "Dev"], v, color=S.GREY, width=2.3, row_height=0.34, size=20)
+        minis = [database_rows(["Bob", "Carol", "Dan"], v, color=S.GREY, width=2.3, row_height=0.34, size=20)
                  for v in mini_vals]
         for m in minis:
             m.next_to(not_db, DOWN, buff=0.25)

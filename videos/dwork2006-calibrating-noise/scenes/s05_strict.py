@@ -118,7 +118,7 @@ class WhyStrict(VoiceScene):
 
         # ============================================================ 1. publish one random row
         caption = S.text("Mechanism: publish one random row", 34).to_edge(UP, buff=0.55)
-        names = ["Bob", "Carol", "Dev", "Alice"]
+        names = ["Bob", "Carol", "Dan", "Alice"]
         stack, rows, dots = db_stack(names, ["no X", "has X", "no X", "no X"])
         mark_alice(rows[-1])
         rows[-1][3].set_color(X_COLOR)
@@ -148,8 +148,8 @@ class WhyStrict(VoiceScene):
         token_head = S.text("published", 22, S.GREY).next_to(token, UP, buff=0.12)
 
         # --- the output distribution: one slot per possible output (name, value)
-        persons = ["Bob", "Carol", "Dev", None, "Alice"]
-        truth_x = {"Bob": "no", "Carol": "has", "Dev": "no", "Alice": "no"}
+        persons = ["Bob", "Carol", "Dan", None, "Alice"]
+        truth_x = {"Bob": "no", "Carol": "has", "Dan": "no", "Alice": "no"}
         truth_xp = dict(truth_x, Alice="has")
         slot_w, pair_gap, base_y = 0.76, 0.28, -2.15
         cursor = -1.4
@@ -240,7 +240,7 @@ class WhyStrict(VoiceScene):
         zoom_t.shift(np.array([-2.7, -1.45, 0]) - zoom_t[0].get_center())
         name_t = S.text("Alice", 40, ALICE).next_to(zoom_t[1], DOWN, buff=0.25)
         others = VGroup(*bases, *slot_labs[:-1], *name_labs[:-1], ell, y_tick, y_lab,
-                        *bars_x.values(), *[bars_xp[p] for p in ["Bob", "Carol", "Dev"]])
+                        *bars_x.values(), *[bars_xp[p] for p in ["Bob", "Carol", "Dan"]])
         lab_n = S.math(r"x'\!:\ 1/n", size=40, color=XP_COLOR).next_to(zoom_t[2], UP, buff=0.18)
         lab_0 = S.math(r"x\!:\ 0", size=40, color=X_COLOR).next_to(zoom_t[3], LEFT, buff=0.2)
         lab_0.shift(UP * 0.12)

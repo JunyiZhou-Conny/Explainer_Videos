@@ -361,7 +361,7 @@ class LineageBefore(VoiceScene):
         q_box = RoundedRectangle(width=q_text.width + 0.36, height=q_text.height + 0.3, corner_radius=0.14,
                                  stroke_color=S.GREY, stroke_width=2).set_fill(S.GREY_DARKER, 1)
         q_text.move_to(q_box)
-        question = VGroup(q_box, q_text).move_to([-4.75, -1.45, 0])
+        question = VGroup(q_box, q_text).move_to([-4.45, -1.45, 0])      # left edge inside x = -6.6
         c1 = coin(0.28, "H").move_to([-4.55, -2.5, 0])
         private = S.text("in private", 20, S.GREY).move_to([-5.15, -3.22, 0])
         a_heads = Arrow(c1.get_right() + UP * 0.08, [-2.75, -1.95, 0], buff=0.08, color=S.GREY,
@@ -390,11 +390,11 @@ class LineageBefore(VoiceScene):
 
         answers, _ = rr_running_estimate()
         crowd = VGroup(*[person_icon(S.WHITE if answers[i] else S.GREY_DARK, 0.24) for i in range(36)])
-        crowd.arrange_in_grid(rows=6, cols=6, buff=(0.1, 0.07)).move_to([0.7, -2.05, 0])
+        crowd.arrange_in_grid(rows=6, cols=6, buff=(0.1, 0.07)).move_to([0.55, -2.05, 0])
         crowd_lab = VGroup(person_icon(S.WHITE, 0.22), S.text("said “yes”", 20, S.GREY)).arrange(RIGHT, buff=0.12)
         crowd_lab.next_to(crowd, DOWN, buff=0.14)
-        ax, ax_labels, est_curve, true_line = rr_plot()
-        shift = np.array([4.0, -2.15, 0]) - ax.get_center()
+        ax, ax_labels, est_curve, true_line = rr_plot(width=3.0)
+        shift = np.array([3.5, -2.15, 0]) - ax.get_center()      # leaves room for 'people asked'
         for m in (ax, ax_labels, est_curve, true_line):
             m.shift(shift)
         ax_title = S.text("estimated true rate", 20, S.GREY).next_to(ax, UP, buff=0.12).align_to(ax, LEFT)
@@ -580,7 +580,7 @@ class LineageBefore(VoiceScene):
             vo.wait_until("and found the governor")
             self.play(gov_name.animate.set_color(ALICE), run_time=0.4)
             self.play(TransformFromCopy(gov_name, gov_copy, path_arc=0.6), run_time=1.1)
-            self.play(Create(gov_row_hl), Flash(gov_copy, color=ALICE, flash_radius=0.6), run_time=0.7)
+            self.play(Create(gov_row_hl), Flash(gov_copy, color=ALICE, flash_radius=0.45, line_length=0.15), run_time=0.7)
             vo.wait_until("The lesson")
             self.play(FadeOut(VGroup(hosp, hosp_title2, hl_h, gov_row_hl, gov_copy, join, hl_v)),
                       run_time=0.6)
@@ -615,17 +615,18 @@ class LineageBefore(VoiceScene):
                     row[i].set_fill(opacity=0).set_stroke(S.GREY_DARK, 2)
             q_rows.add(row)
             q_labs.add(S.math(f"q_{j + 1}", size=30, color=S.GREY).next_to(row, LEFT, buff=0.4))
-            v = S.text(f"→ {a}", 22, S.WHITE).move_to([1.2, y_q[j], 0], aligned_edge=LEFT)
-            vn = S.text(f"→ {an}", 22, NOISE_COLOR).move_to([1.2, y_q[j], 0], aligned_edge=LEFT)
+            v = S.text(f"→ {a}", 22, S.WHITE).move_to([1.05, y_q[j], 0], aligned_edge=LEFT)
+            vn = S.text(f"→ {an}", 22, NOISE_COLOR).move_to([1.05, y_q[j], 0], aligned_edge=LEFT)
             q_vals.add(v)
             q_vals_noisy.add(vn)
-            bx = 3.0
+            bx = 2.85
             q_bars.add(self._err_bar(bx, y_q[j], 0.1, S.WHITE))
             q_bars_noisy.add(self._err_bar(bx, y_q[j], 0.55, NOISE_COLOR))
         for lab in q_labs:
             lab.align_to(db_lab, RIGHT)
-        err_lab = S.math(r"\text{error} \ll \sqrt{n}", size=32).move_to([3.75, y_q[1], 0], aligned_edge=LEFT)
-        more = S.text("… many more questions", 20, S.GREY).next_to(err_lab, DOWN, buff=0.25).align_to(err_lab, LEFT)
+        # top right of the query block, so '... many more questions' stays apart from '2 questions'
+        err_lab = S.math(r"\text{error} \ll \sqrt{n}", size=32).move_to([3.55, y_q[0], 0], aligned_edge=LEFT)
+        more = S.text("… many more questions", 20, S.GREY).next_to(err_lab, DOWN, buff=0.12).align_to(err_lab, LEFT)
         copy_bits = ["1", "0", "1", "1", "0", "1", "1", "0"]
         copy_q = VGroup(*[bit_cell("?", cw, 0.38, color=S.GREY).move_to([cx[i], y_copy, 0]) for i in range(8)])
         copy_f = VGroup(*[bit_cell(copy_bits[i], cw, 0.38,
@@ -665,7 +666,7 @@ class LineageBefore(VoiceScene):
             self.play(Transform(copy_q[0], copy_f[0]), one.animate.move_to(copy_f[0][1]).set_opacity(0),
                       run_time=0.9)
             self.remove(one)
-            self.play(Flash(copy_q[0], color=ALICE, flash_radius=0.4),
+            self.play(Flash(copy_q[0], color=ALICE, flash_radius=0.3, line_length=0.15),
                       pulse(db[0], 1.2), run_time=0.8)
             vo.wait_until("Noise is the price")
             self.play(*[Transform(q_bars[j], q_bars_noisy[j]) for j in range(3)],
@@ -679,8 +680,8 @@ class LineageBefore(VoiceScene):
         header4 = stage_header("Dwork & Nissim 2004", "· Blum, Dwork, McSherry & Nissim 2005", size=24)
         track_y = -1.55
         track = RoundedRectangle(width=4.6, height=0.2, corner_radius=0.1, stroke_color=S.GREY_DARK,
-                                 stroke_width=1.5).set_fill(S.GREY_DARKER, 1).move_to([-3.0, track_y, 0])
-        q_word = S.text("questions", 22, S.GREY).next_to(track, LEFT, buff=0.25)
+                                 stroke_width=1.5).set_fill(S.GREY_DARKER, 1).move_to([-2.75, track_y, 0])
+        q_word = S.text("questions", 22, S.GREY).next_to(track, LEFT, buff=0.2)
         n_lab = S.math("n", size=32, color=S.GREY).next_to(track, RIGHT, buff=0.15)
         tick_x = [track.get_left()[0] + 0.12 + 0.17 * i for i in range(5)]
         ticks = VGroup(*[Line([x, track_y - 0.13, 0], [x, track_y + 0.13, 0], color=S.WHITE, stroke_width=3)
@@ -688,7 +689,7 @@ class LineageBefore(VoiceScene):
         k_brace = Brace(ticks, DOWN, buff=0.12, color=S.WHITE)
         k_lab = S.math("k", size=30).next_to(k_brace, DOWN, buff=0.06)
         limit = VGroup(S.text("number of questions", 24, S.WHITE), S.math(r"k \ll n", size=34)).arrange(RIGHT, buff=0.2)
-        limit.move_to([-3.0, -2.55, 0])
+        limit.move_to([-2.75, -2.55, 0])
         bump_ax = Axes(x_range=[-3, 3, 1], y_range=[0, 0.55, 0.5], x_length=1.2, y_length=0.4, tips=False,
                        axis_config={"color": S.GREY_DARK, "stroke_width": 1.5, "include_ticks": False})
         # SuLQ (and Dwork & Nissim 2004) added Gaussian noise N(0, R): a bell, not a Laplace tent. Its
@@ -698,8 +699,8 @@ class LineageBefore(VoiceScene):
         noise_ic = VGroup(bump_ax, bump)
         noisy = VGroup(S.text("each answer: count +", 22, S.WHITE), noise_ic,
                        S.text("modest noise", 22, NOISE_COLOR)).arrange(RIGHT, buff=0.15)
-        noisy.move_to([-3.0, -3.25, 0])
-        sulq_big = S.text("SuLQ", 52, S.WHITE, weight="BOLD").move_to([3.7, -1.38, 0])
+        noisy.move_to([-2.75, -3.25, 0])
+        sulq_big = S.text("SuLQ", 52, S.WHITE, weight="BOLD").move_to([4.0, -1.55, 0])
         sulq_full = S.text("Sub-Linear Queries", 26, S.GREY).next_to(sulq_big, DOWN, buff=0.18)
         for i in (0, 4, 10):                       # S, L, Q
             sulq_full[i].set_color(S.WHITE)
@@ -745,7 +746,8 @@ class LineageBefore(VoiceScene):
         tag_leak = VGroup(S.text("✗", 22, NOISE_COLOR), S.text("a tiny chance of a large leak", 22, S.GREY)
                           ).arrange(RIGHT, buff=0.12)
         tags = VGroup(tag_sums, tag_leak).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
-        tags.next_to(sums, DOWN, buff=0.25).set_x(4.3)
+        sums_up = sums.copy().next_to(sulq_big, DOWN, buff=0.25)
+        tags.next_to(sums_up, DOWN, buff=0.3).set_x(sums_up.get_x())
 
         packed = packed_positions(chips)
         frame_of = {k: (c[0][0] if k == "warner" else c[0]) for k, c in chips.items()}
@@ -753,21 +755,32 @@ class LineageBefore(VoiceScene):
         arrows, hand_labels = handover_arrows(card)
         p_lines = packed_lane_lines()
         p_labels = packed_lane_labels()
-        caption = VGroup(S.text("TCC = a cryptography conference:", 26, S.GREY),
-                         S.text("define security first,", 26, S.WHITE),
-                         S.text("then prove it", 26, S.WHITE)).arrange(RIGHT, buff=0.16)
-        caption.move_to([0, -2.95, 0])
-        ul1 = Line(caption[1].get_corner(DL), caption[1].get_corner(DR), color=S.WHITE, stroke_width=2.5).shift(DOWN * 0.08)
-        ul2 = Line(caption[2].get_corner(DL), caption[2].get_corner(DR), color=S.WHITE, stroke_width=2.5).shift(DOWN * 0.08)
+        # the cryptographer's habit, staged in the bottom third under the packed map:
+        # "TCC = a cryptography conference" over two steps, define security -> then prove it
+        tcc = VGroup(S.text("TCC", 28, S.YELLOW), S.text("= a cryptography conference", 28, S.GREY))
+        tcc.arrange(RIGHT, buff=0.16, aligned_edge=DOWN).move_to([0, -1.6, 0])
+        steps = VGroup()
+        for title, sub in (("define security first", "against every possible attacker"),
+                           ("then prove it", "the mechanism meets it")):
+            t = S.text(title, 30, S.WHITE)
+            u = S.text(sub, 22, S.GREY)
+            body = VGroup(t, u).arrange(DOWN, buff=0.12)
+            box = RoundedRectangle(width=body.width + 0.6, height=1.15, corner_radius=0.14,
+                                   stroke_color=S.GREY, stroke_width=2).set_fill(S.GREY_DARKER, 1)
+            body.move_to(box)
+            steps.add(VGroup(box, body))
+        step_arrow = Arrow(LEFT * 0.45, RIGHT * 0.45, buff=0, color=S.GREY, stroke_width=3, tip_length=0.18)
+        VGroup(steps[0], step_arrow, steps[1]).arrange(RIGHT, buff=0.25).move_to([0, -2.7, 0])
         all_pins = VGroup(*pins.values())
 
         with self.voiceover(SAY[5]) as vo:
+            self.play(FadeOut(sulq_full), Transform(sums, sums_up), run_time=0.5)
             self.play(Indicate(sums[0:2], color=S.WHITE), FadeIn(tag_sums, shift=UP * 0.15), run_time=0.8)
             vo.wait_until("and its definition")
             self.play(FadeIn(tag_leak, shift=UP * 0.15), run_time=0.7)
             self.wait(max(0.0, vo.time_until("This paper takes") - 2.9))
-            self.play(FadeOut(stage4_left), FadeOut(VGroup(sulq_big, sulq_full, sums)),
-                      tags.animate.move_to([-3.0, -1.85, 0]), run_time=0.7)
+            # the two caveats stay put, under where the card will appear, and later turn into its parts
+            self.play(FadeOut(stage4_left), FadeOut(VGroup(sulq_big, sums)), run_time=0.7)
             self.play(FadeOut(axis), FadeOut(all_pins), *[frames[k].animate.set_stroke(S.GREY) for k in active],
                       *[chips[k].animate.shift(packed[k] - frame_of[k].get_center()) for k in chips],
                       *[Transform(lanes[i], p_lines[i]) for i in range(3)],
@@ -789,13 +802,21 @@ class LineageBefore(VoiceScene):
             self.play(FadeOut(card.empty[2]), FadeIn(card.full[2], shift=RIGHT * 0.2), run_time=0.7)
             vo.wait_until("Fittingly")
             self.play(Indicate(card.venue, color=S.YELLOW, scale_factor=1.3), run_time=0.8)
-            self.play(FadeIn(caption, shift=UP * 0.2), run_time=0.8)
+            self.play(TransformFromCopy(card.venue[:3], tcc[0]), FadeIn(tcc[1], shift=UP * 0.15), run_time=0.9)
             vo.wait_until("to define security")
-            self.play(Create(ul1), Indicate(caption[1], color=S.WHITE, scale_factor=1.05), run_time=0.9)
-            self.play(Circumscribe(card.frame, color=S.YELLOW, buff=0.06), run_time=1.2)
+            # step 1 is what this paper's first slot is: the definition
+            self.play(FadeIn(steps[0], shift=UP * 0.2), run_time=0.7)
+            self.play(steps[0][0].animate.set_stroke(S.WHITE),
+                      Circumscribe(card.full[0], color=EPS_COLOR, buff=0.05), run_time=0.9)
+            vo.wait_until("every possible attacker")
+            self.play(Indicate(steps[0][1][1], color=S.WHITE, scale_factor=1.06),
+                      Indicate(hand_labels[1], color=S.WHITE, scale_factor=1.12), run_time=0.9)
             vo.wait_until("and then prove")
-            self.play(Create(ul2), Indicate(caption[2], color=S.WHITE, scale_factor=1.05), run_time=0.8)
-        self.wait(0.6)
+            self.play(GrowArrow(step_arrow), FadeIn(steps[1], shift=LEFT * 0.2),
+                      steps[0][0].animate.set_stroke(S.GREY), run_time=0.7)
+            self.play(steps[1][0].animate.set_stroke(S.WHITE),
+                      Circumscribe(card.full[2], color=NOISE_COLOR, buff=0.05), run_time=vo.remaining(0.9))
+        self.wait(1.0)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
 
     # ------------------------------------------------------------------ helpers

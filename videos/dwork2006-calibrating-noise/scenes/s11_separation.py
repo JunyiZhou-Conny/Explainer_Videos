@@ -16,11 +16,16 @@ from explainer import style as S
 from explainer.components import gaussian_pdf, person_icon, ponder_card
 from explainer.scene import VoiceScene
 
-from common import ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR
+from common import ALICE, ANALYST_COLOR, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR
 
 SAY = NARRATION["S11"]
 
-MASK = S.PURPLE        # a row's mask r_i: the bit positions that count
+# A row's mask r_i (the bit positions that count): WHITE outlines, so that it never borrows a
+# semantic colour (PURPLE is the analyst's, video-wide). In the compact tables a 1 bit is a GREY
+# cell, so the white outline stays visible on it.
+MASK = S.WHITE
+BIT_ON = S.GREY        # a 1 bit in the compact (cell-only) tables
+BIT_OFF = S.GREY_DARKER
 EVEN = X_COLOR         # the "every row even" world (true answer 0)
 ODD = XP_COLOR         # the "every row odd" world  (true answer n)
 TICK = S.TEAL          # ✓
@@ -75,7 +80,7 @@ def bit_table(bits, cell=0.48, icon_color=X_COLOR):
     return rows.arrange(DOWN, buff=0)
 
 
-def mask_overlays(cells_per_row, masks, scale=0.84, width=3, fill=0.32):
+def mask_overlays(cells_per_row, masks, scale=0.84, width=3, fill=0.16):
     out = VGroup()
     for cells, m in zip(cells_per_row, masks):
         for j in np.flatnonzero(m):
@@ -100,9 +105,9 @@ def mask_card(masks, cell=0.1):
 def mini_table(bits, masks, color, cell=0.24):
     """Compact database: filled cells (1 = light), mask outlines, parity digits. VGroup(frame, rows, masks, par)."""
     rows = VGroup(*[VGroup(*[Square(cell, stroke_color=S.BG, stroke_width=1)
-                             .set_fill(S.WHITE if v else S.GREY_DARK, 0.85 if v else 1) for v in b])
+                             .set_fill(BIT_ON if v else BIT_OFF, 1) for v in b])
                     .arrange(RIGHT, buff=0) for b in bits]).arrange(DOWN, buff=0.04)
-    over = mask_overlays(rows, masks, scale=0.86, width=2.5, fill=0.0)
+    over = mask_overlays(rows, masks, scale=0.8, width=2.5, fill=0.0)
     par = VGroup(*[digit(parity(b, m), 22, color).next_to(r, RIGHT, buff=0.16)
                    for b, m, r in zip(bits, masks, rows)])
     frame = SurroundingRectangle(VGroup(rows, par), buff=0.11, corner_radius=0.08, stroke_color=color,
@@ -219,6 +224,12 @@ def ponder_at(scene, question, seconds, pos, width):
     return card
 
 
+def word(t, w):
+    """The glyphs of word `w` inside Text `t` (Text drops spaces from its submobjects)."""
+    i = t.text.replace(" ", "").index(w)
+    return t[i:i + len(w)]
+
+
 def fan(cards, center, radius=6.0, spread=0.62):
     """Arrange cards like a hand of playing cards."""
     k = len(cards)
@@ -251,8 +262,8 @@ class Separation(VoiceScene):
         dbL_lab = S.math("x", size=34, color=X_COLOR).next_to(dbL, DOWN, buff=0.15)
         cur = person_icon(S.WHITE, 1.0).move_to([-4.15, FY, 0])
         cur_lab = S.text("curator", 22, S.GREY).next_to(cur, DOWN, buff=0.15)
-        ana = person_icon(S.GREY, 0.95).move_to([-1.05, FY, 0])
-        ana_lab = S.text("analyst", 22, S.GREY).next_to(ana, DOWN, buff=0.15)
+        ana = person_icon(ANALYST_COLOR, 0.95).move_to([-1.05, FY, 0])
+        ana_lab = S.text("analyst", 22, ANALYST_COLOR).next_to(ana, DOWN, buff=0.15)
         capL = S.text("ask, answer, repeat", 24, S.GREY).move_to([-3.3, -1.75, 0])
 
         dbR = db_icon(w=1.15, rh=0.25).move_to([0.95, FY, 0])
@@ -262,17 +273,18 @@ class Separation(VoiceScene):
         sheet = release_sheet(np.random.default_rng(2), w=1.7, h=2.0).move_to([4.5, FY + 0.1, 0])
         sheet_lab = S.math("M(", "x", ")", size=34).next_to(sheet, UP, buff=0.15)
         sheet_lab[1].set_color(X_COLOR)
-        users = VGroup(*[person_icon(S.GREY, 0.48) for _ in range(4)]).arrange(RIGHT, buff=0.36)
+        users = VGroup(*[person_icon(ANALYST_COLOR, 0.48) for _ in range(4)]).arrange(RIGHT, buff=0.36)  # analysts
         users.move_to([4.5, -1.0, 0])
         user_arrows = VGroup(*[Arrow(u.get_top(), sheet.get_bottom() + RIGHT * (u.get_x() - sheet.get_x()) * 0.5,
                                      buff=0.08, color=S.GREY, stroke_width=2.5, tip_length=0.14,
                                      max_tip_length_to_length_ratio=0.3) for u in users])
         capR = S.text("publish once, walk away", 24, S.GREY).move_to([3.3, -1.75, 0])
-        defn = S.math(r"\left|\ln\frac{\Pr[M(", "x", r")=t]}{\Pr[M(", "x'", r")=t]}\right|", r"\le",
-                      r"\varepsilon", size=40)
-        defn[1].set_color(X_COLOR)
-        defn[3].set_color(XP_COLOR)
-        defn[6].set_color(EPS_COLOR)
+        # Definition 1 exactly as S04 typesets and colours it (and S13 recaps it)
+        defn = S.math(r"\left|\,", r"\ln", r"\!\left(", r"{\Pr[M(x)=t]", r"\over", r"\Pr[M(x')=t]}",
+                      r"\right)", r"\,\right|", r"\le", r"\varepsilon", size=40)
+        defn[3].set_color(X_COLOR)
+        defn[5].set_color(XP_COLOR)
+        defn[9].set_color(EPS_COLOR)
         qmark = S.text("?", 54, S.YELLOW)
         defn_q = VGroup(defn, qmark).arrange(RIGHT, buff=0.3).move_to([0, -2.95, 0])
 
@@ -323,7 +335,7 @@ class Separation(VoiceScene):
         par_head = S.text("parity", 22, S.GREY).next_to(pcells[0], UP, buff=0.12)
         brace = Brace(cells[-1], DOWN, buff=0.1, color=S.GREY)
         brace_lab = S.math(r"d = 8\ \text{bits}", size=30, color=S.GREY).next_to(brace, DOWN, buff=0.1)
-        legend = VGroup(Square(0.3, stroke_color=MASK, stroke_width=3).set_fill(MASK, 0.32),
+        legend = VGroup(Square(0.3, stroke_color=MASK, stroke_width=3).set_fill(MASK, 0.16),
                         S.text("mask: the bits that count", 24, MASK)).arrange(RIGHT, buff=0.15)
         legend.next_to(brace_lab, RIGHT, buff=0.9)
         qcard = query_card("How many rows have odd parity inside their own mask?", width=10.2)
@@ -332,13 +344,6 @@ class Separation(VoiceScene):
         count = S.math("f(", "x", ")", "=", str(sum(pars)), size=52)
         count[1].set_color(X_COLOR)
         count.move_to([4.6, 0.95, 0])
-        # the paper's f_g(x) = sum_i r_i (.) x_i, with r_i (.) x_i = <r_i, x_i> mod 2
-        formula = S.math("f(", "x", ")", "=", r"\textstyle\sum_{i=1}^{n}", r"\big(", "r_i", r"\cdot", "x_i",
-                         r"\bmod 2", r"\big)", size=40)
-        formula[1].set_color(X_COLOR)
-        formula[6].set_color(MASK)
-        formula[8].set_color(X_COLOR)
-        formula.move_to([-0.55, -3.05, 0])
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(t_right, divider, sheet, sheet_lab, users, user_arrows, capR, capL, defn_q,
@@ -376,7 +381,6 @@ class Separation(VoiceScene):
                       *[Indicate(pdigs[i], color=S.WHITE, scale_factor=1.4) for i in odd_rows], run_time=0.5)
             self.play(TransformFromCopy(VGroup(*[pdigs[i] for i in odd_rows]), count[4]),
                       FadeIn(count[:4]), run_time=0.8)
-            self.play(Write(formula), run_time=0.8)
 
             # sensitivity one: change one row (PINK) -> at most one parity changes -> count moves by <= 1
             vo.wait_until("Each query has")
@@ -402,7 +406,8 @@ class Separation(VoiceScene):
             # back to x: the curator answers the query on the real database
             self.play(Transform(digs[flip_i][flip_j], old_bit), Transform(pdigs[flip_i], old_par),
                       pcells[flip_i].animate.set_stroke(S.GREY, 1.5), row[1].animate.set_color(X_COLOR),
-                      FadeOut(hl), run_time=0.45)
+                      FadeOut(hl), FadeOut(count2), sens.animate.move_to(count2, aligned_edge=LEFT),
+                      run_time=0.45)
             answer = S.math(str(sum(pars)), r"\pm", r"1/", r"\varepsilon", size=40)
             answer[1:3].set_color(NOISE_COLOR)
             answer[3].set_color(EPS_COLOR)
@@ -466,7 +471,7 @@ class Separation(VoiceScene):
         thm = statement_card("Theorem 3", thm_line).move_to([0, -2.78, 0])
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(cur, cur_lab, ans, count, count2, sens, formula, qcard, legend, brace,
+            self.play(FadeOut(VGroup(cur, cur_lab, ans, count, sens, qcard, legend, brace,
                                      brace_lab, par_head, x_lab)), run_time=0.6)
             self.play(FadeOut(VGroup(table, *pdigs, overlays)), FadeIn(card0[0]), FadeIn(card0[2]),
                       TransformFromCopy(overlays, card0[1]), run_time=1.1)
@@ -545,16 +550,20 @@ class Separation(VoiceScene):
         deck_rng = np.random.default_rng(23)
         deck = VGroup(*[mask_card([random_mask(deck_rng) for _ in range(N)]).scale(0.8) for _ in range(12)])
         for i, c in enumerate(deck):
-            c.move_to([-1.7 + 0.04 * i, 1.4 + 0.04 * i, 0])
-        deck_arrow = Arrow([-2.3, 1.4, 0], [-4.6, 1.4, 0], buff=0, color=S.GREY, stroke_width=3, tip_length=0.18)
-        deck_lab = S.text("all of them?", 24, S.GREY).next_to(deck, DOWN, buff=0.3)
+            c.move_to([-2.15 + 0.04 * i, 1.4 + 0.04 * i, 0])
+        # the analyst holds the deck of queries (PURPLE, as everywhere in the video)
+        ana2 = person_icon(ANALYST_COLOR, 0.8).move_to([-0.75, 1.4, 0])
+        ana2_lab = S.text("analyst", 22, ANALYST_COLOR).next_to(ana2, DOWN, buff=0.15)
+        deck_arrow = Arrow([-2.75, 1.4, 0], [-4.65, 1.4, 0], buff=0, color=S.GREY, stroke_width=3, tip_length=0.18)
+        deck_lab = S.text("all of them?", 24, S.GREY).next_to(deck_arrow, DOWN, buff=0.18)
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(keep_fade), run_time=0.5)
-            self.play(FadeIn(VGroup(cur2, cur2_lab), shift=RIGHT * 0.2),
+            self.play(FadeIn(VGroup(cur2, cur2_lab), shift=RIGHT * 0.2), FadeIn(VGroup(ana2, ana2_lab), shift=LEFT * 0.2),
                       LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in deck], lag_ratio=0.05), run_time=0.8)
             vo.wait_until("couldn't an analyst")
-            self.play(GrowArrow(deck_arrow), FadeIn(deck_lab), run_time=0.8)
+            self.play(GrowArrow(deck_arrow), FadeIn(deck_lab), Indicate(ana2, color=ANALYST_COLOR, scale_factor=1.15),
+                      run_time=0.8)
             self.play(Wiggle(deck, scale_value=1.05), run_time=vo.remaining(0.8))
         card = ponder_at(self, "Couldn't an analyst ask the\ninteractive curator all of\nthese queries too?",
                          seconds=10, pos=[3.3, 0.6, 0], width=6.2)
@@ -846,25 +855,30 @@ class Separation(VoiceScene):
         # ============================================================ 7. the quantifiers
         q_title = S.text("Careful with the quantifiers", 40, S.WHITE).move_to([0, 3.0, 0])
         R1, R2 = 1.45, -0.55
-        one_card = mask_card(masks, cell=0.13).move_to([-5.4, R1, 0])
-        one_sheet = release_sheet(np.random.default_rng(3), w=1.0, h=1.2).move_to([-3.45, R1, 0])
-        one_arr = Arrow(one_card.get_right(), one_sheet.get_left(), buff=0.12, color=S.GREY, stroke_width=3,
-                        tip_length=0.15)
+        PIC_Q, PIC_R = -5.75, -4.3          # x of the query card(s) and of the release sheet
+        one_card = mask_card(masks, cell=0.11).move_to([PIC_Q, R1, 0])
+        one_sheet = release_sheet(np.random.default_rng(3), w=0.85, h=1.05).move_to([PIC_R, R1, 0])
+        one_arr = Arrow(one_card.get_right(), one_sheet.get_left(), buff=0.1, color=S.GREY, stroke_width=3,
+                        tip_length=0.14, max_tip_length_to_length_ratio=0.45)
+        # the two lines word for word (and size for size) as S12 shows them: the mark ends the 2nd line
+        tick1 = sym("✓", 44, TICK)
         line1 = VGroup(S.text("Any ONE query, known in advance", 32, S.WHITE),
-                       S.text("→  easy to publish for", 30, S.GREY)).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
-        line1.next_to(one_sheet, RIGHT, buff=0.55)
-        tick1 = sym("✓", 56, TICK).move_to([5.95, R1, 0])
+                       VGroup(S.text("→  easy to publish for", 30, S.GREY), tick1).arrange(RIGHT, buff=0.3)
+                       ).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
+        line1.next_to(one_sheet, RIGHT, buff=0.45)
         many_rng = np.random.default_rng(41)
-        many = VGroup(*[mask_card([random_mask(many_rng) for _ in range(N)]).scale(0.7) for _ in range(5)])
-        fan(many, np.array([-5.4, R2 + 0.3, 0]), radius=3.0, spread=0.22)
-        two_sheet = release_sheet(np.random.default_rng(4), w=1.0, h=1.2).move_to([-3.45, R2, 0])
+        many = VGroup(*[mask_card([random_mask(many_rng) for _ in range(N)]).scale(0.6) for _ in range(5)])
+        fan(many, np.array([-5.68, R2 + 0.12, 0]), radius=3.0, spread=0.15)
+        two_sheet = release_sheet(np.random.default_rng(4), w=0.85, h=1.05).move_to([PIC_R, R2, 0])
         two_links = VGroup(*[Line(two_sheet.get_left(), c.get_right(), color=S.GREY, stroke_width=1.5) for c in many])
         two_links.set_z_index(-1)
-        line2 = VGroup(S.text("ONE private release for MOST queries", 32, S.WHITE),
-                       S.text("→  impossible unless n is huge", 30, S.GREY)).arrange(DOWN, buff=0.14,
-                                                                                   aligned_edge=LEFT)
-        line2.next_to(two_sheet, RIGHT, buff=0.55)
-        cross2 = sym("✗", 56, NOISE_COLOR).move_to([5.95, R2, 0])
+        cross2 = sym("✗", 44, NOISE_COLOR)
+        line2 = VGroup(S.text("ONE private release that works for MOST queries", 32, S.WHITE),
+                       VGroup(S.text("→  impossible unless n is huge", 30, S.GREY), cross2).arrange(RIGHT, buff=0.3)
+                       ).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
+        line2.next_to(two_sheet, RIGHT, buff=0.45)
+        for m in (tick1, cross2):
+            m.shift(UP * 0.03)
         cur3 = person_icon(S.WHITE, 0.75)
         loop = Arc(radius=0.62, start_angle=PI * 0.62, angle=-2 * PI * 0.86, color=S.WHITE, stroke_width=3)
         loop.add_tip(tip_length=0.16)
@@ -884,18 +898,19 @@ class Separation(VoiceScene):
             vo.wait_until("For any one query")
             self.play(FadeIn(one_card, shift=RIGHT * 0.2), run_time=0.6)
             self.play(GrowArrow(one_arr), FadeIn(one_sheet, shift=RIGHT * 0.2), run_time=0.7)
-            self.play(FadeIn(line1, shift=LEFT * 0.2), run_time=0.8)
+            self.play(FadeIn(line1[0], shift=LEFT * 0.2), FadeIn(line1[1][0], shift=LEFT * 0.2), run_time=0.8)
             self.play(FadeIn(tick1, scale=1.6), run_time=0.5)
             vo.wait_until("What is impossible")
             self.play(FadeIn(two_sheet, shift=RIGHT * 0.2),
                       LaggedStart(*[FadeIn(c, shift=RIGHT * 0.2) for c in many], lag_ratio=0.12), run_time=1.0)
             self.play(LaggedStart(*[Create(l) for l in two_links], lag_ratio=0.1), run_time=0.7)
             vo.wait_until("is one private release")
-            self.play(FadeIn(line2, shift=LEFT * 0.2), run_time=0.8)
+            self.play(FadeIn(line2[0], shift=LEFT * 0.2), FadeIn(line2[1][0], shift=LEFT * 0.2), run_time=0.8)
             self.play(FadeIn(cross2, scale=1.6), run_time=0.5)
             # the whole difference is the order of the quantifiers: ONE query vs MOST queries
-            self.play(Indicate(line1[0], color=S.WHITE, scale_factor=1.06), run_time=0.8)
-            self.play(Indicate(line2[0], color=S.WHITE, scale_factor=1.06), run_time=0.8)
+            self.play(Indicate(word(line1[0], "ONE"), color=S.WHITE, scale_factor=1.25),
+                      Indicate(word(line2[0], "ONE"), color=S.WHITE, scale_factor=1.25), run_time=0.8)
+            self.play(Indicate(word(line2[0], "MOST"), color=S.WHITE, scale_factor=1.25), run_time=0.8)
             vo.wait_until("The lesson")
             self.play(FadeIn(cur3, scale=0.8), Create(loop), run_time=0.9)
             self.play(Write(lesson_t), run_time=1.6)

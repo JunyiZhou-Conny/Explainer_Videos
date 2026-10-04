@@ -4,13 +4,15 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.components import paper_card, person_icon, ponder_card
+from explainer.components import person_icon, ponder_card
 from explainer.scene import VoiceScene
 
-from common import ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR
+from common import (ALICE, ANALYST_COLOR, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR,
+                    XP_COLOR)
+from s02_map import map_chip
 
 SAY = NARRATION["S09"]
-ANALYST = S.GREY          # analyst factors: identical in both worlds
+ANALYST = S.GREY          # the analyst's factors in the transcript formula: identical in both worlds
 
 
 # ---------------------------------------------------------------- helpers
@@ -128,7 +130,8 @@ class Budget(VoiceScene):
     def adaptive_beat(self):
         top_y, bot_y = 1.55, -0.65
         xs = [-2.6, 0.5, 3.6]
-        analyst = VGroup(person_icon(S.WHITE, 0.75), S.text("analyst", 22, S.GREY)).arrange(DOWN, buff=0.12)
+        analyst = VGroup(person_icon(ANALYST_COLOR, 0.75), S.text("analyst", 22, ANALYST_COLOR))
+        analyst.arrange(DOWN, buff=0.12)
         analyst.move_to([-5.6, top_y, 0])
         db = VGroup(*[Rectangle(width=0.55, height=0.13, stroke_color=X_COLOR, stroke_width=1.5)
                       .set_fill(S.GREY_DARKER, 1) for _ in range(4)]).arrange(DOWN, buff=0)
@@ -185,7 +188,7 @@ class Budget(VoiceScene):
     # ============================================================ 1. Theorem 1: the ratio telescopes
     def theorem_beat(self):
         P = self.parts
-        title = S.text("Theorem 1", 32, EPS_COLOR, weight="BOLD").to_corner(UL, buff=0.4)
+        title = S.text("Theorem 1", 32, EPS_COLOR, weight="BOLD").to_edge(UP, buff=0.5).to_edge(LEFT, buff=0.6)
         size = 36
 
         def pr(head: str, world: str | None = None):
@@ -284,7 +287,7 @@ class Budget(VoiceScene):
         when_row = VGroup(when, ft_cap).arrange(RIGHT, buff=0.6).move_to([0, -2.1, 0])
         rl = VGroup(S.text("RL:", 24, S.WHITE, weight="BOLD"),
                     S.text("analyst = environment (cancels),  curator = policy", 24, S.GREY))
-        rl.arrange(RIGHT, buff=0.2).to_edge(DOWN, buff=0.35)
+        rl.arrange(RIGHT, buff=0.2).to_edge(DOWN, buff=0.45)
 
         with self.voiceover(SAY[1]) as vo:
             # shrink the ledger into a reference picture; its small captions ("histogram", "analyst", ...)
@@ -297,7 +300,7 @@ class Budget(VoiceScene):
             for k in (2, 3, 4):             # query cards: hide the sub-caption, centre f_i
                 T[k][2].set_opacity(0)
                 T[k][1].move_to(T[k][0])
-            T.scale(0.72).to_corner(UR, buff=0.5)
+            T.scale(0.72).to_corner(UR, buff=0.6)
             self.play(MoveToTarget(L), FadeIn(title, shift=RIGHT * 0.2), run_time=1.0)
             vo.wait_until("Write the probability")
             self.play(Write(lhs_top), Write(eq), run_time=0.6)
@@ -381,9 +384,9 @@ class Budget(VoiceScene):
         refused = S.text("refused", 30, NOISE_COLOR).next_to(curator, DOWN, buff=0.25)
         x5 = x_mark(qcards[4], pad=0.05)
 
-        dn = paper_card("Dinur & Nissim", 2003, "too many accurate answers ⇒ reconstruction", color=S.WHITE,
-                        width=5.8, size=26)     # year and idea lines are size - 6 = 20 pt
-        dn.move_to([0.8, -1.0, 0])
+        # S02's map chip for Dinur & Nissim (scaled up a little), with its idea as a caption
+        dn = map_chip("Dinur & Nissim", "2003").scale(1.25).move_to([0.8, -0.8, 0])
+        dn_idea = S.text("too many accurate answers ⇒ reconstruction", 22, S.GREY).next_to(dn, DOWN, buff=0.2)
         dn_arrow = Arrow(dn.get_top(), outline.get_bottom(), buff=0.12, color=S.GREY, stroke_width=3,
                          tip_length=0.16)
         dn_lab = S.text("limit on questions,\nnow explicit and measurable", 22, S.GREY, line_spacing=0.9)
@@ -414,9 +417,9 @@ class Budget(VoiceScene):
             self.play(Create(x5), FadeIn(refused, scale=1.3), run_time=0.5)
 
             vo.wait_until("That is the answer")
-            dn_start = dn.copy().move_to([-9.5, -1.0, 0])
+            dn_start = dn.copy().move_to([-9.5, dn.get_y(), 0])
             self.play(ReplacementTransform(dn_start, dn), run_time=1.0, rate_func=smooth)
-            self.play(GrowArrow(dn_arrow), FadeIn(dn_lab), run_time=0.6)
+            self.play(FadeIn(dn_idea, shift=UP * 0.1), GrowArrow(dn_arrow), FadeIn(dn_lab), run_time=0.6)
             vo.wait_until("the budget makes")
             self.play(FadeIn(caption, shift=UP * 0.15), run_time=0.6)
             # the spent pieces add up to the budget: each chip label flies into the sum
@@ -510,7 +513,7 @@ class Budget(VoiceScene):
         note = VGroup(S.text("earlier SuLQ analysis:", 24, S.GREY),
                       S.math(r"\sim \sqrt{d}/\varepsilon", size=32, color=S.GREY),
                       S.text("per bin — still grows with d", 24, S.GREY)).arrange(RIGHT, buff=0.18)
-        note.to_edge(DOWN, buff=0.35)
+        note.to_edge(DOWN, buff=0.45)
 
         def grow(bars):
             return LaggedStart(*[GrowFromEdge(b, b.grow_dir) for b in bars], lag_ratio=0.012)

@@ -18,6 +18,7 @@ from explainer.scene import VoiceScene
 
 from common import (ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, TRUTH_COLOR, X_COLOR,
                     XP_COLOR)
+from s02_map import coin             # Warner's coin, exactly as on the S02 map
 
 SAY = NARRATION["S10"]
 
@@ -25,8 +26,7 @@ TILE_W, TILE_H, TILE_Y = 4.0, 4.3, -0.45
 TILE_XS = (-4.25, 0.0, 4.25)
 BIG_W, BIG_H = 13.0, 7.0
 HEADER_Y = 2.95
-COIN = S.GOLD          # Warner's coin, as in S11
-COIN_EDGE = "#A87B2C"
+COIN = S.GOLD          # Warner's coin (the glyph itself is S02's `coin`)
 
 # ------------------------------------------------------------------ tile 1: the network
 NAMES = "ABCDEFGHIJ"
@@ -139,12 +139,6 @@ def bit_string(bits, side=0.5, gap=0.1, colors=None, digits=True):
     return g
 
 
-def coin(r=0.17):
-    disc = Circle(radius=r, stroke_color=COIN_EDGE, stroke_width=3).set_fill(COIN, 1)
-    ring = Circle(radius=r * 0.68, stroke_color=COIN_EDGE, stroke_width=2)
-    return VGroup(disc, ring)
-
-
 def split_glyphs(mob, pieces):
     """Split a Text into VGroups of glyphs, one per piece of its string (pieces concatenate)."""
     full = "".join(pieces)
@@ -200,6 +194,9 @@ class BeyondCounting(VoiceScene):
         return tile
 
     def expand(self, tile, big_content, others, title, run_time=1.1):
+        """Grow `tile` to fill the frame. The two-line caption does not morph into the one-line
+        header (the glyphs would sweep across the growing picture): it fades out early in place,
+        and the header fades in late at the top of the big frame."""
         frame, b, cap, content = tile
         tile.save_state()
         big = RoundedRectangle(width=BIG_W, height=BIG_H, corner_radius=0.3, stroke_color=S.WHITE,
@@ -207,17 +204,22 @@ class BeyondCounting(VoiceScene):
         b_t = badge(b[1].original_text, S.WHITE, r=0.32).move_to([-5.95, HEADER_Y, 0])
         header = S.text(" ".join(tile.cap_lines), 36, S.WHITE)
         header.next_to(b_t, RIGHT, buff=0.3)
-        parts = split_glyphs(header, [tile.cap_lines[0] + " ", tile.cap_lines[1]])
+        tile.header = header
         self.play(FadeOut(others, rate_func=early), FadeOut(title, rate_func=early),
-                  Transform(frame, big), Transform(b, b_t),
-                  Transform(cap[0], parts[0]), Transform(cap[1], parts[1]),
-                  Transform(content, big_content), run_time=run_time)
+                  cap.animate(rate_func=early).set_opacity(0),
+                  Transform(frame, big), Transform(b, b_t), Transform(content, big_content),
+                  FadeIn(header, rate_func=late), run_time=run_time)
 
     def collapse(self, tile, others, title, details, run_time=0.75):
-        tile.saved_state[0].set_stroke(S.GREY)          # come back marked as "done"
+        """Shrink `tile` back (cross-fading header -> caption, as in `expand`)."""
+        frame, b, cap, content = tile
+        saved = tile.saved_state
+        saved[0].set_stroke(S.GREY)                     # come back marked as "done"
         self.play(FadeOut(details), run_time=0.35)
-        self.play(Restore(tile), FadeIn(others, rate_func=late), FadeIn(title, rate_func=late),
-                  run_time=run_time)
+        self.play(FadeOut(tile.header, rate_func=early),
+                  Transform(frame, saved[0]), Transform(b, saved[1]), Transform(content, saved[3]),
+                  Transform(cap, saved[2], rate_func=late),
+                  FadeIn(others, rate_func=late), FadeIn(title, rate_func=late), run_time=run_time)
 
     def light(self, tile):
         return AnimationGroup(tile[0].animate.set_stroke(S.WHITE, 3.5),
@@ -498,7 +500,7 @@ class BeyondCounting(VoiceScene):
 
         out_bits = released([False] * 8)
         out_l = S.text("released", 24, S.GREY).next_to(out_bits, DOWN, buff=0.18)
-        coins = VGroup(*[coin().move_to([c.get_x(), -0.1, 0]) for c in out_bits])
+        coins = VGroup(*[coin(0.17).move_to([c.get_x(), -0.1, 0]) for c in out_bits])
         flip_f = S.math(r"\Pr[\text{bit flips}]", r"=", r"\frac{1}{1+e^{", r"\varepsilon", r"/(2",
                         r"S(f)", r")}}", r"<", r"\tfrac12", size=38)
         flip_f[3].set_color(EPS_COLOR)
