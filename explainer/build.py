@@ -1,0 +1,211 @@
+"""Render a whole video project into one narrated mp4 with subtitles and chapter marks.
+
+    python -m explainer.build videos/<video-id>                 # 1080p60 final
+    python -m explainer.build videos/<video-id> -q l            # fast 480p15 draft
+    python -m explainer.build videos/<video-id> --only s03,s04  # re-render some scenes, reuse the rest
+    python -m explainer.build videos/<video-id> --no-render     # just re-stitch existing renders
+
+Reads <project>/video.yaml:
+
+    id: dp-01-calibrating-noise
+    title: "..."
+    papers: [dwork2006calibrating]          # ids from library/catalog.yaml
+    voice: {backend: kokoro, voice: af_heart, speed: 1.0}
+    scenes:
+      - {file: scenes/s01_hook.py, cls: Hook, title: "The differencing attack"}
+
+Writes <project>/output/<id>.mp4, <id>.srt, chapters.txt (YouTube/Bilibili format), transcript.md.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import subprocess
+import sys
+import textwrap
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+import yaml
+
+from . import REPO_ROOT
+
+QUALITY_DIRS = {"l": "480p15", "m": "720p30", "h": "1080p60", "p": "1440p60", "k": "2160p60"}
+
+
+def load_project(project: Path) -> dict:
+    spec = yaml.safe_load((project / "video.yaml").read_text())
+    spec.setdefault("id", project.name)
+    return spec
+
+
+def scene_env(spec: dict, tts: str | None) -> dict:
+    env = dict(os.environ)
+    v = spec.get("voice", {}) or {}
+    env.setdefault("EXPLAINER_TTS", v.get("backend", "kokoro"))
+    if tts:
+        env["EXPLAINER_TTS"] = tts
+    if v.get("voice") and "EXPLAINER_VOICE" not in os.environ:
+        env["EXPLAINER_VOICE"] = str(v["voice"])
+    if v.get("speed") and "EXPLAINER_SPEED" not in os.environ:
+        env["EXPLAINER_SPEED"] = str(v["speed"])
+    env["PYTHONPATH"] = os.pathsep.join(filter(None, [str(REPO_ROOT), env.get("PYTHONPATH")]))
+    return env
+
+
+def media_dir(project: Path, quality: str) -> Path:
+    return project / "build" / f"media_{quality}"
+
+
+def scene_movie(project: Path, quality: str, scene: dict) -> Path:
+    stem = Path(scene["file"]).stem
+    return media_dir(project, quality) / "videos" / stem / QUALITY_DIRS[quality] / f"{scene['cls']}.mp4"
+
+
+def render_scene(project: Path, quality: str, scene: dict, env: dict) -> Path:
+    cmd = [sys.executable, "-m", "manim", "render", f"-q{quality}", "--disable_caching",
+           "--media_dir", str(media_dir(project, quality)), scene["file"], scene["cls"]]
+    log = project / "build" / "logs" / f"{Path(scene['file']).stem}_{scene['cls']}.log"
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with open(log, "w") as fh:
+        res = subprocess.run(cmd, cwd=project, env=env, stdout=fh, stderr=subprocess.STDOUT)
+    if res.returncode != 0:
+        tail = "\n".join(log.read_text().splitlines()[-30:])
+        raise RuntimeError(f"render failed for {scene['cls']} (see {log}):\n{tail}")
+    out = scene_movie(project, quality, scene)
+    if not out.exists():
+        raise FileNotFoundError(out)
+    print(f"  rendered {scene['cls']:<24} -> {out.relative_to(project)}", flush=True)
+    return out
+
+
+def ffprobe_duration(path: Path) -> float:
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of",
+                        "csv=p=0", str(path)], capture_output=True, text=True, check=True)
+    return float(r.stdout.strip())
+
+
+def has_audio(path: Path) -> bool:
+    r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries",
+                        "stream=index", "-of", "csv=p=0", str(path)], capture_output=True, text=True)
+    return bool(r.stdout.strip())
+
+
+def normalize(src: Path, dst: Path) -> None:
+    """Same audio layout for every scene (48 kHz stereo AAC, padded to video length)."""
+    if has_audio(src):
+        cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-c:v", "copy", "-af",
+               "aresample=48000,apad", "-ac", "2", "-c:a", "aac", "-b:a", "192k", "-shortest", str(dst)]
+    else:
+        cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-f", "lavfi", "-i",
+               "anullsrc=r=48000:cl=stereo", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+               "-shortest", str(dst)]
+    subprocess.run(cmd, check=True)
+
+
+def fmt_srt(t: float) -> str:
+    ms = int(round(t * 1000))
+    h, ms = divmod(ms, 3_600_000)
+    m, ms = divmod(ms, 60_000)
+    s, ms = divmod(ms, 1000)
+    return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
+
+
+def fmt_chapter(t: float) -> str:
+    t = int(t)
+    return f"{t // 3600}:{t % 3600 // 60:02d}:{t % 60:02d}" if t >= 3600 else f"{t // 60:02d}:{t % 60:02d}"
+
+
+def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2):
+    """Break one narration clip into readable cues, timed proportionally to characters."""
+    wrapped = textwrap.wrap(text, width)
+    chunks = [" ".join(wrapped[i:i + lines]) for i in range(0, len(wrapped), lines)] or [text]
+    total = sum(len(c) for c in chunks)
+    t, cues = start, []
+    for c in chunks:
+        dt = (end - start) * len(c) / total
+        cues.append((t, t + dt, "\n".join(textwrap.wrap(c, width))))
+        t += dt
+    return cues
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("project", type=Path)
+    ap.add_argument("-q", "--quality", default="h", choices=list(QUALITY_DIRS))
+    ap.add_argument("--only", help="comma-separated scene file stems or class names to (re)render")
+    ap.add_argument("--no-render", action="store_true", help="only stitch existing scene renders")
+    ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) // 2))
+    ap.add_argument("--tts", help="override the voice backend (kokoro|elevenlabs|edge|espeak|silent)")
+    ap.add_argument("--crf", type=int, help="re-encode the final video with x264 at this CRF (smaller file)")
+    args = ap.parse_args(argv)
+
+    project = args.project.resolve()
+    spec = load_project(project)
+    scenes = spec["scenes"]
+    env = scene_env(spec, args.tts)
+    only = set(args.only.split(",")) if args.only else None
+
+    todo = [] if args.no_render else [
+        s for s in scenes
+        if only is None or Path(s["file"]).stem in only or s["cls"] in only
+        or not scene_movie(project, args.quality, s).exists()]
+    if todo:
+        # synthesize narration once, serially, so parallel renders don't race on the TTS cache
+        print(f"Rendering {len(todo)} scene(s) at {QUALITY_DIRS[args.quality]} "
+              f"with TTS={env['EXPLAINER_TTS']} (jobs={args.jobs})", flush=True)
+        with ThreadPoolExecutor(max_workers=args.jobs) as pool:
+            list(pool.map(lambda s: render_scene(project, args.quality, s, env), todo))
+
+    build = project / "build" / f"stitch_{args.quality}"
+    build.mkdir(parents=True, exist_ok=True)
+    out_dir = project / "output"
+    out_dir.mkdir(exist_ok=True)
+
+    parts, offset = [], 0.0
+    srt, chapters, transcript = [], [], [f"# {spec.get('title', spec['id'])}\n"]
+    for i, s in enumerate(scenes):
+        movie = scene_movie(project, args.quality, s)
+        if not movie.exists():
+            raise SystemExit(f"missing render for {s['cls']}: {movie}")
+        norm = build / f"{i:02d}_{s['cls']}.mp4"
+        normalize(movie, norm)
+        parts.append(norm)
+        title = s.get("title", s["cls"])
+        if s.get("chapter", True):
+            chapters.append(f"{fmt_chapter(offset)} {title}")
+        transcript.append(f"\n## {fmt_chapter(offset)} — {title}\n")
+        subs_file = movie.with_suffix(".subs.json")
+        for cue in (json.loads(subs_file.read_text()) if subs_file.exists() else []):
+            transcript.append(cue["text"] + "\n")
+            srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"]))
+        offset += ffprobe_duration(norm)
+
+    listing = build / "concat.txt"
+    listing.write_text("".join(f"file '{p}'\n" for p in parts))
+    joined = build / "joined.mp4"
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
+                    "-c", "copy", str(joined)], check=True)
+
+    final = out_dir / f"{spec['id']}{'' if args.quality == 'h' else '_' + QUALITY_DIRS[args.quality]}.mp4"
+    vcodec = ["-c:v", "copy"] if args.crf is None else [
+        "-c:v", "libx264", "-preset", "slow", "-tune", "animation", "-crf", str(args.crf),
+        "-pix_fmt", "yuv420p"]
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), *vcodec, "-af",
+                    "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k",
+                    "-movflags", "+faststart", str(final)], check=True)
+
+    stem = final.with_suffix("")
+    Path(f"{stem}.srt").write_text("".join(
+        f"{n}\n{fmt_srt(a)} --> {fmt_srt(b)}\n{t}\n\n" for n, (a, b, t) in enumerate(srt, 1)))
+    (out_dir / "chapters.txt").write_text("\n".join(chapters) + "\n")
+    (out_dir / "transcript.md").write_text("".join(transcript))
+    size = final.stat().st_size / 1e6
+    print(f"\nDone: {final.relative_to(project)}  ({fmt_chapter(offset)}, {size:.1f} MB)")
+    print(f"      {Path(f'{stem}.srt').name}, chapters.txt, transcript.md")
+
+
+if __name__ == "__main__":
+    main()

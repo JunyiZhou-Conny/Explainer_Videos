@@ -1,0 +1,20 @@
+id: dwork2006-calibrating-noise
+title: "Calibrating Noise to Sensitivity — the paper that invented differential privacy"
+papers: [dwork2006calibrating]          # ids in library/catalog.yaml
+related: [dinur2003revealing, blum2005sulq, dwork2006differential, mcsherry2007mechanism, abadi2016deep]
+audience: "curious newcomer; basic probability"
+voice: {backend: kokoro, voice: af_heart, speed: 1.0}
+scenes:
+  - {file: scenes/s01_hook.py,        cls: Hook,             title: "The differencing attack"}
+  - {file: scenes/s02_map.py,         cls: LineageBefore,    title: "Where this paper sits"}
+  - {file: scenes/s03_setup.py,       cls: Curator,          title: "The setup: a trusted curator"}
+  - {file: scenes/s04_definition.py,  cls: Definition,       title: "Defining privacy"}
+  - {file: scenes/s05_strict.py,      cls: WhyStrict,        title: "Why so strict?"}
+  - {file: scenes/s06_sensitivity.py, cls: Sensitivity,      title: "Sensitivity"}
+  - {file: scenes/s07_laplace.py,     cls: LaplaceMechanism, title: "The Laplace mechanism"}
+  - {file: scenes/s08_payoff.py,      cls: Payoff,           title: "Privacy for individuals, accuracy for populations"}
+  - {file: scenes/s09_budget.py,      cls: Budget,           title: "Many questions: the privacy budget"}
+  - {file: scenes/s10_beyond.py,      cls: BeyondCounting,   title: "Beyond counting"}
+  - {file: scenes/s11_separation.py,  cls: Separation,       title: "Interactive vs one-shot releases"}
+  - {file: scenes/s12_legacy.py,      cls: Legacy,           title: "What grew from this paper"}
+  - {file: scenes/s13_recap.py,       cls: Recap,            title: "Recap and questions"}

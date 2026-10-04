@@ -1,0 +1,12 @@
+# Pronunciation fixes for the narrator.
+#   ipa: phonemes fed straight to Kokoro (local TTS)
+#   say: plain-English respelling used by backends that take text (espeak, edge)
+# Matching is whole-word and case-sensitive. Add entries as you find mispronunciations.
+Laplace: {ipa: "ləplˈɑːs", say: "luh-plahss"}
+Laplacian: {ipa: "ləplˈɑːsiən", say: "luh-plahss-ian"}
+covariance: {ipa: "kˌoʊvˈɛɹiəns", say: "co-variance"}
+Lipschitz: {ipa: "lˈɪpʃɪts", say: "lip-shits"}
+Dinur: {ipa: "dˈiːnʊɹ", say: "dee-noor"}
+Gödel: {ipa: "ɡˈɜːdəl", say: "gurdle"}
+SuLQ: {ipa: "sˈʌlk", say: "sulk"}
+RAPPOR: {ipa: "ɹˈæpɔːɹ", say: "rap-or"}

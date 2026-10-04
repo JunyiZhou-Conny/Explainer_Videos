@@ -1,0 +1,13 @@
+# Rendering
+manim>=0.19
+# Narration (local, free). Model files are downloaded by setup/install.sh
+kokoro-onnx>=0.4
+onnxruntime
+soundfile
+numpy
+scipy
+pyyaml
+pypdf
+# Optional backends:
+#   edge-tts          (EXPLAINER_TTS=edge, free online Microsoft voices)
+#   ElevenLabs needs no extra package, just ELEVENLABS_API_KEY
