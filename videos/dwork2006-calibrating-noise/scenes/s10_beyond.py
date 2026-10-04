@@ -25,7 +25,8 @@ TILE_W, TILE_H, TILE_Y = 4.0, 4.3, -0.45
 TILE_XS = (-4.25, 0.0, 4.25)
 BIG_W, BIG_H = 13.0, 7.0
 HEADER_Y = 2.95
-COIN = S.GOLD
+COIN = S.GOLD          # Warner's coin, as in S11
+COIN_EDGE = "#A9782C"
 
 # ------------------------------------------------------------------ tile 1: the network
 NAMES = "ABCDEFGHIJ"
@@ -121,11 +122,13 @@ FLIP_P = 1 / (1 + np.exp(RATE))              # per-bit flip probability (0.389: 
 
 
 def bit_cell(b, side, color=S.WHITE, digits=True):
-    sq = Square(side, stroke_color=color, stroke_width=2.5)
-    sq.set_fill(color, 0.9 if b else 0.0)
+    """A bit as in S11's tables: 1 = light cell, 0 = dark cell. Flipped bits get color=NOISE_COLOR."""
+    flipped = color != S.WHITE
+    sq = Square(side, stroke_color=color if flipped else S.BG, stroke_width=3 if flipped else 1.5)
+    sq.set_fill(color if b else S.GREY_DARK, 0.85 if b else 1)
     if not digits:
         return VGroup(sq)
-    d = S.text(str(b), 26, S.BG if b else color, font=S.FONT_SANS).move_to(sq)
+    d = S.text(str(b), 26, S.BG if b else (color if flipped else S.GREY), font=S.FONT_SANS).move_to(sq)
     return VGroup(sq, d)
 
 
@@ -137,9 +140,9 @@ def bit_string(bits, side=0.5, gap=0.1, colors=None, digits=True):
 
 
 def coin(r=0.17):
-    face = Circle(radius=r, stroke_color="#A87B2C", stroke_width=2).set_fill(COIN, 1)
-    rim = Circle(radius=r * 0.62, stroke_color="#A87B2C", stroke_width=1.5)
-    return VGroup(face, rim)
+    disc = Circle(radius=r, stroke_color=COIN_EDGE, stroke_width=3).set_fill(COIN, 1)
+    ring = Circle(radius=r * 0.68, stroke_color=COIN_EDGE, stroke_width=2)
+    return VGroup(disc, ring)
 
 
 def split_glyphs(mob, pieces):
@@ -160,6 +163,11 @@ def db_label(prime=False, size=26):
     return VGroup(S.text("database", size, col),
                   S.math("x'" if prime else "x", size=size + 6, color=col)).arrange(RIGHT, buff=0.12,
                                                                                     aligned_edge=DOWN)
+
+
+def true_label():
+    return VGroup(S.text("true answer", 24, S.GREY), S.math("f(x)", size=30, color=TRUTH_COLOR)).arrange(
+        RIGHT, buff=0.14, aligned_edge=DOWN)
 
 
 def badge(num, color=S.WHITE, r=0.28):
@@ -194,9 +202,10 @@ class BeyondCounting(VoiceScene):
                   Transform(cap[0], parts[0]), Transform(cap[1], parts[1]),
                   Transform(content, big_content), run_time=run_time)
 
-    def collapse(self, tile, others, title, details, run_time=0.8):
+    def collapse(self, tile, others, title, details, run_time=0.75):
         tile.saved_state[0].set_stroke(S.GREY)          # come back marked as "done"
-        self.play(FadeOut(details), Restore(tile), FadeIn(others), FadeIn(title), run_time=run_time)
+        self.play(FadeOut(details), run_time=0.35)
+        self.play(Restore(tile), FadeIn(others), FadeIn(title), run_time=run_time)
 
     def light(self, tile):
         return AnimationGroup(tile[0].animate.set_stroke(S.WHITE, 3.5),
@@ -223,7 +232,7 @@ class BeyondCounting(VoiceScene):
         tiles = VGroup(
             self.make_tile(0, ["Distance to", "a property"], net_small),
             self.make_tile(1, ["Small random", "samples"], crowd_small),
-            self.make_tile(2, ["Outputs that", "aren't numbers"], bits_small),
+            self.make_tile(2, ["Outputs that", "aren’t numbers"], bits_small),
         )
 
         # ============================================================ 0. three tiles
@@ -326,8 +335,8 @@ class BeyondCounting(VoiceScene):
         db_lab = db_label().move_to([-5.15, -0.42, 0])
         db_lab_p = db_label(prime=True).move_to(db_lab, aligned_edge=LEFT)
         line_y = -1.9
-        nline = Line([-6.0, line_y, 0], [0.6, line_y, 0], color=S.GREY, stroke_width=2.5)
-        nline_lab = S.text("answers", 22, S.GREY).next_to(nline, RIGHT, buff=0.15)
+        nline = Line([-6.0, line_y, 0], [0.5, line_y, 0], color=S.GREY, stroke_width=2.5)
+        nline_lab = S.text("answers", 22, S.GREY).next_to(nline.get_end(), DOWN, buff=0.18).align_to(nline, RIGHT)
         fx_x, fxp_x, sig = -3.4, -1.9, 0.95
 
         def tick(x, col):
@@ -357,7 +366,7 @@ class BeyondCounting(VoiceScene):
             S.tex(r"then ", r"$S(f) \le 2\sigma$", r".", size=38),
         )
         lem[5][1].set_color(SENS_COLOR)
-        lem_note = S.tex(r"(``most'': prob.\ $\ge \frac{1+\alpha}{2}$)", size=28, color=S.GREY)
+        lem_note = S.tex(r"(``most'': prob.\ $\ge \frac{1+\alpha}{2}$)", size=30, color=S.GREY)
         lem_body = VGroup(lem_head, *lem).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
         lem_head.shift(UP * 0.1)
         lem_note.next_to(lem_body, DOWN, buff=0.35).align_to(lem_body, LEFT)
@@ -439,7 +448,7 @@ class BeyondCounting(VoiceScene):
                             for j in range(n_k)])
             cloud.add(ring)
         centre = Dot(cc, radius=0.1, color=TRUTH_COLOR).set_z_index(3)
-        centre_l = S.math("f(x)", size=28, color=TRUTH_COLOR).next_to(centre, DOWN, buff=0.08)
+        centre_l = S.math("f(x)", size=30, color=TRUTH_COLOR).next_to(centre, DOWN, buff=0.06)
         d_arrow = Arrow(cc + 0.66 * np.array([np.cos(2.3), np.sin(2.3), 0]),
                         cc + 2.9 * np.array([np.cos(2.3), np.sin(2.3), 0]), buff=0, color=S.GREY,
                         stroke_width=3, tip_length=0.16)
@@ -451,10 +460,10 @@ class BeyondCounting(VoiceScene):
         formula[3].set_color(EPS_COLOR)
         formula[7].set_color(SENS_COLOR)
         formula.move_to([2.95, 0.45, 0])
-        thm = S.tex(r"Theorem 2: ", r"$\varepsilon$", r"-indistinguishable", size=28, color=S.GREY)
+        thm = S.tex(r"Theorem 2: ", r"$\varepsilon$", r"-indistinguishable", size=32, color=S.GREY)
         thm[1].set_color(EPS_COLOR)
         thm.next_to(formula, DOWN, buff=0.35)
-        true_l = S.text("true answer f(x)", 24, S.GREY)
+        true_l = true_label()
         bits_top = bits_big.copy().move_to([3.0, 2.0, 0])
         true_l.next_to(bits_top, UP, buff=0.18)
 
@@ -466,7 +475,7 @@ class BeyondCounting(VoiceScene):
             if 2 <= f.sum() <= 4:
                 draws.append(f)
         true_left = bits_big.copy().move_to([-3.4, 1.35, 0])
-        true_left_l = S.text("true answer f(x)", 24, S.GREY).next_to(true_left, UP, buff=0.18)
+        true_left_l = true_label().next_to(true_left, UP, buff=0.18)
 
         def released(flips):
             vals = [b ^ int(f) for b, f in zip(TRUE_BITS, flips)]
@@ -481,7 +490,7 @@ class BeyondCounting(VoiceScene):
         flip_f[3].set_color(EPS_COLOR)
         flip_f[5].set_color(SENS_COLOR)
         flip_f.move_to([2.95, -1.45, 0])
-        warner = S.text("Warner's coin again, applied to the answer", 30, COIN).move_to([0, -2.85, 0])
+        warner = S.text("Warner’s coin again, applied to the answer", 30, COIN).move_to([0, -2.85, 0])
 
         with self.voiceover(SAY[3]) as vo:
             self.collapse(t2, VGroup(tiles[0], tiles[2]), title, details2)
@@ -530,7 +539,7 @@ class BeyondCounting(VoiceScene):
                           Transform(cur, released(flips)), run_time=0.27)
                 self.wait(0.3)
         details3 = VGroup(bits_digits, true_left_l, out_bits, out_l, coins, flip_f, formula, thm, warner)
-        self.collapse(t3, VGroup(tiles[0], tiles[1]), title, details3, run_time=0.9)
+        self.collapse(t3, VGroup(tiles[0], tiles[1]), title, details3)
         self.play(LaggedStart(*[Indicate(VGroup(t[1], t[2]), color=S.WHITE, scale_factor=1.08)
                                 for t in tiles], lag_ratio=0.25), run_time=1.0)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)

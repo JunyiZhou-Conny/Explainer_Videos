@@ -172,42 +172,43 @@ class Sensitivity(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(stack), FadeIn(db_lab), FadeIn(machine), Write(f_lab), Create(nl),
                       GrowArrow(arr_in), GrowArrow(arr_out), run_time=1.2)
-            self.play(FadeIn(dot_x, scale=0.5), FadeIn(lab_fx), run_time=0.6)
+            self.play(TransformFromCopy(f_lab, dot_x), FadeIn(lab_fx), run_time=0.6)
             vo.wait_until("It depends on")
             self.play(Transform(rows[3][3], S.text("has X", 22, XP_COLOR).move_to(rows[3][3])),
-                      Transform(db_x, db_xp), Indicate(rows[3], color=ALICE, scale_factor=1.05), run_time=0.8)
+                      Transform(db_x, db_xp), *[Indicate(m, color=ALICE, scale_factor=1.05) for m in rows[3][:3]],
+                      run_time=0.8)
             self.play(TransformFromCopy(f_lab, dot_xp), FadeIn(lab_fxp), run_time=0.8)
             seg = gap_seg(3.2, 4.6)
             self.play(Create(seg), run_time=0.5)
             vo.wait_until("its sensitivity")
             self.play(Write(defn), run_time=1.6)
+            vo.wait_until("the most that")
+            self.play(*[Indicate(m, color=SENS_COLOR, scale_factor=1.06) for m in defn[3:8]],
+                      Indicate(seg, color=SENS_COLOR, scale_factor=1.15), run_time=1.0)
             vo.wait_until("over all pairs")
             segs = VGroup()
-            prev = 3
             for k, (r, v_new, vx, vxp) in enumerate(pairs):
                 if k > 0:
-                    anims = [Transform(rows[prev][3], S.text(base_vals[prev], 22, S.WHITE).move_to(rows[prev][3])),
-                             Transform(rows[r][3], S.text(v_new, 22, XP_COLOR).move_to(rows[r][3]))]
-                    r_prev, r_new = rows[prev].copy(), rows[r].copy()
-                    style_row(r_prev, False)
-                    style_row(r_new, True)
-                    anims += [Transform(rows[prev][0], r_prev[0]), Transform(rows[prev][1], r_prev[1]),
-                              Transform(rows[prev][2], r_prev[2]), Transform(rows[r][0], r_new[0]),
-                              Transform(rows[r][1], r_new[1]), Transform(rows[r][2], r_new[2])]
-                    if k == 3:   # a database that does not exist yet
-                        anims += [Transform(rows[i][2], S.text("?", 22, ALICE if i == r else S.GREY)
-                                            .move_to(rows[i][2], aligned_edge=LEFT)) for i in range(4)]
+                    anims = []
+                    for i in range(4):
+                        tgt = rows[i].copy()
+                        style_row(tgt, i == r)
+                        name = names[i] if k < 3 else "?"
+                        tgt[2].become(S.text(name, 22, ALICE if i == r else (S.WHITE if k < 3 else S.GREY))
+                                      .move_to(rows[i][2], aligned_edge=LEFT))
+                        tgt[3].become(S.text(v_new if i == r else base_vals[i], 22,
+                                             XP_COLOR if i == r else S.WHITE).move_to(rows[i][3]))
+                        anims += [Transform(rows[i][j], tgt[j]) for j in range(4)]
                     lx, lxp = place_labels(vx, vxp)
                     seg = gap_seg(vx, vxp)
                     self.play(*anims, dot_x.animate.move_to(nl.n2p(vx)), dot_xp.animate.move_to(nl.n2p(vxp)),
-                              lab_fx.animate.move_to(lx), lab_fxp.animate.move_to(lxp), run_time=0.6)
-                    self.play(Create(seg), run_time=0.3)
-                    prev = r
-                self.play(seg.animate.set_y(slot_y[k]).set_stroke(width=6), run_time=0.35)
+                              lab_fx.animate.move_to(lx), lab_fxp.animate.move_to(lxp), run_time=0.5)
+                    self.play(Create(seg), run_time=0.25)
+                self.play(seg.animate.set_y(slot_y[k]).set_stroke(width=6), run_time=0.3)
                 segs.add(seg)
             # line the gaps up from a common start: the largest one is S(f)
             left = nl.n2p(0)[0] + 0.1
-            self.play(*[s.animate.shift(RIGHT * (left - s.get_left()[0])) for s in segs], run_time=0.6)
+            self.play(*[sg.animate.shift(RIGHT * (left - sg.get_left()[0])) for sg in segs], run_time=0.5)
             s_lab = S.math("S(f)", size=34, color=SENS_COLOR).next_to(segs[2], RIGHT, buff=0.2)
             self.play(segs[2].animate.set_stroke(width=10), FadeIn(s_lab, shift=LEFT * 0.2),
                       Indicate(defn[2], color=SENS_COLOR), run_time=vo.remaining(0.6))
@@ -244,9 +245,9 @@ class Sensitivity(VoiceScene):
             self.play(Transform(rows[3][3], S.text("has X", 22, XP_COLOR).move_to(rows[3][3])),
                       Transform(db_x, S.math("x'", size=42, color=XP_COLOR).move_to(db_x, aligned_edge=LEFT)),
                       run_time=0.6)
-            dot_xp.move_to(nl2.n2p(41))
             lab_fxp.move_to(lx42)
-            self.play(dot_xp.animate.move_to(nl2.n2p(42)), FadeIn(dot_xp), FadeIn(lab_fxp), run_time=0.7)
+            dot42 = Dot(nl2.n2p(42), radius=0.1, color=XP_COLOR)
+            self.play(TransformFromCopy(dot_x, dot42), FadeIn(lab_fxp), run_time=0.7)
             self.play(Create(seg1), FadeIn(one, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("Sensitivity one")
             self.play(TransformFromCopy(one, s_count[2]), FadeIn(s_count[:2]), run_time=0.8)
@@ -261,8 +262,13 @@ class Sensitivity(VoiceScene):
         blocks = [block_bar(j, c) for j, c in enumerate(COUNTS5)]
         a_blk = alice_block(5, 1, COUNTS5[1])
         alice = hover(a_blk)
-        d_lab = S.math("d", "=", "5", size=44).move_to([-5.35, 1.15, 0])
-        d_word = S.text("bins", 28, S.GREY).next_to(d_lab, RIGHT, buff=0.2)
+        def d_label(n):
+            g = VGroup(S.math("d", "=", str(n), size=44), S.text("bins", 28, S.GREY))
+            g.arrange(RIGHT, buff=0.2, aligned_edge=DOWN)
+            return g.move_to([-5.6, 1.15, 0], aligned_edge=LEFT)
+
+        d_grp = d_label(5)
+        d_lab, d_word = d_grp
         rng = np.random.default_rng(6)
         drops = []
         for j, bb in enumerate(blocks):
@@ -272,11 +278,11 @@ class Sensitivity(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(stack, db_lab, db_x, machine, f_lab, arr_in, arr_out, nl2, nl2_labs, dot_x,
-                                     dot_xp, lab_fx, lab_fxp, seg1, one, s_count)),
-                      ReplacementTransform(defn, defn_top), run_time=0.9)
+                                     dot42, lab_fx, lab_fxp, seg1, one, s_count)), run_time=0.5)
+            self.play(ReplacementTransform(defn, defn_top), run_time=0.7)
             vo.wait_until("split the possible values")
             self.play(Create(base_line), FadeIn(dividers), FadeIn(bin_labs), run_time=0.9)
-            self.play(Write(d_lab), FadeIn(d_word), run_time=0.6)
+            self.play(FadeIn(d_grp), run_time=0.6)
             vo.wait_until("and release how many")
             self.play(LaggedStart(*[FadeIn(b, shift=DOWN * 0.6) for b, _ in drops], lag_ratio=0.06),
                       run_time=2.2)
@@ -285,7 +291,8 @@ class Sensitivity(VoiceScene):
             vo.wait_until("if Alice's row changes")
             self.play(Wiggle(alice[1:]), run_time=1.0)
             vo.wait_until("how much can the whole")
-            self.play(Indicate(VGroup(*blocks, a_blk), color=S.WHITE, scale_factor=1.03), run_time=1.0)
+            self.play(*[Indicate(b, color=S.WHITE, scale_factor=1.0) for bb in blocks for b in bb],
+                      Indicate(a_blk, color=S.WHITE, scale_factor=1.0), run_time=1.0)
             vo.wait_until("Does it depend")
             self.play(Indicate(d_lab, color=S.WHITE), FadeOut(dividers), run_time=1.0)
         card = ponder_at(self, "If Alice's row changes,\nhow much can the whole\nhistogram change in total?\n"
@@ -296,7 +303,7 @@ class Sensitivity(VoiceScene):
         a_tgt = alice_block(5, 3, COUNTS5[3])
         ghost = DashedVMobject(a_blk.copy().set_fill(opacity=0).set_stroke(ALICE, 2), num_dashes=16)
         minus = S.math("-1", size=34).next_to(ghost, UP, buff=0.12)
-        plus = S.math("+1", size=34).next_to(a_tgt, UP, buff=0.95).shift(RIGHT * 0.45)
+        plus = S.math("+1", size=34)
         zeros = VGroup(*[S.math("0", size=30, color=S.GREY).next_to(blocks[j], UP, buff=0.12) for j in (0, 2, 4)])
         expr = S.math(r"|-1|", "+", r"|+1|", "=", "2", size=56).move_to([3.5, -0.4, 0])
         expr[4].set_color(SENS_COLOR)
@@ -321,7 +328,7 @@ class Sensitivity(VoiceScene):
             """Alice leaves bin j_from and joins bin j_to; returns (animations, new block, labels)."""
             blk = alice_block(d, j_to, counts[j_to])
             mi = S.math("-1", size=28).next_to(alice_block(d, j_from, counts[j_from]), UP, buff=0.05)
-            pl = S.math("+1", size=28).next_to(blk, UP, buff=0.9).shift(RIGHT * 0.4)
+            pl = S.math("+1", size=28).next_to(blk.get_top() + UP * 0.75, LEFT, buff=0.32)
             return blk, mi, pl
 
         with self.voiceover(SAY[3]) as vo:
@@ -333,6 +340,7 @@ class Sensitivity(VoiceScene):
             vo.wait_until("one count goes down")
             self.play(FadeIn(minus, shift=DOWN * 0.15), Indicate(ghost, color=ALICE), run_time=0.7)
             vo.wait_until("another goes up")
+            plus.next_to(a_blk, RIGHT, buff=0.15)
             self.play(FadeIn(plus, shift=UP * 0.15), Indicate(a_blk, color=ALICE), run_time=0.7)
             vo.wait_until("Total change")
             self.play(TransformFromCopy(minus, expr[0]), TransformFromCopy(plus, expr[2]), FadeIn(expr[1]),
@@ -351,10 +359,12 @@ class Sensitivity(VoiceScene):
                       ReplacementTransform(expr[4], s_big[2]), FadeOut(VGroup(minus, plus, zeros, ghost)),
                       run_time=0.6)
             # 5 -> 20 bins: every bin splits in four
+            self.remove(*[b for bb in blocks for b in bb])
+            self.add(*blocks)
             b20 = alice_block(20, 13, c20[13])
-            self.play(*[ReplacementTransform(VGroup(*blocks[j]), VGroup(*bars20[4 * j:4 * j + 4])) for j in range(5)],
+            self.play(*[ReplacementTransform(blocks[j], VGroup(*bars20[4 * j:4 * j + 4])) for j in range(5)],
                       Transform(a_blk, b20), alice.animate.shift(b20.get_top() - a_blk.get_top()),
-                      Transform(d_lab[2], S.math("20", size=44).move_to(d_lab[2], aligned_edge=LEFT)),
+                      Transform(d_grp, d_label(20)),
                       run_time=1.0)
             blk, mi, pl = hop(20, c20, 13, 6, PI / 2)
             self.play(VGroup(a_blk, alice).animate(path_arc=PI / 2.5).shift(blk.get_center() - a_blk.get_center()),
@@ -365,7 +375,7 @@ class Sensitivity(VoiceScene):
             self.play(*[ReplacementTransform(bars20[j], VGroup(*bars60[3 * j:3 * j + 3])) for j in range(20)],
                       Transform(a_blk, b60), alice.animate.shift(b60.get_top() - a_blk.get_top()),
                       FadeOut(VGroup(mi, pl)),
-                      Transform(d_lab[2], S.math("60", size=44).move_to(d_lab[2], aligned_edge=LEFT)),
+                      Transform(d_grp, d_label(60)),
                       run_time=1.0)
             blk, mi, pl = hop(60, c60, 19, 44, -PI / 2)
             self.play(VGroup(a_blk, alice).animate(path_arc=-PI / 2.5).shift(blk.get_center() - a_blk.get_center()),
@@ -405,14 +415,13 @@ class Sensitivity(VoiceScene):
                                                  else irows[3].get_y(), 0],
                                                 ans.get_center(), color=S.GREY, stroke_width=2, dash_length=0.08))
         big = coin_roll(X0, 6.55, irows[3].get_y())
-        big_val = S.text("$1,000,000,000", 22, ALICE).move_to(irows[3][3], aligned_edge=RIGHT)
-        big_val.scale_to_fit_width(min(big_val.width, 1.35)).move_to(irows[3][3].get_right(), aligned_edge=RIGHT)
-        cont = S.text("→ $1B", 24, S.GOLD).next_to([6.55, irows[3].get_y(), 0], UP, buff=0.22).align_to(
-            [6.5, 0, 0], RIGHT)
+        big_val = S.text("$1B", 22, ALICE).move_to(irows[3][3])
+        cont = S.text("$1,000,000,000 →", 24, S.GOLD).next_to([6.55, irows[3].get_y(), 0], UP, buff=0.24)
+        cont.align_to([6.5, 0, 0], RIGHT)
         huge = Arrow([xv(81e3), ax_y - 0.62, 0], [6.5, ax_y - 0.62, 0], buff=0, color=SENS_COLOR, stroke_width=5,
                      max_tip_length_to_length_ratio=0.04, tip_length=0.25)
         huge_lab = S.text("S huge", 28, SENS_COLOR).next_to(huge, DOWN, buff=0.1)
-        cap = DashedLine([xv(1e6), 1.95, 0], [xv(1e6), ax_y, 0], color=SENS_COLOR, stroke_width=3, dash_length=0.12)
+        cap = DashedLine([xv(1e6), 1.8, 0], [xv(1e6), ax_y, 0], color=SENS_COLOR, stroke_width=3, dash_length=0.12)
         cap_lab = S.text("cap every value at $1M", 24, SENS_COLOR).next_to(cap, UP, buff=0.1)
         cap_lab.align_to([6.5, 0, 0], RIGHT)
         kept = VGroup(*[c for c in big if c.get_x() <= xv(1e6)])
@@ -471,7 +480,7 @@ class Sensitivity(VoiceScene):
         lbox = RoundedRectangle(width=5.4, height=3.0, corner_radius=0.2, stroke_color=SENS_COLOR, stroke_width=4)
         lbox.set_fill(S.GREY_DARKER, 0.6).move_to([-3.2, 0.7, 0])
         l_sym = S.math("S(f)", size=76, color=SENS_COLOR)
-        l_txt = S.text("a fact about f", 34)
+        l_txt = VGroup(S.text("a fact about", 34), S.math("f", size=44)).arrange(RIGHT, buff=0.15)
         VGroup(l_sym, l_txt).arrange(DOWN, buff=0.35).move_to(lbox)
         rbox = lbox.copy().set_stroke(EPS_COLOR).move_to([3.2, 0.7, 0])
         r_sym = S.math(r"\varepsilon", size=84, color=EPS_COLOR)
@@ -482,7 +491,7 @@ class Sensitivity(VoiceScene):
         knob.move_to(slider.point_from_proportion(0.5))
         not_db = S.text("does not depend on the actual database", 26, S.GREY).next_to(lbox, DOWN, buff=0.35)
         mini_vals = [["no X", "has X", "no X"], ["has X", "has X", "no X"], ["no X", "no X", "has X"]]
-        minis = [database_rows(["", "", ""], v, color=S.GREY, width=1.7, row_height=0.32, size=20)
+        minis = [database_rows(["Bob", "Carol", "Dev"], v, color=S.GREY, width=2.3, row_height=0.34, size=20)
                  for v in mini_vals]
         for m in minis:
             m.next_to(not_db, DOWN, buff=0.25)

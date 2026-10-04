@@ -25,7 +25,7 @@ EVEN = X_COLOR         # the "every row even" world (true answer 0)
 ODD = XP_COLOR         # the "every row odd" world  (true answer n)
 TICK = S.TEAL          # ✓
 COIN = S.GOLD          # Warner's coin
-COIN_EDGE = "#A9782C"
+COIN_EDGE = "#A87B2C"    # as in S10
 SYM = "DejaVu Sans"    # font that has ✓ ✗
 D = 8                  # bits per row in the pictures
 N = 6                  # rows in the small tables
@@ -177,6 +177,30 @@ def statement_card(title, *lines, width=12.4):
     return VGroup(frame, body)
 
 
+def x_mark(m, color=NOISE_COLOR, width=6, pad=0.1):
+    """The S09 red cross over a refused query card."""
+    c = m.get_center()
+    w, h = m.width / 2 + pad, m.height / 2 + pad
+    return VGroup(Line(c + np.array([-w, -h, 0]), c + np.array([w, h, 0]), color=color, stroke_width=width),
+                  Line(c + np.array([-w, h, 0]), c + np.array([w, -h, 0]), color=color, stroke_width=width))
+
+
+def lens(ax, f_a, f_b, color_a, color_b, a=0.0, b=10.0, step=0.02, opacity=0.5):
+    """S05-style shading of the area between two curves, coloured by whichever curve is on top."""
+    ts = np.arange(a, b + step / 2, step)
+    diff = np.array([f_a(t) - f_b(t) for t in ts])
+    out, start = VGroup(), 0
+    for i in range(1, len(ts) + 1):
+        if i == len(ts) or np.sign(diff[i]) != np.sign(diff[start]):
+            seg = ts[start:i + 1] if i < len(ts) else ts[start:]
+            if len(seg) >= 2:
+                pts = [ax.c2p(t, f_a(t)) for t in seg] + [ax.c2p(t, f_b(t)) for t in seg[::-1]]
+                col = color_a if diff[start] > 0 else color_b
+                out.add(Polygon(*pts, stroke_width=0).set_fill(col, opacity))
+            start = i
+    return out
+
+
 def sym(ch, size=40, color=TICK):
     return Text(ch, font=SYM, font_size=size, color=color)
 
@@ -219,23 +243,23 @@ class Separation(VoiceScene):
         t_left = S.text("Interactive", 34, S.WHITE).move_to([-3.3, 3.05, 0])
         t_right = S.text("Non-interactive", 34, S.WHITE).move_to([3.3, 3.05, 0])
 
-        dbL = db_icon().move_to([-5.6, FY, 0])
+        dbL = db_icon(w=1.15, rh=0.25).move_to([-5.6, FY, 0])
         dbL_lab = S.math("x", size=34, color=X_COLOR).next_to(dbL, DOWN, buff=0.15)
-        cur = person_icon(S.WHITE, 0.85).move_to([-4.1, FY, 0])
+        cur = person_icon(S.WHITE, 1.0).move_to([-4.15, FY, 0])
         cur_lab = S.text("curator", 22, S.GREY).next_to(cur, DOWN, buff=0.15)
-        ana = person_icon(S.GREY, 0.75).move_to([-1.1, FY, 0])
+        ana = person_icon(S.GREY, 0.95).move_to([-1.05, FY, 0])
         ana_lab = S.text("analyst", 22, S.GREY).next_to(ana, DOWN, buff=0.15)
         capL = S.text("ask, answer, repeat", 24, S.GREY).move_to([-3.3, -1.75, 0])
 
-        dbR = db_icon().move_to([0.95, FY, 0])
+        dbR = db_icon(w=1.15, rh=0.25).move_to([0.95, FY, 0])
         dbR_lab = S.math("x", size=34, color=X_COLOR).next_to(dbR, DOWN, buff=0.15)
-        curR = person_icon(S.WHITE, 0.85).move_to([2.35, FY, 0])
+        curR = person_icon(S.WHITE, 1.0).move_to([2.4, FY, 0])
         curR_lab = S.text("curator", 22, S.GREY).next_to(curR, DOWN, buff=0.15)
-        sheet = release_sheet(np.random.default_rng(2)).move_to([4.45, FY, 0])
+        sheet = release_sheet(np.random.default_rng(2), w=1.7, h=2.0).move_to([4.5, FY + 0.1, 0])
         sheet_lab = S.math("M(", "x", ")", size=34).next_to(sheet, UP, buff=0.15)
         sheet_lab[1].set_color(X_COLOR)
-        users = VGroup(*[person_icon(S.GREY, 0.42) for _ in range(4)]).arrange(RIGHT, buff=0.38)
-        users.move_to([4.45, -0.95, 0])
+        users = VGroup(*[person_icon(S.GREY, 0.48) for _ in range(4)]).arrange(RIGHT, buff=0.36)
+        users.move_to([4.5, -1.0, 0])
         user_arrows = VGroup(*[Arrow(u.get_top(), sheet.get_bottom() + RIGHT * (u.get_x() - sheet.get_x()) * 0.5,
                                      buff=0.08, color=S.GREY, stroke_width=2.5, tip_length=0.14,
                                      max_tip_length_to_length_ratio=0.3) for u in users])
@@ -250,8 +274,8 @@ class Separation(VoiceScene):
 
         def trip(k):
             """One round of the interactive protocol: query f_k slides in, noisy answer a_k slides back."""
-            q = tag(f"f_{k}").move_to([-3.35, FY + 0.45, 0])
-            a = tag(f"a_{k}").move_to([-1.85, FY - 0.35, 0])
+            q = tag(f"f_{k}").move_to([-3.2, FY + 0.5, 0])
+            a = tag(f"a_{k}").move_to([-1.85, FY - 0.4, 0])
             return q, a
 
         with self.voiceover(SAY[0]) as vo:
@@ -261,9 +285,9 @@ class Separation(VoiceScene):
                       FadeIn(VGroup(ana, ana_lab), shift=LEFT * 0.2), run_time=0.8)
             vo.wait_until("Statisticians")
             q1, a1 = trip(1)
-            self.play(FadeIn(q1, shift=LEFT * 1.5), FadeIn(VGroup(dbR, dbR_lab, curR, curR_lab), shift=LEFT * 0.2),
+            self.play(FadeIn(q1, shift=LEFT * 1.35), FadeIn(VGroup(dbR, dbR_lab, curR, curR_lab), shift=LEFT * 0.2),
                       run_time=1.0)
-            self.play(FadeOut(q1, scale=0.5), FadeIn(a1, shift=RIGHT * 1.5), FadeIn(capL), run_time=1.0)
+            self.play(FadeOut(q1, scale=0.5), FadeIn(a1, shift=RIGHT * 1.35), FadeIn(capL), run_time=1.0)
             self.play(FadeOut(a1, scale=0.5), run_time=0.4)
             vo.wait_until("sanitize the data")
             self.play(TransformFromCopy(dbR, sheet), run_time=1.0)
@@ -273,10 +297,10 @@ class Separation(VoiceScene):
                       FadeOut(VGroup(dbR, dbR_lab), shift=LEFT * 0.6), FadeIn(capR), run_time=1.0)
             vo.wait_until("and let anyone")
             q2, a2 = trip(2)
-            self.play(FadeIn(q2, shift=LEFT * 1.5),
+            self.play(FadeIn(q2, shift=LEFT * 1.35),
                       LaggedStart(*[AnimationGroup(FadeIn(u, shift=UP * 0.2), GrowArrow(a))
                                     for u, a in zip(users, user_arrows)], lag_ratio=0.25), run_time=1.4)
-            self.play(FadeOut(q2, scale=0.5), FadeIn(a2, shift=RIGHT * 1.5), run_time=0.9)
+            self.play(FadeOut(q2, scale=0.5), FadeIn(a2, shift=RIGHT * 1.35), run_time=0.9)
             self.play(FadeOut(a2, scale=0.5), run_time=0.4)
             vo.wait_until("Can that work")
             self.play(Write(defn), run_time=1.0)
@@ -295,19 +319,21 @@ class Separation(VoiceScene):
         brace_lab = S.math(r"d = 8\ \text{bits}", size=30, color=S.GREY).next_to(brace, DOWN, buff=0.1)
         legend = VGroup(Square(0.3, stroke_color=MASK, stroke_width=3).set_fill(MASK, 0.32),
                         S.text("mask: the bits that count", 24, MASK)).arrange(RIGHT, buff=0.15)
-        legend.next_to(table, RIGHT, buff=0.45).align_to(table, UP).shift(DOWN * 0.1)
-        qcard = query_card("How many rows have odd parity inside their own mask?")
-        qcard.move_to([0.75, 2.95, 0])
+        legend.next_to(brace_lab, RIGHT, buff=0.9)
+        qcard = query_card("How many rows have odd parity inside their own mask?", width=10.2)
+        qcard.move_to([0.6, 2.95, 0])
         pdigs = [digit(p, 26, S.WHITE).move_to(pc).set_z_index(3) for p, pc in zip(pars, pcells)]
         count = S.math("f(", "x", ")", "=", str(sum(pars)), size=56)
         count[1].set_color(X_COLOR)
         count.move_to([4.55, -0.35, 0])
-        formula = S.math("f(", "x", ")", "=", r"\sum_{i=1}^{n}", "r_i", r"\odot", "x_i", size=40)
+        # the paper's f_g(x) = sum_i r_i (.) x_i, with r_i (.) x_i = <r_i, x_i> mod 2
+        formula = S.math("f(", "x", ")", "=", r"\sum_{i=1}^{n}", r"\big(", "r_i", r"\cdot", "x_i",
+                         r"\bmod 2", r"\big)", size=40)
         formula[1].set_color(X_COLOR)
-        formula[5].set_color(MASK)
-        formula[7].set_color(X_COLOR)
-        f_note = S.text("= parity of row i inside its mask", 24, S.GREY)
-        f_line = VGroup(formula, f_note).arrange(RIGHT, buff=0.3).move_to([0.9, -3.05, 0])
+        formula[6].set_color(MASK)
+        formula[8].set_color(X_COLOR)
+        f_note = S.text("(ones inside the mask, mod 2)", 24, S.GREY)
+        f_line = VGroup(formula, f_note).arrange(RIGHT, buff=0.35).move_to([0.2, -3.0, 0])
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(t_right, divider, sheet, sheet_lab, users, user_arrows, capR, capL, defn_q,
@@ -372,34 +398,37 @@ class Separation(VoiceScene):
             self.play(Circumscribe(answer[1:], color=NOISE_COLOR), run_time=vo.remaining(0.8))
 
         # ============================================================ 2. Theorem 3
-        card0 = mask_card(masks).move_to([0, 1.25, 0])
-        others = VGroup(*[mask_card(mm) for mm in more_masks])
+        card0 = mask_card(masks, cell=0.13).move_to([0, 1.4, 0])
+        others = VGroup(*[mask_card(mm, cell=0.13) for mm in more_masks])
         hand = VGroup(*others[:6], card0, *others[6:])         # card0 sits in the middle of the fan
-        fan(hand, np.array([0, 1.25, 0]))
-        th0 = -0.62 + 2 * 0.62 * 6 / 11                        # card0's tilt in the fan
-        fan_lab = S.text("every choice of masks is another query", 26, S.GREY).move_to([0, -1.0, 0])
+        FAN_SPREAD = 0.55
+        fan(hand, np.array([0, 1.4, 0]), radius=7.5, spread=FAN_SPREAD)
+        th0 = -FAN_SPREAD + 2 * FAN_SPREAD * 6 / 11            # card0's tilt in the fan
+        small_scale = 0.62 / card0.height
+        fan_lab = S.text("every choice of masks is another query", 28, S.GREY).move_to([0, -0.85, 0])
         bright = {0, 1, 3, 4, 6, 7, 9, 11}                      # 8 of 12 = the 2/3 the theorem covers
-        two_thirds = S.text("for at least 2/3 of them ...", 30, S.WHITE).move_to([0, -1.0, 0])
+        two_thirds = S.text("for at least 2/3 of them ...", 30, S.WHITE).move_to([0, -0.85, 0])
 
         # the two worlds: same masks as card0
         even_bits = [sample_row(rng, m, 0) for m in masks]
         odd_bits = [sample_row(rng, m, 1) for m in masks]
-        tab_e = mini_table(even_bits, masks, EVEN).move_to([-3.55, 1.55, 0])
-        tab_o = mini_table(odd_bits, masks, ODD).move_to([-3.55, -1.3, 0])
+        tab_e = mini_table(even_bits, masks, EVEN).move_to([-3.55, 1.95, 0])
+        tab_o = mini_table(odd_bits, masks, ODD).move_to([-3.55, -0.85, 0])
         lab_e = VGroup(S.text("every row", 24, EVEN), S.text("even", 24, EVEN),
                        S.math(r"\text{answer } 0", size=30, color=EVEN)).arrange(DOWN, buff=0.08)
         lab_e.next_to(tab_e, LEFT, buff=0.25)
         lab_o = VGroup(S.text("every row", 24, ODD), S.text("odd", 24, ODD),
                        S.math(r"\text{answer } n", size=30, color=ODD)).arrange(DOWN, buff=0.08)
         lab_o.next_to(tab_o, LEFT, buff=0.25)
-        q_small_pos = np.array([-3.55, 0.13, 0])
-        m_e = m_box().move_to([-1.35, 1.55, 0])
-        m_o = m_box().move_to([-1.35, -1.3, 0])
+        q_small_pos = np.array([-3.55, 0.55, 0])
+        m_e = m_box().move_to([-1.35, 1.95, 0])
+        m_o = m_box().move_to([-1.35, -0.85, 0])
         a_e = Arrow(tab_e.get_right(), m_e.get_left(), buff=0.06, color=EVEN, stroke_width=3, tip_length=0.15)
         a_o = Arrow(tab_o.get_right(), m_o.get_left(), buff=0.06, color=ODD, stroke_width=3, tip_length=0.15)
         ax = Axes(x_range=[0, 10, 1], y_range=[0, 0.28, 0.1], x_length=5.4, y_length=2.3, tips=False,
-                  axis_config={"color": S.GREY, "stroke_width": 2, "include_ticks": False}).move_to([3.55, 0.15, 0])
-        ax_lab = S.text("output of M", 22, S.GREY).next_to(ax.x_axis, DOWN, buff=0.15)
+                  axis_config={"color": S.GREY, "stroke_width": 2, "include_ticks": False}).move_to([3.6, 0.6, 0])
+        axis = ax.x_axis                                          # only the output axis, as in S05
+        ax_lab = S.text("output of M", 22, S.GREY).next_to(axis, DOWN, buff=0.15)
 
         def p0(t):
             return 0.55 * gaussian_pdf(t, 3.4, 0.95) + 0.45 * gaussian_pdf(t, 6.6, 1.25)
@@ -409,18 +438,16 @@ class Separation(VoiceScene):
 
         c_e = ax.plot(p0, x_range=[0, 10, 0.02], color=EVEN, stroke_width=5)
         c_o = ax.plot(p1, x_range=[0, 10, 0.02], color=ODD, stroke_width=4)
-        ts = np.linspace(0, 10, 300)
-        sliver = Polygon(*[ax.c2p(t, p0(t)) for t in ts], *[ax.c2p(t, p1(t)) for t in ts[::-1]],
-                         stroke_width=0).set_fill(S.WHITE, 0.6)
-        b_e = Arrow(m_e.get_right(), ax.c2p(1.2, 0.2), buff=0.1, color=EVEN, stroke_width=3, tip_length=0.15)
-        b_o = Arrow(m_o.get_right(), ax.c2p(1.2, 0.03), buff=0.1, color=ODD, stroke_width=3, tip_length=0.15)
-        sd_lab = S.text("statistical distance ≈ 0", 28, S.WHITE).next_to(ax, UP, buff=0.25)
+        sliver = lens(ax, p0, p1, EVEN, ODD)
+        b_e = Arrow(m_e.get_right(), ax.c2p(1.6, 0.17), buff=0.1, color=EVEN, stroke_width=3, tip_length=0.15)
+        b_o = Arrow(m_o.get_right(), ax.c2p(1.6, 0.02), buff=0.1, color=ODD, stroke_width=3, tip_length=0.15)
+        sd_lab = S.text("statistical distance ≈ 0", 28, S.WHITE).next_to(ax, UP, buff=0.2)
 
         thm_math = S.math(r"\text{statistical distance}", "=", r"O\!\left(n^{4/3}\,", r"\varepsilon", r"^{2/3}",
-                          r"\,2^{-d/3}\right)", size=38)
+                          r"\,2^{-d/3}\right)", size=36)
         thm_math[3].set_color(EPS_COLOR)
         thm_line = VGroup(S.text("for at least 2/3 of the queries:", 28, S.WHITE), thm_math).arrange(RIGHT, buff=0.3)
-        thm = statement_card("Theorem 3", thm_line).move_to([0, -3.0, 0])
+        thm = statement_card("Theorem 3", thm_line).move_to([0, -2.78, 0])
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(cur, cur_lab, ans, count, sens, f_line, qcard, legend, brace, brace_lab,
@@ -433,11 +460,13 @@ class Separation(VoiceScene):
             vo.wait_until("Theorem 3")
             self.play(*[hand[i].animate.set_opacity(0.22) for i in range(12) if i not in bright],
                       *[hand[i][0].animate.set_stroke(S.WHITE, 3) for i in bright],
-                      ReplacementTransform(fan_lab, two_thirds), run_time=1.1)
-            self.play(FadeOut(VGroup(*[hand[i] for i in range(12) if i != 6]), two_thirds),
-                      card0.animate.rotate(th0).scale(0.75).move_to(q_small_pos), run_time=1.2)
+                      ReplacementTransform(fan_lab, two_thirds), run_time=1.3)
+            self.play(Indicate(VGroup(*[hand[i] for i in sorted(bright)]), color=S.WHITE, scale_factor=1.04),
+                      run_time=1.0)
             vo.wait_until("the release looks")
-            self.play(FadeIn(VGroup(m_e, m_o)), Create(ax), FadeIn(ax_lab), run_time=1.0)
+            self.play(FadeOut(VGroup(*[hand[i] for i in range(12) if i != 6]), two_thirds),
+                      card0.animate.rotate(th0).scale(small_scale).move_to(q_small_pos), run_time=1.0)
+            self.play(FadeIn(VGroup(m_e, m_o)), Create(axis), FadeIn(ax_lab), run_time=0.8)
             vo.wait_until("for a random database")
             self.play(FadeIn(tab_e[0]), FadeIn(tab_e[1]), TransformFromCopy(card0[1], tab_e[2]), run_time=1.0)
             self.play(LaggedStart(*[FadeIn(d, scale=0.5) for d in tab_e[3]], lag_ratio=0.12),
@@ -463,43 +492,45 @@ class Separation(VoiceScene):
             thresh = S.math(r"\text{tiny unless}\quad n", r"\gtrsim", r"2^{d/4}", "/", r"\sqrt{\varepsilon}", size=46)
             thresh[4][-1].set_color(EPS_COLOR)
             thresh.move_to([0, 1.55, 0])
-            self.play(FadeOut(VGroup(tab_e, tab_o, lab_e, lab_o, card0, m_e, m_o, a_e, a_o, b_e, b_o, ax, ax_lab,
+            self.play(FadeOut(VGroup(tab_e, tab_o, lab_e, lab_o, card0, m_e, m_o, a_e, a_o, b_e, b_o, axis, ax_lab,
                                      c_e, c_o, sliver, sd_lab)),
-                      thm.animate.move_to([0, 2.85, 0]), run_time=0.8)
+                      thm.animate.move_to([0, 2.8, 0]), run_time=0.8)
             self.play(Write(thresh), run_time=1.0)
 
-            cellw = 0.3
+            cellw = 0.36
             bitrow = VGroup(*[Square(cellw, stroke_color=S.GREY, stroke_width=1.5).set_fill(S.GREY_DARK, 1)
-                              for _ in range(16)]).arrange(RIGHT, buff=0).move_to([-3.4, -1.75, 0])
-            bitrow.align_to([-6.1, 0, 0], LEFT)
-            d_lab = VGroup(S.text("bits per row:", 24, S.GREY), S.math("d = 8", size=34)).arrange(RIGHT, buff=0.2)
+                              for _ in range(16)]).arrange(RIGHT, buff=0).move_to([-3.4, -1.0, 0])
+            bitrow.align_to([-6.2, 0, 0], LEFT)
+            d_lab = VGroup(S.text("bits per row:", 26, S.GREY), S.math("d = 8", size=38)).arrange(RIGHT, buff=0.2)
             d_lab.next_to(bitrow, UP, buff=0.3).align_to(bitrow, LEFT)
-            bars = VGroup(*[Rectangle(width=2.0, height=0.12, stroke_width=0).set_fill(S.WHITE, 0.8)
+            bars = VGroup(*[Rectangle(width=2.2, height=0.13, stroke_width=0).set_fill(S.WHITE, 0.8)
                             for _ in range(16)]).arrange(UP, buff=0.05)
-            bars.move_to([2.0, 0, 0]).align_to([0, -3.35, 0], DOWN)
-            n_lab = S.text("rows needed", 24, S.GREY).move_to([4.6, -1.35, 0])
-            n_val = S.math(r"\propto 4", size=40).next_to(n_lab, DOWN, buff=0.2)
+            bars.move_to([2.5, 0, 0]).align_to([0, -3.4, 0], DOWN)
+            n_lab = S.text("rows needed", 26, S.GREY).move_to([5.1, -1.7, 0])
+            n_val = S.math(r"\propto 4", size=44).next_to(n_lab, DOWN, buff=0.2)
             vo.wait_until("roughly, every four")
             self.play(FadeIn(bitrow[:8]), FadeIn(d_lab), FadeIn(bars[:4]), FadeIn(n_lab), FadeIn(n_val), run_time=0.7)
             for lo, hi, dv, nv in [(8, 12, 12, 8), (12, 16, 16, 16)]:
-                plus = S.text("+4 bits", 24, S.WHITE).next_to(bitrow[lo:hi], DOWN, buff=0.15)
-                new_d = S.math(f"d = {dv}", size=34).move_to(d_lab[1], aligned_edge=LEFT)
-                new_n = S.math(rf"\propto {nv}", size=40).move_to(n_val, aligned_edge=LEFT)
+                plus = S.text("+4 bits", 26, S.WHITE).next_to(bitrow[lo:hi], DOWN, buff=0.15)
+                new_d = S.math(f"d = {dv}", size=38).move_to(d_lab[1], aligned_edge=LEFT)
+                new_n = S.math(rf"\propto {nv}", size=44).move_to(n_val, aligned_edge=LEFT)
                 self.play(LaggedStart(*[FadeIn(c, shift=LEFT * 0.2) for c in bitrow[lo:hi]], lag_ratio=0.15),
                           FadeIn(plus), Transform(d_lab[1], new_d), run_time=0.8)
                 old = bars[:nv // 2]
+                x2 = S.math(r"\times 2", size=40).next_to(bars[nv // 2:nv], LEFT, buff=0.3)
                 self.play(TransformFromCopy(old, bars[nv // 2:nv]), Transform(n_val, new_n), FadeOut(plus),
-                          run_time=0.9)
+                          FadeIn(x2, shift=UP * 0.2), run_time=0.9)
+                self.play(FadeOut(x2), run_time=0.2)
         keep_fade = VGroup(thm, thresh, bitrow, d_lab, bars, n_lab, n_val)
 
         # ============================================================ 3. ponder: why not ask the curator?
-        cur2 = person_icon(S.WHITE, 0.9).move_to([-5.3, 1.2, 0])
+        cur2 = person_icon(S.WHITE, 0.9).move_to([-5.3, 1.4, 0])
         cur2_lab = S.text("curator", 22, S.GREY).next_to(cur2, DOWN, buff=0.15)
         deck_rng = np.random.default_rng(23)
         deck = VGroup(*[mask_card([random_mask(deck_rng) for _ in range(N)]).scale(0.8) for _ in range(12)])
         for i, c in enumerate(deck):
-            c.move_to([-1.7 + 0.04 * i, 1.2 + 0.04 * i, 0])
-        deck_arrow = Arrow([-2.3, 1.2, 0], [-4.6, 1.2, 0], buff=0, color=S.GREY, stroke_width=3, tip_length=0.18)
+            c.move_to([-1.7 + 0.04 * i, 1.4 + 0.04 * i, 0])
+        deck_arrow = Arrow([-2.3, 1.4, 0], [-4.6, 1.4, 0], buff=0, color=S.GREY, stroke_width=3, tip_length=0.18)
         deck_lab = S.text("all of them?", 24, S.GREY).next_to(deck, DOWN, buff=0.3)
 
         with self.voiceover(SAY[3]) as vo:
@@ -516,14 +547,14 @@ class Separation(VoiceScene):
         t_left2 = S.text("Interactive", 34, S.WHITE).move_to([-3.3, 3.05, 0])
         t_right2 = S.text("Non-interactive", 34, S.WHITE).move_to([3.3, 3.05, 0])
         divider2 = DashedLine([0, 2.55, 0], [0, -3.2, 0], color=S.GREY_DARK, stroke_width=2)
-        bar = budget_bar().move_to([-4.6, -0.3, 0])
-        bar_lab = S.text("privacy budget ε", 24, EPS_COLOR).next_to(bar, UP, buff=0.14).align_to(bar, LEFT)
-        slots = [np.array([-5.85 + 0.93 * k, -1.45, 0]) for k in range(5)]
-        ticks = VGroup(*[sym("✓", 30).move_to(p + DOWN * 0.62) for p in slots])
-        few_lab = S.text("the few questions actually asked", 24, S.GREY).move_to([-3.95, -2.75, 0])
-        refused = S.text("refused", 28, NOISE_COLOR, weight="BOLD")
-        refused = VGroup(SurroundingRectangle(refused, color=NOISE_COLOR, buff=0.12, corner_radius=0.08), refused)
-        refused.move_to([-3.4, 2.05, 0])
+        bar = budget_bar().move_to([-4.6, -0.55, 0])                       # the S09 budget bar
+        bar_lab = S.math(r"\text{privacy budget }", r"\varepsilon", size=32, color=EPS_COLOR)
+        bar_lab.next_to(bar, UP, buff=0.14).align_to(bar, LEFT)
+        slots = [np.array([-5.85 + 0.93 * k, -1.6, 0]) for k in range(5)]
+        ticks = VGroup(*[sym("✓", 30).move_to(p + DOWN * 0.6) for p in slots])
+        few_lab = S.text("the few questions actually asked", 24, S.GREY).move_to([-3.95, -2.8, 0])
+        refused_pos = np.array([-3.35, 1.4, 0])
+        refused = S.text("refused", 30, NOISE_COLOR).move_to(refused_pos + UP * 0.75)   # as in S09
         sheet2 = release_sheet(np.random.default_rng(2)).move_to([1.85, 0.45, 0])
         sheet2_lab = S.math("M(", "x", ")", size=34).next_to(sheet2, UP, buff=0.15)
         sheet2_lab[1].set_color(X_COLOR)
@@ -532,7 +563,7 @@ class Separation(VoiceScene):
         qgrid.arrange_in_grid(rows=4, cols=3, buff=(0.22, 0.25)).move_to([4.95, 0.45, 0])
         links = VGroup(*[Line(sheet2.get_right(), c.get_left(), color=S.GREY, stroke_width=1.5) for c in qgrid])
         all_lab = S.text("ready for all of them, at once", 24, S.GREY).move_to([3.3, -2.2, 0])
-        breaks = sym("✗", 110, NOISE_COLOR).move_to(sheet2)
+        breaks = x_mark(sheet2, width=8, pad=0.15)
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(card), FadeOut(VGroup(deck_arrow, deck_lab)), FadeIn(VGroup(bar, bar_lab)),
@@ -544,8 +575,11 @@ class Separation(VoiceScene):
                     self.play(c.animate.scale(2 * 0.75 / 0.8).move_to(slots[k]),
                               bar[1][4 - k].animate.set_fill(opacity=0.0), run_time=0.3)
                 else:
-                    self.play(FadeIn(refused, scale=1.3), c.animate.set_opacity(0.2), run_time=0.45)
-            self.play(FadeOut(VGroup(*deck[:6])), FadeOut(deck[-6]), Indicate(bar[0], color=EPS_COLOR), run_time=0.6)
+                    self.play(c.animate.scale(2).move_to(refused_pos), Indicate(bar[0], color=NOISE_COLOR,
+                                                                                 scale_factor=1.04), run_time=0.35)
+                    cross = x_mark(c, pad=0.05)
+                    self.play(Create(cross), FadeIn(refused, scale=1.3), run_time=0.45)
+            self.play(VGroup(*deck[:6]).animate.set_opacity(0.25), run_time=0.5)
             vo.wait_until("the few questions")
             self.play(LaggedStart(*[FadeIn(t, scale=1.4) for t in ticks], lag_ratio=0.15), run_time=1.0)
             vo.wait_until("chosen later")
@@ -556,14 +590,14 @@ class Separation(VoiceScene):
             vo.wait_until("so it must be ready")
             self.play(LaggedStart(*[Create(l) for l in links], lag_ratio=0.05), FadeIn(all_lab), run_time=1.3)
             vo.wait_until("That is where")
-            self.play(FadeIn(breaks, scale=1.5), Wiggle(sheet2), run_time=0.9)
+            self.play(Create(breaks), Wiggle(sheet2), run_time=0.9)
 
         # ============================================================ 5. proof idea
         ptag_t = S.text("proof idea", 22, S.GREY)
         ptag = VGroup(SurroundingRectangle(ptag_t, color=S.GREY, buff=0.1, corner_radius=0.08, stroke_width=1.5),
                       ptag_t).move_to([-5.6, 3.3, 0])
         # fact 1: privacy -> every possible row looks almost alike to M
-        f1_t = S.text("1 · every possible row looks almost alike", 26, S.WHITE).move_to([-3.35, 2.45, 0])
+        f1_t = S.text("1 · every row looks almost alike", 26, S.WHITE).move_to([-3.45, 2.45, 0])
         f1_rows_bits = [[0, 0, 1, 0, 1, 1, 0, 1], [1, 1, 1, 0, 0, 0, 1, 0], [0, 1, 0, 1, 1, 1, 1, 0]]
         h_rng = np.random.default_rng(4)
         base = np.array([0.35, 0.72, 0.55, 0.3, 0.5])
@@ -584,7 +618,7 @@ class Separation(VoiceScene):
         f1_cap = S.math(r"\text{ratios within } e^{\pm", r"\varepsilon", "}", size=32).move_to([-3.35, -2.25, 0])
         f1_cap[1].set_color(EPS_COLOR)
         # fact 2: a random mask splits {0,1}^8 into two salt-and-pepper halves
-        f2_t = S.text("2 · a random mask splits all rows in half", 26, S.WHITE).move_to([3.35, 2.45, 0])
+        f2_t = S.text("2 · a random mask halves all rows", 26, S.WHITE).move_to([3.3, 2.45, 0])
         perm = np.random.default_rng(8).permutation(256)
         strings = [np.array([(int(v) >> (7 - j)) & 1 for j in range(D)]) for v in perm]
         dots = VGroup(*[Dot(radius=0.055, color=S.GREY) for _ in range(256)])
@@ -609,7 +643,7 @@ class Separation(VoiceScene):
         def colour_by(m):
             return [dots[g].animate.set_color(EVEN if parity(strings[g], m) == 0 else ODD) for g in range(256)]
 
-        # the hybrid chain: random rows -> even rows (left) and -> odd rows (right)
+        # the hybrid chain, in S08's look: random rows -> even rows (top lane), -> odd rows (bottom lane)
         CH = 4
         ch_rng = np.random.default_rng(5)
         ch_masks = [random_mask(ch_rng) for _ in range(CH)]
@@ -617,67 +651,56 @@ class Separation(VoiceScene):
         E_bits = [sample_row(ch_rng, m, 0) for m in ch_masks]
         O_bits = [sample_row(ch_rng, m, 1) for m in ch_masks]
 
-        def chain_db(states, frame_color=S.GREY, cell=0.14):
+        def chain_db(states, frame_color=S.GREY, newest=None, width=1.2, row_h=0.26):
+            """S08's mini_db with each row's bits drawn in; swapped rows tinted (the newest one brightest)."""
             rws = VGroup()
             for k, st in enumerate(states):
                 b = {"r": R_bits, "e": E_bits, "o": O_bits}[st][k]
-                col = {"r": S.WHITE, "e": EVEN, "o": ODD}[st]
-                rws.add(VGroup(*[Square(cell, stroke_color=S.BG, stroke_width=1)
-                                 .set_fill(col if v else S.GREY_DARK, 0.85 if v else 1) for v in b])
-                        .arrange(RIGHT, buff=0))
-            rws.arrange(DOWN, buff=0.05)
-            return VGroup(SurroundingRectangle(rws, buff=0.08, corner_radius=0.06, stroke_color=frame_color,
-                                               stroke_width=2.5), rws)
+                col = {"r": S.GREY, "e": EVEN, "o": ODD}[st]
+                box = Rectangle(width=width, height=row_h, stroke_color=S.GREY_DARK, stroke_width=1.5)
+                box.set_fill(S.GREY_DARKER, 1) if st == "r" else box.set_fill(col, 0.5 if k == newest else 0.2)
+                icon = person_icon(col, height=row_h * 0.7).move_to(box.get_left() + RIGHT * 0.17)
+                cells = VGroup(*[Square(0.085, stroke_width=0).set_fill(S.WHITE if v else S.BG, 0.9 if v else 0.7)
+                                 for v in b]).arrange(RIGHT, buff=0.012).next_to(icon, RIGHT, buff=0.1)
+                rws.add(VGroup(box, icon, cells))
+            rws.arrange(DOWN, buff=0)
+            frame = SurroundingRectangle(rws, buff=0.06, color=frame_color, stroke_width=2.5, corner_radius=0.06)
+            return VGroup(frame, rws)
 
-        CY = 0.35
-        xs = [0.0, 1.7, 3.4, 5.75]
-        center_db = chain_db("rrrr").move_to([0, CY, 0])
-        left_dbs = [chain_db("errr").move_to([-xs[1], CY, 0]), chain_db("eerr").move_to([-xs[2], CY, 0]),
-                    chain_db("eeee", EVEN).move_to([-xs[3], CY, 0])]
-        right_dbs = [chain_db("orrr").move_to([xs[1], CY, 0]), chain_db("oorr").move_to([xs[2], CY, 0]),
-                     chain_db("oooo", ODD).move_to([xs[3], CY, 0])]
+        LY, XS = 1.45, [-3.2, -1.15, 0.55, 2.25]       # lane height; x of: 1 swap, 2 swaps, ..., n swaps
+        rand_db = chain_db("rrrr").move_to([-5.5, 0, 0])
+        lab_rand = S.text("random rows", 24, S.GREY).next_to(rand_db, DOWN, buff=0.18)
 
-        def chain_arrows(dbs, sign):
-            seq = [center_db] + dbs
-            arrs, sig = VGroup(), VGroup()
-            for a, b in zip(seq, seq[1:]):
-                if b is seq[-1]:   # last hop goes through an ellipsis
-                    mid = (a.get_center() + b.get_center()) / 2
-                    dots_ = S.math(r"\cdots", size=36, color=S.GREY).move_to(mid)
-                    arr = Arrow(a.get_edge_center(sign * RIGHT), dots_.get_edge_center(-sign * RIGHT), buff=0.1,
-                                color=S.GREY, stroke_width=3, tip_length=0.14, max_tip_length_to_length_ratio=0.4)
-                    arr2 = Arrow(dots_.get_edge_center(sign * RIGHT), b.get_edge_center(-sign * RIGHT), buff=0.1,
-                                 color=S.GREY, stroke_width=3, tip_length=0.14, max_tip_length_to_length_ratio=0.4)
-                    arrs.add(VGroup(arr, dots_, arr2))
-                else:
-                    arr = Arrow(a.get_edge_center(sign * RIGHT), b.get_edge_center(-sign * RIGHT), buff=0.1,
-                                color=S.GREY, stroke_width=3, tip_length=0.14, max_tip_length_to_length_ratio=0.4)
-                    arrs.add(arr)
-                    sig.add(S.math(r"+\sigma", size=30).next_to(arr, UP, buff=0.12))
-            return arrs, sig
+        def lane(key, sgn, col):
+            y = sgn * LY
+            n1 = chain_db(key + "rrr", newest=0).move_to([XS[0], y, 0])
+            n2 = chain_db(key * 2 + "rr", newest=1).move_to([XS[1], y, 0])
+            dots_ = S.math(r"\cdots", size=40, color=S.GREY).move_to([XS[2], y, 0])
+            nN = chain_db(key * CH, frame_color=col, newest=CH - 1).move_to([XS[3], y, 0])
+            kw = dict(color=S.GREY, stroke_width=3, tip_length=0.14, max_tip_length_to_length_ratio=0.35)
+            arrs = [Arrow(rand_db.get_right() + UP * 0.32 * sgn, n1.get_left(), buff=0.1, **kw),
+                    Arrow(n1.get_right(), n2.get_left(), buff=0.1, **kw),
+                    Arrow(n2.get_right(), dots_.get_left(), buff=0.12, **kw),
+                    Arrow(dots_.get_right(), nN.get_left(), buff=0.12, **kw)]
+            sig = VGroup(S.math(r"+\sigma", size=30).move_to(arrs[0].get_center() + np.array([-0.32, 0.3 * sgn, 0])),
+                         *[S.math(r"+\sigma", size=30).next_to(a, UP, buff=0.1) for a in arrs[1:]])
+            return [n1, n2, dots_, nN], arrs, sig
 
-        arrs_l, sig_l = chain_arrows(left_dbs, -1)
-        arrs_r, sig_r = chain_arrows(right_dbs, 1)
-        lab_rand = S.text("random rows", 24, S.GREY).next_to(center_db, DOWN, buff=0.2)
-        lab_even = S.text("every row even", 24, EVEN).next_to(left_dbs[-1], DOWN, buff=0.2)
-        lab_odd = S.text("every row odd", 24, ODD).next_to(right_dbs[-1], DOWN, buff=0.2)
-        for m in (lab_even, lab_odd):
-            if m.get_left()[0] < -6.5:
-                m.shift(RIGHT * (-6.5 - m.get_left()[0]))
-            if m.get_right()[0] > 6.5:
-                m.shift(LEFT * (m.get_right()[0] - 6.5))
-        br_y = lab_rand.get_bottom()[1] - 0.15
-        brace_l = BraceBetweenPoints([-xs[3], br_y, 0], [0, br_y, 0], direction=DOWN, color=S.GREY)
-        brace_r = BraceBetweenPoints([0, br_y, 0], [xs[3], br_y, 0], direction=DOWN, color=S.GREY)
-        nsig_l = S.math(r"n \text{ swaps: at most } n\sigma", size=32).next_to(brace_l, DOWN, buff=0.12)
-        nsig_r = S.math(r"\text{at most } n\sigma", size=32).next_to(brace_r, DOWN, buff=0.12)
-        small_lab = S.text("still tiny, unless n is huge", 24, S.GREY).next_to(nsig_l, DOWN, buff=0.12)
-        arc = CurvedDoubleArrow(left_dbs[-1].get_top() + UP * 0.1, right_dbs[-1].get_top() + UP * 0.1, angle=-0.85,
-                                color=S.WHITE, stroke_width=3, tip_length=0.18)
-        arc_lab = S.math(r"\text{even vs odd: at most } 2n\sigma", "=", r"O\!\left(n^{4/3}\,", r"\varepsilon",
-                         r"^{2/3}", r"\,2^{-d/3}\right)", size=34)
-        arc_lab[3].set_color(EPS_COLOR)
-        arc_lab.move_to([0, 2.55, 0])
+        top_nodes, top_arrs, top_sig = lane("e", 1, EVEN)
+        bot_nodes, bot_arrs, bot_sig = lane("o", -1, ODD)
+        lab_even = S.text("every row even", 24, EVEN).next_to(top_nodes[3], UP, buff=0.15)
+        lab_odd = S.text("every row odd", 24, ODD).next_to(bot_nodes[3], DOWN, buff=0.15)
+        nsig_top = S.math(r"n \text{ swaps: at most } n\sigma", size=32).move_to([4.8, LY + 0.1, 0])
+        tiny_lab = S.text("tiny, unless n is huge", 24, S.GREY).next_to(nsig_top, DOWN, buff=0.15)
+        nsig_bot = S.math(r"\text{at most } n\sigma", size=32).move_to([4.8, -LY, 0])
+        both = DoubleArrow(top_nodes[3].get_bottom(), bot_nodes[3].get_top(), buff=0.08, color=S.WHITE,
+                           stroke_width=3, tip_length=0.16)
+        both_lab = S.math(r"\text{even vs odd: at most } 2n\sigma", size=32).next_to(both, RIGHT, buff=0.3)
+        bound = S.math(r"2n\sigma", "=", r"O\!\left(n^{4/3}\,", r"\varepsilon", r"^{2/3}", r"\,2^{-d/3}\right)",
+                       size=36)
+        bound[3].set_color(EPS_COLOR)
+        bound_lab = S.text("= Theorem 3's bound", 26, S.GREY)
+        bound_line = VGroup(bound, bound_lab).arrange(RIGHT, buff=0.3).move_to([0, -3.15, 0])
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
@@ -707,52 +730,53 @@ class Separation(VoiceScene):
             self.play(FadeOut(VGroup(f1_t, f1, vdots, f1_cap, f2_t, dots, strip, strip_lab, legend2, poll_lab)),
                       run_time=0.7)
             vo.wait_until("start from")
-            self.play(FadeIn(center_db, scale=0.8), FadeIn(lab_rand), run_time=0.7)
+            self.play(FadeIn(rand_db, scale=0.85), FadeIn(lab_rand), run_time=0.7)
             vo.wait_until("and swap them")
-            prev = center_db
-            for k, (db, arr) in enumerate(zip(left_dbs, arrs_l)):
-                self.play(GrowArrow(arr) if k < 2 else FadeIn(arr), TransformFromCopy(prev, db), run_time=0.7)
-                if k < 2:
-                    hl = SurroundingRectangle(db[1][k], color=ALICE, buff=0.04, stroke_width=3)
-                    self.play(Create(hl), run_time=0.25)
-                    self.play(FadeOut(hl), run_time=0.2)
-                prev = db
-            self.play(FadeIn(lab_even), run_time=0.4)
+            prev = rand_db
+            for k in (0, 1):
+                node = top_nodes[k]
+                self.play(GrowArrow(top_arrs[k]), TransformFromCopy(prev, node), run_time=0.6)
+                self.play(Indicate(node[1][k][0], color=ALICE, scale_factor=1.15), run_time=0.35)
+                prev = node
+            self.play(GrowArrow(top_arrs[2]), FadeIn(top_nodes[2]), run_time=0.35)
+            self.play(GrowArrow(top_arrs[3]), TransformFromCopy(prev, top_nodes[3]), run_time=0.6)
+            self.play(FadeIn(lab_even, shift=DOWN * 0.1), run_time=0.3)
             vo.wait_until("Each swap")
-            self.play(LaggedStart(*[FadeIn(s, shift=DOWN * 0.1) for s in sig_l], lag_ratio=0.3), run_time=0.8)
+            self.play(LaggedStart(*[FadeIn(sg, shift=DOWN * 0.1) for sg in top_sig], lag_ratio=0.25), run_time=0.8)
             vo.wait_until("and unless n is huge")
-            self.play(GrowFromCenter(brace_l), FadeIn(nsig_l), run_time=0.9)
-            self.play(FadeIn(small_lab), run_time=0.5)
-            self.play(LaggedStart(*[Indicate(s, color=S.WHITE) for s in sig_l], lag_ratio=0.3), run_time=1.2)
+            self.play(FadeIn(nsig_top, shift=LEFT * 0.2), run_time=0.7)
+            self.play(FadeIn(tiny_lab), run_time=0.5)
+            self.play(LaggedStart(*[Indicate(sg, color=S.WHITE) for sg in top_sig], lag_ratio=0.25), run_time=1.0)
             vo.wait_until("The same goes")
-            self.play(LaggedStart(*[AnimationGroup(FadeIn(a), TransformFromCopy(center_db, d))
-                                    for a, d in zip(arrs_r, right_dbs)],
-                                  lag_ratio=0.35), FadeIn(sig_r), FadeOut(small_lab), run_time=1.4)
-            self.play(FadeIn(lab_odd), GrowFromCenter(brace_r), FadeIn(nsig_r), run_time=0.6)
+            self.play(LaggedStart(*[AnimationGroup(GrowArrow(a), FadeIn(nd) if nd is bot_nodes[2]
+                                                   else TransformFromCopy(rand_db, nd))
+                                    for a, nd in zip(bot_arrs, bot_nodes)], lag_ratio=0.3),
+                      FadeIn(bot_sig), run_time=1.3)
+            self.play(FadeIn(lab_odd, shift=UP * 0.1), FadeIn(nsig_bot, shift=LEFT * 0.2), run_time=0.5)
             vo.wait_until("so both databases")
-            self.play(Create(arc), run_time=0.8)
-            self.play(Write(arc_lab), Indicate(center_db, color=S.WHITE), run_time=1.2)
+            self.play(GrowFromCenter(both), FadeIn(both_lab, shift=LEFT * 0.2), run_time=0.7)
+            self.play(Write(bound_line), Indicate(rand_db, color=S.WHITE), run_time=1.0)
 
         # ============================================================ 6. randomized response
         rr_rng = np.random.default_rng(17)
         rr_bits = [rr_rng.integers(0, 2, D) for _ in range(4)]
         flips = [rr_rng.random(D) < 0.3 for _ in range(4)]
-        rr_title = S.text("Randomized response", 32, S.WHITE).move_to([-2.2, 3.2, 0])
-        big_coin = coin(0.3).move_to([-1.75, 2.45, 0])
-        h_own = S.text("own row", 22, S.GREY).move_to([-4.0, 2.45, 0])
-        h_pub = S.text("published", 22, S.GREY).move_to([0.45, 2.45, 0])
+        rr_title = S.text("Randomized response", 34, S.WHITE).move_to([-1.45, 3.2, 0])
+        big_coin = coin(0.3).move_to([-1.4, 2.5, 0])
+        h_own = S.text("own row", 24, S.GREY).move_to([-3.95, 2.5, 0])
+        h_pub = S.text("published", 24, S.GREY).move_to([1.05, 2.5, 0])
         people, raws, coins, arrows_rr, pubs, raw_cells = VGroup(), VGroup(), VGroup(), VGroup(), VGroup(), []
         for k in range(4):
-            y = 1.7 - 0.75 * k
-            p = person_icon(S.GREY, 0.45).move_to([-6.0, y, 0])
-            cl = VGroup(*[Square(0.34, stroke_color=S.GREY_DARK, stroke_width=1.5).set_fill(S.GREY_DARKER, 1)
-                          for _ in range(D)]).arrange(RIGHT, buff=0).move_to([-4.0, y, 0])
-            dg = VGroup(*[digit(v, 22).move_to(c) for v, c in zip(rr_bits[k], cl)]).set_z_index(3)
-            cn = coin(0.17).move_to([-1.75, y, 0])
-            ar = Arrow([-1.45, y, 0], [-0.95, y, 0], buff=0, color=S.GREY, stroke_width=2.5, tip_length=0.12,
+            y = 1.75 - 0.78 * k
+            p = person_icon(S.GREY, 0.5).move_to([-6.05, y, 0])
+            cl = VGroup(*[Square(0.37, stroke_color=S.GREY_DARK, stroke_width=1.5).set_fill(S.GREY_DARKER, 1)
+                          for _ in range(D)]).arrange(RIGHT, buff=0).move_to([-3.95, y, 0])
+            dg = VGroup(*[digit(v, 24).move_to(c) for v, c in zip(rr_bits[k], cl)]).set_z_index(3)
+            cn = coin(0.18).move_to([-1.4, y, 0])
+            ar = Arrow([-1.1, y, 0], [-0.55, y, 0], buff=0, color=S.GREY, stroke_width=2.5, tip_length=0.12,
                        max_tip_length_to_length_ratio=0.4)
-            pc = cl.copy().move_to([0.45, y, 0])
-            pd = VGroup(*[digit(int(v) ^ int(f), 22, COIN if f else None).move_to(c)
+            pc = cl.copy().move_to([1.05, y, 0])
+            pd = VGroup(*[digit(int(v) ^ int(f), 24, NOISE_COLOR if f else None).move_to(c)
                           for v, f, c in zip(rr_bits[k], flips[k], pc)]).set_z_index(3)
             people.add(p)
             raws.add(VGroup(cl, dg))
@@ -761,17 +785,17 @@ class Separation(VoiceScene):
             arrows_rr.add(ar)
             pubs.add(VGroup(pc, pd))
         nobody = VGroup(person_icon(S.GREY, 0.8), db_icon(S.GREY, w=0.8, n=4, rh=0.18)).arrange(RIGHT, buff=0.25)
-        nobody.move_to([4.6, 1.15, 0])
+        nobody.move_to([4.75, 1.2, 0])
         nobody_x = Cross(nobody, stroke_color=NOISE_COLOR, stroke_width=6, scale_factor=1.1)
         nobody_lab = S.text("nobody holds the raw data", 24, S.GREY).next_to(nobody, DOWN, buff=0.35)
         same_mask = np.array([0, 1, 0, 1, 1, 0, 0, 1])
         same_over = mask_overlays(raw_cells, [same_mask] * 4)
-        same_lab = S.text("same mask for every row", 24, MASK).move_to([-4.0, -1.05, 0])
+        same_lab = S.text("same mask for every row", 24, MASK).move_to([-3.95, -1.15, 0])
         p2_math = S.math(r"n", r"\gtrsim", r"2^{d/3}", "/", r"\varepsilon", r"^{2/3}", size=40)
         p2_math[4].set_color(EPS_COLOR)
         p2_line = VGroup(S.text("for most masks, the odd count can't be estimated unless", 28, S.WHITE),
                          p2_math).arrange(RIGHT, buff=0.3)
-        prop2 = statement_card("Proposition 2", p2_line).move_to([0, -2.6, 0])
+        prop2 = statement_card("Proposition 2", p2_line).move_to([0, -2.65, 0])
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
@@ -788,7 +812,7 @@ class Separation(VoiceScene):
             self.play(FadeIn(nobody), run_time=0.5)
             self.play(Create(nobody_x), FadeIn(nobody_lab), run_time=0.8)
             vo.wait_until("is even more limited")
-            self.play(*[Rotate(c, angle=2 * PI, axis=UP) for c in coins], Indicate(pubs, color=COIN), run_time=1.0)
+            self.play(*[Rotate(c, angle=2 * PI, axis=UP) for c in coins], Indicate(VGroup(*[p[1] for p in pubs]), color=NOISE_COLOR), run_time=1.0)
             vo.wait_until("even when every row")
             self.play(LaggedStart(*[FadeIn(o, scale=1.3) for o in same_over], lag_ratio=0.04),
                       FadeIn(same_lab, shift=UP * 0.15), run_time=1.2)
@@ -798,36 +822,35 @@ class Separation(VoiceScene):
             self.play(Circumscribe(p2_math, color=S.WHITE), run_time=1.2)
 
         # ============================================================ 7. the quantifiers
-        q_title = S.text("Careful with the quantifiers", 40, S.WHITE).move_to([0, 2.95, 0])
-        one_card = mask_card(masks).move_to([-5.45, 1.45, 0])
-        one_sheet = release_sheet(np.random.default_rng(3), w=0.85, h=1.0).move_to([-3.55, 1.45, 0])
+        q_title = S.text("Careful with the quantifiers", 40, S.WHITE).move_to([0, 3.0, 0])
+        R1, R2 = 1.45, -0.55
+        one_card = mask_card(masks, cell=0.13).move_to([-5.4, R1, 0])
+        one_sheet = release_sheet(np.random.default_rng(3), w=1.0, h=1.2).move_to([-3.45, R1, 0])
         one_arr = Arrow(one_card.get_right(), one_sheet.get_left(), buff=0.12, color=S.GREY, stroke_width=3,
                         tip_length=0.15)
-        line1 = S.text("ONE query, known in advance: easy to publish for", 30, S.WHITE)
-        tick1 = sym("✓", 44, TICK)
-        row1 = VGroup(line1, tick1).arrange(RIGHT, buff=0.3)
-        row1.next_to(one_sheet, RIGHT, buff=0.45)
+        line1 = VGroup(S.text("Any ONE query, known in advance", 32, S.WHITE),
+                       S.text("→  easy to publish for", 30, S.GREY)).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
+        line1.next_to(one_sheet, RIGHT, buff=0.55)
+        tick1 = sym("✓", 56, TICK).move_to([5.95, R1, 0])
         many_rng = np.random.default_rng(41)
-        many = VGroup(*[mask_card([random_mask(many_rng) for _ in range(N)]).scale(0.55) for _ in range(5)])
-        fan(many, np.array([-5.45, -0.2, 0]), radius=2.4, spread=0.3)
-        two_sheet = release_sheet(np.random.default_rng(4), w=0.85, h=1.0).move_to([-3.55, -0.45, 0])
+        many = VGroup(*[mask_card([random_mask(many_rng) for _ in range(N)]).scale(0.7) for _ in range(5)])
+        fan(many, np.array([-5.4, R2 + 0.3, 0]), radius=3.0, spread=0.22)
+        two_sheet = release_sheet(np.random.default_rng(4), w=1.0, h=1.2).move_to([-3.45, R2, 0])
         two_links = VGroup(*[Line(two_sheet.get_left(), c.get_right(), color=S.GREY, stroke_width=1.5) for c in many])
-        line2 = S.text("ONE release for MOST queries: impossible unless n is huge", 30, S.WHITE)
-        cross2 = sym("✗", 44, NOISE_COLOR)
-        row2 = VGroup(line2, cross2).arrange(RIGHT, buff=0.3)
-        row2.next_to(two_sheet, RIGHT, buff=0.45)
-        for r in (row1, row2):
-            if r.get_right()[0] > 6.5:
-                r.scale_to_fit_width(6.5 - r.get_left()[0]).align_to(two_sheet.get_right() + RIGHT * 0.45, LEFT)
+        line2 = VGroup(S.text("ONE private release for MOST queries", 32, S.WHITE),
+                       S.text("→  impossible unless n is huge", 30, S.GREY)).arrange(DOWN, buff=0.14,
+                                                                                   aligned_edge=LEFT)
+        line2.next_to(two_sheet, RIGHT, buff=0.55)
+        cross2 = sym("✗", 56, NOISE_COLOR).move_to([5.95, R2, 0])
         cur3 = person_icon(S.WHITE, 0.75)
         loop = Arc(radius=0.62, start_angle=PI * 0.62, angle=-2 * PI * 0.86, color=EPS_COLOR, stroke_width=3)
         loop.add_tip(tip_length=0.16)
         loop.move_to(cur3)
-        lesson_t = S.text("Broad accuracy + strong privacy?  Keep a curator in the loop.", 32, S.WHITE)
+        lesson_t = S.text("Want broad accuracy + strong privacy?  Keep a curator in the loop.", 32, S.WHITE)
         lesson = VGroup(VGroup(cur3, loop), lesson_t).arrange(RIGHT, buff=0.45)
         if lesson.width > 12.0:
             lesson.scale_to_fit_width(12.0)
-        lesson.move_to([0, -2.55, 0])
+        lesson.move_to([0, -2.65, 0])
         lesson_box = SurroundingRectangle(lesson, color=EPS_COLOR, buff=0.25, corner_radius=0.15, stroke_width=4)
 
         with self.voiceover(SAY[7]) as vo:

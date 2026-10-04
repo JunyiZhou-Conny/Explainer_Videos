@@ -87,8 +87,7 @@ class WhyStrict(VoiceScene):
         ev[6].set_color(XP_COLOR)
         ev.next_to(sd, DOWN, buff=0.35)
         ev.shift(RIGHT * (sd[1].get_x() - ev[0].get_x()))
-        if ev.get_right()[0] > 6.4:
-            ev.shift(LEFT * (ev.get_right()[0] - 6.4))
+        VGroup(sd, ev).shift(LEFT * VGroup(sd, ev).get_x())     # centre the two-line block
         ev_line = Line(ax.c2p(T0, 0), ax.c2p(mid, 0), color=S.WHITE, stroke_width=8)
         ev_lab = S.math(r"\text{event } A = \{t < 41.5\}", size=30).next_to(ev_line, DOWN, buff=0.15)
 
@@ -105,7 +104,7 @@ class WhyStrict(VoiceScene):
             vo.wait_until("Equivalently")
             self.play(Create(ev_line), FadeIn(ev_lab), run_time=0.8)
             self.play(Write(ev), run_time=1.6)
-            self.play(Indicate(lens_x, color=X_COLOR, scale_factor=1.0), run_time=1.0)
+            self.play(Indicate(lens_x, color=S.WHITE, scale_factor=1.0), Indicate(ev_lab, color=S.WHITE), run_time=1.0)
             vo.wait_until("The paper shows")
             self.play(Circumscribe(title, color=S.YELLOW), run_time=vo.remaining(1.0))
 
@@ -268,7 +267,8 @@ class WhyStrict(VoiceScene):
         avg = VGroup(line1, line2).arrange(DOWN, buff=0.2).move_to(UP * 1.4)
         def1 = S.math(r"\left|\ln\frac{\Pr[M(x)=t]}{\Pr[M(x')=t]}\right|", r"\le", r"\varepsilon", size=48)
         def1[2].set_color(EPS_COLOR)
-        every = S.text("for every output t", 30, S.GREY)
+        every = VGroup(S.text("for every output", 30, S.GREY), S.math("t", size=38, color=S.GREY))
+        every.arrange(RIGHT, buff=0.12)
         rule = VGroup(def1, every).arrange(RIGHT, buff=0.5).next_to(avg, DOWN, buff=0.75)
         # colour M(x) BLUE / M(x') ORANGE inside the fraction
         num, den = frac_split(def1[0])
@@ -301,7 +301,7 @@ class WhyStrict(VoiceScene):
         pr50 = S.math(r"\Pr = 1", size=30, color=XP_COLOR).next_to(spike50, UP, buff=0.12)
         zero50 = Line(nl.n2p(50) + RIGHT * 0.12, nl.n2p(50) + RIGHT * 0.36, color=X_COLOR, stroke_width=7)
         zero50_lab = S.math("0", size=30, color=X_COLOR).next_to(zero50, UP, buff=0.1)
-        readout = VGroup(S.math(r"\Pr[\text{output } 50]:", size=36),
+        readout = VGroup(S.math(r"\Pr[\text{output } 50]\colon", size=36),
                          S.math("1", size=40, color=XP_COLOR), S.text("vs", 28, S.GREY),
                          S.math("0", size=40, color=X_COLOR), S.math(r"\Rightarrow\ \infty", size=40,
                                                                      color=S.RED)).arrange(RIGHT, buff=0.2)

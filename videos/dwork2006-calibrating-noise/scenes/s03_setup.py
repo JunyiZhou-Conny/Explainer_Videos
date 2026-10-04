@@ -107,10 +107,11 @@ class Curator(VoiceScene):
                         max_tip_length_to_length_ratio=0.05, tip_length=0.22)
         q_lab = VGroup(S.text("query", 26, S.WHITE), S.math("f", size=40))
         q_lab.arrange(RIGHT, buff=0.15, aligned_edge=DOWN).next_to(q_arrow, UP, buff=0.12).set_x(2.3)
-        ex1 = VGroup(S.text("e.g.", 22, S.GREY), S.math(r"f(x) = 41", size=34, color=S.GREY))
-        ex1.arrange(RIGHT, buff=0.18).move_to([2.6, 0.75, 0])
-        ex2 = VGroup(S.text("or", 22, S.GREY), S.math(r"f(x) = (12,\, 7,\, 30,\, 2)", size=34, color=S.GREY))
-        ex2.arrange(RIGHT, buff=0.18).next_to(ex1, DOWN, buff=0.22).align_to(ex1, LEFT)
+        ex1 = VGroup(S.text("a number:", 22, S.GREY), S.math(r"f(x) = 41", size=32, color=S.GREY))
+        ex1.arrange(RIGHT, buff=0.18)
+        ex2 = VGroup(S.text("a list:", 22, S.GREY), S.math(r"f(x) = (12,\, 7,\, 30,\, 2)", size=32, color=S.GREY))
+        ex2.arrange(RIGHT, buff=0.18)
+        VGroup(ex1, ex2).arrange(DOWN, buff=0.22, aligned_edge=LEFT).move_to([2.8, 0.5, 0])
 
         with self.voiceover(SAY[0]) as vo:
             self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.2) for r in db_rows], lag_ratio=0.15),
@@ -138,7 +139,8 @@ class Curator(VoiceScene):
         blob = noise_blob(0.36).move_to([-1.2, -1.3, 0])
         a_arrow = Arrow([0.1, -0.45, 0], [4.75, -0.45, 0], buff=0, color=S.GREY, stroke_width=4,
                         max_tip_length_to_length_ratio=0.05, tip_length=0.22)
-        tok = answer_token().next_to(a_arrow.get_start(), UP, buff=0.15).shift(RIGHT * 0.75)
+        out_spot = np.array([2.05, -0.45 + 0.42, 0])     # just outside the trusted boundary
+        tok = answer_token().move_to(out_spot)
         inbox_top = analyst_lab.get_bottom() + DOWN * 0.3
         received = VGroup()
 
@@ -176,7 +178,7 @@ class Curator(VoiceScene):
                 q = S.math(f"f_{k}", size=34).next_to(q_arrow.get_start(), UP, buff=0.12).shift(LEFT * 0.4)
                 self.play(FadeIn(q, scale=0.6), run_time=0.25)
                 self.play(q.animate.move_to(q_arrow.get_end() + UP * 0.32 + RIGHT * 0.4), run_time=rt)
-                ans = answer_token(k).next_to(a_arrow.get_start(), UP, buff=0.15).shift(RIGHT * 0.8)
+                ans = answer_token(k).move_to(out_spot)
                 self.play(FadeOut(q, scale=0.5), Rotate(blob[0], angle=PI / 2),
                           FadeIn(ans, shift=RIGHT * 0.2), run_time=0.4)
                 self.play(deliver(ans), run_time=rt)
@@ -192,7 +194,7 @@ class Curator(VoiceScene):
             sec4.next_to(gg, DOWN, buff=0.1)
             self.play(curator.animate.set_opacity(1), curator_lab.animate.set_opacity(1),
                       FadeIn(gg, scale=1.4), FadeIn(sec4), run_time=0.8)
-            self.play(Indicate(inter, color=S.YELLOW, scale_factor=1.08), run_time=1.0)
+            self.play(Indicate(inter, color=S.WHITE, scale_factor=1.08), run_time=1.0)
 
         # ============================================================ 2. how much noise?
         keep_blob = blob
@@ -224,15 +226,16 @@ class Curator(VoiceScene):
         right_lab.arrange(DOWN, buff=0.08).next_to(pivot + RIGHT * R, DOWN, buff=0.22)
         dial = VGroup(arc, ticks, hub, dial_lab, left_lab, right_lab)
 
-        ax = Axes(x_range=[22, 62, 10], y_range=[0, 0.85, 0.85], x_length=5.6, y_length=2.6, tips=False,
+        ax = Axes(x_range=[21, 61, 10], y_range=[0, 0.85, 0.85], x_length=5.6, y_length=2.6, tips=False,
                   axis_config={"color": S.GREY, "stroke_width": 2},
                   y_axis_config={"include_ticks": False}).move_to([3.55, -0.35, 0])
-        ax_lab = S.text("released answer  f(x) + Y", 22, S.GREY).next_to(ax.x_axis, DOWN, buff=0.45)
+        ax_lab = VGroup(S.text("released answer", 22, S.GREY), answer_token(size=30).set_opacity(0.8))
+        ax_lab.arrange(RIGHT, buff=0.2).next_to(ax.x_axis, DOWN, buff=0.5)
         truth_tick = Line(ax.c2p(41, 0) + DOWN * 0.12, ax.c2p(41, 0) + UP * 0.12, color=TRUTH_COLOR,
                           stroke_width=3)
         truth_lab = S.math("f(x)", size=28, color=TRUTH_COLOR).next_to(truth_tick, DOWN, buff=0.08)
         curve = always_redraw(lambda: ax.plot(lambda t: laplace_pdf(t, 41, lam_of(u.get_value())),
-                                              x_range=[22, 62, 0.04], color=NOISE_COLOR, stroke_width=4))
+                                              x_range=[21, 61, 0.04], color=NOISE_COLOR, stroke_width=4))
         phrase = S.text("Calibrate the noise to the sensitivity", 40, S.WHITE,
                         t2c={"noise": NOISE_COLOR, "sensitivity": SENS_COLOR}).move_to([0, -3.0, 0])
         private_q = VGroup(S.text("private", 64, S.YELLOW), S.math(r"=\ ?", size=72)).arrange(RIGHT, buff=0.3)

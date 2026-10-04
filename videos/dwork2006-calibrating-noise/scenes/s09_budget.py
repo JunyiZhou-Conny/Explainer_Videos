@@ -186,128 +186,156 @@ class Budget(VoiceScene):
     def theorem_beat(self):
         P = self.parts
         title = S.text("Theorem 1", 32, EPS_COLOR, weight="BOLD").to_corner(UL, buff=0.4)
+        size = 36
 
-        prod_spec = [
-            ("lhs", [(r"\Pr[t \mid ", None), ("x", X_COLOR), ("]", None)]),
-            ("eq", [("=", None)]),
-            ("F1", [(r"\Pr[f_1]", ANALYST)]),
-            ("C1", [(r"\Pr[a_1 \mid ", None), ("x", X_COLOR), ("]", None)]),
-            ("dot", [(r"\cdot", None)]),
-            ("F2", [(r"\Pr[f_2 \mid a_1]", ANALYST)]),
-            ("C2", [(r"\Pr[a_2 \mid a_1;\, ", None), ("x", X_COLOR), ("]", None)]),
-            ("dots", [(r"\cdots", None)]),
-        ]
-        prod, pg = build_tex(prod_spec, size=36)
-        prod.move_to([0, -1.1, 0])
+        def pr(head: str, world: str | None = None):
+            """Pr[...] factor; world in {None, 'x', "x'"} adds '; x' style conditioning coloured by world."""
+            if world is None:
+                return S.math(head, size=size, color=ANALYST)
+            m = S.math(head, world, "]", size=size)
+            m[1].set_color(X_COLOR if world == "x" else XP_COLOR)
+            return m
+
+        def row(world):
+            return [pr(r"\Pr[f_1]"), pr(r"\Pr[a_1 \mid ", world), pr(r"\Pr[f_2 \mid a_1]"),
+                    pr(r"\Pr[a_2 \mid a_1;\, ", world), S.math(r"\cdots", size=size)]
+
+        names = ["F1", "C1", "F2", "C2", "dots"]
+        top, bot = row("x"), row("x'")
+        lhs_top, lhs_bot = pr(r"\Pr[t \mid ", "x"), pr(r"\Pr[t \mid ", "x'")
+
+        # step 1: the product along the transcript (world x)
+        eq = S.math("=", size=size)
+        line1 = VGroup(lhs_top, eq, *top).arrange(RIGHT, buff=0.24).move_to([0, -1.0, 0])
         legend = VGroup(
             VGroup(Square(0.22, stroke_width=0).set_fill(ANALYST, 1),
                    S.text("analyst picks the next question", 24, ANALYST)).arrange(RIGHT, buff=0.2),
             VGroup(Square(0.22, stroke_width=0).set_fill(S.WHITE, 1),
                    S.text("curator answers with Laplace noise", 24, S.WHITE)).arrange(RIGHT, buff=0.2),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.2).next_to(prod, DOWN, buff=0.55)
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.2).next_to(line1, DOWN, buff=0.55)
 
-        ratio_spec = [
-            ("lhs", [(r"\frac{\Pr[t \mid ", None), ("x", X_COLOR), (r"]}{\Pr[t \mid ", None), ("x'", XP_COLOR),
-                     ("]}", None)]),
-            ("eq", [("=", None)]),
-            ("F1", [(r"\frac{\Pr[f_1]}{\Pr[f_1]}", ANALYST)]),
-            ("C1", [(r"\frac{\Pr[a_1 \mid ", None), ("x", X_COLOR), (r"]}{\Pr[a_1 \mid ", None),
-                    ("x'", XP_COLOR), ("]}", None)]),
-            ("dot", [(r"\cdot", None)]),
-            ("F2", [(r"\frac{\Pr[f_2 \mid a_1]}{\Pr[f_2 \mid a_1]}", ANALYST)]),
-            ("C2", [(r"\frac{\Pr[a_2 \mid a_1;\, ", None), ("x", X_COLOR), (r"]}{\Pr[a_2 \mid a_1;\, ", None),
-                    ("x'", XP_COLOR), ("]}", None)]),
-            ("dots", [(r"\cdots", None)]),
-        ]
-        ratio, rg = build_tex(ratio_spec, size=36)
-        ratio.move_to([0, 1.95, 0])
-        # compact version once the analyst factors are gone
-        comp_spec = [s for s in ratio_spec if s[0] not in ("F1", "F2")]
-        comp, cg = build_tex(comp_spec, size=36)
-        comp.move_to([0, 1.95, 0])
+        # step 2: ratio of the two worlds' products, stacked column by column
+        y_top, y_bar, y_bot = 2.45, 2.02, 1.6
+        gap = 0.38
+        widths = [max(lhs_top.width, lhs_bot.width), eq.width] + \
+                 [max(a.width, b.width) for a, b in zip(top, bot)]
+        total = sum(widths) + gap * (len(widths) - 1)
+        xs, x = [], -total / 2
+        for w in widths:
+            xs.append(x + w / 2)
+            x += w + gap
+        targets_top = [lhs_top.copy().move_to([xs[0], y_top, 0]), eq.copy().move_to([xs[1], y_bar, 0])] + \
+                      [m.copy().move_to([cx, y_top if n != "dots" else y_bar, 0]) for m, cx, n in zip(top, xs[2:], names)]
+        for m, cx, n in zip(bot, xs[2:], names):
+            m.move_to([cx, y_bot, 0])
+        lhs_bot.move_to([xs[0], y_bot, 0])
+        bar_l = Line([xs[0] - widths[0] / 2, y_bar, 0], [xs[0] + widths[0] / 2, y_bar, 0], stroke_width=2.5,
+                     color=S.WHITE)
+        bar_r = Line([xs[2] - widths[2] / 2, y_bar, 0], [xs[5] + widths[5] / 2, y_bar, 0], stroke_width=2.5,
+                     color=S.WHITE)
+        col = {n: (top[i], bot[i]) for i, n in enumerate(names)}
 
-        strikes = VGroup(strike_line(rg["F1"]), strike_line(rg["F2"]))
+        def cancel_line(n):
+            a, b = col[n]
+            g = VGroup(a, b)
+            return Line(g.get_corner(DL) + np.array([-0.08, -0.06, 0]), g.get_corner(UR) + np.array([0.08, 0.06, 0]),
+                        color=S.WHITE, stroke_width=3)
+
         cancel = S.text("same in both worlds: cancels", 24, ANALYST)
-        cancel.move_to([(rg["F1"].get_x() + rg["F2"].get_x()) / 2, rg["F1"].get_bottom()[1] - 0.4, 0])
-        ptrs = VGroup(*[Line(cancel.get_top() + UP * 0.05, f.get_bottom() + DOWN * 0.08, color=ANALYST,
-                             stroke_width=1.5) for f in (rg["F1"], rg["F2"])])
 
-        b_le = S.math(r"\le", size=36)
-        b1 = S.math(r"e^{|\Delta_1|/\lambda}", size=36)
-        b_dot = S.math(r"\cdot", size=36)
-        b2 = S.math(r"e^{|\Delta_2|/\lambda}", size=36)
-        b_dots = S.math(r"\cdots", size=36)
-        bound_y = 0.55
-        b_le.move_to([cg["eq"].get_x(), bound_y, 0])
-        b1.move_to([cg["C1"].get_x(), bound_y, 0])
-        b_dot.move_to([cg["dot"].get_x(), bound_y, 0])
-        b2.move_to([cg["C2"].get_x(), bound_y, 0])
-        b_dots.move_to([cg["dots"].get_x(), bound_y, 0])
+        # step 2b: what is left, one Laplace ratio per answer
+        comp_w = [widths[0], widths[1], widths[3], 0.3, widths[5], widths[6]]
+        total_c = sum(comp_w) + gap * (len(comp_w) - 1)
+        cx_c, x = [], -total_c / 2
+        for w in comp_w:
+            cx_c.append(x + w / 2)
+            x += w + gap
+        # cx_c: lhs, eq, C1, (dot), C2, dots
+        bars_c = VGroup(Line([cx_c[2] - comp_w[2] / 2, y_bar, 0], [cx_c[2] + comp_w[2] / 2, y_bar, 0]),
+                        Line([cx_c[4] - comp_w[4] / 2, y_bar, 0], [cx_c[4] + comp_w[4] / 2, y_bar, 0]))
+        bars_c.set_stroke(S.WHITE, 2.5)
+        dot_c = S.math(r"\cdot", size=size).move_to([cx_c[3], y_bar, 0])
+        bound_y = 0.75
+        b_le = S.math(r"\le", size=size).move_to([cx_c[1], bound_y, 0])
+        b1 = S.math(r"e^{|\Delta_1|/\lambda}", size=size).move_to([cx_c[2], bound_y, 0])
+        b_dot = S.math(r"\cdot", size=size).move_to([cx_c[3], bound_y, 0])
+        b2 = S.math(r"e^{|\Delta_2|/\lambda}", size=size).move_to([cx_c[4], bound_y, 0])
+        b_dots = S.math(r"\cdots", size=size).move_to([cx_c[5], bound_y, 0])
         bounds = VGroup(b_le, b1, b_dot, b2, b_dots)
         delta_cap = S.math(r"\Delta_i = f_i(", "x", r") - f_i(", "x'", r")", size=30)
         delta_cap[1].set_color(X_COLOR)
         delta_cap[3].set_color(XP_COLOR)
         delta_txt = S.text("how much question i's true answer differs between the worlds", 22, S.GREY)
-        delta = VGroup(delta_cap, delta_txt).arrange(RIGHT, buff=0.35).move_to([0, -0.35, 0])
+        delta = VGroup(delta_cap, delta_txt).arrange(RIGHT, buff=0.35).move_to([0, -0.05, 0])
 
+        # step 3: the product of exponentials is the exponential of a sum
         l3 = S.math(r"=", r"\exp\Big(", r"\sum_i", r"|\Delta_i|/\lambda", r"\Big)", r"=",
                     r"\exp\big(\|f_t(", "x", r") - f_t(", "x'", r")\|_1/\lambda\big)", r"\le", r"e^{\varepsilon}",
-                    size=36)
+                    size=size)
         l3[7].set_color(X_COLOR)
         l3[9].set_color(XP_COLOR)
         l3[12][1].set_color(EPS_COLOR)
-        l3.move_to([0, -1.45, 0])
-        l3.shift(RIGHT * (b_le.get_x() - l3[0].get_x()))
-        if l3.get_right()[0] > 6.5:
-            l3.shift(LEFT * (l3.get_right()[0] - 6.5))
-        when = S.math(r"\text{when}\quad", r"\lambda = \max_t\,", r"S(f_t)", r"/", r"\varepsilon", size=36)
+        l3.move_to([0, -1.05, 0])
+        when = S.math(r"\text{when}\quad", r"\lambda = \max_t\,", r"S(f_t)", r"/", r"\varepsilon", size=size)
         when[2].set_color(SENS_COLOR)
         when[4].set_color(EPS_COLOR)
-        when.next_to(l3, DOWN, buff=0.4).align_to(l3[5], LEFT)
-        ft_cap = S.text("f_t: all the questions asked along t", 20, S.GREY)
-        ft_cap = VGroup(S.math("f_t", size=26, color=S.GREY), S.text(": all the questions asked along t", 20, S.GREY))
-        ft_cap.arrange(RIGHT, buff=0.08).next_to(when, RIGHT, buff=0.6)
+        ft_cap = VGroup(S.math("f_t", size=26, color=S.GREY),
+                        S.text(": all the questions asked along t", 22, S.GREY)).arrange(RIGHT, buff=0.08)
+        when_row = VGroup(when, ft_cap).arrange(RIGHT, buff=0.6).move_to([0, -2.1, 0])
         rl = VGroup(S.text("RL:", 24, S.WHITE, weight="BOLD"),
                     S.text("analyst = environment (cancels),  curator = policy", 24, S.GREY))
         rl.arrange(RIGHT, buff=0.2).to_edge(DOWN, buff=0.35)
 
-        with self.voiceover(SAY[0 + 1]) as vo:
+        with self.voiceover(SAY[1]) as vo:
             self.play(self.ledger.animate.scale(0.7).to_corner(UR, buff=0.3), FadeIn(title, shift=RIGHT * 0.2),
                       run_time=1.0)
             vo.wait_until("Write the probability")
-            self.play(Write(pg["lhs"]), Write(pg["eq"]), run_time=0.6)
-            sources = [("F1", P["qs"][0][1]), ("C1", P["down"][0]), ("F2", P["diag"][0]), ("C2", P["down"][1])]
-            for name, src in sources:
-                self.play(TransformFromCopy(src, pg[name]), *( [FadeIn(pg["dot"])] if name == "F2" else []),
-                          run_time=0.55)
-            self.play(FadeIn(pg["dots"]), FadeIn(legend, shift=UP * 0.15), run_time=0.6)
+            self.play(Write(lhs_top), Write(eq), run_time=0.6)
+            sources = [P["qs"][0][1], P["down"][0], P["diag"][0], P["down"][1]]
+            for m, src in zip(top[:4], sources):
+                self.play(Indicate(src, color=S.WHITE, scale_factor=1.1), FadeIn(m, shift=DOWN * 0.25), run_time=0.55)
+            self.play(FadeIn(top[4]), FadeIn(legend, shift=UP * 0.15), run_time=0.6)
 
             vo.wait_until("The analyst's choice")
-            self.play(Indicate(pg["F1"], color=S.WHITE), Indicate(pg["F2"], color=S.WHITE), run_time=0.8)
+            self.play(Indicate(top[0], color=S.WHITE), Indicate(top[2], color=S.WHITE), run_time=0.8)
             self.play(FadeOut(self.ledger), FadeOut(legend), run_time=0.5)
-            self.play(*[ReplacementTransform(pg[k], rg[k]) for k in pg], run_time=1.3)
+            self.play(*[Transform(m, t) for m, t in zip([lhs_top, eq] + top, targets_top)], run_time=1.0)
+            self.play(TransformFromCopy(lhs_top, lhs_bot), *[TransformFromCopy(a, b) for a, b in zip(top[:4], bot[:4])],
+                      Create(bar_l), Create(bar_r), run_time=1.0)
             vo.wait_until("so in the ratio")
+            strikes = VGroup(cancel_line("F1"), cancel_line("F2"))
+            cancel.move_to([(xs[2] + xs[4]) / 2, y_bot - 0.62, 0])
+            ptrs = VGroup(*[Line(cancel.get_top() + UP * 0.04, VGroup(*col[n]).get_bottom() + DOWN * 0.06,
+                                 color=ANALYST, stroke_width=1.5) for n in ("F1", "F2")])
             self.play(Create(strikes), run_time=0.6)
             self.play(FadeIn(cancel), Create(ptrs), run_time=0.5)
             vo.wait_until("leaving one Laplace")
-            self.play(FadeOut(VGroup(rg["F1"], rg["F2"], strikes, cancel, ptrs)), run_time=0.5)
-            self.play(*[ReplacementTransform(rg[k], cg[k]) for k in cg], run_time=0.8)
-            self.play(FadeIn(b_le), TransformFromCopy(cg["C1"], b1), TransformFromCopy(cg["C2"], b2),
-                      FadeIn(b_dot), FadeIn(b_dots), run_time=1.0)
+            self.play(FadeOut(VGroup(*col["F1"], *col["F2"], strikes, cancel, ptrs)), run_time=0.5)
+            dots_mid = top[4]
+            self.play(lhs_top.animate.set_x(cx_c[0]), lhs_bot.animate.set_x(cx_c[0]), bar_l.animate.set_x(cx_c[0]),
+                      eq.animate.set_x(cx_c[1]),
+                      top[1].animate.set_x(cx_c[2]), bot[1].animate.set_x(cx_c[2]),
+                      top[3].animate.set_x(cx_c[4]), bot[3].animate.set_x(cx_c[4]),
+                      dots_mid.animate.set_x(cx_c[5]), ReplacementTransform(bar_r, bars_c), FadeIn(dot_c),
+                      run_time=0.8)
+            self.play(LaggedStart(FadeIn(b_le), FadeIn(b1, shift=DOWN * 0.25), FadeIn(b_dot),
+                                  FadeIn(b2, shift=DOWN * 0.25), FadeIn(b_dots), lag_ratio=0.2), run_time=1.0)
             self.play(FadeIn(delta, shift=UP * 0.1), run_time=0.6)
 
             vo.wait_until("If you know")
             self.play(FadeIn(rl, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("whatever is identical")
-            self.play(FadeIn(l3[0]), TransformFromCopy(VGroup(b1, b2, b_dots), VGroup(*l3[1:5])), run_time=1.1)
+            self.play(Write(VGroup(*l3[0:5])), Indicate(VGroup(b1, b2), color=S.WHITE), run_time=1.1)
             self.play(Write(VGroup(*l3[5:11])), run_time=1.0)
             self.play(Write(VGroup(*l3[11:])), run_time=0.5)
             vo.wait_until("the per-step")
-            self.play(Indicate(l3[2], color=EPS_COLOR), FadeIn(when, shift=UP * 0.1), FadeIn(ft_cap), run_time=0.8)
+            self.play(Indicate(l3[2], color=EPS_COLOR), FadeIn(when_row, shift=UP * 0.1), run_time=0.8)
             self.play(Circumscribe(VGroup(l3[11:], when), color=EPS_COLOR), run_time=vo.remaining(0.6))
-        self.thm = VGroup(title, cg["lhs"], cg["eq"], cg["C1"], cg["dot"], cg["C2"], cg["dots"], bounds, delta,
-                          l3, when, ft_cap, rl)
+        self.thm = VGroup(title, lhs_top, lhs_bot, bar_l, eq, top[1], bot[1], top[3], bot[3], dots_mid, bars_c, dot_c,
+                          bounds, delta, when_row, rl)
+        self.l3 = l3
         self.eps_glyph = l3[12]
+
 
     # ============================================================ 2. the privacy budget
     def budget_beat(self):
@@ -349,14 +377,17 @@ class Budget(VoiceScene):
         dn_arrow = Arrow(dn.get_top(), outline.get_bottom(), buff=0.12, color=S.GREY, stroke_width=3,
                          tip_length=0.16)
         dn_lab = S.text("limit on questions,\nnow explicit and measurable", 22, S.GREY, line_spacing=0.9)
-        dn_lab.next_to(dn_arrow, RIGHT, buff=0.25)
+        dn_lab.next_to(dn_arrow, LEFT, buff=0.25)
+        total = S.math(r"\varepsilon_1 + \varepsilon_2 + \varepsilon_3 + \varepsilon_4", r"\le", r"\varepsilon", size=30,
+                       color=EPS_COLOR)
+        total[1].set_color(S.WHITE)
+        total.move_to([-4.6, -1.6, 0])
         caption = S.text("refusing depends only on the queries' sensitivity, not the data", 24, S.GREY)
         caption.to_edge(DOWN, buff=0.45)
 
         with self.voiceover(SAY[2]) as vo:
             keep = self.eps_glyph
-            self.play(FadeOut(VGroup(*[m for m in self.thm if m is not self.thm[9]])),
-                      FadeOut(VGroup(*[p for p in self.thm[9] if p is not keep])), run_time=0.7)
+            self.play(FadeOut(self.thm), FadeOut(VGroup(*[p for p in self.l3 if p is not keep])), run_time=0.7)
             self.play(ReplacementTransform(keep, bar_lab[1]), FadeIn(bar_lab[0]), run_time=0.9)
             self.play(Create(outline), LaggedStart(*[GrowFromEdge(s, LEFT) for s in segs], lag_ratio=0.6),
                       FadeIn(curator), run_time=1.4)
@@ -377,7 +408,10 @@ class Budget(VoiceScene):
             self.play(GrowArrow(dn_arrow), FadeIn(dn_lab), run_time=0.7)
             vo.wait_until("the budget makes")
             self.play(FadeIn(caption, shift=UP * 0.15), run_time=0.8)
-            self.play(Indicate(VGroup(*[c[0] for c in chips]), color=S.WHITE), run_time=vo.remaining(0.6))
+            self.play(LaggedStart(*[Indicate(c, color=S.WHITE, scale_factor=1.15) for c in chips], lag_ratio=0.25),
+                      run_time=1.2)
+            self.play(TransformFromCopy(VGroup(*[c[1] for c in chips]), total[0]), FadeIn(total[1:]),
+                      run_time=vo.remaining(0.6))
         self.wait(0.2)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
 
@@ -413,9 +447,10 @@ class Budget(VoiceScene):
         q_noise = S.math(r"\text{noise per bin} = \;?", size=34, color=NOISE_COLOR).move_to(b_outline)
 
         with self.voiceover(SAY[3]) as vo:
-            vo.wait_until("Pause: a histogram")
             self.play(Create(base), LaggedStart(*[GrowFromEdge(b, DOWN) for b in bars], lag_ratio=0.08),
-                      FadeIn(h_title), run_time=1.3)
+                      run_time=1.6)
+            vo.wait_until("Pause: a histogram")
+            self.play(FadeIn(h_title, shift=DOWN * 0.15), run_time=0.6)
             self.play(Create(b_outline), FadeIn(slices), FadeIn(b_lab), run_time=0.8)
             vo.wait_until("Treat each bin")
             self.play(LaggedStart(*[Indicate(b, color=S.WHITE, scale_factor=1.08) for b in bars], lag_ratio=0.08),
@@ -423,30 +458,22 @@ class Budget(VoiceScene):
             vo.wait_until("split the budget")
             self.play(LaggedStart(*[ReplacementTransform(s, c) for s, c in zip(slices, chips)], lag_ratio=0.08),
                       run_time=1.6)
-            self.play(FadeIn(chip_lab), FadeOut(b_lab), run_time=0.5)
+            self.play(FadeIn(chip_lab), FadeOut(b_lab), FadeOut(b_outline), run_time=0.5)
             vo.wait_until("How much noise")
             self.play(FadeIn(q_noise, scale=1.1), run_time=0.6)
         card = ponder_at(self, "d bins, total budget ε. Each bin as its own counting query,\n"
                                "budget split evenly: noise per bin?", seconds=12, pos=UP * 1.55, width=11.0)
 
         # ---- the answer: two panels on the same data
-        ax_l, bars_l, truth_l = hist_panel(TRUE_COUNTS, NOISY_SEPARATE)
-        ax_r, bars_r, truth_r = hist_panel(TRUE_COUNTS, NOISY_JOINT)
-        ax_l.move_to([-3.35, 0.15, 0])
-        ax_r.move_to([3.35, 0.15, 0])
-        for b in (bars_l, truth_l):
-            b.shift(ax_l.get_center() - ax_r.get_center() + (ax_r.get_center() - ax_l.get_center()))
-        # (hist_panel built both at the origin; move bars/outlines with their axes)
-        ax_l2, bars_l, truth_l = hist_panel(TRUE_COUNTS, NOISY_SEPARATE)
-        shift_l = np.array([-3.35, 0.15, 0]) - ax_l2.get_center()
-        for m in (ax_l2, bars_l, truth_l):
-            m.shift(shift_l)
-        ax_l = ax_l2
-        ax_r2, bars_r, truth_r = hist_panel(TRUE_COUNTS, NOISY_JOINT)
-        shift_r = np.array([3.35, 0.15, 0]) - ax_r2.get_center()
-        for m in (ax_r2, bars_r, truth_r):
-            m.shift(shift_r)
-        ax_r = ax_r2
+        def panel(noisy, center):
+            ax, bars, truth = hist_panel(TRUE_COUNTS, noisy)
+            shift = np.array(center) - ax.get_center()
+            for m in (ax, bars, truth):
+                m.shift(shift)
+            return ax, bars, truth
+
+        ax_l, bars_l, truth_l = panel(NOISY_SEPARATE, [-3.35, 0.15, 0])
+        ax_r, bars_r, truth_r = panel(NOISY_JOINT, [3.35, 0.15, 0])
 
         t_l = S.text("d separate queries", 30, S.WHITE).move_to([-3.35, 3.25, 0])
         t_r = VGroup(S.text("one query,", 30, S.WHITE), S.math("S = 2", size=34, color=SENS_COLOR))
@@ -474,7 +501,7 @@ class Budget(VoiceScene):
         def grow(bars):
             return LaggedStart(*[GrowFromEdge(b, b.grow_dir) for b in bars], lag_ratio=0.012)
 
-        small = VGroup(bars, base, h_title, chips, chip_lab, q_noise, b_outline)
+        small = VGroup(bars, base, h_title, chips, chip_lab, q_noise)
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(card), FadeOut(small), run_time=0.6)
             self.play(FadeIn(t_l, shift=DOWN * 0.15), Create(ax_l), run_time=0.7)

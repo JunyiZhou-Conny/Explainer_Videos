@@ -62,8 +62,8 @@ def ponder_at(scene, question: str, seconds: float, pos=ORIGIN, **kw) -> VGroup:
     return card
 
 
-def mini_db(n_rows: int, changed: int, frame_color: str, width: float = 1.2,
-            row_h: float = 0.24, changed_color: str = ALICE) -> VGroup:
+def mini_db(n_rows: int, changed: int, frame_color: str, width: float = 1.5,
+            row_h: float = 0.3, changed_color: str = ALICE) -> VGroup:
     """A small database: n_rows rows, the first `changed` of them replaced (PINK; newest brightest).
 
     Returns VGroup(frame, rows) with rows[i] = VGroup(box, icon)."""
@@ -77,7 +77,7 @@ def mini_db(n_rows: int, changed: int, frame_color: str, width: float = 1.2,
             col = changed_color
         else:
             box.set_fill(S.GREY_DARKER, 1)
-        icon = person_icon(col, height=row_h * 0.7).move_to(box.get_left() + RIGHT * 0.17)
+        icon = person_icon(col, height=row_h * 0.7).move_to(box.get_left() + RIGHT * 0.2)
         rows.add(VGroup(box, icon))
     rows.arrange(DOWN, buff=0)
     frame = SurroundingRectangle(rows, buff=0.06, color=frame_color, stroke_width=2.5,
@@ -88,7 +88,7 @@ def mini_db(n_rows: int, changed: int, frame_color: str, width: float = 1.2,
 def hybrid_chain(n_rows: int = 5, steps=(0, 1, 2, None, "n"), step_tex: str = r"\times\, e^{\varepsilon}",
                  start_tex: str = r"x = x^{(0)}", end_tex: str = r"x^{(n)} = y",
                  start_color: str = X_COLOR, end_color: str = S.WHITE, changed_color: str = ALICE,
-                 gap: float = 1.15, label_size: float = 30, step_color: str = EPS_COLOR) -> VGroup:
+                 gap: float = 1.25, label_size: float = 34, step_color: str = EPS_COLOR) -> VGroup:
     """The hybrid-argument chain x = x(0) -> x(1) -> ... -> x(n) = y, one row changing per step.
 
     `steps` lists the nodes: an int k = database with k rows changed, None = an ellipsis,
@@ -264,7 +264,7 @@ class Payoff(VoiceScene):
             self.play(TransformFromCopy(val1, ans1[1]), FadeIn(ans1[0]), run_time=0.7)
 
             vo.wait_until("Week two")
-            alice.move_to(alice_slot + RIGHT * 1.6)
+            alice.move_to(alice_slot + RIGHT * 0.9)
             alice_lab.next_to(alice, RIGHT, buff=0.12)
             self.play(FadeIn(alice), FadeIn(alice_lab), run_time=0.3)
             self.play(alice.animate.move_to(alice_slot),
@@ -316,9 +316,10 @@ class Payoff(VoiceScene):
                       FadeOut(VGroup(self.top[0], self.top[1], se[3:])), run_time=0.8)
             self.play(Transform(keep, target), run_time=1.0)
             frac = keep[2]
-            c_s = Ellipse(width=frac[0:4].width + 0.45, height=frac[0:4].height + 0.35, color=SENS_COLOR,
-                          stroke_width=4).move_to(frac[0:4])
-            c_e = Circle(radius=frac[5].height * 0.75 + 0.12, color=EPS_COLOR, stroke_width=4).move_to(frac[5])
+            c_s = Ellipse(width=frac[0:4].width + 0.45, height=frac[0:4].height + 0.22, color=SENS_COLOR,
+                          stroke_width=4).move_to(frac[0:4]).shift(UP * 0.05)
+            c_e = Circle(radius=frac[5].height * 0.6 + 0.1, color=EPS_COLOR, stroke_width=4).move_to(frac[5])
+            c_e.shift(DOWN * 0.04)
             l_s = S.text("sensitivity", 28, SENS_COLOR).next_to(c_s, UP, buff=0.2)
             l_e = S.text("privacy level", 28, EPS_COLOR).next_to(c_e, DOWN, buff=0.2)
             vo.wait_until("the sensitivity")
@@ -358,9 +359,6 @@ class Payoff(VoiceScene):
         pct_head = S.text("noise ÷ answer", 20, S.GREY).next_to(rows[0]["pct"], UP, buff=0.35)
         pct_head.align_to(rows[0]["pct"], LEFT)
 
-        def static(r):
-            return VGroup(r["line"], r["ticks"], r["truth"], r["labs"], r["name"])
-
         # zoom inset on the million-row line
         r3 = rows[2]
         zx, zy = x0 + length / 2, r3["line"].get_y()
@@ -399,8 +397,10 @@ class Payoff(VoiceScene):
             self.play(FadeIn(pct_head), FadeIn(r["pct"], shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("With a million")
             for prev, cur in ((rows[0], rows[1]), (rows[1], rows[2])):
-                self.play(TransformFromCopy(static(prev), static(cur)),
-                          TransformFromCopy(prev["bump"], cur["bump"]), run_time=0.8)
+                geo = lambda r: VGroup(r["line"], r["ticks"], r["truth"])
+                self.play(TransformFromCopy(geo(prev), geo(cur)), TransformFromCopy(prev["bump"], cur["bump"]),
+                          FadeIn(cur["labs"], shift=DOWN * 0.3), FadeIn(cur["name"], shift=DOWN * 0.3),
+                          run_time=0.8)
                 self.play(FadeIn(cur["pct"], shift=LEFT * 0.2), run_time=0.35)
             vo.wait_until("Alice is protected")
             self.play(Create(lens), run_time=0.4)
@@ -410,7 +410,7 @@ class Payoff(VoiceScene):
             vo.wait_until("her own contribution")
             self.play(Create(alice_seg), FadeIn(alice_lab), Create(alice_ptr), run_time=0.8)
             vo.wait_until("but tiny compared")
-            self.play(Indicate(r3["line"], color=S.WHITE, scale_factor=1.02), Indicate(r3["pct"]),
+            self.play(Indicate(r3["line"], color=S.WHITE, scale_factor=1.02), Indicate(r3["pct"], color=S.WHITE),
                       run_time=vo.remaining(0.8))
         self.wait(0.3)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
@@ -436,13 +436,14 @@ class Payoff(VoiceScene):
     # ============================================================ 4-5. epsilon << 1/n, hybrid argument
     def tiny_eps_beats(self):
         n_data = 100
-        x0, length, y = -2.5, 5.0, -2.75
+        x0, length, y = -2.5, 5.0, -0.6       # built mid-frame, dropped to Y_LOW for the ponder card
+        y_low = -2.75
         upd = length / n_data                # screen units per count
 
         def px(v):
             return x0 + v * upd
 
-        ext = DashedLine([-6.6, y, 0], [6.6, y, 0], color=S.GREY_DARK, stroke_width=2, dash_length=0.12)
+        ext = DashedLine([-6.6, y, 0], [6.6, y, 0], color=S.GREY, stroke_width=2, dash_length=0.12)
         seg = Line([px(0), y, 0], [px(n_data), y, 0], color=S.GREY, stroke_width=4)
         ticks = VGroup(*[Line([px(v), y - 0.1, 0], [px(v), y + 0.1, 0], color=S.GREY, stroke_width=2)
                          for v in (0, n_data)])
@@ -453,9 +454,10 @@ class Payoff(VoiceScene):
         lam = ValueTracker(LAM)
 
         def make_bump():
-            return bump_shape(px(50), upd, lam.get_value(), 0.9, y, half_width=max(14.0, 7 * lam.get_value()))
+            return bump_shape(px(50), upd, lam.get_value(), 0.9, y_low,
+                              half_width=max(14.0, 7 * lam.get_value()))
 
-        bump0 = make_bump()
+        bump0 = make_bump().shift(UP * (y - y_low))
         n_lab = S.math(r"\text{noise} \approx", r"\frac{1}{\varepsilon}", size=36)
         n_lab[0].set_color(NOISE_COLOR)
         n_lab[1][2].set_color(EPS_COLOR)
@@ -470,6 +472,7 @@ class Payoff(VoiceScene):
             self.play(Write(n_lab), run_time=0.9)
             vo.wait_until("What goes wrong")
             self.play(Indicate(n_lab[1], color=EPS_COLOR), run_time=1.0)
+            self.play(VGroup(line_grp, bump0, n_lab).animate.shift(DOWN * (y - y_low)), run_time=vo.remaining(0.6))
         card = ponder_at(self, "Noise ≈ 1/ε.\nWhat goes wrong if ε is much smaller than 1/n?", seconds=12,
                          pos=UP * 1.45, width=10.0)
 
@@ -507,12 +510,12 @@ class Payoff(VoiceScene):
             # ---- 5b. not Laplace's fault: the chain
             vo.wait_until("This is not")
             bump.clear_updaters()
-            not_lap = S.text("Not Laplace's fault: this holds for any ε-private mechanism M", 28, S.GREY)
+            not_lap = S.text("Not Laplace's fault: this holds for any ε-private mechanism M", 30, S.GREY)
             not_lap.to_edge(UP, buff=0.4)
             self.play(FadeOut(VGroup(readouts, rel, pure, line_grp, bump)), FadeIn(not_lap, shift=DOWN * 0.2),
                       run_time=0.8)
 
-            chain = hybrid_chain().move_to(UP * 1.25)
+            chain = hybrid_chain().move_to(UP * 1.35)
             nodes, arrows, steps, names = chain
             vo.wait_until("Any two databases")
             self.play(FadeIn(nodes[0], shift=RIGHT * 0.2), FadeIn(names[0]),
@@ -533,32 +536,32 @@ class Payoff(VoiceScene):
 
             brace = Brace(VGroup(names, nodes), DOWN, buff=0.2, color=S.GREY)
             b_lab = S.math(r"n \text{ steps:}\quad", r"e^{\varepsilon}\cdot e^{\varepsilon}\cdots e^{\varepsilon}",
-                           r"=", r"e^{n\varepsilon}", size=34)
+                           r"=", r"e^{n\varepsilon}", size=38)
             b_lab[1].set_color(EPS_COLOR)
             b_lab[3].set_color(EPS_COLOR)
             b_lab.next_to(brace, DOWN, buff=0.2)
             ends = S.math(r"\Pr[M(", "x", r")=t]", r"\;\le\;", r"e^{n\varepsilon}", r"\cdot", r"\Pr[M(", "y",
-                          r")=t]", size=42)
+                          r")=t]", size=48)
             ends[1].set_color(X_COLOR)
             ends[4].set_color(EPS_COLOR)
-            ends.next_to(b_lab, DOWN, buff=0.45)
+            ends.next_to(b_lab, DOWN, buff=0.55)
             vo.wait_until("so the ends")
             self.play(GrowFromCenter(brace), FadeIn(b_lab), run_time=0.9)
             self.play(Write(ends), run_time=1.2)
 
             vo.wait_until("If n epsilon")
-            approx = S.math(r"\Pr[M(", "x", r")=t]", r"\;\approx\;", r"\Pr[M(", "y", r")=t]", size=42)
+            approx = S.math(r"\Pr[M(", "x", r")=t]", r"\;\approx\;", r"\Pr[M(", "y", r")=t]", size=48)
             approx[1].set_color(X_COLOR)
             approx.move_to(ends)
-            cond = S.math(r"n\varepsilon \ll 1", r"\;\Rightarrow\;", r"e^{n\varepsilon} \approx 1", size=34)
+            cond = S.math(r"n\varepsilon \ll 1", r"\;\Rightarrow\;", r"e^{n\varepsilon} \approx 1", size=38)
             cond[0][1].set_color(EPS_COLOR)
             cond[2][0:3].set_color(EPS_COLOR)
             cond.move_to(b_lab)
             self.play(ReplacementTransform(b_lab, cond), run_time=0.8)
             self.play(TransformMatchingTex(ends, approx), run_time=1.0)
             vo.wait_until("every database looks alike")
-            alike = S.text("all databases look alike  ⇒  nothing can be learned", 30, S.WHITE)
-            alike.next_to(approx, DOWN, buff=0.4)
+            alike = S.text("all databases look alike  ⇒  nothing can be learned", 34, S.WHITE)
+            alike.next_to(approx, DOWN, buff=0.55)
             self.play(LaggedStart(*[Indicate(nd, color=S.WHITE, scale_factor=1.06) for nd in nodes],
                                   lag_ratio=0.12), run_time=1.0)
             self.play(FadeIn(alike, shift=UP * 0.15), run_time=0.7)
@@ -570,6 +573,8 @@ class Payoff(VoiceScene):
                          tag_txt)
             tag.move_to(not_lap)
             self.play(FadeOut(not_lap, shift=UP * 0.2), FadeIn(tag, shift=UP * 0.2), run_time=0.8)
-            self.play(Circumscribe(chain, color=S.GREY, buff=0.2), run_time=vo.remaining(1.0))
+            self.play(Indicate(tag, color=S.WHITE, scale_factor=1.08), run_time=1.0)
+            self.play(LaggedStart(*[Indicate(a, color=S.WHITE, scale_factor=1.15) for a in arrows], lag_ratio=0.2),
+                      run_time=vo.remaining(1.0))
         self.wait(0.4)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
