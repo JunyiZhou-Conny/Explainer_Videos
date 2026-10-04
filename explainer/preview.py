@@ -39,6 +39,7 @@ def main(argv=None):
     ap.add_argument("--at", help="comma-separated timestamps for full-size frames")
     ap.add_argument("--tts", help="voice backend override (e.g. silent)")
     ap.add_argument("--no-render", action="store_true")
+    ap.add_argument("--movie", type=Path, help="make sheets from this existing mp4 instead of rendering")
     args = ap.parse_args(argv)
 
     scene_file = args.file.resolve()
@@ -48,6 +49,8 @@ def main(argv=None):
     env = scene_env(spec, args.tts)
     media = project / "build" / f"preview_{args.quality}"
     out = media / "videos" / scene_file.stem / QUALITY_DIRS[args.quality] / f"{args.cls}.mp4"
+    if args.movie:
+        out, args.no_render = args.movie.resolve(), True
     if not args.no_render:
         r = subprocess.run([sys.executable, "-m", "manim", "render", f"-q{args.quality}",
                             "--disable_caching", "--media_dir", str(media), str(scene_file), args.cls],
