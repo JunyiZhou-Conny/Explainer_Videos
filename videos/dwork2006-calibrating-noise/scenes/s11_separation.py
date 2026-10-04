@@ -294,16 +294,15 @@ class Separation(VoiceScene):
             self.play(FadeIn(sheet_lab, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("publish it")
             self.play(FadeOut(VGroup(curR, curR_lab), shift=LEFT * 0.6),
-                      FadeOut(VGroup(dbR, dbR_lab), shift=LEFT * 0.6), FadeIn(capR), run_time=1.0)
+                      FadeOut(VGroup(dbR, dbR_lab), shift=LEFT * 0.6), FadeIn(capR), run_time=0.8)
             vo.wait_until("and let anyone")
             q2, a2 = trip(2)
             self.play(FadeIn(q2, shift=LEFT * 1.35),
                       LaggedStart(*[AnimationGroup(FadeIn(u, shift=UP * 0.2), GrowArrow(a))
-                                    for u, a in zip(users, user_arrows)], lag_ratio=0.25), run_time=1.4)
-            self.play(FadeOut(q2, scale=0.5), FadeIn(a2, shift=RIGHT * 1.35), run_time=0.9)
-            self.play(FadeOut(a2, scale=0.5), run_time=0.4)
+                                    for u, a in zip(users, user_arrows)], lag_ratio=0.25), run_time=1.2)
+            self.play(FadeOut(q2, scale=0.5), FadeIn(a2, shift=RIGHT * 1.35), run_time=0.7)
             vo.wait_until("Can that work")
-            self.play(Write(defn), run_time=1.0)
+            self.play(Write(defn), FadeOut(a2, scale=0.5), run_time=1.0)
             self.play(FadeIn(qmark, scale=1.4), run_time=0.4)
 
         # ============================================================ 1. parity queries

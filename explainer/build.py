@@ -158,10 +158,12 @@ def main(argv=None):
     env = scene_env(spec, args.tts)
     only = set(args.only.split(",")) if args.only else None
 
-    todo = [] if args.no_render else [
-        s for s in scenes
-        if only is None or Path(s["file"]).stem in only or s["cls"] in only
-        or not scene_movie(project, args.quality, s).exists()]
+    if args.no_render:
+        todo = []
+    elif only is not None:  # exactly the named scenes
+        todo = [s for s in scenes if Path(s["file"]).stem in only or s["cls"] in only]
+    else:                   # whatever has not been rendered yet
+        todo = [s for s in scenes if not scene_movie(project, args.quality, s).exists()]
     if todo:
         # synthesize narration once, serially, so parallel renders don't race on the TTS cache
         print(f"Rendering {len(todo)} scene(s) at {QUALITY_DIRS[args.quality]} "
