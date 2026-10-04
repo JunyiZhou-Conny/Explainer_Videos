@@ -12,7 +12,7 @@ from explainer import style as S
 from explainer.components import paper_page, person_icon, ponder_card
 from explainer.scene import VoiceScene
 
-from common import ALICE, NARRATION, PAPER_P1
+from common import ALICE, NARRATION, PAPER_P1, X_COLOR, XP_COLOR
 
 SAY = NARRATION["S01"]
 
@@ -64,6 +64,8 @@ class Hook(VoiceScene):
             self.play(FadeIn(legend), run_time=0.5)
             vo.wait_until("A researcher")
             self.play(FadeIn(card, shift=LEFT * 0.4), run_time=0.8)
+            vo.wait_until("how many patients")
+            self.play(Indicate(card[2], color=S.WHITE, scale_factor=1.06), run_time=0.9)
             vo.wait_until("The hospital releases")
             self.play(Indicate(icons, color=S.WHITE, scale_factor=1.02), run_time=1.0)
             vo.wait_until("It just says")
@@ -121,7 +123,7 @@ class Hook(VoiceScene):
             self.play(Create(arrow), run_time=0.8)
             self.play(Flash(alice, color=S.RED, flash_radius=0.4), run_time=0.6)
             vo.wait_until("without seeing")
-            self.play(Circumscribe(VGroup(old_answer, new_answer), color=S.YELLOW), run_time=1.2)
+            self.play(Circumscribe(VGroup(old_answer, new_answer), color=S.WHITE), run_time=1.2)
             vo.wait_until("Before we go on")
             # clear the right-hand column; the two published numbers stay as the ponder's prompt
             self.play(FadeOut(VGroup(card, week, diff, tag, arrow)),
@@ -156,28 +158,25 @@ class Hook(VoiceScene):
                        S.text("rounds to 50", 24, S.GREY))
         reg50[1].next_to(reg50[0], UP, buff=0.12)
 
-        def count_dot(v, col, alice_ring=False):
-            d = VGroup(Dot(nl.n2p(v), color=col, radius=0.11))
-            if alice_ring:
-                d.add(Circle(radius=0.19, color=ALICE, stroke_width=3).move_to(nl.n2p(v)))
-            return d
+        # same look as S05's return of this number line: x (BLUE) without Alice, x' (ORANGE) with her
+        dot_a = Dot(nl.n2p(41), color=X_COLOR, radius=0.1)
+        dot_b = Dot(nl.n2p(42), color=XP_COLOR, radius=0.1)
 
-        dot_a = count_dot(41, S.WHITE)
-        dot_b = count_dot(42, S.WHITE, alice_ring=True)
-        who_a = S.text("without Alice", 22, S.GREY)
-        who_b = S.text("with Alice", 22, ALICE)
+        def count_lab(world, v, side):
+            """'x: 44' (or x') under the tick label of v, flush with its `side` edge, plus who it is."""
+            tick = nl_labs[int(v) - 40]
+            tex, col, who, who_col = ((r"x\!:\ ", X_COLOR, "without Alice", S.GREY) if world == "x"
+                                      else (r"x'\!:\ ", XP_COLOR, "with Alice", ALICE))
+            base = S.math(r"x\!:\ 0", size=32).next_to(tick, DOWN, buff=0.22)     # common baseline
+            m = S.math(tex + str(v), size=32, color=col).align_to(base, DOWN).align_to(tick, side)
+            w = S.text(who, 22, who_col).next_to(m, DOWN, buff=0.12).align_to(m, side)
+            return VGroup(m, w)
 
-        def who_spot(who, v, side):
-            """`who` placed under the tick label of v, flush with its `side` edge (returns a copy)."""
-            lab = nl_labs[int(v) - 40]
-            return who.copy().next_to(lab, DOWN, buff=0.22).align_to(lab, side)
-
-        who_a.move_to(who_spot(who_a, 41, RIGHT))
-        who_b.move_to(who_spot(who_b, 42, LEFT))
-        arr44 = CurvedArrow(nl.n2p(44) + UP * 0.2, nl.n2p(40) + UP * 0.2 + RIGHT * 0.12, angle=PI / 3,
-                            color=S.WHITE, stroke_width=4, tip_length=0.2)
-        arr45 = CurvedArrow(nl.n2p(45) + UP * 0.2, nl.n2p(50) + UP * 0.2 + LEFT * 0.12, angle=-PI / 3,
-                            color=ALICE, stroke_width=4, tip_length=0.2)
+        lab_a, lab_b = count_lab("x", 41, RIGHT), count_lab("xp", 42, LEFT)
+        arr44 = CurvedArrow(nl.n2p(44) + UP * 0.18, nl.n2p(40) + UP * 0.18 + RIGHT * 0.12, angle=PI / 3,
+                            color=X_COLOR, stroke_width=4, tip_length=0.2)
+        arr45 = CurvedArrow(nl.n2p(45) + UP * 0.18, nl.n2p(50) + UP * 0.18 + LEFT * 0.12, angle=-PI / 3,
+                            color=XP_COLOR, stroke_width=4, tip_length=0.2)
         exposed = S.text("Alice exposed", 30, S.RED).next_to(nl.n2p(50), UP, buff=2.25).shift(LEFT * 0.6)
         jump = S.text("jump", 26, S.RED).next_to(cut, UP, buff=0.1)
         rule_cap = S.text("Any fixed rule that ever changes its answer has a jump somewhere.", 28, S.WHITE)
@@ -191,14 +190,14 @@ class Hook(VoiceScene):
             self.play(FadeIn(check, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("But if the count")
             self.play(FadeOut(VGroup(icons, db_title, legend, alice_label, pair, check)), run_time=0.6)
-            self.play(Create(nl), FadeIn(nl_labs), FadeIn(dot_a), FadeIn(dot_b), FadeIn(who_a),
-                      FadeIn(who_b), run_time=0.9)
+            self.play(Create(nl), FadeIn(nl_labs), FadeIn(dot_a), FadeIn(dot_b), FadeIn(lab_a),
+                      FadeIn(lab_b), run_time=0.9)
             self.play(Create(cut), FadeIn(cut_lab), FadeIn(reg40), FadeIn(reg50), run_time=0.7)
             vo.wait_until("forty-four to forty-five")
             # Alice's arrival now straddles the cut: 44 without her, 45 with her
             self.play(dot_a.animate.move_to(nl.n2p(44)), dot_b.animate.move_to(nl.n2p(45)),
-                      who_a.animate.move_to(who_spot(who_a, 44, RIGHT)),
-                      who_b.animate.move_to(who_spot(who_b, 45, LEFT)), run_time=1.0)
+                      Transform(lab_a, count_lab("x", 44, RIGHT)), Transform(lab_b, count_lab("xp", 45, LEFT)),
+                      run_time=1.0)
             vo.wait_until("the rounded answer jumps")
             self.play(Create(arr44), Indicate(nl_labs[0], color=S.WHITE, scale_factor=1.6), run_time=0.8)
             self.play(Create(arr45), Indicate(nl_labs[10], color=S.RED, scale_factor=1.6), run_time=0.8)

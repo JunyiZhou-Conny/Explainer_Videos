@@ -69,7 +69,7 @@ def scene_movie(project: Path, quality: str, scene: dict) -> Path:
 
 
 def render_scene(project: Path, quality: str, scene: dict, env: dict) -> Path:
-    cmd = [sys.executable, "-m", "manim", "render", f"-q{quality}", "--disable_caching",
+    cmd = [sys.executable, "-m", "manim", "render", f"-q{quality}", "--disable_caching", "--no_latex_cleanup",
            "--media_dir", str(media_dir(project, quality)), scene["file"], scene["cls"]]
     log = project / "build" / "logs" / f"{Path(scene['file']).stem}_{scene['cls']}.log"
     log.parent.mkdir(parents=True, exist_ok=True)
@@ -97,14 +97,19 @@ def has_audio(path: Path) -> bool:
     return bool(r.stdout.strip())
 
 
-def normalize(src: Path, dst: Path) -> None:
-    """Same audio layout for every scene (48 kHz stereo AAC, padded to video length)."""
+def normalize(src: Path, dst: Path, crf: int | None = None) -> None:
+    """Same audio layout for every scene (48 kHz stereo AAC, padded to video length).
+
+    With `crf`, the video is re-encoded once here (x264, tuned for flat animation), so the full
+    video and every part are later joined without re-encoding."""
+    vcodec = ["-c:v", "copy"] if crf is None else [
+        "-c:v", "libx264", "-preset", "medium", "-tune", "animation", "-crf", str(crf), "-pix_fmt", "yuv420p"]
     if has_audio(src):
-        cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-c:v", "copy", "-af",
+        cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), *vcodec, "-af",
                "aresample=48000,apad", "-ac", "2", "-c:a", "aac", "-b:a", "192k", "-shortest", str(dst)]
     else:
         cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-f", "lavfi", "-i",
-               "anullsrc=r=48000:cl=stereo", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+               "anullsrc=r=48000:cl=stereo", *vcodec, "-c:a", "aac", "-b:a", "192k",
                "-shortest", str(dst)]
     subprocess.run(cmd, check=True)
 
@@ -143,7 +148,8 @@ def main(argv=None):
     ap.add_argument("--no-render", action="store_true", help="only stitch existing scene renders")
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) // 2))
     ap.add_argument("--tts", help="override the voice backend (kokoro|elevenlabs|edge|espeak|silent)")
-    ap.add_argument("--crf", type=int, help="re-encode the final video with x264 at this CRF (smaller file)")
+    ap.add_argument("--crf", type=int, help="re-encode each scene with x264 at this CRF (smaller files; ~25 is good)")
+    ap.add_argument("--render-only", action="store_true", help="render the selected scenes, don't stitch")
     args = ap.parse_args(argv)
 
     project = args.project.resolve()
@@ -162,6 +168,8 @@ def main(argv=None):
               f"with TTS={env['EXPLAINER_TTS']} (jobs={args.jobs})", flush=True)
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
             list(pool.map(lambda s: render_scene(project, args.quality, s, env), todo))
+    if args.render_only:
+        return
 
     build = project / "build" / f"stitch_{args.quality}"
     build.mkdir(parents=True, exist_ok=True)
@@ -173,23 +181,23 @@ def main(argv=None):
         movie = scene_movie(project, args.quality, s)
         if not movie.exists():
             raise SystemExit(f"missing render for {s['cls']}: {movie}")
-        norm = build / f"{i:02d}_{s['cls']}.mp4"
+        norm = build / f"{i:02d}_{s['cls']}{'' if args.crf is None else f'_crf{args.crf}'}.mp4"
         if not norm.exists() or norm.stat().st_mtime < movie.stat().st_mtime:
-            normalize(movie, norm)
+            normalize(movie, norm, args.crf)
         normalized.append((s, movie, norm))
 
     suffix = "" if args.quality == "h" else "_" + QUALITY_DIRS[args.quality]
     title = spec.get("title", spec["id"])
-    stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, args.crf, chapters_file=out_dir / "chapters.txt",
+    stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
            transcript_file=out_dir / "transcript.md")
     for part in spec.get("parts") or []:
         keep = set(part["scenes"])
         subset = [t for t in normalized if Path(t[0]["file"]).stem in keep or t[0]["cls"] in keep]
         stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", part.get("title", part["id"]), build,
-               args.crf, chapters_file=out_dir / f"chapters_{part['id']}.txt")
+               chapters_file=out_dir / f"chapters_{part['id']}.txt")
 
 
-def stitch(items, stem: Path, title: str, build: Path, crf: int | None, chapters_file: Path,
+def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
            transcript_file: Path | None = None) -> None:
     """Concatenate normalized scene files into stem.mp4 (+ .srt, chapters, transcript)."""
     srt, chapters, transcript, offset = [], [], [f"# {title}\n"], 0.0
@@ -210,10 +218,8 @@ def stitch(items, stem: Path, title: str, build: Path, crf: int | None, chapters
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
                     "-c", "copy", str(joined)], check=True)
     final = stem.with_suffix(".mp4")
-    vcodec = ["-c:v", "copy"] if crf is None else [
-        "-c:v", "libx264", "-preset", "slow", "-tune", "animation", "-crf", str(crf), "-pix_fmt", "yuv420p"]
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), *vcodec, "-af",
-                    "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k",
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
+                    "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
                     "-movflags", "+faststart", str(final)], check=True)
     joined.unlink(missing_ok=True)
     stem.with_suffix(".srt").write_text("".join(

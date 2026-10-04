@@ -59,7 +59,9 @@ def year_x(y: float) -> float:
 
 
 def coin(radius: float = 0.28, face: str = "H", letter: bool = True) -> VGroup:
-    """Warner's coin: a gold disc with a rim and an H/T face."""
+    """Warner's coin: a gold disc with a rim and an H/T face (the face letter only when the coin
+    is big enough for it to be at least 20 pt)."""
+    letter = letter and radius >= 0.235
     disc = Circle(radius=radius, stroke_width=0).set_fill(S.GOLD, 1)
     rim = Circle(radius=radius, stroke_color=COIN_RIM, stroke_width=3)
     inner = Circle(radius=radius * 0.78, stroke_color=COIN_RIM, stroke_width=1.5)
@@ -366,7 +368,7 @@ class LineageBefore(VoiceScene):
         l_tails = S.text("tails", 20, S.GREY).next_to(a_tails.point_from_proportion(0.42), DOWN + LEFT * 0.35,
                                                       buff=0.06)
         truth = S.text("tell the truth", 24, S.WHITE).next_to(a_heads.get_end(), RIGHT, buff=0.12)
-        c2 = coin(0.22, "H").next_to(a_tails.get_end(), RIGHT, buff=0.1)
+        c2 = coin(0.24, "H").next_to(a_tails.get_end(), RIGHT, buff=0.1)
         say_yes = S.text("H → “yes”", 22, S.WHITE)
         say_no = S.text("T → “no”", 22, S.WHITE)
         results = VGroup(say_yes, say_no).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
@@ -683,7 +685,9 @@ class LineageBefore(VoiceScene):
         limit.move_to([-3.0, -2.55, 0])
         bump_ax = Axes(x_range=[-3, 3, 1], y_range=[0, 0.55, 0.5], x_length=1.2, y_length=0.4, tips=False,
                        axis_config={"color": S.GREY_DARK, "stroke_width": 1.5, "include_ticks": False})
-        bump = bump_ax.plot(lambda t: 0.5 * np.exp(-abs(t)), x_range=[-3, 3, 0.02], color=NOISE_COLOR,
+        # SuLQ (and Dwork & Nissim 2004) added Gaussian noise N(0, R): a bell, not a Laplace tent. Its
+        # tails are what "a tiny chance of a large leak" refers to in the next beat.
+        bump = bump_ax.plot(lambda t: 0.5 * np.exp(-0.5 * t ** 2), x_range=[-3, 3, 0.02], color=NOISE_COLOR,
                             stroke_width=3)
         noise_ic = VGroup(bump_ax, bump)
         noisy = VGroup(S.text("each answer: count +", 22, S.WHITE), noise_ic,

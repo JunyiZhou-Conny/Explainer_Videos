@@ -29,7 +29,7 @@ CARD_C = np.array([-2.37, 0.6, 0])            # this paper's card
 THUMB_X, THUMB_W, THUMB_H = 0.85, 0.86, 0.6   # thumbnails carried by the arrows
 DESC_X0, DESC_X1 = 1.4, 6.55                  # descendant cards
 ROW_Y = [3.1, 2.22, 1.34, 0.46, -0.42, -1.3, -2.18, -3.06]
-PANEL_C, PANEL_W, PANEL_H = np.array([-3.1, 0.0, 0]), 6.75, 6.7
+PANEL_C, PANEL_W, PANEL_H = np.array([-3.175, 0.0, 0]), 6.9, 6.7   # left edge -6.625 covers the map
 SLOT_COLORS = [EPS_COLOR, SENS_COLOR, NOISE_COLOR, S.GREY]
 SIG = 2.2                                     # Gaussian noise scale in the (eps, delta) panel
 T_LO, T_HI = 41.5 - SIG ** 2, 41.5 + SIG ** 2  # where its log-ratio leaves the band |.| <= 1
@@ -207,6 +207,9 @@ class Legacy(VoiceScene):
             self.play(pulse(card.full[0], 1.06), run_time=0.8)
             vo.wait_until("Another 2006 paper")
             grow("delta")
+            vo.wait_until("Mironov")
+            self.play(Indicate(rows["delta"]["card"][2], color=S.WHITE, scale_factor=1.05),
+                      Indicate(rows["delta"]["card"][3][0], color=S.WHITE, scale_factor=1.05), run_time=1.0)
             vo.wait_until("added a tiny slack")
             self.play(Indicate(rows["delta"]["card"][3][1], color=EPS_COLOR, scale_factor=1.3), run_time=0.9)
             vo.wait_until("Remember the Gaussian")
@@ -335,8 +338,11 @@ class Legacy(VoiceScene):
                         VGroup(*[p8[k] for k in ("names", "vals", "vals_noisy", "exact_box", "exact_lab", "stamp")]))
         others = VGroup(*[VGroup(r["card"], r["fan"], *([r["thumb"]] if r["thumb"] is not None else []))
                           for k, r in rows.items() if k != "census"])
+        # only the one-shot slot and the Census stay bright: dim the other slots and the ancestor map too
+        others.add(*[card.full[i] for i in range(3)], card.anyf,
+                   *chips.values(), badge, pm["lines"], pm["labels"], pm["arrows"])
         q = ponder_card("The Census published one release.\nDoes Section 4 forbid it?", width=6.3, size=30)
-        q.move_to([-3.3, 2.2, 0])
+        q.move_to([-3.45, 2.2, 0])      # left edge at -6.6: covers the lane labels completely
         q[0].set_fill(S.BG, 1)          # fully opaque: anything less lets bright text ghost through
         self.play(FadeIn(q, scale=0.95), others.animate.fade(0.7), run_time=0.6)
         bar = q[3]
@@ -382,7 +388,7 @@ class Legacy(VoiceScene):
             vo.wait_until("Section four only")
             self.play(FadeIn(item2, shift=UP * 0.2), run_time=0.9)
             vo.wait_until("that is accurate for most")
-            self.play(Indicate(most, color=S.WHITE, scale_factor=1.25), run_time=0.9)
+            self.play(Indicate(most, color=S.WHITE, scale_factor=1.1), run_time=0.9)
             self.play(Indicate(b2[1], color=NOISE_COLOR, scale_factor=1.4), run_time=vo.remaining(0.6))
         self.play(FadeIn(cup, shift=UP * 0.3), FadeIn(prize, shift=LEFT * 0.2), run_time=1.0)
         self.play(pulse(cup, 1.1), run_time=0.8)
@@ -433,7 +439,9 @@ class Legacy(VoiceScene):
         return VGroup(panel, head, ring, z1, z2)
 
     def _close(self, pop, base, thumb, extras):
-        self.play(FadeOut(extras), FadeOut(pop), Transform(base, thumb.copy()), run_time=0.7)
+        # Order matters: play() re-adds each animated group on top, in argument order. With the
+        # extras first, the opaque panel landed above them and the panel's contents vanished at once.
+        self.play(FadeOut(pop), FadeOut(extras), Transform(base, thumb.copy()), run_time=0.7)
         self.remove(base)
 
     @staticmethod
@@ -472,8 +480,13 @@ class Legacy(VoiceScene):
                    axis_config={"color": S.GREY, "stroke_width": 2, "include_ticks": False}).move_to([-3.35, -1.25, 0])
         dens = ax2.plot(lambda t: gaussian_pdf(t, 41, SIG), x_range=[t0, t1, 0.05], color=X_COLOR, stroke_width=4)
         dens_lab = S.text("outputs in world x", 20, X_COLOR).next_to(ax2.c2p(44.6, 0.12), RIGHT, buff=0.1)
-        tails = VGroup(ax2.get_area(dens, x_range=[t0, T_LO], color=EPS_COLOR, opacity=0.75),
-                       ax2.get_area(dens, x_range=[T_HI, t1], color=EPS_COLOR, opacity=0.75))
+        # the tails are thin slivers: shade them and also trace the curve over them in YELLOW
+        tails = VGroup(ax2.get_area(dens, x_range=[t0, T_LO], color=EPS_COLOR, opacity=0.85),
+                       ax2.get_area(dens, x_range=[T_HI, t1], color=EPS_COLOR, opacity=0.85),
+                       ax2.plot(lambda t: gaussian_pdf(t, 41, SIG), x_range=[t0, T_LO, 0.05], color=EPS_COLOR,
+                                stroke_width=6),
+                       ax2.plot(lambda t: gaussian_pdf(t, 41, SIG), x_range=[T_HI, t1, 0.05], color=EPS_COLOR,
+                                stroke_width=6))
         guides = VGroup(DashedLine(ax.c2p(T_LO, 1), ax2.c2p(T_LO, 0), color=S.GREY, stroke_width=1.5),
                         DashedLine(ax.c2p(T_HI, -1), ax2.c2p(T_HI, 0), color=S.GREY, stroke_width=1.5))
         delta_txt = VGroup(S.math(r"\delta", size=34, color=EPS_COLOR), S.text("= these rare tails", 22, S.WHITE)
@@ -560,7 +573,9 @@ class Legacy(VoiceScene):
         c_lab = S.math("C", size=32, color=SENS_COLOR).move_to(o + np.array([-0.8, 0.85, 0]))
         clip_a = VGroup(S.text("clip each example's gradient to size", 22, S.WHITE),
                         S.math(r"\le C", size=30, color=SENS_COLOR)).arrange(RIGHT, buff=0.12)
-        clip_b = S.text("⇒  its sensitivity is at most C", 22, SENS_COLOR)
+        # (no number here: the sum's sensitivity is C for add/remove neighbours but 2C for the paper's
+        # replace-one-row neighbours)
+        clip_b = S.text("⇒  so the sum has bounded sensitivity", 22, SENS_COLOR)
         clip_lab = VGroup(clip_a, clip_b).arrange(DOWN, buff=0.12).move_to([-3.1, -0.38, 0])
         total = sum(clipped_v) * 0.25
         s0 = np.array([-5.45, -2.0, 0])
@@ -616,7 +631,7 @@ class Legacy(VoiceScene):
         ys = [base.get_top()[1] - rh * (i + 0.5) for i in range(4)]
         names = VGroup(*[S.text(t, 24, S.WHITE).move_to([x_l, y, 0], aligned_edge=LEFT)
                          for t, y in zip(["state totals", "counties", "tracts", "blocks"], ys)])
-        exact = S.text("7,705,281", 24, S.WHITE, font=S.FONT_SANS).move_to([x_r, ys[0], 0], aligned_edge=LEFT)
+        exact = S.text("3,486,201", 24, S.WHITE, font=S.FONT_SANS)   # illustrative (matches no real state).move_to([x_r, ys[0], 0], aligned_edge=LEFT)
         rng = np.random.default_rng(2020)
         true_vals = [48113, 4102, 37]
         def row_vals(noise):

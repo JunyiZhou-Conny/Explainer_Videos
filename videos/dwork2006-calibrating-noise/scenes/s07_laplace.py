@@ -14,7 +14,7 @@ from explainer import style as S
 from explainer.components import laplace_pdf, ponder_card
 from explainer.scene import VoiceScene
 
-from common import ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR
+from common import EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR
 
 SAY = NARRATION["S07"]
 LAM = 1.0            # Laplace scale used in the pictures (so 1/lambda = 1)
@@ -78,6 +78,14 @@ class Panel(VGroup):
         ts = np.unique(np.round(ts, 6))
         return VMobject(stroke_color=color, stroke_width=sw).set_points_as_corners(
             [c2p(t, f(t)) for t in ts])
+
+
+def probe_line(panel, tracker, y0, y1):
+    """Vertical dashed line at t = tracker over a panel; built once, moved by an updater."""
+    line = DashedLine(panel.c2p(panel.t0, y0), panel.c2p(panel.t0, y1), color=S.GREY, stroke_width=2,
+                      dash_length=0.08)
+    line.add_updater(lambda m: m.move_to(panel.c2p(tracker.get_value(), (y0 + y1) / 2)))
+    return line.update()
 
 
 def bracket(p0, p1, color, sw=4, tick=0.1):
@@ -201,10 +209,8 @@ class LaplaceMechanism(VoiceScene):
                            color=EPS_COLOR).move_to(bot.c2p(45.0, 1.55))
 
         t = ValueTracker(T0 + 0.3)
-        probe_top = always_redraw(lambda: DashedLine(top.c2p(t.get_value(), 0), top.c2p(t.get_value(), 0.6),
-                                                     color=S.GREY, stroke_width=2, dash_length=0.08))
-        probe_bot = always_redraw(lambda: DashedLine(bot.c2p(t.get_value(), -2), bot.c2p(t.get_value(), 2),
-                                                     color=S.GREY, stroke_width=2, dash_length=0.08))
+        probe_top = probe_line(top, t, 0, 0.6)
+        probe_bot = probe_line(bot, t, -2, 2)
         dot_a = always_redraw(lambda: Dot(top.c2p(t.get_value(), laplace_pdf(t.get_value(), A, LAM)),
                                           color=X_COLOR, radius=0.07))
         dot_b = always_redraw(lambda: Dot(top.c2p(t.get_value(), laplace_pdf(t.get_value(), B, LAM)),
@@ -290,10 +296,8 @@ class LaplaceMechanism(VoiceScene):
                                 .next_to(gap_txt, RIGHT, buff=0.12))
         gap_note = S.math(r"|\text{gap}| \le \text{slide} \times \tfrac{1}{\lambda}", size=32, color=EPS_COLOR)
         gap_note.move_to([-2.6, 3.2, 0], aligned_edge=LEFT)
-        probe_top2 = always_redraw(lambda: DashedLine(top.c2p(probe.get_value(), 0), top.c2p(probe.get_value(), 0.6),
-                                                      color=S.GREY, stroke_width=2, dash_length=0.08))
-        probe_bot2 = always_redraw(lambda: DashedLine(bot.c2p(probe.get_value(), -2), bot.c2p(probe.get_value(), 2),
-                                                      color=S.GREY, stroke_width=2, dash_length=0.08))
+        probe_top2 = probe_line(top, probe, 0, 0.6)
+        probe_bot2 = probe_line(bot, probe, -2, 2)
         dot_g = always_redraw(lambda: Dot(bot.c2p(probe.get_value(), log_ratio(probe.get_value())),
                                           color=EPS_COLOR, radius=0.08))
         principle = S.text("privacy needs noise whose log density is never steep", 30, S.WHITE)
@@ -382,7 +386,9 @@ class LaplaceMechanism(VoiceScene):
         guide = DashedLine(nl.n2p(A) + UP * H_B, nl.n2p(A) + UP * H_O, color=S.GREY, stroke_width=2,
                            dash_length=0.06)
         extra_lab = S.math(r"\text{differ by} \le |f(x)-f(x')|", size=28).next_to(extra, RIGHT, buff=0.25)
-        diff_txt = S.math(r"|t-f(x')|-|t-f(x)| =", size=28).move_to([-4.3, -0.95, 0])
+        diff_txt = S.math(r"|t-", "f(x')", r"|-|t-", "f(x)", r"| =", size=28).move_to([-4.3, -0.95, 0])
+        diff_txt[1].set_color(XP_COLOR)
+        diff_txt[3].set_color(X_COLOR)
         diff_num = always_redraw(lambda: DecimalNumber(log_ratio(tt.get_value()), num_decimal_places=2,
                                                        include_sign=True, font_size=30)
                                  .next_to(diff_txt, RIGHT, buff=0.12))
@@ -542,8 +548,10 @@ class LaplaceMechanism(VoiceScene):
             self.play(FadeIn(w_x), FadeIn(w_xp), FadeIn(e_labs), run_time=0.6)
             edge_hl = VGroup(Line(ax_u.n2p(31), ax_u.n2p(32), color=S.WHITE, stroke_width=10),
                              Line(ax_u.n2p(51), ax_u.n2p(52), color=S.WHITE, stroke_width=10))
-            self.play(ShowPassingFlash(edge_hl.copy(), time_width=0.8), Indicate(e_labs[0]), Indicate(e_labs[3]),
-                      Indicate(e_labs[2]), Indicate(e_labs[5]), run_time=1.0)
+            self.play(ShowPassingFlash(edge_hl.copy(), time_width=0.8),
+                      *[Indicate(e_labs[i], color=(X_COLOR if i < 3 else XP_COLOR), scale_factor=1.4)
+                        for i in (0, 2, 3, 5)],
+                      run_time=1.0)
             vo.wait_until("An output of")
             self.play(Create(out_line), FadeIn(out_lab), run_time=0.8)
             vo.wait_until("is possible if")
@@ -585,21 +593,24 @@ class LaplaceMechanism(VoiceScene):
         hi2 = bot2.c2p(T0, 1)[1] - bot2.c2p(T0, 0)[1]
         band_h = ValueTracker(1.0)
 
-        def band2():
-            hgt = band_h.get_value() * hi2
-            mid = bot2.c2p((T0 + T1) / 2, 0)
-            r = Rectangle(width=bot2.ref.width, height=2 * hgt, stroke_width=0).set_fill(EPS_COLOR, 0.08).move_to(mid)
-            up = DashedLine(mid + LEFT * bot2.ref.width / 2 + UP * hgt, mid + RIGHT * bot2.ref.width / 2 + UP * hgt,
-                            color=EPS_COLOR, stroke_width=3)
-            dn = DashedLine(mid + LEFT * bot2.ref.width / 2 + DOWN * hgt, mid + RIGHT * bot2.ref.width / 2 + DOWN * hgt,
-                            color=EPS_COLOR, stroke_width=3)
-            return VGroup(r, up, dn)
+        mid2 = bot2.c2p((T0 + T1) / 2, 0)
+        band_g = VGroup(Rectangle(width=bot2.ref.width, height=2 * hi2, stroke_width=0).set_fill(EPS_COLOR, 0.08),
+                        DashedLine(LEFT * bot2.ref.width / 2, RIGHT * bot2.ref.width / 2, color=EPS_COLOR,
+                                   stroke_width=3),
+                        DashedLine(LEFT * bot2.ref.width / 2, RIGHT * bot2.ref.width / 2, color=EPS_COLOR,
+                                   stroke_width=3))
 
-        band_g = always_redraw(band2)
-        eps_hi = always_redraw(lambda: S.math(r"+\varepsilon", size=30, color=EPS_COLOR)
-                               .next_to(bot2.c2p(T1, band_h.get_value()), RIGHT, buff=0.1))
-        eps_lo = always_redraw(lambda: S.math(r"-\varepsilon", size=30, color=EPS_COLOR)
-                               .next_to(bot2.c2p(T1, -band_h.get_value()), RIGHT, buff=0.1))
+        def band_upd(g):          # built once; the updater only resizes / moves (stable submobjects)
+            hgt = band_h.get_value() * hi2
+            g[0].stretch_to_fit_height(2 * hgt).move_to(mid2)
+            g[1].move_to(mid2 + UP * hgt)
+            g[2].move_to(mid2 + DOWN * hgt)
+
+        band_g.add_updater(band_upd).update()
+        eps_hi = S.math(r"+\varepsilon", size=30, color=EPS_COLOR)
+        eps_lo = S.math(r"-\varepsilon", size=30, color=EPS_COLOR)
+        eps_hi.add_updater(lambda m: m.next_to(bot2.c2p(T1, band_h.get_value()), RIGHT, buff=0.1)).update()
+        eps_lo.add_updater(lambda m: m.next_to(bot2.c2p(T1, -band_h.get_value()), RIGHT, buff=0.1)).update()
         lap_line = bot2.plot(log_ratio, kinks=[A, B], color=S.WHITE, sw=4)
         g_lo_t, g_hi_t = (A + B) / 2 - R2, (A + B) / 2 + R2          # where 41.5 - t leaves the panel
         gauss_line = bot2.plot(lambda s: (A + B) / 2 - s, g_lo_t, g_hi_t, color=S.GREY, sw=6)
@@ -640,14 +651,17 @@ class LaplaceMechanism(VoiceScene):
             self.play(gprobe.animate.set_value(38.8), run_time=2.2)
             vo.wait_until("In the tails")
             self.play(lap_line.animate.set_stroke(opacity=0.45), Create(gauss_line), run_time=1.1)
-            self.play(GrowArrow(up_arrow), GrowArrow(dn_arrow), FadeIn(keys), run_time=0.7)
+            self.play(GrowArrow(up_arrow), GrowArrow(dn_arrow), run_time=0.7)
             vo.wait_until("no single epsilon")
             self.play(band_h.animate.set_value(1.7), run_time=1.3)
+            self.play(FadeIn(keys), run_time=0.5)
             self.play(Flash(up_arrow.get_end(), color=S.RED, flash_radius=0.3),
                       Flash(dn_arrow.get_end(), color=S.RED, flash_radius=0.3), run_time=0.6)
             vo.wait_until("Hold on to that")
             self.play(FadeIn(later, shift=DOWN * 0.15), run_time=0.8)
-            self.play(Indicate(VGroup(pA, pB), color=S.WHITE, scale_factor=1.0), Indicate(kind_gau), run_time=1.2)
+            self.play(ShowPassingFlash(pA.copy().set_stroke(X_COLOR, 10), time_width=0.4),
+                      ShowPassingFlash(pB.copy().set_stroke(XP_COLOR, 10), time_width=0.4),
+                      Indicate(kind_gau, color=S.WHITE), run_time=vo.remaining(1.2))
         for m in (band_g, eps_hi, eps_lo, g_gap, g_num):
             m.clear_updaters()
 

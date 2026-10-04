@@ -52,7 +52,7 @@ def main(argv=None):
     if args.movie:
         out, args.no_render = args.movie.resolve(), True
     if not args.no_render:
-        r = subprocess.run([sys.executable, "-m", "manim", "render", f"-q{args.quality}",
+        r = subprocess.run([sys.executable, "-m", "manim", "render", f"-q{args.quality}", "--no_latex_cleanup",
                             "--disable_caching", "--media_dir", str(media), str(scene_file), args.cls],
                            cwd=project, env=env, capture_output=True, text=True)
         if r.returncode != 0:
