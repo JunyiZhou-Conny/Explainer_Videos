@@ -105,7 +105,7 @@ class Hook(VoiceScene):
         col_x = 3.55                                   # centre of the right-hand column
         pair = VGroup()
         for num, who, col in (("41", "without Alice", S.GREY), ("42", "with Alice", ALICE)):
-            m = S.math(num, r"\to", "?", size=60)
+            m = S.math(num, r"\to", "{?}", size=60)    # {?}: ordinary, so \to keeps its space after it
             m[2].set_color(S.YELLOW)
             lab = S.text(who, 22, col).next_to(m[0], DOWN, buff=0.18)
             pair.add(VGroup(m, lab))
@@ -189,10 +189,10 @@ class Hook(VoiceScene):
                       run_time=0.6)
             self.play(FadeIn(check, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("But if the count")
-            self.play(FadeOut(VGroup(icons, db_title, legend, alice_label, pair, check)), run_time=0.6)
-            self.play(Create(nl), FadeIn(nl_labs), FadeIn(dot_a), FadeIn(dot_b), FadeIn(lab_a),
-                      FadeIn(lab_b), run_time=0.9)
-            self.play(Create(cut), FadeIn(cut_lab), FadeIn(reg40), FadeIn(reg50), run_time=0.7)
+            self.play(FadeOut(VGroup(icons, db_title, legend, alice_label, pair, check)),
+                      Create(nl), FadeIn(nl_labs), FadeIn(dot_a), FadeIn(dot_b), FadeIn(lab_a),
+                      FadeIn(lab_b), run_time=1.0)
+            self.play(Create(cut), FadeIn(cut_lab), FadeIn(reg40), FadeIn(reg50), run_time=0.6)
             vo.wait_until("forty-four to forty-five")
             # Alice's arrival now straddles the cut: 44 without her, 45 with her
             self.play(dot_a.animate.move_to(nl.n2p(44)), dot_b.animate.move_to(nl.n2p(45)),

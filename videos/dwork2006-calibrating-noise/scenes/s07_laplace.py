@@ -209,7 +209,7 @@ class LaplaceMechanism(VoiceScene):
                            color=EPS_COLOR).move_to(bot.c2p(45.0, 1.55))
 
         t = ValueTracker(T0 + 0.3)
-        probe_top = probe_line(top, t, 0, 0.6)
+        probe_top = probe_line(top, t, 0, 0.52)          # stops below the 'density' label
         probe_bot = probe_line(bot, t, -2, 2)
         dot_a = always_redraw(lambda: Dot(top.c2p(t.get_value(), laplace_pdf(t.get_value(), A, LAM)),
                                           color=X_COLOR, radius=0.07))
@@ -411,14 +411,15 @@ class LaplaceMechanism(VoiceScene):
         every = S.text("for every output t and every pair of neighbors", 26, S.GREY).next_to(box, DOWN, buff=0.3)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(Group(*self.mobjects)), run_time=0.5)
-            self.play(Write(l1), Create(nl), FadeIn(dot_fx), FadeIn(dot_fxp), FadeIn(dot_t), run_time=1.2)
+            self.play(FadeOut(Group(*self.mobjects)), run_time=0.4)
+            self.play(Write(l1), Create(nl), FadeIn(dot_fx), FadeIn(dot_fxp), FadeIn(dot_t), run_time=1.0)
             vo.wait_until("two distances to t")
-            self.play(FadeIn(d_blue, shift=UP * 0.1), FadeIn(d_orng, shift=UP * 0.1), run_time=0.7)
+            self.play(FadeIn(d_blue, shift=UP * 0.1), FadeIn(d_orng, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("at most the distance")
             self.play(Create(guide), Create(extra), FadeIn(extra_lab, shift=LEFT * 0.15), run_time=0.6)
             self.play(Write(l2), FadeIn(tri, shift=LEFT * 0.2), run_time=0.9)
-            vo.wait_until("of any output")
+            vo.wait_until("So the privacy loss")
+            # 'any output': drag t across the centres; the difference of distances never leaves [-1, +1]
             self.play(FadeOut(VGroup(extra, guide, extra_lab)), FadeIn(diff_txt), FadeIn(diff_num), run_time=0.4)
             self.play(tt.animate.set_value(44.5), run_time=2.0, rate_func=smooth)
             vo.wait_until("the sensitivity divided")
@@ -544,14 +545,15 @@ class LaplaceMechanism(VoiceScene):
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(card_u), FadeOut(u_labs), FadeOut(u_title), ReplacementTransform(u_axis, ax_u),
-                      ReplacementTransform(u_box, box_x), TransformFromCopy(u_box, box_xp), run_time=1.2)
-            self.play(FadeIn(w_x), FadeIn(w_xp), FadeIn(e_labs), run_time=0.6)
-            edge_hl = VGroup(Line(ax_u.n2p(31), ax_u.n2p(32), color=S.WHITE, stroke_width=10),
-                             Line(ax_u.n2p(51), ax_u.n2p(52), color=S.WHITE, stroke_width=10))
-            self.play(ShowPassingFlash(edge_hl.copy(), time_width=0.8),
+                      ReplacementTransform(u_box, box_x), TransformFromCopy(u_box, box_xp),
+                      FadeIn(w_x), FadeIn(w_xp), FadeIn(e_labs), run_time=1.0)
+            # 'Look at the edges': the four vertical box edges flash in their world's colour
+            edge_hl = VGroup(*[Line(ax_u.n2p(v), ax_u.n2p(v) + UP * BOX_H, color=col, stroke_width=10)
+                               for v, col in ((31, X_COLOR), (51, X_COLOR), (32, XP_COLOR), (52, XP_COLOR))])
+            self.play(*[ShowPassingFlash(e, time_width=0.7) for e in edge_hl],
                       *[Indicate(e_labs[i], color=(X_COLOR if i < 3 else XP_COLOR), scale_factor=1.4)
                         for i in (0, 2, 3, 5)],
-                      run_time=1.0)
+                      run_time=0.9)
             vo.wait_until("An output of")
             self.play(Create(out_line), FadeIn(out_lab), run_time=0.8)
             vo.wait_until("is possible if")
@@ -614,11 +616,13 @@ class LaplaceMechanism(VoiceScene):
         lap_line = bot2.plot(log_ratio, kinks=[A, B], color=S.WHITE, sw=4)
         g_lo_t, g_hi_t = (A + B) / 2 - R2, (A + B) / 2 + R2          # where 41.5 - t leaves the panel
         gauss_line = bot2.plot(lambda s: (A + B) / 2 - s, g_lo_t, g_hi_t, color=S.GREY, sw=6)
-        ratio_lab = S.text("log ratio", 22, S.GREY).next_to(bot2.c2p(T0, -2.0), RIGHT, buff=0.2)
+        ratio_lab = S.text("log ratio", 22, S.GREY).next_to(bot2.c2p(T0, -2.2), RIGHT, buff=0.2)
+        # direct labels in free space: under the Laplace line's +1 shelf (inside the band), and below
+        # the band at the right, where the Gaussian line leaves it
         lap_key = S.text("Laplace: stays inside", 24, S.WHITE)
-        lap_key.move_to(bot2.c2p(T0, 1.35), aligned_edge=LEFT).shift(RIGHT * 0.2)
+        lap_key.move_to(bot2.c2p(T0, 0.5), aligned_edge=LEFT).shift(RIGHT * 0.2)
         gau_key = S.text("Gaussian: escapes", 24, S.GREY)
-        gau_key.move_to(bot2.c2p(43.7, -1.35), aligned_edge=LEFT)
+        gau_key.move_to(bot2.c2p(44.5, -2.15), aligned_edge=LEFT)
         keys = VGroup(lap_key, gau_key)
         up_arrow = Arrow(bot2.c2p(g_lo_t, R2) + DOWN * 0.05, bot2.c2p(g_lo_t, R2) + UP * 0.38 + LEFT * 0.44,
                          color=S.RED, buff=0, stroke_width=6, max_tip_length_to_length_ratio=0.4)
@@ -653,10 +657,9 @@ class LaplaceMechanism(VoiceScene):
             self.play(lap_line.animate.set_stroke(opacity=0.45), Create(gauss_line), run_time=1.1)
             self.play(GrowArrow(up_arrow), GrowArrow(dn_arrow), run_time=0.7)
             vo.wait_until("no single epsilon")
-            self.play(band_h.animate.set_value(1.7), run_time=1.3)
-            self.play(FadeIn(keys), run_time=0.5)
-            self.play(Flash(up_arrow.get_end(), color=S.RED, flash_radius=0.3),
-                      Flash(dn_arrow.get_end(), color=S.RED, flash_radius=0.3), run_time=0.6)
+            self.play(band_h.animate.set_value(1.7), run_time=1.2)
+            self.play(FadeIn(keys), Indicate(up_arrow, color=S.RED, scale_factor=1.25),
+                      Indicate(dn_arrow, color=S.RED, scale_factor=1.25), run_time=0.7)
             vo.wait_until("Hold on to that")
             self.play(FadeIn(later, shift=DOWN * 0.15), run_time=0.8)
             self.play(ShowPassingFlash(pA.copy().set_stroke(X_COLOR, 10), time_width=0.4),

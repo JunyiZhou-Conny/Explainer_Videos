@@ -141,9 +141,13 @@ def tag(tex, color=S.WHITE, size=30):
 
 
 def coin(r=0.28):
+    """Warner's coin (S02's look: gold disc, rim, inner ring; the H face only when it is >= 20 pt)."""
     disc = Circle(radius=r, stroke_color=COIN_EDGE, stroke_width=3).set_fill(COIN, 1)
-    ring = Circle(radius=r * 0.68, stroke_color=COIN_EDGE, stroke_width=2)
-    return VGroup(disc, ring)
+    ring = Circle(radius=r * 0.78, stroke_color=COIN_EDGE, stroke_width=1.5)
+    g = VGroup(disc, ring)
+    if r >= 0.235:
+        g.add(S.text("H", r * 85, S.BG, weight="BOLD").move_to(disc))
+    return g
 
 
 def budget_bar(w=3.0, h=0.36, k=5):
@@ -288,7 +292,10 @@ class Separation(VoiceScene):
             self.play(FadeIn(q1, shift=LEFT * 1.35), FadeIn(VGroup(dbR, dbR_lab, curR, curR_lab), shift=LEFT * 0.2),
                       run_time=1.0)
             self.play(FadeOut(q1, scale=0.5), FadeIn(a1, shift=RIGHT * 1.35), FadeIn(capL), run_time=1.0)
-            self.play(FadeOut(a1, scale=0.5), run_time=0.4)
+            q2, a2 = trip(2)                                   # ... and another: a stream of queries
+            self.play(FadeOut(a1, scale=0.5), FadeIn(q2, shift=LEFT * 1.35), run_time=0.7)
+            self.play(FadeOut(q2, scale=0.5), FadeIn(a2, shift=RIGHT * 1.35), run_time=0.7)
+            self.play(FadeOut(a2, scale=0.5), run_time=0.3)
             vo.wait_until("sanitize the data")
             self.play(TransformFromCopy(dbR, sheet), run_time=1.0)
             self.play(FadeIn(sheet_lab, shift=DOWN * 0.1), run_time=0.4)
@@ -296,13 +303,13 @@ class Separation(VoiceScene):
             self.play(FadeOut(VGroup(curR, curR_lab), shift=LEFT * 0.6),
                       FadeOut(VGroup(dbR, dbR_lab), shift=LEFT * 0.6), FadeIn(capR), run_time=0.8)
             vo.wait_until("and let anyone")
-            q2, a2 = trip(2)
-            self.play(FadeIn(q2, shift=LEFT * 1.35),
+            q3, a3 = trip(3)
+            self.play(FadeIn(q3, shift=LEFT * 1.35),
                       LaggedStart(*[AnimationGroup(FadeIn(u, shift=UP * 0.2), GrowArrow(a))
                                     for u, a in zip(users, user_arrows)], lag_ratio=0.25), run_time=1.2)
-            self.play(FadeOut(q2, scale=0.5), FadeIn(a2, shift=RIGHT * 1.35), run_time=0.7)
+            self.play(FadeOut(q3, scale=0.5), FadeIn(a3, shift=RIGHT * 1.35), run_time=0.7)
             vo.wait_until("Can that work")
-            self.play(Write(defn), FadeOut(a2, scale=0.5), run_time=1.0)
+            self.play(Write(defn), FadeOut(a3, scale=0.5), run_time=1.0)
             self.play(FadeIn(qmark, scale=1.4), run_time=0.4)
 
         # ============================================================ 1. parity queries
@@ -322,17 +329,16 @@ class Separation(VoiceScene):
         qcard = query_card("How many rows have odd parity inside their own mask?", width=10.2)
         qcard.move_to([0.6, 2.95, 0])
         pdigs = [digit(p, 26, S.WHITE).move_to(pc).set_z_index(3) for p, pc in zip(pars, pcells)]
-        count = S.math("f(", "x", ")", "=", str(sum(pars)), size=56)
+        count = S.math("f(", "x", ")", "=", str(sum(pars)), size=52)
         count[1].set_color(X_COLOR)
-        count.move_to([4.55, -0.35, 0])
+        count.move_to([4.6, 0.95, 0])
         # the paper's f_g(x) = sum_i r_i (.) x_i, with r_i (.) x_i = <r_i, x_i> mod 2
         formula = S.math("f(", "x", ")", "=", r"\sum_{i=1}^{n}", r"\big(", "r_i", r"\cdot", "x_i",
                          r"\bmod 2", r"\big)", size=40)
         formula[1].set_color(X_COLOR)
         formula[6].set_color(MASK)
         formula[8].set_color(X_COLOR)
-        f_note = S.text("(ones inside the mask, mod 2)", 24, S.GREY)
-        f_line = VGroup(formula, f_note).arrange(RIGHT, buff=0.35).move_to([0.2, -3.0, 0])
+        formula.move_to([-0.55, -3.05, 0])
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(t_right, divider, sheet, sheet_lab, users, user_arrows, capR, capL, defn_q,
@@ -364,13 +370,13 @@ class Separation(VoiceScene):
                     anims.append(ReplacementTransform(VGroup(*[o.copy() for o in ones]), pdigs[i]))
                 else:
                     anims.append(FadeIn(pdigs[i], scale=0.5))
-            self.play(LaggedStart(*anims, lag_ratio=0.22), run_time=2.2)
+            self.play(LaggedStart(*anims, lag_ratio=0.22), run_time=1.7)
             odd_rows = [i for i in range(N) if pars[i]]
             self.play(*[pcells[i].animate.set_stroke(S.WHITE, 3) for i in odd_rows],
-                      *[Indicate(pdigs[i], color=S.WHITE, scale_factor=1.4) for i in odd_rows], run_time=0.6)
+                      *[Indicate(pdigs[i], color=S.WHITE, scale_factor=1.4) for i in odd_rows], run_time=0.5)
             self.play(TransformFromCopy(VGroup(*[pdigs[i] for i in odd_rows]), count[4]),
-                      FadeIn(count[:4]), run_time=0.9)
-            self.play(Write(formula), FadeIn(f_note, shift=LEFT * 0.2), run_time=1.0)
+                      FadeIn(count[:4]), run_time=0.8)
+            self.play(Write(formula), run_time=0.8)
 
             # sensitivity one: change one row (PINK) -> at most one parity changes -> count moves by <= 1
             vo.wait_until("Each query has")
@@ -378,15 +384,26 @@ class Separation(VoiceScene):
             hl = SurroundingRectangle(row, color=ALICE, buff=0.03, stroke_width=4)
             new_bit = digit(1).move_to(digs[flip_i][flip_j]).set_z_index(3)
             new_par = digit(1, 26, S.WHITE).move_to(pcells[flip_i]).set_z_index(3)
-            new_count = S.math(str(sum(pars) + 1), size=56).move_to(count[4])
-            sens = S.math("S(f) = 1", size=44, color=SENS_COLOR).next_to(count, DOWN, buff=0.45)
-            self.play(Create(hl), row[1].animate.set_color(ALICE), run_time=0.6)
+            old_bit = digit(0).move_to(digs[flip_i][flip_j]).set_z_index(3)
+            old_par = digit(0, 26, S.WHITE).move_to(pcells[flip_i]).set_z_index(3)
+            # one changed row makes the neighbour x' (ORANGE): its count is one more
+            count2 = S.math("f(", "x'", ")", "=", str(sum(pars) + 1), size=52)
+            count2[1].set_color(XP_COLOR)
+            count2.next_to(count, DOWN, buff=0.4).align_to(count, LEFT)
+            sens = S.math("S(f) = 1", size=44, color=SENS_COLOR).next_to(count2, DOWN, buff=0.5)
+            sens.align_to(count, LEFT)
+            self.play(Create(hl), row[1].animate.set_color(ALICE), run_time=0.4)
             self.play(Transform(digs[flip_i][flip_j], new_bit), Flash(digs[flip_i][flip_j], color=ALICE,
-                                                                      flash_radius=0.3), run_time=0.6)
-            self.play(Transform(pdigs[flip_i], new_par), pcells[flip_i].animate.set_stroke(S.WHITE, 3), run_time=0.5)
-            self.play(Transform(count[4], new_count), FadeIn(sens, shift=UP * 0.15), run_time=0.7)
+                                                                      flash_radius=0.3), run_time=0.45)
+            self.play(Transform(pdigs[flip_i], new_par), pcells[flip_i].animate.set_stroke(S.WHITE, 3), run_time=0.4)
+            self.play(TransformFromCopy(count, count2), run_time=0.6)
+            self.play(FadeIn(sens, shift=UP * 0.15), run_time=0.3)
             vo.wait_until("so an interactive curator")
-            answer = S.math(str(sum(pars) + 1), r"\pm", r"1/", r"\varepsilon", size=40)
+            # back to x: the curator answers the query on the real database
+            self.play(Transform(digs[flip_i][flip_j], old_bit), Transform(pdigs[flip_i], old_par),
+                      pcells[flip_i].animate.set_stroke(S.GREY, 1.5), row[1].animate.set_color(X_COLOR),
+                      FadeOut(hl), run_time=0.45)
+            answer = S.math(str(sum(pars)), r"\pm", r"1/", r"\varepsilon", size=40)
             answer[1:3].set_color(NOISE_COLOR)
             answer[3].set_color(EPS_COLOR)
             ans_frame = SurroundingRectangle(answer, color=S.GREY, buff=0.15, corner_radius=0.1, stroke_width=2)
@@ -449,8 +466,8 @@ class Separation(VoiceScene):
         thm = statement_card("Theorem 3", thm_line).move_to([0, -2.78, 0])
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(cur, cur_lab, ans, count, sens, f_line, qcard, legend, brace, brace_lab,
-                                     par_head, x_lab, hl)), run_time=0.6)
+            self.play(FadeOut(VGroup(cur, cur_lab, ans, count, count2, sens, formula, qcard, legend, brace,
+                                     brace_lab, par_head, x_lab)), run_time=0.6)
             self.play(FadeOut(VGroup(table, *pdigs, overlays)), FadeIn(card0[0]), FadeIn(card0[2]),
                       TransformFromCopy(overlays, card0[1]), run_time=1.1)
             self.add(card0)
@@ -490,10 +507,10 @@ class Separation(VoiceScene):
             vo.wait_until("unless the database")
             thresh = S.math(r"\text{tiny unless}\quad n", r"\gtrsim", r"2^{d/4}", "/", r"\sqrt{\varepsilon}", size=46)
             thresh[4][-1].set_color(EPS_COLOR)
-            thresh.move_to([0, 1.55, 0])
+            thresh.move_to([0, 1.38, 0])
             self.play(FadeOut(VGroup(tab_e, tab_o, lab_e, lab_o, card0, m_e, m_o, a_e, a_o, b_e, b_o, axis, ax_lab,
                                      c_e, c_o, sliver, sd_lab)),
-                      thm.animate.move_to([0, 2.8, 0]), run_time=0.8)
+                      thm.animate.move_to([0, 2.72, 0]), run_time=0.8)
             self.play(Write(thresh), run_time=1.0)
 
             cellw = 0.36
@@ -506,13 +523,13 @@ class Separation(VoiceScene):
                             for _ in range(16)]).arrange(UP, buff=0.05)
             bars.move_to([2.5, 0, 0]).align_to([0, -3.4, 0], DOWN)
             n_lab = S.text("rows needed", 26, S.GREY).move_to([5.1, -1.7, 0])
-            n_val = S.math(r"\propto 4", size=44).next_to(n_lab, DOWN, buff=0.2)
+            n_val = S.math(r"\sim 2^{8/4} = 4", size=40).next_to(n_lab, DOWN, buff=0.2).align_to(n_lab, LEFT)
             vo.wait_until("roughly, every four")
             self.play(FadeIn(bitrow[:8]), FadeIn(d_lab), FadeIn(bars[:4]), FadeIn(n_lab), FadeIn(n_val), run_time=0.7)
             for lo, hi, dv, nv in [(8, 12, 12, 8), (12, 16, 16, 16)]:
                 plus = S.text("+4 bits", 26, S.WHITE).next_to(bitrow[lo:hi], DOWN, buff=0.15)
                 new_d = S.math(f"d = {dv}", size=38).move_to(d_lab[1], aligned_edge=LEFT)
-                new_n = S.math(rf"\propto {nv}", size=44).move_to(n_val, aligned_edge=LEFT)
+                new_n = S.math(rf"\sim 2^{{{dv}/4}} = {nv}", size=40).move_to(n_val, aligned_edge=LEFT)
                 self.play(LaggedStart(*[FadeIn(c, shift=LEFT * 0.2) for c in bitrow[lo:hi]], lag_ratio=0.15),
                           FadeIn(plus), Transform(d_lab[1], new_d), run_time=0.8)
                 old = bars[:nv // 2]
@@ -533,9 +550,9 @@ class Separation(VoiceScene):
         deck_lab = S.text("all of them?", 24, S.GREY).next_to(deck, DOWN, buff=0.3)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(keep_fade), run_time=0.7)
+            self.play(FadeOut(keep_fade), run_time=0.5)
             self.play(FadeIn(VGroup(cur2, cur2_lab), shift=RIGHT * 0.2),
-                      LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in deck], lag_ratio=0.05), run_time=1.2)
+                      LaggedStart(*[FadeIn(c, shift=DOWN * 0.15) for c in deck], lag_ratio=0.05), run_time=0.8)
             vo.wait_until("couldn't an analyst")
             self.play(GrowArrow(deck_arrow), FadeIn(deck_lab), run_time=0.8)
             self.play(Wiggle(deck, scale_value=1.05), run_time=vo.remaining(0.8))
@@ -570,18 +587,18 @@ class Separation(VoiceScene):
                       FadeIn(t_left2), run_time=0.6)
             for k in range(6):
                 c = deck[-1 - k]
-                self.play(c.animate.scale(0.5).move_to(cur2.get_center() + RIGHT * 0.75), run_time=0.28)
+                self.play(c.animate.scale(0.5).move_to(cur2.get_center() + RIGHT * 0.75), run_time=0.2)
                 if k < 5:
                     self.play(c.animate.scale(2 * 0.75 / 0.8).move_to(slots[k]),
-                              bar[1][4 - k].animate.set_fill(opacity=0.0), run_time=0.3)
+                              bar[1][4 - k].animate.set_fill(opacity=0.0), run_time=0.26)
                 else:
                     self.play(c.animate.scale(2).move_to(refused_pos), Indicate(bar[0], color=NOISE_COLOR,
-                                                                                 scale_factor=1.04), run_time=0.35)
+                                                                                 scale_factor=1.04), run_time=0.3)
                     cross = x_mark(c, pad=0.05)
-                    self.play(Create(cross), FadeIn(refused, scale=1.3), run_time=0.45)
-            self.play(VGroup(*deck[:6]).animate.set_opacity(0.25), run_time=0.5)
+                    self.play(Create(cross), FadeIn(refused, scale=1.3), run_time=0.4)
             vo.wait_until("the few questions")
-            self.play(LaggedStart(*[FadeIn(t, scale=1.4) for t in ticks], lag_ratio=0.15), run_time=1.0)
+            self.play(LaggedStart(*[FadeIn(t, scale=1.4) for t in ticks], lag_ratio=0.15),
+                      VGroup(*deck[:6]).animate.set_opacity(0.25), run_time=1.0)
             vo.wait_until("chosen later")
             self.play(FadeIn(few_lab, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("A published release")
@@ -705,9 +722,14 @@ class Separation(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
+            # two facts: both headings appear dim, each lights up when it is spoken
+            f1_t.set_opacity(0.3)
+            f2_t.set_opacity(0.3)
             self.play(FadeIn(ptag, shift=DOWN * 0.15), run_time=0.5)
+            self.play(LaggedStart(FadeIn(f1_t, shift=DOWN * 0.15), FadeIn(f2_t, shift=DOWN * 0.15), lag_ratio=0.4),
+                      run_time=0.8)
             vo.wait_until("Privacy forces")
-            self.play(FadeIn(f1_t, shift=DOWN * 0.15), run_time=0.5)
+            self.play(f1_t.animate.set_opacity(1), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(VGroup(g[0], g[1]), shift=RIGHT * 0.2) for g in f1], lag_ratio=0.2),
                       FadeIn(vdots), run_time=0.9)
             self.play(LaggedStart(*[AnimationGroup(GrowArrow(g[2]), FadeIn(g[3]), Create(g[5]),
@@ -715,7 +737,7 @@ class Separation(VoiceScene):
                       run_time=1.6)
             self.play(Write(f1_cap), run_time=0.8)
             vo.wait_until("And a random mask")
-            self.play(FadeIn(f2_t, shift=DOWN * 0.15), FadeIn(dots), FadeIn(all_lab2), run_time=0.8)
+            self.play(f2_t.animate.set_opacity(1), FadeIn(dots), FadeIn(all_lab2), run_time=0.8)
             self.play(FadeIn(strip), FadeIn(strip_lab), run_time=0.5)
             self.play(*colour_by(f2_masks[0]), FadeIn(legend2), run_time=1.0)
             vo.wait_until("mixed like salt")
@@ -729,19 +751,18 @@ class Separation(VoiceScene):
 
             vo.wait_until("Then the chain trick")
             self.play(FadeOut(VGroup(f1_t, f1, vdots, f1_cap, f2_t, dots, strip, strip_lab, legend2, poll_lab)),
-                      run_time=0.7)
-            vo.wait_until("start from")
-            self.play(FadeIn(rand_db, scale=0.85), FadeIn(lab_rand), run_time=0.7)
+                      run_time=0.6)
+            self.play(FadeIn(rand_db, scale=0.85), FadeIn(lab_rand), run_time=0.6)
             vo.wait_until("and swap them")
             prev = rand_db
             for k in (0, 1):
                 node = top_nodes[k]
-                self.play(GrowArrow(top_arrs[k]), TransformFromCopy(prev, node), run_time=0.6)
-                self.play(Indicate(node[1][k][0], color=ALICE, scale_factor=1.15), run_time=0.35)
+                self.play(GrowArrow(top_arrs[k]), TransformFromCopy(prev, node), run_time=0.5)
+                self.play(Indicate(node[1][k][0], color=ALICE, scale_factor=1.15), run_time=0.3)
                 prev = node
-            self.play(GrowArrow(top_arrs[2]), FadeIn(top_nodes[2]), run_time=0.35)
-            self.play(GrowArrow(top_arrs[3]), TransformFromCopy(prev, top_nodes[3]), run_time=0.6)
-            self.play(FadeIn(lab_even, shift=DOWN * 0.1), run_time=0.3)
+            self.play(GrowArrow(top_arrs[2]), FadeIn(top_nodes[2]), run_time=0.3)
+            self.play(GrowArrow(top_arrs[3]), TransformFromCopy(prev, top_nodes[3]),
+                      FadeIn(lab_even, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("Each swap")
             self.play(LaggedStart(*[FadeIn(sg, shift=DOWN * 0.1) for sg in top_sig], lag_ratio=0.25), run_time=0.8)
             vo.wait_until("and unless n is huge")
@@ -788,7 +809,7 @@ class Separation(VoiceScene):
         nobody = VGroup(person_icon(S.GREY, 0.8), db_icon(S.GREY, w=0.8, n=4, rh=0.18)).arrange(RIGHT, buff=0.25)
         nobody.move_to([4.75, 1.2, 0])
         nobody_x = Cross(nobody, stroke_color=NOISE_COLOR, stroke_width=6, scale_factor=1.1)
-        nobody_lab = S.text("nobody holds the raw data", 24, S.GREY).next_to(nobody, DOWN, buff=0.35)
+        nobody_lab = S.text("nobody holds\nthe raw data", 24, S.GREY).next_to(nobody, DOWN, buff=0.35)
         same_mask = np.array([0, 1, 0, 1, 1, 0, 0, 1])
         same_over = mask_overlays(raw_cells, [same_mask] * 4)
         same_lab = S.text("same mask for every row", 24, MASK).move_to([-3.95, -1.15, 0])
@@ -845,7 +866,7 @@ class Separation(VoiceScene):
         line2.next_to(two_sheet, RIGHT, buff=0.55)
         cross2 = sym("✗", 56, NOISE_COLOR).move_to([5.95, R2, 0])
         cur3 = person_icon(S.WHITE, 0.75)
-        loop = Arc(radius=0.62, start_angle=PI * 0.62, angle=-2 * PI * 0.86, color=EPS_COLOR, stroke_width=3)
+        loop = Arc(radius=0.62, start_angle=PI * 0.62, angle=-2 * PI * 0.86, color=S.WHITE, stroke_width=3)
         loop.add_tip(tip_length=0.16)
         loop.move_to(cur3)
         lesson_t = S.text("Want broad accuracy + strong privacy?  Keep a curator in the loop.", 32, S.WHITE)
@@ -867,8 +888,12 @@ class Separation(VoiceScene):
             self.play(FadeIn(two_sheet, shift=RIGHT * 0.2),
                       LaggedStart(*[FadeIn(c, shift=RIGHT * 0.2) for c in many], lag_ratio=0.12), run_time=1.0)
             self.play(LaggedStart(*[Create(l) for l in two_links], lag_ratio=0.1), run_time=0.7)
+            vo.wait_until("is one private release")
             self.play(FadeIn(line2, shift=LEFT * 0.2), run_time=0.8)
             self.play(FadeIn(cross2, scale=1.6), run_time=0.5)
+            # the whole difference is the order of the quantifiers: ONE query vs MOST queries
+            self.play(Indicate(line1[0], color=S.WHITE, scale_factor=1.06), run_time=0.8)
+            self.play(Indicate(line2[0], color=S.WHITE, scale_factor=1.06), run_time=0.8)
             vo.wait_until("The lesson")
             self.play(FadeIn(cur3, scale=0.8), Create(loop), run_time=0.9)
             self.play(Write(lesson_t), run_time=1.6)

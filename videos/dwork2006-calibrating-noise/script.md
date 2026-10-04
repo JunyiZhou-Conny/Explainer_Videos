@@ -14,7 +14,7 @@ Conventions
 - `PONDER(n s, "question")` inside a SHOW line: after that SAY block, show
   `pause_and_ponder(self, "question", seconds=n)` — a silent timer — then remove the card at the
   start of the next block.
-- Semantic colours (keep them fixed for the whole video):
+- Semantic colours (keep them fixed for the whole video): analyst / attacker = PURPLE ·
   database **x** = BLUE · neighbouring database **x′** = ORANGE · Alice / the one changed row = PINK ·
   **ε** (privacy loss / budget) = YELLOW · sensitivity **S(f)** = GREEN · noise / Laplace = RED ·
   true answer = WHITE · secondary text = GREY · "this paper" highlight = YELLOW frame.

@@ -350,22 +350,29 @@ class Legacy(VoiceScene):
                   run_time=8)
 
         # ---------------------------------------------------------- beat 5: no — quantifiers, trophy, open problems
-        a1 = S.text("Any ONE query, known in advance", 30, S.WHITE)
-        b1 = VGroup(S.text("→  easy to publish for", 30, S.GREY), S.text("✓", 30, S.WHITE)).arrange(RIGHT, buff=0.25)
+        # The two lines exactly as S11 showed them (wording, sizes, TEAL tick / RED cross in DejaVu Sans).
+        def mark(ch, color, size=44):
+            return Text(ch, font="DejaVu Sans", font_size=size, color=color)
+
+        a1 = S.text("Any ONE query, known in advance", 32, S.WHITE)
+        tick1 = mark("✓", S.TEAL)
+        b1 = VGroup(S.text("→  easy to publish for", 30, S.GREY), tick1).arrange(RIGHT, buff=0.3)
+        census_tick = mark("✓", S.TEAL, 34)
         census = VGroup(S.text("US Census 2020: a fixed set of tables chosen in advance", 26, S.WHITE),
-                        S.text("✓", 26, S.WHITE)).arrange(RIGHT, buff=0.2)
-        a2 = S.text("ONE private release that works for MOST queries", 30, S.WHITE)
-        b2 = VGroup(S.text("→  impossible unless n is huge", 30, S.GREY), S.text("✗", 30, NOISE_COLOR)).arrange(RIGHT, buff=0.25)
+                        census_tick).arrange(RIGHT, buff=0.22)
+        a2 = S.text("ONE private release for MOST queries", 32, S.WHITE)
+        cross2 = mark("✗", NOISE_COLOR)
+        b2 = VGroup(S.text("→  impossible unless n is huge", 30, S.GREY), cross2).arrange(RIGHT, buff=0.3)
+        for m in (tick1, cross2):
+            m.shift(UP * 0.03)
         item1 = VGroup(a1, b1).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         item2 = VGroup(a2, b2).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
-        b1.shift(RIGHT * 0.5)
-        b2.shift(RIGHT * 0.5)
         census_box = VGroup(census)
-        quant = VGroup(item1, census_box, item2).arrange(DOWN, aligned_edge=LEFT, buff=0.4)
-        census_box.shift(RIGHT * 0.9)
-        quant.move_to([0, 1.6, 0])
-        census_frame = SurroundingRectangle(census, color=S.GREY, buff=0.12, corner_radius=0.08, stroke_width=2)
-        most = a2[29:33]   # "MOST"
+        quant = VGroup(item1, census_box, item2).arrange(DOWN, aligned_edge=LEFT, buff=0.42)
+        census_box.shift(RIGHT * 0.6)
+        quant.move_to([0, 1.55, 0])
+        census_frame = SurroundingRectangle(census, color=S.GREY, buff=0.14, corner_radius=0.08, stroke_width=2)
+        most = a2[20:24]   # "MOST"
         cup = trophy(1.25)
         prize = VGroup(S.text("Gödel Prize 2017", 28, S.GOLD), S.text("TCC Test-of-Time Award 2016", 24, S.GREY)
                        ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
@@ -380,16 +387,17 @@ class Legacy(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
             vo.wait_until("The Census tuned")
-            self.play(FadeIn(item1, shift=UP * 0.2), run_time=0.8)
-            self.play(FadeIn(census, shift=RIGHT * 0.2), Create(census_frame), run_time=0.9)
+            self.play(FadeIn(a1, shift=LEFT * 0.2), FadeIn(b1[0], shift=LEFT * 0.2), run_time=0.8)
+            self.play(FadeIn(tick1, scale=1.6), run_time=0.4)
+            self.play(FadeIn(census[0], shift=RIGHT * 0.2), Create(census_frame), run_time=0.9)
             vo.wait_until("chosen in advance")
-            self.play(Indicate(census[1], color=S.WHITE, scale_factor=1.5), Indicate(b1[1], color=S.WHITE,
-                                                                                     scale_factor=1.5), run_time=0.8)
+            self.play(FadeIn(census_tick, scale=1.6), pulse(tick1, 1.3), run_time=0.8)
             vo.wait_until("Section four only")
-            self.play(FadeIn(item2, shift=UP * 0.2), run_time=0.9)
+            self.play(FadeIn(a2, shift=LEFT * 0.2), FadeIn(b2[0], shift=LEFT * 0.2), run_time=0.9)
+            self.play(FadeIn(cross2, scale=1.6), run_time=0.4)
             vo.wait_until("that is accurate for most")
-            self.play(Indicate(most, color=S.WHITE, scale_factor=1.1), run_time=0.9)
-            self.play(Indicate(b2[1], color=NOISE_COLOR, scale_factor=1.4), run_time=vo.remaining(0.6))
+            self.play(Indicate(most, color=S.WHITE, scale_factor=1.15), run_time=0.9)
+            self.play(pulse(cross2, 1.35), run_time=vo.remaining(0.6))
         self.play(FadeIn(cup, shift=UP * 0.3), FadeIn(prize, shift=LEFT * 0.2), run_time=1.0)
         self.play(pulse(cup, 1.1), run_time=0.8)
         self.wait(0.8)
@@ -439,9 +447,12 @@ class Legacy(VoiceScene):
         return VGroup(panel, head, ring, z1, z2)
 
     def _close(self, pop, base, thumb, extras):
-        # Order matters: play() re-adds each animated group on top, in argument order. With the
-        # extras first, the opaque panel landed above them and the panel's contents vanished at once.
-        self.play(FadeOut(pop), FadeOut(extras), Transform(base, thumb.copy()), run_time=0.7)
+        # Two steps: clear the panel's contents while the panel is still opaque, then fade the panel
+        # and shrink the drawing back into its thumbnail. (Fading both at once let the contents and the
+        # card underneath show through each other; FadeOut(extras) after FadeOut(pop) in a single
+        # play() also put the panel above its own contents, which then vanished at once.)
+        self.play(FadeOut(extras), run_time=0.35)
+        self.play(FadeOut(pop), Transform(base, thumb.copy()), run_time=0.6)
         self.remove(base)
 
     @staticmethod
@@ -521,9 +532,10 @@ class Legacy(VoiceScene):
         adv = ax.plot(adv_f, x_range=[0.5, 1050, 2], color=EPS_COLOR, stroke_width=5)
         basic_lab = VGroup(S.text("add up:", 22, S.GREY), S.math(r"k\,\varepsilon", size=30, color=S.GREY)
                            ).arrange(RIGHT, buff=0.12).next_to(ax.c2p(560, 620), LEFT, buff=0.3)
-        adv_lab = VGroup(S.text("with a tiny δ:", 22, EPS_COLOR, t2c={"δ": EPS_COLOR}),
-                         S.math(r"\sim\sqrt{k}\;\varepsilon", size=30, color=EPS_COLOR)
-                         ).arrange(RIGHT, buff=0.12).next_to(ax.c2p(700, adv_f(700)), UP, buff=0.3)
+        # two lines, inside the wedge between the two curves (one line grazed the grey k*eps line)
+        adv_lab = VGroup(S.text("with a tiny δ:", 22, EPS_COLOR),
+                         S.math(r"\sim\sqrt{k}\;\varepsilon", size=30, color=EPS_COLOR)).arrange(DOWN, buff=0.08)
+        adv_lab.move_to(ax.c2p(760, 0), aligned_edge=DOWN).shift(UP * 0.55)
         mark = DashedLine(ax.c2p(1000, 0), ax.c2p(1000, 1000), color=S.GREY, stroke_width=1.5)
         dots = VGroup(Dot(ax.c2p(1000, 1000), color=S.WHITE, radius=0.06), Dot(ax.c2p(1000, adv_f(1000)),
                                                                                 color=EPS_COLOR, radius=0.07))
@@ -631,7 +643,8 @@ class Legacy(VoiceScene):
         ys = [base.get_top()[1] - rh * (i + 0.5) for i in range(4)]
         names = VGroup(*[S.text(t, 24, S.WHITE).move_to([x_l, y, 0], aligned_edge=LEFT)
                          for t, y in zip(["state totals", "counties", "tracts", "blocks"], ys)])
-        exact = S.text("3,486,201", 24, S.WHITE, font=S.FONT_SANS)   # illustrative (matches no real state).move_to([x_r, ys[0], 0], aligned_edge=LEFT)
+        # illustrative total (the earlier 5,893,718 is Wisconsin's real 2020 count)
+        exact = S.text("3,486,201", 24, S.WHITE, font=S.FONT_SANS).move_to([x_r, ys[0], 0], aligned_edge=LEFT)
         rng = np.random.default_rng(2020)
         true_vals = [48113, 4102, 37]
         def row_vals(noise):

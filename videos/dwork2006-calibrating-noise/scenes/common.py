@@ -23,3 +23,4 @@ TRUTH_COLOR = S.WHITE   # true answers
 DIM = S.GREY            # secondary text
 
 NARRATION = load_narration(PROJECT / "script.md")
+ANALYST_COLOR = S.PURPLE  # the analyst / attacker figure, in every scene
