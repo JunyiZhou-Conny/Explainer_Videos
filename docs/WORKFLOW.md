@@ -80,6 +80,7 @@ One file per scene in `videos/<id>/scenes/`, each a `VoiceScene` that pulls its 
 ```bash
 python -m explainer.preview videos/<id>/scenes/s04_definition.py Definition      # contact sheet PNG
 python -m explainer.preview videos/<id>/scenes/s04_definition.py Definition --tts silent  # no TTS
+python -m explainer.check videos/<id>/scenes/s04_definition.py Definition      # lint: off-frame, < 20 pt, leftovers
 ```
 
 > **Prompt (ultracode):** *Implement every scene of `videos/<id>/script.md` (one agent per scene or

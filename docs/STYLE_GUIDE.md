@@ -79,7 +79,8 @@ class MyScene(VoiceScene):
 ```bash
 python -m explainer.preview videos/<id>/scenes/s07_laplace.py LaplaceMechanism          # contact sheet
 python -m explainer.preview videos/<id>/scenes/s07_laplace.py LaplaceMechanism --at 12,30 -q m
-python -m explainer.build videos/<id> -q l --only s07_laplace                           # draft of whole video
+python -m explainer.check videos/<id>/scenes/s07_laplace.py LaplaceMechanism            # off-frame / tiny text / leftovers
+python -m explainer.build videos/<id> -q l --only s07_laplace                           # re-render one scene
 ```
 
 Open the contact-sheet PNG and check, frame by frame:
