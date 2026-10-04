@@ -47,7 +47,7 @@ def main(argv=None):
     import yaml
     spec = yaml.safe_load((project / "video.yaml").read_text()) if (project / "video.yaml").exists() else {}
     env = scene_env(spec, args.tts)
-    media = project / "build" / f"preview_{args.quality}"
+    media = project / "build" / f"preview_{args.quality}" / scene_file.stem  # per-scene Tex cache
     out = media / "videos" / scene_file.stem / QUALITY_DIRS[args.quality] / f"{args.cls}.mp4"
     if args.movie:
         out, args.no_render = args.movie.resolve(), True
@@ -58,6 +58,9 @@ def main(argv=None):
         if r.returncode != 0:
             print(r.stdout[-4000:], r.stderr[-6000:], sep="\n")
             raise SystemExit("render failed")
+        for line in (r.stdout + r.stderr).splitlines():
+            if "anchor not found" in line:
+                print("WARNING:", line.strip())
     dur = ffprobe_duration(out)
     sheets_dir = project / "build" / "sheets" / f"{scene_file.stem}_{args.cls}"
     sheets_dir.mkdir(parents=True, exist_ok=True)

@@ -102,14 +102,14 @@ class Hook(VoiceScene):
         diff.move_to([card.get_center()[0], answers_y - 1.15, 0])
         tag = S.text("Alice has condition X", 30, S.RED).next_to(diff, DOWN, buff=0.45)
 
-        col_x = 3.55                                   # centre of the right-hand column
+        col_x = 3.4                                    # centre of the right-hand column
         pair = VGroup()
         for num, who, col in (("41", "without Alice", S.GREY), ("42", "with Alice", ALICE)):
             m = S.math(num, r"\to", "{?}", size=60)    # {?}: ordinary, so \to keeps its space after it
             m[2].set_color(S.YELLOW)
             lab = S.text(who, 22, col).next_to(m[0], DOWN, buff=0.18)
             pair.add(VGroup(m, lab))
-        pair.arrange(RIGHT, buff=1.0).move_to([col_x, 2.35, 0])
+        pair.arrange(RIGHT, buff=0.8).move_to([col_x, 2.35, 0])   # room for '40' in place of '?'
         ponder = ponder_card("Would rounding the count\nto the nearest ten\nprotect Alice?", width=5.9)
         ponder.move_to([col_x, -0.95, 0])
 

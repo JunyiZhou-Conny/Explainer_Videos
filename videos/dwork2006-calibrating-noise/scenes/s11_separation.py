@@ -333,7 +333,7 @@ class Separation(VoiceScene):
         count[1].set_color(X_COLOR)
         count.move_to([4.6, 0.95, 0])
         # the paper's f_g(x) = sum_i r_i (.) x_i, with r_i (.) x_i = <r_i, x_i> mod 2
-        formula = S.math("f(", "x", ")", "=", r"\sum_{i=1}^{n}", r"\big(", "r_i", r"\cdot", "x_i",
+        formula = S.math("f(", "x", ")", "=", r"\textstyle\sum_{i=1}^{n}", r"\big(", "r_i", r"\cdot", "x_i",
                          r"\bmod 2", r"\big)", size=40)
         formula[1].set_color(X_COLOR)
         formula[6].set_color(MASK)
@@ -868,12 +868,14 @@ class Separation(VoiceScene):
         cur3 = person_icon(S.WHITE, 0.75)
         loop = Arc(radius=0.62, start_angle=PI * 0.62, angle=-2 * PI * 0.86, color=S.WHITE, stroke_width=3)
         loop.add_tip(tip_length=0.16)
-        loop.move_to(cur3)
-        lesson_t = S.text("Want broad accuracy + strong privacy?  Keep a curator in the loop.", 32, S.WHITE)
+        loop.scale_to_fit_height(1.2).move_to(cur3)     # add_tip re-fits the arc, so size it afterwards
+        lesson_t = VGroup(S.text("Want broad accuracy + strong privacy?", 32, S.WHITE),
+                          S.text("Keep a curator in the loop.", 36, S.WHITE)).arrange(DOWN, buff=0.18,
+                                                                                    aligned_edge=LEFT)
         lesson = VGroup(VGroup(cur3, loop), lesson_t).arrange(RIGHT, buff=0.45)
         if lesson.width > 12.0:
             lesson.scale_to_fit_width(12.0)
-        lesson.move_to([0, -2.65, 0])
+        lesson.move_to([0, -2.55, 0])
         lesson_box = SurroundingRectangle(lesson, color=EPS_COLOR, buff=0.25, corner_radius=0.15, stroke_width=4)
 
         with self.voiceover(SAY[7]) as vo:

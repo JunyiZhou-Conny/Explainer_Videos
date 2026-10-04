@@ -110,17 +110,18 @@ def drain(scene, card, seconds: float) -> None:
 
 
 def random_row_thumb() -> VGroup:
-    """Thumbnail of S05's verdict on 'publish one random row': 1/n in one world, 0 in the other."""
-    frame = RoundedRectangle(width=3.1, height=2.0, corner_radius=0.12, stroke_color=S.GREY,
+    """Thumbnail of S05's verdict on 'publish one random row': 1/n in one world, 0 in the other, a RED x."""
+    frame = RoundedRectangle(width=3.3, height=2.0, corner_radius=0.12, stroke_color=S.GREY,
                              stroke_width=2).set_fill(S.GREY_DARKER, 0.95)
+    c = frame.get_center()
     title = S.text("publish a random row", 20, S.GREY).move_to(frame.get_top() + DOWN * 0.3)
-    base = Line(LEFT * 0.75, RIGHT * 0.75, color=S.GREY, stroke_width=2).move_to(frame.get_center() + DOWN * 0.55)
-    bar = Rectangle(width=0.3, height=0.85, stroke_width=0).set_fill(XP_COLOR, 0.9)
+    base = Line(LEFT * 0.6, RIGHT * 0.6, color=S.GREY, stroke_width=2).move_to(c + LEFT * 0.45 + DOWN * 0.55)
+    bar = Rectangle(width=0.3, height=0.65, stroke_width=0).set_fill(XP_COLOR, 0.9)
     bar.next_to(base.get_center() + LEFT * 0.3, UP, buff=0)
     zero = Line(ORIGIN, RIGHT * 0.3, color=X_COLOR, stroke_width=6).move_to(base.get_center() + RIGHT * 0.3)
-    n_lab = S.math("1/n", size=26, color=XP_COLOR).next_to(bar, LEFT, buff=0.12)
-    z_lab = S.math("0", size=26, color=X_COLOR).next_to(zero, UP, buff=0.1)
-    cross = Cross(VGroup(bar, zero, n_lab, z_lab), stroke_color=S.RED, stroke_width=6, scale_factor=1.15)
+    n_lab = S.math("1/n", size=26, color=XP_COLOR).next_to(bar, UP, buff=0.08)
+    z_lab = S.math("0", size=26, color=X_COLOR).next_to(zero, UP, buff=0.08)
+    cross = Cross(Square(0.55), stroke_color=S.RED, stroke_width=7).move_to(c + RIGHT * 0.95 + DOWN * 0.2)
     return VGroup(frame, title, base, bar, zero, n_lab, z_lab, cross)
 
 
@@ -205,12 +206,15 @@ class LaplaceMechanism(VoiceScene):
         band_lo = DashedLine(bot.c2p(T0, -1 / LAM), bot.c2p(T1, -1 / LAM), color=EPS_COLOR, stroke_width=3)
         hi_lab = S.math(r"+1/\lambda", size=30, color=EPS_COLOR).next_to(band_hi, RIGHT, buff=0.1)
         lo_lab = S.math(r"-1/\lambda", size=30, color=EPS_COLOR).next_to(band_lo, RIGHT, buff=0.1)
-        shift_lab = S.math(r"\frac{\text{shift}}{\text{scale}} = \frac{42-41}{\lambda}", size=32,
-                           color=EPS_COLOR).move_to(bot.c2p(45.0, 1.55))
+        shift_lab = S.math(r"\text{shift}/\text{scale} = (", "42", "-", "41", r")/\lambda", size=32,
+                           color=EPS_COLOR)
+        shift_lab[1].set_color(XP_COLOR)
+        shift_lab[3].set_color(X_COLOR)
+        shift_lab.move_to(bot.c2p(44.2, 1.5))        # above the +1/lambda line, left of the parked probe
 
         t = ValueTracker(T0 + 0.3)
         probe_top = probe_line(top, t, 0, 0.52)          # stops below the 'density' label
-        probe_bot = probe_line(bot, t, -2, 2)
+        probe_bot = probe_line(bot, t, -1.15, 2)         # stays clear of the panel label below -1
         dot_a = always_redraw(lambda: Dot(top.c2p(t.get_value(), laplace_pdf(t.get_value(), A, LAM)),
                                           color=X_COLOR, radius=0.07))
         dot_b = always_redraw(lambda: Dot(top.c2p(t.get_value(), laplace_pdf(t.get_value(), B, LAM)),
@@ -272,7 +276,7 @@ class LaplaceMechanism(VoiceScene):
             normal = np.array([-np.sin(ang), np.cos(ang), 0.0])
             return lab.move_to((p + q) / 2 + side * 0.3 * normal)
 
-        slope_l = slope_label(r"\text{slope } +1/\lambda", 39.6, +1)
+        slope_l = slope_label(r"\text{slope } +1/\lambda", 39.9, +1)     # clear of the probe parked at 38.5
         slope_r = slope_label(r"\text{slope } -1/\lambda", 44.6, -1)
 
         probe = ValueTracker(38.5)
@@ -294,10 +298,10 @@ class LaplaceMechanism(VoiceScene):
         gap_num = always_redraw(lambda: DecimalNumber(gap_value(), num_decimal_places=2, include_sign=True,
                                                       font_size=32, color=EPS_COLOR)
                                 .next_to(gap_txt, RIGHT, buff=0.12))
-        gap_note = S.math(r"|\text{gap}| \le \text{slide} \times \tfrac{1}{\lambda}", size=32, color=EPS_COLOR)
+        gap_note = S.math(r"|\text{gap}| \le \text{slide} \times 1/\lambda", size=32, color=EPS_COLOR)
         gap_note.move_to([-2.6, 3.2, 0], aligned_edge=LEFT)
         probe_top2 = probe_line(top, probe, 0, 0.6)
-        probe_bot2 = probe_line(bot, probe, -2, 2)
+        probe_bot2 = probe_line(bot, probe, -1.15, 2)
         dot_g = always_redraw(lambda: Dot(bot.c2p(probe.get_value(), log_ratio(probe.get_value())),
                                           color=EPS_COLOR, radius=0.08))
         principle = S.text("privacy needs noise whose log density is never steep", 30, S.WHITE)
@@ -305,7 +309,7 @@ class LaplaceMechanism(VoiceScene):
 
         with self.voiceover(SAY[3]) as vo:
             self.play(ReplacementTransform(pdf_a, tent_a), FadeOut(pdf_b), FadeOut(VGroup(lab_a, lab_b, m_a, m_b)),
-                      ReplacementTransform(dens_lab, log_lab), run_time=1.4)
+                      FadeTransform(dens_lab, log_lab), run_time=1.4)
             vo.wait_until("On a log scale")
             self.play(ReplacementTransform(formula0, formula_log), run_time=1.0)
             vo.wait_until("a tent whose sides")
@@ -471,10 +475,15 @@ class LaplaceMechanism(VoiceScene):
         stair_lab.next_to(plane, DOWN, buff=0.25).set_x(plane.get_x())
         if stair_lab.get_bottom()[1] < -3.55:
             stair_lab.shift(UP * (-3.55 - stair_lab.get_bottom()[1]))
+        l1_note[0][13:17].set_color(X_COLOR)              # f(x) in 'density ∝ e^{-||y - f(x)||_1 / λ}'
+        # the picture is drawn centre stage, then slides right to make room for the Proposition 1 card
+        pgroup = VGroup(plane, dz, dzp, l1_note, stair, stair_lab)
+        home_x = plane.get_x()
+        pgroup.shift(LEFT * home_x)
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(l1, l2, l3, tri, sens, every)),
-                      VGroup(sub, box).animate.scale(0.62).to_edge(UP, buff=0.3), run_time=0.8)
+                      VGroup(sub, box).animate.scale(0.62).to_edge(UP, buff=0.4), run_time=0.8)
             self.play(Create(plane), run_time=0.9)
             vo.wait_until("add independent")
             self.play(LaggedStart(*[Create(m) for m in dz], lag_ratio=0.15), run_time=1.4)
@@ -484,8 +493,9 @@ class LaplaceMechanism(VoiceScene):
             vo.wait_until("which is exactly why")
             self.play(Create(stair), FadeIn(stair_lab, shift=UP * 0.1), run_time=1.2)
             vo.wait_until("That is Proposition 1")
-            self.play(FadeIn(frame), Write(prop_title), Write(prop), run_time=1.4)
-            self.play(Write(prop2), run_time=1.2)
+            self.play(pgroup.animate.shift(RIGHT * home_x), FadeIn(frame), Write(prop_title), run_time=1.0)
+            self.play(Write(prop), run_time=1.0)
+            self.play(Write(prop2), run_time=1.1)
             self.play(Indicate(prop2[1:4], color=S.WHITE, scale_factor=1.1), run_time=vo.remaining(0.6))
 
         # ============================================================ 6. ponder: why not uniform noise?
@@ -617,12 +627,12 @@ class LaplaceMechanism(VoiceScene):
         g_lo_t, g_hi_t = (A + B) / 2 - R2, (A + B) / 2 + R2          # where 41.5 - t leaves the panel
         gauss_line = bot2.plot(lambda s: (A + B) / 2 - s, g_lo_t, g_hi_t, color=S.GREY, sw=6)
         ratio_lab = S.text("log ratio", 22, S.GREY).next_to(bot2.c2p(T0, -2.2), RIGHT, buff=0.2)
-        # direct labels in free space: under the Laplace line's +1 shelf (inside the band), and below
-        # the band at the right, where the Gaussian line leaves it
+        # direct labels in free space: under the Laplace line's +1 shelf (inside the band), and above
+        # the widened band at the left, where the Gaussian line leaves it
         lap_key = S.text("Laplace: stays inside", 24, S.WHITE)
         lap_key.move_to(bot2.c2p(T0, 0.5), aligned_edge=LEFT).shift(RIGHT * 0.2)
-        gau_key = S.text("Gaussian: escapes", 24, S.GREY)
-        gau_key.move_to(bot2.c2p(44.5, -2.15), aligned_edge=LEFT)
+        gau_key = S.text("Gaussian: escapes", 24, S.GREY)            # above the widened band, by the exit
+        gau_key.move_to(bot2.c2p(T0, 2.2), aligned_edge=LEFT).shift(RIGHT * 0.2)
         keys = VGroup(lap_key, gau_key)
         up_arrow = Arrow(bot2.c2p(g_lo_t, R2) + DOWN * 0.05, bot2.c2p(g_lo_t, R2) + UP * 0.38 + LEFT * 0.44,
                          color=S.RED, buff=0, stroke_width=6, max_tip_length_to_length_ratio=0.4)
@@ -654,10 +664,10 @@ class LaplaceMechanism(VoiceScene):
             self.play(FadeIn(g_gap), FadeIn(g_txt), FadeIn(g_num), run_time=0.4)
             self.play(gprobe.animate.set_value(38.8), run_time=2.2)
             vo.wait_until("In the tails")
-            self.play(lap_line.animate.set_stroke(opacity=0.45), Create(gauss_line), run_time=1.1)
+            self.play(Create(gauss_line), run_time=1.1)
             self.play(GrowArrow(up_arrow), GrowArrow(dn_arrow), run_time=0.7)
             vo.wait_until("no single epsilon")
-            self.play(band_h.animate.set_value(1.7), run_time=1.2)
+            self.play(band_h.animate.set_value(1.6), run_time=1.2)
             self.play(FadeIn(keys), Indicate(up_arrow, color=S.RED, scale_factor=1.25),
                       Indicate(dn_arrow, color=S.RED, scale_factor=1.25), run_time=0.7)
             vo.wait_until("Hold on to that")

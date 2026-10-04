@@ -59,18 +59,20 @@ def scene_env(spec: dict, tts: str | None) -> dict:
     return env
 
 
-def media_dir(project: Path, quality: str) -> Path:
-    return project / "build" / f"media_{quality}"
+def media_dir(project: Path, quality: str, scene: dict) -> Path:
+    # one media (and LaTeX) dir per scene: parallel renders must not share Manim's Tex cache,
+    # whose temp files collide when two processes typeset the same formula at once
+    return project / "build" / f"media_{quality}" / Path(scene["file"]).stem
 
 
 def scene_movie(project: Path, quality: str, scene: dict) -> Path:
     stem = Path(scene["file"]).stem
-    return media_dir(project, quality) / "videos" / stem / QUALITY_DIRS[quality] / f"{scene['cls']}.mp4"
+    return media_dir(project, quality, scene) / "videos" / stem / QUALITY_DIRS[quality] / f"{scene['cls']}.mp4"
 
 
 def render_scene(project: Path, quality: str, scene: dict, env: dict) -> Path:
     cmd = [sys.executable, "-m", "manim", "render", f"-q{quality}", "--disable_caching", "--no_latex_cleanup",
-           "--media_dir", str(media_dir(project, quality)), scene["file"], scene["cls"]]
+           "--media_dir", str(media_dir(project, quality, scene)), scene["file"], scene["cls"]]
     log = project / "build" / "logs" / f"{Path(scene['file']).stem}_{scene['cls']}.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     with open(log, "w") as fh:
@@ -81,6 +83,9 @@ def render_scene(project: Path, quality: str, scene: dict, env: dict) -> Path:
     out = scene_movie(project, quality, scene)
     if not out.exists():
         raise FileNotFoundError(out)
+    for line in log.read_text(errors="replace").splitlines():
+        if "anchor not found" in line:
+            print(f"  WARNING {scene['cls']}: {line.strip()}", flush=True)
     print(f"  rendered {scene['cls']:<24} -> {out.relative_to(project)}", flush=True)
     return out
 
