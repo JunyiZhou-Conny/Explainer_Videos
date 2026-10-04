@@ -142,9 +142,10 @@ class Hook(VoiceScene):
         drain(self, ponder, 10)                       # PONDER(10 s): silent timer
 
         # ---------------------------------------------------------- the rounding jump
-        # Exactly the number line S05 brings back (s05_strict.py, beat 3): same line, height, cut, dots,
-        # count labels and arrows. S01 only adds what its first showing needs: who x and x' are, a header,
-        # and the "jump" / "Alice exposed" call-outs.
+        # Exactly the number line S05 brings back (s05_strict.py, beat 3): same line, height, cut, dots
+        # and arrows. x and x' are not introduced until S04, so here the two dots are labelled by meaning
+        # ("without Alice" BLUE / "with Alice" ORANGE) in the spot where S05 puts its "x: 44" / "x': 45".
+        # S01 also adds a header and the "jump" / "Alice exposed" call-outs.
         NL_Y = -1.1
         nl = NumberLine(x_range=[40, 50, 1], length=10.4, color=S.GREY, stroke_width=2,
                         include_ticks=True, tick_size=0.08).move_to(UP * NL_Y)
@@ -155,19 +156,16 @@ class Hook(VoiceScene):
         cut_lab = S.text("rounding cut", 22, S.GREY).next_to(cut, UP, buff=0.1)
         nl_head = S.text("Round to the nearest ten", 34, S.WHITE).to_edge(UP, buff=0.55)
 
-        # x (BLUE) without Alice, x' (ORANGE) with her
+        # the world without Alice (BLUE) and the world with her (ORANGE)
         dot_a = Dot(nl.n2p(41), color=X_COLOR, radius=0.1)
         dot_b = Dot(nl.n2p(42), color=XP_COLOR, radius=0.1)
 
         def count_lab(world, v, side):
-            """'x: 44' (or x') under the tick label of v, flush with its `side` edge, plus who it is."""
+            """Who the dot at v is, under the tick label of v and flush with its `side` edge."""
             tick = nl_labs[int(v) - 40]
-            tex, col, who, who_col = ((r"x\!:\ ", X_COLOR, "without Alice", S.GREY) if world == "x"
-                                      else (r"x'\!:\ ", XP_COLOR, "with Alice", ALICE))
-            base = S.math(r"x\!:\ 0", size=32).next_to(tick, DOWN, buff=0.22)     # common baseline
-            m = S.math(tex + str(v), size=32, color=col).align_to(base, DOWN).align_to(tick, side)
-            w = S.text(who, 22, who_col).next_to(m, DOWN, buff=0.12).align_to(m, side)
-            return VGroup(m, w)
+            who, col = ("without Alice", X_COLOR) if world == "x" else ("with Alice", XP_COLOR)
+            base = S.text("without Alice", 26).next_to(tick, DOWN, buff=0.22)     # common baseline
+            return S.text(who, 26, col).align_to(base, DOWN).align_to(tick, side)
 
         lab_a, lab_b = count_lab("x", 41, RIGHT), count_lab("xp", 42, LEFT)
         arr44 = CurvedArrow(nl.n2p(44) + UP * 0.18, nl.n2p(40) + UP * 0.18 + RIGHT * 0.12, angle=PI / 3,

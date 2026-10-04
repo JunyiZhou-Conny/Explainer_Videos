@@ -17,7 +17,7 @@ from explainer import style as S
 from explainer.components import database_rows, person_icon, timeline
 from explainer.scene import VoiceScene
 
-from common import ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR
+from common import ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, budget_bar
 
 SAY = NARRATION["S02"]
 
@@ -129,25 +129,47 @@ def stage_header(bold: str, rest: str = "", size: float = 26) -> VGroup:
     return g
 
 
-def mini_table(headers, rows, col_w, row_h: float = 0.36, size: float = 20) -> VGroup:
-    """A small table: VGroup(header_row, *data_rows); each row is VGroup of cells VGroup(box, text)."""
+CELL_PAD = 0.12      # text inset of a left-aligned table cell
+
+
+def mini_table(headers, rows, col_w, row_h: float = 0.36, size: float = 20, left_cols=()) -> VGroup:
+    """A small table: VGroup(header_row, *data_rows); each row is VGroup of cells VGroup(box, text).
+    Data cells in `left_cols` are left-aligned (inset CELL_PAD); all others are centred."""
     out = VGroup()
     for r, vals in enumerate([headers] + list(rows)):
         row = VGroup()
         x = 0.0
-        for w, v in zip(col_w, vals):
+        for c, (w, v) in enumerate(zip(col_w, vals)):
             box = Rectangle(width=w, height=row_h, stroke_width=1.5 if r else 0,
                             stroke_color=S.GREY_DARK).set_fill(S.GREY_DARKER, 1 if r else 0)
             box.move_to([x + w / 2, -r * row_h, 0])
             t = S.text(v if v else " ", size, S.GREY if r == 0 else S.WHITE,
                        font=S.FONT_SANS if r else S.FONT)
-            if t.width > w - 0.12:
-                t.scale_to_fit_width(w - 0.12)
-            t.move_to(box)
+            left = bool(r) and c in left_cols
+            room = w - (2 * CELL_PAD if left else 0.12)
+            if t.width > room:
+                t.scale_to_fit_width(room)
+            if left:
+                t.move_to(box.get_left() + RIGHT * CELL_PAD, aligned_edge=LEFT)
+            else:
+                t.move_to(box)
             row.add(VGroup(box, t))
             x += w
         out.add(row)
     return out
+
+
+def drop_into_cell(lift: float = 0.7, x_share: float = 0.8):
+    """path_func for a label flying into a table cell: it arcs over the table, finishes its sideways
+    move by alpha = x_share and then drops straight down its own column into the cell, so it never
+    slides through the neighbouring cells of the target row."""
+    def path(start, end, alpha):
+        sideways = smooth(min(1.0, alpha / x_share))
+        pts = start + (end - start) * alpha
+        pts[:, 0] = start[:, 0] + (end[:, 0] - start[:, 0]) * sideways
+        pts[:, 1] += lift * np.sin(np.pi * alpha)
+        return pts
+    return path
 
 
 def bit_cell(v: str, w: float = 0.46, h: float = 0.36, color: str = S.WHITE,
@@ -516,11 +538,15 @@ class LineageBefore(VoiceScene):
                      ("", "02144", "2/11/58", "M", "flu"),
                      ("", "02135", "9/17/43", "M", "cardiac"),
                      ("", "02141", "12/3/82", "F", "fracture")]
+        # both name columns are NAME_W wide and left-aligned, so 'the governor' (1.44 at 20 pt) fits the
+        # hospital cell it is copied into with room to spare
+        NAME_W = 1.95
         hosp = mini_table(["name", "ZIP", "born", "sex", "diagnosis"], hosp_rows,
-                          [1.75, 0.9, 1.05, 0.55, 1.25])     # wide enough for 'diagnosis' at 20 pt
+                          [NAME_W, 0.9, 1.05, 0.55, 1.25], left_cols=(0,))   # 'diagnosis' fits at 20 pt
         hosp.move_to([-3.55, -2.6, 0])
         blobs = VGroup(*[RoundedRectangle(width=w, height=0.11, corner_radius=0.05, stroke_width=0)
-                         .set_fill(S.GREY, 0.9).move_to(hosp[r + 1][0][0])
+                         .set_fill(S.GREY, 0.9)
+                         .move_to(hosp[r + 1][0][0].get_left() + RIGHT * CELL_PAD, aligned_edge=LEFT)
                          for r, w in enumerate([1.05, 0.85, 1.2, 0.95])])
         hosp_title = S.text("hospital records", 22, S.WHITE).next_to(hosp, UP, buff=0.14).align_to(hosp, LEFT)
         hosp_title2 = S.text("hospital records, names removed", 22, S.WHITE).move_to(hosp_title,
@@ -529,7 +555,7 @@ class LineageBefore(VoiceScene):
                       ("the governor", "02135", "9/17/43", "M"),
                       ("K. Osei", "02139", "1/5/90", "M"),
                       ("M. Novak", "02144", "8/19/77", "F")]
-        voter = mini_table(["name", "ZIP", "born", "sex"], voter_rows, [1.75, 0.9, 1.05, 0.55])
+        voter = mini_table(["name", "ZIP", "born", "sex"], voter_rows, [NAME_W, 0.9, 1.05, 0.55], left_cols=(0,))
         voter.move_to([4.15, -2.6, 0])
         voter_title = S.text("public voter list", 22, S.WHITE).next_to(voter, UP, buff=0.14).align_to(voter, LEFT)
         qi_cols = VGroup(*[hosp[r][c] for r in range(5) for c in (1, 2, 3)])
@@ -542,8 +568,8 @@ class LineageBefore(VoiceScene):
         hl_v = SurroundingRectangle(gov_v, color=ALICE, buff=0.02, stroke_width=3)
         join = Line(hosp[3].get_right(), voter[2].get_left(), color=ALICE, stroke_width=3)
         gov_name = voter[2][0][1]
-        gov_copy = S.text("the governor", 20, ALICE, font=S.FONT_SANS)
-        gov_copy.scale_to_fit_width(gov_name.width).move_to(hosp[3][0][0])
+        gov_copy = gov_name.copy().set_color(ALICE)                     # same 20 pt text, left-aligned
+        gov_copy.move_to(hosp[3][0][0].get_left() + RIGHT * CELL_PAD, aligned_edge=LEFT)
         gov_row_hl = SurroundingRectangle(hosp[3], color=ALICE, buff=0.02, stroke_width=3)
 
         lesson1 = S.text("privacy = a property of the process", 30, S.WHITE)
@@ -579,7 +605,7 @@ class LineageBefore(VoiceScene):
             self.play(Create(hl_v), Create(join), run_time=0.6)
             vo.wait_until("and found the governor")
             self.play(gov_name.animate.set_color(ALICE), run_time=0.4)
-            self.play(TransformFromCopy(gov_name, gov_copy, path_arc=0.6), run_time=1.1)
+            self.play(TransformFromCopy(gov_name, gov_copy, path_func=drop_into_cell()), run_time=1.1)
             self.play(Create(gov_row_hl), Flash(gov_copy, color=ALICE, flash_radius=0.45, line_length=0.15), run_time=0.7)
             vo.wait_until("The lesson")
             self.play(FadeOut(VGroup(hosp, hosp_title2, hl_h, gov_row_hl, gov_copy, join, hl_v)),
@@ -626,7 +652,10 @@ class LineageBefore(VoiceScene):
             lab.align_to(db_lab, RIGHT)
         # top right of the query block, so '... many more questions' stays apart from '2 questions'
         err_lab = S.math(r"\text{error} \ll \sqrt{n}", size=32).move_to([3.55, y_q[0], 0], aligned_edge=LEFT)
-        more = S.text("… many more questions", 20, S.GREY).next_to(err_lab, DOWN, buff=0.12).align_to(err_lab, LEFT)
+        # n is not defined until S03: say what it is, right under the formula that uses it
+        n_note = S.text("(n = number of rows)", 20, S.GREY).next_to(err_lab, DOWN, buff=0.08)
+        n_note.align_to(err_lab, LEFT)
+        more = S.text("… many more questions", 20, S.GREY).move_to([3.55, y_q[2], 0], aligned_edge=LEFT)
         copy_bits = ["1", "0", "1", "1", "0", "1", "1", "0"]
         copy_q = VGroup(*[bit_cell("?", cw, 0.38, color=S.GREY).move_to([cx[i], y_copy, 0]) for i in range(8)])
         copy_f = VGroup(*[bit_cell(copy_bits[i], cw, 0.38,
@@ -655,7 +684,7 @@ class LineageBefore(VoiceScene):
                 self.play(FadeIn(q_vals[j], shift=RIGHT * 0.15), run_time=0.3)
             vo.wait_until("with errors much")
             self.play(LaggedStart(*[Create(b) for b in q_bars], lag_ratio=0.2), run_time=0.6)
-            self.play(Write(err_lab), FadeIn(more), run_time=0.9)
+            self.play(Write(err_lab), FadeIn(n_note), FadeIn(more), run_time=0.9)
             vo.wait_until("and an attacker")
             self.play(LaggedStart(*[Transform(copy_q[i], copy_f[i]) for i in range(1, 8)], lag_ratio=0.25),
                       run_time=2.2)
@@ -674,7 +703,7 @@ class LineageBefore(VoiceScene):
             self.play(*[Transform(copy_q[i], bit_cell("?", cw, 0.38, color=S.GREY).move_to(copy_q[i]))
                         for i in range(8)], FadeOut(wrong_mark), run_time=vo.remaining(0.6))
         stage3 = VGroup(header3, db, db_lab, copy_q, copy_lab, q_rows, q_labs, q_vals, q_bars, err_lab,
-                        more, sub, sub_lab)
+                        n_note, more, sub, sub_lab)
 
         # ========================================================== 4 · SuLQ: few questions, modest noise
         header4 = stage_header("Dwork & Nissim 2004", "· Blum, Dwork, McSherry & Nissim 2005", size=24)
@@ -707,12 +736,10 @@ class LineageBefore(VoiceScene):
         sums = S.math(r"\textstyle\sum_i", r"g(x_i)", "+", r"\text{noise}", size=36)
         sums[3].set_color(NOISE_COLOR)
         sums.next_to(sulq_full, DOWN, buff=0.22)
-        budget = Rectangle(width=ticks.get_right()[0] - track.get_left()[0] + 0.12, height=0.26, stroke_width=0)
-        budget.set_fill(EPS_COLOR, 1).move_to(track.get_left(), aligned_edge=LEFT).shift(RIGHT * 0.02)
-        seg = VGroup(*[Line([x, track_y - 0.13, 0], [x, track_y + 0.13, 0], color=S.BG, stroke_width=3)
-                       for x in tick_x[1:]])
-        budget_lab = VGroup(S.text("privacy budget", 24, EPS_COLOR), S.math(r"\varepsilon", size=36, color=EPS_COLOR)
-                            ).arrange(RIGHT, buff=0.15).next_to(track, DOWN, buff=0.2).align_to(track, LEFT)
+        # "This paper turns it into a budget": the questions track becomes THE privacy-budget bar of the
+        # video (common.budget_bar, the same object S09, S11 and S12 show). No epsilon yet: S04 defines it.
+        bar = budget_bar(width=track.width, label=False).move_to(track)
+        budget_lab = S.text("privacy budget", 24, EPS_COLOR).next_to(bar, DOWN, buff=0.2).align_to(bar, LEFT)
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(stage3), run_time=0.6)
@@ -736,10 +763,11 @@ class LineageBefore(VoiceScene):
             self.play(Indicate(limit[1], color=S.WHITE, scale_factor=1.25), Indicate(ticks, color=S.WHITE),
                       run_time=1.1)
             vo.wait_until("This paper turns")
-            self.play(FadeIn(budget), FadeIn(seg), FadeOut(ticks), FadeOut(k_brace), FadeOut(k_lab),
+            self.play(ReplacementTransform(track, bar.frame), FadeOut(VGroup(ticks, k_brace, k_lab, q_word, n_lab)),
+                      LaggedStart(*[GrowFromEdge(s, LEFT) for s in bar.segs], lag_ratio=0.12),
                       FadeIn(budget_lab, shift=UP * 0.1), run_time=1.0)
             self.play(Indicate(budget_lab, color=EPS_COLOR, scale_factor=1.08), run_time=vo.remaining(0.4))
-        stage4_left = VGroup(header4, track, q_word, n_lab, limit, noisy, budget, seg, budget_lab)
+        stage4_left = VGroup(header4, limit, noisy, bar, budget_lab)
 
         # ========================================================== 5 · all lanes flow into this paper
         tag_sums = VGroup(S.text("✗", 22, NOISE_COLOR), S.text("only sums", 22, S.GREY)).arrange(RIGHT, buff=0.12)

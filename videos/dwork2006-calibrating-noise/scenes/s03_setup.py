@@ -4,7 +4,7 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.components import database_rows, person_icon
+from explainer.components import database_rows, laplace_pdf, person_icon
 from explainer.scene import VoiceScene
 
 from common import ALICE, ANALYST_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, TRUTH_COLOR, X_COLOR
@@ -70,16 +70,6 @@ def table_icon(color=S.GREY, width=1.0, height=0.72, rows=4, cols=3) -> VGroup:
     for c in cells[:cols]:
         c.set_fill(color, 0.35)
     return cells
-
-
-def smooth_pdf(t, mu, lam):
-    """A smooth bell (logistic, scale lam/2: same peak height 1/(2 lam) as Laplace(lam)).
-
-    Deliberately not the Laplace density: which distribution Y should have is the question this
-    scene asks, and the Laplace kink is S07's reveal (S04 pictures smooth curves too)."""
-    s = lam / 2
-    z = (np.asarray(t, dtype=float) - mu) / (2 * s)
-    return 1.0 / (4 * s) / np.cosh(z) ** 2
 
 
 def answer_token(sub: str = "", size=30) -> MathTex:
@@ -160,14 +150,21 @@ class Curator(VoiceScene):
             received.add(token)
             return token.animate.scale(0.85).move_to(spot)
 
+        # 22 pt row labels, flush with the safe-area edges, leave a 3.3-wide gap between them for the
+        # arrow and its 22 pt label (2.93 wide) without either touching the row's texts
         inter = VGroup(S.math(r"\circlearrowleft", size=38, color=S.WHITE),
-                       S.text("interactive: ask, answer, repeat", 24, S.WHITE)).arrange(RIGHT, buff=0.15)
-        inter.move_to([2.75, -2.8, 0])
+                       S.text("interactive: ask, answer, repeat", 22, S.WHITE)).arrange(RIGHT, buff=0.15)
         table = table_icon(S.GREY)
-        table_lab = S.text("non-interactive: publish once", 24, S.GREY)
-        pub = VGroup(table, table_lab).arrange(RIGHT, buff=0.25).move_to([-3.75, -2.8, 0])
-        gg = S.math(r"\ll", size=48, color=S.WHITE)
-        sec4 = S.text("proved in Section 4", 20, S.GREY)
+        table_lab = S.text("non-interactive: publish once", 22, S.GREY)
+        pub = VGroup(table, table_lab).arrange(RIGHT, buff=0.25).move_to([-6.45, -2.8, 0], aligned_edge=LEFT)
+        inter.move_to([6.45, -2.8, 0], aligned_edge=RIGHT)        # the gap between them holds the arrow
+        # "the first is fundamentally more powerful", in words (a '≪' here would read as 'much less than')
+        stronger = Arrow([pub.get_right()[0] + 0.2, -2.8, 0], [inter.get_left()[0] - 0.2, -2.8, 0], buff=0,
+                         color=S.WHITE, stroke_width=4, tip_length=0.2, max_tip_length_to_length_ratio=0.2)
+        stronger_lab = S.text("strictly more powerful", 22, S.WHITE).next_to(stronger, UP, buff=0.14)
+        sec4 = VGroup(S.text("proved in Section 4", 20, S.GREY), S.text("of the paper", 20, S.GREY))
+        sec4.arrange(DOWN, buff=0.05).next_to(stronger, DOWN, buff=0.07)      # centred under the arrow,
+        # inside y >= -3.6 (the arrow's bounding box already reaches below its shaft, so the gap reads wider)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(ex1, ex2)), run_time=0.4)
@@ -201,10 +198,8 @@ class Curator(VoiceScene):
             vo.wait_until("and walking away")
             self.play(curator.animate.set_opacity(0.25), curator_lab.animate.set_opacity(0.25), run_time=0.8)
             vo.wait_until("At the end")
-            gg.move_to([(pub.get_right()[0] + inter.get_left()[0]) / 2, -2.8, 0])
-            sec4.next_to(gg, DOWN, buff=0.1)
             self.play(curator.animate.set_opacity(1), curator_lab.animate.set_opacity(1),
-                      FadeIn(gg, scale=1.4), FadeIn(sec4), run_time=0.8)
+                      GrowArrow(stronger), FadeIn(stronger_lab, shift=RIGHT * 0.15), FadeIn(sec4), run_time=0.8)
             self.play(Indicate(inter, color=S.WHITE, scale_factor=1.08), run_time=1.0)
 
         # ============================================================ 2. how much noise?
@@ -245,8 +240,11 @@ class Curator(VoiceScene):
         truth_tick = Line(ax.c2p(41, 0) + DOWN * 0.12, ax.c2p(41, 0) + UP * 0.12, color=TRUTH_COLOR,
                           stroke_width=3)
         truth_lab = S.math("f(x)", size=28, color=TRUTH_COLOR).next_to(truth_tick, DOWN, buff=0.08)
-        curve = always_redraw(lambda: ax.plot(lambda t: smooth_pdf(t, 41, lam_of(u.get_value())),
-                                              x_range=[21, 61, 0.04], color=NOISE_COLOR, stroke_width=4))
+        # the released answer's density is Laplace-shaped (a tent with straight log-tails), never a smooth
+        # bell: S07 shows that bells fail the definition. Scale lam_of(u), peak 1/(2 lam); 41 is a sample
+        # point of the 0.02 grid, so the kink stays sharp.
+        curve = always_redraw(lambda: ax.plot(lambda t: laplace_pdf(t, 41, lam_of(u.get_value())),
+                                              x_range=[21, 61, 0.02], color=NOISE_COLOR, stroke_width=4))
         phrase = S.text("Calibrate the noise to the sensitivity", 40, S.WHITE,
                         t2c={"noise": NOISE_COLOR, "sensitivity": SENS_COLOR}).move_to([0, -3.0, 0])
         private_q = VGroup(S.text("private", 64, S.YELLOW), S.math(r"=\ ?", size=72)).arrange(RIGHT, buff=0.3)
