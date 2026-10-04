@@ -3,74 +3,93 @@
 Paper: C. Dwork, F. McSherry, K. Nissim, A. Smith. *Calibrating Noise to Sensitivity in Private
 Data Analysis.* TCC 2006, LNCS 3876, pp. 265–284. (`library/privacy/differential-privacy/dwork2006calibrating.pdf`)
 
-Audience: a smart newcomer (comfortable with basic probability and functions; has never heard of
-differential privacy). Goal: intuition first, then the exact statements from the paper.
+Audience: a smart newcomer — e.g. a PhD student in reinforcement learning or medical imaging —
+comfortable with basic probability, who has never heard of differential privacy. Goal: intuition
+first, then the exact statements from the paper; the viewer predicts before we reveal.
 
 Conventions
 - `SAY:` lines are spoken verbatim by the narrator (one `voiceover` block each) and become subtitles.
   Write numbers and symbols the way they should be *spoken* ("e to the epsilon", "one over n").
 - `SHOW:` lines describe the visuals that accompany the following `SAY:` block.
+- `PONDER(n s, "question")` inside a SHOW line: after that SAY block, show
+  `pause_and_ponder(self, "question", seconds=n)` — a silent timer — then remove the card at the
+  start of the next block.
 - Semantic colours (keep them fixed for the whole video):
   database **x** = BLUE · neighbouring database **x′** = ORANGE · Alice / the one changed row = PINK ·
   **ε** (privacy loss / budget) = YELLOW · sensitivity **S(f)** = GREEN · noise / Laplace = RED ·
   true answer = WHITE · secondary text = GREY · "this paper" highlight = YELLOW frame.
+- Running example: in world **x** Alice's row says "no condition X" (count 41); in world **x′** it
+  says "condition X" (count 42). So f(x) = 41 (BLUE), f(x′) = 42 (ORANGE) everywhere.
+- One symbol for the mechanism on screen: **M** (footnote once in S04: "paper: 𝒯 = transcript,
+  San = sanitizer"). Use "statistical distance" everywhere (the paper says "statistical difference").
 - Paper references in brackets (e.g. [Def. 1, p. 270]) are for reviewers; they are not spoken.
 
 ---
 
 ## S01 · The differencing attack — `s01_hook.py` · `Hook`
 
-SHOW: A grid of ~40 grey person icons labelled "Hospital database". A few icons are PINK (have
-condition X). A query card slides in from the right: "How many patients have condition X?"
-SAY: Here is a hospital database, one row per patient. A researcher asks an innocent-looking question: how many patients have condition X? The hospital releases no records at all. It just says: forty-one.
+SHOW: A grid of 120 person icons (15 × 8) labelled "Hospital database"; 41 PINK (have condition X),
+plus the slot where Alice will arrive. A query card slides in: "How many patients have condition X?"
+SAY: Here is a hospital database, one row per patient. A researcher asks an innocent question: how many patients have condition X? The hospital releases no records. It just says: forty-one.
 
 SHOW: The answer "41" appears under the query. Then a new PINK icon labelled "Alice" slides into the
 grid. The same query card fires again; the answer becomes "42".
-SAY: A week later, one new patient, Alice, is admitted. The researcher asks the exact same question. The answer is now forty-two.
+SAY: A week later, one new patient, Alice, is admitted. The researcher asks again. The answer is now forty-two.
 
-SHOW: "42 − 41 = 1" written out; an arrow from the 1 to Alice; a red tag "Alice has condition X".
-SAY: Subtract, and the researcher has learned something very specific about Alice, without ever seeing a single record. No names were released. Only counts. But the counts were exact.
+SHOW: "42 − 41 = 1" written out; a red tag "Alice has condition X" with an arrow to Alice.
+PONDER(10 s, "Would rounding the count to the nearest ten protect Alice?")
+SAY: Subtract, and the researcher has learned something very specific about Alice, without seeing a single record. Before we go on, try to fix this yourself. Pause and ponder: would rounding the count to the nearest ten protect Alice? Pause the video if you need more time.
+
+SHOW: A number line 40–50 with the rounding cut at 45: "44 → 40"; with Alice, "45 → 50" (RED flash).
+SAY: Most weeks, yes. But if the count goes from forty-four to forty-five, the rounded answer jumps from forty to fifty, and Alice is exposed again. Any fixed rule that ever changes its answer has a jump like that somewhere.
 
 SHOW: Everything fades except a large question mark; two short lines of text appear:
 "What makes a statistic private?" / "How much noise is enough?"
-SAY: So aggregate statistics are not automatically private. But then what would it even mean for a statistic to be private? And if the fix is to add noise, how much noise is enough?
+SAY: So what would it even mean for a statistic to be private? And if the fix is to add noise, how much is enough?
 
-SHOW: Page 1 of the actual paper (asset `paper_p1.png`) slides in on the left, tilted slightly; the
-title is boxed in YELLOW. On the right: "Dwork · McSherry · Nissim · Smith", "TCC 2006",
-"Gödel Prize 2017".
-SAY: In 2006, Cynthia Dwork, Frank McSherry, Kobbi Nissim and Adam Smith answered both questions in this paper: Calibrating Noise to Sensitivity in Private Data Analysis. It is the paper that founded what we now call differential privacy, and in 2017 it won the Gödel Prize.
+SHOW: Page 1 of the actual paper (asset `paper_p1.png`) on the left; the title is boxed in YELLOW.
+On the right: "Dwork · McSherry · Nissim · Smith", "TCC 2006", "Gödel Prize 2017".
+SAY: In 2006, Cynthia Dwork, Frank McSherry, Kobbi Nissim and Adam Smith answered both questions in this paper: Calibrating Noise to Sensitivity in Private Data Analysis. It founded what we now call differential privacy, and in 2017 it won the Gödel Prize.
 
-SHOW: The page shrinks away. Four numbered idea cards appear one by one:
-"1 · A definition of privacy" (YELLOW ε icon), "2 · Sensitivity" (GREEN), "3 · The Laplace mechanism"
-(RED tent curve), "4 · A limit on one-shot releases" (GREY).
-SAY: By the end of this video, you will understand its three big ideas: a definition of privacy, a number called sensitivity, and a recipe for exactly how much noise to add. Plus a surprising limit on what any one-shot anonymized release can achieve.
+SHOW: Heading "In this video"; four numbered idea cards appear one by one:
+"1 · A definition of privacy" (YELLOW), "2 · Sensitivity" (GREEN), "3 · The Laplace mechanism"
+(RED tent curve), "4 · Why one published table falls short" (GREY).
+SAY: This video covers its three big ideas: a definition of privacy, a number called sensitivity, and a recipe for how much noise is enough. Plus a surprising limit on what one published table can achieve, if it must be private in this sense.
 
 ---
 
 ## S02 · Where this paper sits — `s02_map.py` · `LineageBefore`
 
-SHOW: A horizontal timeline from 1960 to 2010 along the bottom. Above 1965 a card appears:
-"Warner 1965 — Randomized response".
-SAY: First, a quick map, so you know where this paper sits. Protecting privacy with randomness is an old idea. In 1965, Stanley Warner proposed randomized response for sensitive surveys: each person randomizes their own answer with a private coin, so no single answer can be held against them.
+SHOW: A "mentor map": three thin horizontal lanes over a shared 1960–2010 axis, GREY lane labels on
+the left: "Randomize", "Attacks", "Provable noise". Lane 1, card "Warner 1965 · randomized response":
+a person icon with a coin; branches "heads → truth", "tails → coin decides"; then a crowd's share of
+"yes" settling near the true rate.
+SAY: First, a map of where this paper comes from. In 1965, Stanley Warner proposed randomized response for sensitive surveys. In a popular version, you flip a coin in private. Heads, you answer truthfully. Tails, you flip again and say yes for heads, no for tails. Any single yes could be the coin talking, yet over thousands of people the true rate can still be estimated. Keep this coin in mind.
 
-SHOW: Card at ~1980: "Statistical disclosure control — perturb inputs or outputs" (Denning 1980;
-Adam & Wortmann 1989). Card at ~2000: "Sweeney — 'anonymous' ≠ anonymous" with a small graphic:
-"ZIP + birth date + sex → 87% unique".
-SAY: Statisticians spent decades refining such tricks. Meanwhile, the intuitive fix, just remove the names, kept failing. Latanya Sweeney showed that ZIP code, birth date and sex alone single out most Americans, and she famously matched anonymous hospital records back to the governor of Massachusetts.
+SHOW: Lane 1 continues: card "Statistical disclosure control (Denning 1980; Adam & Wortmann 1989)"
+with two mini-icons "scramble inputs" (jittered rows) and "scramble outputs" (exact rows, noisy
+answer); card "Evfimievski, Gehrke & Srikant 2003 · worst-case belief change".
+SAY: Over the following decades, statisticians and computer scientists refined such tricks, in two flavours: scramble the data going in, or scramble the answers coming out.
 
-SHOW: Card at 2003: "Dinur & Nissim 2003 — too many accurate answers ⇒ reconstruction".
-Mini-animation: a stream of queries hits a database; each answer has a tiny error bar labelled
-"error ≪ √n"; the database "reassembles" on the attacker's side.
-SAY: Then, in 2003, Irit Dinur and Kobbi Nissim proved something sobering. If a database answers too many questions too accurately, with errors much smaller than the square root of n, an attacker can reconstruct almost the entire database. Noise is not optional. It is the price of answering at all.
+SHOW: Lane 2: card "Sweeney · 'anonymous' ≠ anonymous": "ZIP + birth date + sex → most people
+unique"; a voter list and a hospital table joined by a line, picking out one row ("the governor").
+SAY: Meanwhile, the obvious fix, just remove the names, kept failing. Latanya Sweeney showed that ZIP code, birth date and sex alone single out most Americans, and in 1997 she linked supposedly anonymous hospital records to a public voter list and found the governor of Massachusetts. The lesson: privacy must be a property of the process, not of how the released table looks, and it must hold whatever else the attacker knows.
 
-SHOW: Cards at 2004–2005: "Dwork & Nissim 2004", "Blum, Dwork, McSherry & Nissim 2005 — SuLQ:
-noisy sums". Under them a label: "only sums Σᵢ g(xᵢ)".
-SAY: Dwork, Nissim and colleagues then found the positive side. With a limited number of questions, noisy sums, such as counts of rows with some property, can be answered both usefully and privately. That framework was called SuLQ.
+SHOW: Lane 2: card "Dinur & Nissim 2003 · too many accurate answers ⇒ reconstruction".
+Mini-animation: queries hit a database; each answer has a tiny error bar "error ≪ √n"; the
+attacker's copy of a 0/1 column fills in cell by cell until it matches; the S01 "42 − 41" fills the
+first cell.
+SAY: Then, in 2003, Irit Dinur and Kobbi Nissim proved something sobering. Answer too many questions too accurately, with errors much smaller than the square root of n, and an attacker can rebuild almost the entire database. Our subtraction was the two-question version of this attack. Noise is the price of answering many questions.
 
-SHOW: The 2006 card for THIS paper drops in with a YELLOW frame: "Dwork, McSherry, Nissim & Smith
-2006 — any function f · one definition · noise ∝ sensitivity". Arrows from the 2003–2005 cards
-into it.
-SAY: But it only covered sums, and its definitions were complicated. This paper takes the leap: any function of the data, one clean definition, and one simple rule for the noise. Hold on to this map. We will come back at the end to see what grew out of it.
+SHOW: Lane 3: cards "Dwork & Nissim 2004", "Blum, Dwork, McSherry & Nissim 2005 · SuLQ: sub-linear
+queries, noisy sums"; caption "number of questions ≪ n".
+SAY: The hopeful flip side: with a limited number of questions, modest noise is enough. Dwork, Nissim and colleagues built this into a framework called SuLQ, for sub-linear queries, which answers noisy sums like counts. Remember that limit on questions. This paper turns it into a budget.
+
+SHOW: Each lane ends in an arrow into the YELLOW 2006 card "Dwork, McSherry, Nissim & Smith ·
+TCC 2006", labelled with what it hands over: "randomness", "must survive any attacker", "noise you
+can analyse". The card fills three slots: "one definition (ε)", "one number (S(f))", "one recipe
+(Lap(S(f)/ε))". Caption: "TCC = a cryptography conference: define security first, then prove it".
+SAY: But SuLQ only covered sums, and its definition tolerated a tiny chance of a large leak. This paper takes the leap: any function of the data, one clean definition, and one simple rule for the noise. Fittingly, it appeared at a cryptography conference, where the habit is to define security against every possible attacker first, and then prove it.
 
 ---
 
@@ -79,143 +98,159 @@ SAY: But it only covered sums, and its definitions were complicated. This paper 
 SHOW: Left: a vault/box labelled "database x" (BLUE) containing n rows (row stack). Middle: a
 "curator" figure next to the box. Right: an "analyst" figure. An arrow from analyst to curator
 carries "query f".
-SAY: Here is the setting. A trusted server, let's call it the curator, holds a database x: n rows, one per person. An analyst sends a query f, any function that maps the database to a number, or to a list of numbers.
+SAY: Here is the setting. A trusted server, the curator, holds a database x: n rows, one per person. An analyst sends a query f, any function of the database that returns a number, or a list of numbers.
 
 SHOW: Inside the curator: "f(x)" computed (WHITE) but locked (a small lock icon — it never leaves).
-A RED die/noise blob "Y" appears; the output "f(x) + Y" travels back to the analyst. Then a second
-and third query arrow fly in, labelled "interactive: ask, answer, repeat".
-SAY: The honest answer is f of x, but the curator never releases it. Instead, it draws random noise, Y, and releases f of x plus Y. And because the analyst can keep asking, one question after another, this is called the interactive setting. Remember that word.
+A RED noise blob "Y" appears; the output "f(x) + Y" travels back to the analyst. More query arrows fly
+in: "interactive: ask, answer, repeat". A faded GREY "published table" icon labelled
+"non-interactive" appears beside the curator.
+SAY: The curator never releases the honest answer, f of x. Instead it draws random noise, Y, and releases f of x plus Y. Because the analyst can keep asking, this is called the interactive setting. The alternative, publishing one sanitized table and walking away, is non-interactive. At the end, the paper proves the first is fundamentally more powerful.
 
 SHOW: A dial labelled "noise": left end "too little → Alice exposed", right end "too much →
 useless". Then the paper's title phrase appears: "Calibrate the noise to the sensitivity".
-SAY: That is the entire mechanism. Everything in this paper is about one question: what distribution should Y have? Too little noise, and Alice is exposed. Too much, and the answer is useless. The title gives the answer: calibrate the noise to the sensitivity. But first, we need to pin down what private actually means.
+SAY: So everything hinges on one question: what distribution should Y have? Too little noise, and Alice is exposed. Too much, and the answer is useless. The title gives the answer: calibrate the noise to the sensitivity. But first, what does private actually mean?
 
 ---
 
 ## S04 · Defining privacy — `s04_definition.py` · `Definition`
 
-SHOW: Two database row-stacks side by side: "x" (BLUE) and "x′" (ORANGE). All rows identical
-except one row highlighted PINK (Alice): value 1 in x, 0 in x′. A "≠ only here" bracket.
-SAY: The key move is to imagine two worlds. In one world, the database is x. In the other, it is x prime: identical in every row except one. Say, Alice's.
+SHOW: Two database row-stacks side by side, same number of rows: "x" (BLUE) and "x′" (ORANGE). All
+rows identical except one row highlighted PINK (Alice): "no X" in x, "has X" in x′. A bracket
+"neighbors: differ in one row". Under each: "count = 41" (BLUE) and "count = 42" (ORANGE).
+SAY: The key move is to imagine two worlds. In one, the database is x. In the other, it is x prime: identical except for one row. Say, Alice's. Databases like this are called neighbors. In the hospital, Alice was added; here, her row just says something different. Either way, no single person's row should matter much.
 
-SHOW: Each database feeds a mechanism box "𝒯"; out come two smooth output distributions over a
-shared horizontal axis "output t" — BLUE and ORANGE curves, heavily overlapping.
-SAY: Run the mechanism in each world. Because it is random, each world produces a whole distribution of possible outputs.
+SHOW: Each database feeds a mechanism box "M"; out come two smooth output distributions over a
+shared horizontal axis "output t" — BLUE and ORANGE curves, heavily overlapping. Small GREY footnote:
+"paper: 𝒯 = transcript, San = sanitizer".
+SAY: Run the mechanism, the curator's randomized answering rule, in each world. Whatever the analyst gets to see, the paper calls the transcript; for now, a single noisy answer. Because the mechanism is random, each world gives a whole distribution of possible outputs.
 
-SHOW: Pick a point t on the axis; vertical lines up to both curves give Pr[𝒯(x)=t] (BLUE) and
-Pr[𝒯(x′)=t] (ORANGE). Then Definition 1 is written out in full:
-|ln( Pr[𝒯(x)=t] / Pr[𝒯(x′)=t] )| ≤ ε   (ε in YELLOW) with caption
-"for all x, x′ differing in one row, and all outputs t" [Def. 1, p. 270].
-SAY: The paper's definition, which it calls epsilon-indistinguishability, says this. For every pair of databases that differ in a single row, and for every possible output t, the log of the ratio of these two probabilities is at most epsilon in absolute value.
+SHOW: A point t slides along the axis; vertical lines up to both curves; a live readout
+"BLUE height ÷ ORANGE height" (1.08 … 0.95 … 1.10) that stays inside a YELLOW band [e^{−ε}, e^{ε}].
+SAY: Pick any output t, and compare the heights of the two curves there. Slide t along and watch their ratio. A private mechanism keeps that ratio close to one everywhere: never above e to the epsilon, never below e to the minus epsilon.
 
-SHOW: Transform the formula into e^{−ε} ≤ ratio ≤ e^{ε}; below, a plot of the ratio as t sweeps
-left to right, staying inside a YELLOW band [e^{−ε}, e^{ε}]. Small note: "small ε: e^ε ≈ 1 + ε".
-SAY: Equivalently, the ratio stays between e to the minus epsilon and e to the epsilon. When epsilon is small, that is roughly one plus or minus epsilon. Every output is almost equally likely in both worlds.
+SHOW: Definition 1 written as a caption for what was just seen [Def. 1, p. 270]:
+|ln( Pr[M(x)=t] / Pr[M(x′)=t] )| ≤ ε — numerator BLUE, denominator ORANGE, ε YELLOW; Indicate
+|ln(·)| when it is spoken. Caption "for all neighbors x, x′, all analysts, all outputs t";
+note "small ε: e^ε ≈ 1 + ε".
+SAY: That is the paper's definition, which it calls epsilon-indistinguishability. The log of the ratio is the privacy loss at t. For every pair of neighbors, every analyst and every output, it must be at most epsilon in absolute value. The absolute value makes it symmetric: a ratio of two and a ratio of one half count the same. For small epsilon, e to the epsilon is about one plus epsilon.
 
-SHOW: An attacker icon looking at the output t. Above Alice: a "belief" bar (odds that Alice's row
-is 1). Seeing t changes the bar only slightly; label "odds change by at most × e^ε".
-SAY: Now be the attacker. You see the output, and you want to know which world you are in. But whatever you see was roughly as likely either way. By Bayes' rule, your odds about Alice's row can change by at most a factor of e to the epsilon, no matter what you knew beforehand.
+SHOW: PONDER(12 s, "Warner's coin: what is its ε?") — the coin diagram from S02 returns in a corner.
+SAY: Let's test it on Warner's coin from our map. Pause and ponder: if Alice's true answer is yes, how likely is she to say yes? And if it is no?
 
-SHOW: A small vignette: "Study finds: smoking → heart disease". Alice (PINK) with a cigarette icon;
-"Her insurer now worries" — then a tick: "would happen with or without Alice's row ✓ not a privacy
-breach" [p. 267, App. A].
-SAY: Notice what this does not promise. Suppose the study reveals that smoking causes heart disease. If Alice smokes, people may now believe she is at higher risk. The paper argues that is not a privacy violation, because it would happen whether or not Alice was in the database. What is protected is exactly the contribution of Alice's own row.
+SHOW: Table: "truth yes → says yes w.p. 1/2 + 1/4 = 3/4" · "truth no → says yes w.p. 1/4";
+"3/4 ÷ 1/4 = 3"; "ε = ln 3 ≈ 1.1" in YELLOW.
+SAY: If the truth is yes, she says yes three quarters of the time: heads, or tails then heads. If it is no, only the second coin can say yes: one quarter. The worst ratio is three, so the coin satisfies the definition with epsilon equal to the log of three, about one point one.
 
-SHOW: A dial for ε (YELLOW): "smaller ε → stronger privacy". Label "set by policy" and the paper's
-word "leakage".
-SAY: And epsilon is a dial, set by policy. The paper calls it the leakage. Smaller epsilon means stronger privacy.
+SHOW: An attacker icon looking at the output t: "posterior odds = prior odds × (BLUE height ÷ ORANGE
+height)", the ratio clamped in the YELLOW band. Then a small table "start 50/50 between the two
+worlds → at most": "ε = 0.1: 52.5%" · "ε = 0.5: 62%" · "ε = 1: 73%" · "coin, ε = ln 3: 75%".
+Label "ε is set by policy — the paper calls it the leakage".
+SAY: Now be the attacker, trying to tell the two worlds apart. By Bayes' rule, your new odds are your old odds times exactly this ratio, so they move by at most a factor of e to the epsilon, whatever you knew before. Starting from fifty-fifty, epsilon one tenth leaves you at most fifty-two and a half percent sure; epsilon one, at most seventy-three. Epsilon is set by policy; the paper calls it the leakage.
+
+SHOW: A small vignette: "Study finds: smokers get more heart disease". Alice (PINK) with a cigarette
+icon; "Her insurer now worries" — then Alice's row is swapped for a stranger's and the same headline
+still appears: "would happen even with Alice's row replaced ✓ not a privacy breach" [p. 267, App. A].
+SAY: Notice what this does not promise. If a study reveals that smokers get more heart disease, and Alice smokes, people may now think she is at higher risk. That is not a privacy violation: the same lesson could be learned from everyone else's data, so it would happen even if Alice's row were replaced by someone else's.
 
 ---
 
 ## S05 · Why so strict? — `s05_strict.py` · `WhyStrict`
 
-SHOW: Title "Why a ratio, for every output?". Two curves that are "close on average": total
-variation distance shown as a small shaded sliver.
-SAY: Why demand a ratio bound for every single output? In cryptography it is common to settle for something weaker: two distributions count as close if they differ by a small total amount, a small statistical distance. The paper shows why that is not good enough here.
+SHOW: Title "Why a ratio, for every output?". Two nearly identical curves with the area between them
+shaded: "statistical distance = ½ × shaded area".
+SAY: Why demand a ratio bound for every single output? Cryptography often settles for something weaker: statistical distance, half the area between the two curves. Equivalently, the most the probability of any event can differ between the worlds. The paper shows why that is not enough here.
 
-SHOW: Database row-stack (n rows). A random pointer spins and lands on row i; the whole row
-(name + value) is copied out as the published output "(i, xᵢ)". Caption: "Mechanism: publish one
-random row" [Example 2, p. 271].
-SAY: Consider this mechanism: pick one row at random and publish it, word for word. Change one person's row, and the output distribution changes by only one over n. For a big database that is tiny, so by the averaged measure this looks wonderfully private.
+SHOW: Database row-stack (n rows). A random pointer spins and lands on a row; the whole row is copied
+out as the published output "(name, value)". Caption: "Mechanism: publish one random row"
+[Example 2, p. 271]. Then the output distribution as a bar chart over outputs "(Bob, no) (Bob, has)
+… (Alice, no) (Alice, has)": BLUE and ORANGE bars coincide except at Alice's two outputs; "statistical
+distance = 1/n (tiny)".
+SAY: Consider this mechanism: pick one row at random and publish it, word for word. Change one person's row, and the output distribution moves by only one over n. For a big database that is tiny, so by the averaged measure this looks private.
 
-SHOW: The pointer lands on Alice's row: output "(Alice, 1)". Side-by-side probabilities:
-"in world x: 1/n" vs "in world x′: 0". Ratio "1/n ÷ 0 = ∞" in RED; a big RED ✗ over
-"privacy".
-SAY: But every output is somebody's complete record. The ratio test catches it immediately. If x and x prime differ in Alice's row, then the output showing Alice's real value has probability one over n in one world, and zero in the other. The ratio is infinite.
+SHOW: Zoom into the bar "(Alice, has)": "world x′: 1/n" vs "world x: 0"; "1/n ÷ 0 = ∞" in RED; a big
+RED ✗ over "privacy".
+SAY: But every output is somebody's complete record. The ratio test catches it: the output showing Alice's real value has probability one over n in one world, and zero in the other. The ratio is infinite.
 
-SHOW: Text: "Averages hide rare catastrophes. Ratios rule them out everywhere."
-SAY: Averages let rare catastrophes slip through. A ratio bound rules them out everywhere.
-
-SHOW: Pause-and-ponder card: "Why can't ε be much smaller than 1/n?" (timer bar drains ~4 s).
-SAY: One more subtlety. Pause and ponder this: why can't we make epsilon vanishingly small, say much smaller than one over n?
-
-SHOW: A chain of databases x = x⁽⁰⁾ → x⁽¹⁾ → … → x⁽ⁿ⁾ = y, each arrow labelled "× e^ε", one row
-changing per step (PINK). The total "≤ e^{nε}" grows at the end. Then: "nε ≪ 1 ⇒ all databases look
-alike ⇒ nothing can be learned" [p. 271].
-SAY: Here is why. Any two databases are connected by a chain of at most n single-row changes. Each step can change output probabilities by at most a factor of e to the epsilon, so the two ends differ by at most e to the n epsilon. If n times epsilon is tiny, every database produces essentially the same outputs, and nothing at all can be learned. So useful privacy must leak a little: epsilon of at least about one over n. This chain trick, called a hybrid argument, will come back later.
+SHOW: Text: "Averages hide catastrophes that are rare for each person." Then the S01 rounding number
+line returns: at the jump, "probability 1 vs 0 → ∞"; caption "to pass the ratio test, a mechanism
+must be random".
+SAY: Averages let catastrophes slip through, as long as each is rare for any single person. A ratio bound rules them out everywhere. It also settles our rounding question: at the jump, one world gives that answer with probability one, the other with probability zero. To pass this test, a mechanism has to be random.
 
 ---
 
 ## S06 · Sensitivity — `s06_sensitivity.py` · `Sensitivity`
 
 SHOW: A function machine "f" taking a database to a number line. Swap one row (PINK) and the
-output dot moves; the gap is marked. Then the definition appears (S in GREEN) [Def. 2, p. 271]:
-S(f) = max over neighbouring x, x′ of ‖f(x) − f(x′)‖₁.
-SAY: So how much noise do we need? The paper's answer depends on a single property of the query: its sensitivity. That is the most that changing one row can ever change the answer. Formally, it is the maximum, over all pairs of neighboring databases, of the distance between f of x and f of x prime, measured in the L1 norm: add up the absolute differences of all the coordinates.
+output dot moves; the gap is marked. Then the definition (S in GREEN) [Def. 2, p. 271]:
+S(f) = max over neighbors x, x′ of |f(x) − f(x′)|.
+SAY: So how much noise do we need? It depends on a single property of the query: its sensitivity, the most that changing one row can ever change the answer, over all pairs of neighboring databases, including ones that do not exist yet.
 
 SHOW: Counting query: the hospital count 41 → 42 when Alice's row flips; "S(count) = 1".
-SAY: For a counting query, like our hospital count, changing one row changes the answer by at most one. Sensitivity one.
+SAY: For a counting query, like our hospital count, one row changes the answer by at most one. Sensitivity one.
 
-SHOW: A histogram with 5 bins. Alice (PINK) moves from bin 2 to bin 4: one bar drops by 1, another
-rises by 1 → "|−1| + |+1| = 2". Then the histogram morphs into 20 bins, then 60 thin bins; the
-label "S = 2" stays put [Example 3, p. 271–272].
-SAY: Now a histogram: split the population into d bins and release every count. Change Alice's row, and she moves out of one bin and into another. One count goes down by one, another goes up by one. Total change: two. And that is true whether there are five bins or five thousand. The sensitivity does not depend on the dimension at all.
+SHOW: A histogram with 5 bins; Alice (PINK) hovering above it. PONDER(8 s, "If Alice's row changes,
+how much can the whole histogram change in total? Does it depend on the number of bins?")
+SAY: Now a histogram: split the possible values of a row into d bins, and release how many rows fall in each. Before I show you, pause: if Alice's row changes, how much can the whole histogram change in total? Does it depend on the number of bins?
 
-SHOW: Contrast (marked "illustration"): "largest income in the database". One extreme row (a
-gold coin stack) drags the answer far right; "S huge" in GREEN.
-SAY: Contrast that with a query like: what is the largest income in the database? A single billionaire can move that answer by a billion. That query is highly sensitive, so it will need a lot of noise.
+SHOW: Alice moves from bin 2 to bin 4: one bar drops by 1, another rises by 1 → "|−1| + |+1| = 2".
+The definition morphs |·| into ‖·‖₁ ("‖v‖₁ = |v₁| + |v₂| + …"). Then the histogram morphs into 20
+bins, then 60 thin bins; "S = 2" stays put [Example 3, p. 271–272].
+SAY: She moves out of one bin and into another: one count goes down by one, another goes up by one. Total change: two. Adding up absolute changes across coordinates like this is the L1 norm, the paper's way to measure sensitivity for lists of numbers. And it is two whether there are five bins or five thousand. It does not depend on the dimension at all.
+
+SHOW: Contrast (marked "illustration"): "largest income in the database". One extreme row (a gold
+coin stack) drags the answer far right; "S huge" in GREEN. Then a cap line slices the stack at "1M":
+"cap every value → S ≤ 1M".
+SAY: Contrast that with: what is the largest income in the database? One billionaire can move that answer by a billion, and with no cap there is no limit at all. The standard fix is to cap every value, say at a million, first. Remember that trick: it is exactly what private deep learning does to gradients.
 
 SHOW: Two labelled boxes: "ε — a choice (policy)" in YELLOW and "S(f) — a fact about f" in GREEN.
 "S(f) does not depend on the actual database".
-SAY: Two things to remember. Sensitivity is a property of the function alone, not of the particular database. And it is not chosen by policy; it is inherent in the question being asked. Epsilon is a choice. Sensitivity is a fact.
+SAY: Two things to remember. Sensitivity is a property of the function alone, not of the particular database, and it is not chosen by policy. Epsilon is a choice. Sensitivity is a fact.
 
 ---
 
 ## S07 · The Laplace mechanism — `s07_laplace.py` · `LaplaceMechanism`
 
 SHOW: Axes; the Laplace density (RED) drawn as a sharp tent-shaped peak. Formula
-h(y) ∝ e^{−|y|/λ}, with λ labelled "scale".
-SAY: Now for the noise. The paper uses the Laplace distribution: symmetric, sharply peaked, with a density that falls off exponentially with distance from the center. Its width is set by a scale parameter, lambda.
+h(y) ∝ e^{−|y|/λ}, with λ labelled "scale"; λ is dialled wider and narrower.
+SAY: Now for the noise. The paper uses the Laplace distribution: symmetric, sharply peaked, and falling off exponentially with distance from the center. Its width is set by a scale parameter, lambda.
 
 SHOW: Two Laplace curves, BLUE centred at f(x) = 41 and ORANGE centred at f(x′) = 42 (λ = 1).
-SAY: Here is the trick that makes it work. Center one Laplace curve at f of x, say forty-one, and another at f of x prime, forty-two. These are the output distributions in our two worlds.
+SAY: Here is the trick. Center one Laplace curve at f of x, forty-one, and another at f of x prime, forty-two: the output distributions of our two worlds.
 
-SHOW: A second axis below: the log of the ratio of the two densities as a function of t — flat at
-+1/λ on the left, a straight ramp between 41 and 42, flat at −1/λ on the right. A YELLOW band of
-height ±1/λ around 0 contains it.
-SAY: Now plot the log of their ratio, for every possible output t. Far to the left, it is constant. Far to the right, constant again. In between, a straight ramp. It never leaves a band of height one over lambda: the shift, divided by the scale.
+SHOW: A second axis below: the log of the ratio of the two densities, swept out as t moves left to
+right — flat at +1/λ for t ≤ 41, a straight ramp between 41 and 42, flat at −1/λ for t ≥ 42. A YELLOW
+band from −1/λ to +1/λ contains it.
+SAY: Now plot the log of their ratio for every output t. To the left of forty-one, it is exactly constant. To the right of forty-two, constant again. In between, a straight ramp. It never rises above one over lambda, and never falls below minus one over lambda: the shift, divided by the scale.
 
-SHOW: Switch the top plot to log-density: each Laplace becomes a "tent" of two straight lines.
-Shift the tent by 1: the vertical gap between the tents is shown never exceeding 1/λ.
-SAY: Why? On a log scale, a Laplace density is just a tent made of two straight lines. Slide the tent over, and the vertical gap between the two tents can never exceed the size of the slide, divided by lambda. That is the triangle inequality in disguise.
+SHOW: Switch the top plot to log-density: each Laplace becomes a "tent" of two straight lines, each
+side labelled "slope ±1/λ". Slide the ORANGE tent from 41 to 42: the vertical gap between the tents
+is shown never exceeding 1/λ.
+SAY: Why? On a log scale, a Laplace density is a tent whose sides have slope one over lambda, never steeper. Slide the tent over, and the gap between the tents can never exceed the slide times that slope. That is the whole design principle: privacy needs noise whose log density is never steep.
 
-SHOW: One-line proof (colours: S GREEN, ε YELLOW):
-ln[h(t−f(x)) / h(t−f(x′))] = (|t−f(x′)| − |t−f(x)|)/λ ≤ |f(x)−f(x′)|/λ ≤ S(f)/λ.
+SHOW: One-line proof (colours: S GREEN, ε YELLOW); beside it a number line with t, f(x), f(x′) and
+two distance brackets showing "|t−f(x′)| − |t−f(x)| ≤ |f(x)−f(x′)|":
+|ln[h(t−f(x)) / h(t−f(x′))]| = | |t−f(x′)| − |t−f(x)| |/λ ≤ |f(x)−f(x′)|/λ ≤ S(f)/λ.
 Then substitute λ = S(f)/ε ⇒ ≤ ε. Box it.
-SAY: So for any output, the privacy loss is at most the sensitivity divided by lambda. Set lambda equal to the sensitivity over epsilon, and the ratio is bounded by e to the epsilon, for every output and every pair of neighboring databases. Privacy, proven in one line.
+SAY: In symbols: two distances to t can differ by at most the distance between the centers. So the privacy loss of any output is at most the sensitivity divided by lambda. Set lambda to the sensitivity over epsilon, and the ratio stays within e to the epsilon, for every output and every pair of neighbors. Privacy, proven in one line.
 
-SHOW: Proposition 1 card [p. 272]: San_f(x) = f(x) + (Y₁, …, Y_d), Yᵢ ~ Lap(S(f)/ε) i.i.d.
-Small 2-D picture: joint density contours are diamonds (L1 balls).
-SAY: If the query returns several numbers, add independent Laplace noise to each coordinate. The joint density then depends on the L1 distance, which is exactly why sensitivity is measured in the L1 norm. That is the paper's Proposition 1: Laplace noise of scale S of f over epsilon in every coordinate.
+SHOW: Proposition 1 card [p. 272]: M(x) = f(x) + (Y₁, …, Y_d), Yᵢ ~ Lap(S(f)/ε) i.i.d.
+Small 2-D picture: joint density contours are diamonds (L1 balls) around two nearby centres.
+SAY: If the query returns several numbers, add independent Laplace noise to each. The joint density then depends on the L1 distance, which is exactly why sensitivity is measured in the L1 norm. That is Proposition 1: Laplace noise of scale S of f over epsilon in every coordinate.
 
-SHOW: Compare with a Gaussian (GREY): on the log scale it is a parabola; two shifted parabolas
-differ by a straight line that grows without bound; the log-ratio plot shoots out of the YELLOW band
-in the tails (RED overflow arrows).
-SAY: Why not the familiar bell curve? On a log scale a Gaussian is a parabola, and the gap between two shifted parabolas is a straight line that grows without bound. Far out in the tails the ratio explodes, so no single epsilon works for every output. Laplace tails are exactly heavy enough.
+SHOW: PONDER(10 s, "Why not uniform noise, anywhere between −10 and +10?")
+SAY: Pause and ponder: why not something simpler, like uniform noise anywhere between minus ten and plus ten?
 
-SHOW: Title-style summary: "noise scale = S(f) / ε" (S GREEN, ε YELLOW); two arrows: "more sensitive
-→ more noise", "stronger privacy → more noise".
-SAY: That is the recipe in the title. Noise scale equals sensitivity divided by epsilon. A more sensitive question needs more noise. Stronger privacy needs more noise. And nothing else matters.
+SHOW: Two boxes on one axis: BLUE [31, 51] and ORANGE [32, 52]; the output 51.5 lights up: ORANGE > 0,
+BLUE = 0, "∞" in RED, with a thumbnail of the S05 random-row ✗.
+SAY: Look at the edges. An output of fifty-one and a half is possible if the true count is forty-two, but impossible if it is forty-one: the same infinite ratio that sank the random-row mechanism. Good noise must never rule an output out.
+
+SHOW: Compare with a Gaussian (GREY) [not from the paper]: its log-ratio is a straight line that
+leaves the YELLOW band in both tails (RED overflow arrows), while the Laplace log-ratio stays inside.
+SAY: And why not the familiar bell curve? On a log scale a Gaussian is a parabola, steeper and steeper, so the gap between two shifted parabolas grows without bound. In the tails the ratio explodes, and no single epsilon works. Hold on to that Gaussian, though: it comes back, and it is the noise you would actually use to train a neural network privately.
+
+SHOW: Title-style summary: "noise scale = S(f) / ε" (S GREEN, ε YELLOW); lines: "more sensitive
+question → more noise", "stronger privacy (smaller ε) → more noise".
+SAY: So here is the recipe in the title: noise scale equals sensitivity divided by epsilon. A more sensitive question needs more noise. Stronger privacy needs more noise.
 
 ---
 
@@ -223,134 +258,181 @@ SAY: That is the recipe in the title. Noise scale equals sensitivity divided by 
 
 SHOW: Back to the hospital query. ε = 0.5 ⇒ Laplace scale 2. Week 1: true 41 → released "43.7";
 week 2: true 42 → released "40.6". Two broad overlapping Laplace curves (BLUE at 41, ORANGE at 42).
-SAY: Back to the hospital. With epsilon equal to one half, the curator adds Laplace noise of scale two. Week one, it reports about forty-three point seven. Week two, after Alice arrives, about forty point six. The difference tells the researcher almost nothing about Alice. The two worlds' answer distributions overlap heavily.
+Then "40.6 − 43.7 = −3.1"; the S01 arrow from the difference to Alice appears and is crossed out in
+RED; annotation "50/50 → at most 62%".
+SAY: Back to the hospital, with epsilon one half: Laplace noise of scale two. Week one, the curator reports about forty-three point seven. Week two, when the true count is forty-two, about forty point six. Subtract as before, and Alice seems to have lowered the count by three. A fifty-fifty guess about her can now move to at most about sixty-two percent.
 
 SHOW: Highlight "scale = S(f)/ε" — circle the two inputs; a crossed-out "n".
 SAY: Now look at what the noise scale depends on: the sensitivity and epsilon. Not the size of the database.
 
 SHOW: Three number lines stacked: n = 100 (true count ≈ 50), n = 10,000 (≈ 5,000), n = 1,000,000
-(≈ 500,000), each zoomed so the true answer is centred; the RED noise band is the same absolute width
-(±2) and becomes visually negligible; labels "≈ 4%", "≈ 0.04%", "≈ 0.0004%".
-SAY: With a hundred patients, noise of size two is a few percent of the answer. With a million patients, it is a rounding error. Alice is protected by noise that is large compared to her own contribution, which is one, but tiny compared to the whole population.
+(≈ 500,000), each centred on the true answer; the RED noise band is the same absolute width
+("typical noise ≈ 2", never labelled as a standard deviation) and becomes visually negligible;
+labels "≈ 4%", "≈ 0.04%", "≈ 0.0004%".
+SAY: With a hundred patients, noise of typical size two is a few percent of the answer. With a million, it is a rounding error. Alice is protected by noise that is large compared to her own contribution, which is one, but tiny compared to the population's.
 
 SHOW: Two-line slogan: "Privacy for individuals. Accuracy for populations."
 SAY: Privacy for individuals. Accuracy for populations. That is the bargain.
+
+SHOW: PONDER(12 s, "Noise ≈ 1/ε. What goes wrong if ε is much smaller than 1/n?")
+SAY: Here is one you can answer yourself. Pause and ponder: the noise has size about one over epsilon. What goes wrong if epsilon is much smaller than one over n?
+
+SHOW: The noise band swells past the whole range 0…n. Then a chain of databases x = x⁽⁰⁾ → x⁽¹⁾ → …
+→ x⁽ⁿ⁾ = y, one row changing per step (PINK), each arrow "× e^ε", total "≤ e^{nε} ≈ 1": "all
+databases look alike ⇒ nothing can be learned" [p. 271]. Label "hybrid argument".
+SAY: The noise outgrows n, bigger than the count could ever be, and the answer is pure noise. This is not Laplace's fault. Any two databases are linked by a chain of at most n single-row changes, each changing probabilities by at most e to the epsilon, so the ends differ by at most e to the n epsilon. If n epsilon is tiny, every database looks alike, and nothing can be learned. This chain trick is called a hybrid argument, and it comes back at the end.
 
 ---
 
 ## S09 · Many questions: the privacy budget — `s09_budget.py` · `Budget`
 
 SHOW: Analyst asks f₁ → a₁; the next query f₂ visibly depends on a₁ (an arrow from a₁ into f₂);
-then f₃ … A transcript strip builds: t = [a₁, a₂, a₃, …].
-SAY: One question is never enough. Real analysts ask many, and adaptively, each question chosen after seeing the earlier answers. Maybe you spot a spike in one bin of a histogram, and zoom in on it.
+then f₃ … A strip labelled "transcript" builds: [a₁, a₂, a₃, …].
+SAY: One question is never enough. Real analysts ask many, adaptively, each chosen after seeing earlier answers. Maybe you spot a spike in one bin, and zoom in.
 
-SHOW: Pr[t] = Π Pr[aᵢ | a₁…aᵢ₋₁] ; under it the per-factor bounds e^{|Δᵢ|/λ}; the product
-turns into a sum in the exponent: exp(Σ|Δᵢ|/λ) ≤ exp(S/λ) [Thm. 1, p. 273].
-SAY: The paper's Theorem 1 handles this. The probability of the whole conversation is a product: each answer's probability, given the answers before it. Each factor is a Laplace term with its own small privacy loss, and when probabilities multiply, log ratios add.
+SHOW: [Thm. 1, p. 273] The transcript probability as a product with two kinds of factors: GREY
+"analyst picks the next question (same in both worlds)" — struck through as it cancels in the ratio —
+and curator factors "Pr[aᵢ | earlier; x] ÷ Pr[aᵢ | earlier; x′] ≤ e^{|Δᵢ|/λ}", caption
+"Δᵢ = how much question i's true answer differs between x and x′". Then the product becomes a sum in
+the exponent: "exp(Σ|Δᵢ|/λ) = exp(‖fₜ(x) − fₜ(x′)‖₁/λ) ≤ e^ε when λ = maxₜ S(fₜ)/ε".
+SAY: The paper's Theorem 1 handles this. Write the probability of the whole transcript as a product, step by step. The analyst's choice of the next question is the same in both worlds, so in the ratio it cancels, leaving one Laplace ratio per answer. If you know reinforcement learning, this is the trajectory-ratio trick: whatever is identical in both worlds cancels, and the per-step log ratios add up.
 
 SHOW: A YELLOW "privacy budget ε" bar. Each answered query drains a segment. When it is empty, the
-curator shows "refused". Note: "refusal depends only on S(fₜ) → reveals nothing about the data".
-SAY: So privacy losses add up. Epsilon behaves like a budget. Each answer spends part of it, and once it is spent, the curator stops answering. Crucially, the curator decides whether to answer by looking only at the sensitivity of the queries, which does not depend on the data, so even a refusal reveals nothing.
+curator shows "refused". A mini Dinur–Nissim card flies in from the map and docks next to the bar.
+GREY caption: "refusing depends only on the queries' sensitivity, not the data".
+SAY: So privacy losses add up, and epsilon behaves like a budget. Each answer spends part of it; once it is spent, the curator stops. That is the answer to Dinur and Nissim: the budget makes the limit on questions explicit and measurable.
 
-SHOW: Two noisy histograms of the same data with d = 100 bins. Left "each bin as its own query
-(earlier framework)": noise bars grow like √d. Right "one query, S = 2 (this paper)": small constant
-noise bars [§3.2, p. 273].
-SAY: This view also reveals hidden savings. In the earlier framework, a histogram with d bins was treated as d separate questions, so the noise in each bin grew with the number of bins, roughly like the square root of d. Here the whole histogram is a single question with sensitivity two, so each bin gets noise of about two over epsilon, no matter how many bins there are.
+SHOW: PONDER(12 s, "d bins, total budget ε. Each bin as its own counting query, budget split
+evenly: noise per bin?")
+SAY: You can now compute a real saving yourself. Pause: a histogram with d bins, total budget epsilon. Treat each bin as its own counting query and split the budget evenly. How much noise does each bin get?
+
+SHOW: Two noisy histograms of the same data, d = 100 bins (seeded noise). Left "d separate queries":
+"Lap(d/ε) per bin". Right "one query, S = 2": "Lap(2/ε) per bin". Small GREY note: "earlier SuLQ
+analysis: ~√d/ε per bin — still grows with d" [§3.2, p. 273].
+SAY: Each bin gets one over d of the budget, so noise of scale d over epsilon. Treated as one query with sensitivity two, each bin gets two over epsilon, whatever d is. The earlier framework's sharper analysis got this down to about the square root of d, but it still grew with d.
 
 ---
 
 ## S10 · Beyond counting — `s10_beyond.py` · `BeyondCounting`
 
-SHOW: A 2×2 grid of tiles that light up in turn: "Covariance matrices", "Distance to a property",
-"Small random samples", "Any metric space".
-SAY: Sensitivity reaches far beyond counts. Here are a few examples from the paper.
+SHOW: Three tiles that light up (and grow) in turn: "Distance to a property", "Small random
+samples", "Outputs that aren't numbers".
+SAY: Sensitivity reaches far beyond counts. Three examples from the paper.
 
-SHOW: Tile 1: a d×d matrix heat-map; label "d² numbers, one query → a factor d less noise than d²
-separate queries" [p. 274].
-SAY: Means and covariance matrices have d squared entries, but treated as a single query, they need a factor of d less noise than asking for each entry separately.
+SHOW: Tile 1: a small social network; caption "each possible link = one row (present / absent)"; the
+minimum cut highlighted (RED dashed line) with its size; one link changes and the cut changes by at
+most 1; label "min cut is 1-sensitive" [p. 274]. Then: "how many rows must change to make P true?
+→ sensitivity 1".
+SAY: First, picture a social network where each possible link is one row of the database. How many links must you cut to split the network in two? That minimum cut moves by at most one when one link changes, so it is one-sensitive. In general, any question of the form, how many rows would you have to change to make something true, has sensitivity one.
 
-SHOW: Tile 2: a small social network graph; a minimum cut highlighted (RED dashed line) with its
-weight "3"; one edge changes and the cut changes by at most 1; label "min cut is 1-sensitive" [p. 274].
-SAY: Distances work too. How much would you need to change the data to give it some property? Changing one row moves that distance by at most one. Picture a social network, where each link is a person's data. The minimum cut, the total weight of links you must remove to split the network, is one-sensitive, so it can be released with just a little noise.
+SHOW: Tile 2: a big crowd; a small random sample is highlighted; Alice is usually not in it.
+"Lemma 1: if A reads each row with probability ≤ α and is within σ of f most of the time, on every
+database ⇒ S(f) ≤ 2σ" [p. 275].
+SAY: Second: if an algorithm that rarely looks at any particular row, like one working from a small random sample, approximates f to within sigma most of the time, on every database, then f has sensitivity at most two sigma. That is Lemma 1.
 
-SHOW: Tile 3: a big crowd; a small random sample is highlighted; Alice is usually not in it;
-"Lemma 1: approximable from a small sample ⇒ low sensitivity" [p. 275].
-SAY: And anything you can estimate well from a small random sample has low sensitivity. A small sample rarely contains Alice, so her row cannot matter much. That is the paper's Lemma 1.
-
-SHOW: Tile 4: outputs in a general space (points on a plane); a glowing true answer f(x); every
-candidate output y is shaded by weight exp(−ε·d(y, f(x)) / 2S) — brighter near the truth
-[Thm. 2, p. 276]. Caption: "→ exponential mechanism (McSherry & Talwar 2007)".
-SAY: Finally, the answer need not be a number at all. Section three point three handles any metric space: choose an output with probability that decays exponentially with its distance from the true answer. Answers near the truth are exponentially favored. Later, McSherry and Talwar generalized this idea into the exponential mechanism, one of the workhorses of the field.
+SHOW: Tile 3: a bit string whose bits flicker, and a cloud of candidate outputs shaded by
+weight exp(−ε·dist(y, f(x)) / 2S) — brighter near the true answer [Thm. 2, p. 276; sign corrected,
+the paper's Eqn. 4 omits the minus]. Caption "rankings, sets, bit strings: anything with a distance".
+SAY: Third, the answer need not be a number: a ranking, a set, a string of bits, anything with a distance between answers. Pick an output with probability that decays exponentially with its distance from the true answer, at a rate of epsilon over twice the sensitivity. For bit strings, that flips each bit with probability a little below one half: Warner's coin again, applied to the answer.
 
 ---
 
 ## S11 · Interactive vs. one-shot releases — `s11_separation.py` · `Separation`
 
 SHOW: Split screen. Left "Interactive": curator answering a stream of queries. Right
-"Non-interactive": curator publishes a sanitized table "San(x)" once, then walks away; many users
+"Non-interactive": curator publishes a sanitized table "M(x)" once, then walks away; many users
 query the table.
-SAY: The last part of the paper asks a question practitioners cared about deeply. Statisticians and data miners traditionally prefer the non-interactive model: sanitize the data once, publish an anonymized table, and let anyone compute anything. Can that work under this strong definition of privacy?
+SAY: Now the last part of the paper. Statisticians and data miners traditionally prefer the non-interactive model: sanitize the data once, publish it, and let anyone compute anything. Can that work under this definition?
 
-SHOW: Rows as d-bit strings. A random mask r selects some bit positions (highlighted columns); for
-each row, the parity of the selected bits is shown (0 or 1). Caption: "parity query: how many rows
-have r · x = 1 (mod 2)?", "sensitivity 1". On the left, the interactive curator answers it with
-"± 1/ε".
-SAY: The paper proves a striking limit. Suppose each row is a string of d bits. Consider parity queries: choose a subset of the bit positions, and ask how many rows have an odd number of ones in that subset. Each such query has sensitivity one, so an interactive curator can answer any one of them with noise of about one over epsilon.
+SHOW: Rows as d-bit strings (a small table, d = 8). Each row gets its own random mask (highlighted
+bit positions, different per row); for each row, the parity of its masked bits is shown (0 = even,
+1 = odd). Caption: "query: how many rows have odd parity inside their own mask?", "sensitivity 1".
+On the left, the interactive curator answers it with "± 1/ε".
+SAY: The paper proves a striking limit. Let each row be a string of d bits. Here is a family of simple counting queries: give each row its own mask, a subset of bit positions, and count the rows with an odd number of ones inside their mask. Each query has sensitivity one, so an interactive curator can answer any one of them with noise of about one over epsilon.
 
-SHOW: "2^d parity queries" — a fan of many masks. Two databases: "every row has parity 0 → answer 0"
-vs "every row has parity 1 → answer n"; both feed San; the two outputs look nearly identical
-("statistical difference ≈ 0"). Caption: "unless n ≳ 2^{Ω(d)}" [Thm. 3, p. 277].
-SAY: But a single published release must prepare for all two to the d parity queries at once. Theorem 3 shows that, for most of them, the release looks almost the same whether every row has parity zero, so the true answer is zero, or every row has parity one, so the true answer is n. The most extreme difference possible, and the release cannot tell them apart, unless the database has exponentially many rows in d.
+SHOW: A fan of many mask-sets. Two random databases: "every row even → answer 0" vs "every row odd →
+answer n"; both feed M; the two outputs look nearly identical ("statistical distance ≈ 0", with a
+thumbnail of the S05 shaded area). Caption [Thm. 3, p. 277]: "for ≥ 2/3 of the queries:
+statistical distance O(n^{4/3} ε^{2/3} 2^{−d/3}) — tiny unless n is exponential in d (roughly
+n > 2^{d/4}/√ε)".
+SAY: But a one-shot release must prepare for all of them at once. Theorem 3 shows that for at least two thirds of these queries, the release looks almost the same for a random database where every row has even parity, true answer zero, as for one where every row is odd, true answer n. The most extreme difference possible, and it cannot be seen, unless the database is exponentially large: roughly, every four extra bits per row doubles the rows you would need.
 
-SHOW: The d-bit cube's points coloured by parity: two interleaved halves (salt-and-pepper).
-Lemma 2 [p. 278]: "a random half looks like the whole space to an ε-private map". Then the hybrid
-chain: replace rows one at a time from "any row" to "parity-0 row"; each step "+σ", total "nσ".
-SAY: The proof reuses the chain trick. A random parity splits all possible rows into two interleaved halves, and Lemma 2 shows that a private randomized map can barely tell a random half from the whole space. So swap the rows one at a time, from any row at all, to rows of parity zero. Each swap barely moves the output, and even n swaps together barely move it. The same holds for parity one, so both databases look like the same thing.
+SHOW: PONDER(10 s, "Couldn't an analyst ask the interactive curator all of these queries too?")
+SAY: Pause and ponder: couldn't an analyst just ask the interactive curator all of these queries too?
 
-SHOW: Randomized response: each person (icons) perturbs their own row locally before sending it;
-no curator holds raw data. Caption: "Proposition 2: can't even learn one population parity unless
-n ≳ 2^{d/3}" [p. 278].
-SAY: Randomized response, where each person scrambles their own data before sending it, so nobody ever holds the raw data, is even more limited. Proposition 2 shows it cannot even estimate the population count for most such parities unless n is exponentially large.
+SHOW: The S09 YELLOW budget bar empties after a handful of parity queries; "refused".
+SAY: No: the budget would run out. The curator only has to answer the few questions someone actually asks, chosen later. A published release cannot know which few those will be, so it must be ready for all of them at once. That is where it breaks.
 
-SHOW: Quantifier reminder: "∀ one query: easy to sanitize for it" vs "∃ one release for most
-queries: impossible". Final line: "Want broad accuracy + strong privacy? Keep a curator in the loop."
-SAY: Careful with the quantifiers. For any one particular query, it is easy to design a one-shot release that answers it well. What is impossible is a single release that answers most of them. The lesson: if you want broad, flexible accuracy with strong privacy, keep the curator in the loop.
+SHOW: A small "proof idea" tag. The d-bit cube's points coloured by parity under one random mask:
+two interleaved halves (salt-and-pepper); one half highlighted as "a random poll of all rows"
+[Lemma 2, p. 278]. Then the hybrid chain from S08: start from n completely random rows; replace them
+one at a time by even-parity rows (each under its own mask); each step "+σ", total "nσ" — small
+unless n is huge. The same for odd parity; both ends meet at "completely random rows".
+SAY: The proof idea uses two facts. Privacy forces the release to treat every possible row almost alike. And a random mask splits all rows into two halves mixed like salt and pepper, so the even half is like a random poll of everything. Then the chain trick: start from completely random rows, and swap them one at a time for even ones. Each swap barely moves the output, and unless n is huge, all n swaps together barely move it. The same goes for odd rows, so both databases look like random rows.
+
+SHOW: The Warner coin icon from S02 flies in next to a picture of each person scrambling their own
+row locally; no curator holds raw data. Caption [Prop. 2, p. 278]: "same mask for every row: for
+most masks, can't learn the fraction with odd parity unless n ≳ 2^{d/3}/ε^{2/3}".
+SAY: Warner's coin, randomized response, where each person scrambles their own row so nobody holds the raw data, is even more limited. Proposition 2: even when every row uses the same mask, for most masks it cannot estimate the odd count unless n is exponentially large.
+
+SHOW: Two lines in words: "Any ONE query, known in advance → easy to publish for ✓" vs "ONE private
+release that works for MOST queries → impossible unless n is huge ✗". Final line: "Want broad
+accuracy + strong privacy? Keep a curator in the loop."
+SAY: Careful with the quantifiers. For any one query known in advance, a one-shot release can answer it well. What is impossible, unless the database is exponentially large, is one private release that answers most of them. The lesson: for broad, flexible accuracy with strong privacy, keep the curator in the loop.
 
 ---
 
 ## S12 · What grew from this paper — `s12_legacy.py` · `Legacy`
 
-SHOW: The S02 map returns, compressed to the left; THIS paper's card (YELLOW) moves to the centre.
-Descendant cards appear to the right, each with an arrow labelled by the section it grew from:
-"Dwork 2006 (ICALP): the name *differential privacy*".
-"Dwork, Kenthapadi, McSherry, Mironov & Naor 2006: (ε, δ) — Gaussian noise allowed".
-SAY: Let's return to our map and see what grew from this paper. The same year, Dwork gave the definition its lasting name: differential privacy. Another 2006 paper, with Kenthapadi, McSherry, Mironov and Naor, relaxed it to allow a tiny probability of failure, delta, which finally lets Gaussian noise in.
+SHOW: The S02 lanes return, compressed to the left; THIS paper's card (YELLOW, with its four idea
+slots coloured YELLOW/GREEN/RED/GREY) moves to the centre. Descendant cards grow to the right, each
+arrow leaving from the matching idea slot and carrying a thumbnail of the scene it echoes:
+"Dwork 2006 (ICALP): the name *differential privacy*"; "Dwork, Kenthapadi, McSherry, Mironov & Naor
+2006: (ε, δ)" ← thumbnail of the Gaussian escaping the band (S07).
+SAY: Back to our map, to see what grew from this paper. The same year, in an invited paper titled simply Differential Privacy, Dwork introduced the name the field still uses. Another 2006 paper, with Kenthapadi, McSherry, Mironov and Naor, added a tiny slack, delta. Remember the Gaussian whose ratio escaped the band in the tails? Delta pays for those rare tails, and lets the bell curve back in.
 
-SHOW: "§3.3 metric spaces → Exponential mechanism (McSherry & Talwar 2007)";
-"Thm 1 budget → Composition theorems (Dwork, Rothblum & Vadhan 2010)".
-SAY: The metric space idea of section three point three became McSherry and Talwar's exponential mechanism. The privacy budget of Theorem 1 grew into a whole theory of composition, including the advanced composition theorem of Dwork, Rothblum and Vadhan.
+SHOW: "Exponential mechanism (McSherry & Talwar 2007)" ← bit-flip tile (S10); "Composition theorems
+(Dwork, Rothblum & Vadhan 2010): loss of k questions ~ √k" ← budget bar (S09).
+SAY: Scoring every possible answer became McSherry and Talwar's exponential mechanism. The privacy budget grew into a theory of composition, with a surprise from Dwork, Rothblum and Vadhan: allow that tiny delta, and the total loss of k questions grows only like the square root of k.
 
-SHOW: "§4 randomized response → Local DP: Google RAPPOR (2014), Apple (2016)";
-"S(f) + noise inside SGD → DP-SGD (Abadi et al. 2016): clip each gradient = bound sensitivity".
-SAY: The randomized response model of Section four became local differential privacy, deployed by Google in Chrome and by Apple on iPhones. And in 2016, Abadi and colleagues trained deep neural networks with differential privacy: clip each example's gradient, which bounds its sensitivity, then add noise. Calibrating noise to sensitivity, inside gradient descent.
+SHOW: "Local DP: Google RAPPOR (2014), Apple (2016)" ← Warner's coin (S02/S11).
+SAY: Warner's coin, the model Section four showed is most limited, is what we now call local differential privacy, used by Google in Chrome and by Apple on iPhones. Why the weakest model? Nobody has to be trusted with the raw data, and with millions of users, a few simple statistics can afford the noise.
 
-SHOW: "US Census 2020: published statistics protected with DP"; a trophy: "Gödel Prize 2017".
-SAY: For the 2020 census, the US Census Bureau protected its published statistics with differential privacy. And in 2017, this paper won the Gödel Prize, one of the highest honors in theoretical computer science.
+SHOW: "DP-SGD (Abadi et al. 2016): clip each example's gradient (= the income cap, S06) + Gaussian
+noise, budget tracked over thousands of steps"; card "Membership inference (Shokri et al. 2017):
+the differencing attack, against models".
+SAY: In 2016, Abadi and colleagues made it practical to train deep networks privately: clip each example's gradient, like our income cap, which bounds its sensitivity; add Gaussian noise; and track the budget over thousands of steps. If you train models on patient data, this is your entry point. A trained network is just another f of x, and attacks that ask whether a patient was in the training set are our subtraction attack, scaled up.
+
+SHOW: "US Census 2020: published tables protected with DP (a few counts, e.g. state totals, exact)".
+PONDER(8 s, "The Census published one release. Does Section 4 forbid it?")
+SAY: And for the 2020 census, the US Census Bureau protected its published tables with differential privacy; only a few counts, like state populations, were exact. But that is a one-shot release. Pause and ponder: does Section four forbid it?
+
+SHOW: The two quantifier lines from S11, the first one ticked: "a fixed set of tables chosen in
+advance ✓". A trophy, silently: "Gödel Prize 2017 · TCC Test-of-Time Award 2016". Last card:
+"Still open: choosing ε in practice · when no one can be trusted with the data".
+SAY: No. The Census tuned its release for a fixed set of tables chosen in advance. Section four only rules out one release that is accurate for most of a huge family of questions.
 
 ---
 
 ## S13 · Recap and questions — `s13_recap.py` · `Recap`
 
-SHOW: Four panels build up, each with its formula:
-1 "Privacy: |ln(Pr[𝒯(x)=t]/Pr[𝒯(x′)=t])| ≤ ε" · 2 "Sensitivity: S(f) = max ‖f(x)−f(x′)‖₁" ·
-3 "Laplace mechanism: f(x) + Lap(S(f)/ε)" · 4 "One-shot releases need n ≳ 2^{Ω(d)}".
-SAY: Let's recap. One: privacy means that changing any one person's row changes the probability of any output by at most a factor of e to the epsilon. Two: a query's sensitivity is the most that one row can change its answer. Three: add Laplace noise with scale sensitivity over epsilon, and you are private, with error that does not grow with the size of the database. And four: one-shot sanitized releases cannot match what an interactive curator can do.
+SHOW: Four panels build up, each with its formula (reuse the exact formulas/colours from S04, S06,
+S07, S11): 1 "Privacy: |ln(Pr[M(x)=t]/Pr[M(x′)=t])| ≤ ε" · 2 "Sensitivity: S(f) = max ‖f(x)−f(x′)‖₁"
+· 3 "Laplace mechanism: f(x) + Lap(S(f)/ε)" · 4 "One published table: most parity counts need
+exponentially many rows".
+SAY: Let's recap. One: privacy means changing any one person's row changes the probability of any output by at most a factor of e to the epsilon. Two: a query's sensitivity is the most one row can change its answer. Three: Laplace noise with scale sensitivity over epsilon makes it private, with error that does not grow with the database. Four: one private published table cannot answer most simple parity counts unless the database is exponentially large.
 
-SHOW: Three "test yourself" questions appear (YELLOW header):
-"Sensitivity of the average of n numbers in [0, 1]?" · "Ten counting queries at ε = 0.1 each: total
-privacy loss?" · "Why does the median give the Laplace mechanism trouble?" ·
-footer: "answers + exercises: exercises.md".
-SAY: Some questions to test yourself. What is the sensitivity of the average of n numbers between zero and one? If you answer ten counting queries, each with epsilon of one tenth, what is your total privacy loss? And why does the median give the Laplace mechanism trouble? Answers and more exercises are in the companion notes.
+SHOW: Header "Test yourself" (YELLOW). Question card 1: "Sensitivity of the average of n numbers in
+[0, 1]?" PONDER(8 s, "Sensitivity of the average of n numbers in [0, 1]?")
+SAY: Some questions to test yourself; pause after each. First: what is the sensitivity of the average of n numbers between zero and one?
 
-SHOW: Final card: "What's the epsilon?" then the paper citation.
-SAY: Next time someone tells you a dataset is safe because it is anonymized, you will know the better question to ask: what is the epsilon?
+SHOW: Question card 2: "Each patient contributes 50 slices; each slice's gradient is clipped to size
+C. How much can one patient change the summed gradient?" PONDER(10 s, same text)
+SAY: Second: in a medical imaging dataset, each patient contributes fifty slices, and each slice's gradient is clipped to size C. How much can one patient change the summed gradient?
+
+SHOW: Question card 3: "Why does the median give the Laplace mechanism trouble?" PONDER(8 s, same
+text); footer "answers + more exercises: companion notes (exercises.md)".
+SAY: Third: why does the median give the Laplace mechanism trouble? Answers, and more exercises, are in the companion notes.
+
+SHOW: Final card: "What's the epsilon? · What counts as one person's row?" then the paper citation.
+SAY: Next time someone says a dataset is safe because it is anonymized, you will know the better questions: what is the epsilon, and what counts as one person's row?

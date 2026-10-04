@@ -36,6 +36,27 @@ and Lap(range/ε) noise swamps the answer. The fix came a year later: *smooth se
 database, without leaking that stability itself.
 </details>
 
+**2b. What counts as one person?** In a medical imaging dataset each patient contributes 50 slices,
+and you train with per-example gradient clipping: each slice's gradient is clipped to norm C. How
+much can one *patient* change the summed gradient?
+
+<details><summary>Answer</summary>
+
+Up to **50·C** (triangle inequality over the patient's 50 clipped gradients). Differential privacy
+protects whatever unit "one row" stands for. If the row should be the patient, either clip per
+patient (sum the patient's slice gradients, then clip that to C) or calibrate the noise to 50·C.
+Clipping per slice and calibrating to C silently protects slices, not people.
+</details>
+
+**2c. Warner's coin, measured.** In the coin version of randomized response (heads: answer
+truthfully; tails: flip again, say "yes" on heads, "no" on tails), what is ε?
+
+<details><summary>Answer</summary>
+
+Pr[say yes | truth yes] = 1/2 + 1/4 = 3/4 and Pr[say yes | truth no] = 1/4; the same ratio holds
+for "no" answers. Worst ratio 3, so **ε = ln 3 ≈ 1.1**. A fifty-fifty prior can move to at most 75%.
+</details>
+
 ## Understanding the definition
 
 **4. Why e^ε and not 1 + ε?** Show that if a mechanism is ε-indistinguishable for neighbours

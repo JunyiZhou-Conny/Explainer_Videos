@@ -158,7 +158,7 @@ class Hook(VoiceScene):
             self.play(FadeOut(Group(page, title_box, info)), run_time=0.8)
             self.play(FadeIn(heading, shift=DOWN * 0.2), run_time=0.6)
             anchors = ["a definition of privacy", "a number called sensitivity",
-                       "a recipe for exactly", "Plus a surprising limit"]
+                       "a recipe for", "Plus a surprising limit"]
             for card_i, phrase in zip(cards, anchors):
                 vo.wait_until(phrase)
                 self.play(FadeIn(card_i, shift=RIGHT * 0.3), run_time=0.6)

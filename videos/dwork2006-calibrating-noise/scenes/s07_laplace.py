@@ -108,8 +108,8 @@ class LaplaceMechanism(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(Create(bot), FadeIn(bot_lab), run_time=1.0)
             self.add(v_a, dot_a, dot_b, dot_r, trace)
-            vo.wait_until("Far to the left")
-            self.play(t.animate.set_value(A - 0.3), run_time=vo.until("Far to the right"),
+            vo.wait_until("To the left")
+            self.play(t.animate.set_value(A - 0.3), run_time=vo.until("To the right"),
                       rate_func=linear)
             self.play(t.animate.set_value(B + 0.3), run_time=1.2, rate_func=linear)
             self.play(t.animate.set_value(T1 - 0.3), run_time=vo.until("In between", 1.5),
@@ -165,8 +165,8 @@ class LaplaceMechanism(VoiceScene):
                                  bot, bot_lab, ratio_graph, band, band_hi, band_lo, hi_lab, lo_lab)),
                   run_time=0.8)
         fx, fxp = r"f(x)", r"f(x')"
-        l1 = S.math(r"\ln\frac{h(t-", fx, r")}{h(t-", fxp, r")}", r"=",
-                    r"\frac{|t-", fxp, r"|-|t-", fx, r"|}{\lambda}", size=44)
+        l1 = S.math(r"\left|\ln\frac{h(t-", fx, r")}{h(t-", fxp, r")}\right|", r"=",
+                    r"\frac{\big|\,|t-", fxp, r"|-|t-", fx, r"|\,\big|}{\lambda}", size=44)
         l2 = S.math(r"\le", r"\frac{|", fx, "-", fxp, r"|}{\lambda}", size=44)
         l3 = S.math(r"\le", r"\frac{S(f)}{\lambda}", size=44)
         for line in (l1, l2):

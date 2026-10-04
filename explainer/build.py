@@ -14,7 +14,11 @@ Reads <project>/video.yaml:
     scenes:
       - {file: scenes/s01_hook.py, cls: Hook, title: "The differencing attack"}
 
-Writes <project>/output/<id>.mp4, <id>.srt, chapters.txt (YouTube/Bilibili format), transcript.md.
+    parts:                                   # optional: also cut the video into parts
+      - {id: part1, title: "...", scenes: [s01_hook, s02_map]}
+
+Writes <project>/output/<id>.mp4, <id>.srt, chapters.txt (YouTube/Bilibili format), transcript.md,
+and <id>_<part>.mp4 / .srt / chapters_<part>.txt for each part.
 """
 
 from __future__ import annotations
@@ -164,47 +168,61 @@ def main(argv=None):
     out_dir = project / "output"
     out_dir.mkdir(exist_ok=True)
 
-    parts, offset = [], 0.0
-    srt, chapters, transcript = [], [], [f"# {spec.get('title', spec['id'])}\n"]
+    normalized = []
     for i, s in enumerate(scenes):
         movie = scene_movie(project, args.quality, s)
         if not movie.exists():
             raise SystemExit(f"missing render for {s['cls']}: {movie}")
         norm = build / f"{i:02d}_{s['cls']}.mp4"
-        normalize(movie, norm)
-        parts.append(norm)
-        title = s.get("title", s["cls"])
+        if not norm.exists() or norm.stat().st_mtime < movie.stat().st_mtime:
+            normalize(movie, norm)
+        normalized.append((s, movie, norm))
+
+    suffix = "" if args.quality == "h" else "_" + QUALITY_DIRS[args.quality]
+    title = spec.get("title", spec["id"])
+    stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, args.crf, chapters_file=out_dir / "chapters.txt",
+           transcript_file=out_dir / "transcript.md")
+    for part in spec.get("parts") or []:
+        keep = set(part["scenes"])
+        subset = [t for t in normalized if Path(t[0]["file"]).stem in keep or t[0]["cls"] in keep]
+        stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", part.get("title", part["id"]), build,
+               args.crf, chapters_file=out_dir / f"chapters_{part['id']}.txt")
+
+
+def stitch(items, stem: Path, title: str, build: Path, crf: int | None, chapters_file: Path,
+           transcript_file: Path | None = None) -> None:
+    """Concatenate normalized scene files into stem.mp4 (+ .srt, chapters, transcript)."""
+    srt, chapters, transcript, offset = [], [], [f"# {title}\n"], 0.0
+    for s, movie, norm in items:
+        name = s.get("title", s["cls"])
         if s.get("chapter", True):
-            chapters.append(f"{fmt_chapter(offset)} {title}")
-        transcript.append(f"\n## {fmt_chapter(offset)} — {title}\n")
+            chapters.append(f"{fmt_chapter(offset)} {name}")
+        transcript.append(f"\n## {fmt_chapter(offset)} — {name}\n")
         subs_file = movie.with_suffix(".subs.json")
         for cue in (json.loads(subs_file.read_text()) if subs_file.exists() else []):
             transcript.append(cue["text"] + "\n")
             srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"]))
         offset += ffprobe_duration(norm)
 
-    listing = build / "concat.txt"
-    listing.write_text("".join(f"file '{p}'\n" for p in parts))
-    joined = build / "joined.mp4"
+    listing = build / f"concat_{stem.name}.txt"
+    listing.write_text("".join(f"file '{n}'\n" for _, _, n in items))
+    joined = build / f"joined_{stem.name}.mp4"
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
                     "-c", "copy", str(joined)], check=True)
-
-    final = out_dir / f"{spec['id']}{'' if args.quality == 'h' else '_' + QUALITY_DIRS[args.quality]}.mp4"
-    vcodec = ["-c:v", "copy"] if args.crf is None else [
-        "-c:v", "libx264", "-preset", "slow", "-tune", "animation", "-crf", str(args.crf),
-        "-pix_fmt", "yuv420p"]
+    final = stem.with_suffix(".mp4")
+    vcodec = ["-c:v", "copy"] if crf is None else [
+        "-c:v", "libx264", "-preset", "slow", "-tune", "animation", "-crf", str(crf), "-pix_fmt", "yuv420p"]
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), *vcodec, "-af",
                     "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k",
                     "-movflags", "+faststart", str(final)], check=True)
-
-    stem = final.with_suffix("")
-    Path(f"{stem}.srt").write_text("".join(
+    joined.unlink(missing_ok=True)
+    stem.with_suffix(".srt").write_text("".join(
         f"{n}\n{fmt_srt(a)} --> {fmt_srt(b)}\n{t}\n\n" for n, (a, b, t) in enumerate(srt, 1)))
-    (out_dir / "chapters.txt").write_text("\n".join(chapters) + "\n")
-    (out_dir / "transcript.md").write_text("".join(transcript))
-    size = final.stat().st_size / 1e6
-    print(f"\nDone: {final.relative_to(project)}  ({fmt_chapter(offset)}, {size:.1f} MB)")
-    print(f"      {Path(f'{stem}.srt').name}, chapters.txt, transcript.md")
+    chapters_file.write_text("\n".join(chapters) + "\n")
+    if transcript_file:
+        transcript_file.write_text("".join(transcript))
+    print(f"Done: {final.name}  ({fmt_chapter(offset)}, {final.stat().st_size / 1e6:.1f} MB) + .srt, "
+          f"{chapters_file.name}")
 
 
 if __name__ == "__main__":

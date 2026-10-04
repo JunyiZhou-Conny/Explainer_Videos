@@ -18,3 +18,10 @@ scenes:
   - {file: scenes/s11_separation.py,  cls: Separation,       title: "Interactive vs one-shot releases"}
   - {file: scenes/s12_legacy.py,      cls: Legacy,           title: "What grew from this paper"}
   - {file: scenes/s13_recap.py,       cls: Recap,            title: "Recap and questions"}
+parts:
+  - id: part1
+    title: "Differential privacy, part 1: the definition and the Laplace mechanism"
+    scenes: [s01_hook, s02_map, s03_setup, s04_definition, s05_strict, s06_sensitivity, s07_laplace, s08_payoff]
+  - id: part2
+    title: "Differential privacy, part 2: budgets, beyond counting, and the limits of one-shot releases"
+    scenes: [s09_budget, s10_beyond, s11_separation, s12_legacy, s13_recap]

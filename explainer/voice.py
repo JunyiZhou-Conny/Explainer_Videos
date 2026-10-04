@@ -96,6 +96,9 @@ def audio_duration(path: Path) -> float:
 
 
 def write_wav(path: Path, samples: np.ndarray, sr: int = SAMPLE_RATE) -> None:
+    peak = float(np.abs(samples).max()) if len(samples) else 0.0
+    if peak > 0.99:  # scale instead of clipping
+        samples = samples * (0.99 / peak)
     pcm = (np.clip(samples, -1.0, 1.0) * 32767).astype("<i2")
     with wave.open(str(path), "wb") as w:
         w.setnchannels(1)
@@ -229,8 +232,16 @@ class KokoroBackend(Backend):
         joined = " ".join(p.strip() for p in parts if p.strip())
         return re.sub(r"\s+([.,!?;:])", r"\1", joined)
 
+    def _lexicon_key(self, sentence: str) -> str:
+        """The lexicon entries a sentence uses, so editing the lexicon re-voices only those sentences."""
+        lex = {k: v for k, v in load_lexicon().items() if v.get("ipa")}
+        rx = _lexicon_regex(lex)
+        used = sorted({m.group(1) for m in rx.finditer(sentence)}) if rx else []
+        return json.dumps({w: lex[w]["ipa"] for w in used}, ensure_ascii=False) if used else ""
+
     def _sentence_wav(self, sentence: str) -> Path:
-        out = self._cache_path(sentence)
+        lex_key = self._lexicon_key(sentence)
+        out = self._cache_path(sentence + (f"|lex={lex_key}" if lex_key else ""))
         if not out.exists():
             out.parent.mkdir(parents=True, exist_ok=True)
             samples, sr = self.engine.create(self.phonemize(sentence), voice=self.voice,
