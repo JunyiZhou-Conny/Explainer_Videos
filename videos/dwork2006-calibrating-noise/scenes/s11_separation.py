@@ -16,7 +16,9 @@ from explainer import style as S
 from explainer.components import gaussian_pdf, person_icon, ponder_card
 from explainer.scene import VoiceScene
 
-from common import ALICE, ANALYST_COLOR, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR
+from common import (ALICE, ANALYST_COLOR, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR,
+                    budget_bar)
+from s02_map import coin          # Warner's coin, exactly as S02 (and S12) draw it
 
 SAY = NARRATION["S11"]
 
@@ -29,8 +31,6 @@ BIT_OFF = S.GREY_DARKER
 EVEN = X_COLOR         # the "every row even" world (true answer 0)
 ODD = XP_COLOR         # the "every row odd" world  (true answer n)
 TICK = S.TEAL          # ✓
-COIN = S.GOLD          # Warner's coin
-COIN_EDGE = "#A87B2C"    # as in S10
 SYM = "DejaVu Sans"    # font that has ✓ ✗
 D = 8                  # bits per row in the pictures
 N = 6                  # rows in the small tables
@@ -145,21 +145,10 @@ def tag(tex, color=S.WHITE, size=30):
     return VGroup(fr, m)
 
 
-def coin(r=0.28):
-    """Warner's coin (S02's look: gold disc, rim, inner ring; the H face only when it is >= 20 pt)."""
-    disc = Circle(radius=r, stroke_color=COIN_EDGE, stroke_width=3).set_fill(COIN, 1)
-    ring = Circle(radius=r * 0.78, stroke_color=COIN_EDGE, stroke_width=1.5)
-    g = VGroup(disc, ring)
-    if r >= 0.235:
-        g.add(S.text("H", r * 85, S.BG, weight="BOLD").move_to(disc))
-    return g
-
-
-def budget_bar(w=3.0, h=0.36, k=5):
-    frame = Rectangle(width=w, height=h, stroke_color=EPS_COLOR, stroke_width=2.5)
-    segs = VGroup(*[Rectangle(width=w / k - 0.07, height=h - 0.1, stroke_width=0).set_fill(EPS_COLOR, 0.85)
-                    for _ in range(k)]).arrange(RIGHT, buff=0.07).move_to(frame)
-    return VGroup(frame, segs)
+def corner_tag(label, size=22):
+    """A small GREY-framed tag (the 'proof idea' and 'Section 4 of the paper' tags)."""
+    t = S.text(label, size, S.GREY)
+    return VGroup(SurroundingRectangle(t, color=S.GREY, buff=0.1, corner_radius=0.08, stroke_width=1.5), t)
 
 
 def query_card(question, width=8.4):
@@ -252,11 +241,20 @@ class Separation(VoiceScene):
         flip_j = next(j for j in range(D) if masks[flip_i][j] and not bits[flip_i][j])
         more_masks = [[random_mask(rng) for _ in range(N)] for _ in range(11)]
 
+        # S12 keeps referring to "Section four": this tag names it, top right, for the whole scene
+        sec_tag = corner_tag("Section 4 of the paper")
+        sec_tag.move_to([6.55, 3.3, 0], aligned_edge=RIGHT)
+
+        def clear(run_time):
+            """Fade out everything except the section tag."""
+            self.play(FadeOut(Group(*[m for m in self.mobjects if m is not sec_tag])), run_time=run_time)
+
         # ============================================================ 0. interactive vs one-shot
         FY = 0.75
-        divider = DashedLine([0, 2.55, 0], [0, -2.25, 0], color=S.GREY_DARK, stroke_width=2)
-        t_left = S.text("Interactive", 34, S.WHITE).move_to([-3.3, 3.05, 0])
-        t_right = S.text("Non-interactive", 34, S.WHITE).move_to([3.3, 3.05, 0])
+        TITLE_Y = 2.8                       # just under the section tag
+        divider = DashedLine([0, 2.45, 0], [0, -2.25, 0], color=S.GREY_DARK, stroke_width=2)
+        t_left = S.text("Interactive", 34, S.WHITE).move_to([-3.3, TITLE_Y, 0])
+        t_right = S.text("Non-interactive", 34, S.WHITE).move_to([3.3, TITLE_Y, 0])
 
         dbL = db_icon(w=1.15, rh=0.25).move_to([-5.6, FY, 0])
         dbL_lab = S.math("x", size=34, color=X_COLOR).next_to(dbL, DOWN, buff=0.15)
@@ -295,8 +293,9 @@ class Separation(VoiceScene):
             return q, a
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(t_left, shift=DOWN * 0.2), FadeIn(t_right, shift=DOWN * 0.2), Create(divider),
-                      run_time=0.8)
+            # "Now the last part of the paper": the section tag arrives with the two titles
+            self.play(FadeIn(sec_tag, shift=LEFT * 0.2), FadeIn(t_left, shift=DOWN * 0.2),
+                      FadeIn(t_right, shift=DOWN * 0.2), Create(divider), run_time=0.8)
             self.play(FadeIn(VGroup(dbL, dbL_lab, cur, cur_lab), shift=RIGHT * 0.2),
                       FadeIn(VGroup(ana, ana_lab), shift=LEFT * 0.2), run_time=0.8)
             vo.wait_until("Statisticians")
@@ -338,8 +337,8 @@ class Separation(VoiceScene):
         legend = VGroup(Square(0.3, stroke_color=MASK, stroke_width=3).set_fill(MASK, 0.16),
                         S.text("mask: the bits that count", 24, MASK)).arrange(RIGHT, buff=0.15)
         legend.next_to(brace_lab, RIGHT, buff=0.9)
-        qcard = query_card("How many rows have odd parity inside their own mask?", width=10.2)
-        qcard.move_to([0.6, 2.95, 0])
+        qcard = query_card("How many rows have odd parity inside their own mask?", width=9.2)
+        qcard.move_to([-1.85, 2.95, 0])     # right edge 2.75: clear of the section tag
         pdigs = [digit(p, 26, S.WHITE).move_to(pc).set_z_index(3) for p, pc in zip(pars, pcells)]
         count = S.math("f(", "x", ")", "=", str(sum(pars)), size=52)
         count[1].set_color(X_COLOR)
@@ -404,10 +403,11 @@ class Separation(VoiceScene):
             self.play(FadeIn(sens, shift=UP * 0.15), run_time=0.3)
             vo.wait_until("so an interactive curator")
             # back to x: the curator answers the query on the real database
+            # (and clear what is done: x' and its count, the d-bits brace, the mask key)
             self.play(Transform(digs[flip_i][flip_j], old_bit), Transform(pdigs[flip_i], old_par),
                       pcells[flip_i].animate.set_stroke(S.GREY, 1.5), row[1].animate.set_color(X_COLOR),
-                      FadeOut(hl), FadeOut(count2), sens.animate.move_to(count2, aligned_edge=LEFT),
-                      run_time=0.45)
+                      FadeOut(VGroup(hl, count2, brace, brace_lab, legend)),
+                      sens.animate.move_to(count2, aligned_edge=LEFT), run_time=0.45)
             answer = S.math(str(sum(pars)), r"\pm", r"1/", r"\varepsilon", size=40)
             answer[1:3].set_color(NOISE_COLOR)
             answer[3].set_color(EPS_COLOR)
@@ -471,8 +471,7 @@ class Separation(VoiceScene):
         thm = statement_card("Theorem 3", thm_line).move_to([0, -2.78, 0])
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(cur, cur_lab, ans, count, sens, qcard, legend, brace,
-                                     brace_lab, par_head, x_lab)), run_time=0.6)
+            self.play(FadeOut(VGroup(cur, cur_lab, ans, count, sens, qcard, par_head, x_lab)), run_time=0.6)
             self.play(FadeOut(VGroup(table, *pdigs, overlays)), FadeIn(card0[0]), FadeIn(card0[2]),
                       TransformFromCopy(overlays, card0[1]), run_time=1.1)
             self.add(card0)
@@ -512,35 +511,54 @@ class Separation(VoiceScene):
             vo.wait_until("unless the database")
             thresh = S.math(r"\text{tiny unless}\quad n", r"\gtrsim", r"2^{d/4}", "/", r"\sqrt{\varepsilon}", size=46)
             thresh[4][-1].set_color(EPS_COLOR)
-            thresh.move_to([0, 1.38, 0])
+            thresh.move_to([0, 1.15, 0])
+            # first clear the two worlds completely, then lift the card (it used to slide up across
+            # the half-faded tables and curves); smaller, and left of the section tag
             self.play(FadeOut(VGroup(tab_e, tab_o, lab_e, lab_o, card0, m_e, m_o, a_e, a_o, b_e, b_o, axis, ax_lab,
-                                     c_e, c_o, sliver, sd_lab)),
-                      thm.animate.move_to([0, 2.72, 0]), run_time=0.8)
-            self.play(Write(thresh), run_time=1.0)
+                                     c_e, c_o, sliver, sd_lab)), run_time=0.6)
+            self.play(thm.animate.scale(0.78).move_to([-1.5, 2.42, 0]), run_time=0.6)
+            self.play(Write(thresh), run_time=0.9)
 
+            # realistic sizes (epsilon = 1): a 100-bit row already needs ~33 million rows, and every
+            # 4 more bits double that. The first 100 bits are drawn compressed (3 cells, dots, 3 cells).
             cellw = 0.36
-            bitrow = VGroup(*[Square(cellw, stroke_color=S.GREY, stroke_width=1.5).set_fill(S.GREY_DARK, 1)
-                              for _ in range(16)]).arrange(RIGHT, buff=0).move_to([-3.4, -1.0, 0])
+            gap_blk = Rectangle(width=2 * cellw, height=cellw, stroke_color=S.GREY, stroke_width=1.5)
+            gap_blk.set_fill(S.GREY_DARK, 1)
+            base_cells = VGroup(*[Square(cellw, stroke_color=S.GREY, stroke_width=1.5).set_fill(S.GREY_DARK, 1)
+                                  for _ in range(3)], gap_blk,
+                                *[Square(cellw, stroke_color=S.GREY, stroke_width=1.5).set_fill(S.GREY_DARK, 1)
+                                  for _ in range(3)]).arrange(RIGHT, buff=0)
+            base_dots = S.math(r"\cdots", size=34, color=S.GREY).move_to(gap_blk)
+            extra = VGroup(*[Square(cellw, stroke_color=S.GREY, stroke_width=1.5).set_fill(S.GREY_DARK, 1)
+                             for _ in range(8)]).arrange(RIGHT, buff=0)
+            bitrow = VGroup(VGroup(base_cells, base_dots), extra).arrange(RIGHT, buff=0).move_to([-3.4, -1.0, 0])
             bitrow.align_to([-6.2, 0, 0], LEFT)
-            d_lab = VGroup(S.text("bits per row:", 26, S.GREY), S.math("d = 8", size=38)).arrange(RIGHT, buff=0.2)
+            d_lab = VGroup(S.text("bits per row:", 26, S.GREY), S.math("d = 100", size=38)).arrange(RIGHT, buff=0.2)
             d_lab.next_to(bitrow, UP, buff=0.3).align_to(bitrow, LEFT)
             bars = VGroup(*[Rectangle(width=2.2, height=0.13, stroke_width=0).set_fill(S.WHITE, 0.8)
                             for _ in range(16)]).arrange(UP, buff=0.05)
             bars.move_to([2.5, 0, 0]).align_to([0, -3.4, 0], DOWN)
-            n_lab = S.text("rows needed", 26, S.GREY).move_to([5.1, -1.7, 0])
-            n_val = S.math(r"\sim 2^{8/4} = 4", size=40).next_to(n_lab, DOWN, buff=0.2).align_to(n_lab, LEFT)
+            n_lab = VGroup(S.text("rows needed", 24, S.GREY), S.text("(with ε = 1)", 22, S.GREY, t2c={"ε": EPS_COLOR})
+                           ).arrange(DOWN, aligned_edge=LEFT, buff=0.1).move_to([3.95, -0.95, 0], aligned_edge=UL)
+
+            def rows_needed(power, words):
+                g = VGroup(S.math(rf"2^{{{power}}}", size=44), S.text(words, 30, S.WHITE))
+                g.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
+                return g.next_to(n_lab, DOWN, buff=0.2).align_to(n_lab, LEFT)
+
+            n_val = rows_needed(25, "≈ 33 million")
             vo.wait_until("roughly, every four")
-            self.play(FadeIn(bitrow[:8]), FadeIn(d_lab), FadeIn(bars[:4]), FadeIn(n_lab), FadeIn(n_val), run_time=0.7)
-            for lo, hi, dv, nv in [(8, 12, 12, 8), (12, 16, 16, 16)]:
-                plus = S.text("+4 bits", 26, S.WHITE).next_to(bitrow[lo:hi], DOWN, buff=0.15)
+            self.play(FadeIn(bitrow[0]), FadeIn(d_lab), FadeIn(bars[:4]), FadeIn(n_lab), FadeIn(n_val), run_time=0.7)
+            for lo, hi, dv, nv, power, words in [(0, 4, 104, 8, 26, "≈ 67 million"),
+                                                 (4, 8, 108, 16, 27, "≈ 134 million")]:
+                plus = S.text("+4 bits", 26, S.WHITE).next_to(extra[lo:hi], DOWN, buff=0.15)
                 new_d = S.math(f"d = {dv}", size=38).move_to(d_lab[1], aligned_edge=LEFT)
-                new_n = S.math(rf"\sim 2^{{{dv}/4}} = {nv}", size=40).move_to(n_val, aligned_edge=LEFT)
-                self.play(LaggedStart(*[FadeIn(c, shift=LEFT * 0.2) for c in bitrow[lo:hi]], lag_ratio=0.15),
+                self.play(LaggedStart(*[FadeIn(c, shift=LEFT * 0.2) for c in extra[lo:hi]], lag_ratio=0.15),
                           FadeIn(plus), Transform(d_lab[1], new_d), run_time=0.8)
                 old = bars[:nv // 2]
                 x2 = S.math(r"\times 2", size=40).next_to(bars[nv // 2:nv], LEFT, buff=0.3)
-                self.play(TransformFromCopy(old, bars[nv // 2:nv]), Transform(n_val, new_n), FadeOut(plus),
-                          FadeIn(x2, shift=UP * 0.2), run_time=0.9)
+                self.play(TransformFromCopy(old, bars[nv // 2:nv]), Transform(n_val, rows_needed(power, words)),
+                          FadeOut(plus), FadeIn(x2, shift=UP * 0.2), run_time=0.9)
                 self.play(FadeOut(x2), run_time=0.2)
         keep_fade = VGroup(thm, thresh, bitrow, d_lab, bars, n_lab, n_val)
 
@@ -552,7 +570,7 @@ class Separation(VoiceScene):
         for i, c in enumerate(deck):
             c.move_to([-2.15 + 0.04 * i, 1.4 + 0.04 * i, 0])
         # the analyst holds the deck of queries (PURPLE, as everywhere in the video)
-        ana2 = person_icon(ANALYST_COLOR, 0.8).move_to([-0.75, 1.4, 0])
+        ana2 = person_icon(ANALYST_COLOR, 0.8).move_to([-0.62, 1.4, 0])
         ana2_lab = S.text("analyst", 22, ANALYST_COLOR).next_to(ana2, DOWN, buff=0.15)
         deck_arrow = Arrow([-2.75, 1.4, 0], [-4.65, 1.4, 0], buff=0, color=S.GREY, stroke_width=3, tip_length=0.18)
         deck_lab = S.text("all of them?", 24, S.GREY).next_to(deck_arrow, DOWN, buff=0.18)
@@ -569,12 +587,13 @@ class Separation(VoiceScene):
                          seconds=10, pos=[3.3, 0.6, 0], width=6.2)
 
         # ============================================================ 4. the budget runs out
-        t_left2 = S.text("Interactive", 34, S.WHITE).move_to([-3.3, 3.05, 0])
-        t_right2 = S.text("Non-interactive", 34, S.WHITE).move_to([3.3, 3.05, 0])
-        divider2 = DashedLine([0, 2.55, 0], [0, -3.2, 0], color=S.GREY_DARK, stroke_width=2)
-        bar = budget_bar().move_to([-4.6, -0.55, 0])                       # the S09 budget bar
-        bar_lab = S.math(r"\text{privacy budget }", r"\varepsilon", size=32, color=EPS_COLOR)
-        bar_lab.next_to(bar, UP, buff=0.14).align_to(bar, LEFT)
+        t_left2 = S.text("Interactive", 34, S.WHITE).move_to([-3.3, TITLE_Y, 0])
+        t_right2 = S.text("Non-interactive", 34, S.WHITE).move_to([3.3, TITLE_Y, 0])
+        divider2 = DashedLine([0, 2.45, 0], [0, -3.2, 0], color=S.GREY_DARK, stroke_width=2)
+        # the video's one budget bar (common.budget_bar, as in S02/S09/S12): 5 segments, one per answer
+        bar = budget_bar(width=3.0, n=5, label_size=32)
+        bar.shift(np.array([-4.6, -0.55, 0]) - bar.frame.get_center())
+        bar.label.align_to(bar.frame, LEFT)
         slots = [np.array([-5.85 + 0.93 * k, -1.6, 0]) for k in range(5)]
         ticks = VGroup(*[sym("✓", 30).move_to(p + DOWN * 0.6) for p in slots])
         few_lab = S.text("the few questions actually asked", 24, S.GREY).move_to([-3.95, -2.8, 0])
@@ -592,16 +611,16 @@ class Separation(VoiceScene):
         breaks = x_mark(sheet2, width=8, pad=0.15)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(card), FadeOut(VGroup(deck_arrow, deck_lab)), FadeIn(VGroup(bar, bar_lab)),
+            self.play(FadeOut(card), FadeOut(VGroup(deck_arrow, deck_lab)), FadeIn(bar),
                       FadeIn(t_left2), run_time=0.6)
             for k in range(6):
                 c = deck[-1 - k]
                 self.play(c.animate.scale(0.5).move_to(cur2.get_center() + RIGHT * 0.75), run_time=0.2)
                 if k < 5:
                     self.play(c.animate.scale(2 * 0.75 / 0.8).move_to(slots[k]),
-                              bar[1][4 - k].animate.set_fill(opacity=0.0), run_time=0.26)
+                              bar.segs[4 - k].animate.set_fill(opacity=0.0), run_time=0.26)
                 else:
-                    self.play(c.animate.scale(2).move_to(refused_pos), Indicate(bar[0], color=NOISE_COLOR,
+                    self.play(c.animate.scale(2).move_to(refused_pos), Indicate(bar.frame, color=NOISE_COLOR,
                                                                                  scale_factor=1.04), run_time=0.3)
                     cross = x_mark(c, pad=0.05)
                     self.play(Create(cross), FadeIn(refused, scale=1.3), run_time=0.4)
@@ -619,9 +638,7 @@ class Separation(VoiceScene):
             self.play(Create(breaks), Wiggle(sheet2), run_time=0.9)
 
         # ============================================================ 5. proof idea
-        ptag_t = S.text("proof idea", 22, S.GREY)
-        ptag = VGroup(SurroundingRectangle(ptag_t, color=S.GREY, buff=0.1, corner_radius=0.08, stroke_width=1.5),
-                      ptag_t).move_to([-5.6, 3.3, 0])
+        ptag = corner_tag("proof idea").move_to([-5.6, 3.3, 0])
         # fact 1: privacy -> every possible row looks almost alike to M
         f1_t = S.text("1 · every row looks almost alike", 26, S.WHITE).move_to([-3.45, 2.45, 0])
         f1_rows_bits = [[0, 0, 1, 0, 1, 1, 0, 1], [1, 1, 1, 0, 0, 0, 1, 0], [0, 1, 0, 1, 1, 1, 1, 0]]
@@ -730,7 +747,7 @@ class Separation(VoiceScene):
         bound_line = VGroup(bound, bound_lab).arrange(RIGHT, buff=0.3).move_to([0, -3.15, 0])
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
+            clear(0.8)
             # two facts: both headings appear dim, each lights up when it is spoken
             f1_t.set_opacity(0.3)
             f2_t.set_opacity(0.3)
@@ -829,7 +846,7 @@ class Separation(VoiceScene):
         prop2 = statement_card("Proposition 2", p2_line).move_to([0, -2.65, 0])
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
+            clear(0.7)
             self.play(FadeIn(big_coin, shift=RIGHT * 2.5 + DOWN * 0.5), FadeIn(rr_title), run_time=0.6)
             self.play(Rotate(big_coin, angle=2 * PI, axis=UP), run_time=0.6)
             vo.wait_until("where each person")
@@ -853,7 +870,7 @@ class Separation(VoiceScene):
             self.play(Circumscribe(p2_math, color=S.WHITE), run_time=1.2)
 
         # ============================================================ 7. the quantifiers
-        q_title = S.text("Careful with the quantifiers", 40, S.WHITE).move_to([0, 3.0, 0])
+        q_title = S.text("Careful with the quantifiers", 40, S.WHITE).move_to([0, 2.7, 0])   # under the section tag
         R1, R2 = 1.45, -0.55
         PIC_Q, PIC_R = -5.75, -4.3          # x of the query card(s) and of the release sheet
         one_card = mask_card(masks, cell=0.11).move_to([PIC_Q, R1, 0])
@@ -867,8 +884,9 @@ class Separation(VoiceScene):
                        ).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
         line1.next_to(one_sheet, RIGHT, buff=0.45)
         many_rng = np.random.default_rng(41)
-        many = VGroup(*[mask_card([random_mask(many_rng) for _ in range(N)]).scale(0.6) for _ in range(5)])
-        fan(many, np.array([-5.68, R2 + 0.12, 0]), radius=3.0, spread=0.15)
+        # many queries, as the 'ready for all of them' grid of section 4 showed them
+        many = VGroup(*[mask_card([random_mask(many_rng) for _ in range(N)]).scale(0.46) for _ in range(6)])
+        many.arrange_in_grid(rows=3, cols=2, buff=(0.1, 0.07)).move_to([-5.85, R2, 0])
         two_sheet = release_sheet(np.random.default_rng(4), w=0.85, h=1.05).move_to([PIC_R, R2, 0])
         two_links = VGroup(*[Line(two_sheet.get_left(), c.get_right(), color=S.GREY, stroke_width=1.5) for c in many])
         two_links.set_z_index(-1)
@@ -893,7 +911,7 @@ class Separation(VoiceScene):
         lesson_box = SurroundingRectangle(lesson, color=EPS_COLOR, buff=0.25, corner_radius=0.15, stroke_width=4)
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
+            clear(0.7)
             self.play(FadeIn(q_title, shift=DOWN * 0.2), run_time=0.7)
             vo.wait_until("For any one query")
             self.play(FadeIn(one_card, shift=RIGHT * 0.2), run_time=0.6)

@@ -25,10 +25,9 @@ CARD_W, CARD_SIZE = 11.6, 32
 CARD_Y = 1.15
 
 
-def logistic(t, mu, s=0.22):
-    """S04's smooth output density (logistic), drawn small."""
-    z = (np.asarray(t, dtype=float) - mu) / (2 * s)
-    return 1.0 / np.cosh(z) ** 2
+def lap_tent(t, mu, b=0.32):
+    """A Laplace density (peak 1), drawn small: the output of M in world x or x' (as in S07/S08)."""
+    return np.exp(-abs(t - mu) / b)
 
 
 def badge(num, color, r=0.3):
@@ -101,17 +100,21 @@ class Recap(VoiceScene):
         c1 = pic_anchor(p1) + UP * 0.1
         base1 = Line(c1 + LEFT * 1.6 + DOWN * 0.4, c1 + RIGHT * 1.6 + DOWN * 0.4, color=S.GREY, stroke_width=2)
 
-        def bump(mu, col):
-            return FunctionGraph(lambda u: 0.85 * logistic(u, mu, 0.26), x_range=[-1.6, 1.6, 0.02], color=col,
-                                 stroke_width=3.5).shift(c1 + DOWN * 0.4)
+        MU = 0.2                          # the two worlds' answers, f(x) and f(x'), on this little axis
 
-        b_x, b_xp = bump(-0.12, X_COLOR), bump(0.12, XP_COLOR)
+        def bump(mu, col):
+            """Laplace tent (sharp peak: no smoothing, and the kink is a sample point)."""
+            us = np.unique(np.r_[np.arange(-1.6, 1.6001, 0.02), mu])
+            pts = [c1 + DOWN * 0.4 + np.array([u, 0.85 * lap_tent(u, mu), 0]) for u in us]
+            return VMobject(color=col, stroke_width=3.5).set_points_as_corners(pts)
+
+        b_x, b_xp = bump(-MU, X_COLOR), bump(MU, XP_COLOR)
         tt = ValueTracker(-1.2)
 
         def probe():
             u = tt.get_value()
             p = c1 + DOWN * 0.4 + RIGHT * u
-            ha, hb = 0.85 * logistic(u, -0.12, 0.26), 0.85 * logistic(u, 0.12, 0.26)
+            ha, hb = 0.85 * lap_tent(u, -MU), 0.85 * lap_tent(u, MU)
             return VGroup(DashedLine(p, p + UP * max(ha, hb), color=S.GREY, stroke_width=2.5, dash_length=0.05),
                           Dot(p + UP * ha, radius=0.055, color=X_COLOR),
                           Dot(p + UP * hb, radius=0.055, color=XP_COLOR),
@@ -322,11 +325,11 @@ class Recap(VoiceScene):
         med_l = S.text("median", 24, TRUTH_COLOR).next_to(mdots[4], DOWN, buff=0.18)
         mtent = FunctionGraph(lambda u: 1.3 * np.exp(-abs(u) / 0.55), x_range=[-2.6, 2.6, 0.01], color=NOISE_COLOR,
                               stroke_width=4).shift([mvals[4], my, 0])
-        lap_l = S.math(r"+\ \mathrm{Lap}\big(", r"S(\mathrm{median})", "/", r"\varepsilon", r"\big)", size=32)
+        lap_l = S.math(r"+\ \mathrm{Lap}\!\left(", r"S(\mathrm{median})", "/", r"\varepsilon", r"\right)", size=32)
         lap_l[1].set_color(SENS_COLOR)
         lap_l[3].set_color(EPS_COLOR)
         lap_l.move_to([mvals[4] + 2.75, my + 1.0, 0])
-        footer = S.text("answers + more exercises: companion notes (exercises.md)", 24, S.GREY)
+        footer = S.text("answers + more exercises: companion notes (link in the description)", 24, S.GREY)
         footer.move_to([0, -3.3, 0])
 
         with self.voiceover(SAY[3]) as vo:

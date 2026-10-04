@@ -15,7 +15,7 @@ from explainer import style as S
 from explainer.components import database_rows, gaussian_pdf, person_icon, ponder_card
 from explainer.scene import VoiceScene
 
-from common import ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR
+from common import ALICE, EPS_COLOR, NARRATION, NOISE_COLOR, SENS_COLOR, X_COLOR, XP_COLOR, budget_bar
 from s02_map import (LANE_NAMES, PACK_X0, PACK_X1, PAPERS, bit_cell, build_packed_map, coin, coin_flip,
                      pulse, rr_plot, this_paper_card)
 
@@ -29,7 +29,7 @@ CARD_C = np.array([-2.37, 0.6, 0])            # this paper's card
 THUMB_X, THUMB_W, THUMB_H = 0.85, 0.86, 0.6   # thumbnails carried by the arrows
 DESC_X0, DESC_X1 = 1.4, 6.55                  # descendant cards
 ROW_Y = [3.1, 2.22, 1.34, 0.46, -0.42, -1.3, -2.18, -3.06]
-PANEL_C, PANEL_W, PANEL_H = np.array([-3.15, 0.0, 0]), 6.9, 6.7    # left edge -6.6 covers the map
+PANEL_C, PANEL_W, PANEL_H = np.array([-3.13, 0.0, 0]), 6.9, 6.7    # left edge -6.58 (stroke inside -6.6) covers the map
 SLOT_COLORS = [EPS_COLOR, SENS_COLOR, NOISE_COLOR, S.GREY]
 SIG = 2.2                                     # Gaussian noise scale in the (eps, delta) panel
 T_LO, T_HI = 41.5 - SIG ** 2, 41.5 + SIG ** 2  # where its log-ratio leaves the band |.| <= 1
@@ -67,15 +67,6 @@ def fit(m: Mobject, w: float = THUMB_W, h: float = THUMB_H) -> Mobject:
     t = m.copy()
     t.scale(min(w / t.width, h / t.height))
     return t
-
-
-def budget_bar(width: float = 4.8, height: float = 0.3, n: int = 8, spent: int = 3) -> VGroup:
-    gap = 0.05
-    w = (width - gap * (n - 1)) / n
-    segs = VGroup(*[Rectangle(width=w, height=height, stroke_width=0)
-                    .set_fill(S.GREY_DARK if i >= n - spent else EPS_COLOR, 1) for i in range(n)])
-    segs.arrange(RIGHT, buff=gap)
-    return segs
 
 
 def coin_stack(n: int = 7, capped: int = 4) -> VGroup:
@@ -162,7 +153,7 @@ class Legacy(VoiceScene):
         # ---------------------------------------------------------- descendants (by idea slot)
         p2, p3, p5 = self._gauss_panel(), self._composition_panel(), self._sgd_panel()
         p6, p7, p8 = self._mia_panel(), self._local_panel(), self._census_panel()
-        rows = self._rows(dict(delta=fit(p2["base"]), comp=budget_bar(0.86, 0.2, 8, 3), sgd=fit(p5["base"]),
+        rows = self._rows(dict(delta=fit(p2["base"]), comp=budget_bar(THUMB_W, n=8, spent=3, label=False), sgd=fit(p5["base"]),
                                census=fit(p8["base"])))
         for r in rows.values():
             r["card"].move_to([(DESC_X0 + DESC_X1) / 2, ROW_Y[r["row"]], 0])
@@ -175,9 +166,28 @@ class Legacy(VoiceScene):
                 end = np.array([DESC_X0 - 0.04, ROW_Y[r["row"]], 0])
             r["fan"] = fan_arrow(p0, end, col)
 
+        # Only the card being narrated is shown in full (WHITE frame). When the next one grows, the
+        # older cards shrink to their bold first line and their arrows and thumbnails dim, so the full
+        # column never shows eight two-line cards at once.
+        narrated = []
+
+        def dim(key):
+            r = rows[key]
+            frame, _, l1, l2 = r["card"]
+            short = r.get("short", l1.copy())
+            short.move_to(l1, aligned_edge=LEFT).set_y(frame.get_y())
+            anims = [frame.animate.set_stroke(S.GREY_DARK), l2.animate.set_opacity(0),
+                     Transform(l1, short.fade(0.35)), r["fan"].animate.fade(0.55)]
+            if r["thumb"] is not None:
+                anims.append(r["thumb"].animate.fade(0.55))
+            return anims
+
         def grow(key, extra=()):
             r = rows[key]
-            self.play(Create(r["fan"]), run_time=0.55)
+            older = [a for k in narrated for a in dim(k)]
+            narrated[:] = [key]
+            r["card"][0].set_stroke(S.WHITE)
+            self.play(Create(r["fan"]), *older, run_time=0.55)
             anims = [FadeIn(r["card"], shift=RIGHT * 0.25)]
             if r["thumb"] is not None:
                 anims.append(FadeIn(r["thumb"], scale=0.6))
@@ -300,8 +310,8 @@ class Legacy(VoiceScene):
             self.play(GrowArrow(p5["sum"]), FadeIn(p5["sum_lab"]), run_time=0.6)
             self.play(FadeIn(p5["noise"], scale=0.5), FadeIn(p5["noise_lab"]), run_time=0.6)
             vo.wait_until("and track the budget")
-            self.add(p5["bar"], p5["counter"])
-            self.play(FadeIn(p5["bar_lab"]), run_time=0.4)
+            self.play(FadeIn(p5["bar"]), FadeIn(p5["counter"]), FadeIn(p5["bar_lab"]), run_time=0.4)
+            p5["bar"].add_updater(p5["drain"])
             self.play(p5["step"].animate.set_value(10000), run_time=2.2, rate_func=linear)
             p5["bar"].clear_updaters()
             p5["counter"].clear_updaters()
@@ -342,8 +352,9 @@ class Legacy(VoiceScene):
         # only the one-shot slot and the Census stay bright: dim the other slots and the ancestor map too
         others.add(*[card.full[i] for i in range(3)], card.anyf,
                    *chips.values(), badge, pm["lines"], pm["labels"], pm["arrows"])
-        q = ponder_card("The Census published one release.\nDoes Section 4 forbid it?", width=6.3, size=30)
-        q.move_to([-3.45, 2.2, 0])      # left edge at -6.6: covers the lane labels completely
+        q = ponder_card("The Census published one release.\nDoes the one-shot limit\n(Section 4) forbid it?",
+                        width=6.3, size=30)
+        q.move_to([-3.43, 3.5 - q.height / 2, 0])   # left edge at -6.58: covers the lane labels (x >= -6.55)
         q[0].set_fill(S.BG, 1)          # fully opaque: anything less lets bright text ghost through
         self.play(FadeIn(q, scale=0.95), others.animate.fade(0.7), run_time=0.6)
         bar = q[3]
@@ -378,7 +389,7 @@ class Legacy(VoiceScene):
         cup = trophy(1.25)
         prize = VGroup(S.text("Gödel Prize 2017", 28, S.GOLD), S.text("TCC Test-of-Time Award 2016", 24, S.GREY)
                        ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
-        award = VGroup(cup, prize).arrange(RIGHT, buff=0.35).move_to([-3.4, -1.95, 0])
+        award = VGroup(cup, prize).arrange(RIGHT, buff=0.35).move_to([-3.25, -1.95, 0])   # room for the cup's pulse
         still_t = S.text("Still open", 26, S.YELLOW, weight="BOLD")
         still_1 = S.text("choosing ε in practice", 24, S.WHITE, t2c={"ε": EPS_COLOR})
         still_2 = S.text("when no one can be trusted\nwith the data", 24, S.WHITE, line_spacing=0.9)
@@ -403,10 +414,10 @@ class Legacy(VoiceScene):
             # the prizes arrive silently as the sentence ends (no narration about them) ...
             self.play(FadeIn(cup, shift=UP * 0.3), FadeIn(prize, shift=LEFT * 0.2), run_time=vo.remaining(0.8))
         # ... and the open problems right after it: a ~3 s tail instead of ~7 s of silence
-        self.play(FadeIn(still_card, shift=UP * 0.2), pulse(cup, 1.1), run_time=0.9)
-        self.play(Indicate(still_1[8], color=EPS_COLOR, scale_factor=1.5), run_time=0.8)
-        self.wait(0.5)
-        self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
+        self.play(FadeIn(still_card, shift=UP * 0.2), pulse(cup, 1.1), run_time=0.6)
+        self.play(Indicate(still_1[8], color=EPS_COLOR, scale_factor=1.5), run_time=0.9)
+        self.wait(0.9)
+        self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
 
     # ================================================================== rows
     def _rows(self, thumbs: dict) -> dict:
@@ -432,6 +443,10 @@ class Legacy(VoiceScene):
         out = {}
         for key, slot, row, l1, l2 in spec:
             out[key] = dict(slot=slot, row=row, card=desc_card(l1, l2, SLOT_COLORS[slot]), thumb=thumbs.get(key))
+        # dimmed, a card keeps only its bold first line; delta's first line alone would end on a comma
+        out["delta"]["short"] = VGroup(S.text("Dwork et al. 2006 ·", 20, S.WHITE, weight="BOLD"),
+                                       S.math(r"(\varepsilon,\delta)", size=28, color=EPS_COLOR)
+                                       ).arrange(RIGHT, buff=0.14)
         return out
 
     # ================================================================== pop-out panels
@@ -444,18 +459,23 @@ class Legacy(VoiceScene):
         z1 = Line(ring.get_corner(UL), panel.get_corner(UR) + LEFT * 0.15, color=S.GREY_DARK, stroke_width=1.5)
         z2 = Line(ring.get_corner(DL), panel.get_corner(DR) + LEFT * 0.15, color=S.GREY_DARK, stroke_width=1.5)
         base.set_z_index(3)
-        self.play(FadeIn(panel), Create(ring), Create(z1), Create(z2), TransformFromCopy(thumb, base),
-                  FadeIn(head, shift=RIGHT * 0.2), run_time=0.9)
+        # the panel first, then the drawing grows out of its thumbnail onto the (now opaque) panel:
+        # growing both at once drew e.g. the Census table across the paper card behind the panel
+        self.play(FadeIn(panel), Create(ring), Create(z1), Create(z2), FadeIn(head, shift=RIGHT * 0.2),
+                  run_time=0.45)
+        self.play(TransformFromCopy(thumb, base), run_time=0.55)
         return VGroup(panel, head, ring, z1, z2)
 
     def _close(self, pop, base, thumb, extras):
-        # Two steps: clear the panel's contents while the panel is still opaque, then fade the panel
-        # and shrink the drawing back into its thumbnail. (Fading both at once let the contents and the
-        # card underneath show through each other; FadeOut(extras) after FadeOut(pop) in a single
-        # play() also put the panel above its own contents, which then vanished at once.)
-        self.play(FadeOut(extras), run_time=0.35)
-        self.play(FadeOut(pop), Transform(base, thumb.copy()), run_time=0.6)
+        # Three steps, the reverse of _open: clear the panel's contents and shrink the drawing back
+        # into its thumbnail while the panel is still opaque, then fade the panel. (Fading the panel
+        # while the drawing moved let the drawing and the card underneath show through each other;
+        # FadeOut(extras) after FadeOut(pop) in a single play() also put the panel above its own
+        # contents, which then vanished at once.)
+        self.play(FadeOut(extras), run_time=0.3)
+        self.play(Transform(base, thumb.copy()), run_time=0.4)
         self.remove(base)
+        self.play(FadeOut(pop), run_time=0.3)
 
     @staticmethod
     def _flicker(cells, strings):
@@ -487,10 +507,10 @@ class Legacy(VoiceScene):
         eps_hi = S.math(r"+\varepsilon", size=28, color=EPS_COLOR).next_to(ax.c2p(t1, 1), RIGHT, buff=0.08)
         eps_lo = S.math(r"-\varepsilon", size=28, color=EPS_COLOR).next_to(ax.c2p(t1, -1), RIGHT, buff=0.08)
         y_lab = S.text("log ratio", 20, S.GREY).next_to(ax, UP, buff=0.05).align_to(ax, LEFT).shift(RIGHT * 0.1)
-        # S07's keys, in free space: inside the band below the axis (left, where the Gaussian line is
-        # still above it), and above the band just right of the Gaussian's exit arrow
-        lap_lab = S.text("Laplace: stays inside", 20, S.WHITE).move_to(ax.c2p(t0, -0.5), aligned_edge=LEFT)
-        lap_lab.shift(RIGHT * 0.12)
+        # S07's keys, in free space: inside the band's upper right (the Laplace line runs along the
+        # bottom edge there, the Gaussian is already below the axis, the dashed guides start lower),
+        # and above the band just right of the Gaussian's exit arrow
+        lap_lab = S.text("Laplace: stays inside", 20, S.WHITE).move_to(ax.c2p(42.35, 0.5), aligned_edge=LEFT)
         gauss_lab = S.text("Gaussian: escapes", 20, S.GREY).move_to(ax.c2p(T_LO - 0.75, 1.62), aligned_edge=LEFT)
         ax2 = Axes(x_range=[t0, t1, 1], y_range=[0, 0.2, 0.1], x_length=5.6, y_length=1.45, tips=False,
                    axis_config={"color": S.GREY, "stroke_width": 2, "include_ticks": False}).move_to([-3.35, -1.25, 0])
@@ -522,7 +542,7 @@ class Legacy(VoiceScene):
 
     # composition: k answers cost ~k with pure epsilon, ~sqrt(k) once a tiny delta is allowed
     def _composition_panel(self) -> dict:
-        base = budget_bar(4.8, 0.3, 8, 3).move_to([-3.4, 2.25, 0])
+        base = budget_bar(4.8, n=8, spent=3, label=False).move_to([-3.4, 2.25, 0])   # the video's budget bar
         bar_lab = VGroup(S.text("privacy budget", 22, EPS_COLOR), S.math(r"\varepsilon", size=32, color=EPS_COLOR)
                          ).arrange(RIGHT, buff=0.12).next_to(base, DOWN, buff=0.15).align_to(base, LEFT)
         kmax = 1100
@@ -537,10 +557,12 @@ class Legacy(VoiceScene):
         adv = ax.plot(adv_f, x_range=[0.5, 1050, 2], color=EPS_COLOR, stroke_width=5)
         basic_lab = VGroup(S.text("add up:", 22, S.GREY), S.math(r"k\,\varepsilon", size=30, color=S.GREY)
                            ).arrange(RIGHT, buff=0.12).next_to(ax.c2p(560, 620), LEFT, buff=0.3)
-        # two lines, inside the wedge between the two curves (one line grazed the grey k*eps line)
-        adv_lab = VGroup(S.text("with a tiny δ:", 22, EPS_COLOR),
-                         S.math(r"\sim\sqrt{k}\;\varepsilon", size=30, color=EPS_COLOR)).arrange(DOWN, buff=0.08)
-        adv_lab.move_to(ax.c2p(760, 0), aligned_edge=DOWN).shift(UP * 0.55)
+        # the curve's actual formula (so its k = 1000 value, 150 epsilon, can be checked), in two lines
+        # inside the wedge between the two curves, right-aligned just left of the k = 1000 guide
+        adv_lab = VGroup(S.tex(r"with $\delta = 10^{-5}$:", size=30, color=EPS_COLOR),
+                         S.math(r"\approx\sqrt{2k\ln(1/\delta)}\;\varepsilon", size=28, color=EPS_COLOR)
+                         ).arrange(DOWN, buff=0.08, aligned_edge=RIGHT)
+        adv_lab.move_to([ax.c2p(1000, 0)[0] - 0.14, ax.c2p(0, adv_f(1000))[1] + 0.12, 0], aligned_edge=DR)
         mark = DashedLine(ax.c2p(1000, 0), ax.c2p(1000, 1000), color=S.GREY, stroke_width=1.5)
         dots = VGroup(Dot(ax.c2p(1000, 1000), color=S.WHITE, radius=0.06), Dot(ax.c2p(1000, adv_f(1000)),
                                                                                 color=EPS_COLOR, radius=0.07))
@@ -605,17 +627,26 @@ class Legacy(VoiceScene):
         noise_lab = S.text("+ Gaussian noise", 22, NOISE_COLOR).next_to(noise, RIGHT, buff=0.2)
         step = ValueTracker(1)
         bar_x0, bar_w = -5.6, 3.9
-        bar = always_redraw(lambda: Rectangle(width=max(0.02, bar_w * (1 - 0.82 * (step.get_value() - 1) / 9999)),
-                                              height=0.26, stroke_width=0).set_fill(EPS_COLOR, 1)
-                            .move_to([bar_x0, -2.75, 0], aligned_edge=LEFT))
-        bar_lab = S.text("privacy budget, tracked", 20, EPS_COLOR).next_to([bar_x0, -2.75, 0], UP, buff=0.2,
+        # the video's budget bar (common.budget_bar); 10,000 steps spend 82% of it, from the right
+        bar = budget_bar(bar_w, n=10, label=False)
+        bar.shift(np.array([bar_x0, -2.75, 0]) - bar.frame.get_left())
+        full = bar.segs[0].get_fill_opacity()
+
+        def drain(m):
+            spent = 0.82 * len(m.segs) * (step.get_value() - 1) / 9999      # in segments
+            for j, seg in enumerate(reversed(m.segs)):
+                seg.set_fill(opacity=full * float(np.clip(1 - (spent - j), 0, 1)))
+
+        bar_lab = S.text("privacy budget, tracked", 20, EPS_COLOR).next_to(bar.frame, UP, buff=0.12,
                                                                          aligned_edge=LEFT)
         step_lab = S.text("step", 22, S.GREY).move_to([-1.35, -2.75, 0])
-        counter = always_redraw(lambda: Integer(int(step.get_value()), group_with_commas=True, font_size=30,
-                                                color=S.WHITE).next_to(step_lab, RIGHT, buff=0.15))
+        # set_value() rebuilds the digits at the number's own 30 pt (always_redraw + become() left the
+        # comma glyph with a bogus font size, which explainer.check reported as 13.5 pt)
+        counter = Integer(1, group_with_commas=True, font_size=30, color=S.WHITE).next_to(step_lab, RIGHT, buff=0.15)
+        counter.add_updater(lambda m: m.set_value(int(step.get_value())).next_to(step_lab, RIGHT, buff=0.15))
         return dict(base=base, cap_lab=cap_lab, grads=grads, clipped=clipped, circle=circle, c_lab=c_lab,
                     clip_lab=clip_lab, sum=sum_arrow, sum_lab=sum_lab, noise=noise, noise_lab=noise_lab, step=step,
-                    bar=bar, bar_lab=VGroup(bar_lab, step_lab), counter=counter, step_lab=step_lab)
+                    bar=bar, drain=drain, bar_lab=VGroup(bar_lab, step_lab), counter=counter, step_lab=step_lab)
 
     # membership inference: was Alice in the training set? = tell f(x) from f(x')
     def _mia_panel(self) -> dict:
@@ -625,11 +656,13 @@ class Legacy(VoiceScene):
         db[2][2].set_color(ALICE)
         db.move_to([-5.3, 1.05, 0])
         db_lab = S.text("database x", 22, X_COLOR).next_to(db, UP, buff=0.12)
-        net = net_icon().move_to([-2.85, 1.05, 0])
+        net = net_icon().move_to([-3.0, 1.05, 0])
         net_lab = S.text("train", 20, S.GREY).next_to(net, UP, buff=0.12)
         a1 = Arrow(db.get_right(), net.get_left(), buff=0.12, color=S.GREY, stroke_width=3, tip_length=0.15)
-        fx = VGroup(S.math("f(x)", size=36, color=X_COLOR), S.text("the trained model", 20, S.GREY)).arrange(DOWN, buff=0.1)
-        fx.move_to([-1.05, 1.05, 0])
+        # two-line caption, so the net -> f(x) arrow has room (one line ran into the net's last layer)
+        fx = VGroup(S.math("f(x)", size=36, color=X_COLOR),
+                    S.text("the trained\nmodel", 20, S.GREY, line_spacing=0.85)).arrange(DOWN, buff=0.1)
+        fx.move_to([-1.0, 1.0, 0])
         a2 = Arrow(net.get_right(), fx.get_left(), buff=0.12, color=S.GREY, stroke_width=3, tip_length=0.15)
         question = S.text("“Was Alice in the training set?”", 26, ALICE).move_to([-3.1, -0.35, 0])
         same = VGroup(S.math(r"\Rightarrow", size=36), S.math("f(x)", size=36, color=X_COLOR),
