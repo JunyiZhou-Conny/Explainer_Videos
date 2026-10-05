@@ -132,22 +132,37 @@ def fmt_chapter(t: float) -> str:
     return f"{t // 3600}:{t % 3600 // 60:02d}:{t % 60:02d}" if t >= 3600 else f"{t // 60:02d}:{t % 60:02d}"
 
 
-def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2):
-    """Break one narration clip into readable cues (<= 2 lines each), never across sentences,
-    timed proportionally to characters."""
-    import re
+def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2,
+               marks: list | None = None):
+    """Break one narration clip into readable cues (<= 2 lines each), never across sentences.
 
-    sentences = [x for x in re.split(r"(?<=[.!?])\s+", text) if x.strip()] or [text]
-    chunks = []
-    for sent in sentences:
-        wrapped = textwrap.wrap(sent, width)
-        chunks += [" ".join(wrapped[i:i + lines]) for i in range(0, len(wrapped), lines)]
-    total = sum(len(c) for c in chunks) or 1
-    t, cues = start, []
-    for c in chunks:
-        dt = (end - start) * len(c) / total
-        cues.append((t, t + dt, "\n".join(textwrap.wrap(c, width))))
-        t += dt
+    With `marks` ((char offset, seconds) of each sentence start, from the voice clip), every
+    sentence's cues sit exactly where that sentence is spoken; without them, the whole clip is
+    timed proportionally to characters. Inside a sentence, cues are timed by characters."""
+    from .voice import SENTENCE_GAP, split_sentences
+
+    sentences = split_sentences(text) or [(0, text)]
+    if marks and [int(o) for o, _ in marks] == [o for o, _ in sentences]:
+        starts = [start + float(t) for _, t in marks]
+        spans = [(a, (starts[i + 1] - SENTENCE_GAP) if i + 1 < len(starts) else end)
+                 for i, a in enumerate(starts)]
+    else:
+        total = sum(len(s) for _, s in sentences) or 1
+        spans, t = [], start
+        for _, sent in sentences:
+            dt = (end - start) * len(sent) / total
+            spans.append((t, t + dt))
+            t += dt
+    cues = []
+    for (a, b), (_, sent) in zip(spans, sentences):
+        wrapped = textwrap.wrap(sent.strip(), width)
+        chunks = [" ".join(wrapped[i:i + lines]) for i in range(0, len(wrapped), lines)]
+        total = sum(len(c) for c in chunks) or 1
+        t = a
+        for c in chunks:
+            dt = max(0.0, b - a) * len(c) / total
+            cues.append((t, t + dt, "\n".join(textwrap.wrap(c, width))))
+            t += dt
     return cues
 
 
@@ -222,7 +237,8 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         subs_file = movie.with_suffix(".subs.json")
         for cue in (json.loads(subs_file.read_text()) if subs_file.exists() else []):
             transcript.append(cue["text"] + "\n")
-            srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"]))
+            srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"],
+                                  marks=cue.get("marks")))
         offset += ffprobe_duration(norm)
 
     listing = build / f"concat_{stem.name}.txt"

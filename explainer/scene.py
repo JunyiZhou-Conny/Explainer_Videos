@@ -87,7 +87,7 @@ class VoiceScene(Scene):
         if left > MIN_WAIT:
             self.wait(left)
         self._subs.append({"start": round(start, 3), "end": round(start + clip.duration, 3),
-                           "text": text})
+                           "text": text, "marks": [[o, round(t, 3)] for o, t in clip.marks]})
 
     def tear_down(self):  # Manim >= 0.19 (older versions call tearDown)
         getattr(super(), "tear_down", lambda: None)()
