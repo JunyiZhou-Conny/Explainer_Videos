@@ -11,12 +11,14 @@ Beats
    2, 1, 2 come back and `total +=` collects them in a GREEN counter: 5.
 4. Worked example  X X O / O X . / X . O  (O to move) on one working board with a tiny tree of
    snapshots under it: O middle-right wins (1); a RED eraser takes it back; O bottom-middle, then X
-   fills the last square: a GREY draw (1); 1 + 1 = 2 travels up to the root.
+   fills the last square: a GREY draw (1); "Undo both moves": the RED eraser takes back X, then O;
+   "and add up": the 1s travel up to the root (1 + 1); "Total": = 2 games.
 5. Recursion: explore(next_player) jumps back to `def explore`; a staircase of calls adds one mark
    each until a stopping rule fires. The staircase becomes the leftmost branch of the whole game
    tree (empty board on top, 9 first moves, 9 x 8 = 72 like S02, then a sampled fringe whose leaves
-   end at different depths). explore walks down to its first leaf (X0 O1 X2 O3 X4 O5 X6, a real
-   first game) with the side board filling up; the leaf flashes GREEN, "games counted" 1.
+   end at different depths). explore walks down, one step at a time, to its first leaf (X0 O1 X2
+   O3 X4 O5 X6, a real first game) with the side board filling up; on "and counts the leaves" the
+   leaf flashes GREEN, "games counted" 1.
 6. Undo (RED line): the side board becomes "one shared board" (a whiteboard); a close-up of the
    bottom of the branch; the eraser takes back X6, the path steps up, then goes down the next
    branches in explore's real order (X7 O6 X8 -> 2, then X7 O8 X6 -> 3).
@@ -529,16 +531,19 @@ class Explore(VoiceScene):
             self.play(snap_g[1].animate.set_color(DRAW_COLOR), FadeIn(tag_g, shift=LEFT * 0.15),
                       run_time=0.5)
             self.play(FadeIn(one_g, scale=0.5), run_time=0.4)
-            # back to the starting board (undo X, then undo O)
-            del on[5], on[7]
-            erase(self, x5, work.center_of(5), work.cell, run_time=0.3)
-            erase(self, o7, work.center_of(7), work.cell, run_time=0.3)
 
-            vo.wait_until("Total")
+            # "Undo both moves": back to the starting board (undo X, then undo O)
+            vo.wait_until("Undo both moves")
+            del on[5], on[7]
+            erase(self, x5, work.center_of(5), work.cell, run_time=0.4)
+            erase(self, o7, work.center_of(7), work.cell, run_time=0.4)
+
+            # "and add up": the two 1s travel up to the root -> 1 + 1; "Total": = 2 games
+            vo.wait_until("and add up")
             self.play(ReplacementTransform(one_l, total[0]), ReplacementTransform(one_g, total[2]),
-                      run_time=0.8)
-            self.play(FadeIn(total[1]), FadeIn(total[3]), FadeIn(total[4:], shift=LEFT * 0.15),
-                      run_time=0.4)
+                      FadeIn(total[1]), run_time=0.8)
+            vo.wait_until("Total")
+            self.play(FadeIn(total[3]), FadeIn(total[4:], shift=LEFT * 0.15), run_time=0.5)
         self.example_stuff = VGroup(work, *on.values(), cap, snap_l, snap_r, snap_g, arr_l, arr_r,
                                     arr_g, tag_l, tag_g, total)
 
@@ -641,7 +646,8 @@ class Explore(VoiceScene):
             self.play(FadeIn(leaf_dots, scale=1.0), FadeIn(leaf_lab, shift=UP * 0.15), run_time=0.8)
             self.play(FadeIn(cnt_lab), FadeIn(cnt, scale=0.6), run_time=0.5)
 
-            # explore walks down its first branch, the board beside it filling up
+            # explore walks down its first branch, one step at a time, the board beside it filling
+            # up (0.4 s per step: the walk fills "Explore walks down every branch, one at a time")
             vo.wait_until("Explore walks down")
             cursor = Dot(nodes[0], radius=0.08, color=WIN_COLOR)
             trail, side_marks = [], {}
@@ -651,7 +657,8 @@ class Explore(VoiceScene):
                 m = side.mark_at(s, sym, 0.6, stroke=6)
                 trail.append(seg)
                 side_marks[s] = m
-                self.play(Create(seg), cursor.animate.move_to(b), mark_anim(m), run_time=0.3)
+                self.play(Create(seg), cursor.animate.move_to(b), mark_anim(m), run_time=0.4)
+            vo.wait_until("and counts the leaves")
             side_win = side.win_line(2, 6)
             leaf = Dot(path_to[-1], radius=0.07, color=COUNT_COLOR)
             new_cnt = count_value(1, 52).move_to(cnt)

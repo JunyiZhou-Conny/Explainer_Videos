@@ -10,8 +10,9 @@ its beat ends.
    -> "8 winning lines".
 3. spot a winner: winner() ("function = a mini-program with a name"); a scanner walks the lines of
    an example board (GREY ✗ for each line that is not three equal marks; a line of dots fails the
-   `!= "."` test) until X's middle column lights YELLOW and the function hands back "X". Then X's last
-   mark moves so no line is complete: every line gets ✗ -> "nothing found → None (nobody)".
+   `!= "."` test) until X's middle column lights YELLOW and the function hands back "X". Then ("If no
+   line matches") X's last mark moves so no line is complete: every line gets ✗ -> "nothing found →
+   None (nobody)" on "hands back None"; the scene fades out right after the narration.
 """
 
 import numpy as np
@@ -345,10 +346,10 @@ class BoardCode(VoiceScene):
             onlydots.next_to(cross(WIN_LINES[3]), LEFT, buff=0.2)
             reject(WIN_LINES[3], 0.4, FadeIn(onlydots, shift=RIGHT * 0.1))
 
-            # X X X: a winner
-            vo.wait_until("that player has won")
+            # X X X: a winner (the scanner moves on first, the line lights as it is spoken)
             assert WIN_LINES[4] == WIN_AT
             to_line(WIN_AT, 0.3)                                                    # X X X
+            vo.wait_until("that player has won")
             win = b3.win_line(WIN_AT[0], WIN_AT[2], stroke=9).set_z_index(2)
             hand = Arrow(call.get_bottom(), call.get_bottom() + DOWN * 0.8, buff=0.08, color=S.GREY,
                          stroke_width=4, max_tip_length_to_length_ratio=0.3)
@@ -358,27 +359,28 @@ class BoardCode(VoiceScene):
                       Transform(bar, code_bar(code3, 3)), run_time=0.6)
             self.play(GrowArrow(hand), FadeIn(hands_lab),
                       FadeTransform(mark_on[WIN_AT[0]].copy(), out, path_arc=-PI / 4), run_time=0.8)
-            self.play(Indicate(out, color=X_COLOR, scale_factor=1.25), run_time=0.7)
-        self.wait(0.2)
+            self.play(Indicate(out, color=X_COLOR, scale_factor=1.25), run_time=0.4)
 
-        # ---------------------------------------------------------- a board with no line (silent)
-        self.play(FadeOut(VGroup(crosses, onlydots, win)), out.animate.set_opacity(0.25),
-                  *[band[j].animate.set_fill(S.WHITE, 0.16).move_to(b3.center_of(WIN_LINES[0][j]))
-                    for j in range(3)],
-                  *[tags[j].animate.move_to(tag_pos(WIN_LINES[0][j])) for j in range(3)],
-                  Transform(bar, code_bar(code3, 1)),
-                  mark_on[7].animate(path_arc=PI / 3).move_to(b3.center_of(5)),
-                  dot_at[5].animate(path_arc=PI / 3).move_to(b3.center_of(7)), run_time=0.9)
-        assert "".join("X" if i in (1, 4, 5) else "O" if i in (2, 8) else "." for i in range(9)) == EX_NONE
-        reject(WIN_LINES[0], 0.12)
-        for line in WIN_LINES[1:]:
-            to_line(line, 0.13)
-            reject(line, 0.11)
-        nothing = VGroup(S.text("nothing found → None (nobody)", 26, S.GREY))
-        nothing.add_to_back(SurroundingRectangle(nothing[0], buff=0.18, corner_radius=0.12,
-                                                 color=S.GREY, stroke_width=2))
-        nothing.move_to(out)
-        self.play(FadeOut(band), FadeOut(tags), FadeOut(bar), FadeTransform(out, nothing), run_time=0.6)
-        self.play(tick(strip[2]), Indicate(nothing[1], color=S.GREY, scale_factor=1.06), run_time=0.7)
-        self.wait(0.7)
+            # a board with no line: X's last mark moves, the scanner finds nothing -> None
+            vo.wait_until("If no line matches")
+            self.play(FadeOut(VGroup(crosses, onlydots, win)), out.animate.set_opacity(0.25),
+                      *[band[j].animate.set_fill(S.WHITE, 0.16).move_to(b3.center_of(WIN_LINES[0][j]))
+                        for j in range(3)],
+                      *[tags[j].animate.move_to(tag_pos(WIN_LINES[0][j])) for j in range(3)],
+                      Transform(bar, code_bar(code3, 1)),
+                      mark_on[7].animate(path_arc=PI / 3).move_to(b3.center_of(5)),
+                      dot_at[5].animate(path_arc=PI / 3).move_to(b3.center_of(7)), run_time=0.9)
+            assert "".join("X" if i in (1, 4, 5) else "O" if i in (2, 8) else "." for i in range(9)) == EX_NONE
+            reject(WIN_LINES[0], 0.12)
+            for line in WIN_LINES[1:]:
+                to_line(line, 0.13)
+                reject(line, 0.11)
+            nothing = VGroup(S.text("nothing found → None (nobody)", 26, S.GREY))
+            nothing.add_to_back(SurroundingRectangle(nothing[0], buff=0.18, corner_radius=0.12,
+                                                     color=S.GREY, stroke_width=2))
+            nothing.move_to(out)
+            vo.wait_until("hands back None")
+            self.play(FadeOut(band), FadeOut(tags), FadeOut(bar), FadeTransform(out, nothing), run_time=0.6)
+            vo.wait_until("which means nobody")
+            self.play(tick(strip[2]), Indicate(nothing[1], color=S.GREY, scale_factor=1.06), run_time=0.7)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)

@@ -1,7 +1,8 @@
 """S09 · Bigger games, and your turn (the last scene of the video).
 
 Beats
-1. A REAL position (X to move, 6 marks placed) whose whole subtree is small: 6 finished games.
+1. "X always wins?" gets a RED ✗ on "No.", and the question later makes way for the answer.
+   A REAL position (X to move, 6 marks placed) whose whole subtree is small: 6 finished games.
    The leaves keep their result colours; the colours bubble up level by level (at X's turn the
    best result for X, at O's turn the best for O) and the root ends GREY: perfect play -> draw.
    Everything shown is computed below from the rules (and the empty board is checked to be a draw).
@@ -329,6 +330,11 @@ class Bigger(VoiceScene):
             .arrange(RIGHT, buff=0.5).move_to([0, -3.15, 0]).align_to([-6.3, 0, 0], LEFT)
         caption = S.text("perfect play → draw", 34, S.WHITE, t2c={"draw": DRAW_COLOR})
         caption.next_to(TREE["frame"], RIGHT, buff=0.45).align_to(TREE["frame"], UP).shift(DOWN * 0.02)
+        # the opening question sits where its answer (the caption) will appear
+        question = S.text("X always wins?", 34, S.WHITE, t2c={"X": X_COLOR})
+        no_cross = S.text("✗", 44, S.RED, font="DejaVu Sans")
+        ask = VGroup(question, no_cross).arrange(RIGHT, buff=0.3)
+        ask.next_to(TREE["frame"], RIGHT, buff=0.45).align_to(caption, LEFT).match_y(caption)
         empty = mini_board(size=0.5, stroke=2)
         empty_frame = RoundedRectangle(width=0.66, height=0.66, corner_radius=0.07) \
             .set_stroke(DRAW_COLOR, 3).set_fill(tint(DRAW_COLOR), 1)
@@ -341,18 +347,24 @@ class Bigger(VoiceScene):
             path.append(path[-1]["best"])
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(TREE["mob"], scale=0.9), FadeIn(row_labels[0], shift=RIGHT * 0.2), run_time=0.6)
+            # "So does going first mean X always wins?" while the tree grows
+            self.play(FadeIn(TREE["mob"], scale=0.9), FadeIn(row_labels[0], shift=RIGHT * 0.2),
+                      FadeIn(question, shift=DOWN * 0.15), run_time=0.6)
             for d in (1, 2, 3):
                 grow = [AnimationGroup(Create(n["edge"]), FadeIn(n["mob"], shift=DOWN * 0.15))
                         for n in LEVELS[d]]
                 extra = [FadeIn(row_labels[d], shift=RIGHT * 0.2)] if d < 3 else []
                 self.play(LaggedStart(*grow, lag_ratio=0.12), *extra, run_time=0.75)
 
-            # every finished game shows its real result
+            # "No."
+            vo.wait_until("No.")
+            self.play(FadeIn(no_cross, scale=1.8), shake(question, 0.12), run_time=0.5)
+
+            # every finished game shows its real result (the answered question steps back)
             vo.wait_until("A computer can")
             self.play(*[result_frame_anim(n["frame"], n["result"]) for n in LEAVES],
                       *[Create(n["win"]) for n in LEAVES if n["win"] is not None],
-                      FadeIn(legend, shift=UP * 0.2), run_time=1.0)
+                      FadeIn(legend, shift=UP * 0.2), ask.animate.set_opacity(0.45), run_time=1.0)
 
             # colours bubble up: X's forced last moves, then O's choices, then X's choice
             vo.wait_until("By finding the best")
@@ -370,7 +382,7 @@ class Bigger(VoiceScene):
             self.play(*[n["frame"].animate.set_stroke(width=7) for n in path], run_time=0.4)
 
             vo.wait_until("every game ends")
-            self.play(Write(caption), run_time=0.8)
+            self.play(FadeOut(ask, shift=UP * 0.25), Write(caption), run_time=0.8)
             self.play(FadeIn(note, shift=UP * 0.15), run_time=0.6)
         self.wait(1.2)                       # time to read the note before the chess beat
 
@@ -646,10 +658,13 @@ class Bigger(VoiceScene):
                                   lag_ratio=0.45), run_time=1.4)
             self.play(Create(line2), Indicate(marks2[-1][1], color=X_COLOR, scale_factor=1.6), run_time=0.5)
 
-            vo.wait_until("The program and")
-            self.play(Create(boards[2]), FadeIn(text3, shift=UP * 0.15), FadeIn(footer, shift=UP * 0.2),
-                      run_time=0.8)
+            vo.wait_until("or see what happens")
+            self.play(Create(boards[2]), FadeIn(text3, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("if O goes")
             self.play(mark_anim(marks3[0][0]), FadeIn(marks3[0][1], scale=0.6), run_time=0.6)
+
+            vo.wait_until("The program and")
+            self.play(FadeIn(footer, shift=UP * 0.2), run_time=0.8)
 
             vo.wait_until("Have fun")
             cards = [VGroup(self.recap_frames[0], boards[0], *marks1, line1, text1),

@@ -4,7 +4,8 @@ Beats:
   1. A legal game that O wins on move 6 (X0 O3 X1 O4 X6 O5, O's middle row YELLOW). A copy slides
      right and X's 5th mark hops from square 6 to square 2: now X's top row is complete too, so the
      game was "already over at move 5" (RED stamp) and O's 6th mark becomes a ghost.
-  2. Column subtraction with pictures: ways O could line up 5,760 (8 lines x 6 orders x 6 x 5 x 4),
+  2. Column subtraction with pictures: ways O could line up 5,760 (8 lines x 6 orders x 6 x 5 x 4,
+     each factor pulsing with its picture as it is named),
      minus X already won 432 (12 pairs of parallel lines x 6 x 6; two tiny boards: rows, columns),
      = 5,328 (GREEN). The heading "O wins on move 6" slides down to label the answer.
   3. A table of hand counts (move 5 -> 1,440, move 6 -> 5,328, moves 7-9 -> ?) wrapped in a tangle of
@@ -261,22 +262,31 @@ class Messy(VoiceScene):
             self.adopt(rows)
             self.play(FadeIn(label1, shift=RIGHT * 0.2), run_time=0.5)
 
-            # the same three steps: which line, in what order, where X's marks go
-            # the 8 lines are drawn one by one (as in S03), then cleared
+            # the same three steps, each factor with its picture as it is named:
+            # "8 lines for O": the 8 lines are drawn one by one (as in S03), then cleared
+            vo.wait_until("8 lines for O")
             lines8 = VGroup(*[mini1.board.win_line(a, c, stroke=5) for a, _, c in WIN_LINES])
             self.play(FadeIn(p1[0], shift=UP * 0.15), mini1[1].animate.set_stroke(opacity=0.35),
-                      LaggedStart(*[Create(ln) for ln in lines8], lag_ratio=0.45), run_time=1.3)
+                      LaggedStart(*[Create(ln) for ln in lines8], lag_ratio=0.45), run_time=1.0)
             o_marks = VGroup(*mini1[1][2:5])
-            x_marks = VGroup(mini1[1][0], mini1[1][1], mini1[1][5])
-            self.play(FadeOut(lines8), mini1[1].animate.set_stroke(opacity=1), run_time=0.3)
+            x_marks = VGroup(mini1[1][0], mini1[1][1], mini1[1][5])     # squares 0, 1, 6: moves 1, 3, 5
+            self.play(FadeOut(lines8), mini1[1].animate.set_stroke(opacity=1), run_time=0.25)
+            # "6 orders for O's marks"
+            vo.wait_until("6 orders")
             self.play(FadeIn(VGroup(p1[1], p1[2]), shift=UP * 0.15),
                       Indicate(o_marks, color=O_COLOR, scale_factor=1.3), run_time=0.8)
+            # "6 times 5 times 4 ways to place X's three marks": X's marks pulse one per factor
+            vo.wait_until("6 times 5 times 4")
             self.play(FadeIn(VGroup(p1[3], p1[4]), shift=UP * 0.15),
-                      Indicate(x_marks, color=X_COLOR, scale_factor=1.3), run_time=0.9)
+                      LaggedStart(*[Indicate(m, color=X_COLOR, scale_factor=1.3) for m in x_marks],
+                                  lag_ratio=0.5), run_time=1.4)
             self.remove(*p1)
             self.add(brk1)
-            vo.wait_until("5,760")
+            vo.wait_until("That's 5,760")
             self.play(Write(n1), run_time=0.6)
+            # "... ways for O to finish a line": O's line on the picture pulses
+            vo.wait_until("to finish a line")
+            self.play(Indicate(mini1[2], color=WIN_COLOR, scale_factor=1.2), run_time=0.8)
 
             # subtract the games where X's row (or column) was finished first
             vo.wait_until("Then we subtract")

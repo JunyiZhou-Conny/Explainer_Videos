@@ -4,7 +4,8 @@ Beats: explore() (same panel as S06) with the undo line struck through -> ponder
 program's exact trace: squares 0..6 fill in order and are never erased, X's 2-4-6 diagonal on
 move 7 counts 1, then the X that was never erased lets X land on 7 and 8 too (2, 3) -> output 3
 -> undo back, winner check struck through -> ponder -> 362,880 slides into "9! = 362,880", and a
-quick replay of S03's game shows the ghost games coming back. The code is restored at the end.
+quick replay of S03's game shows the ghost games coming back. The scene ends with the winner check
+still struck out: S08 opens on that and erases the strike ("put every line back").
 
 Verified (running the program without the undo line): moves X0 O1 X2 O3 X4 O5 X6, counts at
 XOXOXOX.., XOXOXOXX., XOXOXOXXX -> prints 3. Without the winner check it prints 362,880.
@@ -182,28 +183,27 @@ class Experiments(VoiceScene):
             self.play(FadeIn(stuck), FadeIn(still, shift=UP * 0.15),
                       Indicate(marks[6], color=X_COLOR, scale_factor=1.25), run_time=0.8)
 
-            # program order: X on 7 -> winner check -> count; X on 8 -> winner check -> count
-            # (kept short so it ends before "The old diagonal ...", which then explains it)
-            vo.wait_until("so X lands")
+            # program order: X on 7 -> winner check (the old diagonal) -> count 2;
+            # X on 8 -> winner check -> count 3
             tag7, tag8 = corner_tag(board, 7, "?!", UNDO_COLOR), corner_tag(board, 8, "?!", UNDO_COLOR)
-            drop(7, "X", None, run_time=0.45, extra=[FadeOut(still), FadeIn(tag7, scale=0.5)])
-            self.play(Indicate(win, color=WIN_COLOR, scale_factor=1.06),
-                      Transform(bar, lines_bar(code, *WINNER_LINES)), *bump(2), run_time=0.55)
-            self.play(Transform(bar, line_highlight(code, MOVE_LINE)), run_time=0.25)
-            drop(8, "X", None, run_time=0.45, extra=[FadeIn(tag8, scale=0.5)])
-            self.play(Indicate(win, color=WIN_COLOR, scale_factor=1.06),
-                      Transform(bar, lines_bar(code, *WINNER_LINES)), *bump(3), run_time=0.55)
-
-            vo.wait_until("The old diagonal")
+            vo.wait_until("X lands on square 7")
+            drop(7, "X", None, run_time=0.5, extra=[FadeOut(still), FadeIn(tag7, scale=0.5)])
+            vo.wait_until("and the old diagonal")
             self.play(ShowPassingFlash(win.copy().set_stroke(S.WHITE, 16), time_width=0.5),
-                      Indicate(bar, color=WIN_COLOR, scale_factor=1.0),
-                      Indicate(VGroup(tag7, tag8), color=UNDO_COLOR, scale_factor=1.3), run_time=1.0)
-            self.play(Indicate(win, color=WIN_COLOR, scale_factor=1.06), run_time=0.7)
+                      Indicate(win, color=WIN_COLOR, scale_factor=1.06),
+                      Transform(bar, lines_bar(code, *WINNER_LINES)),
+                      Indicate(tag7, color=UNDO_COLOR, scale_factor=1.3), run_time=1.0)
+            vo.wait_until("that's 2")
+            self.play(*bump(2), run_time=0.55)
 
-            vo.wait_until("That's 3")
-            self.play(Circumscribe(count, color=COUNT_COLOR, buff=0.1),
-                      Circumscribe(out_3, color=COUNT_COLOR, buff=0.1), run_time=0.6)
-            vo.wait_until("and the board is full")
+            vo.wait_until("Then square 8")
+            drop(8, "X", None, run_time=0.5,
+                 extra=[FadeIn(tag8, scale=0.5), Transform(bar, line_highlight(code, MOVE_LINE))])
+            vo.wait_until("that's 3")
+            self.play(Indicate(win, color=WIN_COLOR, scale_factor=1.06),
+                      Transform(bar, lines_bar(code, *WINNER_LINES)), *bump(3),
+                      Circumscribe(out_3, color=COUNT_COLOR, buff=0.1), run_time=0.7)
+            vo.wait_until("Now the board is full")
             full = S.text("board full", 26, S.GREY).next_to(board, DOWN, buff=0.22)
             self.play(FadeIn(full, shift=UP * 0.15), FadeOut(bar),
                       Circumscribe(VGroup(board, *marks.values()), color=S.GREY, buff=0.12),
@@ -237,7 +237,7 @@ class Experiments(VoiceScene):
             vo.wait_until("Pause and predict")
             self.play(Indicate(out_q2, color=S.WHITE, scale_factor=1.3), run_time=0.7)
         # the card sits under the two tags, so the struck lines and their labels stay visible
-        card = side_ponder(self, "Now delete the\nwinner check instead.\nWhat number comes out?\n"
+        card = side_ponder(self, "Now delete the winner check instead.\nWhat number comes out?\n"
                                  "(Hint: you've met it before!)", seconds=10, y=-1.7)
 
         # ================================================================ beat 4: 362,880 = nine factorial
@@ -291,7 +291,6 @@ class Experiments(VoiceScene):
             vo.wait_until("It rediscovered")
             self.play(Circumscribe(VGroup(eq, nf), color=COUNT_COLOR, buff=0.15), run_time=1.0)
 
-        # put the winner check back, so S08 can say "put every line back"
-        self.play(Uncreate(win_strikes), win_texts.animate.set_opacity(1),
-                  FadeOut(heading2, shift=UP * 0.2), run_time=0.8)
+        # the winner check stays struck out: S08 opens on the same struck lines 1-2 and erases the
+        # strike on "put every line back"
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
