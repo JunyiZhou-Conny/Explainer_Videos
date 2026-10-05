@@ -196,15 +196,15 @@ def make_eraser(w: float) -> VGroup:
     return VGroup(body, sleeve).rotate(25 * DEGREES)
 
 
-def erase(scene, targets, center, cell: float, run_time: float = 0.7):
-    """A RED eraser scrubs over a square while `targets` fade away."""
+def erase(scene, targets, center, cell: float, run_time: float = 0.7, extra=()):
+    """A RED eraser scrubs over a square while `targets` fade away (and `extra` animations run)."""
     c = np.array(center, dtype=float)
     offs = [(0.45, 0.32), (-0.28, 0.14), (0.28, 0.0), (-0.28, -0.14), (0.3, -0.3)]
     pts = [c + np.array([dx, dy, 0]) * cell for dx, dy in offs]
     e = make_eraser(max(0.32, cell * 0.8)).move_to(pts[0])
     path = VMobject().set_points_smoothly(pts)
     scene.play(FadeIn(e, scale=0.6), run_time=0.15)
-    scene.play(MoveAlongPath(e, path, rate_func=linear), FadeOut(targets), run_time=run_time)
+    scene.play(MoveAlongPath(e, path, rate_func=linear), FadeOut(targets), *extra, run_time=run_time)
     scene.play(FadeOut(e, shift=UR * 0.15), run_time=0.15)
 
 
@@ -549,11 +549,11 @@ class Explore(VoiceScene):
         defn = glyphs(code, 0, "explore(player)")
 
         # the staircase of calls: explore's first game, one more mark per call
-        chain_c = [np.array([2.05 + 0.6 * k, 3.0 - 0.82 * k, 0]) for k in range(8)]
+        chain_c = [np.array([1.95 + 0.6 * k, 2.98 - 0.82 * k, 0]) for k in range(8)]
         cells = ["." * 9]
         for s, sym in PATH:
             cells.append(put(cells[-1], s, sym))
-        chain = [snap(cells[k], 0.62, chain_c[k], stroke=2) for k in range(8)]
+        chain = [snap(cells[k], 0.7, chain_c[k], stroke=2) for k in range(8)]
         chain_win = chain[7].board.win_line(2, 6, stroke=4)
         chain_edges = [Line(chain[k].get_bottom(), chain[k + 1].get_top(), color=S.GREY,
                             stroke_width=2) for k in range(7)]
@@ -595,13 +595,14 @@ class Explore(VoiceScene):
             self.play(FadeOut(fly), Create(def_box), Indicate(defn, color=WIN_COLOR, scale_factor=1.1),
                       run_time=0.5)
             vo.wait_until("is called recursive")
-            rec = S.text("recursive", 52, S.WHITE).move_to([3.95, 0.55, 0])
-            rec_sub = S.text("a function that calls itself", 26, S.GREY).next_to(rec, DOWN, buff=0.3)
+            # the new word sits above the code (free space) and stays while the staircase grows
+            rec = S.text("recursive", 52, S.WHITE).move_to([code.get_center()[0], 2.78, 0])
+            rec_sub = S.text("a function that calls itself", 26, S.GREY).next_to(rec, DOWN, buff=0.22)
             self.play(Write(rec), FadeIn(rec_sub, shift=UP * 0.15), run_time=0.8)
 
             vo.wait_until("That might sound")
             bar = lines_bar(code, 10)
-            self.play(FadeOut(VGroup(rec, rec_sub, call_box, def_box)), FadeIn(bar), run_time=0.4)
+            self.play(FadeOut(VGroup(call_box, def_box)), FadeIn(bar), run_time=0.4)
             self.play(LaggedStart(*[Create(ln) for ln in chain[0][0]], lag_ratio=0.15), run_time=0.35)
             for k in range(1, 8):
                 new = chain[k][1][-1]
@@ -618,8 +619,8 @@ class Explore(VoiceScene):
             self.play(Indicate(chain[7], color=WIN_COLOR, scale_factor=1.1), run_time=0.7)
 
             vo.wait_until("Picture an upside-down")
-            self.play(FadeOut(code, shift=LEFT * 1.0), FadeOut(VGroup(bar, each, stop, chain_win)),
-                      run_time=0.6)
+            self.play(FadeOut(code, shift=LEFT * 1.0),
+                      FadeOut(VGroup(bar, each, stop, chain_win, rec, rec_sub)), run_time=0.6)
             self.play(ReplacementTransform(chain[0], root), ReplacementTransform(chain[1], l1[0]),
                       *[FadeTransform(chain[k], path_dots[k - 2]) for k in range(2, 8)],
                       *[ReplacementTransform(e, p) for e, p in zip(chain_edges, path_edges)],
@@ -733,22 +734,25 @@ class Explore(VoiceScene):
             self.play(Create(seg), cursor.animate.move_to(CU[key]), mark_anim(m), run_time=rt)
 
         def step_back(key, up_key, s, extra_targets=(), rt=0.5):
+            """Undo = step back: the mark is erased on the board WHILE the path edge turns RED and
+            pulls back up to the parent node."""
             seg = hl.pop(key)
             m = marks.pop(s)
-            erase(self, VGroup(m, *extra_targets), side.center_of(s), side.cell, run_time=rt)
             tip = CU[up_key] + 0.02 * (CU[key] - CU[up_key])
-            self.play(seg.animate.set_color(UNDO_COLOR).put_start_and_end_on(CU[up_key], tip),
-                      cursor.animate.move_to(CU[up_key]), run_time=0.4)
+            back = [seg.animate.set_color(UNDO_COLOR).put_start_and_end_on(CU[up_key], tip),
+                    cursor.animate.move_to(CU[up_key])]
+            erase(self, VGroup(m, *extra_targets), side.center_of(s), side.cell, run_time=rt,
+                  extra=back)
             self.remove(seg)
 
-        def count_leaf(key, n):
+        def count_leaf(key, n, rt=0.6):
             nonlocal cnt
             dot = Dot(CU[key], radius=0.09, color=COUNT_COLOR)
             counted[key] = dot
             new = count_value(n, 52).move_to(cnt)
             self.play(FadeIn(dot, scale=2), Flash(dot, color=COUNT_COLOR, line_length=0.16,
                                                    flash_radius=0.24),
-                      FadeOut(cnt, shift=UP * 0.3), FadeIn(new, shift=UP * 0.3), run_time=0.6)
+                      FadeOut(cnt, shift=UP * 0.3), FadeIn(new, shift=UP * 0.3), run_time=rt)
             cnt = new
 
         with self.voiceover(SAY[5]) as vo:
@@ -778,14 +782,16 @@ class Explore(VoiceScene):
 
             # undo the last move: erase X6, step back up to A
             vo.wait_until("So after exploring")
+            self.play(Indicate(cursor, color=WIN_COLOR, scale_factor=1.6),
+                      Indicate(marks[6], color=WIN_COLOR, scale_factor=1.3), run_time=0.7)
+            vo.wait_until("it erases that mark")
             self.play(Indicate(code_line(code, 11), color=UNDO_COLOR, scale_factor=1.05),
-                      Indicate(undo_tag, color=UNDO_COLOR), run_time=0.6)
+                      run_time=0.4)
             step_back("X6", "A", 6, extra_targets=[w["side_win"]], rt=0.8)
 
             vo.wait_until("That's called undoing")
             self.play(undo_bar.animate(rate_func=there_and_back).set_fill(opacity=0.7),
-                      Indicate(undo_tag, color=UNDO_COLOR, scale_factor=1.25),
-                      Indicate(cursor, color=WIN_COLOR, scale_factor=1.6), run_time=1.0)
+                      Indicate(undo_tag, color=UNDO_COLOR, scale_factor=1.25), run_time=1.0)
 
             # the next branch starts fresh: X7, O6, X8 -> the 2nd game
             vo.wait_until("and it means the next branch")
@@ -798,15 +804,16 @@ class Explore(VoiceScene):
 
             # backtracking: undo X8 and O6, try O8 then X6 -> the 3rd game
             vo.wait_until("Trying a path")
-            self.play(FadeIn(cap1, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(cap1, shift=UP * 0.15), run_time=0.5)
+            # "then stepping back to try the next one": undo X8, undo O6, then O8, X6 -> game 3
             step_back("X8b", "O6", 8, extra_targets=[win2], rt=0.45)
             step_back("O6", "X7", 6, rt=0.45)
-            go_down("O8", 8, "O", rt=0.4)
-            go_down("X6b", 6, "X", rt=0.4)
+            go_down("O8", 8, "O", rt=0.35)
+            go_down("X6b", 6, "X", rt=0.35)
             win3 = side.win_line(2, 6)
-            self.play(Create(win3), run_time=0.3)
-            count_leaf("X6b", 3)
+            self.play(Create(win3), run_time=0.25)
+            count_leaf("X6b", 3, rt=0.5)
             vo.wait_until("is called backtracking")
-            self.play(Write(cap2), run_time=0.8)
+            self.play(Write(cap2), run_time=0.7)
             self.play(Circumscribe(VGroup(cap1, cap2), color=S.WHITE, buff=0.12), run_time=0.8)
         self.wait(0.8)
