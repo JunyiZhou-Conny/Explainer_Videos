@@ -379,9 +379,10 @@ class Answer(VoiceScene):
             fact.next_to(tbrace, LEFT, buff=0.3)
             self.play(ReplacementTransform(VGroup(*pieces), tower), FadeOut(goal),
                       ReplacementTransform(VGroup(*piece_labels), fact[0]),
-                      GrowFromCenter(tbrace), run_time=1.2)
-            self.play(ReplacementTransform(goal_lab, fact[1]), run_time=0.7)
-            self.play(Indicate(fact, color=COUNT_COLOR, scale_factor=1.06), run_time=vo.remaining())
+                      GrowFromCenter(tbrace), run_time=1.0)
+            self.play(ReplacementTransform(goal_lab, fact[1]), run_time=0.6)
+            if vo.remaining(0.0) > 0.6:
+                self.play(Indicate(fact, color=COUNT_COLOR, scale_factor=1.06), run_time=vo.remaining())
 
         # ================================================================ 4. who wins?
         g = U2 / U3
