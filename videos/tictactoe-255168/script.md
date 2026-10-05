@@ -85,15 +85,15 @@ SHOW: A timeline of moves 1–9, coloured X, O, X, O, X, …; X's moves 1, 3, 5 
 "X's 3rd mark: move 5".
 SAY: So when can a game end? Not before move 5. X plays moves 1, 3 and 5, so the fifth move is the first time anyone can have three marks.
 
-SHOW: PONDER(20 s, "How many games end with X winning on move 5?\nHint: (1) Which line? (2) In what
-order does X fill it? (3) Where can O's 2 marks go?") with the board and the timeline still
+SHOW: PONDER(20 s, "How many games end with X winning on move 5?\nHint: (1) Which line?\n(2) In
+what order does X fill it?\n(3) Where can O's 2 marks go?") with the board and the timeline still
 visible.
 SAY: Pause and ponder: how many games end with X winning on move 5? Try to count them before I show you.
 
 SHOW: Three steps, each with its number in GREEN:
 (1) the 8 winning lines flash one by one on the board → "8 lines";
 (2) X's three marks on one line get move labels 1-3-5, then 1-5-3, 3-1-5, … (all 6 orders) →
-"3 × 2 × 1 = 6";
+"3 × 2 × 1 = 3! = 6";
 (3) O's first mark hops through the 6 other squares ("6"), then O's second mark through the 5 left
 ("× 5") → "6 × 5 = 30".
 Then "8 × 6 × 30 = 1,440".
@@ -105,13 +105,14 @@ SAY: Here's one way, in three steps. First, pick the line X wins with. There are
 
 SHOW: A board where O completes a line on move 6 (O's line YELLOW). Then a second board where X's
 three marks ALSO form a line (the row parallel to O's row): it gets a RED "already over at move 5!"
-stamp.
+stamp (no "!", which would read as a factorial).
 SAY: What about games that O wins on move 6? O needs three in a row. But careful: if X's three marks also make a line, X already won on move 5, and the game stopped before O could finish.
 
 SHOW: "ways O could line up: 5,760" with the small breakdown
 "8 lines × 6 orders × (6 × 5 × 4 for X's 3 marks)"; minus "X already won: 432" with
-"12 pairs of parallel lines × 6 × 6" (two tiny boards: two rows, two columns); = "5,328" (GREEN).
-SAY: Using the same three steps, we can count all the ways O could finish a line: 5,760. Then we subtract the 432 where X sneaked in a win first. That leaves 5,328 games.
+"12 pairs (O's line, X's parallel line) × 6 × 6" (two tiny boards: two rows, two columns);
+= "5,328" (GREEN).
+SAY: Use the same three steps: 8 lines for O, 6 orders for O's marks, and 6 times 5 times 4 ways to place X's three marks. That's 5,760 ways for O to finish a line. Then we subtract the 432 where X sneaked in a win first. That leaves 5,328 games.
 
 SHOW: A table: move 5 → 1,440 ✓, move 6 → 5,328 ✓, move 7 → ?, move 8 → ?, move 9 → ?
 Around the question marks, a tangle of crossing arrows and small boards labelled "did X win
@@ -140,7 +141,7 @@ for-line "for each line: squares a, b, c". On an example board, a scanner checks
 one (GREY ✗ for "not all the same"), until a line with three X's lights YELLOW and the function
 hands back "X". Then on a board with no line: the scanner finds nothing → GREY tag
 "nothing found → None (nobody)".
-SAY: Next comes a function: a little mini-program with a name. This one, called winner, checks every line. If all three squares on a line hold the same mark, and that mark isn't a dot, that player has won.
+SAY: Next comes a function: a little mini-program with a name. This one, called winner, checks every line. If all three squares on a line hold the same mark, and that mark isn't a dot, that player has won. If no line matches, winner finds nothing, and hands back None, which means nobody.
 
 ---
 
@@ -164,13 +165,13 @@ SHOW: Tiny worked example. Board X X O / O X · / X · O (cells "XXOOX.X.O"), ca
 A tiny tree under it: O → square 5 (middle-right), column 2-5-8 lights YELLOW, leaf "1". RED eraser
 removes that O. O → square 7 (bottom-middle), then X → square 5, full board, GREY draw, leaf "1".
 GREEN "1 + 1 = 2" travels up to the root.
-SAY: Here's a tiny example, with O to move. If O takes the middle-right square, O wins: that's 1 game. Erase it, and try the bottom-middle square instead. Then X fills the last square, and it's a draw: 1 more. Total: 2 games.
+SAY: Here's a tiny example, with O to move. If O takes the middle-right square, O wins: that's 1 game. Erase it, and try the bottom-middle square instead. Then X fills the last square, and it's a draw: 1 more. Undo both moves, and add up. Total: 2 games.
 
 SHOW: Zoom out to the full game tree, upside down: the empty board at the top, 9 branches, then
 8 under each (label "same 9 × 8 as before!"), … leaves (finished games) at the tips, some short
 (early wins), most deep. A highlighted path walks down one branch to a leaf (the board changing
 along the way), the leaf flashes GREEN and the counter goes up by 1.
-SAY: A function that calls itself like this is called recursive. That might sound like it goes on forever, but each call adds one more mark, so a stopping rule always kicks in. Picture an upside-down tree. The empty board is at the top, every possible move is a branch, and every finished game is a leaf. Explore walks down every branch and counts the leaves.
+SAY: A function that calls itself like this is called recursive. That might sound like it goes on forever, but each call adds one more mark, so a stopping rule always kicks in. Picture an upside-down tree. The empty board is at the top, every possible move is a branch, and every finished game is a leaf. Explore walks down every branch, one at a time, and counts the leaves it reaches.
 
 SHOW: The undo line is highlighted RED. A single whiteboard icon: every branch shares the same
 board. On the board, the last mark is erased (RED eraser swipe) and the highlighted path steps back
@@ -190,22 +191,22 @@ SHOW: A board fills square by square in order 0 → 6 with move numbers (X O X O
 erased. The 2-4-6 diagonal lights YELLOW; GREEN counter "1". No eraser: X's mark on 6 stays. A BLUE
 X drops onto square 7 (counter 2, RED "?!"), then onto square 8 (counter 3, RED "?!"); the diagonal
 is still YELLOW. The board is full (X O X / O X O / X X X). Output "3".
-SAY: The program prints just 3. Without undo, nothing ever gets erased. The program plays one game, filling the squares in order, until X makes a diagonal on move 7. That's 1. Then it tries X's other choices, but the old X is still there, so X lands on the last two squares too. The old diagonal still counts as a win each time. That's 3, and the board is full, so there's nothing left to try.
+SAY: The program prints just 3. Without undo, nothing ever gets erased. The program plays one game, filling the squares in order, until X makes a diagonal on move 7. That's 1. Then it tries X's other choices, but the old X is still there. X lands on square 7, and the old diagonal counts as a win again: that's 2. Then square 8: that's 3. Now the board is full, so there's nothing left to try.
 
 SHOW: Undo restored; now the winner-check lines get the strike-through.
-PONDER(10 s, "Now delete the winner check instead. What number comes out?\n(Hint: you've met it before!)")
+PONDER(10 s, "Now delete the winner check instead.\nWhat number comes out?\n(Hint: you've met it before!)")
 SAY: Now put undo back, and delete the winner check instead, so games only stop when the board is full. Pause and predict the answer.
 
 SHOW: Output "362,880"; it slides next to "9! = 362,880" from S02; a GREEN ✓ "the ghost games are
-back".
+back". The strikes stay on until the end of the scene (S08 puts every line back).
 SAY: 362,880. That's nine factorial! Without the winner check, the program keeps playing after a win, so it counts all the ghost games. It rediscovered our very first count.
 
 ---
 
 ## S08 · 255,168, explained — `s08_answer.py` · `Answer`
 
-SHOW: The winner check is restored. The full program (small) with lines 37 and 40 highlighted,
-label "start: empty board, X's turn". Then a terminal window: `python play_all_games.py` →
+SHOW: explore() with the winner check restored (the strike is erased), then the end of the program
+(lines 37–40) with lines 37 and 40 highlighted, label "start: empty board, X's turn". Then a terminal window: `python play_all_games.py` →
 `255168` (GREEN).
 SAY: Now let's put every line back and run the real program. After a moment, it prints 255,168.
 
@@ -246,7 +247,7 @@ SAY: But careful: more games doesn't mean a better move. Out of all the games th
 SHOW: A small game tree with leaves keeping their real colours (BLUE X wins, ORANGE O wins, GREY
 draws). Colours bubble up from the leaves: at X's turns a node takes the best result for X, at O's
 turns the best result for O. The root ends up GREY; caption "perfect play → draw".
-SAY: But more ways to win doesn't mean X always wins. A computer can do more than count. By finding the best move at every branch, it has solved tic-tac-toe: if both players play perfectly, every game ends in a draw.
+SAY: So does going first mean X always wins? No. A computer can do more than count. By finding the best move at every branch, it has solved tic-tac-toe: if both players play perfectly, every game ends in a draw.
 
 SHOW: A chessboard. Three written-out numbers as digit strips: "tic-tac-toe: 255,168 (6 digits)",
 "atoms in the observable universe: about 1 followed by 80 zeros", "chess: at least 1 followed by
@@ -264,4 +265,4 @@ SAY: Let's recap. Multiplying the choices gives nine factorial, 362,880 orders. 
 
 SHOW: Challenge cards: "Count only X's wins" · "Count the games that end on move 7" · "What if O
 went first?" Footer: "program + challenges: linked in the description".
-SAY: Now it's your turn. Change the program so it counts only the games X wins, or only the games that end on move 7. The program and the challenges are linked in the description. Have fun exploring!
+SAY: Now it's your turn. Change the program so it counts only the games X wins, or only the games that end on move 7, or see what happens if O goes first. The program and the challenges are linked in the description. Have fun exploring!
