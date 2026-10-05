@@ -155,12 +155,25 @@ def program_lines(first: int, last: int) -> str:
     return "\n".join(PROGRAM.splitlines()[first - 1:last])
 
 
+def _house_code_style():
+    """Monokai, but with light comments: the `# ...` notes are the plain-English labels a
+    12-year-old needs, so they must be readable (monokai's comment grey is too dim)."""
+    from pygments.styles import get_style_by_name
+    from pygments.token import Comment
+    base = get_style_by_name("monokai")
+    return type("HouseCodeStyle", (base,), {"styles": {**base.styles, Comment: "#D9D3B8",
+                                                        Comment.Single: "#D9D3B8"}})
+
+
+HOUSE_CODE_STYLE = _house_code_style()
+
+
 def code_block(source: str, font_size: float = 22, line_numbers: bool = False,
                width: float | None = None) -> Code:
-    """The house code style: monokai-like colours on a dark rounded panel.
+    """The house code style: monokai colours (with light comments) on a dark rounded panel.
 
     Pass `width` to scale the whole panel to that width (keep the text >= ~20 pt on screen)."""
-    c = Code(code_string=source, language="python", formatter_style="monokai",
+    c = Code(code_string=source, language="python", formatter_style=HOUSE_CODE_STYLE,
                 add_line_numbers=line_numbers,
                 background="rectangle",
                 background_config={"fill_color": S.GREY_DARKER, "stroke_color": S.GREY_DARK,
