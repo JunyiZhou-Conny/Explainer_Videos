@@ -189,11 +189,13 @@ class Answer(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(code), FadeIn(cuts), run_time=0.5)
+            self.wait(0.3)
             back = VGroup(line_highlight(code, 1, COUNT_COLOR), line_highlight(code, 2, COUNT_COLOR))
-            self.play(Uncreate(cuts), win_texts.animate.set_opacity(1), FadeIn(back), run_time=0.7)
+            self.play(Uncreate(cuts), win_texts.animate.set_opacity(1), FadeIn(back), run_time=0.8)
             self.wait(0.15)
-            # scroll down to the bottom of the file
-            self.play(FadeOut(VGroup(code, back), shift=UP * 3), FadeIn(tail, shift=UP * 3), run_time=0.8)
+            # scroll down to the bottom of the file: the tail comes up from just below explore()
+            d = tail.get_center()[1] - (code.get_bottom()[1] - 0.35 - tail.height / 2)
+            self.play(FadeOut(VGroup(code, back), shift=UP * d), FadeIn(tail, shift=UP * d), run_time=0.9)
             self.play(FadeIn(hl37), GrowArrow(start_arrow), FadeIn(start_txt, shift=LEFT * 0.15),
                       Create(start_board), run_time=0.8)
             self.play(FadeIn(hl40), run_time=0.4)
@@ -201,7 +203,7 @@ class Answer(VoiceScene):
             self.play(FadeIn(term), run_time=0.4)
             self.play(FadeIn(prompt, run_time=0.1), AddTextLetterByLetter(cmd, run_time=0.8))
             self.add(cursor)
-            for _ in range(2):
+            while vo.time_until("it prints") > 0.4:           # the program thinks...
                 self.play(cursor.animate.set_opacity(0.0), run_time=0.25)
                 self.play(cursor.animate.set_opacity(0.8), run_time=0.25)
             vo.wait_until("it prints")
@@ -344,31 +346,29 @@ class Answer(VoiceScene):
             ones = [multiply(m, None, play=False) for m in (8, 9)]
             self.play(*ones, run_time=0.6)
 
-            # stack every product into one tower: each piece rises to its height, then slides right
+            # add them up: the products fly up into one sum (straight up their own column, above every
+            # bar), the pieces rise to their height in the stack, then slide right into the 9! outline
             vo.wait_until("add them up")
-            pieces, piece_labels, lab_c, y = {}, [], {}, Y0
-            rise = []
-            for m in (9, 8, 7, 6, 5):
+            self.play(FadeOut(VGroup(*mults.values()), shift=UP * 0.2), run_time=0.3)
+            order = (5, 6, 7, 8, 9)
+            sum_line = VGroup()
+            for i, m in enumerate(order):
+                sum_line.add(S.text(fmt(BY_MOVE[m] * GHOSTS[m]), 30, S.WHITE))
+                if i < len(order) - 1:
+                    sum_line.add(S.text("+", 30, S.GREY))
+            sum_line.arrange(RIGHT, buff=0.18).move_to([-0.8, 3.2, 0])
+            pieces, rise, y = {}, [], Y0
+            for m in (9, 8, 7, 6, 5):                 # the tallest product (move 9) at the bottom
                 solid = VGroup(bars[m].copy()) if m != 9 else VGroup(b9x.copy(), b9d.copy())
-                self.add(solid)
-                if m in ghosts:
-                    self.remove(ghosts[m])
                 piece = VGroup(solid, ghosts[m]) if m in ghosts else solid
-                self.add(piece)
-                h = BY_MOVE[m] * GHOSTS[m] * U3
-                lab = prods[m]
-                rise.append(VGroup(piece, lab).animate.shift(UP * (y - Y0)))
-                lab_c[m] = np.array([STACK_X - BAR_W / 2 - 0.15 - lab.width * 26 / 28 / 2, y + h / 2, 0])
+                self.add(piece)                       # ghosts[m] is re-added on top of the solid copy
+                rise.append(piece.animate.shift(UP * (y - Y0)))
                 pieces[m] = piece
-                piece_labels.append(lab)
-                y += h
-            self.play(*rise, FadeOut(VGroup(*mults.values())), run_time=0.8)
-            slide = []
-            for m, piece in pieces.items():
-                slide.append(piece.animate.shift(RIGHT * (STACK_X - XS[m])))
-                slide.append(prods[m].animate.scale(26 / 28).move_to(lab_c[m]))
-            self.play(LaggedStart(*slide, lag_ratio=0.05), run_time=1.0)
-            pieces = list(pieces.values())
+                y += BY_MOVE[m] * GHOSTS[m] * U3
+            self.play(*rise, *[ReplacementTransform(prods[m], sum_line[2 * i]) for i, m in enumerate(order)],
+                      FadeIn(VGroup(*sum_line[1::2])), run_time=0.9)
+            self.play(LaggedStart(*[pieces[m].animate.shift(RIGHT * (STACK_X - XS[m])) for m in pieces],
+                                  lag_ratio=0.08), run_time=1.0)
 
             vo.wait_until("and you get exactly")
             tower = Rectangle(width=BAR_W, height=y - Y0, stroke_width=0).set_fill(COUNT_COLOR, 1) \
@@ -377,9 +377,8 @@ class Answer(VoiceScene):
             fact = VGroup(S.text(fmt(NINE_FACTORIAL), 40, COUNT_COLOR, weight=BOLD),
                           S.text("= 9!", 40, S.WHITE)).arrange(RIGHT, buff=0.2)
             fact.next_to(tbrace, LEFT, buff=0.3)
-            self.play(ReplacementTransform(VGroup(*pieces), tower), FadeOut(goal),
-                      ReplacementTransform(VGroup(*piece_labels), fact[0]),
-                      GrowFromCenter(tbrace), run_time=1.0)
+            self.play(ReplacementTransform(VGroup(*pieces.values()), tower), FadeOut(goal),
+                      ReplacementTransform(sum_line, fact[0]), GrowFromCenter(tbrace), run_time=1.0)
             self.play(ReplacementTransform(goal_lab, fact[1]), run_time=0.6)
             if vo.remaining(0.0) > 0.6:
                 self.play(Indicate(fact, color=COUNT_COLOR, scale_factor=1.06), run_time=vo.remaining())
@@ -534,7 +533,7 @@ class Answer(VoiceScene):
 
         # ================================================================ 7. more games is not a better move
         caution = caution_sign().move_to(king)
-        ROW = {"center": 1.15, "edge": -1.45}          # y of each row's bar
+        ROW = {"center": 1.5, "edge": -1.5}            # y of each row's bar (gap leaves room for the sign)
         BAR_L, BAR_LEN = -3.6, 9.4
         row_board_target = {}
         for k in ("center", "edge"):
@@ -561,7 +560,8 @@ class Answer(VoiceScene):
         half_x = BAR_L + BAR_LEN / 2
         halves = VGroup(*[DashedLine([half_x, ROW[k] + 0.42, 0], [half_x, ROW[k] - 0.42, 0], color=S.WHITE,
                                      stroke_width=4, dash_length=0.1) for k in ROW])
-        half_word = S.text("half", 26, S.WHITE).next_to(halves[1], DOWN, buff=0.12)
+        half_word = S.text("half", 26, S.WHITE).next_to(halves[0], DOWN, buff=0.12)
+        half_word_low = half_word.copy().next_to(halves[1], DOWN, buff=0.12)
 
         with self.voiceover(SAY[6]) as vo:
             self.play(ReplacementTransform(king, caution), run_time=0.8)
@@ -576,11 +576,11 @@ class Answer(VoiceScene):
             segs, inner, label = rows["center"]
             self.play(FadeIn(label, shift=RIGHT * 0.2), run_time=0.5)
             self.play(LaggedStart(*[GrowFromEdge(s, LEFT) for s in segs], lag_ratio=0.6), run_time=1.2)
-            self.play(FadeIn(inner), Create(halves), FadeIn(half_word), run_time=0.6)
+            self.play(FadeIn(inner), Create(halves[0]), FadeIn(half_word), run_time=0.6)
             vo.wait_until("Starting on an edge")
             segs, inner, label = rows["edge"]
             self.play(FadeIn(label, shift=RIGHT * 0.2), run_time=0.5)
             self.play(LaggedStart(*[GrowFromEdge(s, LEFT) for s in segs], lag_ratio=0.6), run_time=1.2)
-            self.play(FadeIn(inner), Indicate(halves[1], color=S.WHITE), run_time=0.6)
+            self.play(FadeIn(inner), Create(halves[1]), half_word.animate.move_to(half_word_low), run_time=0.6)
         self.wait(1.0)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)

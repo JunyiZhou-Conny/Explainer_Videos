@@ -4,7 +4,8 @@ Beats: a real game stops when X wins on move 5, so the 4 empty squares are never
 dashed ghost moves 6-9) -> the ghost moves shuffle through all 24 orders while a GREEN counter
 ticks 1..24: this 1 game was counted 24 times in 362,880 ("ghost games") -> a timeline of moves
 1-9: X's 3rd mark is move 5 -> ponder: how many games does X win on move 5? -> three steps on the
-board: 8 lines, 6 orders of X's marks, 6 x 5 places for O's marks -> 8 x 6 x 30 = 1,440.
+board: 8 lines, 3 x 2 x 1 = 3! = 6 orders of X's marks, 6 x 5 places for O's marks (O hops between
+neighbouring squares) -> 8 x 6 x 30 = 1,440.
 """
 
 import itertools
@@ -31,6 +32,12 @@ PANEL_X = 2.2                           # centre of the right-hand column
 GAME = [(0, "X"), (4, "O"), (1, "X"), (8, "O"), (2, "X")]   # X wins on the top row, move 5
 GHOST_SQUARES = (3, 5, 6, 7)                                # never played
 GHOST_SYMBOLS = ("O", "X", "O", "X")                        # ghost moves 6, 7, 8, 9
+# The ghost shuffle swaps neighbours along this walk through the empty squares
+# (3 -6 -7 -5: down, right, diagonal up), so no ghost ever jumps across the board over a real mark.
+GHOST_WALK = (3, 6, 7, 5)
+# O's marks hop between neighbouring squares only (step 3); both tours start at square 3.
+O1_TOUR = (3, 6, 7, 8, 5, 4)    # O's first mark: the 6 squares X did not use, ends in the center
+O2_TOUR = (3, 6, 7, 8, 5)       # O's second mark: the 5 squares left, ends at square 5
 
 
 # ------------------------------------------------------------------ the numbers on screen, checked
@@ -58,12 +65,78 @@ def _check_numbers():
     assert factorial(4) == 24 and NINE_FACTORIAL == factorial(9) == 362_880
     assert len(WIN_LINES) == 8 and 8 * factorial(3) * (6 * 5) == BY_MOVE[5] == 1_440
     assert _games_won_by_x_on_move_5() == 1_440
+    assert sorted(GHOST_WALK) == sorted(GHOST_SQUARES)
+    # step 3: X holds the top row; O's tours cover exactly the free squares, one neighbour at a time
+    assert sorted(O1_TOUR) == [3, 4, 5, 6, 7, 8] and sorted(O2_TOUR) == [3, 5, 6, 7, 8]
+    for tour in (O1_TOUR, O2_TOUR):
+        assert all(abs(a // 3 - b // 3) + abs(a % 3 - b % 3) == 1 for a, b in zip(tour, tour[1:]))
+    # the board at the end of step 3 is a legal game X wins on move 5:
+    # X labels 5-3-1 on squares 0-2 (so X1@2, X3@1, X5@0), O2 at O1_TOUR[-1], O4 at O2_TOUR[-1]
+    b = ["."] * 9
+    for i, sym in [(2, "X"), (O1_TOUR[-1], "O"), (1, "X"), (O2_TOUR[-1], "O"), (0, "X")]:
+        assert b[i] == "." and winner(b) is None
+        b[i] = sym
+    assert winner(b) == "X"
 
 
 _check_numbers()
 
 
 # ------------------------------------------------------------------ helpers
+# Phrase times are estimated per sentence from character counts. Where that estimate is off by more
+# than ~0.4 s, the anchor gets a `shift` measured from the pauses in this narration's audio
+# (e.g. a spoken "362,880" lasts ~3 s but is only 7 characters).
+def wait_for(scene, vo, phrase: str, shift: float = 0.0) -> None:
+    """vo.wait_until(phrase), moved by `shift` seconds."""
+    t = vo.time_until(phrase) + shift
+    if t > 1 / 30:
+        scene.wait(t)
+
+
+def until(vo, phrase: str, shift: float = 0.0, minimum: float = 0.3) -> float:
+    """Seconds from now until `phrase` (+ shift) is spoken."""
+    return max(minimum, vo.time_until(phrase) + shift)
+
+
+def play_steps(scene, steps, events=(), on_land=None) -> None:
+    """Play steps [(anims, move_time, hold_time), ...] back to back.
+
+    events: [(t, anims)] with t in seconds from now; each event's anims join the step (or hold)
+    that is running when t comes up. on_land(k) is called right after step k's motion lands.
+
+    Each play lasts a whole number of frames and is timed to end at its planned moment, so many
+    short steps don't drift late (a play always rounds its run time up to whole frames)."""
+    events = sorted(events, key=lambda e: e[0])
+    fps = config.frame_rate
+    t0 = scene.renderer.time
+
+    def run(anims, end):          # play `anims` (or wait) so that they end at t0 + end
+        frames = max(1, round((t0 + end - scene.renderer.time) * fps))
+        run_time = (frames - 0.5) / fps          # -> exactly `frames` frames
+        if anims:
+            scene.play(*anims, run_time=run_time)
+        else:
+            scene.wait(run_time)
+
+    t = 0.0
+    for k, (anims, dt, hold) in enumerate(steps):
+        anims = list(anims)
+        while events and events[0][0] <= t + dt / 2:
+            anims += events.pop(0)[1]
+        t += dt
+        run(anims, t)
+        if on_land is not None:
+            on_land(k)
+        if hold > 0:
+            extra = []
+            while events and events[0][0] <= t + hold / 2:
+                extra += events.pop(0)[1]
+            t += hold
+            run(extra, t)
+    for _, anims in events:   # anything the steps finished before
+        scene.play(*anims, run_time=0.3)
+
+
 def corner(board: Board, i: int) -> np.ndarray:
     """Where a move number sits in square i (lower-right corner, as move_number() puts it)."""
     return board.center_of(i) + np.array([0.36, -0.36, 0]) * board.cell
@@ -176,41 +249,45 @@ class GamesStop(VoiceScene):
             self.play(VGroup(board, marks, nums, win, ghosts, caption, never).animate.shift(
                 BOARD_LEFT - board.get_center()), run_time=1.0)
             self.play(Write(top), FadeIn(top_cap, shift=UP * 0.1), run_time=1.0)
+            # "counted those missing moves": the ghost moves and their label pulse
+            wait_for(self, vo, "counted those", shift=2.2)
+            self.play(Indicate(never, color=S.WHITE, scale_factor=1.15),
+                      *[Indicate(g[0], color=S.WHITE, scale_factor=1.12) for g in ghosts], run_time=1.0)
             # "as if the players kept going": the ghost moves get played, 6, 7, 8, 9
-            vo.wait_until("as if the players")
+            wait_for(self, vo, "as if the players", shift=1.3)
             self.play(LaggedStart(*[Indicate(g, color=S.WHITE, scale_factor=1.25) for g in ghosts],
-                                  lag_ratio=0.55), run_time=2.2)
+                                  lag_ratio=0.55), run_time=2.0)
 
             # the 4 ghost moves shuffle through all 24 orders while a GREEN counter ticks
             vo.wait_until("The 4 empty")
             counter = count_tex(1, formula[8].get_center(), size=56)
-            self.play(FadeIn(ways_cap, shift=DOWN * 0.1), FadeIn(counter, scale=0.6), run_time=0.6)
+            self.play(FadeIn(ways_cap, shift=DOWN * 0.1), FadeIn(counter, scale=0.6), run_time=0.5)
+            # every order is one swap of two neighbouring ghosts away from the last (plain changes);
+            # perms[k][p] says which ghost sits at walk spot p (ghost order = GHOST_SQUARES order)
+            start = [GHOST_SQUARES.index(sq) for sq in GHOST_WALK]
+            spot = [board.center_of(sq) for sq in GHOST_WALK]
+            offset = [g.get_center() - board.center_of(sq) for g, sq in zip(ghosts, GHOST_SQUARES)]
             perms = plain_changes(4)
-            home = [board.center_of(sq) for sq in GHOST_SQUARES]
-            offset = [g.get_center() - home[k] for k, g in enumerate(ghosts)]
-            events = [(vo.time_until("4 times 3"), [formula[0]]),
-                      (vo.time_until("3 times 2"), [formula[1], formula[2]]),
-                      (vo.time_until("2 times 1"), [formula[3], formula[4]]),
-                      (vo.time_until("times 1,") + 0.25, [formula[5], formula[6]])]
-            budget = vo.time_until("so 24 ways") - 0.1
-            base = [max(0.14, 0.5 * 0.9 ** k) for k in range(len(perms) - 1)]
+            # the counter reaches 24 as "24" is spoken; the factors appear as they are spoken
+            budget = until(vo, "so 24 ways")
+            base = [max(0.17, 0.45 * 0.9 ** k) for k in range(len(perms) - 1)]
             durations = [d * budget / sum(base) for d in base]
-            t0 = 0.0
+            steps = []
             for k in range(1, len(perms)):
                 prev, cur = perms[k - 1], perms[k]
-                anims = [ghosts[mv].animate(path_arc=0.5 * PI).move_to(home[pos] + offset[mv])
-                         for pos, mv in enumerate(cur) if prev[pos] != mv]
-                dt = durations[k - 1]
-                while events and events[0][0] <= t0 + dt / 2:
-                    anims += [FadeIn(p, shift=DOWN * 0.1) for p in events.pop(0)[1]]
-                self.play(*anims, run_time=dt)
-                counter.become(count_tex(k + 1, formula[8].get_center(), size=56))   # ticks on landing
-                t0 += dt
-            for _, parts in events:   # any part the shuffle finished before
-                self.play(*[FadeIn(p) for p in parts], run_time=0.2)
-            vo.wait_until("so 24 ways")
+                moved = [p for p in range(4) if prev[p] != cur[p]]
+                arc = 0.35 * PI if moved == [2, 3] else 0.5 * PI     # 7 <-> 5 is the diagonal swap
+                steps.append(([ghosts[start[cur[p]]].animate(path_arc=arc)
+                               .move_to(spot[p] + offset[start[cur[p]]]) for p in moved],
+                              durations[k - 1], 0))
+            factor_events = [(until(vo, "4 times 3", -0.9, 0), [FadeIn(formula[0], shift=DOWN * 0.1)]),
+                             (until(vo, "3 times 2", -0.95, 0), [FadeIn(formula[1:3], shift=DOWN * 0.1)]),
+                             (until(vo, "2 times 1", -1.0, 0), [FadeIn(formula[3:5], shift=DOWN * 0.1)]),
+                             (until(vo, "times 1,", -0.6, 0), [FadeIn(formula[5:7], shift=DOWN * 0.1)])]
+            play_steps(self, steps, factor_events,
+                       on_land=lambda k: counter.become(count_tex(k + 2, formula[8].get_center(), size=56)))
             self.play(FadeIn(formula[7]), ReplacementTransform(counter, formula[8]), run_time=0.4)
-            self.play(Indicate(formula[8], color=COUNT_COLOR, scale_factor=1.3), run_time=0.6)
+            self.play(Indicate(formula[8], color=COUNT_COLOR, scale_factor=1.3), run_time=0.5)
 
             # this one real game was counted 24 times
             vo.wait_until("So this one game")
@@ -223,10 +300,11 @@ class GamesStop(VoiceScene):
 
             # those made-up endings are ghost games
             vo.wait_until("Let's call")
+            self.play(LaggedStart(*[Wiggle(g, scale_value=1.15) for g in ghosts], lag_ratio=0.15),
+                      run_time=1.2)
+            wait_for(self, vo, "ghost games", shift=-0.3)
             ghost_label.move_to(never)
-            self.play(ReplacementTransform(never, ghost_label),
-                      LaggedStart(*[Wiggle(g, scale_value=1.15) for g in ghosts], lag_ratio=0.15),
-                      run_time=1.4)
+            self.play(FadeTransform(never, ghost_label), run_time=0.7)
 
             # count each real game only once
             vo.wait_until("We want")
@@ -259,12 +337,13 @@ class GamesStop(VoiceScene):
             self.play(*[Restore(s) for s in slots[:4]], run_time=0.3)
             x_slots = [slots[0], slots[2], slots[4]]
             x_nums = [nums[0], nums[2], nums[4]]          # X's move numbers 1, 3, 5 on the board
+            self.wait(0.5)                                # "1", "3" and "5" are spoken ~0.6 s apart
             self.play(LaggedStart(*[AnimationGroup(
                 s[0].animate.set_fill(X_COLOR, 0.3).set_stroke(X_COLOR, 3),
                 Indicate(s[1], color=X_COLOR, scale_factor=1.3),
                 Indicate(n, color=X_COLOR, scale_factor=1.7)) for s, n in zip(x_slots, x_nums)],
-                lag_ratio=0.6), run_time=2.0)
-            vo.wait_until("so the fifth move")
+                lag_ratio=0.6), run_time=2.1)
+            wait_for(self, vo, "so the fifth move", shift=1.0)
             self.play(FadeIn(third, shift=DOWN * 0.15), GrowArrow(third_arrow),
                       Indicate(marks[4], color=WIN_COLOR, scale_factor=1.2), run_time=0.9)
 
@@ -288,7 +367,8 @@ class GamesStop(VoiceScene):
         heads = VGroup(S.text("(1) Which line?", 28), S.text("(2) In what order does X fill it?", 28),
                        S.text("(3) Where can O's 2 marks go?", 28))
         r1 = colour_parts(S.math("8", r"\text{ lines}", size=44), green=(0,))
-        r2 = colour_parts(S.math("3", r"\times", "2", r"\times", "1", "=", "6", size=44), green=(6,))
+        r2 = colour_parts(S.math("3", r"\times", "2", r"\times", "1", "=", "3!", "=", "6", size=44),
+                          green=(8,))     # "which is 3 factorial" (S02 wrote 9! as "nine factorial")
         r3 = colour_parts(S.math("6", r"\times", "5", "=", "30", size=44), green=(0, 2, 4))
         rows = VGroup(*[VGroup(h, r) for h, r in zip(heads, (r1, r2, r3))])
         for h, r in rows:
@@ -298,7 +378,7 @@ class GamesStop(VoiceScene):
         sep = Line(LEFT * 3.3, RIGHT * 3.3, color=S.GREY_DARK, stroke_width=2) \
             .move_to([PANEL_X, rows.get_bottom()[1] - 0.4, 0])
         final = colour_parts(S.math("8", r"\times", "6", r"\times", "30", "=", r"1{,}440",
-                                    r"\text{ games}", size=54), green=(0, 2, 4, 6))
+                                    r"\ \ \text{games}", size=54), green=(0, 2, 4, 6))
         final.next_to(sep, DOWN, buff=0.45).set_x(PANEL_X)
 
         with self.voiceover(SAY[4]) as vo:
@@ -323,68 +403,76 @@ class GamesStop(VoiceScene):
             self.play(lines[7].animate.set_stroke(opacity=0.3), ReplacementTransform(c1, r1[0]),
                       FadeIn(r1[1], shift=LEFT * 0.1), run_time=0.5)
 
-            # (2) X fills that line: 3 x 2 x 1 = 6 orders
+            # (2) X fills that line: 3 x 2 x 1 = 3! = 6 orders
             vo.wait_until("Second, X fills")
             self.play(FadeOut(VGroup(*lines[1:])), lines[0].animate.set_stroke(opacity=1),
                       heads[0].animate.set_color(S.GREY), heads[1].animate.set_color(S.WHITE),
                       run_time=0.6)
-            orders = list(itertools.permutations((1, 3, 5)))   # label on squares 0, 1, 2
+            orders = list(itertools.permutations((1, 3, 5)))   # move labels on squares 0, 1, 2
             xs = VGroup(*[board.mark_at(i, "X", scale=MARK_SCALE) for i in (0, 1, 2)])
             labels = {n: move_number(board, i, n, "X") for i, n in zip((0, 1, 2), orders[0])}
-            c2 = count_tex(1, r2[6].get_center())
+            c2 = count_tex(1, r2[8].get_center())
             self.play(LaggedStart(*[mark_anim(x) for x in xs], lag_ratio=0.3),
                       LaggedStart(*[FadeIn(labels[n], scale=0.6) for n in orders[0]], lag_ratio=0.3),
                       FadeIn(c2, scale=0.6), run_time=0.9)
-            budget = max(2.0, vo.time_until("3 times 2") - 0.2)
-            for k in range(1, len(orders)):
-                self.play(*[labels[n].animate(path_arc=-0.45 * PI).move_to(corner(board, orders[k].index(n)))
-                            for n in orders[k] if orders[k].index(n) != orders[k - 1].index(n)],
-                          run_time=min(0.6, budget / 5))
-                c2.become(count_tex(k + 1, r2[6].get_center()))
-            vo.wait_until("3 times 2")
-            self.play(FadeIn(r2[0:6], lag_ratio=0.3), run_time=1.2)
-            vo.wait_until("which is 3")
-            self.play(Indicate(r2[0:5], color=S.WHITE, scale_factor=1.12), run_time=0.8)
-            vo.wait_until("so 6 orders")
-            self.play(ReplacementTransform(c2, r2[6]), Indicate(VGroup(*labels.values()), scale_factor=1.3),
-                      run_time=0.6)
+            # the labels go through the other 5 orders (each one lands, then holds a moment) while
+            # "3 times 2 times 1, which is 3 factorial" writes itself; the counter lands on 6 at "so 6"
+            dt = until(vo, "so 6 orders", -0.2) / (len(orders) - 1)
+            steps = [([labels[n].animate(path_arc=-0.45 * PI).move_to(corner(board, cur.index(n)))
+                       for n in cur if cur.index(n) != prev.index(n)], 0.6 * dt, 0.4 * dt)
+                     for prev, cur in zip(orders, orders[1:])]
+            events = [(until(vo, "3 times 2", -0.4, 0), [FadeIn(r2[0], shift=DOWN * 0.1)]),
+                      (until(vo, "2 times 1", -0.45, 0), [FadeIn(r2[1:3], shift=DOWN * 0.1)]),
+                      (until(vo, "times 1,", 0.0, 0), [FadeIn(r2[3:5], shift=DOWN * 0.1)]),
+                      (until(vo, "which is 3", 0.3, 0), [FadeIn(r2[5:7], shift=DOWN * 0.1)])]
+            play_steps(self, steps, events,
+                       on_land=lambda k: c2.become(count_tex(k + 2, r2[8].get_center())))
+            self.play(FadeIn(r2[7]), ReplacementTransform(c2, r2[8]),
+                      Indicate(VGroup(*labels.values()), scale_factor=1.3), run_time=0.6)
 
             # (3) O's 2 marks: 6 x 5 = 30
             vo.wait_until("Third, O")
             self.play(heads[1].animate.set_color(S.GREY), heads[2].animate.set_color(S.WHITE), run_time=0.4)
             dots = VGroup()
 
-            def hop_through(squares, n, counter_slot):
+            def hop_through(squares, n, counter_slot, budget):
+                """O's mark n starts on squares[0] and hops to each next (neighbouring) square,
+                leaving an ORANGE dot where it was; a GREEN counter ticks as it lands."""
                 o = VGroup(board.mark_at(squares[0], "O", scale=MARK_SCALE),
                            move_number(board, squares[0], n, "O"))
                 off = o.get_center() - board.center_of(squares[0])
                 c = count_tex(1, counter_slot)
                 self.play(Create(o[0]), FadeIn(o[1], scale=0.6), FadeIn(c, scale=0.6), run_time=0.45)
+                dt = min(0.6, max(0.3, (budget - 0.45) / (len(squares) - 1)))
                 for k, sq in enumerate(squares[1:], start=2):
                     dot = Dot(board.center_of(squares[k - 2]), radius=0.08, color=O_COLOR).set_opacity(0.7)
                     dots.add(dot)
-                    self.play(o.animate(path_arc=-0.6 * PI).move_to(board.center_of(sq) + off),
-                              FadeIn(dot, scale=0.5), run_time=0.42)
+                    self.play(o.animate(path_arc=-0.35 * PI).move_to(board.center_of(sq) + off),
+                              FadeIn(dot, scale=0.5), run_time=dt)
                     c.become(count_tex(k, counter_slot))
                 return o, c
 
-            _, c3a = hop_through((3, 5, 6, 7, 8, 4), 2, r3[0].get_center())
+            _, c3a = hop_through(O1_TOUR, 2, r3[0].get_center(), until(vo, "and O's second", -0.7) - 0.4)
             self.play(ReplacementTransform(c3a, r3[0]), FadeOut(dots), run_time=0.4)
             dots.remove(*dots.submobjects)
-            vo.wait_until("and O's second")
+            wait_for(self, vo, "and O's second", -0.7)
             self.play(FadeIn(r3[1]), run_time=0.3)
-            _, c3b = hop_through((3, 5, 6, 7, 8), 4, r3[2].get_center())
+            _, c3b = hop_through(O2_TOUR, 4, r3[2].get_center(), until(vo, "6 times 5", -1.1) - 0.4)
             self.play(ReplacementTransform(c3b, r3[2]), FadeOut(dots), run_time=0.4)
-            vo.wait_until("6 times 5")
+            wait_for(self, vo, "6 times 5", -1.1)
+            self.play(Indicate(r3[0:3], color=COUNT_COLOR, scale_factor=1.15), run_time=0.6)
+            wait_for(self, vo, "is 30", -0.5)
             self.play(FadeIn(r3[3:5], shift=LEFT * 0.1), run_time=0.6)
 
-            # multiply
+            # multiply: 8, 6 and 30 fly down as they are spoken
             vo.wait_until("Multiply")
             self.play(heads[2].animate.set_color(S.GREY), Create(sep), run_time=0.4)
-            self.play(TransformFromCopy(r1[0], final[0]), TransformFromCopy(r2[6], final[2]),
-                      TransformFromCopy(r3[4], final[4]), FadeIn(final[1]), FadeIn(final[3]),
-                      run_time=1.2)
-            vo.wait_until("is 1,440")
+            vo.wait_until("8 times 6")
+            self.play(LaggedStart(TransformFromCopy(r1[0], final[0]),
+                                  AnimationGroup(FadeIn(final[1]), TransformFromCopy(r2[8], final[2])),
+                                  AnimationGroup(FadeIn(final[3]), TransformFromCopy(r3[4], final[4])),
+                                  lag_ratio=0.4), run_time=1.4)
+            wait_for(self, vo, "is 1,440", -0.45)
             self.play(Write(final[5:]), run_time=0.8)
             box = highlight_box(final[6], color=COUNT_COLOR, buff=0.08)
             self.play(Create(box), Indicate(final[6], color=COUNT_COLOR, scale_factor=1.15), run_time=0.6)

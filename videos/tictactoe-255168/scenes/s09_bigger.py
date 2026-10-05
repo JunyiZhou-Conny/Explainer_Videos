@@ -270,6 +270,11 @@ def pulse(m, k: float = 1.15):
     return m.animate(rate_func=there_and_back).scale(k)
 
 
+def shake(m, amp: float = 0.2, n: int = 3):
+    """A quick side-to-side 'no' shake that ends where it started."""
+    return m.animate(rate_func=lambda t: np.sin(n * TAU * t) * (1 - t)).shift(RIGHT * amp)
+
+
 def place_game(board: Board, moves, numbers: bool = False, scale: float = 0.5, num_size: float = 20):
     """Marks (and optional move numbers) of a game on `board`, not yet added. Returns list of VGroups."""
     out = []
@@ -365,9 +370,9 @@ class Bigger(VoiceScene):
             self.play(*[n["frame"].animate.set_stroke(width=7) for n in path], run_time=0.4)
 
             vo.wait_until("every game ends")
-            self.play(Write(caption), run_time=0.9)
-            self.play(FadeIn(note, shift=UP * 0.15), run_time=0.7)
-        self.wait(0.9)
+            self.play(Write(caption), run_time=0.8)
+            self.play(FadeIn(note, shift=UP * 0.15), run_time=0.6)
+        self.wait(1.2)                       # time to read the note before the chess beat
 
     # ------------------------------------------------------------------ beat 2: chess is huge
     def chess_numbers(self):
@@ -398,16 +403,18 @@ class Bigger(VoiceScene):
         header.move_to([0, 3.2, 0]).align_to([STRIP_X0, 0, 0], LEFT)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(Group(*self.mobjects), shift=UP * 0.3), run_time=0.6)
+            self.play(FadeOut(Group(*self.mobjects), shift=UP * 0.3), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(s) for s in board[0]], lag_ratio=0.015), Create(board[2]),
-                      run_time=0.8)
-            self.play(LaggedStart(*[FadeIn(p, shift=DOWN * 0.1) for p in board[1]], lag_ratio=0.02),
                       run_time=0.6)
+            self.play(LaggedStart(*[FadeIn(p, shift=DOWN * 0.1) for p in board[1]], lag_ratio=0.02),
+                      run_time=0.5)
             self.remove(*board.get_family()[1:])          # from now on the board moves as one piece
             self.add(board)
 
-            # the chessboard becomes the icon of its row; tic-tac-toe's number for comparison
+            # "Not a chance": the board shakes its head, then becomes the icon of its row;
+            # tic-tac-toe's number for comparison
             vo.wait_until("Not a chance")
+            self.play(shake(board), run_time=0.7)
             self.play(board.animate.scale_to_fit_width(ICON_W).move_to(icon_pos["chess"]),
                       FadeIn(ttt_icon), FadeIn(ttt_label, shift=RIGHT * 0.2), FadeIn(header),
                       run_time=1.0)
@@ -427,8 +434,8 @@ class Bigger(VoiceScene):
             vo.wait_until("The whole observable")
             self.play(FadeIn(a_icon, scale=0.6), FadeIn(a_label, shift=RIGHT * 0.2), run_time=0.7)
             self.play(LaggedStart(*[GrowFromEdge(c, DOWN) for c in a_cells], lag_ratio=0.2), run_time=1.6)
-            a_cells[0].set_fill(S.WHITE)
-            self.play(Write(a_tag), Rotate(a_icon[0], PI / 3), run_time=0.8)
+            self.play(Write(a_tag), Rotate(a_icon[0], PI / 3), a_cells[0].animate.set_fill(S.WHITE),
+                      run_time=0.8)
             self.play(Indicate(chess_tag, color=CHESS_COLOR), run_time=min(1.0, vo.remaining()))
         self.chess_icon = board
 
@@ -573,13 +580,13 @@ class Bigger(VoiceScene):
 
             vo.wait_until("And a short")
             self.play(FadeIn(frames[2], scale=0.95), Create(tree3), FadeIn(dots3), run_time=0.8)
-            self.play(FadeIn(text3[0], shift=UP * 0.15), run_time=0.6)
-            vo.wait_until("by trying a move")
             walk = Dot(t0, radius=0.09, color=S.WHITE)
+            self.play(FadeIn(walk, scale=0.5), run_time=0.3)
+            vo.wait_until("by trying a move")
             down1 = Line(t0, t1[0]).set_stroke(S.WHITE, 7)
             down2 = Line(t1[0], t2[0]).set_stroke(S.WHITE, 7)
-            self.add(walk)
-            self.play(Create(down1), MoveAlongPath(walk, Line(t0, t1[0])), run_time=0.5)
+            self.play(Create(down1), MoveAlongPath(walk, Line(t0, t1[0])),
+                      FadeIn(text3[0], shift=UP * 0.15), run_time=0.5)
             self.play(Create(down2), MoveAlongPath(walk, Line(t1[0], t2[0])), run_time=0.5)
             self.play(Flash(t2[0], color=COUNT_COLOR, line_length=0.15, flash_radius=0.15), run_time=0.4)
             vo.wait_until("and undoing it")
@@ -595,7 +602,10 @@ class Bigger(VoiceScene):
                      VGroup(frames[2], tree3, dots3, down1, down3, walk, text3)]
             pulses = LaggedStart(*[pulse(c, 1.04) for c in cards], lag_ratio=0.3)
             self.play(pulses, run_time=min(1.5, vo.remaining()))
-            self.remove(pulses.mobject)      # drop the temporary wrapper: it holds the frames we keep
+            # Drop the temporary wrapper the LaggedStart added (it holds the frames we keep). Scene.remove
+            # takes the wrapper's whole family with it, so put the cards' pieces back one by one.
+            self.remove(pulses.mobject)
+            self.add(*[m for c in cards for m in c])
         self.recap_title, self.recap_frames = title, frames
 
     # ------------------------------------------------------------------ beat 5: challenges

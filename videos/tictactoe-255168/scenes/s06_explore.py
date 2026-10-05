@@ -753,9 +753,9 @@ class Explore(VoiceScene):
             self.play(FadeOut(self.tree), FadeOut(VGroup(*w["trail"], w["cursor"], w["leaf"])),
                       ReplacementTransform(zoom, zoom_to),
                       FadeIn(VGroup(closeup, hl_stub, hl["X6"], counted["X6"], cursor)),
-                      side_group.animate.scale(scale).move_to(WB_C),
-                      Transform(cnt_lab, cnt_lab_to), Transform(cnt, cnt_to), run_time=1.1)
-            self.play(FadeOut(zoom_to), FadeIn(code, shift=RIGHT * 1.0), run_time=0.7)
+                      side_group.animate.scale(scale).move_to(WB_C), run_time=1.1)
+            self.play(FadeOut(zoom_to), FadeIn(code, shift=RIGHT * 1.0),
+                      Transform(cnt_lab, cnt_lab_to), Transform(cnt, cnt_to), run_time=0.7)
             undo_bar = lines_bar(code, 11, color=UNDO_COLOR, opacity=0.32)
             undo_tag = line_tag(code, 11, "undo", UNDO_COLOR)
             self.play(FadeIn(undo_bar), FadeIn(undo_tag, shift=LEFT * 0.2),
@@ -777,6 +777,10 @@ class Explore(VoiceScene):
             self.play(Indicate(code_line(code, 11), color=UNDO_COLOR, scale_factor=1.05),
                       Indicate(undo_tag, color=UNDO_COLOR), run_time=0.6)
             step_back("X6", "A", 6, extra_targets=[w["side_win"]], rt=0.8)
+
+            vo.wait_until("That's called undoing")
+            self.play(Circumscribe(VGroup(undo_bar, undo_tag), color=UNDO_COLOR, buff=0.06),
+                      Indicate(cursor, color=WIN_COLOR, scale_factor=1.6), run_time=1.0)
 
             # the next branch starts fresh: X7, O6, X8 -> the 2nd game
             vo.wait_until("and it means the next branch")
