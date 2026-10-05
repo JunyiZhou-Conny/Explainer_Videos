@@ -1,9 +1,10 @@
 """S03 · Games stop early.
 
 Beats: a real game stops when X wins on move 5, so the 4 empty squares are never played (GREY
-dashed ghost moves 6-9) -> the ghost moves shuffle through all 24 orders while a GREEN counter
-ticks 1..24: this 1 game was counted 24 times in 362,880 ("ghost games") -> a timeline of moves
-1-9: X's 3rd mark is move 5 -> ponder: how many games does X win on move 5? -> three steps on the
+dashed ghost moves 6-9) -> the ghost moves shuffle through all 24 orders while a GREEN tally under
+the board counts them 1..24: this 1 game was counted 24 times in 362,880 ("ghost games" = made-up
+moves after someone already won) -> a timeline of moves 1-9: X's 3rd mark is move 5 -> ponder
+(hints arrive one by one): how many games does X win on move 5? -> three steps on the
 board: 8 lines, 3 x 2 x 1 = 3! = 6 orders of X's marks, 6 x 5 places for O's marks (O hops between
 neighbouring squares) -> 8 x 6 x 30 = 1,440.
 """
@@ -99,7 +100,12 @@ def until(vo, phrase: str, shift: float = 0.0, minimum: float = 0.3) -> float:
 
 
 def play_steps(scene, steps, events=(), on_land=None) -> None:
-    """Play steps [(anims, move_time, hold_time), ...] back to back.
+    """Play steps [(make_anims, move_time, hold_time), ...] back to back.
+
+    make_anims is a function that builds the step's animations; it is called right before the step
+    plays. (Building `.animate` ahead of time does not work for a mobject that moves in several
+    steps: each `.animate` overwrites the mobject's one `.target`, so every step would jump to the
+    last step's position.)
 
     events: [(t, anims)] with t in seconds from now; each event's anims join the step (or hold)
     that is running when t comes up. on_land(k) is called right after step k's motion lands.
@@ -119,8 +125,8 @@ def play_steps(scene, steps, events=(), on_land=None) -> None:
             scene.wait(run_time)
 
     t = 0.0
-    for k, (anims, dt, hold) in enumerate(steps):
-        anims = list(anims)
+    for k, (make_anims, dt, hold) in enumerate(steps):
+        anims = list(make_anims())               # built now, from where things are now
         while events and events[0][0] <= t + dt / 2:
             anims += events.pop(0)[1]
         t += dt
@@ -182,8 +188,33 @@ def plain_changes(n: int) -> list[tuple[int, ...]]:
     return out
 
 
+def moves_to(moves, path_arc: float):
+    """A step for play_steps: moves = [(mobject, point), ...], each travels along an arc to its point.
+    The `.animate`s are made only when the step plays."""
+    return lambda: [m.animate(path_arc=path_arc).move_to(p) for m, p in moves]
+
+
 def count_tex(k: int, at, size: float = 44) -> MathTex:
     return S.math(str(k), size=size, color=COUNT_COLOR).move_to(at)
+
+
+def ghost_tally(k: int, left) -> Text:
+    """'ghost endings counted: k' (k GREEN), its left end at `left`, so the words stay put as k grows."""
+    return S.text(f"ghost endings counted: {k}", 26, S.GREY, t2c={str(k): COUNT_COLOR}) \
+        .move_to(left, aligned_edge=LEFT)
+
+
+def card_lines(question: Text) -> list[VGroup]:
+    """The glyphs of a multi-line Text, one VGroup per line (glyph counts can differ from character
+    counts, e.g. the 'fi' ligature, so lines are found by where each glyph sits)."""
+    lines, y_line = [], None
+    for g in question:
+        y = g.get_center()[1]
+        if y_line is None or y_line - y > 0.25:      # dropped to the next line
+            lines.append(VGroup())
+            y_line = y
+        lines[-1].add(g)
+    return lines
 
 
 def colour_parts(tex: MathTex, green: tuple[int, ...]) -> MathTex:
@@ -243,7 +274,8 @@ class GamesStop(VoiceScene):
         tag1 = S.text("this 1 game was counted", 32, S.WHITE)
         tag2 = S.text("24 times in 362,880", 32, S.WHITE, t2c={"24": COUNT_COLOR, "362,880": COUNT_COLOR})
         tag = VGroup(tag1, tag2).arrange(DOWN, buff=0.18).move_to([PANEL_X, -1.75, 0])
-        ghost_label = S.text("ghost games", 32, GHOST_COLOR)
+        ghost_label = S.text("ghost games", 38, GHOST_COLOR)
+        ghost_def = S.text("made-up moves after someone already won", 26, GHOST_COLOR)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(VGroup(board, marks, nums, win, ghosts, caption, never).animate.shift(
@@ -258,18 +290,21 @@ class GamesStop(VoiceScene):
             self.play(LaggedStart(*[Indicate(g, color=S.WHITE, scale_factor=1.25) for g in ghosts],
                                   lag_ratio=0.55), run_time=2.0)
 
-            # the 4 ghost moves shuffle through all 24 orders while a GREEN counter ticks
+            # the 4 ghost moves shuffle through all 24 orders while a GREEN tally under the board
+            # counts them; the formula on the right only gets its "= 24" once the tally is done
             vo.wait_until("The 4 empty")
-            counter = count_tex(1, formula[8].get_center(), size=56)
-            self.play(FadeIn(ways_cap, shift=DOWN * 0.1), FadeIn(counter, scale=0.6), run_time=0.5)
+            tally_at = ghost_tally(24, ORIGIN).next_to(never, DOWN, buff=0.2).get_left()   # centred at 24
+            tally = ghost_tally(1, tally_at)
+            self.play(FadeIn(ways_cap, shift=DOWN * 0.1), FadeIn(tally, shift=UP * 0.1), run_time=0.5)
             # every order is one swap of two neighbouring ghosts away from the last (plain changes);
             # perms[k][p] says which ghost sits at walk spot p (ghost order = GHOST_SQUARES order)
             start = [GHOST_SQUARES.index(sq) for sq in GHOST_WALK]
             spot = [board.center_of(sq) for sq in GHOST_WALK]
             offset = [g.get_center() - board.center_of(sq) for g, sq in zip(ghosts, GHOST_SQUARES)]
             perms = plain_changes(4)
-            # the counter reaches 24 as "24" is spoken; the factors appear as they are spoken
-            budget = until(vo, "so 24 ways")
+            # the tally reaches 24 as "24 ways" is spoken; the factors appear as they are spoken.
+            # The first swaps are slow enough to follow, then the shuffle speeds up.
+            budget = until(vo, "so 24 ways", -0.1)
             base = [max(0.17, 0.45 * 0.9 ** k) for k in range(len(perms) - 1)]
             durations = [d * budget / sum(base) for d in base]
             steps = []
@@ -277,17 +312,19 @@ class GamesStop(VoiceScene):
                 prev, cur = perms[k - 1], perms[k]
                 moved = [p for p in range(4) if prev[p] != cur[p]]
                 arc = 0.35 * PI if moved == [2, 3] else 0.5 * PI     # 7 <-> 5 is the diagonal swap
-                steps.append(([ghosts[start[cur[p]]].animate(path_arc=arc)
-                               .move_to(spot[p] + offset[start[cur[p]]]) for p in moved],
-                              durations[k - 1], 0))
+                d = durations[k - 1]
+                hold = 0.25 * d if d > 0.3 else 0.0                    # the slow first swaps settle
+                steps.append((moves_to([(ghosts[start[cur[p]]], spot[p] + offset[start[cur[p]]])
+                                        for p in moved], arc), d - hold, hold))
             factor_events = [(until(vo, "4 times 3", -0.9, 0), [FadeIn(formula[0], shift=DOWN * 0.1)]),
                              (until(vo, "3 times 2", -0.95, 0), [FadeIn(formula[1:3], shift=DOWN * 0.1)]),
                              (until(vo, "2 times 1", -1.0, 0), [FadeIn(formula[3:5], shift=DOWN * 0.1)]),
                              (until(vo, "times 1,", -0.6, 0), [FadeIn(formula[5:7], shift=DOWN * 0.1)])]
             play_steps(self, steps, factor_events,
-                       on_land=lambda k: counter.become(count_tex(k + 2, formula[8].get_center(), size=56)))
-            self.play(FadeIn(formula[7]), ReplacementTransform(counter, formula[8]), run_time=0.4)
-            self.play(Indicate(formula[8], color=COUNT_COLOR, scale_factor=1.3), run_time=0.5)
+                       on_land=lambda k: tally.become(ghost_tally(k + 2, tally_at)))
+            # the tally has reached 24: it leaves, then "= 24" is written (24 is never on screen twice)
+            self.play(FadeOut(tally, shift=DOWN * 0.1), run_time=0.3)
+            self.play(FadeIn(formula[7]), FadeIn(formula[8], scale=1.5), run_time=0.45)
 
             # this one real game was counted 24 times
             vo.wait_until("So this one game")
@@ -298,22 +335,24 @@ class GamesStop(VoiceScene):
                       Indicate(top, color=COUNT_COLOR, scale_factor=1.12),     # "...in 362,880" (the one up top)
                       FadeIn(tag2[2:]), run_time=1.2)
 
-            # those made-up endings are ghost games
+            # those made-up endings are ghost games: the label (with what it means) stays under the
+            # board, next to the dashed ghost moves, until the next block
             vo.wait_until("Let's call")
+            ghost_label.next_to(board, DOWN, buff=0.22).align_to(board, LEFT)
+            ghost_def.next_to(ghost_label, DOWN, buff=0.14, aligned_edge=LEFT)
             self.play(LaggedStart(*[Wiggle(g, scale_value=1.15) for g in ghosts], lag_ratio=0.15),
+                      FadeTransform(never, ghost_label, rate_func=squish_rate_func(smooth, 0.4, 1.0)),
                       run_time=1.2)
-            wait_for(self, vo, "ghost games", shift=-0.3)
-            ghost_label.move_to(never)
-            self.play(FadeTransform(never, ghost_label), run_time=0.7)
+            self.play(FadeIn(ghost_def, shift=UP * 0.1), run_time=0.5)
 
-            # count each real game only once
+            # count each real game only once: the right-hand panel leaves first, then the goal comes in
             vo.wait_until("We want")
             goal = VGroup(S.text("count each real game", 34, S.WHITE),
                           S.text("only once", 44, COUNT_COLOR)).arrange(DOWN, buff=0.25) \
                 .move_to([PANEL_X, 0.2, 0])
-            self.play(FadeOut(ghosts, scale=0.6), FadeOut(ghost_label),
-                      FadeOut(VGroup(top, top_cap, ways_cap, formula, tag, arrow), shift=UP * 0.3),
-                      FadeIn(goal, shift=UP * 0.3), run_time=0.9)
+            self.play(FadeOut(VGroup(top, top_cap, ways_cap, formula, tag, arrow), shift=UP * 0.3),
+                      run_time=0.5)
+            self.play(FadeIn(goal, shift=UP * 0.3), run_time=0.6)
             self.play(LaggedStart(*[Indicate(n, scale_factor=1.5) for n in nums], lag_ratio=0.25),
                       run_time=1.2)
 
@@ -326,7 +365,8 @@ class GamesStop(VoiceScene):
                             stroke_width=4, max_tip_length_to_length_ratio=0.3)
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(goal, shift=UP * 0.3), FadeOut(caption), run_time=0.4)
+            self.play(FadeOut(goal, shift=UP * 0.3), FadeOut(caption), FadeOut(ghosts, scale=0.6),
+                      FadeOut(VGroup(ghost_label, ghost_def)), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(s, shift=UP * 0.2) for s in slots], lag_ratio=0.12),
                       run_time=1.1)
             vo.wait_until("Not before")
@@ -346,22 +386,41 @@ class GamesStop(VoiceScene):
             wait_for(self, vo, "so the fifth move", shift=1.0)
             self.play(FadeIn(third, shift=DOWN * 0.15), GrowArrow(third_arrow),
                       Indicate(marks[4], color=WIN_COLOR, scale_factor=1.2), run_time=0.9)
+            # the timeline slides down as the sentence ends, making room for the ponder card
+            strip = VGroup(slots, hl5, third, third_arrow)
+            wait_for(self, vo, "three marks", shift=-0.3)
+            self.play(strip.animate.shift(DOWN * (slots.get_top()[1] + 2.15)), run_time=0.9)
 
         # ============================================================== 4. ponder
-        strip = VGroup(slots, hl5, third, third_arrow)
+        # The card comes in on "Pause" with just the question; during the silent timer the hints
+        # come in one at a time, so the wait keeps giving something new.
+        card = ponder_card("How many games end with X winning on move 5?\nHint: (1) Which line?\n"
+                           "(2) In what order does X fill it?\n(3) Where can O's 2 marks go?",
+                           width=8.4, size=26).move_to([PANEL_X, 1.6, 0])
+        q_lines = card_lines(card[2])                  # question, hint (1), hint (2), hint (3)
+        assert len(q_lines) == 4
+        card_top = VGroup(card[0], card[1], q_lines[0], card[3])   # frame, header, question, timer
         with self.voiceover(SAY[3]) as vo:
-            self.play(strip.animate.shift(DOWN * (slots.get_top()[1] + 2.15)), run_time=1.0)
+            vo.wait_until("Pause")
+            self.play(FadeIn(card_top, scale=0.95), run_time=0.6)
             self.play(Indicate(win, color=WIN_COLOR, scale_factor=1.1), run_time=0.8)
             vo.wait_until("Try to count")
             self.play(Indicate(VGroup(marks[0], marks[2], marks[4]), color=X_COLOR, scale_factor=1.15),
                       run_time=0.8)
-        card = ponder_card("How many games end with X winning on move 5?\nHint: (1) Which line?\n"
-                           "(2) In what order does X fill it?\n(3) Where can O's 2 marks go?",
-                           width=8.4, size=26).move_to([PANEL_X, 1.6, 0])
-        self.play(FadeIn(card, scale=0.95), run_time=0.6)
+        # the timer bar drains over the whole ponder; hints (1), (2), (3) arrive along the way
+        ponder, hint_at = 20.0, (4.0, 9.0, 14.0)
         bar = card[3]
-        self.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
-                  run_time=20)
+        full, bar_start = bar.copy(), bar.get_start()
+        times = (0.0, *hint_at, ponder)
+        for k, (a, b) in enumerate(zip(times, times[1:])):
+            left = full.copy().scale(max(0.001, 1 - b / ponder), about_point=bar_start)
+            anims = [bar.animate(rate_func=linear).become(left)]
+            if k > 0:
+                anims.append(FadeIn(q_lines[k], shift=RIGHT * 0.15,
+                                    rate_func=squish_rate_func(smooth, 0, 0.7 / (b - a))))
+            self.play(*anims, run_time=b - a)
+        self.remove(card_top, *q_lines[1:])            # the whole card is on screen now:
+        self.add(card)                                 # hand it over as one mobject
 
         # ============================================================== 5. three steps -> 1,440
         heads = VGroup(S.text("(1) Which line?", 28), S.text("(2) In what order does X fill it?", 28),
@@ -417,9 +476,11 @@ class GamesStop(VoiceScene):
                       FadeIn(c2, scale=0.6), run_time=0.9)
             # the labels go through the other 5 orders (each one lands, then holds a moment) while
             # "3 times 2 times 1, which is 3 factorial" writes itself; the counter lands on 6 at "so 6"
+            # (each step moves the 2 or 3 labels whose square changes; built lazily, see play_steps)
             dt = until(vo, "so 6 orders", -0.2) / (len(orders) - 1)
-            steps = [([labels[n].animate(path_arc=-0.45 * PI).move_to(corner(board, cur.index(n)))
-                       for n in cur if cur.index(n) != prev.index(n)], 0.6 * dt, 0.4 * dt)
+            steps = [(moves_to([(labels[n], corner(board, cur.index(n)))
+                                for n in cur if cur.index(n) != prev.index(n)], -0.45 * PI),
+                      0.6 * dt, 0.4 * dt)
                      for prev, cur in zip(orders, orders[1:])]
             events = [(until(vo, "3 times 2", -0.4, 0), [FadeIn(r2[0], shift=DOWN * 0.1)]),
                       (until(vo, "2 times 1", -0.45, 0), [FadeIn(r2[1:3], shift=DOWN * 0.1)]),

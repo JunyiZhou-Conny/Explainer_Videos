@@ -1,7 +1,8 @@
 """S02 · Filling the board: nine factorial.
 
-Beats: an empty board fills up move by move (a real draw, so no one ever wins) and the move numbers
-shuffle: in how many orders can the board fill? -> the board shrinks into the root of a tree:
+Beats: an empty board fills up move by move: X completes the top row on move 5 (YELLOW line, 'X won!'),
+but the players ignore it and keep going (moves 6-9 dimmer) until the board is full; then the move
+numbers shuffle: in how many orders can the board fill? -> the board shrinks into the root of a tree:
 9 first moves for X, then the 8 replies for O under the first one, which pack into a small bundle
 that is copied under every first move: 9 groups of 8 = 72 -> that label becomes the start of the
 product 9 x 8 x 7 x ... x 1, built term by term with the running total under each term -> it
@@ -15,32 +16,41 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (COUNT_COLOR, NARRATION, NINE_FACTORIAL, TOTAL_GAMES, UNDO_COLOR, Board,
-                    mark_anim, mini_board, move_number, o_mark, winner, x_mark)
+from common import (COUNT_COLOR, NARRATION, NINE_FACTORIAL, TOTAL_GAMES, UNDO_COLOR, WIN_COLOR, WIN_LINES,
+                    X_COLOR, Board, mark_anim, mini_board, move_number, o_mark, winner, x_mark)
 
 SAY = NARRATION["S02"]
 
-# A real game that fills all nine squares without anyone winning (a draw): X center, O corner, ...
-# Because the final board has no line, ANY order of these same moves is also a real game.
-FILL_GAME = [(4, "X"), (0, "O"), (2, "X"), (6, "O"), (3, "X"), (5, "O"), (1, "X"), (7, "O"), (8, "X")]
-# Two re-orderings (move numbers swap among X's squares and among O's squares).
+# A fill that ignores three in a row: X completes the top row on move 5 (X0 O3 X1 O4 X2), and the
+# players keep going (O8 X5 O6 X7) until the board is full. The top row is the only line ever made.
+FILL_GAME = [(0, "X"), (3, "O"), (1, "X"), (4, "O"), (2, "X"), (8, "O"), (5, "X"), (6, "O"), (7, "X")]
+WIN_MOVE, WIN_ENDS = 5, (0, 2)
+# Two other fill orders (move numbers swap among X's squares and among O's squares; every number
+# moves each time). They are fills, not real games: nobody stops for a line here.
 SHUFFLES = [
-    {4: 5, 2: 9, 3: 1, 1: 3, 8: 7, 0: 4, 6: 8, 5: 2, 7: 6},
-    {4: 3, 2: 7, 3: 9, 1: 5, 8: 1, 0: 6, 6: 2, 5: 8, 7: 4},
+    {5: 1, 7: 3, 0: 5, 2: 7, 1: 9, 6: 2, 8: 4, 3: 6, 4: 8},
+    {1: 1, 5: 3, 7: 5, 0: 7, 2: 9, 4: 2, 6: 4, 8: 6, 3: 8},
 ]
 
 
 def _check_fill_orders():
-    """Every order shown is a real game: right player each turn, nobody wins before the board is full."""
-    final = dict((sq, sym) for sq, sym in FILL_GAME)
+    """The first fill is legal up to X's win on move 5 (the only line it ever makes), then fills the
+    board taking turns; every shown order is an alternating fill (odd numbers on X, even on O)."""
+    assert sorted(sq for sq, _ in FILL_GAME) == list(range(9))
+    board = ["."] * 9
+    for n, (sq, sym) in enumerate(FILL_GAME, start=1):
+        assert sym == ("X" if n % 2 else "O")
+        board[sq] = sym
+        assert winner(board) == ("X" if n >= WIN_MOVE else None)
+    lines = [(a, c) for a, b, c in WIN_LINES if board[a] == board[b] == board[c]]
+    assert lines == [WIN_ENDS] and board[WIN_ENDS[0]] == "X"
+    final = dict(FILL_GAME)
     orders = [{sq: n for n, (sq, _) in enumerate(FILL_GAME, start=1)}, *SHUFFLES]
     for order in orders:
         assert sorted(order.values()) == list(range(1, 10))
-        board = ["."] * 9
-        for sq in sorted(order, key=order.get):
-            assert final[sq] == ("X" if order[sq] % 2 else "O")
-            board[sq] = final[sq]
-            assert winner(board) is None
+        assert all(final[sq] == ("X" if n % 2 else "O") for sq, n in order.items())
+    for before, after in zip(orders, orders[1:]):
+        assert all(after[sq] != before[sq] for sq in after)          # every number visibly moves
 
 
 _check_fill_orders()
@@ -100,19 +110,41 @@ class FillTheBoard(VoiceScene):
         board = Board(size=3.6).move_to(DOWN * 0.45)
         caption = S.text("What if the game never stopped early?", 40).to_edge(UP, buff=0.5)
 
+        win = board.win_line(*WIN_ENDS)
+        won_text = S.text("X won!", 30, WIN_COLOR, weight=BOLD, t2c={"X": X_COLOR})
+        won = VGroup(SurroundingRectangle(won_text, buff=0.12, corner_radius=0.08, color=WIN_COLOR,
+                                          stroke_width=2.5).set_fill(S.BG, 0.9), won_text)
+        won.next_to(win, RIGHT, buff=0.3)
+        dim = 0.4                       # moves 6-9: the players play on after X's win
+
         with self.voiceover(SAY[0]) as vo:
-            self.play(LaggedStart(*[Create(ln) for ln in board], lag_ratio=0.2), run_time=1.0)
-            self.play(Write(caption), run_time=1.2)
-            vo.wait_until("Suppose the players")
+            self.play(LaggedStart(*[Create(ln) for ln in board], lag_ratio=0.2), run_time=0.8)
+            self.play(Write(caption), run_time=1.0)
             marks, nums = VGroup(), {}
+            # moves 1-4 run up to "ignore three in a row"; X's winning move 5 lands on it
+            step = min(0.5, max(0.3, vo.until("ignore three in a row") / (WIN_MOVE - 1)))
             for n, (sq, sym) in enumerate(FILL_GAME, start=1):
                 m = board.mark_at(sq, sym, scale=0.5)
                 num = move_number(board, sq, n, sym, size=26)
                 marks.add(m)
                 nums[sq] = num
-                self.play(mark_anim(m), FadeIn(num, scale=0.6), run_time=0.5)
-            # a different order: the move numbers swap places (X's among X squares, O's among O's)
+                if n == WIN_MOVE:
+                    vo.wait_until("ignore three in a row")
+                elif n == WIN_MOVE + 1:
+                    vo.wait_until("and just keep going")
+                if n > WIN_MOVE:
+                    m.set_stroke(opacity=dim)
+                    num.set_opacity(dim)
+                self.play(mark_anim(m), FadeIn(num, scale=0.6), run_time=step if n <= WIN_MOVE else 0.45)
+                if n == WIN_MOVE:       # X has three in a row ... and nobody stops
+                    self.play(Create(win), FadeIn(won, shift=LEFT * 0.2), run_time=0.45)
+                    self.play(Indicate(win, color=WIN_COLOR, scale_factor=1.12), run_time=0.5)
+            # other orders: the line goes (it isn't a win at move 5 in every order) and all moves look alike,
+            # then the move numbers swap places (X's among X squares, O's among O's)
             vo.wait_until("In how many")
+            late = [sq for sq, _ in FILL_GAME[WIN_MOVE:]]
+            self.play(FadeOut(win), FadeOut(won), marks[WIN_MOVE:].animate.set_stroke(opacity=1),
+                      *[nums[sq].animate.set_opacity(1) for sq in late], run_time=0.45)
             num_of = {sq: n for n, (sq, _) in enumerate(FILL_GAME, start=1)}
             for shuffle in SHUFFLES:
                 # the number now in square sq travels to the square that gets it in the new order
