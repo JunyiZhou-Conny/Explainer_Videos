@@ -98,11 +98,20 @@ erased, so X also "tries" square 7 (game 2: X has still won) and square 8 (game 
 is full, every earlier loop finds no empty squares, and the search ends with a total of **3**.
 </details>
 
+**10. Delete the draw check.** Put undo back, keep the winner check, and delete the two lines
+that count a full board as a draw. What prints, and why?
+
+<details><summary>Answer</summary>
+
+**209,088**. A full board with no winner now reaches the `for` loop, finds no empty square, and
+returns a total of 0, so all 46,080 draws stop counting: 255,168 − 46,080 = 209,088.
+</details>
+
 ## For the curious
 
 - With perfect play, every game of tic-tac-toe is a draw. A computer can prove this by checking
   the whole game tree (look up the **minimax** algorithm).
 - There are 5,478 different boards that can appear in real games, but only 765 if you treat
   rotated and mirrored boards as the same.
-- Chess is far too big for this: Claude Shannon estimated around 10¹²⁰ possible games in 1950.
-  Chess programs search only the most promising branches.
+- Chess is far too big for this: in 1950 Claude Shannon estimated that chess has *at least* 10¹²⁰
+  possible games. Chess programs look only a few moves ahead, then estimate who is winning.

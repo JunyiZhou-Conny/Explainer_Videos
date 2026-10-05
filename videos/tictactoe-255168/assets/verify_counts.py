@@ -82,4 +82,7 @@ def walk(pl, seq):
         if b[s] == ".":
             b[s] = pl; walk("O" if pl == "X" else "X", seq+[s]); b[s] = "."
 walk("X", [])
+# Note: "games up to symmetry" here turns/flips the WHOLE game, and every orbit has 8 games, so it
+# is 255,168 / 8 = 31,896. The often-quoted 26,830 merges symmetric moves position by position
+# instead, which is a different count. The video quotes neither.
 print("distinct reachable positions:", len(positions), " up to symmetry:", len(canon_pos), " games up to symmetry:", len(games_canon))
