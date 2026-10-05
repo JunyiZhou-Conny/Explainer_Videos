@@ -173,3 +173,58 @@ def code_block(source: str, font_size: float = 22, line_numbers: bool = False,
 
 def big_number(n: int, size: float = 96, color: str = COUNT_COLOR):
     return S.text(f"{n:,}", size, color)
+
+
+# ------------------------------------------------------------------ explore() on screen (S06, S07)
+EXPLORE_FIRST, EXPLORE_LAST = 23, 35        # explore() in assets/play_all_games.py (1-based, inclusive)
+EXPLORE_SOURCE = program_lines(EXPLORE_FIRST, EXPLORE_LAST)
+EXPLORE_WIDTH = 8.0                         # same size in S06 and S07, so strike-throughs land on known lines
+
+
+def explore_code() -> Code:
+    """The explore() function as shown in S06 and S07: same size, placed at the left edge.
+
+    code.code_lines[k] is line k (0-based) of EXPLORE_SOURCE:
+      0 def explore(player):          5 total = 0                  10 total += explore(next_player)
+      1 if winner(...) is not None:   6 for square in range(9):    11 board[square] = "."  (undo)
+      2     return 1                  7     if board[square] == ".":  12 return total
+      3 if "." not in board:          8         board[square] = player
+      4     return 1                  9         next_player = ...
+    """
+    c = code_block(EXPLORE_SOURCE, font_size=24, width=EXPLORE_WIDTH)
+    return c.to_edge(LEFT, buff=0.35)
+
+
+def code_line(code: Code, k: int):
+    """Line k (0-based) of a code block's text."""
+    return code.code_lines[k]
+
+
+def line_highlight(code: Code, k: int, color: str = WIN_COLOR, opacity: float = 0.22) -> Rectangle:
+    """A translucent bar over line k of `code`, spanning the panel width. Add it AFTER the code (the
+    code panel is opaque, so a bar behind it would be hidden); the text stays readable through it."""
+    ln = code_line(code, k)
+    bg = code.background
+    return Rectangle(width=bg.width - 0.12, height=ln.height + 0.12, stroke_width=0) \
+        .set_fill(color, opacity).move_to([bg.get_center()[0], ln.get_center()[1], 0])
+
+
+def strike(code: Code, k: int, color: str = UNDO_COLOR) -> Line:
+    """A RED strike-through across the text of line k ("delete this line")."""
+    ln = code_line(code, k)
+    y = line_highlight(code, k).get_center()[1]
+    return Line([ln.get_left()[0] - 0.08, y, 0], [ln.get_right()[0] + 0.08, y, 0], color=color, stroke_width=6)
+
+
+# ------------------------------------------------------------------ move numbers and playing moves
+def move_number(board: Board, i: int, n: int, symbol: str, size: float = 24):
+    """Small move number in the lower-right corner of square i, in the player's colour."""
+    color = X_COLOR if symbol == "X" else O_COLOR
+    return S.text(str(n), size, color, font=S.FONT_SANS) \
+        .move_to(board.center_of(i) + np.array([0.36, -0.36, 0]) * board.cell)
+
+
+def mark_anim(m):
+    """Draw a mark the way a hand would: an O in one stroke, an X as two strokes."""
+    from manim import Create, LaggedStart
+    return LaggedStart(*[Create(s) for s in m], lag_ratio=0.5) if isinstance(m, VGroup) else Create(m)
