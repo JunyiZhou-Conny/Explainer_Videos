@@ -1,6 +1,8 @@
 """S08 · 255,168, explained.
 
-Beats: the winner check comes back, the bottom of the program runs in a terminal and prints 255168
+Beats: explore() exactly as S07 left it (S06/S07 size, winner check struck out) -> the strike is
+erased, the panel grows, then folds into the "..." of play_all_games() -> the program runs in a
+terminal and prints 255168
 -> a bar chart of games by the move they end on (linear scale: moves 5 and 6 are tiny slivers)
 -> each bar times its ghost multiplier (x24, x6, x2, x1, x1) stacks into nine factorial
 -> the same bars regroup by result: X wins / O wins / draws
@@ -20,7 +22,7 @@ from explainer.scene import VoiceScene
 from common import (BY_MOVE, COUNT_COLOR, DRAW_COLOR, DRAWS, FIRST_MOVE_GAMES, GHOST_COLOR,
                     MOVE9_DRAWS, MOVE9_X_WINS, NARRATION, NINE_FACTORIAL, O_COLOR, O_WINS,
                     TOTAL_GAMES, UNDO_COLOR, WIN_COLOR, WIN_LINES, X_COLOR, X_WINS, Board,
-                    code_block, explore_code, line_highlight, program_lines, strike, winner)
+                    code_block, explore_code, line_highlight, strike, winner)
 
 SAY = NARRATION["S08"]
 MONO = "DejaVu Sans Mono"
@@ -160,20 +162,29 @@ def mini_tree(center_x: float = 0.0, top: float = -1.8):
 class Answer(VoiceScene):
     def construct(self):
         # ================================================================ 1. run the real program
-        # S06/S07's explore() panel, but big enough to read (~21 pt instead of ~13 pt)
-        code = explore_code().scale_to_fit_width(13.0).move_to([0, 0.2, 0])
+        # S07 ends on explore() at the S06/S07 size and place with the winner check struck out and
+        # dimmed: S08 opens on exactly that, erases the strike, and only then grows the panel so it
+        # can be read (~21 pt instead of ~13 pt)
+        code = explore_code()
         cuts = VGroup(strike(code, 1), strike(code, 2))          # how S07 left the winner check
         win_texts = VGroup(code.code_lines[1], code.code_lines[2])
         win_texts.set_opacity(0.35)                              # dimmed, as in S07
-        tail = code_block(program_lines(37, 40), font_size=26).move_to([-2.4, 1.85, 0])
-        hl37, hl40 = line_highlight(tail, 0), line_highlight(tail, 3)
-        y37 = tail.code_lines[0].get_center()[1]
+        # the end of the program; "..." is where explore() lives (the panel folds into it)
+        tail = code_block('def play_all_games():\n'
+                          '    board = ["."] * 9\n'
+                          '    ...\n'
+                          '    return explore("X")\n'
+                          '\n'
+                          'print(play_all_games())', font_size=26).move_to([-2.4, 1.85, 0])
+        RET, DOTS, PRINT = 3, 2, 5                               # tail.code_lines indices
+        hl_ret, hl_print = line_highlight(tail, RET), line_highlight(tail, PRINT)
+        y_ret = tail.code_lines[RET].get_center()[1]
         start_board = Board(size=0.9, stroke=3)
         start_txt = VGroup(S.text("start: empty board,", 26, S.WHITE),
                            S.text("X's turn", 26, X_COLOR)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         start_lab = VGroup(start_board, start_txt).arrange(RIGHT, buff=0.25)
-        start_lab.move_to([tail.get_right()[0] + 0.75 + start_lab.width / 2, y37 - 0.1, 0])
-        start_arrow = Arrow(start_lab.get_left() + LEFT * 0.05, [tail.get_right()[0] + 0.02, y37, 0], buff=0.05,
+        start_lab.move_to([tail.get_right()[0] + 0.75 + start_lab.width / 2, y_ret - 0.1, 0])
+        start_arrow = Arrow(start_lab.get_left() + LEFT * 0.05, [tail.get_right()[0] + 0.02, y_ret, 0], buff=0.05,
                             color=S.GREY, stroke_width=3, max_tip_length_to_length_ratio=0.35)
 
         term = terminal().move_to([2.4, -1.6, 0])
@@ -188,17 +199,25 @@ class Answer(VoiceScene):
             .next_to(cmd_line, DOWN, buff=0.35).align_to(cmd_line, LEFT)
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(code), FadeIn(cuts), run_time=0.5)
+            self.play(FadeIn(code), FadeIn(cuts), run_time=0.4)
+            vo.wait_until("put every line back")
+            # GREEN bars on the restored lines (inset a little so they stay inside x >= -6.6)
+            back = VGroup(*[line_highlight(code, k, COUNT_COLOR).stretch_to_fit_width(code.background.width - 0.36)
+                            for k in (1, 2)])
+            self.play(Uncreate(cuts), win_texts.animate.set_opacity(1), FadeIn(back), run_time=0.7)
+            # now grow the whole panel to a readable size
+            explore_panel = VGroup(code, back).set_z_index(1)    # stays in front of the tail below
+            self.play(explore_panel.animate.scale_to_fit_width(13.0).move_to([0, 0.2, 0]), run_time=0.6)
             self.wait(0.3)
-            back = VGroup(line_highlight(code, 1, COUNT_COLOR), line_highlight(code, 2, COUNT_COLOR))
-            self.play(Uncreate(cuts), win_texts.animate.set_opacity(1), FadeIn(back), run_time=0.8)
-            self.wait(0.15)
-            # scroll down to the bottom of the file: the tail comes up from just below explore()
-            d = tail.get_center()[1] - (code.get_bottom()[1] - 0.35 - tail.height / 2)
-            self.play(FadeOut(VGroup(code, back), shift=UP * d), FadeIn(tail, shift=UP * d), run_time=0.9)
-            self.play(FadeIn(hl37), GrowArrow(start_arrow), FadeIn(start_txt, shift=LEFT * 0.15),
-                      Create(start_board), run_time=0.8)
-            self.play(FadeIn(hl40), run_time=0.4)
+            # the end of the program: explore() folds away into the "..." inside play_all_games()
+            dots = tail.code_lines[DOTS]
+            self.play(explore_panel.animate.scale(0.7 / explore_panel.width).move_to(dots.get_center())
+                      .set_opacity(0),
+                      FadeIn(tail, run_time=0.6), run_time=0.9)
+            self.remove(explore_panel)
+            self.play(FadeIn(hl_ret), GrowArrow(start_arrow), FadeIn(start_txt, shift=LEFT * 0.15),
+                      Create(start_board), run_time=0.7)
+            self.play(FadeIn(hl_print), run_time=0.3)
             vo.wait_until("After a moment")
             self.play(FadeIn(term), run_time=0.4)
             self.play(FadeIn(prompt, run_time=0.1), AddTextLetterByLetter(cmd, run_time=0.8))
@@ -238,9 +257,9 @@ class Answer(VoiceScene):
         half_lab = S.text("just over half", 28, S.WHITE).next_to(brace, RIGHT, buff=0.15)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(tail, hl37, hl40, start_lab, start_arrow,
+            self.play(FadeOut(VGroup(tail, hl_ret, hl_print, start_lab, start_arrow,
                                      term, prompt, cmd)),
-                      ReplacementTransform(output, total), run_time=1.0)
+                      FadeTransform(output, total), run_time=1.0)    # "255168" -> "255,168": no glyph morph
             self.play(Create(axis), FadeIn(ticks, lag_ratio=0.1), FadeIn(legend, shift=RIGHT * 0.2),
                       run_time=1.0)
             vo.wait_until("1,440 end on")
@@ -299,7 +318,7 @@ class Answer(VoiceScene):
             self.play(FadeOut(VGroup(parts, legend, by_hand, brace, half_lab), run_time=0.6),
                       chart_bars.animate.stretch(f, 1, about_point=np.array([0, Y0, 0])),
                       *[vals[m].animate.move_to(above(vals[m], tops[m])) for m in (5, 6, 7, 8)],
-                      ReplacementTransform(VGroup(in9x[0], in9d[0]), lab9),
+                      FadeTransform(VGroup(in9x[0], in9d[0]), lab9),
                       FadeOut(VGroup(in9x[1], in9d[1])), run_time=1.3)
             vals[9] = lab9
             vo.wait_until("connects to nine")
@@ -329,7 +348,7 @@ class Answer(VoiceScene):
                 prod.move_to([XS[m], new_top + 0.12 + prod.height / 2, 0])
                 prods[m] = prod
                 mult_target = mult.copy().move_to(above(mult, prod.get_top()[1], 0.14)).set_x(XS[m])
-                self.play(GrowFromEdge(gh, DOWN), ReplacementTransform(vals[m], prod),
+                self.play(GrowFromEdge(gh, DOWN), FadeTransform(vals[m], prod),
                           mult.animate.move_to(mult_target), run_time=1.3)
 
             vo.wait_until("each game that ends")
@@ -342,13 +361,16 @@ class Answer(VoiceScene):
             multiply(6, None)
             vo.wait_until("and on move 7")
             multiply(7, None)
-            vo.wait_until("Multiply each bar")
+            # moves 8 and 9 leave at most one empty square: no ghosts, x1
+            vo.wait_until("Games that end on move 8")
             ones = [multiply(m, None, play=False) for m in (8, 9)]
             self.play(*ones, run_time=0.6)
+            vo.wait_until("so they were counted")
+            self.play(Indicate(VGroup(mults[8], mults[9]), color=S.WHITE, scale_factor=1.2), run_time=0.8)
 
-            # add them up: the products fly up into one sum (straight up their own column, above every
-            # bar), the pieces rise to their height in the stack, then slide right into the 9! outline
-            vo.wait_until("add them up")
+            # multiply and add: the products fly up into one sum (straight up their own column, above
+            # every bar), the pieces rise to their height in the stack, then slide right into the 9! outline
+            vo.wait_until("Multiply each bar")
             self.play(FadeOut(VGroup(*mults.values()), shift=UP * 0.2), run_time=0.3)
             order = (5, 6, 7, 8, 9)
             sum_line = VGroup()
@@ -367,6 +389,7 @@ class Answer(VoiceScene):
                 y += BY_MOVE[m] * GHOSTS[m] * U3
             self.play(*rise, *[ReplacementTransform(prods[m], sum_line[2 * i]) for i, m in enumerate(order)],
                       FadeIn(VGroup(*sum_line[1::2])), run_time=0.9)
+            vo.wait_until("add them up")
             self.play(LaggedStart(*[pieces[m].animate.shift(RIGHT * (STACK_X - XS[m])) for m in pieces],
                                   lag_ratio=0.08), run_time=1.0)
 
@@ -378,10 +401,10 @@ class Answer(VoiceScene):
                           S.text("= 9!", 40, S.WHITE)).arrange(RIGHT, buff=0.2)
             fact.next_to(tbrace, LEFT, buff=0.3)
             self.play(ReplacementTransform(VGroup(*pieces.values()), tower), FadeOut(goal),
-                      ReplacementTransform(sum_line, fact[0]), GrowFromCenter(tbrace), run_time=1.0)
-            self.play(ReplacementTransform(goal_lab, fact[1]), run_time=0.6)
-            if vo.remaining(0.0) > 0.6:
-                self.play(Indicate(fact, color=COUNT_COLOR, scale_factor=1.06), run_time=vo.remaining())
+                      FadeTransform(sum_line, fact[0]), GrowFromCenter(tbrace), run_time=1.0)
+            self.play(FadeTransform(goal_lab, fact[1]), run_time=0.6)
+            # let it land: hold the full stack (362,880 = 9!) for ~1.5 s before the next beat
+            self.play(Indicate(fact, color=COUNT_COLOR, scale_factor=1.06), run_time=1.5)
 
         # ================================================================ 4. who wins?
         g = U2 / U3
@@ -440,18 +463,21 @@ class Answer(VoiceScene):
         xs_ = {k: boards[k].mark_at(spots[k], "X", scale=0.6) for k in spots}
         names = {k: on_baseline(S.text(k, 30, S.WHITE), bx[k], -2.75) for k in spots}
 
+        card = ponder_card("Which first move for X leads to the MOST different games:\n"
+                           "corner, edge, or center?", width=11.8).to_edge(UP, buff=0.5)
+
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(Group(*self.mobjects)), run_time=0.7)
-            vo.wait_until("Which first move")
-            self.play(LaggedStart(*[Create(ln) for k in spots for ln in boards[k]], lag_ratio=0.06),
-                      run_time=1.0)
+            # "One last puzzle": the wins chart fades while the three boards are already being drawn
+            self.play(LaggedStart(FadeOut(Group(*self.mobjects), run_time=0.8),
+                                  LaggedStart(*[Create(ln) for k in spots for ln in boards[k]],
+                                              lag_ratio=0.04, run_time=1.5),
+                                  lag_ratio=0.2))
             for k, anchor in (("corner", "a corner"), ("edge", "an edge"), ("center", "or the center")):
                 vo.wait_until(anchor)
                 self.play(LaggedStart(*[Create(s) for s in xs_[k]], lag_ratio=0.5),
                           FadeIn(names[k], shift=UP * 0.15), run_time=0.6)
-        card = ponder_card("Which first move for X leads to the MOST different games:\n"
-                           "corner, edge, or center?", width=11.8).to_edge(UP, buff=0.5)
-        self.play(FadeIn(card, scale=0.95), run_time=0.6)
+            vo.wait_until("Pause and guess")                    # the card is up as "Pause" is said
+            self.play(FadeIn(card, scale=0.95), run_time=0.6)
         timer = card[3]
         self.play(timer.animate(rate_func=linear).become(timer.copy().scale(0.001, about_point=timer.get_start())),
                   run_time=10)
@@ -482,15 +508,24 @@ class Answer(VoiceScene):
             self.play(FadeOut(card, run_time=0.5),
                       *[board_groups[k].animate.shift(up) for k in spots],
                       *[names[k].animate.shift(up) for k in spots], run_time=1.0)
-            self.play(ReplacementTransform(names["edge"], new_names["edge"]),
+            def add_each(k: str) -> list:
+                """'edge' -> 'each edge' with no letter morphing: the word itself slides into place
+                (same letters) and 'each' fades in in front of it."""
+                tgt, n = new_names[k], len(new_names[k]) - len(names[k])     # n = glyphs of "each"
+                assert tgt.text.replace(" ", "")[n:] == names[k].text
+                return [ReplacementTransform(names[k], tgt[n:]), FadeIn(tgt[:n], shift=RIGHT * 0.15)]
+
+            self.play(*add_each("edge"),
                       FadeIn(nums["edge"], shift=UP * 0.2), FadeIn(king, shift=DOWN * 0.4), run_time=1.0)
+            self.add(new_names["edge"])                                 # one mobject again
             vo.wait_until("Each corner")
-            self.play(ReplacementTransform(names["corner"], new_names["corner"]),
-                      FadeIn(nums["corner"], shift=UP * 0.2), run_time=0.8)
+            self.play(*add_each("corner"), FadeIn(nums["corner"], shift=UP * 0.2), run_time=0.8)
+            self.add(new_names["corner"])
             vo.wait_until("and the center the fewest")
-            self.play(ReplacementTransform(names["center"], new_names["center"]),
+            self.play(ReplacementTransform(names["center"], new_names["center"]),   # same word, just moves
                       FadeIn(nums["center"], shift=UP * 0.2), run_time=0.8)
-            self.wait(0.4)
+            # the check-sum (not spoken) is written while this sentence is still going, and is gone
+            # by "Why?" so it doesn't compete with the winning lines
             self.play(TransformFromCopy(nums["corner"][0], sum_line[1]),
                       TransformFromCopy(nums["edge"][0], sum_line[4]),
                       TransformFromCopy(nums["center"][0], sum_line[6]),
@@ -498,8 +533,12 @@ class Answer(VoiceScene):
                       run_time=1.2)
             self.play(Write(sum_line[8]), run_time=0.6)
 
+            vo.wait_until("Why?")
+            self.play(FadeOut(sum_line, shift=DOWN * 0.2),
+                      *[Indicate(xs_[k], color=S.WHITE, scale_factor=1.25) for k in spots],   # each in place
+                      run_time=0.8)
             for k, anchor, n in (("center", "The center sits", 4), ("corner", "a corner on 3", 3),
-                                 ("edge", "and an edge on just", 2)):
+                                 ("edge", "an edge on just 2", 2)):
                 vo.wait_until(anchor)
                 b = boards[k]
                 wlines[k] = VGroup(*[b.win_line(ln[0], ln[2], stroke=7) for ln in WIN_LINES if spots[k] in ln]) \
@@ -508,14 +547,13 @@ class Answer(VoiceScene):
                 assert len(wlines[k]) == n
                 tags[k] = S.text(f"on {n} winning lines", 26, WIN_COLOR).next_to(nums[k], DOWN, buff=0.2)
                 self.play(LaggedStart(*[Create(w) for w in wlines[k]], lag_ratio=0.25),
-                          FadeIn(tags[k], shift=UP * 0.15), run_time=1.0)
+                          FadeIn(tags[k], shift=UP * 0.15), run_time=0.9)
 
             # early wins chop whole branches off the tree
-            vo.wait_until("More lines")
+            vo.wait_until("More lines give X")
             nodes, dots, lines = mini_tree(center_x=-0.4, top=-1.9)
             tree = VGroup(*lines.values(), *dots.values())
             self.play(Indicate(wlines["center"], color=WIN_COLOR, scale_factor=1.06),
-                      FadeOut(sum_line, shift=DOWN * 0.2, run_time=0.5),
                       FadeIn(tree, lag_ratio=0.02), run_time=1.2)
             vo.wait_until("and every early win")
             win_key = (2,)

@@ -4,7 +4,8 @@ Beats
 1. "X always wins?" gets a RED ✗ on "No.", and the question later makes way for the answer.
    A REAL position (X to move, 6 marks placed) whose whole subtree is small: 6 finished games.
    The leaves keep their result colours; the colours bubble up level by level (at X's turn the
-   best result for X, at O's turn the best for O) and the root ends GREY: perfect play -> draw.
+   best result for X, at O's turn the best for O) and the root ends GREY. Following the picks from
+   the root (a WHITE path) lands on a draw: perfect play -> draw.
    Everything shown is computed below from the rules (and the empty board is checked to be a draw).
 2. Chess is far too big: digit strips drawn to scale, one box per digit
    (255,168: 6 boxes · atoms in the observable universe: 81 · chess games (Shannon 1950): 121).
@@ -105,43 +106,47 @@ assert winner(legal_game(GAME_MOVE7)) == "X"
 
 
 # ====================================================================== beat 1: drawing the tree
-ROW_Y = [2.75, 1.2, -0.35, -1.9]
-TREE_DX = 0.6
-NODE = 0.82                                      # mini-board size
+# The tree fills the frame: a label column on the left (whose turn / best for whom, then the
+# legend beside the finished games), the question and the answer to the right of the root.
+NODE = 1.1                                       # mini-board size
 FRAME = NODE + 0.26
-LABEL_X = -5.62
+ROW_Y = [2.82, 0.86, -1.0, -2.78]                # gaps between rows: 0.6, 0.5, 0.42
+TREE_X = 0.86                                    # the root's x
+KID_DX, PAIR_DX = 3.66, 0.83                     # root -> its 3 moves; each O node -> its 2 moves
+LABEL_X = -5.55
+PATH_COLOR = S.WHITE                             # the perfect-play path (YELLOW means three in a row)
 
 
 def tint(color: str, alpha: float = 0.24) -> ManimColor:
     return ManimColor(S.BG).interpolate(ManimColor(color), alpha)
 
 
-def result_frame_anim(frame, result: str, width: float = 4):
+def result_frame_anim(frame, result: str, width: float = 4.5):
     c = RESULT_COLOR[result]
     return frame.animate.set_stroke(c, width).set_fill(tint(c), 1)
 
 
 def layout_tree():
-    TREE["pos"] = np.array([TREE_DX, ROW_Y[0], 0])
-    for kid, x in zip(TREE["kids"], (-3.6, 0.0, 3.6)):
-        kid["pos"] = np.array([x + TREE_DX, ROW_Y[1], 0])
-        for g, dx in zip(kid["kids"], (-0.85, 0.85)):
-            g["pos"] = np.array([kid["pos"][0] + dx, ROW_Y[2], 0])
+    TREE["pos"] = np.array([TREE_X, ROW_Y[0], 0])
+    for kid, dx in zip(TREE["kids"], (-KID_DX, 0.0, KID_DX)):
+        kid["pos"] = np.array([TREE_X + dx, ROW_Y[1], 0])
+        for g, dx2 in zip(kid["kids"], (-PAIR_DX, PAIR_DX)):
+            g["pos"] = np.array([kid["pos"][0] + dx2, ROW_Y[2], 0])
             for leaf in g["kids"]:
                 leaf["pos"] = np.array([g["pos"][0], ROW_Y[3], 0])
 
 
 def build_node(node: dict, parent: dict | None):
-    frame = RoundedRectangle(width=FRAME, height=FRAME, corner_radius=0.1)
-    frame.set_stroke(S.GREY_DARK, 2).set_fill(S.BG, 1)
-    mb = mini_board(node["cells"], size=NODE, stroke=3)
+    frame = RoundedRectangle(width=FRAME, height=FRAME, corner_radius=0.12)
+    frame.set_stroke(S.GREY_DARK, 2.5).set_fill(S.BG, 1)
+    mb = mini_board(node["cells"], size=NODE, stroke=4)
     mob = VGroup(frame)
     if node["move"] is not None:            # the square just played: a faint highlight
         mob.add(mb.board.square(node["move"], color=S.WHITE, opacity=0.16))
     mob.add(mb)
     mob.move_to(node["pos"])
     node.update(mob=mob, frame=frame, board=mb.board)
-    node["win"] = mb.board.win_line(*node["line"], stroke=4) if node["line"] else None
+    node["win"] = mb.board.win_line(*node["line"], stroke=5) if node["line"] else None
     if parent is not None:
         node["edge"] = Line(parent["frame"].get_bottom(), frame.get_top()) \
             .set_stroke(S.WHITE, 2.5, opacity=0.35)
@@ -149,8 +154,8 @@ def build_node(node: dict, parent: dict | None):
 
 def swatch(result: str, label: str) -> VGroup:
     c = RESULT_COLOR[result]
-    sq = RoundedRectangle(width=0.36, height=0.36, corner_radius=0.06).set_stroke(c, 3).set_fill(tint(c), 1)
-    return VGroup(sq, S.text(label, 24, c)).arrange(RIGHT, buff=0.15)
+    sq = RoundedRectangle(width=0.4, height=0.4, corner_radius=0.07).set_stroke(c, 3).set_fill(tint(c), 1)
+    return VGroup(sq, S.text(label, 26, c)).arrange(RIGHT, buff=0.16)
 
 
 # ====================================================================== beat 2: chess and digits
@@ -296,8 +301,8 @@ class Bigger(VoiceScene):
         self.your_turn()
 
     # ------------------------------------------------------------------ beat 1: solved!
-    def bubble(self, parents, flow_time: float, pick_time: float, extra=()):
-        """Each kid's colour flows up its edge; the parent keeps the best one for the player to move."""
+    def flow_up(self, parents, run_time: float, extra=()):
+        """Each kid's result colour flows up its edge to the parent."""
         flows = []
         for n in parents:
             n["flows"] = []
@@ -306,14 +311,17 @@ class Bigger(VoiceScene):
                     .set_stroke(RESULT_COLOR[k["result"]], 5)
                 n["flows"].append((k, ln))
                 flows.append(Create(ln))
-        self.play(*flows, run_time=flow_time)
+        self.play(*flows, *extra, run_time=run_time)
+
+    def pick_best(self, parents, run_time: float, extra=()):
+        """The parent keeps the best result for the player to move; the other edges dim."""
         picks = []
         for n in parents:
             for k, ln in n["flows"]:
-                picks.append(ln.animate.set_stroke(width=7) if k is n["best"]
+                picks.append(ln.animate.set_stroke(width=8) if k is n["best"]
                              else ln.animate.set_stroke(width=3, opacity=0.3))
             picks.append(result_frame_anim(n["frame"], n["result"]))
-        self.play(*picks, *extra, run_time=pick_time)
+        self.play(*picks, *extra, run_time=run_time)
 
     def solved_tree(self):
         layout_tree()
@@ -322,29 +330,36 @@ class Bigger(VoiceScene):
                 parent = None if depth == 0 else next(p for p in LEVELS[depth - 1] if n in p["kids"])
                 build_node(n, parent)
 
-        row_labels = VGroup(*[S.text(f"{p} to move", 26, S.WHITE, t2c={p: RESULT_COLOR[p]})
-                              .move_to([LABEL_X, y, 0]) for p, y in zip("XOX", ROW_Y)])   # as in S06
-        best_labels = {d: S.text(f"best for {p}", 24, S.WHITE).next_to(row_labels[d], DOWN, buff=0.16)
-                       for d, p in ((0, "X"), (1, "O"))}
+        # left column: whose turn (as in S06), and later whose best result that row keeps
+        row_labels = VGroup(*[S.text(f"{p} to move", 30, S.WHITE, t2c={p: RESULT_COLOR[p]})
+                              .move_to([LABEL_X, y + 0.19, 0]) for p, y in zip("XOX", ROW_Y)])
+        best_labels = {d: S.text(f"best for {p}", 28, S.WHITE, t2c={p: RESULT_COLOR[p]})
+                       .move_to([LABEL_X, ROW_Y[d] - 0.21, 0]) for d, p in ((0, "X"), (1, "O"), (2, "X"))}
         legend = VGroup(swatch("X", "X wins"), swatch("O", "O wins"), swatch("D", "draw")) \
-            .arrange(RIGHT, buff=0.5).move_to([0, -3.15, 0]).align_to([-6.3, 0, 0], LEFT)
+            .arrange(DOWN, buff=0.16, aligned_edge=LEFT).move_to([LABEL_X, ROW_Y[3], 0])
+        # right of the root: the question, later its answer, and a note on the full game
         caption = S.text("perfect play → draw", 34, S.WHITE, t2c={"draw": DRAW_COLOR})
-        caption.next_to(TREE["frame"], RIGHT, buff=0.45).align_to(TREE["frame"], UP).shift(DOWN * 0.02)
-        # the opening question sits where its answer (the caption) will appear
+        caption.next_to(TREE["frame"], RIGHT, buff=0.4).set_y(3.26)
         question = S.text("X always wins?", 34, S.WHITE, t2c={"X": X_COLOR})
         no_cross = S.text("✗", 44, S.RED, font="DejaVu Sans")
         ask = VGroup(question, no_cross).arrange(RIGHT, buff=0.3)
-        ask.next_to(TREE["frame"], RIGHT, buff=0.45).align_to(caption, LEFT).match_y(caption)
-        empty = mini_board(size=0.5, stroke=2)
-        empty_frame = RoundedRectangle(width=0.66, height=0.66, corner_radius=0.07) \
+        ask.align_to(caption, LEFT).match_y(caption)
+        empty = mini_board(size=0.4, stroke=2)
+        empty_frame = RoundedRectangle(width=0.52, height=0.52, corner_radius=0.07) \
             .set_stroke(DRAW_COLOR, 3).set_fill(tint(DRAW_COLOR), 1)
-        note = VGroup(S.text("the same on the full tree:", 24, S.WHITE), VGroup(empty_frame, empty),
+        note = VGroup(S.text("the full game too:", 24, S.WHITE), VGroup(empty_frame, empty),
                       S.text("→ draw", 24, DRAW_COLOR)).arrange(RIGHT, buff=0.15)
-        note.move_to([0, -3.15, 0]).align_to([6.35, 0, 0], RIGHT)
+        note.align_to(caption, LEFT).set_y(2.59)
 
+        # perfect play: from the root, follow the best move at every level, down to a draw
         path = [TREE]
         while path[-1]["kids"]:
             path.append(path[-1]["best"])
+        assert path[-1]["result"] == "D" and not path[-1]["kids"]
+        path_lines = [Line(a["frame"].get_bottom(), b["frame"].get_top()).set_stroke(PATH_COLOR, 9)
+                      for a, b in zip(path, path[1:])]
+        glows = [RoundedRectangle(width=FRAME + 0.16, height=FRAME + 0.16, corner_radius=0.15)
+                 .set_stroke(PATH_COLOR, 5).move_to(n["frame"]) for n in path]
 
         with self.voiceover(SAY[0]) as vo:
             # "So does going first mean X always wins?" while the tree grows
@@ -354,7 +369,7 @@ class Bigger(VoiceScene):
                 grow = [AnimationGroup(Create(n["edge"]), FadeIn(n["mob"], shift=DOWN * 0.15))
                         for n in LEVELS[d]]
                 extra = [FadeIn(row_labels[d], shift=RIGHT * 0.2)] if d < 3 else []
-                self.play(LaggedStart(*grow, lag_ratio=0.12), *extra, run_time=0.75)
+                self.play(LaggedStart(*grow, lag_ratio=0.12), *extra, run_time=0.7)
 
             # "No."
             vo.wait_until("No.")
@@ -366,20 +381,33 @@ class Bigger(VoiceScene):
                       *[Create(n["win"]) for n in LEAVES if n["win"] is not None],
                       FadeIn(legend, shift=UP * 0.2), ask.animate.set_opacity(0.45), run_time=1.0)
 
-            # colours bubble up: X's forced last moves, then O's choices, then X's choice
-            vo.wait_until("By finding the best")
-            self.bubble([n for n in LEVELS[2] if n["kids"]], 0.5, 0.4,
-                        extra=[Indicate(row_labels[2], color=X_COLOR, scale_factor=1.1)])
-            self.bubble(LEVELS[1], 0.6, 0.7, extra=[FadeIn(best_labels[1], shift=DOWN * 0.1)])
-            self.bubble(LEVELS[0], 0.6, 0.7, extra=[FadeIn(best_labels[0], shift=DOWN * 0.1)])
+            # colours bubble up from the finished games: first into X's last (forced) moves ...
+            vo.wait_until("At every branch")
+            self.flow_up([n for n in LEVELS[2] if n["kids"]], 1.0)
+            # ... "best for X on X's turns": X's rows keep the best result for X
+            vo.wait_until("best for X")
+            self.pick_best([n for n in LEVELS[2] if n["kids"]], 0.6,
+                           extra=[FadeIn(best_labels[2], shift=DOWN * 0.1),
+                                  FadeIn(best_labels[0], shift=DOWN * 0.1)])
+            # ... "and best for O on O's turns": O's row keeps the best result for O
+            vo.wait_until("and best for O")
+            self.flow_up(LEVELS[1], 0.5, extra=[FadeIn(best_labels[1], shift=DOWN * 0.1)])
+            self.pick_best(LEVELS[1], 0.55, extra=[pulse(best_labels[1], 1.2)])
+            # ... and back at the top it's X's turn again
+            self.flow_up(LEVELS[0], 0.35)
+            self.pick_best(LEVELS[0], 0.45, extra=[pulse(best_labels[0], 1.2)])
 
-            # perfect play: follow the best move at every level
+            # "Doing that": follow the picks from the top, and you land on a draw
+            vo.wait_until("Doing that")
+            self.play(Create(glows[0]), run_time=0.3)
+            for ln, glow in zip(path_lines, glows[1:]):
+                self.play(Create(ln), run_time=0.4)
+                self.play(Create(glow), run_time=0.25)
+
+            # "if both players play perfectly": the whole perfect game, top to bottom, once more
             vo.wait_until("if both players")
-            flashes = [ShowPassingFlash(Line(a["frame"].get_bottom(), b["frame"].get_top())
-                                        .set_stroke(S.WHITE, 10), time_width=1.0, run_time=0.45)
-                       for a, b in zip(path, path[1:])]
-            self.play(Succession(*flashes), run_time=1.35)
-            self.play(*[n["frame"].animate.set_stroke(width=7) for n in path], run_time=0.4)
+            self.play(LaggedStart(*[pulse(VGroup(n["mob"], g), 1.08) for n, g in zip(path, glows)],
+                                  lag_ratio=0.3), run_time=1.1)
 
             vo.wait_until("every game ends")
             self.play(FadeOut(ask, shift=UP * 0.25), Write(caption), run_time=0.8)

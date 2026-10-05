@@ -2,7 +2,8 @@
 
 Beats: explore() (same panel as S06) with the undo line struck through -> ponder -> the broken
 program's exact trace: squares 0..6 fill in order and are never erased, X's 2-4-6 diagonal on
-move 7 counts 1, then the X that was never erased lets X land on 7 and 8 too (2, 3) -> output 3
+move 7 counts 1, then the X that was never erased lets X land on 7 and 8 too (2, 3; narrated as the
+bottom-middle and bottom-right squares, since the X on square 6 carries move number 7) -> output 3
 -> undo back, winner check struck through -> ponder -> 362,880 slides into "9! = 362,880", and a
 quick replay of S03's game shows the ghost games coming back. The scene ends with the winner check
 still struck out: S08 opens on that and erases the strike ("put every line back").
@@ -57,6 +58,12 @@ def drain_timer(scene, card: VGroup, seconds: float) -> None:
     bar = card[3]
     target = bar.copy().scale(0.001, about_point=bar.get_start())
     scene.play(bar.animate(rate_func=linear).become(target), run_time=seconds)
+
+
+def roll(old: Mobject, new: Mobject) -> list:
+    """A label rolls over into a different one, like a counter (fade out/in: no half-morphed
+    glyphs)."""
+    return [FadeOut(old, shift=UP * 0.25), FadeIn(new, shift=UP * 0.25)]
 
 
 def out_value(s: str, color: str = COUNT_COLOR) -> Text:
@@ -114,7 +121,7 @@ class Experiments(VoiceScene):
             self.play(FadeIn(out_frame), FadeIn(out_label), FadeIn(out_q, scale=0.6), run_time=0.6)
             vo.wait_until("delete the undo line")
             self.play(Create(undo_strike), undo_text.animate.set_opacity(0.35), FadeOut(undo_bar),
-                      TransformMatchingShapes(heading0, heading1), run_time=0.9)
+                      *roll(heading0, heading1), run_time=0.9)
         drain_timer(self, card, 10)
 
         # ================================================================ beat 2: the broken program's trace
@@ -150,7 +157,7 @@ class Experiments(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(card), run_time=0.4)
-            self.play(ReplacementTransform(out_q, out_3), run_time=0.6)
+            self.play(*roll(out_q, out_3), run_time=0.6)
             self.play(Circumscribe(out_frame, color=COUNT_COLOR, buff=0.06), run_time=0.8)
 
             vo.wait_until("Without undo")
@@ -230,10 +237,10 @@ class Experiments(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             # "Now put undo back": the strike comes off and the line lights up GREEN
-            self.play(FadeOut(trace), ReplacementTransform(out_3, out_q2), Uncreate(undo_strike),
+            self.play(FadeOut(trace), *roll(out_3, out_q2), Uncreate(undo_strike),
                       undo_text.animate.set_opacity(1), FadeIn(undo_back), run_time=0.8)
             vo.wait_until("and delete the winner")
-            self.play(FadeOut(undo_back), TransformMatchingShapes(heading1, heading2), run_time=0.8)
+            self.play(FadeOut(undo_back), *roll(heading1, heading2), run_time=0.8)
             self.play(LaggedStart(*[Create(s) for s in win_strikes], lag_ratio=0.4),
                       win_texts.animate.set_opacity(0.35), FadeIn(win_tag, shift=LEFT * 0.2),
                       run_time=0.8)

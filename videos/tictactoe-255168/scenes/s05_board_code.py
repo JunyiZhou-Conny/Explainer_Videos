@@ -4,11 +4,14 @@ Checklist strip (top right): board · winning lines · spot a winner -- each ite
 its beat ends.
 
 1. board: the numbered 3x3 board -> its nine squares slide into a row (a Python list, spots 0-8),
-   each gets a dot -> `board = ["."] * 9`  ("a dot, 9 times").
+   each gets a dot -> `board = ["."] * 9`  ("a dot, 9 times"). On "In Python, the programming
+   language we're using" a tag "Python = a language for giving a computer instructions" appears at
+   the bottom (under the code's spot); it fades out with the code.
 2. winning lines: the row rolls back into the board; the WIN_LINES code; each triple highlighted
    in the code lights its line YELLOW on the board: (0, 1, 2), (0, 4, 8), then the rest quickly
    -> "8 winning lines".
-3. spot a winner: winner() ("function = a mini-program with a name"); a scanner walks the lines of
+3. spot a winner: winner() ("function = a mini-program with a name"; the call `winner(board)` fades in
+   beside the board, never sliding over the code); a scanner walks the lines of
    an example board (GREY ✗ for each line that is not three equal marks; a line of dots fails the
    `!= "."` test) until X's middle column lights YELLOW and the function hands back "X". Then ("If no
    line matches") X's last mark moves so no line is complete: every line gets ✗ -> "nothing found →
@@ -135,8 +138,17 @@ class BoardCode(VoiceScene):
                 labels[i].animate.scale(28 / 22).move_to([row_x(i), ROW_Y - 0.82, 0]))
                 for i in range(9)], lag_ratio=0.08), run_time=1.6)
 
-            # "In Python ... a list": brackets close around the row, the spot numbers light up
+            # "In Python, the programming language we're using": a tag says what Python is. It sits
+            # at the bottom, just under where the code `board = ["."] * 9` appears, and leaves with it.
             vo.wait_until("In Python")
+            py_txt = S.text("Python = a language for giving a computer instructions", 24, S.WHITE)
+            py_tag = VGroup(RoundedRectangle(width=py_txt.width + 0.4, height=py_txt.height + 0.2,
+                                             corner_radius=0.12, stroke_color=S.GREY_DARK, stroke_width=2)
+                            .set_fill(S.GREY_DARKER, 1), py_txt).move_to(DOWN * 3.31)
+            self.play(FadeIn(py_tag, shift=UP * 0.15), run_time=0.6)
+
+            # "the spots in a list": brackets close around the row, the spot numbers light up
+            vo.wait_until("the spots in a list")
             brackets = list_brackets(VGroup(*[Square(1.0).move_to([row_x(i), ROW_Y, 0]) for i in range(9)]))
             self.play(FadeIn(brackets[0], shift=RIGHT * 0.3), FadeIn(brackets[1], shift=LEFT * 0.3),
                       run_time=0.6)
@@ -197,7 +209,8 @@ class BoardCode(VoiceScene):
             self.play(Create(ln), *dim, run_time=rt)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(code1, box_dot, box_9, cap_dot, cap_9, brackets)), activate(strip[1]),
+            self.play(FadeOut(VGroup(code1, box_dot, box_9, cap_dot, cap_9, brackets, py_tag)),
+                      activate(strip[1]),
                       run_time=0.5)
             # the row rolls back up into the board
             self.play(LaggedStart(*[AnimationGroup(
@@ -216,8 +229,9 @@ class BoardCode(VoiceScene):
             chip = glyph_box(triple(WIN_LINES[0]))
             self.play(FadeIn(chip), FadeIn(num, scale=0.6), run_time=0.3)
             for k, t in enumerate(WIN_LINES[1:], start=2):
-                self.play(Transform(chip, glyph_box(triple(t))),
-                          Transform(num, S.text(str(k), 32, COUNT_COLOR).move_to(count[0])), run_time=0.2)
+                nxt = S.text(str(k), 32, COUNT_COLOR).move_to(count[0])   # digits cross-fade (no glyph morph)
+                self.play(Transform(chip, glyph_box(triple(t))), FadeOut(num), FadeIn(nxt), run_time=0.2)
+                num = nxt
             rest = VGroup(*count[1:])                          # "winning lines"
             self.play(FadeOut(chip), FadeIn(rest, shift=LEFT * 0.15), run_time=0.4)
             self.remove(num, rest)                             # swap in the whole label (looks identical)
@@ -276,13 +290,14 @@ class BoardCode(VoiceScene):
             self.play(Create(fbox), run_time=0.4)
             self.play(GrowArrow(farrow), FadeIn(flab, shift=LEFT * 0.2), run_time=0.5)
 
-            # its name is winner; here is a board to check
+            # its name is winner; here is a board to check. The call fades in at its own spot
+            # (no flying copy: nothing slides across the code lines).
             vo.wait_until("This one, called winner")
             call = S.text("winner(board)", 28, S.WHITE, font=MONO).move_to([3.7, -0.4, 0])
             self.play(Transform(fbox, SurroundingRectangle(glyphs(code3, 0, 3, 9), buff=0.07,
                                                            corner_radius=0.06, color=S.WHITE,
                                                            stroke_width=2.5)),
-                      TransformFromCopy(glyphs(code3, 0, 3, 16), call), run_time=0.7)
+                      FadeIn(call, scale=0.85), run_time=0.7)
             anims = []
             for i in EX_WIN_ORDER:
                 m = b3.mark_at(i, EX_WIN[i], scale=0.48).set_z_index(2)
@@ -340,8 +355,8 @@ class BoardCode(VoiceScene):
             ne_box = op_box(ne_op)
             ne_leg = VGroup(ne_op.copy().scale(1.3), S.text("is not", 26, S.WHITE)) \
                 .arrange(RIGHT, buff=0.25).move_to([ne_box.get_x(), 0.42, 0])
-            self.play(Create(ne_box), TransformFromCopy(ne_op, ne_leg[0]),
-                      FadeIn(ne_leg[1], shift=UP * 0.1), run_time=0.6)
+            # fade, not a flying copy: straight down from line 2 would slide over "return board[a]"
+            self.play(Create(ne_box), FadeIn(ne_leg, shift=UP * 0.1), run_time=0.6)
             onlydots = S.text("only dots", 24, S.GREY)
             onlydots.next_to(cross(WIN_LINES[3]), LEFT, buff=0.2)
             reject(WIN_LINES[3], 0.4, FadeIn(onlydots, shift=RIGHT * 0.1))
