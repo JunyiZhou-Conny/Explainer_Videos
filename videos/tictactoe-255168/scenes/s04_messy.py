@@ -366,7 +366,8 @@ class Messy(VoiceScene):
                         for bd, nm in ((rows, rows_nums), (cols, cols_nums))],
                       *[Indicate(bd[2], color=WIN_COLOR, scale_factor=1.1) for bd in (rows, cols)],
                       run_time=0.9)
-            # ... then both shrink into the subtraction row (swooping up from below the text) as "-432" is written
+            # ... then both shrink into the subtraction row (swooping up from below the text) as "-432"
+            # and the rest of the breakdown are written
             self.play(SwoopMove(rows, rows_small), SwoopMove(cols, cols_small),
                       *[FadeOut(nm, rate_func=squish_rate_func(smooth, 0, 0.3)) for nm in (rows_nums, cols_nums)],
                       Write(n2), LaggedStart(*[FadeIn(p, shift=UP * 0.15) for p in p2[1:]], lag_ratio=0.35),
