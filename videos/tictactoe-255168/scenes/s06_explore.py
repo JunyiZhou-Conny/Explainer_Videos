@@ -363,7 +363,7 @@ class Explore(VoiceScene):
         code = self.code
         name = glyphs(code, 0, "explore")
         player = glyphs(code, 0, "player")
-        # a one-time note above the first comment: the grey-ish "# ..." text is for humans
+        # a one-time note above the first comment: the light "# ..." text is for humans
         notes = [comment(code, k) for k in range(len(SRC)) if "#" in SRC[k]]
         hint = VGroup(VGroup(S.text("# …", 24, COMMENT_COLOR, font=MONO),
                              S.text("= a note for humans", 24, S.WHITE)).arrange(RIGHT, buff=0.15),
@@ -532,7 +532,9 @@ class Explore(VoiceScene):
 
     # ================================================================ 4. a tiny worked example
     def beat_example(self):
-        work = Board(size=2.0, stroke=5).move_to([0, 2.35, 0])
+        lp = self.loop
+        kid0, o_tag = lp["kids"][0], lp["o_tag"]
+        work = Board(size=WORK_S, stroke=5).move_to(WORK_C)
         on = {}                                  # square -> mark on the working board
 
         def place(s, sym):
@@ -543,6 +545,7 @@ class Explore(VoiceScene):
         for i, ch in enumerate(B4):
             if ch in "XO":
                 place(i, ch)
+        work_grp = VGroup(work, VGroup(*[on[s] for s in sorted(on)]))   # same shape as a snap()
 
         def state(line=None):
             g = VGroup(work, VGroup(*[on[s] for s in sorted(on)]))
@@ -554,9 +557,9 @@ class Explore(VoiceScene):
         L = np.array([-3.4, -0.25, 0])
         R = np.array([3.4, -0.25, 0])
         G = np.array([3.4, -2.65, 0])
-        snap_l = snap(put(B4, 5, "O"), 1.5, L, stroke=3, line=(2, 8))
-        snap_r = snap(put(B4, 7, "O"), 1.5, R, stroke=3)
-        snap_g = snap(put(put(B4, 7, "O"), 5, "X"), 1.5, G, stroke=3)
+        snap_l = snap(put(B4, B4_WIN, "O"), 1.5, L, stroke=3, line=(2, 8))
+        snap_r = snap(put(B4, B4_TRY, "O"), 1.5, R, stroke=3)
+        snap_g = snap(put(put(B4, B4_TRY, "O"), B4_FILL, "X"), 1.5, G, stroke=3)
 
         def arrow(a, b):
             return Arrow(a, b, buff=0.12, color=S.GREY, stroke_width=3, tip_length=0.16,
@@ -572,32 +575,52 @@ class Explore(VoiceScene):
         total = S.text("1 + 1 = 2 games", 40, COUNT_COLOR).next_to(work, RIGHT, buff=0.45)
         # glyphs of "1+1=2games": 0 '1' | 1 '+' | 2 '1' | 3 '=' | 4 '2' | 5.. 'games'
 
+        # zooming back out: a centred copy of beat 3's tree (the code is off screen by then)
+        k_s = 1.2
+        parent2 = snap(B3, 1.5, [0, 2.6, 0], stroke=4)
+        cap2 = to_move("X", 30).next_to(parent2, LEFT, buff=0.45)
+        kids2 = [snap(put(B3, s, "X"), k_s, [x, 0.15, 0], stroke=3, line=(1, 7) if s == 1 else None)
+                 for s, x in zip(B3_TRY, (-2.7, 0.0, 2.7))]
+        arrows2 = [Arrow(parent2.get_bottom(), k.get_top(), buff=0.1, color=S.GREY, stroke_width=3,
+                         tip_length=0.15, max_tip_length_to_length_ratio=0.2) for k in kids2]
+        ans2 = [S.text(str(a), 44, COUNT_COLOR).next_to(k, DOWN, buff=0.2) for a, k in zip(B3_ANS, kids2)]
+        cap_to = cap.copy().next_to(kids2[0], LEFT, buff=0.5)
+        eq = S.text(" + ".join(map(str, B3_ANS)) + f" = {sum(B3_ANS)}", 52, COUNT_COLOR) \
+            .move_to([0, -2.3, 0])
+        # glyphs of "2+1+2=5": 0, 2, 4 the answers | 1, 3 '+' | 5 '=' | 6 '5'
+
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(self.loop_stuff), FadeOut(self.code, shift=LEFT * 1.2), run_time=0.7)
-            self.play(LaggedStart(*[Create(ln) for ln in work], lag_ratio=0.15), run_time=0.5)
-            self.play(LaggedStart(*[FadeIn(on[s], scale=0.7) for s in sorted(on)], lag_ratio=0.12),
-                      FadeIn(cap, shift=RIGHT * 0.2), run_time=0.9)
+            # "Let's zoom into the first of those": the first child (worth 2) grows into the
+            # working board while everything else flies out of frame, as if the camera zoomed in
+            self.play(Circumscribe(VGroup(kid0, lp["answers"][0]), color=WIN_COLOR, buff=0.1),
+                      run_time=0.7)
+            k_in = WORK_S / KID_S
+            self.play(ReplacementTransform(kid0, work_grp), ReplacementTransform(o_tag, cap),
+                      *[cam_out(m, kid0.get_center(), WORK_C, k_in)
+                        for m in lp["tree"] + lp["code_side"]], run_time=1.4)
+            vo.wait_until("with O to move")
+            self.play(Indicate(cap, color=O_COLOR, scale_factor=1.12), run_time=0.6)
 
             vo.wait_until("If O takes")
-            o5 = place(5, "O")
-            self.play(mark_anim(o5), run_time=0.5)
+            o_win = place(B4_WIN, "O")
+            self.play(mark_anim(o_win), run_time=0.5)
             col = work.win_line(2, 8)
             self.play(Create(col), run_time=0.4)
             self.play(GrowArrow(arr_l), TransformFromCopy(state(col), snap_l), run_time=0.9)
             self.play(FadeIn(one_l, scale=0.5), FadeIn(tag_l, shift=RIGHT * 0.15), run_time=0.5)
 
             vo.wait_until("Erase it")
-            del on[5]
-            erase(self, VGroup(o5, col), work.center_of(5), work.cell, run_time=0.8)
+            del on[B4_WIN]
+            erase(self, VGroup(o_win, col), work.center_of(B4_WIN), work.cell, run_time=0.8)
 
-            vo.wait_until("and try the bottom-middle")
-            o7 = place(7, "O")
-            self.play(mark_anim(o7), run_time=0.5)
+            vo.wait_until("and try the top-middle")
+            o_try = place(B4_TRY, "O")
+            self.play(mark_anim(o_try), run_time=0.5)
             self.play(GrowArrow(arr_r), TransformFromCopy(state(), snap_r), run_time=0.8)
 
             vo.wait_until("Then X fills")
-            x5 = place(5, "X")
-            self.play(mark_anim(x5), run_time=0.5)
+            x_fill = place(B4_FILL, "X")
+            self.play(mark_anim(x_fill), run_time=0.5)
             self.play(GrowArrow(arr_g), TransformFromCopy(state(), snap_g), run_time=0.8)
             self.play(snap_g[1].animate.set_color(DRAW_COLOR), FadeIn(tag_g, shift=LEFT * 0.15),
                       run_time=0.5)
@@ -605,18 +628,35 @@ class Explore(VoiceScene):
 
             # "Undo both moves": back to the starting board (undo X, then undo O)
             vo.wait_until("Undo both moves")
-            del on[5], on[7]
-            erase(self, x5, work.center_of(5), work.cell, run_time=0.4)
-            erase(self, o7, work.center_of(7), work.cell, run_time=0.4)
+            del on[B4_FILL], on[B4_TRY]
+            erase(self, x_fill, work.center_of(B4_FILL), work.cell, run_time=0.4)
+            erase(self, o_try, work.center_of(B4_TRY), work.cell, run_time=0.4)
 
-            # "and add up": the two 1s travel up to the root -> 1 + 1; "Total": = 2 games
+            # "and add up: 2 games": the two 1s travel up to the root -> 1 + 1 = 2 games
             vo.wait_until("and add up")
             self.play(ReplacementTransform(one_l, total[0]), ReplacementTransform(one_g, total[2]),
                       FadeIn(total[1]), run_time=0.8)
-            vo.wait_until("Total")
-            self.play(FadeIn(total[3]), FadeIn(total[4:], shift=LEFT * 0.15), run_time=0.5)
-        self.example_stuff = VGroup(work, *on.values(), cap, snap_l, snap_r, snap_g, arr_l, arr_r,
-                                    arr_g, tag_l, tag_g, total)
+            self.play(FadeIn(total[3]), FadeIn(total[4]), FadeIn(total[5:], shift=LEFT * 0.15),
+                      run_time=0.5)
+
+            # "With the other two branches": zoom back out; the board shrinks back into the first
+            # child, its 2 drops under it, and the other two children come back with 1 and 2
+            vo.wait_until("With the other two branches")
+            k_out = k_s / WORK_S
+            c0 = kids2[0].get_center()
+            outgoing = [snap_l, snap_r, snap_g, arr_l, arr_r, arr_g, tag_l, tag_g,
+                        VGroup(*total[:4], *total[5:])]
+            incoming = [parent2, cap2, *kids2[1:], *arrows2, *ans2[1:]]
+            self.play(ReplacementTransform(work_grp, kids2[0]), ReplacementTransform(total[4], ans2[0]),
+                      cap.animate.move_to(cap_to),
+                      *[cam_out(m, WORK_C, c0, k_out) for m in outgoing],
+                      *[cam_in(m, c0, WORK_C, 1 / k_out) for m in incoming], run_time=1.4)
+
+            vo.wait_until("2 plus 1")
+            self.play(*[TransformFromCopy(a, eq[2 * i]) for i, a in enumerate(ans2)],
+                      FadeIn(eq[1]), FadeIn(eq[3]), run_time=0.9)
+            self.play(FadeIn(eq[5:], shift=LEFT * 0.15), run_time=0.5)
+        self.example_stuff = VGroup(parent2, cap2, *kids2, *arrows2, *ans2, cap, eq)
 
     # ================================================================ 5. recursion and the game tree
     def beat_tree(self):
