@@ -1,0 +1,9 @@
+00:00 How many games?
+00:48 Filling the board: 9!
+01:40 Games stop early
+03:23 Counting by hand gets messy
+04:21 Teaching a computer the rules
+05:09 Exploring every game
+06:48 Change one line
+08:07 255,168, explained
+10:26 Bigger games, and your turn
