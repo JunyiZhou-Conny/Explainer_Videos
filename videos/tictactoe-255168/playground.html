@@ -1,0 +1,187 @@
+<title>Tic-Tac-Toe Game Counter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a game board on the left, a live "how many games are left" counter on the right, challenges below. */
+:root {
+  --bg: #f3f5f9; --panel: #ffffff; --ink: #1c2233; --muted: #5e6578; --rule: #dde1ea;
+  --x: #1f86a8; --o: #d0661c; --win: #b58800; --count: #3f8a2e; --draw: #7a8090; --undo: #c8423a;
+  --display: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --body: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d0f14; --panel: #161a25; --ink: #eceef3; --muted: #9aa1b2; --rule: #2a3040;
+  --x: #58c4dd; --o: #ff8f40; --win: #ffd54f; --count: #83c167; --draw: #8a8f98; --undo: #fc6255;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d0f14; --panel: #161a25; --ink: #eceef3; --muted: #9aa1b2; --rule: #2a3040;
+  --x: #58c4dd; --o: #ff8f40; --win: #ffd54f; --count: #83c167; --draw: #8a8f98; --undo: #fc6255;
+  color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); padding-inline: 16px; padding-block: 24px 48px; margin: 0; }
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 20px; }
+h1 { font: 600 clamp(28px, 5vw, 42px)/1.1 var(--display); margin: 0; text-wrap: balance; }
+header p { margin: 8px 0 0; color: var(--muted); max-width: 64ch; }
+.main { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 820px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 18px; min-width: 0; }
+.panel h2 { font: 600 14px/1.2 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+.board { display: grid; grid-template-columns: repeat(3, 1fr); width: min(100%, 320px); aspect-ratio: 1; margin: 0 auto; position: relative; }
+.cell { border: 0; background: transparent; position: relative; cursor: pointer; padding: 0; }
+.cell:nth-child(3n+1), .cell:nth-child(3n+2) { border-right: 4px solid var(--ink); }
+.cell:nth-child(-n+6) { border-bottom: 4px solid var(--ink); }
+.cell:disabled { cursor: default; }
+.cell:focus-visible { outline: 3px solid var(--win); outline-offset: -6px; }
+.cell .idx { position: absolute; left: 8px; top: 4px; font: 500 13px var(--mono); color: var(--muted); }
+.cell svg { width: 64%; height: 64%; display: block; margin: auto; }
+.cell .hint { position: absolute; inset: auto 0 6px 0; text-align: center; font: 600 13px var(--mono); color: var(--count); font-variant-numeric: tabular-nums; }
+.cell.winning { background: color-mix(in srgb, var(--win) 22%, transparent); }
+.status { text-align: center; font: 600 18px var(--display); margin-top: 14px; min-height: 1.5em; }
+.status .x { color: var(--x); } .status .o { color: var(--o); }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
+button.act { font: 700 15px var(--body); padding: 9px 16px; border-radius: 10px; border: 2px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+button.act.undo { border-color: var(--undo); color: var(--undo); }
+button.act:disabled { opacity: .45; cursor: not-allowed; }
+label.toggle { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 10px; font-size: 14px; color: var(--muted); }
+.big { font: 600 clamp(40px, 8vw, 64px)/1 var(--display); color: var(--count); font-variant-numeric: tabular-nums; }
+.sub { color: var(--muted); margin-top: 4px; }
+.split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
+.chip { border-radius: 10px; padding: 10px 12px; background: color-mix(in srgb, var(--c) 14%, transparent); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); }
+.chip b { display: block; font: 600 22px var(--display); color: var(--c); font-variant-numeric: tabular-nums; }
+.chip span { font-size: 13px; color: var(--muted); }
+.bars { display: grid; gap: 8px; margin-top: 18px; }
+.bar { display: grid; grid-template-columns: 76px minmax(0, 1fr) 84px; gap: 10px; align-items: center; font-size: 14px; }
+.bar .track { height: 16px; border-radius: 8px; background: color-mix(in srgb, var(--rule) 70%, transparent); overflow: hidden; display: flex; }
+.bar .fill { height: 100%; }
+.bar .n { text-align: right; font: 500 13px var(--mono); font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+ol.try { margin: 0; padding-left: 22px; display: grid; gap: 8px; }
+.foot { font-size: 13px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Tic-Tac-Toe Game Counter</h1>
+    <p>Click squares to play. After every move, the counter shows how many different games can still
+      happen from this board, the same number the program <code>explore()</code> would return.
+      Use <b>Undo</b> to step back, just like the program does.</p>
+  </header>
+
+  <div class="main">
+    <section class="panel" aria-label="Board">
+      <h2>Board</h2>
+      <div class="board" id="board" role="grid" aria-label="Tic-tac-toe board"></div>
+      <div class="status" id="status" aria-live="polite"></div>
+      <div class="btns">
+        <button class="act undo" id="undo" type="button">Undo</button>
+        <button class="act" id="reset" type="button">New game</button>
+      </div>
+      <label class="toggle" for="hints"><input type="checkbox" id="hints" checked> show games-from-here on each empty square</label>
+    </section>
+
+    <section class="panel" aria-label="Games counter">
+      <h2>Games that can still happen from here</h2>
+      <div class="big" id="total">255,168</div>
+      <div class="sub" id="totalSub"></div>
+      <div class="split">
+        <div class="chip" style="--c: var(--x)"><b id="xw"></b><span>X wins</span></div>
+        <div class="chip" style="--c: var(--o)"><b id="ow"></b><span>O wins</span></div>
+        <div class="chip" style="--c: var(--draw)"><b id="dr"></b><span>draws</span></div>
+      </div>
+      <div class="bars" id="bars" aria-label="Games by the move on which they end"></div>
+      <div class="legend"><span><i style="background:var(--x)"></i>X wins</span><span><i style="background:var(--o)"></i>O wins</span><span><i style="background:var(--draw)"></i>draw</span></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-label="Challenges">
+    <h2>Try this</h2>
+    <ol class="try">
+      <li>Before any move the counter says 255,168. Put X in the centre. How many games are left now? Then undo and try a corner and an edge. Which first move leaves the <b>most</b> games?</li>
+      <li>Find a board where the counter says exactly <b>1</b>. What kind of board is that?</li>
+      <li>Play X in square 0, O in 4, X in 8. Who wins most of the remaining games?</li>
+      <li>Find a board, with empty squares left, where <b>every</b> remaining game is a draw.</li>
+      <li>Find the board with the most games that end on move 5. (Hint: it takes four moves to get there.)</li>
+    </ol>
+  </section>
+  <p class="foot">Companion to the video "Why are there exactly 255,168 games of tic-tac-toe?". Squares are numbered 0 to 8, like in the program.</p>
+</div>
+
+<script>
+(() => {
+  const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  const $ = id => document.getElementById(id);
+  const fmt = n => n.toLocaleString("en-US");
+  function winnerOf(b) { for (const [a, c, d] of LINES) if (b[a] !== "." && b[a] === b[c] && b[a] === b[d]) return { who: b[a], line: [a, c, d] }; return null; }
+  const memo = new Map();
+  // count every game from board b with `p` to move: totals by result and by the move the game ends on
+  function count(b, p) {
+    const key = b + p;
+    if (memo.has(key)) return memo.get(key);
+    const w = winnerOf(b), moves = 9 - [...b].filter(c => c === ".").length;
+    let r;
+    if (w || moves === 9) {
+      r = { total: 1, X: 0, O: 0, D: 0, by: {} };
+      const res = w ? w.who : "D"; r[res] = 1; r.by[moves] = { X: 0, O: 0, D: 0 }; r.by[moves][res] = 1;
+    } else {
+      r = { total: 0, X: 0, O: 0, D: 0, by: {} };
+      const q = p === "X" ? "O" : "X";
+      for (let i = 0; i < 9; i++) if (b[i] === ".") {
+        const s = count(b.slice(0, i) + p + b.slice(i + 1), q);
+        r.total += s.total; r.X += s.X; r.O += s.O; r.D += s.D;
+        for (const [m, v] of Object.entries(s.by)) {
+          r.by[m] = r.by[m] || { X: 0, O: 0, D: 0 };
+          r.by[m].X += v.X; r.by[m].O += v.O; r.by[m].D += v.D;
+        }
+      }
+    }
+    memo.set(key, r); return r;
+  }
+  const svgX = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M18 18 L82 82 M82 18 L18 82" stroke="var(--x)" stroke-width="13" stroke-linecap="round"/></svg>';
+  const svgO = '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="33" fill="none" stroke="var(--o)" stroke-width="13"/></svg>';
+  let history = [];
+  const boardStr = () => { const b = Array(9).fill("."); history.forEach((sq, k) => b[sq] = k % 2 ? "O" : "X"); return b.join(""); };
+  const toMove = () => history.length % 2 ? "O" : "X";
+
+  function render() {
+    const b = boardStr(), w = winnerOf(b), over = !!w || !b.includes("."), p = toMove();
+    const c = count(b, p);
+    const cells = $("board"); cells.innerHTML = "";
+    for (let i = 0; i < 9; i++) {
+      const btn = document.createElement("button");
+      btn.className = "cell" + (w && w.line.includes(i) ? " winning" : "");
+      btn.type = "button";
+      btn.setAttribute("aria-label", `square ${i}${b[i] === "." ? ", empty" : ", " + b[i]}`);
+      btn.innerHTML = `<span class="idx">${i}</span>` + (b[i] === "X" ? svgX : b[i] === "O" ? svgO : "");
+      if (b[i] === "." && !over) {
+        if ($("hints").checked) {
+          const s = count(b.slice(0, i) + p + b.slice(i + 1), p === "X" ? "O" : "X");
+          btn.insertAdjacentHTML("beforeend", `<span class="hint">${fmt(s.total)}</span>`);
+        }
+        btn.addEventListener("click", () => { history.push(i); render(); });
+      } else btn.disabled = true;
+      cells.appendChild(btn);
+    }
+    $("status").innerHTML = w ? `<span class="${w.who.toLowerCase()}">${w.who}</span> wins on move ${history.length}!`
+      : over ? "Draw: the board is full." : `<span class="${p.toLowerCase()}">${p}</span> to move (move ${history.length + 1})`;
+    $("total").textContent = fmt(c.total);
+    $("totalSub").textContent = over ? "This game is finished: it counts as exactly 1 game." :
+      history.length === 0 ? "from the empty board: every game of tic-tac-toe" : `after ${history.length} move${history.length > 1 ? "s" : ""}`;
+    $("xw").textContent = fmt(c.X); $("ow").textContent = fmt(c.O); $("dr").textContent = fmt(c.D);
+    const max = Math.max(1, ...[5, 6, 7, 8, 9].map(m => c.by[m] ? c.by[m].X + c.by[m].O + c.by[m].D : 0));
+    $("bars").innerHTML = [5, 6, 7, 8, 9].map(m => {
+      const v = c.by[m] || { X: 0, O: 0, D: 0 }, tot = v.X + v.O + v.D;
+      const seg = (n, col) => n ? `<div class="fill" style="width:${100 * n / max}%;background:var(${col})"></div>` : "";
+      return `<div class="bar"><span>move ${m}</span><div class="track">${seg(v.X, "--x")}${seg(v.O, "--o")}${seg(v.D, "--draw")}</div><span class="n">${fmt(tot)}</span></div>`;
+    }).join("");
+    $("undo").disabled = history.length === 0;
+  }
+  $("undo").addEventListener("click", () => { history.pop(); render(); });
+  $("reset").addEventListener("click", () => { history = []; render(); });
+  $("hints").addEventListener("change", render);
+  render();
+})();
+</script>

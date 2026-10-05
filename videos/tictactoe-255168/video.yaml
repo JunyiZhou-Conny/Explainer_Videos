@@ -1,0 +1,15 @@
+id: tictactoe-255168
+title: "Why are there exactly 255,168 games of tic-tac-toe?"
+papers: []                     # not a paper: a counting puzzle and a small program
+audience: "middle school (about 11-14); no algebra or programming background assumed"
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+scenes:
+  - {file: scenes/s01_hook.py,        cls: Hook,        title: "How many games?"}
+  - {file: scenes/s02_fill.py,        cls: FillTheBoard, title: "Filling the board: 9!"}
+  - {file: scenes/s03_stop.py,        cls: GamesStop,   title: "Games stop early"}
+  - {file: scenes/s04_messy.py,       cls: Messy,       title: "Counting by hand gets messy"}
+  - {file: scenes/s05_board_code.py,  cls: BoardCode,   title: "Teaching a computer the rules"}
+  - {file: scenes/s06_explore.py,     cls: Explore,     title: "Exploring every game"}
+  - {file: scenes/s07_experiments.py, cls: Experiments, title: "Change one line"}
+  - {file: scenes/s08_answer.py,      cls: Answer,      title: "255,168, explained"}
+  - {file: scenes/s09_bigger.py,      cls: Bigger,      title: "Bigger games, and your turn"}
