@@ -30,12 +30,14 @@ The next step after videos is interactivity — playgrounds where you have to *p
 | | Video | Papers | Length |
 | --- | --- | --- | --- |
 | 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~24 min, also cut in two parts (~15 + ~9 min) |
+| 🎬 | [Why are there exactly 255,168 games of tic-tac-toe?](videos/tictactoe-255168/) (for middle school) | — (counting, recursion and backtracking) | ~12 min |
 
-Each video folder has: `output/*.mp4` (the video, plus part cuts), `output/*.srt` (subtitles),
-`output/chapters*.txt`, `script.md` (narration + visual plan), `digest.md` (paper notes),
-`exercises.md`, and the Manim source in `scenes/`. The first video also has `playground.html`, an
-interactive page where you play the attacker against the Laplace mechanism: a first step from
-watching to doing.
+Each video folder has: `output/*.mp4` (the video, plus part cuts for long ones), `output/*.srt`
+(subtitles), `output/chapters*.txt`, `script.md` (narration + visual plan), `exercises.md`, the
+Manim source in `scenes/`, and (for paper videos) `digest.md` (paper notes). Each also has a
+`playground.html`, an interactive page that is a first step from watching to doing. In the privacy
+video you play the attacker against the Laplace mechanism. In the tic-tac-toe video you play moves
+and watch how many games are still possible.
 
 ## Repository layout
 
