@@ -46,15 +46,17 @@ def line_tag(code, k0: int, k1: int, s: str, color: str, size: float = 26) -> Te
     return S.text("← " + s, size, color).move_to([code.get_right()[0] + 0.15, y, 0], aligned_edge=LEFT)
 
 
-def side_ponder(scene, question: str, seconds: float, y: float, width: float = 5.3,
-                size: float = 30) -> VGroup:
-    """pause_and_ponder, but the card sits in the right-hand column so the code stays visible."""
-    card = ponder_card(question, width=width, size=size).move_to([CARD_X, y, 0])
-    scene.play(FadeIn(card, scale=0.95), run_time=0.6)
+def side_card(question: str, y: float, width: float = 5.3, size: float = 30) -> VGroup:
+    """A ponder card in the right-hand column, so the code stays visible. Fade it in on the
+    narrator's "Pause..." inside the SAY block, then drain_timer() after the block."""
+    return ponder_card(question, width=width, size=size).move_to([CARD_X, y, 0])
+
+
+def drain_timer(scene, card: VGroup, seconds: float) -> None:
+    """The pause_and_ponder drain: the card's timer bar (card[3]) empties over `seconds`."""
     bar = card[3]
     target = bar.copy().scale(0.001, about_point=bar.get_start())
     scene.play(bar.animate(rate_func=linear).become(target), run_time=seconds)
-    return card
 
 
 def out_value(s: str, color: str = COUNT_COLOR) -> Text:
@@ -99,19 +101,21 @@ class Experiments(VoiceScene):
         undo_bar = line_highlight(code, UNDO_LINE, UNDO_COLOR, 0.3)
         undo_strike = strike(code, UNDO_LINE)
         undo_tag = line_tag(code, UNDO_LINE, UNDO_LINE, "undo", UNDO_COLOR)
+        # the card stays above the "undo" tag, so the struck line and its label stay visible
+        card = side_card("What happens if we\ndelete the undo line?", y=0.85)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(code, shift=RIGHT * 0.3), run_time=1.0)
             vo.wait_until("break it on purpose")
             self.play(Write(heading0), run_time=0.9)
-            vo.wait_until("Pause and ponder")
-            self.play(FadeIn(undo_bar), Indicate(undo_text, color=UNDO_COLOR, scale_factor=1.04),
+            vo.wait_until("Pause and ponder")       # the question is up the moment "Pause" is said
+            self.play(FadeIn(card, scale=0.95), FadeIn(undo_bar),
+                      Indicate(undo_text, color=UNDO_COLOR, scale_factor=1.04),
                       FadeIn(undo_tag, shift=LEFT * 0.2), run_time=0.8)
             self.play(FadeIn(out_frame), FadeIn(out_label), FadeIn(out_q, scale=0.6), run_time=0.6)
             vo.wait_until("delete the undo line")
             self.play(Create(undo_strike), undo_text.animate.set_opacity(0.35), FadeOut(undo_bar),
                       TransformMatchingShapes(heading0, heading1), run_time=0.9)
-        # the card stays above the "undo" tag, so the struck line and its label stay visible
-        card = side_ponder(self, "What happens if we\ndelete the undo line?", seconds=10, y=0.85)
+        drain_timer(self, card, 10)
 
         # ================================================================ beat 2: the broken program's trace
         board = Board(size=3.0).move_to([COL_X, 0.75, 0])
@@ -186,7 +190,7 @@ class Experiments(VoiceScene):
             # program order: X on 7 -> winner check (the old diagonal) -> count 2;
             # X on 8 -> winner check -> count 3
             tag7, tag8 = corner_tag(board, 7, "?!", UNDO_COLOR), corner_tag(board, 8, "?!", UNDO_COLOR)
-            vo.wait_until("X lands on square 7")
+            vo.wait_until("X lands on the bottom-middle")      # square 7
             drop(7, "X", None, run_time=0.5, extra=[FadeOut(still), FadeIn(tag7, scale=0.5)])
             vo.wait_until("and the old diagonal")
             self.play(ShowPassingFlash(win.copy().set_stroke(S.WHITE, 16), time_width=0.5),
@@ -196,7 +200,7 @@ class Experiments(VoiceScene):
             vo.wait_until("that's 2")
             self.play(*bump(2), run_time=0.55)
 
-            vo.wait_until("Then square 8")
+            vo.wait_until("Then the bottom-right")             # square 8
             drop(8, "X", None, run_time=0.5,
                  extra=[FadeIn(tag8, scale=0.5), Transform(bar, line_highlight(code, MOVE_LINE))])
             vo.wait_until("that's 3")
@@ -220,6 +224,9 @@ class Experiments(VoiceScene):
         draw_bar = lines_bar(code, *DRAW_LINES)
         win_tag = line_tag(code, *WINNER_LINES, "winner check", UNDO_COLOR)
         draw_tag = line_tag(code, *DRAW_LINES, "board full", S.WHITE)
+        # the card sits under the two tags, so the struck lines and their labels stay visible
+        card = side_card("Now delete the winner check instead.\nWhat number comes out?\n"
+                         "(Hint: you've met it before!)", y=-1.7)
 
         with self.voiceover(SAY[2]) as vo:
             # "Now put undo back": the strike comes off and the line lights up GREEN
@@ -234,11 +241,10 @@ class Experiments(VoiceScene):
             self.play(FadeIn(draw_bar), FadeIn(draw_tag, shift=LEFT * 0.2),
                       Indicate(VGroup(*[code_line(code, k) for k in DRAW_LINES]), color=S.WHITE,
                                scale_factor=1.04), run_time=0.9)
-            vo.wait_until("Pause and predict")
-            self.play(Indicate(out_q2, color=S.WHITE, scale_factor=1.3), run_time=0.7)
-        # the card sits under the two tags, so the struck lines and their labels stay visible
-        card = side_ponder(self, "Now delete the winner check instead.\nWhat number comes out?\n"
-                                 "(Hint: you've met it before!)", seconds=10, y=-1.7)
+            vo.wait_until("Pause and predict")       # the question is up the moment "Pause" is said
+            self.play(FadeIn(card, scale=0.95), Indicate(out_q2, color=S.WHITE, scale_factor=1.3),
+                      run_time=0.7)
+        drain_timer(self, card, 10)
 
         # ================================================================ beat 4: 362,880 = nine factorial
         out_big = place_out(out_value(f"{NINE_FACTORIAL:,}"))
