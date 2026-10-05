@@ -301,7 +301,7 @@ CU = {k: np.array([x, y, 0]) for k, (x, y) in CU.items()}
 CU_EDGES = [("A", "X6", 6, "X"), ("A", "X7", 7, "X"), ("A", "X8", 8, "X"),
             ("X7", "O6", 6, "O"), ("X7", "O8", 8, "O"), ("O6", "X8b", 8, "X"), ("O8", "X6b", 6, "X")]
 CU_LEAVES = ["X6", "X8", "X8b", "X6b"]
-WB_C = np.array([3.65, -2.25, 0])      # the whiteboard
+WB_C = np.array([3.9, -2.32, 0])       # the whiteboard (clear of the "<- undo" tag)
 WB_S = 1.6
 
 
@@ -439,19 +439,22 @@ class Explore(VoiceScene):
             q2 = try_square(2, rt=0.75)
             self.play(FadeIn(q2, scale=0.5), run_time=0.25)
 
+            # the question is asked of each child board (the ?s pulse), then the answers come back
             vo.wait_until("how many games can")
+            self.play(*[Indicate(q, color=S.WHITE, scale_factor=1.35) for q in qs], run_time=0.5)
+            vo.wait_until("happen from here")
             answers = [S.text(str(a), 40, COUNT_COLOR).move_to(q) for a, q in zip(B3_ANS, qs)]
-            self.play(*[ReplacementTransform(q, a) for q, a in zip(qs, answers)], run_time=0.6)
+            self.play(*[ReplacementTransform(q, a) for q, a in zip(qs, answers)], run_time=0.5)
 
             vo.wait_until("It adds up")
-            self.play(Transform(bar, lines_bar(code, 10)), run_time=0.3)
+            self.play(Transform(bar, lines_bar(code, 10)), run_time=0.25)
             running = 0
             for a, v in zip(answers, B3_ANS):
                 running += v
                 new_num = S.text(str(running), 40, COUNT_COLOR, font=MONO).move_to(total_num)
                 self.play(FadeOut(a.copy(), target_position=total_num.get_center(), scale=0.6),
-                          Transform(total_num, new_num), Indicate(a, color=COUNT_COLOR), run_time=0.45)
-            self.play(Circumscribe(counter, color=COUNT_COLOR, buff=0.12), run_time=0.5)
+                          Transform(total_num, new_num), Indicate(a, color=COUNT_COLOR), run_time=0.4)
+            self.play(Circumscribe(counter, color=COUNT_COLOR, buff=0.12), run_time=0.4)
         self.loop_stuff = VGroup(parent, cap, *kids, *arrows, *answers, ask, o_tag, counter, bar)
 
     # ================================================================ 4. a tiny worked example
@@ -528,14 +531,14 @@ class Explore(VoiceScene):
             self.play(FadeIn(one_g, scale=0.5), run_time=0.4)
             # back to the starting board (undo X, then undo O)
             del on[5], on[7]
-            erase(self, x5, work.center_of(5), work.cell, run_time=0.45)
-            erase(self, o7, work.center_of(7), work.cell, run_time=0.45)
+            erase(self, x5, work.center_of(5), work.cell, run_time=0.3)
+            erase(self, o7, work.center_of(7), work.cell, run_time=0.3)
 
             vo.wait_until("Total")
             self.play(ReplacementTransform(one_l, total[0]), ReplacementTransform(one_g, total[2]),
-                      run_time=0.9)
+                      run_time=0.8)
             self.play(FadeIn(total[1]), FadeIn(total[3]), FadeIn(total[4:], shift=LEFT * 0.15),
-                      run_time=0.5)
+                      run_time=0.4)
         self.example_stuff = VGroup(work, *on.values(), cap, snap_l, snap_r, snap_g, arr_l, arr_r,
                                     arr_g, tag_l, tag_g, total)
 
@@ -711,8 +714,9 @@ class Explore(VoiceScene):
         cap1 = S.text("try → explore → undo", 30, S.WHITE, t2c={"undo": UNDO_COLOR})
         cap2 = S.text("= backtracking", 30, S.WHITE, weight="BOLD")
         VGroup(cap1, cap2).arrange(RIGHT, buff=0.25).move_to([code.get_center()[0], -2.6, 0])
-        cnt_lab_to = cnt_lab.copy().move_to([5.5, 3.25, 0])
-        cnt_to = cnt.copy().move_to([5.5, 2.62, 0])
+        # the counter sits in the free space left of the close-up (not next to the X8 label)
+        cnt_lab_to = cnt_lab.copy().move_to([0.3, 3.15, 0])
+        cnt_to = cnt.copy().move_to([0.3, 2.5, 0])
 
         side_group = VGroup(side, *marks.values(), w["side_win"])
         scale = WB_S / SIDE_S
@@ -753,9 +757,9 @@ class Explore(VoiceScene):
             self.play(FadeOut(self.tree), FadeOut(VGroup(*w["trail"], w["cursor"], w["leaf"])),
                       ReplacementTransform(zoom, zoom_to),
                       FadeIn(VGroup(closeup, hl_stub, hl["X6"], counted["X6"], cursor)),
-                      side_group.animate.scale(scale).move_to(WB_C), run_time=1.1)
-            self.play(FadeOut(zoom_to), FadeIn(code, shift=RIGHT * 1.0),
-                      Transform(cnt_lab, cnt_lab_to), Transform(cnt, cnt_to), run_time=0.7)
+                      side_group.animate.scale(scale).move_to(WB_C),
+                      Transform(cnt_lab, cnt_lab_to), Transform(cnt, cnt_to), run_time=1.1)
+            self.play(FadeOut(zoom_to), FadeIn(code, shift=RIGHT * 1.0), run_time=0.7)
             undo_bar = lines_bar(code, 11, color=UNDO_COLOR, opacity=0.32)
             undo_tag = line_tag(code, 11, "undo", UNDO_COLOR)
             self.play(FadeIn(undo_bar), FadeIn(undo_tag, shift=LEFT * 0.2),
@@ -779,7 +783,8 @@ class Explore(VoiceScene):
             step_back("X6", "A", 6, extra_targets=[w["side_win"]], rt=0.8)
 
             vo.wait_until("That's called undoing")
-            self.play(Circumscribe(VGroup(undo_bar, undo_tag), color=UNDO_COLOR, buff=0.06),
+            self.play(undo_bar.animate(rate_func=there_and_back).set_fill(opacity=0.7),
+                      Indicate(undo_tag, color=UNDO_COLOR, scale_factor=1.25),
                       Indicate(cursor, color=WIN_COLOR, scale_factor=1.6), run_time=1.0)
 
             # the next branch starts fresh: X7, O6, X8 -> the 2nd game
