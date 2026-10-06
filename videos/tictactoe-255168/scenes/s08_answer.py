@@ -1,10 +1,11 @@
 """S08 · 255,168, explained.
 
 Beats: explore() exactly as S07 left it (S06/S07 size, winner check struck out) -> the strike is
-erased, the panel grows, then folds into the "..." of play_all_games() -> the program runs in a
-terminal and prints 255168
+erased, the panel grows, then folds into the "# (winner and explore from before)" line of
+play_all_games() -> the program runs in a terminal and prints 255168
 -> a bar chart of games by the move they end on (linear scale: moves 5 and 6 are tiny slivers)
--> each bar times its ghost multiplier (x24, x6, x2, x1, x1) stacks into nine factorial
+-> each bar times its ghost multiplier (x24, x6, x2, x1, x1) stacks into nine factorial (S03's ghost
+   board comes back above the move-5 bar); the 362,880 = 9! payoff is held in silence
 -> the same bars regroup by result: X wins / O wins / draws
 -> ponder: which first move gives the most games? -> edge > corner > center, and the winning lines
    through each first mark explain why -> more games is not a better move (X's share of wins).
@@ -22,7 +23,7 @@ from explainer.scene import VoiceScene
 from common import (BY_MOVE, COUNT_COLOR, DRAW_COLOR, DRAWS, FIRST_MOVE_GAMES, GHOST_COLOR,
                     MOVE9_DRAWS, MOVE9_X_WINS, NARRATION, NINE_FACTORIAL, O_COLOR, O_WINS,
                     TOTAL_GAMES, UNDO_COLOR, WIN_COLOR, WIN_LINES, X_COLOR, X_WINS, Board,
-                    code_block, explore_code, line_highlight, strike, winner)
+                    code_block, explore_code, line_highlight, mark_anim, strike, winner)
 
 SAY = NARRATION["S08"]
 MONO = "DejaVu Sans Mono"
@@ -162,28 +163,30 @@ def mini_tree(center_x: float = 0.0, top: float = -1.8):
 class Answer(VoiceScene):
     def construct(self):
         # ================================================================ 1. run the real program
-        # S07 ends on explore() at the S06/S07 size and place with the winner check struck out and
-        # dimmed: S08 opens on exactly that, erases the strike, and only then grows the panel so it
-        # can be read (~21 pt instead of ~13 pt)
+        # S07 ends on explore() at the S06/S07 size and place (explore_code(): x from -6.6 to 2.4)
+        # with the winner check (lines 1-2) struck out and dimmed: S08 opens on exactly that, erases
+        # the strike, and only then grows the panel so it can be read
         code = explore_code()
         cuts = VGroup(strike(code, 1), strike(code, 2))          # how S07 left the winner check
         win_texts = VGroup(code.code_lines[1], code.code_lines[2])
         win_texts.set_opacity(0.35)                              # dimmed, as in S07
-        # the end of the program; "..." is where explore() lives (the panel folds into it)
+        # the end of the program; the comment line stands for winner() and explore() (the panel
+        # folds into it). Not a bare "...": non-programmers can't tell whether that is real code.
         tail = code_block('def play_all_games():\n'
                           '    board = ["."] * 9\n'
-                          '    ...\n'
+                          '    # (winner and explore from before)\n'
                           '    return explore("X")\n'
                           '\n'
-                          'print(play_all_games())', font_size=26).move_to([-2.4, 1.85, 0])
-        RET, DOTS, PRINT = 3, 2, 5                               # tail.code_lines indices
+                          'print(play_all_games())', font_size=24)
+        tail.to_edge(LEFT, buff=0.55).set_y(1.85)               # x from -6.56 to 1.58
+        RET, NOTE, PRINT = 3, 2, 5                               # tail.code_lines indices
         hl_ret, hl_print = line_highlight(tail, RET), line_highlight(tail, PRINT)
         y_ret = tail.code_lines[RET].get_center()[1]
         start_board = Board(size=0.9, stroke=3)
         start_txt = VGroup(S.text("start: empty board,", 26, S.WHITE),
                            S.text("X's turn", 26, X_COLOR)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         start_lab = VGroup(start_board, start_txt).arrange(RIGHT, buff=0.25)
-        start_lab.move_to([tail.get_right()[0] + 0.75 + start_lab.width / 2, y_ret - 0.1, 0])
+        start_lab.move_to([tail.get_right()[0] + 0.65 + start_lab.width / 2, y_ret - 0.1, 0])
         start_arrow = Arrow(start_lab.get_left() + LEFT * 0.05, [tail.get_right()[0] + 0.02, y_ret, 0], buff=0.05,
                             color=S.GREY, stroke_width=3, max_tip_length_to_length_ratio=0.35)
 
@@ -209,10 +212,10 @@ class Answer(VoiceScene):
             explore_panel = VGroup(code, back).set_z_index(1)    # stays in front of the tail below
             self.play(explore_panel.animate.scale_to_fit_width(13.0).move_to([0, 0.2, 0]), run_time=0.6)
             self.wait(0.3)
-            # the end of the program: explore() folds away into the "..." inside play_all_games()
-            dots = tail.code_lines[DOTS]
-            self.play(explore_panel.animate.scale(0.7 / explore_panel.width).move_to(dots.get_center())
-                      .set_opacity(0),
+            # the end of the program: explore() folds flat into the comment line that stands for it
+            note = tail.code_lines[NOTE]
+            self.play(explore_panel.animate.stretch_to_fit_width(note.width).stretch_to_fit_height(note.height)
+                      .move_to(note.get_center()).set_opacity(0),
                       FadeIn(tail, run_time=0.6), run_time=0.9)
             self.remove(explore_panel)
             self.play(FadeIn(hl_ret), GrowArrow(start_arrow), FadeIn(start_txt, shift=LEFT * 0.15),
@@ -313,6 +316,14 @@ class Answer(VoiceScene):
             .move_to([STACK_X, Y0 + goal_h / 2, 0])
         goal_lab = S.text("9!", 36, S.WHITE)
         goal_lab.move_to([STACK_X, Y0 + goal_h + 0.14 + goal_lab.height / 2, 0])
+        # S03's game, small, above the move-5 bar: X wins on move 5 (top row), and the four ghost moves
+        # that nine factorial played anyway (the same squares and symbols as in S03 and S07)
+        gboard = Board(size=1.9, stroke=4).move_to([XS[5], 1.15, 0])
+        g_real = VGroup(*[gboard.mark_at(i, s, scale=0.55)
+                          for i, s in ((0, "X"), (4, "O"), (1, "X"), (8, "O"), (2, "X"))])
+        g_win = gboard.win_line(0, 2, stroke=7)
+        g_ghosts = VGroup(*[gboard.ghost_at(i, s, scale=0.55) for i, s in ((3, "O"), (5, "X"), (6, "O"), (7, "X"))])
+        ghost_game = VGroup(gboard, g_real, g_win, g_ghosts)
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(parts, legend, by_hand, brace, half_lab), run_time=0.6),
@@ -324,8 +335,10 @@ class Answer(VoiceScene):
             vo.wait_until("connects to nine")
             self.play(Create(goal), FadeIn(goal_lab, shift=DOWN * 0.15), run_time=0.9)
 
-            def multiply(m: int, grow_at: str | None, play: bool = True):
-                """Show xk above bar m, then grow its ghost part and turn its label into the product."""
+            def multiply(m: int, grow_at: str | None, play: bool = True, grow_mult: bool = False,
+                         lead: tuple = (), extra: tuple = ()):
+                """Show xk above bar m (with `lead` animations), then grow its ghost part (with `extra`)
+                and turn its label into the product."""
                 k = GHOSTS[m]
                 head = S.text(f"×{k}", 34, S.WHITE)
                 mult = VGroup(head)
@@ -337,7 +350,8 @@ class Answer(VoiceScene):
                 if not play:                      # x1: no ghosts, the bar stays as it is
                     prods[m] = vals[m]
                     return FadeIn(mult, shift=DOWN * 0.2)
-                self.play(FadeIn(mult, shift=DOWN * 0.2), run_time=0.6)
+                self.play(GrowFromCenter(mult) if grow_mult else FadeIn(mult, shift=DOWN * 0.2), *lead,
+                          run_time=0.6)
                 if grow_at:
                     vo.wait_until(grow_at)
                 h = BY_MOVE[m] * U3
@@ -349,16 +363,23 @@ class Answer(VoiceScene):
                 prods[m] = prod
                 mult_target = mult.copy().move_to(above(mult, prod.get_top()[1], 0.14)).set_x(XS[m])
                 self.play(GrowFromEdge(gh, DOWN), FadeTransform(vals[m], prod),
-                          mult.animate.move_to(mult_target), run_time=1.3)
+                          mult.animate.move_to(mult_target), *extra, run_time=1.3)
 
+            # "Remember": S03's game comes back above the move-5 bar, which lights up
+            vo.wait_until("Remember")
+            self.play(LaggedStart(*[Create(ln) for ln in gboard], lag_ratio=0.15),
+                      Indicate(VGroup(bars[5], vals[5]), color=S.WHITE, scale_factor=1.25), run_time=0.8)
+            self.play(LaggedStart(*[mark_anim(mk) for mk in g_real], Create(g_win), lag_ratio=0.45),
+                      run_time=1.6)
             vo.wait_until("each game that ends")
-            self.play(Circumscribe(VGroup(bars[5], vals[5]), color=S.WHITE, buff=0.12), run_time=1.0)
-            vo.wait_until("a total of 24")
-            multiply(5, None)
-            vo.wait_until("once for each ghost")
-            self.play(Indicate(ghosts[5], color=S.WHITE, scale_factor=1.08), run_time=0.9)
+            # the game is over on move 5, but nine factorial played on: the four ghost moves appear
+            self.play(Circumscribe(VGroup(bars[5], vals[5]), color=S.WHITE, buff=0.12),
+                      LaggedStart(*[Create(gh) for gh in g_ghosts], lag_ratio=0.35), run_time=1.2)
+            vo.wait_until("24 times")
+            multiply(5, "once for each ghost", grow_mult=True,
+                     extra=(Indicate(g_ghosts, color=S.WHITE, scale_factor=1.15),))
             vo.wait_until("A game ending on move 6")
-            multiply(6, None)
+            multiply(6, None, lead=(FadeOut(ghost_game),))
             vo.wait_until("and on move 7")
             multiply(7, None)
             # moves 8 and 9 leave at most one empty square: no ghosts, x1
@@ -403,8 +424,9 @@ class Answer(VoiceScene):
             self.play(ReplacementTransform(VGroup(*pieces.values()), tower), FadeOut(goal),
                       FadeTransform(sum_line, fact[0]), GrowFromCenter(tbrace), run_time=1.0)
             self.play(FadeTransform(goal_lab, fact[1]), run_time=0.6)
-            # let it land: hold the full stack (362,880 = 9!) for ~1.5 s before the next beat
             self.play(Indicate(fact, color=COUNT_COLOR, scale_factor=1.06), run_time=1.5)
+        # the payoff: hold the full "362,880 = 9!" frame in silence before the next question
+        self.wait(1.8)
 
         # ================================================================ 4. who wins?
         g = U2 / U3
@@ -472,10 +494,15 @@ class Answer(VoiceScene):
                                   LaggedStart(*[Create(ln) for k in spots for ln in boards[k]],
                                               lag_ratio=0.04, run_time=1.5),
                                   lag_ratio=0.2))
+            # "first move for X": an X goes into each grid (corner, edge, center), one after another
+            vo.wait_until("first move for X")
+            self.play(LaggedStart(*[LaggedStart(*[Create(s) for s in xs_[k]], lag_ratio=0.5) for k in spots],
+                                  lag_ratio=0.6), run_time=1.6)
+            # each name appears as it is said, and its X nods
             for k, anchor in (("corner", "a corner"), ("edge", "an edge"), ("center", "or the center")):
                 vo.wait_until(anchor)
-                self.play(LaggedStart(*[Create(s) for s in xs_[k]], lag_ratio=0.5),
-                          FadeIn(names[k], shift=UP * 0.15), run_time=0.6)
+                self.play(FadeIn(names[k], shift=UP * 0.15),
+                          Indicate(xs_[k], color=S.WHITE, scale_factor=1.2), run_time=0.6)
             vo.wait_until("Pause and guess")                    # the card is up as "Pause" is said
             self.play(FadeIn(card, scale=0.95), run_time=0.6)
         timer = card[3]
@@ -487,13 +514,15 @@ class Answer(VoiceScene):
         board_groups = {k: VGroup(boards[k], xs_[k]) for k in spots}
         counts = {"corner": FIRST_MOVE_GAMES["corner"], "edge": FIRST_MOVE_GAMES["edge"],
                   "center": FIRST_MOVE_GAMES["centre"]}
-        times = {"corner": "×4", "edge": "×4", "center": "×1"}
+        # how many such squares there are (words, not "×4": in this video "×24 / ×6" meant
+        # "counted this many times")
+        how_many = {"corner": "4 corners", "edge": "4 edges", "center": "1 center"}
         new_names, nums = {}, {}
         for k in spots:
             new_names[k] = S.text(("each " if k != "center" else "") + k, 28, S.WHITE)
             on_baseline(new_names[k], bx[k], -2.75 + up[1])
             nums[k] = VGroup(S.text(fmt(counts[k]), 34, COUNT_COLOR, weight=BOLD),
-                             S.text(f"({times[k]})", 28, S.GREY)).arrange(RIGHT, buff=0.15, aligned_edge=DOWN)
+                             S.text(f"({how_many[k]})", 28, S.GREY)).arrange(RIGHT, buff=0.15, aligned_edge=DOWN)
         for k in spots:                      # same height for all three (no descender in "each corner")
             nums[k].next_to(new_names["corner"], DOWN, buff=0.18).set_x(bx[k])
         top_board = boards["edge"].get_top() + up

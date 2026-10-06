@@ -3,10 +3,14 @@
 Beats
 1. "X always wins?" gets a RED ✗ on "No.", and the question later makes way for the answer.
    A REAL position (X to move, 6 marks placed) whose whole subtree is small: 6 finished games.
-   The leaves keep their result colours; the colours bubble up level by level (at X's turn the
-   best result for X, at O's turn the best for O) and the root ends GREY. Following the picks from
-   the root (a WHITE path) lands on a draw: perfect play -> draw.
-   Everything shown is computed below from the rules (and the empty board is checked to be a draw).
+   "It starts at the bottom": the leaves take their result colours; "and works upward": the colours
+   climb level by level (at X's turn the best result for X, at O's turn the best for O) and the
+   root ends GREY. Following the picks from the root (a WHITE path) lands on a draw: perfect play
+   -> draw, and the same holds on the full tree (empty board -> draw). "So every one of X's wins
+   needs a mistake by O": one X-win leaf is ringed, and the O move on its path that gave up O's
+   best result turns RED ("O's mistake").
+   Everything shown is computed below from the rules (the empty board is checked to be a draw, and
+   every one of X's 131,184 wins is checked to contain an O mistake).
 2. Chess is far too big: digit strips drawn to scale, one box per digit
    (255,168: 6 boxes · atoms in the observable universe: 81 · chess games (Shannon 1950): 121).
 3. Chess programs look a few moves ahead in a huge tree and estimate who's winning.
@@ -22,8 +26,8 @@ from explainer import style as S
 from explainer.scene import VoiceScene
 
 from common import (COUNT_COLOR, DRAW_COLOR, NARRATION, NINE_FACTORIAL, O_COLOR, TOTAL_GAMES,
-                    UNDO_COLOR, WIN_LINES, X_COLOR, Board, mark_anim, mini_board, move_number,
-                    winner)
+                    UNDO_COLOR, WIN_LINES, X_COLOR, X_WINS, Board, mark_anim, mini_board,
+                    move_number, winner)
 
 SAY = NARRATION["S09"]
 
@@ -89,6 +93,59 @@ assert [len(r) for r in LEVELS] == [1, 3, 6, 4]
 assert perfect_play("." * 9, "X") == "D"          # the full game: perfect play is a draw
 
 
+def path_to(target: dict, node: dict = TREE) -> list | None:
+    """The nodes from the root down to `target`."""
+    if node is target:
+        return [node]
+    for k in node["kids"]:
+        p = path_to(target, k)
+        if p:
+            return [node, *p]
+    return None
+
+
+def mistakes(path: list) -> list:
+    """The moves on a path that give the mover a worse result than their best choice."""
+    return [(a, b) for a, b in zip(path, path[1:])
+            if PREFER[a["player"]].index(b["result"]) > PREFER[a["player"]].index(a["result"])]
+
+
+# "So every one of X's wins needs a mistake by O somewhere": true for every X win in this tree ...
+X_WIN_LEAVES = [n for n in LEAVES if n["result"] == "X"]
+assert X_WIN_LEAVES and all(any(a["player"] == "O" for a, _ in mistakes(path_to(n))) for n in X_WIN_LEAVES)
+# ... and the one we point at has O's mistake as the ONLY slip on its way (X always plays its best)
+SHOWN_WINS = [n for n in X_WIN_LEAVES if len(mistakes(path_to(n))) == 1]
+assert len(SHOWN_WINS) == 1
+SHOWN_WIN = SHOWN_WINS[0]
+[(O_TURN, O_SLIP)] = mistakes(path_to(SHOWN_WIN))
+assert O_TURN["player"] == "O" and O_SLIP is not O_TURN["best"]
+assert O_TURN["move"] == 3 and O_SLIP["move"] == 8 and O_TURN["best"]["move"] == 6   # O took 8, not 6
+
+
+@lru_cache(maxsize=None)
+def x_wins_count(cells: str, player: str, o_never_slips: bool = False) -> int:
+    """X's wins from here: all of them, or only games in which O never gives up its best result."""
+    w = winner(cells)
+    if w is not None:
+        return int(w == "X")
+    if "." not in cells:
+        return 0
+    total = 0
+    for s in range(9):
+        if cells[s] != ".":
+            continue
+        nxt = play(cells, s, player)
+        if o_never_slips and player == "O" and perfect_play(nxt, "X") != perfect_play(cells, "O"):
+            continue                                  # an O mistake: leave those games out
+        total += x_wins_count(nxt, other(player), o_never_slips)
+    return total
+
+
+# ... and on the full tree: of X's 131,184 wins, not one happens without an O mistake
+assert x_wins_count("." * 9, "X") == X_WINS
+assert x_wins_count("." * 9, "X", o_never_slips=True) == 0
+
+
 def legal_game(moves) -> str:
     """Final cells of a game [(square, symbol), ...]; asserts nobody won before the last move."""
     cells = "." * 9
@@ -121,9 +178,9 @@ def tint(color: str, alpha: float = 0.24) -> ManimColor:
     return ManimColor(S.BG).interpolate(ManimColor(color), alpha)
 
 
-def result_frame_anim(frame, result: str, width: float = 4.5):
+def result_frame_anim(frame, result: str, width: float = 4.5, rate_func=smooth):
     c = RESULT_COLOR[result]
-    return frame.animate.set_stroke(c, width).set_fill(tint(c), 1)
+    return frame.animate(rate_func=rate_func).set_stroke(c, width).set_fill(tint(c), 1)
 
 
 def layout_tree():
@@ -339,17 +396,29 @@ class Bigger(VoiceScene):
             .arrange(DOWN, buff=0.16, aligned_edge=LEFT).move_to([LABEL_X, ROW_Y[3], 0])
         # right of the root: the question, later its answer, and a note on the full game
         caption = S.text("perfect play → draw", 34, S.WHITE, t2c={"draw": DRAW_COLOR})
-        caption.next_to(TREE["frame"], RIGHT, buff=0.4).set_y(3.26)
+        caption.next_to(TREE["frame"], RIGHT, buff=0.4).set_y(3.3)
         question = S.text("X always wins?", 34, S.WHITE, t2c={"X": X_COLOR})
         no_cross = S.text("✗", 44, S.RED, font="DejaVu Sans")
         ask = VGroup(question, no_cross).arrange(RIGHT, buff=0.3)
         ask.align_to(caption, LEFT).match_y(caption)
-        empty = mini_board(size=0.4, stroke=2)
-        empty_frame = RoundedRectangle(width=0.52, height=0.52, corner_radius=0.07) \
+        # the note on the full game, at normal size: "the same on the full tree: / empty board ▦ → draw"
+        empty = mini_board(size=0.34, stroke=2)
+        empty_frame = RoundedRectangle(width=0.44, height=0.44, corner_radius=0.07) \
             .set_stroke(DRAW_COLOR, 3).set_fill(tint(DRAW_COLOR), 1)
-        note = VGroup(S.text("the full game too:", 24, S.WHITE), VGroup(empty_frame, empty),
-                      S.text("→ draw", 24, DRAW_COLOR)).arrange(RIGHT, buff=0.15)
-        note.align_to(caption, LEFT).set_y(2.59)
+        note = VGroup(S.text("the same on the full tree:", 28, S.WHITE),
+                      VGroup(S.text("empty board", 28, S.WHITE), VGroup(empty_frame, empty),
+                             S.text("→ draw", 28, DRAW_COLOR)).arrange(RIGHT, buff=0.15)) \
+            .arrange(DOWN, buff=0.1, aligned_edge=LEFT)
+        note.next_to(caption, DOWN, buff=0.12, aligned_edge=LEFT)
+
+        # one of X's wins (X plays its best all the way) and the O move that gave the game away
+        win_ring = RoundedRectangle(width=FRAME + 0.16, height=FRAME + 0.16, corner_radius=0.15) \
+            .set_stroke(X_COLOR, 6).move_to(SHOWN_WIN["frame"])
+        win_tag = S.text("X wins", 28, X_COLOR).next_to(win_ring, RIGHT, buff=0.15)
+        slip_ring = RoundedRectangle(width=FRAME + 0.16, height=FRAME + 0.16, corner_radius=0.15) \
+            .set_stroke(S.RED, 6).move_to(O_SLIP["frame"])
+        slip_mid = (O_TURN["frame"].get_bottom() + O_SLIP["frame"].get_top()) / 2
+        slip_tag = S.text("O's mistake", 28, S.RED).next_to(slip_mid + UP * 0.12, RIGHT, buff=0.45)
 
         # perfect play: from the root, follow the best move at every level, down to a draw
         path = [TREE]
@@ -375,15 +444,25 @@ class Bigger(VoiceScene):
             vo.wait_until("No.")
             self.play(FadeIn(no_cross, scale=1.8), shake(question, 0.12), run_time=0.5)
 
-            # every finished game shows its real result (the answered question steps back)
+            # "A computer can do more than count": the answered question steps back
             vo.wait_until("A computer can")
-            self.play(*[result_frame_anim(n["frame"], n["result"]) for n in LEAVES],
-                      *[Create(n["win"]) for n in LEAVES if n["win"] is not None],
-                      FadeIn(legend, shift=UP * 0.2), ask.animate.set_opacity(0.45), run_time=1.0)
+            self.play(ask.animate.set_opacity(0.45), run_time=0.6)
 
-            # colours bubble up from the finished games: first into X's last (forced) moves ...
-            vo.wait_until("At every branch")
-            self.flow_up([n for n in LEVELS[2] if n["kids"]], 1.0)
+            # "It starts at the bottom of the tree, where every game is finished": the finished games
+            # show their real results
+            vo.wait_until("It starts at the bottom")
+            # (a left-to-right sweep by rate functions, not LaggedStart: a LaggedStart would re-add the
+            # filled frames on top of their boards)
+            sweep = sorted(LEAVES, key=lambda n: n["pos"][0])
+            self.play(*[result_frame_anim(n["frame"], n["result"],
+                                          rate_func=squish_rate_func(smooth, 0.11 * i, 0.11 * i + 0.45))
+                        for i, n in enumerate(sweep)],
+                      *[Create(n["win"]) for n in LEAVES if n["win"] is not None],
+                      FadeIn(legend, shift=UP * 0.2), run_time=1.4)
+
+            # "and works upward": the colours climb, first into X's last (forced) moves ...
+            vo.wait_until("and works upward")
+            self.flow_up([n for n in LEVELS[2] if n["kids"]], 1.2)
             # ... "best for X on X's turns": X's rows keep the best result for X
             vo.wait_until("best for X")
             self.pick_best([n for n in LEVELS[2] if n["kids"]], 0.6,
@@ -409,10 +488,26 @@ class Bigger(VoiceScene):
             self.play(LaggedStart(*[pulse(VGroup(n["mob"], g), 1.08) for n, g in zip(path, glows)],
                                   lag_ratio=0.3), run_time=1.1)
 
+            # "every game ends in a draw": the answer, and the same on the full tree
             vo.wait_until("every game ends")
-            self.play(FadeOut(ask, shift=UP * 0.25), Write(caption), run_time=0.8)
+            self.play(FadeOut(ask, shift=UP * 0.25), run_time=0.35)     # gone before the answer is written
+            self.play(Write(caption), run_time=0.7)
             self.play(FadeIn(note, shift=UP * 0.15), run_time=0.6)
-        self.wait(1.2)                       # time to read the note before the chess beat
+
+            # "So every one of X's wins needs a mistake by O somewhere": one of X's wins, and the
+            # O move on its way that was NOT O's best (O took square 8; square 6 would have drawn)
+            vo.wait_until("So every one")
+            win_mob = VGroup(SHOWN_WIN["mob"], SHOWN_WIN["win"])
+            self.play(Create(win_ring), pulse(win_mob, 1.1), FadeIn(win_tag, shift=LEFT * 0.15),
+                      run_time=0.8)
+            self.wait(0.3)
+            slip_line = next(ln for k, ln in O_TURN["flows"] if k is O_SLIP)
+            self.play(slip_line.animate.set_stroke(S.RED, 8, opacity=1), Create(slip_ring), run_time=0.6)
+            self.play(FadeIn(slip_tag, shift=RIGHT * 0.15), pulse(O_SLIP["mob"], 1.1), run_time=0.6)
+
+        # the note on the full game, held for a moment before the chess beat
+        self.play(pulse(note, 1.08), run_time=0.7)
+        self.wait(1.5)
 
     # ------------------------------------------------------------------ beat 2: chess is huge
     def chess_numbers(self):
