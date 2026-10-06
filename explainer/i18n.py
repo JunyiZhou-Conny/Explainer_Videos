@@ -376,6 +376,10 @@ def install() -> None:
             tr_keys(kw, ("t2c", "t2w", "t2s", "t2f", "t2g"), kind)
             if has_cjk(text):
                 kw["font"] = _cjk_font(kw.get("font"))
+                quotes = [q for q in "“”‘’" if q in text]
+                if quotes and kind == "text":   # the Latin font comes first and has narrow quotes
+                    cjk = CJK_FONTS["sans" if "sans" in kw["font"].lower() else "serif"]
+                    kw["t2f"] = {**{q: cjk for q in quotes}, **(kw.get("t2f") or {})}
                 if kw.get("t2c") and kind == "text":
                     # Pango lays out every t2c run on its own; in CJK text a run of only Latin
                     # letters/digits (the X of "X 赢了！") then sits ~0.05-0.08 units above the
@@ -438,7 +442,32 @@ def install() -> None:
                 out.append(ln)
             kw["code_string"] = "\n".join(out)
         orig_code(self, *a, **kw)
+        if isinstance(src, str) and has_cjk(kw["code_string"]):
+            _even_code_lines(self, kw)
     Code.__init__ = code_init
+
+
+def _even_code_lines(code, kw) -> None:
+    """A code line whose translated comment falls back to the CJK font sits lower than the others
+    (that font's taller ascent). Move each such line to where it would sit with Latin glyphs only,
+    so the panel keeps the English line pitch."""
+    from manim import UP, Code, Paragraph
+
+    lines = code._code_html.get_text().removesuffix("\n").split("\n")
+    rows = [k for k, t in enumerate(lines) if t.strip() and k < len(code.code_lines)]
+    cjk = [k for k in rows if has_cjk(lines[k])]
+    plain = [k for k in rows if k not in cjk]
+    if not cjk or not plain:
+        return
+    cfg = {**Code.default_paragraph_config, **(kw.get("paragraph_config") or {})}
+    font = cfg.pop("font", None) or "Monospace"
+    ref = Paragraph(*[lines[k].strip()[0] for k in rows], font=font, **cfg)
+    yr = {k: ref[i][0].get_bottom()[1] for i, k in enumerate(rows)}
+    yc = {k: code.code_lines[k][0].get_bottom()[1] for k in rows}
+    j = plain[0]
+    scale = code.code_lines[j][0].height / max(1e-6, ref[rows.index(j)][0].height)
+    for k in cjk:
+        code.code_lines[k].shift(UP * (yc[j] - (yr[j] - yr[k]) * scale - yc[k]))
 
 
 def main(argv=None) -> int:

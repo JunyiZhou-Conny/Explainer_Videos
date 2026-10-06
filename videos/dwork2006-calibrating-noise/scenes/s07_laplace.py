@@ -672,10 +672,12 @@ class LaplaceMechanism(VoiceScene):
             self.play(FadeIn(VGroup(top2, log_lab2, kind_lap, tA, tB)), FadeIn(VGroup(bot2, ratio_lab, lap_line)),
                       FadeIn(band_g), FadeIn(eps_hi), FadeIn(eps_lo), run_time=1.0)
             vo.wait_until("On a log scale")
-            # Chinese glyphs do not morph into one another cleanly (拉普拉斯 -> 高斯): cross-fade them
-            relabel = (ReplacementTransform(kind_lap, kind_gau) if not i18n.active()
-                       else FadeTransform(kind_lap, kind_gau, stretch=False))
-            self.play(ReplacementTransform(tA, pA), ReplacementTransform(tB, pB), relabel, run_time=1.6)
+            # Chinese glyphs do not morph into one another cleanly (拉普拉斯 -> 高斯): fade the old label out
+            # in the first half of the move, the new one in during the second half
+            relabel = ([ReplacementTransform(kind_lap, kind_gau)] if not i18n.active() else
+                       [FadeOut(kind_lap, rate_func=lambda a: smooth(min(1.0, 2 * a))),
+                        FadeIn(kind_gau, rate_func=lambda a: smooth(max(0.0, 2 * a - 1)))])
+            self.play(ReplacementTransform(tA, pA), ReplacementTransform(tB, pB), *relabel, run_time=1.6)
             vo.wait_until("so the gap")
             self.play(FadeIn(g_gap), FadeIn(g_txt), FadeIn(g_num), run_time=0.4)
             self.play(gprobe.animate.set_value(38.8), run_time=2.2)
