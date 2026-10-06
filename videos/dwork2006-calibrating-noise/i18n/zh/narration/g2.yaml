@@ -6,7 +6,7 @@ S04:
   zh:
   - "关键是想象两个世界。"
   - "一边是数据库 x。"
-  - "另一边是 x′：只差一条记录。"
+  - "另一边是 x′：只有一条记录不同。"
   - "比如 Alice 那条。"
   - "这样的一对叫相邻数据库（也叫相邻数据集）。"
   - "医院例子里多了 Alice；这里是她的记录变了。"
@@ -14,13 +14,13 @@ S04:
   say:
   - null
   - null
-  - "另一边是 x prime：只差一条记录。"
+  - "另一边是 x prime：只有一条记录不同。"
   - null
   - "这样的一对叫相邻数据库。"
   - null
   - null
   anchors:
-    "except for one row": "只差一条记录"
+    "except for one row": "只有一条记录不同"
     "here, her row": "这里是她的记录"
   en_display:
   - null
@@ -34,7 +34,7 @@ S04:
   zh:
   - "运行这个机制，也就是数据管理者随机作答的规则，两个世界各一次。"
   - "分析者能看到的一切，原文叫 transcript（交互历史）；目前就是一个带噪声的答案。"
-  - "机制是随机的，所以每个世界都给出一整个输出分布。"
+  - "因为机制是随机的，每个世界都给出一整个输出分布。"
   say:
   - null
   - "分析者能看到的一切，原文叫 transcript；目前就是一个带噪声的答案。"
@@ -90,17 +90,17 @@ S04:
 - en: "Let's test it on Warner's coin from our map. Pause and ponder: if Alice's true answer is yes, how likely is she to say yes? And if it is no?"
   zh:
   - "拿地图上 Warner 的硬币试试。"
-  - "暂停想一想：真实答案为“是”，Alice 有多大概率说“是”？"
+  - "暂停想一想：如果 Alice 的真实答案为“是”，她有多大概率说“是”？"
   - "换成“否”呢？"
   anchors:
     "how likely is she": "有多大概率"
 - en: "If the truth is yes, she says yes three quarters of the time: heads, or tails then heads. If it is no, only the second coin can say yes: one quarter. The worst ratio is three, so the coin satisfies the definition with epsilon equal to the log of three, about one point one."
   zh:
-  - "真实答案为“是”，她有 3/4 的概率说“是”：正面，或者先反后正。"
+  - "真实答案为“是”，她说“是”的概率是 3/4：正面，或者先反后正。"
   - "换成“否”，只有第二枚硬币能让她说“是”：1/4。"
   - "最坏的比值是 3，所以硬币满足定义，ε 就等于 3 的对数，大约 1.1。"
   say:
-  - "真实答案为“是”，她有四分之三的概率说“是”：正面，或者先反后正。"
+  - "真实答案为“是”，她说“是”的概率是四分之三：正面，或者先反后正。"
   - "换成“否”，只有第二枚硬币能让她说“是”：四分之一。"
   - "最坏的比值是三，所以硬币满足定义，艾普西隆就等于三的对数，大约一点一。"
   anchors:
@@ -113,13 +113,13 @@ S04:
   - "The worst ratio is 3, so the coin satisfies the definition with ε = ln 3, about 1.1."
 - en: "Now be the attacker, trying to tell the two worlds apart. By Bayes' rule, your new odds are your old odds times exactly this ratio, so they move by at most a factor of e to the epsilon, whatever you knew before. Starting from fifty-fifty, epsilon one tenth leaves you at most fifty-two and a half percent sure; epsilon one, at most seventy-three. Epsilon is set by policy; the paper calls it the leakage."
   zh:
-  - "现在你是攻击者，想分清两个世界。"
-  - "按贝叶斯公式，后验概率比恰好是先验概率比乘这个比值，所以最多相差 e^ε 倍，无论你之前知道什么。"
+  - "现在你是攻击者，想区分这两个世界。"
+  - "按贝叶斯公式，后验概率比恰好是先验概率比乘这个比值，所以变化倍数最多是 e^ε，无论你之前知道什么。"
   - "从五五开出发，ε 取 0.1，最多有 52.5% 的把握；取 1，最多 73%。"
   - "ε 是人为选定的；原文管它叫 leakage（泄露量）。"
   say:
   - null
-  - "按贝叶斯公式，后验概率比恰好是先验概率比乘这个比值，所以最多相差 E 的艾普西隆次方倍，无论你之前知道什么。"
+  - "按贝叶斯公式，后验概率比恰好是先验概率比乘这个比值，所以变化倍数最多是 E 的艾普西隆次方，无论你之前知道什么。"
   - "从五五开出发，艾普西隆取零点一，最多有百分之五十二点五的把握；取一，最多百分之七十三。"
   - "艾普西隆是人为选定的；原文管它叫 leakage。"
   anchors:
@@ -127,7 +127,7 @@ S04:
     "your new odds": "后验概率比"
     "your old odds": "先验概率比"
     "exactly this ratio": "乘这个比值"
-    "so they move": "所以最多相差"
+    "so they move": "所以变化倍数"
     "whatever you knew": "无论你"
     "epsilon one tenth": "取 0.1"
     "epsilon one,": "取 1，"
@@ -152,7 +152,7 @@ S05:
   - "为什么每个输出的比值都要有上界？"
   - "密码学常常满足于更弱的东西：统计距离（即 TV 距离），也就是两条曲线间面积的一半。"
   - "等价地说，就是任意事件的概率在两个世界间的最大差距。"
-  - "原文说明了为什么在这里不够。"
+  - "原文说明了它在这里为什么不够。"
   say:
   - null
   - "密码学常常满足于更弱的东西：统计距离，也就是两条曲线间面积的一半。"
@@ -165,7 +165,7 @@ S05:
   zh:
   - "看这个机制：随机挑一条记录，原样发布。"
   - "改动一个人的记录，输出分布只会变化 1/n。"
-  - "数据库很大时这点变化微不足道，所以按平均的度量，它看起来不泄露隐私。"
+  - "数据库很大时这点变化微不足道，所以按平均来衡量，它看起来不泄露隐私。"
   say:
   - null
   - "改动一个人的记录，输出分布只会变化 n 分之一。"
@@ -173,7 +173,7 @@ S05:
   anchors:
     "pick one row": "随机挑一条记录"
     "moves by only": "只会变化"
-    "by the averaged measure": "按平均的度量"
+    "by the averaged measure": "按平均来衡量"
   en_display:
   - null
   - "Change one person's row, and the output distribution moves by only 1/n."
@@ -226,7 +226,7 @@ S06:
 - en: "For a counting query, like our hospital count, one row changes the answer by at most one. Sensitivity one."
   zh:
   - "对 counting query（计数查询），比如医院那个，一条记录最多让答案变 1。"
-  - "敏感度为 1。"
+  - "敏感度是 1。"
   say:
   - "对 counting query，比如医院那个，一条记录最多让答案变一。"
   - null
@@ -240,12 +240,12 @@ S06:
 - en: "Now a histogram: split the possible values of a row into d bins, and release how many rows fall in each. Before I show you, pause: if Alice's row changes, how much can the whole histogram change in total? Does it depend on the number of bins?"
   zh:
   - "再看直方图：把一条记录的可能取值分成 d 个桶，发布每个桶的记录数。"
-  - "先别急着看答案，暂停一下：Alice 的记录一变，整个直方图总共能变多少？"
+  - "先别急着看答案，暂停一下：如果 Alice 的记录变了，整个直方图总共能变多少？"
   - "这和桶的数量有关吗？"
   anchors:
     "split the possible values": "把一条记录"
     "and release how many": "发布每个桶"
-    "if Alice's row changes": "Alice 的记录一变"
+    "if Alice's row changes": "如果 Alice 的记录变了"
     "how much can the whole": "整个直方图"
 - en: "She moves out of one bin and into another: one count goes down by one, another goes up by one. Total change: two. Adding up absolute changes across coordinates like this is the L1 norm, the paper's way to measure sensitivity for lists of numbers. And it is two whether there are five bins or five thousand. It does not depend on the dimension at all."
   zh:
@@ -268,9 +268,9 @@ S06:
 - en: "Contrast that with: what is the largest income in the database? One billionaire can move that answer by a billion, and with no cap there is no limit at all. The standard fix is to cap every value, say at a million, first. Remember that trick: it is exactly what private deep learning does to gradients."
   zh:
   - "对比一下：数据库里最高的收入是多少？"
-  - "一个亿万富翁就能让答案变动 10 亿，不封顶就根本没有上限。"
+  - "一个亿万富翁，就能让答案变动 10 亿，不封顶就根本没有上限。"
   - "标准做法是先给每个值封顶，比如 100 万。"
-  - "记住这个 trick：差分隐私深度学习对梯度做的就是这个。"
+  - "这个 trick 要记住：差分隐私深度学习对梯度做的就是这个。"
   anchors:
     "and with no cap": "不封顶"
 - en: "Two things to remember. Sensitivity is a property of the function alone, not of the particular database, and it is not chosen by policy. Epsilon is a choice. Sensitivity is a fact."

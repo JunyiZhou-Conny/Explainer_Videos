@@ -1,5 +1,4 @@
 # Pronunciation fixes for the Mandarin narrator (EXPLAINER_LANG=zh), say:-only respellings that
 # are sent to the voice instead of the word. Display text and subtitles never change.
 # Matching is whole-word for Latin words (CJK neighbours count as boundaries), case-sensitive.
-# Example:   Kenthapadi: {say: "Ken ta pa di"}
-{}
+SuLQ: {say: "sulk"}            # read as 苏LQ / SoilQ otherwise (measured with faster-whisper)

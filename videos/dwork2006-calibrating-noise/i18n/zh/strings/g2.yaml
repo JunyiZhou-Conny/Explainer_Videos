@@ -1,10 +1,15 @@
 # zh on-screen strings for S04, S05, S06 (group g2): exact English -> Chinese.
 # Scoped keys '<scene file stem>|<text>' apply only to strings created by that scene file.
+# Pending scene edits (rule E4/D5, see the g2 revision notes): 'privacy loss at' + t needs an i18n.active()
+# branch in s04_definition.py (label 't 处的隐私损失'); until then it reads 隐私损失，对应输出 t. The Warner ponder
+# card's trailing '?' is S.text("?") in ponder_at (s04_definition.py:134) and stays half-width until the scene
+# picks '？' itself: a scoped '?' key would also hit the MathTex '?' of 'x or x′?'.
+# 'no' has no unscoped key on purpose: s04 (the answer, “否”) and s05 (the output slot, 无) are scoped.
 "neighbors:": "相邻："
 "differ in one row": "只差一条记录"
 "count = 41": "计数 = 41"
 "count = 42": "计数 = 42"
-"hospital: Alice added": "医院例子：新加入了 Alice"
+"hospital: Alice added": "医院例子：多了 Alice"
 "here: Alice's row changed": "这里：Alice 的记录变了"
 "output": "输出"
 "paper's notation:": "论文记号："
@@ -14,17 +19,16 @@
 "ratio": "比值"
 '\textbf{Definition 1}\quad ': '\textbf{定义 1}\quad '
 "-indistinguishability": "-不可区分性"
-"privacy loss at": "隐私损失，输出为"
+"privacy loss at": "隐私损失，对应输出"
 "for all neighbors ": '对任意相邻数据库\ '
-'all analysts,\quad ': '任意分析者，\quad '
+'all analysts,\quad ': '任意分析者，'
 "all outputs $t$": "任意输出 $t$"
 '\text{small } \varepsilon\!:\quad': '\text{对于很小的}\ \varepsilon\text{：}\quad'
 '\ln(\text{ratio})': '\ln(\text{比值})'
-"yes": "是"
-"no": "否"
+"yes": "“是”"
 '\text{heads }\tfrac12': '\text{正面}\ \tfrac12'
 '\text{tails }\tfrac12': '\text{反面}\ \tfrac12'
-"Warner's coin (1965)": "Warner 的硬币（1965 年）"
+"Warner's coin (1965)": "Warner 的硬币（1965）"
 "Warner's coin: what is its ε?": "Warner 的硬币对应多大的 ε？"
 "Warner's coin: what is its": "Warner 的硬币对应多大的"
 '\text{truth yes}': '\text{真实：是}'
@@ -42,7 +46,7 @@
 '\text{coin: }': '\text{硬币：}'
 " is set by policy": " 是人为选定的"
 "the paper calls it the leakage": "论文称之为 leakage（泄露量）"
-"What it does not promise": "它不保证什么"
+"What it does not promise": "这个定义不保证什么"
 "Study finds:": "研究发现："
 "smokers get more heart disease": "吸烟者更容易得心脏病"
 "study": "研究"
@@ -64,15 +68,15 @@
 "tiny for a big database: looks private?": "数据库很大时微不足道：看起来不泄露隐私？"
 '\text{output }(\text{Alice, has X})': '\text{输出}\ (\text{Alice, 有 X})'
 "privacy": "隐私"
-"Averages hide catastrophes": "平均值会掩盖"
-"that are rare for each person.": "那些对每个人都很罕见的灾难"
-"for every output": "对每个输出"
+"Averages hide catastrophes": "平均值会掩盖那些"
+"that are rare for each person.": "对每个人都很罕见的灾难"
+"for every output": "对任意输出"
 '\Pr[\text{output } 50]\colon': '\Pr[\text{输出}\ 50]\colon'
 "to pass the ratio test, a mechanism must be random": "想过比值这一关，机制必须是随机的"
 '\max_{x,\,x''\ \text{neighbors}}': '\max_{x,\,x''\ \text{相邻}}'
 'S(\text{count})': 'S(\text{计数})'
 "bins": "个桶"
-"If Alice's row changes,\nhow much can the whole\nhistogram change in total?\nDoes it depend on the\nnumber of bins?": "如果 Alice 的记录变了，\n整个直方图总共能变多少？\n这和桶的数量有关吗？"
+"If Alice's row changes,\nhow much can the whole\nhistogram change in total?\nDoes it depend on the\nnumber of bins?": "Alice 的记录变了，整个直方图\n总共能变多少？和桶数有关吗？"
 "illustration": "示意"
 "What is the largest income in the database?": "数据库里最高的收入是多少？"
 "Erin": "Erin"
@@ -85,7 +89,7 @@
 "a choice (policy)": "人为选择（政策）"
 "does not depend on the actual database": "与实际数据库无关"
 # scene-scoped keys
-"s04_definition|no": "否"
+"s04_definition|no": "“否”"
 "s05_strict|no": "无"
 "s04_definition|, ": "、"
-'s04_definition|,\quad ': '，\quad '
+'s04_definition|,\quad ': '，'
