@@ -280,6 +280,8 @@ def main(argv=None):
     ap.add_argument("--burn", action="store_true", help="English build: also burn bilingual subtitles "
                     "(<id>.<lang>-en.mp4) for each translation")
     ap.add_argument("--no-burn", action="store_true", help="translated build: keep the video clean")
+    ap.add_argument("--subs-only", action="store_true", help="only (re)write subtitles, chapters and transcript "
+                    "from existing renders; leave the video files alone")
     args = ap.parse_args(argv)
 
     project = args.project.resolve()
@@ -295,7 +297,7 @@ def main(argv=None):
         for p in problems:
             print("  WARNING", p)
 
-    if args.no_render:
+    if args.no_render or args.subs_only:
         todo = []
     elif only is not None:  # exactly the named scenes
         todo = [s for s in scenes if Path(s["file"]).stem in only or s["cls"] in only]
@@ -321,7 +323,9 @@ def main(argv=None):
         if not movie.exists():
             raise SystemExit(f"missing render for {s['cls']}: {movie}")
         norm = build / f"{i:02d}_{s['cls']}{'' if args.crf is None else f'_crf{args.crf}'}.mp4"
-        if not norm.exists() or norm.stat().st_mtime < movie.stat().st_mtime:
+        if args.subs_only:
+            norm = norm if norm.exists() else movie        # durations only
+        elif not norm.exists() or norm.stat().st_mtime < movie.stat().st_mtime:
             normalize(movie, norm, args.crf)
         normalized.append((s, movie, norm))
 
@@ -332,7 +336,7 @@ def main(argv=None):
         meta = lang_meta(lang, project)
     title = meta.get("title") or spec.get("title", spec["id"])
     ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
-               burn=(not args.no_burn) if lang != "en" else args.burn)
+               burn=(not args.no_burn) if lang != "en" else args.burn, subs_only=args.subs_only)
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
            transcript_file=out_dir / "transcript.md", ctx=ctx)
     for part in spec.get("parts") or []:
@@ -386,8 +390,11 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
     translations = {}                          # English build: every language with a narration file
     if lang == "en" and project is not None:
         from .i18n import narration
-        for d in sorted((project / "i18n").glob("*/narration.yaml")) if (project / "i18n").exists() else []:
-            translations[d.parent.name] = narration(d.parent.name, project)
+        langs = sorted({p.parent.name for p in (project / "i18n").glob("*/narration.yaml")} |
+                       {p.parent.parent.name for p in (project / "i18n").glob("*/narration/*.yaml")}) \
+            if (project / "i18n").exists() else []
+        for code in langs:
+            translations[code] = narration(code, project)
 
     srt, chapters, transcript, offset = [], [], [f"# {title}\n"], 0.0
     pairs: dict[str, list] = {code: [] for code in translations}
@@ -410,16 +417,18 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
                     pairs[code] += subs.sentence_pairs(cue, offset, line)
         offset += ffprobe_duration(norm)
 
-    listing = build / f"concat_{stem.name}.txt"
-    listing.write_text("".join(f"file '{n}'\n" for _, _, n in items))
-    joined = build / f"joined_{stem.name}.mp4"
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
-                    "-c", "copy", str(joined)], check=True)
+    subs_only = ctx.get("subs_only")
     final = stem.with_suffix(".mp4") if lang == "en" else build / f"{stem.name}.clean.mp4"
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
-                    "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
-                    "-movflags", "+faststart", str(final)], check=True)
-    joined.unlink(missing_ok=True)
+    if not subs_only:
+        listing = build / f"concat_{stem.name}.txt"
+        listing.write_text("".join(f"file '{n}'\n" for _, _, n in items))
+        joined = build / f"joined_{stem.name}.mp4"
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
+                        "-c", "copy", str(joined)], check=True)
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
+                        "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
+                        "-movflags", "+faststart", str(final)], check=True)
+        joined.unlink(missing_ok=True)
     made = []
     if lang == "en":
         stem.with_suffix(".srt").write_text("".join(
@@ -434,7 +443,7 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
             ass = Path(f"{stem}.{code}-en.ass")
             subs.write_ass(ass, tr_["zh-en"], title=title)
             made += [f".{code}.srt", f".{code}-en.srt/.ass"]
-            if ctx.get("burn"):
+            if ctx.get("burn") and not subs_only:
                 subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"))
                 made.append(f".{code}-en.mp4")
     else:
@@ -446,7 +455,9 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         subs.write_ass(ass, tr_["zh-en"], title=title)
         made += [f".{lang}.srt", ".en.srt", f".{lang}-en.srt/.ass"]
         out = stem.with_suffix(".mp4")
-        if ctx.get("burn", True):
+        if subs_only:
+            pass
+        elif ctx.get("burn", True):
             subs.burn(final, ass, out)
             made.append(" (bilingual subtitles burned in)")
         else:
@@ -455,8 +466,8 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
     chapters_file.write_text("\n".join(chapters) + "\n")
     if transcript_file:
         transcript_file.write_text("".join(transcript))
-    print(f"Done: {final.name}  ({fmt_chapter(offset)}, {final.stat().st_size / 1e6:.1f} MB) + "
-          f"{', '.join(made)}, {chapters_file.name}")
+    size = f"{final.stat().st_size / 1e6:.1f} MB" if final.exists() else "video not written"
+    print(f"Done: {final.name}  ({fmt_chapter(offset)}, {size}) + {', '.join(made)}, {chapters_file.name}")
 
 
 if __name__ == "__main__":
