@@ -136,8 +136,8 @@ ol.try li::marker { font-family: var(--mono); color: var(--muted); }
         <span>已玩轮数</span><b id="sRounds">0</b>
         <span>你的猜中率</span><b id="sAcc">–</b>
         <span>本轮已花的预算</span><b class="eps" id="sBudget">0</b>
-        <span>只看一个答案时的最好成绩</span><b id="sBest"></b>
-        <span>保证：任何攻击者都超不过（一个答案）</span><b class="eps" id="sCeil"></b>
+        <span>只看一个答案时的最高猜中率</span><b id="sBest"></b>
+        <span>保证：只看一个答案，任何攻击者都超不过</span><b class="eps" id="sCeil"></b>
       </div>
       <p class="foot" style="margin:12px 0 0">在五五开的先验下，这个保证是 e<sup>ε</sup>/(1 + e<sup>ε</sup>)，无论攻击者还知道什么。每多一个答案，就多花一份 ε；每个答案最多让证据指针移动 ε。</p>
     </section>
@@ -149,7 +149,7 @@ ol.try li::marker { font-family: var(--mono); color: var(--muted); }
       <li>让 ε 取 0.1，玩十轮，每轮只看一个答案。你能超过 52.5% 吗？</li>
       <li>切换到<b>高斯</b>。对数比值在哪里冲出了 ±ε 带？为什么这就违反了定义？</li>
       <li>切换到<b>均匀</b>。找一个在一个世界里可能、在另一个世界里不可能的输出。</li>
-      <li>ε 保持取 0.5，先把同一个问题问十次再猜。总预算是多少？现在你有多大把握？</li>
+      <li>ε 保持 0.5 不变，先把同一个问题问十次再猜。总预算是多少？现在你有多大把握？</li>
       <li>把 S 调到 2（直方图 query）。两个世界离得更远了，但噪声也变大了。你的猜中率变了吗？</li>
     </ol>
   </section>

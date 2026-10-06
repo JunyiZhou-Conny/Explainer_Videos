@@ -127,7 +127,7 @@ terms:
   zh_subtitle: 'boards: 角格 / 边格 / 中心；counted: 每个角格 27,732（×4）· 每个边格 29,592（×4）· 中心 25,872（×1）；（4 个角格）（4 个边格）（1 个中心）；S08 card 角格、边格，还是中心？'
   zh_spoken: 下在角上 / 下在边上 / 下在正中间（提问：角上、边上，还是中心？）
   first_use: 边格，也就是每条边正中间的那一格
-  note: 'every side (每条边) would mean a whole side (three squares, two of them corners), so a single square is 角格 / 边格. ''center'' is one strings.yaml key for two sites, so it is 中心 at both. Confirmed: the board labels are 角格 / 边格 / 中心 and the counts 每个角格 / 每个边格 (s08_answer.add_each() needs 每个 + the board label, so the board label must be 角格); the spoken question still says 角上、边上.'
+  note: '每条边 would mean a whole side (three squares, two of them corners), so a single square is 角格 / 边格. ''center'' is one strings.yaml key for two sites, so it is 中心 at both. Confirmed: the board labels are 角格 / 边格 / 中心 and the counts 每个角格 / 每个边格 (s08_answer.add_each() needs 每个 + the board label, so the board label must be 角格); the spoken question still says 角上、边上.'
 - en: 'named squares: top-right / top-middle / bottom-middle / bottom-right'
   zh_subtitle: 右上角那格 / 上边中间那格 / 下边中间那格 / 右下角那格
   zh_spoken: 右上角那格 / 上边中间那格 / 下边中间那格 / 右下角那格

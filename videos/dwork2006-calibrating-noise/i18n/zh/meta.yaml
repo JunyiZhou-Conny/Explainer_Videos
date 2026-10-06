@@ -29,7 +29,7 @@ chapters:
 # characters, so it stays under Bilibili's 2000-character limit even with the 13 timestamps (about 260
 # characters) pasted in. Links are repository-relative paths.
 description: |
-  这期精读差分隐私的开山之作：Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith 的论文《Calibrating Noise to Sensitivity in Private Data Analysis》（TCC 2006；中文意译：在隐私数据分析中按敏感度校准噪声）。这篇论文提出了今天所说的差分隐私（differential privacy），2017 年获得哥德尔奖。视频从一个只做减法的攻击讲起，一直讲到论文的定义、拉普拉斯机制和它证明的一个局限。
+  这期精读差分隐私的开山之作：Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith 的论文《Calibrating Noise to Sensitivity in Private Data Analysis》（TCC 2006；中文意译：在隐私数据分析中按敏感度校准噪声）。这篇论文提出了今天所说的差分隐私（differential privacy），2017 年获得哥德尔奖。视频从一个只做减法的攻击讲起，依次讲论文的定义、拉普拉斯机制，以及论文证明的一个局限。
 
   适合谁看：刚接触差分隐私的研究生和研究者，尤其是做强化学习、机器学习、医学影像的同学。只需要基础的概率知识。旁白是组会讲论文的风格：概念用中文文献的标准术语，query、transcript 这类口头本来就说英文的词保留英文。
 
