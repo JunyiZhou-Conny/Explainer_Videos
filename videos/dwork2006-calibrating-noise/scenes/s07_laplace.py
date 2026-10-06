@@ -10,6 +10,7 @@ ratio -> a Gaussian's parabolas drift apart without bound -> the recipe noise sc
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import laplace_pdf, ponder_card
 from explainer.scene import VoiceScene
@@ -484,7 +485,8 @@ class LaplaceMechanism(VoiceScene):
         stair_lab.next_to(plane, DOWN, buff=0.25).set_x(plane.get_x())
         if stair_lab.get_bottom()[1] < -3.55:
             stair_lab.shift(UP * (-3.55 - stair_lab.get_bottom()[1]))
-        l1_note[0][13:17].set_color(X_COLOR)              # f(x) in 'density ∝ e^{-||y - f(x)||_1 / λ}'
+        # f(x) in 'density ∝ e^{-||y - f(x)||_1 / λ}', counted from the end (the word before ∝ is translated)
+        l1_note[0][-8:-4].set_color(X_COLOR)
         # the picture is drawn centre stage, then slides right to make room for the Proposition 1 card
         pgroup = VGroup(plane, dz, dzp, l1_note, stair, stair_lab)
         home_x = plane.get_x()
@@ -670,8 +672,10 @@ class LaplaceMechanism(VoiceScene):
             self.play(FadeIn(VGroup(top2, log_lab2, kind_lap, tA, tB)), FadeIn(VGroup(bot2, ratio_lab, lap_line)),
                       FadeIn(band_g), FadeIn(eps_hi), FadeIn(eps_lo), run_time=1.0)
             vo.wait_until("On a log scale")
-            self.play(ReplacementTransform(tA, pA), ReplacementTransform(tB, pB),
-                      ReplacementTransform(kind_lap, kind_gau), run_time=1.6)
+            # Chinese glyphs do not morph into one another cleanly (拉普拉斯 -> 高斯): cross-fade them
+            relabel = (ReplacementTransform(kind_lap, kind_gau) if not i18n.active()
+                       else FadeTransform(kind_lap, kind_gau, stretch=False))
+            self.play(ReplacementTransform(tA, pA), ReplacementTransform(tB, pB), relabel, run_time=1.6)
             vo.wait_until("so the gap")
             self.play(FadeIn(g_gap), FadeIn(g_txt), FadeIn(g_num), run_time=0.4)
             self.play(gprobe.animate.set_value(38.8), run_time=2.2)

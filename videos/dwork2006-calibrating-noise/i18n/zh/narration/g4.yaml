@@ -11,8 +11,13 @@
   "zh":
   - "第一，想象一个社交网络，每条可能的边都是数据库里的一条记录。"
   - "至少要切断多少条边，才能把网络一分为二？"
-  - "这个最小割在改动一条边时最多变化 1，所以敏感度为 1。"
+  - "这个最小割在改动一条边时最多变化 1，所以敏感度是 1。"
   - "一般来说，凡是“至少要改动多少条记录才能让某件事成立”这类问题，敏感度都是 1。"
+  "say":
+  - null
+  - null
+  - "这个最小割在改动一条边时最多变化一，所以敏感度是一。"
+  - null
   "en_display":
   - null
   - null
@@ -23,7 +28,7 @@
     "How many links": "至少要切断多少条边"
     "That minimum cut": "这个最小割"
     "when one link changes": "在改动一条边时"
-    "so it is one-sensitive": "所以敏感度为 1"
+    "so it is one-sensitive": "所以敏感度是 1"
     "In general": "一般来说"
     "how many rows": "至少要改动多少条记录"
     "to make something true": "才能让某件事成立"

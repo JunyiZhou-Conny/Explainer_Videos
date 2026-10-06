@@ -3,6 +3,7 @@
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import database_rows, person_icon, ponder_card
 from explainer.scene import VoiceScene
@@ -194,6 +195,7 @@ class Sensitivity(VoiceScene):
             self.play(*[Indicate(m, color=SENS_COLOR, scale_factor=1.06) for m in defn[3:8]],
                       Indicate(seg, color=SENS_COLOR, scale_factor=1.15), run_time=1.0)
             vo.wait_until("over all pairs")
+            pace = 0.75 if i18n.active() else 1.0    # zh: 取遍每一对 comes later in a shorter clip
             segs = VGroup()
             for k, (r, v_new, vx, vxp) in enumerate(pairs):
                 if k > 0:
@@ -210,13 +212,13 @@ class Sensitivity(VoiceScene):
                     lx, lxp = place_labels(vx, vxp)
                     seg = gap_seg(vx, vxp)
                     self.play(*anims, dot_x.animate.move_to(nl.n2p(vx)), dot_xp.animate.move_to(nl.n2p(vxp)),
-                              lab_fx.animate.move_to(lx), lab_fxp.animate.move_to(lxp), run_time=0.5)
-                    self.play(Create(seg), run_time=0.25)
-                self.play(seg.animate.set_y(slot_y[k]).set_stroke(width=6), run_time=0.3)
+                              lab_fx.animate.move_to(lx), lab_fxp.animate.move_to(lxp), run_time=0.5 * pace)
+                    self.play(Create(seg), run_time=0.25 * pace)
+                self.play(seg.animate.set_y(slot_y[k]).set_stroke(width=6), run_time=0.3 * pace)
                 segs.add(seg)
             # line the gaps up from a common start: the largest one is S(f)
             left = nl.n2p(0)[0] + 0.1
-            self.play(*[sg.animate.shift(RIGHT * (left - sg.get_left()[0])) for sg in segs], run_time=0.5)
+            self.play(*[sg.animate.shift(RIGHT * (left - sg.get_left()[0])) for sg in segs], run_time=0.5 * pace)
             s_lab = S.math("S(f)", size=34, color=SENS_COLOR).next_to(segs[2], RIGHT, buff=0.2)
             self.play(segs[2].animate.set_stroke(width=10), FadeIn(s_lab, shift=LEFT * 0.2),
                       Indicate(defn[2], color=SENS_COLOR), run_time=vo.remaining(0.6))

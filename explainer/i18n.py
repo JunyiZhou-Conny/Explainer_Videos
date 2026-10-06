@@ -376,6 +376,20 @@ def install() -> None:
             tr_keys(kw, ("t2c", "t2w", "t2s", "t2f", "t2g"), kind)
             if has_cjk(text):
                 kw["font"] = _cjk_font(kw.get("font"))
+                if kw.get("t2c") and kind == "text":
+                    # Pango lays out every t2c run on its own; in CJK text a run of only Latin
+                    # letters/digits (the X of "X 赢了！") then sits ~0.05-0.08 units above the
+                    # line. Lay the text out in one piece and copy the run colours glyph by glyph.
+                    ref = type(self).__new__(type(self))
+                    orig(ref, text, *a, **kw)
+                    plain = {k: v for k, v in kw.items() if k != "t2c"}
+                    orig(self, text, *a, **plain)
+                    if len(ref) == len(self):
+                        for g, r in zip(self, ref):
+                            g.set_color(r.get_color())
+                        return
+                    orig(self, text, *a, **kw)        # glyph counts differ: keep Pango's colours
+                    return
             orig(self, text, *a, **kw)
         cls.__init__ = init
 

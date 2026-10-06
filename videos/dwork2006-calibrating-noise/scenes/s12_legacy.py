@@ -11,6 +11,7 @@ from __future__ import annotations
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import database_rows, gaussian_pdf, person_icon, ponder_card
 from explainer.scene import VoiceScene
@@ -366,13 +367,15 @@ class Legacy(VoiceScene):
         def mark(ch, color, size=44):
             return Text(ch, font="DejaVu Sans", font_size=size, color=color)
 
-        a1 = S.text("Any ONE query, known in advance", 32, S.WHITE)
+        # Chinese has no capitals: the quantifiers ONE / MOST are coloured instead (as in S11)
+        quant_kw = {"t2c": {"ONE": S.YELLOW, "MOST": S.YELLOW}} if i18n.active() else {}
+        a1 = S.text("Any ONE query, known in advance", 32, S.WHITE, **quant_kw)
         tick1 = mark("✓", S.TEAL)
         b1 = VGroup(S.text("→  easy to publish for", 30, S.GREY), tick1).arrange(RIGHT, buff=0.3)
         census_tick = mark("✓", S.TEAL, 34)
         census = VGroup(S.text("US Census 2020: a fixed set of tables chosen in advance", 26, S.WHITE),
                         census_tick).arrange(RIGHT, buff=0.22)
-        a2 = S.text("ONE private release that works for MOST queries", 32, S.WHITE)
+        a2 = S.text("ONE private release that works for MOST queries", 32, S.WHITE, **quant_kw)
         cross2 = mark("✗", NOISE_COLOR)
         b2 = VGroup(S.text("→  impossible unless n is huge", 30, S.GREY), cross2).arrange(RIGHT, buff=0.3)
         for m in (tick1, cross2):
@@ -384,8 +387,9 @@ class Legacy(VoiceScene):
         census_box.shift(RIGHT * 0.6)
         quant.move_to([0, 1.55, 0])
         census_frame = SurroundingRectangle(census, color=S.GREY, buff=0.14, corner_radius=0.08, stroke_width=2)
-        _i = a2.text.replace(" ", "").index("MOST")    # Text drops spaces from its glyphs
-        most = a2[_i:_i + 4]
+        _w = i18n.tr("MOST")                            # (translated: the scoped key s12_legacy|MOST)
+        _i = a2.text.replace(" ", "").index(_w)    # Text drops spaces from its glyphs
+        most = a2[_i:_i + len(_w)]
         cup = trophy(1.25)
         prize = VGroup(S.text("Gödel Prize 2017", 28, S.GOLD), S.text("TCC Test-of-Time Award 2016", 24, S.GREY)
                        ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)

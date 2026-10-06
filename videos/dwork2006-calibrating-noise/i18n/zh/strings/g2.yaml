@@ -1,9 +1,8 @@
 # zh on-screen strings for S04, S05, S06 (group g2): exact English -> Chinese.
 # Scoped keys '<scene file stem>|<text>' apply only to strings created by that scene file.
-# Pending scene edits (rule E4/D5, see the g2 revision notes): 'privacy loss at' + t needs an i18n.active()
-# branch in s04_definition.py (label 't 处的隐私损失'); until then it reads 隐私损失，对应输出 t. The Warner ponder
-# card's trailing '?' is S.text("?") in ponder_at (s04_definition.py:134) and stays half-width until the scene
-# picks '？' itself: a scoped '?' key would also hit the MathTex '?' of 'x or x′?'.
+# Scene branches instead of keys (rule E4/D5): the brace label 'privacy loss at' + t is built as t + '处的隐私损失'
+# by s04_definition.py when i18n.active(), and the Warner ponder card's trailing '?' is set to '？' by the scene
+# itself (ponder_at): a scoped '?' key would also hit the MathTex '?' of 'x or x′?'.
 # 'no' has no unscoped key on purpose: s04 (the answer, “否”) and s05 (the output slot, 无) are scoped.
 "neighbors:": "相邻："
 "differ in one row": "只差一条记录"
@@ -19,7 +18,6 @@
 "ratio": "比值"
 '\textbf{Definition 1}\quad ': '\textbf{定义 1}\quad '
 "-indistinguishability": "-不可区分性"
-"privacy loss at": "隐私损失，对应输出"
 "for all neighbors ": '对任意相邻数据库\ '
 'all analysts,\quad ': '任意分析者，'
 "all outputs $t$": "任意输出 $t$"
@@ -91,5 +89,6 @@
 # scene-scoped keys
 "s04_definition|no": "“否”"
 "s05_strict|no": "无"
+"s05_strict|vs": "vs"
 "s04_definition|, ": "、"
 's04_definition|,\quad ': '，'

@@ -277,6 +277,9 @@ class Hook(VoiceScene):
         VGroup(heading, cards).arrange(DOWN, buff=0.8).move_to(DOWN * 0.1)
         cards.set_x(0)
         tent.next_to(cards[2], RIGHT, buff=0.4)
+        overhang = tent.get_right()[0] - cards.get_right()[0]
+        if overhang > 0.05:       # a longer card-3 label pushes the tent out: centre list + tent instead
+            VGroup(cards, tent).shift(LEFT * overhang / 2)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(Group(page, title_box, info)), run_time=0.8)
             self.play(FadeIn(heading, shift=DOWN * 0.2), run_time=0.6)

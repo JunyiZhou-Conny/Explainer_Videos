@@ -98,8 +98,8 @@
 "· “anonymous” ≠ anonymous": "· “匿名”≠ 匿名"
 "name": "姓名"
 "ZIP": "邮编"
-# table headers: 出生日期 / 性别 are auto-shrunk (86% / 81%) to fit columns sized for "born" / "sex";
-# kept to match the narration (邮编、出生日期和性别), the column widths are a scene change
+# table headers 出生日期 / 性别 (as the narration says: 邮编、出生日期和性别): s02_map.py widens the
+# born / sex columns when i18n.active() (name column narrower, same total width), so they render at 20 pt
 "born": "出生日期"
 "sex": "性别"
 "diagnosis": "诊断"

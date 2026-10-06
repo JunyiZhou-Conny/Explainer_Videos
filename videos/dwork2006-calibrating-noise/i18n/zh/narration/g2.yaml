@@ -78,8 +78,9 @@ S04:
     "which it calls": "叫作"
     "every analyst": "任意分析者"
     "every output": "任意输出"
-    "it must be at most": "它的绝对值"
-    "in absolute value": "都不能超过"
+    # Chinese order is 绝对值 -> 不能超过 ε; s04_definition.py waits for these two in that order when zh
+    "in absolute value": "它的绝对值"
+    "it must be at most": "都不能超过"
     "a ratio of two": "比值是 2"
   en_display:
   - "That is the paper's definition, which it calls ε-indistinguishability."

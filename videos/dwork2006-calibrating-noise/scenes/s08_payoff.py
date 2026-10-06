@@ -229,6 +229,11 @@ class Payoff(VoiceScene):
         diff[0].set_color(XP_COLOR)
         diff[2].set_color(X_COLOR)
         diff.move_to([cx, -3.08, 0])
+        # the week labels stay clear of the legend: a taller (translated) query card and legend push the
+        # grid's legend down, so the answer column moves down by the shortfall (no-op in English: 0.197)
+        legend_gap = legend.get_bottom()[1] - VGroup(ans1, ans2).get_top()[1]
+        if legend_gap < 0.19:
+            VGroup(ans1, ans2, diff).shift(DOWN * (0.19 - legend_gap))
 
         # belief meter (attacker starts at 50/50)
         m_left, m_right, m_y = 0.9, 6.2, -2.75

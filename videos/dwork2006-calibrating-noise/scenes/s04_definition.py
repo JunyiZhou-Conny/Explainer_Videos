@@ -12,6 +12,7 @@ eps = 1/lambda = 0.2 mechanism whose ratio readout touches the band edges and ne
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import database_rows, laplace_pdf, person_icon, ponder_card
 from explainer.scene import VoiceScene
@@ -131,9 +132,11 @@ def ponder_at(scene, question, seconds, pos, width=6.0) -> VGroup:
     if question.endswith(" ε?"):
         old = card[2]
         new = VGroup(S.text(question[:-3], 34), S.math(r"\varepsilon", size=40, color=EPS_COLOR),
-                     S.text("?", 34))
-        new[1].next_to(new[0], RIGHT, buff=0.17).align_to(new[0], DOWN)    # a word space before ε
-        new[2].next_to(new[1], RIGHT, buff=0.06).align_to(new[0], DOWN)
+                     S.text("？" if i18n.active() else "?", 34))
+        # zh: CJK glyphs dip below the baseline, so sit ε and ？ on the baseline of the Latin 'W'
+        base = new[0][0] if i18n.active() else new[0]
+        new[1].next_to(new[0], RIGHT, buff=0.17).align_to(base, DOWN)    # a word space before ε
+        new[2].next_to(new[1], RIGHT, buff=0.06).align_to(base, DOWN)
         if new.width > width - 0.6:
             new.scale_to_fit_width(width - 0.6)
         new.move_to(old)
@@ -190,7 +193,8 @@ class Definition(VoiceScene):
             vo.wait_until("In the hospital")
             self.play(FadeIn(cover), FadeIn(tag_added, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("here, her row")
-            self.play(FadeOut(cover), ReplacementTransform(tag_added, tag_changed), run_time=0.7)
+            retag = TransformMatchingShapes if i18n.active() else ReplacementTransform   # no CJK stroke soup
+            self.play(FadeOut(cover), retag(tag_added, tag_changed), run_time=0.7)
             self.play(FadeIn(cnt_x, shift=UP * 0.15), FadeIn(cnt_xp, shift=UP * 0.15), run_time=0.8)
             vo.wait_until("Either way")
             self.play(Circumscribe(VGroup(alice_x, alice_xp, neq), color=ALICE, time_width=0.6),
@@ -384,7 +388,10 @@ class Definition(VoiceScene):
         header[1].set_color(EPS_COLOR)
         header.move_to([-1.55, 2.85, 0])
         loss_brace = Brace(VGroup(*defn[1:7]), direction=DOWN, color=EPS_COLOR, buff=0.12)
-        loss_lab = VGroup(S.text("privacy loss at", 26, EPS_COLOR), S.math("t", size=36, color=EPS_COLOR))
+        if i18n.active():   # 't 处的隐私损失', as the narration says it (glossary E4)
+            loss_lab = VGroup(S.math("t", size=36, color=EPS_COLOR), S.text("处的隐私损失", 26, EPS_COLOR))
+        else:
+            loss_lab = VGroup(S.text("privacy loss at", 26, EPS_COLOR), S.math("t", size=36, color=EPS_COLOR))
         loss_lab.arrange(RIGHT, buff=0.12, aligned_edge=DOWN).next_to(loss_brace, DOWN, buff=0.1)
         cap = S.tex(r"for all neighbors ", r"$x$", r", ", r"$x'$", r",\quad ", r"all analysts,\quad ",
                     r"all outputs $t$", size=36)
@@ -416,23 +423,34 @@ class Definition(VoiceScene):
             self.play(Write(defn[1]), Write(defn[2]), Write(defn[6]), run_time=0.9)
             self.play(GrowFromCenter(loss_brace), FadeIn(loss_lab, shift=UP * 0.1),
                       ReplacementTransform(g_one_lab, zero_lab), ReplacementTransform(e_hi_lab, hi2),
-                      ReplacementTransform(e_lo_lab, lo2), ReplacementTransform(g_title, g_title2), run_time=1.0)
+                      ReplacementTransform(e_lo_lab, lo2),
+                      (TransformMatchingShapes if i18n.active() else ReplacementTransform)(g_title, g_title2),
+                      run_time=1.0)
             vo.wait_until("For every pair")
             self.play(FadeIn(cap_a, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("every analyst")
             self.play(FadeIn(cap_b, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("every output")
             self.play(FadeIn(cap_c, shift=UP * 0.15), run_time=0.6)
-            vo.wait_until("it must be at most")
-            self.play(Write(defn[0]), Write(defn[7]), Write(defn[8]), Write(defn[9]), run_time=1.0)
-            self.play(Indicate(defn[9], color=EPS_COLOR, scale_factor=1.5), Indicate(band, color=EPS_COLOR),
-                      run_time=0.8)
-            vo.wait_until("in absolute value")
-            self.play(Indicate(VGroup(*defn[0:8]), color=S.WHITE, scale_factor=1.06), run_time=1.0)
+            if i18n.active():   # Chinese order: 它的绝对值 (the bars) comes before 都不能超过 ε
+                vo.wait_until("in absolute value")
+                self.play(Write(defn[0]), Write(defn[7]), run_time=0.5)
+                self.play(Indicate(VGroup(*defn[0:8]), color=S.WHITE, scale_factor=1.06), run_time=0.8)
+                vo.wait_until("it must be at most")
+                self.play(Write(defn[8]), Write(defn[9]), run_time=0.6)
+                self.play(Indicate(defn[9], color=EPS_COLOR, scale_factor=1.5), Indicate(band, color=EPS_COLOR),
+                          run_time=0.8)
+            else:
+                vo.wait_until("it must be at most")
+                self.play(Write(defn[0]), Write(defn[7]), Write(defn[8]), Write(defn[9]), run_time=1.0)
+                self.play(Indicate(defn[9], color=EPS_COLOR, scale_factor=1.5), Indicate(band, color=EPS_COLOR),
+                          run_time=0.8)
+                vo.wait_until("in absolute value")
+                self.play(Indicate(VGroup(*defn[0:8]), color=S.WHITE, scale_factor=1.06), run_time=1.0)
             vo.wait_until("a ratio of two")
             self.play(Write(sym), run_time=1.2)
             vo.wait_until("For small epsilon")
-            self.play(ReplacementTransform(sym, small), run_time=1.0)
+            self.play((FadeTransform if i18n.active() else ReplacementTransform)(sym, small), run_time=1.0)
             self.play(Indicate(small[1:], color=EPS_COLOR), run_time=vo.remaining(0.6))
 
         # ============================================================ 4. Warner's coin: ponder

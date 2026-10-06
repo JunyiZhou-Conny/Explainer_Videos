@@ -141,6 +141,9 @@ S06:
   - null
   anchors:
     "with O to move": "轮到 O"
+    # zh only (s06_explore.py): the win line and the draw wait for their words
+    "O wins": "O 就赢了"
+    "it's a draw": "平局"
     "and try the top-middle": "这回试试"
     "and add up": "再加起来"
     "2 plus 1": "2 加 1"
@@ -171,5 +174,6 @@ S06:
   anchors:
     "like a single whiteboard": "就像只有"
     "it erases that mark": "就要擦掉"
-    "and it means the next branch": "这样棋盘"
+    # the next branch is drawn as it is named (这样棋盘恢复原样 is said over the restored board)
+    "and it means the next branch": "下一个分支"
     "is called backtracking": "这就叫回溯"

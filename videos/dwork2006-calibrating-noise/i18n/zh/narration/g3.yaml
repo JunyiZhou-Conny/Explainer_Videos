@@ -14,7 +14,7 @@ S07:
   - "它的宽度由尺度参数 lambda 决定。"
   anchors:
     "symmetric": "左右对称"
-    "falling off exponentially": "并且随着离中心"
+    "falling off exponentially": "指数衰减"
   en_display:
   - null
   - null
@@ -116,7 +116,7 @@ S07:
   say:
   - "暂停想一想：为什么不用更简单的，比如均匀噪声，负十到正十之间任意取值？"
   anchors:
-    "like uniform noise": "比如均匀噪声"
+    "like uniform noise": "均匀噪声"
     "anywhere between": "−10 到"
   en_display:
   - "Pause and ponder: why not something simpler, like uniform noise anywhere between −10 and +10?"

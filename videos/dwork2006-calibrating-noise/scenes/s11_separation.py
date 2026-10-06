@@ -12,6 +12,7 @@ Proposition 2 (p. 278): randomized response, SAME mask for every row: needs n = 
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import gaussian_pdf, person_icon, ponder_card
 from explainer.scene import VoiceScene
@@ -879,7 +880,9 @@ class Separation(VoiceScene):
                         tip_length=0.14, max_tip_length_to_length_ratio=0.45)
         # the two lines word for word (and size for size) as S12 shows them: the mark ends the 2nd line
         tick1 = sym("✓", 44, TICK)
-        line1 = VGroup(S.text("Any ONE query, known in advance", 32, S.WHITE),
+        # Chinese has no capitals: the quantifiers ONE / MOST are coloured instead (S12 does the same)
+        quant_kw = {"t2c": {"ONE": S.YELLOW, "MOST": S.YELLOW}} if i18n.active() else {}
+        line1 = VGroup(S.text("Any ONE query, known in advance", 32, S.WHITE, **quant_kw),
                        VGroup(S.text("→  easy to publish for", 30, S.GREY), tick1).arrange(RIGHT, buff=0.3)
                        ).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
         line1.next_to(one_sheet, RIGHT, buff=0.45)
@@ -891,7 +894,7 @@ class Separation(VoiceScene):
         two_links = VGroup(*[Line(two_sheet.get_left(), c.get_right(), color=S.GREY, stroke_width=1.5) for c in many])
         two_links.set_z_index(-1)
         cross2 = sym("✗", 44, NOISE_COLOR)
-        line2 = VGroup(S.text("ONE private release that works for MOST queries", 32, S.WHITE),
+        line2 = VGroup(S.text("ONE private release that works for MOST queries", 32, S.WHITE, **quant_kw),
                        VGroup(S.text("→  impossible unless n is huge", 30, S.GREY), cross2).arrange(RIGHT, buff=0.3)
                        ).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
         line2.next_to(two_sheet, RIGHT, buff=0.45)
@@ -926,9 +929,10 @@ class Separation(VoiceScene):
             self.play(FadeIn(line2[0], shift=LEFT * 0.2), FadeIn(line2[1][0], shift=LEFT * 0.2), run_time=0.8)
             self.play(FadeIn(cross2, scale=1.6), run_time=0.5)
             # the whole difference is the order of the quantifiers: ONE query vs MOST queries
-            self.play(Indicate(word(line1[0], "ONE"), color=S.WHITE, scale_factor=1.25),
-                      Indicate(word(line2[0], "ONE"), color=S.WHITE, scale_factor=1.25), run_time=0.8)
-            self.play(Indicate(word(line2[0], "MOST"), color=S.WHITE, scale_factor=1.25), run_time=0.8)
+            # (i18n.tr: the scoped keys s11_separation|ONE / |MOST name the same words in Chinese)
+            self.play(Indicate(word(line1[0], i18n.tr("ONE")), color=S.WHITE, scale_factor=1.25),
+                      Indicate(word(line2[0], i18n.tr("ONE")), color=S.WHITE, scale_factor=1.25), run_time=0.8)
+            self.play(Indicate(word(line2[0], i18n.tr("MOST")), color=S.WHITE, scale_factor=1.25), run_time=0.8)
             vo.wait_until("The lesson")
             self.play(FadeIn(cur3, scale=0.8), Create(loop), run_time=0.9)
             self.play(Write(lesson_t), run_time=1.6)

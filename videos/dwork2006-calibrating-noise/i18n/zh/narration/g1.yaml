@@ -68,13 +68,17 @@ S01:
   say:
   - "二零零六年，Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith，用这篇 paper 回答了这两个问题，Calibrating Noise to Sensitivity in Private Data Analysis。"
   - null
+  # The anchor position is estimated by character count, and the Latin names and the title are
+  # spoken faster per character than Chinese, so the targets are the surnames (the glyphs S01 fades
+  # in) and "Noise": with the given names / 《Calibrating the beats came 0.4-1.4 s too early
+  # (faster-whisper word times of the zh clip).
   anchors:
-    "Cynthia Dwork": "Cynthia Dwork"
-    "Frank McSherry": "Frank McSherry"
-    "Kobbi Nissim": "Kobbi Nissim"
-    "Adam Smith": "Adam Smith"
+    "Cynthia Dwork": "Dwork"
+    "Frank McSherry": "McSherry"
+    "Kobbi Nissim": "Nissim"
+    "Adam Smith": "Smith"
     "in this paper": "这篇 paper"
-    "Calibrating Noise": "《Calibrating Noise"
+    "Calibrating Noise": "Noise"
     "and in 2017": "2017 年还"
 - en: "This video covers its three big ideas: a definition of privacy, a number called sensitivity, and a recipe for how much noise is enough. Plus a surprising limit on what one published table can achieve, if it must be private in this sense."
   zh:

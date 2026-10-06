@@ -196,33 +196,28 @@ def lines_bar(code, k0: int, k1: int | None = None, color: str = WIN_COLOR,
         .move_to([(x0 + x1) / 2, (y0 + y1) / 2, 0])
 
 
-def ctext(s: str, size: float, color: str = S.WHITE, **kw) -> Text:
-    """S.text(s, size, color, **kw). With t2c in a language version, the colours are put on the
-    glyphs after the Text is built: Manim lays out each t2c span on its own, so a span of Latin
-    glyphs inside Chinese text ("轮到 X", "← 有人赢了？→ 1") would sit about 0.06 higher than the
-    Chinese around it (the CJK font's taller ascent sets the other spans' baseline)."""
-    t2c = kw.get("t2c")
-    if not (t2c and i18n.active()):
-        return S.text(s, size, color, **kw)
-    kw.pop("t2c")
-    t = S.text(s, size, color, **kw)
-    flat = i18n.tr(s).replace(" ", "")              # glyphs skip spaces
-    assert len(t) == len(flat), (s, len(t), flat)
-    for key, col in t2c.items():
-        k = i18n.tr(key).replace(" ", "")
-        i = flat.find(k) if k else -1
-        while i >= 0:
-            t[i:i + len(k)].set_color(col)
-            i = flat.find(k, i + len(k))
-    return t
+def text_t2c(s: str, size: float, color, t2c: dict, **kw) -> Text:
+    """S.text(s, size, color, t2c=t2c, **kw). Pango lays out each t2c run on its own, and in CJK
+    text a run of only Latin letters or digits (the 'X' of '轮到 X', the '1' of '← 有人赢了？→ 1')
+    sits ~0.06 units above the line; a language version copies the colours onto the same text
+    laid out in one piece. (Same helper as in s02_fill.py and s03_stop.py.)"""
+    t = S.text(s, size, color, t2c=t2c, **kw)
+    if not (i18n.active() and i18n.has_cjk(t.text)):
+        return t
+    plain = S.text(s, size, color, **kw)
+    assert len(plain) == len(t), (t.text, len(plain), len(t))
+    for g, c in zip(plain, t):
+        g.set_color(c.get_color())
+    return plain
 
 
 def line_tag(code, k: int, s: str, color: str = S.WHITE, dy: float = 0.0, size: float = TAG,
              **kw) -> Text:
     """'<- label' just right of the code panel (x = 2.4), level with line k."""
     y = code_line(code, k).get_center()[1] + dy
-    return ctext("← " + s, size, color, **kw).move_to([code.get_right()[0] + 0.12, y, 0],
-                                                      aligned_edge=LEFT)
+    t2c = kw.pop("t2c", None)
+    tag = text_t2c("← " + s, size, color, t2c, **kw) if t2c else S.text("← " + s, size, color, **kw)
+    return tag.move_to([code.get_right()[0] + 0.12, y, 0], aligned_edge=LEFT)
 
 
 def comment(code, k: int) -> VGroup:
@@ -256,7 +251,7 @@ def cam_out(m, frm, to, k: float, **kw):
 
 
 def to_move(sym: str, size: float = 30) -> Text:
-    return ctext(f"{sym} to move", size, S.WHITE, t2c={sym: X_COLOR if sym == "X" else O_COLOR})
+    return text_t2c(f"{sym} to move", size, S.WHITE, {sym: X_COLOR if sym == "X" else O_COLOR})
 
 
 def count_value(n: int, size: float = 48) -> Text:
@@ -697,6 +692,10 @@ class Explore(VoiceScene):
             o_win = place(B4_WIN, "O")
             self.play(mark_anim(o_win), run_time=0.5)
             col = work.win_line(2, 8)
+            if i18n.active():
+                # a language version that names the square first (Chinese: 如果 O 下在右上角那格，
+                # O 就赢了) holds the new mark until the win is spoken
+                vo.wait_until("O wins")
             self.play(Create(col), run_time=0.4)
             self.play(GrowArrow(arr_l), TransformFromCopy(state(col), snap_l), run_time=0.9)
             self.play(FadeIn(one_l, scale=0.5), FadeIn(tag_l, shift=RIGHT * 0.15), run_time=0.5)
@@ -714,6 +713,8 @@ class Explore(VoiceScene):
             x_fill = place(B4_FILL, "X")
             self.play(mark_anim(x_fill), run_time=0.5)
             self.play(GrowArrow(arr_g), TransformFromCopy(state(), snap_g), run_time=0.8)
+            if i18n.active():
+                vo.wait_until("it's a draw")          # (the longer sentence says 平局 later)
             self.play(snap_g[1].animate.set_color(DRAW_COLOR), FadeIn(tag_g, shift=LEFT * 0.15),
                       run_time=0.5)
             self.play(FadeIn(one_g, scale=0.5), run_time=0.4)
@@ -778,7 +779,7 @@ class Explore(VoiceScene):
         l2_dots = dots_mob(l2_pts, 0.03, S.GREY)
         fringe = [seg_mob(segs[d], width=0.9, opacity=0.4) for d in range(3, 10)]
         leaf_dots = dots_mob(leaves, 0.03, S.WHITE)
-        nine_eight = ctext("same 9 × 8 as before!", 26, S.WHITE, t2c={"9 × 8": COUNT_COLOR}) \
+        nine_eight = text_t2c("same 9 × 8 as before!", 26, S.WHITE, {"9 × 8": COUNT_COLOR}) \
             .move_to([4.45, 3.1, 0])
         leaf_lab = S.text("leaves = finished games", 24, S.WHITE).move_to([3.6, -3.3, 0])
 

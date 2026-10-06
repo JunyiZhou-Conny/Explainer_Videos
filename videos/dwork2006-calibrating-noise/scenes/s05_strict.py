@@ -3,6 +3,7 @@
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import database_rows, laplace_pdf
 from explainer.scene import VoiceScene
@@ -194,6 +195,10 @@ class WhyStrict(VoiceScene):
                         r"\frac1n", size=38).move_to([2.6, 1.75, 0])
         tiny = S.text("tiny for a big database: looks private?", 26, S.GREY).next_to(sd_val, DOWN, buff=0.25)
 
+        # zh: only ~2.9 s (en 3.5 s) from 随机挑一条记录 to the next sentence: the same pick-and-publish
+        # beats, played faster, so the change of Alice's row still lands on 改动一个人的记录
+        pace = 0.75 if i18n.active() else 1.0
+
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(title, axis, out_lab, c_x, c_xp, lab_x, lab_xp, lens_x, lens_xp, sd, ev,
                                      ev_line, ev_lab)), run_time=0.6)
@@ -204,15 +209,15 @@ class WhyStrict(VoiceScene):
             pointer.add_updater(follow)
             hl.add_updater(follow)
             self.play(FadeIn(pointer), FadeIn(hl), run_time=0.2)
-            self.play(spin.animate.set_value(11.0), run_time=1.5, rate_func=rate_functions.ease_out_cubic)
+            self.play(spin.animate.set_value(11.0), run_time=1.5 * pace, rate_func=rate_functions.ease_out_cubic)
             pointer.clear_updaters()
             hl.clear_updaters()
-            self.play(TransformFromCopy(rows[1], token), FadeIn(token_head), run_time=0.6)
-            self.wait(0.3)
+            self.play(TransformFromCopy(rows[1], token), FadeIn(token_head), run_time=0.6 * pace)
+            self.wait(0.3 * pace)
             # the published row is one sample; its slot in the chart is one of n equally likely outputs
             self.play(token.animate.scale(0.5).move_to([slot_x[("Carol", "has")], base_y + BAR_H + 0.3, 0])
-                      .set_opacity(0), FadeOut(token_head), run_time=0.55)
-            self.play(*[GrowFromEdge(bars_x[p], DOWN) for p in truth_x], FadeIn(leg[0]), run_time=0.55)
+                      .set_opacity(0), FadeOut(token_head), run_time=0.55 * pace)
+            self.play(*[GrowFromEdge(bars_x[p], DOWN) for p in truth_x], FadeIn(leg[0]), run_time=0.55 * pace)
             vo.wait_until("Change one person")
             self.play(FadeOut(VGroup(pointer, hl)),
                       Transform(rows[-1][3], S.text("has X", 24, XP_COLOR).move_to(rows[-1][3])),

@@ -13,6 +13,7 @@ from __future__ import annotations
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import database_rows, person_icon, timeline
 from explainer.scene import VoiceScene
@@ -541,8 +542,14 @@ class LineageBefore(VoiceScene):
         # both name columns are NAME_W wide and left-aligned, so 'the governor' (1.44 at 20 pt) fits the
         # hospital cell it is copied into with room to spare
         NAME_W = 1.95
+        hosp_w, voter_w = [NAME_W, 0.9, 1.05, 0.55, 1.25], [NAME_W, 0.9, 1.05, 0.55]
+        if i18n.active():
+            # the translated 'born' / 'sex' headers (出生日期 / 性别) need wider columns at 20 pt; the
+            # name column pays for them (its longest entry, the translated 'the governor', is short):
+            # same total width, so both tables keep their place
+            hosp_w, voter_w = [1.5, 0.9, 1.25, 0.8, 1.25], [1.5, 0.9, 1.25, 0.8]
         hosp = mini_table(["name", "ZIP", "born", "sex", "diagnosis"], hosp_rows,
-                          [NAME_W, 0.9, 1.05, 0.55, 1.25], left_cols=(0,))   # 'diagnosis' fits at 20 pt
+                          hosp_w, left_cols=(0,))   # 'diagnosis' fits at 20 pt
         hosp.move_to([-3.55, -2.6, 0])
         blobs = VGroup(*[RoundedRectangle(width=w, height=0.11, corner_radius=0.05, stroke_width=0)
                          .set_fill(S.GREY, 0.9)
@@ -555,7 +562,7 @@ class LineageBefore(VoiceScene):
                       ("the governor", "02135", "9/17/43", "M"),
                       ("K. Osei", "02139", "1/5/90", "M"),
                       ("M. Novak", "02144", "8/19/77", "F")]
-        voter = mini_table(["name", "ZIP", "born", "sex"], voter_rows, [NAME_W, 0.9, 1.05, 0.55], left_cols=(0,))
+        voter = mini_table(["name", "ZIP", "born", "sex"], voter_rows, voter_w, left_cols=(0,))
         voter.move_to([4.15, -2.6, 0])
         voter_title = S.text("public voter list", 22, S.WHITE).next_to(voter, UP, buff=0.14).align_to(voter, LEFT)
         qi_cols = VGroup(*[hosp[r][c] for r in range(5) for c in (1, 2, 3)])
@@ -585,8 +592,12 @@ class LineageBefore(VoiceScene):
                       FadeIn(hosp, shift=UP * 0.2), FadeIn(blobs, shift=UP * 0.2), FadeIn(hosp_title),
                       run_time=1.0)
             vo.wait_until("just remove the names")
+            # a point morph only reads well when the old title is the start of the new one (English);
+            # otherwise (去掉姓名的医院病历 ends with 医院病历) move the shared glyphs and fade in the rest
+            retitle = (TransformMatchingShapes(hosp_title, hosp_title2) if i18n.active()
+                       else ReplacementTransform(hosp_title, hosp_title2))
             self.play(LaggedStart(*[b.animate.stretch(0.02, 0).set_opacity(0) for b in blobs], lag_ratio=0.15),
-                      ReplacementTransform(hosp_title, hosp_title2), run_time=1.0)
+                      retitle, run_time=1.0)
             vo.wait_until("kept failing")
             self.play(Indicate(header2[1], color=S.WHITE, scale_factor=1.06), run_time=0.8)
             vo.wait_until("Latanya Sweeney")

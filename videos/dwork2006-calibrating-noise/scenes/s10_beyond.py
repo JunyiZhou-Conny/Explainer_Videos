@@ -12,6 +12,7 @@ from math import comb
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import person_icon
 from explainer.scene import VoiceScene
@@ -287,6 +288,9 @@ class BeyondCounting(VoiceScene):
 
         qa_pieces = ["how many ", "links", " must you ", "cut", " to ", "split the network in two", "?"]
         qb_pieces = ["how many ", "rows", " must you ", "change", " to ", "make P true", "?"]
+        if i18n.active():     # the same seven pieces in Chinese word order (1, 3, 5 highlighted)
+            qa_pieces = ["至少要", "切断", "多少条", "边", "，才能", "把网络一分为二", "？"]
+            qb_pieces = ["至少要", "改动", "多少条", "记录", "，才能", "让 P 成立", "？"]
         qa = S.text("".join(qa_pieces), 30, S.WHITE).move_to(caption)
         qb = S.text("".join(qb_pieces), 30, S.WHITE)
         qb_tail = S.text("→  sensitivity 1", 28, SENS_COLOR)
@@ -449,7 +453,12 @@ class BeyondCounting(VoiceScene):
         bits_l = S.text("a string of bits", **lab_kw).move_to([bits_big.get_x(), rank_l.get_y(), 0])
         any_cap = S.text("rankings, sets, bit strings: anything with a distance", 30, S.WHITE)
         any_cap.move_to([0, -1.25, 0])
-        dist_word = split_glyphs(any_cap, ["rankings, sets, bit strings: anything with a ", "distance"])[1]
+        if i18n.active():     # find the translated word in the translated caption
+            _w = i18n.tr("distance")
+            _i = any_cap.text.replace(" ", "").index(_w)
+            dist_word = any_cap[_i:_i + len(_w)]
+        else:
+            dist_word = split_glyphs(any_cap, ["rankings, sets, bit strings: anything with a ", "distance"])[1]
 
         # the cloud of candidate outputs, one dot per bit string, ring k = Hamming distance k
         cc = np.array([-3.6, -0.45, 0.0])
