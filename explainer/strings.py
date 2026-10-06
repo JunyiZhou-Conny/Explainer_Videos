@@ -41,17 +41,20 @@ def patch(cls, kind, getter):
     orig = cls.__init__
     def init(self, *a, **k):
         try:
-            records.append({"kind": kind, "text": getter(a, k), "size": k.get("font_size"), "site": site()})
+            texts = getter(a, k)
+            for t in (texts if isinstance(texts, list) else [texts]):
+                records.append({"kind": kind, "text": t, "size": k.get("font_size"), "site": site()})
         except Exception as e:  # never break the scene
             records.append({"kind": kind, "text": f"<unreadable: {e}>", "size": None, "site": site()})
         orig(self, *a, **k)
     cls.__init__ = init
 
+# the i18n hooks translate each string argument separately, so record them separately
 patch(Text, "text", lambda a, k: a[0] if a else k.get("text"))
 patch(MarkupText, "markup", lambda a, k: a[0] if a else k.get("text"))
-patch(Paragraph, "paragraph", lambda a, k: "\n".join(a))
-patch(MathTex, "mathtex", lambda a, k: " ".join(a))
-patch(Tex, "tex", lambda a, k: " ".join(a))
+patch(Paragraph, "paragraph", lambda a, k: list(a))
+patch(MathTex, "mathtex", lambda a, k: [x for x in a if isinstance(x, str)])
+patch(Tex, "tex", lambda a, k: [x for x in a if isinstance(x, str)])
 patch(Code, "code", lambda a, k: k.get("code_string") or k.get("code_file") or "")
 spec = importlib.util.spec_from_file_location(scene_file.stem, scene_file)
 mod = importlib.util.module_from_spec(spec)
