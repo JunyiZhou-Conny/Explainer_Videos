@@ -1,0 +1,133 @@
+# Chinese on-screen strings for S04, S05, S06 (group g2) of tictactoe-255168.
+# Keys are the exact English strings of the scenes; glossary: ../GLOSSARY.md.
+
+# ---------------------------------------------------------------- S04 s04_messy.py
+"O wins on move 6": "O 在第 6 步赢了"
+"already over at move 5": "第 5 步就已经结束"
+"ways O could line up": "O 连成一线的方法"
+"8 lines  ×  6 orders  ×  (6 × 5 × 4 for X's 3 marks)": "8 条线 × 6 种顺序 ×（6 × 5 × 4：3 个 X 的放法）"
+"X already won": "X 已经赢了"
+"12 pairs (O's line, X's parallel line)  ×  6  ×  6": "12 对（O 的线，X 的平行线）× 6 × 6"
+"3 rows × 2 other rows  +  3 columns × 2 other columns = 12 pairs": "3 排 × 另外 2 排 + 3 列 × 另外 2 列 = 12 对"
+"game ends on": "第几步结束"
+# table header and laptop counter (one key, two sites)
+"games": "局数"
+# table rows (S04) and bar-chart axis (S08)
+"move 5": "第 5 步"
+"move 6": "第 6 步"
+"move 7": "第 7 步"
+"move 8": "第 8 步"
+"move 9": "第 9 步"
+"did O win before?": "O 之前赢了吗？"
+"did X win before?": "X 之前赢了吗？"
+"win or draw?": "赢还是平局？"
+"Plan B: let a computer play every game": "Plan B：让电脑把每一局都下一遍"
+
+# part keys of rich() (s04_messy.py:38-51). INERT until rich() translates each part before joining
+# (parts = [(i18n.tr(p), c) for p, c in parts]); today it translates only the joined string and its
+# glyph-count assert fails in zh. Each list of parts keeps the English order and joins to the
+# whole-string Chinese above, so every colour and every per-cue piece (p1, p2, cp) lands on the
+# right glyphs. The grey separators ("  ×  ", " × ", "  +  ", " = ") and the coloured "O", "X",
+# "6" parts have no English words and stay as they are. No other string of the video normalizes
+# to any of these keys (checked against build/strings.en.json and the g1/g3 tables).
+" wins on move 6": " 在第 6 步赢了"
+"ways ": ""
+" could line up": " 连成一线的方法"
+"8 lines": "8 条线"
+"6 orders": "6 种顺序"
+"(6 × 5 × 4 for X's 3 marks)": "（6 × 5 × 4：3 个 X 的放法）"
+" already won": " 已经赢了"
+"12 pairs (": "12 对（"
+"'s line, ": " 的线，"
+"'s parallel line)": " 的平行线）"
+"3 rows": "3 排"
+"2 other rows": "另外 2 排"
+"3 columns": "3 列"
+"2 other columns": "另外 2 列"
+"12 pairs": "12 对"
+
+# ---------------------------------------------------------------- S05 s05_board_code.py
+# checklist strip
+"board": "棋盘"
+"winning lines": "获胜线"
+"spot a winner": "判断输赢"
+"Python = a language for giving a computer instructions": "Python = 一种给电脑下指令的语言"
+# caption under board = ["."] * 9, two Text objects
+"a dot,": "一个点，"
+"9 times": "重复 9 次"
+# the 8 stays the first glyph (the scene counts 1..8 on it)
+"8 winning lines": "8 条获胜线"
+"function = a mini-program with a name": "函数 = 一小段有名字的程序"
+# code, stays code
+"winner(board)": "winner(board)"
+"for each line: squares a, b, c": "对每一条线：格子 a、b、c"
+"not all the same": "不全一样"
+"is the same as": "一样"
+"is not": "不是"
+"only dots": "全是点"
+"hands back": "返回（交回结果）"
+"nothing found → None (nobody)": "没找到 → None（没有人）"
+
+# ---------------------------------------------------------------- S06 s06_explore.py
+# the one-time note on comments: "# …" + these two
+"= a note for humans": "= 写给人看的说明（注释）"
+"(the computer skips it)": "（电脑会跳过它）"
+# side labels of the explore() panel
+"← whose turn: X or O": "← 轮到谁：X 还是 O"
+"← someone won? → 1": "← 有人赢了？→ 1"
+"← board full? → 1 (a draw)": "← 棋盘满了？→ 1（平局）"
+"← squares 0 to 8": "← 0 到 8 号格"
+"← try each empty square": "← 试每一个空格子"
+"← switch turns": "← 轮到对方"
+# shorter than the glossary's "← 统计从这里往后有多少局", which ends at x 6.92, past the scene's
+# x <= 6.6 safe area (measured); the same line's comment already says # 统计从这里往后有多少局
+"← count games from here": "← 从这里往后有多少局"
+"← undo": "← 撤销"
+"add to the total": "累加到 total（总数）"
+# leaf labels; "(a draw)" is also a t2c key of "← board full? → 1 (a draw)"
+"1 game": "1 局"
+"(a draw)": "（平局）"
+"X to move": "轮到 X"
+"O to move": "轮到 O"
+# code, stays code
+"total =": "total ="
+"O wins": "O 赢"
+"draw": "平局"
+# glyphs of "1 + 1 = 2 局" (spaces skipped): 0 '1' | 1 '+' | 2 '1' | 3 '=' | 4 '2' | 5 '局', as in English
+"1 + 1 = 2 games": "1 + 1 = 2 局"
+"each call:\n1 more mark": "每调用一次：\n多一个棋子"
+"stop!": "停！"
+"same 9 × 8 as before!": "和前面一样：9 × 8"
+"leaves = finished games": "叶子 = 下完的对局"
+"games counted": "对局计数"
+"recursive": "递归"
+# fallback of rule A3 (no grey 'recursion' tag in s06_explore.py yet); with the tag: "函数自己调用（问）自己"
+"a function that calls (asks) itself": "recursion：函数自己调用（问）自己"
+# tree edges f"{sym} in {s}": square numbers, never 第 N (rule A9). The exact keys below win over
+# the re: key, so change both together. At 24 pt these are 1.94x the English width: X8, O8 and X6b
+# run past x 6.58, X7 is crossed by the A-X8 edge, O6 and X8b run into the code panel. The fix is
+# in s06_explore.py:838 (zh size / placement), not in this wording.
+"re:([XO]) in (\\d)": "\\1 下 \\2 号格"
+"X in 6": "X 下 6 号格"
+"X in 7": "X 下 7 号格"
+"X in 8": "X 下 8 号格"
+"O in 6": "O 下 6 号格"
+"O in 8": "O 下 8 号格"
+"one\nshared\nboard": "共用\n一个\n棋盘"
+# "undo" is the t2c key of the caption (and of S09's card): the colour lands on 撤销
+"try → explore → undo": "试走 → 探索 → 撤销"
+"undo": "撤销"
+# fallback of rule A3 (no grey 'backtracking' tag in s06_explore.py yet); with the tag: "= 回溯"
+"= backtracking": "= 回溯（backtracking）"
+
+# ---------------------------------------------------------------- code comments (# ... in Code panels)
+# WIN_LINES (S05)
+"rows": "横排"
+"columns": "竖列"
+"diagonals": "对角线"
+# explore() (S06, S07, S08)
+"someone won": "有人赢了"
+"board full: a draw": "棋盘满了：平局"
+"make a move": "试走一步"
+"count games from here": "统计从这里往后有多少局"
+"undo the move": "撤销这一步"

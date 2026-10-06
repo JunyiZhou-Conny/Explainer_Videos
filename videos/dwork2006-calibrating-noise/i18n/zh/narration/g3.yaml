@@ -1,0 +1,336 @@
+# zh narration for S07, S08, S09 (group g3). One zh sentence per English sentence;
+# say: = what the voice reads (null = the display text); anchors: English phrase -> zh words;
+# en_display: the English subtitle line with digits/symbols (null = the SAY text).
+# Spoken "the count" is 人数, never 计数 (计数 is heard as 技术; labels may keep 计数).
+S07:
+- en: "Now for the noise. The paper uses the Laplace distribution: symmetric, sharply peaked, and falling off exponentially with distance from the center. Its width is set by a scale parameter, lambda."
+  zh:
+  - "下面来看噪声。"
+  - "原文用的是拉普拉斯分布：左右对称，峰很尖，并且随着离中心的距离指数衰减。"
+  - "它的宽度由尺度参数 λ 决定。"
+  say:
+  - null
+  - null
+  - "它的宽度由尺度参数 lambda 决定。"
+  anchors:
+    "symmetric": "左右对称"
+    "falling off exponentially": "并且随着离中心"
+  en_display:
+  - null
+  - null
+  - "Its width is set by a scale parameter, λ."
+- en: "Here is the trick. Center one Laplace curve at f of x, forty-one, and another at f of x prime, forty-two: the output distributions of our two worlds."
+  zh:
+  - "这里有个 trick。"
+  - "一条拉普拉斯曲线的中心在 f(x)，也就是 41，另一条在 f(x′)，也就是 42：这就是两个世界的输出分布。"
+  say:
+  - null
+  - "一条拉普拉斯曲线的中心在 f x，也就是四十一，另一条在 f x prime，也就是四十二：这就是两个世界的输出分布。"
+  anchors:
+    "and another": "另一条"
+    "the output distributions": "这就是两个世界"
+  en_display:
+  - null
+  - "Center one Laplace curve at f(x), 41, and another at f(x′), 42: the output distributions of our two worlds."
+- en: "Now plot the log of their ratio for every output t. To the left of forty-one, it is exactly constant. To the right of forty-two, constant again. In between, a straight ramp. It never rises above one over lambda, and never falls below minus one over lambda: the shift, divided by the scale."
+  zh:
+  - "现在对每个输出 t，画出两条曲线比值的对数。"
+  - "在 41 左边，它完全是个常数。"
+  - "在 42 右边，又是个常数。"
+  - "中间是一段笔直的斜坡。"
+  - "它从不超过 1/λ，也从不低于 −1/λ：也就是平移量除以尺度。"
+  say:
+  - null
+  - null
+  - null
+  - null
+  - "它从不超过 lambda 分之一，也从不低于负的 lambda 分之一：也就是平移量除以尺度。"
+  anchors:
+    "and never falls": "也从不低于"
+    "the shift, divided": "也就是平移量"
+  en_display:
+  - null
+  - "To the left of 41, it is exactly constant."
+  - "To the right of 42, constant again."
+  - null
+  - "It never rises above 1/λ, and never falls below −1/λ: the shift, divided by the scale."
+- en: "Why? On a log scale, a Laplace density is a tent whose sides have slope one over lambda, never steeper. Slide the tent over, and the gap between the tents can never exceed the slide times that slope. That is the whole design principle: privacy needs noise whose log density is never steep."
+  zh:
+  - "为什么？"
+  - "取对数之后，拉普拉斯密度是个帐篷形，两边的斜率是 1/λ，绝不会更陡。"
+  - "把帐篷平移过去，两个帐篷的高度差，永远不超过平移量乘以这个斜率。"
+  - "这就是整个设计原则：隐私需要对数密度处处不陡的噪声。"
+  say:
+  - null
+  - "取对数之后，拉普拉斯密度是个帐篷形，两边的斜率是 lambda 分之一，绝不会更陡。"
+  - null
+  - null
+  anchors:
+    "a tent whose sides": "是个帐篷形"
+    "never steeper": "绝不会更陡"
+  en_display:
+  - null
+  - "On a log scale, a Laplace density is a tent whose sides have slope 1/λ, never steeper."
+  - null
+  - null
+- en: "In symbols: two distances to t can differ by at most the distance between the centers. So the privacy loss of any output is at most the sensitivity divided by lambda. Set lambda to the sensitivity over epsilon, and the ratio stays within e to the epsilon, for every output and every pair of neighbors. Privacy, proven in one line."
+  zh:
+  - "用符号写出来：到 t 的两段距离，最多相差两个中心之间的距离。"
+  - "所以任意输出的隐私损失，最多是敏感度除以 λ。"
+  - "让 λ 取敏感度除以 ε，比值就始终在 e^ε 以内，对任意输出、任意一对相邻数据库都成立。"
+  - "隐私，一个不等式就证完了。"
+  say:
+  - null
+  - "所以任意输出的隐私损失，最多是敏感度除以 lambda。"
+  - "让 lambda 取敏感度除以艾普西隆，比值就始终在 E 的艾普西隆次方以内，对任意输出、任意一对相邻数据库都成立。"
+  - null
+  anchors:
+    "two distances to t": "到 t 的两段距离"
+    "at most the distance": "最多相差"
+    "the sensitivity divided": "敏感度除以 λ"
+    "for every output": "对任意输出"
+  en_display:
+  - null
+  - "So the privacy loss of any output is at most the sensitivity divided by λ."
+  - "Set λ to the sensitivity over ε, and the ratio stays within e^ε, for every output and every pair of neighbors."
+  - null
+- en: "If the query returns several numbers, add independent Laplace noise to each. The joint density then depends on the L1 distance, which is exactly why sensitivity is measured in the L1 norm. That is Proposition 1: Laplace noise of scale S of f over epsilon in every coordinate."
+  zh:
+  - "如果 query 返回好几个数，就给每个数加上独立的拉普拉斯噪声。"
+  - "这时联合密度取决于 L1 距离，正因为这样，敏感度才用 L1 范数来衡量。"
+  - "这就是命题 1：在每个分量上加尺度为 S(f)/ε 的拉普拉斯噪声。"
+  say:
+  - null
+  - null
+  - "这就是命题一：在每个分量上加尺度为 S f 除以艾普西隆的拉普拉斯噪声。"
+  anchors:
+    "add independent": "就给每个数"
+    "which is exactly why": "正因为这样"
+  en_display:
+  - null
+  - null
+  - "That is Proposition 1: Laplace noise of scale S(f)/ε in every coordinate."
+- en: "Pause and ponder: why not something simpler, like uniform noise anywhere between minus ten and plus ten?"
+  zh:
+  - "暂停想一想：为什么不用更简单的，比如均匀噪声，在 −10 到 +10 之间任意取值？"
+  say:
+  - "暂停想一想：为什么不用更简单的，比如均匀噪声，在负十到正十之间任意取值？"
+  anchors:
+    "like uniform noise": "比如均匀噪声"
+    "anywhere between": "在 −10 到"
+  en_display:
+  - "Pause and ponder: why not something simpler, like uniform noise anywhere between −10 and +10?"
+- en: "Look at the edges. An output of fifty-one and a half is possible if the true count is forty-two, but impossible if it is forty-one: the same infinite ratio that sank the random-row mechanism. Good noise must never rule an output out."
+  zh:
+  - "看看边缘。"
+  - "输出 51.5，真实人数是 42 就可能，是 41 就不可能：又是那个无穷大比值，随机发布一条记录的机制当初就栽在这上面。"
+  - "好的噪声，绝不能把任何输出排除在外。"
+  anchors:
+    "is possible if": "真实人数是 42"
+    "but impossible": "是 41 就不可能"
+    "the same infinite ratio": "又是那个无穷大比值"
+    "that sank": "随机发布一条记录的机制"
+  en_display:
+  - null
+  - "An output of 51.5 is possible if the true count is 42, but impossible if it is 41: the same infinite ratio that sank the random-row mechanism."
+  - null
+- en: "And why not the familiar bell curve? On a log scale a Gaussian is a parabola, steeper and steeper, so the gap between two shifted parabolas grows without bound. In the tails the ratio explodes, and no single epsilon works. Hold on to that Gaussian, though: it comes back, and it is the noise you would actually use to train a neural network privately."
+  zh:
+  - "那为什么不用熟悉的钟形曲线？"
+  - "取对数之后，高斯是一条抛物线，越来越陡，所以两条平移开的抛物线，高度差会无限增大。"
+  - "到了尾部，比值会爆炸，没有哪个 ε 能管用。"
+  - "不过先记住这个高斯：它还会回来，用差分隐私训练神经网络时，实际用的就是它。"
+  say:
+  - null
+  - null
+  - "到了尾部，比值会爆炸，没有哪个艾普西隆能管用。"
+  - null
+  anchors:
+    "so the gap": "所以两条"
+    "no single epsilon": "没有哪个 ε"
+  en_display:
+  - null
+  - null
+  - "In the tails the ratio explodes, and no single ε works."
+  - null
+- en: "So here is the recipe in the title: noise scale equals sensitivity divided by epsilon. A more sensitive question needs more noise. Stronger privacy needs more noise."
+  zh:
+  - "这就是标题里的那条公式：噪声尺度等于敏感度除以 ε。"
+  - "敏感度越高的 query，噪声越大。"
+  - "隐私越强，噪声越大。"
+  say:
+  - "这就是标题里的那条公式：噪声尺度等于敏感度除以艾普西隆。"
+  - null
+  - null
+  anchors:
+    "noise scale equals": "噪声尺度等于"
+  en_display:
+  - "So here is the recipe in the title: noise scale equals sensitivity divided by ε."
+  - null
+  - null
+S08:
+- en: "Back to the hospital, with epsilon one half: Laplace noise of scale two. Week one, the curator reports about forty-three point seven. Week two, when the true count is forty-two, about forty point six. Subtract as before, and Alice seems to have lowered the count by three. A fifty-fifty guess about her can now move to at most about sixty-two percent."
+  zh:
+  - "回到医院的例子，ε 取 0.5：尺度为 2 的拉普拉斯噪声。"
+  - "第一周，管理者报出大约 43.7。"
+  - "第二周，真实人数是 42，报出大约 40.6。"
+  - "跟之前一样相减，Alice 好像让人数少了 3。"
+  - "原本对她的判断是五五开，现在最多能有大约 62% 的把握。"
+  say:
+  - "回到医院的例子，艾普西隆取零点五：尺度为二的拉普拉斯噪声。"
+  - null
+  - null
+  - null
+  - "原本对她的判断是五五开，现在最多能有大约百分之六十二的把握。"
+  anchors:
+    "Laplace noise": "尺度为 2 的拉普拉斯噪声"
+    "Alice seems": "Alice 好像"
+  en_display:
+  - "Back to the hospital, with ε = 0.5: Laplace noise of scale 2."
+  - "Week 1, the curator reports about 43.7."
+  - "Week 2, when the true count is 42, about 40.6."
+  - "Subtract as before, and Alice seems to have lowered the count by 3."
+  - "A 50/50 guess about her can now move to at most about 62%."
+- en: "Now look at what the noise scale depends on: the sensitivity and epsilon. Not the size of the database."
+  zh:
+  - "再看噪声尺度取决于什么：敏感度和 ε。"
+  - "而不是数据库的规模。"
+  say:
+  - "再看噪声尺度取决于什么：敏感度和艾普西隆。"
+  - null
+  anchors:
+    "the sensitivity": "敏感度和"
+    "and epsilon": "和 ε"
+  en_display:
+  - "Now look at what the noise scale depends on: the sensitivity and ε."
+  - null
+- en: "With a hundred patients, noise of typical size two is a few percent of the answer. With a million, it is a rounding error. Alice is protected by noise that is large compared to her own contribution, which is one, but tiny compared to the population's."
+  zh:
+  - "有 100 个病人时，噪声一般在 2 左右，占答案的百分之几。"
+  - "到了 100 万人，这点噪声可以忽略不计。"
+  - "保护 Alice 的噪声，比起她自己的贡献，也就是 1，算是很大，但比起总体微不足道。"
+  anchors:
+    "is a few percent": "占答案的百分之几"
+    "her own contribution": "比起她自己的贡献"
+    "but tiny compared": "但比起总体"
+  en_display:
+  - "With 100 patients, noise of typical size 2 is a few percent of the answer."
+  - null
+  - "Alice is protected by noise that is large compared to her own contribution, which is 1, but tiny compared to the population's."
+- en: "Privacy for individuals. Accuracy for populations. That is the bargain."
+  zh:
+  - "隐私，留给个体。"
+  - "准确，留给总体。"
+  - "这就是差分隐私的取舍。"
+- en: "Here is one you can answer yourself. Pause and ponder: the noise has size about one over epsilon. What goes wrong if epsilon is much smaller than one over n?"
+  zh:
+  - "这一题你可以自己回答。"
+  - "暂停想一想：噪声大约有 1/ε 那么大。"
+  - "如果 ε 远小于 1/n，会出什么问题？"
+  say:
+  - null
+  - "暂停想一想：噪声大约有艾普西隆分之一那么大。"
+  - "如果艾普西隆远小于 n 分之一，会出什么问题？"
+  anchors:
+    "the noise has size": "噪声大约有"
+  en_display:
+  - null
+  - "Pause and ponder: the noise has size about 1/ε."
+  - "What goes wrong if ε is much smaller than 1/n?"
+- en: "The noise outgrows n, bigger than the count could ever be, and the answer is pure noise. This is not Laplace's fault. Any two databases are linked by a chain of at most n single-row changes, each changing probabilities by at most e to the epsilon, so the ends differ by at most e to the n epsilon. If n epsilon is tiny, every database looks alike, and nothing can be learned. This chain trick is called a hybrid argument, and it comes back at the end."
+  zh:
+  - "噪声超过了 n，比人数可能取到的任何值都大，答案成了纯噪声。"
+  - "这不是拉普拉斯噪声的问题。"
+  - "任意两个数据库之间，都有一条最多 n 步的链，每步只改一条记录，概率之比最多是 e^ε，所以两端之比最多是 e^(nε)。"
+  - "如果 nε 极小，所有数据库看起来都一样，什么也学不到。"
+  - "这种链式 trick 叫 hybrid argument（混合论证），最后还会再出现。"
+  say:
+  - null
+  - null
+  - "任意两个数据库之间，都有一条最多 n 步的链，每步只改一条记录，概率之比最多是 E 的艾普西隆次方，所以两端之比最多是 E 的 n 乘艾普西隆次方。"
+  - "如果 n 乘艾普西隆极小，所有数据库看起来都一样，什么也学不到。"
+  - "这种链式 trick 叫 hybrid argument，最后还会再出现。"
+  anchors:
+    "linked by a chain": "都有一条"
+    "each changing probabilities": "概率之比"
+    "so the ends": "所以两端"
+    "every database looks alike": "所有数据库看起来"
+  en_display:
+  - null
+  - null
+  - "Any two databases are linked by a chain of at most n single-row changes, each changing probabilities by at most e^ε, so the ends differ by at most e^(nε)."
+  - "If nε is tiny, every database looks alike, and nothing can be learned."
+  - null
+S09:
+- en: "One question is never enough. Real analysts ask many, adaptively, each chosen after seeing earlier answers. Maybe you spot a spike in one bin, and zoom in."
+  zh:
+  - "一个问题永远不够。"
+  - "现实中的分析者会自适应地问很多个，每个都是看了前面的答案才选的。"
+  - "比如某个桶冒出尖峰，就放大看看。"
+- en: "The paper's Theorem 1 handles this. Write the probability of the whole transcript as a product, step by step. The analyst's choice of the next question is the same in both worlds, so in the ratio it cancels, leaving one Laplace ratio per answer. If you know reinforcement learning, this is the trajectory-ratio trick: whatever is identical in both worlds cancels, and the per-step log ratios add up."
+  zh:
+  - "原文的定理 1 处理的就是这个。"
+  - "看整份 transcript（交互历史）：把它的概率一步一步写成乘积。"
+  - "分析者怎么选下一个问题，在两个世界里都一样，所以在比值里会约掉，每个答案只剩一个拉普拉斯比值。"
+  - "懂强化学习的话，这就是算轨迹概率比时的那个 trick：凡是两个世界里相同的都约掉，每一步的对数比值相加。"
+  say:
+  - null
+  - "看整份 transcript：把它的概率一步一步写成乘积。"
+  - null
+  - null
+  anchors:
+    "so in the ratio": "所以在比值里"
+    "leaving one Laplace": "每个答案只剩"
+    "whatever is identical": "凡是两个世界"
+    "the per-step": "每一步的对数比值"
+- en: "So privacy losses add up, and epsilon behaves like a budget. Each answer spends part of it; once it is spent, the curator stops. That is the answer to Dinur and Nissim: the budget makes the limit on questions explicit and measurable."
+  zh:
+  - "所以隐私损失会累加，ε 就像一笔隐私预算，privacy budget。"
+  - "每个答案花掉一部分；一旦花完，管理者就不再回答。"
+  - "这就回应了 Dinur 和 Nissim：预算让提问的上限变得明确、可度量。"
+  say:
+  - "所以隐私损失会累加，艾普西隆就像一笔隐私预算，privacy budget。"
+  - null
+  - null
+  anchors:
+    "once it is spent": "一旦花完"
+    "the budget makes": "预算让提问"
+  en_display:
+  - "So privacy losses add up, and ε behaves like a budget."
+  - null
+  - null
+- en: "You can now compute a real saving yourself. Pause: a histogram with d bins, total budget epsilon. Treat each bin as its own counting query and split the budget evenly. How much noise does each bin get?"
+  zh:
+  - "现在你可以自己算一算，实打实能省下多少。"
+  - "暂停一下：直方图有 d 个桶，总预算是 ε。"
+  - "每个桶单独算一个 counting query（计数查询），预算平分。"
+  - "每个桶要加多大的噪声？"
+  say:
+  - null
+  - "暂停一下：直方图有 d 个桶，总预算是艾普西隆。"
+  - "每个桶单独算一个 counting query，预算平分。"
+  - null
+  anchors:
+    "split the budget": "（计数查询），预算平分"
+  en_display:
+  - null
+  - "Pause: a histogram with d bins, total budget ε."
+  - null
+  - null
+- en: "Each bin gets one over d of the budget, so noise of scale d over epsilon. Treated as one query with sensitivity two, each bin gets two over epsilon, whatever d is. The earlier framework's sharper analysis got this down to about the square root of d, but it still grew with d."
+  zh:
+  - "每个桶分到 1/d 的预算，所以噪声尺度是 d/ε。"
+  - "合起来当成一个敏感度为 2 的 query，每个桶的噪声就都是 2/ε，不管 d 是多少。"
+  - "早先那个框架分析得更细，把它降到了大约根号 d，但还是随 d 增大。"
+  say:
+  - "每个桶分到 d 分之一的预算，所以噪声尺度是 d 除以艾普西隆。"
+  - "合起来当成一个敏感度为二的 query，每个桶的噪声就都是艾普西隆分之二，不管 d 是多少。"
+  - null
+  anchors:
+    "so noise of scale": "所以噪声尺度"
+    "whatever d is": "不管 d 是多少"
+    "but it still grew": "但还是随 d"
+  en_display:
+  - "Each bin gets 1/d of the budget, so noise of scale d/ε."
+  - "Treated as one query with sensitivity 2, each bin gets 2/ε, whatever d is."
+  - "The earlier framework's sharper analysis got this down to about √d, but it still grew with d."

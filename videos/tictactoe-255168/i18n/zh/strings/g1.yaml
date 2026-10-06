@@ -1,0 +1,60 @@
+# On-screen strings of S01-S03 (s01_hook.py, s02_fill.py, s03_stop.py), zh-CN.
+# Rules: i18n/zh/GLOSSARY.md (B1 spacing, B2 punctuation, C1 numbers, E1-E4 labels).
+
+# ------------------------------------------------------------------ S01 · s01_hook.py
+"How many different games of tic-tac-toe?": "井字棋有多少种不同的对局？"
+"same board, different order  →  different games": "棋盘一样，顺序不同  →  不同的对局"
+"turned board  →  a different game too": "旋转过的棋盘  →  也是不同的对局"
+"Pause and ponder": "暂停想一想"
+"How many different games of tic-tac-toe are there?\nWrite down a guess!": "井字棋一共有多少种不同的对局？\n把你猜的数写下来！"
+# the two guesses (no English words, so not in the package; glossary S01 labels: 100？/ 100 万？)
+"s01_hook|100?": "100？"
+"s01_hook|1,000,000?": "100 万？"
+"careful counting": "仔细地算"
+"a short program": "一段短短的程序"
+"where does it come from?": "它是怎么来的？"
+# " pA1" and "print(play_all_games()) pA1" are Manim Code's internal alignment strings
+# (code_mobject.py: alignment_suffix = " pA" + ...): code, deliberately left untranslated.
+
+# ------------------------------------------------------------------ S02 · s02_fill.py
+"What if the game never stopped early?": "如果对局从不提前结束呢？"
+"X won!": "X 赢了！"
+"9 choices": "9 种选择"
+"8 choices": "8 种选择"
+# s02_fill.py indexes this label's glyphs: 0 '9' | 1-8 words | 9 '8' | 10 '=' | 11-12 '72'
+# (Text has no glyphs for spaces or line breaks). The glossary's 9 个 8 = 72 has only 6 glyphs and
+# would raise an IndexError at groups_label[9], so the words take exactly 8 glyphs and the label
+# still ends in 9 个 8 = 72; two lines keep it inside the English label's width (4.1 vs 4.5).
+"9 groups of 8 = 72": "9 组棋盘，\n就是 9 个 8 = 72"
+"nine factorial": "9 的阶乘"
+"never stop early": "从不提前结束"
+"real games": "真实对局"
+"too many!": "太多了！"
+"extra games?": "多出来的对局？"
+
+# ------------------------------------------------------------------ S03 · s03_stop.py
+"X wins on move 5": "X 在第 5 步赢了"
+"never played": "从没下过"
+"orders to fill all 9 squares": "填满 9 个格子的顺序"
+"orders to fill the 4 empty squares": "填满 4 个空格子的顺序"
+# two Text objects, translated as a pair (E4); tag2[0:2] must stay the glyphs of "24"
+"this 1 game was counted": "这 1 局被算了"
+"24 times in 362,880": "24 次（在 362,880 里）"
+"ghost games": "幽灵对局"
+"made-up moves after someone already won": "有人赢了之后编出来的走法"
+# counters (E2): the number stays last after a full-width colon (board_tally / t2c colour it)
+"re:ghost endings counted: (\\d+)": "幽灵对局计数：\\1"
+"re:orders shown: (\\d+)": "已列出的顺序：\\1"
+"re:places for first O: (\\d+)": "第一个 O 的放法：\\1"
+"re:places for second O: (\\d+)": "第二个 O 的放法：\\1"
+"count each real game": "每一局真实对局"
+"only once": "只算一次"
+"X's 3rd mark: move 5": "第 3 个 X：第 5 步"
+"X's 3rd mark": "第 3 个 X"          # t2c key of the line above (E3), keeps X_COLOR
+# ponder card: card_lines() asserts exactly 4 lines (question + 3 hints)
+"How many games end with X winning on move 5?\nHint: (1) Which line?\n(2) In what order does X fill it?\n(3) Where can O's 2 marks go?": "X 在第 5 步赢下的对局有多少种？\n提示：（1）哪条线？\n（2）X 按什么顺序填？\n（3）2 个 O 能放在哪儿？"
+"(1) Which line?": "（1）哪条线？"
+"(2) In what order does X fill it?": "（2）X 按什么顺序填？"
+"(3) Where can O's 2 marks go?": "（3）2 个 O 能放在哪儿？"
+"\\text{ lines}": "\\text{ 条线}"
+"\\ \\ \\text{games}": "\\ \\text{种}"

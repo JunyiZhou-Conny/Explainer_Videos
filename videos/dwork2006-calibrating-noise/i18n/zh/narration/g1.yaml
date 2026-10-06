@@ -1,0 +1,199 @@
+# S01-S03 (work package g1): one entry per SAY line, one zh sentence per English sentence.
+# say: spoken form where the display text has 《》, f(x) or a subtitle-only gloss (rule F2);
+# anchors: mid-sentence vo.wait_until / vo.until phrases of the scene code (rule D2);
+# en_display: English subtitle line with digits / symbols (rule G3); none uses √ (rule C3).
+# Durations were measured with edge zh-CN-XiaoxiaoNeural against the English clips (rule D3).
+S01:
+- en: "Here is a hospital database, one row per patient. A researcher asks an innocent question: how many patients have condition X? The hospital releases no records. It just says: forty-one."
+  zh:
+  - "这是一个医院数据库，每个病人一条记录。"
+  - "有位研究者问了个看似无害的问题：有多少病人患有疾病 X？"
+  - "医院不公开任何记录。"
+  - "它只给了一个数：41。"
+  anchors:
+    "how many patients": "有多少病人"
+  en_display:
+  - null
+  - null
+  - null
+  - "It just says: 41."
+- en: "A week later, one new patient, Alice, is admitted. The researcher asks again. The answer is now forty-two."
+  zh:
+  - "一周后，一位新病人 Alice 入院了。"
+  - "研究者又问了一遍。"
+  - "现在答案是 42。"
+  anchors:
+    "Alice, is admitted": "Alice 入院了"
+  en_display:
+  - null
+  - null
+  - "The answer is now 42."
+- en: "Subtract, and the researcher has learned something very specific about Alice, without seeing a single record. Before we go on, try to fix this yourself. Pause and ponder: would rounding the count to the nearest ten protect Alice? Pause the video if you need more time."
+  zh:
+  - "两数一减，研究者一条记录都没看，就知道了 Alice 的一个很具体的情况。"
+  - "往下讲之前，先自己试着补上这个漏洞。"
+  - "暂停想一想：把人数四舍五入到十位，能保护 Alice 吗？"
+  - "需要多想一会儿的话，可以先暂停视频。"
+  anchors:
+    "without seeing": "一条记录都没看"
+    "to the nearest ten": "到十位"
+- en: "Most weeks, yes. But if the count goes from forty-four to forty-five, the rounded answer jumps from forty to fifty, and Alice is exposed again. Any fixed rule that ever changes its answer has a jump like that somewhere."
+  zh:
+  - "大多数星期里，确实可以。"
+  - "但如果人数从 44 变成 45，取整后的答案就从 40 跳到 50，Alice 又暴露了。"
+  - "任何确定性的规则，只要答案会变，就一定在某处有这样的跳变。"
+  anchors:
+    "forty-four to forty-five": "44 变成 45"
+    "the rounded answer jumps": "取整后的答案"
+    "and Alice is exposed": "Alice 又暴露了"
+  en_display:
+  - null
+  - "But if the count goes from 44 to 45, the rounded answer jumps from 40 to 50, and Alice is exposed again."
+  - null
+- en: "So what would it even mean for a statistic to be private? And if the fix is to add noise, how much is enough?"
+  zh:
+  - "那发布统计量，到底怎样才算不泄露隐私？"
+  - "如果靠加噪声，那加多少才够？"
+  anchors:
+    "to be private": "不泄露隐私"
+    "how much is enough": "加多少才够"
+- en: "In 2006, Cynthia Dwork, Frank McSherry, Kobbi Nissim and Adam Smith answered both questions in this paper: Calibrating Noise to Sensitivity in Private Data Analysis. It founded what we now call differential privacy, and in 2017 it won the Gödel Prize."
+  zh:
+  - "2006 年，Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith，在这篇 paper 里回答了这两个问题：《Calibrating Noise to Sensitivity in Private Data Analysis》。"
+  - "它开创了我们今天所说的差分隐私，differential privacy，并在 2017 年获得了哥德尔奖。"
+  say:
+  - "二零零六年，Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith，在这篇 paper 里回答了这两个问题，Calibrating Noise to Sensitivity in Private Data Analysis。"
+  - null
+  anchors:
+    "Cynthia Dwork": "Cynthia Dwork"
+    "Frank McSherry": "Frank McSherry"
+    "Kobbi Nissim": "Kobbi Nissim"
+    "Adam Smith": "Adam Smith"
+    "in this paper": "在这篇 paper 里"
+    "Calibrating Noise": "《Calibrating Noise"
+    "and in 2017": "并在 2017 年"
+- en: "This video covers its three big ideas: a definition of privacy, a number called sensitivity, and a recipe for how much noise is enough. Plus a surprising limit on what one published table can achieve, if it must be private in this sense."
+  zh:
+  - "这期讲它的三个核心想法：隐私的定义；一个数，叫敏感度，sensitivity；以及一个公式，算噪声加多少才够。"
+  - "还有个出人意料的限制：要按这个定义不泄露隐私，一张公开的表能做的就有限了。"
+  anchors:
+    "a definition of privacy": "隐私的定义"
+    "a number called sensitivity": "一个数，叫敏感度"
+    "a recipe for": "以及一个公式"
+    "if it must be private": "要按这个定义"
+S02:
+- en: "First, a map of where this paper comes from. In 1965, Stanley Warner proposed randomized response for sensitive surveys. In a popular version, you flip a coin in private. Heads, you answer truthfully. Tails, you flip again and say yes for heads, no for tails. Any single yes could be the coin talking, yet over thousands of people the true rate can still be estimated. Keep this coin in mind."
+  zh:
+  - "先画一张地图，看看这篇 paper 从哪儿来。"
+  - "1965 年，Stanley Warner 为敏感问题调查提出了随机响应。"
+  - "在常见的版本里，你私下掷一枚硬币。"
+  - "正面，你就如实回答。"
+  - "反面，你就再掷一次：正面答“是”，反面答“否”。"
+  - "任何一个“是”，都可能只是硬币说的；但问上成千上万人，真实比例照样能估出来。"
+  - "记住这枚硬币。"
+  anchors:
+    "yet over thousands": "但问上成千上万人"
+- en: "Over the following decades, statisticians and computer scientists refined such tricks, in two flavours: scramble the data going in, or scramble the answers coming out."
+  zh:
+  - "之后几十年，统计学家和计算机科学家不断改进这类 trick，分成两种思路：要么扰动输入的数据，要么扰动输出的答案。"
+  anchors:
+    "refined such": "不断改进"
+    "in two flavours": "分成两种思路"
+    "scramble the data": "要么扰动输入"
+    "or scramble the answers": "要么扰动输出"
+- en: "Meanwhile, the obvious fix, just remove the names, kept failing. Latanya Sweeney showed that ZIP code, birth date and sex alone single out most Americans, and in 1997 she linked supposedly anonymous hospital records to a public voter list and found the governor of Massachusetts. The lesson: privacy must be a property of the process, not of how the released table looks, and it must hold whatever else the attacker knows."
+  zh:
+  - "与此同时，最容易想到的办法，也就是直接去掉姓名，却一再失败。"
+  - "Latanya Sweeney 发现，光凭邮编、出生日期和性别，就能唯一识别出大多数美国人；1997 年，她把号称匿名的医院病历和公开的选民名单一对照，就认出了马萨诸塞州州长。"
+  - "教训是：隐私必须是发布过程的性质，而不在于发布出来的表是什么样子；而且无论攻击者还知道什么，都必须成立。"
+  anchors:
+    "just remove the names": "直接去掉姓名"
+    "kept failing": "一再失败"
+    "ZIP code": "邮编"
+    "single out most": "就能唯一识别出"
+    "and in 1997": "1997 年"
+    "linked supposedly": "号称匿名"
+    "to a public voter": "公开的选民名单"
+    "and found the governor": "就认出了"
+    "not of how": "而不在于"
+    "and it must hold": "而且无论"
+- en: "Then, in 2003, Irit Dinur and Kobbi Nissim proved something sobering. Answer too many questions too accurately, with errors much smaller than the square root of n, and an attacker can rebuild almost the entire database. Our subtraction was the two-question version of this attack. Noise is the price of answering many questions."
+  zh:
+  - "然后在 2003 年，Irit Dinur 和 Kobbi Nissim 证明了一个令人警醒的结论。"
+  - "问题答得太多、太准，误差远小于根号 n，攻击者就能重构出几乎整个数据库。"
+  - "我们那个做减法的攻击，其实就是这种攻击只问两个问题的版本。"
+  - "噪声，就是回答很多问题的代价。"
+  anchors:
+    "proved something": "证明了"
+    "with errors much": "误差远小于"
+    "and an attacker": "攻击者就能"
+- en: "The hopeful flip side: with a limited number of questions, modest noise is enough. Dwork, Nissim and colleagues built this into a framework called SuLQ, for sub-linear queries, which answers noisy sums like counts. Remember that limit on questions. This paper turns it into a budget."
+  zh:
+  - "反过来也有好消息：问题数量有限时，适量噪声就够了。"
+  - "Dwork、Nissim 和合作者据此做了个叫 SuLQ 的框架，意思是只问次线性数量的 query（查询）；它回答带噪声的求和，比如人数。"
+  - "记住提问的上限。"
+  - "这篇 paper 把它变成了一笔预算。"
+  say:
+  - null
+  - "Dwork、Nissim 和合作者据此做了个叫 SuLQ 的框架，意思是只问次线性数量的 query；它回答带噪声的求和，比如人数。"
+  - null
+  - null
+  anchors:
+    "modest noise": "适量噪声"
+    "called SuLQ": "叫 SuLQ"
+    "which answers noisy": "它回答带噪声"
+- en: "But SuLQ only covered sums, and its definition tolerated a tiny chance of a large leak. This paper takes the leap: any function of the data, one clean definition, and one simple rule for the noise. Fittingly, it appeared at a cryptography conference, where the habit is to define security against every possible attacker first, and then prove it."
+  zh:
+  - "但 SuLQ 只能处理求和，而且它的定义容许以极小的概率发生大量泄露。"
+  - "这篇 paper 迈出了一大步：数据的任意函数、一个干净的定义，以及一条简单的噪声规则。"
+  - "很应景的是，它发表在一个密码学会议上，那里的习惯是先定义安全性，要求能抵御所有可能的攻击者，再去证明。"
+  anchors:
+    "and its definition": "而且它的定义"
+    "any function": "任意函数"
+    "one clean definition": "一个干净的定义"
+    "and one simple rule": "以及一条简单的"
+    "to define security": "先定义安全性"
+    "every possible attacker": "所有可能的攻击者"
+    "and then prove": "再去证明"
+S03:
+- en: "Here is the setting. A trusted server, the curator, holds a database x: n rows, one per person. An analyst sends a query f, any function of the database that returns a number, or a list of numbers."
+  zh:
+  - "先交代一下 setting。"
+  - "一台可信的服务器，也就是数据管理者，持有数据库 x：n 条记录，每人一条。"
+  - "分析者发来一个 query f：数据库的任意函数，返回一个数或一列数。"
+  anchors:
+    "holds a database": "持有数据库"
+    "n rows": "n 条记录"
+    "any function": "任意函数"
+    "or a list": "或一列数"
+- en: "The curator never releases the honest answer, f of x. Instead it draws random noise, Y, and releases f of x plus Y. Because the analyst can keep asking, this is called the interactive setting. The alternative, publishing one sanitized table and walking away, is non-interactive. At the end, the paper proves the first is fundamentally more powerful."
+  zh:
+  - "数据管理者从不公开真实答案 f(x)。"
+  - "它的做法是先抽一个随机噪声 Y，再公开 f(x) 加 Y。"
+  - "因为分析者可以一直问下去，所以这叫交互式的 setting。"
+  - "另一种做法是发布一张经过隐私处理的表，然后撒手不管，这叫非交互式。"
+  - "原文最后证明了，前者从根本上更强大。"
+  say:
+  - "数据管理者从不公开真实答案 f x。"
+  - "它的做法是先抽一个随机噪声 Y，再公开 f x 加 Y。"
+  - null
+  - null
+  - null
+  anchors:
+    "and releases": "再公开"
+    "and walking away": "然后撒手不管"
+  en_display:
+  - "The curator never releases the honest answer, f(x)."
+  - "Instead it draws random noise, Y, and releases f(x) + Y."
+  - null
+  - null
+  - null
+- en: "So everything hinges on one question: what distribution should Y have? Too little noise, and Alice is exposed. Too much, and the answer is useless. The title gives the answer: calibrate the noise to the sensitivity. But first, what does private actually mean?"
+  zh:
+  - "所以一切都归结到一个问题：Y 应该服从什么分布？"
+  - "噪声太少，Alice 就暴露了。"
+  - "太多，答案就没用了。"
+  - "标题已经给出了答案：按敏感度校准噪声。"
+  - "不过我们先要搞清楚：到底什么叫不泄露隐私？"
+  anchors:
+    "calibrate the noise": "按敏感度校准噪声"

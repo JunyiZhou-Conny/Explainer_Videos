@@ -1,0 +1,169 @@
+# Chinese narration for S04, S05, S06 (group g2) of tictactoe-255168.
+# One Chinese sentence per English sentence (explainer.voice.split_sentences); glossary: ../GLOSSARY.md.
+# anchors map mid-sentence vo.wait_until / vo.until phrases of the scene code to the Chinese words
+# spoken at that moment (each target is unique in its entry, because time_of takes the first match).
+# say: only where the voice must differ from the subtitle: 三子连成一线 -> 三个连成一条线 (the
+# glossary's spoken form, as in g1) and 2 局 -> 两局 (rule F2).
+
+S04:
+- en: "What about games that O wins on move 6? O needs three in a row. But careful: if X's three marks also make a line, X already won on move 5, and the game stopped before O could finish."
+  zh:
+  - "那 O 在第 6 步赢下的对局呢？"
+  - "O 需要三子连成一线。"
+  - "但要小心：如果三个 X 也连成了一线，X 在第 5 步就已经赢了，还没等 O 连成一线，这一局就结束了。"
+  say:
+  - null
+  - "O 需要三个连成一条线。"
+  - null
+  anchors:
+    "if X's three": "如果三个 X"
+    "X already won": "X 在第 5 步"
+    "and the game stopped": "还没等 O"
+
+- en: "Use the same three steps: 8 lines for O, 6 orders for O's marks, and 6 times 5 times 4 ways to place X's three marks. That's 5,760 ways for O to finish a line. Then we subtract the 432 where X's three marks made a line too, a row or column parallel to O's, so X sneaked in a win first. That leaves 5,328 games."
+  zh:
+  - "还是用那三个步骤：O 有 8 条线可选，O 填满这条线有 6 种顺序，三个 X 有 6 乘 5 乘 4 种放法。"
+  - "这样，O 一共有 5,760 种方法连成一线。"
+  - "然后再减去 432 种情况：三个 X 也连成了一线，正好是和 O 那条线平行的一排或一列，所以 X 抢先赢了。"
+  - "最后剩下 5,328 种对局。"
+  anchors:
+    "8 lines for O": "O 有 8 条线"
+    "6 orders": "6 种顺序"
+    "6 times 5 times 4": "6 乘 5 乘 4"
+    "That's 5,760": "5,760"
+    "to finish a line": "连成一线"
+    "where X's three marks": "三个 X 也"
+    "a row or column parallel": "正好是"
+    "so X sneaked": "所以 X 抢先"
+
+- en: "For games that end on moves 7, 8 and 9, it gets much worse: we'd have to check every earlier move for a win, and a full board might be a win or a draw. It turns into a tangled mess."
+  zh:
+  - "在第 7、8、9 步结束的对局就麻烦多了：我们就得检查之前的每一步有没有人赢，而且下满的棋盘可能是有人赢，也可能是平局。"
+  - "这就变成了一团乱麻。"
+  anchors:
+    "it gets much worse": "就麻烦多了"
+    "we'd have to check": "我们就得检查"
+    "and a full board": "而且下满的棋盘"
+
+- en: "When counting gets this messy, there's another plan. Don't count cleverly. Instead, teach a computer the rules, and let it play every possible game, one by one."
+  zh:
+  - "手算变得这么乱的时候，我们还有 Plan B。"
+  - "别巧算了。"
+  - "不如教电脑学会规则，再让它一局接一局，把所有可能的对局都下一遍。"
+  anchors:
+    "there's another plan": "我们还有"
+    "and let it play": "再让它"
+
+S05:
+- en: "First, the computer needs a board. We'll use a list of 9 squares. In Python, the programming language we're using, the spots in a list are numbered starting from zero, so our squares are numbered 0 to 8. An empty square holds a dot."
+  zh:
+  - "首先，电脑需要一个棋盘。"
+  - "我们用一个列表来存 9 个格子。"
+  - "我们用的编程语言叫 Python；在 Python 里，列表里的位置从零开始编号，所以格子的编号是 0 到 8。"
+  - "空格子里放一个点。"
+  anchors:
+    "the spots in a list": "列表里的位置"
+    "starting from zero": "从零开始"
+    "so our squares": "所以格子"
+
+- en: "Next, the computer needs to know what counts as a win. We simply list all 8 winning lines, as groups of three square numbers. Squares 0, 1 and 2 make the top row. Squares 0, 4 and 8 make a diagonal."
+  zh:
+  - "接下来，电脑要知道怎样才算赢。"
+  - "我们直接把能让人赢的 8 条获胜线都列出来，每条线写成一组三个格子编号。"
+  - "0、1、2 号格组成最上面一排。"
+  - "0、4、8 号格组成一条对角线。"
+  anchors:
+    "as groups of three": "每条线写成"
+
+- en: "Next comes a function: a little mini-program with a name. This one, called winner, checks every line. If all three squares on a line hold the same mark, and that mark isn't a dot, that player has won. If no line matches, winner finds nothing, and hands back None, which means nobody."
+  zh:
+  - "接下来是一个函数：在编程里，函数就是一小段有名字的程序。"
+  - "这个函数叫 winner，意思是“赢家”，它会检查每一条线。"
+  - "如果一条线上三个格子放的都一样，而且不是点，那这是谁的棋子，谁就赢了。"
+  - "如果没有一条线符合，winner 什么也没找到，就返回 None，意思是“没有人”。"
+  anchors:
+    "a little mini-program": "一小段"
+    "checks every line": "检查每一条线"
+    "and that mark": "而且不是点"
+    "that player has won": "那这是谁的棋子"
+    "hands back None": "返回 None"
+    "which means nobody": "意思是“没有人”"
+
+S06:
+- en: "Now for the clever part: a function called explore. We tell it whose turn it is, and its job is to count every game that can still happen from the current board."
+  zh:
+  - "最巧妙的部分来了：一个叫 explore 的函数，explore 就是“探索”的意思。"
+  - "我们告诉它轮到谁，它的任务是统计从现在这个棋盘往后，还可能出现多少局。"
+  anchors:
+    "a function called explore": "叫 explore 的函数"
+    "and its job is": "它的任务"
+
+- en: "It starts with two stopping rules. If someone has already won, that's one finished game, so explore hands back the number 1. If the board is full with no winner, that's a draw, also one finished game."
+  zh:
+  - "它一开头就是两个停止条件。"
+  - "如果已经有人赢了，那就是下完的一局，所以 explore 返回数字 1。"
+  - "如果棋盘满了却没有人赢，那就是平局，也算下完的一局。"
+  anchors:
+    "so explore hands back": "所以 explore 返回"
+
+- en: "Otherwise, the game isn't over yet. So explore tries every empty square. It puts the player's mark there, and then asks itself the same question, now for the other player: how many games can happen from here? It adds up all the answers."
+  zh:
+  - "否则，这一局就还没结束。"
+  - "于是 explore 会试每一个空格子。"
+  - "它在那里放上这一方的棋子，再问自己同一个问题，这次轮到对方：从这里往后，还能下出多少局？"
+  - "它把所有的答案加起来。"
+  anchors:
+    "and then asks itself": "再问自己"
+    "now for the other player": "这次轮到对方"
+    "how many games can": "从这里往后"
+    "happen from here": "多少局"
+
+- en: "Let's zoom into the first of those, with O to move. If O takes the top-right square, O wins: that's 1 game. Erase it, and try the top-middle square instead. Then X fills the last square, and it's a draw: 1 more. Undo both moves, and add up: 2 games. With the other two branches, 2 plus 1 plus 2 makes 5."
+  zh:
+  - "我们把第一个小棋盘放大看看，这时轮到 O。"
+  - "如果 O 下在右上角那格，O 就赢了：算 1 局。"
+  - "擦掉它，这回试试上边中间那格。"
+  - "然后 X 填上最后一格，结果是平局：再算 1 局。"
+  - "撤销这两步，再加起来：2 局。"
+  - "再算上另外两个分支，2 加 1 加 2 等于 5。"
+  say:
+  - null
+  - null
+  - null
+  - null
+  - "撤销这两步，再加起来：两局。"
+  - null
+  anchors:
+    "with O to move": "轮到 O"
+    "and try the top-middle": "这回试试"
+    "and add up": "再加起来"
+    "2 plus 1": "2 加 1"
+
+- en: "When a function calls itself, asking itself the same question like this, it's called recursive. That might sound like it goes on forever, but each call adds one more mark, so a stopping rule always kicks in. Picture an upside-down tree. The empty board is at the top, every possible move is a branch, and every finished game is a leaf. Explore walks down every branch, one at a time, and counts the leaves it reaches."
+  zh:
+  - "像这样，函数自己调用自己，也就是自己问自己同一个问题，就叫作递归。"
+  - "听起来好像会没完没了，但每调用一次就多一个棋子，所以总会碰到停止条件。"
+  - "想象一棵倒过来的树。"
+  - "空棋盘在最上面，每一种可能的走法是一个分支，而下完的每一局都是一片叶子。"
+  - "我们的 explore 会沿着每一条分支往下走，一次走一条，再数一数走到了多少片叶子。"
+  anchors:
+    "asking itself": "自己问自己"
+    "it's called recursive": "就叫作递归"
+    "but each call adds": "但每调用一次"
+    "so a stopping rule": "所以总会"
+    "every possible move": "每一种可能的走法"
+    "and every finished game": "而下完的每一局"
+    "and counts the leaves": "再数一数"
+
+- en: "There's one more line, and it's easy to miss. The program plays every game on just one board, like a single whiteboard. So after exploring a move, it erases that mark. That's called undoing the move, and it means the next branch starts fresh. Trying a path, then stepping back to try the next one, is called backtracking."
+  zh:
+  - "还有一行代码，很容易被忽略。"
+  - "程序下每一局都用同一个棋盘，就像只有一块白板。"
+  - "所以每探索完一步，它就要擦掉那个棋子。"
+  - "这叫“撤销”这一步，这样棋盘恢复原样，下一个分支就能接着试。"
+  - "先试走一条路，再退回来试下一条，这就叫回溯。"
+  anchors:
+    "like a single whiteboard": "就像只有"
+    "it erases that mark": "就要擦掉"
+    "and it means the next branch": "这样棋盘"
+    "is called backtracking": "这就叫回溯"

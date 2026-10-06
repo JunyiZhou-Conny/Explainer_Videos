@@ -1,0 +1,158 @@
+# Narration of S01-S03, zh-CN (edge zh-CN-XiaoxiaoNeural), sentence-aligned to script.md.
+# Rules: i18n/zh/GLOSSARY.md. say: only where the voice must differ from the subtitle
+# (三子连成一线 -> 三个连成一条线, the glossary's spoken form; 2 条 -> 两条, like 两局 / 两步).
+#
+# Anchor timing was checked against real edge zh-CN-XiaoxiaoNeural audio (word boundaries).
+# s03_stop.py adds fixed shifts measured on the ENGLISH audio (wait_for/until ..., shift=...).
+# Where a natural target plus that shift missed the Chinese words by more than ~0.4 s, the
+# target is moved so that target + shift lands on the right words; those anchors are marked
+# "# shift-compensated" with the natural target. If s03_stop.py ever drops its shifts for zh,
+# put the natural targets back.
+
+S01:
+- en: "Here's a question that sounds easy. How many different games of tic-tac-toe are there?"
+  zh:
+  - "有个问题，听起来很简单。"
+  - "井字棋有多少种不同的对局？"
+
+- en: "By a game, we mean the whole list of moves, in order. So if two games end with the same board, but the moves happened in a different order, they count as two different games. Flipped or turned versions count separately too."
+  zh:
+  - "这里说的“一局”，指的是从第一步到最后一步、按顺序排好的全部走法。"
+  - "所以，如果两局最后的棋盘一样，但走棋的顺序不同，那它们要算作两种不同的对局。"
+  - "棋盘翻转或旋转之后的版本，也分开算。"
+  anchors:
+    "the whole list": "从第一步"
+    "they count as": "那它们"
+    "Flipped or turned": "翻转"
+
+- en: "Take a guess. A hundred? A million? Pause the video and write your guess down."
+  zh:
+  - "猜一猜。"
+  - "一百？"
+  - "一百万？"
+  - "暂停一下视频，把你猜的数写下来。"
+
+- en: "The answer is 255,168. In this video we'll find out where that number comes from: first by careful counting, and then with a short computer program that plays every single game."
+  zh:
+  - "答案是 255,168。"
+  - "在这个视频里，我们会弄清楚这个数字是怎么来的：先仔细地算，再用一段短短的电脑程序，把每一局都下一遍。"
+  anchors:
+    "where that number": "这个数字"
+    "first by careful": "先仔细地算"
+    "and then with": "再用"
+
+S02:
+- en: "Let's start with a simpler question. Suppose the players ignore three in a row, and just keep going until all nine squares are full. In how many different orders can the board fill up?"
+  zh:
+  - "先看一个更简单的问题。"
+  - "假设有人三子连成一线了，双方也不停，一直下到九个格子都填满。"
+  - "填满棋盘有多少种不同的顺序？"
+  say:
+  - null
+  - "假设有人把三个连成一条线了，双方也不停，一直下到九个格子都填满。"
+  - null
+  anchors:
+    "ignore three in a row": "有人"
+    "and just keep going": "双方也不停"
+
+- en: "X goes first and has 9 squares to choose from. For each of those, O has 8 squares left. That's 9 groups of 8, so the choices multiply: 9 times 8 is 72 different ways to make the first two moves."
+  zh:
+  - "X 先走，有 9 个格子可以选。"
+  - "不管 X 下在哪儿，O 都还剩 8 个格子。"
+  - "这就是 9 个 8，所以选择数要相乘：9 乘 8 等于 72，前两步就有 72 种不同的下法。"
+  anchors:
+    "O has 8": "O 都还剩"
+    "9 times 8 is 72": "9 乘 8 等于 72"
+    "first two moves": "前两步"
+
+- en: "Keep going: 9 times 8 times 7, and so on, all the way down to 1. Mathematicians have a short name for this: nine factorial, written as a 9 with an exclamation mark. It equals 362,880."
+  zh:
+  - "继续乘下去：9 乘 8 乘 7，依此类推，一直乘到 1。"
+  - "数学家给这种连乘起了个名字：9 的阶乘，写成 9 后面加一个感叹号。"
+  - "它等于 362,880。"
+  anchors:
+    "times 7": "乘 7"
+    "and so on": "依此类推"
+    "nine factorial": "9 的阶乘"
+    "exclamation mark": "一个感叹号"
+
+- en: "But wait. That's more than 255,168. Our count is too high. Where are all those extra games coming from?"
+  zh:
+  - "可是，等一下。"
+  - "这比 255,168 还要多。"
+  - "我们算出来的太多了。"
+  - "这些多出来的对局，都是从哪儿来的？"
+
+S03:
+- en: "Here's the catch. Real tic-tac-toe stops as soon as someone gets three in a row. In this game, X wins on the fifth move, so the last four squares are never played."
+  zh:
+  - "问题就在这儿。"
+  - "真正的井字棋，一有人三子连成一线，就结束了。"
+  - "这一局，X 在第 5 步就赢了，所以剩下的四个格子从没下过。"
+  say:
+  - null
+  - "真正的井字棋，一有人把三个连成一条线，就结束了。"
+  - null
+  anchors:
+    "three in a row": "三子连成一线"
+    "so the last four": "所以剩下的"
+
+- en: "But our 362,880 counted those missing moves anyway, as if the players kept going after the win. The 4 empty squares can be filled in 4 times 3 times 2 times 1, so 24 ways. So this one game got counted 24 times! Let's call those made-up endings ghost games. We want to count each real game only once."
+  zh:
+  - "可是 362,880 还是把这几步没下的棋也算进去了，就好像赢了以后，双方还在接着下。"
+  - "填满这 4 个空格子，有 4 乘 3 乘 2 乘 1，也就是 24 种不同的顺序。"
+  - "所以这一局被算了 24 次！"
+  - "我们把这些编出来的对局叫作“幽灵对局”。"
+  - "我们要让每一局真实的对局都只算一次。"
+  anchors:
+    "counted those": "362,880"       # shift-compensated (+2.2 s, s03_stop.py:295): pulse on 这几步没下的棋; natural 这几步
+    "as if the players": "就好像"     # +1.3 s (s03_stop.py:299) lands it on 双方还在接着下, the words the animation shows
+    "4 times 3": "乘 2"              # shift-compensated (-0.9 s, s03_stop.py:329): "4" as 4 is spoken; natural 4 乘 3
+    "3 times 2": "2 乘 1"            # shift-compensated (-0.95 s, s03_stop.py:330): "× 3" on 乘 3; natural 3 乘 2
+    "2 times 1": "乘 1"              # shift-compensated (-1.0 s, s03_stop.py:331): "× 2" on 乘 2; natural 2 乘 1
+    "times 1,": "乘 1"
+    "so 24 ways": "也就是 24"
+
+- en: "So when can a game end? Not before move 5. X plays moves 1, 3 and 5, so the fifth move is the first time anyone can have three marks."
+  zh:
+  - "一局最早什么时候能结束？"
+  - "至少要到第 5 步。"
+  - "X 下的是第 1、3、5 步，所以到了第 5 步，才可能有人凑齐三个棋子。"
+  anchors:
+    "so the fifth move": "，所以到了"   # shift-compensated (+1.0 s, s03_stop.py:396): label on 第 5 步; natural 所以到了第 5 步
+    "three marks": "三个棋子"
+
+- en: "Pause and ponder: how many games end with X winning on move 5? Try to count them before I show you."
+  zh:
+  - "暂停想一想：有多少种对局是 X 在第 5 步赢下的？"
+  - "先自己算一算，再看答案。"
+
+- en: "Here's one way, in three steps. First, pick the line X wins with. There are 8: 3 rows, 3 columns and 2 diagonals. Second, X fills that line in some order: 3 times 2 times 1, which is 3 factorial, so 6 orders. Third, O's first mark can go on any of the other 6 squares, and O's second mark on any of the 5 left: 6 times 5 is 30 ways. Multiply: 8 times 6 times 30 is 1,440 games."
+  zh:
+  - "这里有个办法，分三个步骤。"
+  - "第一，选出 X 获胜的那条线。"
+  - "一共有 8 条：3 排、3 列和 2 条对角线。"
+  - "第二，X 可以按不同的顺序填满这条线：3 乘 2 乘 1，也就是 3 的阶乘，所以有 6 种顺序。"
+  - "第三，第一个 O 有另外 6 个格子可以选，第二个 O 还剩 5 个格子可以选：6 乘 5 等于 30 种放法。"
+  - "把它们乘起来：8 乘 6 乘 30 等于 1,440 种对局。"
+  say:
+  - null
+  - null
+  - "一共有 8 条：3 排、3 列和两条对角线。"
+  - null
+  - null
+  - null
+  anchors:
+    "3 rows": "3 排"
+    "3 columns": "3 列"
+    "2 diagonals": "2 条对角线"
+    "3 times 2": "乘 1"              # shift-compensated (-0.4 s, s03_stop.py:498): "3" as 3 is spoken; natural 3 乘 2
+    "2 times 1": "1，也就是"         # shift-compensated (-0.45 s, s03_stop.py:499): "× 2" on 乘 2; natural 2 乘 1
+    "times 1,": "乘 1"
+    "which is 3": "也就是"
+    "so 6 orders": "所以有 6 种"
+    "and O's second": "还剩"          # shift-compensated (-0.7 s, s03_stop.py:542/545): 2nd O tour starts on 第二个 O; natural 第二个 O
+    "6 times 5": "等于 30"           # shift-compensated (-1.1 s, s03_stop.py:546/549): "6 × 5" on 6 乘 5; natural 6 乘 5
+    "is 30": "等于 30"
+    "8 times 6": "8 乘 6"
+    "is 1,440": "等于 1,440"
