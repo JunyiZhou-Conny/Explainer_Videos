@@ -1,6 +1,6 @@
 # 中文版说明
 
-这是视频 *Calibrating Noise to Sensitivity — the paper that invented differential privacy* 的中文版：**【论文精读】差分隐私的开山之作：Calibrating Noise to Sensitivity（TCC 2006）**。它讲解 Dwork、McSherry、Nissim 和 Smith 的论文《Calibrating Noise to Sensitivity in Private Data Analysis》（TCC 2006），面向刚接触差分隐私的研究生和研究者，尤其是强化学习、机器学习和医学影像方向的同学。中文旁白由 edge 语音 `zh-CN-XiaoxiaoNeural` 合成，画面上的标签和公式里的文字都译成了中文，字幕是中英双语（中文在上，英文原句在下）。英文原版见 [`../../README.md`](../../README.md)。
+这是视频 *Calibrating Noise to Sensitivity — the paper that invented differential privacy* 的中文版：**【论文精读】差分隐私的开山之作：Calibrating Noise to Sensitivity（TCC 2006）**。它讲解 Dwork、McSherry、Nissim 和 Smith 的论文《Calibrating Noise to Sensitivity in Private Data Analysis》（TCC 2006），面向刚接触差分隐私的研究生和研究者，尤其是强化学习、机器学习和医学影像方向的同学。旁白：神经网络语音合成（TTS）。画面上的标签和公式里的文字都译成了中文，字幕是中英双语（中文在上，英文原句在下）。英文原版见 [`../../README.md`](../../README.md)。
 
 ## 文件
 
@@ -16,11 +16,11 @@
 | `output/zh/chapters.txt`（`chapters_part1.txt` / `chapters_part2.txt`） | 章节时间轴，章节名取自 `meta.yaml`，可直接贴进 B 站 / YouTube 简介 |
 | `output/zh/transcript.md` | 按章节排列的中英对照旁白稿 |
 | `i18n/zh/meta.yaml` | 中文标题、分集标题、章节名，以及可直接粘贴的视频简介 |
-| [`exercises.md`](exercises.md) | 练习：纸笔题和一道 15 分钟的代码题，答案折叠在每道题下面 |
-| [`digest.md`](digest.md) | 论文笔记：带页码的导读、主要结果、勘误和中英术语对照表 |
-| [`playground.html`](playground.html) | 交互页面：用浏览器打开，调 ε，切换拉普拉斯 / 高斯 / 均匀噪声，自己扮演攻击者 |
+| [`i18n/zh/exercises.md`](exercises.md) | 练习：纸笔题和一道 15 分钟的代码题，答案折叠在每道题下面 |
+| [`i18n/zh/digest.md`](digest.md) | 论文笔记：带页码的导读、主要结果、勘误和中英术语对照表 |
+| [`i18n/zh/playground.html`](playground.html) | 交互页面：用浏览器打开，调 ε，切换拉普拉斯 / 高斯 / 均匀噪声，自己扮演攻击者 |
 | `i18n/zh/narration/*.yaml`、`i18n/zh/strings/*.yaml` | 逐句对齐英文的中文旁白（含朗读用的 `say:`）和屏幕文字 |
-| [`GLOSSARY.md`](GLOSSARY.md)、[`glossary.yaml`](glossary.yaml) | 术语表与翻译规则（两份内容相同） |
+| [`i18n/zh/GLOSSARY.md`](GLOSSARY.md)、[`glossary.yaml`](glossary.yaml) | 术语表与翻译规则（两份内容相同） |
 
 英文版的构建也会顺带生成 `output/dwork2006-calibrating-noise.zh.srt`、`.zh-en.srt` 和 `.zh-en.ass`，即按英文配音时间轴排的中文 / 双语字幕；加 `--burn` 还会输出烧录了双语字幕的 `.zh-en.mp4`。
 
@@ -34,7 +34,7 @@ python -m explainer.build videos/dwork2006-calibrating-noise --lang zh -q l    #
 python -m explainer.build videos/dwork2006-calibrating-noise --lang zh         # 1080p60 成片
 ```
 
-`--no-burn` 输出不烧录字幕的干净视频，`--subs-only` 只重写字幕、章节和旁白稿，`--only s03,s04` 只重新渲染部分场景。需要 Noto CJK 字体和 XeLaTeX + ctex（`setup/install.sh` 会安装）；中文配音用 edge-tts，需要联网。
+`--no-burn` 输出不烧录字幕的干净视频，`--subs-only` 只重写字幕、章节和旁白稿，`--only s03,s04` 只重新渲染部分场景。需要 Noto CJK 字体和 XeLaTeX + ctex（`setup/install.sh` 会安装）；中文配音的语音在 `video.yaml` 的 `languages: {zh: {voice: …}}` 里设置。
 
 ## 中英混用的原则
 

@@ -25,7 +25,7 @@ chapters:
 
 # Ready to paste into the Bilibili 简介 / YouTube description. The line 章节：见下方时间轴 points to the
 # chapter timestamps from output/zh/chapters.txt (chapters_part1.txt / chapters_part2.txt for the parts):
-# paste them right under it (YouTube) or into Bilibili's 分段章节 / a pinned comment. About 1670
+# paste them right under it (YouTube) or into Bilibili's 分段章节 / a pinned comment. About 1650
 # characters, so it stays under Bilibili's 2000-character limit even with the 13 timestamps (about 260
 # characters) pasted in. Links are repository-relative paths.
 description: |
@@ -54,7 +54,10 @@ description: |
 
   核心术语（中 / 英）：差分隐私 / differential privacy；敏感度 / sensitivity；拉普拉斯机制 / Laplace mechanism；隐私预算 / privacy budget；隐私损失 / privacy loss；相邻数据库 / neighboring databases；随机响应 / randomized response；本地化差分隐私 / local differential privacy；交互式与非交互式 / interactive vs non-interactive
 
-  制作说明：中文旁白由 Microsoft Edge 神经网络语音 zh-CN-XiaoxiaoNeural 合成；动画用 Manim 制作，由一套开源的讲解视频工具包生成；中英双语字幕。片中的论文页面仅用于评论和教学，版权归作者和 Springer（LNCS 3876）所有。
-  英文原版：Calibrating Noise to Sensitivity — the paper that invented differential privacy
+  制作说明：
+  · 旁白：神经网络语音合成（TTS）
+  · 动画用 Manim 制作，由一套开源的讲解视频工具包生成；中英双语字幕（中文在上，英文原句在下）
+  · 片中出现的论文页面仅用于评论和教学，版权归作者和 Springer（LNCS 3876）所有
+  · 英文原版：Calibrating Noise to Sensitivity — the paper that invented differential privacy
 
   标签：差分隐私、differential privacy、敏感度、拉普拉斯机制、隐私预算、随机响应、论文精读
