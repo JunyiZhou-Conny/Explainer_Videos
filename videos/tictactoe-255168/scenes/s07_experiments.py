@@ -26,9 +26,8 @@ from common import (COUNT_COLOR, GHOST_COLOR, NARRATION, NINE_FACTORIAL, O_COLOR
 SAY = NARRATION["S07"]
 
 MONO = "DejaVu Sans Mono"
-COL_X = 4.1                       # centre of the right-hand column (code panel ends at x = 1.24)
+COL_X = 4.55                      # centre of the right-hand column (code panel: x -6.6 .. 2.4)
 ROW_Y = -2.45                     # bottom row: program output (left) and our own count (right)
-CARD_X = 3.95                     # ponder cards sit in the right-hand column (x 1.3 .. 6.6)
 WINNER_LINES, DRAW_LINES, UNDO_LINE, MOVE_LINE = (1, 2), (3, 4), 11, 8
 
 
@@ -47,10 +46,10 @@ def line_tag(code, k0: int, k1: int, s: str, color: str, size: float = 26) -> Te
     return S.text("← " + s, size, color).move_to([code.get_right()[0] + 0.15, y, 0], aligned_edge=LEFT)
 
 
-def side_card(question: str, y: float, width: float = 5.3, size: float = 30) -> VGroup:
-    """A ponder card in the right-hand column, so the code stays visible. Fade it in on the
-    narrator's "Pause..." inside the SAY block, then drain_timer() after the block."""
-    return ponder_card(question, width=width, size=size).move_to([CARD_X, y, 0])
+def side_card(question: str, width: float, size: float = 30) -> VGroup:
+    """A ponder card (place it with .move_to / .to_corner). Fade it in on the narrator's
+    "Pause..." inside the SAY block, then drain_timer() after the block."""
+    return ponder_card(question, width=width, size=size)
 
 
 def drain_timer(scene, card: VGroup, seconds: float) -> None:
@@ -87,8 +86,8 @@ class Experiments(VoiceScene):
 
         heading1 = S.text("Experiment 1: delete the undo line", 30, S.WHITE)
         heading2 = S.text("Experiment 2: delete the winner check", 30, S.WHITE)
-        for h in (heading1, heading2):
-            h.next_to(code, UP, buff=0.45).align_to([-6.45, 0, 0], LEFT)
+        for h in (heading1, heading2):          # left-aligned with the code text
+            h.next_to(code, UP, buff=0.45).align_to(code_line(code, 0), LEFT)
         heading0 = S.text("Break it on purpose!", 34, S.WHITE).move_to(heading1, aligned_edge=LEFT)
 
         # the program's output, under the program
@@ -108,8 +107,9 @@ class Experiments(VoiceScene):
         undo_bar = line_highlight(code, UNDO_LINE, UNDO_COLOR, 0.3)
         undo_strike = strike(code, UNDO_LINE)
         undo_tag = line_tag(code, UNDO_LINE, UNDO_LINE, "undo", UNDO_COLOR)
-        # the card stays above the "undo" tag, so the struck line and its label stay visible
-        card = side_card("What happens if we\ndelete the undo line?", y=0.85)
+        # the card fills the right-hand column above the "undo" tag (x 2.55 .. 6.55), so the struck
+        # line and its label stay visible
+        card = side_card("What happens if we\ndelete the undo line?", width=4.0).move_to([COL_X, 0.7, 0])
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(code, shift=RIGHT * 0.3), run_time=1.0)
             vo.wait_until("break it on purpose")
@@ -231,9 +231,14 @@ class Experiments(VoiceScene):
         draw_bar = lines_bar(code, *DRAW_LINES)
         win_tag = line_tag(code, *WINNER_LINES, "winner check", UNDO_COLOR)
         draw_tag = line_tag(code, *DRAW_LINES, "board full", S.WHITE)
-        # the card sits under the two tags, so the struck lines and their labels stay visible
+        # the right-hand column is too narrow for this card at a readable size, so it sits in the
+        # bottom-right corner (x 0.55 .. 6.55, y -3.55 .. -0.6): under the two tags and right of the
+        # output box, covering only the ends of the comments on lines 10-11 (the loop, not needed
+        # here). The struck lines 1-2, lines 3-4 and both tags stay visible.
         card = side_card("Now delete the winner check instead.\nWhat number comes out?\n"
-                         "(Hint: you've met it before!)", y=-1.7)
+                         "(Hint: you've met it before!)", width=6.0)
+        card.move_to([6.55, -3.55, 0], aligned_edge=DR)
+        card[0].set_fill(opacity=1)              # opaque: no comment glyphs showing through
 
         with self.voiceover(SAY[2]) as vo:
             # "Now put undo back": the strike comes off and the line lights up GREEN
@@ -264,8 +269,9 @@ class Experiments(VoiceScene):
         gboard = Board(size=2.4, stroke=5).move_to([COL_X, 1.1, 0])
         real = [(0, "X"), (4, "O"), (1, "X"), (8, "O"), (2, "X")]
         ghosts = [(3, "O"), (5, "X"), (6, "O"), (7, "X")]
+        # two lines: the right-hand column (x 2.55 .. 6.6) is too narrow for one line at 28 pt
         check = VGroup(S.math(r"\checkmark", size=48, color=COUNT_COLOR),
-                       S.text("the ghost games are back", 28, COUNT_COLOR)).arrange(RIGHT, buff=0.2)
+                       S.text("the ghost games\nare back", 28, COUNT_COLOR)).arrange(RIGHT, buff=0.2)
         check.next_to(gboard, DOWN, buff=0.45).set_x(COL_X)
 
         with self.voiceover(SAY[3]) as vo:
