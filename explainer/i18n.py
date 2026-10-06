@@ -5,7 +5,8 @@
 
 A language version lives next to the video, in videos/<id>/i18n/<lang>/:
 
-    narration.yaml   every SAY line of script.md, translated SENTENCE BY SENTENCE:
+    narration.yaml   (and/or narration/*.yaml fragments, merged; same for strings)
+                     every SAY line of script.md, translated SENTENCE BY SENTENCE:
                        S03:
                        - en: "Here's the catch. Real tic-tac-toe stops as soon as ..."
                          zh: ["关键在这里。", "真正的井字棋，只要有人连成三个就结束了……"]
@@ -31,7 +32,8 @@ A language version lives next to the video, in videos/<id>/i18n/<lang>/:
 Toolkit strings (e.g. the "Pause and ponder" card) are translated by explainer/locales/<lang>.yaml.
 
 When EXPLAINER_LANG is not "en", `install()` (called by explainer.style) wraps Manim's Text,
-MarkupText, Paragraph, Tex and MathTex so every on-screen string is looked up in those tables,
+MarkupText, Paragraph, Tex and MathTex so every on-screen string is looked up in those tables
+(Code keeps the code and translates only `# comment` texts),
 CJK text gets a matching CJK font (Noto Serif/Sans/Mono CJK SC), and TeX with CJK characters is
 typeset with XeLaTeX + ctex. Untranslated strings that contain English words are collected in
 build/i18n/missing.<lang>.json for review.
@@ -109,10 +111,26 @@ class Line:
     en_display: list[str | None] = field(default_factory=list)   # English subtitle line overrides
 
 
+def _merged(d: Path | None, name: str) -> dict:
+    """<name>.yaml plus every <name>/*.yaml (fragments written by different translators)."""
+    if d is None:
+        return {}
+    data: dict = {}
+    files = ([d / f"{name}.yaml"] if (d / f"{name}.yaml").exists() else []) + sorted((d / name).glob("*.yaml"))
+    for f in files:
+        part = _yaml(f) or {}
+        for k, v in part.items():
+            if isinstance(v, list) and isinstance(data.get(k), list):
+                data[k] = data[k] + v
+            else:
+                data[k] = v
+    return data
+
+
 @lru_cache(maxsize=4)
 def narration(code: str | None = None, project: Path | None = None) -> dict[str, Line]:
     d = lang_dir(code, project)
-    data = _yaml(d / "narration.yaml") if d else {}
+    data = _merged(d, "narration")
     out: dict[str, Line] = {}
     for scene_id, items in (data or {}).items():
         for it in items or []:
@@ -216,12 +234,12 @@ def _tables(code: str):
     exact: dict[str, str] = {}
     scoped: dict[tuple[str, str], str] = {}
     patterns: list[tuple[re.Pattern, str]] = []
-    sources = [TOOLKIT_DIR / "locales" / f"{code}.yaml"]
+    tables = [_yaml(TOOLKIT_DIR / "locales" / f"{code}.yaml")]
     d = lang_dir(code)
     if d:
-        sources.append(d / "strings.yaml")
-    for src in sources:                        # the video's own table wins over the toolkit's
-        for k, v in (_yaml(src) or {}).items():
+        tables.append(_merged(d, "strings"))
+    for table in tables:                       # the video's own table wins over the toolkit's
+        for k, v in (table or {}).items():
             if v is None:
                 continue
             k = str(k)
@@ -386,6 +404,27 @@ def install() -> None:
 
     wrap_tex(MathTex, "mathtex")
     wrap_tex(Tex, "tex")
+
+    from manim import Code
+
+    orig_code = Code.__init__
+    comment = re.compile(r"(#\s*)(.*?)(\s*)$")
+
+    def code_init(self, *a, **kw):
+        """Code stays code; only `# comments` are translated (key: the comment text)."""
+        src = kw.get("code_string")
+        if isinstance(src, str):
+            out = []
+            for ln in src.split("\n"):
+                i = ln.find("#")
+                if i >= 0 and ln[:i].count('"') % 2 == 0 and ln[:i].count("'") % 2 == 0:
+                    m = comment.match(ln[i:])
+                    if m and m.group(2):
+                        ln = ln[:i] + m.group(1) + tr(m.group(2), "code-comment") + m.group(3)
+                out.append(ln)
+            kw["code_string"] = "\n".join(out)
+        orig_code(self, *a, **kw)
+    Code.__init__ = code_init
 
 
 def main(argv=None) -> int:
