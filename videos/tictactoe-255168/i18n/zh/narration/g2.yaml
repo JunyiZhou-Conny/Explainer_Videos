@@ -48,7 +48,7 @@ S04:
 - en: "When counting gets this messy, there's another plan. Don't count cleverly. Instead, teach a computer the rules, and let it play every possible game, one by one."
   zh:
   - "手算变得这么乱的时候，我们还有 Plan B。"
-  - "别再想巧办法了。"
+  - "别再想巧办法了。"            # not 别巧算了: heard aloud as 别巧……算了 (算了 = forget it)
   - "不如教电脑学会规则，再让它一局接一局，把所有可能的对局都下一遍。"
   anchors:
     "there's another plan": "我们还有"

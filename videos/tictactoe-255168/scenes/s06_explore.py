@@ -1007,14 +1007,15 @@ class Explore(VoiceScene):
                   extra=back)
             self.remove(seg)
 
-        def count_leaf(key, n, rt=0.6):
+        def count_leaf(key, n, rt=0.6, also=()):
+            """`also`: animations played at the same time (only the language version passes any)."""
             nonlocal cnt
             dot = Dot(CU[key], radius=0.09, color=COUNT_COLOR)
             counted[key] = dot
             new = count_value(n, 52).move_to(cnt)
             self.play(FadeIn(dot, scale=2), Flash(dot, color=COUNT_COLOR, line_length=0.16,
                                                    flash_radius=0.24),
-                      FadeOut(cnt, shift=UP * 0.3), FadeIn(new, shift=UP * 0.3), run_time=rt)
+                      FadeOut(cnt, shift=UP * 0.3), FadeIn(new, shift=UP * 0.3), *also, run_time=rt)
             cnt = new
 
         with self.voiceover(SAY[5]) as vo:
@@ -1071,16 +1072,32 @@ class Explore(VoiceScene):
 
             # backtracking: undo X8 and O6, try O8 then X6 -> the 3rd game
             vo.wait_until("Trying a path")
-            self.play(FadeIn(cap1, shift=UP * 0.15), run_time=0.5)
-            # "then stepping back to try the next one": undo X8, undo O6, then O8, X6 -> game 3
-            step_back("X8b", "O6", 8, extra_targets=[win2], rt=0.45)
-            step_back("O6", "X7", 6, rt=0.45)
-            go_down("O8", 8, "O", rt=0.35)
-            go_down("X6b", 6, "X", rt=0.35)
-            win3 = side.win_line(2, 6)
-            self.play(Create(win3), run_time=0.25)
-            count_leaf("X6b", 3, rt=0.5)
-            vo.wait_until("is called backtracking")
-            self.play(Write(cap2), run_time=0.7)
+            if i18n.active():
+                # zh: in 先试走一条路，再退回来试下一条，这就叫回溯 the term is the last word of a 4 s
+                # sentence, and the English chain below (3.9 s at 15 fps: each erase adds 0.4 s to its
+                # rt) started "= 回溯" 0.7 s after 回溯 was said (word times measured with ASR). A quicker
+                # chain (2.7 s), and the third game is counted while the caption is written on 这就叫,
+                # as in English on "is called": "= 回溯" is complete as 回溯 is said.
+                self.play(FadeIn(cap1, shift=UP * 0.15), run_time=0.4)
+                step_back("X8b", "O6", 8, extra_targets=[win2], rt=0.3)
+                step_back("O6", "X7", 6, rt=0.3)
+                go_down("O8", 8, "O", rt=0.3)
+                go_down("X6b", 6, "X", rt=0.3)
+                win3 = side.win_line(2, 6)
+                self.play(Create(win3), run_time=0.2)
+                vo.wait_until("is called backtracking")
+                count_leaf("X6b", 3, rt=0.7, also=[Write(cap2)])
+            else:
+                self.play(FadeIn(cap1, shift=UP * 0.15), run_time=0.5)
+                # "then stepping back to try the next one": undo X8, undo O6, then O8, X6 -> game 3
+                step_back("X8b", "O6", 8, extra_targets=[win2], rt=0.45)
+                step_back("O6", "X7", 6, rt=0.45)
+                go_down("O8", 8, "O", rt=0.35)
+                go_down("X6b", 6, "X", rt=0.35)
+                win3 = side.win_line(2, 6)
+                self.play(Create(win3), run_time=0.25)
+                count_leaf("X6b", 3, rt=0.5)
+                vo.wait_until("is called backtracking")
+                self.play(Write(cap2), run_time=0.7)
             self.play(Circumscribe(VGroup(cap1, cap2), color=S.WHITE, buff=0.12), run_time=0.8)
         self.wait(0.8)
