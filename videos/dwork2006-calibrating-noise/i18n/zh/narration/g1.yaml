@@ -105,7 +105,7 @@ S02:
   zh:
   - "之后几十年，统计学家和计算机科学家，不断改进这类 trick，分成两种思路：要么扰动输入的数据，要么扰动输出的答案。"
   anchors:
-    "refined such": "不断改进"
+    "refined such": "改进这类"         # "不断改进" sat 0.67 s before the voice reached it
     "in two flavours": "分成两种思路"
     "scramble the data": "要么扰动输入"
     "or scramble the answers": "要么扰动输出"
@@ -114,14 +114,18 @@ S02:
   - "与此同时，最容易想到的办法，也就是直接去掉姓名，却一再失败。"
   - "Latanya Sweeney 发现，光凭邮编、出生日期和性别，就能唯一识别大多数美国人；1997 年，她把号称匿名的病历和公开的选民名单一对照，就认出了马萨诸塞州州长。"
   - "教训是：隐私必须是发布过程的性质，而不在于发布出来的表看起来怎么样；而且无论攻击者还知道什么，它都必须成立。"
+  # Sentence 2 opens with "Latanya Sweeney", which the voice says in ~1 s although it is 15 of the
+  # 85 characters the anchor estimate counts, so every target there would land 0.4-1.5 s late; these
+  # targets sit a few characters before the spoken word and hit it (faster-whisper word times and
+  # the pauses of the clip: 邮编 8.4 s, 就能 10.9, 1997 13.45, 号称 15.0, 公开 16.7 into the line).
   anchors:
     "just remove the names": "直接去掉姓名"
     "kept failing": "一再失败"
-    "ZIP code": "邮编"
-    "single out most": "就能唯一识别"
-    "and in 1997": "1997 年"
-    "linked supposedly": "号称匿名"
-    "to a public voter": "公开的选民名单"
+    "ZIP code": "ney 发现"
+    "single out most": "日期和性别"
+    "and in 1997": "美国人；1997"
+    "linked supposedly": "年，她把号称"
+    "to a public voter": "病历和公开"
     "and found the governor": "就认出了"
     "not of how": "而不在于"
     "and it must hold": "而且无论"

@@ -1,0 +1,60 @@
+# Chinese (zh-CN) metadata for dwork2006-calibrating-noise (read by explainer/i18n.py meta(), used by
+# explainer/build.py --lang zh): video title, part titles, chapter titles keyed by scene file stem, and
+# the Bilibili / YouTube description. Titles follow GLOSSARY.md (标题与章节, rule H1): written register
+# (论文, 设定), core-concept chapters carry their English term so the chapter list is searchable.
+title: "【论文精读】差分隐私的开山之作：Calibrating Noise to Sensitivity（TCC 2006）"
+
+parts:
+  part1: "差分隐私（上）：定义与拉普拉斯机制"
+  part2: "差分隐私（下）：隐私预算、不止于计数，以及一次性发布的极限"
+
+chapters:
+  s01_hook: "差分攻击（differencing attack）"
+  s02_map: "这篇论文从哪里来"
+  s03_setup: "设定：可信的数据管理者"
+  s04_definition: "定义隐私"
+  s05_strict: "为什么这么严格？"
+  s06_sensitivity: "敏感度（sensitivity）"
+  s07_laplace: "拉普拉斯机制（Laplace mechanism）"
+  s08_payoff: "隐私留给个体，准确留给总体"
+  s09_budget: "很多问题：隐私预算（privacy budget）"
+  s10_beyond: "不止于计数"
+  s11_separation: "交互式 vs 一次性发布"
+  s12_legacy: "这篇论文之后"
+  s13_recap: "回顾与思考题"
+
+# Ready to paste into the Bilibili 简介 / YouTube description. The line 章节：见下方时间轴 points to the
+# chapter timestamps from output/zh/chapters.txt (chapters_part1.txt / chapters_part2.txt for the parts):
+# paste them right under it (YouTube) or into Bilibili's 分段章节 / a pinned comment. About 1670
+# characters, so it stays under Bilibili's 2000-character limit even with the 13 timestamps (about 260
+# characters) pasted in. Links are repository-relative paths.
+description: |
+  这期精读差分隐私的开山之作：Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith 的论文《Calibrating Noise to Sensitivity in Private Data Analysis》（TCC 2006；中文意译：在隐私数据分析中按敏感度校准噪声）。这篇论文提出了今天所说的差分隐私（differential privacy），2017 年获得哥德尔奖。视频从一个只做减法的攻击讲起，一直讲到论文的定义、拉普拉斯机制和它证明的一个局限。
+
+  适合谁看：刚接触差分隐私的研究生和研究者，尤其是做强化学习、机器学习、医学影像的同学。只需要基础的概率知识。旁白是组会讲论文的风格：概念用中文文献的标准术语，query、transcript 这类口头本来就说英文的词保留英文。
+
+  你会学到：
+  · 为什么精确的统计数字也会泄露隐私，“去掉姓名”（去标识化）为什么不够
+  · 差分隐私的定义：改动任何一个人的记录，任何输出的概率之比最多是 e^ε（论文里叫 ε-不可区分性）
+  · 敏感度：一条记录最多能让答案变化多少；直方图的敏感度为什么总是 2，与桶的数量无关
+  · 拉普拉斯机制：噪声尺度 = 敏感度 / ε，一个不等式就证完；为什么不用均匀噪声，也不用高斯噪声
+  · 隐私预算：自适应地问很多个 query 时，隐私损失怎样累加（定理 1）
+  · 交互式 vs 一次性发布：为什么满足差分隐私的公开表答不好大多数奇偶 query，除非数据库大到指数级
+  · 后续发展：(ε, δ)-差分隐私、指数机制、组合定理、本地化差分隐私、DP-SGD、2020 年美国人口普查
+  片中有 8 处“暂停想一想”，结尾还有 3 道自测题，建议先自己想，再看答案。
+
+  章节：见下方时间轴
+
+  配套材料（仓库内的相对路径）：
+  · 练习与答案：videos/dwork2006-calibrating-noise/i18n/zh/exercises.md
+  · 论文笔记（逐页导读、勘误）：videos/dwork2006-calibrating-noise/i18n/zh/digest.md
+  · 交互页面（自己调 ε，扮演攻击者）：videos/dwork2006-calibrating-noise/i18n/zh/playground.html
+  · 中文版说明：videos/dwork2006-calibrating-noise/i18n/zh/README.md
+  · 术语表与翻译规则：videos/dwork2006-calibrating-noise/i18n/zh/GLOSSARY.md
+
+  核心术语（中 / 英）：差分隐私 / differential privacy；敏感度 / sensitivity；拉普拉斯机制 / Laplace mechanism；隐私预算 / privacy budget；隐私损失 / privacy loss；相邻数据库 / neighboring databases；随机响应 / randomized response；本地化差分隐私 / local differential privacy；交互式与非交互式 / interactive vs non-interactive
+
+  制作说明：中文旁白由 Microsoft Edge 神经网络语音 zh-CN-XiaoxiaoNeural 合成；动画用 Manim 制作，由一套开源的讲解视频工具包生成；中英双语字幕。片中的论文页面仅用于评论和教学，版权归作者和 Springer（LNCS 3876）所有。
+  英文原版：Calibrating Noise to Sensitivity — the paper that invented differential privacy
+
+  标签：差分隐私、differential privacy、敏感度、拉普拉斯机制、隐私预算、随机响应、论文精读
