@@ -101,12 +101,16 @@
 "leaves = finished games": "叶子 = 下完的对局"
 "games counted": "对局计数"
 "recursive": "递归"
-# fallback of rule A3 (no grey 'recursion' tag in s06_explore.py yet); with the tag: "函数自己调用（问）自己"
-"a function that calls (asks) itself": "recursion：函数自己调用（问）自己"
+# rule A3: s06_explore.py puts a small grey 'recursion' tag under 递归 (i18n.active()), so the
+# sub-line no longer carries the English word
+"a function that calls (asks) itself": "函数自己调用（问）自己"
+# the grey A3 tags stay English on purpose (identity keys: not reported as untranslated)
+"recursion": "recursion"
+"backtracking": "backtracking"
 # tree edges f"{sym} in {s}": square numbers, never 第 N (rule A9). The exact keys below win over
-# the re: key, so change both together. At 24 pt these are 1.94x the English width: X8, O8 and X6b
-# run past x 6.58, X7 is crossed by the A-X8 edge, O6 and X8b run into the code panel. The fix is
-# in s06_explore.py:838 (zh size / placement), not in this wording.
+# the re: key, so change both together. One line would be 1.94x the English width; s06_explore.py
+# (edge_label) splits the translation before the square number into two lines ("X 下" / "6 号格",
+# 22 pt) and places them by CU_LAB_TR, so keep the number in the translation.
 "re:([XO]) in (\\d)": "\\1 下 \\2 号格"
 "X in 6": "X 下 6 号格"
 "X in 7": "X 下 7 号格"
@@ -117,8 +121,8 @@
 # "undo" is the t2c key of the caption (and of S09's card): the colour lands on 撤销
 "try → explore → undo": "试走 → 探索 → 撤销"
 "undo": "撤销"
-# fallback of rule A3 (no grey 'backtracking' tag in s06_explore.py yet); with the tag: "= 回溯"
-"= backtracking": "= 回溯（backtracking）"
+# rule A3: s06_explore.py puts a small grey 'backtracking' tag under 回溯 (i18n.active())
+"= backtracking": "= 回溯"
 
 # ---------------------------------------------------------------- code comments (# ... in Code panels)
 # WIN_LINES (S05)

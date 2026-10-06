@@ -17,6 +17,7 @@ import numpy as np
 from manim import *
 from math import factorial  # after the star import, so nothing shadows it
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import highlight_box, ponder_card
 from explainer.scene import VoiceScene
@@ -89,8 +90,12 @@ _check_numbers()
 # Phrase times are estimated per sentence from character counts. Where that estimate is off by more
 # than ~0.4 s, the anchor gets a `shift` measured from the pauses in this narration's audio
 # (e.g. a spoken "362,880" lasts ~3 s but is only 7 characters).
+# The shifts belong to the English audio: a language version (explainer.i18n) ignores them, and its
+# narration anchors point at the words the animation goes with instead.
 def wait_for(scene, vo, phrase: str, shift: float = 0.0) -> None:
     """vo.wait_until(phrase), moved by `shift` seconds."""
+    if i18n.active():
+        shift = 0.0
     t = vo.time_until(phrase) + shift
     if t > 1 / 30:
         scene.wait(t)
@@ -98,6 +103,8 @@ def wait_for(scene, vo, phrase: str, shift: float = 0.0) -> None:
 
 def until(vo, phrase: str, shift: float = 0.0, minimum: float = 0.3) -> float:
     """Seconds from now until `phrase` (+ shift) is spoken."""
+    if i18n.active():
+        shift = 0.0
     return max(minimum, vo.time_until(phrase) + shift)
 
 
@@ -200,16 +207,31 @@ def count_tex(k: int, at, size: float = 44) -> MathTex:
     return S.math(str(k), size=size, color=COUNT_COLOR).move_to(at)
 
 
+def text_t2c(s: str, size: float, color, t2c: dict, **kw) -> Text:
+    """S.text(s, size, color, t2c=t2c, **kw). Pango lays out each t2c run on its own, and in CJK
+    text a run of only Latin letters or digits (the 'X' of 'X 在第 5 步赢了', the '24' of a
+    counter) sits ~0.05-0.08 units above the line; a language version copies the colours onto
+    the same text laid out in one piece."""
+    t = S.text(s, size, color, t2c=t2c, **kw)
+    if not (i18n.active() and i18n.has_cjk(t.text)):
+        return t
+    plain = S.text(s, size, color, **kw)
+    assert len(plain) == len(t), (t.text, len(plain), len(t))
+    for g, c in zip(plain, t):
+        g.set_color(c.get_color())
+    return plain
+
+
 def ghost_tally(k: int, left) -> Text:
     """'ghost endings counted: k' (k GREEN), its left end at `left`, so the words stay put as k grows."""
-    return S.text(f"ghost endings counted: {k}", 26, S.GREY, t2c={str(k): COUNT_COLOR}) \
+    return text_t2c(f"ghost endings counted: {k}", 26, S.GREY, {str(k): COUNT_COLOR}) \
         .move_to(left, aligned_edge=LEFT)
 
 
 def board_tally(words: str, k: int, left, t2c=None) -> Text:
     """'words: k' (k GREEN) for a count kept under the board, away from the formula line (where
     '3 × 2   3' would read as a wrong product); its left end at `left`, so the words stay put."""
-    t = S.text(f"{words}: {k}", 26, S.GREY, t2c=t2c or {})
+    t = text_t2c(f"{words}: {k}", 26, S.GREY, t2c or {})
     t[-len(str(k)):].set_color(COUNT_COLOR)       # the number's glyphs (Text has no glyphs for spaces)
     return t.move_to(left, aligned_edge=LEFT)
 
@@ -252,7 +274,7 @@ class GamesStop(VoiceScene):
     def construct(self):
         # ============================================================== 1. a real game stops
         board = Board(size=BOARD_SIZE).move_to(BOARD_HOME)
-        caption = S.text("X wins on move 5", 32, S.WHITE, t2c={"X": X_COLOR})
+        caption = text_t2c("X wins on move 5", 32, S.WHITE, {"X": X_COLOR})
         never = S.text("never played", 28, GHOST_COLOR)
 
         with self.voiceover(SAY[0]) as vo:
@@ -282,7 +304,7 @@ class GamesStop(VoiceScene):
                                       size=56), green=(8,))
         formula.next_to(ways_cap, DOWN, buff=0.3)
         tag1 = S.text("this 1 game was counted", 32, S.WHITE)
-        tag2 = S.text("24 times in 362,880", 32, S.WHITE, t2c={"24": COUNT_COLOR, "362,880": COUNT_COLOR})
+        tag2 = text_t2c("24 times in 362,880", 32, S.WHITE, {"24": COUNT_COLOR, "362,880": COUNT_COLOR})
         tag = VGroup(tag1, tag2).arrange(DOWN, buff=0.18).move_to([PANEL_X, -1.75, 0])
         ghost_label = S.text("ghost games", 38, GHOST_COLOR)
         ghost_def = S.text("made-up moves after someone already won", 26, GHOST_COLOR)
@@ -369,7 +391,7 @@ class GamesStop(VoiceScene):
         # ============================================================== 3. when can a game end?
         slots = timeline_strip(y=0.35)
         hl5 = highlight_box(slots[4], color=WIN_COLOR, buff=0.08)
-        third = S.text("X's 3rd mark: move 5", 30, S.WHITE, t2c={"X's 3rd mark": X_COLOR})
+        third = text_t2c("X's 3rd mark: move 5", 30, S.WHITE, {"X's 3rd mark": X_COLOR})
         third.next_to(hl5, UP, buff=0.75)
         third_arrow = Arrow(third.get_bottom(), hl5.get_top(), buff=0.08, color=WIN_COLOR,
                             stroke_width=4, max_tip_length_to_length_ratio=0.3)

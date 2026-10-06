@@ -52,6 +52,9 @@
 "(1 center)": "（1 个中心）"
 # card wording 角格、边格 = the board labels shown under it (E1); the spoken question keeps 角上、边上
 "Which first move for X leads to the MOST different games:\ncorner, edge, or center?": "X 的第一步下在哪儿，能下出的不同对局最多：\n角格、边格，还是中心？"
+# the card's capitalised MOST: s08_answer finds this word in the translated card and colours it
+# (GREEN, the count colour) in place of the capitals (E1)
+"MOST": "最多"
 "on 4 winning lines": "在 4 条获胜线上"
 "on 3 winning lines": "在 3 条获胜线上"
 "on 2 winning lines": "在 2 条获胜线上"

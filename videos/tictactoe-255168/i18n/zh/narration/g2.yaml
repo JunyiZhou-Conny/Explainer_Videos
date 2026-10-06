@@ -86,7 +86,9 @@ S05:
     "checks every line": "检查每一条线"
     "and that mark": "而且不是点"
     "that player has won": "那这是谁的棋子"
-    "hands back None": "返回 None"
+    # 就: the "None" label is in completely before None is spoken (measured in the audio: the
+    # clause 就返回 None runs 3.7-4.45 s into its 6.2 s sentence, None at its end)
+    "hands back None": "就返回 None"
     "which means nobody": "意思是“没有人”"
 
 S06:

@@ -16,6 +16,7 @@ from collections import Counter
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import ponder_card
 from explainer.scene import VoiceScene
@@ -126,11 +127,19 @@ def terminal(width: float = 7.4, height: float = 2.3) -> VGroup:
     return VGroup(frame, sep, dots)
 
 
+LABEL_RISE = 0.27      # how far "each corner" (28 pt) rises above its baseline
+
+
 def on_baseline(t: Text, x: float, y: float) -> Text:
     """Centre text t at x with the bottom of its first letter (an x-height letter) at height y,
     so words with and without ascenders/descenders line up."""
     t.set_x(x)
     t.shift(UP * (y - t[0].get_bottom()[1]))
+    if i18n.active() and t.get_top()[1] > y + LABEL_RISE:
+        # a language version's full-height glyphs (Chinese) rise well above the English x-height
+        # words and would touch the board above: drop the label so it rises no higher than
+        # "each corner" does
+        t.shift(DOWN * (t.get_top()[1] - y - LABEL_RISE))
     return t
 
 
@@ -180,6 +189,12 @@ class Answer(VoiceScene):
                           'print(play_all_games())', font_size=24)
         tail.to_edge(LEFT, buff=0.55).set_y(1.85)               # x from -6.56 to 1.58
         RET, NOTE, PRINT = 3, 2, 5                               # tail.code_lines indices
+        if i18n.active():
+            # a translated comment is set in a CJK fallback font whose taller line box puts it lower
+            # than the English one, into the highlight bar of the next line: centre it between its
+            # neighbours, where the English comment sits
+            tail.code_lines[NOTE].set_y((tail.code_lines[NOTE - 1].get_center()[1]
+                                         + tail.code_lines[NOTE + 1].get_center()[1]) / 2)
         hl_ret, hl_print = line_highlight(tail, RET), line_highlight(tail, PRINT)
         y_ret = tail.code_lines[RET].get_center()[1]
         start_board = Board(size=0.9, stroke=3)
@@ -487,6 +502,12 @@ class Answer(VoiceScene):
 
         card = ponder_card("Which first move for X leads to the MOST different games:\n"
                            "corner, edge, or center?", width=11.8).to_edge(UP, buff=0.5)
+        if i18n.active():
+            # the English stresses MOST with capitals; a language version colours its word for it
+            q, most = card[2], i18n.tr("MOST")
+            i = "".join(q.text.split()).find(most)
+            if most != "MOST" and i >= 0 and len(q) == len("".join(q.text.split())):
+                q[i:i + len(most)].set_color(COUNT_COLOR)
 
         with self.voiceover(SAY[4]) as vo:
             # "One last puzzle": the wins chart fades while the three boards are already being drawn

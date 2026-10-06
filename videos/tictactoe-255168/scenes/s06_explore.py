@@ -45,6 +45,7 @@ Every board and number is checked in _check() (runs on import).
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.scene import VoiceScene
 
@@ -160,6 +161,29 @@ def glyphs(code, k: int, token: str, nth: int = 0) -> VGroup:
     return VGroup(*code.code_lines[k][start:start + len(tok)])
 
 
+def even_code_lines(code, font_size: float):
+    """Language versions only: a code line whose translated comment falls back to the CJK font sits
+    lower than the others (that font's taller ascent). Move each such line to where it would sit
+    with Latin glyphs only, so the panel keeps the English line pitch. (Same helper in S05.)"""
+    text = code._code_html.get_text().removesuffix("\n").split("\n")
+    rows = [k for k, s in enumerate(text) if s.strip()]
+    cjk = [k for k in rows if i18n.has_cjk(text[k])]
+    plain = [k for k in rows if k not in cjk]
+    if not cjk or not plain:
+        return code
+    # reference: each line's first character alone, in the panel's font (Latin line metrics only;
+    # single glyphs, so nothing is reported as an untranslated string)
+    cfg = {**Code.default_paragraph_config, "font_size": font_size, "font": MONO}
+    ref = Paragraph(*[text[k].strip()[0] for k in rows], **cfg)
+    yr = {k: ref[i][0].get_bottom()[1] for i, k in enumerate(rows)}
+    yc = {k: code.code_lines[k][0].get_bottom()[1] for k in rows}
+    j = plain[0]
+    k_scale = code.code_lines[j][0].height / ref[rows.index(j)][0].height
+    for k in cjk:
+        code.code_lines[k].shift(UP * (yc[j] - (yr[j] - yr[k]) * k_scale - yc[k]))
+    return code
+
+
 def lines_bar(code, k0: int, k1: int | None = None, color: str = WIN_COLOR,
               opacity: float = 0.22) -> Rectangle:
     """One translucent bar over code lines k0..k1 (inclusive)."""
@@ -192,6 +216,16 @@ def token_box(m, color: str = WIN_COLOR) -> SurroundingRectangle:
 def at_char(s: str, ch: str) -> int:
     """Glyph index of character `ch` in a Text made from string s (glyphs skip spaces)."""
     return s.replace(" ", "").index(ch)
+
+
+def edge_label(sym: str, s: int, color: str) -> VGroup:
+    """Language versions only: the close-up's "X in 6" edge label, translated and set in two lines
+    at 22 pt, split before the square number ("X 下" / "6 号格"), so it is about as wide as the
+    English one-line label."""
+    head, num, tail = i18n.tr(f"{sym} in {s}").partition(str(s))
+    lines = [head.strip(), (num + tail).strip()] if num and head.strip() else [head + num + tail]
+    return VGroup(*[S.text(ln, 22, color, font=S.FONT_SANS, weight="BOLD") for ln in lines]) \
+        .arrange(DOWN, buff=0.06)
 
 
 def cam_out(m, frm, to, k: float, **kw):
@@ -353,6 +387,14 @@ CU_LAB = {"X6": (0.5, LEFT, 0.3), "X7": (None, RIGHT, 0.12), "X8": (0.5, RIGHT, 
           "O6": (0.5, LEFT, 0.2), "O8": (0.5, RIGHT, 0.2), "X8b": (0.5, LEFT, 0.12),
           "X6b": (0.5, RIGHT, 0.12)}
 CU_LEAVES = ["X6", "X8", "X8b", "X6b"]
+if i18n.active():
+    # A language version whose edge labels are much wider than "X in 6" (Chinese "X 下 6 号格" is
+    # 1.9x as wide) sets them in two lines (see edge_label) and places each one beside its edge
+    # with ~0.1 clearance to every edge; A sits a little higher (a taller fan) so the label of the
+    # middle edge fits between A-X7 and A-X8. Centres of the two-line labels:
+    CU["top"], CU["A"] = np.array([4.5, 3.5, 0]), np.array([4.5, 3.25, 0])
+    CU_LAB_TR = {"X6": (2.91, 2.55), "X7": (5.055, 1.995), "X8": (6.09, 2.55),
+                 "O6": (3.40, 1.15), "O8": (5.60, 1.15), "X8b": (3.245, 0.075), "X6b": (5.755, 0.075)}
 WB_C = np.array([5.2, -2.2, 0])        # the whiteboard: right of the "<- undo" tag, below the tree
 WB_S = 2.0                             # big enough for corner square numbers next to the marks
 WB_MARK = 0.5                          # marks on the whiteboard: 0.5 of a square, so the corners stay free
@@ -361,6 +403,8 @@ WB_MARK = 0.5                          # marks on the whiteboard: 0.5 of a squar
 class Explore(VoiceScene):
     def construct(self):
         self.code = explore_code()
+        if i18n.active():
+            even_code_lines(self.code, 24)
         self.beat_intro()
         self.beat_stops()
         self.beat_loop()
@@ -413,7 +457,8 @@ class Explore(VoiceScene):
         tag_won = line_tag(code, 1, s_won, dy=-0.02, size=24, t2c={"1": COUNT_COLOR})
         tag_draw = line_tag(code, 3, s_draw, dy=-0.16, size=24,
                             t2c={"1": COUNT_COLOR, "(a draw)": DRAW_COLOR})
-        aw, ad = at_char("← " + s_won, "→"), at_char("← " + s_draw, "→")
+        # glyph index of the arrow in the label as rendered (the translated text in a language version)
+        aw, ad = at_char(i18n.tr("← " + s_won), "→"), at_char(i18n.tr("← " + s_draw), "→")
         won = snap(B2_WON, 1.6, [3.4, -0.95, 0], stroke=4.5, line=(0, 8))
         draw = snap(B2_DRAW, 1.6, [5.75, -0.95, 0], stroke=4.5)
         lab_won = S.text("1 game", 28, COUNT_COLOR).next_to(won, DOWN, buff=0.28)
@@ -745,6 +790,12 @@ class Explore(VoiceScene):
             rec = S.text("recursive", 52, S.WHITE).move_to([code.get_center()[0], 2.78, 0])
             rec_sub = S.text("a function that calls (asks) itself", 26, S.GREY) \
                 .next_to(rec, DOWN, buff=0.22)
+            if i18n.active():
+                # a language version names the term in its own words; the English term stays on the
+                # card as a small grey tag under it (zh glossary rule A3), then the sub-line
+                rec = VGroup(rec, S.text("recursion", 22, S.GREY).next_to(rec, DOWN, buff=0.1))
+                rec_sub.next_to(rec, DOWN, buff=0.16)
+                VGroup(rec, rec_sub).move_to([code.get_center()[0], 2.66, 0])
             self.play(Write(rec), FadeIn(rec_sub, shift=UP * 0.15), run_time=0.8)
 
             vo.wait_until("That might sound")
@@ -835,6 +886,11 @@ class Explore(VoiceScene):
             pa, pb = CU[a], CU[b]
             t, side_dir, gap = CU_LAB[b]
             col = X_COLOR if sym == "X" else O_COLOR
+            if i18n.active():
+                lab = edge_label(sym, s, col).move_to([*CU_LAB_TR[b], 0])
+                labels.add(lab)
+                lab_of[b] = lab
+                continue
             lab = S.text(f"{sym} in {s}", 24, col, font=S.FONT_SANS, weight="BOLD")
             if t is None:                                    # A-X7: just above the X7 node
                 lab.next_to(pb + UP * 0.25, side_dir, buff=gap)
@@ -873,6 +929,9 @@ class Explore(VoiceScene):
         cap1 = S.text("try → explore → undo", 30, S.WHITE, t2c={"undo": UNDO_COLOR})
         cap2 = S.text("= backtracking", 30, S.WHITE, weight="BOLD")
         VGroup(cap1, cap2).arrange(RIGHT, buff=0.25).move_to([code.get_center()[0], -2.6, 0])
+        if i18n.active():
+            # the English term as a small grey tag under the translated one (zh glossary rule A3)
+            cap2 = VGroup(cap2, S.text("backtracking", 22, S.GREY).next_to(cap2[1:], DOWN, buff=0.1))
         # the counter sits in the free space above the panel, left of the close-up
         cnt_lab_to = cnt_lab.copy().move_to([0.9, 3.15, 0])
         cnt_to = cnt.copy().move_to([0.9, 2.5, 0])

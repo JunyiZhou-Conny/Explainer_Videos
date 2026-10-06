@@ -21,11 +21,9 @@
 "X won!": "X 赢了！"
 "9 choices": "9 种选择"
 "8 choices": "8 种选择"
-# s02_fill.py indexes this label's glyphs: 0 '9' | 1-8 words | 9 '8' | 10 '=' | 11-12 '72'
-# (Text has no glyphs for spaces or line breaks). The glossary's 9 个 8 = 72 has only 6 glyphs and
-# would raise an IndexError at groups_label[9], so the words take exactly 8 glyphs and the label
-# still ends in 9 个 8 = 72; two lines keep it inside the English label's width (4.1 vs 4.5).
-"9 groups of 8 = 72": "9 组棋盘，\n就是 9 个 8 = 72"
+# s02_fill.py finds this label's 9, 8, = and 72 by searching the rendered text (label_pieces), so
+# any wording works that keeps them in that order: the glossary's 9 个 8 = 72.
+"9 groups of 8 = 72": "9 个 8 = 72"
 "nine factorial": "9 的阶乘"
 "never stop early": "从不提前结束"
 "real games": "真实对局"
@@ -57,4 +55,4 @@
 "(2) In what order does X fill it?": "（2）X 按什么顺序填？"
 "(3) Where can O's 2 marks go?": "（3）2 个 O 能放在哪儿？"
 "\\text{ lines}": "\\text{ 条线}"
-"\\ \\ \\text{games}": "\\ \\text{种}"
+"\\ \\ \\text{games}": "\\ \\ \\text{种}"   # the English spacing (B1): 种 clears the box around 1,440

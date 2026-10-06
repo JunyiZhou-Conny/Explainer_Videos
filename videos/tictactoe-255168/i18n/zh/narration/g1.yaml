@@ -3,11 +3,12 @@
 # (三子连成一线 -> 三个连成一条线, the glossary's spoken form; 2 条 -> 两条, like 两局 / 两步).
 #
 # Anchor timing was checked against real edge zh-CN-XiaoxiaoNeural audio (word boundaries).
-# s03_stop.py adds fixed shifts measured on the ENGLISH audio (wait_for/until ..., shift=...).
-# Where a natural target plus that shift missed the Chinese words by more than ~0.4 s, the
-# target is moved so that target + shift lands on the right words; those anchors are marked
-# "# shift-compensated" with the natural target. If s03_stop.py ever drops its shifts for zh,
-# put the natural targets back.
+# An anchor fires at its target's character position in the sentence (explainer.voice.AlignedClip).
+# s03_stop.py's shifts (wait_for/until ..., shift=...) were measured on the English audio and are
+# ignored in a language version, so every S03 anchor names the Chinese words its animation goes
+# with. Edge reads digit runs (4 乘 3 乘 2 乘 1, 3 乘 2 乘 1) faster than their character count
+# suggests; the few targets placed a little later than the words they stand for for that reason
+# are marked "# digits".
 
 S01:
 - en: "Here's a question that sounds easy. How many different games of tic-tac-toe are there?"
@@ -63,7 +64,7 @@ S02:
   anchors:
     "O has 8": "O 都还剩"
     "9 times 8 is 72": "9 乘 8 等于 72"
-    "first two moves": "前两步"
+    "first two moves": "就有 72"     # the label's 72 pulses as 72 is spoken (Chinese says 前两步 first)
 
 - en: "Keep going: 9 times 8 times 7, and so on, all the way down to 1. Mathematicians have a short name for this: nine factorial, written as a 9 with an exclamation mark. It equals 362,880."
   zh:
@@ -105,13 +106,14 @@ S03:
   - "我们把这些编出来的对局叫作“幽灵对局”。"
   - "我们要让每一局真实的对局都只算一次。"
   anchors:
-    "counted those": "362,880"       # shift-compensated (+2.2 s, s03_stop.py:295): pulse on 这几步没下的棋; natural 这几步
-    "as if the players": "就好像"     # +1.3 s (s03_stop.py:299) lands it on 双方还在接着下, the words the animation shows
-    "4 times 3": "乘 2"              # shift-compensated (-0.9 s, s03_stop.py:329): "4" as 4 is spoken; natural 4 乘 3
-    "3 times 2": "2 乘 1"            # shift-compensated (-0.95 s, s03_stop.py:330): "× 3" on 乘 3; natural 3 乘 2
-    "2 times 1": "乘 1"              # shift-compensated (-1.0 s, s03_stop.py:331): "× 2" on 乘 2; natural 2 乘 1
-    "times 1,": "乘 1"
-    "so 24 ways": "也就是 24"
+    "counted those": "这几步"         # the ghost moves pulse on 这几步没下的棋 ("those missing moves")
+    "as if the players": "双方还在"   # the ghost moves get played on 双方还在接着下 ("kept going")
+    "4 times 3": "4 乘 3"            # the factors appear as they are spoken: "4"
+    "3 times 2": "乘 3"              # "× 3"
+    "2 times 1": "乘 2"              # "× 2"
+    "times 1,": "乘 1"               # "× 1"
+    "so 24 ways": "也就是 24"         # the tally reaches 24, then "= 24" is written on 24
+    "Let's call": "编出来的对局"      # the ghosts wiggle on 编出来的对局 and the label lands on 叫作“幽灵对局”
 
 - en: "So when can a game end? Not before move 5. X plays moves 1, 3 and 5, so the fifth move is the first time anyone can have three marks."
   zh:
@@ -119,8 +121,8 @@ S03:
   - "至少要到第 5 步。"
   - "X 下的是第 1、3、5 步，所以到了第 5 步，才可能有人凑齐三个棋子。"
   anchors:
-    "so the fifth move": "，所以到了"   # shift-compensated (+1.0 s, s03_stop.py:396): label on 第 5 步; natural 所以到了第 5 步
-    "three marks": "三个棋子"
+    "so the fifth move": "到了第 5 步"  # the label fades in on 到了第 5 步 (bare 第 5 步 would match sentence 2)
+    "three marks": "三个棋子"          # the timeline slides down as the sentence ends
 
 - en: "Pause and ponder: how many games end with X winning on move 5? Try to count them before I show you."
   zh:
@@ -146,13 +148,13 @@ S03:
     "3 rows": "3 排"
     "3 columns": "3 列"
     "2 diagonals": "2 条对角线"
-    "3 times 2": "乘 1"              # shift-compensated (-0.4 s, s03_stop.py:498): "3" as 3 is spoken; natural 3 乘 2
-    "2 times 1": "1，也就是"         # shift-compensated (-0.45 s, s03_stop.py:499): "× 2" on 乘 2; natural 2 乘 1
-    "times 1,": "乘 1"
-    "which is 3": "也就是"
-    "so 6 orders": "所以有 6 种"
-    "and O's second": "还剩"          # shift-compensated (-0.7 s, s03_stop.py:542/545): 2nd O tour starts on 第二个 O; natural 第二个 O
-    "6 times 5": "等于 30"           # shift-compensated (-1.1 s, s03_stop.py:546/549): "6 × 5" on 6 乘 5; natural 6 乘 5
+    "3 times 2": "2 乘 1"            # digits: "3" appears as 3 is spoken (3 乘 2 would be ~0.8 s early)
+    "2 times 1": "乘 1"              # digits: "× 2" on 乘 2
+    "times 1,": "1，也就是"           # digits: "× 1" on 乘 1
+    "which is 3": "3 的阶乘"          # the order count lands on 6, then "= 3!" is written on 3 的阶乘
+    "so 6 orders": "有 6 种"          # "= 6" on 6
+    "and O's second": "第二个 O"      # the first O's tour ends and the second O starts on 第二个 O
+    "6 times 5": "6 乘 5"            # "6 × 5" is written as it is spoken
     "is 30": "等于 30"
     "8 times 6": "8 乘 6"
     "is 1,440": "等于 1,440"

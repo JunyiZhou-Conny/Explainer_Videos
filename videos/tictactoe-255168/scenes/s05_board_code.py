@@ -21,6 +21,7 @@ its beat ends.
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.scene import VoiceScene
 
@@ -44,6 +45,29 @@ assert EX_WIN.count("X") == 3 and EX_WIN.count("O") == 2 and EX_NONE.count("X") 
 def glyphs(code, k, i0, i1) -> VGroup:
     """Characters i0..i1-1 (spaces don't count) of line k of a code block."""
     return VGroup(*code.code_lines[k][i0:i1])
+
+
+def even_code_lines(code, font_size: float):
+    """Language versions only: a code line whose translated comment falls back to the CJK font sits
+    lower than the others (that font's taller ascent). Move each such line to where it would sit
+    with Latin glyphs only, so the panel keeps the English line pitch. (Same helper in S06.)"""
+    text = code._code_html.get_text().removesuffix("\n").split("\n")
+    rows = [k for k, s in enumerate(text) if s.strip()]
+    cjk = [k for k in rows if i18n.has_cjk(text[k])]
+    plain = [k for k in rows if k not in cjk]
+    if not cjk or not plain:
+        return code
+    # reference: each line's first character alone, in the panel's font (Latin line metrics only;
+    # single glyphs, so nothing is reported as an untranslated string)
+    cfg = {**Code.default_paragraph_config, "font_size": font_size, "font": MONO}
+    ref = Paragraph(*[text[k].strip()[0] for k in rows], **cfg)
+    yr = {k: ref[i][0].get_bottom()[1] for i, k in enumerate(rows)}
+    yc = {k: code.code_lines[k][0].get_bottom()[1] for k in rows}
+    j = plain[0]
+    k_scale = code.code_lines[j][0].height / ref[rows.index(j)][0].height
+    for k in cjk:
+        code.code_lines[k].shift(UP * (yc[j] - (yr[j] - yr[k]) * k_scale - yc[k]))
+    return code
 
 
 def glyph_box(m, color=WIN_COLOR, opacity=0.25, buff=0.05):
@@ -185,6 +209,8 @@ class BoardCode(VoiceScene):
         for lab in lab2:
             outlined(lab)
         code2 = code_block(program_lines(7, 11), font_size=21)
+        if i18n.active():
+            even_code_lines(code2, 21)
         code2.move_to([-6.45 + code2.width / 2, b2.get_center()[1], 0])
 
         # where each triple sits in the code: (code line, position in that line)

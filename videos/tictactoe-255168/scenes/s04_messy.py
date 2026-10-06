@@ -24,6 +24,7 @@ All boards are legal positions (checked against winner()); all numbers are exact
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.scene import VoiceScene
 
@@ -38,7 +39,19 @@ W = S.WHITE
 def rich(parts, size, font=S.FONT):
     """One Text (so the baseline stays straight) coloured piece by piece.
 
-    parts = [(string, colour), ...]; returns (text, [VGroup of the glyphs of each part])."""
+    parts = [(string, colour), ...]; returns (text, [VGroup of the glyphs of each part]).
+    In a language version each part is translated on its own (i18n part keys), so the colours and
+    the per-part pieces land on the translated glyphs (English: tr() returns the part unchanged)."""
+    parts = [(i18n.tr(p), col) for p, col in parts]
+    if i18n.active():
+        # no half-width spaces next to a full-width bracket, which has its own white space
+        # ("6 种顺序  ×  （6 × 5" -> "6 种顺序  ×（6 × 5", zh glossary B1)
+        for i in range(len(parts) - 1):
+            (a, ca), (b, cb) = parts[i], parts[i + 1]
+            if b[:1] in "（“":
+                parts[i] = (a.rstrip(), ca)
+            if a[-1:] in "）”":
+                parts[i + 1] = (b.lstrip(), cb)
     s = "".join(p for p, _ in parts)
     t = S.text(s, size, W, font=font, disable_ligatures=True)
     assert len(t) == len(s), "glyphs and characters out of step"

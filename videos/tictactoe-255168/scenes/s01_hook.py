@@ -8,6 +8,7 @@ orders (move numbers in the squares) -> a turned copy is a different game too ->
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import ponder_card
 from explainer.scene import VoiceScene
@@ -119,7 +120,10 @@ class Hook(VoiceScene):
             vo.wait_until("A million")
             self.play(FadeIn(guesses[1], scale=0.8), run_time=0.5)
             vo.wait_until("Pause the video")
-            card = ponder_card("How many different games of tic-tac-toe are there?\nWrite down a guess!")
+            # ponder_card shrinks the English question to fit the card (to ~29 pt); a shorter
+            # translation would stay at the full 34 pt and outgrow the title, so it gets the English size
+            card = ponder_card("How many different games of tic-tac-toe are there?\nWrite down a guess!",
+                               **({"size": 29} if i18n.active() else {}))
             self.play(FadeOut(guesses), FadeIn(card, scale=0.95), run_time=0.6)
         bar = card[3]
         self.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),

@@ -13,6 +13,7 @@ bars: too many!  Where do the extra games come from?
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.scene import VoiceScene
 
@@ -89,6 +90,30 @@ def tex_num(n: int) -> str:
     return f"{n:,}".replace(",", "{,}")
 
 
+def text_t2c(s: str, size: float, color, t2c: dict, **kw) -> Text:
+    """S.text(s, size, color, t2c=t2c, **kw). Pango lays out each t2c run on its own, and in CJK
+    text a run of only Latin letters or digits (the 'X' of 'X 赢了！') sits ~0.08 units above
+    the line; a language version copies the colours onto the same text laid out in one piece."""
+    t = S.text(s, size, color, t2c=t2c, **kw)
+    if not (i18n.active() and i18n.has_cjk(t.text)):
+        return t
+    plain = S.text(s, size, color, **kw)
+    assert len(plain) == len(t), (t.text, len(plain), len(t))
+    for g, c in zip(plain, t):
+        g.set_color(c.get_color())
+    return plain
+
+
+def label_pieces(label: Text) -> tuple[int, int, int, int]:
+    """Glyph indices of the '9', the '8', the '=' and the first digit of '72' in the
+    '9 groups of 8 = 72' label, found in its rendered string (which may be a translation, e.g.
+    '9 个 8 = 72'): Text has one glyph per character that is not a space or a line break."""
+    chars = [c for c in label.text if not c.isspace()]
+    assert len(chars) == len(label), (label.text, len(label))
+    eq = chars.index("=")
+    return chars.index("9"), max(i for i in range(eq) if chars[i] == "8"), eq, eq + 1
+
+
 def bundle(i: int, kid_bottom: float, faded: bool) -> VGroup:
     """The 8 boards after X takes square i (one O in each other square), packed in a column under
     child i. Returns VGroup(connector, frame, boards)."""
@@ -111,7 +136,7 @@ class FillTheBoard(VoiceScene):
         caption = S.text("What if the game never stopped early?", 40).to_edge(UP, buff=0.5)
 
         win = board.win_line(*WIN_ENDS)
-        won_text = S.text("X won!", 30, WIN_COLOR, weight=BOLD, t2c={"X": X_COLOR})
+        won_text = text_t2c("X won!", 30, WIN_COLOR, {"X": X_COLOR}, weight=BOLD)
         won = VGroup(SurroundingRectangle(won_text, buff=0.12, corner_radius=0.08, color=WIN_COLOR,
                                           stroke_width=2.5).set_fill(S.BG, 0.9), won_text)
         won.next_to(win, RIGHT, buff=0.3)
@@ -176,7 +201,8 @@ class FillTheBoard(VoiceScene):
 
         bundles = [bundle(i, kid_bottom, faded=i > 0) for i in range(9)]
         groups_label = S.text("9 groups of 8 = 72", 40, COUNT_COLOR).move_to(LABEL_C)
-        # glyphs: 0 '9' | 1-8 'groupsof' | 9 '8' | 10 '=' | 11-12 '72'
+        # glyphs: 0 '9' | 1-8 'groupsof' | 9 '8' | 10 '=' | 11-12 '72' (found by label_pieces)
+        g9, g8, g_eq, g72 = label_pieces(groups_label)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(marks, *nums.values(), question, caption)), run_time=0.45)
@@ -196,9 +222,9 @@ class FillTheBoard(VoiceScene):
             self.play(FadeIn(label_o, shift=LEFT * 0.2), run_time=0.4)
             # "9" and "8" become the label (one thing at a time: label, then pack, then copies)
             vo.wait_until("That's 9 groups")
-            self.play(ReplacementTransform(label_x[1][0], groups_label[0]),
-                      FadeTransform(label_x[1][1:], groups_label[1:9]),     # words cross-fade (no glyph scramble)
-                      ReplacementTransform(label_o[1][0], groups_label[9]),
+            self.play(ReplacementTransform(label_x[1][0], groups_label[g9]),
+                      FadeTransform(label_x[1][1:], groups_label[g9 + 1:g8]),     # words cross-fade (no glyph scramble)
+                      ReplacementTransform(label_o[1][0], groups_label[g8]),
                       FadeOut(label_x[0], scale=0.3), FadeOut(label_o[0], scale=0.3), FadeOut(label_o[1][1:]),
                       run_time=0.8)
             # pack the 8 into a bundle under the first move
@@ -209,11 +235,11 @@ class FillTheBoard(VoiceScene):
             self.play(LaggedStart(*[FadeIn(b, shift=DOWN * 0.5) for b in bundles[1:]], lag_ratio=0.12),
                       run_time=1.4)
             vo.wait_until("9 times 8 is 72")
-            self.play(Write(groups_label[10:]),
+            self.play(Write(groups_label[g_eq:]),
                       LaggedStart(*[b[1].animate.set_stroke(COUNT_COLOR, width=2.5, opacity=1)
                                     for b in bundles], lag_ratio=0.15), run_time=1.3)
             vo.wait_until("first two moves")
-            self.play(Indicate(groups_label[11:], color=COUNT_COLOR, scale_factor=1.25), run_time=0.8)
+            self.play(Indicate(groups_label[g72:], color=COUNT_COLOR, scale_factor=1.25), run_time=0.8)
 
         self.add(groups_label)          # re-gather the label's pieces into one top-level mobject
         tree = [m for m in self.mobjects if m is not groups_label]
@@ -244,10 +270,10 @@ class FillTheBoard(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             # clear the tree first, so the 9, 8 and 72 fly into the product row over an empty stage
-            self.play(FadeOut(Group(*tree)), FadeOut(groups_label[1:9]), FadeOut(groups_label[10]),
+            self.play(FadeOut(Group(*tree)), FadeOut(groups_label[g9 + 1:g8]), FadeOut(groups_label[g_eq]),
                       run_time=0.5)
             # the label's 9, 8 and 72 slide (whole, not glyph-morphed: Text -> MathTex morphs into blobs)
-            nine, eight, seventy_two = groups_label[0], groups_label[9], groups_label[11:]
+            nine, eight, seventy_two = groups_label[g9], groups_label[g8], groups_label[g72:]
             self.play(nine.animate.scale_to_fit_height(terms[0].height).move_to(terms[0]).set_color(S.WHITE),
                       eight.animate.scale_to_fit_height(terms[1].height).move_to(terms[1]).set_color(S.WHITE),
                       seventy_two.animate.scale_to_fit_height(totals[1].height).move_to(totals[1]),

@@ -22,6 +22,7 @@ from functools import lru_cache
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.scene import VoiceScene
 
@@ -392,6 +393,14 @@ class Bigger(VoiceScene):
                               .move_to([LABEL_X, y + 0.19, 0]) for p, y in zip("XOX", ROW_Y)])
         best_labels = {d: S.text(f"best for {p}", 28, S.WHITE, t2c={p: RESULT_COLOR[p]})
                        .move_to([LABEL_X, ROW_Y[d] - 0.21, 0]) for d, p in ((0, "X"), (1, "O"), (2, "X"))}
+        if i18n.active():
+            # a language version's full-height glyphs (Chinese) make the two lines of each pair touch:
+            # open each pair up evenly to the English gap between "X to move" and "best for X"
+            for d, b in best_labels.items():
+                gap = row_labels[d].get_bottom()[1] - b.get_top()[1]
+                if gap < 0.11:
+                    row_labels[d].shift(UP * (0.11 - gap) / 2)
+                    b.shift(DOWN * (0.11 - gap) / 2)
         legend = VGroup(swatch("X", "X wins"), swatch("O", "O wins"), swatch("D", "draw")) \
             .arrange(DOWN, buff=0.16, aligned_edge=LEFT).move_to([LABEL_X, ROW_Y[3], 0])
         # right of the root: the question, later its answer, and a note on the full game
