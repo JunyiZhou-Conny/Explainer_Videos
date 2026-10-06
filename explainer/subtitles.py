@@ -43,8 +43,11 @@ def _cuts(text: str) -> tuple[list[int], list[int]]:
     punctuation or after an opening bracket."""
     good, ok = [], []
     depth = 0
+    mixed = bool(_CJK.search(text))
     for i in range(1, len(text)):
         a, b = text[i - 1], text[i]
+        if a in ",;:)" and b != " " and not is_cjk(b) and i < len(text):
+            continue                                          # S(f)/ε, 2,5: only before a space/CJK
         if a == "《":
             depth += 1
         elif a == "》":
@@ -64,7 +67,11 @@ def _cuts(text: str) -> tuple[list[int], list[int]]:
             if p.isdigit() and is_cjk(b):
                 continue                                      # "5 步"
             if not is_cjk(p) and not is_cjk(b):
-                good.append(i)                                # between Latin words
+                if not mixed:
+                    good.append(i)                            # between words of an English line
+                elif _latin_run(text, i) > 24:
+                    ok.append(i)                              # a long English run inside Chinese
+                # otherwise keep kept-English terms whole: hybrid argument, Kobbi Nissim
             else:
                 ok.append(i)
         elif b == " ":
@@ -74,6 +81,17 @@ def _cuts(text: str) -> tuple[list[int], list[int]]:
         elif is_cjk(a) or is_cjk(b):
             ok.append(i)
     return good, ok
+
+
+def _latin_run(text: str, i: int) -> int:
+    """Length of the run of non-CJK characters around position i."""
+    lo = i
+    while lo > 0 and not is_cjk(text[lo - 1]) and text[lo - 1] not in "，。、；：！？":
+        lo -= 1
+    hi = i
+    while hi < len(text) and not is_cjk(text[hi]) and text[hi] not in "，。、；：！？":
+        hi += 1
+    return hi - lo
 
 
 def join_pieces(a: str, b: str) -> str:

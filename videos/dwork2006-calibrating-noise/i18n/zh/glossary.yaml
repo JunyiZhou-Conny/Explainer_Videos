@@ -816,3 +816,6 @@ terms:
   zh_spoken: ''
   first_use: S12、digest
   note: ''
+# Names spoken in English that appear only in the glossary's en field (rule A10); used by
+# `python -m explainer.i18n check` together with every Latin word of the spoken/subtitle forms.
+allowed_spoken_latin: [Latanya, Sweeney, Irit, Dinur, Mironov, Naor, Vadhan, Kobbi, Nissim, Cynthia, Dwork, Frank, McSherry, Adam, Smith, Stanley, Warner]

@@ -21,7 +21,7 @@ S07:
   - "Its width is set by a scale parameter, λ."
 - en: "Here is the trick. Center one Laplace curve at f of x, forty-one, and another at f of x prime, forty-two: the output distributions of our two worlds."
   zh:
-  - "这里的 trick 是这样的。"
+  - "关键的 trick 来了。"
   - "一条拉普拉斯曲线的中心在 f(x)，也就是 41，另一条在 f(x′)，也就是 42：这就是两个世界的输出分布。"
   say:
   - null
@@ -112,12 +112,12 @@ S07:
   - "That is Proposition 1: Laplace noise of scale S(f)/ε in every coordinate."
 - en: "Pause and ponder: why not something simpler, like uniform noise anywhere between minus ten and plus ten?"
   zh:
-  - "暂停想一想：为什么不用更简单的，比如均匀噪声，在 −10 到 +10 之间任意取值？"
+  - "暂停想一想：为什么不用更简单的，比如均匀噪声，−10 到 +10 之间任意取值？"
   say:
-  - "暂停想一想：为什么不用更简单的，比如均匀噪声，在负十到正十之间任意取值？"
+  - "暂停想一想：为什么不用更简单的，比如均匀噪声，负十到正十之间任意取值？"
   anchors:
     "like uniform noise": "比如均匀噪声"
-    "anywhere between": "在 −10 到"
+    "anywhere between": "−10 到"
   en_display:
   - "Pause and ponder: why not something simpler, like uniform noise anywhere between −10 and +10?"
 - en: "Look at the edges. An output of fifty-one and a half is possible if the true count is forty-two, but impossible if it is forty-one: the same infinite ratio that sank the random-row mechanism. Good noise must never rule an output out."
@@ -251,10 +251,10 @@ S08:
   - "如果 n 乘艾普西隆极小，所有数据库看起来都一样，什么也学不到。"
   - "这种链式 trick 叫 hybrid argument，最后还会再出现。"
   anchors:
-    "linked by a chain": "都有一条"
-    "each changing probabilities": "概率之比"
-    "so the ends": "所以两端"
-    "every database looks alike": "所有数据库看起来"
+    "linked by a chain": "之间，都有一条"
+    "each changing probabilities": "改一条记录，概率之比"
+    "so the ends": "e^ε，所以两端"
+    "every database looks alike": "数据库看起来"
   en_display:
   - null
   - null
@@ -286,22 +286,22 @@ S09:
 - en: "So privacy losses add up, and epsilon behaves like a budget. Each answer spends part of it; once it is spent, the curator stops. That is the answer to Dinur and Nissim: the budget makes the limit on questions explicit and measurable."
   zh:
   - "所以隐私损失会累加，ε 就像一笔隐私预算，privacy budget。"
-  - "每个答案花掉一部分；一旦花完，管理者就不再回答。"
-  - "这就回应了 Dinur 和 Nissim：预算让提问的上限变得明确、可度量。"
+  - "每个答案花掉一部分；一旦花完，管理者就不答了。"
+  - "这就回应了 Dinur 和 Nissim：预算让提问的上限明确、可度量。"
   say:
   - "所以隐私损失会累加，艾普西隆就像一笔隐私预算，privacy budget。"
   - null
   - null
   anchors:
     "once it is spent": "一旦花完"
-    "the budget makes": "预算让提问"
+    "the budget makes": "Nissim：预算"
   en_display:
   - "So privacy losses add up, and ε behaves like a budget."
   - null
   - null
 - en: "You can now compute a real saving yourself. Pause: a histogram with d bins, total budget epsilon. Treat each bin as its own counting query and split the budget evenly. How much noise does each bin get?"
   zh:
-  - "现在你可以自己算一算，实打实能省下多少。"
+  - "现在你可以自己算算，实打实能省多少。"
   - "暂停一下：直方图有 d 个桶，总预算是 ε。"
   - "每个桶单独算一个 counting query（计数查询），预算平分。"
   - "每个桶要加多大的噪声？"
@@ -319,15 +319,15 @@ S09:
   - null
 - en: "Each bin gets one over d of the budget, so noise of scale d over epsilon. Treated as one query with sensitivity two, each bin gets two over epsilon, whatever d is. The earlier framework's sharper analysis got this down to about the square root of d, but it still grew with d."
   zh:
-  - "每个桶分到 1/d 的预算，所以噪声尺度是 d/ε。"
-  - "合起来当成一个敏感度为 2 的 query，每个桶的噪声就都是 2/ε，不管 d 是多少。"
-  - "早先那个框架分析得更细，把它降到了大约根号 d，但还是随 d 增大。"
+  - "每个桶分到 1/d 的预算，噪声尺度就是 d/ε。"
+  - "把整个直方图当成一个敏感度为 2 的 query，每个桶就都是 2/ε，不管 d 是多少。"
+  - "早先那个框架分析得更细，把噪声降到大约根号 d，但还是随 d 增大。"
   say:
-  - "每个桶分到 d 分之一的预算，所以噪声尺度是 d 除以艾普西隆。"
-  - "合起来当成一个敏感度为二的 query，每个桶的噪声就都是艾普西隆分之二，不管 d 是多少。"
+  - "每个桶分到 d 分之一的预算，噪声尺度就是 d 除以艾普西隆。"
+  - "把整个直方图当成一个敏感度为二的 query，每个桶就都是艾普西隆分之二，不管 d 是多少。"
   - null
   anchors:
-    "so noise of scale": "所以噪声尺度"
+    "so noise of scale": "预算，噪声尺度"
     "whatever d is": "不管 d 是多少"
     "but it still grew": "但还是随 d"
   en_display:
