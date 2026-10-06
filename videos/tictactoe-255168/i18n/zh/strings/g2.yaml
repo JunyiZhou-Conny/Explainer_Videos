@@ -104,7 +104,7 @@
 "recursive": "递归"
 # rule A3: s06_explore.py puts a small grey 'recursion' tag under 递归 (i18n.active()), so the
 # sub-line no longer carries the English word
-"a function that calls (asks) itself": "函数自己调用（问）自己"
+"a function that calls (asks) itself": "函数自己调用自己（自己问自己）"
 # the grey A3 tags stay English on purpose (identity keys: not reported as untranslated)
 "recursion": "recursion"
 "backtracking": "backtracking"

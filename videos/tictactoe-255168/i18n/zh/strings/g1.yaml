@@ -41,7 +41,7 @@
 "ghost games": "幽灵对局"
 "made-up moves after someone already won": "有人赢了之后编出来的走法"
 # counters (E2): the number stays last after a full-width colon (board_tally / t2c colour it)
-"re:ghost endings counted: (\\d+)": "幽灵对局计数：\\1"
+"re:ghost endings counted: (\\d+)": "多算的对局：\\1"
 "re:orders shown: (\\d+)": "已列出的顺序：\\1"
 "re:places for first O: (\\d+)": "第一个 O 的放法：\\1"
 "re:places for second O: (\\d+)": "第二个 O 的放法：\\1"

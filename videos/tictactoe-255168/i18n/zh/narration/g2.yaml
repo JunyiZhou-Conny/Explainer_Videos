@@ -48,7 +48,7 @@ S04:
 - en: "When counting gets this messy, there's another plan. Don't count cleverly. Instead, teach a computer the rules, and let it play every possible game, one by one."
   zh:
   - "手算变得这么乱的时候，我们还有 Plan B。"
-  - "别巧算了。"
+  - "别再想巧办法了。"
   - "不如教电脑学会规则，再让它一局接一局，把所有可能的对局都下一遍。"
   anchors:
     "there's another plan": "我们还有"
@@ -69,7 +69,7 @@ S05:
 - en: "Next, the computer needs to know what counts as a win. We simply list all 8 winning lines, as groups of three square numbers. Squares 0, 1 and 2 make the top row. Squares 0, 4 and 8 make a diagonal."
   zh:
   - "接下来，电脑要知道怎样才算赢。"
-  - "我们直接把能让人赢的 8 条获胜线都列出来，每条线写成一组三个格子编号。"
+  - "我们直接把所有能赢的线都列出来，一共 8 条，每条线写成一组三个格子编号。"
   - "0、1、2 号格组成最上面一排。"
   - "0、4、8 号格组成一条对角线。"
   anchors:
