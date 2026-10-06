@@ -1,8 +1,10 @@
-# Narration of S01-S03, zh-CN (edge zh-CN-XiaoxiaoNeural), sentence-aligned to script.md.
+# Narration of S01-S03, zh-CN (edge zh-CN-XiaoyiNeural, the toolkit default since 875166f; glossary
+# rule F1), sentence-aligned to script.md.
 # Rules: i18n/zh/GLOSSARY.md. say: only where the voice must differ from the subtitle
 # (三子连成一线 -> 三个连成一条线, the glossary's spoken form; 2 条 -> 两条, like 两局 / 两步).
 #
-# Anchor timing was checked against real edge zh-CN-XiaoxiaoNeural audio (word boundaries).
+# Anchor timing was checked against real edge zh-CN-XiaoxiaoNeural audio (word boundaries), the
+# voice before 875166f (renders now use Xiaoyi).
 # An anchor fires at its target's character position in the sentence (explainer.voice.AlignedClip).
 # s03_stop.py's shifts (wait_for/until ..., shift=...) were measured on the English audio and are
 # ignored in a language version, so every S03 anchor names the Chinese words its animation goes

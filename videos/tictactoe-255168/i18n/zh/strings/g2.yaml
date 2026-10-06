@@ -7,7 +7,8 @@
 "ways O could line up": "O 连成一线的方法"
 "8 lines  ×  6 orders  ×  (6 × 5 × 4 for X's 3 marks)": "8 条线 × 6 种顺序 ×（6 × 5 × 4：3 个 X 的放法）"
 "X already won": "X 已经赢了"
-"12 pairs (O's line, X's parallel line)  ×  6  ×  6": "12 对（O 的线，X 的平行线）× 6 × 6"
+# s04_messy.py builds this row from its own zh part list (part keys below), naming the two 6s
+"12 pairs (O's line, X's parallel line)  ×  6  ×  6": "12 对 × 6（O 的顺序）× 6（X 的顺序）"
 "3 rows × 2 other rows  +  3 columns × 2 other columns = 12 pairs": "3 排 × 另外 2 排 + 3 列 × 另外 2 列 = 12 对"
 "game ends on": "第几步结束"
 # table header and laptop counter (one key, two sites)
@@ -38,9 +39,11 @@
 "6 orders": "6 种顺序"
 "(6 × 5 × 4 for X's 3 marks)": "（6 × 5 × 4：3 个 X 的放法）"
 " already won": " 已经赢了"
-"12 pairs (": "12 对（"
-"'s line, ": " 的线，"
-"'s parallel line)": " 的平行线）"
+# the "12 pairs ... × 6 × 6" row: in a language version s04_messy.py uses the parts "12 pairs",
+# "  ×  ", "6", " (O's order)", "  ×  ", "6", " (X's order)" (the English row's "12 pairs (",
+# "'s line, ", "'s parallel line)" are not used there)
+" (O's order)": "（O 的顺序）"
+" (X's order)": "（X 的顺序）"
 "3 rows": "3 排"
 "2 other rows": "另外 2 排"
 "3 columns": "3 列"

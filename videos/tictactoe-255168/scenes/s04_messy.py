@@ -306,10 +306,19 @@ class Messy(VoiceScene):
         label2.move_to([0, Y2, 0]).align_to([LBL_X, 0, 0], LEFT)
         # "12 pairs of parallel lines" alone reads as 6 (3 row pairs + 3 column pairs): spell out that a
         # pair is (O's line, X's parallel line), i.e. 6 choices for O's row/column x 2 parallel X lines
-        brk2, p2 = rich([("12 pairs (", WIN_COLOR), ("O", O_COLOR), ("'s line, ", WIN_COLOR), ("X", X_COLOR),
-                         ("'s parallel line)", WIN_COLOR), ("  ×  ", S.GREY), ("6", O_COLOR),
-                         ("  ×  ", S.GREY), ("6", X_COLOR)], 26)
-        p2 = [VGroup(*p2[:5]), *p2[5:]]
+        if i18n.active():
+            # a language version names the two 6s instead ("12 对 × 6（O 的顺序）× 6（X 的顺序）"): the
+            # pair is already spelled out by the count under the boards that this row replaces, and
+            # the English wording would not fit next to the two glosses. Same 5 pieces as in English.
+            brk2, p2 = rich([("12 pairs", WIN_COLOR), ("  ×  ", S.GREY), ("6", O_COLOR),
+                             (" (O's order)", O_COLOR), ("  ×  ", S.GREY), ("6", X_COLOR),
+                             (" (X's order)", X_COLOR)], 26)
+            p2 = [p2[0], p2[1], VGroup(*p2[2:4]), p2[4], VGroup(*p2[5:7])]
+        else:
+            brk2, p2 = rich([("12 pairs (", WIN_COLOR), ("O", O_COLOR), ("'s line, ", WIN_COLOR), ("X", X_COLOR),
+                             ("'s parallel line)", WIN_COLOR), ("  ×  ", S.GREY), ("6", O_COLOR),
+                             ("  ×  ", S.GREY), ("6", X_COLOR)], 26)
+            p2 = [VGroup(*p2[:5]), *p2[5:]]
         assert 6 * 2 == 12 and 12 * 6 * 6 == 432
         brk2.next_to(label2, DOWN, buff=0.25, aligned_edge=LEFT)
         # where the 12 pairs come from, under the two boards: O's line (O's colour) x X's parallel line
