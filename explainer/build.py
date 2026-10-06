@@ -48,7 +48,7 @@ from . import REPO_ROOT
 from . import subtitles as subs
 
 # default narrator per language when video.yaml has no `languages: {<lang>: {voice: ...}}`
-DEFAULT_VOICES = {"zh": {"backend": "kokoro-zh", "voice": "zf_xiaoxiao", "speed": 1.0}}
+DEFAULT_VOICES = {"zh": {"backend": "edge", "voice": "zh-CN-XiaoxiaoNeural", "speed": 1.0}}
 
 QUALITY_DIRS = {"l": "480p15", "m": "720p30", "h": "1080p60", "p": "1440p60", "k": "2160p60"}
 
@@ -70,9 +70,11 @@ def scene_env(spec: dict, tts: str | None, lang: str | None = None) -> dict:
     env = dict(os.environ)
     lang = lang or env.get("EXPLAINER_LANG") or "en"
     v = voice_spec(spec, lang)
-    if lang != "en":                       # the language's own voice, not the English one
-        for k in ("EXPLAINER_TTS", "EXPLAINER_VOICE", "EXPLAINER_SPEED"):
-            env.pop(k, None)
+    if lang != "en":                       # the language's own voice, not the English one;
+        for k in ("EXPLAINER_TTS", "EXPLAINER_VOICE", "EXPLAINER_SPEED"):   # EXPLAINER_TTS_ZH etc.
+            env.pop(k, None)                                                  # override it
+            if env.get(f"{k}_{lang.upper()}"):
+                env[k] = env[f"{k}_{lang.upper()}"]
     env["EXPLAINER_LANG"] = lang
     env.setdefault("EXPLAINER_TTS", v.get("backend", "kokoro"))
     if tts:

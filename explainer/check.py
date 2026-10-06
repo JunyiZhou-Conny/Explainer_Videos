@@ -1,6 +1,6 @@
 """Lint a scene without rendering frames: anything off-frame, text under 20 pt, leftovers at the end.
 
-    python -m explainer.check videos/<id>/scenes/s08_payoff.py Payoff [--lang zh]
+    python -m explainer.check videos/<id>/scenes/s08_payoff.py Payoff [--lang zh] [--tts silent]
 
 Runs the scene as a Manim dry run (narration audio comes from the TTS cache, so timings are
 real) and, after every play()/wait(), reports:
@@ -24,11 +24,16 @@ XL, YL, MIN_PT = 6.6, 3.6, 19.5
 
 def main(argv=None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
-    lang = None
+    lang = tts = None
     if "--lang" in argv:                    # python -m explainer.check <file> <Class> --lang zh
         i = argv.index("--lang")
         lang = argv[i + 1]
         del argv[i:i + 2]
+    if "--tts" in argv:                     # e.g. --tts silent for a quick layout check
+        i = argv.index("--tts")
+        tts = argv[i + 1]
+        del argv[i:i + 2]
+        os.environ["EXPLAINER_TTS"] = tts
     if len(argv) != 2:
         print(__doc__)
         return 2
@@ -39,7 +44,7 @@ def main(argv=None) -> int:
         from .build import scene_env
         project = scene_file.parent.parent
         spec = yaml.safe_load((project / "video.yaml").read_text())
-        os.environ.update({k: v for k, v in scene_env(spec, None, lang).items()
+        os.environ.update({k: v for k, v in scene_env(spec, tts, lang).items()
                            if k.startswith("EXPLAINER_")})
         os.environ["EXPLAINER_PROJECT"] = str(project)
     sys.path.insert(0, str(scene_file.parent))

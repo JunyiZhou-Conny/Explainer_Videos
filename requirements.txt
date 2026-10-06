@@ -8,6 +8,6 @@ numpy
 scipy
 pyyaml
 pypdf
-# Optional backends:
-#   edge-tts          (EXPLAINER_TTS=edge, free online Microsoft voices)
-#   ElevenLabs needs no extra package, just ELEVENLABS_API_KEY
+# Chinese versions (EXPLAINER_LANG=zh): default Mandarin narrator (online Microsoft voices)
+edge-tts>=7
+# Optional: ElevenLabs needs no extra package, just ELEVENLABS_API_KEY

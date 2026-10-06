@@ -202,10 +202,14 @@ class Backend:
         """Text actually sent to the engine (respellings applied); the cache is keyed on it."""
         return sentence
 
+    # online voices pad every sentence with silence (edge: ~0.2 s before, ~0.6 s after); trimmed to
+    # these, so SENTENCE_GAP alone sets the pause between sentences
+    TRIM = (0.05, 0.12)
+
     def sentence_wav(self, sentence: str) -> Path:
-        """One sentence as a cached mono wav at SAMPLE_RATE (any backend)."""
+        """One sentence as a cached mono wav at SAMPLE_RATE (any backend), edge silence trimmed."""
         sentence = self.prepare(sentence)
-        out = self._cache_path(sentence, "wav")
+        out = self._cache_path(sentence + f"|trim={self.TRIM}", "wav")
         if not out.exists():
             out.parent.mkdir(parents=True, exist_ok=True)
             raw = self._cache_path(sentence)
@@ -213,11 +217,18 @@ class Backend:
                 tmp = raw.with_name(raw.stem + f".tmp{os.getpid()}" + raw.suffix)
                 self.synthesize(sentence, tmp)
                 tmp.replace(raw)
-            if raw != out:
-                tmp = out.with_name(out.stem + f".tmp{os.getpid()}.wav")
-                subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(raw), "-ac", "1", "-ar",
-                                str(SAMPLE_RATE), "-c:a", "pcm_s16le", str(tmp)], check=True)
-                tmp.replace(out)
+            tmp = out.with_name(out.stem + f".tmp{os.getpid()}.wav")
+            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(raw), "-ac", "1", "-ar",
+                            str(SAMPLE_RATE), "-c:a", "pcm_s16le", str(tmp)], check=True)
+            with wave.open(str(tmp)) as w:
+                data = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2").astype(np.float32) / 32767
+            loud = np.flatnonzero(np.abs(data) > 0.0056)          # -45 dBFS
+            if len(loud):
+                a = max(0, loud[0] - int(self.TRIM[0] * SAMPLE_RATE))
+                b = min(len(data), loud[-1] + int(self.TRIM[1] * SAMPLE_RATE))
+                data = data[a:b]
+            write_wav(tmp, data)
+            tmp.replace(out)
         return out
 
     def speak_sentences(self, sentences: list[str]) -> tuple[Path, float, list[tuple[float, float]]]:
@@ -426,6 +437,13 @@ class EdgeBackend(Backend):
 
         import edge_tts
 
+        ca = os.environ.get("SSL_CERT_FILE") or os.environ.get("REQUESTS_CA_BUNDLE")
+        if ca and Path(ca).exists():                  # behind a TLS-inspecting proxy: trust its CA
+            import ssl
+
+            import edge_tts.communicate as communicate
+            if hasattr(communicate, "_SSL_CTX"):
+                communicate._SSL_CTX = ssl.create_default_context(cafile=ca)
         rate = f"{round((self.speed - 1) * 100):+d}%"
         for attempt in range(6):                      # the online service occasionally drops a request
             try:
