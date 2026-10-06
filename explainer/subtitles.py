@@ -109,9 +109,27 @@ def strip_end(piece: str) -> str:
     return piece.rstrip(_DROP_AT_END + " ") if piece and _CJK.search(piece) else piece
 
 
+# an English line should not end on one of these ("by a / billion")
+_FUNCTION_WORDS = {"a", "an", "the", "of", "to", "by", "in", "on", "at", "for", "and", "or", "nor",
+                   "with", "from", "as", "is", "are", "was", "be", "its", "their", "his", "her",
+                   "that", "than", "into", "per", "if", "but", "so", "not", "no", "each", "every"}
+
+
+def _cut_penalty(text: str, c: int) -> float:
+    """Extra cost (in units) of cutting an English run at the space before position c: a plain
+    word gap costs more than a cut after punctuation, and a gap after a function word much more."""
+    if text[c - 1] != " " or _CJK.search(text):
+        return 0.0
+    prev = text[:c - 1].rsplit(" ", 1)[-1]
+    if not prev[-1:].isalnum():
+        return 0.0
+    return 2.0 + (6.0 if prev.lower() in _FUNCTION_WORDS else 0.0)
+
+
 def split_balanced(text: str, limit: float) -> list[str]:
     """Fewest pieces of at most `limit` units each, balanced in length, cut at punctuation or
-    spaces when possible (anywhere between CJK characters otherwise)."""
+    spaces when possible (anywhere between CJK characters otherwise). English pieces prefer to
+    end at punctuation and never end on an article or preposition when there is a choice."""
     text = " ".join(text.split())
     if units(text) <= limit:
         return [text]
@@ -127,7 +145,7 @@ def split_balanced(text: str, limit: float) -> list[str]:
             pool = window or [c for c in ok + good if c > prev]
             if not pool:
                 break
-            cut = min(pool, key=lambda c: abs(u_at(c) - ideal_u))
+            cut = min(pool, key=lambda c: abs(u_at(c) - ideal_u) + _cut_penalty(text, c))
             cuts.append(cut)
             prev = cut
         pieces = [text[a:b].strip() for a, b in zip([0, *cuts], [*cuts, len(text)])]
