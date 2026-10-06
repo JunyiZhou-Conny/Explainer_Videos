@@ -21,7 +21,7 @@
 # side tags of the struck lines (same words as the S06 labels and the narration)
 "← winner check": "← 判断输赢"
 "← board full": "← 棋盘满了"
-"Now delete the winner check instead.\nWhat number comes out?\n(Hint: you've met it before!)": "这次改成删掉“判断输赢”。\n会输出什么数？\n（提示：你见过它！）"
+"Now delete the winner check instead.\nWhat number comes out?\n(Hint: you've met it before!)": "这次改成删掉“判断输赢”\n会输出什么数？\n（提示：你见过它！）"
 "the ghost games\nare back": "幽灵对局\n又回来了"
 
 # ---------------------------------------------------------------- S08 s08_answer.py
