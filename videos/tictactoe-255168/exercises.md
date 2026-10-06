@@ -77,9 +77,9 @@ Still **255,168**. Swapping the names X and O doesn't change the shape of the ga
 labels change.
 </details>
 
-**8. Corner, edge or centre?** Make the program count the games where X's first move is in a
-corner (square 0), on an edge (square 1), or in the centre (square 4). Do your numbers match the
-video (27,732 · 29,592 · 25,872)? Check that 4 × corner + 4 × edge + centre = 255,168.
+**8. Corner, edge or center?** Make the program count the games where X's first move is in a
+corner (square 0), on an edge (square 1), or in the center (square 4). Do your numbers match the
+video (27,732 · 29,592 · 25,872)? Check that 4 × corner + 4 × edge + center = 255,168.
 
 <details><summary>Hint</summary>
 
