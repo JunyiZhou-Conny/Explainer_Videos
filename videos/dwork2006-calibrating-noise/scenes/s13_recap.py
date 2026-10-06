@@ -346,9 +346,9 @@ class Recap(VoiceScene):
 
     # ================================================================ 3. the better questions
     def closing_beat(self, leftovers):
-        # (Chinese has no italics: Pango would slant the Hanzi synthetically, so the quote stays upright there)
-        quote = S.text("“It’s safe: it’s anonymized.”", 36, S.GREY,
-                       slant=NORMAL if i18n.active() else ITALIC).move_to([0, 2.2, 0])
+        # Chinese has no italics (Pango would slant the Hanzi synthetically): the quote stays upright there
+        quote_kw = {} if i18n.active() else {"slant": ITALIC}
+        quote = S.text("“It’s safe: it’s anonymized.”", 36, S.GREY, **quote_kw).move_to([0, 2.2, 0])
         q1 = S.tex(r"What's the ", r"$\varepsilon$", r"?", size=64)
         q1[1].set_color(EPS_COLOR)
         q2 = S.tex(r"What counts as ", r"one person's row", r"?", size=64)
