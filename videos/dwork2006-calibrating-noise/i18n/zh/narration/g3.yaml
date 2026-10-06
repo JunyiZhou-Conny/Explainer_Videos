@@ -21,7 +21,7 @@ S07:
   - "Its width is set by a scale parameter, λ."
 - en: "Here is the trick. Center one Laplace curve at f of x, forty-one, and another at f of x prime, forty-two: the output distributions of our two worlds."
   zh:
-  - "这里有个 trick。"
+  - "这里的 trick 是这样的。"
   - "一条拉普拉斯曲线的中心在 f(x)，也就是 41，另一条在 f(x′)，也就是 42：这就是两个世界的输出分布。"
   say:
   - null
@@ -174,7 +174,7 @@ S08:
   - "回到医院的例子，ε 取 0.5：尺度为 2 的拉普拉斯噪声。"
   - "第一周，管理者报出大约 43.7。"
   - "第二周，真实人数是 42，报出大约 40.6。"
-  - "跟之前一样相减，Alice 好像让人数少了 3。"
+  - "跟之前一样做减法，Alice 好像让人数少了 3。"
   - "原本对她的判断是五五开，现在最多能有大约 62% 的把握。"
   say:
   - "回到医院的例子，艾普西隆取零点五：尺度为二的拉普拉斯噪声。"

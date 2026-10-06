@@ -6,9 +6,12 @@
 # names by glyph runs, 27 glyphs), "TCC 2006" (s02 copies venue[:3] into the TCC caption) and
 # "Sub-Linear Queries" (s02 colours glyphs 0, 4, 10).
 # Not here on purpose: single letters / symbols (H, T, F, M, ?, ✗), see glossary rule E3: the coin
-# glyphs stay H/T, so the heads / tails branch labels carry the letter (正面（H）, 反面（T）) and the
-# outcome labels read "H → “是”" (E3's "H（正面）→ “是”" would run into the crowd grid at x = -0.31). The S03 title phrase's t2c key
-# "sensitivity" is translated by group g3 (敏感度); "noise" (噪声) is here.
+# glyphs stay H/T. E3's outcome label "H（正面）→ “是”" does not fit (measured: it ends at x = 0.36, inside
+# the crowd grid, which starts at x = -0.31), and "正面（H）" on the branch sits 0.04 above the coin like a
+# caption of it. So the branch labels read 正面 / 反面 (where the English sat, right of the coin) and the
+# outcomes read "H → “是”" / "T → “否”" next to the second coin's H/T face, while the voice says
+# 正面答“是”，反面答“否”. The S03 title phrase's t2c key "sensitivity" is translated by group g3 (敏感度);
+# "noise" (噪声) is here.
 
 # ---------------------------------------------------------------- S01 · s01_hook.py
 "Hospital database": "医院数据库"
@@ -21,7 +24,7 @@
 "without Alice": "没有 Alice"
 "with Alice": "有 Alice"
 "Pause and ponder": "暂停想一想"
-"Would rounding the count\nto the nearest ten\nprotect Alice?": "把计数四舍五入到十位，\n能保护 Alice 吗？"
+"Would rounding the count\nto the nearest ten\nprotect Alice?": "把人数四舍五入到十位，\n能保护 Alice 吗？"
 "rounding cut": "取整分界线"
 "Round to the nearest ten": "四舍五入到十位"
 "Alice exposed": "Alice 暴露了"
@@ -57,8 +60,8 @@
 "· randomized response": "· 随机响应"
 "“Do you have condition X?”": "“你患有疾病 X 吗？”"
 "in private": "私下"
-"heads": "正面（H）"
-"tails": "反面（T）"
+"heads": "正面"
+"tails": "反面"
 "tell the truth": "说真话"
 "H → “yes”": "H → “是”"
 "T → “no”": "T → “否”"
@@ -95,6 +98,8 @@
 "· “anonymous” ≠ anonymous": "· “匿名”≠ 匿名"
 "name": "姓名"
 "ZIP": "邮编"
+# table headers: 出生日期 / 性别 are auto-shrunk (86% / 81%) to fit columns sized for "born" / "sex";
+# kept to match the narration (邮编、出生日期和性别), the column widths are a scene change
 "born": "出生日期"
 "sex": "性别"
 "diagnosis": "诊断"
@@ -109,7 +114,7 @@
 "K. Osei": "K. Osei"
 "M. Novak": "M. Novak"
 "public voter list": "公开的选民名单"
-"· ZIP + birth date + sex  →  most people unique": "· 邮编 + 出生日期 + 性别  →  大多数人可被唯一识别"
+"· ZIP + birth date + sex  →  most people unique": "· 邮编 + 出生日期 + 性别  →  大多数人可唯一识别"
 "privacy = a property of the process": "隐私 = 发布过程（机制）的性质"
 "not of how the released table looks": "而不是发布出来的表长什么样"
 "… whatever else the attacker knows": "……无论攻击者还知道什么"
@@ -144,7 +149,9 @@
 "\\mathrm{Lap}\\big(": "\\mathrm{Lap}\\big("
 "randomness": "随机性"
 "must survive\nany attacker": "必须抵御\n任意攻击者"
-"noise you\ncan analyse": "可以分析的\n噪声"
+# hand-over labels (also rebuilt by S12): two lines keep the ink 0.05 clear of the diagonal arrow above;
+# one line (可分析的噪声) would touch it
+"noise you\ncan analyse": "可分析的\n噪声"
 "TCC": "TCC"
 "= a cryptography conference": "= 一个密码学会议"
 "define security first": "先定义安全性"
