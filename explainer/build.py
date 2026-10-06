@@ -48,7 +48,8 @@ from . import REPO_ROOT
 from . import subtitles as subs
 
 # default narrator per language when video.yaml has no `languages: {<lang>: {voice: ...}}`
-DEFAULT_VOICES = {"zh": {"backend": "edge", "voice": "zh-CN-XiaoxiaoNeural", "speed": 1.0}}
+# (edge voices switch to the official Azure endpoint when AZURE_SPEECH_KEY/REGION are set: see voice.py)
+DEFAULT_VOICES = {"zh": {"backend": "edge", "voice": "zh-CN-XiaoyiNeural", "speed": 1.0}}
 
 QUALITY_DIRS = {"l": "480p15", "m": "720p30", "h": "1080p60", "p": "1440p60", "k": "2160p60"}
 

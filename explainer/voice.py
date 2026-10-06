@@ -2,13 +2,17 @@
 
 Pick a backend with environment variables (or the `voice:` block of a video.yaml):
 
-    EXPLAINER_TTS     kokoro (default, local + free) | elevenlabs | edge | espeak | silent
+    EXPLAINER_TTS     kokoro (default, local + free) | elevenlabs | edge | azure | espeak | silent
     EXPLAINER_VOICE   backend-specific voice name, e.g. af_heart (kokoro),
-                      an ElevenLabs voice id, en-US-AndrewNeural (edge)
-    EXPLAINER_SPEED   speaking-rate multiplier (kokoro / edge), default 1.0
+                      an ElevenLabs voice id, en-US-AndrewNeural (edge / azure)
+    EXPLAINER_SPEED   speaking-rate multiplier (kokoro / edge / azure), default 1.0
 
     ELEVENLABS_API_KEY        required for elevenlabs
     ELEVENLABS_MODEL          default eleven_multilingual_v2
+    AZURE_SPEECH_KEY          required for azure (with AZURE_SPEECH_REGION, e.g. eastus). When both
+    AZURE_SPEECH_REGION       are set, `edge` voices are fetched from the official Azure AI Speech
+                              API instead (same voices; licensed for published videos, unlike the
+                              free Edge Read Aloud endpoint). EXPLAINER_EDGE_VIA_AZURE=0 opts out.
     KOKORO_MODEL_DIR          folder holding kokoro-v1.0.onnx and voices-v1.0.bin
                               (default: ~/.cache/explainer/kokoro, then /opt/tts-models)
 
@@ -456,6 +460,63 @@ class EdgeBackend(Backend):
         raise RuntimeError(f"edge-tts failed for {text[:60]!r}: {err if 'err' in locals() else 'empty audio'}")
 
 
+class AzureBackend(Backend):
+    """Azure AI Speech REST API (official; the free F0 tier covers 0.5M characters a month).
+    Needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION. Serves the same neural voices as edge."""
+
+    name = "azure"
+    ext = "wav"
+
+    def __init__(self, voice: str = "en-US-AndrewNeural", speed: float = 1.0):
+        self.voice, self.speed = voice, speed
+        self.key = os.environ.get("AZURE_SPEECH_KEY")
+        self.region = os.environ.get("AZURE_SPEECH_REGION")
+        if not (self.key and self.region):
+            raise RuntimeError("EXPLAINER_TTS=azure needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION")
+
+    def params(self):
+        return {"voice": self.voice, "speed": self.speed}
+
+    def prepare(self, sentence: str) -> str:
+        return respell(sentence)
+
+    def ssml(self, text: str) -> str:
+        from xml.sax.saxutils import escape
+
+        locale = "-".join(self.voice.split("-")[:2])
+        rate = f"{round((self.speed - 1) * 100):+d}%"
+        return (f'<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="{locale}">'
+                f'<voice name="{self.voice}"><prosody rate="{rate}">{escape(text)}</prosody></voice></speak>')
+
+    def synthesize(self, text, out):
+        import time
+        import urllib.error
+        import urllib.request
+
+        req = urllib.request.Request(
+            f"https://{self.region}.tts.speech.microsoft.com/cognitiveservices/v1",
+            data=self.ssml(text).encode("utf-8"),
+            headers={"Ocp-Apim-Subscription-Key": self.key, "Content-Type": "application/ssml+xml",
+                     "X-Microsoft-OutputFormat": "riff-24khz-16bit-mono-pcm", "User-Agent": "explainer"},
+        )
+        err = None
+        for attempt in range(6):                      # 429 / 5xx: back off and retry
+            try:
+                with urllib.request.urlopen(req, timeout=120) as r:
+                    data = r.read()
+                if len(data) > 1000:
+                    out.write_bytes(data)
+                    return
+            except urllib.error.HTTPError as e:
+                if e.code not in (429, 500, 502, 503, 504):
+                    raise RuntimeError(f"Azure TTS HTTP {e.code} for {text[:60]!r}: {e.read()[:300]!r}") from e
+                err = e
+            except OSError as e:
+                err = e
+            time.sleep(2 ** attempt)
+        raise RuntimeError(f"Azure TTS failed for {text[:60]!r}: {err or 'empty audio'}")
+
+
 class EspeakBackend(Backend):
     """espeak-ng: robotic but always available offline."""
 
@@ -490,8 +551,13 @@ def get_backend() -> Backend:
         return KokoroBackend(voice or "af_heart", speed)
     if name == "elevenlabs":
         return ElevenLabsBackend(voice)
+    if name == "edge" and os.environ.get("AZURE_SPEECH_KEY") and os.environ.get("AZURE_SPEECH_REGION") \
+            and os.environ.get("EXPLAINER_EDGE_VIA_AZURE", "1") != "0":
+        name = "azure"                                # same voice through the licensed endpoint
     if name == "edge":
         return EdgeBackend(voice or "en-US-AndrewNeural", speed)
+    if name == "azure":
+        return AzureBackend(voice or "en-US-AndrewNeural", speed)
     if name == "espeak":
         return EspeakBackend(voice or "en-us", speed)
     if name == "silent":
