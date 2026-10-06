@@ -21,7 +21,7 @@
 "for all neighbors ": '对任意相邻数据库\ '
 'all analysts,\quad ': '任意分析者，'
 "all outputs $t$": "任意输出 $t$"
-'\text{small } \varepsilon\!:\quad': '\text{对于很小的}\ \varepsilon\text{：}\quad'
+'\text{small } \varepsilon\!:\quad': '\text{对于很小的}\ \varepsilon\text{：}\,'    # the full-width ： already spaces it
 '\ln(\text{ratio})': '\ln(\text{比值})'
 "yes": "“是”"
 '\text{heads }\tfrac12': '\text{正面}\ \tfrac12'
@@ -30,10 +30,10 @@
 "Warner's coin: what is its ε?": "Warner 的硬币对应多大的 ε？"
 "Warner's coin: what is its": "Warner 的硬币对应多大的"
 '\text{truth yes}': '\text{真实：是}'
-'\Pr[\text{says yes}]': '\Pr[\text{回答“是”}]'
+'\Pr[\text{says yes}]': '\Pr[\text{回答“是”}\mkern-6mu]'    # pull ] in over the blank half of ”
 '\text{truth no}': '\text{真实：否}'
-"→ yes": "→ “是”"
-"→ no": "→ “否”"
+"→ yes": "→“是”"    # no space: “ brings its own blank half
+"→ no": "→“否”"
 "attacker": "攻击者"
 '\text{ or }': '\ \text{还是}\ '
 "new odds": "后验概率比"

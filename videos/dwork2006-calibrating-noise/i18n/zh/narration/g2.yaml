@@ -160,7 +160,9 @@ S05:
   - null
   - null
   anchors:
-    "statistical distance": "统计距离"
+    # the gloss （即 TV 距离） is subtitle-only, so the voice says 统计距离 about where the display
+    # shows the gloss (the target 统计距离 itself wrote the label 0.7 s before the word)
+    "statistical distance": "（即 TV 距离）"
     "half the area": "也就是两条曲线间"
 - en: "Consider this mechanism: pick one row at random and publish it, word for word. Change one person's row, and the output distribution moves by only one over n. For a big database that is tiny, so by the averaged measure this looks private."
   zh:

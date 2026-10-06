@@ -2,9 +2,9 @@
 # say: spoken form where the display text has 《》, f(x) or a subtitle-only gloss (rule F2);
 # anchors: mid-sentence vo.wait_until / vo.until phrases of the scene code (rule D2);
 # en_display: English subtitle line with digits / symbols (rule G3); none uses √ (rule C3).
-# Durations measured with the toolkit's EdgeBackend (zh-CN-XiaoxiaoNeural, trimmed clips, SENTENCE_GAP)
-# against the English clips (rule D3): every block is within +15% except S02 line 5 (+17.8%; SuLQ is
-# read letter by letter until explainer/lexicon.zh.yaml maps it to "sulk", which saves ~0.35 s).
+# Durations (python -m explainer.script script.md --lang zh, voice zh-CN-XiaoyiNeural, the toolkit
+# default since 875166f) against the English clips (rule D3): every block is within +15%, the longest
+# S03 line 1 (x1.14); SuLQ is read via explainer/lexicon.zh.yaml ("sulk").
 # Kept on purpose: the comma after "Adam Smith" (S01 line 6) and after "计算机科学家" (S02 line 2) give
 # the subtitle splitter a clean break.
 S01:
@@ -34,7 +34,7 @@ S01:
   - "The answer is now 42."
 - en: "Subtract, and the researcher has learned something very specific about Alice, without seeing a single record. Before we go on, try to fix this yourself. Pause and ponder: would rounding the count to the nearest ten protect Alice? Pause the video if you need more time."
   zh:
-  - "两数一减，研究者一条记录都没看，就知道了 Alice 一件很具体的事。"
+  - "两数一减，研究者就知道了 Alice 一件很具体的事，却一条记录都没看。"
   - "继续之前，先自己试着补上这个漏洞。"
   - "暂停想一想：人数四舍五入到十位，能保护 Alice 吗？"
   - "需要多想一会儿的话，可以先暂停视频。"
@@ -71,7 +71,8 @@ S01:
   # The anchor position is estimated by character count, and the Latin names and the title are
   # spoken faster per character than Chinese, so the targets are the surnames (the glyphs S01 fades
   # in) and "Noise": with the given names / 《Calibrating the beats came 0.4-1.4 s too early
-  # (faster-whisper word times of the zh clip).
+  # (faster-whisper word times of the zh clip). Re-checked with Xiaoyi (edge WordBoundary times): each
+  # name fades in 0.1-0.45 s before its surname, the title box 0.2 s before "Calibrating".
   anchors:
     "Cynthia Dwork": "Dwork"
     "Frank McSherry": "McSherry"
@@ -118,6 +119,7 @@ S02:
   # 85 characters the anchor estimate counts, so every target there would land 0.4-1.5 s late; these
   # targets sit a few characters before the spoken word and hit it (faster-whisper word times and
   # the pauses of the clip: 邮编 8.4 s, 就能 10.9, 1997 13.45, 号称 15.0, 公开 16.7 into the line).
+  # Re-checked with Xiaoyi (edge WordBoundary times): every beat lands within 0.25 s of its word.
   anchors:
     "just remove the names": "直接去掉姓名"
     "kept failing": "一再失败"

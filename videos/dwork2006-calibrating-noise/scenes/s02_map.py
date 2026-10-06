@@ -579,9 +579,12 @@ class LineageBefore(VoiceScene):
         gov_copy.move_to(hosp[3][0][0].get_left() + RIGHT * CELL_PAD, aligned_edge=LEFT)
         gov_row_hl = SurroundingRectangle(hosp[3], color=ALICE, buff=0.02, stroke_width=3)
 
+        # Chinese "……" (here and in '… many more questions') must come from the CJK font: the Latin
+        # font comes first in the fallback list and its U+2026 sits on the baseline
+        cjk_dots = {"t2f": {"…": i18n.CJK_FONTS["serif"]}} if i18n.active() else {}
         lesson1 = S.text("privacy = a property of the process", 30, S.WHITE)
         lesson1b = S.text("not of how the released table looks", 24, S.GREY)
-        lesson2 = S.text("… whatever else the attacker knows", 30, S.WHITE)
+        lesson2 = S.text("… whatever else the attacker knows", 30, S.WHITE, **cjk_dots)
         lessons = VGroup(lesson1, lesson1b, lesson2).arrange(DOWN, buff=0.28, aligned_edge=LEFT)
         lessons.move_to([-2.9, -2.35, 0])
         side_brace = Brace(voter, LEFT, color=S.GREY, buff=0.1)
@@ -666,7 +669,7 @@ class LineageBefore(VoiceScene):
         # n is not defined until S03: say what it is, right under the formula that uses it
         n_note = S.text("(n = number of rows)", 20, S.GREY).next_to(err_lab, DOWN, buff=0.08)
         n_note.align_to(err_lab, LEFT)
-        more = S.text("… many more questions", 20, S.GREY).move_to([3.55, y_q[2], 0], aligned_edge=LEFT)
+        more = S.text("… many more questions", 20, S.GREY, **cjk_dots).move_to([3.55, y_q[2], 0], aligned_edge=LEFT)
         copy_bits = ["1", "0", "1", "1", "0", "1", "1", "0"]
         copy_q = VGroup(*[bit_cell("?", cw, 0.38, color=S.GREY).move_to([cx[i], y_copy, 0]) for i in range(8)])
         copy_f = VGroup(*[bit_cell(copy_bits[i], cw, 0.38,
