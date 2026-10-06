@@ -200,20 +200,27 @@ def _split_sentence(sent: str, width: int, lines: int) -> list[str]:
         return [sent]
     clause = [m.end() for m in re.finditer(r"[,:;]\s", sent)]
     spaces = [m.end() for m in re.finditer(r"\s", sent)]
+    def penalty(c):                     # word gaps cost more than clause cuts (subtitles._cut_penalty)
+        return subs._cut_penalty(sent, c) * 1.8
+
     for k in range(2, 12):
-        cuts, prev = [], 0
-        for j in range(1, k):
-            ideal = len(sent) * j / k
-            near = [c for c in clause if prev < c and abs(c - ideal) <= len(sent) / (2.5 * k)]
-            pool = near or [c for c in spaces if prev < c]
-            if not pool:
-                break
-            cut = min(pool, key=lambda c: abs(c - ideal))
-            cuts.append(cut)
-            prev = cut
-        pieces = [sent[a:b].strip() for a, b in zip([0, *cuts], [*cuts, len(sent)])]
-        if all(p and _fits(p, width, lines) for p in pieces):
-            return pieces
+        for pool_of in (lambda prev, ideal: [c for c in clause if prev < c],      # clauses, if they fit
+                        lambda prev, ideal: ([c for c in clause if prev < c and abs(c - ideal) <= len(sent) / (2.5 * k)]
+                                             or [c for c in spaces if prev < c])):
+            cuts, prev = [], 0
+            for j in range(1, k):
+                ideal = len(sent) * j / k
+                pool = pool_of(prev, ideal)
+                if not pool:
+                    break
+                cut = min(pool, key=lambda c: abs(c - ideal) + penalty(c))
+                cuts.append(cut)
+                prev = cut
+            if len(cuts) != k - 1:
+                continue
+            pieces = [sent[a:b].strip() for a, b in zip([0, *cuts], [*cuts, len(sent)])]
+            if all(p and _fits(p, width, lines) for p in pieces):
+                return pieces
     return [" ".join(w) for w in [textwrap.wrap(sent, width)]]
 
 

@@ -169,13 +169,13 @@ So when can a game end?
 Not before move 5.
 
 39
-00:02:17,073 --> 00:02:20,051
-X plays moves 1, 3 and 5, so the fifth move
+00:02:17,073 --> 00:02:18,804
+X plays moves 1, 3 and 5,
 
 40
-00:02:20,051 --> 00:02:23,238
-is the first time anyone can have three
-marks.
+00:02:18,804 --> 00:02:23,238
+so the fifth move is the first time anyone
+can have three marks.
 
 41
 00:02:23,484 --> 00:02:27,409
@@ -374,14 +374,13 @@ Now for the clever part: a function called
 explore.
 
 84
-00:05:18,354 --> 00:05:21,292
-We tell it whose turn it is, and its job is
-to count
+00:05:18,354 --> 00:05:19,936
+We tell it whose turn it is,
 
 85
-00:05:21,292 --> 00:05:24,455
-every game that can still happen from the
-current board.
+00:05:19,936 --> 00:05:24,455
+and its job is to count every game that can
+still happen from the current board.
 
 86
 00:05:24,700 --> 00:05:26,599
@@ -637,14 +636,13 @@ And here's how it connects to nine
 factorial.
 
 141
-00:09:00,781 --> 00:09:04,855
+00:09:00,781 --> 00:09:06,929
 Remember, nine factorial counted each game
-that ends on
+that ends on move 5 a total of 24 times,
 
 142
-00:09:04,855 --> 00:09:08,930
-move 5 a total of 24 times, once for each
-ghost ending.
+00:09:06,929 --> 00:09:08,930
+once for each ghost ending.
 
 143
 00:09:09,250 --> 00:09:14,114
@@ -846,14 +844,13 @@ But games stop when someone wins, so many of
 those orders are ghost games.
 
 186
-00:12:06,746 --> 00:12:09,827
+00:12:06,746 --> 00:12:11,334
 And a short recursive program counts every
-real
+real game by trying a move,
 
 187
-00:12:09,827 --> 00:12:13,039
-game by trying a move, exploring, and
-undoing it.
+00:12:11,334 --> 00:12:13,039
+exploring, and undoing it.
 
 188
 00:12:13,359 --> 00:12:18,095
