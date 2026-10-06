@@ -1,33 +1,42 @@
 """S06 · Exploring every game.
 
+The explore() panel (common.explore_code) spans x -6.6 .. 2.4; every side label, tree, counter and
+board of this scene sits right of x = 2.5 (or above / below the panel) and inside x <= 6.6.
+
 Beats
-1. explore() appears (lines 23-35, the shared S06/S07 panel): its name and `player` are boxed;
-   side labels at full brightness: "whose turn", range(9) "squares 0 to 8", next_player "switch
-   turns", total += "add to the total". A one-time note above the first comment:
-   "# … = a note for humans (the computer skips it)", every # comment flashing once.
+1. explore() appears (lines 23-35, the shared S06/S07 panel): its name and `player` are boxed, with
+   the side label "whose turn" (the narration says it). Then, on its own, a one-time note above the
+   first comment: "# … = a note for humans (the computer skips it)", every # comment flashing once.
 2. The two stopping rules, each with a side label at its lines ("← someone won? → 1",
    "← board full? → 1 (a draw)") and a legal finished board below: X wins (diagonal) -> "1 game";
    a full board with no line turns GREY -> "1 game (a draw)". The 1s fly out of `return 1` into
    the label, then down to the board.
-3. The loop on  . . . / X X O / O X O  (X to move), side labels "← try each empty square" (for/if)
-   and "← count games from here" (total +=): the empty squares blink, X drops into each, the board
-   slides down to a smaller copy ("?"), the answers 2, 1, 2 come back and `total +=` collects
-   them in a GREEN counter: 5.
-4. Zoom into the loop's first child  X . . / X X O / O X O  (O to move): it grows into one working
-   board with a tiny tree of snapshots under it: O top-right wins with the 2-5-8 column (1); a RED
-   eraser takes it back; O top-middle, then X fills the last square: a GREY draw (1); "Undo both
-   moves": the RED eraser takes back X, then O; "and add up": the 1s travel up (1 + 1 = 2 games).
-   "With the other two branches": zoom back out to a centred copy of the loop's tree, the 2 drops
-   back under the first child, and the answers 2, 1, 2 make "2 + 1 + 2 = 5" (GREEN).
-5. Recursion: explore(next_player) jumps back to `def explore`; a staircase of calls adds one mark
-   each until a stopping rule fires. The staircase becomes the leftmost branch of the whole game
-   tree (empty board on top, 9 first moves, 9 x 8 = 72 like S02, then a sampled fringe whose leaves
-   end at different depths). explore walks down, one step at a time, to its first leaf (X0 O1 X2
-   O3 X4 O5 X6, a real first game) with the side board filling up; on "and counts the leaves" the
-   leaf flashes GREEN, "games counted" 1.
-6. Undo (RED line): the side board becomes "one shared board" (a whiteboard); a close-up of the
-   bottom of the branch; the eraser takes back X6, the path steps up, then goes down the next
-   branches in explore's real order (X7 O6 X8 -> 2, then X7 O8 X6 -> 3).
+3. The loop on  . . . / X X O / O X O  (X to move). Each side label appears when its line is
+   narrated: "squares 0 to 8" (range(9)) and "try each empty square" on "So explore tries",
+   "count games from here" on "and then asks itself", "switch turns" on "now for the other
+   player", GREEN "add to the total" (total +=) on "It adds up". The empty squares blink, X drops
+   into each, the board slides down to a smaller copy ("?"), the answers 2, 1, 2 come back and
+   `total +=` collects them in a GREEN counter: 5.
+4. The loop's first child  X . . / X X O / O X O  (O to move): everything else clears away, then
+   that small board visibly GROWS into one working board, its "2" riding along to the right. A tiny
+   tree of snapshots under it: O top-right wins with the 2-5-8 column (1); a RED eraser takes it
+   back; O top-middle, then X fills the last square: a GREY draw (1); "Undo both moves": the RED
+   eraser takes back X, then O; "and add up": the 1s travel up in front of the 2 (1 + 1 = 2 games).
+   "With the other two branches": the working board SHRINKS back into its slot in a centred copy of
+   the loop's tree, the 2 drops under it, and the answers 2, 1, 2 make "2 + 1 + 2 = 5" (GREEN).
+5. Recursion: the call explore(next_player) and the def line explore(player) get matching boxes,
+   joined by a curved arrow drawn beside the panel; "recursive / a function that calls (asks)
+   itself" on "it's called recursive". A staircase of calls adds one mark each until a stopping
+   rule fires. The staircase becomes the leftmost branch of the whole game tree (empty board on
+   top, 9 first moves, 9 x 8 = 72 like S02, then a sampled fringe whose leaves end at different
+   depths). explore walks down, one step at a time, to its first leaf (X0 O1 X2 O3 X4 O5 X6, a real
+   first game) with the side board filling up; on "and counts the leaves" the leaf flashes GREEN,
+   "games counted" 1.
+6. Undo (RED line): the side board becomes "one shared board" (a whiteboard) with faint square
+   numbers 0-8 in its corners; a close-up of the bottom of the branch whose edges say which square
+   each move takes ("X in 6", "O in 8", ...). The eraser takes back X6, the path steps up, then goes
+   down the next branches in explore's real order (X in 7, O in 6, X in 8 -> 2; then O in 8, X in 6
+   -> 3), the matching square lighting up on the whiteboard at each step.
    Caption: try -> explore -> undo = backtracking.
 
 Every board and number is checked in _check() (runs on import).
@@ -60,7 +69,8 @@ B3_ANS = [2, 1, 2]
 B4 = "X..XXOOXO"          # = B3's first child (X on 0), O to move; explore gives 2
 B4_WIN = 2                # O on 2 (top-right) wins with the 2-5-8 column
 B4_TRY, B4_FILL = 1, 2    # O on 1 (top-middle), then X fills 2: full board, no line: a draw
-KID_S, KID_Y, KID_X = 0.9, 1.22, (2.65, 4.3, 5.95)     # beat 3: the three children of B3
+PARENT_C = np.array([4.55, 2.95, 0])                    # beat 3: the loop's board (X to move)
+KID_S, KID_Y, KID_X = 0.85, 1.5, (3.15, 4.55, 5.95)    # beat 3: the three children of B3
 WORK_C, WORK_S = np.array([0, 2.35, 0]), 2.0           # beat 4: the working board
 PATH = [(0, "X"), (1, "O"), (2, "X"), (3, "O"), (4, "X"), (5, "O"), (6, "X")]   # explore's 1st game
 NEXT1 = [(7, "X"), (6, "O"), (8, "X")]     # after undoing X6: the 2nd game explore finds
@@ -164,9 +174,9 @@ def lines_bar(code, k0: int, k1: int | None = None, color: str = WIN_COLOR,
 
 def line_tag(code, k: int, s: str, color: str = S.WHITE, dy: float = 0.0, size: float = TAG,
              **kw) -> Text:
-    """'<- label' just right of the code panel, level with line k."""
+    """'<- label' just right of the code panel (x = 2.4), level with line k."""
     y = code_line(code, k).get_center()[1] + dy
-    return S.text("← " + s, size, color, **kw).move_to([code.get_right()[0] + 0.15, y, 0],
+    return S.text("← " + s, size, color, **kw).move_to([code.get_right()[0] + 0.12, y, 0],
                                                        aligned_edge=LEFT)
 
 
@@ -188,12 +198,6 @@ def cam_out(m, frm, to, k: float, **kw):
     """FadeOut as if the camera zooms: point `frm` moves to `to` and everything scales by k."""
     c = m.get_center()
     return FadeOut(m, shift=np.asarray(to) + k * (c - np.asarray(frm)) - c, scale=k, **kw)
-
-
-def cam_in(m, frm, to, k: float, **kw):
-    """FadeIn from where that zoom (frm -> to, scale k) would have put m."""
-    c = m.get_center()
-    return FadeIn(m, shift=c - (np.asarray(to) + k * (c - np.asarray(frm))), scale=k, **kw)
 
 
 def to_move(sym: str, size: float = 30) -> Text:
@@ -335,16 +339,23 @@ def sample_tree(seed: int = 11):
 
 
 # ------------------------------------------------------------------ the close-up (beat 6)
-CU = {"top": (3.6, 3.45), "A": (3.6, 2.95),
-      "X6": (2.1, 1.95), "X7": (3.6, 1.95), "X8": (5.1, 1.95),
-      "O6": (2.9, 0.95), "O8": (4.3, 0.95),
-      "X8b": (2.9, -0.05), "X6b": (4.3, -0.05)}
+# right of the code panel (x >= 2.6) and above the whiteboard
+CU = {"top": (4.5, 3.47), "A": (4.5, 3.05),
+      "X6": (2.9, 1.7), "X7": (4.5, 1.7), "X8": (6.1, 1.7),
+      "O6": (3.8, 0.6), "O8": (5.2, 0.6),
+      "X8b": (3.8, -0.45), "X6b": (5.2, -0.45)}
 CU = {k: np.array([x, y, 0]) for k, (x, y) in CU.items()}
 CU_EDGES = [("A", "X6", 6, "X"), ("A", "X7", 7, "X"), ("A", "X8", 8, "X"),
             ("X7", "O6", 6, "O"), ("X7", "O8", 8, "O"), ("O6", "X8b", 8, "X"), ("O8", "X6b", 6, "X")]
+# where each edge's "X in 6" label sits: (fraction along the edge, side, gap). The label of the
+# middle edge A-X7 sits low, next to X7, to stay clear of the A-X8 edge.
+CU_LAB = {"X6": (0.5, LEFT, 0.3), "X7": (None, RIGHT, 0.12), "X8": (0.5, RIGHT, 0.3),
+          "O6": (0.5, LEFT, 0.2), "O8": (0.5, RIGHT, 0.2), "X8b": (0.5, LEFT, 0.12),
+          "X6b": (0.5, RIGHT, 0.12)}
 CU_LEAVES = ["X6", "X8", "X8b", "X6b"]
-WB_C = np.array([3.9, -2.32, 0])       # the whiteboard (clear of the "<- undo" tag)
-WB_S = 1.6
+WB_C = np.array([5.2, -2.2, 0])        # the whiteboard: right of the "<- undo" tag, below the tree
+WB_S = 2.0                             # big enough for corner square numbers next to the marks
+WB_MARK = 0.5                          # marks on the whiteboard: 0.5 of a square, so the corners stay free
 
 
 class Explore(VoiceScene):
@@ -382,38 +393,33 @@ class Explore(VoiceScene):
             p_box = token_box(player)
             turn = line_tag(code, 0, "whose turn: X or O", t2c={"X": X_COLOR, "O": O_COLOR})
             self.play(Create(p_box), FadeIn(turn, shift=LEFT * 0.2), run_time=0.8)
+            # the note gets its own moment (no other label appears with it; it stays until the
+            # first stopping rule): "# ..." is for humans; every comment in the panel flashes once.
+            # The other side labels come in the loop beat, as their lines are narrated.
             vo.wait_until("and its job is")
-            rng_box = token_box(glyphs(code, 6, "range(9)"))
-            rng_tag = line_tag(code, 6, "squares 0 to 8")
-            self.play(Create(rng_box), FadeIn(rng_tag, shift=LEFT * 0.2), run_time=0.6)
-            # every side label stays at full brightness (and its line undimmed) for the whole beat
-            sw_tag = line_tag(code, 9, "switch turns", dy=0.14)
-            self.play(Indicate(code_line(code, 9), color=S.WHITE, scale_factor=1.03),
-                      FadeIn(sw_tag, shift=LEFT * 0.2), run_time=0.6)
-            tot_box = token_box(glyphs(code, 10, "total +="), COUNT_COLOR)
-            tot_tag = line_tag(code, 10, "add to the total", COUNT_COLOR, dy=-0.17)
-            self.play(Create(tot_box), FadeIn(tot_tag, shift=LEFT * 0.2), run_time=0.6)
-            # the note: "# ..." is for humans; every comment in the panel flashes once
             self.play(FadeIn(hint, shift=DOWN * 0.15), GrowArrow(hint_arrow),
                       LaggedStart(*[Indicate(n, color=WIN_COLOR, scale_factor=1.06) for n in notes],
                                   lag_ratio=0.15), run_time=1.3)
-        self.intro_marks = VGroup(name_box, p_box, turn, rng_box, rng_tag, sw_tag, tot_box, tot_tag)
+            self.play(Indicate(hint[0][0], color=WIN_COLOR, scale_factor=1.15), run_time=0.8)
+        self.intro_marks = VGroup(name_box, p_box, turn)
         self.hint = VGroup(hint, hint_arrow)
 
     # ================================================================ 2. two stopping rules
     def beat_stops(self):
         code = self.code
-        # side labels at the line heights (beat 1's style); the example boards sit below them
+        # side labels at the line heights (beat 1's style, 24 pt so the longer one ends at x 6.57);
+        # the example boards sit below them, right of the panel
         s_won, s_draw = "someone won? → 1", "board full? → 1 (a draw)"
-        tag_won = line_tag(code, 1, s_won, dy=-0.02, t2c={"1": COUNT_COLOR})
-        tag_draw = line_tag(code, 3, s_draw, dy=-0.16, t2c={"1": COUNT_COLOR, "(a draw)": DRAW_COLOR})
+        tag_won = line_tag(code, 1, s_won, dy=-0.02, size=24, t2c={"1": COUNT_COLOR})
+        tag_draw = line_tag(code, 3, s_draw, dy=-0.16, size=24,
+                            t2c={"1": COUNT_COLOR, "(a draw)": DRAW_COLOR})
         aw, ad = at_char("← " + s_won, "→"), at_char("← " + s_draw, "→")
-        won = snap(B2_WON, 1.8, [2.65, -1.3, 0], stroke=5, line=(0, 8))
-        draw = snap(B2_DRAW, 1.8, [5.1, -1.3, 0], stroke=5)
-        lab_won = S.text("1 game", 28, COUNT_COLOR).next_to(won, DOWN, buff=0.3)
-        lab_draw = S.text("1 game (a draw)", 28, COUNT_COLOR, t2c={"(a draw)": DRAW_COLOR}) \
-            .next_to(draw, DOWN, buff=0.3)
-        lab_draw.align_to(lab_won, DOWN)
+        won = snap(B2_WON, 1.6, [3.4, -0.95, 0], stroke=4.5, line=(0, 8))
+        draw = snap(B2_DRAW, 1.6, [5.75, -0.95, 0], stroke=4.5)
+        lab_won = S.text("1 game", 28, COUNT_COLOR).next_to(won, DOWN, buff=0.28)
+        lab_draw = VGroup(S.text("1 game", 28, COUNT_COLOR), S.text("(a draw)", 28, DRAW_COLOR)) \
+            .arrange(DOWN, buff=0.1).next_to(draw, DOWN, buff=0.28)
+        lab_draw.align_to(lab_won, UP)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(self.intro_marks), run_time=0.5)
@@ -438,23 +444,31 @@ class Explore(VoiceScene):
             self.play(draw[1].animate.set_color(DRAW_COLOR), run_time=0.6)
             self.play(FadeIn(tag_draw[ad]), TransformFromCopy(glyphs(code, 4, "1"), tag_draw[ad + 1]),
                       FadeIn(tag_draw[ad + 2:], shift=LEFT * 0.1), run_time=0.7)
-            self.play(TransformFromCopy(tag_draw[ad + 1], lab_draw[0]),
-                      FadeIn(lab_draw[1:], shift=LEFT * 0.1), run_time=0.6)
+            self.play(TransformFromCopy(tag_draw[ad + 1], lab_draw[0][0]),
+                      FadeIn(VGroup(lab_draw[0][1:], lab_draw[1]), shift=LEFT * 0.1), run_time=0.6)
         self.stop_stuff = VGroup(won, draw, lab_won, lab_draw, bar, tag_won, tag_draw)
 
     # ================================================================ 3. the loop: try every square
     def beat_loop(self):
         code = self.code
-        # the tree sits ABOVE the side labels (which are level with lines 6-7 and 10); the GREEN
-        # counter sits below them
-        parent = snap(B3, 1.2, [4.3, 2.95, 0], stroke=4)
+        # the tree sits ABOVE the side labels (a stack level with lines 6-10, each label appearing
+        # as its line is narrated); the GREEN counter sits below them
+        parent = snap(B3, 1.2, PARENT_C, stroke=4)
         cap = to_move("X", 30).next_to(parent, LEFT, buff=0.45)
         slots = [np.array([x, KID_Y, 0]) for x in KID_X]
         total_lab = S.text("total =", 32, S.WHITE, font=MONO)
         total_num = S.text("0", 40, COUNT_COLOR, font=MONO)
-        counter = VGroup(total_lab, total_num).arrange(RIGHT, buff=0.25).move_to([4.3, -2.1, 0])
-        tag_try = line_tag(code, 6, "try each empty square", dy=-0.1)
-        tag_count = line_tag(code, 10, "count games from here")
+        counter = VGroup(total_lab, total_num).arrange(RIGHT, buff=0.25).move_to([4.55, -2.15, 0])
+        # line 6 for ... range(9) | 7 if empty | 9 next_player | 10 total += explore(...); the small
+        # dy's spread the stack to 0.37 apart without any arrow pointing at a different line
+        rng_box = token_box(glyphs(code, 6, "range(9)"))
+        rng_tag = line_tag(code, 6, "squares 0 to 8", dy=0.12)
+        tag_try = line_tag(code, 7, "try each empty square", dy=-0.02)
+        sw_tag = line_tag(code, 9, "switch turns", dy=0.067)
+        tag_count = line_tag(code, 10, "count games from here", dy=-0.076)
+        tot_box = token_box(glyphs(code, 10, "total +="), COUNT_COLOR)
+        tot_tag = S.text("add to the total", TAG, COUNT_COLOR).next_to(tag_count, DOWN, buff=0.1) \
+            .align_to(tag_count[1], LEFT)            # under "count games from here": same line
         kids, arrows, qs = [], [], []
 
         def try_square(n: int, rt: float = 1.0):
@@ -487,8 +501,9 @@ class Explore(VoiceScene):
                       run_time=0.9)
 
             vo.wait_until("So explore tries")
-            self.play(Transform(bar, lines_bar(code, 6, 7)), FadeIn(tag_try, shift=LEFT * 0.2),
-                      run_time=0.5)
+            self.play(Transform(bar, lines_bar(code, 6, 7)), Create(rng_box),
+                      FadeIn(rng_tag, shift=LEFT * 0.2), FadeIn(tag_try, shift=LEFT * 0.2),
+                      run_time=0.6)
             blink = VGroup(*[parent.board.square(i, WIN_COLOR, 0.35) for i in B3_TRY])
             for _ in range(2):
                 self.play(FadeIn(blink), run_time=0.3)
@@ -504,9 +519,10 @@ class Explore(VoiceScene):
             q1 = try_square(1, rt=0.75)
             self.play(FadeIn(q1, scale=0.5), run_time=0.25)
             vo.wait_until("now for the other player")
-            o_tag = to_move("O", 24).move_to([2.15, 2.03, 0])      # beside the row of children
-            self.play(FadeIn(o_tag, shift=DOWN * 0.1), Indicate(code_line(code, 9), color=O_COLOR,
-                                                                scale_factor=1.03), run_time=0.6)
+            # beside the row of children, just above the panel (top at y 1.65)
+            o_tag = to_move("O", 24).next_to(kids[0], LEFT, buff=0.15).set_y(1.97)
+            self.play(FadeIn(o_tag, shift=DOWN * 0.1), FadeIn(sw_tag, shift=LEFT * 0.2),
+                      Indicate(code_line(code, 9), color=O_COLOR, scale_factor=1.03), run_time=0.6)
             q2 = try_square(2, rt=0.75)
             self.play(FadeIn(q2, scale=0.5), run_time=0.25)
 
@@ -518,7 +534,8 @@ class Explore(VoiceScene):
             self.play(*[ReplacementTransform(q, a) for q, a in zip(qs, answers)], run_time=0.5)
 
             vo.wait_until("It adds up")
-            self.play(Transform(bar, lines_bar(code, 10)), run_time=0.25)
+            self.play(Transform(bar, lines_bar(code, 10)), Create(tot_box),
+                      FadeIn(tot_tag, shift=LEFT * 0.2), run_time=0.45)
             running = 0
             for a, v in zip(answers, B3_ANS):
                 running += v
@@ -527,8 +544,9 @@ class Explore(VoiceScene):
                           Transform(total_num, new_num), Indicate(a, color=COUNT_COLOR), run_time=0.4)
             self.play(Circumscribe(counter, color=COUNT_COLOR, buff=0.12), run_time=0.4)
         self.loop = dict(kids=kids, answers=answers, o_tag=o_tag,
-                         tree=[parent, cap, *kids[1:], *arrows, *answers, counter],
-                         code_side=[code, bar, tag_try, tag_count])
+                         tree=[parent, cap, *kids[1:], *arrows, *answers[1:], counter],
+                         code_side=[code, bar, rng_box, rng_tag, tag_try, sw_tag, tag_count, tot_box,
+                                    tot_tag])
 
     # ================================================================ 4. a tiny worked example
     def beat_example(self):
@@ -590,14 +608,17 @@ class Explore(VoiceScene):
         # glyphs of "2+1+2=5": 0, 2, 4 the answers | 1, 3 '+' | 5 '=' | 6 '5'
 
         with self.voiceover(SAY[3]) as vo:
-            # "Let's zoom into the first of those": the first child (worth 2) grows into the
-            # working board while everything else flies out of frame, as if the camera zoomed in
-            self.play(Circumscribe(VGroup(kid0, lp["answers"][0]), color=WIN_COLOR, buff=0.1),
-                      run_time=0.7)
-            k_in = WORK_S / KID_S
-            self.play(ReplacementTransform(kid0, work_grp), ReplacementTransform(o_tag, cap),
-                      *[cam_out(m, kid0.get_center(), WORK_C, k_in)
-                        for m in lp["tree"] + lp["code_side"]], run_time=1.4)
+            # "Let's zoom into the first of those": everything but the first child, its "2" and
+            # "O to move" clears away (a slight zoom away from that child), then the small board
+            # itself visibly GROWS into the working board, its "2" riding along to the right
+            # (where "1 + 1 = 2 games" will be completed)
+            ans0 = lp["answers"][0]
+            c0 = kid0.get_center()
+            self.play(Circumscribe(VGroup(kid0, ans0), color=WIN_COLOR, buff=0.1),
+                      *[cam_out(m, c0, c0, 1.25) for m in lp["tree"] + lp["code_side"]],
+                      run_time=0.8)
+            self.play(ReplacementTransform(kid0, work_grp), ReplacementTransform(ans0, total[4]),
+                      ReplacementTransform(o_tag, cap), run_time=1.3)
             vo.wait_until("with O to move")
             self.play(Indicate(cap, color=O_COLOR, scale_factor=1.12), run_time=0.6)
 
@@ -632,26 +653,25 @@ class Explore(VoiceScene):
             erase(self, x_fill, work.center_of(B4_FILL), work.cell, run_time=0.4)
             erase(self, o_try, work.center_of(B4_TRY), work.cell, run_time=0.4)
 
-            # "and add up: 2 games": the two 1s travel up to the root -> 1 + 1 = 2 games
+            # "and add up: 2 games": the two 1s travel up in front of the 2 -> 1 + 1 = 2 games
             vo.wait_until("and add up")
             self.play(ReplacementTransform(one_l, total[0]), ReplacementTransform(one_g, total[2]),
                       FadeIn(total[1]), run_time=0.8)
-            self.play(FadeIn(total[3]), FadeIn(total[4]), FadeIn(total[5:], shift=LEFT * 0.15),
-                      run_time=0.5)
+            self.play(FadeIn(total[3]), FadeIn(total[5:], shift=LEFT * 0.15),
+                      Indicate(total[4], color=COUNT_COLOR, scale_factor=1.3), run_time=0.6)
 
-            # "With the other two branches": zoom back out; the board shrinks back into the first
-            # child, its 2 drops under it, and the other two children come back with 1 and 2
+            # "With the other two branches": the snapshots clear, then the working board visibly
+            # SHRINKS back into its slot (the first child of a centred copy of the loop's tree),
+            # its 2 drops under it, and the rest of that tree fades in once the board is clear of it
             vo.wait_until("With the other two branches")
-            k_out = k_s / WORK_S
-            c0 = kids2[0].get_center()
             outgoing = [snap_l, snap_r, snap_g, arr_l, arr_r, arr_g, tag_l, tag_g,
                         VGroup(*total[:4], *total[5:])]
             incoming = [parent2, cap2, *kids2[1:], *arrows2, *ans2[1:]]
-            gone_early = lambda t: smooth(min(1.0, t / 0.6))      # out of the way of the incoming
+            self.play(*[FadeOut(m, scale=0.85) for m in outgoing], run_time=0.45)
+            late = lambda t: smooth(min(1.0, max(0.0, (t - 0.5) / 0.5)))   # after the board left
             self.play(ReplacementTransform(work_grp, kids2[0]), ReplacementTransform(total[4], ans2[0]),
                       cap.animate.move_to(cap_to),
-                      *[cam_out(m, WORK_C, c0, k_out, rate_func=gone_early) for m in outgoing],
-                      *[cam_in(m, c0, WORK_C, 1 / k_out) for m in incoming], run_time=1.4)
+                      *[FadeIn(m, rate_func=late) for m in incoming], run_time=1.3)
 
             vo.wait_until("2 plus 1")
             self.play(*[TransformFromCopy(a, eq[2 * i]) for i, a in enumerate(ans2)],
@@ -674,7 +694,7 @@ class Explore(VoiceScene):
         chain_win = chain[7].board.win_line(2, 6, stroke=4)
         chain_edges = [Line(chain[k].get_bottom(), chain[k + 1].get_top(), color=S.GREY,
                             stroke_width=2) for k in range(7)]
-        each = S.text("each call:\n1 more mark", 26, S.WHITE, line_spacing=1.0).move_to([3.0, -1.7, 0])
+        each = S.text("each call:\n1 more mark", 26, S.WHITE, line_spacing=1.0).move_to([3.45, -2.2, 0])
         stop = S.text("stop!", 28, S.WHITE, weight="BOLD").next_to(chain[7], LEFT, buff=0.3)
 
         # the big tree
@@ -702,24 +722,34 @@ class Explore(VoiceScene):
         cnt_lab = S.text("games counted", 24, S.WHITE).move_to([SIDE_C[0], -1.55, 0])
         cnt = count_value(0, 52).move_to([SIDE_C[0], -2.25, 0])
 
+        # explore(next_player) (line 10) calls explore(player) (line 0): matching boxes in place,
+        # joined by a curved arrow drawn in the margin beside the panel (nothing crosses the code)
+        x_arc = code.get_right()[0] + 0.12
+        jump = CurvedArrow([x_arc, code_line(code, 10).get_center()[1], 0],
+                           [x_arc, code_line(code, 0).get_center()[1], 0], angle=0.6 * PI,
+                           color=WIN_COLOR, stroke_width=4, tip_length=0.2)
+
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(self.example_stuff), run_time=0.45)
             self.play(FadeIn(code, shift=RIGHT * 1.0), run_time=0.6)
             call_box, def_box = token_box(call), token_box(defn)
-            self.play(Create(call_box), run_time=0.3)
-            fly = call.copy()
-            self.play(Transform(fly, defn.copy(), path_arc=-PI / 2), run_time=0.8)
-            self.play(FadeOut(fly), Create(def_box), Indicate(defn, color=WIN_COLOR, scale_factor=1.1),
-                      run_time=0.5)
-            vo.wait_until("is called recursive")
+            self.play(Create(call_box), Indicate(call, color=WIN_COLOR, scale_factor=1.08),
+                      run_time=0.6)
+            vo.wait_until("asking itself")
+            self.play(Create(jump), run_time=0.8)
+            self.play(Create(def_box), Indicate(defn, color=WIN_COLOR, scale_factor=1.1), run_time=0.6)
+            self.play(Indicate(VGroup(call_box, call), color=WIN_COLOR, scale_factor=1.06),
+                      Indicate(VGroup(def_box, defn), color=WIN_COLOR, scale_factor=1.06), run_time=0.8)
+            vo.wait_until("it's called recursive")
             # the new word sits above the code (free space) and stays while the staircase grows
             rec = S.text("recursive", 52, S.WHITE).move_to([code.get_center()[0], 2.78, 0])
-            rec_sub = S.text("a function that calls itself", 26, S.GREY).next_to(rec, DOWN, buff=0.22)
+            rec_sub = S.text("a function that calls (asks) itself", 26, S.GREY) \
+                .next_to(rec, DOWN, buff=0.22)
             self.play(Write(rec), FadeIn(rec_sub, shift=UP * 0.15), run_time=0.8)
 
             vo.wait_until("That might sound")
             bar = lines_bar(code, 10)
-            self.play(FadeOut(VGroup(call_box, def_box)), FadeIn(bar), run_time=0.4)
+            self.play(FadeOut(VGroup(call_box, def_box, jump)), FadeIn(bar), run_time=0.4)
             self.play(LaggedStart(*[Create(ln) for ln in chain[0][0]], lag_ratio=0.15), run_time=0.35)
             for k in range(1, 8):
                 new = chain[k][1][-1]
@@ -798,15 +828,20 @@ class Explore(VoiceScene):
         nodes = {k: Dot(CU[k], radius=0.075, color=S.GREY) for k in CU if k != "top"}
         for k in CU_LEAVES:
             nodes[k].set_color(S.WHITE)
-        labels = VGroup()
+        # each edge says which SQUARE the move takes ("X in 6"), not a move number; the whiteboard
+        # shows the square numbers 0-8 in its corners for the whole beat
+        labels, lab_of = VGroup(), {}
         for a, b, s, sym in CU_EDGES:
             pa, pb = CU[a], CU[b]
-            mid = pa + (pb - pa) * 0.55
-            side_dir = LEFT if pb[0] < pa[0] - 0.01 else RIGHT
+            t, side_dir, gap = CU_LAB[b]
             col = X_COLOR if sym == "X" else O_COLOR
-            lab = S.text(f"{sym}{s}", 26, col, font=S.FONT_SANS, weight="BOLD")   # as in S01: X0 O3 ...
-            lab.move_to(mid + side_dir * 0.34)
+            lab = S.text(f"{sym} in {s}", 24, col, font=S.FONT_SANS, weight="BOLD")
+            if t is None:                                    # A-X7: just above the X7 node
+                lab.next_to(pb + UP * 0.25, side_dir, buff=gap)
+            else:
+                lab.next_to(pa + (pb - pa) * t, side_dir, buff=gap)
             labels.add(lab)
+            lab_of[b] = lab
         closeup = VGroup(stub, *cu_edges.values(), *nodes.values(), labels)
         hl_stub = Line(CU["top"], CU["A"], color=WIN_COLOR, stroke_width=6)
         hl = {"X6": Line(CU["A"], CU["X6"], color=WIN_COLOR, stroke_width=6)}
@@ -814,14 +849,16 @@ class Explore(VoiceScene):
         cursor = Dot(CU["X6"], radius=0.1, color=WIN_COLOR)
 
         zoom = Rectangle(width=0.7, height=1.5, color=S.WHITE, stroke_width=2).move_to([-3.9, -1.55, 0])
-        zoom_to = SurroundingRectangle(closeup, buff=0.12, color=S.WHITE, stroke_width=2,
-                                       corner_radius=0.1)
+        x0, y0 = closeup.get_corner(DL)[:2] - 0.1
+        x1, y1 = np.minimum(closeup.get_corner(UR)[:2] + 0.1, 6.58)        # stays inside the frame
+        zoom_to = RoundedRectangle(width=x1 - x0, height=y1 - y0, corner_radius=0.1, color=S.WHITE,
+                                   stroke_width=2).move_to([(x0 + x1) / 2, (y0 + y1) / 2, 0])
 
         # the whiteboard
         frame = RoundedRectangle(width=WB_S + 0.45, height=WB_S + 0.45, corner_radius=0.14,
                                  stroke_color=S.WHITE, stroke_width=3).set_fill(S.GREY_DARKER, 1)
         frame.move_to(WB_C)
-        tray = RoundedRectangle(width=WB_S + 0.8, height=0.09, corner_radius=0.04, stroke_width=0) \
+        tray = RoundedRectangle(width=WB_S + 0.6, height=0.09, corner_radius=0.04, stroke_width=0) \
             .set_fill(S.GREY, 1).next_to(frame, DOWN, buff=0.04)
         pen = VGroup(RoundedRectangle(width=0.55, height=0.11, corner_radius=0.05, stroke_width=0)
                      .set_fill(S.WHITE, 1),
@@ -829,28 +866,48 @@ class Explore(VoiceScene):
         pen[1].align_to(pen[0], RIGHT)
         pen.next_to(tray, UP, buff=0.0).shift(RIGHT * 0.55)
         wb_icon = VGroup(frame, tray, pen)
+        # left of the whiteboard (the right edge is taken by the board), level with its lower half
+        # so it doesn't stack under the "<- undo" tag like one label
         shared = S.text("one\nshared\nboard", 28, S.WHITE, line_spacing=0.9) \
-            .next_to(frame, RIGHT, buff=0.3)
+            .next_to(frame, LEFT, buff=0.28).align_to(frame, DOWN).shift(UP * 0.12)
         cap1 = S.text("try → explore → undo", 30, S.WHITE, t2c={"undo": UNDO_COLOR})
         cap2 = S.text("= backtracking", 30, S.WHITE, weight="BOLD")
         VGroup(cap1, cap2).arrange(RIGHT, buff=0.25).move_to([code.get_center()[0], -2.6, 0])
-        # the counter sits in the free space left of the close-up (not next to the X8 label)
-        cnt_lab_to = cnt_lab.copy().move_to([0.3, 3.15, 0])
-        cnt_to = cnt.copy().move_to([0.3, 2.5, 0])
+        # the counter sits in the free space above the panel, left of the close-up
+        cnt_lab_to = cnt_lab.copy().move_to([0.9, 3.15, 0])
+        cnt_to = cnt.copy().move_to([0.9, 2.5, 0])
 
+        # the side board grows into the whiteboard; its marks shrink to WB_MARK of a square so the
+        # faint square numbers fit in the corners
         side_group = VGroup(side, *marks.values(), w["side_win"])
-        scale = WB_S / SIDE_S
+        wb_target = side_group.copy().scale(WB_S / SIDE_S).move_to(WB_C)
+        for m in wb_target[1:-1]:
+            m.scale(WB_MARK / 0.6)
+        wb_board = wb_target[0]
+        square_nums = wb_board.index_labels(20).set_opacity(0.85)
+        for i, num in enumerate(square_nums):
+            num.move_to(wb_board.center_of(i) + np.array([-0.38, 0.34, 0]) * wb_board.cell)
 
         def wb_mark(s, sym):
-            m = side.mark_at(s, sym, 0.6, stroke=6)
+            m = side.mark_at(s, sym, WB_MARK, stroke=6)
             marks[s] = m
             return m
+
+        def flash_square(s):
+            """The square a move takes lights up on the whiteboard (call self.remove after)."""
+            sq = side.square(s, WIN_COLOR, 0.0).set_z_index(-0.5)       # above the frame only
+            self.add(sq)
+            return sq, sq.animate(rate_func=there_and_back).set_fill(opacity=0.45)
 
         def go_down(key, s, sym, rt=0.45):
             seg = Line(cursor.get_center(), CU[key], color=WIN_COLOR, stroke_width=6)
             hl[key] = seg
             m = wb_mark(s, sym)
-            self.play(Create(seg), cursor.animate.move_to(CU[key]), mark_anim(m), run_time=rt)
+            sq, glow = flash_square(s)
+            self.play(Create(seg), cursor.animate.move_to(CU[key]), mark_anim(m), glow,
+                      Indicate(lab_of[key], color=X_COLOR if sym == "X" else O_COLOR,
+                               scale_factor=1.25), run_time=rt)
+            self.remove(sq)
 
         def step_back(key, up_key, s, extra_targets=(), rt=0.5):
             """Undo = step back: the mark is erased on the board WHILE the path edge turns RED and
@@ -880,9 +937,11 @@ class Explore(VoiceScene):
             self.play(FadeOut(self.tree), FadeOut(VGroup(*w["trail"], w["cursor"], w["leaf"])),
                       ReplacementTransform(zoom, zoom_to),
                       FadeIn(VGroup(closeup, hl_stub, hl["X6"], counted["X6"], cursor)),
-                      side_group.animate.scale(scale).move_to(WB_C),
-                      Transform(cnt_lab, cnt_lab_to), Transform(cnt, cnt_to), run_time=1.1)
-            self.play(FadeOut(zoom_to), FadeIn(code, shift=RIGHT * 1.0), run_time=0.7)
+                      Transform(side_group, wb_target), Transform(cnt_lab, cnt_lab_to),
+                      Transform(cnt, cnt_to), run_time=1.1)
+            self.play(FadeOut(zoom_to), FadeIn(code, shift=RIGHT * 1.0),
+                      LaggedStart(*[FadeIn(n, scale=0.5) for n in square_nums], lag_ratio=0.08),
+                      run_time=0.8)
             undo_bar = lines_bar(code, 11, color=UNDO_COLOR, opacity=0.32)
             undo_tag = line_tag(code, 11, "undo", UNDO_COLOR)
             self.play(FadeIn(undo_bar), FadeIn(undo_tag, shift=LEFT * 0.2),
@@ -901,8 +960,11 @@ class Explore(VoiceScene):
 
             # undo the last move: erase X6, step back up to A
             vo.wait_until("So after exploring")
-            self.play(Indicate(cursor, color=WIN_COLOR, scale_factor=1.6),
-                      Indicate(marks[6], color=WIN_COLOR, scale_factor=1.3), run_time=0.7)
+            sq, glow = flash_square(6)
+            self.play(Indicate(cursor, color=WIN_COLOR, scale_factor=1.6), glow,
+                      Indicate(marks[6], color=WIN_COLOR, scale_factor=1.3),
+                      Indicate(lab_of["X6"], color=X_COLOR, scale_factor=1.25), run_time=0.7)
+            self.remove(sq)
             vo.wait_until("it erases that mark")
             self.play(Indicate(code_line(code, 11), color=UNDO_COLOR, scale_factor=1.05),
                       run_time=0.4)
