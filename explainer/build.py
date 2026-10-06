@@ -1,6 +1,7 @@
 """Render a whole video project into one narrated mp4 with subtitles and chapter marks.
 
-    python -m explainer.build videos/<video-id>                 # 1080p60 final
+    python -m explainer.build videos/<video-id>                 # 1080p60 final (renders scenes that are
+                                                                #   missing or older than their sources)
     python -m explainer.build videos/<video-id> -q l            # fast 480p15 draft
     python -m explainer.build videos/<video-id> --only s03,s04  # re-render some scenes, reuse the rest
     python -m explainer.build videos/<video-id> --no-render     # just re-stitch existing renders
@@ -68,6 +69,21 @@ def media_dir(project: Path, quality: str, scene: dict) -> Path:
 def scene_movie(project: Path, quality: str, scene: dict) -> Path:
     stem = Path(scene["file"]).stem
     return media_dir(project, quality, scene) / "videos" / stem / QUALITY_DIRS[quality] / f"{scene['cls']}.mp4"
+
+
+def is_stale(project: Path, quality: str, scene: dict) -> bool:
+    """A scene needs rendering if its movie is missing or older than anything it is built from:
+    its own file, the other .py files next to it (shared helpers), the script, video.yaml, assets,
+    and the toolkit."""
+    movie = scene_movie(project, quality, scene)
+    if not movie.exists():
+        return True
+    scene_file = project / scene["file"]
+    sources = [scene_file, *scene_file.parent.glob("*.py"), project / "script.md", project / "video.yaml",
+               *(project / "assets").glob("*"), *Path(__file__).parent.glob("*.py"),
+               *Path(__file__).parent.glob("*.yaml")]
+    newest = max((p.stat().st_mtime for p in sources if p.is_file()), default=0.0)
+    return movie.stat().st_mtime < newest
 
 
 def render_scene(project: Path, quality: str, scene: dict, env: dict) -> Path:
@@ -188,8 +204,8 @@ def main(argv=None):
         todo = []
     elif only is not None:  # exactly the named scenes
         todo = [s for s in scenes if Path(s["file"]).stem in only or s["cls"] in only]
-    else:                   # whatever has not been rendered yet
-        todo = [s for s in scenes if not scene_movie(project, args.quality, s).exists()]
+    else:                   # whatever is missing or older than its sources
+        todo = [s for s in scenes if is_stale(project, args.quality, s)]
     if todo:
         # synthesize narration once, serially, so parallel renders don't race on the TTS cache
         print(f"Rendering {len(todo)} scene(s) at {QUALITY_DIRS[args.quality]} "
