@@ -130,7 +130,7 @@
 | dimension / coordinates; triangle inequality | 维度 / 分量；三角不等式 |  |  | 中文：标准术语。 |
 | mask / parity / 'an odd number of ones inside their mask' | mask（首次括注：掩码）；奇偶；mask 内有奇数个 1 / 偶数个 1；卡片：有多少条记录在自己的 mask 内有奇数个 1？ | mask / 奇数个一 / 偶数个一 | S11：给每条记录一个自己的 mask（掩码），也就是一组比特位置 | mask 保留英文（ML、CS 圈口头就说，edge 读对）。奇偶照英文旁白直说“奇数个 1”；“奇偶性为奇”是生硬的直译。 |
 | bit / bit string / bit flips | 比特 / 比特串 / 比特翻转；标签：d = 8 比特；Pr[比特翻转] |  |  | 中文音译，读音接近 bit。 |
-| min cut / 1-sensitive / social network / link | 最小割 / 敏感度是 1（旁白、字幕：所以敏感度是 1）/ 敏感度为 1（只用于画面标签：1-sensitive、→ 敏感度为 1）/ 社交网络 / 边；标签：每条可能的边 = 一条记录（有 / 无） | 最小割 / 敏感度是一 / 社交网络 / 边 | S10 | 中文：“最小割”是算法课的标准术语。朗读说“敏感度是一”，不说“敏感度为一”：“为一”和“唯一”同音，会被听成“唯一”。S06 的“敏感度是 1。”同理。作定语的“敏感度为 2 的 query”（S09）不受影响。 |
+| min cut / 1-sensitive / social network / link | 最小割 / 敏感度是 1（旁白、字幕：所以敏感度是 1）/ 敏感度为 1（只用于画面标签）/ 社交网络 / 边；标签：每条可能的边 = 一条记录（有 / 无） | 最小割 / 敏感度是一 / 社交网络 / 边 | S10 | 中文：“最小割”是算法课的标准术语。朗读说“敏感度是一”，不说“敏感度为一”：“为一”和“唯一”同音，会被听成“唯一”。S06 的“敏感度是 1。”同理。画面标签（1-sensitive、→ sensitivity 1）保留“敏感度为 1”。作定语的“敏感度为 2 的 query”（S09）不受影响。 |
 | statistical disclosure control / scramble inputs / scramble outputs | 统计披露控制（短标签：披露控制）/ 输入扰动 / 输出扰动 | 要么扰动输入的数据，要么扰动输出的答案 | S02 | 标签用 DP、PPML 里固定的名词术语（输入扰动、输出扰动）；旁白像英文一样用动词说。 |
 | anonymous / anonymized / names removed / de-identification | 匿名 / 匿名化 / 去掉姓名；卡片：“匿名”≠ 匿名；结尾引语：“放心，已经匿名化了。”；文档：去标识化 | 匿名 / 匿名化 |  | 中文。“脱敏”“匿名化”只用来描述视频批驳的那种朴素做法。 |
 | raw data | 原始数据 |  | S11、S12 | 中文。 |
@@ -180,7 +180,7 @@
 | Test yourself / Some questions to test yourself; pause after each / Let's recap / One: … Four: | 自测（标题） | 最后留几道题给大家自测，每道题后面都可以暂停一下 / 我们来回顾一下 / 第一，…… 第四，…… | S13 | 口头的“来自测一下”会被听成“来自”+“测一下”。 |
 | In this video / Here is one you can answer yourself | 本期内容 / 这一题你可以自己回答 |  | S01、S08 |  |
 | hospital database / patient / condition X / has X / no X / Alice exposed / one week later / with(out) Alice / same answer | 医院数据库 / 病人 / 疾病 X / 有 X / 无 X / Alice 暴露了 / 一周后 / 有 Alice / 没有 Alice / 答案相同 |  | S01 | 统一用口语的“病人”；字母 X 按英文读。 |
-| heads / tails (coin); coin glyphs H / T; yes / no; says yes; tell the truth | 正面 / 反面；硬币字形保持 H/T（定稿，见 [E3]）；S02 分支标签：正面 / 反面，结果标签：H → “是” / T → “否”；S04：→“是” / →“否”、\Pr[\text{回答“是”}\mkern-6mu]；“是” / “否”；回答“是”；说真话 | 正面 / 反面；是 / 否（S02：正面答“是”，反面答“否”） | S02、S04 | 分布的 tails 是“尾部”。strings.yaml 里绝不直接映射不带作用域的单个字母 H、T。 |
+| heads / tails (coin); coin glyphs H / T; yes / no; says yes; tell the truth | 正面 / 反面；硬币字形保持 H/T（定稿，见 [E3]）；S02 分支标签：正面 / 反面，结果标签：H → “是” / T → “否”；S04：→“是” / →“否”；“是” / “否”；回答“是”；说真话 | 正面 / 反面；是 / 否（S02：正面答“是”，反面答“否”） | S02、S04 | 分布的 tails 是“尾部”。strings.yaml 里绝不直接映射不带作用域的单个字母 H、T。S04 公式写 '\Pr[\text{回答“是”}\mkern-6mu]'（见 C2）。 |
 | study / smokers / heart disease / insurer / stranger; privacy violation / not a privacy breach | 研究 / 吸烟者 / 心脏病 / 保险公司 / 陌生人；侵犯隐私；标签：不算侵犯隐私 |  | S04 | 用“侵犯隐私”，和同一场景里的 leakage（泄露量）分开。 |
 | statistic / count / true answer / true count / released answer / output t / noise ÷ answer / pure noise | 统计量 / 计数 / 真实答案 / 真实计数 / 发布的答案（短标签：发布值）/ 输出 t / 噪声 ÷ 答案 / 纯噪声 |  |  | “计数”在画面上没问题；口头用 counting query 代替“计数查询”（同音“技术”）。 |
 | privacy level / database size (S08 circled inputs) | 隐私参数 ε / 数据库规模 n |  | S08 |  |
@@ -210,7 +210,7 @@
 | English | 字幕 / 屏幕 | 朗读 | 首次出现 | 说明 |
 |---|---|---|---|---|
 | Cynthia Dwork, Frank McSherry, Kobbi Nissim, Adam Smith | Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith；之后只用姓 | 英文发音（拉丁词两侧留半角空格；中文版的改拼只在 explainer/lexicon.zh.yaml，规则 F4） | S01 首次给全名（与英文旁白一致） | 现代研究者保留拉丁字母，绝不音译（不写“德沃克”）。代词：Dwork 用“她”；McSherry、Nissim、Smith 用“他”。Dwork 要人工听一遍：早先的 Xiaoxiao 有一次吞掉了 D（Xiaoyi 回环里读对）。 |
-| Other researchers: Stanley Warner, Latanya Sweeney, Irit Dinur, Denning, Adam & Wortmann, Evfimievski, Gehrke & Srikant, Blum, Kenthapadi, Mironov, Naor, Talwar, Rothblum, Vadhan, Abadi, Shokri | 原样拉丁字母；卡片上的 & 与 et al. 保留；朗读与字幕：Abadi 和合作者 | 英文发音（Xiaoyi 回环里没有系统性读错，只有 Whisper 的拼法差异；Kenthapadi、Talwar、Rothblum 这类少见的名字仍要人工听，读错时加 lexicon.zh.yaml 条目，见 F4） | 首次给全名（照英文旁白），之后用姓 | 代词：Sweeney、Dinur 用“她”，Warner 用“他”。引用卡片保留 et al.（名字下面单独一个“等 2003”像错字）。 |
+| Other researchers: Stanley Warner, Latanya Sweeney, Irit Dinur, Denning, Adam & Wortmann, Evfimievski, Gehrke & Srikant, Blum, Kenthapadi, Mironov, Naor, Talwar, Rothblum, Vadhan, Abadi, Shokri | 原样拉丁字母；卡片上的 & 与 et al. 保留；朗读与字幕：Abadi 和合作者 | 英文发音（Kenthapadi、Talwar、Rothblum 这类少见的名字要人工听；读错时加 lexicon.zh.yaml 条目，见 F4） | 首次给全名（照英文旁白），之后用姓 | 代词：Sweeney、Dinur 用“她”，Warner 用“他”。Xiaoyi 回环里人名没有系统性读错，只有 Whisper 的拼法差异（Dinur → De Nair、Kenthapadi → Cancer Party、Talwar → Tover）。引用卡片保留 et al.（名字下面单独一个“等 2003”像错字）。 |
 | Classic eponyms: Bayes, Laplace, Gauss, Gödel (Shannon, Hamming, Chebyshev in other videos) | 贝叶斯、拉普拉斯、高斯、哥德尔（香农、汉明、切比雪夫） |  |  | 历史人物用教科书音译，中文使用者本来就这么说。以他们命名的记号保持拉丁字母：Lap(·)、N(·)。 |
 | Gödel Prize 2017 / TCC Test-of-Time Award 2016 | 2017 年哥德尔奖 / 2016 年 TCC 时间检验奖 | 二零一七年哥德尔奖 / 二零一六年 TCC 时间检验奖 |  |  |
 | TCC / ICALP / LNCS | TCC / ICALP / LNCS | 照常书写（edge 按字母读） | S02：TCC，一个密码学会议 | 缩写保留。say: 里不要拆开写（拆开的“-”可能被读成“减”）。 |
@@ -278,7 +278,7 @@
 
 ### B. 排版
 
-- **[B1]** 空格。中文与拉丁字母、数字、希腊字母或行内公式之间加一个半角空格，适用于字幕、Pango 的 Text 标签、文档和 say:（用 ε 控制、2006 年、41 个病人、L1 范数、发来一个 query）。say: 里的空格是必需的：词典正则把汉字当作单词字符，“Dwork的”永远匹配不上。全角标点旁不加空格，数字和 %、° 之间不加，连字符复合词内部不加（ε-不可区分性、(ε, δ)-差分隐私、DP-SGD）。拉丁符号（→、= 等）和中文开引号之间也不加：写 →“是”，不写 → “是”，因为引号字形本身已带半个字宽的空白（S04 的 strings 这样写；S02 的“H → “是””“T → “否””目前还带空格，与本规则不一致）。Tex/MathTex 里 xeCJK 只在同一段文字内部自动加中西文间距；\text{…} 末尾紧接数学、以及分开的 Tex/MathTex 片段之间都不会加，要手写 TeX 空格：\text{答案}\ 0、\text{至多}\ n\sigma、\text{全部}\ 2^8、“用的是多大的\ ” + $\varepsilon$、“那么\ ”、“定理 2：满足\ ” + ε。不要用 U+00A0 / U+202F 伪造不换行空格：norm() 和 split_balanced() 会把它变成普通空格。
+- **[B1]** 空格。中文与拉丁字母、数字、希腊字母或行内公式之间加一个半角空格，适用于字幕、Pango 的 Text 标签、文档和 say:（用 ε 控制、2006 年、41 个病人、L1 范数、发来一个 query）。say: 里的空格也是必需的：python -m explainer.i18n check 会报缺空格（词典正则现在把汉字也当作词边界，“Dwork的”也能匹配，但规则不变）。全角标点旁不加空格，数字和 %、° 之间不加，连字符复合词内部不加（ε-不可区分性、(ε, δ)-差分隐私、DP-SGD）。拉丁符号（→、= 等）和中文开引号之间也不加：写 →“是”，不写 → “是”，因为引号字形本身已带半个字宽的空白（S04 的 strings 这样写；S02 的“H → “是””“T → “否””目前还带空格，与本规则不一致）。Tex/MathTex 里 xeCJK 只在同一段文字内部自动加中西文间距；\text{…} 末尾紧接数学、以及分开的 Tex/MathTex 片段之间都不会加，要手写 TeX 空格：\text{答案}\ 0、\text{至多}\ n\sigma、\text{全部}\ 2^8、“用的是多大的\ ” + $\varepsilon$、“那么\ ”、“定理 2：满足\ ” + ε。不要用 U+00A0 / U+202F 伪造不换行空格：norm() 和 split_balanced() 会把它变成普通空格。
 - **[B2]** 标点。中文用全角标点：，。、；：？！（）“”‘’——……《》，英文词前后也一样；引号用“”，嵌套用‘’。列举用顿号。只有公式、数字和元组里用半角（(Carol, 有 X)）。一个中文句子内部不出现。？！（每个英文句子对应一个中文句子），改用，；：。标签末尾不加句号，问句保留？。行首不能是标点。画面上的“……”和中文引号“”‘’由工具链自动改用 CJK 字体（explainer/i18n.py install()，对 Text 生效）：拉丁自家字体排在 Pango 回退列表最前，它的 U+2026 落在基线上，引号也太窄。所以场景不用再自己写 t2f（s02_map.py 里留下的 t2f 已多余，但无害）。“——”不改字体：自家字体的两个 U+2014 连成一条完整的破折号，CJK 字体的两个之间反而断开；标签里放不下或断开难看时改用逗号（S09：“（每个桶），仍随 d 增长”）。
 - **[B3]** 字体。工具链把自家字体和 Noto Sans / Serif / Sans Mono CJK SC 配对（explainer/i18n.py 的 CJK_FONTS），就用这些字体名。汉字约 1 em 宽：每个中文标签按英文标签的外框来适配，而不是照搬 font_size；数字、公式、人名、颜色、位置与英文版完全一致。中文不用斜体：英文用 slant=ITALIC 的名字或引语（S12 命名卡“差分隐私（differential privacy）”、S13 结尾引语“放心，已经匿名化了。”），中文版通过 i18n.active() 分支改为正体，因为 Pango 只会把汉字机械地斜过来。粗体可以用：Noto Serif CJK SC 有真正的粗体。
 
@@ -304,7 +304,7 @@
 ### E. 屏幕文字（strings.yaml）
 
 - **[E1]** 标签用旁白的术语，但更短：电报式名词短语，可以用 → ⇒ ≈ × 和缩写（DP、RL）。标签只写中文，例外：S12 命名卡“差分隐私（differential privacy）”；概览和回顾卡上的核心概念名（S01 想法卡、S13 回顾面板：敏感度（sensitivity）、拉普拉斯机制（Laplace mechanism），放得下的话）；保留英文清单里的词（query、mask、transcript、hybrid argument、SuLQ、Sub-Linear Queries）。定义 1 卡可以通过受 i18n.active() 控制的场景改动加一行灰色小字“（即今天的 ε-差分隐私）”；不改场景时由字幕别名括注承担这个联系。
-- **[E2]** 一个英文键对应一个中文串。strings.yaml 按英文原文精确匹配，不区分类型和场景，所以共用的键在每处都得到同一个中文（“Sensitivity”既是 S01 的想法卡，也是 S13 的回顾面板；“Query”是 S01、S08、S11 的卡片标题）。选一个各处都通顺的中文，或者在场景里改英文键。有意保留英文的字符串（Query、SuLQ、Sub-Linear Queries、mask r、RL:、人名、引用、TCC 2006）加原样映射，这样 build/i18n/missing.zh.json 只列真正漏译的。
+- **[E2]** 一个英文键对应一个中文串。strings.yaml 按英文原文精确匹配，不区分类型和场景（带场景作用域的键除外，见 E3），所以共用的键在每处都得到同一个中文（“Sensitivity”既是 S01 的想法卡，也是 S13 的回顾面板；“Query”是 S01、S08、S11 的卡片标题）。选一个各处都通顺的中文，或者在场景里改英文键。有意保留英文的字符串（Query、SuLQ、Sub-Linear Queries、mask r、RL:、人名、引用、TCC 2006）加原样映射，这样 build/i18n/missing.zh.json 只列真正漏译的。
 - **[E3]** 不带作用域的单个字母和符号（H、T、F、M、A–J、?、.、·、vs、no）绝不放进 strings.yaml：tr() 会把 s04、s11 的机制符号 M、s10 的图节点 F 和 H 以及其他所有地方一起改掉。带场景作用域的键（'<场景文件名>|<英文>'，工具链已支持）可以用，只作用于那个场景文件：（a）有意保留的符号词加原样映射，什么也不翻译，只让 missing.zh.json 保持干净（'s05_strict|vs': 'vs'、's12_legacy|vs': 'vs'）；（b）只在一处翻译（'s13_recap|?': '？'、's10_beyond|.': '。'、's04_definition|no': '“否”'、's05_strict|no': '无'、's11_separation|MOST': '大多数'）。同一场景里如果还有别的同名串（例如 MathTex 里的 '?'），就改用场景分支（S04 的 Warner 卡片由 ponder_at 自己换成“？”）。硬币字形保持 H/T（定稿）：S02 分支标签写“正面 / 反面”，结果标签写“H → “是”” / “T → “否””，旁白说“正面答‘是’，反面答‘否’”；S04 写“→“是”” / “→“否””。原先计划的“H（正面）→“是””放不下（会伸进人群格子）。F/M 作为美国模拟数据保留。
 - **[E4]** 拆片的 Tex/MathTex。很多标签由几段拼成（文字 + ε + 文字）。翻译时选能保持各段位置的语序：“Theorem 2: ”+ ε +“-indistinguishable”→“定理 2：满足\ ”+ ε +“-不可区分性”；“Gaussian noise is back in, for a tiny ”+ δ →“高斯噪声回来了，代价是一个极小的\ ”+ δ；“What counts as ”+“one person's row”+“?”→“什么才算”+“一个人的一条记录”+“？”；“What's the ”+ ε +“?”→“用的是多大的\ ”+ ε +“？”；“noise of typical size 2, the same for every”+ n →“噪声一般在 2 左右，不依赖于”+ n；“Warner's coin: what is its”+ ε +“?”→“Warner 的硬币对应多大的”+ ε +“？”（ε 前的间距由场景给出；场景只把结尾换成“？”，并让 ε 和“？”坐在拉丁字母的基线上：s04_definition.py 的 ponder_at）。找不到保持顺序的中文时，就改场景（加 i18n.active() 分支），绝不硬凑不自然的中文：S04 括号标签“privacy loss at”+ t 由场景按中文语序拼成 t +“处的隐私损失”，strings 里不再有这个键。含行内公式的 Tex 串同理（“If $A$ reads each row”→“如果 $A$ 对每条记录”；“composition: $k$ questions cost …”→“高级组合：$k$ 个问题的代价 …”）。
 - **[E5]** 着色子短语。场景用 t2c 给英文子串着色的地方，中文标签必须原样包含该子短语的中文；工具链用同一张表翻译 t2c 等的键（I4，已实现）。英文大写强调（Any ONE query、MOST queries）改为给“单个 / 大多数”上色或加粗。
@@ -336,7 +336,7 @@
 标“已完成”的条目已对照代码确认，保留在这里说明规则依赖什么。
 
 - **[I1]**（已完成）build.py 的 DEFAULT_VOICES 曾指向不存在的后端 kokoro-zh；现在中文默认是 edge zh-CN-XiaoyiNeural（commit 875166f），video.yaml 不必再设 languages.zh.voice（规则 F1）。
-- **[I2]**（代码已完成，回归测试未加）explainer/subtitles.py：不在数字和后面的中文量词之间切、不在《…》里切（实在太长时只在《…》内的空格处切）、不在数字内部切（两个数字之间的“,”或“.”之后），下一个字符是标点时也不切；拼回片段时，汉字和汉字之间不加空格，汉字和拉丁字母/数字之间保留空格（B1）；去掉字幕末尾标点（G2，strip_end）；把短于约 1 秒的句子字幕并入下一条（_merge_short）。还缺：用 S01 的论文标题句和“5000 个桶”写回归测试。
+- **[I2]**（代码已完成，回归测试未加；这部分代码还在改，最近是 commit cd67aa4）explainer/subtitles.py：不在数字和后面的中文量词之间切、不在《…》里切（实在太长时只在《…》内的空格处切）、不在数字内部切（两个数字之间的“,”或“.”之后），下一个字符是标点时也不切；拼回片段时，汉字和汉字之间不加空格，汉字和拉丁字母/数字之间保留空格（B1）；只去掉一条字幕末尾的标点（G2，strip_end），合并进来的句子保留自己的句末标点；把短于约 1 秒的句子字幕并入相邻一条。还缺：用 S01 的论文标题句和“5000 个桶”写回归测试。
 - **[I3]**（部分完成）python -m explainer.i18n check 现在检查朗读文本（say:，没有 say: 时是显示文字）：括号和《》、数学符号（ε δ λ σ α Δ ′ √ ≤ ≥ ≈ × ÷ ^ = < > → ← +）、n!、带下划线的名字、以“种”结尾的分句、汉字与拉丁字母/数字之间缺空格，以及不在本词表朗读/字幕/首次出现形式或 allowed_spoken_latin 里的拉丁词（能抓住“private 深度学习”这类问题）；另外检查句数、句末和句内标点、锚点目标是否存在。还没做：朗读文本里的数字、%、/ 报错；通过读法表比对 say: 与显示文字；检查标签里的拉丁词；列出没有锚点的 wait_until 短语。
 - **[I4]**（已完成）i18n.install() 用 tr() 翻译 t2c / t2w / t2s / t2f / t2g、tex_to_color_map 和 substrings_to_isolate 的键；带场景作用域的键写成 '<场景文件名>|<英文>'（如 's04_definition|no'），只在那个场景文件里生效（规则 E3）。
 - **[I5]**（已完成）EXPLAINER_LANG=zh 时只加载 explainer/lexicon.zh.yaml（voice.load_lexicon），改拼后的文本就是 TTS 缓存键；用于只作用于 say: 的改拼。中文的修正绝不放进英文视频共用的 lexicon.yaml。

@@ -9,7 +9,7 @@
 # glyphs stay H/T. E3's outcome label "H（正面）→ “是”" does not fit (measured: it ends at x = 0.36, inside
 # the crowd grid, which starts at x = -0.31), and "正面（H）" on the branch sits 0.04 above the coin like a
 # caption of it. So the branch labels read 正面 / 反面 (where the English sat, right of the coin) and the
-# outcomes read "H → “是”" / "T → “否”" next to the second coin's H/T face, while the voice says
+# outcomes read "H →“是”" / "T →“否”" next to the second coin's H/T face, while the voice says
 # 正面答“是”，反面答“否”. The S03 title phrase's t2c key "sensitivity" is translated by group g3 (敏感度);
 # "noise" (噪声) is here.
 
@@ -63,8 +63,8 @@
 "heads": "正面"
 "tails": "反面"
 "tell the truth": "说真话"
-"H → “yes”": "H → “是”"
-"T → “no”": "T → “否”"
+"H → “yes”": "H →“是”"
+"T → “no”": "T →“否”"
 "“yes”": "“是”"
 "truth, or the coin?": "真话，还是硬币？"
 "said “yes”": "回答“是”"
