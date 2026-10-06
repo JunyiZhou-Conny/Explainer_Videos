@@ -5,6 +5,7 @@
     python -m explainer.build videos/<video-id> -q l            # fast 480p15 draft
     python -m explainer.build videos/<video-id> --only s03,s04  # re-render some scenes, reuse the rest
     python -m explainer.build videos/<video-id> --no-render     # just re-stitch existing renders
+    python -m explainer.build videos/<video-id> --lang zh       # the Chinese version (see explainer/i18n.py)
 
 Reads <project>/video.yaml:
 
@@ -20,6 +21,14 @@ Reads <project>/video.yaml:
 
 Writes <project>/output/<id>.mp4, <id>.srt, chapters.txt (YouTube/Bilibili format), transcript.md,
 and <id>_<part>.mp4 / .srt / chapters_<part>.txt for each part.
+
+Language versions (videos/<id>/i18n/<lang>/narration.yaml, see explainer/i18n.py):
+  - the English build also writes <id>.<lang>.srt (translated subtitles on the English timing),
+    <id>.<lang>-en.srt and <id>.<lang>-en.ass (bilingual), and with --burn <id>.<lang>-en.mp4;
+  - `--lang zh` renders the Chinese version into output/zh/: <id>.mp4 with bilingual subtitles
+    burned in under the picture (--no-burn keeps it clean), <id>.zh.srt, <id>.en.srt (English on the
+    Chinese timing), <id>.zh-en.srt / .ass, chapters.txt and a bilingual transcript.md.
+    video.yaml may set the voice per language:  languages: {zh: {voice: {backend: ..., voice: ...}}}
 """
 
 from __future__ import annotations
@@ -36,6 +45,10 @@ from pathlib import Path
 import yaml
 
 from . import REPO_ROOT
+from . import subtitles as subs
+
+# default narrator per language when video.yaml has no `languages: {<lang>: {voice: ...}}`
+DEFAULT_VOICES = {"zh": {"backend": "kokoro-zh", "voice": "zf_xiaoxiao", "speed": 1.0}}
 
 QUALITY_DIRS = {"l": "480p15", "m": "720p30", "h": "1080p60", "p": "1440p60", "k": "2160p60"}
 
@@ -46,61 +59,82 @@ def load_project(project: Path) -> dict:
     return spec
 
 
-def scene_env(spec: dict, tts: str | None) -> dict:
+def voice_spec(spec: dict, lang: str = "en") -> dict:
+    if lang == "en":
+        return spec.get("voice", {}) or {}
+    v = ((spec.get("languages") or {}).get(lang) or {}).get("voice")
+    return v or DEFAULT_VOICES.get(lang, {})
+
+
+def scene_env(spec: dict, tts: str | None, lang: str | None = None) -> dict:
     env = dict(os.environ)
-    v = spec.get("voice", {}) or {}
+    lang = lang or env.get("EXPLAINER_LANG") or "en"
+    v = voice_spec(spec, lang)
+    if lang != "en":                       # the language's own voice, not the English one
+        for k in ("EXPLAINER_TTS", "EXPLAINER_VOICE", "EXPLAINER_SPEED"):
+            env.pop(k, None)
+    env["EXPLAINER_LANG"] = lang
     env.setdefault("EXPLAINER_TTS", v.get("backend", "kokoro"))
     if tts:
         env["EXPLAINER_TTS"] = tts
-    if v.get("voice") and "EXPLAINER_VOICE" not in os.environ:
+    if v.get("voice") and "EXPLAINER_VOICE" not in env:
         env["EXPLAINER_VOICE"] = str(v["voice"])
-    if v.get("speed") and "EXPLAINER_SPEED" not in os.environ:
+    if v.get("speed") and "EXPLAINER_SPEED" not in env:
         env["EXPLAINER_SPEED"] = str(v["speed"])
     env["PYTHONPATH"] = os.pathsep.join(filter(None, [str(REPO_ROOT), env.get("PYTHONPATH")]))
     return env
 
 
-def media_dir(project: Path, quality: str, scene: dict) -> Path:
+def lang_suffix(lang: str) -> str:
+    return "" if lang == "en" else f"_{lang}"
+
+
+def media_dir(project: Path, quality: str, scene: dict, lang: str = "en") -> Path:
     # one media (and LaTeX) dir per scene: parallel renders must not share Manim's Tex cache,
     # whose temp files collide when two processes typeset the same formula at once
-    return project / "build" / f"media_{quality}" / Path(scene["file"]).stem
+    return project / "build" / f"media_{quality}{lang_suffix(lang)}" / Path(scene["file"]).stem
 
 
-def scene_movie(project: Path, quality: str, scene: dict) -> Path:
+def scene_movie(project: Path, quality: str, scene: dict, lang: str = "en") -> Path:
     stem = Path(scene["file"]).stem
-    return media_dir(project, quality, scene) / "videos" / stem / QUALITY_DIRS[quality] / f"{scene['cls']}.mp4"
+    return (media_dir(project, quality, scene, lang) / "videos" / stem / QUALITY_DIRS[quality]
+            / f"{scene['cls']}.mp4")
 
 
-def is_stale(project: Path, quality: str, scene: dict) -> bool:
+def is_stale(project: Path, quality: str, scene: dict, lang: str = "en") -> bool:
     """A scene needs rendering if its movie is missing or older than anything it is built from:
     its own file, the other .py files next to it (shared helpers), the script, video.yaml, assets,
     and the toolkit."""
-    movie = scene_movie(project, quality, scene)
+    movie = scene_movie(project, quality, scene, lang)
     if not movie.exists():
         return True
     scene_file = project / scene["file"]
     sources = [scene_file, *scene_file.parent.glob("*.py"), project / "script.md", project / "video.yaml",
                *(project / "assets").glob("*"), *Path(__file__).parent.glob("*.py"),
                *Path(__file__).parent.glob("*.yaml")]
+    if lang != "en":
+        sources += [p for p in (project / "i18n" / lang).rglob("*") if p.is_file()]
+        sources += list((Path(__file__).parent / "locales").glob("*.yaml"))
     newest = max((p.stat().st_mtime for p in sources if p.is_file()), default=0.0)
     return movie.stat().st_mtime < newest
 
 
 def render_scene(project: Path, quality: str, scene: dict, env: dict) -> Path:
+    lang = env.get("EXPLAINER_LANG", "en")
     cmd = [sys.executable, "-m", "manim", "render", f"-q{quality}", "--disable_caching", "--no_latex_cleanup",
-           "--media_dir", str(media_dir(project, quality, scene)), scene["file"], scene["cls"]]
-    log = project / "build" / "logs" / f"{Path(scene['file']).stem}_{scene['cls']}.log"
+           "--media_dir", str(media_dir(project, quality, scene, lang)), scene["file"], scene["cls"]]
+    log = project / "build" / "logs" / f"{Path(scene['file']).stem}_{scene['cls']}{lang_suffix(lang)}.log"
     log.parent.mkdir(parents=True, exist_ok=True)
     with open(log, "w") as fh:
         res = subprocess.run(cmd, cwd=project, env=env, stdout=fh, stderr=subprocess.STDOUT)
     if res.returncode != 0:
         tail = "\n".join(log.read_text().splitlines()[-30:])
         raise RuntimeError(f"render failed for {scene['cls']} (see {log}):\n{tail}")
-    out = scene_movie(project, quality, scene)
+    out = scene_movie(project, quality, scene, lang)
     if not out.exists():
         raise FileNotFoundError(out)
     for line in log.read_text(errors="replace").splitlines():
-        if "anchor not found" in line:
+        if "anchor not found" in line or "no zh translation" in line or "translation for narration" in line:
             print(f"  WARNING {scene['cls']}: {line.strip()}", flush=True)
     print(f"  rendered {scene['cls']:<24} -> {out.relative_to(project)}", flush=True)
     return out
@@ -237,40 +271,51 @@ def main(argv=None):
     ap.add_argument("--only", help="comma-separated scene file stems or class names to (re)render")
     ap.add_argument("--no-render", action="store_true", help="only stitch existing scene renders")
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) // 2))
-    ap.add_argument("--tts", help="override the voice backend (kokoro|elevenlabs|edge|espeak|silent)")
+    ap.add_argument("--tts", help="override the voice backend (kokoro|kokoro-zh|elevenlabs|edge|espeak|silent)")
     ap.add_argument("--crf", type=int, help="re-encode each scene with x264 at this CRF (smaller files; ~25 is good)")
     ap.add_argument("--render-only", action="store_true", help="render the selected scenes, don't stitch")
+    ap.add_argument("--lang", default="en", help="language version to build (en, zh, ...)")
+    ap.add_argument("--burn", action="store_true", help="English build: also burn bilingual subtitles "
+                    "(<id>.<lang>-en.mp4) for each translation")
+    ap.add_argument("--no-burn", action="store_true", help="translated build: keep the video clean")
     args = ap.parse_args(argv)
 
     project = args.project.resolve()
     spec = load_project(project)
     scenes = spec["scenes"]
-    env = scene_env(spec, args.tts)
+    lang = args.lang
+    env = scene_env(spec, args.tts, lang)
+    env["EXPLAINER_PROJECT"] = str(project)
     only = set(args.only.split(",")) if args.only else None
+    if lang != "en":
+        from .i18n import check_narration
+        problems = check_narration(project, lang)
+        for p in problems:
+            print("  WARNING", p)
 
     if args.no_render:
         todo = []
     elif only is not None:  # exactly the named scenes
         todo = [s for s in scenes if Path(s["file"]).stem in only or s["cls"] in only]
     else:                   # whatever is missing or older than its sources
-        todo = [s for s in scenes if is_stale(project, args.quality, s)]
+        todo = [s for s in scenes if is_stale(project, args.quality, s, lang)]
     if todo:
-        # synthesize narration once, serially, so parallel renders don't race on the TTS cache
-        print(f"Rendering {len(todo)} scene(s) at {QUALITY_DIRS[args.quality]} "
-              f"with TTS={env['EXPLAINER_TTS']} (jobs={args.jobs})", flush=True)
+        print(f"Rendering {len(todo)} scene(s) at {QUALITY_DIRS[args.quality]} lang={lang} "
+              f"with TTS={env['EXPLAINER_TTS']} voice={env.get('EXPLAINER_VOICE', '-')} (jobs={args.jobs})",
+              flush=True)
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
             list(pool.map(lambda s: render_scene(project, args.quality, s, env), todo))
     if args.render_only:
         return
 
-    build = project / "build" / f"stitch_{args.quality}"
+    build = project / "build" / f"stitch_{args.quality}{lang_suffix(lang)}"
     build.mkdir(parents=True, exist_ok=True)
-    out_dir = project / "output"
-    out_dir.mkdir(exist_ok=True)
+    out_dir = project / "output" / ("" if lang == "en" else lang)
+    out_dir.mkdir(parents=True, exist_ok=True)
 
     normalized = []
     for i, s in enumerate(scenes):
-        movie = scene_movie(project, args.quality, s)
+        movie = scene_movie(project, args.quality, s, lang)
         if not movie.exists():
             raise SystemExit(f"missing render for {s['cls']}: {movie}")
         norm = build / f"{i:02d}_{s['cls']}{'' if args.crf is None else f'_crf{args.crf}'}.mp4"
@@ -279,30 +324,88 @@ def main(argv=None):
         normalized.append((s, movie, norm))
 
     suffix = "" if args.quality == "h" else "_" + QUALITY_DIRS[args.quality]
-    title = spec.get("title", spec["id"])
+    meta = {}
+    if lang != "en":
+        from .i18n import meta as lang_meta
+        meta = lang_meta(lang, project)
+    title = meta.get("title") or spec.get("title", spec["id"])
+    ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
+               burn=(not args.no_burn) if lang != "en" else args.burn)
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
-           transcript_file=out_dir / "transcript.md")
+           transcript_file=out_dir / "transcript.md", ctx=ctx)
     for part in spec.get("parts") or []:
         keep = set(part["scenes"])
         subset = [t for t in normalized if Path(t[0]["file"]).stem in keep or t[0]["cls"] in keep]
-        stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", part.get("title", part["id"]), build,
-               chapters_file=out_dir / f"chapters_{part['id']}.txt")
+        ptitle = ((meta.get("parts") or {}).get(part["id"])) or part.get("title", part["id"])
+        stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", ptitle, build,
+               chapters_file=out_dir / f"chapters_{part['id']}.txt", ctx=ctx)
+
+
+def _scene_title(s: dict, meta: dict) -> str:
+    titles = meta.get("chapters") or {}
+    return titles.get(Path(s["file"]).stem) or titles.get(s["cls"]) or s.get("title", s["cls"])
+
+
+def _clips_with_marks(subs_file: Path, env: dict | None) -> list[dict]:
+    """Narration clips of one scene; English clips rendered before sentence marks were recorded get
+    their marks from the (cached) voice, so subtitles still land on each sentence."""
+    clips = json.loads(subs_file.read_text()) if subs_file.exists() else []
+    need = [c for c in clips if not c.get("tr") and not c.get("marks")]
+    if need and env and env.get("EXPLAINER_LANG", "en") == "en":
+        old = {k: os.environ.get(k) for k in ("EXPLAINER_TTS", "EXPLAINER_VOICE", "EXPLAINER_SPEED")}
+        try:
+            for k in old:
+                if env.get(k):
+                    os.environ[k] = env[k]
+            from .voice import get_backend
+            backend = get_backend()
+            for c in need:
+                clip = backend.speak(c["text"])
+                if abs(clip.duration - (c["end"] - c["start"])) < 0.05:
+                    c["marks"] = [[o, t] for o, t in clip.marks]
+        except Exception as e:  # subtitles fall back to proportional timing
+            print(f"  (sentence marks unavailable: {e})")
+        finally:
+            for k, v in old.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+    return clips
 
 
 def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
-           transcript_file: Path | None = None) -> None:
-    """Concatenate normalized scene files into stem.mp4 (+ .srt, chapters, transcript)."""
+           transcript_file: Path | None = None, ctx: dict | None = None) -> None:
+    """Concatenate normalized scene files into stem.mp4 (+ subtitles, chapters, transcript)."""
+    ctx = ctx or {}
+    lang = ctx.get("lang", "en")
+    meta = ctx.get("meta", {})
+    project = ctx.get("project")
+    translations = {}                          # English build: every language with a narration file
+    if lang == "en" and project is not None:
+        from .i18n import narration
+        for d in sorted((project / "i18n").glob("*/narration.yaml")) if (project / "i18n").exists() else []:
+            translations[d.parent.name] = narration(d.parent.name, project)
+
     srt, chapters, transcript, offset = [], [], [f"# {title}\n"], 0.0
+    pairs: dict[str, list] = {code: [] for code in translations}
+    own_pairs = []
     for s, movie, norm in items:
-        name = s.get("title", s["cls"])
+        name = _scene_title(s, meta)
         if s.get("chapter", True):
             chapters.append(f"{fmt_chapter(offset)} {name}")
         transcript.append(f"\n## {fmt_chapter(offset)} — {name}\n")
-        subs_file = movie.with_suffix(".subs.json")
-        for cue in (json.loads(subs_file.read_text()) if subs_file.exists() else []):
-            transcript.append(cue["text"] + "\n")
-            srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"],
-                                  marks=cue.get("marks")))
+        for cue in _clips_with_marks(movie.with_suffix(".subs.json"), ctx.get("env")):
+            if cue.get("tr"):
+                transcript.append("".join(cue["tr"]) + "\n> " + cue["text"] + "\n\n")
+                own_pairs += subs.sentence_pairs(cue, offset)
+            else:
+                transcript.append(cue["text"] + "\n")
+                srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"],
+                                      marks=cue.get("marks")))
+                for code, table in translations.items():
+                    line = table.get(" ".join(cue["text"].split()))
+                    pairs[code] += subs.sentence_pairs(cue, offset, line)
         offset += ffprobe_duration(norm)
 
     listing = build / f"concat_{stem.name}.txt"
@@ -310,18 +413,48 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
     joined = build / f"joined_{stem.name}.mp4"
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
                     "-c", "copy", str(joined)], check=True)
-    final = stem.with_suffix(".mp4")
+    final = stem.with_suffix(".mp4") if lang == "en" else build / f"{stem.name}.clean.mp4"
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
                     "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
                     "-movflags", "+faststart", str(final)], check=True)
     joined.unlink(missing_ok=True)
-    stem.with_suffix(".srt").write_text("".join(
-        f"{n}\n{fmt_srt(a)} --> {fmt_srt(b)}\n{t}\n\n" for n, (a, b, t) in enumerate(srt, 1)))
+    made = []
+    if lang == "en":
+        stem.with_suffix(".srt").write_text("".join(
+            f"{n}\n{fmt_srt(a)} --> {fmt_srt(b)}\n{t}\n\n" for n, (a, b, t) in enumerate(srt, 1)))
+        made.append(".srt")
+        for code, prs in pairs.items():
+            if not any(t for _, _, t, _ in prs):
+                continue
+            tr_ = subs.tracks(prs, timing="en")
+            subs.write_srt(Path(f"{stem}.{code}.srt"), tr_["zh"])
+            subs.write_srt(Path(f"{stem}.{code}-en.srt"), [(a, b, z, e) for a, b, z, e in tr_["zh-en"]])
+            ass = Path(f"{stem}.{code}-en.ass")
+            subs.write_ass(ass, tr_["zh-en"], title=title)
+            made += [f".{code}.srt", f".{code}-en.srt/.ass"]
+            if ctx.get("burn"):
+                subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"))
+                made.append(f".{code}-en.mp4")
+    else:
+        tr_ = subs.tracks(own_pairs, timing="tr")
+        subs.write_srt(Path(f"{stem}.{lang}.srt"), tr_["zh"])
+        subs.write_srt(Path(f"{stem}.en.srt"), tr_["en"])
+        subs.write_srt(Path(f"{stem}.{lang}-en.srt"), [(a, b, z, e) for a, b, z, e in tr_["zh-en"]])
+        ass = Path(f"{stem}.{lang}-en.ass")
+        subs.write_ass(ass, tr_["zh-en"], title=title)
+        made += [f".{lang}.srt", ".en.srt", f".{lang}-en.srt/.ass"]
+        out = stem.with_suffix(".mp4")
+        if ctx.get("burn", True):
+            subs.burn(final, ass, out)
+            made.append(" (bilingual subtitles burned in)")
+        else:
+            subprocess.run(["cp", str(final), str(out)], check=True)
+        final = out
     chapters_file.write_text("\n".join(chapters) + "\n")
     if transcript_file:
         transcript_file.write_text("".join(transcript))
-    print(f"Done: {final.name}  ({fmt_chapter(offset)}, {final.stat().st_size / 1e6:.1f} MB) + .srt, "
-          f"{chapters_file.name}")
+    print(f"Done: {final.name}  ({fmt_chapter(offset)}, {final.stat().st_size / 1e6:.1f} MB) + "
+          f"{', '.join(made)}, {chapters_file.name}")
 
 
 if __name__ == "__main__":

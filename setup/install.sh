@@ -14,9 +14,11 @@ if command -v apt-get >/dev/null; then
     ffmpeg poppler-utils espeak-ng pkg-config libcairo2-dev libpango1.0-dev \
     texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-fonts-recommended \
     texlive-science dvisvgm cm-super fonts-cmu python3-venv python3-dev
+  # Chinese versions (EXPLAINER_LANG=zh): CJK fonts for labels/subtitles, XeLaTeX + ctex for maths
+  $SUDO apt-get install -y --no-install-recommends fonts-noto-cjk texlive-xetex texlive-lang-chinese
 elif command -v brew >/dev/null; then
   brew install ffmpeg poppler espeak-ng pkg-config cairo pango
-  brew install --cask mactex-no-gui font-computer-modern || true
+  brew install --cask mactex-no-gui font-computer-modern font-noto-sans-cjk-sc font-noto-serif-cjk-sc || true
 else
   echo "Install ffmpeg, poppler, espeak-ng, cairo, pango and a LaTeX distribution manually." >&2
 fi

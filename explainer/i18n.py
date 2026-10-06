@@ -1,0 +1,324 @@
+"""Language versions of a video: translated narration, on-screen text and metadata.
+
+    EXPLAINER_LANG=en   (default) the original video, untouched
+    EXPLAINER_LANG=zh   the Chinese version
+
+A language version lives next to the video, in videos/<id>/i18n/<lang>/:
+
+    narration.yaml   every SAY line of script.md, translated SENTENCE BY SENTENCE:
+                       S03:
+                       - en: "Here's the catch. Real tic-tac-toe stops as soon as ..."
+                         zh: ["关键在这里。", "真正的井字棋，只要有人连成三个就结束了……"]
+                         say: [null, "真正的井字棋，只要有人连成三个就结束了……"]  # optional spoken form
+                         anchors: {"Real tic-tac-toe stops": "真正的井字棋"}        # optional
+                     `en` must equal the SAY line (so a changed script is detected), and `zh` must have
+                     exactly one entry per English sentence (explainer.voice.split_sentences). That
+                     alignment is what lets every scene keep its English anchors: vo.wait_until("Second,
+                     X fills") is mapped to the same place in the matching Chinese sentence, and it is
+                     what pairs the Chinese and English lines of the bilingual subtitles.
+    strings.yaml     on-screen text: {"English string": "中文"}; keys starting with "re:" are regular
+                     expressions (Python re, full match) whose value may use \\1, \\2 ...
+    meta.yaml        title, description, chapter titles ({scene file stem or class: title}), part titles
+    assets/          localized assets, e.g. assets/play_all_games.py with Chinese comments
+                     (see `localized()`).
+
+Toolkit strings (e.g. the "Pause and ponder" card) are translated by explainer/locales/<lang>.yaml.
+
+When EXPLAINER_LANG is not "en", `install()` (called by explainer.style) wraps Manim's Text,
+MarkupText, Paragraph, Tex and MathTex so every on-screen string is looked up in those tables,
+CJK text gets a matching CJK font (Noto Serif/Sans/Mono CJK SC), and TeX with CJK characters is
+typeset with XeLaTeX + ctex. Untranslated strings that contain English words are collected in
+build/i18n/missing.<lang>.json for review.
+"""
+
+from __future__ import annotations
+
+import atexit
+import json
+import os
+import re
+from dataclasses import dataclass, field
+from functools import lru_cache
+from pathlib import Path
+
+TOOLKIT_DIR = Path(__file__).resolve().parent
+
+# CJK fonts that pair with the house fonts (installed by setup/install.sh: fonts-noto-cjk)
+CJK_FONTS = {"serif": "Noto Serif CJK SC", "sans": "Noto Sans CJK SC", "mono": "Noto Sans Mono CJK SC"}
+
+_CJK = re.compile(r"[　-〿㐀-䶿一-鿿豈-﫿＀-￯]")
+_WORD = re.compile(r"[A-Za-z]{2,}")
+
+
+def lang() -> str:
+    return (os.environ.get("EXPLAINER_LANG") or "en").strip().lower()
+
+
+def active() -> bool:
+    return lang() != "en"
+
+
+def has_cjk(s: str) -> bool:
+    return bool(_CJK.search(s or ""))
+
+
+@lru_cache(maxsize=1)
+def project_dir() -> Path | None:
+    """The video project being rendered: EXPLAINER_PROJECT, else the nearest folder with video.yaml
+    above the working directory (build, preview and check all run scenes from the project folder)."""
+    env = os.environ.get("EXPLAINER_PROJECT")
+    if env:
+        return Path(env).resolve()
+    for p in [Path.cwd(), *Path.cwd().parents]:
+        if (p / "video.yaml").exists():
+            return p
+    return None
+
+
+def lang_dir(code: str | None = None, project: Path | None = None) -> Path | None:
+    project = project or project_dir()
+    return project / "i18n" / (code or lang()) if project else None
+
+
+def _yaml(path: Path):
+    import yaml
+
+    return (yaml.safe_load(path.read_text(encoding="utf-8")) or {}) if path.exists() else {}
+
+
+def norm(s: str) -> str:
+    """Whitespace-normalized key (VoiceScene and load_narration normalize SAY lines the same way)."""
+    return " ".join(str(s).split())
+
+
+# ---------------------------------------------------------------- narration
+
+@dataclass
+class Line:
+    """One SAY line in another language, sentence-aligned to the English."""
+    en: str
+    sentences: list[str]                      # display text, one per English sentence
+    spoken: list[str]                         # what the TTS reads (defaults to the display text)
+    anchors: dict[str, str] = field(default_factory=dict)
+
+
+@lru_cache(maxsize=4)
+def narration(code: str | None = None, project: Path | None = None) -> dict[str, Line]:
+    d = lang_dir(code, project)
+    data = _yaml(d / "narration.yaml") if d else {}
+    out: dict[str, Line] = {}
+    for scene_id, items in (data or {}).items():
+        for it in items or []:
+            sents = [norm(s) for s in (it.get(code or lang()) or it.get("tr") or [])]
+            say = it.get("say") or [None] * len(sents)
+            spoken = [norm(sp) if sp else s for s, sp in zip(sents, list(say) + [None] * len(sents))]
+            out[norm(it["en"])] = Line(norm(it["en"]), sents, spoken, dict(it.get("anchors") or {}))
+    return out
+
+
+def line_for(text_en: str) -> Line | None:
+    return narration().get(norm(text_en))
+
+
+def check_narration(project: Path, code: str) -> list[str]:
+    """Problems with a translated narration file: missing / stale lines, sentence-count mismatches,
+    anchors that point nowhere."""
+    from .script import load_narration
+    from .voice import split_sentences
+
+    problems = []
+    narration.cache_clear()
+    tr = narration(code, project)
+    say = load_narration(project / "script.md")
+    wanted = {norm(t): sid for sid, lines in say.items() for t in lines}
+    for key, sid in wanted.items():
+        line = tr.get(key)
+        if line is None:
+            problems.append(f"{sid}: no {code} translation for: {key[:90]}")
+            continue
+        n_en = len(split_sentences(key))
+        if len(line.sentences) != n_en:
+            problems.append(f"{sid}: {n_en} English sentences but {len(line.sentences)} {code} sentences: {key[:70]}")
+        if any(not s.strip() for s in line.sentences):
+            problems.append(f"{sid}: empty {code} sentence in: {key[:70]}")
+        for a_en, a_tr in line.anchors.items():
+            if a_en not in key:
+                problems.append(f"{sid}: anchor {a_en!r} is not in the English line")
+            if not any(a_tr in s for s in line.sentences):
+                problems.append(f"{sid}: anchor target {a_tr!r} is not in the {code} line")
+    for key in tr:
+        if key not in wanted:
+            problems.append(f"stale {code} line (no such SAY line in script.md): {key[:90]}")
+    return problems
+
+
+# ---------------------------------------------------------------- on-screen strings
+
+@lru_cache(maxsize=4)
+def _tables(code: str):
+    exact: dict[str, str] = {}
+    patterns: list[tuple[re.Pattern, str]] = []
+    sources = [TOOLKIT_DIR / "locales" / f"{code}.yaml"]
+    d = lang_dir(code)
+    if d:
+        sources.append(d / "strings.yaml")
+    for src in sources:                        # the video's own table wins over the toolkit's
+        for k, v in (_yaml(src) or {}).items():
+            if v is None:
+                continue
+            if str(k).startswith("re:"):
+                patterns.insert(0, (re.compile(str(k)[3:], re.S), str(v)))
+            else:
+                exact[str(k)] = str(v)
+                exact.setdefault(norm(k), str(v))
+    return exact, patterns
+
+
+_MISSING: dict[str, set] = {}
+
+
+def tr(s: str, kind: str = "text") -> str:
+    """Translate one on-screen string into the active language (unchanged if no entry)."""
+    if not active() or not isinstance(s, str) or not s.strip():
+        return s
+    exact, patterns = _tables(lang())
+    if s in exact:
+        return exact[s]
+    if norm(s) in exact:
+        return exact[norm(s)]
+    for rx, repl in patterns:
+        m = rx.fullmatch(s)
+        if m:
+            return m.expand(repl)
+    if _WORD.search(re.sub(r"\\[A-Za-z]+", "", s)):      # English words left in a visible string
+        _MISSING.setdefault(kind, set()).add(s)
+    return s
+
+
+def localized(path: str | Path) -> Path:
+    """`assets/x.py` -> `i18n/<lang>/assets/x.py` when that file exists, else the original path."""
+    path = Path(path)
+    project = project_dir()
+    if not active() or project is None:
+        return path
+    try:
+        rel = path.resolve().relative_to(project)
+    except ValueError:
+        return path
+    alt = lang_dir() / rel
+    return alt if alt.exists() else path
+
+
+def meta(code: str | None = None, project: Path | None = None) -> dict:
+    d = lang_dir(code, project)
+    return _yaml(d / "meta.yaml") if d else {}
+
+
+@atexit.register
+def _dump_missing():
+    if not _MISSING or project_dir() is None:
+        return
+    out = project_dir() / "build" / "i18n" / f"missing.{lang()}.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        old = json.loads(out.read_text()) if out.exists() else {}
+    except json.JSONDecodeError:
+        old = {}
+    for kind, items in _MISSING.items():
+        old[kind] = sorted(set(old.get(kind, [])) | items)
+    out.write_text(json.dumps(old, ensure_ascii=False, indent=1))
+
+
+# ---------------------------------------------------------------- Manim hooks
+
+def _cjk_font(font: str | None) -> str:
+    f = (font or "").lower()
+    kind = "mono" if "mono" in f else "sans" if "sans" in f else "serif"
+    base = font or ""
+    return f"{base}, {CJK_FONTS[kind]}" if base else CJK_FONTS[kind]
+
+
+@lru_cache(maxsize=1)
+def cjk_tex_template():
+    """XeLaTeX + ctex, with the same maths packages as the house template."""
+    from manim import TexTemplate
+
+    t = TexTemplate(tex_compiler="xelatex", output_format=".xdv")
+    t.add_to_preamble(r"\usepackage{amsmath,amssymb,bm}")
+    t.add_to_preamble(r"\usepackage[UTF8,scheme=plain]{ctex}")
+    t.add_to_preamble(rf"\setCJKmainfont{{{CJK_FONTS['serif']}}}")
+    t.add_to_preamble(rf"\setCJKsansfont{{{CJK_FONTS['sans']}}}")
+    return t
+
+
+_INSTALLED = False
+
+
+def install() -> None:
+    """Route every Manim text object through `tr()` (no-op for English)."""
+    global _INSTALLED
+    if _INSTALLED or not active():
+        return
+    _INSTALLED = True
+    from manim import MarkupText, MathTex, Paragraph, Tex, Text
+
+    def wrap_text(cls, kind):
+        orig = cls.__init__
+
+        def init(self, text, *a, **kw):
+            text = tr(text, kind)
+            if has_cjk(text):
+                kw["font"] = _cjk_font(kw.get("font"))
+            orig(self, text, *a, **kw)
+        cls.__init__ = init
+
+    wrap_text(Text, "text")
+    wrap_text(MarkupText, "markup")
+
+    orig_par = Paragraph.__init__
+
+    def par_init(self, *lines, **kw):
+        lines = tuple(tr(s, "paragraph") for s in lines)
+        if any(has_cjk(s) for s in lines):
+            kw["font"] = _cjk_font(kw.get("font"))
+        orig_par(self, *lines, **kw)
+    Paragraph.__init__ = par_init
+
+    def wrap_tex(cls, kind):
+        orig = cls.__init__
+
+        def init(self, *strings, **kw):
+            strings = tuple(tr(s, kind) if isinstance(s, str) else s for s in strings)
+            if any(isinstance(s, str) and has_cjk(s) for s in strings):
+                kw["tex_template"] = cjk_tex_template()
+            orig(self, *strings, **kw)
+        cls.__init__ = init
+
+    wrap_tex(MathTex, "mathtex")
+    wrap_tex(Tex, "tex")
+
+
+def main(argv=None) -> int:
+    """python -m explainer.i18n check videos/<id> [--lang zh]"""
+    import argparse
+
+    ap = argparse.ArgumentParser(description="check a language version of a video")
+    ap.add_argument("cmd", choices=["check"])
+    ap.add_argument("project", type=Path)
+    ap.add_argument("--lang", default="zh")
+    args = ap.parse_args(argv)
+    project = args.project.resolve()
+    problems = check_narration(project, args.lang)
+    for p in problems:
+        print("NARRATION", p)
+    missing = project / "build" / "i18n" / f"missing.{args.lang}.json"
+    if missing.exists():
+        data = json.loads(missing.read_text())
+        n = sum(len(v) for v in data.values())
+        print(f"STRINGS   {n} untranslated on-screen strings with English words seen in renders ({missing})")
+    print("OK" if not problems else f"{len(problems)} narration problem(s)")
+    return 1 if problems else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

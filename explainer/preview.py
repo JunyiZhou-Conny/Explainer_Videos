@@ -40,14 +40,19 @@ def main(argv=None):
     ap.add_argument("--tts", help="voice backend override (e.g. silent)")
     ap.add_argument("--no-render", action="store_true")
     ap.add_argument("--movie", type=Path, help="make sheets from this existing mp4 instead of rendering")
+    ap.add_argument("--lang", default=None, help="language version (en, zh, ...); default $EXPLAINER_LANG or en")
     args = ap.parse_args(argv)
 
     scene_file = args.file.resolve()
     project = find_project(scene_file)
     import yaml
     spec = yaml.safe_load((project / "video.yaml").read_text()) if (project / "video.yaml").exists() else {}
-    env = scene_env(spec, args.tts)
-    media = project / "build" / f"preview_{args.quality}" / scene_file.stem  # per-scene Tex cache
+    import os
+    lang = args.lang or os.environ.get("EXPLAINER_LANG") or "en"
+    env = scene_env(spec, args.tts, lang)
+    env["EXPLAINER_PROJECT"] = str(project)
+    tag = "" if lang == "en" else f"_{lang}"
+    media = project / "build" / f"preview_{args.quality}{tag}" / scene_file.stem  # per-scene Tex cache
     out = media / "videos" / scene_file.stem / QUALITY_DIRS[args.quality] / f"{args.cls}.mp4"
     if args.movie:
         out, args.no_render = args.movie.resolve(), True
@@ -59,10 +64,10 @@ def main(argv=None):
             print(r.stdout[-4000:], r.stderr[-6000:], sep="\n")
             raise SystemExit("render failed")
         for line in (r.stdout + r.stderr).splitlines():
-            if "anchor not found" in line:
+            if "anchor not found" in line or "translation for narration" in line:
                 print("WARNING:", line.strip())
     dur = ffprobe_duration(out)
-    sheets_dir = project / "build" / "sheets" / f"{scene_file.stem}_{args.cls}"
+    sheets_dir = project / "build" / "sheets" / f"{scene_file.stem}_{args.cls}{tag}"
     sheets_dir.mkdir(parents=True, exist_ok=True)
     for old in sheets_dir.glob("*.png"):
         old.unlink()
@@ -86,6 +91,8 @@ def main(argv=None):
     if subs.exists():
         for c in json.loads(subs.read_text()):
             print(f"  [{c['start']:6.1f}-{c['end']:6.1f}] {c['text'][:90]}")
+            for sent, (t0, t1) in zip(c.get("tr") or [], c.get("tr_spans") or []):
+                print(f"      {c['start'] + t0:6.1f}  {sent[:60]}")
     for s in sorted(sheets_dir.glob("sheet_*.png")):
         print(f"sheet:    {s}")
     for f in frames:

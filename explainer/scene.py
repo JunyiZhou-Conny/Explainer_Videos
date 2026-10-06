@@ -26,8 +26,9 @@ from pathlib import Path
 
 from manim import Scene, logger
 
-from . import style  # noqa: F401  (sets the background colour)
-from .voice import Clip, get_backend
+from . import i18n
+from . import style  # noqa: F401  (sets the background colour; installs translation hooks)
+from .voice import AlignedClip, Clip, get_backend
 
 MIN_WAIT = 1 / 60
 
@@ -76,8 +77,14 @@ class VoiceScene(Scene):
 
     @contextmanager
     def voiceover(self, text: str, pad: float | None = None):
+        """Narrate `text` (an English SAY line of script.md). In another language version
+        (EXPLAINER_LANG), the sentence-aligned translation is spoken instead, and anchors given as
+        English phrases are mapped onto it (see explainer.i18n)."""
         text = " ".join(text.split())
-        clip = self._voice.speak(text)
+        line = i18n.line_for(text) if i18n.active() else None
+        if i18n.active() and line is None:
+            logger.warning(f"no {i18n.lang()} translation for narration: {text[:70]!r}... (speaking English)")
+        clip = self._voice.speak_aligned(line) if line else self._voice.speak(text)
         start = self.renderer.time
         self.add_sound(str(clip.path))
         tracker = Tracker(self, clip, start)
@@ -86,8 +93,12 @@ class VoiceScene(Scene):
         left = start + clip.duration + pad - self.renderer.time
         if left > MIN_WAIT:
             self.wait(left)
-        self._subs.append({"start": round(start, 3), "end": round(start + clip.duration, 3),
-                           "text": text, "marks": [[o, round(t, 3)] for o, t in clip.marks]})
+        sub = {"start": round(start, 3), "end": round(start + clip.duration, 3),
+               "text": text, "marks": [[o, round(t, 3)] for o, t in clip.marks]}
+        if isinstance(clip, AlignedClip):   # the translated sentences, with their exact spans
+            sub.update({"lang": i18n.lang(), "tr": clip.sentences,
+                        "tr_spans": [[round(a, 3), round(b, 3)] for a, b in clip.spans]})
+        self._subs.append(sub)
 
     def tear_down(self):  # Manim >= 0.19 (older versions call tearDown)
         getattr(super(), "tear_down", lambda: None)()

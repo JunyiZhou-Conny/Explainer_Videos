@@ -38,6 +38,11 @@ TINY_SIZE = 20
 TEX_TEMPLATE = TexTemplate()
 TEX_TEMPLATE.add_to_preamble(r"\usepackage{amsmath,amssymb,bm}")
 
+# language versions (EXPLAINER_LANG=zh ...): translate every on-screen string, pick CJK fonts
+from . import i18n as _i18n  # noqa: E402
+
+_i18n.install()
+
 
 def text(s: str, size: float = BODY_SIZE, color: str = WHITE, font: str = FONT, **kw) -> Text:
     """Plain text in the house font."""

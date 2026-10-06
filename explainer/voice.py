@@ -69,15 +69,49 @@ class Clip:
         return 0.0
 
 
+@dataclass
+class AlignedClip(Clip):
+    """A clip spoken in another language, sentence-aligned to the English line it replaces.
+
+    `text`/`marks` describe the ENGLISH line (character offsets of its sentences) with the times at
+    which the matching translated sentences start, so `time_of("an English phrase")` still works:
+    the phrase is located in its English sentence and mapped to the same relative position of the
+    translated sentence, or exactly onto `anchors[phrase]` when the translation provides one."""
+    sentences: list[str] = field(default_factory=list)          # translated display sentences
+    spans: list[tuple[float, float]] = field(default_factory=list)  # (start, end) of each sentence
+    anchors: dict[str, str] = field(default_factory=dict)
+
+    def time_of(self, phrase: str) -> float | None:
+        if phrase in self.anchors:
+            target = self.anchors[phrase]
+            for s, (t0, t1) in zip(self.sentences, self.spans):
+                i = s.find(target)
+                if i >= 0:
+                    return t0 + (t1 - t0) * i / max(1, len(s))
+        idx = self.text.find(phrase)
+        if idx < 0:
+            idx = self.text.lower().find(phrase.lower())
+        if idx < 0:
+            return None
+        offs = [o for o, _ in self.marks] + [len(self.text)]
+        for k in range(len(self.spans)):
+            if offs[k] <= idx < offs[k + 1] or k == len(self.spans) - 1:
+                t0, t1 = self.spans[k]
+                return t0 + (t1 - t0) * (idx - offs[k]) / max(1, offs[k + 1] - offs[k])
+        return 0.0
+
+
 # ---------------------------------------------------------------- helpers
 
 _SENT_RE = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\"'(“])")
+_SENT_RE_CJK = re.compile(r"(?<=[。！？])\s*(?=\S)")
 
 
 def split_sentences(text: str) -> list[tuple[int, str]]:
-    """Split narration into (offset, sentence) pairs."""
+    """Split narration into (offset, sentence) pairs (English . ! ? and Chinese 。！？)."""
     out, pos = [], 0
-    for m in _SENT_RE.finditer(text):
+    rx = _SENT_RE_CJK if re.search(r"[。！？]", text) else _SENT_RE
+    for m in rx.finditer(text):
         out.append((pos, text[pos:m.start()]))
         pos = m.end()
     out.append((pos, text[pos:]))
@@ -158,6 +192,57 @@ class Backend:
         marks = [(off, dur * off / max(1, len(text))) for off, _ in split_sentences(text)]
         return Clip(out, dur, text, marks)
 
+    def sentence_wav(self, sentence: str) -> Path:
+        """One sentence as a cached mono wav at SAMPLE_RATE (any backend)."""
+        out = self._cache_path(sentence, "wav")
+        if not out.exists():
+            out.parent.mkdir(parents=True, exist_ok=True)
+            raw = self._cache_path(sentence)
+            if not raw.exists():
+                tmp = raw.with_name(raw.stem + f".tmp{os.getpid()}" + raw.suffix)
+                self.synthesize(sentence, tmp)
+                tmp.replace(raw)
+            if raw != out:
+                tmp = out.with_name(out.stem + f".tmp{os.getpid()}.wav")
+                subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(raw), "-ac", "1", "-ar",
+                                str(SAMPLE_RATE), "-c:a", "pcm_s16le", str(tmp)], check=True)
+                tmp.replace(out)
+        return out
+
+    def speak_sentences(self, sentences: list[str]) -> tuple[Path, float, list[tuple[float, float]]]:
+        """Synthesize sentences one by one and join them with SENTENCE_GAP of silence.
+        Returns (wav, duration, [(start, end) of each sentence]) with exact times."""
+        pieces = [self.sentence_wav(s) for s in sentences]
+        joined = self._cache_path("\x1e".join(sentences) + f"|gap={SENTENCE_GAP}|joined", "wav")
+        spans, t = [], 0.0
+        for p in pieces:
+            d = audio_duration(p)
+            spans.append((t, t + d))
+            t += d + SENTENCE_GAP
+        if not joined.exists():
+            joined.parent.mkdir(parents=True, exist_ok=True)
+            gap = np.zeros(int(SAMPLE_RATE * SENTENCE_GAP), dtype=np.float32)
+            chunks = []
+            for i, p in enumerate(pieces):
+                with wave.open(str(p)) as w:
+                    if w.getframerate() != SAMPLE_RATE:
+                        raise ValueError(f"{p}: expected {SAMPLE_RATE} Hz")
+                    data = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2").astype(np.float32) / 32767
+                chunks.append(data)
+                if i < len(pieces) - 1:
+                    chunks.append(gap)
+            tmp = joined.with_name(joined.stem + f".tmp{os.getpid()}.wav")
+            write_wav(tmp, np.concatenate(chunks) if chunks else np.zeros(1, dtype=np.float32))
+            tmp.replace(joined)
+        return joined, audio_duration(joined), spans
+
+    def speak_aligned(self, line) -> AlignedClip:
+        """Speak a translated, sentence-aligned line (explainer.i18n.Line)."""
+        path, dur, spans = self.speak_sentences(line.spoken)
+        marks = [(off, t0) for (off, _), (t0, _) in zip(split_sentences(line.en), spans)]
+        return AlignedClip(path, dur, line.en, marks, sentences=line.sentences, spans=spans,
+                           anchors=line.anchors)
+
 
 class SilentBackend(Backend):
     """Silence of a plausible length (~2.6 words/s). Fast layout previews, no TTS needed."""
@@ -171,8 +256,10 @@ class SilentBackend(Backend):
         return {"wps": self.wps}
 
     def synthesize(self, text, out):
-        words = max(1, len(text.split()))
-        write_wav(out, np.zeros(int(SAMPLE_RATE * (words / self.wps + 0.2)), dtype=np.float32))
+        cjk = len(re.findall(r"[\u4e00-\u9fff]", text))       # ~4.5 Chinese characters per second
+        words = len(re.sub(r"[\u4e00-\u9fff]", " ", text).split())
+        secs = max(0.4, words / self.wps + cjk / 4.5) + 0.2
+        write_wav(out, np.zeros(int(SAMPLE_RATE * secs), dtype=np.float32))
 
 
 class KokoroBackend(Backend):
@@ -250,6 +337,9 @@ class KokoroBackend(Backend):
             write_wav(tmp, samples, sr)
             tmp.replace(out)
         return out
+
+    def sentence_wav(self, sentence: str) -> Path:
+        return self._sentence_wav(sentence)
 
     def speak(self, text: str) -> Clip:
         sentences = split_sentences(text)
