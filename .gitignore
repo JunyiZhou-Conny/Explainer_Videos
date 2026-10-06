@@ -9,3 +9,5 @@ __pycache__/
 # rendered videos are large: keep only the final cut in output/
 videos/*/output/*_480p15.*
 videos/*/output/*_720p30.*
+videos/*/output/*/*_480p15.*
+videos/*/output/*/*_720p30.*

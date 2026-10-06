@@ -1,6 +1,6 @@
-# Why are there exactly 255,168 games of tic-tac-toe?
+# 井字棋为什么恰好有 255,168 种对局？
 
-## 00:00 — How many games?
+## 00:00 — 到底有多少种对局？
 有个问题，听起来很简单。井字棋有多少种不同的对局？
 > Here's a question that sounds easy. How many different games of tic-tac-toe are there?
 
@@ -14,7 +14,7 @@
 > The answer is 255,168. In this video we'll find out where that number comes from: first by careful counting, and then with a short computer program that plays every single game.
 
 
-## 00:52 — Filling the board: 9!
+## 00:51 — 填满棋盘：9 的阶乘
 先看一个更简单的问题。假设有人三子连成一线了，双方也不停，一直下到九个格子都填满。填满棋盘有多少种不同的顺序？
 > Let's start with a simpler question. Suppose the players ignore three in a row, and just keep going until all nine squares are full. In how many different orders can the board fill up?
 
@@ -28,7 +28,7 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 > But wait. That's more than 255,168. Our count is too high. Where are all those extra games coming from?
 
 
-## 01:44 — Games stop early
+## 01:42 — 对局会提前结束
 问题就在这儿。真正的井字棋，一有人三子连成一线，就结束了。这一局，X 在第 5 步就赢了，所以剩下的四个格子从没下过。
 > Here's the catch. Real tic-tac-toe stops as soon as someone gets three in a row. In this game, X wins on the fifth move, so the last four squares are never played.
 
@@ -45,7 +45,7 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 > Here's one way, in three steps. First, pick the line X wins with. There are 8: 3 rows, 3 columns and 2 diagonals. Second, X fills that line in some order: 3 times 2 times 1, which is 3 factorial, so 6 orders. Third, O's first mark can go on any of the other 6 squares, and O's second mark on any of the 5 left: 6 times 5 is 30 ways. Multiply: 8 times 6 times 30 is 1,440 games.
 
 
-## 03:35 — Counting by hand gets messy
+## 03:30 — 手算越来越乱
 那 O 在第 6 步赢下的对局呢？O 需要三子连成一线。但要小心：如果三个 X 也连成了一线，X 在第 5 步就已经赢了，还没等 O 连完，这一局就结束了。
 > What about games that O wins on move 6? O needs three in a row. But careful: if X's three marks also make a line, X already won on move 5, and the game stopped before O could finish.
 
@@ -59,7 +59,7 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 > When counting gets this messy, there's another plan. Don't count cleverly. Instead, teach a computer the rules, and let it play every possible game, one by one.
 
 
-## 04:42 — Teaching a computer the rules
+## 04:38 — 教电脑学规则
 首先，电脑需要一个棋盘。我们用一个列表来存 9 个格子。我们用的编程语言叫 Python；在 Python 里，列表里的位置从零开始编号，所以格子的编号是 0 到 8。空格子里放一个点。
 > First, the computer needs a board. We'll use a list of 9 squares. In Python, the programming language we're using, the spots in a list are numbered starting from zero, so our squares are numbered 0 to 8. An empty square holds a dot.
 
@@ -70,7 +70,7 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 > Next comes a function: a little mini-program with a name. This one, called winner, checks every line. If all three squares on a line hold the same mark, and that mark isn't a dot, that player has won. If no line matches, winner finds nothing, and hands back None, which means nobody.
 
 
-## 05:43 — Exploring every game
+## 05:38 — 探索每一局
 最巧妙的部分来了：一个叫 explore 的函数，explore 就是“探索”的意思。我们告诉它轮到谁，它的任务是统计从现在这个棋盘往后，还可能出现多少局。
 > Now for the clever part: a function called explore. We tell it whose turn it is, and its job is to count every game that can still happen from the current board.
 
@@ -90,7 +90,7 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 > There's one more line, and it's easy to miss. The program plays every game on just one board, like a single whiteboard. So after exploring a move, it erases that mark. That's called undoing the move, and it means the next branch starts fresh. Trying a path, then stepping back to try the next one, is called backtracking.
 
 
-## 07:47 — Change one line
+## 07:39 — 只改一行代码
 想弄懂一个程序，有个好办法：故意把它改坏。暂停想一想：如果删掉“撤销”那一行，你觉得会发生什么？
 > A great way to understand a program is to break it on purpose. Pause and ponder: what do you think happens if we delete the undo line?
 
@@ -104,7 +104,7 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 > 362,880. That's nine factorial! Without the winner check, the program keeps playing after a win, so it counts all the ghost games. It rediscovered our very first count.
 
 
-## 09:13 — 255,168, explained
+## 09:05 — 255,168 是怎么来的
 现在，我们把每一行都放回去，运行真正的程序。过了一小会儿，它输出了 255,168。
 > Now let's put every line back and run the real program. After a moment, it prints 255,168.
 
@@ -127,7 +127,7 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 > But careful: more games doesn't mean a better move. Out of all the games that start in the center, X wins about 6 in 10. Starting on an edge, X wins fewer than half.
 
 
-## 11:51 — Bigger games, and your turn
+## 11:38 — 更复杂的棋，轮到你了
 那么，先走的 X 是不是总能赢？不是。电脑能做的，不只是统计对局。它从树的最底下开始，那里每一局都已经下完，然后一层一层往上推。每到一个分支，它都挑最好的一步：轮到 X 时挑对 X 最好的，轮到 O 时挑对 O 最好的。这样一来，它就把井字棋彻底算透了：如果双方都不失误，每一局都会是平局。所以 X 赢下的每一局，都少不了 O 在某一步的失误。
 > So does going first mean X always wins? No. A computer can do more than count. It starts at the bottom of the tree, where every game is finished, and works upward. At every branch it picks the best move: best for X on X's turns, and best for O on O's turns. Doing that, it has solved tic-tac-toe: if both players play perfectly, every game ends in a draw. So every one of X's wins needs a mistake by O somewhere.
 

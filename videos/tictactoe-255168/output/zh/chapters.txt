@@ -1,9 +1,9 @@
-00:00 How many games?
-00:52 Filling the board: 9!
-01:44 Games stop early
-03:35 Counting by hand gets messy
-04:42 Teaching a computer the rules
-05:43 Exploring every game
-07:47 Change one line
-09:13 255,168, explained
-11:51 Bigger games, and your turn
+00:00 到底有多少种对局？
+00:51 填满棋盘：9 的阶乘
+01:42 对局会提前结束
+03:30 手算越来越乱
+04:38 教电脑学规则
+05:38 探索每一局
+07:39 只改一行代码
+09:05 255,168 是怎么来的
+11:38 更复杂的棋，轮到你了
