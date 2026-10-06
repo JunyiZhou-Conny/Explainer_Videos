@@ -1,0 +1,818 @@
+# Chinese (zh-CN) glossary and translation rules for dwork2006-calibrating-noise, code-switching version.
+# Final version: resolves the draft glossary and three reviews (DP researcher, teacher, TTS/subtitles),
+# plus a second TTS check (edge zh-CN-XiaoxiaoNeural / YunxiNeural transcribed with faster-whisper).
+# Human-readable copy in Chinese: GLOSSARY.md (keep the two in sync).
+# terms[].zh_subtitle = display form (Chinese subtitle line and on-screen labels);
+# terms[].zh_spoken = what the voice says, i.e. the narration.yaml say: form ("" = same as zh_subtitle);
+# rules are tagged [A1]..[I7]: A terms, B typography, C numbers/maths, D narration file, E on-screen strings,
+# F TTS, G subtitles, H titles/docs, I toolkit work.
+video: dwork2006-calibrating-noise
+lang: zh-CN (mainland Simplified Chinese)
+audience: Chinese grad students / researchers in RL, ML and medical imaging who are new to differential privacy; register of a Bilibili paper explainer by a Chinese PhD student
+voice:
+  backend: edge
+  voice: zh-CN-XiaoxiaoNeural
+  speed: 1.0
+policy: 'Fluent spoken Mandarin of a Chinese PhD student explaining a paper on Bilibili, code-switching only where such a speaker really does, for an audience of RL and medical-imaging grad students who are new to DP. Every choice passes three tests: what real speakers in this setting say; the field''s standard, searchable Chinese name, introduced once; and nothing the Mandarin voice (edge zh-CN-XiaoxiaoNeural) can misread. (1) English stays for symbols and variables (shown as glyphs; the voice says 艾普西隆 for ε and English names for the other letters), for people, products, acronyms, venues and paper titles, and for a short closed list of words that DP/ML researchers say in English and the voice reads reliably: query, counting query, mask, trick, hybrid argument, the paper''s own words transcript and leakage, plus paper, setting and clip in speech only (labels write 论文, 设定, 裁剪). (2) Every other concept is Mandarin, in the term Chinese DP literature uses: 差分隐私, 敏感度, 隐私预算, 拉普拉斯机制, 噪声尺度, 机制, 相邻数据库, 统计距离, 隐私损失, 随机响应, 本地化差分隐私, 组合定理, 成员推理攻击, 重构攻击, 数据管理者 (curator), 记录 (row), 桶 (bin), 对数 (log), 先验/后验概率比 (odds). The last five replace draft code-switches that failed the audience test or the voice. (3) The bilingual subtitles put the original English sentence under every Chinese line, so the Chinese line carries no English glosses. Exceptions: the narrator says the English aloud three times (差分隐私, 敏感度, 隐私预算), and a few short subtitle-only glosses give the Chinese for kept-English words (transcript（交互历史）) or the textbook alias (相邻数据库（也叫相邻数据集）). (4) The toolkit''s constraints are part of the policy: one Chinese sentence per English sentence (259), about 400 anchors that keep the animation in sync, and a say: field whenever the displayed text is not what the voice should read. Mainland Simplified Chinese; written register (论文, labels, titles, docs) is standard Chinese, spoken register is relaxed and lab-meeting-like but never slangy.'
+rules:
+- '[A1] Code-switching test. Keep English only for (a) symbols, Greek letters and variables; (b) people, products, acronyms, venues and paper titles; (c) the closed list: query, counting query, mask, trick, hybrid argument, transcript and leakage (the paper''s words), and in speech only paper, setting and clip. A new word may join (c) only if Chinese DP/ML researchers say it in English in lab talk, the Chinese is stiff, ambiguous or collides with another term, and the zh voice reads it correctly in an ASR check (rule F5). Removed from the draft list: curator → 数据管理者 (audience), log → 对数, odds → 先验/后验概率比, bin → 桶 (the voice). Never add English for flavour (no ''private 深度学习'', no ''DP'' in speech). Every choice is fixed across narration, subtitles, labels, chapter titles, exercises.md and digest.md.'
+- '[A2] Spoken English glosses: exactly three, each tied to a line. S01 它开创了我们今天所说的差分隐私，differential privacy……; S01 ……一个数，叫敏感度，sensitivity……; S09 ……ε 就像一笔隐私预算，privacy budget。 They are spoken, so they appear in the subtitle too. No other English is added to speech: Laplace, statistical distance, privacy loss etc. are shown by the English subtitle line.'
+- '[A3] Subtitle-only glosses, at most about 7 width units each, once per part (repeat at the first use in Part 2), placed at the end of a clause and never inside a noun phrase (not ''query（查询）f''). Only two kinds. (i) Chinese for kept-English words: query（查询）, counting query（计数查询）, transcript（交互历史）, leakage（泄露量）, hybrid argument（混合论证）, mask（掩码）, clip（梯度裁剪）. (ii) The textbook alias of a Chinese term: 相邻数据库（也叫相邻数据集）, 统计距离（即 TV 距离）, ε-不可区分性（即 ε-差分隐私）. No English glosses on Chinese terms in the Chinese line: the English line directly underneath already shows them. Glosses are display-only: the say: entry omits them, and an anchor after a gloss needs an explicit anchors: entry (rule D2).'
+- '[A4] Written vs spoken pairs. Speech and subtitles say paper / setting / clip; labels, chapter titles, meta.yaml and docs write 论文 / 设定 / 梯度裁剪. ''This paper'' as a subject is 这篇 paper; when citing the paper''s own words or results, speech says 原文 (原文管它叫 leakage, 原文证明了……), which also breaks up the paper-paper-paper rhythm. Fixed compounds keep 论文 even in speech (特邀论文).'
+- '[A5] ''private''. ''M is (ε-)private'' → M 满足（ε-）差分隐私; ''a release / statistic is private'' → 不泄露隐私; ''privately'' → 用差分隐私 / 在差分隐私下; ''private deep learning'' → 差分隐私深度学习; ''in private'' (coin) → 私下. Quoting the paper''s statements (Definition 1, Theorem 2) uses ε-不可区分（性）. Never 私有, never 隐私的 + noun, never English ''private''.'
+- '[A6] Disambiguation pairs. 敏感度 (S(f)) vs 敏感问题 (a touchy topic, S02) vs 灵敏度 (diagnostic true-positive rate): never 越敏感的问题 for ''a more sensitive query''. 泄露量 (leakage = ε) vs 侵犯隐私 (privacy violation). DP release = 做隐私处理, never 脱敏 (= masking; 脱敏/匿名化 only for the names-removed approach). 记录 (row) vs transcript (never 交互记录). ε ''set by policy'' = 人为选定 vs RL policy = 策略. Coin tails 反面 vs distribution tails 尾部. 准确 vs 精度 / 准确率. 噪声 vs 噪音. 相邻 vs 邻居. 重构攻击 vs 图像重建. 桶 (bin) vs 区间 (the uniform-noise interval). S06 变化量 vs S07 高度差. 替换 (swap a row) vs 交换. ''fixed rule'' = 确定性的规则. ''a rounding error'' (idiom) = 可以忽略不计, never 舍入误差. 差分攻击 (this hospital attack) vs 差分密码分析.'
+- '[A7] English words inside Chinese never inflect: no plurals, tenses, articles or possessive ''s (很多 query, clip 到 C, Warner 的硬币). Measure words: 一个 query, 一个 mask, 一个 trick, 一篇 paper, 一份 transcript, 一个桶, 一条记录; plurals with 很多 / 这些 / 几个, never 们.'
+- '[A8] Register. Chinese word order and grammar; restructure freely inside a sentence. No translationese: no 让我们… (use 我们来… / 来看…), no 这就是为什么… (use 所以…), drop 它 / 你的 when context recovers them, avoid 被 passives and chains of 一个…的. Address viewers as 大家 for instructions (大家可以先暂停) and 你 inside thought experiments (现在你是攻击者); never 您. Setting a parameter uses 取 (ε 取 0.5); 等于 is reserved for formulas and definitions. ''X percent sure'' → 有 X 的把握; ''about'' → 大约 / 左右. Friendly lab-meeting tone, no internet slang (no 锅, yyds, 一键三连 in narration).'
+- '[A9] Precision. Translate quantifiers and hedges exactly: for every / any 对任意, at least 至少, at most 最多 / 不超过, most 大多数, unless 除非, roughly 大约, tiny 极小, bound 上界 (speech too; never bare 界). Never strengthen or soften a claim (S11, S12). A ponder question must not leak its answer through a wording choice (S06 must not say 总共只变 2).'
+- '[A10] Names. Modern researchers stay in Latin script with their original spelling: full name at first mention (as the English narration does), then the surname. Never transliterate. Pronouns: Dwork, Sweeney, Dinur, Alice 她; McSherry, Nissim, Smith, Warner 他. Narration lists use 、 with 和 before the last name; cards keep ''&'' and ''et al.'' unchanged; speech says ''Abadi 和合作者''. Classic eponyms are Chinese: 贝叶斯, 拉普拉斯, 高斯, 哥德尔 (notation stays Latin: Lap(·), N(·)). Organisations and places: 美国人口普查局, 马萨诸塞州, 苹果 (Apple on cards); products stay Latin (Google, Chrome, iPhone, RAPPOR, DP-SGD); example people keep their English names.'
+- '[A11] Titles and citations. An English paper title stays verbatim inside 《》 in display text and is read in English in say: (no 《》, a comma pause on each side, no spoken gloss). Citation lines (C. Dwork, F. McSherry, K. Nissim, A. Smith; TCC 2006 · LNCS 3876, pp. 265–284) are unchanged. Bracketed page and definition references from script.md are never spoken.'
+- '[A12] Mainland Simplified Chinese only (数据库, 信息, 默认, 算法, 视频, 本地化; not 資料庫, 資訊, 預設, 演算法, 影片). No Traditional track for now.'
+- '[B1] Spacing. One half-width space between CJK and Latin letters, digits, Greek letters or inline formulas, in subtitles, Pango Text labels, docs and say: (用 ε 控制, 2006 年, 41 个病人, L1 范数, 发来一个 query). The say: spaces are required: the lexicon regex treats CJK as word characters, so ''Dwork的'' never matches. No space next to full-width punctuation, none between a number and % or °, none inside hyphenated compounds (ε-不可区分性, (ε, δ)-差分隐私, DP-SGD). In Tex/MathTex, xeCJK spaces CJK and Latin itself. Never fake a no-break space with U+00A0 / U+202F: norm() and split_balanced() turn it into an ordinary space.'
+- '[B2] Punctuation. Chinese text uses full-width ，。、；：？！（）“”‘’——……《》, also around embedded English words; quotes “ ” (‘ ’ nested). Lists use 、. Half-width only inside formulas, numbers and tuples ((Carol, 有 X)). Inside one Chinese sentence there is no 。？！ (one sentence per English sentence); use ，；： instead. Labels have no trailing 。 but questions keep ？. A line never starts with punctuation.'
+- '[B3] Fonts. The toolkit pairs house fonts with Noto Sans / Serif / Sans Mono CJK SC (explainer/i18n.py CJK_FONTS); use those names. A CJK glyph is about 1 em wide: fit each Chinese label to the English label''s bounding box instead of reusing its font_size, and keep numbers, formulas, names, colours and positions identical to the English scene.'
+- '[C1] Numbers in display text. Arabic digits for values, results, years, percentages, decimals and references (41, 42, 52.5%, ε 取 0.5, 2006 年, 第 4 节, 5000 个桶). Chinese numerals for idioms, approximate amounts, small narrative counts and discourse ordinals (一条记录, 两个世界, 三个核心想法, 一半, 五五开, 成千上万步, 第一 / 第二, 第一周). Subtitles use 万/亿 with digits and no thousands commas (100 万, 3300 万, 1.34 亿, 10 亿美元); numbers up to 9999 take no separator. Charts and formulas keep their original numerals (n = 10,000; 1,000,000; $1M; $52k). Minus sign − (U+2212).'
+- '[C2] On-screen formulas. MathTex/Tex keep the English formula unchanged; only words inside \text{} and prose Tex strings are translated in place (误差, 事件 A, 统计距离, 阴影面积, 噪声尺度, 每个桶, 除非, 答案, 比特翻转, 至多). TeX containing CJK is typeset with XeLaTeX + ctex automatically (i18n.cjk_tex_template), so no separate Text mobjects are needed. Formulas keep ln.'
+- '[C3] Maths in subtitles mirrors the audio. Keep as symbols only what is read as itself: variables, Greek letters, f(x), S(f), x′, compact fractions a/b, powers e^ε, digits, %. Write spoken operators as words: 等于, 乘, 加, 减, 不超过, 至少, 约, 根号 n, 无穷大, 3 的对数. No LaTeX source, and no ≤ ≈ × → √ ∞ in subtitles (they render full-width but units() counts them as half-width, so cues overflow).'
+- '[C4] Reading table for say:. ε 艾普西隆; e^ε E 的艾普西隆次方; e^(−ε) E 的负艾普西隆次方; e^(nε) E 的 n 乘艾普西隆次方; 1/n n 分之一; 1/λ lambda 分之一; −1/λ 负的 lambda 分之一; 2/ε 艾普西隆分之二; S(f)/ε S f 除以艾普西隆; d/ε d 除以艾普西隆; √n 根号 n; √k 根号 k; 2σ 两倍 sigma; ε/(2S) 艾普西隆除以两倍敏感度; 1 + ε 一加艾普西隆; x′ x prime; f(x) f x; S(f) S f; ln 3 三的对数; Pr[A] A 的概率; ε = 0.1 艾普西隆取零点一的时候. Years digit by digit (二零零六年), integers 四十一, decimals 四十三点七, percents 百分之六十二, 二 for values and 两 for counts and multiples.'
+- '[D1] Sentence alignment (explainer/i18n.py). i18n/zh/narration.yaml has one entry per SAY line (78 blocks); `en` is byte-equal to the SAY line, and `zh` has exactly one item per English sentence as split by explainer.voice.split_sentences (259 in this script). Restructure only inside a sentence; never merge or split. One-word sentences (''No.'', ''Say, Alice''s.'', ''Sensitivity one.'') get their own items, and so does each sentence of ''Privacy for individuals. Accuracy for populations. That is the bargain.'' Run python -m explainer.i18n check videos/dwork2006-calibrating-noise before any TTS.'
+- '[D2] Anchors. The scenes call vo.wait_until / until about 400 times, many mid-sentence. Without an anchors: entry the English phrase is mapped to the same relative character position in the Chinese display sentence. Add an anchor whenever Chinese word order moves the phrase (a fronted 除非…, a reordered list, a subtitle-only gloss before the phrase) and for every phrase that names a term, number or symbol, targeting the glossary form. The target must occur once in the display sentence; prefer Chinese text, since every Latin letter counts as a full character in the position estimate.'
+- '[D3] Timing. VoiceScene waits for the Chinese clip, so longer audio holds the frame and shorter audio leaves silence after fixed-length animations. Aim for each SAY block within ±15% of the English block''s duration: drop redundant connectives, never content. Check per-block durations before rendering (toolkit item I7).'
+- '[D4] Content parity. Every Chinese sentence translates its English sentence, nothing more: no added names, products or results (no RAPPOR, DP-SGD or 重要性采样 in speech, no spoken title gloss). The only additions are the three spoken English glosses (A2) and the subtitle-only glosses (A3).'
+- '[D5] Fixed spoken patterns. ''Pause and ponder: …?'' → 暂停想一想：……？ and the next sentence ''Pause the video if you need more time.'' → 需要多想一会儿的话，可以先暂停视频。 ''Pause:'' → 暂停一下：; ''Before I show you, pause:'' → 先别急着看答案，暂停一下：; ''Here is one you can answer yourself.'' → 这一题你可以自己回答。; ''Let''s recap.'' → 我们来回顾一下。; ''One: … Four:'' → 第一，…… 第四，……; ''Some questions to test yourself; pause after each.'' → 最后留几道题给大家自测，每道题后面都可以暂停一下。 Card header 暂停想一想 (explainer/locales/zh.yaml) in the same yellow bold style; the card question is at most two lines and ends in ？; timer seconds unchanged. Headers: 自测, 本期内容.'
+- '[E1] Labels follow the narration''s terms but are shorter: telegraphic noun phrases that may use → ⇒ ≈ × and abbreviations (DP, RL). They are Chinese-only, except: the S12 naming card 差分隐私（differential privacy）; the overview and recap cards for the named core ideas (S01 idea cards and S13 recap panels: 敏感度（sensitivity）, 拉普拉斯机制（Laplace mechanism）, if they fit the box); and the kept-English list words (query, mask, transcript, hybrid argument, SuLQ, Sub-Linear Queries). The Definition 1 card may add a small grey line （即今天的 ε-差分隐私） via an i18n.active()-guarded scene edit; without it the subtitle alias carries the link.'
+- '[E2] One English key, one Chinese string. strings.yaml is keyed by the exact English text and ignores kind and scene, so a shared key gets the same Chinese at every site (''Sensitivity'' is both the S01 idea card and the S13 recap panel; ''Query'' is a card title in S01, S08 and S11). Pick Chinese that works at every site, or change the English key in the scene. Add identity entries for strings that intentionally stay English (Query, SuLQ, Sub-Linear Queries, mask r, RL:, names, citations, TCC 2006), so build/i18n/missing.zh.json lists only real gaps.'
+- '[E3] Single letters and symbols (H, T, F, M, A–J, ?, ·, vs) never go into strings.yaml: tr() would also rewrite the mechanism symbol M (s04, s11), the s10 graph nodes F and H, and every other site. Coin faces become 正/反 only after coin() (s02_map.py) and coin_glyph() (s04_definition.py) look up a namespaced key such as ''coin:H''; until then the glyphs stay H/T and the labels read ''H（正面）→ “是”''. F/M stay as mock US data.'
+- '[E4] Fragmented Tex/MathTex. Many labels are built from pieces (text + ε + text). Translate each piece in a word order that keeps the pieces in place: ''Theorem 2: '' + ε + ''-indistinguishable'' → ''定理 2：满足 '' + ε + ''-不可区分性''; ''Gaussian noise is back in, for a tiny '' + δ → ''高斯噪声回来了，代价是一个极小的 '' + δ; ''What counts as '' + ''one person''s row'' + ''?'' → ''什么才算'' + ''一个人的一条记录'' + ''？''; ''What''s the '' + ε + ''?'' → ''用的是多大的 '' + ε + ''？''. Where no order-preserving Chinese exists (''privacy loss at'' + t, ''noise of typical size 2, the same for every'' + n, ''Warner''s coin: what is its'' + ε + ''?''), change the scene (an i18n.active() branch), never force unnatural Chinese. The same applies to Tex strings with inline maths (''If $A$ reads each row'', ''composition: $k$ questions cost …'').'
+- '[E5] Coloured sub-phrases. Where a scene colours an English sub-string with t2c, the Chinese label must contain the Chinese for that sub-phrase verbatim, and the toolkit must translate t2c keys through the same table (item I4). English CAPS emphasis (Any ONE query, MOST queries) becomes colour or bold on 单个 / 大多数.'
+- '[E6] Mock data stays: the US dates, ZIP numbers, F/M, dollar amounts ($52k…$1B), and names in the Sweeney table. Only the headers are translated.'
+- '[F1] Voice. Set languages: {zh: {voice: {backend: edge, voice: zh-CN-XiaoxiaoNeural, speed: 1.0}}} in video.yaml: female like the English af_heart, and the same zh voice as the tic-tac-toe video. As shipped, --lang zh fails, because build.py defaults to backend ''kokoro-zh'', which voice.get_backend() rejects (and Kokoro''s espeak path was unintelligible). zh-CN-YunxiNeural is the fallback; it also read ''bin'' as 病 and dropped ''sensitivity'' once. edge takes no custom SSML or pinyin, so misreadings are fixed by rewording.'
+- '[F2] When say: is required. Every sentence whose display text contains a Greek glyph, ′, a formula or function notation (f(x), S(f), 1/n, e^ε), brackets of either width, 《》, %, or a subtitle-only gloss gets a say: entry. Inside say:, write numbers as Chinese words (reading table C4); sentences without say: keep digits, which edge reads correctly (2006 年, 52.5%, 0.5, 42 all came back right). say: never contains Greek glyphs, LaTeX, brackets, 《》, the operators × ÷ ≤ ≈ → √, or a hyphen between spaced letters.'
+- '[F3] Measured misreadings, fixed by wording (edge, checked with faster-whisper). Latin ''epsilon'' → Excel/Excellent: say 艾普西隆. Row-行 → xíng (型/形) in most contexts: rows are 记录, and ''one line'' is reworded; never 行 for rows in speech. ''bin'' → 病: 桶. ''odds'' → ODS/奥子 and 旧 → 就: 先验/后验概率比. ''log'' → Loud/Lock: 对数. 计数 → 技术: ''counting query''. 等于一时 → 等于10: ……的时候. Lowercase e → 一: write E. A raw f(x′) drops the prime: ''f x prime''. Read correctly: query, counting query, curator, transcript, leakage, mask, clip, setting, paper, hybrid argument, Differential Privacy, privacy budget, lambda, sigma, delta, x prime, DP-SGD, 数据管理者, 记录, 桶, 似然比, 根号 n. ''trick'' was heard as ''trip'' once in Xiaoxiao: listen.'
+- '[F4] Names and the lexicon. Put a half-width space on both sides of every Latin token in say: (rule B1), so explainer/lexicon.yaml respellings apply (EdgeBackend.respell). Add entries for Kenthapadi, Talwar, Rothblum and Nissim. If a name still fails for the zh voice, add a say:-only respelling in a zh lexicon (item I5); never change displayed names. Polyphones to check by ear: 差 (只差 chà vs 差分 / 差值 chā), 重构 (chóng), 数一数 (shǔ), 还, 处 (t 处 chù), 长 (增长 zhǎng), 为.'
+- '[F5] ASR check before rendering. Synthesize every zh sentence, transcribe it with /opt/tts-eval faster-whisper-large-v3-turbo (language zh), and flag any sentence where a Latin token, a name, 艾普西隆, lambda/sigma/delta or a number does not come back. Listen to the flagged ones, reword, and repeat. Homophone transcriptions that are pronounced correctly (先焰 for 先验, 积数 for 奇数) are fine.'
+- '[G1] Bilingual format. The Chinese line sits on top (larger), the original English SAY sentence below (smaller), paired by narration.yaml; timing follows the Chinese audio. Width is measured in the toolkit''s units (CJK character 1, Latin character 0.55: ''transcript'' ≈ 5.5, the paper title ≈ 33). Write sentences whose clauses fit 24 units; the code splits at 30 (bilingual) and 22 (Chinese-only track). Break at ，；： or between clauses, never inside an English term, a number plus its measure word (5000 个桶), 第 4 节, a formula, or 《…》.'
+- '[G2] Cue endings. Drop a cue-final 。，、；：; keep ？！…… and closing ” ）. This needs toolkit item I2: nothing strips them today.'
+- '[G3] English line. narration.yaml `en` must stay byte-equal to the SAY line, which spells numbers and maths as spoken (''forty-one'', ''e to the epsilon''). The bilingual English line should show digits and symbols (41, e^ε, 1/n, x′): add an optional per-sentence en_display written by hand (automatic conversion is unsafe: ''one row'', ''no single person''). Until the toolkit supports it (item I6), the English line shows the SAY text.'
+- '[H1] Titles (i18n/zh/meta.yaml). Use the video, part and chapter titles in the glossary. Core-concept chapters carry their English term (敏感度（sensitivity）, 拉普拉斯机制（Laplace mechanism）, 很多问题：隐私预算（privacy budget）, 差分攻击（differencing attack）) so the chapter list is searchable. The Bilibili 简介 gives the Chinese gloss of the paper title (在隐私数据分析中按敏感度校准噪声), links the companion notes, and lists the core terms in both languages; tags: 差分隐私, differential privacy, 敏感度, 拉普拉斯机制, 隐私预算, 随机响应, 论文精读.'
+- '[H2] Companion docs: i18n/zh/exercises.md and i18n/zh/digest.md, translated with this glossary and typography. Written register (论文, 对数, 梯度裁剪, 敌手 for 𝒜 in formal statements, 例 / 注 / 断言 / 附录 / 式). Headings and <summary>答案</summary> are translated; page references (p. 270), formulas and citations stay. Both end with a 中英术语对照表 (English | the term used here | common variants: Laplace 机制; 本地 / 局部差分隐私; 成员推断; 相邻数据集 / 兄弟数据集; 亚线性 / 次线性; 序列 / 串行组合; 计数查询; 全变差距离), and note that S(f) is 全局敏感度, not diagnostic 灵敏度.'
+- '[H3] Code in exercises.md. Identifiers, API names, string literals, file names and inline `code` stay byte-identical (laplace_mechanism, rng.laplace, rng.normal, digest.md), so the block still runs unchanged; only # comments and the prose around it are translated.'
+- '[H4] playground.html is a separate pass that uses this glossary for its UI labels.'
+- '[I1] build.py DEFAULT_VOICES names backend ''kokoro-zh'', which does not exist: point it to edge zh-CN-XiaoxiaoNeural, or always set languages.zh.voice in video.yaml (rule F1).'
+- '[I2] explainer/subtitles.py: no cut between a digit and a following CJK measure word, inside 《…》, inside a number (after '','' or ''.'' between digits), or where the next character is punctuation (a line once started with ''，''); re-join pieces without a space when either side is CJK; strip cue-final punctuation (G2); merge sentence cues shorter than about 1 s into the next cue. Add regression tests with the S01 title sentence and ''5000 个桶''.'
+- '[I3] python -m explainer.i18n check: fail on [0-9εδλσαΔ′√≤≥≈×÷^/%=（）()《》] in spoken text; compare say: with the display text through the reading table; flag Latin words in zh narration and labels that are not symbols, names, acronyms or list words (this would have caught ''private 深度学习''); list wait_until phrases that have no anchor.'
+- '[I4] i18n.install(): translate t2c / t2w / t2s keys with tr(); add scene-scoped keys (e.g. ''coin:H'') so single letters can be translated at one site only.'
+- '[I5] Load explainer/lexicon.zh.yaml when EXPLAINER_LANG=zh (part of the TTS cache key) for say:-only respellings; never put zh fixes into the shared lexicon.yaml, which the English videos use.'
+- '[I6] Optional per-sentence en_display in narration.yaml for the English subtitle line (rule G3).'
+- '[I7] A Chinese pre-synthesis duration report per SAY block versus English (explainer.script --synth speaks English only today), to apply rule D3 before rendering.'
+terms:
+# ---- Core concepts / 核心概念
+- en: differential privacy (DP)
+  zh_subtitle: 差分隐私；DP 只用于紧凑标签和复合名称（DP-SGD、用 DP 保护的公开表）
+  zh_spoken: 差分隐私（S01 一次：差分隐私，differential privacy）
+  first_use: S01：它开创了我们今天所说的差分隐私，differential privacy，并在 2017 年获得了哥德尔奖。S12 命名卡片：差分隐私（differential privacy）
+  note: 'Chinese: the established term in every Chinese DP text, course and talk. The narrator says the English once (S01; edge reads it cleanly) so viewers hear the name used in the literature. Spoken ''DP'' is not used, because the English narration never says DP.'
+- en: epsilon-indistinguishability (Definition 1, the paper's name); '-indistinguishable' (Theorem 2 card)
+  zh_subtitle: ε-不可区分性；定理里写“满足 ε-不可区分性”
+  zh_spoken: 艾普西隆不可区分性
+  first_use: S04：这就是原文的定义，原文叫它 ε-不可区分性（即 ε-差分隐私）——括注只进字幕。定义卡：TeX \textbf{定义 1}\quad + ε + “-不可区分性”；定理 2 卡：“定理 2：满足 ” + ε + “-不可区分性”
+  note: 'Chinese: 不可区分性 is the standard cryptography term. Chinese textbooks state this definition only as ε-差分隐私, so the first subtitle carries that alias. Use 不可区分 only when quoting the paper''s own statements (Definition 1, Theorem 2); our own predicates say 满足 ε-差分隐私.'
+- en: private (adj.) / privately / 'a private mechanism' / 'in private' (coin)
+  zh_subtitle: “M 是 ε-private” → M 满足 ε-差分隐私；“统计量是 private 的” → 不泄露隐私；privately → 用差分隐私 / 在差分隐私下；private deep learning → 差分隐私深度学习；in private（掷硬币）→ 私下
+  zh_spoken: ''
+  first_use: S01：发布一个统计量，怎样才算不泄露隐私？
+  note: 'Chinese by construction. Never the English word ''private'' inside Chinese, never 私有, never 隐私的 + noun: a statistic does not ''have privacy''; a release leaks or it does not.'
+- en: sensitivity, S(f) (L1 / global sensitivity)
+  zh_subtitle: 敏感度 S(f)；文档：全局敏感度（global sensitivity，本文即 L1 敏感度）
+  zh_spoken: 敏感度，S f（S01 一次：敏感度，sensitivity）
+  first_use: S01：一个数，叫敏感度，sensitivity；S01 想法卡与 S13 回顾卡：敏感度（sensitivity）
+  note: 'Chinese: the standard term in Chinese DP texts. Never 灵敏度 or 敏感性: medical-imaging viewers know 灵敏度 as a diagnostic test''s true-positive rate.'
+- en: '''a more sensitive question needs more noise'' (S07) / ''sensitive surveys'' (S02, Warner)'
+  zh_subtitle: S07：敏感度越高的 query，噪声越大（标签：敏感度越高 → 噪声越大；隐私越强（ε 越小）→ 噪声越大）；S02：敏感问题调查
+  zh_spoken: ''
+  first_use: ''
+  note: The technical sense always carries 度. Bare 越敏感的问题 means a touchy topic (drugs, politics), and S02 genuinely needs that everyday sense for Warner's surveys, so the two must not meet. 噪声越大 is natural Chinese; 更多噪声 is a calque.
+- en: query / queries / counting query; question(s)
+  zh_subtitle: query（不加复数：很多 query）；counting query；question → 问题；S01/S08/S11 卡片标题 Query 保持英文
+  zh_spoken: query / counting query / 问题
+  first_use: S02 SuLQ 句：意思是只问次线性数量的 query（查询）；S06 首次 counting query（计数查询）。括注只进字幕，第二部分首次再注一次
+  note: 'English: DP researchers say query and counting query aloud, and edge read both correctly in every clip. 计数 is heard as 技术 in every clip (计数查询 → 技术查询), so the spoken form is the English compound. The Chinese gloss shows the searchable 查询 / 计数查询 once. The narration''s informal ''question'' stays 问题.'
+- en: mechanism, M
+  zh_subtitle: 机制 M
+  zh_spoken: 机制 M
+  first_use: S04：运行这个机制，也就是数据管理者随机作答的规则
+  note: 'Chinese: 机制 is standard (拉普拉斯机制, 指数机制).'
+- en: Laplace distribution / Laplace noise / Laplace mechanism
+  zh_subtitle: 拉普拉斯分布 / 拉普拉斯噪声 / 拉普拉斯机制；记号 Lap(·) 不变
+  zh_spoken: 拉普拉斯分布 / 拉普拉斯噪声 / 拉普拉斯机制（不说英文）
+  first_use: S07：原文用的是拉普拉斯分布；章节 S07 与 S13 回顾卡：拉普拉斯机制（Laplace mechanism）
+  note: 'Chinese: a textbook eponym that Chinese students say in Chinese. No spoken English: ''Laplace'' is already transliterated, and the English line, the S07 chapter title and the S13 recap card show ''Laplace mechanism''. The docs note the journal variant Laplace 机制. ''not Laplace''s fault'' → 这不是拉普拉斯噪声的问题.'
+- en: 'Lap(S(f)/ε): ''Laplace noise of scale S of f over epsilon'''
+  zh_subtitle: Lap(S(f)/ε)；尺度为 S(f)/ε 的拉普拉斯噪声
+  zh_spoken: 尺度为 S f 除以艾普西隆的拉普拉斯噪声
+  first_use: ''
+  note: Notation stays exactly as in the paper.
+- en: scale (λ, scale parameter) / noise scale
+  zh_subtitle: 尺度 λ / 尺度参数 λ / 噪声尺度
+  zh_spoken: 尺度 lambda / 噪声尺度
+  first_use: S07：它的宽度由尺度参数 λ 决定
+  note: 'Chinese: the standard probability term; it keeps the recipe clean: 噪声尺度 = 敏感度 / ε.'
+- en: noise
+  zh_subtitle: 噪声
+  zh_spoken: ''
+  first_use: ''
+  note: Chinese. Never 噪音 (acoustic noise).
+- en: privacy loss
+  zh_subtitle: 隐私损失
+  zh_spoken: ''
+  first_use: S04：这个比值的对数，就是 t 处的隐私损失
+  note: 'Chinese: established.'
+- en: leakage (the paper's word for ε)
+  zh_subtitle: leakage（首次括注：泄露量）
+  zh_spoken: leakage
+  first_use: S04：ε 是人为选定的，原文管它叫 leakage（泄露量）
+  note: 'English: the narration quotes the paper''s own word, so it stays English with a subtitle-only Chinese gloss. Edge reads it correctly. Keep it apart from 侵犯隐私 (privacy violation) in the same scene.'
+- en: privacy budget / budget
+  zh_subtitle: 隐私预算 / 预算
+  zh_spoken: 隐私预算（S09 一次：隐私预算，privacy budget）
+  first_use: S09：所以隐私损失会累加，ε 就像一笔隐私预算，privacy budget；S02 标签：隐私预算
+  note: 'Chinese: established in Chinese DP literature. The English is spoken once, at the start of Part 2 where the concept is named.'
+- en: neighbors / neighboring databases
+  zh_subtitle: 相邻数据库 / 相邻；标签：相邻：只差一条记录
+  zh_spoken: 相邻数据库
+  first_use: S04：这样的两个数据库叫作相邻数据库（也叫相邻数据集）——括注只进字幕
+  note: 'Chinese: matches the paper''s ''database'' and the visuals. Chinese textbooks almost always write 相邻数据集, so that search term is shown once. 邻居 only as a light metaphor.'
+- en: database x / dataset
+  zh_subtitle: 数据库 x；英文说 dataset 时（S13 医学影像题）用数据集
+  zh_spoken: 数据库 x
+  first_use: ''
+  note: Chinese.
+- en: row / one row per person / one person's row / records
+  zh_subtitle: 记录：一条记录；n 条记录，每人一条；Alice 的记录；一个人的一条记录；标签同（n rows → n 条记录；rows needed → 需要的记录数）
+  zh_spoken: 记录（朗读中绝不用“行”表示 row）
+  first_use: S03：持有数据库 x：n 条记录，每人一条
+  note: 'Chinese, chosen for the voice. Both edge voices read row-行 as xíng in most contexts (n 行, 只差一行, 那一行, 改变一行, 每人一行 all came back as 型/形), while 一条记录 came back right every time. 记录 is also the textbook wording (两个数据集只相差一条记录) and matches the paper''s ''hospital records''. ''one line'' (Privacy, proven in one line) is reworded: 一个不等式就证完了.'
+- en: curator / trusted curator / trusted server
+  zh_subtitle: 数据管理者（简称管理者）；可信的数据管理者；可信服务器；标签：管理者；“管理者拒绝回答”
+  zh_spoken: 数据管理者 / 管理者
+  first_use: S03：一台可信的服务器，也就是数据管理者，持有数据库 x
+  note: Chinese (changed from the draft). Newcomers in RL or medical imaging do not say 'curator' (to them it means 策展人), Chinese DP texts write 可信的数据管理者, and two of three reviews asked for it. The voice reads 'curator' fine, so this is an audience choice, not a TTS one. The English line still shows 'curator'.
+- en: analyst / attacker / adversary
+  zh_subtitle: 分析者 / 攻击者；文档的形式化陈述里 𝒜 写“敌手”
+  zh_spoken: 分析者 / 攻击者
+  first_use: ''
+  note: Chinese. 敌手 is the formal cryptography register, used only in digest.md's definitions.
+- en: transcript
+  zh_subtitle: transcript（首次括注：交互历史）
+  zh_spoken: transcript
+  first_use: S04：分析者能看到的一切，原文叫 transcript（交互历史）；第二部分 S09 首次再注一次
+  note: 'English: the paper''s own word, and Theorem 1 is stated about it. The obvious Chinese 交互记录 collides with 记录 (= row), and modern Chinese texts have no fixed term. Edge reads it correctly. Labels keep ''transcript t = [a₁, a₂, …]''.'
+- en: 'paper notation footnote: 𝒯 = transcript, San = sanitizer'
+  zh_subtitle: 论文记号：𝒯 = transcript，San = sanitizer
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: A label, so it writes 论文. Paper notation stays untranslated; never 脱敏器.
+- en: 'statistical distance (the paper: ''statistical difference'')'
+  zh_subtitle: 统计距离；文档：统计距离（即总变差距离，total variation distance）
+  zh_spoken: 统计距离
+  first_use: S05：密码学常常满足于更弱的东西：统计距离（即 TV 距离）——括注只进字幕
+  note: 'Chinese: the cryptography term. ML viewers and exercises.md know it as total variation, so the alias is shown once.'
+- en: ratio / log ratio / log density / on a log scale / ln
+  zh_subtitle: 比值 / 对数比值 / 对数密度 / 取对数之后 / 公式里保留 ln；“the log of three” → 3 的对数
+  zh_spoken: 比值 / 对数比值 / 对数密度 / 取对数之后；ln 3 读“三的对数”
+  first_use: S04：这个比值的对数，就是 t 处的隐私损失
+  note: Chinese (changed from the draft's 'log'). The bare syllable 'log' failed in the voices (heard as Loud/Lock), and 取对数 is just as natural in spoken Chinese maths. 'ratio' is always 比值 (S04, S05, S07, S09).
+- en: Bayes' rule; new odds / old odds; prior / posterior; likelihood ratio
+  zh_subtitle: 贝叶斯公式；new odds → 后验概率比；old odds → 先验概率比；“this ratio” 仍是 比值；文档：odds（几率，即 p/(1−p)）、似然比
+  zh_spoken: 根据贝叶斯公式，后验概率比等于先验概率比乘上这个比值
+  first_use: S04 攻击者那句；标签：后验概率比 = 先验概率比 × 比值
+  note: Chinese (changed). 'odds' failed in both voices (ODS / 奥子). 几率 reads as everyday 'probability', and 赔率 is a betting payout. Here the odds are exactly the ratio of the probabilities of the two worlds, and 先验/后验 is what ML viewers already use. Never say 旧 (heard as 就); 先验 avoids it. The docs give odds（几率）and 似然比 for search.
+- en: ratio test ('to pass the ratio test, a mechanism must be random')
+  zh_subtitle: 比值这一关；标签：想过比值这一关，机制必须是随机的
+  zh_spoken: ''
+  first_use: S05
+  note: Informal 'test' in English; 检验 would suggest hypothesis testing or the series ratio test.
+- en: 'composition (theorems); Dwork–Rothblum–Vadhan ''composition: k questions cost ~√k'''
+  zh_subtitle: 组合定理；DRV 卡片：高级组合：k 个问题的代价约为 √k
+  zh_spoken: 组合定理
+  first_use: S12：隐私预算发展成了一套组合定理
+  note: 'Chinese: established; the √k result is known as 高级组合定理 (advanced composition).'
+- en: exponential mechanism
+  zh_subtitle: 指数机制
+  zh_spoken: ''
+  first_use: S12：给每个可能的答案打分，后来成了 McSherry 和 Talwar 的指数机制
+  note: 'Chinese: established.'
+- en: randomized response / Warner's coin / local differential privacy (local DP)
+  zh_subtitle: 随机响应 / Warner 的硬币 / 本地化差分隐私；卡片 Local DP → 本地化差分隐私
+  zh_spoken: 随机响应 / Warner 的硬币 / 本地化差分隐私
+  first_use: S02：1965 年，Stanley Warner 提出了随机响应，用于敏感问题调查；S12：就是我们今天说的本地化差分隐私
+  note: 'Chinese: 随机响应 is the DP term. 本地化差分隐私 is the form used by the standard Chinese LDP surveys and most journal papers; the docs list the variants 本地差分隐私 / 局部差分隐私.'
+- en: (ε, δ) / delta / 'a tiny slack' / Gaussian noise is back in
+  zh_subtitle: (ε, δ)-差分隐私 / δ / 一个极小的松弛量 δ；标签：高斯噪声回来了，代价是一个极小的 δ
+  zh_spoken: 艾普西隆 delta 差分隐私 / delta / 一个很小的松弛量 delta
+  first_use: S12
+  note: 'Notation stays; 松弛量 is natural optimization wording. The label keeps the TeX fragment order (text first, δ last). Docs: 近似差分隐私（approximate DP）, 纯差分隐私, 高斯机制.'
+- en: DP-SGD / gradient / clip / per-example gradient / clipping
+  zh_subtitle: DP-SGD（仅卡片）/ 梯度 / clip（朗读与字幕）/ 梯度裁剪（标签与文档）/ 每个样本的梯度
+  zh_spoken: 梯度 / clip / 每个样本的梯度
+  first_use: S12 旁白：把每个样本的梯度 clip（梯度裁剪）到一定大小以内；S06 标签：差分隐私深度学习：把每个样本的梯度裁剪到 C 以内
+  note: Spoken 'clip' is the natural Chinese ML code-switch and reads fine; labels and docs write the searchable 梯度裁剪 / 逐样本梯度裁剪. Never inflect (no 'clipped'). DP-SGD and RAPPOR are not spoken, because the English narration never says them.
+- en: membership inference (attack)
+  zh_subtitle: 成员推理攻击；卡片：成员推理攻击（2017）
+  zh_spoken: 问“某个病人在不在训练集里”的攻击（S12 英文旁白不说术语名）
+  first_use: S12 卡片
+  note: 'Chinese: 成员推理攻击 is the dominant form in Chinese ML-security surveys.'
+- en: reconstruction (Dinur–Nissim attack)
+  zh_subtitle: 重构攻击；标签：太多精确答案 ⇒ 重构数据库
+  zh_spoken: 重构
+  first_use: S02
+  note: 'Chinese: the usual term in Chinese privacy literature. 重建 means CT/MR image reconstruction to medical-imaging viewers.'
+- en: differencing attack / 'our subtraction (attack)'
+  zh_subtitle: 差分攻击（章节 S01：差分攻击（differencing attack））；回扣：我们那个做减法的攻击
+  zh_spoken: 差分攻击 / 我们那个做减法的攻击
+  first_use: S01 章节名
+  note: Chinese DP tutorials use 差分攻击 for exactly this hospital example. The chapter title pins the English, because crypto viewers would otherwise think of differential cryptanalysis.
+- en: interactive / non-interactive; setting; sanitize; one-shot release; published table
+  zh_subtitle: 交互式 / 非交互式；setting（朗读、字幕）/ 设定（标签、章节名）；sanitize → 做隐私处理；一次性发布；公开发布的表；标签：交互式：问、答、再问 / 非交互式：只发布一次
+  zh_spoken: 交互式的 setting / 非交互式 / 做隐私处理 / 一次性发布
+  first_use: S03：先交代一下 setting；这叫交互式的 setting；发布一张经过隐私处理的表，然后撒手不管，叫非交互式
+  note: '''setting'' is everywhere in Chinese ML speech, while spoken 设定 leans toward fiction. Never 脱敏 for a DP release: 数据脱敏 means masking identifiers, which is the ''remove the names'' approach the video shows failing.'
+- en: adaptively / refused
+  zh_subtitle: 自适应地 / 拒绝回答（标签：拒绝）
+  zh_spoken: ''
+  first_use: ''
+  note: Chinese.
+- en: hybrid argument / chain trick / trick
+  zh_subtitle: hybrid argument（首次括注：混合论证）/ 链式 trick / trick
+  zh_spoken: hybrid argument / trick
+  first_use: S08：这种链式 trick 叫 hybrid argument（混合论证），最后还会再出现；S08 标签：hybrid argument
+  note: 'English: a cryptography term of art, said in English in Chinese theory talks; viewers will meet it in proofs. The gloss gives the textbook name 混合论证. ''trick'' is a ubiquitous code-switch (一个 trick).'
+- en: histogram / bin
+  zh_subtitle: 直方图 / 桶（d 个桶、每个桶、第 3 个桶、5000 个桶）
+  zh_spoken: 直方图 / 桶
+  first_use: S06：把一条记录可能的取值分成 d 个桶
+  note: Chinese (changed from the draft's 'bin'). Both voices read 'bin' as 病 (每个病, 5000 个病) in a video full of 病人. 桶 is the CS/DP word (分桶, 桶计数) and avoids clashing with 区间, which the uniform-noise box needs.
+- en: L1 norm / L1 distance
+  zh_subtitle: L1 范数 / L1 距离
+  zh_spoken: L1 范数 / L1 距离（照常书写，edge 读对）
+  first_use: S06：这就是 L1 范数，原文用它衡量一列数的敏感度
+  note: Mixed, as said in Chinese ML.
+- en: dimension / coordinates; triangle inequality
+  zh_subtitle: 维度 / 分量；三角不等式
+  zh_spoken: ''
+  first_use: ''
+  note: 'Chinese: standard.'
+- en: mask / parity / 'an odd number of ones inside their mask'
+  zh_subtitle: mask（首次括注：掩码）；奇偶；mask 内有奇数个 1 / 偶数个 1；卡片：有多少条记录在自己的 mask 内有奇数个 1？
+  zh_spoken: mask / 奇数个一 / 偶数个一
+  first_use: S11：给每条记录一个自己的 mask（掩码），也就是一组比特位置
+  note: 'English ''mask'' (ML and CS people say it; reads fine). Parity is said plainly, as the English narration does: 奇偶性为奇 is a stiff calque.'
+- en: bit / bit string / bit flips
+  zh_subtitle: 比特 / 比特串 / 比特翻转；标签：d = 8 比特；Pr[比特翻转]
+  zh_spoken: ''
+  first_use: ''
+  note: Chinese transliteration that sounds like 'bit'.
+- en: min cut / 1-sensitive / social network / link
+  zh_subtitle: 最小割 / 敏感度为 1 / 社交网络 / 边；标签：每条可能的边 = 一条记录（有 / 无）
+  zh_spoken: 最小割 / 敏感度为一 / 社交网络 / 边
+  first_use: S10
+  note: 'Chinese: 最小割 is the standard algorithms term.'
+- en: statistical disclosure control / scramble inputs / scramble outputs
+  zh_subtitle: 统计披露控制（短标签：披露控制）/ 输入扰动 / 输出扰动
+  zh_spoken: 要么扰动输入的数据，要么扰动输出的答案
+  first_use: S02
+  note: Labels use the fixed noun terms of DP and PPML (输入扰动, 输出扰动); speech says it as verbs, as the English does.
+- en: anonymous / anonymized / names removed / de-identification
+  zh_subtitle: 匿名 / 匿名化 / 去掉姓名；卡片：“匿名”≠ 匿名；结尾引语：“放心，已经匿名化了。”；文档：去标识化
+  zh_spoken: 匿名 / 匿名化
+  first_use: ''
+  note: Chinese. 脱敏 and 匿名化 describe only the naive approach the video debunks.
+- en: raw data
+  zh_subtitle: 原始数据
+  zh_spoken: ''
+  first_use: S11、S12
+  note: Chinese.
+# ---- Symbols and readings / 符号与读法
+- en: epsilon, ε
+  zh_subtitle: ε（U+03B5，与屏幕上 \varepsilon 的字形一致）
+  zh_spoken: '艾普西隆（只写在 say: 里）'
+  first_use: ''
+  note: Display the glyph; speak 艾普西隆, which is also how Chinese maths lecturers read it. In two test rounds the Latin 'epsilon' came back as epsilon in only 6 of 18 clips (otherwise Excel/Excellent), a raw ε glyph fared no better, and 艾普西隆 came back right in 26 of 26. The draft's ban on 艾普西隆 applies to displayed text only.
+- en: e to the epsilon / e to the minus epsilon / e to the n epsilon
+  zh_subtitle: e^ε / e^(−ε) / e^(nε)
+  zh_spoken: E 的艾普西隆次方 / E 的负艾普西隆次方 / E 的 n 乘艾普西隆次方
+  first_use: ''
+  note: 'Uppercase E in say: (lowercase e was read as 一). A ''yi'' reading of e is the normal Chinese classroom reading, so either is acceptable. ''n epsilon'' is said with 乘.'
+- en: lambda λ, sigma σ, delta δ, alpha α, Delta Δ
+  zh_subtitle: λ、σ、δ、α、Δ
+  zh_spoken: lambda、sigma、delta、alpha（Δᵢ 只在画面上，不朗读）
+  first_use: ''
+  note: Latin letter names read fine on edge (Lambda/Sigma/Delta came back verbatim). Never 拉姆达/西格玛/德尔塔 in writing.
+- en: x, x′ (x prime), y, t, f(x), f(x′), S(f)
+  zh_subtitle: x、x′、y、t、f(x)、f(x′)、S(f)（撇号 U+2032）
+  zh_spoken: x、x prime、y、t、f x、f x prime、S f
+  first_use: ''
+  note: 'Variables are read as English letters. A raw f(x′) in TTS input was read ''FX'' with the prime dropped, so say: always spells ''x prime''.'
+- en: n, d, k, C, M, Y, Yᵢ, aᵢ, fₜ
+  zh_subtitle: n、d、k、C、M、Y、Yᵢ、aᵢ、fₜ（Unicode 下标）
+  zh_spoken: n、d、k、C、M、Y（下标不朗读，用文字描述）
+  first_use: ''
+  note: Variables stay letters.
+- en: one over n / one over lambda / two over epsilon / S of f over epsilon / d over epsilon / square root of n / one over d of the budget
+  zh_subtitle: 1/n、1/λ、2/ε、S(f)/ε、d/ε；根号 n；1/d 的预算
+  zh_spoken: n 分之一、lambda 分之一、艾普西隆分之二、S f 除以艾普西隆、d 除以艾普西隆、根号 n、d 分之一的预算
+  first_use: ''
+  note: Unit and small-number fractions are read 'B 分之 A'; symbolic quotients 'A 除以 B'. Subtitles may write the compact a/b form but spell √ as 根号.
+- en: minus one over lambda / two sigma / epsilon over twice the sensitivity / one plus epsilon / a ratio of two and a ratio of one half
+  zh_subtitle: −1/λ / 两倍 σ / ε 除以两倍敏感度 / 1 + ε / 比值是 2 和比值是 1/2
+  zh_spoken: 负的 lambda 分之一 / 两倍 sigma / 艾普西隆除以两倍敏感度 / 一加艾普西隆 / 比值是二和比值是二分之一
+  first_use: ''
+  note: 二 for values, 两 for counts and multiples.
+- en: Pr[…] (probability of …)
+  zh_subtitle: 画面公式保留 Pr[…]；字幕与朗读改写成“……的概率”
+  zh_spoken: ……的概率
+  first_use: ''
+  note: Never read as a symbol.
+- en: 'setting a parameter: ''epsilon one tenth'', ''epsilon one half'', ''with epsilon equal to one'''
+  zh_subtitle: ε 取 0.1 的时候 / ε 取 0.5 / ε 取 1 时（字幕）
+  zh_spoken: 艾普西隆取零点一的时候 / 艾普西隆取零点五 / 艾普西隆取一的时候
+  first_use: ''
+  note: '取 sets a value; 等于 is reserved for formulas and definitions. Never put 一 directly before 时 in say: (等于一时 was heard as 等于10): always ……的时候.'
+- en: Definition 1 / Proposition 1, 2 / Theorem 1, 2, 3 / Lemma 1, 2 / Section 4 / Example 2
+  zh_subtitle: 定义 1 / 命题 1、2 / 定理 1、2、3 / 引理 1、2 / 第 4 节 / 例 2
+  zh_spoken: 定义一 / 命题一 / 定理一 / 引理一 / 第四节
+  first_use: ''
+  note: Chinese mathematical register. Bracketed page references in script.md are never spoken.
+- en: percentages / 'X percent sure' / years / decimals
+  zh_subtitle: 52.5%、62%；最多有 62% 的把握；2006 年；43.7
+  zh_spoken: 百分之五十二点五；最多有百分之六十二的把握；二零零六年；四十三点七
+  first_use: S04、S08
+  note: '''X percent sure'' → 有 X 的把握. Edge reads plain digits correctly; spelled forms are needed only inside say: entries.'
+- en: about / roughly
+  zh_subtitle: 约 / 大约 / 左右（字幕不用 ≈）
+  zh_spoken: 大约 / 左右
+  first_use: ''
+  note: ≈ is fine on screen only.
+# ---- Phrases and visuals of this video / 视频里的说法与画面
+- en: two worlds / world x / world x′
+  zh_subtitle: 两个世界 / 世界 x / 世界 x′
+  zh_spoken: 两个世界 / 世界 x / 世界 x prime
+  first_use: S04
+  note: A coined metaphor that translates directly.
+- en: tent / slope / ramp / gap (between tents) / slide / band
+  zh_subtitle: 帐篷形 / 斜率 / 斜坡 / 高度差 / 平移量 / 带（带内、带外）；标签：|高度差| ≤ 平移量 × 1/λ；shift/scale → 平移量/尺度
+  zh_spoken: ''
+  first_use: S07
+  note: Visual metaphors. The vertical gap is 高度差 (S07); S06's change in the answer is 变化量, so the two 'gaps' stay apart.
+- en: uniform noise; Gaussian / bell curve / parabola; tails (of a distribution)
+  zh_subtitle: 均匀噪声；高斯噪声 / 钟形曲线 / 抛物线；尾部；标签：拉普拉斯：始终在带内 / 高斯：冲出带外
+  zh_spoken: 均匀噪声；高斯 / 钟形曲线 / 抛物线；尾部
+  first_use: S07
+  note: 'Chinese: 高斯 is universal. Distribution tails are 尾部, coin tails 反面. The uniform box is ''在 −10 到 +10 之间均匀分布''.'
+- en: Good noise must never rule an output out / privacy needs noise whose log density is never steep / Averages hide catastrophes that are rare for each person
+  zh_subtitle: 好的噪声，绝不能把任何输出排除在外 / 隐私需要对数密度处处不陡的噪声 / 平均值会掩盖那些对每个人都很罕见的灾难
+  zh_spoken: ''
+  first_use: S05、S07
+  note: Coined takeaway lines; short and quotable.
+- en: Privacy for individuals. / Accuracy for populations. / That is the bargain.
+  zh_subtitle: 隐私，留给个体。/ 准确，留给总体。/ 这就是差分隐私的取舍。（标签两行：隐私，留给个体 / 准确，留给总体）
+  zh_spoken: ''
+  first_use: S08（三个英文句子 → 三个中文条目）
+  note: 留给 gives a natural parallel (给 + adjective is ungrammatical); 取舍 is the word researchers use for the trade-off (这笔交易 is a calque that hints at a shady deal). Use 准确, never 精度 or 准确率.
+- en: one definition / one number / one recipe; 'the recipe in the title'
+  zh_subtitle: 一个定义 / 一个数 / 一个公式；S07：这就是标题里的那条公式
+  zh_spoken: ''
+  first_use: S01、S02、S07
+  note: '公式, not 配方 (a cooking or chemistry word): the recipe really is a formula, Lap(S(f)/ε).'
+- en: Calibrate the noise to the sensitivity (title phrase)
+  zh_subtitle: 按敏感度校准噪声
+  zh_spoken: ''
+  first_use: S03
+  note: Consistent with 敏感度.
+- en: Any fixed rule that ever changes its answer has a jump (like that) somewhere
+  zh_subtitle: 任何确定性的规则，只要答案会变，就一定在某处有跳变
+  zh_spoken: ''
+  first_use: S01（旁白与标签）
+  note: '''fixed'' means deterministic; 固定规则 would read as ''an unchanging rule'' and blunt S05''s punchline.'
+- en: What makes a statistic private? / How much noise is enough?
+  zh_subtitle: 发布统计量，怎样才算不泄露隐私？/ 噪声加多少才够？
+  zh_spoken: ''
+  first_use: S01
+  note: ''
+- en: rounding to the nearest ten / rounding cut / jump
+  zh_subtitle: 四舍五入到十位 / 取整分界线 / 跳变
+  zh_spoken: ''
+  first_use: S01
+  note: ''
+- en: ε is set by policy / ε — a choice (policy) / S(f) — a fact about f / 'Epsilon is a choice. Sensitivity is a fact.'
+  zh_subtitle: ε 是人为选定的；标签：ε：人为选择（政策）/ S(f)：f 本身的性质 / S(f) 与实际数据库无关；ε 是选择，敏感度是事实
+  zh_spoken: 艾普西隆是人为选定的
+  first_use: S04、S06
+  note: 由政策决定 sounds as if a government regulation fixes ε. 政策 stays only in the label's parentheses, which also keeps it apart from the RL 策略.
+- en: trajectory-ratio trick (RL analogy, S09); policy (RL); environment
+  zh_subtitle: 算轨迹概率比时的那个 trick；标签：RL：分析者 = 环境（约掉），管理者 = 策略
+  zh_spoken: 懂强化学习的话，这就是算轨迹概率比时的那个 trick
+  first_use: S09
+  note: RL people say 轨迹概率比 and know the trick from importance sampling; 重要性采样 goes into the docs, not the narration (content parity).
+- en: 'same in both worlds: cancels'
+  zh_subtitle: 两个世界里都一样：约掉
+  zh_spoken: ''
+  first_use: S09
+  note: ''
+- en: noise of typical size two / a rounding error (idiom) / percent of the answer
+  zh_subtitle: 噪声一般在 2 左右；到了 100 万人，这点噪声可以忽略不计；占答案的百分之几
+  zh_spoken: ''
+  first_use: S08
+  note: Not 典型大小为 2; never 舍入误差 for the idiom.
+- en: Careful with the quantifiers / for every / for at least 2/3 / most / at most / unless / any ONE query
+  zh_subtitle: 注意量词 / 对任意 / 至少 2/3 / 大多数 / 最多（不超过）/ 除非 / 单单一个（事先已知的）query
+  zh_spoken: ''
+  first_use: S11、S12
+  note: Translate exactly; S11's point depends on them. English CAPS emphasis becomes colour or bold on 单个 / 大多数, never Latin or full-width caps.
+- en: Keep a curator in the loop / Want broad accuracy + strong privacy?
+  zh_subtitle: 让可信的管理者留在回路里 / 想要大范围的准确，又要强隐私？
+  zh_spoken: ''
+  first_use: S11 结尾
+  note: Echoes 人在回路中 (human in the loop).
+- en: spike in one bin / zoom in / zoom into bin 3 / zoom further
+  zh_subtitle: 某个桶冒出一个尖峰，放大看看 / 放大第 3 个桶 / 再放大
+  zh_spoken: ''
+  first_use: S09
+  note: ''
+- en: swap rows one at a time / n swaps / even half ≈ a random poll of all rows
+  zh_subtitle: 一次替换一条记录 / n 次替换 / 偶数那一半 ≈ 对所有记录的随机抽样调查
+  zh_spoken: ''
+  first_use: S11
+  note: 替换, not 交换 (which means exchanging two things).
+- en: exponentially large / exponential in d / every four extra bits per row doubles the rows
+  zh_subtitle: 指数级大 / 随 d 指数增长 / 每条记录每多 4 个比特，需要的记录数就翻一倍；标签：约 3300 万 / 约 6700 万 / 约 1.34 亿
+  zh_spoken: ''
+  first_use: S11
+  note: Keep the doubling visible.
+- en: salt and pepper (mixed like)
+  zh_subtitle: 像椒盐一样混在一起
+  zh_spoken: ''
+  first_use: S11
+  note: Viewers know 椒盐噪声 from image processing.
+- en: map (our map)
+  zh_subtitle: 地图
+  zh_spoken: ''
+  first_use: S02：先画一张地图，看看这篇 paper 从哪儿来
+  note: A coined metaphor that translates directly.
+- en: illustration (tag) / proof idea / Still open
+  zh_subtitle: 示意 / 证明思路 / 开放问题
+  zh_spoken: （标签，不朗读）
+  first_use: ''
+  note: 开放问题 is how Chinese academics say 'still open'.
+- en: 'Pause and ponder / Pause the video if you need more time / Pause: / Before I show you, pause:'
+  zh_subtitle: 暂停想一想（卡片标题，explainer/locales/zh.yaml）
+  zh_spoken: 暂停想一想：……？/ 需要多想一会儿的话，可以先暂停视频。/ 暂停一下：/ 先别急着看答案，暂停一下：
+  first_use: S01 起
+  note: Two English sentences become two Chinese entries. 想多想 is a stutter; the corrected form is the standard Bilibili wording.
+- en: 'Test yourself / Some questions to test yourself; pause after each / Let''s recap / One: … Four:'
+  zh_subtitle: 自测（标题）
+  zh_spoken: 最后留几道题给大家自测，每道题后面都可以暂停一下 / 我们来回顾一下 / 第一，…… 第四，……
+  first_use: S13
+  note: Spoken 来自测一下 parses as 来自 ('from') + 测一下.
+- en: In this video / Here is one you can answer yourself
+  zh_subtitle: 本期内容 / 这一题你可以自己回答
+  zh_spoken: ''
+  first_use: S01、S08
+  note: ''
+- en: hospital database / patient / condition X / has X / no X / Alice exposed / one week later / with(out) Alice / same answer
+  zh_subtitle: 医院数据库 / 病人 / 疾病 X / 有 X / 无 X / Alice 暴露了 / 一周后 / 有 Alice / 没有 Alice / 答案相同
+  zh_spoken: ''
+  first_use: S01
+  note: Use 病人 consistently (colloquial); the letter X is read in English.
+- en: heads / tails (coin); coin glyphs H / T; yes / no; says yes; tell the truth
+  zh_subtitle: 正面 / 反面；硬币上的 H/T 改为 正/反（必须用场景内专用键，见 [E3]）；“是” / “否”；回答“是”；说真话
+  zh_spoken: 正面 / 反面；是 / 否
+  first_use: S02、S04
+  note: Distribution tails are 尾部. Never map bare 'H'/'T' in strings.yaml.
+- en: study / smokers / heart disease / insurer / stranger; privacy violation / not a privacy breach
+  zh_subtitle: 研究 / 吸烟者 / 心脏病 / 保险公司 / 陌生人；侵犯隐私；标签：不算侵犯隐私
+  zh_spoken: ''
+  first_use: S04
+  note: 侵犯隐私 keeps the vignette apart from leakage（泄露量） in the same scene.
+- en: statistic / count / true answer / true count / released answer / output t / noise ÷ answer / pure noise
+  zh_subtitle: 统计量 / 计数 / 真实答案 / 真实计数 / 发布的答案（短标签：发布值）/ 输出 t / 噪声 ÷ 答案 / 纯噪声
+  zh_spoken: ''
+  first_use: ''
+  note: 计数 is fine on screen; in speech 'counting query' replaces 计数查询 (homophone 技术).
+- en: privacy level / database size (S08 circled inputs)
+  zh_subtitle: 隐私参数 ε / 数据库规模 n
+  zh_spoken: ''
+  first_use: S08
+  note: ''
+- en: cryptography conference / define security first, (against every possible attacker,) then prove it
+  zh_subtitle: 密码学会议 / 先定义安全性（针对所有可能的攻击者），再去证明
+  zh_spoken: ''
+  first_use: S02
+  note: ''
+- en: Statisticians and data miners
+  zh_subtitle: 统计学家和数据挖掘研究者
+  zh_spoken: ''
+  first_use: S11
+  note: ''
+- en: census / US Census Bureau / state totals / counties, tracts, blocks / published tables protected with DP
+  zh_subtitle: 人口普查 / 美国人口普查局 / 各州总数 / 县、普查区、普查街区 / 用 DP 保护的公开表
+  zh_spoken: ''
+  first_use: S12
+  note: Official Chinese translations.
+- en: income cap / cap every value at $1M / largest income
+  zh_subtitle: 收入上限 / 每个值都封顶在 $1M / 数据库里最高的收入
+  zh_spoken: 收入上限 / 每个值都先封顶在一百万美元
+  first_use: S06
+  note: The chart's currency labels stay $52k…$1B.
+- en: medical imaging dataset / slices / summed gradient
+  zh_subtitle: 医学影像数据集 / 切片 / 梯度之和
+  zh_spoken: ''
+  first_use: S13
+  note: As the medical-imaging audience says it.
+- en: median / average
+  zh_subtitle: 中位数 / 平均值
+  zh_spoken: ''
+  first_use: S13
+  note: ''
+- en: week 1 / week 2
+  zh_subtitle: 第一周 / 第二周（标签与字幕一致）
+  zh_spoken: ''
+  first_use: S08
+  note: The label and the subtitle are on screen together, so they use the same numeral style.
+- en: companion notes (exercises.md); 'link in the description'
+  zh_subtitle: 配套笔记（链接见简介）
+  zh_spoken: 配套笔记
+  first_use: S13
+  note: 'Bilibili idiom: 简介 is the video description.'
+- en: framework / noisy sums / only sums / a tiny chance of a large leak
+  zh_subtitle: 框架 / 带噪声的求和 / 只能处理求和 / 以极小的概率发生大量泄露
+  zh_spoken: ''
+  first_use: S02
+  note: ''
+- en: SuLQ (sub-linear queries)
+  zh_subtitle: SuLQ；卡片 Sub-Linear Queries 保持英文
+  zh_spoken: 一个叫 SuLQ 的框架，意思是只问次线性数量的 query（lexicon 读作 sulk）
+  first_use: S02
+  note: 'What is sub-linear is the number of queries, not each query. The card keeps the English because it is where the acronym comes from. Put spaces around SuLQ in say: so the lexicon matches.'
+- en: privacy = a property of the process / not of how the released table looks / … whatever else the attacker knows
+  zh_subtitle: 隐私是发布过程（机制）的性质 / 而不是发布出来的表长什么样 / ……无论攻击者还知道什么
+  zh_spoken: ''
+  first_use: S02
+  note: ''
+- en: worst-case belief change / bounded / before / after
+  zh_subtitle: 最坏情况下的信念变化 / 有界 / 之前 / 之后
+  zh_spoken: ''
+  first_use: S02
+  note: ''
+- en: noise with exponential tails / (its shape comes later)
+  zh_subtitle: 尾部指数衰减的噪声 / （形状稍后揭晓）
+  zh_spoken: ''
+  first_use: S04
+  note: ''
+- en: refusing depends only on the queries' sensitivity, not the data
+  zh_subtitle: 是否拒绝只取决于 query 的敏感度，与数据无关
+  zh_spoken: ''
+  first_use: S09
+  note: 'The key point: the refusal itself leaks nothing.'
+- en: a ranking / a set / a string of bits / anything with a distance
+  zh_subtitle: 一个排名 / 一个集合 / 一个比特串 / 凡是能定义距离的输出
+  zh_spoken: ''
+  first_use: S10
+  note: ''
+- en: Distance to a property / Small random samples / Outputs that aren't numbers (S10 tiles); Beyond counting
+  zh_subtitle: 到某个性质的距离 / 小随机样本 / 输出不是数；不止于计数
+  zh_spoken: ''
+  first_use: S10
+  note: ''
+- en: 'every choice of masks is another query / mask: the bits that count'
+  zh_subtitle: 每选一组 mask，就是一个新的 query / mask：要数的那些比特
+  zh_spoken: ''
+  first_use: S11
+  note: ''
+- en: 'the trained model / ''Was Alice in the training set?'' / scaled up / many users: the true rate still comes through / each user flips their own coin'
+  zh_subtitle: 训练好的模型 / “Alice 在训练集里吗？” / 放大版 / 用户多了，真实比例照样能估出来 / 每个用户自己掷硬币
+  zh_spoken: ''
+  first_use: S12
+  note: ''
+- en: choosing ε in practice / when no one can be trusted with the data
+  zh_subtitle: 实践中如何选 ε / 没有任何一方值得托付数据时
+  zh_spoken: ''
+  first_use: S12
+  note: ''
+- en: rate / true rate / estimated true rate / people asked / said 'yes'
+  zh_subtitle: 比例 / 真实比例 / 估计出的真实比例 / 被调查人数 / 回答“是”
+  zh_spoken: ''
+  first_use: S02
+  note: ''
+- en: public voter list / hospital records, names removed / attacker's copy
+  zh_subtitle: 公开的选民名单 / 去掉姓名的病历 / 攻击者还原出的副本
+  zh_spoken: ''
+  first_use: S02
+  note: ''
+# ---- People, organisations, titles / 人名、机构与标题
+- en: Cynthia Dwork, Frank McSherry, Kobbi Nissim, Adam Smith
+  zh_subtitle: Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith；之后只用姓
+  zh_spoken: 英文发音（lexicon.yaml；拉丁词两侧留半角空格）
+  first_use: S01 首次给全名（与英文旁白一致）
+  note: 'Modern researchers stay in Latin script; never transliterate (no 德沃克). Pronouns: Dwork 她; McSherry, Nissim, Smith 他. Check Dwork by ear: Xiaoxiao dropped the D in one clip.'
+- en: 'Other researchers: Stanley Warner, Latanya Sweeney, Irit Dinur, Denning, Adam & Wortmann, Evfimievski, Gehrke & Srikant, Blum, Kenthapadi, Mironov, Naor, Talwar, Rothblum, Vadhan, Abadi, Shokri'
+  zh_subtitle: 原样拉丁字母；卡片上的 & 与 et al. 保留；朗读与字幕：Abadi 和合作者
+  zh_spoken: 英文发音（lexicon.yaml 需补 Kenthapadi、Talwar、Rothblum、Nissim）
+  first_use: 首次给全名（照英文旁白），之后用姓
+  note: 'Pronouns: Sweeney 她, Dinur 她, Warner 他. Citation cards keep ''et al.'' (''等 2003'' alone under a name reads like a typo).'
+- en: 'Classic eponyms: Bayes, Laplace, Gauss, Gödel (Shannon, Hamming, Chebyshev in other videos)'
+  zh_subtitle: 贝叶斯、拉普拉斯、高斯、哥德尔（香农、汉明、切比雪夫）
+  zh_spoken: ''
+  first_use: ''
+  note: 'Textbook transliterations are what Chinese speakers say for historical figures. Notation built on them stays Latin: Lap(·), N(·).'
+- en: Gödel Prize 2017 / TCC Test-of-Time Award 2016
+  zh_subtitle: 2017 年哥德尔奖 / 2016 年 TCC 时间检验奖
+  zh_spoken: 二零一七年哥德尔奖 / 二零一六年 TCC 时间检验奖
+  first_use: ''
+  note: ''
+- en: TCC / ICALP / LNCS
+  zh_subtitle: TCC / ICALP / LNCS
+  zh_spoken: 照常书写（edge 按字母读）
+  first_use: S02：TCC，一个密码学会议
+  note: 'Acronyms stay. Do not space them out in say: (a spaced ''-'' risks being read as 减).'
+- en: 'Paper title: Calibrating Noise to Sensitivity in Private Data Analysis'
+  zh_subtitle: 《Calibrating Noise to Sensitivity in Private Data Analysis》；S13 引用卡不变
+  zh_spoken: 英文原题，前后各一个逗号停顿；不加口头中文意译
+  first_use: S01
+  note: Titles are cited verbatim so viewers can find the paper. A spoken Chinese gloss would add about 4 s to an already long block; the gloss 在隐私数据分析中按敏感度校准噪声 goes into the Bilibili description. The subtitle splitter must never cut inside 《…》.
+- en: '''Differential Privacy'' (Dwork, ICALP 2006 invited paper)'
+  zh_subtitle: 标题就叫《Differential Privacy》；特邀论文
+  zh_spoken: 标题就叫 Differential Privacy；特邀论文
+  first_use: S12
+  note: 'The naming moment: the English name itself is the point.'
+- en: 'Example people: Alice, Bob, Carol, Dan, Eve, Ann, Cy, Dee, Erin, Femi, Bea, Cal; voter list A. Ruiz, K. Osei, M. Novak'
+  zh_subtitle: 原样保留
+  zh_spoken: 英文发音
+  first_use: ''
+  note: Alice and Bob are canonical in Chinese CS too. Alice is 她.
+- en: Google, RAPPOR, Chrome, Apple, iPhone
+  zh_subtitle: Google、RAPPOR、Chrome、苹果（卡片保留 Apple）、iPhone
+  zh_spoken: Google、Chrome 浏览器、苹果、iPhone
+  first_use: S12
+  note: Brands as Chinese researchers say them. RAPPOR is card-only.
+- en: Massachusetts / the governor / Americans
+  zh_subtitle: 马萨诸塞州 / 州长 / 美国人
+  zh_spoken: ''
+  first_use: S02
+  note: Standard Chinese place names.
+- en: 'Sweeney table headers: name / ZIP / born / sex / diagnosis; asthma, flu, cardiac, fracture; F / M'
+  zh_subtitle: 姓名 / 邮编 / 出生日期 / 性别 / 诊断；哮喘、流感、心脏病、骨折；F / M 保留
+  zh_spoken: 邮编、出生日期和性别
+  first_use: S02
+  note: F/M stay as mock US data, like the ZIP codes and dates (the 性别 header explains them). A bare 'M' entry would also rewrite the mechanism symbol M in s04/s11, and 'F' the s10 graph node.
+# ---- Titles and chapters (meta.yaml) / 标题与章节
+- en: Video title
+  zh_subtitle: 【论文精读】差分隐私的开山之作：Calibrating Noise to Sensitivity（TCC 2006）
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: 论文精读 is the genre tag viewers search for, 开山之作 the stock phrase for 'the paper that invented X'; the English title stays searchable.
+- en: Part 1 title
+  zh_subtitle: 差分隐私（上）：定义与拉普拉斯机制
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: ''
+- en: Part 2 title
+  zh_subtitle: 差分隐私（下）：隐私预算、不止于计数，以及一次性发布的极限
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: ''
+- en: 'Chapter S01: The differencing attack'
+  zh_subtitle: 差分攻击（differencing attack）
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: English pins the meaning (not differential cryptanalysis).
+- en: 'Chapter S02: Where this paper sits'
+  zh_subtitle: 这篇论文从哪里来
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: Written titles use 论文.
+- en: 'Chapter S03: The setup: a trusted curator'
+  zh_subtitle: 设定：可信的数据管理者
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: Written 设定; curator → 数据管理者.
+- en: 'Chapter S04: Defining privacy'
+  zh_subtitle: 定义隐私
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: ''
+- en: 'Chapter S05: Why so strict?'
+  zh_subtitle: 为什么这么严格？
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: ''
+- en: 'Chapter S06: Sensitivity'
+  zh_subtitle: 敏感度（sensitivity）
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: 'Core-concept chapter: English kept for search.'
+- en: 'Chapter S07: The Laplace mechanism'
+  zh_subtitle: 拉普拉斯机制（Laplace mechanism）
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: 'Core-concept chapter: English kept for search.'
+- en: 'Chapter S08: Privacy for individuals, accuracy for populations'
+  zh_subtitle: 隐私留给个体，准确留给总体
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: ''
+- en: 'Chapter S09: Many questions: the privacy budget'
+  zh_subtitle: 很多问题：隐私预算（privacy budget）
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: 'Core-concept chapter: English kept for search.'
+- en: 'Chapter S10: Beyond counting'
+  zh_subtitle: 不止于计数
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: ''
+- en: 'Chapter S11: Interactive vs one-shot releases'
+  zh_subtitle: 交互式 vs 一次性发布
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: '''vs'' is common in Chinese titles.'
+- en: 'Chapter S12: What grew from this paper'
+  zh_subtitle: 这篇论文之后
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: ''
+- en: 'Chapter S13: Recap and questions'
+  zh_subtitle: 回顾与思考题
+  zh_spoken: （不朗读）
+  first_use: ''
+  note: ''
+# ---- Companion docs (exercises.md, digest.md) / 配套材料（exercises.md、digest.md）
+- en: 'Headings: Warm-up / Understanding the definition / Understanding the noise / The separation (harder) / Code it (15 minutes) / Reading the paper with this map / Small errata / Glossary for newcomers / In one paragraph / Where it led'
+  zh_subtitle: 热身 / 理解定义 / 理解噪声 / 分离结果（较难）/ 动手写代码（15 分钟）/ 带着这张地图读论文 / 勘误与阅读笔记 / 新手词汇表 / 一段话概括 / 后续发展
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: <summary>Answer</summary>
+  zh_subtitle: <summary>答案</summary>
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: total variation distance / statistical difference (the paper's word)
+  zh_subtitle: 总变差距离（TV 距离）/ 统计差异
+  zh_spoken: ''
+  first_use: exercises 5、digest
+  note: ''
+- en: global / local / smooth sensitivity
+  zh_subtitle: 全局敏感度 / 局部敏感度 / 平滑敏感度（smooth sensitivity）
+  zh_spoken: ''
+  first_use: exercises 3、digest
+  note: ''
+- en: sequential / parallel composition; advanced composition
+  zh_subtitle: 序列组合（串行组合）/ 并行组合；高级组合定理
+  zh_spoken: ''
+  first_use: exercises 2、9
+  note: ''
+- en: pure / approximate DP; Gaussian mechanism; central DP (trusted-curator model)
+  zh_subtitle: 纯差分隐私 / 近似差分隐私（approximate DP）；高斯机制；中心化差分隐私
+  zh_spoken: ''
+  first_use: exercises 8、digest
+  note: ''
+- en: utility / privacy–utility trade-off
+  zh_subtitle: 可用性 / 隐私与可用性的权衡
+  zh_spoken: ''
+  first_use: digest
+  note: ''
+- en: importance sampling (ratio)
+  zh_subtitle: 重要性采样（比）
+  zh_spoken: ''
+  first_use: digest：S09 RL 类比的出处
+  note: ''
+- en: adversary 𝒜
+  zh_subtitle: 敌手 𝒜（对任意敌手 𝒜）
+  zh_spoken: ''
+  first_use: digest 定义 1、附录 A
+  note: ''
+- en: Example / Remark / Claim / Appendix / Eqn.
+  zh_subtitle: 例 / 注 / 断言 / 附录 / 式
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: Hamming distance / metric space / Lipschitz constant / semantic security / simulatability / contingency table / covariance matrix / minimum spanning tree / pairwise independent / Reed–Solomon code / normalizing constant
+  zh_subtitle: 汉明距离 / 度量空间 / Lipschitz 常数 / 语义安全 / 可模拟性 / 列联表 / 协方差矩阵 / 最小生成树 / 两两独立 / Reed–Solomon 码 / 归一化常数
+  zh_spoken: ''
+  first_use: digest
+  note: Modern eponyms that Chinese ML writes in Latin stay Latin.
+- en: US Census 2020 Disclosure Avoidance System
+  zh_subtitle: 2020 年人口普查披露规避系统（DAS）
+  zh_spoken: ''
+  first_use: digest
+  note: ''
+- en: de-identification (vs anonymization)
+  zh_subtitle: 去标识化（区别于匿名化）
+  zh_spoken: ''
+  first_use: digest、简介
+  note: China's PIPL distinguishes 去标识化 from 匿名化, which is exactly Sweeney's point.
+- en: per-example gradient clipping / privacy accounting ('privacy budget, tracked')
+  zh_subtitle: 逐样本梯度裁剪 / 隐私预算核算；标签：隐私预算，全程记账
+  zh_spoken: ''
+  first_use: S12、digest
+  note: ''

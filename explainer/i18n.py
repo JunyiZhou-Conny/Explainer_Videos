@@ -11,13 +11,19 @@ A language version lives next to the video, in videos/<id>/i18n/<lang>/:
                          zh: ["关键在这里。", "真正的井字棋，只要有人连成三个就结束了……"]
                          say: [null, "真正的井字棋，只要有人连成三个就结束了……"]  # optional spoken form
                          anchors: {"Real tic-tac-toe stops": "真正的井字棋"}        # optional
+                         en_display: [null, "Real tic-tac-toe stops ... 3 in a row."]  # optional English
+                                     # subtitle line per sentence (digits/symbols instead of words)
                      `en` must equal the SAY line (so a changed script is detected), and `zh` must have
                      exactly one entry per English sentence (explainer.voice.split_sentences). That
                      alignment is what lets every scene keep its English anchors: vo.wait_until("Second,
                      X fills") is mapped to the same place in the matching Chinese sentence, and it is
                      what pairs the Chinese and English lines of the bilingual subtitles.
     strings.yaml     on-screen text: {"English string": "中文"}; keys starting with "re:" are regular
-                     expressions (Python re, full match) whose value may use \\1, \\2 ...
+                     expressions (Python re, full match) whose value may use \\1, \\2 ...; keys
+                     "<scene file stem>|<English>" apply only to strings created by that scene file
+                     (e.g. "s04_definition|H": "正" translates one coin label, not every "H").
+                     Keys of t2c / t2w / t2s / t2f / t2g, tex_to_color_map and
+                     substrings_to_isolate are translated through the same table, so colours survive.
     meta.yaml        title, description, chapter titles ({scene file stem or class: title}), part titles
     assets/          localized assets, e.g. assets/play_all_games.py with Chinese comments
                      (see `localized()`).
@@ -100,6 +106,7 @@ class Line:
     sentences: list[str]                      # display text, one per English sentence
     spoken: list[str]                         # what the TTS reads (defaults to the display text)
     anchors: dict[str, str] = field(default_factory=dict)
+    en_display: list[str | None] = field(default_factory=list)   # English subtitle line overrides
 
 
 @lru_cache(maxsize=4)
@@ -112,7 +119,9 @@ def narration(code: str | None = None, project: Path | None = None) -> dict[str,
             sents = [norm(s) for s in (it.get(code or lang()) or it.get("tr") or [])]
             say = it.get("say") or [None] * len(sents)
             spoken = [norm(sp) if sp else s for s, sp in zip(sents, list(say) + [None] * len(sents))]
-            out[norm(it["en"])] = Line(norm(it["en"]), sents, spoken, dict(it.get("anchors") or {}))
+            en_disp = [norm(x) if x else None for x in (it.get("en_display") or [])]
+            out[norm(it["en"])] = Line(norm(it["en"]), sents, spoken, dict(it.get("anchors") or {}),
+                                       en_disp)
     return out
 
 
@@ -149,7 +158,55 @@ def check_narration(project: Path, code: str) -> list[str]:
     for key in tr:
         if key not in wanted:
             problems.append(f"stale {code} line (no such SAY line in script.md): {key[:90]}")
+    allowed = allowed_latin(project, code)
+    for key, line in tr.items():
+        sid = wanted.get(key, "?")
+        for i, (disp, spoken) in enumerate(zip(line.sentences, line.spoken)):
+            for msg in spoken_problems(spoken, allowed):
+                problems.append(f"{sid}: sentence {i + 1}: {msg}: {spoken[:60]}")
+            if not re.search(r"[。！？…]$|[。！？…][”」）)]$", disp):
+                problems.append(f"{sid}: sentence {i + 1} must end with 。！？: {disp[-30:]}")
+            if re.search(r"[。！？](?!$)(?![”」）)]$)", disp):
+                problems.append(f"{sid}: sentence {i + 1} has 。！？ inside (one sentence per English sentence): {disp[:60]}")
     return problems
+
+
+# what the voice reads badly (rules measured with the zh voice, see the videos' GLOSSARY.md)
+_SPOKEN_BAD = [
+    (re.compile(r"[（）()《》\[\]{}]"), "brackets are read aloud or break the voice"),
+    (re.compile(r"[εδλσαΔ′√≤≥≈×÷^=<>→←+]|!=|==|\+="), "maths symbol in spoken text (write it in words)"),
+    (re.compile(r"\d\s*!"), "n! is misread (say: n 的阶乘)"),
+    (re.compile(r"[A-Za-z]+_[A-Za-z_]+"), "identifier with underscore is read as 下划线"),
+    (re.compile(r"种[。，！？]"), "a clause ending in 种 is misheard (多少种。 -> 多少重)"),
+]
+
+
+def spoken_problems(spoken: str, allowed: set[str] | None = None) -> list[str]:
+    out = [msg for rx, msg in _SPOKEN_BAD if rx.search(spoken)]
+    if allowed is not None:
+        for w in re.findall(r"[A-Za-z][A-Za-z'.-]*", spoken):
+            if w not in allowed and w.lower() not in allowed and len(w) > 1:
+                out.append(f"English word {w!r} is not in the glossary's spoken forms")
+    if re.search(r"[\u4e00-\u9fff][A-Za-z0-9]|[A-Za-z0-9][\u4e00-\u9fff]", spoken):
+        out.append("missing half-width space between Chinese and Latin/digits (the lexicon needs it)")
+    return out
+
+
+def allowed_latin(project: Path, code: str) -> set[str]:
+    """Latin words a translation may speak: every Latin word in the glossary's spoken and subtitle
+    forms (code names, people, kept-English terms), plus single letters and symbols' names."""
+    d = project / "i18n" / code
+    g = _yaml(d / "glossary.yaml") if (d / "glossary.yaml").exists() else {}
+    words: set[str] = set()
+    for t in g.get("terms") or []:
+        for f in ("zh_spoken", "zh_subtitle", "first_use"):
+            for w in re.findall(r"[A-Za-z][A-Za-z'.-]*", str(t.get(f) or "")):
+                words.add(w)
+                words.add(w.lower())
+    for w in (g.get("allowed_spoken_latin") or []):
+        words.add(str(w))
+        words.add(str(w).lower())
+    return words
 
 
 # ---------------------------------------------------------------- on-screen strings
@@ -157,6 +214,7 @@ def check_narration(project: Path, code: str) -> list[str]:
 @lru_cache(maxsize=4)
 def _tables(code: str):
     exact: dict[str, str] = {}
+    scoped: dict[tuple[str, str], str] = {}
     patterns: list[tuple[re.Pattern, str]] = []
     sources = [TOOLKIT_DIR / "locales" / f"{code}.yaml"]
     d = lang_dir(code)
@@ -166,12 +224,30 @@ def _tables(code: str):
         for k, v in (_yaml(src) or {}).items():
             if v is None:
                 continue
-            if str(k).startswith("re:"):
-                patterns.insert(0, (re.compile(str(k)[3:], re.S), str(v)))
+            k = str(k)
+            if k.startswith("re:"):
+                patterns.insert(0, (re.compile(k[3:], re.S), str(v)))
+            elif "|" in k and re.fullmatch(r"[A-Za-z0-9_]+", k.split("|", 1)[0]):
+                stem, text = k.split("|", 1)
+                scoped[(stem, text)] = str(v)
             else:
-                exact[str(k)] = str(v)
+                exact[k] = str(v)
                 exact.setdefault(norm(k), str(v))
-    return exact, patterns
+    return exact, scoped, patterns
+
+
+def _caller_stem() -> str | None:
+    """File stem of the scene (or helper) module that is creating the current text object."""
+    import inspect
+
+    project = project_dir()
+    frame = inspect.currentframe()
+    while frame is not None:
+        f = Path(frame.f_code.co_filename)
+        if f.suffix == ".py" and project is not None and project in f.resolve().parents:
+            return f.stem
+        frame = frame.f_back
+    return None
 
 
 _MISSING: dict[str, set] = {}
@@ -181,7 +257,11 @@ def tr(s: str, kind: str = "text") -> str:
     """Translate one on-screen string into the active language (unchanged if no entry)."""
     if not active() or not isinstance(s, str) or not s.strip():
         return s
-    exact, patterns = _tables(lang())
+    exact, scoped, patterns = _tables(lang())
+    if scoped:
+        stem = _caller_stem()
+        if stem and (stem, s) in scoped:
+            return scoped[(stem, s)]
     if s in exact:
         return exact[s]
     if norm(s) in exact:
@@ -262,11 +342,20 @@ def install() -> None:
     _INSTALLED = True
     from manim import MarkupText, MathTex, Paragraph, Tex, Text
 
+    def tr_keys(kw, names, kind):
+        for name in names:
+            m = kw.get(name)
+            if isinstance(m, dict):
+                kw[name] = {tr(k, kind) if isinstance(k, str) else k: v for k, v in m.items()}
+            elif isinstance(m, (list, tuple)):
+                kw[name] = type(m)(tr(k, kind) if isinstance(k, str) else k for k in m)
+
     def wrap_text(cls, kind):
         orig = cls.__init__
 
         def init(self, text, *a, **kw):
             text = tr(text, kind)
+            tr_keys(kw, ("t2c", "t2w", "t2s", "t2f", "t2g"), kind)
             if has_cjk(text):
                 kw["font"] = _cjk_font(kw.get("font"))
             orig(self, text, *a, **kw)
@@ -289,6 +378,7 @@ def install() -> None:
 
         def init(self, *strings, **kw):
             strings = tuple(tr(s, kind) if isinstance(s, str) else s for s in strings)
+            tr_keys(kw, ("tex_to_color_map", "substrings_to_isolate"), kind)
             if any(isinstance(s, str) and has_cjk(s) for s in strings):
                 kw["tex_template"] = cjk_tex_template()
             orig(self, *strings, **kw)

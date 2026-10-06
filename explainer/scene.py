@@ -98,6 +98,8 @@ class VoiceScene(Scene):
         if isinstance(clip, AlignedClip):   # the translated sentences, with their exact spans
             sub.update({"lang": i18n.lang(), "tr": clip.sentences,
                         "tr_spans": [[round(a, 3), round(b, 3)] for a, b in clip.spans]})
+            if any(clip.en_display):
+                sub["en_display"] = clip.en_display
         self._subs.append(sub)
 
     def tear_down(self):  # Manim >= 0.19 (older versions call tearDown)

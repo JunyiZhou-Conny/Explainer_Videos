@@ -80,6 +80,7 @@ class AlignedClip(Clip):
     sentences: list[str] = field(default_factory=list)          # translated display sentences
     spans: list[tuple[float, float]] = field(default_factory=list)  # (start, end) of each sentence
     anchors: dict[str, str] = field(default_factory=dict)
+    en_display: list = field(default_factory=list)              # English subtitle overrides
 
     def time_of(self, phrase: str) -> float | None:
         if phrase in self.anchors:
@@ -141,19 +142,24 @@ def write_wav(path: Path, samples: np.ndarray, sr: int = SAMPLE_RATE) -> None:
         w.writeframes(pcm.tobytes())
 
 
-@lru_cache(maxsize=1)
-def load_lexicon() -> dict[str, dict]:
+@lru_cache(maxsize=4)
+def load_lexicon(lang: str | None = None) -> dict[str, dict]:
+    """Pronunciation fixes: lexicon.yaml (English videos), lexicon.<lang>.yaml for a language
+    version (say:-only respellings for that language's voice; never mixed into the English one)."""
     import yaml
 
-    path = Path(__file__).with_name("lexicon.yaml")
-    return yaml.safe_load(path.read_text()) or {}
+    lang = lang or (os.environ.get("EXPLAINER_LANG") or "en").strip().lower()
+    name = "lexicon.yaml" if lang == "en" else f"lexicon.{lang}.yaml"
+    path = Path(__file__).with_name(name)
+    return (yaml.safe_load(path.read_text()) or {}) if path.exists() else {}
 
 
 def _lexicon_regex(lex: dict) -> re.Pattern | None:
     if not lex:
         return None
     words = sorted(lex, key=len, reverse=True)
-    return re.compile(r"(?<![\w-])(" + "|".join(re.escape(w) for w in words) + r")(?![\w-])")
+    # word boundaries for Latin words only: a CJK character next to a name still counts as a boundary
+    return re.compile(r"(?<![A-Za-z0-9_-])(" + "|".join(re.escape(w) for w in words) + r")(?![A-Za-z0-9_-])")
 
 
 def respell(text: str) -> str:
@@ -181,19 +187,24 @@ class Backend:
         raise NotImplementedError
 
     def speak(self, text: str) -> Clip:
-        out = self._cache_path(text)
+        out = self._cache_path(self.prepare(text))
         if not out.exists():
             out.parent.mkdir(parents=True, exist_ok=True)
             tmp = out.with_name(out.stem + f".tmp{os.getpid()}" + out.suffix)
-            self.synthesize(text, tmp)
+            self.synthesize(self.prepare(text), tmp)
             tmp.replace(out)
         dur = audio_duration(out)
         # proportional sentence marks (no real timings from text-in/audio-out APIs)
         marks = [(off, dur * off / max(1, len(text))) for off, _ in split_sentences(text)]
         return Clip(out, dur, text, marks)
 
+    def prepare(self, sentence: str) -> str:
+        """Text actually sent to the engine (respellings applied); the cache is keyed on it."""
+        return sentence
+
     def sentence_wav(self, sentence: str) -> Path:
         """One sentence as a cached mono wav at SAMPLE_RATE (any backend)."""
+        sentence = self.prepare(sentence)
         out = self._cache_path(sentence, "wav")
         if not out.exists():
             out.parent.mkdir(parents=True, exist_ok=True)
@@ -241,7 +252,7 @@ class Backend:
         path, dur, spans = self.speak_sentences(line.spoken)
         marks = [(off, t0) for (off, _), (t0, _) in zip(split_sentences(line.en), spans)]
         return AlignedClip(path, dur, line.en, marks, sentences=line.sentences, spans=spans,
-                           anchors=line.anchors)
+                           anchors=line.anchors, en_display=list(line.en_display))
 
 
 class SilentBackend(Backend):
@@ -406,13 +417,25 @@ class EdgeBackend(Backend):
     def params(self):
         return {"voice": self.voice, "speed": self.speed}
 
+    def prepare(self, sentence: str) -> str:
+        return respell(sentence)
+
     def synthesize(self, text, out):
         import asyncio
+        import time
 
         import edge_tts
 
         rate = f"{round((self.speed - 1) * 100):+d}%"
-        asyncio.run(edge_tts.Communicate(respell(text), self.voice, rate=rate).save(str(out)))
+        for attempt in range(6):                      # the online service occasionally drops a request
+            try:
+                asyncio.run(edge_tts.Communicate(text, self.voice, rate=rate).save(str(out)))
+                if out.exists() and out.stat().st_size > 1000:
+                    return
+            except Exception as e:  # noqa: BLE001
+                err = e
+            time.sleep(2 ** attempt)
+        raise RuntimeError(f"edge-tts failed for {text[:60]!r}: {err if 'err' in locals() else 'empty audio'}")
 
 
 class EspeakBackend(Backend):
