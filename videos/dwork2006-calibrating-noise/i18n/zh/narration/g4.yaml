@@ -45,7 +45,7 @@
   - null
   "anchors":
     "like one working": "比如只看一个小随机样本"
-    "approximates f": "而且大多数时候"
+    "approximates f": "能把 f 近似到"
     "on every database": "对每个数据库都如此"
     "then f has": "那么 f 的敏感度"
     "That is Lemma 1": "这就是引理 1"
