@@ -30,7 +30,7 @@ The next step after videos is interactivity — playgrounds where you have to *p
 | | Video | Papers | Length |
 | --- | --- | --- | --- |
 | 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~24 min, also cut in two parts (~15 + ~9 min) |
-| 🎬 | [Why are there exactly 255,168 games of tic-tac-toe?](videos/tictactoe-255168/) (for middle school) | — (counting, recursion and backtracking) | ~12 min |
+| 🎬 | [Why are there exactly 255,168 games of tic-tac-toe?](videos/tictactoe-255168/) (for middle school) | — (counting, recursion and backtracking) | ~12½ min |
 
 Each video folder has: `output/*.mp4` (the video, plus part cuts for long ones), `output/*.srt`
 (subtitles), `output/chapters*.txt`, `script.md` (narration + visual plan), `exercises.md`, the

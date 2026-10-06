@@ -6,7 +6,7 @@ program that plays every possible game. No algebra or programming background is 
 
 | file | what it is |
 | --- | --- |
-| `output/tictactoe-255168.mp4` | the full video (1080p60, narrated, ~12 min) |
+| `output/tictactoe-255168.mp4` | the full video (1080p60, narrated, 12:36) |
 | `output/tictactoe-255168.srt` | subtitles |
 | `output/chapters.txt` | chapter timestamps (paste into a YouTube/Bilibili description) |
 | `output/transcript.md` | full narration by chapter |
