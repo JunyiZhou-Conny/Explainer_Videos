@@ -172,7 +172,7 @@
   - "命题 2：即使每条记录都用同一个 mask，对大多数 mask，它也估计不出奇数记录的个数，除非 n 大到指数级。"
   "anchors":
     "where each person": "每个人自己扰动"
-    "so nobody holds": "所以谁手里"
+    "so nobody holds": "都没有原始数据"
     "is even more limited": "它的局限还要更大"
     "even when every row": "即使每条记录"
     "for most masks": "对大多数 mask"
@@ -331,7 +331,7 @@
   - null
   "anchors":
     "One: privacy": "第一，隐私"
-    "changes the probability": "任何输出的概率"
+    "changes the probability": "改动任何一个人的记录"
     "e to the epsilon": "最多是"
     "Two: a query": "第二，一个"
     "Three: Laplace": "第三，尺度为"
