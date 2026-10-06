@@ -23,11 +23,12 @@
 "win or draw?": "赢还是平局？"
 "Plan B: let a computer play every game": "Plan B：让电脑把每一局都下一遍"
 
-# part keys of rich() (s04_messy.py:38-51). INERT until rich() translates each part before joining
-# (parts = [(i18n.tr(p), c) for p, c in parts]); today it translates only the joined string and its
-# glyph-count assert fails in zh. Each list of parts keeps the English order and joins to the
-# whole-string Chinese above, so every colour and every per-cue piece (p1, p2, cp) lands on the
-# right glyphs. The grey separators ("  ×  ", " × ", "  +  ", " = ") and the coloured "O", "X",
+# part keys of rich() (s04_messy.py:39-64), which translates each part before joining (and, in zh,
+# drops the half-width spaces next to a full-width bracket). Each list of parts keeps the English
+# order and joins to the whole-string Chinese above, so every colour and every per-cue piece (p1,
+# p2, cp) lands on the right glyphs. The whole-string keys above are no longer looked up (rich()
+# builds its Text from the translated parts); they document what each label must join to, so
+# change both together. The grey separators ("  ×  ", " × ", "  +  ", " = ") and the coloured "O", "X",
 # "6" parts have no English words and stay as they are. No other string of the video normalizes
 # to any of these keys (checked against build/strings.en.json and the g1/g3 tables).
 " wins on move 6": " 在第 6 步赢了"

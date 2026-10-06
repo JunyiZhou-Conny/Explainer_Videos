@@ -10,7 +10,7 @@ S04:
   zh:
   - "那 O 在第 6 步赢下的对局呢？"
   - "O 需要三子连成一线。"
-  - "但要小心：如果三个 X 也连成了一线，X 在第 5 步就已经赢了，还没等 O 连成一线，这一局就结束了。"
+  - "但要小心：如果三个 X 也连成了一线，X 在第 5 步就已经赢了，还没等 O 连完，这一局就结束了。"
   say:
   - null
   - "O 需要三个连成一条线。"
@@ -38,11 +38,11 @@ S04:
 
 - en: "For games that end on moves 7, 8 and 9, it gets much worse: we'd have to check every earlier move for a win, and a full board might be a win or a draw. It turns into a tangled mess."
   zh:
-  - "在第 7、8、9 步结束的对局就麻烦多了：我们就得检查之前的每一步有没有人赢，而且下满的棋盘可能是有人赢，也可能是平局。"
+  - "在第 7、8、9 步结束的对局就麻烦多了：我们必须检查之前的每一步有没有人赢，而且下满的棋盘可能是有人赢，也可能是平局。"
   - "这就变成了一团乱麻。"
   anchors:
     "it gets much worse": "就麻烦多了"
-    "we'd have to check": "我们就得检查"
+    "we'd have to check": "我们必须检查"
     "and a full board": "而且下满的棋盘"
 
 - en: "When counting gets this messy, there's another plan. Don't count cleverly. Instead, teach a computer the rules, and let it play every possible game, one by one."
@@ -82,7 +82,9 @@ S05:
   - "如果一条线上三个格子放的都一样，而且不是点，那这是谁的棋子，谁就赢了。"
   - "如果没有一条线符合，winner 什么也没找到，就返回 None，意思是“没有人”。"
   anchors:
-    "a little mini-program": "一小段"
+    # the box and its label come in as the definition starts (one beat earlier than 一小段:
+    # the code panel would otherwise stand still for 2.5 s of 接下来是一个函数：在编程里)
+    "a little mini-program": "函数就是"
     "checks every line": "检查每一条线"
     "and that mark": "而且不是点"
     "that player has won": "那这是谁的棋子"
@@ -98,6 +100,8 @@ S06:
   - "我们告诉它轮到谁，它的任务是统计从现在这个棋盘往后，还可能出现多少局。"
   anchors:
     "a function called explore": "叫 explore 的函数"
+    # zh only (s06_explore.py): the name pulses again on its gloss
+    "called explore": "explore 就是"
     "and its job is": "它的任务"
 
 - en: "It starts with two stopping rules. If someone has already won, that's one finished game, so explore hands back the number 1. If the board is full with no winner, that's a draw, also one finished game."

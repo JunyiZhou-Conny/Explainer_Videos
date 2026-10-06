@@ -194,7 +194,10 @@ class BoardCode(VoiceScene):
             box_dot = glyph_box(glyphs(code1, 0, 7, 10))     # "."
             box_9 = glyph_box(glyphs(code1, 0, 11, 13))      # * 9
             cap_dot, cap_9 = S.text("a dot,", 30), S.text("9 times", 30)
-            VGroup(cap_dot, cap_9).arrange(RIGHT, buff=0.2, aligned_edge=UP).next_to(code1, DOWN, buff=0.35)
+            # (a language version's taller glyphs would leave the caption almost touching the
+            # Python tag under it: it sits a little closer to the code instead)
+            VGroup(cap_dot, cap_9).arrange(RIGHT, buff=0.2, aligned_edge=UP) \
+                .next_to(code1, DOWN, buff=0.27 if i18n.active() else 0.35)
             self.play(FadeIn(box_dot), FadeIn(cap_dot, shift=UP * 0.1),
                       LaggedStart(*[Indicate(d, color=S.WHITE, scale_factor=1.8) for d in dots],
                                   lag_ratio=0.08), run_time=0.8)

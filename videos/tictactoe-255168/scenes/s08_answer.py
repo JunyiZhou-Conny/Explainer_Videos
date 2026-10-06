@@ -568,6 +568,16 @@ class Answer(VoiceScene):
             self.play(*add_each("edge"),
                       FadeIn(nums["edge"], shift=UP * 0.2), FadeIn(king, shift=DOWN * 0.4), run_time=1.0)
             self.add(new_names["edge"])                                 # one mobject again
+            if i18n.active():
+                # a language version that first glosses its word for "edge" (zh: "the middle square of
+                # each side") says the count only seconds later: light up the four edge squares during
+                # the gloss, then point at the count as it is said
+                vo.wait_until("with 29,592")
+                edge_sq = VGroup(*[boards["edge"].square(i, S.WHITE, 0.22) for i in (1, 3, 5, 7)]).set_z_index(-1)
+                self.play(LaggedStart(*[FadeIn(s) for s in edge_sq], lag_ratio=0.3), run_time=1.0)
+                vo.wait_until("29,592 games")
+                self.play(FadeOut(edge_sq), Indicate(nums["edge"][0], color=COUNT_COLOR, scale_factor=1.15),
+                          run_time=0.8)
             vo.wait_until("Each corner")
             self.play(*add_each("corner"), FadeIn(nums["corner"], shift=UP * 0.2), run_time=0.8)
             self.add(new_names["corner"])

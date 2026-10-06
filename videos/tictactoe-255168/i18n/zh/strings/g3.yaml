@@ -9,7 +9,9 @@
 "Experiment 1: delete the undo line": "实验 1：删掉“撤销”那一行"
 "Experiment 2: delete the winner check": "实验 2：删掉“判断输赢”"
 "output": "输出"
-"What happens if we\ndelete the undo line?": "如果删掉\n“撤销”那一行，会怎样？"
+# broken at the comma, not between 删掉 and its object; without 如果 it fits the 4.0-wide side card
+# at the full 30 pt (the old 如果删掉 / “撤销”那一行，会怎样？ was shrunk to 24 pt)
+"What happens if we\ndelete the undo line?": "删掉“撤销”那一行，\n会怎样？"
 "still there": "还在"
 # The "?!" corner tags on squares 7 and 8 stay half-width (no entry), a deliberate exception to B2
 # under E1 (fit the English box): corner_tag() centres the tag 0.34 cell right of the square's

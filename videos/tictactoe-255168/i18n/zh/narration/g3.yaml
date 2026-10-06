@@ -64,7 +64,7 @@ S08:
   - "我们按对局在第几步结束，把这个总数拆开来看。"
   - "1,440 局在第 5 步结束，5,328 局在第 6 步结束，和我们手算的结果一样。"
   - "然后柱子一下子升高了：约 4.8 万局在第 7 步结束，7.3 万局在第 8 步结束。"
-  - "所有对局里，有一半多一点会下满 9 步：约 8.2 万局是 X 赢，还有 46,080 局是平局。"
+  - "有一半多一点的对局会下满 9 步：约 8.2 万局是 X 赢，还有 46,080 局是平局。"
   - "加起来就是 255,168。"
   anchors:
     "and 5,328": "5,328 局"
@@ -126,7 +126,11 @@ S08:
   - null
   - "中心在 4 条获胜线上，角格在 3 条上，而边格只在两条上。"
   - null
+  # the zh-only beat in s08_answer: the four edge squares light up while 边格 is glossed, and the
+  # count is pointed at when it is finally said (the English says it right after "the edge")
   anchors:
+    "with 29,592": "也就是"
+    "29,592 games": "有 29,592"
     "and the center the fewest": "而中心最少"
     "a corner on 3": "角格在 3 条"
     "an edge on just 2": "而边格"
@@ -178,9 +182,9 @@ S09:
 - en: "Let's recap. Multiplying the choices gives nine factorial, 362,880 orders. But games stop when someone wins, so many of those orders are ghost games. And a short recursive program counts every real game by trying a move, exploring, and undoing it. The answer is exactly 255,168."
   zh:
   - "我们来小结一下。"
-  - "选择数相乘，就是 9 的阶乘，一共 362,880 种顺序。"
+  - "把每一步的选择数乘起来，就得到 9 的阶乘，一共 362,880 种顺序。"
   - "但只要有人赢，对局就会停下，所以这些顺序里有很多都是幽灵对局。"
-  - "而一段短短的递归程序，把每一局真实对局都统计了一遍：先试走一步，往下探索，再撤销。"
+  - "而一段短短的递归程序，先试走一步，往下探索，再撤销，就把每一局真实对局都统计了一遍。"
   - "答案正好是 255,168。"
   anchors:
     "gives nine factorial": "9 的阶乘"
@@ -188,6 +192,8 @@ S09:
     "ghost games": "幽灵对局"
     "by trying a move": "先试走一步"
     "and undoing it": "再撤销"
+    # zh-only beat in s09_bigger (the method comes first here, the counting after it)
+    "counts every real": "就把每一局"
 
 - en: "Now it's your turn. Change the program so it counts only the games X wins, or only the games that end on move 7, or see what happens if O goes first. The program and the challenges are linked in the description. Have fun exploring!"
   zh:

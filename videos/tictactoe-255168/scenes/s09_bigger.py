@@ -737,6 +737,12 @@ class Bigger(VoiceScene):
             self.play(Uncreate(down2.set_stroke(UNDO_COLOR)), MoveAlongPath(walk, Line(t2[0], t1[0])), run_time=0.5)
             down3 = Line(t1[0], t2[1]).set_stroke(S.WHITE, 7)
             self.play(Create(down3), MoveAlongPath(walk, Line(t1[0], t2[1])), run_time=0.5)
+            if i18n.active():
+                # a translation that names the method first says "counts every real game" after the
+                # walk: every leaf flashes as it is said (the first one already did)
+                vo.wait_until("counts every real")
+                self.play(LaggedStart(*[Flash(p, color=COUNT_COLOR, line_length=0.15, flash_radius=0.15)
+                                        for p in t2[1:]], lag_ratio=0.35), run_time=1.6)
 
             vo.wait_until("The answer is")
             self.play(Write(text3[1]), run_time=0.9)
