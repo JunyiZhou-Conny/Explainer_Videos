@@ -6,11 +6,13 @@ Beats:
      game was "already over at move 5" (RED stamp) and O's 6th mark becomes a ghost.
   2. Column subtraction with pictures: ways O could line up 5,760 (8 lines x 6 orders x 6 x 5 x 4,
      each factor pulsing with its picture as it is named; the "already over" board leaves meanwhile),
-     minus X already won 432: the "already over" board comes back small next to its label, then
-     grows (opening board style, move numbers) and a quarter turn of it gives the column version:
-     O's row with X's parallel row, O's column with X's parallel column, side by side under
-     "12 pairs (O's line, X's parallel line)". Both pulse on "so X sneaked", then shrink into the
-     row as "-432" and "x 6 x 6" are written. = 5,328 (GREEN); the heading slides down to label it.
+     minus X already won 432: on "Then we subtract" the "already over" board comes back small next to
+     its label and "-432" is written; then it grows (opening board style, move numbers) and a quarter
+     turn of it gives the column version: O's row with X's parallel row, O's column with X's parallel
+     column, side by side, with the count of the pairs under them ("3 rows x 2 other rows + 3 columns
+     x 2 other columns = 12 pairs", O's choices in O's colour, X's in X's). Both pulse on "so X
+     sneaked", then shrink into the row as the count gives way to "12 pairs (O's line, X's parallel
+     line) x 6 x 6". = 5,328 (GREEN); the heading slides down to label it.
   3. A table of hand counts (move 5 -> 1,440, move 6 -> 5,328, moves 7-9 -> ?) wrapped in a tangle of
      crossing arrows, small legal boards and grey questions.
   4. The tangle fades; a laptop draws itself and plays games one by one (the first games the program
@@ -122,14 +124,16 @@ class DimmedMove(Transform):
 
 class SwoopMove(Transform):
     """Transform whose mobject swoops into place as one rigid piece (scaling as it goes): its centre
-    follows a curve that starts sideways (dipping `dip` lower) and ends going straight up.
+    follows a curve that starts sideways (dipping `dip` lower) and ends going straight up (or, given
+    `ctrl`, the quadratic curve through that control point).
 
     (Transform's own path_arc moves every point on its own arc, which tilts a shrinking board mid-way;
     here the straight-path Transform is shifted so that only the group's centre follows the curve.)"""
 
-    def __init__(self, mobject, target, dip: float = 0.25, **kw):
+    def __init__(self, mobject, target, dip: float = 0.25, ctrl=None, **kw):
         self.c0, self.c1 = mobject.get_center(), target.get_center()
-        self.ctrl = np.array([self.c1[0], self.c0[1] - dip, 0.0])
+        self.ctrl = (np.array([self.c1[0], self.c0[1] - dip, 0.0]) if ctrl is None
+                     else np.array(ctrl, dtype=float))
         super().__init__(mobject, target, **kw)
 
     def interpolate_mobject(self, alpha: float) -> None:
@@ -246,7 +250,9 @@ class Messy(VoiceScene):
         assert check_legal(COL_GAME) == ".OX.OX..X" and winner(".OX.OX..X") == "X"
         assert winner("XXXOOO...") == "X"                         # O's ghost 6th would finish O's row
         ROWS_AT, COLS_AT = np.array([-5.95, -0.5, 0]), np.array([-4.72, -0.5, 0])   # in the row
-        BIG, ROWS_BIG, COLS_BIG = 2.4, np.array([-1.5, -2.35, 0]), np.array([1.5, -2.35, 0])
+        # the big boards sit between "X already won" and the count of the pairs under them
+        BIG, ROWS_BIG, COLS_BIG = 2.3, np.array([-1.5, -1.8, 0]), np.array([1.5, -1.8, 0])
+        COUNT_Y = -3.33
 
         # the small pictures in the subtraction row (same look as the O-wins picture above them)
         rows = mini_board("XXXOO....", size=1.08, stroke=4, line=(0, 2))
@@ -293,6 +299,13 @@ class Messy(VoiceScene):
         p2 = [VGroup(*p2[:5]), *p2[5:]]
         assert 6 * 2 == 12 and 12 * 6 * 6 == 432
         brk2.next_to(label2, DOWN, buff=0.25, aligned_edge=LEFT)
+        # where the 12 pairs come from, under the two boards: O's line (O's colour) x X's parallel line
+        # (X's colour), for rows and for columns
+        count, cp = rich([("3 rows", O_COLOR), (" × ", S.GREY), ("2 other rows", X_COLOR), ("  +  ", S.GREY),
+                          ("3 columns", O_COLOR), (" × ", S.GREY), ("2 other columns", X_COLOR),
+                          (" = ", S.GREY), ("12 pairs", WIN_COLOR)], 28)
+        count.move_to([0, COUNT_Y, 0])
+        assert 3 * 2 + 3 * 2 == 12
         n2 = S.math(rf"-\,{12 * 6 * 6}", size=56, color=UNDO_COLOR).move_to([0, Y2, 0]).align_to([NUM_X, 0, 0], RIGHT)
 
         assert 8 * 6 * 6 * 5 * 4 - 12 * 6 * 6 == BY_MOVE[6] == 5_328
@@ -341,10 +354,11 @@ class Messy(VoiceScene):
             self.play(Indicate(mini1[2], color=WIN_COLOR, scale_factor=1.2), run_time=0.8)
 
             # subtract the games where X's row (or column) was finished first: the "already over" board
-            # comes back, small, next to its label ...
+            # comes back, small, next to its label, and "-432" is written as the number is spoken ...
             vo.wait_until("Then we subtract")
             self.play(FadeIn(label2, shift=RIGHT * 0.2), FadeIn(VGroup(rows[0], rows[1], rows[3])),
                       run_time=0.6)
+            self.play(Write(n2), run_time=0.6)
             # "... where X's three marks made a line too": X's marks pulse, then X's line is drawn
             vo.wait_until("where X's three marks")
             self.play(Indicate(rows[1][:3], color=X_COLOR, scale_factor=1.3), run_time=0.8)
@@ -353,12 +367,18 @@ class Messy(VoiceScene):
 
             # "a row or column parallel to O's": it grows to a readable size (with its move numbers) and
             # a quarter turn of it gives the column version beside it
+            # (it grows going down first, then right, so it passes under "X already won")
             vo.wait_until("a row or column parallel")
-            self.play(Transform(rows, rows_big), run_time=0.7)
+            self.play(SwoopMove(rows, rows_big, ctrl=[ROWS_AT[0], ROWS_BIG[1], 0]), run_time=0.7)
             cols = rows.copy()
             self.add(cols)
-            self.play(Rotate(cols, -PI / 2, about_point=pivot), FadeIn(rows_nums), run_time=0.8)
-            self.play(FadeIn(cols_nums), FadeIn(p2[0], shift=UP * 0.15), run_time=0.5)
+            # ... and under them, the count of the pairs (O's line, X's parallel line): the rows part
+            # while the column board turns, the columns part with its move numbers
+            self.play(Rotate(cols, -PI / 2, about_point=pivot), FadeIn(rows_nums),
+                      LaggedStart(*[FadeIn(p, shift=UP * 0.15) for p in cp[:3]], lag_ratio=0.2,
+                                  rate_func=squish_rate_func(linear, 0.35, 1)), run_time=0.8)
+            self.play(FadeIn(cols_nums),
+                      LaggedStart(*[FadeIn(p, shift=UP * 0.15) for p in cp[3:]], lag_ratio=0.15), run_time=0.7)
 
             # "so X sneaked in a win first": X's marks (moves 1, 3, 5) and X's lines pulse
             vo.wait_until("so X sneaked")
@@ -366,12 +386,16 @@ class Messy(VoiceScene):
                         for bd, nm in ((rows, rows_nums), (cols, cols_nums))],
                       *[Indicate(bd[2], color=WIN_COLOR, scale_factor=1.1) for bd in (rows, cols)],
                       run_time=0.9)
-            # ... then both shrink into the subtraction row (swooping up from below the text) as "-432"
-            # and the rest of the breakdown are written
-            self.play(SwoopMove(rows, rows_small), SwoopMove(cols, cols_small),
+            # ... then both shrink into the subtraction row (swooping between the breakdown row and the
+            # count), the count fades once the boards have passed it, and the breakdown is written in the
+            # row the boards have just left (all before "That leaves")
+            self.play(SwoopMove(rows, rows_small, dip=0.95), SwoopMove(cols, cols_small, dip=0.95),
                       *[FadeOut(nm, rate_func=squish_rate_func(smooth, 0, 0.3)) for nm in (rows_nums, cols_nums)],
-                      Write(n2), LaggedStart(*[FadeIn(p, shift=UP * 0.15) for p in p2[1:]], lag_ratio=0.35),
-                      run_time=1.2)
+                      *[FadeOut(p, rate_func=squish_rate_func(smooth, 0.4, 0.85)) for p in cp],
+                      FadeIn(p2[0], shift=UP * 0.15, rate_func=squish_rate_func(smooth, 0.35, 0.75)),
+                      LaggedStart(*[FadeIn(p, shift=UP * 0.15) for p in p2[1:]], lag_ratio=0.35,
+                                  rate_func=squish_rate_func(linear, 0.45, 1)),
+                      run_time=min(1.2, max(0.9, vo.until("That leaves") - 0.1)))
             self.remove(*p2)
             self.add(brk2)
 

@@ -6,7 +6,9 @@ the board counts them 1..24: this 1 game was counted 24 times in 362,880 ("ghost
 moves after someone already won) -> a timeline of moves 1-9: X's 3rd mark is move 5 -> ponder
 (hints arrive one by one): how many games does X win on move 5? -> three steps on the
 board: 8 lines, 3 x 2 x 1 = 3! = 6 orders of X's marks, 6 x 5 places for O's marks (O hops between
-neighbouring squares) -> 8 x 6 x 30 = 1,440.
+neighbouring squares) -> 8 x 6 x 30 = 1,440. In steps 2 and 3 the GREEN running counts sit under
+the board ('orders shown: n', 'places for first/second O: n'), and the formula's result is written
+only after they are done.
 """
 
 import itertools
@@ -202,6 +204,14 @@ def ghost_tally(k: int, left) -> Text:
     """'ghost endings counted: k' (k GREEN), its left end at `left`, so the words stay put as k grows."""
     return S.text(f"ghost endings counted: {k}", 26, S.GREY, t2c={str(k): COUNT_COLOR}) \
         .move_to(left, aligned_edge=LEFT)
+
+
+def board_tally(words: str, k: int, left, t2c=None) -> Text:
+    """'words: k' (k GREEN) for a count kept under the board, away from the formula line (where
+    '3 × 2   3' would read as a wrong product); its left end at `left`, so the words stay put."""
+    t = S.text(f"{words}: {k}", 26, S.GREY, t2c=t2c or {})
+    t[-len(str(k)):].set_color(COUNT_COLOR)       # the number's glyphs (Text has no glyphs for spaces)
+    return t.move_to(left, aligned_edge=LEFT)
 
 
 def card_lines(question: Text) -> list[VGroup]:
@@ -466,62 +476,80 @@ class GamesStop(VoiceScene):
             vo.wait_until("Second, X fills")
             self.play(FadeOut(VGroup(*lines[1:])), lines[0].animate.set_stroke(opacity=1),
                       heads[0].animate.set_color(S.GREY), heads[1].animate.set_color(S.WHITE),
-                      run_time=0.6)
+                      run_time=0.5)
             orders = list(itertools.permutations((1, 3, 5)))   # move labels on squares 0, 1, 2
             xs = VGroup(*[board.mark_at(i, "X", scale=MARK_SCALE) for i in (0, 1, 2)])
             labels = {n: move_number(board, i, n, "X") for i, n in zip((0, 1, 2), orders[0])}
-            c2 = count_tex(1, r2[8].get_center())
+            # the GREEN count of orders shown sits under the board, not on the formula line
+            # (where "3 × 2 × 1   4" read like a wrong answer); its words are centred at 6
+            order_at = board_tally("orders shown", 6, ORIGIN).next_to(board, DOWN, buff=0.35).get_left()
+            c2 = board_tally("orders shown", 1, order_at)
             self.play(LaggedStart(*[mark_anim(x) for x in xs], lag_ratio=0.3),
                       LaggedStart(*[FadeIn(labels[n], scale=0.6) for n in orders[0]], lag_ratio=0.3),
-                      FadeIn(c2, scale=0.6), run_time=0.9)
+                      FadeIn(c2, shift=UP * 0.1), run_time=0.8)
             # the labels go through the other 5 orders (each one lands, then holds a moment) while
-            # "3 times 2 times 1, which is 3 factorial" writes itself; the counter lands on 6 at "so 6"
+            # "3 times 2 times 1" writes itself; the count lands on 6 as "which is 3 factorial" starts
             # (each step moves the 2 or 3 labels whose square changes; built lazily, see play_steps)
-            dt = until(vo, "so 6 orders", -0.2) / (len(orders) - 1)
+            dt = until(vo, "which is 3", 0.2) / (len(orders) - 1)
             steps = [(moves_to([(labels[n], corner(board, cur.index(n)))
                                 for n in cur if cur.index(n) != prev.index(n)], -0.45 * PI),
                       0.6 * dt, 0.4 * dt)
                      for prev, cur in zip(orders, orders[1:])]
             events = [(until(vo, "3 times 2", -0.4, 0), [FadeIn(r2[0], shift=DOWN * 0.1)]),
                       (until(vo, "2 times 1", -0.45, 0), [FadeIn(r2[1:3], shift=DOWN * 0.1)]),
-                      (until(vo, "times 1,", 0.0, 0), [FadeIn(r2[3:5], shift=DOWN * 0.1)]),
-                      (until(vo, "which is 3", 0.3, 0), [FadeIn(r2[5:7], shift=DOWN * 0.1)])]
+                      (until(vo, "times 1,", 0.0, 0), [FadeIn(r2[3:5], shift=DOWN * 0.1)])]
             play_steps(self, steps, events,
-                       on_land=lambda k: c2.become(count_tex(k + 2, r2[8].get_center())))
-            self.play(FadeIn(r2[7]), ReplacementTransform(c2, r2[8]),
+                       on_land=lambda k: c2.become(board_tally("orders shown", k + 2, order_at)))
+            # all 6 orders shown: the count leaves as "= 3!" is written, then "= 6" on "so 6 orders"
+            # (6 is never on screen twice)
+            self.play(FadeOut(c2, shift=DOWN * 0.1), FadeIn(r2[5:7], shift=DOWN * 0.1), run_time=0.5)
+            wait_for(self, vo, "so 6 orders", -0.2)
+            self.play(FadeIn(r2[7]), FadeIn(r2[8], scale=1.5),
                       Indicate(VGroup(*labels.values()), scale_factor=1.3), run_time=0.6)
 
             # (3) O's 2 marks: 6 x 5 = 30
             vo.wait_until("Third, O")
             self.play(heads[1].animate.set_color(S.GREY), heads[2].animate.set_color(S.WHITE), run_time=0.4)
             dots = VGroup()
+            # the GREEN counts of places sit under the board, one line per O mark (the first O's
+            # 6 stays up while the second O's count goes 1..5); "6 × 5 = 30" is written on the
+            # formula line only once both are done
+            o_words = ("places for first O", "places for second O")
+            o_colors = {"O": O_COLOR}
+            o_left = board_tally(o_words[1], 5, ORIGIN, o_colors).next_to(board, DOWN, buff=0.35).get_left()
+            o_at = (o_left, o_left + DOWN * 0.45)
 
-            def hop_through(squares, n, counter_slot, budget):
+            def o_tally(j, k):
+                return board_tally(o_words[j], k, o_at[j], o_colors)
+
+            def hop_through(squares, n, j, budget):
                 """O's mark n starts on squares[0] and hops to each next (neighbouring) square,
-                leaving an ORANGE dot where it was; a GREEN counter ticks as it lands."""
+                leaving an ORANGE dot where it was; its GREEN count (line j) ticks as it lands."""
                 o = VGroup(board.mark_at(squares[0], "O", scale=MARK_SCALE),
                            move_number(board, squares[0], n, "O"))
                 off = o.get_center() - board.center_of(squares[0])
-                c = count_tex(1, counter_slot)
-                self.play(Create(o[0]), FadeIn(o[1], scale=0.6), FadeIn(c, scale=0.6), run_time=0.45)
+                c = o_tally(j, 1)
+                self.play(Create(o[0]), FadeIn(o[1], scale=0.6), FadeIn(c, shift=UP * 0.1), run_time=0.45)
                 dt = min(0.6, max(0.3, (budget - 0.45) / (len(squares) - 1)))
                 for k, sq in enumerate(squares[1:], start=2):
                     dot = Dot(board.center_of(squares[k - 2]), radius=0.08, color=O_COLOR).set_opacity(0.7)
                     dots.add(dot)
                     self.play(o.animate(path_arc=-0.35 * PI).move_to(board.center_of(sq) + off),
                               FadeIn(dot, scale=0.5), run_time=dt)
-                    c.become(count_tex(k, counter_slot))
+                    c.become(o_tally(j, k))
                 return o, c
 
-            _, c3a = hop_through(O1_TOUR, 2, r3[0].get_center(), until(vo, "and O's second", -0.7) - 0.4)
-            self.play(ReplacementTransform(c3a, r3[0]), FadeOut(dots), run_time=0.4)
+            _, c3a = hop_through(O1_TOUR, 2, 0, until(vo, "and O's second", -0.7) - 0.4)
+            self.play(FadeOut(dots), Indicate(c3a[-1], color=COUNT_COLOR, scale_factor=1.3), run_time=0.4)
             dots.remove(*dots.submobjects)
             wait_for(self, vo, "and O's second", -0.7)
-            self.play(FadeIn(r3[1]), run_time=0.3)
-            _, c3b = hop_through(O2_TOUR, 4, r3[2].get_center(), until(vo, "6 times 5", -1.1) - 0.4)
-            self.play(ReplacementTransform(c3b, r3[2]), FadeOut(dots), run_time=0.4)
+            _, c3b = hop_through(O2_TOUR, 4, 1, until(vo, "6 times 5", -1.1) - 0.3)
+            # both counts are done: they leave as "6 × 5" is written (each number as it is spoken),
+            # then "= 30"
             wait_for(self, vo, "6 times 5", -1.1)
-            self.play(Indicate(r3[0:3], color=COUNT_COLOR, scale_factor=1.15), run_time=0.6)
+            self.play(FadeOut(VGroup(c3a, c3b), shift=DOWN * 0.1), FadeOut(dots),
+                      LaggedStart(*[FadeIn(p, shift=DOWN * 0.1) for p in r3[0:3]], lag_ratio=0.35),
+                      run_time=0.8)
             wait_for(self, vo, "is 30", -0.5)
             self.play(FadeIn(r3[3:5], shift=LEFT * 0.1), run_time=0.6)
 
