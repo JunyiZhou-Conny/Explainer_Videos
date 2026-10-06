@@ -1,0 +1,221 @@
+[Script Info]
+Title: 井字棋为什么恰好有 255,168 种对局？
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.17,Bilingual,,0,0,0,,有个问题，听起来很简单\N{\fs33\c&H00C8C0B8&\bord1.4}Here's a question that sounds easy.
+Dialogue: 0,0:00:02.49,0:00:05.13,Bilingual,,0,0,0,,井字棋有多少种不同的对局？\N{\fs33\c&H00C8C0B8&\bord1.4}How many different games of tic-tac-toe are there?
+Dialogue: 0,0:00:05.37,0:00:09.18,Bilingual,,0,0,0,,这里说的“一局”，指的是从第一步到最后一步\N{\fs33\c&H00C8C0B8&\bord1.4}By a game, we mean the whole list of moves,
+Dialogue: 0,0:00:09.18,0:00:11.17,Bilingual,,0,0,0,,按顺序排好的全部走法\N{\fs33\c&H00C8C0B8&\bord1.4}in order.
+Dialogue: 0,0:00:11.49,0:00:14.40,Bilingual,,0,0,0,,所以，如果两局最后的棋盘一样\N{\fs33\c&H00C8C0B8&\bord1.4}So if two games end with the same board,
+Dialogue: 0,0:00:14.40,0:00:18.86,Bilingual,,0,0,0,,但走棋的顺序不同，那它们要算作两种不同的对局\N{\fs33\c&H00C8C0B8&\bord1.4}but the moves happened in a different order, they count as two different games.
+Dialogue: 0,0:00:19.18,0:00:23.03,Bilingual,,0,0,0,,棋盘翻转或旋转后得到的对局，也分开算\N{\fs33\c&H00C8C0B8&\bord1.4}Flipped or turned versions count separately too.
+Dialogue: 0,0:00:24.07,0:00:25.81,Bilingual,,0,0,0,,猜一猜。一百？\N{\fs33\c&H00C8C0B8&\bord1.4}Take a guess. A hundred?
+Dialogue: 0,0:00:26.13,0:00:30.02,Bilingual,,0,0,0,,一百万？暂停一下视频，把你猜的数写下来\N{\fs33\c&H00C8C0B8&\bord1.4}A million? Pause the video and write your guess down.
+Dialogue: 0,0:00:38.25,0:00:41.00,Bilingual,,0,0,0,,答案是 255,168\N{\fs33\c&H00C8C0B8&\bord1.4}The answer is 255,168.
+Dialogue: 0,0:00:41.32,0:00:45.59,Bilingual,,0,0,0,,在这个视频里，我们会弄清楚这个数字是怎么来的\N{\fs33\c&H00C8C0B8&\bord1.4}In this video we'll find out where that number comes from: first by careful counting,
+Dialogue: 0,0:00:45.59,0:00:50.60,Bilingual,,0,0,0,,先仔细地算，再用一段短短的电脑程序，把每一局都下一遍\N{\fs33\c&H00C8C0B8&\bord1.4}and then with a short computer program that plays every single game.
+Dialogue: 0,0:00:51.65,0:00:53.55,Bilingual,,0,0,0,,先看一个更简单的问题\N{\fs33\c&H00C8C0B8&\bord1.4}Let's start with a simpler question.
+Dialogue: 0,0:00:53.87,0:00:56.18,Bilingual,,0,0,0,,假设有人三子连成一线了\N{\fs33\c&H00C8C0B8&\bord1.4}Suppose the players ignore three in a row,
+Dialogue: 0,0:00:56.18,0:00:59.63,Bilingual,,0,0,0,,双方也不停，一直下到九个格子都填满\N{\fs33\c&H00C8C0B8&\bord1.4}and just keep going until all nine squares are full.
+Dialogue: 0,0:00:59.95,0:01:02.75,Bilingual,,0,0,0,,填满棋盘有多少种不同的顺序？\N{\fs33\c&H00C8C0B8&\bord1.4}In how many different orders can the board fill up?
+Dialogue: 0,0:01:02.98,0:01:05.56,Bilingual,,0,0,0,,X 先走，有 9 个格子可以选\N{\fs33\c&H00C8C0B8&\bord1.4}X goes first and has 9 squares to choose from.
+Dialogue: 0,0:01:05.88,0:01:09.05,Bilingual,,0,0,0,,不管 X 下在哪儿，O 都还剩 8 个格子\N{\fs33\c&H00C8C0B8&\bord1.4}For each of those, O has 8 squares left.
+Dialogue: 0,0:01:09.37,0:01:12.58,Bilingual,,0,0,0,,这就是 9 个 8，所以选择数要相乘\N{\fs33\c&H00C8C0B8&\bord1.4}That's 9 groups of 8, so the choices multiply:
+Dialogue: 0,0:01:12.58,0:01:16.90,Bilingual,,0,0,0,,9 乘 8 等于 72，前两步就有 72 种不同的下法\N{\fs33\c&H00C8C0B8&\bord1.4}9 times 8 is 72 different ways to make the first two moves.
+Dialogue: 0,0:01:17.15,0:01:21.95,Bilingual,,0,0,0,,继续乘下去：9 乘 8 乘 7，依此类推，一直乘到 1\N{\fs33\c&H00C8C0B8&\bord1.4}Keep going: 9 times 8 times 7, and so on, all the way down to 1.
+Dialogue: 0,0:01:22.27,0:01:24.94,Bilingual,,0,0,0,,数学家给这种连乘起了个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Mathematicians have a short name for this:
+Dialogue: 0,0:01:24.94,0:01:28.33,Bilingual,,0,0,0,,9 的阶乘，写成 9 后面加一个感叹号\N{\fs33\c&H00C8C0B8&\bord1.4}nine factorial, written as a 9 with an exclamation mark.
+Dialogue: 0,0:01:28.65,0:01:31.27,Bilingual,,0,0,0,,它等于 362,880\N{\fs33\c&H00C8C0B8&\bord1.4}It equals 362,880.
+Dialogue: 0,0:01:31.52,0:01:33.10,Bilingual,,0,0,0,,可是，等一下\N{\fs33\c&H00C8C0B8&\bord1.4}But wait.
+Dialogue: 0,0:01:33.15,0:01:36.12,Bilingual,,0,0,0,,这比 255,168 还要多\N{\fs33\c&H00C8C0B8&\bord1.4}That's more than 255,168.
+Dialogue: 0,0:01:36.44,0:01:38.06,Bilingual,,0,0,0,,我们算出来的太多了\N{\fs33\c&H00C8C0B8&\bord1.4}Our count is too high.
+Dialogue: 0,0:01:38.38,0:01:41.11,Bilingual,,0,0,0,,这些多出来的对局，都是从哪儿来的？\N{\fs33\c&H00C8C0B8&\bord1.4}Where are all those extra games coming from?
+Dialogue: 0,0:01:42.75,0:01:48.52,Bilingual,,0,0,0,,问题就在这儿。真正的井字棋，一有人三子连成一线，就结束了\N{\fs33\c&H00C8C0B8&\bord1.4}Here's the catch. Real tic-tac-toe stops as soon as someone gets three in a row.
+Dialogue: 0,0:01:48.84,0:01:54.54,Bilingual,,0,0,0,,这一局，X 在第 5 步就赢了，所以剩下的四个格子从没下过\N{\fs33\c&H00C8C0B8&\bord1.4}In this game, X wins on the fifth move, so the last four squares are never played.
+Dialogue: 0,0:01:54.78,0:01:59.56,Bilingual,,0,0,0,,可是 362,880 还是把这几步没下的棋也算进去了\N{\fs33\c&H00C8C0B8&\bord1.4}But our 362,880 counted those missing moves anyway,
+Dialogue: 0,0:01:59.56,0:02:02.89,Bilingual,,0,0,0,,就好像赢了以后，双方还在接着下\N{\fs33\c&H00C8C0B8&\bord1.4}as if the players kept going after the win.
+Dialogue: 0,0:02:03.21,0:02:06.84,Bilingual,,0,0,0,,填满这 4 个空格子，有 4 乘 3 乘 2 乘 1\N{\fs33\c&H00C8C0B8&\bord1.4}The 4 empty squares can be filled in 4 times 3 times 2 times 1,
+Dialogue: 0,0:02:06.84,0:02:08.98,Bilingual,,0,0,0,,也就是 24 种不同的顺序\N{\fs33\c&H00C8C0B8&\bord1.4}so 24 ways.
+Dialogue: 0,0:02:09.30,0:02:11.75,Bilingual,,0,0,0,,所以这一局被算了 24 次！\N{\fs33\c&H00C8C0B8&\bord1.4}So this one game got counted 24 times!
+Dialogue: 0,0:02:12.07,0:02:15.25,Bilingual,,0,0,0,,我们把这些编出来的对局叫作“幽灵对局”\N{\fs33\c&H00C8C0B8&\bord1.4}Let's call those made-up endings ghost games.
+Dialogue: 0,0:02:15.57,0:02:18.66,Bilingual,,0,0,0,,我们要让每一局真实的对局都只算一次\N{\fs33\c&H00C8C0B8&\bord1.4}We want to count each real game only once.
+Dialogue: 0,0:02:18.90,0:02:20.93,Bilingual,,0,0,0,,一局最早什么时候能结束？\N{\fs33\c&H00C8C0B8&\bord1.4}So when can a game end?
+Dialogue: 0,0:02:21.25,0:02:22.85,Bilingual,,0,0,0,,至少要到第 5 步\N{\fs33\c&H00C8C0B8&\bord1.4}Not before move 5.
+Dialogue: 0,0:02:23.00,0:02:27.37,Bilingual,,0,0,0,,X 下的是第 1、3、5 步，所以到了第 5 步\N{\fs33\c&H00C8C0B8&\bord1.4}X plays moves 1, 3 and 5, so the fifth move is the first
+Dialogue: 0,0:02:27.37,0:02:29.93,Bilingual,,0,0,0,,才可能有人凑齐三个棋子\N{\fs33\c&H00C8C0B8&\bord1.4}time anyone can have three marks.
+Dialogue: 0,0:02:30.17,0:02:34.91,Bilingual,,0,0,0,,暂停想一想：有多少种对局是 X 在第 5 步赢下的？\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and ponder: how many games end with X winning on move 5?
+Dialogue: 0,0:02:35.23,0:02:37.49,Bilingual,,0,0,0,,先自己算一算，再看答案\N{\fs33\c&H00C8C0B8&\bord1.4}Try to count them before I show you.
+Dialogue: 0,0:02:57.73,0:02:59.91,Bilingual,,0,0,0,,这里有个办法，分三个步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Here's one way, in three steps.
+Dialogue: 0,0:03:00.23,0:03:03.09,Bilingual,,0,0,0,,第一，选出 X 获胜的那条线\N{\fs33\c&H00C8C0B8&\bord1.4}First, pick the line X wins with.
+Dialogue: 0,0:03:03.41,0:03:07.27,Bilingual,,0,0,0,,一共有 8 条：3 排、3 列和 2 条对角线\N{\fs33\c&H00C8C0B8&\bord1.4}There are 8: 3 rows, 3 columns and 2 diagonals.
+Dialogue: 0,0:03:07.59,0:03:11.21,Bilingual,,0,0,0,,第二，X 可以按不同的顺序填满这条线\N{\fs33\c&H00C8C0B8&\bord1.4}Second, X fills that line in some order:
+Dialogue: 0,0:03:11.21,0:03:16.04,Bilingual,,0,0,0,,3 乘 2 乘 1，也就是 3 的阶乘，所以有 6 种顺序\N{\fs33\c&H00C8C0B8&\bord1.4}3 times 2 times 1, which is 3 factorial, so 6 orders.
+Dialogue: 0,0:03:16.36,0:03:19.79,Bilingual,,0,0,0,,第三，第一个 O 有另外 6 个格子可以选\N{\fs33\c&H00C8C0B8&\bord1.4}Third, O's first mark can go on any of the other 6 squares,
+Dialogue: 0,0:03:19.79,0:03:24.63,Bilingual,,0,0,0,,第二个 O 还剩 5 个格子可以选：6 乘 5 等于 30 种放法\N{\fs33\c&H00C8C0B8&\bord1.4}and O's second mark on any of the 5 left: 6 times 5 is 30 ways.
+Dialogue: 0,0:03:24.95,0:03:29.74,Bilingual,,0,0,0,,把它们乘起来：8 乘 6 乘 30 等于 1,440 种对局\N{\fs33\c&H00C8C0B8&\bord1.4}Multiply: 8 times 6 times 30 is 1,440 games.
+Dialogue: 0,0:03:31.58,0:03:33.75,Bilingual,,0,0,0,,那 O 在第 6 步赢下的对局呢？\N{\fs33\c&H00C8C0B8&\bord1.4}What about games that O wins on move 6?
+Dialogue: 0,0:03:34.07,0:03:35.87,Bilingual,,0,0,0,,O 需要三子连成一线\N{\fs33\c&H00C8C0B8&\bord1.4}O needs three in a row.
+Dialogue: 0,0:03:36.19,0:03:39.62,Bilingual,,0,0,0,,但要小心：如果三个 X 也连成了一线\N{\fs33\c&H00C8C0B8&\bord1.4}But careful: if X's three marks also make a line,
+Dialogue: 0,0:03:39.62,0:03:44.94,Bilingual,,0,0,0,,X 在第 5 步就已经赢了，还没等 O 连完，这一局就结束了\N{\fs33\c&H00C8C0B8&\bord1.4}X already won on move 5, and the game stopped before O could finish.
+Dialogue: 0,0:03:45.18,0:03:48.72,Bilingual,,0,0,0,,还是用那三个步骤：O 有 8 条线可选\N{\fs33\c&H00C8C0B8&\bord1.4}Use the same three steps: 8 lines for O,
+Dialogue: 0,0:03:48.72,0:03:54.36,Bilingual,,0,0,0,,O 填满这条线有 6 种顺序，三个 X 有 6 乘 5 乘 4 种放法\N{\fs33\c&H00C8C0B8&\bord1.4}6 orders for O's marks, and 6 times 5 times 4 ways to place X's three marks.
+Dialogue: 0,0:03:54.68,0:03:58.88,Bilingual,,0,0,0,,这样，O 一共有 5,760 种方法连成一线\N{\fs33\c&H00C8C0B8&\bord1.4}That's 5,760 ways for O to finish a line.
+Dialogue: 0,0:03:59.20,0:04:04.24,Bilingual,,0,0,0,,然后再减去 432 种情况：三个 X 也连成了一线\N{\fs33\c&H00C8C0B8&\bord1.4}Then we subtract the 432 where X's three marks made a line too,
+Dialogue: 0,0:04:04.24,0:04:10.16,Bilingual,,0,0,0,,正好是和 O 那条线平行的一排或一列，所以 X 抢先赢了\N{\fs33\c&H00C8C0B8&\bord1.4}a row or column parallel to O's, so X sneaked in a win first.
+Dialogue: 0,0:04:10.48,0:04:13.44,Bilingual,,0,0,0,,最后剩下 5,328 种对局\N{\fs33\c&H00C8C0B8&\bord1.4}That leaves 5,328 games.
+Dialogue: 0,0:04:13.68,0:04:17.40,Bilingual,,0,0,0,,在第 7、8、9 步结束的对局就麻烦多了\N{\fs33\c&H00C8C0B8&\bord1.4}For games that end on moves 7, 8 and 9,
+Dialogue: 0,0:04:17.40,0:04:20.97,Bilingual,,0,0,0,,我们必须检查之前的每一步有没有人赢\N{\fs33\c&H00C8C0B8&\bord1.4}it gets much worse: we'd have to check every earlier move for a win,
+Dialogue: 0,0:04:20.97,0:04:25.14,Bilingual,,0,0,0,,而且下满的棋盘可能是有人赢，也可能是平局\N{\fs33\c&H00C8C0B8&\bord1.4}and a full board might be a win or a draw.
+Dialogue: 0,0:04:25.46,0:04:27.18,Bilingual,,0,0,0,,这就变成了一团乱麻\N{\fs33\c&H00C8C0B8&\bord1.4}It turns into a tangled mess.
+Dialogue: 0,0:04:27.42,0:04:30.83,Bilingual,,0,0,0,,手算变得这么乱的时候，我们还有 Plan B\N{\fs33\c&H00C8C0B8&\bord1.4}When counting gets this messy, there's another plan.
+Dialogue: 0,0:04:31.15,0:04:32.73,Bilingual,,0,0,0,,别再想巧办法了\N{\fs33\c&H00C8C0B8&\bord1.4}Don't count cleverly.
+Dialogue: 0,0:04:32.78,0:04:36.24,Bilingual,,0,0,0,,不如教电脑学会规则，再让它一局接一局\N{\fs33\c&H00C8C0B8&\bord1.4}Instead, teach a computer the rules,
+Dialogue: 0,0:04:36.24,0:04:38.60,Bilingual,,0,0,0,,把所有可能的对局都下一遍\N{\fs33\c&H00C8C0B8&\bord1.4}and let it play every possible game, one by one.
+Dialogue: 0,0:04:39.65,0:04:42.04,Bilingual,,0,0,0,,首先，电脑需要一个棋盘\N{\fs33\c&H00C8C0B8&\bord1.4}First, the computer needs a board.
+Dialogue: 0,0:04:42.36,0:04:44.82,Bilingual,,0,0,0,,我们用一个列表来存 9 个格子\N{\fs33\c&H00C8C0B8&\bord1.4}We'll use a list of 9 squares.
+Dialogue: 0,0:04:45.14,0:04:49.01,Bilingual,,0,0,0,,我们用的编程语言叫 Python；在 Python 里\N{\fs33\c&H00C8C0B8&\bord1.4}In Python, the programming language we're using,
+Dialogue: 0,0:04:49.01,0:04:53.71,Bilingual,,0,0,0,,列表里的位置从零开始编号，所以格子的编号是 0 到 8\N{\fs33\c&H00C8C0B8&\bord1.4}the spots in a list are numbered starting from zero, so our squares are numbered 0 to 8.
+Dialogue: 0,0:04:54.03,0:04:55.63,Bilingual,,0,0,0,,空格子里放一个点\N{\fs33\c&H00C8C0B8&\bord1.4}An empty square holds a dot.
+Dialogue: 0,0:04:57.02,0:04:59.95,Bilingual,,0,0,0,,接下来，电脑要知道怎样才算赢\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the computer needs to know what counts as a win.
+Dialogue: 0,0:05:00.27,0:05:03.18,Bilingual,,0,0,0,,我们直接把所有能赢的线都列出来\N{\fs33\c&H00C8C0B8&\bord1.4}We simply list all 8 winning lines,
+Dialogue: 0,0:05:03.18,0:05:06.76,Bilingual,,0,0,0,,一共 8 条，每条线写成一组三个格子编号\N{\fs33\c&H00C8C0B8&\bord1.4}as groups of three square numbers.
+Dialogue: 0,0:05:07.08,0:05:10.60,Bilingual,,0,0,0,,0、1、2 号格组成最上面一排\N{\fs33\c&H00C8C0B8&\bord1.4}Squares 0, 1 and 2 make the top row.
+Dialogue: 0,0:05:10.92,0:05:14.38,Bilingual,,0,0,0,,0、4、8 号格组成一条对角线\N{\fs33\c&H00C8C0B8&\bord1.4}Squares 0, 4 and 8 make a diagonal.
+Dialogue: 0,0:05:15.32,0:05:20.50,Bilingual,,0,0,0,,接下来是一个函数：在编程里，函数就是一小段有名字的程序\N{\fs33\c&H00C8C0B8&\bord1.4}Next comes a function: a little mini-program with a name.
+Dialogue: 0,0:05:20.82,0:05:25.64,Bilingual,,0,0,0,,这个函数叫 winner，意思是“赢家”，它会检查每一条线\N{\fs33\c&H00C8C0B8&\bord1.4}This one, called winner, checks every line.
+Dialogue: 0,0:05:25.96,0:05:28.76,Bilingual,,0,0,0,,如果一条线上三个格子放的都一样\N{\fs33\c&H00C8C0B8&\bord1.4}If all three squares on a line hold the same mark,
+Dialogue: 0,0:05:28.76,0:05:32.08,Bilingual,,0,0,0,,而且不是点，那这是谁的棋子，谁就赢了\N{\fs33\c&H00C8C0B8&\bord1.4}and that mark isn't a dot, that player has won.
+Dialogue: 0,0:05:32.40,0:05:36.11,Bilingual,,0,0,0,,如果没有一条线符合，winner 什么也没找到\N{\fs33\c&H00C8C0B8&\bord1.4}If no line matches, winner finds nothing,
+Dialogue: 0,0:05:36.11,0:05:38.76,Bilingual,,0,0,0,,就返回 None，意思是“没有人”\N{\fs33\c&H00C8C0B8&\bord1.4}and hands back None, which means nobody.
+Dialogue: 0,0:05:39.70,0:05:43.43,Bilingual,,0,0,0,,最巧妙的部分来了：一个叫 explore 的函数\N{\fs33\c&H00C8C0B8&\bord1.4}Now for the clever part:
+Dialogue: 0,0:05:43.43,0:05:45.83,Bilingual,,0,0,0,,explore 就是“探索”的意思\N{\fs33\c&H00C8C0B8&\bord1.4}a function called explore.
+Dialogue: 0,0:05:46.15,0:05:47.82,Bilingual,,0,0,0,,我们告诉它轮到谁\N{\fs33\c&H00C8C0B8&\bord1.4}We tell it whose turn it is,
+Dialogue: 0,0:05:47.82,0:05:52.64,Bilingual,,0,0,0,,它的任务是统计从现在这个棋盘往后，还可能出现多少局\N{\fs33\c&H00C8C0B8&\bord1.4}and its job is to count every game that can still happen from the current board.
+Dialogue: 0,0:05:52.88,0:05:55.25,Bilingual,,0,0,0,,它一开头就是两个停止条件\N{\fs33\c&H00C8C0B8&\bord1.4}It starts with two stopping rules.
+Dialogue: 0,0:05:55.57,0:05:58.97,Bilingual,,0,0,0,,如果已经有人赢了，那就是下完的一局\N{\fs33\c&H00C8C0B8&\bord1.4}If someone has already won, that's one finished game,
+Dialogue: 0,0:05:58.97,0:06:01.44,Bilingual,,0,0,0,,所以 explore 返回数字 1\N{\fs33\c&H00C8C0B8&\bord1.4}so explore hands back the number 1.
+Dialogue: 0,0:06:01.76,0:06:06.52,Bilingual,,0,0,0,,如果棋盘满了却没有人赢，那就是平局，也算下完的一局\N{\fs33\c&H00C8C0B8&\bord1.4}If the board is full with no winner, that's a draw, also one finished game.
+Dialogue: 0,0:06:06.77,0:06:08.96,Bilingual,,0,0,0,,否则，这一局就还没结束\N{\fs33\c&H00C8C0B8&\bord1.4}Otherwise, the game isn't over yet.
+Dialogue: 0,0:06:09.28,0:06:12.18,Bilingual,,0,0,0,,于是 explore 会试每一个空格子\N{\fs33\c&H00C8C0B8&\bord1.4}So explore tries every empty square.
+Dialogue: 0,0:06:12.50,0:06:16.72,Bilingual,,0,0,0,,它在那里放上这一方的棋子，再问自己同一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}It puts the player's mark there, and then asks itself the same question,
+Dialogue: 0,0:06:16.72,0:06:20.58,Bilingual,,0,0,0,,这次轮到对方：从这里往后，还能下出多少局？\N{\fs33\c&H00C8C0B8&\bord1.4}now for the other player: how many games can happen from here?
+Dialogue: 0,0:06:20.90,0:06:22.64,Bilingual,,0,0,0,,它把所有的答案加起来\N{\fs33\c&H00C8C0B8&\bord1.4}It adds up all the answers.
+Dialogue: 0,0:06:22.93,0:06:26.47,Bilingual,,0,0,0,,我们把第一个小棋盘放大看看，这时轮到 O\N{\fs33\c&H00C8C0B8&\bord1.4}Let's zoom into the first of those, with O to move.
+Dialogue: 0,0:06:26.79,0:06:30.73,Bilingual,,0,0,0,,如果 O 下在右上角那格，O 就赢了：算 1 局\N{\fs33\c&H00C8C0B8&\bord1.4}If O takes the top-right square, O wins: that's 1 game.
+Dialogue: 0,0:06:31.05,0:06:33.96,Bilingual,,0,0,0,,擦掉它，这回试试上边中间那格\N{\fs33\c&H00C8C0B8&\bord1.4}Erase it, and try the top-middle square instead.
+Dialogue: 0,0:06:34.28,0:06:39.03,Bilingual,,0,0,0,,然后 X 填上最后一格，结果是平局：再算 1 局\N{\fs33\c&H00C8C0B8&\bord1.4}Then X fills the last square, and it's a draw: 1 more.
+Dialogue: 0,0:06:39.35,0:06:42.08,Bilingual,,0,0,0,,撤销这两步，再加起来：2 局\N{\fs33\c&H00C8C0B8&\bord1.4}Undo both moves, and add up: 2 games.
+Dialogue: 0,0:06:42.40,0:06:46.12,Bilingual,,0,0,0,,再算上另外两个分支，2 加 1 加 2 等于 5\N{\fs33\c&H00C8C0B8&\bord1.4}With the other two branches, 2 plus 1 plus 2 makes 5.
+Dialogue: 0,0:06:46.37,0:06:48.66,Bilingual,,0,0,0,,像这样，函数自己调用自己\N{\fs33\c&H00C8C0B8&\bord1.4}When a function calls itself,
+Dialogue: 0,0:06:48.66,0:06:52.20,Bilingual,,0,0,0,,也就是自己问自己同一个问题，就叫作递归\N{\fs33\c&H00C8C0B8&\bord1.4}asking itself the same question like this, it's called recursive.
+Dialogue: 0,0:06:52.52,0:06:54.62,Bilingual,,0,0,0,,听起来好像会没完没了\N{\fs33\c&H00C8C0B8&\bord1.4}That might sound like it goes on forever,
+Dialogue: 0,0:06:54.62,0:06:59.20,Bilingual,,0,0,0,,但每调用一次就多一个棋子，所以总会碰到停止条件\N{\fs33\c&H00C8C0B8&\bord1.4}but each call adds one more mark, so a stopping rule always kicks in.
+Dialogue: 0,0:06:59.52,0:07:01.58,Bilingual,,0,0,0,,想象一棵倒过来的树\N{\fs33\c&H00C8C0B8&\bord1.4}Picture an upside-down tree.
+Dialogue: 0,0:07:01.90,0:07:06.11,Bilingual,,0,0,0,,空棋盘在最上面，每一种可能的走法是一个分支\N{\fs33\c&H00C8C0B8&\bord1.4}The empty board is at the top, every possible move is a branch,
+Dialogue: 0,0:07:06.11,0:07:08.80,Bilingual,,0,0,0,,而下完的每一局都是一片叶子\N{\fs33\c&H00C8C0B8&\bord1.4}and every finished game is a leaf.
+Dialogue: 0,0:07:09.12,0:07:12.71,Bilingual,,0,0,0,,我们的 explore 会沿着每一条分支往下走\N{\fs33\c&H00C8C0B8&\bord1.4}Explore walks down every branch, one at a time,
+Dialogue: 0,0:07:12.71,0:07:16.13,Bilingual,,0,0,0,,一次走一条，再数一数走到了多少片叶子\N{\fs33\c&H00C8C0B8&\bord1.4}and counts the leaves it reaches.
+Dialogue: 0,0:07:16.37,0:07:18.98,Bilingual,,0,0,0,,还有一行代码，很容易被忽略\N{\fs33\c&H00C8C0B8&\bord1.4}There's one more line, and it's easy to miss.
+Dialogue: 0,0:07:19.30,0:07:23.46,Bilingual,,0,0,0,,程序下每一局都用同一个棋盘，就像只有一块白板\N{\fs33\c&H00C8C0B8&\bord1.4}The program plays every game on just one board, like a single whiteboard.
+Dialogue: 0,0:07:23.78,0:07:27.45,Bilingual,,0,0,0,,所以每探索完一步，它就要擦掉那个棋子\N{\fs33\c&H00C8C0B8&\bord1.4}So after exploring a move, it erases that mark.
+Dialogue: 0,0:07:27.77,0:07:32.76,Bilingual,,0,0,0,,这叫“撤销”这一步，这样棋盘恢复原样，下一个分支就能接着试\N{\fs33\c&H00C8C0B8&\bord1.4}That's called undoing the move, and it means the next branch starts fresh.
+Dialogue: 0,0:07:33.08,0:07:37.03,Bilingual,,0,0,0,,先试走一条路，再退回来试下一条，这就叫回溯\N{\fs33\c&H00C8C0B8&\bord1.4}Trying a path, then stepping back to try the next one, is called backtracking.
+Dialogue: 0,0:07:39.05,0:07:42.81,Bilingual,,0,0,0,,想弄懂一个程序，有个好办法：故意把它改坏\N{\fs33\c&H00C8C0B8&\bord1.4}A great way to understand a program is to break it on purpose.
+Dialogue: 0,0:07:43.13,0:07:47.62,Bilingual,,0,0,0,,暂停想一想：如果删掉“撤销”那一行，你觉得会发生什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and ponder: what do you think happens if we delete the undo line?
+Dialogue: 0,0:07:57.87,0:07:59.47,Bilingual,,0,0,0,,程序只输出 3\N{\fs33\c&H00C8C0B8&\bord1.4}The program prints just 3.
+Dialogue: 0,0:07:59.67,0:08:02.31,Bilingual,,0,0,0,,没有了撤销，什么都不会被擦掉\N{\fs33\c&H00C8C0B8&\bord1.4}Without undo, nothing ever gets erased.
+Dialogue: 0,0:08:02.63,0:08:06.22,Bilingual,,0,0,0,,程序先下一局，按顺序一格一格地填\N{\fs33\c&H00C8C0B8&\bord1.4}The program plays one game, filling the squares in order,
+Dialogue: 0,0:08:06.22,0:08:09.66,Bilingual,,0,0,0,,直到 X 在第 7 步连成一条对角线\N{\fs33\c&H00C8C0B8&\bord1.4}until X makes a diagonal on move 7.
+Dialogue: 0,0:08:09.98,0:08:11.29,Bilingual,,0,0,0,,这是第 1 局\N{\fs33\c&H00C8C0B8&\bord1.4}That's 1.
+Dialogue: 0,0:08:11.34,0:08:16.22,Bilingual,,0,0,0,,接着它去试 X 的其他下法，可是原来那个 X 还在\N{\fs33\c&H00C8C0B8&\bord1.4}Then it tries X's other choices, but the old X is still there.
+Dialogue: 0,0:08:16.54,0:08:18.58,Bilingual,,0,0,0,,X 下在下边中间那格\N{\fs33\c&H00C8C0B8&\bord1.4}X lands on the bottom-middle square,
+Dialogue: 0,0:08:18.58,0:08:22.74,Bilingual,,0,0,0,,原来那条对角线又算赢了一次：这是第 2 局\N{\fs33\c&H00C8C0B8&\bord1.4}and the old diagonal counts as a win again: that's 2.
+Dialogue: 0,0:08:23.06,0:08:25.75,Bilingual,,0,0,0,,然后是右下角那格：第 3 局\N{\fs33\c&H00C8C0B8&\bord1.4}Then the bottom-right square: that's 3.
+Dialogue: 0,0:08:26.07,0:08:29.07,Bilingual,,0,0,0,,现在棋盘满了，再也没有可以试的了\N{\fs33\c&H00C8C0B8&\bord1.4}Now the board is full, so there's nothing left to try.
+Dialogue: 0,0:08:29.32,0:08:33.72,Bilingual,,0,0,0,,现在把“撤销”那一行放回去，改成删掉“判断输赢”\N{\fs33\c&H00C8C0B8&\bord1.4}Now put undo back, and delete the winner check instead,
+Dialogue: 0,0:08:33.72,0:08:36.38,Bilingual,,0,0,0,,这样对局要等棋盘满了才会停\N{\fs33\c&H00C8C0B8&\bord1.4}so games only stop when the board is full.
+Dialogue: 0,0:08:36.70,0:08:38.75,Bilingual,,0,0,0,,暂停一下，先猜猜答案\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and predict the answer.
+Dialogue: 0,0:08:49.00,0:08:51.20,Bilingual,,0,0,0,,362,880\N{\fs33\c&H00C8C0B8&\bord1.4}362,880.
+Dialogue: 0,0:08:51.52,0:08:53.12,Bilingual,,0,0,0,,这正是 9 的阶乘！\N{\fs33\c&H00C8C0B8&\bord1.4}That's nine factorial!
+Dialogue: 0,0:08:53.17,0:08:57.61,Bilingual,,0,0,0,,没有了判断输赢，程序在有人赢了之后还会接着下\N{\fs33\c&H00C8C0B8&\bord1.4}Without the winner check, the program keeps playing after a win,
+Dialogue: 0,0:08:57.61,0:09:00.69,Bilingual,,0,0,0,,所以它把所有幽灵对局都算进去了\N{\fs33\c&H00C8C0B8&\bord1.4}so it counts all the ghost games.
+Dialogue: 0,0:09:01.01,0:09:03.96,Bilingual,,0,0,0,,它自己又找回了我们最早算出的那个数\N{\fs33\c&H00C8C0B8&\bord1.4}It rediscovered our very first count.
+Dialogue: 0,0:09:05.00,0:09:09.09,Bilingual,,0,0,0,,现在，我们把每一行都放回去，运行真正的程序\N{\fs33\c&H00C8C0B8&\bord1.4}Now let's put every line back and run the real program.
+Dialogue: 0,0:09:09.41,0:09:13.31,Bilingual,,0,0,0,,过了一小会儿，它输出了 255,168\N{\fs33\c&H00C8C0B8&\bord1.4}After a moment, it prints 255,168.
+Dialogue: 0,0:09:13.55,0:09:17.33,Bilingual,,0,0,0,,我们按对局在第几步结束，把这个总数拆开来看\N{\fs33\c&H00C8C0B8&\bord1.4}Let's split that total by when each game ends.
+Dialogue: 0,0:09:17.65,0:09:20.25,Bilingual,,0,0,0,,1,440 局在第 5 步结束\N{\fs33\c&H00C8C0B8&\bord1.4}1,440 end on move 5,
+Dialogue: 0,0:09:20.25,0:09:25.26,Bilingual,,0,0,0,,5,328 局在第 6 步结束，和我们手算的结果一样\N{\fs33\c&H00C8C0B8&\bord1.4}and 5,328 on move 6, the same numbers we found by hand.
+Dialogue: 0,0:09:25.58,0:09:30.32,Bilingual,,0,0,0,,然后柱子一下子升高了：约 4.8 万局在第 7 步结束\N{\fs33\c&H00C8C0B8&\bord1.4}Then the bars shoot up: about 48 thousand end on move 7,
+Dialogue: 0,0:09:30.32,0:09:32.62,Bilingual,,0,0,0,,7.3 万局在第 8 步结束\N{\fs33\c&H00C8C0B8&\bord1.4}and 73 thousand on move 8.
+Dialogue: 0,0:09:32.94,0:09:36.34,Bilingual,,0,0,0,,有一半多一点的对局会下满 9 步\N{\fs33\c&H00C8C0B8&\bord1.4}Just over half of all games use all 9 moves:
+Dialogue: 0,0:09:36.34,0:09:41.08,Bilingual,,0,0,0,,约 8.2 万局是 X 赢，还有 46,080 局是平局\N{\fs33\c&H00C8C0B8&\bord1.4}about 82 thousand X wins, plus 46,080 draws.
+Dialogue: 0,0:09:41.40,0:09:44.34,Bilingual,,0,0,0,,加起来就是 255,168\N{\fs33\c&H00C8C0B8&\bord1.4}Together, that's 255,168.
+Dialogue: 0,0:09:44.58,0:09:47.67,Bilingual,,0,0,0,,再来看看，这和 9 的阶乘有什么关系\N{\fs33\c&H00C8C0B8&\bord1.4}And here's how it connects to nine factorial.
+Dialogue: 0,0:09:47.99,0:09:52.02,Bilingual,,0,0,0,,还记得吗，9 的阶乘把在第 5 步结束的每一局\N{\fs33\c&H00C8C0B8&\bord1.4}Remember, nine factorial counted each game that ends on move 5 a total of 24 times,
+Dialogue: 0,0:09:52.02,0:09:55.21,Bilingual,,0,0,0,,都算了 24 次，每个幽灵对局算一次\N{\fs33\c&H00C8C0B8&\bord1.4}once for each ghost ending.
+Dialogue: 0,0:09:55.53,0:10:00.75,Bilingual,,0,0,0,,在第 6 步结束的一局被算了 6 次，在第 7 步结束的，算了两次\N{\fs33\c&H00C8C0B8&\bord1.4}A game ending on move 6 was counted 6 times, and on move 7, twice.
+Dialogue: 0,0:10:01.07,0:10:03.91,Bilingual,,0,0,0,,在第 8 步或第 9 步结束的对局\N{\fs33\c&H00C8C0B8&\bord1.4}Games that end on move 8 or 9 have at most one empty square,
+Dialogue: 0,0:10:03.91,0:10:07.61,Bilingual,,0,0,0,,最多只剩一个空格子，所以它们只算了一次\N{\fs33\c&H00C8C0B8&\bord1.4}so they were counted just once.
+Dialogue: 0,0:10:07.93,0:10:10.75,Bilingual,,0,0,0,,把每根柱子乘上各自被算的次数\N{\fs33\c&H00C8C0B8&\bord1.4}Multiply each bar by its number, add them up,
+Dialogue: 0,0:10:10.75,0:10:13.88,Bilingual,,0,0,0,,再全部加起来，正好又是 9 的阶乘\N{\fs33\c&H00C8C0B8&\bord1.4}and you get exactly nine factorial again.
+Dialogue: 0,0:10:16.78,0:10:18.38,Bilingual,,0,0,0,,谁赢的对局最多？\N{\fs33\c&H00C8C0B8&\bord1.4}Who wins the most games?
+Dialogue: 0,0:10:18.54,0:10:23.97,Bilingual,,0,0,0,,X 赢了 131,184 局，O 赢了 77,904 局\N{\fs33\c&H00C8C0B8&\bord1.4}X wins 131,184 of them, O wins 77,904,
+Dialogue: 0,0:10:23.97,0:10:27.13,Bilingual,,0,0,0,,还有 46,080 局是平局\N{\fs33\c&H00C8C0B8&\bord1.4}and 46,080 are draws.
+Dialogue: 0,0:10:27.45,0:10:31.04,Bilingual,,0,0,0,,在所有可能的对局里，X 赢的超过一半\N{\fs33\c&H00C8C0B8&\bord1.4}X wins in more than half of all possible games,
+Dialogue: 0,0:10:31.04,0:10:33.74,Bilingual,,0,0,0,,因为先走让 X 有更多机会赢\N{\fs33\c&H00C8C0B8&\bord1.4}because going first gives X more chances to win.
+Dialogue: 0,0:10:33.98,0:10:35.36,Bilingual,,0,0,0,,最后一道题\N{\fs33\c&H00C8C0B8&\bord1.4}One last puzzle.
+Dialogue: 0,0:10:35.40,0:10:39.43,Bilingual,,0,0,0,,X 的第一步下在哪儿，能下出的不同对局最多\N{\fs33\c&H00C8C0B8&\bord1.4}Which first move for X leads to the most different games:
+Dialogue: 0,0:10:39.43,0:10:41.52,Bilingual,,0,0,0,,角上、边上，还是中心？\N{\fs33\c&H00C8C0B8&\bord1.4}a corner, an edge, or the center?
+Dialogue: 0,0:10:41.84,0:10:43.58,Bilingual,,0,0,0,,暂停一下，猜一猜\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and guess.
+Dialogue: 0,0:10:53.82,0:10:56.23,Bilingual,,0,0,0,,没想到吧：答案是边格\N{\fs33\c&H00C8C0B8&\bord1.4}Surprise:
+Dialogue: 0,0:10:56.23,0:11:01.36,Bilingual,,0,0,0,,也就是每条边正中间的那一格，有 29,592 种对局\N{\fs33\c&H00C8C0B8&\bord1.4}the edge, with 29,592 games.
+Dialogue: 0,0:11:01.68,0:11:09.25,Bilingual,,0,0,0,,每个角格有 27,732，而中心最少，只有 25,872。为什么？\N{\fs33\c&H00C8C0B8&\bord1.4}Each corner gives 27,732, and the center the fewest, just 25,872. Why?
+Dialogue: 0,0:11:09.57,0:11:14.98,Bilingual,,0,0,0,,中心在 4 条获胜线上，角格在 3 条上，而边格只在 2 条上\N{\fs33\c&H00C8C0B8&\bord1.4}The center sits on 4 winning lines, a corner on 3, and an edge on just 2.
+Dialogue: 0,0:11:15.30,0:11:19.85,Bilingual,,0,0,0,,线越多，X 越有机会在第 5 步或第 7 步提前赢\N{\fs33\c&H00C8C0B8&\bord1.4}More lines give X more chances to win early, on move 5 or 7,
+Dialogue: 0,0:11:19.85,0:11:24.12,Bilingual,,0,0,0,,而每一次提前赢，都会从树上砍掉一大片分支\N{\fs33\c&H00C8C0B8&\bord1.4}and every early win chops whole branches off the tree.
+Dialogue: 0,0:11:24.37,0:11:28.21,Bilingual,,0,0,0,,但要小心：能下出的对局多，不代表这一步更好\N{\fs33\c&H00C8C0B8&\bord1.4}But careful: more games doesn't mean a better move.
+Dialogue: 0,0:11:28.53,0:11:33.26,Bilingual,,0,0,0,,在所有先下中心的对局里，X 每 10 局大约赢 6 局\N{\fs33\c&H00C8C0B8&\bord1.4}Out of all the games that start in the center, X wins about 6 in 10.
+Dialogue: 0,0:11:33.58,0:11:36.59,Bilingual,,0,0,0,,先下边格的话，X 赢不到一半\N{\fs33\c&H00C8C0B8&\bord1.4}Starting on an edge, X wins fewer than half.
+Dialogue: 0,0:11:38.63,0:11:41.71,Bilingual,,0,0,0,,那么，先走的 X 是不是总能赢？\N{\fs33\c&H00C8C0B8&\bord1.4}So does going first mean X always wins?
+Dialogue: 0,0:11:42.03,0:11:45.40,Bilingual,,0,0,0,,不是。电脑能做的，不只是统计对局\N{\fs33\c&H00C8C0B8&\bord1.4}No. A computer can do more than count.
+Dialogue: 0,0:11:45.72,0:11:47.56,Bilingual,,0,0,0,,它从树的最底下开始\N{\fs33\c&H00C8C0B8&\bord1.4}It starts at the bottom of the tree,
+Dialogue: 0,0:11:47.56,0:11:51.41,Bilingual,,0,0,0,,那里每一局都已经下完，然后一层一层往上推\N{\fs33\c&H00C8C0B8&\bord1.4}where every game is finished, and works upward.
+Dialogue: 0,0:11:51.73,0:11:55.02,Bilingual,,0,0,0,,每到一个分支，它都挑最好的一步\N{\fs33\c&H00C8C0B8&\bord1.4}At every branch it picks the best move:
+Dialogue: 0,0:11:55.02,0:12:00.06,Bilingual,,0,0,0,,轮到 X 时挑对 X 最好的，轮到 O 时挑对 O 最好的\N{\fs33\c&H00C8C0B8&\bord1.4}best for X on X's turns, and best for O on O's turns.
+Dialogue: 0,0:12:00.38,0:12:03.58,Bilingual,,0,0,0,,这样一来，它就把井字棋彻底算透了\N{\fs33\c&H00C8C0B8&\bord1.4}Doing that, it has solved tic-tac-toe:
+Dialogue: 0,0:12:03.58,0:12:06.96,Bilingual,,0,0,0,,如果双方都不失误，每一局都会是平局\N{\fs33\c&H00C8C0B8&\bord1.4}if both players play perfectly, every game ends in a draw.
+Dialogue: 0,0:12:07.28,0:12:11.58,Bilingual,,0,0,0,,所以 X 赢下的每一局，都少不了 O 在某一步的失误\N{\fs33\c&H00C8C0B8&\bord1.4}So every one of X's wins needs a mistake by O somewhere.
+Dialogue: 0,0:12:14.02,0:12:16.09,Bilingual,,0,0,0,,国际象棋也能这样算吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Could we do the same for chess?
+Dialogue: 0,0:12:16.41,0:12:17.82,Bilingual,,0,0,0,,完全不可能\N{\fs33\c&H00C8C0B8&\bord1.4}Not a chance.
+Dialogue: 0,0:12:17.87,0:12:22.18,Bilingual,,0,0,0,,1950 年，数学家兼工程师克劳德·香农估计\N{\fs33\c&H00C8C0B8&\bord1.4}In 1950, the mathematician and engineer Claude Shannon estimated
+Dialogue: 0,0:12:22.18,0:12:26.85,Bilingual,,0,0,0,,国际象棋至少有 10 的 120 次方种可能的对局\N{\fs33\c&H00C8C0B8&\bord1.4}that chess has at least 10 to the power of 120 possible games.
+Dialogue: 0,0:12:27.17,0:12:29.68,Bilingual,,0,0,0,,那可是 1 后面跟着 120 个零！\N{\fs33\c&H00C8C0B8&\bord1.4}That's a 1 followed by 120 zeros!
+Dialogue: 0,0:12:30.00,0:12:34.64,Bilingual,,0,0,0,,而我们能观测到的整个宇宙，也只有大约 10 的 80 次方个原子\N{\fs33\c&H00C8C0B8&\bord1.4}The whole observable universe has only about 10 to the power of 80 atoms.
+Dialogue: 0,0:12:34.88,0:12:38.69,Bilingual,,0,0,0,,所以，国际象棋程序没法探索每一个分支\N{\fs33\c&H00C8C0B8&\bord1.4}So chess programs can't explore every branch.
+Dialogue: 0,0:12:39.01,0:12:42.78,Bilingual,,0,0,0,,它们只往后看几步，再估计谁更有希望赢\N{\fs33\c&H00C8C0B8&\bord1.4}They look only so many moves ahead, then estimate who's winning,
+Dialogue: 0,0:12:42.78,0:12:46.15,Bilingual,,0,0,0,,靠的是从几百万局练习中学到的经验\N{\fs33\c&H00C8C0B8&\bord1.4}using what they learned from millions of practice games.
+Dialogue: 0,0:12:46.47,0:12:49.17,Bilingual,,0,0,0,,但说到底，思路和你刚学的一样\N{\fs33\c&H00C8C0B8&\bord1.4}But underneath, it's the same idea you just learned:
+Dialogue: 0,0:12:49.17,0:12:52.96,Bilingual,,0,0,0,,把走法排成一棵树，一个分支一个分支地探索\N{\fs33\c&H00C8C0B8&\bord1.4}a tree of moves, explored one branch at a time.
+Dialogue: 0,0:12:53.50,0:12:54.92,Bilingual,,0,0,0,,我们来小结一下\N{\fs33\c&H00C8C0B8&\bord1.4}Let's recap.
+Dialogue: 0,0:12:54.97,0:12:57.43,Bilingual,,0,0,0,,把每一步的选择数乘起来\N{\fs33\c&H00C8C0B8&\bord1.4}Multiplying the choices gives nine factorial, 362,880 orders.
+Dialogue: 0,0:12:57.43,0:13:01.46,Bilingual,,0,0,0,,就得到 9 的阶乘，一共 362,880 种顺序\N{\fs33\c&H00C8C0B8&\bord1.4}Multiplying the choices gives nine factorial, 362,880 orders.
+Dialogue: 0,0:13:01.78,0:13:04.45,Bilingual,,0,0,0,,但只要有人赢，对局就会停下\N{\fs33\c&H00C8C0B8&\bord1.4}But games stop when someone wins,
+Dialogue: 0,0:13:04.45,0:13:07.70,Bilingual,,0,0,0,,所以这些顺序里有很多都是幽灵对局\N{\fs33\c&H00C8C0B8&\bord1.4}so many of those orders are ghost games.
+Dialogue: 0,0:13:08.02,0:13:12.29,Bilingual,,0,0,0,,而一段短短的递归程序，先试走一步，往下探索\N{\fs33\c&H00C8C0B8&\bord1.4}And a short recursive program counts every real game by trying a move,
+Dialogue: 0,0:13:12.29,0:13:16.16,Bilingual,,0,0,0,,再撤销，就把每一局真实对局都统计了一遍\N{\fs33\c&H00C8C0B8&\bord1.4}exploring, and undoing it.
+Dialogue: 0,0:13:16.48,0:13:19.52,Bilingual,,0,0,0,,答案正好是 255,168\N{\fs33\c&H00C8C0B8&\bord1.4}The answer is exactly 255,168.
+Dialogue: 0,0:13:19.77,0:13:21.37,Bilingual,,0,0,0,,现在，轮到你了\N{\fs33\c&H00C8C0B8&\bord1.4}Now it's your turn.
+Dialogue: 0,0:13:21.57,0:13:25.13,Bilingual,,0,0,0,,改一改程序，让它只统计 X 赢的对局\N{\fs33\c&H00C8C0B8&\bord1.4}Change the program so it counts only the games X wins,
+Dialogue: 0,0:13:25.13,0:13:31.03,Bilingual,,0,0,0,,或者只统计在第 7 步结束的对局，或者看看如果 O 先走会怎样\N{\fs33\c&H00C8C0B8&\bord1.4}or only the games that end on move 7, or see what happens if O goes first.
+Dialogue: 0,0:13:31.35,0:13:34.59,Bilingual,,0,0,0,,程序和挑战题的链接都在视频简介里\N{\fs33\c&H00C8C0B8&\bord1.4}The program and the challenges are linked in the description.
+Dialogue: 0,0:13:34.91,0:13:36.51,Bilingual,,0,0,0,,动手去探索吧！\N{\fs33\c&H00C8C0B8&\bord1.4}Have fun exploring!

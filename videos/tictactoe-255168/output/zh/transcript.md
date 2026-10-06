@@ -4,7 +4,7 @@
 有个问题，听起来很简单。井字棋有多少种不同的对局？
 > Here's a question that sounds easy. How many different games of tic-tac-toe are there?
 
-这里说的“一局”，指的是从第一步到最后一步、按顺序排好的全部走法。所以，如果两局最后的棋盘一样，但走棋的顺序不同，那它们要算作两种不同的对局。棋盘翻转或旋转之后的版本，也分开算。
+这里说的“一局”，指的是从第一步到最后一步、按顺序排好的全部走法。所以，如果两局最后的棋盘一样，但走棋的顺序不同，那它们要算作两种不同的对局。棋盘翻转或旋转后得到的对局，也分开算。
 > By a game, we mean the whole list of moves, in order. So if two games end with the same board, but the moves happened in a different order, they count as two different games. Flipped or turned versions count separately too.
 
 猜一猜。一百？一百万？暂停一下视频，把你猜的数写下来。
@@ -45,7 +45,7 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 > Here's one way, in three steps. First, pick the line X wins with. There are 8: 3 rows, 3 columns and 2 diagonals. Second, X fills that line in some order: 3 times 2 times 1, which is 3 factorial, so 6 orders. Third, O's first mark can go on any of the other 6 squares, and O's second mark on any of the 5 left: 6 times 5 is 30 ways. Multiply: 8 times 6 times 30 is 1,440 games.
 
 
-## 03:30 — 手算越来越乱
+## 03:31 — 手算越来越乱
 那 O 在第 6 步赢下的对局呢？O 需要三子连成一线。但要小心：如果三个 X 也连成了一线，X 在第 5 步就已经赢了，还没等 O 连完，这一局就结束了。
 > What about games that O wins on move 6? O needs three in a row. But careful: if X's three marks also make a line, X already won on move 5, and the game stopped before O could finish.
 
@@ -55,22 +55,22 @@ X 先走，有 9 个格子可以选。不管 X 下在哪儿，O 都还剩 8 个�
 在第 7、8、9 步结束的对局就麻烦多了：我们必须检查之前的每一步有没有人赢，而且下满的棋盘可能是有人赢，也可能是平局。这就变成了一团乱麻。
 > For games that end on moves 7, 8 and 9, it gets much worse: we'd have to check every earlier move for a win, and a full board might be a win or a draw. It turns into a tangled mess.
 
-手算变得这么乱的时候，我们还有 Plan B。别巧算了。不如教电脑学会规则，再让它一局接一局，把所有可能的对局都下一遍。
+手算变得这么乱的时候，我们还有 Plan B。别再想巧办法了。不如教电脑学会规则，再让它一局接一局，把所有可能的对局都下一遍。
 > When counting gets this messy, there's another plan. Don't count cleverly. Instead, teach a computer the rules, and let it play every possible game, one by one.
 
 
-## 04:38 — 教电脑学规则
+## 04:39 — 教电脑学规则
 首先，电脑需要一个棋盘。我们用一个列表来存 9 个格子。我们用的编程语言叫 Python；在 Python 里，列表里的位置从零开始编号，所以格子的编号是 0 到 8。空格子里放一个点。
 > First, the computer needs a board. We'll use a list of 9 squares. In Python, the programming language we're using, the spots in a list are numbered starting from zero, so our squares are numbered 0 to 8. An empty square holds a dot.
 
-接下来，电脑要知道怎样才算赢。我们直接把能让人赢的 8 条获胜线都列出来，每条线写成一组三个格子编号。0、1、2 号格组成最上面一排。0、4、8 号格组成一条对角线。
+接下来，电脑要知道怎样才算赢。我们直接把所有能赢的线都列出来，一共 8 条，每条线写成一组三个格子编号。0、1、2 号格组成最上面一排。0、4、8 号格组成一条对角线。
 > Next, the computer needs to know what counts as a win. We simply list all 8 winning lines, as groups of three square numbers. Squares 0, 1 and 2 make the top row. Squares 0, 4 and 8 make a diagonal.
 
 接下来是一个函数：在编程里，函数就是一小段有名字的程序。这个函数叫 winner，意思是“赢家”，它会检查每一条线。如果一条线上三个格子放的都一样，而且不是点，那这是谁的棋子，谁就赢了。如果没有一条线符合，winner 什么也没找到，就返回 None，意思是“没有人”。
 > Next comes a function: a little mini-program with a name. This one, called winner, checks every line. If all three squares on a line hold the same mark, and that mark isn't a dot, that player has won. If no line matches, winner finds nothing, and hands back None, which means nobody.
 
 
-## 05:38 — 探索每一局
+## 05:39 — 探索每一局
 最巧妙的部分来了：一个叫 explore 的函数，explore 就是“探索”的意思。我们告诉它轮到谁，它的任务是统计从现在这个棋盘往后，还可能出现多少局。
 > Now for the clever part: a function called explore. We tell it whose turn it is, and its job is to count every game that can still happen from the current board.
 

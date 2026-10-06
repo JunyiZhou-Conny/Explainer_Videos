@@ -1,0 +1,1034 @@
+1
+00:00:00,000 --> 00:00:02,168
+有个问题，听起来很简单
+Here's a question that sounds easy.
+
+2
+00:00:02,488 --> 00:00:05,131
+井字棋有多少种不同的对局？
+How many different games of tic-tac-toe are there?
+
+3
+00:00:05,367 --> 00:00:09,180
+这里说的“一局”，指的是从第一步到最后一步
+By a game, we mean the whole list of moves,
+
+4
+00:00:09,180 --> 00:00:11,168
+按顺序排好的全部走法
+in order.
+
+5
+00:00:11,488 --> 00:00:14,400
+所以，如果两局最后的棋盘一样
+So if two games end with the same board,
+
+6
+00:00:14,400 --> 00:00:18,865
+但走棋的顺序不同，那它们要算作两种不同的对局
+but the moves happened in a different order, they count as two different games.
+
+7
+00:00:19,185 --> 00:00:23,028
+棋盘翻转或旋转后得到的对局，也分开算
+Flipped or turned versions count separately too.
+
+8
+00:00:24,067 --> 00:00:25,814
+猜一猜。一百？
+Take a guess. A hundred?
+
+9
+00:00:26,134 --> 00:00:30,017
+一百万？暂停一下视频，把你猜的数写下来
+A million? Pause the video and write your guess down.
+
+10
+00:00:38,250 --> 00:00:41,000
+答案是 255,168
+The answer is 255,168.
+
+11
+00:00:41,320 --> 00:00:45,591
+在这个视频里，我们会弄清楚这个数字是怎么来的
+In this video we'll find out where that number comes from: first by careful counting,
+
+12
+00:00:45,591 --> 00:00:50,604
+先仔细地算，再用一段短短的电脑程序，把每一局都下一遍
+and then with a short computer program that plays every single game.
+
+13
+00:00:51,650 --> 00:00:53,552
+先看一个更简单的问题
+Let's start with a simpler question.
+
+14
+00:00:53,872 --> 00:00:56,175
+假设有人三子连成一线了
+Suppose the players ignore three in a row,
+
+15
+00:00:56,175 --> 00:00:59,630
+双方也不停，一直下到九个格子都填满
+and just keep going until all nine squares are full.
+
+16
+00:00:59,950 --> 00:01:02,748
+填满棋盘有多少种不同的顺序？
+In how many different orders can the board fill up?
+
+17
+00:01:02,983 --> 00:01:05,559
+X 先走，有 9 个格子可以选
+X goes first and has 9 squares to choose from.
+
+18
+00:01:05,879 --> 00:01:09,047
+不管 X 下在哪儿，O 都还剩 8 个格子
+For each of those, O has 8 squares left.
+
+19
+00:01:09,367 --> 00:01:12,576
+这就是 9 个 8，所以选择数要相乘
+That's 9 groups of 8, so the choices multiply:
+
+20
+00:01:12,576 --> 00:01:16,905
+9 乘 8 等于 72，前两步就有 72 种不同的下法
+9 times 8 is 72 different ways to make the first two moves.
+
+21
+00:01:17,150 --> 00:01:21,953
+继续乘下去：9 乘 8 乘 7，依此类推，一直乘到 1
+Keep going: 9 times 8 times 7, and so on, all the way down to 1.
+
+22
+00:01:22,273 --> 00:01:24,944
+数学家给这种连乘起了个名字
+Mathematicians have a short name for this:
+
+23
+00:01:24,944 --> 00:01:28,330
+9 的阶乘，写成 9 后面加一个感叹号
+nine factorial, written as a 9 with an exclamation mark.
+
+24
+00:01:28,650 --> 00:01:31,269
+它等于 362,880
+It equals 362,880.
+
+25
+00:01:31,517 --> 00:01:33,097
+可是，等一下
+But wait.
+
+26
+00:01:33,147 --> 00:01:36,115
+这比 255,168 还要多
+That's more than 255,168.
+
+27
+00:01:36,435 --> 00:01:38,058
+我们算出来的太多了
+Our count is too high.
+
+28
+00:01:38,378 --> 00:01:41,112
+这些多出来的对局，都是从哪儿来的？
+Where are all those extra games coming from?
+
+29
+00:01:42,750 --> 00:01:48,516
+问题就在这儿。真正的井字棋，一有人三子连成一线，就结束了
+Here's the catch. Real tic-tac-toe stops as soon as someone gets three in a row.
+
+30
+00:01:48,836 --> 00:01:54,542
+这一局，X 在第 5 步就赢了，所以剩下的四个格子从没下过
+In this game, X wins on the fifth move, so the last four squares are never played.
+
+31
+00:01:54,783 --> 00:01:59,557
+可是 362,880 还是把这几步没下的棋也算进去了
+But our 362,880 counted those missing moves anyway,
+
+32
+00:01:59,557 --> 00:02:02,886
+就好像赢了以后，双方还在接着下
+as if the players kept going after the win.
+
+33
+00:02:03,206 --> 00:02:06,839
+填满这 4 个空格子，有 4 乘 3 乘 2 乘 1
+The 4 empty squares can be filled in 4 times 3 times 2 times 1,
+
+34
+00:02:06,839 --> 00:02:08,980
+也就是 24 种不同的顺序
+so 24 ways.
+
+35
+00:02:09,300 --> 00:02:11,746
+所以这一局被算了 24 次！
+So this one game got counted 24 times!
+
+36
+00:02:12,066 --> 00:02:15,253
+我们把这些编出来的对局叫作“幽灵对局”
+Let's call those made-up endings ghost games.
+
+37
+00:02:15,573 --> 00:02:18,664
+我们要让每一局真实的对局都只算一次
+We want to count each real game only once.
+
+38
+00:02:18,900 --> 00:02:20,930
+一局最早什么时候能结束？
+So when can a game end?
+
+39
+00:02:21,250 --> 00:02:22,850
+至少要到第 5 步
+Not before move 5.
+
+40
+00:02:23,005 --> 00:02:27,372
+X 下的是第 1、3、5 步，所以到了第 5 步
+X plays moves 1, 3 and 5, so the fifth move is the first
+
+41
+00:02:27,372 --> 00:02:29,929
+才可能有人凑齐三个棋子
+time anyone can have three marks.
+
+42
+00:02:30,167 --> 00:02:34,906
+暂停想一想：有多少种对局是 X 在第 5 步赢下的？
+Pause and ponder: how many games end with X winning on move 5?
+
+43
+00:02:35,226 --> 00:02:37,488
+先自己算一算，再看答案
+Try to count them before I show you.
+
+44
+00:02:57,733 --> 00:02:59,908
+这里有个办法，分三个步骤
+Here's one way, in three steps.
+
+45
+00:03:00,228 --> 00:03:03,091
+第一，选出 X 获胜的那条线
+First, pick the line X wins with.
+
+46
+00:03:03,411 --> 00:03:07,273
+一共有 8 条：3 排、3 列和 2 条对角线
+There are 8: 3 rows, 3 columns and 2 diagonals.
+
+47
+00:03:07,593 --> 00:03:11,213
+第二，X 可以按不同的顺序填满这条线
+Second, X fills that line in some order:
+
+48
+00:03:11,213 --> 00:03:16,044
+3 乘 2 乘 1，也就是 3 的阶乘，所以有 6 种顺序
+3 times 2 times 1, which is 3 factorial, so 6 orders.
+
+49
+00:03:16,364 --> 00:03:19,792
+第三，第一个 O 有另外 6 个格子可以选
+Third, O's first mark can go on any of the other 6 squares,
+
+50
+00:03:19,792 --> 00:03:24,633
+第二个 O 还剩 5 个格子可以选：6 乘 5 等于 30 种放法
+and O's second mark on any of the 5 left: 6 times 5 is 30 ways.
+
+51
+00:03:24,953 --> 00:03:29,745
+把它们乘起来：8 乘 6 乘 30 等于 1,440 种对局
+Multiply: 8 times 6 times 30 is 1,440 games.
+
+52
+00:03:31,583 --> 00:03:33,746
+那 O 在第 6 步赢下的对局呢？
+What about games that O wins on move 6?
+
+53
+00:03:34,066 --> 00:03:35,871
+O 需要三子连成一线
+O needs three in a row.
+
+54
+00:03:36,191 --> 00:03:39,617
+但要小心：如果三个 X 也连成了一线
+But careful: if X's three marks also make a line,
+
+55
+00:03:39,617 --> 00:03:44,935
+X 在第 5 步就已经赢了，还没等 O 连完，这一局就结束了
+X already won on move 5, and the game stopped before O could finish.
+
+56
+00:03:45,183 --> 00:03:48,717
+还是用那三个步骤：O 有 8 条线可选
+Use the same three steps: 8 lines for O,
+
+57
+00:03:48,717 --> 00:03:54,360
+O 填满这条线有 6 种顺序，三个 X 有 6 乘 5 乘 4 种放法
+6 orders for O's marks, and 6 times 5 times 4 ways to place X's three marks.
+
+58
+00:03:54,680 --> 00:03:58,880
+这样，O 一共有 5,760 种方法连成一线
+That's 5,760 ways for O to finish a line.
+
+59
+00:03:59,200 --> 00:04:04,241
+然后再减去 432 种情况：三个 X 也连成了一线
+Then we subtract the 432 where X's three marks made a line too,
+
+60
+00:04:04,241 --> 00:04:10,159
+正好是和 O 那条线平行的一排或一列，所以 X 抢先赢了
+a row or column parallel to O's, so X sneaked in a win first.
+
+61
+00:04:10,479 --> 00:04:13,444
+最后剩下 5,328 种对局
+That leaves 5,328 games.
+
+62
+00:04:13,683 --> 00:04:17,403
+在第 7、8、9 步结束的对局就麻烦多了
+For games that end on moves 7, 8 and 9,
+
+63
+00:04:17,403 --> 00:04:20,975
+我们必须检查之前的每一步有没有人赢
+it gets much worse: we'd have to check every earlier move for a win,
+
+64
+00:04:20,975 --> 00:04:25,141
+而且下满的棋盘可能是有人赢，也可能是平局
+and a full board might be a win or a draw.
+
+65
+00:04:25,461 --> 00:04:27,175
+这就变成了一团乱麻
+It turns into a tangled mess.
+
+66
+00:04:27,416 --> 00:04:30,833
+手算变得这么乱的时候，我们还有 Plan B
+When counting gets this messy, there's another plan.
+
+67
+00:04:31,153 --> 00:04:32,730
+别再想巧办法了
+Don't count cleverly.
+
+68
+00:04:32,780 --> 00:04:36,238
+不如教电脑学会规则，再让它一局接一局
+Instead, teach a computer the rules,
+
+69
+00:04:36,238 --> 00:04:38,604
+把所有可能的对局都下一遍
+and let it play every possible game, one by one.
+
+70
+00:04:39,650 --> 00:04:42,042
+首先，电脑需要一个棋盘
+First, the computer needs a board.
+
+71
+00:04:42,362 --> 00:04:44,816
+我们用一个列表来存 9 个格子
+We'll use a list of 9 squares.
+
+72
+00:04:45,136 --> 00:04:49,012
+我们用的编程语言叫 Python；在 Python 里
+In Python, the programming language we're using,
+
+73
+00:04:49,012 --> 00:04:53,709
+列表里的位置从零开始编号，所以格子的编号是 0 到 8
+the spots in a list are numbered starting from zero, so our squares are numbered 0 to 8.
+
+74
+00:04:54,029 --> 00:04:55,629
+空格子里放一个点
+An empty square holds a dot.
+
+75
+00:04:57,017 --> 00:04:59,948
+接下来，电脑要知道怎样才算赢
+Next, the computer needs to know what counts as a win.
+
+76
+00:05:00,268 --> 00:05:03,183
+我们直接把所有能赢的线都列出来
+We simply list all 8 winning lines,
+
+77
+00:05:03,183 --> 00:05:06,762
+一共 8 条，每条线写成一组三个格子编号
+as groups of three square numbers.
+
+78
+00:05:07,082 --> 00:05:10,599
+0、1、2 号格组成最上面一排
+Squares 0, 1 and 2 make the top row.
+
+79
+00:05:10,919 --> 00:05:14,375
+0、4、8 号格组成一条对角线
+Squares 0, 4 and 8 make a diagonal.
+
+80
+00:05:15,317 --> 00:05:20,499
+接下来是一个函数：在编程里，函数就是一小段有名字的程序
+Next comes a function: a little mini-program with a name.
+
+81
+00:05:20,819 --> 00:05:25,635
+这个函数叫 winner，意思是“赢家”，它会检查每一条线
+This one, called winner, checks every line.
+
+82
+00:05:25,955 --> 00:05:28,755
+如果一条线上三个格子放的都一样
+If all three squares on a line hold the same mark,
+
+83
+00:05:28,755 --> 00:05:32,080
+而且不是点，那这是谁的棋子，谁就赢了
+and that mark isn't a dot, that player has won.
+
+84
+00:05:32,400 --> 00:05:36,112
+如果没有一条线符合，winner 什么也没找到
+If no line matches, winner finds nothing,
+
+85
+00:05:36,112 --> 00:05:38,756
+就返回 None，意思是“没有人”
+and hands back None, which means nobody.
+
+86
+00:05:39,700 --> 00:05:43,425
+最巧妙的部分来了：一个叫 explore 的函数
+Now for the clever part:
+
+87
+00:05:43,425 --> 00:05:45,826
+explore 就是“探索”的意思
+a function called explore.
+
+88
+00:05:46,146 --> 00:05:47,817
+我们告诉它轮到谁
+We tell it whose turn it is,
+
+89
+00:05:47,817 --> 00:05:52,645
+它的任务是统计从现在这个棋盘往后，还可能出现多少局
+and its job is to count every game that can still happen from the current board.
+
+90
+00:05:52,883 --> 00:05:55,247
+它一开头就是两个停止条件
+It starts with two stopping rules.
+
+91
+00:05:55,567 --> 00:05:58,972
+如果已经有人赢了，那就是下完的一局
+If someone has already won, that's one finished game,
+
+92
+00:05:58,972 --> 00:06:01,440
+所以 explore 返回数字 1
+so explore hands back the number 1.
+
+93
+00:06:01,760 --> 00:06:06,517
+如果棋盘满了却没有人赢，那就是平局，也算下完的一局
+If the board is full with no winner, that's a draw, also one finished game.
+
+94
+00:06:06,767 --> 00:06:08,963
+否则，这一局就还没结束
+Otherwise, the game isn't over yet.
+
+95
+00:06:09,283 --> 00:06:12,185
+于是 explore 会试每一个空格子
+So explore tries every empty square.
+
+96
+00:06:12,505 --> 00:06:16,724
+它在那里放上这一方的棋子，再问自己同一个问题
+It puts the player's mark there, and then asks itself the same question,
+
+97
+00:06:16,724 --> 00:06:20,577
+这次轮到对方：从这里往后，还能下出多少局？
+now for the other player: how many games can happen from here?
+
+98
+00:06:20,897 --> 00:06:22,638
+它把所有的答案加起来
+It adds up all the answers.
+
+99
+00:06:22,933 --> 00:06:26,472
+我们把第一个小棋盘放大看看，这时轮到 O
+Let's zoom into the first of those, with O to move.
+
+100
+00:06:26,792 --> 00:06:30,733
+如果 O 下在右上角那格，O 就赢了：算 1 局
+If O takes the top-right square, O wins: that's 1 game.
+
+101
+00:06:31,053 --> 00:06:33,965
+擦掉它，这回试试上边中间那格
+Erase it, and try the top-middle square instead.
+
+102
+00:06:34,285 --> 00:06:39,026
+然后 X 填上最后一格，结果是平局：再算 1 局
+Then X fills the last square, and it's a draw: 1 more.
+
+103
+00:06:39,346 --> 00:06:42,084
+撤销这两步，再加起来：2 局
+Undo both moves, and add up: 2 games.
+
+104
+00:06:42,404 --> 00:06:46,119
+再算上另外两个分支，2 加 1 加 2 等于 5
+With the other two branches, 2 plus 1 plus 2 makes 5.
+
+105
+00:06:46,367 --> 00:06:48,664
+像这样，函数自己调用自己
+When a function calls itself,
+
+106
+00:06:48,664 --> 00:06:52,199
+也就是自己问自己同一个问题，就叫作递归
+asking itself the same question like this, it's called recursive.
+
+107
+00:06:52,519 --> 00:06:54,620
+听起来好像会没完没了
+That might sound like it goes on forever,
+
+108
+00:06:54,620 --> 00:06:59,204
+但每调用一次就多一个棋子，所以总会碰到停止条件
+but each call adds one more mark, so a stopping rule always kicks in.
+
+109
+00:06:59,524 --> 00:07:01,579
+想象一棵倒过来的树
+Picture an upside-down tree.
+
+110
+00:07:01,899 --> 00:07:06,114
+空棋盘在最上面，每一种可能的走法是一个分支
+The empty board is at the top, every possible move is a branch,
+
+111
+00:07:06,114 --> 00:07:08,796
+而下完的每一局都是一片叶子
+and every finished game is a leaf.
+
+112
+00:07:09,116 --> 00:07:12,708
+我们的 explore 会沿着每一条分支往下走
+Explore walks down every branch, one at a time,
+
+113
+00:07:12,708 --> 00:07:16,129
+一次走一条，再数一数走到了多少片叶子
+and counts the leaves it reaches.
+
+114
+00:07:16,367 --> 00:07:18,980
+还有一行代码，很容易被忽略
+There's one more line, and it's easy to miss.
+
+115
+00:07:19,300 --> 00:07:23,460
+程序下每一局都用同一个棋盘，就像只有一块白板
+The program plays every game on just one board, like a single whiteboard.
+
+116
+00:07:23,780 --> 00:07:27,446
+所以每探索完一步，它就要擦掉那个棋子
+So after exploring a move, it erases that mark.
+
+117
+00:07:27,766 --> 00:07:32,756
+这叫“撤销”这一步，这样棋盘恢复原样，下一个分支就能接着试
+That's called undoing the move, and it means the next branch starts fresh.
+
+118
+00:07:33,076 --> 00:07:37,028
+先试走一条路，再退回来试下一条，这就叫回溯
+Trying a path, then stepping back to try the next one, is called backtracking.
+
+119
+00:07:39,050 --> 00:07:42,812
+想弄懂一个程序，有个好办法：故意把它改坏
+A great way to understand a program is to break it on purpose.
+
+120
+00:07:43,132 --> 00:07:47,621
+暂停想一想：如果删掉“撤销”那一行，你觉得会发生什么？
+Pause and ponder: what do you think happens if we delete the undo line?
+
+121
+00:07:57,867 --> 00:07:59,467
+程序只输出 3
+The program prints just 3.
+
+122
+00:07:59,674 --> 00:08:02,311
+没有了撤销，什么都不会被擦掉
+Without undo, nothing ever gets erased.
+
+123
+00:08:02,631 --> 00:08:06,219
+程序先下一局，按顺序一格一格地填
+The program plays one game, filling the squares in order,
+
+124
+00:08:06,219 --> 00:08:09,659
+直到 X 在第 7 步连成一条对角线
+until X makes a diagonal on move 7.
+
+125
+00:08:09,979 --> 00:08:11,287
+这是第 1 局
+That's 1.
+
+126
+00:08:11,337 --> 00:08:16,219
+接着它去试 X 的其他下法，可是原来那个 X 还在
+Then it tries X's other choices, but the old X is still there.
+
+127
+00:08:16,539 --> 00:08:18,575
+X 下在下边中间那格
+X lands on the bottom-middle square,
+
+128
+00:08:18,575 --> 00:08:22,739
+原来那条对角线又算赢了一次：这是第 2 局
+and the old diagonal counts as a win again: that's 2.
+
+129
+00:08:23,059 --> 00:08:25,749
+然后是右下角那格：第 3 局
+Then the bottom-right square: that's 3.
+
+130
+00:08:26,069 --> 00:08:29,075
+现在棋盘满了，再也没有可以试的了
+Now the board is full, so there's nothing left to try.
+
+131
+00:08:29,317 --> 00:08:33,724
+现在把“撤销”那一行放回去，改成删掉“判断输赢”
+Now put undo back, and delete the winner check instead,
+
+132
+00:08:33,724 --> 00:08:36,383
+这样对局要等棋盘满了才会停
+so games only stop when the board is full.
+
+133
+00:08:36,703 --> 00:08:38,753
+暂停一下，先猜猜答案
+Pause and predict the answer.
+
+134
+00:08:49,000 --> 00:08:51,197
+362,880
+362,880.
+
+135
+00:08:51,517 --> 00:08:53,117
+这正是 9 的阶乘！
+That's nine factorial!
+
+136
+00:08:53,170 --> 00:08:57,606
+没有了判断输赢，程序在有人赢了之后还会接着下
+Without the winner check, the program keeps playing after a win,
+
+137
+00:08:57,606 --> 00:09:00,692
+所以它把所有幽灵对局都算进去了
+so it counts all the ghost games.
+
+138
+00:09:01,012 --> 00:09:03,957
+它自己又找回了我们最早算出的那个数
+It rediscovered our very first count.
+
+139
+00:09:05,000 --> 00:09:09,089
+现在，我们把每一行都放回去，运行真正的程序
+Now let's put every line back and run the real program.
+
+140
+00:09:09,409 --> 00:09:13,308
+过了一小会儿，它输出了 255,168
+After a moment, it prints 255,168.
+
+141
+00:09:13,550 --> 00:09:17,329
+我们按对局在第几步结束，把这个总数拆开来看
+Let's split that total by when each game ends.
+
+142
+00:09:17,649 --> 00:09:20,255
+1,440 局在第 5 步结束
+1,440 end on move 5,
+
+143
+00:09:20,255 --> 00:09:25,259
+5,328 局在第 6 步结束，和我们手算的结果一样
+and 5,328 on move 6, the same numbers we found by hand.
+
+144
+00:09:25,579 --> 00:09:30,316
+然后柱子一下子升高了：约 4.8 万局在第 7 步结束
+Then the bars shoot up: about 48 thousand end on move 7,
+
+145
+00:09:30,316 --> 00:09:32,616
+7.3 万局在第 8 步结束
+and 73 thousand on move 8.
+
+146
+00:09:32,936 --> 00:09:36,339
+有一半多一点的对局会下满 9 步
+Just over half of all games use all 9 moves:
+
+147
+00:09:36,339 --> 00:09:41,080
+约 8.2 万局是 X 赢，还有 46,080 局是平局
+about 82 thousand X wins, plus 46,080 draws.
+
+148
+00:09:41,401 --> 00:09:44,345
+加起来就是 255,168
+Together, that's 255,168.
+
+149
+00:09:44,583 --> 00:09:47,670
+再来看看，这和 9 的阶乘有什么关系
+And here's how it connects to nine factorial.
+
+150
+00:09:47,990 --> 00:09:52,021
+还记得吗，9 的阶乘把在第 5 步结束的每一局
+Remember, nine factorial counted each game that ends on move 5 a total of 24 times,
+
+151
+00:09:52,021 --> 00:09:55,209
+都算了 24 次，每个幽灵对局算一次
+once for each ghost ending.
+
+152
+00:09:55,529 --> 00:10:00,752
+在第 6 步结束的一局被算了 6 次，在第 7 步结束的，算了两次
+A game ending on move 6 was counted 6 times, and on move 7, twice.
+
+153
+00:10:01,072 --> 00:10:03,905
+在第 8 步或第 9 步结束的对局
+Games that end on move 8 or 9 have at most one empty square,
+
+154
+00:10:03,905 --> 00:10:07,609
+最多只剩一个空格子，所以它们只算了一次
+so they were counted just once.
+
+155
+00:10:07,929 --> 00:10:10,750
+把每根柱子乘上各自被算的次数
+Multiply each bar by its number, add them up,
+
+156
+00:10:10,750 --> 00:10:13,882
+再全部加起来，正好又是 9 的阶乘
+and you get exactly nine factorial again.
+
+157
+00:10:16,783 --> 00:10:18,383
+谁赢的对局最多？
+Who wins the most games?
+
+158
+00:10:18,545 --> 00:10:23,970
+X 赢了 131,184 局，O 赢了 77,904 局
+X wins 131,184 of them, O wins 77,904,
+
+159
+00:10:23,970 --> 00:10:27,133
+还有 46,080 局是平局
+and 46,080 are draws.
+
+160
+00:10:27,453 --> 00:10:31,039
+在所有可能的对局里，X 赢的超过一半
+X wins in more than half of all possible games,
+
+161
+00:10:31,039 --> 00:10:33,743
+因为先走让 X 有更多机会赢
+because going first gives X more chances to win.
+
+162
+00:10:33,983 --> 00:10:35,355
+最后一道题
+One last puzzle.
+
+163
+00:10:35,405 --> 00:10:39,426
+X 的第一步下在哪儿，能下出的不同对局最多
+Which first move for X leads to the most different games:
+
+164
+00:10:39,426 --> 00:10:41,522
+角上、边上，还是中心？
+a corner, an edge, or the center?
+
+165
+00:10:41,842 --> 00:10:43,577
+暂停一下，猜一猜
+Pause and guess.
+
+166
+00:10:53,817 --> 00:10:56,230
+没想到吧：答案是边格
+Surprise:
+
+167
+00:10:56,230 --> 00:11:01,362
+也就是每条边正中间的那一格，有 29,592 种对局
+the edge, with 29,592 games.
+
+168
+00:11:01,682 --> 00:11:09,248
+每个角格有 27,732，而中心最少，只有 25,872。为什么？
+Each corner gives 27,732, and the center the fewest, just 25,872. Why?
+
+169
+00:11:09,568 --> 00:11:14,975
+中心在 4 条获胜线上，角格在 3 条上，而边格只在 2 条上
+The center sits on 4 winning lines, a corner on 3, and an edge on just 2.
+
+170
+00:11:15,295 --> 00:11:19,850
+线越多，X 越有机会在第 5 步或第 7 步提前赢
+More lines give X more chances to win early, on move 5 or 7,
+
+171
+00:11:19,850 --> 00:11:24,120
+而每一次提前赢，都会从树上砍掉一大片分支
+and every early win chops whole branches off the tree.
+
+172
+00:11:24,367 --> 00:11:28,213
+但要小心：能下出的对局多，不代表这一步更好
+But careful: more games doesn't mean a better move.
+
+173
+00:11:28,533 --> 00:11:33,258
+在所有先下中心的对局里，X 每 10 局大约赢 6 局
+Out of all the games that start in the center, X wins about 6 in 10.
+
+174
+00:11:33,578 --> 00:11:36,592
+先下边格的话，X 赢不到一半
+Starting on an edge, X wins fewer than half.
+
+175
+00:11:38,633 --> 00:11:41,710
+那么，先走的 X 是不是总能赢？
+So does going first mean X always wins?
+
+176
+00:11:42,030 --> 00:11:45,400
+不是。电脑能做的，不只是统计对局
+No. A computer can do more than count.
+
+177
+00:11:45,720 --> 00:11:47,557
+它从树的最底下开始
+It starts at the bottom of the tree,
+
+178
+00:11:47,557 --> 00:11:51,413
+那里每一局都已经下完，然后一层一层往上推
+where every game is finished, and works upward.
+
+179
+00:11:51,733 --> 00:11:55,016
+每到一个分支，它都挑最好的一步
+At every branch it picks the best move:
+
+180
+00:11:55,016 --> 00:12:00,062
+轮到 X 时挑对 X 最好的，轮到 O 时挑对 O 最好的
+best for X on X's turns, and best for O on O's turns.
+
+181
+00:12:00,382 --> 00:12:03,578
+这样一来，它就把井字棋彻底算透了
+Doing that, it has solved tic-tac-toe:
+
+182
+00:12:03,578 --> 00:12:06,962
+如果双方都不失误，每一局都会是平局
+if both players play perfectly, every game ends in a draw.
+
+183
+00:12:07,282 --> 00:12:11,581
+所以 X 赢下的每一局，都少不了 O 在某一步的失误
+So every one of X's wins needs a mistake by O somewhere.
+
+184
+00:12:14,016 --> 00:12:16,092
+国际象棋也能这样算吗？
+Could we do the same for chess?
+
+185
+00:12:16,412 --> 00:12:17,816
+完全不可能
+Not a chance.
+
+186
+00:12:17,866 --> 00:12:22,181
+1950 年，数学家兼工程师克劳德·香农估计
+In 1950, the mathematician and engineer Claude Shannon estimated
+
+187
+00:12:22,181 --> 00:12:26,847
+国际象棋至少有 10 的 120 次方种可能的对局
+that chess has at least 10 to the power of 120 possible games.
+
+188
+00:12:27,167 --> 00:12:29,676
+那可是 1 后面跟着 120 个零！
+That's a 1 followed by 120 zeros!
+
+189
+00:12:29,996 --> 00:12:34,643
+而我们能观测到的整个宇宙，也只有大约 10 的 80 次方个原子
+The whole observable universe has only about 10 to the power of 80 atoms.
+
+190
+00:12:34,883 --> 00:12:38,691
+所以，国际象棋程序没法探索每一个分支
+So chess programs can't explore every branch.
+
+191
+00:12:39,011 --> 00:12:42,778
+它们只往后看几步，再估计谁更有希望赢
+They look only so many moves ahead, then estimate who's winning,
+
+192
+00:12:42,778 --> 00:12:46,147
+靠的是从几百万局练习中学到的经验
+using what they learned from millions of practice games.
+
+193
+00:12:46,467 --> 00:12:49,171
+但说到底，思路和你刚学的一样
+But underneath, it's the same idea you just learned:
+
+194
+00:12:49,171 --> 00:12:52,956
+把走法排成一棵树，一个分支一个分支地探索
+a tree of moves, explored one branch at a time.
+
+195
+00:12:53,500 --> 00:12:54,917
+我们来小结一下
+Let's recap.
+
+196
+00:12:54,967 --> 00:12:57,432
+把每一步的选择数乘起来
+Multiplying the choices gives nine factorial, 362,880 orders.
+
+197
+00:12:57,432 --> 00:13:01,458
+就得到 9 的阶乘，一共 362,880 种顺序
+Multiplying the choices gives nine factorial, 362,880 orders.
+
+198
+00:13:01,778 --> 00:13:04,455
+但只要有人赢，对局就会停下
+But games stop when someone wins,
+
+199
+00:13:04,455 --> 00:13:07,704
+所以这些顺序里有很多都是幽灵对局
+so many of those orders are ghost games.
+
+200
+00:13:08,024 --> 00:13:12,287
+而一段短短的递归程序，先试走一步，往下探索
+And a short recursive program counts every real game by trying a move,
+
+201
+00:13:12,287 --> 00:13:16,162
+再撤销，就把每一局真实对局都统计了一遍
+exploring, and undoing it.
+
+202
+00:13:16,482 --> 00:13:19,517
+答案正好是 255,168
+The answer is exactly 255,168.
+
+203
+00:13:19,766 --> 00:13:21,366
+现在，轮到你了
+Now it's your turn.
+
+204
+00:13:21,566 --> 00:13:25,126
+改一改程序，让它只统计 X 赢的对局
+Change the program so it counts only the games X wins,
+
+205
+00:13:25,126 --> 00:13:31,034
+或者只统计在第 7 步结束的对局，或者看看如果 O 先走会怎样
+or only the games that end on move 7, or see what happens if O goes first.
+
+206
+00:13:31,354 --> 00:13:34,592
+程序和挑战题的链接都在视频简介里
+The program and the challenges are linked in the description.
+
+207
+00:13:34,912 --> 00:13:36,512
+动手去探索吧！
+Have fun exploring!
