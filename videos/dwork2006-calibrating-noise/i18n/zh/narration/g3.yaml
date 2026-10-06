@@ -88,7 +88,7 @@ S07:
     "two distances to t": "到 t 的两段距离"
     "at most the distance": "最多相差"
     "the sensitivity divided": "敏感度除以 λ"
-    "for every output": "对任意输出"
+    "for every output": "任意输出、"    # one character late: the spoken e^ε (E 的艾普西隆次方) before it is long
   en_display:
   - null
   - "So the privacy loss of any output is at most the sensitivity divided by λ."
@@ -117,7 +117,7 @@ S07:
   - "暂停想一想：为什么不用更简单的，比如均匀噪声，负十到正十之间任意取值？"
   anchors:
     "like uniform noise": "均匀噪声"
-    "anywhere between": "−10 到"
+    "anywhere between": "到 +10"    # spoken 负十 lands here: the displayed "−10 " is shorter than its reading
   en_display:
   - "Pause and ponder: why not something simpler, like uniform noise anywhere between −10 and +10?"
 - en: "Look at the edges. An output of fifty-one and a half is possible if the true count is forty-two, but impossible if it is forty-one: the same infinite ratio that sank the random-row mechanism. Good noise must never rule an output out."
@@ -211,7 +211,7 @@ S08:
   - "保护 Alice 的噪声，比起她自己的贡献，也就是 1，算是很大，但比起总体微不足道。"
   anchors:
     "is a few percent": "占答案的百分之几"
-    "her own contribution": "比起她自己的贡献"
+    "her own contribution": "噪声，比起她"    # 3 characters early: the Latin "Alice" before it is spoken faster than its 5 letters
     "but tiny compared": "但比起总体"
   en_display:
   - "With 100 patients, noise of typical size 2 is a few percent of the answer."

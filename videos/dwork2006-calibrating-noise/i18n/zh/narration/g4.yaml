@@ -35,16 +35,16 @@
     "has sensitivity one": "敏感度都是 1"
 - "en": "Second: if an algorithm that rarely looks at any particular row, like one working from a small random sample, approximates f to within sigma most of the time, on every database, then f has sensitivity at most two sigma. That is Lemma 1."
   "zh":
-  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小随机样本，而且大多数时候能把 f 近似到 σ 以内，对每个数据库都如此，那么 f 的敏感度最多是两倍 σ。"
+  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小规模随机样本，而且大多数时候能把 f 近似到 σ 以内，对每个数据库都如此，那么 f 的敏感度最多是两倍 σ。"
   - "这就是引理 1。"
   "say":
-  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小随机样本，而且大多数时候能把 f 近似到 sigma 以内，对每个数据库都如此，那么 f 的敏感度最多是两倍 sigma。"
+  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小规模随机样本，而且大多数时候能把 f 近似到 sigma 以内，对每个数据库都如此，那么 f 的敏感度最多是两倍 sigma。"
   - null
   "en_display":
   - "Second: if an algorithm that rarely looks at any particular row, like one working from a small random sample, approximates f to within σ most of the time, on every database, then f has sensitivity at most 2σ."
   - null
   "anchors":
-    "like one working": "比如只看一个小随机样本"
+    "like one working": "比如只看一个小规模随机样本"
     "approximates f": "能把 f 近似到"
     "on every database": "对每个数据库都如此"
     "then f has": "那么 f 的敏感度"
@@ -72,7 +72,7 @@
     "at a rate of": "速率是"
     "For bit strings": "对比特串来说"
     "a little below": "略低于"
-    "Warner's coin again": "又是 Warner 的硬币"
+    "Warner's coin again": "Warner 的硬币"
 "S11":
 - "en": "Now the last part of the paper. Statisticians and data miners traditionally prefer the non-interactive model: sanitize the data once, publish it, and let anyone compute anything. Can that work under this definition?"
   "zh":
@@ -107,7 +107,7 @@
     "give each row": "给每条记录"
     "and count the rows": "统计有多少条记录"
     "Each query has": "每个 query 的敏感度"
-    "so an interactive curator": "所以交互式的管理者"
+    "so an interactive curator": "都是 1，所以交互式的管理者"
 - "en": "But a one-shot release must prepare for all of them at once. Theorem 3 shows that for at least two thirds of these queries, the release looks almost the same for a random database where every row has even parity, true answer zero, as for one where every row is odd, true answer n. The most extreme difference possible, and it cannot be seen, unless the database is exponentially large: roughly, every four extra bits per row doubles the rows you would need."
   "zh":
   - "但一次性发布必须同时为所有 query 做好准备。"
@@ -252,7 +252,7 @@
   "anchors":
     "the model Section four": "也就是第 4 节"
     "is what we now call": "正是今天所说的"
-    "used by Google": "Google 用在"
+    "used by Google": "Chrome 浏览器里"
     "and by Apple": "苹果用在"
     "Why the weakest": "为什么偏偏是"
     "Nobody has to be": "原始数据不用托付"
@@ -355,8 +355,8 @@
   - "Second: in a medical imaging dataset, each patient contributes 50 slices, and each slice's gradient is clipped to size C."
   - null
   "anchors":
-    "each patient contributes": "每个病人贡献"
-    "and each slice": "每张切片的梯度"
+    "each patient contributes": "病人贡献"
+    "and each slice": "切片的梯度"
     "is clipped to size C": "clip 到 C"
     "How much can one patient": "一个病人能让"
 - "en": "Third: why does the median give the Laplace mechanism trouble? Answers, and more exercises, are in the companion notes."
@@ -375,4 +375,4 @@
   "anchors":
     "you will know": "你就知道"
     "what is the epsilon": "用的是多大的"
-    "and what counts": "什么才算"
+    "and what counts": "才算一个人"

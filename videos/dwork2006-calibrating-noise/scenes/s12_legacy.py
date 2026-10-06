@@ -425,7 +425,9 @@ class Legacy(VoiceScene):
 
     # ================================================================== rows
     def _rows(self, thumbs: dict) -> dict:
-        name_l2 = VGroup(S.text("names it", 20, S.GREY), S.text("differential privacy", 20, S.WHITE, slant=ITALIC)
+        # Chinese has no italics (Pango would slant 差分隐私 synthetically): the name stays upright there
+        name_kw = {} if i18n.active() else {"slant": ITALIC}
+        name_l2 = VGroup(S.text("names it", 20, S.GREY), S.text("differential privacy", 20, S.WHITE, **name_kw)
                          ).arrange(RIGHT, buff=0.14)
         delta_l2 = VGroup(S.text("Mironov & Naor 2006 ·", 20, S.WHITE, weight="BOLD"),
                           S.math(r"(\varepsilon,\delta)", size=28, color=EPS_COLOR)).arrange(RIGHT, buff=0.14)

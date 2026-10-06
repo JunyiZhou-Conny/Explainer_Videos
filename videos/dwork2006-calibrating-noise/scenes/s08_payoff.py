@@ -8,6 +8,7 @@ S11's chain of databases is drawn in the same `mini_db` look: 4 rows, GREY arrow
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import laplace_pdf, person_grid, person_icon, ponder_card
 from explainer.scene import VoiceScene
@@ -417,10 +418,13 @@ class Payoff(VoiceScene):
                           run_time=0.8)
                 self.play(FadeIn(cur["pct"], shift=LEFT * 0.2), run_time=0.35)
             vo.wait_until("Alice is protected")
-            self.play(Create(lens), run_time=0.4)
-            self.play(Create(cone), FadeIn(inset), run_time=0.6)
-            self.play(Create(z_axis), FadeIn(z_ticks), FadeIn(z_labs), run_time=0.6)
-            self.play(GrowFromEdge(z_bump, DOWN), FadeIn(noise_lab), run_time=0.9)
+            # the Chinese sentence reaches "her own contribution" (比起她自己的贡献) sooner after its start:
+            # there the 2.5 s inset build is sped up so Alice's segment still lands on the phrase
+            k = min(1.0, max(0.7, vo.time_until("her own contribution") / 2.5)) if i18n.active() else 1.0
+            self.play(Create(lens), run_time=0.4 * k)
+            self.play(Create(cone), FadeIn(inset), run_time=0.6 * k)
+            self.play(Create(z_axis), FadeIn(z_ticks), FadeIn(z_labs), run_time=0.6 * k)
+            self.play(GrowFromEdge(z_bump, DOWN), FadeIn(noise_lab), run_time=0.9 * k)
             vo.wait_until("her own contribution")
             self.play(Create(alice_seg), FadeIn(alice_lab), Create(alice_ptr), run_time=0.8)
             vo.wait_until("but tiny compared")

@@ -37,7 +37,9 @@
 "training neural networks privately": "用差分隐私训练神经网络"
 "\\text{noise scale}": "\\text{噪声尺度}"
 "more sensitive question  →  more noise": "敏感度越高  →  噪声越大"
-"stronger privacy (smaller ε)  →  more noise": "隐私越强（ε 越小）  →  噪声越大"
+# the full-width ）already carries half an em of space: one space after it, so the arrow sits like the
+# one in the line above
+"stronger privacy (smaller ε)  →  more noise": "隐私越强（ε 越小） →  噪声越大"
 
 # ---------------------------------------------------------------- S08 · s08_payoff.py
 "week 1": "第一周"
@@ -94,4 +96,5 @@
 "released": "发布值"
 "true counts": "真实计数"
 "earlier SuLQ analysis:": "早先 SuLQ 的分析："
-"per bin — still grows with d": "（每个桶）——仍随 d 增长"
+# a comma, not ——: the CJK font's two em dashes leave a gap between them in this label
+"per bin — still grows with d": "（每个桶），仍随 d 增长"
