@@ -376,9 +376,10 @@ def install() -> None:
             tr_keys(kw, ("t2c", "t2w", "t2s", "t2f", "t2g"), kind)
             if has_cjk(text):
                 kw["font"] = _cjk_font(kw.get("font"))
-                quotes = [q for q in "“”‘’…—" if q in text]
-                if quotes and kind == "text":   # the Latin font comes first: its quotes are narrow,
-                    # its … sits on the baseline and its — is half the CJK dash
+                quotes = [q for q in "“”‘’…" if q in text]
+                if quotes and kind == "text":   # the Latin font comes first: its quotes are narrow
+                    # and its … sits on the baseline (its — stays: two of them join into the 破折号,
+                    # while the CJK font's U+2014 leaves a gap between them)
                     cjk = CJK_FONTS["sans" if "sans" in kw["font"].lower() else "serif"]
                     kw["t2f"] = {**{q: cjk for q in quotes}, **(kw.get("t2f") or {})}
                 if kw.get("t2c") and kind == "text":
