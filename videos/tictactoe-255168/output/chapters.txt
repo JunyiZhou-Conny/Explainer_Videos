@@ -1,9 +1,9 @@
 00:00 How many games?
 00:48 Filling the board: 9!
-01:40 Games stop early
-03:23 Counting by hand gets messy
-04:21 Teaching a computer the rules
-05:09 Exploring every game
-06:48 Change one line
-08:07 255,168, explained
-10:26 Bigger games, and your turn
+01:39 Games stop early
+03:22 Counting by hand gets messy
+04:25 Teaching a computer the rules
+05:15 Exploring every game
+06:58 Change one line
+08:16 255,168, explained
+10:41 Bigger games, and your turn
