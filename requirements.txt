@@ -10,4 +10,5 @@ pyyaml
 pypdf
 # Chinese versions (EXPLAINER_LANG=zh): default Mandarin narrator (online Microsoft voices)
 edge-tts>=7
+jieba>=0.42          # word boundaries for Chinese subtitle line breaks (optional)
 # Optional: ElevenLabs needs no extra package, just ELEVENLABS_API_KEY
