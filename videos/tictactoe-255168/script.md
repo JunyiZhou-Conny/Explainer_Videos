@@ -175,7 +175,7 @@ SHOW: Zoom out to the full game tree, upside down: the empty board at the top, 9
 8 under each (label "same 9 × 8 as before!"), … leaves (finished games) at the tips, some short
 (early wins), most deep. A highlighted path walks down one branch to a leaf (the board changing
 along the way), the leaf flashes GREEN and the counter goes up by 1.
-SAY: A function that calls itself like this is called recursive. That might sound like it goes on forever, but each call adds one more mark, so a stopping rule always kicks in. Picture an upside-down tree. The empty board is at the top, every possible move is a branch, and every finished game is a leaf. Explore walks down every branch, one at a time, and counts the leaves it reaches.
+SAY: When a function calls itself, asking itself the same question like this, it's called recursive. That might sound like it goes on forever, but each call adds one more mark, so a stopping rule always kicks in. Picture an upside-down tree. The empty board is at the top, every possible move is a branch, and every finished game is a leaf. Explore walks down every branch, one at a time, and counts the leaves it reaches.
 
 SHOW: The undo line is highlighted RED. A single whiteboard icon: every branch shares the same
 board. On the board, the last mark is erased (RED eraser swipe) and the highlighted path steps back
@@ -251,7 +251,7 @@ SAY: But careful: more games doesn't mean a better move. Out of all the games th
 SHOW: A small game tree with leaves keeping their real colours (BLUE X wins, ORANGE O wins, GREY
 draws). Colours bubble up from the leaves: at X's turns a node takes the best result for X, at O's
 turns the best result for O. The root ends up GREY; caption "perfect play → draw".
-SAY: So does going first mean X always wins? No. A computer can do more than count. At every branch it can pick the best move: best for X on X's turns, and best for O on O's turns. Doing that, it has solved tic-tac-toe: if both players play perfectly, every game ends in a draw.
+SAY: So does going first mean X always wins? No. A computer can do more than count. It starts at the bottom of the tree, where every game is finished, and works upward. At every branch it picks the best move: best for X on X's turns, and best for O on O's turns. Doing that, it has solved tic-tac-toe: if both players play perfectly, every game ends in a draw. So every one of X's wins needs a mistake by O somewhere.
 
 SHOW: A chessboard. Three written-out numbers as digit strips: "tic-tac-toe: 255,168 (6 digits)",
 "atoms in the observable universe: about 1 followed by 80 zeros", "chess: at least 1 followed by

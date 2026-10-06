@@ -191,7 +191,7 @@ def big_number(n: int, size: float = 96, color: str = COUNT_COLOR):
 # ------------------------------------------------------------------ explore() on screen (S06, S07)
 EXPLORE_FIRST, EXPLORE_LAST = 23, 35        # explore() in assets/play_all_games.py (1-based, inclusive)
 EXPLORE_SOURCE = program_lines(EXPLORE_FIRST, EXPLORE_LAST)
-EXPLORE_WIDTH = 8.0                         # same size in S06 and S07, so strike-throughs land on known lines
+EXPLORE_WIDTH = 9.0                         # same size in S06 and S07, so strike-throughs land on known lines
 
 
 def explore_code() -> Code:
@@ -205,7 +205,7 @@ def explore_code() -> Code:
       4     return 1                  9         next_player = ...
     """
     c = code_block(EXPLORE_SOURCE, font_size=24, width=EXPLORE_WIDTH)
-    return c.to_edge(LEFT, buff=0.35)
+    return c.to_edge(LEFT, buff=0.5)          # x from -6.6 to 2.4
 
 
 def code_line(code: Code, k: int):

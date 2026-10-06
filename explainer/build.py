@@ -148,13 +148,46 @@ def fmt_chapter(t: float) -> str:
     return f"{t // 3600}:{t % 3600 // 60:02d}:{t % 60:02d}" if t >= 3600 else f"{t // 60:02d}:{t % 60:02d}"
 
 
+def _fits(text: str, width: int, lines: int) -> bool:
+    return len(textwrap.wrap(text, width)) <= lines
+
+
+def _split_sentence(sent: str, width: int, lines: int) -> list[str]:
+    """Split one sentence into the fewest balanced pieces that each fit in `lines` lines, cutting
+    at a clause boundary (", ", ": ", "; ") near each ideal cut point when there is one, else at a
+    space. Avoids a 1-2 word tail on its own cue."""
+    import re
+
+    sent = " ".join(sent.split())
+    if _fits(sent, width, lines):
+        return [sent]
+    clause = [m.end() for m in re.finditer(r"[,:;]\s", sent)]
+    spaces = [m.end() for m in re.finditer(r"\s", sent)]
+    for k in range(2, 12):
+        cuts, prev = [], 0
+        for j in range(1, k):
+            ideal = len(sent) * j / k
+            near = [c for c in clause if prev < c and abs(c - ideal) <= len(sent) / (2.5 * k)]
+            pool = near or [c for c in spaces if prev < c]
+            if not pool:
+                break
+            cut = min(pool, key=lambda c: abs(c - ideal))
+            cuts.append(cut)
+            prev = cut
+        pieces = [sent[a:b].strip() for a, b in zip([0, *cuts], [*cuts, len(sent)])]
+        if all(p and _fits(p, width, lines) for p in pieces):
+            return pieces
+    return [" ".join(w) for w in [textwrap.wrap(sent, width)]]
+
+
 def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2,
-               marks: list | None = None):
+               marks: list | None = None, min_dur: float = 1.0):
     """Break one narration clip into readable cues (<= 2 lines each), never across sentences.
 
     With `marks` ((char offset, seconds) of each sentence start, from the voice clip), every
     sentence's cues sit exactly where that sentence is spoken; without them, the whole clip is
-    timed proportionally to characters. Inside a sentence, cues are timed by characters."""
+    timed proportionally to characters. Inside a sentence, cues are timed by characters. Cues
+    shorter than `min_dur` are merged with a neighbour when the result still fits."""
     from .voice import SENTENCE_GAP, split_sentences
 
     sentences = split_sentences(text) or [(0, text)]
@@ -171,15 +204,30 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
             t += dt
     cues = []
     for (a, b), (_, sent) in zip(spans, sentences):
-        wrapped = textwrap.wrap(sent.strip(), width)
-        chunks = [" ".join(wrapped[i:i + lines]) for i in range(0, len(wrapped), lines)]
-        total = sum(len(c) for c in chunks) or 1
+        pieces = _split_sentence(sent, width, lines)
+        total = sum(len(c) for c in pieces) or 1
         t = a
-        for c in chunks:
+        for c in pieces:
             dt = max(0.0, b - a) * len(c) / total
-            cues.append((t, t + dt, "\n".join(textwrap.wrap(c, width))))
+            cues.append([t, t + dt, c])
             t += dt
-    return cues
+    merged = True
+    while merged:                       # fold too-short cues into a neighbour when the text fits
+        merged = False
+        for i, (a, b, c) in enumerate(cues):
+            if b - a >= min_dur or len(cues) == 1:
+                continue
+            for j in (i - 1, i + 1) if i > 0 else (i + 1,):
+                if 0 <= j < len(cues):
+                    lo, hi = min(i, j), max(i, j)
+                    joined = cues[lo][2] + " " + cues[hi][2]
+                    if _fits(joined, width, lines):
+                        cues[lo:hi + 1] = [[cues[lo][0], cues[hi][1], joined]]
+                        merged = True
+                        break
+            if merged:
+                break
+    return [(a, b, "\n".join(textwrap.wrap(c, width))) for a, b, c in cues]
 
 
 def main(argv=None):
