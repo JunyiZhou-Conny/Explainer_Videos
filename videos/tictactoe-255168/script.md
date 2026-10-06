@@ -158,9 +158,10 @@ SHOW: The two stopping lines are highlighted in turn. Beside them: a won board �
 a full board with no line (GREY) → "1 game (a draw)".
 SAY: It starts with two stopping rules. If someone has already won, that's one finished game, so explore hands back the number 1. If the board is full with no winner, that's a draw, also one finished game.
 
-SHOW: The for-loop lines are highlighted. On a board, the empty squares blink; the player's mark
-drops into one; an arrow leads to a smaller board labelled "explore: how many games from here?";
-"total +=" collects the answers in a GREEN counter.
+SHOW: The for-loop lines are highlighted, with side labels "← try each empty square" and "← count
+games from here". On a board (X to move, 3 empty squares), the empty squares blink; X's mark drops
+into each in turn; arrows lead to 3 smaller boards (O to move) whose "?" become their answers 2, 1, 2;
+"total +=" collects the answers in a GREEN counter: 0 → 2 → 3 → 5.
 SAY: Otherwise, the game isn't over yet. So explore tries every empty square. It puts the player's mark there, and then asks itself the same question, now for the other player: how many games can happen from here? It adds up all the answers.
 
 SHOW: Zoom into the first child of the loop beat (the one whose answer is 2): board X · · / X X O /

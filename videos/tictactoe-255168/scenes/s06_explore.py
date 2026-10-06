@@ -60,7 +60,7 @@ B3_ANS = [2, 1, 2]
 B4 = "X..XXOOXO"          # = B3's first child (X on 0), O to move; explore gives 2
 B4_WIN = 2                # O on 2 (top-right) wins with the 2-5-8 column
 B4_TRY, B4_FILL = 1, 2    # O on 1 (top-middle), then X fills 2: full board, no line: a draw
-KID_S, KID_Y, KID_X = 0.9, 1.15, (2.65, 4.3, 5.95)     # beat 3: the three children of B3
+KID_S, KID_Y, KID_X = 0.9, 1.22, (2.65, 4.3, 5.95)     # beat 3: the three children of B3
 WORK_C, WORK_S = np.array([0, 2.35, 0]), 2.0           # beat 4: the working board
 PATH = [(0, "X"), (1, "O"), (2, "X"), (3, "O"), (4, "X"), (5, "O"), (6, "X")]   # explore's 1st game
 NEXT1 = [(7, "X"), (6, "O"), (8, "X")]     # after undoing X6: the 2nd game explore finds
@@ -179,8 +179,8 @@ def token_box(m, color: str = WIN_COLOR) -> SurroundingRectangle:
     return SurroundingRectangle(m, color=color, buff=0.045, stroke_width=2.5, corner_radius=0.04)
 
 
-def at_char(t: Text, s: str, ch: str) -> int:
-    """Glyph index of character `ch` in Text t made from string s (glyphs skip spaces)."""
+def at_char(s: str, ch: str) -> int:
+    """Glyph index of character `ch` in a Text made from string s (glyphs skip spaces)."""
     return s.replace(" ", "").index(ch)
 
 
@@ -407,7 +407,7 @@ class Explore(VoiceScene):
         s_won, s_draw = "someone won? → 1", "board full? → 1 (a draw)"
         tag_won = line_tag(code, 1, s_won, dy=-0.02, t2c={"1": COUNT_COLOR})
         tag_draw = line_tag(code, 3, s_draw, dy=-0.16, t2c={"1": COUNT_COLOR, "(a draw)": DRAW_COLOR})
-        aw, ad = at_char(tag_won, "← " + s_won, "→"), at_char(tag_draw, "← " + s_draw, "→")
+        aw, ad = at_char("← " + s_won, "→"), at_char("← " + s_draw, "→")
         won = snap(B2_WON, 1.8, [2.65, -1.3, 0], stroke=5, line=(0, 8))
         draw = snap(B2_DRAW, 1.8, [5.1, -1.3, 0], stroke=5)
         lab_won = S.text("1 game", 28, COUNT_COLOR).next_to(won, DOWN, buff=0.3)
@@ -447,7 +447,7 @@ class Explore(VoiceScene):
         code = self.code
         # the tree sits ABOVE the side labels (which are level with lines 6-7 and 10); the GREEN
         # counter sits below them
-        parent = snap(B3, 1.2, [4.3, 2.9, 0], stroke=4)
+        parent = snap(B3, 1.2, [4.3, 2.95, 0], stroke=4)
         cap = to_move("X", 30).next_to(parent, LEFT, buff=0.45)
         slots = [np.array([x, KID_Y, 0]) for x in KID_X]
         total_lab = S.text("total =", 32, S.WHITE, font=MONO)
@@ -504,7 +504,7 @@ class Explore(VoiceScene):
             q1 = try_square(1, rt=0.75)
             self.play(FadeIn(q1, scale=0.5), run_time=0.25)
             vo.wait_until("now for the other player")
-            o_tag = to_move("O", 24).move_to([2.15, 1.98, 0])      # beside the row of children
+            o_tag = to_move("O", 24).move_to([2.15, 2.03, 0])      # beside the row of children
             self.play(FadeIn(o_tag, shift=DOWN * 0.1), Indicate(code_line(code, 9), color=O_COLOR,
                                                                 scale_factor=1.03), run_time=0.6)
             q2 = try_square(2, rt=0.75)
@@ -647,9 +647,10 @@ class Explore(VoiceScene):
             outgoing = [snap_l, snap_r, snap_g, arr_l, arr_r, arr_g, tag_l, tag_g,
                         VGroup(*total[:4], *total[5:])]
             incoming = [parent2, cap2, *kids2[1:], *arrows2, *ans2[1:]]
+            gone_early = lambda t: smooth(min(1.0, t / 0.6))      # out of the way of the incoming
             self.play(ReplacementTransform(work_grp, kids2[0]), ReplacementTransform(total[4], ans2[0]),
                       cap.animate.move_to(cap_to),
-                      *[cam_out(m, WORK_C, c0, k_out) for m in outgoing],
+                      *[cam_out(m, WORK_C, c0, k_out, rate_func=gone_early) for m in outgoing],
                       *[cam_in(m, c0, WORK_C, 1 / k_out) for m in incoming], run_time=1.4)
 
             vo.wait_until("2 plus 1")
