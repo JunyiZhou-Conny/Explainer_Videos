@@ -174,6 +174,16 @@ _CLAUSE_VERBS = {"prove", "proves", "proved", "show", "shows", "showed", "say", 
                  "means", "meant", "know", "knows", "knew", "guarantees", "ensures", "implies", "suggests",
                  "argues", "claims", "notice", "notices", "realize", "realizes", "think", "thinks"}
 _NOUN_PREPS = {("distance", "from"), ("limit", "on"), ("limits", "on"), ("bound", "on"), ("cap", "on")}
+_VERB_PREPS = {(v, p) for p, vs in {"on": "depend depends depended depending rely relies relied relying",
+                                    "to": "lead leads led leading belong belongs refer refers referred apply applies",
+                                    "of": "consist consists consisted", "at": "look looks looked looking",
+                                    "with": "deal deals dealt", "in": "result results resulted"}.items()
+               for v in vs.split()}                       # a prepositional verb: "depends / on", "leads / to"
+_GREEK = r"(?:epsilon|lambda|sigma|delta|alpha|beta|mu)"
+_OPERAND = r"(?:(?:[b-zB-HJ-Z]|\d+(?:\.\d+)?)(?: %s)?|%s)(?: prime)?" % (_GREEK, _GREEK)
+_SPOKEN_MATH = re.compile(r"\b%s(?: (?:of|over|to the(?: minus)?|plus|minus|times|divided by) %s)+\b|\b[a-z]+ (?:over|divided"
+                          r" by) (?:%s|[b-zB-HJ-Z]|\d+)\b" % (_OPERAND, _OPERAND, _GREEK))   # "S of f over epsilon",
+                                                          # "e to the epsilon", "sensitivity over epsilon", "one over n"
 
 
 def _bare_clause(text: str, c: int) -> bool:
@@ -361,18 +371,25 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
     words = text[:c - 1].split()
     low, nxt = prev.lower(), text[c:].split(" ", 1)[0]
     word = nxt.rstrip(",.;:!?").lower()
-    content = (word.isalpha() and nxt[:1].islower()
+    content = (word.replace("-", "").isalpha() and nxt[:1].islower()          # (made-up)
                and word not in _FUNCTION_WORDS | _CLAUSE_STARTERS | _DETERMINERS | _PRONOUNS)
     short_clause = word in _AUXILIARIES and _SUBORDINATORS & {w.lower() for w in words[-4:-1]}
-    if low not in _FUNCTION_WORDS and ((word in _CLAUSE_STARTERS | _AUXILIARIES | _PREPOSITIONS - {"of", "per", "than"}
-                                        and not _list_and(text, c) and not short_clause) or _bare_clause(text, c)):
-        cost += 1.0                                       # before a clause, verb or phrase: "…table / and walking away"
-    else:                                                 # (not "if the true count / is 42")
-        cost += 6.0 if _list_and(text, c) else 4.0        # (the 'and' of a list: "birth date / and sex")
+    gerund = _gerund_subject(text, c)
+    main_verb = low in ("has", "have", "had") and (word in _DETERMINERS | _NUMBER_WORDS | {"at", "no", "more", "fewer"}
+                                                   or word[:1].isdigit())   # "chess has / at least 10…"
+    if (low not in _FUNCTION_WORDS or main_verb) and (
+            (word in _CLAUSE_STARTERS | _AUXILIARIES | _PREPOSITIONS - {"of", "per", "than"}
+             and not _list_and(text, c) and not short_clause and not _binomial(text, c))
+            or _bare_clause(text, c) or gerund):
+        cost += 1.0                                       # before a clause, verb or phrase: "…table / and walking away",
+                                                          # "because going first / gives X more chances"
+    else:                                                 # (not "if the true count / is 42"; the 'and' of a list:
+        cost += 8.0 if _binomial(text, c) else 6.0 if _list_and(text, c) else 4.0   # "birth date / and sex"; of two
+                                                          # bare nouns: "the mathematician / and engineer Claude Shannon")
     if (re.search(r", \S+ $", text[:c]) and re.match(r"\S+,? (?:and|or) ", text[c:])
             and _list_comma(text, text[:c].rstrip().rfind(",") + 1)):
         cost += 4.0                                       # inside a list item: "ZIP code, birth / date and sex"
-    if low in _FUNCTION_WORDS | _PRE_NOUN or (low in ("this", "these", "those") and content):
+    if (low in _FUNCTION_WORDS | _PRE_NOUN and not main_verb) or (low in ("this", "these", "those") and content):
         cost += 8.0                                       # "…the probability of any / event", "call those / made-up…"
     elif (len(words) > 1 and words[-2].lower() in _AUXILIARIES - {"is", "are", "was", "were", "be", "been", "being"}
           and (low in _ADVERBS or low.endswith("ly"))):
@@ -389,8 +406,11 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
         cost += 8.0                                       # names: "Kobbi / Nissim", "Nissim / and Adam"
     if _in_term(text, c) or (content and low in _ADJECTIVES and _in_term(text, c + len(nxt) + 1)):
         cost += 8.0                                       # a glossary term: "counting / query", "private / deep learning"
-    if (low, word) in _NOUN_PREPS:
-        cost += 3.0                                       # "its distance / from the true answer"
+    if (low, word) in _NOUN_PREPS:                       # "its distance / from the true answer", "the limit / on
+        bare = (text[c + len(nxt):].split() or [""])[0].lower() not in _SUBORDINATORS | {"what", "how", "why"}
+        cost += 6.0 if bare else 3.0                      # questions" (not "a surprising limit / on what…")
+    if (re.sub(r"(?:s|ed|ing|ies|ied)$", "", low), word) in _VERB_PREPS:
+        cost += 8.0                                       # a prepositional verb: "depends / on", "leads / to"
     if len(words) > 1 and words[-2].lower() in _PREPOSITIONS and (
             (words[-2].lower() == "to" and content) or (nxt[:1].islower() and not nxt.rstrip(",.;:!?").isalpha())):
         cost += 3.0                                       # one word into a phrase: "to measure / sensitivity",
@@ -399,7 +419,9 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
                                     if j > 0):
         cost += 6.0                                       # "the paper proves the first / is…": a garden path
     if word == "of":
-        cost += 2.0                                       # "an odd number / of ones"
+        after = (text[c + len(nxt):].split() or [""])[0].lower()
+        cost += 4.0 if after in _NUMBER_WORDS or after[:1].isdigit() else 2.0   # "an odd number / of ones",
+                                                          # "a ratio / of one half"
     if word in _PARTICLES | {"alone"} or (word in _PREPOSITIONS and nxt[-1:] in ",.;:!?"):
         cost += 6.0                                       # "single / out", "whatever / else", "going / in,",
                                                           # "ZIP code, birth date and sex / alone"
@@ -409,7 +431,8 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
                  if words[j].endswith(("'s", "’s"))), None)
     if poss is not None and content and all(_modifier(w) for w in words[poss + 1:]):
         cost += 6.0                                       # "Alice's / row", "curator's randomized answering / rule"
-    elif (content and len(words) > 1 and _modifier(prev)  # (not "any one person's row / changes")
+    elif (content and len(words) > 1 and _modifier(prev) and not gerund   # (not "any one person's row / changes",
+                                                          # "because going first / gives X")
           and (words[-2].lower() in _DETERMINERS | _PREPOSITIONS or _NUMBER.fullmatch(words[-2].lower())
                or _modifier(words[-2]) or words[-2].lower().endswith("ly"))):   # "supposedly anonymous /"
         cost += 8.0                                       # an adjective and its noun: "its published / tables",
@@ -417,6 +440,9 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
     verbal = word in _AUXILIARIES | _CLAUSE_STARTERS | _PREPOSITIONS and word not in ("of", "to", "and", "or")
     if b.isdigit() or word in _NUMBER_WORDS or (prev[-1:].isdigit() and not verbal):
         cost += 4.0                                       # "on move / 6", "9 times / 8", "at most / one"
+        if re.search(r"\b(?:at least|at most|more than|fewer than|less than|about|only|nearly|almost|roughly|exactly)$",
+                     " ".join(words[-2:]).lower()):
+            cost += 4.0                                   # a number and its quantifier: "at least / two thirds"
     if _NUMBER.fullmatch(low) and (content or re.match(r"(and|or) (a |\d|(%s)\b)" % "|".join(_NUMBER_WORDS),
                                                        text[c:])):   # (not "8 or 9 / have")
         cost += 8.0                                       # "at most one / empty square", "fifty-two / and a half"
@@ -426,6 +452,8 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
         cost += 8.0                                       # "as soon / as", "as long / as"
     if any(m.start() < c - 1 < m.end() for m in re.finditer(r"\S+ to the power of \S+", text)):
         cost += 8.0                                       # "10 to the power / of 120"
+    elif any(m.start() < c - 1 < m.end() for m in _SPOKEN_MATH.finditer(text)):
+        cost += 8.0                                       # spoken math: "S of f / over epsilon", "e / to the epsilon"
     elif "-" in prev.strip("-") and prev.islower() and content:
         cost += 4.0                                       # "the two-question / version"
     return cost
@@ -437,9 +465,15 @@ _OPERATORS = set("=+−-×·<>≤≥≈")
 
 def _short_gloss(after: str) -> bool:
     """`after` starts with a short explanation of the term before the comma: 意思是“赢家”, 也就是 1,
-    也就是每条边正中间的那一格 (not a whole clause: 也就是改变一条记录最多能让答案变化多少)."""
-    gloss = re.match(r"(?:意思是|也就是|就是说|即)[^，。！？；：]*(?=[，、])", after)   # not the end of the
-    return bool(gloss) and units(gloss.group()) <= 14             # sentence: "乘 1，/ 也就是 24 种不同的顺序。"
+    也就是每条边正中间的那一格, explore 就是“探索”的意思 (not a whole clause: 也就是改变一条记录最多能让答案
+    变化多少)."""
+    gloss = (re.match(r"(?:意思是|也就是|就是说|即)[^，。！？；：]*(?=[，、])", after)   # not the end of the
+             or _QUOTE_GLOSS.match(after))                                # sentence: "乘 1，/ 也就是 24 种不同的顺序。"
+    return bool(gloss) and units(gloss.group()) <= 14
+
+
+# the term restated with its meaning: "一个叫 explore 的函数，explore 就是“探索”的意思"
+_QUOTE_GLOSS = re.compile(r"[A-Za-z][\w']*\s*(?:就是|的意思是)“[^”]*”(?:的意思)?(?=[，、。！？]|$)")
 
 
 def _number_appositive(rest: str) -> bool:
@@ -492,10 +526,17 @@ def _mark_cost(text: str, c: int) -> float:
         if re.search(r"一(.)接一\1$|一(.)一\2$", clause):
             return 10.0             # a manner adverbial and its verb: "再让它一局接一局，/ 把所有可能的对局都下一遍"
         if (re.match(r"[就才便]", text[c:].lstrip())
-                and re.search(r"光凭|凭|只要|只有|一旦|如果|要是|假如", re.split(r"[。！？；：]", head)[-1])):
-            return 8.0              # a condition and its result: "光凭邮编、出生日期和性别，/ 就能唯一识别……"
+                and re.search(r"光凭|凭|只要|只有|一旦|如果|要是|假如|到了|等到|直到|先.*再",
+                              re.split(r"[。！？；：]", head)[-1])):
+            return 8.0              # a condition and its result: "光凭邮编、出生日期和性别，/ 就能唯一识别……",
+                                    # "所以到了第 5 步，/ 才可能有人凑齐三个棋子", "先试走一步，往下探索，再撤销，/ 就把……"
         if any(m.start() < len(head) < m.end() for m in re.finditer(r"先[^。！？；]*?再[^，。！？；]*", text)):
-            return 6.0              # inside a 先……再…… sequence, like a list: "先试走一步，/ 往下探索，再撤销"
+            return 8.0              # inside a 先……再…… sequence, like a list: "先试走一步，/ 往下探索，再撤销"
+        clauses = re.split(r"[，。！？；：]", head[:-1])
+        if len(clauses) > 1 and _short_gloss(clauses[-1] + "，"):
+            clauses.pop()           # (past its gloss: "比起她自己的贡献，也就是 1，/ 算是很大")
+        if re.match(r"比起|相比|相较", clauses[-1]) or re.search(r"(?:和|与|跟|同).*相比$", clauses[-1]):
+            return 8.0              # a comparison and its predicate: "比起她自己的贡献，也就是 1，/ 算是很大"
         nxt_clause = re.match(r"(?:又|也|还|而且|并且|所以|却|但)[^，。！？；：、]*(?=，)", text[c:].lstrip())
         if nxt_clause and units(nxt_clause.group()) <= 6:
             return 8.0              # a short clause that continues this one: "想对各种问题都答得准，/ 又要强隐私，",
@@ -530,6 +571,48 @@ def _pick_cuts(text: str, k: int, pool_of, total: float, lines: bool = False, cu
 # / and in 1997 she linked … / and found the governor")
 _CLAUSE_WORDS = {"and", "but", "or", "so", "yet", "which", "who", "whose", "what", "where", "when", "while",
                  "because", "then", "unless", "until", "if", "although", "though", "whereas", "whether"}
+
+
+def _binomial(text: str, c: int) -> bool:
+    """At c, an and / or that joins two bare nouns or adjectives: "the mathematician / and engineer
+    Claude Shannon", "statisticians / and computer scientists", "explicit / and measurable" (not a
+    clause or a verb phrase: "…table / and walking away", "…voter list / and found the governor",
+    "…at random / and publish it"; the 'and' of a longer list is _list_and)."""
+    prev = (text[:c].split() or [""])[-1]
+    m = re.match(r"(?:and|or) ([a-z][a-z-]*)([,.;:!?]?)(?: ([\w'’-]+))?", text[c:])
+    if (not m or not prev.isalpha() or not prev.islower() or prev.endswith("ly")
+            or prev in _FUNCTION_WORDS | _ADVERBS | _PARTICLES | {"again"}):
+        return False
+    y1, punct, y2 = m.group(1), m.group(2), m.group(3) or ""
+    if (y1 in _FUNCTION_WORDS | _DETERMINERS | _PRONOUNS | _ADVERBS | _CLAUSE_STARTERS | _NUMBER_WORDS
+            or y1.endswith(("ing", "ed")) or _list_and(text, c)):
+        return False
+    return bool(punct) or not y2 or not (
+        y2.lower() in _FUNCTION_WORDS | _DETERMINERS | _PRONOUNS | _ADVERBS | {"yes", "no", "them", "him", "us", "me"}
+        or y2[:1].isdigit() or y2.lower() in _NUMBER_WORDS)
+
+
+_GERUND = re.compile(r"(?:^|\b(?:%s) )([A-Za-z]+ing)((?: [\w'’/^-]+){1,6}) $" % "|".join(
+    sorted(_CLAUSE_VERBS | {"because", "that", "if", "when", "since", "while", "although", "though", "so"},
+           key=len, reverse=True)))
+
+
+def _gerund_subject(text: str, c: int) -> bool:
+    """At c, the verb after a gerund subject, which a break may separate: "because going first / gives
+    X more chances to win", "privacy means changing any one person's row / changes the probability…",
+    "Multiplying the choices / gives nine factorial" (not a participle after a comma: ", filling the
+    squares in order")."""
+    m = _GERUND.search(text[:c])
+    if not m or m.group(1).lower() in _NOT_MODIFIERS:
+        return False
+    if any(w.lower() in _AUXILIARIES | _CLAUSE_STARTERS for w in m.group(2).split()):
+        return False
+    rest = text[c:].split()[:2]
+    if len(rest) < 2:
+        return False
+    verb, obj = rest
+    return (bool(re.fullmatch(r"[a-z]+(?:[^s']s|ed)", verb)) and verb not in _FUNCTION_WORDS
+            and (obj.lower() in _DETERMINERS | _NUMBER_WORDS or obj[:1].isupper() or obj[:1].isdigit()))
 
 
 def _list_and(text: str, c: int) -> bool:
@@ -1030,7 +1113,10 @@ def _split_like(e: str, zp: list[str], limit: float) -> tuple[list[str], bool]:
     if k == 1:
         return [e], False
     zu = [units(re.sub(r"（[^（）]*）", "", strip_end(p))) for p in zp]   # the glosses have no English,
-                                                                        # the closing ，nothing on screen
+                                                                        # the closing ，nothing on screen,
+    if not re.search(r"\bmean(?:s|ing)?\b", e):                         # nor a restated term ("explore
+        zu = [max(1.0, u - sum(units(m.group()) for m in _QUOTE_GLOSS.finditer(p)))   # 就是“探索”的意思"
+              for u, p in zip(zu, zp)]                                  # under "…called explore.")
     share = [u / (sum(zu) or 1) * units(e) for u in zu]      # how long each piece would be ...
     targets = [sum(share[:j]) for j in range(1, k)]          # ... and where it would end
     good, _ = _cuts(e)
@@ -1135,8 +1221,8 @@ def _split_like(e: str, zp: list[str], limit: float) -> tuple[list[str], bool]:
             pool = [x for x in good if prev < x < upper]
             if not pool:
                 break
-            c = min(pool, key=lambda x: (mismatch(x, prev, j),
-                                         abs(units(e[:x]) - targets[j]) + _cut_penalty(e, x)))
+            c = min(pool, key=lambda x: (mismatch(x, prev, j),   # (as a cue end: "…person's row // changes
+                                         abs(units(e[:x]) - targets[j]) + _cue_cost(e, x)))   # the…", not "…changes // the")
         cuts.append(c)
         prev = c
     pieces = pieces_of(cuts)
@@ -1171,7 +1257,8 @@ def _cue_cost(text: str, c: int) -> float:
         q += 4.0                                          # (a line break there costs 2)
     if _mark_cost(text, c) >= 10 or _list_and(text, c):
         q += 6.0                                          # inside a list: "Frank McSherry, // Kobbi Nissim"
-    return q + (20.0 if prev in _ENDERS else 0.0)
+    pronoun = prev in ("this", "that", "these", "those") and nxt in _AUXILIARIES   # "…like this // is the L1 norm"
+    return q + (20.0 if prev in _ENDERS and not pronoun else 0.0)
 
 
 def _clean_break(text: str, c: int) -> bool:
@@ -1183,7 +1270,8 @@ def _clean_break(text: str, c: int) -> bool:
     if prev[-1:] in ",;:.!?—":
         return _mark_cost(text, c) < 10
     return ((nxt in _CLAUSE_WORDS - {"then", "so"} or _that_clause(text, c) or _bare_clause(text, c))
-            and prev.lower() not in _FUNCTION_WORDS and not _list_and(text, c) and _cut_penalty(text, c) <= 4)
+            and prev.lower() not in _FUNCTION_WORDS and not _list_and(text, c) and not _binomial(text, c)
+            and _cut_penalty(text, c) <= 4)
 
 
 def _rewrap(text: str, limit: float, accept, min_line: float = 0.0, weight: float = 1.0) -> list[str] | None:
@@ -1219,10 +1307,11 @@ def wrap_en(text: str, limit: float) -> tuple[str, ...]:
         c = len(text) - len(text[len(ls[0]):].lstrip())
     q = _break_cost(text, c)
 
-    def better(x):                                        # before a clause, or much cheaper
-        nxt = (text[x:].split() or [""])[0]
-        return _break_cost(text, x) <= q - 3 and (q >= 10 or nxt in _SUBORDINATORS | {"what", "how", "why"}
-                                                  or _bare_clause(text, x))
+    def better(x):                                        # before a clause, or much cheaper (before a
+        nxt = (text[x:].split() or [""])[0]               # preposition: "track the budget / over thousands…")
+        q2 = _break_cost(text, x)
+        return q2 <= q - 3 and (q >= 10 or nxt in _SUBORDINATORS | {"what", "how", "why"} or _bare_clause(text, x)
+                                or (nxt in _PREPOSITIONS and q2 <= q - 5))
     if q >= 7:
         ls = _rewrap(text, limit, better, limit / 5, 0.25) or ls
     return tuple(ls)
