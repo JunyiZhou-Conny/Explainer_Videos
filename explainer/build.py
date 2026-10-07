@@ -419,6 +419,11 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         for code in langs:
             translations[code] = narration(code, project)
 
+    own_table = {}                             # translated build: the spoken forms (subtitle timing)
+    if lang != "en" and project is not None:
+        from .i18n import narration
+        own_table = narration(lang, project)
+
     srt, chapters, transcript, offset = [], [], [f"# {title}\n"], 0.0
     pairs: dict[str, list] = {code: [] for code in translations}
     own_pairs = []
@@ -430,7 +435,7 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         for cue in _clips_with_marks(movie.with_suffix(".subs.json"), ctx.get("env")):
             if cue.get("tr"):
                 transcript.append("".join(cue["tr"]) + "\n> " + cue["text"] + "\n\n")
-                own_pairs += subs.sentence_pairs(cue, offset)
+                own_pairs += subs.sentence_pairs(cue, offset, own_table.get(" ".join(cue["text"].split())))
             else:
                 transcript.append(cue["text"] + "\n")
                 srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"],
@@ -458,7 +463,7 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
             f"{n}\n{fmt_srt(a)} --> {fmt_srt(b)}\n{t}\n\n" for n, (a, b, t) in enumerate(srt, 1)))
         made.append(".srt")
         for code, prs in pairs.items():
-            if not any(t for _, _, t, _ in prs):
+            if not any(p[2] for p in prs):
                 continue
             tr_ = subs.tracks(prs, timing="en")
             subs.write_srt(Path(f"{stem}.{code}.srt"), tr_["zh"])

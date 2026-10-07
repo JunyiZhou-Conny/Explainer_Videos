@@ -81,14 +81,29 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
 - Each sentence is cut into its own cues (no cue runs from the middle of one sentence into the
   next). A cue shorter than 1 s is then merged into the neighbouring cue when they are contiguous
   and the result fits, even across a sentence boundary, and the sentence punctuation stays inside
-  it (不是。电脑能做的……). Only the end of a Chinese cue loses its 。，、；：.
-- Lines break at punctuation whenever the pieces fit; otherwise at the cheapest gap. The costs
-  steer English away from ending a line on an article, preposition or other function word or next
-  to a number, and Chinese away from ending a line on a preposition (从, 把, 在 …), starting one with
-  a particle (的, 了 …) or breaking inside a word (jieba). They are costs, not absolute rules.
-- In the bilingual band the English sentence is cut where the Chinese one is, at the matching
-  clause; if none is close and it fits on one line, the whole sentence stays up under each piece.
-- Sidecar cues have at most 2 lines; short cues stay up 1.6 s when the next one leaves room.
+  it (不是。电脑能做的……). Only the end of a Chinese cue loses its 。，、；： (so that mark does not
+  count against the line width either).
+- Lines break at punctuation whenever the pieces fit, preferring the stronger mark (；：。 over ，,
+  and ， over 、, which splits a list) and never leaving a scrap of a few characters at a comma
+  (2016 年，/ …); otherwise at the cheapest gap. The costs steer English away from ending a line on
+  an article, preposition, auxiliary or possessive, splitting a name (Kobbi / Nissim) or a phrasal
+  verb (single / out), and Chinese away from ending a line on a preposition (从, 把, 在 …), a 的 or
+  a negation, a demonstrative (这些 / query), starting one with a particle (的, 了 …) or a
+  postposition (以内, 之间 …), breaking inside a word (jieba, with the glossary terms registered) or
+  inside “…” and （…）, cutting off a gloss from its term (hybrid argument（混合论证）, 隐私预算，privacy
+  budget), and cutting inside a 《…》 title rather than before it. They are costs, not absolute rules.
+- In the bilingual band (Chinese line ≤ 30 units, a whole 《…》 title ≤ 35; English line ≤ 96
+  characters, ≤ 110 for a clause piece — burned at 1080p a 110-character line is about 1170 px of
+  the 1840 px line) the English sentence is cut where the Chinese one is: at the nearest clause
+  stop that keeps the numbers and symbols on the same side as the Chinese (41 / 42, 1/n, e^ε), not
+  at a comma inside a list of names or adjectives, else at a plain gap before a preposition or
+  conjunction right at the cut; if there is none and it fits on one line, the whole sentence stays
+  up under each piece.
+- Inside a sentence the Chinese cues are timed by the spoken form (say:, recorded in
+  <scene>.subs.json as `tr_say`), so 二零一六年, E 的艾普西隆次方 and a gloss that is not read move
+  the cue switches to where the voice is.
+- Sidecar cues have at most 2 lines (22 units per Chinese line, 48 characters per English line);
+  short cues stay up 1.6 s when the next one leaves room. Regression tests: tests/test_subtitles.py.
 
 ## Lessons from the Chinese versions
 

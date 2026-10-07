@@ -100,6 +100,8 @@ class VoiceScene(Scene):
                         "tr_spans": [[round(a, 3), round(b, 3)] for a, b in clip.spans]})
             if any(clip.en_display):
                 sub["en_display"] = clip.en_display
+            if line.spoken != line.sentences:   # what the voice read (say:): times the subtitles
+                sub["tr_say"] = line.spoken
         self._subs.append(sub)
 
     def tear_down(self):  # Manim >= 0.19 (older versions call tearDown)
