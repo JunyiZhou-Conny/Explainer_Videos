@@ -1,0 +1,25 @@
+id: how-these-videos-are-made
+title: "How these explainer videos are made: one human, one AI agent, and a lot of measuring"
+papers: []                     # not a paper: a behind-the-scenes look at this repo's own pipeline
+audience: "curious viewers of the other videos; no Manim, programming or machine-learning background assumed"
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+# Values that change while the session runs. The scenes read them from here (scenes/common.py);
+# the narration never speaks them, so updating them changes no SAY line. Editing this file marks
+# every scene stale: update once, right before the final render (ASSETS.md A40, A11).
+live:
+  cost_usd: 1435.16            # last `cost-state` record of the session transcript when script v1 was written
+  cost_label: "API list-price equivalent for the whole session · all four requests, not the cost of one video"
+  snapshot: "2026-10-07"
+  commits_cutoff: bb3fc1e      # assets/commits.csv is frozen at this commit (98 commits)
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,           title: "Made by something that can't watch it"}
+  - {file: scenes/s02_ask.py,        cls: TheAsk,         title: "What the user asked for"}
+  - {file: scenes/s03_team.py,       cls: Team,           title: "Who did what"}
+  - {file: scenes/s04_script.py,     cls: ScriptIsCode,   title: "A script that is code"}
+  - {file: scenes/s05_clock.py,      cls: AudioClock,     title: "The audio is the clock"}
+  - {file: scenes/s06_watch.py,      cls: Watching,       title: "Checking without eyes or ears"}
+  - {file: scenes/s07_reviewers.py,  cls: Reviewers,      title: "Reviewers who pretend"}
+  - {file: scenes/s08_language.py,   cls: SecondLanguage, title: "Same video, second language"}
+  - {file: scenes/s09_machinery.py,  cls: Machinery,      title: "Bugs in the machinery"}
+  - {file: scenes/s10_next.py,       cls: WhatNext,       title: "What to improve next"}
+  - {file: scenes/s11_recipe.py,     cls: Recipe,         title: "A recipe, and a request"}
