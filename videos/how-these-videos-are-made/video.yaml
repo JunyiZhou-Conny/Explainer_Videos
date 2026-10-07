@@ -7,10 +7,12 @@ voice: {backend: kokoro, voice: af_heart, speed: 0.95}
 # the narration never speaks them, so updating them changes no SAY line. Editing this file marks
 # every scene stale: update once, right before the final render (ASSETS.md A40, A11).
 live:
-  cost_usd: 1435.16            # last `cost-state` record of the session transcript when script v1 was written
+  cost_usd: 1507.47            # last `cost-state` record of the session transcript when script v2 was written (repo at 60258b4)
   cost_label: "API list-price equivalent for the whole session · all four requests, not the cost of one video"
+  # cost_label is the user's binding wording; s03 renders it as is, split into two lines at " · ".
+  # If a fifth request arrives before the final render, ask the user before changing "all four requests".
   snapshot: "2026-10-07"
-  commits_cutoff: bb3fc1e      # assets/commits.csv is frozen at this commit (98 commits)
+  commits_cutoff: bb3fc1e      # assets/commits.csv is frozen at this commit (98 commits); 101 at 60258b4 (99 agent, 2 user)
 scenes:
   - {file: scenes/s01_hook.py,       cls: Hook,           title: "Made by something that can't watch it"}
   - {file: scenes/s02_ask.py,        cls: TheAsk,         title: "What the user asked for"}

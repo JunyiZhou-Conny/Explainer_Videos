@@ -14,7 +14,10 @@ Rules
   current state (after every fix). No pre-fix render survives, so every "before" picture is either
   a git text artefact, the A03 re-render, or a labelled reconstruction.
 - Line numbers are pinned to commit `bb3fc1e` (the fact-sheet snapshot) with `git show`, so they
-  stay valid while other sessions edit the working tree.
+  stay valid while other sessions edit the working tree. Frames of finished videos are pinned to
+  the commit that holds the mp4 (A04: `68d6c23`), because `output/` may be re-burned later.
+- Revised for script v2 (2026-10-07, repo at `60258b4`): A03, A04, A06, A09, A10, A14, A20, A28,
+  A31, A32, A38, A40, A41, A42 changed; A44 added; A29 is no longer used (optional cut-in).
 - Marks: **V** = re-checked against the repo, git, run records or the transcript; **N** = from the
   research notes, not re-checked (re-check before rendering if it is shown as a number).
 
@@ -41,8 +44,8 @@ cd $R
 |---|---|---|---|---|
 | A01 | S01, S06 | contact sheet of tic-tac-toe S03 (+ the 23.0 s tile) | REAL image | `ttt_s03_sheet_01.png`, `ttt_s03_tile_23s.png` |
 | A02 | S06, S07 | 4 frames 0.2 s apart, ghost shuffle moving | REAL frames | `ttt_s03_moving_19.6.png` … `_20.2.png` |
-| A03 | S01, S07 | the "12" tally and the frozen shuffle, before the fix | re-render of `8a922bf` (optional) or RECON | `old_s03_tally_12.png`, `old_s03_frozen_*.png` |
-| A04 | S08 | Chinese tic-tac-toe final at 11:43, fixed subtitle | REAL frame | `ttt_zh_1143.png` |
+| A03 | S01, S07 | the "12" tally and the frozen shuffle, before the fix (draft only) | re-render of `8a922bf` (optional) or RECON | `old_s03_tally_12.png`, `old_s03_frozen_*.png` |
+| A04 | S08 (base of the RECON), S09 | Chinese tic-tac-toe final at 11:43, fixed subtitle | REAL frame (mp4 from git `68d6c23`) | `ttt_zh_1143.png` |
 | A05 | S02 | Karpathy line, as quoted | REAL text | (text in the scene) |
 | A06, A06b, A06c | S02, S08, S11 | the user's words (3 requests) | REAL text, lightly cleaned | `quotes.yaml` |
 | A07 | S02 | privacy video at 2:30, lineage timeline | REAL frame | `dp_0230.png` |
@@ -67,8 +70,8 @@ cd $R
 | A26 | S07 | `moves_to()` after the fix | REAL code | (text) |
 | A27 | S08 | aligned narration entry + anchors | REAL text | `ttt_zh_g1_entry.yaml` |
 | A28 | S08 | voice bake-off results | REAL text / DATA | (text) |
-| A29 | S08 | glossary rows 行 → 记录, bin → 桶 | REAL text | (text) |
-| A30 | S08 | the Chinese subtitle cue, before and after | REAL text (+ RECON frame) | (text) |
+| A29 | (not used in v2) | glossary rows 行 → 记录, bin → 桶 | REAL text | (text) |
+| A30 | S08 | the Chinese subtitle cue, before (RECON frame) and after | REAL text (+ RECON frame) | (text) |
 | A31 | S09 | voice stamp of a Chinese render | REAL text | `ttt_zh_s03_voice.json` |
 | A32 | S09 | Chinese privacy QA: 103 → 75 → 12 | DATA | (numbers) |
 | A33 | S10 | Laplace Mechanism Playground screenshot | REAL screenshot | `dp_playground.png` |
@@ -79,8 +82,9 @@ cd $R
 | A38 | S07 | Dev → Dan, budget bar drawn five ways | REAL text | (text) |
 | A40 | S03 | session cost counter (live value) | DATA | → `video.yaml` `live.cost_usd` |
 | A41 | S04 | misfiled DCAN PDF | REAL text | (text) |
-| A42 | S07 | QA prompt line "You cannot hear the audio." | REAL text | (text) |
+| A42 | S07 | round-1 QA prompt line (English, simulated kid): "… that is the video." | REAL text | (text) |
 | A43 | S04 | false start: builder runs started / killed | DATA (V) | (times) |
+| A44 | S09 | privacy newcomer review: "The renders are older than the source." | REAL text | (text) |
 
 ---
 
@@ -93,7 +97,9 @@ cp $TTT/build/sheets/s03_stop_GamesStop/sheet_01.png $A/ttt_s03_sheet_01.png    
 ffmpeg -v error -y -i $A/ttt_s03_sheet_01.png -vf crop=480:270:1464:558 $A/ttt_s03_tile_23s.png
 ```
 - The 23.0 s tile shows the fixed layout: "4 × 3 × 2 × 1" on the formula line, "ghost endings
-  counted: 19" under the board. Tiles 18.9–23.0 s all show the tally under the board.
+  counted: 19" under the board. Tiles 18.9–23.0 s all show the tally under the board. In S01 the
+  tally gets a GREY gloss arrow, "a running count, now under the board", so 19 doesn't read as
+  another bug.
 - **Do not use the 25.0 s tile**: it catches a second "24" mid-flight. That is an intended
   `TransformFromCopy` to the "counted 24 times" label, not the bug.
 - If the sheet is gone, rebuild it straight from the 1080p render into `assets/` (same filter as
@@ -110,7 +116,9 @@ Checked: the dashed ghost marks are in different squares from frame to frame ("g
 counted" 2 → 3). These are the "after" frames in S07 and the motion check in S06.
 
 ### A03 · Before the fix: the "12" on the formula line and the frozen shuffle (optional re-render)
-The bug was in `s03_stop.py` at commit `8a922bf` (fixed in `1478d81`): the GREEN counter sat at
+These existed only in the round-1 draft (the 12:03 480p draft reviewed by QA run `wf_4be30e32`,
+Oct 5 23:25); `1478d81` (23:56) fixed both before the final cut `525bf2a`, so no finished video
+showed them. Caption them as a draft (S01). The bug was in `s03_stop.py` at commit `8a922bf` (fixed in `1478d81`): the GREEN counter sat at
 the position of the final "24" on the formula line (`count_tex(k + 2, formula[8].get_center(), …)`),
 and every `.animate` was built before playing. Re-rendering that commit reproduces both, as a real
 render of the old code:
@@ -125,22 +133,33 @@ cd $OLD && EXPLAINER_CACHE=$R/.cache/tts KOKORO_MODEL_DIR=/opt/tts-models PYTHON
 cd $R
 ```
 - Copy the chosen frames to `$A/old_s03_tally_12.png` and `$A/old_s03_frozen_1.png` …
-  `_4.png` (4 frames 0.2 s apart during the shuffle, where the ghosts don't move).
+  `_4.png` (4 frames 0.2 s apart during the shuffle, the same spacing as the A02 "after" strip,
+  where the ghosts don't move). Timing check: the old shuffle ran 23 steps between about 17.6 and
+  23.4 s of the scene (`qa_round1.txt` line 125; step durations `max(0.17, 0.45·0.9^k)` scaled to
+  the budget), about 0.25 s per step, so 4 frames 0.2 s apart show the counter moving by only one
+  or two steps.
 - On screen the tag reads **"re-rendered from the old code (commit 8a922bf)"**.
 - Check the frames really show the bug (renders are not perfectly reproducible; the old narration
   may be re-synthesised if it is not in the cache). The QA note to match: `qa_round1.txt` line 30
   ("'4 × 3 × 2      12' and '4 × 3 × 2 × 1      22'") and line 125 (the shuffle "does not play").
 - **Fallback (RECON):** build the frame in Manim from today's S03 layout: the board, the formula
-  "4 × 3 × 2" and a GREEN "12" where "= 24" will go; for the frozen strip, 4 identical boards with
-  the counter at 6, 12, 18, 24. Tag: **"reconstruction"**.
+  "4 × 3 × 2" and a GREEN "12" where "= 24" will go; for the frozen strip, 4 identical boards
+  0.2 s apart with the counter at 9, 10, 10, 11 (consistent with about 0.25 s per step). Tag:
+  **"reconstruction"**.
 
 ### A04 · Chinese tic-tac-toe final at 11:43, the fixed subtitle (V)
+Pinned to the final-cut commit: the working-tree `output/zh/tictactoe-255168.mp4` may be re-burned
+with the newer subtitle tool before the assets are copied, and then 703.0 s would no longer show
+the `68d6c23` cue.
 ```bash
-ffmpeg -v error -y -ss 703.0 -i $TTT/output/zh/tictactoe-255168.mp4 -frames:v 1 $A/ttt_zh_1143.png
+git -C $R show 68d6c23:videos/tictactoe-255168/output/zh/tictactoe-255168.mp4 > $SCRATCH/ttt_zh_68d6c23.mp4
+ffmpeg -v error -y -ss 703.0 -i $SCRATCH/ttt_zh_68d6c23.mp4 -frames:v 1 $A/ttt_zh_1143.png
 ```
 Shows the game tree (轮到 X / 轮到 O) and, in the subtitle band, "不是。电脑能做的，不只是统计对局" over
 "No. A computer can do more than count." (cue `00:11:42,030 --> 00:11:45,400`). The burned
-version scales the picture to 87 % and puts the subtitles in their own band.
+version scales the picture to 87 % and puts the subtitles in their own band. S09 shows this frame
+as is (caption "real frame · Chinese tic-tac-toe final cut"); S08's broken frame is this picture
+with the old cue text redrawn in the band (A30, "reconstruction").
 
 ### A07 · Privacy video at 2:30, the lineage map (V)
 ```bash
@@ -160,10 +179,12 @@ The real `explore()` code panel with "← someone won?" and a small board.
 cp $DP/assets/paper_p6.png $A/dp_paper_p270.png          # 1195×1834, printed page 270
 git show bb3fc1e:videos/dwork2006-calibrating-noise/digest.md | sed -n '29,30p;81p'
 ```
-- Zoom box: the line "mean 0, and standard deviation λ." sits at about y = 1245 px of 1834
-  (68 % down), x ≈ 120–600 px. Show it with `components.paper_page()`.
-- Digest line 81 (the sticky note): "p. 270: "standard deviation λ" for Lap(λ) — the scale is λ,
-  the std is √2λ."
+- The line "mean 0, and standard deviation λ." sits at about y = 1245 px of 1834 (68 % down),
+  x ≈ 120–600 px: underline it in WHITE (no zoom box in v2). Show the page with
+  `components.paper_page()`.
+- The sticky note quotes digest lines 29–30 exactly: "the true standard deviation is √2·λ — λ is
+  the scale". (Line 81 says the same in short: "p. 270: "standard deviation λ" for Lap(λ) — the
+  scale is λ, the std is √2λ.") It is an error in the paper, not a typo: S04 says "mistakes".
 
 ### A33, A34 · Playground screenshots (headless Chromium is installed)
 ```bash
@@ -200,19 +221,31 @@ EOF
 The first request opens with a pasted post (the Karpathy part); the user's own words start at
 "So this is something that I uh, came across…". Write the cleaned texts below to
 `$A/quotes.yaml`. Cleaning = filler words and false starts removed ("uh", "um", repeated words,
-"overload, uh, offloading" → "offloading"), nothing else; `…` marks a cut.
+"overload, uh, offloading" → "offloading"), nothing else; `…` marks a cut. Hedges ("I feel
+like", "I think") are not filler: keep them. Cards on screen are cut with `…` to about 15 words so
+they can be read while the narration runs. Captions: "— the user (dictated; filler words removed)"
+for the first request; "— the user (request for the Chinese versions)" for A06b, which is quoted
+verbatim (it was not dictated and has no fillers). The S02 request cards are summaries in the
+third person, captioned "requests, summarized"; they are not quotes.
 
 | card | lightly cleaned (on screen) | original (for the check) |
 |---|---|---|
-| S02 (1) | "Our brain is a neural net, and we're training our brain to update its parameter. And I think it takes hardship, turmoil, dedication, pain, essentially, to train ourselves." | "Our our brain is a neural net, and we're training our brain um, to update its parameter. And I think it only it takes hardship, turmoil, dedication, pain, essentially, to to train ourselves." |
+| S02 (1) | "Our brain is a neural net … it takes hardship, turmoil, dedication, pain … to train ourselves." (full cleaned text: "Our brain is a neural net, and we're training our brain to update its parameter. And I think it takes hardship, turmoil, dedication, pain, essentially, to train ourselves.") | "Our our brain is a neural net, and we're training our brain um, to update its parameter. And I think it only it takes hardship, turmoil, dedication, pain, essentially, to to train ourselves." |
 | S02 (2) | "AI is very patient, but at the same time, I'm doing a lot of cognitive offloading." | "Yeah, AI is very patient, but at the same time, I'm doing a lot of cognitive offloading." |
-| S02 (3) | "It's like the explainer video is a mentor, and it's kind of paving the path." | "it's like the explainer video is is, is a mentor as a mentor and it's it's kind of paving the path" |
-| S02 (3b) | "They're never isolated." | "but th they're never isolated, right?" |
-| S02 (4) | "What is the next step? … It's definitely something interactive, something that demands the user to actually create, generate stuff." | "what is the next step? And I feel like it's definitely something interactive, something that demands the user to actually create, generate stuff, right?" |
+| S02 (3) | "It's like the explainer video is a mentor" | "it's like the explainer video is is, is a mentor as a mentor and it's it's kind of paving the path" |
+| S02 (3b) | "they're never isolated" (a separate small card: in the request it comes before card 3) | "but th they're never isolated, right?" |
+| S02 (4) | "What is the next step? … I feel like it's definitely something interactive, something that demands the user to actually create" (keeps the hedge "I feel like") | "what is the next step? And I feel like it's definitely something interactive, something that demands the user to actually create, generate stuff, right?" |
 | S11 | "I felt like LLM should not just be cognitive offloading; it should be something that can actually help us to make knowledge more accessible, but at the same time achieve some sort of the same level of learning." | "And I felt like LLM should not just be cognitive overload, uh, offloading; it sh should be something that can actually help us to make knowledge more accessible, but at the same time achieve some sort of the same level of of learning." |
-| S08 (A06b) | "I want it to be code switching between the English language and Chinese language. … There are a lot of terms that are derived from English and would thus sound weird directly translated into Chinese." | "…I want it to be code switching between the English language and Chinese language. The thing is that there are a lot of terms that are derived from English and would thus sound weird directly translate that into Chinese." |
-| S02 card 3 | "subtitles in both languages": paraphrase of "This is a good example where you have both English and Chinese subtitles, and thus it would benefit more people." (do not show the Bilibili URL; it carries tracking parameters) | |
-| S02 card 4 (A06c) | "how you build these explainer videos … what are you looking to improve in the future" | "can you build a explainer video in terms of how you build these explainer videos? Like what did you do, and what are you looking to improve in the future when making these videos" |
+| S08 (A06b) | verbatim excerpt: "… there are a lot of terms that are derived from English and would thus sound weird directly translate that into Chinese." (no grammar edits) | "…I want it to be code switching between the English language and Chinese language. The thing is that there are a lot of terms that are derived from English and would thus sound weird directly translate that into Chinese." |
+| S02 request card 3 (summary) | "subtitles in both languages": paraphrase of "This is a good example where you have both English and Chinese subtitles, and thus it would benefit more people." (do not show the Bilibili URL; it carries tracking parameters) | |
+| S02 request card 4 (A06c, summary) | "this video: how they're built, and what to improve", from "how you build these explainer videos … what are you looking to improve in the future" | "can you build a explainer video in terms of how you build these explainer videos? Like what did you do, and what are you looking to improve in the future when making these videos" |
+
+S02 request card 1 (summary) "a privacy paper from a friend": the source is "the PDF that my
+friend sent me that he's working on … I want it to be fair … I have no idea what this paper is
+about". The paper is Dwork, McSherry, Nissim and Smith (TCC 2006), not the friend's own paper.
+S02 SAY 1 "a researcher with more papers to read than time" paraphrases "a researcher who is
+currently learning reinforcement learning … a lot of paper I need to read, but I don't really
+have the dedicated time to do so".
 
 A05 (Karpathy, as quoted): `sed -n 7,8p README.md` → "The output format I am most bullish on is
 fully custom / bespoke explainer videos generated on any arbitrary topic." — Andrej Karpathy. The
@@ -240,9 +273,11 @@ $PY $A/user_original_program.py            # prints 255168 (the program was comp
 cp $TTT/assets/play_all_games.py $A/play_all_games.py
 diff $A/user_original_program.py $A/play_all_games.py | head -40
 ```
-Highlight in S03: `next_player = "0" if player == "X" else "X"` (a zero) and the comment
-`# undo before trying another square i suppose`. The agent's changes: "0" → "O", comments
-rewritten. The comments are the user's own words, shown verbatim.
+Highlight in S03: only `next_player = "0" if player == "X" else "X"` (a zero) and the GREEN
+`255168`. The comments stay visible, verbatim and unhighlighted (they are the user's own words;
+the diff chip "comments rewritten" already makes the point). The agent's changes: "0" → "O",
+comments rewritten. The program arrived pasted in the request, opening with a task docstring
+("Write a program that writes every tic tac toe outcome…"), so S03 says the user "supplied" it.
 
 ### A10 · QA notes, tic-tac-toe rounds 1 and 2 (V; no names inside)
 ```bash
@@ -251,11 +286,19 @@ sed -n '2p;7p;30p;38p;125p' $A/qa_round1.txt; sed -n '2p;62p' $A/qa_round2.txt
 ```
 - Round 1, line 30 (S01): "Paused frames read '4 × 3 × 2      12' and '4 × 3 × 2 × 1      22',
   which look like wrong multiplication."
-- Round 1, line 38 (S07): "… couldn't work out what X0 meant (X's zeroth move?)."
+- Round 1, line 38 (S07): "… couldn't work out what X0 meant (X's zeroth move?)." (the bubble
+  starts with "…": the source line reads "…so I saw 'O3' under a mark labelled 2 and couldn't
+  work out…"; do not add "I")
 - Round 1, line 2: "about 8/10"; round 2, line 2: "VERDICT: 8.5/10"; round 2, line 62: "25 are
   fixed and 5 are partly fixed. I found nothing "wrong" this round."
-- Counts for the S07 funnel (fact sheet 2d): round 1 = 30 issues (3 wrong, 13 confusing, 14
-  polish; the 30 is N, the score V); round 2 = 18 new or remaining issues (N), 0 wrong (V).
+- Counts for the S07 funnel (fact sheet 2d, re-checked by the v1 facts review): round 1 = 30
+  issues (3 wrong, 13 confusing, 14 polish); round 2 = the director re-checked all 30 (25 fixed,
+  5 partly, 0 wrong) plus 18 new or remaining notes (some overlap between the kid and the
+  director, and some are round-1 leftovers: label them "18 new or remaining notes").
+- The score card 8/10 → 8.5/10 is not independent: the round-2 kid prompt says "You may skim
+  qa_round1.txt to know what another kid struggled with" (`$WF/scripts/qa2-ttt-video-wf_494cce6b-731.js`
+  line 47). Show it only with both caveats: "a model's guess, not a real child's · the second kid
+  had read the first one's notes".
 - Label every quote "a simulated 12-year-old (AI persona)" or "AI director".
 
 ### A13 · WORKFLOW.md (V)
@@ -328,8 +371,11 @@ watch list in `script.md`.
 git show bb3fc1e:videos/tictactoe-255168/scenes/s03_stop.py | sed -n '90,92p;317p'
 ```
 "(e.g. a spoken "362,880" lasts ~3 s but is only 7 characters)." · `wait_for(self, vo, "counted
-those", shift=2.2)`. The scene carries 20 hand-set shift values from −1.1 s to +2.2 s (fact sheet
-2c, V); language versions switch them off (`if i18n.active(): shift = 0.0`, lines 97–98).
+those", shift=2.2)`. The scene carries 20 `shift=` arguments from −1.1 s to +2.2 s (fact sheet
+2c, V). One is 0.0 (line 522), and two phrases are shifted twice with the same value (lines
+564/567 and 568/571), so S05 says "about 20". They were set by the agent from pauses in the audio
+("measured from the pauses in this narration's audio"), not by ear: call them "hand-set", never
+"hand-measured". Language versions switch them off (`if i18n.active(): shift = 0.0`, lines 97–98).
 
 ### A21 · Word times are dropped (V)
 ```bash
@@ -389,11 +435,19 @@ grep -o "None of this has been checked by ear." $WF/wf_4ab45a89-932.json | head 
 ```
 - zh-CN-XiaoxiaoNeural: composite 0.933, term recall 0.82; "noise → Nice, epsilon → Excellent,
   Claude → Clark" (what the recognizer heard; the run notes say "not verified by ear").
-- zh-CN-XiaoyiNeural: 0.991, 17/17 terms, 10/10 numbers. en-US-BrianMultilingualNeural (male):
-  0.997, the top score. Ava (female): 0.991–0.995.
+- zh-CN-XiaoyiNeural: 0.991, 17/17 terms, 10/10 numbers, by the judge's fuzzy match (for Claude
+  Shannon it heard "Cloud Shannon"): S08 says "passed all 17 test terms", not "got them right".
+- en-US-BrianMultilingualNeural (male, an English multilingual voice): 0.997, the top score.
+  en-US-AvaMultilingualNeural (female, English multilingual): 0.991–0.995, 17/17. Ranking line:
+  "Brian 0.997 > Ava 0.991-0.995 > Xiaoyi = William 0.991 > Emma 0.979 > Yunxi 0.973 > Xiaoxiao
+  0.93-0.97"; the record's noise floor is about 0.04, so Ava and Xiaoyi are level. Xiaoyi was
+  picked as a native Mandarin female voice, to match the English narrator (`875166f`). It was
+  not the "female runner-up".
+- Scoreboard labels on screen: "Brian (male, English-first) 0.997 · Ava (female, English-first)
+  0.991–0.995 · Xiaoyi (native Mandarin) 0.991 · Xiaoxiao 0.933".
 - Then a round trip of all 417 sentences with Xiaoyi (commit `2f452bb`, N).
 
-### A29 · The voice changed the wording (V)
+### A29 · The voice changed the wording (V; not used in script v2, kept as an optional cut-in)
 ```bash
 git show bb3fc1e:videos/dwork2006-calibrating-noise/i18n/zh/GLOSSARY.md | sed -n '16,17p'
 ```
@@ -411,15 +465,22 @@ fix: `cd67aa4` (merged cues keep their sentence punctuation); found by both Chin
 (`$WF/wf_f49ebc60-495.json`, N). The burned frame of the broken cue was never kept: the S08
 "before" frame is A04 with the old text redrawn in the band, tagged "reconstruction".
 
-### A31 · Voice stamp (V)
+### A31 · Voice stamp (V) — copy it now
+The file is in a gitignored `build/` folder and is rewritten by the next Chinese render, so copy it
+before anything re-renders. It was written Oct 7 02:31 (by the stamp feature, `638db72`), after the
+Chinese final cut `68d6c23` (Oct 6 17:52). Caption it "voice stamp of a Chinese scene render
+(tic-tac-toe scene 3)", not "final cut".
 ```bash
 cp $TTT/build/media_h_zh/s03_stop/voice.json $A/ttt_zh_s03_voice.json    # {"speed": 1.0, "tts": "edge", "voice": "zh-CN-XiaoyiNeural"}
 ```
 
 ### A32 · Chinese privacy QA: reviewers → fixer → verifier (V counts; V example)
-Source: `$WF/wf_b21332a2-5a8.json` (workflow `zh-qa-fix-dp`, 16 agents). 103 findings (1 wrong,
-21 confusing, 81 polish) → 75 fixer changes, 35 skipped with reasons → 12 verifier corrections
-(fact sheet 2d, recomputed). The bounce-back example:
+Source: `$WF/wf_b21332a2-5a8.json` (workflow `zh-qa-fix-dp`, 16 agents = 4 groups, each with a
+director, a simulated grad student, a fixer and a skeptical verifier). 103 findings (1 wrong, 21
+confusing, 81 polish) → 75 fixer changes (18/16/19/22 by group) → 12 verifier corrections (2/2/3/5)
+(fact sheet 2d, recomputed). Not shown: "35 skipped" (changes and skips don't map one to one to
+findings, so 75 + 35 > 103 would invite a wrong sum). The bounce-back example (shown as "claimed:
+×1.12, within the limit · measured: ×1.153, over the 15 % limit"):
 ```bash
 grep -o "The fixer's report puts the SuLQ block at x1.12. It is actually 19.896 s against 17.259 s, x1.153" $WF/wf_b21332a2-5a8.json | head -1
 ```
@@ -438,23 +499,29 @@ git show bb3fc1e:docs/LANGUAGES.md | sed -n '8,9p;60p'
 "The English video is never touched: every language-specific change in a scene is guarded by
 `i18n.active()` or is a refactor that builds the same objects, and that is checked frame by
 frame." · "**Publishing:** the free Edge endpoint is not licensed for published videos." The
-Azure backend exists (`explainer/voice.py`) but has produced 0 clips: there is no
-`.cache/tts/azure/` (`ls $R/.cache/tts`).
+Azure backend exists (`explainer/voice.py`) but had produced 0 clips when the script was written:
+there is no `.cache/tts/azure/` and no AZURE env vars (`ls $R/.cache/tts`; re-check right before
+the render, S10 says "when this script was written").
 
 ### A37 · Frame-fingerprint report (V)
 ```bash
 grep -o "Identical: all 721 frames of the English 480p preview match the framemd5 baseline[^\"]\{0,60\}" $WF/wf_c68e2867-dcd.json | head -1
 ```
-Other scenes reported 779, 1,533, 945/945, 749/749, 1,585/1,585 frames (N). Some scenes render
-nondeterministically even with seeds fixed (N): keep the footnote.
+On screen: "tic-tac-toe scene 1, English 480p preview: all 721 frames match". Other scenes
+reported 779, 1,533, 945/945, 749/749, 1,585/1,585 frames (N). Some scenes render
+nondeterministically, but not always: privacy s02 differed in 2 of 4 runs (`wf_b21332a2`), and
+tic-tac-toe S08 renders differ from each other by 84–124 frames (`wf_c68e2867`). So the footnote
+says "a few scenes don't render exactly the same every time", never "never".
 
 ### A38 · Cross-scene drift in the privacy video (V)
 ```bash
 f=$(ls $WF/wf_7f255fc6-*.json); grep -o "renamed the row 'Dev' to 'Dan'[^\"]\{0,80\}" $f | head -1
 f=$(ls $WF/wf_acf0396b-*.json); grep -o "is drawn five different ways" $f | head -1
 ```
-"Dev" in S05/S06, "Dan" in S03/S04; unified by whole-video QA. The budget bar became a shared
-`common.budget_bar()` (commit `9020ce5`).
+"Dev" in S05/S06, "Dan" in S03/S04. The rename was made by the `qa-dp-video` agent assigned the
+scene group S04–S07 (`wf_7f255fc6`, `args.groups[1]`): a reviewer looking across a run of scenes,
+not one that "watched the whole video". On screen: faded-BLUE bar "cross-scene reviewer
+(whole-video QA pass)". The budget bar became a shared `common.budget_bar()` (commit `9020ce5`).
 
 ### A41 · The misfiled DCAN PDF (V)
 ```bash
@@ -464,12 +531,29 @@ f=$(ls $WF/wf_6c3794e7-*.json); grep -o "Topological Pressure of Proper Map" $f 
 grep -o "most likely arXiv 1604.02677" $f | head -1
 ```
 Four PDFs were the wrong paper (DCAN, Cellpose, TopoLoss, MILD-Net); three were replaced, Cellpose
-is flagged for the user to fetch. The flip-card moment is redrawn: tag "reconstruction".
+is flagged for the user to fetch. The flip-card moment is redrawn: tag "reconstruction". The
+catalog agent wrote that DCAN is "most likely arXiv 1604.02677": label it "most likely
+1604.02677", not "≠".
 
 ### A42 · The QA prompt (V)
+S07 depicts the English tic-tac-toe review, so it quotes the English round-1 prompt for the
+simulated kid (run `wf_4be30e32`, the one that found the "12" and the X0 labels), stored in the
+run record's `script` field:
 ```bash
-sed -n '39p' $WF/scripts/zh-qa-ttt-wf_f49ebc60-495.js     # "- You cannot hear the audio. …"
+/usr/bin/python3 -I -c "import json,sys; s=json.load(open(sys.argv[1]))['script']; i=s.index('go through the contact sheets'); print(s[i:i+150])" $WF/wf_4be30e32-fea.json
+# → go through the contact sheets of every scene in order while reading the subtitles for the same times (the srt) — that is the video.
 ```
+Caption: "from the round-1 QA prompt (tic-tac-toe)". The line "You cannot hear the audio." exists
+only in the Chinese QA prompts (`$WF/scripts/zh-qa-ttt-wf_f49ebc60-495.js` line 39): don't use it
+for the English review.
+
+### A44 · A reviewer noticed the stale renders (V)
+```bash
+f=$(ls $WF/wf_acf0396b-*.json); grep -o "The renders are older than the source.\*\* All 13 renders date from[^\"]\{0,90\}" $f | head -1
+```
+"**The renders are older than the source.** All 13 renders date from about 18:24–18:34, before
+commit 5b369a5 (18:47) and other edits." (the privacy video's newcomer QA, Oct 4). Show the first
+sentence, without the asterisks. This is the one recorded case: S09 says "one reviewer noticed".
 
 ---
 
@@ -490,8 +574,11 @@ for line in sys.stdin:
 " > $A/commits.csv
 ```
 Expected: 98 rows; 2 `user` (Oct 4 14:56 and 15:22), 96 `agent`; 28 WIP; per day Oct 4 21 · Oct 5
-21 · Oct 6 50 · Oct 7 6. The file holds no names. Later commits (this video's own) are left out on
-purpose; the narration says "about a hundred".
+21 · Oct 6 50 · Oct 7 6. The file holds no names. Later commits (this video's own, and the
+subtitle rounds) are left out on purpose; at `60258b4` the repo has 101 commits (99 by the agent,
+2 by the user, 31 WIP). The narration says "about a hundred, all but two by the agent": re-count
+right before the render (`git rev-list --count HEAD`) and switch to "over a hundred" above about
+110.
 
 ### A12 · Usage-limit stops (N: from the research notes; "at least 6" is V)
 Write `$A/usage_limits.csv` by hand (UTC; `reset` = when the limit lifted, `resumed` = when work
@@ -505,7 +592,11 @@ stop,reset,resumed
 2026-10-06 18:51,2026-10-06 22:50,2026-10-07 02:12
 2026-10-07 06:37,2026-10-07 07:10,2026-10-07 20:09
 ```
-Draw a band from `stop` to `resumed` (or `reset`) where known, a plain tick otherwise.
+Draw a band from `stop` to `resumed` (or `reset`) where known, a plain tick otherwise. The two
+restarts that came from the user's messages get a small PINK tick: "the user: 'Please continue'"
+(2026-10-07T02:12:20Z, "I hit my usage limit while you were working, but it has reset now. Please
+continue from where you left off.") and "the user: 'Try again'" (2026-10-07T20:09:29Z), both V
+against the transcript.
 
 ### A43 · The false start (V, from the run records)
 ```bash
@@ -533,7 +624,7 @@ for line in open(sys.argv[1]):
 print(round(last["totalCostUSD"], 2))
 EOF
 ```
-Snapshot when script v1 was written: **1435.16**. Copy the latest value into `video.yaml`
+Snapshot when script v1 was written: 1435.16; when v2 was written (repo at `60258b4`): **1507.47**. Copy the latest value into `video.yaml`
 → `live.cost_usd` once, right before the final render; the counter keeps rising while this video
 is made in the same session. On screen always with the full label (in `video.yaml`
 `live.cost_label`): "API list-price equivalent for the whole session · all four requests, not the
@@ -546,8 +637,14 @@ cost of one video".
   Tic-tac-toe: request Oct 5 21:53 → final `525bf2a` Oct 6 01:00 (3 h 07 min); 12:36.6.
   Chinese tic-tac-toe: `68d6c23`, 13:38.7. Chinese privacy: 1080p final not rendered (only 480p
   drafts, older than the QA fixes `a824463`).
-- Lexicon 17 entries; toolkit 3,521 lines at HEAD; scene code about 420 lines per minute of video
-  (tic-tac-toe 5,292 lines for 12.6 min, N).
-- Subtitle tool v3, round 1: 19 of 21 issues fixed, 2 partly; 441 cues changed; 11 regressions
-  (N); "several of its 24 tests still fail" at HEAD (4 or 5 depending on setup: say "several").
-- Privacy part 2 starts on a black frame with the voice at 0.088 s (N, from `silencedetect`).
+- Lexicon 17 entries; toolkit 3,521 lines at `bb3fc1e`; scene code about 400 lines per minute of
+  video (V): tic-tac-toe scenes 5,040 lines at the English final `525bf2a` for 12.6 min (5,292 at
+  `bb3fc1e`, which adds the Chinese-adaptation branches; both round to "about 400").
+- Subtitle tool v3, round 1: 19 of 21 issues fixed, 2 partly (the implementer's own report,
+  `wf_21e5261a`); 441 cues changed; reviewers found 11 regressions. Rounds 2 and 3 were committed
+  as WIP after the fact sheet (`7c6fcc0` 21:14, `5b78118` 21:50); `tests/test_subtitles.py` has
+  35 tests at `60258b4`. The script no longer quotes a failing-test count.
+- English privacy video, part 2, starts on a black frame (0.02–0.87 s) with the voice at 0.088 s
+  (V by the v1 facts review).
+- Chinese privacy video: only 480p drafts in `output/zh/` (Oct 6 15:08) when v2 was written; the
+  1080p final cut is in progress elsewhere. Re-check before rendering (S10 card 3).
