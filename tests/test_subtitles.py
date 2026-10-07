@@ -38,9 +38,9 @@ SWEENEY = ("Latanya Sweeney 发现，光凭邮编、出生日期和性别，就�
 # ---------------------------------------------------------------- A. Chinese line and cue breaks
 
 def test_1_no_cut_inside_a_list_at_its_comma():
-    assert bi(*SWEENEY, 14.6)[0][0] == "Latanya Sweeney 发现，光凭邮编、出生日期和性别"
-    assert zh(SWEENEY[0], 14.6)[:2] == ["Latanya Sweeney 发现， / 光凭邮编、出生日期和性别",
-                                        "就能唯一识别大多数美国人"]
+    assert bi(*SWEENEY, 14.6)[1][0] == "光凭邮编、出生日期和性别，就能唯一识别大多数美国人"     # round 3: and
+    assert zh(SWEENEY[0], 14.6)[:2] == ["Latanya Sweeney 发现",                               # 光凭……，就……
+                                        "光凭邮编、出生日期和性别， / 就能唯一识别大多数美国人"]  # stays whole
     assert S.split_balanced("Dwork、Rothblum 和 Vadhan 还带来了一个惊喜", 22) == [
         "Dwork、Rothblum 和 Vadhan", "还带来了一个惊喜"]
     t = "光凭邮编{}出生日期和性别就能唯一识别大多数美国人"
@@ -153,10 +153,11 @@ def test_13_names_and_set_phrases_stay_together():
         "Then, in 2003, Irit Dinur and Kobbi Nissim / proved something sobering."]
     assert en("and it must hold whatever else the attacker knows.") == [
         "and it must hold / whatever else the attacker knows."]
-    assert en(SWEENEY[1], 14.6) == [                   # round 2: no cue cut inside the list
-        "Latanya Sweeney showed that ZIP code, birth date / and sex alone single out most Americans,",
-        "and in 1997 she linked supposedly anonymous / hospital records to a public voter list",
-        "and found the governor of Massachusetts."]
+    assert en(SWEENEY[1], 14.6) == [                   # round 2: no cue cut inside the list; round 3:
+        "Latanya Sweeney showed",                       # nor a line break ("birth date / and sex"),
+        "that ZIP code, birth date and sex alone / single out most Americans,",   # nor "anonymous / hospital"
+        "and in 1997 she linked / supposedly anonymous hospital records",
+        "to a public voter list / and found the governor of Massachusetts."]
     assert S.split_balanced("For games that end on moves 7, 8 and 9, it gets much worse:", 48 * 0.55) == [
         "For games that end on moves 7, 8 and 9,", "it gets much worse:"]                   # tic-tac-toe
     e = ("Over the following decades, statisticians and computer scientists refined such tricks, in two "
@@ -236,15 +237,20 @@ def test_19_list_commas_whole_sentence_and_the_next_clause():
     e = ("In 2016, Abadi and colleagues made it practical to train deep networks privately: clip each "
          "example's gradient, like our income cap, which bounds its sensitivity; add Gaussian noise; and "
          "track the budget over thousands of steps.")
-    assert bi(t, e, 16.2)[1:] == [
-        ("对每个样本的梯度做 clip（梯度裁剪），就像我们的收入上限",
-         "clip each example's gradient, like our income cap,"),
-        ("从而限制了敏感度；加上高斯噪声；并在成千上万步里跟踪预算",
-         "which bounds its sensitivity; add Gaussian noise; and track the budget over thousands of steps.")]
-    # no clause stop near the Chinese cut, and it fits on one line: the whole sentence under both pieces
+    assert bi(t, e, 16.2)[1:] == [                     # round 3: one ； run-on instead of two, not "// 从而"
+        ("对每个样本的梯度做 clip（梯度裁剪）", "clip each example's gradient,"),
+        ("就像我们的收入上限，从而限制了敏感度", "like our income cap, which bounds its sensitivity;"),
+        ("加上高斯噪声；并在成千上万步里跟踪预算", "add Gaussian noise; and track the budget over thousands of steps.")]
+    assert zh(t, 16.2)[1:] == ["对每个样本的梯度做 clip（梯度裁剪）， / 就像我们的收入上限，从而限制了敏感度",
+                               "加上高斯噪声；并在成千上万步里跟踪预算"]
+    # no clause stop near the Chinese cut: a clean gap a little further than a plain one may be
     e = "Games that end on move 8 or 9 have at most one empty square, so they were counted just once."
     assert bi("在第 8 步或第 9 步结束的对局，最多只剩一个空格子，所以它们只算了一次。", e, 6.5) == [   # tic-tac-toe
-        ("在第 8 步或第 9 步结束的对局", e), ("最多只剩一个空格子，所以它们只算了一次", e)]
+        ("在第 8 步或第 9 步结束的对局", "Games that end on move 8 or 9"),          # (round 2: the whole
+        ("最多只剩一个空格子，所以它们只算了一次", "have at most one empty square, so they were counted just once.")]
+    # nothing to cut at, and it fits on one line: the whole sentence under both pieces          # sentence)
+    e = "Sweeney found the governor of Massachusetts in it."
+    assert S._split_like(e, ["她就在里面，", "找到了马萨诸塞州州长的病历。"], 96 * 0.55) == ([e, e], True)
 
 
 # ---------------------------------------------------------------- D. Other
@@ -315,7 +321,7 @@ def test_no_sidecar_cue_needs_three_lines():
             tr = S.tracks(pairs, timing=timing)
             for _, _, text in tr["zh"]:                  # (+1.5 for a list of Latin names, see test_r2_lists)
                 assert len(text.split("\n")) <= 2 and all(S.units(ln) <= 23.5 for ln in text.split("\n")), text
-                assert all(S.units(ln) <= 22 or "、" in ln for ln in text.split("\n")), text
+                assert all(S.units(ln) <= 22 or S._NAME_LIST.search(ln) for ln in text.split("\n")), text
             for _, _, text in tr["en"]:
                 assert len(text.split("\n")) <= 2 and all(len(ln) <= 48 for ln in text.split("\n")), text
             for _, _, z, e in tr["zh-en"]:
@@ -347,9 +353,8 @@ def test_r2_a_short_chinese_cue_gets_time_to_read():
     assert S.units(z2) / (d - b) <= 9.5                   # round 3: and not at the cost of its neighbour
     tr = S.tracks([(169.92, 174.52, "然后在 2003 年，Irit Dinur 和 Kobbi Nissim 证明了一个令人警醒的结论。",
                     "Then, in 2003, Irit Dinur and Kobbi Nissim proved something sobering.")], timing="en")
-    (a, b, z), (_, d, z2) = tr["zh"]
-    assert z == "然后在 2003 年" and b - a >= 1.0                                    # was 1.09 s (0.2 s/unit)
-    assert S.units(z) / (b - a) <= S.units(z2.replace("\n", "")) / (d - b) + 0.2   # until the rates meet
+    assert [c[2] for c in tr["zh"]] == ["然后在 2003 年，Irit Dinur 和 Kobbi Nissim\n证明了一个令人警醒的结论"]
+    # round 3: (was "然后在 2003 年" alone, 1.09 s): a line of Latin names may run 1.5 units over
 
 
 def test_r2_lists_stay_whole():
@@ -464,15 +469,16 @@ def test_r2_band_alignment():
                  6.2) == ["The earlier framework's sharper analysis",
                           "got this down to about √d, but it still grew with d."]
     assert [e for _, e in bi(*SWEENEY, 14.6)][:2] == [                                       # the list whole
-        "Latanya Sweeney showed that ZIP code, birth date and sex alone", "single out most Americans,"]
+        "Latanya Sweeney showed", "that ZIP code, birth date and sex alone single out most Americans,"]
     assert pairs("另一种做法是发布一张经过隐私处理的表，然后撒手不管，这叫非交互式。",
                  "The alternative, publishing one sanitized table and walking away, is non-interactive.", 6) == [
         "The alternative, publishing one sanitized table", "and walking away, is non-interactive."]
     assert pairs("像这样把各个分量变化的绝对值加起来，就是 L1 范数，原文就用它来衡量一列数的敏感度。",       # L1 under L1
                  "Adding up absolute changes across coordinates like this is the L1 norm, the paper's way to "
                  "measure sensitivity for lists of numbers.", 8.1)[1].startswith("is the L1 norm,")
-    e = "We simply list all 8 winning lines, as groups of three square numbers."                # 8 under 8: repeat
-    assert pairs("我们直接把所有能赢的线都列出来，一共 8 条，每条线写成一组三个格子编号。", e, 6.5) == [e, e]
+    e = "We simply list all 8 winning lines, as groups of three square numbers."    # round 3: one number
+    assert pairs("我们直接把所有能赢的线都列出来，一共 8 条，每条线写成一组三个格子编号。", e, 6.5) == [   # restated
+        "We simply list all 8 winning lines,", "as groups of three square numbers."]  # by 一共 8 条: not a repeat
     assert pairs("在第 7、8、9 步结束的对局就麻烦多了：我们必须检查之前的每一步有没有人赢，而且下满的棋盘可能是有人赢，"
                  "也可能是平局。", "For games that end on moves 7, 8 and 9, it gets much worse: we'd have to check every "
                  "earlier move for a win, and a full board might be a win or a draw.", 11.5)[0] == (
@@ -493,3 +499,158 @@ def test_r2_band_alignment():
     assert pairs("还记得吗，9 的阶乘把在第 5 步结束的每一局，都算了 24 次，每个幽灵对局算一次。",       # 5 under 5
                  "Remember, nine factorial counted each game that ends on move 5 a total of 24 times, once for "
                  "each ghost ending.", 7.2)[0] == "Remember, nine factorial counted each game that ends on move 5"
+
+
+# ---------------------------------------------------------------- round 3 (two reviewers' findings)
+
+SURPRISE = [(557.25, 559.79, "没想到吧：答案是边格，也就是每条边正中间的那一格，有 29,592 种对局。",
+             "Surprise: the edge, with 29,592 games."),
+            (560.11, 564.44, "每个角格有 27,732，而中心最少，只有 25,872。",
+             "Each corner gives 27,732, and the center the fewest, just 25,872.")]
+
+
+def test_r3_english_video_band_reads_at_9_units_a_second():
+    tr = S.tracks(SURPRISE, timing="en")            # tic-tac-toe, English video (timed by the English)
+    (a, b, z, _), (_, d, _, _), (f, _, _, _) = tr["zh-en"]
+    assert S.units(z) / (b - a) <= 10.5 and d - b >= 1.0      # round 2: 24 units in 1.30 s (18.5 units/s)
+    assert f - SURPRISE[1][0] <= 0.5 + 1e-9                   # the next sentence starts at most 0.5 s late
+    assert [c[:2] for c in tr["zh"]] == [c[:2] for c in tr["zh-en"]]   # the sidecar switches with the band
+    t = "同年她与 Kenthapadi、McSherry、Mironov 和 Naor 合作，在另一篇 paper 里引入了一个极小的松弛量 δ。"
+    e = "Another 2006 paper, with Kenthapadi, McSherry, Mironov and Naor, added a tiny slack, δ."
+    tr = S.tracks([(1228.96, 1234.76, t, e), (1235.08, 1239.35, "还记得高斯噪声的比值在尾部冲出带外吗？",
+                    "Remember the Gaussian whose ratio escaped the band in the tails?")], timing="en")
+    (_, b, _, _), (_, d, z2, _) = tr["zh-en"][:2]
+    assert S.units(z2) / (d - b) <= 9.0 + 1e-6                # round 2: 21 units in 1.60 s
+    slow = S.tracks([(0.0, 6.0, "两个随机数据库的发布结果几乎一样，一个里每条记录都有偶数个 1。",
+                      "the release looks almost the same for a random database where every row has even parity,")],
+                    timing="en")["zh-en"]
+    english = S._proportional(0.0, 6.0, [c[3] for c in slow])          # readable at the English pace:
+    assert [round(c[1], 6) for c in slow] == [round(c[1], 6) for c in english]   # the English stays put
+
+
+def test_r3_sidecar_switches_where_the_band_switches_in_the_english_video():
+    tr = S.tracks([(149.54, 164.12, *SWEENEY)], timing="en")
+    band = {round(c[1], 6) for c in tr["zh-en"]}
+    assert all(round(c[1], 6) in band for c in tr["zh"])        # round 2: 44 of 58 switches off by > 0.2 s
+
+
+def test_r3_a_cue_that_cannot_linger_to_one_second_borrows_across_the_gap():
+    tr = S.tracks([(0.0, 0.71, "为什么？", "Why?"),
+                   (1.03, 5.0, "中心在 4 条获胜线上，角格在 3 条上，而边格只在 2 条上。",
+                    "The center sits on 4 winning lines, a corner on 3, and an edge on just 2.")])
+    for track in ("zh", "en", "zh-en"):
+        assert all(c[1] - c[0] >= 1.0 - 1e-6 for c in tr[track]), track    # round 2: 0.98 s
+
+
+def test_r3_english_cue_cuts():
+    cases = {
+        "Pause and ponder: couldn't an analyst just ask the interactive curator all of these queries too?":
+            ["Pause and ponder: couldn't an analyst just ask", "the interactive curator / all of these queries too?"],
+        "Third, the answer need not be a number: a ranking, a set, a string of bits, anything with a distance "
+        "between answers.": ["Third, the answer need not be a number:",                    # no cut in a list
+                             "a ranking, a set, a string of bits, / anything with a distance between answers."],
+        "Unless the database is exponentially large: roughly, every 4 extra bits per row doubles the rows you "
+        "would need.": ["Unless the database is exponentially large:",                       # not "roughly," alone
+                        "roughly, every 4 extra bits per row / doubles the rows you would need."],
+        "Pick an output with probability that decays exponentially with its distance from the true answer, at a "
+        "rate of ε over twice the sensitivity.": ["Pick an output with probability / that decays exponentially",
+                                                  "with its distance from the true answer, / at a rate of ε over twice the sensitivity."],
+        "Section 4 only rules out one release that is accurate for most of a huge family of questions.":
+            ["Section 4 only rules out one release", "that is accurate / for most of a huge family of questions."],
+        "Trying a path, then stepping back to try the next one, is called backtracking.":      # tic-tac-toe
+            ["Trying a path, then stepping back / to try the next one, is called backtracking."],
+        "X plays moves 1, 3 and 5, so the fifth move is the first time anyone can have three marks.":
+            ["X plays moves 1, 3 and 5,", "so the fifth move is the first time / anyone can have three marks."],
+        "One: privacy means changing any one person's row changes the probability of any output by at most a "
+        "factor of e^ε.": ["One: privacy means changing any one person's row",
+                           "changes the probability of any output / by at most a factor of e^ε."],
+    }
+    for e, cues in cases.items():
+        assert en(e, 6.5) == cues, e
+    e = ("In 2006, Cynthia Dwork, Frank McSherry, Kobbi Nissim and Adam Smith answered both questions in this "
+         "paper: Calibrating Noise to Sensitivity in Private Data Analysis.")
+    assert en(e, 12.9)[:2] == ["In 2006, Cynthia Dwork, Frank McSherry, / Kobbi Nissim and Adam Smith",
+                               "answered both questions in this paper:"]
+    t = ("Theorem 3 shows that for at least 2/3 of these queries, the release looks almost the same for a random "
+         "database where every row has even parity, true answer 0, as for one where every row is odd, true answer n.")
+    assert en(t, 15.5)[2:] == ["where every row has even parity, true answer 0,",
+                               "as for one / where every row is odd, true answer n."]
+    q = "couldn't an analyst just ask the interactive curator"
+    assert S._cue_cost(q, q.index("interactive")) >= 20                                   # never after "the"
+
+
+def test_r3_english_lines():
+    cases = {
+        "A week later, one new patient, Alice, is admitted.": "A week later, / one new patient, Alice, is admitted.",
+        "At the end, the paper proves the first is fundamentally more powerful.":    # not "the first / is…"
+            "At the end, the paper proves / the first is fundamentally more powerful.",
+        "the paper's way to measure sensitivity for lists of numbers.":
+            "the paper's way to measure sensitivity / for lists of numbers.",
+        "Three: Laplace noise with scale sensitivity/ε makes it private,":
+            "Three: Laplace noise / with scale sensitivity/ε makes it private,",
+        "Theorem 3 shows that for at least 2/3 of these queries,": "Theorem 3 shows / that for at least 2/3 of these queries,",
+        "It founded what we now call differential privacy,": "It founded / what we now call differential privacy,",
+        "that ZIP code, birth date and sex alone single out most Americans,":
+            "that ZIP code, birth date and sex alone / single out most Americans,",
+    }
+    for e, cue in cases.items():
+        assert en(e, 5) == [cue], e
+
+
+def test_r3_english_video_srt_lines():
+    from explainer import build
+
+    def srt(t):
+        return [c[2].replace("\n", " / ") for c in build.split_cues(0.0, len(t) / 15, t)]
+    assert srt("The earlier framework's sharper analysis got this down to about the square root of d, but it "
+               "still grew with d.") == ["The earlier framework's sharper analysis / got this down to about the "
+                                         "square root of d,", "but it still grew with d."]   # not "…got / this"
+    assert srt("Instead, teach a computer the rules, and let it play every possible game, one by one.") == [
+        "Instead, teach a computer the rules,", "and let it play every possible game, / one by one."]   # "let / it"
+    assert srt("Another 2006 paper, with Kenthapadi, McSherry, Mironov and Naor, added a tiny slack, delta.") == [
+        "Another 2006 paper, / with Kenthapadi, McSherry, Mironov and Naor,", "added a tiny slack, delta."]
+    assert srt("and in 1997 she linked supposedly anonymous hospital records to a public voter list and found "
+               "the governor of Massachusetts.")[-1] == "to a public voter list / and found the governor of Massachusetts."
+
+
+def test_r3_chinese_cue_cuts():
+    t = "命题 2：即使每条记录都用同一个 mask，对大多数 mask，它也估计不出奇数记录的个数，除非 n 大到指数级。"
+    e = ("Proposition 2: even when every row uses the same mask, for most masks it cannot estimate the odd count "
+         "unless n is exponentially large.")
+    assert zh(t, 9.2) == ["命题 2：即使每条记录都用同一个 mask",                     # a short scope phrase
+                          "对大多数 mask，它也估计不出奇数记录的个数， / 除非 n 大到指数级"]   # starts its clause
+    assert bi(t, e, 9.2) == [("命题 2：即使每条记录都用同一个 mask", "Proposition 2: even when every row uses the same mask,"),
+                             ("对大多数 mask，它也估计不出奇数记录的个数", "for most masks it cannot estimate the odd count"),
+                             ("除非 n 大到指数级", "unless n is exponentially large.")]
+    t = "不如教电脑学会规则，再让它一局接一局，把所有可能的对局都下一遍。"                 # tic-tac-toe
+    e = "Instead, teach a computer the rules, and let it play every possible game, one by one."
+    assert zh(t, 5.8) == ["不如教电脑学会规则， / 再让它一局接一局，把所有可能的对局都下一遍"]
+    assert bi(t, e, 5.8) == [("不如教电脑学会规则", "Instead, teach a computer the rules,"),     # 一局接一局
+                             ("再让它一局接一局，把所有可能的对局都下一遍", "and let it play every possible game, one by one.")]
+    assert zh("任何确定性的规则，只要答案会变，就一定在某处有这样的跳变。", 5.2) == [       # 只要……，就……
+        "任何确定性的规则， / 只要答案会变，就一定在某处有这样的跳变"]
+    assert zh("难怪它发表在密码学会议上：那里的习惯就是先定义安全性，要求能抵御所有可能的攻击者，再去证明。", 8.9) == [
+        "难怪它发表在密码学会议上", "那里的习惯就是先定义安全性， / 要求能抵御所有可能的攻击者，再去证明"]   # 先……再……
+    assert S._mark_cost("就像我们的收入上限，从而限制了敏感度", 10) >= 8                   # never "// 从而"
+
+
+def test_r3_a_line_of_latin_names_may_run_over_rather_than_leave_a_scrap():
+    t = ("隐私预算发展成了一套组合定理，Dwork、Rothblum 和 Vadhan 还带来了一个惊喜：只要允许那个极小的 δ，"
+         "k 个问题的总损失就只按根号 k 增长。")
+    assert zh(t, 12.7)[0] == "隐私预算发展成了一套组合定理， / Dwork、Rothblum 和 Vadhan 还带来了一个惊喜"
+    assert zh("然后在 2003 年，Irit Dinur 和 Kobbi Nissim 证明了一个令人警醒的结论。", 4.6) == [
+        "然后在 2003 年，Irit Dinur 和 Kobbi Nissim / 证明了一个令人警醒的结论"]           # round 2: "然后在 2003 年"
+    assert S._wrapped("这篇 paper 迈出了一大步：适用于数据的任意函数，只用一个干净的定义和一条简单的噪声规则", 22) != (
+        "这篇 paper 迈出了一大步：适用于数据的任意", "函数，只用一个干净的定义和一条简单的噪声规则")    # only for names
+
+
+def test_r3_band_cuts():
+    def pairs(t, e, d):
+        return [e2 for _, e2 in bi(t, e, d)]
+    assert pairs("第三，尺度为敏感度除以 ε 的拉普拉斯噪声，就能让它满足差分隐私，数据库再大，误差也不会变大。",
+                 "Three: Laplace noise with scale sensitivity/ε makes it private, with error that does not grow "
+                 "with the database.", 9.9) == ["Three: Laplace noise with scale sensitivity/ε",     # a plain gap
+                                                "makes it private, with error that does not grow with the database."]
+    assert pairs("如果没有一条线符合，winner 什么也没找到，就返回 None，意思是“没有人”。",          # 如果……，就……
+                 "If no line matches, winner finds nothing, and hands back None, which means nobody.", 5.5) == [
+        "If no line matches,", "winner finds nothing, and hands back None, which means nobody."]

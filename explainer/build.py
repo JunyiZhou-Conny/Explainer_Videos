@@ -203,16 +203,30 @@ def _fits(text: str, width: int, lines: int) -> bool:
     return len(textwrap.wrap(text, width)) <= lines
 
 
+def _good(text: str, width: int, lines: int) -> bool:
+    """`text` has a layout in `lines` lines (_lines) that does not break badly ("…and let / it play")."""
+    ls = _lines(text, width, lines)
+    return len(ls) == 1 or (len(ls) <= lines and subs._break_cost(text, len(ls[0]) + 1) < 10)
+
+
 def _split_sentence(sent: str, width: int, lines: int) -> list[str]:
     """Split one sentence into the fewest balanced pieces that each fit in `lines` lines, cutting
     at a clause boundary (", ", ": ", "; ") near each ideal cut point when there is one, else at a
-    space. Avoids a 1-2 word tail on its own cue."""
+    space. Avoids a 1-2 word tail on its own cue. A sentence that fits but only with a bad line
+    break becomes two cues at a comma when both have good lines ("Instead, teach a computer the
+    rules," + "and let it play every possible game, / one by one.")."""
     import re
 
     sent = " ".join(sent.split())
     if _fits(sent, width, lines):
-        return [sent]
-    clause = [m.end() for m in re.finditer(r"[,:;]\s", sent)]
+        if _good(sent, width, lines):
+            return [sent]
+        halves = [(sent[:m.end()].strip(), sent[m.end():].strip()) for m in re.finditer(r"[,:;]\s", sent)]
+        halves = [h for h in halves if all(_fits(x, width, lines) and _good(x, width, lines)
+                                           and len(x) >= width / 2.5 for x in h)]   # (not "First:" alone)
+        return list(min(halves, key=lambda h: abs(len(h[0]) - len(h[1])))) if halves else [sent]
+    clause = [m.end() for m in re.finditer(r"[,:;]\s", sent)
+              if subs._mark_cost(sent, m.end()) < 10]   # not a list comma: "ZIP code, // birth date and sex"
     spaces = [m.end() for m in re.finditer(r"\s", sent)]
     def penalty(c):                     # word gaps cost more than clause cuts (subtitles._cut_penalty)
         return subs._cut_penalty(sent, c) * 1.8
@@ -245,7 +259,7 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
     With `marks` ((char offset, seconds) of each sentence start, from the voice clip), every
     sentence's cues sit exactly where that sentence is spoken; without them, the whole clip is
     timed proportionally to characters. Inside a sentence, cues are timed by characters. Cues
-    shorter than `min_dur` are merged with a neighbour when the result still fits."""
+    shorter than `min_dur` are merged with a neighbour when the result still fits. Lines: _lines."""
     from .voice import SENTENCE_GAP, split_sentences
 
     sentences = split_sentences(text) or [(0, text)]
@@ -285,7 +299,15 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
                         break
             if merged:
                 break
-    return [(a, b, "\n".join(textwrap.wrap(c, width))) for a, b, c in cues]
+    return [(a, b, "\n".join(_lines(c, width, lines))) for a, b, c in cues]
+
+
+def _lines(cue: str, width: int, lines: int) -> list[str]:
+    """The lines of one cue: balanced and kept off mid-phrase breaks (subtitles.wrap_en: "The earlier
+    framework's sharper analysis / got this down…", not the greedy "…analysis got / this down…")
+    when that fits `lines` lines of `width` characters, else greedy."""
+    ls = list(subs.wrap_en(" ".join(cue.split()), width * 0.55))
+    return ls if len(ls) <= lines and all(len(x) <= width for x in ls) else textwrap.wrap(cue, width)
 
 
 def main(argv=None):
