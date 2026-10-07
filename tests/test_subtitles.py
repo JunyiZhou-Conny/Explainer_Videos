@@ -342,12 +342,14 @@ def test_r2_an_english_gloss_may_take_the_second_line():
 def test_r2_a_short_chinese_cue_gets_time_to_read():
     tr = S.tracks([(6.99, 10.52, "这里说的“一局”，指的是从第一步到最后一步、按顺序排好的全部走法。",
                     "By a game, we mean the whole list of moves, in order.")], timing="en")
-    a, b, z, _ = tr["zh-en"][0]
-    assert z == "这里说的“一局”" and b - a >= 1.4                                 # was 0.68 s
+    (a, b, z, _), (_, d, z2, _) = tr["zh-en"]
+    assert z == "这里说的“一局”" and b - a >= 1.0                                 # was 0.68 s
+    assert S.units(z2) / (d - b) <= 9.5                   # round 3: and not at the cost of its neighbour
     tr = S.tracks([(169.92, 174.52, "然后在 2003 年，Irit Dinur 和 Kobbi Nissim 证明了一个令人警醒的结论。",
                     "Then, in 2003, Irit Dinur and Kobbi Nissim proved something sobering.")], timing="en")
-    a, b, z = tr["zh"][0]
-    assert z == "然后在 2003 年" and b - a >= 1.4                                    # was 1.09 s
+    (a, b, z), (_, d, z2) = tr["zh"]
+    assert z == "然后在 2003 年" and b - a >= 1.0                                    # was 1.09 s (0.2 s/unit)
+    assert S.units(z) / (b - a) <= S.units(z2.replace("\n", "")) / (d - b) + 0.2   # until the rates meet
 
 
 def test_r2_lists_stay_whole():
