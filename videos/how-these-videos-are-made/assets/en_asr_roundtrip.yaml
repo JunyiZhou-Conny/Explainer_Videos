@@ -1,0 +1,69 @@
+what: speech-recognizer round trip of every say line of this video (the first English one in this repo)
+date: '2026-10-07'
+voice: Kokoro af_heart, speed 0.95 (video.yaml)
+recognizer: faster-whisper large-v3-turbo, int8, CPU, language en, beam 5, no prompt
+lines: 46
+sentences: 152
+words: 1823
+word_differences: 17
+word_error_rate: 0.0093
+misread_by_the_voice:
+- word: Andrej
+  line: S02[0]
+  heard_before_fix: Andredj
+  heard_after_fix: Andre
+  fix: lexicon.yaml entry Andrej (ipa ˈɑːndɹeɪ)
+recognizer_spellings_not_voice_errors:
+- word: Manim
+  lines:
+  - S02[0]
+  - S07[2]
+  heard: Manum
+  note: the voice's phonemes are mˈænɪm (MAN-im), as intended
+other_differences: hyphens and apostrophes (hand-set → handset, re-checked → rechecked, hand-written → handwritten,
+  toolkit's → toolkits, agent's → agents, project's → project), 'a hundred' → 100, 'an animation' → 'and animation'
+  (S04[3]), 'the goal' → 'the goals' (S11[1])
+not_spoken_in_this_video:
+- Kokoro
+- Whisper
+- edge-tts
+- framemd5
+- Bilibili
+- Xiaoyi
+by_ear: no recorded check by ear
+after_fix_rows:
+- id: S02[0]
+  diffs:
+  - manim → manum
+  - andrej → andre
+- id: S03[2]
+  diffs:
+  - a → one
+  - project's → project
+- id: S04[3]
+  diffs:
+  - an → and
+- id: S05[3]
+  diffs:
+  - toolkit's → toolkits
+- id: S05[4]
+  diffs:
+  - hand set → handset
+- id: S06[1]
+  diffs:
+  - agent's → agents
+- id: S07[1]
+  diffs:
+  - re checked → rechecked
+- id: S07[2]
+  diffs:
+  - manim → manum
+- id: S10[2]
+  diffs:
+  - hand set → handset
+- id: S10[3]
+  diffs:
+  - hand written → handwritten
+- id: S11[1]
+  diffs:
+  - goal → goals

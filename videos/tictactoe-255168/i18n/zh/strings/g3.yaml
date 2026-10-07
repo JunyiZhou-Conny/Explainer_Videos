@@ -1,0 +1,104 @@
+# Chinese on-screen strings for S07, S08, S09 (group g3) of tictactoe-255168.
+# Keys are the exact English strings of the scenes; glossary: ../GLOSSARY.md.
+# Already in g1/g2 and reused here: "undo", "games counted", "nine factorial", "ghost games",
+# "move 5".."move 9", "O wins", "draw", "X to move", "O to move", "try → explore → undo",
+# and the explore() comments.
+
+# ---------------------------------------------------------------- S07 s07_experiments.py
+"Break it on purpose!": "故意把程序改坏！"
+"Experiment 1: delete the undo line": "实验 1：删掉“撤销”那一行"
+"Experiment 2: delete the winner check": "实验 2：删掉“判断输赢”"
+"output": "输出"
+# broken at the comma, not between 删掉 and its object; without 如果 it fits the 4.0-wide side card
+# at the full 30 pt (the old 如果删掉 / “撤销”那一行，会怎样？ was shrunk to 24 pt)
+"What happens if we\ndelete the undo line?": "删掉“撤销”那一行，\n会怎样？"
+"still there": "还在"
+# The "?!" corner tags on squares 7 and 8 stay half-width (no entry), a deliberate exception to B2
+# under E1 (fit the English box): corner_tag() centres the tag 0.34 cell right of the square's
+# centre, and a full-width ？！ (0.47 wide vs 0.26 at 26 pt) puts its ！ on the far side of the grid
+# line between squares 7 and 8 (checked in a test render). Like the caution sign's "!", it is a symbol.
+"board full": "棋盘满了"
+# side tags of the struck lines (same words as the S06 labels and the narration)
+"← winner check": "← 判断输赢"
+"← board full": "← 棋盘满了"
+"Now delete the winner check instead.\nWhat number comes out?\n(Hint: you've met it before!)": "这次改成删掉“判断输赢”\n会输出什么数？\n（提示：你见过它！）"
+"the ghost games\nare back": "幽灵对局\n又回来了"
+
+# ---------------------------------------------------------------- S08 s08_answer.py
+# The "# (winner and explore from before)" line of the hard-coded play_all_games() tail: Code
+# translates only the comment text (key without '#'); the four-space key is rule E5's form.
+# The panel's own internal strings ("def play_all_games(): pA1 ..." with Manim Code's " pA1"
+# alignment suffix) are code and deliberately left untranslated.
+"(winner and explore from before)": "（前面的 winner 和 explore）"
+"    # (winner and explore from before)": "    # （前面的 winner 和 explore）"
+# label "start: empty board, / X's turn" (two Text objects, translated as a pair)
+"start: empty board,": "开始：空棋盘，"
+"X's turn": "轮到 X"
+# terminal: code, stays code
+"python play_all_games.py": "python play_all_games.py"
+# legend, bar labels, result columns (S08) and legend / win tag (S09)
+"X wins": "X 赢"
+"draws": "平局"
+"counted by hand": "手算过"
+"just over half": "一半多一点"
+"half of all games": "所有对局的一半"
+# s08_answer.add_each() asserts that "each <k>" ENDS with the glyphs of "<k>" (the word slides into
+# place and "each" fades in before it), so the board names are 角格 / 边格 (每个角格 = 每个 + 角格)
+"corner": "角格"
+"edge": "边格"
+"center": "中心"
+"each corner": "每个角格"
+"each edge": "每个边格"
+"(4 corners)": "（4 个角格）"
+"(4 edges)": "（4 个边格）"
+"(1 center)": "（1 个中心）"
+# card wording 角格、边格 = the board labels shown under it (E1); the spoken question keeps 角上、边上
+"Which first move for X leads to the MOST different games:\ncorner, edge, or center?": "X 的第一步下在哪儿，能下出的不同对局最多：\n角格、边格，还是中心？"
+# the card's capitalised MOST: s08_answer finds this word in the translated card and colours it
+# (GREEN, the count colour) in place of the capitals (E1)
+"MOST": "最多"
+"on 4 winning lines": "在 4 条获胜线上"
+"on 3 winning lines": "在 3 条获胜线上"
+"on 2 winning lines": "在 2 条获胜线上"
+"early win": "提前赢"
+# bars "X wins 15,648 of 25,872" / "X wins 14,232 of 29,592": whole before part. No final 局: with it
+# the edge-row label (24 pt bold, inset 0.25) runs ~0.04 past its X segment into the O segment.
+"re:X wins ([\\d,]+) of ([\\d,]+)": "\\2 局中 X 赢 \\1"
+"start in the center: X wins about 6 in 10 games": "先下中心：X 每 10 局大约赢 6 局"
+"start on an edge: X wins fewer than half": "先下边格：X 赢不到一半"
+"half": "一半"
+
+# ---------------------------------------------------------------- S09 s09_bigger.py
+# tree labels ("X"/"O" t2c keys stay letters, so their colours survive)
+"best for X": "对 X 最好"
+"best for O": "对 O 最好"
+# t2c key "draw" -> 平局 (g2), contained verbatim
+"perfect play → draw": "双方都不失误 → 平局"
+"X always wins?": "X 总能赢吗？"
+"the same on the full tree:": "整棵树也一样："
+"empty board": "空棋盘"
+"→ draw": "→ 平局"
+"O's mistake": "O 的失误"
+# digit strips; t2c key "255,168" kept verbatim
+"tic-tac-toe: 255,168 (6 digits)": "井字棋：255,168（6 位数）"
+"chess: at least 1 followed by 120 zeros (Shannon, 1950)": "国际象棋：至少 1 后面跟着 120 个零（香农，1950 年）"
+"120 zeros": "120 个零"
+"atoms in the observable universe: about 1 followed by 80 zeros": "可观测宇宙中的原子：大约 1 后面跟着 80 个零"
+"= one digit": "= 一位数字"
+# chess programs
+"≈ who's winning?": "≈ 谁更有希望赢？"
+"look a few moves ahead + estimate who's winning": "往后看几步 + 估计谁更有希望赢"
+"(learned from millions of practice games)": "（从几百万局练习中学来）"
+# recap cards (t2c key "ghost games" -> 幽灵对局, contained verbatim)
+"Recap": "小结"
+"multiply choices": "选择数相乘"
+"→ nine factorial": "→ 9 的阶乘"
+"games stop early": "对局会提前结束"
+"→ ghost games": "→ 幽灵对局"
+# challenge cards; "Count the games / that end on move 7" is one label in two Text objects (E4)
+"Your turn!": "轮到你了！"
+"Count only X's wins": "只统计 X 赢的对局"
+"Count the games": "统计在第 7 步"
+"that end on move 7": "结束的对局"
+"What if O went first?": "如果 O 先走呢？"
+"program + challenges: linked in the description": "程序 + 挑战题：链接在视频简介里"

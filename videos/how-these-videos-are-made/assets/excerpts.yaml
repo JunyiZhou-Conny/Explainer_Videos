@@ -1,0 +1,177 @@
+# Real text excerpts the scenes show (ASSETS.md ids). Every string was copied from its source with
+# the command in ASSETS.md and re-checked on 2026-10-07 (repo HEAD 699ca66). Show them exactly as
+# written here; `src` is the GREY source caption material. Code excerpts live in assets/code/ (exact
+# lines, with their line numbers in the file name); the user's words are in quotes.yaml.
+# No names: authors are "the user" / "the agent".
+
+A05:
+  text: "The output format I am most bullish on is fully custom / bespoke explainer videos generated on any arbitrary topic."
+  screen: "fully custom / bespoke explainer videos generated on any arbitrary topic"
+  src: "README.md lines 7-8 and the first request (as quoted; not checked against the original post)"
+
+A13:                                 # git show 41eca34:docs/WORKFLOW.md | sed -n '4p;67p;73p' (committed Oct 4, 16:07 UTC)
+  motto: "Every step leaves a file behind, so you can stop, review, and resume."
+  heading: "4. Review the script (before any animation)"     # line 67 reads "## 4. Review the script (before any animation)"
+  cost: "Fixing a sentence here costs seconds; fixing it after animation costs a re-render."
+  src: "docs/WORKFLOW.md at 41eca34 (Oct 4, 16:07 UTC)"
+
+A14:                                 # privacy paper p. 270 (assets/dp_paper_p270.png, 1195x1834)
+  page_line: "mean 0, and standard deviation λ."
+  page_line_px: {x0: 118, x1: 475, y: 1245}    # baseline of that line in the PNG (68 % down)
+  digest_note: "the true standard deviation is √2·λ — λ is the scale"
+  digest_src: "digest.md lines 29-30"
+
+A15:                                 # tic-tac-toe script.md at bb3fc1e (full excerpt: ttt_script_excerpt.md)
+  convention: "say \"nine factorial\", never \"9!\""
+  say_line_44: "Take a guess. A hundred? A million? Pause the video and write your guess down."
+  src: "videos/tictactoe-255168/script.md"
+
+A16:
+  scene_reads: "SAY = NARRATION[\"S03\"]"                  # code/ttt_s03_stop_28.py
+  loader: "NARRATION = load_narration(PROJECT / \"script.md\")"   # code/ttt_common_31.py
+  anchors_file: "ttt_s01_hook_115-122.py"                 # s01_hook.py lines 115-122 (cut at 122)
+
+A17:                                 # ttt_s03_say1_marks.json: tic-tac-toe S03, SAY[1]
+  clip: {start: 10.233, end: 33.252, duration: 23.019}
+  marks: [[0, 0.0], [96, 8.533], [172, 14.571], [211, 17.579], [257, 20.437]]   # (character offset, seconds)
+  estimate_counted_those: {offset: 16, seconds: 1.42}     # 16/96 x 8.533 s (explainer/voice.py Clip.time_of)
+
+A19:                                 # see ttt_s03_say1_words.txt (faster-whisper large-v3-turbo, this video's run)
+  caption: "word times measured by a speech recognizer for this video, on this one clip"
+
+A20:
+  comment_file: "code/ttt_s03_stop_90-92.py"
+  shift_file: "code/ttt_s03_stop_317.py"
+  shift_line: "wait_for(self, vo, \"counted those\", shift=2.2)"
+  shifts_in_scene: 20                # numeric shift arguments in s03_stop.py at bb3fc1e, from -1.1 to +2.2 s; say "about 20"
+  src: "videos/tictactoe-255168/scenes/s03_stop.py lines 90-92, 317"
+
+A21:
+  file: "code/voice_463.py"
+  line: "asyncio.run(edge_tts.Communicate(text, self.voice, rate=rate).save(str(out)))"
+  src: "explainer/voice.py line 463 (at bb3fc1e)"
+
+A22:
+  file: "ttt_s03_lint.txt"           # the real output: clean ("OK"); Manim's own frame-rate warnings included
+  tool_lines: ["end at 99.9s; 0 visible mobject(s) left on screen", "OK"]
+  flag_formats:                      # explainer/check.py print formats: show as "output format", not as findings
+    - "[  t s] OUT   Text x[.., ..] y[.., ..] 'label'"
+    - "[  t s] SMALL 18.0pt Text 'label'"
+    - "  LEFT: VGroup"
+  flags: ["OUT · off screen", "SMALL · under 20 points", "LEFT · still on screen at the end"]
+
+A23:
+  file: "code/ttt_s03_stop_62-72.py"
+  asserts_in_ttt_scenes: 82          # grep -hE '^\s*assert\b' videos/tictactoe-255168/scenes/*.py | wc -l
+  src: "videos/tictactoe-255168/scenes/s03_stop.py lines 62-72"
+
+A24:
+  command: "python assets/play_all_games.py"
+  output: "255168"
+
+A25:
+  file: "code/old_8a922bf_s03_stop_280-282.py"
+  src: "s03_stop.py at 8a922bf, line 280"
+A26:
+  file: "code/ttt_s03_stop_200-203.py"
+  docstring: "The `.animate`s are made only when the step plays."
+  src: "s03_stop.py line 203"
+
+A27:
+  file: "ttt_zh_g1_entry.yaml"       # i18n/zh/narration/g1.yaml lines 21-30
+  anchor: {en: "Flipped or turned", zh: "翻转"}
+  sentence_pairs: {total: 417, tictactoe: 158, privacy: 259}
+
+A28:                                 # workflow zh-tts-bakeoff (wf_4ab45a89) + commit 875166f
+  heard: [["noise", "Nice"], ["epsilon", "Excellent"], ["Claude", "Clark"]]   # what the recognizer heard (Xiaoxiao)
+  first_voice: "zh-CN-XiaoxiaoNeural"
+  chosen_voice: "zh-CN-XiaoyiNeural"
+  chosen_result: "17 of 17 terms · 10 of 10 numbers"
+  fuzzy_note: "a fuzzy match: 'Claude Shannon' came back as 'Cloud Shannon'"
+  scoreboard: "Brian (male, English-first) 0.997 · Ava (female, English-first) 0.991–0.995 · Xiaoyi (native Mandarin) 0.991 · Xiaoxiao 0.933"
+  ranking_line: "Ranking within edge-tts: Brian 0.997 > Ava 0.991-0.995 > Xiaoyi = William 0.991 > Emma 0.979 > Yunxi 0.973 > Xiaoxiao 0.93-0.97."
+  by_ear: "None of this has been checked by ear."
+
+A30:
+  before: "不是电脑能做的，不只是统计对局"        # as both Chinese QA reviewers quoted it (wf_f49ebc60)
+  before_gloss: "It's not what a computer can do, not just counting games"
+  after: "不是。电脑能做的，不只是统计对局"
+  english: "No. A computer can do more than count."
+  cue: "00:11:42,030 --> 00:11:45,400"
+  reviewer_quote: "11:42 then reads “不是电脑能做的，不只是统计对局”"
+  recon_tag: "reconstruction · the old cue text, as both QA reviewers quoted it"
+
+A31:
+  file: "ttt_zh_s03_voice.json"
+  text: "{\"speed\": 1.0, \"tts\": \"edge\", \"voice\": \"zh-CN-XiaoyiNeural\"}"
+  caption: "voice stamp of a Chinese scene render (tic-tac-toe scene 3)"
+
+A32:                                 # wf_b21332a2 (zh-qa-fix-dp), recounted from the run record
+  groups: 4
+  findings: {total: 103, wrong: 1, confusing: 21, polish: 81}
+  fixer_changes: {total: 75, by_group: [18, 16, 19, 22]}
+  verifier_corrections: {total: 12, by_group: [2, 2, 3, 5]}
+  bounce: "claimed: ×1.12, within the limit · measured: ×1.153, over the 15 % limit"
+  bounce_src: "The fixer's report puts the SuLQ block at x1.12. It is actually 19.896 s against 17.259 s, x1.153"
+
+A35:
+  cd67aa4: "Subtitles: keep sentence punctuation in merged cues; clause-aligned English; 2-line cues"
+  5be60d7: "A plain build used to reuse any existing scene movie, so edited scenes were silently stitched from stale renders."
+  5be60d7_next: "Now a scene is rendered when its movie is missing or older than its file, the shared scene helpers, script.md, video.yaml, assets or the toolkit."
+  638db72: "Toolkit fixes found by fact-checking the language docs"
+
+A36:
+  never_touched: "The English video is never touched"
+  never_touched_full: "The English video is never touched: every language-specific change in a scene is guarded by `i18n.active()` or is a refactor that builds the same objects, and that is checked frame by frame."
+  licence: "the free Edge endpoint is not licensed for published videos"
+  src: "docs/LANGUAGES.md lines 8-9, 60"
+  azure_clips_when_written: 0        # no .cache/tts/azure/, no AZURE env vars (re-checked 2026-10-07 23:05 UTC)
+
+A37:
+  text: "Identical: all 721 frames of the English 480p preview match the framemd5 baseline"
+  screen: "tic-tac-toe scene 1, English 480p preview: all 721 frames match"
+  footnote: "a few scenes don't render exactly the same every time"
+
+A38:
+  rename: "renamed the row 'Dev' to 'Dan' so the names match S03/S04 (Bob, Carol, Alice, Dan, Eve)"
+  budget_bar: "is drawn five different ways"
+  src: "privacy video, whole-video QA notes"
+
+A41:
+  filename: "20_chen2016dcan_1604.02678.pdf"
+  inside: "Topological Pressure of Proper Map"     # what the catalog agent found inside
+  likely: "most likely arXiv 1604.02677"
+  tally: "4 of 36 PDFs: the wrong paper"          # DCAN, Cellpose, TopoLoss, MILD-Net
+  commit_line: "Replace four misfiled PDFs (wrong arXiv ids) …"
+
+A42:
+  text: "go through the contact sheets of every scene in order while reading the subtitles for the same times (the srt) — that is the video."
+  caption: "from the round-1 QA prompt (tic-tac-toe)"
+
+A43:                                 # build-dp-scenes runs, Oct 4 (UTC)
+  review_lane: {start: "15:47", end: "16:30"}
+  guide_committed: "16:07"
+  builders: {runs: 3, agents_per_run: 2, started: ["16:12:55", "16:13:04", "16:13:15"], killed: "16:24:19"}
+
+A44:
+  reviewer: "The renders are older than the source."
+  reviewer_caption: "a reviewer · privacy video, Oct 4"
+  agent_pair: {movie: "Explore.mp4 · Oct 5, 23:24", source: "s06_explore.py · committed Oct 6, 00:05"}
+  agent_caption: "the agent · tic-tac-toe, Oct 6"
+  fix_commit: "5be60d7 · Oct 6, 00:07"
+
+A10:                                 # qa_round1.txt / qa_round2.txt line refs
+  r1_line30: "Paused frames read '4 × 3 × 2      12' and '4 × 3 × 2 × 1      22', which look like wrong multiplication."
+  s01_bubble: "Paused frames read '4 × 3 × 2      12' … which look like wrong multiplication."
+  r1_line38_bubble: "… couldn't work out what X0 meant (X's zeroth move?)"
+  r1_score: "about 8/10"
+  r2_score: "8.5/10"
+  r2_line62: "25 are fixed and 5 are partly fixed. I found nothing \"wrong\" this round."
+  funnel: {round1: {issues: 30, wrong: 3, confusing: 13, polish: 14}, round2: {fixed: 25, partly: 5, wrong: 0, new_or_remaining: 18}}
+  score_caveats: "a model's guess, not a real child's · the second kid had read the first one's notes"
+
+A03:                                 # the re-render of commit 8a922bf (old toolkit + old scene, 720p30, this session)
+  tag: "re-rendered from the old code (commit 8a922bf)"
+  tally_frame: {file: "old_s03_tally_12.png", t: 22.13, shows: "4 × 3 × 2      12"}
+  frozen_frames: {files: ["old_s03_frozen_1.png", "old_s03_frozen_2.png", "old_s03_frozen_3.png", "old_s03_frozen_4.png"],
+                  t: [20.6, 20.8, 21.0, 21.2], counter: [5, 5, 6, 7]}     # the ghosts stay put while the counter creeps on

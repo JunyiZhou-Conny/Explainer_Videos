@@ -1,0 +1,304 @@
+# zh narration for S04, S05, S06 (group g2). One zh sentence per English sentence;
+# say: = what the voice reads (null = the display text); anchors: English phrase -> zh words;
+# en_display: the English subtitle line with digits/symbols (null = the SAY text).
+S04:
+- en: "The key move is to imagine two worlds. In one, the database is x. In the other, it is x prime: identical except for one row. Say, Alice's. Databases like this are called neighbors. In the hospital, Alice was added; here, her row just says something different. Either way, no single person's row should matter much."
+  zh:
+  - "关键是想象两个世界。"
+  - "一边是数据库 x。"
+  - "另一边是 x′：只有一条记录不同。"
+  - "比如 Alice 那条。"
+  - "这样的一对叫相邻数据库（也叫相邻数据集）。"
+  - "医院例子里多了 Alice；这里是她的记录变了。"
+  - "总之，谁的记录都不该影响太大。"
+  say:
+  - null
+  - null
+  - "另一边是 x prime：只有一条记录不同。"
+  - null
+  - "这样的一对叫相邻数据库。"
+  - null
+  - null
+  anchors:
+    "except for one row": "只有一条记录不同"
+    "here, her row": "这里是她的记录"
+  en_display:
+  - null
+  - null
+  - "In the other, it is x′: identical except for one row."
+  - null
+  - null
+  - null
+  - null
+- en: "Run the mechanism, the curator's randomized answering rule, in each world. Whatever the analyst gets to see, the paper calls the transcript; for now, a single noisy answer. Because the mechanism is random, each world gives a whole distribution of possible outputs."
+  zh:
+  - "把这个机制，也就是数据管理者随机作答的规则，在两个世界里各跑一次。"
+  - "分析者能看到的一切，原文叫 transcript（交互历史）；目前就是一个带噪声的答案。"
+  - "因为机制是随机的，每个世界都对应一个完整的输出分布。"
+  say:
+  - null
+  - "分析者能看到的一切，原文叫 transcript；目前就是一个带噪声的答案。"
+  - null
+  anchors:
+    "in each world": "在两个世界里各跑一次"
+    "for now, a single": "目前就是"
+    "a whole distribution": "完整的输出分布"
+- en: "Pick any output t, and compare the heights of the two curves there. Slide t along and watch their ratio. A private mechanism keeps that ratio close to one everywhere: never above e to the epsilon, never below e to the minus epsilon."
+  zh:
+  - "任取一个输出 t，比较两条曲线在这里的高度。"
+  - "滑动 t，看它们的比值。"
+  - "满足差分隐私的机制，让比值处处接近 1：不超过 e^ε，也不低于 e^(−ε)。"
+  say:
+  - null
+  - null
+  - "满足差分隐私的机制，让比值处处接近一：不超过 E 的艾普西隆次方，也不低于 E 的负艾普西隆次方。"
+  anchors:
+    "compare the heights": "比较两条曲线"
+    "A private mechanism": "满足差分隐私的机制"
+    "never above": "不超过"
+    "never below": "也不低于"
+  en_display:
+  - null
+  - null
+  - "A private mechanism keeps that ratio close to 1 everywhere: never above e^ε, never below e^(−ε)."
+- en: "That is the paper's definition, which it calls epsilon-indistinguishability. The log of the ratio is the privacy loss at t. For every pair of neighbors, every analyst and every output, it must be at most epsilon in absolute value. The absolute value makes it symmetric: a ratio of two and a ratio of one half count the same. For small epsilon, e to the epsilon is about one plus epsilon."
+  zh:
+  - "这就是原文的定义，叫作 ε-不可区分性（即 ε-差分隐私）。"
+  - "比值的对数，就是输出 t 处的隐私损失。"
+  - "对任意一对相邻数据库、任意分析者、任意输出，它的绝对值都不能超过 ε。"
+  - "取绝对值就对称了：比值是 2 还是 1/2，都算一样。"
+  - "ε 很小的时候，e^ε 约等于 1 + ε。"
+  say:
+  - "这就是原文的定义，叫作艾普西隆不可区分性。"
+  - null
+  - "对任意一对相邻数据库、任意分析者、任意输出，它的绝对值都不能超过艾普西隆。"
+  - "取绝对值就对称了：比值是二还是二分之一，都算一样。"
+  - "艾普西隆很小的时候，E 的艾普西隆次方约等于一加艾普西隆。"
+  anchors:
+    "which it calls": "叫作"
+    "every analyst": "任意分析者"
+    "every output": "任意输出"
+    # Chinese order is 绝对值 -> 不能超过 ε; s04_definition.py waits for these two in that order when zh
+    "in absolute value": "它的绝对值"
+    "it must be at most": "都不能超过"
+    "a ratio of two": "比值是 2"
+  en_display:
+  - "That is the paper's definition, which it calls ε-indistinguishability."
+  - null
+  - "For every pair of neighbors, every analyst and every output, it must be at most ε in absolute value."
+  - "The absolute value makes it symmetric: a ratio of 2 and a ratio of 1/2 count the same."
+  - "For small ε, e^ε is about 1 + ε."
+- en: "Let's test it on Warner's coin from our map. Pause and ponder: if Alice's true answer is yes, how likely is she to say yes? And if it is no?"
+  zh:
+  - "拿地图上 Warner 的硬币试试。"
+  - "暂停想一想：如果 Alice 的真实答案为“是”，她有多大概率回答“是”？"
+  - "换成“否”呢？"
+  anchors:
+    "how likely is she": "有多大概率"
+- en: "If the truth is yes, she says yes three quarters of the time: heads, or tails then heads. If it is no, only the second coin can say yes: one quarter. The worst ratio is three, so the coin satisfies the definition with epsilon equal to the log of three, about one point one."
+  zh:
+  - "真实答案为“是”，她回答“是”的概率是 3/4：正面，或者先反后正。"
+  - "换成“否”，只有第二枚硬币能让她回答“是”：1/4。"
+  - "最坏的比值是 3，所以硬币满足定义，ε 就等于 3 的自然对数，大约 1.1。"
+  say:
+  - "真实答案为“是”，她回答“是”的概率是四分之三：正面，或者先反后正。"
+  - "换成“否”，只有第二枚硬币能让她回答“是”：四分之一。"
+  - "最坏的比值是三，所以硬币满足定义，艾普西隆就等于三的自然对数，大约一点一。"
+  anchors:
+    "or tails then heads": "或者先反后正"
+    "If it is no": "换成“否”"
+    "with epsilon equal": "ε 就等于"
+  en_display:
+  - "If the truth is yes, she says yes 3/4 of the time: heads, or tails then heads."
+  - "If it is no, only the second coin can say yes: 1/4."
+  - "The worst ratio is 3, so the coin satisfies the definition, with ε = ln 3, about 1.1."
+- en: "Now be the attacker, trying to tell the two worlds apart. By Bayes' rule, your new odds are your old odds times exactly this ratio, so they move by at most a factor of e to the epsilon, whatever you knew before. Starting from fifty-fifty, epsilon one tenth leaves you at most fifty-two and a half percent sure; epsilon one, at most seventy-three. Epsilon is set by policy; the paper calls it the leakage."
+  zh:
+  - "现在你是攻击者，想区分这两个世界。"
+  - "按贝叶斯公式，后验概率比恰好是先验概率比乘上这个比值，所以最多只会变成原来的 e^ε 倍，无论你之前知道什么。"
+  # display drops the two commas the voice keeps (say:), so the bilingual cut falls after 的话 and
+  # pairs with 'Starting from 50/50,' | 'ε = 0.1 leaves you…' (with the comma after 0.1 it fell before 最多)
+  - "一开始是五五开的话，ε 取 0.1 最多有 52.5% 的把握；取 1 最多 73%。"
+  - "ε 是人为选定的；原文管它叫 leakage（泄露量）。"
+  say:
+  - null
+  - "按贝叶斯公式，后验概率比恰好是先验概率比乘上这个比值，所以最多只会变成原来的 E 的艾普西隆次方倍，无论你之前知道什么。"
+  - "一开始是五五开的话，艾普西隆取零点一，最多有百分之五十二点五的把握；取一，最多百分之七十三。"
+  - "艾普西隆是人为选定的；原文管它叫 leakage。"
+  anchors:
+    "By Bayes": "按贝叶斯公式"
+    "your new odds": "后验概率比"
+    "your old odds": "先验概率比"
+    # 变成原来的: “变 E 的…” is heard as 变异的, “最多是 E 的…” as 最多示意的 (ASR round trip)
+    "exactly this ratio": "乘上这个比值"
+    "so they move": "所以最多只会变成"
+    "whatever you knew": "无论你"
+    "epsilon one tenth": "取 0.1"
+    "epsilon one,": "取 1"
+  en_display:
+  - null
+  - "By Bayes' rule, your new odds are your old odds times exactly this ratio, so they move by at most a factor of e^ε, whatever you knew before."
+  - "Starting from 50/50, ε = 0.1 leaves you at most 52.5% sure; ε = 1, at most 73%."
+  - "ε is set by policy; the paper calls it the leakage."
+- en: "Notice what this does not promise. If a study reveals that smokers get more heart disease, and Alice smokes, people may now think she is at higher risk. That is not a privacy violation: the same lesson could be learned from everyone else's data, so it would happen even if Alice's row were replaced by someone else's."
+  zh:
+  - "再来看它不保证什么。"
+  - "假如研究发现吸烟者更容易得心脏病，而 Alice 吸烟，别人现在就可能觉得她风险更高。"
+  - "这不算侵犯隐私：同样的结论从其他人的数据里也能得出，所以就算把 Alice 的记录换成别人的，也照样会发生。"
+  anchors:
+    "and Alice smokes": "而 Alice 吸烟"
+    "people may now": "别人现在"
+    "the same lesson": "同样的结论"
+    "so it would happen": "所以就算"
+S05:
+- en: "Why demand a ratio bound for every single output? Cryptography often settles for something weaker: statistical distance, half the area between the two curves. Equivalently, the most the probability of any event can differ between the worlds. The paper shows why that is not enough here."
+  zh:
+  - "为什么每个输出的比值都要有上界？"
+  - "密码学常常满足于更弱的标准：统计距离（即 TV 距离），也就是两条曲线间面积的一半。"
+  - "等价地说，就是任意事件的概率在两个世界间的最大差距。"
+  - "原文说明了它在这里为什么不够。"
+  say:
+  - null
+  - "密码学常常满足于更弱的标准：统计距离，也就是两条曲线间面积的一半。"
+  - null
+  - null
+  anchors:
+    # the gloss （即 TV 距离） is subtitle-only, so the voice says 统计距离 about where the display
+    # shows the gloss (the target 统计距离 itself wrote the label 0.7 s before the word)
+    "statistical distance": "（即 TV 距离）"
+    "half the area": "也就是两条曲线间"
+- en: "Consider this mechanism: pick one row at random and publish it, word for word. Change one person's row, and the output distribution moves by only one over n. For a big database that is tiny, so by the averaged measure this looks private."
+  zh:
+  - "看这个机制：随机挑一条记录，原样发布。"
+  - "改动一个人的记录，输出分布只会变化 1/n。"
+  - "数据库很大时这点变化微不足道，所以按这种平均意义上的度量，它看起来不泄露隐私。"
+  say:
+  - null
+  - "改动一个人的记录，输出分布只会变化 n 分之一。"
+  - null
+  anchors:
+    "pick one row": "随机挑一条记录"
+    "moves by only": "只会变化"
+    "by the averaged measure": "按这种平均意义上的度量"
+  en_display:
+  - null
+  - "Change one person's row, and the output distribution moves by only 1/n."
+  - null
+- en: "But every output is somebody's complete record. The ratio test catches it: the output showing Alice's real value has probability one over n in one world, and zero in the other. The ratio is infinite."
+  zh:
+  - "可每个输出都是某个人的完整记录。"
+  - "比值这一关能拦住它：显示 Alice 真实取值的输出，一个世界里概率是 1/n，另一个是 0。"
+  - "比值是无穷大。"
+  say:
+  - null
+  - "比值这一关能拦住它：显示 Alice 真实取值的输出，一个世界里概率是 n 分之一，另一个是零。"
+  - null
+  anchors:
+    "has probability one over n": "概率是"
+    "and zero in the other": "另一个是"
+  en_display:
+  - null
+  - "The ratio test catches it: the output showing Alice's real value has probability 1/n in one world, and 0 in the other."
+  - null
+- en: "Averages let catastrophes slip through, as long as each is rare for any single person. A ratio bound rules them out everywhere. It also settles our rounding question: at the jump, one world gives that answer with probability one, the other with probability zero. To pass this test, a mechanism has to be random."
+  zh:
+  - "平均值会放过那些对每个人来说都很罕见的灾难。"
+  - "而比值上界会处处把它们排除在外。"
+  - "它也解答了四舍五入那道题：在跳变处，一个世界给出这个答案的概率是 1，另一个是 0。"
+  - "想过这一关，机制就必须是随机的。"
+  say:
+  - null
+  - null
+  - "它也解答了四舍五入那道题：在跳变处，一个世界给出这个答案的概率是一，另一个是零。"
+  - null
+  anchors:
+    "at the jump": "在跳变处"
+    "one world gives": "一个世界给出"
+    "the other with probability zero": "另一个是"
+  en_display:
+  - null
+  - null
+  - "It also settles our rounding question: at the jump, one world gives that answer with probability 1, the other with probability 0."
+  - null
+S06:
+- en: "So how much noise do we need? It depends on a single property of the query: its sensitivity, the most that changing one row can ever change the answer, over all pairs of neighboring databases, including ones that do not exist yet."
+  zh:
+  - "那噪声到底要加多少？"
+  - "这只取决于 query 的一个性质：它的敏感度，也就是改变一条记录最多能让答案变化多少，取遍每一对相邻数据库，包括还不存在的那些。"
+  anchors:
+    "its sensitivity": "它的敏感度"
+    "the most that": "也就是改变"
+    "over all pairs": "取遍每一对"
+- en: "For a counting query, like our hospital count, one row changes the answer by at most one. Sensitivity one."
+  zh:
+  - "对 counting query（计数查询），比如医院那个，一条记录最多让答案变 1。"
+  - "敏感度是 1。"
+  say:
+  - "对 counting query，比如医院那个，一条记录最多让答案变一。"
+  - null
+  anchors:
+    # placed by display position: the subtitle-only gloss pushes 一条记录 late, so the target is the
+    # clause before it (比如 is shown at ~0.53 of the line; 一条记录 is spoken at ~0.49 of the clip)
+    "one row changes": "比如医院那个"
+  en_display:
+  - "For a counting query, like our hospital count, one row changes the answer by at most 1."
+  - "Sensitivity 1."
+- en: "Now a histogram: split the possible values of a row into d bins, and release how many rows fall in each. Before I show you, pause: if Alice's row changes, how much can the whole histogram change in total? Does it depend on the number of bins?"
+  zh:
+  - "再看直方图：把一条记录的可能取值分成 d 个桶，发布每个桶的记录数。"
+  - "先别急着看答案，暂停一下：如果 Alice 的记录变了，整个直方图总共能变多少？"
+  - "这跟桶的数量有关吗？"    # 和桶 (hé tǒng) is heard as 合同
+  anchors:
+    "split the possible values": "把一条记录"
+    "and release how many": "发布每个桶"
+    "if Alice's row changes": "如果 Alice 的记录变了"
+    "how much can the whole": "整个直方图"
+- en: "She moves out of one bin and into another: one count goes down by one, another goes up by one. Total change: two. Adding up absolute changes across coordinates like this is the L1 norm, the paper's way to measure sensitivity for lists of numbers. And it is two whether there are five bins or five thousand. It does not depend on the dimension at all."
+  zh:
+  - "她从一个桶搬到另一个桶：一个桶少了 1，另一个桶多了 1。"
+  - "总变化量：2。"
+  - "像这样把各个分量变化的绝对值加起来，就是 L1 范数，原文就用它来衡量一列数的敏感度。"
+  - "而且它总是 2，不管是 5 个桶还是 5000 个桶。"
+  - "它和维度完全无关。"
+  anchors:
+    "one count goes down": "一个桶少了"
+    "another goes up": "另一个桶多了"
+    "is the L1 norm": "L1 范数"
+    "the paper's way": "原文就用它"
+  en_display:
+  - "She moves out of one bin and into another: one count goes down by 1, another goes up by 1."
+  - "Total change: 2."
+  - null
+  - "And it is 2 whether there are 5 bins or 5000."
+  - null
+- en: "Contrast that with: what is the largest income in the database? One billionaire can move that answer by a billion, and with no cap there is no limit at all. The standard fix is to cap every value, say at a million, first. Remember that trick: it is exactly what private deep learning does to gradients."
+  zh:
+  - "对比一下：数据库里最高的收入是多少？"
+  - "一个亿万富翁，就能让答案变动 10 亿，不封顶就根本没有上限。"
+  - "标准做法是先给每个值封顶，比如 100 万。"
+  - "这个 trick 要记住：差分隐私深度学习对梯度做的就是这个。"
+  anchors:
+    "and with no cap": "不封顶"
+  en_display:    # $1B: the English fits one line (85 < 88 chars), so the sentence is one cue, not a 1.2 s '一个亿万富翁'
+  - null
+  - "One billionaire can move that answer by $1B, and with no cap there is no limit at all."
+  - "The standard fix is to cap every value, say at $1M, first."
+  - null
+- en: "Two things to remember. Sensitivity is a property of the function alone, not of the particular database, and it is not chosen by policy. Epsilon is a choice. Sensitivity is a fact."
+  zh:
+  - "再强调两点。"    # not 有两点要记住: 这个 trick 要记住 is 5 s earlier
+  - "敏感度只取决于函数本身，与具体的数据库无关，也不是人为选定的。"
+  - "ε 是选出来的。"
+  - "敏感度是算出来的。"
+  say:
+  - null
+  - null
+  - "艾普西隆是选出来的。"
+  - null
+  anchors:
+    "not of the particular": "与具体的数据库"
+  en_display:
+  - null
+  - null
+  - "ε is a choice."
+  - null

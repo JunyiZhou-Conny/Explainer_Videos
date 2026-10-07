@@ -1,0 +1,385 @@
+# Chinese narration for S10-S13 (group g4), sentence-aligned to script.md SAY lines.
+# Terminology and rules: ../GLOSSARY.md / ../glossary.yaml.
+"S10":
+- "en": "Sensitivity reaches far beyond counts. Three examples from the paper."
+  "zh":
+  - "敏感度的用处远不止 counting query。"
+  - "原文举了三个例子。"
+  "anchors":
+    "Three examples": "三个例子"
+- "en": "First, picture a social network where each possible link is one row of the database. How many links must you cut to split the network in two? That minimum cut moves by at most one when one link changes, so it is one-sensitive. In general, any question of the form, how many rows would you have to change to make something true, has sensitivity one."
+  "zh":
+  - "第一，想象一个社交网络，每条可能的边都是数据库里的一条记录。"
+  - "至少要切断多少条边，才能把网络一分为二？"
+  - "这个最小割在改动一条边时最多变化 1，所以敏感度是 1。"
+  - "一般来说，凡是“至少要改动多少条记录，才能让某件事成立”这类问题，敏感度都是 1。"
+  "say":
+  - null
+  - null
+  - "这个最小割在改动一条边时最多变化一，所以敏感度是一。"
+  - null
+  "en_display":
+  - null
+  - null
+  - "That minimum cut moves by at most 1 when one link changes, so it is 1-sensitive."
+  - "In general, any question of the form, how many rows would you have to change to make something true, has sensitivity 1."
+  "anchors":
+    "each possible link": "每条可能的边"
+    "How many links": "至少要切断多少条边"
+    "That minimum cut": "这个最小割"
+    "when one link changes": "在改动一条边时"
+    "so it is one-sensitive": "所以敏感度是 1"
+    "In general": "一般来说"
+    "how many rows": "至少要改动多少条记录"
+    "to make something true": "才能让某件事成立"
+    "has sensitivity one": "敏感度都是 1"
+- "en": "Second: if an algorithm that rarely looks at any particular row, like one working from a small random sample, approximates f to within sigma most of the time, on every database, then f has sensitivity at most two sigma. That is Lemma 1."
+  "zh":
+  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小规模随机样本；而且大多数时候都能把 f 近似到 σ 以内，在每个数据库上都是这样；那么 f 的敏感度最多是两倍 σ。"
+  - "这就是引理 1。"
+  "say":
+  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小规模随机样本；而且大多数时候都能把 f 近似到 sigma 以内，在每个数据库上都是这样；那么 f 的敏感度最多是两倍 sigma。"
+  - null
+  "en_display":
+  - "Second: if an algorithm that rarely looks at any particular row, like one working from a small random sample, approximates f to within σ most of the time, on every database, then f has sensitivity at most 2σ."
+  - null
+  "anchors":
+    "like one working": "比如只看一个小规模随机样本"
+    "approximates f": "能把 f 近似到"
+    "on every database": "在每个数据库上"
+    "then f has": "那么 f 的敏感度"
+    "That is Lemma 1": "这就是引理 1"
+- "en": "Third, the answer need not be a number: a ranking, a set, a string of bits, anything with a distance between answers. Pick an output with probability that decays exponentially with its distance from the true answer, at a rate of epsilon over twice the sensitivity. For bit strings, that flips each bit with probability a little below one half: Warner's coin again, applied to the answer."
+  "zh":
+  - "第三，答案不一定是一个数：一个排名、一个集合、一个比特串，凡是答案之间能定义距离的都行。"
+  - "选中某个输出的概率，随它到真实答案的距离呈指数衰减，速率是 ε 除以两倍敏感度。"
+  - "对比特串来说，这就是每个比特以略低于 1/2 的概率翻转：又是 Warner 的硬币，这次用在了答案上。"
+  "say":
+  - null
+  - "选中某个输出的概率，随它到真实答案的距离呈指数衰减，速率是艾普西隆除以两倍敏感度。"
+  - "对比特串来说，这就是每个比特以略低于二分之一的概率翻转：又是 Warner 的硬币，这次用在了答案上。"
+  "en_display":
+  - null
+  - "Pick an output with probability that decays exponentially with its distance from the true answer, at a rate of ε over twice the sensitivity."
+  - "For bit strings, that flips each bit with probability a little below 1/2: Warner's coin again, applied to the answer."
+  "anchors":
+    "a ranking": "一个排名"
+    "a set": "一个集合"
+    "a string of bits": "一个比特串"
+    "anything with a distance": "凡是答案之间"
+    "Pick an output": "选中某个输出"
+    "decays exponentially": "指数衰减"
+    "at a rate of": "速率是"
+    "For bit strings": "对比特串来说"
+    "a little below": "略低于"
+    "Warner's coin again": "Warner 的硬币"
+"S11":
+- "en": "Now the last part of the paper. Statisticians and data miners traditionally prefer the non-interactive model: sanitize the data once, publish it, and let anyone compute anything. Can that work under this definition?"
+  "zh":
+  - "来看这篇 paper 的最后一部分。"
+  - "统计学家和数据挖掘研究者传统上偏爱非交互式模型：数据只做一次隐私处理，发布出去，谁想算什么都行。"
+  - "在这个定义下，行得通吗？"
+  "anchors":
+    "Statisticians": "统计学家"
+    "sanitize the data": "数据只做一次隐私处理"
+    "publish it": "发布出去"
+    "and let anyone": "谁想算什么都行"
+    "Can that work": "在这个定义下"
+- "en": "The paper proves a striking limit. Let each row be a string of d bits. Here is a family of simple counting queries: give each row its own mask, a subset of bit positions, and count the rows with an odd number of ones inside their mask. Each query has sensitivity one, so an interactive curator can answer any one of them with noise of about one over epsilon."
+  "zh":
+  - "原文证明了一个惊人的局限。"
+  - "假设每条记录都是一个 d 位的比特串。"
+  - "这里有一族简单的 counting query：给每条记录一个自己的 mask（掩码），也就是一组比特位置，统计有多少条记录在自己的 mask 内有奇数个 1。"
+  - "每个 query 的敏感度都是 1，所以交互式的管理者回答任意一个，噪声只要 1/ε 左右。"
+  "say":
+  - null
+  - null
+  - "这里有一族简单的 counting query：给每条记录一个自己的 mask，也就是一组比特位置，统计有多少条记录在自己的 mask 内有奇数个一。"
+  - "每个 query 的敏感度都是一，所以交互式的管理者回答任意一个，噪声只要艾普西隆分之一左右。"
+  "en_display":
+  - null
+  - null
+  - null
+  - "Each query has sensitivity 1, so an interactive curator can answer any one of them with noise of about 1/ε."
+  "anchors":
+    "Let each row": "假设每条记录"
+    "Here is a family": "这里有一族"
+    "give each row": "给每条记录"
+    "and count the rows": "统计有多少条记录"
+    "Each query has": "每个 query 的敏感度"
+    "so an interactive curator": "都是 1，所以交互式的管理者"
+- "en": "But a one-shot release must prepare for all of them at once. Theorem 3 shows that for at least two thirds of these queries, the release looks almost the same for a random database where every row has even parity, true answer zero, as for one where every row is odd, true answer n. The most extreme difference possible, and it cannot be seen, unless the database is exponentially large: roughly, every four extra bits per row doubles the rows you would need."
+  "zh":
+  - "但一次性发布必须同时为所有 query 做好准备。"
+  - "定理 3 表明，对其中至少 2/3 的 query，两个随机数据库的发布结果几乎一样：一个里每条记录的 mask 内都有偶数个 1，真实答案为 0；另一个里每条记录都有奇数个 1，真实答案为 n。"
+  - "这已经是最大的差别了，却根本看不出来，除非数据库大到指数级：粗略地说，每条记录每多 4 个比特，需要的记录数就翻一倍。"
+  "say":
+  - null
+  - "定理三表明，对其中至少三分之二的 query，两个随机数据库的发布结果几乎一样：一个里每条记录的 mask 内都有偶数个一，真实答案为零；另一个里每条记录都有奇数个一，真实答案为 n。"
+  - null
+  "en_display":
+  - null
+  - "Theorem 3 shows that for at least 2/3 of these queries, the release looks almost the same for a random database where every row has even parity, true answer 0, as for one where every row is odd, true answer n."
+  - "The most extreme difference possible, and it cannot be seen, unless the database is exponentially large: roughly, every 4 extra bits per row doubles the rows you would need."
+  "anchors":
+    "Theorem 3": "定理 3"
+    "the release looks": "两个随机数据库的发布结果"
+    "for a random database": "一个里每条记录的"
+    "as for one where": "另一个里"
+    "The most extreme": "这已经是最大的差别"
+    "and it cannot be seen": "却根本看不出来"
+    "unless the database": "除非数据库"
+    "roughly, every four": "粗略地说"
+- "en": "Pause and ponder: couldn't an analyst just ask the interactive curator all of these queries too?"
+  "zh":
+  - "暂停想一想：分析者就不能把这些 query 也都拿去问交互式的管理者吗？"
+  "anchors":
+    "couldn't an analyst": "分析者就不能"
+- "en": "No: the budget would run out. The curator only has to answer the few questions someone actually asks, chosen later. A published release cannot know which few those will be, so it must be ready for all of them at once. That is where it breaks."
+  "zh":
+  - "不行：预算会用光。"
+  - "管理者只需回答真正有人问的那几个问题，而且是后来才选的。"
+  - "发布的结果没法预知会是哪几个，所以必须同时为所有问题做好准备。"
+  - "一次性发布就败在这里。"
+  "anchors":
+    "the few questions": "真正有人问的"
+    "chosen later": "后来才选的"
+    "A published release": "发布的结果"
+    "so it must be ready": "所以必须同时"
+    "That is where": "一次性发布就败在这里"
+- "en": "The proof idea uses two facts. Privacy forces the release to treat every possible row almost alike. And a random mask splits all rows into two halves mixed like salt and pepper, so the even half is like a random poll of everything. Then the chain trick: start from completely random rows, and swap them one at a time for even ones. Each swap barely moves the output, and unless n is huge, all n swaps together barely move it. The same goes for odd rows, so both databases look like random rows."
+  "zh":
+  - "证明思路用到两个事实。"
+  - "差分隐私要求：发布结果对每种记录几乎一视同仁。"
+  - "而随机的 mask 把所有记录分成两半，像椒盐一样混在一起，所以偶数那一半就像对全体的随机抽样。"
+  - "接着是链式 trick：从完全随机的记录出发，一条一条地换成 mask 内有偶数个 1 的记录。"
+  - "每次替换对输出几乎没影响；除非 n 极大，n 次加起来也几乎没影响。"
+  - "换成奇数记录也一样，所以两个数据库看起来都像随机记录。"
+  "say":
+  - null
+  - null
+  - null
+  - "接着是链式 trick：从完全随机的记录出发，一条一条地换成 mask 内有偶数个一的记录。"
+  - null
+  - null
+  "anchors":
+    "Privacy forces": "差分隐私要求"
+    "And a random mask": "而随机的 mask"
+    "mixed like salt": "像椒盐一样"
+    "so the even half": "所以偶数那一半"
+    "Then the chain trick": "接着是链式 trick"
+    "and swap them": "一条一条地换成"
+    "Each swap": "每次替换"
+    "and unless n is huge": "除非 n 极大"
+    "The same goes": "换成奇数记录也一样"
+    "so both databases": "所以两个数据库"
+- "en": "Warner's coin, randomized response, where each person scrambles their own row so nobody holds the raw data, is even more limited. Proposition 2: even when every row uses the same mask, for most masks it cannot estimate the odd count unless n is exponentially large."
+  "zh":
+  - "Warner 的硬币，也就是随机响应：每个人自己扰动自己的记录，所以谁手里都没有原始数据；它的局限还要更大。"
+  - "命题 2：即使每条记录都用同一个 mask，对大多数 mask，它也估计不出奇数记录的个数，除非 n 大到指数级。"
+  "anchors":
+    "where each person": "每个人自己扰动"
+    "so nobody holds": "都没有原始数据"
+    "is even more limited": "它的局限还要更大"
+    "even when every row": "即使每条记录"
+    "for most masks": "对大多数 mask"
+    "unless n is": "除非 n"
+  "say":
+  - null
+  - "命题二：即使每条记录都用同一个 mask，对大多数 mask，它也估计不出奇数记录的个数，除非 n 大到指数级。"
+- "en": "Careful with the quantifiers. For any one query known in advance, a one-shot release can answer it well. What is impossible, unless the database is exponentially large, is one private release that answers most of them. The lesson: for broad, flexible accuracy with strong privacy, keep the curator in the loop."
+  "zh":
+  - "注意量词。"
+  - "对任何一个事先就知道的 query，一次性发布都能答好。"
+  - "除非数据库大到指数级，否则单单一次发布，不可能既满足差分隐私，又答好其中的大多数。"
+  - "结论是：想对各种问题都答得准，又要强隐私，就让可信的管理者留在回路里。"
+  "anchors":
+    "For any one query": "对任何一个"
+    "What is impossible": "除非数据库大到指数级"
+    "is one private release": "单单一次发布"
+    "The lesson": "结论是"
+    "keep the curator": "就让可信的管理者"
+"S12":
+- "en": "Back to our map, to see what grew from this paper. The same year, in an invited paper titled simply Differential Privacy, Dwork introduced the name the field still uses. Another 2006 paper, with Kenthapadi, McSherry, Mironov and Naor, added a tiny slack, delta. Remember the Gaussian whose ratio escaped the band in the tails? Delta pays for those rare tails, and lets the bell curve back in."
+  "zh":
+  - "回到地图上，看看这篇 paper 的后续发展。"
+  - "同一年，Dwork 的特邀论文标题就叫《Differential Privacy》，给这个领域起了沿用至今的名字。"
+  - "同年她与 Kenthapadi、McSherry、Mironov 和 Naor 合作，在另一篇 paper 里引入了一个极小的松弛量 δ。"
+  - "还记得高斯噪声的比值在尾部冲出带外吗？"
+  - "δ 来替罕见的尾部买单，钟形曲线就回来了。"
+  "say":
+  - null
+  - "同一年，Dwork 的特邀论文标题就叫 Differential Privacy，给这个领域起了沿用至今的名字。"
+  - "同年她与 Kenthapadi、McSherry、Mironov 和 Naor 合作，在另一篇 paper 里引入了一个极小的松弛量 delta。"
+  - null
+  - "delta 来替罕见的尾部买单，钟形曲线就回来了。"
+  "en_display":
+  - null
+  - null
+  - "Another 2006 paper, with Kenthapadi, McSherry, Mironov and Naor, added a tiny slack, δ."
+  - null
+  - "δ pays for those rare tails, and lets the bell curve back in."
+  "anchors":
+    "in an invited paper": "特邀论文"
+    "titled simply": "标题就叫"
+    "Dwork introduced": "给这个领域起了"
+    "Another 2006 paper": "同年她与"
+    "Mironov": "Mironov"
+    "added a tiny slack": "paper 里引入了"
+    "Remember the Gaussian": "还记得高斯噪声"
+    "escaped the band": "冲出带外"
+    "Delta pays": "δ 来替罕见的尾部"
+    "and lets the bell": "钟形曲线就"
+- "en": "Scoring every possible answer became McSherry and Talwar's exponential mechanism. The privacy budget grew into a theory of composition, with a surprise from Dwork, Rothblum and Vadhan: allow that tiny delta, and the total loss of k questions grows only like the square root of k."
+  "zh":
+  - "给每个可能的答案打分，成了 McSherry 和 Talwar 的指数机制。"
+  - "隐私预算发展成了一套组合定理，Dwork、Rothblum 和 Vadhan 还带来了一个惊喜：只要允许那个极小的 δ，k 个问题的总损失就只按根号 k 增长。"
+  "say":
+  - null
+  - "隐私预算发展成了一套组合定理，Dwork、Rothblum 和 Vadhan 还带来了一个惊喜：只要允许那个极小的 delta，k 个问题的总损失就只按根号 k 增长。"
+  "en_display":
+  - null
+  - "The privacy budget grew into a theory of composition, with a surprise from Dwork, Rothblum and Vadhan: allow that tiny δ, and the total loss of k questions grows only like the square root of k."
+  "anchors":
+    "became McSherry": "成了 McSherry"
+    "The privacy budget": "隐私预算发展成了"
+    "with a surprise": "Dwork、Rothblum"
+    "allow that tiny delta": "只要允许那个极小的"
+    "and the total loss": "个问题的总损失"
+    "grows only like": "就只按根号"
+- "en": "Warner's coin, the model Section four showed is most limited, is what we now call local differential privacy, used by Google in Chrome and by Apple on iPhones. Why the weakest model? Nobody has to be trusted with the raw data, and with millions of users, a few simple statistics can afford the noise."
+  "zh":
+  - "Warner 的硬币，也就是第 4 节里证明局限最大的那个模型，正是今天所说的本地化差分隐私，Google 用在 Chrome 浏览器里，苹果用在 iPhone 上。"
+  - "为什么偏偏是局限最大的这个模型？"
+  - "原始数据不用托付给任何人；用户上百万时，几个简单的统计量也扛得住噪声。"
+  "en_display":
+  - "Warner's coin, the model Section 4 showed is most limited, is what we now call local differential privacy, used by Google in Chrome and by Apple on iPhones."
+  - null
+  - null
+  "anchors":
+    "the model Section four": "也就是第 4 节"
+    "is what we now call": "正是今天所说的"
+    "used by Google": "Chrome 浏览器里"
+    "and by Apple": "苹果用在"
+    "Why the weakest": "为什么偏偏是"
+    "Nobody has to be": "原始数据不用托付"
+    "and with millions": "用户上百万时"
+- "en": "In 2016, Abadi and colleagues made it practical to train deep networks privately: clip each example's gradient, like our income cap, which bounds its sensitivity; add Gaussian noise; and track the budget over thousands of steps. If you train models on patient data, this is your entry point. A trained network is just another f of x, and attacks that ask whether a patient was in the training set are our subtraction attack, scaled up."
+  "zh":
+  - "2016 年，Abadi 和合作者让差分隐私深度学习真正可行：对每个样本的梯度做 clip（梯度裁剪），就像我们的收入上限，从而限制了敏感度；加上高斯噪声；并在成千上万步里跟踪预算。"
+  - "用病人数据训练模型的话，这就是你的切入点。"
+  - "训练好的网络不过是又一个 f(x)；问“某个病人在不在训练集里”的攻击，就是我们那个做减法的攻击的放大版。"
+  "say":
+  - "二零一六年，Abadi 和合作者让差分隐私深度学习真正可行：对每个样本的梯度做 clip，就像我们的收入上限，从而限制了敏感度；加上高斯噪声；并在成千上万步里跟踪预算。"
+  - null
+  - "训练好的网络不过是又一个 f x；问某个病人在不在训练集里的攻击，就是我们那个做减法的攻击的放大版。"
+  "en_display":
+  - null
+  - null
+  - "A trained network is just another f(x), and attacks that ask whether a patient was in the training set are our subtraction attack, scaled up."
+  "anchors":
+    "made it practical": "让差分隐私深度学习"
+    "clip each example": "样本的梯度做 clip"
+    "like our income cap": "），就像我们的收入上限"
+    "which bounds": "，从而限制了敏感度"
+    "add Gaussian noise": "加上高斯噪声"
+    "and track the budget": "并在成千上万步里"
+    "If you train": "用病人数据训练模型的话"
+    "A trained network": "训练好的网络"
+    "and attacks that ask": "问“某个病人"
+    "are our subtraction": "就是我们那个做减法"
+- "en": "And for the 2020 census, the US Census Bureau protected its published tables with differential privacy; only a few counts, like state populations, were exact. But that is a one-shot release. Pause and ponder: does Section four forbid it?"
+  "zh":
+  - "还有 2020 年的人口普查：美国人口普查局用差分隐私保护了公开发布的表；只有少数几项，比如各州人口，是精确的。"
+  - "但这是一次性发布。"
+  - "暂停想一想：这和第 4 节证明的局限矛盾吗？"
+  "en_display":
+  - null
+  - null
+  - "Pause and ponder: does Section 4 forbid it?"
+  "anchors":
+    "protected its published": "用差分隐私保护了"
+    "only a few counts": "只有少数几项"
+    "But that is a one-shot": "但这是一次性发布"
+    "Pause and ponder": "暂停想一想"
+- "en": "No. The Census tuned its release for a fixed set of tables chosen in advance. Section four only rules out one release that is accurate for most of a huge family of questions."
+  "zh":
+  - "不矛盾。"
+  - "人口普查局的发布，是针对一组事先选定的固定表格量身定制的。"
+  - "第 4 节排除的只是这样一种发布：对一大类问题里的大多数都答得准。"
+  "en_display":
+  - null
+  - null
+  - "Section 4 only rules out one release that is accurate for most of a huge family of questions."
+  "anchors":
+    "The Census tuned": "人口普查局的发布"
+    "chosen in advance": "事先选定"
+    "Section four only": "第 4 节排除的只是"
+    "that is accurate for most": "对一大类问题里的大多数"
+"S13":
+- "en": "Let's recap. One: privacy means changing any one person's row changes the probability of any output by at most a factor of e to the epsilon. Two: a query's sensitivity is the most one row can change its answer. Three: Laplace noise with scale sensitivity over epsilon makes it private, with error that does not grow with the database. Four: one private published table cannot answer most simple parity counts unless the database is exponentially large."
+  "zh":
+  - "我们来回顾一下。"
+  - "第一，隐私指的是：改动任何一个人的记录，任何输出的概率之比最多是 e^ε。"
+  - "第二，query 的敏感度，就是一条记录最多能让答案变化多少。"
+  - "第三，尺度为敏感度除以 ε 的拉普拉斯噪声，就能让它满足差分隐私，数据库再大，误差也不会变大。"
+  - "第四，一张满足差分隐私的公开表，答不好大多数简单的奇偶 query，除非数据库大到指数级。"
+  "say":
+  - null
+  - "第一，隐私指的是：改动任何一个人的记录，任何输出的概率之比最多是 E 的艾普西隆次方。"
+  - null
+  - "第三，尺度为敏感度除以艾普西隆的拉普拉斯噪声，就能让它满足差分隐私，数据库再大，误差也不会变大。"
+  - null
+  "en_display":
+  - null
+  - "One: privacy means changing any one person's row changes the probability of any output by at most a factor of e^ε."
+  - null
+  - "Three: Laplace noise with scale sensitivity/ε makes it private, with error that does not grow with the database."
+  - null
+  "anchors":
+    "One: privacy": "第一，隐私"
+    "changes the probability": "改动任何一个人的记录"
+    "e to the epsilon": "最多是"
+    "Two: a query": "第二，query"
+    "Three: Laplace": "第三，尺度为"
+    "with error that": "数据库再大"
+    "Four: one private": "第四，一张"
+    "unless the database": "除非数据库"
+- "en": "Some questions to test yourself; pause after each. First: what is the sensitivity of the average of n numbers between zero and one?"
+  "zh":
+  - "最后留几道题给大家自测，每道题后面都可以暂停一下。"
+  - "第一题：n 个 0 到 1 之间的数，平均值的敏感度是多少？"
+  "en_display":
+  - null
+  - "First: what is the sensitivity of the average of n numbers between 0 and 1?"
+  "anchors":
+    "First:": "第一题"
+- "en": "Second: in a medical imaging dataset, each patient contributes fifty slices, and each slice's gradient is clipped to size C. How much can one patient change the summed gradient?"
+  "zh":
+  - "第二题：在一个医学影像数据集里，每个病人贡献 50 张切片，每张切片的梯度都 clip 到 C 以内。"
+  - "一个病人能让梯度之和改变多少？"
+  "en_display":
+  - "Second: in a medical imaging dataset, each patient contributes 50 slices, and each slice's gradient is clipped to size C."
+  - null
+  "anchors":
+    "each patient contributes": "病人贡献"
+    "and each slice": "切片的梯度"
+    "is clipped to size C": "clip 到 C"
+    "How much can one patient": "一个病人能让"
+- "en": "Third: why does the median give the Laplace mechanism trouble? Answers, and more exercises, are in the companion notes."
+  "zh":
+  - "第三题：为什么中位数会给拉普拉斯机制带来麻烦？"
+  - "答案和更多练习，都在配套笔记里。"
+  "anchors":
+    "Answers, and more": "答案和更多练习"
+- "en": "Next time someone says a dataset is safe because it is anonymized, you will know the better questions: what is the epsilon, and what counts as one person's row?"
+  "zh":
+  - "下次有人说数据集匿名化了，所以很安全，你就知道真正该问的是：用的是多大的 ε，什么才算一个人的一条记录？"
+  "say":
+  - "下次有人说数据集匿名化了，所以很安全，你就知道真正该问的是：用的是多大的艾普西隆，什么才算一个人的一条记录？"
+  "en_display":
+  - "Next time someone says a dataset is safe because it is anonymized, you will know the better questions: what is the ε, and what counts as one person's row?"
+  "anchors":
+    "you will know": "你就知道"
+    "what is the epsilon": "用的是多大的"
+    "and what counts": "才算一个人"

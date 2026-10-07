@@ -1,0 +1,3 @@
+# Chinese strings created by the toolkit itself (explainer/components.py ...).
+# A video's own i18n/zh/strings.yaml overrides these.
+"Pause and ponder": "暂停想一想"

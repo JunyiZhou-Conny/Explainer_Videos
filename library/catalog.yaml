@@ -1,0 +1,1916 @@
+# The library: single source of truth for every paper in this repo.
+#
+#   python tools/ingest.py <pdf> --category <slug>   # add a paper (files the PDF, appends a stub here)
+#   python tools/catalog.py                          # validate + regenerate README.md and MAP.md
+#
+# Paper fields: id (citekey) · title · short_name · authors · year · venue · arxiv · doi ·
+#   category (slug below; the PDF lives in library/<category>/<id>.pdf) · tags · pdf ·
+#   status (unread | skimmed | reading | read | video) · one_liner · key_ideas ·
+#   builds_on (ids of library papers this one directly builds on) · cites (all library papers it cites) ·
+#   videos (ids under videos/) · notes (your own words, after reading)
+
+categories:
+  privacy/differential-privacy:
+    title: Differential privacy
+    description: 'Mathematical privacy guarantees for statistics and learning: noise calibrated so that no single
+      person''s data changes what can be learned.'
+  reinforcement-learning/policy-optimization:
+    title: RL · policy optimization (PPO → GRPO → R1 → DAPO)
+    description: Core RL algorithms and recipes for training policies, mainly LLMs (PPO, GRPO, R1-style RL with
+      rule-based rewards, DAPO); every RL-for-vision paper in the library reuses them.
+  reinforcement-learning/rl-for-segmentation:
+    title: RL · reasoning segmentation & grounding
+    description: Vision-language models trained with GRPO-style RL to reason about a request and then locate the
+      target, either as a box plus points that a SAM-family model turns into a mask or as a box alone, covering
+      natural and medical images and multi-turn agents.
+  reinforcement-learning/rl-for-medical-vqa:
+    title: RL · medical visual question answering
+    description: RL (GRPO) fine-tuning of vision-language models to answer questions about medical images, using
+      rule-based rewards that can be checked automatically, with the goal of generalizing across imaging types.
+  reinforcement-learning/rl-for-pathology:
+    title: RL · agents for pathology
+    description: RL agents for pathology and microscopy images that either choose where to look in gigapixel slides
+      (attention glimpses, PPO observation paths, Q-learning from pathologists' gaze) or produce instance segmentations
+      rewarded by non-differentiable shape priors.
+  segmentation/architectures:
+    title: Segmentation · architectures & task definitions
+    description: Foundational segmentation networks, pipelines and task definitions (U-Net, nnU-Net, and panoptic
+      segmentation with its PQ metric) that the rest of the library builds on.
+  segmentation/promptable-foundation-models:
+    title: Segmentation · promptable foundation models
+    description: Large promptable segmentation models (SAM, SAM 2) that turn clicks, boxes or rough masks into object
+      masks; the RL-trained vision-language models use them as a frozen tool or as the source of their reward.
+  segmentation/nuclei-instance:
+    title: Segmentation · nuclei, cell & gland instances
+    description: Methods for separating and classifying individual nuclei in histology and microscopy images, from
+      shape representations (StarDist polygons, HoVer-Net distance maps) to learning from point clicks only (Qu
+      et al., SC-Net).
+  segmentation/topology-aware:
+    title: Segmentation · topology-aware losses
+    description: Losses and metrics that make a segmentation keep the right connected pieces, holes and branches,
+      using persistent homology, soft skeletons (clDice) and Betti matching.
+  datasets/computational-pathology:
+    title: Datasets · computational pathology
+    description: Benchmark datasets and challenges for segmenting and classifying individual glands and nuclei in
+      H&E histology (GlaS, PanNuke, Lizard).
+papers:
+- id: dwork2006calibrating
+  title: Calibrating Noise to Sensitivity in Private Data Analysis
+  short_name: Laplace mechanism / ε-DP
+  authors:
+  - Cynthia Dwork
+  - Frank McSherry
+  - Kobbi Nissim
+  - Adam Smith
+  year: 2006
+  venue: TCC 2006 (LNCS 3876)
+  arxiv: ''
+  doi: 10.1007/11681878_14
+  category: privacy/differential-privacy
+  tags:
+  - differential-privacy
+  - laplace-mechanism
+  - sensitivity
+  - privacy-budget
+  - lower-bounds
+  pdf: library/privacy/differential-privacy/dwork2006calibrating.pdf
+  status: video
+  one_liner: Defines privacy as 'one person's row barely changes the odds of any output' and shows that adding Laplace
+    noise scaled to the query's sensitivity achieves it — the founding paper of differential privacy.
+  key_ideas:
+  - 'ε-indistinguishability: for databases differing in one row, every output''s probability changes by at most
+    a factor e^ε'
+  - L1 sensitivity S(f) and the Laplace mechanism f(x) + Lap(S(f)/ε), also for adaptive query sequences (privacy
+    budget)
+  - Non-interactive sanitizers cannot answer most low-sensitivity queries unless n is exponential in d
+  builds_on: []
+  cites: []
+  related_external:
+  - Dinur & Nissim 2003 — Revealing information while preserving privacy (reconstruction attacks)
+  - 'Blum, Dwork, McSherry & Nissim 2005 — Practical privacy: the SuLQ framework'
+  - 'Dwork 2006 — Differential Privacy (ICALP): names the definition'
+  - McSherry & Talwar 2007 — the exponential mechanism
+  - Abadi et al. 2016 — Deep learning with differential privacy (DP-SGD)
+  videos:
+  - dwork2006-calibrating-noise
+- id: schulman2017ppo
+  title: Proximal Policy Optimization Algorithms
+  short_name: PPO
+  authors:
+  - John Schulman
+  - Filip Wolski
+  - Prafulla Dhariwal
+  - Alec Radford
+  - et al.
+  year: 2017
+  venue: arXiv preprint
+  arxiv: '1707.06347'
+  doi: ''
+  category: reinforcement-learning/policy-optimization
+  tags:
+  - policy-gradient
+  - clipped-surrogate-objective
+  - trust-region
+  - actor-critic
+  - continuous-control
+  pdf: library/reinforcement-learning/policy-optimization/schulman2017ppo.pdf
+  status: unread
+  one_liner: PPO trains a decision-making policy by reusing each batch of experience for several gradient steps
+    while clipping how far the new policy's action probabilities can move from the old one's, which gives most of
+    the stability of trust-region methods with plain first-order optimization.
+  key_ideas:
+  - 'Clipped surrogate objective: the probability ratio r = pi_new/pi_old is clipped to [1-eps, 1+eps] and the minimum
+    of the clipped and unclipped advantage-weighted terms is taken, giving a pessimistic lower bound that removes
+    the incentive for overly large policy updates'
+  - Alternative adaptive-KL-penalty variant that raises or lowers the penalty coefficient beta to hit a target KL
+    divergence between old and new policies
+  - 'Practical actor-critic algorithm: N parallel actors collect T-step rollouts, advantages come from truncated
+    Generalized Advantage Estimation (GAE), then several epochs of minibatch SGD optimize a combined policy, value,
+    and entropy loss; beats A2C/TRPO on MuJoCo and Atari'
+  builds_on: []
+  cites: []
+  video_hook: 'Plot the objective against the probability ratio r and show the flat clipped plateaus outside [1-eps,
+    1+eps]: once the policy has moved far enough in the good direction, the gradient switches off, like a leash
+    that keeps each update close to the old policy.'
+- id: shao2024deepseekmath
+  title: 'DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models'
+  short_name: GRPO / DeepSeekMath
+  authors:
+  - Zhihong Shao
+  - Peiyi Wang
+  - Qihao Zhu
+  - Runxin Xu
+  - et al.
+  year: 2024
+  venue: arXiv preprint
+  arxiv: '2402.03300'
+  doi: ''
+  category: reinforcement-learning/policy-optimization
+  tags:
+  - grpo
+  - llm-reasoning
+  - math-reasoning
+  - pretraining-data
+  - rlhf
+  pdf: library/reinforcement-learning/policy-optimization/shao2024deepseekmath.pdf
+  status: unread
+  one_liner: DeepSeekMath is a 7B open language model that approaches GPT-4 on competition math, thanks to 120B
+    tokens of math text mined from the web and GRPO, a lighter version of PPO that scores each answer against a
+    group of answers to the same question instead of training a separate critic network.
+  key_ideas:
+  - 'DeepSeekMath Corpus: an iterative fastText-classifier pipeline, seeded with OpenWebMath and refined with human
+    annotation, mines 120B math tokens from Common Crawl; continued pretraining of DeepSeek-Coder-Base-v1.5 7B reaches
+    64.2% GSM8K and 36.2% MATH'
+  - 'Group Relative Policy Optimization (GRPO): sample G outputs per question, normalize their rewards within the
+    group (subtract mean, divide by std) to get advantages, drop PPO''s value model, and add the KL to a reference
+    model directly in the loss, which cuts memory and compute'
+  - A unified gradient-coefficient view showing SFT, RFT, DPO, PPO and GRPO as variants of the same RL template
+    (data source, reward function, gradient coefficient), plus studies of online vs offline, outcome vs process
+    supervision, and iterative RL
+  builds_on:
+  - schulman2017ppo
+  cites:
+  - schulman2017ppo
+  video_hook: 'For one math question, draw a fan of 8 sampled answers, each with its reward, then slide them onto
+    a number line centred on the group mean: answers above the mean are pushed up and those below are pushed down,
+    with no critic network anywhere in the picture.'
+- id: guo2025deepseekr1
+  title: 'DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning'
+  short_name: DeepSeek-R1 / R1-Zero
+  authors:
+  - Daya Guo
+  - Dejian Yang
+  - Haowei Zhang
+  - Junxiao Song
+  - et al.
+  year: 2025
+  venue: arXiv preprint
+  arxiv: '2501.12948'
+  doi: ''
+  category: reinforcement-learning/policy-optimization
+  tags:
+  - grpo
+  - llm-reasoning
+  - chain-of-thought
+  - rule-based-reward
+  - distillation
+  - emergent-reasoning
+  pdf: library/reinforcement-learning/policy-optimization/guo2025deepseekr1.pdf
+  status: unread
+  one_liner: DeepSeek-R1 shows that a large language model can learn to reason step by step (checking and revising
+    its own work) through reinforcement learning alone, rewarded only for getting the final answer right, with no
+    human-written reasoning examples.
+  key_ideas:
+  - 'DeepSeek-R1-Zero: GRPO applied directly to DeepSeek-V3-Base with no SFT, using only rule-based accuracy and
+    format rewards (reasoning inside <think> tags); responses grow longer and self-reflection and verification (the
+    ''aha moment'') emerge during training'
+  - 'DeepSeek-R1: a multi-stage pipeline (cold-start long-CoT SFT, reasoning RL with a language-consistency reward,
+    rejection sampling plus SFT on reasoning and general data, then a final RL stage with helpfulness/harmlessness
+    reward models) fixes R1-Zero''s poor readability and language mixing'
+  - 'Distillation: R1''s reasoning traces are used to fine-tune smaller Qwen/Llama models that beat their instruction-tuned
+    counterparts; an appendix compares GRPO with PPO and finds PPO sensitive to the GAE lambda setting'
+  builds_on:
+  - shao2024deepseekmath
+  cites:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  video_hook: Animate the average response length climbing over thousands of RL steps while sample outputs appear
+    above the curve, until the model writes 'Wait, wait. That's an aha moment...' and backtracks to fix its own
+    mistake, behaviour nobody taught it.
+- id: yu2025dapo
+  title: 'DAPO: An Open-Source LLM Reinforcement Learning System at Scale'
+  short_name: DAPO
+  authors:
+  - Qiying Yu
+  - Zheng Zhang
+  - Ruofei Zhu
+  - Yufeng Yuan
+  - et al.
+  year: 2025
+  venue: arXiv preprint
+  arxiv: '2503.14476'
+  doi: ''
+  category: reinforcement-learning/policy-optimization
+  tags:
+  - grpo
+  - long-cot
+  - entropy-collapse
+  - open-source
+  - llm-reasoning
+  pdf: library/reinforcement-learning/policy-optimization/yu2025dapo.pdf
+  status: unread
+  one_liner: DAPO is an openly released recipe of four fixes to GRPO-style reinforcement learning (asymmetric clipping,
+    skipping uninformative prompt groups, per-token loss averaging, and a soft penalty for over-long answers) that
+    lets Qwen2.5-32B reach 50 on AIME 2024 in half the training steps DeepSeek-R1-Zero needed.
+  key_ideas:
+  - 'Clip-Higher: decouple the PPO clip range into eps_low and a larger eps_high so low-probability tokens can still
+    be boosted, which prevents entropy collapse and keeps exploration alive'
+  - 'Dynamic Sampling: over-sample and drop prompt groups whose answers are all correct or all wrong (zero advantage,
+    so zero gradient), keeping every batch full of useful signal; KL penalty removed'
+  - Token-Level Policy Gradient Loss, which averages over all tokens rather than per sample so long reasoning chains
+    are not under-weighted, plus Overlong Reward Shaping (filtering truncated samples and a soft length penalty)
+    to cut reward noise; released with verl-based code and the DAPO-Math-17K dataset
+  builds_on:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  cites:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  video_hook: Show the clipping window on the probability ratio stretching asymmetrically, with the upper edge widened,
+    so rare but good tokens (a thin sliver of probability) are finally allowed to grow, while a token-entropy meter
+    that was collapsing toward zero recovers.
+- id: liu2025segzero
+  title: 'Seg-Zero: Reasoning-Chain Guided Segmentation via Cognitive Reinforcement'
+  short_name: Seg-Zero
+  authors:
+  - Yuqi Liu
+  - Bohao Peng
+  - Zhisheng Zhong
+  - Zihao Yue
+  - et al.
+  year: 2025
+  venue: arXiv preprint
+  arxiv: '2503.06520'
+  doi: ''
+  category: reinforcement-learning/rl-for-segmentation
+  tags:
+  - reasoning-segmentation
+  - grpo
+  - multimodal-llm
+  - sam2
+  - zero-shot-generalization
+  pdf: library/reinforcement-learning/rl-for-segmentation/liu2025segzero.pdf
+  status: unread
+  one_liner: Seg-Zero gets a vision-language model to think out loud about which object a tricky request refers
+    to, then output a box and points that a frozen SAM2 turns into a pixel mask; the model is trained only with
+    reinforcement learning rewards, with no example reasoning to imitate.
+  key_ideas:
+  - 'Decoupled architecture: a reasoning MLLM (Qwen2.5-VL) reads the image and query, writes a chain of thought,
+    and outputs a bounding box plus two points; a frozen SAM2 segmentation model turns these prompts into the mask'
+  - 'Pure GRPO training from the pretrained model with no reasoning annotations (R1-Zero style), on just 9,000 RefCOCOg
+    samples, using five rule-based rewards: thinking format, segmentation format (soft/strict), bbox IoU, bbox L1,
+    and point L1'
+  - 'RL with a reasoning chain generalizes better than SFT, avoids catastrophic forgetting, and shows emergent test-time
+    reasoning: Seg-Zero-7B scores 57.5 zero-shot on ReasonSeg, 18% above LISA-7B'
+  builds_on:
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  - ravi2024sam2
+  cites:
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  - ronneberger2015unet
+  - kirillov2023sam
+  - ravi2024sam2
+  video_hook: 'Split the screen: on the left the model''s thought bubble reasons ''the speaker is the person at
+    the podium...'', and on the right a box and two dots land on that person and a SAM2 mask spreads out from them,
+    while reward meters for format, IoU and point distance light up.'
+- id: you2025segr1
+  title: 'Seg-R1: Segmentation Can Be Surprisingly Simple with Reinforcement Learning'
+  short_name: Seg-R1
+  authors:
+  - Zuyao You
+  - Zuxuan Wu
+  year: 2025
+  venue: arXiv preprint
+  arxiv: '2506.22624'
+  doi: ''
+  category: reinforcement-learning/rl-for-segmentation
+  tags:
+  - grpo
+  - sam2-prompting
+  - camouflaged-object-detection
+  - salient-object-detection
+  - zero-shot-referring-segmentation
+  - multimodal-llm
+  pdf: library/reinforcement-learning/rl-for-segmentation/you2025segr1.pdf
+  status: unread
+  one_liner: Instead of bolting a mask decoder onto a vision-language model, Seg-R1 teaches the model with reinforcement
+    learning to write out a bounding box and a few click points as plain text, which a frozen SAM2 turns into a
+    mask, and the model is rewarded by how good that mask is.
+  key_ideas:
+  - Qwen2.5-VL reasons inside <think> tags and then outputs a box, points and positive/negative labels as ordinary
+    tokens. A frozen SAM2 converts these prompts into a mask, so there are no special segmentation tokens and no
+    architecture changes.
+  - GRPO training with a format reward plus a segmentation reward of 0.7*IoU + 0.3*S-measure. Using S-measure alone
+    led to reward hacking.
+  - Pure RL (a pre-RL stage on high-resolution DIS5K, then COD10K/CAMO) on about 7k image-mask pairs with no text
+    gives .873 S-measure on COD10K. It also transfers zero-shot to referring and reasoning segmentation (71.4 cIoU
+    on RefCOCOg, 56.7 gIoU on ReasonSeg). A 1,500-sample FCoT dataset serves as the SFT baseline for comparison.
+  builds_on:
+  - shao2024deepseekmath
+  - ravi2024sam2
+  cites:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - kirillov2023sam
+  - ravi2024sam2
+  - kirillov2019panoptic
+  video_hook: 'Animate the model annotating a camouflaged animal the way a human would: it drops a box, adds green
+    foreground and red background clicks, and SAM2 fills in the mask. Several such attempts are then scored side
+    by side, and the higher-IoU ones are pushed up.'
+- id: zhu2025lens
+  title: 'LENS: Learning to Segment Anything with Unified Reinforced Reasoning'
+  short_name: LENS
+  authors:
+  - Lianghui Zhu
+  - Bin Ouyang
+  - Yuxuan Zhang
+  - Tianheng Cheng
+  - et al.
+  year: 2025
+  venue: AAAI 2026
+  arxiv: '2508.14153'
+  doi: ''
+  category: reinforcement-learning/rl-for-segmentation
+  tags:
+  - text-prompted-segmentation
+  - grpo
+  - end-to-end
+  - sam2
+  - chain-of-thought
+  - referring-segmentation
+  pdf: library/reinforcement-learning/rl-for-segmentation/zhu2025lens.pdf
+  status: unread
+  one_liner: LENS segments whatever a sentence describes by having a vision-language model reason step by step and
+    pass a rich learned summary of that reasoning straight into SAM, rather than just a box. The model and SAM are
+    trained together with reinforcement learning, using rewards for format, box accuracy and mask accuracy.
+  key_ideas:
+  - A context module links the two models end to end. Learnable context queries are appended after the MLLM's chain
+    of thought and box, and a shallow transformer connector projects them into SAM2's prompt space, so errors in
+    the box alone no longer decide the mask.
+  - Two-stage training. In pretraining alignment only the queries and connector are trained, with a segmentation
+    loss, while the MLLM and SAM2 stay frozen. In the RL stage the MLLM and mask decoder are unfrozen.
+  - Unified GRPO rewards (format, box IoU, segment IoU) plus a pixel-level segmentation loss. Using Qwen2.5-VL-3B,
+    LENS reaches 81.2% average cIoU on RefCOCO/+/g, 58.0 on ReasonSeg and 78.3 on GS-Eval.
+  builds_on:
+  - shao2024deepseekmath
+  - liu2025segzero
+  - ravi2024sam2
+  cites:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  - liu2025segzero
+  - kirillov2023sam
+  - ravi2024sam2
+  video_hook: Show two pipes from the reasoning model to SAM. In Seg-Zero only a box's four numbers fit through
+    the narrow one, while in LENS a stream of context-query vectors carries the whole chain of thought through the
+    wide one. Three reward meters (format, box IoU, mask IoU) light up as the mask sharpens.
+- id: huang2025samr1
+  title: 'SAM-R1: Leveraging SAM for Reward Feedback in Multimodal Segmentation via Reinforcement Learning'
+  short_name: SAM-R1
+  authors:
+  - Jiaqi Huang
+  - Zunnan Xu
+  - Jun Zhou
+  - Ting Liu
+  - et al.
+  year: 2025
+  venue: arXiv preprint
+  arxiv: '2505.22596'
+  doi: ''
+  category: reinforcement-learning/rl-for-segmentation
+  tags:
+  - reasoning-segmentation
+  - grpo
+  - sam-as-reward
+  - asymmetric-clipping
+  - multimodal-llm
+  pdf: library/reinforcement-learning/rl-for-segmentation/huang2025samr1.pdf
+  status: unread
+  one_liner: SAM-R1 trains a vision-language model to reason about a tricky request and output a box and points.
+    It puts the Segment Anything Model inside the training loop, so each guess is turned into a real mask whose
+    overlap with the true mask becomes the reward.
+  key_ideas:
+  - Qwen2.5-VL-7B outputs its reasoning plus a bounding box and positive/negative points. During RL, SAM2-Large
+    turns these into a mask, and mask IoU against ground truth gives a fine-grained reward that supplements format
+    and box/point rewards. This closes the pixel-feedback gap in Seg-Zero.
+  - A modified GRPO objective, following DAPO. The upper clipping threshold is raised (asymmetric clipping) to allow
+    more exploration, and the loss is normalized at the token level across the group to discourage long responses
+    with little content.
+  - Data-efficient. With only 3k training samples it improves the base model by 34.1% zero-shot on ReasonSeg. Ablations
+    show that removing the KL term collapses training.
+  builds_on:
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  - yu2025dapo
+  - liu2025segzero
+  - ravi2024sam2
+  cites:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  - yu2025dapo
+  - liu2025segzero
+  - kirillov2023sam
+  - ravi2024sam2
+  video_hook: Animate the reward loop. The model's box and dots go into SAM, a mask appears and is laid over the
+    ground-truth mask, and the overlap area fills a reward bar that flows back to update the model. Then the PPO
+    clipping window is shown stretching further on the upside.
+- id: xu2025medground
+  title: 'MedGround-R1: Advancing Medical Image Grounding via Spatial-Semantic Rewarded Group Relative Policy Optimization'
+  short_name: MedGround-R1
+  authors:
+  - Huihui Xu
+  - Yuanpeng Nie
+  - Hualiang Wang
+  - Ying Chen
+  - et al.
+  year: 2025
+  venue: arXiv preprint
+  arxiv: '2507.02994'
+  doi: ''
+  category: reinforcement-learning/rl-for-segmentation
+  tags:
+  - medical-image-grounding
+  - grpo
+  - chest-x-ray
+  - medclip-reward
+  - chain-of-box
+  - vision-language-model
+  pdf: library/reinforcement-learning/rl-for-segmentation/xu2025medground.pdf
+  status: unread
+  one_liner: MedGround-R1 teaches a vision-language model to draw a box around the region of a medical image (such
+    as a chest X-ray) that a text phrase describes. It uses reinforcement learning with no hand-written reasoning
+    examples, and rewards boxes for overlapping the right spot and for containing tissue that matches the description.
+  key_ideas:
+  - Adapts DeepSeek-R1-style GRPO to medical image grounding (text in, bounding box out) on Qwen2.5-VL. It needs
+    only ground-truth boxes, not chain-of-thought annotations.
+  - 'Spatial-semantic rewards: a binary spatial reward (IoU > 0.5) plus a continuous semantic reward, the cosine
+    similarity in a frozen MedCLIP between the predicted box crop and the referring text. Boxes in the wrong place
+    that still show the right kind of finding get more advantage than unrelated ones.'
+  - 'Chain-of-Box template: whenever the reasoning in <think> mentions a region, it writes that region''s box coordinates
+    inline, so the reasoning moves through image regions. Reports state-of-the-art results on MS-CXR, ChestX-ray8
+    and M3D-RefSeg.'
+  builds_on:
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  cites:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  video_hook: On a chest X-ray, show a group of candidate boxes. One hits the target and earns full credit. A second
+    misses but sits on another patch of the same disease, and gets partial credit as MedCLIP scores its crop against
+    the phrase. A third on healthy lung gets nothing. Then animate how the group-relative advantage bars rearrange.
+- id: liu2026medsamagent
+  title: 'MedSAM-Agent: Empowering Interactive Medical Image Segmentation with Multi-turn Agentic Reinforcement
+    Learning'
+  short_name: MedSAM-Agent
+  authors:
+  - Shengyuan Liu
+  - Liuxin Bao
+  - Qi Yang
+  - Wanting Geng
+  - et al.
+  year: 2026
+  venue: arXiv preprint
+  arxiv: '2602.03320'
+  doi: ''
+  category: reinforcement-learning/rl-for-segmentation
+  tags:
+  - medical-image-segmentation
+  - agentic-rl
+  - multi-turn
+  - interactive-segmentation
+  - process-reward
+  - tool-use
+  pdf: library/reinforcement-learning/rl-for-segmentation/liu2026medsamagent.pdf
+  status: unread
+  one_liner: MedSAM-Agent turns a vision-language model into an autonomous annotator. Over several turns it places
+    a box, looks at the mask a SAM-style tool returns, adds corrective clicks and decides when to stop. It is trained
+    first by imitating simulated expert sessions and then by reinforcement learning that rewards accurate and efficient
+    interaction.
+  key_ideas:
+  - 'Recasts medical segmentation as a multi-step decision process. The policy (Qwen3-VL-8B) chooses among three
+    actions: add a box, add a positive or negative click, or stop. A segmentation tool (MedSAM2, SAM2.1 or IMISNet)
+    returns a mask, which is overlaid on the image and fed back at each turn.'
+  - Hybrid-prompting trajectory synthesis. Box-to-Point and Sequential-Click sessions are simulated, with corrective
+    clicks placed at the centroids of the largest false-negative or false-positive regions. Each step must raise
+    IoU by a threshold, with retries, and a global IoU filter is applied. This yields 449K SFT cold-start samples.
+  - 'GRPO with a clinical-fidelity process reward: format + IoU/Dice quality + a progressive-improvement bonus,
+    minus an overshoot penalty and a per-step tool-cost penalty. It reports state-of-the-art results on 21 datasets
+    across 6 modalities, and a policy trained with one tool transfers to other tools.'
+  builds_on:
+  - shao2024deepseekmath
+  - ravi2024sam2
+  - you2025segr1
+  - liu2025segzero
+  - huang2025samr1
+  cites:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - yu2025dapo
+  - liu2025segzero
+  - you2025segr1
+  - huang2025samr1
+  - xu2025medground
+  - lai2025medr1
+  - ronneberger2015unet
+  - isensee2021nnunet
+  - kirillov2023sam
+  - ravi2024sam2
+  - yan2025medreasoner
+  video_hook: Play an agent loop on a CT slice. A box goes down, a rough mask appears, red and green clicks land
+    on the biggest error blobs, and the mask tightens step by step while an IoU curve climbs and then the agent
+    hits stop. Show the overshoot penalty flashing if it keeps clicking after the peak.
+- id: lai2025medr1
+  title: 'Med-R1: Reinforcement Learning for Generalizable Medical Reasoning in Vision-Language Models'
+  short_name: Med-R1
+  authors:
+  - Yuxiang Lai
+  - Jike Zhong
+  - Ming Li
+  - Shitian Zhao
+  - et al.
+  year: 2025
+  venue: IEEE Transactions on Medical Imaging
+  arxiv: '2503.13939'
+  doi: ''
+  category: reinforcement-learning/rl-for-medical-vqa
+  tags:
+  - grpo
+  - medical-vqa
+  - vision-language-models
+  - reasoning
+  - generalization
+  - qwen2-vl
+  pdf: library/reinforcement-learning/rl-for-medical-vqa/lai2025medr1.pdf
+  status: unread
+  one_liner: Instead of fine-tuning a small vision-language model to copy correct answers to medical image questions,
+    Med-R1 trains it with reinforcement learning (GRPO), rewarding answers that are right and well-formatted, which
+    lets a 2B model generalize across imaging types (CT, MRI, X-ray, ...) and question types better than a 72B model.
+  key_ideas:
+  - Post-trains Qwen2-VL-2B with GRPO (group-relative advantages, no critic) using rule-based format and accuracy
+    rewards on multiple-choice medical VQA (OmniMedVQA), avoiding costly expert chain-of-thought labels
+  - Evaluates cross-modality (8 imaging modalities) and cross-task (5 question types) generalization, beating SFT
+    by large margins and outperforming Qwen2-VL-72B
+  - 'Studies where reasoning should go: No-Thinking generalizes better with less training, while a Think-After variant
+    (answer first, then rationale) keeps interpretability and improves accuracy'
+  builds_on:
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  cites:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  video_hook: Show one medical image question, the model sampling a group of candidate answers, each scored right/wrong,
+    with above-group-average answers pushed up and below-average pushed down; then slide the 'thinking' block before,
+    after, or out of the answer to show how its position changes accuracy.
+- id: ronneberger2015unet
+  title: 'U-Net: Convolutional Networks for Biomedical Image Segmentation'
+  short_name: U-Net
+  authors:
+  - Olaf Ronneberger
+  - Philipp Fischer
+  - Thomas Brox
+  year: 2015
+  venue: MICCAI 2015
+  arxiv: '1505.04597'
+  doi: ''
+  category: segmentation/architectures
+  tags:
+  - encoder-decoder
+  - skip-connections
+  - biomedical-segmentation
+  - data-augmentation
+  - fully-convolutional
+  pdf: library/segmentation/architectures/ronneberger2015unet.pdf
+  status: unread
+  one_liner: U-Net labels every pixel of a biomedical image (e.g. cell vs. background) with a U-shaped network that
+    first shrinks the image to understand context and then grows it back, copying fine detail across 'skip connections',
+    so it trains well from only a few annotated images.
+  key_ideas:
+  - Symmetric contracting path (conv + max-pool) and expanding path (up-convolution) joined by copy-and-crop skip
+    connections that combine context with precise localization
+  - Overlap-tile strategy with mirrored borders for seamless segmentation of arbitrarily large images, plus heavy
+    elastic-deformation augmentation to learn from very few labelled images
+  - Pixel-wise weighted cross-entropy with a precomputed weight map that emphasizes thin borders between touching
+    cells so instances get separated; won ISBI EM and cell-tracking challenges
+  builds_on: []
+  cites: []
+  video_hook: Animate an image flowing down the left arm of the U (getting smaller but 'smarter'), then back up
+    the right arm, with skip-connection bridges zipping high-resolution detail across so the final mask has crisp
+    cell borders.
+- id: isensee2021nnunet
+  title: Automated Design of Deep Learning Methods for Biomedical Image Segmentation
+  short_name: nnU-Net
+  authors:
+  - Fabian Isensee
+  - Paul F. Jaeger
+  - Simon A. A. Kohl
+  - Jens Petersen
+  - et al.
+  year: 2021
+  venue: Nature Methods 2021
+  arxiv: '1904.08128'
+  doi: ''
+  category: segmentation/architectures
+  tags:
+  - self-configuring
+  - u-net
+  - medical-image-segmentation
+  - automl
+  - 3d-segmentation
+  - benchmarking
+  pdf: library/segmentation/architectures/isensee2021nnunet.pdf
+  status: unread
+  one_liner: 'nnU-Net (''no new net'') shows that a plain U-Net is still hard to beat if the whole pipeline is set
+    up right, and it automates that setup: it reads a dataset''s properties and applies fixed rules to choose preprocessing,
+    network size, patch size and training, winning many medical segmentation challenges without manual tuning.'
+  key_ideas:
+  - Formulates pipeline design as mapping a 'data fingerprint' (image sizes, voxel spacing, modality, intensities,
+    class count) to a 'pipeline fingerprint' via explicit heuristic rules under GPU-memory constraints
+  - Splits design choices into fixed blueprint parameters (plain U-Net with instance norm, leaky ReLU, deep supervision,
+    Dice + cross-entropy, 1000 epochs), rule-inferred parameters (patch/batch size, network depth, resampling, normalization)
+    and empirical ones (pick best of 2D / 3D / 3D-cascade or ensemble, post-processing)
+  - Out of the box beats most specialised pipelines across 19 public challenges and 49 tasks, arguing configuration
+    matters more than architectural novelty
+  builds_on:
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  video_hook: Feed a dataset 'fingerprint card' (voxel spacing, image size, modality) into a machine of rule gears
+    that prints out a 'recipe card' (patch size, batch size, network depth, resampling), then assembles the matching
+    U-Net on screen for each very different dataset.
+- id: kirillov2023sam
+  title: Segment Anything
+  short_name: SAM
+  authors:
+  - Alexander Kirillov
+  - Eric Mintun
+  - Nikhila Ravi
+  - Hanzi Mao
+  - et al.
+  year: 2023
+  venue: ICCV 2023
+  arxiv: '2304.02643'
+  doi: ''
+  category: segmentation/promptable-foundation-models
+  tags:
+  - foundation-model
+  - promptable-segmentation
+  - zero-shot
+  - data-engine
+  - sa-1b
+  - vision-transformer
+  pdf: library/segmentation/promptable-foundation-models/kirillov2023sam.pdf
+  status: unread
+  one_liner: 'SAM is a general-purpose ''cut out any object'' model: given a click, box or rough mask on any image,
+    it returns a valid object mask, and it was trained on a new dataset of over 1 billion masks built by using the
+    model itself to help annotators.'
+  key_ideas:
+  - 'Defines the promptable segmentation task: return a valid mask for any prompt (points, box, mask, text), even
+    when the prompt is ambiguous'
+  - 'Architecture: heavy MAE-pretrained ViT image encoder run once per image, a light prompt encoder, and a fast
+    two-way-transformer mask decoder that outputs three candidate masks (whole / part / subpart) with predicted
+    IoU scores to handle ambiguity'
+  - Three-stage data engine (assisted-manual, semi-automatic, fully automatic) produces SA-1B (1.1B masks on 11M
+    licensed images), enabling strong zero-shot transfer to edges, proposals and instance segmentation
+  builds_on: []
+  cites:
+  - kirillov2019panoptic
+  video_hook: A single click on a photo of a person instantly blooms into three nested masks (shirt, upper body,
+    whole person), each with a confidence score, followed by the data-engine flywheel where model and annotators
+    bootstrap a billion masks.
+- id: ravi2024sam2
+  title: 'SAM 2: Segment Anything in Images and Videos'
+  short_name: SAM 2
+  authors:
+  - Nikhila Ravi
+  - Valentin Gabeur
+  - Yuan-Ting Hu
+  - Ronghang Hu
+  - et al.
+  year: 2024
+  venue: ICLR 2025
+  arxiv: '2408.00714'
+  doi: ''
+  category: segmentation/promptable-foundation-models
+  tags:
+  - video-object-segmentation
+  - streaming-memory
+  - foundation-model
+  - promptable-segmentation
+  - sa-v-dataset
+  pdf: library/segmentation/promptable-foundation-models/ravi2024sam2.pdf
+  status: unread
+  one_liner: 'SAM 2 extends Segment Anything from single images to video: you click an object once and it follows
+    that object through every frame using a memory of what it has already seen, while also being faster and more
+    accurate than SAM on still images.'
+  key_ideas:
+  - 'Promptable Visual Segmentation task: points/boxes/masks on any frame define an object whose spatio-temporal
+    mask (''masklet'') is predicted and can be refined with prompts on further frames'
+  - 'Streaming architecture: Hiera image encoder per frame, memory attention that cross-attends to a memory bank
+    of past predictions, prompted frames and object pointers, SAM-style prompt encoder and mask decoder, plus an
+    occlusion head; an image is just a one-frame video'
+  - Model-in-the-loop data engine (8.4x faster annotation) builds SA-V, 35.5M masks on 50.9K videos; SAM 2 needs
+    3x fewer interactions in video and is 6x faster than SAM on images
+  builds_on:
+  - kirillov2023sam
+  cites:
+  - kirillov2023sam
+  video_hook: 'Follow a tracked object through a video as it ducks behind an obstacle: show each frame''s features
+    reaching back into a growing memory bank of earlier frames, and a single extra click instantly recovering the
+    object after it reappears.'
+- id: graham2019hovernet
+  title: 'HoVer-Net: Simultaneous Segmentation and Classification of Nuclei in Multi-Tissue Histology Images'
+  short_name: HoVer-Net
+  authors:
+  - Simon Graham
+  - Quoc Dang Vu
+  - Shan E Ahmed Raza
+  - Ayesha Azam
+  - et al.
+  year: 2019
+  venue: Medical Image Analysis 2019
+  arxiv: '1812.06499'
+  doi: ''
+  category: segmentation/nuclei-instance
+  tags:
+  - histopathology
+  - nuclei-classification
+  - distance-maps
+  - panoptic-quality
+  - consep-dataset
+  - watershed
+  pdf: library/segmentation/nuclei-instance/graham2019hovernet.pdf
+  status: unread
+  one_liner: Cell nuclei in stained tissue images often touch and blur together. HoVer-Net has a network predict,
+    for every pixel, how far it sits horizontally and vertically from the centre of its nucleus, and the sharp jumps
+    in those maps show where one nucleus ends and the next begins; a separate branch then labels each nucleus's
+    cell type.
+  key_ideas:
+  - 'One shared Preact-ResNet50 encoder feeds three decoder branches: nuclear pixel (foreground vs background),
+    HoVer (horizontal and vertical distances to the nucleus centre of mass), and nuclear type classification.'
+  - Sobel gradients of the HoVer maps show the boundaries between touching nuclei. They supply the markers and energy
+    landscape for watershed post-processing, and a gradient loss (MSGE) on the maps sharpens those boundaries during
+    training.
+  - Proposes Panoptic Quality (detection quality times segmentation quality) as a more reliable nuclear instance
+    metric than DICE2 or AJI, and releases the CoNSeP colorectal dataset (24,319 annotated nuclei with class labels).
+  builds_on:
+  - kirillov2019panoptic
+  cites:
+  - ronneberger2015unet
+  - chen2016dcan
+  - kirillov2019panoptic
+  video_hook: Animate a cluster of touching nuclei. Overlay each pixel's horizontal and vertical distance to its
+    own nucleus centre as two colour gradients, then show the gradient flipping sharply where two nuclei meet, which
+    cuts the blob into separate cells.
+- id: schmidt2018stardist
+  title: Cell Detection with Star-convex Polygons
+  short_name: StarDist
+  authors:
+  - Uwe Schmidt
+  - Martin Weigert
+  - Coleman Broaddus
+  - Gene Myers
+  year: 2018
+  venue: MICCAI 2018
+  arxiv: '1806.03535'
+  doi: ''
+  category: segmentation/nuclei-instance
+  tags:
+  - star-convex-polygons
+  - fluorescence-microscopy
+  - non-maximum-suppression
+  - u-net-backbone
+  - instance-segmentation
+  pdf: library/segmentation/nuclei-instance/schmidt2018stardist.pdf
+  status: unread
+  one_liner: Instead of drawing boxes around cell nuclei or colouring pixels and hoping crowded cells stay apart,
+    StarDist has every pixel predict a star-shaped polygon (its distances to the cell edge along 32 directions)
+    for the nucleus it belongs to, then keeps the best non-overlapping polygons.
+  key_ideas:
+  - Each pixel predicts n=32 radial distances to its object's boundary. Together these define a star-convex polygon
+    that fits roundish nuclei far better than an axis-aligned bounding box, so no extra shape-refinement step is
+    needed.
+  - Each pixel also predicts an object probability, its normalised distance to the nearest background pixel. Non-maximum
+    suppression on the polygons therefore prefers those predicted near a cell's centre.
+  - A lightweight U-Net backbone is trained with binary cross-entropy for the probability and a probability-weighted
+    L1 loss for the distances. It outperforms U-Net baselines and Mask R-CNN on crowded nuclei (DSB2018) at moderate
+    IoU thresholds.
+  builds_on:
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  - chen2016dcan
+  video_hook: From a single pixel inside a nucleus, shoot 32 rays outward until they hit the cell edge and join
+    the tips into a polygon. Repeat this for many pixels, then let non-maximum suppression discard the overlapping
+    polygons until one clean polygon per cell remains.
+- id: stringer2021cellpose
+  title: 'Cellpose: a generalist algorithm for cellular segmentation'
+  short_name: Cellpose
+  authors:
+  - Carsen Stringer
+  - Tim Wang
+  - Michalis Michaelos
+  - Marius Pachitariu
+  year: 2021
+  venue: Nature Methods 2021
+  arxiv: ''
+  doi: 10.1038/s41592-020-01018-x
+  category: segmentation/nuclei-instance
+  tags:
+  - cell-segmentation
+  - gradient-flows
+  - generalist-model
+  - microscopy
+  pdf: null
+  status: unread
+  one_liner: Cellpose segments cells of almost any shape and imaging type by predicting, for each pixel, which way
+    to flow to reach its cell centre; pixels whose flows end at the same sink belong to the same cell.
+  key_ideas:
+  - Represents each cell by a spatial gradient field obtained from heat diffusion from the cell centre, so a U-Net-style
+    network predicts flows plus a cell probability
+  - Masks are recovered by running the predicted flows as a dynamical system and grouping pixels that converge to
+    the same fixed point
+  - A deliberately diverse training set (cells, nuclei, non-biological blobs) yields one generalist model that rivals
+    specialist ones
+  builds_on:
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  needs_pdf: 'Not on arXiv: download the bioRxiv preprint (doi 10.1101/2020.02.02.931238) or the Nature Methods
+    version and save it as library/segmentation/nuclei-instance/stringer2021cellpose.pdf'
+- id: chen2016dcan
+  title: 'DCAN: Deep Contour-Aware Networks for Accurate Gland Segmentation'
+  short_name: DCAN
+  authors:
+  - Hao Chen
+  - Xiaojuan Qi
+  - Lequan Yu
+  - Pheng-Ann Heng
+  year: 2016
+  venue: CVPR 2016
+  arxiv: '1604.02677'
+  doi: ''
+  category: segmentation/nuclei-instance
+  tags:
+  - gland-segmentation
+  - multi-task
+  - contours
+  - touching-objects
+  - histology
+  pdf: library/segmentation/nuclei-instance/chen2016dcan.pdf
+  status: unread
+  one_liner: DCAN separates touching glands by having one network predict both the object region and its contour,
+    then subtracting the contours from the regions; it won the 2015 GlaS gland segmentation challenge.
+  key_ideas:
+  - 'Multi-level fully convolutional network with two output branches: object probability and contour probability'
+  - Fusing the two maps (objects minus contours) splits glands that touch each other
+  - Deep supervision via auxiliary classifiers; top results on the GlaS challenge
+  builds_on:
+  - sirinukunwattana2017glas
+  cites:
+  - ronneberger2015unet
+  - sirinukunwattana2017glas
+- id: kirillov2019panoptic
+  title: Panoptic Segmentation
+  short_name: Panoptic Segmentation / PQ
+  authors:
+  - Alexander Kirillov
+  - Kaiming He
+  - Ross Girshick
+  - Carsten Rother
+  - et al.
+  year: 2019
+  venue: CVPR 2019
+  arxiv: '1801.00868'
+  doi: ''
+  category: segmentation/architectures
+  tags:
+  - task-definition
+  - evaluation-metric
+  - panoptic-quality
+  - stuff-and-things
+  - semantic-segmentation
+  - instance-segmentation
+  pdf: library/segmentation/architectures/kirillov2019panoptic.pdf
+  status: unread
+  one_liner: Computer vision had split images into 'stuff' (amorphous regions such as sky or grass, labelled per
+    pixel) and 'things' (countable objects, detected one by one). This paper merges them into a single task in which
+    every pixel gets both a class and an instance ID, and it introduces one score, Panoptic Quality, to grade that
+    task.
+  key_ideas:
+  - 'Defines panoptic segmentation: each pixel is assigned a semantic label and an instance ID, segments must not
+    overlap, and stuff and thing classes are handled in one output format.'
+  - Introduces the Panoptic Quality (PQ) metric, which matches predicted and ground-truth segments at IoU > 0.5
+    (a matching provably unique) and factors into segmentation quality (mean IoU of matched pairs) times recognition
+    quality (an F1-style detection score).
+  - Measures human annotator consistency and combined semantic and instance baselines on Cityscapes, ADE20k and
+    Mapillary Vistas, giving the community a benchmark and a reference for human performance.
+  builds_on: []
+  cites: []
+  video_hook: 'Paint a street scene three ways: semantic colours only, then outlines of individual objects, then
+    the merged panoptic map. Next, animate the PQ calculation, matching predicted and true segments whenever IoU
+    exceeds 0.5 and splitting the score into segmentation quality times recognition quality.'
+- id: lin2023scnet
+  title: Nuclei Segmentation with Point Annotations from Pathology Images via Self-Supervised Learning and Co-Training
+  short_name: SC-Net
+  authors:
+  - Yi Lin
+  - Zhiyong Qu
+  - Hao Chen
+  - Zhongke Gao
+  - et al.
+  year: 2023
+  venue: arXiv preprint
+  arxiv: '2202.08195'
+  doi: ''
+  category: segmentation/nuclei-instance
+  tags:
+  - weakly-supervised
+  - point-annotation
+  - co-training
+  - self-supervised-learning
+  - nuclei-segmentation
+  - histopathology
+  pdf: library/segmentation/nuclei-instance/lin2023scnet.pdf
+  status: unread
+  one_liner: 'Pathologists can cheaply click one dot per nucleus instead of tracing outlines; SC-Net turns those
+    dots into rough masks, then improves them in two ways: two networks teach each other (co-training), and a self-supervised
+    side task learns to re-colour the hematoxylin (nucleus-stain) channel back into the full H&E image.'
+  key_ideas:
+  - 'Coarse pixel labels from point clicks: a Voronoi diagram splits the image into one cell per nucleus, and k-means
+    colour clustering marks nucleus vs background pixels. Uncertain pixels are ignored.'
+  - End-to-end co-training of two segmentation networks, where exponential-moving-average pseudo-labels are combined
+    with the coarse labels for stable cross-supervision. This replaces error-prone multi-stage refinement.
+  - 'Self-supervised colourization: a second U-Net rebuilds the H&E image from the nucleus probability map predicted
+    from the H-component, which teaches the nucleus/cytoplasm boundary. A cumulative-learning schedule shifts weight
+    from colourization to segmentation over training.'
+  builds_on:
+  - qu2020weaknuclei
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  - graham2019hovernet
+  - schmidt2018stardist
+  - chen2016dcan
+  - kirillov2019panoptic
+  - qu2020weaknuclei
+  video_hook: Animate dots on nuclei expanding into a Voronoi mosaic and a k-means colour map, then show two networks
+    passing averaged pseudo-label masks back and forth while the rough blobs sharpen into true nucleus outlines.
+- id: qu2020weaknuclei
+  title: Weakly Supervised Deep Nuclei Segmentation Using Partial Points Annotation in Histopathology Images
+  short_name: Partial-points nuclei segmentation (Qu et al.)
+  authors:
+  - Hui Qu
+  - Pengxiang Wu
+  - Qiaoying Huang
+  - Jingru Yi
+  - et al.
+  year: 2020
+  venue: IEEE Transactions on Medical Imaging
+  arxiv: '2007.05448'
+  doi: 10.1109/TMI.2020.3002244
+  category: segmentation/nuclei-instance
+  tags:
+  - weakly-supervised
+  - point-annotation
+  - self-training
+  - voronoi
+  - conditional-random-field
+  - histopathology
+  pdf: library/segmentation/nuclei-instance/qu2020weaknuclei.pdf
+  status: unread
+  one_liner: 'Shows that nuclei in tissue images can be segmented when annotators only click the centres of about
+    10% of them: first train a detector to find all the centres, then grow rough masks from those dots and train
+    a segmentation network on the masks.'
+  key_ideas:
+  - Semi-supervised detection from partial points. Extended Gaussian masks label the known nuclei plus a ring of
+    background around each one and ignore unlabelled areas. Self-training with background propagation then expands
+    the confident background round by round and suppresses false positives.
+  - 'Two complementary coarse labels are derived from the detected points: Voronoi-diagram labels (which separate
+    touching nuclei) and k-means colour-cluster labels (nucleus vs background pixels). These train a U-Net with
+    a ResNet34 encoder.'
+  - A dense CRF is used as a training loss to fine-tune boundaries rather than as a post-processing step, so inference
+    costs nothing extra. Results approach full supervision at about 60x less annotation time (10% of points).
+  builds_on:
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  video_hook: Animate a few clicked dots on a tissue image spawning Gaussian halos, then show the detector finding
+    the remaining nuclei round by round as the 'known background' spreads, and finally a Voronoi tessellation carving
+    the image into cells that shrink into nucleus masks.
+- id: hu2019topoloss
+  title: Topology-Preserving Deep Image Segmentation
+  short_name: TopoLoss (Hu et al.)
+  authors:
+  - Xiaoling Hu
+  - Li Fuxin
+  - Dimitris Samaras
+  - Chao Chen
+  year: 2019
+  venue: NeurIPS 2019
+  arxiv: '1906.05404'
+  doi: ''
+  category: segmentation/topology-aware
+  tags:
+  - persistent-homology
+  - topological-loss
+  - betti-numbers
+  - thin-structures
+  pdf: library/segmentation/topology-aware/hu2019topoloss.pdf
+  status: unread
+  one_liner: Adds a differentiable loss based on persistent homology that pushes a segmentation network to produce
+    the same number of connected components and holes (Betti numbers) as the ground truth, fixing broken vessels
+    and merged membranes.
+  key_ideas:
+  - Computes the persistence diagram of the predicted likelihood map on image patches
+  - Matches its persistence dots to the ground-truth Betti numbers and moves the critical pixels that create or
+    destroy topological features
+  - Plugs into standard training alongside cross-entropy; big gains on topology-aware metrics (Betti error) for
+    neurons, vessels and roads
+  builds_on:
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+- id: clough2019topological
+  title: A Topological Loss Function for Deep-Learning based Image Segmentation using Persistent Homology
+  short_name: Topological prior loss (Clough et al.)
+  authors:
+  - James R. Clough
+  - Nicholas Byrne
+  - Ilkay Oksuz
+  - Veronika A. Zimmer
+  - et al.
+  year: 2019
+  venue: arXiv preprint
+  arxiv: '1910.01877'
+  doi: ''
+  category: segmentation/topology-aware
+  tags:
+  - persistent-homology
+  - betti-numbers
+  - topological-loss
+  - cardiac-mri
+  - semi-supervised
+  - medical-imaging
+  pdf: library/segmentation/topology-aware/clough2019topological.pdf
+  status: unread
+  one_liner: 'Lets you tell a segmentation network what shape type to expect, e.g. ''the heart muscle in this view
+    is a ring: one connected piece with one hole''. It penalises predictions whose topology differs, using persistent
+    homology to make the count of pieces and holes differentiable.'
+  key_ideas:
+  - Compute persistent homology of the network's predicted probability map using a cubical-complex filtration of
+    super-level sets. This gives a barcode of when each component or hole appears and disappears as the threshold
+    is lowered.
+  - The loss pushes the longest bars to length 1 for the prescribed Betti numbers (e.g. one component and one loop
+    for the myocardium ring) and pushes all other bars to length 0. Gradients flow back through the pixels where
+    features are born and die.
+  - The topological term needs no ground-truth masks, so it can be used semi-supervised or as per-image test-time
+    post-processing. It is demonstrated on MNIST denoising, UK Biobank and ACDC myocardium MRI, and 3D placenta
+    ultrasound.
+  builds_on:
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  - hu2019topoloss
+  video_hook: 'Sweep a threshold down over a noisy ring-shaped probability map and grow a barcode in sync: one long
+    bar for the component and one for the hole, while spurious short bars get squeezed to zero by the loss.'
+- id: shit2021cldice
+  title: clDice - a Novel Topology-Preserving Loss Function for Tubular Structure Segmentation
+  short_name: clDice
+  authors:
+  - Suprosanna Shit
+  - Johannes C. Paetzold
+  - Anjany Sekuboyina
+  - Ivan Ezhov
+  - et al.
+  year: 2021
+  venue: arXiv preprint
+  arxiv: '2003.07311'
+  doi: ''
+  category: segmentation/topology-aware
+  tags:
+  - tubular-structures
+  - skeletonization
+  - connectivity
+  - vessel-segmentation
+  - loss-function
+  - 3d-segmentation
+  pdf: library/segmentation/topology-aware/shit2021cldice.pdf
+  status: unread
+  one_liner: For thin branching structures like blood vessels, roads or neurons, staying connected matters more
+    than pixel overlap. clDice scores a segmentation by how much of each mask's centreline (skeleton) lies inside
+    the other mask, and a differentiable 'soft' version trains networks not to break these structures apart.
+  key_ideas:
+  - 'clDice is the harmonic mean of two scores: topology precision (the fraction of the predicted skeleton inside
+    the ground-truth mask) and topology sensitivity (the fraction of the ground-truth skeleton inside the predicted
+    mask).'
+  - A theoretical proof that clDice guarantees topology preservation up to homotopy equivalence for binary 2D and
+    3D segmentations.
+  - A soft skeleton built from iterated min-pooling (erosion) and max-pooling (dilation) makes the measure differentiable.
+    The combined loss (1-alpha)*soft-Dice + alpha*soft-clDice improves connectivity on DRIVE, Massachusetts Roads,
+    CREMI, synthetic 3D vessels and Vessap brain vessels, using U-Net and FCN backbones.
+  builds_on:
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  - hu2019topoloss
+  - clough2019topological
+  video_hook: Overlay two vessel segmentations with equal Dice scores, then shrink each to its yellow skeleton and
+    show that only the one capturing the thin capillaries keeps its skeleton inside the true mask, which is the
+    clDice score in action.
+- id: stucki2023barcodes
+  title: Topologically Faithful Image Segmentation via Induced Matching of Persistence Barcodes
+  short_name: Betti Matching
+  authors:
+  - Nico Stucki
+  - Johannes C. Paetzold
+  - Suprosanna Shit
+  - Bjoern Menze
+  - et al.
+  year: 2023
+  venue: ICML 2023
+  arxiv: '2211.15272'
+  doi: ''
+  category: segmentation/topology-aware
+  tags:
+  - persistent-homology
+  - betti-matching
+  - topological-loss
+  - segmentation-metric
+  - induced-matching
+  pdf: library/segmentation/topology-aware/stucki2023barcodes.pdf
+  status: unread
+  one_liner: Pixel-overlap losses like Dice can't tell whether a segmentation has the right number of connected
+    pieces and loops in the right places, so this paper uses a tool from algebraic topology (induced matchings of
+    persistence barcodes) to pair each topological feature in the prediction with the spatially corresponding feature
+    in the ground truth, yielding both a metric and a trainable loss.
+  key_ideas:
+  - Uses induced matchings (Bauer & Lesnick 2015) by embedding prediction and ground truth into a common comparison
+    image, so matched components/cycles are guaranteed to correspond in space, unlike the location-blind Wasserstein
+    matching of Hu et al. 2019.
+  - Defines the Betti matching error, an interpretable metric that counts unmatched topological features and is
+    stricter than the Betti number error (which only compares counts).
+  - Makes the matching differentiable as a loss (squared distance between matched birth/death values, added to Dice
+    loss) with an efficient algorithm; improves topological scores on six datasets (roads, CREMI neurons, C. elegans,
+    synthetic MNIST, colon cells, buildings) while keeping Dice.
+  builds_on:
+  - hu2019topoloss
+  cites:
+  - hu2019topoloss
+  - clough2019topological
+  - shit2021cldice
+  video_hook: Show two images with loops, draw their persistence barcodes side by side, and animate Wasserstein
+    matching pairing a loop in one corner with an unrelated loop in the opposite corner, then switch to Betti matching
+    where each bar only links to the bar whose loop overlaps it in the comparison image.
+- id: berger2024topo
+  title: Topologically Faithful Multi-class Segmentation in Medical Images
+  short_name: Multi-class Betti Matching
+  authors:
+  - Alexander H. Berger
+  - Laurin Lux
+  - Nico Stucki
+  - Vincent Bürgin
+  - et al.
+  year: 2024
+  venue: arXiv preprint
+  arxiv: '2403.11001'
+  doi: ''
+  category: segmentation/topology-aware
+  tags:
+  - betti-matching
+  - multi-class-segmentation
+  - persistent-homology
+  - medical-imaging
+  - topological-loss
+  pdf: library/segmentation/topology-aware/berger2024topo.pdf
+  status: unread
+  one_liner: Extends the Betti matching topology loss from yes/no (binary) segmentation to images with many labeled
+    structures, such as heart chambers or artery vs. vein, by treating each class as its own binary map so that
+    connected pieces and holes come out right for every class.
+  key_ideas:
+  - Splits an N-class prediction into N one-channel (class-vs-rest) tasks, which slices the intractable N-parameter
+    persistence module into N 1-parameter ones, so cost grows only linearly with the number of classes; the per-class
+    Betti matching losses are summed.
+  - Separates the Betti matching loss into matched-feature and unmatched-feature terms and adds a weighting between
+    them, which can be tuned to dataset characteristics.
+  - Builds multi-class versions of clDice and HuTopo as baselines and, training a residual U-Net, improves Betti
+    matching error on ACDC cardiac MRI, Platelet EM, OCTA-500 artery-vein, and TopCoW Circle-of-Willis data.
+  builds_on:
+  - stucki2023barcodes
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  - hu2019topoloss
+  - clough2019topological
+  - shit2021cldice
+  - stucki2023barcodes
+  video_hook: Take a colorful multi-class cardiac segmentation, peel it apart into a stack of single-class binary
+    layers, and run a separate barcode-matching animation on each layer before summing the per-layer losses into
+    one.
+- id: qaiser2019where
+  title: 'Learning Where to See: A Novel Attention Model for Automated Immunohistochemical Scoring'
+  short_name: Learning Where to See
+  authors:
+  - Talha Qaiser
+  - Nasir M. Rajpoot
+  year: 2019
+  venue: IEEE Transactions on Medical Imaging
+  arxiv: '1903.10762'
+  doi: ''
+  category: reinforcement-learning/rl-for-pathology
+  tags:
+  - her2-scoring
+  - recurrent-attention
+  - policy-gradient
+  - whole-slide-images
+  - inhibition-of-return
+  pdf: library/reinforcement-learning/rl-for-pathology/qaiser2019where.pdf
+  status: unread
+  one_liner: Instead of analysing every patch of a huge breast-cancer slide, a reinforcement-learning agent learns,
+    like a pathologist, to glance at a low-resolution overview and then zoom into a few informative spots before
+    giving the HER2 score (a 0 to 3+ grade of a cancer protein marker).
+  key_ideas:
+  - 'Frames HER2 immunohistochemistry scoring as a sequential decision process: a ResNet encodes 40x/20x regions,
+    an LSTM accumulates evidence, and a context network on a downsampled image helps predict the next location to
+    view.'
+  - Trains the non-differentiable location choices with the REINFORCE policy-gradient rule, rewarded only by a correct
+    slide-level score, so no region-level annotations are needed.
+  - Adds an inhibition-of-return penalty so the agent does not revisit attended spots, and a task-specific regularizer
+    that penalizes large clinical errors (e.g. 3+ predicted as 0/1+); outperforms all 18 HER2 challenge entries
+    and is also tested on Glo1-stained neuroendocrine tumour slides.
+  builds_on: []
+  cites:
+  - ronneberger2015unet
+  video_hook: Animate a blurry slide thumbnail with a magnifying glass hopping across it in a numbered sequence
+    of colored circles, each visited spot dimming out (inhibition of return), until the agent stamps a HER2 score.
+- id: zhao2023rlogist
+  title: 'RLogist: Fast Observation Strategy on Whole-slide Images with Deep Reinforcement Learning'
+  short_name: RLogist
+  authors:
+  - Boxuan Zhao
+  - Jun Zhang
+  - Deheng Ye
+  - Jian Cao
+  - et al.
+  year: 2023
+  venue: AAAI 2023
+  arxiv: '2212.01737'
+  doi: ''
+  category: reinforcement-learning/rl-for-pathology
+  tags:
+  - whole-slide-images
+  - ppo
+  - observation-path
+  - multiple-instance-learning
+  - feature-super-resolution
+  pdf: library/reinforcement-learning/rl-for-pathology/zhao2023rlogist.pdf
+  status: unread
+  one_liner: Gigapixel pathology slides are slow to analyse because standard methods extract features from every
+    high-magnification patch, so RLogist trains a PPO agent that scans at low magnification and only zooms into
+    a short path of diagnostically useful regions before classifying the slide.
+  key_ideas:
+  - Models slide diagnosis as a Markov decision process in which an agent browses low-magnification features and
+    chooses which regions to observe at high magnification, producing a short, interpretable observation path instead
+    of dense multiple-instance-learning sampling.
+  - 'Conditional feature super-resolution: after each observation, the estimated high-magnification features of
+    still-unobserved regions are updated from the observed low/high-magnification feature pairs.'
+  - Uses a discrete action space (via patching) and a final done-state reward, trained with an actor-critic PPO;
+    competitive with MIL baselines such as CLAM and TransMIL on CAMELYON16 metastasis detection and TCGA-NSCLC lung
+    subtyping while observing far fewer patches.
+  builds_on:
+  - schulman2017ppo
+  - qaiser2019where
+  cites:
+  - schulman2017ppo
+  - qaiser2019where
+  video_hook: Show a gigapixel slide as a grid of dim low-res tiles; the agent zooms into one tile at a time, and
+    after each zoom the 'imagined' high-res features of neighbouring unvisited tiles sharpen, until a short glowing
+    path is enough to call the diagnosis.
+- id: nan2025pean
+  title: Deep learning quantifies pathologists' visual patterns for whole slide image diagnosis
+  short_name: PEAN
+  authors:
+  - Tianhang Nan
+  - Song Zheng
+  - Siyuan Qiao
+  - Hao Quan
+  - et al.
+  year: 2025
+  venue: Nature Communications
+  arxiv: ''
+  doi: 10.1038/s41467-025-60307-1
+  category: reinforcement-learning/rl-for-pathology
+  tags:
+  - eye-tracking
+  - whole-slide-images
+  - skin-lesion-classification
+  - imitation
+  - deep-q-learning
+  pdf: library/reinforcement-learning/rl-for-pathology/nan2025pean.pdf
+  status: unread
+  one_liner: Rather than asking pathologists to draw pixel-level outlines, this work records where their eyes linger
+    while reading skin-biopsy slides and trains a network (PEAN) to turn that gaze data into a per-patch 'expertise
+    value' that drives both slide classification and an RL agent that reviews slides the way a pathologist does.
+  key_ideas:
+  - Collects eye-tracking and zoom/pan logs from dermatopathologists on 5,881 WSIs across 5 skin-lesion types; annotating
+    by gaze takes about 4% of the time of manual pixel annotation.
+  - Learns a per-patch 'expertise value' from gaze duration and gaze-point density, then PEAN-C selects the top-k
+    high-expertise patches per disease type and fuses them with a Transformer for slide classification (AUC 0.992,
+    accuracy 96.3% on the internal test set).
+  - PEAN-I is a DQN-style reinforcement-learning agent that moves in 8 directions with a fixed step, rewarded by
+    the learned expertise value, to imitate pathologists' viewing trajectories; the regions it picks overlap expert
+    ROIs and improve weakly supervised models trained on them.
+  builds_on:
+  - zhao2023rlogist
+  cites:
+  - zhao2023rlogist
+  video_hook: Overlay a pathologist's live gaze heatmap on a skin slide, morph it into the network's learned expertise-value
+    heatmap, then release a small agent that steps in eight directions along the hottest regions, tracing a human-like
+    reading path.
+- id: hilt2021rlinstance
+  title: Reinforcement Learning for Instance Segmentation with High-Level Priors
+  short_name: Stateless actor-critic instance segmentation (RL with priors)
+  authors:
+  - Paul Hilt
+  - Maedeh Zarvandi
+  - Edgar Kaziakhmedov
+  - Sourabh Bhide
+  - et al.
+  year: 2021
+  venue: arXiv preprint
+  arxiv: '2107.02600'
+  doi: ''
+  category: reinforcement-learning/rl-for-pathology
+  tags:
+  - actor-critic
+  - instance-segmentation
+  - non-differentiable-rewards
+  - graph-partitioning
+  - microscopy
+  - shape-priors
+  pdf: library/reinforcement-learning/rl-for-pathology/hilt2021rlinstance.pdf
+  status: unread
+  one_liner: 'Outlining every cell in a microscope image by hand takes experts weeks, so this paper trains a segmenter
+    with reinforcement learning instead: it gets rewarded when the objects it produces follow simple rules such
+    as ''nuclei are roundish blobs of about this size'', and those rules don''t need to be differentiable.'
+  key_ideas:
+  - 'Treats instance segmentation as cutting a graph: the image is pre-split into superpixels (small pixel clusters),
+    an actor graph neural network predicts a merge/split weight for every edge between neighbouring superpixels,
+    and a multicut solver inside the environment turns those weights into objects.'
+  - Uses a stateless (single-step) soft actor-critic. The critic learns to imitate non-differentiable rewards built
+    from object shape, size, position and intensity priors, so gradients can reach the actor and its U-Net feature
+    extractor, trained end to end.
+  - Gives local credit by mapping object-level scores onto overlapping fixed-size sub-graphs (6 to 128 edges). Tested
+    on synthetic circles (no object labels), DSB2018 nuclei (competitive with pretrained StarDist/Cellpose without
+    labels) and fruit-fly embryo cells.
+  builds_on:
+  - ronneberger2015unet
+  cites:
+  - ronneberger2015unet
+  - schmidt2018stardist
+  - stringer2021cellpose
+  - hu2019topoloss
+  video_hook: A mosaic of superpixels where the agent paints each shared edge green (merge) or red (split); the
+    resulting blobs glow green or red by how well they fit a 'round nucleus' rule, and over training the edges flip
+    until clean nuclei snap together.
+- id: gamper2020pannuke
+  title: PanNuke Dataset Extension, Insights and Baselines
+  short_name: PanNuke
+  authors:
+  - Jevgenij Gamper
+  - Navid Alemi Koohbanani
+  - Ksenija Benes
+  - Simon Graham
+  - et al.
+  year: 2020
+  venue: arXiv preprint
+  arxiv: '2003.10778'
+  doi: ''
+  category: datasets/computational-pathology
+  tags:
+  - nuclei-segmentation
+  - nuclei-classification
+  - pan-cancer
+  - semi-automatic-annotation
+  - panoptic-quality
+  - histopathology
+  pdf: library/datasets/computational-pathology/gamper2020pannuke.pdf
+  status: unread
+  one_liner: Releases PanNuke, a pan-cancer dataset of about 200,000 cell nuclei from 19 tissue types. Each nucleus
+    is outlined and labelled as one of 5 clinically important cell types, using semi-automatic annotation checked
+    by pathologists, so models can be trained and tested on messy real-clinic slides rather than hand-picked clean
+    images.
+  key_ideas:
+  - 'Semi-automatic labelling loop: a CNN detects and classifies nuclei, pathologists verify and relabel them over
+    7 rounds of retraining, and NuClick turns each verified click into a nucleus mask, giving 481 visual fields
+    (sampled from >20,000 whole-slide images) with 189,744 nuclei.'
+  - 'Visual fields are sampled at random across 19 tissues and clinical artefacts (blur, burnt tissue) are kept,
+    to reduce selection bias. There are 5 classes: neoplastic, non-neoplastic epithelial, inflammatory, connective
+    and dead.'
+  - Benchmarks DIST, Mask R-CNN, Micro-Net, HoVer-Net and a detection U-Net using multi-class and binary panoptic
+    quality (mPQ/bPQ) over three splits. HoVer-Net is usually best, dead cells are hardest, and models trained on
+    PanNuke carry over to unseen tissues such as brain.
+  builds_on:
+  - graham2019hovernet
+  - kirillov2019panoptic
+  cites:
+  - graham2019hovernet
+  - kirillov2019panoptic
+  - sirinukunwattana2017glas
+  video_hook: A pathologist clicks once on each nucleus and every click blooms into a tight outline (NuClick); then
+    zoom out as tens of thousands of colour-coded nuclei from 19 organs tile together into the dataset.
+- id: sirinukunwattana2017glas
+  title: 'Gland Segmentation in Colon Histology Images: The GlaS Challenge Contest'
+  short_name: GlaS
+  authors:
+  - Korsuk Sirinukunwattana
+  - Josien P. W. Pluim
+  - Hao Chen
+  - Xiaojuan Qi
+  - et al.
+  year: 2017
+  venue: Medical Image Analysis 2017 (GlaS challenge held at MICCAI 2015)
+  arxiv: '1603.00275'
+  doi: ''
+  category: datasets/computational-pathology
+  tags:
+  - gland-segmentation
+  - colorectal-cancer
+  - challenge
+  - benchmark
+  - evaluation-metrics
+  - histopathology
+  pdf: library/datasets/computational-pathology/sirinukunwattana2017glas.pdf
+  status: unread
+  one_liner: Describes the MICCAI 2015 GlaS challenge, which gave teams colon tissue images with every gland (a
+    tube-shaped structure in the gut lining) outlined by a pathologist, then scored how well each team's algorithm
+    could outline the individual glands in both healthy and cancerous tissue.
+  key_ideas:
+  - 'Dataset: 165 H&E images from 16 colorectal adenocarcinoma sections, graded benign or malignant, split into
+    a Training set, Test A (off-site) and Test B (run on-site within 45 minutes), with pathologist gland annotations.'
+  - 'Object-level evaluation: gland detection F1 (an overlap of at least 50% counts as a hit), object-level Dice
+    and object-level Hausdorff distance, combined into a rank-sum leaderboard.'
+  - 'Reports the top entries, where deep networks dominated: CUMedVision''s contour-aware FCN (DCAN) ranked first
+    overall, followed by ExB and Freiburg''s U-Net. Also analyses how methods fail on malignant, deformed glands.'
+  builds_on: []
+  cites:
+  - ronneberger2015unet
+  - chen2016dcan
+  video_hook: Overlay several teams' predicted gland outlines on the same malignant colon image, match each predicted
+    blob to its true gland, and light up hits, misses and boundary distances to show why touching, deformed glands
+    are hard.
+- id: graham2019mildnet
+  title: 'MILD-Net: Minimal Information Loss Dilated Network for Gland Instance Segmentation in Colon Histology
+    Images'
+  short_name: MILD-Net / CRAG
+  authors:
+  - Simon Graham
+  - Hao Chen
+  - Jevgenij Gamper
+  - Qi Dou
+  - et al.
+  year: 2019
+  venue: Medical Image Analysis 2019
+  arxiv: '1806.01963'
+  doi: 10.1016/j.media.2018.11.009
+  category: datasets/computational-pathology
+  tags:
+  - gland-segmentation
+  - dilated-convolutions
+  - uncertainty
+  - crag-dataset
+  - histology
+  pdf: library/datasets/computational-pathology/graham2019mildnet.pdf
+  status: unread
+  one_liner: MILD-Net segments individual glands in colon histology by re-injecting the original image into the
+    network to avoid losing detail through max-pooling, and introduces the CRAG gland dataset.
+  key_ideas:
+  - Minimal information loss units feed the original image back in at several depths; dilated convolutions keep
+    resolution
+  - Atrous spatial pyramid pooling plus a contour branch to split touching glands; random transformation sampling
+    gives an uncertainty map
+  - Releases CRAG, a colorectal adenocarcinoma gland dataset, and reports state of the art on GlaS and CRAG
+  builds_on:
+  - chen2016dcan
+  - sirinukunwattana2017glas
+  cites:
+  - ronneberger2015unet
+  - chen2016dcan
+  - sirinukunwattana2017glas
+- id: graham2021lizard
+  title: 'Lizard: A Large-Scale Dataset for Colonic Nuclear Instance Segmentation and Classification'
+  short_name: Lizard
+  authors:
+  - Simon Graham
+  - Mostafa Jahanifar
+  - Ayesha Azam
+  - Mohammed Nimir
+  - et al.
+  year: 2021
+  venue: ICCV Workshops 2021 (IEEE)
+  arxiv: '2108.11195'
+  doi: ''
+  category: datasets/computational-pathology
+  tags:
+  - nuclei-segmentation
+  - nuclei-classification
+  - colon
+  - pathologist-in-the-loop
+  - panoptic-quality
+  - histopathology
+  pdf: library/datasets/computational-pathology/graham2021lizard.pdf
+  status: unread
+  one_liner: Builds Lizard, the largest dataset of outlined and labelled cell nuclei in colon tissue (about 495,000
+    nuclei across 6 cell types), with a pipeline where AI does most of the drawing and pathologists only fix what
+    it gets wrong.
+  key_ideas:
+  - 'Four-stage pathologist-in-the-loop pipeline: (1) retrain HoVer-Net repeatedly on regions where it does badly,
+    (2) refine poor boundaries with NuClick clicks and then manual touch-ups, (3) sub-type inflammatory cells (lymphocyte,
+    plasma, neutrophil, eosinophil) with a CNN refined over several rounds, (4) a final class-label review.'
+  - 291 colon image regions at 20x pooled from GlaS, CRAG, CoNSeP, DigestPath, PanNuke and TCGA, labelled as epithelial,
+    connective, lymphocyte, plasma, neutrophil or eosinophil.
+  - 'Quality check: contrastive-learning features pick a representative sample of 1,800 nuclei, and pathologist-vs-Lizard
+    Cohen''s kappa matches pathologist-vs-pathologist agreement. U-Net, Micro-Net and HoVer-Net baselines are scored
+    with binary and multi-class panoptic quality.'
+  builds_on:
+  - graham2019hovernet
+  - gamper2020pannuke
+  - sirinukunwattana2017glas
+  - graham2019mildnet
+  - kirillov2019panoptic
+  cites:
+  - ronneberger2015unet
+  - graham2019hovernet
+  - chen2016dcan
+  - kirillov2019panoptic
+  - gamper2020pannuke
+  - sirinukunwattana2017glas
+  - graham2019mildnet
+  video_hook: On a colon tissue tile, HoVer-Net's draft outlines appear instantly, a pathologist clicks only the
+    bad ones, NuClick snaps them tight, and colour-coded cell types fill in as the count climbs toward half a million
+    nuclei.
+- id: yan2025medreasoner
+  title: 'MedReasoner: Reinforcement Learning Drives Reasoning Grounding from Clinical Thought to Pixel-Level Precision'
+  short_name: MedReasoner / U-MRG-14K
+  authors:
+  - Zhonghao Yan
+  - Muxi Diao
+  - Yuxuan Yang
+  - Ruoyan Jing
+  - et al.
+  year: 2025
+  venue: AAAI 2026
+  arxiv: '2508.08177'
+  doi: ''
+  category: reinforcement-learning/rl-for-segmentation
+  tags:
+  - medical-imaging
+  - reasoning-segmentation
+  - grpo
+  - multimodal-llm
+  - medsam2
+  - visual-grounding
+  pdf: library/reinforcement-learning/rl-for-segmentation/yan2025medreasoner.pdf
+  status: unread
+  one_liner: Doctors ask vague questions like 'what is this irregular shadow?' rather than 'segment the left lung',
+    so MedReasoner trains a medical vision-language model with reinforcement learning to reason out which region
+    is meant and emit a box plus two points, which a frozen medical segmentation model (MedSAM2) turns into a pixel-accurate
+    mask.
+  key_ideas:
+  - 'Defines the Unified Medical Reasoning Grounding (UMRG) task and releases U-MRG-14K: 14K image-mask pairs (10
+    modalities, 15 super-categories, 108 categories) paired with GPT-4o-generated implicit clinical queries and
+    chain-of-thought reasoning traces.'
+  - 'Decoupled plug-and-play design: a Clinical Reasoning Module (Lingshu-7B MLLM) outputs <think> reasoning and
+    an <answer> with a bounding box plus two key points; a frozen Anatomical Segmentation Module (MedSAM2) converts
+    these prompts to a mask, so either part can be swapped without retraining the other.'
+  - Only the reasoner is trained, via GRPO with rule-based rewards for output format, box IoU and corner L1 alignment,
+    and key-point accuracy; RL removes SFT's query refusals and beats a Seg-Zero-style hard-threshold reward by
+    a wide IoU margin.
+  builds_on:
+  - shao2024deepseekmath
+  - liu2025segzero
+  cites:
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  - liu2025segzero
+  - lai2025medr1
+  - kirillov2023sam
+  video_hook: Animate a vague clinical question about a chest X-ray flowing into a 'thinking' bubble that narrows
+    to 'left lung', which then drops a box and two pins onto the image, and a frozen SAM-style segmenter fills them
+    in as a glowing mask while reward scores tick up across RL training rounds.
+paths:
+- id: rl-foundations
+  title: 'Policy optimization for reasoning LLMs: PPO to GRPO to R1 to DAPO'
+  why: 'Every RL paper on segmentation, medical imaging and pathology in this library reuses this objective and
+    its rewards. Reading them in historical order shows why each change was made: the clipped ratio first, then
+    removing the critic, then rewards from simple rules, then fixes for training at scale. Each later vision paper
+    then reads as a small change to a known recipe.'
+  steps:
+  - paper: schulman2017ppo
+    note: Learn the clipped probability-ratio objective, how advantages are estimated with a learned value function
+      (the critic, via GAE), and why several epochs on each batch are safe. Every later paper modifies this objective.
+  - paper: shao2024deepseekmath
+    note: 'GRPO: sample a group of answers per prompt and use each reward minus the group mean, divided by the group''s
+      standard deviation, as the advantage, so no critic is needed. The KL penalty to a reference model moves into
+      the loss. Also note that the math pretraining corpus is half of the paper''s result.'
+  - paper: guo2025deepseekr1
+    note: 'R1-Zero: GRPO with only answer-accuracy and format rewards produces long chains of thought and self-checking.
+      R1 adds a cold-start SFT stage and distillation. The <think>/<answer> template and rule-based rewards introduced
+      here are what the vision papers copy.'
+  - paper: yu2025dapo
+    note: 'DAPO''s four fixes for training at scale: Clip-Higher (separate lower and upper clip ranges, to stop
+      entropy collapse), dynamic sampling (drop prompt groups that are all right or all wrong), per-token loss averaging,
+      and a soft penalty for over-long answers. Remember Clip-Higher, because SAM-R1 borrows it.'
+- id: reasoning-segmentation
+  title: From Segment Anything to reasoning segmentation
+  why: Read 'rl-foundations' first. This path starts with the frozen tool (SAM/SAM 2) and then compares four ways
+    of connecting a reasoning VLM to it. The open design question it frames is whether to keep the segmenter frozen
+    behind a text interface or to train everything end to end.
+  steps:
+  - paper: kirillov2023sam
+    note: SAM's split into a prompt encoder, a heavy image encoder and a light mask decoder, plus its multiple candidate
+      masks for ambiguous prompts. Understand why one box and a couple of points are enough to get a good mask,
+      since that is the interface every RL-segmentation paper uses.
+  - paper: ravi2024sam2
+    note: SAM 2 adds a streaming memory for video and is also better and faster on still images. It is the frozen
+      mask generator used by Seg-Zero, Seg-R1, SAM-R1 and LENS.
+  - paper: liu2025segzero
+    note: 'Seg-Zero, the template: a reasoning VLM (Qwen2.5-VL) writes a box and points as text, and a frozen SAM2
+      produces the mask. GRPO is trained with format, box and point rewards and no reasoning annotations, and it
+      generalizes zero-shot to ReasonSeg better than SFT does.'
+  - paper: you2025segr1
+    note: 'Seg-R1 is the simplest version: the reward is the quality of SAM2''s mask itself. It trains on plain
+      foreground tasks (camouflaged and salient object detection) and still transfers zero-shot to referring and
+      reasoning segmentation. It also gives a clear comparison of RL against SFT.'
+  - paper: huang2025samr1
+    note: SAM-R1 puts SAM inside the RL loop as the reward provider (IoU of the mask produced from the predicted
+      prompt), adds finer-grained rewards and borrows DAPO's asymmetric clipping. It gets strong results from only
+      about 3k samples.
+  - paper: zhu2025lens
+    note: 'LENS drops the text-box bottleneck: learned context embeddings from the VLM feed straight into SAM2,
+      and both are trained together with RL using format, box and mask rewards. Weigh the richer interface against
+      losing the plug-in, frozen-tool simplicity.'
+- id: medical-vlm-rl
+  title: 'RL-trained medical vision-language models: answer, box, mask, agent'
+  why: 'Read ''rl-foundations'' and ''reasoning-segmentation'' first. The four medical papers ask for more spatial
+    precision and more interaction at each step: a text answer, then a box, then a pixel mask through a medical
+    SAM, then a multi-turn annotating agent. Reading them in this order shows how the R1 recipe was adapted to clinical
+    data one step at a time.'
+  steps:
+  - paper: lai2025medr1
+    note: 'Med-R1: GRPO with accuracy and format rewards on medical VQA across 8 imaging types. RL generalizes across
+      imaging types and question types better than SFT, and a 2B model beats a 72B one. It shows the R1 recipe carries
+      over to medicine.'
+  - paper: xu2025medground
+    note: MedGround-R1 grounds a text phrase to a box on chest X-rays. Its rewards combine spatial overlap with
+      semantic match (MedCLIP), and it uses chain-of-box reasoning without hand-written reasoning examples. This
+      is the first move from answers to locations.
+  - paper: yan2025medreasoner
+    note: MedReasoner answers vague clinical questions. A reasoning module outputs a box plus two points, a frozen
+      MedSAM2 produces the mask, and the paper releases the U-MRG-14K dataset. It is effectively Seg-Zero redesigned
+      for clinical language.
+  - paper: liu2026medsamagent
+    note: MedSAM-Agent works over multiple turns, choosing box, point and stop actions. It is trained first by SFT
+      on simulated expert sessions and then by GRPO with process rewards for improvement, overshoot and number of
+      actions. It is explicitly positioned against single-turn, final-outcome-reward methods (Seg-Zero, Seg-R1,
+      SAM-R1).
+- id: biomedical-and-nuclei-segmentation
+  title: 'Biomedical segmentation: U-Net to nuclei instances and their benchmarks'
+  why: 'Covers the supervised side of the library: the network everyone builds on, the metric everyone reports,
+    the two main ways of separating touching nuclei, the datasets that made the field measurable, and how point
+    clicks replace full outlines. It is a prerequisite for ''topology-aware'' and useful context for ''rl-in-pathology''.
+    The intended Cellpose (18) and DCAN (20) PDFs are wrong downloads; get the correct ones to fill gaps after HoVer-Net
+    and GlaS.'
+  steps:
+  - paper: ronneberger2015unet
+    note: Encoder-decoder with skip connections, a weighted loss that separates touching cells, and heavy elastic
+      augmentation. Nearly every later method in this path uses it as the backbone.
+  - paper: isensee2021nnunet
+    note: How the whole pipeline is configured (dataset fingerprint, rule-based and empirical settings) matters
+      more than changes to the architecture. nnU-Net is the strong baseline any medical segmentation claim has to
+      beat.
+  - paper: kirillov2019panoptic
+    note: Panoptic segmentation and PQ = SQ x RQ, with predicted and true segments matched at IoU > 0.5. You need
+      this to read the metrics in every nuclei paper and dataset paper below.
+  - paper: sirinukunwattana2017glas
+    note: GlaS, an early pathology challenge on segmenting individual glands. Learn its object-level F1, object
+      Dice and object Hausdorff distance, and how it scores benign and malignant tissue separately.
+  - paper: chen2016dcan
+    note: 'The GlaS winner: predict objects and contours jointly, subtract contours to split touching glands, an
+      idea HoVer-Net and others refine.'
+  - paper: graham2019mildnet
+    note: Keeps fine detail by re-injecting the image; introduces the CRAG dataset used by Lizard.
+  - paper: schmidt2018stardist
+    note: 'StarDist: each pixel predicts a star-convex polygon (radial distances along 32 rays), followed by non-maximum
+      suppression. A built-in shape prior solves crowding in fluorescence microscopy.'
+  - paper: graham2019hovernet
+    note: 'HoVer-Net: horizontal and vertical distance-to-centre maps, separating nuclei where those maps jump sharply,
+      and a branch that classifies cell type. It brings PQ to nuclei and introduces the CoNSeP dataset. Compare
+      its representation with StarDist''s.'
+  - paper: gamper2020pannuke
+    note: 'PanNuke: 19 tissue types, 5 cell classes and semi-automatic annotation checked by pathologists. It is
+      the standard pan-cancer benchmark for multi-class nuclei, evaluated with PQ.'
+  - paper: graham2021lizard
+    note: 'Lizard: about 495k colon nuclei in 6 classes. A HoVer-Net-style model does most of the drawing and pathologists
+      only fix its mistakes, which shows how datasets grew by orders of magnitude.'
+  - paper: qu2020weaknuclei
+    note: 'Qu et al.: detect all centres from about 10% clicked points, build Voronoi and k-means cluster pseudo-labels,
+      refine with a CRF, and self-train. This is the base recipe for learning from points.'
+  - paper: lin2023scnet
+    note: 'SC-Net: Voronoi and cluster labels from points, two networks that co-train each other, and a self-supervised
+      task that recolours the hematoxylin channel back into the full H&E image. A recent example of how weakly supervised
+      nuclei segmentation is designed.'
+- id: topology-aware
+  title: Topology-aware segmentation losses
+  why: Read U-Net (12) first. Overlap losses like Dice cannot see a broken vessel or a missing hole. This path goes
+    from the basic tool (persistent homology with a known shape prior) to a cheap skeleton-based alternative, then
+    to spatially correct matching of topological features, then to many classes. The foundational Hu et al. 2019
+    TopoLoss (slot 24) is a wrong PDF; re-download arXiv 1906.05404 and read it between 26 and 27.
+  steps:
+  - paper: hu2019topoloss
+    note: 'The starting point: a persistent-homology loss that makes predicted masks have the right number of components
+      and holes. Everything after refines or replaces it.'
+  - paper: clough2019topological
+    note: 'Persistent homology and Betti numbers in practice. A known shape (for example ''a ring: one piece, one
+      hole'') is enforced through a differentiable loss without needing the ground truth, which allows semi-supervised
+      training on cardiac MRI.'
+  - paper: shit2021cldice
+    note: 'clDice: a soft skeleton and the overlap between each mask''s centreline and the other mask, with topology
+      guarantees for thin tubular structures. It is a far cheaper alternative to persistent homology, and the baseline
+      later papers compare against.'
+  - paper: stucki2023barcodes
+    note: 'Betti matching: induced matchings of persistence barcodes pair each topological feature with the spatially
+      corresponding one in the ground truth, which fixes the wrong pairings of Hu et al.''s Wasserstein loss. It
+      gives both a metric and a loss.'
+  - paper: berger2024topo
+    note: The multi-class extension treats each class as a binary map (plus union and background terms) and adds
+      weighting by structure. It also builds multi-class versions of the clDice and HuTopo losses as baselines,
+      so it doubles as a comparison of the whole path.
+- id: rl-in-pathology
+  title: RL agents for pathology and microscopy
+  why: 'Read PPO (01) first. These papers use RL for a different reason than the LLM papers: slides are too large
+    to process everywhere, and the useful signals (where an expert looks, rules about what a nucleus looks like)
+    cannot be differentiated. Reading in this order goes from glimpse attention to full-slide scanning paths to
+    learning from pathologists'' gaze, and ends with RL rewarding a segmentation through non-differentiable rules,
+    the same idea that SAM-R1 applies with SAM-based rewards.'
+  steps:
+  - paper: qaiser2019where
+    note: A recurrent attention agent trained by policy gradient that looks at an overview, then takes a few glimpses,
+      with inhibition of return so it doesn't revisit spots, before giving a HER2 score. This is the 'learn where
+      to look' formulation.
+  - paper: zhao2023rlogist
+    note: 'RLogist: a PPO agent scans at low magnification and builds a short observation path over the whole slide,
+      using feature super-resolution and multiple-instance-learning classification. It extends Qaiser''s glimpse
+      idea from cropped regions to entire slides, for speed.'
+  - paper: nan2025pean
+    note: PEAN turns pathologists' eye-tracking data into per-patch expertise values, which drive slide classification
+      and a Q-learning agent that imitates how pathologists review slides. Contrast learning from human gaze with
+      learning from a task reward (RLogist).
+  - paper: hilt2021rlinstance
+    note: Stateless soft actor-critic on superpixel-graph edges, rewarded by high-level rules (object size, shape,
+      roundness) that need not be differentiable. A conceptual bridge from pathology RL to the reward-driven segmentation
+      of SAM-R1 and Seg-R1.
+video_ideas:
+- title: 'Dropping the critic: PPO, GRPO, R1-Zero and DAPO'
+  papers:
+  - schulman2017ppo
+  - shao2024deepseekmath
+  - guo2025deepseekr1
+  - yu2025dapo
+  story: 'Open with the problem PPO solves: a policy update that is too large wrecks the policy, so PPO clips the
+    probability ratio and relies on a critic network to estimate advantages. Move to LLMs, where a critic as large
+    as the policy is expensive. DeepSeekMath''s GRPO samples a group of answers per question and scores each one
+    against the group average, so the critic disappears. DeepSeek-R1-Zero then shows that GRPO with only rule-checked
+    correctness and format rewards produces long reasoning and ''aha'' self-correction. Close with DAPO as the honest
+    account of what breaks at scale (entropy collapse, groups that give no gradient, length bias) and its four fixes.
+    End by naming the tools (group advantages, rule rewards, the think/answer template, Clip-Higher) that the vision
+    papers in the next videos borrow.'
+- title: 'From specialist to generalist segmenters: U-Net, nnU-Net, SAM, SAM 2'
+  papers:
+  - ronneberger2015unet
+  - isensee2021nnunet
+  - kirillov2023sam
+  - ravi2024sam2
+  story: 'Begin with U-Net, a network trained on each dataset that labels every pixel and works from a few annotated
+    images. nnU-Net shows that the winning move was configuring the whole pipeline correctly rather than inventing
+    new architectures, and it automates that configuration. SAM then changes the paradigm: one promptable model,
+    trained on 1B masks collected with a model-in-the-loop data engine, that segments anything from a click or a
+    box. SAM 2 adds memory so the same prompt can follow an object through a video. The closing point sets up the
+    next video: once segmentation is promptable, a language model only has to say where to click.'
+- title: 'How to talk to SAM: four ways to bolt reasoning onto segmentation'
+  papers:
+  - liu2025segzero
+  - you2025segr1
+  - huang2025samr1
+  - zhu2025lens
+  story: 'Pose reasoning segmentation, for example ''segment the thing you''d use to cut bread''. Seg-Zero gives
+    the template: a VLM reasons, writes a box and points as text, a frozen SAM2 draws the mask, and GRPO is rewarded
+    on the box and points. Seg-R1 simplifies further by rewarding the mask itself and training only on simple foreground
+    tasks, and it still transfers zero-shot. SAM-R1 puts SAM in the training loop as the judge and borrows DAPO''s
+    asymmetric clipping. LENS questions the whole text interface, passing learned embeddings into SAM2 and training
+    both together. Frame the video as one axis, from a frozen tool behind text to an end-to-end model, and what
+    each step gains and loses.'
+- title: 'RL goes to the clinic: from answers to boxes to masks to agents'
+  papers:
+  - lai2025medr1
+  - xu2025medground
+  - yan2025medreasoner
+  - liu2026medsamagent
+  story: 'Show the R1 recipe moving into medicine one level of precision at a time. Med-R1 shows GRPO on medical
+    VQA generalizes across CT, MRI and X-ray far better than SFT. MedGround-R1 asks the model to point, rewarding
+    boxes for overlap and for MedCLIP semantic match on chest X-rays. MedReasoner takes the vague questions doctors
+    actually ask and turns its reasoning into a box plus two points for a frozen MedSAM2, effectively a medical
+    Seg-Zero. MedSAM-Agent ends the arc: the model becomes an annotator that places a box, inspects the result,
+    adds corrective clicks and decides when to stop, trained with process rewards for efficiency, where earlier
+    methods rewarded only the final mask.'
+- title: 'Splitting touching nuclei: panoptic quality, StarDist and HoVer-Net'
+  papers:
+  - chen2016dcan
+  - kirillov2019panoptic
+  - schmidt2018stardist
+  - graham2019hovernet
+  - stringer2021cellpose
+  story: 'Start with the failure case: labelling pixels as nucleus or background merges crowded nuclei into blobs.
+    Panoptic Segmentation supplies the vocabulary and the grade: every pixel gets a class and an instance ID, scored
+    by PQ. StarDist builds in a shape prior, where each pixel predicts a star-shaped polygon and non-maximum suppression
+    keeps the best non-overlapping ones. HoVer-Net instead predicts horizontal and vertical distance-to-centre maps
+    whose sharp jumps mark boundaries, adds a cell-type branch and brings PQ to nuclei. End by comparing the two
+    representations on the same crowded image.'
+- title: 'The annotation bottleneck in pathology: challenges, big datasets and clicks'
+  papers:
+  - sirinukunwattana2017glas
+  - gamper2020pannuke
+  - graham2021lizard
+  - qu2020weaknuclei
+  - lin2023scnet
+  story: The story is about how much human effort each label costs. GlaS shows the classic model, a challenge with
+    every gland outlined by a pathologist and object-level scoring. PanNuke scales up with semi-automatic annotation
+    across 19 tissues. Lizard reaches about 495k nuclei by letting a HoVer-Net-style model draw while pathologists
+    only correct it. Even that is expensive, so Qu et al. ask what happens if annotators just click about 10% of
+    nuclei centres, and grow masks from Voronoi and cluster pseudo-labels. SC-Net improves on this with two networks
+    that teach each other and a self-supervised task that recolours the hematoxylin channel. Close on the trade-off
+    between label cost and accuracy.
+- title: 'Getting the shape right: topology-aware segmentation losses'
+  papers:
+  - hu2019topoloss
+  - clough2019topological
+  - shit2021cldice
+  - stucki2023barcodes
+  - berger2024topo
+  story: 'Open with a vessel segmentation that scores 0.95 Dice but is broken in three places. Clough et al. introduce
+    persistent homology as a differentiable way to count pieces and holes and to enforce a known shape, such as
+    a ring of heart muscle. clDice offers a cheap alternative for tubes: compare skeletons rather than pixels. Betti
+    matching then points out that earlier homology losses (Hu et al.''s Wasserstein matching) pair features in the
+    wrong places, and uses induced matchings of barcodes to pair them where they actually are. The multi-class extension
+    carries this to heart chambers and artery versus vein. Note on screen that the Hu et al. 2019 PDF in slot 24
+    needs re-downloading.'
+- title: 'Learning where to look (and what counts as an object): RL in pathology'
+  papers:
+  - qaiser2019where
+  - zhao2023rlogist
+  - nan2025pean
+  - hilt2021rlinstance
+  story: 'Gigapixel slides make ''process every patch'' slow, and pathologists don''t work that way. Qaiser and
+    Rajpoot train a glimpse agent with policy gradient that views an overview, zooms into a few spots and scores
+    HER2. RLogist scales this to whole slides with a PPO agent that plans a short low-magnification observation
+    path. PEAN learns from where pathologists'' eyes actually linger and trains an agent to review slides the same
+    way. The finale changes the question from where to look to what counts as an object: an actor-critic segmenter
+    rewarded by non-differentiable rules about nucleus shape and size. Link this back to SAM-R1''s idea of using
+    an external judge as the reward.'

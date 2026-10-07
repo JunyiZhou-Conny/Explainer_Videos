@@ -1,0 +1,13 @@
+# renders, caches, scratch
+videos/*/build/
+media/
+.cache/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+# rendered videos are large: keep only the final cut in output/
+videos/*/output/*_480p15.*
+videos/*/output/*_720p30.*
+videos/*/output/*/*_480p15.*
+videos/*/output/*/*_720p30.*

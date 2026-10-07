@@ -1,0 +1,309 @@
+<title>Laplace Mechanism Playground</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a lab bench — controls rail on the left, the two-worlds chart in the middle, the attacker's desk below. */
+:root {
+  --bg: #f4f5f8; --panel: #ffffff; --ink: #1b2030; --muted: #5d6475; --rule: #dfe2ea;
+  --x: #1f86a8; --xp: #d0661c; --eps: #a67c00; --sens: #3f8a2e; --noise: #c8423a; --alice: #c0437a;
+  --display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d0f14; --panel: #151924; --ink: #e9ebf0; --muted: #9aa1b2; --rule: #272d3b;
+  --x: #58c4dd; --xp: #ff8f40; --eps: #ffd54f; --sens: #83c167; --noise: #fc6255; --alice: #f28fb5;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d0f14; --panel: #151924; --ink: #e9ebf0; --muted: #9aa1b2; --rule: #272d3b;
+  --x: #58c4dd; --xp: #ff8f40; --eps: #ffd54f; --sens: #83c167; --noise: #fc6255; --alice: #f28fb5;
+  color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); padding-inline: 16px; padding-block: 24px 48px; }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 20px; }
+header h1 { font: 600 clamp(28px, 4vw, 40px)/1.1 var(--display); margin: 0; text-wrap: balance; }
+header p { margin: 8px 0 0; color: var(--muted); max-width: 68ch; }
+.x { color: var(--x); } .xp { color: var(--xp); } .eps { color: var(--eps); } .sens { color: var(--sens); } .alice { color: var(--alice); }
+.grid { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; min-width: 0; }
+.panel h2 { font: 600 13px/1.2 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+.controls { display: grid; gap: 18px; }
+label { display: grid; gap: 6px; font-weight: 500; }
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.val { font: 600 15px var(--mono); font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: var(--eps); }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; color: var(--ink); font: 500 13px var(--body); padding: 8px 4px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+.facts { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+.facts b { color: var(--ink); font-family: var(--mono); font-weight: 600; font-variant-numeric: tabular-nums; }
+canvas { width: 100%; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin-top: 6px; }
+.legend span::before { content: ""; display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 6px; background: currentColor; }
+.desk { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 860px) { .desk { grid-template-columns: minmax(0, 1fr); } }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+button.act { font: 600 14px var(--body); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+button.act.primary { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+button.act.guess-x { border-color: var(--x); color: var(--x); }
+button.act.guess-xp { border-color: var(--xp); color: var(--xp); }
+button.act:disabled { opacity: .45; cursor: not-allowed; }
+button:focus-visible { outline: 3px solid var(--eps); outline-offset: 2px; }
+.answers { font: 14px var(--mono); font-variant-numeric: tabular-nums; color: var(--muted); min-height: 1.6em; overflow-wrap: anywhere; }
+.meter { position: relative; height: 34px; border-radius: 6px; background: linear-gradient(90deg, color-mix(in srgb, var(--xp) 22%, transparent), transparent 50%, color-mix(in srgb, var(--x) 22%, transparent)); border: 1px solid var(--rule); }
+.meter .mid { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--muted); }
+.meter .needle { position: absolute; top: 3px; bottom: 3px; width: 6px; margin-left: -3px; border-radius: 3px; background: var(--eps); transition: left .35s ease; }
+@media (prefers-reduced-motion: reduce) { .meter .needle { transition: none; } }
+.meter-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.stat { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 14px; }
+.stat b { font: 600 14px var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.verdict { font: 600 15px var(--body); min-height: 1.5em; }
+.verdict.ok { color: var(--sens); } .verdict.bad { color: var(--noise); }
+ol.try { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+ol.try li::marker { font-family: var(--mono); color: var(--muted); }
+.foot { font-size: 13px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Laplace Mechanism Playground</h1>
+    <p>Two neighbouring hospital databases differ only in <span class="alice">Alice's row</span>. In world
+      <b class="x">x</b> the true count is 41; in world <b class="xp">x′</b> it is 41 + S. The curator adds noise of
+      scale <span class="sens">S</span>/<span class="eps">ε</span>. Pick ε, then play the attacker and try to tell the
+      worlds apart.</p>
+  </header>
+
+  <div class="grid">
+    <section class="panel controls" aria-label="Mechanism settings">
+      <h2>Mechanism</h2>
+      <label for="eps">
+        <span class="row"><span>Privacy budget <span class="eps">ε</span> per answer</span><span class="val eps" id="epsVal"></span></span>
+        <input id="eps" type="range" min="0.05" max="3" step="0.05" value="0.5">
+      </label>
+      <label for="sens">
+        <span class="row"><span>Sensitivity <span class="sens">S</span></span><span class="val sens" id="sensVal"></span></span>
+        <input id="sens" type="range" min="1" max="4" step="1" value="1">
+      </label>
+      <div style="display:grid;gap:6px">
+        <span style="font-weight:500">Noise family (same spread)</span>
+        <div class="seg" role="group" aria-label="Noise family">
+          <button type="button" id="famLap" aria-pressed="true">Laplace</button>
+          <button type="button" id="famGau" aria-pressed="false">Gaussian</button>
+          <button type="button" id="famUni" aria-pressed="false">Uniform</button>
+        </div>
+      </div>
+      <div class="facts" id="facts"></div>
+    </section>
+
+    <section class="panel" aria-label="The two worlds">
+      <h2>What each world releases</h2>
+      <canvas id="dens" height="230" aria-label="Output densities of the two worlds"></canvas>
+      <div class="legend"><span class="x">world x · count 41</span><span class="xp">world x′ · count 41 + S</span><span style="color:var(--alice)">released answers</span></div>
+      <canvas id="ratio" height="170" style="margin-top:14px" aria-label="Log ratio of the two densities"></canvas>
+      <div class="legend"><span style="color:var(--ink)">ln( density in x ÷ density in x′ )</span><span class="eps">band ±ε</span></div>
+    </section>
+  </div>
+
+  <div class="desk">
+    <section class="panel" aria-label="Attacker's desk">
+      <h2>Attacker's desk</h2>
+      <div style="display:grid;gap:14px">
+        <div class="btns">
+          <button class="act primary" id="newRound" type="button">Draw a release</button>
+          <button class="act" id="again" type="button" disabled>Ask the same question again (+ε)</button>
+        </div>
+        <div class="answers" id="answers">Press “Draw a release”. The page secretly picks one world.</div>
+        <div>
+          <div class="meter" aria-hidden="true"><div class="mid"></div><div class="needle" id="needle" style="left:50%"></div></div>
+          <div class="meter-labels"><span class="xp">evidence for x′</span><span id="post">posterior 50% / 50%</span><span class="x">evidence for x</span></div>
+        </div>
+        <div class="btns">
+          <button class="act guess-x" id="gx" type="button" disabled>It's world x (Alice: no)</button>
+          <button class="act guess-xp" id="gxp" type="button" disabled>It's world x′ (Alice: yes)</button>
+        </div>
+        <div class="verdict" id="verdict" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="Score">
+      <h2>Score</h2>
+      <div class="stat">
+        <span>Rounds played</span><b id="sRounds">0</b>
+        <span>Your accuracy</span><b id="sAcc">–</b>
+        <span>Budget spent, this round</span><b class="eps" id="sBudget">0</b>
+        <span>Best possible with one answer</span><b id="sBest"></b>
+        <span>Guarantee: no attacker beats (one answer)</span><b class="eps" id="sCeil"></b>
+      </div>
+      <p class="foot" style="margin:12px 0 0">The guarantee is e<sup>ε</sup>/(1 + e<sup>ε</sup>) for a fifty-fifty prior, whatever
+        the attacker knows. Each extra answer spends another ε, and the evidence needle can move by at most ε per answer.</p>
+    </section>
+  </div>
+
+  <section class="panel" aria-label="Things to try">
+    <h2>Things to try</h2>
+    <ol class="try">
+      <li>Set ε = 0.1 and play ten rounds with one answer each. Can you beat 52.5%?</li>
+      <li>Switch to <b>Gaussian</b>. Where does the log-ratio leave the ±ε band? Why does that break the definition?</li>
+      <li>Switch to <b>Uniform</b>. Find an output that is possible in one world and impossible in the other.</li>
+      <li>Keep ε = 0.5 and ask the same question ten times before guessing. What is your total budget, and how sure are you now?</li>
+      <li>Raise S to 2 (a histogram query). The worlds move apart, but the noise grows too. Does your accuracy change?</li>
+    </ol>
+  </section>
+  <p class="foot">Companion to the explainer video on Dwork, McSherry, Nissim &amp; Smith, “Calibrating Noise to Sensitivity in Private Data Analysis” (TCC 2006).</p>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const A = 41;
+  const state = { eps: 0.5, S: 1, fam: "lap", world: null, answers: [], rounds: 0, correct: 0, done: true };
+
+  const lam = () => state.S / state.eps;                      // Laplace scale
+  const sd = () => Math.SQRT2 * lam();                        // same spread for all families
+  function pdf(t, mu) {
+    const l = lam();
+    if (state.fam === "lap") return Math.exp(-Math.abs(t - mu) / l) / (2 * l);
+    if (state.fam === "gau") { const s = sd(); return Math.exp(-0.5 * ((t - mu) / s) ** 2) / (s * Math.sqrt(2 * Math.PI)); }
+    const a = Math.sqrt(3) * sd(); return Math.abs(t - mu) <= a ? 1 / (2 * a) : 0;
+  }
+  function sample(mu) {
+    const u = Math.random() - 0.5;
+    if (state.fam === "lap") return mu - lam() * Math.sign(u) * Math.log(1 - 2 * Math.abs(u));
+    if (state.fam === "gau") { const r = Math.sqrt(-2 * Math.log(1 - Math.random())); return mu + sd() * r * Math.cos(2 * Math.PI * Math.random()); }
+    return mu + 2 * u * Math.sqrt(3) * sd();
+  }
+  function logRatio(t) {                                      // ln p_x(t) / p_x'(t)
+    const p = pdf(t, A), q = pdf(t, A + state.S);
+    if (p === 0 && q === 0) return NaN;
+    if (q === 0) return Infinity;
+    if (p === 0) return -Infinity;
+    return Math.log(p / q);
+  }
+
+  function setupCanvas(c) {
+    const dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = Number(c.getAttribute("height"));
+    c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); c.style.height = h + "px";
+    const g = c.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); return [g, w, h];
+  }
+  function range() { const half = Math.max(8, 4.2 * sd()); const mid = A + state.S / 2; return [mid - half, mid + half]; }
+
+  function drawDens() {
+    const [g, w, h] = setupCanvas($("dens")); const [t0, t1] = range();
+    const pad = { l: 8, r: 8, t: 10, b: 26 };
+    const X = t => pad.l + (t - t0) / (t1 - t0) * (w - pad.l - pad.r);
+    let ymax = 0; for (let i = 0; i <= 400; i++) { const t = t0 + (t1 - t0) * i / 400; ymax = Math.max(ymax, pdf(t, A), pdf(t, A + state.S)); }
+    const Y = y => h - pad.b - y / (ymax * 1.08) * (h - pad.t - pad.b);
+    g.strokeStyle = css("--rule"); g.lineWidth = 1; g.beginPath(); g.moveTo(pad.l, Y(0)); g.lineTo(w - pad.r, Y(0)); g.stroke();
+    g.fillStyle = css("--muted"); g.font = "12px " + css("--mono"); g.textAlign = "center";
+    const step = (t1 - t0) > 60 ? 10 : (t1 - t0) > 25 ? 5 : 2;
+    for (let v = Math.ceil(t0 / step) * step; v <= t1; v += step) { g.fillText(String(v), X(v), h - 8); }
+    for (const [mu, col] of [[A, css("--x")], [A + state.S, css("--xp")]]) {
+      g.strokeStyle = col; g.lineWidth = 2.5; g.beginPath();
+      for (let i = 0; i <= 800; i++) { const t = t0 + (t1 - t0) * i / 800; const y = Y(pdf(t, mu)); i ? g.lineTo(X(t), y) : g.moveTo(X(t), y); }
+      g.stroke();
+    }
+    g.fillStyle = css("--alice");
+    state.answers.forEach((t, i) => { if (t < t0 || t > t1) return; g.beginPath(); g.arc(X(t), Y(0) - 7 - (i % 4) * 8, 5, 0, 2 * Math.PI); g.fill(); });
+  }
+
+  function drawRatio() {
+    const [g, w, h] = setupCanvas($("ratio")); const [t0, t1] = range();
+    const pad = { l: 8, r: 8, t: 10, b: 10 }; const lim = Math.max(2.2 * state.eps, 1);
+    const X = t => pad.l + (t - t0) / (t1 - t0) * (w - pad.l - pad.r);
+    const Y = v => pad.t + (lim - Math.max(-lim, Math.min(lim, v))) / (2 * lim) * (h - pad.t - pad.b);
+    g.fillStyle = css("--eps"); g.globalAlpha = 0.12; g.fillRect(pad.l, Y(state.eps), w - pad.l - pad.r, Y(-state.eps) - Y(state.eps)); g.globalAlpha = 1;
+    g.strokeStyle = css("--eps"); g.setLineDash([5, 4]); g.lineWidth = 1.5;
+    for (const v of [state.eps, -state.eps]) { g.beginPath(); g.moveTo(pad.l, Y(v)); g.lineTo(w - pad.r, Y(v)); g.stroke(); }
+    g.setLineDash([]); g.strokeStyle = css("--rule"); g.beginPath(); g.moveTo(pad.l, Y(0)); g.lineTo(w - pad.r, Y(0)); g.stroke();
+    g.fillStyle = css("--eps"); g.font = "12px " + css("--mono"); g.textAlign = "left";
+    g.fillText("+ε", pad.l + 4, Y(state.eps) - 4); g.fillText("−ε", pad.l + 4, Y(-state.eps) + 14);
+    g.strokeStyle = css("--ink"); g.lineWidth = 2.5; g.beginPath(); let pen = false; let escapes = false;
+    for (let i = 0; i <= 900; i++) {
+      const t = t0 + (t1 - t0) * i / 900, v = logRatio(t);
+      if (!Number.isFinite(v)) { pen = false; if (!Number.isNaN(v)) escapes = true; continue; }
+      if (Math.abs(v) > state.eps + 1e-9) escapes = true;
+      const y = Y(v); pen ? g.lineTo(X(t), y) : g.moveTo(X(t), y); pen = true;
+    }
+    g.stroke();
+    if (state.fam === "uni") {                                 // mark the infinite regions
+      g.fillStyle = css("--noise"); g.globalAlpha = .18;
+      for (let i = 0; i < 900; i++) { const t = t0 + (t1 - t0) * i / 900, v = logRatio(t);
+        if (v === Infinity || v === -Infinity) g.fillRect(X(t), pad.t, (w - pad.l - pad.r) / 900 + 1, h - pad.t - pad.b); }
+      g.globalAlpha = 1;
+    }
+    g.fillStyle = escapes ? css("--noise") : css("--sens"); g.textAlign = "right"; g.font = "600 12px " + css("--body");
+    g.fillText(escapes ? (state.fam === "uni" ? "ratio is infinite at the edges" : "leaves the band: not ε-private") : "stays inside the band: ε-private", w - pad.r - 4, pad.t + 12);
+  }
+
+  function facts() {
+    const l = lam();
+    $("facts").innerHTML =
+      `<span>Laplace scale λ = S/ε = <b>${l.toFixed(2)}</b></span>` +
+      `<span>Typical |noise| (all families) ≈ <b>${(state.fam === "lap" ? l : state.fam === "gau" ? sd() * Math.sqrt(2 / Math.PI) : Math.sqrt(3) * sd() / 2).toFixed(2)}</b></span>` +
+      `<span>Odds can move by at most × e<sup>ε</sup> = <b>${Math.exp(state.eps).toFixed(2)}</b> per answer</span>`;
+    $("epsVal").textContent = state.eps.toFixed(2);
+    $("sensVal").textContent = state.S;
+    $("sBest").textContent = pct(bestOne());
+    $("sCeil").textContent = pct(Math.exp(state.eps) / (1 + Math.exp(state.eps)));
+  }
+  function bestOne() {                                         // optimal single-answer test (threshold at midpoint)
+    if (state.fam === "lap") return 1 - 0.5 * Math.exp(-state.eps / 2);
+    if (state.fam === "gau") { const z = (state.S / 2) / sd(); return Phi(z); }
+    const a = Math.sqrt(3) * sd(); return Math.min(1, 0.5 + state.S / (4 * a));
+  }
+  function Phi(z) { const t = 1 / (1 + 0.2316419 * Math.abs(z)); const d = 0.3989423 * Math.exp(-z * z / 2);
+    const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; }
+  const pct = v => (100 * v).toFixed(1) + "%";
+
+  function evidence() { return state.answers.reduce((s, t) => s + logRatio(t), 0); }
+  function updateDesk() {
+    const L = evidence();
+    let post = Number.isFinite(L) ? 1 / (1 + Math.exp(-L)) : (L > 0 ? 1 : 0);
+    if (Number.isNaN(L)) post = 0.5;
+    const cap = Math.max(3, state.eps * Math.max(1, state.answers.length));
+    const pos = Number.isFinite(L) ? 50 + 48 * Math.max(-1, Math.min(1, L / cap)) : (L > 0 ? 98 : 2);
+    $("needle").style.left = pos + "%";
+    $("post").textContent = state.answers.length ? `posterior: x ${pct(post)} · x′ ${pct(1 - post)}` : "posterior 50% / 50%";
+    $("answers").textContent = state.answers.length ? "Released: " + state.answers.map(t => t.toFixed(1)).join(", ") : "Press “Draw a release”. The page secretly picks one world.";
+    $("sBudget").textContent = (state.answers.length * state.eps).toFixed(2) + (state.answers.length > 1 ? `  (${state.answers.length} × ε)` : "");
+    const live = !state.done;
+    $("again").disabled = !live; $("gx").disabled = !live; $("gxp").disabled = !live;
+  }
+
+  function redraw() { facts(); drawDens(); drawRatio(); updateDesk(); }
+
+  $("eps").addEventListener("input", e => { state.eps = Number(e.target.value); resetRound(); redraw(); });
+  $("sens").addEventListener("input", e => { state.S = Number(e.target.value); resetRound(); redraw(); });
+  for (const [id, fam] of [["famLap", "lap"], ["famGau", "gau"], ["famUni", "uni"]]) {
+    $(id).addEventListener("click", () => {
+      state.fam = fam; ["famLap", "famGau", "famUni"].forEach(b => $(b).setAttribute("aria-pressed", String(b === id)));
+      resetRound(); redraw();
+    });
+  }
+  function resetRound() { state.answers = []; state.world = null; state.done = true; $("verdict").textContent = ""; }
+  $("newRound").addEventListener("click", () => {
+    state.world = Math.random() < 0.5 ? "x" : "xp"; state.answers = [sample(state.world === "x" ? A : A + state.S)];
+    state.done = false; $("verdict").textContent = ""; $("verdict").className = "verdict"; redraw();
+  });
+  $("again").addEventListener("click", () => { if (state.done) return; state.answers.push(sample(state.world === "x" ? A : A + state.S)); redraw(); });
+  function guess(w) {
+    if (state.done) return;
+    state.done = true; state.rounds++; const ok = w === state.world; if (ok) state.correct++;
+    const v = $("verdict"); v.className = "verdict " + (ok ? "ok" : "bad");
+    v.textContent = (ok ? "Correct. " : "Wrong. ") + `It was world ${state.world === "x" ? "x (count 41)" : "x′ (count " + (A + state.S) + ")"}.`;
+    $("sRounds").textContent = state.rounds; $("sAcc").textContent = `${pct(state.correct / state.rounds)} (${state.correct}/${state.rounds})`;
+    updateDesk();
+  }
+  $("gx").addEventListener("click", () => guess("x"));
+  $("gxp").addEventListener("click", () => guess("xp"));
+  window.addEventListener("resize", () => { drawDens(); drawRatio(); });
+  if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", redraw);
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  redraw();
+})();
+</script>

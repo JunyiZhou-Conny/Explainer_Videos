@@ -1,0 +1,94 @@
+# zh on-screen strings for S04, S05, S06 (group g2): exact English -> Chinese.
+# Scoped keys '<scene file stem>|<text>' apply only to strings created by that scene file.
+# Scene branches instead of keys (rule E4/D5): the brace label 'privacy loss at' + t is built as t + '处的隐私损失'
+# by s04_definition.py when i18n.active(), and the Warner ponder card's trailing '?' is set to '？' by the scene
+# itself (ponder_at): a scoped '?' key would also hit the MathTex '?' of 'x or x′?'.
+# 'no' has no unscoped key on purpose: s04 (the answer, “否”) and s05 (the output slot, 无) are scoped.
+"neighbors:": "相邻："
+"differ in one row": "只差一条记录"
+"count = 41": "计数 = 41"
+"count = 42": "计数 = 42"
+"hospital: Alice added": "医院例子：多了 Alice"
+"here: Alice's row changed": "这里：Alice 的记录变了"
+"output": "输出"
+"paper's notation:": "论文记号："
+'\mathcal{T} = \text{transcript},\ \ \mathrm{San} = \text{sanitizer}': '\mathcal{T} = \text{transcript},\ \ \mathrm{San} = \text{sanitizer}'
+"noise with exponential tails": "尾部指数衰减的噪声"
+"(its shape comes later)": "（形状稍后揭晓）"
+"ratio": "比值"
+'\textbf{Definition 1}\quad ': '\textbf{定义 1}\quad '
+"-indistinguishability": "-不可区分性"
+"for all neighbors ": '对任意相邻数据库\ '
+'all analysts,\quad ': '任意分析者，'
+"all outputs $t$": "任意输出 $t$"
+'\text{small } \varepsilon\!:\quad': '\text{对于很小的}\ \varepsilon\text{：}\,'    # the full-width ： already spaces it
+'\ln(\text{ratio})': '\ln(\text{比值})'
+"yes": "“是”"
+'\text{heads }\tfrac12': '\text{正面}\ \tfrac12'
+'\text{tails }\tfrac12': '\text{反面}\ \tfrac12'
+"Warner's coin (1965)": "Warner 的硬币（1965）"
+"Warner's coin: what is its ε?": "Warner 的硬币对应多大的 ε？"
+"Warner's coin: what is its": "Warner 的硬币对应多大的"
+'\text{truth yes}': '\text{真实：是}'
+'\Pr[\text{says yes}]': '\Pr[\text{回答“是”}\mkern-6mu]'    # pull ] in over the blank half of ”
+'\text{truth no}': '\text{真实：否}'
+"→ yes": "→“是”"    # no space: “ brings its own blank half
+"→ no": "→“否”"
+"attacker": "攻击者"
+'\text{ or }': '\ \text{还是}\ '
+"new odds": "后验概率比"
+"old odds": "先验概率比"
+"Bayes' rule": "贝叶斯公式"
+"start at 50/50": "从 50/50 出发"
+"at most": "最多"
+'\text{coin: }': '\text{硬币：}'
+" is set by policy": " 是人为选定的"
+"the paper calls it the leakage": "论文称之为 leakage（泄露量）"
+"What it does not promise": "这个定义不保证什么"
+"Study finds:": "研究发现："
+"smokers get more heart disease": "吸烟者更容易得心脏病"
+"study": "研究"
+"Her insurer now worries": "她的保险公司开始担心了"
+"stranger": "陌生人"
+"would happen even with Alice's row replaced": "就算换掉 Alice 的记录，也照样会发生"
+"not a privacy breach": "不算侵犯隐私"
+"Why a ratio, for every output?": "为什么要对每个输出都看比值？"
+'\text{statistical distance}': '\text{统计距离}'
+'\text{shaded area}': '\text{阴影面积}'
+'\max_{\text{events }A}\ \big|\Pr[': '\max_{\text{事件}\,A}\ \big|\Pr['
+'\text{event } A = \{t < 41.5\}': '\text{事件}\ A = \{t < 41.5\}'
+"Mechanism: publish one random row": "机制：随机发布一条记录"
+"n rows": "n 条记录"
+"(Carol, has X)": "(Carol, 有 X)"
+"published": "已发布"
+"has": "有"
+"world": "世界"
+"tiny for a big database: looks private?": "数据库很大时微不足道：看起来不泄露隐私？"
+'\text{output }(\text{Alice, has X})': '\text{输出}\ (\text{Alice, 有 X})'
+"privacy": "隐私"
+"Averages hide catastrophes": "平均值会掩盖那些"
+"that are rare for each person.": "对每个人都很罕见的灾难"
+"for every output": "对任意输出"
+'\Pr[\text{output } 50]\colon': '\Pr[\text{输出}\ 50]\colon'
+"to pass the ratio test, a mechanism must be random": "想过比值这一关，机制必须是随机的"
+'\max_{x,\,x''\ \text{neighbors}}': '\max_{x,\,x''\ \text{相邻}}'
+'S(\text{count})': 'S(\text{计数})'
+"bins": "个桶"
+"If Alice's row changes,\nhow much can the whole\nhistogram change in total?\nDoes it depend on the\nnumber of bins?": "Alice 的记录变了，整个直方图\n总共能变多少？和桶数有关吗？"
+"illustration": "示意"
+"What is the largest income in the database?": "数据库里最高的收入是多少？"
+"Erin": "Erin"
+"Femi": "Femi"
+"answer": "答案"
+"S huge": "S 非常大"
+"cap every value at $1M": "每个值都封顶在 $1M"
+"private deep learning: clip each example's gradient to size C": "差分隐私深度学习：把每个样本的梯度裁剪到 C 以内"
+"a fact about": "事实：只取决于"
+"a choice (policy)": "人为选择（政策）"
+"does not depend on the actual database": "与实际数据库无关"
+# scene-scoped keys
+"s04_definition|no": "“否”"
+"s05_strict|no": "无"
+"s05_strict|vs": "vs"
+"s04_definition|, ": "、"
+'s04_definition|,\quad ': '，'

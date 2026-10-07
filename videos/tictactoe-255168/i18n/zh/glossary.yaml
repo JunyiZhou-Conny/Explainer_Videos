@@ -1,0 +1,557 @@
+# Chinese (zh-CN, mainland Simplified) glossary and translation rules for tictactoe-255168,
+# code-switching version. Audience: students aged about 11-14 (小学五六年级 to 初二), no programming.
+# Narrator: edge zh-CN-XiaoyiNeural (toolkit default since commit 875166f; served by the licensed
+# Azure AI Speech API when AZURE_SPEECH_KEY/REGION are set; rule F1). The first voice, Xiaoxiao,
+# was replaced because it read the kept English words with a heavy accent; its findings are marked.
+# Final version: resolves the draft glossary and three reviews (student, teacher, TTS/subtitles).
+# Human-readable copy in Chinese: GLOSSARY.md (keep the two in sync).
+# terms[].zh_subtitle = display form (subtitles and on-screen labels); zh_spoken = what the voice says
+# (goes into narration.yaml say: only where it differs from the display text); rules are tagged [A1]...[I3].
+policy: 'Mandarin first, English exactly where Chinese speakers keep it. For every term, ask what a Chinese teacher or programmer would actually say to an 11-14-year-old (小学五六年级 to 初二) with no programming background. (1) Code-switch, i.e. keep the English word and say it in English, when Chinese speakers in this setting say it in English, or when a translation would name something that does not exist in the program: the players X and O (O is read 欧, never 零 or 圈); Python; every identifier and keyword visible in the code (explore, winner, None, board, player, total, WIN_LINES, range, print, for, if, return ...), followed by a Chinese head noun (explore 函数, 返回 None, for 循环) and glossed once on its first spoken mention (winner，意思是“赢家”; explore 就是“探索”的意思; None，意思是“没有人”); Plan B; and minimax in the companions. 探索函数, 赢家函数 or 无 would name things that are not in the program, so those are the translations that would sound wrong. (2) Where the field has an established Chinese term, use it, because every Chinese classroom and programmer does and English there would sound affected: 井字棋, 对局, 阶乘, 函数, 列表, 调用, 返回, 递归, 回溯, 注释, 平局. The two concepts viewers will later meet in English, 递归 and 回溯, get a small grey English tag on their cards (recursion, backtracking), so both names are searchable; the narrator says only the Chinese. (3) Translate the phrases this video coined for their meaning: ghost games → 幽灵对局, Pause and ponder → 暂停想一想. (4) Where the English deliberately chose a plain word over jargon, the Chinese is plain too (== 一样, != 不是, empty square 空格子, solved 彻底算透了, who''s winning 谁更有希望赢), and a standard term is introduced once with a plain gloss (返回（交回结果）; 索引 in the companions). The bilingual subtitles (Chinese above, the original English below) already show every original term, so Chinese subtitle lines carry no English in parentheses. Numbers stay as digits with half-width comma separators. The narrator is edge zh-CN-XiaoyiNeural, and every spoken line follows the TTS rules below. Register: friendly, concrete, short sentences, mainland Simplified Chinese, never childish.'
+rules:
+- '[A1] Code-switching scope. Keep English ONLY for: X and O; Python; names and keywords from the code on screen (explore, winner, None, board, player, next_player, total, square, range, WIN_LINES, print, play_all_games, def/if/for/in/not/is/return); Plan B (the narration may say it at ''there''s another plan'', when the caption shows it); minimax and for 循环 in the companions. Everything else is Mandarin, using the word a Chinese classroom or programmer uses. Never add English for flavour (no ''这个 count 很 tricky''). Test for a new term: keep English only if a Chinese teacher would say it in English to this audience, or if translating it would name something that is not in the program.'
+- '[A2] Gloss each spoken identifier once. The first time winner, explore and None are spoken, give the everyday meaning inside the same sentence (this keeps one Chinese sentence per English sentence): 这个函数叫 winner，意思是“赢家”，它会检查每一条线。/ 一个叫 explore 的函数，explore 就是“探索”的意思。/ 返回 None，意思是“没有人”。 The name itself stays English on screen, in subtitles and in speech; a gloss is not a renaming, so 探索函数 and 赢家函数 remain banned. Other identifiers are glossed by the existing Chinese side labels (player → ← 轮到谁：X 还是 O; range(9) → ← 0 到 8 号格; total += → 累加到 total（总数）). Do not add new on-screen objects for keyword glosses: every highlighted code line already has a Chinese label saying what it does.'
+- '[A3] English tags on cards. Only the 递归 and 回溯 cards show English: a small grey tag under the Chinese word, ''recursion'' under 递归 and ''backtracking'' under = 回溯 (implemented in s06_explore.py, guarded by i18n.active()). So the Chinese card strings carry no English: ''= 回溯'' and ''函数自己调用自己（自己问自己）''. The narrator never says these English words.'
+- '[A4] Vocabulary is mainland Simplified Chinese: 程序 (not 程式), 函数 (not 函式), 列表 (not 串列), 递归 (not 遞迴), 电脑, 视频. Never 小程序 (WeChat Mini Programs) and never 象棋 for chess (国际象棋). This glossary covers Simplified Chinese only; a Traditional/Taiwan version needs its own glossary (井字遊戲/圈圈叉叉, 程式, 函式, 遞迴).'
+- '[A5] Plain for plain, standard term once. Where the English chose a plain word on purpose, the Chinese is plain too: is the same as → 一样; is not → 不是; mini-program → 一小段有名字的程序; spots in a list → 位置; who''s winning → 谁更有希望赢; solved → 彻底算透了. Where Chinese has one standard term that viewers will meet in every textbook, use it and gloss it once in plain words: hands back → 返回, introduced by the S05 label 返回（交回结果）. Never call the assignment = 等于; if it must be named, say 放进 / 存进.'
+- '[A6] Function framing. Introduce 函数 in its programming sense (在编程里，函数就是一小段有名字的程序) and never link it to 一次函数 from maths class: many viewers haven''t met it, and a maths function is not a named piece of code. The same goes for 返回 and 调用: for a 13-year-old the everyday reading comes first, so their first appearance carries the programming meaning.'
+- '[A7] Counting verbs. 算 for ''counted as included'' (这一局被算了 24 次, 每一局只算一次, 只算了一次, the S03 counter 多算的对局：24); 统计 for what the program counts (code comments, challenge cards, companions); 数 (shǔ) only for counting one by one (数一数, 数叶子). The S06 and S07 counter label uses 计数 (对局计数). Avoid 数数 (shǔshù); say 手算.'
+- '[A8] Measure words for games. 种 when counting distinct possible games: in the ''how many different games'' question and its direct answers (title 255,168 种对局, 有多少种不同的对局？, 1,440 种对局, 5,328 种对局). 局 for one concrete game (一局, 这一局, 每一局, leaf label 1 局), for tallies and splits (X 赢了 131,184 局, 1,440 局在第 5 步结束, header 局数) and for playing (下一局). Never 盘. Never answer a 有多少种 question with …局 in the same beat.'
+- '[A9] Move vs. square vs. step. Moves count from 1 and are written 第 N 步. Squares count from 0 and are written N 号格 (never 第 N 格; tree edges ''X in 6'' → X 下 6 号格). In the S06 close-up this label is set in two lines (''X 下'' / ''6 号格'', 22 pt): s06_explore.edge_label() splits the translation before the square number, so every translation (exact keys and the re: key) must keep the bare digit. Stages of the counting method are 步骤 / 第一、第二、第三, never 步.'
+- '[A10] ''line'' and ''row''. A line on the board is 线 (获胜线, 对角线, 连成一线). A board row is 排 (横排: 最上面一排, 3 排), a column is 列 (竖列). A line of code is 行 (一行代码, “撤销”那一行, 只改一行代码). So 行 always means code, and ''three in a row'' is always 连成一线, never 连成一排 (排 is horizontal only).'
+- '[A11] Code names in narration and subtitles are written exactly as in the code (case, underscores), bare (explore, never explore() in speech), spoken in English, and never translated, inflected, pluralised or put in Chinese quotes. Name only identifiers visible on screen; otherwise describe the code in Chinese. Never start a sentence with a code name: put a Chinese word before it (这个函数叫 winner / 如果 winner… / 而 explore…). In the earlier TTS tests with Xiaoxiao a sentence-initial winner came out as 威娜/Wiener, after 叫 it was clean; the rule stays with Xiaoyi.'
+- '[A12] People''s names. Use the established transliteration where one exists (Claude Shannon → 克劳德·香农, later 香农; middle dot U+00B7). The bilingual subtitle shows the original name, so the on-screen label stays short: （香农，1950 年）. Names without an established Chinese form stay in Latin letters and are spoken in English (respellings for the Chinese voice go in explainer/lexicon.zh.yaml only, F4).'
+- '[B1] Spacing. Put a half-width space between Chinese characters and any Latin letter or Arabic digit, in subtitles, labels, code comments and say: (X 在第 5 步赢了, explore 函数, Python 里, 1950 年, 约 4.8 万, 被算了 24 次). In say: a missing space is reported by python -m explainer.i18n check (the lexicon regex now treats CJK as a word boundary, so ''返回None'' would match, but the rule stands). No space next to full-width punctuation (……255,168。 / X 赢了！). Never a space inside a number or an identifier. Formulas keep the English spacing (9 × 8 = 72; in TeX too: ''\ \ \text{games}'' → ''\ \ \text{种}'', as in the scene and strings/g1.yaml); compact tags stay as in English (×24, (4×3×2×1)). Never fake a no-break space with U+00A0 / U+202F: i18n.norm() and split_balanced() call str.split(), which collapses them.'
+- '[B2] Punctuation. Chinese text uses full-width ，。、；：？！（）“”‘’……《》; lists take the 顿号 (0、1、2 号格; 3 排、3 列和 2 条对角线); “” mark coined terms on first use (“幽灵对局”), quoted words, and the name of a code line inside a verb phrase (删掉“撤销”那一行, 删掉“判断输赢”). Half-width only inside numbers (255,168, 4.8), formulas, code, the factorial ''!'', the standalone ''?'' placeholder for an unknown number, the ''!'' inside the caution sign, and the ''?!'' corner tags on squares 7 and 8 in S07. A standalone ''?!'' becomes ？！; the one exception is those two corner tags: corner_tag() puts the tag 0.34 of a square right of the square centre, and a full-width ？！ (0.47 wide at 26 pt, against 0.26 half-width) pushes its ！ across the grid line between squares 7 and 8 (confirmed in a test render), so, like the caution sign''s ''!'', it is a symbol and stays half-width (no strings entry). Full-width （） around Chinese content, half-width () around pure maths.'
+- '[B3] Factorial vs. exclamation. The half-width ''!'' appears only in formulas. A full-width ！ never directly follows a digit or formula: rephrase so the sentence ends on a character (被算了 24 次！ is fine; 1 后面跟着 120 个零！, not ''120 个 0！''). ''same 9 × 8 as before!'' → 和前面一样：9 × 8 (no ！). Chapter 2''s title uses 9 的阶乘, not ''9!''.'
+- '[C1] Numbers on screen and in subtitles. Arabic digits for every number that is part of the maths (counts, results, factors, move and square numbers, years), with half-width comma separators exactly as in the English visuals (1,440 · 5,328 · 255,168 · 362,880). Labels keep the English digit string unchanged, because scenes colour numbers by matching that string (t2c={''362,880'': ...}). A full-width ， inside a number is forbidden (255，168 reads as two numbers). Rounded large numbers use 万 with digits (约 4.8 万, 7.3 万, 约 8.2 万; label 100 万？). Chinese numerals where the English spells the word or the use is idiomatic: 一局 meaning ''a/one'', 两个停止条件, 三个步骤, 三子连成一线, 一百？一百万？, 从零开始.'
+- '[C2] Maths on screen vs. in words. On-screen formulas keep the English symbols and layout (× = ≠ ≈ ! ⋯ 10^{120}); Chinese words inside MathTex are fine (ctex): \text{ 条线}, \ \ \text{种} (keeping the English TeX spacing, B1); keep 1{,}440 in maths mode (a bare comma adds space). Subtitles spell operations in words, as the English narration does: 9 乘 8 等于 72; 6 乘 5 等于 30 (always 等于, never 得); 再减去 432; 9 的阶乘; 10 的 120 次方. Readings: × 乘, + 加, − 减, = 等于, ≠ 不等于, ≈ 约等于, n! n 的阶乘, 10^n 10 的 n 次方.'
+- '[D1] Sentence alignment (explainer/i18n.py). Translate each SAY line sentence by sentence: exactly one Chinese sentence per English sentence (explainer.voice.split_sentences), each ending in 。, ？ or ！. Never put 。？！ inside a sentence: an inner question takes ： or ，, and ； is allowed inside. Example: ''Take a guess. A hundred? A million? Pause the video and write your guess down.'' → 猜一猜。/ 一百？/ 一百万？/ 暂停一下视频，把你猜的数写下来。 Put the TTS form in say: only where it differs from the display text (see F). Then run python -m explainer.i18n check videos/tictactoe-255168.'
+- '[D2] Anchors. Add an anchor for every wait_until phrase that names a term, number, square, move or code name, targeting the glossary form (''nine factorial'' → ''9 的阶乘'', ''Flipped or turned'' → ''翻转'', ''a function called explore'' → ''叫 explore 的函数''). The target must appear in the display sentence, and being unique in that sentence is not enough: AlignedClip.time_of takes the first sentence of the whole SAY line that contains the target (then the first match in that sentence), so the target must first occur in the intended sentence (X, 第 5 步 and 9 的阶乘 often repeat). Example: S03 ''so the fifth move'' cannot use a bare 第 5 步, because the earlier sentence 至少要到第 5 步。 already contains it; it uses 到了第 5 步. When the Chinese word order differs from the English, target the Chinese word the animation is about, not a literal translation of the English phrase: S02 ''first two moves'' pulses the 72, and the Chinese says 前两步就有 72 种, so the target is 就有 72 (前两步 made the pulse end before 72 was spoken). In a language version the English-measured shift= values in s03_stop.py''s wait_for()/until() are ignored, so a zh anchor must name the exact Chinese words its animation goes with. Edge reads digit runs (4 乘 3 乘 2 乘 1) faster than their character count suggests, so a target inside or right after such a run may need to sit one or two tokens later (marked # digits in narration/g1.yaml). Prefer Chinese text as the target: time_of estimates position by character index, so every Latin letter counts as a full character and a target just after a long English word fires late.'
+- '[D3] Pause and ponder. The card title is 暂停想一想 (explainer/locales/zh.yaml) and the spoken opener is exactly 暂停想一想：…. ''Pause the video'' → 暂停一下视频; ''Pause and guess'' → 暂停一下，猜一猜。 Hints are numbered （1）（2）（3）. A spoken ponder question never ends on 种: 暂停想一想：有多少种对局是 X 在第 5 步赢下的？ (the card itself may read X 在第 5 步赢下的对局有多少种？).'
+- '[E1] Labels vs. narration. Labels use exactly the narration''s word for the same idea (幽灵对局, 撤销, 回溯, 获胜线, 判断输赢, 9 的阶乘, 赢, 返回, 空格子), with no short forms that are different words (X 赢, not X 胜). Labels are short noun phrases, about 12 Chinese characters per line at most, with no final 。. CJK looks larger than Latin at the same font_size, so fit each Chinese label to the English label''s box instead of reusing its font_size. English CAPS emphasis (''the MOST'') becomes 最多 and is coloured: s08_answer.py finds the word in the translated card through the strings key "MOST": "最多" (i18n/zh/strings/g3.yaml) and colours it green (COUNT_COLOR) in place of the English capitals.'
+- '[E2] Counters. A ''words: N'' counter puts the number last after a full-width colon, via re: keys in strings.yaml (board_tally colours the last len(N) glyphs). It names a count, never a position: 第一个 O 的放法：3 (never 第一个 O 的位置：3, which reads as ''on square 3''), 多算的对局：24, 已列出的顺序：6, 对局计数.'
+- '[E3] Coloured sub-phrases. Scenes colour English sub-strings with t2c (''undo'', ''draw'', ''ghost games'', ''(a draw)'', "X''s 3rd mark", ''9 × 8'', ''255,168'', ''X'', ''O''). The Chinese label must contain the Chinese for that sub-phrase verbatim (撤销, 平局, 幽灵对局, （平局）, 第 3 个 X), and the i18n layer must translate t2c keys through the same table (toolkit work, section I). X and O stay letters, so their colours keep working. Note: in Chinese text a t2c run made only of Latin letters or digits (''X'', ''O'', ''24'', ''362,880'', as in 轮到 X, ← 有人赢了？→ 1, 9 × 8) sits about 0.05–0.08 units above the line, because Pango lays out each t2c run on its own with the Latin font''s smaller ascent. s02_fill.py, s03_stop.py and s06_explore.py work around it with a local text_t2c() (zh only: lay the text out untinted, then copy the colours glyph by glyph); the toolkit now does the same in explainer/i18n.py install() (see I3), so the S04, S08 and S09 counters and labels line up too.'
+- '[E4] One English key, one Chinese string. strings.yaml is keyed by the English text, so the same English string gets the same Chinese at every site. Pick Chinese that works everywhere (''games'' → 局数 for both the S04 table header and the laptop counter; ''center'' → 中心; ''1 game'' → 1 局; ''move 5'' → 第 5 步), or change the English key in the scene. Labels split across two Text objects are translated as a pair, each half readable on its own (一个点，/ 重复 9 次; 这 1 局被算了 / 24 次（在 362,880 里）).'
+- '[E5] Code comments are Chinese. How it works (implemented in the toolkit): the code panels read the English assets/play_all_games.py, and the Code hook in explainer/i18n.py translates only the `# comment` text of each line, through strings.yaml (key: the comment text without #; see the ''code comments'' block of strings/g2.yaml, "make a move": "试走一步"). The code itself does not change by a single character. So don''t translate code lines in strings.yaml: s06_explore.py''s glyphs() and comment() index characters of SRC, so the code before each comment must equal the source. Comment set: # 横排 / # 竖列 / # 对角线 / # 有人赢了 / # 棋盘满了：平局 / # 试走一步 / # 统计从这里往后有多少局 / # 撤销这一步. The S08 tail is hard-coded in s08_answer.py, and the Code hook translates its comment by its text too: ''(winner and explore from before)'' → ''（前面的 winner 和 explore）'', shown as ''    # （前面的 winner 和 explore）'' (strings/g3.yaml also keeps the whole-line key with the four leading spaces, as a record of this rule). ''# 255168'', the terminal line ''$ python play_all_games.py'' and the output 255168 stay unchanged. The Chinese download program (E6) must use exactly this comment set, identical to the screen.'
+- '[E6] The Chinese program (i18n/zh/assets/play_all_games.py). Identifiers, keywords, string literals (''X'', ''O'', ''.''), numbers and layout are unchanged; Chinese appears only in trailing comments and the docstring, never in identifiers. Every line number is kept: the docstring stays 5 lines, explore() stays at lines 23–35, and lines 37 and 40 stay where S08 highlights them. No ''# -*- coding -*-'' line (it would shift every line; UTF-8 is Python 3''s default); save as UTF-8 without BOM. Check: strip comments and docstrings from both files and diff; the diff must be empty. No Chinese comment may render wider than its English original (Latin mono ≈ 0.6 em, CJK ≈ 1 em), because explore_code() scales the panel to EXPLORE_WIDTH by its longest line; the set above is narrower in every case. The same file is the zh download. Checked: it runs and prints 255168, and applying the strings table''s comment translations to the English program gives this file line for line, except for the docstring.'
+- '[F1] Voice. The narrator is edge zh-CN-XiaoyiNeural (speed 1.0; female, like af_heart, and the same zh voice as the privacy video). It is the toolkit''s zh default (explainer/build.py DEFAULT_VOICES, commit 875166f), so video.yaml needs no languages.zh.voice unless the voice changes, and --lang zh no longer fails on the missing ''kokoro-zh'' backend. Why not Xiaoxiao, the voice first chosen: in an ASR round trip (faster-whisper large-v3-turbo) Xiaoxiao read the English terms that the code-switched narration keeps with a heavy accent (noise → Nice, epsilon → Excellent, Claude → Clark, diverge → Vert), which defeats the code-switching; Xiaoyi, also a Mandarin voice, got 17/17 test terms and all numbers right in the bake-off, and a round trip of all 417 zh sentences of both videos (158 here) found no systematic misreading. The remaining flags are Whisper''s own: truncated long sentences, homophone spellings (阶乘 → 阶层, 递归 → 地规), and None written as 那 (Whisper does that for native English voices too). The earlier rewordings and say: rules (两局, 两步, no clause-final 种, no sentence-initial code name, ...) all stay: they are also the natural Chinese. The free edge voices take no custom SSML or pinyin, so polyphones and English words are fixed by rewording, or by splicing audio. Publishing: the free Edge endpoint is not licensed for published videos; the official Azure AI Speech API serves the same voice and is. With AZURE_SPEECH_KEY and AZURE_SPEECH_REGION set, the toolkit routes edge voices through it automatically (explainer/voice.py AzureBackend; EXPLAINER_EDGE_VIA_AZURE=0 opts out). The TTS cache is keyed per backend, so the published version re-synthesizes every sentence: re-check durations and anchors (D2) before publishing.'
+- '[F2] say: only where a measured failure needs it. Edge reads digits as displayed (255,168, 362,880, 29,592, 77,904, 1,440 and 1950 年 all came out right with the earlier Xiaoxiao; Xiaoyi got every number right in the bake-off), so say: keeps the display digits. Required say: forms (measured with Xiaoxiao; the rules stay): 2 before 局 or 步 → 两局 / 两步 (edge said 二局); n! never (write n 的阶乘; edge read ''9!'' as 九 and ''3! = 6'' as 三等于六). Measured with Xiaoyi in the ASR round trip: X/O + 时 → 的时候 (in 轮到 X 时 the X was heard as 某; the subtitle keeps 时, say: writes 轮到 X 的时候 / 轮到 O 的时候). If another backend is ever used, spell numbers in 万 grouping (二十五万五千一百六十八, 七万七千九百零四, 四万六千零八十; 两 before a measure word and at the head of 万/千, 二 in arithmetic and ordinals; years digit by digit) or add a zh normalizer that first removes commas between digits.'
+- '[F3] say: hygiene (spoken text). No digit followed by ''!''; no × ÷ → ≈ == != += symbols; no brackets of either width (edge reads them aloud, so ''递归（recursion）'' would be spoken in full); code names bare; no names with underscores or brackets (WIN_LINES, next_player, range(9) come out as 下划线, 左括号); never end a clause on 种 (with the earlier Xiaoxiao, 多少种。 was heard as 多少重); no English parentheticals. A Chinese-only subtitle track adds （recursion）/（backtracking） in the subtitle writer, never in the narration text, which also feeds the voice.'
+- '[F4] English inside the Mandarin voice. X, Python, explore, winner (not sentence-initial) and Plan B came out as English (with the earlier Xiaoxiao and with Xiaoyi, whose round trip transcribed winner, explore and Plan B verbatim); O comes out as 欧, which is correct. None: with Xiaoxiao every spelling was transcribed as 难/南/那, although a single test clip 就返回 None came back as ''None''; in the full Xiaoyi round trip Whisper wrote 就返回那, which it also does for native English voices, so that is no proof of a misreading. It is always on screen when spoken and always glossed (意思是“没有人”), but have a listener who doesn''t know Python check it (a machine check does not replace that), and if it is misheard splice an English ''None'' in a same-gender voice. Pronunciation fixes go in the per-language lexicon: with EXPLAINER_LANG=zh the toolkit loads explainer/lexicon.zh.yaml only (done; the respelled text is the TTS cache key, and the shared lexicon.yaml is not used); never put X, O, None or winner into the shared lexicon.yaml (it would change the English videos).'
+- '[F5] Polyphones: reword first, pin only whole words. The glossary already removes the worst cases: rows are 排 (no 行 háng in board talk), 空格子 (no kòng/kōng), 算 for ''counted'' (no 数 shǔ/shù in key sentences), 等于 (no 得), 手算 (no 数数). Check the rest by ear in a draft render: 一行代码 / 那一行 (háng), 数一数 / 数叶子 (shǔ), 调用 (diào), 重复 / 重新 (chóng), 还 (hái), 落 (luò), 倒过来 (dào), 角 (jiǎo), 种 (zhǒng). Any override must be word-level: a character rule 行→háng would break 运行, and 数→shǔ would break 数学家 and 数字.'
+- '[G1] Bilingual subtitles. The Chinese line goes on top and the original English sentence below, paired by narration.yaml; never edit the English to match the Chinese. Chinese subtitle lines get no English in parentheses. Keep a Chinese sentence within about 30 width units so it fits one bilingual cue (22 per line for a Chinese-only track), and split long sentences at ，. Never break inside 第 5 步, 5 号格, explore 函数, 1,440 局, 9 的阶乘, or any number or identifier.'
+- '[G2] Cue endings. Drop a trailing 。 or ， (also 、；：) at the very end of a cue; keep ？！…… and closing quotes. Punctuation inside a cue stays. Never use a space as a pause mark: half-width spaces already mean a Latin/digit boundary.'
+- '[H1] Titles (meta.yaml). Video: 井字棋为什么恰好有 255,168 种对局？ Chapters: 1 到底有多少种对局？ 2 填满棋盘：9 的阶乘 3 对局会提前结束 4 手算越来越乱 5 教电脑学规则 6 探索每一局 7 只改一行代码 8 255,168 是怎么来的 9 更复杂的棋，轮到你了. The hook label ''where does it come from?'' is 它是怎么来的？, the same wording as chapter 8.'
+- '[H2] Register. Address the viewer as 你 (or 我们), never 小朋友 or 宝贝. Short, concrete sentences, friendly but not childish. No internet slang (一键三连, yyds, 三连) and little 儿化. Carry the English rhythm by meaning, not word by word: Here''s the catch. → 问题就在这儿。 / Not a chance. → 完全不可能。 / Surprise: → 没想到吧： / sneaked in a win first → 抢先赢了 / Let''s recap. → 我们来小结一下。 / Have fun exploring! → 动手去探索吧！ Alternative questions take 还是 (轮到谁：X 还是 O; 角格、边格，还是中心？), statements take 或 / 或者.'
+- '[H3] Audience premises. Ages 11–14 span 小学五六年级 to 初二. Don''t assume 函数 from maths, 乘方 (七年级), 阶乘 (高中), Python or 递归/回溯 (高中选修 / CSP-J); the video defines 函数, 列表, 阶乘 and 递归 in plain words, and keeps ''1 后面跟着 120 个零'' next to 10 的 120 次方. Comma separators are fine (四年级《大数的认识》 teaches the three-digit grouping).'
+- '[H4] Companions. Ship i18n/zh/exercises.md, i18n/zh/playground.html and i18n/zh/assets/play_all_games.py, translated with this glossary (热身, 编程挑战, 提示与参考代码, 正确结果应为, for 循环, minimax 算法（极小化极大算法）, 翻转/旋转 as in the video, 撤销, 空格子); the zh video description links to them (视频简介 works on Bilibili and YouTube). Code blocks keep their identifiers; comments become Chinese (# 平局也不算). Add a 想多了解一点 block that bridges to classroom and CSP vocabulary: 索引（也叫下标）从 0 开始; == 在编程课里读作“等于”; 递归 mnemonic 问题一层层“递”下去，答案一层层“归”回来; 分步乘法计数原理（高中会学）; 9 的阶乘 = 9 个格子的全排列数; 删掉“判断输赢”后，explore 就是经典的全排列回溯程序; 深度优先搜索（DFS）; the undo line is what CSP coaches call 恢复现场; 停止条件 = 终止条件（递归边界）; 博弈树, 叶子节点. Run instructions for Chinese classrooms: 用 IDLE 打开，按 F5 运行，或在命令行输入 python play_all_games.py; 不需要安装第三方库; playground.html 用浏览器打开就能玩. Exercises 9–10 say 删掉（或在行首加 # 把它注释掉）.'
+- '[I1] Subtitle splitter (explainer/subtitles.py): a code fix, not a manual check. Status (checked against the code at commit cd67aa4; this code is still changing): mostly done. Numbers no longer get a space inserted, there is no cut inside a number or between a number and its measure word (5 步, 5 号), the 1,440/5,328 sentence breaks at ，, the cue-ending rule and the short-cue merge are implemented, and Chinese cuts prefer jieba word boundaries. Not done: a cut between 第 and its number, between 号 and 格, or between a code name and 函数 is still allowed (just not preferred); no regression tests yet. The original report: _split_k(''答案是 255,168。'', 2, 30) returned [''答案是'', ''255, 168。''] (a space inserted inside the number), and ''1,440 局在第 5 步结束，5,328 局在第 6 步结束……'' split as ''…5,328 局在第'' / ''6 步结束…''. Fix: (a) in _cuts, no cut after '','' or ''.'' between digits; (b) a space next to a CJK character is never a preferred cut; (c) when _split_k re-joins pieces, restore the original text between them (slice the source string) instead of guessing '''' or '' '' (it inserted '' '', producing ''255, 168''); (d) no cut inside 第 N 步, N 号格, a number plus its measure word, or a code name plus 函数. Add regression tests with ''答案是 255,168。'', ''X 赢了 131,184 局，O 赢了 77,904 局，46,080 局是平局。'' and the 1,440/5,328 sentence. Implement the cue-ending rule (G) in tracks(), and merge sentence cues shorter than about 1 s (一百？ / 一百万？ / 完全不可能。) into the next cue.'
+- '[I2] i18n layer (checked against the code). (1) (done) install() translates the keys of t2c / t2w / t2s / t2f / t2g etc. with tr(), so semantic colours survive (rule E3). (2) (partly done) `python -m explainer.i18n check` now flags the say: hygiene violations of section F: brackets, × ÷ → ≈ == != += and other symbols, a digit followed by ''!'', names with underscores, clauses ending in 种, a missing CJK-Latin/digit space, and English words not in this glossary; not yet: a say: whose numbers differ from its display text, and wait_until phrases of the scene that have no Chinese anchor. (3) (done) With EXPLAINER_LANG=zh only explainer/lexicon.zh.yaml is loaded. (4) (done) build.py DEFAULT_VOICES is now edge zh-CN-XiaoyiNeural (commit 875166f), no longer the missing ''kokoro-zh''. (5) Expect the untranslated-strings report (build/i18n/missing.zh.json) to list the code lines: they are intentionally English.'
+- '[I3] Two baseline problems in Chinese layout (fixed in the toolkit; re-check S04, S07, S08 and S09 in the next draft render). (1) In Chinese text a t2c run of only Latin letters or digits sits about 0.05–0.08 high (see E3): explainer/i18n.py install() now lays out a Text that has CJK and t2c in one piece without the colours, then copies the colours glyph by glyph; the local text_t2c() of S02, S03 and S06 does the same. (2) In code panels a line whose comment falls back to the CJK font sits about 0.05 lower than Latin-only lines (Pango ascent), so the line pitch is uneven: S05 and S06 correct it locally with even_code_lines(); the Code hook in explainer/i18n.py now applies the same correction (_even_code_lines()) to every panel with Chinese comments, which covers S07 and S08; the S08 tail also centres its comment line between the lines above and below.'
+terms:
+- en: tic-tac-toe
+  zh_subtitle: 井字棋
+  zh_spoken: 井字棋
+  first_use: ''
+  note: Chinese. Every Chinese child knows the game as 井字棋 (also 井字游戏, 圈叉棋); the English name would sound foreign. Title, chapters, labels, narration.
+- en: 'game (one complete play-through: the whole ordered list of moves)'
+  zh_subtitle: 对局；一局；这一局；每一局
+  zh_spoken: 对局 / 一局
+  first_use: 这里说的“一局”，指的是从第一步到最后一步、按顺序排好的全部走法。
+  note: Chinese. Kids know 对局 from game menus (对局记录). Never 游戏 for one play-through (游戏 is tic-tac-toe itself), never 棋局 (also means the position on the board, and the video separates 'same board' from 'same game'), never 盘 (brings back 棋盘).
+- en: 'how many (different) games: counting distinct possible games'
+  zh_subtitle: 'N 种对局；有多少种不同的对局？；1,440 种对局；5,328 种对局；255,168 种对局；formula: = 1,440 种'
+  zh_spoken: ……种对局（种 never ends a spoken clause）
+  first_use: ''
+  note: '种 in the ''how many different games'' question and its direct answers (title, hook, ponder card, S03/S04 results). A Chinese maths question 有多少种…？ is answered with …种, and a bare 局 sounds like games actually played. In spoken text 种 is always followed by its noun: the earlier Xiaoxiao voice turned a clause-final 多少种。 into 多少重 (the rule stays).'
+- en: games as tallies and splits; 'games' (S04 table header and laptop counter)
+  zh_subtitle: 'X 赢了 131,184 局；1,440 局在第 5 步结束；1 局；1 + 1 = 2 局；header/counter: 局数'
+  zh_spoken: '两局 for 2 (say: 两局)'
+  first_use: ''
+  note: '局 for one concrete game, for leaf labels and bar values, and for ''N games end on move k'' / ''X wins N''. ''games'' is one strings.yaml key for two sites, so it becomes 局数, which works for both. Edge read ''2 局'' as 二局, so say: must write 两局.'
+- en: move / on move 5 / the fifth move
+  zh_subtitle: 一步；第 5 步；在第 5 步
+  zh_spoken: '第五步（edge reads 第 5 步 correctly）；2 步 → say: 两步'
+  first_use: ''
+  note: 'Moves count from 1: always 第 N 步, including ''the fifth move''. 步 only for game moves.'
+- en: 'step (of the counting method: ''in three steps'', First/Second/Third)'
+  zh_subtitle: 三个步骤；第一，…第二，…第三，…
+  zh_spoken: 分三个步骤
+  first_use: ''
+  note: 步骤, never 步, so 'three steps' never collides with 第 5 步 in the same sentence.
+- en: square / squares 0–8
+  zh_subtitle: 格子、格；0 号格 … 8 号格
+  zh_spoken: 格子；零号格
+  first_use: 9 个格子从 0 到 8 编号，从左到右、从上到下。
+  note: 'Square numbers are labels starting at 0: always N 号格, never 第 N 格 (第 implies counting from 1 and clashes with 第 N 步).'
+- en: empty square
+  zh_subtitle: 空格子（tight labels may use 空位）
+  zh_spoken: 空格子
+  first_use: 空格子里放一个点。
+  note: 'Changed from the draft''s 空格: in a programming scene 空格 is the space character / space bar, which clashes with the program putting ''.'' in empty squares. 空格子 also removes the kòng/kōng polyphone.'
+- en: board / empty board
+  zh_subtitle: 棋盘；空棋盘
+  zh_spoken: 棋盘
+  first_use: ''
+  note: Chinese in speech and labels. `board` appears only in code; the narration never needs to say it in English.
+- en: mark (X's three marks, O's first mark, one more mark)
+  zh_subtitle: '三个 X；第一个 O；2 个 O；generic: 棋子（多一个棋子）'
+  zh_spoken: 三个 X；两个 O；棋子
+  first_use: ''
+  note: Chinese names a mark by its letter (三个 X), shorter and clearer than 记号/标记. 棋子 only when the player doesn't matter.
+- en: X / O (the players and their marks)
+  zh_subtitle: X / O
+  zh_spoken: 'X: English letter name; O: 欧 (ōu), the standard Chinese name of the letter. Never 零, never 圈.'
+  first_use: ''
+  note: 'Keep the letters: the code compares ''X'' and ''O'', the board shows them, and the scenes colour them by matching the letter (t2c), which keeps working only if the letter stays. Don''t rename them 叉/圈 or 先手/后手. Changed from the draft: O is spoken 欧, as every Mandarin voice and every Chinese student says the letter; the hard rule is only that it never sounds like 零.'
+- en: three in a row
+  zh_subtitle: 三子连成一线；连成一线
+  zh_spoken: 三个连成一条线
+  first_use: ''
+  note: Never 连成一排 (排 now means a horizontal row only), never 三连 (Bilibili slang 一键三连).
+- en: winning line(s); line on the board
+  zh_subtitle: 获胜线；8 条获胜线；线；哪条线？
+  zh_spoken: 获胜线
+  first_use: 我们直接把所有能赢的线都列出来，一共 8 条，……
+  note: 'A line on the board is 线; a line of code is 行 (see rules). WIN_LINES stays in code; the label 8 条获胜线 is its gloss. The S05 narration says it in plain words (我们直接把所有能赢的线都列出来，一共 8 条，…), and the term itself is introduced on screen by the label 8 条获胜线 that lands as the 8 lines are counted (the S05 checklist strip also lists 获胜线). The narration first says 获胜线 in S08 (中心在 4 条获胜线上).'
+- en: row / column / diagonal / top row / 3 rows, 3 columns and 2 diagonals
+  zh_subtitle: 排（横排）/ 列（竖列）/ 对角线；最上面一排；3 排、3 列和 2 条对角线
+  zh_spoken: 排 / 列 / 对角线
+  first_use: ''
+  note: 'Changed from the draft''s 行: 排 is everyday Chinese for a row (第一排), it keeps 行 exclusively for lines of code (只改一行代码, “撤销”那一行), and it removes the háng/xíng polyphone from board talk. Code comments: # 横排 / # 竖列 / # 对角线.'
+- en: parallel
+  zh_subtitle: 平行；和 O 那条线平行的一排或一列
+  zh_spoken: 平行
+  first_use: ''
+  note: Chinese school geometry word.
+- en: corner / edge / center (as first moves and as squares)
+  zh_subtitle: 'boards: 角格 / 边格 / 中心；counted: 每个角格 27,732（×4）· 每个边格 29,592（×4）· 中心 25,872（×1）；（4 个角格）（4 个边格）（1 个中心）；S08 card 角格、边格，还是中心？'
+  zh_spoken: 下在角上 / 下在边上 / 下在正中间（提问：角上、边上，还是中心？）
+  first_use: 边格，也就是每条边正中间的那一格
+  note: '每条边 would mean a whole side (three squares, two of them corners), so a single square is 角格 / 边格. ''center'' is one strings.yaml key for two sites, so it is 中心 at both. Confirmed: the board labels are 角格 / 边格 / 中心 and the counts 每个角格 / 每个边格 (s08_answer.add_each() needs 每个 + the board label, so the board label must be 角格); the spoken question still says 角上、边上.'
+- en: 'named squares: top-right / top-middle / bottom-middle / bottom-right'
+  zh_subtitle: 右上角那格 / 上边中间那格 / 下边中间那格 / 右下角那格
+  zh_spoken: 右上角那格 / 上边中间那格 / 下边中间那格 / 右下角那格
+  first_use: ''
+  note: Narration names squares by position, as the English does; numbers (N 号格) are for labels and code.
+- en: win / X wins / X won! / X wins on move 5
+  zh_subtitle: '赢；X 赢了！；labels: X 赢 / O 赢；X 在第 5 步赢了'
+  zh_spoken: 赢
+  first_use: ''
+  note: 'Changed from the draft''s label short form 胜: 赢 is the same length, it is the narration''s word, and 胜 reads like a sports scoreboard. 获胜 is fine in narration, but labels say 赢.'
+- en: draw / draws
+  zh_subtitle: 平局
+  zh_spoken: 平局
+  first_use: ''
+  note: 平局 is what children say for 井字棋; 和棋 sounds like chess.
+- en: whose turn / X to move / X's turn / switch turns / go first
+  zh_subtitle: 轮到谁；轮到 X；轮到对方；先走；label ← 轮到谁：X 还是 O
+  zh_spoken: 轮到 X
+  first_use: ''
+  note: Alternative questions take 还是, not 或. 'switch turns' is 轮到对方 (换人 sounds like a sports substitution). player / next_player stay in code; these labels are their glosses.
+- en: order / orders
+  zh_subtitle: 顺序；6 种顺序
+  zh_spoken: 顺序
+  first_use: ''
+  note: ''
+- en: flipped or turned (rotated, mirrored)
+  zh_subtitle: 翻转或旋转（the same pair in the companions; never 镜像）
+  zh_spoken: 翻转或旋转
+  first_use: 棋盘翻转或旋转后得到的对局，也分开算。
+  note: 'Anchor ''Flipped or turned'' → 翻转. One pair of words in the video, exercises.md and the playground. Changed from 棋盘翻转或旋转之后的版本: 版本 sounds like a software version.'
+- en: choices multiply / 9 groups of 8
+  zh_subtitle: 选择数相乘；9 个 8 = 72；9 种选择 / 8 种选择
+  zh_spoken: 九个八，所以选择数要相乘
+  first_use: ''
+  note: '''9 个 8'' is exactly how Chinese primary school phrases multiplication. Don''t name 乘法原理 in the video (the English doesn''t; companions may mention 分步乘法计数原理, 高中会学).'
+- en: 9 × 8 × 7 × … × 1 (the chained product)
+  zh_subtitle: 从 9 一直乘到 1（连乘）
+  zh_spoken: 从九一直乘到一
+  first_use: 继续乘下去：9 乘 8 乘 7，依此类推，一直乘到 1。
+  note: 连乘 is primary-school vocabulary and lets the factorial sentence say what is being named.
+- en: factorial / nine factorial / 3 factorial
+  zh_subtitle: 阶乘；9 的阶乘；3 的阶乘（symbols 9!, 3! only inside formulas）
+  zh_spoken: 九的阶乘
+  first_use: 数学家给这种连乘起了个名字：9 的阶乘，写成 9 后面加一个感叹号。
+  note: 'Changed from the draft''s 简称, which means an abbreviation (北大 for 北京大学). 阶乘 is the only word Chinese speakers use. As in English, subtitles write it in words; the symbol appears only in formulas, and n! never reaches say: (edge read ''9!'' as 九).'
+- en: 255,168 and 362,880 (the headline numbers); all comma-grouped numbers
+  zh_subtitle: 255,168；362,880；131,184；77,904；46,080
+  zh_spoken: 'edge reads the digits correctly; for any other backend: 二十五万五千一百六十八 / 三十六万两千八百八十 …'
+  first_use: ''
+  note: 'Digits with half-width commas match the English visuals, and labels must keep the exact digit string because scenes colour numbers by matching it. Tested on edge: 255,168, 362,880, 29,592, 77,904 and 1,440 come out right, so say: keeps the digits.'
+- en: about 48 / 73 / 82 thousand
+  zh_subtitle: 约 4.8 万；7.3 万；约 8.2 万
+  zh_spoken: '约四点八万（edge default; no say: override）'
+  first_use: ''
+  note: Chinese counts large numbers in 万 ('48 千' is not Chinese). No hand-written spoken form, so what is heard matches the subtitle. Anchor targets '4.8 万', '7.3 万', '8.2 万'.
+- en: just over half / half / about 6 in 10 games / fewer than half
+  zh_subtitle: 一半多一点；一半；所有对局的一半；每 10 局大约赢 6 局；赢不到一半
+  zh_spoken: 每十局大约赢六局
+  first_use: ''
+  note: 'Changed: 每 marks a rate (without it, 10 局赢 6 局 sounds like one specific set of games). Keep the English''s concrete ''in 10 games'' instead of 60%.'
+- en: × = ≠ ≈ + − in subtitles and speech
+  zh_subtitle: 乘 / 等于 / 不等于 / 约等于 / 加 / 减；9 乘 8 等于 72；6 乘 5 等于 30；再减去 432
+  zh_spoken: 乘 / 等于 / 不等于 / 约等于 / 加 / 减；9 乘 8 等于 72；6 乘 5 等于 30；再减去 432
+  first_use: ''
+  note: Subtitles spell operations in words, as the English narration does. Always 等于 for 'is' in products (never 得, which removes a polyphone).
+- en: 10 to the power of 120 / a 1 followed by 120 zeros
+  zh_subtitle: 10 的 120 次方；1 后面跟着 120 个零（formula 10^{120} on screen）
+  zh_spoken: 十的一百二十次方
+  first_use: ''
+  note: 'Write 零 (not 0) at the end of an exclamatory sentence so a digit never meets ！. Keep ''1 后面跟着 120 个零'' next to the power: 乘方 is a 七年级 topic and part of the audience is younger.'
+- en: digits (6 digits) / = one digit
+  zh_subtitle: （6 位数）；= 一位数字
+  zh_spoken: （6 位数）；= 一位数字
+  first_use: ''
+  note: ''
+- en: ghost games / ghost endings / made-up endings
+  zh_subtitle: 幽灵对局（first subtitle in “”）；counter 多算的对局：N；S08 每个幽灵对局算一次
+  zh_spoken: 幽灵对局
+  first_use: 我们把这些编出来的对局叫作“幽灵对局”。
+  note: 'Changed: ONE term. The draft''s 幽灵结局 differs from 幽灵对局 by one similar-sounding character, so viewers would think they are two things; the English itself says ''call those made-up endings ghost games''. Translate the metaphor (vivid for children); don''t keep the English. The S03 counter does not use the term (多算的对局：N): it is on screen before the narration introduces 幽灵对局.'
+- en: made-up moves after someone already won (caption) / never played
+  zh_subtitle: 有人赢了之后编出来的走法；从没下过
+  zh_spoken: 有人赢了之后编出来的走法；从没下过
+  first_use: ''
+  note: ''
+- en: real game(s)
+  zh_subtitle: 真实对局；每一局真实对局只算一次
+  zh_spoken: 真实的对局
+  first_use: ''
+  note: ''
+- en: counted 24 times / count each real game only once / counted just once / counted 6 times
+  zh_subtitle: 被算了 24 次；每一局只算一次；只算了一次；算了 6 次
+  zh_spoken: 被算了二十四次
+  first_use: ''
+  note: 'Changed from 数（shǔ）: 算 is what kids say for double counting (算重了, 多算了), matches 手算 and the S03 counter 多算的对局, and takes the shǔ/shù polyphone out of the video''s key sentence. Keep 数 only for literal one-by-one counting (数一数, 数叶子).'
+- en: stop early / early win
+  zh_subtitle: 提前结束；提前赢
+  zh_spoken: 提前结束
+  first_use: ''
+  note: ''
+- en: Pause and ponder
+  zh_subtitle: 暂停想一想（card title, explainer/locales/zh.yaml）
+  zh_spoken: 暂停想一想：…
+  first_use: ''
+  note: 'Changed: the spoken opener is exactly the card title (same words for what is seen and heard). ''Pause the video'' → 暂停一下视频; ''Pause and guess'' → 暂停一下，猜一猜。'
+- en: Plan B
+  zh_subtitle: 'Plan B（caption: Plan B：让电脑把每一局都下一遍）'
+  zh_spoken: Plan B (English; tested fine on edge)
+  first_use: 手算变得这么乱的时候，我们还有 Plan B。
+  note: 'Keep English: Chinese speakers say ''Plan B'' in everyday talk, so it is a natural code-switch. The narration may say it at ''there''s another plan'', because the caption shows it at that moment.'
+- en: Don't count cleverly
+  zh_subtitle: 别再想巧办法了
+  zh_spoken: 别再想巧办法了
+  first_use: ''
+  note: 'Changed from 别巧算了: spoken aloud it is heard as 别巧……算了 (算了 = ''forget it''). 别再想巧办法了 says ''stop looking for clever shortcuts'' in plain words.'
+- en: counted by hand / counting by hand gets messy
+  zh_subtitle: 手算过；手算越来越乱
+  zh_spoken: 手算
+  first_use: ''
+  note: Use 手算 rather than 数数 (shǔshù polyphone pair).
+- en: tangled mess
+  zh_subtitle: 一团乱麻
+  zh_spoken: 一团乱麻
+  first_use: ''
+  note: A Chinese idiom with the same image.
+- en: computer
+  zh_subtitle: 电脑
+  zh_spoken: 电脑
+  first_use: ''
+  note: 电脑 is what children say; 计算机 sounds like a textbook.
+- en: program / prints / output / run
+  zh_subtitle: 程序；输出（程序只输出 3）；运行程序；label 输出
+  zh_spoken: 输出
+  first_use: ''
+  note: 输出, not 打印 (a printer to a child). print stays in code; the label 输出 next to the output links the two.
+- en: Python / programming language
+  zh_subtitle: Python；编程语言；label Python = 一种给电脑下指令的语言
+  zh_spoken: Python (English)
+  first_use: 我们用的编程语言叫 Python；在 Python 里，……
+  note: 'Keep English: a language name, and Chinese speakers always say Python.'
+- en: list (Python list)
+  zh_subtitle: 列表
+  zh_spoken: 列表
+  first_use: 我们用一个列表来存 9 个格子。
+  note: Chinese Python teaching says 列表.
+- en: spots in a list, numbered starting from zero
+  zh_subtitle: 列表里的位置从零开始编号
+  zh_spoken: 从零开始
+  first_use: ''
+  note: Plain 位置 / 编号, as the English avoids 'index'. 'zero' is spelled as a word in English, so 零 here. 索引 (也叫下标) is introduced in the companions, not in the narration.
+- en: dot "."
+  zh_subtitle: 点；label 一个点，重复 9 次
+  zh_spoken: 一个点
+  first_use: 空格子里放一个点。
+  note: The literal "." stays only in code.
+- en: function
+  zh_subtitle: 函数；label 函数 = 一小段有名字的程序
+  zh_spoken: 函数
+  first_use: 接下来是一个函数：在编程里，函数就是一小段有名字的程序。
+  note: 'Changed: always mark the programming sense (在编程里) and never link it to 一次函数 from maths class. 一次函数 is 八年级 material that many viewers haven''t met, and a maths function (y = kx + b) is not a named piece of code that changes a board.'
+- en: mini-program
+  zh_subtitle: 一小段（有名字的）程序
+  zh_spoken: 一小段程序
+  first_use: ''
+  note: 'Never 小程序: in China that means WeChat Mini Programs.'
+- en: winner (the function)
+  zh_subtitle: winner；winner 函数；code winner(board)
+  zh_spoken: winner (English; never at the start of a sentence)
+  first_use: 这个函数叫 winner，意思是“赢家”，它会检查每一条线。
+  note: 'Keep English: it is the name in the code on screen (赢家函数 names nothing in the program). New: gloss it once in the same sentence, so a viewer who doesn''t know the word sees why the function has that name. The earlier Xiaoxiao voice mispronounced sentence-initial winner (heard as 威娜/Wiener), so always put a Chinese word before it (the rule stays).'
+- en: explore (the function) vs. exploring
+  zh_subtitle: 'explore 函数；探索 (the activity: chapter 探索每一局; 试走 → 探索 → 撤销)'
+  zh_spoken: explore (English)
+  first_use: 最巧妙的部分来了：一个叫 explore 的函数，explore 就是“探索”的意思。
+  note: 'Keep English for the function name. New: gloss it once, so the label 试走 → 探索 → 撤销, the chapter title and the closing 动手去探索吧！ visibly map onto the explore(...) call. Use 探索 when no code is meant.'
+- en: None (nobody)
+  zh_subtitle: None；label 没找到 → None（没有人）
+  zh_spoken: None (English; ear-check, splice an English 'None' if misheard)
+  first_use: 如果没有一条线符合，winner 什么也没找到，就返回 None，意思是“没有人”。
+  note: 'Keep English: it is a Python value on screen, and 无 or 空 would be wrong. The English line already glosses it (''which means nobody''). In the earlier Xiaoxiao tests every spelling was transcribed as 难/南/那, and in the Xiaoyi round trip Whisper wrote 那 (as it does for native English voices), so it needs a listener check; it is always on screen when spoken (F4).'
+- en: hands back (return)
+  zh_subtitle: 返回；S05 label 返回（交回结果）；返回数字 1
+  zh_spoken: 返回
+  first_use: 'first label: 返回（交回结果）'
+  note: 返回 is the standard Chinese term (返回值) that every Python lesson uses, so it is the searchable name. Because 返回 is also the phone's back button, its first appearance (the S05 label next to the hand-back arrow) carries the plain gloss 交回结果. The keyword return stays in code.
+- en: == 'is the same as' / != 'is not' (S05 labels)
+  zh_subtitle: == 一样；!= 不是
+  zh_spoken: 一样 / 不是
+  first_use: ''
+  note: 'Changed from 等于/不等于: the English avoided ''equals'' because the same panels show = as assignment (board = …, total = 0). Labelling == as 等于 makes == and = look alike, the classic beginner confusion. Never call the assignment = 等于 either; say 放进 / 存进. The companions may add that == is read 等于 in programming classes.'
+- en: 'for each line: squares a, b, c'
+  zh_subtitle: 对每一条线：格子 a、b、c
+  zh_spoken: 对每一条线：格子 a、b、c
+  first_use: ''
+  note: This label is the gloss for `for a, b, c in WIN_LINES:`.
+- en: 'other code names: board, player, next_player, total, square, range(9), WIN_LINES, print, play_all_games, def/if/for/in/not/is/return'
+  zh_subtitle: 'Unchanged in code. Glossed by the existing side labels: ← 轮到谁：X 还是 O (player)；← 轮到对方 (next_player)；← 0 到 8 号格 (range(9))；累加到 total（总数）(total +=)；8 条获胜线 (WIN_LINES)'
+  zh_spoken: Never spoken in English except winner, explore, None (and never names with _ or brackets)
+  first_use: ''
+  note: 'Keep English: they are code. Never translate them or change their case. Every highlighted code line already has a Chinese side label that says what it does, so no new label objects are added for keywords.'
+- en: add to the total (label on total +=)
+  zh_subtitle: 累加到 total（总数）
+  zh_spoken: 累加
+  first_use: ''
+  note: 累加 is the textbook word for total += x (累加器, 累加求和); （总数） glosses the identifier. Polyphone 累 lěi (label only).
+- en: comment (# …)
+  zh_subtitle: '注释；label # … = 写给人看的说明（注释）/（电脑会跳过它）'
+  zh_spoken: 注释
+  first_use: ''
+  note: Code comments are Chinese in the zh version, consistent with this card.
+- en: stopping rules
+  zh_subtitle: 停止条件；两个停止条件
+  zh_spoken: 停止条件
+  first_use: ''
+  note: Natural Chinese close to the CS term 终止条件. Avoid 递归出口 / base case in the video; the companions bridge to 终止条件（递归边界）.
+- en: finished game
+  zh_subtitle: 下完的对局
+  zh_spoken: 下完的对局
+  first_use: ''
+  note: ''
+- en: call / calls itself / each call
+  zh_subtitle: 调用；自己调用自己；label 每调用一次：多一个棋子
+  zh_spoken: 调用 (diàoyòng; ear-check)
+  first_use: ''
+  note: Standard term. Mark the programming sense on first use, as for 函数.
+- en: recursive / recursion
+  zh_subtitle: '递归 (card: 递归 + small grey tag ''recursion'' under it; sub-line 函数自己调用自己（自己问自己）)'
+  zh_spoken: 递归
+  first_use: 像这样，函数自己调用自己，也就是自己问自己同一个问题，就叫作递归。
+  note: 'Chinese: every Chinese programmer says 递归. Changed: 递归 names the process, so never ''…的函数，叫作递归'' (a function is not a process); a function that does it is a 递归函数. The English tag on the card makes both names searchable; the narrator does not say it. The grey ''recursion'' under 递归 is added by s06_explore.py (i18n.active()), so the sub-line has no English. Changed from the sub-line 函数自己调用（问）自己, which read as 调用问自己. The mnemonic 问题一层层“递”下去，答案一层层“归”回来 goes in the companions.'
+- en: tree / upside-down tree / game tree
+  zh_subtitle: 树；一棵倒过来的树；整棵树（博弈树 in the companions only）
+  zh_spoken: 一棵倒过来的树
+  first_use: ''
+  note: ''
+- en: branch / chops whole branches off the tree
+  zh_subtitle: 分支；砍掉一大片分支
+  zh_spoken: 分支
+  first_use: ''
+  note: Keep 分支, not 树枝.
+- en: leaf / leaves
+  zh_subtitle: 叶子；label 叶子 = 下完的对局
+  zh_spoken: 叶子
+  first_use: ''
+  note: Friendly form of 叶子节点 (companions).
+- en: whiteboard / one shared board
+  zh_subtitle: 白板；label 共用\n一个\n棋盘
+  zh_spoken: 白板
+  first_use: ''
+  note: ''
+- en: undo / undo the move / the undo line
+  zh_subtitle: 撤销；撤销这一步；“撤销”那一行；label ← 撤销
+  zh_spoken: 撤销
+  first_use: 这叫“撤销”这一步，这样棋盘恢复原样，下一个分支就能接着试。
+  note: 'Never 从头开始: the next branch continues from the restored position, not from the empty board. 撤销 is the Ctrl+Z word every child knows; the code comment is # 撤销这一步 (there is no `undo` identifier, so nothing stays in English). 悔棋 is not used: the program isn''t taking a move back out of regret.'
+- en: backtracking
+  zh_subtitle: '回溯 (card: = 回溯 + small grey tag ''backtracking'' under it)'
+  zh_spoken: 回溯
+  first_use: 先试走一条路，再退回来试下一条，这就叫回溯。
+  note: Chinese standard term (回溯法). English tag on the card only; the grey 'backtracking' under = 回溯 is added by s06_explore.py (i18n.active()).
+- en: try → explore → undo
+  zh_subtitle: 试走 → 探索 → 撤销
+  zh_spoken: 先试走一步，往下探索，再撤销
+  first_use: ''
+  note: 'Matches the loop comments # 试走一步 / # 撤销这一步 and the explore = 探索 gloss.'
+- en: winner check / spot a winner / draw check
+  zh_subtitle: '判断输赢（checklist 判断输赢；label ← 判断输赢；实验 2：删掉“判断输赢”）；exercise 10: 判断平局的那两行'
+  zh_spoken: 判断输赢
+  first_use: 改成删掉“判断输赢”
+  note: 'Changed from 胜负检查: 判断 is the textbook verb for an if-line (条件判断) and 判断输赢 is what kids say; one phrase for the checklist, the label and the experiment.'
+- en: Experiment 1 / 2; Break it on purpose!; still there
+  zh_subtitle: 实验 1：删掉“撤销”那一行；实验 2：删掉“判断输赢”；故意把程序改坏！；还在
+  zh_spoken: 故意把它改坏
+  first_use: 想弄懂一个程序，有个好办法：故意把它改坏。
+  note: 'Changed: quotes mark the line''s name (删掉撤销那一行 parses as two verbs); 改坏, not 弄坏 (a program is broken by editing it, not physically).'
+- en: solved (it has solved tic-tac-toe)
+  zh_subtitle: 把井字棋彻底算透了
+  zh_spoken: 彻底算透了
+  first_use: ''
+  note: 'Changed from 被“破解”了: to a 13-year-old 破解 means 破解版 / cracked passwords. 算透 says ''worked out completely'' and echoes 手算.'
+- en: play perfectly / perfect play → draw / best for X / O's mistake
+  zh_subtitle: 双方都下得完美；双方都不失误 → 平局；轮到 X 时挑对 X 最好的，轮到 O 时挑对 O 最好的；O 的失误
+  zh_spoken: '双方都不失误；轮到 X 的时候 / 轮到 O 的时候 (say:)'
+  first_use: ''
+  note: 'The subtitle keeps 轮到 X 时; the spoken form goes through say: as 轮到 X 的时候 / 轮到 O 的时候, because the ASR round trip heard the X in 轮到 X 时 as 某 (F2). The anchors still target the display text 轮到 X 时 / 轮到 O 时.'
+- en: chess / chess programs
+  zh_subtitle: 国际象棋；国际象棋程序
+  zh_spoken: 国际象棋
+  first_use: ''
+  note: 'Never 象棋: that is Chinese chess (xiangqi); Shannon''s estimate is about Western chess.'
+- en: Claude Shannon
+  zh_subtitle: 克劳德·香农；later 香农；label （香农，1950 年）
+  zh_spoken: 克劳德·香农
+  first_use: 1950 年，数学家兼工程师克劳德·香农估计……
+  note: Established transliteration (香农熵), with the middle dot U+00B7. The bilingual subtitle shows 'Claude Shannon' at that moment, so the label stays short. Edge reads 1950 年 digit by digit.
+- en: observable universe / atoms
+  zh_subtitle: label 可观测宇宙中的原子；narration 我们能观测到的整个宇宙
+  zh_spoken: 我们能观测到的整个宇宙
+  first_use: ''
+  note: 'Changed for the narration: 可观测宇宙 is an opaque pop-science block for this audience; the long form explains itself. The short form fits the label.'
+- en: look a few moves ahead / estimate who's winning / practice games
+  zh_subtitle: 往后看几步 + 估计谁更有希望赢；≈ 谁更有希望赢？；（从几百万局练习中学来）
+  zh_spoken: 往后看几步，再估计谁更有希望赢
+  first_use: ''
+  note: 'Changed: 占优 is commentator jargon; never 盘 for games (the draft''s 数百万盘练习对局 also counted games twice).'
+- en: Recap
+  zh_subtitle: 小结
+  zh_spoken: 我们来小结一下
+  first_use: ''
+  note: 'Changed from 回顾: 课堂小结 is the fixed classroom word.'
+- en: Your turn! / challenges / linked in the description
+  zh_subtitle: 轮到你了！；挑战题；程序 + 挑战题：链接在视频简介里
+  zh_spoken: 轮到你了
+  first_use: ''
+  note: 视频简介 works on both Bilibili and YouTube.
+- en: Have fun exploring!
+  zh_subtitle: 动手去探索吧！
+  zh_spoken: 动手去探索吧
+  first_use: ''
+  note: New. Keeps the explore = 探索 echo without the translationese 祝你…愉快.
+- en: chapter titles and video title (meta.yaml)
+  zh_subtitle: 井字棋为什么恰好有 255,168 种对局？ | 1 到底有多少种对局？ 2 填满棋盘：9 的阶乘 3 对局会提前结束 4 手算越来越乱 5 教电脑学规则 6 探索每一局 7 只改一行代码 8 255,168 是怎么来的 9 更复杂的棋，轮到你了
+  zh_spoken: 井字棋为什么恰好有 255,168 种对局？ | 1 到底有多少种对局？ 2 填满棋盘：9 的阶乘 3 对局会提前结束 4 手算越来越乱 5 教电脑学规则 6 探索每一局 7 只改一行代码 8 255,168 是怎么来的 9 更复杂的棋，轮到你了
+  first_use: ''
+  note: 'Changed: chapter 1 follows the 种 rule; 只改一行代码 (a bare 一行 reads as a board row in a chapter list); 是怎么来的 (来历 sounds like a person''s background) matches the hook label 它是怎么来的？; chess is more complex, not bigger.'
+- en: minimax
+  zh_subtitle: minimax 算法（极小化极大算法）
+  zh_spoken: minimax
+  first_use: minimax 算法（极小化极大算法）
+  note: 'Keep English: Chinese CS people mostly say minimax; the Chinese name is shown once for searching.'
+- en: for loop
+  zh_subtitle: for 循环
+  zh_spoken: for 循环
+  first_use: ''
+  note: Exactly how Chinese textbooks and programmers say it.
+- en: index (companions only)
+  zh_subtitle: 索引（也叫下标），从 0 开始
+  zh_spoken: 索引
+  first_use: 编程课里把列表里的位置编号叫作“索引”（index），也有人叫“下标”。
+  note: The video says 位置 like the English; the companions give the textbook / CSP names once.
+- en: comment out (companions)
+  zh_subtitle: '注释掉（在行首加 #）'
+  zh_spoken: '注释掉（在行首加 #）'
+  first_use: ''
+  note: 'The safe way to ''delete'' a line in exercises 9–10: 删掉（或在行首加 # 把它注释掉）.'
+- en: Warm-ups / Coding challenges / For the curious / Hint / Answer / Hint and solution / Expected answer
+  zh_subtitle: 热身（纸笔题）/ 编程挑战 / 想多了解一点 / 提示 / 答案 / 提示与参考代码 / 正确结果应为 131,184
+  zh_spoken: 热身（纸笔题）/ 编程挑战 / 想多了解一点 / 提示 / 答案 / 提示与参考代码 / 正确结果应为 131,184
+  first_use: ''
+  note: A coding solution is one of many correct programs, so 参考代码.
+- en: Python 3, no extra installs needed / run it
+  zh_subtitle: 用 Python 3 就行，不需要安装第三方库；用 IDLE 打开，按 F5 运行，或在命令行输入 python play_all_games.py；playground.html 用浏览器打开就能玩
+  zh_spoken: 用 Python 3 就行，不需要安装第三方库；用 IDLE 打开，按 F5 运行，或在命令行输入 python play_all_games.py；playground.html 用浏览器打开就能玩
+  first_use: ''
+  note: Run instructions that match Chinese classrooms; say that the playground needs no installation.
+- en: Tiny tic-tac-toe / two in a row wins
+  zh_subtitle: 迷你井字棋；两子连成一线就赢
+  zh_spoken: 迷你井字棋；两子连成一线就赢
+  first_use: ''
+  note: ''
+- en: 'playground UI: Undo / New game / Games that can still happen from here / This game is finished…'
+  zh_subtitle: 撤销 / 重新开始 / 从这里往后还可能出现的对局 / 这一局结束了：正好算 1 局。/ 在每个空格子上显示从这里往后的对局数
+  zh_spoken: 撤销 / 重新开始 / 从这里往后还可能出现的对局 / 这一局结束了：正好算 1 局。/ 在每个空格子上显示从这里往后的对局数
+  first_use: ''
+  note: Same words as the video (撤销, 空格子, 算).
+- en: 'places for first O: N / places for second O: N (S03 counters)'
+  zh_subtitle: '第一个 O 的放法：N / 第二个 O 的放法：N (re: keys, number last)'
+  zh_spoken: '第一个 O 的放法：N / 第二个 O 的放法：N (re: keys, number last)'
+  first_use: ''
+  note: 'Changed: in a video that numbers its squares, 第一个 O 的位置：3 reads as ''the first O is on square 3''. A counter names a count (放法), never a position. board_tally colours the last len(N) glyphs, so the number stays last.'
+- en: 'ghost endings counted: N / orders shown: N / games counted'
+  zh_subtitle: 多算的对局：N / 已列出的顺序：N / 对局计数
+  zh_spoken: 多算的对局：N / 已列出的顺序：N / 对局计数
+  first_use: ''
+  note: 'The number comes last after a full-width colon. Changed from 幽灵对局计数：N: the S03 counter appears with 填满这 4 个空格子…, two sentences before the narration introduces the term 幽灵对局 (in the last zh render it had left about 3 s before 叫作“幽灵对局”), and the English counter says ''ghost endings'', not the term.'
+- en: X in 6 / X in 7 / X in 8 / O in 6 / O in 8 (S06 tree edges, f'{sym} in {s}')
+  zh_subtitle: 'X 下 6 号格 …（re:([XO]) in (\d) → \1 下 \2 号格）；S06 close-up: two lines “X 下” / “6 号格”, 22 pt'
+  zh_spoken: X 下 6 号格 …（re:([XO]) in (\d) → \1 下 \2 号格）
+  first_use: ''
+  note: 'Square numbers, so N 号格, never 第 6 (which would read as move 6). In the S06 close-up the label is set in two lines: s06_explore.edge_label() splits the translation before the square number, so the translation (exact keys and the re: key) must keep the bare number, e.g. X 下 6 号格.'
+- en: X wins 15,648 of 25,872 / X wins 14,232 of 29,592 (S08 bars)
+  zh_subtitle: '25,872 局中 X 赢 15,648 (re: key; whole before part; no final 局)'
+  zh_spoken: '25,872 局中 X 赢 15,648 (re: key; whole before part; no final 局)'
+  first_use: ''
+  note: 'Whole before part, as Chinese says it. No final 局: with it, the edge row''s label (24 pt bold) runs past the X segment onto the O segment.'
+- en: 'X''s 3rd mark: move 5'
+  zh_subtitle: 第 3 个 X：第 5 步
+  zh_spoken: 第 3 个 X：第 5 步
+  first_use: ''
+  note: The t2c key "X's 3rd mark" must map to 第 3 个 X so the colour survives.
+- en: this 1 game was counted / 24 times in 362,880 (two Text objects)
+  zh_subtitle: 这 1 局被算了 / 24 次（在 362,880 里）
+  zh_spoken: 这 1 局被算了 / 24 次（在 362,880 里）
+  first_use: ''
+  note: The second line keeps both coloured numbers (t2c keys '24' and '362,880').
+- en: 'a dot, / 9 times; start: empty board, / X''s turn; count each real game / only once; Count the games / that end on move 7; 1 game / (a draw)'
+  zh_subtitle: 一个点，/ 重复 9 次；开始：空棋盘，/ 轮到 X；每一局真实对局 / 只算一次；统计在第 7 步 / 结束的对局；1 局 /（平局）
+  zh_spoken: 一个点，/ 重复 9 次；开始：空棋盘，/ 轮到 X；每一局真实对局 / 只算一次；统计在第 7 步 / 结束的对局；1 局 /（平局）
+  first_use: ''
+  note: 'Labels split across two Text objects: translate as a pair, each half readable alone.'
+- en: S06 side labels
+  zh_subtitle: ← 轮到谁：X 还是 O；← 有人赢了？→ 1；← 棋盘满了？→ 1（平局）；← 0 到 8 号格；← 试每一个空格子；← 轮到对方；← 从这里往后有多少局；← 撤销；轮到 X / 轮到 O
+  zh_spoken: ← 轮到谁：X 还是 O；← 有人赢了？→ 1；← 棋盘满了？→ 1（平局）；← 0 到 8 号格；← 试每一个空格子；← 轮到对方；← 从这里往后有多少局；← 撤销；轮到 X / 轮到 O
+  first_use: ''
+  note: 'Each label is the Chinese gloss of the highlighted line. ← 从这里往后有多少局 is shorter than ← 统计从这里往后有多少局, so it fits the safe area next to the panel (x ≤ 6.6); the code comment on that line stays # 统计从这里往后有多少局 (rule E5).'
+- en: S04 breakdowns and table
+  zh_subtitle: O 连成一线的方法；8 条线 × 6 种顺序 ×（6 × 5 × 4：3 个 X 的放法）；X 已经赢了；12 对 × 6（O 的顺序）× 6（X 的顺序）；3 排 × 另外 2 排 + 3 列 × 另外 2 列 = 12 对；第几步结束 / 局数；X 之前赢了吗？/ O 之前赢了吗？/ 赢还是平局？；第 5 步就已经结束
+  zh_spoken: O 连成一线的方法；8 条线 × 6 种顺序 ×（6 × 5 × 4：3 个 X 的放法）；X 已经赢了；12 对 × 6（O 的顺序）× 6（X 的顺序）；3 排 × 另外 2 排 + 3 列 × 另外 2 列 = 12 对；第几步结束 / 局数；X 之前赢了吗？/ O 之前赢了吗？/ 赢还是平局？；第 5 步就已经结束
+  first_use: ''
+  note: 'Full-width （） around Chinese content, half-width () around pure maths. ''already over at move 5'' has no ！ (as in English). Changed from 12 对（O 的线，X 的平行线）× 6 × 6: the row now says what each 6 is (O''s order, X''s order); the pair is already spelled out by the count it replaces (3 排 × 另外 2 排 + 3 列 × 另外 2 列 = 12 对). In a language version s04_messy.py builds this row from its own part list ("12 pairs", "6", " (O''s order)", "6", " (X''s order)").'
+- en: S01/S02 labels
+  zh_subtitle: 井字棋有多少种不同的对局？；棋盘一样，顺序不同 → 不同的对局；旋转过的棋盘 → 也是不同的对局；100？/ 100 万？；仔细地算 / 一段短短的程序 / 它是怎么来的？；如果对局从不提前结束呢？；X 赢了！；从不提前结束 / 真实对局 / 太多了！/ 多出来的对局？
+  zh_spoken: 井字棋有多少种不同的对局？；棋盘一样，顺序不同 → 不同的对局；旋转过的棋盘 → 也是不同的对局；100？/ 100 万？；仔细地算 / 一段短短的程序 / 它是怎么来的？；如果对局从不提前结束呢？；X 赢了！；从不提前结束 / 真实对局 / 太多了！/ 多出来的对局？
+  first_use: ''
+  note: ''
+- en: S05/S07/S08/S09 labels
+  zh_subtitle: 棋盘 · 获胜线 · 判断输赢；不全一样 / 全是点；共用一个棋盘；还在；?!（7、8 号格角上的小标签，保持半角，见 B2）；棋盘满了；幽灵对局\n又回来了；手算过；角格 / 边格 / 中心；每个角格 / 每个边格；在 4 条获胜线上；先下中心：X 每 10 局大约赢 6 局；先下边格：X 赢不到一半；X 总能赢吗？；整棵树也一样：；→ 平局；井字棋：255,168（6 位数）；国际象棋：至少 1 后面跟着 120 个零（香农，1950 年）；可观测宇宙中的原子：大约 1 后面跟着 80 个零；选择数相乘 → 9 的阶乘；对局会提前结束 → 幽灵对局；只统计 X 赢的对局；如果 O 先走呢？
+  zh_spoken: 棋盘 · 获胜线 · 判断输赢；不全一样 / 全是点；共用一个棋盘；还在；?!（7、8 号格角上的小标签，保持半角，见 B2）；棋盘满了；幽灵对局\n又回来了；手算过；角格 / 边格 / 中心；每个角格 / 每个边格；在 4 条获胜线上；先下中心：X 每 10 局大约赢 6 局；先下边格：X 赢不到一半；X 总能赢吗？；整棵树也一样：；→ 平局；井字棋：255,168（6 位数）；国际象棋：至少 1 后面跟着 120 个零（香农，1950 年）；可观测宇宙中的原子：大约 1 后面跟着 80 个零；选择数相乘 → 9 的阶乘；对局会提前结束 → 幽灵对局；只统计 X 赢的对局；如果 O 先走呢？
+  first_use: ''
+  note: 'Confirmed: the board labels are 角格 / 边格 / 中心 and the counts 每个角格 / 每个边格 (add_each needs 每个 + 角格); the spoken question keeps 角上、边上 (the E1 note in strings/g3).'
+- en: ponder cards
+  zh_subtitle: 井字棋一共有多少种不同的对局？\n把你猜的数写下来！ | X 在第 5 步赢下的对局有多少种？\n提示：（1）哪条线？\n（2）X 按什么顺序填？\n（3）2 个 O 能放在哪儿？ | 删掉“撤销”那一行，\n会怎样？ | 这次改成删掉“判断输赢”\n会输出什么数？\n（提示：你见过它！） | X 的第一步下在哪儿，能下出的不同对局最多：\n角格、边格，还是中心？
+  zh_spoken: 'spoken ponder openers never end on 种: 暂停想一想：有多少种对局是 X 在第 5 步赢下的？'
+  first_use: ''
+  note: 'The ''MOST'' capitals become 最多, found by s08_answer.py through the strings key "MOST": "最多" and coloured green (COUNT_COLOR). The S07 card breaks at the comma (not between verb and object) and fits the side card at the full 30 pt; the first line of the other S07 card (这次改成删掉“判断输赢”) has no final 。 (E1). The S08 card says 角格、边格, matching the board labels under it (the narration still says 角上、边上). A spoken question never ends on 种.'

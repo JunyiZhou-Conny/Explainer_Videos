@@ -1,0 +1,22 @@
+# Pronunciation fixes for the narrator.
+#   ipa: phonemes fed straight to Kokoro (local TTS)
+#   say: plain-English respelling used by backends that take text (espeak, edge)
+# Matching is whole-word and case-sensitive. Add entries as you find mispronunciations.
+Laplace: {ipa: "ləplˈɑːs", say: "luh-plahss"}
+Laplacian: {ipa: "ləplˈɑːsiən", say: "luh-plahss-ian"}
+covariance: {ipa: "kˌoʊvˈɛɹiəns", say: "co-variance"}
+Lipschitz: {ipa: "lˈɪpʃɪts", say: "lip-shits"}
+Dinur: {ipa: "dˈiːnʊɹ", say: "dee-noor"}
+Gödel: {ipa: "ɡˈɜːdəl", say: "gurdle"}
+SuLQ: {ipa: "sˈʌlk", say: "sulk"}
+RAPPOR: {ipa: "ɹˈæpɔːɹ", say: "rap-or"}
+ZIP: {ipa: "zˈɪp", say: "zip"}
+Dwork: {ipa: "dwˈɔːɹk", say: "dwork"}
+Mironov: {ipa: "mɪɹˈoʊnəv", say: "mih-ROH-nov"}
+Naor: {ipa: "nɑːˈɔːɹ", say: "nah-or"}
+Vadhan: {ipa: "vˈɑːdən", say: "vah-dun"}
+Abadi: {ipa: "ɑːbˈɑːdi", say: "ah-bah-dee"}
+Irit: {ipa: "iɹˈiːt", say: "ee-reet"}
+Kobbi: {ipa: "kˈoʊbi", say: "koh-bee"}
+Latanya: {ipa: "lətˈɑːnjə", say: "la-tahn-ya"}
+Andrej: {ipa: "ˈɑːndɹeɪ", say: "ahn-dray"}

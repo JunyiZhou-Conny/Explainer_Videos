@@ -1,0 +1,62 @@
+# Chinese (zh-CN) metadata for tictactoe-255168 (read by explainer/i18n.py meta(), used by
+# explainer/build.py --lang zh): video title, chapter titles keyed by scene file stem, and the
+# Bilibili / YouTube description. Title and chapters are the ones decided in GLOSSARY.md (rule H1 and
+# the row 'chapter titles and video title'): 种 when counting distinct games (A8), 9 的阶乘 rather than
+# 9! (B3), 只改一行代码 (行 is always code, A10), 是怎么来的 matching the hook label. The glossary gives no
+# chapter an English term (the audience is 11-14; the bilingual subtitles carry the English), so the
+# titles are plain Chinese. video.yaml defines no parts, so there are no part titles.
+title: "井字棋为什么恰好有 255,168 种对局？"
+
+chapters:
+  s01_hook: "到底有多少种对局？"
+  s02_fill: "填满棋盘：9 的阶乘"
+  s03_stop: "对局会提前结束"
+  s04_messy: "手算越来越乱"
+  s05_board_code: "教电脑学规则"
+  s06_explore: "探索每一局"
+  s07_experiments: "只改一行代码"
+  s08_answer: "255,168 是怎么来的"
+  s09_bigger: "更复杂的棋，轮到你了"
+
+# Ready to paste into the Bilibili 简介 / YouTube description. The line 章节：见下方时间轴 points to the
+# chapter timestamps in output/zh/chapters.txt: paste them right under it (YouTube) or into Bilibili's
+# 分段章节 / a pinned comment. About 1,370 characters (about 1,620 with the 9 timestamps pasted in), so
+# it stays under Bilibili's 2,000-character limit. The learning list asks the pause-and-ponder questions instead
+# of answering them. Links are repository-relative paths. The narration voice is not final, so the
+# credit names no engine or voice.
+description: |
+  井字棋一共有多少种不同的对局？答案精确到个位：255,168。这期视频用两种办法把这个数算出来：先用纸和笔仔细地算，再写一段短短的 Python 程序，让电脑把每一局都下一遍。
+
+  适合谁看：11–14 岁（小学五六年级到初二）的同学，以及他们的数学老师和信息科技老师。不需要学过代数，也不需要会编程：函数、列表、阶乘和递归，视频里都用大白话讲清楚。代码里的名字（explore、winner、None）保留英文，第一次出现时会说明意思。
+
+  你会学到：
+  · 什么算“一局”：按顺序排好的全部走法，所以棋盘一样、顺序不同，也是不同的对局
+  · 选择数相乘：填满棋盘有 9 的阶乘，也就是 362,880 种顺序，为什么比答案还多？
+  · “幽灵对局”：有人赢了之后编出来的走法；分三个步骤，算出 X 在第 5 步赢下的对局有多少种
+  · 手算为什么越来越乱，以及 Plan B：教电脑学会规则
+  · 用列表存棋盘，列出 8 条获胜线，再写一个判断输赢的 winner 函数
+  · explore 函数：递归、一棵倒过来的树，以及“撤销”这一步（回溯）
+  · 故意把程序改坏：删掉“撤销”那一行，或者删掉“判断输赢”，会输出什么？
+  · 把 255,168 按第几步结束拆开看，X 赢、O 赢和平局各有多少局
+  · X 的第一步下在角格、边格，还是中心，能下出的不同对局最多？
+  · 为什么国际象棋没法这样算（香农的估计：至少 10 的 120 次方种对局）
+  片中有 5 张“暂停想一想”卡片，建议先暂停视频，自己想一想，再看答案。
+
+  章节：见下方时间轴
+
+  配套材料（仓库内的相对路径）：
+  · 挑战题与答案（纸笔题 + 编程挑战）：videos/tictactoe-255168/i18n/zh/exercises.md
+  · 视频里的程序（中文注释，运行后输出 255168）：videos/tictactoe-255168/i18n/zh/assets/play_all_games.py
+  · 交互页面（边下棋边看还剩多少种对局）：videos/tictactoe-255168/i18n/zh/playground.html
+  · 中文版说明：videos/tictactoe-255168/i18n/zh/README.md
+  · 术语表与翻译规则：videos/tictactoe-255168/i18n/zh/GLOSSARY.md
+  程序用 Python 3 就行，不需要安装第三方库：用 IDLE 打开，按 F5 运行，或在命令行输入 python play_all_games.py。交互页面用浏览器打开就能玩，也适合在课堂上投屏。
+
+  给老师：挑战题的答案都折叠在题目下面；“想多了解一点”一节把视频里的大白话和课本、信息学竞赛（CSP）的叫法对上（索引、终止条件、全排列、深度优先搜索、恢复现场）。
+
+  制作说明：
+  · 旁白：神经网络语音合成（TTS）
+  · 动画用 Manim 制作，由一套开源的讲解视频工具包生成；中英双语字幕（中文在上，英文原句在下）
+  · 英文原版：Why are there exactly 255,168 games of tic-tac-toe?
+
+  标签：井字棋、计数、阶乘、递归、回溯、Python、编程入门、信息科技、数学科普

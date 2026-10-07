@@ -1,0 +1,27 @@
+[10/07/26 23:05:20] WARNING  The original duration of              scene.py:1131
+                             GamesStop.wait(), 0.0333333 seconds,               
+                             is too short for the current frame                 
+                             rate of 15 FPS. Rendering with the                 
+                             shortest possible duration of                      
+                             0.0666667 seconds instead.                         
+                    WARNING  The original duration of              scene.py:1131
+                             GamesStop.wait(), 0.0333333 seconds,               
+                             is too short for the current frame                 
+                             rate of 15 FPS. Rendering with the                 
+                             shortest possible duration of                      
+                             0.0666667 seconds instead.                         
+[10/07/26 23:05:25] WARNING  The original duration of              scene.py:1131
+                             GamesStop.wait(), 0.0186667 seconds,               
+                             is too short for the current frame                 
+                             rate of 15 FPS. Rendering with the                 
+                             shortest possible duration of                      
+                             0.0666667 seconds instead.                         
+[10/07/26 23:05:30] WARNING  The original duration of              scene.py:1131
+                             GamesStop.wait(), 0.0426667 seconds,               
+                             is too short for the current frame                 
+                             rate of 15 FPS. Rendering with the                 
+                             shortest possible duration of                      
+                             0.0666667 seconds instead.                         
+end at 99.9s; 0 visible mobject(s) left on screen
+OK
+exit 0
