@@ -4,9 +4,14 @@
 # en_display: English subtitle line with digits / symbols (rule G3); none uses √ (rule C3).
 # Durations (python -m explainer.script script.md --lang zh, voice zh-CN-XiaoyiNeural, the toolkit
 # default since 875166f) against the English clips (rule D3): every block is within +15%, the longest
-# S03 line 1 (x1.14); SuLQ is read via explainer/lexicon.zh.yaml ("sulk").
+# S02 SuLQ (x1.148: its last sentence says 变成一笔预算 without 了, because 记住提问的上限, the
+# wording S09 echoes, put the block at x1.153), S03 line 1 (x1.147) and S01 line 3 (x1.145);
+# SuLQ is read via explainer/lexicon.zh.yaml ("sulk").
 # Kept on purpose: the comma after "Adam Smith" (S01 line 6) and after "计算机科学家" (S02 line 2) give
-# the subtitle splitter a clean break.
+# the subtitle splitter a clean break. For the same reason S01 displays its two spoken glosses in （）
+# (say: keeps the spoken commas) and drops the pause comma of 一个数，叫敏感度 (one cue per idea, each
+# over its English item), and S02 SuLQ sentence 2 displays a comma after 和合作者 that the voice does not
+# say (a spoken one cost 0.45 s, x1.17): without it the zh-only track left "Dwork、" alone on a line.
 S01:
 - en: "Here is a hospital database, one row per patient. A researcher asks an innocent question: how many patients have condition X? The hospital releases no records. It just says: forty-one."
   zh:
@@ -63,11 +68,13 @@ S01:
     "how much is enough": "加多少才够"
 - en: "In 2006, Cynthia Dwork, Frank McSherry, Kobbi Nissim and Adam Smith answered both questions in this paper: Calibrating Noise to Sensitivity in Private Data Analysis. It founded what we now call differential privacy, and in 2017 it won the Gödel Prize."
   zh:
-  - "2006 年，Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith，用这篇 paper 回答了这两个问题：《Calibrating Noise to Sensitivity in Private Data Analysis》。"
-  - "它开创了我们今天所说的差分隐私，differential privacy，2017 年还获得了哥德尔奖。"
+  - "2006 年，Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith，在这篇 paper 里回答了这两个问题：《Calibrating Noise to Sensitivity in Private Data Analysis》。"
+  - "它开创了我们今天所说的差分隐私（differential privacy），2017 年还获得了哥德尔奖。"
+  # the spoken gloss is shown in （） (as on the S01 / S12 cards): with the comma form the subtitle
+  # splitter cut at the comma before it and the next cue opened with "differential privacy，"
   say:
-  - "二零零六年，Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith，用这篇 paper 回答了这两个问题，Calibrating Noise to Sensitivity in Private Data Analysis。"
-  - null
+  - "二零零六年，Cynthia Dwork、Frank McSherry、Kobbi Nissim 和 Adam Smith，在这篇 paper 里回答了这两个问题，Calibrating Noise to Sensitivity in Private Data Analysis。"
+  - "它开创了我们今天所说的差分隐私，differential privacy，二零一七年还获得了哥德尔奖。"
   # The anchor position is estimated by character count, and the Latin names and the title are
   # spoken faster per character than Chinese, so the targets are the surnames (the glyphs S01 fades
   # in) and "Noise": with the given names / 《Calibrating the beats came 0.4-1.4 s too early
@@ -83,13 +90,16 @@ S01:
     "and in 2017": "2017 年还"
 - en: "This video covers its three big ideas: a definition of privacy, a number called sensitivity, and a recipe for how much noise is enough. Plus a surprising limit on what one published table can achieve, if it must be private in this sense."
   zh:
-  - "这期讲三个核心想法：隐私的定义；一个数，叫敏感度，sensitivity；以及一个公式，算噪声加多少才够。"
-  - "还有个出人意料的限制：要按这个定义不泄露隐私，一张公开的表能做的有限。"
+  - "这期视频讲它的三个核心想法：隐私的定义；一个数叫敏感度（sensitivity）；以及一个公式，算噪声加多少才够。"
+  - "还有个出人意料的限制：要满足这个定义，只公开一张表，能做的很有限。"
+  say:
+  - "这期视频讲它的三个核心想法：隐私的定义；一个数，叫敏感度，sensitivity；以及一个公式，算噪声加多少才够。"
+  - null
   anchors:
     "a definition of privacy": "隐私的定义"
-    "a number called sensitivity": "一个数，叫敏感度"
+    "a number called sensitivity": "一个数叫敏感度"
     "a recipe for": "以及一个公式"
-    "if it must be private": "要按这个定义"
+    "if it must be private": "要满足这个定义"
 S02:
 - en: "First, a map of where this paper comes from. In 1965, Stanley Warner proposed randomized response for sensitive surveys. In a popular version, you flip a coin in private. Heads, you answer truthfully. Tails, you flip again and say yes for heads, no for tails. Any single yes could be the coin talking, yet over thousands of people the true rate can still be estimated. Keep this coin in mind."
   zh:
@@ -98,7 +108,7 @@ S02:
   - "在常见的版本里，你私下掷一枚硬币。"
   - "正面，你就如实回答。"
   - "反面，你就再掷一次：正面答“是”，反面答“否”。"
-  - "任何一个“是”，都可能只是硬币说的；但问上成千上万人，真实比例照样能估出来。"
+  - "任何一个“是”，都可能只是硬币替你说的；但问上成千上万人，真实比例照样能估出来。"
   - "记住这枚硬币。"
   anchors:
     "yet over thousands": "但问上成千上万人"
@@ -114,7 +124,7 @@ S02:
   zh:
   - "与此同时，最容易想到的办法，也就是直接去掉姓名，却一再失败。"
   - "Latanya Sweeney 发现，光凭邮编、出生日期和性别，就能唯一识别大多数美国人；1997 年，她把号称匿名的病历和公开的选民名单一对照，就认出了马萨诸塞州州长。"
-  - "教训是：隐私必须是发布过程的性质，而不在于发布出来的表看起来怎么样；而且无论攻击者还知道什么，它都必须成立。"
+  - "教训是：隐私必须是发布过程本身的性质，而不是看发布出来的表长什么样；而且无论攻击者还知道什么，这一点都必须成立。"
   # Sentence 2 opens with "Latanya Sweeney", which the voice says in ~1 s although it is 15 of the
   # 85 characters the anchor estimate counts, so every target there would land 0.4-1.5 s late; these
   # targets sit a few characters before the spoken word and hit it (faster-whisper word times and
@@ -129,7 +139,7 @@ S02:
     "linked supposedly": "年，她把号称"
     "to a public voter": "病历和公开"
     "and found the governor": "就认出了"
-    "not of how": "而不在于"
+    "not of how": "而不是看"
     "and it must hold": "而且无论"
 - en: "Then, in 2003, Irit Dinur and Kobbi Nissim proved something sobering. Answer too many questions too accurately, with errors much smaller than the square root of n, and an attacker can rebuild almost the entire database. Our subtraction was the two-question version of this attack. Noise is the price of answering many questions."
   zh:
@@ -144,9 +154,9 @@ S02:
 - en: "The hopeful flip side: with a limited number of questions, modest noise is enough. Dwork, Nissim and colleagues built this into a framework called SuLQ, for sub-linear queries, which answers noisy sums like counts. Remember that limit on questions. This paper turns it into a budget."
   zh:
   - "反过来也有好消息：问题数量有限，适量噪声就够了。"
-  - "Dwork、Nissim 和合作者据此做了个叫 SuLQ 的框架，意思是只问次线性数量的 query（查询）；它回答带噪声的求和，比如人数。"
-  - "记住这个上限。"
-  - "这篇 paper 把它变成了一笔预算。"
+  - "Dwork、Nissim 和合作者，据此做了个叫 SuLQ 的框架，意思是只问次线性数量的 query（查询）；它回答带噪声的求和，比如人数。"
+  - "记住提问的上限。"
+  - "这篇 paper 把它变成一笔预算。"
   say:
   - null
   - "Dwork、Nissim 和合作者据此做了个叫 SuLQ 的框架，意思是只问次线性数量的 query；它回答带噪声的求和，比如人数。"
@@ -158,9 +168,9 @@ S02:
     "which answers noisy": "它回答带噪声"
 - en: "But SuLQ only covered sums, and its definition tolerated a tiny chance of a large leak. This paper takes the leap: any function of the data, one clean definition, and one simple rule for the noise. Fittingly, it appeared at a cryptography conference, where the habit is to define security against every possible attacker first, and then prove it."
   zh:
-  - "但 SuLQ 只能处理求和，而且它的定义容许以极小的概率发生大量泄露。"
-  - "这篇 paper 迈出了一大步：数据的任意函数、一个干净的定义和一条简单的噪声规则。"
-  - "很应景的是，它发表在密码学会议上，那里的习惯是先定义安全性，要求能抵御所有可能的攻击者，再去证明。"
+  - "但 SuLQ 只能处理求和，而且它的定义允许有极小的概率发生大量泄露。"
+  - "这篇 paper 迈出了一大步：适用于数据的任意函数，只用一个干净的定义和一条简单的噪声规则。"
+  - "难怪它发表在密码学会议上：那里的习惯就是先定义安全性，要求能抵御所有可能的攻击者，再去证明。"
   anchors:
     "and its definition": "而且它的定义"
     "any function": "任意函数"
@@ -174,19 +184,19 @@ S03:
   zh:
   - "先交代一下 setting。"
   - "可信的服务器，也就是数据管理者，持有数据库 x：n 条记录，每人一条。"
-  - "分析者发来 query f：数据库的任意函数，返回一个数或一列数。"
+  - "分析者发来 query f：数据库的任意函数，返回一个数或一组数。"
   anchors:
     "holds a database": "持有数据库"
     "n rows": "n 条记录"
     "any function": "任意函数"
-    "or a list": "或一列数"
+    "or a list": "或一组数"
 - en: "The curator never releases the honest answer, f of x. Instead it draws random noise, Y, and releases f of x plus Y. Because the analyst can keep asking, this is called the interactive setting. The alternative, publishing one sanitized table and walking away, is non-interactive. At the end, the paper proves the first is fundamentally more powerful."
   zh:
   - "数据管理者从不公开真实答案 f(x)。"
   - "它的做法是先抽一个随机噪声 Y，再公开 f(x) 加 Y。"
   - "因为分析者可以一直问下去，所以这叫交互式的 setting。"
   - "另一种做法是发布一张经过隐私处理的表，然后撒手不管，这叫非交互式。"
-  - "原文最后证明了，前者从根本上更强大。"
+  - "原文最后证明了，交互式从根本上更强。"
   say:
   - "数据管理者从不公开真实答案 f x。"
   - "它的做法是先抽一个随机噪声 Y，再公开 f x 加 Y。"

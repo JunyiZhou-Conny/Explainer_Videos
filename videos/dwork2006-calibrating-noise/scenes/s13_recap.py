@@ -36,13 +36,19 @@ def badge(num, color, r=0.3):
     return VGroup(c, S.text(str(num), 26, color).move_to(c))
 
 
-def panel(i, title, color):
-    """VGroup(frame, badge, title); the frame and badge appear first, the title with the content."""
+def panel(i, title, color, en_tag=None):
+    """VGroup(frame, badge, title); the frame and badge appear first, the title with the content.
+    `en_tag`: in a translated render, a core term's English name follows its title, small and
+    grey (the key, e.g. "Laplace mechanism [en]", is translated to the English name by a scoped
+    strings entry, so it cannot collide with the title's own key)."""
     frame = RoundedRectangle(width=PANEL_W, height=PANEL_H, corner_radius=0.2, stroke_color=S.GREY_DARK,
                              stroke_width=2.5).set_fill(S.GREY_DARKER, 0.55)
     frame.move_to([*PANEL_XY[i], 0])
     b = badge(i + 1, color).move_to(frame.get_corner(UL) + RIGHT * 0.5 + DOWN * 0.48)
     t = S.text(title, 32, S.WHITE).next_to(b, RIGHT, buff=0.25)
+    if en_tag and i18n.active():
+        tag = S.text(en_tag, 20, S.GREY).next_to(t, RIGHT, buff=0.18).align_to(t, DOWN)
+        t = VGroup(t, tag)
     return VGroup(frame, b, t)
 
 
@@ -87,8 +93,8 @@ class Recap(VoiceScene):
     # ================================================================ 1. four panels
     def recap_beat(self):
         p1 = panel(0, "Privacy", EPS_COLOR)
-        p2 = panel(1, "Sensitivity", SENS_COLOR)
-        p3 = panel(2, "Laplace mechanism", NOISE_COLOR)
+        p2 = panel(1, "Sensitivity", SENS_COLOR, en_tag="Sensitivity [en]")
+        p3 = panel(2, "Laplace mechanism", NOISE_COLOR, en_tag="Laplace mechanism [en]")
         p4 = panel(3, "One published table", S.GREY)
 
         # --- 1: Definition 1, exactly as in S04

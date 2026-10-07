@@ -12,7 +12,7 @@
   - "第一，想象一个社交网络，每条可能的边都是数据库里的一条记录。"
   - "至少要切断多少条边，才能把网络一分为二？"
   - "这个最小割在改动一条边时最多变化 1，所以敏感度是 1。"
-  - "一般来说，凡是“至少要改动多少条记录才能让某件事成立”这类问题，敏感度都是 1。"
+  - "一般来说，凡是“至少要改动多少条记录，才能让某件事成立”这类问题，敏感度都是 1。"
   "say":
   - null
   - null
@@ -35,10 +35,10 @@
     "has sensitivity one": "敏感度都是 1"
 - "en": "Second: if an algorithm that rarely looks at any particular row, like one working from a small random sample, approximates f to within sigma most of the time, on every database, then f has sensitivity at most two sigma. That is Lemma 1."
   "zh":
-  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小规模随机样本，而且大多数时候能把 f 近似到 σ 以内，对每个数据库都如此，那么 f 的敏感度最多是两倍 σ。"
+  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小规模随机样本；而且大多数时候都能把 f 近似到 σ 以内，在每个数据库上都是这样；那么 f 的敏感度最多是两倍 σ。"
   - "这就是引理 1。"
   "say":
-  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小规模随机样本，而且大多数时候能把 f 近似到 sigma 以内，对每个数据库都如此，那么 f 的敏感度最多是两倍 sigma。"
+  - "第二：如果一个算法读到每条记录的概率都很小，比如只看一个小规模随机样本；而且大多数时候都能把 f 近似到 sigma 以内，在每个数据库上都是这样；那么 f 的敏感度最多是两倍 sigma。"
   - null
   "en_display":
   - "Second: if an algorithm that rarely looks at any particular row, like one working from a small random sample, approximates f to within σ most of the time, on every database, then f has sensitivity at most 2σ."
@@ -46,7 +46,7 @@
   "anchors":
     "like one working": "比如只看一个小规模随机样本"
     "approximates f": "能把 f 近似到"
-    "on every database": "对每个数据库都如此"
+    "on every database": "在每个数据库上"
     "then f has": "那么 f 的敏感度"
     "That is Lemma 1": "这就是引理 1"
 - "en": "Third, the answer need not be a number: a ranking, a set, a string of bits, anything with a distance between answers. Pick an output with probability that decays exponentially with its distance from the true answer, at a rate of epsilon over twice the sensitivity. For bit strings, that flips each bit with probability a little below one half: Warner's coin again, applied to the answer."
@@ -150,13 +150,20 @@
 - "en": "The proof idea uses two facts. Privacy forces the release to treat every possible row almost alike. And a random mask splits all rows into two halves mixed like salt and pepper, so the even half is like a random poll of everything. Then the chain trick: start from completely random rows, and swap them one at a time for even ones. Each swap barely moves the output, and unless n is huge, all n swaps together barely move it. The same goes for odd rows, so both databases look like random rows."
   "zh":
   - "证明思路用到两个事实。"
-  - "隐私迫使发布结果对每种可能的记录几乎一视同仁。"
+  - "差分隐私要求：发布结果对每种记录几乎一视同仁。"
   - "而随机的 mask 把所有记录分成两半，像椒盐一样混在一起，所以偶数那一半就像对全体的随机抽样。"
-  - "接着是链式 trick：从完全随机的记录出发，一条一条地换成偶数记录。"
+  - "接着是链式 trick：从完全随机的记录出发，一条一条地换成 mask 内有偶数个 1 的记录。"
   - "每次替换对输出几乎没影响；除非 n 极大，n 次加起来也几乎没影响。"
   - "换成奇数记录也一样，所以两个数据库看起来都像随机记录。"
+  "say":
+  - null
+  - null
+  - null
+  - "接着是链式 trick：从完全随机的记录出发，一条一条地换成 mask 内有偶数个一的记录。"
+  - null
+  - null
   "anchors":
-    "Privacy forces": "隐私迫使"
+    "Privacy forces": "差分隐私要求"
     "And a random mask": "而随机的 mask"
     "mixed like salt": "像椒盐一样"
     "so the even half": "所以偶数那一半"
@@ -183,11 +190,11 @@
 - "en": "Careful with the quantifiers. For any one query known in advance, a one-shot release can answer it well. What is impossible, unless the database is exponentially large, is one private release that answers most of them. The lesson: for broad, flexible accuracy with strong privacy, keep the curator in the loop."
   "zh":
   - "注意量词。"
-  - "对任意单个、事先已知的 query，一次性发布都能答好。"
-  - "除非数据库大到指数级，单单一次发布不可能既满足差分隐私，又答好其中的大多数。"
-  - "结论是：想对各种问题都灵活地答准，又要强隐私，就让可信的管理者留在回路里。"
+  - "对任何一个事先就知道的 query，一次性发布都能答好。"
+  - "除非数据库大到指数级，否则单单一次发布，不可能既满足差分隐私，又答好其中的大多数。"
+  - "结论是：想对各种问题都答得准，又要强隐私，就让可信的管理者留在回路里。"
   "anchors":
-    "For any one query": "对任意单个"
+    "For any one query": "对任何一个"
     "What is impossible": "除非数据库大到指数级"
     "is one private release": "单单一次发布"
     "The lesson": "结论是"
@@ -197,15 +204,15 @@
   "zh":
   - "回到地图上，看看这篇 paper 的后续发展。"
   - "同一年，Dwork 的特邀论文标题就叫《Differential Privacy》，给这个领域起了沿用至今的名字。"
-  - "同年她还与 Kenthapadi、McSherry、Mironov 和 Naor 合写了一篇 paper，引入了一个极小的松弛量 δ。"
+  - "同年她与 Kenthapadi、McSherry、Mironov 和 Naor 合作，在另一篇 paper 里引入了一个极小的松弛量 δ。"
   - "还记得高斯噪声的比值在尾部冲出带外吗？"
-  - "δ 替罕见的尾部买单，让钟形曲线回来了。"
+  - "δ 来替罕见的尾部买单，钟形曲线就回来了。"
   "say":
   - null
   - "同一年，Dwork 的特邀论文标题就叫 Differential Privacy，给这个领域起了沿用至今的名字。"
-  - "同年她还与 Kenthapadi、McSherry、Mironov 和 Naor 合写了一篇 paper，引入了一个很小的松弛量 delta。"
+  - "同年她与 Kenthapadi、McSherry、Mironov 和 Naor 合作，在另一篇 paper 里引入了一个极小的松弛量 delta。"
   - null
-  - "delta 替罕见的尾部买单，让钟形曲线回来了。"
+  - "delta 来替罕见的尾部买单，钟形曲线就回来了。"
   "en_display":
   - null
   - null
@@ -216,25 +223,25 @@
     "in an invited paper": "特邀论文"
     "titled simply": "标题就叫"
     "Dwork introduced": "给这个领域起了"
-    "Another 2006 paper": "同年她还与"
+    "Another 2006 paper": "同年她与"
     "Mironov": "Mironov"
-    "added a tiny slack": "引入了一个极小的松弛量"
+    "added a tiny slack": "paper 里引入了"
     "Remember the Gaussian": "还记得高斯噪声"
     "escaped the band": "冲出带外"
-    "Delta pays": "δ 替罕见的尾部"
-    "and lets the bell": "让钟形曲线"
+    "Delta pays": "δ 来替罕见的尾部"
+    "and lets the bell": "钟形曲线就"
 - "en": "Scoring every possible answer became McSherry and Talwar's exponential mechanism. The privacy budget grew into a theory of composition, with a surprise from Dwork, Rothblum and Vadhan: allow that tiny delta, and the total loss of k questions grows only like the square root of k."
   "zh":
-  - "给每个可能的答案打分，后来成了 McSherry 和 Talwar 的指数机制。"
+  - "给每个可能的答案打分，成了 McSherry 和 Talwar 的指数机制。"
   - "隐私预算发展成了一套组合定理，Dwork、Rothblum 和 Vadhan 还带来了一个惊喜：只要允许那个极小的 δ，k 个问题的总损失就只按根号 k 增长。"
   "say":
   - null
-  - "隐私预算发展成了一套组合定理，Dwork、Rothblum 和 Vadhan 还带来了一个惊喜：只要允许那个很小的 delta，k 个问题的总损失就只按根号 k 增长。"
+  - "隐私预算发展成了一套组合定理，Dwork、Rothblum 和 Vadhan 还带来了一个惊喜：只要允许那个极小的 delta，k 个问题的总损失就只按根号 k 增长。"
   "en_display":
   - null
   - "The privacy budget grew into a theory of composition, with a surprise from Dwork, Rothblum and Vadhan: allow that tiny δ, and the total loss of k questions grows only like the square root of k."
   "anchors":
-    "became McSherry": "后来成了"
+    "became McSherry": "成了 McSherry"
     "The privacy budget": "隐私预算发展成了"
     "with a surprise": "Dwork、Rothblum"
     "allow that tiny delta": "只要允许那个极小的"
@@ -243,7 +250,7 @@
 - "en": "Warner's coin, the model Section four showed is most limited, is what we now call local differential privacy, used by Google in Chrome and by Apple on iPhones. Why the weakest model? Nobody has to be trusted with the raw data, and with millions of users, a few simple statistics can afford the noise."
   "zh":
   - "Warner 的硬币，也就是第 4 节里证明局限最大的那个模型，正是今天所说的本地化差分隐私，Google 用在 Chrome 浏览器里，苹果用在 iPhone 上。"
-  - "为什么偏偏是最弱的模型？"
+  - "为什么偏偏是局限最大的这个模型？"
   - "原始数据不用托付给任何人；用户上百万时，几个简单的统计量也扛得住噪声。"
   "en_display":
   - "Warner's coin, the model Section 4 showed is most limited, is what we now call local differential privacy, used by Google in Chrome and by Apple on iPhones."
@@ -259,11 +266,11 @@
     "and with millions": "用户上百万时"
 - "en": "In 2016, Abadi and colleagues made it practical to train deep networks privately: clip each example's gradient, like our income cap, which bounds its sensitivity; add Gaussian noise; and track the budget over thousands of steps. If you train models on patient data, this is your entry point. A trained network is just another f of x, and attacks that ask whether a patient was in the training set are our subtraction attack, scaled up."
   "zh":
-  - "2016 年，Abadi 和合作者让深度网络在差分隐私下也能真正训练起来：把每个样本的梯度 clip（梯度裁剪）到一定大小以内，就像我们的收入上限，从而限制了敏感度；加上高斯噪声；并在成千上万步里跟踪预算。"
+  - "2016 年，Abadi 和合作者让差分隐私深度学习真正可行：对每个样本的梯度做 clip（梯度裁剪），就像我们的收入上限，从而限制了敏感度；加上高斯噪声；并在成千上万步里跟踪预算。"
   - "用病人数据训练模型的话，这就是你的切入点。"
   - "训练好的网络不过是又一个 f(x)；问“某个病人在不在训练集里”的攻击，就是我们那个做减法的攻击的放大版。"
   "say":
-  - "二零一六年，Abadi 和合作者让深度网络在差分隐私下也能真正训练起来：把每个样本的梯度 clip 到一定大小以内，就像我们的收入上限，从而限制了敏感度；加上高斯噪声；并在成千上万步里跟踪预算。"
+  - "二零一六年，Abadi 和合作者让差分隐私深度学习真正可行：对每个样本的梯度做 clip，就像我们的收入上限，从而限制了敏感度；加上高斯噪声；并在成千上万步里跟踪预算。"
   - null
   - "训练好的网络不过是又一个 f x；问某个病人在不在训练集里的攻击，就是我们那个做减法的攻击的放大版。"
   "en_display":
@@ -271,10 +278,10 @@
   - null
   - "A trained network is just another f(x), and attacks that ask whether a patient was in the training set are our subtraction attack, scaled up."
   "anchors":
-    "made it practical": "让深度网络在差分隐私下"
-    "clip each example": "把每个样本的梯度"
-    "like our income cap": "就像我们的收入上限"
-    "which bounds": "从而限制了敏感度"
+    "made it practical": "让差分隐私深度学习"
+    "clip each example": "样本的梯度做 clip"
+    "like our income cap": "），就像我们的收入上限"
+    "which bounds": "，从而限制了敏感度"
     "add Gaussian noise": "加上高斯噪声"
     "and track the budget": "并在成千上万步里"
     "If you train": "用病人数据训练模型的话"
@@ -285,7 +292,7 @@
   "zh":
   - "还有 2020 年的人口普查：美国人口普查局用差分隐私保护了公开发布的表；只有少数几项，比如各州人口，是精确的。"
   - "但这是一次性发布。"
-  - "暂停想一想：这和第 4 节的结论矛盾吗？"
+  - "暂停想一想：这和第 4 节证明的局限矛盾吗？"
   "en_display":
   - null
   - null
@@ -314,7 +321,7 @@
   "zh":
   - "我们来回顾一下。"
   - "第一，隐私指的是：改动任何一个人的记录，任何输出的概率之比最多是 e^ε。"
-  - "第二，一个 query 的敏感度，就是一条记录最多能让它的答案变化多少。"
+  - "第二，query 的敏感度，就是一条记录最多能让答案变化多少。"
   - "第三，尺度为敏感度除以 ε 的拉普拉斯噪声，就能让它满足差分隐私，数据库再大，误差也不会变大。"
   - "第四，一张满足差分隐私的公开表，答不好大多数简单的奇偶 query，除非数据库大到指数级。"
   "say":
@@ -333,7 +340,7 @@
     "One: privacy": "第一，隐私"
     "changes the probability": "改动任何一个人的记录"
     "e to the epsilon": "最多是"
-    "Two: a query": "第二，一个"
+    "Two: a query": "第二，query"
     "Three: Laplace": "第三，尺度为"
     "with error that": "数据库再大"
     "Four: one private": "第四，一张"

@@ -3,6 +3,7 @@
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import person_icon, ponder_card
 from explainer.scene import VoiceScene
@@ -163,8 +164,14 @@ class Budget(VoiceScene):
         t_lab.next_to(strip, DOWN, buff=0.25)
         spike = ans[0][1][0][2]
 
+        enter = (FadeIn(analyst, shift=RIGHT * 0.2), FadeIn(curator, shift=RIGHT * 0.2))
+        if i18n.active():
+            # part 2 opens on this scene: a silent lead-in, so the voice does not start on the first frame
+            self.play(*enter, run_time=0.6)
+            self.wait(0.3)
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(analyst, shift=RIGHT * 0.2), FadeIn(curator, shift=RIGHT * 0.2), run_time=0.6)
+            if not i18n.active():
+                self.play(*enter, run_time=0.6)
             self.play(FadeIn(qs[0], shift=RIGHT * 0.3), run_time=0.5)
             self.play(GrowArrow(down[0]), FadeIn(d_lab), run_time=0.5)
             self.play(FadeIn(ans[0], shift=DOWN * 0.2), run_time=0.5)

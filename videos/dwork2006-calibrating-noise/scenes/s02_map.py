@@ -757,11 +757,21 @@ class LineageBefore(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(stage3), run_time=0.6)
-            self.play(*show_chip("dn04", 0.8), FadeIn(header4, shift=RIGHT * 0.2), run_time=0.8)
-            self.play(*show_chip("sulq", 0.8, keep=True), run_time=0.8)
-            self.play(FadeIn(track), FadeIn(q_word), FadeIn(n_lab), run_time=0.6)
-            self.play(LaggedStart(*[Create(t) for t in ticks], lag_ratio=0.3), run_time=0.8)
-            self.play(GrowFromCenter(k_brace), FadeIn(k_lab), FadeIn(limit, shift=UP * 0.15), run_time=0.7)
+            if i18n.active():
+                # the Chinese first sentence is only 4.6 s: 问题数量有限 at 1.7-2.7 s, 适量噪声 at 3.3 s
+                # (faster-whisper). The 4.3 s build-up put the limit 1-2 s late, so both chips come in
+                # together and the track, ticks and limit take 1.1 s: the limit lands at 2.0-2.5 s
+                self.play(*show_chip("dn04", 0.8), *show_chip("sulq", 0.8, keep=True),
+                          FadeIn(header4, shift=RIGHT * 0.2), run_time=0.8)
+                self.play(FadeIn(track), FadeIn(q_word), FadeIn(n_lab),
+                          LaggedStart(*[Create(t) for t in ticks], lag_ratio=0.3), run_time=0.6)
+                self.play(GrowFromCenter(k_brace), FadeIn(k_lab), FadeIn(limit, shift=UP * 0.15), run_time=0.5)
+            else:
+                self.play(*show_chip("dn04", 0.8), FadeIn(header4, shift=RIGHT * 0.2), run_time=0.8)
+                self.play(*show_chip("sulq", 0.8, keep=True), run_time=0.8)
+                self.play(FadeIn(track), FadeIn(q_word), FadeIn(n_lab), run_time=0.6)
+                self.play(LaggedStart(*[Create(t) for t in ticks], lag_ratio=0.3), run_time=0.8)
+                self.play(GrowFromCenter(k_brace), FadeIn(k_lab), FadeIn(limit, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("modest noise")
             self.play(FadeIn(noisy, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("Dwork, Nissim")

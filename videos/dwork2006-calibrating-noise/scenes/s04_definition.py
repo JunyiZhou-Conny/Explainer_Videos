@@ -558,7 +558,9 @@ class Definition(VoiceScene):
                                   stroke_width=2).set_fill(S.GREY_DARKER, 1)
         screen_t = VGroup(S.text("output", 20, S.GREY), S.math("t", size=34)).arrange(RIGHT, buff=0.1)
         scr = VGroup(screen, screen_t.move_to(screen)).next_to(attacker, UP, buff=0.35)
-        wonder = S.math("x", r"\text{ or }", "x'", "?", size=34)
+        # zh: a Chinese question ends in a full-width ？ (glossary B2); a '?' string key cannot do it, as it
+        # would put the CJK glyph in math mode (outside \text{})
+        wonder = S.math("x", r"\text{ or }", "x'", r"\text{？}" if i18n.active() else "?", size=34)
         wonder[0].set_color(X_COLOR)
         wonder[2].set_color(XP_COLOR)
         wonder.next_to(att_lab, DOWN, buff=0.15)

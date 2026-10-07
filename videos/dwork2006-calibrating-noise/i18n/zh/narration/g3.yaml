@@ -37,7 +37,7 @@ S07:
   - "现在对每个输出 t，画出两条曲线比值的对数。"
   - "在 41 左边，它完全是个常数。"
   - "在 42 右边，又是个常数。"
-  - "中间是一段笔直的斜坡。"
+  - "中间是一段直线斜坡。"    # not 笔直 (bǐzhí): a homophone of 比值, the word for ratio in this scene
   - "它从不超过 1/λ，也从不低于 −1/λ：也就是平移量除以尺度。"
   say:
   - null
@@ -59,7 +59,7 @@ S07:
   - "为什么？"
   - "取对数之后，拉普拉斯密度是个帐篷形，两边的斜率是 1/λ，绝不会更陡。"
   - "把帐篷平移过去，两个帐篷的高度差，永远不超过平移量乘以这个斜率。"
-  - "这就是整个设计原则：隐私需要对数密度处处不陡的噪声。"
+  - "这就是整个设计原则：隐私需要的噪声，对数密度必须处处不陡。"    # spoken: no long modifier before 噪声 (the label keeps it)
   say:
   - null
   - "取对数之后，拉普拉斯密度是个帐篷形，两边的斜率是 lambda 分之一，绝不会更陡。"
@@ -70,12 +70,13 @@ S07:
     "never steeper": "绝不会更陡"
   en_display:
   - null
-  - "On a log scale, a Laplace density is a tent whose sides have slope 1/λ, never steeper."
+  # the comma after "tent" gives the bilingual track a cut that matches 帐篷形， / 两边的斜率
+  - "On a log scale, a Laplace density is a tent, whose sides have slope 1/λ, never steeper."
   - null
   - null
 - en: "In symbols: two distances to t can differ by at most the distance between the centers. So the privacy loss of any output is at most the sensitivity divided by lambda. Set lambda to the sensitivity over epsilon, and the ratio stays within e to the epsilon, for every output and every pair of neighbors. Privacy, proven in one line."
   zh:
-  - "用符号写出来：到 t 的两段距离，最多相差两个中心之间的距离。"
+  - "用符号写出来：t 到两个中心的距离，最多相差中心之间的距离。"    # name the centres: "two distances to t" alone leaves "from where?"
   - "所以任意输出的隐私损失，最多是敏感度除以 λ。"
   - "让 λ 取敏感度除以 ε，比值就始终在 e^ε 以内，对任意输出、任意一对相邻数据库都成立。"
   - "隐私，一个不等式就证完了。"
@@ -85,7 +86,7 @@ S07:
   - "让 lambda 取敏感度除以艾普西隆，比值就始终在 E 的艾普西隆次方以内，对任意输出、任意一对相邻数据库都成立。"
   - null
   anchors:
-    "two distances to t": "到 t 的两段距离"
+    "two distances to t": "t 到两个中心"
     "at most the distance": "最多相差"
     "the sensitivity divided": "敏感度除以 λ"
     "for every output": "任意输出、"    # one character late: the spoken e^ε (E 的艾普西隆次方) before it is long
@@ -112,12 +113,12 @@ S07:
   - "That is Proposition 1: Laplace noise of scale S(f)/ε in every coordinate."
 - en: "Pause and ponder: why not something simpler, like uniform noise anywhere between minus ten and plus ten?"
   zh:
-  - "暂停想一想：为什么不用更简单的，比如均匀噪声，−10 到 +10 之间任意取值？"
+  - "暂停想一想：为什么不用更简单的，比如在 −10 到 +10 之间均匀分布的噪声？"
   say:
-  - "暂停想一想：为什么不用更简单的，比如均匀噪声，负十到正十之间任意取值？"
+  - "暂停想一想：为什么不用更简单的，比如在负十到正十之间均匀分布的噪声？"
   anchors:
-    "like uniform noise": "均匀噪声"
-    "anywhere between": "到 +10"    # spoken 负十 lands here: the displayed "−10 " is shorter than its reading
+    "like uniform noise": "在 −10"    # the uniform-noise box is the example: flash its title as the example starts
+    "anywhere between": "到 +10"
   en_display:
   - "Pause and ponder: why not something simpler, like uniform noise anywhere between −10 and +10?"
 - en: "Look at the edges. An output of fifty-one and a half is possible if the true count is forty-two, but impossible if it is forty-one: the same infinite ratio that sank the random-row mechanism. Good noise must never rule an output out."
@@ -132,7 +133,8 @@ S07:
     "that sank": "随机发布一条记录的机制"
   en_display:
   - null
-  - "An output of 51.5 is possible if the true count is 42, but impossible if it is 41: the same infinite ratio that sank the random-row mechanism."
+  # no comma after "42": the bilingual track then cuts the English after "41:", where the Chinese is cut
+  - "An output of 51.5 is possible if the true count is 42 but impossible if it is 41: the same infinite ratio that sank the random-row mechanism."
   - null
 - en: "And why not the familiar bell curve? On a log scale a Gaussian is a parabola, steeper and steeper, so the gap between two shifted parabolas grows without bound. In the tails the ratio explodes, and no single epsilon works. Hold on to that Gaussian, though: it comes back, and it is the noise you would actually use to train a neural network privately."
   zh:
@@ -155,11 +157,13 @@ S07:
   - null
 - en: "So here is the recipe in the title: noise scale equals sensitivity divided by epsilon. A more sensitive question needs more noise. Stronger privacy needs more noise."
   zh:
-  - "这就是标题里的那条公式：噪声尺度等于敏感度除以 ε。"
+  # the title holds no formula: call back S03's 按敏感度校准噪声 (the paper's title phrase), then the formula
+  # after a colon (no 写成公式就是: it held the written recipe 3 s and put this block at x1.19, rule D3)
+  - "这就是标题里说的按敏感度校准噪声：噪声尺度等于敏感度除以 ε。"
   - "敏感度越高的 query，噪声越大。"
   - "隐私越强，噪声越大。"
   say:
-  - "这就是标题里的那条公式：噪声尺度等于敏感度除以艾普西隆。"
+  - "这就是标题里说的按敏感度校准噪声：噪声尺度等于敏感度除以艾普西隆。"
   - null
   - null
   anchors:
@@ -264,7 +268,7 @@ S08:
 S09:
 - en: "One question is never enough. Real analysts ask many, adaptively, each chosen after seeing earlier answers. Maybe you spot a spike in one bin, and zoom in."
   zh:
-  - "一个问题永远不够。"
+  - "只问一个问题，远远不够。"    # no 是……的: the block was at x1.16 (rule D3)
   - "现实中的分析者会自适应地问很多个，每个都是看了前面的答案才选的。"
   - "比如某个桶冒出尖峰，就放大看看。"
 - en: "The paper's Theorem 1 handles this. Write the probability of the whole transcript as a product, step by step. The analyst's choice of the next question is the same in both worlds, so in the ratio it cancels, leaving one Laplace ratio per answer. If you know reinforcement learning, this is the trajectory-ratio trick: whatever is identical in both worlds cancels, and the per-step log ratios add up."
@@ -283,11 +287,17 @@ S09:
     "leaving one Laplace": "每个答案只剩"
     "whatever is identical": "凡是两个世界"
     "the per-step": "每一步的对数比值"
+  en_display:
+  - null
+  # the comma gives the bilingual track a cut that matches transcript（交互历史）： / 把它的概率
+  - "Write the probability of the whole transcript, as a product, step by step."
+  - null
+  - null
 - en: "So privacy losses add up, and epsilon behaves like a budget. Each answer spends part of it; once it is spent, the curator stops. That is the answer to Dinur and Nissim: the budget makes the limit on questions explicit and measurable."
   zh:
   - "所以隐私损失会累加，ε 就像一笔隐私预算，privacy budget。"
-  - "每个答案花掉一部分；一旦花完，管理者就不答了。"
-  - "这就回应了 Dinur 和 Nissim：预算让提问的上限明确、可度量。"
+  - "每个答案花掉一部分；一旦花完，数据管理者就不答了。"    # part 2 viewers: the full term once
+  - "这就回应了 Dinur 和 Nissim：预算让提问的上限变得明确、可度量。"
   say:
   - "所以隐私损失会累加，艾普西隆就像一笔隐私预算，privacy budget。"
   - null
@@ -301,17 +311,17 @@ S09:
   - null
 - en: "You can now compute a real saving yourself. Pause: a histogram with d bins, total budget epsilon. Treat each bin as its own counting query and split the budget evenly. How much noise does each bin get?"
   zh:
-  - "现在你可以自己算算，实打实能省多少。"
+  - "现在你可以自己算算能省多少噪声。"    # says what is saved; short: the block was at x1.20 (rule D3)
   - "暂停一下：直方图有 d 个桶，总预算是 ε。"
-  - "每个桶单独算一个 counting query（计数查询），预算平分。"
+  - "每个桶单独算一个 counting query（计数查询），预算平均分配。"    # not 平分: heard as 评分
   - "每个桶要加多大的噪声？"
   say:
   - null
   - "暂停一下：直方图有 d 个桶，总预算是艾普西隆。"
-  - "每个桶单独算一个 counting query，预算平分。"
+  - "每个桶单独算一个 counting query，预算平均分配。"
   - null
   anchors:
-    "split the budget": "（计数查询），预算平分"
+    "split the budget": "（计数查询），预算平均"
   en_display:
   - null
   - "Pause: a histogram with d bins, total budget ε."
@@ -321,7 +331,9 @@ S09:
   zh:
   - "每个桶分到 1/d 的预算，噪声尺度就是 d/ε。"
   - "把整个直方图当成一个敏感度为 2 的 query，每个桶就都是 2/ε，不管 d 是多少。"
-  - "早先那个框架分析得更细，把噪声降到大约根号 d，但还是随 d 增大。"
+  # name SuLQ (part 2 viewers never saw S02); the longer first clause also lets the bilingual track cut
+  # the English after "sharper analysis"
+  - "早先的 SuLQ 框架分析得更细，把噪声降到大约根号 d，但还是随 d 增大。"
   say:
   - "每个桶分到 d 分之一的预算，噪声尺度就是 d 除以艾普西隆。"
   - "把整个直方图当成一个敏感度为二的 query，每个桶就都是艾普西隆分之二，不管 d 是多少。"

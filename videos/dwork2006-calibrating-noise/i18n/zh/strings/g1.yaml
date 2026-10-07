@@ -46,7 +46,7 @@
 # lanes and map chips
 "Randomize": "随机化"
 "Attacks": "攻击"
-"Provable noise": "可证明的噪声"
+"Provable noise": "可证明的加噪"            # noise ADDING with a proof (S02 and the S12 rebuild)
 "Warner": "Warner"
 "Disclosure control": "披露控制"
 "Evfimievski": "Evfimievski"
@@ -125,7 +125,7 @@
 "\\text{error} \\ll \\sqrt{n}": "\\text{误差} \\ll \\sqrt{n}"
 "(n = number of rows)": "（n = 记录数）"
 "… many more questions": "……还有更多问题"
-"attacker's copy": "攻击者还原出的副本"
+"attacker's copy": "攻击者的重构结果"       # the narration's 重构
 "2 questions": "2 个问题"
 # stage 4 · SuLQ
 "Dwork & Nissim 2004": "Dwork & Nissim 2004"
@@ -167,7 +167,7 @@
 "analyst": "分析者"
 "query": "query"
 "a number:": "一个数："
-"a list:": "一列数："
+"a list:": "一组数："                       # a vector output (一列数 reads as a sequence)
 "interactive: ask, answer, repeat": "交互式：问、答、再问"
 "non-interactive: publish once": "非交互式：只发布一次"
 "strictly more powerful": "严格更强"
