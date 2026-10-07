@@ -281,7 +281,7 @@ def main(argv=None):
     ap.add_argument("--only", help="comma-separated scene file stems or class names to (re)render")
     ap.add_argument("--no-render", action="store_true", help="only stitch existing scene renders")
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 2) // 2))
-    ap.add_argument("--tts", help="override the voice backend (kokoro|kokoro-zh|elevenlabs|edge|espeak|silent)")
+    ap.add_argument("--tts", help="override the voice backend (kokoro|elevenlabs|edge|azure|espeak|silent)")
     ap.add_argument("--crf", type=int, help="re-encode each scene with x264 at this CRF (smaller files; ~25 is good)")
     ap.add_argument("--render-only", action="store_true", help="render the selected scenes, don't stitch")
     ap.add_argument("--lang", default="en", help="language version to build (en, zh, ...)")

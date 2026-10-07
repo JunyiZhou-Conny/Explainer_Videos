@@ -10,6 +10,10 @@ program that plays every possible game. No algebra or programming background is 
 | `output/tictactoe-255168.srt` | subtitles |
 | `output/chapters.txt` | chapter timestamps (paste into a YouTube/Bilibili description) |
 | `output/transcript.md` | full narration by chapter |
+| `output/zh/tictactoe-255168.mp4` | **中文版**: the Chinese version (Mandarin narration, Chinese on-screen text, bilingual subtitles burned in); see [`i18n/zh/README.md`](i18n/zh/README.md) |
+| `output/zh/tictactoe-255168.zh.srt`, `.en.srt`, `.zh-en.srt` / `.ass` | its subtitle files (Chinese, English on the Chinese timing, bilingual) |
+| `output/tictactoe-255168.zh.srt`, `.zh-en.srt` / `.ass` | Chinese and bilingual subtitles for the English video |
+| `i18n/zh/` | the Chinese translation (narration, on-screen text, glossary) and companions (exercises, playground, program) |
 | `assets/play_all_games.py` | the program from the video: `python assets/play_all_games.py` prints `255168` |
 | `exercises.md` | do these after watching: pencil-and-paper warm-ups and "change one line" coding challenges, with answers |
 | `playground.html` | open in a browser: play moves on a board and watch how many games are still possible, split by X wins, O wins and draws |
@@ -55,6 +59,7 @@ the answer:
 ```bash
 python -m explainer.build videos/tictactoe-255168 -q l   # fast draft
 python -m explainer.build videos/tictactoe-255168        # 1080p60
+python -m explainer.build videos/tictactoe-255168 --lang zh   # the Chinese version (docs/LANGUAGES.md)
 ```
 
 Narration: Kokoro (`af_heart`), generated locally. To re-voice with ElevenLabs, set

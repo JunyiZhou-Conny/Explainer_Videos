@@ -11,6 +11,11 @@ privacy and won the 2017 Gödel Prize.
 | `output/dwork2006-calibrating-noise.srt` | subtitles |
 | `output/chapters.txt` | chapter timestamps (paste into a YouTube/Bilibili description) |
 | `output/transcript.md` | full narration by chapter |
+| `output/zh/dwork2006-calibrating-noise.mp4` | **中文版**: the Chinese version (Mandarin narration, Chinese on-screen text, bilingual subtitles burned in); see [`i18n/zh/README.md`](i18n/zh/README.md) |
+| `output/zh/dwork2006-calibrating-noise_part1.mp4` / `_part2.mp4` | the Chinese version in two parts |
+| `output/zh/dwork2006-calibrating-noise.zh.srt`, `.en.srt`, `.zh-en.srt` / `.ass` | its subtitle files (Chinese, English on the Chinese timing, bilingual) |
+| `output/dwork2006-calibrating-noise.zh.srt`, `.zh-en.srt` / `.ass` | Chinese and bilingual subtitles for the English video |
+| `i18n/zh/` | the Chinese translation (narration, on-screen text, glossary) and companions (exercises, playground, digest) |
 | `exercises.md` | do these after watching: pen-and-paper problems + a 15-minute coding task |
 | `playground.html` | open in a browser: set ε, switch Laplace/Gaussian/uniform noise, and play the attacker |
 | `digest.md` | page-referenced notes on the paper, glossary, small errata in the paper |
@@ -47,6 +52,7 @@ paper's impossibility result. Three test-yourself questions close the video.
 ```bash
 python -m explainer.build videos/dwork2006-calibrating-noise -q l   # fast draft
 python -m explainer.build videos/dwork2006-calibrating-noise        # 1080p60
+python -m explainer.build videos/dwork2006-calibrating-noise --lang zh   # the Chinese version (docs/LANGUAGES.md)
 ```
 
 Narration: Kokoro (`af_heart`), generated locally. To re-voice with ElevenLabs set

@@ -32,6 +32,14 @@ The next step after videos is interactivity — playgrounds where you have to *p
 | 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~24 min, also cut in two parts (~15 + ~9 min) |
 | 🎬 | [Why are there exactly 255,168 games of tic-tac-toe?](videos/tictactoe-255168/) (for middle school) | — (counting, recursion and backtracking) | ~12½ min |
 
+**中文版 / Chinese versions.** Both videos also exist in Mandarin, code-switched the way Chinese
+speakers in that setting really talk (English kept for names, symbols, code and the terms Chinese
+researchers say in English), with Chinese on-screen text and bilingual subtitles (Chinese above,
+the English original below): `videos/<id>/output/zh/<id>.mp4`, plus a Chinese README, exercises,
+playground and glossary in `videos/<id>/i18n/zh/`. The English videos ship Chinese and bilingual
+subtitle files too (`output/<id>.zh.srt`, `.zh-en.srt`, `.zh-en.ass`). How it works and how to make
+another language: [docs/LANGUAGES.md](docs/LANGUAGES.md).
+
 Each video folder has: `output/*.mp4` (the video, plus part cuts for long ones), `output/*.srt`
 (subtitles), `output/chapters*.txt`, `script.md` (narration + visual plan), `exercises.md`, the
 Manim source in `scenes/`, and (for paper videos) `digest.md` (paper notes). Each also has a
@@ -52,6 +60,7 @@ explainer/                  the toolkit: TTS backends, narration-synced scenes, 
 tools/                      ingest.py (add a paper) · catalog.py (validate + regenerate) · new_video.py
 docs/WORKFLOW.md            paper → digest → script → review → scenes → render, with prompts for Claude
 docs/STYLE_GUIDE.md         visual language: semantic colours, layout, timing, checklist
+docs/LANGUAGES.md           language versions (Chinese): translation files, voice, bilingual subtitles
 setup/install.sh            one-shot environment setup
 ```
 
@@ -66,6 +75,9 @@ python tools/ingest.py ~/Downloads/2402.03300.pdf --category reinforcement-learn
 # render the existing video (fast draft, then final 1080p60)
 python -m explainer.build videos/dwork2006-calibrating-noise -q l
 python -m explainer.build videos/dwork2006-calibrating-noise
+
+# the Chinese version (needs internet for the voice; see docs/LANGUAGES.md)
+python -m explainer.build videos/dwork2006-calibrating-noise --lang zh
 
 # start a new one
 python tools/new_video.py schulman2017ppo --id ppo-explained
