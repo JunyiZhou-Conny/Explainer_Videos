@@ -82,26 +82,42 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
   next). A cue shorter than 1 s is then merged into the neighbouring cue when they are contiguous
   and the result fits, even across a sentence boundary, and the sentence punctuation stays inside
   it (不是。电脑能做的……). Only the end of a Chinese cue loses its 。，、；： (so that mark does not
-  count against the line width either).
+  count against the line width either). A Chinese cue still shorter than 0.2 s per character
+  (at most 1.5 s) borrows time from a contiguous neighbour that has some to spare.
+- Cues follow the clause structure: a sentence split at ；。！？ keeps one clause per cue when
+  those cuts alone fit, a Chinese cue does not run on across a ；。 in mid-line when one cue more
+  avoids it, and a cue is never cut inside a 、 list (第三，答案不一定是一个数 / 一个排名、一个集合、
+  一个比特串，……).
 - Lines break at punctuation whenever the pieces fit, preferring the stronger mark (；：。 over ，,
   and ， over 、, which splits a list) and never leaving a scrap of a few characters at a comma
   (2016 年，/ …); otherwise at the cheapest gap. The costs steer English away from ending a line on
-  an article, preposition, auxiliary or possessive, splitting a name (Kobbi / Nissim) or a phrasal
-  verb (single / out), and Chinese away from ending a line on a preposition (从, 把, 在 …), a 的 or
-  a negation, a demonstrative (这些 / query), starting one with a particle (的, 了 …) or a
-  postposition (以内, 之间 …), breaking inside a word (jieba, with the glossary terms registered) or
-  inside “…” and （…）, cutting off a gloss from its term (hybrid argument（混合论证）, 隐私预算，privacy
-  budget), and cutting inside a 《…》 title rather than before it. They are costs, not absolute rules.
+  an article, preposition, auxiliary or possessive, splitting a name (Kobbi / Nissim, McSherry /
+  and Talwar's), a list (birth / date and sex; broad, / flexible), an adjective from its noun (its
+  published / tables), a glossary term (counting / query) or a phrasal verb (single / out), and
+  Chinese away from ending a line on a preposition (从, 把, 在 …), a 的, a negation, a demonstrative
+  or a numeral and its measure word (这些 / query, 一个 / counting query), starting one with a
+  particle (的, 了 …) or a postposition (以内, 之间 …), breaking inside a word (jieba, with the
+  glossary headwords registered: terms only, not the example phrases of zh_subtitle) or inside
+  “…” and （…）, cutting off a gloss from its term (hybrid argument（混合论证）, 叫 winner，意思是
+  “赢家”), splitting a short clause from the one it continues (想……，又要强隐私，/ 就……), and cutting
+  inside a 《…》 title rather than before it. They are costs, not absolute rules; a line that is a
+  list of Latin names may run 1.5 units over rather than break the list.
+- An English cue whose two lines break mid-phrase is re-wrapped at a clean break when one fits
+  (Remember the Gaussian / whose ratio…), else split into two cues at a clause boundary when that
+  gives lines that break better or follow the commas (But SuLQ only covered sums, // and its
+  definition tolerated / a tiny chance…).
 - In the bilingual band (Chinese line ≤ 30 units, a whole 《…》 title ≤ 35; English line ≤ 96
   characters, ≤ 110 for a clause piece — burned at 1080p a 110-character line is about 1170 px of
   the 1840 px line) the English sentence is cut where the Chinese one is: at the nearest clause
-  stop that keeps the numbers and symbols on the same side as the Chinese (41 / 42, 1/n, e^ε), not
-  at a comma inside a list of names or adjectives, else at a plain gap before a preposition or
-  conjunction right at the cut; if there is none and it fits on one line, the whole sentence stays
-  up under each piece.
+  stop that keeps the numbers and symbols on the same side as the Chinese (41 / 42, 1/n, e^ε), has
+  about as many clause marks as the Chinese piece, keeps connectives (而且 / and, 但 / yet) on the
+  same side and matches a Chinese ：；。 with a strong mark, not at a comma inside a list of names
+  or adjectives; failing that, or when that stop is poor, at a gap right at the cut before an
+  auxiliary or conjunction, and in a long sentence at a plain gap; if the numbers cannot be put on
+  the right side and the sentence fits on one line, the whole sentence stays up under each piece.
 - Inside a sentence the Chinese cues are timed by the spoken form (say:, recorded in
   <scene>.subs.json as `tr_say`), so 二零一六年, E 的艾普西隆次方 and a gloss that is not read move
-  the cue switches to where the voice is.
+  the cue switches to where the voice is, in the .zh.srt as in the band.
 - Sidecar cues have at most 2 lines (22 units per Chinese line, 48 characters per English line);
   short cues stay up 1.6 s when the next one leaves room. Regression tests: tests/test_subtitles.py.
 
