@@ -1,0 +1,111 @@
+##############################
+OVERALL: VERDICT: 8.5/10. I liked it, and it's clearly better than what the other kid described. The counting half is great. The ghost marks swap around while "ghost endings counted" goes up to 24, the dashed moves after "X won!" make the idea obvious, and every ponder card is on screen the moment I hit pause. In the code half, I could follow explore because of the side labels, the zoom into the "2" child, and the whiteboard with the eraser. I never felt bored. The ponder waits now show a new hint every few seconds. The spots where I got lost are smaller now:
+- the X6/O6/O8 labels in the whiteboard tree (6:39-6:58);
+- a counter that made a paused frame read "3! 5" (3:00-3:04);
+- a burst of code labels at 5:19-5:25 while the narrator talks about something else;
+- the "perfect play is a draw" part, which goes by fast and never says the computer works up from the bottom of the tree.
+The explore code is still tiny compared to the winner code in S05.
+
+MY PONDER ANSWERS (before the reveal):
+1. Hook: I guessed about 20,000. Way too low.
+2. X wins on move 5: 8 lines × 6 orders for X × (6 × 5 = 30 for O's two marks) = 1,440. I used the hints and got it right.
+3. Delete the undo line: I said 1, because I thought it plays one game and then the board is stuck full. The real answer is 3. I forgot that X's other two tries still count, because the old diagonal is still on the board. The bottom-middle / bottom-right explanation made sense.
+4. Delete the winner check: 362,880 = 9!, because then games only stop when the board is full. Right.
+5. Corner, edge or center: I said center, since it's on the most lines. Wrong, it's the edge. The reason clicked afterwards: more lines means more early wins, and early wins chop branches off the tree.
+
+IN MY OWN WORDS:
+(a) 9! = 9×8×7×…×1 counts every order in which the 9 squares could fill up, as if nobody stops after three in a row. A real game that ends early gets counted again for every made-up way of filling its empty squares. A game won on move 5 has 4 empty squares, so it's counted 4×3×2×1 = 24 times. Move 6 games are counted 6 times and move 7 games twice. So 9! is way more than the real number.
+(b) A ghost game is a fake ending: moves "played" after someone already won. They never happen in a real game, so they shouldn't be counted. Deleting the winner check brings them all back and gives 9! again.
+(c) The program plays every game on one single board, like one whiteboard. It tries a square, counts all the games from there, and then has to erase that mark so the next try starts from the right board. Without the undo line the old marks stay, the board fills up after the first game, and it only counts 3.
+(d) The computer knows how every finished game ends: X wins, O wins, or a draw. Going up the tree, on X's turn it picks the child that's best for X, and on O's turn the child that's best for O. Following those picks from the top, you land on a draw. So if both players never make a mistake, nobody wins. (I had to work out the "from the bottom up" part from the colours myself, because the narrator doesn't say it.)
+[S06][confusing] 06:39-06:58 (scene 1:24-1:43)
+  PROBLEM: The whiteboard tree labels its branches 'X6', 'X7', 'X8', 'O6', 'O8'. These are square numbers, but they look exactly like the move numbers used everywhere else: the S03 ghost O's carried 6 and 8, and S04 is titled 'O wins on move 6'. So I read 'O6' as 'O's 6th move' and 'X6 / X8' as X's 6th and 8th moves, which X never plays, and the tree stopped making sense. The whiteboard board shows no square numbers, so I couldn't decode them either. The narration never mentions them.
+  FIX: Show faint 0-8 square indices in the corners of the whiteboard board for this beat, and relabel the edges 'X→6', 'X→7', 'O→6' (or 'X in 6'). Or drop the text and flash the matching square on the whiteboard as the yellow dot reaches each node. If the labels stay, add a one-line GREY legend under the tree: 'X6 = X goes in square 6'.
+
+[S03][confusing] 02:59.8-03:04.0 (scene 80.8-85.0)
+  PROBLEM: In step (2), the green counter for X's orders sits on the same line as the formula being written. Paused frames read '3 × 2      3', '3 × 2 × 1      4' and '3 × 2 × 1 = 3!      5', which looks like 3! = 5. This is the same problem that was fixed for the ghost tally at 1:58, but it still happens here.
+  FIX: Do it the same way as the ghost fix. Put the tally under the X board as 'orders shown: n'. Write '= 3! = 6' only when the tally reaches 6, and fade the tally out before '= 6' appears. Or drop the tally, since the six visible label swaps plus the narration already count them.
+
+[S09][confusing] 10:41-11:01 (scene 0:00-0:20)
+  PROBLEM: About 30 s earlier I heard that X wins 131,184 games and about 6 in 10 when starting in the center. Then 'perfect play → draw' goes by in 20 s. The narration says the computer picks the best move on each turn, but never says how it knows which move is best: it starts from the finished games at the bottom and works upward. It also never says why X's many wins don't count here. The example root is a late-game board, and the empty-board claim is only a small grey line ('the full game too: # → draw').
+  FIX: Add two sentences. 'It starts at the bottom, where every game is finished, and works upward: each board gets the result of the best choice for whoever's turn it is.' And: 'Most of X's 131,184 wins only happen because O made a mistake somewhere.' Time the colours climbing level by level to the first sentence, and make 'the full game too: empty board → draw' a normal-size line, held for about 2 s.
+
+[S06][polish] 05:19-05:25 (scene 0:04-0:10)
+  PROBLEM: Five annotations pop in within about 4 s: 'whose turn', 'squares 0 to 8', 'switch turns', 'add to the total' and the '# … = a note for humans' callout. Meanwhile the narrator is saying 'its job is to count every game…' and 'It starts with two stopping rules'. They disappear at 5:25. 'switch turns' (the weirdest line, '"O" if player == "X" else "X"') is never narrated or shown again, so I only half-read it.
+  FIX: Keep only 'whose turn' (it matches the narration) and the '#' note at the start. Bring each other label back at the moment its line is used: 'squares 0 to 8' on 'tries every empty square' (5:39), 'switch turns' on 'now for the other player' (5:44), 'add to the total' on 'It adds up all the answers' (5:49).
+
+[S06][polish] 05:15-06:58 (all of S06; also S07)
+  PROBLEM: The explore() code is still small: about 12 px line spacing at 480p, which is roughly 20 px text at 1080p. It's about half the size of the winner() code in S05. On a phone or a classroom projector I can read the side labels but not the code.
+  FIX: Enlarge the explore panel (about 8.6-9 units wide; the right side has room in most beats), keeping S06/S07/S08 identical. Or, during each beat, scale up just the highlighted lines in a callout next to the panel.
+
+[S04][polish] 03:48-03:58 (scene 0:26-0:36)
+  PROBLEM: The −432 is much better now: the narration says 'a row or column parallel to O's' and the boards are big. But '12 pairs' is never worked out, so I had to stop and figure out 3 rows × 2 + 3 columns × 2 myself.
+  FIX: Under the two example boards, write '3 rows × 2 other rows + 3 columns × 2 other columns = 12 pairs' for about 2 s before it shrinks into the '12 pairs × 6 × 6' line. Or add a clause to the narration: '…parallel to O's: 12 such pairs, times 6 orders each'.
+
+[S08][polish] 09:48-10:15 (scene 1:47-1:59)
+  PROBLEM: The first-move totals carry tags '(×4)', '(×4)', '(×1)'. Thirty seconds earlier the same '×24 / ×6 / ×2 / ×1' style meant 'counted this many times' in the 9! chart. So I first read '27,732 (×4)' as '27,732 counted 4 times'. The check sum '4 × 27,732 + 4 × 29,592 + 25,872 = 255,168' is never spoken.
+  FIX: Write the tags as '(4 corners)', '(4 edges)', '(1 center)'. Optionally add a few words to the narration: '…four corners and four edges, which adds back up to 255,168.'
+
+[S06][polish] 06:12-06:16 (scene 0:57-1:01)
+  PROBLEM: 'recursive: a function that calls itself'. 'Calls' is never defined. Earlier the narrator said explore 'asks itself the same question', and the video never connects the two phrases.
+  FIX: Change the subtitle under 'recursive' to 'a function that calls (asks) itself', or have the narrator say 'A function that asks itself, or as programmers say, calls itself, is called recursive.'
+
+[S06][polish] 05:51-05:53 (scene 0:36.5-0:38.6)
+  PROBLEM: 'Let's zoom into the first of those' is a slide-and-cut. The tree pans away and a big 'O to move' board just appears, so I had to trust it was the left '2' child. Coming back to '2 + 1 + 2 = 5' is also a cut.
+  FIX: Animate the left child board itself growing into the big board, keeping its '2' bracket visible. At 'With the other two branches' (6:08), shrink it back into its slot.
+
+[S08][polish] 08:17-08:24 (scene 0:01-0:08)
+  PROBLEM: play_all_games has a bare '...' line between 'board = ["."] * 9' and 'return explore("X")'. Having never programmed, I couldn't tell whether '...' is real code or means something was left out.
+  FIX: Replace '...' with a grey comment, for example '# (winner and explore from before)', or drop the line.
+
+##############################
+OVERALL: Round 2 verdict: the revision lands. I checked all 30 round-1 items against the new draft: 25 are fixed and 5 are partly fixed. I found nothing "wrong" this round. I re-checked these and they are all correct:
+- every board shown (S01-S04 games, the S06 zoom tree and whiteboard sequence, the S07 no-undo game, the S09 minimax tree, the challenge cards)
+- every number, including 5,760 − 432, the ×24/×6/×2/×1 bars summing to 362,880, the move-9 split, and 15,648/25,872 and 14,232/29,592, which I recomputed
+- all the code shown, which matches play_all_games.py, including the new def play_all_games(): header in S08
+
+What's now good:
+- **Ponder cards:** all five start on the word "Pause".
+- **S03:** the ghost shuffle and the 6 X orders animate step by step. The ghost tally sits under the board. "ghost games" stays up about 5.5 s with its definition. The hints reveal one by one.
+- **S08:** the "why" visuals are anchored to the sentence, the black frame is gone, and S08 opens at the S07 code size.
+- **Still frames:** a full-video still scan finds only ponder timers, plus two near-still stretches in S08 (one 5 s, one 4.2 s).
+
+What's left:
+1. **S03 X-order counter:** the round-1 tally confusion is back in step 2. The counter sits on the formula line, so a paused frame reads "3 × 2 × 1   4".
+2. **explore() in S06/S07 is still small:** it's about two-thirds the size of winner() in S05.
+3. **S06 opening:** four margin labels flash for about 4 s without narration and then vanish.
+4. **S06 morph glitch:** one flying "explore(next_player)" morph slides over the code.
+5. **Subtitles:** sentence splitting leaves orphan cues, down to a 0.13 s "2." cue.
+6. **Small sync and hold items:** the −432 lands 7 s after "432" is spoken, there's the 5 s near-still in S08, and the 362,880 = 9! payoff isn't held.
+[S03][confusing] 3:00.2-3:04.4 (scene 80.2-84.4); also 3:06.6-3:13.6 (scene 86.6-93.6)
+  PROBLEM: Step (2), 'X fills that line in some order', puts the GREEN running count of shown orders on the same line as the formula being written. Paused frames read '3 × 2   3' (3:02.0), '3 × 2 × 1   4' (3:02.6) and '3 × 2 × 1 = 3!   5' (3:03.8). These look like wrong multiplication, the exact confusion round 1 fixed for the ghost tally. Step (3) has a milder form: the O-placement counter shows '6 × 1' … '6 × 4' on the line where '6 × 5 = 30' then appears.
+  FIX: Use the ghost-tally treatment. Move the counter under the board as 'orders shown: n' (step 2) and 'places for O: n' (step 3). Write '= 3! = 6' and '6 × 5 = 30' on the formula line only after the counter reaches its total, and fade the counter out before the result is written.
+
+[S06][confusing] 5:15-6:58 (all of S06), and S07 6:58-8:16
+  PROBLEM: explore(), the key program of the video, is still drawn at EXPLORE_WIDTH 8.0. Its monospace characters are about 5.6 px wide at 480p (about 13 px at 1080p), roughly two-thirds the size of the winner() code in S05 (about 8.5 px at 480p), and below the size of every label around it. A child can read the side labels but not the line they point at. S08 briefly scales the same panel to about 1.6× at 8:18, which shows how much room there is.
+  FIX: Raise EXPLORE_WIDTH in scenes/common.py from 8.0 to about 9.2 (about 15% larger text). Shift the right-hand side labels, trees and whiteboard right by the same amount; there is about 2 units of free margin on the right in S06 and S07. Because both scenes use explore_code(), the strike-throughs stay aligned.
+
+[S06][confusing] 5:20.6-5:26.1 (scene 5.5-11.0)
+  PROBLEM: While the narrator says '…its job is to count every game that can still happen from the current board. It starts with two stopping rules', four unnarrated labels appear in under 5 s. Three are margin labels ('squares 0 to 8', 'switch turns', 'add to the total'), and the fourth is a '# … = a note for humans (the computer skips it)' callout. All of them vanish at about 5:25 when the stopping-rules beat starts. Nobody can read the code plus four labels in that time, and those labels never come back for the loop beat they belong to.
+  FIX: Reveal each label when its line is narrated. Show 'squares 0 to 8' on 'So explore tries every empty square' (5:39.4), 'switch turns' on 'now for the other player' (about 5:45), and 'add to the total' on 'It adds up all the answers' (5:49.9). Give the '# = note for humans' callout its own about 2.5 s right after the panel appears, or keep it on screen for the whole scene.
+
+[S06][polish] 6:13.9-6:14.5 (scene 58.8-59.4)
+  PROBLEM: A copy of the boxed 'explore(next_player)' flies diagonally from line 10 up to the def line, morphing into 'explore(player)' as it goes. Mid-flight it lands on other code lines, giving garbled frames such as 'total ±(t player)' over 'total = 0'. This is the same kind of half-morphed text that round 1 removed from S05.
+  FIX: Replace the TransformFromCopy with an in-place cue. Keep the box on 'explore(next_player)' and FadeIn/Create a matching box on 'explore(player)' on the def line, or Indicate both, so no moving text crosses the code.
+
+[S07][polish] 7:38.59-7:38.72 (cue 122); also cues 16, 34, 42, 49, 81, 88, 118, 126, 131, 145, 147, 154, 169, 171, 187
+  PROBLEM: The srt splitter cuts long sentences by character count and leaves a 1-2 word tail as its own cue. There are 15 cues under 0.75 s. The worst is the punchline 'that's 2.': cue 121 ends on 'that's', and cue 122 shows just '2.' for 0.13 s (2 frames), so someone reading subtitles misses the count. Other examples: 'once.' 0.30 s (9:17.5), 'again.' 0.40 s, 'marks.' 0.42 s, 'center?' 0.43 s.
+  FIX: In the srt builder, split a long sentence at the clause boundary (comma or colon) nearest the middle, so both halves are similar in length. Merge any remainder under about 20 characters into the previous cue (2 lines of about 42 characters allows it), and enforce a minimum cue length of about 1 s.
+
+[S04][polish] 3:49.7-3:57.9 (scene 27.5-35.7)
+  PROBLEM: The narrator says 'Then we subtract the 432' at about 3:49.7, but the red '− 432' is only written at about 3:57.5, after the sentence ends. During the spoken number, the screen shows just 'X already won' and a thumbnail. The '12 pairs (O's line, X's parallel line) × 6 × 6' breakdown is on screen but never spoken, so the arithmetic behind 432 is still left to small text.
+  FIX: Write '− 432' at vo.wait_until('subtract the 432'). Then show the two parallel-line boards on 'a row or column parallel to O's', and the '12 pairs × 6 × 6' row after them. Optionally extend the SAY line with '…12 such pairs, times 6 orders for O and 6 for X, is 432.'
+
+[S08][polish] 8:58.2-9:03.4 (scene 41.6-46.8); also 9:44.5-9:48.7 (scene 87.9-92.1)
+  PROBLEM: The frame is nearly static for about 5 s while the narrator says 'Remember, nine factorial counted each game that ends on move 5 a total of 24 times'. The only change is a 0.3 s bracket flash under 'move 5', until '×24' appears at about 9:03.4. A frame-difference scan flags this as the longest still stretch outside a ponder timer. Later, three empty grids sit still for 4.2 s during 'Which first move for X…' before the X's are placed.
+  FIX: At vo.wait_until('Remember'), bring back a small copy of the S03 ghost board beside the move-5 bar, or Indicate the move-5 bar, and grow '×24' on '24 times'. For the puzzle, place the corner/edge/centre X's on 'first move for X' (about 9:46), with the labels appearing as each word is said.
+
+[S08][polish] 9:22.6-9:24.6 (scene 66.0-68.0)
+  PROBLEM: The payoff '362,880 = 9!' (the stacked bar filling the 9! box) completes about 1.2 s before the sentence ends. 'Who wins the most games?' starts 0.5 s after that, so the moment never gets the roughly 2 s of silence asked for in round 1.
+  FIX: After the SAY ending 'exactly nine factorial again', add a vo pause or self.wait(1.8) with the full '362,880 = 9!' frame held (optionally a gentle Indicate on '= 9!') before the next voiceover block starts.
+

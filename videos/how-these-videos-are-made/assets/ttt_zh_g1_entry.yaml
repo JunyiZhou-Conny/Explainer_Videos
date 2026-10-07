@@ -1,0 +1,10 @@
+- en: "By a game, we mean the whole list of moves, in order. So if two games end with the same board, but the moves happened in a different order, they count as two different games. Flipped or turned versions count separately too."
+  zh:
+  - "这里说的“一局”，指的是从第一步到最后一步、按顺序排好的全部走法。"
+  - "所以，如果两局最后的棋盘一样，但走棋的顺序不同，那它们要算作两种不同的对局。"
+  - "棋盘翻转或旋转后得到的对局，也分开算。"
+  anchors:
+    "the whole list": "从第一步"
+    "they count as": "那它们"
+    "Flipped or turned": "翻转"
+

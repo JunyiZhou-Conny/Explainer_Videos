@@ -1,0 +1,61 @@
+# The user's own words (ASSETS.md A05, A06, A06b, A06c), as shown on screen.
+# Source: the user messages of the session transcript (first request 2026-10-04T15:28:29Z,
+# voice-dictated; Chinese request 2026-10-06T01:31:00Z; this video's request 2026-10-07T20:13:45Z).
+# Cleaning = filler words and false starts removed, nothing else; "…" marks a cut. Hedges
+# ("I feel like", "I think") are kept. Attribute to "the user" only: no name, ever.
+# `screen` is the exact card text; `cleaned` the full cleaned sentence; `original` is for the check.
+
+captions:
+  dictated: "— the user (dictated; filler words removed)"
+  chinese_request: "— the user (request for the Chinese versions)"
+  summaries: "requests, summarized"
+  karpathy: "Andrej Karpathy, as quoted in the first request and the repo README"
+
+karpathy:          # A05: README.md lines 7-8 and the opening of the first request; not checked against the original post
+  screen: "fully custom / bespoke explainer videos generated on any arbitrary topic"
+  full: "The output format I am most bullish on is fully custom / bespoke explainer videos generated on any arbitrary topic."
+
+s02_card1:
+  screen: "Our brain is a neural net … it takes hardship, turmoil, dedication, pain … to train ourselves."
+  cleaned: "Our brain is a neural net, and we're training our brain to update its parameter. And I think it takes hardship, turmoil, dedication, pain, essentially, to train ourselves."
+  original: "Our our brain is a neural net, and we're training our brain um, to update its parameter. And I think it only it takes hardship, turmoil, dedication, pain, essentially, to to train ourselves."
+  caption: dictated
+
+s02_card2:
+  screen: "AI is very patient, but at the same time, I'm doing a lot of cognitive offloading."
+  original: "Yeah, AI is very patient, but at the same time, I'm doing a lot of cognitive offloading."
+  caption: dictated
+  red: "cognitive offloading"
+
+s02_card3:
+  screen: "It's like the explainer video is a mentor …"
+  original: "it's like the explainer video is is, is a mentor as a mentor and it's it's kind of paving the path"
+  caption: dictated
+
+s02_card3b:        # a separate small card: in the request it comes before card 3
+  screen: "they're never isolated"
+  original: "but th they're never isolated, right?"
+  caption: dictated
+
+s02_card4:
+  screen: "What is the next step? … I feel like it's definitely something interactive, something that demands the user to actually create …"
+  original: "what is the next step? And I feel like it's definitely something interactive, something that demands the user to actually create, generate stuff, right?"
+  caption: dictated
+  open: "interactive"   # dashed YELLOW outline + "idea · not built yet"
+
+s08_chinese:       # A06b: verbatim (typed, no fillers, no grammar edits)
+  screen: "… there are a lot of terms that are derived from English and would thus sound weird directly translate that into Chinese."
+  original: "…I want it to be code switching between the English language and Chinese language. The thing is that there are a lot of terms that are derived from English and would thus sound weird directly translate that into Chinese."
+  caption: chinese_request
+
+s11_goal:
+  screen: "I felt like LLM should not just be cognitive offloading; it should be something that can actually help us to make knowledge more accessible, but at the same time achieve some sort of the same level of learning."
+  original: "And I felt like LLM should not just be cognitive overload, uh, offloading; it sh should be something that can actually help us to make knowledge more accessible, but at the same time achieve some sort of the same level of of learning."
+  caption: dictated
+
+# S02 request cards: third-person summaries (caption "requests, summarized"), NOT quotes.
+requests:
+  - {n: 1, date: "2026-10-04", utc: "15:28", text: "a privacy paper from a friend (differential privacy) + organize the paper library"}
+  - {n: 2, date: "2026-10-05", utc: "21:53", text: "tic-tac-toe, for a middle-school kid, with a program the user supplied"}
+  - {n: 3, date: "2026-10-06", utc: "01:31", text: "Chinese versions that code-switch, with subtitles in both languages"}
+  - {n: 4, date: "2026-10-07", utc: "20:13", text: "this video: how they're built, and what to improve"}
