@@ -12,7 +12,7 @@ live:
   # cost_label is the user's binding wording; s03 renders it as is, split into two lines at " · ".
   # If a fifth request arrives before the final render, ask the user before changing "all four requests".
   snapshot: "2026-10-07"
-  commits_cutoff: bb3fc1e      # assets/commits.csv is frozen at this commit (98 commits); 101 at 60258b4 (99 agent, 2 user)
+  commits_cutoff: bb3fc1e      # assets/commits.csv is frozen at this commit (98 commits); 103 at d4043cd (101 agent, 2 user)
 scenes:
   - {file: scenes/s01_hook.py,       cls: Hook,           title: "Made by something that can't watch it"}
   - {file: scenes/s02_ask.py,        cls: TheAsk,         title: "What the user asked for"}

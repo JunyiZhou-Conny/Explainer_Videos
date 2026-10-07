@@ -77,6 +77,27 @@ Rejected or changed
 - Viewer, the S08 sentence on cues "re-aimed" at Chinese words: dropped rather than reworded.
   S08's first beat now gives the reason for the one-to-one rule ("every animation cue still
   has a sentence to wait for").
+
+Final check of v2 (2026-10-07, repo at d4043cd): every number, date, quote and claim re-checked
+against git, the run records and the transcript. Changed:
+- S01: "Here's what a paused frame looked like in an early draft" (the picture is a re-render or a
+  reconstruction, so "This is a paused frame" overclaimed).
+- S02: "The user's own words go further" (after the Karpathy sentence, "Their" could mean him).
+  Cards (3) and (4) end on "…", since the quotes continue in the request.
+- S03: the edge-tts chip says "via Microsoft Edge" (edge-tts is a third-party library).
+- S08: the 27-word fingerprint sentence is split in two. The broken-cue tag cites the QA
+  reviewers' quotes: the old .srt in 6f9e57c is the English video's Chinese sidecar, not the
+  Chinese draft.
+- S09: the 。 was lost when the short cue 不是。 was merged into the next one, not when "two
+  short subtitles" merged. "One reviewer noticed …" became "The file dates gave it away": the
+  fix (5be60d7) followed the agent's own date check (transcript, Oct 6 00:06), not the Oct 4
+  reviewer note, which stays on screen as an earlier sighting.
+- S10: "about 400 lines per minute" holds only for tic-tac-toe (privacy: 7,532 lines / 24.2 min
+  ≈ 310), so the number left the narration and the bar shows both. "Nobody has measured what
+  anyone learned" became "there's no measure yet" (the friend may have reported back off the
+  record). Card 3 adds round 3 (3aace23) and round 4. Live values refreshed (103 commits, 44
+  tests).
+- Length: 1,780 words in 46 say lines and 152 sentences, about 11:56 to 11:59.
 -->
 
 Audience: viewers of the other two videos, and anyone curious how an AI agent can make an
@@ -91,7 +112,8 @@ caught, (4) what is still unverified, and what to improve next.
 
 Facts: every number comes from the meta-video fact sheet (`FACTSHEET.md`, research snapshot
 2026-10-07, repo HEAD `bb3fc1e`), using its corrected values, re-checked by the four v1 reviews at
-HEAD `60258b4`. Its honesty notes and the user's decisions are binding. Numbers that keep moving
+HEAD `60258b4` and by a final check of v2 at HEAD `d4043cd`. Its honesty notes and the user's
+decisions are binding. Numbers that keep moving
 (the commit count, the cost counter, the "when this script was written" facts) are phrased so they
 stay true, or live in one place (see "Live values"). Every real asset a scene needs, with the
 command that extracts it, is listed in `ASSETS.md` (ids `A01`…).
@@ -181,10 +203,10 @@ Live values (refresh right before the final render; they are the only facts that
 |---|---|---|---|
 | session cost counter | `video.yaml` → `live.cost_usd` (read by `scenes/common.py`; never spoken) | 1507.47 (USD, last `cost-state` record, at `60258b4`) | ASSETS.md A40 |
 | cost label | `video.yaml` → `live.cost_label`, rendered as is (split into two lines at " · ") | "… all four requests …" | if a fifth request arrives before the render, ask the user; the label and S03's last SAY say "all four requests" |
-| commit timeline | `assets/commits.csv`, frozen at `bb3fc1e` (98 commits) | 101 commits at `60258b4` (99 by the agent, 2 by the user, 31 WIP); narration says "about a hundred, all but two by the agent" | ASSETS.md A11; above about 110 commits, say "over a hundred" |
-| subtitle tool | S10 card 3 | round 1: 19 of 21 fixed (own report), 11 regressions; rounds 2 and 3 committed as WIP (`7c6fcc0`, `5b78118`); 35 tests at `60258b4` | `git log --oneline -- explainer/subtitles.py`; reword card 3's last line if a later round is reviewed |
+| commit timeline | `assets/commits.csv`, frozen at `bb3fc1e` (98 commits) | 103 commits at `d4043cd` (101 by the agent, 2 by the user, 32 WIP); narration says "about a hundred, all but two by the agent" | ASSETS.md A11; above about 110 commits, say "over a hundred" |
+| subtitle tool | S10 card 3 (S10 say line 4 speaks only of round 1) | round 1: 19 of 21 fixed (own report), 11 regressions; round 2 WIP (`7c6fcc0`); round 3 committed as `3aace23` (44 tests; its commit note: "Both adversarial editors judge round 3 a clear net improvement"); round 4 under way | `git log --oneline -- explainer/subtitles.py`; reword card 3's round-3/round-4 line to the latest reviewed round |
 | Chinese privacy final cut | S10 card 3 ("not rendered when this script was written") | only 480p drafts in `output/zh/` (Oct 6 15:08) | `ls -la videos/dwork2006-calibrating-noise/output/zh/` |
-| licensed (Azure) clips | S10 SAY 3 and card 2 ("0 when this script was written") | no `.cache/tts/azure/`, no AZURE env vars | `ls .cache/tts` |
+| licensed (Azure) clips | S10 card 2 ("0 when this script was written") | no `.cache/tts/azure/`, no AZURE env vars | `ls .cache/tts` |
 | recorded human listening | S08 SAY 3, S10 SAY 1 | none on record | the transcript; ask the user |
 
 Editing `video.yaml` marks every scene stale, so update it once, right before the final render. On
@@ -201,7 +223,7 @@ ghost marks; on the right, the formula line reads "4 × 3 × 2", a gap, then a G
 top-right: "reconstruction" (or the re-render tag, if A03 exists). Caption under the player:
 "from a draft of 'Why are there exactly 255,168 games of tic-tac-toe?' · made for ages 11 to 14".
 [RECON A03]
-SAY: This is a paused frame from an early draft of one of these videos, about tic-tac-toe, for kids around 12. Look at the line on the right: 4 times 3 times 2, and then 12.
+SAY: Here's what a paused frame looked like in an early draft of one of these videos, about tic-tac-toe, for kids around 12. Look at the line on the right: 4 times 3 times 2, and then 12.
 
 SHOW: PONDER(6 s, "If you were 12,\nwhat would you think went wrong?") with the frame still visible,
 dimmed to 40 %.
@@ -247,14 +269,14 @@ SHOW: PINK quote cards, one at a time, each captioned "— the user (dictated; f
 removed)": (1) "Our brain is a neural net … it takes hardship, turmoil, dedication, pain … to
 train ourselves." (2) "AI is very patient, but at the same time, I'm doing a lot of cognitive
 offloading." The words "cognitive offloading" turn RED. Exact card texts: ASSETS.md A06. [REAL A06]
-SAY: Their own words go further: our brain is a neural net, and training it takes hardship. AI is patient, they said, but they were doing a lot of cognitive offloading.
+SAY: The user's own words go further: our brain is a neural net, and training it takes hardship. AI is patient, they said, but they were doing a lot of cognitive offloading.
 
-SHOW: Cards (1) and (2) slide up small. Card (3): "It's like the explainer video is a mentor", and
+SHOW: Cards (1) and (2) slide up small. Card (3): "It's like the explainer video is a mentor …", and
 a second small card, "they're never isolated", beside a small thumbnail of the privacy video's
 lineage map (A07, at 2:30: Warner 1965 → disclosure control → Sweeney 1997 → Evfimievski 2003),
 caption "papers are never isolated · the privacy video at 2:30". Card (4): "What is the next step?
 … I feel like it's definitely something interactive, something that demands the user to actually
-create". The word "interactive" gets a dashed YELLOW outline and the tag "idea · not built yet".
+create …". The word "interactive" gets a dashed YELLOW outline and the tag "idea · not built yet".
 [REAL A06, A07]
 SAY: A video should be a mentor, showing how papers connect, because they're never isolated. And video is only a first step: the next is something interactive, where the learner has to make things.
 
@@ -275,7 +297,7 @@ Claude Code · one long session" (one icon); faded BLUE "sub-agents" (a grid of 
 filling in, label "183 sub-agents · 46 workflow runs · before this video"); as the workflow is
 explained, a small GREY script card "workflow script" launches three of the dots, each with a job
 tag: "build one scene" · "review" · "translate". GREY "tools" (chips: "Manim · animation" ·
-"Kokoro · text-to-speech, English, local" · "edge-tts · Microsoft's online text-to-speech
+"Kokoro · text-to-speech, English, local" · "edge-tts · online text-to-speech via Microsoft Edge
 (Chinese)" · "faster-whisper · speech recognizer" · "FFmpeg · video" · "jieba · Chinese word
 breaks" · "LaTeX · math"). [DATA fact sheet 2a; DIAGRAM]
 SAY: The team: one human, the user. One AI agent: Claude Code. Under it, 183 sub-agents in 46 workflow runs, before this video. A workflow is a script the agent writes to launch sub-agents, each with one job. And tools, like a synthetic voice for each language and a speech recognizer.
@@ -466,7 +488,7 @@ columns of frame fingerprints scroll: "English render, before" vs "after the Chi
 turning GREEN "=", footer "tic-tac-toe scene 1, English 480p preview: all 721 frames match" (A37).
 The real rule from `docs/LANGUAGES.md` (A36): "The English video is never touched". A dashed YELLOW
 footnote: "a few scenes don't render exactly the same every time". [REAL A36, A37; DIAGRAM]
-SAY: Both languages share the same scene code, so the agent checks that the English video didn't change: it compares a fingerprint of every frame, before and after. A few scenes don't render exactly the same every time, but most match.
+SAY: Both languages share the same scene code, so the agent checks that the English video didn't change. It compares a fingerprint of every frame, before and after. A few scenes don't render exactly the same every time, but most match.
 
 SHOW: The voice bake-off (A28): an ORANGE waveform labelled "Mandarin voice 1 ·
 zh-CN-XiaoxiaoNeural" flows into a GREY box "speech recognizer", which prints in RED "noise →
@@ -478,7 +500,7 @@ dashed YELLOW outline: "chosen by speech recognition · no recorded check by ear
 SAY: Then, which voice? The agent can't listen, so it asked a speech recognizer. With the first Mandarin voice, the recognizer heard "Nice" where the script said noise, and "Excellent" where it said epsilon. Another voice passed all 17 test terms, and was chosen. There's no record yet of anyone checking it by ear.
 
 SHOW: A redrawn frame of the Chinese tic-tac-toe video at 11:43 (A30 on the A04 picture, tag
-"reconstruction · text from the old subtitle file, commit 6f9e57c"): the game tree under 轮到 X /
+"reconstruction · the old cue text, as both QA reviewers quoted it"): the game tree under 轮到 X /
 轮到 O, and in the band below "不是电脑能做的，不只是统计对局" over the English line "No. A computer can
 do more than count." The Chinese line is glossed "It's not what a computer can do, not just
 counting games", with a RED "meaning flipped" stamp; the English line stays WHITE. Two small
@@ -498,17 +520,20 @@ frame · Chinese tic-tac-toe final cut": the band reads "不是。电脑能做�
 pulses WHITE. The cue splits into two layers: "content: the translation" with a GREEN ✓, and
 "tool: the subtitle merger" with a RED ✗ and the real fix commit subject (A35, `cd67aa4`):
 "Subtitles: keep sentence punctuation in merged cues; …". [REAL A04, A35]
-SAY: It wasn't. The translation had a full stop after that no, but the subtitle tool dropped it when it merged two short subtitles. Tool bugs often look like content bugs.
+SAY: It wasn't. The translation had a full stop after that no, but the subtitle tool dropped it when it merged that short subtitle into the next. Tool bugs often look like content bugs.
 
 SHOW: A file timeline: scene files edited, their movies older, each with a RED tag "older than
 source" [DIAGRAM], under the real commit line (A35, `5be60d7`): "A plain build used to reuse any
-existing scene movie, so edited scenes were silently stitched from stale renders." A faded-BLUE
-reviewer icon holds the real note from the privacy video's newcomer review (A44): "The renders are
-older than the source." Then the real voice stamp of a Chinese scene render (A31):
+existing scene movie, so edited scenes were silently stitched from stale renders." On "file
+dates", two real date checks: a faded-BLUE reviewer icon holds the note from the privacy video's
+newcomer review (A44, caption "a reviewer · privacy video, Oct 4"): "The renders are older than the
+source."; and the BLUE agent icon lines up the dates it listed just before the fix (A44, caption
+"the agent · tic-tac-toe, Oct 6"): "Explore.mp4 · Oct 5, 23:24" vs "s06_explore.py · committed Oct 6,
+00:05", with a RED "older than source". Then the real voice stamp of a Chinese scene render (A31):
 `{"speed": 1.0, "tts": "edge", "voice": "zh-CN-XiaoyiNeural"}`, caption "voice stamp of a Chinese
 scene render (tic-tac-toe scene 3)", with a GREEN tag "every render now records its voice".
 [REAL A35, A44, A31; DIAGRAM]
-SAY: Another tool bug: a plain build used to reuse old scene movies, so edited scenes were quietly stitched from out-of-date footage. One reviewer noticed its pictures were older than the code. Now a scene is rendered again whenever it's older than its sources, or its voice has changed.
+SAY: Another tool bug: a plain build used to reuse old scene movies, so edited scenes were quietly stitched from out-of-date footage. The file dates gave it away: the movies were older than the code. Now a scene is rendered again whenever it's older than its sources, or its voice has changed.
 
 SHOW: Three lanes for the Chinese privacy video's QA (A32): "reviewers · 4 groups × (director +
 simulated grad student) · 103 findings, 81 of them polish" → "4 fixers · 75 changes" → "4
@@ -528,7 +553,7 @@ Sub-lines: "no recorded human review of the narration yet, English or Chinese" �
 narration: no full speech-recognition check yet (one clip timed for this video)" · "every test
 viewer on record: an AI persona" · "learning not measured: no quiz, no data". [DIAGRAM; DATA fact
 sheet 6]
-SAY: So what's next? The biggest gaps sit exactly where measuring runs out. First, what only people can do. There's no recorded human review of any narration yet, every test viewer on record was simulated, and nobody has measured what anyone learned.
+SAY: So what's next? The biggest gaps sit exactly where measuring runs out. First, what only people can do. There's no recorded human review of any narration yet. Every test viewer on record was simulated, and there's no measure yet of what anyone learned.
 
 SHOW: Card 1 opens into two columns. PINK "decided by the user": "the topics" · "the audiences" ·
 "Chinese, code-switched" · "this video". BLUE "decided by the agent · worth a second look", each
@@ -545,16 +570,18 @@ Edge endpoint is not licensed for published videos" → "Azure AI Speech: same v
 clips made when this script was written: 0" → "switching re-voices all 417 sentences, then re-times
 them". "Word-level timing": the S05 pin snaps from its estimate onto the GREEN word bar; "then
 delete the hand-set shifts · add a lint for sync, overlaps and dead air". "Shared parts": a GREEN
-bar "scene code: about 400 lines per minute of video" shrinks as a shelf of reusable parts fills
-(board · game tree · code panel · counter · paper card). A small footnote card: "also: the English
-privacy video, part 2, opens on a black frame, voice at 0.088 s → add a lead-in". [REAL A36; DATA]
-SAY: Second, engineering: a licensed Chinese voice, since the free service isn't licensed for published videos. Timing should follow words, not characters, so the hand-set shifts can go. And shared parts would shrink the scene code, now about 400 lines per minute of video.
+bar "scene code per minute of video: about 400 lines (tic-tac-toe) · about 310 (privacy)" shrinks
+as a shelf of reusable parts fills (board · game tree · code panel · counter · paper card). A small
+footnote card: "also: the English privacy video, part 2, opens on a black frame, voice at 0.088 s →
+add a lead-in". [REAL A36; DATA]
+SAY: Second, engineering: a licensed Chinese voice, since the free service isn't licensed for published videos. Timing should follow words, not characters, so the hand-set shifts can go. And shared parts would shrink the scene code.
 
 SHOW: Card 3, "subtitles that understand sentences": a cue cut at the wrong place is re-cut by a
 GREY "parser" box that proposes and a GREEN "rules" box that checks (tag "idea · not built yet");
 facts underneath: "rule-based rewrite, first review round: 19 of 21 issues fixed (its own report)
-· reviewers found 11 regressions" · "later rounds were still being committed when this script was
-written" · "privacy video, Chinese: final cut not rendered when this script was written". [DATA]
+· reviewers found 11 regressions" · "round 3: judged a clear net improvement by its two reviewers
+(its commit note) · a fourth round was under way when this script was written" · "privacy video,
+Chinese: final cut not rendered when this script was written". [DATA]
 SAY: Third, subtitles. Hand-written rules decide where to cut each sentence into subtitle lines. In its first review round, the newest version fixed most of its targets, but made 11 other subtitles worse. A sentence parser could propose the cuts, and the rules could check them.
 
 SHOW: Card 4, "interactivity": the two real playground screenshots (A33 "Laplace Mechanism

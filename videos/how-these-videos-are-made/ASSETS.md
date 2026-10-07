@@ -18,6 +18,8 @@ Rules
   the commit that holds the mp4 (A04: `68d6c23`), because `output/` may be re-burned later.
 - Revised for script v2 (2026-10-07, repo at `60258b4`): A03, A04, A06, A09, A10, A14, A20, A28,
   A31, A32, A38, A40, A41, A42 changed; A44 added; A29 is no longer used (optional cut-in).
+  Final check of v2 (repo at `d4043cd`): A06 cards (3) and (4), A11 counts, A30, A44 and the
+  scene-code and subtitle numbers updated.
 - Marks: **V** = re-checked against the repo, git, run records or the transcript; **N** = from the
   research notes, not re-checked (re-check before rendering if it is shown as a number).
 
@@ -84,7 +86,7 @@ cd $R
 | A41 | S04 | misfiled DCAN PDF | REAL text | (text) |
 | A42 | S07 | round-1 QA prompt line (English, simulated kid): "… that is the video." | REAL text | (text) |
 | A43 | S04 | false start: builder runs started / killed | DATA (V) | (times) |
-| A44 | S09 | privacy newcomer review: "The renders are older than the source." | REAL text | (text) |
+| A44 | S09 | stale renders seen in file dates: the privacy newcomer review ("The renders are older than the source.") and the agent's own date check before `5be60d7` | REAL text | (text) |
 
 ---
 
@@ -232,9 +234,9 @@ third person, captioned "requests, summarized"; they are not quotes.
 |---|---|---|
 | S02 (1) | "Our brain is a neural net … it takes hardship, turmoil, dedication, pain … to train ourselves." (full cleaned text: "Our brain is a neural net, and we're training our brain to update its parameter. And I think it takes hardship, turmoil, dedication, pain, essentially, to train ourselves.") | "Our our brain is a neural net, and we're training our brain um, to update its parameter. And I think it only it takes hardship, turmoil, dedication, pain, essentially, to to train ourselves." |
 | S02 (2) | "AI is very patient, but at the same time, I'm doing a lot of cognitive offloading." | "Yeah, AI is very patient, but at the same time, I'm doing a lot of cognitive offloading." |
-| S02 (3) | "It's like the explainer video is a mentor" | "it's like the explainer video is is, is a mentor as a mentor and it's it's kind of paving the path" |
+| S02 (3) | "It's like the explainer video is a mentor …" (the request continues "and it's kind of paving the path") | "it's like the explainer video is is, is a mentor as a mentor and it's it's kind of paving the path" |
 | S02 (3b) | "they're never isolated" (a separate small card: in the request it comes before card 3) | "but th they're never isolated, right?" |
-| S02 (4) | "What is the next step? … I feel like it's definitely something interactive, something that demands the user to actually create" (keeps the hedge "I feel like") | "what is the next step? And I feel like it's definitely something interactive, something that demands the user to actually create, generate stuff, right?" |
+| S02 (4) | "What is the next step? … I feel like it's definitely something interactive, something that demands the user to actually create …" (keeps the hedge "I feel like"; the request continues "generate stuff, right?") | "what is the next step? And I feel like it's definitely something interactive, something that demands the user to actually create, generate stuff, right?" |
 | S11 | "I felt like LLM should not just be cognitive offloading; it should be something that can actually help us to make knowledge more accessible, but at the same time achieve some sort of the same level of learning." | "And I felt like LLM should not just be cognitive overload, uh, offloading; it sh should be something that can actually help us to make knowledge more accessible, but at the same time achieve some sort of the same level of of learning." |
 | S08 (A06b) | verbatim excerpt: "… there are a lot of terms that are derived from English and would thus sound weird directly translate that into Chinese." (no grammar edits) | "…I want it to be code switching between the English language and Chinese language. The thing is that there are a lot of terms that are derived from English and would thus sound weird directly translate that into Chinese." |
 | S02 request card 3 (summary) | "subtitles in both languages": paraphrase of "This is a good example where you have both English and Chinese subtitles, and thus it would benefit more people." (do not show the Bilibili URL; it carries tracking parameters) | |
@@ -456,14 +458,18 @@ of 病人, so it became 桶. These were measured with a speech recognizer on the
 
 ### A30 · The subtitle cue, before and after (V)
 ```bash
-git show 6f9e57c:videos/tictactoe-255168/output/tictactoe-255168.zh.srt | sed -n '618,620p'        # before (draft timing 10:48)
+git show 6f9e57c:videos/tictactoe-255168/output/tictactoe-255168.zh.srt | sed -n '618,620p'        # before: the English video's Chinese sidecar (written in 7a5ec3c), timed 10:48
+grep -o "11:42 then reads “不是电脑能做的，不只是统计对局”" $WF/wf_f49ebc60-495.json | head -1           # before, in the Chinese draft, as a QA reviewer quoted it
 git show 68d6c23:videos/tictactoe-255168/output/zh/tictactoe-255168.zh-en.srt | sed -n '876,879p'  # after, 00:11:42,030
 ```
 Before: "不是电脑能做的，不只是统计对局" (reads "It's not what a computer can do, not just counting
 games"). After: "不是。电脑能做的，不只是统计对局" / "No. A computer can do more than count." Cause and
 fix: `cd67aa4` (merged cues keep their sentence punctuation); found by both Chinese QA personas
-(`$WF/wf_f49ebc60-495.json`, N). The burned frame of the broken cue was never kept: the S08
-"before" frame is A04 with the old text redrawn in the band, tagged "reconstruction".
+(`$WF/wf_f49ebc60-495.json`, V: both quote "不是电脑能做的，不只是统计对局" and blame the subtitle
+merger, not the translation). The burned frame of the broken cue was never kept: the S08 "before"
+frame is A04 with the old text redrawn in the band, tagged "reconstruction · the old cue text, as
+both QA reviewers quoted it". The `6f9e57c` file has the same text but belongs to the English
+video (its Chinese sidecar), so it is supporting evidence, not the source of the Chinese frame.
 
 ### A31 · Voice stamp (V) — copy it now
 The file is in a gitignored `build/` folder and is rewritten by the next Chinese render, so copy it
@@ -547,13 +553,23 @@ Caption: "from the round-1 QA prompt (tic-tac-toe)". The line "You cannot hear t
 only in the Chinese QA prompts (`$WF/scripts/zh-qa-ttt-wf_f49ebc60-495.js` line 39): don't use it
 for the English review.
 
-### A44 · A reviewer noticed the stale renders (V)
+### A44 · Stale renders, seen in the file dates (V)
 ```bash
 f=$(ls $WF/wf_acf0396b-*.json); grep -o "The renders are older than the source.\*\* All 13 renders date from[^\"]\{0,90\}" $f | head -1
 ```
 "**The renders are older than the source.** All 13 renders date from about 18:24–18:34, before
 commit 5b369a5 (18:47) and other edits." (the privacy video's newcomer QA, Oct 4). Show the first
-sentence, without the asterisks. This is the one recorded case: S09 says "one reviewer noticed".
+sentence, without the asterisks, captioned "a reviewer · privacy video, Oct 4".
+
+The fix itself (`5be60d7`, Oct 6 00:07) followed the agent's own date check, not this note: at
+2026-10-06T00:06:51Z the transcript shows it listing
+`build/media_l/s06_explore/videos/s06_explore/480p15/Explore.mp4` dated 2026-10-05 23:24:02
+after a rebuild, while `s06_explore.py` had been edited since (commit `36f3450`, Oct 6 00:05:52).
+Draw that pair as text (DIAGRAM, caption "the agent · tic-tac-toe, Oct 6"). Check:
+```bash
+TZ=UTC git log -1 --date=format-local:'%F %H:%M:%S' --format='%h %ad %s' 36f3450
+```
+S09 says only "The file dates gave it away", which covers both.
 
 ---
 
@@ -575,8 +591,8 @@ for line in sys.stdin:
 ```
 Expected: 98 rows; 2 `user` (Oct 4 14:56 and 15:22), 96 `agent`; 28 WIP; per day Oct 4 21 · Oct 5
 21 · Oct 6 50 · Oct 7 6. The file holds no names. Later commits (this video's own, and the
-subtitle rounds) are left out on purpose; at `60258b4` the repo has 101 commits (99 by the agent,
-2 by the user, 31 WIP). The narration says "about a hundred, all but two by the agent": re-count
+subtitle rounds) are left out on purpose; at `d4043cd` the repo has 103 commits (101 by the agent,
+2 by the user, 32 WIP). The narration says "about a hundred, all but two by the agent": re-count
 right before the render (`git rev-list --count HEAD`) and switch to "over a hundred" above about
 110.
 
@@ -637,13 +653,18 @@ cost of one video".
   Tic-tac-toe: request Oct 5 21:53 → final `525bf2a` Oct 6 01:00 (3 h 07 min); 12:36.6.
   Chinese tic-tac-toe: `68d6c23`, 13:38.7. Chinese privacy: 1080p final not rendered (only 480p
   drafts, older than the QA fixes `a824463`).
-- Lexicon 17 entries; toolkit 3,521 lines at `bb3fc1e`; scene code about 400 lines per minute of
-  video (V): tic-tac-toe scenes 5,040 lines at the English final `525bf2a` for 12.6 min (5,292 at
-  `bb3fc1e`, which adds the Chinese-adaptation branches; both round to "about 400").
+- Lexicon 17 entries; toolkit 3,521 lines at `bb3fc1e`. Scene code per minute of video (V, all
+  `scenes/*.py`): tic-tac-toe 5,040 lines at the English final `525bf2a` for 12.6 min, about 400
+  (5,292 at `bb3fc1e`, with the Chinese-adaptation branches); privacy 7,532 lines at `5fc0837` for
+  24.2 min, about 310 (7,636 at `bb3fc1e`). So "about 400" is only the tic-tac-toe figure; S10
+  shows both and the narration gives no number.
 - Subtitle tool v3, round 1: 19 of 21 issues fixed, 2 partly (the implementer's own report,
   `wf_21e5261a`); 441 cues changed; reviewers found 11 regressions. Rounds 2 and 3 were committed
   as WIP after the fact sheet (`7c6fcc0` 21:14, `5b78118` 21:50); `tests/test_subtitles.py` has
-  35 tests at `60258b4`. The script no longer quotes a failing-test count.
+  35 tests at `60258b4`. Round 3 was then committed as `3aace23` (22:42, 44 tests), whose message
+  says "Both adversarial editors judge round 3 a clear net improvement" and "A fourth round
+  addresses the remaining regressions" (the agent's own report, N). The script no longer quotes a
+  failing-test count.
 - English privacy video, part 2, starts on a black frame (0.02–0.87 s) with the voice at 0.088 s
   (V by the v1 facts review).
 - Chinese privacy video: only 480p drafts in `output/zh/` (Oct 6 15:08) when v2 was written; the
