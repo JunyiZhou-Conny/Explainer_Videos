@@ -36,17 +36,19 @@ def is_cjk(ch: str) -> bool:
 
 
 def units(s: str) -> float:
-    """Display width in 'CJK character' units (a Latin character is about half as wide)."""
-    return sum(1.0 if _CJK.match(ch) else 0.55 for ch in s)
+    """Display width in 'CJK character' units (a Latin character is about half as wide), rounded
+    so that 48 Latin characters fit a 48 * 0.55 limit (the float sum is 26.40000000000002)."""
+    return round(sum(1.0 if _CJK.match(ch) else 0.55 for ch in s), 6)
 
 
-def _cuts(text: str) -> tuple[list[int], list[int]]:
+def _cuts(text: str, lines: bool = False) -> tuple[list[int], list[int]]:
     """Positions where a line or cue may break. 'good': after punctuation, and at spaces between
     Latin words. 'ok': between two CJK characters, at a space next to CJK text, or anywhere inside
     “…” or （…） (a last resort, see _cut_penalty). Never inside a number (255,168 / 0.5), between
     a number and its measure word (5 步), inside 《…》 (but at its spaces, as a last resort),
     before punctuation, after an opening bracket or before a bracket glued to the word it glosses
-    (hybrid argument（混合论证）)."""
+    (hybrid argument（混合论证）), except, between the `lines` of one cue, an English gloss of a
+    Chinese term (差分隐私 / （differential privacy）: both lines are on screen together)."""
     good, ok = [], []
     depth = quoted = 0
     mixed = bool(_CJK.search(text))
@@ -59,7 +61,11 @@ def _cuts(text: str) -> tuple[list[int], list[int]]:
         elif a == "》":
             depth = max(0, depth - 1)
         quoted = quoted + 1 if a in "“（" else max(0, quoted - 1) if a in "”）" else quoted
-        if b in _NO_LINE_START or a in _OPENERS or (b in "（(" and a != " " and a not in _BREAK_AFTER):
+        if b in "（(" and a != " " and a not in _BREAK_AFTER:
+            if lines and is_cjk(a) and re.match(r"[（(][A-Za-z]", text[i:]):
+                ok.append(i)                                  # 差分隐私 / （differential privacy）
+            continue
+        if b in _NO_LINE_START or a in _OPENERS:
             continue
         if depth:                                             # inside 《…》: only at spaces, as a last resort
             if a == " " and b != " ":
@@ -134,34 +140,44 @@ _PARTICLES = {"out", "up", "off", "away", "back", "down", "else"}
 
 # a Chinese line should not end on a preposition / conjunction ("统计从 / 现在这个棋盘"), a 的 that
 # belongs to the next noun ("公开的 / 选民名单") or a negation, or start with a particle
-_CJK_NO_END = set("从把在对给向跟和与被让将比以于为及或而但且的不没")
+_CJK_NO_END = set("从把在对给向跟和与被让将比以于为及或而但且的不没叫")   # 叫: "标题就叫 / 《…》"
 _CJK_NO_START = set("的了着过地得们吗呢吧啊")
-_CJK_NO_END_WORDS = ("这些", "那些", "这个", "那个", "这种", "那种", "每个", "某个")   # "把这些 / query"
+_CJK_NO_END_WORDS = re.compile(r"[这那每某哪一两几][个些种条份篇项位张件句段组批]$")   # "把这些 / query", "算一个 / counting query"
 _CJK_NO_START_WORDS = ("以内", "以上", "以下", "以外", "之间", "之内", "之外")         # "clip 到 C / 以内"
 _TITLE = re.compile(r"《[^《》]*》")
 _GLOSS = re.compile(r"[A-Za-z][A-Za-z' -]*(?=[，；。]|$)")    # a spoken English gloss: "，sensitivity；"
 
 
-# terms jieba splits (差分/隐私, 深度/网络, 不/可能) but a line must keep whole; the zh terms of every
+# terms jieba splits (差分/隐私, 深度/网络, 不/可能) but a line must keep whole; the headwords of every
 # video's glossary are added to them (_glossary_terms)
 _TERMS = ("差分隐私", "本地化差分隐私", "深度网络", "不可能", "隐私预算", "拉普拉斯机制", "组合定理",
           "指数机制", "最小割", "比特串", "训练集")
-_TERM_EDGE = set("的了在是和与或被把对个种局条次步年第")   # not a term's first or last character
+_NOT_WORDS = ("是从",)          # jieba's dictionary has them, but they are two words: 指的是 / 从第一步
+_TERM_EDGE = set("的了在是和与或被把对个种局条次步年第为到后再越先也都就")   # not a term's first or last character
+_TERM_INNER = set("的地得了着过就叫有为只再后是之那这不没也都又还被把将从向对在和与或及而但且吗呢吧啊么每越到")
+_TERM_NOTES = ("保持", "保留", "不变", "注意", "标签", "卡片", "字幕", "原样", "括注", "首次", "文档")
 
 
 def _glossary_terms() -> list[str]:
-    """Chinese terms of videos/*/i18n/zh/glossary.yaml: each run of 2-7 CJK characters of a term's
-    zh_subtitle (its alternatives and label forms) that does not start or end on a particle,
-    preposition or measure word."""
+    """Headwords of videos/*/i18n/zh/glossary.yaml: each alternative of a term's zh_subtitle (split
+    at ； and /, without its （…） note or a symbol beside it: 机制 M, ε-不可区分性; split at a 的:
+    公开的选民名单 → 公开, 选民名单) that is a run of 2-7 CJK characters with no particle, preposition
+    or adverb inside or at its edges. Not every CJK run of the field: it also holds example phrases
+    and editorial notes (标题就叫…, 字幕不用…), which would make jieba keep a phrase like 标题就叫
+    together and move a line break to a worse place."""
     import yaml
 
     out = []
     for g in sorted((Path(__file__).resolve().parent.parent / "videos").glob("*/i18n/zh/glossary.yaml")):
         for t in (yaml.safe_load(g.read_text(encoding="utf-8")) or {}).get("terms") or []:
-            for w in re.split(r"[^一-鿿]+", str(t.get("zh_subtitle") or "")):
-                if 2 <= len(w) <= 7 and w[0] not in _TERM_EDGE and w[-1] not in _TERM_EDGE:
-                    out.append(w)
-    return out
+            for alt in re.split(r"[；;]|/", str(t.get("zh_subtitle") or "")):
+                alt = re.split(r"[（(]", alt, maxsplit=1)[0].strip()
+                alt = re.sub(r"^[A-Za-zα-ωΑ-Ω0-9()′'.-]+[\s-]+|\s+[A-Za-zα-ωΑ-Ω0-9()′'.]+$", "", alt)
+                for w in alt.split("的"):                        # 公开的选民名单: 选民名单
+                    if (re.fullmatch(r"[一-鿿]{2,7}", w) and w[0] not in _TERM_EDGE and w[-1] not in _TERM_EDGE
+                            and not _TERM_INNER & set(w[1:-1]) and not any(n in w for n in _TERM_NOTES)):
+                        out.append(w)
+    return list(dict.fromkeys(out))
 
 
 @lru_cache(maxsize=1)
@@ -176,6 +192,8 @@ def _jieba():
     jieba.setLogLevel(logging.WARNING)
     for w in [*_TERMS, *_glossary_terms()]:
         jieba.add_word(w)
+    for w in _NOT_WORDS:
+        jieba.del_word(w)
     return jieba
 
 
@@ -204,14 +222,20 @@ def _cut_penalty(text: str, c: int) -> float:
     a, b = text[c - 1], text[c] if c < len(text) else ""
     if is_cjk(a) or is_cjk(b) or (a == " " and is_cjk(text[c - 2:c - 1] or " ")):
         before, after = head.rstrip(), text[c:].lstrip()
-        bad_end = before[-1:] in _CJK_NO_END or before.endswith(_CJK_NO_END_WORDS)
+        bad_end = before[-1:] in _CJK_NO_END or _CJK_NO_END_WORDS.search(before)
         bad_start = after[:1] in _CJK_NO_START or (after.startswith(_CJK_NO_START_WORDS)
                                                    and before[-1:] not in _BREAK_AFTER)
         names = re.match(r"[和与及] [A-Z]", after) and before[-1:].isascii() and before[-1:].isalpha()
-        if bad_end or bad_start or names:                 # names: "Rothblum / 和 Vadhan"
+        clause = re.split(r"[，。、；：！？]", before)[-1]
+        span = "从" in clause and "到" in clause[clause.rfind("从"):] + re.split(r"[，。、；：！？]", after)[0]
+        if bad_end or bad_start or names or span:         # names: "Rothblum / 和 Vadhan"; span: "从第一步 / 到最后一步"
             cost += 6.0
         if before[-1:] in "，、" and _GLOSS.match(after):
             cost += 20.0                                  # "隐私预算 / privacy budget。": keep the gloss
+        if b in "（(" and a != " ":
+            cost += 2.0                                   # a line break before its English gloss
+        if before[-1:] == "，" and re.match(r"意思是|也就是|就是说|即", after):
+            cost += 6.0                                   # "叫 winner，/ 意思是“赢家”": keep the gloss
         bounds = _word_bounds(text) if is_cjk(a) and is_cjk(b) else None
         if bounds is not None and c not in bounds:
             cost += 8.0                                   # inside a word: 现|在
@@ -244,7 +268,8 @@ _STRONG = "。！？；：.!?;:—…"
 def _mark_cost(text: str, c: int) -> float:
     """Weight of the mark a cut at c follows, so that the stronger mark wins when the balance is
     close: none after 。！？；：. ! ? ; : — …, 3 after a comma (or no mark at all), 8 after a comma
-    that leaves a short clause before a 。；！？ (the cut belongs there), 6 after 、 (it splits a
+    that leaves a short clause before a 。；！？ (the cut belongs there), after a short lead-in that
+    follows one (；在 Python 里，) or before a short 又/也/还 clause (想……，又要强隐私，), 6 after 、 (it splits a
     list: 光凭邮编、/ 出生日期), 10 after a 、 between two Latin names (Dwork、/ Rothblum) or a comma
     between two numbers (moves 7, / 8 and 9)."""
     head = text[:c].rstrip()
@@ -259,6 +284,13 @@ def _mark_cost(text: str, c: int) -> float:
     end = re.search(r"[。！？；.!?;]", text[c:])
     if head[-1:] in "，," and end and units(text[c:c + end.start()]) <= 7:
         return 8.0                  # a clause end a few characters on: "偶数个 1，/ 真实答案为 0；"
+    if head[-1:] == "，":
+        start = max(head.rfind(m, 0, len(head) - 1) for m in "。！？；：")
+        if start >= 0 and units(head[start + 1:-1]) <= 7:
+            return 8.0              # a short lead-in after a strong mark: "叫 Python；在 Python 里，/ 列表……"
+        nxt_clause = re.match(r"[又也还]([^，。！？；：]*)[，。！？；：]", text[c:].lstrip())
+        if nxt_clause and units(nxt_clause.group(1)) <= 6:
+            return 8.0              # the second half of a pair: "想对各种问题都答得准，/ 又要强隐私，"
     return 3.0
 
 
@@ -287,7 +319,7 @@ def split_balanced(text: str, limit: float, hang: bool = False) -> list[str]:
     text = " ".join(text.split())
     if units(strip_end(text) if hang else text) <= limit:
         return [text]
-    good, ok = _cuts(text)
+    good, ok = _cuts(text, lines=not hang)
     stops = "，；：。！？,;:.!?…—"                     # not after 、, a closing quote or bracket
     punct = [c for c in good if _cut_penalty(text, c) == 0 and text[c - 1] in stops + " "
              and (text[c - 1] != " " or text[c - 2] in stops)]
@@ -310,7 +342,8 @@ def split_balanced(text: str, limit: float, hang: bool = False) -> list[str]:
     for k in range(2, 40):
         tries = (
             lambda prev, ideal: [c for c in punct if c > prev],
-            lambda prev, ideal: ([c for c in good if c > prev and abs(units(text[:c]) - ideal) <= total / (2.5 * k)]
+            lambda prev, ideal: ([c for c in good if c > prev and abs(units(text[:c]) - ideal) <= total / (2.5 * k)
+                                  and text[c - 1] != "、"]
                                  or [c for c in ok + good if c > prev]),
         )
         for n, pool_of in enumerate(tries):
@@ -594,6 +627,7 @@ def _two_lines(cue, limit: float) -> list[tuple[float, float, str]]:
         if len(split_balanced(strip_end(left), limit)) > 2 or len(split_balanced(right, limit)) > 2:
             continue
         at_stop = text[c - 1] in stops or (text[c - 1] == " " and text[c - 2] in stops)
+        at_stop = at_stop and text[:c].rstrip()[-1:] != "、"    # a cue cut inside a list: "一个集合 // 一个比特串"
         clean = (at_stop and left[-1:] in "，；：。！？,;:.!?" and min(units(left), units(right)) >= limit / 3
                  and not listy(strip_end(left)) and not listy(right))
         if len(lines) == 2 and not clean:
