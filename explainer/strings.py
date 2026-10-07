@@ -1,12 +1,15 @@
 """Inventory every piece of on-screen text a video creates (for translation and review).
 
-    python -m explainer.strings videos/<id>                  # all scenes -> build/strings.json
+    python -m explainer.strings videos/<id>                  # all scenes -> build/strings.en.json
     python -m explainer.strings videos/<id> --only s03_stop  # some scenes
+    python -m explainer.strings videos/<id> --lang zh        # + each string's current translation ("tr")
 
 Each scene runs as a Manim dry run (no frames; narration from the TTS cache) in its own process,
 with Text / MarkupText / Paragraph / Tex / MathTex / Code constructors patched to record the string,
 the kind, the font size and the line in the scene (or helper) file that created it. Identical
-(kind, text) entries are merged with all their call sites.
+(kind, text) entries are merged with all their call sites. Strings are recorded in English (the keys
+of i18n/<lang>/strings/*.yaml); with --lang, "tr" is what the language version shows (equal to
+"text" when it is untranslated).
 """
 
 from __future__ import annotations
@@ -26,6 +29,8 @@ toolkit = Path(sys.argv[5])
 sys.path.insert(0, str(scene_file.parent)); sys.path.insert(0, str(toolkit.parent))
 import manim
 from manim import Code, MarkupText, MathTex, Paragraph, Tex, Text, tempconfig
+import explainer.style                  # installs the i18n hooks first, so the recorder below sees the
+from explainer import i18n               # English source strings (the strings/*.yaml keys)
 records = []
 
 def site():
@@ -43,7 +48,10 @@ def patch(cls, kind, getter):
         try:
             texts = getter(a, k)
             for t in (texts if isinstance(texts, list) else [texts]):
-                records.append({"kind": kind, "text": t, "size": k.get("font_size"), "site": site()})
+                rec = {"kind": kind, "text": t, "size": k.get("font_size"), "site": site()}
+                if i18n.active() and isinstance(t, str) and kind != "code":
+                    rec["tr"] = i18n.tr(t, kind)
+                records.append(rec)
         except Exception as e:  # never break the scene
             records.append({"kind": kind, "text": f"<unreadable: {e}>", "size": None, "site": site()})
         orig(self, *a, **k)
@@ -81,7 +89,7 @@ def main(argv=None) -> int:
 
     project = args.project.resolve()
     spec = yaml.safe_load((project / "video.yaml").read_text())
-    env = {**scene_env(spec, None), "EXPLAINER_LANG": args.lang}
+    env = {**scene_env(spec, None, args.lang), "EXPLAINER_LANG": args.lang}   # that language's voice
     only = set(args.only.split(",")) if args.only else None
     toolkit = Path(__file__).resolve().parent
     merged: dict[tuple, dict] = {}
@@ -105,6 +113,8 @@ def main(argv=None) -> int:
             if key not in merged:
                 merged[key] = {"kind": rec["kind"], "text": rec["text"], "sizes": set(), "sites": set(),
                                "scenes": set(), "count": 0}
+                if "tr" in rec:
+                    merged[key]["tr"] = rec["tr"]
                 order.append(key)
             m = merged[key]
             m["count"] += 1

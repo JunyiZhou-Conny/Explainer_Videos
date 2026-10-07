@@ -146,13 +146,17 @@ def write_wav(path: Path, samples: np.ndarray, sr: int = SAMPLE_RATE) -> None:
         w.writeframes(pcm.tobytes())
 
 
-@lru_cache(maxsize=4)
 def load_lexicon(lang: str | None = None) -> dict[str, dict]:
     """Pronunciation fixes: lexicon.yaml (English videos), lexicon.<lang>.yaml for a language
-    version (say:-only respellings for that language's voice; never mixed into the English one)."""
+    version (say:-only respellings for that language's voice; never mixed into the English one).
+    Without `lang`, the language being rendered (EXPLAINER_LANG)."""
+    return _load_lexicon(lang or (os.environ.get("EXPLAINER_LANG") or "en").strip().lower())
+
+
+@lru_cache(maxsize=4)
+def _load_lexicon(lang: str) -> dict[str, dict]:
     import yaml
 
-    lang = lang or (os.environ.get("EXPLAINER_LANG") or "en").strip().lower()
     name = "lexicon.yaml" if lang == "en" else f"lexicon.{lang}.yaml"
     path = Path(__file__).with_name(name)
     return (yaml.safe_load(path.read_text()) or {}) if path.exists() else {}
@@ -297,6 +301,11 @@ class KokoroBackend(Backend):
         self.voice, self.speed, self.lang = voice, speed, lang
         self._engine = None
 
+    @property
+    def lexicon_lang(self) -> str:
+        """The IPA lexicon matches the voice's language (en-us -> lexicon.yaml), not EXPLAINER_LANG."""
+        return self.lang.split("-")[0]
+
     def params(self):
         return {"voice": self.voice, "speed": self.speed, "lang": self.lang, "v": 2}
 
@@ -327,7 +336,7 @@ class KokoroBackend(Backend):
 
     def phonemize(self, text: str) -> str:
         """Phonemize with lexicon overrides spliced in at the phoneme level."""
-        lex = {k: v for k, v in load_lexicon().items() if v.get("ipa")}
+        lex = {k: v for k, v in load_lexicon(self.lexicon_lang).items() if v.get("ipa")}
         rx = _lexicon_regex(lex)
         tok = self.engine.tokenizer
         if rx is None:
@@ -347,7 +356,7 @@ class KokoroBackend(Backend):
 
     def _lexicon_key(self, sentence: str) -> str:
         """The lexicon entries a sentence uses, so editing the lexicon re-voices only those sentences."""
-        lex = {k: v for k, v in load_lexicon().items() if v.get("ipa")}
+        lex = {k: v for k, v in load_lexicon(self.lexicon_lang).items() if v.get("ipa")}
         rx = _lexicon_regex(lex)
         used = sorted({m.group(1) for m in rx.finditer(sentence)}) if rx else []
         return json.dumps({w: lex[w]["ipa"] for w in used}, ensure_ascii=False) if used else ""
@@ -536,24 +545,40 @@ class EspeakBackend(Backend):
                         respell(text)], check=True)
 
 
-def get_backend() -> Backend:
-    """Backend chosen by EXPLAINER_TTS (default: kokoro if its model is present, else silent)."""
-    name = os.environ.get("EXPLAINER_TTS", "").strip().lower()
-    voice = os.environ.get("EXPLAINER_VOICE") or None
-    speed = float(os.environ.get("EXPLAINER_SPEED", "1.0"))
+def backend_name(env=None) -> str:
+    """The backend get_backend() uses in this environment: EXPLAINER_TTS (default: kokoro if its
+    model is present, else silent), with edge served through Azure when its keys are set."""
+    env = os.environ if env is None else env
+    name = env.get("EXPLAINER_TTS", "").strip().lower()
     if not name:
         try:
             KokoroBackend.model_dir()
             name = "kokoro"
         except FileNotFoundError:
             name = "silent"
+    if name == "edge" and env.get("AZURE_SPEECH_KEY") and env.get("AZURE_SPEECH_REGION") \
+            and env.get("EXPLAINER_EDGE_VIA_AZURE", "1") != "0":
+        name = "azure"                                # same voice through the licensed endpoint
+    return name
+
+
+def voice_identity(env=None) -> str:
+    """What decides the sound of the narration (backend, voice, speed): build.py stamps every scene
+    render with it, so a change of voice or backend re-renders the scenes."""
+    env = os.environ if env is None else env
+    return json.dumps({"tts": backend_name(env), "voice": env.get("EXPLAINER_VOICE") or None,
+                       "speed": float(env.get("EXPLAINER_SPEED") or 1.0)}, sort_keys=True)
+
+
+def get_backend() -> Backend:
+    """Backend chosen by EXPLAINER_TTS (see backend_name)."""
+    name = backend_name()
+    voice = os.environ.get("EXPLAINER_VOICE") or None
+    speed = float(os.environ.get("EXPLAINER_SPEED", "1.0"))
     if name == "kokoro":
         return KokoroBackend(voice or "af_heart", speed)
     if name == "elevenlabs":
         return ElevenLabsBackend(voice)
-    if name == "edge" and os.environ.get("AZURE_SPEECH_KEY") and os.environ.get("AZURE_SPEECH_REGION") \
-            and os.environ.get("EXPLAINER_EDGE_VIA_AZURE", "1") != "0":
-        name = "azure"                                # same voice through the licensed endpoint
     if name == "edge":
         return EdgeBackend(voice or "en-US-AndrewNeural", speed)
     if name == "azure":

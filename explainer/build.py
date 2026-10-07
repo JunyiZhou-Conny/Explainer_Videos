@@ -46,6 +46,7 @@ import yaml
 
 from . import REPO_ROOT
 from . import subtitles as subs
+from .voice import backend_name, voice_identity
 
 # default narrator per language when video.yaml has no `languages: {<lang>: {voice: ...}}`
 # (edge voices switch to the official Azure endpoint when AZURE_SPEECH_KEY/REGION are set: see voice.py)
@@ -104,19 +105,31 @@ def scene_movie(project: Path, quality: str, scene: dict, lang: str = "en") -> P
             / f"{scene['cls']}.mp4")
 
 
-def is_stale(project: Path, quality: str, scene: dict, lang: str = "en") -> bool:
+def voice_stamp(project: Path, quality: str, scene: dict, lang: str = "en") -> Path:
+    """Records the narrator (voice.voice_identity) a scene render was made with."""
+    return media_dir(project, quality, scene, lang) / "voice.json"
+
+
+def is_stale(project: Path, quality: str, scene: dict, lang: str = "en", voice: str | None = None) -> bool:
     """A scene needs rendering if its movie is missing or older than anything it is built from:
     its own file, the other .py files next to it (shared helpers), the script, video.yaml, assets,
-    and the toolkit."""
+    and the toolkit; or (with `voice`, a voice.voice_identity()) if it was rendered with another
+    narrator, e.g. after AZURE_SPEECH_KEY was set or the voice changed."""
     movie = scene_movie(project, quality, scene, lang)
     if not movie.exists():
         return True
+    if voice is not None:
+        stamp = voice_stamp(project, quality, scene, lang)
+        if not stamp.exists() or stamp.read_text().strip() != voice:
+            return True
     scene_file = project / scene["file"]
     sources = [scene_file, *scene_file.parent.glob("*.py"), project / "script.md", project / "video.yaml",
                *(project / "assets").glob("*"), *Path(__file__).parent.glob("*.py"),
                *Path(__file__).parent.glob("*.yaml")]
     if lang != "en":
-        sources += [p for p in (project / "i18n" / lang).rglob("*") if p.is_file()]
+        tr = project / "i18n" / lang                 # what a render reads (not the glossary or companions)
+        sources += [p for d in ("narration", "strings", "assets") for p in (tr / d).rglob("*") if p.is_file()]
+        sources += [p for p in tr.glob("*.yaml") if p.stem in ("narration", "strings")]
         sources += list((Path(__file__).parent / "locales").glob("*.yaml"))
     newest = max((p.stat().st_mtime for p in sources if p.is_file()), default=0.0)
     return movie.stat().st_mtime < newest
@@ -140,6 +153,7 @@ def render_scene(project: Path, quality: str, scene: dict, env: dict) -> Path:
         if "anchor not found" in line or "no zh translation" in line or "translation for narration" in line:
             print(f"  WARNING {scene['cls']}: {line.strip()}", flush=True)
     print(f"  rendered {scene['cls']:<24} -> {out.relative_to(project)}", flush=True)
+    voice_stamp(project, quality, scene, lang).write_text(voice_identity(env))
     return out
 
 
@@ -310,10 +324,11 @@ def main(argv=None):
     elif only is not None:  # exactly the named scenes
         todo = [s for s in scenes if Path(s["file"]).stem in only or s["cls"] in only]
     else:                   # whatever is missing or older than its sources
-        todo = [s for s in scenes if is_stale(project, args.quality, s, lang)]
+        voice = voice_identity(env)
+        todo = [s for s in scenes if is_stale(project, args.quality, s, lang, voice)]
     if todo:
         print(f"Rendering {len(todo)} scene(s) at {QUALITY_DIRS[args.quality]} lang={lang} "
-              f"with TTS={env['EXPLAINER_TTS']} voice={env.get('EXPLAINER_VOICE', '-')} (jobs={args.jobs})",
+              f"with TTS={backend_name(env)} voice={env.get('EXPLAINER_VOICE', '-')} (jobs={args.jobs})",
               flush=True)
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
             list(pool.map(lambda s: render_scene(project, args.quality, s, env), todo))
