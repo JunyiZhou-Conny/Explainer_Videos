@@ -78,8 +78,8 @@ def _cuts(text: str, lines: bool = False) -> tuple[list[int], list[int]]:
             best.append(i)
         elif a == " ":
             p = text[i - 2] if i >= 2 else ""
-            if p.isdigit() and is_cjk(b):
-                continue                                      # "5 步"
+            if (p.isdigit() and is_cjk(b)) or (p in "第约" and b.isdigit()):
+                continue                                      # "5 步", "第 4 节"
             if not is_cjk(p) and not is_cjk(b):
                 if not mixed:
                     best.append(i)                            # between words of an English line
@@ -125,13 +125,60 @@ def strip_end(piece: str) -> str:
     return piece.rstrip(_DROP_AT_END + " ") if piece and _CJK.search(piece) else piece
 
 
-# an English line should not end on one of these ("by a / billion", "scrambles their own / row")
-_FUNCTION_WORDS = {"a", "an", "the", "of", "to", "by", "in", "on", "at", "for", "and", "or", "nor",
-                   "with", "from", "as", "is", "are", "was", "were", "be", "been", "being",
-                   "has", "have", "had", "do", "does", "did", "can", "could", "will", "would",
-                   "shall", "should", "may", "might", "must", "its", "their", "his", "her", "our",
-                   "your", "my", "own", "that", "than", "into", "per", "if", "but", "so", "not", "no",
-                   "each", "every"}
+# an English line should not end on one of these ("by a / billion", "scrambles their own / row",
+# "changes across / coordinates", "A published release cannot / know")
+_AUXILIARIES = {"is", "are", "was", "were", "be", "been", "being", "has", "have", "had", "do", "does",
+                "did", "can", "could", "will", "would", "shall", "should", "may", "might", "must",
+                "cannot", "can't", "won't", "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't",
+                "weren't", "couldn't", "wouldn't", "shouldn't", "hasn't", "haven't", "hadn't"}
+_PREPOSITIONS = {"of", "to", "by", "in", "on", "at", "for", "with", "from", "as", "into", "per", "than",
+                 "against", "across", "like", "about", "between", "over", "through", "after", "before",
+                 "without", "within", "under", "onto", "upon", "toward", "towards", "among", "along",
+                 "around", "beyond", "during", "since", "via"}
+_FUNCTION_WORDS = (_AUXILIARIES | _PREPOSITIONS |
+                   {"a", "an", "the", "and", "or", "nor", "its", "their", "his", "her", "our", "your",
+                    "my", "own", "that", "if", "but", "so", "not", "no", "each", "every", "until",
+                    "unless", "whether", "where", "when", "while", "whose", "what", "which", "who",
+                    "whom", "because", "though", "although"})
+_NUMBER_WORDS = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+                 "eleven", "twelve"}
+_NUMBER = re.compile(r"\d+(?:[.,]\d+)*%?|(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)"
+                     r"(?:-(?:one|two|three|four|five|six|seven|eight|nine))?|" + "|".join(_NUMBER_WORDS))
+_PRONOUNS = {"it", "we", "they", "he", "she", "you", "i"}
+_ADVERBS = {"now", "also", "still", "only", "never", "always", "just", "even", "then", "really", "often"}
+_TERM_STOP = _FUNCTION_WORDS | _PRONOUNS | _ADVERBS | {"this", "one", "itself", "how", "many", "first",
+                                                       "once", "yourself", "further", "early", "yes", "vs"}
+
+
+@lru_cache(maxsize=1)
+def _en_terms() -> frozenset[tuple[str, str]]:
+    """Word pairs inside the English terms of videos/*/i18n/zh/glossary.yaml (each 2-3 word
+    alternative of a term's en field: counting query, privacy budget, Laplace mechanism), which a
+    line break should not split."""
+    import yaml
+
+    out = set()
+    for g in sorted((Path(__file__).resolve().parent.parent / "videos").glob("*/i18n/zh/glossary.yaml")):
+        for t in (yaml.safe_load(g.read_text(encoding="utf-8")) or {}).get("terms") or []:
+            for alt in re.split(r"[/;,:]", re.sub(r"\([^()]*\)", "", str(t.get("en") or ""))):
+                ws = [w.lower() for w in alt.split()]
+                if 2 <= len(ws) <= 3 and all(re.fullmatch(r"[a-z]{2,}", w) for w in ws) and not _TERM_STOP & set(ws):
+                    out.update(zip(ws, ws[1:]))
+    return frozenset(out)
+
+
+def _in_term(text: str, c: int) -> bool:
+    """The word gap before position c is inside a glossary term ("counting / query")."""
+    a = text[:c].split()[-1:] or [""]
+    b = text[c:].split()[:1] or [""]
+    return (a[0].lower(), b[0].lower().rstrip(",.;:!?")) in _en_terms()
+
+
+# a word that starts a clause: a cut before it (", which" / " and") lines up with a Chinese clause
+_CLAUSE_STARTERS = {"and", "but", "or", "so", "yet", "which", "who", "where", "when", "while",
+                    "because", "then", "that", "if", "unless", "as"}
+_DETERMINERS = {"a", "an", "the", "this", "that", "these", "those", "its", "their", "his", "her",
+                "our", "your", "my", "each", "every", "one"}
 
 
 # nor start with one of these ("single / out", "whatever / else")
@@ -210,13 +257,16 @@ def _word_bounds(text: str) -> frozenset[int] | None:
     return frozenset(out)
 
 
-def _cut_penalty(text: str, c: int) -> float:
+def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
     """Extra cost (in units) of cutting at position c. English (at a word gap): a plain gap costs
     more than a cut after punctuation, a gap after a function word or next to a number much more.
     Chinese: a cut after a preposition or before a particle costs a lot. Both: a cut inside “…”
-    or （…） costs a little, one inside a 《…》 title more (cut before the 《 instead)."""
+    or （…） costs a little (a lot at a cue boundary), one inside a 《…》 title more (cut before
+    the 《 instead). `lines`: the cut is a line break inside a cue, not a cue boundary."""
     head = text[:c]
-    cost = 5.0 if head.count("“") + head.count("（") > head.count("”") + head.count("）") else 0.0
+    cost = 0.0
+    if head.count("“") + head.count("（") > head.count("”") + head.count("）"):
+        cost += 5.0 if lines else 15.0                    # a cue boundary inside a gloss: "（混合 // 论证）"
     if head.count("《") > head.count("》"):
         cost += 10.0
     a, b = text[c - 1], text[c] if c < len(text) else ""
@@ -234,8 +284,8 @@ def _cut_penalty(text: str, c: int) -> float:
             cost += 20.0                                  # "隐私预算 / privacy budget。": keep the gloss
         if b in "（(" and a != " ":
             cost += 2.0                                   # a line break before its English gloss
-        if before[-1:] == "，" and re.match(r"意思是|也就是|就是说|即", after):
-            cost += 6.0                                   # "叫 winner，/ 意思是“赢家”": keep the gloss
+        if not lines and before[-1:] == "，" and _short_gloss(after):
+            cost += 6.0                                   # a cue boundary before it: "边格 // 也就是……"
         bounds = _word_bounds(text) if is_cjk(a) and is_cjk(b) else None
         if bounds is not None and c not in bounds:
             cost += 8.0                                   # inside a word: 现|在
@@ -245,33 +295,60 @@ def _cut_penalty(text: str, c: int) -> float:
     prev = text[:c - 1].rsplit(" ", 1)[-1]
     if not prev[-1:].isalnum():
         return cost
-    cost += 4.0
-    if prev.lower() in _FUNCTION_WORDS:
-        cost += 8.0
     words = text[:c - 1].split()
+    low, nxt = prev.lower(), text[c:].split(" ", 1)[0]
+    word = nxt.rstrip(",.;:!?").lower()
+    content = word.isalpha() and nxt[:1].islower() and word not in _FUNCTION_WORDS | _CLAUSE_STARTERS
+    if low not in _FUNCTION_WORDS and (word in _CLAUSE_STARTERS | _AUXILIARIES | _PREPOSITIONS - {"of"}
+                                       and not _list_and(text, c)):
+        cost += 1.0                                       # before a clause, verb or phrase: "…table / and walking away"
+    else:
+        cost += 4.0
+    if low in _FUNCTION_WORDS:
+        cost += 8.0
+    elif (len(words) > 1 and words[-2].lower() in _AUXILIARIES - {"is", "are", "was", "were", "be", "been", "being"}
+          and (low in _ADVERBS or low.endswith("ly"))):
+        cost += 8.0                                       # "can now / move", "would actually / use"
+    elif low in _PRONOUNS and len(words) > 1 and words[-2].lower() in _CLAUSE_STARTERS | {"so", "then"}:
+        cost += 8.0                                       # "so it / counts"
     if prev[:1].isupper() and len(words) > 1 and (b.isupper() or re.match(r"(and|or) [A-Z]", text[c:])):
         cost += 8.0                                       # names: "Kobbi / Nissim", "Nissim / and Adam"
-    if text[c:].split(" ", 1)[0].rstrip(",.;:!?") in _PARTICLES:
+    if _in_term(text, c):
+        cost += 8.0                                       # a glossary term: "counting / query"
+    if word in _PARTICLES:
         cost += 6.0                                       # "single / out", "whatever / else"
-    if prev.endswith(("'s", "’s")):
-        cost += 6.0                                       # "Alice's / row"
-    elif len(words) > 1 and words[-2].endswith(("'s", "’s")):
-        cost += 4.0                                       # "framework's sharper / analysis": a noun phrase
-    if prev[-1:].isdigit() or b.isdigit():
-        cost += 4.0                                       # "on move / 6", "9 times / 8"
+    if any(w.endswith(("'s", "’s")) for w in words[-2:]) and content:
+        cost += 6.0                                       # "Alice's / row", "framework's sharper / analysis"
+    if prev[-1:].isdigit() or b.isdigit() or word in _NUMBER_WORDS:
+        cost += 4.0                                       # "on move / 6", "9 times / 8", "at most / one"
+    if _NUMBER.fullmatch(low) and (content or text[c:].startswith("and a ")):
+        cost += 8.0                                       # "at most one / empty square", "fifty-two / and a half"
+    if any(m.start() < c - 1 < m.end() for m in re.finditer(r"\S+ to the power of \S+", text)):
+        cost += 8.0                                       # "10 to the power / of 120"
+    elif "-" in prev.strip("-") and prev.islower() and content:
+        cost += 4.0                                       # "the two-question / version"
     return cost
 
 
 _STRONG = "。！？；：.!?;:—…"
 
 
+def _short_gloss(after: str) -> bool:
+    """`after` starts with a short explanation of the term before the comma: 意思是“赢家”, 也就是 1,
+    也就是每条边正中间的那一格 (not a whole clause: 也就是改变一条记录最多能让答案变化多少)."""
+    gloss = re.match(r"(?:意思是|也就是|就是说|即)[^，。！？；：]*", after)
+    return bool(gloss) and units(gloss.group()) <= 14
+
+
 def _mark_cost(text: str, c: int) -> float:
     """Weight of the mark a cut at c follows, so that the stronger mark wins when the balance is
     close: none after 。！？；：. ! ? ; : — …, 3 after a comma (or no mark at all), 8 after a comma
     that leaves a short clause before a 。；！？ (the cut belongs there), after a short lead-in that
-    follows one (；在 Python 里，) or before a short 又/也/还 clause (想……，又要强隐私，), 6 after 、 (it splits a
+    follows one (；在 Python 里，), before a short 又/也 clause (想……，又要强隐私，) or before a
+    short gloss (winner，意思是“赢家”；边格，也就是每条边正中间的那一格), 6 after 、 (it splits a
     list: 光凭邮编、/ 出生日期), 10 after a 、 between two Latin names (Dwork、/ Rothblum) or a comma
-    between two numbers (moves 7, / 8 and 9)."""
+    between two numbers (moves 7, / 8 and 9), two names or adjectives (Dwork, / Rothblum; broad, /
+    flexible accuracy) or before a short appositive (f(x), / 41,; noise, / Y,)."""
     head = text[:c].rstrip()
     if head[-1:] in _STRONG:
         return 0.0
@@ -281,48 +358,73 @@ def _mark_cost(text: str, c: int) -> float:
         return 10.0 if names else 6.0
     if head[-1:] == "," and head[-2:-1].isdigit() and nxt.isdigit():
         return 10.0                                        # a list of numbers: "moves 7, / 8 and 9"
-    end = re.search(r"[。！？；.!?;]", text[c:])
-    if head[-1:] in "，," and end and units(text[c:c + end.start()]) <= 7:
+    if head[-1:] == "," and (_list_comma(text, c) or re.match(r"(\S*\d\S*|[A-Z]),", text[c:].lstrip())):
+        return 10.0                                        # "Dwork, / Rothblum", "broad, / flexible", "f(x), / 41,"
+    end = re.search(r"[。！？；.!?;]|$", text[c:])
+    if head[-1:] in "，," and units(text[c:c + end.start()]) <= 7.5:
         return 8.0                  # a clause end a few characters on: "偶数个 1，/ 真实答案为 0；"
     if head[-1:] == "，":
         start = max(head.rfind(m, 0, len(head) - 1) for m in "。！？；：")
         if start >= 0 and units(head[start + 1:-1]) <= 7:
             return 8.0              # a short lead-in after a strong mark: "叫 Python；在 Python 里，/ 列表……"
-        nxt_clause = re.match(r"[又也还]([^，。！？；：]*)[，。！？；：]", text[c:].lstrip())
+        nxt_clause = re.match(r"[又也]([^，。！？；：]*)[，。！？；：]", text[c:].lstrip())
         if nxt_clause and units(nxt_clause.group(1)) <= 6:
             return 8.0              # the second half of a pair: "想对各种问题都答得准，/ 又要强隐私，"
+        if _short_gloss(text[c:].lstrip()):
+            return 8.0              # a short gloss stays with its term: "叫 winner，/ 意思是“赢家”"
     return 3.0
 
 
-def _pick_cuts(text: str, k: int, pool_of, total: float) -> list[int] | None:
+def _pick_cuts(text: str, k: int, pool_of, total: float, lines: bool = False) -> list[int] | None:
     cuts, prev = [], 0
     for j in range(1, k):
         ideal_u = total * j / k
-        pool = pool_of(prev, ideal_u)
+        pool = pool_of(prev, ideal_u, j == k - 1)
         if not pool:
             return None
-        cut = min(pool, key=lambda c: abs(units(text[:c]) - ideal_u) + _cut_penalty(text, c)
+        cut = min(pool, key=lambda c: abs(units(text[:c]) - ideal_u) + _cut_penalty(text, c, lines)
                   + _mark_cost(text, c))
         cuts.append(cut)
         prev = cut
     return cuts
 
 
-def split_balanced(text: str, limit: float, hang: bool = False) -> list[str]:
-    """Fewest pieces of at most `limit` units each, balanced in length. Cuts at punctuation
-    whenever the pieces still fit (even if unbalanced, but not leaving a stray scrap at a comma),
-    preferring the stronger mark (_mark_cost), else at the best word gap or between CJK
-    characters; English pieces avoid ending on an article or preposition, Chinese pieces on a
-    preposition. `hang`: the pieces are cues, whose final ，。、；： is dropped (strip_end), so it
-    does not count against the limit, and a whole 《…》 title may run 5 units over it (a 30-unit
-    bilingual line is about 1040 px of the 1840 px line at 1080p, measured with burn())."""
+# a word that starts a clause, for an English cue cut that has no punctuation ("…most Americans,
+# / and in 1997 she linked … / and found the governor")
+_CLAUSE_WORDS = {"and", "but", "or", "so", "yet", "which", "who", "whose", "where", "when", "while",
+                 "because", "then", "unless", "until", "if", "although", "though", "whereas", "whether"}
+
+
+def _list_and(text: str, c: int) -> bool:
+    """A gap before the 'and' / 'or' that closes a list: "ZIP code, birth date / and sex"."""
+    return bool(re.match(r"(and|or) ", text[c:]) and re.search(r", (\S+ ){0,2}\S+ $", text[:c]))
+
+
+def split_balanced(text: str, limit: float, hang: bool = False, clauses: bool = False) -> list[str]:
+    """Fewest pieces of at most `limit` units each, balanced in length. Cuts at sentence marks
+    (；。！？ ; . ! ?) when those alone give pieces that fit and none is tiny (a ；-structured
+    sentence keeps one clause per piece; not ：, which often binds a short lead-in to what follows:
+    分成两种思路：要么……), else at any punctuation whenever the pieces still fit
+    (even if unbalanced, but not leaving a stray scrap at a comma), preferring the stronger mark
+    (_mark_cost), else at the best word gap or between CJK characters; English pieces avoid ending
+    on an article or preposition, Chinese pieces on a preposition. `clauses` (English cues): before
+    a word gap, also try a gap before and / but / which … (not the 'and' of a list), and one more
+    piece cut at punctuation, so that a cue boundary does not fall mid-phrase. `hang`: the pieces
+    are cues, whose final ，。、；： is dropped (strip_end), so it does not count against the limit,
+    and a whole 《…》 title may run 5 units over it (a 30-unit bilingual line is about 1040 px of the
+    1840 px line at 1080p, measured with burn())."""
     text = " ".join(text.split())
     if units(strip_end(text) if hang else text) <= limit:
         return [text]
-    good, ok = _cuts(text, lines=not hang)
+    lines = not hang
+    good, ok = _cuts(text, lines=lines)
     stops = "，；：。！？,;:.!?…—"                     # not after 、, a closing quote or bracket
-    punct = [c for c in good if _cut_penalty(text, c) == 0 and text[c - 1] in stops + " "
+    punct = [c for c in good if _cut_penalty(text, c, lines) == 0 and text[c - 1] in stops + " "
              and (text[c - 1] != " " or text[c - 2] in stops)]
+    strong = [c for c in punct if text[:c].rstrip()[-1:] in "；。！？;.!?"
+              and not (text[:c].rstrip()[-1:] == "." and text[c:c + 1].islower())]
+    clause = sorted(set(punct) | {c for c in good if clauses and text[c - 1] == " " and text[c - 2].isalnum()
+                                  and text[c:].split(" ", 1)[0] in _CLAUSE_WORDS and not _list_and(text, c)})
     total = units(text)
 
     def pieces_of(cuts):
@@ -332,6 +434,11 @@ def split_balanced(text: str, limit: float, hang: bool = False) -> list[str]:
         q = strip_end(p) if hang else p
         return p and (units(q) <= limit or (hang and _TITLE.fullmatch(q) and units(q) <= limit + 5))
 
+    def fitting(cands):
+        """Cuts of `cands` after prev whose piece fits (and the rest, for the last cut)."""
+        return lambda prev, ideal, last: [c for c in cands if c > prev and fits(text[prev:c].strip())
+                                          and (not last or fits(text[c:].strip()))]
+
     def stray(cuts, pieces):
         """A piece of a few characters cut off at a comma: "2016 年，/ Abadi 和合作者……", "…the
         honest answer, / f(x)." (under a quarter of the longest piece in Chinese, a sixth in English)."""
@@ -339,19 +446,35 @@ def split_balanced(text: str, limit: float, hang: bool = False) -> list[str]:
         commas = [text[:c].rstrip()[-1:] in "，、," for c in cuts]   # the cut after each piece
         return any(units(p) < short and any(commas[max(0, j - 1):j + 1]) for j, p in enumerate(pieces))
 
+    def gaps(k):
+        return lambda prev, ideal, last: (
+            [c for c in good if c > prev and abs(units(text[:c]) - ideal) <= total / (2.5 * k) and text[c - 1] != "、"]
+            or [c for c in ok + good if c > prev])
+
+    def attempt(k, kind):
+        pool_of = {"strong": fitting(strong), "punct": fitting(punct), "clause": fitting(clause)}.get(kind) or gaps(k)
+        cuts = _pick_cuts(text, k, pool_of, total, lines)
+        if cuts is None:
+            return None
+        pieces = pieces_of(cuts)
+        if not all(fits(p) for p in pieces):
+            return None
+        sizes = [units(p) for p in pieces]
+        if kind == "strong" and min(sizes) < limit / 4:
+            return None                                   # not "第二：/ ……"
+        if kind == "punct" and stray(cuts, pieces):
+            return None
+        if kind == "clause" and min(sizes) < max(sizes) / 3:
+            return None
+        return pieces
+
     for k in range(2, 40):
-        tries = (
-            lambda prev, ideal: [c for c in punct if c > prev],
-            lambda prev, ideal: ([c for c in good if c > prev and abs(units(text[:c]) - ideal) <= total / (2.5 * k)
-                                  and text[c - 1] != "、"]
-                                 or [c for c in ok + good if c > prev]),
-        )
-        for n, pool_of in enumerate(tries):
-            cuts = _pick_cuts(text, k, pool_of, total)
-            if cuts is None:
-                continue
-            pieces = pieces_of(cuts)
-            if all(fits(p) for p in pieces) and not (n == 0 and stray(cuts, pieces)):
+        plan = [(k, "strong"), (k, "punct")]
+        if clauses:
+            plan += [(k, "clause"), (k + 1, "strong"), (k + 1, "punct"), (k + 1, "clause")]
+        for kk, kind in plan + [(k, "gaps")]:
+            pieces = attempt(kk, kind)
+            if pieces:
                 return pieces
     return [text]
 
@@ -413,12 +536,10 @@ def _proportional(a: float, b: float, pieces: list[str], weights=None) -> list[t
     return out
 
 
-def _spoken_weights(text: str, pieces: list[str], spoken: str) -> list[float] | None:
-    """How long each piece of `text` takes to say: the units of the part of the spoken sentence it
-    stands for, by a character alignment of the two forms (2016 年 / 二零一六年, e^ε / E 的艾普西隆
-    次方; a gloss （计数查询） that is not read weighs nothing). units() of the spoken text predicts
-    the Xiaoyi sentence durations better than units() of the display text (R² 0.975 against 0.954
-    over the 417 sentences of both videos). None when a piece cannot be found in `text`."""
+def _spoken_parts(text: str, pieces: list[str], spoken: str) -> list[str] | None:
+    """The part of the spoken sentence that each piece of `text` stands for, by a character
+    alignment of the two forms (2016 年 / 二零一六年, e^ε / E 的艾普西隆次方; a gloss （计数查询）
+    that is not read gets nothing). None when a piece cannot be found in `text` or gets nothing."""
     ops = SequenceMatcher(None, text, spoken, autojunk=False).get_opcodes()
 
     def at(i):                                             # text position -> spoken position
@@ -434,8 +555,16 @@ def _spoken_weights(text: str, pieces: list[str], spoken: str) -> list[float] | 
             return None
         starts.append(pos)
     cuts = [0] + [at(i) for i in starts[1:]] + [len(spoken)]
-    weights = [units(spoken[x:y]) for x, y in zip(cuts, cuts[1:])]
-    return weights if all(w > 0 for w in weights) else None
+    parts = [spoken[x:y] for x, y in zip(cuts, cuts[1:])]
+    return parts if all(units(q) > 0 for q in parts) else None
+
+
+def _spoken_weights(text: str, pieces: list[str], spoken: str) -> list[float] | None:
+    """How long each piece of `text` takes to say: the units of its part of the spoken sentence
+    (_spoken_parts). units() of the spoken text predicts the Xiaoyi sentence durations better than
+    units() of the display text (R² 0.975 against 0.954 over the 417 sentences of both videos)."""
+    parts = _spoken_parts(text, pieces, spoken)
+    return [units(q) for q in parts] if parts else None
 
 
 def tracks(pairs: list[tuple], timing: str = "tr",
@@ -449,7 +578,11 @@ def tracks(pairs: list[tuple], timing: str = "tr",
     - Cues shorter than `min_dur` are merged into a neighbour when the result still fits; the
       sentence punctuation inside a merged cue stays (不是。电脑能做的……), and only the end of a
       Chinese cue loses its 。，、；：.
-    - Single-language cues have at most 2 lines; a longer piece becomes two cues.
+    - A cue still shorter than `min_dur` takes time from a contiguous neighbour (up to 0.2 s
+      per unit of its first line, at most 1.5 s), as long as the neighbour keeps its own minimum.
+    - Single-language cues have at most 2 lines; a longer piece becomes two cues (timed by the
+      spoken form too), and an English cue whose two lines break mid-phrase becomes two cues
+      when a clause cut gives cleaner lines.
     - In the bilingual track, the English sentence is cut where the Chinese one is (at the
       matching clause boundary, see _split_like); when it fits on one line and no boundary is
       close, the whole English sentence stays up under each Chinese piece.
@@ -459,8 +592,10 @@ def tracks(pairs: list[tuple], timing: str = "tr",
         spoken = say[0] if say and say[0] and timing == "tr" else None
         if t:
             zs = split_balanced(t, 2 * zh_limit, hang=True)
-            zh += _proportional(a, b, zs, spoken and _spoken_weights(t, zs, spoken))
-        en += _proportional(a, b, split_balanced(e, 2 * en_limit))
+            parts = (spoken and _spoken_parts(t, zs, spoken)) or [None] * len(zs)
+            times = _proportional(a, b, zs, parts[0] and [units(q) for q in parts])
+            zh += [(s0, s1, z, q) for (s0, s1, z), q in zip(times, parts)]
+        en += _proportional(a, b, split_balanced(e, 2 * en_limit, clauses=True))
         if t:
             zp = split_balanced(t, bi_zh_limit, hang=True)
             ne = len(split_balanced(e, bi_en_limit))
@@ -476,17 +611,10 @@ def tracks(pairs: list[tuple], timing: str = "tr",
     zh = _merge_short(zh, lambda x, y: _fits_join(x, y, zh_limit, 2), min_dur)
     en = _merge_short(en, lambda x, y: _fits_join(x, y, en_limit, 2), min_dur)
     bi = _merge_short(bi, None, min_dur, bi_zh_limit, bi_en_limit)
-    zh = _linger([c for x in zh for c in _two_lines(x, zh_limit)], min_show)
-    en = _linger([c for x in en for c in _two_lines(x, en_limit)], min_show)
-    bi = _linger([(s0, s1, strip_end(z), e) for s0, s1, z, e, _ in bi], min_show)
-    return {"zh": zh, "en": en, "zh-en": bi}
-
-
-# a word that starts a clause: a cut before it (", which" / " and") lines up with a Chinese clause
-_CLAUSE_STARTERS = {"and", "but", "or", "so", "yet", "which", "who", "where", "when", "while",
-                    "because", "then", "that", "if", "unless", "as"}
-_DETERMINERS = {"a", "an", "the", "this", "that", "these", "those", "its", "their", "his", "her",
-                "our", "your", "my", "each", "every", "one"}
+    zh = _stretch([c for x in zh for c in _two_lines(x, zh_limit)], min_dur)
+    en = _stretch([c for x in en for c in _two_lines(x, en_limit)], min_dur)
+    bi = _stretch([(s0, s1, strip_end(z), e) for s0, s1, z, e, _ in bi], min_dur)
+    return {"zh": _linger(zh, min_show), "en": _linger(en, min_show), "zh-en": _linger(bi, min_show)}
 
 
 def _symbols(s: str) -> Counter:
@@ -602,20 +730,52 @@ def _split_like(e: str, zp: list[str], limit: float) -> tuple[list[str], bool]:
     return _split_k(e, k, limit), False
 
 
+def _break_cost(text: str, c: int) -> float:
+    """How bad a line break at c is: its cut and mark cost, and for English 2 more before a
+    determiner (a verb and its object: "got / this down")."""
+    q = _cut_penalty(text, c, lines=True) + _mark_cost(text, c)
+    prev, nxt = (text[:c].split() or [""])[-1].lower(), (text[c:].split() or [""])[0].lower()
+    if nxt in _DETERMINERS and prev.isalpha() and prev not in _FUNCTION_WORDS:
+        q += 2.0
+    return q
+
+
+def _clean_break(text: str, c: int) -> bool:
+    """An English line break at c that follows the sentence: after a clause mark (not a list or
+    appositive comma), or before and / but / which … (not the 'and' that closes a list)."""
+    prev, nxt = (text[:c].split() or [""])[-1], (text[c:].split() or [""])[0]
+    if prev[-1:] in ",;:.!?—":
+        return _mark_cost(text, c) < 10
+    return nxt in _CLAUSE_WORDS and prev.lower() not in _FUNCTION_WORDS and not _list_and(text, c)
+
+
 def _two_lines(cue, limit: float) -> list[tuple[float, float, str]]:
-    """A cue wrapped to at most 2 lines; a piece that needs more becomes two cues (time split
-    in proportion to their length), cut at a clause boundary when one gives two 2-line cues. Two
-    lines that split a list at its 、 ("光凭邮编、/ 出生日期和性别") also become two cues when a clause
-    cut gives two 2-line cues."""
-    a, b, text = cue
+    """A cue wrapped to at most 2 lines; a piece that needs more becomes two cues (time split in
+    proportion to their spoken form, cue[3], when there is one, else their length), cut at a clause
+    boundary when one gives two 2-line cues. Two lines that split a list at its 、 ("光凭邮编、/
+    出生日期和性别") also become two cues when a clause cut gives two 2-line cues, and so do two
+    English lines that break mid-phrase ("with a limited / number of questions") when a clause cut
+    gives cues whose lines all break more cleanly (_clean_break, else _break_cost)."""
+    a, b, text, *rest = cue
+    spoken = rest[0] if rest else None
     text = strip_end(text)
     lines = split_balanced(text, limit)
+    english = not _CJK.search(text)
 
     def listy(t):                                         # two lines that split a list at its 、
         ls = split_balanced(t, limit)
         return len(ls) == 2 and t[:len(t) - len(t[len(ls[0]):].lstrip())].rstrip()[-1:] == "、"
 
-    if len(lines) == 1 or (len(lines) == 2 and not listy(text)):
+    def breaks(t):                                        # where the 2 lines of t break
+        ls = split_balanced(t, limit)
+        return [len(t) - len(t[len(ls[0]):].lstrip())] if len(ls) == 2 else []
+
+    def worst(*parts):                                    # the worst line break of these cues
+        return max([0.0] + [0.0 if english and _clean_break(t, c) else _break_cost(t, c)
+                            for t in parts for c in breaks(t)])
+
+    mid_phrase = english and len(lines) == 2 and worst(text) > 0
+    if len(lines) == 1 or (len(lines) == 2 and not listy(text) and not mid_phrase):
         return [(a, b, "\n".join(lines))]
     good, ok = _cuts(text)
     stops = "，、；：。！？,;:.!?…—"
@@ -628,11 +788,20 @@ def _two_lines(cue, limit: float) -> list[tuple[float, float, str]]:
             continue
         at_stop = text[c - 1] in stops or (text[c - 1] == " " and text[c - 2] in stops)
         at_stop = at_stop and text[:c].rstrip()[-1:] != "、"    # a cue cut inside a list: "一个集合 // 一个比特串"
-        clean = (at_stop and left[-1:] in "，；：。！？,;:.!?" and min(units(left), units(right)) >= limit / 3
-                 and not listy(strip_end(left)) and not listy(right))
+        if english:
+            at_stop = _clean_break(text, c)               # also before and / which …: "network // where each"
+        clean = (at_stop and (left[-1:] in "，；：。！？,;:.!?" or english)
+                 and min(units(left), units(right)) >= limit / 3
+                 and not listy(strip_end(left)) and not listy(right) and _mark_cost(text, c) < 10)
         if len(lines) == 2 and not clean:
             continue                                      # instead of a 、 split: two clean clause cues
-        cost = abs(units(left) - units(right)) + _cut_penalty(text, c) + _mark_cost(text, c)
+        if mid_phrase and worst(left, right) >= worst(text):
+            continue                                      # ... or for two cues whose lines break more cleanly
+        if english:                                       # the lines matter more than the balance
+            cost = (0.5 * abs(units(left) - units(right)) + _cut_penalty(text, c) + _mark_cost(text, c)
+                    + worst(left, right))
+        else:
+            cost = abs(units(left) - units(right)) + _cut_penalty(text, c) + _mark_cost(text, c)
         cost += 0 if at_stop else 20
         if min(units(left), units(right)) < limit / 3:
             cost += 15                                    # an orphan cue: "First:" / "真实答案为 0；"
@@ -642,10 +811,38 @@ def _two_lines(cue, limit: float) -> list[tuple[float, float, str]]:
         return [(a, b, "\n".join(lines))]
     halves = best[1] if best else [join_pieces(*lines[:2]), "".join(lines[2:]) if _CJK.search(text)
                                                          else " ".join(lines[2:])]
+    said = (spoken and _spoken_parts(text, halves, spoken)) or [None] * len(halves)
     out = []
-    for s0, s1, h in _proportional(a, b, halves):
-        out += _two_lines((s0, s1, h), limit)
+    for (s0, s1, h), q in zip(_proportional(a, b, halves, said[0] and [units(x) for x in said]), said):
+        out += _two_lines((s0, s1, h, q), limit)
     return out
+
+
+def _stretch(cues, min_dur: float):
+    """A cue still shorter than min_dur (a merge did not fit) gets up to 0.2 s per unit of its first
+    line (at least min_dur, at most 1.5 s: "这里说的“一局”" 0.68 → 1.42 s) from a contiguous neighbour
+    with time to spare, the longer one first; the neighbour keeps its own minimum."""
+    out = [list(c) for c in cues]
+
+    def need(c):
+        return max(min_dur, min(1.5, 0.2 * units(c[2].split("\n")[0])))
+
+    for i, c in enumerate(out):
+        if c[1] - c[0] >= min_dur:
+            continue
+        nbrs = [j for j in (i - 1, i + 1) if 0 <= j < len(out) and abs(out[j][0] - c[1] if j > i
+                                                                      else c[0] - out[j][1]) < 0.05]
+        for j in sorted(nbrs, key=lambda j: out[j][0] - out[j][1]):
+            give = min(need(c) - (c[1] - c[0]), (out[j][1] - out[j][0]) - need(out[j]))
+            if give <= 0:
+                continue
+            if j > i:
+                c[1] += give
+                out[j][0] = c[1]
+            else:
+                c[0] -= give
+                out[j][1] = c[0]
+    return [tuple(c) for c in out]
 
 
 def _linger(cues, min_show: float):
@@ -686,7 +883,9 @@ def _merge_short(cues, join, min_dur, bi_zh=None, bi_en=None):
                 text = join(cues[lo][2], cues[hi][2])
                 if text is None:
                     continue
-                cues[lo:hi + 1] = [[cues[lo][0], cues[hi][1], text]]
+                said = [c[3] for c in (cues[lo], cues[hi]) if len(c) > 3]
+                cues[lo:hi + 1] = [[cues[lo][0], cues[hi][1], text, *(
+                    [said[0] + said[1] if all(said) else None] if said else [])]]
             else:
                 z = join_pieces(cues[lo][2], cues[hi][2])
                 same = cues[lo][4] is not None and cues[lo][4] == cues[hi][4]
