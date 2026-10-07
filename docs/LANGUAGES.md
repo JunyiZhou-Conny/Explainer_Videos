@@ -86,17 +86,23 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
   (at most 1.5 s) borrows time from a neighbour of the same sentence that has some to spare, but
   past 1 s only while that neighbour still reads slower (这里说的“一局” 1.0 s, not 1.4 s that leave
   the next cue 23 units in 2.1 s). A cue that could not stay 1 s up borrows the missing bit across
-  the 0.05 s gap to the next sentence (Why?, 不矛盾 || No.).
+  the 0.05 s gap to the next sentence (Why?, 不矛盾 || No.). A short question merges into the
+  parallel question before it rather than into the statement after it (猜一猜。一百？一百万？ /
+  暂停一下视频……).
 - Cues follow the clause structure: a sentence split at ；。！？ keeps one clause per cue when
   those cuts alone fit; among the clause plans of up to two cues more, a Chinese sentence takes
   the one with the fewest run-ons across a mid-line ；。！？, then without a weak comma (a short
-  scope phrase 对大多数 mask，, a condition 光凭……，/ 就能……, a gloss, a continuation, a result
-  从而……), then the fewest cues (DP-SGD: 对每个样本的梯度做 clip（梯度裁剪） / 就像我们的收入上限，
+  scope phrase 对大多数 mask，, a condition 光凭……，/ 就能…… or 到了第 5 步，/ 才……, a means and its
+  result 先试走一步，往下探索，再撤销，/ 就把……, a comparison and its predicate 比起她自己的贡献，也就是 1，
+  / 算是很大, a gloss 一个叫 explore 的函数，/ explore 就是“探索”的意思, a continuation, a result
+  从而……, a ； inside a list after a ：), then the fewest cues (DP-SGD: 对每个样本的梯度做 clip（梯度裁剪） / 就像我们的收入上限，
   从而限制了敏感度 / 加上高斯噪声；并在……); a .zh.srt cue piece must wrap into 2 lines. A cue is
   not cut inside a 、 list (第三，答案不一定是一个数 / 一个排名、一个集合、一个比特串，……) — in the
   band only when the list itself is wider than the 30-unit line (the four authors of the paper:
   2006 年，Cynthia Dwork、Frank McSherry / Kobbi Nissim 和 Adam Smith) — nor inside a 先……再……
-  sequence or between a manner adverbial and its verb (一局接一局，/ 把……) when the balance allows.
+  sequence or between a manner adverbial and its verb (一局接一局，/ 把……) when the balance allows,
+  nor inside a ；-list after a ： (这期视频讲它的三个核心想法 / 隐私的定义；一个数叫敏感度（sensitivity）；
+  / 以及一个公式，……, whose first line may run 0.5 units over).
 - Lines break at punctuation whenever the pieces fit, preferring the stronger mark (；：。 over ，,
   and ， over 、, which splits a list) and never leaving a scrap of a few characters at a comma
   (2016 年，/ …); otherwise at the cheapest gap. The costs steer English away from ending a line on
@@ -114,7 +120,17 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
   cue (然后在 2003 年，Irit Dinur 和 Kobbi Nissim / 证明了一个令人警醒的结论). English also avoids
   ending a line one word into a phrase (to measure / sensitivity), on a determiner before its noun
   (call those / made-up endings), before an object pronoun (let / it play) or before the verb of a
-  clause whose "that" is left out (proves the first / is → proves / the first is).
+  clause whose "that" is left out (proves the first / is → proves / the first is), and splitting
+  a prepositional verb (depends / on, leads / to, compared / to), two nouns joined by and (the
+  mathematician / and engineer Claude Shannon, statisticians / and computer scientists), a number
+  from its quantifier (at least / two thirds; "has" before at least or a number is a main verb:
+  chess has / at least 10 to the power of 120…), spoken math (S of f / over epsilon, e / to the
+  epsilon, scale / sensitivity over epsilon), a noun from its preposition before a plain object
+  (the limit / on questions, not a surprising limit / on what…), a subject pronoun from its verb
+  (masks it / cannot) or an object from its complement (makes it / private). A gerund subject and
+  its verb are a fine break (because going first / gives X more chances), and when the balanced
+  break costs 7 or more a break before a preposition that costs 5 less wins (track the budget /
+  over thousands of steps).
 - An English cue whose two lines break mid-phrase is re-wrapped at a clean break when one fits
   (Remember the Gaussian / whose ratio…), or at a much cheaper break whatever the balance (It
   founded / what we now call…), else split into two cues at a clause boundary when that gives
@@ -123,9 +139,17 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
   stepping back / to try the next one, is called backtracking.). An English cue boundary costs more
   than a line break: never after an article, preposition or auxiliary (…just ask // the
   interactive curator), nor inside a list (Frank McSherry, // Kobbi Nissim); before "that" + a
-  clause it is clean (…one release // that is accurate). The English video's own .srt
-  (build.split_cues, 44 characters) uses the same line breaks (subtitles.wrap_en), and a sentence
-  that fits only with a bad break becomes two cues at a comma.
+  clause it is clean (…one release // that is accurate). Between two clean stops the stronger mark
+  wins (Pause and ponder: // if Alice's true answer is yes, / how likely is she to say yes?); a cue
+  that needs 3 lines is cut at one of its own line breaks or at a clean break (First: what is the
+  sensitivity // of the average of n numbers / between zero and one?); and a cue boundary that is
+  not a clean break moves to the nearest clean one when both cues keep 2 lines that break no worse
+  (Latanya Sweeney showed // that ZIP code, birth date and sex alone / single out most Americans,).
+  Rather a line break that costs up to 16 (not inside a name) than a cue cut of 10 or more.
+- The English video's own .srt (build.split_cues, 44 characters a line) uses the same cues as the
+  English track of the Chinese video: split_balanced with clause cuts, _two_lines and _reflow_en,
+  and the lines of subtitles.wrap_en, never the greedy textwrap fallback (that is what gave its
+  published / tables, …of the / average…).
 - In the bilingual band (Chinese line ≤ 30 units, a whole 《…》 title ≤ 35; English line ≤ 96
   characters, ≤ 110 for a clause piece — burned at 1080p a 110-character line is about 1170 px of
   the 1840 px line) the English sentence is cut where the Chinese one is: at the nearest clause
@@ -138,7 +162,10 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
   scale sensitivity/ε / makes it private, …); if the numbers cannot be put on the right side and
   the sentence fits on one line, the whole sentence stays up under each piece — unless only a
   poor gap would put them right and a stop misplaces just one number (list all 8 winning lines, /
-  under 一共 8 条).
+  under 一共 8 条). A Chinese gloss that restates a kept-English term (explore 就是“探索”的意思) has
+  no English, so it does not count toward its piece's share of the English sentence. When no stop
+  or clean gap is near, the fallback gap is scored as a cue end (…any one person's row // changes the
+  probability…, not …row changes // the probability…).
 - In the English video (timing="en") the band follows the English pieces, but where a Chinese
   piece would read faster than 9 units/s the switch moves (by at most 1 s) toward equal reading
   rates, and a sentence's Chinese may run up to 0.5 s into the next sentence when that one has

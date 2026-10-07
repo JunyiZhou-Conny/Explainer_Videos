@@ -162,7 +162,8 @@ def test_13_names_and_set_phrases_stay_together():
         "For games that end on moves 7, 8 and 9,", "it gets much worse:"]                   # tic-tac-toe
     e = ("Over the following decades, statisticians and computer scientists refined such tricks, in two "
          "flavours: scramble the data going in, or scramble the answers coming out.")
-    assert en(e, 10) == ["Over the following decades, statisticians / and computer scientists refined such tricks,",
+    assert en(e, 10) == ["Over the following decades,",                       # round 4: not "statisticians /
+                         "statisticians and computer scientists / refined such tricks,",   # and computer…"
                          "in two flavours: scramble the data going in, / or scramble the answers coming out."]
 
 
@@ -319,9 +320,11 @@ def test_no_sidecar_cue_needs_three_lines():
             t += 0.7
         for timing in ("tr", "en"):
             tr = S.tracks(pairs, timing=timing)
-            for _, _, text in tr["zh"]:                  # (+1.5 for a list of Latin names, see test_r2_lists)
+            for _, _, text in tr["zh"]:                  # (+1.5 for a list of Latin names, see test_r2_lists;
                 assert len(text.split("\n")) <= 2 and all(S.units(ln) <= 23.5 for ln in text.split("\n")), text
-                assert all(S.units(ln) <= 22 or S._NAME_LIST.search(ln) for ln in text.split("\n")), text
+                assert all(S.units(ln) <= 22 or S._NAME_LIST.search(ln)          # +0.5 for an item of a ；-list)
+                           or (ln.endswith("；") and S.units(ln) <= 22.5 and S._SEMI_LIST.search(text.replace("\n", "")))
+                           for ln in text.split("\n")), text
             for _, _, text in tr["en"]:
                 assert len(text.split("\n")) <= 2 and all(len(ln) <= 48 for ln in text.split("\n")), text
             for _, _, z, e in tr["zh-en"]:
@@ -447,8 +450,8 @@ def test_r2_english_lines_keep_phrases():
             "Instead it draws random noise, Y, / and releases f(x) + Y.",
         "with a surprise from Dwork, Rothblum and Vadhan: allow that tiny δ,":
             "with a surprise from Dwork, Rothblum and Vadhan: / allow that tiny δ,",
-        "that chess has at least 10 to the power of 120 possible games.":
-            "that chess has at least / 10 to the power of 120 possible games.",
+        "that chess has at least 10 to the power of 120 possible games.":   # round 4: "has" is a main verb,
+            "that chess has / at least 10 to the power of 120 possible games.",   # "at least / 10" costs more
         "Treat each bin as its own counting query and split the budget evenly.":
             "Treat each bin as its own counting query / and split the budget evenly.",
         "Multiplying the choices gives nine factorial, 362,880 orders.":
@@ -545,7 +548,8 @@ def test_r3_a_cue_that_cannot_linger_to_one_second_borrows_across_the_gap():
 def test_r3_english_cue_cuts():
     cases = {
         "Pause and ponder: couldn't an analyst just ask the interactive curator all of these queries too?":
-            ["Pause and ponder: couldn't an analyst just ask", "the interactive curator / all of these queries too?"],
+            ["Pause and ponder: couldn't an analyst",           # round 4: a 3-line cue is cut at one of its own
+             "just ask the interactive curator / all of these queries too?"],   # line breaks (not "…ask the //")
         "Third, the answer need not be a number: a ranking, a set, a string of bits, anything with a distance "
         "between answers.": ["Third, the answer need not be a number:",                    # no cut in a list
                              "a ranking, a set, a string of bits, / anything with a distance between answers."],
@@ -654,3 +658,129 @@ def test_r3_band_cuts():
     assert pairs("如果没有一条线符合，winner 什么也没找到，就返回 None，意思是“没有人”。",          # 如果……，就……
                  "If no line matches, winner finds nothing, and hands back None, which means nobody.", 5.5) == [
         "If no line matches,", "winner finds nothing, and hands back None, which means nobody."]
+
+
+# ---------------------------------------------------------------- round 4 (two reviewers' findings)
+
+def test_r4_band_cuts():
+    t = "而一段短短的递归程序，先试走一步，往下探索，再撤销，就把每一局真实对局都统计了一遍。"      # tic-tac-toe
+    e = "And a short recursive program counts every real game by trying a move, exploring, and undoing it."
+    assert bi(t, e, 8.1) == [("而一段短短的递归程序", "And a short recursive program"),       # round 3: the halves
+                             ("先试走一步，往下探索，再撤销，就把每一局真实对局都统计了一遍",       # crossed
+                              "counts every real game by trying a move, exploring, and undoing it.")]
+    assert S._mark_cost(t, t.index("往下")) >= 8 and S._mark_cost(t, t.index("就把")) >= 8   # 先……再……，就……
+    t = "保护 Alice 的噪声，比起她自己的贡献，也就是 1，算是很大，但比起总体微不足道。"            # 比起……，算是……
+    e = ("Alice is protected by noise that is large compared to her own contribution, which is 1, but tiny "
+         "compared to the population's.")
+    assert bi(t, e, 7.2) == [("保护 Alice 的噪声，比起她自己的贡献，也就是 1，算是很大",
+                              "Alice is protected by noise that is large compared to her own contribution, which is 1,"),
+                             ("但比起总体微不足道", "but tiny compared to the population's.")]
+    t = "X 下的是第 1、3、5 步，所以到了第 5 步，才可能有人凑齐三个棋子。"                         # 到了……，才……
+    e = "X plays moves 1, 3 and 5, so the fifth move is the first time anyone can have three marks."
+    assert bi(t, e, 6.9) == [("X 下的是第 1、3、5 步", "X plays moves 1, 3 and 5,"),
+                             ("所以到了第 5 步，才可能有人凑齐三个棋子",
+                              "so the fifth move is the first time anyone can have three marks.")]
+    t = "最巧妙的部分来了：一个叫 explore 的函数，explore 就是“探索”的意思。"           # a restated term: no English
+    assert bi(t, "Now for the clever part: a function called explore.", 6.1) == [   # (round 3: the English
+        ("最巧妙的部分来了", "Now for the clever part:"),                                 # sentence twice)
+        ("一个叫 explore 的函数，explore 就是“探索”的意思", "a function called explore.")]
+    e = ("One: privacy means changing any one person's row changes the probability of any output by at most a "
+         "factor of e^ε.")
+    assert [x for _, x in bi("第一，隐私指的是：改动任何一个人的记录，任何输出的概率之比最多是 e^ε。", e, 7.8)] == [
+        "One: privacy means changing any one person's row",                               # not "…row changes //
+        "changes the probability of any output by at most a factor of e^ε."]              # the probability"
+
+
+def test_r4_chinese_cues():
+    t = "这期视频讲它的三个核心想法：隐私的定义；一个数叫敏感度（sensitivity）；以及一个公式，算噪声加多少才够。"
+    assert zh(t, 9.0) == ["这期视频讲它的三个核心想法",                          # a ；-list stays whole (its first
+                          "隐私的定义；一个数叫敏感度（sensitivity）； / 以及一个公式，算噪声加多少才够"]   # line 22.05)
+    tr = S.tracks([(24.79, 25.54, "猜一猜。", "Take a guess."), (25.86, 26.54, "一百？", "A hundred?"),
+                   (26.86, 27.56, "一百万？", "A million?"),
+                   (27.88, 30.74, "暂停一下视频，把你猜的数写下来。", "Pause the video and write your guess down.")])
+    assert [c[2] for c in tr["zh"]] == ["猜一猜。一百？一百万？", "暂停一下视频，把你猜的数写下来"]   # parallel
+    assert [c[2] for c in tr["en"]] == ["Take a guess. A hundred? A million?",                   # questions
+                                        "Pause the video and write your guess down."]            # together
+    assert [c[2] for c in tr["zh-en"]] == ["猜一猜。一百？一百万？", "暂停一下视频，把你猜的数写下来"]
+
+
+def test_r4_english_lines():
+    cases = {                                                       # the Chinese video's English track
+        "The joint density then depends on the L1 distance,": ["The joint density / then depends on the L1 distance,"],
+        "Which first move for X leads to the most different games:":                  # tic-tac-toe
+            ["Which first move for X / leads to the most different games:"],          # not "depends / on"
+        "In 1950, the mathematician and engineer Claude Shannon estimated":            # not "the mathematician /
+            ["In 1950, the mathematician and engineer / Claude Shannon estimated"],    # and engineer"
+        "the budget makes the limit on questions explicit and measurable.":
+            ["the budget makes the limit on questions / explicit and measurable."],
+        "Plus a surprising limit on what one published table can achieve,":           # (a wh-clause after "on")
+            ["Plus a surprising limit / on what one published table can achieve,"],
+    }
+    for e, cues in cases.items():
+        assert en(e, 4) == cues, e
+    w = 44 * 0.55                                                   # the English video's .srt
+    for e, ls in {"Laplace noise of scale S of f over epsilon in every coordinate.":            # spoken math
+                  ("Laplace noise of scale S of f over epsilon", "in every coordinate."),
+                  "add Gaussian noise; and track the budget over thousands of steps.":          # not "track /
+                  ("add Gaussian noise; and track the budget", "over thousands of steps."),     # the budget"
+                  "Theorem 3 shows that for at least two thirds of these queries,":             # not "at least /
+                  ("Theorem 3 shows that for at least two thirds", "of these queries,"),        # two thirds"
+                  "Let's call those made-up endings ghost games.": ("Let's call those made-up endings", "ghost games."),
+                  "a ratio of two and a ratio of one half count the same.":
+                  ("a ratio of two and a ratio of one half", "count the same."),
+                  "because going first gives X more chances to win.":                           # a gerund
+                  ("because going first", "gives X more chances to win.")}.items():            # subject
+        assert S.wrap_en(e, w) == ls, e
+    assert S._binomial("the mathematician and engineer Claude", 18)
+    assert not S._binomial("to a public voter list and found the governor", 23)
+    assert S._gerund_subject("Multiplying the choices gives nine factorial", 24)
+
+
+def test_r4_english_video_srt():
+    from explainer import build
+
+    def srt(t):
+        return [c[2].replace("\n", " / ") for c in build.split_cues(0.0, len(t) / 15, t)]
+    assert srt(" ".join(SWEENEY[1].split())) == [                         # the whole sentence (round 3 tested
+        "Latanya Sweeney showed", "that ZIP code, birth date and sex alone / single out most Americans,",   # only
+        "and in 1997 she linked / supposedly anonymous hospital records",                              # its last
+        "to a public voter list / and found the governor of Massachusetts."]                           # cue)
+    cases = {
+        "Four: one private published table cannot answer most simple parity counts unless the database is "
+        "exponentially large.": ["Four: one private published table / cannot answer most simple parity counts",
+                                 "unless the database is exponentially large."],
+        "Explore walks down every branch, one at a time, and counts the leaves it reaches.":     # tic-tac-toe
+            ["Explore walks down every branch, / one at a time,", "and counts the leaves it reaches."],
+        "The hopeful flip side: with a limited number of questions, modest noise is enough.":
+            ["The hopeful flip side:", "with a limited number of questions, / modest noise is enough."],
+        "Pause and ponder: if Alice's true answer is yes, how likely is she to say yes?":
+            ["Pause and ponder:", "if Alice's true answer is yes, / how likely is she to say yes?"],
+        "First: what is the sensitivity of the average of n numbers between zero and one?":    # no greedy
+            ["First: what is the sensitivity", "of the average of n numbers / between zero and one?"],   # lines
+        "Three: Laplace noise with scale sensitivity over epsilon makes it private, with error that does not grow "
+        "with the database.": ["Three: Laplace noise / with scale sensitivity over epsilon",
+                               "makes it private, with error / that does not grow with the database."],
+        "In 1950, the mathematician and engineer Claude Shannon estimated that chess has at least 10 to the power "
+        "of 120 possible games.": ["In 1950, the mathematician and engineer / Claude Shannon estimated",
+                                   "that chess has at least / 10 to the power of 120 possible games."],
+        "Over the following decades, statisticians and computer scientists refined such tricks, in two flavours: "
+        "scramble the data going in, or scramble the answers coming out.":
+            ["Over the following decades,", "statisticians and computer scientists / refined such tricks,",
+             "in two flavours: scramble the data going in, / or scramble the answers coming out."],
+    }
+    for t, cues in cases.items():
+        assert srt(t) == cues, t
+
+
+def test_r4_english_video_srt_corpus():
+    """Every narration clip of both videos: the English video's .srt cues have at most 2 lines of 44
+    characters, laid out by subtitles.wrap_en (no greedy textwrap fallback), and stay up 1 s."""
+    from explainer import build, i18n
+
+    for video in ("dwork2006-calibrating-noise", "tictactoe-255168"):
+        for english in i18n.narration("zh", REPO / "videos" / video):
+            for a, b, text in build.split_cues(0.0, len(english) / 15, english):
+                ls = text.split("\n")
+                assert len(ls) <= 2 and all(len(x) <= 44 for x in ls), text
+                assert tuple(ls) == S.wrap_en(" ".join(ls), 44 * 0.55), text
+                assert b - a >= 1.0 - 1e-9, text
