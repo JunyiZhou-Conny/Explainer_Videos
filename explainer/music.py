@@ -40,6 +40,8 @@ video.yaml (all optional):
                                 # chord from that bar on (roman in the key there, "/D" a bass note,
                                 # rest = no pads); without it the composer plans the harmony itself
       joins: {"12.1": segue}    # a scene join that continues the picture: no thump, no riser
+      levels: {"1.1": {bed: -16, accents: -9}, "2.1": -6, "10.1": 0}   # (optional) a fader over the
+                                # score: dB at positions, linear in between (a number: both stems)
       density: 3                # at most this many ordinary accents per second
       pulse: true               # shorts: the soft grid pulse
       lufs: -14                 # music-only loudness target
@@ -143,6 +145,7 @@ class Settings:
     cues: list = field(default_factory=list)   # structure placed in video.yaml (video time)
     chords: dict = field(default_factory=dict)  # a planned progression: {bar (from 1) or position: chord}
     joins: dict = field(default_factory=dict)   # scene joins that are not cuts: {position: "segue"}
+    levels: dict = field(default_factory=dict)  # a fader over the score: {position: dB or {bed, accents}}
 
     @classmethod
     def from_spec(cls, spec: dict) -> "Settings":
@@ -165,6 +168,7 @@ class Settings:
         s.cues = [dict(c) for c in m.get("cues") or []]
         s.chords = dict(m.get("chords") or {})
         s.joins = {k: str(v) for k, v in (m.get("joins") or {}).items()}
+        s.levels = dict(m.get("levels") or {})
         s.acts += [c for c in s.cues if c.get("key") or c.get("mode")]
         s.duck = {**s.duck, **(m.get("duck") or {})}
         if s.bpm is None:
@@ -1064,6 +1068,7 @@ def _count_notes(sc: Score, c: Cue, ch: Chord, settings: Settings, pal: dict) ->
     ticks (a note each would be a smear)."""
     times = c.times or [c.t + i * (c.dur / max(1, c.n)) for i in range(c.n)]
     voices = count_voices(c, settings, pal)
+    gain = float(c.data.get("gain", 1.0))             # (a mark's `gain`: this phrase softer or louder)
     rise = c.data.get("pitch", "rise") != "flat"
     many = len(times) > 24
     tones = chord_tones(ch, 67, 98)
@@ -1076,17 +1081,17 @@ def _count_notes(sc: Score, c: Cue, ch: Chord, settings: Settings, pal: dict) ->
         if inst in FX or (many and fixed is None):
             pan = _screen_x(float(xs[i]), None) * 0.8 if i < len(xs) else c.x * 0.6 + 0.3 * math.sin(i * 1.7)
             if inst in ("blip",):                           # a soft pulse at the item's note
-                sc.add_fx(tt, "blip", 0.5 + 0.2 * u, pan=pan, pitch=round(float(mtof(m)), 2))
+                sc.add_fx(tt, "blip", (0.5 + 0.2 * u) * gain, pan=pan, pitch=round(float(mtof(m)), 2))
             elif inst in FX and inst != "tick":
-                sc.add_fx(tt, inst, 0.25, dur=0.4, pan=pan)
+                sc.add_fx(tt, inst, 0.25 * gain, dur=0.4, pan=pan)
             else:                                           # ticks that climb
                 if tt - last_tick < 0.04:
                     continue
                 last_tick = tt
-                sc.add_fx(tt, "tick", 0.22 + 0.06 * u, pan=pan, pitch=(2000 + 2400 * u) if rise else 2600)
+                sc.add_fx(tt, "tick", (0.22 + 0.06 * u) * gain, pan=pan, pitch=(2000 + 2400 * u) if rise else 2600)
             continue
         pan = _screen_x(float(xs[i]), None) * 0.8 if i < len(xs) else c.x * 0.6 + 0.35 * math.sin(i * 1.3)
-        sc.note(tt + 0.005, 1.4, m, 0.36 + 0.12 * u, inst, pan)
+        sc.note(tt + 0.005, 1.4, m, (0.36 + 0.12 * u) * gain, inst, pan)
 
 
 def _roll_ticks(sc: Score, c: Cue, ch: Chord) -> None:
@@ -1486,6 +1491,7 @@ def render(score: Score, ctx: dict, settings: Settings, length: float) -> tuple[
         if np.any(x):
             out += signal.oaconvolve(x, ir, axes=0)[:L] * w
         del x
+    bed, acc = apply_levels(bed, ctx.get("levels"), 1), apply_levels(acc, ctx.get("levels"), 2)
     hp = signal.butter(2, 32 / (SR / 2), "high", output="sos")
     bed, acc = (signal.sosfilt(hp, x, axis=0) for x in (bed, acc))
     bed, acc = (apply_silences(x, score.silences) for x in (bed, acc))
@@ -1495,6 +1501,40 @@ def render(score: Score, ctx: dict, settings: Settings, length: float) -> tuple[
     nfi = min(L, int(0.02 * SR))
     fade[:nfi] *= np.linspace(0, 1, nfi)
     return bed * fade[:, None], acc * fade[:, None]
+
+
+def level_curves(settings: Settings, scenes: list[SceneLog], grid: Grid | None, total: float,
+                 step: float = 0.01) -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
+    """video.yaml music.levels, a fader over the whole score: {position: dB} (both stems) or
+    {position: {bed: dB, accents: dB}}, linear in dB between the positions and held before the first and
+    after the last. Returns (times, bed dB, accents dB) every `step` s, or None without levels. A short's
+    cold open can start near silence and build into its title; the master's loudness target still
+    applies to the whole score."""
+    if not settings.levels:
+        return None
+    pts = []
+    for at, v in settings.levels.items():
+        t = video_time(at, scenes, grid)
+        if t is None:
+            raise ValueError(f"music.levels: cannot place {at!r} (a bar from 1, 'bar.beat', or seconds)")
+        if isinstance(v, dict):
+            both = float(v.get("all", 0.0))
+            b, a = float(v.get("bed", both)), float(v.get("accents", both))
+        else:
+            b = a = float(v)
+        pts.append((t, b, a))
+    pts.sort()
+    tt = np.arange(0.0, total + 4.0, step)
+    ts = [p[0] for p in pts]
+    return tt, np.interp(tt, ts, [p[1] for p in pts]), np.interp(tt, ts, [p[2] for p in pts])
+
+
+def apply_levels(x: np.ndarray, curve, which: int) -> np.ndarray:
+    """Multiply a stem by a level curve (which: 1 = bed, 2 = accents)."""
+    if curve is None or not np.any(curve[which]):
+        return x
+    ts = np.arange(len(x)) / SR
+    return x * (10 ** (np.interp(ts, curve[0], curve[which]) / 20))[:, None]
 
 
 def apply_silences(x: np.ndarray, silences) -> np.ndarray:
@@ -1790,6 +1830,7 @@ def write_midi(score: Score, path: Path, bpm: float = 120.0) -> None:
 def compose(scenes: list[SceneLog], settings: Settings, length: float | None = None):
     """Event logs -> (score, cues, ctx, bed, accents). Deterministic."""
     cues, ctx = derive_cues(scenes, settings)
+    ctx["levels"] = level_curves(settings, scenes, ctx["grid"], ctx["total"] if length is None else length)
     ctx["cuts"] = [c.t for c in cues if c.kind == "cut"]
     ctx["titles"] = [c.t for c in cues if c.kind == "title"]
     score = build_score(cues, ctx, settings, scenes)

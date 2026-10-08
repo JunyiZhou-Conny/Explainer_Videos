@@ -124,6 +124,13 @@ music:
   # Scene joins that continue the picture: no thump, no riser, the chord carries on. NOT READ by today's
   # composer (every scene start is a cut there): a toolkit request.
   joins: {"12.1": segue, "62.1": segue, "70.1": segue, "81.1": segue}
+  # A fader over the score (dB at bar.beat positions, linear in between, held after the last; bed = pads,
+  # bass, risers; accents = the event-locked notes). The cold open starts near silence (script.md bar 1:
+  # about -24 LUFS short-term), the pad fades in under the first plucks, the puzzle builds a few dB at a
+  # time, the scramble's ticks come forward over the riser, and from the title on the score is at full level.
+  levels: {"1.1": {bed: -20, accents: -11}, "2.1": {bed: -9, accents: -6}, "4.1": {bed: -7, accents: -6},
+           "8.1": {bed: -5, accents: -4}, "9.1": {bed: -2, accents: 3}, "9.4+": {bed: 0, accents: 3},
+           "10.1": 0}
   stems: [bed, accents]        # bed = pads, bass, risers; accents = event-locked notes, ticks, hits
   # The long version gets music later from the same pipeline (free time, ducked under the voice).
 

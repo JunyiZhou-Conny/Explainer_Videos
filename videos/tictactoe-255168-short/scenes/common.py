@@ -303,7 +303,7 @@ def win_template(a: int, b: int, cell: float, ext: float = 0.42) -> Line:
     return Line([p[0], p[1], 0], [q[0], q[1], 0])
 
 
-def move_digit(n: int, size: float = 19) -> Text:
+def move_digit(n: int, size: float = 23) -> Text:
     return Text(str(n), font=FONT_MONO, font_size=size, color=INK_DIM)
 
 
@@ -447,26 +447,27 @@ class Sounds:
         self.phrases: list[tuple[str, list[tuple[float, str, float]], bool]] = []
         self.fx: list[tuple[float, str, float, float]] = []
 
-    def phrase(self, name: str, notes, rise: bool = False):
+    def phrase(self, name: str, notes, rise: bool = False, gain: float = 1.0):
         """One count mark: its notes get one crescendo (the composer's count velocity); `rise`: ticks
-        and other unpitched items climb."""
+        and other unpitched items climb; `gain`: this phrase softer or louder."""
         notes = sorted((float(t), str(tg), float(x)) for t, tg, x in notes)
         if notes:
-            self.phrases.append((name, notes, rise))
+            self.phrases.append((name, notes, rise, float(gain)))
 
     def effect(self, t: float, sound: str, dur: float = 0.6, x: float = 0.0):
         self.fx.append((float(t), sound, float(dur), float(x)))
 
     def log(self, scene) -> None:
-        for name, notes, rise in self.phrases:
+        for name, notes, rise, gain in self.phrases:
+            extra = {} if gain == 1.0 else {"gain": round(gain, 3)}
             scene.mark("count", at=notes[0][0], n=len(notes), every=0.0, pitch="rise" if rise else "flat",
                        phrase=name, times=[round(t, 4) for t, _, _ in notes], sounds=[tg for _, tg, _ in notes],
-                       xs=[round(x, 2) for _, _, x in notes])
+                       xs=[round(x, 2) for _, _, x in notes], **extra)
         for t, sound, dur, x in self.fx:
             scene.mark("fx", at=t, dur=dur, sound=sound, x=round(x, 2))
 
     def table(self) -> list[tuple[float, str, str]]:
-        rows = [(t, tg, name) for name, notes, _ in self.phrases for t, tg, _ in notes]
+        rows = [(t, tg, name) for name, notes, _, _ in self.phrases for t, tg, _ in notes]
         rows += [(t, s, "fx") for t, s, _, _ in self.fx]
         return sorted(rows)
 

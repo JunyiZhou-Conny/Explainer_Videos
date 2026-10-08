@@ -26,12 +26,12 @@ from __future__ import annotations
 import math
 
 import numpy as np
-from manim import LIGHT, Line, Mobject, Rectangle, Text, VGroup, config
+from manim import LIGHT, Group, Line, Mobject, Rectangle, Text, VGroup, config
 
 from explainer.short import (BeatScene, FONT_TRACKED, INK, INK_DIM, WHITE, brackets, cjk, sample_points,
                              stroke_px, tracked)
 
-from common import (GAME_A, GAME_B, OC, PITCH, WIN_TOP, XC, Cam, Ink, InkText, Pen, ScreenField, Shot, Sounds,
+from common import (GAME_A, GAME_B, OC, PEN_HALO, PITCH, WIN_TOP, XC, Cam, Ink, InkText, Pen, ScreenField, Shot, Sounds,
                     W, box, clamp01, ease_in_cubic, ease_in_expo, ease_in_out_cubic, ease_in_out_sine,
                     ease_out_cubic, ease_out_quad, final_glyphs, gaussian_sprite, grid_lines, lerp, mark_ink,
                     mirror_lr, move_digit, player, pulse, rgb, rot_cw, seg, square_centre, tag, title_counter,
@@ -135,6 +135,9 @@ class BoardRig:
         self.marks = [mark_ink(player(k), 0.62 * cell) for k in range(len(self.moves))]
         self.win = Ink(win_template(*WIN_TOP, cell), XC.mid, 3.4, XC.glow, 22, layers=7, glow_opacity=0.7)
         self.nums = [InkText(move_digit(k + 1)) for k in range(len(self.moves))]
+        self.num_halos = [gaussian_sprite(PEN_HALO, 64, 0.3).scale_to_fit_width(0.62) for _ in self.moves]
+        for hlo in self.num_halos:
+            hlo.set_opacity(0)
         self.ghosts = []                     # motion-blur copies (core strokes only) for the quarter turn
         for _ in range(ghosts):
             g = [Ink(Line([*p, 0], [*q, 0]), INK, 2.0) for p, q in grid_lines(cell)]
@@ -142,7 +145,8 @@ class BoardRig:
                   for k in range(len(self.moves))]
             g.append(Ink(win_template(*WIN_TOP, cell), XC.mid, 2.5))
             self.ghosts.append(g)
-        self.group = VGroup(*[i for g in self.ghosts for i in g], *self.lines, *self.marks, self.win, *self.nums)
+        self.group = Group(*[i for g in self.ghosts for i in g], *self.lines, *self.marks, self.win,
+                           *self.num_halos, *self.nums)
         self.place(np.zeros(2))
 
     def place(self, b, s: float = 1.0, theta: float = 0.0, fx: float = 1.0, fall=None):
@@ -166,6 +170,8 @@ class BoardRig:
             x.hide()
         for n in self.nums:
             n.hide()
+        for hlo in self.num_halos:
+            hlo.set_opacity(0)
         for g in self.ghosts:
             for x in g:
                 x.hide()
@@ -187,8 +193,11 @@ class BoardRig:
             h = hl[k]
             col = rgb(INK_DIM) * (1 - h) + rgb(WHITE) * h
             settle = (1 - num_v[k]) * 0.06
-            n.show(self.number_at(k) + np.array([0.0, settle * self.s]), scale=self.s * (1 + 0.28 * h),
-                   sx=sx, vis=num_v[k] * vis, color=_hex(col))
+            at = self.number_at(k) + np.array([0.0, settle * self.s])
+            n.show(at, scale=self.s * (1 + 0.55 * h), sx=sx, vis=num_v[k] * vis, color=_hex(col))
+            hlo = self.num_halos[k]
+            hlo.move_to([at[0], at[1], 0])
+            hlo.set_opacity(clamp01(0.8 * h * vis))
 
 
 def _mark_tmpl(sym: str, size: float):
@@ -302,16 +311,16 @@ class ColdOpen(BeatScene):
             cols.append(np.repeat(rgb(col)[None, :], n, axis=0))
         p0 = np.concatenate(pts)
         colors = np.concatenate(cols)
-        v = rng.normal(0, 0.55, p0.shape) + (p0 - CB) * 0.25
-        t0, d = DISSOLVE_B, 1.6
+        v = rng.normal(0, 0.5, p0.shape) + (p0 - CB) * 0.45 + np.array([0.9, 0.35])
+        t0, d = DISSOLVE_B, 1.1
 
         def pos(t):
             u = max(0.0, (t - t0) / d)
-            return p0 + v * (u ** 0.8) + np.array([0.0, 0.18]) * u
+            return p0 + v * (1 - (1 - min(u, 1.0)) ** 2) * 1.3
 
         def wts(t):
             u = clamp01((t - t0) / d)
-            return np.full(len(p0), 0.95 * (1 - u) ** 1.6)
+            return np.full(len(p0), 0.9 * (1 - u) ** 2)
         return ScreenField(pos, CAM, weights=wts, colors=colors, size_px=1.5, glow_px=5, gain=1.8)
 
     def make_dust_title(self) -> ScreenField:
@@ -323,15 +332,15 @@ class ColdOpen(BeatScene):
         u = np.clip((xs - xs.min()) / (xs.max() - xs.min()), 0, 1)
         w = np.clip((u - 0.38) / 0.24, 0, 1)[:, None]            # cool left, warm right, blended between
         colors = rgb(XC.mid)[None, :] * (1 - w) + rgb(OC.core)[None, :] * w
-        out = (p0 - NUM_C) * np.array([0.22, 0.5])
-        v = rng.normal(0, 0.55, p0.shape) + out
+        out = (p0 - NUM_C) * np.array([0.12, 0.35])
+        v = rng.normal(0, 0.32, p0.shape) + out
         q1 = p0 + v                                             # where the drift ends (11.3)
         spin = rng.uniform(1.6, 2.6, len(p0))                    # clockwise turns on the way in (radians)
         t0, t1 = DISSOLVE, SWIRL[0]
 
         def pos(t):
             if t <= t1:
-                return p0 + v * ease_out_quad(seg(t, t0, t1))
+                return p0 + v * seg(t, t0, t1) ** 1.7          # holds the glyphs' shape, then drifts apart
             e = ease_in_cubic(seg(t, *SWIRL))
             r = (q1 - ROOT) * (1 - e)
             ang = -spin * e
@@ -341,8 +350,8 @@ class ColdOpen(BeatScene):
         def wts(t):
             fade_in = seg(t, t0 - 0.02, t0 + 0.12)
             fade_out = 1 - seg(t, SWIRL[1], SWIRL[1] + 0.4)
-            return np.full(len(p0), 0.8 * fade_in * fade_out)
-        return ScreenField(pos, CAM, weights=wts, colors=colors, size_px=1.4, glow_px=6, gain=1.7)
+            return np.full(len(p0), 0.6 * fade_in * fade_out)
+        return ScreenField(pos, CAM, weights=wts, colors=colors, size_px=1.25, glow_px=6, gain=1.6)
 
     # ------------------------------------------------------------- the counter's plan (bars 9-10)
     def counter_plan(self):
@@ -382,7 +391,7 @@ class ColdOpen(BeatScene):
         self.dark.set_fill(opacity=dark)
         fl = 0.85 * math.exp(-(t - HIT) / 0.022) if HIT <= t < HIT + 0.07 else 0.0
         self.flash.set_fill(opacity=fl)
-        for f, (a, b) in ((self.dust_b, (DISSOLVE_B, DISSOLVE_B + 1.7)), (self.dust_t, (DISSOLVE, END))):
+        for f, (a, b) in ((self.dust_b, (DISSOLVE_B, DISSOLVE_B + 1.2)), (self.dust_t, (DISSOLVE, END))):
             if f in self.mobjects and a - 1e-6 <= t <= b + 1e-6:
                 f.render_at(t)
 
@@ -425,7 +434,7 @@ class ColdOpen(BeatScene):
             return
         u = ease_in_out_sine(seg(t, DISSOLVE_B, TURN[0]))
         lift = math.sin(math.pi * u)
-        centre = CA + (CB - CA) * u
+        centre = CA + (CB - CA) * u + np.array([0.0, 0.4 * lift])      # lifts over the gap as it slides
         e = ease_in_out_cubic(seg(t, *TURN))
         theta = -0.5 * math.pi * e
         fu = ease_in_out_sine(seg(t, *FLIP))
@@ -494,6 +503,9 @@ class ColdOpen(BeatScene):
         fall = self.fall(t)
         k = 1.0 if fall is None else fall[1]
         appear = ease_out_cubic(seg(t, SIGN_IN, SIGN_IN + 0.3))
+        if DISSOLVE_B <= t:                       # out of the way while the copy slides over, back as "=?"
+            appear = min(1 - seg(t, DISSOLVE_B, DISSOLVE_B + 0.15), 1.0) if t < TURN[0] else \
+                ease_out_cubic(seg(t, TURN[0], TURN[0] + 0.3))
         c = SIGN + np.array([0.0, 0.14 * (1 - appear)])
         if fall is not None:
             c = fall[0] + (c - fall[0]) * k
@@ -506,7 +518,7 @@ class ColdOpen(BeatScene):
         elif t < DISSOLVE_B:
             sf, sv = ease_out_cubic(seg(t, NE_1, NE_1 + 0.2)), 1.0
         elif t < NE_2:
-            sf, sv = 1.0, 1 - seg(t, DISSOLVE_B, DISSOLVE_B + 0.3)
+            sf, sv = 1.0, 1.0 if t < DISSOLVE_B + 0.15 else 0.0
         else:
             sf, sv = ease_out_cubic(seg(t, NE_2, NE_2 + 0.2)), 1.0
         S.slash.show(sf, A, c, vis=sv * appear, glow=glow, width=max(0.35, k ** 0.5))
@@ -516,7 +528,7 @@ class ColdOpen(BeatScene):
         elif t < DISSOLVE_B:
             qv = 1 - seg(t, NE_1, NE_1 + 0.15)
         elif t < NE_2:
-            qv = seg(t, DISSOLVE_B, DISSOLVE_B + 0.3)
+            qv = 1.0 if t >= TURN[0] else 0.0
         else:
             qv = 1 - seg(t, NE_2, NE_2 + 0.15)
         S.q.show(c + np.array([0.0, 0.42]) * k, scale=k * (0.9 + 0.1 * qv), vis=qv, color=INK)
@@ -709,7 +721,7 @@ class ColdOpen(BeatScene):
         """Play the logged events in time order (each a Shot; overlapping ones share a play), and add
         the particle fields while they are needed."""
         self.log_events()
-        fields = [(self.dust_b, DISSOLVE_B, DISSOLVE_B + 1.7), (self.dust_t, DISSOLVE, END)]
+        fields = [(self.dust_b, DISSOLVE_B, DISSOLVE_B + 1.2), (self.dust_t, DISSOLVE, END)]
         steps = sorted({round(t, 4) for t, _, _ in self.shots} | {round(a, 4) for _, a, _ in fields}
                        | {round(b, 4) for _, _, b in fields if b < END})
         for i, t in enumerate(steps):

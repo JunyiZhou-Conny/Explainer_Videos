@@ -268,8 +268,8 @@ blip); every synthesized sound ends with a short fade, so none stops with a clic
 video.yaml `music:` — `key`, `mode` (lydian, ionian/major, mixolydian, dorian, aeolian/minor,
 phrygian), `mood` (bright / warm / dark: filters, reverb, sparkle, bass and accent levels),
 `palette` (glass / soft / pluck: which instrument plays which role; or a map of sound tags, as
-`sounds`), `sounds`, `acts` (key changes), `cues`, `density`, `pulse`, `lufs` (-14), `peak` (or
-`true_peak_dbtp`, -1), `seed`. The tempo is video.yaml's `tempo` (or `grid: {bpm}`, or `music.bpm`).
+`sounds`), `sounds`, `acts` (key changes), `cues`, `chords`, `joins`, `levels`, `density`, `pulse`,
+`lufs` (-14), `peak` (or `true_peak_dbtp`, -1), `seed`. The tempo is video.yaml's `tempo` (or `grid: {bpm}`, or `music.bpm`).
 
 Structure can also be written in video.yaml instead of scene code, on the whole video's timeline:
 
@@ -290,7 +290,12 @@ music:
 entry is the chord from that bar (from 1, or a `"bar.beat"` position) on, a roman numeral in the key
 that holds there (`acts` / cue `key:`), `"/D"` a bass note (`II/D`), `rest` no pads or bass; a cue's
 own `chord:` fills in where the map has none. `joins:` marks scene joins that are not cuts (`segue`:
-no thump, no riser, the chord carries on).
+no thump, no riser, the chord carries on). `levels:` (optional) is a fader over the whole score, so a
+cold open can start near silence and build into its title: `{"1.1": {bed: -16, accents: -9}, "2.1": -8,
+"9.4+": 0}` gives dB at positions (a number: both stems; `bed` = pads, bass, risers; `accents` = the
+event-locked notes and hits), linear in dB between them and held after the last; the loudness target
+still applies to the whole score. A count mark's `gain` (`self.mark("count", ..., gain=0.6)`) makes one
+phrase softer or louder without moving its notes.
 
 Positions in video.yaml count as musicians do, from 1: `"10.1"` is bar 10, beat 1 (bar n starts at
 (n − 1) × 2.4 s), `"12.3+"` the eighth note after bar 12 beat 3, a bare `12` bar 12; `"9:0"` is the

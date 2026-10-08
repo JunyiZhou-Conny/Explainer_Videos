@@ -400,3 +400,37 @@ def test_planned_progression_joins_and_hit_sizes(tmp_path):
     assert not [f for f in score.fx if f["kind"] == "thump"]
     hit = [f for f in score.fx if f["kind"] == "boom" and f["t"] == pytest.approx(7.2)]
     assert hit and hit[0]["gain"] < 0.5                                   # a small hit (size 0.2)
+
+
+def test_levels_fade_the_score(tmp_path):
+    """video.yaml music.levels is a fader over the score: dB at positions, linear in between, per stem;
+    a cold open can start near silence and build into its title. Without levels nothing changes."""
+    (_, _, ctx0, bed0, acc0), _ = compose(tmp_path)
+    spec = {**SPEC, "music": {**SPEC["music"], "levels": {"1.1": {"bed": -20, "accents": -10}, "2.1": -20, 3: 0}}}
+    (_, _, ctx1, bed1, acc1), _ = compose(tmp_path, spec)
+    assert ctx0["levels"] is None and ctx1["levels"] is not None
+    sr = mu.SR
+    first = slice(int(0.3 * sr), int(1.2 * sr))          # inside bar 1, before the count starts
+    late = slice(int(5.2 * sr), int(7.0 * sr))           # bar 3 on: back to 0 dB
+    assert mu.lufs(bed0[first]) - mu.lufs(bed1[first]) == pytest.approx(20, abs=1.5)
+    assert np.allclose(bed0[late], bed1[late]) and np.allclose(acc0[late], acc1[late])
+    t = np.arange(len(bed0)) / sr
+    mid = (t > 3.55) & (t < 3.65)                          # 3.6 s: half way from bar 2 (-20 dB) to bar 3 (0 dB)
+    ratio = np.sqrt(np.mean(acc1[mid] ** 2) / np.mean(acc0[mid] ** 2))
+    assert 20 * np.log10(ratio) == pytest.approx(-10, abs=1.0)
+    with pytest.raises(ValueError):
+        compose(tmp_path, {**SPEC, "music": {**SPEC["music"], "levels": {"nowhere": -3}}})
+
+
+def test_count_gain_scales_a_phrase(tmp_path):
+    """A count mark's `gain` makes that phrase softer (or louder) without changing its notes or times."""
+    loud = _score_of(tmp_path, _count_log(["X@C#5", "X@E5", "O@G4", "tick"]))
+    log = _count_log(["X@C#5", "X@E5", "O@G4", "tick"])
+    log["events"][0]["data"]["gain"] = 0.5
+    soft = _score_of(tmp_path, log)
+    pick = lambda sc: [(n["t"], n["m"], n["vel"]) for n in sc.notes if n["inst"] in ("bell", "glass") and 1.1 < n["t"] < 2.4]
+    a, b = pick(loud), pick(soft)
+    assert [x[:2] for x in a] == [x[:2] for x in b] and len(a) == 3
+    assert all(y[2] == pytest.approx(0.5 * x[2], abs=1e-3) for x, y in zip(a, b))
+    tick = lambda sc: [f["gain"] for f in sc.fx if f["kind"] == "tick" and 2.0 < f["t"] < 2.2]
+    assert tick(soft)[0] == pytest.approx(0.5 * tick(loud)[0], abs=1e-3)
