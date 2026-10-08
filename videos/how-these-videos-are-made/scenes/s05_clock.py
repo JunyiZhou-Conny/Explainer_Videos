@@ -27,8 +27,9 @@ Every number on screen is checked in _check() (runs on import) against the asset
 sentence marks, the character estimate (1.42 s), the recognizer's word times, the +1.8 s gap, the
 7 characters, and the real code lines.
 
-Helpers defined here (not in common.py): glyphs_of(), wave_poly(), clipped_panel(), glow(),
-say_card(), cell_strip().
+Helpers defined here (not in common.py): glyphs_of(), glyphs_of_code(), wave_poly(), clipped_panel()
+(a code panel cut at a column, like an editor window), glow(), say_card(), cell_strip(), collect()
+(gather that also lifts parts animated in one by one), adopt().
 """
 
 import json
@@ -41,7 +42,7 @@ from explainer import style as S
 from explainer.components import ponder_card
 from explainer.scene import VoiceScene
 
-from common import (AUDIO, BUG, CAPTION_COLOR, EXCERPTS, INK, MEASURED, MONO, NARRATION, OPEN, PANEL, TOOL,
+from common import (AUDIO, BUG, EXCERPTS, INK, MEASURED, NARRATION, PANEL, TOOL,
                     anchor_pin, asset_text, box, bug_tag, caption, chip, code_block, code_span, emphasize,
                     fade_out_all, label, load_envelope, measured_badge, mono, open_tag, ponder_drain, pulse,
                     source_caption, video_player)
@@ -338,8 +339,9 @@ class AudioClock(VoiceScene):
             vo.wait_until("the voice is made first")
             self.play(GrowFromEdge(clip, LEFT), FadeIn(voice_l, shift=RIGHT * 0.1), run_time=1.0)
             vo.wait_until("waits for words")
-            self.play(*[code.code_lines[k].animate.set_opacity(1) for k, _ in HOOK_ANCHORS],
-                      *[s.animate.set_color(AUDIO) for s in strings], run_time=0.5)
+            self.play(*[VGroup(*[g for g in code.code_lines[k] if g not in s]).animate.set_opacity(1)
+                        for (k, _), s in zip(HOOK_ANCHORS, strings)],
+                      *[s.animate.set_color(AUDIO).set_opacity(1) for s in strings], run_time=0.5)
             self.play(LaggedStart(*[TransformFromCopy(s, p) for s, p in zip(strings, pins)], lag_ratio=0.2),
                       run_time=1.2)
             vo.wait_until("This code says")
@@ -443,8 +445,9 @@ class AudioClock(VoiceScene):
             vo.wait_until("Pause")
             self.add(lifted)
             self.remove(*num)
-            self.play(FadeIn(q, scale=0.95), FadeOut(collect(self, full, badge, window, src2, *zoom_view)),
-                      lifted.animate.arrange(RIGHT, buff=0.42).move_to(num_strip), run_time=0.8)
+            self.play(FadeOut(collect(self, full, badge, window, src2, *zoom_view)),
+                      lifted.animate.arrange(RIGHT, buff=0.42).move_to(num_strip), run_time=0.5)
+            self.play(FadeIn(q, scale=0.95), run_time=0.5)
             vo.wait_until("The number on screen")
             self.play(*[ReplacementTransform(a, b) for a, b in zip(lifted, num_strip.chars)],
                       LaggedStart(*[Create(b) for b in num_strip.boxes], lag_ratio=0.1), run_time=0.9)
@@ -498,6 +501,8 @@ class AudioClock(VoiceScene):
         green_pin.shift(np.array([zoom_x(WCOUNTED[0]), ZW_TOP + 0.04, 0]) - green_pin[1].get_bottom())
         y_gap = pin[0].get_y()
         gap_line = Line([zoom_x(EST), y_gap, 0], [zoom_x(WCOUNTED[0]), y_gap, 0], color=BUG, stroke_width=4)
+        gap_ends = VGroup(*[Line([x, y_gap - 0.14, 0], [x, y_gap + 0.14, 0], color=BUG, stroke_width=4)
+                            for x in (zoom_x(EST), zoom_x(WCOUNTED[0]))])
         gap_tag = bug_tag(f"+{GAP:.1f} s", 24).move_to(gap_line)
 
         with self.voiceover(SAY[3]) as vo:
@@ -531,8 +536,10 @@ class AudioClock(VoiceScene):
             vo.wait_until("for the words right after")
             self.play(GrowFromEdge(bars[2], LEFT), FadeIn(bar_labels[2]), run_time=0.6)
             vo.wait_until("lands almost")
+            self.add(gap_ends[0])
             self.play(pin.animate.shift(RIGHT * (zoom_x(WCOUNTED[0]) - zoom_x(EST))), Create(gap_line),
                       run_time=0.9, rate_func=linear)
+            self.add(gap_ends[1])
             self.play(ReplacementTransform(pin, green_pin), FadeIn(gap_tag, scale=0.9), run_time=0.5)
 
         # ---------------------------------------------------------- the fix so far: by hand
@@ -540,7 +547,7 @@ class AudioClock(VoiceScene):
         for k in (0, 1):
             for gl in comment.code.code_lines[k]:
                 gl.set_opacity(gl.get_fill_opacity() * 0.35)
-        comment.move_to([0, 2.8 - comment.height / 2, 0])
+        comment.move_to([0, 2.45 - comment.height / 2, 0])
         fix = clipped_panel(SHIFT_LINE, "tic-tac-toe video · scenes/s03_stop.py", 317, cols=60, font_size=24)
         fix.move_to([0, 0, 0]).align_to(comment, LEFT).align_to([0, comment.get_bottom()[1] - 0.3, 0], UP)
         fcode = fix.code
@@ -570,10 +577,10 @@ class AudioClock(VoiceScene):
         note = open_tag("this service can send word times · only the audio is kept")
 
         with self.voiceover(SAY[4]) as vo:
-            self.add(ghost)
-            self.play(FadeOut(collect(self, zoom, zoom_tick, green_pin, gap_line, gap_tag, measured, meas_chars,
-                                      bars, bar_labels, guides, brace, about3, cap4)),
-                      FadeIn(fix), ReplacementTransform(a1, ghost), run_time=1.1)
+            self.play(FadeOut(collect(self, zoom, zoom_tick, green_pin, gap_line, gap_ends, gap_tag, measured,
+                                      meas_chars, bars, bar_labels, guides, brace, about3, cap4)), run_time=0.5)
+            a1.set_z_index(3)                                  # fly over the panel, not under it
+            self.play(FadeIn(fix), ReplacementTransform(a1, ghost), run_time=0.8)
             target.set_opacity(1).set_color(AUDIO)
             self.remove(ghost)
             self.play(FadeIn(comment, shift=DOWN * 0.15), run_time=0.6)
@@ -590,10 +597,10 @@ class AudioClock(VoiceScene):
             vo.wait_until("Yet the online voice")
             counter_n.clear_updaters()
             stay = collect(self, fix, counter)
-            dy = comment.get_top()[1] - fix.get_top()[1]
-            voice.move_to([0, 0, 0]).align_to(comment, LEFT).align_to([0, stay.get_bottom()[1] + dy - 0.6, 0], UP)
-            outs.next_to(voice, DOWN, buff=0.5).align_to(voice, LEFT).shift(RIGHT * 0.4)
-            note.next_to(outs, DOWN, buff=0.45).align_to(voice, LEFT)
+            dy = 2.85 - fix.get_top()[1]                     # the kept line moves up to the top
+            voice.move_to([0, 0, 0]).align_to(comment, LEFT).align_to([0, stay.get_bottom()[1] + dy - 0.55, 0], UP)
+            outs.next_to(voice, DOWN, buff=0.45).align_to(voice, LEFT).shift(RIGHT * 0.4)
+            note.next_to(outs, DOWN, buff=0.4).align_to(voice, LEFT)
             self.play(FadeOut(comment, shift=UP * 0.3), stay.animate.shift(UP * dy), run_time=0.8)
             self.play(FadeIn(voice, shift=UP * 0.3), run_time=0.7)
             vo.wait_until("can send a time")

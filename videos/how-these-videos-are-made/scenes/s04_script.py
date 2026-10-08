@@ -25,7 +25,8 @@ the A41 strings, the run times of the false start and their "minutes later" / "e
 and that every quoted excerpt is in its asset.
 
 Helpers defined here (not in common.py): doc_icon(), pipe_item(), tip_of(), find_glyphs(),
-wrap_to(), flip_faces(), pdf_grid(), sticky_note(), script_panel(), clock_label().
+wrap_to(), flip_faces(), pdf_grid(), turn_red(), sticky_note(), script_panel(), side_bar(),
+clock_label(), and ScriptIsCode.play()/drop_wrappers() (see their docstring).
 """
 
 import datetime as dt
@@ -36,10 +37,10 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (AUDIO, BUG, CAPTION, EXCERPTS, INK, MEASURED, NARRATION, PANEL, SUB_AGENT, SUB_AGENT_TEXT,
+from common import (AGENT, AUDIO, BUG, CAPTION, EXCERPTS, INK, MEASURED, NARRATION, PANEL, SUB_AGENT, SUB_AGENT_TEXT,
                     TOOL, asset_text, box, bug_tag, caption, clock, code_block, code_span, dim, emphasize,
-                    exhibit, fade_out_all, file_icon, gather, label, mono, pause_icon, pen, person_icon,
-                    pin_to_corner, pulse, recon_tag, role_icon, source_caption, strike, time_axis, undim)
+                    exhibit, fade_out_all, file_icon, gather, label, mono, pause_icon, pen, person_icon, pulse,
+                    recon_tag, role_icon, source_caption, strike, time_axis, undim)
 
 SAY = NARRATION["S04"]
 
@@ -367,6 +368,30 @@ def clock_label(top: str, bottom: str) -> VGroup:
 
 # ------------------------------------------------------------------ the scene
 class ScriptIsCode(VoiceScene):
+    def play(self, *animations, **kwargs):
+        """Scene.play, then drop the wrapper groups Manim adds for animated groups that were not on
+        screen themselves (a `.animate` on a sub-group, a LaggedStart's group): their members are
+        already drawn by their own parents, and a second copy on top hides what lies under it (a
+        page over its lines) and undoes dimming (two layers at 35 % read as 58 %)."""
+        super().play(*animations, **kwargs)
+        self.drop_wrappers()
+
+    def drop_wrappers(self):
+        fams = [{id(x): x for x in m.get_family()} for m in self.mobjects]
+        seen: dict[int, int] = {}
+        for f in fams:
+            for k in f:
+                seen[k] = seen.get(k, 0) + 1
+        keep = [True] * len(self.mobjects)
+        for i in reversed(range(len(self.mobjects))):        # the newest first: wrappers come last
+            m, f = self.mobjects[i], fams[i]
+            own = [k for k, x in f.items() if isinstance(x, ImageMobject) or len(x.points)]
+            if not m.updaters and all(seen[k] > 1 for k in own):
+                keep[i] = False
+                for k in f:
+                    seen[k] -= 1
+        self.mobjects = [m for m, k in zip(self.mobjects, keep) if k]
+
     def construct(self):
         # ---------------------------------------------------------- the pipeline is a chain of files
         items = [pipe_item(n, note, kind) for n, note, kind in FILES]
@@ -377,7 +402,7 @@ class ScriptIsCode(VoiceScene):
                   for a, b in zip(items, items[1:])]
         track = DashedLine([ROW_X[0] - 0.75, ROW_Y0, 0], [ROW_X[-1] + 0.75, ROW_Y0, 0], dash_length=0.09,
                            dashed_ratio=0.45, color=TOOL, stroke_width=2).set_opacity(0.55)
-        quill = pen(0.62, S.BLUE)
+        quill = pen(0.62, AGENT)
         quill.shift(track.get_start() + UP * 0.5 - tip_of(quill))
         motto = label("“" + A13["motto"] + "”", 30, INK).move_to([0, 2.05, 0])
         src0 = source_caption("motto: " + A13["src"])
@@ -443,10 +468,10 @@ class ScriptIsCode(VoiceScene):
 
         with self.voiceover(SAY[1], pad=1.4) as vo:
             self.play(FadeOut(motto), FadeOut(src0), FadeOut(reviewer), row.animate.shift(lift), run_time=0.9)
-            self.play(LaggedStart(*[AnimationGroup(pulse(it.icon, 1.12, run_time=0.5),
-                                                   it.icon.page.animate(rate_func=there_and_back, run_time=0.5)
-                                                   .set_stroke(S.WHITE, 4)) for it in items],
-                                  lag_ratio=0.15), run_time=1.0)
+            self.play(LaggedStart(*[pulse(it.icon, 1.12, run_time=0.5) for it in items], lag_ratio=0.15),
+                      LaggedStart(*[ShowPassingFlash(it.icon.page.copy().set_fill(opacity=0).set_stroke(S.WHITE, 4),
+                                                     time_width=0.7) for it in items], lag_ratio=0.15),
+                      run_time=1.1)
             vo.wait_until("Agents cataloging")
             self.play(*dim(items[3], items[4], items[5], *arrows[2:], opacity=0.35),
                       FadeIn(front, target_position=items[0].icon.get_center(), scale=0.3),
@@ -490,7 +515,7 @@ class ScriptIsCode(VoiceScene):
         reads_arrow = CurvedArrow(say_l.get_right() + RIGHT * 0.15, chip.get_corner(DR) + np.array([-0.45, -0.06, 0]),
                                   angle=PI / 2, color=AUDIO, stroke_width=3, tip_length=0.16)
         src2 = source_caption("real file · the tic-tac-toe video's script.md (commit bb3fc1e); “…” marks a cut")
-        nine_line = next(r for r in conv if NINE in (getattr(r, "original_text", "") or ""))
+        nine_line = next((r for r in conv if NINE in (getattr(r, "original_text", "") or "")), conv[-1])
         nine = find_glyphs(nine_line, NINE)
         sym = mono("9!", 32, INK)
         words = label("nine factorial", 30, AUDIO)
@@ -567,10 +592,13 @@ class ScriptIsCode(VoiceScene):
         rev_icons_at.move_to([0, REV_Y, 0]).align_to([-6.4, 0, 0], LEFT)
         rev_l = label("script review", 26, SUB_AGENT_TEXT).next_to(rev_icons_at, RIGHT, buff=0.2)
         rev_times = caption("15:47 → 16:30", 22).move_to([0, REV_Y + 0.36, 0]).align_to([x_of(REVIEW[0]), 0, 0], LEFT)
-        now = ValueTracker(_t(REVIEW[0]).timestamp())
+        def mins(t: str) -> float:                               # minutes after 15:40 (no time zones)
+            return (_t(t) - _t(LANE_T0)).total_seconds() / 60
+
+        now = ValueTracker(mins(REVIEW[0]))
 
         def x_now():
-            return x_of(dt.datetime.fromtimestamp(now.get_value()))
+            return x_of(_t(LANE_T0) + dt.timedelta(minutes=now.get_value()))
 
         def lane_bar(t0: str, t_end: str, y: float, h: float, color: str = SUB_AGENT, opacity: float = 1.0):
             x0, x1 = x_of(t0), x_of(t_end)
@@ -607,7 +635,7 @@ class ScriptIsCode(VoiceScene):
         guide_drop = DashedLine([x_of(GUIDE_AT), guide.get_bottom()[1], 0], [x_of(GUIDE_AT), ax_y, 0],
                                 dash_length=0.08, color=TOOL, stroke_width=2)
         guide_time = caption("16:07", 20).move_to([x_of(GUIDE_AT), ax_y - 0.32, 0])
-        quill2 = pen(0.62, S.BLUE)
+        quill2 = pen(0.62, AGENT)
         src3 = source_caption("times: the session's workflow run records and git (UTC)")
         stop_line = Line([x_of(KILLED), lane_ys[0] + 0.25, 0], [x_of(KILLED), ax_y, 0], color=BUG, stroke_width=4)
         stop_tag = bug_tag("stopped at 16:24,\nbefore the review was done", size=24)
@@ -641,7 +669,7 @@ class ScriptIsCode(VoiceScene):
                       FadeIn(rev_times), FadeIn(src3), run_time=0.6)
             self.add(review_bar, cursor)
             quill2.shift(guide_text.get_left() + LEFT * 0.1 - tip_of(quill2))
-            self.play(now.animate.set_value(_t(GUIDE_AT).timestamp()), FadeIn(guide_box), FadeIn(guide_ic),
+            self.play(now.animate.set_value(mins(GUIDE_AT)), FadeIn(guide_box), FadeIn(guide_ic),
                       FadeIn(guide_path), FadeIn(quill2, shift=DOWN * 0.2), run_time=0.9, rate_func=linear)
             self.play(Write(guide_text), quill2.animate.shift(RIGHT * guide_text.width), run_time=1.1)
             self.play(FadeOut(quill2, shift=UP * 0.2), Create(guide_drop), FadeIn(guide_time), run_time=0.5)
@@ -649,14 +677,14 @@ class ScriptIsCode(VoiceScene):
             self.play(emphasize(day, run_time=0.7))
 
             vo.wait_until("Minutes later")
-            self.play(now.animate.set_value(_t(STARTS[0]).timestamp()), run_time=vo.until("it started six"),
+            self.play(now.animate.set_value(mins(STARTS[0])), run_time=vo.until("it started six"),
                       rate_func=linear)
             self.play(LaggedStart(*[FadeIn(b, shift=RIGHT * 0.15) for b in builders], lag_ratio=0.12),
                       FadeIn(b_label, shift=RIGHT * 0.15), FadeIn(b_time), FadeIn(b_tick), run_time=0.9)
             self.add(*builder_bars)
             t_still = vo.time_until("while the review")
             t_stop = vo.time_until("all six were stopped")
-            self.play(now.animate(rate_func=linear).set_value(_t(KILLED).timestamp()),
+            self.play(now.animate(rate_func=linear).set_value(mins(KILLED)),
                       Succession(Wait(max(0.05, t_still)), emphasize(rev_l, run_time=0.9)),
                       run_time=max(t_stop, t_still + 1.0))
             for b in builder_bars:
@@ -665,7 +693,7 @@ class ScriptIsCode(VoiceScene):
                       builders.animate.set_color(BUG), run_time=0.5)
             self.play(FadeIn(stop_tag, scale=0.9), *[m.animate.set_fill(BUG, 0.25) for m in builder_bars],
                       builders.animate.set_opacity(0.3), run_time=0.7)
-        self.play(now.animate.set_value(_t(REVIEW[1]).timestamp()), run_time=0.9, rate_func=linear)
+        self.play(now.animate.set_value(mins(REVIEW[1])), run_time=0.9, rate_func=linear)
         review_bar.clear_updaters()
         cursor.clear_updaters()
         self.play(FadeOut(cursor), emphasize(axis.marks[-1][1], run_time=0.8), emphasize(rev_times, run_time=0.8))
