@@ -530,7 +530,7 @@ class Team(VoiceScene):
             self.play(GrowFromCenter(burst), FadeIn(burst_l, shift=DOWN * 0.1),
                       LaggedStart(*[FadeIn(w, scale=0.3) for w in rib.wip], lag_ratio=0.05),
                       FadeIn(wip_key), run_time=0.9)
-            vo.wait_until("Over four days")
+            vo.wait_until("In under a week")
             self.play(LaggedStart(*[FadeIn(b) for b in rib.bands], lag_ratio=0.3), run_time=1.8)
             self.play(FadeIn(stop_key, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("and each time picked up")

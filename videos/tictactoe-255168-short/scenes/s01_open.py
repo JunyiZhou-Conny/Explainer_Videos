@@ -138,8 +138,8 @@ class BoardRig:
         self.ghosts = []                     # motion-blur copies (core strokes only) for the quarter turn
         for _ in range(ghosts):
             g = [Ink(Line([*p, 0], [*q, 0]), INK, 2.0) for p, q in grid_lines(cell)]
-            g += [Ink(m.parts[0].copy() if False else _mark_tmpl(player(k), 0.62 * cell),
-                      XC.core if player(k) == "X" else OC.core, 2.5) for k in range(len(self.moves))]
+            g += [Ink(_mark_tmpl(player(k), 0.62 * cell), XC.core if player(k) == "X" else OC.core, 2.5)
+                  for k in range(len(self.moves))]
             g.append(Ink(win_template(*WIN_TOP, cell), XC.mid, 2.5))
             self.ghosts.append(g)
         self.group = VGroup(*[i for g in self.ghosts for i in g], *self.lines, *self.marks, self.win, *self.nums)
@@ -154,9 +154,6 @@ class BoardRig:
             A, b = A * k, P + (b - P) * k
         self.A, self.b, self.s, self.fx, self.k = A, b, s * k, fx, k
         return self
-
-    def matrix(self, theta: float):
-        return self.s / max(1e-9, self.k) * np.array([[self.fx, 0.0], [0.0, 1.0]]) @ rot(theta) * self.k
 
     def square(self, i: int) -> np.ndarray:
         return self.A @ square_centre(i, self.cell) + self.b
@@ -225,7 +222,7 @@ class ColdOpen(BeatScene):
 
     def construct(self):
         self.sounds = Sounds()
-        self.events: list[tuple[float, float, tuple]] = []      # logged visual events (t, dur, box)
+        self.shots: list[tuple[float, float, tuple]] = []       # logged visual events (t, dur, box)
         self.build()
         self.score()
         self.run()
@@ -247,10 +244,11 @@ class ColdOpen(BeatScene):
             col = _hex(rgb(XC.glow) * (1 - u) + rgb(OC.mid) * u)
             layers = []
             for k in range(7, 0, -1):
-                c = g.copy().set_fill(opacity=0).set_stroke(col, width=stroke_px(2 * 22) * k / 7, opacity=0)
-                layers.append((c, 0.62 * (1 - k / 8) ** 2))
+                wk = stroke_px(2 * 22) * k / 7
+                c = g.copy().set_fill(opacity=0).set_stroke(col, width=0, opacity=0)
+                layers.append((c, 0.62 * (1 - k / 8) ** 2, wk))
             self.title_glow.append(layers)
-        self.title_glow_group = VGroup(*[c for lay in self.title_glow for c, _ in lay])
+        self.title_glow_group = VGroup(*[c for lay in self.title_glow for c, _, _ in lay])
         self.halo = gaussian_sprite(None, 96, 0.34, gradient=(XC.glow, OC.mid), aspect=3.0)
         self.halo.stretch_to_fit_width(12.8).stretch_to_fit_height(4.3).move_to([*NUM_C, 0])
         word = tracked("TIC-TAC-TOE", size=26, spacing=0.9, font=FONT_TRACKED, color=INK, weight=LIGHT)
@@ -560,12 +558,11 @@ class ColdOpen(BeatScene):
         for i, lay in enumerate(self.title_glow):
             v = ease_out_cubic(seg(t, lands[i], lands[i] + 0.3)) * breathe * out if t >= HIT else 0.0
             v += 1.2 * pulse(t, lands[i], 0.25) * out if t >= HIT else 0.0
-            for c, base in lay:
+            for c, base, wk in lay:
                 if v <= 1e-3:
                     c.set_stroke(width=0, opacity=0)
                 else:
-                    c.set_stroke(width=c.get_stroke_width() or 1, opacity=clamp01(base * v))
-        self._fix_glow_widths()
+                    c.set_stroke(width=wk, opacity=clamp01(base * v))
         hv = ease_out_cubic(seg(t, HIT, HIT + 0.5)) * (0.5 + 0.08 * math.sin(2 * math.pi * (t - HIT) / BAR))
         hv *= 1 - seg(t, DISSOLVE, DISSOLVE + 1.0)
         self.halo.set_opacity(hv if t >= HIT else 0.0)
@@ -573,14 +570,6 @@ class ColdOpen(BeatScene):
         self.word.show([NUM_C[0], self.word_y - 0.1 * (1 - wv)], vis=wv, color=INK)
         sv = ease_out_cubic(seg(t, HIT + 0.4, HIT + 1.0)) * (1 - seg(t, DISSOLVE, DISSOLVE + 0.8))
         self.subline.show([NUM_C[0], self.sub_y - 0.08 * (1 - sv)], vis=sv, color=INK_DIM)
-
-    def _fix_glow_widths(self):
-        if getattr(self, "_glow_widths", None) is None:
-            self._glow_widths = [[stroke_px(2 * 22) * k / 7 for k in range(7, 0, -1)] for _ in self.title_glow]
-        for lay, ws in zip(self.title_glow, self._glow_widths):
-            for (c, _), w in zip(lay, ws):
-                if c.get_stroke_opacity() > 0:
-                    c.set_stroke(width=w)
 
     def update_root(self, t: float):
         R = self.root
@@ -680,7 +669,7 @@ class ColdOpen(BeatScene):
 
     # ------------------------------------------------------------- the logged events and the clock
     def log_events(self):
-        ev = self.events
+        ev = self.shots
 
         def add(t, dur, x, y, w, h):
             ev.append((float(t), float(dur), (x, y, w, h)))
@@ -721,7 +710,7 @@ class ColdOpen(BeatScene):
         the particle fields while they are needed."""
         self.log_events()
         fields = [(self.dust_b, DISSOLVE_B, DISSOLVE_B + 1.7), (self.dust_t, DISSOLVE, END)]
-        steps = sorted({round(t, 4) for t, _, _ in self.events} | {round(a, 4) for _, a, _ in fields}
+        steps = sorted({round(t, 4) for t, _, _ in self.shots} | {round(a, 4) for _, a, _ in fields}
                        | {round(b, 4) for _, _, b in fields if b < END})
         for i, t in enumerate(steps):
             nxt = steps[i + 1] if i + 1 < len(steps) else END
@@ -733,13 +722,15 @@ class ColdOpen(BeatScene):
                 if abs(t - b) < 1e-6:
                     self.unfix(f)
                     self.remove(f)
-            active = [(a, d, bx) for a, d, bx in self.events if a <= t + 1e-6 and a + d > t + 1e-6]
+            active = [(a, d, bx) for a, d, bx in self.shots if a <= t + 1e-6 and a + d > t + 1e-6]
             if not active:
                 continue
             end = min(nxt, max(a + d for a, d, _ in active))
             if end - t < 0.5 / self.fps:
                 continue
-            self.play(*[Shot(box(*bx)) for _, _, bx in active], run_time=end - t)
+            shots = [Shot(box(*bx)) for _, _, bx in active]
+            self.play(*shots, run_time=end - t)
+            self.remove(*[s.mobject for s in shots])
         self.until(f"{END:.4f}s")
 
 
