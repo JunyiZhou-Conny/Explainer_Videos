@@ -24,8 +24,9 @@ yellow timestamps, which squares of the four frames changed (the GREEN rings), t
 the three flags, the code lines and the count of 82.
 
 Helpers defined here (not in common.py): glyphs_of(), clipped_panel() and collect()/adopt() (as in
-s05_clock.py), tile_box(), ts_box(), sight_line(), mini_grid(), mini_screen(), flag_picto(),
-flag_chip().
+s05_clock.py), tile_box(), ts_box(), wait_for() (an anchor with a hand-set shift, measured with a
+speech-recognizer pass over this scene's clips; English only), sight_line(), mini_grid(),
+mini_screen(), flag_picto(), flag_chip().
 """
 
 import numpy as np
@@ -94,6 +95,7 @@ def _check():
         assert (im[y0 - 1, x0:x1] == 255).all()           # white padding above each tile
     t = [float(s.split(":")[-1]) for s in TILE_TIMES]
     assert t[BEFORE] < float(FRAMES[0][1]) and float(FRAMES[-1][1]) < t[AFTER]
+    assert all(TILE_TIMES[k].endswith(f"{t[k]:.3f}") for k in (BEFORE, AFTER))   # the axis-end labels
     # A02: which ghost marks moved between neighbouring frames (the GREEN rings)
     fs = [np.asarray(Image.open(asset(f)).convert("L")).astype(int) for f, _ in FRAMES]
     for a in range(1, 4):
@@ -486,7 +488,7 @@ class Watching(VoiceScene):
                 for k, s in NUMBERS]
         n_num = DecimalNumber(0, num_decimal_places=0, font_size=56, color=MEASURED)
         n_text = VGroup(label("checks in the tic-tac-toe scenes", 24, INK),
-                        label("most of them on the numbers", 24, INK)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+                        label("most of them on numbers", 24, INK)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         room = VGroup(DecimalNumber(88, num_decimal_places=0, font_size=56), n_text).arrange(RIGHT, buff=0.28)
         n_box = box(room.width + 0.6, room.height + 0.4, MEASURED, fill_opacity=0.1, radius=0.18)
         room.move_to(n_box)              # the box has room for two digits; the count starts at 0
@@ -496,53 +498,57 @@ class Watching(VoiceScene):
         n_num.add_updater(lambda m: m.next_to(n_text, LEFT, buff=0.28))       # grows to the left as it counts
 
         with self.voiceover(SAY[3]) as vo:
-            b1, b2 = chip1.box.copy(), chip2.box.copy()
-            strip = collect(self, *lift, axis, ticks, fans, *frames, times, cap2, src2)
+            strip = collect(self, *lift, axis, end_l, ticks, fans, *frames, times, cap2, src2)
             self.play(FadeOut(strip), run_time=0.5)              # the GREEN rings stay: they were a measurement
-            self.play(ReplacementTransform(VGroup(*rings[:3]), b1), ReplacementTransform(VGroup(*rings[3:]), b2),
-                      run_time=0.8)
-            self.remove(b1, b2)
-            self.add(chip1.box, chip2.box)
-            self.play(FadeIn(chip1[1]), FadeIn(chip2[1]), run_time=0.4)
-            adopt(self, chip1)
-            adopt(self, chip2)
+            # each ring (a measured change) becomes the check mark of a GREEN check chip, which then opens
+            marks = [chip1.icon.copy() for _ in range(3)] + [chip2.icon.copy() for _ in range(3)]
+            self.play(*[ReplacementTransform(r, m) for r, m in zip(rings, marks)], run_time=0.8)
+            self.remove(*marks)
+            for c in (chip1, chip2):
+                c.box.set_z_index(-1)                            # the box fades in under its check mark
+                self.add(c.icon)
+            self.play(*[FadeIn(c.box, scale=0.9) for c in (chip1, chip2)],
+                      *[FadeIn(c.text, shift=LEFT * 0.15) for c in (chip1, chip2)], run_time=0.5)
+            for c in (chip1, chip2):
+                adopt(self, c)
+                c.box.set_z_index(0)
 
-            vo.wait_until("A checker called")
-            self.play(Indicate(chip1, color=S.WHITE, scale_factor=1.06),
+            wait_for(self, vo, "A checker called", -0.25)
+            self.play(Indicate(chip1[1], color=S.WHITE, scale_factor=1.04),       # text and check, not the box
                       FadeIn(VGroup(term.box, term[1], term[2]), target_position=chip1.get_center(), scale=0.2),
                       run_time=0.7)
             self.play(AddTextLetterByLetter(rows[0], run_time=0.7))
-            vo.wait_until("runs each scene")
+            wait_for(self, vo, "runs each scene", -0.4)
             self.play(FadeIn(rows[1]), FadeIn(rows[2], shift=UP * 0.1), FadeIn(src3), run_time=0.6)
-            vo.wait_until("without drawing")
+            wait_for(self, vo, "without drawing", -0.5)
             self.play(FadeIn(rows[3], scale=1.3), run_time=0.4)
-            vo.wait_until("and flags anything")
+            wait_for(self, vo, "and flags anything", -0.3)      # on "flags"
             self.play(LaggedStart(*[Create(p[0]) for p in pictos], lag_ratio=0.25), run_time=0.8)
-            vo.wait_until("off screen")
+            wait_for(self, vo, "off screen", -0.7)
             self.play(FadeIn(flags[0], shift=UP * 0.15), FadeIn(VGroup(*pictos[0][1:]), scale=0.5), run_time=0.5)
-            vo.wait_until("text that's too small")
+            wait_for(self, vo, "text that's too small", -0.5)
             self.play(FadeIn(flags[1], shift=UP * 0.15), FadeIn(VGroup(*pictos[1][1:]), scale=0.5), run_time=0.5)
-            vo.wait_until("or objects left behind")
+            wait_for(self, vo, "or objects left behind", -0.5)
             self.play(FadeIn(flags[2], shift=UP * 0.15), FadeIn(VGroup(*pictos[2][1:]), scale=0.5),
                       emphasize(left_span, run_time=0.8), run_time=0.8)
             self.play(GrowArrow(ok_arrow), FadeIn(ok_gloss, shift=LEFT * 0.1), Indicate(ok, color=S.WHITE), run_time=0.6)
 
-            vo.wait_until("And the tic-tac-toe scenes")
+            wait_for(self, vo, "And the tic-tac-toe scenes", -0.25)
             view = collect(self, *lint_view)
             self.play(FadeOut(view, target_position=chip1.get_center(), scale=0.1), FadeOut(src3), run_time=0.6)
-            self.play(Indicate(chip2, color=S.WHITE, scale_factor=1.06),
+            self.play(Indicate(chip2[1], color=S.WHITE, scale_factor=1.04),
                       FadeIn(panel, target_position=chip2.get_center(), scale=0.15), run_time=0.8)
-            vo.wait_until("check themselves")
+            wait_for(self, vo, "check themselves", -0.3)
             self.play(code.code_lines[GLOW_LINE].animate.set_opacity(1), glow_bar.animate.set_fill(opacity=0.2),
                       run_time=0.6)
-            vo.wait_until("with 82 checks")
+            wait_for(self, vo, "with 82 checks", -0.3)        # the count reaches 82 as "checks" is said
             self.play(FadeIn(VGroup(n_box, n_text), shift=LEFT * 0.2), FadeIn(n_num), run_time=0.3)
             self.play(ChangeDecimalToValue(n_num, N_ASSERTS), run_time=0.8, rate_func=smooth)
             adopt(self, counter)
             vo.wait_until("most of them")
             self.play(LaggedStart(*[n.animate.set_color(MEASURED).set_opacity(1) for n in nums], lag_ratio=0.2),
                       emphasize(n_text[1], run_time=1.0), run_time=1.0)
-            self.play(LaggedStart(*[Indicate(n, color=S.WHITE, scale_factor=1.25) for n in nums], lag_ratio=0.2),
+            self.play(LaggedStart(*[Indicate(n, color=S.WHITE, scale_factor=1.12) for n in nums], lag_ratio=0.2),
                       run_time=1.0)
         n_num.clear_updaters()
         self.wait(0.8)

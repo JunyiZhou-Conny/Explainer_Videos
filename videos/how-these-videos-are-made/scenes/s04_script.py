@@ -698,9 +698,13 @@ class ScriptIsCode(VoiceScene):
             self.add(*builder_bars)
             t_still = vo.time_until("while the review")
             t_stop = vo.time_until("all six were stopped")
+            run = max(t_stop, t_still + 1.0)
+            # the trailing Wait keeps the Succession at its own length: play(run_time=...) would
+            # otherwise stretch it over the whole run and light "script review" seconds late
             self.play(now.animate(rate_func=linear).set_value(mins(KILLED)),
-                      Succession(Wait(max(0.05, t_still)), emphasize(rev_l, run_time=0.9)),
-                      run_time=max(t_stop, t_still + 1.0))
+                      Succession(Wait(max(0.05, t_still)), emphasize(rev_l, run_time=0.9),
+                                 Wait(max(0.05, run - max(0.05, t_still) - 0.9))),
+                      run_time=run)
             for b in builder_bars:
                 b.clear_updaters()
             self.play(Create(stop_line), *[m.animate.set_fill(BUG, 1) for m in builder_bars],

@@ -5,7 +5,12 @@ at 60 fps that is 36 and 144 frames, so every grid point falls exactly on a fram
 
 Positions are written "bar:beat" with bars and beats counted from 0 at the start of the scene:
 "0" is the scene's first downbeat, "2:1" is one beat into the third bar (2.4 * 2 + 0.6 = 5.4 s),
-"2:1.5" half a beat later; "4.8s" is a plain time in seconds. A bare number is a bar.
+"2:1.5" half a beat later; "4.8s" is a plain time in seconds; a bare number (3, "3") is a bar.
+A dotted string such as "10.1" is refused here: that is video.yaml's "bar.beat" form, counted from 1
+(music.cues, scenes.bars), and reading it as 10.1 bars would put a caption in the wrong place.
+
+Grid units follow the note names, a beat being a quarter note: "whole" (4 beats), "half" (2),
+"quarter" (= "beat"), "eighth" (1/2 beat), "sixteenth" (1/4), "triplet" (1/3), and "bar".
 """
 
 from __future__ import annotations
@@ -17,8 +22,8 @@ from dataclasses import dataclass
 DEFAULT_BPM = 100.0
 BEATS_PER_BAR = 4
 
-UNITS = {"bar": None, "beat": 1.0, "half": 0.5, "eighth": 0.5, "quarter": 0.25, "sixteenth": 0.25,
-         "triplet": 1 / 3}
+UNITS = {"bar": None, "beat": 1.0, "whole": 4.0, "half": 2.0, "quarter": 1.0, "eighth": 0.5,
+         "sixteenth": 0.25, "triplet": 1 / 3}
 
 _POS = re.compile(r"^\s*(-?\d+(?:\.\d+)?)\s*(?::\s*(\d+(?:\.\d+)?))?\s*$")
 _SECS = re.compile(r"^\s*(-?\d+(?:\.\d+)?)\s*s\s*$")
@@ -39,7 +44,8 @@ class Grid:
         return self.beat * self.beats_per_bar
 
     def unit(self, name: str | float) -> float:
-        """Seconds of a grid unit: "bar", "beat", "half" (= "eighth"), "quarter" (sixteenth), or beats."""
+        """Seconds of a grid unit: "bar", "beat" (= "quarter"), "half", "whole", "eighth", "sixteenth",
+        "triplet" (note names: a beat is a quarter note), or a number of beats."""
         if isinstance(name, (int, float)):
             return float(name) * self.beat
         if name not in UNITS:
@@ -60,6 +66,10 @@ class Grid:
         m = _POS.match(s)
         if not m:
             raise ValueError(f"bad grid position {pos!r}: use 'bar:beat' (from 0), e.g. '2:1', or '4.8s'")
+        if m.group(2) is None and "." in m.group(1):
+            raise ValueError(f"ambiguous grid position {pos!r}: scene code and captions.yaml write 'bar:beat' "
+                             f"counted from 0 (e.g. '9:0'); 'bar.beat' counted from 1 is the video.yaml form "
+                             f"(music.cues, scenes.bars). For a fraction of a bar, write it as beats ('2:2').")
         return self.offset + float(m.group(1)) * self.bar + float(m.group(2) or 0) * self.beat
 
     def position(self, t: float) -> tuple[int, float]:

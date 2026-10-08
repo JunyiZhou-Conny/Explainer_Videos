@@ -1405,31 +1405,40 @@ def master(x: np.ndarray, target_lufs: float = -14.0, ceiling_dbtp: float = -1.0
 
 
 def duck_curve(voice: np.ndarray, depth_db: float = 12.0, hold: float = 0.45, attack: float = 0.12,
-               release: float = 0.6, look: float = 0.15) -> np.ndarray:
-    """Per-sample gain (<= 1) that dips under speech: 150 ms look-ahead, 120 ms attack, 0.45 s hold so
-    the bed does not pump between words, 600 ms release."""
-    from scipy.ndimage import maximum_filter1d
+               release: float = 0.6, look: float = 0.15, floor_db: float = 35.0) -> np.ndarray:
+    """Per-sample gain (<= 1) that dips under speech. Speech is any 10 ms frame within `floor_db` of the
+    loudest. The music starts going down `look` (150 ms) before speech starts and reaches full depth
+    `attack` (120 ms) later, so it is fully down before the first syllable; it stays down until `hold`
+    (0.45 s) after speech ends, so it does not pump between words, then comes back over `release`
+    (600 ms). Ramps are linear in dB."""
     v = voice.mean(axis=1) if voice.ndim > 1 else voice
-    hop = int(SR * 0.01)
+    step = 0.01
+    hop = int(SR * step)
     nfr = len(v) // hop + 1
     pad = np.zeros(nfr * hop)
     pad[:len(v)] = v
-    rms = np.sqrt((pad.reshape(nfr, hop) ** 2).mean(axis=1) + 1e-12)
-    db = 20 * np.log10(rms + 1e-9)
-    active = db > (db.max() - 35)
-    n_hold = int(hold / 0.01)
-    act = maximum_filter1d(active.astype(float), size=n_hold + 1, origin=-(n_hold // 2)) > 0
-    shift = int(look / 0.01)
-    act = np.concatenate([act[shift:], np.zeros(shift, bool)])
-    target = np.where(act, -depth_db, 0.0)
-    g = np.zeros_like(target)
-    cur = float(target[0])
-    ka, kr = 1 - math.exp(-0.01 / attack), 1 - math.exp(-0.01 / release)
-    for i, tg in enumerate(target):
-        cur += (tg - cur) * (ka if tg < cur else kr)
-        g[i] = cur
+    db = 10 * np.log10((pad.reshape(nfr, hop) ** 2).mean(axis=1) + 1e-12)
+    speech = db > (db.max() - floor_db)
+    # frame i is at full depth when speech falls anywhere in [i - hold, i + look - attack]: from
+    # (start - look + attack) to (end + hold)
+    n_back, n_ahead = int(round(hold / step)), int(round((look - attack) / step))
+    n_ahead = max(n_ahead, 0)
+    win = np.convolve(speech.astype(float), np.ones(n_back + n_ahead + 1))
+    ducked = win[n_ahead:n_ahead + nfr] > 0.5
+    target = np.where(ducked, -float(depth_db), 0.0)
+    down = float(depth_db) * step / max(attack, step)       # dB per frame
+    up = float(depth_db) * step / max(release, step)
+
+    def slew(seq, rate):                     # instant down, at most `rate` dB per frame back up
+        out, cur = np.empty(len(seq)), 0.0
+        for i, tg in enumerate(seq):
+            cur = tg if tg <= cur else min(tg, cur + rate)
+            out[i] = cur
+        return out
+    # the release runs forwards in time after each ducked stretch, the attack backwards before it
+    g = np.minimum(slew(target, up), slew(target[::-1], down)[::-1])
     tt = np.arange(len(v)) / SR
-    return 10 ** (np.interp(tt, np.arange(len(g)) * 0.01, g) / 20)
+    return 10 ** (np.interp(tt, np.arange(nfr) * step, g) / 20)
 
 
 def voice_active(voice: np.ndarray, floor_db: float = 35.0) -> np.ndarray:

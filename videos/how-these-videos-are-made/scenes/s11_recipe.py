@@ -240,7 +240,11 @@ class Recipe(VoiceScene):
             self.play(FadeIn(o_tag, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("You can")
             lifted = hp.copy()
-            self.play(FadeIn(you, shift=UP * 0.2), FadeIn(you_l), Transform(lifted, worn, path_arc=-0.6),
+            # the ears drop down on a leftward arc (clear of the screenshot) and pass BEHIND the
+            # agent, so they never cover its AI badge; on "you" they sit on top of the head
+            agent.set_z_index(2)
+            lifted.set_z_index(1)
+            self.play(FadeIn(you, shift=UP * 0.2), FadeIn(you_l), Transform(lifted, worn, path_arc=0.9),
                       run_time=1.0)
             self.play(Indicate(VGroup(you, lifted), color=S.WHITE, scale_factor=1.1), run_time=0.6)
             vo.wait_until("If anything sounded")

@@ -250,7 +250,7 @@ def number_chip(k: int, size: float = 28) -> VGroup:
     return VGroup(b, t)
 
 
-def scene_card(n: int, name: str, width: float = 2.9, height: float = 2.2) -> VGroup:
+def scene_card(n: int, name: str, width: float = 2.75, height: float = 2.2) -> VGroup:
     """A mini scene of the privacy video (a diagram): 'scene n' and a few table rows, one with a
     person's name. .box .name .row .builder (a faded-BLUE icon standing on the card's top edge)"""
     b = box(width, height, TOOL, fill=PANEL, fill_opacity=1, radius=0.16)
@@ -326,8 +326,11 @@ class Reviewers(VoiceScene):
         hand2 = Arrow([X_AGENT + 0.62, ROW_Y, 0], [got.get_left()[0] - 0.14, ROW_Y, 0], buff=0, color=AGENT,
                       stroke_width=3, tip_length=0.16, max_tip_length_to_length_ratio=0.1)
         dir_l = label("director", 24, SUB_AGENT_TEXT).next_to(director, DOWN, buff=0.22)
-        kid_l = label("a simulated 12-year-old", 24, SUB_AGENT_TEXT).next_to(kid, DOWN, buff=0.22)
-        kid_l2 = caption("sharp but ordinary", 22).next_to(kid_l, DOWN, buff=0.08)
+        # two centred lines: on one line it ran into "director" and read as one phrase
+        kid_l = VGroup(label("a simulated", 24, SUB_AGENT_TEXT), label("12-year-old", 24, SUB_AGENT_TEXT)) \
+            .arrange(DOWN, buff=0.08).next_to(kid, DOWN, buff=0.22)
+        kid_l2 = caption("sharp but ordinary", 22).next_to(kid_l, DOWN, buff=0.1)
+        assert kid_l.get_left()[0] - dir_l.get_right()[0] > 0.8
 
         prompt_text = label("“" + wrap(A42["text"], 56).replace("\n", "\n ") + "”", 24, INK, line_spacing=1.0)
         prompt_box = box(prompt_text.width + 0.6, prompt_text.height + 0.45, TOOL, fill=PANEL, fill_opacity=1)
@@ -336,14 +339,13 @@ class Reviewers(VoiceScene):
         prompt = VGroup(prompt_box, prompt_text, prompt_cap).move_to([-1.2, -2.0, 0])
         the_video = glyphs_of(prompt_text, prompt_text.original_text, "that is the video.")
         to_kid = DashedLine(prompt_box.get_corner(UR) + LEFT * 0.5, kid_l2.get_bottom() + DOWN * 0.08,
-                            color=TOOL, stroke_width=2, dash_length=0.08)
+                            color=TOOL, stroke_width=2.5, dash_length=0.1)
 
         bubble = speech_bubble(KID_NOTE, chars=30, tail=UP, tail_shift=0.22)
-        bubble.move_to([3.6, -1.55, 0])
-        bubble.shift(np.array([X_KID - bubble.tail.get_vertices()[2][0], 0, 0]))
+        bubble.shift(np.array([X_KID, kid_l2.get_bottom()[1] - 0.12, 0]) - bubble.tail.get_vertices()[2])
         x0 = glyphs_of(bubble.text, bubble.text.original_text, "X0")
         src1 = source_caption("QA notes, round 1 · tic-tac-toe video (qa_round1.txt, line 38)")
-        assert kid_l.get_right()[0] < 6.5 and bubble.get_right()[0] < 6.5
+        assert kid_l.get_right()[0] < 6.5 and bubble.get_right()[0] < 6.5 and bubble.get_bottom()[1] > -3.0
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(agent, shift=UP * 0.2), FadeIn(agent_l), run_time=0.6)
@@ -387,7 +389,7 @@ class Reviewers(VoiceScene):
         grid1.move_to([R1_X, GRID_Y, 0])
         r1_icons = VGroup(role_icon("sub", 0.8), role_icon("sub", 0.8)).arrange(RIGHT, buff=0.25)
         r1_head = VGroup(r1_icons, label("round 1", 28)).arrange(RIGHT, buff=0.3).move_to([R1_X, HEAD_Y, 0])
-        r1_kid, r1_dir = r1_icons
+        r1_dir, r1_kid = r1_icons                             # same order as in beat 1: the paths don't cross
         r1 = FUNNEL["round1"]
         leg1a = label(f"{r1['issues']} issues:", 26)
         leg1b = label(f"{r1['wrong']} wrong · {r1['confusing']} confusing · {r1['polish']} polish", 24,
@@ -404,7 +406,7 @@ class Reviewers(VoiceScene):
         fixed_sq = VGroup(*[issue_square("fixed").move_to(grid2[k]) for k in range(25)])
         partly_sq = VGroup(*[issue_square("partly").move_to(grid2[k]) for k in range(25, 30)])
         r2_icons = VGroup(role_icon("sub", 0.8), role_icon("sub", 0.8)).arrange(RIGHT, buff=0.25)
-        r2_dir = r2_icons[1]                                  # round 2: the same roles, fresh agents
+        r2_dir = r2_icons[0]                                  # round 2: the same roles, fresh agents
         r2_head = VGroup(r2_icons, label("round 2", 28)).arrange(RIGHT, buff=0.3).move_to([R2_X, HEAD_Y, 0])
         r2 = FUNNEL["round2"]
         leg2a = label("a fresh director re-checked all 30:", 24)
@@ -432,10 +434,13 @@ class Reviewers(VoiceScene):
                            kid_l, kid_l2, src1)
             target = grid1[KID_X0]
             others = [grid1[k] for k in range(30) if k != KID_X0]
-            self.play(FadeOut(out1), ReplacementTransform(director, r1_dir), ReplacementTransform(kid, r1_kid),
-                      FadeIn(r1_head[1]), ReplacementTransform(bubble, target), FadeIn(src2),
-                      LaggedStart(*[FadeIn(s, scale=0.4) for s in others], lag_ratio=0.03), run_time=1.2)
-            self.play(FadeIn(leg1, shift=UP * 0.1), run_time=0.4)
+            # clear the loop first (only the reviewers and the kid's note stay), then build the grid:
+            # done at once, the squares faded in over the leaving items and the two captions crossed
+            self.play(FadeOut(out1), run_time=0.35)
+            self.play(ReplacementTransform(director, r1_dir), ReplacementTransform(kid, r1_kid),
+                      ReplacementTransform(bubble, target), FadeIn(src2), run_time=0.75)
+            self.play(FadeIn(r1_head[1]), LaggedStart(*[FadeIn(s, scale=0.4) for s in others], lag_ratio=0.03),
+                      FadeIn(leg1, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("including that 12")
             slot = grid1[TWELVE_ITEM]
             hole = slot.copy().set_fill(opacity=0).set_stroke(opacity=0.35)
@@ -473,7 +478,7 @@ class Reviewers(VoiceScene):
         signs = VGroup()
         for a, b in zip(before.tiles, before.tiles[1:]):
             signs.add(equals_sign().move_to([(a.get_right()[0] + b.get_left()[0]) / 2, a.board.get_y(), 0]))
-        b_icon = role_icon("sub", 0.72)
+        b_icon = role_icon("sub", 0.64)                    # lifted to y 3.2 later: keeps its top under 3.6
         b_word = label("before", 28)
         frozen = bug_tag("frozen", 24)
         head = VGroup(b_icon, b_word, frozen).arrange(RIGHT, buff=0.25)
@@ -514,7 +519,8 @@ class Reviewers(VoiceScene):
                              note=" (part of the line)")
         fixp.move_to([0, FIX_CODE_Y, 0]).shift(UP * (FIX_CODE_Y - fixp.code.get_y()))
         fixp.align_to(old, LEFT)
-        doc = caption(f"its docstring: “{DOCSTRING}”", 20).next_to(fixp.caption, DOWN, buff=0.06) \
+        # the docstring's second sentence: "…" marks the cut
+        doc = caption(f"its docstring: “… {DOCSTRING}”", 20).next_to(fixp.caption, DOWN, buff=0.06) \
             .align_to(fixp.caption, LEFT)
         lambda_span = code_span(fixp.code, 0, "lambda")
         for g in fixp.code.code_lines[0]:
@@ -590,8 +596,8 @@ class Reviewers(VoiceScene):
             vo.wait_until("Now each move")
             self.play(FadeIn(fixp, shift=UP * 0.2), FadeIn(doc, shift=UP * 0.2), FadeOut(prev),
                       ghost.animate.move_to([START_X, SPOT_Y, 0]),
-                      *[s.animate.set_stroke(TOOL) for s in spots[:3]], run_time=0.5)
-            self.play(lambda_span.animate.set_color(MEASURED).set_opacity(1), run_time=0.25)
+                      *[s.animate.set_stroke(TOOL) for s in spots[:3]], run_time=0.4)
+            self.play(lambda_span.animate.set_color(MEASURED).set_opacity(1), run_time=0.2)
             prev = None
             for k in range(4):                                  # each written just as it plays
                 c = number_chip(k + 1).move_to(lambda_span).scale(0.6)
@@ -599,9 +605,9 @@ class Reviewers(VoiceScene):
                 anims = [c.animate(path_arc=PI / 5).move_to(slot_b).scale(1 / 0.6)]
                 if prev is not None:
                     anims.append(FadeOut(prev, shift=DOWN * 0.2))
-                self.play(*anims, run_time=0.26)
+                self.play(*anims, run_time=0.21)               # 4 x 0.47 s: ends with the voice
                 self.play(ghost.animate(path_arc=-PI / 2.5).move_to(spots[k]),
-                          spots[k].animate.set_stroke(INK), run_time=0.3)
+                          spots[k].animate.set_stroke(INK), run_time=0.26)
                 prev = c
 
         # the real frames after the fix
@@ -609,12 +615,12 @@ class Reviewers(VoiceScene):
         self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.15) for t in after.tiles], lag_ratio=0.12),
                   FadeIn(a_word), FadeIn(a_tag), FadeIn(a_side), run_time=0.8)
         self.play(LaggedStart(*[Create(r) for r in rings], lag_ratio=0.15), run_time=0.8)
-        self.wait(1.1)
+        self.wait(0.9)
 
         # ---------------------------------------------------------- beat 4: drift across scenes
         names = ["Dan", "Dan", "Dev", "Dev"]
-        cards = VGroup(*[scene_card(n, nm) for n, nm in zip((3, 4, 5, 6), names)]).arrange(RIGHT, buff=0.3)
-        cards.move_to([0, 0.8, 0])
+        cards = VGroup(*[scene_card(n, nm) for n, nm in zip((3, 4, 5, 6), names)]).arrange(RIGHT, buff=0.5)
+        cards.move_to([0, 1.0, 0])                        # 0.5 gaps: the ≠ sits between the cards, not on them
         builders = VGroup(*[c.builder.next_to(c.box, UP, buff=0.06).align_to(c.box, RIGHT).shift(LEFT * 0.3)
                             for c in cards])
         name_m = [c.name for c in cards]
@@ -623,22 +629,28 @@ class Reviewers(VoiceScene):
         neq = S.math(r"\neq", size=56, color=BUG).move_to(
             [(cards[1].get_right()[0] + cards[2].get_left()[0]) / 2, cards[1].row.get_y(), 0])
         built_l = caption("built by sub-agents working independently", 22).next_to(builders, UP, buff=0.18)
-        bar_y = -0.95
-        bar = RoundedRectangle(width=cards.width, height=0.62, corner_radius=0.2, stroke_color=SUB_AGENT_TEXT,
+        bar_y = -0.82
+        bar = RoundedRectangle(width=cards.width, height=0.92, corner_radius=0.26, stroke_color=SUB_AGENT_TEXT,
                                stroke_width=2.5).set_fill(SUB_AGENT, 0.45).move_to([0, bar_y, 0])
-        bar_l = label("cross-scene reviewer (whole-video QA pass)", 24, INK).move_to(bar).shift(RIGHT * 0.4)
-        rider = role_icon("sub", 0.78)
-        rider.move_to([bar.get_left()[0] + 0.45, bar_y + 0.02, 0])
+        bar_l = label("cross-scene reviewer (whole-video QA pass)", 24, INK).move_to(bar).shift(RIGHT * 0.2)
+        rider = role_icon("sub", 0.66)                    # rides inside the bar (badge included)
+        rider.move_to([bar.get_left()[0] + 0.55, bar_y, 0])
         dans = [label("Dan", 26, INK).move_to(name_m[k]).align_to(name_m[k], LEFT) for k in (2, 3)]
         variants, shared = budget_variants()
-        variants.arrange(RIGHT, buff=0.55).move_to([0, -2.2, 0])
+        variants.arrange(RIGHT, buff=0.55).move_to([0, -2.05, 0])
         for v in variants:
             v.match_y(variants)
-        var_l = label("one budget bar, “drawn five different ways”", 24, TOOL).move_to([0, -2.95, 0])
-        shared.move_to([0, -2.2, 0])
+        var_l = label("one budget bar, “drawn five different ways”", 24, TOOL).move_to([0, -2.78, 0])
+        shared.move_to([0, -2.05, 0])
         shared_l = VGroup(label("one shared drawing:", 24, TOOL), mono("common.budget_bar()", 22, TOOL)) \
             .arrange(RIGHT, buff=0.18).match_y(var_l)
         src4 = source_caption(A38["src"])
+
+        # beat 4 layout: measured, not guessed
+        assert rider.height < bar.height - 0.08 and rider.width < 1.1
+        assert cards.get_bottom()[1] > bar.get_top()[1] + 0.25 and variants.get_top()[1] < bar.get_bottom()[1] - 0.2
+        assert var_l.get_bottom()[1] > src4.get_top()[1] + 0.25 and built_l.get_top()[1] < 3.5
+        assert all(cards[k + 1].box.get_left()[0] - cards[k].box.get_right()[0] > neq.width + 0.1 for k in range(3))
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(collect(self, *self.mobjects)), run_time=0.6)
@@ -659,10 +671,10 @@ class Reviewers(VoiceScene):
             self.play(FadeIn(rider, shift=RIGHT * 0.2), run_time=0.3)
             bar_l.set_opacity(0)                                 # added with the sweep, shown at its end
             sweep = 1.8
-            end_x = bar.get_right()[0] - 0.45
+            end_x = bar.get_right()[0] - 0.6
             t_hit = [(cards[k].get_x() - bar.get_left()[0]) / bar.width * sweep - 0.15 for k in (2, 3)]
             self.play(GrowFromEdge(bar, LEFT, rate_func=linear),
-                      rider.animate(rate_func=linear).move_to([end_x, bar_y + 0.02, 0]),
+                      rider.animate(rate_func=linear).move_to([end_x, bar_y, 0]),
                       Succession(Wait(t_hit[0]), ReplacementTransform(name_m[2], dans[0], run_time=0.3)),
                       Succession(Wait(t_hit[1]), ReplacementTransform(name_m[3], dans[1], run_time=0.3)),
                       Succession(Wait(t_hit[0]), FadeOut(neq, run_time=0.3)),
@@ -670,8 +682,8 @@ class Reviewers(VoiceScene):
                       run_time=sweep)
             self.play(LaggedStart(*[FadeIn(v, shift=UP * 0.15) for v in variants], lag_ratio=0.12),
                       FadeIn(var_l), run_time=0.8)
-        self.wait(1.0)
+        self.wait(0.8)
         self.play(*[ReplacementTransform(v, shared.copy()) for v in variants],
                   ReplacementTransform(var_l, shared_l), run_time=1.0)
-        self.wait(1.3)
+        self.wait(1.1)
         fade_out_all(self)

@@ -377,7 +377,10 @@ class SecondLanguage(VoiceScene):
                                   lag_ratio=0.25), FadeIn(head_zh), run_time=0.8)
             vo.wait_until("for each English")
             self.play(LaggedStart(*[AnimationGroup(Create(links[k]), FadeIn(nums[k])) for k in range(3)],
-                                  lag_ratio=0.35), run_time=1.2)
+                                  lag_ratio=0.35), run_time=1.0)
+            # the pairs, counted over both videos (on screen ~5 s, until the columns fold in block 2)
+            self.play(FadeIn(counter, shift=UP * 0.15), run_time=0.3)
+            self.play(ChangeDecimalToValue(count, PAIRS["total"]), run_time=0.9, rate_func=smooth)
 
             vo.wait_until("so every animation cue")
             self.play(anchor_en.animate.set_color(AUDIO), FadeIn(pin, shift=DOWN * 0.2), run_time=0.6)
@@ -386,8 +389,6 @@ class SecondLanguage(VoiceScene):
                       run_time=0.8)
             self.play(anchor_zh.animate.set_color(AUDIO), Flash(anchor_zh, color=AUDIO, line_length=0.15,
                                                                 flash_radius=0.4), run_time=0.5)
-            self.play(FadeIn(counter, shift=UP * 0.15), run_time=0.3)
-            self.play(ChangeDecimalToValue(count, PAIRS["total"]), run_time=0.9, rate_func=smooth)
         count.clear_updaters()
 
         # ---------------------------------------------------------- beat 2: the English video is never touched
@@ -611,6 +612,7 @@ class SecondLanguage(VoiceScene):
         cue.next_to(pic.image, DOWN, buff=0)
         frame = Rectangle(width=FRAME_W, height=pic.image.height + cue.height, stroke_color=TOOL, stroke_width=2)
         frame.move_to(Group(pic.image, cue.band))
+        # the tag (9.1 wide) is wider than the frame (7.6), so it starts at the frame's left edge
         rtag = recon_tag(A30["recon_tag"]).next_to(frame, UP, buff=0.12).align_to(frame, LEFT)
         pic_src = source_caption("picture: real frame of the Chinese tic-tac-toe video at 11:43 · subtitle band redrawn")
         no_m = glyphs_of(cue.en, CUE_EN, "No.")
@@ -667,8 +669,10 @@ class SecondLanguage(VoiceScene):
         # ---------------------------------------------------------- ponder (the band stays in view under the card)
         keep = set(cue.en.get_family()) | set(cue.zh.get_family()) | {zh_line}
         shown = [m for m in self.mobjects if not set(m.get_family()) & keep]      # the two cue lines stay bright
-        card = ponder_card(QUESTION, width=8.6)
-        card.move_to([FRAME_X0 + FRAME_W / 2 + 0.5, 0, 0]).align_to(cue.band, DOWN).shift(UP * (cue.band.height + 0.3))
+        card = ponder_card(QUESTION, width=FRAME_W)        # over the frame, clear of the gloss card on its right
+        card.move_to([FRAME_X0 + FRAME_W / 2, 0, 0]).align_to(cue.band, DOWN).shift(UP * (cue.band.height + 0.3))
+        assert card.get_right()[0] < gl_card.get_left()[0] - 0.2 \
+            and abs(card[2].height - ponder_card(QUESTION)[2].height) < 1e-6      # the question keeps its size
         with self.voiceover(SAY[4]) as vo:
             self.play(*dim(*shown, opacity=0.4), run_time=0.5)
             vo.wait_until("Pause")

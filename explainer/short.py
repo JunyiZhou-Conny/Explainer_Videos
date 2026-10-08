@@ -684,6 +684,15 @@ class CounterLand(Animation):
 
 # ---------------------------------------------------------------- camera that keeps a HUD still
 
+def sound_tag(m) -> str | None:
+    """The sound tag of a mobject (`m.sound = "X"` or "X@C#5"), or of the first part of it that has one."""
+    for x in m.get_family():
+        snd = x.__dict__.get("sound")
+        if snd is not None:
+            return str(snd)
+    return None
+
+
 class HUDCamera(MovingCamera):
     """A MovingCamera that draws `fixed_mobjects` in screen space, on top: HUD labels, figure numbers
     and counters stay put while the camera pans and zooms. (Fixed mobjects must be top-level scene
@@ -853,7 +862,8 @@ class BeatScene(EventLog, MovingCameraScene):
         return super().wait(d, frozen_frame=frozen)
 
     def wait_to(self, unit: str = "bar") -> None:
-        """Wait to the next grid point of `unit` ("bar", "beat", "half", "quarter"); no-op if on one."""
+        """Wait to the next grid point of `unit` ("bar", "beat", "eighth", "sixteenth", ...: note names,
+        a beat being a quarter note); no-op if on one."""
         t = self.now
         target = self.grid.snap(t, unit, "up", tol=0.5 / self.fps)
         if target - t > 0.5 / self.fps:
@@ -882,8 +892,14 @@ class BeatScene(EventLog, MovingCameraScene):
 
     def count(self, mobjects, every="eighth", each: float | None = None, anim=FadeIn, on: str | None = "beat",
               kind: str = "count", sound: str | None = None, pitch: str = "rise", **anim_kw):
-        """Reveal `mobjects` one per subdivision (`every`: a grid unit or seconds), logged as a count so the
-        music gives each one its own note: self.count(cards, every="quarter")."""
+        """Reveal `mobjects` one per subdivision (`every`: a grid unit such as "eighth" or "sixteenth", or
+        seconds), logged as a count so the music gives each one its own note:
+        self.count(cards, every="eighth").
+
+        Each item sounds as its own `.sound` tag says (`m.sound = "X"`, or `"X@C#5"` for a fixed note,
+        or `"@C#5"` for the count's instrument at that note); `sound=` is the tag of items that have
+        none; else video.yaml music.sounds/palette `count`, else the palette's count instrument. Notes
+        without a fixed pitch climb through the chord (`pitch="flat"`: they repeat one note)."""
         mobjects = list(mobjects)
         if not mobjects:
             return
@@ -896,6 +912,9 @@ class BeatScene(EventLog, MovingCameraScene):
         t0 = self.now
         data = {"n": n, "every": step, "pitch": pitch, "times": [round(t0 + i * step, 4) for i in range(n)],
                 "xs": [round(float(m.get_center()[0]), 2) for m in mobjects]}
+        tags = [sound_tag(m) for m in mobjects]
+        if any(t is not None for t in tags):
+            data["sounds"] = tags
         if sound:
             data["sound"] = sound
         self.mark(kind, **data)
