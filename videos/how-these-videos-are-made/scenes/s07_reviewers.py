@@ -8,7 +8,7 @@ line of the round-1 QA prompt for the simulated kid (A42) -> the kid's note (A10
 line 38) in a speech bubble -> the bubble shrinks into one of the 30 round-1 issues (A10, coloured
 by kind: 3 wrong, 13 confusing, 14 polish, in the order of the notes); the "12 on the formula
 line" item (line 30) is pulled out, glows and goes back; the 30 go into a BLUE "fix round" and 30
-come out of it for round 2: 25 fixed (GREEN), 5 partly fixed (dashed YELLOW) (the record doesn't
+come out of it for round 2 (same roles, fresh agents): 25 fixed (GREEN), 5 partly fixed (dashed YELLOW) (the record doesn't
 say which ones, so none is mapped to a round-1 square), plus 18 new or remaining notes; the score
 card with both caveats (dashed YELLOW) -> the round-1 director and its "wrong" note carry over
 into the frozen shuffle: four real frames 0.2 s apart re-rendered from the old code (A03), the
@@ -126,6 +126,7 @@ LOW_HEAD_Y, LOW_STRIP_Y, FIX_CODE_Y = 0.0, -1.05, -2.2
 NOTE_Y, SPOT_Y = -0.15, -1.2         # the diagram, in the lower band before the "after" row comes
 START_X, SPOTS_X = -4.75, (-2.6, -0.85, 0.9, 2.65)
 SIDE_X = 5.45                        # "4 frames, 0.2 s apart", right of the small strips
+CHIP = 0.56                          # a planned move's card = the note's slot, so it covers it exactly
 
 
 # ------------------------------------------------------------------ helpers (this scene only)
@@ -244,7 +245,7 @@ def issue_square(kind: str, side: float = 0.36) -> VMobject:
 def number_chip(k: int, size: float = 28) -> VGroup:
     """A planned move: the number of the spot it goes to, on a small GREY card."""
     t = label(str(k), size, INK)
-    b = box(0.5, 0.5, TOOL, fill=PANEL, fill_opacity=1, radius=0.08)
+    b = box(CHIP, CHIP, TOOL, fill=PANEL, fill_opacity=1, radius=0.08)
     t.move_to(b)
     return VGroup(b, t)
 
@@ -402,8 +403,9 @@ class Reviewers(VoiceScene):
                       stroke_width=3, tip_length=0.15, max_tip_length_to_length_ratio=0.4)
         fixed_sq = VGroup(*[issue_square("fixed").move_to(grid2[k]) for k in range(25)])
         partly_sq = VGroup(*[issue_square("partly").move_to(grid2[k]) for k in range(25, 30)])
-        r2_dir = role_icon("sub", 0.8)
-        r2_head = VGroup(r2_dir, label("round 2", 28)).arrange(RIGHT, buff=0.3).move_to([R2_X, HEAD_Y, 0])
+        r2_icons = VGroup(role_icon("sub", 0.8), role_icon("sub", 0.8)).arrange(RIGHT, buff=0.25)
+        r2_dir = r2_icons[1]                                  # round 2: the same roles, fresh agents
+        r2_head = VGroup(r2_icons, label("round 2", 28)).arrange(RIGHT, buff=0.3).move_to([R2_X, HEAD_Y, 0])
         r2 = FUNNEL["round2"]
         leg2a = label("a fresh director re-checked all 30:", 24)
         leg2b = label(f"{r2['fixed']} fixed · {r2['partly']} partly fixed · {r2['wrong']} wrong", 24,
@@ -487,7 +489,7 @@ class Reviewers(VoiceScene):
         ghost_boxes = [before.tiles[0].board.px_box(x - 48, y - 48, x + 48, y + 48) for x, y in OLD_GHOSTS]
 
         old = dim_code_panel(OLD_LINE, "tic-tac-toe video · scenes/s03_stop.py at 8a922bf", 280)
-        old.move_to([0, OLD_CODE_Y, 0])
+        old.move_to([0, OLD_CODE_Y, 0]).shift(UP * (OLD_CODE_Y - old.code.get_y()))
         animate_span = code_span(old.code, 0, ".animate")
 
         spots = VGroup(*[box(0.7, 0.7, TOOL, fill_opacity=0.06, radius=0.08).move_to([x, SPOT_Y, 0])
@@ -499,7 +501,7 @@ class Reviewers(VoiceScene):
         ghost = DashedVMobject(Circle(radius=0.27), num_dashes=14, dashed_ratio=0.55).set_stroke(TOOL, 4)
         ghost.move_to([START_X, SPOT_Y, 0])
         note_l = label("next spot:", 26, INK)
-        slot_b = box(0.6, 0.56, TOOL, fill=S.BG, fill_opacity=1, radius=0.08)
+        slot_b = box(CHIP, CHIP, TOOL, fill=S.BG, fill_opacity=1, radius=0.08)
         note_body = VGroup(note_l, slot_b).arrange(RIGHT, buff=0.18)
         note_box = box(note_body.width + 0.4, note_body.height + 0.24, TOOL, fill=PANEL, fill_opacity=1)
         note_body.move_to(note_box)
@@ -510,7 +512,7 @@ class Reviewers(VoiceScene):
 
         fixp = clipped_panel(FIX_LINE, "tic-tac-toe video · scenes/s03_stop.py", 203, cols=64,
                              note=" (part of the line)")
-        fixp.move_to([0, FIX_CODE_Y, 0])
+        fixp.move_to([0, FIX_CODE_Y, 0]).shift(UP * (FIX_CODE_Y - fixp.code.get_y()))
         fixp.align_to(old, LEFT)
         doc = caption(f"its docstring: “{DOCSTRING}”", 20).next_to(fixp.caption, DOWN, buff=0.06) \
             .align_to(fixp.caption, LEFT)
@@ -526,7 +528,7 @@ class Reviewers(VoiceScene):
         for k, moved in enumerate(MOVED):
             for c, r in moved:
                 p = after.tiles[k].board.px(NEW_COL[c], NEW_ROW[r])
-                rings.add(Circle(radius=0.2, color=MEASURED, stroke_width=4).move_to(p))
+                rings.add(Circle(radius=0.14, color=MEASURED, stroke_width=4).move_to(p))
         lift = TOP_HEAD_Y - BIG_HEAD_Y
         # the before/after screen: nothing may overlap (heights measured, not guessed)
         top_bottom, low_top, low_bottom = (TOP_STRIP_Y - SMALL_H / 2, LOW_STRIP_Y + SMALL_H / 2,
@@ -620,7 +622,7 @@ class Reviewers(VoiceScene):
             m.set_opacity(0)
         neq = S.math(r"\neq", size=56, color=BUG).move_to(
             [(cards[1].get_right()[0] + cards[2].get_left()[0]) / 2, cards[1].row.get_y(), 0])
-        built_l = caption("each scene built by its own agent", 22).next_to(builders, UP, buff=0.18)
+        built_l = caption("built by sub-agents working independently", 22).next_to(builders, UP, buff=0.18)
         bar_y = -0.95
         bar = RoundedRectangle(width=cards.width, height=0.62, corner_radius=0.2, stroke_color=SUB_AGENT_TEXT,
                                stroke_width=2.5).set_fill(SUB_AGENT, 0.45).move_to([0, bar_y, 0])
@@ -655,6 +657,7 @@ class Reviewers(VoiceScene):
 
             vo.wait_until("Only a reviewer")
             self.play(FadeIn(rider, shift=RIGHT * 0.2), run_time=0.3)
+            bar_l.set_opacity(0)                                 # added with the sweep, shown at its end
             sweep = 1.8
             end_x = bar.get_right()[0] - 0.45
             t_hit = [(cards[k].get_x() - bar.get_left()[0]) / bar.width * sweep - 0.15 for k in (2, 3)]
@@ -663,12 +666,12 @@ class Reviewers(VoiceScene):
                       Succession(Wait(t_hit[0]), ReplacementTransform(name_m[2], dans[0], run_time=0.3)),
                       Succession(Wait(t_hit[1]), ReplacementTransform(name_m[3], dans[1], run_time=0.3)),
                       Succession(Wait(t_hit[0]), FadeOut(neq, run_time=0.3)),
+                      Succession(Wait(sweep - 0.4), bar_l.animate(run_time=0.4).set_opacity(1)),
                       run_time=sweep)
-            self.play(FadeIn(bar_l), run_time=0.4)
-            vo.wait_until("could catch that")
             self.play(LaggedStart(*[FadeIn(v, shift=UP * 0.15) for v in variants], lag_ratio=0.12),
                       FadeIn(var_l), run_time=0.8)
+        self.wait(1.0)
         self.play(*[ReplacementTransform(v, shared.copy()) for v in variants],
                   ReplacementTransform(var_l, shared_l), run_time=1.0)
-        self.wait(1.4)
+        self.wait(1.3)
         fade_out_all(self)

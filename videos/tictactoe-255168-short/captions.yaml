@@ -1,0 +1,147 @@
+# Caption track of the tic-tac-toe short. There is no voice: these 30 lines and the picture carry
+# everything. One short sentence per caption, Chinese and English, each a claim, a question, a number
+# or a name (never a description of the picture). The plan they sit in is script.md.
+#
+# Burned in after rendering (libass), outside the camera, so camera moves never drag them and one
+# rendered picture serves both masters (every word label inside the picture is bilingual):
+#   zh-first master (Bilibili): zh line in Noto Serif CJK SC Regular 40 px, baseline at 87 % of the
+#       frame height; en line under it in Noto Sans Mono, all caps, letter-spaced, 22 px, grey #9AA0A0.
+#   en-first master (YouTube):  en line in sentence case, EB Garamond 12 Regular 40 px; zh line under
+#       it in Noto Serif CJK SC Regular 24 px, grey #9AA0A0.
+#   Both: white #E8E8E8 primary line, 0.3 s fade in and out, bottom 15 % of the frame reserved.
+# The en lines are stored in sentence case; the zh-first burn upper-cases them. 10¹²⁰ and 10⁸⁰ are
+# Unicode superscripts: Noto Sans Mono and EB Garamond have the glyphs, Noto Serif CJK SC does not, so
+# the zh lines say 10 的 120 次方 (the glossary's form) instead.
+#
+# Timing. `at` is the bar.beat a caption is cued from (bar n starts at (n-1) x 2.4 s, beat b of it
+# (b-1) x 0.6 s later; 100 BPM). start / end are seconds on the stitched short (254.4 s). Captions
+# are timed for reading, not snapped to the grid: each starts 0-0.3 s after the picture event it
+# names and stays up 3.0-4.0 s.
+#
+# Text rules: the long video's binding glossary (videos/tictactoe-255168/i18n/zh/GLOSSARY.md): X, O
+# and code names stay English; 种 for counting different games, 局 for a game or a tally; 第 N 步;
+# 空格子; 幽灵对局 (in “” where it is named); 9 的阶乘 (the symbol 9! only inside on-screen maths);
+# 撤销; 判断输赢; 递归 / 回溯; 平局; 国际象棋; a half-width space between CJK and Latin letters or
+# digits; full-width punctuation; no 。 or ， at the end of a caption (glossary G2), ？ kept; never a
+# 「！」 or "!" right after a digit.
+#
+# Check after every edit: python3 videos/tictactoe-255168-short/assets/check_short.py
+# (it recomputes every number, replays every board, and checks widths, overlaps, the picture-only
+# share and the glossary rules against script.md).
+
+version: 1
+bpm: 100
+bar_s: 2.4
+bars: 106
+duration_s: 254.4
+primary: zh
+
+masters:
+  zh-en: {primary: zh, secondary: en, en_case: upper, for: "Bilibili (Chinese first)"}
+  en-zh: {primary: en, secondary: zh, en_case: sentence, for: "YouTube (English first)"}
+
+# Corner section labels (top-left, tiny letter-spaced mono, 50 % grey), burned in like the captions.
+# No label over the cold open, the title or the callback. A term appears in a label only after the
+# picture has shown it (so §2 says 对局会提前结束, not 幽灵对局, before c09 names the ghost games).
+hud:
+  - {bars: [12, 20], text: "§1 · FILL THE BOARD · 填满棋盘"}
+  - {bars: [21, 40], text: "§2 · GAMES STOP EARLY · 对局会提前结束"}
+  - {bars: [41, 69], text: "§3 · PLAY EVERY GAME · 探索每一局"}
+  - {bars: [70, 83], text: "§4 · 255,168, EXPLAINED · 255,168 是怎么来的"}
+  - {bars: [84, 98], text: "§5 · BIGGER GAMES · 更复杂的棋"}
+
+# End line (centre, tiny mono, over the final title; bars 105-106).
+cards:
+  - {bars: [105, 106], zh: "完整版、程序和练习：见视频简介", en: "Full version, program and exercises: see the description"}
+
+captions:
+  - {id: c01, scene: S01, at: "4.1", start: 7.50, end: 11.00, kind: question,
+     zh: "井字棋有多少种不同的对局？",
+     en: "How many different games of tic-tac-toe are there?"}
+  - {id: c02, scene: S01, at: "6.1", start: 12.30, end: 15.90, kind: claim,
+     zh: "最后的棋盘一样，顺序不同：是两种对局",
+     en: "Same final board, different order: two different games."}
+  - {id: c03, scene: S01, at: "8.1", start: 16.90, end: 20.30, kind: claim,
+     zh: "翻转或旋转后的对局，也分开算",
+     en: "Flipped or turned games count separately too."}
+  - {id: c04, scene: S02, at: "12.1", start: 26.70, end: 30.30, kind: question,
+     zh: "先不管输赢：填满棋盘，有多少种顺序？",
+     en: "Forget winning: in how many orders can the board fill up?"}
+  - {id: c05, scene: S02, at: "18.1", start: 41.10, end: 44.70, kind: number,
+     zh: "从 9 一直乘到 1：9 的阶乘，362,880",
+     en: "Multiply all the way down to 1: nine factorial, 362,880."}
+  - {id: c06, scene: S02, at: "19.4", start: 45.00, end: 48.80, kind: question,
+     zh: "比 255,168 还多：多出来的对局从哪儿来？",
+     en: "More than 255,168: where do the extra games come from?"}
+  - {id: c07, scene: S03, at: "22.2", start: 51.30, end: 54.60, kind: claim,
+     zh: "真正的对局，有人赢了就结束",
+     en: "A real game ends as soon as someone wins."}
+  - {id: c08, scene: S03, at: "26.1", start: 60.30, end: 63.70, kind: number,
+     zh: "9 的阶乘把这一局，算了 24 次",
+     en: "Nine factorial counted this one game 24 times."}
+  - {id: c09, scene: S03, at: "27.4", start: 64.50, end: 68.00, kind: name,
+     zh: "这些编出来的对局，叫“幽灵对局”",
+     en: "These made-up games are called ghost games."}
+  - {id: c10, scene: S03, at: "29.4", start: 69.30, end: 72.30, kind: claim,
+     zh: "一局最早在第 5 步结束",
+     en: "The earliest a game can end is move 5."}
+  - {id: c11, scene: S03, at: "31.2", start: 72.90, end: 76.50, kind: claim,
+     zh: "结束得越早，拖着的幽灵对局越多",
+     en: "The earlier a game ends, the more ghost games it drags along."}
+  - {id: c12, scene: S04, at: "37.1", start: 86.70, end: 90.10, kind: number,
+     zh: "X 在第 5 步赢的对局：1,440 种",
+     en: "Games that X wins on move 5: 1,440."}
+  - {id: c13, scene: S04, at: "39.2", start: 92.10, end: 95.40, kind: claim,
+     zh: "再往后，手算就成了一团乱麻",
+     en: "After that, counting by hand becomes a tangled mess."}
+  - {id: c14, scene: S05, at: "41.1", start: 96.30, end: 99.90, kind: question,
+     zh: "要是让电脑把每一局都下一遍呢？",
+     en: "What if a computer plays every game, one by one?"}
+  - {id: c15, scene: S05, at: "46.1", start: 108.30, end: 111.80, kind: claim,
+     zh: "先试走一步，往下探索，再撤销",
+     en: "Try a move, explore what follows, then undo it."}
+  - {id: c16, scene: S05, at: "48.4", start: 114.90, end: 118.70, kind: claim,
+     zh: "有人赢了，或者棋盘满了：就是下完的一局",
+     en: "Someone won, or the board is full: one finished game."}
+  - {id: c17, scene: S05, at: "50.3", start: 119.10, end: 123.10, kind: name,
+     zh: "函数自己问自己，叫递归；退回来再试，叫回溯",
+     en: "A function asking itself is recursion; stepping back is backtracking."}
+  - {id: c18, scene: S05, at: "52.3", start: 123.90, end: 127.50, kind: claim,
+     zh: "按顺序一局接一局地下，一局也不漏",
+     en: "In order, game after game, without missing one."}
+  - {id: c19, scene: S05, at: "58.1", start: 137.10, end: 140.50, kind: number,
+     zh: "每一局只算一次：255,168",
+     en: "Every game counted exactly once: 255,168."}
+  - {id: c20, scene: S06, at: "62.3", start: 147.90, end: 151.50, kind: claim,
+     zh: "删掉“判断输赢”，对局就不会提前停",
+     en: "Delete the winner check, and no game stops early."}
+  - {id: c21, scene: S06, at: "67.3", start: 159.90, end: 163.20, kind: number,
+     zh: "362,880：幽灵对局全回来了",
+     en: "362,880: the ghost games are back."}
+  - {id: c22, scene: S07, at: "70.1", start: 165.90, end: 169.20, kind: question,
+     zh: "这些对局，都在第几步结束？",
+     en: "On which move does each game end?"}
+  - {id: c23, scene: S07, at: "77.1", start: 182.70, end: 186.70, kind: claim,
+     zh: "乘上各自被算的次数，正好又是 9 的阶乘",
+     en: "Multiply each by how often it was counted: nine factorial again."}
+  - {id: c24, scene: S07, at: "80.3", start: 191.10, end: 194.60, kind: number,
+     zh: "先走的 X，赢了一半多一点的对局",
+     en: "X, who goes first, wins just over half of all games."}
+  - {id: c25, scene: S08, at: "84.1", start: 199.50, end: 202.90, kind: question,
+     zh: "那么，先走的 X 是不是总能赢？",
+     en: "So does going first mean X always wins?"}
+  - {id: c26, scene: S08, at: "87.1", start: 206.70, end: 210.50, kind: claim,
+     zh: "可要是双方都不失误，每一局都是平局",
+     en: "But with perfect play on both sides, every game ends in a draw."}
+  - {id: c27, scene: S08, at: "89.1", start: 211.50, end: 214.70, kind: question,
+     zh: "那国际象棋，有多少种对局？",
+     en: "And how many games of chess are there?"}
+  - {id: c28, scene: S08, at: "93.1", start: 221.10, end: 224.90, kind: number,
+     zh: "国际象棋至少有 10 的 120 次方种对局",
+     en: "Chess has at least 10¹²⁰ possible games."}
+  - {id: c29, scene: S08, at: "95.1", start: 225.90, end: 229.90, kind: number,
+     zh: "整个可观测宇宙，也才约 10 的 80 次方个原子",
+     en: "The whole observable universe has only about 10⁸⁰ atoms."}
+  - {id: c30, scene: S09, at: "102.2", start: 243.30, end: 247.30, kind: claim,
+     zh: "255,168 种对局，每一局都是这棵树上的一条路",
+     en: "255,168 games, and each one is a path down the same tree."}

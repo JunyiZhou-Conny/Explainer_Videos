@@ -1,0 +1,92 @@
+id: tictactoe-255168-short
+format: short                  # caption-led, music-led cut: no narration; picture on a 100 BPM bar grid
+source: tictactoe-255168       # the long version: its verified numbers, components and zh glossary
+title: "井字棋为什么恰好有 255,168 种对局？"
+title_en: "Why are there exactly 255,168 games of tic-tac-toe?"
+subtitle: {zh: "4 分钟版", en: "the 4-minute version"}
+papers: []                     # not a paper: a counting puzzle and a small program
+audience: "middle school (about 11-14); no algebra or programming background assumed"
+voice: none                    # music + bilingual captions carry everything (captions.yaml)
+plan: script.md                # bar-by-bar plan: picture, caption and sound designed together
+checks: assets/check_short.py  # every number, board, caption and bar of the plan, re-verified
+
+grid: {bpm: 100, beat_s: 0.6, bar_s: 2.4, bars: 106, duration_s: 254.4, fps: 60}
+# Bar n starts at (n-1) x 2.4 s; beat 0 is frame 0. Every shot length is whole bars, every cut and
+# morph starts on a bar downbeat, every arrival lands on a beat.
+
+captions:
+  file: captions.yaml
+  primary: zh                  # Bilibili master: Chinese line first, small tracked English under it
+  masters:
+    - {id: zh-en, primary: zh, secondary: en, title: "井字棋为什么恰好有 255,168 种对局？（4 分钟版）"}
+    - {id: en-zh, primary: en, secondary: zh, title: "Why are there exactly 255,168 games of tic-tac-toe? (4-minute version)"}
+  # Both masters share one rendered picture: captions and the corner labels are burned in after the
+  # render, and every word label inside the picture is bilingual (zh over tiny tracked en).
+
+look:
+  profile: short               # the short style profile (STYLE_PLAN 2.4), not the long videos' look
+  background: "#050505"
+  line: "#C8CCCC"              # hairline line art, 1.5-2 px at 1080p
+  secondary: "#7D8484"
+  grid: "#151515"
+  accents:                     # two families only because tic-tac-toe has two players
+    X: ["#DDFFFF", "#A3EBEF", "#5AA9B4", "#1B3438"]   # cool: core → mid → glow → halo
+    O: ["#F6C965", "#CFA463", "#784C2E", "#442100"]   # warm
+  draw: "#C8CCCC"              # grey-white, soft glow, no hue
+  ghost: "#7D8484"             # dashed, 35 % opacity, never glows
+  wrong: "#FC6255"             # RED = undo / erase / deleted line / too many / mistake
+  light: "#FFFFFF"             # the search's light pen and the hero numbers (white core, neutral halo)
+  fonts: {caption_zh: "Noto Serif CJK SC", caption_en: "Noto Sans Mono", title: "Noto Serif CJK SC Bold",
+          tracked: "Montserrat Light", hero_number: "Inter Black", maths: "EB Garamond 12 Italic",
+          hud: "Noto Sans Mono"}
+  post: {bloom: [6, 28], grain: 5, vignette: "PI/5"}
+
+music:
+  engine: synth                # our own numpy/scipy synthesis from the render's event log (music_lab PoC)
+  bpm: 100
+  key: D
+  mode: lydian                 # every chord diatonic to D Lydian, so the square notes never clash
+  palette: {X: bell, O: glass, draw: wood, ghost: reversed_glass, undo: reverse_whoosh, cut: sub_boom,
+            count: tick, pen: soft_pulse}
+  square_pitches: [C#5, D5, E5, G#4, A4, B4, D4, E4, F#4]   # squares 0-8: a game is a melody
+  lufs: -14
+  true_peak_dbtp: -1
+  density: 3                   # at most about 3 accents per second outside planned swarms
+  cues:                        # structural moments (bar.beat); script.md has every bar's SOUND line
+    - {at: "10.1", kind: title, note: "title hit on Bm9 (vi): the number is given, not yet explained"}
+    - {at: "18.1", kind: hit, note: "9! bloom over an A pedal (unresolved: too many)"}
+    - {at: "41.1", kind: cut, note: "the tangle snaps"}
+    - {at: "58.1", kind: resolve, note: "255,168 lands: boom + first tonic since the opening"}
+    - {at: "63.1", kind: tape_stop, bars: 1}
+    - {at: "64.1", kind: silence, bars: 1, note: "THE TURN: one bar of digital silence"}
+    - {at: "65.1", kind: hit, note: "the ghosts return on Bbmaj7(#11), outside the key"}
+    - {at: "77.1", kind: resolve, note: "the ledger stacks to 9!: boom + tonic"}
+    - {at: "87.1", kind: hit, note: "perfect play: an open fifth D-A, no third (a draw)"}
+    - {at: "93.1", kind: hit, note: "climax: the chess strip ends; key lifts to E Lydian"}
+    - {at: "99.1", kind: section, note: "back to D through Asus4"}
+    - {at: "104.1", kind: resolve, note: "rolled Dmaj9, then a tail to silence at 254.4 s"}
+  stems: [bed, accents]        # bed = pads, bass, risers; accents = event-locked notes, ticks, hits
+  # The long version gets music later from the same pipeline (free time, ducked under the voice).
+
+scenes:                        # BeatScene classes (explainer.short); one scene = several shots, whole bars
+  - {file: scenes/s01_open.py,    cls: ColdOpen,      bars: [1, 11],   title: "How many games? · 有多少种对局？"}
+  - {file: scenes/s02_fill.py,    cls: FillOrders,    bars: [12, 20],  title: "Fill the board · 填满棋盘"}
+  - {file: scenes/s03_ghosts.py,  cls: GhostGames,    bars: [21, 32],  title: "Games stop early · 对局会提前结束"}
+  - {file: scenes/s04_by_hand.py, cls: ByHand,        bars: [33, 40],  title: "Counting by hand · 手算"}
+  - {file: scenes/s05_search.py,  cls: EveryGame,     bars: [41, 61],  title: "Play every game · 探索每一局"}
+  - {file: scenes/s06_turn.py,    cls: DeleteCheck,   bars: [62, 69],  title: "Delete one check · 删掉判断输赢"}
+  - {file: scenes/s07_ledger.py,  cls: Ledger,        bars: [70, 83],  title: "255,168, explained · 255,168 是怎么来的"}
+  - {file: scenes/s08_bigger.py,  cls: BiggerGames,   bars: [84, 98],  title: "Perfect play, and chess · 双方都不失误，还有国际象棋"}
+  - {file: scenes/s09_callback.py, cls: SameTree,     bars: [99, 106], title: "One tree · 同一棵树"}
+
+description:
+  zh: |
+    井字棋一共有多少种不同的对局？答案是 255,168。这个 4 分钟版没有旁白，只有画面、音乐和双语字幕；
+    想听完整的讲解（还有角上、边上、中心哪一步能下出最多对局），请看完整版。
+    程序 play_all_games.py 和练习题的链接见下方。
+    音乐：由代码为本视频生成。本视频由 AI 智能体制作。
+  en: |
+    How many different games of tic-tac-toe are there? 255,168. This 4-minute version has no narration:
+    just the picture, music and bilingual captions. The full version explains every step (and which first
+    move leads to the most games). The program play_all_games.py and the exercises are linked below.
+    Music generated in code for this video. Made by an AI agent.
