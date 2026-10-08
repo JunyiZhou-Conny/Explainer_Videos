@@ -190,7 +190,8 @@ Conventions
   SAY sentence was run through the voice's own phonemizer (`kokoro_onnx.tokenizer`, espeak), with
   no audio made. Manim, Karpathy, 3Blue1Brown and Claude come out right. So do v2's new words:
   Mandarin, epsilon, lint, playground, example, cataloging, re-render, API, PDFs and "say line" /
-  "show line". No `lexicon.yaml` entry looks needed. In v1, "SAY" was spelled out and "2.2." was
+  "show line". A speech-recognizer round trip of all 46 say lines (assets/en_asr_roundtrip.yaml: 0.9 % word
+  differences) found one misread name, Andrej, now fixed in `lexicon.yaml`. In v1, "SAY" was spelled out and "2.2." was
   split in two; both are fixed above. Before the final render, run the speech-recognizer round
   trip on all SAY lines (ASSETS.md A19 shows the command). Bilibili and Xiaoyi stay out of SAY
   (both are misread).
@@ -220,9 +221,10 @@ four requests, not the cost of one video".
 SHOW: Black frame. A GREY video-player frame (rounded rectangle, pause icon, scrubber) fades in
 holding the tic-tac-toe "before" frame: the board with X's top row YELLOW and the faded, dashed
 ghost marks; on the right, the formula line reads "4 × 3 × 2", a gap, then a GREEN "12". Tag
-top-right: "reconstruction" (or the re-render tag, if A03 exists). Caption under the player:
+top-right: "re-rendered from the old code (commit 8a922bf)" (A03 exists: a real frame of the
+old code, re-rendered). Caption under the player:
 "from a draft of 'Why are there exactly 255,168 games of tic-tac-toe?' · made for ages 11 to 14".
-[RECON A03]
+[REAL A03 re-render]
 SAY: Here's what a paused frame looked like in an early draft of one of these videos, about tic-tac-toe, for kids around 12. Look at the line on the right: 4 times 3 times 2, and then 12.
 
 SHOW: PONDER(6 s, "If you were 12,\nwhat would you think went wrong?") with the frame still visible,
@@ -236,7 +238,7 @@ under the board"); the tag changes to "real frame, after the fix". A RED tag poi
 spot: "the math was right · the layout was wrong". A faded-BLUE `person_icon` with a small "AI"
 badge enters left, with a speech bubble from the QA notes (A10, `qa_round1.txt` line 30): "Paused
 frames read '4 × 3 × 2      12' … which look like wrong multiplication." Label under the icon: "a
-simulated 12-year-old (an AI reviewer)". [RECON A03 → REAL A01; REAL A10]
+simulated 12-year-old (an AI reviewer)". [REAL A03 re-render → REAL A01; REAL A10]
 SAY: It looks like bad multiplication, but the math was right. The 12 was a running count on its way to 24, sitting on the formula's line. The layout lied. And the reviewer who caught it wasn't a child. It was an AI, pretending to be a 12-year-old.
 
 SHOW: Everything shrinks to the left. A row of icons builds: one PINK `person_icon` ("the user"),
@@ -454,13 +456,13 @@ SAY: Round one found 30 issues, including that 12 on the formula line. In round 
 
 SHOW: The frozen shuffle, before and after. Left, "before": four frames 0.2 s apart, the same
 spacing as the "after" strip, in which the ghost marks don't move while the GREEN counter creeps on
-(the re-render shows the old code's real values; the reconstruction uses 9 → 10 → 10 → 11), RED tag
-"frozen", plus the A03 tag; under it one line of the real old code (A25, `s03_stop.py` at
+(A03, re-rendered from the old code: the counter reads 5, 5, 6, 7), RED tag "frozen", plus the
+A03 tag "re-rendered from the old code (commit 8a922bf)"; under it one line of the real old code (A25, `s03_stop.py` at
 `8a922bf`, line 280): `ghosts[start[cur[p]]].animate(path_arc=arc) .move_to(...)`, with `.animate`
 RED, the rest faded. Right, "after": the real moving strip (A02); under it one line of the real fix
 (A26, `s03_stop.py` line 203): `return lambda: [m.animate(path_arc=path_arc).move_to(p) for m, p in moves]`,
 with `lambda` GREEN and the docstring as a GREY caption: "The `.animate`s are made only when the
-step plays." [RECON A03; REAL A25, A26, A02]
+step plays." [REAL A03 re-render, A25, A26, A02]
 SAY: The director caught a subtler bug. The scene should shuffle 4 marks through all 24 orders, but the board froze while the counter ticked on. The cause is a Manim pitfall: every move was prepared before any played, so each overwrote the last. Now each move is prepared as it plays.
 
 SHOW: Four mini scene cards from the privacy video (scenes 3 to 6), each with a small faded-BLUE
@@ -550,7 +552,7 @@ SHOW: A board with four empty slots, titled with the rule: "the biggest gaps sit
 runs out". Card 1 slides in, dashed YELLOW outline: "only people can do this". A PINK
 `person_icon` with headphones replaces the RED-struck headphones over the agent icons (from S01).
 Sub-lines: "no recorded human review of the narration yet, English or Chinese" · "English
-narration: no full speech-recognition check yet (one clip timed for this video)" · "every test
+narration: checked by a speech recognizer for this video, no human listening yet" · "every test
 viewer on record: an AI persona" · "learning not measured: no quiz, no data". [DIAGRAM; DATA fact
 sheet 6]
 SAY: So what's next? The biggest gaps sit exactly where measuring runs out. First, what only people can do. There's no recorded human review of any narration yet. Every test viewer on record was simulated, and there's no measure yet of what anyone learned.

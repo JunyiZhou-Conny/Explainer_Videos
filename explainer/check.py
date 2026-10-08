@@ -38,13 +38,13 @@ def main(argv=None) -> int:
         print(__doc__)
         return 2
     scene_file, cls_name = Path(argv[0]).resolve(), argv[1]
-    if lang:
+    project = scene_file.parent.parent
+    if (project / "video.yaml").exists():   # the video's own voice (and language), as preview uses
         import yaml
 
         from .build import scene_env
-        project = scene_file.parent.parent
         spec = yaml.safe_load((project / "video.yaml").read_text())
-        os.environ.update({k: v for k, v in scene_env(spec, tts, lang).items()
+        os.environ.update({k: v for k, v in scene_env(spec, tts, lang or "en").items()
                            if k.startswith("EXPLAINER_")})
         os.environ["EXPLAINER_PROJECT"] = str(project)
     sys.path.insert(0, str(scene_file.parent))
