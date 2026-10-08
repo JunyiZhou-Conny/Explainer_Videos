@@ -6,14 +6,14 @@ Manim -> Manim Community Edition -> a BLUE card "explainers built by an AI agent
 Karpathy line (A05, as quoted) feeding the last card -> the user's own words come out of the user
 icon as PINK quote cards (A06), "cognitive offloading" turns RED -> those two cards slide up
 small, their captions merge into one; card 3 (a mentor), card 3b (never isolated) pointing at
-the privacy video's real lineage map (A07, cropped to the map), card 4 (the next step) with
+the privacy video's real lineage map (A07, cropped to its four papers), card 4 (the next step) with
 "interactive" in a dashed YELLOW outline + "idea · not built yet" -> the cards clear, the map
 thumbnail stays and becomes request 1's picture; four PINK request cards (summaries) drop onto a
 UTC date axis at their real request times (quotes.yaml `requests`), request 2 with A08.
 
 Helpers defined here (not in common.py): broken() (line breaks in a quote without touching its
 words), quote_glyphs() (the glyphs of a word in a quote card, to colour or outline it),
-paper_pile(), lineage_card(), request_card().
+paper_pile(), lineage_card(), request_card(), aspect().
 """
 
 import datetime as dt
