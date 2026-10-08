@@ -99,7 +99,7 @@ A30:
   english: "No. A computer can do more than count."
   cue: "00:11:42,030 --> 00:11:45,400"
   reviewer_quote: "11:42 then reads “不是电脑能做的，不只是统计对局”"
-  recon_tag: "reconstruction · the old cue text, as both QA reviewers quoted it"
+  recon_tag: "re-created for this video · the old cue text, as both AI reviewers quoted it"
 
 A31:
   file: "ttt_zh_s03_voice.json"
@@ -135,7 +135,7 @@ A37:
 A38:
   rename: "renamed the row 'Dev' to 'Dan' so the names match S03/S04 (Bob, Carol, Alice, Dan, Eve)"
   budget_bar: "is drawn five different ways"
-  src: "privacy video, whole-video QA notes"
+  src: "privacy video, whole-video review notes"
 
 A41:
   filename: "20_chen2016dcan_1604.02678.pdf"
@@ -146,7 +146,8 @@ A41:
 
 A42:
   text: "go through the contact sheets of every scene in order while reading the subtitles for the same times (the srt) — that is the video."
-  caption: "from the round-1 QA prompt (tic-tac-toe)"
+  caption: "from the round-1 review instructions (tic-tac-toe)"
+  shown: "go through the contact sheets of every scene in order while reading the subtitles for the same times … — that is the video."   # on screen: "(the srt)" cut, marked "…"
 
 A43:                                 # build-dp-scenes runs, Oct 4 (UTC)
   review_lane: {start: "15:47", end: "16:30"}
@@ -171,7 +172,7 @@ A10:                                 # qa_round1.txt / qa_round2.txt line refs
   score_caveats: "a model's guess, not a real child's · the second kid had read the first one's notes"
 
 A03:                                 # the re-render of commit 8a922bf (old toolkit + old scene, 720p30, this session)
-  tag: "re-rendered from the old code (commit 8a922bf)"
+  tag: "the old draft, redrawn from its saved code"     # common.RERENDER (was "re-rendered from the old code (commit 8a922bf)")
   tally_frame: {file: "old_s03_tally_12.png", t: 22.13, shows: "4 × 3 × 2      12"}
   frozen_frames: {files: ["old_s03_frozen_1.png", "old_s03_frozen_2.png", "old_s03_frozen_3.png", "old_s03_frozen_4.png"],
                   t: [20.6, 20.8, 21.0, 21.2], counter: [5, 5, 6, 7]}     # the ghosts stay put while the counter creeps on

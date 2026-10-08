@@ -107,14 +107,16 @@ TITLE = 48          # scene / section titles
 BODY = 32
 LABEL = 26          # labels in diagrams
 SMALL = 24          # chips, bubbles, card text
-TAG = 22            # tags ("reconstruction", "not yet verified"), as script.md asks
+TAG = 22            # tags ("re-created for this video", "not yet verified"), as script.md asks
 CAPTION = 20        # source captions (the toolkit minimum)
 MONO = "DejaVu Sans Mono"   # the house code font (same as the other videos' code panels)
 SANS = S.FONT_SANS
 
 # fixed strings (honesty: always the same words)
-RECON = "reconstruction"
-RERENDER = "re-rendered from the old code (commit 8a922bf)"
+# Plain words, for viewers who don't code (the fresh-viewer review of the draft read
+# "reconstruction" and "re-rendered from the old code (commit 8a922bf)" as jargon).
+RECON = "re-created for this video"
+RERENDER = "the old draft, redrawn from its saved code"
 NOT_VERIFIED = "not yet verified"
 IDEA = "idea · not built yet"
 DICTATED = QUOTES["captions"]["dictated"]           # "— the user (dictated; filler words removed)"
@@ -257,13 +259,13 @@ def tag(s: str, color: str = TOOL, size: float = TAG, text_color: str | None = N
 
 
 def recon_tag(s: str = RECON) -> Chip:
-    """GREY 'reconstruction' tag (22 pt): every redrawn picture of something that no longer exists
+    """GREY 're-created for this video' tag (22 pt): every redrawn picture of something that no longer exists
     carries it, top-right (pin_to_corner(tag, target))."""
     return tag(s, TOOL)
 
 
 def rerender_tag() -> Chip:
-    """The tag for frames of the A03 re-render: 're-rendered from the old code (commit 8a922bf)'."""
+    """The tag for frames of the A03 re-render of commit 8a922bf: 'the old draft, redrawn from its saved code'."""
     return tag(RERENDER, TOOL)
 
 

@@ -168,7 +168,7 @@ ROW_Y0 = 0.1                     # the row while it is written (beat 1)
 ROW_Y1 = 2.75                    # the row at the top (beats 2 and 4)
 NAME_SIZE = 22
 FILES = [("paper.pdf", None, "pdf"), ("catalog.yaml", None, "yaml"),
-         ("digest.md", "page numbers + errata", "md"), ("script.md", None, "script"),
+         ("digest.md", "page numbers + the paper's mistakes", "md"), ("script.md", None, "script"),
          ("scenes/*.py", None, "py"), ("output/", "mp4, subtitles,\nchapters", "out")]
 PHRASES = ["a paper", "a catalog entry", "a digest", "a script,", "animation code", "and the video"]
 DOC_SIZE = 22
@@ -584,7 +584,7 @@ class ScriptIsCode(VoiceScene):
         # the review run of the false start had 4 reviewers (run record review-dp-script, 15:47:32:
         # agentCount 4, "4 independent reviewers with distinct lenses"), so 4 icons, not a generic 2
         reviewers = sub_agent_cluster(REVIEWERS, 0.6, cols=REVIEWERS)      # one AI badge for the group
-        reviewers.move_to([ROW_X[3] + 0.1, 0.82, 0])        # clear of digest.md's note "page numbers + errata"
+        reviewers.move_to([ROW_X[3] + 0.1, 0.82, 0])        # clear of digest.md's note "page numbers + the paper's mistakes"
         gate = VGroup(Rectangle(width=0.42, height=0.42, stroke_width=0).set_fill(S.BG, 1), pause_icon(0.28, INK))
         gate.move_to(arrows[3].get_center())
         downstream = VGroup(arrows[3], arrows[4], items[4], items[5])
@@ -676,7 +676,7 @@ class ScriptIsCode(VoiceScene):
             vo.wait_until("a sentence costs")
             self.play(FadeIn(c1, scale=0.6), FadeIn(l1, shift=UP * 0.1), run_time=0.5)
             self.play(Rotate(c1.minute, -TAU / 60, about_point=c1.face.get_center()), run_time=0.4)
-            vo.wait_until("an animation costs")
+            vo.wait_until("a scene costs")
             self.play(FadeIn(c2, scale=0.6), FadeIn(l2, shift=UP * 0.1), run_time=0.5)
             self.play(Rotate(c2.minute, -TAU * 3, about_point=c2.face.get_center()),
                       Rotate(c2.hour, -TAU / 4, about_point=c2.face.get_center()), run_time=1.5, rate_func=smooth)

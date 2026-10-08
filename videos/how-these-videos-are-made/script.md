@@ -138,9 +138,11 @@ Conventions
   - `[DATA]` drawn in Manim from real numbers or real text (the source is named).
   - `[DIAGRAM]` an explanatory drawing that claims to be nothing more.
   - `[RECON Axx]` a redrawn picture of something that no longer exists. It always carries the
-    on-screen tag **"reconstruction"** (GREY rounded tag, top-right, 22 pt). Where `ASSETS.md`
-    offers a re-render of the old commit instead (A03), the tag reads **"re-rendered from the old
-    code (commit 8a922bf)"**.
+    on-screen tag **"re-created for this video"** (GREY rounded tag, top-right, 22 pt; it said
+    "reconstruction" until the fresh-viewer review of the draft). Where `ASSETS.md` offers a
+    re-render of the old commit instead (A03), the tag reads **"the old draft, redrawn from its
+    saved code"** (was "re-rendered from the old code (commit 8a922bf)"). On-screen words avoid
+    developer jargon: "review", not "QA"; "voice test", not "bake-off"; "self-checks", not "asserts".
 - `PONDER(n s, "question")`: after that SAY block, `pause_and_ponder(self, "question", seconds=n)`
   (silent timer), then remove the card at the start of the next block. As in the tic-tac-toe video,
   the card comes in on the word "Pause" (`vo.wait_until("Pause")`), so the question is already on
@@ -221,8 +223,8 @@ four requests, not the cost of one video".
 SHOW: Black frame. A GREY video-player frame (rounded rectangle, pause icon, scrubber) fades in
 holding the tic-tac-toe "before" frame: the board with X's top row YELLOW and the faded, dashed
 ghost marks; on the right, the formula line reads "4 × 3 × 2", a gap, then a GREEN "12". Tag
-top-right: "re-rendered from the old code (commit 8a922bf)" (A03 exists: a real frame of the
-old code, re-rendered). Caption under the player:
+top-right: "the old draft, redrawn from its saved code" (A03 exists: a real frame of the
+old code, re-rendered at commit 8a922bf). Caption under the player:
 "from a draft of 'Why are there exactly 255,168 games of tic-tac-toe?' · made for ages 11 to 14".
 [REAL A03 re-render]
 SAY: Here's what a paused frame looked like in an early draft of one of these videos, about tic-tac-toe, for kids around 12. Look at the line on the right: 4 times 3 times 2, and then 12.
@@ -236,7 +238,7 @@ real fixed layout (A01, the 23.0 s tile, cropped: the formula line reads "4 × 3
 "ghost endings counted: 19" sits under the board, with a GREY gloss arrow "a running count, now
 under the board"); the tag changes to "real frame, after the fix". A RED tag points at the old
 spot: "the math was right · the layout was wrong". A faded-BLUE `person_icon` with a small "AI"
-badge enters left, with a speech bubble from the QA notes (A10, `qa_round1.txt` line 30): "Paused
+badge enters left, with a speech bubble from the review notes (A10, `qa_round1.txt` line 30): "Paused
 frames read '4 × 3 × 2      12' … which look like wrong multiplication." Label under the icon: "a
 simulated 12-year-old (an AI reviewer)". [REAL A03 re-render → REAL A01; REAL A10]
 SAY: It looks like bad multiplication, but the math was right. The 12 was a running count on its way to 24, sitting on the formula's line. The layout lied. And the reviewer who caught it wasn't a child. It was an AI, pretending to be a 12-year-old.
@@ -336,7 +338,7 @@ SAY: From request to final cut, the privacy video took about six hours, and tic-
 ## S04 · A script that is code — `s04_script.py` · `ScriptIsCode`
 
 SHOW: A file pipeline grows left to right, GREY file cards each "written" by a small BLUE pen:
-"paper.pdf" → "catalog.yaml" → "digest.md · page numbers + errata" → "script.md" → "scenes/*.py" →
+"paper.pdf" → "catalog.yaml" → "digest.md · page numbers + the paper's mistakes" → "script.md" → "scenes/*.py" →
 "output/ · mp4, subtitles, chapters". The motto types in above: "Every step leaves a file behind,
 so you can stop, review, and resume." [REAL A13; DIAGRAM]
 SAY: The pipeline is a chain of files: a paper, a catalog entry, a digest with page numbers, a script, animation code, and the video. Every step leaves a file behind, so you can stop, review, and resume.
@@ -344,7 +346,7 @@ SAY: The pipeline is a chain of files: a paper, a catalog entry, a digest with p
 SHOW: Two catches pop off the first cards. On "catalog.yaml": a filename card
 "20_chen2016dcan_1604.02678.pdf" flips over to "inside: a math paper on topological pressure",
 with "1604.02678 · DCAN is most likely 1604.02677" in RED and a tally "4 of 36 PDFs: the wrong
-paper" (the flip is a redrawn moment: tag "reconstruction"; the filename and the tally are real,
+paper" (the flip is a redrawn moment: tag "re-created for this video"; the filename and the tally are real,
 A41). On "digest.md": page 270 of the privacy paper (A14) slides in, the line "mean 0, and
 standard deviation λ." underlined in WHITE, and a GREEN sticky note quotes the digest: "the true
 standard deviation is √2·λ — λ is the scale". [RECON flip; REAL A41, A14]
@@ -363,7 +365,7 @@ review · 15:47 → 16:30"; at 16:07 the guide is committed, with its real headi
 `docs/WORKFLOW.md` at `41eca34`): "4. Review the script (before any animation)"; at 16:12–16:13
 six faded-BLUE builder icons start (3 runs × 2 agents) while the review lane is still running; at
 16:24 all six turn RED and fade ("stopped at 16:24, before the review was done"). [REAL A13; DATA A43]
-SAY: So other agents review the script before any animation: a sentence costs seconds to fix, an animation costs a re-render. The agent wrote that rule into its own guide on day one. Minutes later, it started six sub-agents building scenes while the review was still running. Eleven minutes after that, all six were stopped.
+SAY: So other agents review the script before any animation: a sentence costs seconds to fix, a scene costs a re-render. The agent wrote that rule into its own guide on day one. Minutes later, it started six sub-agents building scenes while the review was still running. Eleven minutes after that, all six were stopped.
 
 ---
 
@@ -439,9 +441,9 @@ SAY: Then it measures everything it can. A checker called a lint runs each scene
 SHOW: A review loop: the BLUE agent hands a "draft video" card to two faded-BLUE reviewer icons,
 "director" and "a simulated 12-year-old", tagged "fresh agents · didn't build it". What each
 receives floats in: "contact sheets", "subtitles = the sound", "a role". A real line from the
-round-1 QA prompt for the simulated kid (A42), GREY caption "from the round-1 QA prompt
-(tic-tac-toe)": "go through the contact sheets of every scene in order while reading the subtitles
-for the same times (the srt) — that is the video." Then a speech bubble from the simulated kid
+round-1 review instructions for the simulated kid (A42), GREY caption "from the round-1 review
+instructions (tic-tac-toe)": "go through the contact sheets of every scene in order while reading
+the subtitles for the same times … — that is the video." ("(the srt)" cut, marked "…"). Then a speech bubble from the simulated kid
 (A10, `qa_round1.txt` line 38): "… couldn't work out what X0 meant (X's zeroth move?)".
 [REAL A10, A42; DIAGRAM]
 SAY: Next come the reviewers, fresh agents that didn't build the video. They get the stills, the subtitles as a stand-in for sound, and a role: a director, or a simulated 12-year-old, sharp but ordinary. That simulated kid found real problems, like move labels it couldn't decode.
@@ -457,7 +459,7 @@ SAY: Round one found 30 issues, including that 12 on the formula line. In round 
 SHOW: The frozen shuffle, before and after. Left, "before": four frames 0.2 s apart, the same
 spacing as the "after" strip, in which the ghost marks don't move while the GREEN counter creeps on
 (A03, re-rendered from the old code: the counter reads 5, 5, 6, 7), RED tag "frozen", plus the
-A03 tag "re-rendered from the old code (commit 8a922bf)"; under it one line of the real old code (A25, `s03_stop.py` at
+A03 tag "the old draft, redrawn from its saved code"; under it one line of the real old code (A25, `s03_stop.py` at
 `8a922bf`, line 280): `ghosts[start[cur[p]]].animate(path_arc=arc) .move_to(...)`, with `.animate`
 RED, the rest faded. Right, "after": the real moving strip (A02); under it one line of the real fix
 (A26, `s03_stop.py` line 203): `return lambda: [m.animate(path_arc=path_arc).move_to(p) for m, p in moves]`,
@@ -467,9 +469,9 @@ SAY: The director caught a subtler bug. The scene should shuffle 4 marks through
 
 SHOW: Four mini scene cards from the privacy video (scenes 3 to 6), each with a small faded-BLUE
 builder icon: the name tags read "Dan" in scenes 3 and 4 and "Dev" in scenes 5 and 6, with a RED
-"≠". A wide faded-BLUE bar labelled "cross-scene reviewer (whole-video QA pass)" sweeps across the
+"≠". A wide faded-BLUE bar labelled "cross-scene reviewer (whole-video review)" sweeps across the
 cards and the tags settle on "Dan". Below, five differently drawn budget bars collapse into one
-shared drawing. Source caption: "privacy video, whole-video QA notes" (A38). [DIAGRAM; DATA A38]
+shared drawing. Source caption: "privacy video, whole-video review notes" (A38). [DIAGRAM; DATA A38]
 SAY: Some problems only show across scenes. In the privacy video, agents building different scenes named the same person Dan in one part and Dev in another. Only a reviewer looking across scenes could catch that.
 
 ---
@@ -502,7 +504,7 @@ dashed YELLOW outline: "chosen by speech recognition · no recorded check by ear
 SAY: Then, which voice? The agent can't listen, so it asked a speech recognizer. With the first Mandarin voice, the recognizer heard "Nice" where the script said noise, and "Excellent" where it said epsilon. Another voice passed all 17 test terms, and was chosen. There's no record yet of anyone checking it by ear.
 
 SHOW: A redrawn frame of the Chinese tic-tac-toe video at 11:43 (A30 on the A04 picture, tag
-"reconstruction · the old cue text, as both QA reviewers quoted it"): the game tree under 轮到 X /
+"re-created for this video · the old cue text, as both AI reviewers quoted it"): the game tree under 轮到 X /
 轮到 O, and in the band below "不是电脑能做的，不只是统计对局" over the English line "No. A computer can
 do more than count." The Chinese line is glossed "It's not what a computer can do, not just
 counting games", with a RED "meaning flipped" stamp; the English line stays WHITE. Two small
@@ -559,8 +561,8 @@ SAY: So what's next? The biggest gaps sit exactly where measuring runs out. Firs
 
 SHOW: Card 1 opens into two columns. PINK "decided by the user": "the topics" · "the audiences" ·
 "Chinese, code-switched" · "this video". BLUE "decided by the agent · worth a second look", each
-item in a dashed YELLOW outline: "privacy video: 24 min, not the 12–15 its own README prompt
-suggests → also cut into 2 parts" · "Chinese voice: the top scorer was male and English-first → a
+item in a dashed YELLOW outline: "privacy video: 24 min, not the 12–15 its own instructions
+suggest → also cut into 2 parts" · "Chinese voice: the top scorer was male and English-first → a
 native Mandarin female voice, to match the English (another female voice scored about as well)" ·
 "which English words to keep: argued by simulated Chinese readers" · "small edits to the user's
 program". [DATA fact sheet 6, A28]
@@ -568,7 +570,7 @@ SAY: People should also revisit the agent's own calls, like the length of the pr
 
 SHOW: Card 2, "engineering", with three sub-cards, each tagged "idea · not built yet" in a dashed
 YELLOW outline. "A licensed Chinese voice": the real line from `docs/LANGUAGES.md` (A36), "the free
-Edge endpoint is not licensed for published videos" → "Azure AI Speech: same voices, licensed ·
+Edge [service] is not licensed for published videos" ("endpoint" swapped for viewers, in brackets) → "Azure AI Speech: same voices, licensed ·
 clips made when this script was written: 0" → "switching re-voices all 417 sentences, then re-times
 them". "Word-level timing": the S05 pin snaps from its estimate onto the GREEN word bar; "then
 delete the hand-set shifts · add a lint for sync, overlaps and dead air". "Shared parts": a GREEN

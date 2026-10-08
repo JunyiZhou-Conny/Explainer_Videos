@@ -7,7 +7,7 @@ real fixed frame (A01's moment, 23.0 s, from the final render) -> RED tag "the m
 the layout was wrong" -> the reviewer who caught it: a faded-BLUE icon that turns out to be an AI
 (A10, qa_round1.txt line 30) -> the team row (user, agent, sub-agents), the three things they
 made, and the motif of the whole video: headphones and play button struck through in RED ->
-the five chapters of this video, each formed from what was just on screen.
+the five chapters of this video, one chip per chapter, once the stage is clear.
 
 Idioms for the other scenes: colours and helpers from common.py only; real images through
 Player.show()/exhibit() with their tag and caption; anchors on sentence starts; the ponder card
@@ -165,7 +165,7 @@ class Hook(VoiceScene):
             bubble.shift(RIGHT * (player.frame.get_left()[0] - 0.3 - bubble.box.get_right()[0]))
             reviewer.shift(RIGHT * (bubble.tail.get_vertices()[2][0] - 0.1 - reviewer.person.get_x()))
             badge.move_to(reviewer.person.get_corner(DR) + np.array([0.02, 0.12, 0]))
-            qa_cap = source_caption("from the QA notes on the draft · qa_round1.txt, line 30")
+            qa_cap = source_caption("from the review notes on the draft · qa_round1.txt, line 30")
             self.play(FadeIn(reviewer, shift=RIGHT * 0.4), run_time=0.6)
             self.play(FadeIn(bubble, shift=UP * 0.15), FadeIn(qa_cap), run_time=0.7)
             vo.wait_until("It was an AI")
@@ -218,22 +218,18 @@ class Hook(VoiceScene):
         ]
         for ch, y in zip(chapters, ys):
             ch.move_to([0, y, 0])
-        sources = [(made[0], made[1]), (user, agent, subs), (made[2],), None, None]
         anchors = ["the pipeline", "who did what", "how work gets", "the Chinese versions", "what still needs"]
 
         with self.voiceover(SAY[4]) as vo:
-            sources[4] = gather(self, glyphs[0][0], glyphs[0][1], glyphs[1][0], glyphs[1][1])
-            self.play(Write(title), FadeOut(VGroup(user_l, agent_l, subs_l)), run_time=0.9)
-            for ch, src, phrase in zip(chapters, sources, anchors):
+            # the team row, its three chips and the struck glyphs leave together, then the chapters come
+            # in one by one (morphing the people into "who did what" made blobs, and left "checks"
+            # alone in a corner meanwhile: viewer review of the draft, 0:54)
+            team = gather(self, user, user_l, agent, agent_l, *subs.icons, subs.badge, subs_l, *made,
+                          glyphs[0][0], glyphs[0][1], glyphs[1][0], glyphs[1][1])
+            self.play(Write(title), FadeOut(team, shift=DOWN * 0.2), run_time=0.9)
+            for ch, phrase in zip(chapters, anchors):
                 vo.wait_until(phrase)
-                if isinstance(src, tuple):
-                    src = gather(self, *src)
-                if src is None:
-                    self.play(FadeIn(ch, shift=UP * 0.2), run_time=0.6)
-                else:
-                    # the struck glyphs arc round the right of the column on their way to the last slot
-                    self.play(ReplacementTransform(src, ch, path_arc=-PI / 2 if ch is chapters[4] else 0),
-                              run_time=0.8 if ch is chapters[4] else 0.6)
+                self.play(FadeIn(ch, shift=UP * 0.2), run_time=0.6)
                 self.play(pulse(ch, 1.08, run_time=0.35))
         self.wait(0.6)
         fade_out_all(self)

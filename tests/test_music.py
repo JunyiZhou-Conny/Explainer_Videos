@@ -434,3 +434,14 @@ def test_count_gain_scales_a_phrase(tmp_path):
     assert all(y[2] == pytest.approx(0.5 * x[2], abs=1e-3) for x, y in zip(a, b))
     tick = lambda sc: [f["gain"] for f in sc.fx if f["kind"] == "tick" and 2.0 < f["t"] < 2.2]
     assert tick(soft)[0] == pytest.approx(0.5 * tick(loud)[0], abs=1e-3)
+
+
+def test_a_partial_build_of_a_longer_plan(tmp_path):
+    """Building only the first scenes of a short whose video.yaml plans chords and cues for the whole
+    film: what lies after the end is left out (it used to crash with a negative note length)."""
+    spec = {**SPEC, "music": {**SPEC["music"], "chords": {1: "I", 3: "II", 40: "vi", 90: "Vsus"},
+                              "cues": [{"at": "60.1", "kind": "hit"}]}}
+    (score, _, _, bed, acc), _ = compose(tmp_path, spec)
+    assert len(bed) == int(round(7 * G.bar * mu.SR))
+    assert all(n["dur"] > 0 for n in score.notes)
+    assert all(n["t"] < 7 * G.bar for n in score.notes if n["inst"] in ("pad", "bass"))

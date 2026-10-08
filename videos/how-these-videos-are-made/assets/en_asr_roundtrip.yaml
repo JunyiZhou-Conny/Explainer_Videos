@@ -67,3 +67,14 @@ after_fix_rows:
 - id: S11[1]
   diffs:
   - goal → goals
+recheck_2026_10_08:                  # the say lines changed since this file was written (script at df12921)
+  why: d6dc340 rewrote S03[2]; the draft review changed S04[3] ('an animation costs' was heard as 'and animation')
+  same_setup: true                   # Kokoro af_heart 0.95 (cached clips), faster-whisper large-v3-turbo int8, beam 5
+  rows:
+  - id: S03[2]
+    diffs: ["project's → project (recognizer spelling, as before)", "a hundred → 100", "commas → full stops"]
+  - id: S04[3]
+    diffs: []                        # "a sentence costs seconds to fix, a scene costs a re-render" heard as written
+  - id: S10[3]
+    diffs: ["hand-written → handwritten"]
+  note: lines edited after this recheck (the other draft-review fixes) still need the round trip before the final render

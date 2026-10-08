@@ -127,10 +127,11 @@ music:
   # A fader over the score (dB at bar.beat positions, linear in between, held after the last; bed = pads,
   # bass, risers; accents = the event-locked notes). The cold open starts near silence (script.md bar 1:
   # about -24 LUFS short-term), the pad fades in under the first plucks, the puzzle builds a few dB at a
-  # time, the scramble's ticks come forward over the riser, and from the title on the score is at full level.
-  levels: {"1.1": {bed: -20, accents: -11}, "2.1": {bed: -9, accents: -6}, "4.1": {bed: -7, accents: -6},
-           "8.1": {bed: -5, accents: -4}, "9.1": {bed: -2, accents: 3}, "9.4+": {bed: 0, accents: 3},
-           "10.1": 0}
+  # time, the scramble's ticks come forward over the riser, the title is at full level, and the title's tail
+  # dips under the dissolve (11.3-11.4) before S02 comes in at full level.
+  levels: {"1.1": {bed: -22, accents: -16}, "2.1": {bed: -10, accents: -6}, "4.1": {bed: -7, accents: -6},
+           "8.1": {bed: -5, accents: -7}, "9.1": {bed: -2, accents: 3}, "9.4+": {bed: 0, accents: 3},
+           "10.1": 0, "11.1": 0, "11.3": {bed: -3, accents: -5}, "12.1": 0}
   stems: [bed, accents]        # bed = pads, bass, risers; accents = event-locked notes, ticks, hits
   # The long version gets music later from the same pipeline (free time, ducked under the voice).
 
@@ -154,5 +155,4 @@ description:
   en: |
     How many different games of tic-tac-toe are there? 255,168. This 4-minute version has no narration:
     just the picture, music and bilingual captions. The full version explains every step (and which first
-    move leads to the most games). The program play_all_games.py and the exercises are linked below.
-    Music generated in code for this video. Made by an AI agent.
+    move leads to the most games). The program

@@ -2,7 +2,7 @@
 
 Beats: the team builds column by column. PINK the user (where S02 left them), BLUE the agent (one
 long session), a grid of 183 faded-BLUE dots filling in with its count (183 sub-agents in 46
-workflow runs, before this video), a GREY "workflow script" card that comes out of the agent and
+workflow runs, before this video), a GREY "workflow script" card that appears as the agent is pointed at and
 launches three of the dots (copies fly out and become sub-agents, each with a job tag), and the GREY
 tools with a gloss each (the two voices and the recognizer are pointed at as they are named) ->
 the other columns step aside, the user moves to the corner and the PINK column expands into a
@@ -380,7 +380,10 @@ class Team(VoiceScene):
             self.play(FadeIn(before, shift=UP * 0.1), run_time=0.5)
 
             vo.wait_until("A workflow is a script")
-            self.play(FadeIn(wf_card, target_position=agent.get_bottom(), scale=0.3), run_time=0.9)
+            # the card appears in place while the agent is indicated: flown out of the agent, it crossed
+            # "one long session" (viewer review of the draft, 2:11)
+            self.play(Indicate(agent, color=S.WHITE, scale_factor=1.08), FadeIn(wf_card, shift=DOWN * 0.2),
+                      run_time=0.9)
             vo.wait_until("to launch sub-agents")
             movers = [d.copy() for d in picks]
             self.play(*[d.animate.set_color(SUB_AGENT_TEXT).scale(1.6) for d in picks], run_time=0.4)
@@ -517,8 +520,8 @@ class Team(VoiceScene):
                           term.lines[1], diff.box, diff.zero, diff.names, diff.first[2], diff.oh, diff.rest, cleaned)
             self.play(FadeOut(gone, shift=LEFT * 0.4), ReplacementTransform(helper, head), run_time=0.9)
             self.play(FadeIn(head_l, shift=UP * 0.1),
-                      LaggedStart(*[FadeIn(c, target_position=head.get_center(), scale=0.4) for c in made],
-                                  lag_ratio=0.08), run_time=1.1)
+                      LaggedStart(*[FadeIn(c, shift=RIGHT * 0.25) for c in made],   # each in its own place: flown
+                                  lag_ratio=0.08), run_time=1.1)                     # from the corner, they crossed "subtitles"
             vo.wait_until("It wrote the toolkit")
             self.play(emphasize(made[0], run_time=0.7), Create(rib.axis.line), FadeIn(rib.days), FadeIn(src2),
                       run_time=0.9)

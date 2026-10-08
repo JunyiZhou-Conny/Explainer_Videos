@@ -480,7 +480,11 @@ class Watching(VoiceScene):
         for p, fl in zip(pictos, flags):                    # every little screen at the same height
             p.shift(fl.get_top() + UP * (0.3 + p[0].height / 2) - p[0].get_center())
         src3 = source_caption("real lint output · tic-tac-toe video, scene 3 · “…” marks cuts (the path, Manim's own warnings)")
-        lint_view = [term, flags, pictos, ok_arrow, ok_gloss]
+        # the real output says "mobject(s)" (Manim's word): a GREY gloss under it, for viewers who don't code
+        mob_gloss = label("mobject = a drawn object", 22, TOOL)
+        mob_gloss.next_to(term.box, DOWN, buff=0.1).align_to(glyphs_of(rows[2], LINT_LINES[0], "mobject(s)"), LEFT)
+        assert mob_gloss.get_bottom()[1] > max(p.get_top()[1] for p in pictos) + 0.15
+        lint_view = [term, flags, pictos, ok_arrow, ok_gloss, mob_gloss]
 
         panel = clipped_panel(CHECKS, "tic-tac-toe video · scenes/s03_stop.py", CHECKS_FIRST, cols=75, keep=())
         code = panel.code
@@ -524,7 +528,8 @@ class Watching(VoiceScene):
                       run_time=0.7)
             self.play(AddTextLetterByLetter(rows[0], run_time=0.7))
             wait_for(self, vo, "runs each scene", -0.4)
-            self.play(FadeIn(rows[1]), FadeIn(rows[2], shift=UP * 0.1), FadeIn(src3), run_time=0.6)
+            self.play(FadeIn(rows[1]), FadeIn(rows[2], shift=UP * 0.1), FadeIn(src3),
+                      FadeIn(mob_gloss, shift=UP * 0.1), run_time=0.6)        # glossed as soon as it shows
             wait_for(self, vo, "without drawing", -0.5)
             self.play(FadeIn(rows[3], scale=1.3), run_time=0.4)
             # the run is clean: say so before the flags come in, so they read as a legend, not findings

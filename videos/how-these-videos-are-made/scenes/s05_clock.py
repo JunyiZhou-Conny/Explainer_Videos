@@ -620,8 +620,9 @@ class AudioClock(VoiceScene):
             self.play(FadeIn(voice, shift=UP * 0.3), run_time=0.7)
             vo.wait_until("can send a time")
             self.play(emphasize(comm_span, run_time=0.8))
-            self.play(LaggedStart(*[FadeIn(o, target_position=comm_span.get_center(), scale=0.5) for o in outs],
-                                  lag_ratio=0.35), run_time=1.0)
+            # the two outputs drop in under the line (flown out of the call, "word times" crossed the
+            # voice.py caption: viewer review of the draft, 5:21)
+            self.play(LaggedStart(*[FadeIn(o, shift=DOWN * 0.25) for o in outs], lag_ratio=0.35), run_time=1.0)
             vo.wait_until("The toolkit keeps")
             self.play(Circumscribe(save_span, color=S.WHITE, buff=0.08), Indicate(out_audio, color=S.WHITE),
                       out_words.animate.shift(DOWN * 0.25).set_opacity(0.2), FadeIn(note, shift=UP * 0.1), run_time=0.9)

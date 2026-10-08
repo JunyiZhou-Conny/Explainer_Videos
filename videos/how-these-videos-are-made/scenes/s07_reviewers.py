@@ -4,7 +4,7 @@ Beats: the review loop: the BLUE agent hands a "draft video" (a GREY player with
 track) towards two faded-BLUE reviewers, tagged "fresh agents · didn't build it"; the picture
 becomes the real contact sheet (A01) and the sound becomes "subtitles = the sound"; "a role" comes
 from the agent and turns into the two labels, "director" and "a simulated 12-year-old"; a real
-line of the round-1 QA prompt for the simulated kid (A42) -> the kid's note (A10, qa_round1.txt
+line of the round-1 review instructions for the simulated kid (A42) -> the kid's note (A10, qa_round1.txt
 line 38) in a speech bubble -> the bubble shrinks into one of the 30 round-1 issues (A10, coloured
 by kind: 3 wrong, 13 confusing, 14 polish, in the order of the notes); the "12 on the formula
 line" item (line 30) is pulled out, glows and goes back; the 30 go into a BLUE "fix round" and 30
@@ -84,6 +84,7 @@ KID_X0, TWELVE_ITEM, FROZEN_ITEM = SLOT[37], SLOT[29], SLOT[124]  # the X0 note,
 
 def _check():
     assert A42["text"].startswith("go through the contact sheets") and A42["text"].endswith("that is the video.")
+    assert A42["shown"] == A42["text"].replace(" (the srt) —", " … —")      # on screen: only "(the srt)" cut
     assert KID_NOTE == "… couldn't work out what X0 meant (X's zeroth move?)"
     assert f"'{TWELVE}'" in LINE30
     qa1 = asset_text("qa_round1.txt").splitlines()
@@ -106,7 +107,7 @@ def _check():
     assert FIX_LINE == "return lambda: [m.animate(path_arc=path_arc).move_to(p) for m, p in moves]"
     assert DOCSTRING in FIX_SRC[2]
     assert OLD_COUNTS == [5, 5, 6, 7] and A03["frozen_frames"]["t"] == [20.6, 20.8, 21.0, 21.2]
-    assert A38["src"] == "privacy video, whole-video QA notes" and "'Dev' to 'Dan'" in A38["rename"]
+    assert A38["src"] == "privacy video, whole-video review notes" and "'Dev' to 'Dan'" in A38["rename"]
     assert A38["budget_bar"] == "is drawn five different ways"
     for f in OLD_FRAMES + NEW_FRAMES + ["ttt_s03_sheet_01.png"]:
         asset(f)
@@ -334,7 +335,9 @@ class Reviewers(VoiceScene):
         kid_l2 = caption("sharp but ordinary", 22).next_to(kid_l, DOWN, buff=0.1)
         assert kid_l.get_left()[0] - dir_l.get_right()[0] > 0.8
 
-        prompt_text = label("“" + wrap(A42["text"], 56).replace("\n", "\n ") + "”", 24, INK, line_spacing=1.0)
+        shown = A42["shown"].replace(" in order while", " in order\nwhile").replace(" … — that", " …\n— that")
+        assert shown.count("\n") == 2                    # one line per clause: "— that is the video." on its own
+        prompt_text = label("“" + wrap(shown, 56).replace("\n", "\n ") + "”", 24, INK, line_spacing=1.0)
         prompt_box = box(prompt_text.width + 0.6, prompt_text.height + 0.45, TOOL, fill=PANEL, fill_opacity=1)
         prompt_text.move_to(prompt_box)
         prompt_cap = caption(A42["caption"], 20).next_to(prompt_box, DOWN, buff=0.1).align_to(prompt_box, RIGHT)
@@ -346,7 +349,7 @@ class Reviewers(VoiceScene):
         bubble = speech_bubble(KID_NOTE, chars=30, tail=UP, tail_shift=0.22)
         bubble.shift(np.array([X_KID, kid_l2.get_bottom()[1] - 0.12, 0]) - bubble.tail.get_vertices()[2])
         x0 = glyphs_of(bubble.text, bubble.text.original_text, "X0")
-        src1 = source_caption("QA notes, round 1 · tic-tac-toe video (qa_round1.txt, line 38)")
+        src1 = source_caption("review notes, round 1 · tic-tac-toe video (qa_round1.txt, line 38)")
         assert kid_l.get_right()[0] < 6.5 and bubble.get_right()[0] < 6.5 and bubble.get_bottom()[1] > -3.0
 
         with self.voiceover(SAY[0]) as vo:
@@ -357,7 +360,9 @@ class Reviewers(VoiceScene):
             vo.wait_until("fresh agents")
             self.play(FadeIn(fresh, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("didn't build")
-            self.play(GrowArrow(hand), FadeIn(draft, target_position=agent.get_center(), scale=0.3), run_time=0.9)
+            # the draft comes in beside the arrow (grown out of the agent, it covered "the agent":
+            # viewer review of the draft, 6:25)
+            self.play(GrowArrow(hand), FadeIn(draft, scale=0.85), run_time=0.9)
 
             vo.wait_until("They get the stills")
             self.play(player.animate.move_to(sheet).scale(sheet.width / player.width).set_opacity(0),
@@ -431,7 +436,7 @@ class Reviewers(VoiceScene):
         score_box = open_outline(score_lines, buff=0.22)
         score = VGroup(score_box, score_lines)
         score.move_to([0, -2.55, 0]).align_to([6.45, 0, 0], RIGHT)
-        src2 = source_caption("QA notes of the tic-tac-toe video, rounds 1 and 2")
+        src2 = source_caption("review notes of the tic-tac-toe video, rounds 1 and 2")
 
         with self.voiceover(SAY[1]) as vo:
             out1 = collect(self, agent, agent_l, hand2, sheet, sheet_l, subs, role, feed, fresh, dir_l,
@@ -565,8 +570,10 @@ class Reviewers(VoiceScene):
             gone = [r1_kid, r1_head[1], *[s for s in grid1 if s is not red], leg1, fix, a_in, a_out, r2_head,
                     *fixed_sq, *partly_sq, leg2, notes, notes_l, score, src2]
             self.play(FadeOut(collect(self, *gone)), run_time=0.6)
-            self.play(ReplacementTransform(r1_dir, b_icon), red.animate.move_to(frozen).scale(0.8),
-                      FadeIn(b_word, shift=RIGHT * 0.1), run_time=0.7)
+            # the RED square lands first, then "before" comes in beside it (together, the square
+            # crossed the word on its way up: viewer review of the draft, 6:55)
+            self.play(ReplacementTransform(r1_dir, b_icon), red.animate.move_to(frozen).scale(0.8), run_time=0.6)
+            self.play(FadeIn(b_word, shift=RIGHT * 0.1), run_time=0.3)
             self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.15) for t in before.tiles], lag_ratio=0.12),
                       FadeIn(rr), FadeIn(b_side), FadeIn(src3), run_time=0.9)
 
@@ -647,7 +654,7 @@ class Reviewers(VoiceScene):
         bar_y = -0.82
         bar = RoundedRectangle(width=cards.width, height=0.92, corner_radius=0.26, stroke_color=SUB_AGENT_TEXT,
                                stroke_width=2.5).set_fill(SUB_AGENT, 0.45).move_to([0, bar_y, 0])
-        bar_l = label("cross-scene reviewer (whole-video QA pass)", 24, INK).move_to(bar).shift(RIGHT * 0.2)
+        bar_l = label("cross-scene reviewer (whole-video review)", 24, INK).move_to(bar).shift(RIGHT * 0.2)
         rider = role_icon("sub", 0.66)                    # rides inside the bar (badge included)
         rider.move_to([bar.get_left()[0] + 0.55, bar_y, 0])
         dans = [label("Dan", 26, INK).move_to(name_m[k]).align_to(name_m[k], LEFT) for k in (2, 3)]

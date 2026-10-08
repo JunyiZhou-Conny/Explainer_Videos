@@ -133,7 +133,7 @@ class BoardRig:
         self.moves = list(moves)
         self.lines = [Ink(Line([*p, 0], [*q, 0]), INK, 2.0) for p, q in grid_lines(cell)]
         self.marks = [mark_ink(player(k), 0.62 * cell) for k in range(len(self.moves))]
-        self.win = Ink(win_template(*WIN_TOP, cell), XC.mid, 3.4, XC.glow, 22, layers=7, glow_opacity=0.7)
+        self.win = Ink(win_template(*WIN_TOP, cell), XC.mid, 3.2, XC.glow, 18, layers=7, glow_opacity=0.55)
         self.nums = [InkText(move_digit(k + 1)) for k in range(len(self.moves))]
         self.num_halos = [gaussian_sprite(PEN_HALO, 64, 0.3).scale_to_fit_width(0.62) for _ in self.moves]
         for hlo in self.num_halos:
@@ -177,16 +177,16 @@ class BoardRig:
                 x.hide()
 
     def draw(self, line_f, mark_f, num_v, win_f, glow, hl, vis: float = 1.0, glow_w: float = 1.0,
-             sx: float = 1.0):
+             sx: float = 1.0, boost: float = 0.0):
         """line_f[4], mark_f[k], num_v[k], win_f: drawn fractions; glow[k]: mark glow levels; hl[k]:
         how lit each move number is (0..1)."""
         width = max(0.35, self.k ** 0.5)
         for ln, f in zip(self.lines, line_f):
-            ln.show(f, self.A, self.b, vis=vis, width=width)
+            ln.show(f, self.A, self.b, vis=vis, width=width * (1 + 0.8 * boost))
         for k, m in enumerate(self.marks):
             Ak = self.A
             bk = self.square(self.moves[k])
-            m.show(mark_f[k], Ak, bk, vis=vis, glow=glow[k], width=width, glow_width=glow_w * width)
+            m.show(mark_f[k], Ak, bk, vis=vis, glow=glow[k] + 0.8 * boost, width=width, glow_width=glow_w * width)
         self.win.show(win_f, self.A, self.b, vis=vis, glow=glow[-1] if len(glow) > len(self.marks) else 1.0,
                       width=width, glow_width=glow_w * width)
         for k, n in enumerate(self.nums):
@@ -332,18 +332,22 @@ class ColdOpen(BeatScene):
         u = np.clip((xs - xs.min()) / (xs.max() - xs.min()), 0, 1)
         w = np.clip((u - 0.38) / 0.24, 0, 1)[:, None]            # cool left, warm right, blended between
         colors = rgb(XC.mid)[None, :] * (1 - w) + rgb(OC.core)[None, :] * w
-        out = (p0 - NUM_C) * np.array([0.12, 0.35])
-        v = rng.normal(0, 0.32, p0.shape) + out
+        out = (p0 - NUM_C) * np.array([0.10, 0.22])             # a slow expansion ...
+        ph = rng.uniform(0, 2 * np.pi, 2)
+        flow = 0.42 * np.column_stack([np.sin(1.7 * p0[:, 1] + 0.9 * p0[:, 0] + ph[0]),
+                                       np.cos(1.3 * p0[:, 0] - 0.6 * p0[:, 1] + ph[1])])   # ... smoke-like streams
+        v = rng.normal(0, 0.14, p0.shape) + out + flow + np.array([0.0, 0.12])
         q1 = p0 + v                                             # where the drift ends (11.3)
-        spin = rng.uniform(1.6, 2.6, len(p0))                    # clockwise turns on the way in (radians)
+        r0 = np.linalg.norm(q1 - ROOT, axis=1)
+        spin = (1.1 + 2.4 * (1 - r0 / r0.max())) * rng.uniform(0.85, 1.15, len(p0))   # inner ones turn faster
         t0, t1 = DISSOLVE, SWIRL[0]
 
         def pos(t):
             if t <= t1:
-                return p0 + v * seg(t, t0, t1) ** 1.7          # holds the glyphs' shape, then drifts apart
+                return p0 + v * seg(t, t0, t1) ** 1.8          # holds the glyphs' shape, then drifts apart
             e = ease_in_cubic(seg(t, *SWIRL))
             r = (q1 - ROOT) * (1 - e)
-            ang = -spin * e
+            ang = -spin * (0.35 + 0.65 * e) * e
             c, s = np.cos(ang), np.sin(ang)
             return ROOT + np.column_stack([c * r[:, 0] - s * r[:, 1], s * r[:, 0] + c * r[:, 1]])
 
@@ -410,8 +414,8 @@ class ColdOpen(BeatScene):
             A.hide()
         else:
             A.place(CA, fall=fall)
-            lf = [ease_in_out_sine(seg(t, a, a + LINE_S)) for a in GRID_A]
-            mf = [_smooth(seg(t, a, a + 0.25)) for a in MOVES_A]
+            lf = [ease_out_quad(seg(t, a, a + LINE_S)) for a in GRID_A]
+            mf = [ease_out_cubic(seg(t, a, a + 0.25)) for a in MOVES_A]
             nv = [ease_out_cubic(seg(t, a + 0.12, a + 0.42)) for a in MOVES_A]
             wf, passes = self.win_progress(t, WIN_A)
             glow, hl = self.mark_levels(t, MOVES_A, passes, WIN_A, RUN_AB, GAME_A)
@@ -422,8 +426,8 @@ class ColdOpen(BeatScene):
         else:
             vis = 1 - seg(t, DISSOLVE_B, DISSOLVE_B + 0.15)
             B.place(CB)
-            lf = [ease_in_out_sine(seg(t, a, a + LINE_S)) for a in GRID_B]
-            mf = [_smooth(seg(t, a, a + 0.2)) for a in MOVES_B]
+            lf = [ease_out_quad(seg(t, a, a + LINE_S)) for a in GRID_B]
+            mf = [ease_out_cubic(seg(t, a, a + 0.2)) for a in MOVES_B]
             nv = [ease_out_cubic(seg(t, a + 0.1, a + 0.36)) for a in MOVES_B]
             wf, passes = self.win_progress(t, WIN_B)
             glow, hl = self.mark_levels(t, MOVES_B, passes, WIN_B, RUN_AB, GAME_B)
@@ -432,9 +436,11 @@ class ColdOpen(BeatScene):
         if t < DISSOLVE_B or gone:
             C.hide()
             return
-        u = ease_in_out_sine(seg(t, DISSOLVE_B, TURN[0]))
-        lift = math.sin(math.pi * u)
-        centre = CA + (CB - CA) * u + np.array([0.0, 0.4 * lift])      # lifts over the gap as it slides
+        centre, lift = self.copy_centre(t)                              # lifts over the gap as it slides
+        # the copy is faint while it still lies over board A and solid once clear of it (no bright
+        # double image of A as it lifts off)
+        overlap = clamp01(1 - abs(centre[0] - CA[0]) / (3 * CELL))
+        slide_vis = 0.15 + 0.85 * (1 - overlap) ** 1.5
         e = ease_in_out_cubic(seg(t, *TURN))
         theta = -0.5 * math.pi * e
         fu = ease_in_out_sine(seg(t, *FLIP))
@@ -442,26 +448,44 @@ class ColdOpen(BeatScene):
         C.place(centre, s=1 + 0.04 * lift, theta=theta, fx=fx, fall=fall)
         _, passes = self.win_progress(t, WIN_A)
         hl = [max(pulse(t, RUN_T[k], 0.3), pulse(t, RUN_F[k], 0.3)) for k in range(5)]
-        base = 1.35 + 0.15 * math.sin(2 * math.pi * (t - WIN_A) / BAR)
+        base = 1.2 + 0.12 * math.sin(2 * math.pi * (t - WIN_A) / BAR)
         glow = [(base if player(k) == "X" else 1.1) + 0.9 * hl[k] + 0.6 * lift for k in range(5)] + [1.0 + 0.5 * lift]
-        C.draw([1] * 4, [1] * 5, [1] * 5, 1.0, glow, hl, vis=0.35 + 0.65 * ease_out_cubic(seg(t, DISSOLVE_B, TURN[0])),
-               sx=abs(fx) if abs(fx) > 0.02 else 0.0)
-        # motion-blur ghosts of the turn: the board a few frames back, fading with the turn's speed
-        speed = abs(math.sin(math.pi * seg(t, *TURN)))
+        boost = max(pulse(t, tp, 0.16, attack=0.017) for tp in TURN_PLUCKS)      # each pluck of the turn
+        C.draw([1] * 4, [1] * 5, [1] * 5, 1.0, glow, hl, vis=slide_vis,
+               sx=abs(fx) if abs(fx) > 0.02 else 0.0, boost=boost)
+        # motion-blur ghosts of the two fast moves (the slide, 7.1-7.2, and the quarter turn, 7.2-7.4):
+        # the board a few frames back, fading with the move's speed
+        sliding = DISSOLVE_B < t < TURN[0]
+        turning = TURN[0] < t < TURN[1]
+        speed = abs(math.sin(math.pi * seg(t, DISSOLVE_B, TURN[0]))) * slide_vis if sliding else \
+            abs(math.sin(math.pi * seg(t, *TURN))) if turning else 0.0
         for gi, ghost in enumerate(C.ghosts):
-            if speed < 0.05 or not (TURN[0] < t < TURN[1]):
+            if speed < 0.05:
                 for x in ghost:
                     x.hide()
                 continue
             lag = 0.035 * (gi + 1)
-            th = -0.5 * math.pi * ease_in_out_cubic(seg(t - lag, *TURN))
-            Ag = (1 + 0.04 * lift) * rot(th)
+            if sliding:
+                cg, lg = self.copy_centre(t - lag)
+                Ag = (1 + 0.04 * lg) * np.eye(2)
+            else:
+                cg = centre
+                th = -0.5 * math.pi * ease_in_out_cubic(seg(t - lag, *TURN))
+                Ag = (1 + 0.04 * lift) * rot(th)
             op = (0.3, 0.17, 0.08)[gi] * speed
             for x in ghost[:4]:
-                x.show(1.0, Ag, centre, vis=op)
+                x.show(1.0, Ag, cg, vis=op)
             for k, x in enumerate(ghost[4:9]):
-                x.show(1.0, Ag, Ag @ square_centre(GAME_A[k], CELL) + centre, vis=op)
-            ghost[9].show(1.0, Ag, centre, vis=op)
+                x.show(1.0, Ag, Ag @ square_centre(GAME_A[k], CELL) + cg, vis=op)
+            ghost[9].show(1.0, Ag, cg, vis=op)
+
+    @staticmethod
+    def copy_centre(t: float):
+        """Where the copy of A is during its slide (7.1-7.2: one beat, lifting over the gap), and how
+        lifted it is (0..1)."""
+        u = ease_in_out_sine(seg(t, DISSOLVE_B, TURN[0]))
+        lift = math.sin(math.pi * u)
+        return CA + (CB - CA) * u + np.array([0.0, 0.4 * lift]), lift
 
     def win_progress(self, t: float, t0: float):
         """The win line sweeps the top row in one beat (ease-out); when its head passes each X."""
@@ -485,9 +509,9 @@ class ColdOpen(BeatScene):
         for k, sq in enumerate(moves):
             g = 1.0 + 0.8 * pulse(t, move_t[k], 0.35)           # each mark lands with a little flare
             if player(k) == "X" and sq in top:
-                g += 1.1 * pulse(t, top[sq], 0.45)
+                g += 0.9 * pulse(t, top[sq], 0.45)
                 if t >= top[sq]:                                # ... and stays brighter, breathing
-                    g += 0.35 + 0.15 * math.sin(2 * math.pi * (t - win_t) / BAR)
+                    g += 0.2 + 0.12 * math.sin(2 * math.pi * (t - win_t) / BAR)
             else:
                 g += 0.06 * math.sin(2 * math.pi * (t - win_t) / BAR + 1.0) * (t >= win_t)
             glow.append(g)
@@ -529,7 +553,7 @@ class ColdOpen(BeatScene):
         elif t < DISSOLVE_B:
             qv = 1 - seg(t, NE_1, NE_1 + 0.15)
         elif t < NE_2:
-            qv = 1.0 if t >= TURN[0] else 0.0
+            qv = appear if t >= TURN[0] else 0.0             # fades back in with the "=", no pop
         else:
             qv = 1 - seg(t, NE_2, NE_2 + 0.15)
         S.q.show(c + np.array([0.0, 0.56]) * k, scale=k * (0.9 + 0.1 * qv), vis=qv, color=INK)
@@ -550,6 +574,8 @@ class ColdOpen(BeatScene):
             cnt.layout()
             bright = 0.62 if t < HIT else 1.0
             vis = seg(t, FALL_T[1], FALL_T[1] + 0.2) * (1 - seg(t, DISSOLVE, DISSOLVE + 0.2))
+            if HIT <= t < HIT + 0.6 / config.frame_rate:  # the flash frame is clean white: the scramble's
+                vis = 0.0                                  # last number never shows through it
             col = INK if t < HIT else WHITE
             for c in cnt.columns:
                 for g in c:
@@ -616,11 +642,11 @@ class ColdOpen(BeatScene):
                     return end + np.array([0.25, -0.12]) * ease_out_quad(u), vis * (1 - u) ** 1.5
                 for k, s0 in enumerate(starts):
                     if t <= s0 + LINE_S:
-                        f = ease_in_out_sine(seg(t, s0, s0 + LINE_S))
+                        f = ease_out_quad(seg(t, s0, s0 + LINE_S))
                         p, q = lines[k]
                         return p + (q - p) * f, vis
                     if k + 1 < len(starts) and t < starts[k + 1]:
-                        u = ease_in_out_sine(seg(t, s0 + LINE_S, starts[k + 1]))
+                        u = ease_in_cubic(seg(t, s0 + LINE_S, starts[k + 1]))   # flicks into the next line
                         a0, b0 = lines[k][1], lines[k + 1][0]
                         return a0 + (b0 - a0) * u, vis * (0.55 + 0.45 * abs(2 * u - 1))
         if t >= ROOT_IN + 0.1:
@@ -635,7 +661,8 @@ class ColdOpen(BeatScene):
         B = BoardRig(GAME_B).place(CB)
         # bar 1: four low plucks, one per grid line (Dmaj9)
         mids_a = [CA + (p + q) / 2 for p, q in grid_lines(CELL)]
-        S.phrase("grid A", [(t, f"grid@{n}", sx(m, t)) for t, n, m in zip(GRID_A, ("D3", "A3", "E4", "A4"), mids_a)])
+        S.phrase("grid A", [(t, f"grid@{n}", sx(m, t)) for t, n, m in zip(GRID_A, ("D3", "A3", "E4", "A4"), mids_a)],
+                 gain=0.65)
         # bars 2-3: game A, the motif (X bell / O glass at each square's pitch)
         S.phrase("game A", [(t, tag(player(k), sq), sx(A.square(sq), t)) for k, (t, sq) in enumerate(zip(MOVES_A, GAME_A))])
         S.phrase("win A", [(t, f"X@{n}", sx(A.square(sq), t))
@@ -643,7 +670,8 @@ class ColdOpen(BeatScene):
         S.effect(WIN_A, "whoosh_up", BEAT, sx(A.square(1), WIN_A))
         # bar 4: the second grid (E9), panned right
         mids_b = [CB + (p + q) / 2 for p, q in grid_lines(CELL)]
-        S.phrase("grid B", [(t, f"grid@{n}", sx(m, t)) for t, n, m in zip(GRID_B, ("E3", "B3", "F#4", "G#4"), mids_b)])
+        S.phrase("grid B", [(t, f"grid@{n}", sx(m, t)) for t, n, m in zip(GRID_B, ("E3", "B3", "F#4", "G#4"), mids_b)],
+                 gain=0.7)                                  # the board is quieter than its marks
         # bar 5: game B, the same five notes in another order
         S.phrase("game B", [(t, tag(player(k), sq), sx(B.square(sq), t)) for k, (t, sq) in enumerate(zip(MOVES_B, GAME_B))])
         S.phrase("win B", [(t, f"X@{n}", sx(B.square(sq), t))
@@ -652,20 +680,21 @@ class ColdOpen(BeatScene):
         # bar 6: "=?" (a suspended tone), both orders in counterpoint, "≠" (a soft thump)
         S.phrase("=?", [(SIGN_IN, "bell@E4", 0.0)])
         S.phrase("both orders", [(t, tag(player(k), GAME_A[k]), sx(A.square(GAME_A[k]), t)) for k, t in enumerate(RUN_AB)]
-                 + [(t, tag(player(k), GAME_B[k]), sx(B.square(GAME_B[k]), t)) for k, t in enumerate(RUN_AB)])
+                 + [(t, tag(player(k), GAME_B[k]), sx(B.square(GAME_B[k]), t)) for k, t in enumerate(RUN_AB)],
+                 gain=0.75)                                 # two notes at once
         S.effect(NE_1, "thump", 0.6, 0.0)
         # bar 7: B to dust (a shimmer), six plucks across the quarter turn (F#m9), left to right
         S.effect(DISSOLVE_B, "shimmer", 1.8, sx(CB, DISSOLVE_B))
         S.phrase("turn", [(t, f"pluck@{n}", lerp(1.3, 5.3, k / 5))
-                          for k, (t, n) in enumerate(zip(TURN_PLUCKS, ("F#3", "C#4", "E4", "G#4", "A4", "C#5")))])
+                          for k, (t, n) in enumerate(zip(TURN_PLUCKS, ("F#3", "C#4", "E4", "G#4", "A4", "C#5")))], gain=0.75)
         # bar 8: the turned game falling on sixteenths; the flip (an air whoosh) and the flipped game
         T = BoardRig(GAME_A).place(CB, theta=-math.pi / 2)
         S.phrase("turned", [(t, tag(player(k), sq), sx(T.square(GAME_A[k]), t))
-                            for k, (t, sq) in enumerate(zip(RUN_T, TURNED))])
+                            for k, (t, sq) in enumerate(zip(RUN_T, TURNED))], gain=0.65)
         S.effect(FLIP[0], "whoosh_up", BEAT, sx(CB, FLIP[0]))
         F = BoardRig(GAME_A).place(CB, theta=-math.pi / 2, fx=-1.0)
         S.phrase("flipped", [(t, tag(player(k), sq), sx(F.square(GAME_A[k]), t))
-                             for k, (t, sq) in enumerate(zip(RUN_F, FLIPPED))])
+                             for k, (t, sq) in enumerate(zip(RUN_F, FLIPPED))], gain=0.55)
         # bar 9: the scramble, ticks that climb and speed up; 9.4+ the breath; 10.1 the title
         S.phrase("scramble", [(t, "tick", 0.0) for t in TICKS], rise=True)
         # bar 11: the dissolve's shimmer; grains that fall as the particles converge; the root's plucks

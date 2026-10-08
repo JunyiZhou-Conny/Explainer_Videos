@@ -850,6 +850,8 @@ def build_score(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sce
     # --- pads and bass, one voicing per chord (pads lead the change a little, so it is heard on time)
     prev = None
     for i, ch in enumerate(chords):
+        if ch.t >= total:                                 # planned after the end of what was built (a
+            break                                         # partial build of a longer plan): nothing to play
         t_next = chords[i + 1].t if i + 1 < len(chords) else total + 2.0
         if ch.rest:                                       # "rest": no harmony until the next chord
             continue

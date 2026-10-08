@@ -1,7 +1,7 @@
 """S10 · What to improve next.
 
 Beats: a board of four empty slots under its rule, "the biggest gaps sit where measuring runs
-out": a GREEN row of the measured checks of S06-S09 (lint, asserts, frame fingerprints, speech
+out": a GREEN row of the measured checks of S06-S09 (lint, self-checks, frame fingerprints, speech
 recognizer) runs out, and the dashed YELLOW stretch beyond it becomes card 1, "only people can do
 this", which slides into slot 1 -> S01's motif (the agents under the RED-struck headphones): a PINK
 person comes in and the headphones move onto their head, the strike falls away; four open items
@@ -53,7 +53,7 @@ SAY = NARRATION["S10"]
 # original in _check()).
 RULE = "the biggest gaps sit where measuring runs out"
 CARD_TITLES = ["only people can do this", "engineering", "subtitles that understand sentences", "interactivity"]
-CHECKS = ["lint", "asserts", "frame fingerprints", "speech recognizer"]       # the GREEN checks of S06-S09
+CHECKS = ["lint", "self-checks", "frame fingerprints", "speech recognizer"]   # the GREEN checks of S06-S09
 
 OPEN_ITEMS = [                                       # card 1, fact sheet 6 (not yet verified)
     "no recorded human review of the narration yet,\nEnglish or Chinese",
@@ -64,7 +64,7 @@ OPEN_ITEMS = [                                       # card 1, fact sheet 6 (not
 USER_HEAD, AGENT_HEAD = "decided by the user", "decided by the agent · worth a second look"
 USER_CALLS = ["the topics", "the audiences", "Chinese, code-switched", "this video"]
 AGENT_CALLS = [
-    "privacy video: 24 min, not the 12–15\nits own README prompt suggests → also cut into 2 parts",
+    "privacy video: 24 min, not the 12–15\nits own instructions suggest → also cut into 2 parts",
     "Chinese voice: the top scorer was male and English-first\n→ a native Mandarin female voice, to match the English\n"
     "(another female voice scored about as well)",
     "which English words to keep:\nargued by simulated Chinese readers",
@@ -74,7 +74,8 @@ AGENT_CALLS = [
 ENG_TITLES = ["A licensed Chinese voice", "Word-level timing", "Shared parts"]
 A36 = EXCERPTS["A36"]
 LICENCE = A36["licence"]                             # "the free Edge endpoint is not licensed for published videos"
-LICENCE_SHOWN = "“the free Edge endpoint\nis not licensed for\npublished videos”"
+# the real line, with one word swapped for viewers who don't code; the [brackets] mark the edit
+LICENCE_SHOWN = "“the free Edge [service]\nis not licensed for\npublished videos”"
 LICENCE_CAP = "real · docs/LANGUAGES.md · line 60"
 AZURE = "Azure AI Speech:\nsame voices, licensed"
 CLIPS_WHEN_WRITTEN = A36["azure_clips_when_written"]                 # 0 (live value: see script.md)
@@ -144,14 +145,15 @@ def _check():
         "no recorded human review of the narration yet, English or Chinese",
         "English narration: checked by a speech recognizer for this video, no human listening yet",
         "every test viewer on record: an AI persona", "learning not measured: no quiz, no data"]
-    assert _one_line(AGENT_CALLS[0]) == ("privacy video: 24 min, not the 12–15 its own README prompt suggests → "
+    assert _one_line(AGENT_CALLS[0]) == ("privacy video: 24 min, not the 12–15 its own instructions suggest → "
                                          "also cut into 2 parts")
     assert _one_line(AGENT_CALLS[1]) == ("Chinese voice: the top scorer was male and English-first → a native "
                                          "Mandarin female voice, to match the English (another female voice "
                                          "scored about as well)")
     assert _one_line(AGENT_CALLS[2]) == "which English words to keep: argued by simulated Chinese readers"
     # card 2: the real line, the live 0, the 417 sentence pairs, S05's clip and shift
-    assert _one_line(LICENCE_SHOWN) == f"“{LICENCE}”" and LICENCE == "the free Edge endpoint is not licensed for published videos"
+    assert _one_line(LICENCE_SHOWN) == f"“{LICENCE.replace('endpoint', '[service]')}”" \
+        and LICENCE == "the free Edge endpoint is not licensed for published videos"
     assert CLIPS_WHEN_WRITTEN == 0 and _one_line(CLIPS) == "clips made when this script was written: 0"
     assert PAIRS == 417 == EXCERPTS["A27"]["sentence_pairs"]["tictactoe"] + EXCERPTS["A27"]["sentence_pairs"]["privacy"]
     assert _one_line(REVOICE) == "switching re-voices all 417 sentences, then re-times them"
@@ -541,8 +543,11 @@ class WhatNext(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             card1 = collect(self, u_icon, u_head, u_calls, a_icon, a_head, a_rows)
+            # the open card folds away before the next tab slides up (together, "engineering" slid over
+            # "decided by the agent": viewer review of the draft, 10:15); the same for tabs 3 and 4
             self.play(FadeOut(card1, target_position=tabs[0].get_center(), scale=0.12), *dim(tabs[0], opacity=0.55),
-                      FadeOut(slots[1].num), FadeIn(tabs[1], shift=UP * 0.6), run_time=0.8)
+                      FadeOut(slots[1].num), run_time=0.5)
+            self.play(FadeIn(tabs[1], shift=UP * 0.6), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(c, target_position=tabs[1].get_center(), scale=0.3) for c in index],
                                   lag_ratio=0.18), run_time=0.7)
             vo.wait_until("a licensed Chinese voice")
@@ -670,7 +675,8 @@ class WhatNext(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             card2 = collect(self, index, c_head, lpm_bars, lpm_l, ghosts, shelves, shelf_l, parts, foot)
             self.play(FadeOut(card2, target_position=tabs[1].get_center(), scale=0.12), *dim(tabs[1], opacity=0.55),
-                      FadeOut(slots[2].num), FadeIn(tabs[2], shift=UP * 0.6), run_time=0.8)
+                      FadeOut(slots[2].num), run_time=0.5)
+            self.play(FadeIn(tabs[2], shift=UP * 0.6), run_time=0.4)
             vo.wait_until("Hand-written rules")
             self.play(FadeIn(rules0, target_position=tabs[2].get_center(), scale=0.3), run_time=0.6)
             self.play(FadeIn(band_long), FadeIn(long_line, shift=UP * 0.1), run_time=0.6)
@@ -755,7 +761,8 @@ class WhatNext(VoiceScene):
             card3 = collect(self, rules1, parser, p_arrow, band_two, *w_good, ok, cue_cap, mach_out, mach_tag,
                             f_head, sq_fix, sq_reg, fix_l, reg_l, later)
             self.play(FadeOut(card3, target_position=tabs[2].get_center(), scale=0.12), *dim(tabs[2], opacity=0.55),
-                      FadeOut(slots[3].num), FadeIn(tabs[3], shift=UP * 0.6), run_time=0.8)
+                      FadeOut(slots[3].num), run_time=0.5)
+            self.play(FadeIn(tabs[3], shift=UP * 0.6), run_time=0.4)
             vo.wait_until("closest to the user's")
             self.play(FadeIn(qc, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("interactivity")

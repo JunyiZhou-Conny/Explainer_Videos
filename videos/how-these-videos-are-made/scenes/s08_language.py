@@ -102,7 +102,7 @@ def _check():
                       ["Xiaoyi (native Mandarin)", "0.991"], ["Xiaoxiao", "0.933"]]
     assert A30["before"] == "不是电脑能做的，不只是统计对局" and A30["english"] == "No. A computer can do more than count."
     assert A30["after"] == "不是。" + A30["before"][2:]          # the fix only puts back the full stop
-    assert A30["recon_tag"] == "reconstruction · the old cue text, as both QA reviewers quoted it"
+    assert A30["recon_tag"] == "re-created for this video · the old cue text, as both AI reviewers quoted it"
     assert A30["before_gloss"] == "It's not what a computer can do, not just counting games"
     asset("ttt_zh_1143.png")
 
@@ -412,6 +412,8 @@ class SecondLanguage(VoiceScene):
         after = mini_video("en", HEADER_W).move_to([HEADER_X, HEADER_Y, 0])
         before_l = label("English render, before", 24, INK).next_to(before, DOWN, buff=0.12)
         after_l = label("after the Chinese edits", 24, INK).next_to(after, DOWN, buff=0.12)
+        for m in (before_l, after_l):           # drawn over the frames that drop down into fingerprints
+            m.set_z_index(2)
         assert before_l.get_bottom()[1] > FP_TOP + FP_H / 2 + 0.1
 
         rows0 = VGroup(*[fp_row(f).move_to([0, FP_TOP - j * FP_DY, 0]) for j, f in enumerate(range(FP_ROWS))])
@@ -472,8 +474,10 @@ class SecondLanguage(VoiceScene):
             vo.wait_until("the English video didn't")
             out2 = collect(self, code, feeds, zh_vid, zh_vid_l)
             self.play(FadeOut(out2), ReplacementTransform(en_vid, before), FadeOut(en_vid_l), run_time=0.8)
-            self.play(TransformFromCopy(before, after, path_arc=-PI / 4), FadeIn(before_l), FadeIn(after_l),
-                      run_time=0.7)
+            # the copy lands before its label comes in (together, the arcing box covered "after the
+            # Chinese edits": viewer review of the draft, 7:53)
+            self.play(TransformFromCopy(before, after, path_arc=-PI / 4), FadeIn(before_l), run_time=0.6)
+            self.play(FadeIn(after_l, shift=UP * 0.08), run_time=0.3)
 
             vo.wait_until("It compares")             # a frame from each render becomes its fingerprint
             shots = [Rectangle(width=v.player.screen.width * 0.8, height=v.player.screen.height * 0.8, stroke_color=INK,
@@ -547,7 +551,7 @@ class SecondLanguage(VoiceScene):
         for k, r in enumerate(board_rows):
             r[0].move_to([0, -k * 0.34, 0], aligned_edge=LEFT)
             r[1].move_to([name_w + 0.35, -k * 0.34, 0], aligned_edge=LEFT)
-        board_head = caption("bake-off scores, from the speech recognizer", 20)
+        board_head = caption("voice test scores, from the speech recognizer", 20)
         board = VGroup(board_head, board_rows).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
         board.move_to([0, 2.74, 0]).align_to([6.45, 0, 0], RIGHT)
         chosen_row = board_rows[[n for n, _ in SCORES].index(CHOSEN)]
@@ -555,7 +559,7 @@ class SecondLanguage(VoiceScene):
         chosen_l = label("chosen", 22, AGENT).next_to(chosen_box, LEFT, buff=0.15)
         verdict_t = label("chosen by speech recognition · no recorded check by ear yet", 24, INK)
         verdict = VGroup(open_outline(verdict_t, buff=0.16), verdict_t).move_to([0.4, -2.85, 0])
-        bake_src = source_caption("real results · Chinese voice bake-off (workflow run record, commit 875166f) · "
+        bake_src = source_caption("real results · Chinese voice test (workflow run record, commit 875166f) · "
                                   "waveforms drawn")
         assert out1.get_top()[1] < board.get_bottom()[1] - 0.12, (out1.get_top(), board.get_bottom())
         assert fuzzy.get_bottom()[1] > verdict.get_top()[1] + 0.12
@@ -613,12 +617,13 @@ class SecondLanguage(VoiceScene):
         cue.next_to(pic.image, DOWN, buff=0)
         frame = Rectangle(width=FRAME_W, height=pic.image.height + cue.height, stroke_color=TOOL, stroke_width=2)
         frame.move_to(Group(pic.image, cue.band))
-        # the tag (9.1 wide) is wider than the frame (7.6), so it starts at the frame's left edge
+        # the tag (about 10.5 wide) is wider than the frame (7.6), so it starts at the frame's left edge
         rtag = recon_tag(A30["recon_tag"]).next_to(frame, UP, buff=0.12).align_to(frame, LEFT)
         pic_src = source_caption("picture: real frame of the Chinese tic-tac-toe video at 11:43 · subtitle band redrawn")
         no_m = glyphs_of(cue.en, CUE_EN, "No.")
         rest_m = glyphs_of(cue.en, CUE_EN, "A computer can do more than count.")
         assert rtag.get_top()[1] < 3.55 and frame.get_bottom()[1] > pic_src.get_top()[1] + 0.3
+        assert rtag.get_right()[0] < 6.45
 
         gl_head = caption("the Chinese line says:", 22)
         gl_text = label("“" + GLOSS.replace("computer can", "computer\ncan").replace("just counting", "just\ncounting")

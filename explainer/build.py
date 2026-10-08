@@ -239,15 +239,15 @@ def _fits(text: str, width: int, lines: int) -> bool:
     return len(_lines(text, width, lines)) <= lines
 
 
-def _split_sentence(sent: str, width: int, lines: int) -> list[str]:
+def _split_sentence(sent: str, width: int, lines: int, min_units: float = 0.0) -> list[str]:
     """Split one sentence into the fewest pieces that each fit in `lines` lines, by the rules of the
     Chinese video's English track (subtitles.tracks, subtitles.split_balanced with clauses=True): cut
     at a clause boundary, or a gap before and / but / which …, never inside a list or a name (a cue
     cut is scored by subtitles._cue_cost: "Latanya Sweeney showed" + "that ZIP code, birth date and
     sex alone / single out most Americans,"), and each piece must have a 2-line layout that does not
-    split a name."""
+    split a name. `min_units`: no piece shorter than that (subtitles.split_balanced's min_piece)."""
     sent = " ".join(sent.split())
-    return subs.split_balanced(sent, lines * width * 0.55, clauses=lines == 2)
+    return subs.split_balanced(sent, lines * width * 0.55, clauses=lines == 2, min_piece=min_units)
 
 
 def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2,
@@ -257,7 +257,12 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
     With `marks` ((char offset, seconds) of each sentence start, from the voice clip), every
     sentence's cues sit exactly where that sentence is spoken; without them, the whole clip is
     timed proportionally to characters. Inside a sentence, cues are timed by characters. Cues
-    shorter than `min_dur` are merged with a neighbour when the result still fits. A cue whose two
+    shorter than `min_dur` are merged with a neighbour when the result still fits: one of the same
+    sentence first, and across a sentence end only when the merged cue ends at a sentence end
+    ("…fit its time limit. It didn't.") or a whole short sentence starts it ("Why? On a log scale,"),
+    never as a fragment of the next sentence at its end ("…on day one. Minutes later,"); a fragment
+    that can join neither is avoided by cutting its sentence again with no piece that short. A short
+    cue that the pause after it can hold stays up into the pause instead ("It wasn't."). A cue whose two
     lines would break mid-phrase becomes two cues at a clean break when that reads better, as in
     the English track of the Chinese video (subtitles._two_lines: "Explore walks down every branch,
     one at a time," + "and counts the leaves it reaches."). Lines: _lines."""
@@ -275,36 +280,60 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
             dt = (end - start) * len(sent) / total
             spans.append((t, t + dt))
             t += dt
-    cues = []
-    for (a, b), (_, sent) in zip(spans, sentences):
+    cues = []                           # [start, end, text, sentence index]
+    for si, ((a, b), (_, sent)) in enumerate(zip(spans, sentences)):
         pieces = _split_sentence(sent, width, lines)
         total = sum(len(c) for c in pieces) or 1
+        if len(pieces) > 1 and b - a > 0:   # a fragment too short to read that can't join its neighbours
+            stuck = [k for k, c in enumerate(pieces) if (b - a) * len(c) / total < min_dur
+                     and not any(_fits(" ".join(pieces[min(j, k):max(j, k) + 1]), width, lines)
+                                 for j in (k - 1, k + 1) if 0 <= j < len(pieces))]
+            if stuck:                       # ("Minutes later," + a piece too long to take it)
+                alt = _split_sentence(sent, width, lines, min_units=min_dur * total / (b - a) * 0.55)
+                if len(alt) > 1:
+                    pieces = alt
+                    total = sum(len(c) for c in pieces) or 1
         t = a
         for c in pieces:
             dt = max(0.0, b - a) * len(c) / total
-            cues.append([t, t + dt, c])
+            cues.append([t, t + dt, c, si])
             t += dt
+
+    def ends_sentence(k):
+        return k == len(cues) - 1 or cues[k + 1][3] != cues[k][3]
+
+    def starts_sentence(k):
+        return k == 0 or cues[k - 1][3] != cues[k][3]
     merged = True
     while merged:                       # fold too-short cues into a neighbour when the text fits
         merged = False
-        for i, (a, b, c) in enumerate(cues):
-            if b - a >= min_dur or len(cues) == 1:
+        for i, (a, b, c, si) in enumerate(cues):
+            room = (cues[i + 1][0] - 0.05 if i + 1 < len(cues) else b) - a   # it may linger into a pause
+            if b - a >= min_dur or room >= min_dur or len(cues) == 1:
                 continue
-            for j in (i - 1, i + 1) if i > 0 else (i + 1,):
-                if 0 <= j < len(cues):
-                    lo, hi = min(i, j), max(i, j)
-                    joined = cues[lo][2] + " " + cues[hi][2]
-                    if _fits(joined, width, lines):
-                        cues[lo:hi + 1] = [[cues[lo][0], cues[hi][1], joined]]
-                        merged = True
-                        break
+            near = [j for j in (i - 1, i + 1) if 0 <= j < len(cues)]
+            for j in sorted(near, key=lambda j: cues[j][3] != si):      # its own sentence first
+                lo, hi = min(i, j), max(i, j)
+                whole = lo == i and starts_sentence(i) and ends_sentence(i)   # "Why? On a log scale,"
+                if cues[lo][3] != cues[hi][3] and not (ends_sentence(hi) or whole):
+                    continue                # not "…on day one. Minutes later,"
+                joined = cues[lo][2] + " " + cues[hi][2]
+                if _fits(joined, width, lines):
+                    cues[lo:hi + 1] = [[cues[lo][0], cues[hi][1], joined, cues[hi][3]]]
+                    merged = True
+                    break
             if merged:
                 break
     out = []
-    for a, b, c in cues:
+    for a, b, c, _ in cues:
         out += subs._two_lines((a, b, " ".join(c.split())), width * 0.55, min_dur) if lines == 2 else [(a, b, c)]
     if lines == 2:                      # (and a cue cut that is not a clean break moves to one: subs._reflow_en)
         out = subs._reflow_en(out, width * 0.55)
+    out = [list(c) for c in out]        # a short cue stays up into the pause after it (not past the clip
+    for i, c in enumerate(out):         # or into the next cue): "It wasn't." alone, 0.9 s -> 1 s
+        if c[1] - c[0] < min_dur:
+            nxt = out[i + 1][0] - 0.05 if i + 1 < len(out) else c[1]
+            c[1] = max(c[1], min(c[0] + min_dur, nxt))
     return [(a, b, "\n".join(_lines(c.replace("\n", " "), width, lines))) for a, b, c in out]
 
 

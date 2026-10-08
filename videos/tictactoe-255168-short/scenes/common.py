@@ -292,7 +292,7 @@ def o_template(size: float) -> VMobject:
 
 def mark_ink(sym: str, size: float, bright: float = 1.0) -> Ink:
     if sym == "X":
-        return Ink(x_template(size), XC.core, 3.2, XC.glow, 16, layers=6, glow_opacity=0.55 * bright)
+        return Ink(x_template(size), XC.core, 2.8, XC.glow, 12, layers=6, glow_opacity=0.42 * bright)
     return Ink(o_template(size), OC.core, 3.0, OC.glow, 15, layers=6, glow_opacity=0.5 * bright)
 
 

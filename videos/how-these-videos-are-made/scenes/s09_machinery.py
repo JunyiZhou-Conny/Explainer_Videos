@@ -64,11 +64,11 @@ CLAIMED, MEASURED_NOTE = A32["bounce"].split(" · ")
 FRAME_CAP = "real frame · Chinese tic-tac-toe final cut · 11:43"
 ZOOM_CAP = FRAME_CAP + " · its subtitle band, zoomed in"
 TR_CAP = "real translation · tic-tac-toe video, i18n/zh/narration/g3.yaml"
-MERGE_CAP = "diagram · the old cue text, as both QA reviewers quoted it"
+MERGE_CAP = "diagram · the old cue text, as both AI reviewers quoted it"
 FIX_CAP = "the fix · real commit subject (cd67aa4, Oct 6)"
 STALE_CAP = "real commit message (5be60d7, Oct 6)"
 STAMP_CAP = A31["caption"]                          # "voice stamp of a Chinese scene render (tic-tac-toe scene 3)"
-QA_SRC = "data · Chinese privacy video's QA run"
+QA_SRC = "data · Chinese privacy video's reviews"
 
 
 def _check():

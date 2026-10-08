@@ -149,7 +149,13 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
 - The English video's own .srt (build.split_cues, 44 characters a line) uses the same cues as the
   English track of the Chinese video: split_balanced with clause cuts, _two_lines and _reflow_en,
   and the lines of subtitles.wrap_en, never the greedy textwrap fallback (that is what gave its
-  published / tables, …of the / average…).
+  published / tables, …of the / average…). A cue too short to read joins a neighbour of its own
+  sentence first; across a sentence end only when the joined cue ends at a sentence end or a whole
+  short sentence starts it (Why? On a log scale,), never as a fragment of the next sentence at its
+  end (…on day one. Minutes later,): that sentence is cut again with no piece that short, and a
+  short cue the pause after it can hold stays up there (It wasn't.). Lines do not break inside a
+  noun phrase (an early / draft, the Chinese / version, the fixers' / work, no recorded human /
+  review) or before the adverb yet (no record / yet).
 - In the bilingual band (Chinese line ≤ 30 units, a whole 《…》 title ≤ 35; English line ≤ 96
   characters, ≤ 110 for a clause piece — burned at 1080p a 110-character line is about 1170 px of
   the 1840 px line) the English sentence is cut where the Chinese one is: at the nearest clause

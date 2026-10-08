@@ -11,3 +11,7 @@ videos/*/output/*_480p15.*
 videos/*/output/*_720p30.*
 videos/*/output/*/*_480p15.*
 videos/*/output/*/*_720p30.*
+# pilot excerpts (superseded by the full short): media stay local
+videos/*/output/*/*_opening.mp4
+videos/*/output/*/*_opening.*.mp4
+videos/*/output/*/*_opening.music.wav

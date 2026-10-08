@@ -156,7 +156,8 @@ _ADJECTIVES = {"random", "true", "whole", "next", "odd", "same", "real", "small"
                "sharper", "earlier", "larger", "smaller", "bigger", "higher", "lower", "steeper", "weaker",
                "stronger", "simpler", "better", "greater", "wider", "closer", "later", "different",
                "independent", "consistent", "efficient", "important", "constant", "first", "second",
-               "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "only"}
+               "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "only",
+               "early", "old", "final", "human", "chinese", "english"}     # "an early / draft", "the Chinese / version"
 _MODIFIER = re.compile(r"[a-z-]+(?:ed|ing|ive|ous|ful|ic|able|ible|est|less|al)")
 _NOT_MODIFIERS = {"signal", "interval", "trial", "animal", "proposal", "need", "seed", "speed", "thing",
                   "nothing", "something", "anything", "everything", "string", "king", "ring", "logic"}
@@ -177,8 +178,11 @@ _NOUN_PREPS = {("distance", "from"), ("limit", "on"), ("limits", "on"), ("bound"
 _VERB_PREPS = {(v, p) for p, vs in {"on": "depend depends depended depending rely relies relied relying",
                                     "to": "lead leads led leading belong belongs refer refers referred apply applies compared",
                                     "of": "consist consists consisted", "at": "look looks looked looking",
-                                    "with": "deal deals dealt", "in": "result results resulted"}.items()
-               for v in vs.split()}                       # a prepositional verb: "depends / on", "leads / to"
+                                    "with": "deal deals dealt", "in": "result results resulted",
+                                    "like": "look looks looked looking sound sounds sounded feel feels felt "
+                                            "seem seems seemed"}.items()
+               for v in vs.split()}                       # a prepositional verb: "depends / on", "leads / to",
+                                                          # "looked / like"
 _GREEK = r"(?:epsilon|lambda|sigma|delta|alpha|beta|mu)"
 _OPERAND = r"(?:(?:[b-zB-HJ-Z]|\d+(?:\.\d+)?)(?: %s)?|%s)(?: prime)?" % (_GREEK, _GREEK)
 _SPOKEN_MATH = re.compile(                                # "S of f over epsilon", "e to the epsilon", "one over n",
@@ -205,6 +209,33 @@ def _that_clause(text: str, c: int) -> bool:
     w = m.group(1)
     return (w.lower() in _AUXILIARIES | _DETERMINERS | _PRONOUNS | _PREPOSITIONS | _ADVERBS
             or w[0].isupper() or w[0].isdigit())
+
+
+def _adverb_yet(text: str, c: int) -> bool:
+    """At c, "yet" is the adverb of "no record yet", after a word and before a preposition or the
+    end of its clause ("There's no record yet of anyone…", "no measure yet."), not the conjunction
+    of "simple, yet powerful" or "…, yet it works"."""
+    m = re.match(r"yet(?=$|[,.;:!?]| )(?: (\S+))?", text[c:].lstrip())
+    prev = (text[:c].split() or [""])[-1]
+    if not m or not prev[-1:].isalnum():
+        return False
+    after = text[c:].lstrip()[3:4]
+    return after in ("", ",", ".", ";", ":", "!", "?") or (m.group(1) or "").lower() in _PREPOSITIONS
+
+
+_LIKE_VERBS = {"look", "looks", "looked", "looking", "sound", "sounds", "sounded", "feel", "feels", "felt",
+               "seem", "seems", "seemed"}
+
+
+def _verb_like(text: str, c: int) -> bool:
+    """Before c, the "like" of "looked like", "sounds like", ending its clause (a preposition, a
+    clause word or punctuation follows): "Here's what a paused frame looked like / in an early
+    draft", not "looks like / a tree"."""
+    words = text[:c].split()
+    if len(words) < 2 or words[-1].lower() != "like" or words[-2].lower() not in _LIKE_VERBS:
+        return False
+    nxt = (text[c:].split() or [""])[0].lower()
+    return nxt in _PREPOSITIONS | _CLAUSE_STARTERS or nxt == ""
 
 
 _EN_COMPOUNDS = {("deep", "learning"), ("neural", "network"), ("computer", "scientists"), ("birth", "date"),
@@ -366,11 +397,13 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
     prev = text[:c - 1].rsplit(" ", 1)[-1]
     if prev in _OPERATORS or text[c:c + 1] in _OPERATORS and text[c + 1:c + 2] == " ":
         return cost + 12.0                                # "ε = / 0.1", "f(x) / + Y"
-    if not prev[-1:].isalnum():
-        return cost
+    if not prev[-1:].isalnum() and not prev.endswith(("s'", "s’")):   # (a plural possessive goes on:
+        return cost                                                   # "the fixers' / work")
     words = text[:c - 1].split()
     low, nxt = prev.lower(), text[c:].split(" ", 1)[0]
     word = nxt.rstrip(",.;:!?").lower()
+    like = _verb_like(text, c)                            # "what a paused frame looked like / in an early draft"
+    yet_end = low == "yet" and _adverb_yet(text, c - 4)   # "There's no record yet / of anyone…"
     content = (word.replace("-", "").isalpha() and nxt[:1].islower()          # (made-up)
                and word not in _FUNCTION_WORDS | _CLAUSE_STARTERS | _DETERMINERS | _PRONOUNS)
     short_clause = word in _AUXILIARIES and _SUBORDINATORS & {w.lower() for w in words[-4:-1]}
@@ -379,8 +412,9 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
         re.search(r"\b(?:is|are|was|were|be|been)(?: [a-z]+ly| just| not)? $", text[:c]))
     main_verb = low in ("has", "have", "had") and (word in _DETERMINERS | _NUMBER_WORDS | {"at", "no", "more", "fewer"}
                                                    or word[:1].isdigit())   # "chess has / at least 10…"
-    if (low not in _FUNCTION_WORDS or main_verb) and (
+    if (low not in _FUNCTION_WORDS or main_verb or like or yet_end) and (
             (word in _CLAUSE_STARTERS | _AUXILIARIES | _PREPOSITIONS - {"of", "per", "than"}
+             and not _adverb_yet(text, c)
              and not _list_and(text, c) and not short_clause and not _binomial(text, c) and not complement)
             or _bare_clause(text, c) or gerund):
         cost += 1.0                                       # before a clause, verb or phrase: "…table / and walking away",
@@ -392,7 +426,7 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
             and _list_comma(text, text[:c].rstrip().rfind(",") + 1)):
         cost += 4.0                                       # inside a list item: "ZIP code, birth / date and sex"
     quantifier = low in ("most", "least") and len(words) > 1 and words[-2].lower() == "at"   # "is at most / the…"
-    if ((low in _FUNCTION_WORDS | _PRE_NOUN and not main_verb and not quantifier)
+    if ((low in _FUNCTION_WORDS | _PRE_NOUN and not main_verb and not quantifier and not like)
             or (low in ("this", "these", "those") and content)):
         cost += 8.0                                       # "…the probability of any / event", "call those / made-up…"
     elif (len(words) > 1 and words[-2].lower() in _AUXILIARIES - {"is", "are", "was", "were", "be", "been", "being"}
@@ -428,22 +462,23 @@ def _cut_penalty(text: str, c: int, lines: bool = False) -> float:
     if word in _AUXILIARIES and any(_bare_clause(text, len(" ".join(words[:j]))) for j in (len(words) - 2, len(words) - 3)
                                     if j > 0):
         cost += 6.0                                       # "the paper proves the first / is…": a garden path
-    if word == "of":
+    if word == "of" and not yet_end:
         after = (text[c + len(nxt):].split() or [""])[0].lower()
         cost += 4.0 if after in _NUMBER_WORDS or after[:1].isdigit() else 2.0   # "an odd number / of ones",
                                                           # "a ratio / of one half"
-    if word in _PARTICLES | {"alone"} or (word in _PREPOSITIONS and nxt[-1:] in ",.;:!?"):
+    if (word in _PARTICLES | {"alone"} or (word in _PREPOSITIONS and nxt[-1:] in ",.;:!?")
+            or _adverb_yet(text, c)):                    # "There's no record / yet of anyone…"
         cost += 6.0                                       # "single / out", "whatever / else", "going / in,",
                                                           # "ZIP code, birth date and sex / alone"
     if low in _PARTICLES and (content or word in _DETERMINERS):
         cost += 3.0                                       # its object: "single out / most Americans"
     poss = next((j for j in range(len(words) - 1, max(-1, len(words) - 4), -1)
-                 if words[j].endswith(("'s", "’s"))), None)
+                 if words[j].endswith(("'s", "’s", "s'", "s’"))), None)   # (and "the fixers' / work")
     if poss is not None and content and all(_modifier(w) for w in words[poss + 1:]):
         cost += 6.0                                       # "Alice's / row", "curator's randomized answering / rule"
     elif (content and len(words) > 1 and _modifier(prev) and not gerund   # (not "any one person's row / changes",
                                                           # "because going first / gives X")
-          and (words[-2].lower() in _DETERMINERS | _PREPOSITIONS or _NUMBER.fullmatch(words[-2].lower())
+          and (words[-2].lower() in _DETERMINERS | _PREPOSITIONS | {"no"} or _NUMBER.fullmatch(words[-2].lower())
                or _modifier(words[-2]) or words[-2].lower().endswith("ly"))):   # "supposedly anonymous /"
         cost += 8.0                                       # an adjective and its noun: "its published / tables",
                                                           # "for broad, flexible / accuracy"
@@ -646,7 +681,7 @@ def _list_and(text: str, c: int) -> bool:
 
 
 def split_balanced(text: str, limit: float, hang: bool = False, clauses: bool = False,
-                   line: float = 0.0) -> list[str]:
+                   line: float = 0.0, min_piece: float = 0.0) -> list[str]:
     """Fewest pieces of at most `limit` units each, balanced in length. Cuts at sentence marks
     (；。！？ ; . ! ?) when those alone give pieces that fit and none is tiny (a ；-structured
     sentence keeps one clause per piece; not ：, which often binds a short lead-in to what follows:
@@ -665,7 +700,10 @@ def split_balanced(text: str, limit: float, hang: bool = False, clauses: bool = 
     Chinese cue does not run on across a ；。！？ in mid-line (in lines of `line` units, default
     `limit`) when one cue more avoids it;
     and a whole 《…》 title may run 5 units over it (a 30-unit bilingual line is about 1040 px of the
-    1840 px line at 1080p, measured with burn())."""
+    1840 px line at 1080p, measured with burn()). `min_piece`: no piece under that many units (the
+    English video's .srt asks for it when a cue would be too short to read and cannot join its own
+    sentence's neighbour: "Minutes later, it started six sub-agents building scenes" + "while the
+    review was still running.", not "Minutes later," alone)."""
     text = " ".join(text.split())
     if units(strip_end(text) if hang else text) <= limit:
         return [text]
@@ -750,6 +788,8 @@ def split_balanced(text: str, limit: float, hang: bool = False, clauses: bool = 
         if not all(fits(p) for p in pieces):
             return None
         sizes = [units(p) for p in pieces]
+        if min_piece and min(sizes) < min_piece:
+            return None
         if kind == "strong" and min(sizes) < limit / 4:
             return None                                   # not "第二：/ ……"
         if kind in ("punct", "whole", "firm") and stray(cuts, pieces):
@@ -1310,7 +1350,7 @@ def _cue_cost(text: str, c: int) -> float:
     if _mark_cost(text, c) >= 10 or _list_and(text, c):
         q += 6.0                                          # inside a list: "Frank McSherry, // Kobbi Nissim"
     pronoun = prev in ("this", "that", "these", "those") and nxt in _AUXILIARIES   # "…like this // is the L1 norm"
-    return q + (20.0 if prev in _ENDERS and not pronoun else 0.0)
+    return q + (20.0 if prev in _ENDERS and not pronoun and not _verb_like(text, c) else 0.0)
 
 
 def _clean_break(text: str, c: int) -> bool:
@@ -1323,7 +1363,8 @@ def _clean_break(text: str, c: int) -> bool:
         return _mark_cost(text, c) < 10
     complement = nxt in ("what", "how", "where", "why", "who", "which") and bool(   # "it is exactly / what…"
         re.search(r"\b(?:is|are|was|were|be|been)(?: [a-z]+ly| just| not)? $", text[:c]))
-    return ((nxt in _CLAUSE_WORDS - {"then", "so"} or _that_clause(text, c) or _bare_clause(text, c))
+    return (((nxt in _CLAUSE_WORDS - {"then", "so"} and not _adverb_yet(text, c))   # (not "no record / yet")
+             or _that_clause(text, c) or _bare_clause(text, c))
             and prev.lower() not in _FUNCTION_WORDS and not _list_and(text, c) and not _binomial(text, c)
             and not complement
             and _cut_penalty(text, c) <= 4)
@@ -1410,7 +1451,8 @@ def _two_lines(cue, limit: float, min_dur: float = 1.0) -> list[tuple[float, flo
 
     def worst(*parts):                                    # the worst line break of these cues ("ask the /
         return max([0.0] + [0.0 if english and _clean_break(t, c) else _break_cost(t, c)   # interactive")
-                            + (20.0 if english and (t[:c].split() or [""])[-1].lower() in _ENDERS else 0.0)
+                            + (20.0 if english and (t[:c].split() or [""])[-1].lower() in _ENDERS
+                                      and not _verb_like(t, c) else 0.0)
                             for t in parts for c in breaks(t)])
 
     def midline(*parts):                                  # clause marks inside a line of these cues:
