@@ -2,6 +2,8 @@
 
 The production pipeline, step by step, with the prompts that work well when you hand a step to
 Claude Code. Every step leaves a file behind, so you can stop, review, and resume.
+[PLAYBOOK.md](PLAYBOOK.md) has the lessons from the first videos: where the time went, and the
+rules that make the next one faster.
 
 ```
 PDF ──ingest──▶ library/catalog.yaml ──plan──▶ videos/<id>/
