@@ -31,15 +31,23 @@ from common import (AGENT, BUG, DICTATED, IDEA, INK, NARRATION, PANEL, QUOTES, S
 
 SAY = NARRATION["S02"]
 
-# Real frames (1920 x 1080), cropped to the part the SHOW line points at, both to the same aspect.
-MAP, MAP_CROP = "dp_0230.png", (60, 80, 1860, 590)          # privacy video at 2:30: the lineage map
+# Real frames (1920 x 1080), cropped to the part the SHOW line points at. The map is cropped to its
+# four papers (Warner 1965 -> disclosure control -> Sweeney 1997 -> Evfimievski 2003, the lanes
+# between them), without the lane names and the year axis, so the names stay legible at MAP_W.
+MAP, MAP_CROP = "dp_0230.png", (334, 80, 1750, 342)         # privacy video at 2:30: the lineage map
 TTT, TTT_CROP = "ttt_0530.png", (60, 318, 1660, 771)        # tic-tac-toe video at 5:30: explore() + board
+MAP_W = 6.8                                                 # the map in SAY[2] (as wide as the right half allows)
 
 QUOTE_SIZE = 28
 SMALL_F = 0.72                     # 28 pt cards slid up small -> 20.2 pt (never below 20)
 CORNER_F = 0.78                    # 26 pt "the user" label in the corner -> 20.3 pt
 MARK = "#FF00FE"                   # probe colour, never drawn
 MAP_CAPTION = "papers are never isolated · the privacy video at 2:30"
+
+
+def aspect(crop) -> float:
+    """height / width of a pixel crop (x0, y0, x1, y1)."""
+    return (crop[3] - crop[1]) / (crop[2] - crop[0])
 
 
 # ------------------------------------------------------------------ helpers (this scene only)
@@ -139,9 +147,9 @@ def when(req) -> str:
     return f"{d.strftime('%b')} {d.day} · {req['utc']} UTC"
 
 
-def request_card(req, width: float, thumb_cap: str | None = None) -> VGroup:
+def request_card(req, width: float, thumb_cap: str | None = None, thumb_aspect: float = 0.3) -> VGroup:
     """A PINK request card (a summary, not a quote): number, UTC time, the summary, and an empty
-    slot for a real thumbnail (.slot, with its caption). .box .slot"""
+    slot for a real thumbnail (.slot, height = width * thumb_aspect, with its caption). .box .slot"""
     num = label(str(req["n"]), 30, USER, weight="BOLD")
     t = caption(when(req), 20)
     head = VGroup(num, t).arrange(RIGHT, buff=0.2, aligned_edge=DOWN)
@@ -150,8 +158,7 @@ def request_card(req, width: float, thumb_cap: str | None = None) -> VGroup:
     slot = None
     if thumb_cap:
         sw = width - 0.42
-        slot = Rectangle(width=sw, height=sw * (MAP_CROP[3] - MAP_CROP[1]) / (MAP_CROP[2] - MAP_CROP[0]),
-                         stroke_width=0).set_fill(opacity=0)
+        slot = Rectangle(width=sw, height=sw * thumb_aspect, stroke_width=0).set_fill(opacity=0)
         cap = caption(thumb_cap, 20)
         parts.add(VGroup(slot, cap).arrange(DOWN, aligned_edge=LEFT, buff=0.08))
     parts.arrange(DOWN, aligned_edge=LEFT, buff=0.16)
@@ -255,16 +262,23 @@ class TheAsk(VoiceScene):
         c3.move_to([0, 0.95, 0]).align_to([-6.3, 0, 0], LEFT)
         c3b = quote_card(QUOTES["s02_card3b"]["screen"], None, size=24, chars=80)
         c3b.next_to(c3, DOWN, buff=0.2).align_to(c3, LEFT)
-        thumb = exhibit(MAP, width=5.2, crop=MAP_CROP)
-        thumb.move_to([3.6, 0.95, 0])
-        tcap = caption(MAP_CAPTION.replace(" · ", "\n"), 20)
+        # the map sits between cards 3 and 3b, right of them, as wide as the right half allows
+        thumb = exhibit(MAP, width=MAP_W, crop=MAP_CROP)
+        thumb.move_to([0, 0.6, 0]).align_to([6.45, 0, 0], RIGHT)
+        tcap = caption(MAP_CAPTION, 20)
+        if tcap.width > thumb.width:
+            tcap = caption(MAP_CAPTION.replace(" · ", "\n"), 20)
         tcap.next_to(thumb, DOWN, buff=0.12).align_to(thumb, LEFT)
-        link = Arrow(c3b.box.get_right(), thumb.frame.get_left() + DOWN * 0.45, buff=0.12, color=TOOL,
+        # low on the map's left edge, so the arrow passes under card 3's corner
+        link = Arrow(c3b.box.get_right(), thumb.frame.get_corner(DL) + UP * 0.2, buff=0.12, color=TOOL,
                      stroke_width=3, tip_length=0.18, max_tip_length_to_length_ratio=0.25)
         c4 = quote_card(broken(QUOTES["s02_card4"]["screen"], "I feel like it's", "something interactive,"),
                         None, size=QUOTE_SIZE, chars=80)
         c4.move_to([0, -2.1, 0]).align_to([-6.3, 0, 0], LEFT)
-        inter = quote_glyphs(c4, "interactive")
+        # the comma touches the word, so the outline takes it in (an outline edge through it reads badly)
+        inter = quote_glyphs(c4, "interactive,")
+        if not len(inter):
+            inter = quote_glyphs(c4, "interactive")
         make = quote_glyphs(c4, "actually create")
 
         with self.voiceover(SAY[2]) as vo:
@@ -300,8 +314,9 @@ class TheAsk(VoiceScene):
         # ---------------------------------------------------------- then came four requests
         reqs = QUOTES["requests"]
         W, GAP = 3.15, 0.12
-        caps = {1: "privacy video · 2:30", 2: "tic-tac-toe video · 5:30"}
-        rcards = [request_card(r, W, caps.get(r["n"])) for r in reqs]
+        # each thumbnail slot takes its own picture's aspect (the map is a wide strip, A08 is not)
+        caps = {1: ("privacy video · 2:30", aspect(MAP_CROP)), 2: ("tic-tac-toe video · 5:30", aspect(TTT_CROP))}
+        rcards = [request_card(r, W, *caps.get(r["n"], (None,))) for r in reqs]
         VGroup(*rcards).arrange(RIGHT, buff=GAP, aligned_edge=DOWN).move_to([0, 0, 0])
         base_y = -2.35
         for rc in rcards:

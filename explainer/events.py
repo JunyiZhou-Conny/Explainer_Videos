@@ -62,7 +62,7 @@ KINDS = {
                      "Homotopy", "SmoothedVectorizedHomotopy", "ApplyPointwiseFunction", "ApplyMatrix",
                      "ApplyComplexFunction", "ScaleInPlace", "ShrinkInPlace", "SpinInPlace",
                      "ApplyFunction", "Restore"], "move"),
-    **dict.fromkeys(["ChangeDecimalToValue", "ChangingDecimal", "Count"], "count"),
+    **dict.fromkeys(["ChangeDecimalToValue", "ChangingDecimal", "Count", "CounterRoll", "CounterLand"], "count"),
 }
 
 DEFAULT_FRAME = None  # set lazily: (center x, center y, width) of an unmoved camera frame
@@ -130,13 +130,22 @@ def describe(anim, at: float, end: float, before: dict | None, frame=None) -> di
         return info
     info["mob"] = type(m).__name__
     b = box(m)
+    before = before or {}
     if b:
         info.update(b)
         if before and (abs(before["x"] - b["x"]) > 0.05 or abs(before["y"] - b["y"]) > 0.05):
             info.update(x0=before["x"], y0=before["y"])
+        if before.get("w") and b["w"] and abs(before["w"] - b["w"]) > 0.05 * max(before["w"], b["w"]):
+            info["w0"] = before["w"]
     snd = getattr(m, "__dict__", {}).get("sound")
     if snd is not None:
         info["sound"] = str(snd)
+    extra = getattr(anim, "event_info", None)      # animations may describe themselves (counters: land times)
+    if callable(extra):
+        try:
+            info.update(jsonable(extra()))
+        except Exception:
+            pass
     return info
 
 

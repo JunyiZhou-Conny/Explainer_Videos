@@ -99,6 +99,11 @@ python -m explainer.build videos/<id> --crf 26  # smaller file for sharing
 Output in `videos/<id>/output/`: the mp4 (loudness-normalised), `.srt` subtitles,
 `chapters.txt` (paste into a YouTube/Bilibili description), `transcript.md`.
 
+Background music composed from the picture (every scene writes `<Scene>.events.json` as it renders):
+`python -m explainer.build videos/<id> --music` mixes it under the narration and keeps the
+narration-only master as `<id>.nomusic.mp4`. A condensed, music-led short of a video is its own
+project (`format: short`): see [SHORTS.md](SHORTS.md).
+
 ## Voices
 
 | backend | cost | quality | how |

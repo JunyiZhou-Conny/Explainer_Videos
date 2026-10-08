@@ -1,7 +1,9 @@
 # Explainer video style guide
 
 How every video in this repo should look, sound and be built. It is written for both humans and
-coding agents that implement scenes.
+coding agents that implement scenes. The condensed, music-led **short** format has its own profile
+(black, one glowing accent, hairlines, captions instead of narration, a beat grid):
+[SHORTS.md](SHORTS.md); everything below is about the long, narrated videos.
 
 ## 1. Principles (borrowed from 3Blue1Brown)
 

@@ -30,6 +30,28 @@ def find_project(scene_file: Path) -> Path:
     return scene_file.parent
 
 
+def _with_captions(movie: Path, project: Path, spec: dict, scene_file: Path, cls: str, work: Path) -> Path:
+    """A short-format scene (its events.json lists captions): the movie with its captions burned in, as
+    the stitched short will show them (first layout of video.yaml); any other scene: the movie."""
+    ev = movie.with_suffix(".events.json")
+    if not ev.exists() or not json.loads(ev.read_text()).get("captions"):
+        return movie
+    from . import captions as cap
+    from . import finishing as fin
+    try:
+        rel = str(scene_file.relative_to(project))
+    except ValueError:
+        rel = str(scene_file)
+    track = fin.gather_captions(project, spec, [({"file": rel, "cls": cls}, movie, 0.0)])
+    if not track.cues:
+        return movie
+    ass = work / "captions.ass"
+    cap.write_ass(ass, track.cues, cap.caption_config(spec)["layout"], *fin._video_size(movie))
+    dst = work / "captioned.mp4"
+    cap.burn(movie, ass, dst, crf=20, audio=False)
+    return dst
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("file", type=Path)
@@ -71,6 +93,7 @@ def main(argv=None):
     sheets_dir.mkdir(parents=True, exist_ok=True)
     for old in sheets_dir.glob("*.png"):
         old.unlink()
+    out = _with_captions(out, project, spec, scene_file, args.cls, sheets_dir)
 
     n = max(1, math.ceil(dur / args.every))
     rows = min(4, math.ceil(n / 4))

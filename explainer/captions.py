@@ -47,7 +47,7 @@ ZH_RATE, EN_RATE = 5.0, 2.9   # characters / words per second a caption allows (
 _CJK = re.compile(r"[⺀-鿿豈-﫿＀-￯　-〿]")
 
 
-@dataclass
+@dataclass(eq=False)          # captions are compared by identity (two lines may share a text)
 class Caption:
     zh: str = ""
     en: str = ""
@@ -58,6 +58,7 @@ class Caption:
     at: str | None = None          # grid position from captions.yaml
     beats: float | None = None
     placed: str = ""               # "yaml" (by `at`), "code" (self.caption) or "" (not placed yet)
+    fixed: bool = False            # its length was given (beats / dur), not the reading time
 
     @property
     def end(self) -> float:
@@ -69,6 +70,8 @@ class Caption:
             if getattr(self, k) is not None:
                 d[k] = getattr(self, k)
         d["placed"] = self.placed
+        if self.fixed:
+            d["fixed"] = True
         return d
 
     @classmethod
@@ -76,7 +79,8 @@ class Caption:
         return cls(zh=str(d.get("zh") or "").strip(), en=" ".join(str(d.get("en") or "").split()),
                    id=None if d.get("id") is None else str(d["id"]), scene=scene,
                    t=d.get("t"), dur=d.get("dur"), at=None if d.get("at") is None else str(d["at"]),
-                   beats=d.get("beats"), placed=d.get("placed", ""))
+                   beats=d.get("beats"), placed=d.get("placed", ""),
+                   fixed=bool(d.get("fixed") or d.get("beats") is not None or d.get("dur") is not None))
 
 
 def cjk_count(s: str) -> int:

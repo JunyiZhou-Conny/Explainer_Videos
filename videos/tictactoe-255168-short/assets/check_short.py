@@ -29,6 +29,7 @@ import yaml
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parent
 FAILS: list[str] = []
+BAR_S = 2.4
 
 
 def check(name: str, ok: bool, detail: str = "") -> None:
@@ -244,7 +245,13 @@ empty_a = [s for s in range(9) if cells_a[s] == "."]
 ghost_orders = list(permutations(empty_a))
 check("game A leaves squares 5, 6, 7, 8 empty", empty_a == [5, 6, 7, 8])
 check("4 x 3 x 2 x 1 = 24 ghost orders, all different", len(set(ghost_orders)) == 24)
-check("first ghost order shown: O5 X6 O7 X8 (moves 6-9)", ghost_orders[0] == (5, 6, 7, 8))
+FIRST_GHOSTS = (6, 5, 8, 7)        # moves 6-9 drawn first in S03: O6 X5 O8 X7
+ghost_board = list(cells_a)
+for k, s in enumerate(FIRST_GHOSTS, 6):
+    ghost_board[s] = "X" if k % 2 else "O"
+lines_on = [l for l in WIN_LINES if ghost_board[l[0]] != "." and ghost_board[l[0]] == ghost_board[l[1]] == ghost_board[l[2]]]
+check("first ghost order shown, O6 X5 O8 X7, is one of the 24 and forms no second line",
+      FIRST_GHOSTS in ghost_orders and lines_on == [(0, 1, 2)], f"{''.join(ghost_board)} {lines_on}")
 full_orders_with_prefix = sum(1 for p in permutations(range(9)) if p[:5] == GAME_A)
 check("9! counts game A 24 times (fill orders that start with its 5 moves)", full_orders_with_prefix == 24)
 
@@ -326,30 +333,61 @@ t = 0
 for s in range(9):
     t += wedges[s]
     cum.append(t)
-check("counter at the end of each first-move wedge (S05 bar lines 50.1 … 58.1)",
+check("counter at the end of each first-move wedge (S05 bar lines 51.1 … 59.1)",
       cum == [27_732, 57_324, 85_056, 114_648, 140_520, 170_112, 197_844, 227_436, 255_168], str(cum))
 idx_a = [m for m, _ in LEAVES].index(GAME_A) + 1
 ang_a = leaf_slot[GAME_A] / factorial(9) * 360
 check("game A is the 7,317th game the program finds, at 10.12° clockwise from 12 o'clock",
       idx_a == 7_317 and abs(ang_a - 10.119) < 0.001, f"{idx_a}, {ang_a:.3f}°")
 
+# S08 bubble, ring 2: 48 nodes turn cyan (O's reply loses) and 24 stay grey
+ring2 = Counter(perfect("".join("X" if i == a else "O" if i == b else "." for i in range(9)), "X")
+                for a in range(9) for b in range(9) if a != b)
+check("minimax colours of ring 2: 48 X wins, 24 draws", ring2 == Counter({"X": 48, "D": 24}), str(dict(ring2)))
+radii = [round(2.9 * (d / 9) ** 0.75, 2) for d in range(1, 10)]
+check("ring radii r_d = 2.9 (d/9)^0.75: 0.56 … 2.90",
+      radii == [0.56, 0.94, 1.27, 1.58, 1.87, 2.14, 2.4, 2.65, 2.9], str(radii))
+UNIT = 30_240                                  # S07: one length scale, 9! = 12 units
+check("S07 scale: 9! = 12 units; bars 1,440 → 0.05, X 4.34, O 2.58, draws 1.52",
+      factorial(9) / UNIT == 12 and round(1_440 / UNIT, 2) == 0.05
+      and [round(n / UNIT, 2) for n in (131_184, 77_904, 46_080)] == [4.34, 2.58, 1.52])
+t_pass = 64 * BAR_S + (255_168 / factorial(9)) * 2 * BAR_S       # S06: uniform sweep 65.1 → 67.1
+bar_pass, rest = divmod(t_pass, BAR_S)
+check("S06: the re-run passes 255,168 at about 66.2+ (beat 2 and a half of bar 66)",
+      int(bar_pass) + 1 == 66 and 0.6 <= rest < 1.2, f"{t_pass:.2f} s, bar {int(bar_pass) + 1} + {rest:.2f} s")
+# the explore() plate: the file lines script.md names (S05, S06)
+src = (PROJECT.parent / "tictactoe-255168" / "assets" / "play_all_games.py").read_text().splitlines()
+want = {23: "def explore(player):", 24: "if winner(board) is not None:", 25: "return 1",
+        26: 'if "." not in board:', 27: "return 1", 31: "board[square] = player",
+        33: "total += explore(next_player)", 34: 'board[square] = "."', 35: "return total"}
+bad_lines = [n for n, t in want.items() if not src[n - 1].strip().startswith(t)]
+check("explore() plate: file lines 23-35 as script.md names them (24-25 winner check, 34 undo …)",
+      not bad_lines, str(bad_lines))
 # minimax colour of every node, ring by ring (S08 bubble): the root ends grey, all 9 first moves grey
 first_moves = {perfect("." * s + "X" + "." * (8 - s), "O") for s in range(9)}
 check("all 9 first moves are draws under perfect play (ring 1 turns grey)", first_moves == {"D"})
 
 # ====================================================================== 4. CAPTIONS, PLAN, video.yaml
-spec = yaml.safe_load((PROJECT / "captions.yaml").read_text(encoding="utf-8"))
-caps = spec["captions"]
 BAR, BEAT, TOTAL = 2.4, 0.6, 254.4
+vy = yaml.safe_load((PROJECT / "video.yaml").read_text(encoding="utf-8"))
+first_bar = {Path(sc["file"]).stem: (f"S{k + 1:02d}", sc["bars"]) for k, sc in enumerate(vy["scenes"])}
+table = yaml.safe_load((PROJECT / "captions.yaml").read_text(encoding="utf-8"))
+check("captions.yaml has only scene keys, in video.yaml order",
+      list(table) == [k for k in first_bar if k in table] and all(isinstance(v, list) for v in table.values()),
+      ", ".join(table))
+caps = []                   # the explainer/captions.py format: per scene stem, at = "bar:beat" from 0
+for stem, items in table.items():
+    sid, (b0, b1) = first_bar[stem]
+    for c in items:
+        rb, rbeat = (c["at"].split(":") + ["0"])[:2]
+        start = (b0 - 1 + int(rb)) * BAR + float(rbeat) * BEAT
+        caps.append({**c, "scene": sid, "stem": stem, "start": round(start, 4),
+                     "end": round(start + float(c["dur"]), 4), "bar": b0 + int(rb), "rel_beat": float(rbeat),
+                     "range": (b0, b1)})
 
 
-def t_of(at: str) -> float:
-    bar, beat = at.split(".")
-    return (int(bar) - 1) * BAR + (int(beat) - 1) * BEAT
-
-
-HAN = re.compile(r"[一-鿿]")
-WIDE = re.compile(r"[　-〿＀-￯一-鿿“”‘’……]")
+HAN = re.compile(r"[\u4e00-\u9fff]")
+WIDE = re.compile(r"[\u3000-\u303f\uff00-\uffef\u4e00-\u9fff“”‘’……]")
 
 
 def width(s: str) -> float:
@@ -358,8 +396,10 @@ def width(s: str) -> float:
 
 check("caption count 25-30", 25 <= len(caps) <= 30, str(len(caps)))
 check("caption ids c01 … in order", [c["id"] for c in caps] == [f"c{i:02d}" for i in range(1, len(caps) + 1)])
-bad_t = [c["id"] for c in caps if not (0 <= c["start"] - t_of(c["at"]) <= 0.6 + 1e-9)]
-check("each caption starts 0-0.6 s after its cue (bar.beat)", not bad_t, ", ".join(bad_t))
+off = [c["id"] for c in caps if abs(c["rel_beat"] * 2 - round(c["rel_beat"] * 2)) > 1e-9 or c["rel_beat"] >= 4]
+check("each caption's `at` is on the eighth-note grid of its scene", not off, ", ".join(off))
+outside = [c["id"] for c in caps if not (c["range"][0] <= c["bar"] <= c["range"][1])]
+check("each caption starts inside its own scene's bars", not outside, ", ".join(outside))
 bad_d = [f'{c["id"]} {c["end"] - c["start"]:.1f}s' for c in caps if not 3.0 - 1e-9 <= c["end"] - c["start"] <= 4.0 + 1e-9]
 check("each caption stays up 3.0-4.0 s", not bad_d, ", ".join(bad_d))
 gaps = [(a["id"], b["id"]) for a, b in zip(caps, caps[1:]) if b["start"] < a["end"] + 0.2 - 1e-9]
@@ -412,11 +452,11 @@ check("en lines: no digit followed by '!'", not any(re.search(r"\d!", c["en"]) f
 first_ghost = next(c for c in caps if "幽灵对局" in c["zh"])
 check("幽灵对局 is first used where it is named, in “”", "“幽灵对局”" in first_ghost["zh"], first_ghost["id"])
 check("no section label uses 幽灵对局 before it is named (c09, bar 27)",
-      all("幽灵对局" not in h["text"] or h["bars"][0] >= 27 for h in spec["hud"]))
+      all("幽灵对局" not in h["text"] or h["bars"][0] >= 27 for h in vy["sections"]))
 
 # script.md: bars, scenes and the captions it quotes
 script = (PROJECT / "script.md").read_text(encoding="utf-8")
-heads = re.findall(r"^## (S\d\d) · .+? — `scenes/(s\d\d_\w+)\.py` · `(\w+)`\s*$", script, flags=re.M)
+heads = re.findall(r"^## (S\d\d) · .+? — `scenes/(s\d\d_\w+)\.py` · `(\w+)`", script, flags=re.M)
 ranges = [tuple(map(int, m)) for m in re.findall(r"^Bars (\d+)–(\d+)", script, flags=re.M)]
 blocks = [tuple(map(int, m)) for m in re.findall(r"^BARS (\d+)-(\d+):", script, flags=re.M)]
 check("script.md has one header and one bar range per scene", len(heads) == len(ranges) > 0,
@@ -446,16 +486,14 @@ for line in script.splitlines():
     if m:
         pos[m.group(1)] = (cur_scene, cur_block)
 misplaced = [cid for cid, c in cmap.items()
-             if cid in pos and not (pos[cid][0] == c["scene"]
-                                    and pos[cid][1][0] <= int(c["at"].split(".")[0]) <= pos[cid][1][1])]
+             if cid in pos and not (pos[cid][0] == c["scene"] and pos[cid][1][0] <= c["bar"] <= pos[cid][1][1])]
 check("each caption is quoted in its own scene and BARS block", not misplaced, ", ".join(misplaced))
 check("script.md has no SAY: lines (the short has no voice)", not re.search(r"^SAY:", script, flags=re.M))
 
 # video.yaml
-vy = yaml.safe_load((PROJECT / "video.yaml").read_text(encoding="utf-8"))
-check("video.yaml: format short, 100 BPM, 106 bars, zh first, papers []",
+check("video.yaml: format short, 100 BPM, 106 bars, zh-first master first, papers []",
       vy.get("format") == "short" and vy["grid"]["bpm"] == 100 and vy["grid"]["bars"] == 106
-      and vy["captions"]["primary"] == "zh" and vy.get("papers") == [])
+      and vy["captions"]["layouts"][0] == "zh-first" and vy.get("papers") == [])
 vs = [(Path(s["file"]).stem, s["cls"], tuple(s["bars"])) for s in vy["scenes"]]
 check("video.yaml scenes match script.md headers and bar ranges",
       [(f, c) for f, c, _ in vs] == [(f, c) for _, f, c in heads] and [b for _, _, b in vs] == ranges)

@@ -40,6 +40,12 @@ playground and glossary in `videos/<id>/i18n/zh/`. The English videos ship Chine
 subtitle files too (`output/<id>.zh.srt`, `.zh-en.srt`, `.zh-en.ass`). How it works and how to make
 another language: [docs/LANGUAGES.md](docs/LANGUAGES.md).
 
+**Shorts (in progress).** The toolkit can also make a condensed, music-led cut of a video (about
+4 minutes, no narrator): bilingual captions, a picture timed on a 100 BPM beat grid, and a score
+composed in code from the picture's own event log, so every cut, reveal and count is heard. The
+same music can be mixed under the narration of the long versions (`--music`). How:
+[docs/SHORTS.md](docs/SHORTS.md).
+
 Each video folder has: `output/*.mp4` (the video, plus part cuts for long ones), `output/*.srt`
 (subtitles), `output/chapters*.txt`, `script.md` (narration + visual plan), `exercises.md`, the
 Manim source in `scenes/`, and (for paper videos) `digest.md` (paper notes). Each also has a
@@ -56,11 +62,13 @@ library/                    the papers, filed by category
   MAP.md                    generated knowledge graph + reading paths + multi-paper video ideas
   <area>/<topic>/<id>.pdf   e.g. reinforcement-learning/policy-optimization/schulman2017ppo.pdf
 videos/<video-id>/          one folder per video (single- or multi-paper)
-explainer/                  the toolkit: TTS backends, narration-synced scenes, components, build
+explainer/                  the toolkit: TTS backends, narration-synced scenes, components, build,
+                            event logs, the short format (short.py), music (music.py)
 tools/                      ingest.py (add a paper) · catalog.py (validate + regenerate) · new_video.py
 docs/WORKFLOW.md            paper → digest → script → review → scenes → render, with prompts for Claude
 docs/STYLE_GUIDE.md         visual language: semantic colours, layout, timing, checklist
 docs/LANGUAGES.md           language versions (Chinese): translation files, voice, bilingual subtitles
+docs/SHORTS.md              condensed music-led shorts: beat grid, captions, music, finishing pass
 setup/install.sh            one-shot environment setup
 ```
 

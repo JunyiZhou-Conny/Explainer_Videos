@@ -6,7 +6,9 @@ Runs the scene as a Manim dry run (narration audio comes from the TTS cache, so 
 real) and, after every play()/wait(), reports:
   OUT    a visible mobject outside the safe area x in [-6.6, 6.6], y in [-3.6, 3.6]
   SMALL  a Text / MathTex rendered below 20 pt
-and at the end lists mobjects still visible (scenes should end on an empty frame).
+and at the end lists mobjects still visible (scenes should end on an empty frame). For a short-format
+BeatScene the HUD (fixed in the frame) may be tiny and a scene may end with objects on screen (they
+carry over into the next shot); its length in bars is printed instead.
 """
 
 from __future__ import annotations
@@ -81,6 +83,7 @@ def main(argv=None) -> int:
     def check(scene):
         nonlocal problems
         t = scene.renderer.time
+        hud = {id(x) for m in getattr(scene.renderer.camera, "fixed_mobjects", []) for x in m.get_family()}
         for top in scene.mobjects:
             for m, label in leaves(top):
                 if isinstance(m, (Text, SingleStringMathTex)):
@@ -100,7 +103,7 @@ def main(argv=None) -> int:
                         problems += 1
                         print(f"[{t:6.2f}s] OUT   {type(m).__name__} x[{x0:.2f}, {x1:.2f}] "
                               f"y[{y0:.2f}, {y1:.2f}] {label!r:.60}")
-                if isinstance(m, (Text, SingleStringMathTex)):
+                if isinstance(m, (Text, SingleStringMathTex)) and id(m) not in hud:   # (HUD: tiny on purpose)
                     fs = getattr(m, "font_size", None)
                     if fs is not None and fs < MIN_PT:
                         key = ("small", id(m), round(fs, 1))
@@ -134,6 +137,11 @@ def main(argv=None) -> int:
         print(f"end at {scene.renderer.time:.1f}s; {len(left)} visible mobject(s) left on screen")
         for m in left:
             print("  LEFT:", type(m).__name__)
+        if getattr(scene, "grid", None) is not None:      # a short: shots hand objects on (match cuts)
+            bar = scene.grid.bar
+            off = scene.renderer.time / bar - round(scene.renderer.time / bar)
+            print(f"short: {scene.renderer.time / bar:.2f} bars" + ("" if abs(off) < 1e-3 else "  (NOT on a bar line)"))
+            left = []
     print("OK" if problems == 0 and not left else f"{problems + len(left)} problem(s)")
     return 0 if problems == 0 and not left else 1
 

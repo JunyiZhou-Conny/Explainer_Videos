@@ -16,6 +16,10 @@ When a `with` block ends, the scene waits for the clip to finish (plus a short p
 narration never gets cut off. If your animations run longer than the clip, the next clip
 simply starts later. Every clip is written to `<scene>.subs.json` next to the rendered
 movie; `explainer.build` stitches those into an .srt for the whole video.
+
+Every play() / wait() and narration block is also logged to `<scene>.events.json` (explainer.events),
+which the music composer (explainer.music) reads; `self.mark("hit")` and `self.play(..., kind=...)`
+say what a moment means. Logging only reads the scene: the picture and the audio are unchanged.
 """
 
 from __future__ import annotations
@@ -28,6 +32,7 @@ from manim import Scene, logger
 
 from . import i18n
 from . import style  # noqa: F401  (sets the background colour; installs translation hooks)
+from .events import EventLog
 from .voice import AlignedClip, Clip, get_backend
 
 MIN_WAIT = 1 / 60
@@ -67,7 +72,7 @@ class Tracker:
         return max(minimum, self.time_until(phrase))
 
 
-class VoiceScene(Scene):
+class VoiceScene(EventLog, Scene):
     pad_after_clip = 0.25  # breathing room after each narration clip
 
     def setup(self):
@@ -88,11 +93,16 @@ class VoiceScene(Scene):
         start = self.renderer.time
         self.add_sound(str(clip.path))
         tracker = Tracker(self, clip, start)
+        block = len(self._subs)                      # the event log's narration block
+        self._ev_state_()["block"] = block
+        self.events.append({"type": "voice", "t": round(start, 4), "dur": round(clip.duration, 4),
+                            "block": block, "text": text[:80]})
         yield tracker
         pad = self.pad_after_clip if pad is None else pad
         left = start + clip.duration + pad - self.renderer.time
         if left > MIN_WAIT:
             self.wait(left)
+        self._ev_state_()["block"] = None
         sub = {"start": round(start, 3), "end": round(start + clip.duration, 3),
                "text": text, "marks": [[o, round(t, 3)] for o, t in clip.marks]}
         if isinstance(clip, AlignedClip):   # the translated sentences, with their exact spans

@@ -177,6 +177,27 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
 - Sidecar cues have at most 2 lines (22 units per Chinese line, 48 characters per English line);
   short cues stay up 1.6 s when the next one leaves room. Regression tests: tests/test_subtitles.py.
 
+## Shorts: one picture, both languages
+
+A short (docs/SHORTS.md) has no narration, so there is nothing to dub and no `--lang` build: its
+words are bilingual captions, a Chinese line and an English line for each, kept per scene in the
+project's `captions.yaml` and drawn into the picture when the video is stitched.
+
+- **Layouts.** `captions: {layouts: [zh-first, en-first]}` in video.yaml makes one master per layout
+  from the same render: `<id>.mp4` (the first; zh-first for Bilibili: the Chinese line in a Song/Ming
+  serif, the English under it in small letter-spaced capitals) and `<id>.en-first.mp4` (for YouTube:
+  English sentence case on top, the Chinese line under it). `--layout en-first` builds just one.
+  Sidecars come from the same lines: `<id>.zh.srt`, `<id>.en.srt`, `<id>.zh-en.srt`.
+- **Writing the lines.** One claim, question or number per caption, at most about 20 CJK characters
+  and 14 English words, the two lines saying the same thing (no line-by-line paraphrase drift: a
+  reviewer reads them as a pair). The video's glossary still binds the terms (幽灵对局 = ghost games).
+  Numbers are written the way the picture shows them (255,168; 9!), not spelled out.
+- **Editing.** captions.yaml is read again at stitch time, so a wording fix is
+  `python -m explainer.build videos/<id> --no-render`; only a caption placed by scene code
+  (`self.caption("id")`) keeps the moment the scene chose.
+- **Music** is the same for every layout; for a narrated video each language version gets its own
+  score from its own event log (the Chinese timing differs), mixed under its own voice.
+
 ## Lessons from the Chinese versions
 
 - **Anchors drift.** An `anchors:` entry is placed by its character position in the displayed

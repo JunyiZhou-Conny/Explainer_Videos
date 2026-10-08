@@ -1,31 +1,33 @@
 """S08 · Same video, second language.
 
-Beats: the user's request for the Chinese versions (A06b, verbatim) in a PINK card; "sound weird"
-underlined; a bilingual subtitle band (one real sentence pair of A27, as a diagram of "subtitles in
-both languages") -> the key rule: the band's two lines become the third row of the real aligned
-entry (A27, tic-tac-toe i18n/zh/narration/g1.yaml lines 21-30): the English say line in its three
-sentences on the left, the three Chinese sentences on the right, joined one to one by GREY lines;
-"Flipped or turned" glows ORANGE and the ORANGE cue pin jumps to 翻转; counter "417 sentence pairs
-· both videos" -> the two columns fold into two outputs, "English video" and "Chinese video", fed by
-one GREY "scene code" card; the rule (A36, docs/LANGUAGES.md) "The English video is never touched";
-the English video splits into "English render, before" and "after the Chinese edits"; a frame from
-each becomes a fingerprint (a diagram: grey squares), the two columns scroll through all 721 frames
-with a GREEN "=" on every row, and the counter becomes the real result (A37) "tic-tac-toe scene 1,
-English 480p preview: all 721 frames match"; dashed YELLOW footnote "a few scenes don't render
-exactly the same every time" -> the voice bake-off (A28): the BLUE agent with the struck
-headphones (S01's motif) asks a GREY speech recognizer; the ORANGE "Mandarin voice 1 ·
-zh-CN-XiaoxiaoNeural" flows in and comes out as noise -> "Nice", epsilon -> "Excellent", Claude ->
-"Clark" (RED); "another voice" (zh-CN-XiaoyiNeural) flows in -> GREEN "17 of 17 terms · 10 of 10
-numbers" with the fuzzy-match footnote; the scoreboard (Brian, Ava, Xiaoyi, Xiaoxiao) and BLUE
-"chosen"; the label becomes "the chosen voice"; dashed YELLOW "chosen by speech recognition · no
-recorded check by ear yet" -> the Chinese tic-tac-toe video at 11:43, the real picture (A04,
-68d6c23) over a redrawn subtitle band with the OLD cue text (A30, as both QA reviewers quoted it),
-tag "reconstruction · ..."; the English line ("No. ...") stays WHITE; the Chinese line is glossed
-"It's not what a computer can do, not just counting games" with a RED "meaning flipped" stamp; two
-faded-BLUE reviewers raise RED flags on the cue -> ponder (10 s) over the dimmed frame.
+Beats: the user's request for the Chinese versions (A06b, verbatim) in a PINK card, "sound weird"
+underlined; a bilingual subtitle band (one real sentence pair of A27, drawn as a diagram of
+"subtitles in both languages") -> the key rule: the band's two lines become the third row of the
+real aligned entry (A27, tic-tac-toe i18n/zh/narration/g1.yaml lines 21-30): the English say line in
+its three sentences on the left, the three Chinese sentences on the right, joined one to one by
+GREY lines; "Flipped or turned" glows ORANGE, the ORANGE cue pin jumps to 翻转 and the file's anchor
+line appears; counter "417 sentence pairs · both videos" -> the two columns fold into two outputs,
+"English video" and "Chinese video", fed by one GREY "scene code" card; the real rule (A36,
+docs/LANGUAGES.md) "The English video is never touched"; the English video splits into "English
+render, before" and "after the Chinese edits"; a frame from each becomes a fingerprint (drawn: grey
+squares), the two columns scroll through all 721 frames with a GREEN "=" on every row, and the
+counter becomes the real result (A37) "tic-tac-toe scene 1, English 480p preview: all 721 frames
+match"; dashed YELLOW footnote "a few scenes don't render exactly the same every time" -> the voice
+bake-off (A28): the BLUE agent with S01's struck headphones asks a GREY speech recognizer; the
+ORANGE "Mandarin voice 1 · zh-CN-XiaoxiaoNeural" flows in and comes out as noise -> "Nice",
+epsilon -> "Excellent", Claude -> "Clark" (RED); "another voice" (zh-CN-XiaoyiNeural) flows in ->
+GREEN "17 of 17 terms · 10 of 10 numbers" with the fuzzy-match footnote; the scoreboard (Brian, Ava,
+Xiaoyi, Xiaoxiao), BLUE "chosen", the label becomes "the chosen voice"; dashed YELLOW "chosen by
+speech recognition · no recorded check by ear yet" -> the Chinese tic-tac-toe video at 11:43: the
+real picture (A04, 68d6c23) over a redrawn subtitle band with the OLD cue text (A30, as both QA
+reviewers quoted it), tag "reconstruction · ..."; the English line ("No. ...") stays WHITE; the
+Chinese line is glossed "It's not what a computer can do, not just counting games", RED "meaning
+flipped" stamp; two faded-BLUE reviewers raise RED flags on the cue -> ponder (10 s): the frame
+dims to 40 % except the two cue lines, the card sits above the band, and each line is circled as
+the narration names it.
 
 Waveforms here are drawings of "a voice" (DIAGRAM), not measured audio; the fingerprints are
-drawn squares, not real hashes (only the 721 and the result line are real).
+drawn squares, not real hashes (only the 721 and the result line are real). Both say so on screen.
 
 Continuity for S09 (which opens on the real A04 frame): the reconstructed frame here is the A04
 picture cropped to FRAME_CROP, FRAME_W wide, its left edge at FRAME_X0, its top at FRAME_TOP, with
@@ -33,8 +35,10 @@ the redrawn band (subtitle_band, fill = the frame's own background) directly und
 
 Every number and quote on screen is checked in _check() (runs on import) against the assets.
 
-Helpers defined here (not in common.py): glyphs_of(), collect(), zh_wrap(), sentence_box(),
-mini_video(), fingerprint(), fp_row(), voice_wave(), flag(), recognizer_box(), heard_line().
+Helpers defined here (not in common.py): glyphs_of(), collect() (as in s05-s07, but a VGroup when it
+can be, so FadeTransform works), zh_wrap() (Chinese line breaks after clause marks), en_wrap(),
+sentence_box(), mini_video(), fingerprint(), equals(), fp_row(), voice_wave(), flag(),
+recognizer_box(), heard_line().
 """
 
 import numpy as np
@@ -42,16 +46,18 @@ import yaml
 from manim import *
 
 from explainer import style as S
+from explainer.components import ponder_card
 from explainer.scene import VoiceScene
 from explainer.voice import split_sentences
 
 from common import (AGENT, AUDIO, BUG, CHINESE_REQUEST, EXCERPTS, INK, MEASURED, NARRATION, PANEL, QUOTES,
                     SUB_AGENT_TEXT, TOOL, USER, anchor_pin, asset, box, bug_tag, cant_hear_or_play, caption, dim,
                     emphasize, exhibit, fade_out_all, file_card, gloss, label, measured_badge, mono, open_outline,
-                    ponder_drain, ponder_in, pulse, quote_card, recon_tag, role_icon, source_caption,
+                    ponder_drain, pulse, quote_card, recon_tag, role_icon, source_caption,
                     subtitle_band, video_player, waveform, zh)
 
 SAY = NARRATION["S08"]
+QUESTION = "The English is right.\nThe Chinese says the opposite.\nIs this a translation mistake?"
 
 # ------------------------------------------------------------------ the real material (assets/)
 A27, A28, A30, A36, A37 = EXCERPTS["A27"], EXCERPTS["A28"], EXCERPTS["A30"], EXCERPTS["A36"], EXCERPTS["A37"]
@@ -111,7 +117,7 @@ EN_SIZE, ZH_SIZE = 24, 24
 PLAYER_Y, PLAYER_W, CODE_Y = 0.3, 2.3, 2.2      # beat 2: the scene code and its two outputs
 HEADER_X, HEADER_Y, HEADER_W = 2.45, 1.78, 1.6   # the before / after renders
 RULE_Y = 3.15
-FP_TOP, FP_DY, FP_ROWS = 0.1, 0.56, 4           # fingerprint rows (top row centre, step, rows shown)
+FP_TOP, FP_DY, FP_ROWS = 0.0, 0.56, 4           # fingerprint rows (top row centre, step, rows shown)
 FP_X, FP_W, FP_H = 2.45, 2.6, 0.4
 BADGE_Y, FOOT_Y = -2.3, -3.0
 ROW1_Y, ROW2_Y = 0.65, -1.25         # beat 3: the two voices
@@ -310,7 +316,7 @@ class SecondLanguage(VoiceScene):
                          for e, z in zip(en_box, zh_box)])
         nums = VGroup(*[caption(str(k + 1), 20).next_to(links[k], UP, buff=0.06) for k in range(3)])
         head_en = label("English say line · 3 sentences", 24, TOOL).move_to([EN_X, HEAD_Y, 0])
-        head_zh = label("Chinese · one sentence each", 24, TOOL).move_to([ZH_X, HEAD_Y, 0])
+        head_zh = label("Chinese · one sentence each", 24, TOOL).move_to([ZH_X, HEAD_Y, 0]).align_to(head_en, UP)
         entry_src = source_caption("real aligned entry · tic-tac-toe video, i18n/zh/narration/g1.yaml, lines 21–30")
         assert en_box.get_bottom()[1] > -2.45, en_box.get_bottom()
 
@@ -408,14 +414,14 @@ class SecondLanguage(VoiceScene):
         assert before_l.get_bottom()[1] > FP_TOP + FP_H / 2 + 0.1
 
         rows0 = VGroup(*[fp_row(f).move_to([0, FP_TOP - j * FP_DY, 0]) for j, f in enumerate(range(FP_ROWS))])
-        fp_gloss = gloss("fingerprint:\na short code\nmade from all\nof a frame's\npixels", rows0[0][2], RIGHT,
+        fp_gloss = gloss("fingerprint:\na short code\nmade from all\nof a frame's\npixels (drawn)", rows0[0][2], RIGHT,
                          size=22, length=0.45)
         fp_gloss.text.align_to(rows0[0][2], UP).shift(UP * 0.12)
         assert fp_gloss.get_right()[0] < 6.45
         scroll = ValueTracker(0.0)
-        n_seen = DecimalNumber(FP_ROWS, num_decimal_places=0, font_size=30, color=INK)
-        seen_l = label("frames\ncompared", 22, TOOL, line_spacing=0.9)
-        seen = VGroup(n_seen, seen_l).arrange(DOWN, buff=0.1).move_to([-5.55, FP_TOP - 0.75, 0])
+        n_seen = DecimalNumber(FP_ROWS, num_decimal_places=0, font_size=40, color=INK)
+        seen_l = label("frames compared", 22, TOOL)
+        seen = VGroup(n_seen, seen_l).arrange(DOWN, buff=0.1).move_to([-5.3, FP_TOP - 0.85, 0])
 
         def keep_count(m):
             m.set_value(min(FRAMES, int(np.floor(scroll.get_value())) + FP_ROWS))
@@ -548,7 +554,8 @@ class SecondLanguage(VoiceScene):
         chosen_l = label("chosen", 22, AGENT).next_to(chosen_box, LEFT, buff=0.15)
         verdict_t = label("chosen by speech recognition · no recorded check by ear yet", 24, INK)
         verdict = VGroup(open_outline(verdict_t, buff=0.16), verdict_t).move_to([0.4, -2.85, 0])
-        bake_src = source_caption("real results · Chinese voice bake-off (workflow run record, commit 875166f)")
+        bake_src = source_caption("real results · Chinese voice bake-off (workflow run record, commit 875166f) · "
+                                  "waveforms drawn")
         assert out1.get_top()[1] < board.get_bottom()[1] - 0.12, (out1.get_top(), board.get_bottom())
         assert fuzzy.get_bottom()[1] > verdict.get_top()[1] + 0.12
         assert verdict.get_bottom()[1] > bake_src.get_top()[1] + 0.05
@@ -565,9 +572,10 @@ class SecondLanguage(VoiceScene):
 
             vo.wait_until("With the first")
             self.play(Indicate(v1[0], color=S.WHITE, scale_factor=1.06), run_time=0.6)
-            self.play(w1.animate.stretch_to_fit_width(0.05).move_to(into[0]).set_opacity(0.2), run_time=0.9,
-                      rate_func=rate_functions.ease_in_sine)
-            self.remove(w1)
+            flow = w1.copy()                       # the voice flows in; a faint copy stays by its label
+            self.play(flow.animate(rate_func=rate_functions.ease_in_sine).stretch_to_fit_width(0.05)
+                      .move_to(into[0]).set_opacity(0.2), w1.animate.set_opacity(0.3), run_time=0.9)
+            self.remove(flow)
             self.play(pulse(rec.box, 1.04, run_time=0.4))
             self.play(GrowArrow(out1_a), FadeIn(out1_b, shift=RIGHT * 0.2), FadeIn(heard_cap), run_time=0.6)
             vo.wait_until("the recognizer heard")
@@ -579,9 +587,10 @@ class SecondLanguage(VoiceScene):
             self.play(FadeIn(heard[2], shift=RIGHT * 0.15), run_time=0.5)
 
             vo.wait_until("Another voice")
-            self.play(w2.animate.stretch_to_fit_width(0.05).move_to(into[1]).set_opacity(0.2), run_time=0.8,
-                      rate_func=rate_functions.ease_in_sine)
-            self.remove(w2)
+            flow = w2.copy()
+            self.play(flow.animate(rate_func=rate_functions.ease_in_sine).stretch_to_fit_width(0.05)
+                      .move_to(into[1]).set_opacity(0.2), w2.animate.set_opacity(0.3), run_time=0.8)
+            self.remove(flow)
             self.play(pulse(rec.box, 1.04, run_time=0.4))
             self.play(GrowArrow(out2_a), FadeIn(result, shift=RIGHT * 0.2), run_time=0.6)
             self.play(FadeIn(fuzzy, shift=UP * 0.1), run_time=0.5)
@@ -655,12 +664,19 @@ class SecondLanguage(VoiceScene):
             self.play(Create(zh_line), *[Wiggle(f.cloth, scale_value=1.15, rotation_angle=0.02 * TAU,
                                                  rotate_about_point=f.pole.get_end()) for f in flags], run_time=0.8)
 
-        # ---------------------------------------------------------- ponder
-        shown = [m for m in self.mobjects]
+        # ---------------------------------------------------------- ponder (the band stays in view under the card)
+        keep = set(cue.en.get_family()) | set(cue.zh.get_family()) | {zh_line}
+        shown = [m for m in self.mobjects if not set(m.get_family()) & keep]      # the two cue lines stay bright
+        card = ponder_card(QUESTION, width=8.6)
+        card.move_to([FRAME_X0 + FRAME_W / 2 + 0.5, 0, 0]).align_to(cue.band, DOWN).shift(UP * (cue.band.height + 0.3))
         with self.voiceover(SAY[4]) as vo:
             self.play(*dim(*shown, opacity=0.4), run_time=0.5)
             vo.wait_until("Pause")
-            card = ponder_in(self, "The English is right.\nThe Chinese says the opposite.\nIs this a translation mistake?")
+            self.play(FadeIn(card, scale=0.95), run_time=0.6)        # as ponder_in, placed above the band
+            vo.wait_until("The English line")
+            self.play(Circumscribe(cue.en, color=S.WHITE, buff=0.08, run_time=1.0))
+            vo.wait_until("and the Chinese says")
+            self.play(Circumscribe(cue.zh, color=S.WHITE, buff=0.08, run_time=1.0))
         ponder_drain(self, card, 10)
         fade_out_all(self)
 

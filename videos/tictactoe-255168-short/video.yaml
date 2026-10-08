@@ -15,13 +15,25 @@ grid: {bpm: 100, beat_s: 0.6, bar_s: 2.4, bars: 106, duration_s: 254.4, fps: 60}
 # morph starts on a bar downbeat, every arrival lands on a beat.
 
 captions:
-  file: captions.yaml
-  primary: zh                  # Bilibili master: Chinese line first, small tracked English under it
-  masters:
-    - {id: zh-en, primary: zh, secondary: en, title: "井字棋为什么恰好有 255,168 种对局？（4 分钟版）"}
-    - {id: en-zh, primary: en, secondary: zh, title: "Why are there exactly 255,168 games of tic-tac-toe? (4-minute version)"}
-  # Both masters share one rendered picture: captions and the corner labels are burned in after the
-  # render, and every word label inside the picture is bilingual (zh over tiny tracked en).
+  file: captions.yaml          # per scene, explainer/captions.py format
+  layouts: [zh-first, en-first]   # one master per layout, from the same rendered picture
+masters:
+  zh-first: {for: Bilibili, title: "井字棋为什么恰好有 255,168 种对局？（4 分钟版）"}
+  en-first: {for: YouTube, title: "Why are there exactly 255,168 games of tic-tac-toe? (4-minute version)"}
+# Both masters share one picture: captions are burned in after the render, and every word label
+# inside the picture (section labels and the end line included) is bilingual (zh, then tiny tracked en).
+
+# Section labels, top-left, tiny letter-spaced mono, 50 % grey, fixed in the frame (BeatScene.hud at
+# UL), in our own "§n" format. None over the cold open, the title or the coda. A term appears in a
+# label only after the picture has shown it (§2 says 对局会提前结束, not 幽灵对局, before c09 names them).
+sections:
+  - {bars: [12, 20], text: "§1 · FILL THE BOARD · 填满棋盘"}
+  - {bars: [21, 40], text: "§2 · GAMES STOP EARLY · 对局会提前结束"}
+  - {bars: [41, 69], text: "§3 · PLAY EVERY GAME · 探索每一局"}
+  - {bars: [70, 83], text: "§4 · 255,168, EXPLAINED · 255,168 是怎么来的"}
+  - {bars: [84, 98], text: "§5 · BIGGER GAMES · 更复杂的棋"}
+# End line under the final title (bars 105-106), tiny mono, centred.
+end_card: {bars: [105, 106], zh: "完整版、程序和练习：见视频简介", en: "Full version, program and exercises: see the description"}
 
 look:
   profile: short               # the short style profile (STYLE_PLAN 2.4), not the long videos' look
@@ -56,7 +68,7 @@ music:
     - {at: "10.1", kind: title, note: "title hit on Bm9 (vi): the number is given, not yet explained"}
     - {at: "18.1", kind: hit, note: "9! bloom over an A pedal (unresolved: too many)"}
     - {at: "41.1", kind: cut, note: "the tangle snaps"}
-    - {at: "58.1", kind: resolve, note: "255,168 lands: boom + first tonic since the opening"}
+    - {at: "59.1", kind: resolve, note: "255,168 lands: boom + first tonic since the opening"}
     - {at: "63.1", kind: tape_stop, bars: 1}
     - {at: "64.1", kind: silence, bars: 1, note: "THE TURN: one bar of digital silence"}
     - {at: "65.1", kind: hit, note: "the ghosts return on Bbmaj7(#11), outside the key"}
