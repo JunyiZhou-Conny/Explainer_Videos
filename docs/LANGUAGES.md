@@ -192,9 +192,13 @@ project's `captions.yaml` and drawn into the picture when the video is stitched.
   and 14 English words, the two lines saying the same thing (no line-by-line paraphrase drift: a
   reviewer reads them as a pair). The video's glossary still binds the terms (幽灵对局 = ghost games).
   Numbers are written the way the picture shows them (255,168; 9!), not spelled out.
-- **Editing.** captions.yaml is read again at stitch time, so a wording fix is
+- **Editing.** captions.yaml is read again at stitch time (under the key the scene rendered with:
+  its `captions_key`, file stem or class name), so a wording fix is
   `python -m explainer.build videos/<id> --no-render`; only a caption placed by scene code
-  (`self.caption("id")`) keeps the moment the scene chose.
+  (`self.caption("id")`) keeps the moment the scene chose. A line the render placed that
+  captions.yaml has lost is reported, never dropped silently.
+- **Sizes.** zh-first at 1080p: Chinese glyphs 38 px, English capitals 22 px (the reference's 14 px
+  is too small on a phone); a line wider than 86 % of the frame wraps.
 - **Music** is the same for every layout; for a narrated video each language version gets its own
   score from its own event log (the Chinese timing differs), mixed under its own voice.
 

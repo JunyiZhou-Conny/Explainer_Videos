@@ -204,7 +204,7 @@ Live values (refresh right before the final render; they are the only facts that
 |---|---|---|---|
 | session cost counter | `video.yaml` → `live.cost_usd` (read by `scenes/common.py`; never spoken) | 1507.47 (USD, last `cost-state` record, at `60258b4`) | ASSETS.md A40 |
 | cost label | `video.yaml` → `live.cost_label`, rendered as is (split into two lines at " · ") | "… all four requests …" | if a fifth request arrives before the render, ask the user; the label and S03's last SAY say "all four requests" |
-| commit timeline | `assets/commits.csv`, frozen at `bb3fc1e` (98 commits) | 103 commits at `d4043cd` (101 by the agent, 2 by the user, 32 WIP); narration says "about a hundred, all but two by the agent" | ASSETS.md A11; above about 110 commits, say "over a hundred" |
+| commit timeline | `assets/commits.csv`, frozen at `bb3fc1e` (98 commits) | 103 commits at `d4043cd` (101 by the agent, 2 by the user, 32 WIP); narration says "over a hundred, all but two by the agent" (118 at the scene review) | ASSETS.md A11; above about 110 commits, say "over a hundred" |
 | subtitle tool | S10 card 3 (S10 say line 4 speaks only of round 1) | round 1: 19 of 21 fixed (own report), 11 regressions; round 2 WIP (`7c6fcc0`); round 3 committed as `3aace23` (44 tests; its commit note: "Both adversarial editors judge round 3 a clear net improvement"); round 4 under way | `git log --oneline -- explainer/subtitles.py`; reword card 3's round-3/round-4 line to the latest reviewed round |
 | Chinese privacy final cut | S10 card 3 ("not rendered when this script was written") | only 480p drafts in `output/zh/` (Oct 6 15:08) | `ls -la videos/dwork2006-calibrating-noise/output/zh/` |
 | licensed (Azure) clips | S10 card 2 ("0 when this script was written") | no `.cache/tts/azure/`, no AZURE env vars | `ls .cache/tts` |
@@ -321,7 +321,7 @@ checkpoint"; GREY bands mark the usage-limit stops (A12), with the counter "usag
 least 6"; two of the restarts carry a small PINK tick, "the user: 'Please continue'" (Oct 7 02:12)
 and "the user: 'Try again'" (Oct 7 20:09). Footer: "about 100 commits · 2 by the user".
 [DATA A11, A12]
-SAY: The agent did the rest. It wrote the toolkit that runs the pipeline, and made all but two of about a hundred commits, the project's saved versions. Over four days, work stopped at least six times on usage limits, and each time picked up where it left off.
+SAY: The agent did the rest. It wrote the toolkit that runs the pipeline, and made all but two of over a hundred commits, the project's saved versions. In under a week, work stopped at least six times on usage limits, and each time picked up where it left off.
 
 SHOW: Two speed bars under the ribbon: "privacy video: request 15:28 → final cut 21:29 · about 6
 hours (24 min of video, plus the paper library and the toolkit)" · "tic-tac-toe: request 21:53 →
@@ -581,9 +581,7 @@ SAY: Second, engineering: a licensed Chinese voice, since the free service isn't
 SHOW: Card 3, "subtitles that understand sentences": a cue cut at the wrong place is re-cut by a
 GREY "parser" box that proposes and a GREEN "rules" box that checks (tag "idea · not built yet");
 facts underneath: "rule-based rewrite, first review round: 19 of 21 issues fixed (its own report)
-· reviewers found 11 regressions" · "round 3: judged a clear net improvement by its two reviewers
-(its commit note) · a fourth round was under way when this script was written" · "privacy video,
-Chinese: final cut not rendered when this script was written". [DATA]
+· reviewers found 11 regressions" · "four rounds in all: 49 tests; rule tuning stopped at diminishing returns (its commit note)" · "privacy video, Chinese: final cut rendered with the new subtitles". [DATA]
 SAY: Third, subtitles. Hand-written rules decide where to cut each sentence into subtitle lines. In its first review round, the newest version fixed most of its targets, but made 11 other subtitles worse. A sentence parser could propose the cuts, and the rules could check them.
 
 SHOW: Card 4, "interactivity": the two real playground screenshots (A33 "Laplace Mechanism

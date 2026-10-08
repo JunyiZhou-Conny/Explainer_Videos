@@ -123,6 +123,7 @@ ROWS_Y = (0.68, -0.32, -1.32)
 AXIS_Y, AXIS_X = -2.12, (-4.85, 1.95)
 CODE_X0, MOVIE_X, CODE_X1 = -4.05, -2.45, 1.1
 SLOTS_X, SLOT_W, SLOT_H = 4.6, 1.02, 0.64
+HOP_ARC = 4 * np.arctan(0.55 / ((CODE_X1 - CODE_X0) / 2))   # path_arc whose sagitta is 0.55 (rows are 1.0 apart)
 REV_Y, AGENT_Y = 1.0, -0.88
 ICON_X = -5.55
 
@@ -130,7 +131,7 @@ COL_X = (-4.35, 0.0, 4.35)
 TITLE_Y, ICONS_Y, SUB_Y = 3.1, 2.45, 1.72
 GRID_BOTTOM, COUNT_Y, BREAK_Y = -1.0, -1.38, -1.76
 SQ, SQ_BUFF, SQ_COLS = 0.22, 0.07, 13
-CARD_Y, CARD_X, WALL_X = -2.62, 1.6, 5.85
+CARD_Y, CARD_X, WALL_X = -2.72, 1.6, 5.85
 
 
 # ------------------------------------------------------------------ helpers (this scene only)
@@ -394,7 +395,9 @@ class Machinery(VoiceScene):
         voice_tag.next_to(stamp, UP, buff=0.14).align_to(stamp, RIGHT)
         assert stamp.width < 12.8 and stamp_cap.get_bottom()[1] > -3.55
 
-        with self.voiceover(SAY[1]) as vo:
+        # pad: the voice stamp and its tag come in on "or its voice", 1.5 s before the clip ends;
+        # hold them long enough to read before the next beat clears the stage
+        with self.voiceover(SAY[1], pad=1.3) as vo:
             gone = collect(self, zoom, zoom_cap, content, sent, tr_cap, ok, tool.box, merged, bad, merge_cap)
             self.play(FadeOut(gone), FadeOut(tool.name, shift=UP * 0.2),
                       ReplacementTransform(fix1.box, msg1.box), FadeTransform(fix1.text, msg1.text),
@@ -410,8 +413,14 @@ class Machinery(VoiceScene):
 
             vo.wait_until("so edited scenes")
             self.play(LaggedStart(*[FadeIn(p, shift=DOWN * 0.15) for p in pens], lag_ratio=0.25), run_time=0.4)
-            self.play(*[codes[k].animate(path_arc=-PI / 2).shift(RIGHT * (CODE_X1 - CODE_X0)) for k in (1, 2)],
-                      *[p.animate(path_arc=-PI / 2).shift(RIGHT * (CODE_X1 - CODE_X0)) for p in pens], run_time=0.9)
+            # a low hop (peak ~0.55 above its row): it clears the movie icon but never reaches the row
+            # above, so it can't read as scene 1 (or 2) being edited mid-flight
+            hop = -HOP_ARC
+            for k in (1, 2):
+                self.bring_to_front(codes[k])
+            self.bring_to_front(*pens)
+            self.play(*[codes[k].animate(path_arc=hop).shift(RIGHT * (CODE_X1 - CODE_X0)) for k in (1, 2)],
+                      *[p.animate(path_arc=hop).shift(RIGHT * (CODE_X1 - CODE_X0)) for p in pens], run_time=0.9)
             self.play(FadeOut(collect(self, *pens)), LaggedStart(*[FadeIn(t, scale=0.8) for t in stale], lag_ratio=0.25),
                       run_time=0.55)
             vo.wait_until("quietly stitched")
@@ -434,8 +443,10 @@ class Machinery(VoiceScene):
             self.play(FadeIn(VGroup(movie_row.name, movie_row.date, code_row.name, code_row.date), shift=LEFT * 0.15),
                       FadeIn(pair_cap), run_time=0.6)
             vo.wait_until("the movies were older")
+            # one box per date: a single box round both would sweep across the RED tag
             self.play(Indicate(note.text, color=S.WHITE, scale_factor=1.06),
-                      Circumscribe(VGroup(movie_row.date, code_row.date), color=S.WHITE, buff=0.08), run_time=1.0)
+                      *[Circumscribe(d, color=S.WHITE, buff=0.07) for d in (movie_row.date, code_row.date)],
+                      run_time=1.0)
 
             # the fix
             vo.wait_until("Now a scene")
@@ -448,8 +459,8 @@ class Machinery(VoiceScene):
             self.play(ReplacementTransform(older, fresh), run_time=0.8)
             self.play(Circumscribe(msg2.text, color=S.WHITE, buff=0.08, time_width=0.4), run_time=1.1)
             vo.wait_until("or its voice")
-            self.play(FadeIn(stamp, shift=UP * 0.2), FadeIn(stamp_cap), run_time=0.7)
-            self.play(FadeIn(voice_tag, scale=0.9), run_time=0.45)
+            self.play(LaggedStart(AnimationGroup(FadeIn(stamp, shift=UP * 0.2), FadeIn(stamp_cap)),
+                                  FadeIn(voice_tag, scale=0.9), lag_ratio=0.45), run_time=0.95)
 
         # ---------------------------------------------------------- beat 3: the fixes get checked too
         titles = VGroup(label("reviewers", 28, SUB_AGENT_TEXT), label(f"{A32['groups']} fixers", 28, SUB_AGENT_TEXT),
@@ -474,10 +485,12 @@ class Machinery(VoiceScene):
         c_find = label(f"{FIND['total']} findings:", 26, INK).move_to([COL_X[0], COUNT_Y, 0])
         brk = VGroup(label(f"{FIND['wrong']} wrong", 22, BUG), label("·", 22, TOOL),
                      label(f"{FIND['confusing']} confusing", 22, BUG), label("·", 22, TOOL),
-                     label(f"{FIND['polish']} polish", 22, INK)).arrange(RIGHT, buff=0.12)
+                     label(f"{FIND['polish']} polish", 22, TOOL)).arrange(RIGHT, buff=0.12)   # as S07: polish GREY
         brk.move_to([COL_X[0], BREAK_Y, 0])
         c_fix = label(f"{FIXES} changes", 26, INK).move_to([COL_X[1], COUNT_Y, 0])
         c_cor = label(f"{CORR} corrections", 26, INK).move_to([COL_X[2], COUNT_Y, 0])
+        for c in (c_find, c_cor):                          # one baseline with "75 changes" (digits sit on it)
+            c.shift(UP * (c_fix[0].get_bottom()[1] - c[0].get_bottom()[1]))
         qa_src = source_caption(QA_SRC)
         assert g_find.get_top()[1] < sub.get_bottom()[1] - 0.08 and sub.get_top()[1] < crews[0].get_bottom()[1] - 0.08
         assert crews[0].get_left()[0] > -6.5 and crews[0].get_right()[0] < flow[0].get_end()[0] + 2.0
@@ -496,7 +509,7 @@ class Machinery(VoiceScene):
         card_b.align_to(big_b, UP).match_x(big_b)
         card = VGroup(card_b, head, claim)                  # the card before it is checked (two lines)
         src_sq = g_fix[FIXES - 1]                           # one change, top right of the fixers' squares
-        wall = Line(UP * 0.55, DOWN * 0.55, color=MEASURED, stroke_width=6)
+        wall = Line(UP * 0.48, DOWN * 0.48, color=MEASURED, stroke_width=6)
         wall.move_to([WALL_X, card_b.get_y() - 0.08, 0])
         gate = VGroup(wall, check_mark(0.34).next_to(wall, UP, buff=0.08))
         dx = wall.get_x() - card_b.get_right()[0] - 0.05
@@ -504,6 +517,7 @@ class Machinery(VoiceScene):
         assert big_b.get_left()[0] > brk.get_right()[0] + 0.2
         assert qa_src.get_right()[0] < big_b.get_left()[0] - 0.15 or qa_src.get_top()[1] < big_b.get_bottom()[1] - 0.05
         assert card_b.get_right()[0] + dx < 6.5 and dx > 0.4
+        assert gate.get_top()[1] < c_cor.get_bottom()[1] - 0.15, (gate.get_top(), c_cor.get_bottom())
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(collect(self, *self.mobjects)), run_time=0.6)

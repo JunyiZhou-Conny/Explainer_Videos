@@ -598,7 +598,8 @@ class SecondLanguage(VoiceScene):
             vo.wait_until("and was chosen")
             self.play(FadeIn(board, shift=DOWN * 0.15), run_time=0.6)
             self.play(Create(chosen_box), FadeIn(chosen_l, shift=RIGHT * 0.1),
-                      ReplacementTransform(v2_name, v2_chosen), run_time=0.7)
+                      ReplacementTransform(v2_name, v2_chosen), w2.animate.set_fill(opacity=0.85),   # the chosen voice
+                      run_time=0.7)
             vo.wait_until("There's no record")
             self.play(Create(verdict[0]), FadeIn(verdict_t), run_time=0.8)
             self.play(Circumscribe(ears, color=S.WHITE, buff=0.1, run_time=1.0))
@@ -626,12 +627,15 @@ class SecondLanguage(VoiceScene):
         gl_box = box(gl_body.width + 0.5, gl_body.height + 0.4, TOOL, fill=PANEL, fill_opacity=1)
         gl_body.move_to(gl_box)
         gl_card = VGroup(gl_box, gl_body).move_to([4.1, 1.45, 0])
-        gl_arrow = Arrow(gl_box.get_corner(DL) + RIGHT * 0.45, cue.zh.get_corner(UR) + np.array([-0.2, 0.05, 0]),
-                         buff=0.08, color=TOOL, stroke_width=3, tip_length=0.16, max_tip_length_to_length_ratio=0.15)
+        # the gloss arrow bends down outside the picture and enters the band from the right, so it never
+        # crosses the real frame's game tree; it ends at the end of the Chinese line
+        gl_arrow = ArcBetweenPoints(gl_box.get_corner(DL) + np.array([0.35, -0.06, 0]),
+                                    cue.zh.get_right() + RIGHT * 0.12, angle=-PI / 2, color=TOOL, stroke_width=3)
+        gl_arrow.add_tip(tip_length=0.16, tip_width=0.16)
         stamp = bug_tag("meaning flipped", 28).rotate(8 * DEGREES).move_to(gl_box.get_bottom() + np.array([0.8, -0.1, 0]))
         assert gl_card.get_right()[0] < 6.5 and gl_card.get_left()[0] > frame.get_right()[0] + 0.2
 
-        revs = VGroup(role_icon("sub", 0.9), role_icon("sub", 0.9)).arrange(RIGHT, buff=0.95).move_to([4.25, -1.45, 0])
+        revs = VGroup(role_icon("sub", 0.9), role_icon("sub", 0.9)).arrange(RIGHT, buff=0.95).move_to([4.65, -1.45, 0])
         flags = VGroup(*[flag().next_to(r.person, LEFT, buff=-0.05).align_to(r.person, DOWN).shift(UP * 0.35)
                          for r in revs])
         revs_l = label("both AI reviewers of\nthe Chinese version", 22, SUB_AGENT_TEXT, line_spacing=0.9)
@@ -639,6 +643,11 @@ class SecondLanguage(VoiceScene):
         zh_line = Line(cue.zh.get_corner(DL) + DOWN * 0.06, cue.zh.get_corner(DR) + DOWN * 0.06, color=BUG,
                        stroke_width=4)
         assert revs_l.get_bottom()[1] > -3.25 and stamp.get_bottom()[1] > revs.get_top()[1] + 0.4
+        arc_pts = gl_arrow.get_points()
+        assert all(p[0] > frame.get_right()[0] or p[1] < pic.image.get_bottom()[1] - 0.05 for p in arc_pts)
+        beside_flags = arc_pts[(arc_pts[:, 1] < flags.get_top()[1] + 0.1) & (arc_pts[:, 1] > flags.get_bottom()[1] - 0.1)]
+        assert beside_flags[:, 0].max() < flags.get_left()[0] - 0.45 and revs.get_right()[0] < 6.45, \
+            (beside_flags[:, 0].max(), flags.get_left())
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(collect(self, *self.mobjects)), run_time=0.6)
@@ -654,7 +663,7 @@ class SecondLanguage(VoiceScene):
 
             vo.wait_until("The Chinese subtitle")
             self.play(Circumscribe(cue.zh, color=S.WHITE, buff=0.08, run_time=1.0))
-            self.play(FadeIn(gl_card, shift=LEFT * 0.2), GrowArrow(gl_arrow), run_time=0.8)
+            self.play(FadeIn(gl_card, shift=LEFT * 0.2), Create(gl_arrow), run_time=0.8)
             vo.wait_until("that this is not")
             self.play(FadeIn(stamp, scale=1.6), run_time=0.5)
             self.play(Wiggle(stamp, scale_value=1.08, rotation_angle=0.03 * TAU), run_time=0.7)

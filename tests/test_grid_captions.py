@@ -34,6 +34,9 @@ def test_positions():
     assert g.label(5.4) == "2:1"
     with pytest.raises(ValueError):
         g.time("bar two")
+    with pytest.raises(ValueError, match="bar.beat"):      # video.yaml's 1-based form, refused here
+        g.time("10.1")
+    assert g.time("10") == pytest.approx(24.0) and g.time("2:1.5") == pytest.approx(5.7)
 
 
 def test_snap_and_units():
@@ -42,7 +45,10 @@ def test_snap_and_units():
     assert g.snap(2.4, "bar") == pytest.approx(2.4)          # already on a bar line
     assert g.snap(2.5, "bar", "down") == pytest.approx(2.4)
     assert g.snap(0.31, "beat", "nearest") == pytest.approx(0.6)
-    assert g.unit("eighth") == pytest.approx(0.3) and g.unit("quarter") == pytest.approx(0.15)
+    # note names, a beat being a quarter note
+    assert g.unit("eighth") == pytest.approx(0.3) and g.unit("sixteenth") == pytest.approx(0.15)
+    assert g.unit("quarter") == g.unit("beat") == pytest.approx(0.6) and g.unit("half") == pytest.approx(1.2)
+    assert g.unit("whole") == g.unit("bar") == pytest.approx(2.4)
     assert g.on_grid(9.6, "bar") and not g.on_grid(9.0, "bar")
     assert Grid(120).bar == pytest.approx(2.0)
 

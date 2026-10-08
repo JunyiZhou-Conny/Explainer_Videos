@@ -8,7 +8,7 @@ papers: []                     # not a paper: a counting puzzle and a small prog
 audience: "middle school (about 11-14); no algebra or programming background assumed"
 voice: none                    # music + bilingual captions carry everything (captions.yaml)
 plan: script.md                # bar-by-bar plan: picture, caption and sound designed together
-checks: assets/check_short.py  # every number, board, caption and bar of the plan, re-verified
+checks: assets/check_short.py  # every number, board, caption, bar and music cue of the plan, re-verified
 
 grid: {bpm: 100, beat_s: 0.6, bar_s: 2.4, bars: 106, duration_s: 254.4, fps: 60}
 # Bar n starts at (n-1) x 2.4 s; beat 0 is frame 0. Every shot length is whole bars, every cut and
@@ -21,17 +21,20 @@ masters:
   zh-first: {for: Bilibili, title: "井字棋为什么恰好有 255,168 种对局？（4 分钟版）"}
   en-first: {for: YouTube, title: "Why are there exactly 255,168 games of tic-tac-toe? (4-minute version)"}
 # Both masters share one picture: captions are burned in after the render, and every word label
-# inside the picture (section labels and the end line included) is bilingual (zh, then tiny tracked en).
+# inside the picture (section labels and the end line included) is bilingual: Chinese first, then
+# tracked English (at least 22 px at 1080p on labels that carry content, so the en-first master reads).
 
 # Section labels, top-left, tiny letter-spaced mono, 50 % grey, fixed in the frame (BeatScene.hud at
-# UL), in our own "§n" format. None over the cold open, the title or the coda. A term appears in a
-# label only after the picture has shown it (§2 says 对局会提前结束, not 幽灵对局, before c09 names them).
+# UL), in our own "§n · 中文 · EN" format (not the reference's "FIG. NN"). None over the cold open, the
+# title or the coda. A term appears in a label only after the picture has shown it (§2 says
+# 对局会提前结束, not 幽灵对局, before c09 names them).
 sections:
-  - {bars: [12, 20], text: "§1 · FILL THE BOARD · 填满棋盘"}
-  - {bars: [21, 40], text: "§2 · GAMES STOP EARLY · 对局会提前结束"}
-  - {bars: [41, 69], text: "§3 · PLAY EVERY GAME · 探索每一局"}
-  - {bars: [70, 83], text: "§4 · 255,168, EXPLAINED · 255,168 是怎么来的"}
-  - {bars: [84, 98], text: "§5 · BIGGER GAMES · 更复杂的棋"}
+  - {bars: [12, 20], text: "§1 · 填满棋盘 · FILL THE BOARD"}
+  - {bars: [21, 40], text: "§2 · 对局会提前结束 · GAMES STOP EARLY"}
+  - {bars: [41, 69], text: "§3 · 探索每一局 · PLAY EVERY GAME"}
+  - {bars: [70, 80], text: "§4 · 255,168 是怎么来的 · 255,168, EXPLAINED"}
+  - {bars: [81, 89], text: "§5 · 双方都不失误 · PERFECT PLAY"}
+  - {bars: [90, 98], text: "§6 · 更复杂的棋 · BIGGER GAMES"}
 # End line under the final title (bars 105-106), tiny mono, centred.
 end_card: {bars: [105, 106], zh: "完整版、程序和练习：见视频简介", en: "Full version, program and exercises: see the description"}
 
@@ -41,7 +44,11 @@ look:
   line: "#C8CCCC"              # hairline line art, 1.5-2 px at 1080p
   secondary: "#7D8484"
   grid: "#151515"
-  accents:                     # two families only because tic-tac-toe has two players
+  # The user chose "one glowing accent colour with a meaning". Tic-tac-toe has two players, so the plan
+  # asks for one exception (to confirm with the user, script.md checklist): two families, X cool and O
+  # warm, with O kept one step darker than X so the galaxy never reads as a two-tone target, and hero
+  # numbers glowing only in the colour of what they count (1,440 cyan; 255,168 cool-left / warm-right).
+  accents:
     X: ["#DDFFFF", "#A3EBEF", "#5AA9B4", "#1B3438"]   # cool: core → mid → glow → halo
     O: ["#F6C965", "#CFA463", "#784C2E", "#442100"]   # warm
   draw: "#C8CCCC"              # grey-white, soft glow, no hue
@@ -52,31 +59,71 @@ look:
           tracked: "Montserrat Light", hero_number: "Inter Black", maths: "EB Garamond 12 Italic",
           hud: "Noto Sans Mono"}
   post: {bloom: [6, 28], grain: 5, vignette: "PI/5"}
+  # The galaxy's leaves are additive splats, tone-mapped with headroom: ring 9 with 35 % of its slots lit
+  # (S05, 59.1) must read clearly dimmer and mottled next to the full ring (S06, just before 67.1). Check
+  # both as 1080p stills before building S05-S06 (script.md checklist).
 
 music:
   engine: synth                # our own numpy/scipy synthesis from the render's event log (music_lab PoC)
   bpm: 100
   key: D
-  mode: lydian                 # every chord diatonic to D Lydian, so the square notes never clash
-  palette: {X: bell, O: glass, draw: wood, ghost: reversed_glass, undo: reverse_whoosh, cut: sub_boom,
-            count: tick, pen: soft_pulse}
-  square_pitches: [C#5, D5, E5, G#4, A4, B4, D4, E4, F#4]   # squares 0-8: a game is a melody
+  mode: lydian                 # home key. Outside it on purpose: bVI (B♭maj7♯11) at the turn, the climax
+                               # in E Lydian (93-98). Square notes are D Lydian, so they rub there (wanted).
+  mood: bright
+  palette: glass
+  sounds: {X: bell, O: glass, draw: wood, ghost: reversed_glass, undo: reverse_whoosh, pen: soft_pulse,
+           count: tick, grid: pluck, cut: thump}
+  # cut: the composer's soft sub thump at a scene join, never a boom: the booms are the hit cues below.
+  square_pitches: [C#5, D5, E5, G#4, A4, B4, D4, E4, F#4]
+  # squares 0-8. Read by the scenes, not by the composer: every X / O / ghost mark carries the sound tag
+  # of its square ("X@C#5", "O@G#4", "ghost@D4"), so a game is a melody and game A is the motif. No
+  # `motif` marks (the composer's motif adds a figure of its own on top).
   lufs: -14
   true_peak_dbtp: -1
   density: 3                   # at most about 3 accents per second outside planned swarms
-  cues:                        # structural moments (bar.beat); script.md has every bar's SOUND line
-    - {at: "10.1", kind: title, note: "title hit on Bm9 (vi): the number is given, not yet explained"}
-    - {at: "18.1", kind: hit, note: "9! bloom over an A pedal (unresolved: too many)"}
-    - {at: "41.1", kind: cut, note: "the tangle snaps"}
-    - {at: "59.1", kind: resolve, note: "255,168 lands: boom + first tonic since the opening"}
+  acts:                        # key changes (bar.beat from 1)
+    - {at: "93.1", key: E, mode: lydian}   # the climax lifts a whole tone
+    - {at: "99.1", key: D, mode: lydian}   # home for the coda
+  cues:                        # structure the composer reads (bar.beat from 1); chord: a roman numeral in
+                               # the act's key (vi, Vsus, bVI, I5 ...). `size` (0-1) is for the toolkit's
+                               # pending hit sizes; today every hit is one size and the title a bit bigger.
+    - {at: "9.4+", kind: silence, beats: 0.5, hit: false, note: "the breath before the title (the title cue carries the boom)"}
+    - {at: "10.1", kind: title, chord: vi, size: 1.0, note: "title on Bm9: the number is given, not explained (a deceptive cadence)"}
+    - {at: "18.1", kind: hit, chord: Vsus, size: 0.6, note: "9! = 362,880: the fifths stack blooms over the A pedal (too many)"}
+    - {at: "37.1", kind: hit, chord: Vsus, size: 0.5, note: "1,440 lands"}
+    - {at: "41.1", kind: hit, chord: Vsus, size: 0.6, note: "the tangle snaps; then a thin, low A drone"}
+    - {at: "58.4+", kind: silence, beats: 0.5, hit: false, note: "half a beat of darkness before the landing"}
+    - {at: "59.1", kind: hit, size: 0.9, note: "255,168 lands: the boom"}
+    - {at: "59.1", kind: resolve, note: "... and the first tonic since the opening"}
     - {at: "63.1", kind: tape_stop, bars: 1}
-    - {at: "64.1", kind: silence, bars: 1, note: "THE TURN: one bar of digital silence"}
-    - {at: "65.1", kind: hit, note: "the ghosts return on Bbmaj7(#11), outside the key"}
-    - {at: "77.1", kind: resolve, note: "the ledger stacks to 9!: boom + tonic"}
-    - {at: "87.1", kind: hit, note: "perfect play: an open fifth D-A, no third (a draw)"}
-    - {at: "93.1", kind: hit, note: "climax: the chess strip ends; key lifts to E Lydian"}
-    - {at: "99.1", kind: section, note: "back to D through Asus4"}
-    - {at: "104.1", kind: resolve, note: "rolled Dmaj9, then a tail to silence at 254.4 s"}
+    - {at: "64.1", kind: silence, bars: 1, hit: false, note: "THE TURN: one bar of digital silence (65.1's hit is the only boom)"}
+    - {at: "65.1", kind: hit, chord: bVI, size: 0.85, note: "the ghosts return on B♭maj7♯11, outside the key"}
+    - {at: "67.1", kind: hit, chord: Vsus, size: 0.6, note: "362,880 again: S02's bloom chord returns"}
+    - {at: "77.1", kind: hit, size: 0.8, note: "the ledger stacks to 9!: the boom"}
+    - {at: "77.1", kind: resolve, note: "... and the tonic: the pedal falls from A to D"}
+    - {at: "87.1", kind: section, chord: I5, note: "perfect play: the open fifth D-A, no third (a draw), with the soft thump"}
+    - {at: "93.1", kind: hit, chord: I, size: 0.95, note: "climax: the chess strip ends on Emaj9 (E Lydian)"}
+    - {at: "99.1", kind: section, chord: Vsus, note: "back to D through Asus4"}
+    - {at: "101.1", kind: resolve, note: "the coda: game A's five notes over the tonic"}
+    - {at: "104.1", kind: resolve, note: "the title returns: a rolled Dmaj9, then the tail to silence at 254.4 s"}
+  # The bar-by-bar progression (bar: chord from that bar on, roman in the act's key; "/X" a bass note;
+  # rest = silence). script.md's SOUND lines end with the same chords by name, and check_short.py
+  # compares the two. NOT READ by today's composer, which fills the bars between the cues above with its
+  # own 2-bar cycle: a toolkit request (script.md, "Music build notes").
+  chords: {1: I, 4: II, 6: vi, 7: iii, 8: Vsus, 10: vi,
+           12: Vsus, 19: vi,
+           21: II/D, 23: vi/D, 26: iii, 28: vi, 29: II, 31: iii, 32: Vsus,
+           33: II, 36: iii, 37: Vsus, 38: vi,
+           41: Vsus, 43: II/D, 45: vi/D, 47: II, 49: vi, 50: iii, 51: II, 52: iii, 53: vi, 54: Vsus, 55: vi,
+           56: iii, 57: II, 58: Vsus, 59: I, 61: vi,
+           64: rest, 65: bVI, 67: Vsus, 68: II, 69: Vsus,
+           72: II, 73: iii, 74: II/G#, 75: Vsus, 76: vi, 77: I, 79: vi, 80: II,
+           81: iii, 82: vi, 83: II, 84: iii, 85: vi, 86: Vsus, 87: I5, 88: vi, 90: II, 91: vi, 92: Vsus,
+           93: I, 96: II, 98: I,
+           99: Vsus, 101: I}
+  # Scene joins that continue the picture: no thump, no riser, the chord carries on. NOT READ by today's
+  # composer (every scene start is a cut there): a toolkit request.
+  joins: {"12.1": segue, "62.1": segue, "70.1": segue, "81.1": segue}
   stems: [bed, accents]        # bed = pads, bass, risers; accents = event-locked notes, ticks, hits
   # The long version gets music later from the same pipeline (free time, ducked under the voice).
 
@@ -86,9 +133,9 @@ scenes:                        # BeatScene classes (explainer.short); one scene 
   - {file: scenes/s03_ghosts.py,  cls: GhostGames,    bars: [21, 32],  title: "Games stop early · 对局会提前结束"}
   - {file: scenes/s04_by_hand.py, cls: ByHand,        bars: [33, 40],  title: "Counting by hand · 手算"}
   - {file: scenes/s05_search.py,  cls: EveryGame,     bars: [41, 61],  title: "Play every game · 探索每一局"}
-  - {file: scenes/s06_turn.py,    cls: DeleteCheck,   bars: [62, 69],  title: "Delete one check · 删掉判断输赢"}
-  - {file: scenes/s07_ledger.py,  cls: Ledger,        bars: [70, 83],  title: "255,168, explained · 255,168 是怎么来的"}
-  - {file: scenes/s08_bigger.py,  cls: BiggerGames,   bars: [84, 98],  title: "Perfect play, and chess · 双方都不失误，还有国际象棋"}
+  - {file: scenes/s06_turn.py,    cls: DeleteCheck,   bars: [62, 69],  title: "Delete one check · 删掉“判断输赢”"}
+  - {file: scenes/s07_ledger.py,  cls: Ledger,        bars: [70, 80],  title: "255,168, explained · 255,168 是怎么来的"}
+  - {file: scenes/s08_bigger.py,  cls: BiggerGames,   bars: [81, 98],  title: "Perfect play, and chess · 双方都不失误，还有国际象棋"}
   - {file: scenes/s09_callback.py, cls: SameTree,     bars: [99, 106], title: "One tree · 同一棵树"}
 
 description:

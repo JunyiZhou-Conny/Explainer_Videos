@@ -23,11 +23,12 @@ The stitch burns the captions into the picture (libass, `burn`), in the layout s
     captions: {layout: zh-first}        # zh-first (default) | en-first | zh | en
                                         # layouts: [zh-first, en-first] makes one master per layout
 
-zh-first: Chinese in a Song/Ming serif (Noto Serif CJK SC), glyphs about 39 px tall at 1080p with
+zh-first: Chinese in a Song/Ming serif (Noto Serif CJK SC), glyphs about 38 px tall at 1080p with
 the baseline at 87 % of the frame height; under it the English line in letter-spaced mono capitals
-(Noto Sans Mono, cap height about 17 px, at about 93 %). en-first: English sentence case in Noto
-Serif (cap height about 25 px) on top, the Chinese line (about 27 px) under it, grey. Fades 0.3 s.
-The same cues are written as .zh.srt / .en.srt / .zh-en.srt sidecars.
+(Noto Sans Mono, cap height about 22 px, baseline at about 92.5 %; a line wider than 86 % of the
+frame wraps at balanced word gaps and pushes the Chinese line up). en-first: English sentence case
+in Noto Serif (cap height about 24 px) on top, the Chinese line (about 27 px) under it, grey. Fades
+0.3 s. The same cues are written as .zh.srt / .en.srt / .zh-en.srt sidecars.
 """
 
 from __future__ import annotations
@@ -59,6 +60,7 @@ class Caption:
     beats: float | None = None
     placed: str = ""               # "yaml" (by `at`), "code" (self.caption) or "" (not placed yet)
     fixed: bool = False            # its length was given (beats / dur), not the reading time
+    index: int | None = None       # its place in the scene's captions.yaml list (finds lines without an id)
 
     @property
     def end(self) -> float:
@@ -66,7 +68,7 @@ class Caption:
 
     def as_dict(self) -> dict:
         d = {"zh": self.zh, "en": self.en, "t": round(self.t or 0.0, 4), "dur": round(self.dur or 0.0, 4)}
-        for k in ("id", "at", "beats"):
+        for k in ("id", "at", "beats", "index"):
             if getattr(self, k) is not None:
                 d[k] = getattr(self, k)
         d["placed"] = self.placed
@@ -75,12 +77,14 @@ class Caption:
         return d
 
     @classmethod
-    def from_dict(cls, d: dict, scene: str | None = None) -> "Caption":
+    def from_dict(cls, d: dict, scene: str | None = None, logged: bool = False) -> "Caption":
+        """A caption from captions.yaml, or (`logged`) from an events.json, where every caption has a
+        `dur` and only `fixed: true` says its length was given rather than its reading time."""
+        fixed = bool(d.get("fixed")) if logged else (d.get("beats") is not None or d.get("dur") is not None)
         return cls(zh=str(d.get("zh") or "").strip(), en=" ".join(str(d.get("en") or "").split()),
                    id=None if d.get("id") is None else str(d["id"]), scene=scene,
                    t=d.get("t"), dur=d.get("dur"), at=None if d.get("at") is None else str(d["at"]),
-                   beats=d.get("beats"), placed=d.get("placed", ""),
-                   fixed=bool(d.get("fixed") or d.get("beats") is not None or d.get("dur") is not None))
+                   beats=d.get("beats"), placed=d.get("placed", ""), fixed=fixed, index=d.get("index"))
 
 
 def cjk_count(s: str) -> int:
@@ -120,11 +124,14 @@ def load(path: Path) -> dict[str, list[Caption]]:
     return out
 
 
+def scene_key(table: dict[str, list[Caption]], *keys: str) -> str | None:
+    """The first of `keys` that captions.yaml has (a scene's captions_key, file stem, class name)."""
+    return next((k for k in keys if k and k in table), None)
+
+
 def for_scene(table: dict[str, list[Caption]], *keys: str) -> list[Caption]:
-    for k in keys:
-        if k and k in table:
-            return [replace(c) for c in table[k]]
-    return []
+    k = scene_key(table, *keys)
+    return [replace(c, index=i) for i, c in enumerate(table[k])] if k is not None else []
 
 
 def project_file(project: Path, spec: dict | None = None) -> Path:
@@ -169,10 +176,11 @@ MONO = "Noto Sans Mono"
 SERIF = "Noto Serif"
 
 LAYOUTS: dict[str, tuple[LineStyle, ...]] = {
-    # measured with libass at 1080p: Noto Serif CJK SC at 60 -> 39 px glyphs, bottom 9 px above the anchor;
-    # Noto Sans Mono at 30 -> 17 px capitals, 7 px above; Noto Serif at 46 -> about 25 px capitals
+    # measured with libass at 1080p (pixels above half brightness): Noto Serif CJK SC at 60 -> 38 px glyphs,
+    # bottom 10 px above the anchor; Noto Sans Mono at 42 -> 22 px capitals (the plan's size: the
+    # reference's 14 px is too small on a phone; 30 gave 15 px), 10 px above; Noto Serif at 46 -> 24 px
     "zh-first": (LineStyle("zh", CJK_SERIF, 60, "#E8E8E6", 0.870, 9),
-                 LineStyle("en", MONO, 30, "#9CA3A3", 0.925, 7, upper=True, spacing=4.0, advance=0.6)),
+                 LineStyle("en", MONO, 42, "#9CA3A3", 0.925, 10, upper=True, spacing=5.0, advance=0.6)),
     "en-first": (LineStyle("en", SERIF, 46, "#E8E8E6", 0.872, 12),
                  LineStyle("zh", CJK_SERIF, 42, "#9CA3A3", 0.932, 6)),
     "zh": (LineStyle("zh", CJK_SERIF, 60, "#E8E8E6", 0.900, 9),),

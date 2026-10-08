@@ -1,137 +1,136 @@
-# Caption track of the tic-tac-toe short. There is no voice: these 30 lines and the picture carry
+# Caption track of the tic-tac-toe short. There is no voice: these 29 lines and the picture carry
 # everything. One short sentence per caption, Chinese and English, each a claim, a question, a number
 # or a name (never a description of the picture). The plan they sit in is script.md, which quotes
-# every line verbatim.
+# every line verbatim, with its time.
 #
 # Format: explainer/captions.py (the short-format toolkit). One key per scene file stem, a list of
 # captions each; `at` is the grid position inside that scene, "bar:beat" counted from 0 at the
 # scene's first downbeat (100 BPM: a beat is 0.6 s, a bar 2.4 s); `dur` is seconds on screen. The
 # `# cue` comment is the same moment in the bar.beat numbering of script.md (bars from 1 across the
-# whole short). Captions are timed for reading, not snapped to the beat: each starts half a beat
-# after the picture event it names (c06: on the beat) and stays up 3.0-4.0 s. `kind` (question /
+# whole short; "4.1+" is half a beat after 4.1). Captions are timed for reading, not snapped to the
+# beat: most start half a beat after the picture event they name, a question starts on the beat that
+# raises it, and each stays up 3.0-4.0 s while its evidence is still on screen. `kind` (question /
 # claim / number / name) is for reviewers; the toolkit ignores it.
 #
 # Burned in after rendering, outside the camera, so camera moves never drag them, and one rendered
 # picture serves both masters (video.yaml: captions.layouts = zh-first for Bilibili, en-first for
 # YouTube); every word label inside the picture is bilingual. The zh-first layout upper-cases the en
 # line. 10¹²⁰ and 10⁸⁰ are Unicode superscripts in the en lines (Noto Sans Mono and Noto Serif have
-# them); Noto Serif CJK SC does not, so the zh lines say 10 的 120 次方, the glossary's form.
+# them); Noto Serif CJK SC does not, so the zh lines say 10 的 120 次方, the glossary's form (the strip
+# labels add 1 后面跟着 120 个零, glossary H3).
 #
 # Text rules: the long video's binding glossary (videos/tictactoe-255168/i18n/zh/GLOSSARY.md). X, O
 # and code names stay English; 种 for counting different games, 局 for one game or a tally; 第 N 步;
-# 空格子; 幽灵对局 (in “” where it is named); 9 的阶乘 (the symbol 9! only in on-screen maths); 撤销;
-# 判断输赢; 递归 / 回溯; 平局; 国际象棋; a half-width space between CJK and Latin letters or digits;
-# full-width punctuation; no 。 or ， at the end of a caption (glossary G2), ？ kept; never ！ or !
-# right after a digit.
+# 空格子; 真实的对局; 提前结束; 幽灵对局 (in “” where it is named); 9 的阶乘 (the symbol 9! only in
+# on-screen maths); 撤销; 判断输赢 (in “” after a verb); 整棵树; 平局; 双方都不失误; 国际象棋; a
+# half-width space between CJK and Latin letters or digits; full-width punctuation; no 。 or ， at the
+# end of a caption (glossary G2), ？ kept; never ！ or ! right after a digit.
 #
 # Check after every edit: python3 videos/tictactoe-255168-short/assets/check_short.py
-# (it recomputes every number, replays every board, and checks widths, overlaps, the picture-only
-# share and the glossary rules against script.md and video.yaml).
+# (it recomputes every number, replays every board, and checks widths, rates, overlaps, the
+# picture-only share and the glossary rules against script.md and video.yaml).
 
 s01_open:                     # S01 · cold open and title (starts on bar 1)
-  - {id: c01, at: "3:0.5", dur: 3.5, kind: question,   # cue 4.1
+  - {id: c01, at: "3:0.5", dur: 3.5, kind: question,   # cue 4.1+
      zh: "井字棋有多少种不同的对局？",
      en: "How many different games of tic-tac-toe are there?"}
-  - {id: c02, at: "5:0.5", dur: 3.6, kind: claim,   # cue 6.1
-     zh: "最后的棋盘一样，顺序不同：算两种对局",
-     en: "Same final board, different order: two different games."}
-  - {id: c03, at: "7:0.5", dur: 3.4, kind: claim,   # cue 8.1
-     zh: "翻转或旋转后的对局，也分开算",
-     en: "Flipped or turned games count separately too."}
+  - {id: c02, at: "4:3", dur: 3.4, kind: question,   # cue 5.4
+     zh: "最后的棋盘一样：算一种对局，还是两种？",
+     en: "Same final board: one game or two?"}
+  - {id: c03, at: "6:3.5", dur: 3.6, kind: claim,   # cue 7.4+
+     zh: "顺序不同，或棋盘翻转、旋转：都算不同的对局",
+     en: "A different order, or a flipped or turned board: a different game."}
 
 s02_fill:                     # S02 · Act I: fill the board (starts on bar 12)
-  - {id: c04, at: "0:0.5", dur: 3.6, kind: question,   # cue 12.1
-     zh: "先不管输赢：填满棋盘，有多少种顺序？",
+  - {id: c04, at: "0:0.5", dur: 3.6, kind: question,   # cue 12.1+
+     zh: "先不管输赢，填满棋盘有多少种顺序？",
      en: "Forget winning: in how many orders can the board fill up?"}
-  - {id: c05, at: "6:0.5", dur: 3.6, kind: number,   # cue 18.1
+  - {id: c05, at: "6:0.5", dur: 3.6, kind: number,   # cue 18.1+
      zh: "从 9 一直乘到 1，叫 9 的阶乘：362,880",
-     en: "Multiplying all the way down to 1 is called nine factorial: 362,880."}
+     en: "Multiplying from 9 down to 1 is called nine factorial: 362,880."}
   - {id: c06, at: "7:3", dur: 3.8, kind: question,   # cue 19.4
-     zh: "比 255,168 还多：多出来的对局从哪儿来？",
-     en: "More than 255,168: where do the extra games come from?"}
+     zh: "比 255,168 还多：9 的阶乘多算了什么？",
+     en: "More than 255,168: what did nine factorial count too often?"}
 
 s03_ghosts:                     # S03 · Act II: games stop early (starts on bar 21)
-  - {id: c07, at: "1:1.5", dur: 3.3, kind: claim,   # cue 22.2
-     zh: "真正的对局，有人赢了就结束",
+  - {id: c07, at: "1:1.5", dur: 3.3, kind: claim,   # cue 22.2+
+     zh: "真实的对局，有人赢了就结束",
      en: "A real game ends as soon as someone wins."}
-  - {id: c08, at: "5:0.5", dur: 3.4, kind: number,   # cue 26.1
+  - {id: c08, at: "5:0.5", dur: 3.4, kind: number,   # cue 26.1+
      zh: "9 的阶乘把这一局算了 24 次",
      en: "Nine factorial counted this one game 24 times."}
-  - {id: c09, at: "6:3.5", dur: 3.5, kind: name,   # cue 27.4
+  - {id: c09, at: "6:3.5", dur: 3.5, kind: name,   # cue 27.4+
      zh: "这些编出来的对局，叫“幽灵对局”",
      en: "These made-up games are called ghost games."}
-  - {id: c10, at: "8:3.5", dur: 3.0, kind: claim,   # cue 29.4
-     zh: "一局最早在第 5 步结束",
+  - {id: c10, at: "8:3.5", dur: 3.0, kind: claim,   # cue 29.4+
+     zh: "一局最早也要到第 5 步才结束",
      en: "The earliest a game can end is move 5."}
-  - {id: c11, at: "10:1.5", dur: 3.6, kind: claim,   # cue 31.2
-     zh: "结束得越早，拖着的幽灵对局越多",
+  - {id: c11, at: "10:1.5", dur: 3.6, kind: claim,   # cue 31.2+
+     zh: "结束得越早，身后拖着的幽灵对局就越多",
      en: "The earlier a game ends, the more ghost games it drags along."}
 
 s04_by_hand:                     # S04 · Act II: counting by hand (starts on bar 33)
-  - {id: c12, at: "4:0.5", dur: 3.4, kind: number,   # cue 37.1
-     zh: "X 在第 5 步赢的对局：1,440 种",
+  - {id: c12, at: "4:0.5", dur: 3.0, kind: number,   # cue 37.1+
+     zh: "X 在第 5 步赢下的对局：1,440 种",
      en: "Games that X wins on move 5: 1,440."}
-  - {id: c13, at: "6:1.5", dur: 3.3, kind: claim,   # cue 39.2
+  - {id: c13, at: "6:3", dur: 3.0, kind: claim,   # cue 39.4
      zh: "再往后，手算就成了一团乱麻",
      en: "After that, counting by hand becomes a tangled mess."}
 
 s05_search:                     # S05 · Act III: play every game (starts on bar 41)
-  - {id: c14, at: "0:0.5", dur: 3.6, kind: question,   # cue 41.1
+  - {id: c14, at: "0:0.5", dur: 3.6, kind: question,   # cue 41.1+
      zh: "要是让电脑把每一局都下一遍呢？",
      en: "What if a computer plays every game, one by one?"}
-  - {id: c15, at: "5:0.5", dur: 3.5, kind: claim,   # cue 46.1
+  - {id: c15, at: "5:0.5", dur: 3.5, kind: claim,   # cue 46.1+
      zh: "先试走一步，往下探索，再撤销",
      en: "Try a move, explore what follows, then undo it."}
-  - {id: c16, at: "7:3.5", dur: 3.8, kind: claim,   # cue 48.4
-     zh: "有人赢了，或者棋盘满了：就是下完的一局",
-     en: "Someone won, or the board is full: one finished game."}
-  - {id: c17, at: "9:2.5", dur: 4.0, kind: name,   # cue 50.3
-     zh: "函数自己问自己，叫递归；退回来再试，叫回溯",
-     en: "A function asking itself is recursion; stepping back is backtracking."}
-  - {id: c18, at: "11:2.5", dur: 3.6, kind: claim,   # cue 52.3
-     zh: "按顺序一局接一局地下，一局也不漏",
-     en: "In order, game after game, without missing one."}
-  - {id: c19, at: "18:0.5", dur: 3.4, kind: number,   # cue 59.1
+  - {id: c16, at: "7:3.5", dur: 3.8, kind: claim,   # cue 48.4+
+     zh: "有人赢了，或者棋盘满了，这一局就下完了",
+     en: "Someone won, or the board is full: that game is finished."}
+  - {id: c17, at: "11:2.5", dur: 3.6, kind: claim,   # cue 52.3+
+     zh: "按顺序走遍整棵树，一局也不漏",
+     en: "In order, through the whole tree, without missing a game."}
+  - {id: c18, at: "18:0.5", dur: 3.4, kind: number,   # cue 59.1+
      zh: "每一局只算一次：255,168",
      en: "Every game counted exactly once: 255,168."}
 
 s06_turn:                     # S06 · Act III: the turn (starts on bar 62)
-  - {id: c20, at: "0:1.5", dur: 3.6, kind: claim,   # cue 62.2
-     zh: "删掉“判断输赢”，对局就不会提前停",
-     en: "Delete the winner check, and no game stops early."}
-  - {id: c21, at: "5:2.5", dur: 3.3, kind: number,   # cue 67.3
+  - {id: c19, at: "0:1.5", dur: 3.4, kind: claim,   # cue 62.2+
+     zh: "删掉“判断输赢”，再跑一遍",
+     en: "Delete the winner check, and run it again."}
+  - {id: c20, at: "5:2.5", dur: 3.3, kind: number,   # cue 67.3+
      zh: "362,880：幽灵对局全回来了",
      en: "362,880: the ghost games are back."}
 
 s07_ledger:                     # S07 · Act IV: 255,168, explained (starts on bar 70)
-  - {id: c22, at: "0:0.5", dur: 3.3, kind: question,   # cue 70.1
-     zh: "这些对局，都在第几步结束？",
-     en: "On which move does each game end?"}
-  - {id: c23, at: "7:0.5", dur: 4.0, kind: claim,   # cue 77.1
-     zh: "乘上各自被算的次数，正好又是 9 的阶乘",
-     en: "Multiply each by how often it was counted: nine factorial again."}
-  - {id: c24, at: "10:2.5", dur: 3.5, kind: number,   # cue 80.3
-     zh: "先走的 X，赢了一半多一点的对局",
+  - {id: c21, at: "0:0.5", dur: 3.6, kind: question,   # cue 70.1+
+     zh: "255,168 种对局，怎么变成了 362,880？",
+     en: "How do 255,168 games become 362,880?"}
+  - {id: c22, at: "7:0.5", dur: 4.0, kind: claim,   # cue 77.1+
+     zh: "乘上各自被算的次数，加起来又是 9 的阶乘",
+     en: "Multiply each by how often it was counted, and add: nine factorial again."}
+  - {id: c23, at: "10:0.5", dur: 3.5, kind: number,   # cue 80.1+
+     zh: "先走的 X 赢了一半多一点的对局",
      en: "X, who goes first, wins just over half of all games."}
 
-s08_bigger:                     # S08 · Act IV: perfect play, and chess (starts on bar 84)
-  - {id: c25, at: "0:0.5", dur: 3.4, kind: question,   # cue 84.1
-     zh: "那么，先走的 X 是不是总能赢？",
-     en: "So does going first mean X always wins?"}
-  - {id: c26, at: "3:0.5", dur: 3.8, kind: claim,   # cue 87.1
-     zh: "可要是双方都不失误，每一局都是平局",
-     en: "But with perfect play on both sides, every game ends in a draw."}
-  - {id: c27, at: "5:0.5", dur: 3.2, kind: question,   # cue 89.1
+s08_bigger:                     # S08 · Act IV: perfect play, and chess (starts on bar 81)
+  - {id: c24, at: "1:0.5", dur: 3.4, kind: question,   # cue 82.1+
+     zh: "那先走的 X 只要不失误，就一定能赢吗？",
+     en: "If X goes first and makes no mistakes, can X always win?"}
+  - {id: c25, at: "6:0.5", dur: 3.6, kind: claim,   # cue 87.1+
+     zh: "可要是双方都不失误，结果总是平局",
+     en: "But if neither side makes a mistake, it is always a draw."}
+  - {id: c26, at: "9:0.5", dur: 3.2, kind: question,   # cue 90.1+
      zh: "那国际象棋，有多少种对局？",
      en: "And how many games of chess are there?"}
-  - {id: c28, at: "9:0.5", dur: 3.8, kind: number,   # cue 93.1
-     zh: "国际象棋至少有 10 的 120 次方种对局",
-     en: "Chess has at least 10¹²⁰ possible games."}
-  - {id: c29, at: "11:0.5", dur: 4.0, kind: number,   # cue 95.1
-     zh: "整个可观测宇宙，也才约 10 的 80 次方个原子",
+  - {id: c27, at: "12:0.5", dur: 3.8, kind: number,   # cue 93.1+
+     zh: "国际象棋估计至少有 10 的 120 次方种对局",
+     en: "By Shannon's estimate, chess has at least 10¹²⁰ games."}
+  - {id: c28, at: "14:0.5", dur: 4.0, kind: number,   # cue 95.1+
+     zh: "整个可观测宇宙也只有约 10 的 80 次方个原子",
      en: "The whole observable universe has only about 10⁸⁰ atoms."}
 
 s09_callback:                     # S09 · coda (starts on bar 99)
-  - {id: c30, at: "3:1.5", dur: 4.0, kind: claim,   # cue 102.2
+  - {id: c29, at: "3:1.5", dur: 3.6, kind: claim,   # cue 102.2+
      zh: "255,168 种对局，每一局都是这棵树上的一条路",
-     en: "255,168 games, and each one is a path down the same tree."}
+     en: "255,168 games: each one is a path through this tree."}

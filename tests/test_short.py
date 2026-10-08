@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from manim import DOWN, UL, Circle, Create, FadeIn, LaggedStart, Square, VGroup, tempconfig
+from manim import DOWN, RIGHT, UL, Circle, Create, FadeIn, LaggedStart, Square, VGroup, tempconfig
 
 from explainer import i18n
 from explainer import short as sh
@@ -184,8 +184,9 @@ def test_long_videos_do_not_depend_on_short_modules(tmp_path):
     from explainer.build import toolkit_sources
     (tmp_path / "video.yaml").write_text("id: long\nscenes: []\n")
     names = {p.name for p in toolkit_sources(tmp_path)}
-    assert "scene.py" in names and "events.py" in names
+    assert "scene.py" in names and "events.py" in names and "style.py" in names
     assert not names & {"short.py", "music.py", "finishing.py", "captions.py", "grid.py"}
+    assert not names & {"build.py", "check.py", "preview.py"}         # tooling: no scene imports it
     (tmp_path / "video.yaml").write_text("id: s\nformat: short\nscenes: []\n")
     names = {p.name for p in toolkit_sources(tmp_path)}
     assert {"short.py", "grid.py", "captions.py"} <= names and "music.py" not in names
@@ -204,3 +205,74 @@ def test_pen_write_rides_the_tip():
     assert anim.pen.get_center()[:2] == pytest.approx([3.0, 0.5], abs=0.02)
     anim.finish()
     assert a.get_end()[0] == pytest.approx(3.0) and b.get_end()[1] == pytest.approx(1.0)
+
+
+class CountTags(sh.BeatScene):
+    def construct(self):
+        dots = VGroup(*[Circle(0.2).shift((i - 1.5) * 0.6 * RIGHT) for i in range(4)])
+        dots[0].sound = "X@C#5"
+        dots[1].sound = "X@E5"
+        dots[2].sound = "@G4"                              # the count's instrument, at G4
+        self.count(dots, every="eighth", sound="O")          # dots[3]: no tag -> the count's sound O
+
+
+def test_counted_items_sound_as_tagged_in_a_real_render(project, tmp_path):
+    """BeatScene.count logs each item's own .sound tag, and the composer plays it: instrument and note."""
+    from explainer import music as mu
+    scene, movie = render(CountTags, tmp_path / "media")
+    log = json.loads(movie.with_suffix(".events.json").read_text())
+    count = [e for e in log["events"] if e["type"] == "mark" and e["kind"] == "count"][0]
+    assert count["data"]["sounds"] == ["X@C#5", "X@E5", "@G4", None] and count["data"]["sound"] == "O"
+    st = mu.Settings.from_spec({"tempo": 100, "music": {"key": "D", "mode": "lydian", "palette": "pluck"}})
+    score, *_ = mu.compose(mu.load_timeline([("s", 0.0, movie.with_suffix(".events.json"))]), st, log["duration"])
+    t0 = count["t"]
+    got = [(round(n["t"] - 0.005 - t0, 2), n["inst"], n["m"]) for n in score.notes
+           if n["dur"] == 1.4 and n["inst"] not in ("pad", "bass")]
+    assert [g[:2] for g in got] == [(0.0, "bell"), (0.3, "bell"), (0.6, "pluck"), (0.9, "glass")]
+    assert [g[2] for g in got[:3]] == [73, 76, 67]
+    assert not [f for f in score.fx if f["kind"] == "tick" and t0 - 0.01 < f["t"] < t0 + 1.0]
+
+
+class SharedKey(sh.BeatScene):
+    captions_key = "shared"
+
+    def construct(self):
+        self.play(Create(sh.hairline(Square(1))), beats=2)
+        self.caption("b")
+        self.wait_bars(2)
+
+
+def test_stitch_finds_captions_under_the_scene_captions_key(project, tmp_path):
+    """A scene with captions_key: the stitch reads its lines (placed by `at:` and by code) from that
+    key, as the render did; a line that captions.yaml lost is reported, not silently dropped."""
+    from explainer import finishing as fin
+    (project / "captions.yaml").write_text(
+        "shared:\n  - {id: a, zh: 甲句, en: Line A, at: '2:0'}\n  - {id: b, zh: 乙句, en: Line B}\n",
+        encoding="utf-8")
+    scene, movie = render(SharedKey, tmp_path / "media")
+    log = json.loads(movie.with_suffix(".events.json").read_text())
+    assert log["captions_key"] == "shared" and log["captions_keys"][0] == "shared"
+    entry = {"file": "scenes/s07_other_name.py", "cls": "SharedKey"}
+    spec = {"tempo": 100}
+    track = fin.gather_captions(project, spec, [(entry, movie, 10.0)])
+    assert [(c.id, c.zh, round(c.t, 2)) for c in track.cues] == [("b", "乙句", 11.2), ("a", "甲句", 14.8)]
+    assert not track.warnings
+    (project / "captions.yaml").write_text("shared:\n  - {id: b, zh: 乙句（改）, en: Line B}\n", encoding="utf-8")
+    track = fin.gather_captions(project, spec, [(entry, movie, 10.0)])
+    assert [c.zh for c in track.cues] == ["乙句（改）"]                     # the new wording, no re-render
+    assert any("'a'" in w and "not in captions.yaml" in w for w in track.warnings)
+
+
+def test_counter_comma_sits_like_typeset_text():
+    """The thousands separator is set as Inter sets "255,168": just clear of the digit before it."""
+    from manim import HEAVY, Text
+    c = sh.RollingCounter(255168, digits=6, size=96)
+    c.layout()
+    shown = lambda col: [g for g in col if g.get_fill_opacity() > 0.5][0]
+    sep = c.separators[0][1]
+    before = sep.get_left()[0] - shown(c.columns[2]).get_right()[0]
+    t = Text("255,168", font=sh.FONT_HEAVY, weight=HEAVY, font_size=96)
+    want = t[3].get_left()[0] - t[2].get_right()[0]
+    assert before == pytest.approx(want, abs=0.06)
+    after = shown(c.columns[3]).get_left()[0] - sep.get_right()[0]       # next cell starts right after it
+    assert after < 0.25

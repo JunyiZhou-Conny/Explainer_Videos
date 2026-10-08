@@ -315,10 +315,12 @@ class Reviewers(VoiceScene):
         hand = Arrow([X_AGENT + 0.62, ROW_Y + 0.3, 0], [X_DRAFT - 1.05, ROW_Y + 0.3, 0], buff=0, color=AGENT,
                      stroke_width=3, tip_length=0.16, max_tip_length_to_length_ratio=0.35)
 
-        sheet = exhibit("ttt_s03_sheet_01.png", width=2.0).move_to([X_GOT, 2.2, 0])
+        # 2.6 wide (not 2.0): at 2.0 the 4 x 4 tiles read as a texture, not as a grid of stills
+        sheet = exhibit("ttt_s03_sheet_01.png", width=2.6).move_to([X_GOT, 2.25, 0])
         sheet_l = caption("contact sheets", 22).next_to(sheet, DOWN, buff=0.08)
         subs = chip("subtitles = the sound", TOOL, 24).move_to([X_GOT, 0.78, 0])
         role = chip("a role", SUB_AGENT_TEXT, 24).move_to([X_GOT, 0.02, 0])
+        assert sheet_l.get_bottom()[1] > subs.get_top()[1] + 0.06 and sheet.get_top()[1] < 3.1
         got = VGroup(sheet.frame, sheet_l, subs, role)
         feed = Arrow([got.get_right()[0] + 0.12, ROW_Y, 0], [X_DIR - 0.62, ROW_Y, 0], buff=0, color=TOOL,
                      stroke_width=3, tip_length=0.16, max_tip_length_to_length_ratio=0.35)
@@ -371,10 +373,12 @@ class Reviewers(VoiceScene):
 
             vo.wait_until("and a role")
             self.play(FadeIn(role, target_position=agent.get_center(), scale=0.4), run_time=0.7)
+            # chip -> label as a cross-fade on the move (FadeTransform): a glyph-by-glyph morph shows
+            # half-formed letters, the very glitch the round-1 reviewers flagged (qa_round1.txt line 90)
             vo.wait_until("a director")
-            self.play(TransformFromCopy(role, dir_l, path_arc=-PI / 6), run_time=0.7)
+            self.play(FadeTransform(role.copy(), dir_l, path_arc=-PI / 6), run_time=0.7)
             vo.wait_until("or a simulated")
-            self.play(TransformFromCopy(role, kid_l, path_arc=-PI / 6), run_time=0.8)
+            self.play(FadeTransform(role.copy(), kid_l, path_arc=-PI / 6), run_time=0.8)
             vo.wait_until("sharp but ordinary")
             self.play(FadeIn(kid_l2, shift=UP * 0.1), Create(to_kid), run_time=0.7)
 
@@ -437,24 +441,31 @@ class Reviewers(VoiceScene):
             # clear the loop first (only the reviewers and the kid's note stay), then build the grid:
             # done at once, the squares faded in over the leaving items and the two captions crossed
             self.play(FadeOut(out1), run_time=0.35)
+            # the bubble's outline becomes the square; its words shrink into it (no glyph morph)
+            self.remove(bubble)
+            self.add(*bubble.submobjects)
             self.play(ReplacementTransform(director, r1_dir), ReplacementTransform(kid, r1_kid),
-                      ReplacementTransform(bubble, target), FadeIn(src2), run_time=0.75)
+                      ReplacementTransform(bubble.box, target),
+                      FadeOut(VGroup(bubble.tail, bubble[2]), target_position=target, scale=0.2),  # [2]: seam
+                      FadeOut(bubble.text, target_position=target, scale=0.1), FadeIn(src2), run_time=0.75)
             self.play(FadeIn(r1_head[1]), LaggedStart(*[FadeIn(s, scale=0.4) for s in others], lag_ratio=0.03),
                       FadeIn(leg1, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("including that 12")
             slot = grid1[TWELVE_ITEM]
             hole = slot.copy().set_fill(opacity=0).set_stroke(opacity=0.35)
             self.add(hole)
-            self.play(ReplacementTransform(slot, twelve_b), FadeIn(twelve_t, target_position=slot), run_time=0.8)
-            self.play(FadeIn(twelve_c), emphasize(twelve_b, run_time=1.0, circle=True))
+            # the box travels alone (it crosses the grid and the legend), the words come once it lands
+            self.play(ReplacementTransform(slot, twelve_b), run_time=0.6)
+            self.play(FadeIn(twelve_t, scale=0.9), FadeIn(twelve_c), run_time=0.35)
+            self.play(emphasize(twelve_b, run_time=0.9, circle=True))
 
             vo.wait_until("In round two")
             back = issue_square("confusing").move_to(hole)
-            self.play(ReplacementTransform(twelve_b, back), FadeOut(twelve_t, target_position=hole),
-                      FadeOut(twelve_c), run_time=0.7)
+            self.play(FadeOut(twelve_t, scale=0.9), FadeOut(twelve_c), run_time=0.25)
+            self.play(ReplacementTransform(twelve_b, back), FadeIn(r2_head, shift=DOWN * 0.15), GrowArrow(a_in),
+                      FadeIn(fix, scale=0.8), run_time=0.6)
             self.remove(hole)
             grid1.submobjects[TWELVE_ITEM] = back
-            self.play(FadeIn(r2_head, shift=DOWN * 0.15), GrowArrow(a_in), FadeIn(fix, scale=0.8), run_time=0.6)
             vo.wait_until("a fresh director")
             self.play(Indicate(r2_dir, color=S.WHITE, scale_factor=1.15), run_time=0.6)
             flying = [s.copy() for s in grid1]
@@ -492,6 +503,10 @@ class Reviewers(VoiceScene):
         zoom_line = Line(zoom_cap.get_top() + UP * 0.05, before.tiles[0].count.get_bottom() + DOWN * 0.05,
                          color=TOOL, stroke_width=2)
         ghost_boxes = [before.tiles[0].board.px_box(x - 48, y - 48, x + 48, y + 48) for x, y in OLD_GHOSTS]
+        # source of the exhibit (script.md: every REAL item has one, bottom-left); it leaves when the
+        # code panels take the lower half, where the code captions name the file instead
+        src3 = source_caption("frames of a draft · tic-tac-toe video, scene 3")
+        assert src3.get_top()[1] < zoom_cap.get_bottom()[1] - 0.5
 
         old = dim_code_panel(OLD_LINE, "tic-tac-toe video · scenes/s03_stop.py at 8a922bf", 280)
         old.move_to([0, OLD_CODE_Y, 0]).shift(UP * (OLD_CODE_Y - old.code.get_y()))
@@ -553,7 +568,7 @@ class Reviewers(VoiceScene):
             self.play(ReplacementTransform(r1_dir, b_icon), red.animate.move_to(frozen).scale(0.8),
                       FadeIn(b_word, shift=RIGHT * 0.1), run_time=0.7)
             self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.15) for t in before.tiles], lag_ratio=0.12),
-                      FadeIn(rr), FadeIn(b_side), run_time=0.9)
+                      FadeIn(rr), FadeIn(b_side), FadeIn(src3), run_time=0.9)
 
             vo.wait_until("The scene should shuffle")
             self.play(FadeIn(zoom_cap), Create(zoom_line), run_time=0.3)
@@ -570,9 +585,9 @@ class Reviewers(VoiceScene):
             top = collect(self, *before.tiles, signs)
             head_now = collect(self, b_icon, b_word, frozen, rr)
             self.play(top.animate.scale(SHRINK).move_to([0, TOP_STRIP_Y, 0]), head_now.animate.shift(UP * lift),
-                      ReplacementTransform(b_side, b_side_small), FadeOut(collect(self, zoom_cap, zoom_line)),
-                      run_time=0.9)
-            self.play(FadeIn(old, shift=UP * 0.2), run_time=0.6)
+                      FadeOut(collect(self, zoom_cap, zoom_line, src3, b_side)), run_time=0.9)
+            # the caption re-wraps beside the small strip: out, then in (a cross-fade overlaps the words)
+            self.play(FadeIn(old, shift=UP * 0.2), FadeIn(b_side_small), run_time=0.6)
             self.play(animate_span.animate.set_color(BUG).set_opacity(1), run_time=0.4)
 
             vo.wait_until("every move was prepared")
@@ -670,20 +685,25 @@ class Reviewers(VoiceScene):
             vo.wait_until("Only a reviewer")
             self.play(FadeIn(rider, shift=RIGHT * 0.2), run_time=0.3)
             bar_l.set_opacity(0)                                 # added with the sweep, shown at its end
+            # Dev -> Dan keeps its D and swaps the rest (no half-morphed letters); the names leave
+            # their cards first, so nothing of "Dev" stays behind inside a card
+            self.remove(*name_m[2:])
+            self.add(*name_m[2:])
             sweep = 1.8
             end_x = bar.get_right()[0] - 0.6
             t_hit = [(cards[k].get_x() - bar.get_left()[0]) / bar.width * sweep - 0.15 for k in (2, 3)]
             self.play(GrowFromEdge(bar, LEFT, rate_func=linear),
                       rider.animate(rate_func=linear).move_to([end_x, bar_y, 0]),
-                      Succession(Wait(t_hit[0]), ReplacementTransform(name_m[2], dans[0], run_time=0.3)),
-                      Succession(Wait(t_hit[1]), ReplacementTransform(name_m[3], dans[1], run_time=0.3)),
+                      Succession(Wait(t_hit[0]), TransformMatchingShapes(name_m[2], dans[0], run_time=0.3)),
+                      Succession(Wait(t_hit[1]), TransformMatchingShapes(name_m[3], dans[1], run_time=0.3)),
                       Succession(Wait(t_hit[0]), FadeOut(neq, run_time=0.3)),
                       Succession(Wait(sweep - 0.4), bar_l.animate(run_time=0.4).set_opacity(1)),
                       run_time=sweep)
             self.play(LaggedStart(*[FadeIn(v, shift=UP * 0.15) for v in variants], lag_ratio=0.12),
                       FadeIn(var_l), run_time=0.8)
         self.wait(0.8)
-        self.play(*[ReplacementTransform(v, shared.copy()) for v in variants],
-                  ReplacementTransform(var_l, shared_l), run_time=1.0)
-        self.wait(1.1)
+        self.play(*[ReplacementTransform(v, shared.copy()) for v in variants], FadeOut(var_l, shift=DOWN * 0.1),
+                  run_time=0.8)
+        self.play(FadeIn(shared_l, shift=UP * 0.1), run_time=0.4)
+        self.wait(0.9)
         fade_out_all(self)

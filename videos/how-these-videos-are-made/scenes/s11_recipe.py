@@ -157,10 +157,11 @@ class Recipe(VoiceScene):
                     pop = LaggedStart(*[FadeIn(f, shift=RIGHT * 0.15) for f in files], lag_ratio=0.3)
                 else:
                     pop = FadeIn(glyphs[k], scale=0.6)
-                anims = [pop, Write(lines[k])]
-                if k == 2:                                  # the clock's hand sweeps round once
-                    anims.append(Rotate(clk.minute, -TAU, about_point=clk.face.get_center()))
-                self.play(*anims, run_time=1.3 if k in (0, 3, 4) else 1.0)
+                self.play(pop, Write(lines[k]), run_time=1.3 if k in (0, 3, 4) else 1.0)
+                if k == 2:                                  # then the clock's hand sweeps round once
+                    # (not during the FadeIn: a Rotate started with it copies the hand at opacity 0,
+                    # and the minute hand then stays invisible for the rest of the scene)
+                    self.play(Rotate(clk.minute, -TAU, about_point=clk.face.get_center()), run_time=0.75)
                 if k == 4:
                     vo.wait_until("and check the fixes")
                     self.play(Create(checks[1]), run_time=0.5)
@@ -181,7 +182,7 @@ class Recipe(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             rest = gather(self, card, rule, *lines, *glyphs[1:])
             self.play(FadeOut(rest, scale=0.94), ReplacementTransform(glyphs[0], user.person),
-                      ReplacementTransform(head, goal_head), run_time=1.0)
+                      FadeTransform(head, goal_head, stretch=False), run_time=1.0)   # no half-morphed glyphs
             self.add(user)
             self.play(FadeIn(user_l, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("As the user put it")
@@ -250,8 +251,11 @@ class Recipe(VoiceScene):
             vo.wait_until("If anything sounded")
             self.play(FadeIn(ask, shift=RIGHT * 0.2), run_time=0.7)
             vo.wait_until("say so, with the time")
+            # the words already are WHITE, so the emphasis is the swell; it grows from its left edge
+            # (from the centre, "with" ran into the comma of "say so,")
             self.play(Rotate(ask_clock.minute, -TAU, about_point=ask_clock.face.get_center()),
-                      *([Indicate(when, color=S.WHITE, scale_factor=1.15)] if len(when) else []), run_time=1.1)
+                      *([when.animate(rate_func=there_and_back).scale(1.15, about_edge=LEFT)] if len(when) else []),
+                      run_time=1.1)
             vo.wait_until("That's exactly")
             self.play(GrowArrow(feedback), FadeIn(fb_l, shift=UP * 0.1), run_time=0.8)
             self.play(Indicate(o_box, color=S.WHITE, scale_factor=1.04), run_time=0.8)

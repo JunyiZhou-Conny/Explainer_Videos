@@ -74,7 +74,8 @@ class ColdOpen(BeatScene):             # MovingCameraScene + beat grid + event l
                          for p in ([0, 0, 0], [-1, 1, 0], [1, -1, 0])])
         for m in marks:
             m.sound = "O"                                     # semantic sound: O is glass
-        self.count(marks, every="eighth")                     # one mark (and one note) per eighth note
+        marks[2].sound = "O@C#5"                              # ... and this one is always C#5
+        self.count(marks, every="eighth")                     # one mark (and its own note) per eighth note
 
         dust = self.add_field(ParticleField(drift(800), color=INK_DIM))   # keeps the hold alive
         n = RollingCounter(0, digits=6).to_edge(RIGHT)
@@ -98,15 +99,24 @@ class ColdOpen(BeatScene):             # MovingCameraScene + beat grid + event l
 | `self.play(anim, bars=1)` | wait for the next bar line, then play for 1 bar |
 | `self.play(anim, run_time=0.9)` / `self.play(anim)` | start now (any length, whole frames) |
 | `self.play(anim, beats=1, on="bar")` | start on the next bar, last one beat |
-| `self.on_bar()`, `self.on_beat()`, `self.wait_to("half")` | wait to the next grid point (nothing if on one) |
+| `self.on_bar()`, `self.on_beat()`, `self.wait_to("eighth")` | wait to the next grid point (nothing if on one) |
 | `self.wait_beats(n)`, `self.wait_bars(n)`, `self.wait()` (one beat) | holds; they keep updaters (particles, drifts) running |
 | `self.until("12:2")` | wait until bar 12, beat 2 of this scene (bars and beats from 0) |
-| `self.count(mobs, every="eighth" \| "quarter" \| 0.25)` | reveal one item per step, logged as a count |
+| `self.count(mobs, every="eighth" \| "sixteenth" \| 0.25)` | reveal one item per step (seconds, or a unit), logged as a count |
 | `self.now`, `self.beat`, `self.bar`, `self.grid.label(self.now)` | where you are: `"3:2"` |
 
-Grid points are whole frames (a beat is 36 frames at 60 fps, 9 at 15 fps), so timings do not drift
-across a scene or across the stitched video. A play without `beats`/`bars` starts wherever the last
-one ended, so follow off-grid moves with `self.on_beat()` or a `beats=` play.
+Units are note names, a beat being a quarter note: `"bar"` = `"whole"` (4 beats), `"half"` (2),
+`"beat"` = `"quarter"`, `"eighth"` (0.3 s), `"sixteenth"` (0.15 s), `"triplet"`; or a number of beats.
+Positions in scene code and captions.yaml are `"bar:beat"` counted from 0 (`"2:1.5"`), a bare number
+is whole bars, `"7.2s"` seconds; a dotted `"10.1"` is refused (that is video.yaml's 1-based
+`bar.beat`, see section 5).
+
+Grid points are whole frames at 30 and 60 fps (a beat is 36 frames at 60 fps), so timings do not
+drift across a scene or across the stitched video. At the 15 fps draft (`-q l`) beats and bars are
+whole frames (9 and 36) but an eighth note is 4.5 frames and a sixteenth 2.25: `beats=0.5` plays
+round to whole frames and drift until the next `beats=`/`bars=` play or `on_beat()` re-snaps, so
+check fine timing at `-q m` or `-q h`. A play without `beats`/`bars` starts wherever the last one
+ended, so follow off-grid moves with `self.on_beat()` or a `beats=` play.
 
 **Captions** live in `captions.yaml` (see `explainer/captions.py` for the format):
 
@@ -123,7 +133,11 @@ s01_cold_open:                         # scene file stem (or class name; or the 
 
 `self.caption("games")` shows a line now; `self.caption()` the next line not yet shown;
 `self.caption(zh="…", en="…")` inline text. The text is read again from captions.yaml at stitch
-time, so a wording fix needs no re-render (only a re-stitch: `--no-render`).
+time, so a wording fix needs no re-render (only a re-stitch: `--no-render`): the log records which
+key the scene read (`captions_key`, else the file stem, else the class name) and the stitch reads
+the same one; a line without an `id` is found again by its text, else by its place in the list. A
+line the render placed that captions.yaml no longer has is reported (`WARNING … left out`), and an
+inline line keeps the text it was rendered with.
 
 **Marks and sounds**: the composer reads the event log (section 5), so tell it what a moment means.
 `self.mark(kind, dur=…, **data)` binds to the play that starts at the same moment; `self.play(...,
@@ -133,9 +147,15 @@ times), `particles`, `motif` (name: a recurring figure), `end`. Per object, `mob
 names its sound; `music.sounds` (or a `music.palette` map) in video.yaml maps names to instruments
 (`bell`, `glass`, `pluck`, `wood`, `glass_rev`: a glass note played backwards) or effects (`tick`,
 `blip`, `whoosh_rev` for a RED erase, `shimmer`, `boom`); common other names work too
-(`reversed_glass`, `reverse_whoosh`, `sub_boom`, `soft_pulse`, `marimba` …). The palette's `cut` and
-`count` entries set the sound of scene cuts and of counts. A tag may fix the note: `m.sound = "X@C#5"`
-(so each square of a board has its own pitch and a game is heard as a melody).
+(`reversed_glass`, `reverse_whoosh`, `sub_boom`, `soft_pulse`, `marimba` …). A tag may fix the note:
+`m.sound = "X@C#5"` (so each square of a board has its own pitch and a game is heard as a melody);
+`"@C#5"` is the default instrument at that note.
+
+In a `self.count(...)` each item sounds as its own tag says (instrument and note); items without a
+tag use the count's `sound=`, then video.yaml's `count` entry (`music.sounds` or the palette map),
+then the palette's count instrument (glass for the `glass` palette); unpitched notes climb through
+the chord (`pitch="flat"`: they repeat one). More than 24 unpitched items become ticks. A `count:
+tick` entry makes every untagged count tick. The palette's `cut` entry sets the sound of scene cuts.
 
 **Camera**: `self.play(self.zoom_to(cup, width=1), beats=4, rate_func=rate_functions.ease_in_expo)`
 (zoom-through), `self.zoom_to(scale=3)` (pull out), `self.camera_home()`, `self.drift((0.04, 0),
@@ -180,16 +200,41 @@ zh-first puts the Chinese baseline at 87 % of the height, glyphs about 39 px tal
 English in letter-spaced mono capitals under it; en-first swaps them), composes and masters the
 music, and writes `<id>.mp4` (first layout), `<id>.<layout>.mp4` (the others), `<id>.nomusic.mp4`
 (the same picture, a silent track), `<id>.music.wav`, the `.zh.srt`, `.en.srt` and `.zh-en.srt`
-sidecars, the `.ass` files, `chapters.txt` and a caption `transcript.md`. It prints, and writes to
-`build/stitch_*/<id>.qa.json`, the share of the runtime with no caption (aim ≥ 40 %), how many cuts
-are on bar lines, the music's loudness, true peak and stereo correlation, and the share of visual
-events with a note or effect within 30 ms.
+sidecars, the `.ass` files, `chapters.txt` and a caption `transcript.md`. A short has music unless
+video.yaml says `music: false` (or `--no-music`). The stitch prints, and writes to
+`build/stitch_*/<id>.qa.json`:
+
+| number | what it checks | aim |
+|---|---|---|
+| `picture_only` | share of the runtime with no caption | ≥ 40 % |
+| `cuts_on_bars`, `cuts_rayleigh` | cuts on bar lines; how tightly they sit on the bar grid (R = 1: all on it) | all; R = 1 |
+| `scenes_whole_bars`, `bar_plan` | every scene a whole number of bars; where video.yaml `bars:` planned it | all |
+| `plays_on_beat`, `plays_on_16th`, `plays_rayleigh_beat` | play starts on the beat grid | most on beats |
+| `sync.picture_delay_frames` | measured on the joined picture: frames from each logged play (that starts out of a still picture) to its first visible change; `early` counts changes before the play | ≥ 1 frame (the start frame shows alpha 0), about 0.1 s for a smooth fade; early 0 |
+| `sync.audio_lag_ms`, `sync.frames_match` | measured on the shipped `<id>.mp4`: its sound against `music.wav` (cross-correlation), its frame count against the joined picture | 0 ms; true |
+| `sync.motion_share` | share of seconds in which the picture moves | ≥ 75 % |
+| `lufs`, `true_peak_dbtp`, `lr_correlation` | the master's loudness, peaks, mono safety | −14, ≤ −1, > 0 |
+| `clicks`, `clicks_dry_accents` | discontinuities in the music (1 ms bursts above 7 kHz) away from any planned onset | 0 |
+| `score_coverage` | share of visual events the composer gave a sound (a check of the composer, not of sync) | ≈ 100 % |
+| `dropped_in_silences` | accents left out because a planned silence would have cut them to a blip | — |
+
+Together the measured numbers make the sync end to end: picture events appear where the log says
+(1 frame after the play starts: that frame still shows alpha 0), the score puts each sound at the
+logged time, and the shipped file's sound sits exactly where the score put it.
 
 `finish:` (or `look: {post: ...}`) values: `true`, a strength (`grain: 4`, `bloom: 0.5`, `vignette: 0.6`, the vignette
 angle in radians), or a dict (`bloom: {strength: 0.55, threshold: 0.6, radius: 6, wide: 28}`: blur
 sigmas in px at 1080p; `bloom: [6, 28]` gives the two sigmas; `vignette: "PI/5"` works too). The
 pass costs about 3× real time at 1080p60; grain also makes files larger
-(CRF 18 with grain is about 8 MB per 10 s at 1080p60; `--crf 20` about 5.5 MB).
+(CRF 18 with grain is about 8 MB per 10 s at 1080p60; `--crf 20` about 5.5 MB). The pass writes a
+near-lossless intermediate (CRF 12); every master is encoded from it at the master CRF, also when a
+layout has no captions.
+
+**Caption type** (zh-first, at 1080p): Chinese Noto Serif CJK SC glyphs 38 px tall, baseline at 87 %;
+the English line in Noto Sans Mono capitals 22 px tall (the plan's size; the reference's 14 px is
+too small on a phone), letter-spaced 5 px, baseline at 92.5 %. A line wider than 86 % of the frame
+wraps at balanced word gaps (the Chinese line moves up). The longest English lines of the pilot
+(c05, c17) are one line at 83–84 % of the width.
 
 ## 5. Music
 
@@ -214,7 +259,12 @@ this video”). The same logs and settings always give the same samples.
 | motion (number and size of moving things, camera moves, particles) | the pads' low-pass opens (brightness follows motion, loudness does not) |
 | the beat grid (shorts) | chords change on bar lines (every 2 bars inside a phrase); a soft pulse of ticks and chord tones on the grid when the picture is busy, from the title on |
 
-At most `density` (3) ordinary accents a second; counts and structure always sound. Settings in
+At most `density` (3) ordinary accents a second; counts and structure always sound. Structure that
+is said twice sounds once: cues of one family (`cut`/`section`, `hit`/`title`, `silence`, …) less than
+a beat apart are merged (the scene's time, video.yaml's chord / key / mode; title wins over hit), and
+a silence whose return has a `hit` or `title` leaves the boom to it. An accent that would start in a
+planned silence, or within 0.12 s before one, is left out (the drop-out would cut it to a 30 ms
+blip); every synthesized sound ends with a short fade, so none stops with a click. Settings in
 video.yaml `music:` — `key`, `mode` (lydian, ionian/major, mixolydian, dorian, aeolian/minor,
 phrygian), `mood` (bright / warm / dark: filters, reverb, sparkle, bass and accent levels),
 `palette` (glass / soft / pluck: which instrument plays which role; or a map of sound tags, as
@@ -230,16 +280,26 @@ music:
     - {at: "63.1", kind: tape_stop, bars: 1}
     - {at: "64.1", kind: silence, bars: 1}           # the turn
     - {at: "65.1", kind: hit, chord: bVI}            # outside the key
-    - {at: "93.1", kind: hit, key: E}                # the climax lifts the key
+    - {at: "93.1", kind: hit, key: E, size: 0.9}     # the climax lifts the key; size 0-1: how big a hit
   acts: [{at: s08_bigger, key: E, mode: lydian}]
+  chords: {1: I, 4: II, 6: vi, 21: II/D, 64: rest, 65: bVI}   # optional: the progression, bar by bar
+  joins: {"12.1": segue}                             # a scene join that continues the picture
 ```
+
+`chords:` (optional) writes the harmony bar by bar instead of letting the composer plan it: each
+entry is the chord from that bar (from 1, or a `"bar.beat"` position) on, a roman numeral in the key
+that holds there (`acts` / cue `key:`), `"/D"` a bass note (`II/D`), `rest` no pads or bass; a cue's
+own `chord:` fills in where the map has none. `joins:` marks scene joins that are not cuts (`segue`:
+no thump, no riser, the chord carries on).
 
 Positions in video.yaml count as musicians do, from 1: `"10.1"` is bar 10, beat 1 (bar n starts at
 (n − 1) × 2.4 s), `"12.3+"` the eighth note after bar 12 beat 3, a bare `12` bar 12; `"9:0"` is the
 0-based notation of scenes and captions.yaml, `"123.4s"` seconds, a scene stem that scene's start.
 `chord:` names the chord at a structure point: a scale degree (`vi`, `IV`, `Vsus`), an open fifth
 (`I5`: neither major nor minor) or a borrowed root (`bVI`, `bVII`: a maj7♯11 chord there); `key:` /
-`mode:` on a cue change the key from there. Without a name, the tonic is withheld until a `title` or
+`mode:` on a cue change the key from there. Only these fields are read: a chord or key written in a
+`note:` is a comment to people (`{at: "93.1", kind: hit, key: E}`, `{at: "99.1", kind: section,
+chord: Vsus, key: D}`). Without a name, the tonic is withheld until a `title` or
 `resolve` and prepared by a suspended dominant. Outputs in `build/stitch_*/music/<id>/` (or
 `build/music/<quality>/` from the CLI):
 `score.json` (chords, notes, effects, silences), `cues.json`, `score.mid` (open it in any DAW),
@@ -258,11 +318,15 @@ wrong with the time.
 `python -m explainer.build videos/<id> --music` (or a `music:` block in its video.yaml) adds the
 score to a long video after the usual stitch, in free time (no grid): chords change on cuts and big
 reveals at least 2 s apart, ponder cards become a ticking riser, ordinary accents thin out under
-speech. The music is ducked under the narration (150 ms look-ahead, 120 ms attack, 0.45 s hold,
-600 ms release; the bed 12 dB, the accents 7 dB), sits 6 LU under the voice between sentences and
-at least 15 LU under it while someone speaks (`music.duck: {depth, accents, gap, under}`); the voice
-stays as built (-16 LUFS). Outputs: `<id>.mp4` with the mix, `<id>.nomusic.mp4` (the narration-only
-master, exactly as before), `<id>.music.wav`; parts get the same. Without `--music` or a `music:`
+speech. The music is ducked under the narration: it starts down 150 ms before each stretch of speech
+and is fully down 120 ms later (before the first syllable), stays down until 0.45 s after the speech
+ends (so it does not pump between words), then comes back over 600 ms (the bed 12 dB, the accents
+7 dB; deeper if needed so that it sits at least 15 LU under the speech, and 6 LU under the voice
+between sentences: `music.duck: {depth, accents, gap, under}`). The voice stays as built (-16 LUFS)
+and is mixed from the loudness-normalized narration before its AAC encode, so it is encoded only
+once. Outputs: `<id>.mp4` with the mix, `<id>.nomusic.mp4` (the narration-only master, exactly as
+before), `<id>.music.wav`; parts get the same, and with `--burn` the bilingual `<id>.<lang>-en.mp4`
+is burned from the music version. Without `--music` or a `music:`
 block nothing changes. The event logs come from the scene renders, so scenes rendered before the
 logger existed need one re-render (`--only <scene>`); the picture and narration of a re-render are
 identical. A translated version (`--lang zh`) has its own logs and so its own timing.

@@ -32,12 +32,14 @@ Language versions (videos/<id>/i18n/<lang>/narration.yaml, see explainer/i18n.py
 
 Music (explainer.music, composed from the scenes' event logs): `--music` (or a `music:` block in
 video.yaml) mixes the score under the narration: <id>.mp4 with music, <id>.nomusic.mp4 as before,
-<id>.music.wav. Without either, nothing changes.
+<id>.music.wav (with --burn, the bilingual <id>.<lang>-en.mp4 is burned from the music version).
+Without either, nothing changes.
 
 A short (video.yaml `format: short`, docs/SHORTS.md) is stitched by stitch_short: finishing pass
 (`finish:`), bilingual captions from captions.yaml drawn into the picture (one master per
 `captions.layouts`, or --layout), music at -14 LUFS; <id>.mp4, <id>.<layout>.mp4, <id>.nomusic.mp4,
 <id>.music.wav, <id>.zh.srt / .en.srt / .zh-en.srt / .<layout>.ass, chapters.txt, transcript.md.
+A short has music unless video.yaml says `music: false` (or --no-music).
 """
 
 from __future__ import annotations
@@ -120,9 +122,12 @@ def voice_stamp(project: Path, quality: str, scene: dict, lang: str = "en") -> P
     return media_dir(project, quality, scene, lang) / "voice.json"
 
 
-# toolkit modules that run only after rendering (music, the finishing pass), and modules that only
-# short-format scenes import: they never change a narrated video's scene renders
+# toolkit modules that run only after rendering (music, the finishing pass), command-line tooling that
+# no scene imports (the build itself, the linter, contact sheets), and modules that only short-format
+# scenes import: none of them changes a narrated video's scene renders. (A change to the render
+# command in build.py itself therefore needs --only or a deleted render to take effect.)
 AFTER_RENDER = {"music.py", "finishing.py"}
+TOOLING = {"build.py", "check.py", "preview.py"}
 SHORT_ONLY = {"short.py", "grid.py", "captions.py"}
 
 
@@ -136,7 +141,7 @@ def toolkit_sources(project: Path) -> list[Path]:
         short = is_short(load_project(project))
     except Exception:
         short = False
-    skip = AFTER_RENDER | (set() if short else SHORT_ONLY)
+    skip = AFTER_RENDER | TOOLING | (set() if short else SHORT_ONLY)
     return [p for p in Path(__file__).parent.glob("*.py") if p.name not in skip]
 
 
@@ -388,6 +393,8 @@ def main(argv=None):
     suffix = "" if args.quality == "h" else "_" + QUALITY_DIRS[args.quality]
     from .music import music_enabled
     with_music = not args.no_music and (args.music or music_enabled(spec))
+    if is_short(spec) and with_music and spec.get("music") is None and not args.music:
+        print("  music: on (a short has music; video.yaml `music: false` or --no-music leaves it out)")
     if is_short(spec):
         layouts = args.layout.split(",") if args.layout else None
         stitch_short(normalized, out_dir / f"{spec['id']}{suffix}", spec.get("title", spec["id"]), build,
@@ -400,10 +407,11 @@ def main(argv=None):
         meta = lang_meta(lang, project)
     title = meta.get("title") or spec.get("title", spec["id"])
     ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
-               burn=(not args.no_burn) if lang != "en" else args.burn, subs_only=args.subs_only)
+               burn=(not args.no_burn) if lang != "en" else args.burn, subs_only=args.subs_only,
+               music=with_music and not args.subs_only)
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
            transcript_file=out_dir / "transcript.md", ctx=ctx)
-    if with_music and not args.subs_only:
+    if ctx["music"]:
         add_music(normalized, out_dir / f"{spec['id']}{suffix}", build, ctx)
     for part in spec.get("parts") or []:
         keep = set(part["scenes"])
@@ -411,7 +419,7 @@ def main(argv=None):
         ptitle = ((meta.get("parts") or {}).get(part["id"])) or part.get("title", part["id"])
         stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", ptitle, build,
                chapters_file=out_dir / f"chapters_{part['id']}.txt", ctx=ctx)
-        if with_music and not args.subs_only:
+        if ctx["music"]:
             add_music(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", build, ctx)
 
 
@@ -501,6 +509,12 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
                         "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
                         "-movflags", "+faststart", str(final)], check=True)
+        if ctx.get("music"):                   # the same narration before AAC: the music is mixed from it,
+            voice_wav = build / f"voice_{stem.name}.wav"                     # so the voice is encoded once
+            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-vn", "-af",
+                            "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-ac", "2",
+                            "-c:a", "pcm_f32le", str(voice_wav)], check=True)
+            ctx.setdefault("voice_wavs", {})[str(stem)] = voice_wav
         joined.unlink(missing_ok=True)
     made = []
     if lang == "en":
@@ -517,7 +531,10 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
             subs.write_ass(ass, tr_["zh-en"], title=title)
             made += [f".{code}.srt", f".{code}-en.srt/.ass"]
             if ctx.get("burn") and not subs_only:
-                subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"))
+                if ctx.get("music"):           # burned after the music is mixed in (add_music)
+                    ctx.setdefault("pending_burns", []).append((final, ass, Path(f"{stem}.{code}-en.mp4")))
+                else:
+                    subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"))
                 made.append(f".{code}-en.mp4")
     else:
         tr_ = subs.tracks(own_pairs, timing="tr")
@@ -577,10 +594,16 @@ def add_music(items, stem: Path, build: Path, ctx: dict) -> None:
     work = build / "music" / stem.name
     work.mkdir(parents=True, exist_ok=True)
     subprocess.run(["cp", str(final), str(nomusic)], check=True)
-    voice = fin.extract_audio(nomusic, work / "voice.wav")
+    voice = (ctx.get("voice_wavs") or {}).get(str(stem))      # the narration as stitch() wrote it, before AAC
+    if voice is None or not Path(voice).exists():
+        voice = fin.extract_audio(nomusic, work / "voice.wav")   # (fallback: decode the AAC master)
     res = fin.compose_music(ctx["project"], ctx["spec"], scenes, total, work, voice_wav=voice)
     fin.mux(nomusic, res["mix"], final)
     subprocess.run(["cp", str(res["music"]), f"{stem}.music.wav"], check=True)
+    pending = [b for b in ctx.get("pending_burns") or [] if b[0] == final]
+    for src, ass, dst in pending:                      # bilingual masters, now with the music
+        subs.burn(src, ass, dst)
+        ctx["pending_burns"].remove((src, ass, dst))
     r = res["report"]
     print(f"Music: {final.name} (+ {nomusic.name}, {stem.name}.music.wav): voice {r.get('voice_lufs')} LUFS, "
           f"music {r.get('music_under_speech_lufs')} LUFS under speech / {r.get('music_in_gaps_lufs')} in gaps, "
@@ -657,19 +680,27 @@ def stitch_short(items, stem: Path, title: str, build: Path, ctx: dict) -> None:
     made = []
     for i, lay in enumerate(layouts):
         dst = stem.with_suffix(".mp4") if i == 0 else Path(f"{stem}.{lay}.mp4")
-        fin.mux(picture, music_wav, dst, ass=ass_files[lay] if track.cues else None, crf=crf, tune=tune)
+        fin.mux(picture, music_wav, dst, ass=ass_files[lay] if track.cues else None, crf=crf, tune=tune,
+                encode=picture != joined)
         made.append(dst.name)
     fin.silent_copy(stem.with_suffix(".mp4"), Path(f"{stem}.nomusic.mp4"))
     made.append(f"{stem.name}.nomusic.mp4")
     g = None
+    logs = []
     for s, movie, _ in items:
         ev = movie.with_suffix(".events.json")
-        if ev.exists():
-            gg = json.loads(ev.read_text()).get("grid")
-            if gg:
-                g = Grid(float(gg["bpm"]), int(gg.get("beats_per_bar", 4)))
-                break
-    qa = fin.short_qa(track, offsets, total, g)
+        log = json.loads(ev.read_text()) if ev.exists() else {}
+        logs.append(log)
+        gg = log.get("grid")
+        if gg and g is None:
+            g = Grid(float(gg["bpm"]), int(gg.get("beats_per_bar", 4)))
+    qa = fin.short_qa(track, offsets, total, g, logs if all(logs) else None)
+    plays = [o + float(e["t"]) for lg, o in zip(logs, offsets) for e in lg.get("events", [])
+             if e.get("type") == "play" and float(e.get("dur") or 0) > 0]
+    try:                                                # sync measured on the shipped file and the joined picture
+        qa["sync"] = fin.measure_sync(stem.with_suffix(".mp4"), music_wav, joined, plays, cuts=offsets[1:])
+    except Exception as e:                              # (QA must never fail a build)
+        qa["sync"] = {"error": str(e)}
     if g is not None:                                   # video.yaml scenes may say where they sit: bars: [a, b]
         for (s, _, _), o, e in zip(items, offsets, offsets[1:] + [total]):
             if isinstance(s.get("bars"), (list, tuple)) and len(s["bars"]) == 2:
@@ -680,13 +711,30 @@ def stitch_short(items, stem: Path, title: str, build: Path, ctx: dict) -> None:
                            f"{o:.2f}-{e:.2f} s ({(e - o) / g.bar:.2f} bars)")
                     qa.setdefault("bar_plan", []).append(msg)
                     print("  WARNING", msg)
-    qa.update({k: report[k] for k in ("lufs", "true_peak_dbtp", "lr_correlation", "sync_30ms") if k in report})
+    qa.update({k: report[k] for k in ("lufs", "true_peak_dbtp", "lr_correlation", "score_coverage", "clicks",
+                                      "clicks_dry_accents", "click_times", "dropped_in_silences") if k in report})
     (build / f"{stem.name}.qa.json").write_text(json.dumps(qa, indent=1))
+    sy = qa.get("sync") or {}
+    pdl = sy.get("picture_delay_frames") or {}
     print(f"Done: {', '.join(made)} ({fmt_chapter(total)}; {len(track.cues)} captions, picture only "
-          f"{qa['picture_only']:.0%}, cuts on bars {qa.get('cuts_on_bars', '-')}"
-          + (f"; music {qa.get('lufs')} LUFS, peak {qa.get('true_peak_dbtp')} dBTP, sync {qa.get('sync_30ms', 0):.0%}"
-             if music_wav else "") + ") + .zh.srt, .en.srt, .zh-en.srt, " + ", ".join(f".{k}.ass" for k in ass_files)
+          f"{qa['picture_only']:.0%}, cuts on bars {qa.get('cuts_on_bars', '-')}, scenes in whole bars "
+          f"{qa.get('scenes_whole_bars', '-')}, plays on the beat {qa.get('plays_on_beat', 0):.0%}"
+          + (f", motion {sy['motion_share']:.0%} of seconds" if sy.get("motion_share") is not None else "")
+          + (f"; picture follows the log by {pdl['median']:g} frame(s) ({pdl['within_4']} plays within 4)"
+             if pdl else "")
+          + (f"; music {qa.get('lufs')} LUFS, peak {qa.get('true_peak_dbtp')} dBTP, sound lag "
+             f"{sy.get('audio_lag_ms')} ms, {qa.get('clicks', 0)} clicks, {qa.get('score_coverage', 0):.0%} of "
+             f"visual events with a sound" if music_wav else "")
+          + ") + .zh.srt, .en.srt, .zh-en.srt, " + ", ".join(f".{k}.ass" for k in ass_files)
           + (", .music.wav" if music_wav else ""))
+    for k, msg in (("audio_lag_ms", "the sound is {v} ms off the score"),):
+        v = sy.get(k)
+        if v is not None and abs(v) > 2:
+            print("  WARNING", msg.format(v=v))
+    if sy.get("frames_match") is False:
+        print("  WARNING the master has a different number of frames from the joined picture")
+    if qa.get("clicks"):
+        print(f"  WARNING {qa['clicks']} click(s) in the music at {qa.get('click_times')} s")
 
 
 if __name__ == "__main__":

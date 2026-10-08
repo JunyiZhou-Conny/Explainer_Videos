@@ -254,9 +254,13 @@ def flag_chip(flag: str) -> VGroup:
     """'OUT · off screen' as a GREY chip: the flag word in the code font, the meaning in house text."""
     key, meaning = flag.split(" · ", 1)
     body = VGroup(mono(key, 22, INK), label("· " + meaning, 24, INK)).arrange(RIGHT, buff=0.12)
-    body[0].align_to(body[1], DOWN).shift(UP * 0.03)
+    # one baseline for the code word and the words (the first letter after "·" sits on it; a
+    # descender such as the p of "points" must not lift or drop the line), the same in every chip
+    body[0].align_to(body[1][1], DOWN)
     b = box(body.width + 0.5, 0.56, TOOL, fill_opacity=0.12, radius=0.2)
+    ref = label("Hgy", 24)
     body.move_to(b)
+    body.shift(UP * (b.get_center()[1] + ref[0].get_bottom()[1] - ref.get_center()[1] - body[1][1].get_bottom()[1]))
     g = VGroup(b, body)
     g.key = key
     return g
@@ -300,7 +304,7 @@ class Watching(VoiceScene):
         agent2 = role_icon("agent", 1.1).move_to([-5.65, -0.3, 0])      # new icons, not scaled: the AI
         agent3 = role_icon("agent", 1.0).move_to(AGENT_SPOT)            # badge's text stays at 20 pt
         player = video_player(1.75, progress=0.0).move_to(PLAYER_SPOT)
-        draft_l = caption("a quick draft", 22).next_to(player, DOWN, buff=0.12)
+        draft_l = label("a quick draft", 24, TOOL).next_to(player, DOWN, buff=0.12)   # as "pictures"
         sheet = exhibit(SHEET, width=SHEET_W).move_to(SHEET_C)
         targets = [sheet.px_box(*tile_box(k)) for k in range(16)]
         slots = VGroup(*[Rectangle(width=r.width, height=r.height, stroke_color=TOOL, stroke_width=2)
@@ -350,9 +354,10 @@ class Watching(VoiceScene):
                             color=TOOL, stroke_width=3, tip_length=0.18, max_tip_length_to_length_ratio=0.3)
             self.play(FadeTransform(pl_g, player), Transform(arrow_a, arrow_p), FadeIn(draft_l, shift=UP * 0.1),
                       run_time=0.8)          # the draft (time) still points at the pictures
-            self.play(player.done.animate.put_start_and_end_on(player.bar.get_start(), player.at(1.0)),
-                      player.knob.animate.move_to(player.at(1.0)), run_time=1.0, rate_func=linear)
-            self.play(FadeIn(stack), run_time=0.3)
+            # the draft is on the player's screen while it renders (not a blank screen)
+            self.play(player.done.animate(rate_func=linear).put_start_and_end_on(player.bar.get_start(), player.at(1.0)),
+                      player.knob.animate(rate_func=linear).move_to(player.at(1.0)),
+                      FadeIn(stack, rate_func=lambda t: smooth(min(1.0, 3 * t))), run_time=1.0)
 
             vo.wait_until("and tiles a still")
             self.play(FadeOut(VGroup(hp_g, arrow_b, text_chip, pics_l, arrow_a)),
@@ -522,6 +527,8 @@ class Watching(VoiceScene):
             self.play(FadeIn(rows[1]), FadeIn(rows[2], shift=UP * 0.1), FadeIn(src3), run_time=0.6)
             wait_for(self, vo, "without drawing", -0.5)
             self.play(FadeIn(rows[3], scale=1.3), run_time=0.4)
+            # the run is clean: say so before the flags come in, so they read as a legend, not findings
+            self.play(GrowArrow(ok_arrow), FadeIn(ok_gloss, shift=LEFT * 0.1), run_time=0.5)
             wait_for(self, vo, "and flags anything", -0.3)      # on "flags"
             self.play(LaggedStart(*[Create(p[0]) for p in pictos], lag_ratio=0.25), run_time=0.8)
             wait_for(self, vo, "off screen", -0.7)
@@ -531,7 +538,7 @@ class Watching(VoiceScene):
             wait_for(self, vo, "or objects left behind", -0.5)
             self.play(FadeIn(flags[2], shift=UP * 0.15), FadeIn(VGroup(*pictos[2][1:]), scale=0.5),
                       emphasize(left_span, run_time=0.8), run_time=0.8)
-            self.play(GrowArrow(ok_arrow), FadeIn(ok_gloss, shift=LEFT * 0.1), Indicate(ok, color=S.WHITE), run_time=0.6)
+            self.play(Indicate(ok, color=S.WHITE), Indicate(ok_gloss, color=S.WHITE, scale_factor=1.05), run_time=0.6)
 
             wait_for(self, vo, "And the tic-tac-toe scenes", -0.25)
             view = collect(self, *lint_view)

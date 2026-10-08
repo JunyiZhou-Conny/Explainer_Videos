@@ -13,8 +13,8 @@ note out of digest.md quotes the digest's erratum -> script.md opens into the re
 script (A15): its colour line first, then the S03 block, the show line with a GREY bar "the
 picture", the say line with an ORANGE bar "spoken word for word", an arrow to the real line of
 code that reads it (A16, `SAY = NARRATION["S03"]`, the "S03" lit in both), then the convention
-line turns ORANGE and "9!" becomes "nine factorial" -> the page folds back into script.md; two
-faded-BLUE reviewers stop the chain there, two GREY clocks (a tick for a sentence, many turns for
+line turns ORANGE and "9!" becomes "nine factorial" -> the page folds back into script.md; four
+faded-BLUE reviewers (the real review run had 4) stop the chain there, two GREY clocks (a tick for a sentence, many turns for
 a re-render) -> the false start on a UTC time lane (A43): the review lane runs from 15:47; at
 16:07 the pen writes the guide's real heading (A13, docs/WORKFLOW.md at 41eca34); at 16:12-16:13
 six faded-BLUE builders start while the review is still running; at 16:24 all six turn RED and
@@ -40,7 +40,7 @@ from explainer.scene import VoiceScene
 from common import (AGENT, AUDIO, BUG, CAPTION, EXCERPTS, INK, MEASURED, NARRATION, PANEL, SUB_AGENT, SUB_AGENT_TEXT,
                     TOOL, asset_text, box, bug_tag, caption, clock, code_block, code_span, dim, emphasize,
                     exhibit, fade_out_all, file_icon, gather, label, mono, pause_icon, pen, person_icon, pulse,
-                    recon_tag, role_icon, source_caption, strike, time_axis, undim)
+                    recon_tag, role_icon, source_caption, strike, sub_agent_cluster, time_axis, undim)
 
 SAY = NARRATION["S04"]
 
@@ -79,6 +79,7 @@ GUIDE_AT = f"{DAY} {A43['guide_committed']}"
 STARTS = [f"{DAY} {t}" for t in A43["builders"]["started"]]
 KILLED = f"{DAY} {A43['builders']['killed']}"
 LANE_T0, LANE_T1 = f"{DAY} 15:40", f"{DAY} 16:35"
+REVIEWERS = 4    # the script review run (workflow review-dp-script, started 15:47:32): 4 reviewers
 
 
 def _t(s: str) -> dt.datetime:
@@ -460,7 +461,10 @@ class ScriptIsCode(VoiceScene):
         front, back = flip_faces()
         VGroup(front, back).move_to([-2.85, 0.3, 0])
         red_line = VGroup(mono(WRONG_ID, 22, BUG), label("· DCAN is most likely", 22, BUG),
-                          mono(LIKELY_ID, 22, BUG)).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
+                          mono(LIKELY_ID, 22, BUG)).arrange(RIGHT, buff=0.12)
+        # one baseline: the capital D sits where the digits sit ("likely" has a descender, so
+        # aligning bottom edges lifted the words above the ids)
+        red_line[1].shift(UP * (red_line[0].get_bottom()[1] - red_line[1][1].get_bottom()[1]))
         red_line.move_to([0, -0.72, 0]).align_to([-6.45, 0, 0], LEFT)
         grid = pdf_grid(cols=9, h=0.36).move_to([0, -2.12, 0]).align_to([-6.3, 0, 0], LEFT)
         tally = bug_tag(A41["tally"].replace(": ", ":\n", 1), size=26).next_to(grid, RIGHT, buff=0.4)
@@ -548,13 +552,13 @@ class ScriptIsCode(VoiceScene):
             rest.set_opacity(0.3)
             self.play(FadeIn(panel.rows), FadeIn(src2), run_time=0.45)
             self.play(Circumscribe(colour, color=S.WHITE, buff=0.08, run_time=0.7))
-            vo.wait_until("a show line")
-            self.play(colour.animate.set_opacity(0.3), VGroup(s03, show, say).animate.set_opacity(1),
+            vo.wait_until("a show line")                     # each line lights as it is named
+            self.play(colour.animate.set_opacity(0.3), VGroup(s03, show).animate.set_opacity(1),
                       Create(show_bar), run_time=0.5)
             vo.wait_until("the picture")
             self.play(FadeIn(show_l, shift=LEFT * 0.15), run_time=0.45)
             vo.wait_until("with a say line")
-            self.play(Create(say_bar), run_time=0.35)
+            self.play(say.animate.set_opacity(1), Create(say_bar), run_time=0.35)
             self.play(FadeIn(say_l, shift=LEFT * 0.15), run_time=0.45)
             vo.wait_until("the exact words")
             self.play(say.animate.set_color(AUDIO), run_time=0.8)
@@ -577,7 +581,9 @@ class ScriptIsCode(VoiceScene):
         # ---------------------------------------------------------- review the script before any animation
         new_icon = doc_icon("script").move_to([ROW_X[3], ROW_Y1, 0])
         new_name = mono("script.md", NAME_SIZE, INK).next_to(new_icon, DOWN, buff=0.18)
-        reviewers = VGroup(role_icon("sub", 0.75), role_icon("sub", 0.75)).arrange(RIGHT, buff=0.35)
+        # the review run of the false start had 4 reviewers (run record review-dp-script, 15:47:32:
+        # agentCount 4, "4 independent reviewers with distinct lenses"), so 4 icons, not a generic 2
+        reviewers = sub_agent_cluster(REVIEWERS, 0.6, cols=REVIEWERS)      # one AI badge for the group
         reviewers.move_to([ROW_X[3] + 0.1, 0.82, 0])        # clear of digest.md's note "page numbers + errata"
         gate = VGroup(Rectangle(width=0.42, height=0.42, stroke_width=0).set_fill(S.BG, 1), pause_icon(0.28, INK))
         gate.move_to(arrows[3].get_center())
@@ -601,7 +607,7 @@ class ScriptIsCode(VoiceScene):
         utc = caption("UTC", 22).next_to(axis.line, LEFT, buff=0.25)
         REV_Y, LANE_Y0, LANE_DY = 1.2, -0.25, 0.37
         lane_ys = [LANE_Y0 - k * LANE_DY for k in range(6)]
-        rev_icons_at = VGroup(*[m.copy() for m in reviewers]).arrange(RIGHT, buff=0.12)
+        rev_icons_at = sub_agent_cluster(REVIEWERS, 0.42, cols=2)          # 2 x 2, so the label clears 15:47
         rev_icons_at.move_to([0, REV_Y, 0]).align_to([-6.4, 0, 0], LEFT)
         rev_l = label("script review", 26, SUB_AGENT_TEXT).next_to(rev_icons_at, RIGHT, buff=0.2)
         rev_times = caption(f"{hm(REVIEW[0])} → {hm(REVIEW[1])}", 22).move_to([0, REV_Y + 0.36, 0]).align_to([x_of(REVIEW[0]), 0, 0], LEFT)
@@ -663,7 +669,8 @@ class ScriptIsCode(VoiceScene):
                       ReplacementTransform(panel.frame, new_icon), ReplacementTransform(panel.title, new_name),
                       *[FadeIn(m) for m in (*others, *arrows)], run_time=1.0)
             vo.wait_until("review the script")
-            self.play(LaggedStart(*[FadeIn(r, shift=UP * 0.25) for r in reviewers], lag_ratio=0.3), run_time=0.7)
+            self.play(LaggedStart(*[FadeIn(r, shift=UP * 0.25) for r in (*reviewers.icons, reviewers.badge)],
+                                  lag_ratio=0.3), run_time=0.7)
             vo.wait_until("before any animation")
             self.play(FadeIn(gate, scale=0.5), *dim(downstream, opacity=0.35), run_time=0.5)
             vo.wait_until("a sentence costs")
@@ -677,6 +684,8 @@ class ScriptIsCode(VoiceScene):
             # the rule, and how it was broken the same day
             vo.wait_until("The agent wrote")
             stage = gather(self, *others, new_icon, new_name, *arrows, gate, c1, c2, l1, l2)
+            self.remove(*reviewers.icons, reviewers.badge)  # the cluster itself on top: no copies left behind
+            self.add(reviewers)
             # the sentence lasts about 3.4 s: the lane, the guide written at 16:07, then "day one" lit
             self.play(FadeOut(stage), ReplacementTransform(reviewers, rev_icons_at), run_time=0.6)
             self.play(Create(axis.line), FadeIn(axis.marks), FadeIn(small_ticks), FadeIn(day), FadeIn(utc), FadeIn(rev_l),

@@ -14,8 +14,9 @@ How the picture drives the music (every rule reads the event log; nothing is han
                                 riser over the 1-2 bars before it, the chord moves (to I on "title")
     a reveal                    one note per object: bells for small marks, glass, plucks for text, a
                                 rolled chord for big titles, an upward run for a long line, panned to x
-    a count (self.count, a      one note or tick per item, rising, on the items' own times
-    RollingCounter)
+    a count (self.count, a      one sound per item on the item's own time: its own .sound tag ("X",
+    RollingCounter)             "X@C#5" a fixed note), else the count's sound, else video.yaml's
+                                `count` sound, else the palette's; unpitched notes climb the chord
     mark "silence" (dur)        a planned drop-out, then a hit on the return
     mark "tape_stop" (dur)      everything glides down and stops; silence until the next hit or cut
     mark "resolve"              the tonic arrives (it is withheld until then)
@@ -29,16 +30,24 @@ video.yaml (all optional):
       mode: lydian              # ionian / lydian / mixolydian / dorian / aeolian / phrygian / major / minor
       mood: bright              # bright | dark | warm: filter, reverb and pulse presets
       palette: glass            # glass | soft | pluck: which instrument plays which role (or a map, as sounds)
-      sounds: {X: bell, O: glass}   # semantic sound: a mobject's .sound tag -> instrument ("X@C#5": a fixed note)
+      sounds: {X: bell, O: glass, count: pluck}   # a mobject's .sound tag -> instrument ("X@C#5": a fixed
+                                # note); `count` and `cut`: the sound of untagged counts and of scene cuts
       acts: [{at: s05_turn, key: A, mode: major}]   # key changes (see video_time for positions)
-      cues: [{at: "10.1", kind: title, chord: vi}, {at: "64.1", kind: silence, bars: 1}]
-                                # structure on the video's timeline: bar.beat counted from 1
+      cues: [{at: "10.1", kind: title, chord: vi, size: 1}, {at: "64.1", kind: silence, bars: 1}]
+                                # structure on the video's timeline: bar.beat counted from 1 (size: 0-1,
+                                # how big a hit is)
+      chords: {1: I, 4: II, 6: vi, 21: II/D, 64: rest}   # (optional) the progression, bar by bar: the
+                                # chord from that bar on (roman in the key there, "/D" a bass note,
+                                # rest = no pads); without it the composer plans the harmony itself
+      joins: {"12.1": segue}    # a scene join that continues the picture: no thump, no riser
       density: 3                # at most this many ordinary accents per second
       pulse: true               # shorts: the soft grid pulse
       lufs: -14                 # music-only loudness target
       duck: {depth: 12, accents: 7, gap: 6, under: 15}   # narrated: dB of ducking (bed, accents); the music
                                 # `gap` LU under the voice between sentences, at least `under` LU under speech
       seed: 7
+
+A short (video.yaml `format: short`) has music unless video.yaml says `music: false`.
 
 Everything is deterministic: the same logs and settings give the same samples (seeded generators,
 no Python hash(), no clock).
@@ -107,7 +116,12 @@ ALIASES = {      # other names for the sounds, as a video.yaml palette may write
 def resolve_sound(name: str) -> str:
     n = str(name).strip().lower()
     return ALIASES.get(n, n)
-DEFAULT_SOUNDS = {"X": "bell", "O": "glass", "count": "tick", "tick": "tick", "red": "whoosh_rev",
+
+
+# sound tags every video understands (video.yaml music.sounds / palette add to and override them). There
+# is deliberately no "count" entry: a count uses its items' own tags, then the video's `count` entry if
+# it sets one, then the palette's count instrument.
+DEFAULT_SOUNDS = {"X": "bell", "O": "glass", "tick": "tick", "red": "whoosh_rev",
                   "undo": "whoosh_rev", "erase": "whoosh_rev", "light": "shimmer", "hit": "boom"}
 
 
@@ -127,6 +141,8 @@ class Settings:
     seed: int = 7
     bpm: float | None = None
     cues: list = field(default_factory=list)   # structure placed in video.yaml (video time)
+    chords: dict = field(default_factory=dict)  # a planned progression: {bar (from 1) or position: chord}
+    joins: dict = field(default_factory=dict)   # scene joins that are not cuts: {position: "segue"}
 
     @classmethod
     def from_spec(cls, spec: dict) -> "Settings":
@@ -147,6 +163,8 @@ class Settings:
         s.sounds = {**DEFAULT_SOUNDS, **{str(k): resolve_sound(v) for k, v in sounds.items()}}
         s.acts = list(m.get("acts") or [])
         s.cues = [dict(c) for c in m.get("cues") or []]
+        s.chords = dict(m.get("chords") or {})
+        s.joins = {k: str(v) for k, v in (m.get("joins") or {}).items()}
         s.acts += [c for c in s.cues if c.get("key") or c.get("mode")]
         s.duck = {**s.duck, **(m.get("duck") or {})}
         if s.bpm is None:
@@ -163,8 +181,12 @@ class Settings:
 
 
 def music_enabled(spec: dict) -> bool:
+    """Whether a build adds music: a `music:` block (or `music: true`) turns it on; a short (`format:
+    short`, which has no narrator) has music unless video.yaml says `music: false` / `enabled: false`."""
     m = spec.get("music")
-    if m is None or m is False:
+    if m is None:
+        return str(spec.get("format", "")).lower() == "short"
+    if m is False:
         return False
     if isinstance(m, dict):
         return bool(m.get("enabled", True))
@@ -297,9 +319,57 @@ def derive_cues(scenes: list[SceneLog], settings: Settings) -> tuple[list[Cue], 
             dur = float(spec_cue.get("bars") or 0) * grid.bar + float(spec_cue.get("beats") or 0) * grid.beat
         data = {k: v for k, v in spec_cue.items() if k not in ("at", "kind", "dur", "bars", "beats")}
         cues.append(Cue(t, kind, dur=dur, prio=3, data=data, role=str(data.get("sound") or ""), scene="video.yaml"))
+    segues = [video_time(k, scenes, grid) for k, v in settings.joins.items()
+              if v.lower() in ("segue", "continue", "join", "none")]
+    segues = [t for t in segues if t is not None]
+    if segues:                                       # a join that continues the picture is not a cut
+        cues = [c for c in cues if not (c.kind == "cut" and "index" in c.data
+                                        and any(abs(c.t - t) < 0.02 for t in segues))]
     cues.sort(key=lambda c: (c.t, -c.prio))
+    cues = merge_structure(cues, (grid.beat * 0.99) if grid is not None else 0.35)
     act = activity(plays, particles, total)
     return cues, {"total": total, "speech": speech, "activity": act, "grid": grid, "plays": plays}
+
+
+# structure cues that say the same thing: within a beat of each other, one of a family is enough (a
+# scene's self.mark("title") and video.yaml's {at: "10.1", kind: title}, or a scene cut and a
+# `cut` / `section` cue on it). The stronger kind wins (title over hit, section over cut).
+FAMILY = {"cut": "cut", "section": "cut", "hit": "hit", "title": "hit", "resolve": "resolve",
+          "silence": "silence", "tape_stop": "tape_stop", "riser": "riser", "end": "end"}
+_STRENGTH = {"title": 2, "hit": 1, "section": 1, "cut": 0}
+
+
+def merge_structure(cues: list[Cue], tol: float) -> list[Cue]:
+    """Merge structure cues of one family less than `tol` apart into one: it keeps the picture's time
+    (a scene's own mark or cut) and takes video.yaml's chord / key / mode / sound on top of the
+    scene's data. Cues must be sorted by time."""
+    out: list[Cue] = []
+    for c in cues:
+        fam = FAMILY.get(c.kind)
+        twin = None
+        if fam is not None and c.prio >= 3:
+            for o in reversed(out):
+                if c.t - o.t > tol:
+                    break
+                if o.prio >= 3 and FAMILY.get(o.kind) == fam:
+                    twin = o
+                    break
+        if twin is None:
+            out.append(c)
+            continue
+        if c.scene == "video.yaml" and twin.scene != "video.yaml":
+            spec_c, pic = c, twin
+        elif twin.scene == "video.yaml" and c.scene != "video.yaml":
+            spec_c, pic = twin, c
+        else:                                     # both from scenes (or both from video.yaml): the
+            pic, spec_c = twin, c                 # earlier time, the later one's data on top
+        kind = max((twin.kind, c.kind), key=lambda k: _STRENGTH.get(k, 0))
+        merged = Cue(pic.t, kind, dur=max(twin.dur, c.dur), x=pic.x, role=spec_c.role or pic.role,
+                     size=max(twin.size, c.size), n=max(twin.n, c.n), times=pic.times or spec_c.times,
+                     prio=3, data={**pic.data, **spec_c.data, "merged": sorted({twin.kind, c.kind})},
+                     scene=pic.scene)
+        out[len(out) - 1 - out[::-1].index(twin)] = merged
+    return out
 
 
 def _play_cues(t, dur, ev, cam, sounds, scene, tags) -> list[Cue]:
@@ -429,9 +499,17 @@ class Chord:
     tag: str = ""
     custom: tuple | None = None       # (root pc, pcs, name) of a chord given by name (video.yaml)
     named: bool = False               # named in video.yaml: kept as written
+    bass_pc: int | None = None        # a slash chord's bass ("II/D")
+    label: str = ""                   # the name video.yaml gave it
+
+    @property
+    def rest(self) -> bool:
+        return bool(self.custom) and not self.custom[1]
 
     @property
     def name(self) -> str:
+        if self.label:
+            return self.label
         if self.custom:
             return self.custom[2]
         roman = ["I", "II", "III", "IV", "V", "VI", "VII"][self.degree - 1]
@@ -452,6 +530,16 @@ def parse_chord(spec: str, key: Key, t: float, tag: str) -> Chord:
     borrowed degree "bVI" / "bVII" / "#iv" (a major-7 #11 chord on that root; lower case: minor 9)."""
     s0 = str(spec).strip()
     s = s0.replace("♭", "b").replace("♯", "#")
+    if s.lower() in ("rest", "none", "-"):                 # no harmony here (pads and bass stop)
+        return Chord(t, key, 1, tag=tag, custom=(key.tonic, [], "rest"), label="rest")
+    if "/" in s:                                            # a slash chord: "II/D", "vi/F#"
+        upper, bass = s.split("/", 1)
+        b = bass.strip().upper().replace("♯", "#").replace("♭", "B")
+        if b not in NOTE:
+            raise ValueError(f"music chord {spec!r}: the bass after '/' must be a note name (D, F#, Bb)")
+        ch = parse_chord(upper, key, t, tag)
+        ch.bass_pc, ch.label = NOTE[b], s0
+        return ch
     if s.lower() in ("fifth", "5", "open"):
         s = "I5"
     acc = 0
@@ -471,11 +559,13 @@ def parse_chord(spec: str, key: Key, t: float, tag: str) -> Chord:
     if acc:
         ivs = [0, 3, 7, 10, 14] if roman.islower() else [0, 4, 7, 11, 18]
         return Chord(t, key, deg, tag=tag, custom=(root, sorted({(root + i) % 12 for i in ivs}), s0))
-    return Chord(t, key, deg, sus=sus, tag=tag)
+    return Chord(t, key, deg, sus=sus, tag=tag, label=s0)
 
 
 def chord_tones(ch: Chord, lo: int, hi: int) -> list[int]:
     _, pcs = ch.pcs()
+    if not pcs:                                   # a rest: accents still take the key's tonic chord
+        _, pcs = ch.key.degree_pcs(1)
     return [m for m in range(lo, hi + 1) if m % 12 in pcs]
 
 
@@ -498,6 +588,8 @@ def voice_chord(ch: Chord, prev, lo: int = 52, hi: int = 76, n: int = 4):
             best, best_cost = combo, cost
     if best is None:
         best = tuple(cands[:n])
+    if ch.bass_pc is not None:
+        root = ch.bass_pc
     bass = 36 + ((root - 36) % 12)
     if bass > 43:
         bass -= 12
@@ -555,6 +647,8 @@ def plan_harmony(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sc
     suspended dominant and arrives on "title" / "resolve" and at the end."""
     total, grid = ctx["total"], ctx["grid"]
     rank = {"open": 9, "title": 5, "resolve": 5, "hit": 4, "cut": 3, "section": 3, "end": 2, "": 0}
+    if settings.chords and grid is not None:
+        return planned_harmony(cues, ctx, settings, scenes, rank)
     structure = sorted((grid.snap(c.t, "beat", "nearest") if grid is not None else c.t, c.kind)
                        for c in cues if c.kind in ("cut", "section", "hit", "title", "resolve"))
     named = {}                                       # chords that video.yaml names at a cue
@@ -626,6 +720,38 @@ def plan_harmony(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sc
     return chords
 
 
+def planned_harmony(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[SceneLog], rank: dict
+                    ) -> list[Chord]:
+    """The progression video.yaml writes bar by bar (music.chords: {bar from 1, or a bar.beat position:
+    chord}), each chord in the key that holds there; a cue's own `chord:` fills in where the map has
+    none. Chords at structure points take the cue's tag (title, resolve, hit ...)."""
+    grid = ctx["grid"]
+    snap = lambda t: round(grid.snap(t, "beat", "nearest"), 3)
+    tags: dict[float, str] = {}
+    for c in cues:
+        if c.kind in ("cut", "section", "hit", "title", "resolve"):
+            t = snap(c.t)
+            if rank[c.kind] > rank[tags.get(t, "")]:
+                tags[t] = c.kind
+    points: dict[float, str] = {}
+    for at, name in settings.chords.items():
+        t = video_time(at, scenes, grid)
+        if t is None:
+            raise ValueError(f"music.chords: cannot place {at!r} (a bar from 1, or 'bar.beat')")
+        points[snap(t)] = str(name)
+    for c in cues:
+        if c.data.get("chord") and c.kind in ("cut", "section", "hit", "title", "resolve"):
+            points.setdefault(snap(c.t), str(c.data["chord"]))
+    if 0.0 not in points:
+        points[0.0] = "I"
+    chords = []
+    for t in sorted(points):
+        ch = parse_chord(points[t], key_at(t, settings, scenes, grid), t, "open" if t == 0 else tags.get(t, ""))
+        ch.named = True
+        chords.append(ch)
+    return chords
+
+
 def chord_at(chords: list[Chord], t: float) -> Chord:
     cur = chords[0]
     for c in chords:
@@ -647,6 +773,7 @@ class Score:
     end: float = 0.0
     grid: dict | None = None
     key: str = ""
+    dropped: int = 0                               # accents left out because a planned silence cut them
 
     def note(self, t, dur, m, vel, inst, pan=0.0):
         self.notes.append(dict(t=round(float(t), 4), dur=round(float(dur), 4), m=int(m), vel=round(float(vel), 4),
@@ -660,7 +787,7 @@ class Score:
     def as_dict(self) -> dict:
         return {"key": self.key, "grid": self.grid, "end": self.end,
                 "chords": [[round(c.t, 4), c.name, c.tag, sorted(c.pcs()[1])] for c in self.chords],
-                "silences": self.silences, "notes": self.notes, "fx": self.fx}
+                "silences": self.silences, "dropped": self.dropped, "notes": self.notes, "fx": self.fx}
 
 
 def _in(spans, t, pad=0.0):
@@ -696,11 +823,13 @@ def build_score(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sce
     sc.chords = chords
 
     # --- silences and tape stops (the music is cut there; a hit brings it back)
+    tol = (grid.beat * 0.99) if grid is not None else 0.35
     for c in cues:
         if c.kind == "silence":
             d = c.dur or (grid.bar if grid else 2.0)
             sc.silences.append([round(c.t, 4), round(c.t + d, 4), "silence"])
-            if c.data.get("hit", True):
+            back = any(x.kind in ("hit", "title") and abs(x.t - (c.t + d)) <= tol for x in cues)
+            if c.data.get("hit", True) and not back:    # (a hit or title on the return brings its own boom)
                 sc.add_fx(c.t + d, "boom", 0.85)
                 sc.add_fx(c.t + d, "shimmer", 0.22, dur=3.0)
         elif c.kind == "tape_stop":
@@ -711,12 +840,15 @@ def build_score(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sce
             sc.silences.append([round(c.t, 4), round(c.t + d, 4), "tape_stop"])
             if until > c.t + d + 0.02:
                 sc.silences.append([round(c.t + d, 4), round(until, 4), "silence"])
-    quiet = [(a, b) for a, b, _ in sc.silences]
+    sc.silences = [list(x) for x in dict.fromkeys(tuple(x) for x in sc.silences)]   # (a tape stop's tail and
+    quiet = [(a, b) for a, b, _ in sc.silences]                                     # a silence cue may agree)
 
     # --- pads and bass, one voicing per chord (pads lead the change a little, so it is heard on time)
     prev = None
     for i, ch in enumerate(chords):
         t_next = chords[i + 1].t if i + 1 < len(chords) else total + 2.0
+        if ch.rest:                                       # "rest": no harmony until the next chord
+            continue
         voicing, bass = voice_chord(ch, prev, *((52, 76) if narrated else (55, 79)))
         prev = voicing
         hit = ch.tag in ("title", "resolve", "hit", "cut")
@@ -742,8 +874,10 @@ def build_score(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sce
                 sc.add_fx(c.t, cut_fx, (0.45 if narrated else 0.55) * (0.8 if cut_fx == "boom" else 1.0))
             riser_ends.append((c.t, 1))
         elif c.kind in ("hit", "title"):
-            sc.add_fx(c.t, "boom", 0.95 if c.kind == "title" else 0.8)
-            sc.add_fx(c.t, "shimmer", 0.25, dur=3.5)
+            size = float(np.clip(float(c.data.get("size", 1.0)), 0.0, 1.0))   # video.yaml: how big a hit is
+            k = 0.45 + 0.55 * size
+            sc.add_fx(c.t, "boom", (0.95 if c.kind == "title" else 0.8) * k)
+            sc.add_fx(c.t, "shimmer", 0.25 * k, dur=3.5)
             riser_ends.append((c.t, 2))
             if c.kind == "title":
                 ch = chord_at(chords, c.t + 0.01)
@@ -857,9 +991,29 @@ def build_score(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sce
     # --- the grid pulse (shorts): soft, follows activity, rests in silences and before the first cut
     if grid is not None and settings.pulse and not narrated:
         _pulse(sc, ctx, chords, quiet, mood, pal, settings)
+    _clear_silences(sc)
     sc.notes.sort(key=lambda n: (n["t"], n["inst"], n["m"]))
     sc.fx.sort(key=lambda f: (f["t"], f["kind"]))
     return sc
+
+
+SILENCE_GUARD = 0.12      # an accent starting this close before a planned silence would be cut to a blip
+
+
+def _clear_silences(sc: Score) -> None:
+    """Drop accents (notes other than pads and bass, effects other than risers) that start inside a
+    planned silence or within SILENCE_GUARD before it: the drop-out would cut them to a 30 ms blip (a
+    RollingCounter's landing bell on the first frame of the turn). The hit on the return stays."""
+    spans = [(a, b) for a, b, kind in sc.silences if kind == "silence"]
+    if not spans:
+        return
+
+    def muted(t: float) -> bool:
+        return any(a - SILENCE_GUARD <= t < b - 0.005 for a, b in spans)
+    keep_n = [n for n in sc.notes if n["inst"] in ("pad", "bass") or not muted(n["t"])]
+    keep_f = [f for f in sc.fx if f["kind"] == "riser" or not muted(f["t"])]
+    sc.dropped += (len(sc.notes) - len(keep_n)) + (len(sc.fx) - len(keep_f))
+    sc.notes, sc.fx = keep_n, keep_f
 
 
 def _instrument(role: str, settings: Settings, default: str) -> str:
@@ -885,27 +1039,54 @@ def tag_pitch(role: str) -> int | None:
     return 12 * (int(m.group(3)) + 1) + pc
 
 
+def count_voices(c: Cue, settings: Settings, pal: dict) -> list[tuple[str, int | None]]:
+    """(instrument or effect, fixed MIDI pitch or None) of each item of a count. Each item sounds as
+    its own `.sound` tag says (logged by BeatScene.count as data["sounds"]): "X" -> the instrument X
+    maps to, "X@C#5" -> that instrument at C#5, "@C#5" -> the count's instrument at C#5. Items without
+    a tag use the count's `sound=` (the cue's role), then video.yaml's `count` entry (music.sounds or
+    a palette map), then the palette's count instrument."""
+    n = len(c.times) if c.times else max(1, c.n)
+    base = _instrument("count", settings, pal["count"]) if "count" in settings.sounds else pal["count"]
+    tags = list(c.data.get("sounds") or [])[:n]
+    tags += [None] * (n - len(tags))
+    out = []
+    for tag in tags:
+        tag = c.role if tag is None else str(tag)
+        name = (tag or "").split("@", 1)[0]
+        inst = _instrument(name, settings, base) if name else base
+        out.append((inst, tag_pitch(tag) if tag else None))
+    return out
+
+
 def _count_notes(sc: Score, c: Cue, ch: Chord, settings: Settings, pal: dict) -> None:
+    """One sound per counted item on its own time: a note of the item's instrument (its fixed pitch,
+    or climbing through the chord), or a tick / blip that climbs. More than 24 unpitched items become
+    ticks (a note each would be a smear)."""
     times = c.times or [c.t + i * (c.dur / max(1, c.n)) for i in range(c.n)]
-    inst = _instrument(c.role or ("count" if "count" in settings.sounds else ""), settings, pal["count"])
+    voices = count_voices(c, settings, pal)
     rise = c.data.get("pitch", "rise") != "flat"
-    if inst in FX or len(times) > 24:              # many items: ticks that climb
-        last = -1.0
-        for i, tt in enumerate(times):
-            if tt - last < 0.04:
-                continue
-            last = tt
-            u = i / max(1, len(times) - 1)
-            xs = c.data.get("xs") or []
-            pan = _screen_x(float(xs[i]), None) * 0.8 if i < len(xs) else c.x * 0.6 + 0.3 * math.sin(i * 1.7)
-            sc.add_fx(tt, "tick", 0.22 + 0.06 * u, pan=pan, pitch=(2000 + 2400 * u) if rise else 2600)
-        return
+    many = len(times) > 24
     tones = chord_tones(ch, 67, 98)
+    xs = c.data.get("xs") or []
+    last_tick = -1.0
     for i, tt in enumerate(times):
-        m = tones[min(i, len(tones) - 1)] if rise else tones[len(tones) // 2]
-        xs = c.data.get("xs") or []
+        inst, fixed = voices[i] if i < len(voices) else voices[-1]
+        u = i / max(1, len(times) - 1)
+        m = fixed if fixed is not None else (tones[min(i, len(tones) - 1)] if rise else tones[len(tones) // 2])
+        if inst in FX or (many and fixed is None):
+            pan = _screen_x(float(xs[i]), None) * 0.8 if i < len(xs) else c.x * 0.6 + 0.3 * math.sin(i * 1.7)
+            if inst in ("blip",):                           # a soft pulse at the item's note
+                sc.add_fx(tt, "blip", 0.5 + 0.2 * u, pan=pan, pitch=round(float(mtof(m)), 2))
+            elif inst in FX and inst != "tick":
+                sc.add_fx(tt, inst, 0.25, dur=0.4, pan=pan)
+            else:                                           # ticks that climb
+                if tt - last_tick < 0.04:
+                    continue
+                last_tick = tt
+                sc.add_fx(tt, "tick", 0.22 + 0.06 * u, pan=pan, pitch=(2000 + 2400 * u) if rise else 2600)
+            continue
         pan = _screen_x(float(xs[i]), None) * 0.8 if i < len(xs) else c.x * 0.6 + 0.35 * math.sin(i * 1.3)
-        sc.note(tt + 0.005, 1.4, m, 0.36 + 0.12 * (i / max(1, len(times) - 1)), inst, pan)
+        sc.note(tt + 0.005, 1.4, m, 0.36 + 0.12 * u, inst, pan)
 
 
 def _roll_ticks(sc: Score, c: Cue, ch: Chord) -> None:
@@ -1076,7 +1257,7 @@ def syn_pluck(n, rng):
     """A harp / kalimba pluck: decaying harmonic partials (the upper ones faster) and a short noise
     transient; exactly in tune (unlike a Karplus-Strong delay line)."""
     f = float(mtof(n["m"]))
-    L = int(max(n["dur"], 1.2) * SR)
+    L = int((max(n["dur"], 1.2) + 0.6) * SR)
     t = np.arange(L) / SR
     x = np.zeros(L)
     for h in range(1, 9):
@@ -1184,6 +1365,16 @@ FX_BUS = dict(boom="hit", thump="hit", tick="acc_fx", blip="acc_fx", riser="fx",
               whoosh_rev="acc_fx", swell="fx", shimmer="acc_fx")
 
 
+def _tail_fade(y: np.ndarray, sec: float = 0.06) -> np.ndarray:
+    """A raised-cosine fade over the last `sec` (at most 10 % of the sound): a note or effect whose
+    buffer ends while it still rings must not stop with a step (a click)."""
+    n = min(len(y) // 10, int(sec * SR))
+    if n > 1:
+        y = y.copy()
+        y[-n:] *= (0.5 + 0.5 * np.cos(np.linspace(0, np.pi, n)))[:, None]
+    return y
+
+
 def _add(buf, t, stereo):
     i = int(round(t * SR))
     if i < 0:
@@ -1252,13 +1443,15 @@ def render(score: Score, ctx: dict, settings: Settings, length: float) -> tuple[
     for i, n in enumerate(score.notes):
         rng = np.random.default_rng(seed_for(settings.seed, "note", i, n["inst"], n["m"], n["t"]))
         y = SYN[n["inst"]](n, rng)
+        if n["inst"] != "glass_rev":                     # (a reversed note ends on its own soft attack)
+            y = _tail_fade(y)
         bus = "pad" if n["inst"] == "pad" else "low" if n["inst"] == "bass" else "keys"
         start = n["t"] - (len(y) / SR if n["inst"] == "glass_rev" else 0.0)   # a reversed note ends on the event
         _add(buses[bus], start, y)
     for i, f in enumerate(score.fx):
         rng = np.random.default_rng(seed_for(settings.seed, "fx", i, f["kind"], f["t"]))
         start = f["t"] - (float(f.get("dur", 0.3)) if f["kind"] == "whoosh_rev" else 0.0)   # it lands on the event
-        _add(buses[FX_BUS[f["kind"]]], start, fx_sound(f, rng))
+        _add(buses[FX_BUS[f["kind"]]], start, _tail_fade(fx_sound(f, rng), 0.03))
     tt, act = ctx["activity"]
     lo, hi = (700, 2300) if narrated else (mood["cut_lo"], mood["cut_hi"])
     risers = [(f["t"], f["t"] + f.get("dur", 0)) for f in score.fx if f["kind"] == "riser"]
@@ -1418,6 +1611,8 @@ def duck_curve(voice: np.ndarray, depth_db: float = 12.0, hold: float = 0.45, at
     pad = np.zeros(nfr * hop)
     pad[:len(v)] = v
     db = 10 * np.log10((pad.reshape(nfr, hop) ** 2).mean(axis=1) + 1e-12)
+    if db.max() < -80:                       # no voice at all: nothing to duck under
+        return np.ones(len(v))
     speech = db > (db.max() - floor_db)
     # frame i is at full depth when speech falls anywhere in [i - hold, i + look - attack]: from
     # (start - look + attack) to (end + hold)
@@ -1494,6 +1689,46 @@ def _fit(x, n):
     return np.concatenate([x, np.zeros((n - len(x), x.shape[1]))])
 
 
+def planned_transients(score: Score) -> list[float]:
+    """Times where the score itself starts something sharp (every note and effect onset, the end of a
+    reversed sound, the edges of planned silences): a click scan leaves these alone."""
+    out = [n["t"] for n in score.notes] + [f["t"] for f in score.fx]
+    out += [f["t"] - float(f.get("dur", 0.3)) for f in score.fx if f["kind"] == "whoosh_rev"]
+    out += [x for a, b, _ in score.silences for x in (a, b)]
+    return sorted(out)
+
+
+def click_scan(x: np.ndarray, planned=(), rise_db: float = 18.0, floor_db: float = -66.0,
+               guard: float = 0.008) -> list[float]:
+    """Times of clicks: 1 ms bursts of energy above 7 kHz at least `rise_db` above the 50 ms before
+    them and above `floor_db` (re 0 dBFS), more than `guard` seconds from any planned transient (note
+    and effect onsets: a tick or a pluck is meant to be sharp). What it finds are defects: a sound cut
+    off while it rings, a step at a buffer edge, a discontinuity in a fade."""
+    mono = np.asarray(x, dtype=float)
+    mono = mono.mean(axis=1) if mono.ndim > 1 else mono
+    if len(mono) < SR // 10:
+        return []
+    hp = signal.sosfilt(signal.butter(4, 7000 / (SR / 2), "high", output="sos"), mono)
+    e = np.concatenate([[0.0], np.cumsum(hp * hp)])
+    w, L = int(0.001 * SR), int(0.05 * SR)
+    i = np.arange(L + w, len(mono) - w)
+    short = (e[i + w] - e[i]) / w
+    before = (e[i - w] - e[i - w - L]) / L
+    hit = (short > before * 10 ** (rise_db / 10)) & (short > 10 ** (floor_db / 10))
+    idx = i[hit]
+    if not len(idx):
+        return []
+    starts = idx[np.concatenate([[True], np.diff(idx) > int(0.01 * SR)])] / SR
+    planned = np.sort(np.asarray(list(planned), dtype=float))
+    out = []
+    for t in starts:
+        j = np.searchsorted(planned, t)
+        near = [abs(planned[k] - t) for k in (j - 1, j) if 0 <= k < len(planned)]
+        if not near or min(near) > guard:
+            out.append(round(float(t), 4))
+    return out
+
+
 def lr_correlation(x: np.ndarray) -> float:
     w = int(0.5 * SR)
     cs = []
@@ -1506,7 +1741,7 @@ def lr_correlation(x: np.ndarray) -> float:
 
 # ---------------------------------------------------------------- MIDI (for inspection in any DAW)
 
-GM = dict(pad=89, bass=32, bell=8, glass=11, pluck=46)
+GM = dict(pad=89, bass=32, bell=8, glass=11, pluck=46, wood=12, glass_rev=11)   # General MIDI programs
 
 
 def write_midi(score: Score, path: Path, bpm: float = 120.0) -> None:
@@ -1563,8 +1798,11 @@ def compose(scenes: list[SceneLog], settings: Settings, length: float | None = N
     return score, cues, ctx, bed, acc
 
 
-def sync_share(cues: list[Cue], score: Score, tol: float = 0.03) -> float:
-    """Share of visual cues (not structure) that have a note or effect starting within `tol` seconds."""
+def score_coverage(cues: list[Cue], score: Score, tol: float = 0.03) -> float:
+    """Share of visual cues (not structure) that have a note or effect starting within `tol` seconds.
+    This checks the composer (did every event get a sound?), not the sync of the shipped file: the
+    score is built from these very cues. The build measures sync on the encoded video
+    (explainer.finishing.measure_sync)."""
     onsets = np.array(sorted([n["t"] for n in score.notes if n["inst"] not in ("pad", "bass")] +
                              [f["t"] for f in score.fx]))
     targets = [c.t for c in cues if c.kind not in ("cut", "section", "swell", "timer", "silence", "tape_stop",
@@ -1638,12 +1876,13 @@ def main(argv=None):
     total = max(total, max((s.offset + s.duration for s in scenes), default=0.0))
     score, cues, ctx, bed, acc = compose(scenes, settings, total)
     music, rep = music_only(bed, acc, settings)
-    rep.update(sync_30ms=round(sync_share(cues, score), 3), notes=len(score.notes), fx=len(score.fx),
+    rep.update(score_coverage=round(score_coverage(cues, score), 3), notes=len(score.notes), fx=len(score.fx),
                chords=len(score.chords), cues=len(cues), duration=round(total, 3))
     out = args.out or project / "build" / "music" / QUALITY_DIRS.get(args.quality, args.quality)
     write_outputs(out, score, cues, ctx, bed, acc, music, rep)
     print(f"music: {out}/music.wav  ({total:.1f}s, {rep['lufs']} LUFS, peak {rep['true_peak_dbtp']} dBTP, "
-          f"{rep['notes']} notes, {rep['fx']} effects, {rep['chords']} chords, sync {rep['sync_30ms']:.0%})")
+          f"{rep['notes']} notes, {rep['fx']} effects, {rep['chords']} chords, "
+          f"{rep['score_coverage']:.0%} of visual events with a sound)")
     if args.report:
         print("chords:", ", ".join(f"{c.t:.2f} {c.name}" for c in score.chords))
 

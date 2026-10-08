@@ -555,12 +555,13 @@ class RollingCounter(VGroup):
             self.columns.append(col)
             items.append(col)
             x += self.cell_w
-            if group and k > 0 and k % 3 == 0:
-                sep = Text(group, font=font, weight=weight, font_size=size, color=color)
-                sep.x = x + self.cell_w * 0.12
+            if group and k > 0 and k % 3 == 0:          # set as Inter sets "255,168": the comma just
+                sep = Text(group, font=font, weight=weight, font_size=size, color=color)   # clear of
+                gap = self.cell_w * 0.04                 # the digit before it, the next cell right after
+                sep.x = x + gap + sep.width / 2
                 self.separators.append((k, sep))
                 items.append(sep)
-                x += self.cell_w * 0.4
+                x += gap + sep.width
         self.total_w = x
         self.ref = Rectangle(width=x, height=self.cell_h * 0.8).set_stroke(width=0).set_fill(opacity=0)
         self.add(self.ref, *items)
@@ -767,10 +768,13 @@ class BeatScene(EventLog, MovingCameraScene):
         except (TypeError, OSError):          # a module loaded without sys.modules (explainer.check)
             stem = type(self).__module__.rsplit(".", 1)[-1] or None
         self.scene_stem = stem
+        self.captions_keys = [k for k in (self.captions_key, stem, type(self).__name__) if k]
+        self.captions_found = None          # the captions.yaml key this scene's lines came from
         project = _project()
         if project is not None:
             table = cap.load(cap.project_file(project, spec))
-            self._pool = cap.for_scene(table, *(k for k in (self.captions_key, stem, type(self).__name__) if k))
+            self.captions_found = cap.scene_key(table, *self.captions_keys)
+            self._pool = cap.for_scene(table, *self.captions_keys)
         for c in self._pool:
             if c.at is not None:
                 c.t = self.grid.time(c.at)
@@ -809,7 +813,9 @@ class BeatScene(EventLog, MovingCameraScene):
                 "bar": self.grid.bar, "offset": 0.0}
 
     def event_extras(self) -> dict:
-        return {"format": "short", "scene_file": self.scene_stem,
+        # captions_keys: where the stitch looks the text up again (captions_key, file stem, class name)
+        return {"format": "short", "scene_file": self.scene_stem, "captions_keys": self.captions_keys,
+                "captions_key": self.captions_found,
                 "captions": [c.as_dict() for c in sorted(self._caps, key=lambda c: c.t or 0.0)]}
 
     # ------------------------------------------------------------- play and wait on the grid

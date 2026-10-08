@@ -97,9 +97,9 @@ SUB_FIXED_L = f"{SUB_FIXED} of {SUB_ISSUES} issues fixed (its own report)"
 SUB_REG_L = f"reviewers found {SUB_REGRESSIONS} regressions"
 # Live values (script.md "Live values": subtitle tool, Chinese privacy final cut): refresh these
 # two lines, worded as the script's show line, right before the final render.
-SUB_LATER = ("round 3: judged a clear net improvement by its two reviewers (its commit note)\n"
-             "· a fourth round was under way when this script was written")
-ZH_PRIVACY = "privacy video, Chinese: final cut not rendered when this script was written"
+SUB_LATER = ("four rounds in all: 49 tests\n"
+             "· rule tuning stopped at diminishing returns (its commit note)")
+ZH_PRIVACY = "privacy video, Chinese: final cut rendered with the new subtitles"
 CUE = "A sentence parser could propose the cuts, and the rules could check them."   # this scene's own words
 CUE_WORDS = CUE.split()
 BAD_SPLIT, GOOD_SPLIT = CUE_WORDS.index("rules"), CUE_WORDS.index("and")          # "… and the | rules …"
@@ -413,8 +413,8 @@ class WhatNext(VoiceScene):
         u_calls.next_to(u_icon, DOWN, buff=0.45).align_to([LEFT_X, 0, 0], LEFT)
         a_text = [label(s, 22, INK, line_spacing=0.8) for s in AGENT_CALLS]
         a_rows = VGroup()
-        for t in a_text:
-            a_rows.add(VGroup(open_outline(t, buff=0.14, stroke=2.5), t))
+        for t in a_text:                                    # more room left and right than above and below
+            a_rows.add(VGroup(box(t.width + 0.42, t.height + 0.28, OPEN, dashed=True, stroke=2.5).move_to(t), t))
         a_rows.arrange(DOWN, buff=0.15, aligned_edge=LEFT)
         a_rows.next_to(a_icon, DOWN, buff=0.3).align_to([-2.15, 0, 0], LEFT)
         assert a_rows.get_right()[0] < 6.5 and a_rows.get_bottom()[1] > -3.55, (a_rows.get_right(), a_rows.get_bottom())
@@ -586,7 +586,7 @@ class WhatNext(VoiceScene):
                       LaggedStart(*[GrowFromEdge(r, LEFT) for r in lpm_bars], lag_ratio=0.3), FadeIn(lpm_l),
                       Create(shelves), FadeIn(shelf_l), run_time=0.7)
             shrink = [r.animate.stretch_to_fit_width(r.width * SHRINK).align_to(r, LEFT) for r in lpm_bars]
-            self.play(LaggedStart(*[FadeIn(p, shift=DOWN * 0.7) for p in parts], lag_ratio=0.25), *shrink,
+            self.play(LaggedStart(*[FadeIn(p, shift=DOWN * 0.3) for p in parts], lag_ratio=0.25), *shrink,
                       LaggedStart(*[Create(g) for g in ghosts], lag_ratio=0.3), run_time=1.5)
         self.play(FadeIn(foot, shift=UP * 0.15), run_time=0.5)
         self.wait(0.7)
@@ -697,12 +697,14 @@ class WhatNext(VoiceScene):
 
             vo.wait_until("A sentence parser")
             self.play(FadeIn(parser, shift=RIGHT * 0.3), GrowArrow(p_arrow), run_time=0.6)
-            self.play(Create(prop), Indicate(parser.text[1], color=S.WHITE, scale_factor=1.15), run_time=0.6)
+            # the whole proposal is the idea: its dashed outline and tag come with it (and stay readable)
+            self.play(Create(prop), Indicate(parser.text[1], color=S.WHITE, scale_factor=1.15),
+                      Create(mach_out), FadeIn(mach_tag, shift=LEFT * 0.15), run_time=0.7)
             vo.wait_until("and the rules could")
             self.play(ReplacementTransform(rules0, rules1), run_time=0.5)
             self.play(*[ReplacementTransform(a, b) for a, b in zip(w_bad, w_good)], FadeOut(under_bad),
                       FadeOut(prop), Create(ok), run_time=1.0)
-            self.play(Create(mach_out), FadeIn(mach_tag, shift=LEFT * 0.15), run_time=0.6)
+        self.wait(0.5)                                      # the re-cut cue, checked, before the card folds
 
         # ================================================================ card 4: interactivity
         q4 = QUOTES["s02_card4"]
@@ -797,6 +799,7 @@ class WhatNext(VoiceScene):
             saved.move_to(board.get_bottom() + DOWN * 0.42)
             self.play(FadeIn(saved, scale=0.8), run_time=0.5)
             self.play(pulse(saved, 1.12, run_time=0.6))
+        self.wait(0.6)                                      # the finished window, before it folds
 
         # the card folds into its slot; the full board
         card4 = collect(self, win_frame, frame, player.bar, player.done, player.knob, paused, card, ttt, win_out,

@@ -99,6 +99,12 @@ python -m explainer.build videos/<id> --crf 26  # smaller file for sharing
 Output in `videos/<id>/output/`: the mp4 (loudness-normalised), `.srt` subtitles,
 `chapters.txt` (paste into a YouTube/Bilibili description), `transcript.md`.
 
+A build re-renders a scene when its movie is missing or older than what it is built from: the
+scene's folder, `script.md`, `video.yaml`, `assets/`, and the toolkit modules a scene imports.
+Command-line tooling (`build.py`, `check.py`, `preview.py`), the after-render modules (`music.py`,
+`finishing.py`) and, for narrated videos, the short-only modules (`short.py`, `grid.py`,
+`captions.py`) do not count; a change to the render command itself needs `--only`.
+
 Background music composed from the picture (every scene writes `<Scene>.events.json` as it renders):
 `python -m explainer.build videos/<id> --music` mixes it under the narration and keeps the
 narration-only master as `<id>.nomusic.mp4`. A condensed, music-led short of a video is its own

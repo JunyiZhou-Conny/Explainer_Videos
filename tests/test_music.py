@@ -123,7 +123,7 @@ def test_one_note_per_counted_object_on_its_own_time(tmp_path):
     assert pans[0] < pans[1] < pans[2]                                    # panned to the square
     land = [n for n in score.notes if 14.0 < n["t"] < 15.5 and n["dur"] == 2.2]
     assert [n["t"] for n in land] == pytest.approx([13.2 + 2.4 * u for u in (0.4, 0.5, 0.6, 0.7, 0.8, 0.9)])
-    assert mu.sync_share(cues, score) > 0.8
+    assert mu.score_coverage(cues, score) > 0.8
 
 
 def test_structure_hits_risers_and_silence(tmp_path):
@@ -203,6 +203,9 @@ def test_settings_validation():
     assert s.bpm == 90 and s.acts and s.sounds["X"] == "bell"
     assert mu.music_enabled({"music": {"key": "D"}}) and not mu.music_enabled({})
     assert not mu.music_enabled({"music": {"enabled": False}})
+    assert mu.music_enabled({"format": "short"})                          # a short has music by default
+    assert not mu.music_enabled({"format": "short", "music": False})
+    assert "count" not in mu.Settings.from_spec({}).sounds                # (so the palette's count sound is used)
     assert mu.seed_for("a", 1) == mu.seed_for("a", 1) != mu.seed_for("a", 2)
 
 
@@ -234,7 +237,14 @@ def test_video_yaml_cues_palette_and_named_chords(tmp_path):
         "cues": [{"at": "4.1", "kind": "title", "chord": "vi"},
                  {"at": "5.1", "kind": "tape_stop", "bars": 1},
                  {"at": "7.1", "kind": "hit", "chord": "bVI", "key": "E"}]}}
-    (score, cues, *_), st = compose(tmp_path, spec)
+    s1, s2 = short_logs()
+    s2["events"] = s2["events"][2:]                       # (no planned silence at 9.6: the cut is heard)
+    p1, p2 = tmp_path / "One.events.json", tmp_path / "Two.events.json"
+    p1.write_text(json.dumps(s1))
+    p2.write_text(json.dumps(s2))
+    scenes = mu.load_timeline([("s01", 0.0, p1), ("s02", 4 * G.bar, p2)])
+    st = mu.Settings.from_spec(spec)
+    score, cues, *_ = mu.compose(scenes, st, 7 * G.bar)
     title = [c for c in score.chords if c.tag == "title"]
     assert title and title[0].t == pytest.approx(7.2) and title[0].degree == 6      # vi, not the tonic
     hit = [c for c in score.chords if abs(c.t - 14.4) < 1e-6][0]
@@ -255,3 +265,138 @@ def test_pitched_sound_tags(tmp_path):
     score, *_ = mu.compose(mu.load_timeline([("s01", 0.0, p)]), mu.Settings.from_spec(SPEC), 4 * G.bar)
     ms = [n["m"] for n in score.notes if n["inst"] == "glass" and 1.1 < n["t"] < 4.0 and n["dur"] == 1.8]
     assert ms == [73, 74, 76, 68, 69, 71, 62, 64, 66]
+
+
+# ---------------------------------------------------------------- ducking, counts, structure, clicks
+
+def test_duck_curve_timing():
+    """A burst of speech from 2.0 to 3.0 s: the music starts down 150 ms before it, is fully down 120 ms
+    later (before the first syllable), stays down until 0.45 s after the speech, then takes 600 ms to
+    come back."""
+    n = int(6 * mu.SR)
+    v = np.zeros(n)
+    i, j = int(2.0 * mu.SR), int(3.0 * mu.SR)
+    v[i:j] = np.random.default_rng(0).normal(0, 0.1, j - i)
+    db = 20 * np.log10(mu.duck_curve(v, 12.0))
+    at = lambda t: float(db[int(round(t * mu.SR))])
+    assert at(1.83) == pytest.approx(0.0, abs=0.01)                   # not yet
+    assert -12 < at(1.91) < -1                                         # going down from 1.85
+    for t in (1.98, 2.0, 2.5, 2.99, 3.2, 3.44):                       # full depth: 1.97 .. 3.45
+        assert at(t) == pytest.approx(-12.0, abs=0.05), t
+    assert -12 < at(3.75) < -1                                         # releasing
+    assert at(4.06) == pytest.approx(0.0, abs=0.01)                   # back by 3.45 + 0.6
+    assert np.all(mu.duck_curve(np.zeros(n)) == 1.0)                   # no voice: no ducking
+
+
+def _count_log(sounds=None, sound=None, n=4):
+    times = [round(1.2 + 0.3 * i, 4) for i in range(n)]
+    data = {"n": n, "every": 0.3, "times": times, "xs": [float(i - 1) for i in range(n)]}
+    if sounds is not None:
+        data["sounds"] = sounds
+    if sound is not None:
+        data["sound"] = sound
+    return {"version": 1, "scene": "C", "fps": 60.0, "duration": 2 * G.bar, "frames": int(2 * G.bar * 60),
+            "grid": {"bpm": 100.0, "beat": 0.6, "beats_per_bar": 4, "bar": 2.4, "offset": 0.0},
+            "events": [{"type": "mark", "t": 1.2, "kind": "count", "dur": 1.5, "data": data},
+                       {"type": "play", "t": 1.2, "dur": 1.5, "kinds": ["reveal"], "tags": ["count"],
+                        "anims": [leaf("FadeIn", "Circle", i - 1.0, 0, 0.5, 0.5, 0.3 * i, 0.3 * i + 0.6)
+                                  for i in range(n)]}]}
+
+
+def _score_of(tmp_path, log, spec=SPEC):
+    p = tmp_path / "C.events.json"
+    p.write_text(json.dumps(log))
+    score, *_ = mu.compose(mu.load_timeline([("s01", 0.0, p)]), mu.Settings.from_spec(spec), 2 * G.bar)
+    return score
+
+
+def test_count_items_sound_as_their_own_tags(tmp_path):
+    """Each counted item sounds as its .sound tag says (instrument and fixed note), untagged items use
+    the count's sound=, and a count without tags uses the palette's count instrument, not ticks."""
+    score = _score_of(tmp_path, _count_log(["X@C#5", "X@E5", "@G4", None], sound="O"))
+    got = [(round(n["t"] - 0.005, 3), n["inst"], n["m"]) for n in score.notes
+           if n["inst"] not in ("pad", "bass") and 1.1 < n["t"] < 2.4 and n["dur"] == 1.4]
+    assert [g[:2] for g in got] == [(1.2, "bell"), (1.5, "bell"), (1.8, "glass"), (2.1, "glass")]
+    assert got[0][2] == 73 and got[1][2] == 76 and got[2][2] == 67      # C#5, E5, G4 as tagged
+    assert not [f for f in score.fx if f["kind"] == "tick" and 1.1 < f["t"] < 2.4]
+    plain = _score_of(tmp_path, _count_log())                            # glass palette: count = glass
+    insts = {n["inst"] for n in plain.notes if 1.1 < n["t"] < 2.4 and n["dur"] == 1.4}
+    assert insts == {"glass"}
+    ticks = _score_of(tmp_path, _count_log(), {**SPEC, "music": {**SPEC["music"], "palette": {"count": "tick"}}})
+    assert len([f for f in ticks.fx if f["kind"] == "tick" and 1.1 < f["t"] < 2.4]) == 4   # the video asks for ticks
+
+
+def test_structure_cues_are_not_doubled(tmp_path):
+    """A title marked in the scene and also in video.yaml music.cues sounds once (one boom, one rolled
+    chord), on the scene's time, with video.yaml's chord."""
+    spec = {"tempo": 100, "music": {"key": "D", "mode": "lydian",
+                                    "cues": [{"at": "6.1", "kind": "title", "chord": "vi"},      # = 12.0 s
+                                             {"at": "5.1", "kind": "cut"}]}}                       # the scene cut
+    (score, cues, *_), _ = compose(tmp_path, spec)
+    booms = [f["t"] for f in score.fx if f["kind"] == "boom"]
+    assert booms.count(pytest.approx(12.0)) == 1
+    cuts = [c for c in cues if c.kind in ("cut", "section") and abs(c.t - 9.6) < 1e-6]
+    assert len(cuts) == 1 and cuts[0].data["merged"] == ["cut"]          # the scene cut and video.yaml's
+    title = [c for c in cues if c.kind == "title"]
+    assert len(title) == 1 and title[0].data["chord"] == "vi" and title[0].scene == "s02"
+    assert [c for c in score.chords if c.tag == "title"][0].degree == 6
+
+
+def test_no_blips_at_the_start_of_a_silence(tmp_path):
+    """An accent that would start just before (or inside) a planned silence is left out instead of
+    being cut to a 30 ms blip; the boom on the return stays."""
+    s1, s2 = short_logs()
+    s1["events"].append({"type": "play", "t": 7.8, "dur": 1.75, "kinds": ["count"], "anims": [
+        leaf("CounterRoll", "RollingCounter", 3, 0, 3, 1, 0, 1.75, kind="count")]})   # lands at 9.55
+    p1, p2 = tmp_path / "One.events.json", tmp_path / "Two.events.json"
+    p1.write_text(json.dumps(s1))
+    p2.write_text(json.dumps(s2))
+    scenes = mu.load_timeline([("s01", 0.0, p1), ("s02", 4 * G.bar, p2)])
+    score, *_ = mu.compose(scenes, mu.Settings.from_spec(SPEC), 7 * G.bar)
+    assert score.dropped >= 1
+    assert not [n for n in score.notes if n["inst"] not in ("pad", "bass") and 9.48 <= n["t"] < 11.99]
+    assert any(f["kind"] == "boom" and f["t"] == pytest.approx(12.0) for f in score.fx)
+
+
+def test_click_scan(tmp_path):
+    (score, cues, ctx, bed, acc), st = compose(tmp_path)
+    m, _ = mu.music_only(bed, acc, st)
+    planned = mu.planned_transients(score)
+    assert mu.click_scan(m, planned) == []                         # every note ends with a fade
+    assert mu.click_scan(acc, planned) == []
+    y = m.copy()
+    y[int(5.3 * mu.SR):] = 0.0                                     # a sound cut off while it rings
+    assert mu.click_scan(y, planned) == [pytest.approx(5.3, abs=0.002)]
+    t = np.arange(mu.SR * 2) / mu.SR
+    tone = 0.2 * np.sin(2 * np.pi * 440 * t)
+    tone[mu.SR:] = 0.0
+    assert mu.click_scan(tone, [1.0]) == []                         # ... unless the score planned it there
+
+
+def test_midi_has_every_instrument(tmp_path):
+    spec = {"tempo": 100, "music": {"key": "D", "palette": {"O": "reversed_glass", "X": "marimba"}}}
+    (score, *_), _ = compose(tmp_path, spec)
+    score.note(1.0, 0.5, 70, 0.5, "wood")
+    p = tmp_path / "s.mid"
+    mu.write_midi(score, p, bpm=100)
+    assert p.read_bytes().count(b"MTrk") >= 5
+
+
+def test_planned_progression_joins_and_hit_sizes(tmp_path):
+    """video.yaml may write the progression bar by bar (slash basses, rests), mark a scene join as a
+    segue (no cut sound), and size its hits."""
+    spec = {"tempo": 100, "music": {
+        "key": "D", "mode": "lydian",
+        "chords": {1: "I", 2: "II/D", 3: "vi", 5: "rest", 6: "Vsus", 7: "I"},
+        "joins": {"5.1": "segue"},
+        "cues": [{"at": "4.1", "kind": "hit", "size": 0.2}]}}
+    (score, cues, *_), _ = compose(tmp_path, spec)
+    names = [(round(c.t, 2), c.name) for c in score.chords]
+    assert names == [(0.0, "I"), (2.4, "II/D"), (4.8, "vi"), (9.6, "rest"), (12.0, "Vsus"), (14.4, "I")]
+    bass = [n for n in score.notes if n["inst"] == "bass" and abs(n["t"] - 2.4) < 0.2]
+    assert bass and all(n["m"] % 12 == 2 for n in bass)                  # E minor over a D bass
+    assert not [n for n in score.notes if n["inst"] == "pad" and 9.0 < n["t"] < 11.9]   # the rest
+    assert not [c for c in cues if c.kind == "cut"]                       # the join at 9.6 is a segue
+    assert not [f for f in score.fx if f["kind"] == "thump"]
+    hit = [f for f in score.fx if f["kind"] == "boom" and f["t"] == pytest.approx(7.2)]
+    assert hit and hit[0]["gain"] < 0.5                                   # a small hit (size 0.2)

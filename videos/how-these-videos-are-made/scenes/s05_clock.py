@@ -8,8 +8,8 @@ the three quoted phrases in the code turn ORANGE and fly up as anchor pins onto 
 clip's real sentence starts); a playhead runs along it, and when it reaches "A hundred" / "A
 million" the same words light up in the say line and "100?" / "1,000,000?" appear on the screen
 (the strings the code fades in) -> the real 23-second clip of tic-tac-toe scene 3, second say line
-(A18 envelope), revealed one sentence at a time, GREEN ticks at its five sentence starts (A17),
-"sentence starts: exact" -> it moves up; its first 5.2 s zoom out of it; the first sentence's
+(A18 envelope), revealed one sentence at a time, its ends labelled "0 s" / "23 s", GREEN ticks at
+its five sentence starts (A17), "sentence starts: exact" -> it moves up (the end labels go); its first 5.2 s zoom out of it; the first sentence's
 words appear in their natural widths, then spread into equal character cells over the zoomed
 audio (the toolkit's guess), and ORANGE pins (dashed YELLOW: estimated) drop at "counted those"
 and "as if the players" -> ponder: the 7 cells of "362,880" lift into a strip of 7 boxes under the
@@ -299,7 +299,7 @@ class AudioClock(VoiceScene):
         clip_y = card.clip_y()
         clip = RoundedRectangle(width=x1 - x0, height=0.13, corner_radius=0.06, stroke_width=0) \
             .set_fill(AUDIO, 0.9).move_to([(x0 + x1) / 2, clip_y, 0])
-        voice_l = label("voice", 22, AUDIO).move_to([card.say.get_x(), clip_y, 0])
+        voice_l = label("voice", 24, AUDIO).move_to([card.say.get_x(), clip_y, 0])
 
         def clip_at(t):
             return np.array([x0 + (x1 - x0) * t / SAY44_DUR, clip_y, 0])
@@ -369,6 +369,10 @@ class AudioClock(VoiceScene):
             .move_to([0, FULL_Y, 0])
         badge = measured_badge("sentence starts: exact", 24)
         badge.next_to(ticks, UP, buff=0.2).align_to([ZX1, 0, 0], RIGHT)
+        ends_y = FULL_Y - FULL_H / 2 - 0.12 - 0.1               # the clip's two ends, under the ticks:
+        ends = VGroup(label("0 s", 24, TOOL), label(f"{round(CLIP_T)} s", 24, TOOL))   # "23 s" (A17)
+        ends[0].next_to([ZX0, ends_y, 0], DOWN, buff=0).align_to([ZX0, 0, 0], LEFT)
+        ends[1].next_to([ZX1, ends_y, 0], DOWN, buff=0).align_to([ZX1, 0, 0], RIGHT)
         src2 = source_caption("drawn from the real audio and its sentence marks · tic-tac-toe video, scene 3, "
                               "its second say line")
         squash = TOP_H / FULL_H                                # the full clip, moved up into the top band
@@ -405,11 +409,14 @@ class AudioClock(VoiceScene):
             beat1 = collect(self, hook, card, card_cap, clip, voice_l, pins, head, player, player_cap, *guess)
             self.play(FadeOut(beat1, shift=UP * 0.3), run_time=0.6)
             self.add(part_a, part_b, cover)
-            self.play(FadeIn(src2), run_time=0.3)
-            for _, t in MARKS[1:] + [(None, CLIP_T)]:           # one sentence at a time
+            steps = MARKS[1:] + [(None, CLIP_T)]
+            for k, (_, t) in enumerate(steps):                  # one sentence at a time
                 right = cover.get_right()[0]
                 w = max(0.001, right - full_x(t))
-                self.play(cover.animate.stretch_to_fit_width(w, about_edge=RIGHT), run_time=0.3, rate_func=smooth)
+                with_it = [FadeIn(src2), FadeIn(ends[0])] if k == 0 else \
+                    [FadeIn(ends[1])] if k == len(steps) - 1 else []
+                self.play(cover.animate.stretch_to_fit_width(w, about_edge=RIGHT), *with_it, run_time=0.3,
+                          rate_func=smooth)
                 self.wait(1 / 15)
             self.remove(cover)
             vo.wait_until("so every sentence")
@@ -419,7 +426,7 @@ class AudioClock(VoiceScene):
             vo.wait_until("Inside a sentence")
             full = collect(self, part_a, part_b, ticks)
             self.play(full.animate.stretch_to_fit_height(2 * top_half).move_to([0, TOP_Y, 0]),
-                      badge.animate.move_to(top_badge_pos), run_time=0.7)
+                      badge.animate.move_to(top_badge_pos), *[FadeOut(e) for e in ends], run_time=0.7)
             self.play(Create(window), TransformFromCopy(part_a, zoom), TransformFromCopy(ticks[0], zoom_tick),
                       run_time=0.9)
             vo.wait_until("the toolkit has to guess")
