@@ -116,6 +116,13 @@ The container has 4 CPUs shared by all agents.
   `--at`. Render 1080p once, at the end.
 - Lint (`explainer.check`, a dry run with no frames) before any render.
 
+### 2.10b Disk
+The session's disk allowance filled up while the short's opening was being built. That build failed
+once, and the next had to be staged in `/dev/shm`. The space had gone to scratch renders and
+abandoned 480p drafts.
+- Give each agent a scratch folder and have it delete its renders when done. Delete `build/media_l*`,
+  `preview_*` and `stitch_l*` once a video's final cut exists. Check `df -h /` before a long render.
+
 ### 2.11 Facts that change while the video is made
 Cost, commit counts and "not done yet" statements went stale between the script and the render.
 - Keep them in a `live:` block in `video.yaml`, show them from there, and **refresh them just before
