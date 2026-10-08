@@ -4,633 +4,675 @@ One question is never enough.
 
 2
 00:00:02,197 --> 00:00:07,296
-Real analysts ask many, adaptively, each
-chosen after seeing earlier answers.
+Real analysts ask many, adaptively,
+each chosen after seeing earlier answers.
 
 3
 00:00:07,616 --> 00:00:10,325
-Maybe you spot a spike in one bin, and zoom
-in.
+Maybe you spot a spike in one bin,
+and zoom in.
 
 4
 00:00:10,567 --> 00:00:12,572
 The paper's Theorem 1 handles this.
 
 5
-00:00:12,892 --> 00:00:17,074
-Write the probability of the whole
-transcript as a product, step by step.
+00:00:12,892 --> 00:00:14,112
+Write the probability
 
 6
-00:00:17,394 --> 00:00:21,700
-The analyst's choice of the next question is
-the same in both worlds,
+00:00:14,112 --> 00:00:17,074
+of the whole transcript as a product,
+step by step.
 
 7
-00:00:21,700 --> 00:00:25,756
-so in the ratio it cancels, leaving one
-Laplace ratio per answer.
+00:00:17,394 --> 00:00:21,700
+The analyst's choice of the next question
+is the same in both worlds,
 
 8
-00:00:26,076 --> 00:00:30,640
-If you know reinforcement learning, this is
-the trajectory-ratio trick:
+00:00:21,700 --> 00:00:25,756
+so in the ratio it cancels,
+leaving one Laplace ratio per answer.
 
 9
-00:00:30,640 --> 00:00:35,847
-whatever is identical in both worlds
-cancels, and the per-step log ratios add up.
+00:00:26,076 --> 00:00:30,640
+If you know reinforcement learning,
+this is the trajectory-ratio trick:
 
 10
-00:00:36,083 --> 00:00:39,966
-So privacy losses add up, and epsilon
-behaves like a budget.
+00:00:30,640 --> 00:00:33,569
+whatever is identical
+in both worlds cancels,
 
 11
-00:00:40,286 --> 00:00:44,232
-Each answer spends part of it; once it is
-spent, the curator stops.
+00:00:33,569 --> 00:00:35,847
+and the per-step log ratios add up.
 
 12
+00:00:36,083 --> 00:00:39,966
+So privacy losses add up,
+and epsilon behaves like a budget.
+
+13
+00:00:40,286 --> 00:00:44,232
+Each answer spends part of it;
+once it is spent, the curator stops.
+
+14
 00:00:44,552 --> 00:00:46,927
 That is the answer to Dinur and Nissim:
 
-13
+15
 00:00:46,927 --> 00:00:50,825
 the budget makes the limit on questions
 explicit and measurable.
 
-14
+16
 00:00:52,367 --> 00:00:54,778
 You can now compute a real saving yourself.
 
-15
-00:00:55,098 --> 00:00:58,724
-Pause: a histogram with d bins, total budget
-epsilon.
-
-16
-00:00:59,044 --> 00:01:03,140
-Treat each bin as its own counting query and
-split the budget evenly.
-
 17
+00:00:55,098 --> 00:00:58,724
+Pause: a histogram with d bins,
+total budget epsilon.
+
+18
+00:00:59,044 --> 00:01:03,140
+Treat each bin as its own counting query
+and split the budget evenly.
+
+19
 00:01:03,460 --> 00:01:05,337
 How much noise does each bin get?
 
-18
+20
 00:01:18,183 --> 00:01:22,855
-Each bin gets one over d of the budget, so
-noise of scale d over epsilon.
+Each bin gets one over d of the budget,
+so noise of scale d over epsilon.
 
-19
+21
 00:01:23,175 --> 00:01:25,985
 Treated as one query with sensitivity two,
 
-20
-00:01:25,985 --> 00:01:29,063
-each bin gets two over epsilon, whatever d
-is.
-
-21
-00:01:29,383 --> 00:01:34,230
-The earlier framework's sharper analysis got
-this down to about the square root of d,
-
 22
+00:01:25,985 --> 00:01:29,063
+each bin gets two over epsilon,
+whatever d is.
+
+23
+00:01:29,383 --> 00:01:34,230
+The earlier framework's sharper analysis
+got this down to about the square root of d,
+
+24
 00:01:34,230 --> 00:01:35,655
 but it still grew with d.
 
-23
+25
 00:01:37,000 --> 00:01:39,368
 Sensitivity reaches far beyond counts.
 
-24
+26
 00:01:39,688 --> 00:01:41,459
 Three examples from the paper.
 
-25
-00:01:41,767 --> 00:01:47,015
-First, picture a social network where each
-possible link is one row of the database.
-
-26
-00:01:47,335 --> 00:01:50,194
-How many links must you cut to split the
-network in two?
-
 27
-00:01:50,514 --> 00:01:55,676
-That minimum cut moves by at most one when
-one link changes, so it is one-sensitive.
+00:01:41,767 --> 00:01:43,727
+First, picture a social network
 
 28
+00:01:43,727 --> 00:01:47,015
+where each possible link
+is one row of the database.
+
+29
+00:01:47,335 --> 00:01:50,194
+How many links must you cut
+to split the network in two?
+
+30
+00:01:50,514 --> 00:01:54,246
+That minimum cut moves by at most one
+when one link changes,
+
+31
+00:01:54,246 --> 00:01:55,676
+so it is one-sensitive.
+
+32
 00:01:55,996 --> 00:01:58,075
 In general, any question of the form,
 
-29
+33
 00:01:58,075 --> 00:02:02,737
-how many rows would you have to change to
-make something true, has sensitivity one.
+how many rows would you have to change
+to make something true, has sensitivity one.
 
-30
+34
 00:02:02,983 --> 00:02:07,250
-Second: if an algorithm that rarely looks at
-any particular row,
+Second: if an algorithm
+that rarely looks at any particular row,
 
-31
+35
 00:02:07,250 --> 00:02:10,183
 like one working from a small random sample,
 
-32
+36
 00:02:10,183 --> 00:02:13,383
-approximates f to within sigma most of the
-time,
+approximates f
+to within sigma most of the time,
 
-33
+37
 00:02:13,383 --> 00:02:17,383
-on every database, then f has sensitivity at
-most two sigma.
+on every database,
+then f has sensitivity at most two sigma.
 
-34
+38
 00:02:17,703 --> 00:02:18,791
 That is Lemma 1.
 
-35
-00:02:19,033 --> 00:02:22,471
-Third, the answer need not be a number: a
-ranking, a set,
-
-36
-00:02:22,471 --> 00:02:26,030
-a string of bits, anything with a distance
-between answers.
-
-37
-00:02:26,350 --> 00:02:29,000
-Pick an output with probability that decays
-
-38
-00:02:29,000 --> 00:02:32,267
-exponentially with its distance from the
-true answer,
-
 39
-00:02:32,267 --> 00:02:35,225
-at a rate of epsilon over twice the
-sensitivity.
+00:02:19,033 --> 00:02:21,386
+Third, the answer need not be a number:
 
 40
-00:02:35,545 --> 00:02:40,207
-For bit strings, that flips each bit with
-probability a little below one half:
+00:02:21,386 --> 00:02:26,030
+a ranking, a set, a string of bits,
+anything with a distance between answers.
 
 41
+00:02:26,350 --> 00:02:29,863
+Pick an output with probability
+that decays exponentially
+
+42
+00:02:29,863 --> 00:02:32,267
+with its distance from the true answer,
+
+43
+00:02:32,267 --> 00:02:35,225
+at a rate of epsilon
+over twice the sensitivity.
+
+44
+00:02:35,545 --> 00:02:40,207
+For bit strings, that flips each bit
+with probability a little below one half:
+
+45
 00:02:40,207 --> 00:02:42,777
 Warner's coin again, applied to the answer.
 
-42
+46
 00:02:45,617 --> 00:02:47,345
 Now the last part of the paper.
 
-43
+47
 00:02:47,665 --> 00:02:52,604
 Statisticians and data miners traditionally
 prefer the non-interactive model:
 
-44
+48
 00:02:52,604 --> 00:02:56,966
-sanitize the data once, publish it, and let
-anyone compute anything.
+sanitize the data once, publish it,
+and let anyone compute anything.
 
-45
+49
 00:02:57,286 --> 00:02:59,142
 Can that work under this definition?
 
-46
+50
 00:02:59,384 --> 00:03:01,261
 The paper proves a striking limit.
 
-47
+51
 00:03:01,581 --> 00:03:03,501
 Let each row be a string of d bits.
 
-48
+52
 00:03:03,821 --> 00:03:06,637
 Here is a family of simple counting queries:
 
-49
-00:03:06,637 --> 00:03:10,093
-give each row its own mask, a subset of bit
-positions,
-
-50
-00:03:10,093 --> 00:03:14,189
-and count the rows with an odd number of
-ones inside their mask.
-
-51
-00:03:14,509 --> 00:03:18,359
-Each query has sensitivity one, so an
-interactive curator can
-
-52
-00:03:18,359 --> 00:03:22,146
-answer any one of them with noise of about
-one over epsilon.
-
 53
-00:03:22,384 --> 00:03:25,669
-But a one-shot release must prepare for all
-of them at once.
+00:03:06,637 --> 00:03:10,093
+give each row its own mask,
+a subset of bit positions,
 
 54
+00:03:10,093 --> 00:03:14,189
+and count the rows with an odd number
+of ones inside their mask.
+
+55
+00:03:14,509 --> 00:03:18,106
+Each query has sensitivity one,
+so an interactive curator
+
+56
+00:03:18,106 --> 00:03:22,146
+can answer any one of them
+with noise of about one over epsilon.
+
+57
+00:03:22,384 --> 00:03:25,669
+But a one-shot release must prepare
+for all of them at once.
+
+58
 00:03:25,989 --> 00:03:29,773
 Theorem 3 shows that for at least two thirds
 of these queries,
 
-55
-00:03:29,773 --> 00:03:32,581
-the release looks almost the same for a
-random
-
-56
-00:03:32,581 --> 00:03:36,182
-database where every row has even parity,
-true answer zero,
-
-57
-00:03:36,182 --> 00:03:39,173
-as for one where every row is odd, true
-answer n.
-
-58
-00:03:39,493 --> 00:03:43,237
-The most extreme difference possible, and it
-cannot be seen,
-
 59
-00:03:43,237 --> 00:03:46,482
-unless the database is exponentially large:
-roughly,
+00:03:29,773 --> 00:03:33,130
+the release looks almost the same
+for a random database
 
 60
-00:03:46,482 --> 00:03:50,352
-every four extra bits per row doubles the
-rows you would need.
+00:03:33,130 --> 00:03:36,182
+where every row has even parity,
+true answer zero,
 
 61
-00:03:50,600 --> 00:03:51,642
-Pause and ponder:
+00:03:36,182 --> 00:03:39,173
+as for one
+where every row is odd, true answer n.
 
 62
-00:03:51,642 --> 00:03:56,424
-couldn't an analyst just ask the interactive
-curator all of these queries too?
+00:03:39,493 --> 00:03:43,237
+The most extreme difference possible,
+and it cannot be seen,
 
 63
+00:03:43,237 --> 00:03:45,921
+unless the database is exponentially large:
+
+64
+00:03:45,921 --> 00:03:50,352
+roughly, every four extra bits per row
+doubles the rows you would need.
+
+65
+00:03:50,600 --> 00:03:52,868
+Pause and ponder: couldn't an analyst
+
+66
+00:03:52,868 --> 00:03:56,424
+just ask the interactive curator
+all of these queries too?
+
+67
 00:04:07,267 --> 00:04:08,973
 No: the budget would run out.
 
-64
-00:04:09,293 --> 00:04:13,693
-The curator only has to answer the few
-questions someone actually asks,
+68
+00:04:09,293 --> 00:04:11,152
+The curator only has to answer
 
-65
-00:04:13,693 --> 00:04:17,781
-chosen later. A published release cannot
-know which few those will be,
+69
+00:04:11,152 --> 00:04:14,499
+the few questions someone actually asks,
+chosen later.
 
-66
+70
+00:04:14,819 --> 00:04:17,781
+A published release cannot know
+which few those will be,
+
+71
 00:04:17,781 --> 00:04:20,109
 so it must be ready for all of them at once.
 
-67
+72
 00:04:20,429 --> 00:04:21,688
 That is where it breaks.
 
-68
+73
 00:04:21,934 --> 00:04:23,811
 The proof idea uses two facts.
 
-69
+74
 00:04:24,131 --> 00:04:28,526
-Privacy forces the release to treat every
-possible row almost alike.
+Privacy forces the release
+to treat every possible row almost alike.
 
-70
+75
 00:04:28,846 --> 00:04:33,407
-And a random mask splits all rows into two
-halves mixed like salt and pepper,
+And a random mask splits all rows
+into two halves mixed like salt and pepper,
 
-71
+76
 00:04:33,407 --> 00:04:36,547
-so the even half is like a random poll of
-everything.
+so the even half
+is like a random poll of everything.
 
-72
+77
 00:04:36,867 --> 00:04:40,110
-Then the chain trick: start from completely
-random rows,
+Then the chain trick:
+start from completely random rows,
 
-73
+78
 00:04:40,110 --> 00:04:42,542
 and swap them one at a time for even ones.
 
-74
+79
 00:04:42,862 --> 00:04:46,381
-Each swap barely moves the output, and
-unless n is huge,
+Each swap barely moves the output,
+and unless n is huge,
 
-75
+80
 00:04:46,381 --> 00:04:48,643
 all n swaps together barely move it.
 
-76
+81
 00:04:48,963 --> 00:04:53,315
-The same goes for odd rows, so both
-databases look like random rows.
+The same goes for odd rows,
+so both databases look like random rows.
 
-77
-00:04:53,550 --> 00:04:57,603
-Warner's coin, randomized response, where
-each person scrambles
+82
+00:04:53,550 --> 00:04:55,819
+Warner's coin, randomized response,
 
-78
-00:04:57,603 --> 00:05:01,784
-their own row so nobody holds the raw data,
+83
+00:04:55,819 --> 00:05:00,423
+where each person scrambles their own row
+so nobody holds the raw data,
+
+84
+00:05:00,423 --> 00:05:01,784
 is even more limited.
 
-79
-00:05:02,104 --> 00:05:06,016
-Proposition 2: even when every row uses the
-same mask,
+85
+00:05:02,104 --> 00:05:06,046
+Proposition 2:
+even when every row uses the same mask,
 
-80
-00:05:06,016 --> 00:05:11,812
-for most masks it cannot estimate the odd
-count unless n is exponentially large.
+86
+00:05:06,046 --> 00:05:09,476
+for most masks
+it cannot estimate the odd count
 
-81
+87
+00:05:09,476 --> 00:05:11,812
+unless n is exponentially large.
+
+88
 00:05:12,050 --> 00:05:13,628
 Careful with the quantifiers.
 
-82
+89
 00:05:13,948 --> 00:05:18,258
-For any one query known in advance, a one-
-shot release can answer it well.
+For any one query known in advance,
+a one-shot release can answer it well.
 
-83
+90
 00:05:18,578 --> 00:05:22,478
-What is impossible, unless the database is
-exponentially large,
+What is impossible,
+unless the database is exponentially large,
 
-84
+91
 00:05:22,478 --> 00:05:25,511
-is one private release that answers most of
-them.
+is one private release
+that answers most of them.
 
-85
+92
 00:05:25,831 --> 00:05:29,677
 The lesson: for broad, flexible accuracy
 with strong privacy,
 
-86
+93
 00:05:29,677 --> 00:05:31,506
 keep the curator in the loop.
 
-87
-00:05:33,150 --> 00:05:35,689
-Back to our map, to see what grew from this
-paper.
-
-88
-00:05:36,009 --> 00:05:40,233
-The same year, in an invited paper titled
-simply Differential Privacy,
-
-89
-00:05:40,233 --> 00:05:43,070
-Dwork introduced the name the field still
-uses.
-
-90
-00:05:43,390 --> 00:05:46,868
-Another 2006 paper, with Kenthapadi,
-McSherry,
-
-91
-00:05:46,868 --> 00:05:50,195
-Mironov and Naor, added a tiny slack, delta.
-
-92
-00:05:50,515 --> 00:05:54,035
-Remember the Gaussian whose ratio escaped
-the band in the tails?
-
-93
-00:05:54,355 --> 00:05:58,131
-Delta pays for those rare tails, and lets
-the bell curve back in.
-
 94
+00:05:33,150 --> 00:05:35,689
+Back to our map,
+to see what grew from this paper.
+
+95
+00:05:36,009 --> 00:05:40,233
+The same year, in an invited paper
+titled simply Differential Privacy,
+
+96
+00:05:40,233 --> 00:05:43,070
+Dwork introduced the name
+the field still uses.
+
+97
+00:05:43,390 --> 00:05:48,229
+Another 2006 paper,
+with Kenthapadi, McSherry, Mironov and Naor,
+
+98
+00:05:48,229 --> 00:05:50,195
+added a tiny slack, delta.
+
+99
+00:05:50,515 --> 00:05:54,035
+Remember the Gaussian
+whose ratio escaped the band in the tails?
+
+100
+00:05:54,355 --> 00:05:58,131
+Delta pays for those rare tails,
+and lets the bell curve back in.
+
+101
 00:05:58,367 --> 00:06:03,615
 Scoring every possible answer became
 McSherry and Talwar's exponential mechanism.
 
-95
+102
 00:06:03,935 --> 00:06:07,489
-The privacy budget grew into a theory of
-composition,
+The privacy budget grew
+into a theory of composition,
 
-96
-00:06:07,489 --> 00:06:12,251
-with a surprise from Dwork, Rothblum and
-Vadhan: allow that tiny delta,
+103
+00:06:07,489 --> 00:06:10,754
+with a surprise
+from Dwork, Rothblum and Vadhan:
 
-97
+104
+00:06:10,754 --> 00:06:12,251
+allow that tiny delta,
+
+105
 00:06:12,251 --> 00:06:17,012
-and the total loss of k questions grows only
-like the square root of k.
+and the total loss of k questions
+grows only like the square root of k.
 
-98
+106
 00:06:17,250 --> 00:06:21,253
-Warner's coin, the model Section four showed
-is most limited,
+Warner's coin, the model
+Section four showed is most limited,
 
-99
+107
 00:06:21,253 --> 00:06:24,338
-is what we now call local differential
-privacy,
+is what we now call
+local differential privacy,
 
-100
+108
 00:06:24,338 --> 00:06:27,554
-used by Google in Chrome and by Apple on
-iPhones.
+used by Google in Chrome
+and by Apple on iPhones.
 
-101
+109
 00:06:27,874 --> 00:06:29,197
 Why the weakest model?
 
-102
+110
 00:06:29,517 --> 00:06:33,865
 Nobody has to be trusted with the raw data,
 and with millions of users,
 
-103
-00:06:33,865 --> 00:06:36,621
-a few simple statistics can afford the
-noise.
-
-104
-00:06:36,867 --> 00:06:42,250
-In 2016, Abadi and colleagues made it
-practical to train deep networks privately:
-
-105
-00:06:42,250 --> 00:06:47,566
-clip each example's gradient, like our
-income cap, which bounds its sensitivity;
-
-106
-00:06:47,566 --> 00:06:51,886
-add Gaussian noise; and track the budget
-over thousands of steps.
-
-107
-00:06:52,206 --> 00:06:55,747
-If you train models on patient data, this is
-your entry point.
-
-108
-00:06:56,067 --> 00:07:00,158
-A trained network is just another f of x,
-and attacks that ask whether
-
-109
-00:07:00,158 --> 00:07:04,365
-a patient was in the training set are our
-subtraction attack, scaled up.
-
-110
-00:07:04,600 --> 00:07:06,274
-And for the 2020 census,
-
 111
-00:07:06,274 --> 00:07:11,714
-the US Census Bureau protected its published
-tables with differential privacy;
+00:06:33,865 --> 00:06:36,621
+a few simple statistics
+can afford the noise.
 
 112
-00:07:11,714 --> 00:07:15,480
-only a few counts, like state populations,
-were exact.
+00:06:36,867 --> 00:06:40,004
+In 2016,
+Abadi and colleagues made it practical
 
 113
+00:06:40,004 --> 00:06:44,209
+to train deep networks privately:
+clip each example's gradient,
+
+114
+00:06:44,209 --> 00:06:47,547
+like our income cap,
+which bounds its sensitivity;
+
+115
+00:06:47,547 --> 00:06:48,835
+add Gaussian noise;
+
+116
+00:06:48,835 --> 00:06:51,886
+and track the budget
+over thousands of steps.
+
+117
+00:06:52,206 --> 00:06:55,747
+If you train models on patient data,
+this is your entry point.
+
+118
+00:06:56,067 --> 00:06:59,690
+A trained network is just another f of x,
+and attacks that ask
+
+119
+00:06:59,690 --> 00:07:04,365
+whether a patient was in the training set
+are our subtraction attack, scaled up.
+
+120
+00:07:04,600 --> 00:07:07,738
+And for the 2020 census,
+the US Census Bureau
+
+121
+00:07:07,738 --> 00:07:11,714
+protected its published tables
+with differential privacy;
+
+122
+00:07:11,714 --> 00:07:15,480
+only a few counts,
+like state populations, were exact.
+
+123
 00:07:15,800 --> 00:07:17,485
 But that is a one-shot release.
 
-114
+124
 00:07:17,805 --> 00:07:20,429
-Pause and ponder: does Section four forbid
-it?
+Pause and ponder:
+does Section four forbid it?
 
-115
+125
 00:07:29,267 --> 00:07:34,430
-No. The Census tuned its release for a fixed
-set of tables chosen in advance.
+No. The Census tuned its release
+for a fixed set of tables chosen in advance.
 
-116
+126
 00:07:34,750 --> 00:07:37,237
 Section four only rules out one release
 
-117
-00:07:37,237 --> 00:07:40,808
-that is accurate for most of a huge family
-of questions.
-
-118
-00:07:44,150 --> 00:07:49,270
-Let's recap. One: privacy means changing any
-one person's row changes
-
-119
-00:07:49,270 --> 00:07:54,070
-the probability of any output by at most a
-factor of e to the epsilon.
-
-120
-00:07:54,390 --> 00:07:58,635
-Two: a query's sensitivity is the most one
-row can change its answer.
-
-121
-00:07:58,955 --> 00:08:03,562
-Three: Laplace noise with scale sensitivity
-over epsilon makes it private,
-
-122
-00:08:03,562 --> 00:08:06,550
-with error that does not grow with the
-database.
-
-123
-00:08:06,870 --> 00:08:10,733
-Four: one private published table cannot
-answer most simple
-
-124
-00:08:10,733 --> 00:08:14,465
-parity counts unless the database is
-exponentially large.
-
-125
-00:08:15,100 --> 00:08:18,108
-Some questions to test yourself; pause after
-each.
-
-126
-00:08:18,428 --> 00:08:23,185
-First: what is the sensitivity of the
-average of n numbers between zero and one?
-
 127
-00:08:31,433 --> 00:08:36,284
-Second: in a medical imaging dataset, each
-patient contributes fifty slices,
+00:07:37,237 --> 00:07:40,808
+that is accurate
+for most of a huge family of questions.
 
 128
-00:08:36,284 --> 00:08:39,284
-and each slice's gradient is clipped to size
-C.
+00:07:44,150 --> 00:07:48,721
+Let's recap. One:
+privacy means changing any one person's row
 
 129
-00:08:39,604 --> 00:08:42,591
-How much can one patient change the summed
-gradient?
+00:07:48,721 --> 00:07:54,070
+changes the probability of any output
+by at most a factor of e to the epsilon.
 
 130
-00:08:52,833 --> 00:08:56,225
-Third: why does the median give the Laplace
-mechanism trouble?
+00:07:54,390 --> 00:07:58,635
+Two: a query's sensitivity
+is the most one row can change its answer.
 
 131
-00:08:56,545 --> 00:08:59,959
-Answers, and more exercises, are in the
-companion notes.
+00:07:58,955 --> 00:08:02,441
+Three: Laplace noise
+with scale sensitivity over epsilon
 
 132
+00:08:02,441 --> 00:08:06,550
+makes it private, with error
+that does not grow with the database.
+
+133
+00:08:06,870 --> 00:08:11,650
+Four: one private published table
+cannot answer most simple parity counts
+
+134
+00:08:11,650 --> 00:08:14,465
+unless the database is exponentially large.
+
+135
+00:08:15,100 --> 00:08:18,108
+Some questions to test yourself;
+pause after each.
+
+136
+00:08:18,428 --> 00:08:20,234
+First: what is the sensitivity
+
+137
+00:08:20,234 --> 00:08:23,185
+of the average of n numbers
+between zero and one?
+
+138
+00:08:31,433 --> 00:08:36,284
+Second: in a medical imaging dataset,
+each patient contributes fifty slices,
+
+139
+00:08:36,284 --> 00:08:39,284
+and each slice's gradient
+is clipped to size C.
+
+140
+00:08:39,604 --> 00:08:42,591
+How much can one patient
+change the summed gradient?
+
+141
+00:08:52,833 --> 00:08:56,225
+Third: why does the median give
+the Laplace mechanism trouble?
+
+142
+00:08:56,545 --> 00:08:59,959
+Answers, and more exercises,
+are in the companion notes.
+
+143
 00:09:08,200 --> 00:09:12,103
 Next time someone says a dataset is safe
 because it is anonymized,
 
-133
+144
 00:09:12,103 --> 00:09:14,173
 you will know the better questions:
 
-134
+145
 00:09:14,173 --> 00:09:17,544
-what is the epsilon, and what counts as one
-person's row?
+what is the epsilon,
+and what counts as one person's row?
 
