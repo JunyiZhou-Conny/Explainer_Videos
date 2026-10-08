@@ -426,7 +426,8 @@ class AudioClock(VoiceScene):
             self.play(FadeIn(natural, shift=DOWN * 0.1), run_time=0.5)
             self.play(FadeIn(guess_tag, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("It assumes")
-            self.play(*[ReplacementTransform(a, b) for a, b in zip(natural, spread)], run_time=1.2)
+            # serif -> mono glyphs: a cross-fade while they move (a morph between fonts is unreadable midway)
+            self.play(*[FadeTransform(a, b) for a, b in zip(natural, spread)], run_time=1.2)
             adopt(self, spread)
             self.play(LaggedStart(*[Create(r) for r in ruler], lag_ratio=0.02), run_time=0.5)
             self.play(a1.animate.set_color(AUDIO), a2.animate.set_color(AUDIO),
@@ -449,7 +450,7 @@ class AudioClock(VoiceScene):
                       lifted.animate.arrange(RIGHT, buff=0.42).move_to(num_strip), run_time=0.5)
             self.play(FadeIn(q, scale=0.95), run_time=0.5)
             vo.wait_until("The number on screen")
-            self.play(*[ReplacementTransform(a, b) for a, b in zip(lifted, num_strip.chars)],
+            self.play(*[FadeTransform(a, b) for a, b in zip(lifted, num_strip.chars)],
                       LaggedStart(*[Create(b) for b in num_strip.boxes], lag_ratio=0.1), run_time=0.9)
             adopt(self, num_strip)
             vo.wait_until("as many as")
@@ -510,14 +511,16 @@ class AudioClock(VoiceScene):
             for g in others:
                 g.set_opacity(0.3)
             ruler.set_opacity(0.6)
-            self.play(FadeOut(q), FadeOut(ex_strip, shift=DOWN * 0.2), FadeIn(Group(*back)), FadeIn(cap4),
-                      *[ReplacementTransform(a, b) for a, b in zip(num_strip, est_cells)], run_time=1.1)
+            # clear the card first (the boxes would pass through its text), then the zoom comes back
+            self.play(FadeOut(q), FadeOut(ex_strip, shift=DOWN * 0.2), run_time=0.4)
+            self.play(FadeIn(Group(*back)), FadeIn(cap4),
+                      *[ReplacementTransform(a, b) for a, b in zip(num_strip, est_cells)], run_time=0.8)
             collect(self, a1)
             vo.wait_until("three hundred")
             step1 = []
             for k in range(3):                                 # "362" takes its measured time ...
                 step1 += [ReplacementTransform(est_cells[k][0], measured[k]),
-                          ReplacementTransform(est_cells[k][1], meas_chars[k])]
+                          FadeTransform(est_cells[k][1], meas_chars[k])]   # mono -> serif: fade, don't morph
             step1 += [est_cells[k].animate.shift(RIGHT * push) for k in range(3, 7)]   # ... and pushes the rest
             self.play(*step1, FadeOut(collect(self, *others, ruler)), a1.animate.shift(RIGHT * push),
                       GrowFromEdge(bars[0], LEFT), FadeIn(bar_labels[0]), Create(guides[0]), Create(guides[1]),
@@ -526,7 +529,7 @@ class AudioClock(VoiceScene):
             step2 = []
             for k in range(3, 7):
                 step2 += [ReplacementTransform(est_cells[k][0], measured[k]),
-                          ReplacementTransform(est_cells[k][1], meas_chars[k])]
+                          FadeTransform(est_cells[k][1], meas_chars[k])]
             self.play(*step2, a1.animate.shift(RIGHT * (to_measured - push)), GrowFromEdge(bars[1], LEFT),
                       FadeIn(bar_labels[1]), Create(guides[2]), run_time=1.1)
             vo.wait_until("Far longer")
@@ -538,9 +541,9 @@ class AudioClock(VoiceScene):
             vo.wait_until("lands almost")
             self.add(gap_ends[0])
             self.play(pin.animate.shift(RIGHT * (zoom_x(WCOUNTED[0]) - zoom_x(EST))), Create(gap_line),
-                      run_time=0.9, rate_func=linear)
+                      run_time=0.8, rate_func=linear)
             self.add(gap_ends[1])
-            self.play(ReplacementTransform(pin, green_pin), FadeIn(gap_tag, scale=0.9), run_time=0.5)
+            self.play(ReplacementTransform(pin, green_pin), FadeIn(gap_tag, scale=0.9), run_time=0.4)
 
         # ---------------------------------------------------------- the fix so far: by hand
         comment = clipped_panel(COMMENT, "tic-tac-toe video · scenes/s03_stop.py", 90, cols=66, font_size=22)
@@ -577,16 +580,19 @@ class AudioClock(VoiceScene):
         note = open_tag("this service can send word times · only the audio is kept")
 
         with self.voiceover(SAY[4]) as vo:
+            # "The fix so far ...": the gap that needs fixing stays readable a moment longer (the ponder's
+            # answer only finished appearing at the very end of the previous block)
+            self.play(Circumscribe(VGroup(gap_ends, gap_tag), color=S.WHITE, buff=0.12, time_width=0.5),
+                      run_time=0.8)
             self.play(FadeOut(collect(self, zoom, zoom_tick, green_pin, gap_line, gap_ends, gap_tag, measured,
-                                      meas_chars, bars, bar_labels, guides, brace, about3, cap4)), run_time=0.5)
+                                      meas_chars, bars, bar_labels, guides, brace, about3, cap4)), run_time=0.4)
             a1.set_z_index(3)                                  # fly over the panel, not under it
-            self.play(FadeIn(fix), ReplacementTransform(a1, ghost), run_time=0.8)
+            self.play(FadeIn(fix), ReplacementTransform(a1, ghost), FadeIn(comment, shift=DOWN * 0.15), run_time=0.8)
             target.set_opacity(1).set_color(AUDIO)
             self.remove(ghost)
-            self.play(FadeIn(comment, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("this one scene carries")
             self.play(FadeIn(counter, shift=UP * 0.1), run_time=0.4)
-            self.play(ChangeDecimalToValue(counter_n, SHIFTS), run_time=1.4, rate_func=smooth)
+            self.play(ChangeDecimalToValue(counter_n, SHIFTS), run_time=1.2, rate_func=smooth)
             self.play(emphasize(why, run_time=0.9))
             vo.wait_until("the biggest")
             self.play(shift_glow.animate.set_fill(opacity=shift_glow.glow_opacity), shift_span.animate.set_color(AUDIO),
@@ -601,7 +607,9 @@ class AudioClock(VoiceScene):
             voice.move_to([0, 0, 0]).align_to(comment, LEFT).align_to([0, stay.get_bottom()[1] + dy - 0.55, 0], UP)
             outs.next_to(voice, DOWN, buff=0.45).align_to(voice, LEFT).shift(RIGHT * 0.4)
             note.next_to(outs, DOWN, buff=0.4).align_to(voice, LEFT)
-            self.play(FadeOut(comment, shift=UP * 0.3), stay.animate.shift(UP * dy), run_time=0.8)
+            # the comment leaves first: its caption would cross the line moving up
+            self.play(FadeOut(comment, shift=UP * 0.2), run_time=0.35)
+            self.play(stay.animate.shift(UP * dy), run_time=0.5)
             self.play(FadeIn(voice, shift=UP * 0.3), run_time=0.7)
             vo.wait_until("can send a time")
             self.play(emphasize(comm_span, run_time=0.8))

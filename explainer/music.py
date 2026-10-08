@@ -28,9 +28,11 @@ video.yaml (all optional):
       key: D                    # tonic
       mode: lydian              # ionian / lydian / mixolydian / dorian / aeolian / phrygian / major / minor
       mood: bright              # bright | dark | warm: filter, reverb and pulse presets
-      palette: glass            # glass | soft | pluck: which instrument plays which role
-      sounds: {X: bell, O: glass}   # semantic sound: a mobject's .sound tag -> instrument
-      acts: [{at: s05_turn, key: A, mode: major}]   # key changes (scene stem, "123.4s" or a bar number)
+      palette: glass            # glass | soft | pluck: which instrument plays which role (or a map, as sounds)
+      sounds: {X: bell, O: glass}   # semantic sound: a mobject's .sound tag -> instrument ("X@C#5": a fixed note)
+      acts: [{at: s05_turn, key: A, mode: major}]   # key changes (see video_time for positions)
+      cues: [{at: "10.1", kind: title, chord: vi}, {at: "64.1", kind: silence, bars: 1}]
+                                # structure on the video's timeline: bar.beat counted from 1
       density: 3                # at most this many ordinary accents per second
       pulse: true               # shorts: the soft grid pulse
       lufs: -14                 # music-only loudness target
@@ -426,6 +428,7 @@ class Chord:
     sus: bool = False
     tag: str = ""
     custom: tuple | None = None       # (root pc, pcs, name) of a chord given by name (video.yaml)
+    named: bool = False               # named in video.yaml: kept as written
 
     @property
     def name(self) -> str:
@@ -597,6 +600,7 @@ def plan_harmony(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sc
         last_point = i + 1 == len(phrased)
         if round(t, 3) in named:
             ch = parse_chord(named[round(t, 3)], key, t, tag)
+            ch.named = True
         elif tag in ("open", "title", "resolve"):
             ch = Chord(t, key, 1, tag=tag)
         elif last_point and total - t < room:
@@ -617,7 +621,7 @@ def plan_harmony(cues: list[Cue], ctx: dict, settings: Settings, scenes: list[Sc
         tail = max(tail, chords[-1].t + ((grid.bar if grid is not None else 2.0)))
         if tail < total - 0.3:
             chords.append(Chord(tail, key_at(tail, settings, scenes, grid), 1, tag="end"))
-        else:
+        elif not chords[-1].named:
             chords[-1] = Chord(chords[-1].t, chords[-1].key, 1, tag="end")
     return chords
 

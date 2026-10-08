@@ -7,8 +7,9 @@ launches three of the dots (copies fly out and become sub-agents, each with a jo
 tools with a gloss each (the two voices and the recognizer are pointed at as they are named) ->
 the other columns step aside, the user moves to the corner and the PINK column expands into a
 checklist (30 pt, mid-frame) that ticks as each item is named; on "supplied the program" it shrinks
-to the top band (24 pt) as the real program slides up under it (A09, lines 31-38 as pasted, the
-user's comments verbatim and unhighlighted; 20 pt, the largest size its 76-character line allows);
+to the top band (24 pt) as the real program slides up under it (A09, lines 31-38 of the extracted
+file, which are lines 43-50 of the request; text as pasted, indent removed, the user's comments
+verbatim and unhighlighted; 20 pt, the largest size its 76-character line allows);
 it runs and prints a GREEN 255168 (A24); the "0" on the one highlighted line becomes a BLUE "O" in a
 diff chip ("0" (zero) -> "O" (the letter O): the two glyphs look alike in a code font), held by a
 small agent icon -> that icon becomes the BLUE column in the corner: eight GREY chips of what it
@@ -53,6 +54,10 @@ PROGRAM_OUT = asset_text("play_all_games.out")         # A24: "255168"
 EXCERPT_FIRST, EXCERPT_LAST = 31, 38                   # total = 0 ... return total (1-based)
 EXCERPT = textwrap.dedent("\n".join(ORIGINAL.splitlines()[EXCERPT_FIRST - 1:EXCERPT_LAST]))
 NEXT_LINE = 4                                          # next_player = "0" ... (0-based, in EXCERPT)
+# The line numbers count lines of the extracted file (A09 starts it at WIN_LINES); in the request
+# itself the program opens with two docstrings, so the same lines are 43-50 there. The caption
+# therefore names the file the numbers belong to.
+PANEL_PATH = "the user's program, as pasted in the request: user_original_program.py"
 
 
 def _commits():
@@ -74,8 +79,9 @@ def _stops():
 
 COMMITS = _commits()
 STOPS = _stops()
-# the two restarts that came from the user's own messages (A12, checked against the transcript)
-NUDGES = [(dt.datetime(2026, 10, 7, 2, 12), "Please continue"), (dt.datetime(2026, 10, 7, 20, 9), "Try again")]
+# the two restarts that came from the user's own messages (A12, checked against the transcript):
+# "… Please continue from where you left off." (cut, so "…" marks it, as in S02) and "Try again" (whole)
+NUDGES = [(dt.datetime(2026, 10, 7, 2, 12), "Please continue …"), (dt.datetime(2026, 10, 7, 20, 9), "Try again")]
 # request -> final cut (git + the request log; fact sheet 2a)
 PRIVACY = (dt.datetime(2026, 10, 4, 15, 28), dt.datetime(2026, 10, 4, 21, 29))
 TICTACTOE = (dt.datetime(2026, 10, 5, 21, 53), dt.datetime(2026, 10, 6, 1, 0))
@@ -93,6 +99,15 @@ JOBS = ["build one scene", "review", "translate"]
 MADE = ["toolkit", "scripts", "scenes", "translations", "voices", "subtitles", "reviews", "renders"]
 CHECKLIST = ["chose the topics and the audiences", "uploaded 36 PDFs", "gave the tic-tac-toe counts",
              "supplied the program"]
+# The footer follows the narration's wording (script.md live values: "about a hundred" switches to
+# "over a hundred" above about 110 commits), so the two can't drift apart. The ribbon itself stays
+# frozen at bb3fc1e (98 commits), as its source caption says.
+if "about a hundred" in SAY[2]:
+    FOOTER = "about 100 commits · 2 by the user"
+elif "over a hundred" in SAY[2]:
+    FOOTER = "over 100 commits · 2 by the user"
+else:
+    raise AssertionError("S03 say line 3 changed its commit wording: update FOOTER to match")
 
 
 def _check():
@@ -120,6 +135,7 @@ def _check():
     b = [s.strip() for s in CLEANED.splitlines() if s.strip().startswith("next_player")]
     assert a == ['next_player = "0" if player == "X" else "X"'] and b == [a[0].replace('"0"', '"O"')]
     assert EXCERPT.splitlines()[NEXT_LINE].strip() == a[0]
+    assert len(EXCERPT.splitlines()) == EXCERPT_LAST - EXCERPT_FIRST + 1      # the caption's "lines 31–38"
     assert "#" in EXCERPT                              # the user's own comments are in the excerpt
 
 
@@ -397,7 +413,7 @@ class Team(VoiceScene):
         shrunk = grid.copy().scale(0.8)
         shrunk.shift(np.array([ROW_X, ROW_Y[0], 0]) - np.array([shrunk.get_left()[0], items_top_y(shrunk), 0]))
         # the real line is 76 characters long: 20 pt (the minimum) is the largest size that fits
-        panel = code_panel(EXCERPT, "the user's program, as pasted in the request", EXCERPT_FIRST, font_size=20)
+        panel = code_panel(EXCERPT, PANEL_PATH, EXCERPT_FIRST, font_size=20)
         panel.move_to([0, 0, 0]).align_to([0, ROW_Y[1] - 0.4, 0], UP)
         code = panel.code
         bar = line_bar(code, NEXT_LINE)
@@ -431,7 +447,9 @@ class Team(VoiceScene):
                     vo.wait_until("and for whom")
                 self.play(Create(it.tick), run_time=0.35)
             grid = gather(self, *shown, *[it.tick for it in items])
-            self.play(grid.animate.scale(0.8).move_to(shrunk), FadeIn(panel, shift=UP * 0.6), run_time=1.0)
+            # the checklist clears the middle before the program slides up into it (no crossing)
+            self.play(LaggedStart(grid.animate.scale(0.8).move_to(shrunk), FadeIn(panel, shift=UP * 0.6),
+                                  lag_ratio=0.6), run_time=1.3)
             vo.wait_until("It already worked")
             self.play(FadeIn(term_head, shift=UP * 0.15), run_time=0.5)
             self.play(FadeIn(term.lines[1], shift=RIGHT * 0.1), run_time=0.4)
@@ -468,8 +486,10 @@ class Team(VoiceScene):
         burst = Brace(oct6, UP, buff=0.02, color=TOOL)
         burst_l = label("50 commits that day", 24, INK).next_to(burst, UP, buff=0.08)
         wip_key = VGroup(Dot(radius=0.05, color=TOOL), caption("WIP checkpoint (work in progress)", 22))
-        stop_key = VGroup(Rectangle(width=0.36, height=0.26, stroke_width=0).set_fill(TOOL, 0.3),
-                          label("usage-limit stops: at least 6", 22, INK))
+        # both marks the ribbon uses for a stop: a band (its end is known) and a plain tick (it isn't)
+        stop_swatch = VGroup(Rectangle(width=0.36, height=0.26, stroke_width=0).set_fill(TOOL, 0.3),
+                             Line(DOWN * 0.15, UP * 0.15, color=TOOL, stroke_width=3.5)).arrange(RIGHT, buff=0.1)
+        stop_key = VGroup(stop_swatch, label("usage-limit stops: at least 6", 22, INK))
         for kk in (wip_key, stop_key):
             kk.arrange(RIGHT, buff=0.16)
         VGroup(wip_key, stop_key).arrange(DOWN, aligned_edge=LEFT, buff=0.16) \
@@ -481,7 +501,11 @@ class Team(VoiceScene):
             ln = Line([x, AXIS_Y, 0], d.get_center(), color=USER, stroke_width=3.5)
             txt = label(f"the user:\n“{words}”", 22, USER, line_spacing=0.85).next_to(d, DOWN, buff=0.1)
             nudges.add(VGroup(ln, d, txt))
-        footer = label("about 100 commits · 2 by the user", 26, INK, t2c={"2 by the user": USER})
+        # the two quotes sit 18 h apart on the axis: keep a clear gap so they never read as one line
+        gap = nudges[1][2].get_left()[0] - nudges[0][2].get_right()[0]
+        if gap < 0.5:
+            nudges[0][2].shift(LEFT * (0.5 - gap))
+        footer = label(FOOTER, 26, INK, t2c={"2 by the user": USER})
         footer.move_to([0, AXIS_Y - 2.05, 0])
         src2 = source_caption("git log up to commit bb3fc1e · usage-limit stops from the session transcript · UTC")
         # the first commit after each stop: work picked up where it left off
@@ -532,7 +556,8 @@ class Team(VoiceScene):
             done = gather(self, head, head_l, made, commit_gloss, gloss_arrow, burst, burst_l, wip_key, stop_key,
                           nudges, footer, src2)
             rib = gather(self, rib)
-            self.play(FadeOut(done), rib.animate.shift(UP * RISE), run_time=1.0)
+            # the labels leave first, so the rising ribbon never runs through them
+            self.play(LaggedStart(FadeOut(done), rib.animate.shift(UP * RISE), lag_ratio=0.45), run_time=1.3)
             for sb, phrase in ((privacy, "the privacy video took"), (ttt, "and tic-tac-toe just")):
                 vo.wait_until(phrase)
                 self.play(Create(sb.drops), FadeIn(sb.dot, scale=0.5), run_time=0.4)

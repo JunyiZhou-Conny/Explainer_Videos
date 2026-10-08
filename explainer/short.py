@@ -425,12 +425,14 @@ def splat(pts: np.ndarray, region, res, weights=None, colors=None, color=(1, 1, 
     if colors is None:                   # one colour: tone map through a lookup table (fast)
         v = 1.0 - np.exp(np.float32(-gain) * inten[0])
         return _tone_lut(tuple(np.round(np.asarray(color, dtype=float), 4)))[(v * 1023).astype(np.int32)]
-    rgb = np.moveaxis(inten, 0, -1)
-    rgb = 1.0 - np.exp(-gain * rgb)
+    rgb = np.moveaxis(inten, 0, -1)                     # (h, w, 3) float32
+    np.multiply(rgb, np.float32(-gain), out=rgb)
+    np.exp(rgb, out=rgb)
+    np.subtract(np.float32(1.0), rgb, out=rgb)
     alpha = rgb.max(axis=2)
-    straight = np.where(alpha[..., None] > 1e-4, rgb / np.maximum(alpha[..., None], 1e-4), 0.0)
-    out[..., :3] = np.clip(straight * 255, 0, 255).astype(np.uint8)
-    out[..., 3] = np.clip(alpha * 255, 0, 255).astype(np.uint8)
+    np.multiply(rgb, np.float32(255.0) / np.maximum(alpha, np.float32(1e-4))[..., None], out=rgb)
+    out[..., :3] = np.minimum(rgb, 255).astype(np.uint8)
+    out[..., 3] = (alpha * 255).astype(np.uint8)
     return out
 
 

@@ -82,7 +82,8 @@ def test_caption_config():
     assert cap.caption_config({"captions": "en-first"})["layout"] == "en-first"
     c = cap.caption_config({"captions": {"layouts": ["zh-first", "en-first"]}})
     assert c["layout"] == "zh-first" and c["layouts"] == ["zh-first", "en-first"]
-    assert cap.caption_config({"captions": False})["enabled"] is False
+    off = cap.caption_config({"captions": False})
+    assert off["enabled"] is False and off["layouts"] == ["zh-first"]
 
 
 def _cues():

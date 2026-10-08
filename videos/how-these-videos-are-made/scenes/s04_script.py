@@ -59,8 +59,11 @@ WRONG_ID, LIKELY_ID = "1604.02678", A41["likely"].split()[-1]  # "most likely ar
 
 # A14: page 270 of the privacy paper (1195 x 1834), cropped to its last two lines of the
 # paragraph that defines Lap(λ); the target line "mean 0, and standard deviation λ." spans
-# x 117-531 px, baseline at about 1254 px (measured on the png).
-PAGE, PAGE_CROP = "dp_paper_p270.png", (100, 1194, 724, 1262)
+# x 117-531 px, baseline at about 1252 px (measured on the png). The crop ends in the word gap
+# after "distribution" (575-583 px) on the line above, so no word is cut and the page text sits
+# at about 24 pt on screen (its x-height is 11 px).
+PAGE, PAGE_CROP = "dp_paper_p270.png", (104, 1194, 580, 1262)
+PAGE_W = 6.4
 LINE_X = (117, 531)
 
 # A15: the tic-tac-toe script.md at bb3fc1e (lines 12-22 and 74-84), shown with "…" for cuts.
@@ -80,6 +83,11 @@ LANE_T0, LANE_T1 = f"{DAY} 15:40", f"{DAY} 16:35"
 
 def _t(s: str) -> dt.datetime:
     return dt.datetime.fromisoformat(s)
+
+
+def hm(s: str) -> str:
+    """'2026-10-04 16:12:55' -> '16:12' (the lane's labels, as script.md writes them)."""
+    return _t(s).strftime("%H:%M")
 
 
 def _paragraphs(md: str) -> list[str]:
@@ -145,6 +153,9 @@ def _check():
     for s in STARTS:                                                                  # "Eleven minutes"
         assert round((_t(KILLED) - _t(s)).total_seconds() / 60) == 11
     assert _t(LANE_T0) < _t(REVIEW[0]) and _t(REVIEW[1]) < _t(LANE_T1)
+    # the lane's labels read exactly as script.md's SHOW line writes them
+    assert [hm(REVIEW[0]), hm(REVIEW[1]), hm(GUIDE_AT), hm(STARTS[0]), hm(STARTS[-1]), hm(KILLED)] == \
+        ["15:47", "16:30", "16:07", "16:12", "16:13", "16:24"]
 
 
 _check()
@@ -452,16 +463,17 @@ class ScriptIsCode(VoiceScene):
                           mono(LIKELY_ID, 22, BUG)).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
         red_line.move_to([0, -0.72, 0]).align_to([-6.45, 0, 0], LEFT)
         grid = pdf_grid(cols=9, h=0.36).move_to([0, -2.12, 0]).align_to([-6.3, 0, 0], LEFT)
-        tally = bug_tag("4 of 36 PDFs:\nthe wrong paper", size=26).next_to(grid, RIGHT, buff=0.4)
+        tally = bug_tag(A41["tally"].replace(": ", ":\n", 1), size=26).next_to(grid, RIGHT, buff=0.4)
         src1 = source_caption("file names: the library as uploaded · finding: the catalog run record")
 
         # catch 2: the digest lists the paper's own mistakes
-        page = exhibit(PAGE, width=5.9, crop=PAGE_CROP).move_to([0, 0.45, 0]).align_to([6.45, 0, 0], RIGHT)
+        page = exhibit(PAGE, width=PAGE_W, crop=PAGE_CROP).move_to([0, 0.45, 0]).align_to([6.45, 0, 0], RIGHT)
         under = Line(page.px(LINE_X[0], PAGE_CROP[3]) + DOWN * 0.08, page.px(LINE_X[1], PAGE_CROP[3]) + DOWN * 0.08,
                      color=S.WHITE, stroke_width=5)
         page_cap = caption("real page · the privacy paper, p. 270").next_to(under, DOWN, buff=0.14)
         page_cap.align_to(page, LEFT)
-        note = sticky_note(A14["digest_note"].replace(" — ", "\n— ", 1)).rotate(1.5 * DEGREES)
+        # broken after "deviation" (not before the dash): narrower, so it clears the RED tally
+        note = sticky_note(A14["digest_note"].replace("deviation is", "deviation\nis", 1)).rotate(1.5 * DEGREES)
         note.move_to([page.get_x(), -1.55, 0])
         note_cap = caption("the privacy video's digest.md · lines 29–30").next_to(note, DOWN, buff=0.16)
         note_cap.align_to(note, RIGHT)
@@ -532,13 +544,13 @@ class ScriptIsCode(VoiceScene):
             gone = gather(self, reader, back, red_line, grid, tally, src1, page, page_cap, under, note, note_cap)
             self.play(FadeOut(gone), *[FadeOut(m) for m in (*others, *arrows)],
                       ReplacementTransform(script_item.icon, panel.frame),
-                      ReplacementTransform(script_item.name, panel.title), FadeIn(panel.bar), run_time=1.0)
+                      ReplacementTransform(script_item.name, panel.title), FadeIn(panel.bar), run_time=0.9)
             rest.set_opacity(0.3)
-            self.play(FadeIn(panel.rows), FadeIn(src2), run_time=0.6)
-            self.play(Circumscribe(colour, color=S.WHITE, buff=0.08, run_time=0.8))
+            self.play(FadeIn(panel.rows), FadeIn(src2), run_time=0.45)
+            self.play(Circumscribe(colour, color=S.WHITE, buff=0.08, run_time=0.7))
             vo.wait_until("a show line")
-            self.play(colour.animate.set_opacity(0.3), VGroup(s03, show, say).animate.set_opacity(1), run_time=0.5)
-            self.play(Create(show_bar), run_time=0.35)
+            self.play(colour.animate.set_opacity(0.3), VGroup(s03, show, say).animate.set_opacity(1),
+                      Create(show_bar), run_time=0.5)
             vo.wait_until("the picture")
             self.play(FadeIn(show_l, shift=LEFT * 0.15), run_time=0.45)
             vo.wait_until("with a say line")
@@ -546,9 +558,10 @@ class ScriptIsCode(VoiceScene):
             self.play(FadeIn(say_l, shift=LEFT * 0.15), run_time=0.45)
             vo.wait_until("the exact words")
             self.play(say.animate.set_color(AUDIO), run_time=0.8)
-            vo.wait_until("The animation code")
-            self.play(Create(reads_arrow), FadeIn(reads_l, shift=UP * 0.1), run_time=0.7)
+            vo.wait_until("The animation code")             # the code first, then what it reads
             self.play(FadeIn(chip, shift=UP * 0.2), FadeIn(chip_cap), run_time=0.6)
+            vo.wait_until("reads those words")
+            self.play(Create(reads_arrow), FadeIn(reads_l, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("straight from this file")
             self.play(Indicate(s03_glyphs, color=S.WHITE, scale_factor=1.3),
                       Indicate(chip_s03, color=S.WHITE, scale_factor=1.3), run_time=0.9)
@@ -565,7 +578,7 @@ class ScriptIsCode(VoiceScene):
         new_icon = doc_icon("script").move_to([ROW_X[3], ROW_Y1, 0])
         new_name = mono("script.md", NAME_SIZE, INK).next_to(new_icon, DOWN, buff=0.18)
         reviewers = VGroup(role_icon("sub", 0.75), role_icon("sub", 0.75)).arrange(RIGHT, buff=0.35)
-        reviewers.move_to([ROW_X[3], 1.1, 0])
+        reviewers.move_to([ROW_X[3] + 0.1, 0.82, 0])        # clear of digest.md's note "page numbers + errata"
         gate = VGroup(Rectangle(width=0.42, height=0.42, stroke_width=0).set_fill(S.BG, 1), pause_icon(0.28, INK))
         gate.move_to(arrows[3].get_center())
         downstream = VGroup(arrows[3], arrows[4], items[4], items[5])
@@ -591,7 +604,7 @@ class ScriptIsCode(VoiceScene):
         rev_icons_at = VGroup(*[m.copy() for m in reviewers]).arrange(RIGHT, buff=0.12)
         rev_icons_at.move_to([0, REV_Y, 0]).align_to([-6.4, 0, 0], LEFT)
         rev_l = label("script review", 26, SUB_AGENT_TEXT).next_to(rev_icons_at, RIGHT, buff=0.2)
-        rev_times = caption("15:47 → 16:30", 22).move_to([0, REV_Y + 0.36, 0]).align_to([x_of(REVIEW[0]), 0, 0], LEFT)
+        rev_times = caption(f"{hm(REVIEW[0])} → {hm(REVIEW[1])}", 22).move_to([0, REV_Y + 0.36, 0]).align_to([x_of(REVIEW[0]), 0, 0], LEFT)
         def mins(t: str) -> float:                               # minutes after 15:40 (no time zones)
             return (_t(t) - _t(LANE_T0)).total_seconds() / 60
 
@@ -614,12 +627,12 @@ class ScriptIsCode(VoiceScene):
         review_bar = lane_bar(REVIEW[0], REVIEW[1], REV_Y, 0.32)
         starts = [s for s in STARTS for _ in range(2)]          # 3 runs x 2 agents
         builder_bars = [lane_bar(s, KILLED, y, 0.2) for s, y in zip(starts, lane_ys)]
-        builders = VGroup(*[person_icon(SUB_AGENT, 0.34).move_to([x_of(s) - 0.24, y, 0])
+        builders = VGroup(*[person_icon(SUB_AGENT, 0.28).move_to([x_of(s) - 0.22, y, 0])   # 6 apart, not one column
                             for s, y in zip(starts, lane_ys)])
         b_label = VGroup(label("6 sub-agents\nbuilding scenes", 26, SUB_AGENT_TEXT, line_spacing=0.9),
                          caption("3 runs × 2 agents", 22)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         b_label.move_to([0, (lane_ys[0] + lane_ys[-1]) / 2, 0]).align_to([-6.45, 0, 0], LEFT)
-        b_time = caption("16:12–16:13", 20, SUB_AGENT_TEXT).move_to([x_of(STARTS[1]), ax_y - 0.62, 0])
+        b_time = caption(f"{hm(STARTS[0])}–{hm(STARTS[-1])}", 20, SUB_AGENT_TEXT).move_to([x_of(STARTS[1]), ax_y - 0.62, 0])
         b_tick = Line([x_of(STARTS[1]), ax_y - 0.08, 0], [x_of(STARTS[1]), ax_y + 0.08, 0], color=SUB_AGENT_TEXT,
                       stroke_width=3)
 
@@ -634,11 +647,11 @@ class ScriptIsCode(VoiceScene):
         guide = VGroup(guide_box, guide_inner).move_to([x_of(GUIDE_AT) + 0.6, 2.62, 0])
         guide_drop = DashedLine([x_of(GUIDE_AT), guide.get_bottom()[1], 0], [x_of(GUIDE_AT), ax_y, 0],
                                 dash_length=0.08, color=TOOL, stroke_width=2)
-        guide_time = caption("16:07", 20).move_to([x_of(GUIDE_AT), ax_y - 0.32, 0])
+        guide_time = caption(hm(GUIDE_AT), 20).move_to([x_of(GUIDE_AT), ax_y - 0.32, 0])
         quill2 = pen(0.62, AGENT)
         src3 = source_caption("times: the session's workflow run records and git (UTC)")
         stop_line = Line([x_of(KILLED), lane_ys[0] + 0.25, 0], [x_of(KILLED), ax_y, 0], color=BUG, stroke_width=4)
-        stop_tag = bug_tag("stopped at 16:24,\nbefore the review was done", size=24)
+        stop_tag = bug_tag(f"stopped at {hm(KILLED)},\nbefore the review was done", size=24)
         stop_tag.move_to([x_of(KILLED), (REV_Y + lane_ys[0]) / 2 - 0.02, 0])
 
         for m in (items[4], items[5], *arrows[2:]):          # dimmed in beat 2, faded out in beat 3
@@ -664,17 +677,18 @@ class ScriptIsCode(VoiceScene):
             # the rule, and how it was broken the same day
             vo.wait_until("The agent wrote")
             stage = gather(self, *others, new_icon, new_name, *arrows, gate, c1, c2, l1, l2)
-            self.play(FadeOut(stage), ReplacementTransform(reviewers, rev_icons_at), run_time=0.8)
+            # the sentence lasts about 3.4 s: the lane, the guide written at 16:07, then "day one" lit
+            self.play(FadeOut(stage), ReplacementTransform(reviewers, rev_icons_at), run_time=0.6)
             self.play(Create(axis.line), FadeIn(axis.marks), FadeIn(small_ticks), FadeIn(day), FadeIn(utc), FadeIn(rev_l),
-                      FadeIn(rev_times), FadeIn(src3), run_time=0.6)
+                      FadeIn(rev_times), FadeIn(src3), run_time=0.5)
             self.add(review_bar, cursor)
             quill2.shift(guide_text.get_left() + LEFT * 0.1 - tip_of(quill2))
             self.play(now.animate.set_value(mins(GUIDE_AT)), FadeIn(guide_box), FadeIn(guide_ic),
-                      FadeIn(guide_path), FadeIn(quill2, shift=DOWN * 0.2), run_time=0.9, rate_func=linear)
-            self.play(Write(guide_text), quill2.animate.shift(RIGHT * guide_text.width), run_time=1.1)
-            self.play(FadeOut(quill2, shift=UP * 0.2), Create(guide_drop), FadeIn(guide_time), run_time=0.5)
+                      FadeIn(guide_path), FadeIn(quill2, shift=DOWN * 0.2), run_time=0.7, rate_func=linear)
+            self.play(Write(guide_text), quill2.animate.shift(RIGHT * guide_text.width), run_time=0.9)
             vo.wait_until("on day one")
-            self.play(emphasize(day, run_time=0.7))
+            self.play(FadeOut(quill2, shift=RIGHT * 0.25 + DOWN * 0.1), Create(guide_drop), FadeIn(guide_time),
+                      emphasize(day, run_time=0.7), run_time=0.7)
 
             vo.wait_until("Minutes later")
             self.play(now.animate.set_value(mins(STARTS[0])), run_time=vo.until("it started six"),
@@ -697,5 +711,5 @@ class ScriptIsCode(VoiceScene):
         review_bar.clear_updaters()
         cursor.clear_updaters()
         self.play(FadeOut(cursor), emphasize(axis.marks[-1][1], run_time=0.8), emphasize(rev_times, run_time=0.8))
-        self.wait(0.5)
+        self.wait(0.3)
         fade_out_all(self)

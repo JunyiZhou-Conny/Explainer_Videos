@@ -31,6 +31,7 @@ flag_chip().
 import numpy as np
 from manim import *
 
+from explainer import i18n
 from explainer import style as S
 from explainer.components import ponder_card
 from explainer.scene import VoiceScene
@@ -200,6 +201,20 @@ def clipped_panel(source: str, path: str, first_line: int, cols: int, font_size:
     return g
 
 
+def wait_for(scene, vo, phrase: str, shift: float = 0.0) -> None:
+    """vo.wait_until(phrase), moved by `shift` seconds. The toolkit places a phrase by its characters
+    inside the sentence, which runs up to 0.9 s late in SAY[3]'s long middle sentence (a pause after
+    "frame,"). The shifts are hand-set from a speech-recognizer pass over this scene's clips (word
+    starts); in another language version the clip differs, so they are not applied there."""
+    t = vo.clip.time_of(phrase)
+    if t is None:
+        vo.wait_until(phrase)                       # logs "voiceover anchor not found"
+        return
+    left = t + (0.0 if i18n.active() else shift) - vo.elapsed
+    if left > 1 / 60:
+        scene.wait(left)
+
+
 def sight_line(a, b, n: int = 26) -> VMobject:
     """The agent 'looking': a GREY dashed line (a fixed number of dashes, so it moves smoothly)."""
     return DashedVMobject(Line(a, b), num_dashes=n, dashed_ratio=0.55).set_stroke(TOOL, 2.5, opacity=0.9)
@@ -329,13 +344,16 @@ class Watching(VoiceScene):
             self.play(FadeIn(text_chip, shift=RIGHT * 0.4), run_time=0.6)
 
             vo.wait_until("The toolkit renders")
-            self.play(FadeTransform(pl_g, player), FadeOut(arrow_a), FadeIn(draft_l, shift=UP * 0.1), run_time=0.8)
+            arrow_p = Arrow(player.frame.get_right() + RIGHT * 0.12, grid_icon.get_left() + LEFT * 0.15, buff=0,
+                            color=TOOL, stroke_width=3, tip_length=0.18, max_tip_length_to_length_ratio=0.3)
+            self.play(FadeTransform(pl_g, player), Transform(arrow_a, arrow_p), FadeIn(draft_l, shift=UP * 0.1),
+                      run_time=0.8)          # the draft (time) still points at the pictures
             self.play(player.done.animate.put_start_and_end_on(player.bar.get_start(), player.at(1.0)),
                       player.knob.animate.move_to(player.at(1.0)), run_time=1.0, rate_func=linear)
             self.play(FadeIn(stack), run_time=0.3)
 
             vo.wait_until("and tiles a still")
-            self.play(FadeOut(VGroup(hp_g, arrow_b, text_chip, pics_l)),
+            self.play(FadeOut(VGroup(hp_g, arrow_b, text_chip, pics_l, arrow_a)),
                       *[ReplacementTransform(a, b) for a, b in zip(grid_icon, slots)],
                       ReplacementTransform(agent2, agent3), run_time=0.7)
             self.play(UpdateFromAlphaFunc(stack, fly), run_time=1.9)
@@ -390,6 +408,11 @@ class Watching(VoiceScene):
         tick_x = [AX0 + (AX1 - AX0) * (float(t) - t0) / (t1 - t0) for _, t in FRAMES]
         ticks = VGroup(*[Line([x, AXIS_Y - 0.14, 0], [x, AXIS_Y + 0.14, 0], color=INK, stroke_width=3) for x in tick_x])
         gap_q = label("?", 40, INK).move_to([(AX0 + AX1) / 2, AXIS_Y + 0.35, 0])
+        # the two stills' own burned-in times, at the ends of the axis (so the strip reads as "between them")
+        end_l = VGroup(label(f"{t0:.3f} s", 24, INK).next_to([AX0, AXIS_Y, 0], UP, buff=0.16, aligned_edge=LEFT),
+                       label(f"{t1:.3f} s", 24, INK).next_to([AX1, AXIS_Y, 0], UP, buff=0.16, aligned_edge=RIGHT))
+        end_l[0].align_to([AX0, 0, 0], LEFT)
+        end_l[1].align_to([AX1, 0, 0], RIGHT)
         frames = [exhibit(fn, width=FRAME_W, crop=FRAME_CROP).move_to([x, STRIP_Y, 0])
                   for (fn, _), x in zip(FRAMES, FRAME_X)]
         fans = VGroup(*[Line([x, AXIS_Y - 0.14, 0], fr.get_top() + UP * 0.04, color=TOOL, stroke_width=2,
@@ -412,21 +435,21 @@ class Watching(VoiceScene):
             gone = collect(self, sheet, agent3, src1)
             self.play(FadeOut(gone), FadeOut(outline),
                       *[lt.animate.scale(STILL_W / TILE_UW).move_to(e) for lt, e in zip(lift, ends)], run_time=0.9)
-            self.play(Create(axis), FadeIn(gap_q, scale=0.6), run_time=0.6)
-            vo.wait_until("so to check motion")
-            self.play(FadeOut(gap_q, target_position=ticks.get_center() + UP * 0.2, scale=0.4),
-                      LaggedStart(*[GrowFromCenter(t) for t in ticks], lag_ratio=0.2), run_time=0.6)
+            self.play(Create(axis), FadeIn(end_l, shift=UP * 0.1), FadeIn(gap_q, scale=0.6), run_time=0.6)
+            # the "?" (what happens between stills) stays while "so to check motion" is spoken
             vo.wait_until("it grabs frames")
+            self.play(FadeOut(gap_q, target_position=ticks.get_center() + UP * 0.2, scale=0.4),
+                      LaggedStart(*[GrowFromCenter(t) for t in ticks], lag_ratio=0.2), run_time=0.5)
             self.play(LaggedStart(*[AnimationGroup(Create(fn), FadeIn(fr, target_position=[x, AXIS_Y, 0], scale=0.15))
                                     for fn, fr, x in zip(fans, frames, tick_x)], lag_ratio=0.25),
-                      FadeIn(src2), run_time=1.05)
+                      FadeIn(src2), run_time=0.9)
             vo.wait_until("a fifth of a second")
             self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.1) for t in times], lag_ratio=0.15),
                       FadeIn(cap2_parts[0]), run_time=0.8)
-            vo.wait_until("If they're all the same")
+            wait_for(self, vo, "If they're all the same", -0.25)
             self.play(FadeIn(cap2_parts[1], shift=LEFT * 0.1), run_time=0.4)
             self.play(LaggedStart(*[Create(r) for r in rings], lag_ratio=0.2), run_time=0.9)
-            vo.wait_until("nothing moved")
+            wait_for(self, vo, "nothing moved", -0.25)
             self.play(LaggedStart(*[Indicate(r, color=S.WHITE, scale_factor=1.2) for r in rings], lag_ratio=0.08),
                       run_time=0.6)
 

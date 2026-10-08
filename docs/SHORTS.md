@@ -130,8 +130,12 @@ time, so a wording fix needs no re-render (only a re-stitch: `--no-render`).
 kind="reveal", sound="glass")` is the same as a keyword. Kinds: `cut`, `section`, `hit`, `title`,
 `resolve` (the tonic arrives), `riser`, `silence` (dur), `tape_stop` (dur), `count` (n, every or
 times), `particles`, `motif` (name: a recurring figure), `end`. Per object, `mobject.sound = "X"`
-names its sound; `music.sounds` in video.yaml maps names to instruments (`bell`, `glass`, `pluck`)
-or effects (`tick`, `whoosh_rev` for a RED erase, `shimmer`, `boom`).
+names its sound; `music.sounds` (or a `music.palette` map) in video.yaml maps names to instruments
+(`bell`, `glass`, `pluck`, `wood`, `glass_rev`: a glass note played backwards) or effects (`tick`,
+`blip`, `whoosh_rev` for a RED erase, `shimmer`, `boom`); common other names work too
+(`reversed_glass`, `reverse_whoosh`, `sub_boom`, `soft_pulse`, `marimba` …). The palette's `cut` and
+`count` entries set the sound of scene cuts and of counts. A tag may fix the note: `m.sound = "X@C#5"`
+(so each square of a board has its own pitch and a game is heard as a melody).
 
 **Camera**: `self.play(self.zoom_to(cup, width=1), beats=4, rate_func=rate_functions.ease_in_expo)`
 (zoom-through), `self.zoom_to(scale=3)` (pull out), `self.camera_home()`, `self.drift((0.04, 0),
@@ -153,10 +157,14 @@ tempo: 100
 captions: {layouts: [zh-first, en-first]}    # zh-first (Bilibili), en-first (YouTube), zh, en
 music: {key: D, mode: lydian, mood: bright, palette: glass, sounds: {X: bell, O: glass}}
 finish: {bloom: true, grain: true, vignette: true}
+voice: none                                  # (a short has no narrator)
 scenes:
-  - {file: scenes/s01_cold_open.py, cls: ColdOpen, title: "How many games?"}
-  - {file: scenes/s02_fill.py,      cls: FillOrders, title: "Nine factorial"}
+  - {file: scenes/s01_cold_open.py, cls: ColdOpen, bars: [1, 11], title: "How many games?"}
+  - {file: scenes/s02_fill.py,      cls: FillOrders, bars: [12, 20], title: "Nine factorial"}
 ```
+
+`bars: [a, b]` (optional, counted from 1) is where the plan puts a scene; the stitch warns when a
+render does not start at bar a or is not b − a + 1 bars long.
 
 ```bash
 python -m explainer.build videos/<id> -q l           # draft (480p15): render, stitch, captions, music
@@ -177,9 +185,10 @@ sidecars, the `.ass` files, `chapters.txt` and a caption `transcript.md`. It pri
 are on bar lines, the music's loudness, true peak and stereo correlation, and the share of visual
 events with a note or effect within 30 ms.
 
-`finish:` values: `true`, a strength (`grain: 4`, `bloom: 0.5`, `vignette: 0.6`, the vignette
+`finish:` (or `look: {post: ...}`) values: `true`, a strength (`grain: 4`, `bloom: 0.5`, `vignette: 0.6`, the vignette
 angle in radians), or a dict (`bloom: {strength: 0.55, threshold: 0.6, radius: 6, wide: 28}`: blur
-sigmas in px at 1080p). The pass costs about 3× real time at 1080p60; grain also makes files larger
+sigmas in px at 1080p; `bloom: [6, 28]` gives the two sigmas; `vignette: "PI/5"` works too). The
+pass costs about 3× real time at 1080p60; grain also makes files larger
 (CRF 18 with grain is about 8 MB per 10 s at 1080p60; `--crf 20` about 5.5 MB).
 
 ## 5. Music
@@ -207,10 +216,32 @@ this video”). The same logs and settings always give the same samples.
 
 At most `density` (3) ordinary accents a second; counts and structure always sound. Settings in
 video.yaml `music:` — `key`, `mode` (lydian, ionian/major, mixolydian, dorian, aeolian/minor,
-phrygian), `mood` (bright / warm / dark: filters, reverb, sparkle), `palette` (glass / soft / pluck:
-which instrument plays which role), `sounds`, `acts` (key changes: `[{at: s05_turn, key: A, mode:
-major}]`, `at` a scene stem, `"123.4s"` or a bar number), `density`, `pulse`, `lufs` (-14), `peak`
-(-1), `seed`. Outputs in `build/stitch_*/music/<id>/` (or `build/music/<quality>/` from the CLI):
+phrygian), `mood` (bright / warm / dark: filters, reverb, sparkle, bass and accent levels),
+`palette` (glass / soft / pluck: which instrument plays which role; or a map of sound tags, as
+`sounds`), `sounds`, `acts` (key changes), `cues`, `density`, `pulse`, `lufs` (-14), `peak` (or
+`true_peak_dbtp`, -1), `seed`. The tempo is video.yaml's `tempo` (or `grid: {bpm}`, or `music.bpm`).
+
+Structure can also be written in video.yaml instead of scene code, on the whole video's timeline:
+
+```yaml
+music:
+  cues:
+    - {at: "10.1", kind: title, chord: vi}          # the number is given, not yet explained
+    - {at: "63.1", kind: tape_stop, bars: 1}
+    - {at: "64.1", kind: silence, bars: 1}           # the turn
+    - {at: "65.1", kind: hit, chord: bVI}            # outside the key
+    - {at: "93.1", kind: hit, key: E}                # the climax lifts the key
+  acts: [{at: s08_bigger, key: E, mode: lydian}]
+```
+
+Positions in video.yaml count as musicians do, from 1: `"10.1"` is bar 10, beat 1 (bar n starts at
+(n − 1) × 2.4 s), `"12.3+"` the eighth note after bar 12 beat 3, a bare `12` bar 12; `"9:0"` is the
+0-based notation of scenes and captions.yaml, `"123.4s"` seconds, a scene stem that scene's start.
+`chord:` names the chord at a structure point: a scale degree (`vi`, `IV`, `Vsus`), an open fifth
+(`I5`: neither major nor minor) or a borrowed root (`bVI`, `bVII`: a maj7♯11 chord there); `key:` /
+`mode:` on a cue change the key from there. Without a name, the tonic is withheld until a `title` or
+`resolve` and prepared by a suspended dominant. Outputs in `build/stitch_*/music/<id>/` (or
+`build/music/<quality>/` from the CLI):
 `score.json` (chords, notes, effects, silences), `cues.json`, `score.mid` (open it in any DAW),
 `bed.wav` and `accents.wav` (the two stems), `music.wav`, `report.json`.
 

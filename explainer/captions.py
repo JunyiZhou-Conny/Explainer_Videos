@@ -135,7 +135,7 @@ def project_file(project: Path, spec: dict | None = None) -> Path:
 def caption_config(spec: dict) -> dict:
     c = spec.get("captions")
     if c is False:
-        return {"enabled": False}
+        return {"enabled": False, "layouts": ["zh-first"], "layout": "zh-first"}
     if isinstance(c, str):
         c = {"layout": c}
     c = dict(c or {})
