@@ -214,10 +214,10 @@ class SignRig:
     """The hairline "=?" (a question mark over an equals sign) that becomes "≠" (a slash through it)."""
 
     def __init__(self):
-        eq = VGroup(Line([-0.3, 0.08, 0], [0.3, 0.08, 0]), Line([-0.3, -0.08, 0], [0.3, -0.08, 0]))
-        self.eq = Ink(eq, INK, 2.2, INK, 9, layers=4, glow_opacity=0.55, splits=[0, 0.5, 1.0])
-        self.slash = Ink(Line([-0.15, -0.3, 0], [0.15, 0.3, 0]), INK, 2.2, INK, 9, layers=4, glow_opacity=0.55)
-        self.q = InkText(Text("?", font=FONT_TRACKED, weight=LIGHT, font_size=40, color=INK), INK)
+        eq = VGroup(Line([-0.4, 0.1, 0], [0.4, 0.1, 0]), Line([-0.4, -0.1, 0], [0.4, -0.1, 0]))
+        self.eq = Ink(eq, INK, 2.4, INK, 10, layers=4, glow_opacity=0.55, splits=[0, 0.5, 1.0])
+        self.slash = Ink(Line([-0.2, -0.4, 0], [0.2, 0.4, 0]), INK, 2.4, INK, 10, layers=4, glow_opacity=0.55)
+        self.q = InkText(Text("?", font=FONT_TRACKED, weight=LIGHT, font_size=56, color=INK), INK)
         self.group = VGroup(self.eq, self.slash, self.q)
 
     def hide(self):
@@ -311,8 +311,8 @@ class ColdOpen(BeatScene):
             cols.append(np.repeat(rgb(col)[None, :], n, axis=0))
         p0 = np.concatenate(pts)
         colors = np.concatenate(cols)
-        v = rng.normal(0, 0.5, p0.shape) + (p0 - CB) * 0.45 + np.array([0.9, 0.35])
-        t0, d = DISSOLVE_B, 1.1
+        v = rng.normal(0, 0.45, p0.shape) + (p0 - CB) * 0.5 + np.array([2.2, 0.6])
+        t0, d = DISSOLVE_B, 0.9
 
         def pos(t):
             u = max(0.0, (t - t0) / d)
@@ -320,7 +320,7 @@ class ColdOpen(BeatScene):
 
         def wts(t):
             u = clamp01((t - t0) / d)
-            return np.full(len(p0), 0.9 * (1 - u) ** 2)
+            return np.full(len(p0), 0.85 * (1 - u) ** 3)
         return ScreenField(pos, CAM, weights=wts, colors=colors, size_px=1.5, glow_px=5, gain=1.8)
 
     def make_dust_title(self) -> ScreenField:
@@ -391,7 +391,7 @@ class ColdOpen(BeatScene):
         self.dark.set_fill(opacity=dark)
         fl = 0.85 * math.exp(-(t - HIT) / 0.022) if HIT <= t < HIT + 0.07 else 0.0
         self.flash.set_fill(opacity=fl)
-        for f, (a, b) in ((self.dust_b, (DISSOLVE_B, DISSOLVE_B + 1.2)), (self.dust_t, (DISSOLVE, END))):
+        for f, (a, b) in ((self.dust_b, (DISSOLVE_B, DISSOLVE_B + 0.95)), (self.dust_t, (DISSOLVE, END))):
             if f in self.mobjects and a - 1e-6 <= t <= b + 1e-6:
                 f.render_at(t)
 
@@ -444,7 +444,8 @@ class ColdOpen(BeatScene):
         hl = [max(pulse(t, RUN_T[k], 0.3), pulse(t, RUN_F[k], 0.3)) for k in range(5)]
         base = 1.35 + 0.15 * math.sin(2 * math.pi * (t - WIN_A) / BAR)
         glow = [(base if player(k) == "X" else 1.1) + 0.9 * hl[k] + 0.6 * lift for k in range(5)] + [1.0 + 0.5 * lift]
-        C.draw([1] * 4, [1] * 5, [1] * 5, 1.0, glow, hl, sx=abs(fx) if abs(fx) > 0.02 else 0.0)
+        C.draw([1] * 4, [1] * 5, [1] * 5, 1.0, glow, hl, vis=0.35 + 0.65 * ease_out_cubic(seg(t, DISSOLVE_B, TURN[0])),
+               sx=abs(fx) if abs(fx) > 0.02 else 0.0)
         # motion-blur ghosts of the turn: the board a few frames back, fading with the turn's speed
         speed = abs(math.sin(math.pi * seg(t, *TURN)))
         for gi, ghost in enumerate(C.ghosts):
@@ -531,7 +532,7 @@ class ColdOpen(BeatScene):
             qv = 1.0 if t >= TURN[0] else 0.0
         else:
             qv = 1 - seg(t, NE_2, NE_2 + 0.15)
-        S.q.show(c + np.array([0.0, 0.42]) * k, scale=k * (0.9 + 0.1 * qv), vis=qv, color=INK)
+        S.q.show(c + np.array([0.0, 0.56]) * k, scale=k * (0.9 + 0.1 * qv), vis=qv, color=INK)
 
     def update_title(self, t: float):
         cnt = self.counter
@@ -721,7 +722,7 @@ class ColdOpen(BeatScene):
         """Play the logged events in time order (each a Shot; overlapping ones share a play), and add
         the particle fields while they are needed."""
         self.log_events()
-        fields = [(self.dust_b, DISSOLVE_B, DISSOLVE_B + 1.2), (self.dust_t, DISSOLVE, END)]
+        fields = [(self.dust_b, DISSOLVE_B, DISSOLVE_B + 0.95), (self.dust_t, DISSOLVE, END)]
         steps = sorted({round(t, 4) for t, _, _ in self.shots} | {round(a, 4) for _, a, _ in fields}
                        | {round(b, 4) for _, _, b in fields if b < END})
         for i, t in enumerate(steps):
