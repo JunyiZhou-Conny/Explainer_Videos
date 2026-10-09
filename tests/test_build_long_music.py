@@ -51,7 +51,7 @@ def test_long_video_music_is_opt_in(tmp_path):
     (p / "video.yaml").write_text("id: tiny-long\ntitle: Tiny\nvoice: {backend: espeak, voice: en-us}\n"
                                   "scenes:\n  - {file: scenes/s01_hook.py, cls: Hook, title: Hook}\n")
     (p / "scenes" / "s01_hook.py").write_text(SCENE)
-    (p / "i18n" / "zh").mkdir(parents=True)                     # a translation: --burn makes <id>.zh-en.mp4
+    (p / "i18n" / "zh").mkdir(parents=True)                     # a translation: the build burns <id>.zh-en.mp4
     (p / "i18n" / "zh" / "narration.yaml").write_text(
         "s01_hook:\n  - en: Three circles appear, one after another.\n    zh: [三个圆一个接一个出现。]\n"
         "  - en: Then they fade away.\n    zh: [然后它们消失了。]\n", encoding="utf-8")
@@ -70,7 +70,7 @@ def test_long_video_music_is_opt_in(tmp_path):
     log = json.loads(ev.read_text())
     assert [e["type"] for e in log["events"]][:2] == ["voice", "play"]
 
-    assert not (out / "tiny-long_480p15.zh-en.mp4").exists()
+    assert (out / "tiny-long_480p15.zh-en.mp4").exists()                  # the bilingual copy is a default output
 
     r = run("--no-render", "--music", "--burn")
     assert r.returncode == 0, r.stdout[-3000:] + r.stderr[-3000:]
