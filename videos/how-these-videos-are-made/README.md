@@ -8,7 +8,7 @@ machine-learning background is assumed.
 
 | file | what it is |
 | --- | --- |
-| `output/how-these-videos-are-made.mp4` | the video (1080p60, narrated, LENGTH) |
+| `output/how-these-videos-are-made.mp4` | the video (1080p60, narrated, 13:40) |
 | `output/how-these-videos-are-made.srt` | subtitles |
 | `output/chapters.txt` | chapter timestamps (paste into a YouTube/Bilibili description) |
 | `output/transcript.md` | full narration by chapter |

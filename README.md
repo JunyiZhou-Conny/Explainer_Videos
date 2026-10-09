@@ -31,7 +31,7 @@ The next step after videos is interactivity — playgrounds where you have to *p
 | --- | --- | --- | --- |
 | 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~24 min, also cut in two parts (~15 + ~9 min) |
 | 🎬 | [Why are there exactly 255,168 games of tic-tac-toe?](videos/tictactoe-255168/) (for middle school) | — (counting, recursion and backtracking) | ~12½ min |
-| 🎬 | [How these explainer videos are made: one human, one AI agent, and a lot of measuring](videos/how-these-videos-are-made/) | — (behind the scenes of this repo) | ~LENGTH |
+| 🎬 | [How these explainer videos are made: one human, one AI agent, and a lot of measuring](videos/how-these-videos-are-made/) | — (behind the scenes of this repo) | ~13½ min |
 
 **中文版 / Chinese versions.** Both videos also exist in Mandarin, code-switched the way Chinese
 speakers in that setting really talk (English kept for names, symbols, code and the terms Chinese

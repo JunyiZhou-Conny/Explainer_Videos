@@ -1,0 +1,1111 @@
+1
+00:00:00,000 --> 00:00:04,860
+Here's what a paused frame looked like
+in an early draft of one of these videos,
+
+2
+00:00:04,860 --> 00:00:07,168
+about tic-tac-toe, for kids around 12.
+
+3
+00:00:07,488 --> 00:00:11,733
+Look at the line on the right:
+4 times 3 times 2, and then 12.
+
+4
+00:00:11,967 --> 00:00:13,119
+Pause for a moment.
+
+5
+00:00:13,439 --> 00:00:15,999
+If you were 12,
+what would you think went wrong here?
+
+6
+00:00:22,233 --> 00:00:25,604
+It looks like bad multiplication,
+but the math was right.
+
+7
+00:00:25,924 --> 00:00:30,702
+The 12 was a running count on its way to 24,
+sitting on the formula's line.
+
+8
+00:00:31,022 --> 00:00:32,196
+The layout lied.
+
+9
+00:00:32,516 --> 00:00:34,628
+And the reviewer
+who caught it wasn't a child.
+
+10
+00:00:34,948 --> 00:00:37,785
+It was an AI,
+pretending to be a 12-year-old.
+
+11
+00:00:38,033 --> 00:00:39,505
+Now the strange part.
+
+12
+00:00:39,825 --> 00:00:43,572
+Almost everything in these videos
+was made by AI agents:
+
+13
+00:00:43,572 --> 00:00:46,716
+the script, the animation code,
+and the checks.
+
+14
+00:00:47,036 --> 00:00:49,958
+And none of them can hear the narration,
+or press play.
+
+15
+00:00:50,278 --> 00:00:52,113
+So how do they know any of it works?
+
+16
+00:00:52,350 --> 00:00:55,176
+This video covers the pipeline,
+who did what,
+
+17
+00:00:55,176 --> 00:00:59,259
+how work gets checked without eyes or ears,
+the Chinese versions,
+
+18
+00:00:59,259 --> 00:01:02,462
+what still needs a human,
+and what to improve next.
+
+19
+00:01:04,100 --> 00:01:06,440
+It started with one person, the user:
+
+20
+00:01:06,440 --> 00:01:09,476
+a researcher with more papers
+to read than time.
+
+21
+00:01:09,796 --> 00:01:14,430
+The look comes from 3Blue1Brown,
+whose videos are animated in Manim,
+
+22
+00:01:14,430 --> 00:01:16,815
+where every frame is drawn by code.
+
+23
+00:01:17,135 --> 00:01:21,245
+The idea for this project came
+from a post by Andrej Karpathy,
+
+24
+00:01:21,245 --> 00:01:23,300
+as quoted in the first request.
+
+25
+00:01:23,533 --> 00:01:25,483
+The user's own words go further:
+
+26
+00:01:25,483 --> 00:01:29,016
+our brain is a neural net,
+and training it takes hardship.
+
+27
+00:01:29,336 --> 00:01:30,967
+AI is patient, they said,
+
+28
+00:01:30,967 --> 00:01:34,228
+but they were doing a lot
+of cognitive offloading:
+
+29
+00:01:34,228 --> 00:01:36,803
+letting the AI do the thinking for them.
+
+30
+00:01:37,050 --> 00:01:40,229
+A video should be a mentor,
+showing how papers connect,
+
+31
+00:01:40,229 --> 00:01:42,021
+because they're never isolated.
+
+32
+00:01:42,341 --> 00:01:44,209
+And video is only a first step:
+
+33
+00:01:44,209 --> 00:01:48,549
+the next is something interactive,
+where the learner has to make things.
+
+34
+00:01:48,783 --> 00:01:50,319
+Then came four requests.
+
+35
+00:01:50,639 --> 00:01:52,439
+A privacy paper from a friend,
+
+36
+00:01:52,439 --> 00:01:55,439
+which the user hadn't read,
+to keep the test fair.
+
+37
+00:01:55,759 --> 00:01:58,468
+A tic-tac-toe video,
+for a middle-school kid.
+
+38
+00:01:58,788 --> 00:02:00,346
+Chinese versions of both.
+
+39
+00:02:00,666 --> 00:02:01,711
+And this video.
+
+40
+00:02:03,983 --> 00:02:05,946
+The team: one human, the user.
+
+41
+00:02:06,266 --> 00:02:08,484
+One AI agent: Claude Code.
+
+42
+00:02:08,804 --> 00:02:12,690
+Under it,
+183 sub-agents in 46 workflow runs,
+
+43
+00:02:12,690 --> 00:02:14,244
+before this video.
+
+44
+00:02:14,564 --> 00:02:19,386
+A workflow is a script the agent writes
+to launch sub-agents, each with one job.
+
+45
+00:02:19,706 --> 00:02:22,941
+And tools,
+like a synthetic voice for each language
+
+46
+00:02:22,941 --> 00:02:24,463
+and a speech recognizer.
+
+47
+00:02:24,700 --> 00:02:27,729
+The user decided
+what was worth learning, and for whom.
+
+48
+00:02:28,049 --> 00:02:33,844
+They uploaded 36 PDFs,
+gave the tic-tac-toe counts to explain,
+
+49
+00:02:33,844 --> 00:02:39,825
+like 255,168 games,
+and supplied the program that video teaches.
+
+50
+00:02:40,145 --> 00:02:41,319
+It already worked.
+
+51
+00:02:41,639 --> 00:02:44,571
+The agent only changed a zero
+into the letter O,
+
+52
+00:02:44,571 --> 00:02:46,097
+and rewrote the comments.
+
+53
+00:02:46,333 --> 00:02:47,805
+The agent did the rest.
+
+54
+00:02:48,125 --> 00:02:50,685
+It wrote the toolkit that runs the pipeline,
+
+55
+00:02:50,685 --> 00:02:53,456
+and made all but two
+of over a hundred commits,
+
+56
+00:02:53,456 --> 00:02:55,165
+the project's saved versions.
+
+57
+00:02:55,485 --> 00:02:59,112
+In under a week, work stopped
+at least six times on usage limits.
+
+58
+00:02:59,432 --> 00:03:03,001
+Twice, it then sat idle
+for hours after the limit reset,
+
+59
+00:03:03,001 --> 00:03:04,594
+until the user nudged it.
+
+60
+00:03:05,583 --> 00:03:09,894
+From request to final cut,
+the privacy video took about six hours,
+
+61
+00:03:09,894 --> 00:03:11,983
+and tic-tac-toe just over three.
+
+62
+00:03:12,303 --> 00:03:16,868
+The Chinese versions took far longer:
+16 hours, and about two days.
+
+63
+00:03:17,188 --> 00:03:20,047
+Drawing the final frames took
+under half an hour each.
+
+64
+00:03:20,367 --> 00:03:24,050
+The rest went to translating,
+rounds of review and fixes,
+
+65
+00:03:24,050 --> 00:03:27,215
+a subtitle tool reworked four times,
+and waiting.
+
+66
+00:03:27,535 --> 00:03:31,192
+And the cost on screen
+is what the whole session had cost
+
+67
+00:03:31,192 --> 00:03:34,309
+by October 7th,
+at the public pay-per-use price:
+
+68
+00:03:34,309 --> 00:03:36,452
+all four requests, not one video.
+
+69
+00:03:38,100 --> 00:03:40,422
+The pipeline is a chain of files:
+
+70
+00:03:40,422 --> 00:03:44,150
+a paper,
+a catalog entry, a digest with page numbers,
+
+71
+00:03:44,150 --> 00:03:46,932
+a script, animation code, and the video.
+
+72
+00:03:47,252 --> 00:03:51,476
+Every step leaves a file behind,
+so you can stop, review, and resume.
+
+73
+00:03:51,850 --> 00:03:53,301
+Each file gets checked.
+
+74
+00:03:53,621 --> 00:03:57,921
+Agents cataloging the papers read them,
+not just their names,
+
+75
+00:03:57,921 --> 00:04:01,727
+and found that 4 of the 36 PDFs
+were the wrong papers.
+
+76
+00:04:02,047 --> 00:04:05,653
+And the privacy digest even lists
+the paper's own mistakes.
+
+77
+00:04:07,050 --> 00:04:10,460
+In the script,
+each beat pairs a show line, the picture,
+
+78
+00:04:10,460 --> 00:04:13,749
+with a say line:
+the exact words the voice will speak.
+
+79
+00:04:14,069 --> 00:04:17,503
+The animation code reads
+those words straight from this file.
+
+80
+00:04:17,823 --> 00:04:21,557
+It's written for the ear:
+nine factorial is spelled out in words.
+
+81
+00:04:21,800 --> 00:04:25,302
+So other agents review the script
+before any animation:
+
+82
+00:04:25,302 --> 00:04:30,141
+a sentence takes seconds to fix,
+but a finished scene has to be drawn again.
+
+83
+00:04:30,461 --> 00:04:33,640
+The agent wrote that rule
+into its own guide on day one.
+
+84
+00:04:33,960 --> 00:04:37,032
+Minutes later,
+it started six sub-agents building scenes
+
+85
+00:04:37,032 --> 00:04:38,952
+while the review was still running.
+
+86
+00:04:39,272 --> 00:04:40,813
+Eleven minutes after that,
+
+87
+00:04:40,813 --> 00:04:43,697
+one review came back
+with changes to the script,
+
+88
+00:04:43,697 --> 00:04:45,139
+so all six were stopped.
+
+89
+00:04:45,459 --> 00:04:47,630
+Writing the rule down was not enough:
+
+90
+00:04:47,630 --> 00:04:50,387
+the workflow itself
+has to wait for the review.
+
+91
+00:04:51,733 --> 00:04:53,056
+Now the animation.
+
+92
+00:04:53,376 --> 00:04:55,974
+In this pipeline, the voice is made first,
+
+93
+00:04:55,974 --> 00:04:58,880
+and the animation waits for words,
+not seconds.
+
+94
+00:04:59,200 --> 00:05:03,210
+This code says: when the narration
+reaches "A hundred", show a hundred.
+
+95
+00:05:03,530 --> 00:05:05,813
+When it reaches "A million", show a million.
+
+96
+00:05:06,050 --> 00:05:10,914
+The voice speaks one sentence at a time,
+so every sentence start is known exactly.
+
+97
+00:05:11,234 --> 00:05:13,794
+Inside a sentence, the toolkit has to guess.
+
+98
+00:05:14,114 --> 00:05:17,335
+It assumes every character
+takes the same time to say.
+
+99
+00:05:17,583 --> 00:05:18,735
+Pause and try it.
+
+100
+00:05:19,055 --> 00:05:23,258
+The number on screen has 7 characters,
+as many as the word example.
+
+101
+00:05:23,578 --> 00:05:24,922
+Say both out loud.
+
+102
+00:05:25,242 --> 00:05:26,842
+How long does the number take?
+
+103
+00:05:35,083 --> 00:05:36,267
+About three seconds:
+
+104
+00:05:36,267 --> 00:05:39,520
+three hundred sixty-two thousand,
+eight hundred eighty.
+
+105
+00:05:39,840 --> 00:05:41,334
+Far longer than the word.
+
+106
+00:05:41,654 --> 00:05:46,006
+So the toolkit's guess for the words right
+after it lands almost two seconds early.
+
+107
+00:05:46,250 --> 00:05:47,910
+The fix so far is manual:
+
+108
+00:05:47,910 --> 00:05:51,134
+this one scene carries
+about 20 hand-set shifts,
+
+109
+00:05:51,134 --> 00:05:53,418
+the biggest two point two seconds.
+
+110
+00:05:53,738 --> 00:05:55,698
+A better fix is within reach:
+
+111
+00:05:55,698 --> 00:06:00,159
+the online voice used for Chinese
+can send the time of every word.
+
+112
+00:06:00,479 --> 00:06:04,276
+But the toolkit doesn't ask for them yet,
+and keeps only the audio.
+
+113
+00:06:06,917 --> 00:06:07,941
+Pause and think.
+
+114
+00:06:08,261 --> 00:06:10,842
+Suppose you can't hear,
+and you can't press play.
+
+115
+00:06:11,162 --> 00:06:12,656
+How would you check a video?
+
+116
+00:06:20,900 --> 00:06:24,975
+The agent's answer: turn time into pictures,
+and sound into text.
+
+117
+00:06:25,295 --> 00:06:27,300
+The toolkit renders a quick draft,
+
+118
+00:06:27,300 --> 00:06:30,543
+and tiles a still
+from every two seconds into one grid.
+
+119
+00:06:30,863 --> 00:06:34,276
+An agent can look at an image,
+so this is how it watches.
+
+120
+00:06:34,517 --> 00:06:38,089
+Between stills, things can go wrong,
+so to check motion,
+
+121
+00:06:38,089 --> 00:06:40,768
+it grabs frames a fifth of a second apart.
+
+122
+00:06:41,088 --> 00:06:43,242
+If they're all the same, nothing moved.
+
+123
+00:06:43,484 --> 00:06:45,425
+Then it measures everything it can.
+
+124
+00:06:45,745 --> 00:06:49,783
+A checker called a lint runs each scene
+without drawing a frame,
+
+125
+00:06:49,783 --> 00:06:51,700
+and flags anything off screen,
+
+126
+00:06:51,700 --> 00:06:54,641
+text that's too small,
+or objects left behind.
+
+127
+00:06:54,961 --> 00:06:57,508
+And the tic-tac-toe scenes check themselves,
+
+128
+00:06:57,508 --> 00:07:00,230
+with 82 checks
+on the numbers and boards shown.
+
+129
+00:07:02,250 --> 00:07:05,962
+Next come the reviewers,
+fresh agents that didn't build the video.
+
+130
+00:07:06,282 --> 00:07:07,677
+They get the stills,
+
+131
+00:07:07,677 --> 00:07:11,164
+the subtitles as a stand-in for sound,
+and a role:
+
+132
+00:07:11,164 --> 00:07:15,221
+a director, or a simulated 12-year-old,
+sharp but ordinary.
+
+133
+00:07:15,541 --> 00:07:20,341
+That simulated kid found real problems,
+like move labels it couldn't decode.
+
+134
+00:07:20,583 --> 00:07:25,020
+Round one found 30 issues,
+including that 12 on the formula line.
+
+135
+00:07:25,340 --> 00:07:29,006
+In round two,
+a fresh director re-checked each one:
+
+136
+00:07:29,006 --> 00:07:31,378
+25 were fixed, and 5 only partly.
+
+137
+00:07:34,017 --> 00:07:35,809
+The director caught a subtler bug.
+
+138
+00:07:36,129 --> 00:07:39,284
+The scene should shuffle 4 marks
+through all 24 orders,
+
+139
+00:07:39,284 --> 00:07:42,038
+but the board froze
+while the counter ticked on.
+
+140
+00:07:42,358 --> 00:07:44,192
+The cause is a Manim pitfall:
+
+141
+00:07:44,192 --> 00:07:47,353
+every move was set up
+before the first one played,
+
+142
+00:07:47,353 --> 00:07:49,693
+and each setup erased the one before,
+
+143
+00:07:49,693 --> 00:07:52,918
+so each mark jumped
+to its last spot and sat still.
+
+144
+00:07:53,238 --> 00:07:57,206
+Now each move is set up only when it plays,
+and the marks move again.
+
+145
+00:08:00,067 --> 00:08:02,435
+Some problems only show across scenes.
+
+146
+00:08:02,755 --> 00:08:06,097
+In the privacy video,
+agents building different scenes
+
+147
+00:08:06,097 --> 00:08:09,624
+named the same person Dan in one part
+and Dev in another.
+
+148
+00:08:09,944 --> 00:08:12,846
+Only a reviewer checking
+across scenes could catch that.
+
+149
+00:08:13,166 --> 00:08:17,518
+Another reviewer found the privacy budget
+bar drawn five different ways.
+
+150
+00:08:17,838 --> 00:08:19,843
+Now those scenes share one drawing.
+
+151
+00:08:22,683 --> 00:08:23,792
+On to Chinese.
+
+152
+00:08:24,112 --> 00:08:28,555
+The user asked to keep English terms
+that would sound weird translated,
+
+153
+00:08:28,555 --> 00:08:30,619
+with subtitles in both languages.
+
+154
+00:08:30,939 --> 00:08:34,988
+The key rule: one Chinese sentence
+for each English sentence,
+
+155
+00:08:34,988 --> 00:08:38,704
+so every animation cue still
+has a sentence to wait for.
+
+156
+00:08:39,024 --> 00:08:41,691
+Some cues are also pinned to a Chinese word.
+
+157
+00:08:43,133 --> 00:08:45,525
+Both languages share the same scene code,
+
+158
+00:08:45,525 --> 00:08:48,850
+so the agent checks
+that the English video didn't change.
+
+159
+00:08:49,170 --> 00:08:52,541
+It compares a fingerprint of every frame,
+before and after.
+
+160
+00:08:52,861 --> 00:08:57,277
+A few scenes don't render exactly
+the same every time, but most match.
+
+161
+00:08:57,516 --> 00:08:58,711
+Then, which voice?
+
+162
+00:08:59,031 --> 00:09:02,252
+The agent can't listen,
+so it asked a speech recognizer.
+
+163
+00:09:02,572 --> 00:09:04,343
+With the first Mandarin voice,
+
+164
+00:09:04,343 --> 00:09:07,647
+the recognizer heard "Nice"
+where the script said noise,
+
+165
+00:09:07,647 --> 00:09:09,889
+and "Excellent" where it said epsilon.
+
+166
+00:09:10,209 --> 00:09:13,494
+Another Mandarin voice
+passed all 17 test terms,
+
+167
+00:09:13,494 --> 00:09:14,520
+and was chosen,
+
+168
+00:09:14,520 --> 00:09:18,359
+though two English-first
+voices scored as high or higher.
+
+169
+00:09:18,679 --> 00:09:21,623
+There's no record yet
+of anyone checking it by ear.
+
+170
+00:09:21,866 --> 00:09:23,829
+And one subtitle flipped a meaning.
+
+171
+00:09:24,149 --> 00:09:27,276
+The English narration asks
+whether X always wins,
+
+172
+00:09:27,276 --> 00:09:31,679
+answers with a short no,
+then says a computer can do more than count.
+
+173
+00:09:31,999 --> 00:09:34,307
+The Chinese subtitle said the opposite:
+
+174
+00:09:34,307 --> 00:09:36,970
+that this is not something
+a computer can do.
+
+175
+00:09:37,290 --> 00:09:40,213
+Both AI reviewers
+of the Chinese version caught it.
+
+176
+00:09:40,450 --> 00:09:41,538
+Pause on this one.
+
+177
+00:09:41,858 --> 00:09:45,250
+The English line is right,
+and the Chinese says the opposite.
+
+178
+00:09:45,570 --> 00:09:47,276
+Was this a bad translation?
+
+179
+00:09:58,317 --> 00:09:59,317
+It wasn't.
+
+180
+00:09:59,533 --> 00:10:02,361
+The translation
+had a full stop after that no,
+
+181
+00:10:02,361 --> 00:10:04,328
+but the subtitle tool dropped it
+
+182
+00:10:04,328 --> 00:10:07,341
+when it merged
+that short subtitle into the next.
+
+183
+00:10:07,661 --> 00:10:10,114
+Tool bugs often look like content bugs.
+
+184
+00:10:10,350 --> 00:10:13,343
+Another tool bug:
+when putting the video together,
+
+185
+00:10:13,343 --> 00:10:15,798
+the toolkit reused each scene's old clip,
+
+186
+00:10:15,798 --> 00:10:19,630
+so edited scenes were quietly stitched
+from out-of-date footage.
+
+187
+00:10:19,950 --> 00:10:23,598
+The file dates gave it away:
+the clips were older than the code.
+
+188
+00:10:23,918 --> 00:10:27,942
+Now a scene is rendered again
+whenever it's older than its sources,
+
+189
+00:10:27,942 --> 00:10:29,444
+or its voice has changed.
+
+190
+00:10:30,734 --> 00:10:32,313
+Fixes need checking too.
+
+191
+00:10:32,633 --> 00:10:37,291
+For the Chinese privacy video,
+reviewers raised 103 points,
+
+192
+00:10:37,291 --> 00:10:41,081
+most of them polish,
+and fixers made 75 changes.
+
+193
+00:10:41,401 --> 00:10:44,398
+Then skeptical verifiers
+checked the fixers' work,
+
+194
+00:10:44,398 --> 00:10:46,137
+and made 12 more corrections.
+
+195
+00:10:46,457 --> 00:10:50,778
+A Chinese passage may run
+at most 15 percent longer than the English,
+
+196
+00:10:50,778 --> 00:10:52,281
+or the animation stalls.
+
+197
+00:10:52,601 --> 00:10:55,417
+One fixer said a passage now fit that limit.
+
+198
+00:10:55,737 --> 00:10:59,192
+A verifier timed it:
+fifteen point three percent longer.
+
+199
+00:11:02,233 --> 00:11:03,342
+So what's next?
+
+200
+00:11:03,662 --> 00:11:06,649
+The biggest gaps sit exactly
+where measuring runs out.
+
+201
+00:11:06,969 --> 00:11:10,169
+First, and most important:
+what only people can do.
+
+202
+00:11:10,489 --> 00:11:13,513
+The only human feedback
+on record is the user's:
+
+203
+00:11:13,513 --> 00:11:18,553
+add background music to the long videos,
+and make a shorter, denser version too.
+
+204
+00:11:18,873 --> 00:11:23,353
+There's no record yet of anyone checking
+the narration line by line, by ear.
+
+205
+00:11:23,673 --> 00:11:26,089
+Every test viewer on record was simulated,
+
+206
+00:11:26,089 --> 00:11:28,964
+and there's no measure yet
+of what anyone learned.
+
+207
+00:11:29,200 --> 00:11:32,209
+People should also revisit
+the agent's own calls:
+
+208
+00:11:32,209 --> 00:11:35,955
+the length of the privacy video,
+the choice of Chinese voice,
+
+209
+00:11:35,955 --> 00:11:40,314
+which English terms to keep,
+and the small edits to the user's program.
+
+210
+00:11:43,550 --> 00:11:44,873
+Second, engineering.
+
+211
+00:11:45,193 --> 00:11:48,741
+The free Chinese voice
+isn't licensed for published videos,
+
+212
+00:11:48,741 --> 00:11:52,830
+so the Chinese versions need
+a licensed voice before they're posted.
+
+213
+00:11:53,150 --> 00:11:57,523
+Timing should follow words, not characters,
+so the hand-set shifts can go.
+
+214
+00:11:57,843 --> 00:12:00,126
+And shared parts
+would shrink the scene code.
+
+215
+00:12:04,533 --> 00:12:05,589
+Third, subtitles,
+
+216
+00:12:05,589 --> 00:12:09,440
+the biggest source of review findings
+in the Chinese versions.
+
+217
+00:12:09,760 --> 00:12:13,194
+Hand-written rules decide
+where each subtitle line breaks.
+
+218
+00:12:13,514 --> 00:12:17,196
+The first rewrite of those rules
+fixed most of its targets,
+
+219
+00:12:17,196 --> 00:12:19,317
+but made 11 other subtitles worse.
+
+220
+00:12:19,637 --> 00:12:24,672
+It took three more rounds to fix those,
+so next time, the test cases come first.
+
+221
+00:12:24,992 --> 00:12:28,661
+A grammar tool could suggest the breaks,
+and the rules could check them.
+
+222
+00:12:29,400 --> 00:12:32,835
+Last, and closest to the user's vision:
+interactivity.
+
+223
+00:12:33,155 --> 00:12:36,224
+The first two videos each come
+with a playground,
+
+224
+00:12:36,224 --> 00:12:40,984
+a small web page to try the idea yourself,
+but it sits apart from the video.
+
+225
+00:12:41,304 --> 00:12:44,246
+Next, pausing the video
+should open it right there,
+
+226
+00:12:44,246 --> 00:12:46,552
+in the same state, and keep your answer.
+
+227
+00:12:50,000 --> 00:12:51,536
+Want to try this yourself?
+
+228
+00:12:51,856 --> 00:12:54,096
+A human picks the learner and the question.
+
+229
+00:12:54,416 --> 00:12:56,336
+Write the script first, as code.
+
+230
+00:12:56,656 --> 00:12:58,256
+Let the audio be the clock.
+
+231
+00:12:58,576 --> 00:13:02,096
+Use independent reviewers,
+including a simulated viewer.
+
+232
+00:13:02,416 --> 00:13:05,467
+Measure what you can't perceive,
+and check the fixes too.
+
+233
+00:13:05,787 --> 00:13:07,536
+And keep every step in a file.
+
+234
+00:13:07,783 --> 00:13:09,447
+Above all, remember the goal.
+
+235
+00:13:09,767 --> 00:13:13,671
+As the user put it,
+AI should not just be cognitive offloading.
+
+236
+00:13:13,991 --> 00:13:18,194
+It should make knowledge easier to reach,
+and still let you learn just as deeply.
+
+237
+00:13:18,433 --> 00:13:19,521
+One last thing.
+
+238
+00:13:19,841 --> 00:13:23,808
+This video was made the same way,
+so it has the same blind spot:
+
+239
+00:13:23,808 --> 00:13:26,412
+the agent that made it can't listen to it.
+
+240
+00:13:26,732 --> 00:13:27,732
+You can.
+
+241
+00:13:27,905 --> 00:13:32,236
+If anything sounded wrong, or lost you,
+say so in the comments, with the time.
+
+242
+00:13:32,556 --> 00:13:35,415
+That's exactly the feedback
+this pipeline is missing.
+
