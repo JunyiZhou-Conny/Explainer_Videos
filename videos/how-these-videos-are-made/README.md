@@ -10,6 +10,9 @@ machine-learning background is assumed.
 | --- | --- |
 | `output/how-these-videos-are-made.mp4` | the video (1080p60, narrated, 13:40) |
 | `output/how-these-videos-are-made.srt` | subtitles |
+| `output/how-these-videos-are-made.zh-en.mp4` | the same video with bilingual subtitles burned in (Chinese above, English below): the upload copy for Bilibili |
+| `output/how-these-videos-are-made.zh.srt`, `.zh-en.srt` / `.ass` | Chinese and bilingual subtitle files |
+| `i18n/zh/` | the Chinese translation of the narration (sentence by sentence), its glossary and the Bilibili title, chapters and description (`meta.yaml`) |
 | `output/chapters.txt` | chapter timestamps (paste into a YouTube/Bilibili description) |
 | `output/transcript.md` | full narration by chapter |
 | `script.md` | narration (SAY) and visual plan (SHOW), with its review log and the honesty rules |
