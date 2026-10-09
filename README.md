@@ -32,6 +32,7 @@ The next step after videos is interactivity — playgrounds where you have to *p
 | 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~24 min, also cut in two parts (~15 + ~9 min) |
 | 🎬 | [Why are there exactly 255,168 games of tic-tac-toe?](videos/tictactoe-255168/) (for middle school) | — (counting, recursion and backtracking) | ~12½ min |
 | 🎬 | [How these explainer videos are made: one human, one AI agent, and a lot of measuring](videos/how-these-videos-are-made/) | — (behind the scenes of this repo) | ~13½ min |
+| 🎵 | [井字棋为什么恰好有 255,168 种对局？（4 分钟版）](videos/tictactoe-255168-short/): the short of the tic-tac-toe video, no narrator, bilingual captions, music composed from the picture | — | 4:14 |
 
 **中文版 / Chinese versions.** Both videos also exist in Mandarin, code-switched the way Chinese
 speakers in that setting really talk (English kept for names, symbols, code and the terms Chinese
@@ -42,10 +43,11 @@ subtitles burned in (`output/<id>.zh-en.mp4`, Chinese above, English below: the 
 and as subtitle files (`output/<id>.zh.srt`, `.zh-en.srt`, `.zh-en.ass`). How it works and how to make
 another language: [docs/LANGUAGES.md](docs/LANGUAGES.md).
 
-**Shorts (in progress).** The toolkit can also make a condensed, music-led cut of a video (about
+**Shorts.** The toolkit can also make a condensed, music-led cut of a video (about
 4 minutes, no narrator): bilingual captions, a picture timed on a 100 BPM beat grid, and a score
 composed in code from the picture's own event log, so every cut, reveal and count is heard. The
-same music can be mixed under the narration of the long versions (`--music`). How:
+same music can be mixed under the narration of the long versions (`--music`). The first one is the
+tic-tac-toe short above. How:
 [docs/SHORTS.md](docs/SHORTS.md).
 
 Each video folder has: `output/*.mp4` (the video, plus part cuts for long ones), `output/*.srt`
