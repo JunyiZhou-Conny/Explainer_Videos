@@ -69,6 +69,8 @@ def finish_config(spec: dict, enabled: bool = True) -> dict | None:
     v = f.get("vignette")
     if v:
         out["vignette"] = VIGNETTE if v is True else _number(v if not isinstance(v, dict) else v.get("angle", VIGNETTE))
+    if out and f.get("crf"):                            # the intermediate's CRF (default INTERMEDIATE_CRF)
+        out["crf"] = int(f["crf"])
     return out or None
 
 
@@ -107,17 +109,25 @@ def _video_size(path: Path) -> tuple[int, int]:
     return w, h
 
 
-def apply_finish(src: Path, dst: Path, cfg: dict, crf: int = 12) -> Path:
-    """Run the finishing pass once (cached: skipped when dst is newer than src with the same settings)."""
+INTERMEDIATE_CRF = 16    # 12 made a 4-minute short with film grain larger than 3 GB; the masters are encoded from it at 18
+
+
+def apply_finish(src: Path, dst: Path, cfg: dict, crf: int | None = None) -> Path:
+    """Run the finishing pass once (cached: skipped when dst is newer than src with the same settings).
+    The intermediate is x264 at `crf` (else cfg["crf"], else INTERMEDIATE_CRF), written to a temporary name
+    and renamed when complete."""
+    crf = int(crf if crf is not None else cfg.get("crf", INTERMEDIATE_CRF))
     stamp = dst.with_suffix(".finish.json")
-    key = hashlib.sha1(json.dumps(cfg, sort_keys=True).encode()).hexdigest()
+    key = hashlib.sha1(json.dumps({**cfg, "crf": crf}, sort_keys=True).encode()).hexdigest()   # the CRF is an input too
     if dst.exists() and stamp.exists() and stamp.read_text() == key and dst.stat().st_mtime >= src.stat().st_mtime:
         return dst
     _, h = _video_size(src)
     graph = finish_graph(cfg, h, "0:v", "vout")
+    tmp = dst.with_name(dst.stem + ".partial" + dst.suffix)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-filter_complex", graph, "-map", "[vout]",
                     "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", str(crf), "-pix_fmt", "yuv420p",
-                    str(dst)], check=True)
+                    str(tmp)], check=True)
+    tmp.replace(dst)
     stamp.write_text(key)
     return dst
 

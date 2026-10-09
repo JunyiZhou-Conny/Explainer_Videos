@@ -227,8 +227,9 @@ angle in radians), or a dict (`bloom: {strength: 0.55, threshold: 0.6, radius: 6
 sigmas in px at 1080p; `bloom: [6, 28]` gives the two sigmas; `vignette: "PI/5"` works too). The
 pass costs about 3× real time at 1080p60; grain also makes files larger
 (CRF 18 with grain is about 8 MB per 10 s at 1080p60; `--crf 20` about 5.5 MB). The pass writes a
-near-lossless intermediate (CRF 12); every master is encoded from it at the master CRF, also when a
-layout has no captions.
+high-quality intermediate (CRF 16; `finish: {crf: N}` changes it: at CRF 12 a 4-minute short with
+grain passed 3 GB); every master is encoded from it at the master CRF, also when a layout has no
+captions.
 
 **Caption type** (zh-first, at 1080p): Chinese Noto Serif CJK SC glyphs 38 px tall, baseline at 87 %;
 the English line in Noto Sans Mono capitals 22 px tall (the plan's size; the reference's 14 px is
