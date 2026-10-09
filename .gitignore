@@ -18,3 +18,6 @@ videos/*/output/*/*_opening.music.wav
 # partial burns (renamed when complete)
 videos/*/output/*.partial.mp4
 videos/*/output/*/*.partial.mp4
+# the short pilot: masters are committed once its review round is done (they are rebuilt by the fixes)
+videos/tictactoe-255168-short/output/*.mp4
+videos/tictactoe-255168-short/output/*.wav
