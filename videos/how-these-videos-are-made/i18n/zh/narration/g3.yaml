@@ -1,0 +1,93 @@
+# Narration of S09-S11, zh-CN, sentence-aligned to script.md. Rules and terms: i18n/zh/GLOSSARY.md.
+# S09 line 1 names the Chinese cue it is about (那个“不是”), the word on the frame (A04).
+# S11 line 2 restates the user's own words (assets/quotes.yaml s11_goal) as the English does:
+# 认知卸载 = cognitive offloading, the same term as S02 (rule A6).
+
+S09:
+- en: "It wasn't. The translation had a full stop after that no, but the subtitle tool dropped it when it merged that short subtitle into the next. Tool bugs often look like content bugs."
+  zh:
+  - "不是。"
+  - "译文在那个“不是”后面本来有句号，但字幕工具把这条短字幕并进下一条时，把句号弄丢了。"
+  - "工具的 bug，常常看起来像内容的 bug。"
+
+- en: "Another tool bug: when putting the video together, the toolkit reused each scene's old clip, so edited scenes were quietly stitched from out-of-date footage. The file dates gave it away: the clips were older than the code. Now a scene is rendered again whenever it's older than its sources, or its voice has changed."
+  zh:
+  - "另一个工具 bug：拼接视频时，工具包直接复用了每个场景的旧片段，结果改过的场景，悄悄地用过时的画面拼了进去。"
+  - "文件日期露了馅：片段比代码还旧。"
+  - "现在，只要场景比它的源文件旧，或者它的语音换了，就会重新渲染。"
+
+- en: "Fixes need checking too. For the Chinese privacy video, reviewers raised 103 points, most of them polish, and fixers made 75 changes. Then skeptical verifiers checked the fixers' work, and made 12 more corrections. A Chinese passage may run at most 15 percent longer than the English, or the animation stalls. One fixer said a passage now fit that limit. A verifier timed it: fifteen point three percent longer."
+  zh:
+  - "修改本身也要检查。"
+  - "差分隐私的中文版，评审一共提了 103 条意见，大多是润色，负责修改的智能体做了 75 处改动。"
+  - "接着，持怀疑态度的核查者检查了这些修改，又做了 12 处更正。"
+  - "一段中文最多只能比英文长 15%，否则动画就会卡住。"
+  - "有个修改者说，某一段现在已经在这个限度以内了。"
+  - "核查者实际测了时长：长了 15.3%。"
+  en_display:
+  - null
+  - null
+  - null
+  - null
+  - null
+  - "A verifier timed it: 15.3 percent longer."
+
+S10:
+- en: "So what's next? The biggest gaps sit exactly where measuring runs out. First, and most important: what only people can do. The only human feedback on record is the user's: add background music to the long videos, and make a shorter, denser version too. There's no record yet of anyone checking the narration line by line, by ear. Every test viewer on record was simulated, and there's no measure yet of what anyone learned."
+  zh:
+  - "那下一步呢？"
+  - "最大的缺口，恰恰在测量够不着的地方。"
+  - "第一，也是最重要的：只有人能做的事。"
+  - "有记录的人类反馈只有用户的：给长视频加背景音乐，再做一个更短、更紧凑的版本。"
+  - "目前还没有记录显示，有人逐句亲耳检查过旁白。"
+  - "有记录的试看观众全是模拟的，至于大家到底学到了什么，目前也还没有衡量。"
+
+- en: "People should also revisit the agent's own calls: the length of the privacy video, the choice of Chinese voice, which English terms to keep, and the small edits to the user's program."
+  zh:
+  - "智能体自己拍板的事，也应该由人再看一遍：差分隐私那期的长度，中文声音的选择，保留哪些英文术语，以及对用户程序的那些小改动。"
+
+- en: "Second, engineering. The free Chinese voice isn't licensed for published videos, so the Chinese versions need a licensed voice before they're posted. Timing should follow words, not characters, so the hand-set shifts can go. And shared parts would shrink the scene code."
+  zh:
+  - "第二，工程方面。"
+  - "免费的中文语音没有授权用于公开发布的视频，所以中文版发布之前，需要换成有授权的语音。"
+  - "时间应该按词来定，而不是按字符，这样那些手动设置的偏移就能去掉。"
+  - "共用的部件还能让场景代码变少。"
+
+- en: "Third, subtitles, the biggest source of review findings in the Chinese versions. Hand-written rules decide where each subtitle line breaks. The first rewrite of those rules fixed most of its targets, but made 11 other subtitles worse. It took three more rounds to fix those, so next time, the test cases come first. A grammar tool could suggest the breaks, and the rules could check them."
+  zh:
+  - "第三，字幕：在中文版的评审意见里，字幕问题最多。"
+  - "每条字幕在哪儿断行，是由手写的规则决定的。"
+  - "第一次重写这些规则时，大部分目标都修好了，却让另外 11 条字幕变差了。"
+  - "又花了三轮才把它们修好，所以下次要先写测试用例。"
+  - "可以让语法分析工具来建议断在哪儿，再由规则来检查。"
+
+- en: "Last, and closest to the user's vision: interactivity. The first two videos each come with a playground, a small web page to try the idea yourself, but it sits apart from the video. Next, pausing the video should open it right there, in the same state, and keep your answer."
+  zh:
+  - "最后一项，也最接近用户的设想：交互。"
+  - "前两期视频各配了一个交互页面，也就是一个可以自己动手试的小网页，但它和视频是分开的。"
+  - "下一步，暂停视频时，应该直接在原地打开它，停在同样的状态，还能记住你的答案。"
+
+S11:
+- en: "Want to try this yourself? A human picks the learner and the question. Write the script first, as code. Let the audio be the clock. Use independent reviewers, including a simulated viewer. Measure what you can't perceive, and check the fixes too. And keep every step in a file."
+  zh:
+  - "想自己试试吗？"
+  - "由人来选定学习者和问题。"
+  - "先写脚本，而且把它写成代码。"
+  - "让音频当时钟。"
+  - "用独立的评审，包括一个模拟观众。"
+  - "感知不到的，就去测量，修改也要再检查。"
+  - "还有，每一步都存成文件。"
+
+- en: "Above all, remember the goal. As the user put it, AI should not just be cognitive offloading. It should make knowledge easier to reach, and still let you learn just as deeply."
+  zh:
+  - "最重要的是，记住目标。"
+  - "正如用户所说，AI 不应该只是认知卸载。"
+  - "它应该让知识更容易获得，同时还能让你学得一样深。"
+
+- en: "One last thing. This video was made the same way, so it has the same blind spot: the agent that made it can't listen to it. You can. If anything sounded wrong, or lost you, say so in the comments, with the time. That's exactly the feedback this pipeline is missing."
+  zh:
+  - "最后还有一件事。"
+  - "这期视频也是这样做出来的，所以它有同样的盲区：做它的智能体，没法听它。"
+  - "但你可以。"
+  - "如果哪里听着不对，或者让你听糊涂了，请在评论区说一声，带上时间点。"
+  - "这正是这条流水线缺的反馈。"

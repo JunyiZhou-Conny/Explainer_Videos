@@ -1,0 +1,128 @@
+# Narration of S05-S08, zh-CN, sentence-aligned to script.md. Rules and terms: i18n/zh/GLOSSARY.md.
+# The words the old tic-tac-toe code waits for ("A hundred", "A million") and the words the speech
+# recognizer misheard (noise -> "Nice", epsilon -> "Excellent") stay English: they are the real
+# strings on screen and in the voice test (rule A3). S05's number is written out in Chinese
+# numerals in sentence 1 of the fourth line: that sentence is about how the number sounds.
+
+S05:
+- en: 'Now the animation. In this pipeline, the voice is made first, and the animation waits for words, not seconds. This code says: when the narration reaches "A hundred", show a hundred. When it reaches "A million", show a million.'
+  zh:
+  - "接下来是动画。"
+  - "在这条流水线里，先生成语音，动画等的是词，不是秒数。"
+  - "这段代码的意思是：旁白念到“A hundred”的时候，就显示一百。"
+  - "念到“A million”的时候，就显示一百万。"
+
+- en: "The voice speaks one sentence at a time, so every sentence start is known exactly. Inside a sentence, the toolkit has to guess. It assumes every character takes the same time to say."
+  zh:
+  - "语音是一句一句合成的，所以每一句从哪儿开始，都精确知道。"
+  - "可在一句话内部，工具包只能靠猜。"
+  - "它假设每个字符念起来都花一样的时间。"
+
+- en: "Pause and try it. The number on screen has 7 characters, as many as the word example. Say both out loud. How long does the number take?"
+  zh:
+  - "暂停一下，自己试试。"
+  - "屏幕上这个数有 7 个字符，和英文单词 example 一样多。"
+  - "把两个都大声念出来。"
+  - "念这个数要多久？"
+
+- en: "About three seconds: three hundred sixty-two thousand, eight hundred eighty. Far longer than the word. So the toolkit's guess for the words right after it lands almost two seconds early."
+  zh:
+  - "大约三秒：三十六万两千八百八十。"
+  - "比那个单词长得多。"
+  - "所以对紧跟在它后面的那些词，工具包的估计早了将近两秒。"
+
+- en: "The fix so far is manual: this one scene carries about 20 hand-set shifts, the biggest two point two seconds. A better fix is within reach: the online voice used for Chinese can send the time of every word. But the toolkit doesn't ask for them yet, and keeps only the audio."
+  zh:
+  - "目前的办法是手动修：光这一个场景就有大约 20 处手动设置的偏移，最大的一处是 2.2 秒。"
+  - "更好的办法其实触手可及：中文用的那个在线语音服务，能把每个词的时间一起发回来。"
+  - "但工具包现在还没去要这些时间，只保存了音频。"
+  en_display:
+  - "The fix so far is manual: this one scene carries about 20 hand-set shifts, the biggest 2.2 seconds."
+  - null
+  - null
+
+S06:
+- en: "Pause and think. Suppose you can't hear, and you can't press play. How would you check a video?"
+  zh:
+  - "暂停想一想。"
+  - "假设你听不见，也没法按播放键。"
+  - "你会怎么检查一个视频？"
+
+- en: "The agent's answer: turn time into pictures, and sound into text. The toolkit renders a quick draft, and tiles a still from every two seconds into one grid. An agent can look at an image, so this is how it watches."
+  zh:
+  - "智能体的答案是：把时间变成图片，把声音变成文字。"
+  - "工具包先快速渲染一版草稿，每两秒取一张截图，拼成一张网格图。"
+  - "智能体能看图片，所以它就是这样“看”视频的。"
+
+- en: "Between stills, things can go wrong, so to check motion, it grabs frames a fifth of a second apart. If they're all the same, nothing moved."
+  zh:
+  - "两张截图之间也可能出问题，所以为了检查动作，它会每隔五分之一秒抓一帧。"
+  - "如果这几帧都一样，就说明什么都没动。"
+
+- en: "Then it measures everything it can. A checker called a lint runs each scene without drawing a frame, and flags anything off screen, text that's too small, or objects left behind. And the tic-tac-toe scenes check themselves, with 82 checks on the numbers and boards shown."
+  zh:
+  - "然后，凡是能测量的，它都测量。"
+  - "有个叫 lint 的检查工具，一帧都不画就能把每个场景跑一遍，标出跑到屏幕外的东西、太小的文字，还有最后没清掉的元素。"
+  - "井字棋那期的场景还会自己检查自己：针对画面上的数字和棋盘，一共有 82 项检查。"
+
+S07:
+- en: "Next come the reviewers, fresh agents that didn't build the video. They get the stills, the subtitles as a stand-in for sound, and a role: a director, or a simulated 12-year-old, sharp but ordinary. That simulated kid found real problems, like move labels it couldn't decode."
+  zh:
+  - "接下来是评审：一批全新的智能体，没有参与制作这个视频。"
+  - "它们拿到的是截图、代替声音的字幕，还有一个角色：导演，或者一个模拟的 12 岁孩子，聪明，但很普通。"
+  - "这个模拟的孩子找出了真问题，比如有些表示走法的标签，它看不懂。"
+
+- en: "Round one found 30 issues, including that 12 on the formula line. In round two, a fresh director re-checked each one: 25 were fixed, and 5 only partly."
+  zh:
+  - "第一轮找出了 30 个问题，其中就有算式那一行上的那个 12。"
+  - "第二轮，一位新的导演逐条复查：25 个已经修好，5 个只修好了一部分。"
+
+- en: "The director caught a subtler bug. The scene should shuffle 4 marks through all 24 orders, but the board froze while the counter ticked on. The cause is a Manim pitfall: every move was set up before the first one played, and each setup erased the one before, so each mark jumped to its last spot and sat still. Now each move is set up only when it plays, and the marks move again."
+  zh:
+  - "导演还抓到了一个更隐蔽的 bug。"
+  - "这个场景本该把 4 个棋子换遍全部 24 种顺序，可棋盘一动不动，计数器却还在往上跳。"
+  - "原因是 Manim 的一个坑：所有移动都在第一步播放之前就设好了，而每次设置都会覆盖前一次，结果每个棋子直接跳到最后的位置，然后就不动了。"
+  - "现在每一步移动都等到播放时才设置，棋子就又动起来了。"
+
+- en: "Some problems only show across scenes. In the privacy video, agents building different scenes named the same person Dan in one part and Dev in another. Only a reviewer checking across scenes could catch that. Another reviewer found the privacy budget bar drawn five different ways. Now those scenes share one drawing."
+  zh:
+  - "有些问题要跨场景才看得出来。"
+  - "在差分隐私那期，负责不同场景的智能体给同一个人起了两个名字：一部分叫 Dan，另一部分叫 Dev。"
+  - "只有跨场景检查的评审，才能发现这种问题。"
+  - "另一位评审发现，隐私预算条被画成了五种不同的样子。"
+  - "现在这些场景共用同一种画法。"
+
+S08:
+- en: "On to Chinese. The user asked to keep English terms that would sound weird translated, with subtitles in both languages. The key rule: one Chinese sentence for each English sentence, so every animation cue still has a sentence to wait for. Some cues are also pinned to a Chinese word."
+  zh:
+  - "再说中文版。"
+  - "用户要求：那些翻成中文会听着别扭的英文术语，保留英文，并且配上中英双语字幕。"
+  - "关键规则是：一句英文对一句中文，这样每个动画触发点都还有一句话可以等。"
+  - "有些触发点还会钉在某个具体的中文词上。"
+
+- en: "Both languages share the same scene code, so the agent checks that the English video didn't change. It compares a fingerprint of every frame, before and after. A few scenes don't render exactly the same every time, but most match."
+  zh:
+  - "两种语言共用同一套场景代码，所以智能体要检查英文版有没有被改动。"
+  - "它会比对改动前后每一帧的指纹。"
+  - "有几个场景每次渲染的结果不完全一样，但大多数都对得上。"
+
+- en: "Then, which voice? The agent can't listen, so it asked a speech recognizer. With the first Mandarin voice, the recognizer heard \"Nice\" where the script said noise, and \"Excellent\" where it said epsilon. Another Mandarin voice passed all 17 test terms, and was chosen, though two English-first voices scored as high or higher. There's no record yet of anyone checking it by ear."
+  zh:
+  - "那么，用哪个声音？"
+  - "智能体听不了，所以它去问语音识别模型。"
+  - "用第一个普通话声音时，脚本里写的是 noise，识别模型听到的却是“Nice”；写的是 epsilon，听到的是“Excellent”。"
+  - "另一个普通话声音 17 个测试词全部通过，于是被选中了，尽管有两个以英语为主的声音分数一样高，甚至更高。"
+  - "目前还没有记录显示，有人亲耳检查过它。"
+
+- en: "And one subtitle flipped a meaning. The English narration asks whether X always wins, answers with a short no, then says a computer can do more than count. The Chinese subtitle said the opposite: that this is not something a computer can do. Both AI reviewers of the Chinese version caught it."
+  zh:
+  - "还有一条字幕，意思被弄反了。"
+  - "英文旁白先问 X 是不是总能赢，简短地答了一句“No”，然后说电脑能做的不只是统计。"
+  - "中文字幕却说反了：说这不是电脑能做的事。"
+  - "中文版的两个 AI 评审都发现了这个问题。"
+
+- en: "Pause on this one. The English line is right, and the Chinese says the opposite. Was this a bad translation?"
+  zh:
+  - "这里暂停想一想。"
+  - "英文那句是对的，中文说的却正好相反。"
+  - "这是翻译错了吗？"
