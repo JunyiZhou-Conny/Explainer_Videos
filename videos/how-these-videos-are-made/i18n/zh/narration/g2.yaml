@@ -14,7 +14,7 @@ S05:
 
 - en: "The voice speaks one sentence at a time, so every sentence start is known exactly. Inside a sentence, the toolkit has to guess. It assumes every character takes the same time to say."
   zh:
-  - "语音是一句一句合成的，所以每一句从哪儿开始，都精确知道。"
+  - "语音是一句一句合成的，所以每一句从哪儿开始，都能精确知道。"
   - "可在一句话内部，工具包只能靠猜。"
   - "它假设每个字符念起来都花一样的时间。"
 
@@ -57,7 +57,7 @@ S06:
 - en: "Between stills, things can go wrong, so to check motion, it grabs frames a fifth of a second apart. If they're all the same, nothing moved."
   zh:
   - "两张截图之间也可能出问题，所以为了检查动作，它会每隔五分之一秒抓一帧。"
-  - "如果几帧都一样，就是什么都没动。"
+  - "如果几帧都一样，就说明什么都没动。"
 
 - en: "Then it measures everything it can. A checker called a lint runs each scene without drawing a frame, and flags anything off screen, text that's too small, or objects left behind. And the tic-tac-toe scenes check themselves, with 82 checks on the numbers and boards shown."
   zh:
@@ -111,7 +111,7 @@ S08:
   - "那么，用哪个声音？"
   - "智能体听不了，所以它去问语音识别模型。"
   - "用第一个普通话声音时，识别模型把脚本里的 noise 听成了“Nice”，把 epsilon 听成了“Excellent”。"
-  - "另一个普通话声音 17 个测试词全部通过，于是被选中了，尽管有两个以英语为主的声音，分数一样高，甚至更高。"
+  - "另一个普通话声音 17 个测试词全部通过，于是被选中了，不过有两个以英语为主的声音，分数和它一样高，甚至更高。"
   - "目前还没有记录显示，有人亲耳检查过它。"
 
 - en: "And one subtitle flipped a meaning. The English narration asks whether X always wins, answers with a short no, then says a computer can do more than count. The Chinese subtitle said the opposite: that this is not something a computer can do. Both AI reviewers of the Chinese version caught it."

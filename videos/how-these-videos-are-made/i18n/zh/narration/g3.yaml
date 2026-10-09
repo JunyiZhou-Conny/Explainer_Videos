@@ -19,7 +19,7 @@ S09:
 - en: "Fixes need checking too. For the Chinese privacy video, reviewers raised 103 points, most of them polish, and fixers made 75 changes. Then skeptical verifiers checked the fixers' work, and made 12 more corrections. A Chinese passage may run at most 15 percent longer than the English, or the animation stalls. One fixer said a passage now fit that limit. A verifier timed it: fifteen point three percent longer."
   zh:
   - "修改本身也要检查。"
-  - "差分隐私的中文版，评审一共提了 103 条意见，大多是润色，负责修改的智能体做了 75 处改动。"
+  - "差分隐私那期的中文版，评审一共提了 103 条意见，大多是润色，负责修改的智能体做了 75 处改动。"
   - "接着，持怀疑态度的核查者检查了这些修改，又做了 12 处更正。"
   - "一段中文最多只能比英文长 15%，否则动画就会卡住。"
   - "有个修改者说，某一段现在不超限了。"
@@ -38,7 +38,7 @@ S10:
   - "那下一步呢？"
   - "最大的缺口，恰恰在测量够不着的地方。"
   - "第一，也是最重要的：只有人能做的事。"
-  - "有记录的人类反馈只有用户的：给长视频加背景音乐，再做一个更短、更紧凑的版本。"
+  - "有记录的真人反馈，只来自用户：给长视频加背景音乐，再做一个更短、更紧凑的版本。"
   - "目前还没有记录显示，有人逐句亲耳检查过旁白。"
   - "有记录的试看观众全是模拟的，至于大家到底学到了什么，目前也还没有衡量。"
 
@@ -57,7 +57,7 @@ S10:
   zh:
   - "第三，字幕：在中文版的评审意见里，字幕问题最多。"
   - "每条字幕在哪儿断行，是由手写的规则决定的。"
-  - "第一次重写这些规则时，大部分目标都修好了，却让另外 11 条字幕变差了。"
+  - "第一次重写这些规则时，想修的大部分问题都修好了，却让另外 11 条字幕变差了。"
   - "又花了三轮才把它们修好，所以下次要先写测试用例。"
   - "可以让语法分析工具来建议断在哪儿，再由规则来检查。"
 
@@ -65,7 +65,7 @@ S10:
   zh:
   - "最后一项，也最接近用户的设想：交互。"
   - "前两期视频各配了一个交互页面，也就是一个可以自己动手试的小网页，但它和视频是分开的。"
-  - "下一步，暂停视频时，应该直接在原地打开它，停在同样的状态，还能记住你的答案。"
+  - "下一步，暂停视频时，应该直接在原地打开它，状态和视频里一样，还能记住你的答案。"
 
 S11:
 - en: "Want to try this yourself? A human picks the learner and the question. Write the script first, as code. Let the audio be the clock. Use independent reviewers, including a simulated viewer. Measure what you can't perceive, and check the fixes too. And keep every step in a file."
