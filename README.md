@@ -37,8 +37,9 @@ The next step after videos is interactivity — playgrounds where you have to *p
 speakers in that setting really talk (English kept for names, symbols, code and the terms Chinese
 researchers say in English), with Chinese on-screen text and bilingual subtitles (Chinese above,
 the English original below): `videos/<id>/output/zh/<id>.mp4`, plus a Chinese README, exercises,
-playground and glossary in `videos/<id>/i18n/zh/`. The English videos ship Chinese and bilingual
-subtitle files too (`output/<id>.zh.srt`, `.zh-en.srt`, `.zh-en.ass`). How it works and how to make
+playground and glossary in `videos/<id>/i18n/zh/`. Every English video also ships with bilingual
+subtitles burned in (`output/<id>.zh-en.mp4`, Chinese above, English below: the copy for Bilibili),
+and as subtitle files (`output/<id>.zh.srt`, `.zh-en.srt`, `.zh-en.ass`). How it works and how to make
 another language: [docs/LANGUAGES.md](docs/LANGUAGES.md).
 
 **Shorts (in progress).** The toolkit can also make a condensed, music-led cut of a video (about

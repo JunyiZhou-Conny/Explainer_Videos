@@ -20,8 +20,8 @@ and the "camera" is the galaxy's own placement (`gcam`) and the strips' zoom (`z
            DRAW"; 89.1-89.3 the inset plays on faintly, X1 O4 X2, to X's top row
     90-92  §6. 90.1-90.3 the galaxy shrinks into one small glowing box: box 1 of the strip "2 5 5 1 6 8"
            (6 boxes, "井字棋 · 6 位数 · TIC-TAC-TOE · 6 DIGITS"); 90.4 the chess strip starts below it, "1" and
-           then zeros, one box per sixteenth and then faster; the camera pulls back as it runs (frame 1.0 ->
-           2.6)                                                                                 (c26)
+           then zeros, one box per sixteenth and then faster; the camera pulls back as it runs, from close on
+           the 55 px boxes (zoom Z0 = 2, so the digits read) to frame 2.6 on the 121st box             (c26)
     93     93.1 THE CLIMAX: the 121st box lands (one flash frame); the chess label (至少 ... 估计), "121 位数 ·
            121 DIGITS"; the tic-tac-toe strip glows, "全部下完 · ALL PLAYED OUT"                   (c27)
     94-95  the atoms strip runs between the two, 81 boxes (94.1-95.1), its label and "81 位数"   (c28)
@@ -245,19 +245,23 @@ G_WAVE = (-2.45, -0.35, 1.40)                     # pushed in on the inner rings
 G_HOLD = (-2.49, -0.40, 1.46)                     # ... drifting until 90.1
 
 # the strips (screen units): one box per digit, every strip to the same scale
-P_BOX = 0.25                                      # box pitch at zoom 1
+P_BOX = 0.25                                      # box pitch at zoom 1 (121 boxes fit the frame at zoom 1/2.6)
 BOX_FILL = 0.82                                   # a box's width as a share of the pitch
 XL = -5.7                                         # the strips' left end
-ROWS0 = {"ttt": 1.0, "atoms": 0.35, "chess": -0.35}     # rows at zoom 1
+Z0 = 2.0                                          # the zoom when the strips appear (90.3): boxes 55 px, digits
+                                                  # 29 px at 1080p, so "2 5 5 1 6 8" reads; the camera then pulls
+                                                  # back 5.2x along the chess run, to frame 2.6 on its 121st box
+ROWS0 = {"ttt": 1.0, "atoms": 0.35, "chess": -0.35}     # rows at zoom Z0
 ROWS1 = {"ttt": 2.3, "atoms": 0.7, "chess": -0.85}      # rows once pulled back (93.1 on)
 ZS1, ZS_END = 1 / 2.6, 1 / 2.85                   # the zoom at 93.1 (frame 2.6) and at the end of the scene
-N_SOFT = 8                                        # the camera starts to pull back once 8 chess boxes stand
+PULL_P = 3.0                                      # the knee of the pull-back (a soft minimum, see zs)
+PULL_C = 121.5 * (ZS1 ** -PULL_P - Z0 ** -PULL_P) ** (-1 / PULL_P)   # ... so that the 121st box stands at ZS1
 DIGITS = {"ttt": "255168", "chess": "1" + "0" * 120, "atoms": "1" + "0" * 80}
 assert DIGITS["ttt"] == f"{N_GAMES}" and int(DIGITS["chess"]) == 10 ** 120 and int(DIGITS["atoms"]) == 10 ** 80
 assert len(DIGITS["ttt"]) == 6 and len(DIGITS["chess"]) == 121 and len(DIGITS["atoms"]) == 81
 GAL_IN_BOX = 0.35                                 # the shrunken galaxy's diameter as a share of box 1's width
-BOX1_C0 = np.array([XL + 0.5 * P_BOX, ROWS0["ttt"]])
-S_BOX = GAL_IN_BOX * BOX_FILL * P_BOX / (2 * 2.9)
+BOX1_C0 = np.array([XL + 0.5 * P_BOX * Z0, ROWS0["ttt"]])
+S_BOX = GAL_IN_BOX * BOX_FILL * P_BOX * Z0 / (2 * 2.9)
 
 
 def _mix(a, b, e):
@@ -324,18 +328,27 @@ def _chess_count(t: float) -> float:
     return k + (t - a) / (b - a)
 
 
+def _run_zoom(n: float) -> float:
+    """The strips' zoom once n chess boxes stand: Z0 while the run is short, then pulled back so the run's front
+    keeps to the frame (a soft minimum of Z0 and PULL_C / (n + 0.5); the front x = XL + P_BOX (n + 0.5) z rises
+    monotonically), exactly ZS1 at the 121st box."""
+    return (Z0 ** -PULL_P + (PULL_C / (n + 0.5)) ** -PULL_P) ** (-1 / PULL_P)
+
+
 def _pull(n: float) -> float:
-    """0 .. 1: how far the camera has pulled back once n chess boxes stand (smooth, 1 at the 121st)."""
-    v = clamp01((n - N_SOFT) / (121.0 - N_SOFT))
-    return v * v * (3 - 2 * v)
+    """0 .. 1: how far the camera has pulled back once n chess boxes stand (log zoom, 1 at the 121st)."""
+    return clamp01(math.log(Z0 / _run_zoom(n)) / math.log(Z0 / ZS1))
 
 
 def zs(t: float) -> float:
     """The strips' zoom (1 = box pitch P_BOX on screen; 1/2.6 = the frame 2.6 times wider)."""
     if t < HIT:
-        return math.exp(math.log(ZS1) * _pull(_chess_count(t)))
+        return _run_zoom(_chess_count(t))
     e = ease_in_out_sine(seg(t, HIT, END))
     return math.exp(math.log(ZS1) + (math.log(ZS_END) - math.log(ZS1)) * e)
+
+
+assert abs(_run_zoom(121.0) - ZS1) < 1e-9 and abs(_run_zoom(0.0) / Z0 - 1) < 1e-4
 
 
 def rows(t: float) -> dict:
@@ -349,8 +362,9 @@ def box_x(i, z: float):
 
 
 def box_size(z: float) -> tuple[float, float]:
-    """(width, height) of a box: the height shrinks more slowly, so far out the boxes read as tall cells."""
-    return BOX_FILL * P_BOX * z, BOX_FILL * P_BOX * z ** 0.6
+    """(width, height) of a box: square close up; pulled back (z < 1) the height shrinks more slowly, so far out
+    the boxes read as tall cells."""
+    return BOX_FILL * P_BOX * z, BOX_FILL * P_BOX * (z if z >= 1 else z ** 0.6)
 
 
 _fronts = [box_x(_chess_count(t), zs(t)) for t in np.linspace(CHESS0, HIT, 400)]
@@ -648,7 +662,8 @@ class StripsRig:
         if s["n"]:
             c0 = xf_apply(s["c"][0], xf)
             a = ease_out_cubic(seg(t, TTT_T[0], TTT_T[0] + 0.35))
-            self.lab_ttt.show([c0[0] - s["w0"] * K / 2, c0[1] + 0.36 + 0.05 * (1 - a)], "l", vis * a)
+            dy = max(0.36, s["h0"] * K / 2 + 0.26)                 # clear of the boxes, close up or pulled back
+            self.lab_ttt.show([c0[0] - s["w0"] * K / 2, c0[1] + dy + 0.05 * (1 - a)], "l", vis * a)
             e = xf_apply(s["c"][-1], xf)
             a = ease_out_cubic(seg(t, HIT, HIT + 0.4))
             self.tag_ttt.show([e[0] + s["w0"] * K / 2 + 0.3 + 0.1 * (1 - a), e[1]], "l", vis * a)
@@ -1261,7 +1276,7 @@ class BiggerGames(BeatScene):
         S.phrase("faint win", [(WIN_IN + 0.15 * j, f"X@{n}", ix) for j, n in enumerate(("C#6", "D6", "E6"))], gain=0.3)
         # 90.1: the galaxy shrinks into a box (a pull-out); its six boxes, then every chess box a tick, accelerating
         S.effect(COLLAPSE[0], "whoosh_down", COLLAPSE[1] - COLLAPSE[0], x=-3.0)
-        S.phrase("ttt strip", [(tt, "tick", float(box_x(j, 1.0))) for j, tt in enumerate(TTT_T)], rise=True, gain=0.8)
+        S.phrase("ttt strip", [(tt, "tick", float(box_x(j, zs(tt)))) for j, tt in enumerate(TTT_T)], rise=True, gain=0.8)
         S.phrase("chess strip", [(tt, "tick", float(box_x(j, zs(tt)))) for j, tt in enumerate(CHESS_T)], rise=True)
         # 94: the atoms' run, softer; 95.1 a low bell
         S.phrase("atoms strip", [(tt, "tick", float(box_x(j, zs(tt)))) for j, tt in enumerate(ATOMS_T)], rise=True,
@@ -1269,8 +1284,10 @@ class BiggerGames(BeatScene):
         S.phrase("atoms bell", [(ATOMS[1], "bell@B3", float(box_x(80, zs(ATOMS[1]))))], gain=0.8)
         # 96-98: the note (a soft pluck); the pen's soft pulse; a ping per box it lights (F#9's tones, rising); its
         # thin grain; the stall: the pen pulses on the beats of bar 98
-        S.phrase("note", [(NOTE_IN, "pluck@B3", 0.0)], gain=0.35)
-        S.phrase("pen", [(bb(96, b), "pen@B4", XL) for b in (1, 2)]
+        # (bars 96-97 are F#9: F# A# C# E G#, so the pluck and the pen's first pulses sit on its tones; bar 98 is
+        # Emaj9, where the stalled pen pulses on its fifth, B4)
+        S.phrase("note", [(NOTE_IN, "pluck@F#3", 0.0)], gain=0.35)
+        S.phrase("pen", [(bb(96, b), "pen@C#5", XL) for b in (1, 2)]
                  + [(bb(98, b), "pen@B4", float(box_x(5, zs(bb(98, b))))) for b in (1, 2, 3, 4)], gain=0.6)
         S.phrase("lit", [(tt, f"pen@{n}", float(box_x(j, zs(tt))))
                          for j, (tt, n) in enumerate(zip(LIT_T, ("F#5", "G#5", "A#5", "C#6", "E6", "F#6")))], gain=0.75)

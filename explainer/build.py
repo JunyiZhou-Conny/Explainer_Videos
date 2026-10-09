@@ -24,7 +24,9 @@ and <id>_<part>.mp4 / .srt / chapters_<part>.txt for each part.
 
 Language versions (videos/<id>/i18n/<lang>/narration.yaml, see explainer/i18n.py):
   - the English build also writes <id>.<lang>.srt (translated subtitles on the English timing),
-    <id>.<lang>-en.srt and <id>.<lang>-en.ass (bilingual), and with --burn <id>.<lang>-en.mp4;
+    <id>.<lang>-en.srt and <id>.<lang>-en.ass (bilingual), and <id>.<lang>-en.mp4: the English video
+    with the bilingual subtitles burned in under the picture (the standard upload copy for Bilibili;
+    --no-burn skips it);
   - `--lang zh` renders the Chinese version into output/zh/: <id>.mp4 with bilingual subtitles
     burned in under the picture (--no-burn keeps it clean), <id>.zh.srt, <id>.en.srt (English on the
     Chinese timing), <id>.zh-en.srt / .ass, chapters.txt and a bilingual transcript.md.
@@ -32,7 +34,7 @@ Language versions (videos/<id>/i18n/<lang>/narration.yaml, see explainer/i18n.py
 
 Music (explainer.music, composed from the scenes' event logs): `--music` (or a `music:` block in
 video.yaml) mixes the score under the narration: <id>.mp4 with music, <id>.nomusic.mp4 as before,
-<id>.music.wav (with --burn, the bilingual <id>.<lang>-en.mp4 is burned from the music version).
+<id>.music.wav (the bilingual <id>.<lang>-en.mp4 is burned from the music version).
 Without either, nothing changes.
 
 A short (video.yaml `format: short`, docs/SHORTS.md) is stitched by stitch_short: finishing pass
@@ -356,9 +358,10 @@ def main(argv=None):
     ap.add_argument("--crf", type=int, help="re-encode each scene with x264 at this CRF (smaller files; ~25 is good)")
     ap.add_argument("--render-only", action="store_true", help="render the selected scenes, don't stitch")
     ap.add_argument("--lang", default="en", help="language version to build (en, zh, ...)")
-    ap.add_argument("--burn", action="store_true", help="English build: also burn bilingual subtitles "
-                    "(<id>.<lang>-en.mp4) for each translation")
-    ap.add_argument("--no-burn", action="store_true", help="translated build: keep the video clean")
+    ap.add_argument("--burn", action="store_true", help="(the default) burn the bilingual subtitles: the English "
+                    "build writes <id>.<lang>-en.mp4 for each translation, a translated build burns its own video")
+    ap.add_argument("--no-burn", action="store_true", help="no burned copy: English build writes only the clean "
+                    "video, a translated build keeps its video clean")
     ap.add_argument("--subs-only", action="store_true", help="only (re)write subtitles, chapters and transcript "
                     "from existing renders; leave the video files alone")
     ap.add_argument("--music", action="store_true", help="add the score composed from the scenes' event logs "
@@ -436,7 +439,7 @@ def main(argv=None):
         meta = lang_meta(lang, project)
     title = meta.get("title") or spec.get("title", spec["id"])
     ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
-               burn=(not args.no_burn) if lang != "en" else args.burn, subs_only=args.subs_only,
+               burn=not args.no_burn, subs_only=args.subs_only,
                music=with_music and not args.subs_only)
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
            transcript_file=out_dir / "transcript.md", ctx=ctx)

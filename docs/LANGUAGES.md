@@ -72,7 +72,11 @@ All commands below run from the repository root (the toolkit is imported from th
    `<id>.zh-en.srt` / `.ass`, `chapters.txt` and `transcript.md`; each part gets its own
    `<id>_<part>.mp4`, subtitle files and `chapters_<part>.txt` (the transcript covers the whole
    video). The English build also writes `<id>.zh.srt` / `<id>.zh-en.srt` / `.ass` for the English
-   video.
+   video, and **`<id>.zh-en.mp4`: the English video with the bilingual subtitles burned in** under
+   the picture, the same layout as the Chinese version. This is the standard upload copy for
+   Bilibili, made for the full video and each part whenever a translation exists (`--no-burn`
+   skips it). A video that has no Chinese version yet still gets it: translate the narration only
+   (step 2, `narration/*.yaml`); the on-screen strings are needed only for a Chinese-voiced render.
 
 ## Subtitles
 

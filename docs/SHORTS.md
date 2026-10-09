@@ -330,7 +330,7 @@ ends (so it does not pump between words), then comes back over 600 ms (the bed 1
 between sentences: `music.duck: {depth, accents, gap, under}`). The voice stays as built (-16 LUFS)
 and is mixed from the loudness-normalized narration before its AAC encode, so it is encoded only
 once. Outputs: `<id>.mp4` with the mix, `<id>.nomusic.mp4` (the narration-only master, exactly as
-before), `<id>.music.wav`; parts get the same, and with `--burn` the bilingual `<id>.<lang>-en.mp4`
+before), `<id>.music.wav`; parts get the same, and the bilingual `<id>.<lang>-en.mp4`
 is burned from the music version. Without `--music` or a `music:`
 block nothing changes. The event logs come from the scene renders, so scenes rendered before the
 logger existed need one re-render (`--only <scene>`); the picture and narration of a re-render are

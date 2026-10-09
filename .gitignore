@@ -15,3 +15,6 @@ videos/*/output/*/*_720p30.*
 videos/*/output/*/*_opening.mp4
 videos/*/output/*/*_opening.*.mp4
 videos/*/output/*/*_opening.music.wav
+# partial burns (renamed when complete)
+videos/*/output/*.partial.mp4
+videos/*/output/*/*.partial.mp4

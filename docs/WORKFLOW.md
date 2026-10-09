@@ -99,7 +99,10 @@ python -m explainer.build videos/<id> --crf 26  # smaller file for sharing
 ```
 
 Output in `videos/<id>/output/`: the mp4 (loudness-normalised), `.srt` subtitles,
-`chapters.txt` (paste into a YouTube/Bilibili description), `transcript.md`.
+`chapters.txt` (paste into a YouTube/Bilibili description), `transcript.md`. With a Chinese
+translation of the narration (`i18n/zh/narration/*.yaml`, [LANGUAGES.md](LANGUAGES.md)), also
+`<id>.zh-en.mp4`: the same video with bilingual subtitles burned in, the standard copy for Bilibili
+(`--no-burn` skips it), and `.zh.srt` / `.zh-en.srt` / `.zh-en.ass`.
 
 A build re-renders a scene when its movie is missing or older than what it is built from: the
 scene's folder, `script.md`, `video.yaml`, `assets/`, and the toolkit modules a scene imports.

@@ -16,7 +16,8 @@ python -m explainer.check  videos/<id>/scenes/s03_x.py Class          # lint: of
 python -m explainer.preview videos/<id>/scenes/s03_x.py Class --every 3   # 480p + contact sheets; -q m --at t1,t2
 python -m explainer.build videos/<id> -q l                            # 480p draft of the whole video
 python -m explainer.build videos/<id> --only s03_x                    # re-render one scene, re-stitch
-python -m explainer.build videos/<id>                                 # final 1080p60 (--crf 25 for a smaller file)
+python -m explainer.build videos/<id>                                 # final 1080p60 (--crf 25 for a smaller file);
+                                                                      #   with i18n/zh also <id>.zh-en.mp4 (bilingual burned in)
 python -m explainer.build videos/<id> --lang zh                       # Chinese version -> output/zh/
 python -m explainer.build videos/<id> --music                         # score from the event logs
 python -m pytest -q tests                                             # toolkit tests (subtitles, music, shorts)
@@ -36,6 +37,9 @@ python -m pytest -q tests                                             # toolkit 
   `live:`. Refresh them just before the final render.
 - The Chinese voice: the free Edge endpoint is for drafts only. Published Chinese videos are rendered
   through Azure AI Speech (`AZURE_SPEECH_KEY`, `AZURE_SPEECH_REGION`); see docs/LANGUAGES.md.
+- Standard outputs of every English video: the clean mp4 and `<id>.zh-en.mp4` with bilingual
+  subtitles burned in (the Bilibili copy), so every video needs at least a Chinese narration
+  translation (`i18n/zh/narration/*.yaml`).
 - Agents cannot hear. Run the ASR round trip for each narration language, and ask a human to listen
   before anything is published.
 - Lexicon entries (`explainer/lexicon.yaml`) change the English cache keys of every video that uses
