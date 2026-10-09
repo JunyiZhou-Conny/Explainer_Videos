@@ -19,7 +19,7 @@ S01:
 - en: "It looks like bad multiplication, but the math was right. The 12 was a running count on its way to 24, sitting on the formula's line. The layout lied. And the reviewer who caught it wasn't a child. It was an AI, pretending to be a 12-year-old."
   zh:
   - "看起来像是乘法算错了，但数学其实没错。"
-  - "这个 12 其实是个还没数完的计数，要一直数到 24，却摆在了算式那一行上。"
+  - "这个 12 是个还没数完的计数，要数到 24，却摆在了算式那一行上。"
   - "是排版在撒谎。"
   - "而发现问题的评审，并不是孩子。"
   - "它是一个 AI，假扮成 12 岁的孩子。"
@@ -40,7 +40,7 @@ S02:
   zh:
   - "事情要从一个人说起，也就是这位用户：一位论文多到读不过来的研究者。"
   - "视频的风格学的是 3Blue1Brown：这个频道的视频用 Manim 做动画，每一帧都是用代码画出来的。"
-  - "这个项目的想法来自 Andrej Karpathy 的一条帖子，第一个请求里引用了它。"
+  - "这个项目源于 Andrej Karpathy 的一条帖子，第一个请求里引用了它。"
 
 - en: "The user's own words go further: our brain is a neural net, and training it takes hardship. AI is patient, they said, but they were doing a lot of cognitive offloading: letting the AI do the thinking for them."
   zh:
@@ -66,7 +66,7 @@ S03:
   - "团队：一个真人，就是用户。"
   - "一个 AI 智能体：Claude Code。"
   - "它手下有 183 个子智能体，来自 46 次工作流运行，都在这期视频之前。"
-  - "所谓工作流，就是智能体写的一段程序，用来启动子智能体，每个子智能体只干一件事。"
+  - "所谓工作流，就是智能体写的一段程序，用来启动子智能体，每个只干一件事。"
   - "还有各种工具，比如每种语言各一个合成语音，以及一个语音识别模型。"
 
 - en: "The user decided what was worth learning, and for whom. They uploaded 36 PDFs, gave the tic-tac-toe counts to explain, like 255,168 games, and supplied the program that video teaches. It already worked. The agent only changed a zero into the letter O, and rewrote the comments."
@@ -114,5 +114,5 @@ S04:
   - "所以在做任何动画之前，先让别的智能体评审脚本：改一句话只要几秒钟，场景做完了再改，就得整个重画。"
   - "第一天，智能体就把这条规则写进了自己的工作指南。"
   - "几分钟后，评审还在进行，它就启动了六个子智能体去做场景。"
-  - "又过了 11 分钟，一份评审意见回来了，要求改脚本，于是六个全被叫停。"
+  - "11 分钟后，一份要求改脚本的评审意见回来了，于是六个全被叫停。"
   - "光把规则写下来还不够：工作流本身必须等评审结束。"

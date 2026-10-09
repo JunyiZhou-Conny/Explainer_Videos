@@ -55,7 +55,7 @@ description: |
   章节：见下方时间轴
 
   制作说明：
-  · 本版：英文原声旁白（神经网络语音合成），中英双语字幕（中文在上，英文原句在下）
+  · 本版：英文原版旁白（神经网络语音合成），中英双语字幕（中文在上，英文原句在下）
   · 动画用 Manim 制作，由一套开源的讲解视频工具包生成
   · 英文原版：How these explainer videos are made: one human, one AI agent, and a lot of measuring
   · 术语表与翻译规则：videos/how-these-videos-are-made/i18n/zh/GLOSSARY.md

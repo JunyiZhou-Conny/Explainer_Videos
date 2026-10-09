@@ -34,7 +34,7 @@
 | English | 字幕 | 朗读 | 首次出现 | 说明 |
 |---|---|---|---|---|
 | the user | 用户；这位用户（S02 第一次） |  | S02：一切从一个人开始，也就是这位用户 | 不出现姓名，不用他/她。 |
-| one human / people | 一个真人；人；只有人能做的事 |  | S03：团队：一个真人，就是用户 | “真人”只用在和 AI 智能体对比的地方。 |
+| one human / people | 一个真人；人；只有人能做的事 |  | S03：团队：一个真人，就是用户 | “真人”只用在和 AI 对比的地方（S03 一个真人；S10 有记录的真人反馈，不说“人类反馈”，那像 RLHF 的术语）。 |
 | AI | AI；一个 AI | AI |  | 这个语境里说 AI，不说“人工智能”。 |
 | AI agent(s) / the agent | AI 智能体（第一次）；智能体 |  | S01：这些视频里几乎所有东西都是 AI 智能体做的 | 规则 A2。不用“代理”，不保留 agent（英文行里已经有）。 |
 | sub-agents | 子智能体 |  | S03：它手下有 183 个子智能体，来自 46 次工作流运行，都在这期视频之前 | 给出 183 / 46 时，一定带上“都在这期视频之前”。 |
@@ -44,7 +44,7 @@
 | a simulated 12-year-old / simulated viewer / test viewer | 一个模拟的 12 岁孩子；这个模拟的孩子；模拟观众；试看观众 |  | S07 | sharp but ordinary → 聪明但普通。 |
 | cross-scene reviewer | 跨场景检查的评审 |  | S07 |  |
 | fixers / skeptical verifiers | 负责修改的智能体（修改者）；持怀疑态度的核查者 |  | S09 | 各有四个，是复数；英文说 one 时才用“有个修改者 / 核查者”。 |
-| Andrej Karpathy | Andrej Karpathy | Andrej Karpathy | S02：本项目的想法来自 Andrej Karpathy 的帖子，是第一个请求里引用的 | 拉丁字母（同差分隐私那期的人名规则）；as quoted → 引用的。 |
+| Andrej Karpathy | Andrej Karpathy | Andrej Karpathy | S02：这个项目源于 Andrej Karpathy 的一条帖子，第一个请求里引用了它 | 拉丁字母（同差分隐私那期的人名规则）；as quoted → 第一个请求里引用了它（原话只见于引用）。 |
 | 3Blue1Brown | 3Blue1Brown | 3Blue1Brown | S02：视频的风格学的是 3Blue1Brown | 频道名；不说它的制作量有多大。 |
 | Dan / Dev | Dan；Dev | Dan / Dev | S07 | 卡片上的真实名字。 |
 
@@ -54,9 +54,9 @@
 |---|---|---|---|---|
 | pipeline | 流水线；整条流水线 |  | S01 |  |
 | toolkit | 工具包 |  | S03：它写了驱动整条流水线的工具包 |  |
-| workflow / workflow run | 工作流；一次工作流运行 |  | S03：工作流就是智能体为了启动子智能体写的程序，每个子智能体只干一件事 | 中文里已经通行（各种 AI 工具都叫“工作流”），外行也听过。 |
-| script (script.md) / a workflow script | 脚本；工作流是……写的程序 |  | S01 | “脚本”只指视频脚本；工作流的 script 说“程序”，两者不会撞。 |
-| show line / say line / beat | 一行画面；一行台词；每一小段 |  | S04：每一小段都是一行画面配一行台词 | 画面上是真实的英文脚本（SHOW:/SAY:），英文行也写着 show line / say line，中文说它们是什么。 |
+| workflow / workflow run | 工作流；一次工作流运行 |  | S03：所谓工作流，就是智能体写的一段程序，用来启动子智能体，每个只干一件事 | 中文里已经通行（各种 AI 工具都叫“工作流”），外行也听过。 |
+| script (script.md) / a workflow script | 脚本；工作流是……一段程序 |  | S01 | “脚本”只指视频脚本；工作流的 script 说“程序”，两者不会撞。 |
+| show line / say line / beat | 一行画面说明；一行台词；每一小段 |  | S04：每一小段都是一行画面说明，配一行台词 | 画面上是真实的英文脚本（SHOW:/SAY:），英文行也写着 show line / say line，中文说它们是什么。 |
 | the voice / synthetic voice / Mandarin voice / English-first voices | 语音；合成语音；普通话声音；以英语为主的声音 |  | S03：每种语言各一个合成语音 | “语音”指生成的音频，“声音”指测试里的某一个声音；不用“配音”（像真人配音）。 |
 | narration | 旁白 |  | S01 |  |
 | speech recognizer | 语音识别模型；识别模型 |  | S03：以及一个语音识别模型 | 不读 ASR。护栏：识别模型把……听成了……。 |
@@ -70,7 +70,7 @@
 | hand-set shifts / word times | 手动设的偏移；每个词的时间 |  | S05 |  |
 | usage limits / reset | 用量上限；额度恢复 |  | S03 |  |
 | session / request(s) | 会话；请求；第一个请求 |  | S02、S03 | 一律“请求”，和费用说明（全部四个请求）一致；不用“需求”。 |
-| paper / PDF / catalog / digest | 论文；PDF；目录记录；给论文编目录；论文笔记 | PDF | S03：用户上传了 36 个 PDF | “论文笔记”同差分隐私中文版简介。 |
+| paper / PDF / catalog / digest | 论文；PDF；目录条目；给论文编目录；论文笔记 | PDF | S03：用户上传了 36 个 PDF | “论文笔记”同差分隐私中文版简介。 |
 | comments | 注释 |  | S03 | 同井字棋词表。 |
 | subtitles / subtitle tool / line breaks | 字幕；字幕工具；断行；中英双语字幕 |  | S08、S10 |  |
 | test cases / grammar tool / hand-written rules | 测试用例；语法分析工具；手写的规则 |  | S10 |  |
@@ -124,18 +124,18 @@
 - **A1** 保留英文的范围：（a）人名、产品、工具和服务的名字；（b）被当作字符串引用的词：“A hundred”“A million”、noise、epsilon、“Nice”“Excellent”、example、“No”；（c）PDF 和 AI；（d）封闭清单 commit、lint、bug。新词要加入（d），必须同时满足：中国开发者跟外行说话时也说英文；中文说法有歧义或生硬（“提交”像“提交表格”，“代码检查”说不出是哪个工具）；旁白在同一句里解释一次。不为“洋气”加英文（不要“这个 pipeline 很 robust”）。
 - **A2** 智能体一族。agent → 智能体；第一次（S01、S03）说“AI 智能体”，之后说“智能体”；sub-agents → 子智能体；fresh agents → 全新的智能体；agents cataloging the papers → 给论文编目录的智能体。为什么不保留 agent：“智能体”是中文科技媒体和行业的标准说法，外行也认识，而每条字幕下面的英文行都写着 agent。智能体用“它 / 它们”，不用“他”。
 - **A3** 被引用的字符串放在中文引号里，拼写不变：旁白念到“A hundred”，就显示一百；识别模型把脚本里的 noise 听成了“Nice”；简短地答了一句“No”。英文里不带引号的词，中文里也不加：脚本里的 noise；英文单词 example。旁白里不翻译画面上的代码和名字。
-- **A4** 用户。见上面“用户的决定”。“one human” → 一个真人（和 AI 智能体对比时）。Andrej Karpathy 保留拉丁字母，并保留“引用”的限定：本项目的想法来自 Andrej Karpathy 的帖子，是第一个请求里引用的。
+- **A4** 用户。见上面“用户的决定”。“one human” → 一个真人（和 AI 智能体对比时）。Andrej Karpathy 保留拉丁字母，并保留“引用”的限定：这个项目源于 Andrej Karpathy 的一条帖子，第一个请求里引用了它。
 - **A5** 用户的话。见上面“用户的决定”。对照：our brain is a neural net → 我们的大脑就是一个神经网络；training it takes hardship → 训练它是要吃苦的；cognitive offloading → 认知卸载（S02 第一次加引号）；a mentor → 导师；never isolated → 从来不是孤立的；AI should not just be cognitive offloading → AI 不应该只是认知卸载。
 - **A6** 和另外两期一致：井字棋；数不同的对局用“种”（255,168 种对局）；棋子；顺序；九的阶乘；差分隐私；隐私预算（条）；交互页面；论文笔记；暂停想一想；中英双语字幕。
-- **A7** “the privacy video” → 差分隐私那期（中文版 → 差分隐私的中文版；digest → 差分隐私论文的笔记）；“the tic-tac-toe video” → 井字棋那期。绝不说“隐私视频”：中文里像在说私密视频。“a privacy paper” → 一篇讲隐私的论文。
-- **A8** 措辞护栏（英文脚本的硬性规定）的中文固定说法：a simulated 12-year-old → 一个模拟的 12 岁孩子（指这个角色时绝不只说“12 岁孩子”；S01 的 pretending to be a 12-year-old → 假扮成 12 岁的孩子）；the speech recognizer heard "Nice" where the script said noise → 识别模型把脚本里的 noise 听成了“Nice”（主语是识别模型），绝不说“声音说成了……”；no record yet of anyone checking it by ear → 目前还没有记录显示，有人亲耳检查过……；every test viewer on record → 有记录的试看观众；183 sub-agents in 46 workflow runs, before this video → 183 个子智能体，来自 46 次工作流运行，都在这期视频之前；passed all 17 test terms → 17 个测试词全部通过（绝不说“全部读对”）；fixers / verifiers 是复数 → 负责修改的智能体 / 持怀疑态度的核查者；most of them polish → 大多是润色。AI 评审不用感知动词（看、听、看懂）：labels it couldn't decode → 它读不懂；唯一的例外是 S06 故意的“它就是这样‘看’视频的”，和英文一样带着反讽，加引号。
+- **A7** “the privacy video” → 差分隐私那期（中文版 → 差分隐私那期的中文版，不说“差分隐私的中文版”，那像是“差分隐私”这个概念的中文版；digest → 差分隐私论文的笔记）；“the tic-tac-toe video” → 井字棋那期。绝不说“隐私视频”：中文里像在说私密视频。“a privacy paper” → 一篇讲隐私的论文。
+- **A8** 措辞护栏（英文脚本的硬性规定）的中文固定说法：a simulated 12-year-old → 一个模拟的 12 岁孩子（指这个角色时绝不只说“12 岁孩子”；S01 的 pretending to be a 12-year-old → 假扮成 12 岁的孩子）；the speech recognizer heard "Nice" where the script said noise → 识别模型把脚本里的 noise 听成了“Nice”（主语是识别模型），绝不说“声音说成了……”；no record yet of anyone checking it by ear → 目前还没有记录显示，有人亲耳检查过……；every test viewer on record → 有记录的试看观众；183 sub-agents in 46 workflow runs, before this video → 183 个子智能体，来自 46 次工作流运行，都在这期视频之前；passed all 17 test terms → 17 个测试词全部通过（绝不说“全部读对”）；fixers / verifiers 是复数 → 负责修改的智能体 / 持怀疑态度的核查者；most of them polish → 大多是润色。AI 评审不用感知动词（看、听、看懂）：labels it couldn't decode → 它读不懂；唯一的例外是 S06 故意的“它就是这样‘看’视频的”，和英文一样带着反讽，加引号。另有两处是英文脚本的审稿记录改过的，中文不能改回去：S01 的 Here's what a paused frame looked like in an early draft → 在……早期草稿里，暂停下来的画面是这样的（画面是重新渲染的，所以不说“这是……的一帧暂停画面”）；S10 的 there's no measure yet of what anyone learned → 目前也还没有衡量（不说“没人测过”：那位朋友可能私下反馈过）。
 - **A9** 费用。见上面“用户的决定”。
 - **A10** 语气。口语、友好、具体，像工程师讲给朋友听：短分句，中文语序，不要翻译腔（不要“让我们……”“这就是为什么……”，不要一串“一个……的”）。“Manim 的一个坑”的“坑”是中国开发者说“陷阱”的日常用词，外行也从“踩坑”里认识它；此外不用网络用语（不要 yyds、一键三连、锅）。称呼观众用“你”；S11 的请求要客气（请在评论区说一声）。只用大陆简体（视频、程序、软件、默认、渲染）。
 
 ### B. 排版与标点
 
 - **B1** 空格（同另外两期）。汉字和拉丁字母、阿拉伯数字之间加一个半角空格（AI 智能体、36 个 PDF、12 岁、10 月 7 日、lint 的检查工具、Manim 的一个坑）。全角标点旁边不加空格（念到“A hundred”，、3Blue1Brown：），数字和 % 之间不加（15.3%），数字和名字内部不加。不用 U+00A0。
-- **B2** 标点。中文用全角 ，。、；：？！“”‘’……《》；引号用于被引用的字符串和第一次出现的新词（“认知卸载”）；、只用于短的名词并列。一句中文里没有 。？！（一句英文对一句中文），用 ，；： 代替。分句的长串列举用 ，，字幕才能在项目之间断开（S01 第 5 条、S10 第 2 条）。如果英文那半句只能在冒号处断开（英文列表里的逗号不算断点），名词列表就放在 ： 后面用 、，并在中间加一个 ，，好让纯中文字幕换行（S04 第 1 条：这条流水线是一串文件：论文、目录记录、带页码的论文笔记，再到脚本、动画代码和视频。）。
+- **B2** 标点。中文用全角 ，。、；：？！“”‘’……《》；引号用于被引用的字符串和第一次出现的新词（“认知卸载”）；、只用于短的名词并列。一句中文里没有 。？！（一句英文对一句中文），用 ，；： 代替。分句的长串列举用 ，，字幕才能在项目之间断开（S01 第 5 条、S10 第 2 条）。如果英文那半句只能在冒号处断开（英文列表里的逗号不算断点），名词列表就放在 ： 后面用 、，并在中间加一个 ，，好让纯中文字幕换行（S04 第 1 条：这条流水线是一串文件：论文、目录条目、带页码的论文笔记，再到脚本、动画代码和视频。）。
 - **B3** 字体（以后翻译画面时用）。用工具链配的 Noto Sans / Serif CJK SC；中文不用斜体，粗体可以。
 
 ### C. 数字

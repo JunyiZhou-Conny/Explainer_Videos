@@ -18,8 +18,7 @@ Dialogue: 0,0:00:07.49,0:00:11.73,Bilingual,,0,0,0,,看右边这一行：4 乘 3
 Dialogue: 0,0:00:11.97,0:00:13.39,Bilingual,,0,0,0,,先暂停一下\N{\fs33\c&H00C8C0B8&\bord1.4}Pause for a moment.
 Dialogue: 0,0:00:13.44,0:00:16.00,Bilingual,,0,0,0,,如果你 12 岁，你会觉得这里哪儿出错了？\N{\fs33\c&H00C8C0B8&\bord1.4}If you were 12, what would you think went wrong here?
 Dialogue: 0,0:00:22.23,0:00:25.60,Bilingual,,0,0,0,,看起来像是乘法算错了，但数学其实没错\N{\fs33\c&H00C8C0B8&\bord1.4}It looks like bad multiplication, but the math was right.
-Dialogue: 0,0:00:25.92,0:00:28.15,Bilingual,,0,0,0,,这个 12 其实是个还没数完的计数\N{\fs33\c&H00C8C0B8&\bord1.4}The 12 was a running count on its way to 24, sitting on the formula's line.
-Dialogue: 0,0:00:28.15,0:00:30.70,Bilingual,,0,0,0,,要一直数到 24，却摆在了算式那一行上\N{\fs33\c&H00C8C0B8&\bord1.4}The 12 was a running count on its way to 24, sitting on the formula's line.
+Dialogue: 0,0:00:25.92,0:00:30.70,Bilingual,,0,0,0,,这个 12 是个还没数完的计数，要数到 24，却摆在了算式那一行上\N{\fs33\c&H00C8C0B8&\bord1.4}The 12 was a running count on its way to 24, sitting on the formula's line.
 Dialogue: 0,0:00:31.02,0:00:32.47,Bilingual,,0,0,0,,是排版在撒谎\N{\fs33\c&H00C8C0B8&\bord1.4}The layout lied.
 Dialogue: 0,0:00:32.52,0:00:34.63,Bilingual,,0,0,0,,而发现问题的评审，并不是孩子\N{\fs33\c&H00C8C0B8&\bord1.4}And the reviewer who caught it wasn't a child.
 Dialogue: 0,0:00:34.95,0:00:37.78,Bilingual,,0,0,0,,它是一个 AI，假扮成 12 岁的孩子\N{\fs33\c&H00C8C0B8&\bord1.4}It was an AI, pretending to be a 12-year-old.
@@ -34,7 +33,7 @@ Dialogue: 0,0:01:04.10,0:01:06.44,Bilingual,,0,0,0,,事情要从一个人说起�
 Dialogue: 0,0:01:06.44,0:01:09.48,Bilingual,,0,0,0,,一位论文多到读不过来的研究者\N{\fs33\c&H00C8C0B8&\bord1.4}a researcher with more papers to read than time.
 Dialogue: 0,0:01:09.80,0:01:11.98,Bilingual,,0,0,0,,视频的风格学的是 3Blue1Brown\N{\fs33\c&H00C8C0B8&\bord1.4}The look comes from 3Blue1Brown,
 Dialogue: 0,0:01:11.98,0:01:16.82,Bilingual,,0,0,0,,这个频道的视频用 Manim 做动画，每一帧都是用代码画出来的\N{\fs33\c&H00C8C0B8&\bord1.4}whose videos are animated in Manim, where every frame is drawn by code.
-Dialogue: 0,0:01:17.13,0:01:21.24,Bilingual,,0,0,0,,这个项目的想法来自 Andrej Karpathy 的一条帖子\N{\fs33\c&H00C8C0B8&\bord1.4}The idea for this project came from a post by Andrej Karpathy,
+Dialogue: 0,0:01:17.13,0:01:21.24,Bilingual,,0,0,0,,这个项目源于 Andrej Karpathy 的一条帖子\N{\fs33\c&H00C8C0B8&\bord1.4}The idea for this project came from a post by Andrej Karpathy,
 Dialogue: 0,0:01:21.24,0:01:23.30,Bilingual,,0,0,0,,第一个请求里引用了它\N{\fs33\c&H00C8C0B8&\bord1.4}as quoted in the first request.
 Dialogue: 0,0:01:23.53,0:01:25.48,Bilingual,,0,0,0,,用户自己的话说得更进一步\N{\fs33\c&H00C8C0B8&\bord1.4}The user's own words go further:
 Dialogue: 0,0:01:25.48,0:01:29.02,Bilingual,,0,0,0,,我们的大脑就是一个神经网络，训练它是要吃苦的\N{\fs33\c&H00C8C0B8&\bord1.4}our brain is a neural net, and training it takes hardship.
@@ -54,7 +53,7 @@ Dialogue: 0,0:02:06.27,0:02:08.48,Bilingual,,0,0,0,,一个 AI 智能体：Claude
 Dialogue: 0,0:02:08.80,0:02:10.88,Bilingual,,0,0,0,,它手下有 183 个子智能体\N{\fs33\c&H00C8C0B8&\bord1.4}Under it, 183 sub-agents
 Dialogue: 0,0:02:10.88,0:02:14.24,Bilingual,,0,0,0,,来自 46 次工作流运行，都在这期视频之前\N{\fs33\c&H00C8C0B8&\bord1.4}in 46 workflow runs, before this video.
 Dialogue: 0,0:02:14.56,0:02:16.94,Bilingual,,0,0,0,,所谓工作流，就是智能体写的一段程序\N{\fs33\c&H00C8C0B8&\bord1.4}A workflow is a script the agent writes
-Dialogue: 0,0:02:16.94,0:02:19.39,Bilingual,,0,0,0,,用来启动子智能体，每个子智能体只干一件事\N{\fs33\c&H00C8C0B8&\bord1.4}to launch sub-agents, each with one job.
+Dialogue: 0,0:02:16.94,0:02:19.39,Bilingual,,0,0,0,,用来启动子智能体，每个只干一件事\N{\fs33\c&H00C8C0B8&\bord1.4}to launch sub-agents, each with one job.
 Dialogue: 0,0:02:19.71,0:02:22.94,Bilingual,,0,0,0,,还有各种工具，比如每种语言各一个合成语音\N{\fs33\c&H00C8C0B8&\bord1.4}And tools, like a synthetic voice for each language
 Dialogue: 0,0:02:22.94,0:02:24.54,Bilingual,,0,0,0,,以及一个语音识别模型\N{\fs33\c&H00C8C0B8&\bord1.4}and a speech recognizer.
 Dialogue: 0,0:02:24.70,0:02:27.73,Bilingual,,0,0,0,,值得学什么、讲给谁听，是用户定的\N{\fs33\c&H00C8C0B8&\bord1.4}The user decided what was worth learning, and for whom.
@@ -91,8 +90,8 @@ Dialogue: 0,0:04:21.80,0:04:25.30,Bilingual,,0,0,0,,所以在做任何动画之�
 Dialogue: 0,0:04:25.30,0:04:30.14,Bilingual,,0,0,0,,改一句话只要几秒钟，场景做完了再改，就得整个重画\N{\fs33\c&H00C8C0B8&\bord1.4}a sentence takes seconds to fix, but a finished scene has to be drawn again.
 Dialogue: 0,0:04:30.46,0:04:33.64,Bilingual,,0,0,0,,第一天，智能体就把这条规则写进了自己的工作指南\N{\fs33\c&H00C8C0B8&\bord1.4}The agent wrote that rule into its own guide on day one.
 Dialogue: 0,0:04:33.96,0:04:38.95,Bilingual,,0,0,0,,几分钟后，评审还在进行，它就启动了六个子智能体去做场景\N{\fs33\c&H00C8C0B8&\bord1.4}Minutes later, it started six sub-agents building scenes while the review was still running.
-Dialogue: 0,0:04:39.27,0:04:43.58,Bilingual,,0,0,0,,又过了 11 分钟，一份评审意见回来了\N{\fs33\c&H00C8C0B8&\bord1.4}Eleven minutes after that, one review came back with changes to the script,
-Dialogue: 0,0:04:43.58,0:04:45.18,Bilingual,,0,0,0,,要求改脚本，于是六个全被叫停\N{\fs33\c&H00C8C0B8&\bord1.4}so all six were stopped.
+Dialogue: 0,0:04:39.27,0:04:43.64,Bilingual,,0,0,0,,11 分钟后，一份要求改脚本的评审意见回来了\N{\fs33\c&H00C8C0B8&\bord1.4}Eleven minutes after that, one review came back with changes to the script,
+Dialogue: 0,0:04:43.64,0:04:45.24,Bilingual,,0,0,0,,于是六个全被叫停\N{\fs33\c&H00C8C0B8&\bord1.4}so all six were stopped.
 Dialogue: 0,0:04:45.46,0:04:50.39,Bilingual,,0,0,0,,光把规则写下来还不够：工作流本身必须等评审结束\N{\fs33\c&H00C8C0B8&\bord1.4}Writing the rule down was not enough: the workflow itself has to wait for the review.
 Dialogue: 0,0:04:51.73,0:04:53.33,Bilingual,,0,0,0,,接下来是动画\N{\fs33\c&H00C8C0B8&\bord1.4}Now the animation.
 Dialogue: 0,0:04:53.38,0:04:58.88,Bilingual,,0,0,0,,在这条流水线里，先生成语音，动画等的是词，不是秒数\N{\fs33\c&H00C8C0B8&\bord1.4}In this pipeline, the voice is made first, and the animation waits for words, not seconds.

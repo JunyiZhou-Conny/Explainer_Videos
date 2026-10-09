@@ -12,7 +12,8 @@ mobjects.
     63     the program starts again: the galaxy's light drains into the root (a spiral, as the turn slows to a
            halt with the tape stop); the HUD counter rolls back to 000,000 on 63.4
     64     near-black, digital silence: only the struck check, faint, and the still pen on the empty root
-    65-66  65.1 HIT: the re-run, one turn of the arm in two bars. Every game that ended on moves 5-8 lights as
+    65-66  65.1 HIT: the re-run, one turn of the arm in two bars (the plate glides back, a little smaller than
+           in S05, clear of ring 9). Every game that ended on moves 5-8 lights as
            the arm passes, then its light streams outwards as pale streaks and splits into its (9 - k)! ghost
            games: unglowing grey points on ring 9, inside its own wedge (24, 6, 2, 1). The move-9 games keep
            their colours. The inner rings empty out; ring 9 fills in completely. The counter races; as it passes
@@ -20,7 +21,8 @@ mobjects.
     67     67.1 the counter lands on 362,880 (the right third, where S05 landed 255,168; neutral halo); the
            whole tree takes S02's look and repeats S02's 18.1 flare frame (s02_fill's own point sets, weights,
            envelopes and tone map); 67.2 S02's label "9 × 8 × … × 1 = 9! = 362,880" and "9 的阶乘 · NINE
-           FACTORIAL" fly in from the left and dock under the number                                    (c20)
+           FACTORIAL" fly in from the left and dock under the number; ALIVE: bright patches drift round
+           the ring (SHIMMER)                                                                          (c20)
     68-69  68.1 the strike pulses; 69.1 it erases, the winner check is back: the ghost points stream back
            inwards along their streaks into their games, which light again in their colours; the number rolls
            back to 255,168 as it docks into the HUD (69.1-69.3); 70.1 the five-ring galaxy of S05, restored
@@ -39,8 +41,8 @@ look is cached as intensity fields for that one camera and one turn, RHO_F: the 
 tape stop and starts again at 69.1).
 Hand-over to S07 (a segue at 70.1): HANDOVER_S07 below. The camera CAM_1; the galaxy is S05's look
 (`galaxy_families`), turned by rho(END) and turning at ROT_RATE again; all 81 ring 1-2 edges at 38 %; the root
-board and the pen (90 %); the plate at PLATE_TL, PLATE_DIM, scale PLATE_BACK, no strike; the HUD: §3 and one readout,
-"对局计数 · GAMES COUNTED 255,168" (CALLS and UNDOS are gone since 63.1).
+board and the pen (90 %); the plate at PLATE_TL, PLATE_DIM, scale PLATE_BACK, no strike; the HUD: §3 and one
+readout, "对局计数 · GAMES COUNTED 255,168" (CALLS and UNDOS are gone since 63.1).
 """
 
 from __future__ import annotations
@@ -49,7 +51,7 @@ import math
 from math import factorial
 
 import numpy as np
-from manim import Group, Line, Mobject, Rectangle, VGroup, config
+from manim import Group, Line, Mobject, VGroup, config
 
 from explainer.short import FONT_MONO, BeatScene, INK, INK_DIM, RED, WHITE, _tone_lut, oldstyle, stroke_px
 
