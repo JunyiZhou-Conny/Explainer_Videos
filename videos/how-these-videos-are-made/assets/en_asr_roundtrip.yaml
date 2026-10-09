@@ -78,3 +78,13 @@ recheck_2026_10_08:                  # the say lines changed since this file was
   - id: S10[3]
     diffs: ["hand-written → handwritten"]
   note: lines edited after this recheck (the other draft-review fixes) still need the round trip before the final render
+final_2026_10_09:                    # every say line again, after the whole-video QA (the script of the final render)
+  lines: 46
+  sentences: 164
+  words: 2107
+  word_differences: 22
+  word_error_rate: 0.0104
+  misread_by_the_voice: none         # every difference is a spelling (Manim → manum, Andrej → Andre, hand-set → handset,
+                                     # agent's → agents, subtler → suttler, goal → goals) or a dropped word at a line-level
+                                     # sentence break: S03[3] "all four requests" lost "all", but the sentence alone is
+                                     # heard with it ("All four requests, not one video", word times 6.38-8.66 s)
