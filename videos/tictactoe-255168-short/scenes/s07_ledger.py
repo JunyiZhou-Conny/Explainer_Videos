@@ -34,10 +34,15 @@ same rows x 24, 6, 2, 1, 1 = 34,560 + 31,968 + 95,904 + 72,576 + 127,872 = 362,8
 
 Hand-over from S06 (a segue at 70.1): s06_turn.HANDOVER_S07 and S06's own drawing functions (galaxy_families,
 render_light, show_plate, the edges), so the first frame here is S06's last.
-Hand-over to S08 (a segue at 81.1): HANDOVER_S08 below, in the keys s08_bigger.FROM_S07 reads (it imports this
-module): the three result bars X | O | draws side by side on the top line (x0, line_y, gap; each game at x0 + its
-place / 30,240 screen units, y line_y + its radial jitter x thick, weight bar_w), S08's stacked labels centred
-label_dy under them, the HUD §4 and the tracked readout "Σ 255,168"; the camera is S06's CAM_1, unchanged.
+Hand-over to S08 (a segue at 81.1). s08_bigger draws S07's last frame with this module's own interface, so keep
+it stable: ledger_points(END) (every game's screen place, weight W_GAME and colour family), SH_PH (the games'
+shimmer), HANDOVER_S08 ("unit", "w_game", "rho_cut", and the layout keys), ROOT_S / Z (where the galaxy was cut),
+and Ledger.update_results / Ledger.update_sigma, which S08 calls on its S07End: an object holding the end objects
+under the names Ledger.build gives them (ruler, ruler_ticks, half_line, half_lab, res_lab of bi_label parts,
+sigma_sym, sigma_eq, n255, n255_w, halo255, hud_sigma). The last frame: X's wins | O's | the draws side by side on
+the top line (HANDOVER_S08 x0, line_y, gap; a game at x0 + its place / 30,240 screen units), their labels under
+them, the HUD §4 and the readout "Σ 255,168"; the half mark and Σ = 255,168 have faded (ENDING). The camera is
+S06's CAM_1, unchanged.
 """
 
 from __future__ import annotations
@@ -322,14 +327,14 @@ def fan_point(k: int, f: float) -> np.ndarray:
 
 
 TOP_LAB.update(_top_labels())
-# what S08 reads (s08_bigger.FROM_S07, the same keys): the result bars X | O | draws on one line, each game at
-# x0 + its place / unit (+ gap between bars), y line_y + its radial jitter x thick, weight bar_w; the labels (S08's
-# stacked zh over en) centred label_dy under each bar; the HUD: §4 and the tracked readout "Σ 255,168"
+# what S08 reads (see the module docstring): the result bars X | O | draws on one line, each game at x0 + its place
+# / unit (+ gap between bars), y line_y + its radial jitter x thick, weight bar_w (= w_game); the labels centred
+# label_dy under each bar; the HUD: §4 and the readout "Σ 255,168"
 HANDOVER_S08 = {"line_y": Y_TOP, "x0": LINE_X, "gap": RES_GAP, "unit": UNIT, "thick": J_SCALE * Z, "bar_w": W_GAME,
                 "labels": ((f"X 赢 {RESULT[1]:,}", "X WINS"), (f"O 赢 {RESULT[2]:,}", "O WINS"),
                            (f"平局 {RESULT[3]:,}", "DRAWS")),
                 "label_dy": LABEL_DY, "hud": "§4 · 255,168 是怎么来的 · 255,168, EXPLAINED", "readout": "Σ 255,168",
-                "cam": CAM_1, "rho_cut": None, "bars": RES_BARS}
+                "cam": CAM_1, "rho_cut": None, "bars": RES_BARS, "w_game": W_GAME}
 assert UNIT_S == 1.0                              # (S08 places the games at x0 + place / 30,240 screen units)
 
 
@@ -358,9 +363,16 @@ class Ledger(BeatScene):
         self.sec3 = section_hud("§3 · 探索每一局 · PLAY EVERY GAME")
         self.sec4 = section_hud("§4 · 255,168 是怎么来的 · 255,168, EXPLAINED")
         self.hud_games = HudLine("对局计数", "GAMES COUNTED", HUD_LINES_Y[0])
-        rd = tracked(HANDOVER_S08["readout"], size=12, spacing=0.25, color=INK_DIM, upper=False)   # as S08 draws it
-        self.readout = InkText(rd, INK_DIM)
-        self.readout_c = np.array([HUD_RIGHT - rd.width / 2, HUD_LINES_Y[0]])
+        # the readout "Σ 255,168" (S08's S07End builds the same HudLine and fades it)
+        self.hud_sigma = HudLine("对局计数", "GAMES COUNTED", HUD_LINES_Y[0])
+        sig = Text("Σ", font=FONT_OLDSTYLE, font_size=15, color=INK_DIM)
+        sig.next_to(self.hud_sigma.counter.ref, np.array([-1, 0, 0]), buff=0.18)
+        sig.align_to(self.hud_sigma.counter.columns[0][0], np.array([0, -1, 0]))
+        self.hud_sigma.label = sig
+        self.hud_sigma.lab_t = InkText(sig, INK_DIM)
+        self.hud_sigma.lab_c = sig.get_center()[:2]
+        self.hud_sigma.group.remove(self.hud_sigma.group[0])
+        self.hud_sigma.group.add(self.hud_sigma.lab_t)
         self.pen = Pen()
         self.heads = [Pen(radius_px=3.5, halo_px=34) for _ in range(8)]
         # 70-71: the ring labels and their leaders
@@ -430,14 +442,20 @@ class Ledger(BeatScene):
                       bi_label("9 的阶乘", "NINE FACTORIAL", zh_size=20, en_size=16.5, color=INK_DIM)).arrange(buff=0.14)
         self.nine = InkText(nine, INK_DIM)
         self.nine_w = nine.width
-        # 79-80: the half of all games, marked on the line; the result labels (S08's stacked zh over en)
-        self.half_tick = Ink(Line([0, -0.5, 0], [0, 0.5, 0]), INK, 1.4)
+        # 79-80: the half of all games marked on the line, the result labels. S08 (s08_bigger.S07End) builds these
+        # same objects, under these names, and draws them with this class's update_results / update_sigma: keep
+        # both in step. (ruler and half_line are kept for that interface; they are not drawn.)
+        self.ruler = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.3)
+        self.ruler_ticks = [Ink(Line([0, -0.5, 0], [0, 0.5, 0]), INK_DIM, 1.3) for _ in range(3)]
+        self.half_line = VMobject().set_stroke(INK_DIM, width=stroke_px(1.2), opacity=0).set_fill(opacity=0)
+        self.half_line.points = np.zeros((0, 3))
         self.half_lab = InkText(maths("½", size=26, color=INK_DIM), INK_DIM)
         self.res_lab = {}
-        for r, (zh, en_) in zip((1, 2, 3), HANDOVER_S08["labels"]):
-            lab = VGroup(cjk(zh, size=ZH_SIZE, color=INK), en(en_, color=INK_DIM)).arrange(
-                np.array([0, -1, 0]), buff=0.09, aligned_edge=np.array([0, 0, 0]))
-            parts = [InkText(p, c) for p, c in zip(lab, (INK, INK_DIM))]
+        for r, (zh, en_) in {1: (f"X 赢 {RESULT[1]:,}", "X WINS"), 2: (f"O 赢 {RESULT[2]:,}", "O WINS"),
+                             3: (f"平局 {RESULT[3]:,}", "DRAWS")}.items():
+            lab = bi_label(zh, en_, zh_size=20, en_size=16.5, color=INK)
+            lab[2].set_color(INK_DIM)
+            parts = [InkText(p, c) for p, c in zip(lab, (INK, INK_DIM, INK_DIM))]
             offs = [p.get_center()[:2] - lab.get_center()[:2] for p in lab]
             self.res_lab[r] = (parts, offs, lab.width)
 
@@ -447,12 +465,12 @@ class Ledger(BeatScene):
         self.add(self.galaxy, *self.edges, self.root.group)
         fixed = [self.plate.group, *[p for k in KS for p in self.ring_lab[k][0]], *self.leaders.values(),
                  *self.fan_fill.values(), *self.fan_lines, *self.dashes.values(), *self.end_ticks,
-                 self.half_tick, self.half_lab,
+                 self.ruler, *self.ruler_ticks, self.half_line, self.half_lab,
                  *[p for k in KS for p in self.count_lab[k][0]], *self.count_leaders.values(),
                  *self.mult.values(), *self.bot_cnt.values(), self.halo255, self.sigma_sym, self.sigma_eq,
                  self.n255, self.halo362, self.eq362, self.n362, self.nine,
                  *[p for r in (1, 2, 3) for p in self.res_lab[r][0]], self.pen, *self.heads, self.sec3, self.sec4,
-                 self.hud_games.group, self.readout]
+                 self.hud_games.group, self.hud_sigma.group]
         self.fix(*fixed)
         self.update_state(0.0)
 
@@ -603,7 +621,7 @@ class Ledger(BeatScene):
                     p.set_fill(opacity=x)
             self._hx = x
         self.hud_games.show(N, 1 - x)
-        self.readout.show(self.readout_c, vis=x, color=INK_DIM)
+        self.hud_sigma.show(N, x)
 
     # --- 70-74: the ring labels (at the seam, with leaders; then with their rows)
     def update_ring_labels(self, t: float):
@@ -806,29 +824,35 @@ class Ledger(BeatScene):
     # --- 79-80: the half mark and the result labels
     def update_results(self, t: float):
         """79-80: half of all games marked on the line (X's bar runs just past it), the labels under the bars
-        (80.1-80.3). The mark and the labels' places are S08's first frame (HANDOVER_S08); the mark fades
-        before the join (S08 does not draw it)."""
+        (80.1-80.3, zh over en). The mark fades before the join (ENDING). S08 calls this with its own S07End,
+        which holds the same objects: ruler_ticks, half_lab, res_lab (each a bi_label's three parts)."""
         out = 1 - ease_in_out_sine(seg(t, *ENDING))
         hv = ease_in_out_sine(seg(t, REGROUP[1] - 0.3, REGROUP[1] + 0.3)) * out
+        tick = self.ruler_ticks[1]
+        self.ruler.hide()
+        for k in (self.ruler_ticks[0], self.ruler_ticks[2]):
+            k.hide()
+        self.half_line.points = np.zeros((0, 3))
         if hv <= 1e-3:
-            self.half_tick.hide()
+            tick.hide()
             self.half_lab.hide()
         else:
             g = 1 + 1.4 * pulse(t, RES_LAB_T[1], 0.5)
-            self.half_tick.show(1.0, np.array([[1.0, 0.0], [0.0, 0.42]]), np.array([HALF_X, Y_TOP]),
-                                vis=clamp01(0.75 * hv * g))
+            tick.show(1.0, np.array([[1.0, 0.0], [0.0, 0.42]]), np.array([HALF_X, Y_TOP]), vis=clamp01(0.9 * hv * g),
+                      width=1.2)
             self.half_lab.show([HALF_X, Y_TOP + 0.4], vis=hv, color=INK_DIM)
         for r in (1, 2, 3):
-            parts, offs, lw = self.res_lab[r]
+            parts, _, _ = self.res_lab[r]
             v = ease_out_cubic(seg(t, RES_LAB_T[r], RES_LAB_T[r] + 0.35))
+            parts[1].hide()                                # (the bi_label's dot: the label is set on two lines)
             if v <= 1e-3:
-                for p in parts:
-                    p.hide()
+                parts[0].hide()
+                parts[2].hide()
                 continue
             x0, x1 = RES_BARS[r]
-            c = np.array([(x0 + x1) / 2, Y_TOP + LABEL_DY - 0.06 * (1 - v)])
-            for p, off, col in zip(parts, offs, (INK, INK_DIM)):
-                p.show(c + off, vis=v, color=col)
+            cx, y = (x0 + x1) / 2, Y_TOP + LABEL_DY - 0.06 * (1 - v)
+            parts[0].show([cx, y + 0.14], vis=v, color=INK)
+            parts[2].show([cx, y - 0.17], vis=v, color=INK_DIM)
 
     def update_heads(self, t: float):
         """Bar 78: the running light's heads (screen-space pens): along the top, down each hairline, along the

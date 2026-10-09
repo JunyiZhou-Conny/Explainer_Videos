@@ -17,8 +17,12 @@ frame, and the notes are computed from the same numbers (Sounds) and logged with
            "所有顺序的树 · THE TREE OF ORDERS" (c05); the tree turns 0.5°/s
     19     255,168 drifts in under it (the title's halo, cool left, warm right); 19.2 a RED ">" (c06)
     20     the camera dives (ease-in-expo) into ring 9 at 10.12°: the rings streak past (motion blur),
-           the numbers fly off; 20.4 the frame fills with one glowing point, which resolves into the 24
-           dim points of the 24 fill orders that begin with game A's five moves (slots 10,200-10,223)
+           the numbers fly off (each fades as it reaches the caption band; the tree's tag leaves first);
+           20.4 the frame fills with one glowing point (sigma capped, so the corners and the captions stay
+           dark), which resolves into the 24 dim points of the 24 fill orders that begin with game A's five
+           moves (slots 10,200-10,223)
+
+Maths labels use lining figures (maths(): an old-style 1 reads as I), as S04, S06 and S07 do.
 
 Hand-over from S01 (a segue): camera (-2.0, +0.3) at 0.45 of the frame width, the root an empty board
 0.42 units wide (2 px hairlines), the pen on its centre. Hand-over to S03 (a cut): the 24 dim points at
@@ -31,10 +35,10 @@ from __future__ import annotations
 import math
 
 import numpy as np
-from manim import LEFT, ImageMobject, Line, Mobject, VGroup, VMobject, config
+from manim import LEFT, ImageMobject, Line, MarkupText, Mobject, VGroup, VMobject, config
 
-from explainer.short import (BeatScene, FONT_MONO, INK, INK_DIM, RED, WHITE, RollingCounter, cjk, hero_number,
-                             oldstyle, splat, stroke_px, tracked)
+from explainer.short import (BeatScene, FONT_MONO, FONT_OLDSTYLE, INK, INK_DIM, RED, WHITE, RollingCounter, cjk,
+                             hero_number, splat, stroke_px, tracked)
 
 from common import (FILL_COLOR, FILL_SPLAT, FILL_WEIGHT, GAME_A, H, NINE_FACT, OC, PEN_HALO, TREE_ROOT, XC,
                     Cam, Ink, Pen, Shot, Sounds, W, bi_label, box, clamp01, ease_in_cubic, ease_in_expo,
@@ -107,6 +111,8 @@ GT_T = bb(19, 2)                                    # the RED ">"
 DIVE = (bb(20, 1), bb(20, 4))                       # ease-in-expo into ring 9 at 10.12°
 RESOLVE = (bb(20, 4), END)                          # the glowing point resolves into 24 dim points
 TEXT_OUT = (bb(20, 1), bb(20, 1) + 0.5)             # the HUD readout fades as the dive starts
+GLOW_SIG_MAX = 2.6                                  # the glowing point at its largest (screen units)
+BAND_TOP, BAND_RAMP = -2.72, 0.4                    # the captions' band (Chinese glyph tops at 87 % - 38 px)
 PULSES = ([bb(b, k) for b in (12, 13, 14) for k in (1, 3)] + [bb(15, k) for k in (1, 2, 3, 4)]
           + [bb(16, 1 + 0.5 * k) for k in range(8)] + [bb(17, 1 + 0.25 * k) for k in range(16)])
 
@@ -241,6 +247,7 @@ class Glyphs(VGroup):
         super().__init__()
         t = tmpl.copy()
         t.shift(-t.get_center())
+        self.w, self.h = float(t.width), float(t.height)
         self.parts = [p for p in t.family_members_with_points()]
         self.tp = [p.points.copy() for p in self.parts]
         self.color = color
@@ -397,6 +404,14 @@ def _hex(c) -> str:
     return "#%02X%02X%02X" % tuple(int(round(v * 255)) for v in c)
 
 
+def maths(s: str, size: float = 30, color: str = INK) -> MarkupText:
+    """A small formula in EB Garamond italic with lining figures: an old-style 1 reads as I ("× I"). The same
+    setting as S04's maths(), which S06 and S07 use (S06 repeats this scene's "9 × 8 × … × 1 = 9! = 362,880")."""
+    esc = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    return MarkupText(f'<span font_features="lnum 1">{esc}</span>', font=FONT_OLDSTYLE, slant="ITALIC",
+                      font_size=size, color=color)
+
+
 def stacked_label(zh: str, en: str, zh_size: float = 21, en_size: float = 20, color: str = INK_DIM,
                   buff: float = 0.1) -> VGroup:
     """A bilingual tag on two lines, left-aligned: Chinese, then tracked English caps (27 px at 1080p)."""
@@ -499,7 +514,7 @@ class FillOrders(BeatScene):
         self.update_state(0.0)
 
     def build_numbers(self):
-        row_a = oldstyle("9 × 8 × 7 × 6 × 5 × 4 × 3 × 2 × 1", size=26, color=INK)
+        row_a = maths("9 × 8 × 7 × 6 × 5 × 4 × 3 × 2 × 1", size=26, color=INK)
         glyphs = list(row_a)                                             # 17 glyphs: 9, ×, 8, ×, 7, ...
         assert len(glyphs) == 17
         groups = [VGroup(glyphs[0])] + [VGroup(glyphs[2 * k - 1], glyphs[2 * k]) for k in range(1, 9)]
@@ -507,7 +522,7 @@ class FillOrders(BeatScene):
         self.row_a_y = 0.72
         self.factor_rigs = [Glyphs(g, INK, INK, 7, layers=4, glow_opacity=0.5) for g in groups]
         self.factor_off = [g.get_center()[:2] - rc[:2] for g in groups]
-        row_b = oldstyle("= 9! = 362,880", size=26, color=INK)
+        row_b = maths("= 9! = 362,880", size=26, color=INK)
         self.row_b = Glyphs(row_b, INK, INK, 6, layers=4, glow_opacity=0.4)
         bang = [g for g in row_b][1:3]                                   # the "9!"
         self.row_b_y = 0.30
@@ -832,6 +847,13 @@ class FillOrders(BeatScene):
     def update_numbers(self, t: float):
         f, s = self.text_map(t)
         gone = s > 4.0                                                   # carried off the edges by the dive
+
+        def safe(xy, h: float) -> float:
+            """The dive carries the text down and out through the caption band: each item fades as its bottom
+            edge reaches the band (the burned-in captions stay readable; nothing changes before the dive)."""
+            if t < DIVE[0]:
+                return 1.0
+            return clamp01((xy[1] - 0.5 * h * s - BAND_TOP) / BAND_RAMP)
         rc = np.array([COL_X, self.row_a_y])
         for i, (rig, off) in enumerate(zip(self.factor_rigs, self.factor_off)):
             t0 = FACTOR_T[i]
@@ -841,16 +863,18 @@ class FillOrders(BeatScene):
                 continue
             lift = 0.08 * (1 - v)
             glow = 0.25 + 2.2 * pulse(t, t0, 0.4) + 0.6 * pulse(t, HIT, 0.6)
-            rig.show(f(rc + off + np.array([0, -lift])), scale=s, vis=v, glow=glow)
+            xy = f(rc + off + np.array([0, -lift]))
+            rig.show(xy, scale=s, vis=v * safe(xy, rig.h), glow=glow)
         v = ease_out_cubic(seg(t, ROW_B_T, ROW_B_T + 0.35))
         if v > 0 and not gone:
-            self.row_b.show(f(np.array([self.row_b_x, self.row_b_y - 0.06 * (1 - v)])), scale=s, vis=v,
-                            glow=0.3 + 1.5 * pulse(t, ROW_B_T, 0.45))
+            xy = f(np.array([self.row_b_x, self.row_b_y - 0.06 * (1 - v)]))
+            self.row_b.show(xy, scale=s, vis=v * safe(xy, self.row_b.h), glow=0.3 + 1.5 * pulse(t, ROW_B_T, 0.45))
         else:
             self.row_b.hide()
         v = ease_out_cubic(seg(t, TAG9_T, TAG9_T + 0.4))
         if v > 0 and not gone:
-            self.tag9.show(f(self.tag9_xy + np.array([0, -0.05 * (1 - v)])), scale=s, vis=0.95 * v)
+            xy = f(self.tag9_xy + np.array([0, -0.05 * (1 - v)]))
+            self.tag9.show(xy, scale=s, vis=0.95 * v * safe(xy, self.tag9.h))
         else:
             self.tag9.hide()
         # the hero: 362,880 lands on the hit (a short rise, white core, neutral halo that breathes)
@@ -858,11 +882,13 @@ class FillOrders(BeatScene):
         if v > 0 and not gone:
             breathe = 1 + 0.12 * math.sin(2 * math.pi * (t - HIT) / BAR)
             xy = f(self.hero_xy + np.array([0, -0.12 * (1 - v)]))
-            self.hero.show(xy, scale=s * (1.04 - 0.04 * v), vis=v, glow=(0.8 + 1.6 * pulse(t, HIT, 0.5)) * breathe)
+            fade = safe(xy, self.hero.h)
+            self.hero.show(xy, scale=s * (1.04 - 0.04 * v), vis=v * fade,
+                           glow=(0.8 + 1.6 * pulse(t, HIT, 0.5)) * breathe)
             self.halo_n.move_to([xy[0], xy[1], 0])
             self.halo_n.set(width=6.2 * s)
             self.halo_n.stretch_to_fit_height(2.0 * s)
-            self.halo_n.set_opacity(clamp01(v * (0.32 + 0.05 * math.sin(2 * math.pi * (t - HIT) / BAR))))
+            self.halo_n.set_opacity(clamp01(v * fade * (0.32 + 0.05 * math.sin(2 * math.pi * (t - HIT) / BAR))))
         else:
             self.hero.hide()
             _park(self.halo_n)
@@ -870,6 +896,7 @@ class FillOrders(BeatScene):
         v = ease_out_cubic(seg(t, *DRIFT_IN))
         if v > 0 and not gone:
             xy = f(self.title_xy + np.array([-0.9 * (1 - v), -0.25 * (1 - v)]))
+            v *= safe(xy, self.title.h)
             br = 1 + 0.1 * math.sin(2 * math.pi * (t - DRIFT_IN[0]) / BAR)
             self.title.show(xy, scale=s, vis=v, glow=(0.85 + 0.8 * pulse(t, DRIFT_IN[1], 0.5)) * br)
             self.halo_t.move_to([xy[0], xy[1], 0])
@@ -882,18 +909,24 @@ class FillOrders(BeatScene):
         v = ease_out_cubic(seg(t, GT_T, GT_T + 0.2))
         if v > 0 and not gone:
             g = 0.7 + 2.0 * pulse(t, GT_T, 0.45)
-            self.gt.show(1.0, np.eye(2) * s * lerp(1.25, 1.0, v), f(self.gt_xy), vis=v, glow=g, width=s, glow_width=1.0)
+            xy = f(self.gt_xy)
+            self.gt.show(1.0, np.eye(2) * s * lerp(1.25, 1.0, v), xy, vis=v * safe(xy, 0.54), glow=g, width=s,
+                         glow_width=1.0)
         else:
             self.gt.hide()
-        # the tree's tag at the lower right of ring 9, with a hairline to the ring
-        v = ease_out_cubic(seg(t, TREE_TAG_T, TREE_TAG_T + 0.45))
-        if v > 0 and not gone:
-            self.tree_tag.show(f(self.tree_tag_xy + np.array([0.1 * (1 - v), 0])), scale=s, vis=0.95 * v)
+        # the tree's tag at the lower right of ring 9, with a hairline to the ring; it sits just above the caption
+        # band, so it leaves first when the dive starts (before the camera's drift can carry it into the band)
+        v = ease_out_cubic(seg(t, TREE_TAG_T, TREE_TAG_T + 0.45)) * (1 - ease_in_out_sine(seg(t, DIVE[0], DIVE[0] + 0.4)))
+        if v > 1e-3 and not gone:
+            xy = f(self.tree_tag_xy + np.array([0.1 * (1 - v) * (t < DIVE[0]), 0]))
+            v *= safe(xy, self.tree_tag.h)
+            self.tree_tag.show(xy, scale=s, vis=0.95 * v)
             a = math.radians(137) + phi(t)
             p0 = tree_point(a, ring_radius(9) + 0.06, 0.0)
             p0 = CAM.to_screen(p0, t)
             p1 = f(self.tree_tag_xy + np.array([-self.tree_tag_w / 2 - 0.1, 0.12]))
-            self.tree_tag_line.set_segments([p0], [p0 + (p1 - p0) * v], width=1.0, opacity=0.6 * v)
+            grow = ease_out_cubic(seg(t, TREE_TAG_T, TREE_TAG_T + 0.45))
+            self.tree_tag_line.set_segments([p0], [p0 + (p1 - p0) * grow], width=1.0, opacity=0.6 * v)
         else:
             self.tree_tag.hide()
             self.tree_tag_line.set_segments([], [])
@@ -954,7 +987,9 @@ class FillOrders(BeatScene):
         k = W / CAM(t)[2]
         p = CAM.to_screen(TARGET, t)
         sig = max(0.012, 0.018 * k)                                      # 0.018 world units: a point that grows
-        return (float(p[0]), float(p[1]), min(60.0, sig), op, rgb(PEN_HALO))
+        # ... until it fills the frame (20.4) as one glowing point, never a flat grey: its sigma stops growing at
+        # GLOW_SIG_MAX screen units, so the corners and the caption band stay dark (the captions stay readable)
+        return (float(p[0]), float(p[1]), min(GLOW_SIG_MAX, sig), op, rgb(PEN_HALO))
 
     # ------------------------------------------------------------- the sounds (from the same numbers)
     def score(self):

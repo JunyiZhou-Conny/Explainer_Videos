@@ -162,7 +162,7 @@ CELL_C = float(HANDOVER["cell"])
 CELL_T = 1.4                                      # ... drawn as S01/S03 draw it: the opening board, scaled
 COUNT_C = np.array([PANEL_C[2][0], -0.8])         # the counter, right third
 FORMULA_C = np.array([PANEL_C[2][0], -1.72])
-NOTE_C = np.array([PANEL_C[0][0], -0.95])         # the note (37.2), left third
+NOTE_C = np.array([PANEL_C[0][0] + 0.25, -0.95])  # the note (37.2), left third (inside the HUD's margin)
 SLIDE_CTRL = np.array([0.6, 2.4])                 # the counter arcs over the board as it slides left
 # after the slide (38.1-38.2): the 1,440 group on the left third
 LEFT_SCALE = 0.34
@@ -370,7 +370,7 @@ class MiniBoard:
             return
         p, q = win_ends(line, self.cell)
         A, b = line_affine(p * self.s, q * self.s)
-        self.win.show(f, A, b + self.c, vis=vis, glow=glow, width=width)
+        self.win.show(f, A, b + self.c, vis=vis, glow=glow, width=width, glow_width=width)   # as S01/S03 do
 
     def draw_marks(self, xs, os, vis_x=1.0, vis_o=1.0, glow_x=1.0, glow_o=1.0, width: float = 1.0,
                    f_x=None, f_o=None):
@@ -630,10 +630,11 @@ class ByHand(BeatScene):
 
     # ------------------------------------------------------------- the picture at time t
     def update_state(self, t: float):
+        t = round(t * self.fps) / self.fps                  # the frame's own time (the clock sums floats)
         cx, cy, w = cam_path(t)
         self.camera.frame.set(width=w)
         self.camera.frame.move_to([cx, cy, 0])
-        fade = 1 - ease_in_cubic(seg(t, *FADE_T))           # bar 40: everything but the knot fades into it
+        fade = 1 - ease_in_out_sine(seg(t, *FADE_T))        # bar 40: everything but the knot fades into it
         self.update_panels(t, fade)
         self.update_centre(t, fade)
         self.update_counter(t, fade)
@@ -1005,7 +1006,7 @@ class ByHand(BeatScene):
 
     def update_hud(self, t: float):
         to6 = ease_in_out_sine(seg(t, ANNOT, ANNOT + 0.3))
-        hv = (1 - ease_in_cubic(seg(t, FADE_T[0], FADE_T[1]))) * ease_out_cubic(seg(t, 0.0, 0.35))
+        hv = (1 - ease_in_out_sine(seg(t, FADE_T[0], FADE_T[1]))) * ease_out_cubic(seg(t, 0.0, 0.35))
         self.hud5_t.show(self.hud5_c + np.array([0, 0.05 * to6]), vis=(1 - to6) * hv, color=INK_DIM)
         self.hud6_t.show(self.hud5_c + np.array([0, -0.05 * (1 - to6)]), vis=to6 * hv, color=INK_DIM)
         hc = self.hud_count
@@ -1065,6 +1066,7 @@ class ByHand(BeatScene):
         # 39.1: the RED stamp: a short reverse whoosh and a low thud; 39.2 the result; 39.3 the placeholders
         S.effect(STAMP - 0.35, "whoosh_rev", 0.35, float(ROW_B[0]))
         S.effect(STAMP, "thump", 0.6, float(ROW_B[0]))
+        S.phrase("ghost O", [(STAMP + 0.05, f"ghost@{PITCH[5]}", float(ROW_B[0] + 0.36))], gain=0.6)   # dashed, on 5
         S.phrase("5,328", [(RESULT, tag("O", 5), float(ROW_C[0] + 1.5))], gain=0.7)
         S.phrase("placeholders", [(t, "pluck@" + n, float(HOLD_C[j][0])) for j, (t, n) in
                                   enumerate(zip(HOLDS, ("B3", "D4", "F#4")))], gain=0.55)

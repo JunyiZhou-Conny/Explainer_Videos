@@ -29,11 +29,11 @@ and the "camera" is the galaxy's own placement (`gcam`) and the strips' zoom (`z
            sweeps the chess strip (a faint arm, its grain), one box per beat from 96.3, and stalls on box 6
            (97.4); bar 98 it pulses there while the 115 dark boxes fade into grain; the camera drifts back
 
-Hand-over from S07 (a segue at 81.1): s07_ledger's own interface. Every game starts where
-s07_ledger.ledger_points(END) leaves it (the three result bars, with S07's weight and shimmer) and flies to its
-slot in the galaxy as S07 cut it (S06's camera: the root on screen at s07_ledger.ROOT_S, the turn
-HANDOVER_S08["rho_cut"]); the rest of S07's last frame (the ruler and its half, "Σ = 255,168", the result labels,
-the readout "Σ 255,168", §4) is built as S07 builds it and drawn by S07's own update methods (S07End), then fades.
+Hand-over from S07 (a segue at 81.1): drawn by S07 itself. S07Stage runs s07_ledger.Ledger.build on a stand-in
+and draws S07's objects with S07's own update_state at S07's times (and S07's own light until 81.3), so the first
+frame here is S07's last whatever S07 ends on; they fade as the games leave (81.3-81.4). Every game flies from
+where s07_ledger.ledger_points(END) leaves it to its slot in the galaxy as S07 cut it (S06's camera: the root on
+screen at s07_ledger.ROOT_S, the turn s07_ledger.RHO_CUT).
 Hand-over to S09 (a cut at 99.1): S09 draws this scene's last frame with the same rigs (StripsRig, the labels,
 the pen, pen_glow) through `strip_view(END)`, then rushes back into box 1 of the tic-tac-toe strip.
 """
@@ -42,9 +42,10 @@ from __future__ import annotations
 
 import math
 from math import factorial
+from types import SimpleNamespace
 
 import numpy as np
-from manim import Circle, Dot, Line, Mobject, Rectangle, VGroup, VMobject
+from manim import Circle, Dot, ImageMobject, Line, Mobject, Rectangle, VGroup, VMobject
 
 from explainer.short import BeatScene, FONT_MONO, INK, INK_DIM, RED, WHITE, cjk, stroke_px
 
@@ -171,7 +172,8 @@ VAL_HEX = {1: XC.mid, 2: OC.mid, 3: "#C8CCCC"}            # a perfect-play value
 # ---------------------------------------------------------------- times
 FLY = (bb(81, 3), bb(82))                         # the result bars fly back into the galaxy (2 beats)
 FLY_SPREAD, FLY_JIT, FLY_DUR = 0.25, 0.04, 0.9
-LABELS_OUT = (bb(81, 3), bb(81, 3) + 0.3)
+LABELS_OUT = (bb(81, 3), bb(81, 3) + 0.3)        # S07's labels, ruler and sums fade as the games leave
+S07_GONE = LABELS_OUT[1] + 0.05                   # ... and S07's objects leave the scene
 SEC_SWAP = (0.0, 0.5)                             # §4 -> §5 (the segue: out, then in) ...
 SEC6 = bb(90)                                     # ... and §5 -> §6
 READY = bb(82)                                    # dust brightens, the root glows white
@@ -224,13 +226,13 @@ assert all(b > a for a, b in zip(CHESS_T, CHESS_T[1:]))
 
 # ---------------------------------------------------------------- the hand-over from S07 (a segue at 81.1)
 S07_END = s07.END                                 # S08's t = 0 is S07's t = S07_END
-H07 = s07.HANDOVER_S08
-UNIT = H07["unit"]
+UNIT = 30_240                                     # games per unit of length (S07's scale: 9! = 12 units)
+assert s07.UNIT == UNIT
 assert UNIT == 30_240 and [round(n / UNIT, 2) for n in (131_184, 77_904, 46_080)] == [4.34, 2.58, 1.52]
-BAR_XY, _w07, _fam07 = s07.ledger_points(S07_END)  # every game in S07's three result bars (screen)
-assert np.allclose(_w07, H07["w_game"]) and (_fam07 == L_FAM).all() and np.allclose(s07.L_JIT, L_JIT)
+BAR_XY, BAR_W, _fam07 = s07.ledger_points(S07_END)  # every game in S07's result bars (screen), with its light
+assert (_fam07 == L_FAM).all() and len(BAR_XY) == N_GAMES
 SHIMMER_PH = s07.SH_PH                            # S07's shimmer of the games, continued
-RHO0 = float(H07["rho_cut"])                      # the galaxy's turn when S07 cut it: every game flies to its slot
+RHO0 = float(s07.RHO_CUT)                         # the galaxy's turn when S07 cut it: every game flies to its slot
 _rng = np.random.default_rng(81)
 _u = (BAR_XY[:, 0] - BAR_XY[:, 0].min()) / np.ptp(BAR_XY[:, 0])
 FLY_T0 = FLY[0] + FLY_SPREAD * _u + _rng.uniform(0, FLY_JIT, N_GAMES)      # each point leaves from its place
@@ -782,75 +784,80 @@ def run_lights(t: float, z: float, ry: dict):
     return np.concatenate(ps), np.concatenate(ws)
 
 
-# ---------------------------------------------------------------- S07's last frame, outside its light (81.1-81.4)
-class S07End:
-    """What S07's last frame holds besides its games, built as s07_ledger.Ledger.build builds it and drawn by S07's
-    own update methods (update_results, update_sigma: the same places and the same breathing), then faded by
-    S08 as the games fly home: the ruler of all 255,168 with its half marked, "Σ = 255,168" at its end, the
-    three result labels, and the HUD readout "Σ 255,168" (S08 draws the §4 label itself)."""
+# ---------------------------------------------------------------- S07's last frame (81.1-81.6), drawn by S07 itself
+class S07Stage(s07.Ledger):
+    """S07's scene without a scene: s07_ledger.Ledger.build runs on this stand-in (no renderer, no camera), which
+    records what S07 adds and fixes, so S08 shows S07's own objects drawn by S07's own update_state at S07's
+    times: the first frame here is S07's last, whatever S07 ends on. S08 then fades them (`draw`) as the games
+    fly home and drops them (`mobjects`) once they are gone."""
 
-    def __init__(self):
-        from manim import Text
-        from explainer.short import FONT_OLDSTYLE, hero_number
-        from common import HudLine, LeanInk
-        from s02_fill import Glyphs
-        from s04_by_hand import maths
-        self.ruler = LeanInk(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.3)
-        self.ruler_ticks = [LeanInk(Line([0, -0.5, 0], [0, 0.5, 0]), INK_DIM, 1.3) for _ in range(3)]
-        self.half_line = VMobject().set_stroke(INK_DIM, width=stroke_px(1.2), opacity=0).set_fill(opacity=0)
-        self.half_line.points = np.zeros((0, 3))
-        self.half_lab = LeanText(maths("½", size=26, color=INK_DIM), INK_DIM)
-        R = s07.RESULT
-        self.res_lab = {}
-        for r, (zh, en_) in {1: (f"X 赢 {R[1]:,}", "X WINS"), 2: (f"O 赢 {R[2]:,}", "O WINS"),
-                             3: (f"平局 {R[3]:,}", "DRAWS")}.items():
-            lab = bi_label(zh, en_, zh_size=20, en_size=16.5, color=INK)
-            lab[2].set_color(INK_DIM)
-            parts = [LeanText(q, c) for q, c in zip(lab, (INK, INK_DIM, INK_DIM))]
-            offs = [q.get_center()[:2] - lab.get_center()[:2] for q in lab]
-            self.res_lab[r] = (parts, offs, lab.width)
-        self.sigma_sym = LeanText(Text("Σ", font=FONT_OLDSTYLE, font_size=34, color=INK), INK)
-        self.sigma_eq = LeanText(maths("=", size=34, color=INK), INK)
-        t255 = hero_number("255,168", size=36)
-        xs = np.array([g.get_center()[0] for g in t255])
-        u = (xs - xs.min()) / (xs.max() - xs.min())
-        self.n255 = Glyphs(t255, WHITE, INK, 10, layers=6, glow_opacity=0.55,
-                           glow_colors=[hex_of(rgb(XC.glow) * (1 - v) + rgb(OC.mid) * v) for v in u])
-        self.n255_w = t255.width
-        self.halo255 = gaussian_sprite(None, 96, 0.34, gradient=(XC.glow, OC.mid), aspect=3.0)
-        self.hud_sigma = HudLine("对局计数", "GAMES COUNTED", HUD_LINES_Y[0])
-        sig = Text("Σ", font=FONT_OLDSTYLE, font_size=15, color=INK_DIM)
-        sig.next_to(self.hud_sigma.counter.ref, np.array([-1, 0, 0]), buff=0.18)
-        sig.align_to(self.hud_sigma.counter.columns[0][0], np.array([0, -1, 0]))
-        self.hud_sigma.label = sig
-        self.hud_sigma.lab_t = LeanText(sig, INK_DIM)
-        self.hud_sigma.lab_c = sig.get_center()[:2]
-        self.hud_sigma.group.remove(self.hud_sigma.group[0])
-        self.hud_sigma.group.add(self.hud_sigma.lab_t)
-        self.parts = [self.ruler, *self.ruler_ticks, self.half_line, self.half_lab,
-                      *[q for r in (1, 2, 3) for q in self.res_lab[r][0]], self.sigma_sym, self.sigma_eq, self.n255]
-        self.group = VGroup(*self.parts)
+    HUD_Y = 3.15                                  # what sits above this (screen) is S07's HUD: it goes with §4
+
+    def __init__(self):                           # (deliberately not Scene.__init__: nothing here renders)
+        self._cam = SimpleNamespace(frame=Mobject())
+        self.added, self.fixed = [], []
+        self.build()
+        self.update_state(S07_END)
+        self.base = []                            # (mobject, fill opacity, stroke opacity or image alpha, is hud)
+        for m in self.fixed:
+            for x in m.get_family():
+                hud = len(x.points) > 0 and x.get_center()[1] > self.HUD_Y
+                if isinstance(x, ImageMobject):
+                    self.base.append((x, None, float(getattr(x, "stroke_opacity", 1.0)), hud))
+                elif isinstance(x, VMobject):
+                    self.base.append((x, x.get_fill_opacity(), x.get_stroke_opacity(), hud))
+
+    @property
+    def camera(self):
+        return self._cam
+
+    def add(self, *mobs):
+        self.added.extend(mobs)
+        return self
+
+    def fix(self, *mobs):
+        self.fixed.extend(mobs)
+        return mobs[0] if len(mobs) == 1 else mobs
+
+    def remove(self, *mobs):
+        return self
+
+    def clock(self) -> float:
+        return S07_END
+
+    @property
+    def mobjects_to_show(self) -> list:
+        return list(self.fixed)
+
+    def light_at(self, t07: float):
+        """S07's own light image (its games in the result bars) at S07 time t07."""
+        type(self).update_light(self, t07)
+        return self.galaxy.light
 
     def draw(self, t07: float, vis: float, vis_hud: float):
-        """S07's last frame at S07 time t07, faded by vis (the hud by vis_hud)."""
-        self.hud_sigma.show(s07.N, vis_hud)
-        if vis <= 1e-3:
-            for q in (self.ruler, *self.ruler_ticks, self.half_lab, self.sigma_sym, self.sigma_eq, self.n255,
-                      *[q for r in (1, 2, 3) for q in self.res_lab[r][0]]):
-                q.hide()
-            self.half_line.points = np.zeros((0, 3))
-            show_sprite(self.halo255, opacity=0)
-            return
-        s07.Ledger.update_results(self, t07)
-        s07.Ledger.update_sigma(self, t07)
-        if vis < 1 - 1e-6:
-            for q in self.parts:
-                for x in q.get_family():
-                    if len(x.points):
-                        x.set_fill(opacity=x.get_fill_opacity() * vis)
-                        x.set_stroke(opacity=x.get_stroke_opacity() * vis)
-            if len(self.halo255.points):
-                self.halo255.set_opacity(clamp01(self.halo255.stroke_opacity * vis))
+        """S07's last frame at S07 time t07 (its breathing goes on), faded by vis (the HUD by vis_hud)."""
+        for x, f, a, _ in self.base:                          # back to S07's last frame, then S07 draws on it
+            if f is None:
+                if len(x.points):
+                    x.set_opacity(a)
+            else:
+                x.set_fill(opacity=f)
+                x.set_stroke(opacity=a)
+        self.update_light = lambda t: None                    # (its light is drawn by S08)
+        try:
+            self.update_state(t07)
+        finally:
+            del self.update_light
+        for x, f, a, hud in self.base:
+            k = vis_hud if hud else vis
+            if k >= 1 - 1e-6:
+                continue
+            if f is None:
+                if len(x.points):
+                    x.set_opacity(clamp01(getattr(x, "stroke_opacity", a) * k))
+            else:
+                x.set_fill(opacity=x.get_fill_opacity() * k)
+                x.set_stroke(opacity=x.get_stroke_opacity() * k)
 
 
 # ---------------------------------------------------------------- the scene
@@ -873,12 +880,11 @@ class BiggerGames(BeatScene):
         self.light = FrameImage()
         # S07's last frame: the HUD (§4 and its readout) and the bars' labels
         self.secs = []
-        for text in ("§4 · 255,168 是怎么来的 · 255,168, EXPLAINED", "§5 · 双方都不失误 · PERFECT PLAY",
-                     "§6 · 更复杂的棋 · BIGGER GAMES"):
+        for text in ("§5 · 双方都不失误 · PERFECT PLAY", "§6 · 更复杂的棋 · BIGGER GAMES"):
             g = section_hud(text)
             self.secs.append((InkText(g, INK_DIM), g.get_center()[:2]))
-        self.sec4, self.sec5, self.sec6 = [s for s, _ in self.secs]
-        self.s07 = S07End()
+        self.sec5, self.sec6 = [s for s, _ in self.secs]
+        self.s07 = S07Stage()
         # the tree's inner structure: the ring 1-2 edges, the root, the wave front and its label
         self.edges = Hairlines(INK_DIM, 1.2)
         # rings 1-2 (81 nodes) as small dots, so their perfect-play colours read one by one (48 cyan, 24 grey; 9 grey)
@@ -915,11 +921,12 @@ class BiggerGames(BeatScene):
         self.clock_mob.add_updater(lambda m: self.update_state(self.clock()))
         self.add(self.clock_mob, self.camera.frame)
         self.add(self.light)
+        self.s07_on = True
         self.fix(self.edges, *self.node_glow, *self.node_core, self.front, self.wave_leader, self.root_halo, self.root_board.group, *self.path, self.path_red,
                  *self.path_dots, self.leaf_ring, self.inset_leader, self.centre_glow, self.inset.group, self.red_o,
-                 self.s07.halo255, self.s07.group, *[lb.group for lb in self.wave_lab], self.lab_mistake.group,
-                 self.lab_centre.group, *self.strips.sprites, self.strips.group, self.arm, self.pen, self.sec4,
-                 self.sec5, self.sec6, self.s07.hud_sigma.group, self.flash)
+                 *[lb.group for lb in self.wave_lab], self.lab_mistake.group,
+                 self.lab_centre.group, *self.strips.sprites, self.strips.group, self.arm, self.pen,
+                 self.sec5, self.sec6, *self.s07.mobjects_to_show, self.flash)
         self.update_state(0.0)
 
     # ------------------------------------------------------------- the picture at time t
@@ -943,6 +950,9 @@ class BiggerGames(BeatScene):
         def put(f, p, w):
             fams[f][0].append(p)
             fams[f][1].append(w)
+        if t < FLY[0] - 1e-6:                                  # S07's own light (its games, shimmering)
+            self.light.light = self.s07.light_at(S07_END + t)
+            return
         if self.galaxy_on(t) > 1e-3:
             self.galaxy_families(t, put)
         z, ry = zs(t), rows(t)
@@ -990,7 +1000,7 @@ class BiggerGames(BeatScene):
             e = np.clip((t - FLY_T0) / FLY_DUR, 0, 1)
             e = np.where(e < 0.5, 4 * e ** 3, 1 - (-2 * e + 2) ** 3 / 2)
             shim = 1 + 0.12 * np.sin(SHIMMER_PH + 2.3 * (S07_END + t))
-            w = (H07["w_game"] * shim * (1 - e) + L_WEIGHT * zf * e)
+            w = (BAR_W * shim * (1 - e) + L_WEIGHT * zf * e)
             P = self.flight(e)
             for f in range(3):
                 sel = L_FAM == f
@@ -1214,9 +1224,10 @@ class BiggerGames(BeatScene):
         in5 = ease_in_out_sine(seg(t, m, SEC_SWAP[1]))
         out5 = 1 - ease_in_out_sine(seg(t, SEC6, SEC6 + 0.25))
         in6 = ease_in_out_sine(seg(t, SEC6 + 0.25, SEC6 + 0.5))
-        for (sec, c), v in zip(self.secs, (out4, in5 * out5, in6)):
+        for (sec, c), v in zip(self.secs, (in5 * out5, in6)):
             sec.show(c, vis=v)
-        self.s07.draw(S07_END + t, 1 - ease_in_out_sine(seg(t, *LABELS_OUT)), 1 - ease_in_out_sine(seg(t, 0.0, 0.3)))
+        if self.s07_on:                                         # (faded to nothing from S07_GONE, then removed)
+            self.s07.draw(S07_END + min(t, S07_GONE), 1 - ease_in_out_sine(seg(t, *LABELS_OUT)), out4)
 
     # ------------------------------------------------------------- the sounds (from the same numbers)
     def score(self):
@@ -1325,9 +1336,15 @@ class BiggerGames(BeatScene):
         self.log_events()
         self.shots = [(a, min(d, END - a), bx) for a, d, bx in self.shots if a < END - 1e-6]
         steps = sorted({round(t, 4) for t, _, _ in self.shots})
+        steps = sorted(set(steps) | {round(S07_GONE, 4)})
         for i, t in enumerate(steps):
             nxt = steps[i + 1] if i + 1 < len(steps) else END
             self.until(f"{t:.4f}s")
+            if self.s07_on and t >= S07_GONE - 1e-6:          # S07's objects have faded: out of the scene
+                self.s07_on = False
+                gone = self.s07.mobjects_to_show
+                self.unfix(*gone)
+                self.remove(*gone)
             active = [(a, d, bx) for a, d, bx in self.shots if a <= t + 1e-6 and a + d > t + 1e-6]
             if not active:
                 continue

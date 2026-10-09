@@ -298,8 +298,9 @@ LENS_T = (T49, bb(50, 1.5))                       # the magnifier relaxes into t
 CAM_START = (-2.0, 0.0, W)                        # 41.1: the root where the knot was
 CAM_WALK0 = (-1.95, 1.0, 0.35 * W)                # 43.1: close on the first wedge
 CAM_WALK = (-1.97, 2.55, 0.35 * W)                # 44.4-48.4: the walked subtree (rings 4-9)
-FULL_Z = 1.0                                      # the full galaxy: ring 9 fills the picture's height
-ROOT_SCREEN_FULL = np.array([-0.62, 0.28])
+FULL_Z = 0.965                                    # the full galaxy: ring 9 fills the picture's height, clear of
+ROOT_SCREEN_FULL = np.array([-0.53, 0.28])        # the plate (left) and of the landed number (right)
+Z_DOCK = 0.985                                    # 59.1-61.1: the slight push in, within the room the number leaves
 CAM_FULL = (ROOT[0] - ROOT_SCREEN_FULL[0] / FULL_Z, ROOT[1] - ROOT_SCREEN_FULL[1] / FULL_Z, W / FULL_Z)
 END_Z = 1.045                                     # 60-61: easing in towards the inner rings
 ROOT_SCREEN_END = np.array([-0.42, 0.26])
@@ -334,13 +335,13 @@ def cam_path(t: float):
         e = ease_in_out_sine(seg(t, bb(53), T59))                    # a slow drift
         return CAM_FULL[0] + 0.05 * e, CAM_FULL[1] - 0.02 * e, CAM_FULL[2] * (1 + 0.008 * e)
     held = (CAM_FULL[0] + 0.05, CAM_FULL[1] - 0.02, CAM_FULL[2] * 1.008)
-    ez = ease_in_out_sine(seg(t, T59, END))                          # a slow push in ...
-    ex = ease_in_out_sine(seg(t, DOCK[1], END))                      # ... sideways once the number has docked
-    w = held[2] * (CAM_END[2] / held[2]) ** ez
-    z = W / w
-    sx = lerp((ROOT[0] - held[0]) / (W / held[2]), ROOT_SCREEN_END[0], ex)
-    sy = lerp((ROOT[1] - held[1]) / (W / held[2]), ROOT_SCREEN_END[1], ez)
-    return ROOT[0] - sx / z, ROOT[1] - sy / z, w
+    zh = W / held[2]
+    e1 = ease_in_out_sine(seg(t, T59, DOCK[0]))                      # a slow push in while the number stands ...
+    e2 = ease_in_out_sine(seg(t, DOCK[0], END))                      # ... on to S06's camera as it docks
+    z = zh * (Z_DOCK / zh) ** e1 * (END_Z / Z_DOCK) ** e2
+    sx = lerp((ROOT[0] - held[0]) * zh, ROOT_SCREEN_END[0], e2)
+    sy = lerp((ROOT[1] - held[1]) * zh, ROOT_SCREEN_END[1], ease_in_out_sine(seg(t, T59, END)))
+    return ROOT[0] - sx / z, ROOT[1] - sy / z, W / z
 
 
 CAM = Cam(cam_path)
@@ -410,13 +411,51 @@ DARK = bb(58, 4.5)                                # 58.4+: half a beat of darkne
 LANDS = [T59 + 0.04 + 0.09 * i for i in range(6)]
 DOCK = (bb(61), bb(61, 3))                        # 61.1-61.3: the number docks into the HUD
 END_PULSES = [bb(60, b) for b in (1, 2, 3, 4)] + [bb(61, b) for b in (1, 2, 3, 4)]
-HERO_C = np.array([4.6, 0.38])                    # 255,168 on the right third (screen)
-HERO_SIZE = 74
+HERO_C = np.array([4.55, 0.38])                   # 255,168 on the right third (screen), inside the HUD's margin
+HERO_SIZE = 70
 
 
 # where S06 (the segue at 62.1) picks everything up: see the module docstring
 HANDOVER_S06 = {"cam": cam_path(END - 1e-6), "rot": rot(END), "rot_rate": ROT_RATE, "plate_dim": PLATE_DIM,
                 "plate_tl": PLATE_TL, "games": N_GAMES, "calls": len(ALL_STARTS), "undos": len(ALL_STARTS) - 1}
+
+
+def win_colours(ink, core: str, glow: str) -> None:
+    """Recolour a win line's core and glow layers (an inset shows X's and O's wins with one Ink)."""
+    for cps, _, _, is_core in ink.layers:
+        for c in cps:
+            c.set_stroke(color=core if is_core else glow)
+
+
+class Leader(VMobject):
+    """A hairline callout (screen space): a polyline drawn from its start up to fraction f of its length."""
+
+    def __init__(self, color: str = INK_DIM, px: float = 1.2):
+        super().__init__()
+        self.px = px
+        self.set_fill(opacity=0).set_stroke(color, width=0, opacity=0)
+        self.set_points_as_corners([[0, 0, 0], [0.01, 0, 0]])
+
+    def hide(self):
+        self.set_stroke(width=0, opacity=0)
+        self.points = np.zeros((0, 3))
+
+    def show(self, pts: np.ndarray, f: float, vis: float):
+        if f <= 1e-3 or vis <= 1e-3:
+            return self.hide()
+        seglen = np.linalg.norm(np.diff(pts, axis=0), axis=1)
+        cum = np.concatenate([[0.0], np.cumsum(seglen)])
+        cut = f * cum[-1]
+        k = int(np.searchsorted(cum, cut, side="left"))
+        q = list(pts[:max(1, k)])
+        if k < len(pts):
+            a = (cut - cum[k - 1]) / max(1e-9, seglen[k - 1]) if k >= 1 else 0.0
+            q.append(pts[k - 1] + (pts[k] - pts[k - 1]) * a if k >= 1 else pts[0])
+        q = np.array(q)
+        if len(q) < 2:
+            q = np.vstack([q, q + 1e-4])
+        self.set_points_as_corners(np.column_stack([q, np.zeros(len(q))]))
+        self.set_stroke(width=stroke_px(self.px), opacity=clamp01(vis))
 
 
 def octave_up(note: str) -> str:
@@ -472,12 +511,13 @@ class EveryGame(BeatScene):
         self.plate = ProgramPlate()
         self.tag1 = Label([(VGroup(cjk("递归：", size=ZH_SIZE), Text("explore", font=FONT_MONO, font_size=17),
                                    cjk("调用自己", size=ZH_SIZE)).arrange(RIGHT, buff=0.08), INK),
-                           (en("RECURSION: explore CALLS ITSELF", upper=False).set_color(INK_DIM), INK_DIM)],
-                          gap=0.1, align="l")
+                           (en("RECURSION: explore", upper=False), INK_DIM), (en("CALLS ITSELF"), INK_DIM)],
+                          gap=0.08, align="l")
         self.tag2 = Label([(cjk("回溯：撤销，退回来再试", size=ZH_SIZE), INK),
                            (en("BACKTRACKING: UNDO,"), INK_DIM), (en("STEP BACK, TRY AGAIN"), INK_DIM)],
                           gap=0.08, align="l")
-        self.leaders = [Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.2) for _ in range(2)]
+        self.leaders = [Leader() for _ in range(2)]
+        self.tag_layout()
         self.inset = MiniBoard(0.55, 5, 4, nums=0, glow_x=9, glow_o=11, layers=5)
         self.inset_blur = [MiniBoard(0.55, 5, 4, nums=0, glow_x=0, glow_o=0, layers=1) for _ in range(2)]
         self.eraser = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), RED, 3.0, RED, 10, layers=4, glow_opacity=0.5)
@@ -523,6 +563,7 @@ class EveryGame(BeatScene):
 
     # ------------------------------------------------------------- the picture at time t
     def update_state(self, t: float):
+        t = round(t * self.fps) / self.fps                  # the frame's own time (the clock sums floats)
         cx, cy, w = CAM(t)
         self.camera.frame.set(width=w)
         self.camera.frame.move_to([cx, cy, 0])
@@ -759,6 +800,9 @@ class EveryGame(BeatScene):
             for j, num in enumerate((24, 25, 26, 27, 31, 33, 34)):
                 fl = 0.5 + 0.5 * math.sin(41 * t + 2.1 * j) * math.sin(23 * t + j)
                 add(num, (0.25 + 0.45 * fl) * fast * (1 - 0.6 * seg(t, bb(53), bb(54))), RED if num == 34 else WHITE)
+        out = 1 - seg(t, *TAGS_OUT)
+        for j, (num, col) in enumerate(((33, WHITE), (34, RED))):         # a tagged line stays lit by its tag
+            add(num, 0.8 * ease_out_cubic(seg(t, TAGS_IN[j], TAGS_IN[j] + 0.35)) * out, col)
         self.plate.show(dim * ease_out_cubic(seg(t, PLATE_IN[0] - 0.1, PLATE_IN[0] + 0.25)), hl, line_vis=lv)
         # the tags on the recursive call and the undo line (50.3, 50.4), gone before the 12 wordless seconds
         out = 1 - seg(t, *TAGS_OUT)
@@ -768,12 +812,26 @@ class EveryGame(BeatScene):
                 lab.hide()
                 ld.hide()
                 continue
-            y = self.plate.row_y(num)
-            x0 = self.plate.row_right(num) + 0.08
-            anchor = np.array([PLATE_TL[0] + 0.05, -0.55 - 1.05 * j])
+            anchor, route = self.tag_place[j]
             lab.show(anchor + np.array([0.0, -0.05 * (1 - v)]), vis=v)
-            A, c = line_affine(np.array([x0, y]), np.array([PLATE_TL[0] + self.plate.width + 0.15, y]))
-            ld.show(v, A, c, vis=0.6 * v)
+            ld.show(route, ease_out_cubic(seg(t, TAGS_IN[j], TAGS_IN[j] + 0.4)), 0.6 * v)
+
+    def tag_layout(self):
+        """Where the two plate tags go (left edge, centre) and their leaders' routes (screen). The tags sit
+        under the plate, BACKTRACKING (line 34) above RECURSION (line 33), so the two elbow leaders nest:
+        line 34's turns down just past its tag, line 33's further out, past both."""
+        left = PLATE_TL[0] + 0.05
+        c2 = np.array([left, -0.2 - self.tag2.height / 2])                       # upper: line 34's tag
+        c1 = np.array([left, c2[1] - self.tag2.height / 2 - 0.3 - self.tag1.height / 2])   # lower: line 33's
+        zh = lambda lab, c: (c[0] + lab.items[0][0].tmpl.width, c[1] + lab.items[0][1][1])
+        p34 = np.array([self.plate.row_right(34) + 0.1, self.plate.row_y(34)])
+        p33 = np.array([self.plate.row_right(33) + 0.1, self.plate.row_y(33)])
+        xa = max(left + self.tag2.width, p34[0]) + 0.3
+        xb = max(xa + 0.32, left + self.tag1.width + 0.3, p33[0] + 0.3)
+        (r2, y2), (r1, y1) = zh(self.tag2, c2), zh(self.tag1, c1)
+        route34 = np.array([p34, [xa, p34[1]], [xa, y2], [r2 + 0.12, y2]])
+        route33 = np.array([p33, [xb, p33[1]], [xb, y1], [r1 + 0.12, y1]])
+        self.tag_place = [(c1, route33), (c2, route34)]      # in the order of self.tag1, self.tag2
 
     # --- the inset board: the position the pen is at (bars 43-50)
     def inset_moves(self, t: float):
@@ -839,7 +897,7 @@ class EveryGame(BeatScene):
         if line is not None:
             wv = ease_out_quad(seg(t, t0, t0 + 0.3)) if kind == "move" else 1.0
             col = (XC.mid, XC.glow) if L_RES[g] == 1 else (OC.mid, OC.glow)
-            B.win.set_core_color(col[0])
+            win_colours(B.win, *col)
             B.draw_win(line, wv, vis=vis, glow=1.2)
         else:
             B.win.hide()
@@ -1007,6 +1065,8 @@ class EveryGame(BeatScene):
         S.phrase("leaf ticks", ticks, gain=0.6)
         S.phrase("stops", stops, gain=0.45)
         S.phrase("undos", undos, gain=0.8)
+        stub_x = sx(path_pos(FIRST_SIX[0], STUB_T), STUB_T)                 # 44.4: the ghost stub, O's next square (7)
+        S.phrase("ghost stub", [(STUB_T + 0.05, f"ghost@{PITCH[7]}", stub_x)], gain=0.5)
         # bars 49-58: the leaf pings thicken into grains, in the proportions being lit (bells for X, glass
         # for O, wood for draws), each at its game's last square: sixteenths in bar 49, then 32nd notes,
         # doubled in 57-58
@@ -1015,6 +1075,8 @@ class EveryGame(BeatScene):
             notes = []
             for j in range(int(round(BAR / step))):
                 tt = bb(bar) + j * step
+                if tt >= DARK - 0.12:                                       # the breath is silent (58.4+)
+                    break
                 g = max(6, games_at(tt + 1e-6) - 1)
                 res = int(L_RES[g])
                 sq = int(L_LAST[g])

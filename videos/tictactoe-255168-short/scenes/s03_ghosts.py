@@ -8,12 +8,13 @@ function of the scene time (State.update), as in s01_open; the notes come from t
            "第 5 步 · X 赢 · MOVE 5 · X WINS" (c07)
     23-25  but 9! kept going: four dashed ghost marks, O6 X5 O8 X7 (moves 6-9, never glowing); 24.1-25.3 the
            ghosts run through all 24 orders of the four empty squares, one per sixteenth (adjacent swaps, so
-           moves 6 and 8 stay O, 7 and 9 X), the readout counts 1 -> 24; 25.3 "4 × 3 × 2 × 1 = 24"
+           moves 6 and 8 stay O, 7 and 9 X), the readout counts 1 -> 24; 25.3 "4 × 3 × 2 × 1 = 24" beside
+           the timeline's ghost slots (lining figures: s02_fill.maths), clear of the captions
     26-28  the 24 ghost endings fan out behind the board as a spread deck (±40°), each with the same five
            real moves and its own dashed ending (c08); 27.4 "幽灵对局 · GHOST GAMES" (c09); the fan drifts
-    29     the fan folds back; the board shrinks onto the left end of the move timeline (X's slots cyan, O's
-           amber); X's slots 1, 3, 5 light with a small X above each (X's 1st, 2nd, 3rd mark),
-           "第 3 个 X：第 5 步 · X'S 3RD MARK: MOVE 5" (c10)
+    29     the fan folds back; the board shrinks onto the left end of the move timeline, which rises and widens
+           (X's slots cyan, O's amber); X's slots 1, 3, 5 light with a small X above each (X's 1st, 2nd, 3rd
+           mark), "第 3 个 X：第 5 步 · X'S 3RD MARK: MOVE 5" under slot 5 (c10; it leaves with c10, at 31.1+)
     30-31  one tiny real board per end move rises above slots 5-9, trailing its ghost endings as a dashed
            fan: ×24 ×6 ×2 ×1 ×1, one per beat (c11)
     32     the move-5 board glides to the centre and grows; the rest fades; 32.4 three panel frames draw
@@ -34,13 +35,13 @@ import math
 import numpy as np
 from manim import DashedVMobject, Line, Mobject, Rectangle, VGroup
 
-from explainer.short import BG, BeatScene, FONT_MONO, INK, INK_DIM, INK_FAINT, WHITE, RollingCounter, oldstyle
+from explainer.short import BG, BeatScene, FONT_MONO, INK, INK_DIM, INK_FAINT, WHITE, RollingCounter
 
 from common import (GAME_A, OC, PITCH, XC, Cam, Ink, InkText, Shot, Sounds, W, H, bi_label, box,
                     clamp01, ease_in_cubic, ease_in_out_cubic, ease_in_out_sine, ease_out_cubic, ease_out_quad,
                     grid_lines, lerp, mark_ink, move_digit, o_template, player, pulse,
                     section_hud, seg, square_centre, tag, win_template, x_template)
-from s02_fill import ORDER_DOTS, ORDER_SCREEN, Glyphs, Hairlines, order_dots, stacked_label
+from s02_fill import ORDER_DOTS, ORDER_SCREEN, Glyphs, Hairlines, maths, order_dots, stacked_label
 
 # ---------------------------------------------------------------- the plan's clock (bar 21 = scene time 0)
 BEAT, BAR = 0.6, 2.4
@@ -136,11 +137,11 @@ CELL = 1.4                                         # board A at its opening size
 BC = np.array([0.0, 1.0])                          # its centre: the board and its timeline sit in the picture
 NUM_OFF = np.array([0.36, -0.36])                  # a move number in its square's lower-right corner (x cell)
 TL_NARROW = dict(x0=-2.0, dx=0.5, y=-1.55)         # the move timeline under the board (slots 1-9)
-TL_WIDE = dict(x0=-4.6, dx=1.2, y=-1.30)           # ... and wide, from bar 29
+TL_WIDE = dict(x0=-4.6, dx=1.2, y=-0.55)           # ... and wide, from bar 29 (higher: the slot-5 tag clears the captions)
 TINY_CELL = 0.3                                    # the tiny boards of bars 29-31
-LEFT_END = np.array([-6.0, -1.30])                 # board A shrunk onto the left end of the timeline
-TINY_Y = 0.32                                      # the tiny boards above slots 5-9
-MULT_Y = 1.30                                      # their multipliers
+LEFT_END = np.array([-6.0, -0.55])                 # board A shrunk onto the left end of the timeline
+TINY_Y = 1.07                                      # the tiny boards above slots 5-9
+MULT_Y = 2.05                                      # their multipliers
 FAN_PIVOT = BC + np.array([0.0, -2.3])             # the spread deck turns about this point
 FAN_SCALE = 0.92
 FAN_DEG = 40.0
@@ -164,6 +165,7 @@ FOLD = (bb(29, 1), bb(29, 1) + 0.38)               # the deck folds back
 SHRINK = (bb(29, 1) + 0.1, bb(29, 2) + 0.15)       # the board shrinks onto the left end; the timeline widens
 X_SLOTS = [bb(29, 2), bb(29, 3), bb(29, 4)]        # X's slots 1, 3, 5 light
 SLOT_LABEL = bb(29, 4)
+SLOT_LABEL_OUT = (bb(31, 1.5), bb(31, 2.5))       # ... gone with c10, before c11 (31.2+)
 RISE = [bb(30, 1), bb(30, 2), bb(30, 3), bb(30, 4), bb(31, 1)]   # end moves 5-9: boards rise, ×24 ... ×1
 GLIDE = (bb(32, 1), bb(32, 3))                     # the move-5 board glides to the centre and grows
 PANELS = bb(32, 4)
@@ -394,11 +396,11 @@ class GhostGames(BeatScene):
         lbl = stacked_label("第 5 步 · X 赢", "MOVE 5 · X WINS", color=INK_DIM)
         self.stop_tag, self.stop_tag_w = Glyphs(lbl, INK_DIM), lbl.width
         self.slot_tag = Glyphs(stacked_label("第 3 个 X：第 5 步", "X'S 3RD MARK: MOVE 5", color=INK), INK)
-        self.formula = Glyphs(oldstyle("4 × 3 × 2 × 1 = 24", size=28, color=INK), INK, INK, 7, layers=4,
+        self.formula = Glyphs(maths("4 × 3 × 2 × 1 = 24", size=28, color=INK), INK, INK, 7, layers=4,
                               glow_opacity=0.45)
         self.fan_tag = Glyphs(bi_label("幽灵对局", "GHOST GAMES", zh_size=22, en_size=20, color=INK_DIM), INK_DIM)
         self.fans = {m: Hairlines(INK_DIM, 1.2) for m in range(5, 10)}
-        self.mults = {m: Glyphs(oldstyle(f"×{GHOST_ENDINGS[m]}", size=40, color=WHITE), WHITE, INK, 9, layers=5,
+        self.mults = {m: Glyphs(maths(f"×{GHOST_ENDINGS[m]}", size=40, color=WHITE), WHITE, INK, 9, layers=5,
                                 glow_opacity=0.45) for m in range(5, 10)}
         self.panels = Hairlines(INK_DIM, 1.5)
         # HUD
@@ -702,8 +704,9 @@ class GhostGames(BeatScene):
         else:
             self.stop_tag.hide()
         v = ease_out_cubic(seg(t, LAND, LAND + 0.35)) * (1 - seg(t, SHRINK[0], SHRINK[0] + 0.3))
-        if v > 1e-3:
-            self.formula.show(np.array([0.0, TL_NARROW["y"] - 0.72 + 0.05 * (1 - v)]), vis=v,
+        if v > 1e-3:                                                     # beside the ghost slots 6-9 it counts
+            x = tl_slot(9, t)[0] + FORMULA_GAP + self.formula.w / 2
+            self.formula.show(np.array([x, TL_NARROW["y"] - 0.17 + 0.05 * (1 - v)]), vis=v,
                               glow=0.3 + 1.8 * pulse(t, LAND, 0.5))
         else:
             self.formula.hide()
@@ -712,7 +715,7 @@ class GhostGames(BeatScene):
             self.fan_tag.show(np.array([0.0, FAN_TAG_Y + 0.06 * (1 - v)]), vis=0.95 * v)
         else:
             self.fan_tag.hide()
-        v = ease_out_cubic(seg(t, SLOT_LABEL, SLOT_LABEL + 0.4)) * (1 - seg(t, GLIDE[0], GLIDE[0] + 0.6))
+        v = ease_out_cubic(seg(t, SLOT_LABEL, SLOT_LABEL + 0.4)) * (1 - ease_in_out_sine(seg(t, *SLOT_LABEL_OUT)))
         if v > 1e-3:
             self.slot_tag.show(tl_slot(5, t) + np.array([0, -0.84 + 0.05 * (1 - v)]), vis=v)
         else:
@@ -840,3 +843,4 @@ RAY_PHASE = list(np.random.default_rng(31).uniform(0.0, 1.0, 24))   # each ghost
 GHOST_NUM_VIS = 0.8
 DECK_BODY = 0.0                                    # the deck's cards are faint, transparent copies
 FAN_TAG_Y = 3.62                                   # the deck's name, above the fan (the camera is eased back)
+FORMULA_GAP = 0.62                                 # 25.3: "4 × 3 × 2 × 1 = 24" starts this far right of slot 9
