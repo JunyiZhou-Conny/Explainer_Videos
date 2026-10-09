@@ -28,16 +28,18 @@ Every number is exact and asserted below: the odometer enumerates exactly the 1,
 move 5 (each a real game: X completes its line on move 5, nobody had three marks before), the move-6
 boards replay as script.md says, 8 × 6 × (6 × 5 × 4) = 5,760, 12 × 6 × 6 = 432, 5,760 − 432 = 5,328.
 
-Hand-over from S03 (the join at 33.1 is a cut in the music, not in the picture). At 33.1:
-  - the camera is home (centre (0, 0), frame 14.22 units wide);
-  - game A's final board (X on 0 1 2, O on 3 4, no move numbers) is centred at CENTRE_C = (0, -1.15)
-    with cells CELL_C = 0.66 units (board 1.98 wide), its top-row win line cyan and glowing, as S01
-    draws it (mark_ink(…, 0.62 × cell), hairline grid 2 px);
-  - three hairline panel frames (INK_DIM, 1.5 px, no fill), 3.9 × 2.6 units, centred at
-    (-4.35, 1.75), (0, 1.75) and (4.35, 1.75), are drawn and empty;
-  - HUD: the §2 label (common.section_label) top left; nothing yet top right.
+Hand-over from S03 (the join at 33.1 is a cut in the music, not in the picture): this scene starts from
+s03_ghosts.HANDOVER (imported, so the two stay in step): the camera home; game A's final board XXXOO....,
+no move numbers, centred at HANDOVER["board"] with cell HANDOVER["cell"], drawn as S03's BoardRig draws
+it (common.mark_ink strokes on the 1.4-unit opening board, scaled, widths sqrt(scale), X glow 1.2 plus
+S03's breathing, in phase across the join); the three hairline panel frames HANDOVER["panels"]
+(INK_DIM, 1.5 px, 90 %); the HUD label common.section_hud("§2 · ...") top left.
 Hand-over to S05 (a cut, with a flash frame at 41.1): at 41.1 only the knot is left, centred on screen at
-(0, 0.3) (`knot_screen(END)`); S05 snaps it.
+(0, 0.3); `knot_screen(END)` gives its threads in screen units, and S05 snaps them.
+
+Shared with S05 (imported from here): MiniBoard, Label / zh_en, Thread, knot_screen. From common: the lean
+Ink / InkText (hidden strokes drop their points, so Cairo skips them), cull / uncull for the counters'
+hidden glyphs, show_sprite, hud_label, section_hud.
 """
 
 from __future__ import annotations
@@ -202,6 +204,7 @@ THREADS_IN = bb(39, 3)
 KNOT_T = (bb(40), bb(40, 3))                      # the arrows knot into one tangle ...
 FADE_T = (bb(40), bb(40, 4))                      # ... and everything else fades into it
 ODO_P = 2.4                                       # g(u) = 1440 u^p: the odometer accelerates
+GRID_IN = [0.0, bb(33, 4), bb(34, 4)]             # each panel's mini-board draws itself before its bar
 
 
 def odo_count(t: float) -> float:
@@ -234,7 +237,7 @@ def maths(s: str, size: float = 30, color: str = INK) -> MarkupText:
 
 
 EN_SIZE = 16.5                                    # tracked mono caps 22 px tall at 1080p (content labels)
-ZH_SIZE = 19                                      # Song/Ming, about 32 px
+ZH_SIZE = 20                                      # Song/Ming, about 34 px
 
 
 def en(s: str, size: float = EN_SIZE, color: str = INK_DIM, spacing: float = 0.12, upper: bool = True):
@@ -668,7 +671,7 @@ class ByHand(BeatScene):
         c1, s1 = self.panel_place(0, t)
         bc = c1 + np.array([0, PANEL_BOARD_DY]) * s1
         B = self.p1.place(bc, s1)
-        B.draw_grid(1.0, vis=fade * dim)
+        B.draw_grid(self.grid_f(0, t), vis=fade * dim)
         cur = 0 if not odo_on else o_li
         for j, ink in enumerate(self.p1_lines):
             t0 = P1_FLASH[j]
@@ -697,7 +700,7 @@ class ByHand(BeatScene):
         c2, s2 = self.panel_place(1, t)
         bc2 = c2 + np.array([0, PANEL_BOARD_DY]) * s2
         B2 = self.p2.place(bc2, s2)
-        B2.draw_grid(1.0, vis=fade * dim)
+        B2.draw_grid(self.grid_f(1, t), vis=fade * dim)
         if t < P2_IN:
             B2.marks.hide()
             B2.draw_numbers([])
@@ -736,7 +739,7 @@ class ByHand(BeatScene):
         c3, s3 = self.panel_place(2, t)
         bc3 = c3 + np.array([0, PANEL_BOARD_DY]) * s3
         B3 = self.p3.place(bc3, s3)
-        B3.draw_grid(1.0, vis=fade * dim)
+        B3.draw_grid(self.grid_f(2, t), vis=fade * dim)
         for tr in self.p3_trail:
             tr.hide()
         if t < P3_IN:
@@ -783,6 +786,10 @@ class ByHand(BeatScene):
         self.lab3.show(c3 + np.array([0, PANEL_LABEL_DY]) * s3 + np.array([0, -0.06 * (1 - seg(t, P3_LABEL, P3_LABEL + 0.3))]),
                        scale=s3, vis=ease_out_cubic(seg(t, P3_LABEL, P3_LABEL + 0.3)) * fade * dim
                        * (1 - seg(t, SLIDE[0], SLIDE[0] + 0.25)))
+
+    @staticmethod
+    def grid_f(k: int, t: float) -> list:
+        return [ease_out_quad(seg(t, GRID_IN[k] + 0.07 * i, GRID_IN[k] + 0.07 * i + 0.22)) for i in range(4)]
 
     @staticmethod
     def order_at(t: float) -> int:
@@ -870,12 +877,13 @@ class ByHand(BeatScene):
         B.draw_marks([0, 1, 2], [3, 4], vis_x=fade, vis_o=fade, glow_x=glow, glow_o=1.0, width=width)
         B.draw_win(WIN_LINES[0], 1.0, vis=fade, glow=1.0 + breathe + 0.6 * pulse(t, LAND, 0.4), width=width)
         nv = (ease_out_cubic(seg(t, ODO[0], ODO[0] + 0.3)) if t < ODO[1] else 1.0) * fade
+        nv *= 1 - seg(t, SLIDE[0], SLIDE[0] + 0.25)          # too small to read once the board shrinks
         B.draw_numbers(list(GAME_A), vis=nv, colors=[INK] * 5)
         # 39.1: O's would-be third mark, dashed on square 5 (a ghost move: never glows)
         gv = ease_out_cubic(seg(t, STAMP, STAMP + 0.25)) * fade
         if gv > 0:
             self.ghost_o.show(1.0, np.eye(2) * s, B.sq(5), vis=0.55 * gv, width=width)
-            self.ghost_num.show(B.sq(5) + s * NUM_OFF * CELL_T, scale=s, vis=0.5 * gv, color=INK_DIM)
+            self.ghost_num.hide()
         else:
             self.ghost_o.hide()
             self.ghost_num.hide()
@@ -894,7 +902,7 @@ class ByHand(BeatScene):
         g = min(1440.0, odo_count(t)) if t >= ODO[0] else 0.0
         if t >= LAND:
             g = 1440.0
-        cnt.value.set_value(g)                       # every digit rolls like an odometer
+        cnt.value.set_value(math.floor(g))           # whole games: every frame shows an exact count
         cnt.manual = None
         k = s * self.count_w0 / cnt.ref.width        # scale the whole counter about its centre
         if abs(k - 1) > 1e-6:
@@ -933,6 +941,7 @@ class ByHand(BeatScene):
         show_sprite(self.halo, c, 6.2 * s, 2.6 * s, halo_v * fade * (1 - 0.35 * self.slide(t)))
         # the formula under it (bar 36 on), and the note (37.2)
         fv = ease_out_cubic(seg(t, ODO[0] + 0.15, ODO[0] + 0.45)) * fade
+        fv *= 1 - seg(t, SLIDE[0], SLIDE[0] + 0.12) * (1 - seg(t, SLIDE[1] - 0.12, SLIDE[1]))   # out of the way
         e = ease_in_out_cubic(seg(t, SLIDE[0] + 0.05, SLIDE[1]))
         fc = c + (FORMULA_C - COUNT_C) * (1 - e) + (LEFT_FORMULA_C - LEFT_COUNT_C) * e
         self.formula.show(fc, scale=1 + (0.85 - 1) * e, vis=fv, color=INK)
@@ -1010,7 +1019,7 @@ class ByHand(BeatScene):
         else:
             u = ease_out_cubic(seg(t, RESULT, RESULT + 0.45))
             v, cv = 5328.0 * u, 1.0
-        hc.value.set_value(v)
+        hc.value.set_value(math.floor(v))
         hc.layout()
         on = ease_out_cubic(seg(t, ODO[0], ODO[0] + 0.25)) if t < ANNOT else ease_out_cubic(seg(t, RESULT, RESULT + 0.2))
         for colm in hc.columns:

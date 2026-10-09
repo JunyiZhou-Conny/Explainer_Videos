@@ -15,11 +15,11 @@ diff chip ("0" (zero) -> "O" (the letter O): the two glyphs look alike in a code
 small agent icon -> that icon becomes the BLUE column in the corner: eight GREY chips of what it
 made, then the commit ribbon (A11, git up to bb3fc1e, UTC, on S02's date axis): one tick per
 commit, PINK for the user's two, a gloss for "commit", the Oct 6 burst, WIP dots, GREY usage-limit
-bands (A12), the two idle stretches after a reset circled, and the user's two PINK nudges with their
+bands (A12), the two idle stretches after a reset (lighter) circled, and the user's two PINK nudges with their
 idle hours -> the ribbon rises; four speed bars on the same time axis (a PINK request dot, a BLUE bar
 to the final cut): the two English videos, then the two Chinese versions (far longer), and under the
-longest one where the time went (drawing the frames: minutes; the rest: translating, review and
-fixes, the subtitle tool, waiting: the stops inside those days light up) -> the cost card (LIVE
+longest one where the time went (drawing the final frames: minutes; the rest: translating, review
+and fixes, the subtitle tool, waiting: the stops inside those days light up) -> the cost card (LIVE
 value, always with LIVE's label, its source caption dated) counts up under the dimmed ribbon; "the
 whole session" circles the ribbon, and the four PINK request pins of S02 light up on "all four
 requests".
@@ -296,8 +296,8 @@ def ribbon(axis_y: float = AXIS_Y, tick_h: float = 0.62) -> Ribbon:
     bands, idle = VGroup(), VGroup()
     top = tick_h + 0.32
 
-    def band(xa, xb):
-        return Rectangle(width=xb - xa, height=top, stroke_width=0).set_fill(TOOL, 0.3) \
+    def band(xa, xb, opacity=0.3):
+        return Rectangle(width=xb - xa, height=top, stroke_width=0).set_fill(TOOL, opacity) \
             .move_to([(xa + xb) / 2, axis_y + top / 2, 0]).set_z_index(-1)
 
     resets = iter(dt.datetime.fromisoformat(r) for r in _resets())
@@ -305,10 +305,10 @@ def ribbon(axis_y: float = AXIS_Y, tick_h: float = 0.62) -> Ribbon:
         x0 = x_of(stop)
         if end is None:
             bands.add(Line([x0, axis_y, 0], [x0, axis_y + top, 0], color=TOOL, stroke_width=3.5).set_z_index(-1))
-        elif by_user:                           # the limit, then the idle hours after its reset (.idle)
-            xr = x_of(next(resets))
-            bands.add(band(x0, xr))
-            q = band(xr, x_of(end))
+        elif by_user:                           # the limit, then the idle hours after its reset (.idle),
+            xr = x_of(next(resets))             # lighter, so the reset shows: in one shade the two read
+            bands.add(band(x0, xr))             # as one long stop (verifier, 2:46)
+            q = band(xr, x_of(end), 0.13)
             bands.add(q)
             idle.add(q)
         else:
@@ -603,15 +603,18 @@ class Team(VoiceScene):
                            "16 h 21 min", "(about 14 min of video)", side=LEFT)
         zh_priv = speed_bar(x_of, up_y, ZH_PRIVACY, up_y - 3.5, "Chinese privacy: Oct 6 01:31 → Oct 8 00:14",
                             "about 2 days", "(about 26 min of video)", side=LEFT)
-        # where the time went, under the longest bar, one line per phrase
-        went = VGroup(label("drawing the frames: under 30 min each", 22, INK),
+        # where the time went, under the longest bar, one line per phrase ("final": draft renders
+        # came before). The lines stay short: the block's left edge must clear the source caption
+        # in the corner, just under its last line (checked below)
+        went = VGroup(label("final frames drawn in under 30 min each", 22, INK),
                       label("the rest: translating, review and fixes,", 22, INK),
-                      label("subtitle tool reworked 4 times, waiting", 22, INK)) \
+                      label("a subtitle tool reworked 4 times, waiting", 22, INK)) \
             .arrange(DOWN, aligned_edge=LEFT, buff=0.08)
         # under the right half of the bar, above the source caption in the corner
         went.next_to(zh_priv.bar, DOWN, buff=0.16).align_to([6.45, 0, 0], RIGHT)
         went_l3 = went[2]
         src3 = source_caption("times (UTC): git, request and render logs · lengths: ffprobe")
+        assert went.get_left()[0] > src3.get_right()[0] + 0.25
         src4 = source_caption("cost: the session's own cost counter, Oct 7 (UTC)")   # the value's date
         card = cost_card()
         card.move_to([0, -1.95, 0])
@@ -634,7 +637,7 @@ class Team(VoiceScene):
                 self.play(GrowFromEdge(sb.bar, LEFT), FadeIn(sb.cap), FadeIn(sb.text, shift=LEFT * 0.15),
                           *([FadeIn(src3)] if sb is privacy else []), run_time=0.8 if sb is not zh_priv else 1.2)
                 self.play(emphasize(sb.hours, run_time=0.6))
-            for k, phrase in enumerate(("Drawing the frames", "The rest went to", "a subtitle tool")):
+            for k, phrase in enumerate(("Drawing the final frames", "The rest went to", "a subtitle tool")):
                 vo.wait_until(phrase)
                 self.play(FadeIn(went[k], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("and waiting")

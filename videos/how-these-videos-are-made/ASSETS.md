@@ -87,6 +87,7 @@ cd $R
 | A42 | S07 | round-1 QA prompt line (English, simulated kid): "… that is the video." | REAL text | (text) |
 | A43 | S04 | false start: builder runs started / killed | DATA (V) | (times) |
 | A44 | S09 | stale renders seen in file dates: the privacy newcomer review ("The renders are older than the source.") and the agent's own date check before `5be60d7` | REAL text | (text) |
+| A45 | S11 | this video's own contact sheet: scene 1 of the 480p draft | REAL image | `meta_s01_sheet.png` |
 
 ---
 
@@ -640,19 +641,19 @@ for line in open(sys.argv[1]):
 print(round(last["totalCostUSD"], 2))
 EOF
 ```
-Snapshot when script v1 was written: 1435.16; when v2 was written (repo at `60258b4`): **1507.47**. Copy the latest value into `video.yaml`
-→ `live.cost_usd` once, right before the final render; the counter keeps rising while this video
-is made in the same session. On screen always with the full label (in `video.yaml`
-`live.cost_label`): "API list-price equivalent for the whole session · all four requests, not the
-cost of one video".
+Snapshot when script v1 was written: 1435.16; when v2 was written (repo at `60258b4`, record of Oct 7
+21:14 UTC): **1507.47**. A fifth request (condensed versions with music) arrived on Oct 8 at 17:00 UTC,
+so later values no longer cover "all four requests" only. The video keeps the Oct 7 value and names
+its date. On screen always with the full label (in `video.yaml` `live.cost_label`): "API list-price
+equivalent for the whole session up to Oct 7 · all four requests, not the cost of one video".
 
 ### Other numbers used on screen (fact sheet, V unless marked)
 - 183 sub-agents in 46 workflow runs (42 completed, 4 killed) before this video; agents by phase:
   privacy + library 45 · tic-tac-toe 42 · Chinese 96.
 - Privacy video: request Oct 4 15:28 → final `5fc0837` 21:29; 24:13.6; parts 14:48.1 + 9:25.6.
   Tic-tac-toe: request Oct 5 21:53 → final `525bf2a` Oct 6 01:00 (3 h 07 min); 12:36.6.
-  Chinese tic-tac-toe: `68d6c23`, 13:38.7. Chinese privacy: 1080p final not rendered (only 480p
-  drafts, older than the QA fixes `a824463`).
+  Chinese tic-tac-toe: `68d6c23` (Oct 6 17:52), 13:38.7. Chinese privacy: final cut `62d3b66`
+  (Oct 8 00:14), 25:40.
 - Lexicon 17 entries; toolkit 3,521 lines at `bb3fc1e`. Scene code per minute of video (V, all
   `scenes/*.py`): tic-tac-toe 5,040 lines at the English final `525bf2a` for 12.6 min, about 400
   (5,292 at `bb3fc1e`, with the Chinese-adaptation branches); privacy 7,532 lines at `5fc0837` for

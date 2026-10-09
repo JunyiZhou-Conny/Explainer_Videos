@@ -35,16 +35,16 @@ passes exactly through the running totals at the wedge boundaries.
 
 Hand-over from S04 (a cut at 41.1, with the flash): S04 ends on the knot alone, centred on screen at
 (0, 0.3); this scene's camera starts centred on (-2.0, 0.0), frame 14.22 wide, so the root lands where
-the knot was.
-Hand-over to S06 (a segue at 62.1). At 62.1 (this scene's END):
-  - camera: CAM(END) = (centre x, centre y, width), see `cam_path` (root on screen at about (-1.0, 0.27),
-    zoom 1.10);
-  - the galaxy: all 255,168 leaves lit (`Splatter` weights below, tone-mapped with headroom), turned
-    clockwise about the root by ROT(END) (0.35°/s since 53.1, about 6.5°), dust on rings 0-8, edges of
-    rings 1-2; the pen on the root, pulsing on the beats;
-  - the plate at the left edge (screen space, `ProgramPlate`), dimmed to PLATE_DIM;
-  - HUD: §3 top left; top right "对局计数 · GAMES COUNTED 255,168", "调用次数 · CALLS 549,946",
-    "撤销次数 · UNDOS 549,945".
+the knot was, and the first frames redraw s04_by_hand.knot_screen(END) before it snaps.
+Hand-over to S06 (a segue at 62.1): HANDOVER_S06 below holds this scene's last state, in short:
+  - camera: centre and width CAM(END) (the root on screen at (-0.42, 0.26), zoom 1.045);
+  - the galaxy: all 255,168 leaves lit, drawn with common.galaxy_tree / galaxy_point / Splatter(0.5) /
+    FrameImage / FastCamera and GALAXY_LOOK, leaf weights tree.l_weight * zoom^2 (dust: dust_w *
+    GALAXY_DUST_W[ring] * zoom^2), turned clockwise about the root by ROT(END) = 7.2° (0.35°/s since
+    53.1); the ring 1-2 edges at 38 % INK_DIM; the light pen on the root (screen space, common.Pen);
+  - the plate: common.ProgramPlate at PLATE_TL, shown at PLATE_DIM (0.55), no line highlighted;
+  - HUD: common.section_hud("§3 · 探索每一局 · PLAY EVERY GAME"); three common.HudLine readouts at
+    HUD_LINES_Y: "对局计数 · GAMES COUNTED 255,168", "调用次数 · CALLS 549,946", "撤销次数 · UNDOS 549,945".
 """
 
 from __future__ import annotations
@@ -334,8 +334,13 @@ def cam_path(t: float):
         e = ease_in_out_sine(seg(t, bb(53), T59))                    # a slow drift
         return CAM_FULL[0] + 0.05 * e, CAM_FULL[1] - 0.02 * e, CAM_FULL[2] * (1 + 0.008 * e)
     held = (CAM_FULL[0] + 0.05, CAM_FULL[1] - 0.02, CAM_FULL[2] * 1.008)
-    e = ease_in_out_sine(seg(t, T59, END))
-    return _mix_cam(held, CAM_END, e)
+    ez = ease_in_out_sine(seg(t, T59, END))                          # a slow push in ...
+    ex = ease_in_out_sine(seg(t, DOCK[1], END))                      # ... sideways once the number has docked
+    w = held[2] * (CAM_END[2] / held[2]) ** ez
+    z = W / w
+    sx = lerp((ROOT[0] - held[0]) / (W / held[2]), ROOT_SCREEN_END[0], ex)
+    sy = lerp((ROOT[1] - held[1]) / (W / held[2]), ROOT_SCREEN_END[1], ez)
+    return ROOT[0] - sx / z, ROOT[1] - sy / z, w
 
 
 CAM = Cam(cam_path)
@@ -405,8 +410,13 @@ DARK = bb(58, 4.5)                                # 58.4+: half a beat of darkne
 LANDS = [T59 + 0.04 + 0.09 * i for i in range(6)]
 DOCK = (bb(61), bb(61, 3))                        # 61.1-61.3: the number docks into the HUD
 END_PULSES = [bb(60, b) for b in (1, 2, 3, 4)] + [bb(61, b) for b in (1, 2, 3, 4)]
-HERO_C = np.array([4.75, 0.38])                   # 255,168 on the right third (screen)
+HERO_C = np.array([4.6, 0.38])                    # 255,168 on the right third (screen)
 HERO_SIZE = 74
+
+
+# where S06 (the segue at 62.1) picks everything up: see the module docstring
+HANDOVER_S06 = {"cam": cam_path(END - 1e-6), "rot": rot(END), "rot_rate": ROT_RATE, "plate_dim": PLATE_DIM,
+                "plate_tl": PLATE_TL, "games": N_GAMES, "calls": len(ALL_STARTS), "undos": len(ALL_STARTS) - 1}
 
 
 def octave_up(note: str) -> str:

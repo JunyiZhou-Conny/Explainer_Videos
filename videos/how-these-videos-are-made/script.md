@@ -205,16 +205,16 @@ Live values (refresh right before the final render; they are the only facts that
 | value | lives in | snapshot when this script was written | how to refresh |
 |---|---|---|---|
 | session cost counter | `video.yaml` → `live.cost_usd` (read by `scenes/common.py`; never spoken) | 1507.47 (USD, last `cost-state` record, at `60258b4`) | ASSETS.md A40 |
-| cost label | `video.yaml` → `live.cost_label`, rendered as is (split into two lines at " · ") | "… all four requests …" | if a fifth request arrives before the render, ask the user; the label and S03's last SAY say "all four requests" |
+| cost label | `video.yaml` → `live.cost_label`, rendered as is (split into two lines at " · ") | "… for the whole session up to Oct 7 · all four requests …" (a fifth request arrived Oct 8 17:00 UTC; the value stays the Oct 7 snapshot and the label and S03's SAY name the date) | keep the date in the label, S03's SAY ("had cost by October 7th") and the src4 caption in step |
 | commit timeline | `assets/commits.csv`, frozen at `bb3fc1e` (98 commits) | 103 commits at `d4043cd` (101 by the agent, 2 by the user, 32 WIP); narration says "over a hundred, all but two by the agent" (118 at the scene review) | ASSETS.md A11; above about 110 commits, say "over a hundred" |
-| subtitle tool | S10 card 3 (S10 say line 4 speaks only of round 1) | round 1: 19 of 21 fixed (own report), 11 regressions; round 2 WIP (`7c6fcc0`); round 3 committed as `3aace23` (44 tests; its commit note: "Both adversarial editors judge round 3 a clear net improvement"); round 4 under way | `git log --oneline -- explainer/subtitles.py`; reword card 3's round-3/round-4 line to the latest reviewed round |
-| Chinese privacy final cut | S10 card 3 ("not rendered when this script was written") | only 480p drafts in `output/zh/` (Oct 6 15:08) | `ls -la videos/dwork2006-calibrating-noise/output/zh/` |
+| subtitle tool | S10 card 3 and say line 4 (round 1, then "three more rounds") | round 1: 19 of 21 fixed (own report), 11 regressions; round 2 WIP (`7c6fcc0`); round 3 committed as `3aace23` (44 tests; its commit note: "Both adversarial editors judge round 3 a clear net improvement"); round 4 under way | `git log --oneline -- explainer/subtitles.py`; reword card 3's round-3/round-4 line to the latest reviewed round |
+| Chinese privacy final cut | S03 timing bars (request → final cut, about 2 days) | final cut `62d3b66` (Oct 8 00:14) | `ls -la videos/dwork2006-calibrating-noise/output/zh/` |
 | licensed (Azure) clips | S10 card 2 ("0 when this script was written") | no `.cache/tts/azure/`, no AZURE env vars | `ls .cache/tts` |
-| recorded human listening | S08 SAY 3, S10 SAY 1 | none on record | the transcript; ask the user |
+| recorded human listening | S08 SAY 3, S10 SAY 1 and card 1 | no line-by-line check by ear on record; one human reaction on record (the user, Oct 8: add music, make a shorter cut) | the transcript; ask the user |
 
 Editing `video.yaml` marks every scene stale, so update it once, right before the final render. On
-screen the cost always carries the label "API list-price equivalent for the whole session · all
-four requests, not the cost of one video".
+screen the cost always carries the label "API list-price equivalent for the whole session up to
+Oct 7 · all four requests, not the cost of one video".
 
 ---
 
@@ -323,7 +323,7 @@ the first two PINK ("the user"), the rest BLUE; a GREY gloss "commit = a saved v
 project"; the Oct 6 burst labelled "50 commits that day"; 28 ticks carry a small GREY dot, "WIP
 checkpoint"; GREY bands mark the usage-limit stops (A12), with the counter "usage-limit stops: at
 least 6"; the two stops that sat idle after their reset (Oct 6 22:50 → Oct 7 02:12 and Oct 7 07:10 →
-20:09) are circled on "Twice", and their restarts carry a small PINK tick, "the user: 'Please continue'"
+20:09), drawn lighter after the reset, are circled on "Twice", and their restarts carry a small PINK tick, "the user: 'Please continue'"
 (Oct 7 02:12) and "the user: 'Try again'" (Oct 7 20:09), each with a GREY line "idle over 3 h after reset"
 / "idle 13 h after reset". Footer: "98 shown, to Oct 7 · over 100 in all · 2 by the user".
 [DATA A11, A12]
@@ -334,14 +334,14 @@ hours (24 min of video, plus the paper library and the toolkit)" · "tic-tac-toe
 final cut 01:00 · about 3 hours (12 min 37 s of video)"; then the Chinese versions, both from request 3,
 labelled to the left: "Chinese tic-tac-toe: Oct 6 01:31 → 17:52 · 16 h 21 min (about 14 min of video)" ·
 "Chinese privacy: Oct 6 01:31 → Oct 8 00:14 · about 2 days (about 26 min of video)" (final cuts
-68d6c23 and 62d3b66). Under the longest bar, line by line: "drawing the frames: under 30 min each" ·
-"the rest: translating, review and fixes," · "subtitle tool reworked 4 times, waiting"; on "waiting" the usage-limit bands inside those two days light up (docs/PLAYBOOK.md §1:
+68d6c23 and 62d3b66). Under the longest bar, line by line: "final frames drawn in under 30 min each" ·
+"the rest: translating, review and fixes," · "a subtitle tool reworked 4 times, waiting"; on "waiting" the usage-limit bands inside those two days light up (docs/PLAYBOOK.md §1:
 rendering is not the bottleneck). Then, centered, a GREY counter card
 counts up to the live value from `video.yaml` (`live.cost_usd`), formatted "$1,507.47", with the
 label `live.cost_label` rendered as is in two lines: "API list-price equivalent for the whole
 session" / "all four requests, not the cost of one video"; source caption "cost: the session's own cost
 counter, Oct 7 (UTC)" (the value's date). [DATA git + ffprobe + render logs; live value]
-SAY: From request to final cut, the privacy video took about six hours, and tic-tac-toe just over three. The Chinese versions took far longer: 16 hours, and about two days. Drawing the frames took under half an hour each. The rest went to translating, rounds of review and fixes, a subtitle tool reworked four times, and waiting. And the cost on screen is what the whole session would cost at the public pay-per-use price: all four requests, not one video.
+SAY: From request to final cut, the privacy video took about six hours, and tic-tac-toe just over three. The Chinese versions took far longer: 16 hours, and about two days. Drawing the final frames took under half an hour each. The rest went to translating, rounds of review and fixes, a subtitle tool reworked four times, and waiting. And the cost on screen is what the whole session had cost by October 7th, at the public pay-per-use price: all four requests, not one video.
 
 ---
 
@@ -587,9 +587,9 @@ runs out". Card 1 slides in, dashed YELLOW outline: "only people can do this". A
 Sub-lines: first, with a solid PINK bullet, "the user's feedback (Oct 8, summarized): add
 background music · a shorter, denser version too" (third person, not a quote: the user's message
 of Oct 8, 17:00 UTC); then, dashed YELLOW, "narration: no line-by-line check by ear yet, English or
-Chinese (the English: a speech recognizer)" · "every test viewer on record: an AI persona" ·
+Chinese (this video: a speech recognizer)" · "every test viewer on record: an AI persona" ·
 "learning not measured: no quiz, no data". [DIAGRAM; DATA fact sheet 6, transcript Oct 8]
-SAY: So what's next? The biggest gaps sit exactly where measuring runs out. First, and most important: what only people can do. The only human feedback on record is the user's: the long videos lack background music, and they'd also like a shorter, denser version. There's no record yet of anyone checking the narration line by line, by ear. Every test viewer on record was simulated, and there's no measure yet of what anyone learned.
+SAY: So what's next? The biggest gaps sit exactly where measuring runs out. First, and most important: what only people can do. The only human feedback on record is the user's: add background music to the long videos, and make a shorter, denser version too. There's no record yet of anyone checking the narration line by line, by ear. Every test viewer on record was simulated, and there's no measure yet of what anyone learned.
 
 SHOW: Card 1 opens into two columns. PINK "decided by the user": "the topics" · "the audiences" ·
 "Chinese, code-switched" · "this video". BLUE "decided by the agent · worth a second look", each
@@ -597,7 +597,7 @@ item in a dashed YELLOW outline: "privacy video: 24 min, not the 12–15 its own
 suggest → also cut into 2 parts" · "Chinese voice: native Mandarin, female, like the English ·
 two English-first voices scored as high or higher" · "which English terms to keep: argued by
 simulated Chinese readers" · "small edits to the user's program". Each row comes in as it is named;
-the four are held together about 2 s more. [DATA fact sheet 6, A28]
+the four are held together about 3 s more. [DATA fact sheet 6, A28]
 SAY: People should also revisit the agent's own calls: the length of the privacy video, the choice of Chinese voice, which English terms to keep, and the small edits to the user's program.
 
 SHOW: Card 2, "engineering", with three sub-cards, each tagged "idea · not built yet" in a dashed

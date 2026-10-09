@@ -63,7 +63,7 @@ CHECKS = ["lint", "self-checks", "frame fingerprints", "speech recognizer"]   # 
 # the third person so it never reads as a quote; then the open items (fact sheet 6)
 FEEDBACK = "the user's feedback (Oct 8, summarized):\nadd background music · a shorter, denser version too"
 OPEN_ITEMS = [
-    "narration: no line-by-line check by ear yet,\nEnglish or Chinese (the English: a speech recognizer)",
+    "narration: no line-by-line check by ear yet,\nEnglish or Chinese (this video: a speech recognizer)",
     "every test viewer on record: an AI persona",
     "learning not measured: no quiz, no data",
 ]
@@ -157,7 +157,7 @@ def _check():
                                    "denser version too")
     assert "The only human feedback on record is the user's" in SAY[0]
     assert [_one_line(s) for s in OPEN_ITEMS] == [
-        "narration: no line-by-line check by ear yet, English or Chinese (the English: a speech recognizer)",
+        "narration: no line-by-line check by ear yet, English or Chinese (this video: a speech recognizer)",
         "every test viewer on record: an AI persona", "learning not measured: no quiz, no data"]
     assert _one_line(AGENT_CALLS[0]) == ("privacy video: 24 min, not the 12–15 its own instructions suggest → "
                                          "also cut into 2 parts")
@@ -415,10 +415,18 @@ class WhatNext(VoiceScene):
             vo.wait_until("The only human feedback")
             self.play(FadeIn(items[0], shift=RIGHT * 0.25), run_time=0.6)
             self.play(Indicate(ears_on, color=S.WHITE, scale_factor=1.06), run_time=0.7)
-            vo.wait_until("the long videos lack")
-            self.play(Indicate(items[0].text, color=S.WHITE, scale_factor=1.04), run_time=0.8)
+            # each half of the feedback as it is spoken (whole line in a translated build)
+            music = glyphs_like(items[0].text, "add background music", 24, line_spacing=0.9)
+            denser = glyphs_like(items[0].text, "a shorter, denser version too", 24, line_spacing=0.9)
+            vo.wait_until("add background music")
+            self.play(Indicate(music if len(music) else items[0].text, color=S.WHITE, scale_factor=1.06), run_time=0.8)
+            if len(denser):
+                vo.wait_until("make a shorter")
+                self.play(Indicate(denser, color=S.WHITE, scale_factor=1.06), run_time=0.8)
             vo.wait_until("There's no record yet")
             self.play(FadeIn(items[1], shift=RIGHT * 0.25), run_time=0.6)
+            vo.wait_until("by ear")                           # the person's headphones: checking by ear
+            self.play(Indicate(hp, color=S.WHITE, scale_factor=1.15), run_time=0.7)
             vo.wait_until("Every test viewer")
             self.play(FadeIn(items[2], shift=RIGHT * 0.25), Indicate(subs, color=S.WHITE, scale_factor=1.1),
                       run_time=0.7)

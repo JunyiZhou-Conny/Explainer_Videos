@@ -20,7 +20,8 @@ function of the scene time (State.update), as in s01_open; the notes come from t
 
 Hand-over from S02 (a cut): the 24 dim points at s02_fill.ORDER_SCREEN, drawn the same way (order_dots).
 Hand-over to S04 (a cut, 33.1): camera home (0, 0, full width); game A's final board XXXOO.... with its
-glowing top-row win line, centred at HANDOVER["board"] with cell HANDOVER["cell"] (no move numbers);
+glowing top-row win line, centred at HANDOVER["board"] with cell HANDOVER["cell"] (no move numbers), drawn
+as S01 draws board A (mark_ink, S01's win line), every stroke x sqrt(0.6 / 1.4) as the board shrank;
 three hairline panel frames HANDOVER["panels"] (centre x, centre y, width, height) above it; the HUD
 section label common.section_hud("§2 · 对局会提前结束 · GAMES STOP EARLY") stays.
 """
@@ -174,8 +175,10 @@ def cam_path(t: float):
     """(centre x, centre y, frame width): home, eased back while the deck is open."""
     a = ease_in_out_cubic(seg(t, *CAM_BACK)) * (1 - ease_in_out_cubic(seg(t, *CAM_HOME)))
     push = ease_in_out_sine(seg(t, 0.0, FAN)) * (1 - ease_in_out_cubic(seg(t, *CAM_HOME)))   # a slow push-in
-    drift = 0.02 * math.sin(2 * math.pi * (t - FAN) / (4 * BAR)) * a
-    return drift, 0.40 * a + 0.05 * push, W * (1 + 0.13 * a) * (1 - 0.018 * push)
+    drift = 0.12 * math.sin(2 * math.pi * seg(t, CAM_BACK[1], CAM_HOME[0])) * a      # the deck drifts by
+    late = math.sin(math.pi * seg(t, CAM_HOME[1], GLIDE[0]))                          # bars 29-31, home again
+    return drift + 0.10 * late, 0.40 * a + 0.05 * push + 0.04 * late, \
+        W * (1 + 0.13 * a) * (1 - 0.018 * push) * (1 - 0.015 * late)
 
 
 CAM = Cam(cam_path)
@@ -243,11 +246,13 @@ class BoardRig:
         for n in self.nums + list(self.ghost_n.values()):
             n.hide()
 
-    def draw_grid(self, f: float = 1.0, vis: float = 1.0, width: float = 1.0):
+    def draw_grid(self, f: float = 1.0, vis: float = 1.0, width: float | None = None):
         P, Q = [], []
         for p, q in grid_lines(self.cell):
             P.append(self.A @ p + self.b)
             Q.append(self.A @ (p + (q - p) * f) + self.b)
+        if width is None:                                                # hairlines thin as the board shrinks
+            width = max(0.4, (self.s * self.cell / CELL) ** 0.5)
         self.grid.set_segments(P, Q, width=width, opacity=vis)
 
     def draw_marks(self, mark_f, glow, num_v, vis: float = 1.0, win_f: float = 0.0, win_glow: float = 1.0):
@@ -555,7 +560,7 @@ class GhostGames(BeatScene):
         th = math.radians(-FAN_DEG + 2 * FAN_DEG * i / 23)
         t0 = FAN + 0.6 * i / 24
         e = ease_out_cubic(seg(t, t0, t0 + 0.38))
-        sway = math.radians(1.6) * math.sin(2 * math.pi * (t - PULSE5) / (2 * BAR) + 0.27 * i) * seg(t, PULSE5, PULSE5 + 1.2)
+        sway = math.radians(2.0) * math.sin(2 * math.pi * (t - FAN) / (2 * BAR) + 0.27 * i) * seg(t, FAN + 0.6, FAN + 1.8)
         fold = 1 - ease_in_cubic(seg(t, *FOLD))
         return (th * e + sway) * fold
 
@@ -665,7 +670,7 @@ class GhostGames(BeatScene):
             fan = self.fans[m]
             if n_rays and t >= t0 and fade > 1e-3:
                 spread = {24: 36, 6: 22, 2: 10, 1: 0}[n_rays]
-                breathe = 1 + 0.06 * math.sin(2 * math.pi * (t - RISE[-1]) / BAR + i) * (t >= RISE[-1] + BEAT)
+                breathe = 1 + 0.12 * math.sin(2 * math.pi * (t - RISE[-1]) / BAR + i) * seg(t, RISE[-1] + 0.3, RISE[-1] + BEAT)
                 L = 0.78 * ease_out_cubic(seg(t, t0 + 0.05, t0 + 0.55))
                 P, Q = [], []
                 for r in range(n_rays):
@@ -709,7 +714,7 @@ class GhostGames(BeatScene):
             self.fan_tag.hide()
         v = ease_out_cubic(seg(t, SLOT_LABEL, SLOT_LABEL + 0.4)) * (1 - seg(t, GLIDE[0], GLIDE[0] + 0.6))
         if v > 1e-3:
-            self.slot_tag.show(tl_slot(5, t) + np.array([0, -0.95 + 0.05 * (1 - v)]), vis=v)
+            self.slot_tag.show(tl_slot(5, t) + np.array([0, -0.84 + 0.05 * (1 - v)]), vis=v)
         else:
             self.slot_tag.hide()
         # 32.4: three hairline panel frames draw above the centre board (S04's panels), clockwise from top left

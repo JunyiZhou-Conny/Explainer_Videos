@@ -895,7 +895,7 @@ PLATE_LINES = [(23, "def explore(player):"), (24, "  if winner(board) is not Non
                (26, '  if "." not in board:'), (27, "    return 1"), (None, "      ⋯"),
                (31, "      board[square] = player"), (None, "      ⋯"),
                (33, "      total += explore(next_player)"), (34, '      board[square] = "."')]
-PLATE_TL = np.array([-6.9, 2.98])                  # S05: the plate's top-left corner on screen
+PLATE_TL = np.array([-6.75, 2.98])                 # S05: the plate's top-left corner on screen
 PLATE_SIZE = 8.8
 PLATE_PITCH = 0.19
 

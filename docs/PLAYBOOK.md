@@ -36,6 +36,10 @@ container restarts. Some of them killed workflows silently.
   byte-identical and keep their cached results.
 - **Keep a safety-net check-in** (`send_later`, about hourly) while long runs are in flight. A killed
   workflow sends no notification.
+- **Schedule the restart for the reset time.** Twice, the work sat idle for hours after a limit had
+  reset: 3 h 22 min (Oct 6–7) and 12 h 59 min (Oct 7). It resumed only when the user typed "Please
+  continue" or "Try again", which made these the largest single losses of time on record. A limit
+  message names its reset time, so set a check-in for a few minutes after it.
 
 ### 2.2 Workflow scripts that were wrong at launch
 The first scene builds were launched three times in a row, each killed within minutes.

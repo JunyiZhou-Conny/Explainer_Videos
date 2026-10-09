@@ -8,9 +8,11 @@ voice: {backend: kokoro, voice: af_heart, speed: 0.95}
 # every scene stale: update once, right before the final render (ASSETS.md A40, A11).
 live:
   cost_usd: 1507.47            # last `cost-state` record of the session transcript when script v2 was written (repo at 60258b4)
-  cost_label: "API list-price equivalent for the whole session · all four requests, not the cost of one video"
+  cost_label: "API list-price equivalent for the whole session up to Oct 7 · all four requests, not the cost of one video"
   # cost_label is the user's binding wording; s03 renders it as is, split into two lines at " · ".
-  # If a fifth request arrives before the final render, ask the user before changing "all four requests".
+  # A fifth request (condensed versions with music) arrived on Oct 8 at 17:00 UTC. The value stays the Oct 7
+  # snapshot of the four requests this video covers, and the label names that date (default stated to the
+  # user on Oct 8; the alternative was the current value with "five requests").
   snapshot: "2026-10-07"
   commits_cutoff: bb3fc1e      # assets/commits.csv is frozen at this commit (98 commits); 103 at d4043cd (101 agent, 2 user)
 scenes:
