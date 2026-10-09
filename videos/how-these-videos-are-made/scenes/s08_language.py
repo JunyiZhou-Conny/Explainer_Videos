@@ -5,8 +5,9 @@ underlined; a bilingual subtitle band (one real sentence pair of A27, drawn as a
 "subtitles in both languages") -> the key rule: the band's two lines become the third row of the
 real aligned entry (A27, tic-tac-toe i18n/zh/narration/g1.yaml lines 21-30): the English say line in
 its three sentences on the left, the three Chinese sentences on the right, joined one to one by
-GREY lines; "Flipped or turned" glows ORANGE, the ORANGE cue pin jumps to 翻转 and the file's anchor
-line appears; counter "417 sentence pairs · both videos" -> the two columns fold into two outputs,
+GREY lines (each cue keeps its sentence); counter "417 sentence pairs · both videos"; on "Some cues are
+also pinned", "Flipped or turned" glows ORANGE and the ORANGE cue pin and the file's anchor line
+appear, on "to a Chinese word" the pin jumps to 翻转 (held a moment) -> the two columns fold into two outputs,
 "English video" and "Chinese video", fed by one GREY "scene code" card; the real rule (A36,
 docs/LANGUAGES.md) "The English video is never touched"; the English video splits into "English
 render, before" and "after the Chinese edits"; a frame from each becomes a fingerprint (drawn: grey
@@ -17,12 +18,15 @@ bake-off (A28): the BLUE agent with S01's struck headphones asks a GREY speech r
 ORANGE "Mandarin voice 1 · zh-CN-XiaoxiaoNeural" flows in and comes out as noise -> "Nice",
 epsilon -> "Excellent", Claude -> "Clark" (RED); "another voice" (zh-CN-XiaoyiNeural) flows in ->
 GREEN "17 of 17 terms · 10 of 10 numbers" with the fuzzy-match footnote; the scoreboard (Brian, Ava,
-Xiaoyi, Xiaoxiao), BLUE "chosen", the label becomes "the chosen voice"; dashed YELLOW "chosen by
-speech recognition · no recorded check by ear yet" -> the Chinese tic-tac-toe video at 11:43: the
+Xiaoyi "(native Mandarin, female)", Xiaoxiao), BLUE "chosen", the label becomes "the chosen voice";
+on "though two English-first voices" the Brian and Ava rows light up, then the first line of a dashed
+YELLOW footer, "screened by speech recognition · picked as a native Mandarin female voice", and on
+"There's no record" its second, "no recorded check by ear yet" -> the Chinese tic-tac-toe video at 11:43: the
 real picture (A04, 68d6c23) over a redrawn subtitle band with the OLD cue text (A30, as both QA
 reviewers quoted it), tag "reconstruction · ..."; the English line ("No. ...") stays WHITE; the
-Chinese line is glossed "It's not what a computer can do, not just counting games", RED "meaning
-flipped" stamp; two faded-BLUE reviewers raise RED flags on the cue -> ponder (10 s): the frame
+frame's question "X 总能赢吗? ✗" gets its English original, "“X always wins?”", as a GREY gloss when
+the narration names it; the Chinese line is glossed "It's not what a computer can do, not just
+counting games", RED "meaning flipped" stamp; two faded-BLUE reviewers raise RED flags on the cue -> ponder (10 s): the frame
 dims to 40 % except the two cue lines, the card sits above the band, and each line is circled as
 the narration names it.
 
@@ -50,13 +54,14 @@ from explainer.components import ponder_card
 from explainer.scene import VoiceScene
 from explainer.voice import split_sentences
 
-from common import (AGENT, AUDIO, BUG, CHINESE_REQUEST, EXCERPTS, INK, MEASURED, NARRATION, PANEL, QUOTES,
+from common import (AGENT, AUDIO, BUG, CHINESE_REQUEST, EXCERPTS, INK, MEASURED, NARRATION, PANEL, PROJECT, QUOTES,
                     SUB_AGENT_TEXT, TOOL, USER, anchor_pin, asset, box, bug_tag, cant_hear_or_play, caption, dim,
                     emphasize, exhibit, fade_out_all, file_card, gloss, label, measured_badge, mono, open_outline,
                     ponder_drain, pulse, quote_card, recon_tag, role_icon, source_caption,
                     subtitle_band, video_player, waveform, zh)
 
 SAY = NARRATION["S08"]
+PROJECT_TTT = PROJECT.parent / "tictactoe-255168"
 QUESTION = "The English is right.\nThe Chinese says the opposite.\nIs this a translation mistake?"
 
 # ------------------------------------------------------------------ the real material (assets/)
@@ -71,6 +76,16 @@ FRAMES = 721                                                      # A37: all 721
 HEARD = A28["heard"]                                              # noise -> Nice, epsilon -> Excellent, ...
 SCORES = [s.rsplit(" ", 1) for s in A28["scoreboard"].split(" · ")]
 CHOSEN = "Xiaoyi (native Mandarin)"
+# the row as shown: why it was picked (a native Mandarin, female voice, to match the English af_heart:
+# FACTSHEET corrections, A28) -- the score alone did not pick it (director's review of the draft, 8:18)
+CHOSEN_SHOWN = "Xiaoyi (native Mandarin, female)"
+ENGLISH_FIRST = ["Brian (male, English-first)", "Ava (female, English-first)"]
+VERDICT = ["screened by speech recognition · picked as a native Mandarin female voice",
+           "no recorded check by ear yet"]
+# the question in the A04 picture ("X 总能赢吗? ✗", px of the 1920 x 1080 png) and its English original
+# (tic-tac-toe s09_bigger.py line 409): glossed, since the narration now names the question
+QUESTION_PX = (1180, 50, 1576, 114)
+QUESTION_EN = "X always wins?"
 CUE_OLD, CUE_EN = A30["before"], A30["english"]
 GLOSS = A30["before_gloss"]
 LANG_SRC = "docs/LANGUAGES.md, lines 8–9"
@@ -100,11 +115,23 @@ def _check():
     assert A28["fuzzy_note"] == "a fuzzy match: 'Claude Shannon' came back as 'Cloud Shannon'"
     assert SCORES == [["Brian (male, English-first)", "0.997"], ["Ava (female, English-first)", "0.991–0.995"],
                       ["Xiaoyi (native Mandarin)", "0.991"], ["Xiaoxiao", "0.933"]]
+    assert CHOSEN_SHOWN.startswith(CHOSEN[:-1]) and all(n in [a for a, _ in SCORES] for n in ENGLISH_FIRST)
+    # the two English-first voices scored as high or higher than the chosen one (what SAY[2] says)
+    sc = {n: float(v.split("–")[-1]) for n, v in SCORES}
+    assert all(sc[n] >= sc[CHOSEN] for n in ENGLISH_FIRST)
+    tt = (PROJECT_TTT / "scenes" / "s09_bigger.py").read_text().splitlines()
+    assert f'S.text("{QUESTION_EN}"' in tt[408]                        # the English video's label, line 409
     assert A30["before"] == "不是电脑能做的，不只是统计对局" and A30["english"] == "No. A computer can do more than count."
     assert A30["after"] == "不是。" + A30["before"][2:]          # the fix only puts back the full stop
     assert A30["recon_tag"] == "re-created for this video · the old cue text, as both AI reviewers quoted it"
     assert A30["before_gloss"] == "It's not what a computer can do, not just counting games"
     asset("ttt_zh_1143.png")
+    from PIL import Image
+    im = np.asarray(Image.open(asset("ttt_zh_1143.png")).convert("RGB")).astype(int)
+    x0, y0, x1, y1 = QUESTION_PX
+    ys, xs = np.nonzero(im[y0:y1, x0:x1].max(axis=2) > 120)          # the question lies inside the box ...
+    assert xs.min() > 2 and ys.min() > 2 and xs.max() < x1 - x0 - 2 and ys.max() < y1 - y0 - 2
+    assert (im[y1:226, 1150:1800].max(axis=2) <= 60).all()           # ... and the gloss's spot under it is empty
 
 
 _check()
@@ -120,9 +147,10 @@ RULE_Y = 3.15
 FP_TOP, FP_DY, FP_ROWS = 0.0, 0.56, 4           # fingerprint rows (top row centre, step, rows shown)
 FP_X, FP_W, FP_H = 2.45, 2.6, 0.4
 BADGE_Y, FOOT_Y = -2.3, -3.0
-ROW1_Y, ROW2_Y = 0.65, -1.25         # beat 3: the two voices
+ROW1_Y, ROW2_Y = 0.65, -1.1          # beat 3: the two voices (row 2 raised: room for the two-line verdict)
 REC_X = -0.8
 FRAME_CROP = (120, 20, 1800, 920)    # the A04 picture (1920 x 1080; its band is redrawn below it)
+assert FRAME_CROP[2] == 1800         # the right edge _check() looks up to
 FRAME_W, FRAME_X0, FRAME_TOP = 7.6, -6.35, 2.75
 FRAME_BG = "#0D0E13"                 # the frame's own background colour (sampled)
 
@@ -382,13 +410,21 @@ class SecondLanguage(VoiceScene):
             self.play(FadeIn(counter, shift=UP * 0.15), run_time=0.3)
             self.play(ChangeDecimalToValue(count, PAIRS["total"]), run_time=0.9, rate_func=smooth)
 
-            vo.wait_until("so every animation cue")
-            self.play(anchor_en.animate.set_color(AUDIO), FadeIn(pin, shift=DOWN * 0.2), run_time=0.6)
-            vo.wait_until("still has a sentence")
-            self.play(pin.animate(path_arc=-PI / 2.2).move_to(pin_zh_at), FadeIn(anchor_chip, shift=UP * 0.15),
-                      run_time=0.8)
+            vo.wait_until("so every animation cue")         # sentence to sentence: each cue keeps its sentence
+            self.play(LaggedStart(*[Indicate(VGroup(links[k], nums[k]), color=S.WHITE, scale_factor=1.15)
+                                    for k in range(3)], lag_ratio=0.3), run_time=1.2)
+            # the word-level cues, now narrated (the anchor line was on screen with no word about it,
+            # and S05 had just said the animation waits for words: fresh-viewer review, 7:39)
+            # (the anchor line comes in with the pin, and the jump is held a moment after the voice: at the
+            # block's very end it was on screen about half a second: verifier of the fix round)
+            vo.wait_until("Some cues are also pinned")
+            self.play(anchor_en.animate.set_color(AUDIO), FadeIn(pin, shift=DOWN * 0.2),
+                      FadeIn(anchor_chip, shift=UP * 0.15), run_time=0.7)
+            vo.wait_until("to a Chinese word")
+            self.play(pin.animate(path_arc=-PI / 2.2).move_to(pin_zh_at), run_time=0.8)
             self.play(anchor_zh.animate.set_color(AUDIO), Flash(anchor_zh, color=AUDIO, line_length=0.15,
                                                                 flash_radius=0.4), run_time=0.5)
+        self.wait(1.2)
         count.clear_updaters()
 
         # ---------------------------------------------------------- beat 2: the English video is never touched
@@ -544,7 +580,7 @@ class SecondLanguage(VoiceScene):
 
         board_rows = VGroup()
         for name, score in SCORES:
-            n_t = label(name, 20, INK if name == CHOSEN else S.GREY)
+            n_t = label(CHOSEN_SHOWN if name == CHOSEN else name, 20, INK if name == CHOSEN else S.GREY)
             s_t = label(score, 20, INK if name == CHOSEN else S.GREY)
             board_rows.add(VGroup(n_t, s_t))
         name_w = max(r[0].width for r in board_rows)
@@ -557,13 +593,19 @@ class SecondLanguage(VoiceScene):
         chosen_row = board_rows[[n for n, _ in SCORES].index(CHOSEN)]
         chosen_box = SurroundingRectangle(chosen_row, color=AGENT, buff=0.06, stroke_width=2.5, corner_radius=0.06)
         chosen_l = label("chosen", 22, AGENT).next_to(chosen_box, LEFT, buff=0.15)
-        verdict_t = label("chosen by speech recognition · no recorded check by ear yet", 24, INK)
-        verdict = VGroup(open_outline(verdict_t, buff=0.16), verdict_t).move_to([0.4, -2.85, 0])
+        eng_rows = VGroup(*[board_rows[[n for n, _ in SCORES].index(n)] for n in ENGLISH_FIRST])
+        # what picked the voice, said plainly: the recognizer screened, the choice was a native Mandarin
+        # female voice (the old footer, "chosen by speech recognition", contradicted the scoreboard
+        # above it: director's review of the draft, 8:18)
+        verdict_t = VGroup(*[label(t, 24, INK) for t in VERDICT]).arrange(DOWN, buff=0.1)
+        verdict = VGroup(open_outline(verdict_t, buff=0.14), verdict_t).move_to([0.4, -2.58, 0])
+        verdict_1 = open_outline(verdict_t[0], buff=0.14)    # the first line alone, until the second comes
+        assert abs(verdict_1.width - verdict[0].width) < 1e-6
         bake_src = source_caption("real results · Chinese voice test (workflow run record, commit 875166f) · "
                                   "waveforms drawn")
         assert out1.get_top()[1] < board.get_bottom()[1] - 0.12, (out1.get_top(), board.get_bottom())
-        assert fuzzy.get_bottom()[1] > verdict.get_top()[1] + 0.12
-        assert verdict.get_bottom()[1] > bake_src.get_top()[1] + 0.05
+        assert fuzzy.get_bottom()[1] > verdict.get_top()[1] + 0.15, (fuzzy.get_bottom(), verdict.get_top())
+        assert verdict.get_bottom()[1] > bake_src.get_top()[1] + 0.12, (verdict.get_bottom(), bake_src.get_top())
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(collect(self, *self.mobjects)), run_time=0.6)
@@ -591,7 +633,7 @@ class SecondLanguage(VoiceScene):
             self.play(Indicate(heard[1].heard, color=S.WHITE, scale_factor=1.12), run_time=0.6)
             self.play(FadeIn(heard[2], shift=RIGHT * 0.15), run_time=0.5)
 
-            vo.wait_until("Another voice")
+            vo.wait_until("Another Mandarin voice")
             flow = w2.copy()
             self.play(flow.animate(rate_func=rate_functions.ease_in_sine).stretch_to_fit_width(0.05)
                       .move_to(into[1]).set_opacity(0.2), w2.animate.set_opacity(0.3), run_time=0.8)
@@ -604,8 +646,16 @@ class SecondLanguage(VoiceScene):
             self.play(Create(chosen_box), FadeIn(chosen_l, shift=RIGHT * 0.1),
                       ReplacementTransform(v2_name, v2_chosen), w2.animate.set_fill(opacity=0.85),   # the chosen voice
                       run_time=0.7)
+            vo.wait_until("though two English-first")       # scored as high or higher, and were not picked
+            self.play(*[r.animate.set_color(INK) for r in eng_rows], run_time=0.3)
+            self.play(LaggedStart(*[Indicate(r, color=S.WHITE, scale_factor=1.06) for r in eng_rows], lag_ratio=0.3),
+                      run_time=0.9)
+            # why it was picked comes right after the scores (both footer lines came in on the last
+            # sentence and were fully on screen about 2 s: verifier of the fix round)
+            self.play(*[r.animate.set_color(S.GREY) for r in eng_rows], Create(verdict_1), FadeIn(verdict_t[0]),
+                      run_time=0.8)
             vo.wait_until("There's no record")
-            self.play(Create(verdict[0]), FadeIn(verdict_t), run_time=0.8)
+            self.play(ReplacementTransform(verdict_1, verdict[0]), FadeIn(verdict_t[1], shift=UP * 0.1), run_time=0.5)
             self.play(Circumscribe(ears, color=S.WHITE, buff=0.1, run_time=1.0))
 
         # ---------------------------------------------------------- beat 4: one subtitle flipped a meaning
@@ -620,6 +670,10 @@ class SecondLanguage(VoiceScene):
         # the tag (about 10.5 wide) is wider than the frame (7.6), so it starts at the frame's left edge
         rtag = recon_tag(A30["recon_tag"]).next_to(frame, UP, buff=0.12).align_to(frame, LEFT)
         pic_src = source_caption("picture: real frame of the Chinese tic-tac-toe video at 11:43 · subtitle band redrawn")
+        q_box = pic.px_box(*QUESTION_PX)
+        q_gloss = label("“" + QUESTION_EN + "”", 24, TOOL)
+        q_gloss.next_to(q_box, DOWN, buff=0.08).align_to(q_box, LEFT)
+        assert q_gloss.get_right()[0] < frame.get_right()[0] - 0.08 and q_gloss.get_bottom()[1] > pic.px(0, 226)[1]
         no_m = glyphs_of(cue.en, CUE_EN, "No.")
         rest_m = glyphs_of(cue.en, CUE_EN, "A computer can do more than count.")
         assert rtag.get_top()[1] < 3.55 and frame.get_bottom()[1] > pic_src.get_top()[1] + 0.3
@@ -661,6 +715,11 @@ class SecondLanguage(VoiceScene):
                       FadeIn(pic_src), run_time=0.7)
             vo.wait_until("The English narration")
             self.play(Circumscribe(cue.en, color=S.WHITE, buff=0.08, run_time=1.1))
+            # the question it answers, glossed in English (it was in Chinese only, so the flipped
+            # meaning and the ponder could not be followed without reading Chinese: viewer, 8:21)
+            vo.wait_until("asks whether X")
+            self.play(Circumscribe(q_box, color=S.WHITE, buff=0.08, run_time=1.0),
+                      FadeIn(q_gloss, shift=DOWN * 0.08), run_time=1.0)
             vo.wait_until("with a short no")
             self.play(Indicate(no_m, color=S.WHITE, scale_factor=1.3), run_time=0.7)
             vo.wait_until("then says a computer")

@@ -8,8 +8,8 @@ sentences, 不是。 and 电脑能做的，不只是统计对局。, GREEN ✓) 
 of the merge: the short cue 不是。 is merged into the next one and its 。 falls out, RED ✗; the
 merged text is the old cue as both QA reviewers quoted it), and the real fix commit subject (A35,
 cd67aa4) -> that commit card becomes the next one (A35, 5be60d7) at the top; under it a diagram of
-three scenes on a time line: the scene code is edited after its movie was made, so the movie is
-"older than source" (RED), and a plain build stitches the old movies into the final video anyway
+three scenes on a time line: the scene code is edited after its clip (its movie) was made, so the
+clip is "older than source" (RED), and the toolkit stitches the old clips into the final video anyway
 -> the file dates: a faded-BLUE reviewer's note from the privacy video's newcomer review (A44) and
 the BLUE agent's own date pair (A44: Explore.mp4 · Oct 5, 23:24 vs s06_explore.py · committed Oct 6,
 00:05), into which the diagram's second row turns -> the commit card's text becomes the commit's
@@ -17,9 +17,11 @@ next sentence (the fix, real), the RED tag becomes a GREEN date check, and the r
 Chinese scene render (A31) with a GREEN tag -> the Chinese privacy video's QA in three lanes (A32):
 reviewers (4 groups × director + simulated grad student) with 103 findings, coloured by kind as in
 S07 (1 wrong, 21 confusing, 81 polish) -> 4 fixers with 75 changes -> 4 skeptical verifiers with
-12 corrections; one change leaves the fixers' lane as a card ("claimed: ×1.12, within the limit"),
-reaches the verifiers' lane and bounces back with the RED measured value ("measured: ×1.153, over
-the 15 % limit").
+12 corrections; one change leaves the fixers' lane as a card headed with the limit (rule D3: the
+Chinese narration at most 15 % longer than the English, or the animation stalls), gets the fixer's
+claim ("fixer: 12 % longer, within the limit"), reaches the verifiers' GREEN gate and bounces back:
+the gate's ✓ becomes a RED ✗ and the card gets the measured value ("verifier: 15.3 % longer, over
+the limit"; the run record's ×1.12 and ×1.153).
 
 Squares are one per finding / change / correction (DATA: counts from the run record); which
 findings led to which changes is not on record, so none is mapped to another.
@@ -60,6 +62,11 @@ CODE_NAME, CODE_DATE = A44["agent_pair"]["source"].split(" · ")
 STAMP = asset_text(A31["file"])                     # {"speed": 1.0, "tts": "edge", "voice": "zh-CN-XiaoyiNeural"}
 FIND, FIXES, CORR = A32["findings"], A32["fixer_changes"]["total"], A32["verifier_corrections"]["total"]
 CLAIMED, MEASURED_NOTE = A32["bounce"].split(" · ")
+# The card says it in percent, as the narration does (the run record's ratios: x1.12 claimed, x1.153
+# measured = 19.896 s of Chinese against 17.259 s of English; the limit, rule D3: at most x1.15).
+LIMIT_HEAD = "the limit: Chinese at most 15 % longer than English"
+CLAIM_SHOWN = "fixer: 12 % longer, within the limit"
+MEAS_SHOWN = "verifier: 15.3 % longer, over the limit"
 
 FRAME_CAP = "real frame · Chinese tic-tac-toe final cut · 11:43"
 ZOOM_CAP = FRAME_CAP + " · its subtitle band, zoomed in"
@@ -96,6 +103,9 @@ def _check():
     assert CLAIMED == "claimed: ×1.12, within the limit"
     assert MEASURED_NOTE == "measured: ×1.153, over the 15 % limit"
     assert "x1.12" in A32["bounce_src"] and "x1.153" in A32["bounce_src"]
+    assert "19.896 s against 17.259 s" in A32["bounce_src"] and round(19.896 / 17.259, 3) == 1.153
+    assert "12 %" in CLAIM_SHOWN and "15.3 %" in MEAS_SHOWN and round((1.153 - 1) * 100, 1) == 15.3
+    assert "15 percent longer than the English" in SAY[2] and "fifteen point three percent" in SAY[2]
     asset(FRAME_PNG)
 
 
@@ -342,7 +352,7 @@ class Machinery(VoiceScene):
 
         # the diagram: three scenes on a time line
         legend = VGroup(file_icon(0.42), label("scene code", 22, TOOL), movie_icon(0.36),
-                        label("scene movie", 22, TOOL)).arrange(RIGHT, buff=0.16)
+                        label("scene clip", 22, TOOL)).arrange(RIGHT, buff=0.16)
         legend[2].shift(RIGHT * 0.3)
         legend[3].shift(RIGHT * 0.3)
         legend.move_to([0, LEGEND_Y, 0]).align_to([-6.2, 0, 0], LEFT)
@@ -361,7 +371,7 @@ class Machinery(VoiceScene):
                                           stroke_width=2).set_fill(PANEL, 1) for _ in range(3)])
         slots.arrange(RIGHT, buff=0.08).move_to([SLOTS_X, ROWS_Y[1], 0])
         slots_l = label("final video", 24, INK).next_to(slots, UP, buff=0.18)
-        plain = caption("plain build", 22).next_to(slots, DOWN, buff=0.18)
+        plain = caption("put together by the toolkit", 22).next_to(slots, DOWN, buff=0.18)
         segs = VGroup()
         for k, s in enumerate(slots):
             seg = VGroup(s.copy().set_stroke(BUG if k else TOOL, 3), movie_icon(0.4).move_to(s))
@@ -369,6 +379,7 @@ class Machinery(VoiceScene):
                 seg[0].set_fill(BUG, 0.14)
             segs.add(seg)
         assert slots.get_right()[0] < 6.45 and slots.get_left()[0] > CODE_X1 + 0.6
+        assert plain.get_right()[0] < 6.5 and plain.get_left()[0] > CODE_X1 + 0.4, (plain.get_left(), plain.get_right())
 
         # the file dates (A44): a reviewer's note and the agent's own date check
         reviewer = role_icon("sub", 0.95).move_to([ICON_X, REV_Y, 0])
@@ -402,11 +413,11 @@ class Machinery(VoiceScene):
             self.play(FadeOut(gone), FadeOut(tool.name, shift=UP * 0.2),
                       ReplacementTransform(fix1.box, msg1.box), FadeTransform(fix1.text, msg1.text),
                       FadeTransform(fix1_cap, msg_cap), run_time=1.0)
-            vo.wait_until("a plain build")
+            vo.wait_until("when putting the video")
             self.play(FadeIn(legend), FadeIn(names), GrowArrow(axis), FadeIn(early), FadeIn(late),
                       LaggedStart(*[FadeIn(c, shift=UP * 0.15) for c in codes], lag_ratio=0.15), run_time=0.8)
             self.play(LaggedStart(*[FadeIn(m, shift=RIGHT * 0.3) for m in movies], lag_ratio=0.15), run_time=0.7)
-            vo.wait_until("reuse old")
+            vo.wait_until("the toolkit reused")
             self.play(FadeIn(slots), FadeIn(slots_l), FadeIn(plain), run_time=0.5)
             self.play(LaggedStart(*[Indicate(m, color=S.WHITE, scale_factor=1.15) for m in movies], lag_ratio=0.2),
                       run_time=0.8)
@@ -442,7 +453,7 @@ class Machinery(VoiceScene):
                       ReplacementTransform(stale[0], older), FadeIn(agent, shift=RIGHT * 0.3), run_time=0.9)
             self.play(FadeIn(VGroup(movie_row.name, movie_row.date, code_row.name, code_row.date), shift=LEFT * 0.15),
                       FadeIn(pair_cap), run_time=0.6)
-            vo.wait_until("the movies were older")
+            vo.wait_until("the clips were older")
             # one box per date: a single box round both would sweep across the RED tag
             self.play(Indicate(note.text, color=S.WHITE, scale_factor=1.06),
                       *[Circumscribe(d, color=S.WHITE, buff=0.07) for d in (movie_row.date, code_row.date)],
@@ -496,27 +507,34 @@ class Machinery(VoiceScene):
         assert crews[0].get_left()[0] > -6.5 and crews[0].get_right()[0] < flow[0].get_end()[0] + 2.0
         assert g_find.get_right()[0] < g_fix.get_left()[0] - 0.4 and g_fix.get_right()[0] < g_cor.get_left()[0] - 0.4
 
-        # the change card that bounces back
-        head = caption("one passage · Chinese narration time ÷ English", 20)
-        claim = label(CLAIMED, 24, INK)
-        meas = label(MEASURED_NOTE, 24, BUG)
+        # the change card that bounces back: first its limit, then the fixer's claim, then the measurement
+        head = caption(LIMIT_HEAD, 20)
+        claim = label(CLAIM_SHOWN, 24, INK)
+        meas = label(MEAS_SHOWN, 24, BUG)
         body = VGroup(head, claim, meas).arrange(DOWN, buff=0.12, aligned_edge=LEFT)
         big_b = box(body.width + 0.5, body.height + 0.34, TOOL, fill=PANEL, fill_opacity=1, radius=0.12)
         body.move_to(big_b)
-        VGroup(big_b, body).move_to([CARD_X, CARD_Y, 0])
+        card_left = max(brk.get_right()[0] + 0.3, qa_src.get_right()[0] + 0.2)   # room to travel to the gate
+        VGroup(big_b, body).move_to([card_left + big_b.width / 2, CARD_Y, 0])
         two = VGroup(head, claim)
         card_b = box(big_b.width, two.height + 0.34, TOOL, fill=PANEL, fill_opacity=1, radius=0.12)
         card_b.align_to(big_b, UP).match_x(big_b)
-        card = VGroup(card_b, head, claim)                  # the card before it is checked (two lines)
+        one_b = box(big_b.width, head.height + 0.34, TOOL, fill=PANEL, fill_opacity=1, radius=0.12)
+        one_b.align_to(big_b, UP).match_x(big_b)
+        head_at, head_left = head.get_center(), head.get_left()
+        head.move_to(one_b).align_to(head_left, LEFT)        # centred in the one-line card, same left edge
+        head_shift = head_at - head.get_center()
         src_sq = g_fix[FIXES - 1]                           # one change, top right of the fixers' squares
         wall = Line(UP * 0.48, DOWN * 0.48, color=MEASURED, stroke_width=6)
         wall.move_to([WALL_X, card_b.get_y() - 0.08, 0])
-        gate = VGroup(wall, check_mark(0.34).next_to(wall, UP, buff=0.08))
+        tick = check_mark(0.34).next_to(wall, UP, buff=0.08)
+        gate = VGroup(wall, tick)
+        no = cross_mark(0.34).move_to(tick)                  # the verifier's verdict on this change
         dx = wall.get_x() - card_b.get_right()[0] - 0.05
         assert big_b.get_bottom()[1] > -3.55 and big_b.get_top()[1] < c_fix.get_bottom()[1] - 0.25
         assert big_b.get_left()[0] > brk.get_right()[0] + 0.2
         assert qa_src.get_right()[0] < big_b.get_left()[0] - 0.15 or qa_src.get_top()[1] < big_b.get_bottom()[1] - 0.05
-        assert card_b.get_right()[0] + dx < 6.5 and dx > 0.4
+        assert card_b.get_right()[0] + dx < 6.5 and dx > 0.4, (card_b.get_right(), dx)
         assert gate.get_top()[1] < c_cor.get_bottom()[1] - 0.15, (gate.get_top(), c_cor.get_bottom())
 
         with self.voiceover(SAY[2]) as vo:
@@ -549,22 +567,31 @@ class Machinery(VoiceScene):
             self.play(LaggedStart(*[FadeIn(s, scale=0.5) for s in g_cor], lag_ratio=0.08), run_time=0.8)
             self.play(FadeIn(c_cor, shift=UP * 0.1), run_time=0.4)
 
-            vo.wait_until("One fixer said")
-            # the change leaves the fixers' squares (between the count labels), then opens into its card
+            vo.wait_until("A Chinese passage")
+            # the change leaves the fixers' squares (between the count labels) and opens into its card,
+            # headed with the limit; the verifiers' gate comes with it
             traveler = src_sq.copy()
             self.play(Indicate(src_sq, color=S.WHITE, scale_factor=1.6), run_time=0.5)
             self.add(traveler)
-            self.play(traveler.animate.move_to(card_b.get_center()), run_time=0.45, rate_func=rate_functions.ease_in_out_sine)
-            self.play(ReplacementTransform(traveler, card_b), FadeIn(VGroup(head, claim), scale=0.6), run_time=0.5)
-            self.remove(card_b, head, claim)
-            self.add(card)
-            vo.wait_until("now fit its")
-            self.play(FadeIn(gate), card.animate.shift(RIGHT * dx), run_time=0.9, rate_func=rate_functions.ease_in_quad)
-            vo.wait_until("It didn't")
+            self.play(traveler.animate.move_to(one_b.get_center()), run_time=0.45, rate_func=rate_functions.ease_in_out_sine)
+            self.play(ReplacementTransform(traveler, one_b), FadeIn(head, scale=0.6), run_time=0.5)
+            vo.wait_until("at most 15 percent")
+            self.play(FadeIn(gate, shift=LEFT * 0.15), Indicate(head, color=S.WHITE, scale_factor=1.05), run_time=0.8)
+            vo.wait_until("One fixer said")
+            self.play(ReplacementTransform(one_b, card_b), head.animate.shift(head_shift),
+                      FadeIn(claim, shift=UP * 0.1), run_time=0.6)
+            card = collect(self, card_b, head, claim)           # the card before it is checked (two lines)
+            vo.wait_until("now fit that limit")
+            self.play(card.animate.shift(RIGHT * dx), run_time=0.9, rate_func=rate_functions.ease_in_quad)
+            vo.wait_until("A verifier timed")
+            # it bounces back, and the gate's tick turns into the verifier's RED cross
             self.play(card.animate(rate_func=rate_functions.ease_out_back).shift(LEFT * dx),
                       Flash(wall.get_center(), color=MEASURED, line_length=0.2, flash_radius=0.4),
+                      ReplacementTransform(tick, no),
                       Indicate(crews[2].people, color=S.WHITE, scale_factor=1.08), run_time=0.6)
+            vo.wait_until("fifteen point three")
             self.play(ReplacementTransform(card_b, big_b), FadeIn(meas, shift=UP * 0.1), run_time=0.5)
-        self.play(Circumscribe(meas, color=S.WHITE, buff=0.06, time_width=0.5), run_time=1.0)
-        self.wait(0.6)
+        self.play(Circumscribe(meas, color=S.WHITE, buff=0.06, time_width=0.5), Indicate(no, color=BUG, scale_factor=1.2),
+                  run_time=1.0)
+        self.wait(1.0)
         fade_out_all(self)

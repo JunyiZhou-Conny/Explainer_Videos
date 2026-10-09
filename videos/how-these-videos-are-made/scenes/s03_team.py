@@ -15,10 +15,14 @@ diff chip ("0" (zero) -> "O" (the letter O): the two glyphs look alike in a code
 small agent icon -> that icon becomes the BLUE column in the corner: eight GREY chips of what it
 made, then the commit ribbon (A11, git up to bb3fc1e, UTC, on S02's date axis): one tick per
 commit, PINK for the user's two, a gloss for "commit", the Oct 6 burst, WIP dots, GREY usage-limit
-bands (A12) and the user's two PINK nudges -> the ribbon rises; two speed bars on the same time
-axis (a PINK request dot, a BLUE bar to the final cut) -> the cost card (LIVE value, always with
-LIVE's label) counts up under the dimmed ribbon; "the whole session" circles the ribbon, and the
-four PINK request pins of S02 light up on "all four requests".
+bands (A12), the two idle stretches after a reset circled, and the user's two PINK nudges with their
+idle hours -> the ribbon rises; four speed bars on the same time axis (a PINK request dot, a BLUE bar
+to the final cut): the two English videos, then the two Chinese versions (far longer), and under the
+longest one where the time went (drawing the frames: minutes; the rest: translating, review and
+fixes, the subtitle tool, waiting: the stops inside those days light up) -> the cost card (LIVE
+value, always with LIVE's label, its source caption dated) counts up under the dimmed ribbon; "the
+whole session" circles the ribbon, and the four PINK request pins of S02 light up on "all four
+requests".
 
 Every number on screen is checked in _check() (runs on import): the commit counts, the stops, the
 two durations, the request times, the user's program really printing 255168, and the agent's
@@ -77,6 +81,12 @@ def _stops():
     return out
 
 
+def _resets():
+    """A12: the reset times of the stops the user restarted (oldest first)."""
+    with asset("usage_limits.csv").open() as f:
+        return [r["reset"] for r in csv.DictReader(f) if r["resumed"]]
+
+
 COMMITS = _commits()
 STOPS = _stops()
 # the two restarts that came from the user's own messages (A12, checked against the transcript):
@@ -85,6 +95,16 @@ NUDGES = [(dt.datetime(2026, 10, 7, 2, 12), "Please continue …"), (dt.datetime
 # request -> final cut (git + the request log; fact sheet 2a)
 PRIVACY = (dt.datetime(2026, 10, 4, 15, 28), dt.datetime(2026, 10, 4, 21, 29))
 TICTACTOE = (dt.datetime(2026, 10, 5, 21, 53), dt.datetime(2026, 10, 6, 1, 0))
+# ... and the Chinese versions (request 3, Oct 6 01:31): 68d6c23 "Tic-tac-toe: Chinese final cut"
+# (Oct 6 17:52:54) and 62d3b66 "Privacy video: Chinese final cut" (Oct 8 00:14:24); docs/PLAYBOOK.md §1.
+# Where the time went (director review of the draft, 2:52): drawing the frames took under half an
+# hour each (render logs: the 13 Chinese privacy scenes 05:59-06:26 on Oct 7; tic-tac-toe about 10
+# min, PLAYBOOK §1); the rest was translating, review -> fix rounds, the subtitle tool's four v3
+# rounds (git log explainer/subtitles.py, 37f5287 .. 9dcd7f8) and waiting on usage limits.
+ZH_TTT = (dt.datetime(2026, 10, 6, 1, 31), dt.datetime(2026, 10, 6, 17, 52))
+ZH_PRIVACY = (dt.datetime(2026, 10, 6, 1, 31), dt.datetime(2026, 10, 8, 0, 14))
+# idle after a reset, until the user's message (A12): Oct 6 22:50 -> Oct 7 02:12 and Oct 7 07:10 -> 20:09
+IDLE_LABELS = ["idle over 3 h after reset", "idle 13 h after reset"]
 REQUESTS = [(r["n"], dt.datetime.fromisoformat(f"{r['date']} {r['utc']}")) for r in QUOTES["requests"]]
 T0, T1 = "2026-10-04 00:00", "2026-10-08 00:00"         # the axis of S02 (UTC)
 
@@ -97,15 +117,17 @@ TOOLS = [("Manim", "animation"),
          ("LaTeX", "math")]
 JOBS = ["build one scene", "review", "translate"]
 MADE = ["toolkit", "scripts", "scenes", "translations", "voices", "subtitles", "reviews", "renders"]
-CHECKLIST = ["chose the topics and the audiences", "uploaded 36 PDFs", "gave the tic-tac-toe counts",
-             "supplied the program"]
+CHECKLIST = ["chose the topics and the audiences", "uploaded 36 PDFs", "gave the counts (255,168 games …)",
+             "supplied the program"]           # which counts: the request lists the games ending at each move,
+                                               # and their total, 255,168 (viewer review of the draft, 2:24)
 # The footer follows the narration's wording (script.md live values: "about a hundred" switches to
 # "over a hundred" above about 110 commits), so the two can't drift apart. The ribbon itself stays
 # frozen at bb3fc1e (98 commits), as its source caption says.
+# The ribbon shows 98 of them, so the footer says both (director review of the draft, 2:52).
 if "about a hundred" in SAY[2]:
-    FOOTER = "about 100 commits · 2 by the user"
+    FOOTER = "98 shown, to Oct 7 · about 100 in all · 2 by the user"
 elif "over a hundred" in SAY[2]:
-    FOOTER = "over 100 commits · 2 by the user"
+    FOOTER = "98 shown, to Oct 7 · over 100 in all · 2 by the user"
 else:
     raise AssertionError("S03 say line 3 changed its commit wording: update FOOTER to match")
 
@@ -123,6 +145,13 @@ def _check():
     # "about 6 hours" (6 h 01 min) and "about 3 hours" / "just over three" (3 h 07 min)
     assert round((PRIVACY[1] - PRIVACY[0]).total_seconds() / 3600) == 6
     assert 3 < (TICTACTOE[1] - TICTACTOE[0]).total_seconds() / 3600 < 3.25
+    # "16 hours" (16 h 21 min) and "about two days" (46 h 43 min), both from request 3
+    assert ZH_TTT[1] - ZH_TTT[0] == dt.timedelta(hours=16, minutes=21)
+    assert 1.75 < (ZH_PRIVACY[1] - ZH_PRIVACY[0]).total_seconds() / 86400 < 2.0
+    assert REQUESTS[2][1] == ZH_TTT[0] == ZH_PRIVACY[0]
+    # the two idle stretches (reset -> the user's message): over 3 h, and 13 h to the nearest hour
+    idle = [(e - dt.datetime.fromisoformat(r)) for (r, e) in zip(_resets(), [t for t, _ in NUDGES])]
+    assert 3 < idle[0].total_seconds() / 3600 < 3.5 and round(idle[1].total_seconds() / 3600) == 13
     assert [n for n, _ in REQUESTS] == [1, 2, 3, 4]
     assert REQUESTS[0][1] == PRIVACY[0] and REQUESTS[1][1] == TICTACTOE[0]
     # A09/A24: the user's program, exactly as pasted, already printed the answer
@@ -152,7 +181,7 @@ ROW_Y = (3.05, 2.4)
 CORNER = np.array([-5.8, 3.05, 0])   # the role in focus (beats 2 and 3): a smaller icon in the corner
 CORNER_H = 0.95
 AXIS_Y = -0.3                    # the ribbon's axis in S03's third beat; it rises in the fourth
-RISE = 1.6
+RISE = 1.9                       # room under it for four speed bars and the where-the-time-went lines
 
 
 # ------------------------------------------------------------------ helpers (this scene only)
@@ -264,27 +293,38 @@ def ribbon(axis_y: float = AXIS_Y, tick_h: float = 0.62) -> Ribbon:
             user_ticks.add(ln)
         if is_wip:
             wip.add(Dot([x, axis_y + tick_h + 0.17, 0], radius=0.034, color=TOOL))
-    bands = VGroup()
+    bands, idle = VGroup(), VGroup()
     top = tick_h + 0.32
-    for stop, end, _ in STOPS:
+
+    def band(xa, xb):
+        return Rectangle(width=xb - xa, height=top, stroke_width=0).set_fill(TOOL, 0.3) \
+            .move_to([(xa + xb) / 2, axis_y + top / 2, 0]).set_z_index(-1)
+
+    resets = iter(dt.datetime.fromisoformat(r) for r in _resets())
+    for stop, end, by_user in STOPS:
         x0 = x_of(stop)
         if end is None:
-            m = Line([x0, axis_y, 0], [x0, axis_y + top, 0], color=TOOL, stroke_width=3.5)
+            bands.add(Line([x0, axis_y, 0], [x0, axis_y + top, 0], color=TOOL, stroke_width=3.5).set_z_index(-1))
+        elif by_user:                           # the limit, then the idle hours after its reset (.idle)
+            xr = x_of(next(resets))
+            bands.add(band(x0, xr))
+            q = band(xr, x_of(end))
+            bands.add(q)
+            idle.add(q)
         else:
-            x1 = x_of(end)
-            m = Rectangle(width=x1 - x0, height=top, stroke_width=0).set_fill(TOOL, 0.3)
-            m.move_to([(x0 + x1) / 2, axis_y + top / 2, 0])
-        bands.add(m.set_z_index(-1))
+            bands.add(band(x0, x_of(end)))
     g = Ribbon(axis.line, days, bands, ticks, wip)
     g.axis, g.days, g.ticks, g.user_ticks, g.wip, g.bands, g.x_of = axis, days, ticks, user_ticks, wip, bands, x_of
+    g.idle = idle
     g.tick_top = axis_y + 0.06 + tick_h
     return g
 
 
-def speed_bar(x_of, axis_y: float, span, y: float, head: str, hours: str, rest: str) -> VGroup:
+def speed_bar(x_of, axis_y: float, span, y: float, head: str, hours: str, rest: str,
+              side=RIGHT) -> VGroup:
     """Request -> final cut on the ribbon's own time axis: a PINK dot (the user's request), a BLUE
-    bar (the agent's work), a WHITE cap (final cut), dashed GREY drops from the axis, and the label.
-    .dot .bar .cap .drops .text"""
+    bar (the agent's work), a WHITE cap (final cut), dashed GREY drops from the axis, and the label
+    (right of the cap, or with side=LEFT left of the dot, right-aligned). .dot .bar .cap .drops .text"""
     x0, x1 = x_of(span[0]), x_of(span[1])
     bar = Rectangle(width=x1 - x0, height=0.26, stroke_width=0).set_fill(AGENT, 0.9).move_to([(x0 + x1) / 2, y, 0])
     dot = Dot([x0, y, 0], radius=0.075, color=USER).set_z_index(2)   # over the bar that grows from it
@@ -292,8 +332,11 @@ def speed_bar(x_of, axis_y: float, span, y: float, head: str, hours: str, rest: 
     drops = VGroup(*[DashedLine([x, axis_y - 0.02, 0], [x, y + 0.13, 0], dash_length=0.06, stroke_width=1.6,
                                 color=TOOL) for x in (x0, x1)])
     line2 = VGroup(label(hours, 22, INK), caption(rest, 20)).arrange(RIGHT, buff=0.12, aligned_edge=DOWN)
-    text = VGroup(label(head, 22, INK), line2).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-    text.next_to(cap, RIGHT, buff=0.22)
+    text = VGroup(label(head, 22, INK), line2).arrange(DOWN, aligned_edge=LEFT if side is RIGHT else RIGHT, buff=0.1)
+    if side is RIGHT:
+        text.next_to(cap, RIGHT, buff=0.22)
+    else:
+        text.next_to(dot, LEFT, buff=0.22)
     mask = BackgroundRectangle(text, color=S.BG, fill_opacity=1, buff=0.08).set_z_index(1)
     text.set_z_index(2)
     text.add_to_back(mask)                  # later drop lines pass behind the label
@@ -498,24 +541,26 @@ class Team(VoiceScene):
         VGroup(wip_key, stop_key).arrange(DOWN, aligned_edge=LEFT, buff=0.16) \
             .move_to([0, AXIS_Y - 1.15, 0]).align_to([-6.4, 0, 0], LEFT)
         nudges = VGroup()
-        for t, words in NUDGES:
+        for (t, words), idle_l in zip(NUDGES, IDLE_LABELS):
             x = x_of(t)
             d = Dot([x, AXIS_Y - 0.5, 0], radius=0.06, color=USER)
             ln = Line([x, AXIS_Y, 0], d.get_center(), color=USER, stroke_width=3.5)
-            txt = label(f"the user:\n“{words}”", 22, USER, line_spacing=0.85).next_to(d, DOWN, buff=0.1)
+            txt = VGroup(label(f"the user:\n“{words}”", 22, USER, line_spacing=0.85), label(idle_l, 22, TOOL)) \
+                .arrange(DOWN, buff=0.1).next_to(d, DOWN, buff=0.1)
             nudges.add(VGroup(ln, d, txt))
-        # the two quotes sit 18 h apart on the axis: keep a clear gap so they never read as one line
+        # the right one stays inside the frame; the two sit 18 h apart on the axis: keep a clear gap so
+        # they never read as one line
+        over = nudges[1][2].get_right()[0] - 6.45
+        if over > 0:
+            nudges[1][2].shift(LEFT * over)
         gap = nudges[1][2].get_left()[0] - nudges[0][2].get_right()[0]
-        if gap < 0.5:
-            nudges[0][2].shift(LEFT * (0.5 - gap))
+        if gap < 0.45:
+            nudges[0][2].shift(LEFT * (0.45 - gap))
         footer = label(FOOTER, 26, INK, t2c={"2 by the user": USER})
         footer.move_to([0, AXIS_Y - 2.05, 0])
         src2 = source_caption("git log up to commit bb3fc1e · usage-limit stops from the session transcript · UTC")
-        # the first commit after each stop: work picked up where it left off
-        resumed = VGroup(*[next(ln for (t, _, _), ln in zip(COMMITS, rib.ticks) if t >= (end or stop))
-                           for stop, end, _ in STOPS])
 
-        with self.voiceover(SAY[2]) as vo:
+        with self.voiceover(SAY[2], pad=1.0) as vo:      # a moment to read the two nudges
             gone = gather(self, corner_user, corner_user_l, grid, panel, bar, term_head,
                           term.lines[1], diff.box, diff.zero, diff.names, diff.first[2], diff.oh, diff.rest, cleaned)
             self.play(FadeOut(gone, shift=LEFT * 0.4), ReplacementTransform(helper, head), run_time=0.9)
@@ -528,6 +573,7 @@ class Team(VoiceScene):
             vo.wait_until("and made all but two")
             self.play(LaggedStart(*[Create(t) for t in rib.ticks], lag_ratio=0.04), run_time=2.0)
             self.play(Circumscribe(rib.user_ticks, color=S.WHITE, buff=0.12, run_time=0.8))
+            self.play(FadeIn(footer, shift=UP * 0.1), run_time=0.5)      # with the ticks it counts
             vo.wait_until("the project's saved versions")
             self.play(FadeIn(commit_gloss, shift=DOWN * 0.1), GrowArrow(gloss_arrow), run_time=0.7)
             self.play(GrowFromCenter(burst), FadeIn(burst_l, shift=DOWN * 0.1),
@@ -536,24 +582,44 @@ class Team(VoiceScene):
             vo.wait_until("In under a week")
             self.play(LaggedStart(*[FadeIn(b) for b in rib.bands], lag_ratio=0.3), run_time=1.8)
             self.play(FadeIn(stop_key, shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("and each time picked up")
-            self.play(LaggedStart(*[Indicate(m, color=S.WHITE, scale_factor=1.6) for m in resumed], lag_ratio=0.15),
+            # twice it sat idle after the reset until the user's message (it was "each time picked up
+            # where it left off", which sounded automatic: director and viewer reviews of the draft, 2:46)
+            vo.wait_until("Twice, it then sat idle")
+            self.play(LaggedStart(*[Circumscribe(q, color=S.WHITE, buff=0.05, run_time=1.0) for q in rib.idle],
+                                  lag_ratio=0.3),
                       LaggedStart(*[FadeIn(n, shift=UP * 0.15) for n in nudges], lag_ratio=0.4), run_time=1.4)
-            self.play(FadeIn(footer, shift=UP * 0.1), run_time=0.6)
+            vo.wait_until("until the user nudged")
+            self.play(*[Indicate(VGroup(n[1], n[2][0]), color=S.WHITE, scale_factor=1.08) for n in nudges],
+                      run_time=0.9)
 
-        # ---------------------------------------------------------- how long, and what it cost
+        # ---------------------------------------------------------- how long, where the time went, what it cost
         up_y = AXIS_Y + RISE
-        privacy = speed_bar(x_of, up_y, PRIVACY, up_y - 1.25, "privacy video: request 15:28 → final cut 21:29",
+        privacy = speed_bar(x_of, up_y, PRIVACY, up_y - 1.1, "privacy video: request 15:28 → final cut 21:29",
                             "about 6 hours", "(24 min of video, plus the paper library and the toolkit)")
-        ttt = speed_bar(x_of, up_y, TICTACTOE, up_y - 2.35, "tic-tac-toe: request 21:53 → final cut 01:00",
+        ttt = speed_bar(x_of, up_y, TICTACTOE, up_y - 1.9, "tic-tac-toe: request 21:53 → final cut 01:00",
                         "about 3 hours", "(12 min 37 s of video)")
-        src3 = source_caption("times: git and the request log (UTC) · lengths: ffprobe")
-        src4 = source_caption("cost: the session's own cost counter")
+        # the Chinese versions, both from request 3: far longer (director review of the draft, 2:52)
+        zh_ttt = speed_bar(x_of, up_y, ZH_TTT, up_y - 2.7, "Chinese tic-tac-toe: Oct 6 01:31 → 17:52",
+                           "16 h 21 min", "(about 14 min of video)", side=LEFT)
+        zh_priv = speed_bar(x_of, up_y, ZH_PRIVACY, up_y - 3.5, "Chinese privacy: Oct 6 01:31 → Oct 8 00:14",
+                            "about 2 days", "(about 26 min of video)", side=LEFT)
+        # where the time went, under the longest bar, one line per phrase
+        went = VGroup(label("drawing the frames: under 30 min each", 22, INK),
+                      label("the rest: translating, review and fixes,", 22, INK),
+                      label("subtitle tool reworked 4 times, waiting", 22, INK)) \
+            .arrange(DOWN, aligned_edge=LEFT, buff=0.08)
+        # under the right half of the bar, above the source caption in the corner
+        went.next_to(zh_priv.bar, DOWN, buff=0.16).align_to([6.45, 0, 0], RIGHT)
+        went_l3 = went[2]
+        src3 = source_caption("times (UTC): git, request and render logs · lengths: ffprobe")
+        src4 = source_caption("cost: the session's own cost counter, Oct 7 (UTC)")   # the value's date
         card = cost_card()
         card.move_to([0, -1.95, 0])
         card.number.set_value(0)
         pins = VGroup(*[request_pin(x_of, up_y, n, t) for n, t in REQUESTS])
         pins_l = label("requests", 22, USER).next_to(pins[0][2], LEFT, buff=0.3)
+        # the stops that fall in the Chinese versions' two days (lit on "and waiting")
+        zh_bands = VGroup(*[b for b in rib.bands if b.get_x() > x_of(ZH_PRIVACY[0])])
 
         with self.voiceover(SAY[3]) as vo:
             done = gather(self, head, head_l, made, commit_gloss, gloss_arrow, burst, burst_l, wip_key, stop_key,
@@ -561,18 +627,26 @@ class Team(VoiceScene):
             rib = gather(self, rib)
             # the labels leave first, so the rising ribbon never runs through them
             self.play(LaggedStart(FadeOut(done), rib.animate.shift(UP * RISE), lag_ratio=0.45), run_time=1.3)
-            for sb, phrase in ((privacy, "the privacy video took"), (ttt, "and tic-tac-toe just")):
+            for sb, phrase in ((privacy, "the privacy video took"), (ttt, "and tic-tac-toe just"),
+                               (zh_ttt, "The Chinese versions took"), (zh_priv, "and about two days")):
                 vo.wait_until(phrase)
                 self.play(Create(sb.drops), FadeIn(sb.dot, scale=0.5), run_time=0.4)
                 self.play(GrowFromEdge(sb.bar, LEFT), FadeIn(sb.cap), FadeIn(sb.text, shift=LEFT * 0.15),
-                          *([FadeIn(src3)] if sb is privacy else []), run_time=0.8)
+                          *([FadeIn(src3)] if sb is privacy else []), run_time=0.8 if sb is not zh_priv else 1.2)
                 self.play(emphasize(sb.hours, run_time=0.6))
+            for k, phrase in enumerate(("Drawing the frames", "The rest went to", "a subtitle tool")):
+                vo.wait_until(phrase)
+                self.play(FadeIn(went[k], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("and waiting")
+            self.play(emphasize(went_l3[-7:], run_time=0.8),
+                      LaggedStart(*[Indicate(b, color=S.WHITE, scale_factor=1.15) for b in zh_bands], lag_ratio=0.15),
+                      run_time=1.2)
             vo.wait_until("And the cost on screen")
-            bars = gather(self, privacy, ttt)
+            bars = gather(self, privacy, ttt, zh_ttt, zh_priv, went)
             self.play(FadeOut(bars), *dim(rib, opacity=0.4), FadeTransform(src3, src4), run_time=0.6)
             self.play(FadeIn(card, shift=UP * 0.3), run_time=0.6)
             self.play(ChangeDecimalToValue(card.number, LIVE["cost_usd"]), run_time=1.7, rate_func=smooth)
-            vo.wait_until("is for the whole session")
+            vo.wait_until("what the whole session")
             self.play(Circumscribe(rib, color=S.WHITE, buff=0.12, run_time=1.0),
                       emphasize(card.label[0], run_time=1.0))
             vo.wait_until("all four requests")

@@ -35,8 +35,18 @@ SAY = NARRATION["S02"]
 # four papers (Warner 1965 -> disclosure control -> Sweeney 1997 -> Evfimievski 2003, the lanes
 # between them), without the lane names and the year axis, so the names stay legible at MAP_W.
 MAP, MAP_CROP = "dp_0230.png", (334, 80, 1750, 342)         # privacy video at 2:30: the lineage map
+# its four paper boxes (px of the png), in time order: Warner 1965, disclosure control 1980-1989,
+# Sweeney 1997, Evfimievski et al. 2003 (circled one after another as "papers connect" is spoken)
+MAP_NODES = [(340, 90, 598, 177), (878, 90, 1263, 177), (1230, 219, 1435, 304), (1476, 90, 1740, 177)]
 TTT, TTT_CROP = "ttt_0530.png", (60, 318, 1660, 771)        # tic-tac-toe video at 5:30: explore() + board
-MAP_W = 6.8                                                 # the map in SAY[2] (as wide as the right half allows)
+MAP_W = 6.8                                                 # the map beside the cards in SAY[2] (as wide as the right half allows)
+BIG_W, BIG_Y = 11.0, -1.97                                  # ... and while "showing how papers connect" is spoken: large
+                                                            # enough to read its names (they were ~12 px at 1080p beside the
+                                                            # cards: director and viewer reviews of the draft, 1:36)
+# Request 3 as shown: "code-switch" is jargon for this audience (viewer review of the draft, 1:54); the
+# summary says what the user asked for in plain words (the request: "code switching between the English
+# language and Chinese language … a lot of terms that are derived from English").
+REQUEST_TEXT = {3: "Chinese versions that keep some English terms, with subtitles in both languages"}
 
 QUOTE_SIZE = 28
 SMALL_F = 0.72                     # 28 pt cards slid up small -> 20.2 pt (never below 20)
@@ -194,8 +204,15 @@ class TheAsk(VoiceScene):
         karp = quote_card(QUOTES["karpathy"]["screen"].replace("bespoke ", "bespoke\n", 1)
                           .replace("generated ", "generated\n", 1), cap=None, color=TOOL, size=26, chars=60)
         karp.move_to([0, 2.05, 0]).align_to(cards[3].frame, RIGHT)
-        kcap_text = QUOTES["captions"]["karpathy"].replace(", ", ",\n", 1).replace(" request ", " request\n", 1)
-        kcap = caption(kcap_text, 20).next_to(karp.box, DOWN, buff=0.12).align_to(karp.box, LEFT)
+        # two lines, left of the quote card and level with its bottom: under the card it was squeezed
+        # between the card, the arrow and the AI badge (director review of the draft, 1:20)
+        kq = QUOTES["captions"]["karpathy"]               # "Andrej Karpathy, as quoted in the first request and ..."
+        k1, rest = kq.split(", ", 1)
+        k2, k3 = rest.split(" request ", 1)
+        kcap = VGroup(*[caption(t, 20) for t in (k1 + ",", k2 + " request", k3)]) \
+            .arrange(DOWN, aligned_edge=RIGHT, buff=0.08)     # right-aligned against the card
+        assert " ".join(c.original_text for c in kcap) == kq
+        kcap.next_to(karp.box, LEFT, buff=0.3).align_to(karp.box, DOWN)
         kx = cards[3].frame.get_right()[0] - 1.1          # clear of the caption (left) and the AI badge (right)
         k_arrow = Arrow([kx, karp.box.get_bottom()[1], 0], [kx, cards[3].frame.get_top()[1], 0], buff=0.08,
                         color=TOOL, stroke_width=3, tip_length=0.18, max_tip_length_to_length_ratio=0.3)
@@ -272,6 +289,11 @@ class TheAsk(VoiceScene):
         # low on the map's left edge, so the arrow passes under card 3's corner
         link = Arrow(c3b.box.get_right(), thumb.frame.get_corner(DL) + UP * 0.2, buff=0.12, color=TOOL,
                      stroke_width=3, tip_length=0.18, max_tip_length_to_length_ratio=0.25)
+        # the map first comes in large, under cards 3 and 3b, then shrinks to its place beside them
+        thumb_at = thumb.get_center()
+        thumb.scale_to_fit_width(BIG_W).move_to([0, BIG_Y, 0])
+        # above its right end (under it, it ran into the quotes' shared caption in the corner)
+        tcap_big = caption(MAP_CAPTION, 20).next_to(thumb, UP, buff=0.12).align_to(thumb, RIGHT)
         c4 = quote_card(broken(QUOTES["s02_card4"]["screen"], "I feel like it's", "something interactive,"),
                         None, size=QUOTE_SIZE, chars=80)
         c4.move_to([0, -2.1, 0]).align_to([-6.3, 0, 0], LEFT)
@@ -279,6 +301,9 @@ class TheAsk(VoiceScene):
         inter = quote_glyphs(c4, "interactive,")
         if not len(inter):
             inter = quote_glyphs(c4, "interactive")
+        # the word ends its line, so it can move right a little: the outline (buff 0.07) touched
+        # "something" and read "something(interactive," (director review of the draft, 1:41)
+        inter.shift(RIGHT * 0.1)
         make = quote_glyphs(c4, "actually create")
 
         with self.voiceover(SAY[2]) as vo:
@@ -291,12 +316,19 @@ class TheAsk(VoiceScene):
             self.play(*dim(c1.box, c1.quote, c2.box, c2.quote, opacity=0.5),
                       FadeIn(c3, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("showing how papers")
-            self.play(FadeIn(thumb, shift=LEFT * 0.2), FadeIn(tcap, shift=UP * 0.1), run_time=0.8)
+            self.play(FadeIn(thumb, shift=UP * 0.2), FadeIn(tcap_big, shift=UP * 0.1), run_time=0.8)
+            self.play(LaggedStart(*[emphasize(thumb.px_box(*b), run_time=0.7) for b in MAP_NODES], lag_ratio=0.3),
+                      run_time=1.4)
             vo.wait_until("because they're never")
             self.play(FadeIn(c3b, shift=UP * 0.15), run_time=0.5)
-            self.play(GrowArrow(link), run_time=0.5)
             vo.wait_until("And video is only")
-            self.play(FadeIn(c4, shift=UP * 0.2), run_time=0.8)
+            # shrink towards the right edge first (its top stays under card 3b), then straight up into
+            # its place: a diagonal move swept the map across card 3b
+            ur = thumb.get_corner(UR)
+            self.play(thumb.animate.scale(MAP_W / BIG_W, about_point=ur)
+                      .shift(RIGHT * (thumb_at[0] + MAP_W / 2 - ur[0])), FadeOut(tcap_big), run_time=0.55)
+            self.play(thumb.animate.move_to(thumb_at), run_time=0.55)
+            self.play(FadeIn(tcap, shift=UP * 0.1), GrowArrow(link), FadeIn(c4, shift=UP * 0.2), run_time=0.8)
             vo.wait_until("something interactive")
             itag = open_tag(IDEA)
             if len(inter):                          # the word itself, outlined, its tag right beside it
@@ -316,7 +348,8 @@ class TheAsk(VoiceScene):
         W, GAP = 3.15, 0.12
         # each thumbnail slot takes its own picture's aspect (the map is a wide strip, A08 is not)
         caps = {1: ("privacy video · 2:30", aspect(MAP_CROP)), 2: ("tic-tac-toe video · 5:30", aspect(TTT_CROP))}
-        rcards = [request_card(r, W, *caps.get(r["n"], (None,))) for r in reqs]
+        rcards = [request_card({**r, "text": REQUEST_TEXT.get(r["n"], r["text"])}, W, *caps.get(r["n"], (None,)))
+                  for r in reqs]
         VGroup(*rcards).arrange(RIGHT, buff=GAP, aligned_edge=DOWN).move_to([0, 0, 0])
         base_y = -2.35
         for rc in rcards:

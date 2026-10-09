@@ -18,10 +18,11 @@ zoom comes back, the 7 boxes drop into their cells and stretch to the speech rec
 word bars (A19: "362" 0.24-1.56 s, ",880" 1.56-3.26 s), pushing "counted those" to where it is
 really spoken; the estimated pin slides from 1.42 s to the measured 3.26 s and turns GREEN,
 leaving a RED gap "+1.8 s" -> the words "counted those" fly into the real line that waits for them
-(A20, s03_stop.py line 317) under its own comment (lines 90-92); shift=2.2 glows ORANGE, a GREEN
-counter counts the hand-set shifts (about 20) -> the real line of voice.py that calls the online
-voice (A21, line 463): it could hand back "audio" and "word times"; .save() keeps only the audio
-(dashed YELLOW note).
+(A20, s03_stop.py line 317) under the last line of its own comment (line 92, whole); shift=2.2 glows
+ORANGE, a GREEN counter counts the hand-set shifts (about 20) -> "a better fix": the real line of
+voice.py that calls the online voice (A21, line 463): it could hand back "audio" and "word times";
+the toolkit doesn't ask for the word times (the call leaves edge-tts 7.2.8 at its default,
+sentence boundaries), and .save() keeps only the audio (dashed YELLOW note).
 
 Every number on screen is checked in _check() (runs on import) against the assets: the clip, its
 sentence marks, the character estimate (1.42 s), the recognizer's word times, the +1.8 s gap, the
@@ -91,11 +92,14 @@ GAP = WCOUNTED[0] - EST                                          # +1.84 s
 
 SHIFT_LINE = asset_text(EXCERPTS["A20"]["shift_file"]).strip()   # s03_stop.py line 317
 COMMENT = asset_text(EXCERPTS["A20"]["comment_file"])            # s03_stop.py lines 90-92
+COMMENT_LINE = COMMENT.splitlines()[2]                           # line 92, the only one shown (complete)
 SHIFTS = EXCERPTS["A20"]["shifts_in_scene"]                      # 20 -> "about 20"
 VOICE_LINE = asset_text(EXCERPTS["A21"]["file"]).strip()         # voice.py line 463
 VOICE_SHOWN = "edge_tts.Communicate(text, self.voice, rate=rate).save(str(out))"   # SHOW line's excerpt
 
-QUESTION = "362,880 has 7 characters,\nas many as the word 'example'.\nSay both out loud.\nHow much longer is the number?"
+# the question asks for the number's length, which the answer gives ("About three seconds"); no time
+# is claimed for "example" (no source measures it): fresh-viewer review of the draft, 4:58
+QUESTION = "362,880 has 7 characters,\nas many as the word 'example'.\nSay both out loud.\nHow long does the number take?"
 
 
 def _check():
@@ -119,7 +123,7 @@ def _check():
     assert SENT1[WINDOW_CHARS - 6:WINDOW_CHARS] == "as if " and EST2 < Z_T
     # A20/A21: the real lines
     assert SHIFT_LINE == EXCERPTS["A20"]["shift_line"] and "shift=2.2" in SHIFT_LINE
-    assert '"362,880" lasts ~3 s but is only 7 characters' in COMMENT.splitlines()[2]
+    assert '"362,880" lasts ~3 s but is only 7 characters' in COMMENT_LINE and len(COMMENT_LINE) <= 66
     assert SHIFTS == 20
     assert VOICE_LINE == EXCERPTS["A21"]["line"] and VOICE_SHOWN in VOICE_LINE
 
@@ -467,7 +471,7 @@ class AudioClock(VoiceScene):
             vo.wait_until("Say both")
             self.play(pulse(num_strip, 1.06), run_time=0.5)
             self.play(pulse(ex_strip, 1.06), run_time=0.5)
-            vo.wait_until("How much longer")
+            vo.wait_until("How long does")
             self.play(emphasize(num_strip.boxes, run_time=0.9, circle=True))
         ponder_drain(self, q, 8)
 
@@ -553,10 +557,10 @@ class AudioClock(VoiceScene):
             self.play(ReplacementTransform(pin, green_pin), FadeIn(gap_tag, scale=0.9), run_time=0.4)
 
         # ---------------------------------------------------------- the fix so far: by hand
-        comment = clipped_panel(COMMENT, "tic-tac-toe video · scenes/s03_stop.py", 90, cols=66, font_size=22)
-        for k in (0, 1):
-            for gl in comment.code.code_lines[k]:
-                gl.set_opacity(gl.get_fill_opacity() * 0.35)
+        # only the comment's last line, whole (its first two lines ran past the panel edge, cut mid-word:
+        # fresh-viewer review of the draft, 5:12)
+        comment = clipped_panel(COMMENT_LINE, "tic-tac-toe video · scenes/s03_stop.py", 92, cols=len(COMMENT_LINE) + 8,
+                                font_size=22, note=" (end of a comment)")      # not clipped: no faded columns
         comment.move_to([0, 2.45 - comment.height / 2, 0])
         fix = clipped_panel(SHIFT_LINE, "tic-tac-toe video · scenes/s03_stop.py", 317, cols=60, font_size=24)
         fix.move_to([0, 0, 0]).align_to(comment, LEFT).align_to([0, comment.get_bottom()[1] - 0.3, 0], UP)
@@ -566,7 +570,7 @@ class AudioClock(VoiceScene):
         shift_glow = glow(fcode, shift_span)
         ghost = target.copy().set_color(AUDIO)
         target.set_opacity(0)
-        why = glyphs_of_code(comment.code, 2, COMMENT.splitlines()[2], '"362,880" lasts ~3 s but is only 7 characters')
+        why = glyphs_of_code(comment.code, 0, COMMENT_LINE, '"362,880" lasts ~3 s but is only 7 characters')
         counter_l = label("hand-set shifts in this one scene: about", 24, INK)
         counter_n = DecimalNumber(0, num_decimal_places=0, font_size=30, color=MEASURED)
         cbody = VGroup(counter_l, counter_n).arrange(RIGHT, buff=0.15, aligned_edge=DOWN)
@@ -607,7 +611,7 @@ class AudioClock(VoiceScene):
             self.play(Circumscribe(shift_span, color=S.WHITE, buff=0.08, run_time=0.9))
 
             # the voice that could tell the time of every word
-            vo.wait_until("Yet the online voice")
+            vo.wait_until("A better fix")
             counter_n.clear_updaters()
             stay = collect(self, fix, counter)
             dy = 2.85 - fix.get_top()[1]                     # the kept line moves up to the top
@@ -618,14 +622,18 @@ class AudioClock(VoiceScene):
             self.play(FadeOut(comment, shift=UP * 0.2), run_time=0.35)
             self.play(stay.animate.shift(UP * dy), run_time=0.5)
             self.play(FadeIn(voice, shift=UP * 0.3), run_time=0.7)
-            vo.wait_until("can send a time")
+            vo.wait_until("can send the time")
             self.play(emphasize(comm_span, run_time=0.8))
             # the two outputs drop in under the line (flown out of the call, "word times" crossed the
             # voice.py caption: viewer review of the draft, 5:21)
             self.play(LaggedStart(*[FadeIn(o, shift=DOWN * 0.25) for o in outs], lag_ratio=0.35), run_time=1.0)
-            vo.wait_until("The toolkit keeps")
+            # the word times are never requested (the call passes no boundary="WordBoundary"; it said
+            # "throws those times away", but they are not sent: verifier of the fix round) ...
+            vo.wait_until("doesn't ask for them")
+            self.play(out_words.animate.shift(DOWN * 0.25).set_opacity(0.2), run_time=0.8)
+            vo.wait_until("keeps only the audio")             # ... and .save() keeps only the audio
             self.play(Circumscribe(save_span, color=S.WHITE, buff=0.08), Indicate(out_audio, color=S.WHITE),
-                      out_words.animate.shift(DOWN * 0.25).set_opacity(0.2), FadeIn(note, shift=UP * 0.1), run_time=0.9)
+                      FadeIn(note, shift=UP * 0.1), run_time=0.9)
         self.wait(1.6)
         fade_out_all(self)
 

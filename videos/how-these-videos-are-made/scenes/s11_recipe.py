@@ -5,16 +5,18 @@ colour with a small glyph of the same colour in front of it (PINK person, GREY s
 clock whose hand sweeps round, two faded-BLUE reviewers, a GREEN check that gets a second check on
 "check the fixes", a GREY chain of files) -> "above all, the goal": the card folds away, its heading
 "A recipe" becomes "the goal" and its PINK person grows into the user, from whom the PINK quote card
-of S02 comes back (A06, quotes.yaml `s11_goal`, exact, with the dictated caption); "cognitive
-offloading" turns RED as in S02, and the two halves of the goal get a WHITE Circumscribe as they are
-spoken -> the request: the tic-tac-toe playground (A34, real screenshot, GREY frame) on the left; on
+of S02 comes back (A06, quotes.yaml `s11_goal`, exact, with the dictated caption) and a GREY gloss
+arrow explains its "LLM" (the narration says "AI"); "cognitive offloading" turns RED as in S02, and
+the two halves of the goal get a WHITE Circumscribe as they are spoken -> the request: a piece of
+this video's own contact sheet (assets/meta_s01_sheet.png, the 480p draft's scene 1, real; the
+tic-tac-toe playground screenshot that stood here read as "this video": viewer review) on the left; on
 the right the BLUE agent under S01's GREY headphones, struck through in RED, "this video was made
 the same way", and under it a dashed YELLOW outline "checked by measuring · the agent that made it
 can't listen to it" with the tag "not yet verified" -> on "You can." the headphones (without the
 strike) lift off the motif onto a PINK person, "you"; under it a GREY chip "something sounded wrong?
-say so, with the time", whose clock hand sweeps on "with the time"; a PINK arrow, "feedback", runs
-from the chip up to the open outline (the outline stays dashed: nothing has been heard yet) ->
-everything fades out (the end of the video).
+say so in the comments, with the time", whose clock hand sweeps on "with the time"; a PINK arrow,
+"feedback", runs from the chip up to the open outline (the outline stays dashed: nothing has been
+heard yet) -> the finished frame holds about 3 s -> everything fades out (the end of the video).
 
 Helpers defined here (not in common.py): broken() and marked_glyphs() (as s02's broken() and
 quote_glyphs(): line breaks in a quote without touching its words, and the glyphs of a phrase in
@@ -55,12 +57,16 @@ GOAL = QUOTES["s11_goal"]["screen"]
 QUOTE_SIZE = 28
 MARK = "#FF00FE"                   # probe colour of marked_glyphs(), never drawn
 
-# ------------------------------------------------------------------ the request (A34)
-PLAYGROUND, PG_CROP = "ttt_playground.png", (96, 8, 1184, 742)    # 1280 x 800: title, board and counter
-PG_CAPTION = "real screenshot · the tic-tac-toe playground\na small web page to try the idea yourself"
+GLOSS = "LLM: a large language model, the AI behind the agent"   # the quote says LLM, the narration AI
+
+# ------------------------------------------------------------------ the request: this video's own contact sheet
+# rows 3-4 of the 480p draft's scene-1 sheet (0:25-0:46, a still every 3 s; 1950 x 558), its right
+# two columns: the real frame after the fix, the simulated 12-year-old, and the team row
+SHEET, SHEET_CROP = "meta_s01_sheet.png", (972, 0, 1950, 558)
+SHEET_CAPTION = "real contact sheet · this video's draft\n(scene 1, a still every 3 s)"
 MADE = "this video was made the same way"
 OPEN_LINES = ("checked by measuring", "the agent that made it", "can't listen to it")
-ASK = "something sounded wrong?\nsay so, with the time"
+ASK = "something sounded wrong?\nsay so in the comments,\nwith the time"
 
 
 # ------------------------------------------------------------------ helpers (this scene only)
@@ -178,6 +184,19 @@ class Recipe(VoiceScene):
         reach = marked_glyphs(q.quote, "make knowledge more accessible", QUOTE_SIZE, line_spacing=1.0)
         learn = marked_glyphs(q.quote, "the same level of learning", QUOTE_SIZE, line_spacing=1.0)
         goal_head = label("the goal", 40, INK).next_to(q.box, UP, buff=0.45).align_to(q.box, LEFT)
+        llm = marked_glyphs(q.quote, "LLM", QUOTE_SIZE, line_spacing=1.0)
+        gloss_t = label(GLOSS, 22, TOOL)
+        if len(llm):                                        # a GREY gloss arrow down onto "LLM" (the quote stays exact)
+            tip = llm.get_top() + UP * 0.08
+            tail = tip + np.array([0.55, 0.5, 0])
+            gloss_a = Arrow(tail, tip, buff=0, color=TOOL, stroke_width=3, tip_length=0.15,
+                            max_tip_length_to_length_ratio=0.35)
+            gloss_t.next_to(tail, RIGHT, buff=0.1)
+        else:                                               # translated build: a line under the caption
+            gloss_a = VMobject()
+            gloss_t.next_to(q.caption, DOWN, buff=0.12).align_to(q.caption, RIGHT)
+        assert gloss_t.get_right()[0] < 6.5 and gloss_t.get_top()[1] < 3.6, (gloss_t.get_right(), gloss_t.get_top())
+        assert gloss_t.get_left()[0] > goal_head.get_right()[0] + 0.3 or not len(llm), (gloss_t.get_left(), goal_head.get_right())
 
         with self.voiceover(SAY[1]) as vo:
             rest = gather(self, card, rule, *lines, *glyphs[1:])
@@ -188,6 +207,8 @@ class Recipe(VoiceScene):
             vo.wait_until("As the user put it")
             self.play(FadeIn(VGroup(q.box, q.quote), target_position=user.get_center(), scale=0.3), run_time=0.9)
             self.play(FadeIn(q.caption, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("AI should not")
+            self.play(GrowArrow(gloss_a) if len(llm) else Wait(0.01), FadeIn(gloss_t, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("cognitive offloading")
             if len(offload):                                # as in S02: the words the goal argues against
                 self.play(offload.animate.set_color(BUG), run_time=0.5)
@@ -201,8 +222,10 @@ class Recipe(VoiceScene):
             self.play(pulse(VGroup(user, user_l), 1.08, run_time=0.7))
 
         # ---------------------------------------------------------- the request: you can listen
-        pg = exhibit(PLAYGROUND, width=5.0, crop=PG_CROP).move_to([-3.95, 0.4, 0])
-        pg_cap = caption(PG_CAPTION, 20).next_to(pg, DOWN, buff=0.15).align_to(pg, LEFT)
+        pg = exhibit(SHEET, width=5.0, crop=SHEET_CROP).move_to([-3.95, 0.4, 0])
+        pg_cap = caption(SHEET_CAPTION, 20).next_to(pg, DOWN, buff=0.15).align_to(pg, LEFT)
+        assert pg.get_left()[0] > -6.55 and pg_cap.get_bottom()[1] > -3.55
+        assert pg_cap.get_right()[0] < -1.25, pg_cap.get_right()      # clear of the 'you' icon below the agent
 
         agent = role_icon("agent", 1.1).move_to([-0.45, 1.0, 0])
         motif = cant_hear_or_play(0.62)[0]                 # GREY headphones + RED strike
@@ -228,7 +251,7 @@ class Recipe(VoiceScene):
         fb_l = label("feedback", 24, USER).next_to(feedback, RIGHT, buff=0.18)
 
         with self.voiceover(SAY[2]) as vo:
-            goal = gather(self, user, user_l, goal_head, q)
+            goal = gather(self, user, user_l, goal_head, q, gloss_a, gloss_t)
             self.play(FadeOut(goal, shift=LEFT * 0.4), run_time=0.7)
             self.play(FadeIn(pg, shift=RIGHT * 0.3), FadeIn(pg_cap), run_time=0.8)
             vo.wait_until("This video was made")
@@ -250,7 +273,7 @@ class Recipe(VoiceScene):
             self.play(Indicate(VGroup(you, lifted), color=S.WHITE, scale_factor=1.1), run_time=0.6)
             vo.wait_until("If anything sounded")
             self.play(FadeIn(ask, shift=RIGHT * 0.2), run_time=0.7)
-            vo.wait_until("say so, with the time")
+            vo.wait_until("with the time")
             # the words already are WHITE, so the emphasis is the swell; it grows from its left edge
             # (from the centre, "with" ran into the comma of "say so,")
             self.play(Rotate(ask_clock.minute, -TAU, about_point=ask_clock.face.get_center()),
@@ -259,5 +282,8 @@ class Recipe(VoiceScene):
             vo.wait_until("That's exactly")
             self.play(GrowArrow(feedback), FadeIn(fb_l, shift=UP * 0.1), run_time=0.8)
             self.play(Indicate(o_box, color=S.WHITE, scale_factor=1.04), run_time=0.8)
-        self.wait(1.0)
+        # the finished last frame, long enough to read the request (director's review: about 2 s)
+        self.wait(1.4)
+        self.play(Indicate(ask, color=S.WHITE, scale_factor=1.05), run_time=0.8)
+        self.wait(0.8)
         fade_out_all(self, run_time=1.2)

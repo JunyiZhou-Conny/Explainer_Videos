@@ -223,7 +223,7 @@ four requests, not the cost of one video".
 SHOW: Black frame. A GREY video-player frame (rounded rectangle, pause icon, scrubber) fades in
 holding the tic-tac-toe "before" frame: the board with X's top row YELLOW and the faded, dashed
 ghost marks; on the right, the formula line reads "4 × 3 × 2", a gap, then a GREEN "12". Tag
-top-right: "the old draft, redrawn from its saved code" (A03 exists: a real frame of the
+top-right, in with the frame: "the old draft, redrawn from its saved code" (A03 exists: a real frame of the
 old code, re-rendered at commit 8a922bf). Caption under the player:
 "from a draft of 'Why are there exactly 255,168 games of tic-tac-toe?' · made for ages 11 to 14".
 [REAL A03 re-render]
@@ -252,9 +252,9 @@ SAY: Now the strange part. Almost everything in these videos was made by AI agen
 
 SHOW: Title "How these videos are made"; five chips line up under it and pulse as they are named:
 "the pipeline" (GREY) · "who did what" (half PINK, half BLUE) · "how it's checked" (GREEN) · "the
-Chinese versions" (GREY, with a small 中) · "what still needs a human" (dashed YELLOW outline).
-[DIAGRAM]
-SAY: This video covers the pipeline, who did what, how work gets checked without eyes or ears, the Chinese versions, and what still needs a human.
+Chinese versions" (GREY, with a small 中) · "what still needs a human, and what to improve" (dashed
+YELLOW outline). [DIAGRAM]
+SAY: This video covers the pipeline, who did what, how work gets checked without eyes or ears, the Chinese versions, what still needs a human, and what to improve next.
 
 ---
 
@@ -273,12 +273,14 @@ SHOW: PINK quote cards, one at a time, each captioned "— the user (dictated; f
 removed)": (1) "Our brain is a neural net … it takes hardship, turmoil, dedication, pain … to
 train ourselves." (2) "AI is very patient, but at the same time, I'm doing a lot of cognitive
 offloading." The words "cognitive offloading" turn RED. Exact card texts: ASSETS.md A06. [REAL A06]
-SAY: The user's own words go further: our brain is a neural net, and training it takes hardship. AI is patient, they said, but they were doing a lot of cognitive offloading.
+SAY: The user's own words go further: our brain is a neural net, and training it takes hardship. AI is patient, they said, but they were doing a lot of cognitive offloading: letting the AI do the thinking for them.
 
 SHOW: Cards (1) and (2) slide up small. Card (3): "It's like the explainer video is a mentor …", and
-a second small card, "they're never isolated", beside a small thumbnail of the privacy video's
-lineage map (A07, at 2:30: Warner 1965 → disclosure control → Sweeney 1997 → Evfimievski 2003),
-caption "papers are never isolated · the privacy video at 2:30". Card (4): "What is the next step?
+a second small card, "they're never isolated", beside the privacy video's lineage map (A07, at
+2:30: Warner 1965 → disclosure control → Sweeney 1997 → Evfimievski 2003), caption "papers are
+never isolated · the privacy video at 2:30". The map comes in large (about 11 units wide, so its
+names are readable) on "showing how papers connect", and shrinks beside the cards when card (4)
+comes in. Card (4): "What is the next step?
 … I feel like it's definitely something interactive, something that demands the user to actually
 create …". The word "interactive" gets a dashed YELLOW outline and the tag "idea · not built yet".
 [REAL A06, A07]
@@ -287,8 +289,8 @@ SAY: A video should be a mentor, showing how papers connect, because they're nev
 SHOW: The cards clear. Four PINK request cards drop onto a date axis, Oct 4 to Oct 7, with a GREY
 caption "requests, summarized": "1 · a privacy paper from a friend (differential privacy) +
 organize the paper library" with the A07 thumbnail · "2 · tic-tac-toe, for a middle-school kid,
-with a program the user supplied" with the A08 thumbnail · "3 · Chinese versions that
-code-switch, with subtitles in both languages" · "4 · this video: how they're built, and what to
+with a program the user supplied" with the A08 thumbnail · "3 · Chinese versions that keep some
+English terms, with subtitles in both languages" ("code-switch" was jargon: viewer review) · "4 · this video: how they're built, and what to
 improve". [REAL A07, A08; DATA dates from the request log, A06]
 SAY: Then came four requests. A privacy paper from a friend, which the user hadn't read, to keep the test fair. A tic-tac-toe video, for a middle-school kid. Chinese versions of both. And this video.
 
@@ -307,31 +309,39 @@ breaks" · "LaTeX · math"). [DATA fact sheet 2a; DIAGRAM]
 SAY: The team: one human, the user. One AI agent: Claude Code. Under it, 183 sub-agents in 46 workflow runs, before this video. A workflow is a script the agent writes to launch sub-agents, each with one job. And tools, like a synthetic voice for each language and a speech recognizer.
 
 SHOW: The PINK column expands into a checklist, ticking as each item is named: "chose the topics
-and the audiences" · "uploaded 36 PDFs" · "gave the tic-tac-toe counts" · "supplied the program".
+and the audiences" · "uploaded 36 PDFs" · "gave the counts (255,168 games …)" · "supplied the program".
 A real code panel slides up: the user's original program (A09), its comments visible verbatim and
 unhighlighted, with only `next_player = "0" if player == "X" else "X"` highlighted, and a GREEN
 terminal line under it: `255168`. Then a small diff chip: `"0"` → `"O"` (BLUE) · "comments
 rewritten", and a GREY caption: "the cleaned file is the code on screen in the tic-tac-toe video".
 [REAL A09, A24]
-SAY: The user decided what was worth learning, and for whom. They uploaded 36 PDFs, gave the tic-tac-toe numbers, and supplied the program that video teaches. It already worked. The agent only changed a zero into the letter O, and rewrote the comments.
+SAY: The user decided what was worth learning, and for whom. They uploaded 36 PDFs, gave the tic-tac-toe counts to explain, like 255,168 games, and supplied the program that video teaches. It already worked. The agent only changed a zero into the letter O, and rewrote the comments.
 
 SHOW: The BLUE column expands: "toolkit · scripts · scenes · translations · voices · subtitles ·
 reviews · renders". Then the commit ribbon (A11): one tick per commit from Oct 4 to Oct 7 (UTC),
 the first two PINK ("the user"), the rest BLUE; a GREY gloss "commit = a saved version of the
 project"; the Oct 6 burst labelled "50 commits that day"; 28 ticks carry a small GREY dot, "WIP
 checkpoint"; GREY bands mark the usage-limit stops (A12), with the counter "usage-limit stops: at
-least 6"; two of the restarts carry a small PINK tick, "the user: 'Please continue'" (Oct 7 02:12)
-and "the user: 'Try again'" (Oct 7 20:09). Footer: "about 100 commits · 2 by the user".
+least 6"; the two stops that sat idle after their reset (Oct 6 22:50 → Oct 7 02:12 and Oct 7 07:10 →
+20:09) are circled on "Twice", and their restarts carry a small PINK tick, "the user: 'Please continue'"
+(Oct 7 02:12) and "the user: 'Try again'" (Oct 7 20:09), each with a GREY line "idle over 3 h after reset"
+/ "idle 13 h after reset". Footer: "98 shown, to Oct 7 · over 100 in all · 2 by the user".
 [DATA A11, A12]
-SAY: The agent did the rest. It wrote the toolkit that runs the pipeline, and made all but two of over a hundred commits, the project's saved versions. In under a week, work stopped at least six times on usage limits, and each time picked up where it left off.
+SAY: The agent did the rest. It wrote the toolkit that runs the pipeline, and made all but two of over a hundred commits, the project's saved versions. In under a week, work stopped at least six times on usage limits. Twice, it then sat idle for hours after the limit reset, until the user nudged it.
 
 SHOW: Two speed bars under the ribbon: "privacy video: request 15:28 → final cut 21:29 · about 6
 hours (24 min of video, plus the paper library and the toolkit)" · "tic-tac-toe: request 21:53 →
-final cut 01:00 · about 3 hours (12 min 37 s of video)". Then, centered, a GREY counter card
+final cut 01:00 · about 3 hours (12 min 37 s of video)"; then the Chinese versions, both from request 3,
+labelled to the left: "Chinese tic-tac-toe: Oct 6 01:31 → 17:52 · 16 h 21 min (about 14 min of video)" ·
+"Chinese privacy: Oct 6 01:31 → Oct 8 00:14 · about 2 days (about 26 min of video)" (final cuts
+68d6c23 and 62d3b66). Under the longest bar, line by line: "drawing the frames: under 30 min each" ·
+"the rest: translating, review and fixes," · "subtitle tool reworked 4 times, waiting"; on "waiting" the usage-limit bands inside those two days light up (docs/PLAYBOOK.md §1:
+rendering is not the bottleneck). Then, centered, a GREY counter card
 counts up to the live value from `video.yaml` (`live.cost_usd`), formatted "$1,507.47", with the
 label `live.cost_label` rendered as is in two lines: "API list-price equivalent for the whole
-session" / "all four requests, not the cost of one video". [DATA git + ffprobe; live value]
-SAY: From request to final cut, the privacy video took about six hours, and tic-tac-toe just over three. And the cost on screen, at API list prices, is for the whole session: all four requests, not one video.
+session" / "all four requests, not the cost of one video"; source caption "cost: the session's own cost
+counter, Oct 7 (UTC)" (the value's date). [DATA git + ffprobe + render logs; live value]
+SAY: From request to final cut, the privacy video took about six hours, and tic-tac-toe just over three. The Chinese versions took far longer: 16 hours, and about two days. Drawing the frames took under half an hour each. The rest went to translating, rounds of review and fixes, a subtitle tool reworked four times, and waiting. And the cost on screen is what the whole session would cost at the public pay-per-use price: all four requests, not one video.
 
 ---
 
@@ -345,10 +355,11 @@ SAY: The pipeline is a chain of files: a paper, a catalog entry, a digest with p
 
 SHOW: Two catches pop off the first cards. On "catalog.yaml": a filename card
 "20_chen2016dcan_1604.02678.pdf" flips over to "inside: a math paper on topological pressure",
-with "1604.02678 · DCAN is most likely 1604.02677" in RED and a tally "4 of 36 PDFs: the wrong
+with "1604.02678 · DCAN is most likely 1604.02677" in RED, glossed in GREY "arXiv paper numbers:
+off by one in the file name", and a tally "4 of 36 PDFs: the wrong
 paper" (the flip is a redrawn moment: tag "re-created for this video"; the filename and the tally are real,
-A41). On "digest.md": page 270 of the privacy paper (A14) slides in, the line "mean 0, and
-standard deviation λ." underlined in WHITE, and a GREEN sticky note quotes the digest: "the true
+A41). On "digest.md": page 270 of the privacy paper (A14) slides in, cropped to the one line "mean 0, and
+standard deviation λ.", underlined in WHITE, and a GREEN sticky note quotes the digest: "the true
 standard deviation is √2·λ — λ is the scale". [RECON flip; REAL A41, A14]
 SAY: Each file gets checked. Agents cataloging the papers read them, not just their names, and found that 4 of the 36 PDFs were the wrong papers. And the privacy digest even lists the paper's own mistakes.
 
@@ -359,13 +370,16 @@ SHOW: Zoom into the real tic-tac-toe `script.md` (A15): the colour table first, 
 'nine factorial', never '9!'". [REAL A15, A16]
 SAY: In the script, each beat pairs a show line, the picture, with a say line: the exact words the voice will speak. The animation code reads those words straight from this file. It's written for the ear: nine factorial is spelled out in words.
 
-SHOW: Two GREY clocks: "fix a sentence in script.md: seconds" vs "fix it after animation: a
-re-render". Then the false start as a time lane (Oct 4, UTC): a faded-BLUE review lane, "script
+SHOW: Two GREY clocks: "fix a sentence in script.md: seconds" vs "fix it after animation: draw the
+scene again". Then the false start as a time lane (Oct 4, UTC): a faded-BLUE review lane, "script
 review · 15:47 → 16:30"; at 16:07 the guide is committed, with its real heading (A13,
 `docs/WORKFLOW.md` at `41eca34`): "4. Review the script (before any animation)"; at 16:12–16:13
 six faded-BLUE builder icons start (3 runs × 2 agents) while the review lane is still running; at
-16:24 all six turn RED and fade ("stopped at 16:24, before the review was done"). [REAL A13; DATA A43]
-SAY: So other agents review the script before any animation: a sentence costs seconds to fix, a scene costs a re-render. The agent wrote that rule into its own guide on day one. Minutes later, it started six sub-agents building scenes while the review was still running. Eleven minutes after that, all six were stopped.
+16:24 all six turn RED and fade ("stopped at 16:24, before the review was done"); the lane runs on to
+16:30, where a faded-BLUE dashed line and icon read "relaunched on the new script" (transcript, Oct 4:
+the review came in at 16:23:55, the runs were stopped at 16:24:19, script v3 was written, and the
+builders restarted at 16:30:10). [REAL A13; DATA A43]
+SAY: So other agents review the script before any animation: a sentence takes seconds to fix, but a finished scene has to be drawn again. The agent wrote that rule into its own guide on day one. Minutes later, it started six sub-agents building scenes while the review was still running. Eleven minutes after that, one review came back with changes to the script, so all six were stopped. Writing the rule down was not enough: the workflow itself has to wait for the review.
 
 ---
 
@@ -387,9 +401,9 @@ with a dashed YELLOW outline: "inside a sentence: estimated from character count
 SAY: The voice speaks one sentence at a time, so every sentence start is known exactly. Inside a sentence, the toolkit has to guess. It assumes every character takes the same time to say.
 
 SHOW: PONDER(8 s, "362,880 has 7 characters,\nas many as the word 'example'.\nSay both out loud.
-How much longer is the number?") above two strips of 7 equal boxes: 3 · 6 · 2 · , · 8 · 8 · 0
+How long does the number take?") above two strips of 7 equal boxes: 3 · 6 · 2 · , · 8 · 8 · 0
 and e · x · a · m · p · l · e.
-SAY: Pause and try it. The number on screen has 7 characters, as many as the word example. Say both out loud. How much longer does the number take?
+SAY: Pause and try it. The number on screen has 7 characters, as many as the word example. Say both out loud. How long does the number take?
 
 SHOW: The "example" strip fades (no time is claimed for it). The 7 number boxes stretch to fit the
 real waveform (A18): GREEN word bars from the speech recognizer (A19) put "362" at 0.24–1.56 s and
@@ -398,13 +412,14 @@ to the measured word start (3.26 s, GREEN), leaving a RED gap labelled "+1.8 s".
 times measured by a speech recognizer for this video, on this one clip". [REAL A18, A19; DATA A17]
 SAY: About three seconds: three hundred sixty-two thousand, eight hundred eighty. Far longer than the word. So the toolkit's guess for the words right after it lands almost two seconds early.
 
-SHOW: Real code (A20): the comment in `s03_stop.py` lines 90–92 ("(e.g. a spoken "362,880" lasts
-~3 s but is only 7 characters)") and line 317, `wait_for(self, vo, "counted those", shift=2.2)`,
+SHOW: Real code (A20): the last line of the comment in `s03_stop.py` lines 90–92, line 92 alone
+(complete; lines 90–91 run past the panel edge): "(e.g. a spoken "362,880" lasts ~3 s but is only 7
+characters)", and line 317, `wait_for(self, vo, "counted those", shift=2.2)`,
 with `shift=2.2` glowing ORANGE. A GREEN counter: "hand-set shifts in this one scene: about 20".
 Then a GREY code chip from `explainer/voice.py` line 463 (A21),
 `edge_tts.Communicate(text, self.voice, rate=rate).save(str(out))`, with a dashed YELLOW note:
 "this service can send word times · only the audio is kept". [REAL A20, A21]
-SAY: The fix so far is manual: this one scene carries about 20 hand-set shifts, the biggest two point two seconds. Yet the online voice used for Chinese can send a time for every word. The toolkit keeps only the audio.
+SAY: The fix so far is manual: this one scene carries about 20 hand-set shifts, the biggest two point two seconds. A better fix is within reach: the online voice used for Chinese can send the time of every word. But the toolkit doesn't ask for them yet, and keeps only the audio.
 
 ---
 
@@ -430,9 +445,11 @@ SHOW: Two GREEN check chips appear in a column, each opening a real excerpt. (1)
 drawing a frame": the real console output of `explainer.check` on tic-tac-toe scene 3 (A22), beside
 its three flags "OUT · off screen", "SMALL · under 20 points", "LEFT · still on screen at the end".
 (2) "the scenes check themselves": `_check_numbers()` from `s03_stop.py` lines 62–72 (A23), one
-`assert` line glowing, with "82 checks in the tic-tac-toe scenes · most of them on numbers".
+`assert` line glowing, with "82 checks in the tic-tac-toe scenes · on numbers and boards" (many
+of them check boards and game states, not numbers); the numbers inside the asserts light up, then a
+board check (`winner(b) == "X"`).
 [REAL A22, A23]
-SAY: Then it measures everything it can. A checker called a lint runs each scene without drawing a frame, and flags anything off screen, text that's too small, or objects left behind. And the tic-tac-toe scenes check themselves, with 82 checks, most of them on the numbers shown.
+SAY: Then it measures everything it can. A checker called a lint runs each scene without drawing a frame, and flags anything off screen, text that's too small, or objects left behind. And the tic-tac-toe scenes check themselves, with 82 checks on the numbers and boards shown.
 
 ---
 
@@ -453,7 +470,8 @@ SHOW: A funnel for tic-tac-toe (A10): round 1 "30 issues: 3 wrong · 13 confusin
 plus "18 new or remaining notes". The "12 on the formula line" item from S01 is pulled out of the
 round-1 list and glows. Beside it, small, a score card in a dashed YELLOW outline: "simulated kid:
 8/10 → 8.5/10 · a model's guess, not a real child's · the second kid had read the first one's
-notes". [DATA A10]
+notes"; it comes in as "5 only partly" is spoken and stays on screen into the next beat, about 5 s.
+[DATA A10]
 SAY: Round one found 30 issues, including that 12 on the formula line. In round two, a fresh director re-checked each one: 25 were fixed, and 5 only partly.
 
 SHOW: The frozen shuffle, before and after. Left, "before": four frames 0.2 s apart, the same
@@ -461,18 +479,22 @@ spacing as the "after" strip, in which the ghost marks don't move while the GREE
 (A03, re-rendered from the old code: the counter reads 5, 5, 6, 7), RED tag "frozen", plus the
 A03 tag "the old draft, redrawn from its saved code"; under it one line of the real old code (A25, `s03_stop.py` at
 `8a922bf`, line 280): `ghosts[start[cur[p]]].animate(path_arc=arc) .move_to(...)`, with `.animate`
-RED, the rest faded. Right, "after": the real moving strip (A02); under it one line of the real fix
+RED, the rest faded. Between them, a diagram of one mark and its four moves: "before: only the last
+move survives", then "after: one move at a time". Right, "after": the real moving strip (A02),
+on "and the marks move again", held about 2 s after the voice ends; under it one line of the real fix
 (A26, `s03_stop.py` line 203): `return lambda: [m.animate(path_arc=path_arc).move_to(p) for m, p in moves]`,
 with `lambda` GREEN and the docstring as a GREY caption: "The `.animate`s are made only when the
 step plays." [REAL A03 re-render, A25, A26, A02]
-SAY: The director caught a subtler bug. The scene should shuffle 4 marks through all 24 orders, but the board froze while the counter ticked on. The cause is a Manim pitfall: every move was prepared before any played, so each overwrote the last. Now each move is prepared as it plays.
+SAY: The director caught a subtler bug. The scene should shuffle 4 marks through all 24 orders, but the board froze while the counter ticked on. The cause is a Manim pitfall: every move was set up before the first one played, and each setup erased the one before, so each mark jumped to its last spot and sat still. Now each move is set up only when it plays, and the marks move again.
 
 SHOW: Four mini scene cards from the privacy video (scenes 3 to 6), each with a small faded-BLUE
 builder icon: the name tags read "Dan" in scenes 3 and 4 and "Dev" in scenes 5 and 6, with a RED
 "≠". A wide faded-BLUE bar labelled "cross-scene reviewer (whole-video review)" sweeps across the
 cards and the tags settle on "Dan". Below, five differently drawn budget bars collapse into one
-shared drawing. Source caption: "privacy video, whole-video review notes" (A38). [DIAGRAM; DATA A38]
-SAY: Some problems only show across scenes. In the privacy video, agents building different scenes named the same person Dan in one part and Dev in another. Only a reviewer looking across scenes could catch that.
+shared drawing as the narration names them (the fresh-viewer pass of a later run of the whole-video
+review, `wf_acf0396b`: S02, S09 twice, S11 and S12; shared `common.budget_bar()` since `9020ce5`). Source
+caption: "privacy video, whole-video review notes" (A38). [DIAGRAM; DATA A38]
+SAY: Some problems only show across scenes. In the privacy video, agents building different scenes named the same person Dan in one part and Dev in another. Only a reviewer checking across scenes could catch that. Another reviewer found the privacy budget bar drawn five different ways. Now those scenes share one drawing.
 
 ---
 
@@ -484,8 +506,8 @@ English and would thus sound weird directly translate that into Chinese." Captio
 `i18n/zh/narration/g1.yaml` lines 21–30): the English SAY line split into its three sentences on
 the left, the three Chinese sentences on the right, joined one to one by GREY lines; the anchor
 `"Flipped or turned": "翻转"` glows ORANGE and an ORANGE pin jumps from the English words to the
-Chinese word. A counter: "417 sentence pairs · both videos". [REAL A06b, A27]
-SAY: On to Chinese. The user asked to keep English terms that would sound weird translated, with subtitles in both languages. The key rule: one Chinese sentence for each English sentence, so every animation cue still has a sentence to wait for.
+Chinese word, as "Some cues are also pinned to a Chinese word" is spoken. A counter: "417 sentence pairs · both videos". [REAL A06b, A27]
+SAY: On to Chinese. The user asked to keep English terms that would sound weird translated, with subtitles in both languages. The key rule: one Chinese sentence for each English sentence, so every animation cue still has a sentence to wait for. Some cues are also pinned to a Chinese word.
 
 SHOW: One GREY "scene code" card feeds two outputs, "English video" and "Chinese video". Then two
 columns of frame fingerprints scroll: "English render, before" vs "after the Chinese edits", rows
@@ -499,17 +521,23 @@ zh-CN-XiaoxiaoNeural" flows into a GREY box "speech recognizer", which prints in
 Nice", "epsilon → Excellent", "Claude → Clark". Then "the chosen voice · zh-CN-XiaoyiNeural" →
 GREEN "17 of 17 terms · 10 of 10 numbers", with a GREY footnote "a fuzzy match: 'Claude Shannon'
 came back as 'Cloud Shannon'". A small scoreboard: "Brian (male, English-first) 0.997 · Ava
-(female, English-first) 0.991–0.995 · Xiaoyi (native Mandarin) 0.991 · Xiaoxiao 0.933". Footer in a
-dashed YELLOW outline: "chosen by speech recognition · no recorded check by ear yet". [REAL A28]
-SAY: Then, which voice? The agent can't listen, so it asked a speech recognizer. With the first Mandarin voice, the recognizer heard "Nice" where the script said noise, and "Excellent" where it said epsilon. Another voice passed all 17 test terms, and was chosen. There's no record yet of anyone checking it by ear.
+(female, English-first) 0.991–0.995 · Xiaoyi (native Mandarin) 0.991 · Xiaoxiao 0.933", the
+Xiaoyi row shown as "Xiaoyi (native Mandarin, female)" and marked "chosen"; on "two English-first
+voices" the Brian and Ava rows light up. Footer in a dashed YELLOW outline, two lines: "screened by
+speech recognition · picked as a native Mandarin female voice" (right after the two rows) / "no
+recorded check by ear yet" (on "There's no record").
+[REAL A28]
+SAY: Then, which voice? The agent can't listen, so it asked a speech recognizer. With the first Mandarin voice, the recognizer heard "Nice" where the script said noise, and "Excellent" where it said epsilon. Another Mandarin voice passed all 17 test terms, and was chosen, though two English-first voices scored as high or higher. There's no record yet of anyone checking it by ear.
 
 SHOW: A redrawn frame of the Chinese tic-tac-toe video at 11:43 (A30 on the A04 picture, tag
 "re-created for this video · the old cue text, as both AI reviewers quoted it"): the game tree under 轮到 X /
 轮到 O, and in the band below "不是电脑能做的，不只是统计对局" over the English line "No. A computer can
 do more than count." The Chinese line is glossed "It's not what a computer can do, not just
-counting games", with a RED "meaning flipped" stamp; the English line stays WHITE. Two small
+counting games", with a RED "meaning flipped" stamp; the English line stays WHITE. The frame's own
+question "X 总能赢吗? ✗" gets a GREY gloss under it, “X always wins?” (the English
+video's label, `s09_bigger.py` line 409), as the narration names the question. Two small
 faded-BLUE reviewer icons each raise a RED flag on the cue. [RECON A30; REAL A04]
-SAY: And one subtitle flipped a meaning. The English narration answers with a short no, then says a computer can do more than count. The Chinese subtitle said the opposite: that this is not something a computer can do. Both AI reviewers of the Chinese version caught it.
+SAY: And one subtitle flipped a meaning. The English narration asks whether X always wins, answers with a short no, then says a computer can do more than count. The Chinese subtitle said the opposite: that this is not something a computer can do. Both AI reviewers of the Chinese version caught it.
 
 SHOW: PONDER(10 s, "The English is right.\nThe Chinese says the opposite.\nIs this a translation mistake?")
 over the reconstructed frame.
@@ -526,8 +554,9 @@ pulses WHITE. The cue splits into two layers: "content: the translation" with a 
 "Subtitles: keep sentence punctuation in merged cues; …". [REAL A04, A35]
 SAY: It wasn't. The translation had a full stop after that no, but the subtitle tool dropped it when it merged that short subtitle into the next. Tool bugs often look like content bugs.
 
-SHOW: A file timeline: scene files edited, their movies older, each with a RED tag "older than
-source" [DIAGRAM], under the real commit line (A35, `5be60d7`): "A plain build used to reuse any
+SHOW: A file timeline: scene files edited, their clips older (legend "scene code" · "scene clip"),
+each with a RED tag "older than source", stitched into a "final video" labelled "put together by
+the toolkit" [DIAGRAM], under the real commit line (A35, `5be60d7`): "A plain build used to reuse any
 existing scene movie, so edited scenes were silently stitched from stale renders." On "file
 dates", two real date checks: a faded-BLUE reviewer icon holds the note from the privacy video's
 newcomer review (A44, caption "a reviewer · privacy video, Oct 4"): "The renders are older than the
@@ -537,14 +566,16 @@ source."; and the BLUE agent icon lines up the dates it listed just before the f
 `{"speed": 1.0, "tts": "edge", "voice": "zh-CN-XiaoyiNeural"}`, caption "voice stamp of a Chinese
 scene render (tic-tac-toe scene 3)", with a GREEN tag "every render now records its voice".
 [REAL A35, A44, A31; DIAGRAM]
-SAY: Another tool bug: a plain build used to reuse old scene movies, so edited scenes were quietly stitched from out-of-date footage. The file dates gave it away: the movies were older than the code. Now a scene is rendered again whenever it's older than its sources, or its voice has changed.
+SAY: Another tool bug: when putting the video together, the toolkit reused each scene's old clip, so edited scenes were quietly stitched from out-of-date footage. The file dates gave it away: the clips were older than the code. Now a scene is rendered again whenever it's older than its sources, or its voice has changed.
 
 SHOW: Three lanes for the Chinese privacy video's QA (A32): "reviewers · 4 groups × (director +
 simulated grad student) · 103 findings, 81 of them polish" → "4 fixers · 75 changes" → "4
-skeptical verifiers · 12 corrections". One change card bounces back from the verifier lane with a
-RED note from the run record: "claimed: ×1.12, within the limit · measured: ×1.153, over the
-15 % limit". [DATA A32]
-SAY: Fixes need checking too. For the Chinese privacy video, reviewers raised 103 points, most of them polish, and fixers made 75 changes. Then skeptical verifiers checked the fixers' work, and made 12 more corrections. One fixer said a passage now fit its time limit. It didn't.
+skeptical verifiers · 12 corrections". One change card, headed "the limit: Chinese at most 15 %
+longer than English" (rule D3 of the privacy video's Chinese glossary:
+the animation waits for the voice), reaches a GREEN gate and bounces back; the gate's ✓ turns into
+a RED ✗. The run record's ratios (×1.12 claimed, ×1.153 measured) read "fixer: 12 % longer, within
+the limit" and, in RED, "verifier: 15.3 % longer, over the limit". [DATA A32]
+SAY: Fixes need checking too. For the Chinese privacy video, reviewers raised 103 points, most of them polish, and fixers made 75 changes. Then skeptical verifiers checked the fixers' work, and made 12 more corrections. A Chinese passage may run at most 15 percent longer than the English, or the animation stalls. One fixer said a passage now fit that limit. A verifier timed it: fifteen point three percent longer.
 
 ---
 
@@ -553,38 +584,42 @@ SAY: Fixes need checking too. For the Chinese privacy video, reviewers raised 10
 SHOW: A board with four empty slots, titled with the rule: "the biggest gaps sit where measuring
 runs out". Card 1 slides in, dashed YELLOW outline: "only people can do this". A PINK
 `person_icon` with headphones replaces the RED-struck headphones over the agent icons (from S01).
-Sub-lines: "no recorded human review of the narration yet, English or Chinese" · "English
-narration: checked by a speech recognizer for this video, no human listening yet" · "every test
-viewer on record: an AI persona" · "learning not measured: no quiz, no data". [DIAGRAM; DATA fact
-sheet 6]
-SAY: So what's next? The biggest gaps sit exactly where measuring runs out. First, what only people can do. There's no recorded human review of any narration yet. Every test viewer on record was simulated, and there's no measure yet of what anyone learned.
+Sub-lines: first, with a solid PINK bullet, "the user's feedback (Oct 8, summarized): add
+background music · a shorter, denser version too" (third person, not a quote: the user's message
+of Oct 8, 17:00 UTC); then, dashed YELLOW, "narration: no line-by-line check by ear yet, English or
+Chinese (the English: a speech recognizer)" · "every test viewer on record: an AI persona" ·
+"learning not measured: no quiz, no data". [DIAGRAM; DATA fact sheet 6, transcript Oct 8]
+SAY: So what's next? The biggest gaps sit exactly where measuring runs out. First, and most important: what only people can do. The only human feedback on record is the user's: the long videos lack background music, and they'd also like a shorter, denser version. There's no record yet of anyone checking the narration line by line, by ear. Every test viewer on record was simulated, and there's no measure yet of what anyone learned.
 
 SHOW: Card 1 opens into two columns. PINK "decided by the user": "the topics" · "the audiences" ·
 "Chinese, code-switched" · "this video". BLUE "decided by the agent · worth a second look", each
 item in a dashed YELLOW outline: "privacy video: 24 min, not the 12–15 its own instructions
-suggest → also cut into 2 parts" · "Chinese voice: the top scorer was male and English-first → a
-native Mandarin female voice, to match the English (another female voice scored about as well)" ·
-"which English words to keep: argued by simulated Chinese readers" · "small edits to the user's
-program". [DATA fact sheet 6, A28]
-SAY: People should also revisit the agent's own calls, like the length of the privacy video and the choice of Chinese voice.
+suggest → also cut into 2 parts" · "Chinese voice: native Mandarin, female, like the English ·
+two English-first voices scored as high or higher" · "which English terms to keep: argued by
+simulated Chinese readers" · "small edits to the user's program". Each row comes in as it is named;
+the four are held together about 2 s more. [DATA fact sheet 6, A28]
+SAY: People should also revisit the agent's own calls: the length of the privacy video, the choice of Chinese voice, which English terms to keep, and the small edits to the user's program.
 
 SHOW: Card 2, "engineering", with three sub-cards, each tagged "idea · not built yet" in a dashed
 YELLOW outline. "A licensed Chinese voice": the real line from `docs/LANGUAGES.md` (A36), "the free
 Edge [service] is not licensed for published videos" ("endpoint" swapped for viewers, in brackets) → "Azure AI Speech: same voices, licensed ·
 clips made when this script was written: 0" → "switching re-voices all 417 sentences, then re-times
 them". "Word-level timing": the S05 pin snaps from its estimate onto the GREEN word bar; "then
-delete the hand-set shifts · add a lint for sync, overlaps and dead air". "Shared parts": a GREEN
+delete the hand-set shifts". "Shared parts": a GREEN
 bar "scene code per minute of video: about 400 lines (tic-tac-toe) · about 310 (privacy)" shrinks
-as a shelf of reusable parts fills (board · game tree · code panel · counter · paper card). A small
-footnote card: "also: the English privacy video, part 2, opens on a black frame, voice at 0.088 s →
-add a lead-in". [REAL A36; DATA]
-SAY: Second, engineering: a licensed Chinese voice, since the free service isn't licensed for published videos. Timing should follow words, not characters, so the hand-set shifts can go. And shared parts would shrink the scene code.
+as a shelf of reusable parts fills (board · game tree · code panel · counter · paper card). A
+footnote card, held about 4 s: "also to do: a lint for sync, overlaps and dead air" / "a lead-in for
+part 2 of the English privacy video (it opens on a black frame, voice at 0.088 s)". [REAL A36; DATA]
+SAY: Second, engineering. The free Chinese voice isn't licensed for published videos, so the Chinese versions need a licensed voice before they're posted. Timing should follow words, not characters, so the hand-set shifts can go. And shared parts would shrink the scene code.
 
-SHOW: Card 3, "subtitles that understand sentences": a cue cut at the wrong place is re-cut by a
-GREY "parser" box that proposes and a GREEN "rules" box that checks (tag "idea · not built yet");
-facts underneath: "rule-based rewrite, first review round: 19 of 21 issues fixed (its own report)
-· reviewers found 11 regressions" · "four rounds in all: 49 tests; rule tuning stopped at diminishing returns (its commit note)" · "privacy video, Chinese: final cut rendered with the new subtitles". [DATA]
-SAY: Third, subtitles. Hand-written rules decide where to cut each sentence into subtitle lines. In its first review round, the newest version fixed most of its targets, but made 11 other subtitles worse. A sentence parser could propose the cuts, and the rules could check them.
+SHOW: Card 3, "subtitles that understand sentences": first a GREY data line, "review findings about
+subtitles: 37 of 103 (Chinese privacy) · 15 of 27 (Chinese tic-tac-toe)" (kind "subtitles" in the
+run records wf_b21332a2 and wf_f49ebc60; docs/PLAYBOOK.md §2.4). Then a cue cut at the wrong place
+is re-cut by a GREY "grammar tool" box that suggests and a GREEN "rules" box that checks (tag "idea ·
+not built yet"); facts underneath: "first rewrite of the rules: 19 of 21 targets fixed (its own
+report) · reviewers: 11 subtitles made worse" · "three more rounds, 49 tests (9dcd7f8) ·
+next time: test cases and a diff before the first rule change". [DATA]
+SAY: Third, subtitles, the biggest source of review findings in the Chinese versions. Hand-written rules decide where each subtitle line breaks. The first rewrite of those rules fixed most of its targets, but made 11 other subtitles worse. It took three more rounds to fix those, so next time, the test cases come first. A grammar tool could suggest the breaks, and the rules could check them.
 
 SHOW: Card 4, "interactivity": the two real playground screenshots (A33 "Laplace Mechanism
 Playground", A34 "Tic-Tac-Toe Game Counter") sit apart from a video frame, then merge into one
@@ -607,12 +642,17 @@ SAY: Want to try this yourself? A human picks the learner and the question. Writ
 SHOW: The PINK quote returns (A06): "I felt like LLM should not just be cognitive offloading; it
 should be something that can actually help us to make knowledge more accessible, but at the same
 time achieve some sort of the same level of learning." — the user (dictated; filler words
-removed). [REAL A06]
+removed). Above the quote, a GREY gloss arrow points at "LLM": "LLM: a large language model, the
+AI behind the agent" (the quote itself stays exact). [REAL A06]
 SAY: Above all, remember the goal. As the user put it, AI should not just be cognitive offloading. It should make knowledge easier to reach, and still let you learn just as deeply.
 
-SHOW: Last frame: the tic-tac-toe playground screenshot (A34) on the left; on the right the BLUE
+SHOW: Last frame: a piece of this video's own contact sheet on the left (assets/meta_s01_sheet.png:
+rows 3 and 4 of the 480p draft's scene-1 sheet, 0:25 to 0:46, a still every 3 s, yellow
+timestamps), caption "real contact sheet · this video's draft (scene 1, a still every 3 s)" (the playground screenshot read as "this video":
+viewer review); on the right the BLUE
 agent icon with the RED-struck headphones, and the line "this video was made the same way"; under
 it, in a dashed YELLOW outline, "checked by measuring · the agent that made it can't listen to it".
 On "You can.", a PINK `person_icon` with headphones appears beside it, and under it a GREY chip:
-"something sounded wrong? say so, with the time". Then everything fades out. [REAL A34; DIAGRAM]
-SAY: One last thing. This video was made the same way, so it has the same blind spot: the agent that made it can't listen to it. You can. If anything sounded wrong, or lost you, say so, with the time. That's exactly the feedback this pipeline is missing.
+"something sounded wrong? say so in the comments, with the time". The finished frame holds about
+3 s, then everything fades out. [REAL contact sheet; DIAGRAM]
+SAY: One last thing. This video was made the same way, so it has the same blind spot: the agent that made it can't listen to it. You can. If anything sounded wrong, or lost you, say so in the comments, with the time. That's exactly the feedback this pipeline is missing.

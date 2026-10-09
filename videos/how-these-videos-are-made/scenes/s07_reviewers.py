@@ -10,17 +10,19 @@ by kind: 3 wrong, 13 confusing, 14 polish, in the order of the notes); the "12 o
 line" item (line 30) is pulled out, glows and goes back; the 30 go into a BLUE "fix round" and 30
 come out of it for round 2 (same roles, fresh agents): 25 fixed (GREEN), 5 partly fixed (dashed YELLOW) (the record doesn't
 say which ones, so none is mapped to a round-1 square), plus 18 new or remaining notes; the score
-card with both caveats (dashed YELLOW) -> the round-1 director and its "wrong" note carry over
+card with both caveats (dashed YELLOW), in on "5 only partly" and kept into the next beat -> the round-1 director and its "wrong" note carry over
 into the frozen shuffle: four real frames 0.2 s apart re-rendered from the old code (A03), the
 board the same in all four while the counter (zoomed in) reads 5, 5, 6, 7; the note becomes the
 RED tag "frozen" -> the strip moves up; under it the real old line (A25) with `.animate` RED; a
 diagram of one mark with one "next spot" note: four planned moves fly out of `.animate` into the
-note, each overwriting the last, so the mark jumps straight to the last spot -> the real fix
-(A26, line 203) with `lambda` GREEN: each move is written into the note as it plays, and the mark
-visits every spot -> the real "after" frames (A02), GREEN rings on the marks that moved -> four
+note, each overwriting the last ("before: only the last move survives"), so the mark jumps
+straight to the last spot -> the real fix (A26, line 203) with `lambda` GREEN: each move is written
+into the note as it plays ("after: one move at a time"), and the mark visits every spot -> on "and
+the marks move again", the real "after" frames (A02), GREEN rings on the marks that moved -> four
 mini scene cards of the privacy video (diagram): "Dan" in scenes 3-4, "Dev" in 5-6, a RED ≠; a
 faded-BLUE cross-scene reviewer bar sweeps across and the names settle on "Dan"; five differently
-drawn budget bars collapse into one shared drawing (A38).
+drawn budget bars appear as the second reviewer's find is narrated and collapse into one shared
+drawing on "Now those scenes share" (A38).
 
 Every number and quote on screen is checked in _check() (runs on import) against the assets.
 
@@ -485,9 +487,11 @@ class Reviewers(VoiceScene):
             vo.wait_until("and 5 only partly")
             self.play(*[ReplacementTransform(grid2[k], partly_sq[k - 25]) for k in range(25, 30)],
                       FadeIn(leg2b, shift=UP * 0.1), run_time=0.8)
+            # the score card comes in now and stays into the next beat (about 5 s in all): shown only
+            # 1.5 s after the voice, its three lines could not be read (fresh-viewer review, 6:52)
+            self.play(FadeIn(score, shift=UP * 0.15), run_time=0.6)
         self.play(LaggedStart(*[FadeIn(n, scale=0.4) for n in notes], lag_ratio=0.03), FadeIn(notes_l), run_time=0.8)
-        self.play(FadeIn(score, shift=UP * 0.15), run_time=0.6)
-        self.wait(1.4)
+        self.wait(1.6)
 
         # ---------------------------------------------------------- beat 3: the frozen shuffle
         before = frame_strip(OLD_FRAMES, OLD_BOARD, OLD_COUNT).move_to([0, BIG_Y, 0])
@@ -533,6 +537,12 @@ class Reviewers(VoiceScene):
         note = VGroup(note_box, note_body).move_to([START_X + 0.55, NOTE_Y, 0])
         pinline = Line(note_box.get_bottom() + LEFT * 0.55, ghost.get_top(), color=TOOL, stroke_width=2)
         dia_cap = caption("one mark, four moves\n(a diagram)", 22).move_to([4.9, SPOT_Y, 0])
+        # what the diagram shows, in words (the code lines alone lost a viewer who doesn't code:
+        # fresh-viewer review of the draft, 7:02)
+        state_before = label("before: only the last\nmove survives", 24, INK, t2c={"before:": BUG})
+        state_after = label("after: one move\nat a time", 24, INK)
+        for m in (state_before, state_after):
+            m.move_to([4.9, NOTE_Y - 0.1, 0])
         diagram = VGroup(rail, start_dot, spots, nums, pinline, note, ghost, dia_cap)
 
         fixp = clipped_panel(FIX_LINE, "tic-tac-toe video · scenes/s03_stop.py", 203, cols=64,
@@ -564,21 +574,26 @@ class Reviewers(VoiceScene):
         assert fixp.code.get_top()[1] < low_bottom - 0.08 and doc.get_bottom()[1] > -3.55
         assert note.get_top()[1] < old.caption.get_bottom()[1] - 0.05
         assert spots.get_bottom()[1] > fixp.code.get_top()[1] + 0.15
+        assert all(m.get_bottom()[1] > dia_cap.get_top()[1] + 0.12 and m.get_top()[1] < old.caption.get_bottom()[1] - 0.1
+                   and m.get_left()[0] > spots.get_right()[0] + 0.2 and m.get_right()[0] < 6.45
+                   for m in (state_before, state_after))
 
         with self.voiceover(SAY[2]) as vo:
             red = grid1[FROZEN_ITEM]
             gone = [r1_kid, r1_head[1], *[s for s in grid1 if s is not red], leg1, fix, a_in, a_out, r2_head,
-                    *fixed_sq, *partly_sq, leg2, notes, notes_l, score, src2]
-            self.play(FadeOut(collect(self, *gone)), run_time=0.6)
+                    *fixed_sq, *partly_sq, leg2, notes, notes_l]
+            self.play(FadeOut(collect(self, *gone)), run_time=0.6)     # the score card (and its source) stay
             # the RED square lands first, then "before" comes in beside it (together, the square
             # crossed the word on its way up: viewer review of the draft, 6:55)
             self.play(ReplacementTransform(r1_dir, b_icon), red.animate.move_to(frozen).scale(0.8), run_time=0.6)
             self.play(FadeIn(b_word, shift=RIGHT * 0.1), run_time=0.3)
             self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.15) for t in before.tiles], lag_ratio=0.12),
-                      FadeIn(rr), FadeIn(b_side), FadeIn(src3), run_time=0.9)
+                      FadeIn(rr), FadeIn(b_side), run_time=0.9)
 
             vo.wait_until("The scene should shuffle")
-            self.play(FadeIn(zoom_cap), Create(zoom_line), run_time=0.3)
+            # the score card (and its source caption) leave only now; the frames' source comes in
+            self.play(FadeIn(zoom_cap), Create(zoom_line), FadeOut(collect(self, score, src2), shift=DOWN * 0.15),
+                      FadeIn(src3), run_time=0.4)
             self.play(LaggedStart(*[Circumscribe(gb, color=S.WHITE, shape=Circle, buff=0.02, run_time=0.8)
                                     for gb in ghost_boxes], lag_ratio=0.25), run_time=1.6)
             vo.wait_until("but the board froze")
@@ -597,7 +612,7 @@ class Reviewers(VoiceScene):
             self.play(FadeIn(old, shift=UP * 0.2), FadeIn(b_side_small), run_time=0.6)
             self.play(animate_span.animate.set_color(BUG).set_opacity(1), run_time=0.4)
 
-            vo.wait_until("every move was prepared")
+            vo.wait_until("every move was set up")
             self.play(FadeIn(diagram, shift=UP * 0.15), run_time=0.6)
             prev = None
             for k in range(4):                                  # all four written before any plays
@@ -610,14 +625,17 @@ class Reviewers(VoiceScene):
                 if prev is not None:
                     self.remove(prev)
                 prev = c
-            vo.wait_until("so each overwrote")
-            self.play(Circumscribe(slot_b, color=S.WHITE, buff=0.06, run_time=0.7))
+            vo.wait_until("and each setup erased")
+            self.play(Circumscribe(slot_b, color=S.WHITE, buff=0.06, run_time=0.7),
+                      FadeIn(state_before, shift=LEFT * 0.15), run_time=0.7)
+            vo.wait_until("so each mark jumped")
             self.play(ghost.animate(path_arc=-PI / 3).move_to(spots[3]), run_time=0.7)
+            vo.wait_until("and sat still")
             self.play(*[s.animate.set_stroke(BUG) for s in spots[:3]], run_time=0.4)
 
             vo.wait_until("Now each move")
             self.play(FadeIn(fixp, shift=UP * 0.2), FadeIn(doc, shift=UP * 0.2), FadeOut(prev),
-                      ghost.animate.move_to([START_X, SPOT_Y, 0]),
+                      ghost.animate.move_to([START_X, SPOT_Y, 0]), FadeTransform(state_before, state_after),
                       *[s.animate.set_stroke(TOOL) for s in spots[:3]], run_time=0.4)
             self.play(lambda_span.animate.set_color(MEASURED).set_opacity(1), run_time=0.2)
             prev = None
@@ -627,17 +645,21 @@ class Reviewers(VoiceScene):
                 anims = [c.animate(path_arc=PI / 5).move_to(slot_b).scale(1 / 0.6)]
                 if prev is not None:
                     anims.append(FadeOut(prev, shift=DOWN * 0.2))
-                self.play(*anims, run_time=0.21)               # 4 x 0.47 s: ends with the voice
+                self.play(*anims, run_time=0.21)               # 4 x 0.47 s
                 self.play(ghost.animate(path_arc=-PI / 2.5).move_to(spots[k]),
                           spots[k].animate.set_stroke(INK), run_time=0.26)
                 prev = c
 
-        # the real frames after the fix
-        self.play(FadeOut(collect(self, diagram, prev), shift=DOWN * 0.15), run_time=0.4)
-        self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.15) for t in after.tiles], lag_ratio=0.12),
-                  FadeIn(a_word), FadeIn(a_tag), FadeIn(a_side), run_time=0.8)
-        self.play(LaggedStart(*[Create(r) for r in rings], lag_ratio=0.15), run_time=0.8)
-        self.wait(0.9)
+            # the real frames after the fix, as the narration says the marks move again (they came in
+            # after the voice and were gone 3 s later, too short to register: director's review, 7:11)
+            vo.wait_until("and the marks move")
+            self.play(FadeOut(collect(self, diagram, prev, state_after), shift=DOWN * 0.15), run_time=0.4)
+            self.play(LaggedStart(*[FadeIn(t, shift=UP * 0.15) for t in after.tiles], lag_ratio=0.12),
+                      FadeIn(a_word), FadeIn(a_tag), FadeIn(a_side), run_time=0.8)
+            self.play(LaggedStart(*[Create(r) for r in rings], lag_ratio=0.15), run_time=0.8)
+        self.play(LaggedStart(*[Indicate(r, color=S.WHITE, scale_factor=1.25) for r in rings], lag_ratio=0.1),
+                  run_time=0.9)
+        self.wait(1.4)
 
         # ---------------------------------------------------------- beat 4: drift across scenes
         names = ["Dan", "Dan", "Dev", "Dev"]
@@ -662,7 +684,7 @@ class Reviewers(VoiceScene):
         variants.arrange(RIGHT, buff=0.55).move_to([0, -2.05, 0])
         for v in variants:
             v.match_y(variants)
-        var_l = label("one budget bar, “drawn five different ways”", 24, TOOL).move_to([0, -2.78, 0])
+        var_l = label("the privacy budget bar, “drawn five different ways”", 24, TOOL).move_to([0, -2.78, 0])
         shared.move_to([0, -2.05, 0])
         shared_l = VGroup(label("one shared drawing:", 24, TOOL), mono("common.budget_bar()", 22, TOOL)) \
             .arrange(RIGHT, buff=0.18).match_y(var_l)
@@ -706,11 +728,19 @@ class Reviewers(VoiceScene):
                       Succession(Wait(t_hit[0]), FadeOut(neq, run_time=0.3)),
                       Succession(Wait(sweep - 0.4), bar_l.animate(run_time=0.4).set_opacity(1)),
                       run_time=sweep)
+            # the budget bar is narrated now (it played in silence and "budget bar" was never said:
+            # fresh-viewer review of the draft, 7:26)
+            vo.wait_until("Another reviewer found")
+            self.play(Indicate(rider, color=S.WHITE, scale_factor=1.15), run_time=0.5)
+            vo.wait_until("the privacy budget bar")
             self.play(LaggedStart(*[FadeIn(v, shift=UP * 0.15) for v in variants], lag_ratio=0.12),
                       FadeIn(var_l), run_time=0.8)
-        self.wait(0.8)
-        self.play(*[ReplacementTransform(v, shared.copy()) for v in variants], FadeOut(var_l, shift=DOWN * 0.1),
-                  run_time=0.8)
-        self.play(FadeIn(shared_l, shift=UP * 0.1), run_time=0.4)
-        self.wait(0.9)
+            vo.wait_until("five different ways")
+            self.play(LaggedStart(*[Indicate(v, color=S.WHITE, scale_factor=1.12) for v in variants], lag_ratio=0.12),
+                      run_time=0.8)
+            vo.wait_until("Now those scenes share")
+            self.play(*[ReplacementTransform(v, shared.copy()) for v in variants], FadeOut(var_l, shift=DOWN * 0.1),
+                      run_time=0.8)
+            self.play(FadeIn(shared_l, shift=UP * 0.1), run_time=0.4)
+        self.wait(1.8)                    # the payoff label came in at the voice's end: give it time to read
         fade_out_all(self)

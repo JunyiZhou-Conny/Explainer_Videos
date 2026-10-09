@@ -4,22 +4,24 @@ Beats: a board of four empty slots under its rule, "the biggest gaps sit where m
 out": a GREEN row of the measured checks of S06-S09 (lint, self-checks, frame fingerprints, speech
 recognizer) runs out, and the dashed YELLOW stretch beyond it becomes card 1, "only people can do
 this", which slides into slot 1 -> S01's motif (the agents under the RED-struck headphones): a PINK
-person comes in and the headphones move onto their head, the strike falls away; four open items
-(dashed YELLOW bullets) build beside them (fact sheet 6) -> card 1 opens into two columns: PINK
+person comes in and the headphones move onto their head, the strike falls away; beside them the
+one human reaction on record (the user's feedback of Oct 8, summarized, solid PINK bullet) and
+three open items (dashed YELLOW bullets; fact sheet 6) -> card 1 opens into two columns: PINK
 "decided by the user", BLUE "decided by the agent · worth a second look", each agent's call in a
-dashed YELLOW outline -> the columns fold back into tab 1; card 2, "engineering", slides into slot
+dashed YELLOW outline, each named as it comes in -> the columns fold back into tab 1; card 2, "engineering", slides into slot
 2 and three index cards come out of it (each with the "idea · not built yet" tag); the stage beside
 them shows one at a time: (a) the real LANGUAGES.md line (A36) -> Azure (0 clips when the script
 was written) -> 417 sentence dots re-voiced and re-timed; (b) S05's clip (A18 envelope, A19 word
 bars): the estimated pin (1.42 s) snaps onto the measured word (3.26 s) and turns GREEN, and the
 real hand-set shift (A20, line 317) is struck out; (c) GREEN bars of scene code per minute (400,
 310) shrink as a two-shelf rack of shared parts fills, the cut-off part dashed YELLOW; a footnote
-card (the black frame of the privacy video's part 2) -> card 3, "subtitles that understand
-sentences": a long example cue (this scene's own last sentence) is cut by GREY hand-written rules
-in the wrong place ("and the / rules"); the first review round in squares (19 of 21 fixed, its
-own report; 11 RED regressions) and the round-3/4 and Chinese-privacy facts (as of the script);
-then a GREY sentence parser proposes the cut after "cuts,", the rules turn GREEN and check it, and
-the words reflow -> card 4, "interactivity": the user's own words from S02 (card 4, "interactive"
+card of the two unspoken to-dos (a sync lint; a lead-in for the privacy video's part 2), held
+about 4 s -> card 3, "subtitles that understand sentences": the share of subtitle findings in the
+two Chinese reviews (37 of 103, 15 of 27; run records), then a long example cue (this scene's own
+last sentence) is cut by GREY hand-written rules in the wrong place ("and the / rules"); the first
+rewrite in squares (19 of 21 fixed, its own report; 11 RED made worse), which turn back on "three
+more rounds", and the lesson (tests first); then a GREY grammar tool suggests the cut after
+"breaks,", the rules turn GREEN and check it, and the words reflow -> card 4, "interactivity": the user's own words from S02 (card 4, "interactive"
 outlined), then a real tic-tac-toe frame in a player, apart from the two real playground
 screenshots (A33, A34) -> pausing: the tic-tac-toe video's last ponder question appears in the
 player, its playground docks beside it in one window (dashed YELLOW, "idea · not built yet"),
@@ -55,21 +57,25 @@ RULE = "the biggest gaps sit where measuring runs out"
 CARD_TITLES = ["only people can do this", "engineering", "subtitles that understand sentences", "interactivity"]
 CHECKS = ["lint", "self-checks", "frame fingerprints", "speech recognizer"]   # the GREEN checks of S06-S09
 
-OPEN_ITEMS = [                                       # card 1, fact sheet 6 (not yet verified)
-    "no recorded human review of the narration yet,\nEnglish or Chinese",
-    "English narration: checked by a speech recognizer\nfor this video, no human listening yet",
+# card 1: the one human reaction on record (the user's message of Oct 8, 17:00 UTC: "Not saying you
+# did wrong, I think your long video is very great, it just lacks back ground music", and "I am
+# also looking for an alternate version where the information is more condensed"), summarized in
+# the third person so it never reads as a quote; then the open items (fact sheet 6)
+FEEDBACK = "the user's feedback (Oct 8, summarized):\nadd background music · a shorter, denser version too"
+OPEN_ITEMS = [
+    "narration: no line-by-line check by ear yet,\nEnglish or Chinese (the English: a speech recognizer)",
     "every test viewer on record: an AI persona",
     "learning not measured: no quiz, no data",
 ]
 USER_HEAD, AGENT_HEAD = "decided by the user", "decided by the agent · worth a second look"
 USER_CALLS = ["the topics", "the audiences", "Chinese, code-switched", "this video"]
-AGENT_CALLS = [
+AGENT_CALLS = [                                      # each one named in the say line as it comes in
     "privacy video: 24 min, not the 12–15\nits own instructions suggest → also cut into 2 parts",
-    "Chinese voice: the top scorer was male and English-first\n→ a native Mandarin female voice, to match the English\n"
-    "(another female voice scored about as well)",
-    "which English words to keep:\nargued by simulated Chinese readers",
+    "Chinese voice: native Mandarin, female, like the English\n· two English-first voices scored as high or higher",
+    "which English terms to keep:\nargued by simulated Chinese readers",
     "small edits to the user's program",
 ]
+CALL_ANCHORS = ["the length", "the choice", "which English terms", "and the small edits"]
 
 ENG_TITLES = ["A licensed Chinese voice", "Word-level timing", "Shared parts"]
 A36 = EXCERPTS["A36"]
@@ -84,24 +90,30 @@ PAIRS = EXCERPTS["A27"]["sentence_pairs"]["total"]                   # 417
 REVOICE = f"switching re-voices all\n{PAIRS} sentences, then\nre-times them"
 SHIFT_LINE = EXCERPTS["A20"]["shift_line"]           # wait_for(self, vo, "counted those", shift=2.2)
 SHIFT_CAP = "tic-tac-toe video · scenes/s03_stop.py · line 317"
-TIMING_NOTE = "then delete the hand-set shifts ·\nadd a lint for sync, overlaps and dead air"
+TIMING_NOTE = "then delete the hand-set shifts"           # what the say line says; the lint is in FOOT
 WAVE_CAP = "clip from “The audio is the clock” · word times: a speech recognizer"
 CODE_HEAD = "scene code per minute of video:"
 LINES_PER_MIN = [(400, "about 400 lines (tic-tac-toe)"), (310, "about 310 (privacy)")]
 PARTS = [["board", "game tree", "counter"], ["code panel", "paper card"]]
-FOOT = "also: the English privacy video, part 2, opens on a black frame, voice at 0.088 s → add a lead-in"
+# the two to-dos the narration doesn't speak, together in one footnote card held about 4 s (each was
+# on screen about 1 s in the draft: director's review)
+FOOT = ["also to do: a lint for sync, overlaps and dead air",
+        "a lead-in for part 2 of the English privacy video (it opens on a black frame, voice at 0.088 s)"]
 
-# card 3: the first review round (narrated) and the later state, as the script had it when written
-SUB_HEAD = "rule-based rewrite, first review round:"
+# card 3: why subtitles (findings of kind "subtitles" in the two Chinese reviews: run records
+# wf_b21332a2 zh-qa-fix-dp, 37 of 103, and wf_f49ebc60 zh-qa-ttt, 15 of 27; docs/PLAYBOOK.md §2.4),
+# the first rewrite (narrated), the three rounds after it (9dcd7f8: "the remaining regressions fixed
+# (49 tests)") and the lesson (PLAYBOOK §2.4: the corpus, diff and tests before the first rule change)
+SUB_SHARE = [(37, 103, "Chinese privacy"), (15, 27, "Chinese tic-tac-toe")]
+SUB_STAT = ("review findings about subtitles: "
+            + " · ".join(f"{a} of {b} ({v})" for a, b, v in SUB_SHARE))
+SUB_HEAD = "first rewrite of the rules:"
 SUB_FIXED, SUB_ISSUES, SUB_REGRESSIONS = 19, 21, 11
-SUB_FIXED_L = f"{SUB_FIXED} of {SUB_ISSUES} issues fixed (its own report)"
-SUB_REG_L = f"reviewers found {SUB_REGRESSIONS} regressions"
-# Live values (script.md "Live values": subtitle tool, Chinese privacy final cut): refresh these
-# two lines, worded as the script's show line, right before the final render.
-SUB_LATER = ("four rounds in all: 49 tests\n"
-             "· rule tuning stopped at diminishing returns (its commit note)")
-ZH_PRIVACY = "privacy video, Chinese: final cut rendered with the new subtitles"
-CUE = "A sentence parser could propose the cuts, and the rules could check them."   # this scene's own words
+SUB_FIXED_L = f"{SUB_FIXED} of {SUB_ISSUES} targets fixed (its own report)"
+SUB_REG_L = f"reviewers: {SUB_REGRESSIONS} subtitles made worse"
+SUB_LATER = "then three more rounds to fix those · 49 tests"
+SUB_LESSON = "next time: test cases and a diff before the first rule change"
+CUE = "A grammar tool could suggest the breaks, and the rules could check them."   # this scene's own words
 CUE_WORDS = CUE.split()
 BAD_SPLIT, GOOD_SPLIT = CUE_WORDS.index("rules"), CUE_WORDS.index("and")          # "… and the | rules …"
 CUE_CAP = "example cue (diagram): this scene's own last sentence"
@@ -141,28 +153,33 @@ def _one_line(s: str) -> str:
 
 def _check():
     # card 1 and its columns: the show lines' words, only re-broken
+    assert _one_line(FEEDBACK) == ("the user's feedback (Oct 8, summarized): add background music · a shorter, "
+                                   "denser version too")
+    assert "The only human feedback on record is the user's" in SAY[0]
     assert [_one_line(s) for s in OPEN_ITEMS] == [
-        "no recorded human review of the narration yet, English or Chinese",
-        "English narration: checked by a speech recognizer for this video, no human listening yet",
+        "narration: no line-by-line check by ear yet, English or Chinese (the English: a speech recognizer)",
         "every test viewer on record: an AI persona", "learning not measured: no quiz, no data"]
     assert _one_line(AGENT_CALLS[0]) == ("privacy video: 24 min, not the 12–15 its own instructions suggest → "
                                          "also cut into 2 parts")
-    assert _one_line(AGENT_CALLS[1]) == ("Chinese voice: the top scorer was male and English-first → a native "
-                                         "Mandarin female voice, to match the English (another female voice "
-                                         "scored about as well)")
-    assert _one_line(AGENT_CALLS[2]) == "which English words to keep: argued by simulated Chinese readers"
+    assert _one_line(AGENT_CALLS[1]) == ("Chinese voice: native Mandarin, female, like the English · "
+                                         "two English-first voices scored as high or higher")
+    assert _one_line(AGENT_CALLS[2]) == "which English terms to keep: argued by simulated Chinese readers"
+    assert all(a in SAY[1] for a in CALL_ANCHORS)
     # card 2: the real line, the live 0, the 417 sentence pairs, S05's clip and shift
     assert _one_line(LICENCE_SHOWN) == f"“{LICENCE.replace('endpoint', '[service]')}”" \
         and LICENCE == "the free Edge endpoint is not licensed for published videos"
     assert CLIPS_WHEN_WRITTEN == 0 and _one_line(CLIPS) == "clips made when this script was written: 0"
     assert PAIRS == 417 == EXCERPTS["A27"]["sentence_pairs"]["tictactoe"] + EXCERPTS["A27"]["sentence_pairs"]["privacy"]
     assert _one_line(REVOICE) == "switching re-voices all 417 sentences, then re-times them"
-    assert _one_line(TIMING_NOTE) == "then delete the hand-set shifts · add a lint for sync, overlaps and dead air"
+    assert "so the hand-set shifts can go" in SAY[2]
+    assert FOOT[0] == "also to do: a lint for sync, overlaps and dead air" and "voice at 0.088 s" in FOOT[1]
     assert SHIFT_LINE == asset_text("code/ttt_s03_stop_317.py").strip() and "shift=2.2" in SHIFT_LINE
     assert EST == 1.42 and WORDS["362"] == (0.24, 1.56) and WORDS[",880"] == (1.56, 3.26)
     assert WORDS["counted"] == (3.26, 4.0) and WORDS["counted"][1] < WIN_T <= ENV_T[-1]
     # card 3: the counts of the first review round (ASSETS "Other numbers"), the example cue
     assert (SUB_FIXED, SUB_ISSUES, SUB_REGRESSIONS) == (19, 21, 11)
+    assert SUB_STAT == "review findings about subtitles: 37 of 103 (Chinese privacy) · 15 of 27 (Chinese tic-tac-toe)"
+    assert "11 other subtitles worse" in SAY[3] and "three more rounds" in SAY[3] and "test cases come first" in SAY[3]
     assert SAY[3].endswith(CUE) and CUE_WORDS[BAD_SPLIT - 2:BAD_SPLIT] == ["and", "the"]
     # card 4: the user's words, the real ponder question of the tic-tac-toe video
     q4 = QUOTES["s02_card4"]
@@ -190,7 +207,7 @@ HEAD_Y = 1.72                        # card 1, columns: the headers
 INDEX_X, INDEX_W = -4.45, 3.95       # card 2: the index cards ...
 INDEX_Y = (1.45, 0.12, -1.21)
 STAGE_X0, STAGE_X1 = -2.25, 6.45     # ... and the stage beside them
-FOOT_Y = -3.3
+FOOT_Y = -2.95                       # the two-line footnote card under the shared-parts shelves
 
 
 # ------------------------------------------------------------------ helpers (this scene only)
@@ -239,10 +256,10 @@ def bullet(size: float = 0.24) -> VMobject:
     return box(size, size, OPEN, dashed=True, stroke=2.5, radius=0.04)
 
 
-def open_item(s: str, t2c: dict | None = None, size: float = 24) -> VGroup:
-    """A bullet and a (pre-broken) text, top-aligned."""
+def open_item(s: str, t2c: dict | None = None, size: float = 24, mark=None) -> VGroup:
+    """A bullet (dashed YELLOW unless `mark` is given) and a (pre-broken) text, top-aligned."""
     t = label(s, size, INK, line_spacing=0.9, t2c=t2c or {})
-    b = bullet()
+    b = mark if mark is not None else bullet()
     b.next_to(t, LEFT, buff=0.25).align_to(t, UP).shift(DOWN * 0.04)
     g = VGroup(b, t)
     g.bullet, g.text = b, t
@@ -355,11 +372,12 @@ class WhatNext(VoiceScene):
         worn = hp.copy().scale_to_fit_height(worn_h)
         band = worn[0]
         worn.shift(head.get_center() + UP * 0.03 - band.get_arc_center())
+        heard = box(0.24, 0.24, USER, fill_opacity=0.9, stroke=2.5, radius=0.04)   # solid PINK: on record
         items = VGroup(
-            open_item(OPEN_ITEMS[0]),
-            open_item(OPEN_ITEMS[1], t2c={"checked by a speech recognizer": MEASURED}),
-            open_item(OPEN_ITEMS[2], t2c={"an AI persona": SUB_AGENT_TEXT}),
-            open_item(OPEN_ITEMS[3]),
+            open_item(FEEDBACK, t2c={"the user's feedback": USER}, mark=heard),
+            open_item(OPEN_ITEMS[0], t2c={"a speech recognizer": MEASURED}),
+            open_item(OPEN_ITEMS[1], t2c={"an AI persona": SUB_AGENT_TEXT}),
+            open_item(OPEN_ITEMS[2]),
         ).arrange(DOWN, buff=0.42, aligned_edge=LEFT)
         items.move_to([0, -0.25, 0]).align_to([LIST_X, 0, 0], LEFT)
         assert items.get_right()[0] < 6.45 and items.get_top()[1] < TOP - 0.1
@@ -377,7 +395,7 @@ class WhatNext(VoiceScene):
             self.play(Indicate(qmark, color=S.WHITE, scale_factor=1.25), run_time=0.6)
 
             # the open stretch becomes card 1, in slot 1
-            vo.wait_until("First, what only")
+            vo.wait_until("First, and most")
             self.play(FadeOut(collect(self, badges, floor, floor_l), shift=LEFT * 0.4),
                       FadeOut(qmark, scale=0.5), FadeOut(slots[0].num),
                       ReplacementTransform(beyond, tabs[0].frame), run_time=0.9)
@@ -394,16 +412,19 @@ class WhatNext(VoiceScene):
             self.remove(person, hp)
             self.add(ears_on)
 
-            vo.wait_until("There's no recorded")
+            vo.wait_until("The only human feedback")
             self.play(FadeIn(items[0], shift=RIGHT * 0.25), run_time=0.6)
             self.play(Indicate(ears_on, color=S.WHITE, scale_factor=1.06), run_time=0.7)
+            vo.wait_until("the long videos lack")
+            self.play(Indicate(items[0].text, color=S.WHITE, scale_factor=1.04), run_time=0.8)
+            vo.wait_until("There's no record yet")
             self.play(FadeIn(items[1], shift=RIGHT * 0.25), run_time=0.6)
             vo.wait_until("Every test viewer")
             self.play(FadeIn(items[2], shift=RIGHT * 0.25), Indicate(subs, color=S.WHITE, scale_factor=1.1),
                       run_time=0.7)
             vo.wait_until("and there's no measure")
             self.play(FadeIn(items[3], shift=RIGHT * 0.25), run_time=0.6)
-            self.play(LaggedStart(*[Indicate(it.bullet, color=S.WHITE, scale_factor=1.4) for it in items],
+            self.play(LaggedStart(*[Indicate(it.bullet, color=S.WHITE, scale_factor=1.4) for it in items[1:]],
                                   lag_ratio=0.2), run_time=1.0)
 
         # ================================================================ card 1 opens: who decided what
@@ -430,15 +451,15 @@ class WhatNext(VoiceScene):
                       LaggedStart(*[FadeIn(c, shift=RIGHT * 0.2) for c in u_calls], lag_ratio=0.2), run_time=0.9)
             vo.wait_until("the agent's own calls")
             self.play(FadeIn(a_head, shift=RIGHT * 0.15), run_time=0.5)
-            vo.wait_until("like the length")
-            self.play(FadeIn(a_rows[0][1], shift=UP * 0.12), Create(a_rows[0][0]), run_time=0.7)
-            self.play(Indicate(first, color=S.WHITE, scale_factor=1.15), run_time=0.6)
-            vo.wait_until("and the choice")
-            self.play(FadeIn(a_rows[1][1], shift=UP * 0.12), Create(a_rows[1][0]), run_time=0.7)
-            self.play(LaggedStart(*[AnimationGroup(FadeIn(r[1], shift=UP * 0.12), Create(r[0])) for r in a_rows[2:]],
-                                  lag_ratio=0.4), run_time=0.9)
+            for k, (row, phrase) in enumerate(zip(a_rows, CALL_ANCHORS)):
+                vo.wait_until(phrase)
+                self.play(FadeIn(row[1], shift=UP * 0.12), Create(row[0]), run_time=0.6)
+                if k == 0:
+                    self.play(Indicate(first, color=S.WHITE, scale_factor=1.15), run_time=0.6)
+        # all four together, long enough to read (director's review: about 2 s in the draft)
         self.play(LaggedStart(*[Circumscribe(r[0], color=S.WHITE, buff=0.04, time_width=0.5) for r in a_rows],
                               lag_ratio=0.25), run_time=1.4)
+        self.wait(1.6)
 
         # ================================================================ card 2: engineering
         index = []
@@ -527,19 +548,21 @@ class WhatNext(VoiceScene):
                        .move_to([r.get_left()[0] + nw + (r.width - nw) / 2, r.get_y(), 0]))
         shelves, parts = VGroup(), VGroup()
         for k, row in enumerate(PARTS):
-            y = -1.3 - k * 0.9
+            y = -1.15 - k * 0.82
             shelf = Line([STAGE_X0, y, 0], [STAGE_X0 + 6.6, y, 0], color=TOOL, stroke_width=3)
             cs = VGroup(*[chip(s, TOOL, 24) for s in row]).arrange(RIGHT, buff=0.16)
             cs.next_to(shelf, UP, buff=0.04).align_to(shelf, LEFT).shift(RIGHT * 0.15)
             shelves.add(shelf)
             parts.add(*cs)
         shelf_l = caption("shared parts").next_to(shelves[-1], DOWN, buff=0.1).align_to(shelves[-1], LEFT)
-        foot_t = label(FOOT, 20, TOOL)
-        foot = VGroup(box(foot_t.width + 0.4, foot_t.height + 0.26, TOOL, fill=PANEL, fill_opacity=1, radius=0.1),
+        foot_t = VGroup(*[label(s, 22, TOOL) for s in FOOT]).arrange(DOWN, buff=0.12, aligned_edge=LEFT)
+        foot = VGroup(box(foot_t.width + 0.5, foot_t.height + 0.3, TOOL, fill=PANEL, fill_opacity=1, radius=0.1),
                       foot_t).move_to([0, FOOT_Y, 0])
         foot_t.move_to(foot[0])
-        assert foot.get_left()[0] > -6.55 and foot.get_right()[0] < 6.55
-        assert shelf_l.get_bottom()[1] > foot.get_top()[1] + 0.05 and parts.get_right()[0] < 6.5
+        assert foot.get_left()[0] > -6.55 and foot.get_right()[0] < 6.55 and foot.get_bottom()[1] > -3.58, foot.get_bottom()
+        assert shelf_l.get_bottom()[1] > foot.get_top()[1] + 0.05 and parts.get_right()[0] < 6.5, \
+            (shelf_l.get_bottom(), foot.get_top())
+        assert parts.get_top()[1] < lpm_l.get_bottom()[1] - 0.08, (parts.get_top(), lpm_l.get_bottom())
 
         with self.voiceover(SAY[2]) as vo:
             card1 = collect(self, u_icon, u_head, u_calls, a_icon, a_head, a_rows)
@@ -550,14 +573,15 @@ class WhatNext(VoiceScene):
             self.play(FadeIn(tabs[1], shift=UP * 0.6), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(c, target_position=tabs[1].get_center(), scale=0.3) for c in index],
                                   lag_ratio=0.18), run_time=0.7)
-            vo.wait_until("a licensed Chinese voice")
+            vo.wait_until("The free Chinese voice")
             self.play(Indicate(index[0].title, color=S.WHITE, scale_factor=1.08), index[0].box.animate.set_stroke(INK, 3.5),
                       FadeIn(q_panel, target_position=index[0].get_center(), scale=0.4), FadeIn(q_cap), run_time=0.7)
-            vo.wait_until("since the free service")
+            vo.wait_until("isn't licensed for published")
             self.play(Circumscribe(q_panel, color=S.WHITE, buff=0.06, time_width=0.5), run_time=0.8)
-            vo.wait_until("isn't licensed")
+            vo.wait_until("so the Chinese versions")
             self.play(GrowArrow(arr1), FadeIn(az, shift=LEFT * 0.2), run_time=0.6)
             self.play(Indicate(clips, color=S.WHITE, scale_factor=1.06), run_time=0.45)
+            vo.wait_until("before they're posted")
             self.play(GrowArrow(arr2), FadeIn(rv, shift=DOWN * 0.15),
                       LaggedStart(*[FadeIn(d, scale=0.3) for d in dots], lag_ratio=0.002), run_time=0.8)
 
@@ -578,9 +602,8 @@ class WhatNext(VoiceScene):
                       rate_func=rate_functions.ease_in_out_sine)
             self.play(ReplacementTransform(pin, green_pin), pin_l.animate.set_color(MEASURED),
                       Flash(bars[2].get_left(), color=MEASURED, line_length=0.15, flash_radius=0.25),
-                      Create(x_line), run_time=0.5)
-            self.play(glow.animate.set_fill(AUDIO, 0), cut_g.animate.set_opacity(0.25), FadeIn(note, shift=UP * 0.12),
-                      run_time=0.5)
+                      Create(x_line), FadeIn(note, shift=UP * 0.12), run_time=0.5)
+            self.play(glow.animate.set_fill(AUDIO, 0), cut_g.animate.set_opacity(0.25), run_time=0.5)
 
             vo.wait_until("And shared parts")
             stage_b = collect(self, wave, bars, bar_l, green_pin, pin_l, wave_cap, code, code_cap, x_line, note)
@@ -593,8 +616,11 @@ class WhatNext(VoiceScene):
             shrink = [r.animate.stretch_to_fit_width(r.width * SHRINK).align_to(r, LEFT) for r in lpm_bars]
             self.play(LaggedStart(*[FadeIn(p, shift=DOWN * 0.3) for p in parts], lag_ratio=0.25), *shrink,
                       LaggedStart(*[Create(g) for g in ghosts], lag_ratio=0.3), run_time=1.5)
+        # the two unspoken to-dos, held long enough to read (each was up about 1 s in the draft)
         self.play(FadeIn(foot, shift=UP * 0.15), run_time=0.5)
-        self.wait(0.7)
+        self.wait(1.8)
+        self.play(Indicate(foot_t[1], color=S.WHITE, scale_factor=1.03), run_time=0.8)
+        self.wait(1.0)
 
         # ================================================================ card 3: subtitles that understand sentences
         long_line = cue_line(CUE_WORDS)
@@ -628,9 +654,9 @@ class WhatNext(VoiceScene):
             return g
 
         MACH_Y = 1.62
-        rules0 = machine_box("hand-written rules", "cut each sentence", TOOL).move_to([-1.25, MACH_Y, 0])
-        rules1 = machine_box("rules", "checks", MEASURED).move_to(rules0)
-        parser = machine_box("sentence parser", "proposes", TOOL).move_to([-4.85, MACH_Y, 0])
+        rules0 = machine_box("hand-written rules", "decide the breaks", TOOL).move_to([-1.25, MACH_Y, 0])
+        rules1 = machine_box("rules", "check", MEASURED).move_to(rules0)
+        parser = machine_box("grammar tool", "suggests", TOOL).move_to([-4.85, MACH_Y, 0])
         p_arrow = Arrow(parser.get_right(), rules1.get_left(), buff=0.1, color=TOOL, stroke_width=3, tip_length=0.16,
                         max_tip_length_to_length_ratio=0.3)
         cut_x = ((w_long[BAD_SPLIT - 1].get_right()[0] + w_long[BAD_SPLIT].get_left()[0]) / 2 if per_word
@@ -656,6 +682,14 @@ class WhatNext(VoiceScene):
                           color=TOOL, stroke_width=3, dash_length=0.06)
         ok = check_mark(0.45).next_to(band_two, RIGHT, buff=0.25)
 
+        # why subtitles: their share of the two Chinese reviews' findings (run records)
+        counts = " · ".join(f"{a} of {b} ({v})" for a, b, v in SUB_SHARE)
+        stat = VGroup(label(SUB_STAT.split(": ")[0] + ":", 26, INK),
+                      label(counts, 26, INK, t2c={f"{a} of {b}": BUG for a, b, _ in SUB_SHARE}))
+        stat.arrange(DOWN, buff=0.16).move_to([0.55, CUE_Y, 0])
+        assert stat[0].original_text + " " + stat[1].original_text == SUB_STAT
+        assert stat.get_left()[0] > -6.5 and stat.get_right()[0] < 6.5, stat.get_right()
+
         # the facts underneath
         f_head = label(SUB_HEAD, 24, INK).move_to([0, -0.9, 0]).align_to([LEFT_X, 0, 0], LEFT)
         sq_fix = squares(SUB_ISSUES, TOOL, 0.12)
@@ -666,8 +700,8 @@ class WhatNext(VoiceScene):
         lab_x = sq_fix.get_right()[0] + 0.35
         fix_l = label(SUB_FIXED_L, 24, INK).move_to([0, sq_fix.get_y(), 0]).align_to([lab_x, 0, 0], LEFT)
         reg_l = label(SUB_REG_L, 24, BUG).move_to([0, sq_reg.get_y(), 0]).align_to([lab_x, 0, 0], LEFT)
-        later = VGroup(label(SUB_LATER, 22, TOOL, line_spacing=0.9), label(ZH_PRIVACY, 22, TOOL))
-        later.arrange(DOWN, buff=0.12, aligned_edge=LEFT).next_to(sq_reg, DOWN, buff=0.3).align_to(f_head, LEFT)
+        later = VGroup(label(SUB_LATER, 24, TOOL), label(SUB_LESSON, 24, INK))
+        later.arrange(DOWN, buff=0.16, aligned_edge=LEFT).next_to(sq_reg, DOWN, buff=0.3).align_to(f_head, LEFT)
         assert fix_l.get_right()[0] < 6.5 and later.get_right()[0] < 6.5 and later.get_bottom()[1] > -3.58, \
             (fix_l.get_right(), later.get_right(), later.get_bottom())
         assert cue_cap.get_bottom()[1] > f_head.get_top()[1] + 0.05, (cue_cap.get_bottom(), f_head.get_top())
@@ -677,37 +711,48 @@ class WhatNext(VoiceScene):
             self.play(FadeOut(card2, target_position=tabs[1].get_center(), scale=0.12), *dim(tabs[1], opacity=0.55),
                       FadeOut(slots[2].num), run_time=0.5)
             self.play(FadeIn(tabs[2], shift=UP * 0.6), run_time=0.4)
+            vo.wait_until("the biggest source")
+            self.play(FadeIn(stat, shift=UP * 0.12), run_time=0.6)
+            self.play(Indicate(stat[1], color=S.WHITE, scale_factor=1.06), run_time=0.8)
             vo.wait_until("Hand-written rules")
-            self.play(FadeIn(rules0, target_position=tabs[2].get_center(), scale=0.3), run_time=0.6)
+            self.play(FadeOut(stat, shift=DOWN * 0.15), FadeIn(rules0, target_position=tabs[2].get_center(), scale=0.3),
+                      run_time=0.6)
             self.play(FadeIn(band_long), FadeIn(long_line, shift=UP * 0.1), run_time=0.6)
             self.remove(long_line)                       # the words, one by one, so they can reflow
             self.add(*w_long)
-            vo.wait_until("where to cut")
+            vo.wait_until("where each subtitle line")
             self.play(GrowArrow(r_arrow), Create(cut), run_time=0.5)
             self.play(ReplacementTransform(band_long, band_two),
                       *[ReplacementTransform(a, b) for a, b in zip(w_long, w_bad)],
                       FadeOut(cut), FadeOut(r_arrow), run_time=1.0)
             self.play(FadeIn(cue_cap), run_time=0.3)
 
-            vo.wait_until("In its first review")
+            vo.wait_until("The first rewrite")
             self.play(FadeIn(f_head, shift=UP * 0.1), LaggedStart(*[FadeIn(s, scale=0.5) for s in sq_fix],
                                                                   lag_ratio=0.05), run_time=0.9)
-            vo.wait_until("the newest version fixed")
+            vo.wait_until("fixed most of its")
             self.play(LaggedStart(*[s.animate.set_fill(INK, 0.6) for s in fixed], lag_ratio=0.05),
                       FadeIn(fix_l, shift=LEFT * 0.15), run_time=1.0)
             vo.wait_until("but made 11")
             self.play(LaggedStart(*[FadeIn(s, scale=0.5) for s in sq_reg], lag_ratio=0.06),
                       FadeIn(reg_l, shift=LEFT * 0.15), run_time=0.8)
             self.play(Create(under_bad), run_time=0.5)
-            self.play(FadeIn(later, shift=UP * 0.1), run_time=0.6)
+            vo.wait_until("It took three more")
+            # the later rounds fixed them: the RED squares turn into fixed ones
+            self.play(FadeIn(later[0], shift=UP * 0.1),
+                      LaggedStart(*[s.animate.set_fill(INK, 0.6).set_stroke(TOOL) for s in sq_reg], lag_ratio=0.06),
+                      run_time=1.0)
+            vo.wait_until("so next time")
+            self.play(FadeIn(later[1], shift=UP * 0.1), run_time=0.6)
+            self.play(Indicate(later[1], color=S.WHITE, scale_factor=1.04), run_time=0.7)
 
-            vo.wait_until("A sentence parser")
+            vo.wait_until("A grammar tool")
             self.play(FadeIn(parser, shift=RIGHT * 0.3), GrowArrow(p_arrow), run_time=0.6)
             # the whole proposal is the idea: its dashed outline and tag come with it (and stay readable)
             self.play(Create(prop), Indicate(parser.text[1], color=S.WHITE, scale_factor=1.15),
                       Create(mach_out), FadeIn(mach_tag, shift=LEFT * 0.15), run_time=0.7)
             vo.wait_until("and the rules could")
-            self.play(ReplacementTransform(rules0, rules1), run_time=0.5)
+            self.play(FadeTransform(rules0, rules1), run_time=0.5)    # a morph garbled the two labels mid-way
             self.play(*[ReplacementTransform(a, b) for a, b in zip(w_bad, w_good)], FadeOut(under_bad),
                       FadeOut(prop), Create(ok), run_time=1.0)
         self.wait(0.5)                                      # the re-cut cue, checked, before the card folds

@@ -68,15 +68,15 @@ class Hook(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             # plays for a moment, then pauses while "a paused frame" is spoken (0.75 s)
-            self.play(FadeIn(player.frame), FadeIn(old),
+            # the tag comes with the frame, so the redrawn picture is never on screen untagged
+            # (director review of the draft, 0:01)
+            self.play(FadeIn(player.frame), FadeIn(old), FadeIn(rtag, shift=DOWN * 0.1),
                       FadeIn(VGroup(player.pause, player.bar, player.done, player.knob)), run_time=0.6)
             self.play(player.knob.animate.move_to(player.at(0.31)),
                       player.done.animate.put_start_and_end_on(player.bar.get_start(), player.at(0.31)),
                       run_time=0.6, rate_func=smooth)
             vo.wait_until("a paused frame")
             self.play(ReplacementTransform(player.pause, play), run_time=0.4)
-            vo.wait_until("in an early draft")
-            self.play(FadeIn(rtag, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("about tic-tac-toe")
             self.play(FadeIn(cap, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("Look at the line")
@@ -214,7 +214,7 @@ class Hook(VoiceScene):
             split_chip("who did what", USER, AGENT, size=30),
             chip("how it's checked", MEASURED, size=30),
             chip("the Chinese versions", TOOL, size=30, icon=zh("中", 28)),
-            chip("what still needs a human", OPEN, size=30, dashed=True),
+            chip("what still needs a human, and what to improve", OPEN, size=30, dashed=True),
         ]
         for ch, y in zip(chapters, ys):
             ch.move_to([0, y, 0])
@@ -231,5 +231,7 @@ class Hook(VoiceScene):
                 vo.wait_until(phrase)
                 self.play(FadeIn(ch, shift=UP * 0.2), run_time=0.6)
                 self.play(pulse(ch, 1.08, run_time=0.35))
+            vo.wait_until("and what to improve")         # the last chapter promises improvements too
+            self.play(emphasize(chapters[-1], run_time=0.8))
         self.wait(0.6)
         fade_out_all(self)

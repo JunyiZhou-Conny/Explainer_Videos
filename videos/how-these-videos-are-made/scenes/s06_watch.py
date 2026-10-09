@@ -17,7 +17,9 @@ GREEN check chips in a column: (1) "lint, without drawing a frame" opens the rea
 tic-tac-toe scene 3 (A22: clean, "OK") and its three flags as a legend (output format, with a
 small drawing of each), then folds back; (2) "the scenes check themselves" opens _check_numbers()
 (A23, s03_stop.py lines 62-72), one assert line glowing GREEN, a GREEN counter "82 checks in the
-tic-tac-toe scenes · most of them on the numbers", and the numbers inside the asserts light up.
+tic-tac-toe scenes · on numbers and boards", the numbers inside the asserts light up, then a board
+check (winner(b) == "X"). (Not "most of them on numbers": many of the 82 check boards and game
+states. Director's review of the draft, 6:17.)
 
 Everything shown as real is checked in _check() (runs on import): the sheet's tile layout and its
 yellow timestamps, which squares of the four frames changed (the GREEN rings), the lint lines,
@@ -69,6 +71,7 @@ CHECKS = asset_text(A23["file"])        # s03_stop.py lines 62-72, _check_number
 CHECKS_FIRST = 62
 GLOW_LINE = 7                           # line 69: factorial(4) == 24 ... factorial(9) == 362_880
 NUMBERS = [(7, "24"), (7, "362_880"), (8, "== 8"), (9, "1_440")]   # numbers inside the asserts
+BOARDS = [(5, 'winner(b) == "X"')]                                # a board check: X has won the shown game
 N_ASSERTS = A23["asserts_in_ttt_scenes"]                          # 82
 
 
@@ -115,7 +118,7 @@ def _check():
     assert len(lines) == 11 and lines[0] == "def _check_numbers():"
     assert lines[GLOW_LINE].strip() == "assert factorial(4) == 24 and NINE_FACTORIAL == factorial(9) == 362_880"
     assert sum(ln.strip().startswith("assert") for ln in lines) == 7
-    assert all(s in lines[k] for k, s in NUMBERS)
+    assert all(s in lines[k] for k, s in NUMBERS) and all(s in lines[k] for k, s in BOARDS)
     assert N_ASSERTS == 82
 
 
@@ -495,9 +498,10 @@ class Watching(VoiceScene):
         code.submobjects.insert(1, glow_bar)
         nums = [code_span(code, k, s.replace("== ", "")) if s.startswith("== ") else code_span(code, k, s)
                 for k, s in NUMBERS]
+        boards = [code_span(code, k, s) for k, s in BOARDS]
         n_num = DecimalNumber(0, num_decimal_places=0, font_size=56, color=MEASURED)
         n_text = VGroup(label("checks in the tic-tac-toe scenes", 24, INK),
-                        label("most of them on numbers", 24, INK)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+                        label("on numbers and boards", 24, INK)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         room = VGroup(DecimalNumber(88, num_decimal_places=0, font_size=56), n_text).arrange(RIGHT, buff=0.28)
         n_box = box(room.width + 0.6, room.height + 0.4, MEASURED, fill_opacity=0.1, radius=0.18)
         room.move_to(n_box)              # the box has room for two digits; the count starts at 0
@@ -557,11 +561,13 @@ class Watching(VoiceScene):
             self.play(FadeIn(VGroup(n_box, n_text), shift=LEFT * 0.2), FadeIn(n_num), run_time=0.3)
             self.play(ChangeDecimalToValue(n_num, N_ASSERTS), run_time=0.8, rate_func=smooth)
             adopt(self, counter)
-            vo.wait_until("most of them")
-            self.play(LaggedStart(*[n.animate.set_color(MEASURED).set_opacity(1) for n in nums], lag_ratio=0.2),
-                      emphasize(n_text[1], run_time=1.0), run_time=1.0)
-            self.play(LaggedStart(*[Indicate(n, color=S.WHITE, scale_factor=1.12) for n in nums], lag_ratio=0.2),
-                      run_time=1.0)
+            vo.wait_until("on the numbers")
+            self.play(LaggedStart(*[n.animate.set_color(MEASURED).set_opacity(1) for n in nums], lag_ratio=0.15),
+                      emphasize(n_text[1], run_time=0.8), run_time=0.8)
+            vo.wait_until("and boards")
+            self.play(*[b.animate.set_color(MEASURED).set_opacity(1) for b in boards], run_time=0.4)
+            self.play(LaggedStart(*[Indicate(n, color=S.WHITE, scale_factor=1.12) for n in nums + boards],
+                                  lag_ratio=0.15), run_time=1.0)
         n_num.clear_updaters()
         self.wait(0.8)
         fade_out_all(self)

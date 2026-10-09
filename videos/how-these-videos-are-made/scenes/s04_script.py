@@ -6,19 +6,20 @@ carries a hint of what is inside: script.md's lines alternate GREY "show" and OR
 real motto of docs/WORKFLOW.md (A13) types in above, and the chain shows it: it stops at the
 script (a pause mark), a faded-BLUE reviewer looks, and it resumes -> the row rises; two catches
 pop off the first files: a cataloging sub-agent reads a PDF, not just its name (the file card
-flips: redrawn, tagged "reconstruction"), the real filename and arXiv ids in RED, and the
+flips: redrawn, tagged "re-created for this video"), the real filename and arXiv ids in RED (glossed:
+off by one in the file name), and the
 library's 36 PDFs in file order, the 4 wrong ones RED (A41); the real page 270 of the privacy
-paper slides in (A14, cropped to the line), the line is underlined in WHITE, and a GREEN sticky
+paper slides in (A14, cropped to the one line), the line is underlined in WHITE, and a GREEN sticky
 note out of digest.md quotes the digest's erratum -> script.md opens into the real tic-tac-toe
 script (A15): its colour line first, then the S03 block, the show line with a GREY bar "the
 picture", the say line with an ORANGE bar "spoken word for word", an arrow to the real line of
 code that reads it (A16, `SAY = NARRATION["S03"]`, the "S03" lit in both), then the convention
 line turns ORANGE and "9!" becomes "nine factorial" -> the page folds back into script.md; four
 faded-BLUE reviewers (the real review run had 4) stop the chain there, two GREY clocks (a tick for a sentence, many turns for
-a re-render) -> the false start on a UTC time lane (A43): the review lane runs from 15:47; at
-16:07 the pen writes the guide's real heading (A13, docs/WORKFLOW.md at 41eca34); at 16:12-16:13
+drawing a scene again) -> the false start on a UTC time lane (A43): the review lane runs from 15:47;
+at 16:07 the pen writes the guide's real heading (A13, docs/WORKFLOW.md at 41eca34); at 16:12-16:13
 six faded-BLUE builders start while the review is still running; at 16:24 all six turn RED and
-fade; the review carries on to 16:30.
+fade; on the lesson the lane runs on to 16:30, where the builders are relaunched on the new script.
 
 Every number on screen is checked in _check() (runs on import): the 36 PDFs and the 4 wrong ones,
 the A41 strings, the run times of the false start and their "minutes later" / "eleven minutes",
@@ -57,12 +58,12 @@ FILENAME_SHOWN = FILENAME.replace("dcan_", "dcan_\n", 1)     # wrapped on the ca
 INSIDE = "inside: a math paper\non topological pressure"      # A41 `inside`: "Topological Pressure of Proper Map"
 WRONG_ID, LIKELY_ID = "1604.02678", A41["likely"].split()[-1]  # "most likely arXiv 1604.02677"
 
-# A14: page 270 of the privacy paper (1195 x 1834), cropped to its last two lines of the
-# paragraph that defines Lap(λ); the target line "mean 0, and standard deviation λ." spans
-# x 117-531 px, baseline at about 1252 px (measured on the png). The crop ends in the word gap
-# after "distribution" (575-583 px) on the line above, so no word is cut and the page text sits
-# at about 24 pt on screen (its x-height is 11 px).
-PAGE, PAGE_CROP = "dp_paper_p270.png", (104, 1194, 580, 1262)
+# A14: page 270 of the privacy paper (1195 x 1834), cropped to the target line alone, "mean 0, and
+# standard deviation λ." (x 117-531 px, ink 1234-1252 px, measured on the png; the line above ends
+# at 1226). Two lines cut the one above after "This distribution" (its "has density function ..."
+# runs on to x 1080), which made the paper read as if a word were missing in the beat about its
+# mistakes (director review of the draft, 3:32). The page text sits at about 24 pt on screen.
+PAGE, PAGE_CROP = "dp_paper_p270.png", (104, 1227, 580, 1264)
 PAGE_W = 6.4
 LINE_X = (117, 531)
 
@@ -79,6 +80,10 @@ GUIDE_AT = f"{DAY} {A43['guide_committed']}"
 STARTS = [f"{DAY} {t}" for t in A43["builders"]["started"]]
 KILLED = f"{DAY} {A43['builders']['killed']}"
 LANE_T0, LANE_T1 = f"{DAY} 15:40", f"{DAY} 16:35"
+# the builders were relaunched on the rewritten script (v3) at 16:30 (transcript, Oct 4: the review
+# "is in" at 16:23:55, the three workflows stopped at 16:24:19, script v3 written, then three
+# build-dp-scenes-v2 runs started 16:30:10-16:30:24)
+RELAUNCH = f"{DAY} 16:30:10"
 REVIEWERS = 4    # the script review run (workflow review-dp-script, started 15:47:32): 4 reviewers
 
 
@@ -154,6 +159,7 @@ def _check():
     for s in STARTS:                                                                  # "Eleven minutes"
         assert round((_t(KILLED) - _t(s)).total_seconds() / 60) == 11
     assert _t(LANE_T0) < _t(REVIEW[0]) and _t(REVIEW[1]) < _t(LANE_T1)
+    assert _t(KILLED) < _t(RELAUNCH) < _t(LANE_T1) and hm(RELAUNCH) == hm(REVIEW[1])
     # the lane's labels read exactly as script.md's SHOW line writes them
     assert [hm(REVIEW[0]), hm(REVIEW[1]), hm(GUIDE_AT), hm(STARTS[0]), hm(STARTS[-1]), hm(KILLED)] == \
         ["15:47", "16:30", "16:07", "16:12", "16:13", "16:24"]
@@ -457,15 +463,18 @@ class ScriptIsCode(VoiceScene):
         lift = UP * (ROW_Y1 - ROW_Y0)
 
         # catch 1: the catalog agents read the PDFs
-        reader = role_icon("sub", 0.95).move_to([-5.95, 0.3, 0])
+        reader = role_icon("sub", 0.95).move_to([-5.95, 0.42, 0])
         front, back = flip_faces()
-        VGroup(front, back).move_to([-2.85, 0.3, 0])
+        VGroup(front, back).move_to([-2.85, 0.42, 0])
         red_line = VGroup(mono(WRONG_ID, 22, BUG), label("· DCAN is most likely", 22, BUG),
                           mono(LIKELY_ID, 22, BUG)).arrange(RIGHT, buff=0.12)
         # one baseline: the capital D sits where the digits sit ("likely" has a descender, so
         # aligning bottom edges lifted the words above the ids)
         red_line[1].shift(UP * (red_line[0].get_bottom()[1] - red_line[1][1].get_bottom()[1]))
-        red_line.move_to([0, -0.72, 0]).align_to([-6.45, 0, 0], LEFT)
+        red_line.move_to([0, -0.6, 0]).align_to([-6.45, 0, 0], LEFT)
+        # what the numbers are (viewer review of the draft, 3:26: "I don't know what these numbers are")
+        id_gloss = label("arXiv paper numbers: off by one in the file name", 22, TOOL)
+        id_gloss.next_to(red_line, DOWN, buff=0.1).align_to(red_line, LEFT)
         grid = pdf_grid(cols=9, h=0.36).move_to([0, -2.12, 0]).align_to([-6.3, 0, 0], LEFT)
         tally = bug_tag(A41["tally"].replace(": ", ":\n", 1), size=26).next_to(grid, RIGHT, buff=0.4)
         src1 = source_caption("file names: the library as uploaded · finding: the catalog run record")
@@ -502,6 +511,7 @@ class ScriptIsCode(VoiceScene):
             self.play(Restore(back, rate_func=rush_from), run_time=0.3)
             vo.wait_until("and found that")
             self.play(FadeIn(red_line, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(id_gloss, shift=UP * 0.08), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(t, scale=0.6) for t in grid], lag_ratio=0.02), FadeIn(src1), run_time=0.9)
             vo.wait_until("were the wrong papers")
             self.play(*[Transform(t, turn_red(t)) for t in grid.wrong], FadeIn(tally, shift=LEFT * 0.15), run_time=0.6)
@@ -509,7 +519,7 @@ class ScriptIsCode(VoiceScene):
                       run_time=0.8)
 
             vo.wait_until("And the privacy digest")
-            self.play(*dim(reader, back, red_line, grid, tally, src1, opacity=0.55),
+            self.play(*dim(reader, back, red_line, id_gloss, grid, tally, src1, opacity=0.55),
                       FadeIn(page, shift=LEFT * 0.6), FadeIn(page_cap), run_time=0.7)
             self.play(Create(under), run_time=0.45)
             vo.wait_until("lists the paper's")
@@ -545,7 +555,7 @@ class ScriptIsCode(VoiceScene):
         others = [it for it in items if it is not script_item]
 
         with self.voiceover(SAY[2]) as vo:
-            gone = gather(self, reader, back, red_line, grid, tally, src1, page, page_cap, under, note, note_cap)
+            gone = gather(self, reader, back, red_line, id_gloss, grid, tally, src1, page, page_cap, under, note, note_cap)
             self.play(FadeOut(gone), *[FadeOut(m) for m in (*others, *arrows)],
                       ReplacementTransform(script_item.icon, panel.frame),
                       ReplacementTransform(script_item.name, panel.title), FadeIn(panel.bar), run_time=0.9)
@@ -592,7 +602,7 @@ class ScriptIsCode(VoiceScene):
         c1.move_to([ROW_X[3] - 0.3, -0.75, 0])
         c2.move_to([ROW_X[5] - 0.75, -0.75, 0])
         l1 = clock_label("fix a sentence in script.md:", "seconds").next_to(c1, DOWN, buff=0.3)
-        l2 = clock_label("fix it after animation:", "a re-render").next_to(c2, DOWN, buff=0.3)
+        l2 = clock_label("fix it after animation:", "draw the scene again").next_to(c2, DOWN, buff=0.3)
 
         # the false start, on a time lane (Oct 4, UTC)
         axis = time_axis(LANE_T0, LANE_T1, width=9.6,
@@ -659,6 +669,16 @@ class ScriptIsCode(VoiceScene):
         stop_line = Line([x_of(KILLED), lane_ys[0] + 0.25, 0], [x_of(KILLED), ax_y, 0], color=BUG, stroke_width=4)
         stop_tag = bug_tag(f"stopped at {hm(KILLED)},\nbefore the review was done", size=24)
         stop_tag.move_to([x_of(KILLED), (REV_Y + lane_ys[0]) / 2 - 0.02, 0])
+        # what it cost and what changed: relaunched at 16:30 on the rewritten script (director and
+        # viewer reviews of the draft, 4:08: the story ended on "all six were stopped", with no point)
+        # in the lanes right of the stop line, under the RED tag (it sat on the tag at first)
+        relaunch = VGroup(label("relaunched\non the new\nscript", 24, SUB_AGENT_TEXT, line_spacing=0.9),
+                          person_icon(SUB_AGENT, 0.28)).arrange(DOWN, buff=0.12)
+        relaunch.move_to([x_of(RELAUNCH), lane_ys[2], 0])
+        relaunch.shift(RIGHT * min(0, 6.45 - relaunch.get_right()[0]))
+        assert relaunch.get_left()[0] > x_of(KILLED) + 0.05
+        relaunch_line = DashedLine([x_of(RELAUNCH), ax_y, 0], [x_of(RELAUNCH), relaunch.get_bottom()[1] - 0.06, 0],
+                                   dash_length=0.08, color=SUB_AGENT_TEXT, stroke_width=2.5)
 
         for m in (items[4], items[5], *arrows[2:]):          # dimmed in beat 2, faded out in beat 3
             m.restore()
@@ -673,10 +693,10 @@ class ScriptIsCode(VoiceScene):
                                   lag_ratio=0.3), run_time=0.7)
             vo.wait_until("before any animation")
             self.play(FadeIn(gate, scale=0.5), *dim(downstream, opacity=0.35), run_time=0.5)
-            vo.wait_until("a sentence costs")
+            vo.wait_until("a sentence takes")
             self.play(FadeIn(c1, scale=0.6), FadeIn(l1, shift=UP * 0.1), run_time=0.5)
             self.play(Rotate(c1.minute, -TAU / 60, about_point=c1.face.get_center()), run_time=0.4)
-            vo.wait_until("a scene costs")
+            vo.wait_until("but a finished scene")
             self.play(FadeIn(c2, scale=0.6), FadeIn(l2, shift=UP * 0.1), run_time=0.5)
             self.play(Rotate(c2.minute, -TAU * 3, about_point=c2.face.get_center()),
                       Rotate(c2.hour, -TAU / 4, about_point=c2.face.get_center()), run_time=1.5, rate_func=smooth)
@@ -720,9 +740,14 @@ class ScriptIsCode(VoiceScene):
                       builders.animate.set_color(BUG), run_time=0.5)
             self.play(FadeIn(stop_tag, scale=0.9), *[m.animate.set_fill(BUG, 0.25) for m in builder_bars],
                       builders.animate.set_opacity(0.3), run_time=0.7)
-        self.play(now.animate.set_value(mins(REVIEW[1])), run_time=0.9, rate_func=linear)
-        review_bar.clear_updaters()
-        cursor.clear_updaters()
-        self.play(FadeOut(cursor), emphasize(axis.marks[-1][1], run_time=0.8), emphasize(rev_times, run_time=0.8))
+            # the lesson: the lane runs on to 16:30, when the builders start again on the new script
+            vo.wait_until("Writing the rule down")
+            self.play(now.animate.set_value(mins(RELAUNCH)), run_time=0.9, rate_func=linear)
+            review_bar.clear_updaters()
+            cursor.clear_updaters()
+            self.play(FadeOut(cursor), Create(relaunch_line), FadeIn(relaunch, shift=UP * 0.15),
+                      emphasize(axis.marks[-1][1], run_time=0.8), run_time=0.8)
+            vo.wait_until("the workflow itself")
+            self.play(emphasize(rev_l, run_time=0.9), emphasize(rev_times, run_time=0.9))
         self.wait(0.3)
         fade_out_all(self)
