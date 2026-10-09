@@ -487,7 +487,7 @@ class Thread(VGroup):
     def hide(self):
         for m in (self.glow, self.core, self.head):
             m.set_stroke(width=0, opacity=0)
-            m.points = _EMPTY
+            m.points = np.zeros((0, 3))
 
     def show(self, pts: np.ndarray, f: float, vis: float, head: float, color=INK, width: float = 1.0):
         if f <= 1e-3 or vis <= 1e-3:

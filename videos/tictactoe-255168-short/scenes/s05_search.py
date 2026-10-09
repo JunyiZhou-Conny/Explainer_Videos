@@ -721,7 +721,7 @@ class EveryGame(BeatScene):
 
     # --- the plate: fades in (41.2-41.4), highlights the line being run, tags (50.3-50.4)
     def update_plate(self, t: float):
-        n = len(PLATE_LINES)
+        n = len(self.plate.rows)
         lv = [ease_out_cubic(seg(t, PLATE_IN[0] + 0.07 * j, PLATE_IN[0] + 0.07 * j + 0.3)) for j in range(n)]
         dim = 1 - (1 - PLATE_DIM) * ease_in_out_sine(seg(t, bb(53, 3), bb(54, 2)))
         hl = {}
