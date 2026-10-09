@@ -10,7 +10,7 @@ share one 100 BPM beat grid (a bar is 2.4 s): 106 bars, 4:14.
 | --- | --- |
 | `output/tictactoe-255168-short.mp4` | the Chinese-first master (Chinese caption above, English below), for Bilibili |
 | `output/tictactoe-255168-short.en-first.mp4` | the English-first master, from the same picture |
-| `output/tictactoe-255168-short.nomusic.mp4`, `.music.wav` | the picture without the score, and the score alone |
+| `output/tictactoe-255168-short.nomusic.mp4`, `.music.wav` | the picture without the score, and the score alone (written by the build, not committed: `python -m explainer.build videos/tictactoe-255168-short --no-render`) |
 | `output/tictactoe-255168-short.zh.srt`, `.en.srt`, `.zh-en.srt` | the captions as subtitle files |
 | `output/chapters.txt`, `transcript.md` | chapters (bilingual titles) and every caption by scene |
 | `script.md` | the bar-by-bar plan: picture, caption and sound for every bar range, with the acceptance checklist |
