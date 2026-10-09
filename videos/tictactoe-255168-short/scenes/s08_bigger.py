@@ -1148,9 +1148,10 @@ class BiggerGames(BeatScene):
             return
         if self.galaxy_on(t) > 1e-3:
             self.galaxy_families(t, put)
-        z, ry = zs(t), rows(t)
-        if TTT_T[0] <= t < ATOMS[1] + 0.5:
-            p, w = run_lights(t, z, ry)
+        v = strip_view(t)
+        z, ry = v["z"], v["rows"]
+        if t >= TTT_T[0]:
+            p, w = strip_lights(t, v)
             if p is not None:
                 put(5, p, w)
         if t >= PEN_IN:
@@ -1396,9 +1397,8 @@ class BiggerGames(BeatScene):
             self.arm.hide()
             return
         v = strip_view(t)
-        L = S.draw(t, v["z"], v["rows"], lit=v["lit"], grain=v["grain"], flash=v["flash"],
-                   glow=1.0 + 0.6 * pulse(t, HIT, 0.6) if t >= HIT else 1.0, breathe=v["breathe"] if t >= HIT else 0.0)
-        S.draw_labels(t, L, v["rows"])
+        L = S.draw(t, v, glow=1.0 + 0.6 * pulse(t, HIT, 0.6) if t >= HIT else 1.0)
+        S.draw_labels(t, L, v)
         if t >= PEN_IN:
             pv = ease_out_cubic(seg(t, PEN_IN, PEN_IN + 0.3))
             x, y = pen_x(t, v["z"]), v["rows"]["chess"]
