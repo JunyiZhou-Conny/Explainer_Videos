@@ -1101,8 +1101,11 @@ class DeleteCheck(BeatScene):
             self.over_strike.hide()
             return
         u = seg(t, T_CROSS, T_CROSS + OVERRUN)
-        v = ease_out_cubic(seg(t, T_CROSS, T_CROSS + 0.06)) * (1 - ease_in_out_sine(seg(u, 0.45, 1.0)))
-        c = HERO_NUM_C + np.array([0.0, -0.75 * ease_in_out_sine(seg(u, 0.12, 1.0))])
+        v = ease_out_cubic(seg(t, T_CROSS, T_CROSS + 0.06)) * (1 - ease_in_out_sine(seg(u, 0.62, 1.0)))
+        # it drops out from under the racing count at once (clear of its digits, 0.52 tall, within 0.08 s), so the
+        # RED 255,168 reads for most of a beat, then drifts on down as it fades
+        drop = 0.66 * ease_out_cubic(seg(t, T_CROSS, T_CROSS + 0.18)) + 0.22 * ease_in_out_sine(seg(u, 0.5, 1.0))
+        c = HERO_NUM_C + np.array([0.0, -drop])
         R.show(c, RUN_K, v, value=float(WEDGE_GAMES), glow=0.7 + 1.2 * pulse(t, T_CROSS, 0.3), halo=0.3 * v,
                color=RED)
         w = R.w0 * RUN_K

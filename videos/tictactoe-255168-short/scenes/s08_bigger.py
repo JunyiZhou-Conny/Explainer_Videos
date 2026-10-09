@@ -1124,7 +1124,7 @@ class BiggerGames(BeatScene):
         self.path_red = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), RED, 2.4, RED, 11, layers=5, glow_opacity=0.55)
         self.path_dots = [gaussian_sprite(VAL_HEX[v], 48, 0.3) for v in GA_VALS]
         self.inset = MiniBoard(0.52, 3, 1, nums=0, glow_x=9, glow_o=11, layers=5)
-        self.inset_c = np.array([4.35, 0.95])
+        self.inset_c = np.array([4.25, 0.95])          # (its labels inside the safe area, x <= 6.6)
         self.red_o = Ink(o_template(0.62 * 0.52), RED, 3.0, RED, 12, layers=5, glow_opacity=0.5)
         self.centre_glow = gaussian_sprite("#C8CCCC", 64, 0.32)
         self.lab_mistake = bi("O 的失误", "O'S MISTAKE", zh_color=RED, en_color=RED)
@@ -1132,7 +1132,7 @@ class BiggerGames(BeatScene):
                                    ("KEEPS THE DRAW", INK, "en")], align="c")
         self.lab_late = stacked([("太晚了", INK_DIM, "zh"), ("TOO LATE", INK_DIM, "en")], en_size=EN_SIZE)
         self.late_leader = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.1)
-        assert self.inset_c[0] + self.lab_centre.width / 2 < 6.85 and self.wave_lab.width < 6.4
+        assert self.inset_c[0] + self.lab_centre.width / 2 < 6.6 and self.wave_lab.width < 6.4
         self.inset_leader = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.1)
         # the strips, the pen and its arm, the flash
         self.strips = StripsRig()

@@ -141,6 +141,8 @@ music:
   # moment after the title. Measured (all nine scenes, 3 s short-term / 0.4 s momentary maxima per bar): title
   # -10.6 / -7.5; 93.1 -11.2 / -8.2 over 91-92 -15.3 / -14.3; 59.1 -11.7 / -8.4 over 57-58 -13.4 / -13.5;
   # 65.1 -12.3 / -9.1 after the silence; 77.1 -11.7 / -9.5 over 75-76 -13.4 / -13.8; 101.1 -12.3 / -10.4.
+  # The tail: from 105.2 the bed (the sustained Dmaj9 pads) dies away, about 19 dB by 106.4+, so the rolled
+  # chords of 104.1 and 105.1 ring out over it to silence instead of the whole mix riding the master's 2 s fade.
   levels: {"1.1": {bed: -22, accents: -16}, "2.1": {bed: -10, accents: -6}, "4.1": {bed: -7, accents: -6},
            "8.1": {bed: -5, accents: -7}, "9.1": {bed: -2, accents: 3}, "9.4+": {bed: 0, accents: 3},
            "10.1": {bed: 4, accents: 4}, "10.2": {bed: 5, accents: 5}, "10.4": {bed: 4, accents: 4}, "11.1": 1,
@@ -160,7 +162,8 @@ music:
            "76.4+": 0, "77.1": -1.6, "78.4": -1.6, "79.1": 0,
            "92.4+": 0, "220.74s": 0, "93.1": 1.9, "93.2": 1.9, "94.1": -0.8, "95.1": 0,
            "98.1": 0, "98.4": {bed: -2.5, accents: 0}, "99.1": 0,
-           "100.4+": 0, "101.1": -2.2, "102.4": -2, "103.1": -0.8}
+           "100.4+": 0, "101.1": -2.2, "102.4": -2, "103.1": -0.8,
+           "105.2": -0.8, "106.4+": {bed: -20, accents: -0.8}}
   stems: [bed, accents]        # bed = pads, bass, risers; accents = event-locked notes, ticks, hits
   # The long version gets music later from the same pipeline (free time, ducked under the voice).
 
