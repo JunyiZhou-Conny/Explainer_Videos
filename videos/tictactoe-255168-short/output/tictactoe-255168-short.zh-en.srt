@@ -1,0 +1,144 @@
+1
+00:00:07,500 --> 00:00:11,000
+井字棋有多少种不同的对局？
+How many different games of tic-tac-toe are there?
+
+2
+00:00:11,400 --> 00:00:14,800
+最后的棋盘一样：算一种对局，还是两种？
+Same final board: one game or two?
+
+3
+00:00:16,500 --> 00:00:20,100
+顺序不同，或棋盘翻转、旋转：都算不同的对局
+A different order, or a flipped or turned board: a different game.
+
+4
+00:00:26,700 --> 00:00:30,300
+先不管输赢，填满棋盘有多少种顺序？
+Forget winning: in how many orders can the board fill up?
+
+5
+00:00:41,100 --> 00:00:44,700
+从 9 一直乘到 1，叫 9 的阶乘：362,880
+Multiplying from 9 down to 1 is called nine factorial: 362,880.
+
+6
+00:00:45,000 --> 00:00:48,800
+比 255,168 还多：9 的阶乘多算了什么？
+More than 255,168: what did nine factorial count too often?
+
+7
+00:00:51,300 --> 00:00:54,600
+真实的对局，有人赢了就结束
+A real game ends as soon as someone wins.
+
+8
+00:01:00,300 --> 00:01:03,700
+9 的阶乘把这一局算了 24 次
+Nine factorial counted this one game 24 times.
+
+9
+00:01:04,500 --> 00:01:08,000
+这些编出来的对局，叫“幽灵对局”
+These made-up games are called ghost games.
+
+10
+00:01:09,300 --> 00:01:12,300
+一局最早也要到第 5 步才结束
+The earliest a game can end is move 5.
+
+11
+00:01:12,900 --> 00:01:16,500
+结束得越早，身后拖着的幽灵对局就越多
+The earlier a game ends, the more ghost games it drags along.
+
+12
+00:01:26,700 --> 00:01:29,700
+X 在第 5 步赢下的对局：1,440 种
+Games that X wins on move 5: 1,440.
+
+13
+00:01:33,000 --> 00:01:36,000
+再往后，手算就成了一团乱麻
+After that, counting by hand becomes a tangled mess.
+
+14
+00:01:36,300 --> 00:01:39,900
+要是让电脑把每一局都下一遍呢？
+What if a computer plays every game, one by one?
+
+15
+00:01:48,300 --> 00:01:51,800
+先试走一步，往下探索，再撤销
+Try a move, explore what follows, then undo it.
+
+16
+00:01:54,900 --> 00:01:58,700
+有人赢了，或者棋盘满了，这一局就下完了
+Someone won, or the board is full: that game is finished.
+
+17
+00:02:03,900 --> 00:02:07,500
+按顺序走遍整棵树，一局也不漏
+In order, through the whole tree, without missing a game.
+
+18
+00:02:19,500 --> 00:02:22,900
+每一局只算一次：255,168
+Every game counted exactly once: 255,168.
+
+19
+00:02:27,300 --> 00:02:30,700
+删掉“判断输赢”，再跑一遍
+Delete the winner check, and run it again.
+
+20
+00:02:39,900 --> 00:02:43,200
+362,880：幽灵对局全回来了
+362,880: the ghost games are back.
+
+21
+00:02:45,900 --> 00:02:49,500
+255,168 种对局，怎么变成了 362,880？
+How do 255,168 games become 362,880?
+
+22
+00:03:02,700 --> 00:03:06,700
+乘上各自被算的次数，加起来又是 9 的阶乘
+Multiply each by how often it was counted, and add: nine factorial again.
+
+23
+00:03:09,900 --> 00:03:13,400
+先走的 X 赢了一半多一点的对局
+X, who goes first, wins just over half of all games.
+
+24
+00:03:14,700 --> 00:03:18,100
+那先走的 X 只要不失误，就一定能赢吗？
+If X goes first and makes no mistakes, can X always win?
+
+25
+00:03:26,700 --> 00:03:30,300
+可要是双方都不失误，结果总是平局
+But if neither side makes a mistake, it is always a draw.
+
+26
+00:03:33,900 --> 00:03:37,100
+那国际象棋，有多少种对局？
+And how many games of chess are there?
+
+27
+00:03:41,100 --> 00:03:44,900
+国际象棋估计至少有 10 的 120 次方种对局
+By Shannon's estimate, chess has at least 10¹²⁰ games.
+
+28
+00:03:45,900 --> 00:03:49,900
+整个可观测宇宙也只有约 10 的 80 次方个原子
+The whole observable universe has only about 10⁸⁰ atoms.
+
+29
+00:04:03,300 --> 00:04:06,900
+255,168 种对局，每一局都是这棵树上的一条路
+255,168 games: each one is a path through this tree.

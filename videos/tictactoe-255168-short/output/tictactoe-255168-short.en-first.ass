@@ -1,0 +1,74 @@
+[Script Info]
+Title: 井字棋为什么恰好有 255,168 种对局？
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+YCbCr Matrix: TV.709
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: L0,Noto Serif,46.0,&H00E6E8E8,&H00E6E8E8,&H96000000,&H00000000,0,0,0,0,100,100,0.00,0,1,1.20,0,2,0,0,0,1
+Style: L1,Noto Serif CJK SC,42.0,&H00A3A39C,&H00A3A39C,&H96000000,&H00000000,0,0,0,0,100,100,0.00,0,1,1.20,0,2,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 1,0:00:07.50,0:00:11.00,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}井字棋有多少种不同的对局？
+Dialogue: 0,0:00:07.50,0:00:11.00,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}How many different games of tic-tac-toe are there?
+Dialogue: 1,0:00:11.40,0:00:14.80,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}最后的棋盘一样：算一种对局，还是两种？
+Dialogue: 0,0:00:11.40,0:00:14.80,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Same final board: one game or two?
+Dialogue: 1,0:00:16.50,0:00:20.10,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}顺序不同，或棋盘翻转、旋转：都算不同的对局
+Dialogue: 0,0:00:16.50,0:00:20.10,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}A different order, or a flipped or turned board: a different game.
+Dialogue: 1,0:00:26.70,0:00:30.30,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}先不管输赢，填满棋盘有多少种顺序？
+Dialogue: 0,0:00:26.70,0:00:30.30,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Forget winning: in how many orders can the board fill up?
+Dialogue: 1,0:00:41.10,0:00:44.70,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}从 9 一直乘到 1，叫 9 的阶乘：362,880
+Dialogue: 0,0:00:41.10,0:00:44.70,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Multiplying from 9 down to 1 is called nine factorial: 362,880.
+Dialogue: 1,0:00:45.00,0:00:48.80,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}比 255,168 还多：9 的阶乘多算了什么？
+Dialogue: 0,0:00:45.00,0:00:48.80,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}More than 255,168: what did nine factorial count too often?
+Dialogue: 1,0:00:51.30,0:00:54.60,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}真实的对局，有人赢了就结束
+Dialogue: 0,0:00:51.30,0:00:54.60,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}A real game ends as soon as someone wins.
+Dialogue: 1,0:01:00.30,0:01:03.70,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}9 的阶乘把这一局算了 24 次
+Dialogue: 0,0:01:00.30,0:01:03.70,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Nine factorial counted this one game 24 times.
+Dialogue: 1,0:01:04.50,0:01:08.00,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}这些编出来的对局，叫“幽灵对局”
+Dialogue: 0,0:01:04.50,0:01:08.00,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}These made-up games are called ghost games.
+Dialogue: 1,0:01:09.30,0:01:12.30,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}一局最早也要到第 5 步才结束
+Dialogue: 0,0:01:09.30,0:01:12.30,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}The earliest a game can end is move 5.
+Dialogue: 1,0:01:12.90,0:01:16.50,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}结束得越早，身后拖着的幽灵对局就越多
+Dialogue: 0,0:01:12.90,0:01:16.50,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}The earlier a game ends, the more ghost games it drags along.
+Dialogue: 1,0:01:26.70,0:01:29.70,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}X 在第 5 步赢下的对局：1,440 种
+Dialogue: 0,0:01:26.70,0:01:29.70,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Games that X wins on move 5: 1,440.
+Dialogue: 1,0:01:33.00,0:01:36.00,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}再往后，手算就成了一团乱麻
+Dialogue: 0,0:01:33.00,0:01:36.00,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}After that, counting by hand becomes a tangled mess.
+Dialogue: 1,0:01:36.30,0:01:39.90,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}要是让电脑把每一局都下一遍呢？
+Dialogue: 0,0:01:36.30,0:01:39.90,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}What if a computer plays every game, one by one?
+Dialogue: 1,0:01:48.30,0:01:51.80,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}先试走一步，往下探索，再撤销
+Dialogue: 0,0:01:48.30,0:01:51.80,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Try a move, explore what follows, then undo it.
+Dialogue: 1,0:01:54.90,0:01:58.70,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}有人赢了，或者棋盘满了，这一局就下完了
+Dialogue: 0,0:01:54.90,0:01:58.70,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Someone won, or the board is full: that game is finished.
+Dialogue: 1,0:02:03.90,0:02:07.50,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}按顺序走遍整棵树，一局也不漏
+Dialogue: 0,0:02:03.90,0:02:07.50,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}In order, through the whole tree, without missing a game.
+Dialogue: 1,0:02:19.50,0:02:22.90,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}每一局只算一次：255,168
+Dialogue: 0,0:02:19.50,0:02:22.90,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Every game counted exactly once: 255,168.
+Dialogue: 1,0:02:27.30,0:02:30.70,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}删掉“判断输赢”，再跑一遍
+Dialogue: 0,0:02:27.30,0:02:30.70,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Delete the winner check, and run it again.
+Dialogue: 1,0:02:39.90,0:02:43.20,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}362,880：幽灵对局全回来了
+Dialogue: 0,0:02:39.90,0:02:43.20,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}362,880: the ghost games are back.
+Dialogue: 1,0:02:45.90,0:02:49.50,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}255,168 种对局，怎么变成了 362,880？
+Dialogue: 0,0:02:45.90,0:02:49.50,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}How do 255,168 games become 362,880?
+Dialogue: 1,0:03:02.70,0:03:06.70,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}乘上各自被算的次数，加起来又是 9 的阶乘
+Dialogue: 0,0:03:02.70,0:03:06.70,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}Multiply each by how often it was counted, and add: nine factorial again.
+Dialogue: 1,0:03:09.90,0:03:13.40,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}先走的 X 赢了一半多一点的对局
+Dialogue: 0,0:03:09.90,0:03:13.40,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}X, who goes first, wins just over half of all games.
+Dialogue: 1,0:03:14.70,0:03:18.10,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}那先走的 X 只要不失误，就一定能赢吗？
+Dialogue: 0,0:03:14.70,0:03:18.10,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}If X goes first and makes no mistakes, can X always win?
+Dialogue: 1,0:03:26.70,0:03:30.30,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}可要是双方都不失误，结果总是平局
+Dialogue: 0,0:03:26.70,0:03:30.30,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}But if neither side makes a mistake, it is always a draw.
+Dialogue: 1,0:03:33.90,0:03:37.10,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}那国际象棋，有多少种对局？
+Dialogue: 0,0:03:33.90,0:03:37.10,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}And how many games of chess are there?
+Dialogue: 1,0:03:41.10,0:03:44.90,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}国际象棋估计至少有 10 的 120 次方种对局
+Dialogue: 0,0:03:41.10,0:03:44.90,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}By Shannon's estimate, chess has at least 10¹²⁰ games.
+Dialogue: 1,0:03:45.90,0:03:49.90,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}整个可观测宇宙也只有约 10 的 80 次方个原子
+Dialogue: 0,0:03:45.90,0:03:49.90,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}The whole observable universe has only about 10⁸⁰ atoms.
+Dialogue: 1,0:04:03.30,0:04:06.90,L1,,0,0,0,,{\an2\pos(960,1013)\fad(300,300)}255,168 种对局，每一局都是这棵树上的一条路
+Dialogue: 0,0:04:03.30,0:04:06.90,L0,,0,0,0,,{\an2\pos(960,954)\fad(300,300)}255,168 games: each one is a path through this tree.

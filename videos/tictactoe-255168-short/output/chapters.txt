@@ -1,0 +1,9 @@
+00:00 How many games? · 有多少种对局？
+00:26 Fill the board · 填满棋盘
+00:48 Games stop early · 对局会提前结束
+01:16 Counting by hand · 手算
+01:36 Play every game · 探索每一局
+02:26 Delete one check · 删掉“判断输赢”
+02:45 255,168, explained · 255,168 是怎么来的
+03:12 Perfect play, and chess · 双方都不失误，还有国际象棋
+03:55 One tree · 同一棵树

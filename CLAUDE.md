@@ -52,6 +52,9 @@ python -m pytest -q tests                                             # toolkit 
 - Workflows run at most 2 agents at once. Resume with `resumeFromRunId`, and add notes for the
   resumed agents only conditionally, so cached prompts stay unchanged.
 - Keep an hourly `send_later` check-in while long runs are in flight.
+- Background shell commands are stopped after 30 min unless given a longer `timeout` (up to 2 h).
+  A full 1080p build can take longer: pass the timeout, or build in steps (`--only`, then
+  `--no-render`). Write outputs to a temporary name and rename when complete.
 
 ## Docs
 - [docs/WORKFLOW.md](docs/WORKFLOW.md): the steps, paper to video.
