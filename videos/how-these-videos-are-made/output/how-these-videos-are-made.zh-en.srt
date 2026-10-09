@@ -1,0 +1,1079 @@
+1
+00:00:00,000 --> 00:00:04,860
+这是其中一期视频早期草稿里的一帧暂停画面
+Here's what a paused frame looked like in an early draft of one of these videos,
+
+2
+00:00:04,860 --> 00:00:07,168
+那期讲井字棋，给 12 岁左右的孩子看
+about tic-tac-toe, for kids around 12.
+
+3
+00:00:07,488 --> 00:00:11,733
+看右边这一行：4 乘 3 乘 2，然后是 12
+Look at the line on the right: 4 times 3 times 2, and then 12.
+
+4
+00:00:11,967 --> 00:00:13,389
+先暂停一下
+Pause for a moment.
+
+5
+00:00:13,439 --> 00:00:15,999
+如果你 12 岁，你会觉得这里哪儿出错了？
+If you were 12, what would you think went wrong here?
+
+6
+00:00:22,233 --> 00:00:25,604
+看起来像是乘法算错了，但数学其实没错
+It looks like bad multiplication, but the math was right.
+
+7
+00:00:25,924 --> 00:00:30,702
+这个 12 是一个正往 24 涨的计数，却摆在了算式那一行上
+The 12 was a running count on its way to 24, sitting on the formula's line.
+
+8
+00:00:31,022 --> 00:00:32,466
+是排版在撒谎
+The layout lied.
+
+9
+00:00:32,516 --> 00:00:34,628
+而发现问题的评审，并不是孩子
+And the reviewer who caught it wasn't a child.
+
+10
+00:00:34,948 --> 00:00:37,785
+它是一个 AI，假扮成 12 岁的孩子
+It was an AI, pretending to be a 12-year-old.
+
+11
+00:00:38,033 --> 00:00:39,633
+奇怪的地方来了
+Now the strange part.
+
+12
+00:00:39,825 --> 00:00:43,572
+这些视频里几乎所有东西都是 AI 智能体做的
+Almost everything in these videos was made by AI agents:
+
+13
+00:00:43,572 --> 00:00:46,716
+脚本、动画代码，还有各种检查
+the script, the animation code, and the checks.
+
+14
+00:00:47,036 --> 00:00:49,958
+可它们没有一个能听见旁白，也没法按下播放键
+And none of them can hear the narration, or press play.
+
+15
+00:00:50,278 --> 00:00:52,113
+那它们怎么知道这些行不行？
+So how do they know any of it works?
+
+16
+00:00:52,350 --> 00:00:57,905
+这期视频会讲：整条流水线，谁做了什么，没有眼睛和耳朵怎么检查
+This video covers the pipeline, who did what, how work gets checked without eyes or ears,
+
+17
+00:00:57,905 --> 00:01:02,462
+中文版，哪些事仍然需要人，以及下一步改进什么
+the Chinese versions, what still needs a human, and what to improve next.
+
+18
+00:01:04,100 --> 00:01:06,440
+一切从一个人开始，也就是这位用户
+It started with one person, the user:
+
+19
+00:01:06,440 --> 00:01:09,476
+一位论文多到读不过来的研究者
+a researcher with more papers to read than time.
+
+20
+00:01:09,796 --> 00:01:11,977
+视频的风格学的是 3Blue1Brown
+The look comes from 3Blue1Brown,
+
+21
+00:01:11,977 --> 00:01:16,815
+这个频道的视频用 Manim 做动画，每一帧都是用代码画出来的
+whose videos are animated in Manim, where every frame is drawn by code.
+
+22
+00:01:17,135 --> 00:01:21,245
+本项目的想法来自 Andrej Karpathy 的帖子
+The idea for this project came from a post by Andrej Karpathy,
+
+23
+00:01:21,245 --> 00:01:23,300
+是第一个请求里引用的
+as quoted in the first request.
+
+24
+00:01:23,533 --> 00:01:25,483
+用户自己的话说得更进一步
+The user's own words go further:
+
+25
+00:01:25,483 --> 00:01:29,016
+我们的大脑就是一个神经网络，训练它是要吃苦的
+our brain is a neural net, and training it takes hardship.
+
+26
+00:01:29,336 --> 00:01:34,228
+用户说，AI 很有耐心，可自己却在做大量的“认知卸载”
+AI is patient, they said, but they were doing a lot of cognitive offloading:
+
+27
+00:01:34,228 --> 00:01:36,803
+让 AI 替自己思考
+letting the AI do the thinking for them.
+
+28
+00:01:37,050 --> 00:01:40,229
+视频应该像一位导师，讲清楚论文之间怎样关联
+A video should be a mentor, showing how papers connect,
+
+29
+00:01:40,229 --> 00:01:42,021
+因为论文从来不是孤立的
+because they're never isolated.
+
+30
+00:01:42,341 --> 00:01:46,319
+而视频只是第一步：下一步是能交互的东西
+And video is only a first step: the next is something interactive,
+
+31
+00:01:46,319 --> 00:01:48,549
+学习的人得亲手做出点什么
+where the learner has to make things.
+
+32
+00:01:48,783 --> 00:01:50,383
+接下来是四个请求
+Then came four requests.
+
+33
+00:01:50,639 --> 00:01:55,439
+一篇朋友发来的、讲隐私的论文，用户自己没读过，这样测试才公平
+A privacy paper from a friend, which the user hadn't read, to keep the test fair.
+
+34
+00:01:55,759 --> 00:01:58,468
+一期井字棋视频，给一个初中生看
+A tic-tac-toe video, for a middle-school kid.
+
+35
+00:01:58,788 --> 00:02:00,388
+这两期的中文版
+Chinese versions of both.
+
+36
+00:02:00,666 --> 00:02:02,266
+还有这期视频
+And this video.
+
+37
+00:02:03,983 --> 00:02:05,946
+团队：一个真人，就是用户
+The team: one human, the user.
+
+38
+00:02:06,266 --> 00:02:08,484
+一个 AI 智能体：Claude Code
+One AI agent: Claude Code.
+
+39
+00:02:08,804 --> 00:02:10,877
+它手下有 183 个子智能体
+Under it, 183 sub-agents
+
+40
+00:02:10,877 --> 00:02:14,244
+来自 46 次工作流运行，都在这期视频之前
+in 46 workflow runs, before this video.
+
+41
+00:02:14,564 --> 00:02:17,886
+工作流就是智能体为了启动子智能体写的程序
+A workflow is a script the agent writes to launch sub-agents,
+
+42
+00:02:17,886 --> 00:02:19,486
+每个子智能体只干一件事
+each with one job.
+
+43
+00:02:19,706 --> 00:02:22,941
+还有各种工具，比如每种语言各一个合成语音
+And tools, like a synthetic voice for each language
+
+44
+00:02:22,941 --> 00:02:24,541
+以及一个语音识别模型
+and a speech recognizer.
+
+45
+00:02:24,700 --> 00:02:27,729
+值得学什么、讲给谁听，是用户定的
+The user decided what was worth learning, and for whom.
+
+46
+00:02:28,049 --> 00:02:33,844
+用户上传了 36 个 PDF，给出了井字棋视频要讲的那些数
+They uploaded 36 PDFs, gave the tic-tac-toe counts to explain,
+
+47
+00:02:33,844 --> 00:02:39,825
+比如 255,168 种对局，还提供了那期视频讲解的程序
+like 255,168 games, and supplied the program that video teaches.
+
+48
+00:02:40,145 --> 00:02:41,589
+程序本来就能用
+It already worked.
+
+49
+00:02:41,639 --> 00:02:46,097
+智能体只是把一个数字 0 改成了字母 O，又重写了注释
+The agent only changed a zero into the letter O, and rewrote the comments.
+
+50
+00:02:46,333 --> 00:02:47,933
+剩下的都是智能体做的
+The agent did the rest.
+
+51
+00:02:48,125 --> 00:02:50,707
+它写了驱动整条流水线的工具包
+It wrote the toolkit that runs the pipeline,
+
+52
+00:02:50,707 --> 00:02:53,464
+一百多个 commit 里，除了两个，全是它提交的
+and made all but two of over a hundred commits,
+
+53
+00:02:53,464 --> 00:02:55,165
+commit 就是项目存下的版本
+the project's saved versions.
+
+54
+00:02:55,485 --> 00:02:59,112
+不到一周，工作因为用量上限至少停了六次
+In under a week, work stopped at least six times on usage limits.
+
+55
+00:02:59,432 --> 00:03:04,594
+其中有两次，额度恢复之后它又闲了好几个小时，直到用户催了一下
+Twice, it then sat idle for hours after the limit reset, until the user nudged it.
+
+56
+00:03:05,583 --> 00:03:09,894
+从请求到成片，差分隐私那期用了大约六个小时
+From request to final cut, the privacy video took about six hours,
+
+57
+00:03:09,894 --> 00:03:11,983
+井字棋那期三个多小时
+and tic-tac-toe just over three.
+
+58
+00:03:12,303 --> 00:03:16,868
+中文版花的时间长得多：分别是 16 个小时和大约两天
+The Chinese versions took far longer: 16 hours, and about two days.
+
+59
+00:03:17,188 --> 00:03:20,047
+最终画面的渲染，每期都不到半小时
+Drawing the final frames took under half an hour each.
+
+60
+00:03:20,367 --> 00:03:24,050
+其余的时间都花在：翻译，一轮又一轮的评审和修改
+The rest went to translating, rounds of review and fixes,
+
+61
+00:03:24,050 --> 00:03:27,215
+返工了四次的字幕工具，还有等待
+a subtitle tool reworked four times, and waiting.
+
+62
+00:03:27,535 --> 00:03:32,218
+屏幕上的费用，是整个会话截至 10 月 7 日的花费
+And the cost on screen is what the whole session had cost by October 7th,
+
+63
+00:03:32,218 --> 00:03:36,452
+按公开的按量计费价格计算：涵盖全部四个请求，不是一期视频
+at the public pay-per-use price: all four requests, not one video.
+
+64
+00:03:38,100 --> 00:03:40,395
+这条流水线是一串文件
+The pipeline is a chain of files:
+
+65
+00:03:40,395 --> 00:03:46,932
+论文、目录记录、带页码的论文笔记，再到脚本、动画代码和视频
+a paper, a catalog entry, a digest with page numbers, a script, animation code, and the video.
+
+66
+00:03:47,252 --> 00:03:51,476
+每一步都留下一个文件，所以随时可以停下、检查，再接着做
+Every step leaves a file behind, so you can stop, review, and resume.
+
+67
+00:03:51,850 --> 00:03:53,450
+每个文件都要检查
+Each file gets checked.
+
+68
+00:03:53,621 --> 00:03:57,921
+给论文编目录的智能体不光看文件名，还读了内容
+Agents cataloging the papers read them, not just their names,
+
+69
+00:03:57,921 --> 00:04:01,727
+结果发现 36 个 PDF 里有 4 个是错的论文
+and found that 4 of the 36 PDFs were the wrong papers.
+
+70
+00:04:02,047 --> 00:04:05,653
+差分隐私论文的笔记里，甚至列出了论文本身的错误
+And the privacy digest even lists the paper's own mistakes.
+
+71
+00:04:07,050 --> 00:04:11,496
+在脚本里，每一小段都是一行画面配一行台词
+In the script, each beat pairs a show line, the picture, with a say line:
+
+72
+00:04:11,496 --> 00:04:13,749
+台词就是语音要一字不差念出来的话
+the exact words the voice will speak.
+
+73
+00:04:14,069 --> 00:04:17,503
+动画代码直接从这个文件里读取这些台词
+The animation code reads those words straight from this file.
+
+74
+00:04:17,823 --> 00:04:21,557
+脚本是写给耳朵听的：“九的阶乘”要用文字写出来
+It's written for the ear: nine factorial is spelled out in words.
+
+75
+00:04:21,800 --> 00:04:25,302
+所以在做任何动画之前，先让别的智能体评审脚本
+So other agents review the script before any animation:
+
+76
+00:04:25,302 --> 00:04:30,141
+改一句话只要几秒钟，场景做完了再改，就得整个重画
+a sentence takes seconds to fix, but a finished scene has to be drawn again.
+
+77
+00:04:30,461 --> 00:04:33,640
+第一天，智能体就把这条规则写进了自己的工作指南
+The agent wrote that rule into its own guide on day one.
+
+78
+00:04:33,960 --> 00:04:38,952
+几分钟后，评审还在进行，它就启动了六个子智能体去做场景
+Minutes later, it started six sub-agents building scenes while the review was still running.
+
+79
+00:04:39,272 --> 00:04:43,639
+11 分钟后，一份要求改脚本的评审意见回来了
+Eleven minutes after that, one review came back with changes to the script,
+
+80
+00:04:43,639 --> 00:04:45,239
+于是六个全被叫停
+so all six were stopped.
+
+81
+00:04:45,459 --> 00:04:50,387
+光把规则写下来还不够：工作流本身就得等评审结束
+Writing the rule down was not enough: the workflow itself has to wait for the review.
+
+82
+00:04:51,733 --> 00:04:53,326
+接下来是动画
+Now the animation.
+
+83
+00:04:53,376 --> 00:04:58,880
+在这条流水线里，先生成语音，动画等的是词，不是秒数
+In this pipeline, the voice is made first, and the animation waits for words, not seconds.
+
+84
+00:04:59,200 --> 00:05:03,210
+这段代码的意思是：旁白念到“A hundred”，就显示一百
+This code says: when the narration reaches "A hundred", show a hundred.
+
+85
+00:05:03,530 --> 00:05:05,813
+念到“A million”，就显示一百万
+When it reaches "A million", show a million.
+
+86
+00:05:06,050 --> 00:05:10,914
+语音是一句一句合成的，所以每一句从哪儿开始，都精确知道
+The voice speaks one sentence at a time, so every sentence start is known exactly.
+
+87
+00:05:11,234 --> 00:05:13,794
+可在一句话内部，工具包只能靠猜
+Inside a sentence, the toolkit has to guess.
+
+88
+00:05:14,114 --> 00:05:17,335
+它假设每个字符念起来都花一样的时间
+It assumes every character takes the same time to say.
+
+89
+00:05:17,583 --> 00:05:19,005
+暂停一下，自己试试
+Pause and try it.
+
+90
+00:05:19,055 --> 00:05:23,258
+屏幕上这个数有 7 个字符，和英文单词 example 一样多
+The number on screen has 7 characters, as many as the word example.
+
+91
+00:05:23,578 --> 00:05:25,178
+把两个都大声念出来
+Say both out loud.
+
+92
+00:05:25,242 --> 00:05:26,842
+念这个数要多久？
+How long does the number take?
+
+93
+00:05:35,083 --> 00:05:39,520
+大约三秒：三十六万两千八百八十
+About three seconds: three hundred sixty-two thousand, eight hundred eighty.
+
+94
+00:05:39,840 --> 00:05:41,440
+比那个单词长得多
+Far longer than the word.
+
+95
+00:05:41,654 --> 00:05:46,006
+所以对紧跟在它后面的那些词，工具包的估计早了将近两秒
+So the toolkit's guess for the words right after it lands almost two seconds early.
+
+96
+00:05:46,250 --> 00:05:48,079
+目前的办法是手动修
+The fix so far is manual:
+
+97
+00:05:48,079 --> 00:05:53,418
+光这一个场景就有大约 20 处手动设的偏移，最大的一处是 2.2 秒
+this one scene carries about 20 hand-set shifts, the biggest 2.2 seconds.
+
+98
+00:05:53,738 --> 00:05:55,698
+更好的办法其实触手可及
+A better fix is within reach:
+
+99
+00:05:55,698 --> 00:06:00,159
+中文用的那个在线语音服务，能把每个词的时间一起发回来
+the online voice used for Chinese can send the time of every word.
+
+100
+00:06:00,479 --> 00:06:04,276
+但工具包现在还没去要这些时间，只保存了音频
+But the toolkit doesn't ask for them yet, and keeps only the audio.
+
+101
+00:06:06,917 --> 00:06:08,211
+暂停想一想
+Pause and think.
+
+102
+00:06:08,261 --> 00:06:10,842
+假设你听不见，也没法按播放键
+Suppose you can't hear, and you can't press play.
+
+103
+00:06:11,162 --> 00:06:12,762
+你会怎么检查一个视频？
+How would you check a video?
+
+104
+00:06:20,900 --> 00:06:24,975
+智能体的答案是：把时间变成图片，把声音变成文字
+The agent's answer: turn time into pictures, and sound into text.
+
+105
+00:06:25,295 --> 00:06:30,543
+工具包先快速渲染一版草稿，每两秒取一张截图，拼成一张网格图
+The toolkit renders a quick draft, and tiles a still from every two seconds into one grid.
+
+106
+00:06:30,863 --> 00:06:34,276
+智能体能看图片，所以它就是这样“看”视频的
+An agent can look at an image, so this is how it watches.
+
+107
+00:06:34,517 --> 00:06:36,813
+两张截图之间也可能出问题
+Between stills, things can go wrong,
+
+108
+00:06:36,813 --> 00:06:40,768
+所以为了检查动作，它会每隔五分之一秒抓一帧
+so to check motion, it grabs frames a fifth of a second apart.
+
+109
+00:06:41,088 --> 00:06:43,242
+如果几帧都一样，就是什么都没动
+If they're all the same, nothing moved.
+
+110
+00:06:43,484 --> 00:06:45,425
+然后，凡是能测量的，它都测量
+Then it measures everything it can.
+
+111
+00:06:45,745 --> 00:06:49,783
+有个叫 lint 的检查工具，一帧都不画就能把每个场景跑一遍
+A checker called a lint runs each scene without drawing a frame,
+
+112
+00:06:49,783 --> 00:06:54,641
+标出跑到屏幕外的东西、太小的文字，还有最后没清掉的元素
+and flags anything off screen, text that's too small, or objects left behind.
+
+113
+00:06:54,961 --> 00:06:57,508
+井字棋那期的场景还会自己检查自己
+And the tic-tac-toe scenes check themselves,
+
+114
+00:06:57,508 --> 00:07:00,230
+针对画面上的数字和棋盘，一共有 82 项检查
+with 82 checks on the numbers and boards shown.
+
+115
+00:07:02,250 --> 00:07:05,962
+接下来是评审：一批全新的智能体，没有参与制作这个视频
+Next come the reviewers, fresh agents that didn't build the video.
+
+116
+00:07:06,282 --> 00:07:11,164
+它们拿到的是截图、代替声音的字幕和一个角色
+They get the stills, the subtitles as a stand-in for sound, and a role:
+
+117
+00:07:11,164 --> 00:07:15,221
+导演，或者一个模拟的 12 岁孩子，聪明但普通
+a director, or a simulated 12-year-old, sharp but ordinary.
+
+118
+00:07:15,541 --> 00:07:20,341
+这个模拟的孩子找出了真问题，比如有些表示走法的标签，它读不懂
+That simulated kid found real problems, like move labels it couldn't decode.
+
+119
+00:07:20,583 --> 00:07:25,020
+第一轮找出了 30 个问题，其中就有算式那一行上的那个 12
+Round one found 30 issues, including that 12 on the formula line.
+
+120
+00:07:25,340 --> 00:07:29,006
+第二轮，一位新的导演逐条复查
+In round two, a fresh director re-checked each one:
+
+121
+00:07:29,006 --> 00:07:31,378
+25 个已经修好，5 个只修好了一部分
+25 were fixed, and 5 only partly.
+
+122
+00:07:34,017 --> 00:07:35,809
+导演还抓到一个更隐蔽的 bug
+The director caught a subtler bug.
+
+123
+00:07:36,129 --> 00:07:39,284
+这个场景本该把 4 个棋子换遍全部 24 种顺序
+The scene should shuffle 4 marks through all 24 orders,
+
+124
+00:07:39,284 --> 00:07:42,038
+可棋盘一动不动，计数器却还在往上跳
+but the board froze while the counter ticked on.
+
+125
+00:07:42,358 --> 00:07:44,181
+原因是 Manim 的一个坑
+The cause is a Manim pitfall:
+
+126
+00:07:44,181 --> 00:07:49,712
+所有移动都在第一步播放之前就设好了，而每次设置都会覆盖前一次
+every move was set up before the first one played, and each setup erased the one before,
+
+127
+00:07:49,712 --> 00:07:52,918
+结果每个棋子直接跳到最后的位置，然后就不动了
+so each mark jumped to its last spot and sat still.
+
+128
+00:07:53,238 --> 00:07:57,206
+现在每一步移动都等到播放时才设置，棋子就又动起来了
+Now each move is set up only when it plays, and the marks move again.
+
+129
+00:08:00,067 --> 00:08:02,435
+有些问题要跨场景才看得出来
+Some problems only show across scenes.
+
+130
+00:08:02,755 --> 00:08:07,458
+在差分隐私那期，负责不同场景的智能体给同一个人起了两个名字
+In the privacy video, agents building different scenes named the same person
+
+131
+00:08:07,458 --> 00:08:09,624
+一部分叫 Dan，另一部分叫 Dev
+Dan in one part and Dev in another.
+
+132
+00:08:09,944 --> 00:08:12,846
+只有跨场景检查的评审，才能发现这种问题
+Only a reviewer checking across scenes could catch that.
+
+133
+00:08:13,166 --> 00:08:17,518
+另一位评审发现，隐私预算条被画成了五种不同的样子
+Another reviewer found the privacy budget bar drawn five different ways.
+
+134
+00:08:17,838 --> 00:08:19,843
+现在这些场景共用同一种画法
+Now those scenes share one drawing.
+
+135
+00:08:22,683 --> 00:08:24,062
+再说中文版
+On to Chinese.
+
+136
+00:08:24,112 --> 00:08:28,555
+用户要求保留那些翻成中文听着会别扭的英文术语
+The user asked to keep English terms that would sound weird translated,
+
+137
+00:08:28,555 --> 00:08:30,619
+并且配上中英双语字幕
+with subtitles in both languages.
+
+138
+00:08:30,939 --> 00:08:34,988
+关键规则是：一句英文对一句中文
+The key rule: one Chinese sentence for each English sentence,
+
+139
+00:08:34,988 --> 00:08:38,704
+这样每个动画触发点都还有一句话可以等
+so every animation cue still has a sentence to wait for.
+
+140
+00:08:39,024 --> 00:08:41,691
+有些触发点还会钉在某个具体的中文词上
+Some cues are also pinned to a Chinese word.
+
+141
+00:08:43,133 --> 00:08:45,525
+两种语言共用同一套场景代码
+Both languages share the same scene code,
+
+142
+00:08:45,525 --> 00:08:48,850
+所以智能体要检查英文版有没有被改动
+so the agent checks that the English video didn't change.
+
+143
+00:08:49,170 --> 00:08:52,541
+它会比对改动前后每一帧的指纹
+It compares a fingerprint of every frame, before and after.
+
+144
+00:08:52,861 --> 00:08:57,277
+有几个场景每次渲染的结果不完全一样，但大多数都对得上
+A few scenes don't render exactly the same every time, but most match.
+
+145
+00:08:57,516 --> 00:08:58,981
+那么，用哪个声音？
+Then, which voice?
+
+146
+00:08:59,031 --> 00:09:02,252
+智能体听不了，所以它去问语音识别模型
+The agent can't listen, so it asked a speech recognizer.
+
+147
+00:09:02,572 --> 00:09:04,343
+用第一个普通话声音时
+With the first Mandarin voice,
+
+148
+00:09:04,343 --> 00:09:07,647
+识别模型把脚本里的 noise 听成了“Nice”
+the recognizer heard "Nice" where the script said noise,
+
+149
+00:09:07,647 --> 00:09:09,889
+把 epsilon 听成了“Excellent”
+and "Excellent" where it said epsilon.
+
+150
+00:09:10,209 --> 00:09:14,520
+另一个普通话声音 17 个测试词全部通过，于是被选中了
+Another Mandarin voice passed all 17 test terms, and was chosen,
+
+151
+00:09:14,520 --> 00:09:18,359
+尽管有两个以英语为主的声音，分数一样高，甚至更高
+though two English-first voices scored as high or higher.
+
+152
+00:09:18,679 --> 00:09:21,623
+目前还没有记录显示，有人亲耳检查过它
+There's no record yet of anyone checking it by ear.
+
+153
+00:09:21,866 --> 00:09:23,829
+还有一条字幕，意思被弄反了
+And one subtitle flipped a meaning.
+
+154
+00:09:24,149 --> 00:09:27,276
+英文旁白先问 X 是不是总能赢
+The English narration asks whether X always wins,
+
+155
+00:09:27,276 --> 00:09:31,679
+简短地答了一句“No”，然后说电脑能做的不只是统计
+answers with a short no, then says a computer can do more than count.
+
+156
+00:09:31,999 --> 00:09:36,970
+中文字幕却说反了：说这不是电脑能做的事
+The Chinese subtitle said the opposite: that this is not something a computer can do.
+
+157
+00:09:37,290 --> 00:09:40,213
+中文版的两个 AI 评审都发现了这个问题
+Both AI reviewers of the Chinese version caught it.
+
+158
+00:09:40,450 --> 00:09:41,808
+这里暂停想一想
+Pause on this one.
+
+159
+00:09:41,858 --> 00:09:45,250
+英文那句是对的，中文说的却正好相反
+The English line is right, and the Chinese says the opposite.
+
+160
+00:09:45,570 --> 00:09:47,276
+这是翻译错了吗？
+Was this a bad translation?
+
+161
+00:09:58,317 --> 00:10:02,339
+不是。译文在那个“不是”后面本来有句号
+It wasn't. The translation had a full stop after that no,
+
+162
+00:10:02,339 --> 00:10:07,341
+但字幕工具把这条短字幕并进下一条时，把句号弄丢了
+but the subtitle tool dropped it when it merged that short subtitle into the next.
+
+163
+00:10:07,661 --> 00:10:10,114
+工具的 bug，常常看起来像内容的 bug
+Tool bugs often look like content bugs.
+
+164
+00:10:10,350 --> 00:10:15,822
+另一个工具 bug：拼接视频时，工具包复用了每个场景的旧片段
+Another tool bug: when putting the video together, the toolkit reused each scene's old clip,
+
+165
+00:10:15,822 --> 00:10:19,630
+于是改过的场景悄悄地用上了过时的画面
+so edited scenes were quietly stitched from out-of-date footage.
+
+166
+00:10:19,950 --> 00:10:23,598
+文件日期露了馅：片段比代码还旧
+The file dates gave it away: the clips were older than the code.
+
+167
+00:10:23,918 --> 00:10:29,444
+现在，只要场景比它的源文件旧，或者它的语音换了，就会重新渲染
+Now a scene is rendered again whenever it's older than its sources, or its voice has changed.
+
+168
+00:10:30,734 --> 00:10:32,334
+修改本身也要检查
+Fixes need checking too.
+
+169
+00:10:32,633 --> 00:10:37,291
+差分隐私的中文版，评审一共提了 103 条意见
+For the Chinese privacy video, reviewers raised 103 points,
+
+170
+00:10:37,291 --> 00:10:41,081
+大多是润色，负责修改的智能体做了 75 处改动
+most of them polish, and fixers made 75 changes.
+
+171
+00:10:41,401 --> 00:10:46,137
+接着，持怀疑态度的核查者检查了这些修改，又做了 12 处更正
+Then skeptical verifiers checked the fixers' work, and made 12 more corrections.
+
+172
+00:10:46,457 --> 00:10:52,281
+一段中文最多只能比英文长 15%，否则动画就会卡住
+A Chinese passage may run at most 15 percent longer than the English, or the animation stalls.
+
+173
+00:10:52,601 --> 00:10:55,417
+有个修改者说，某一段现在不超限了
+One fixer said a passage now fit that limit.
+
+174
+00:10:55,737 --> 00:10:59,192
+核查者实际测了时长：长了 15.3%
+A verifier timed it: 15.3 percent longer.
+
+175
+00:11:02,233 --> 00:11:03,612
+那下一步呢？
+So what's next?
+
+176
+00:11:03,662 --> 00:11:06,649
+最大的缺口，恰恰在测量够不着的地方
+The biggest gaps sit exactly where measuring runs out.
+
+177
+00:11:06,969 --> 00:11:10,169
+第一，也是最重要的：只有人能做的事
+First, and most important: what only people can do.
+
+178
+00:11:10,489 --> 00:11:13,513
+有记录的人类反馈只有用户的
+The only human feedback on record is the user's:
+
+179
+00:11:13,513 --> 00:11:18,553
+给长视频加背景音乐，再做一个更短、更紧凑的版本
+add background music to the long videos, and make a shorter, denser version too.
+
+180
+00:11:18,873 --> 00:11:23,353
+目前还没有记录显示，有人逐句亲耳检查过旁白
+There's no record yet of anyone checking the narration line by line, by ear.
+
+181
+00:11:23,673 --> 00:11:26,089
+有记录的试看观众全是模拟的
+Every test viewer on record was simulated,
+
+182
+00:11:26,089 --> 00:11:28,964
+至于大家到底学到了什么，目前也还没有衡量
+and there's no measure yet of what anyone learned.
+
+183
+00:11:29,200 --> 00:11:34,208
+智能体自己拍板的事，也应该由人再看一遍：差分隐私那期的长度
+People should also revisit the agent's own calls: the length of the privacy video,
+
+184
+00:11:34,208 --> 00:11:40,314
+中文声音的选择，保留哪些英文术语，以及对用户程序的那些小改动
+the choice of Chinese voice, which English terms to keep, and the small edits to the user's program.
+
+185
+00:11:43,550 --> 00:11:45,143
+第二，工程方面
+Second, engineering.
+
+186
+00:11:45,193 --> 00:11:48,741
+免费的中文语音没有授权用于公开发布的视频
+The free Chinese voice isn't licensed for published videos,
+
+187
+00:11:48,741 --> 00:11:52,830
+所以中文版发布之前，需要换成有授权的语音
+so the Chinese versions need a licensed voice before they're posted.
+
+188
+00:11:53,150 --> 00:11:57,523
+时间应该按词来定，而不是按字符，这样手动设的偏移就能去掉了
+Timing should follow words, not characters, so the hand-set shifts can go.
+
+189
+00:11:57,843 --> 00:12:00,126
+共用的部件还能让场景代码变少
+And shared parts would shrink the scene code.
+
+190
+00:12:04,533 --> 00:12:09,440
+第三，字幕：在中文版的评审意见里，字幕问题最多
+Third, subtitles, the biggest source of review findings in the Chinese versions.
+
+191
+00:12:09,760 --> 00:12:13,194
+每条字幕在哪儿断行，是由手写的规则决定的
+Hand-written rules decide where each subtitle line breaks.
+
+192
+00:12:13,514 --> 00:12:17,196
+第一次重写这些规则时，大部分目标都修好了
+The first rewrite of those rules fixed most of its targets,
+
+193
+00:12:17,196 --> 00:12:19,317
+却让另外 11 条字幕变差了
+but made 11 other subtitles worse.
+
+194
+00:12:19,637 --> 00:12:24,672
+又花了三轮才把它们修好，所以下次要先写测试用例
+It took three more rounds to fix those, so next time, the test cases come first.
+
+195
+00:12:24,992 --> 00:12:28,661
+可以让语法分析工具来建议断在哪儿，再由规则来检查
+A grammar tool could suggest the breaks, and the rules could check them.
+
+196
+00:12:29,400 --> 00:12:32,835
+最后一项，也最接近用户的设想：交互
+Last, and closest to the user's vision: interactivity.
+
+197
+00:12:33,155 --> 00:12:36,224
+前两期视频各配了一个交互页面
+The first two videos each come with a playground,
+
+198
+00:12:36,224 --> 00:12:40,984
+也就是一个可以自己动手试的小网页，但它和视频是分开的
+a small web page to try the idea yourself, but it sits apart from the video.
+
+199
+00:12:41,304 --> 00:12:44,246
+下一步，暂停视频时，应该直接在原地打开它
+Next, pausing the video should open it right there,
+
+200
+00:12:44,246 --> 00:12:46,552
+停在同样的状态，还能记住你的答案
+in the same state, and keep your answer.
+
+201
+00:12:50,000 --> 00:12:51,600
+想自己试试吗？
+Want to try this yourself?
+
+202
+00:12:51,856 --> 00:12:54,096
+由人来选定学习者和问题
+A human picks the learner and the question.
+
+203
+00:12:54,416 --> 00:12:56,336
+先写脚本，而且把它写成代码
+Write the script first, as code.
+
+204
+00:12:56,656 --> 00:12:58,256
+让音频当时钟
+Let the audio be the clock.
+
+205
+00:12:58,576 --> 00:13:02,096
+用独立的评审，包括一个模拟观众
+Use independent reviewers, including a simulated viewer.
+
+206
+00:13:02,416 --> 00:13:05,467
+感知不到的，就去测量，修改也要再检查
+Measure what you can't perceive, and check the fixes too.
+
+207
+00:13:05,787 --> 00:13:07,536
+还有，每一步都存成文件
+And keep every step in a file.
+
+208
+00:13:07,783 --> 00:13:09,447
+最重要的是，记住目标
+Above all, remember the goal.
+
+209
+00:13:09,767 --> 00:13:13,671
+正如用户所说，AI 不应该只是认知卸载
+As the user put it, AI should not just be cognitive offloading.
+
+210
+00:13:13,991 --> 00:13:18,194
+它应该让知识更容易获得，同时还能让你学得一样深
+It should make knowledge easier to reach, and still let you learn just as deeply.
+
+211
+00:13:18,433 --> 00:13:19,791
+最后还有一件事
+One last thing.
+
+212
+00:13:19,841 --> 00:13:23,808
+这期视频也是这样做出来的，所以它有同样的盲区
+This video was made the same way, so it has the same blind spot:
+
+213
+00:13:23,808 --> 00:13:26,412
+做它的智能体，没法听它
+the agent that made it can't listen to it.
+
+214
+00:13:26,732 --> 00:13:30,099
+但你可以。如果哪里听着不对，或者让你听糊涂了
+You can. If anything sounded wrong, or lost you,
+
+215
+00:13:30,099 --> 00:13:32,236
+请在评论区说一声，带上时间点
+say so in the comments, with the time.
+
+216
+00:13:32,556 --> 00:13:35,415
+这正是这条流水线缺的反馈
+That's exactly the feedback this pipeline is missing.

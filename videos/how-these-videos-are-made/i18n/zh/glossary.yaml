@@ -1,0 +1,380 @@
+# Chinese (zh-CN, mainland Simplified) glossary and translation rules for how-these-videos-are-made,
+# code-switching version. Human-readable copy in Chinese: GLOSSARY.md (keep the two in sync).
+# First use: the bilingual subtitles burned into the English video (the standard Bilibili upload,
+# output/<id>.zh-en.mp4). The same narration files will drive a Chinese-voiced version later.
+# terms[].zh_subtitle = display form (Chinese subtitle line, later on-screen labels);
+# terms[].zh_spoken = what a Chinese voice would say ("" = same as zh_subtitle);
+# python -m explainer.i18n check reads the Latin words of zh_subtitle / zh_spoken / first_use and
+# allowed_spoken_latin as the English the Chinese line may contain.
+# Rules are tagged [A1]..[H2]: A terms, B typography, C numbers, D narration file, E on-screen strings,
+# F voice, G subtitles, H titles and description.
+video: how-these-videos-are-made
+lang: zh-CN (mainland Simplified Chinese)
+audience: curious Bilibili viewers with no programming or machine-learning background (the English video assumes the same); register of a Chinese engineer who builds such tools explaining them to friends
+# For the later Chinese-voiced version: the toolkit default (explainer/build.py DEFAULT_VOICES), served
+# by the licensed Azure AI Speech API when AZURE_SPEECH_KEY and AZURE_SPEECH_REGION are set (rule F1).
+voice:
+  backend: edge
+  voice: zh-CN-XiaoyiNeural
+  speed: 1.0
+policy: 'Natural spoken Mandarin, as a Chinese engineer who builds these tools would explain them to a curious viewer with no programming background. Every choice passes three tests: what real Chinese speakers say in this setting; whether a lay viewer understands it, with one gloss where the video introduces it; and consistency with the two existing Chinese glossaries (tictactoe-255168, dwork2006-calibrating-noise) where the same thing occurs. (1) English stays for names of people, products and tools (Claude Code, Manim, 3Blue1Brown, Andrej Karpathy, Kokoro, edge-tts, faster-whisper, FFmpeg, jieba, LaTeX, Azure AI Speech), for strings that are quoted as strings (the code''s "A hundred" / "A million", the voice-test words noise / epsilon and what the recognizer heard, "Nice" / "Excellent", the English word example, the English answer No), for PDF and AI, and for three engineering words that Chinese developers say in English and that have no better lay Chinese: commit (glossed once: 项目保存下来的版本), lint (introduced as 一个叫 lint 的检查工具) and bug. (2) Everything else is Mandarin in the term Chinese tech media and lay viewers use: 智能体 / AI 智能体 (agent), 子智能体 (sub-agent), 工作流 (workflow), 流水线 (pipeline), 工具包 (toolkit), 脚本 (the video script), 渲染 (render), 语音识别模型 (speech recognizer; ASR is not spoken), 合成语音 (synthetic voice), 评审 (reviewer / review), 截图 (still), 帧 (frame), 交互页面 (playground), 论文笔记 (digest), 认知卸载 (cognitive offloading). (3) The bilingual band shows the English sentence under every Chinese line, so the Chinese line carries no English glosses of Chinese terms. (4) The binding rules of the English script carry over: the user is never named; the user''s words are translated faithfully, adding and dropping nothing; the cost appears only with its full label, whose Chinese keeps its meaning exactly; every number is exact; the phrasing guardrails (a simulated 12-year-old, the recognizer heard, no record yet, 183 sub-agents in 46 workflow runs before this video) have fixed Chinese forms (rule A8).'
+rules:
+- '[A1] Code-switching test. Keep English only for (a) names of people, products, tools and services; (b) strings quoted as strings: "A hundred", "A million" (the anchor words in the old tic-tac-toe code on screen), noise, epsilon, "Nice", "Excellent" (the voice test), example (the English word of the S05 ponder), "No" (the English answer of the tic-tac-toe narration, S08); (c) PDF and AI; (d) the closed list commit, lint, bug. A new word may join (d) only if Chinese developers say it in English when talking to non-developers too, the Chinese is ambiguous or stiff (提交 reads as "submit", 代码检查 names no tool), and the narration glosses it once in the same sentence. Never add English for flavour (no 这个 pipeline 很 robust).'
+- '[A2] The agent family. agent → 智能体; "AI agents" / "one AI agent" → AI 智能体 at the first mentions (S01, S03), then 智能体; sub-agents → 子智能体; "fresh agents" → 全新的智能体; "agents cataloging the papers" → 给论文编目录的智能体. Why not keep "agent": 智能体 is the standard term of Chinese tech media and industry, a lay viewer knows it, and the English line underneath shows agent in every cue. The main agent is "Claude Code" by name only where the English names it. 它 / 它们 for agents, never 他.'
+- '[A3] Quoted strings keep their original spelling inside Chinese quotes “”: 旁白念到“A hundred”的时候；识别模型听到的却是“Nice”；答了一句“No”. Words quoted as words without quotation marks in the English stay bare: 脚本里写的是 noise；英文单词 example. Code and identifiers on screen are never translated in the narration.'
+- '[A4] The user. "the user" → 用户 / 这位用户 (the first mention, S02: 这位用户). Never a name, on screen or in narration, and never a gendered pronoun: repeat 用户, or use 自己 where the English says they / their (用户说，AI 很有耐心，可自己却在做大量的“认知卸载”). "one human" → 一个真人 (against the AI agents). Andrej Karpathy keeps the Latin spelling and the hedge "as quoted": 本项目的想法来自 Andrej Karpathy 的帖子，是第一个请求里引用的.'
+- '[A5] The user''s words. Where the English quotes or restates the user''s English words (S02 lines 2 and 3, S11 line 2), the Chinese translates exactly that, adding and dropping nothing: our brain is a neural net → 我们的大脑就是一个神经网络; training it takes hardship → 训练它是要吃苦的; cognitive offloading → 认知卸载 (in quotes at its first use in S02); a mentor → 导师; never isolated → 从来不是孤立的; AI should not just be cognitive offloading → AI 不应该只是认知卸载. Where a scene would quote the user''s Chinese words, the Chinese original is used verbatim. None of the user''s requests was written in Chinese (assets/quotes.yaml: the request for the Chinese versions, A06b, was typed in English), so every Chinese line here is a translation. The S02 and S08 summaries of the requests stay third-person summaries (用户要求：…), never quotes.'
+- '[A6] Shared terms, the same as in the other two Chinese versions: 井字棋; distinct games counted with 种 (255,168 种对局, tictactoe A8); marks → 棋子; orders → 顺序 (24 种顺序); nine factorial → 九的阶乘 (here written in characters because the sentence is about writing it out in words; the tic-tac-toe video writes 9 的阶乘); differential privacy → 差分隐私; privacy budget (bar) → 隐私预算（条）; playground → 交互页面; digest → 论文笔记; Pause and ponder card → 暂停想一想 (explainer/locales/zh.yaml); bilingual subtitles → 中英双语字幕.'
+- '[A7] "the privacy video" → 差分隐私那期 (the Chinese privacy video → 差分隐私的中文版; the privacy digest → 差分隐私论文的笔记); "the tic-tac-toe video" → 井字棋那期. Never 隐私视频: in Chinese it reads as a private or intimate video. "a privacy paper" → 一篇讲隐私的论文.'
+- '[A8] Guardrail phrasings (binding in the English script) and their fixed Chinese: a simulated 12-year-old → 一个模拟的 12 岁孩子 (never a bare 12 岁孩子 for the persona; S01''s "pretending to be a 12-year-old" → 假扮成 12 岁的孩子); the speech recognizer heard "Nice" where the script said noise → 识别模型把脚本里的 noise 听成了“Nice” (the recognizer is the subject of 听成), never 声音说成了……; no record yet of anyone checking it by ear → 目前还没有记录显示，有人亲耳检查过……; every test viewer on record → 有记录的试看观众; 183 sub-agents in 46 workflow runs, before this video → 183 个子智能体，来自 46 次工作流运行，都在这期视频之前; passed all 17 test terms → 17 个测试词全部通过 (never 全部读对); fixers / verifiers are plural groups → 负责修改的智能体 / 持怀疑态度的核查者; "most of them polish" → 大多是润色. Perception verbs (看, 听, 看懂) are not used for AI reviewers: "labels it couldn''t decode" → 它读不懂; the only exception is S06''s deliberate 它就是这样“看”视频的, in quotes like the English irony.'
+- '[A9] The cost. Narration (S03): 屏幕上的费用，是整个会话截至 10 月 7 日的花费，按公开的按量计费价格计算：涵盖全部四个请求，不是一期视频。 (费用……涵盖全部四个请求，不是一期视频 = all four requests, not one video; the date stays in one subtitle cue.) On-screen label (live.cost_label, two lines split at " · ", for a later strings pass): 整个会话截至 10 月 7 日、按 API 公开标价折算的金额 · 涵盖全部四个请求，不是一期视频的成本. The cost number is never spoken and never shown without that label, in the description too.'
+- '[A10] Register. Spoken, friendly, concrete, like an engineer explaining to friends: short clauses, Chinese word order, no translationese (no 让我们…, no 这就是为什么…, no chains of 一个…的). 坑 (Manim 的一个坑) is the everyday word Chinese developers use for a pitfall and lay viewers know it from 踩坑; no other slang (no yyds, 一键三连, 锅). Address the viewer as 你; requests in S11 are polite (请在评论区说一声). Mainland Simplified Chinese only (视频, 程序, 软件, 默认, 渲染).'
+- '[B1] Spacing (as in the other two glossaries). One half-width space between CJK and Latin letters or digits (AI 智能体, 36 个 PDF, 12 岁, 10 月 7 日, lint 的检查工具, Manim 的一个坑). No space next to full-width punctuation (念到“A hundred”的时候, 3Blue1Brown：), none between a number and % (15.3%), none inside numbers or names. Never U+00A0.'
+- '[B2] Punctuation. Full-width ，。、；：？！“”‘’……《》 in Chinese text; quotes “” for quoted strings and a coined term at its first use (“认知卸载”); 、 only inside a short list of nouns. Inside one Chinese sentence there is no 。？！ (one sentence per English sentence): use ，；：. Long enumerations of clauses take ， rather than 、 so the subtitle band can break between items (S01 line 5, S10 line 2). A list of nouns whose English counterpart can only be cut at its colon keeps 、 after the ： and needs a ， near its middle for the Chinese-only track (S04 line 1: 这条流水线是一串文件：论文、目录记录、带页码的论文笔记，再到脚本、动画代码和视频。).'
+- '[B3] Fonts (for a later on-screen pass). Noto Sans / Serif CJK SC through the toolkit; no italics for Chinese; bold is fine.'
+- '[C1] Numbers. Every number stays exact and in the same unit as the English. Digits where the English narration uses digits or a value matters (183, 46, 36, 255,168, 4 of 36, 82, 30, 25, 5, 4, 24, 17, 103, 75, 12, 15%, 16 个小时, 11 分钟, 20 处, 10 月 7 日); 255,168 keeps its comma, as in the tic-tac-toe video. Decimals that the English SAY spells out for its voice are digits in the Chinese line (2.2 秒, 15.3%), and en_display gives the English line the same digits (rule G2). Small narrative counts that the English writes as words stay Chinese numerals (六个小时, 三个多小时, 大约两天, 六次, 两次, 四次, 六个子智能体, 第一天, 四个请求, 五种, 三轮, 将近两秒, 每两秒, 五分之一秒). S05''s number in "About three seconds: three hundred sixty-two thousand, eight hundred eighty" is written in Chinese numerals (三十六万两千八百八十), because that sentence is about how the number sounds.'
+- '[C2] Arithmetic is spoken in words: 4 乘 3 乘 2 (tictactoe rule C2), never ×.'
+- '[D1] Sentence alignment (explainer/i18n.py). narration/g1.yaml (S01-S04), g2.yaml (S05-S08), g3.yaml (S09-S11): one entry per SAY line (46), en byte-equal to the SAY line, zh exactly one item per English sentence as split by explainer.voice.split_sentences (164), each ending in 。？！ and none inside. Restructure only inside a sentence. Check: python -m explainer.i18n check videos/how-these-videos-are-made --lang zh.'
+- '[D2] Anchors and say: are not needed for the bilingual subtitles of the English video (timing comes from the English voice). For the Chinese-voiced version add them then: anchors for every mid-sentence vo.wait_until phrase whose Chinese word order moves (list them with grep wait_until scenes/*.py), say: wherever the voice must read something other than the display (rule F3), and a timing pass (python -m explainer.script videos/how-these-videos-are-made/script.md --lang zh, every SAY block within ±15% of the English).'
+- '[D3] Content parity. Each Chinese sentence says what its English sentence says, nothing more. The only additions are clarifications a Chinese viewer needs and the English listener already has: the names of the two videos (差分隐私那期, 井字棋那期), 那个“不是” in S09 (the Chinese word on the frame that "that no" points at), and 英文单词 before example.'
+- '[E1] On-screen text (strings/*.yaml, not written yet; needed only for the Chinese-voiced version). Use the terms of this glossary, the tags 本视频重新绘制 (re-created for this video), 旧草稿，按保存的代码重绘 (the old draft, redrawn from its saved code), 想法 · 尚未实现 (idea · not built yet), 尚未验证 (not yet verified), the caption — 用户（口述；已删去口头禅） for the dictated quotes and — 用户（中文版请求） for A06b, 请求（摘要） for the request cards, and the cost label of rule A9. Real exhibits (code, contact sheets, the English quote cards, the English script) stay as they are; a translated card would no longer be the real artefact.'
+- '[F1] Voice (Chinese-voiced version only). edge zh-CN-XiaoyiNeural, the toolkit default; published copies must come from the licensed Azure AI Speech API (AZURE_SPEECH_KEY, AZURE_SPEECH_REGION), never from the free Edge endpoint (docs/LANGUAGES.md, CLAUDE.md).'
+- '[F2] ASR round trip before that render: every sentence through faster-whisper (language zh), flagging any kept English word that does not come back: Claude Code, Manim, 3Blue1Brown, Andrej Karpathy, PDF, commit, lint, bug, A hundred, A million, example, noise, epsilon, Nice, Excellent, No, Dan, Dev, AI. commit, lint, bug, 3Blue1Brown, A hundred and No have never been through the Xiaoyi check. Then a human listens before anything is published.'
+- '[F3] Likely say: forms (to measure, not to assume): 3Blue1Brown may need "3 Blue 1 Brown"; 2.2 秒 and 15.3% were read correctly in the other videos (52.5%); 九的阶乘 needs none. say: never contains brackets, maths symbols or underscores (explainer.i18n check).'
+- '[G1] Bilingual band (explainer/subtitles.py): the Chinese line on top (≤ 30 units, CJK 1, Latin 0.55), the English sentence below; in the English video the timing follows the English voice, and a Chinese piece that would read faster than 9 units/s takes up to 1 s from its neighbour. Write clauses of at most about 24 units with a ，/；/： between them, never break inside a name, a number and its measure word (36 个 PDF, 255,168 种对局), or a quoted string. The English sentence is cut where the Chinese one is, at its nearest matching clause stop, and never at a comma inside a list: so the Chinese clauses follow the English clause order (the commit gloss after the commits, S03; 识别模型把 noise 听成了“Nice”，把 epsilon 听成了“Excellent” in the English order, S08), a Chinese cut has an English stop to match (a colon for a colon, S04 and S07), a date, a number and its unit, or a subject and its verb never straddle a cut (截至 10 月 7 日 / 改过的场景 stay in one piece), and a piece reads at most about 7.5 units/s (the toolkit only rebalances above 9). The Chinese-only .zh.srt wraps each cue into two lines of 22 units: a long sentence needs a ， near its middle. Read the whole output/<id>.zh-en.srt and .zh.srt after any change: python -m explainer.build videos/how-these-videos-are-made --subs-only --crf 25 (the final cut was stitched with --crf 25; without it the durations come from the raw scene renders and every later cue moves by about 1 ms).'
+- '[G2] en_display (English subtitle line per sentence) is used only where the English SAY spells a decimal for its voice: "the biggest 2.2 seconds" (S05, say line 5, sentence 1) and "15.3 percent longer" (S09, say line 3, sentence 6). Everything else shows the SAY sentence, as the English video''s own subtitles do.'
+- '[G3] Side effect on English subtitles. explainer/subtitles.py _en_terms() reads the en fields of every videos/*/i18n/zh/glossary.yaml, and every 2-3 word alternative (split at / ; , :) becomes word pairs that English line and cue breaks avoid splitting, in every video. Of the pairs this glossary adds, only this video''s narration contains any (checked against all script.md files), and none changes the English video''s own .srt (byte-identical after --subs-only --crf 25). A bare ''privacy budget bar'' did change one cue (S07: ''Another reviewer found the privacy budget / bar drawn five different ways.'' became two cues), so that term''s en field says ''the privacy budget bar'' (4 words, ignored). Re-check this whenever an en field changes.'
+- '[H1] Titles (meta.yaml). Video: 【幕后】这些讲解视频是怎么做出来的：一个人、一个 AI 智能体，和大量的测量. Chapters: see the terms "Chapter S01" to "Chapter S11". Plain Chinese titles; English names only where they are names.'
+- '[H2] Description (meta.yaml). For the standard upload (the English video with the bilingual band): what the video covers, the honesty notes of the README (the user is never named; the user''s words only lightly cleaned; the cost only with its full label; every reconstruction is tagged; no person has checked the narration by ear yet), and a request for feedback with a timestamp. The 制作说明 line about the narration changes for a Chinese-voiced upload (see the comment in meta.yaml).'
+terms:
+# ---------------------------------------------------------------- people and roles
+- en: the user
+  zh_subtitle: 用户；这位用户（S02 第一次提到时）
+  zh_spoken: ''
+  first_use: S02：一切从一个人开始，也就是这位用户
+  note: Never a name, never a gendered pronoun (他 / 她); 自己 where the English says they. 用户 also matches 'the user' in the on-screen captions.
+- en: one human / a human / people (who can listen)
+  zh_subtitle: 一个真人；人；只有人能做的事
+  zh_spoken: ''
+  first_use: S03：团队：一个真人，就是用户
+  note: 真人 only where the human is set against the AI agents.
+- en: AI / an AI
+  zh_subtitle: AI；一个 AI
+  zh_spoken: AI
+  first_use: S01
+  note: Chinese speakers say AI (the letters), never 人工智能 in this register.
+- en: AI agent(s) / the agent
+  zh_subtitle: AI 智能体（第一次）；智能体
+  zh_spoken: ''
+  first_use: S01：这些视频里几乎所有东西都是 AI 智能体做的；S03：一个 AI 智能体：Claude Code
+  note: Rule A2. Not 代理 (sounds like a sales agent), not 'agent' (the English line shows it).
+- en: sub-agents / workflow agents
+  zh_subtitle: 子智能体
+  zh_spoken: ''
+  first_use: S03：它手下有 183 个子智能体，来自 46 次工作流运行，都在这期视频之前
+  note: 'Guardrail: always with "before this video" when the 183 / 46 numbers are given.'
+- en: Claude Code
+  zh_subtitle: Claude Code
+  zh_spoken: Claude Code
+  first_use: S03
+  note: Product name, kept.
+- en: reviewer(s) / review / rounds of review
+  zh_subtitle: 评审；评审意见；一轮又一轮的评审
+  zh_spoken: ''
+  first_use: S01：发现问题的评审
+  note: 评审 is both the reviewer and the act. Not 审稿人 (journal peer review).
+- en: director (reviewer persona)
+  zh_subtitle: 导演
+  zh_spoken: ''
+  first_use: S07
+  note: ''
+- en: a simulated 12-year-old / simulated kid / simulated viewer / test viewer
+  zh_subtitle: 一个模拟的 12 岁孩子；这个模拟的孩子；模拟观众；试看观众
+  zh_spoken: ''
+  first_use: S07
+  note: Rule A8. 'sharp but ordinary' → 聪明，但很普通.
+- en: cross-scene reviewer / a reviewer checking across scenes
+  zh_subtitle: 跨场景检查的评审
+  zh_spoken: ''
+  first_use: S07
+  note: ''
+- en: fixers / skeptical verifiers
+  zh_subtitle: 负责修改的智能体（修改者）；持怀疑态度的核查者
+  zh_spoken: ''
+  first_use: S09
+  note: Plural groups (four of each); the singular 有个修改者 / 核查者 only where the English says one.
+- en: Andrej Karpathy
+  zh_subtitle: Andrej Karpathy
+  zh_spoken: Andrej Karpathy
+  first_use: S02：本项目的想法来自 Andrej Karpathy 的帖子，是第一个请求里引用的
+  note: Latin spelling (the DP glossary keeps modern people in Latin script). 'as quoted' → 引用的.
+- en: 3Blue1Brown
+  zh_subtitle: 3Blue1Brown
+  zh_spoken: 3Blue1Brown
+  first_use: S02：视频的风格学的是 3Blue1Brown
+  note: The channel name. Chinese fans also say 3B1B or 三蓝一棕; the narration keeps the full name. No numbers on its production effort.
+- en: Dan / Dev (the name mismatch in the privacy video)
+  zh_subtitle: Dan；Dev
+  zh_spoken: Dan / Dev
+  first_use: S07
+  note: The real names on the cards.
+# ---------------------------------------------------------------- the pipeline
+- en: pipeline
+  zh_subtitle: 流水线；整条流水线
+  zh_spoken: ''
+  first_use: S01
+  note: Understood by everyone; engineers say both pipeline and 流水线.
+- en: toolkit
+  zh_subtitle: 工具包
+  zh_spoken: ''
+  first_use: S03：它写了驱动整条流水线的工具包
+  note: ''
+- en: workflow / workflow run
+  zh_subtitle: 工作流；一次工作流运行
+  zh_spoken: ''
+  first_use: S03：工作流就是智能体为了启动子智能体写的程序，每个子智能体只干一件事
+  note: The established Chinese term (AI 工作流 in every Chinese low-code tool), so a lay viewer has heard it; the English sentence defines it, and so does the Chinese.
+- en: script (script.md, the video script) / a workflow script
+  zh_subtitle: 脚本（视频脚本）；工作流是……一段程序
+  zh_spoken: ''
+  first_use: S01
+  note: 脚本 always means the video script; the workflow 'script' is 一段程序, so the two never collide.
+- en: show line / say line / beat
+  zh_subtitle: 一行画面；一行台词；每一小段
+  zh_spoken: ''
+  first_use: S04：每一小段都是一行画面配一行台词
+  note: The screen shows the real English script with SHOW:/SAY:, and the English line names show line / say line; the Chinese says what they are.
+- en: the voice / synthetic voice / Mandarin voice / English-first voices
+  zh_subtitle: 语音；合成语音；普通话声音；以英语为主的声音
+  zh_spoken: ''
+  first_use: S03：每种语言各一个合成语音
+  note: 语音 for the generated audio, 声音 for one particular voice in the test. Not 配音 (dubbing by a person).
+- en: narration
+  zh_subtitle: 旁白
+  zh_spoken: ''
+  first_use: S01
+  note: ''
+- en: speech recognizer / the recognizer
+  zh_subtitle: 语音识别模型；识别模型
+  zh_spoken: ''
+  first_use: S03：以及一个语音识别模型
+  note: ASR is not spoken. Guardrail (A8) 识别模型把……听成了…….
+- en: commit / the project's saved versions
+  zh_subtitle: commit；项目存下的版本
+  zh_spoken: commit
+  first_use: S03：一百多个 commit 里，除了两个，全是它提交的，commit 就是项目存下的版本
+  note: Kept English (rule A1). 提交 alone reads as 'submit'; Chinese developers say commit, and the same sentence glosses it right after, in the English order (…over a hundred commits, the project's saved versions).
+- en: lint / a checker called a lint
+  zh_subtitle: lint；一个叫 lint 的检查工具
+  zh_spoken: lint
+  first_use: S06：有个叫 lint 的检查工具，一帧都不画就能把每个场景跑一遍
+  note: Kept English (rule A1); there is no lay Chinese name, 代码检查 names no tool.
+- en: bug / tool bugs / content bugs
+  zh_subtitle: bug；工具的 bug；内容的 bug
+  zh_spoken: bug
+  first_use: S07：导演还抓到一个更隐蔽的 bug
+  note: Everyday Chinese for a software fault; never 漏洞 (security hole) or 故障.
+- en: render / rendered again / draft / final cut
+  zh_subtitle: 渲染；重新渲染；草稿；成片
+  zh_spoken: ''
+  first_use: S06：工具包先快速渲染一版草稿
+  note: 渲染 is the standard term and lay viewers know it from video editing apps.
+- en: frame / still / grid of stills / fingerprint of every frame
+  zh_subtitle: 帧；截图；网格图；每一帧的指纹
+  zh_spoken: ''
+  first_use: S06
+  note: 截图 for the stills of a contact sheet (a lay viewer's word), 帧 for frames.
+- en: scene / scene code / clip / footage / sources
+  zh_subtitle: 场景；场景代码；片段；画面；源文件
+  zh_spoken: ''
+  first_use: S04
+  note: 片段 here is a rendered scene clip (not the DP video's gradient clip).
+- en: animation cue / pinned to a Chinese word
+  zh_subtitle: 动画触发点；钉在某个具体的中文词上
+  zh_spoken: ''
+  first_use: S08
+  note: 触发点 says what a cue does for a viewer with no animation background.
+- en: hand-set shifts / word times
+  zh_subtitle: 手动设的偏移；每个词的时间
+  zh_spoken: ''
+  first_use: S05
+  note: ''
+- en: usage limits / the limit reset
+  zh_subtitle: 用量上限；额度恢复
+  zh_spoken: ''
+  first_use: S03
+  note: ''
+- en: session / request(s)
+  zh_subtitle: 会话；请求；第一个请求
+  zh_spoken: ''
+  first_use: S02、S03
+  note: 请求 everywhere, as in the cost label (全部四个请求); not 需求 (a product requirement).
+- en: paper / PDF / catalog (entry) / cataloging / digest
+  zh_subtitle: 论文；PDF；目录记录；给论文编目录；论文笔记
+  zh_spoken: PDF
+  first_use: S03：用户上传了 36 个 PDF
+  note: 论文笔记 as in the privacy video's Chinese description.
+- en: comments (in code)
+  zh_subtitle: 注释
+  zh_spoken: ''
+  first_use: S03
+  note: As in the tic-tac-toe glossary.
+- en: subtitles / subtitle tool / line breaks / bilingual subtitles
+  zh_subtitle: 字幕；字幕工具；断行；中英双语字幕
+  zh_spoken: ''
+  first_use: S08、S10
+  note: ''
+- en: test cases / grammar tool / hand-written rules
+  zh_subtitle: 测试用例；语法分析工具；手写的规则
+  zh_spoken: ''
+  first_use: S10
+  note: ''
+- en: playground / interactive / interactivity
+  zh_subtitle: 交互页面（一个可以自己动手试的小网页）；能交互的东西；交互
+  zh_spoken: ''
+  first_use: S10：前两期视频各配了一个交互页面，也就是一个可以自己动手试的小网页
+  note: The name both Chinese versions already use for their playground.html.
+- en: licensed / the free Chinese voice
+  zh_subtitle: 有授权的语音；免费的中文语音
+  zh_spoken: ''
+  first_use: S10
+  note: ''
+- en: polish / points / changes / corrections
+  zh_subtitle: 润色；条意见；处改动；处更正
+  zh_spoken: ''
+  first_use: S09
+  note: ''
+- en: Manim / a Manim pitfall
+  zh_subtitle: Manim；Manim 的一个坑
+  zh_spoken: Manim
+  first_use: S02：这个频道的视频用 Manim 做动画
+  note: Rule A10 on 坑.
+- en: other tools on screen (not narrated)
+  zh_subtitle: Kokoro；edge-tts；faster-whisper；FFmpeg；jieba；LaTeX；Microsoft Edge；Azure AI Speech
+  zh_spoken: ''
+  first_use: ''
+  note: Names; kept.
+- en: prompt / review instructions (on screen only)
+  zh_subtitle: 评审指令（提示词）
+  zh_spoken: ''
+  first_use: ''
+  note: Not narrated; for a later strings pass.
+# ---------------------------------------------------------------- the user's words
+- en: neural net / hardship / mentor / never isolated
+  zh_subtitle: 神经网络；训练它是要吃苦的；导师；从来不是孤立的
+  zh_spoken: ''
+  first_use: S02
+  note: Rule A5.
+- en: cognitive offloading
+  zh_subtitle: 认知卸载（S02 第一次加引号）
+  zh_spoken: ''
+  first_use: S02：可自己却在做大量的“认知卸载”：让 AI 替自己思考
+  note: The standard term of Chinese psychology; the narration glosses it at once (让 AI 替自己思考), as the English does. The quote cards on screen keep the English words.
+- en: vision (the user's)
+  zh_subtitle: 设想
+  zh_spoken: ''
+  first_use: S10：也最接近用户的设想
+  note: ''
+# ---------------------------------------------------------------- shared with the other two videos
+- en: tic-tac-toe / games / marks / orders
+  zh_subtitle: 井字棋；255,168 种对局；棋子；24 种顺序
+  zh_spoken: ''
+  first_use: S01、S03、S07
+  note: Rule A6 (tictactoe A8).
+- en: nine factorial
+  zh_subtitle: 九的阶乘
+  zh_spoken: ''
+  first_use: S04
+  note: Rule A6.
+- en: X / O / the letter O / a zero
+  zh_subtitle: X；O；字母 O；数字 0
+  zh_spoken: X / O（读“欧”）
+  first_use: S03：把一个数字 0 改成了字母 O
+  note: As in the tic-tac-toe glossary.
+- en: the privacy video / the privacy digest / the privacy budget bar
+  zh_subtitle: 差分隐私那期；差分隐私论文的笔记；隐私预算条
+  zh_spoken: ''
+  first_use: S03、S04、S07
+  note: "Rule A7; never 隐私视频. The en field says 'the privacy budget bar' on purpose (4 words): explainer/subtitles.py _en_terms() turns every 2-3 word alternative of every video's en fields into word pairs that English line breaks avoid, and a bare 'privacy budget bar' changes a cue of the English video's own .srt (S07, 'the privacy budget / bar' became two cues). See rule G3."
+- en: quoted strings (rule A3)
+  zh_subtitle: “A hundred”；“A million”；英文单词 example；noise；epsilon；“Nice”；“Excellent”；“No”
+  zh_spoken: A hundred / A million / example / noise / epsilon / Nice / Excellent / No
+  first_use: S05、S08
+  note: They are the real strings on screen or in the voice test.
+- en: 'Pause for a moment / Pause and try it / Pause and think / Pause on this one'
+  zh_subtitle: 先暂停一下；暂停一下，自己试试；暂停想一想；这里暂停想一想
+  zh_spoken: ''
+  first_use: S01、S05、S06、S08
+  note: The cards say 暂停想一想 (explainer/locales/zh.yaml).
+- en: cost label (live.cost_label)
+  zh_subtitle: 整个会话截至 10 月 7 日、按 API 公开标价折算的金额 · 涵盖全部四个请求，不是一期视频的成本
+  zh_spoken: ''
+  first_use: S03（narration：屏幕上的费用，是整个会话截至 10 月 7 日的花费，按公开的按量计费价格计算：涵盖全部四个请求，不是一期视频）
+  note: Rule A9. Binding; keeps the exact meaning of 'API list-price equivalent for the whole session up to Oct 7 · all four requests, not the cost of one video'.
+# ---------------------------------------------------------------- titles (meta.yaml)
+- en: Video title
+  zh_subtitle: 【幕后】这些讲解视频是怎么做出来的：一个人、一个 AI 智能体，和大量的测量
+  zh_spoken: ''
+  first_use: ''
+  note: 【幕后】 is the tag Bilibili viewers search for (behind the scenes); measuring → 测量, the video's own word.
+- en: 'Chapter S01: Made by something that can''t watch it'
+  zh_subtitle: 做视频的，却看不了视频
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S02: What the user asked for'
+  zh_subtitle: 用户想要什么
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S03: Who did what'
+  zh_subtitle: 谁做了什么
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S04: A script that is code'
+  zh_subtitle: 脚本就是代码
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S05: The audio is the clock'
+  zh_subtitle: 音频就是时钟
+  zh_spoken: ''
+  first_use: ''
+  note: Echoes S11 让音频当时钟.
+- en: 'Chapter S06: Checking without eyes or ears'
+  zh_subtitle: 没有眼睛和耳朵，怎么检查
+  zh_spoken: ''
+  first_use: ''
+  note: Echoes S01 line 5.
+- en: 'Chapter S07: Reviewers who pretend'
+  zh_subtitle: 会扮演角色的评审
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S08: Same video, second language'
+  zh_subtitle: 同一个视频，第二种语言
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S09: Bugs in the machinery'
+  zh_subtitle: 工具链里的 bug
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S10: What to improve next'
+  zh_subtitle: 下一步改进什么
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S11: A recipe, and a request'
+  zh_subtitle: 一份配方，和一个请求
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+open:
+- '智能体 vs agent: this glossary chose 智能体 (a lay viewer knows it; the English line shows agent). For a developer audience the whole video could switch to agent, all at once, never mixed.'
+- 'commit, lint, bug, 3Blue1Brown, A hundred and No have not been through a Xiaoyi ASR check (rule F2).'
+- '坑 (Manim 的一个坑) is natural spoken Chinese; if a reviewer finds it too casual, use Manim 的一个常见陷阱 (3 characters longer).'
+- 'A bilingual reviewer and a viewer from the target audience should read the subtitles through (docs/LANGUAGES.md step 6).'
+allowed_spoken_latin: [AI, Claude, Code, Manim, Blue, Brown, Andrej, Karpathy, PDF, commit, lint, bug, Dan, Dev, noise, epsilon, Nice, Excellent, example, hundred, million, 'No']

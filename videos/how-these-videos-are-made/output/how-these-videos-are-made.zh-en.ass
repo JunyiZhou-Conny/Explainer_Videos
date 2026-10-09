@@ -1,0 +1,230 @@
+[Script Info]
+Title: How these explainer videos are made: one human, one AI agent, and a lot of measuring
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.86,Bilingual,,0,0,0,,这是其中一期视频早期草稿里的一帧暂停画面\N{\fs33\c&H00C8C0B8&\bord1.4}Here's what a paused frame looked like in an early draft of one of these videos,
+Dialogue: 0,0:00:04.86,0:00:07.17,Bilingual,,0,0,0,,那期讲井字棋，给 12 岁左右的孩子看\N{\fs33\c&H00C8C0B8&\bord1.4}about tic-tac-toe, for kids around 12.
+Dialogue: 0,0:00:07.49,0:00:11.73,Bilingual,,0,0,0,,看右边这一行：4 乘 3 乘 2，然后是 12\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the line on the right: 4 times 3 times 2, and then 12.
+Dialogue: 0,0:00:11.97,0:00:13.39,Bilingual,,0,0,0,,先暂停一下\N{\fs33\c&H00C8C0B8&\bord1.4}Pause for a moment.
+Dialogue: 0,0:00:13.44,0:00:16.00,Bilingual,,0,0,0,,如果你 12 岁，你会觉得这里哪儿出错了？\N{\fs33\c&H00C8C0B8&\bord1.4}If you were 12, what would you think went wrong here?
+Dialogue: 0,0:00:22.23,0:00:25.60,Bilingual,,0,0,0,,看起来像是乘法算错了，但数学其实没错\N{\fs33\c&H00C8C0B8&\bord1.4}It looks like bad multiplication, but the math was right.
+Dialogue: 0,0:00:25.92,0:00:30.70,Bilingual,,0,0,0,,这个 12 是一个正往 24 涨的计数，却摆在了算式那一行上\N{\fs33\c&H00C8C0B8&\bord1.4}The 12 was a running count on its way to 24, sitting on the formula's line.
+Dialogue: 0,0:00:31.02,0:00:32.47,Bilingual,,0,0,0,,是排版在撒谎\N{\fs33\c&H00C8C0B8&\bord1.4}The layout lied.
+Dialogue: 0,0:00:32.52,0:00:34.63,Bilingual,,0,0,0,,而发现问题的评审，并不是孩子\N{\fs33\c&H00C8C0B8&\bord1.4}And the reviewer who caught it wasn't a child.
+Dialogue: 0,0:00:34.95,0:00:37.78,Bilingual,,0,0,0,,它是一个 AI，假扮成 12 岁的孩子\N{\fs33\c&H00C8C0B8&\bord1.4}It was an AI, pretending to be a 12-year-old.
+Dialogue: 0,0:00:38.03,0:00:39.63,Bilingual,,0,0,0,,奇怪的地方来了\N{\fs33\c&H00C8C0B8&\bord1.4}Now the strange part.
+Dialogue: 0,0:00:39.83,0:00:43.57,Bilingual,,0,0,0,,这些视频里几乎所有东西都是 AI 智能体做的\N{\fs33\c&H00C8C0B8&\bord1.4}Almost everything in these videos was made by AI agents:
+Dialogue: 0,0:00:43.57,0:00:46.72,Bilingual,,0,0,0,,脚本、动画代码，还有各种检查\N{\fs33\c&H00C8C0B8&\bord1.4}the script, the animation code, and the checks.
+Dialogue: 0,0:00:47.04,0:00:49.96,Bilingual,,0,0,0,,可它们没有一个能听见旁白，也没法按下播放键\N{\fs33\c&H00C8C0B8&\bord1.4}And none of them can hear the narration, or press play.
+Dialogue: 0,0:00:50.28,0:00:52.11,Bilingual,,0,0,0,,那它们怎么知道这些行不行？\N{\fs33\c&H00C8C0B8&\bord1.4}So how do they know any of it works?
+Dialogue: 0,0:00:52.35,0:00:57.91,Bilingual,,0,0,0,,这期视频会讲：整条流水线，谁做了什么，没有眼睛和耳朵怎么检查\N{\fs33\c&H00C8C0B8&\bord1.4}This video covers the pipeline, who did what, how work gets checked without eyes or ears,
+Dialogue: 0,0:00:57.91,0:01:02.46,Bilingual,,0,0,0,,中文版，哪些事仍然需要人，以及下一步改进什么\N{\fs33\c&H00C8C0B8&\bord1.4}the Chinese versions, what still needs a human, and what to improve next.
+Dialogue: 0,0:01:04.10,0:01:06.44,Bilingual,,0,0,0,,一切从一个人开始，也就是这位用户\N{\fs33\c&H00C8C0B8&\bord1.4}It started with one person, the user:
+Dialogue: 0,0:01:06.44,0:01:09.48,Bilingual,,0,0,0,,一位论文多到读不过来的研究者\N{\fs33\c&H00C8C0B8&\bord1.4}a researcher with more papers to read than time.
+Dialogue: 0,0:01:09.80,0:01:11.98,Bilingual,,0,0,0,,视频的风格学的是 3Blue1Brown\N{\fs33\c&H00C8C0B8&\bord1.4}The look comes from 3Blue1Brown,
+Dialogue: 0,0:01:11.98,0:01:16.82,Bilingual,,0,0,0,,这个频道的视频用 Manim 做动画，每一帧都是用代码画出来的\N{\fs33\c&H00C8C0B8&\bord1.4}whose videos are animated in Manim, where every frame is drawn by code.
+Dialogue: 0,0:01:17.13,0:01:21.24,Bilingual,,0,0,0,,本项目的想法来自 Andrej Karpathy 的帖子\N{\fs33\c&H00C8C0B8&\bord1.4}The idea for this project came from a post by Andrej Karpathy,
+Dialogue: 0,0:01:21.24,0:01:23.30,Bilingual,,0,0,0,,是第一个请求里引用的\N{\fs33\c&H00C8C0B8&\bord1.4}as quoted in the first request.
+Dialogue: 0,0:01:23.53,0:01:25.48,Bilingual,,0,0,0,,用户自己的话说得更进一步\N{\fs33\c&H00C8C0B8&\bord1.4}The user's own words go further:
+Dialogue: 0,0:01:25.48,0:01:29.02,Bilingual,,0,0,0,,我们的大脑就是一个神经网络，训练它是要吃苦的\N{\fs33\c&H00C8C0B8&\bord1.4}our brain is a neural net, and training it takes hardship.
+Dialogue: 0,0:01:29.34,0:01:34.23,Bilingual,,0,0,0,,用户说，AI 很有耐心，可自己却在做大量的“认知卸载”\N{\fs33\c&H00C8C0B8&\bord1.4}AI is patient, they said, but they were doing a lot of cognitive offloading:
+Dialogue: 0,0:01:34.23,0:01:36.80,Bilingual,,0,0,0,,让 AI 替自己思考\N{\fs33\c&H00C8C0B8&\bord1.4}letting the AI do the thinking for them.
+Dialogue: 0,0:01:37.05,0:01:40.23,Bilingual,,0,0,0,,视频应该像一位导师，讲清楚论文之间怎样关联\N{\fs33\c&H00C8C0B8&\bord1.4}A video should be a mentor, showing how papers connect,
+Dialogue: 0,0:01:40.23,0:01:42.02,Bilingual,,0,0,0,,因为论文从来不是孤立的\N{\fs33\c&H00C8C0B8&\bord1.4}because they're never isolated.
+Dialogue: 0,0:01:42.34,0:01:46.32,Bilingual,,0,0,0,,而视频只是第一步：下一步是能交互的东西\N{\fs33\c&H00C8C0B8&\bord1.4}And video is only a first step: the next is something interactive,
+Dialogue: 0,0:01:46.32,0:01:48.55,Bilingual,,0,0,0,,学习的人得亲手做出点什么\N{\fs33\c&H00C8C0B8&\bord1.4}where the learner has to make things.
+Dialogue: 0,0:01:48.78,0:01:50.38,Bilingual,,0,0,0,,接下来是四个请求\N{\fs33\c&H00C8C0B8&\bord1.4}Then came four requests.
+Dialogue: 0,0:01:50.64,0:01:55.44,Bilingual,,0,0,0,,一篇朋友发来的、讲隐私的论文，用户自己没读过，这样测试才公平\N{\fs33\c&H00C8C0B8&\bord1.4}A privacy paper from a friend, which the user hadn't read, to keep the test fair.
+Dialogue: 0,0:01:55.76,0:01:58.47,Bilingual,,0,0,0,,一期井字棋视频，给一个初中生看\N{\fs33\c&H00C8C0B8&\bord1.4}A tic-tac-toe video, for a middle-school kid.
+Dialogue: 0,0:01:58.79,0:02:00.39,Bilingual,,0,0,0,,这两期的中文版\N{\fs33\c&H00C8C0B8&\bord1.4}Chinese versions of both.
+Dialogue: 0,0:02:00.67,0:02:02.27,Bilingual,,0,0,0,,还有这期视频\N{\fs33\c&H00C8C0B8&\bord1.4}And this video.
+Dialogue: 0,0:02:03.98,0:02:05.95,Bilingual,,0,0,0,,团队：一个真人，就是用户\N{\fs33\c&H00C8C0B8&\bord1.4}The team: one human, the user.
+Dialogue: 0,0:02:06.27,0:02:08.48,Bilingual,,0,0,0,,一个 AI 智能体：Claude Code\N{\fs33\c&H00C8C0B8&\bord1.4}One AI agent: Claude Code.
+Dialogue: 0,0:02:08.80,0:02:10.88,Bilingual,,0,0,0,,它手下有 183 个子智能体\N{\fs33\c&H00C8C0B8&\bord1.4}Under it, 183 sub-agents
+Dialogue: 0,0:02:10.88,0:02:14.24,Bilingual,,0,0,0,,来自 46 次工作流运行，都在这期视频之前\N{\fs33\c&H00C8C0B8&\bord1.4}in 46 workflow runs, before this video.
+Dialogue: 0,0:02:14.56,0:02:17.89,Bilingual,,0,0,0,,工作流就是智能体为了启动子智能体写的程序\N{\fs33\c&H00C8C0B8&\bord1.4}A workflow is a script the agent writes to launch sub-agents,
+Dialogue: 0,0:02:17.89,0:02:19.49,Bilingual,,0,0,0,,每个子智能体只干一件事\N{\fs33\c&H00C8C0B8&\bord1.4}each with one job.
+Dialogue: 0,0:02:19.71,0:02:22.94,Bilingual,,0,0,0,,还有各种工具，比如每种语言各一个合成语音\N{\fs33\c&H00C8C0B8&\bord1.4}And tools, like a synthetic voice for each language
+Dialogue: 0,0:02:22.94,0:02:24.54,Bilingual,,0,0,0,,以及一个语音识别模型\N{\fs33\c&H00C8C0B8&\bord1.4}and a speech recognizer.
+Dialogue: 0,0:02:24.70,0:02:27.73,Bilingual,,0,0,0,,值得学什么、讲给谁听，是用户定的\N{\fs33\c&H00C8C0B8&\bord1.4}The user decided what was worth learning, and for whom.
+Dialogue: 0,0:02:28.05,0:02:33.84,Bilingual,,0,0,0,,用户上传了 36 个 PDF，给出了井字棋视频要讲的那些数\N{\fs33\c&H00C8C0B8&\bord1.4}They uploaded 36 PDFs, gave the tic-tac-toe counts to explain,
+Dialogue: 0,0:02:33.84,0:02:39.83,Bilingual,,0,0,0,,比如 255,168 种对局，还提供了那期视频讲解的程序\N{\fs33\c&H00C8C0B8&\bord1.4}like 255,168 games, and supplied the program that video teaches.
+Dialogue: 0,0:02:40.15,0:02:41.59,Bilingual,,0,0,0,,程序本来就能用\N{\fs33\c&H00C8C0B8&\bord1.4}It already worked.
+Dialogue: 0,0:02:41.64,0:02:46.10,Bilingual,,0,0,0,,智能体只是把一个数字 0 改成了字母 O，又重写了注释\N{\fs33\c&H00C8C0B8&\bord1.4}The agent only changed a zero into the letter O, and rewrote the comments.
+Dialogue: 0,0:02:46.33,0:02:47.93,Bilingual,,0,0,0,,剩下的都是智能体做的\N{\fs33\c&H00C8C0B8&\bord1.4}The agent did the rest.
+Dialogue: 0,0:02:48.13,0:02:50.71,Bilingual,,0,0,0,,它写了驱动整条流水线的工具包\N{\fs33\c&H00C8C0B8&\bord1.4}It wrote the toolkit that runs the pipeline,
+Dialogue: 0,0:02:50.71,0:02:53.46,Bilingual,,0,0,0,,一百多个 commit 里，除了两个，全是它提交的\N{\fs33\c&H00C8C0B8&\bord1.4}and made all but two of over a hundred commits,
+Dialogue: 0,0:02:53.46,0:02:55.17,Bilingual,,0,0,0,,commit 就是项目存下的版本\N{\fs33\c&H00C8C0B8&\bord1.4}the project's saved versions.
+Dialogue: 0,0:02:55.49,0:02:59.11,Bilingual,,0,0,0,,不到一周，工作因为用量上限至少停了六次\N{\fs33\c&H00C8C0B8&\bord1.4}In under a week, work stopped at least six times on usage limits.
+Dialogue: 0,0:02:59.43,0:03:04.59,Bilingual,,0,0,0,,其中有两次，额度恢复之后它又闲了好几个小时，直到用户催了一下\N{\fs33\c&H00C8C0B8&\bord1.4}Twice, it then sat idle for hours after the limit reset, until the user nudged it.
+Dialogue: 0,0:03:05.58,0:03:09.89,Bilingual,,0,0,0,,从请求到成片，差分隐私那期用了大约六个小时\N{\fs33\c&H00C8C0B8&\bord1.4}From request to final cut, the privacy video took about six hours,
+Dialogue: 0,0:03:09.89,0:03:11.98,Bilingual,,0,0,0,,井字棋那期三个多小时\N{\fs33\c&H00C8C0B8&\bord1.4}and tic-tac-toe just over three.
+Dialogue: 0,0:03:12.30,0:03:16.87,Bilingual,,0,0,0,,中文版花的时间长得多：分别是 16 个小时和大约两天\N{\fs33\c&H00C8C0B8&\bord1.4}The Chinese versions took far longer: 16 hours, and about two days.
+Dialogue: 0,0:03:17.19,0:03:20.05,Bilingual,,0,0,0,,最终画面的渲染，每期都不到半小时\N{\fs33\c&H00C8C0B8&\bord1.4}Drawing the final frames took under half an hour each.
+Dialogue: 0,0:03:20.37,0:03:24.05,Bilingual,,0,0,0,,其余的时间都花在：翻译，一轮又一轮的评审和修改\N{\fs33\c&H00C8C0B8&\bord1.4}The rest went to translating, rounds of review and fixes,
+Dialogue: 0,0:03:24.05,0:03:27.22,Bilingual,,0,0,0,,返工了四次的字幕工具，还有等待\N{\fs33\c&H00C8C0B8&\bord1.4}a subtitle tool reworked four times, and waiting.
+Dialogue: 0,0:03:27.54,0:03:32.22,Bilingual,,0,0,0,,屏幕上的费用，是整个会话截至 10 月 7 日的花费\N{\fs33\c&H00C8C0B8&\bord1.4}And the cost on screen is what the whole session had cost by October 7th,
+Dialogue: 0,0:03:32.22,0:03:36.45,Bilingual,,0,0,0,,按公开的按量计费价格计算：涵盖全部四个请求，不是一期视频\N{\fs33\c&H00C8C0B8&\bord1.4}at the public pay-per-use price: all four requests, not one video.
+Dialogue: 0,0:03:38.10,0:03:40.39,Bilingual,,0,0,0,,这条流水线是一串文件\N{\fs33\c&H00C8C0B8&\bord1.4}The pipeline is a chain of files:
+Dialogue: 0,0:03:40.39,0:03:46.93,Bilingual,,0,0,0,,论文、目录记录、带页码的论文笔记，再到脚本、动画代码和视频\N{\fs33\c&H00C8C0B8&\bord1.4}a paper, a catalog entry, a digest with page numbers, a script, animation code, and the video.
+Dialogue: 0,0:03:47.25,0:03:51.48,Bilingual,,0,0,0,,每一步都留下一个文件，所以随时可以停下、检查，再接着做\N{\fs33\c&H00C8C0B8&\bord1.4}Every step leaves a file behind, so you can stop, review, and resume.
+Dialogue: 0,0:03:51.85,0:03:53.45,Bilingual,,0,0,0,,每个文件都要检查\N{\fs33\c&H00C8C0B8&\bord1.4}Each file gets checked.
+Dialogue: 0,0:03:53.62,0:03:57.92,Bilingual,,0,0,0,,给论文编目录的智能体不光看文件名，还读了内容\N{\fs33\c&H00C8C0B8&\bord1.4}Agents cataloging the papers read them, not just their names,
+Dialogue: 0,0:03:57.92,0:04:01.73,Bilingual,,0,0,0,,结果发现 36 个 PDF 里有 4 个是错的论文\N{\fs33\c&H00C8C0B8&\bord1.4}and found that 4 of the 36 PDFs were the wrong papers.
+Dialogue: 0,0:04:02.05,0:04:05.65,Bilingual,,0,0,0,,差分隐私论文的笔记里，甚至列出了论文本身的错误\N{\fs33\c&H00C8C0B8&\bord1.4}And the privacy digest even lists the paper's own mistakes.
+Dialogue: 0,0:04:07.05,0:04:11.50,Bilingual,,0,0,0,,在脚本里，每一小段都是一行画面配一行台词\N{\fs33\c&H00C8C0B8&\bord1.4}In the script, each beat pairs a show line, the picture, with a say line:
+Dialogue: 0,0:04:11.50,0:04:13.75,Bilingual,,0,0,0,,台词就是语音要一字不差念出来的话\N{\fs33\c&H00C8C0B8&\bord1.4}the exact words the voice will speak.
+Dialogue: 0,0:04:14.07,0:04:17.50,Bilingual,,0,0,0,,动画代码直接从这个文件里读取这些台词\N{\fs33\c&H00C8C0B8&\bord1.4}The animation code reads those words straight from this file.
+Dialogue: 0,0:04:17.82,0:04:21.56,Bilingual,,0,0,0,,脚本是写给耳朵听的：“九的阶乘”要用文字写出来\N{\fs33\c&H00C8C0B8&\bord1.4}It's written for the ear: nine factorial is spelled out in words.
+Dialogue: 0,0:04:21.80,0:04:25.30,Bilingual,,0,0,0,,所以在做任何动画之前，先让别的智能体评审脚本\N{\fs33\c&H00C8C0B8&\bord1.4}So other agents review the script before any animation:
+Dialogue: 0,0:04:25.30,0:04:30.14,Bilingual,,0,0,0,,改一句话只要几秒钟，场景做完了再改，就得整个重画\N{\fs33\c&H00C8C0B8&\bord1.4}a sentence takes seconds to fix, but a finished scene has to be drawn again.
+Dialogue: 0,0:04:30.46,0:04:33.64,Bilingual,,0,0,0,,第一天，智能体就把这条规则写进了自己的工作指南\N{\fs33\c&H00C8C0B8&\bord1.4}The agent wrote that rule into its own guide on day one.
+Dialogue: 0,0:04:33.96,0:04:38.95,Bilingual,,0,0,0,,几分钟后，评审还在进行，它就启动了六个子智能体去做场景\N{\fs33\c&H00C8C0B8&\bord1.4}Minutes later, it started six sub-agents building scenes while the review was still running.
+Dialogue: 0,0:04:39.27,0:04:43.64,Bilingual,,0,0,0,,11 分钟后，一份要求改脚本的评审意见回来了\N{\fs33\c&H00C8C0B8&\bord1.4}Eleven minutes after that, one review came back with changes to the script,
+Dialogue: 0,0:04:43.64,0:04:45.24,Bilingual,,0,0,0,,于是六个全被叫停\N{\fs33\c&H00C8C0B8&\bord1.4}so all six were stopped.
+Dialogue: 0,0:04:45.46,0:04:50.39,Bilingual,,0,0,0,,光把规则写下来还不够：工作流本身就得等评审结束\N{\fs33\c&H00C8C0B8&\bord1.4}Writing the rule down was not enough: the workflow itself has to wait for the review.
+Dialogue: 0,0:04:51.73,0:04:53.33,Bilingual,,0,0,0,,接下来是动画\N{\fs33\c&H00C8C0B8&\bord1.4}Now the animation.
+Dialogue: 0,0:04:53.38,0:04:58.88,Bilingual,,0,0,0,,在这条流水线里，先生成语音，动画等的是词，不是秒数\N{\fs33\c&H00C8C0B8&\bord1.4}In this pipeline, the voice is made first, and the animation waits for words, not seconds.
+Dialogue: 0,0:04:59.20,0:05:03.21,Bilingual,,0,0,0,,这段代码的意思是：旁白念到“A hundred”，就显示一百\N{\fs33\c&H00C8C0B8&\bord1.4}This code says: when the narration reaches "A hundred", show a hundred.
+Dialogue: 0,0:05:03.53,0:05:05.81,Bilingual,,0,0,0,,念到“A million”，就显示一百万\N{\fs33\c&H00C8C0B8&\bord1.4}When it reaches "A million", show a million.
+Dialogue: 0,0:05:06.05,0:05:10.91,Bilingual,,0,0,0,,语音是一句一句合成的，所以每一句从哪儿开始，都精确知道\N{\fs33\c&H00C8C0B8&\bord1.4}The voice speaks one sentence at a time, so every sentence start is known exactly.
+Dialogue: 0,0:05:11.23,0:05:13.79,Bilingual,,0,0,0,,可在一句话内部，工具包只能靠猜\N{\fs33\c&H00C8C0B8&\bord1.4}Inside a sentence, the toolkit has to guess.
+Dialogue: 0,0:05:14.11,0:05:17.34,Bilingual,,0,0,0,,它假设每个字符念起来都花一样的时间\N{\fs33\c&H00C8C0B8&\bord1.4}It assumes every character takes the same time to say.
+Dialogue: 0,0:05:17.58,0:05:19.01,Bilingual,,0,0,0,,暂停一下，自己试试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it.
+Dialogue: 0,0:05:19.06,0:05:23.26,Bilingual,,0,0,0,,屏幕上这个数有 7 个字符，和英文单词 example 一样多\N{\fs33\c&H00C8C0B8&\bord1.4}The number on screen has 7 characters, as many as the word example.
+Dialogue: 0,0:05:23.58,0:05:25.18,Bilingual,,0,0,0,,把两个都大声念出来\N{\fs33\c&H00C8C0B8&\bord1.4}Say both out loud.
+Dialogue: 0,0:05:25.24,0:05:26.84,Bilingual,,0,0,0,,念这个数要多久？\N{\fs33\c&H00C8C0B8&\bord1.4}How long does the number take?
+Dialogue: 0,0:05:35.08,0:05:39.52,Bilingual,,0,0,0,,大约三秒：三十六万两千八百八十\N{\fs33\c&H00C8C0B8&\bord1.4}About three seconds: three hundred sixty-two thousand, eight hundred eighty.
+Dialogue: 0,0:05:39.84,0:05:41.44,Bilingual,,0,0,0,,比那个单词长得多\N{\fs33\c&H00C8C0B8&\bord1.4}Far longer than the word.
+Dialogue: 0,0:05:41.65,0:05:46.01,Bilingual,,0,0,0,,所以对紧跟在它后面的那些词，工具包的估计早了将近两秒\N{\fs33\c&H00C8C0B8&\bord1.4}So the toolkit's guess for the words right after it lands almost two seconds early.
+Dialogue: 0,0:05:46.25,0:05:48.08,Bilingual,,0,0,0,,目前的办法是手动修\N{\fs33\c&H00C8C0B8&\bord1.4}The fix so far is manual:
+Dialogue: 0,0:05:48.08,0:05:53.42,Bilingual,,0,0,0,,光这一个场景就有大约 20 处手动设的偏移，最大的一处是 2.2 秒\N{\fs33\c&H00C8C0B8&\bord1.4}this one scene carries about 20 hand-set shifts, the biggest 2.2 seconds.
+Dialogue: 0,0:05:53.74,0:05:55.70,Bilingual,,0,0,0,,更好的办法其实触手可及\N{\fs33\c&H00C8C0B8&\bord1.4}A better fix is within reach:
+Dialogue: 0,0:05:55.70,0:06:00.16,Bilingual,,0,0,0,,中文用的那个在线语音服务，能把每个词的时间一起发回来\N{\fs33\c&H00C8C0B8&\bord1.4}the online voice used for Chinese can send the time of every word.
+Dialogue: 0,0:06:00.48,0:06:04.28,Bilingual,,0,0,0,,但工具包现在还没去要这些时间，只保存了音频\N{\fs33\c&H00C8C0B8&\bord1.4}But the toolkit doesn't ask for them yet, and keeps only the audio.
+Dialogue: 0,0:06:06.92,0:06:08.21,Bilingual,,0,0,0,,暂停想一想\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and think.
+Dialogue: 0,0:06:08.26,0:06:10.84,Bilingual,,0,0,0,,假设你听不见，也没法按播放键\N{\fs33\c&H00C8C0B8&\bord1.4}Suppose you can't hear, and you can't press play.
+Dialogue: 0,0:06:11.16,0:06:12.76,Bilingual,,0,0,0,,你会怎么检查一个视频？\N{\fs33\c&H00C8C0B8&\bord1.4}How would you check a video?
+Dialogue: 0,0:06:20.90,0:06:24.97,Bilingual,,0,0,0,,智能体的答案是：把时间变成图片，把声音变成文字\N{\fs33\c&H00C8C0B8&\bord1.4}The agent's answer: turn time into pictures, and sound into text.
+Dialogue: 0,0:06:25.29,0:06:30.54,Bilingual,,0,0,0,,工具包先快速渲染一版草稿，每两秒取一张截图，拼成一张网格图\N{\fs33\c&H00C8C0B8&\bord1.4}The toolkit renders a quick draft, and tiles a still from every two seconds into one grid.
+Dialogue: 0,0:06:30.86,0:06:34.28,Bilingual,,0,0,0,,智能体能看图片，所以它就是这样“看”视频的\N{\fs33\c&H00C8C0B8&\bord1.4}An agent can look at an image, so this is how it watches.
+Dialogue: 0,0:06:34.52,0:06:36.81,Bilingual,,0,0,0,,两张截图之间也可能出问题\N{\fs33\c&H00C8C0B8&\bord1.4}Between stills, things can go wrong,
+Dialogue: 0,0:06:36.81,0:06:40.77,Bilingual,,0,0,0,,所以为了检查动作，它会每隔五分之一秒抓一帧\N{\fs33\c&H00C8C0B8&\bord1.4}so to check motion, it grabs frames a fifth of a second apart.
+Dialogue: 0,0:06:41.09,0:06:43.24,Bilingual,,0,0,0,,如果几帧都一样，就是什么都没动\N{\fs33\c&H00C8C0B8&\bord1.4}If they're all the same, nothing moved.
+Dialogue: 0,0:06:43.48,0:06:45.42,Bilingual,,0,0,0,,然后，凡是能测量的，它都测量\N{\fs33\c&H00C8C0B8&\bord1.4}Then it measures everything it can.
+Dialogue: 0,0:06:45.74,0:06:49.78,Bilingual,,0,0,0,,有个叫 lint 的检查工具，一帧都不画就能把每个场景跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}A checker called a lint runs each scene without drawing a frame,
+Dialogue: 0,0:06:49.78,0:06:54.64,Bilingual,,0,0,0,,标出跑到屏幕外的东西、太小的文字，还有最后没清掉的元素\N{\fs33\c&H00C8C0B8&\bord1.4}and flags anything off screen, text that's too small, or objects left behind.
+Dialogue: 0,0:06:54.96,0:06:57.51,Bilingual,,0,0,0,,井字棋那期的场景还会自己检查自己\N{\fs33\c&H00C8C0B8&\bord1.4}And the tic-tac-toe scenes check themselves,
+Dialogue: 0,0:06:57.51,0:07:00.23,Bilingual,,0,0,0,,针对画面上的数字和棋盘，一共有 82 项检查\N{\fs33\c&H00C8C0B8&\bord1.4}with 82 checks on the numbers and boards shown.
+Dialogue: 0,0:07:02.25,0:07:05.96,Bilingual,,0,0,0,,接下来是评审：一批全新的智能体，没有参与制作这个视频\N{\fs33\c&H00C8C0B8&\bord1.4}Next come the reviewers, fresh agents that didn't build the video.
+Dialogue: 0,0:07:06.28,0:07:11.16,Bilingual,,0,0,0,,它们拿到的是截图、代替声音的字幕和一个角色\N{\fs33\c&H00C8C0B8&\bord1.4}They get the stills, the subtitles as a stand-in for sound, and a role:
+Dialogue: 0,0:07:11.16,0:07:15.22,Bilingual,,0,0,0,,导演，或者一个模拟的 12 岁孩子，聪明但普通\N{\fs33\c&H00C8C0B8&\bord1.4}a director, or a simulated 12-year-old, sharp but ordinary.
+Dialogue: 0,0:07:15.54,0:07:20.34,Bilingual,,0,0,0,,这个模拟的孩子找出了真问题，比如有些表示走法的标签，它读不懂\N{\fs33\c&H00C8C0B8&\bord1.4}That simulated kid found real problems, like move labels it couldn't decode.
+Dialogue: 0,0:07:20.58,0:07:25.02,Bilingual,,0,0,0,,第一轮找出了 30 个问题，其中就有算式那一行上的那个 12\N{\fs33\c&H00C8C0B8&\bord1.4}Round one found 30 issues, including that 12 on the formula line.
+Dialogue: 0,0:07:25.34,0:07:29.01,Bilingual,,0,0,0,,第二轮，一位新的导演逐条复查\N{\fs33\c&H00C8C0B8&\bord1.4}In round two, a fresh director re-checked each one:
+Dialogue: 0,0:07:29.01,0:07:31.38,Bilingual,,0,0,0,,25 个已经修好，5 个只修好了一部分\N{\fs33\c&H00C8C0B8&\bord1.4}25 were fixed, and 5 only partly.
+Dialogue: 0,0:07:34.02,0:07:35.81,Bilingual,,0,0,0,,导演还抓到一个更隐蔽的 bug\N{\fs33\c&H00C8C0B8&\bord1.4}The director caught a subtler bug.
+Dialogue: 0,0:07:36.13,0:07:39.28,Bilingual,,0,0,0,,这个场景本该把 4 个棋子换遍全部 24 种顺序\N{\fs33\c&H00C8C0B8&\bord1.4}The scene should shuffle 4 marks through all 24 orders,
+Dialogue: 0,0:07:39.28,0:07:42.04,Bilingual,,0,0,0,,可棋盘一动不动，计数器却还在往上跳\N{\fs33\c&H00C8C0B8&\bord1.4}but the board froze while the counter ticked on.
+Dialogue: 0,0:07:42.36,0:07:44.18,Bilingual,,0,0,0,,原因是 Manim 的一个坑\N{\fs33\c&H00C8C0B8&\bord1.4}The cause is a Manim pitfall:
+Dialogue: 0,0:07:44.18,0:07:49.71,Bilingual,,0,0,0,,所有移动都在第一步播放之前就设好了，而每次设置都会覆盖前一次\N{\fs33\c&H00C8C0B8&\bord1.4}every move was set up before the first one played, and each setup erased the one before,
+Dialogue: 0,0:07:49.71,0:07:52.92,Bilingual,,0,0,0,,结果每个棋子直接跳到最后的位置，然后就不动了\N{\fs33\c&H00C8C0B8&\bord1.4}so each mark jumped to its last spot and sat still.
+Dialogue: 0,0:07:53.24,0:07:57.21,Bilingual,,0,0,0,,现在每一步移动都等到播放时才设置，棋子就又动起来了\N{\fs33\c&H00C8C0B8&\bord1.4}Now each move is set up only when it plays, and the marks move again.
+Dialogue: 0,0:08:00.07,0:08:02.43,Bilingual,,0,0,0,,有些问题要跨场景才看得出来\N{\fs33\c&H00C8C0B8&\bord1.4}Some problems only show across scenes.
+Dialogue: 0,0:08:02.75,0:08:07.46,Bilingual,,0,0,0,,在差分隐私那期，负责不同场景的智能体给同一个人起了两个名字\N{\fs33\c&H00C8C0B8&\bord1.4}In the privacy video, agents building different scenes named the same person
+Dialogue: 0,0:08:07.46,0:08:09.62,Bilingual,,0,0,0,,一部分叫 Dan，另一部分叫 Dev\N{\fs33\c&H00C8C0B8&\bord1.4}Dan in one part and Dev in another.
+Dialogue: 0,0:08:09.94,0:08:12.85,Bilingual,,0,0,0,,只有跨场景检查的评审，才能发现这种问题\N{\fs33\c&H00C8C0B8&\bord1.4}Only a reviewer checking across scenes could catch that.
+Dialogue: 0,0:08:13.17,0:08:17.52,Bilingual,,0,0,0,,另一位评审发现，隐私预算条被画成了五种不同的样子\N{\fs33\c&H00C8C0B8&\bord1.4}Another reviewer found the privacy budget bar drawn five different ways.
+Dialogue: 0,0:08:17.84,0:08:19.84,Bilingual,,0,0,0,,现在这些场景共用同一种画法\N{\fs33\c&H00C8C0B8&\bord1.4}Now those scenes share one drawing.
+Dialogue: 0,0:08:22.68,0:08:24.06,Bilingual,,0,0,0,,再说中文版\N{\fs33\c&H00C8C0B8&\bord1.4}On to Chinese.
+Dialogue: 0,0:08:24.11,0:08:28.55,Bilingual,,0,0,0,,用户要求保留那些翻成中文听着会别扭的英文术语\N{\fs33\c&H00C8C0B8&\bord1.4}The user asked to keep English terms that would sound weird translated,
+Dialogue: 0,0:08:28.55,0:08:30.62,Bilingual,,0,0,0,,并且配上中英双语字幕\N{\fs33\c&H00C8C0B8&\bord1.4}with subtitles in both languages.
+Dialogue: 0,0:08:30.94,0:08:34.99,Bilingual,,0,0,0,,关键规则是：一句英文对一句中文\N{\fs33\c&H00C8C0B8&\bord1.4}The key rule: one Chinese sentence for each English sentence,
+Dialogue: 0,0:08:34.99,0:08:38.70,Bilingual,,0,0,0,,这样每个动画触发点都还有一句话可以等\N{\fs33\c&H00C8C0B8&\bord1.4}so every animation cue still has a sentence to wait for.
+Dialogue: 0,0:08:39.02,0:08:41.69,Bilingual,,0,0,0,,有些触发点还会钉在某个具体的中文词上\N{\fs33\c&H00C8C0B8&\bord1.4}Some cues are also pinned to a Chinese word.
+Dialogue: 0,0:08:43.13,0:08:45.53,Bilingual,,0,0,0,,两种语言共用同一套场景代码\N{\fs33\c&H00C8C0B8&\bord1.4}Both languages share the same scene code,
+Dialogue: 0,0:08:45.53,0:08:48.85,Bilingual,,0,0,0,,所以智能体要检查英文版有没有被改动\N{\fs33\c&H00C8C0B8&\bord1.4}so the agent checks that the English video didn't change.
+Dialogue: 0,0:08:49.17,0:08:52.54,Bilingual,,0,0,0,,它会比对改动前后每一帧的指纹\N{\fs33\c&H00C8C0B8&\bord1.4}It compares a fingerprint of every frame, before and after.
+Dialogue: 0,0:08:52.86,0:08:57.28,Bilingual,,0,0,0,,有几个场景每次渲染的结果不完全一样，但大多数都对得上\N{\fs33\c&H00C8C0B8&\bord1.4}A few scenes don't render exactly the same every time, but most match.
+Dialogue: 0,0:08:57.52,0:08:58.98,Bilingual,,0,0,0,,那么，用哪个声音？\N{\fs33\c&H00C8C0B8&\bord1.4}Then, which voice?
+Dialogue: 0,0:08:59.03,0:09:02.25,Bilingual,,0,0,0,,智能体听不了，所以它去问语音识别模型\N{\fs33\c&H00C8C0B8&\bord1.4}The agent can't listen, so it asked a speech recognizer.
+Dialogue: 0,0:09:02.57,0:09:04.34,Bilingual,,0,0,0,,用第一个普通话声音时\N{\fs33\c&H00C8C0B8&\bord1.4}With the first Mandarin voice,
+Dialogue: 0,0:09:04.34,0:09:07.65,Bilingual,,0,0,0,,识别模型把脚本里的 noise 听成了“Nice”\N{\fs33\c&H00C8C0B8&\bord1.4}the recognizer heard "Nice" where the script said noise,
+Dialogue: 0,0:09:07.65,0:09:09.89,Bilingual,,0,0,0,,把 epsilon 听成了“Excellent”\N{\fs33\c&H00C8C0B8&\bord1.4}and "Excellent" where it said epsilon.
+Dialogue: 0,0:09:10.21,0:09:14.52,Bilingual,,0,0,0,,另一个普通话声音 17 个测试词全部通过，于是被选中了\N{\fs33\c&H00C8C0B8&\bord1.4}Another Mandarin voice passed all 17 test terms, and was chosen,
+Dialogue: 0,0:09:14.52,0:09:18.36,Bilingual,,0,0,0,,尽管有两个以英语为主的声音，分数一样高，甚至更高\N{\fs33\c&H00C8C0B8&\bord1.4}though two English-first voices scored as high or higher.
+Dialogue: 0,0:09:18.68,0:09:21.62,Bilingual,,0,0,0,,目前还没有记录显示，有人亲耳检查过它\N{\fs33\c&H00C8C0B8&\bord1.4}There's no record yet of anyone checking it by ear.
+Dialogue: 0,0:09:21.87,0:09:23.83,Bilingual,,0,0,0,,还有一条字幕，意思被弄反了\N{\fs33\c&H00C8C0B8&\bord1.4}And one subtitle flipped a meaning.
+Dialogue: 0,0:09:24.15,0:09:27.28,Bilingual,,0,0,0,,英文旁白先问 X 是不是总能赢\N{\fs33\c&H00C8C0B8&\bord1.4}The English narration asks whether X always wins,
+Dialogue: 0,0:09:27.28,0:09:31.68,Bilingual,,0,0,0,,简短地答了一句“No”，然后说电脑能做的不只是统计\N{\fs33\c&H00C8C0B8&\bord1.4}answers with a short no, then says a computer can do more than count.
+Dialogue: 0,0:09:32.00,0:09:36.97,Bilingual,,0,0,0,,中文字幕却说反了：说这不是电脑能做的事\N{\fs33\c&H00C8C0B8&\bord1.4}The Chinese subtitle said the opposite: that this is not something a computer can do.
+Dialogue: 0,0:09:37.29,0:09:40.21,Bilingual,,0,0,0,,中文版的两个 AI 评审都发现了这个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Both AI reviewers of the Chinese version caught it.
+Dialogue: 0,0:09:40.45,0:09:41.81,Bilingual,,0,0,0,,这里暂停想一想\N{\fs33\c&H00C8C0B8&\bord1.4}Pause on this one.
+Dialogue: 0,0:09:41.86,0:09:45.25,Bilingual,,0,0,0,,英文那句是对的，中文说的却正好相反\N{\fs33\c&H00C8C0B8&\bord1.4}The English line is right, and the Chinese says the opposite.
+Dialogue: 0,0:09:45.57,0:09:47.28,Bilingual,,0,0,0,,这是翻译错了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Was this a bad translation?
+Dialogue: 0,0:09:58.32,0:10:02.34,Bilingual,,0,0,0,,不是。译文在那个“不是”后面本来有句号\N{\fs33\c&H00C8C0B8&\bord1.4}It wasn't. The translation had a full stop after that no,
+Dialogue: 0,0:10:02.34,0:10:07.34,Bilingual,,0,0,0,,但字幕工具把这条短字幕并进下一条时，把句号弄丢了\N{\fs33\c&H00C8C0B8&\bord1.4}but the subtitle tool dropped it when it merged that short subtitle into the next.
+Dialogue: 0,0:10:07.66,0:10:10.11,Bilingual,,0,0,0,,工具的 bug，常常看起来像内容的 bug\N{\fs33\c&H00C8C0B8&\bord1.4}Tool bugs often look like content bugs.
+Dialogue: 0,0:10:10.35,0:10:15.82,Bilingual,,0,0,0,,另一个工具 bug：拼接视频时，工具包复用了每个场景的旧片段\N{\fs33\c&H00C8C0B8&\bord1.4}Another tool bug: when putting the video together, the toolkit reused each scene's old clip,
+Dialogue: 0,0:10:15.82,0:10:19.63,Bilingual,,0,0,0,,于是改过的场景悄悄地用上了过时的画面\N{\fs33\c&H00C8C0B8&\bord1.4}so edited scenes were quietly stitched from out-of-date footage.
+Dialogue: 0,0:10:19.95,0:10:23.60,Bilingual,,0,0,0,,文件日期露了馅：片段比代码还旧\N{\fs33\c&H00C8C0B8&\bord1.4}The file dates gave it away: the clips were older than the code.
+Dialogue: 0,0:10:23.92,0:10:29.44,Bilingual,,0,0,0,,现在，只要场景比它的源文件旧，或者它的语音换了，就会重新渲染\N{\fs33\c&H00C8C0B8&\bord1.4}Now a scene is rendered again whenever it's older than its sources, or its voice has changed.
+Dialogue: 0,0:10:30.73,0:10:32.33,Bilingual,,0,0,0,,修改本身也要检查\N{\fs33\c&H00C8C0B8&\bord1.4}Fixes need checking too.
+Dialogue: 0,0:10:32.63,0:10:37.29,Bilingual,,0,0,0,,差分隐私的中文版，评审一共提了 103 条意见\N{\fs33\c&H00C8C0B8&\bord1.4}For the Chinese privacy video, reviewers raised 103 points,
+Dialogue: 0,0:10:37.29,0:10:41.08,Bilingual,,0,0,0,,大多是润色，负责修改的智能体做了 75 处改动\N{\fs33\c&H00C8C0B8&\bord1.4}most of them polish, and fixers made 75 changes.
+Dialogue: 0,0:10:41.40,0:10:46.14,Bilingual,,0,0,0,,接着，持怀疑态度的核查者检查了这些修改，又做了 12 处更正\N{\fs33\c&H00C8C0B8&\bord1.4}Then skeptical verifiers checked the fixers' work, and made 12 more corrections.
+Dialogue: 0,0:10:46.46,0:10:52.28,Bilingual,,0,0,0,,一段中文最多只能比英文长 15%，否则动画就会卡住\N{\fs33\c&H00C8C0B8&\bord1.4}A Chinese passage may run at most 15 percent longer than the English, or the animation stalls.
+Dialogue: 0,0:10:52.60,0:10:55.42,Bilingual,,0,0,0,,有个修改者说，某一段现在不超限了\N{\fs33\c&H00C8C0B8&\bord1.4}One fixer said a passage now fit that limit.
+Dialogue: 0,0:10:55.74,0:10:59.19,Bilingual,,0,0,0,,核查者实际测了时长：长了 15.3%\N{\fs33\c&H00C8C0B8&\bord1.4}A verifier timed it: 15.3 percent longer.
+Dialogue: 0,0:11:02.23,0:11:03.61,Bilingual,,0,0,0,,那下一步呢？\N{\fs33\c&H00C8C0B8&\bord1.4}So what's next?
+Dialogue: 0,0:11:03.66,0:11:06.65,Bilingual,,0,0,0,,最大的缺口，恰恰在测量够不着的地方\N{\fs33\c&H00C8C0B8&\bord1.4}The biggest gaps sit exactly where measuring runs out.
+Dialogue: 0,0:11:06.97,0:11:10.17,Bilingual,,0,0,0,,第一，也是最重要的：只有人能做的事\N{\fs33\c&H00C8C0B8&\bord1.4}First, and most important: what only people can do.
+Dialogue: 0,0:11:10.49,0:11:13.51,Bilingual,,0,0,0,,有记录的人类反馈只有用户的\N{\fs33\c&H00C8C0B8&\bord1.4}The only human feedback on record is the user's:
+Dialogue: 0,0:11:13.51,0:11:18.55,Bilingual,,0,0,0,,给长视频加背景音乐，再做一个更短、更紧凑的版本\N{\fs33\c&H00C8C0B8&\bord1.4}add background music to the long videos, and make a shorter, denser version too.
+Dialogue: 0,0:11:18.87,0:11:23.35,Bilingual,,0,0,0,,目前还没有记录显示，有人逐句亲耳检查过旁白\N{\fs33\c&H00C8C0B8&\bord1.4}There's no record yet of anyone checking the narration line by line, by ear.
+Dialogue: 0,0:11:23.67,0:11:26.09,Bilingual,,0,0,0,,有记录的试看观众全是模拟的\N{\fs33\c&H00C8C0B8&\bord1.4}Every test viewer on record was simulated,
+Dialogue: 0,0:11:26.09,0:11:28.96,Bilingual,,0,0,0,,至于大家到底学到了什么，目前也还没有衡量\N{\fs33\c&H00C8C0B8&\bord1.4}and there's no measure yet of what anyone learned.
+Dialogue: 0,0:11:29.20,0:11:34.21,Bilingual,,0,0,0,,智能体自己拍板的事，也应该由人再看一遍：差分隐私那期的长度\N{\fs33\c&H00C8C0B8&\bord1.4}People should also revisit the agent's own calls: the length of the privacy video,
+Dialogue: 0,0:11:34.21,0:11:40.31,Bilingual,,0,0,0,,中文声音的选择，保留哪些英文术语，以及对用户程序的那些小改动\N{\fs33\c&H00C8C0B8&\bord1.4}the choice of Chinese voice, which English terms to keep, and the small edits to the user's program.
+Dialogue: 0,0:11:43.55,0:11:45.14,Bilingual,,0,0,0,,第二，工程方面\N{\fs33\c&H00C8C0B8&\bord1.4}Second, engineering.
+Dialogue: 0,0:11:45.19,0:11:48.74,Bilingual,,0,0,0,,免费的中文语音没有授权用于公开发布的视频\N{\fs33\c&H00C8C0B8&\bord1.4}The free Chinese voice isn't licensed for published videos,
+Dialogue: 0,0:11:48.74,0:11:52.83,Bilingual,,0,0,0,,所以中文版发布之前，需要换成有授权的语音\N{\fs33\c&H00C8C0B8&\bord1.4}so the Chinese versions need a licensed voice before they're posted.
+Dialogue: 0,0:11:53.15,0:11:57.52,Bilingual,,0,0,0,,时间应该按词来定，而不是按字符，这样手动设的偏移就能去掉了\N{\fs33\c&H00C8C0B8&\bord1.4}Timing should follow words, not characters, so the hand-set shifts can go.
+Dialogue: 0,0:11:57.84,0:12:00.13,Bilingual,,0,0,0,,共用的部件还能让场景代码变少\N{\fs33\c&H00C8C0B8&\bord1.4}And shared parts would shrink the scene code.
+Dialogue: 0,0:12:04.53,0:12:09.44,Bilingual,,0,0,0,,第三，字幕：在中文版的评审意见里，字幕问题最多\N{\fs33\c&H00C8C0B8&\bord1.4}Third, subtitles, the biggest source of review findings in the Chinese versions.
+Dialogue: 0,0:12:09.76,0:12:13.19,Bilingual,,0,0,0,,每条字幕在哪儿断行，是由手写的规则决定的\N{\fs33\c&H00C8C0B8&\bord1.4}Hand-written rules decide where each subtitle line breaks.
+Dialogue: 0,0:12:13.51,0:12:17.20,Bilingual,,0,0,0,,第一次重写这些规则时，大部分目标都修好了\N{\fs33\c&H00C8C0B8&\bord1.4}The first rewrite of those rules fixed most of its targets,
+Dialogue: 0,0:12:17.20,0:12:19.32,Bilingual,,0,0,0,,却让另外 11 条字幕变差了\N{\fs33\c&H00C8C0B8&\bord1.4}but made 11 other subtitles worse.
+Dialogue: 0,0:12:19.64,0:12:24.67,Bilingual,,0,0,0,,又花了三轮才把它们修好，所以下次要先写测试用例\N{\fs33\c&H00C8C0B8&\bord1.4}It took three more rounds to fix those, so next time, the test cases come first.
+Dialogue: 0,0:12:24.99,0:12:28.66,Bilingual,,0,0,0,,可以让语法分析工具来建议断在哪儿，再由规则来检查\N{\fs33\c&H00C8C0B8&\bord1.4}A grammar tool could suggest the breaks, and the rules could check them.
+Dialogue: 0,0:12:29.40,0:12:32.84,Bilingual,,0,0,0,,最后一项，也最接近用户的设想：交互\N{\fs33\c&H00C8C0B8&\bord1.4}Last, and closest to the user's vision: interactivity.
+Dialogue: 0,0:12:33.16,0:12:36.22,Bilingual,,0,0,0,,前两期视频各配了一个交互页面\N{\fs33\c&H00C8C0B8&\bord1.4}The first two videos each come with a playground,
+Dialogue: 0,0:12:36.22,0:12:40.98,Bilingual,,0,0,0,,也就是一个可以自己动手试的小网页，但它和视频是分开的\N{\fs33\c&H00C8C0B8&\bord1.4}a small web page to try the idea yourself, but it sits apart from the video.
+Dialogue: 0,0:12:41.30,0:12:44.25,Bilingual,,0,0,0,,下一步，暂停视频时，应该直接在原地打开它\N{\fs33\c&H00C8C0B8&\bord1.4}Next, pausing the video should open it right there,
+Dialogue: 0,0:12:44.25,0:12:46.55,Bilingual,,0,0,0,,停在同样的状态，还能记住你的答案\N{\fs33\c&H00C8C0B8&\bord1.4}in the same state, and keep your answer.
+Dialogue: 0,0:12:50.00,0:12:51.60,Bilingual,,0,0,0,,想自己试试吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Want to try this yourself?
+Dialogue: 0,0:12:51.86,0:12:54.10,Bilingual,,0,0,0,,由人来选定学习者和问题\N{\fs33\c&H00C8C0B8&\bord1.4}A human picks the learner and the question.
+Dialogue: 0,0:12:54.42,0:12:56.34,Bilingual,,0,0,0,,先写脚本，而且把它写成代码\N{\fs33\c&H00C8C0B8&\bord1.4}Write the script first, as code.
+Dialogue: 0,0:12:56.66,0:12:58.26,Bilingual,,0,0,0,,让音频当时钟\N{\fs33\c&H00C8C0B8&\bord1.4}Let the audio be the clock.
+Dialogue: 0,0:12:58.58,0:13:02.10,Bilingual,,0,0,0,,用独立的评审，包括一个模拟观众\N{\fs33\c&H00C8C0B8&\bord1.4}Use independent reviewers, including a simulated viewer.
+Dialogue: 0,0:13:02.42,0:13:05.47,Bilingual,,0,0,0,,感知不到的，就去测量，修改也要再检查\N{\fs33\c&H00C8C0B8&\bord1.4}Measure what you can't perceive, and check the fixes too.
+Dialogue: 0,0:13:05.79,0:13:07.54,Bilingual,,0,0,0,,还有，每一步都存成文件\N{\fs33\c&H00C8C0B8&\bord1.4}And keep every step in a file.
+Dialogue: 0,0:13:07.78,0:13:09.45,Bilingual,,0,0,0,,最重要的是，记住目标\N{\fs33\c&H00C8C0B8&\bord1.4}Above all, remember the goal.
+Dialogue: 0,0:13:09.77,0:13:13.67,Bilingual,,0,0,0,,正如用户所说，AI 不应该只是认知卸载\N{\fs33\c&H00C8C0B8&\bord1.4}As the user put it, AI should not just be cognitive offloading.
+Dialogue: 0,0:13:13.99,0:13:18.19,Bilingual,,0,0,0,,它应该让知识更容易获得，同时还能让你学得一样深\N{\fs33\c&H00C8C0B8&\bord1.4}It should make knowledge easier to reach, and still let you learn just as deeply.
+Dialogue: 0,0:13:18.43,0:13:19.79,Bilingual,,0,0,0,,最后还有一件事\N{\fs33\c&H00C8C0B8&\bord1.4}One last thing.
+Dialogue: 0,0:13:19.84,0:13:23.81,Bilingual,,0,0,0,,这期视频也是这样做出来的，所以它有同样的盲区\N{\fs33\c&H00C8C0B8&\bord1.4}This video was made the same way, so it has the same blind spot:
+Dialogue: 0,0:13:23.81,0:13:26.41,Bilingual,,0,0,0,,做它的智能体，没法听它\N{\fs33\c&H00C8C0B8&\bord1.4}the agent that made it can't listen to it.
+Dialogue: 0,0:13:26.73,0:13:30.10,Bilingual,,0,0,0,,但你可以。如果哪里听着不对，或者让你听糊涂了\N{\fs33\c&H00C8C0B8&\bord1.4}You can. If anything sounded wrong, or lost you,
+Dialogue: 0,0:13:30.10,0:13:32.24,Bilingual,,0,0,0,,请在评论区说一声，带上时间点\N{\fs33\c&H00C8C0B8&\bord1.4}say so in the comments, with the time.
+Dialogue: 0,0:13:32.56,0:13:35.41,Bilingual,,0,0,0,,这正是这条流水线缺的反馈\N{\fs33\c&H00C8C0B8&\bord1.4}That's exactly the feedback this pipeline is missing.

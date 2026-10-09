@@ -1,0 +1,63 @@
+# Chinese (zh-CN) metadata for how-these-videos-are-made (read by explainer/i18n.py meta(), used by
+# explainer/build.py --lang zh for the title and chapter names): video title, chapter titles keyed by
+# scene file stem, and the Bilibili / YouTube description. Titles follow GLOSSARY.md (rule H1).
+# video.yaml defines no parts, so there are no part titles.
+#
+# The description is written for the standard Bilibili upload: the English video with the bilingual
+# subtitles burned in (output/how-these-videos-are-made.zh-en.mp4). For a Chinese-voiced upload, change
+# the first 制作说明 line to "· 本版：中文旁白（神经网络语音合成），中英双语字幕（中文在上，英文原句在下）"
+# and the 说明 line about the speech-recognizer check to what the Chinese round trip found.
+# The cost appears only with its full label (GLOSSARY.md rule A9). The user is never named.
+# About 1,150 characters (about 1,450 with the 11 chapter timestamps pasted under 章节), well under
+# Bilibili's 2,000-character limit. Links are repository-relative paths.
+title: "【幕后】这些讲解视频是怎么做出来的：一个人、一个 AI 智能体，和大量的测量"
+
+chapters:
+  s01_hook: "做视频的，却看不了视频"
+  s02_ask: "用户想要什么"
+  s03_team: "谁做了什么"
+  s04_script: "脚本就是代码"
+  s05_clock: "音频就是时钟"
+  s06_watch: "没有眼睛和耳朵，怎么检查"
+  s07_reviewers: "会扮演角色的评审"
+  s08_language: "同一个视频，第二种语言"
+  s09_machinery: "工具链里的 bug"
+  s10_next: "下一步改进什么"
+  s11_recipe: "一份配方，和一个请求"
+
+# Ready to paste into the Bilibili 简介 / YouTube description. The line 章节：见下方时间轴 points to the
+# chapter timestamps (output/chapters.txt for the English timing; the Chinese titles above replace the
+# English ones): paste them right under it (YouTube) or into Bilibili's 分段章节 / a pinned comment.
+description: |
+  这期是幕后篇：这个系列的讲解视频（差分隐私论文精读、井字棋的 255,168 种对局，以及它们的中文版）到底是怎么做出来的。参与的只有一个人和一个 AI 智能体（Claude Code），外加它启动的子智能体和一堆工具。
+
+  适合谁看：对“AI 怎么做视频”好奇的人。不需要会编程，也不需要懂机器学习：工作流、commit、lint 这些词，视频里第一次出现时都会解释。
+
+  你会看到：
+  · 一帧暂停画面里的“4 乘 3 乘 2……12”：数学没错，错的是排版；发现它的，是一个假扮成 12 岁孩子的 AI 评审
+  · 谁做了什么：用户定选题和观众，提供了程序；其余都是智能体做的，一百多个 commit 里只有两个不是它提交的
+  · 时间都花在了哪儿：最终画面的渲染每期不到半小时，其余是翻译、评审和修改、返工了四次的字幕工具，还有等待
+  · 脚本就是代码：先评审脚本再做动画，这条规则写下来的当天就被打破了
+  · 音频就是时钟：动画等的是旁白里的词，而句子内部的时间只能估计
+  · 没有眼睛和耳朵，怎么检查：截图拼成的网格图、相隔五分之一秒的帧、lint、场景自检、语音识别
+  · 会扮演角色的评审：导演、模拟的 12 岁孩子、跨场景检查的评审，以及检查修改的核查者
+  · 中文版：一句英文对一句中文，用语音识别挑选中文声音，还有一条意思被弄反的字幕
+  · 工具链里的 bug，以及下一步要改进什么
+  片中有 4 处“暂停想一想”，建议先暂停视频，自己想一想。
+
+  关于片中的费用：屏幕上的金额是整个会话截至 10 月 7 日、按 API 公开标价折算的金额，涵盖全部四个请求，不是一期视频的成本。
+
+  几点说明：
+  · 用户在片中从不出现姓名；引用的用户原话只删去了口头禅
+  · 片中重新绘制的画面都有标注，每个数字在仓库的 ASSETS.md 里都有出处
+  · 英文旁白通过了语音识别回环检查，没有发现读错的词，但还没有真人逐句听过。如果哪里听着不对，或者让你听糊涂了，请在评论区留言，并附上时间点
+
+  章节：见下方时间轴
+
+  制作说明：
+  · 本版：英文原声旁白（神经网络语音合成），中英双语字幕（中文在上，英文原句在下）
+  · 动画用 Manim 制作，由一套开源的讲解视频工具包生成
+  · 英文原版：How these explainer videos are made: one human, one AI agent, and a lot of measuring
+  · 术语表与翻译规则：videos/how-these-videos-are-made/i18n/zh/GLOSSARY.md
+
+  标签：幕后、AI 智能体、Claude Code、Manim、3Blue1Brown、讲解视频、语音合成、双语字幕、科普

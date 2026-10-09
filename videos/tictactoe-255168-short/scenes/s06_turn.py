@@ -39,7 +39,7 @@ look is cached as intensity fields for that one camera and one turn, RHO_F: the 
 tape stop and starts again at 69.1).
 Hand-over to S07 (a segue at 70.1): HANDOVER_S07 below. The camera CAM_1; the galaxy is S05's look
 (`galaxy_families`), turned by rho(END) and turning at ROT_RATE again; all 81 ring 1-2 edges at 38 %; the root
-board and the pen (90 %); the plate at PLATE_TL, PLATE_DIM, no strike; the HUD: §3 and one readout,
+board and the pen (90 %); the plate at PLATE_TL, PLATE_DIM, scale PLATE_BACK, no strike; the HUD: §3 and one readout,
 "对局计数 · GAMES COUNTED 255,168" (CALLS and UNDOS are gone since 63.1).
 """
 
@@ -209,7 +209,9 @@ assert abs(rho(T67) - RHO_F) < 1e-12
 BIG_SCALE = 1.6
 BIG_TL = np.array([-6.2, 2.25])                   # 62.1: the plate, centre-left, 1.6x
 GLIDE_IN = (0.0, BEAT)                            # 62.1-62.2
-GLIDE_OUT = (T65, T65 + BEAT)                     # 65.1-65.2: back to the left edge
+GLIDE_OUT = (T65, T65 + BEAT)                     # 65.1-65.2: back to the left edge ...
+PLATE_BACK = 0.88                                 # ... a little smaller than in S05: from 65.1 the camera puts ring 9
+                                                  # 0.3 left of S05's, through line 33 and the frame at 1.0
 HL_ON = (0.25, 0.55)                              # the winner check lights as the plate arrives
 TAG_IN = (0.3, 0.7)                               # 62.1+
 STRIKE = [(bb(62, 2), bb(62, 2) + 0.28), (bb(62, 2) + 0.1, bb(62, 2) + 0.38)]   # 62.2: lines 24, 25
@@ -231,6 +233,10 @@ MATHS_Y, TAG_Y = -0.16, -0.62
 HERO_VALUE = NINE_FACT
 DIM_GALAXY = 0.40
 RERUN_DUST = 0.4                                  # 65-66: the inner rings empty out (their nodes stay, faint)
+SHIMMER = 0.2                                     # 67.2-70.1: the ring's shimmer, +-20 % of its light (7 % did not
+                                                  # show through the tone map: the hold 67.3-69.1 read as still)
+FEATHER, TAG_FEATHER = 0.35, 0.14                 # the backings' soft edges (screen units, at the plate's 1.6x)
+THIN = "\u2009"                                   # a thin space: "9 !" in EB Garamond italic, so the "!" clears the 9
 
 
 # ---------------------------------------------------------------- light: S05's galaxy look, with an unglowing layer
@@ -380,7 +386,8 @@ class FillLook:
             ring9 = ring9 + self.fields["9 ghost"] * np.float32(env[9] * ghost)
         if shimmer > 0:
             th = self.theta
-            ring9 = ring9 * (1 + np.float32(shimmer) * np.sin(23 * th - 1.7 * t) * np.sin(9 * th + 1.1 * t))
+            # bright patches drifting round the ring (two waves turning opposite ways): the hold's ALIVE
+            ring9 = ring9 * (1 + np.float32(shimmer) * np.sin(23 * th - 2.6 * t) * np.sin(9 * th + 1.5 * t))
         inten = ring9
         if inner > 1e-4:
             for d in range(2, 9):
@@ -518,6 +525,23 @@ def show_plate(plate: ProgramPlate, frame_vis: float, row_vis, hl=None, tl=None,
                           color=INK_DIM)
 
 
+def soft_panel(w: float, h: float, feather: float, ppu: float = 40.0):
+    """A dark backing (black, RGBA) w x h screen units whose alpha falls off smoothly over `feather` units at its
+    edges, so it dims what is behind it without cutting a hard-edged rectangle into the galaxy."""
+    from manim import ImageMobject
+    wp, hp = max(8, int(round(w * ppu))), max(8, int(round(h * ppu)))
+    x = (np.arange(wp) + 0.5) / ppu
+    y = (np.arange(hp) + 0.5) / ppu
+    ax = np.clip(np.minimum(x, w - x) / feather, 0, 1)
+    ay = np.clip(np.minimum(y, h - y) / feather, 0, 1)
+    a = np.outer(ay * ay * (3 - 2 * ay), ax * ax * (3 - 2 * ax))
+    img = np.zeros((hp, wp, 4), np.uint8)
+    img[..., 3] = np.clip(255 * a, 0, 255).astype(np.uint8)
+    im = ImageMobject(img)
+    im.set_resampling_algorithm(2)
+    return im
+
+
 def ring_edge_paths():
     """The 81 nodes of rings 1-2 as (slot centre, depth, parent slot centre, parent depth)."""
     out = []
@@ -544,7 +568,7 @@ def edge_ends(e, rh: float):
 
 
 HANDOVER_S07 = {"cam": CAM_1, "rho_end": rho(END), "rot_rate": ROT_RATE, "plate_dim": PLATE_DIM,
-                "games": WEDGE_GAMES, "pen_vis": 0.9, "edge_vis": 0.38}
+                "plate_scale": PLATE_BACK, "games": WEDGE_GAMES, "pen_vis": 0.9, "edge_vis": 0.38}
 
 
 # ---------------------------------------------------------------- the scene
@@ -571,15 +595,20 @@ class DeleteCheck(BeatScene):
         self.arm = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK, 1.4, PEN_HALO, 10, layers=4, glow_opacity=0.35)
         self.streak = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), "#FFFFFF", 2.6, PEN_HALO, 16, layers=5, glow_opacity=0.6)
         # screen space: the backing, the plate (and two motion-blur copies), the strike, the tag, the pen, HUD
-        self.backing = Rectangle(width=1, height=1).set_stroke(width=0).set_fill("#000000", opacity=0)
-        self.tag_backing = Rectangle(width=1, height=1).set_stroke(width=0).set_fill("#000000", opacity=0)
         self.plate = ProgramPlate()
+        bw, bh = self.plate.width * BIG_SCALE + 0.3, self.plate.height * BIG_SCALE + 0.55
+        self.backing = soft_panel(bw + 2 * FEATHER, bh + 2 * FEATHER, FEATHER)      # (feathered: no hard edges)
+        self.backing_pad = (2 * FEATHER / bw, 2 * FEATHER / bh)
+        show_sprite(self.backing, opacity=0)
         self.blur = [ProgramPlate() for _ in range(2)]
         self.strikes = [Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), RED, 2.6, RED, 9, layers=4, glow_opacity=0.5)
                         for _ in range(2)]
         tag = bi_label("判断输赢", "WINNER CHECK", zh_size=20, en_size=16.5, color=INK)
         tag[2].set_color(INK_DIM)
         self.tag_w, self.tag_h = tag.width, tag.height
+        self.tag_backing = soft_panel(self.tag_w + 0.3 + 2 * TAG_FEATHER, self.tag_h + 0.24 + 2 * TAG_FEATHER,
+                                      TAG_FEATHER)
+        show_sprite(self.tag_backing, opacity=0)
         self.tag_parts = [InkText(tag[0], INK), InkText(tag[1], INK_DIM), InkText(tag[2], INK_DIM)]
         self.tag_offs = [p.get_center()[:2] - tag.get_center()[:2] for p in tag]
         self.bracket = Ink(VGroup(Line([0, 0.5, 0], [0.5, 0.5, 0]), Line([0.5, 0.5, 0], [0.5, -0.5, 0]),
@@ -600,7 +629,8 @@ class DeleteCheck(BeatScene):
         self.red_halo = gaussian_sprite(RED, 64, 0.3, aspect=2.6)
         # 67.1: the hero and S02's label
         self.hero = HeroCounter(HERO_VALUE, HERO_NUM_C, HERO_SIZE)
-        m = maths("9 × 8 × … × 1 = 9! = 362,880", size=28, color=INK)       # (lining figures: a 1 is not an I)
+        # (lining figures: a 1 is not an I; a thin space keeps the italic "!" off the 9's tail, where "9!" reads "9/")
+        m = maths(f"9 × 8 × … × 1 = 9{THIN}! = 362,880", size=28, color=INK)
         lab = bi_label("9 的阶乘", "NINE FACTORIAL", zh_size=20, en_size=16.5, color=INK_DIM)
         self.maths = [InkText(m, INK) for _ in range(3)]
         self.lab9 = [InkText(lab, INK_DIM) for _ in range(3)]
@@ -765,7 +795,7 @@ class DeleteCheck(BeatScene):
         """67.1-69.4: S02's look (its 18.1 flare at 67.1); from 69.1 the ghosts stream home and S05's galaxy
         comes back in its colours."""
         t2 = S02_HIT + (t - T67)
-        shimmer = 0.07 * ease_in_out_sine(seg(t, T67 + 0.3, T67 + 1.2))
+        shimmer = SHIMMER * ease_in_out_sine(seg(t, T67 + 0.3, T67 + 1.2))
         if t < T69:
             fill = self.fill.image(t2, shimmer=shimmer, t=t)
             fams = galaxy_families(self.splat, t, CAM, rh, leaves=NO_LEAVES, dust_w=RING1_DUST)
@@ -862,9 +892,9 @@ class DeleteCheck(BeatScene):
     def plate_place(self, t: float):
         if t < GLIDE_OUT[0]:
             e = ease_in_out_cubic(seg(t, *GLIDE_IN))
-        else:
-            e = 1 - ease_in_out_cubic(seg(t, *GLIDE_OUT))
-        return PLATE_TL + (BIG_TL - PLATE_TL) * e, 1 + (BIG_SCALE - 1) * e, e
+            return PLATE_TL + (BIG_TL - PLATE_TL) * e, 1 + (BIG_SCALE - 1) * e, e
+        e = 1 - ease_in_out_cubic(seg(t, *GLIDE_OUT))
+        return PLATE_TL + (BIG_TL - PLATE_TL) * e, PLATE_BACK + (BIG_SCALE - PLATE_BACK) * e, e
 
     def update_plate(self, t: float):
         P = self.plate
@@ -896,11 +926,10 @@ class DeleteCheck(BeatScene):
                 hl[num] = (max(0.5 * (1 - erased), 0.9 * back), RED if erased < 0.5 else WHITE)
         show_plate(P, frame_vis, row_vis, hl, tl, k)
         # the backing behind the big plate (the galaxy is behind it)
-        bo = 0.72 * e
-        if bo > 1e-3:
-            self.backing.stretch_to_fit_width(P.width * k + 0.3).stretch_to_fit_height(P.height * k + 0.55)
-            self.backing.move_to([tl[0] + P.width * k / 2, tl[1] - P.height * k / 2 + 0.12, 0])
-        self.backing.set_fill(opacity=bo * (frame_vis if t >= T63 else 1.0))
+        bo = 0.72 * e * (frame_vis if t >= T63 else 1.0)
+        bw, bh = P.width * k + 0.3, P.height * k + 0.55
+        show_sprite(self.backing, [tl[0] + P.width * k / 2, tl[1] - P.height * k / 2 + 0.12],
+                    bw * (1 + self.backing_pad[0]), bh * (1 + self.backing_pad[1]), bo)
         # motion blur: the plate a few frames back, during the two glides
         for gi, bp in enumerate(self.blur):
             moving = GLIDE_IN[0] < t < GLIDE_IN[1] or GLIDE_OUT[0] < t < GLIDE_OUT[1]
@@ -933,16 +962,15 @@ class DeleteCheck(BeatScene):
             for p in self.tag_parts:
                 p.hide()
             self.bracket.hide()
-            self.tag_backing.set_fill(opacity=0)
+            show_sprite(self.tag_backing, opacity=0)
             return
         y24, y25 = P.row_y(24, tl, k), P.row_y(25, tl, k)
         xb = P.row_right(24, tl, k) + 0.14
         hb = abs(y24 - y25) + 0.16
         self.bracket.show(1.0, np.array([[0.16, 0.0], [0.0, hb]]), np.array([xb, (y24 + y25) / 2]), vis=0.8 * tv)
         cen = np.array([xb + 0.32 + self.tag_w / 2 + 0.06 * (1 - tv), (y24 + y25) / 2])
-        self.tag_backing.stretch_to_fit_width(self.tag_w + 0.3).stretch_to_fit_height(self.tag_h + 0.24)
-        self.tag_backing.move_to([*cen, 0])
-        self.tag_backing.set_fill(opacity=0.7 * tv)
+        show_sprite(self.tag_backing, cen, self.tag_w + 0.3 + 2 * TAG_FEATHER, self.tag_h + 0.24 + 2 * TAG_FEATHER,
+                    0.7 * tv)
         for p, off, col in zip(self.tag_parts, self.tag_offs, (INK, INK_DIM, INK_DIM)):
             p.show(cen + off, vis=tv, color=col)
 

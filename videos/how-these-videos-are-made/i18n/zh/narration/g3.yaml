@@ -12,7 +12,7 @@ S09:
 
 - en: "Another tool bug: when putting the video together, the toolkit reused each scene's old clip, so edited scenes were quietly stitched from out-of-date footage. The file dates gave it away: the clips were older than the code. Now a scene is rendered again whenever it's older than its sources, or its voice has changed."
   zh:
-  - "另一个工具 bug：拼接视频时，工具包直接复用了每个场景的旧片段，结果改过的场景，悄悄地用过时的画面拼了进去。"
+  - "另一个工具 bug：拼接视频时，工具包复用了每个场景的旧片段，于是改过的场景悄悄地用上了过时的画面。"
   - "文件日期露了馅：片段比代码还旧。"
   - "现在，只要场景比它的源文件旧，或者它的语音换了，就会重新渲染。"
 
@@ -22,7 +22,7 @@ S09:
   - "差分隐私的中文版，评审一共提了 103 条意见，大多是润色，负责修改的智能体做了 75 处改动。"
   - "接着，持怀疑态度的核查者检查了这些修改，又做了 12 处更正。"
   - "一段中文最多只能比英文长 15%，否则动画就会卡住。"
-  - "有个修改者说，某一段现在已经在这个限度以内了。"
+  - "有个修改者说，某一段现在不超限了。"
   - "核查者实际测了时长：长了 15.3%。"
   en_display:
   - null
@@ -50,7 +50,7 @@ S10:
   zh:
   - "第二，工程方面。"
   - "免费的中文语音没有授权用于公开发布的视频，所以中文版发布之前，需要换成有授权的语音。"
-  - "时间应该按词来定，而不是按字符，这样那些手动设置的偏移就能去掉。"
+  - "时间应该按词来定，而不是按字符，这样手动设的偏移就能去掉了。"
   - "共用的部件还能让场景代码变少。"
 
 - en: "Third, subtitles, the biggest source of review findings in the Chinese versions. Hand-written rules decide where each subtitle line breaks. The first rewrite of those rules fixed most of its targets, but made 11 other subtitles worse. It took three more rounds to fix those, so next time, the test cases come first. A grammar tool could suggest the breaks, and the rules could check them."

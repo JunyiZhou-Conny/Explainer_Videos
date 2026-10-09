@@ -26,7 +26,7 @@ orders (9! = 12 units), one screen unit each (UNIT_S).
     79-80  79.1-79.2 the bottom line fades; 79.1-79.4 the top line's games regroup by colour, in place: X's
            wins | O's | the draws, on the same scale, with half of all games marked (X's bar runs just past it);
            80.1-80.3 "X 赢 131,184 · X WINS", "O 赢 77,904 · O WINS", "平局 46,080 · DRAWS" under them (c23: just
-           over half); 80.4 the half mark and Σ = 255,168 fade: S08's first frame
+           over half); the half mark and Σ = 255,168 stay up with c23 (S08 fades them with the labels, 81.3)
 
 Every length is exact and asserted: 1,440 + 5,328 + 47,952 + 72,576 + 127,872 = 255,168 games = 8.438 units; the
 same rows x 24, 6, 2, 1, 1 = 34,560 + 31,968 + 95,904 + 72,576 + 127,872 = 362,880 = 12 units; 131,184 (4.34) +
@@ -34,15 +34,15 @@ same rows x 24, 6, 2, 1, 1 = 34,560 + 31,968 + 95,904 + 72,576 + 127,872 = 362,8
 
 Hand-over from S06 (a segue at 70.1): s06_turn.HANDOVER_S07 and S06's own drawing functions (galaxy_families,
 render_light, show_plate, the edges), so the first frame here is S06's last.
-Hand-over to S08 (a segue at 81.1). s08_bigger draws S07's last frame with this module's own interface, so keep
-it stable: ledger_points(END) (every game's screen place, weight W_GAME and colour family), SH_PH (the games'
-shimmer), HANDOVER_S08 ("unit", "w_game", "rho_cut", and the layout keys), ROOT_S / Z (where the galaxy was cut),
-and Ledger.update_results / Ledger.update_sigma, which S08 calls on its S07End: an object holding the end objects
-under the names Ledger.build gives them (ruler, ruler_ticks, half_line, half_lab, res_lab of bi_label parts,
-sigma_sym, sigma_eq, n255, n255_w, halo255, hud_sigma). The last frame: X's wins | O's | the draws side by side on
-the top line (HANDOVER_S08 x0, line_y, gap; a game at x0 + its place / 30,240 screen units), their labels under
-them, the HUD §4 and the readout "Σ 255,168"; the half mark and Σ = 255,168 have faded (ENDING). The camera is
-S06's CAM_1, unchanged.
+Hand-over to S08 (a segue at 81.1). s08_bigger.S07Stage subclasses Ledger: it runs Ledger.build on a stand-in and
+draws this scene's own objects with Ledger.update_state (and its light with update_light until 81.3) at S07 times
+past END, so S08's first frame is S07's last whatever it holds; it also reads ledger_points(END) (every game's
+screen place, weight W_GAME and colour family), SH_PH and the shimmer 1 + 0.12 sin(SH_PH + 2.3 t) (the games'
+flight from 81.3), HANDOVER_S08 ("unit", "w_game", "rho_cut", and the layout keys) and ROOT_S / Z (where the galaxy
+was cut). So keep build, update_state and update_light working without a renderer and for t > END. The last
+frame: X's wins | O's | the draws side by side on the top line (HANDOVER_S08 x0, line_y, gap; a game at x0 + its
+place / 30,240 screen units), their labels under them, the half mark over X's bar, Σ = 255,168 at the line's end,
+the HUD §4 and the readout "Σ 255,168". The camera is S06's CAM_1, unchanged.
 """
 
 from __future__ import annotations
@@ -64,7 +64,7 @@ from common import LeanInk as Ink
 from common import LeanText as InkText
 from s02_fill import Glyphs
 from s04_by_hand import ZH_SIZE, MiniBoard, en, hex_of, line_affine, maths
-from s06_turn import CAM_1, CAM_STILL, EDGES, HANDOVER_S07, PLATE_DIM, ROT_RATE, edge_ends, galaxy_families, \
+from s06_turn import CAM_1, CAM_STILL, EDGES, HANDOVER_S07, PLATE_DIM, ROT_RATE, THIN, edge_ends, galaxy_families, \
     render_light, show_plate
 from s06_turn import END as S06_END
 from s06_turn import rho as s06_rho
@@ -180,7 +180,6 @@ RUN_BOT = (bb(78, 3), bb(79, 1))
 FADE_BOT = (bb(79, 1), bb(79, 2))
 REGROUP = (bb(79, 1), bb(79, 4))
 RES_LAB_T = {1: bb(80, 1), 2: bb(80, 2), 3: bb(80, 3)}
-ENDING = (bb(80, 4), END)                         # what S08 does not draw fades (the ½ mark, Σ = 255,168)
 HUD_X = (0.0, BEAT / 2)                           # 70.1: §3 -> §4, GAMES COUNTED -> Σ
 PLATE_OUT = (0.0, 0.3)
 
@@ -363,7 +362,7 @@ class Ledger(BeatScene):
         self.sec3 = section_hud("§3 · 探索每一局 · PLAY EVERY GAME")
         self.sec4 = section_hud("§4 · 255,168 是怎么来的 · 255,168, EXPLAINED")
         self.hud_games = HudLine("对局计数", "GAMES COUNTED", HUD_LINES_Y[0])
-        # the readout "Σ 255,168" (S08's S07End builds the same HudLine and fades it)
+        # the readout "Σ 255,168" (S08's S07Stage draws it with this class, then fades it with §4)
         self.hud_sigma = HudLine("对局计数", "GAMES COUNTED", HUD_LINES_Y[0])
         sig = Text("Σ", font=FONT_OLDSTYLE, font_size=15, color=INK_DIM)
         sig.next_to(self.hud_sigma.counter.ref, np.array([-1, 0, 0]), buff=0.18)
@@ -438,13 +437,12 @@ class Ledger(BeatScene):
         self.n362 = Glyphs(t362, WHITE, INK, 10, layers=6, glow_opacity=0.5)
         self.n362_w = t362.width
         self.halo362 = gaussian_sprite(PEN_HALO, 96, 0.34, aspect=3.0)
-        nine = VGroup(maths("9!", size=28, color=INK_DIM), cjk("·", size=20, color=INK_DIM),
+        nine = VGroup(maths(f"9{THIN}!", size=28, color=INK_DIM), cjk("·", size=20, color=INK_DIM),
                       bi_label("9 的阶乘", "NINE FACTORIAL", zh_size=20, en_size=16.5, color=INK_DIM)).arrange(buff=0.14)
         self.nine = InkText(nine, INK_DIM)
         self.nine_w = nine.width
-        # 79-80: the half of all games marked on the line, the result labels. S08 (s08_bigger.S07End) builds these
-        # same objects, under these names, and draws them with this class's update_results / update_sigma: keep
-        # both in step. (ruler and half_line are kept for that interface; they are not drawn.)
+        # 79-80: the half of all games marked on the line, the result labels (S08 draws them with this class, through
+        # s08_bigger.S07Stage). (ruler and half_line are kept from an earlier interface; they are not drawn.)
         self.ruler = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.3)
         self.ruler_ticks = [Ink(Line([0, -0.5, 0], [0, 0.5, 0]), INK_DIM, 1.3) for _ in range(3)]
         self.half_line = VMobject().set_stroke(INK_DIM, width=stroke_px(1.2), opacity=0).set_fill(opacity=0)
@@ -610,7 +608,7 @@ class Ledger(BeatScene):
 
     def update_plate_hud(self, t: float):
         pv = PLATE_DIM * (1 - ease_in_out_sine(seg(t, *PLATE_OUT)))
-        show_plate(self.plate, pv, [pv] * len(self.plate.rows), {}, None, 1.0)
+        show_plate(self.plate, pv, [pv] * len(self.plate.rows), {}, None, HANDOVER_S07["plate_scale"])
         x = ease_in_out_sine(seg(t, *HUD_X))
         if abs(x - getattr(self, "_hx", -1)) > 1e-4:
             for p in self.sec3.get_family():
@@ -696,7 +694,6 @@ class Ledger(BeatScene):
             return
         x0 = LINE_X + TOP_LEN + 0.28 + 2 * RES_GAP * ease_in_out_cubic(seg(t, *REGROUP))
         y = Y_TOP
-        v *= 1 - ease_in_out_sine(seg(t, *ENDING))
         breathe = 1 + 0.1 * math.sin(2 * math.pi * (t - SIGMA_T) / BAR)
         self.sigma_sym.show([x0 + 0.12, y + 0.02], vis=v, color=INK)
         self.sigma_eq.show([x0 + 0.48, y], vis=v, color=INK)
@@ -824,10 +821,9 @@ class Ledger(BeatScene):
     # --- 79-80: the half mark and the result labels
     def update_results(self, t: float):
         """79-80: half of all games marked on the line (X's bar runs just past it), the labels under the bars
-        (80.1-80.3, zh over en). The mark fades before the join (ENDING). S08 calls this with its own S07End,
-        which holds the same objects: ruler_ticks, half_lab, res_lab (each a bi_label's three parts)."""
-        out = 1 - ease_in_out_sine(seg(t, *ENDING))
-        hv = ease_in_out_sine(seg(t, REGROUP[1] - 0.3, REGROUP[1] + 0.3)) * out
+        (80.1-80.3, zh over en). They stay up with c23 into S08, which draws them with this class (S07Stage)
+        and fades them at 81.3."""
+        hv = ease_in_out_sine(seg(t, REGROUP[1] - 0.3, REGROUP[1] + 0.3))
         tick = self.ruler_ticks[1]
         self.ruler.hide()
         for k in (self.ruler_ticks[0], self.ruler_ticks[2]):

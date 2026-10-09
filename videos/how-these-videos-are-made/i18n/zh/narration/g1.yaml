@@ -21,7 +21,7 @@ S01:
   - "看起来像是乘法算错了，但数学其实没错。"
   - "这个 12 是一个正往 24 涨的计数，却摆在了算式那一行上。"
   - "是排版在撒谎。"
-  - "而发现这个问题的评审，并不是孩子。"
+  - "而发现问题的评审，并不是孩子。"
   - "它是一个 AI，假扮成 12 岁的孩子。"
 
 - en: "Now the strange part. Almost everything in these videos was made by AI agents: the script, the animation code, and the checks. And none of them can hear the narration, or press play. So how do they know any of it works?"
@@ -29,7 +29,7 @@ S01:
   - "奇怪的地方来了。"
   - "这些视频里几乎所有东西都是 AI 智能体做的：脚本、动画代码，还有各种检查。"
   - "可它们没有一个能听见旁白，也没法按下播放键。"
-  - "那它们怎么知道，这些东西到底行不行？"
+  - "那它们怎么知道这些行不行？"
 
 - en: "This video covers the pipeline, who did what, how work gets checked without eyes or ears, the Chinese versions, what still needs a human, and what to improve next."
   zh:
@@ -40,7 +40,7 @@ S02:
   zh:
   - "一切从一个人开始，也就是这位用户：一位论文多到读不过来的研究者。"
   - "视频的风格学的是 3Blue1Brown：这个频道的视频用 Manim 做动画，每一帧都是用代码画出来的。"
-  - "这个项目的想法，来自第一个请求里引用的一条 Andrej Karpathy 的帖子。"
+  - "本项目的想法来自 Andrej Karpathy 的帖子，是第一个请求里引用的。"
 
 - en: "The user's own words go further: our brain is a neural net, and training it takes hardship. AI is patient, they said, but they were doing a lot of cognitive offloading: letting the AI do the thinking for them."
   zh:
@@ -63,38 +63,38 @@ S02:
 S03:
 - en: "The team: one human, the user. One AI agent: Claude Code. Under it, 183 sub-agents in 46 workflow runs, before this video. A workflow is a script the agent writes to launch sub-agents, each with one job. And tools, like a synthetic voice for each language and a speech recognizer."
   zh:
-  - "团队成员：一个真人，就是这位用户。"
+  - "团队：一个真人，就是用户。"
   - "一个 AI 智能体：Claude Code。"
   - "它手下有 183 个子智能体，来自 46 次工作流运行，都在这期视频之前。"
-  - "工作流是智能体自己写的一段程序，用来启动子智能体，每个子智能体只干一件事。"
+  - "工作流就是智能体为了启动子智能体写的程序，每个子智能体只干一件事。"
   - "还有各种工具，比如每种语言各一个合成语音，以及一个语音识别模型。"
 
 - en: "The user decided what was worth learning, and for whom. They uploaded 36 PDFs, gave the tic-tac-toe counts to explain, like 255,168 games, and supplied the program that video teaches. It already worked. The agent only changed a zero into the letter O, and rewrote the comments."
   zh:
   - "值得学什么、讲给谁听，是用户定的。"
   - "用户上传了 36 个 PDF，给出了井字棋视频要讲的那些数，比如 255,168 种对局，还提供了那期视频讲解的程序。"
-  - "那个程序本来就能正常运行。"
+  - "程序本来就能用。"
   - "智能体只是把一个数字 0 改成了字母 O，又重写了注释。"
 
 - en: "The agent did the rest. It wrote the toolkit that runs the pipeline, and made all but two of over a hundred commits, the project's saved versions. In under a week, work stopped at least six times on usage limits. Twice, it then sat idle for hours after the limit reset, until the user nudged it."
   zh:
   - "剩下的都是智能体做的。"
-  - "它写了驱动整条流水线的工具包；项目保存下来的一百多个版本，也就是 commit，除了两个，全是它提交的。"
+  - "它写了驱动整条流水线的工具包；一百多个 commit 里，除了两个，全是它提交的，commit 就是项目存下的版本。"
   - "不到一周，工作因为用量上限至少停了六次。"
   - "其中有两次，额度恢复之后它又闲了好几个小时，直到用户催了一下。"
 
 - en: "From request to final cut, the privacy video took about six hours, and tic-tac-toe just over three. The Chinese versions took far longer: 16 hours, and about two days. Drawing the final frames took under half an hour each. The rest went to translating, rounds of review and fixes, a subtitle tool reworked four times, and waiting. And the cost on screen is what the whole session had cost by October 7th, at the public pay-per-use price: all four requests, not one video."
   zh:
-  - "从提出请求到成片，差分隐私那期用了大约六个小时，井字棋那期三个多小时。"
+  - "从请求到成片，差分隐私那期用了大约六个小时，井字棋那期三个多小时。"
   - "中文版花的时间长得多：分别是 16 个小时和大约两天。"
   - "最终画面的渲染，每期都不到半小时。"
   - "其余的时间都花在：翻译，一轮又一轮的评审和修改，返工了四次的字幕工具，还有等待。"
-  - "屏幕上的费用，是整个会话截至 10 月 7 日、按公开的按量计费价格算出的总额：涵盖全部四个请求，不是一期视频的成本。"
+  - "屏幕上的费用，是整个会话截至 10 月 7 日的花费，按公开的按量计费价格计算：涵盖全部四个请求，不是一期视频。"
 
 S04:
 - en: "The pipeline is a chain of files: a paper, a catalog entry, a digest with page numbers, a script, animation code, and the video. Every step leaves a file behind, so you can stop, review, and resume."
   zh:
-  - "这条流水线是一串文件：一篇论文，一条目录记录，一份带页码的论文笔记，一份脚本，动画代码，最后是视频。"
+  - "这条流水线是一串文件：论文、目录记录、带页码的论文笔记，再到脚本、动画代码和视频。"
   - "每一步都留下一个文件，所以随时可以停下、检查，再接着做。"
 
 - en: "Each file gets checked. Agents cataloging the papers read them, not just their names, and found that 4 of the 36 PDFs were the wrong papers. And the privacy digest even lists the paper's own mistakes."
@@ -114,5 +114,5 @@ S04:
   - "所以在做任何动画之前，先让别的智能体评审脚本：改一句话只要几秒钟，场景做完了再改，就得整个重画。"
   - "第一天，智能体就把这条规则写进了自己的工作指南。"
   - "几分钟后，评审还在进行，它就启动了六个子智能体去做场景。"
-  - "又过了 11 分钟，一份评审意见回来了，要求修改脚本，于是六个子智能体全被叫停。"
+  - "11 分钟后，一份要求改脚本的评审意见回来了，于是六个全被叫停。"
   - "光把规则写下来还不够：工作流本身就得等评审结束。"

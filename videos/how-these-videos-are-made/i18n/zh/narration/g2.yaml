@@ -9,8 +9,8 @@ S05:
   zh:
   - "接下来是动画。"
   - "在这条流水线里，先生成语音，动画等的是词，不是秒数。"
-  - "这段代码的意思是：旁白念到“A hundred”的时候，就显示一百。"
-  - "念到“A million”的时候，就显示一百万。"
+  - "这段代码的意思是：旁白念到“A hundred”，就显示一百。"
+  - "念到“A million”，就显示一百万。"
 
 - en: "The voice speaks one sentence at a time, so every sentence start is known exactly. Inside a sentence, the toolkit has to guess. It assumes every character takes the same time to say."
   zh:
@@ -33,7 +33,7 @@ S05:
 
 - en: "The fix so far is manual: this one scene carries about 20 hand-set shifts, the biggest two point two seconds. A better fix is within reach: the online voice used for Chinese can send the time of every word. But the toolkit doesn't ask for them yet, and keeps only the audio."
   zh:
-  - "目前的办法是手动修：光这一个场景就有大约 20 处手动设置的偏移，最大的一处是 2.2 秒。"
+  - "目前的办法是手动修：光这一个场景就有大约 20 处手动设的偏移，最大的一处是 2.2 秒。"
   - "更好的办法其实触手可及：中文用的那个在线语音服务，能把每个词的时间一起发回来。"
   - "但工具包现在还没去要这些时间，只保存了音频。"
   en_display:
@@ -57,7 +57,7 @@ S06:
 - en: "Between stills, things can go wrong, so to check motion, it grabs frames a fifth of a second apart. If they're all the same, nothing moved."
   zh:
   - "两张截图之间也可能出问题，所以为了检查动作，它会每隔五分之一秒抓一帧。"
-  - "如果这几帧都一样，就说明什么都没动。"
+  - "如果几帧都一样，就是什么都没动。"
 
 - en: "Then it measures everything it can. A checker called a lint runs each scene without drawing a frame, and flags anything off screen, text that's too small, or objects left behind. And the tic-tac-toe scenes check themselves, with 82 checks on the numbers and boards shown."
   zh:
@@ -69,7 +69,7 @@ S07:
 - en: "Next come the reviewers, fresh agents that didn't build the video. They get the stills, the subtitles as a stand-in for sound, and a role: a director, or a simulated 12-year-old, sharp but ordinary. That simulated kid found real problems, like move labels it couldn't decode."
   zh:
   - "接下来是评审：一批全新的智能体，没有参与制作这个视频。"
-  - "它们拿到的是截图、代替声音的字幕，还有一个角色：导演，或者一个模拟的 12 岁孩子，聪明，但很普通。"
+  - "它们拿到的是截图、代替声音的字幕和一个角色：导演，或者一个模拟的 12 岁孩子，聪明但普通。"
   - "这个模拟的孩子找出了真问题，比如有些表示走法的标签，它读不懂。"
 
 - en: "Round one found 30 issues, including that 12 on the formula line. In round two, a fresh director re-checked each one: 25 were fixed, and 5 only partly."
@@ -79,7 +79,7 @@ S07:
 
 - en: "The director caught a subtler bug. The scene should shuffle 4 marks through all 24 orders, but the board froze while the counter ticked on. The cause is a Manim pitfall: every move was set up before the first one played, and each setup erased the one before, so each mark jumped to its last spot and sat still. Now each move is set up only when it plays, and the marks move again."
   zh:
-  - "导演还抓到了一个更隐蔽的 bug。"
+  - "导演还抓到一个更隐蔽的 bug。"
   - "这个场景本该把 4 个棋子换遍全部 24 种顺序，可棋盘一动不动，计数器却还在往上跳。"
   - "原因是 Manim 的一个坑：所有移动都在第一步播放之前就设好了，而每次设置都会覆盖前一次，结果每个棋子直接跳到最后的位置，然后就不动了。"
   - "现在每一步移动都等到播放时才设置，棋子就又动起来了。"
@@ -96,7 +96,7 @@ S08:
 - en: "On to Chinese. The user asked to keep English terms that would sound weird translated, with subtitles in both languages. The key rule: one Chinese sentence for each English sentence, so every animation cue still has a sentence to wait for. Some cues are also pinned to a Chinese word."
   zh:
   - "再说中文版。"
-  - "用户要求：那些翻成中文会听着别扭的英文术语，保留英文，并且配上中英双语字幕。"
+  - "用户要求保留那些翻成中文听着会别扭的英文术语，并且配上中英双语字幕。"
   - "关键规则是：一句英文对一句中文，这样每个动画触发点都还有一句话可以等。"
   - "有些触发点还会钉在某个具体的中文词上。"
 
@@ -110,8 +110,8 @@ S08:
   zh:
   - "那么，用哪个声音？"
   - "智能体听不了，所以它去问语音识别模型。"
-  - "用第一个普通话声音时，脚本里写的是 noise，识别模型听到的却是“Nice”；写的是 epsilon，听到的是“Excellent”。"
-  - "另一个普通话声音 17 个测试词全部通过，于是被选中了，尽管有两个以英语为主的声音分数一样高，甚至更高。"
+  - "用第一个普通话声音时，识别模型把脚本里的 noise 听成了“Nice”，把 epsilon 听成了“Excellent”。"
+  - "另一个普通话声音 17 个测试词全部通过，于是被选中了，尽管有两个以英语为主的声音，分数一样高，甚至更高。"
   - "目前还没有记录显示，有人亲耳检查过它。"
 
 - en: "And one subtitle flipped a meaning. The English narration asks whether X always wins, answers with a short no, then says a computer can do more than count. The Chinese subtitle said the opposite: that this is not something a computer can do. Both AI reviewers of the Chinese version caught it."
