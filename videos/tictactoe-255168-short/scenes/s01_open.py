@@ -9,11 +9,13 @@ sound tag each ("X@C#5"), so explainer.music puts each one on the frame that sho
     2-3    game A, one mark per beat: X0 O3 X1 O4 X2 (the motif C#5 G#4 D5 A4 E5); the top-row win line
     4      the camera eases right; the pen draws a second grid (c01, the question)
     5      game B on eighth notes, X2 O4 X0 O3 X1: the same final board (c02)
-    6      "=?" between the boards; a light runs through both orders at once; "=?" -> "≠"
+    6      "=?" between the boards; a light runs through both orders together (board B a sixteenth
+           behind board A: two interleaved melodies); "=?" -> "≠"
     7      B dissolves; a copy of A slides into its place and turns a quarter turn: "=?" (c03)
     8      "≠"; the turned copy flips over (game A mirrored); "≠"; everything falls into a point
     9      a slot counter scrambles, ticking faster; half a beat of darkness (the breath)
-    10     TITLE HIT: one flash; the digits land left to right on 255,168 (cool left, warm right)
+    10     TITLE HIT: one flash; the digits are locked on 255,168 from the next frame, their glow lands left
+           to right (cool left, warm right); TIC-TAC-TOE, 井字棋 · 不同的对局 (as large), DIFFERENT GAMES
     11     the number dissolves into ~3,000 particles that swirl into the root of the tree
 
 Hand-over to S02 (the join at 12.1 is a segue): the last frame has the camera frame 0.45 x 14.22 units
@@ -60,6 +62,23 @@ ROOT = np.array([-2.0, 0.3])                      # the root of the tree (S02's 
 NUM_OFF = np.array([0.36, -0.36]) * CELL          # a move number sits in its square's lower-right corner
 LINE_S = 0.45                                     # the pen draws a grid line in 0.45 s (on a 0.6 s beat)
 
+# the title's words under 255,168 (bar 10; S09 sets the same three lines at 104): the tracked word, the
+# Chinese line as large and as bright as it (the zh-first master's title must read as Chinese), and the
+# small English line
+TITLE_WORD_Y = NUM_C[1] - 1.42
+TITLE_ZH_Y = NUM_C[1] - 2.02
+TITLE_SUB_Y = NUM_C[1] - 2.50
+TITLE_ZH_SIZE = 28                                # glyphs about as tall as the tracked capitals
+
+
+def title_words():
+    """(tracked "TIC-TAC-TOE", "井字棋 · 不同的对局", "DIFFERENT GAMES"): the title's three lines."""
+    word = tracked("TIC-TAC-TOE", size=26, spacing=0.9, font=FONT_TRACKED, color=INK, weight=LIGHT)
+    zh = cjk("井字棋 · 不同的对局", size=TITLE_ZH_SIZE, color=INK)
+    en = tracked("DIFFERENT GAMES", size=14, spacing=0.4, color=INK_DIM)
+    return word, zh, en
+
+
 TURNED = tuple(rot_cw(s) for s in GAME_A)         # X2 O1 X5 O4 X8
 FLIPPED = tuple(mirror_lr(s) for s in TURNED)     # X0 O1 X3 O4 X6 (game A mirrored in its diagonal)
 
@@ -71,7 +90,8 @@ GRID_B = [bb(4, k) for k in (1, 2, 3, 4)]
 MOVES_B = [bb(5, 1), bb(5, 1.5), bb(5, 2), bb(5, 2.5), bb(5, 3)]
 WIN_B = bb(5, 4)
 SIGN_IN = bb(6, 1)
-RUN_AB = [bb(6, 1 + 0.5 * k) for k in range(5)]   # 6.1, 6.1+, 6.2, 6.2+, 6.3: both orders at once
+RUN_AB = [bb(6, 1 + 0.5 * k) for k in range(5)]   # 6.1, 6.1+, 6.2, 6.2+, 6.3: both orders together ...
+RUN_B = [t + 0.15 for t in RUN_AB]                # ... board B's light a sixteenth behind board A's
 NE_1 = bb(6, 4)                                   # "=?" -> "≠"
 DISSOLVE_B = bb(7, 1)                             # B to dust; the copy lifts and slides (one beat)
 TURN = (bb(7, 2), bb(8, 1))                       # the quarter turn, 7.2-7.4
@@ -260,15 +280,11 @@ class ColdOpen(BeatScene):
         self.title_glow_group = VGroup(*[c for lay in self.title_glow for c, _, _ in lay])
         self.halo = gaussian_sprite(None, 96, 0.34, gradient=(XC.glow, OC.mid), aspect=3.0)
         self.halo.stretch_to_fit_width(12.8).stretch_to_fit_height(4.3).move_to([*NUM_C, 0])
-        word = tracked("TIC-TAC-TOE", size=26, spacing=0.9, font=FONT_TRACKED, color=INK, weight=LIGHT)
+        word, zh, en = title_words()
         self.word = InkText(word, INK)
-        zh = cjk("井字棋 · 不同的对局", size=19, color=INK_DIM)
-        en = tracked("DIFFERENT GAMES", size=16.5, spacing=0.3, color=INK_DIM)
-        dot = cjk("·", size=19, color=INK_DIM)
-        line = VGroup(zh, dot, en).arrange(buff=0.18)
-        en.align_to(zh, direction=np.array([0, -1, 0])).shift(np.array([0, 0.012, 0]))
-        self.subline = InkText(line, INK_DIM)
-        self.word_y, self.sub_y = NUM_C[1] - 1.42, NUM_C[1] - 2.0
+        self.zh_line = InkText(zh, INK)                # as large and as bright as the tracked word (the
+        self.subline = InkText(en, INK_DIM)            # zh-first master's title reads Chinese), English small
+        self.word_y, self.zh_y, self.sub_y = TITLE_WORD_Y, TITLE_ZH_Y, TITLE_SUB_Y
         bx = Rectangle(width=self.counter.ref.width + 0.2, height=self.counter.cell_h * 0.62)
         self.frame_marks = Ink(brackets(bx.move_to([0, 0, 0]), size=0.32, buff=0.32), INK_DIM, 1.6)
         # the root of the tree (bar 11), and the light pen
@@ -285,7 +301,7 @@ class ColdOpen(BeatScene):
         self.clock_mob.add_updater(lambda m: self.update_state(self.clock()))
         self.add(self.clock_mob, self.camera.frame)
         self.add(self.halo, self.A.group, self.B.group, self.C.group, self.sign.group, self.title_glow_group,
-                 self.counter, self.frame_marks, self.word, self.subline, self.root.group)
+                 self.counter, self.frame_marks, self.word, self.zh_line, self.subline, self.root.group)
         self.fix(self.pen, self.dark, self.flash)
         self.halo.set_opacity(0)
         self.rng = np.random.default_rng(255168)
@@ -377,8 +393,9 @@ class ColdOpen(BeatScene):
             for j, tj in enumerate(TICKS):
                 p += self.c_steps[:, j] * ease_out_cubic(seg(t, tj, tj + 0.1))
             return p
-        return np.array([lerp(a, b, ease_out_cubic(seg(t, HIT, L)))
-                         for a, b, L in zip(self.c_last, self.c_target, LANDS)])
+        # 10.1: every column is locked on 255,168 from the first frame after the flash (the title's boom
+        # lands on readable digits); the landing still runs left to right in the digits' glow (LANDS)
+        return self.c_target.copy()
 
     # ------------------------------------------------------------- the picture at time t
     def update_state(self, t: float):
@@ -430,7 +447,7 @@ class ColdOpen(BeatScene):
             mf = [ease_out_cubic(seg(t, a, a + 0.2)) for a in MOVES_B]
             nv = [ease_out_cubic(seg(t, a + 0.1, a + 0.36)) for a in MOVES_B]
             wf, passes = self.win_progress(t, WIN_B)
-            glow, hl = self.mark_levels(t, MOVES_B, passes, WIN_B, RUN_AB, GAME_B)
+            glow, hl = self.mark_levels(t, MOVES_B, passes, WIN_B, RUN_B, GAME_B)
             B.draw(lf, mf, nv, wf, glow, hl, vis=vis)
         # ---- the copy of A: lifts and slides (7.1), turns (7.2-7.4), flips (8.2), falls (8.4)
         if t < DISSOLVE_B or gone:
@@ -607,7 +624,9 @@ class ColdOpen(BeatScene):
         self.halo.set_opacity(hv if t >= HIT else 0.0)
         wv = ease_out_cubic(seg(t, HIT + 0.15, HIT + 0.75)) * (1 - seg(t, DISSOLVE, DISSOLVE + 0.8))
         self.word.show([NUM_C[0], self.word_y - 0.1 * (1 - wv)], vis=wv, color=INK)
-        sv = ease_out_cubic(seg(t, HIT + 0.4, HIT + 1.0)) * (1 - seg(t, DISSOLVE, DISSOLVE + 0.8))
+        zv = ease_out_cubic(seg(t, HIT + 0.3, HIT + 0.9)) * (1 - seg(t, DISSOLVE, DISSOLVE + 0.8))
+        self.zh_line.show([NUM_C[0], self.zh_y - 0.1 * (1 - zv)], vis=zv, color=INK)
+        sv = ease_out_cubic(seg(t, HIT + 0.45, HIT + 1.05)) * (1 - seg(t, DISSOLVE, DISSOLVE + 0.8))
         self.subline.show([NUM_C[0], self.sub_y - 0.08 * (1 - sv)], vis=sv, color=INK_DIM)
 
     def update_root(self, t: float):
@@ -678,10 +697,12 @@ class ColdOpen(BeatScene):
                            for t, n, sq in zip(self.pass_times(WIN_B), ("C#6", "D6", "E6"), (0, 1, 2))])
         S.effect(WIN_B, "whoosh_up", BEAT, sx(B.square(1), WIN_B))
         # bar 6: "=?" (a suspended tone), both orders in counterpoint, "≠" (a soft thump)
-        S.phrase("=?", [(SIGN_IN, "bell@E4", 0.0)])
+        S.phrase("=?", [(SIGN_IN, "bell@E4", 0.0)], gain=0.55)     # a soft suspended tone (velocity 0.2)
+        # the two orders as two interleaved melodies: the left board on the half beats, the right one a
+        # sixteenth later (its light too), so the seconds between them (G#4-A4, C#5-D5) are steps, not clashes
         S.phrase("both orders", [(t, tag(player(k), GAME_A[k]), sx(A.square(GAME_A[k]), t)) for k, t in enumerate(RUN_AB)]
-                 + [(t, tag(player(k), GAME_B[k]), sx(B.square(GAME_B[k]), t)) for k, t in enumerate(RUN_AB)],
-                 gain=0.75)                                 # two notes at once
+                 + [(t, tag(player(k), GAME_B[k]), sx(B.square(GAME_B[k]), t)) for k, t in enumerate(RUN_B)],
+                 gain=0.75)
         S.effect(NE_1, "thump", 0.6, 0.0)
         # bar 7: B to dust (a shimmer), six plucks across the quarter turn (F#m9), left to right
         S.effect(DISSOLVE_B, "shimmer", 1.8, sx(CB, DISSOLVE_B))
@@ -703,8 +724,10 @@ class ColdOpen(BeatScene):
                            for k, (n, x) in enumerate(zip(("F#6", "D6", "C#6", "B5"), (-2.5, 2.2, -1.2, 1.0)))])
         S.phrase("converge", [(SWIRL[0] + 0.15 * k, f"glass@{n}", lerp(-0.6, -0.15, k / 4))
                               for k, n in enumerate(("A5", "F#5", "D5", "C#5", "B4"))])
-        S.phrase("root", [(ROOT_IN, "grid@B2", -0.2), (ROOT_IN + 0.15, "grid@F#3", -0.1),
-                          (ROOT_IN + 0.3, "pen@B5", 0.0)])
+        S.phrase("root", [(ROOT_IN, "grid@B2", -0.2), (ROOT_IN + 0.15, "grid@F#3", -0.1)])
+        # the pen's arrival on the root: a soft blip like every other pen blip of the film (0.25-0.35;
+        # a lone item sounds at 0.5 x gain), inside the title tail's dip at the match cut into S02
+        S.phrase("root pen", [(ROOT_IN + 0.3, "pen@B5", 0.0)], gain=0.6)
         S.log(self)
         self.mark("silence", at=BREATH, dur=HIT - BREATH, hit=False)
         self.mark("title", at=HIT)
@@ -728,7 +751,9 @@ class ColdOpen(BeatScene):
         add(WIN_B, BEAT, CB[0], CB[1] + CELL, 4.2, 0.2)
         add(SIGN_IN, 0.3, *SIGN, 0.6, 0.9)
         for t in RUN_AB:
-            add(t, 0.3, CAM_X, 0.3, 11.0, 4.2)
+            add(t, 0.15, *CA, 4.2, 4.2)
+        for t in RUN_B:
+            add(t, 0.15, *CB, 4.2, 4.2)
         add(NE_1, BEAT, *SIGN, 0.6, 0.9)
         add(DISSOLVE_B, BEAT, 3.3, 0.3, 11.0, 4.6)
         add(TURN[0], TURN[1] - TURN[0], *CB, 4.2, 4.2)

@@ -3,15 +3,17 @@
 Bars 21-32 (0:48.0-1:16.8) of script.md; scene time 0 is the downbeat of bar 21. The picture is a pure
 function of the scene time (State.update), as in s01_open; the notes come from the same numbers (Sounds).
 
-    21-22  the 24 dim points of S02 gather into board A's grid; game A replays, one mark per beat (the motif);
+    21-22  the 24 dim points of S02 gather into board A's grid (from rest: frame 0 is S02's last frame);
+           game A replays, one mark per beat (the motif);
            22.2 the top-row win line; 22.3 the game stops: a stop bar drops after slot 5 of a move timeline,
            "第 5 步 · X 赢 · MOVE 5 · X WINS" (c07)
     23-25  but 9! kept going: four dashed ghost marks, O6 X5 O8 X7 (moves 6-9, never glowing); 24.1-25.3 the
            ghosts run through all 24 orders of the four empty squares, one per sixteenth (adjacent swaps, so
            moves 6 and 8 stay O, 7 and 9 X), the readout counts 1 -> 24; 25.3 "4 × 3 × 2 × 1 = 24" beside
            the timeline's ghost slots (lining figures: s02_fill.maths), clear of the captions
-    26-28  the 24 ghost endings fan out behind the board as a spread deck (±40°), each with the same five
-           real moves and its own dashed ending (c08); 27.4 "幽灵对局 · GHOST GAMES" (c09); the fan drifts
+    26-28  the 24 ghost endings fly out from behind the board as a spread deck: 24 small copies in two fanned
+           wings of 12 (no overlaps), each with the same five bright real moves and its own dashed ending
+           (c08); 27.4 "幽灵对局 · GHOST GAMES" (c09); the copies sway
     29     the fan folds back; the board shrinks onto the left end of the move timeline, which rises and widens
            (X's slots cyan, O's amber); X's slots 1, 3, 5 light with a small X above each (X's 1st, 2nd, 3rd
            mark), "第 3 个 X：第 5 步 · X'S 3RD MARK: MOVE 5" under slot 5 (c10; it leaves with c10, at 31.1+)
@@ -142,10 +144,27 @@ TINY_CELL = 0.3                                    # the tiny boards of bars 29-
 LEFT_END = np.array([-6.0, -0.55])                 # board A shrunk onto the left end of the timeline
 TINY_Y = 1.07                                      # the tiny boards above slots 5-9
 MULT_Y = 2.05                                      # their multipliers
-FAN_PIVOT = BC + np.array([0.0, -2.3])             # the spread deck turns about this point
-FAN_SCALE = 0.92
-FAN_DEG = 40.0
 CARD = 4.4                                         # the card behind each board of the deck
+# the spread deck (bars 26-28): the 24 copies fly out from behind the board into two fanned wings of 12
+# (3 rows x 4 columns each side, tilted outwards like a hand of cards), small enough not to overlap, so each
+# copy reads as a board: the same five bright real moves, its own dashed ending (an overlapping ±40° or ±60°
+# fan behind the opaque board showed only a tangle of tilted lines at its edges)
+DECK_SCALE = 0.22                                  # a copy is 0.22 x the board (a card 0.97 wide)
+WING_X = (3.25, 4.33, 5.41, 6.49)                  # card centres, |x|, from the board outwards
+WING_Y = (2.42, 1.34, 0.26)                        # rows, top to bottom
+WING_DROP = 0.10                                   # each column further out sits a little lower (an arc) ...
+WING_TILT = (5.0, 8.0, 11.0, 14.0)                 # ... and tilts a little more (degrees)
+
+
+def deck_slot(i: int):
+    """Where copy i lands: (centre, tilt in radians). Copies 0-11 on the left (left to right, top to bottom
+    in each column), 12-23 on the right, so the deck's grains pan left to right as the copies fly out."""
+    side, j = (-1, i) if i < 12 else (1, i - 12)
+    col, row = divmod(j, 3)
+    k = 3 - col if side < 0 else col                # 0: the column next to the board
+    x = side * WING_X[k]
+    y = WING_Y[row] - WING_DROP * k * k
+    return np.array([x, y]), -side * math.radians(WING_TILT[k])
 HANDOVER = {"board": np.array([0.0, -0.95]), "cell": 0.6,
             "panels": [(-4.1, 1.65, 3.8, 2.6), (0.0, 1.65, 3.8, 2.6), (4.1, 1.65, 3.8, 2.6)]}
 
@@ -191,6 +210,15 @@ def tl_slot(k: int, t: float) -> np.ndarray:
     e = ease_in_out_cubic(seg(t, *SHRINK))
     a, b = TL_NARROW, TL_WIDE
     return np.array([lerp(a["x0"] + a["dx"] * (k - 1), b["x0"] + b["dx"] * (k - 1), e), lerp(a["y"], b["y"], e)])
+
+
+def gather_ease(u: float) -> float:
+    """The 24 points' flight into the grid: an ease-out arrival whose first frames start from rest (an
+    ease-out from frame 0 would jump 40-120 px on the first frame after S02's last one, which shows them
+    exactly where S02 left them)."""
+    u = clamp01(u)
+    v = clamp01(u / 0.25)
+    return ease_out_cubic(u) * v * v * (3 - 2 * v)
 
 
 def _dashed(tmpl, n: int):
@@ -289,7 +317,7 @@ class BoardRig:
 # ---------------------------------------------------------------- the spread deck: 24 faint copies
 class DeckCard:
     """One card of the spread deck: the board with game A's five real moves and one dashed ending, as a
-    few Hairlines (one Cairo path each), placed by a turn about FAN_PIVOT."""
+    few Hairlines (one Cairo path each), placed by centre, scale and tilt."""
 
     def __init__(self, order):
         c = CELL
@@ -341,15 +369,16 @@ class DeckCard:
         self.back_tp = self.back_m.points.copy()
         self.group = VGroup(self.back_m, self.card, self.grid, self.os, self.xs, self.gh)
 
-    def show(self, theta: float, vis: float, real: float = 1.0):
+    def show(self, centre, scale: float, theta: float, vis: float, real: float = 1.0):
         if vis <= 1e-3:
             for m in (self.card, self.grid, self.xs, self.os, self.gh):
                 m.set_segments([], [])
             self.back_m.set_fill(BG, opacity=0)
             return
         c, s = math.cos(theta), math.sin(theta)
-        R = FAN_SCALE * np.array([[c, -s], [s, c]])
-        off = FAN_PIVOT + R @ (BC - FAN_PIVOT) / FAN_SCALE              # the card's centre after the turn
+        R = scale * np.array([[c, -s], [s, c]])
+        off = np.asarray(centre, dtype=float)
+        w = max(0.6, scale ** 0.35)                                      # hairlines thin a little with the size
 
         def tr(p):
             return p @ R.T + off
@@ -357,10 +386,10 @@ class DeckCard:
         q[:, :2] = tr(self.back_tp[:, :2])
         self.back_m.points = q
         self.back_m.set_fill(BG, opacity=clamp01(DECK_BODY * vis))
-        for key, mob, op in (("card", self.card, 0.45), ("grid", self.grid, 0.13), ("xs", self.xs, 0.42 * real),
-                             ("os", self.os, 0.40 * real), ("gh", self.gh, 0.62)):
+        for key, mob, op in (("card", self.card, 0.40), ("grid", self.grid, 0.42), ("xs", self.xs, 0.80 * real),
+                             ("os", self.os, 0.75 * real), ("gh", self.gh, 0.62)):
             P, Q = self.segs[key]
-            mob.set_segments(tr(P), tr(Q), opacity=op * vis)
+            mob.set_segments(tr(P), tr(Q), width=w, opacity=clamp01(op * vis))
 
 
 # ---------------------------------------------------------------- the scene
@@ -457,14 +486,14 @@ class GhostGames(BeatScene):
 
     # --- 21.1: the 24 points gather into board A's grid
     def update_gather(self, t: float):
-        e = ease_out_cubic(seg(t, *GATHER))
+        e = gather_ease(seg(t, *GATHER))
         fade = 1 - ease_in_out_sine(seg(t, GROW[0] + 0.05, GROW[1]))
         if fade > 1e-3:
             pts = ORDER_SCREEN + (self.dot_target - ORDER_SCREEN) * e
             trail = [pts]
             wts = [np.full(24, ORDER_DOTS["weight"] * fade)]
             for lag, wt in ((0.03, 0.4),):                              # a short motion-blur trail
-                e2 = ease_out_cubic(seg(t - lag, *GATHER))
+                e2 = gather_ease(seg(t - lag, *GATHER))
                 if 0 < e2 < 0.98:
                     trail.append(ORDER_SCREEN + (self.dot_target - ORDER_SCREEN) * e2)
                     wts.append(np.full(24, ORDER_DOTS["weight"] * fade * wt))
@@ -558,18 +587,25 @@ class GhostGames(BeatScene):
         return out
 
     # --- the spread deck (bars 26-28) and the front card it sits behind
-    def deck_angle(self, t: float, i: int) -> float:
-        th = math.radians(-FAN_DEG + 2 * FAN_DEG * i / 23)
+    def deck_place(self, t: float, i: int):
+        """Copy i: (centre, scale, tilt). It flies out from behind the board (26.1, staggered over one beat,
+        ease-out), sways gently while the deck is open (ALIVE) and flies back in as the deck folds (29.1)."""
+        slot, tilt = deck_slot(i)
         t0 = FAN + 0.6 * i / 24
-        e = ease_out_cubic(seg(t, t0, t0 + 0.38))
-        sway = math.radians(2.0) * math.sin(2 * math.pi * (t - FAN) / (2 * BAR) + 0.27 * i) * seg(t, FAN + 0.6, FAN + 1.8)
-        fold = 1 - ease_in_cubic(seg(t, *FOLD))
-        return (th * e + sway) * fold
+        e = ease_out_cubic(seg(t, t0, t0 + 0.45)) * (1 - ease_in_cubic(seg(t, *FOLD)))
+        on = seg(t, FAN + 0.6, FAN + 1.8) * (1 - seg(t, FOLD[0], FOLD[0] + 0.1))
+        ph = 2 * math.pi * (t - FAN) / (2 * BAR) + 0.61 * i
+        sway = math.radians(2.0) * math.sin(ph) * on
+        bob = np.array([0.03 * math.sin(ph + 1.3), 0.04 * math.sin(ph)]) * on
+        arc = np.array([0.0, 0.35 * math.sin(math.pi * e)])               # a small lift on the way out and back
+        centre = BC + (slot - BC) * e + arc * (1 - e) + bob
+        scale = lerp(0.9, DECK_SCALE, ease_out_cubic(clamp01(e * 1.15)))
+        return centre, scale, tilt * e + sway
 
     def update_deck(self, t: float):
         on = FAN <= t < FOLD[1]
         presence = ease_out_cubic(seg(t, FAN, FAN + 0.3)) * (1 - seg(t, FOLD[0] + 0.2, FOLD[1]))
-        self.backing.set_fill(BG, opacity=clamp01(presence) if on else 0.0)
+        self.backing.set_fill(BG, opacity=clamp01(BACKING * presence) if on else 0.0)
         if on:
             a = np.linspace(0, 1, 2)
             q = CARD / 2
@@ -580,12 +616,12 @@ class GhostGames(BeatScene):
             self.front_card.set_segments([], [])
         for i, card in enumerate(self.deck):
             if not on:
-                card.show(0.0, 0.0)
+                card.show(BC, 1.0, 0.0, 0.0)
                 continue
             t0 = FAN + 0.6 * i / 24
             vis = ease_out_cubic(seg(t, t0, t0 + 0.2)) * (1 - seg(t, FOLD[0] + 0.15, FOLD[1]))
-            real = 1.0 + 0.5 * pulse(t, PULSE5 + 0.06 * 2, 0.5)
-            card.show(self.deck_angle(t, i), vis, real)
+            real = 1.0 + 0.4 * pulse(t, PULSE5 + 0.06 * 2, 0.5)
+            card.show(*self.deck_place(t, i), vis, real)
 
     # --- the move timeline
     def update_timeline(self, t: float):
@@ -768,10 +804,11 @@ class GhostGames(BeatScene):
         S.phrase("stop", [(STOP, "pluck@D3", sx(tl_slot(5, STOP), STOP))], gain=0.6)   # a muted pluck
         S.phrase("ghosts", [(t, f"ghost@{PITCH[s]}", sx(board.square(s), t)) for t, s in zip(GHOSTS, FIRST_GHOSTS)],
                  gain=0.75)
-        S.phrase("shuffle", [(t, "ghost", sx(BC, t) + 2.0 * math.sin(k)) for k, t in enumerate(SHUFFLE)], rise=True,
-                 gain=0.5)
+        S.phrase("shuffle", [(t, f"ghost@{n}", sx(BC, t) + 2.0 * math.sin(k))
+                             for k, (t, n) in enumerate(zip(SHUFFLE, rising(24, TONES_BM9)))], gain=0.5)
         S.effect(LAND, "thump", 0.6, 0.0)
-        S.phrase("deck", [(FAN + 0.6 * i / 24, "ghost", 3.2 * (2 * i / 23 - 1)) for i in range(24)], rise=True, gain=0.45)
+        S.phrase("deck", [(FAN + 0.6 * i / 24, f"ghost@{n}", 3.2 * (2 * i / 23 - 1))
+                          for i, n in enumerate(rising(24, TONES_FSM9))], gain=0.45)
         S.phrase("name", [(FAN_LABEL + 0.04 * i, f"glass@{n}", 0.0) for i, n in enumerate(("F#4", "A4", "C#5", "E5"))],
                  gain=0.5)
         S.effect(PULSE5, "shimmer", 1.2, 0.0)
@@ -784,8 +821,8 @@ class GhostGames(BeatScene):
         for t0, m in zip(RISE, range(5, 10)):
             n = GHOST_ENDINGS[m] if m < 9 else 0
             if n:
-                S.phrase(f"ghosts of move {m}", [(t0 + 0.1 + 0.4 * j / max(1, n), "ghost", sx(tl_slot(m, t0), t0))
-                                                 for j in range(n)], rise=True, gain=0.4)
+                S.phrase(f"ghosts of move {m}", [(t0 + 0.1 + 0.4 * j / max(1, n), f"ghost@{q}", sx(tl_slot(m, t0), t0))
+                                                 for j, q in enumerate(rising(n, TONES_E9))], gain=0.4)
         S.effect(GLIDE[0], "whoosh_up", 1.2, 0.0)
         S.phrase("panels", [(PANELS + 0.06 * j, f"grid@{n}", x) for j, (n, x) in
                             enumerate(zip(("E3", "B3", "E4"), (-4.1, 0.0, 4.1)))], gain=0.55)
@@ -842,5 +879,20 @@ GHOST_VIS = 0.55                                   # ghost marks: dashed #7D8484
 RAY_PHASE = list(np.random.default_rng(31).uniform(0.0, 1.0, 24))   # each ghost ray's dots start apart
 GHOST_NUM_VIS = 0.8
 DECK_BODY = 0.0                                    # the deck's cards are faint, transparent copies
+BACKING = 1.0                                      # the main board's backing hides the copies until they clear it
 FAN_TAG_Y = 3.62                                   # the deck's name, above the fan (the camera is eased back)
 FORMULA_GAP = 0.62                                 # 25.3: "4 × 3 × 2 × 1 = 24" starts this far right of slot 9
+
+# the ghost counts' notes: they climb through the bar's chord (video.yaml music.chords) to D6 at most, each
+# count spread over its own length (the composer's unpitched rise clamps at its top note, D7 / C#7: the last
+# 10-12 ghosts of a 24-count would repeat one shrill reversed-glass note)
+TONES_BM9 = ["D4", "F#4", "A4", "B4", "C#5", "D5", "F#5", "A5", "B5", "C#6", "D6"]    # bars 23-25: Bm9/D
+TONES_FSM9 = ["E4", "F#4", "G#4", "A4", "C#5", "E5", "F#5", "G#5", "A5", "C#6"]       # bars 26-27: F#m9
+TONES_E9 = ["E4", "F#4", "G#4", "B4", "D5", "E5", "F#5", "G#5", "B5", "D6"]           # bar 30: E9
+
+
+def rising(n: int, tones) -> list[str]:
+    """n notes climbing through `tones`: a few items take the lowest tones in turn; 24 step up the whole set."""
+    if n <= len(tones):
+        return list(tones[:n]) if n < 4 else [tones[round(i * (len(tones) - 1) / (n - 1))] for i in range(n)]
+    return [tones[round(i * (len(tones) - 1) / (n - 1))] for i in range(n)]

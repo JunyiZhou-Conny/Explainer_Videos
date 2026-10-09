@@ -13,12 +13,15 @@ frame, and the notes are computed from the same numbers (Sounds) and logged with
            half bar (× 7 ring 3, × 6 ring 4, × 5 ring 5) and one per beat (× 4 … × 1, rings 6-9): each
            ring sprays out of its parents, clockwise. The camera pulls out 0.45 -> 1.0 (15.1-17.4)
     18     HIT: ring 9 flares (FILL_WEIGHT / fill_flare in common.py: S06 repeats this frame at 67.1);
-           362,880 lands (Inter Black, neutral halo), "= 9! = 362,880", "9 的阶乘 · NINE FACTORIAL",
-           "所有顺序的树 · THE TREE OF ORDERS" (c05); the tree turns 0.5°/s
+           362,880 lands (Inter Black, neutral halo), "= 9! = 362,880" (the 9! upright in Inter), with a
+           leader from the 9! to "9! 读作“9 的阶乘” / 9! = NINE FACTORIAL" under it, "所有顺序的树 · THE TREE
+           OF ORDERS" (c05); the tree turns 0.5°/s; the frame sits a little low, so ring 9 clears the captions
     19     255,168 drifts in under it (the title's halo, cool left, warm right); 19.2 a RED ">" (c06)
-    20     the camera dives (ease-in-expo) into ring 9 at 10.12°: the rings streak past (motion blur),
-           the numbers fly off (each fades as it reaches the caption band; the tree's tag leaves first);
-           20.4 the frame fills with one glowing point (sigma capped, so the corners and the captions stay
+    20     the camera dives (ease-in-expo) into ring 9 at 10.12° (its sideways travel from 20.2): the rings
+           streak past (motion blur) and fade to nothing as they reach the caption band, the boards round the
+           root fade out before they get there; the numbers stay pinned in frame (c06 asks about them) and
+           fade over 20.3-20.4 (the tree's tag leaves as the dive starts); 20.4 the frame fills with one
+           glowing point (sigma capped and floored above the band, so the corners and the captions stay
            dark), which resolves into the 24 dim points of the 24 fill orders that begin with game A's five
            moves (slots 10,200-10,223)
 
@@ -35,9 +38,9 @@ from __future__ import annotations
 import math
 
 import numpy as np
-from manim import LEFT, ImageMobject, Line, MarkupText, Mobject, VGroup, VMobject, config
+from manim import LEFT, RIGHT, ImageMobject, Line, MarkupText, Mobject, Text, VGroup, VMobject, config
 
-from explainer.short import (BeatScene, FONT_MONO, FONT_OLDSTYLE, INK, INK_DIM, RED, WHITE, RollingCounter, cjk,
+from explainer.short import (BeatScene, FONT_HEAVY, FONT_MONO, FONT_OLDSTYLE, INK, INK_DIM, RED, WHITE, RollingCounter, cjk,
                              hero_number, splat, stroke_px, tracked)
 
 from common import (FILL_COLOR, FILL_SPLAT, FILL_WEIGHT, GAME_A, H, NINE_FACT, OC, PEN_HALO, TREE_ROOT, XC,
@@ -111,8 +114,11 @@ GT_T = bb(19, 2)                                    # the RED ">"
 DIVE = (bb(20, 1), bb(20, 4))                       # ease-in-expo into ring 9 at 10.12°
 RESOLVE = (bb(20, 4), END)                          # the glowing point resolves into 24 dim points
 TEXT_OUT = (bb(20, 1), bb(20, 1) + 0.5)             # the HUD readout fades as the dive starts
+TRAVEL = (bb(20, 2), bb(20, 4))                     # the dive's sideways travel starts at 20.2 (c06 is read first)
+NUM_OUT = (bb(20, 3), bb(20, 4))                    # the right third's numbers stay pinned in frame, then fade
 GLOW_SIG_MAX = 2.6                                  # the glowing point at its largest (screen units)
 BAND_TOP, BAND_RAMP = -2.72, 0.4                    # the captions' band (Chinese glyph tops at 87 % - 38 px)
+BAND_FADE = (BAND_TOP - 0.05, BAND_TOP + 0.45)      # the dive: the tree fades to nothing as it reaches the band
 PULSES = ([bb(b, k) for b in (12, 13, 14) for k in (1, 3)] + [bb(15, k) for k in (1, 2, 3, 4)]
           + [bb(16, 1 + 0.5 * k) for k in range(8)] + [bb(17, 1 + 0.25 * k) for k in range(16)])
 
@@ -123,6 +129,8 @@ TREE_LOOK = dict(color=FILL_COLOR, **FILL_SPLAT)
 SPARSE_LOOK = dict(color=FILL_COLOR, **SPARSE)
 DOTS_LOOK = dict(color=FILL_COLOR, size_px=ORDER_DOTS["size_px"], glow_px=ORDER_DOTS["glow_px"],
                  glow_amount=ORDER_DOTS["glow_amount"], gain=ORDER_DOTS["gain"])
+GRAINS = {3: 6, 4: 8, 5: 10, 6: 6, 7: 6, 8: 6, 9: 6}                 # each ring's spray (sound), denser ...
+GRAIN_GAIN = {3: 0.32, 4: 0.36, 5: 0.40, 6: 0.30, 7: 0.32, 8: 0.34, 9: 0.36}   # ... but bar 17 is no louder than 18.1
 RING_SUB = {7: 2, 8: 3}                                            # dust rings drawn from every 2nd / 3rd point
 SPARSE_WEIGHT = {2: 1.5, 3: 0.85, 4: 0.13}
 INNER_GAIN = {5: 0.7, 6: 0.6, 7: 0.55, 8: 0.55, 9: 1.0}            # rings 5-8: fainter dust under ring 9
@@ -163,8 +171,8 @@ def _cam_before_dive(t: float):
         return ROOT[0] * (1 - e), ROOT[1] * (1 - e), w_close * (W / w_close) ** e
     if t < HIT:
         return 0.0, 0.0, W
-    e = ease_in_out_sine(seg(t, HIT, DIVE[0]))      # bars 18-19: a slow push towards the tree
-    return -0.12 * e, 0.04 * e, W * (1 - 0.025 * e)
+    e = ease_in_out_sine(seg(t, HIT, DIVE[0]))      # bars 18-19: a slow push towards the tree, the frame a
+    return -0.12 * e, -0.06 * e, W * (1 - 0.025 * e)   # little low, so ring 9 clears c05/c06 (and the HUD)
 
 
 C_DIVE0 = _cam_before_dive(DIVE[0])
@@ -179,7 +187,7 @@ def cam_path(t: float):
     if t < DIVE[1]:                                 # the dive: TARGET glides to S_END while the zoom accelerates
         u = seg(t, *DIVE)
         k = K_DIVE0 * (K_GLOW / K_DIVE0) ** ease_in_expo(u)
-        s = S_DIVE0 + (S_END - S_DIVE0) * ease_in_out_cubic(u)
+        s = S_DIVE0 + (S_END - S_DIVE0) * ease_in_out_cubic(seg(t, *TRAVEL))
     else:                                           # the resolve: the zoom carries on and settles
         u = seg(t, *RESOLVE)
         k = K_GLOW * (K_FINAL / K_GLOW) ** ease_out_cubic(u)
@@ -306,9 +314,10 @@ class DotSplat(ImageMobject):
         self.set_resampling_algorithm(2)
         self.stretch_to_fit_width(W).stretch_to_fit_height(H).move_to([0, 0, 0])
 
-    def draw_layers(self, layers, glow=None):
+    def draw_layers(self, layers, glow=None, floor=None):
         """Several splat layers (pts, weights, look) and an optional soft glow composited (over, bottom to top)
-        into this one image: one resample per frame instead of one per layer."""
+        into this one image: one resample per frame instead of one per layer. `floor` = (y0, y1) screen units:
+        the glow fades out below y1 and is gone at y0 (the caption band stays dark)."""
         h, w_ = self.res[1], self.res[0]
         acc_rgb = np.zeros((h, w_, 3), np.float32)
         acc_a = np.zeros((h, w_, 1), np.float32)
@@ -317,6 +326,9 @@ class DotSplat(ImageMobject):
             xs = ((np.arange(w_) + 0.5) / w_ * W - W / 2).astype(np.float32)
             ys = (H / 2 - (np.arange(h) + 0.5) / h * H).astype(np.float32)
             g = np.float32(op) * np.exp(-((xs[None, :] - cx) ** 2 + (ys[:, None] - cy) ** 2) / np.float32(2 * sig * sig))
+            if floor is not None:
+                u = np.clip((ys - floor[0]) / (floor[1] - floor[0]), 0, 1)
+                g = g * (u * u * (3 - 2 * u))[:, None].astype(np.float32)
             acc_a = g[..., None]
             acc_rgb = acc_a * np.asarray(col, np.float32)[None, None, :]
         for pts, weights, look in layers:
@@ -402,6 +414,15 @@ def _park(img) -> None:
 def _hex(c) -> str:
     c = np.clip(np.asarray(c), 0, 1)
     return "#%02X%02X%02X" % tuple(int(round(v * 255)) for v in c)
+
+
+BAND_GLOW = (BAND_TOP - 0.05, BAND_TOP + 1.3)       # the dive's glowing point: a soft floor above the band
+
+
+def band_mask(y, on: float = 1.0) -> np.ndarray:
+    """Weights of points at screen heights y during the dive: 0 in the caption band, 1 above BAND_FADE."""
+    u = np.clip((np.asarray(y, dtype=float) - BAND_FADE[0]) / (BAND_FADE[1] - BAND_FADE[0]), 0.0, 1.0)
+    return 1.0 - on * (1.0 - u * u * (3 - 2 * u))
 
 
 def maths(s: str, size: float = 30, color: str = INK) -> MarkupText:
@@ -510,7 +531,7 @@ class FillOrders(BeatScene):
         self.add(*self.root_lines, self.guide, self.edges1, self.edges2, self.kid_lines, *self.kid_x,
                  self.lens_ring, self.lens_track, self.lens_lines, *self.lens_x, *self.lens_o)
         self.fix(self.canvas, self.glow, self.halo_n, self.halo_t, *self.number_rigs, self.gt,
-                 self.tree_tag_line, self.section, self.readout_group, self.pen)
+                 self.tree_tag_line, self.leader9_line, self.section, self.readout_group, self.pen)
         self.update_state(0.0)
 
     def build_numbers(self):
@@ -522,15 +543,33 @@ class FillOrders(BeatScene):
         self.row_a_y = 0.72
         self.factor_rigs = [Glyphs(g, INK, INK, 7, layers=4, glow_opacity=0.5) for g in groups]
         self.factor_off = [g.get_center()[:2] - rc[:2] for g in groups]
-        row_b = maths("= 9! = 362,880", size=26, color=INK)
+        # "= 9! = 362,880": the symbol 9! set upright in Inter, about 1.45 times the formula's figures (an
+        # italic "!" reads as "9." or "9l" at phone size), with a leader to the tag that says how to read it
+        eq = maths("=", size=26, color=INK)
+        nine = Text("9!", font=FONT_HEAVY, weight="MEDIUM", font_size=34, color=INK)
+        tail = maths("= 362,880", size=26, color=INK)
+        row_b = VGroup(eq, nine, tail).arrange(RIGHT, buff=0.13)
+        base = tail[1].get_bottom()[1]                                   # figures on one baseline
+        nine.shift(np.array([0.0, base - nine[0].get_bottom()[1], 0.0]))
+        eq.move_to(np.array([eq.get_center()[0], tail[0].get_center()[1], 0.0]))
         self.row_b = Glyphs(row_b, INK, INK, 6, layers=4, glow_opacity=0.4)
-        bang = [g for g in row_b][1:3]                                   # the "9!"
         self.row_b_y = 0.30
-        self.row_b_x = COL_X                                             # centred under row A
-        self.nine_x = self.row_b_x + (VGroup(*bang).get_center()[0] - row_b.get_center()[0])
-        tag9 = bi_label("9 的阶乘", "NINE FACTORIAL", zh_size=21, en_size=20, color=INK_DIM)
+        self.row_b_x = COL_X - row_a.width / 2 + 0.3 + row_b.width / 2  # indented under row A (it continues it)
+        rbc = row_b.get_center()[:2]
+        self.nine_xy = np.array([self.row_b_x, self.row_b_y]) + (nine.get_center()[:2] - rbc)   # the 9! on screen
+        self.nine_bottom = self.row_b_y + (nine.get_bottom()[1] - rbc[1])
+        self.nine_x = self.nine_xy[0]
+        tag9 = VGroup(cjk("9! 读作“9 的阶乘”", size=20, color=INK_DIM),
+                      tracked("9! = NINE FACTORIAL", size=16.5, spacing=0.12, color=INK_DIM)).arrange(
+            direction=np.array([0, -1, 0]), buff=0.12, aligned_edge=LEFT)
         self.tag9 = Glyphs(tag9, INK_DIM)
-        self.tag9_xy = np.array([max(self.nine_x, 1.2 + tag9.width / 2), -0.10])
+        self.tag9_w, self.tag9_h = tag9.width, tag9.height
+        left = self.nine_x - nine.width / 2 - 0.03                       # the tag's small "9!" under the big one
+        self.tag9_xy = np.array([left + tag9.width / 2, -0.50])
+        small9 = cjk("9!", size=20)
+        self.leader9 = (np.array([self.nine_x, self.nine_bottom - 0.05]),
+                        np.array([left + small9.width / 2, self.tag9_xy[1] + self.tag9_h / 2 + 0.05]))
+        self.leader9_line = Hairlines(INK_DIM, 1.2)
         hero = hero_number("362,880", size=66)
         self.hero = Glyphs(hero, WHITE, INK, 16, layers=6, glow_opacity=0.42)
         self.hero_xy = np.array([COL_X, 1.55])
@@ -542,7 +581,7 @@ class FillOrders(BeatScene):
         u = (xs - xs.min()) / (xs.max() - xs.min())
         gcols = [_hex(rgb(XC.glow) * (1 - v) + rgb(OC.mid) * v) for v in u]
         self.title = Glyphs(title, WHITE, INK, 12, layers=6, glow_opacity=0.55, glow_colors=gcols)
-        self.title_xy = np.array([COL_X + 0.32, -0.95])
+        self.title_xy = np.array([COL_X + 0.32, -1.32])
         self.title_w = title.width
         self.halo_t = gaussian_sprite(None, 96, 0.34, gradient=(XC.glow, OC.mid), aspect=3.0)
         self.halo_t.stretch_to_fit_width(4.6).stretch_to_fit_height(1.5)
@@ -570,6 +609,11 @@ class FillOrders(BeatScene):
         self.M = k * _rot(ph)                                             # rel (unturned) -> screen
         self.off = (ROOT - np.array([cx, cy])) * k
         self.k = k
+        # the dive (bar 20) must keep the caption band clear while c06 is read: the tree's splat fades to
+        # nothing as it reaches the band (band_on), and the hairline boards, edges and the pen round the root
+        # fade out as a block before their lowest point gets there (hair)
+        self.band_on = ease_in_out_sine(seg(t, DIVE[0], DIVE[0] + 0.3))
+        self.hair = 1.0 if t < DIVE[0] else clamp01((self.off[1] - 1.05 * k - (BAND_TOP + 0.15)) / 0.6)
         self.update_root(t)
         self.update_ring1(t)
         self.update_lens(t)
@@ -591,7 +635,7 @@ class FillOrders(BeatScene):
         ph = phi(t)
         A = _rot(ph)
         breathe = 1.0 - 0.22 * (0.5 - 0.5 * math.cos(2 * math.pi * t / BAR)) * (t < PULL[0])   # from S01's level
-        vis = 1.0 if self.in_view(ROOT, 0.5) else 0.0
+        vis = (1.0 if self.in_view(ROOT, 0.5) else 0.0) * self.hair
         for ln in self.root_lines:
             ln.show(1.0, A, ROOT, vis=vis * clamp01(breathe), width=1.0 / self.k)
         # the dashed guide for ring 1: drawn clockwise from 12 o'clock over 12.1-12.4, gone as ring 1 lands
@@ -612,7 +656,8 @@ class FillOrders(BeatScene):
         ph = phi(t)
         A = _rot(ph)
         P, Q, E1p, E1q = [], [], [], []
-        far = self.k > 40.0                                              # deep in the dive: all far off
+        far = self.k > 40.0 or self.hair <= 1e-3                         # deep in the dive: all far off
+        hv = self.hair
         for k in range(9):
             e = self.kid_progress(t, k)
             if t < KIDS[k] or far:
@@ -627,12 +672,12 @@ class FillOrders(BeatScene):
             xc = c + A @ (square_centre(k, KID_CELL) * s)
             g = 1.0 + 1.2 * pulse(t, KIDS[k], 0.35)
             self.kid_x[k].show(ease_out_cubic(seg(t, KIDS[k], KIDS[k] + 0.25)), A * s, xc, glow=g,
-                               width=1.0 / self.k, glow_width=1.0)
+                               width=1.0 / self.k, glow_width=1.0, vis=hv)
             # the edge from the root trails the child out
             E1p.append(tree_point(self.kid_angles[k], 0.27, ph))
             E1q.append(tree_point(self.kid_angles[k], max(0.27, r - 0.15), ph))
-        self.kid_lines.set_segments(P, Q, width=1.0 / self.k, opacity=0.9)
-        self.edges1.set_segments(E1p, E1q, width=1.0 / self.k, opacity=0.65)
+        self.kid_lines.set_segments(P, Q, width=1.0 / self.k, opacity=0.9 * hv)
+        self.edges1.set_segments(E1p, E1q, width=1.0 / self.k, opacity=0.65 * hv)
         # ring-2 edges: under X0 as each reply lands, then the bundle's copies swing round with their dots
         P2, Q2 = [], []
         if not far:
@@ -648,7 +693,7 @@ class FillOrders(BeatScene):
                     P2.append(tree_point(lerp(self.kid_angles[0] + rot, a, 0.25), KID_R + 0.15, ph))
                     Q2.append(tree_point(lerp(self.kid_angles[0] + rot, a, 0.25 + 0.75 * fj),
                                          KID_R + 0.15 + (R2 - 0.035 - KID_R - 0.15) * fj, ph))
-        self.edges2.set_segments(P2, Q2, width=1.0 / self.k, opacity=0.5)
+        self.edges2.set_segments(P2, Q2, width=1.0 / self.k, opacity=0.5 * hv)
 
     def bundle_turn(self, t: float, kk: int):
         """How far bundle copy kk has swung clockwise from wedge 0 (None: not there yet)."""
@@ -747,12 +792,15 @@ class FillOrders(BeatScene):
                 scr = np.concatenate([scr[near] if i == 0 else rel_n @ M.T + off for i, (M, off, _) in enumerate(blur)])
                 wt = np.concatenate([wt_n * bw for _, _, bw in blur])
             keep = (np.abs(scr[:, 0]) < W / 2 + 0.2) & (np.abs(scr[:, 1]) < H / 2 + 0.2)
-            layers.append((scr[keep], wt[keep], look))
+            scr, wt = scr[keep], wt[keep]
+            if self.band_on > 1e-3:                                      # the dive: nothing bright in the band
+                wt = wt * band_mask(scr[:, 1], self.band_on)
+            layers.append((scr, wt, look))
         # the 24 dim points of game A's fill orders come out of the glow (20.4 -> 21.1)
         dv = ease_in_out_sine(seg(t, RESOLVE[0] + 0.05, RESOLVE[0] + 0.5))
         if dv > 1e-3:
             layers.append((CAM.to_screen(order_world(), t), np.full(24, ORDER_DOTS["weight"] * dv), DOTS_LOOK))
-        self.canvas.draw_layers(layers, glow=self.glow_spec(t))
+        self.canvas.draw_layers(layers, glow=self.glow_spec(t), floor=BAND_GLOW if self.band_on > 1e-3 else None)
 
     def blur_offsets(self, t: float):
         """Motion blur for the dive: the camera a little earlier in the frame (screen maps and weights)."""
@@ -828,32 +876,11 @@ class FillOrders(BeatScene):
             return 1.0
         return 1.0 - 0.25 * ease_in_out_sine(seg(t, HIT, HIT + 1.2))
 
-    # --- the numbers (screen space; world-locked from the dive on, so they fly off)
-    def text_map(self, t: float):
-        """(screen offset function, scale) for the right-third text: fixed until the dive, then locked to
-        the world so the dive carries it off the edges."""
-        if t < DIVE[0]:
-            return (lambda p: np.asarray(p, dtype=float)), 1.0
-        cx0, cy0, w0 = C_DIVE0
-        k0 = W / w0
-        cx, cy, w = CAM(t)
-        k = W / w
-
-        def f(p):
-            wp = np.array([cx0, cy0]) + np.asarray(p, dtype=float) / k0
-            return (wp - np.array([cx, cy])) * k
-        return f, k / k0
-
+    # --- the numbers (screen space: pinned in the frame like the HUD, also through the dive, while c06 asks about
+    # them; they fade over 20.3-20.4 as the frame fills with the glowing point)
     def update_numbers(self, t: float):
-        f, s = self.text_map(t)
-        gone = s > 4.0                                                   # carried off the edges by the dive
-
-        def safe(xy, h: float) -> float:
-            """The dive carries the text down and out through the caption band: each item fades as its bottom
-            edge reaches the band (the burned-in captions stay readable; nothing changes before the dive)."""
-            if t < DIVE[0]:
-                return 1.0
-            return clamp01((xy[1] - 0.5 * h * s - BAND_TOP) / BAND_RAMP)
+        pin = 1 - ease_in_out_sine(seg(t, *NUM_OUT))
+        gone = pin <= 1e-3
         rc = np.array([COL_X, self.row_a_y])
         for i, (rig, off) in enumerate(zip(self.factor_rigs, self.factor_off)):
             t0 = FACTOR_T[i]
@@ -863,45 +890,46 @@ class FillOrders(BeatScene):
                 continue
             lift = 0.08 * (1 - v)
             glow = 0.25 + 2.2 * pulse(t, t0, 0.4) + 0.6 * pulse(t, HIT, 0.6)
-            xy = f(rc + off + np.array([0, -lift]))
-            rig.show(xy, scale=s, vis=v * safe(xy, rig.h), glow=glow)
+            rig.show(rc + off + np.array([0, -lift]), vis=v * pin, glow=glow)
         v = ease_out_cubic(seg(t, ROW_B_T, ROW_B_T + 0.35))
         if v > 0 and not gone:
-            xy = f(np.array([self.row_b_x, self.row_b_y - 0.06 * (1 - v)]))
-            self.row_b.show(xy, scale=s, vis=v * safe(xy, self.row_b.h), glow=0.3 + 1.5 * pulse(t, ROW_B_T, 0.45))
+            self.row_b.show(np.array([self.row_b_x, self.row_b_y - 0.06 * (1 - v)]), vis=v * pin,
+                            glow=0.3 + 1.5 * pulse(t, ROW_B_T, 0.45))
         else:
             self.row_b.hide()
+        # 18.2: the tag that says how to read 9!, and its leader from the upright 9!
         v = ease_out_cubic(seg(t, TAG9_T, TAG9_T + 0.4))
         if v > 0 and not gone:
-            xy = f(self.tag9_xy + np.array([0, -0.05 * (1 - v)]))
-            self.tag9.show(xy, scale=s, vis=0.95 * v * safe(xy, self.tag9.h))
+            self.tag9.show(self.tag9_xy + np.array([0, -0.05 * (1 - v)]), vis=0.95 * v * pin)
+            p0, p1 = self.leader9
+            grow = ease_out_cubic(seg(t, TAG9_T, TAG9_T + 0.35))
+            self.leader9_line.set_segments([p0], [p0 + (p1 - p0) * grow], width=1.0, opacity=0.7 * v * pin)
         else:
             self.tag9.hide()
+            self.leader9_line.set_segments([], [])
         # the hero: 362,880 lands on the hit (a short rise, white core, neutral halo that breathes)
         v = ease_out_cubic(seg(t, HIT, HIT + 0.3))
         if v > 0 and not gone:
             breathe = 1 + 0.12 * math.sin(2 * math.pi * (t - HIT) / BAR)
-            xy = f(self.hero_xy + np.array([0, -0.12 * (1 - v)]))
-            fade = safe(xy, self.hero.h)
-            self.hero.show(xy, scale=s * (1.04 - 0.04 * v), vis=v * fade,
-                           glow=(0.8 + 1.6 * pulse(t, HIT, 0.5)) * breathe)
+            xy = self.hero_xy + np.array([0, -0.12 * (1 - v)])
+            self.hero.show(xy, scale=1.04 - 0.04 * v, vis=v * pin, glow=(0.8 + 1.6 * pulse(t, HIT, 0.5)) * breathe)
             self.halo_n.move_to([xy[0], xy[1], 0])
-            self.halo_n.set(width=6.2 * s)
-            self.halo_n.stretch_to_fit_height(2.0 * s)
-            self.halo_n.set_opacity(clamp01(v * fade * (0.32 + 0.05 * math.sin(2 * math.pi * (t - HIT) / BAR))))
+            self.halo_n.set(width=6.2)
+            self.halo_n.stretch_to_fit_height(2.0)
+            self.halo_n.set_opacity(clamp01(v * pin * (0.32 + 0.05 * math.sin(2 * math.pi * (t - HIT) / BAR))))
         else:
             self.hero.hide()
             _park(self.halo_n)
         # bar 19: the title's 255,168 drifts in under it; 19.2 a RED ">"
         v = ease_out_cubic(seg(t, *DRIFT_IN))
         if v > 0 and not gone:
-            xy = f(self.title_xy + np.array([-0.9 * (1 - v), -0.25 * (1 - v)]))
-            v *= safe(xy, self.title.h)
+            xy = self.title_xy + np.array([-0.9 * (1 - v), -0.25 * (1 - v)])
+            v *= pin
             br = 1 + 0.1 * math.sin(2 * math.pi * (t - DRIFT_IN[0]) / BAR)
-            self.title.show(xy, scale=s, vis=v, glow=(0.85 + 0.8 * pulse(t, DRIFT_IN[1], 0.5)) * br)
+            self.title.show(xy, vis=v, glow=(0.85 + 0.8 * pulse(t, DRIFT_IN[1], 0.5)) * br)
             self.halo_t.move_to([xy[0], xy[1], 0])
-            self.halo_t.set(width=4.6 * s)
-            self.halo_t.stretch_to_fit_height(1.5 * s)
+            self.halo_t.set(width=4.6)
+            self.halo_t.stretch_to_fit_height(1.5)
             self.halo_t.set_opacity(clamp01(0.42 * v))
         else:
             self.title.hide()
@@ -909,22 +937,19 @@ class FillOrders(BeatScene):
         v = ease_out_cubic(seg(t, GT_T, GT_T + 0.2))
         if v > 0 and not gone:
             g = 0.7 + 2.0 * pulse(t, GT_T, 0.45)
-            xy = f(self.gt_xy)
-            self.gt.show(1.0, np.eye(2) * s * lerp(1.25, 1.0, v), xy, vis=v * safe(xy, 0.54), glow=g, width=s,
+            self.gt.show(1.0, np.eye(2) * lerp(1.25, 1.0, v), self.gt_xy, vis=v * pin, glow=g, width=1.0,
                          glow_width=1.0)
         else:
             self.gt.hide()
-        # the tree's tag at the lower right of ring 9, with a hairline to the ring; it sits just above the caption
-        # band, so it leaves first when the dive starts (before the camera's drift can carry it into the band)
+        # the tree's tag at the lower right of ring 9, with a hairline to the ring: it leaves as the dive starts
+        # (its leader would have to follow the ring)
         v = ease_out_cubic(seg(t, TREE_TAG_T, TREE_TAG_T + 0.45)) * (1 - ease_in_out_sine(seg(t, DIVE[0], DIVE[0] + 0.4)))
-        if v > 1e-3 and not gone:
-            xy = f(self.tree_tag_xy + np.array([0.1 * (1 - v) * (t < DIVE[0]), 0]))
-            v *= safe(xy, self.tree_tag.h)
-            self.tree_tag.show(xy, scale=s, vis=0.95 * v)
+        if v > 1e-3:
+            xy = self.tree_tag_xy + np.array([0.1 * (1 - v) * (t < DIVE[0]), 0])
+            self.tree_tag.show(xy, vis=0.95 * v)
             a = math.radians(137) + phi(t)
-            p0 = tree_point(a, ring_radius(9) + 0.06, 0.0)
-            p0 = CAM.to_screen(p0, t)
-            p1 = f(self.tree_tag_xy + np.array([-self.tree_tag_w / 2 - 0.1, 0.12]))
+            p0 = CAM.to_screen(tree_point(a, ring_radius(9) + 0.06, 0.0), t)
+            p1 = xy + np.array([-self.tree_tag_w / 2 - 0.1, 0.12])
             grow = ease_out_cubic(seg(t, TREE_TAG_T, TREE_TAG_T + 0.45))
             self.tree_tag_line.set_segments([p0], [p0 + (p1 - p0) * grow], width=1.0, opacity=0.6 * v)
         else:
@@ -964,7 +989,10 @@ class FillOrders(BeatScene):
             return
         g = max([pulse(t, tp, 0.2) for tp in PULSES if tp <= t + 1e-6] or [0.0])
         g = max(g, max([pulse(t, tk, 0.22) for tk in KIDS if tk <= t + 1e-6] or [0.0]))
-        vis = 1.0 if t < HIT else 1.0 - 0.3 * seg(t, HIT, HIT + 1.0)
+        vis = (1.0 if t < HIT else 1.0 - 0.3 * seg(t, HIT, HIT + 1.0)) * self.hair
+        if vis <= 1e-3:
+            self.pen.place((0, 0), 0)
+            return
         self.pen.place(p, vis)
         self.pen.halo_img.set(width=self.pen.halo_w * (1 + 0.7 * g))
         self.pen.halo_img.move_to([p[0], p[1], 0])
@@ -995,7 +1023,10 @@ class FillOrders(BeatScene):
     def score(self):
         S = self.sounds
         sx = lambda p, t: float(CAM.to_screen(p, t)[0])
-        S.phrase("pen pulse", [(tp, "pen@A3", sx(ROOT, tp)) for tp in PULSES], gain=0.5)
+        # the pen's pulse: beats 1 and 3, then quarters, eighths (bar 16) and sixteenths (bar 17), the
+        # sixteenths softer (bar 17 is a build: it must stay under the 18.1 hit)
+        S.phrase("pen pulse", [(tp, "pen@A3", sx(ROOT, tp)) for tp in PULSES if tp < bb(17)], gain=0.5)
+        S.phrase("pen pulse 17", [(tp, "pen@A3", sx(ROOT, tp)) for tp in PULSES if tp >= bb(17)], gain=0.36)
         S.phrase("ring 1", [(tk, tag("X", k), sx(tree_point(self.kid_angles[k], KID_R), tk)) for k, tk in enumerate(KIDS)])
         S.phrase("ring 2", [(tr, tag("O", REPLY_SQ[j]), sx(self.lens_pos[j], tr)) for j, tr in enumerate(REPLIES)])
         fifths = ["D3", "A3", "E4", "B4", "F#5", "C#6", "G#6", "D4", "A4"]   # one note per factor, in fifths
@@ -1004,11 +1035,11 @@ class FillOrders(BeatScene):
         S.effect(BUNDLE, "shimmer", 1.0, sx(ROOT, BUNDLE))
         scale = ["C#6", "D6", "E6", "F#6", "G#6", "A6", "B6"]
         for d in range(3, 10):                                           # each ring's spray: a cloud of grains
-            n = 6 + 2 * (d - 3)
+            n = GRAINS[d]                                                # (bar 17: 24 grains in all, not 60)
             ts = RING_T[d] + SWEEP[d] * (np.arange(n) + self.rng.uniform(0.1, 0.9, n)) / n
             S.phrase(f"ring {d} grains", [(float(tt), f"glass@{scale[int(self.rng.integers(len(scale)))]}",
                                            float(np.sin(2 * np.pi * (tt - RING_T[d]) / SWEEP[d]) * 2.5))
-                                          for tt in ts], gain=0.32 + 0.04 * (d - 3))
+                                          for tt in ts], gain=GRAIN_GAIN[d])
         bloom = ["D5", "E5", "F#5", "G#5", "A5", "B5", "C#6"]               # 18.1: all seven notes of D Lydian
         S.phrase("bloom", [(HIT + 0.05 * i, f"bell@{n}", 4.0 - 0.3 * i) for i, n in enumerate(bloom)], gain=0.55)
         S.phrase("tags", [(TAG9_T, "pluck@A4", 3.5), (TREE_TAG_T, "pluck@E4", 3.0)], gain=0.45)
@@ -1038,11 +1069,12 @@ class FillOrders(BeatScene):
             add(RING_T[d], SWEEP[d] + FLIGHT[d], *ROOT, 2 * r, 2 * r)
         add(HIT, BEAT, -2.0, 0.3, 5.8, 5.8)
         add(HIT, BEAT, COL_X, 1.55, 4.0, 0.8)
-        add(TAG9_T, BEAT, COL_X, -0.1, 4.0, 0.4)
+        add(TAG9_T, BEAT, *self.tag9_xy, self.tag9_w, self.tag9_h)
         add(TREE_TAG_T, BEAT, 3.5, -2.3, 5.8, 0.4)
-        add(DRIFT_IN[0], BEAT, COL_X, -0.95, 3.0, 0.6)
-        add(GT_T, BEAT, COL_X - 1.5, -0.95, 0.5, 0.6)
+        add(DRIFT_IN[0], BEAT, *self.title_xy, 3.0, 0.6)
+        add(GT_T, BEAT, *self.gt_xy, 0.5, 0.6)
         add(DIVE[0], DIVE[1] - DIVE[0], *TARGET, 0.5, 0.5)
+        add(NUM_OUT[0], NUM_OUT[1] - NUM_OUT[0], COL_X, 0.3, 4.4, 3.4)          # the pinned numbers fade
         add(RESOLVE[0], BEAT, *TARGET, 0.01, 0.01)
 
     def run(self):

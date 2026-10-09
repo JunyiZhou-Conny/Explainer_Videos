@@ -14,7 +14,8 @@ computed from the same numbers (Sounds) and logged as count marks with one tag e
            every 180) while the centre board flickers through the 1,440 games, accelerating into a blur;
            the counter rolls 0 -> 1,440, "8 × 6 × 30 = 1,440" under it              (32nd ticks, glass, bells)
     37     37.1 the counter lands on 1,440 (hero number, cyan halo), the panels dim; 37.2 the note
-           "第 5 步之前，谁都凑不齐三个棋子 · NOBODY HAS 3 MARKS BEFORE MOVE 5"              (c12)
+           "第 5 步之前，谁都凑不齐三个棋子 · NOBODY HAS 3 MARKS BEFORE MOVE 5" (c12); it stays up with the
+           1,440 (left third from 38.1) until everything fades into the knot
     38     38.1-38.2 the 1,440 and the panels slide to the left third (the centre board, game A again,
            shrinks to the middle); 38.3 the silent annotation of move 6: XX.OOOX.., O's middle row
            amber, "O 连成一线：8 × 6 × (6 × 5 × 4) = 5,760 · O COMPLETES A LINE"           (one glass note)
@@ -162,7 +163,9 @@ CELL_C = float(HANDOVER["cell"])
 CELL_T = 1.4                                      # ... drawn as S01/S03 draw it: the opening board, scaled
 COUNT_C = np.array([PANEL_C[2][0], -0.8])         # the counter, right third
 FORMULA_C = np.array([PANEL_C[2][0], -1.72])
-NOTE_C = np.array([PANEL_C[0][0] + 0.25, -0.95])  # the note (37.2), left third (inside the HUD's margin)
+NOTE_C = np.array([PANEL_C[0][0] + 0.25, -0.95])  # the note (37.2), left third (inside the HUD's margin) ...
+NOTE_L = np.array([PANEL_C[0][0] + 0.25, -1.25])  # ... and under the 1,440 group once it slid left (38.1-38.2),
+                                                  # below the stamp's corner: it stays up with the 1,440
 SLIDE_CTRL = np.array([0.6, 2.4])                 # the counter arcs over the board as it slides left
 # after the slide (38.1-38.2): the 1,440 group on the left third
 LEFT_SCALE = 0.34
@@ -946,8 +949,11 @@ class ByHand(BeatScene):
         e = ease_in_out_cubic(seg(t, SLIDE[0] + 0.05, SLIDE[1]))
         fc = c + (FORMULA_C - COUNT_C) * (1 - e) + (LEFT_FORMULA_C - LEFT_COUNT_C) * e
         self.formula.show(fc, scale=1 + (0.85 - 1) * e, vis=fv, color=INK)
-        nv = ease_out_cubic(seg(t, NOTE_IN, NOTE_IN + 0.4)) * (1 - seg(t, SLIDE[0], SLIDE[0] + 0.25)) * fade
-        self.note.show(NOTE_C + np.array([0, -0.05 * (1 - seg(t, NOTE_IN, NOTE_IN + 0.4))]), vis=nv,
+        # the note (why 1,440 needs nothing subtracted) stays as long as the 1,440 does (37.2 to bar 40, about
+        # 6 s; it used to leave at 38.1, after 1.5 s, before it could be read), easing down out of the stamp's way
+        nv = ease_out_cubic(seg(t, NOTE_IN, NOTE_IN + 0.4)) * fade
+        nc = NOTE_C + (NOTE_L - NOTE_C) * self.slide(t)
+        self.note.show(nc + np.array([0, -0.05 * (1 - seg(t, NOTE_IN, NOTE_IN + 0.4))]), vis=nv,
                        colors=[INK, INK_DIM])
 
     # --- the move-6 annotation, the stamp, the result, the placeholders

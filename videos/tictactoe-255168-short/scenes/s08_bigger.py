@@ -190,13 +190,20 @@ COLLAPSE = (bb(90), bb(90, 3))                    # the galaxy shrinks into one 
 TTT_T = [bb(90, 3) + 0.075 * k for k in range(6)] # its six boxes, on 32nd notes
 CHESS0 = bb(90, 4)                                # the chess strip: "1" ...
 HIT = bb(93)                                      # ... and its 121st box: the climax
+SWEEP = (HIT, HIT + 0.5)                          # 93.1: a light runs the whole chess strip and blooms in box 121
 ATOMS = (bb(94), bb(95))
+CHESS_DIM = (bb(94), bb(94, 2))                   # the long labels step back to 55 % once read (c27, c28 say it)
+ATOMS_DIM = (bb(95, 2), bb(95, 3))
 NOTE_IN = bb(96)
+LABELS_OFF = (bb(96), bb(96, 2))                  # ... and go as the camera moves in
+ZOOM_IN = (bb(96, 2), bb(96, 4))                  # in on the strips' left ends: the six boxes the pen lights read
 PEN_IN = bb(96)
 ARM_IN = (bb(96), bb(96, 3))
 LIT_T = [bb(96, 3), bb(96, 4), bb(97, 1), bb(97, 2), bb(97, 3), bb(97, 4)]
 STALL = bb(98)
-GRAIN = (bb(98), bb(98, 4.5))                     # the 115 dark boxes fade into grain
+ZOOM_OUT = (bb(98), bb(98, 4))                    # back out: the 115 dark boxes ahead
+ENDS_BACK = (bb(98, 3), bb(98, 4))                # "121 位数", "81 位数" come back with them
+GRAIN = (bb(98), bb(98, 4.5))                     # the 115 dark boxes dim into grain
 
 
 def chess_times() -> list[float]:
@@ -251,9 +258,16 @@ XL = -5.7                                         # the strips' left end
 Z0 = 2.0                                          # the zoom when the strips appear (90.3): boxes 55 px, digits
                                                   # 29 px at 1080p, so "2 5 5 1 6 8" reads; the camera then pulls
                                                   # back 5.2x along the chess run, to frame 2.6 on its 121st box
-ROWS0 = {"ttt": 1.0, "atoms": 0.35, "chess": -0.35}     # rows at zoom Z0
-ROWS1 = {"ttt": 2.3, "atoms": 0.7, "chess": -0.85}      # rows once pulled back (93.1 on)
-ZS1, ZS_END = 1 / 2.6, 1 / 2.85                   # the zoom at 93.1 (frame 2.6) and at the end of the scene
+BOX_H0 = BOX_FILL * P_BOX * Z0                    # a box's height at Z0 (square, 55 px); pulled back the boxes stay
+                                                  # tall (h ~ z^0.1: 47 px at frame 2.6): a band of bright cells,
+                                                  # not a hairline
+# rows: the tic-tac-toe strip right above the chess strip's first six boxes (6 against 121, one scale), the atoms
+# strip under the chess strip's label; each long label under its strip
+ROWS0 = {"ttt": 1.15, "chess": 0.60, "atoms": -0.85}    # rows at zoom Z0
+ROWS1 = {"ttt": 1.35, "chess": 0.80, "atoms": -0.75}    # rows once pulled back (frame 2.6 and wider)
+ZS1, ZS_DRIFT = 1 / 2.6, 1 / 2.8                  # the zoom at 93.1 (frame 2.6), drifting back to frame 2.8 (96.2)
+Z_IN = 1.0                                        # 96.4-98.1: the first boxes at 34 px, their digits 26 px
+ZS_END = 1 / 2.9                                  # the end of the scene (the 115 dark boxes ahead)
 PULL_P = 3.0                                      # the knee of the pull-back (a soft minimum, see zs)
 PULL_C = 121.5 * (ZS1 ** -PULL_P - Z0 ** -PULL_P) ** (-1 / PULL_P)   # ... so that the 121st box stands at ZS1
 DIGITS = {"ttt": "255168", "chess": "1" + "0" * 120, "atoms": "1" + "0" * 80}
@@ -340,20 +354,36 @@ def _pull(n: float) -> float:
     return clamp01(math.log(Z0 / _run_zoom(n)) / math.log(Z0 / ZS1))
 
 
+def _lerp_log(a: float, b: float, e: float) -> float:
+    return math.exp(math.log(a) + (math.log(b) - math.log(a)) * e)
+
+
 def zs(t: float) -> float:
-    """The strips' zoom (1 = box pitch P_BOX on screen; 1/2.6 = the frame 2.6 times wider)."""
+    """The strips' zoom (1 = box pitch P_BOX on screen; 1/2.6 = the frame 2.6 times wider): pulled back along the
+    run (90.4-93.1), a slow drift back (93.1-96.2), in on the left ends while the pen lights its six boxes
+    (96.2-96.4, then a slow drift), back out over bar 98, still drifting at the cut."""
     if t < HIT:
         return _run_zoom(_chess_count(t))
-    e = ease_in_out_sine(seg(t, HIT, END))
-    return math.exp(math.log(ZS1) + (math.log(ZS_END) - math.log(ZS1)) * e)
+    if t < ZOOM_IN[0]:
+        return _lerp_log(ZS1, ZS_DRIFT, ease_in_out_sine(seg(t, HIT, ZOOM_IN[0])))
+    z_in = Z_IN * (1 - 0.05 * ease_in_out_sine(seg(t, ZOOM_IN[1], STALL)))
+    if t < STALL:
+        return _lerp_log(ZS_DRIFT, z_in, ease_in_out_cubic(seg(t, *ZOOM_IN)))
+    z_out = ZS_END * (1.02 - 0.02 * seg(t, ZOOM_OUT[1], END))
+    return _lerp_log(z_in, z_out, ease_in_out_cubic(seg(t, *ZOOM_OUT)))
 
 
 assert abs(_run_zoom(121.0) - ZS1) < 1e-9 and abs(_run_zoom(0.0) / Z0 - 1) < 1e-4
 
 
-def rows(t: float) -> dict:
-    lam = 1.0 if t >= HIT else _pull(_chess_count(t))
+def rows_z(z: float) -> dict:
+    """The strips' rows at zoom z (they move apart a little as the camera pulls back)."""
+    lam = clamp01(math.log(Z0 / z) / math.log(Z0 / ZS1))
     return {k: ROWS0[k] + (ROWS1[k] - ROWS0[k]) * lam for k in ROWS0}
+
+
+def rows(t: float) -> dict:
+    return rows_z(zs(t))
 
 
 def box_x(i, z: float):
@@ -362,9 +392,9 @@ def box_x(i, z: float):
 
 
 def box_size(z: float) -> tuple[float, float]:
-    """(width, height) of a box: square close up; pulled back (z < 1) the height shrinks more slowly, so far out
-    the boxes read as tall cells."""
-    return BOX_FILL * P_BOX * z, BOX_FILL * P_BOX * (z if z >= 1 else z ** 0.6)
+    """(width, height) of a box: square close up (Z0); pulled back the height shrinks only slowly, so far out the
+    boxes read as tall bright cells (11 x 47 px at frame 2.6)."""
+    return BOX_FILL * P_BOX * z, BOX_H0 * (min(z, Z0) / Z0) ** 0.1
 
 
 _fronts = [box_x(_chess_count(t), zs(t)) for t in np.linspace(CHESS0, HIT, 400)]
@@ -399,15 +429,19 @@ class BiText:
             it.show(a + off * scale, scale=scale, vis=vis, color=colors[j] if colors else col)
 
 
-def bi(zh: str, en_text: str, zh_color=INK, en_color=INK_DIM) -> BiText:
-    """One line: 中文 · ENGLISH (content size: the English 22 px caps at 1080p)."""
-    g = bi_label(zh, en_text, zh_size=ZH_SIZE, en_size=EN_SIZE)
+EN_C = 20.5                                      # content labels' English: 28 px caps at 1080p, in the line colour
+                                                  # (the 50 % grey is the HUD's)
+
+
+def bi(zh: str, en_text: str, zh_color=INK, en_color=INK, en_size: float = EN_C) -> BiText:
+    """One line: 中文 · ENGLISH (content size: the English 28 px caps at 1080p)."""
+    g = bi_label(zh, en_text, zh_size=ZH_SIZE, en_size=en_size)
     return BiText(g, [zh_color, en_color, en_color])
 
 
-def stacked(lines, align: str = "l", gap: float = 0.09) -> BiText:
+def stacked(lines, align: str = "l", gap: float = 0.09, en_size: float = EN_C) -> BiText:
     """Lines (text, colour, "zh" / "en") stacked top to bottom, aligned left or centred."""
-    mobs = [cjk(s, size=ZH_SIZE, color=c) if k == "zh" else en(s, color=c) for s, c, k in lines]
+    mobs = [cjk(s, size=ZH_SIZE, color=c) if k == "zh" else en(s, size=en_size, color=c) for s, c, k in lines]
     g = VGroup(*mobs).arrange(np.array([0, -1, 0]), buff=gap,
                               aligned_edge=np.array([-1, 0, 0]) if align == "l" else np.array([0, 0, 0]))
     return BiText(g, [c for _, c, _ in lines])
@@ -471,16 +505,71 @@ def xf_apply(p, xf):
 
 
 # ---------------------------------------------------------------- the three digit strips (S08 bars 90-98, S09 bar 99)
+class BoxFill(VMobject):
+    """Many filled rectangles as one VMobject (one Cairo path, one colour): set(centres, w, h, opacity)."""
+
+    def __init__(self, color=INK):
+        super().__init__()
+        self.base_color = color
+        self.set_fill(color, opacity=0).set_stroke(width=0, opacity=0)
+        self.points = np.zeros((0, 3))
+
+    def set(self, c, w, h, opacity: float, color=None):
+        c = np.asarray(c, dtype=float).reshape(-1, 2)
+        if len(c) == 0 or opacity <= 1e-3:
+            self.points = np.zeros((0, 3))
+            self.set_fill(opacity=0)
+            return self
+        n = len(c)
+        P, Q = rect_segments(c, w, h)                 # the four sides of all boxes, side by side ...
+        idx = np.stack([np.arange(n) + k * n for k in range(4)], axis=1).reshape(-1)   # ... box by box
+        P, Q = P[idx], Q[idx]
+        d = Q - P
+        pts = np.zeros((4 * len(P), 3))
+        pts[0::4, :2] = P
+        pts[1::4, :2] = P + d / 3
+        pts[2::4, :2] = P + 2 * d / 3
+        pts[3::4, :2] = Q
+        self.points = pts
+        self.set_fill(color or self.base_color, opacity=clamp01(opacity)).set_stroke(width=0, opacity=0)
+        return self
+
+
+def lit_count(t: float) -> int:
+    """How many chess boxes the light pen has lit by time t (0-6)."""
+    return sum(1 for tt in LIT_T if t >= tt)
+
+
+def ends_vis(t: float) -> float:
+    """The strips' end labels ("121 位数", "81 位数"): they go as the camera moves in on the left ends and come
+    back as it pulls out."""
+    if t < STALL:
+        return 1 - seg(t, ZOOM_IN[0], ZOOM_IN[0] + 0.3)
+    return seg(t, *ENDS_BACK)
+
+
+def atoms_vis(t: float) -> float:
+    """The atoms strip steps back while the pen works on the chess strip (96.2-98.1)."""
+    if t < STALL:
+        return 1 - 0.55 * ease_in_out_sine(seg(t, *ZOOM_IN))
+    return 0.45 + 0.15 * ease_in_out_sine(seg(t, *ZOOM_OUT))
+
+
 class StripsRig:
-    """The tic-tac-toe strip (6 glowing boxes "2 5 5 1 6 8"), the chess strip (121 boxes, "1" and 120 zeros)
-    and the atoms strip (81 boxes): outlines, digits, the glow of the tic-tac-toe boxes and of the boxes the
-    pen lights, their labels. `draw(t, xf, vis, ghosts)` draws them as they stand at S08 time t, through an
-    optional screen similarity xf (S09's rush back) with motion-blur ghost copies."""
+    """The tic-tac-toe strip (6 glowing boxes "2 5 5 1 6 8"), the chess strip (121 bright cells, "1" and 120
+    zeros), the atoms strip (81 cells), and the light they carry: the sweep and the glowing 121st box at the climax,
+    the boxes the pen lights (in the tic-tac-toe strip's colours, so the six match the six above them) and their
+    bracket. `draw(t, view, xf, vis, ghosts)` draws them as they stand at S08 time t (view = strip_view(t)), through
+    an optional screen similarity xf (S09's rush back) with motion-blur ghost copies; `draw_labels` the labels."""
 
     def __init__(self):
-        self.out = {k: Hairlines(INK_DIM, 1.3) for k in DIGITS}
-        self.ghost_out = [Hairlines(INK_DIM, 1.3) for _ in range(3)]
-        self.digits = {k: Glyphs1(WHITE if k == "ttt" else INK_DIM) for k in DIGITS}
+        self.out = {"ttt": Hairlines(INK_DIM, 1.3), "chess": Hairlines(INK, 1.4), "atoms": Hairlines(INK_DIM, 1.3)}
+        self.dim_out = Hairlines(INK_DIM, 1.3)        # chess boxes 7-121 as they dim (bar 98)
+        self.ghost_out = [Hairlines(INK_DIM, 1.3) for _ in range(2)]
+        self.fill = {"chess": BoxFill(INK), "atoms": BoxFill(INK)}
+        self.dim_fill = BoxFill(INK)
+        self.digits = {k: Glyphs1(WHITE if k == "ttt" else INK) for k in DIGITS}
+        self.dim_digits = Glyphs1(INK)
         self.ttt_cols = [hex_of(rgb(XC.mid) * (1 - u) + rgb(OC.mid) * u) for u in np.linspace(0, 1, 6)]
         self.ttt_glow_cols = [hex_of(rgb(XC.glow) * (1 - u) + rgb(OC.glow) * u) for u in np.linspace(0, 1, 6)]
         self.ttt_box = [Ink(Rectangle(width=1, height=1), c, 1.6, g, 8, layers=4, glow_opacity=0.6)
@@ -488,29 +577,38 @@ class StripsRig:
         self.ttt_fill = [Rectangle(width=1, height=1).set_stroke(width=0).set_fill(c, opacity=0) for c in self.ttt_cols]
         self.ttt_halo = gaussian_sprite(None, 96, 0.34, gradient=(XC.glow, OC.mid), aspect=3.0)
         self.box1_glow = gaussian_sprite(XC.mid, 64, 0.3)
-        self.lit_box = [Ink(Rectangle(width=1, height=1), WHITE, 1.6, PEN_HALO, 9, layers=4, glow_opacity=0.55)
-                        for _ in range(6)]
-        self.lit_fill = [Rectangle(width=1, height=1).set_stroke(width=0).set_fill(WHITE, opacity=0) for _ in range(6)]
+        self.lit_box = [Ink(Rectangle(width=1, height=1), c, 1.8, g, 10, layers=4, glow_opacity=0.65)
+                        for c, g in zip(self.ttt_cols, self.ttt_glow_cols)]
+        self.lit_fill = [Rectangle(width=1, height=1).set_stroke(width=0).set_fill(c, opacity=0) for c in self.ttt_cols]
         self.lit_digits = Glyphs1(WHITE)
-        self.flash_out = Hairlines(INK, 1.6)
-        # labels
-        self.lab_ttt = bi("井字棋 · 6 位数", "TIC-TAC-TOE · 6 DIGITS")
+        self.flash_out = Hairlines(WHITE, 1.8)
+        self.end_box = Ink(Rectangle(width=1, height=1), WHITE, 2.0, PEN_HALO, 12, layers=5, glow_opacity=0.6)
+        self.end_halo = gaussian_sprite(PEN_HALO, 64, 0.3)
+        self.bracket = Ink(VGroup(Line([-0.5, 0.5, 0], [-0.5, 0, 0]), Line([-0.5, 0, 0], [0.5, 0, 0]),
+                                  Line([0.5, 0, 0], [0.5, 0.5, 0])), INK, 1.5, PEN_HALO, 6, layers=3,
+                           glow_opacity=0.3)
+        # labels: the English of content labels at 28 px in the line colour
+        self.lab_ttt = bi("井字棋：6 位数", "TIC-TAC-TOE: 6 DIGITS")
         self.tag_ttt = bi("全部下完", "ALL PLAYED OUT")
         self.lab_chess = stacked([("国际象棋：至少 1 后面跟着 120 个零（香农，1950 年，估计）", INK, "zh"),
-                                  ("CHESS: AT LEAST 1 FOLLOWED BY 120 ZEROS (SHANNON 1950, ESTIMATE)", INK_DIM, "en")])
+                                  ("CHESS: AT LEAST 1 FOLLOWED BY 120 ZEROS", INK, "en"),
+                                  ("(SHANNON 1950, ESTIMATE)", INK, "en")])
         self.end_chess = bi("121 位数", "121 DIGITS")
         self.lab_atoms = stacked([("可观测宇宙中的原子：大约 1 后面跟着 80 个零（估计）", INK, "zh"),
-                                  ("ATOMS IN THE OBSERVABLE UNIVERSE: ABOUT 1 FOLLOWED BY 80 ZEROS (ESTIMATE)", INK_DIM,
-                                   "en")])
+                                  ("ATOMS IN THE OBSERVABLE UNIVERSE: ABOUT 1", INK, "en"),
+                                  ("FOLLOWED BY 80 ZEROS (ESTIMATE)", INK, "en")])
         self.end_atoms = bi("81 位数", "81 DIGITS")
         self.note = bi("每多一个格子，就大 10 倍", "EACH EXTRA BOX: 10 TIMES BIGGER")
-        assert self.lab_atoms.width < 12.4 and self.lab_chess.width < 12.4
+        self.lit_lab = [bi(f"{n} 格", f"{n} BOX" + ("ES" if n > 1 else "")) for n in range(1, 7)]
+        assert self.lab_atoms.width < 12.4 and self.lab_chess.width < 12.4 and self.note.width < 12.0
+        assert self.lab_ttt.width + 0.35 + self.tag_ttt.width < 12.3, (self.lab_ttt.width, self.tag_ttt.width)
         self.labels = [self.lab_ttt, self.tag_ttt, self.lab_chess, self.end_chess, self.lab_atoms, self.end_atoms,
-                       self.note]
-        self.group = VGroup(*self.out.values(), *self.ghost_out, *self.ttt_fill, *self.lit_fill, *self.ttt_box,
-                            *self.lit_box, self.flash_out, *[g.mob for g in self.digits.values()], self.lit_digits.mob,
-                            *[lb.group for lb in self.labels])
-        self.sprites = [self.ttt_halo, self.box1_glow]
+                       self.note, *self.lit_lab]
+        self.group = VGroup(*self.fill.values(), self.dim_fill, *self.out.values(), self.dim_out, *self.ghost_out,
+                            *self.ttt_fill, *self.lit_fill, *self.ttt_box, *self.lit_box, self.flash_out,
+                            self.end_box, self.bracket, *[g.mob for g in self.digits.values()], self.dim_digits.mob,
+                            self.lit_digits.mob, *[lb.group for lb in self.labels])
+        self.sprites = [self.ttt_halo, self.box1_glow, self.end_halo]
         self.hide_all()
 
     # --- which boxes stand at S08 time t, and how far each has landed
@@ -521,12 +619,13 @@ class StripsRig:
         return n, age
 
     def hide_all(self):
-        for h in [*self.out.values(), *self.ghost_out, self.flash_out]:
+        for h in [*self.out.values(), self.dim_out, *self.ghost_out, self.flash_out]:
             h.set_segments([], [])
-        for g in self.digits.values():
+        for f in [*self.fill.values(), self.dim_fill]:
+            f.set([], 0, 0, 0)
+        for g in [*self.digits.values(), self.dim_digits, self.lit_digits]:
             g.set([], [], 0)
-        self.lit_digits.set([], [], 0)
-        for x in self.ttt_box + self.lit_box:
+        for x in self.ttt_box + self.lit_box + [self.end_box, self.bracket]:
             x.hide()
         for r in self.ttt_fill + self.lit_fill:
             r.set_fill(opacity=0)
@@ -548,45 +647,62 @@ class StripsRig:
             out[key] = dict(n=n, c=c, w=w * k, h=h * k, land=land, w0=w, h0=h)
         return out
 
-    def draw(self, t: float, z: float, ry: dict, xf=None, vis: float = 1.0, label_vis: float = 1.0,
-             ghosts=(), lit=None, grain: float = 0.0, flash: float = 0.0, glow: float = 1.0, breathe: float = 0.0):
-        """lit: [(box index, amount)] on the chess strip; grain: 0..1, the dark chess boxes 7-121 fading out;
-        ghosts: [(xf, opacity)] earlier placements drawn as faint outlines (motion blur)."""
+    def draw(self, t: float, view: dict, xf=None, vis: float = 1.0, ghosts=(), glow: float = 1.0) -> dict:
+        """The strips at S08 time t as `view` (strip_view) frames them; ghosts: [(xf, opacity)] earlier placements
+        drawn as faint outlines (S09's motion blur)."""
+        z, ry, grain = view["z"], view["rows"], view["grain"]
         L = self.layout(t, z, ry)
         K = 1.0 if xf is None else xf[2]
-        for key, h in self.out.items():
+        dim = 1 - 0.62 * grain                                    # bar 98: the 115 boxes ahead dim
+        # the chess and atoms strips: bright cells (a faint fill, outlines in the line colour), their digits
+        for key in ("chess", "atoms"):
             s = L[key]
             if s["n"] == 0 or vis <= 1e-3:
-                h.set_segments([], [])
+                self.out[key].set_segments([], [])
+                self.fill[key].set([], 0, 0, 0)
                 self.digits[key].set([], [], 0)
+                if key == "chess":
+                    self.dim_out.set_segments([], [])
+                    self.dim_fill.set([], 0, 0, 0)
+                    self.dim_digits.set([], [], 0)
                 continue
+            n = s["n"]
             c = xf_apply(s["c"], xf)
             w, hh = s["w"] * K, s["h"] * K
-            fade = np.ones(s["n"])
+            sv = vis * (view["atoms"] if key == "atoms" else 1.0)
+            land = float(np.mean(s["land"] ** 0.5))
+            keep = np.ones(n, bool)
             if key == "chess" and grain > 0:
-                fade[6:] = 1 - 0.88 * grain
-            op_box = {"ttt": 0.0, "chess": 0.62, "atoms": 0.5}[key]
-            if key != "ttt":
-                # outlines: one Hairlines per strip; boxes faded by grain drawn as a second, dimmer set
-                keep = fade > 0.999
-                P, Q = rect_segments(c[keep], w[keep] if np.ndim(w) else w, hh[keep] if np.ndim(hh) else hh)
+                keep[6:] = False
+            P, Q = rect_segments(c[keep], w[keep], hh[keep])
+            self.out[key].set_segments(P, Q, opacity=(0.85 if key == "chess" else 0.7) * sv * land)
+            self.fill[key].set(c[keep], w[keep], hh[keep], (0.12 if key == "chess" else 0.06) * sv * land)
+            dh = min(0.5 * float(np.min(s["h0"])) * K, 1.2 * float(np.min(s["w0"])) * K)
+            show = s["land"] >= 0.5                                  # a digit appears once its box has landed
+            dig = DIGITS[key][:n]
+            self.digits[key].set(c[show & keep], "".join(d for d, k_ in zip(dig, show & keep) if k_), dh,
+                                 (0.85 if key == "chess" else 0.6) * sv)
+            if key == "chess":
                 if (~keep).any():
                     P2, Q2 = rect_segments(c[~keep], w[~keep], hh[~keep])
-                    self.ghost_out[2].set_segments(P2, Q2, opacity=op_box * vis * (1 - 0.88 * grain))
-                h.set_segments(P, Q, opacity=op_box * vis * np.mean(s["land"] ** 0.5))
-            else:
-                h.set_segments([], [])
-            dh = 0.62 * min(np.min(s["w0"]) * K, np.min(s["h0"]) * K / 1.2)
-            dig = DIGITS[key][:s["n"]]
-            dvis = {"ttt": 1.0, "chess": 0.78, "atoms": 0.6}[key] * vis
-            show = s["land"] >= 0.5                                  # a digit appears once its box has landed
-            if key == "chess" and grain > 0:
-                show[6:] = False
-            self.digits[key].set(c[show], "".join(d for d, k in zip(dig, show) if k), dh, dvis)
-        if grain <= 0:
-            self.ghost_out[2].set_segments([], [])
-        # the tic-tac-toe boxes: glowing outlines (cool -> warm), a faint fill, a halo behind them
+                    self.dim_out.set_segments(P2, Q2, opacity=0.85 * sv * dim)
+                    self.dim_fill.set(c[~keep], w[~keep], hh[~keep], 0.12 * sv * dim)
+                    self.dim_digits.set(c[~keep & show], "".join(d for d, k_ in zip(dig, ~keep & show) if k_), dh,
+                                        0.85 * sv * (1 - 0.8 * grain))
+                else:
+                    self.dim_out.set_segments([], [])
+                    self.dim_fill.set([], 0, 0, 0)
+                    self.dim_digits.set([], [], 0)
+        # the tic-tac-toe boxes: glowing outlines (cool -> warm), a faint fill, a halo behind them, white digits
         s = L["ttt"]
+        if s["n"] and vis > 1e-3:
+            c = xf_apply(s["c"], xf)
+            dh = min(0.5 * s["h0"] * K, 1.2 * s["w0"] * K)
+            show = s["land"] >= 0.5
+            self.digits["ttt"].set(c[show], "".join(d for d, k_ in zip(DIGITS["ttt"], show) if k_), dh, vis)
+        else:
+            self.digits["ttt"].set([], [], 0)
+        self.out["ttt"].set_segments([], [])
         for j in range(6):
             if j >= s["n"] or vis <= 1e-3:
                 self.ttt_box[j].hide()
@@ -594,48 +710,68 @@ class StripsRig:
                 continue
             cj = xf_apply(s["c"][j], xf)
             wj, hj = s["w"][j] * K, s["h"][j] * K
-            g = glow * (1 + 0.3 * breathe)
+            g = glow * (1 + 0.3 * view["breathe"])
             self.ttt_box[j].show(1.0, np.diag([wj, hj]), cj, vis=vis * min(1.0, s["land"][j] * 1.5), glow=g)
             self.ttt_fill[j].stretch_to_fit_width(max(1e-3, wj)).stretch_to_fit_height(max(1e-3, hj)).move_to([*cj, 0])
-            self.ttt_fill[j].set_fill(self.ttt_cols[j], opacity=clamp01(0.16 * vis * s["land"][j] * g))
-        if s["n"]:
+            self.ttt_fill[j].set_fill(self.ttt_cols[j], opacity=clamp01(0.2 * vis * s["land"][j] * g))
+        if s["n"] and vis > 1e-3:
             c0, c1 = xf_apply(s["c"][0], xf), xf_apply(s["c"][s["n"] - 1], xf)
-            hw = (c1[0] - c0[0]) + s["w0"] * K * 2.2
-            show_sprite(self.ttt_halo, (c0 + c1) / 2, hw, s["h0"] * K * 3.4, 0.42 * vis * glow * (1 + 0.3 * breathe))
+            hw = (c1[0] - c0[0]) + s["w0"] * K * 2.6
+            show_sprite(self.ttt_halo, (c0 + c1) / 2, max(hw, s["h0"] * K * 2.2), s["h0"] * K * 3.0,
+                        0.5 * vis * glow * (1 + 0.3 * view["breathe"]))
             bw = s["w0"] * K
             g1 = 0.25 + 0.75 * math.exp(-max(0.0, t - TTT_T[0]) / 0.4)   # the galaxy's last light, settling
             show_sprite(self.box1_glow, c0, bw * 1.1, bw * 1.1, 0.7 * vis * glow * g1)
         else:
             show_sprite(self.ttt_halo, opacity=0)
             show_sprite(self.box1_glow, opacity=0)
-        # the boxes the pen has lit (chess strip): white glow, white digit
-        lit = lit or []
+        # the boxes the pen has lit (chess strip): the tic-tac-toe strip's colours, glowing, white digits
         s = L["chess"]
         cs, ds = [], []
         for j in range(6):
-            amt = next((a for b, a in lit if b == j), 0.0)
+            amt = next((a for b, a in view["lit"] if b == j), 0.0)
             if j >= s["n"] or amt <= 1e-3 or vis <= 1e-3:
                 self.lit_box[j].hide()
                 self.lit_fill[j].set_fill(opacity=0)
                 continue
             cj = xf_apply(s["c"][j], xf)
             wj, hj = s["w0"] * K, s["h0"] * K
-            self.lit_box[j].show(1.0, np.diag([wj, hj]), cj, vis=vis * amt, glow=1.0 + 0.6 * max(0.0, amt - 1))
+            self.lit_box[j].show(1.0, np.diag([wj, hj]), cj, vis=vis * min(1.0, amt), glow=glow * (1.0 + 0.8 * max(0.0, amt - 1)))
             self.lit_fill[j].stretch_to_fit_width(max(1e-3, wj)).stretch_to_fit_height(max(1e-3, hj)).move_to([*cj, 0])
-            self.lit_fill[j].set_fill(WHITE, opacity=clamp01(0.2 * vis * min(1.0, amt)))
+            self.lit_fill[j].set_fill(self.ttt_cols[j], opacity=clamp01(0.3 * vis * min(1.3, amt)))
             cs.append(cj)
             ds.append(DIGITS["chess"][j])
-        dh = 0.62 * min(s["w0"] * K, s["h0"] * K / 1.2) if s["n"] else 0
+        dh = min(0.5 * s["h0"] * K, 1.2 * s["w0"] * K) if s["n"] else 0
         self.lit_digits.set(cs, ds, dh, vis)
-        # the climax: the chess strip's outlines flare once
-        if flash > 1e-3 and s["n"]:
+        # the bracket under the lit boxes (the count is its label, draw_labels)
+        nl, bv = view["bracket"]
+        if nl and s["n"] >= nl and bv > 1e-3 and vis > 1e-3:
+            a = xf_apply(s["c"][0], xf)
+            b = xf_apply(s["c"][nl - 1], xf)
+            x0, x1 = a[0] - s["w0"] * K / 2, b[0] + s["w0"] * K / 2
+            y = a[1] - s["h0"] * K / 2 - 0.09 * K
+            self.bracket.show(1.0, np.diag([x1 - x0, 0.16 * K]), np.array([(x0 + x1) / 2, y]), vis=vis * bv,
+                              glow=1.0 + 1.2 * view["bracket_flash"])
+        else:
+            self.bracket.hide()
+        # the climax: every chess outline flares once; the 121st box keeps a glow
+        if view["flash"] > 1e-3 and s["n"] and vis > 1e-3:
             c = xf_apply(s["c"], xf)
             P, Q = rect_segments(c, s["w0"] * K, s["h0"] * K)
-            self.flash_out.set_segments(P, Q, opacity=clamp01(flash) * vis, width=1.0 + 0.8 * flash)
+            self.flash_out.set_segments(P, Q, opacity=clamp01(view["flash"]) * vis, width=1.0 + 0.8 * view["flash"])
         else:
             self.flash_out.set_segments([], [])
+        ev = view["end_glow"] * vis
+        if s["n"] == 121 and ev > 1e-3:
+            ce = xf_apply(s["c"][120], xf)
+            self.end_box.show(1.0, np.diag([s["w0"] * K, s["h0"] * K]), ce, vis=clamp01(ev), glow=0.8 + 0.8 * ev)
+            hs = s["h0"] * K * (2.4 + 1.6 * view["bloom"])
+            show_sprite(self.end_halo, ce, hs, hs, clamp01(0.55 * ev + 0.6 * view["bloom"] * vis))
+        else:
+            self.end_box.hide()
+            show_sprite(self.end_halo, opacity=0)
         # motion-blur ghosts (S09's rush): earlier placements, outlines only
-        for gi, gh in enumerate(self.ghost_out[:2]):
+        for gi, gh in enumerate(self.ghost_out):
             if gi >= len(ghosts):
                 gh.set_segments([], [])
                 continue
@@ -655,46 +791,63 @@ class StripsRig:
                 gh.set_segments([], [])
         return L
 
-    def draw_labels(self, t: float, L: dict, ry: dict, xf=None, vis: float = 1.0):
-        """The labels at S08 time t (screen; they fade, they do not zoom)."""
+    def draw_labels(self, t: float, L: dict, view: dict, xf=None, vis: float = 1.0):
+        """The labels at S08 time t (screen; they fade, they do not zoom): each strip's long label under it, the
+        counts at the strips' ends, the tic-tac-toe label over its boxes, the lit boxes' count under the bracket."""
         K = 1.0 if xf is None else xf[2]
         s = L["ttt"]
         if s["n"]:
             c0 = xf_apply(s["c"][0], xf)
             a = ease_out_cubic(seg(t, TTT_T[0], TTT_T[0] + 0.35))
-            dy = max(0.36, s["h0"] * K / 2 + 0.26)                 # clear of the boxes, close up or pulled back
-            self.lab_ttt.show([c0[0] - s["w0"] * K / 2, c0[1] + dy + 0.05 * (1 - a)], "l", vis * a)
-            e = xf_apply(s["c"][-1], xf)
+            x0 = c0[0] - s["w0"] * K / 2
+            y = c0[1] + s["h0"] * K / 2 + 0.27
+            self.lab_ttt.show([x0, y + 0.05 * (1 - a)], "l", vis * a)
             a = ease_out_cubic(seg(t, HIT, HIT + 0.4))
-            self.tag_ttt.show([e[0] + s["w0"] * K / 2 + 0.3 + 0.1 * (1 - a), e[1]], "l", vis * a)
+            self.tag_ttt.show([x0 + self.lab_ttt.width + 0.35 + 0.1 * (1 - a), y], "l", vis * a)
         else:
             self.lab_ttt.hide()
             self.tag_ttt.hide()
+        off = 1 - ease_in_out_sine(seg(t, *LABELS_OFF))
         s = L["chess"]
         if s["n"]:
             c0 = xf_apply(s["c"][0], xf)
-            a = ease_out_cubic(seg(t, HIT, HIT + 0.45))
-            self.lab_chess.show([c0[0] - s["w0"] * K / 2, c0[1] + 0.62 + 0.06 * (1 - a)], "l", vis * a)
+            a = ease_out_cubic(seg(t, HIT, HIT + 0.45)) * (1 - 0.45 * ease_in_out_sine(seg(t, *CHESS_DIM))) * off
+            top = c0[1] - s["h0"] * K / 2 - 0.14
+            self.lab_chess.show([c0[0] - s["w0"] * K / 2, top - self.lab_chess.height / 2 - 0.05 * (1 - a)], "l",
+                                vis * a)
             e = xf_apply(s["c"][-1], xf)
-            a = ease_out_cubic(seg(t, HIT + 0.15, HIT + 0.55))
-            self.end_chess.show([e[0] + s["w0"] * K / 2, e[1] - 0.4], "r", vis * a)
+            a = ease_out_cubic(seg(t, HIT + 0.15, HIT + 0.55)) * ends_vis(t)
+            self.end_chess.show([e[0] + s["w0"] * K / 2, e[1] + s["h0"] * K / 2 + 0.24], "r", vis * a)
+            nl, bv = view["bracket"]
+            for n, lb in enumerate(self.lit_lab, start=1):
+                if n == nl and bv > 1e-3:
+                    self.lit_lab[n - 1].show([c0[0] - s["w0"] * K / 2, c0[1] - s["h0"] * K / 2 - 0.4], "l", vis * bv)
+                else:
+                    lb.hide()
         else:
             self.lab_chess.hide()
             self.end_chess.hide()
+            for lb in self.lit_lab:
+                lb.hide()
         s = L["atoms"]
         if s["n"]:
             c0 = xf_apply(s["c"][0], xf)
-            a = ease_out_cubic(seg(t, ATOMS[0], ATOMS[0] + 0.45))
-            self.lab_atoms.show([c0[0] - s["w0"] * K / 2, c0[1] + 0.62 + 0.06 * (1 - a)], "l", vis * a)
+            a = ease_out_cubic(seg(t, ATOMS[0], ATOMS[0] + 0.45)) * (1 - 0.45 * ease_in_out_sine(seg(t, *ATOMS_DIM))) * off
+            top = c0[1] - s["h0"] * K / 2 - 0.14
+            self.lab_atoms.show([c0[0] - s["w0"] * K / 2, top - self.lab_atoms.height / 2 - 0.05 * (1 - a)], "l",
+                                vis * a)
             e = xf_apply(s["c"][-1], xf)
-            a = ease_out_cubic(seg(t, ATOMS[1], ATOMS[1] + 0.4))
+            a = ease_out_cubic(seg(t, ATOMS[1], ATOMS[1] + 0.4)) * ends_vis(t) * view["atoms"]
             self.end_atoms.show([e[0] + s["w0"] * K / 2 + 0.3 + 0.1 * (1 - a), e[1]], "l", vis * a)
         else:
             self.lab_atoms.hide()
             self.end_atoms.hide()
         a = ease_out_cubic(seg(t, NOTE_IN, NOTE_IN + 0.5))
-        y = xf_apply(np.array([0.0, ry["chess"] - 1.0]), xf)[1] if xf is not None else ry["chess"] - 1.0
+        y = xf_apply(np.array([0.0, NOTE_Y]), xf)[1] if xf is not None else NOTE_Y
         self.note.show([0.0, y - 0.05 * (1 - a)], "c", vis * a)
+
+
+NOTE_Y = -2.2                                     # "每多一个格子，就大 10 倍", under everything (above the captions)
 
 
 def pen_x(t: float, z: float) -> float:
@@ -713,21 +866,31 @@ def pen_x(t: float, z: float) -> float:
 def pen_glow(t: float) -> float:
     """The light pen's glow on the chess strip: a flare on each box it lights, a pulse on the beats of bar 98."""
     beat = max([pulse(t, bb(98, b), 0.28) for b in (1, 2, 3, 4) if t >= bb(98, b)] + [0.0])
-    return 1.0 + 0.9 * beat + 0.5 * max([pulse(t, tt, 0.25) for tt in LIT_T if t >= tt] + [0.0])
+    return 1.0 + 1.3 * beat + 0.6 * max([pulse(t, tt, 0.25) for tt in LIT_T if t >= tt] + [0.0])
 
 
 def strip_view(t: float) -> dict:
-    """The strips' zoom, rows, lit boxes and grain at S08 time t (S09 starts from strip_view(END))."""
+    """How the strips stand at S08 time t: zoom, rows, lit boxes, grain, the climax's sweep and glows (S09 starts
+    from strip_view(END))."""
     z = zs(t)
     lit = []
     for j, tt in enumerate(LIT_T):
         if t >= tt:
             amt = 1.0 + 1.2 * pulse(t, tt, 0.35)
             if t >= STALL and j == 5:
-                amt += 0.5 * max([pulse(t, bb(98, b), 0.3) for b in (1, 2, 3, 4) if t >= bb(98, b)] + [0.0])
+                amt += 0.6 * max([pulse(t, bb(98, b), 0.3) for b in (1, 2, 3, 4) if t >= bb(98, b)] + [0.0])
             lit.append((j, amt))
-    return {"z": z, "rows": rows(t), "lit": lit, "grain": ease_in_out_sine(seg(t, *GRAIN)),
-            "flash": 0.55 * pulse(t, HIT, 0.3) if t >= HIT else 0.0, "breathe": math.sin(2 * math.pi * (t - HIT) / BAR)}
+    nl = lit_count(t)
+    bv = ease_out_cubic(seg(t, LIT_T[0], LIT_T[0] + 0.3)) if nl else 0.0
+    bflash = max([pulse(t, tt, 0.3) for tt in LIT_T if t >= tt] + [0.0])
+    head = 120 * (t - SWEEP[0]) / (SWEEP[1] - SWEEP[0]) if SWEEP[0] <= t < SWEEP[1] + 0.3 else None
+    end_glow = ease_out_cubic(seg(t, SWEEP[1] - 0.08, SWEEP[1] + 0.25)) * (1 - 0.6 * ease_in_out_sine(seg(t, *GRAIN)))
+    breathe = math.sin(2 * math.pi * (t - HIT) / BAR) if t >= HIT else 0.0
+    end_glow *= 1 + 0.2 * breathe
+    return {"z": z, "rows": rows_z(z), "lit": lit, "grain": ease_in_out_sine(seg(t, *GRAIN)),
+            "flash": 0.55 * pulse(t, HIT, 0.3) if t >= HIT else 0.0, "breathe": breathe, "head": head,
+            "end_glow": end_glow, "bloom": pulse(t, SWEEP[1], 0.45) if t >= SWEEP[1] else 0.0,
+            "atoms": atoms_vis(t), "bracket": (nl, bv), "bracket_flash": bflash}
 
 
 # ---------------------------------------------------------------- the grain of the dark boxes (bar 98) and the pen's sparks
@@ -776,27 +939,42 @@ def spark_points(t: float, px: float, py: float, moving_until: float):
     return p, 1.6 * (1 - age / 0.7) ** 2
 
 
-def run_lights(t: float, z: float, ry: dict):
-    """Light on the strips: a spark on each box as it lands (the run's front), and at 93.1 a ripple that runs
-    back from the 121st box to the first (the length of the number, felt)."""
+def strip_lights(t: float, view: dict, xf=None):
+    """Light under the strips (white, splatted): the chess strip's band of cells (each box a soft glow, the 115
+    ahead dimming in bar 98), the atoms strip fainter; a spark on each box as it lands (the run's front); at 93.1
+    a light that runs the whole chess strip and blooms in its 121st box; a burst on each box the pen lights."""
+    z, ry = view["z"], view["rows"]
+    w, h = box_size(z)
     ps, ws = [], []
-    for key, times, k in (("ttt", TTT_T, 1.0), ("chess", CHESS_T, 1.0), ("atoms", ATOMS_T, 0.6)):
-        age = t - np.asarray(times)
-        sel = (age >= 0) & (age < 0.45)
-        if sel.any():
-            i = np.flatnonzero(sel)
-            ps.append(np.column_stack([box_x(i, z), np.full(len(i), ry[key])]))
-            ws.append(2.4 * k * np.exp(-age[sel] / 0.1))
-    if HIT <= t < HIT + 1.6:
-        i = np.repeat(np.arange(121), 3)
-        a = t - (HIT + (120 - i) * 0.0055)
-        _, h = box_size(z)
-        dy = np.tile([-0.5, 0.0, 0.5], 121) * h
-        ps.append(np.column_stack([box_x(i, z), ry["chess"] + dy]))
-        ws.append(np.where(a >= 0, 7.0 * np.exp(-np.maximum(a, 0) / 0.3), 0.0))
+    tri = np.array([-0.3, 0.0, 0.3])
+    for key, times, base, k in (("chess", CHESS_T, 0.42, 1.0), ("atoms", ATOMS_T, 0.2, 0.6), ("ttt", TTT_T, 0.0, 1.0)):
+        n = int(np.searchsorted(times, t + 1e-9, side="right"))
+        if n == 0:
+            continue
+        i = np.arange(n)
+        age = t - np.asarray(times[:n])
+        wt = base * np.clip(age / 0.12, 0, 1) + 2.4 * k * np.where(age < 0.45, np.exp(-age / 0.1), 0.0)
+        if key == "atoms":
+            wt = wt * view["atoms"]
+        if key == "chess":
+            if view["grain"] > 0:
+                wt[6:] *= 1 - 0.7 * view["grain"]
+            if view["head"] is not None:                       # the climax's sweep, then the bloom in box 121
+                wt = wt + 6.0 * np.exp(-((i - view["head"]) / 3.0) ** 2) * (view["head"] <= 125)
+            wt[min(n, 121) - 1] += (6.0 * view["bloom"] + 1.4 * view["end_glow"]) if n == 121 else 0.0
+            for j, tt in enumerate(LIT_T):                     # the pen lights a box: a burst
+                if t >= tt and j < n:
+                    wt[j] += 6.0 * math.exp(-(t - tt) / 0.15) + 0.5
+        sel = wt > 1e-3
+        if not sel.any():
+            continue
+        x = np.repeat(box_x(i[sel], z), 3)
+        y = ry[key] + np.tile(tri, int(sel.sum())) * h
+        ps.append(np.column_stack([x, y]))
+        ws.append(np.repeat(wt[sel], 3) / 3)
     if not ps:
         return None, None
-    return np.concatenate(ps), np.concatenate(ws)
+    return xf_apply(np.concatenate(ps), xf), np.concatenate(ws)
 
 
 # ---------------------------------------------------------------- S07's last frame (81.1-81.6), drawn by S07 itself
