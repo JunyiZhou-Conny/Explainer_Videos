@@ -244,7 +244,7 @@ class SameTree(BeatScene):
         self.title = TitleRig()
         self.end_line = s08.stacked([("完整版、程序和练习：见视频简介", INK_DIM, "zh"),
                                      ("FULL VERSION, PROGRAM AND EXERCISES: SEE THE DESCRIPTION", INK_DIM, "en")],
-                                    align="c")
+                                    align="c", en_size=16.5)          # (the end line stays small: video.yaml end_card)
         self.title_src = None
         self.dark = Rectangle(width=W + 0.2, height=8.2).set_stroke(width=0).set_fill("#000000", opacity=0)
 
@@ -313,12 +313,10 @@ class SameTree(BeatScene):
                 ghosts.append((g, op * min(1.0, (k / g[2] - 1.04) * 4)))
         vis = 1 - seg(t, RUSH[1] - 0.35, SETTLE[0] + 0.2)
         dig = 1 - seg(t, 0.5, 1.1)                       # the digits go before they get huge
-        L = S.draw(S08_END, V0["z"], V0["rows"], xf=xf, vis=vis, ghosts=ghosts, lit=V0["lit"], grain=V0["grain"],
-                   glow=1.0 - seg(t, 0.4, 1.2), breathe=V0["breathe"])
-        for gl in S.digits.values():
+        L = S.draw(S08_END, V0, xf=xf, vis=vis, ghosts=ghosts, glow=1.0 - seg(t, 0.4, 1.2))
+        for gl in [*S.digits.values(), S.dim_digits, S.lit_digits]:
             gl.mob.set_fill(opacity=gl.mob.get_fill_opacity() * dig)
-        S.lit_digits.mob.set_fill(opacity=S.lit_digits.mob.get_fill_opacity() * dig)
-        S.draw_labels(S08_END, L, V0["rows"], xf=None, vis=1 - seg(t, 0.0, 0.4))
+        S.draw_labels(S08_END, L, V0, xf=None, vis=1 - seg(t, 0.0, 0.4))
         pv = 1 - seg(t, 0.0, 0.35)
         x, y = xf_apply(np.array([pen_x(S08_END, V0["z"]), V0["rows"]["chess"]]), xf)
         self.pen.place((x, y), pv, glow=s08.pen_glow(S08_END))
@@ -354,11 +352,18 @@ class SameTree(BeatScene):
             DP = gal_screen(N_TH[D_IDX], N_R[D_IDX], G, rh)
             dw = D_BASE * zf * (1 if shim is None else shim(N_R[D_IDX]))
             put(3, DP, dw)
-        if t < SETTLE[0]:                                  # S08's grain, carried by the rush
+        if t < SETTLE[0]:                                  # S08's grain, strip light and pen sparks, carried by the rush
             xf = rush_xf(t)
             p, w = grain_points(S08_END, V0["z"], V0["rows"], V0["grain"], xf)
             if p is not None:
                 put(3, p, w * (1 - seg(t, 0.6, 1.4)))
+            sv = 1 - seg(t, RUSH[1] - 0.35, SETTLE[0] + 0.2)
+            p, w = s08.strip_lights(S08_END, V0, xf)
+            if p is not None and sv > 1e-3:
+                put(5, p, w * sv)
+            p, w = s08.spark_points(S08_END, pen_x(S08_END, V0["z"]), V0["rows"]["chess"], s08.LIT_T[-1])
+            if p is not None and t < 0.35:
+                put(5, xf_apply(p, xf), w * (1 - seg(t, 0.0, 0.35)))
         # 100.4: the bloom breaks into 24 points that fly onto the grid's lines
         if GATHER[0] <= t < GROW[1] + 0.1:
             e = ease_out_cubic(seg(t, *GATHER))
@@ -533,9 +538,9 @@ class SameTree(BeatScene):
         tones = ("D4", "E4", "F#4", "A4", "C#5", "D5", "E5", "F#5", "A5", "C#6", "D6", "E6", "F#6", "A6", "C#7", "D7")
         gx = lambda k: float(SMALL[0] + SMALL[2] * 2.9 * (k / 15) * math.sin(2.4 * k))
         S.phrase("every game", [(SHIMMER[0] + 0.15 * k, f"glass@{tones[k]}", gx(k)) for k in range(16)], gain=0.3)
-        # 104.1: the title gathers (a shimmer) and the motif's last note, E5, on the bell
+        # 104.1: the title gathers (a shimmer); video.yaml's resolve rolls Dmaj9 from D5, so its second note is the
+        # motif's last, E5 (a separate E5 here would strike it twice, 0.12 s apart: a flam)
         S.effect(TITLE, "shimmer", 2.0, x=0.0)
-        S.phrase("last note", [(TITLE, f"X@{PITCH[2]}", 0.0)], gain=0.8)
         S.log(self)
         self.mark("riser", at=bb(100), dur=BAR)                   # the resolve's riser into 101.1
         self.mark("end", at=END_LINE)
@@ -562,9 +567,9 @@ class SameTree(BeatScene):
         add(TITLE, FORM[1] - FORM[0], 0.0, 0.3, 12.0, 4.5)         # 104: the title re-forms
         add(FORM[1], BEAT, 0.0, -0.9, 6.0, 0.6)
         add(FORM[1] + BEAT, BEAT, 0.0, 0.6, 10.0, 2.5)
-        add(END_LINE, 2 * BEAT, 0.0, -2.3, 9.2, 0.6)
-        add(END_LINE + 2 * BEAT, 2 * BEAT, 0.0, 0.3, 10.0, 3.0)
-        add(FADE[0], FADE[1] - FADE[0], 0.0, 0.0, 14.0, 8.0)       # 106: to black
+        # 105-106: the end line fades in, then everything fades to black. Logged small: the music's grid pulse
+        # (its ticks and glass arpeggio follow the logged activity) stops, and the rolled chords ring out alone
+        add(END_LINE, 2 * BEAT, 0.0, -2.3, 3.0, 0.3)
 
     def run(self):
         self.log_events()

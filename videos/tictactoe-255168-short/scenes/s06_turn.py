@@ -11,21 +11,25 @@ mobjects.
            (lines 24-25) lights, tagged "判断输赢 · WINNER CHECK"; 62.2 a RED strike draws across both lines (c19)
     63     the program starts again: the galaxy's light drains into the root (a spiral, as the turn slows to a
            halt with the tape stop); the HUD counter rolls back to 000,000 on 63.4
-    64     near-black, digital silence: only the struck check, faint, and the still pen on the empty root
+    64     near-black, digital silence: only the struck check, faint (it glows once, slowly), and the still pen on
+           the empty root
     65-66  65.1 HIT: the re-run, one turn of the arm in two bars (the plate glides back, a little smaller than
-           in S05, clear of ring 9). Every game that ended on moves 5-8 lights as
+           in S05, clear of ring 9); the count races on the right third (S05's running count). Every game that
+           ended on moves 5-8 lights as
            the arm passes, then its light streams outwards as pale streaks and splits into its (9 - k)! ghost
            games: unglowing grey points on ring 9, inside its own wedge (24, 6, 2, 1). The move-9 games keep
-           their colours. The inner rings empty out; ring 9 fills in completely. The counter races; as it passes
-           255,168 (66.2+) that value flashes RED in the HUD and is left behind
+           their colours. The inner rings empty out; ring 9 fills in completely (1.6x as bright as S05's 35 %
+           band: GHOST_W). As the count passes 255,168 (66.2+) that number is left behind in RED at its size,
+           struck out, dropping away over a beat and a half
     67     67.1 the counter lands on 362,880 (the right third, where S05 landed 255,168; neutral halo); the
            whole tree takes S02's look and repeats S02's 18.1 flare frame (s02_fill's own point sets, weights,
            envelopes and tone map); 67.2 S02's label "9 × 8 × … × 1 = 9! = 362,880" and "9 的阶乘 · NINE
            FACTORIAL" fly in from the left and dock under the number; ALIVE: bright patches drift round
            the ring (SHIMMER)                                                                          (c20)
-    68-69  68.1 the strike pulses; 69.1 it erases, the winner check is back: the ghost points stream back
-           inwards along their streaks into their games, which light again in their colours; the number rolls
-           back to 255,168 as it docks into the HUD (69.1-69.3); 70.1 the five-ring galaxy of S05, restored
+    68-69  68.1 the strike pulses; 69.1 it erases, the winner check is back: lines 24-25 flash white, tagged
+           "放回“判断输赢” · CHECK BACK" (two beats); the ghost points stream back inwards along their streaks
+           into their games, which light again in their colours; 69.3-70.1 the number rolls back to 255,168 as
+           it docks into the HUD, and the plate goes; 70.1 the five-ring galaxy of S05, restored
 
 Every number is exact and asserted below: the 127,296 games that end before move 9 own exactly the 235,008 ghost
 slots (1,440 x 24 + 5,328 x 6 + 47,952 x 2 + 72,576 x 1), which with the 127,872 move-9 games tile all 9! slots;
@@ -41,7 +45,7 @@ look is cached as intensity fields for that one camera and one turn, RHO_F: the 
 tape stop and starts again at 69.1).
 Hand-over to S07 (a segue at 70.1): HANDOVER_S07 below. The camera CAM_1; the galaxy is S05's look
 (`galaxy_families`), turned by rho(END) and turning at ROT_RATE again; all 81 ring 1-2 edges at 38 %; the root
-board and the pen (90 %); the plate at PLATE_TL, PLATE_DIM, scale PLATE_BACK, no strike; the HUD: §3 and one
+board and the pen (90 %); no plate (it went in 69.3-70.1); the HUD: §3 and one
 readout, "对局计数 · GAMES COUNTED 255,168" (CALLS and UNDOS are gone since 63.1).
 """
 
@@ -69,7 +73,8 @@ from s02_fill import (A_SLOTS, FLIGHT as S02_FLIGHT, HIT as S02_HIT, INNER_GAIN,
 from s04_by_hand import MiniBoard, hex_of, line_affine, maths
 from s05_search import CAM as S05_CAM
 from s05_search import END as S05_END
-from s05_search import HANDOVER_S06, HERO_C, HERO_SIZE, PLATE_DIM, ROT_RATE
+from s05_search import Leader
+from s05_search import HANDOVER_S06, HERO_C, HERO_SIZE, PLATE_DIM, PLATE_K, PLATE_TL5, ROT_RATE, RUN_K, GLOW_K, Plate
 from s05_search import rot as s05_rot
 
 # ---------------------------------------------------------------- the plan's clock
@@ -212,7 +217,7 @@ BIG_SCALE = 1.6
 BIG_TL = np.array([-6.2, 2.25])                   # 62.1: the plate, centre-left, 1.6x
 GLIDE_IN = (0.0, BEAT)                            # 62.1-62.2
 GLIDE_OUT = (T65, T65 + BEAT)                     # 65.1-65.2: back to the left edge ...
-PLATE_BACK = 0.88                                 # ... a little smaller than in S05: from 65.1 the camera puts ring 9
+PLATE_BACK = 0.88                                 # ... smaller than in S05 (1.12): from 65.1 the camera puts ring 9
                                                   # 0.3 left of S05's, through line 33 and the frame at 1.0
 HL_ON = (0.25, 0.55)                              # the winner check lights as the plate arrives
 TAG_IN = (0.3, 0.7)                               # 62.1+
@@ -221,11 +226,16 @@ DIM_T = (0.0, BEAT)                               # the galaxy dims to 40 %
 DRAIN = (T63, T63 + 2.05)                         # bar 63: the light drains into the root
 RESET = (bb(63, 4), bb(63, 4.5))                  # 63.4: the counter rolls back to 000,000
 STRIKE_PULSE = T68                                # 68.1
-ERASE = (T69, T69 + 0.35)                         # 69.1: the strike erases
+ERASE = (T69, T69 + 0.35)                         # 69.1: the strike erases, the check flashes white, tagged
+CHECK_TAG = (T69 + 0.1, bb(69, 3), bb(69, 4))     # ... "放回“判断输赢” · CHECK BACK" for two beats
+PLATE_OUT = (bb(69, 3), bb(70))                   # 69.3-70.1: the plate goes (S07's ring labels come in at 70.1)
+SILENT_GLOW = (bb(64, 1.5), bb(64, 4.2))          # bar 64: the struck check glows once, faintly (no sound)
+RUN_HERO = (T65, T65 + 0.3)                       # 65.1: the race comes down to the right third (S05's running count)
+OVERRUN = 0.9                                     # 66.2+: 255,168 left behind, in RED, struck out (a beat and a half)
 LANDS = [T67 + 0.04 + 0.09 * i for i in range(6)] # 67.1: the digits lock left to right
 LABEL_IN = (bb(67, 2), bb(67, 3))                 # 67.2: S02's label flies in from the left
 LABEL_OUT = (T69, T69 + 0.4)
-DOCK = (T69, bb(69, 3))                           # 69.1-69.3: 362,880 rolls back to 255,168 into the HUD
+DOCK = (bb(69, 3), bb(70))                        # 69.3-70.1: 362,880 rolls back to 255,168 into the HUD
 BACK_FLY = 0.6                                    # 69.1-69.4: each ghost's flight home
 S02_SWITCH = 0.2                                  # 67.1: the re-run's picture gives way to S02's look
 PEN_PULSES = [bb(62, b) for b in (1, 2, 3, 4)] + [bb(63, b) for b in (1, 2, 3, 4)]
@@ -235,6 +245,9 @@ MATHS_Y, TAG_Y = -0.16, -0.62
 HERO_VALUE = NINE_FACT
 DIM_GALAXY = 0.40
 RERUN_DUST = 0.4                                  # 65-66: the inner rings empty out (their nodes stay, faint)
+GHOST_W = 2.0                                     # 65-66: a landed ghost's light (x one slot's): ring 9 full reads at
+REAL9_W = 1.25                                    # least 1.5x S05's 35 % band before 67.1's flare (ghosts never glow,
+                                                  # so they need the weight); the real move-9 games keep their colour
 SHIMMER = 0.2                                     # 67.2-70.1: the ring's shimmer, +-20 % of its light (7 % did not
                                                   # show through the tone map: the hold 67.3-69.1 read as still)
 FEATHER, TAG_FEATHER = 0.35, 0.14                 # the backings' soft edges (screen units, at the plate's 1.6x)
@@ -428,11 +441,11 @@ class HeroCounter:
             layers = []
             for k in range(7, 0, -1):
                 c = g.copy().set_fill(opacity=0).set_stroke(glow_color, width=0, opacity=0)
-                layers.append((c, 0.62 * (1 - k / 8) ** 2, stroke_px(2 * 22 * size / 178) * k / 7, c.height))
+                layers.append((c, 0.62 * (1 - k / 8) ** 2, stroke_px(2 * 22 * GLOW_K) * k / 7, c.height))
             self.glow.append(layers)
         self.glow_group = VGroup(*[c for lay in self.glow for c, _, _, _ in lay])
         self.halo = gaussian_sprite(halo_color, 96, 0.34, aspect=3.0)
-        self.halo_w0, self.halo_h0 = 12.8 * size / 178, 4.3 * size / 178
+        self.halo_w0, self.halo_h0 = 12.8 * size / 178 * 1.35, 4.3 * size / 178 * 1.5
         self.halo.stretch_to_fit_width(self.halo_w0).stretch_to_fit_height(self.halo_h0)
         self.digits = [int(ch) for ch in f"{self.value:06d}"]
 
@@ -473,9 +486,11 @@ class HeroCounter:
                 g.set_fill(color, opacity=g.get_fill_opacity() * vis)
         for _, sep in cnt.separators:
             sep.set_fill(color, opacity=vis)
-        cull(gl)
+        ncol = len(cnt.columns)
         for i, lay in enumerate(self.glow):
             v = glow * (1.0 if glow_each is None else glow_each[i]) * vis
+            # (on the glyph the counter shows in that column: the glow hugs it, with no offset)
+            g_vis = max(cnt.columns[i], key=lambda x: x.get_fill_opacity()) if i < ncol else cnt.separators[i - ncol][1]
             for c, base, wk, h0 in lay:
                 uncull([c])
                 if v <= 1e-3:
@@ -485,8 +500,9 @@ class HeroCounter:
                 kk = h0 * scale / max(1e-6, c.height)
                 if abs(kk - 1) > 1e-6:
                     c.scale(kk)
-                c.move_to([*(np.asarray(centre) + self.offs[i] * scale), 0])
+                c.move_to(g_vis.get_center())
                 c.set_stroke(width=wk * scale, opacity=clamp01(base * v))
+        cull(gl)
         show_sprite(self.halo, centre, self.halo_w0 * scale, self.halo_h0 * scale, halo * vis)
 
 
@@ -516,15 +532,15 @@ def show_plate(plate: ProgramPlate, frame_vis: float, row_vis, hl=None, tl=None,
             b = plate.bars[num]
             b.stretch_to_fit_width((plate.width - 0.12) * k).stretch_to_fit_height(plate.pitch * 0.92 * k)
             b.move_to([c[0], yy, 0])
-            b.set_fill(col, opacity=clamp01(0.13 * amt * lv))
+            b.set_fill(col, opacity=clamp01(getattr(plate, "bar_op", 0.13) * amt * lv))
     tv = frame_vis if tag_vis is None else tag_vis
+    offs = getattr(plate, "tag_offs", (np.array([0.18, 0.17]), np.array([0.42 + plate.tag_en.tmpl.width / 2, 0.17])))
     if tv <= 1e-3:
         plate.tag_zh.hide()
         plate.tag_en.hide()
     else:
-        plate.tag_zh.show(tl + k * np.array([0.18, 0.17]), scale=k, vis=tv, color=INK_DIM)
-        plate.tag_en.show(tl + k * np.array([0.42 + plate.tag_en.tmpl.width / 2, 0.17]), scale=k, vis=tv,
-                          color=INK_DIM)
+        plate.tag_zh.show(tl + k * offs[0], scale=k, vis=tv, color=INK_DIM)
+        plate.tag_en.show(tl + k * offs[1], scale=k, vis=tv, color=INK_DIM)
 
 
 def soft_panel(w: float, h: float, feather: float, ppu: float = 40.0):
@@ -569,7 +585,7 @@ def edge_ends(e, rh: float):
     return b, a
 
 
-HANDOVER_S07 = {"cam": CAM_1, "rho_end": rho(END), "rot_rate": ROT_RATE, "plate_dim": PLATE_DIM,
+HANDOVER_S07 = {"cam": CAM_1, "rho_end": rho(END), "rot_rate": ROT_RATE, "plate_dim": 0.0,
                 "plate_scale": PLATE_BACK, "games": WEDGE_GAMES, "pen_vis": 0.9, "edge_vis": 0.38}
 
 
@@ -597,12 +613,12 @@ class DeleteCheck(BeatScene):
         self.arm = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK, 1.4, PEN_HALO, 10, layers=4, glow_opacity=0.35)
         self.streak = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), "#FFFFFF", 2.6, PEN_HALO, 16, layers=5, glow_opacity=0.6)
         # screen space: the backing, the plate (and two motion-blur copies), the strike, the tag, the pen, HUD
-        self.plate = ProgramPlate()
+        self.plate = Plate()
         bw, bh = self.plate.width * BIG_SCALE + 0.3, self.plate.height * BIG_SCALE + 0.55
         self.backing = soft_panel(bw + 2 * FEATHER, bh + 2 * FEATHER, FEATHER)      # (feathered: no hard edges)
         self.backing_pad = (2 * FEATHER / bw, 2 * FEATHER / bh)
         show_sprite(self.backing, opacity=0)
-        self.blur = [ProgramPlate() for _ in range(2)]
+        self.blur = [Plate() for _ in range(2)]
         self.strikes = [Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), RED, 2.6, RED, 9, layers=4, glow_opacity=0.5)
                         for _ in range(2)]
         tag = bi_label("判断输赢", "WINNER CHECK", zh_size=20, en_size=16.5, color=INK)
@@ -615,22 +631,23 @@ class DeleteCheck(BeatScene):
         self.tag_offs = [p.get_center()[:2] - tag.get_center()[:2] for p in tag]
         self.bracket = Ink(VGroup(Line([0, 0.5, 0], [0.5, 0.5, 0]), Line([0.5, 0.5, 0], [0.5, -0.5, 0]),
                                   Line([0.5, -0.5, 0], [0, -0.5, 0])), INK_DIM, 1.3)
+        from explainer.short import cjk, tracked
+        from manim import DOWN, LEFT
+        back = VGroup(cjk("放回“判断输赢”", size=20, color=INK), tracked("CHECK BACK", size=16.5, spacing=0.14,
+                                                                          color=INK)).arrange(DOWN, aligned_edge=LEFT,
+                                                                                              buff=0.08)
+        self.back_tag = InkText(back, INK)
+        self.back_w, self.back_h = back.width, back.height
+        self.back_leader = Leader()
         self.pen = Pen()
         self.sec = section_hud("§3 · 探索每一局 · PLAY EVERY GAME")
         self.hud_games = HudLine("对局计数", "GAMES COUNTED", HUD_LINES_Y[0])
         self.hud_calls = HudLine("调用次数", "CALLS", HUD_LINES_Y[1])
         self.hud_undos = HudLine("撤销次数", "UNDOS", HUD_LINES_Y[2])
-        from explainer.short import RollingCounter
-        self.red_mark = RollingCounter(WEDGE_GAMES, digits=6, size=12, color=RED, font=FONT_MONO, weight="NORMAL",
-                                       leading_zeros=True)
-        self.red_mark.clear_updaters()
-        hc = self.hud_games.counter
-        self.red_c = np.array([hc.ref.get_center()[0], HUD_LINES_Y[1]])
-        self.red_mark.move_to([*self.red_c, 0])
-        self.red_mark.layout()
-        self.red_halo = gaussian_sprite(RED, 64, 0.3, aspect=2.6)
         # 67.1: the hero and S02's label
         self.hero = HeroCounter(HERO_VALUE, HERO_NUM_C, HERO_SIZE)
+        self.overrun = HeroCounter(WEDGE_GAMES, HERO_NUM_C, HERO_SIZE, glow_color=RED, halo_color=RED)
+        self.over_strike = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), RED, 3.2, RED, 10, layers=4, glow_opacity=0.5)
         # (lining figures: a 1 is not an I; a thin space keeps the italic "!" off the 9's tail, where "9!" reads "9/")
         m = maths(f"9 × 8 × … × 1 = 9{THIN}! = 362,880", size=28, color=INK)
         lab = bi_label("9 的阶乘", "NINE FACTORIAL", zh_size=20, en_size=16.5, color=INK_DIM)
@@ -644,9 +661,9 @@ class DeleteCheck(BeatScene):
         self.add(self.clock_mob, self.camera.frame)
         self.add(self.galaxy, *self.edges, self.arm, self.root.group, self.streak)
         self.fix(self.backing, *[b.group for b in self.blur], self.plate.group, *self.strikes, self.bracket,
-                 self.tag_backing, *self.tag_parts, self.pen, self.sec, self.hud_games.group, self.hud_calls.group,
-                 self.hud_undos.group, self.red_halo, self.red_mark, self.hero.halo, self.hero.glow_group,
-                 self.hero.cnt, self.maths_glow, *self.maths, *self.lab9)
+                 self.tag_backing, *self.tag_parts, self.back_tag, self.back_leader, self.pen, self.sec, self.hud_games.group, self.hud_calls.group,
+                 self.hud_undos.group, self.overrun.halo, self.overrun.glow_group, self.overrun.cnt, self.over_strike,
+                 self.hero.halo, self.hero.glow_group, self.hero.cnt, self.maths_glow, *self.maths, *self.lab9)
         self.update_state(0.0)
 
     # ------------------------------------------------------------- the picture at time t
@@ -730,7 +747,7 @@ class DeleteCheck(BeatScene):
         if n9:
             idx = L9[:n9]
             age = t - L9_PASS[:n9]
-            wl = L_WEIGHT[idx] * zf * np.clip(age / 0.08, 0, 1) * (1 + 2.6 * np.exp(-np.maximum(age, 0) / 0.28))
+            wl = L_WEIGHT[idx] * zf * np.clip(age / 0.08, 0, 1) * (REAL9_W + 2.6 * np.exp(-np.maximum(age, 0) / 0.28))
             P = galaxy_point(L_CENTRE[idx], 9, 0.0, 1.0, rh, L_JIT[idx])
             S = CAM.to_screen(P, t)
             fam = L_FAM[idx]
@@ -743,7 +760,7 @@ class DeleteCheck(BeatScene):
             gl = G_LEAF[:ng]
             age = t - G_PASS[:ng]
             fl = np.clip(age / 0.08, 0, 1) * (1 + 2.6 * np.exp(-np.maximum(age, 0) / 0.28))
-            w0 = GALAXY_SLOT_W * zf
+            w0 = GALAXY_SLOT_W * zf * GHOST_W
             landed = t >= G_LAUNCH[:ng] + G_FLY
             # landed: grey, unglowing, on S02's ring 9 positions
             li = np.flatnonzero(landed)
@@ -894,9 +911,9 @@ class DeleteCheck(BeatScene):
     def plate_place(self, t: float):
         if t < GLIDE_OUT[0]:
             e = ease_in_out_cubic(seg(t, *GLIDE_IN))
-            return PLATE_TL + (BIG_TL - PLATE_TL) * e, 1 + (BIG_SCALE - 1) * e, e
+            return PLATE_TL5 + (BIG_TL - PLATE_TL5) * e, PLATE_K + (BIG_SCALE - PLATE_K) * e, e
         e = 1 - ease_in_out_cubic(seg(t, *GLIDE_OUT))
-        return PLATE_TL + (BIG_TL - PLATE_TL) * e, PLATE_BACK + (BIG_SCALE - PLATE_BACK) * e, e
+        return PLATE_TL5 + (BIG_TL - PLATE_TL5) * e, PLATE_BACK + (BIG_SCALE - PLATE_BACK) * e, e
 
     def update_plate(self, t: float):
         P = self.plate
@@ -911,6 +928,8 @@ class DeleteCheck(BeatScene):
         else:
             g = ease_in_out_sine(seg(t, *GLIDE_OUT))
             others, check_v = g, lerp(0.55, PLATE_DIM, g)
+            gone = 1 - ease_in_out_sine(seg(t, *PLATE_OUT))          # 69.3-70.1: the plate goes before S07
+            others, check_v = others * gone, check_v * gone
         row_vis = [check_v if j in check else base * others for j in range(n)]
         frame_vis = base * others
         # the check: lit as the plate arrives, RED-tinted once struck, white again when it comes back (69.1)
@@ -923,9 +942,10 @@ class DeleteCheck(BeatScene):
                 hl[num] = (lit, WHITE)
             elif t < ERASE[0]:
                 hl[num] = (lerp(1.0, 0.5, struck) + 0.35 * pulse(t, STRIKE_PULSE, 0.4), RED)
-            else:
+            else:                                  # back: white, held while the tag says so (69.1-69.3)
                 back = pulse(t, ERASE[0] + 0.15, 0.4)
-                hl[num] = (max(0.5 * (1 - erased), 0.9 * back), RED if erased < 0.5 else WHITE)
+                hold = erased * (1 - seg(t, CHECK_TAG[1], CHECK_TAG[2]))
+                hl[num] = (max(0.5 * (1 - erased), 0.9 * back, 0.85 * hold), RED if erased < 0.5 else WHITE)
         show_plate(P, frame_vis, row_vis, hl, tl, k)
         # the backing behind the big plate (the galaxy is behind it)
         bo = 0.72 * e * (frame_vis if t >= T63 else 1.0)
@@ -944,7 +964,8 @@ class DeleteCheck(BeatScene):
             show_plate(bp, frame_vis * op, [v * op for v in row_vis], {}, tlg, kg, tag_vis=0.0)
         # the strike: 62.2, across both lines; it pulses on 68.1 and erases (right to left) on 69.1
         glow = 1.0 + 1.6 * pulse(t, STRIKE[0][0] + 0.1, 0.35) + 2.2 * pulse(t, STRIKE_PULSE, 0.45) \
-            + 1.5 * pulse(t, ERASE[0], 0.3)
+            + 1.5 * pulse(t, ERASE[0], 0.3) + 1.6 * math.sin(math.pi * seg(t, *SILENT_GLOW)) ** 2
+        # (bar 64: one slow, faint swell of the struck check in the silence, so the stillness reads as meant)
         sv = (1.0 if t < T63 + 0.3 else lerp(1.0, 0.5, seg(t, T63 + 0.3, T64))) if t < GLIDE_OUT[0] else \
             lerp(0.5, 0.85, seg(t, *GLIDE_OUT))
         for (a, b), num, ink in zip(STRIKE, (24, 25), self.strikes):
@@ -958,12 +979,31 @@ class DeleteCheck(BeatScene):
             x1 = P.row_right(num, tl, k) + 0.06 * k
             A, c = line_affine(np.array([x0, y]), np.array([x1, y]))
             ink.show(f, A, c, vis=sv, glow=glow, width=max(0.6, k ** 0.5), glow_width=max(0.6, k ** 0.5))
+        # 69.1-69.3: "放回“判断输赢” · CHECK BACK" under the plate, a bracket on the two lines and a leader to it
+        cv = ease_out_cubic(seg(t, CHECK_TAG[0], CHECK_TAG[0] + 0.3)) * (1 - ease_in_out_sine(seg(t, CHECK_TAG[1],
+                                                                                              CHECK_TAG[2])))
+        if cv > 1e-3:
+            y24, y25 = P.row_y(24, tl, k), P.row_y(25, tl, k)
+            xb = P.row_right(24, tl, k) + 0.12
+            hb = abs(y24 - y25) + 0.14
+            self.bracket.show(1.0, np.array([[0.12, 0.0], [0.0, hb]]), np.array([xb, (y24 + y25) / 2]), vis=0.85 * cv)
+            bottom = tl[1] - P.height * k
+            tc = np.array([tl[0] + 0.05 + self.back_w / 2, bottom - 0.2 - self.back_h / 2 - 0.05 * (1 - cv)])
+            self.back_tag.show(tc, vis=cv, color=INK)
+            xo = tl[0] + P.width * k + 0.14                          # round the plate's right edge, to the tag
+            route = np.array([[xb + 0.14, (y24 + y25) / 2], [xo, (y24 + y25) / 2], [xo, tc[1]],
+                              [tc[0] + self.back_w / 2 + 0.12, tc[1]]])
+            self.back_leader.show(route, ease_out_cubic(seg(t, CHECK_TAG[0], CHECK_TAG[0] + 0.4)), 0.5 * cv)
+        else:
+            self.back_tag.hide()
+            self.back_leader.hide()
         # the tag "判断输赢 · WINNER CHECK", beside the check, while the plate is big
         tv = ease_out_cubic(seg(t, *TAG_IN)) * (1 - ease_in_out_sine(seg(t, T63 + 0.3, T63 + 1.0)))
         if tv <= 1e-3:
             for p in self.tag_parts:
                 p.hide()
-            self.bracket.hide()
+            if cv <= 1e-3:
+                self.bracket.hide()
             show_sprite(self.tag_backing, opacity=0)
             return
         y24, y25 = P.row_y(24, tl, k), P.row_y(25, tl, k)
@@ -1008,45 +1048,37 @@ class DeleteCheck(BeatScene):
         vis = 1.0
         if T63 <= t < RUN[0]:
             vis = 1 - 0.6 * ease_in_out_sine(seg(t, RESET[1], T64))
-        if t >= RUN[0]:
-            vis = lerp(0.4, 1.0, seg(t, RUN[0], RUN[0] + 0.3))
-        if T67 <= t:                                              # the hero has it in between (as in S05)
-            vis = 0.0 if t < DOCK[1] - 0.25 else seg(t, DOCK[1] - 0.25, DOCK[1])
+        if t >= RUN[0]:                                           # the race comes down to the right third (the
+            vis = 0.4 * (1 - seg(t, RUN_HERO[0], RUN_HERO[1]))    # hero has it until it docks back, as in S05)
+        if T67 <= t:                                              # (done a few frames before 70.1: S07's first
+            vis = 0.0 if t < DOCK[1] - 0.3 else seg(t, DOCK[1] - 0.3, DOCK[1] - 0.05)   # frame is exactly this)
         red = pulse(t, T_CROSS, 0.35) if t >= T_CROSS else 0.0
         col = hex_of(rgb(INK_DIM) * (1 - red) + rgb(RED) * red)
         self.hud_games.show(v, vis, color=col)
         cu = 1 - seg(t, T63, T63 + 0.6)
         self.hud_calls.show(HANDOVER_S06["calls"], cu)
         self.hud_undos.show(HANDOVER_S06["undos"], cu)
-        # the value it overran: left behind in RED under the readout, fading
-        rv = (ease_out_cubic(seg(t, T_CROSS, T_CROSS + 0.08)) * (1 - seg(t, T_CROSS + 0.6, T_CROSS + 1.8))
-              if t >= T_CROSS else 0.0)
-        gl = counter_glyphs(self.red_mark)
-        uncull(gl)
-        c = self.red_mark
-        dy = -0.05 * ease_out_cubic(seg(t, T_CROSS, T_CROSS + 1.8))
-        c.ref.move_to([self.red_c[0], self.red_c[1] + dy, 0])
-        c.value.set_value(WEDGE_GAMES)
-        c.layout()
-        for colm in c.columns:
-            for g in colm:
-                g.set_fill(RED, opacity=g.get_fill_opacity() * rv)
-        for _, sep in c.separators:
-            sep.set_fill(RED, opacity=rv)
-        cull(gl)
-        hv = rv * (0.35 + 0.9 * pulse(t, T_CROSS, 0.4)) if t >= T_CROSS else 0.0
-        show_sprite(self.red_halo, self.red_c + np.array([0.0, dy]), 1.7, 0.42, hv)
 
     def update_hero(self, t: float):
+        """65.1-67.1: the race on the right third (S05's running count, at its size: the slots the arm has passed);
+        as it passes 255,168 (66.2+) that number is left behind in RED, struck out, for a beat; 67.1 it lands on
+        362,880 and grows to the landing's size; 69.3-70.1 it rolls back to 255,168 as it docks into the HUD."""
         Hc = self.hero
-        if not (T67 <= t < DOCK[1]):
+        self.update_overrun(t)
+        run = RUN_HERO[0] <= t < T67
+        if not (run or T67 <= t < DOCK[1]):
             Hc.hide()
+            return
+        if run:
+            v = ease_out_cubic(seg(t, *RUN_HERO))
+            Hc.show(HERO_NUM_C, RUN_K, v, value=float(int(sweep(t))), glow=0.0, halo=0.14 * v)
             return
         dock = ease_in_out_cubic(seg(t, *DOCK))
         hud = self.hud_games.counter
-        k = 1 + (hud.ref.width / Hc.w0 - 1) * dock
+        k0 = RUN_K + (1 - RUN_K) * ease_out_cubic(seg(t, T67, T67 + 0.3))
+        k = k0 + (hud.ref.width / Hc.w0 - k0) * dock
         c = HERO_NUM_C + (hud.ref.get_center()[:2] - HERO_NUM_C) * dock
-        vis = 1 - seg(t, DOCK[1] - 0.2, DOCK[1])
+        vis = 1 - seg(t, DOCK[1] - 0.25, DOCK[1] - 0.05)
         if t < DOCK[0]:
             pos = []
             for i, L in enumerate(LANDS):
@@ -1059,6 +1091,24 @@ class DeleteCheck(BeatScene):
             return
         value = HERO_VALUE + (WEDGE_GAMES - HERO_VALUE) * dock    # 362,880 rolls back to 255,168 as it docks
         Hc.show(c, k, vis, value=value, glow=1 - dock, halo=0.42 * (1 - dock))
+
+    def update_overrun(self, t: float):
+        """66.2+: the count passes 255,168: that number stays behind in RED at the race's size, struck out, and
+        drops away over a beat and a half while the race runs on."""
+        R = self.overrun
+        if not (T_CROSS <= t < T_CROSS + OVERRUN):
+            R.hide()
+            self.over_strike.hide()
+            return
+        u = seg(t, T_CROSS, T_CROSS + OVERRUN)
+        v = ease_out_cubic(seg(t, T_CROSS, T_CROSS + 0.06)) * (1 - ease_in_out_sine(seg(u, 0.45, 1.0)))
+        c = HERO_NUM_C + np.array([0.0, -0.75 * ease_in_out_sine(seg(u, 0.12, 1.0))])
+        R.show(c, RUN_K, v, value=float(WEDGE_GAMES), glow=0.7 + 1.2 * pulse(t, T_CROSS, 0.3), halo=0.3 * v,
+               color=RED)
+        w = R.w0 * RUN_K
+        A, cc = line_affine(c + np.array([-w / 2 - 0.08, 0.0]), c + np.array([w / 2 + 0.08, 0.0]))
+        self.over_strike.show(ease_out_quad(seg(t, T_CROSS + 0.04, T_CROSS + 0.2)), A, cc, vis=v,
+                              glow=1.0 + 1.5 * pulse(t, T_CROSS + 0.1, 0.3))
 
     def update_label(self, t: float):
         """67.2: "9 × 8 × … × 1 = 9! = 362,880" and "9 的阶乘 · NINE FACTORIAL" fly in from the left (one beat,
@@ -1150,7 +1200,8 @@ class DeleteCheck(BeatScene):
         add(GLIDE_OUT[0], BEAT, -5.0, 1.8, 3.2, 2.4)
         for k in range(8):                                                  # 65-66: the re-run
             add(RUN[0] + k * BEAT, BEAT, -0.42, 0.26, 6.0, 6.0)
-        add(T_CROSS, 0.3, 5.5, 3.3, 1.0, 0.2)
+        add(RUN_HERO[0], RUN_HERO[1] - RUN_HERO[0], *HERO_NUM_C, 3.0, 0.9)    # the race on the right third
+        add(T_CROSS, 0.3, *HERO_NUM_C, 3.0, 0.9)                            # 255,168 left behind in RED
         add(T67, BEAT, *HERO_NUM_C, 4.2, 0.9)
         add(T67, BEAT, -0.42, 0.26, 6.0, 6.0)
         add(LABEL_IN[0], BEAT, HERO_NUM_C[0], -0.4, 4.0, 0.9)
@@ -1160,6 +1211,7 @@ class DeleteCheck(BeatScene):
             add(T68 + k * BEAT, BEAT, -0.42, 0.26, 6.0, 6.0)
         add(STRIKE_PULSE, 0.4, -5.2, 2.3, 2.5, 0.3)
         add(ERASE[0], 0.4, -5.2, 2.3, 2.5, 0.3)
+        add(CHECK_TAG[0], 0.3, -5.6, 0.0, 2.4, 0.6)                         # "放回“判断输赢” · CHECK BACK"
         for k in range(4):                                                  # 69: the stream home, the dock
             add(T69 + k * BEAT, BEAT, -0.42, 0.26, 6.0, 6.0)
         add(DOCK[0], DOCK[1] - DOCK[0], 5.0, 1.8, 4.5, 3.0)

@@ -15,7 +15,7 @@ orders (9! = 12 units), one screen unit each (UNIT_S).
            top, every game at its slot (the ghost gaps show); 72.3-73.1 the games slide left and close the gaps:
            bars of 1,440 · 5,328 · 47,952 · 72,576 · 127,872 games (the move-9 bar cyan, then grey); the labels
            land one per beat (73.1-74.1); 74.2-74.4 the bars slide end to end into one line, 8.44 units long;
-           74.4 "Σ = 255,168" lands at its end                                              (bell, glass, wood)
+           74.4 "= 255,168" lands at its end, "合计 · TOTAL" over it                                        (bell, glass, wood)
     75-76  the ghosts come back as multipliers, one per beat: × 24, × 6, × 2, × 1, × 1 (75.1-76.1); each segment
            drops a copy to a second line, stretched by its factor (dashed grey ghost slots open between its games)
            and docked end to end; its label rolls to 34,560 · 31,968 · 95,904 · 72,576 · 127,872; 76.2-76.4
@@ -26,7 +26,7 @@ orders (9! = 12 units), one screen unit each (UNIT_S).
     79-80  79.1-79.2 the bottom line fades; 79.1-79.4 the top line's games regroup by colour, in place: X's
            wins | O's | the draws, on the same scale, with half of all games marked (X's bar runs just past it);
            80.1-80.3 "X 赢 131,184 · X WINS", "O 赢 77,904 · O WINS", "平局 46,080 · DRAWS" under them (c23: just
-           over half); the half mark and Σ = 255,168 stay up with c23 (S08 fades them with the labels, 81.3)
+           over half); the half mark and the total (= 255,168) stay up with c23 (S08 fades them with the labels, 81.3)
 
 Every length is exact and asserted: 1,440 + 5,328 + 47,952 + 72,576 + 127,872 = 255,168 games = 8.438 units; the
 same rows x 24, 6, 2, 1, 1 = 34,560 + 31,968 + 95,904 + 72,576 + 127,872 = 362,880 = 12 units; 131,184 (4.34) +
@@ -41,8 +41,8 @@ screen place, weight W_GAME and colour family), SH_PH and the shimmer 1 + 0.12 s
 flight from 81.3), HANDOVER_S08 ("unit", "w_game", "rho_cut", and the layout keys) and ROOT_S / Z (where the galaxy
 was cut). So keep build, update_state and update_light working without a renderer and for t > END. The last
 frame: X's wins | O's | the draws side by side on the top line (HANDOVER_S08 x0, line_y, gap; a game at x0 + its
-place / 30,240 screen units), their labels under them, the half mark over X's bar, Σ = 255,168 at the line's end,
-the HUD §4 and the readout "Σ 255,168". The camera is S06's CAM_1, unchanged.
+place / 30,240 screen units), their labels under them, the half mark over X's bar, the total "合计 · TOTAL = 255,168" at the line's end,
+the HUD §4 and the readout "合计 · TOTAL 255,168". The camera is S06's CAM_1, unchanged.
 """
 
 from __future__ import annotations
@@ -100,6 +100,7 @@ RESULT = {1: int((L_RES == 1).sum()), 2: int((L_RES == 2).sum()), 3: int((L_RES 
 assert RESULT == {1: 131_184, 2: 77_904, 3: 46_080} and 2 * RESULT[1] > N      # X: just over half (51.4 %)
 assert all(int((L_RES[L_K == k] == (1 if k % 2 else 2)).sum()) == COUNT[k] for k in (5, 6, 7, 8))  # odd: X, even: O
 
+EN_C = 19.5                                       # content labels' English: 27 px caps at 1080p, in the line colour
 UNIT = 30_240                                     # games (or orders) per unit: 9! = 12 units
 assert NINE_FACT == 12 * UNIT
 UNIT_S = 1.0                                      # screen units per unit (the plan's: 9! = 12 units; S08 asserts it)
@@ -180,7 +181,7 @@ RUN_BOT = (bb(78, 3), bb(79, 1))
 FADE_BOT = (bb(79, 1), bb(79, 2))
 REGROUP = (bb(79, 1), bb(79, 4))
 RES_LAB_T = {1: bb(80, 1), 2: bb(80, 2), 3: bb(80, 3)}
-HUD_X = (0.0, BEAT / 2)                           # 70.1: §3 -> §4, GAMES COUNTED -> Σ
+HUD_X = (0.0, BEAT / 2)                           # 70.1: §3 -> §4, GAMES COUNTED -> TOTAL
 PLATE_OUT = (0.0, 0.3)
 
 # ---------------------------------------------------------------- the galaxy's last turn (S06's, then at rest)
@@ -328,11 +329,11 @@ def fan_point(k: int, f: float) -> np.ndarray:
 TOP_LAB.update(_top_labels())
 # what S08 reads (see the module docstring): the result bars X | O | draws on one line, each game at x0 + its place
 # / unit (+ gap between bars), y line_y + its radial jitter x thick, weight bar_w (= w_game); the labels centred
-# label_dy under each bar; the HUD: §4 and the readout "Σ 255,168"
+# label_dy under each bar; the HUD: §4 and the readout "合计 · TOTAL 255,168"
 HANDOVER_S08 = {"line_y": Y_TOP, "x0": LINE_X, "gap": RES_GAP, "unit": UNIT, "thick": J_SCALE * Z, "bar_w": W_GAME,
                 "labels": ((f"X 赢 {RESULT[1]:,}", "X WINS"), (f"O 赢 {RESULT[2]:,}", "O WINS"),
                            (f"平局 {RESULT[3]:,}", "DRAWS")),
-                "label_dy": LABEL_DY, "hud": "§4 · 255,168 是怎么来的 · 255,168, EXPLAINED", "readout": "Σ 255,168",
+                "label_dy": LABEL_DY, "hud": "§4 · 255,168 是怎么来的 · 255,168, EXPLAINED", "readout": "合计 · TOTAL 255,168",
                 "cam": CAM_1, "rho_cut": None, "bars": RES_BARS, "w_game": W_GAME}
 assert UNIT_S == 1.0                              # (S08 places the games at x0 + place / 30,240 screen units)
 
@@ -362,24 +363,16 @@ class Ledger(BeatScene):
         self.sec3 = section_hud("§3 · 探索每一局 · PLAY EVERY GAME")
         self.sec4 = section_hud("§4 · 255,168 是怎么来的 · 255,168, EXPLAINED")
         self.hud_games = HudLine("对局计数", "GAMES COUNTED", HUD_LINES_Y[0])
-        # the readout "Σ 255,168" (S08's S07Stage draws it with this class, then fades it with §4)
-        self.hud_sigma = HudLine("对局计数", "GAMES COUNTED", HUD_LINES_Y[0])
-        sig = Text("Σ", font=FONT_OLDSTYLE, font_size=15, color=INK_DIM)
-        sig.next_to(self.hud_sigma.counter.ref, np.array([-1, 0, 0]), buff=0.18)
-        sig.align_to(self.hud_sigma.counter.columns[0][0], np.array([0, -1, 0]))
-        self.hud_sigma.label = sig
-        self.hud_sigma.lab_t = InkText(sig, INK_DIM)
-        self.hud_sigma.lab_c = sig.get_center()[:2]
-        self.hud_sigma.group.remove(self.hud_sigma.group[0])
-        self.hud_sigma.group.add(self.hud_sigma.lab_t)
+        # the readout "合计 · TOTAL 255,168" (S08's S07Stage draws it with this class, then fades it with §4). Words,
+        # not Σ: the audience (11-14) has not met the symbol, and adding up is what this scene teaches
+        self.hud_sigma = HudLine("合计", "TOTAL", HUD_LINES_Y[0])
         self.pen = Pen()
         self.heads = [Pen(radius_px=3.5, halo_px=34) for _ in range(8)]
         # 70-71: the ring labels and their leaders
         self.ring_lab = {}
         for k in KS:
-            lab = bi_label(f"第 {k} 步", f"MOVE {k}", zh_size=20, en_size=16.5, color=INK)
-            lab[2].set_color(INK_DIM)
-            parts = [InkText(p, col) for p, col in zip(lab, (INK, INK_DIM, INK_DIM))]
+            lab = bi_label(f"第 {k} 步", f"MOVE {k}", zh_size=20, en_size=EN_C, color=INK, spacing=0.14)
+            parts = [InkText(p, col) for p, col in zip(lab, (INK, INK, INK))]
             offs = [p.get_center()[:2] - lab.get_center()[:2] for p in lab]
             self.ring_lab[k] = (parts, offs, lab.width, lab.height)
         self.leaders = {k: Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.0) for k in KS}
@@ -396,15 +389,28 @@ class Ledger(BeatScene):
                 a = Text(f"{X9:,}", font=FONT_MONO, font_size=18, color=XC.mid)
                 p = Text("+", font=FONT_MONO, font_size=18, color=INK_DIM)
                 b = Text(f"{D9:,}", font=FONT_MONO, font_size=18, color="#C8CCCC")
-                g = VGroup(a, p, b).arrange(buff=0.14)
-                parts = [InkText(x, c) for x, c in zip(g, (XC.mid, INK_DIM, "#C8CCCC"))]
-                offs = [x.get_center()[:2] - g.get_center()[:2] for x in g]
-                cols = [XC.mid, INK_DIM, "#C8CCCC"]
-                m = g
+                g = VGroup(a, p, b).arrange(buff=0.24)
+                # over each part, what it is: X's wins (cyan) and the draws (grey-white), zh over en
+                wa = VGroup(cjk("X 赢", size=16, color=XC.mid), tracked("X WINS", size=15, spacing=0.12, color=XC.mid)
+                            ).arrange(np.array([0, -1, 0]), buff=0.05)
+                wb = VGroup(cjk("平局", size=16, color="#C8CCCC"),
+                            tracked("DRAWS", size=15, spacing=0.12, color="#C8CCCC")).arrange(np.array([0, -1, 0]),
+                                                                                           buff=0.05)
+                wa.next_to(a, np.array([0, 1, 0]), buff=0.08)
+                wb.next_to(b, np.array([0, 1, 0]), buff=0.08)
+                assert wa.get_right()[0] < wb.get_left()[0] - 0.08
+                g = VGroup(a, p, b, wa, wb)
+                parts = [InkText(x, c) for x, c in zip(g, (XC.mid, INK_DIM, "#C8CCCC", XC.mid, "#C8CCCC"))]
+                ctr = VGroup(a, p, b).get_center()[:2]
+                offs = [x.get_center()[:2] - ctr for x in g]
+                cols = [XC.mid, INK_DIM, "#C8CCCC", XC.mid, "#C8CCCC"]
+                m = VGroup(a, p, b)
             self.count_lab[k] = (parts, offs, cols, m.width, m.height)
         self.count_leaders = {k: Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.0) for k in KS}
-        # 74.4: Σ = 255,168 (the title's halo: cool on the left, warm on the right)
-        self.sigma_sym = InkText(Text("Σ", font=FONT_OLDSTYLE, font_size=34, color=INK), INK)
+        # 74.4: "合计 · TOTAL" over "= 255,168" (the title's halo: cool on the left, warm on the right)
+        tot = bi_label("合计", "TOTAL", zh_size=18, en_size=16.5, color=INK, spacing=0.14)
+        self.sigma_sym = InkText(tot, INK)                # (named sigma_* from when it was "Σ =")
+        self.sigma_w = tot.width
         self.sigma_eq = InkText(maths("=", size=34, color=INK), INK)
         t255 = hero_number("255,168", size=36)
         xs = np.array([g.get_center()[0] for g in t255])
@@ -451,9 +457,8 @@ class Ledger(BeatScene):
         self.res_lab = {}
         for r, (zh, en_) in {1: (f"X 赢 {RESULT[1]:,}", "X WINS"), 2: (f"O 赢 {RESULT[2]:,}", "O WINS"),
                              3: (f"平局 {RESULT[3]:,}", "DRAWS")}.items():
-            lab = bi_label(zh, en_, zh_size=20, en_size=16.5, color=INK)
-            lab[2].set_color(INK_DIM)
-            parts = [InkText(p, c) for p, c in zip(lab, (INK, INK_DIM, INK_DIM))]
+            lab = bi_label(zh, en_, zh_size=20, en_size=EN_C, color=INK, spacing=0.14)
+            parts = [InkText(p, c) for p, c in zip(lab, (INK, INK, INK))]
             offs = [p.get_center()[:2] - lab.get_center()[:2] for p in lab]
             self.res_lab[r] = (parts, offs, lab.width)
 
@@ -607,7 +612,7 @@ class Ledger(BeatScene):
         self.pen.place(ROOT_S, 0.9 * v)
 
     def update_plate_hud(self, t: float):
-        pv = PLATE_DIM * (1 - ease_in_out_sine(seg(t, *PLATE_OUT)))
+        pv = HANDOVER_S07["plate_dim"] * (1 - ease_in_out_sine(seg(t, *PLATE_OUT)))   # (0: S06 took it away, 69.3-70.1)
         show_plate(self.plate, pv, [pv] * len(self.plate.rows), {}, None, HANDOVER_S07["plate_scale"])
         x = ease_in_out_sine(seg(t, *HUD_X))
         if abs(x - getattr(self, "_hx", -1)) > 1e-4:
@@ -638,7 +643,7 @@ class Ledger(BeatScene):
             c1 = np.array([ROW_X + lw / 2, ROW_Y[k] + ROW_LAB_DY])
             c = c0 + (c1 - c0) * e + np.array([0.08 * (1 - ease_out_cubic(seg(t, RING_LAB_T[k], RING_LAB_T[k] + 0.35))), 0])
             v = v * abs(1 - 2 * e) ** 1.5                  # the labels cross as the rows re-stack: gone mid-way
-            for p, off, col in zip(parts, offs, (INK, INK_DIM, INK_DIM)):
+            for p, off, col in zip(parts, offs, (INK, INK, INK)):
                 p.show(c + off, vis=v, color=col)
             # the leader: from the label to its ring's seam (drawn as the label lands), shrinking into the row
             lv = v * (1 - ease_in_out_sine(seg(t, UNROLL[0], UNROLL[0] + 0.6)))
@@ -695,9 +700,9 @@ class Ledger(BeatScene):
         x0 = LINE_X + TOP_LEN + 0.28 + 2 * RES_GAP * ease_in_out_cubic(seg(t, *REGROUP))
         y = Y_TOP
         breathe = 1 + 0.1 * math.sin(2 * math.pi * (t - SIGMA_T) / BAR)
-        self.sigma_sym.show([x0 + 0.12, y + 0.02], vis=v, color=INK)
-        self.sigma_eq.show([x0 + 0.48, y], vis=v, color=INK)
-        nc = np.array([x0 + 0.72 + self.n255_w / 2, y - 0.04 * (1 - v)])
+        self.sigma_eq.show([x0 + 0.14, y], vis=v, color=INK)
+        nc = np.array([x0 + 0.42 + self.n255_w / 2, y - 0.04 * (1 - v)])
+        self.sigma_sym.show([nc[0] - self.n255_w / 2 + self.sigma_w / 2, y + 0.46 + 0.04 * (1 - v)], vis=v, color=INK)
         self.n255.show(nc, vis=v, glow=(0.85 + 1.4 * pulse(t, SIGMA_T, 0.5)) * breathe)
         show_sprite(self.halo255, nc, 3.4, 1.15, 0.38 * v)
 
@@ -848,7 +853,7 @@ class Ledger(BeatScene):
             x0, x1 = RES_BARS[r]
             cx, y = (x0 + x1) / 2, Y_TOP + LABEL_DY - 0.06 * (1 - v)
             parts[0].show([cx, y + 0.14], vis=v, color=INK)
-            parts[2].show([cx, y - 0.17], vis=v, color=INK_DIM)
+            parts[2].show([cx, y - 0.19], vis=v, color=INK)
 
     def update_heads(self, t: float):
         """Bar 78: the running light's heads (screen-space pens): along the top, down each hairline, along the

@@ -9,25 +9,31 @@ and the "camera" is the galaxy's own placement (`gcam`) and the strips' zoom (`z
 
     81-82  the three result bars of S07 hold, shimmering; 81.3-82.1 their 255,168 points fly back into the
            galaxy (2 beats); 82.1 the internal nodes brighten and the root glows white          (c24)
-    83-86  the minimax wave: the colours climb the tree, one ring per half bar (ring 8 on 83.1 ... ring 1 on
-           86.3), each internal node taking the best result for the player to move; a label rides the wave
-           front ("轮到 X 时：挑对 X 最好的 · BEST FOR X" / "... O ..."); ring 2 ends 48 cyan, 24 grey, ring 1
-           all 9 grey; the camera pushes in towards the inner rings
+    83-86  the minimax wave: a band of white light sweeps inwards, one ring per half bar (ring 8 on 83.1 ... ring 1
+           on 86.3); as it passes, the ring's nodes light in the best result for the player to move and the ring's
+           own leaves step back, so each ring visibly turns (8 amber -> cyan / grey, 7 cyan -> amber, ...); one
+           label for the whole wave ("从外往里：轮到谁，就挑对谁最好的 · EACH SIDE PICKS ITS BEST"); ring 2 ends
+           48 cyan, 24 grey, ring 1 all 9 grey; the camera pushes in towards the inner rings
     87     87.1 the root turns grey with a soft flare (perfect play is a draw)                  (c25)
     88-89  88.1 game A's leaf is ringed and its path lights back to the root (its notes backwards);
            88.3 the inset: game A after move 2, X0 cyan, O3 in RED "O 的失误 · O'S MISTAKE", the path's
-           second step turns RED; 88.4 the centre glows grey "只有下中心才能保住平局 · ONLY THE CENTRE KEEPS THE
-           DRAW"; 89.1-89.3 the inset plays on faintly, X1 O4 X2, to X's top row
+           second step turns RED; 88.4 the centre glows grey "第 2 步：只有下中心才能保住平局 · MOVE 2: ONLY THE
+           CENTRE KEEPS THE DRAW"; 89.1-89.3 the inset plays on faintly, X1 O4 X2, to X's top row (O4 on the
+           centre now dim, "太晚了 · TOO LATE")
     90-92  §6. 90.1-90.3 the galaxy shrinks into one small glowing box: box 1 of the strip "2 5 5 1 6 8"
-           (6 boxes, "井字棋 · 6 位数 · TIC-TAC-TOE · 6 DIGITS"); 90.4 the chess strip starts below it, "1" and
-           then zeros, one box per sixteenth and then faster; the camera pulls back as it runs, from close on
+           (6 boxes, "井字棋：6 位数 · TIC-TAC-TOE: 6 DIGITS"); 90.4 the chess strip starts right under it, "1"
+           and then zeros, one box per sixteenth and then faster; the camera pulls back as it runs, from close on
            the 55 px boxes (zoom Z0 = 2, so the digits read) to frame 2.6 on the 121st box             (c26)
-    93     93.1 THE CLIMAX: the 121st box lands (one flash frame); the chess label (至少 ... 估计), "121 位数 ·
-           121 DIGITS"; the tic-tac-toe strip glows, "全部下完 · ALL PLAYED OUT"                   (c27)
-    94-95  the atoms strip runs between the two, 81 boxes (94.1-95.1), its label and "81 位数"   (c28)
-    96-98  96.1 "每多一个格子，就大 10 倍 · EACH EXTRA BOX: 10 TIMES BIGGER"; the light pen comes back and
-           sweeps the chess strip (a faint arm, its grain), one box per beat from 96.3, and stalls on box 6
-           (97.4); bar 98 it pulses there while the 115 dark boxes fade into grain; the camera drifts back
+    93     93.1 THE CLIMAX: the 121st box lands (one flash frame); the chess strip is a band of 121 bright cells
+           (47 px tall), the tic-tac-toe strip glowing right above its first six; a light runs the whole strip
+           and blooms in box 121, which keeps a glow; "全部下完 · ALL PLAYED OUT", "121 位数 · 121 DIGITS", the
+           chess label under the strip (至少 ... 估计; 55 % from 94.1); a drift back to frame 2.8     (c27)
+    94-95  the atoms strip runs under the chess label, 81 boxes (94.1-95.1), its label and "81 位数"   (c28)
+    96-98  96.1 "每多一个格子，就大 10 倍 · EACH EXTRA BOX: 10 TIMES BIGGER"; the long labels go and the camera
+           moves in on the strips' left ends (96.2-96.4, boxes 34 px, digits 26 px); the light pen comes back and
+           lights the chess boxes one per beat from 96.3, each in the colour of the tic-tac-toe box above it, a
+           bracket under them counting "1 格 · 1 BOX" ... "6 格 · 6 BOXES", and stalls on box 6 (97.4); bar 98
+           it pulses there while the camera pulls back out and the 115 boxes ahead dim into grain
 
 Hand-over from S07 (a segue at 81.1): drawn by S07 itself. S07Stage runs s07_ledger.Ledger.build on a stand-in
 and draws S07's objects with S07's own update_state at S07's times (and S07's own light until 81.3), so the first
@@ -49,7 +55,7 @@ from manim import Circle, Dot, ImageMobject, Line, Mobject, Rectangle, VGroup, V
 
 from explainer.short import BeatScene, FONT_MONO, INK, INK_DIM, RED, WHITE, cjk, stroke_px
 
-from common import (GALAXY_COLOURS, GALAXY_DUST_W, GALAXY_LOOK, GAME_A, HUD_LINES_Y, NINE_FACT, OC,
+from common import (GALAXY_COLOURS, GALAXY_DUST_W, GALAXY_LOOK, GALAXY_SLOT_W, GAME_A, HUD_LINES_Y, NINE_FACT, OC,
                     PEN_HALO, PITCH, XC, FastCamera, FrameImage, Ink, InkText, LeanText, Pen, Shot,
                     Sounds, Splatter, W, H, bi_label, box, clamp01, ease_in_out_cubic, ease_in_out_sine,
                     ease_out_cubic, ease_out_quad, galaxy_tree, gaussian_sprite, o_template, order_slot, player,
@@ -164,10 +170,22 @@ D_W = np.where(N_DEPTH[D_IDX] <= 5, 1.0, 3.0)
 D_RING = N_DEPTH[D_IDX]
 D_VAL = N_VAL[D_IDX]
 D_BASE = D_W * GALAXY_DUST_W[D_RING]
-# the wave's colours on the dust, by ring: strong where nodes are few (rings 1-4 read as single nodes), below
-# the leaves' light where they are many (rings 6-8), so the leaves keep their colours
-RING_BOOST = np.array([0.0, 1.5, 1.5, 1.9, 1.5, 1.0, 0.6, 0.5, 0.45, 0.0])
+# the wave's colours on the dust, by ring: once the front has passed ring d (3-8), its nodes shine with 38 % of a
+# full ring's light (as bright as S05's lit bands) in their perfect-play colours, and the ring's own leaves (games
+# that end there) step back to 35 %: so every ring visibly turns as the front passes (ring 8 amber -> cyan / grey,
+# ring 7 cyan -> amber, ring 6 amber -> cyan, ...); rings 1-2 read as single nodes (their dots)
+_DUST_TOTAL = np.array([float(D_BASE[D_RING == d].sum()) for d in range(10)])
+RING_BOOST = np.ones(10)
+RING_BOOST[1:3] = 1.5
+for _d in range(3, 9):
+    RING_BOOST[_d] = 0.2 * GALAXY_SLOT_W * NINE_FACT * ring_radius(_d) / 2.9 / _DUST_TOTAL[_d]
+LEAF_STEP_BACK = 0.25                             # a decided ring's leaves (rings 5-8)
+D_JIT = np.where(D_RING >= 3, np.random.default_rng(84).uniform(-0.03, 0.03, len(D_IDX)), 0.0)   # a band, as the
+                                                  # leaves' (and below the tone map's knee, so the colour reads)
 VAL_HEX = {1: XC.mid, 2: OC.mid, 3: "#C8CCCC"}            # a perfect-play value's colour (X, O, draw)
+_bf = np.random.default_rng(83)
+FRONT_TH = np.sort(_bf.uniform(0, 2 * np.pi, 1800))         # the wave front: a band of light on the ring it is
+FRONT_DR = _bf.uniform(-0.035, 0.035, 1800)                 # reaching
 
 # ---------------------------------------------------------------- times
 FLY = (bb(81, 3), bb(82))                         # the result bars fly back into the galaxy (2 beats)
@@ -194,8 +212,8 @@ SWEEP = (HIT, HIT + 0.5)                          # 93.1: a light runs the whole
 ATOMS = (bb(94), bb(95))
 CHESS_DIM = (bb(94), bb(94, 2))                   # the long labels step back to 55 % once read (c27, c28 say it)
 ATOMS_DIM = (bb(95, 2), bb(95, 3))
-NOTE_IN = bb(96)
-LABELS_OFF = (bb(96), bb(96, 2))                  # ... and go as the camera moves in
+LABELS_OFF = (bb(96), bb(96, 1.75))               # ... and go as the camera moves in
+NOTE_IN = bb(96, 2)                               # "每多一个格子，就大 10 倍" once the atoms label has gone
 ZOOM_IN = (bb(96, 2), bb(96, 4))                  # in on the strips' left ends: the six boxes the pen lights read
 PEN_IN = bb(96)
 ARM_IN = (bb(96), bb(96, 3))
@@ -382,8 +400,13 @@ def rows_z(z: float) -> dict:
     return {k: ROWS0[k] + (ROWS1[k] - ROWS0[k]) * lam for k in ROWS0}
 
 
+ROWS_DROP = -0.45                                 # 96.2-96.4: with the long labels gone, the strips move down to the
+                                                  # middle of the picture (and stay there into S09's rush)
+
+
 def rows(t: float) -> dict:
-    return rows_z(zs(t))
+    d = ROWS_DROP * ease_in_out_cubic(seg(t, *ZOOM_IN))
+    return {k: v + d for k, v in rows_z(zs(t)).items()}
 
 
 def box_x(i, z: float):
@@ -435,7 +458,7 @@ EN_C = 20.5                                      # content labels' English: 28 p
 
 def bi(zh: str, en_text: str, zh_color=INK, en_color=INK, en_size: float = EN_C) -> BiText:
     """One line: 中文 · ENGLISH (content size: the English 28 px caps at 1080p)."""
-    g = bi_label(zh, en_text, zh_size=ZH_SIZE, en_size=en_size)
+    g = bi_label(zh, en_text, zh_size=ZH_SIZE, en_size=en_size, spacing=0.14)
     return BiText(g, [zh_color, en_color, en_color])
 
 
@@ -847,7 +870,7 @@ class StripsRig:
         self.note.show([0.0, y - 0.05 * (1 - a)], "c", vis * a)
 
 
-NOTE_Y = -2.2                                     # "每多一个格子，就大 10 倍", under everything (above the captions)
+NOTE_Y = -2.1                                     # "每多一个格子，就大 10 倍", under everything (above the captions)
 
 
 def pen_x(t: float, z: float) -> float:
@@ -887,7 +910,7 @@ def strip_view(t: float) -> dict:
     end_glow = ease_out_cubic(seg(t, SWEEP[1] - 0.08, SWEEP[1] + 0.25)) * (1 - 0.6 * ease_in_out_sine(seg(t, *GRAIN)))
     breathe = math.sin(2 * math.pi * (t - HIT) / BAR) if t >= HIT else 0.0
     end_glow *= 1 + 0.2 * breathe
-    return {"z": z, "rows": rows_z(z), "lit": lit, "grain": ease_in_out_sine(seg(t, *GRAIN)),
+    return {"z": z, "rows": rows(t), "lit": lit, "grain": ease_in_out_sine(seg(t, *GRAIN)),
             "flash": 0.55 * pulse(t, HIT, 0.3) if t >= HIT else 0.0, "breathe": breathe, "head": head,
             "end_glow": end_glow, "bloom": pulse(t, SWEEP[1], 0.45) if t >= SWEEP[1] else 0.0,
             "atoms": atoms_vis(t), "bracket": (nl, bv), "bracket_flash": bflash}
@@ -940,38 +963,42 @@ def spark_points(t: float, px: float, py: float, moving_until: float):
 
 
 def strip_lights(t: float, view: dict, xf=None):
-    """Light under the strips (white, splatted): the chess strip's band of cells (each box a soft glow, the 115
-    ahead dimming in bar 98), the atoms strip fainter; a spark on each box as it lands (the run's front); at 93.1
-    a light that runs the whole chess strip and blooms in its 121st box; a burst on each box the pen lights."""
+    """Light under the strips (white, splatted, 14 points a box so the cells sit on a soft band of light): the chess
+    strip's band (the 115 boxes ahead dimming in bar 98), the atoms strip fainter; a spark on each box as it lands
+    (the run's front); at 93.1 a light that runs the whole chess strip and blooms in its 121st box; a burst on each
+    box the pen lights."""
     z, ry = view["z"], view["rows"]
     w, h = box_size(z)
+    du = np.tile([-0.25, 0.25], 7) * w
+    dv = np.repeat(np.linspace(-0.4, 0.4, 7), 2) * h
     ps, ws = [], []
-    tri = np.array([-0.3, 0.0, 0.3])
-    for key, times, base, k in (("chess", CHESS_T, 0.42, 1.0), ("atoms", ATOMS_T, 0.2, 0.6), ("ttt", TTT_T, 0.0, 1.0)):
+    for key, times, base, k in (("chess", CHESS_T, 0.9, 1.0), ("atoms", ATOMS_T, 0.45, 0.6), ("ttt", TTT_T, 0.0, 1.0)):
         n = int(np.searchsorted(times, t + 1e-9, side="right"))
         if n == 0:
             continue
         i = np.arange(n)
         age = t - np.asarray(times[:n])
-        wt = base * np.clip(age / 0.12, 0, 1) + 2.4 * k * np.where(age < 0.45, np.exp(-age / 0.1), 0.0)
+        wt = base * np.clip(age / 0.12, 0, 1) + 3.0 * k * np.where(age < 0.45, np.exp(-age / 0.1), 0.0)
         if key == "atoms":
             wt = wt * view["atoms"]
         if key == "chess":
             if view["grain"] > 0:
                 wt[6:] *= 1 - 0.7 * view["grain"]
             if view["head"] is not None:                       # the climax's sweep, then the bloom in box 121
-                wt = wt + 6.0 * np.exp(-((i - view["head"]) / 3.0) ** 2) * (view["head"] <= 125)
-            wt[min(n, 121) - 1] += (6.0 * view["bloom"] + 1.4 * view["end_glow"]) if n == 121 else 0.0
-            for j, tt in enumerate(LIT_T):                     # the pen lights a box: a burst
+                wt = wt + 9.0 * np.exp(-((i - view["head"]) / 3.0) ** 2) * (view["head"] <= 125)
+            if n == 121:
+                wt[120] += 24.0 * view["bloom"] + 2.0 * view["end_glow"]
+            for j, tt in enumerate(LIT_T):                     # the pen lights a box: a burst, then a glow
                 if t >= tt and j < n:
-                    wt[j] += 6.0 * math.exp(-(t - tt) / 0.15) + 0.5
+                    wt[j] += 9.0 * math.exp(-(t - tt) / 0.15) + 1.2
         sel = wt > 1e-3
         if not sel.any():
             continue
-        x = np.repeat(box_x(i[sel], z), 3)
-        y = ry[key] + np.tile(tri, int(sel.sum())) * h
+        m = int(sel.sum())
+        x = np.repeat(box_x(i[sel], z), 14) + np.tile(du, m)
+        y = ry[key] + np.tile(dv, m)
         ps.append(np.column_stack([x, y]))
-        ws.append(np.repeat(wt[sel], 3) / 3)
+        ws.append(np.repeat(wt[sel], 14))
     if not ps:
         return None, None
     return xf_apply(np.concatenate(ps), xf), np.concatenate(ws)
@@ -1087,7 +1114,7 @@ class BiggerGames(BeatScene):
         self.root_board = MiniBoard(0.14, 0, 0, nums=0)            # the root, as S05 draws it: a tiny empty board
         self.front = Ink(Circle(radius=1.0, num_components=64).rotate(math.pi / 2), INK, 1.3, PEN_HALO, 10, layers=4,
                          glow_opacity=0.32)
-        self.wave_lab = [bi("轮到 X 时：挑对 X 最好的", "BEST FOR X"), bi("轮到 O 时：挑对 O 最好的", "BEST FOR O")]
+        self.wave_lab = stacked([("从外往里：轮到谁，就挑对谁最好的", INK, "zh"), ("EACH SIDE PICKS ITS BEST", INK, "en")])
         self.wave_leader = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.1)
         # game A: the ring round its leaf, its path, the inset
         self.leaf_ring = Ink(Circle(radius=1.0, num_components=32).rotate(math.pi / 2), XC.mid, 1.8, XC.glow, 10, layers=5,
@@ -1101,8 +1128,11 @@ class BiggerGames(BeatScene):
         self.red_o = Ink(o_template(0.62 * 0.52), RED, 3.0, RED, 12, layers=5, glow_opacity=0.5)
         self.centre_glow = gaussian_sprite("#C8CCCC", 64, 0.32)
         self.lab_mistake = bi("O 的失误", "O'S MISTAKE", zh_color=RED, en_color=RED)
-        self.lab_centre = stacked([("只有下中心才能保住平局", INK, "zh"), ("ONLY THE CENTRE", INK_DIM, "en"),
-                                   ("KEEPS THE DRAW", INK_DIM, "en")], align="c")
+        self.lab_centre = stacked([("第 2 步：只有下中心才能保住平局", INK, "zh"), ("MOVE 2: ONLY THE CENTRE", INK, "en"),
+                                   ("KEEPS THE DRAW", INK, "en")], align="c")
+        self.lab_late = stacked([("太晚了", INK_DIM, "zh"), ("TOO LATE", INK_DIM, "en")], en_size=EN_SIZE)
+        self.late_leader = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.1)
+        assert self.inset_c[0] + self.lab_centre.width / 2 < 6.85 and self.wave_lab.width < 6.4
         self.inset_leader = Ink(Line([-0.5, 0, 0], [0.5, 0, 0]), INK_DIM, 1.1)
         # the strips, the pen and its arm, the flash
         self.strips = StripsRig()
@@ -1117,8 +1147,8 @@ class BiggerGames(BeatScene):
         self.s07_on = True
         self.fix(self.edges, *self.node_glow, *self.node_core, self.front, self.wave_leader, self.root_halo, self.root_board.group, *self.path, self.path_red,
                  *self.path_dots, self.leaf_ring, self.inset_leader, self.centre_glow, self.inset.group, self.red_o,
-                 *[lb.group for lb in self.wave_lab], self.lab_mistake.group,
-                 self.lab_centre.group, *self.strips.sprites, self.strips.group, self.arm, self.pen,
+                 self.wave_lab.group, self.lab_mistake.group,
+                 self.lab_centre.group, self.lab_late.group, self.late_leader, *self.strips.sprites, self.strips.group, self.arm, self.pen,
                  self.sec5, self.sec6, *self.s07.mobjects_to_show, self.flash)
         self.update_state(0.0)
 
@@ -1212,14 +1242,25 @@ class BiggerGames(BeatScene):
         else:
             w = L_WEIGHT * zf * dim
             flare = 1 + 0.35 * pulse(t, READY, 0.5) if t >= READY else 1.0
+            if t >= WAVE_T[8]:                                  # a decided ring's own leaves step back
+                back = np.array([1 - (1 - LEAF_STEP_BACK) * ease_in_out_sine(seg(t, WAVE_T[k], WAVE_T[k] + 0.45))
+                                 if k in WAVE_T else 1.0 for k in range(10)])
+                w = w * back[L_K]
             for f in range(3):
                 sel = L_FAM == f
                 put(f, gal[sel], w[sel] * flare)
+        # the wave front: a band of white light on the ring it is reaching (82.3-87.1)
+        fv = ease_in_out_sine(seg(t, WAVE_START - 0.3, WAVE_START + 0.3)) * (1 - seg(t, WAVE_T[1] + 0.2, ROOT_GREY))
+        if fv > 1e-3:
+            R = front_radius(t)
+            P = gal_screen(FRONT_TH, np.maximum(0.0, R + FRONT_DR), G, rh)
+            put(5, P, np.full(len(FRONT_TH), 0.3 * GALAXY_SLOT_W * NINE_FACT * max(R, 0.3) / 2.9 / len(FRONT_TH)
+                              * zf * fv))
         # the dust (internal nodes): grey until the wave reaches its ring, then the best result's colour
         dust_in = ease_in_out_sine(seg(t, FLY[0] + 0.5, FLY[1] + 0.1))
         if dust_in > 1e-3:
             bright = 1 + 0.3 * ease_out_cubic(seg(t, READY, READY + 0.4))
-            P = gal_screen(N_TH[D_IDX], N_R[D_IDX], G, rh)
+            P = gal_screen(N_TH[D_IDX], N_R[D_IDX] + D_JIT, G, rh)
             tcol = np.array([WAVE_T.get(int(d), 1e9) for d in range(10)])[D_RING]
             col = t >= tcol
             fl = np.where(col, 1 + 2.0 * np.exp(-np.maximum(t - tcol, 0) / 0.35), 1.0)
@@ -1286,33 +1327,22 @@ class BiggerGames(BeatScene):
         fv = ease_in_out_sine(seg(t, WAVE_START - 0.3, WAVE_START + 0.3)) * (1 - seg(t, WAVE_T[1] + 0.2, ROOT_GREY))
         if fv > 1e-3:
             R = front_radius(t) * G[2]
-            self.front.show(1.0, np.eye(2) * R, (G[0], G[1]), vis=0.5 * fv, glow=0.9)
+            self.front.show(1.0, np.eye(2) * R, (G[0], G[1]), vis=0.85 * fv, glow=1.6)
         else:
             self.front.hide()
         lv = ease_in_out_sine(seg(t, WAVE_T[8] - 0.3, WAVE_T[8] + 0.1)) * (1 - seg(t, WAVE_T[1] + 0.4, ROOT_GREY))
-        if lv > 1e-3:
-            reached = [d for d, tt in WAVE_T.items() if t >= tt]
-            ring = min(reached) if reached else 8                  # the ring the front is on
-            which = 0 if ring % 2 == 0 else 1                      # X to move on even rings
-            t_in = WAVE_T[ring] if ring != 8 else -1.0
-            t_next = WAVE_T.get(ring - 1, 1e9)
-            a_in = ease_out_cubic(seg(t, t_in, t_in + 0.16))       # the next label comes in just after its ring's
-            a_out = 1 - seg(t, t_next - 0.16, t_next - 0.02)       # time, once the last one has gone
-            anchor = np.array([6.42, 2.62])
-            for j, lb in enumerate(self.wave_lab):
-                if j == which:
-                    lb.show(anchor + np.array([0.0, -0.05 * (1 - a_in)]), "r", lv * a_in * a_out)
-                else:
-                    lb.hide()
+        if lv > 1e-3:                                              # one label for the whole wave (from the outside
+            lb = self.wave_lab                                     # in, each side picks its best)
+            anchor = np.array([6.5, 2.6])
+            lb.show(anchor + np.array([0.0, -0.05 * (1 - lv)]), "r", lv)
             th = math.radians(42) + rh
             R = front_radius(t) * G[2]
             p = np.array([G[0] + R * math.sin(th), G[1] + R * math.cos(th)])
-            q = anchor - np.array([self.wave_lab[which].width + 0.12, 0.08])
+            q = anchor - np.array([lb.width + 0.12, lb.height / 2 - 0.12])
             A, c = line_affine(q, p)
             self.wave_leader.show(1.0, A, c, vis=0.55 * lv)
         else:
-            for lb in self.wave_lab:
-                lb.hide()
+            self.wave_lab.hide()
             self.wave_leader.hide()
 
     # --- game A: its leaf ringed, its path lit back to the root, the inset (bars 88-89)
@@ -1361,14 +1391,26 @@ class BiggerGames(BeatScene):
             self.lab_mistake.hide()
             self.lab_centre.hide()
             self.inset_leader.hide()
+            self.lab_late.hide()
+            self.late_leader.hide()
             return
         B.draw_grid(1.0, vis=iv)
         xs = [0] + [s for s, tt in ((1, PLAY_ON[0]), (2, PLAY_ON[2])) if t >= tt]
         fx = [1.0] + [ease_out_cubic(seg(t, tt, tt + 0.25)) for s, tt in ((1, PLAY_ON[0]), (2, PLAY_ON[2])) if t >= tt]
         vx = [iv] + [0.5 * iv] * (len(xs) - 1)
         os_ = [4] if t >= PLAY_ON[1] else []
-        B.draw_marks(xs, os_, vis_x=vx, vis_o=0.5 * iv, f_x=fx, f_o=[ease_out_cubic(seg(t, PLAY_ON[1], PLAY_ON[1] + 0.25))],
-                     glow_x=[1.0 + 0.6 * pulse(t, INSET_IN, 0.4)] + [0.5] * (len(xs) - 1), glow_o=0.5)
+        B.draw_marks(xs, os_, vis_x=vx, vis_o=0.3 * iv, f_x=fx, f_o=[ease_out_cubic(seg(t, PLAY_ON[1], PLAY_ON[1] + 0.25))],
+                     glow_x=[1.0 + 0.6 * pulse(t, INSET_IN, 0.4)] + [0.5] * (len(xs) - 1), glow_o=0.25)
+        # 89.2: O on the centre now is too late (the rule is about move 2): the replayed O dim, tagged
+        lt = ease_out_cubic(seg(t, PLAY_ON[1] + 0.1, PLAY_ON[1] + 0.45)) * iv
+        if lt > 1e-3:
+            ax = self.inset_c[0] + 1.5 * 0.52 + 0.24
+            self.lab_late.show([ax + 0.06 * (1 - lt), self.inset_c[1]], "l", lt)
+            A, c = line_affine(np.array([ax - 0.08, self.inset_c[1]]), B.sq(4) + np.array([0.2, 0.0]))
+            self.late_leader.show(ease_out_cubic(seg(t, PLAY_ON[1] + 0.1, PLAY_ON[1] + 0.4)), A, c, vis=0.5 * lt)
+        else:
+            self.lab_late.hide()
+            self.late_leader.hide()
         self.red_o.show(ease_out_cubic(seg(t, INSET_IN, INSET_IN + 0.25)), np.eye(2), B.sq(3), vis=iv,
                         glow=1.0 + 0.9 * pulse(t, INSET_IN, 0.45))
         if t >= WIN_IN:
@@ -1460,6 +1502,12 @@ class BiggerGames(BeatScene):
         S.phrase("atoms strip", [(tt, "tick", float(box_x(j, zs(tt)))) for j, tt in enumerate(ATOMS_T)], rise=True,
                  gain=0.55)
         S.phrase("atoms bell", [(ATOMS[1], "bell@B3", float(box_x(80, zs(ATOMS[1]))))], gain=0.8)
+        # 93.1: the light runs the chess strip (an Emaj9 run on glass, left to right, with the boom) and blooms in its
+        # 121st box (a high bell)
+        run = ("E5", "G#5", "B5", "D#6", "F#6", "G#6", "B6", "D#7")
+        S.phrase("sweep", [(SWEEP[0] + (SWEEP[1] - SWEEP[0]) * j / len(run), f"glass@{n}",
+                            float(box_x(120 * j / (len(run) - 1), zs(HIT)))) for j, n in enumerate(run)], gain=0.7)
+        S.phrase("bloom", [(SWEEP[1], "bell@E6", float(box_x(120, zs(SWEEP[1]))))], gain=0.6)
         # 96-98: the note (a soft pluck); the pen's soft pulse; a ping per box it lights (F#9's tones, rising); its
         # thin grain; the stall: the pen pulses on the beats of bar 98
         # (bars 96-97 are F#9: F# A# C# E G#, so the pluck and the pen's first pulses sit on its tones; bar 98 is
@@ -1476,6 +1524,10 @@ class BiggerGames(BeatScene):
             grains.append((tt, f"glass@{tones[(k * 3 + k // 5) % 5]}", pen_x(tt, zs(tt))))
         S.phrase("pen grain", grains, gain=0.18)
         S.log(self)
+        # bar 98 hangs (the pen stalls): the 1-bar riser that the cut at 99.1 brings is replaced by a short swish
+        # across the cut itself (an explicit riser that ends within 0.3 s of a cut stands in for the cut's own,
+        # explainer.music build_score; video.yaml cues have no switch for it)
+        self.mark("riser", at=END - 0.29, dur=0.28)
 
     # ------------------------------------------------------------- the logged events and the clock
     def log_events(self):
@@ -1515,17 +1567,20 @@ class BiggerGames(BeatScene):
             t = CHESS0 + k * BEAT
             add(t, BEAT, 0.0, -0.3, 12.0, 2.0)
         add(HIT, BEAT, 0.0, 0.5, 13.0, 4.5)                                       # the climax, the labels
+        add(SWEEP[0], SWEEP[1] - SWEEP[0], 0.0, ROWS1["chess"], 12.0, 0.6)        # the light runs the strip
         add(HIT + BEAT, 3 * BEAT, 0.0, 0.5, 12.0, 4.0)                            # a slow drift
         for k in range(4):
-            add(ATOMS[0] + k * BEAT, BEAT, -2.0, 0.7, 8.0, 1.2)                   # the atoms strip runs
-        add(ATOMS[1], BEAT, 1.0, 0.9, 10.0, 1.4)
+            add(ATOMS[0] + k * BEAT, BEAT, -2.0, ROWS1["atoms"], 8.0, 1.2)        # the atoms strip runs
+        add(ATOMS[1], BEAT, 1.0, ROWS1["atoms"], 10.0, 1.4)
         add(ATOMS[1] + BEAT, 3 * BEAT, 0.0, 0.5, 12.0, 4.0)
-        add(NOTE_IN, 2 * BEAT, 0.0, -1.85, 9.3, 0.3)
+        add(NOTE_IN, 2 * BEAT, 0.0, NOTE_Y, 9.3, 0.3)
+        add(ZOOM_IN[0], ZOOM_IN[1] - ZOOM_IN[0], -2.0, 0.5, 9.0, 3.0)            # in on the left ends
         for tt in LIT_T:
-            add(tt, 0.35, float(box_x(LIT_T.index(tt), zs(tt))), -0.85, 0.4, 0.8)
+            j = LIT_T.index(tt)
+            add(tt, 0.35, float(box_x(j, zs(tt))), rows(tt)["chess"], 0.4, 0.8)
+        # bar 98: the pen stalls and pulses; the camera pulls back (small boxes: the music's filter closes)
         for b in (1, 2, 3, 4):
-            add(bb(98, b), 0.3, float(box_x(5, zs(bb(98, b)))), -0.85, 0.4, 0.8)
-        add(GRAIN[0], GRAIN[1] - GRAIN[0], 1.0, -0.85, 10.5, 0.5)
+            add(bb(98, b), 0.3, float(box_x(5, zs(bb(98, b)))), rows(bb(98, b))["chess"], 0.4, 0.6)
 
     def run(self):
         self.log_events()

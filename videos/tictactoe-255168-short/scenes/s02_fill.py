@@ -19,8 +19,9 @@ frame, and the notes are computed from the same numbers (Sounds) and logged with
     19     255,168 drifts in under it (the title's halo, cool left, warm right); 19.2 a RED ">" (c06)
     20     the camera dives (ease-in-expo) into ring 9 at 10.12° (its sideways travel from 20.2): the rings
            streak past (motion blur) and fade to nothing as they reach the caption band, the boards round the
-           root fade out before they get there; the numbers stay pinned in frame (c06 asks about them) and
-           fade over 20.3-20.4 (the tree's tag leaves as the dive starts); 20.4 the frame fills with one
+           root fade out before they get there; the numbers stay pinned in frame (c06 asks about them, and the
+           streaks fade out behind them: num_mask) and fade over 20.3-20.4 (the tree's tag leaves as the dive
+           starts); 20.4 the frame fills with one
            glowing point (sigma capped and floored above the band, so the corners and the captions stay
            dark), which resolves into the 24 dim points of the 24 fill orders that begin with game A's five
            moves (slots 10,200-10,223)
@@ -425,6 +426,24 @@ def band_mask(y, on: float = 1.0) -> np.ndarray:
     return 1.0 - on * (1.0 - u * u * (3 - 2 * u))
 
 
+# the pinned numbers' block on the right third (screen units: left edge, bottom, top) and the mask's feather: while
+# the numbers are up during the dive, ring 9's streak fades out behind them (it would sweep through "9! 读作 …" and
+# "> 255,168" at 20.3+), and it comes back as they fade (NUM_OUT)
+NUM_BOX = (2.45, -2.3, 2.05)                        # (down to the band fade: no sliver of ring between)
+NUM_FEATHER = 0.45
+
+
+def num_mask(xy, on: float = 1.0) -> np.ndarray:
+    """Weights of points at screen positions xy during the dive: 1 - on inside NUM_BOX, 1 outside its feather."""
+    xy = np.asarray(xy, dtype=float).reshape(-1, 2)
+    x0, y0, y1 = NUM_BOX
+    f = NUM_FEATHER
+    ux = np.clip((xy[:, 0] - (x0 - f)) / f, 0.0, 1.0)
+    uy = np.clip(np.minimum(xy[:, 1] - (y0 - f), (y1 + f) - xy[:, 1]) / f, 0.0, 1.0)
+    m = (ux * ux * (3 - 2 * ux)) * (uy * uy * (3 - 2 * uy))
+    return 1.0 - on * m
+
+
 def maths(s: str, size: float = 30, color: str = INK) -> MarkupText:
     """A small formula in EB Garamond italic with lining figures: an old-style 1 reads as I ("× I"). The same
     setting as S04's maths(), which S06 and S07 use (S06 repeats this scene's "9 × 8 × … × 1 = 9! = 362,880")."""
@@ -793,8 +812,11 @@ class FillOrders(BeatScene):
                 wt = np.concatenate([wt_n * bw for _, _, bw in blur])
             keep = (np.abs(scr[:, 0]) < W / 2 + 0.2) & (np.abs(scr[:, 1]) < H / 2 + 0.2)
             scr, wt = scr[keep], wt[keep]
-            if self.band_on > 1e-3:                                      # the dive: nothing bright in the band
-                wt = wt * band_mask(scr[:, 1], self.band_on)
+            if self.band_on > 1e-3:                                      # the dive: nothing bright in the band,
+                wt = wt * band_mask(scr[:, 1], self.band_on)             # nor behind the pinned numbers
+                num_on = self.band_on * (1 - ease_in_out_sine(seg(t, *NUM_OUT)))
+                if num_on > 1e-3:
+                    wt = wt * num_mask(scr, num_on)
             layers.append((scr, wt, look))
         # the 24 dim points of game A's fill orders come out of the glow (20.4 -> 21.1)
         dv = ease_in_out_sine(seg(t, RESOLVE[0] + 0.05, RESOLVE[0] + 0.5))

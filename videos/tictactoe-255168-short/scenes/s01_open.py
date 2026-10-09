@@ -67,15 +67,17 @@ LINE_S = 0.45                                     # the pen draws a grid line in
 # small English line
 TITLE_WORD_Y = NUM_C[1] - 1.42
 TITLE_ZH_Y = NUM_C[1] - 2.02
-TITLE_SUB_Y = NUM_C[1] - 2.50
+TITLE_SUB_Y = NUM_C[1] - 2.53
 TITLE_ZH_SIZE = 28                                # glyphs about as tall as the tracked capitals
+TITLE_SUB_SIZE = 16.5                             # the small English line: 22 px capitals at 1080p, the plan's
+                                                  # minimum for a label that carries content (the en-first master)
 
 
 def title_words():
     """(tracked "TIC-TAC-TOE", "井字棋 · 不同的对局", "DIFFERENT GAMES"): the title's three lines."""
     word = tracked("TIC-TAC-TOE", size=26, spacing=0.9, font=FONT_TRACKED, color=INK, weight=LIGHT)
     zh = cjk("井字棋 · 不同的对局", size=TITLE_ZH_SIZE, color=INK)
-    en = tracked("DIFFERENT GAMES", size=14, spacing=0.4, color=INK_DIM)
+    en = tracked("DIFFERENT GAMES", size=TITLE_SUB_SIZE, spacing=0.35, color=INK_DIM)
     return word, zh, en
 
 

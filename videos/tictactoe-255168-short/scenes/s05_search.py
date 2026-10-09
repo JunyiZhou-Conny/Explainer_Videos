@@ -14,14 +14,16 @@ nodes of the real game tree, splatted with numpy into one image per frame (`Spla
     45-46  RED undo, X7 O6 X8 -> leaf 2 (ring 9); undo, undo, O8 X6 -> leaf 3                  (c15)
     47-48  twice as fast: leaf 4 (move 7), leaf 5 (move 9), leaf 6: the first draw, grey-white  (c16)
     49-50  the walk accelerates through the first wedge (games 7 ... 27,732): sixteenths, then faster
-           than the eye; the camera pulls out (49.1-53.1); 50.3-50.4 the plate's tags: 递归 / RECURSION,
-           回溯 / BACKTRACKING; 51.1 the counter crosses 27,732 on the downbeat
-    51-53  the sweep: a faint arm turns clockwise one first-move wedge (40°) per bar; the counter on the
-           downbeats 57,324 · 85,056 · 114,648                                                   (c17)
+           than the eye; the camera pulls out (49.1-53.1); 50.3-50.4 the plate's tags, in plain words:
+           "递归：下一层再用同一个办法 · RECURSION: THE SAME STEPS, ONE LEVEL DOWN", "回溯：撤销，退回来再试 ·
+           BACKTRACKING: ..."; 51.1 the counter crosses 27,732 on the downbeat
+    51-53  the sweep: a faint arm turns clockwise one first-move wedge (40°) per bar; from 51.1 the count runs
+           on the right third (secondary hero, "对局计数 · GAMES COUNTED", 70 px digits, a pulse on each wedge
+           line), on the downbeats 57,324 · 85,056 · 114,648                                     (c17)
     54-58  12 s without words: wedges 5-9; CALLS and UNDOS run live; a slow rotation; 58.4+ half a beat
            of darkness as the arm reaches 12 o'clock
-    59     59.1 LANDING: one flash frame, the galaxy flares; 255,168 on the right third, set like the
-           title (cool left, warm right); CALLS 549,946, UNDOS 549,945                           (c18)
+    59     59.1 LANDING: one flash frame, the galaxy flares; the running count grows into 255,168 in place, set
+           like the title (cool left, warm right, its glow on the glyphs); CALLS 549,946, UNDOS 549,945 (c18)
     60-61  the galaxy turns, the camera eases in towards the inner rings; 61.1-61.3 the number docks back
            into the HUD readout
 
@@ -42,7 +44,7 @@ Hand-over to S06 (a segue at 62.1): HANDOVER_S06 below holds this scene's last s
     FrameImage / FastCamera and GALAXY_LOOK, leaf weights tree.l_weight * zoom^2 (dust: dust_w *
     GALAXY_DUST_W[ring] * zoom^2), turned clockwise about the root by ROT(END) = 7.2° (0.35°/s since
     53.1); the ring 1-2 edges at 38 % INK_DIM; the light pen on the root (screen space, common.Pen);
-  - the plate: common.ProgramPlate at PLATE_TL, shown at PLATE_DIM (0.55), no line highlighted;
+  - the plate: Plate (common.ProgramPlate, lower: PLATE_TL5, shown at PLATE_K) at PLATE_DIM, no line highlighted;
   - HUD: common.section_hud("§3 · 探索每一局 · PLAY EVERY GAME"); three common.HudLine readouts at
     HUD_LINES_Y: "对局计数 · GAMES COUNTED 255,168", "调用次数 · CALLS 549,946", "撤销次数 · UNDOS 549,945".
 """
@@ -53,14 +55,14 @@ import math
 from math import factorial
 
 import numpy as np
-from manim import RIGHT, Dot, Line, Mobject, Rectangle, Text, VGroup, VMobject, config
+from manim import RIGHT, Dot, Group, Line, Mobject, Rectangle, Text, VGroup, VMobject, config
 
-from explainer.short import BeatScene, FONT_MONO, INK, INK_DIM, RED, WHITE, cjk, stroke_px
+from explainer.short import BeatScene, FONT_MONO, INK, INK_DIM, RED, WHITE, cjk, stroke_px, tracked
 
 from common import (GALAXY_COLOURS, GALAXY_DUST_W, GALAXY_LOOK, GALAXY_SLOT_W, HUD_LINES_Y, FastCamera,
                     FrameImage, HudLine, ProgramPlate, PLATE_TL, Splatter, TREE_ROOT, counter_glyphs, cull,
                     galaxy_point, galaxy_tree, hud_label, section_hud, show_sprite, uncull)
-from common import (OC, PEN, PEN_HALO, PITCH, XC, Cam, Pen, Shot, Sounds, W, box, clamp01,
+from common import (OC, PEN, PEN_HALO, PITCH, XC, Cam, Pen, Shot, Sounds, W, bi_label, box, clamp01,
                     ease_in_cubic, ease_in_out_cubic, ease_in_out_sine, ease_out_cubic, ease_out_quad,
                     final_glyphs, gaussian_sprite, grid_lines, lerp, o_template, player, pulse, rgb, seg,
                     square_centre, tag, title_counter, x_template)
@@ -396,6 +398,52 @@ DUST_W = GALAXY_DUST_W
 PLATE_DIM = 0.55                                  # the plate during the hero shot (54-61)
 HUD_Y = HUD_LINES_Y
 
+# ---------------------------------------------------------------- the plate (S05, S06): common.ProgramPlate, lower
+PLATE_TL5 = np.array([PLATE_TL[0], PLATE_TL[1] - 0.45])   # clear of the HUD band: its tag 175 px from the top,
+                                                          # not a second line of the section label
+PLATE_K = 1.12                                    # shown 1.12x: the code at 20 px
+PLATE_BAR = 0.32                                  # a lit line's bar (common's 13 % did not read under the grain)
+
+
+class Plate(ProgramPlate):
+    """common.ProgramPlate at PLATE_TL5, its tag set as a bilingual label "程序 · THE PROGRAM", its highlight bars
+    brighter (`bar_op`); S06's show_plate draws it with the same tag offsets (`tag_offs`) and bars."""
+
+    def __init__(self):
+        from common import LeanText
+        super().__init__(tl=PLATE_TL5)
+        zh = VGroup(cjk("程序", size=16, color=INK_DIM), cjk("·", size=16, color=INK_DIM)).arrange(RIGHT, buff=0.1)
+        en_ = tracked("THE PROGRAM", size=14, spacing=0.22, color=INK_DIM)
+        self.tag_zh, self.tag_en = LeanText(zh, INK_DIM), LeanText(en_, INK_DIM)
+        dy = 0.21
+        self.tag_offs = (np.array([0.06 + zh.width / 2, dy]), np.array([0.06 + zh.width + 0.1 + en_.width / 2,
+                                                                         dy - 0.005]))
+        self.bar_op = PLATE_BAR
+        self.group = Group(self.frame, *self.bars.values(), *[r[1] for r in self.rows], *[r[2] for r in self.rows],
+                           self.tag_zh, self.tag_en)
+
+    def show(self, vis: float, hl=None, line_vis=None, tl=None, scale: float = 1.0):
+        hl = hl or {}
+        tl = self.tl if tl is None else np.asarray(tl, dtype=float)
+        k = scale
+        c = tl + k * np.array([self.width / 2, -self.height / 2])
+        self.frame.show(1.0, np.eye(2) * k, c, vis=0.6 * vis)
+        base = rgb(INK_DIM)
+        for j, (num, lnum, txt, lw, tw, y, ind) in enumerate(self.rows):
+            lv = vis if line_vis is None else vis * line_vis[j]
+            amt, col = hl.get(num, (0.0, WHITE))
+            tc = hex_of(base * (1 - amt) + rgb(col if col != WHITE else "#F2F4F4") * amt)
+            yy = tl[1] + k * y
+            lnum.show([tl[0] + k * (0.1 + lw / 2), yy], scale=k, vis=lv * 0.8, color=INK_DIM)
+            txt.show([tl[0] + k * (0.5 + ind + (tw - ind) / 2), yy], scale=k, vis=lv, color=tc)
+            if num in self.bars:
+                b = self.bars[num]
+                b.stretch_to_fit_width((self.width - 0.12) * k).stretch_to_fit_height(self.pitch * 0.92 * k)
+                b.move_to([c[0], yy, 0])
+                b.set_fill(col, opacity=clamp01(self.bar_op * amt * lv))
+        self.tag_zh.show(tl + k * self.tag_offs[0], scale=k, vis=vis, color=INK_DIM)
+        self.tag_en.show(tl + k * self.tag_offs[1], scale=k, vis=vis, color=INK_DIM)
+
 
 # ---------------------------------------------------------------- times
 SNAP = (0.0, 0.42)                                # 41.1: the knot snaps
@@ -405,7 +453,7 @@ PEN_IN = bb(42)
 PEN_PULSES = [bb(42, b) for b in (1, 2, 3, 4)]
 TAGS_IN = [bb(50, 3), bb(50, 4)]
 TAGS_OUT = (bb(53, 3), bb(54))
-INSET_OUT = (bb(50, 3), bb(51, 1.5))
+INSET_OUT = (bb(50, 3), bb(51))                   # (gone as the running count comes in, 51.1)
 ARM_IN = (bb(50, 1), T51)
 DARK = bb(58, 4.5)                                # 58.4+: half a beat of darkness (video.yaml cue)
 LANDS = [T59 + 0.04 + 0.09 * i for i in range(6)]
@@ -413,11 +461,15 @@ DOCK = (bb(61), bb(61, 3))                        # 61.1-61.3: the number docks 
 END_PULSES = [bb(60, b) for b in (1, 2, 3, 4)] + [bb(61, b) for b in (1, 2, 3, 4)]
 HERO_C = np.array([4.55, 0.38])                   # 255,168 on the right third (screen), inside the HUD's margin
 HERO_SIZE = 70
+RUN_IN = (T51, bb(51, 2))                         # 51.1: the running count comes down from the HUD to the right third
+RUN_K = 0.72                                      # ... at 0.72 of the landing's size (digits 70 px), white
+GROW = (T59, T59 + 0.3)                           # 59.1: it grows into the landing number, in place
+GLOW_K = max(HERO_SIZE / 178, 0.62)               # the landing's glow and halo: the title's spread at this size
 
 
 # where S06 (the segue at 62.1) picks everything up: see the module docstring
 HANDOVER_S06 = {"cam": cam_path(END - 1e-6), "rot": rot(END), "rot_rate": ROT_RATE, "plate_dim": PLATE_DIM,
-                "plate_tl": PLATE_TL, "games": N_GAMES, "calls": len(ALL_STARTS), "undos": len(ALL_STARTS) - 1}
+                "plate_tl": PLATE_TL5, "plate_k": PLATE_K, "games": N_GAMES, "calls": len(ALL_STARTS), "undos": len(ALL_STARTS) - 1}
 
 
 def win_colours(ink, core: str, glow: str) -> None:
@@ -508,13 +560,13 @@ class EveryGame(BeatScene):
         self.path_line = VMobject().set_stroke(INK, width=stroke_px(1.4), opacity=0).set_fill(opacity=0)
         self.path_line.set_points_as_corners([[0, 0, 0], [0.01, 0, 0]])
         # screen space: the plate and its tags, the inset board, the pen, the HUD, the hero number
-        self.plate = ProgramPlate()
-        self.tag1 = Label([(VGroup(cjk("递归：", size=ZH_SIZE), Text("explore", font=FONT_MONO, font_size=17),
-                                   cjk("调用自己", size=ZH_SIZE)).arrange(RIGHT, buff=0.08), INK),
-                           (en("RECURSION: explore", upper=False), INK_DIM), (en("CALLS ITSELF"), INK_DIM)],
+        self.plate = Plate()
+        # (plain words: 调用 and the code name explore are programmers' words; a full-width colon, as every label)
+        self.tag1 = Label([(cjk("递归：下一层再用同一个办法", size=ZH_SIZE), INK),
+                           (en("RECURSION: THE SAME", color=INK), INK), (en("STEPS, ONE LEVEL DOWN", color=INK), INK)],
                           gap=0.08, align="l")
         self.tag2 = Label([(cjk("回溯：撤销，退回来再试", size=ZH_SIZE), INK),
-                           (en("BACKTRACKING: UNDO,"), INK_DIM), (en("STEP BACK, TRY AGAIN"), INK_DIM)],
+                           (en("BACKTRACKING: UNDO,", color=INK), INK), (en("STEP BACK, TRY AGAIN", color=INK), INK)],
                           gap=0.08, align="l")
         self.leaders = [Leader() for _ in range(2)]
         self.tag_layout()
@@ -539,13 +591,16 @@ class EveryGame(BeatScene):
             layers = []
             for k in range(7, 0, -1):
                 c = g.copy().set_fill(opacity=0).set_stroke(col, width=0, opacity=0)
-                layers.append((c, 0.62 * (1 - k / 8) ** 2, stroke_px(2 * 22 * HERO_SIZE / 178) * k / 7))
+                layers.append((c, 0.62 * (1 - k / 8) ** 2, stroke_px(2 * 22 * GLOW_K) * k / 7))
             self.hero_glow.append(layers)
         self.hero_glow_group = VGroup(*[c for lay in self.hero_glow for c, _, _ in lay])
         self.hero_halo = gaussian_sprite(None, 96, 0.34, gradient=(XC.glow, OC.mid), aspect=3.0)
-        self.hero_halo.stretch_to_fit_width(12.8 * HERO_SIZE / 178).stretch_to_fit_height(4.3 * HERO_SIZE / 178)
+        self.hero_halo.stretch_to_fit_width(12.8 * HERO_SIZE / 178 * 1.35).stretch_to_fit_height(4.3 * HERO_SIZE / 178 * 1.5)
         self.hero_halo.move_to([*HERO_C, 0])
         self.halo_w0, self.halo_h0 = self.hero_halo.width, self.hero_halo.height
+        self.hero_w0 = self.hero.ref.width
+        run_lab = bi_label("对局计数", "GAMES COUNTED", zh_size=18, en_size=16.5, color=INK, spacing=0.16)
+        self.run_lab = InkText(run_lab, INK)
         self.dark = Rectangle(width=W + 0.2, height=8.2).set_stroke(width=0).set_fill("#000000", opacity=0)
         self.flash = Rectangle(width=W + 0.2, height=8.2).set_stroke(width=0).set_fill("#FFFFFF", opacity=0)
 
@@ -558,7 +613,7 @@ class EveryGame(BeatScene):
         self.fix(self.plate.group, self.tag1.group, self.tag2.group, *self.leaders,
                  *[b.group for b in self.inset_blur], self.inset.group, self.eraser, *self.pen_trail, self.pen,
                  self.sec, self.hud_games.group, self.hud_calls.group, self.hud_undos.group, self.hero_halo,
-                 self.hero_glow_group, self.hero, self.dark, self.flash)
+                 self.hero_glow_group, self.hero, self.run_lab, self.dark, self.flash)
         self.update_state(0.0)
 
     # ------------------------------------------------------------- the picture at time t
@@ -799,11 +854,12 @@ class EveryGame(BeatScene):
             fast = seg(t, T49, T49 + 1.2)
             for j, num in enumerate((24, 25, 26, 27, 31, 33, 34)):
                 fl = 0.5 + 0.5 * math.sin(41 * t + 2.1 * j) * math.sin(23 * t + j)
-                add(num, (0.25 + 0.45 * fl) * fast * (1 - 0.6 * seg(t, bb(53), bb(54))), RED if num == 34 else WHITE)
+                add(num, (0.15 + 0.35 * fl) * fast * (1 - 0.6 * seg(t, bb(53), bb(54))), RED if num == 34 else WHITE)
         out = 1 - seg(t, *TAGS_OUT)
         for j, (num, col) in enumerate(((33, WHITE), (34, RED))):         # a tagged line stays lit by its tag
             add(num, 0.8 * ease_out_cubic(seg(t, TAGS_IN[j], TAGS_IN[j] + 0.35)) * out, col)
-        self.plate.show(dim * ease_out_cubic(seg(t, PLATE_IN[0] - 0.1, PLATE_IN[0] + 0.25)), hl, line_vis=lv)
+        self.plate.show(dim * ease_out_cubic(seg(t, PLATE_IN[0] - 0.1, PLATE_IN[0] + 0.25)), hl, line_vis=lv,
+                        scale=PLATE_K)
         # the tags on the recursive call and the undo line (50.3, 50.4), gone before the 12 wordless seconds
         out = 1 - seg(t, *TAGS_OUT)
         for j, (lab, ld, num) in enumerate(((self.tag1, self.leaders[0], 33), (self.tag2, self.leaders[1], 34))):
@@ -820,12 +876,14 @@ class EveryGame(BeatScene):
         """Where the two plate tags go (left edge, centre) and their leaders' routes (screen). The tags sit
         under the plate, BACKTRACKING (line 34) above RECURSION (line 33), so the two elbow leaders nest:
         line 34's turns down just past its tag, line 33's further out, past both."""
-        left = PLATE_TL[0] + 0.05
-        c2 = np.array([left, -0.2 - self.tag2.height / 2])                       # upper: line 34's tag
-        c1 = np.array([left, c2[1] - self.tag2.height / 2 - 0.3 - self.tag1.height / 2])   # lower: line 33's
+        left = PLATE_TL5[0] + 0.05
+        bottom = PLATE_TL5[1] - self.plate.height * PLATE_K                      # under the plate
+        c2 = np.array([left, bottom - 0.25 - self.tag2.height / 2])              # upper: line 34's tag
+        c1 = np.array([left, c2[1] - self.tag2.height / 2 - 0.24 - self.tag1.height / 2])  # lower: line 33's
         zh = lambda lab, c: (c[0] + lab.items[0][0].tmpl.width, c[1] + lab.items[0][1][1])
-        p34 = np.array([self.plate.row_right(34) + 0.1, self.plate.row_y(34)])
-        p33 = np.array([self.plate.row_right(33) + 0.1, self.plate.row_y(33)])
+        p34 = np.array([self.plate.row_right(34, scale=PLATE_K) + 0.1, self.plate.row_y(34, scale=PLATE_K)])
+        p33 = np.array([self.plate.row_right(33, scale=PLATE_K) + 0.1, self.plate.row_y(33, scale=PLATE_K)])
+        assert c1[1] - self.tag1.height / 2 > -2.75, c1                          # clear of the captions' band
         xa = max(left + self.tag2.width, p34[0]) + 0.3
         xb = max(xa + 0.32, left + self.tag1.width + 0.3, p33[0] + 0.3)
         (r2, y2), (r1, y1) = zh(self.tag2, c2), zh(self.tag1, c1)
@@ -960,18 +1018,26 @@ class EveryGame(BeatScene):
         if t >= T59:
             games = N_GAMES
         hv = ease_out_cubic(seg(t, PLATE_IN[0], PLATE_IN[1]))
-        back = 1.0 if t < T59 else seg(t, DOCK[1] - 0.25, DOCK[1])         # the hero has it in between
+        back = (1 - seg(t, RUN_IN[0] - 0.3, RUN_IN[0])) if t < T59 else seg(t, DOCK[1] - 0.25, DOCK[1])
+        # (the hero has it in between: the running count 51.1-58.4, the landing 59.1-61.3)
         self.hud_games.show(games, hv * back)
         cu = ease_out_cubic(seg(t, bb(54), bb(54, 2)))
         self.hud_calls.show(calls, cu)
         self.hud_undos.show(undos, cu)
 
     def update_hero(self, t: float):
+        """51.1-58.4: the running count on the right third (the games found so far, its low digits rolling), with a
+        pulse on each wedge's downbeat, where it shows that wedge's running total exactly; 59.1: it grows into the
+        landing number in place, the digits locking left to right, set like the title; 61.1-61.3 it docks into the
+        HUD readout. The glow follows each column's visible glyph, so it hugs the digits (no offset, no dark gap)."""
         cnt = self.hero
         gl_all = counter_glyphs(cnt)
         uncull(gl_all)
-        on = T59 <= t < DOCK[1]
-        if not on:
+        run = RUN_IN[0] <= t < T59
+        land = T59 <= t < DOCK[1]
+        lv = ease_out_cubic(seg(t, RUN_IN[0], RUN_IN[1])) * (1 - seg(t, DARK - 0.1, DARK + 0.05)) if run else 0.0
+        self.run_lab.show(HERO_C + np.array([0.0, 0.62 - 0.05 * (1 - lv)]), vis=lv, color=INK)
+        if not (run or land):
             for col in cnt.columns:
                 for g in col:
                     g.set_opacity(0)
@@ -985,62 +1051,76 @@ class EveryGame(BeatScene):
             show_sprite(self.hero_halo, opacity=0)
             cull(gl_all)
             return
-        dock = ease_in_out_cubic(seg(t, *DOCK))
-        # the digits lock left to right (a short roll into place, like the title)
-        pos = []
-        target = [2, 5, 5, 1, 6, 8]
-        for i, L in enumerate(LANDS):
-            u = ease_out_cubic(seg(t, T59, L + 0.12))
-            pos.append(target[i] + 10 * (1 - u) * (1 + (i % 2)))
-        cnt.manual = pos
-        cnt.manual_top = 999_999
-        # docking: shrink towards the HUD readout's digits
-        hud = self.hud_games.counter
-        k = 1 + (hud.ref.width / self.hero_w0 - 1) * dock
+        dock = ease_in_out_cubic(seg(t, *DOCK)) if land else 0.0
+        if run:
+            cnt.manual = None
+            cnt.value.set_value(float(games_at(t)))
+            k, c = RUN_K, HERO_C.copy()
+            vis = ease_out_cubic(seg(t, RUN_IN[0], RUN_IN[1]))
+        else:
+            pos = []                                     # the digits lock left to right (a short roll, like the title)
+            target = [2, 5, 5, 1, 6, 8]
+            for i, L in enumerate(LANDS):
+                u = ease_out_cubic(seg(t, T59, L + 0.12))
+                pos.append(target[i] + 10 * (1 - u) * (1 + (i % 2)))
+            cnt.manual = pos
+            cnt.manual_top = 999_999
+            k0 = RUN_K + (1 - RUN_K) * ease_out_cubic(seg(t, *GROW))
+            hud = self.hud_games.counter
+            k = k0 + (hud.ref.width / self.hero_w0 - k0) * dock
+            c = HERO_C + (hud.ref.get_center()[:2] - HERO_C) * dock
+            vis = 1 - seg(t, DOCK[1] - 0.2, DOCK[1])
+            if T59 <= t < T59 + 0.6 / config.frame_rate:
+                vis = 0.0                                # the flash frame is clean white
         cur = cnt.ref.width / self.hero_w0
         if abs(k / cur - 1) > 1e-6:
             cnt.scale(k / cur)
-        c = HERO_C + (hud.ref.get_center()[:2] - HERO_C) * dock
         cnt.ref.move_to([*c, 0])
         cnt.layout()
-        vis = (1 - seg(t, DOCK[1] - 0.2, DOCK[1]))
-        if T59 <= t < T59 + 0.6 / config.frame_rate:
-            vis = 0.0                                    # the flash frame is clean white
         for colm in cnt.columns:
             for g in colm:
                 g.set_fill(WHITE, opacity=g.get_fill_opacity() * vis)
         for _, sep in cnt.separators:
             sep.set_fill(WHITE, opacity=vis)
-        cull(gl_all)
+        # the glow: per glyph after its digit locks (the comma's at the landing), breathing; it goes with the dock
         breathe = 1 + 0.14 * math.sin(2 * math.pi * (t - T59) / BAR)
         lands = LANDS + [T59]
-        s = cnt.ref.width / self.hero_w0
+        s_ = cnt.ref.width / self.hero_w0
+        ncol = len(cnt.columns)
         for i, lay in enumerate(self.hero_glow):
             gl = self.glyphs[i]
-            p0 = gl.get_center()[:2] - HERO_C
-            v = ease_out_cubic(seg(t, lands[i], lands[i] + 0.3)) * breathe + 1.2 * pulse(t, lands[i], 0.25)
-            v *= 1 - dock
+            if i < ncol:
+                vis_g = max(cnt.columns[i], key=lambda x: x.get_fill_opacity())
+            else:
+                vis_g = cnt.separators[i - ncol][1]
+            v = 0.0
+            if land:
+                v = (ease_out_cubic(seg(t, lands[i], lands[i] + 0.3)) * breathe + 1.2 * pulse(t, lands[i], 0.25)) * (1 - dock)
             for cp, base, wk in lay:
                 uncull([cp])
                 if v <= 1e-3:
                     cp.set_stroke(width=0, opacity=0)
                     cull([cp])
                     continue
-                kk = gl.height * s / max(1e-6, cp.height)
+                kk = gl.height * s_ / max(1e-6, cp.height)
                 if abs(kk - 1) > 1e-6:
                     cp.scale(kk)
-                cp.move_to([*(c + p0 * s), 0])
-                cp.set_stroke(width=wk * s, opacity=clamp01(base * v))
-        hv = ease_out_cubic(seg(t, T59, T59 + 0.5)) * (0.5 + 0.08 * math.sin(2 * math.pi * (t - T59) / BAR)) * (1 - dock)
-        k = cnt.ref.width / self.hero_w0
-        show_sprite(self.hero_halo, c, self.halo_w0 * k, self.halo_h0 * k, hv)
+                cp.move_to(vis_g.get_center())
+                cp.set_stroke(width=wk * s_, opacity=clamp01(base * v))
+        cull(gl_all)
+        if run:                                          # the halo: faint while it runs, a pulse on each wedge line
+            tick = max([pulse(t, bb(b), 0.35) for b in range(52, 59) if t >= bb(b)] + [0.0])
+            hv = vis * (0.16 + 0.34 * tick) * (1 - seg(t, DARK - 0.1, DARK + 0.05))
+        else:
+            hv = ease_out_cubic(seg(t, T59, T59 + 0.5)) * (0.55 + 0.08 * math.sin(2 * math.pi * (t - T59) / BAR)) * (1 - dock)
+        show_sprite(self.hero_halo, c, self.halo_w0 * s_, self.halo_h0 * s_, hv)
 
     # ------------------------------------------------------------- the sounds (from the same numbers)
     def score(self):
         S = self.sounds
         sx = lambda p, t: float(CAM.to_screen(p, t)[0])
         S.effect(0.0, "shimmer", 1.2, 0.0)                                     # the knot's threads fly apart
-        S.phrase("plate", [(PLATE_IN[0], "pluck@A3", float(PLATE_TL[0] + 1.5))], gain=0.4)
+        S.phrase("plate", [(PLATE_IN[0], "pluck@A3", float(PLATE_TL5[0] + 1.5))], gain=0.4)
         S.phrase("pen", [(tp, "pen@A4", 0.0) for tp in PEN_PULSES], gain=0.7)
         # the walk: every move its square's note (X bell, O glass); undos RED whooshes; leaves a ping in
         # the winner's timbre and a tick; the stop bars muted plucks
@@ -1114,6 +1194,7 @@ class EveryGame(BeatScene):
             add(T49 + k * BEAT, BEAT, -1.3, 0.3, 6.5, 6.5)
         for t in TAGS_IN:
             add(t, BEAT, -4.5, -1.0, 5.0, 1.0)
+        add(RUN_IN[0], RUN_IN[1] - RUN_IN[0], *HERO_C, 3.0, 1.2)            # the running count comes in
         add(T59, BEAT, *HERO_C, 4.5, 1.2)
         for k in range(1, 12):                                             # 59-61: a slow turn, the zoom
             add(T59 + k * BEAT, BEAT, -1.3, 0.3, 6.5, 6.5)
@@ -1122,7 +1203,6 @@ class EveryGame(BeatScene):
             add(DOCK[1] + k * BEAT, BEAT, -1.3, 0.3, 6.5, 6.5)
 
     def run(self):
-        self.hero_w0 = self.hero.ref.width
         self.log_events()
         self.shots = [(a, min(d, END - a), bx) for a, d, bx in self.shots if a < END - 1e-6]
         steps = sorted({round(t, 4) for t, _, _ in self.shots})
