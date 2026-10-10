@@ -13,6 +13,9 @@ Reads <project>/video.yaml:
     title: "..."
     papers: [dwork2006calibrating]          # ids from library/catalog.yaml
     voice: {backend: kokoro, voice: af_heart, speed: 1.0}
+    subtitles_only: false                    # true: no narrator (voice: {backend: silent, speed: 0.85}
+                                             #   sets the reading pace); the English build burns the
+                                             #   bilingual subtitles of each translation in (<id>.<lang>-en.mp4)
     scenes:
       - {file: scenes/s01_hook.py, cls: Hook, title: "The differencing attack"}
 
@@ -294,7 +297,8 @@ def main(argv=None):
     ap.add_argument("--lang", default="en", help="language version to build (en, zh, ...)")
     ap.add_argument("--burn", action="store_true", help="English build: also burn bilingual subtitles "
                     "(<id>.<lang>-en.mp4) for each translation")
-    ap.add_argument("--no-burn", action="store_true", help="translated build: keep the video clean")
+    ap.add_argument("--no-burn", action="store_true", help="translated build (or a subtitles_only English "
+                    "build): keep the video clean")
     ap.add_argument("--subs-only", action="store_true", help="only (re)write subtitles, chapters and transcript "
                     "from existing renders; leave the video files alone")
     args = ap.parse_args(argv)
@@ -351,8 +355,10 @@ def main(argv=None):
         from .i18n import meta as lang_meta
         meta = lang_meta(lang, project)
     title = meta.get("title") or spec.get("title", spec["id"])
+    # a subtitle-only video (no narrator) is unwatchable without its subtitles: always burn them in
+    burn_en = args.burn or (bool(spec.get("subtitles_only")) and not args.no_burn)
     ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
-               burn=(not args.no_burn) if lang != "en" else args.burn, subs_only=args.subs_only)
+               burn=(not args.no_burn) if lang != "en" else burn_en, subs_only=args.subs_only)
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
            transcript_file=out_dir / "transcript.md", ctx=ctx)
     for part in spec.get("parts") or []:

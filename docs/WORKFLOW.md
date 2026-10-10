@@ -109,6 +109,13 @@ Output in `videos/<id>/output/`: the mp4 (loudness-normalised), `.srt` subtitles
 | `espeak` | free, local | robotic | fallback |
 | `silent` | — | — | layout previews without audio |
 
+**Subtitle-only videos (no narrator).** Set `voice: {backend: silent, speed: 0.85}` and
+`subtitles_only: true` in `video.yaml`. The SAY lines are then only subtitles: each block lasts its
+reading time (~2.6 words/s × speed), and the English build burns the bilingual subtitles of every
+translation in `i18n/<lang>/narration/` into `output/<id>.<lang>-en.mp4` (`--no-burn` skips that).
+Write SAY lines for reading, not listening: short sentences, digits for numbers. Example:
+`videos/careonex-e2-library/`.
+
 Set it per video in `video.yaml` (`voice:`), or per run: `EXPLAINER_TTS=elevenlabs python -m explainer.build ...`.
 Clips are cached in `.cache/tts/`, so switching voices only re-synthesises once.
 Mispronounced word? Add it to `explainer/lexicon.yaml` (IPA for Kokoro, respelling for others).

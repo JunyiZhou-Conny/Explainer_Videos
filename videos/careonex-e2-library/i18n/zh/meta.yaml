@@ -1,0 +1,10 @@
+title: "CareOneX 第 2 集 · 搭建资料库：从 20 份公开文档到 232 段可检索的文字"
+description: "CareOneX 知识库流水线的五个容器：data、ingest、extract、chunk、kb-sync。"
+chapters:
+  s01_map: "两半"
+  s02_catalog: "来源清单"
+  s03_ingest: "data 和 ingest → raw/"
+  s04_extract: "extract → text/"
+  s05_chunk: "chunk → chunks/"
+  s06_vectors: "kb-sync → 向量"
+  s07_open: "哪些已经可靠，哪些还没解决"
