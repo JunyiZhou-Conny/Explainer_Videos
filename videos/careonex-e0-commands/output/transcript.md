@@ -19,13 +19,13 @@ Most of the other lines look like this: dollar sign, env, colon, a name, equals,
 Think of environment variables as sticky notes on the terminal window. Every program started from that window can read them. The CareOneX code reads its settings this way, so nothing about Marco's laptop is written into the code.
 The notes belong to one window only. That is why both blocks set the same AWS lines again.
 
-## 02:34 — Who are you? AWS profile and SSO login
+## 02:35 — Who are you? AWS profile and SSO login
 An AWS account is the team's own fenced-off corner of Amazon's cloud. Everything CareOneX uses lives inside it, and it has one bill. The team's notes show a budget of 30 dollars a month for the AI models.
 Nobody shares a password. Each teammate signs in through a single sign-on portal, called SSO, with their own email and a second factor. After signing in, everyone gets the same set of permissions, named AC215. It covers the AI models, the course's own storage, and the knowledge base, and nothing in the company's production systems.
 A profile is a named entry in a settings file on the laptop. "careonex-team" says: log in through that portal, into the team account, with the AC215 permissions. The command aws sso login opens a browser, you approve, and the laptop receives temporary keys that last 8 hours.
 The CareOneX code finds those temporary keys through the profile name. When they expire, the voice program stops with a one-line message telling you to log in again.
 
-## 03:53 — Where in the world: the region
+## 03:54 — Where in the world: the region
 AWS runs data centers in many regions around the world. Each region is its own copy of the cloud. The team's models and storage are all in us-east-1, in Northern Virginia, so every program must be told to go there.
 
 ## 04:13 — The strange one: $env:HOME = $HOME
@@ -33,17 +33,17 @@ Now the strangest line: set HOME to HOME. It looks like it does nothing. It fixe
 The retrieve program will run inside a container, a sealed box. To use your login, the box needs your keys folder. The team's Docker file finds that folder through a variable named HOME.
 On a Mac, HOME is always set. On Windows it is not, so the box would look for keys in an empty path and fail to log in. The line copies PowerShell's own home folder into the HOME sticky note. Only terminal 1 needs it, because only terminal 1 uses Docker.
 
-## 05:01 — Which library? CAREONEX_KB_ID
+## 05:02 — Which library? CAREONEX_KB_ID
 A Knowledge Base is an Amazon service that stores the team's documents as small searchable passages, and searches them on request. Every knowledge base has an ID, a short code like this one.
 The retrieve code looks for this sticky note first. If it is missing, it reads the ID from a file in the team's storage, written there by the container that built the library.
 Why set it by hand? We see two possible reasons. It saves one read from storage. Or Marco points retrieve at a different knowledge base, perhaps one built for his own experiments. His code will tell us which.
 
-## 05:50 — Boxes: docker compose up --build retrieve
+## 05:51 — Boxes: docker compose up --build retrieve
 Docker packs a program with everything it needs into an image, like a frozen lunch box. A container is that box, running. It runs the same on Marco's laptop, on yours, and on a server.
 Docker compose reads the team's file that describes all the containers. The word up starts one. The option build first rebuilds its image, so Marco's newest code is inside. And retrieve picks just the search server.
 Inside the box, retrieve becomes a small web server. It listens on port 8080, a numbered door. The Docker file connects that door to the same door on the laptop, so other programs can knock.
 
-## 06:40 — Terminal 2: where to ask, and how
+## 06:41 — Terminal 2: where to ask, and how
 In terminal 2, the first new note tells voice where retrieve is. 127.0.0.1 always means this same computer, and 8080 is the door retrieve opened. Without this note, the voice app answers that the knowledge base is unavailable.
 The next note, search mode feedback, appears nowhere in the code on GitHub. We searched all four branches. So it belongs to Marco's new work. It probably switches between ways of searching. We will explain it once his code is uploaded.
 
@@ -53,7 +53,7 @@ uv is a tool that sets up the exact Python and libraries a project needs, then r
 extra mic adds the microphone library. It is optional on purpose: a container has no microphone or speakers, so the voice program runs directly on the laptop instead.
 Finally, the quoted part is a tiny Python program that starts the voice session. The team's instructions use a shorter command, but that one first checks for a kind of saved key file that an SSO login may never create. Calling the session directly skips that check. That is our inference; it fits the code exactly.
 
-## 08:21 — The whole picture
+## 08:22 — The whole picture
 Put together, it looks like this. Both programs use your 8-hour login. You speak, voice streams it to Nova 2 Sonic, Nova asks for a fact, voice asks retrieve, retrieve searches the knowledge base, and Nova speaks the answer.
 Here is every new word from this video on one card. Pause here if you want to keep it.
 Next, the big picture: what CareOneX is for, and who on the team built which part.

@@ -1,0 +1,143 @@
+[Script Info]
+Title: CareOneX E0 · Decoding the start-up commands: every word, for a beginner
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.15,Bilingual,,0,0,0,,Marco 给团队发了这两段命令\N{\fs33\c&H00C8C0B8&\bord1.4}Marco sent the team these two blocks of commands.
+Dialogue: 0,0:00:04.47,0:00:08.53,Bilingual,,0,0,0,,它们会在他的笔记本电脑上启动 CareOneX 语音应用\N{\fs33\c&H00C8C0B8&\bord1.4}They start the CareOneX voice app on his laptop.
+Dialogue: 0,0:00:08.85,0:00:13.32,Bilingual,,0,0,0,,如果你看着像一堵乱码墙，这很正常\N{\fs33\c&H00C8C0B8&\bord1.4}If they look like a wall of noise, that is normal.
+Dialogue: 0,0:00:13.57,0:00:18.43,Bilingual,,0,0,0,,看完这期视频，每一行你都会看懂\N{\fs33\c&H00C8C0B8&\bord1.4}By the end of this video, every line will mean something.
+Dialogue: 0,0:00:18.75,0:00:25.98,Bilingual,,0,0,0,,每一行背后，都是理解整个系统怎么拼在一起的一小课\N{\fs33\c&H00C8C0B8&\bord1.4}Each one turns out to be a small lesson about how the whole system fits together.
+Dialogue: 0,0:00:26.23,0:00:27.78,Bilingual,,0,0,0,,先提醒一句\N{\fs33\c&H00C8C0B8&\bord1.4}One warning first.
+Dialogue: 0,0:00:27.83,0:00:31.11,Bilingual,,0,0,0,,我们登录不了团队的 AWS 账号\N{\fs33\c&H00C8C0B8&\bord1.4}We cannot log into the team's AWS account.
+Dialogue: 0,0:00:31.43,0:00:37.49,Bilingual,,0,0,0,,所以这里的一切都来自 GitHub 上的代码和团队写的文档\N{\fs33\c&H00C8C0B8&\bord1.4}So everything here is learned from the code on GitHub and the team's notes.
+Dialogue: 0,0:00:37.81,0:00:39.93,Bilingual,,0,0,0,,每个说法都带一个标签\N{\fs33\c&H00C8C0B8&\bord1.4}Each claim carries a tag,
+Dialogue: 0,0:00:39.93,0:00:45.44,Bilingual,,0,0,0,,如果是我们推测的，标签会写 INFERRED（推测），并给出理由\N{\fs33\c&H00C8C0B8&\bord1.4}and when we are guessing, the tag says INFERRED, with our reason.
+Dialogue: 0,0:00:46.48,0:00:48.85,Bilingual,,0,0,0,,这两段命令启动两个程序\N{\fs33\c&H00C8C0B8&\bord1.4}The two blocks start two programs.
+Dialogue: 0,0:00:49.17,0:00:52.77,Bilingual,,0,0,0,,终端 1 启动 retrieve，一个小型检索服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Terminal 1 starts retrieve, a small search server.
+Dialogue: 0,0:00:53.09,0:00:57.54,Bilingual,,0,0,0,,终端 2 启动 voice，也就是你真正对着说话的那个程序\N{\fs33\c&H00C8C0B8&\bord1.4}Terminal 2 starts voice, the program you actually talk to.
+Dialogue: 0,0:00:57.78,0:01:01.89,Bilingual,,0,0,0,,voice 听你的麦克风，再把回答播放出来\N{\fs33\c&H00C8C0B8&\bord1.4}Voice listens to your microphone and plays the reply.
+Dialogue: 0,0:01:02.21,0:01:06.82,Bilingual,,0,0,0,,需要查资料时，它就去问同一台电脑上的 retrieve\N{\fs33\c&H00C8C0B8&\bord1.4}When it needs a fact, it asks retrieve, on the same laptop.
+Dialogue: 0,0:01:07.14,0:01:11.03,Bilingual,,0,0,0,,两个程序还都会连到亚马逊的云，也就是 AWS\N{\fs33\c&H00C8C0B8&\bord1.4}Both programs also talk to Amazon's cloud, AWS,
+Dialogue: 0,0:01:11.03,0:01:15.18,Bilingual,,0,0,0,,AI 模型和文档库都在那里\N{\fs33\c&H00C8C0B8&\bord1.4}where the AI models and the document library live.
+Dialogue: 0,0:01:15.42,0:01:17.20,Bilingual,,0,0,0,,终端（terminal）就是一个用打字\N{\fs33\c&H00C8C0B8&\bord1.4}A terminal is a window
+Dialogue: 0,0:01:17.20,0:01:20.78,Bilingual,,0,0,0,,输入命令、而不是用鼠标点的窗口\N{\fs33\c&H00C8C0B8&\bord1.4}where you type commands instead of clicking.
+Dialogue: 0,0:01:21.10,0:01:24.04,Bilingual,,0,0,0,,Marco 用的是 Windows 上的 PowerShell\N{\fs33\c&H00C8C0B8&\bord1.4}Marco is on Windows, using PowerShell.
+Dialogue: 0,0:01:24.36,0:01:28.29,Bilingual,,0,0,0,,从他命令的写法就能看出来\N{\fs33\c&H00C8C0B8&\bord1.4}We can tell from the way his lines are written.
+Dialogue: 0,0:01:29.33,0:01:32.42,Bilingual,,0,0,0,,第 1 行是 cd，意思是 change directory（切换目录）\N{\fs33\c&H00C8C0B8&\bord1.4}Line 1 is cd, short for change directory.
+Dialogue: 0,0:01:32.74,0:01:36.24,Bilingual,,0,0,0,,它把终端带进项目文件夹\N{\fs33\c&H00C8C0B8&\bord1.4}It moves the terminal into the project folder.
+Dialogue: 0,0:01:36.56,0:01:41.75,Bilingual,,0,0,0,,后面的每条命令，都以这个文件夹为起点去找文件\N{\fs33\c&H00C8C0B8&\bord1.4}Every later command looks for its files relative to this folder.
+Dialogue: 0,0:01:42.00,0:01:48.42,Bilingual,,0,0,0,,这个文件夹是 Marco 自己的一份团队代码，里面有他最新的改动\N{\fs33\c&H00C8C0B8&\bord1.4}The folder is Marco's own copy of the team's code, with his newest changes in it.
+Dialogue: 0,0:01:48.74,0:01:50.14,Bilingual,,0,0,0,,这是我们推测的\N{\fs33\c&H00C8C0B8&\bord1.4}We infer that,
+Dialogue: 0,0:01:50.14,0:01:56.23,Bilingual,,0,0,0,,因为后面的命令需要的正好是团队仓库里的那些文件夹\N{\fs33\c&H00C8C0B8&\bord1.4}because the next commands expect exactly the folders of the team repository.
+Dialogue: 0,0:01:57.27,0:02:00.43,Bilingual,,0,0,0,,其余大部分行都长这样\N{\fs33\c&H00C8C0B8&\bord1.4}Most of the other lines look like this:
+Dialogue: 0,0:02:00.43,0:02:04.40,Bilingual,,0,0,0,,美元符号、env、冒号、一个名字、等号、一个值\N{\fs33\c&H00C8C0B8&\bord1.4}dollar sign, env, colon, a name, equals, a value.
+Dialogue: 0,0:02:04.72,0:02:07.87,Bilingual,,0,0,0,,每一行设置一个环境变量（environment variable）\N{\fs33\c&H00C8C0B8&\bord1.4}Each one sets an environment variable.
+Dialogue: 0,0:02:08.12,0:02:13.19,Bilingual,,0,0,0,,可以把环境变量想成贴在终端窗口上的便利贴\N{\fs33\c&H00C8C0B8&\bord1.4}Think of environment variables as sticky notes on the terminal window.
+Dialogue: 0,0:02:13.51,0:02:17.29,Bilingual,,0,0,0,,从这个窗口启动的每个程序都能读到它们\N{\fs33\c&H00C8C0B8&\bord1.4}Every program started from that window can read them.
+Dialogue: 0,0:02:17.61,0:02:21.14,Bilingual,,0,0,0,,CareOneX 的代码就是这样读取设置的\N{\fs33\c&H00C8C0B8&\bord1.4}The CareOneX code reads its settings this way,
+Dialogue: 0,0:02:21.14,0:02:25.51,Bilingual,,0,0,0,,所以代码里不会写死任何跟 Marco 电脑有关的东西\N{\fs33\c&H00C8C0B8&\bord1.4}so nothing about Marco's laptop is written into the code.
+Dialogue: 0,0:02:25.75,0:02:28.86,Bilingual,,0,0,0,,便利贴只属于一个窗口\N{\fs33\c&H00C8C0B8&\bord1.4}The notes belong to one window only.
+Dialogue: 0,0:02:29.18,0:02:34.09,Bilingual,,0,0,0,,所以两段命令里都重复设置了同样的 AWS 那几行\N{\fs33\c&H00C8C0B8&\bord1.4}That is why both blocks set the same AWS lines again.
+Dialogue: 0,0:02:35.13,0:02:40.78,Bilingual,,0,0,0,,AWS 账号就是团队在亚马逊云里圈出来的一块自己的地方\N{\fs33\c&H00C8C0B8&\bord1.4}An AWS account is the team's own fenced-off corner of Amazon's cloud.
+Dialogue: 0,0:02:41.10,0:02:46.15,Bilingual,,0,0,0,,CareOneX 用到的所有东西都在里面，共用一张账单\N{\fs33\c&H00C8C0B8&\bord1.4}Everything CareOneX uses lives inside it, and it has one bill.
+Dialogue: 0,0:02:46.47,0:02:52.53,Bilingual,,0,0,0,,团队文档里写着：AI 模型的预算是每月 30 美元\N{\fs33\c&H00C8C0B8&\bord1.4}The team's notes show a budget of 30 dollars a month for the AI models.
+Dialogue: 0,0:02:52.77,0:02:54.41,Bilingual,,0,0,0,,没有人共用密码\N{\fs33\c&H00C8C0B8&\bord1.4}Nobody shares a password.
+Dialogue: 0,0:02:54.73,0:02:59.67,Bilingual,,0,0,0,,每个组员都通过一个统一登录门户，也就是 SSO（单点登录）\N{\fs33\c&H00C8C0B8&\bord1.4}Each teammate signs in through a single sign-on portal, called SSO,
+Dialogue: 0,0:02:59.67,0:03:02.69,Bilingual,,0,0,0,,用自己的邮箱加第二重验证登录\N{\fs33\c&H00C8C0B8&\bord1.4}with their own email and a second factor.
+Dialogue: 0,0:03:03.01,0:03:08.27,Bilingual,,0,0,0,,登录之后，每个人得到同一组权限，名字叫 AC215\N{\fs33\c&H00C8C0B8&\bord1.4}After signing in, everyone gets the same set of permissions, named AC215.
+Dialogue: 0,0:03:08.59,0:03:14.21,Bilingual,,0,0,0,,它包括 AI 模型、课程自己的存储和知识库\N{\fs33\c&H00C8C0B8&\bord1.4}It covers the AI models, the course's own storage, and the knowledge base,
+Dialogue: 0,0:03:14.21,0:03:17.85,Bilingual,,0,0,0,,但不包括公司生产环境里的任何东西\N{\fs33\c&H00C8C0B8&\bord1.4}and nothing in the company's production systems.
+Dialogue: 0,0:03:18.10,0:03:22.64,Bilingual,,0,0,0,,profile（配置档）是电脑上一个设置文件里的一个有名字的条目\N{\fs33\c&H00C8C0B8&\bord1.4}A profile is a named entry in a settings file on the laptop.
+Dialogue: 0,0:03:22.96,0:03:24.60,Bilingual,,0,0,0,,“careonex-team”的意思是\N{\fs33\c&H00C8C0B8&\bord1.4}"careonex-team" says:
+Dialogue: 0,0:03:24.60,0:03:30.69,Bilingual,,0,0,0,,通过那个门户，登录团队账号，使用 AC215 权限\N{\fs33\c&H00C8C0B8&\bord1.4}log in through that portal, into the team account, with the AC215 permissions.
+Dialogue: 0,0:03:31.01,0:03:35.44,Bilingual,,0,0,0,,aws sso login 这条命令会打开浏览器，你点同意\N{\fs33\c&H00C8C0B8&\bord1.4}The command aws sso login opens a browser, you approve,
+Dialogue: 0,0:03:35.44,0:03:40.02,Bilingual,,0,0,0,,电脑就拿到一把有效期 8 小时的临时钥匙\N{\fs33\c&H00C8C0B8&\bord1.4}and the laptop receives temporary keys that last 8 hours.
+Dialogue: 0,0:03:40.27,0:03:45.48,Bilingual,,0,0,0,,CareOneX 的代码通过 profile 的名字找到这些临时钥匙\N{\fs33\c&H00C8C0B8&\bord1.4}The CareOneX code finds those temporary keys through the profile name.
+Dialogue: 0,0:03:45.80,0:03:53.14,Bilingual,,0,0,0,,钥匙过期后，voice 程序会停下来，用一行提示告诉你重新登录\N{\fs33\c&H00C8C0B8&\bord1.4}When they expire, the voice program stops with a one-line message telling you to log in again.
+Dialogue: 0,0:03:54.18,0:03:58.65,Bilingual,,0,0,0,,AWS 在世界各地的很多区域（region）都有数据中心\N{\fs33\c&H00C8C0B8&\bord1.4}AWS runs data centers in many regions around the world.
+Dialogue: 0,0:03:58.97,0:04:02.24,Bilingual,,0,0,0,,每个区域都是一套独立的云\N{\fs33\c&H00C8C0B8&\bord1.4}Each region is its own copy of the cloud.
+Dialogue: 0,0:04:02.56,0:04:08.86,Bilingual,,0,0,0,,团队的模型和存储都在 us-east-1，也就是北弗吉尼亚\N{\fs33\c&H00C8C0B8&\bord1.4}The team's models and storage are all in us-east-1, in Northern Virginia,
+Dialogue: 0,0:04:08.86,0:04:12.48,Bilingual,,0,0,0,,所以每个程序都得被告知去那里\N{\fs33\c&H00C8C0B8&\bord1.4}so every program must be told to go there.
+Dialogue: 0,0:04:13.52,0:04:16.89,Bilingual,,0,0,0,,接下来是最奇怪的一行：把 HOME 设成 HOME\N{\fs33\c&H00C8C0B8&\bord1.4}Now the strangest line: set HOME to HOME.
+Dialogue: 0,0:04:17.21,0:04:19.62,Bilingual,,0,0,0,,看起来什么也没做\N{\fs33\c&H00C8C0B8&\bord1.4}It looks like it does nothing.
+Dialogue: 0,0:04:19.94,0:04:22.31,Bilingual,,0,0,0,,其实它修的是一个 Windows 上的问题\N{\fs33\c&H00C8C0B8&\bord1.4}It fixes a Windows problem.
+Dialogue: 0,0:04:22.55,0:04:26.06,Bilingual,,0,0,0,,retrieve 程序会在一个容器（container）里运行\N{\fs33\c&H00C8C0B8&\bord1.4}The retrieve program will run inside a container,
+Dialogue: 0,0:04:26.06,0:04:27.66,Bilingual,,0,0,0,,就像一个密封的盒子\N{\fs33\c&H00C8C0B8&\bord1.4}a sealed box.
+Dialogue: 0,0:04:27.76,0:04:31.59,Bilingual,,0,0,0,,要用你的登录，盒子需要拿到你放钥匙的文件夹\N{\fs33\c&H00C8C0B8&\bord1.4}To use your login, the box needs your keys folder.
+Dialogue: 0,0:04:31.91,0:04:34.22,Bilingual,,0,0,0,,团队的 Docker 配置文件是通过\N{\fs33\c&H00C8C0B8&\bord1.4}The team's Docker file finds
+Dialogue: 0,0:04:34.22,0:04:37.68,Bilingual,,0,0,0,,一个叫 HOME 的变量找到这个文件夹的\N{\fs33\c&H00C8C0B8&\bord1.4}that folder through a variable named HOME.
+Dialogue: 0,0:04:37.92,0:04:40.35,Bilingual,,0,0,0,,在 Mac 上，HOME 一直都有\N{\fs33\c&H00C8C0B8&\bord1.4}On a Mac, HOME is always set.
+Dialogue: 0,0:04:40.67,0:04:42.56,Bilingual,,0,0,0,,在 Windows 上却没有\N{\fs33\c&H00C8C0B8&\bord1.4}On Windows it is not,
+Dialogue: 0,0:04:42.56,0:04:48.59,Bilingual,,0,0,0,,于是盒子会去一个空路径里找钥匙，登录就失败了\N{\fs33\c&H00C8C0B8&\bord1.4}so the box would look for keys in an empty path and fail to log in.
+Dialogue: 0,0:04:48.91,0:04:52.86,Bilingual,,0,0,0,,这一行把 PowerShell 自己知道的用户文件夹\N{\fs33\c&H00C8C0B8&\bord1.4}The line copies PowerShell's own home folder
+Dialogue: 0,0:04:52.86,0:04:55.19,Bilingual,,0,0,0,,抄到 HOME 这张便利贴上\N{\fs33\c&H00C8C0B8&\bord1.4}into the HOME sticky note.
+Dialogue: 0,0:04:55.51,0:05:01.19,Bilingual,,0,0,0,,只有终端 1 需要它，因为只有终端 1 用了 Docker\N{\fs33\c&H00C8C0B8&\bord1.4}Only terminal 1 needs it, because only terminal 1 uses Docker.
+Dialogue: 0,0:05:02.23,0:05:05.13,Bilingual,,0,0,0,,Knowledge Base（知识库）是亚马逊的一项服务\N{\fs33\c&H00C8C0B8&\bord1.4}A Knowledge Base is an Amazon service
+Dialogue: 0,0:05:05.13,0:05:12.35,Bilingual,,0,0,0,,它把团队的文档存成一小段一小段可检索的文字，有人问就去搜\N{\fs33\c&H00C8C0B8&\bord1.4}that stores the team's documents as small searchable passages, and searches them on request.
+Dialogue: 0,0:05:12.67,0:05:17.37,Bilingual,,0,0,0,,每个知识库都有一个 ID，就是像这样的一串短代码\N{\fs33\c&H00C8C0B8&\bord1.4}Every knowledge base has an ID, a short code like this one.
+Dialogue: 0,0:05:17.60,0:05:21.78,Bilingual,,0,0,0,,retrieve 的代码会先找这张便利贴\N{\fs33\c&H00C8C0B8&\bord1.4}The retrieve code looks for this sticky note first.
+Dialogue: 0,0:05:22.10,0:05:28.02,Bilingual,,0,0,0,,如果没有，它就去团队存储里的一个文件读 ID\N{\fs33\c&H00C8C0B8&\bord1.4}If it is missing, it reads the ID from a file in the team's storage,
+Dialogue: 0,0:05:28.02,0:05:32.73,Bilingual,,0,0,0,,这个文件是搭建资料库的那个容器写进去的\N{\fs33\c&H00C8C0B8&\bord1.4}written there by the container that built the library.
+Dialogue: 0,0:05:32.97,0:05:34.57,Bilingual,,0,0,0,,为什么要手动设置？\N{\fs33\c&H00C8C0B8&\bord1.4}Why set it by hand?
+Dialogue: 0,0:05:34.64,0:05:36.74,Bilingual,,0,0,0,,我们想到两种可能\N{\fs33\c&H00C8C0B8&\bord1.4}We see two possible reasons.
+Dialogue: 0,0:05:37.06,0:05:39.42,Bilingual,,0,0,0,,一是省掉一次读存储\N{\fs33\c&H00C8C0B8&\bord1.4}It saves one read from storage.
+Dialogue: 0,0:05:39.74,0:05:44.25,Bilingual,,0,0,0,,二是 Marco 让 retrieve 指向另一个知识库\N{\fs33\c&H00C8C0B8&\bord1.4}Or Marco points retrieve at a different knowledge base,
+Dialogue: 0,0:05:44.25,0:05:47.70,Bilingual,,0,0,0,,也许是为他自己的实验专门建的\N{\fs33\c&H00C8C0B8&\bord1.4}perhaps one built for his own experiments.
+Dialogue: 0,0:05:48.02,0:05:50.36,Bilingual,,0,0,0,,等他的代码上传了，就知道是哪一种\N{\fs33\c&H00C8C0B8&\bord1.4}His code will tell us which.
+Dialogue: 0,0:05:51.40,0:05:56.70,Bilingual,,0,0,0,,Docker 把一个程序和它需要的一切打包成一个镜像（image）\N{\fs33\c&H00C8C0B8&\bord1.4}Docker packs a program with everything it needs into an image,
+Dialogue: 0,0:05:56.70,0:05:58.75,Bilingual,,0,0,0,,就像一个冷冻好的便当盒\N{\fs33\c&H00C8C0B8&\bord1.4}like a frozen lunch box.
+Dialogue: 0,0:05:59.07,0:06:01.71,Bilingual,,0,0,0,,容器就是这个盒子跑起来的样子\N{\fs33\c&H00C8C0B8&\bord1.4}A container is that box, running.
+Dialogue: 0,0:06:02.03,0:06:07.44,Bilingual,,0,0,0,,它在 Marco 的电脑上、你的电脑上、服务器上，运行起来都一样\N{\fs33\c&H00C8C0B8&\bord1.4}It runs the same on Marco's laptop, on yours, and on a server.
+Dialogue: 0,0:06:07.68,0:06:12.89,Bilingual,,0,0,0,,docker compose 读取团队那个描述所有容器的文件\N{\fs33\c&H00C8C0B8&\bord1.4}Docker compose reads the team's file that describes all the containers.
+Dialogue: 0,0:06:13.21,0:06:14.81,Bilingual,,0,0,0,,up 表示启动\N{\fs33\c&H00C8C0B8&\bord1.4}The word up starts one.
+Dialogue: 0,0:06:15.05,0:06:18.17,Bilingual,,0,0,0,,build 这个选项会先重新构建镜像\N{\fs33\c&H00C8C0B8&\bord1.4}The option build first rebuilds its image,
+Dialogue: 0,0:06:18.17,0:06:20.63,Bilingual,,0,0,0,,这样 Marco 最新的代码就在里面\N{\fs33\c&H00C8C0B8&\bord1.4}so Marco's newest code is inside.
+Dialogue: 0,0:06:20.95,0:06:24.17,Bilingual,,0,0,0,,而 retrieve 表示只启动检索服务器这一个\N{\fs33\c&H00C8C0B8&\bord1.4}And retrieve picks just the search server.
+Dialogue: 0,0:06:24.42,0:06:28.57,Bilingual,,0,0,0,,在盒子里，retrieve 变成一个小小的网页服务器\N{\fs33\c&H00C8C0B8&\bord1.4}Inside the box, retrieve becomes a small web server.
+Dialogue: 0,0:06:28.89,0:06:32.12,Bilingual,,0,0,0,,它在 8080 端口（port）上等待，端口就像一扇编了号的门\N{\fs33\c&H00C8C0B8&\bord1.4}It listens on port 8080, a numbered door.
+Dialogue: 0,0:06:32.44,0:06:38.07,Bilingual,,0,0,0,,Docker 配置文件把这扇门接到电脑上同一个号码的门\N{\fs33\c&H00C8C0B8&\bord1.4}The Docker file connects that door to the same door on the laptop,
+Dialogue: 0,0:06:38.07,0:06:40.45,Bilingual,,0,0,0,,这样别的程序就能来敲门\N{\fs33\c&H00C8C0B8&\bord1.4}so other programs can knock.
+Dialogue: 0,0:06:41.50,0:06:46.18,Bilingual,,0,0,0,,在终端 2，第一张新便利贴告诉 voice：retrieve 在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}In terminal 2, the first new note tells voice where retrieve is.
+Dialogue: 0,0:06:46.50,0:06:49.65,Bilingual,,0,0,0,,127.0.0.1 永远指的是这台电脑本身\N{\fs33\c&H00C8C0B8&\bord1.4}127.0.0.1 always means this same computer,
+Dialogue: 0,0:06:49.65,0:06:52.42,Bilingual,,0,0,0,,8080 就是 retrieve 打开的那扇门\N{\fs33\c&H00C8C0B8&\bord1.4}and 8080 is the door retrieve opened.
+Dialogue: 0,0:06:52.74,0:06:58.90,Bilingual,,0,0,0,,没有这张便利贴，语音应用就会回答说知识库不可用\N{\fs33\c&H00C8C0B8&\bord1.4}Without this note, the voice app answers that the knowledge base is unavailable.
+Dialogue: 0,0:06:59.13,0:07:01.93,Bilingual,,0,0,0,,下一张便利贴，搜索模式 feedback\N{\fs33\c&H00C8C0B8&\bord1.4}The next note, search mode feedback,
+Dialogue: 0,0:07:01.93,0:07:04.88,Bilingual,,0,0,0,,在 GitHub 的代码里根本找不到\N{\fs33\c&H00C8C0B8&\bord1.4}appears nowhere in the code on GitHub.
+Dialogue: 0,0:07:05.20,0:07:07.35,Bilingual,,0,0,0,,我们把四个分支都搜了一遍\N{\fs33\c&H00C8C0B8&\bord1.4}We searched all four branches.
+Dialogue: 0,0:07:07.67,0:07:10.14,Bilingual,,0,0,0,,所以它属于 Marco 的新工作\N{\fs33\c&H00C8C0B8&\bord1.4}So it belongs to Marco's new work.
+Dialogue: 0,0:07:10.46,0:07:13.97,Bilingual,,0,0,0,,它大概是在几种检索方式之间切换的开关\N{\fs33\c&H00C8C0B8&\bord1.4}It probably switches between ways of searching.
+Dialogue: 0,0:07:14.29,0:07:17.89,Bilingual,,0,0,0,,等他的代码上传后，我们再来讲\N{\fs33\c&H00C8C0B8&\bord1.4}We will explain it once his code is uploaded.
+Dialogue: 0,0:07:18.93,0:07:21.45,Bilingual,,0,0,0,,最后一行最长\N{\fs33\c&H00C8C0B8&\bord1.4}The last line is the longest.
+Dialogue: 0,0:07:21.77,0:07:24.84,Bilingual,,0,0,0,,我们把它拆开来看。uv 是一个工具\N{\fs33\c&H00C8C0B8&\bord1.4}Let's take it apart. uv is a tool
+Dialogue: 0,0:07:24.84,0:07:29.57,Bilingual,,0,0,0,,它把项目需要的那个 Python 版本和那些库准备好\N{\fs33\c&H00C8C0B8&\bord1.4}that sets up the exact Python and libraries a project needs,
+Dialogue: 0,0:07:29.57,0:07:32.56,Bilingual,,0,0,0,,再在这个环境里运行命令\N{\fs33\c&H00C8C0B8&\bord1.4}then runs a command inside that setup.
+Dialogue: 0,0:07:32.88,0:07:38.12,Bilingual,,0,0,0,,Python 3.12 是亚马逊那个流式传输库能接受的最低版本\N{\fs33\c&H00C8C0B8&\bord1.4}Python 3.12 is the oldest version Amazon's streaming library accepts.
+Dialogue: 0,0:07:38.44,0:07:42.65,Bilingual,,0,0,0,,directory 选项的意思是：用 voice 这个项目\N{\fs33\c&H00C8C0B8&\bord1.4}And the directory option says: use the voice project.
+Dialogue: 0,0:07:42.90,0:07:45.60,Bilingual,,0,0,0,,extra mic 会额外装上麦克风库\N{\fs33\c&H00C8C0B8&\bord1.4}extra mic adds the microphone library.
+Dialogue: 0,0:07:45.92,0:07:51.32,Bilingual,,0,0,0,,它故意做成可选的：容器里没有麦克风也没有扬声器\N{\fs33\c&H00C8C0B8&\bord1.4}It is optional on purpose: a container has no microphone or speakers,
+Dialogue: 0,0:07:51.32,0:07:55.77,Bilingual,,0,0,0,,所以 voice 程序直接在电脑上跑\N{\fs33\c&H00C8C0B8&\bord1.4}so the voice program runs directly on the laptop instead.
+Dialogue: 0,0:07:56.02,0:07:59.90,Bilingual,,0,0,0,,最后，引号里的部分是一个很小的 Python 程序\N{\fs33\c&H00C8C0B8&\bord1.4}Finally, the quoted part is a tiny Python program
+Dialogue: 0,0:07:59.90,0:08:02.28,Bilingual,,0,0,0,,作用是启动语音会话\N{\fs33\c&H00C8C0B8&\bord1.4}that starts the voice session.
+Dialogue: 0,0:08:02.60,0:08:06.32,Bilingual,,0,0,0,,团队的说明文档用的是一条更短的命令\N{\fs33\c&H00C8C0B8&\bord1.4}The team's instructions use a shorter command,
+Dialogue: 0,0:08:06.32,0:08:10.68,Bilingual,,0,0,0,,但它会先检查一种保存下来的钥匙文件\N{\fs33\c&H00C8C0B8&\bord1.4}but that one first checks for a kind of saved key file
+Dialogue: 0,0:08:10.68,0:08:13.51,Bilingual,,0,0,0,,而 SSO 登录可能根本不会生成这种文件\N{\fs33\c&H00C8C0B8&\bord1.4}that an SSO login may never create.
+Dialogue: 0,0:08:13.83,0:08:17.33,Bilingual,,0,0,0,,直接调用会话，就跳过了这个检查\N{\fs33\c&H00C8C0B8&\bord1.4}Calling the session directly skips that check.
+Dialogue: 0,0:08:17.65,0:08:21.56,Bilingual,,0,0,0,,这是我们的推测，但和代码完全吻合\N{\fs33\c&H00C8C0B8&\bord1.4}That is our inference; it fits the code exactly.
+Dialogue: 0,0:08:22.60,0:08:24.99,Bilingual,,0,0,0,,放在一起，就是这样\N{\fs33\c&H00C8C0B8&\bord1.4}Put together, it looks like this.
+Dialogue: 0,0:08:25.31,0:08:27.94,Bilingual,,0,0,0,,两个程序都用你那 8 小时的登录\N{\fs33\c&H00C8C0B8&\bord1.4}Both programs use your 8-hour login.
+Dialogue: 0,0:08:28.26,0:08:31.81,Bilingual,,0,0,0,,你说话，voice 把声音实时传给 Nova 2 Sonic\N{\fs33\c&H00C8C0B8&\bord1.4}You speak, voice streams it to Nova 2 Sonic,
+Dialogue: 0,0:08:31.81,0:08:35.20,Bilingual,,0,0,0,,Nova 要查资料，voice 就去问 retrieve\N{\fs33\c&H00C8C0B8&\bord1.4}Nova asks for a fact, voice asks retrieve,
+Dialogue: 0,0:08:35.20,0:08:40.45,Bilingual,,0,0,0,,retrieve 去搜知识库，然后 Nova 把答案说出来\N{\fs33\c&H00C8C0B8&\bord1.4}retrieve searches the knowledge base, and Nova speaks the answer.
+Dialogue: 0,0:08:40.68,0:08:45.68,Bilingual,,0,0,0,,这期视频里所有的新词，都在这一张卡片上\N{\fs33\c&H00C8C0B8&\bord1.4}Here is every new word from this video on one card.
+Dialogue: 0,0:08:46.00,0:08:49.48,Bilingual,,0,0,0,,想留着的话，可以在这里暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here if you want to keep it.
+Dialogue: 0,0:08:49.72,0:08:57.16,Bilingual,,0,0,0,,下一集讲全局：CareOneX 是干什么的，团队里谁做了哪一部分\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the big picture: what CareOneX is for, and who on the team built which part.

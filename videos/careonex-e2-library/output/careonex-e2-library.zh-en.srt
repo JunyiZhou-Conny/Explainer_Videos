@@ -1,0 +1,704 @@
+1
+00:00:00,000 --> 00:00:01,846
+CareOneX 分成两半
+CareOneX has two halves.
+
+2
+00:00:02,166 --> 00:00:05,398
+一半在电话里和家属对话
+One half talks to a family on the phone.
+
+3
+00:00:05,718 --> 00:00:09,309
+另一半在任何来电之前就已经运行
+The other half runs long before any call:
+
+4
+00:00:09,309 --> 00:00:13,775
+它搭建一座资料库，每个回答都从这里来
+it builds the library that every answer comes from.
+
+5
+00:00:14,017 --> 00:00:16,479
+这一集讲资料库：五个容器（container）
+This episode is about the library:
+
+6
+00:00:16,479 --> 00:00:21,909
+把 20 份公开文档变成 232 段可以检索的文字
+five containers that turn 20 public documents into 232 searchable passages.
+
+7
+00:00:22,150 --> 00:00:24,148
+为什么要先建资料库？
+Why build a library at all?
+
+8
+00:00:24,468 --> 00:00:31,232
+来电者问到收入上限时，agent，也就是电话里的 AI 助手
+When a caller asks about an income limit, the agent, the AI assistant on the phone,
+
+9
+00:00:31,232 --> 00:00:34,329
+必须根据官方文件回答
+must answer from an official document.
+
+10
+00:00:34,649 --> 00:00:41,354
+它不能凭记忆回答，因为这些数字每年都会变
+It is not allowed to answer from memory, because these numbers change every year.
+
+11
+00:00:41,600 --> 00:00:45,378
+所以每个回答都从这样一段文字开始
+So every answer starts as one of these passages.
+
+12
+00:00:45,698 --> 00:00:51,302
+我们跟着一份文档，依次走过这五个容器
+Let's follow a document through the five containers, one at a time.
+
+13
+00:00:52,350 --> 00:00:56,157
+一切从一张表格开始：来源清单（source list）
+Everything starts with one spreadsheet, the source list.
+
+14
+00:00:56,477 --> 00:01:00,242
+它列出了团队批准的 20 份公开文档
+It names 20 public documents that the team approved.
+
+15
+00:01:00,483 --> 00:01:05,379
+一半以上来自新泽西州老龄服务司（DoAS）
+More than half come from New Jersey's Division of Aging Services.
+
+16
+00:01:05,699 --> 00:01:09,326
+其余来自 Medicaid、Medicare、退伍军人
+The rest come from Medicaid, Medicare, Veterans Affairs and Disability Services.
+
+17
+00:01:09,326 --> 00:01:11,781
+事务部（VA）和残障服务司
+The rest come from Medicaid, Medicare, Veterans Affairs and Disability Services.
+
+18
+00:01:12,101 --> 00:01:14,417
+其中 11 份是网页，8 份是 PDF
+11 are web pages, 8 are PDFs,
+
+19
+00:01:14,417 --> 00:01:19,688
+还有 1 份是团队根据州政府 2026 年的文件整理的摘要
+and 1 is a summary the team wrote from the state's 2026 documents.
+
+20
+00:01:19,933 --> 00:01:23,708
+每一行都记着回答以后要用到的信息
+Each row carries what an answer needs later:
+
+21
+00:01:23,708 --> 00:01:28,942
+项目名称、网址、规则生效的日期
+the program, the web address, the date the rules took effect,
+
+22
+00:01:28,942 --> 00:01:32,803
+以及文件的“指纹”，也就是 hash（哈希值）
+and a fingerprint of the file, called a hash.
+
+23
+00:01:33,050 --> 00:01:36,677
+来源清单是整条 pipeline 唯一的输入
+The source list is the pipeline's only input.
+
+24
+00:01:36,997 --> 00:01:40,895
+要加一份文档，就加一行再重新 build
+To add a document, you add a row and rebuild,
+
+25
+00:01:40,895 --> 00:01:45,920
+因为这张清单是打包进 data 容器镜像里的
+because the list is built into the data container's image.
+
+26
+00:01:46,967 --> 00:01:48,989
+S3 是亚马逊的文件存储服务
+S3 is Amazon's file storage.
+
+27
+00:01:49,309 --> 00:01:52,381
+bucket（存储桶）是里面最顶层的一个文件夹
+A bucket is one top-level folder in it,
+
+28
+00:01:52,381 --> 00:01:55,612
+里面的每个文件叫 object（对象）
+and each file inside is called an object.
+
+29
+00:01:55,932 --> 00:02:00,781
+第一个容器 data 负责确保团队的 bucket 存在
+The first container, data, makes sure the team's bucket exists.
+
+30
+00:02:01,101 --> 00:02:08,051
+它会保留每个文件的旧版本，做了加密，而且只存放公开文档
+It keeps old versions of every file, it is encrypted, and it holds public documents only.
+
+31
+00:02:08,371 --> 00:02:11,601
+来电者的任何信息都不会放进去
+No caller information ever goes into it.
+
+32
+00:02:11,850 --> 00:02:14,438
+它的名字以 ac215 开头，是有意为之
+Its name starts with ac215 on purpose.
+
+33
+00:02:14,758 --> 00:02:20,342
+团队的 S3 权限只覆盖名字以 ac215 开头的 bucket
+The team's S3 permissions only reach buckets whose names start with ac215,
+
+34
+00:02:20,342 --> 00:02:22,228
+所以这门课里的任何东西都碰不到
+so nothing in this course
+
+35
+00:02:22,228 --> 00:02:27,435
+公司以 careonex 命名的生产环境 bucket
+can touch the company's production buckets, which are named careonex.
+
+36
+00:02:27,684 --> 00:02:33,366
+第二个容器 ingest 下载每一份文档，并计算它的 hash
+The second container, ingest, downloads every document and computes its hash.
+
+37
+00:02:33,686 --> 00:02:38,291
+如果 bucket 里已经有同样 hash 的文件，就跳过
+If the bucket already holds a file with that hash, it skips it.
+
+38
+00:02:38,611 --> 00:02:41,458
+否则就上传新版本
+Otherwise it uploads the new version.
+
+39
+00:02:41,700 --> 00:02:46,225
+它还会在每个文件旁边写一个小的元数据文件
+Next to every file it writes a small sidecar of metadata:
+
+40
+00:02:46,225 --> 00:02:50,434
+叫 sidecar：项目、年份、州、生效日期
+the program, the year, the state, the effective date.
+
+41
+00:02:50,754 --> 00:02:55,927
+之后检索时就能按这些字段过滤，比如只看 JACC
+Later, search can filter on these fields, for example only JACC.
+
+42
+00:02:56,167 --> 00:02:58,758
+每次运行还会写一份 manifest（清单）
+Every run also writes a manifest:
+
+43
+00:02:58,758 --> 00:03:01,507
+准确记录它看到了哪些文件版本
+exactly which file versions it saw.
+
+44
+00:03:01,827 --> 00:03:05,869
+这份 manifest 就是整个数据集的版本号
+That manifest is the version of the whole dataset.
+
+45
+00:03:06,917 --> 00:03:11,016
+做这期视频时，我们做了一个测试
+Here is something we tested while making this video.
+
+46
+00:03:11,336 --> 00:03:14,188
+我们把每份文档都下载了两次
+We downloaded every document twice,
+
+47
+00:03:14,188 --> 00:03:17,937
+间隔几秒钟，方式和 ingest 完全一样
+a few seconds apart, the same way ingest does.
+
+48
+00:03:18,257 --> 00:03:20,782
+8 份 PDF 两次都一模一样
+All 8 PDFs came back identical,
+
+49
+00:03:20,782 --> 00:03:24,692
+而且仍然和来源清单里的 hash 对得上
+and still matched their hash in the source list.
+
+50
+00:03:25,012 --> 00:03:31,099
+但 11 个网页里有 5 个，第二次下载回来的字节不一样
+But 5 of the 11 web pages came back with different bytes the second time.
+
+51
+00:03:31,334 --> 00:03:34,473
+这些网页上的文字其实没有变
+The text on those pages had not changed.
+
+52
+00:03:34,793 --> 00:03:41,813
+在 nj.gov 上，页面末尾有时会多出一段带随机数的防爬虫脚本
+On nj.gov, a bot-protection script with a random number is sometimes added at the end.
+
+53
+00:03:42,133 --> 00:03:43,413
+在 va.gov 上
+On va.gov,
+
+54
+00:03:43,413 --> 00:03:49,321
+每次都会给几十个标签打上一个新的随机码，叫 nonce
+a fresh random code, called a nonce, is stamped on dozens of tags every time.
+
+55
+00:03:49,641 --> 00:03:55,968
+所以，下载文件的 hash 没法告诉你规则有没有变
+So the hash of a downloaded file cannot tell you whether the rules changed.
+
+56
+00:03:56,217 --> 00:03:57,851
+这正是 extract 的任务
+That is extract's job.
+
+57
+00:03:58,171 --> 00:04:02,948
+它把每个文件转成干净的文本，格式是 Markdown
+It turns every file into clean text, written as Markdown:
+
+58
+00:04:02,948 --> 00:04:08,898
+纯文本加上几个表示结构的符号，比如标题前面加一个 #
+plain text with a few symbols for structure, like a # before a heading.
+
+59
+00:04:09,218 --> 00:04:15,421
+这段文本的 hash，才是文档内容真正变化的信号
+The hash of that text is the real signal that a document's content moved.
+
+60
+00:04:15,667 --> 00:04:18,716
+网页的处理改了三个版本才做对
+Getting web pages right took three versions.
+
+61
+00:04:19,036 --> 00:04:23,063
+第 1 版用了一个自动“猜”正文的库
+Version 1 used a library that guesses the main content,
+
+62
+00:04:23,063 --> 00:04:26,504
+结果悄悄丢掉了讲申请资格的段落
+and it silently dropped eligibility paragraphs.
+
+63
+00:04:26,824 --> 00:04:33,726
+第 2 版先删导航栏，可 nj.gov 把整个页面包在导航栏里面
+Version 2 deleted navigation first, but nj.gov wraps the whole page inside its navigation bar,
+
+64
+00:04:33,726 --> 00:04:35,489
+结果页面变成空的
+so pages came out empty.
+
+65
+00:04:35,809 --> 00:04:40,301
+第 3 版先找到正文区域，然后才做删除
+Version 3 finds the main region first, and only then strips.
+
+66
+00:04:40,550 --> 00:04:44,074
+PDF 交给一个叫 pymupdf4llm 的库处理
+PDFs go through a library called pymupdf4llm.
+
+67
+00:04:44,394 --> 00:04:49,455
+它保留标题，并把表格转成 Markdown 表格
+It keeps headings, and it turns tables into Markdown tables,
+
+68
+00:04:49,455 --> 00:04:53,420
+这样一个数字就和它的标签留在同一行
+so a number stays in the same row as its label.
+
+69
+00:04:54,467 --> 00:04:58,100
+检索不该把一份 22 页的指南整个丢给 agent
+Search should not hand the agent a 22-page guide.
+
+70
+00:04:58,420 --> 00:05:02,756
+它应该返回一段文字：短到一眼能读完
+It should return a passage short enough to read at once,
+
+71
+00:05:02,756 --> 00:05:06,086
+又具体到能回答一个问题
+and specific enough to answer one question.
+
+72
+00:05:06,406 --> 00:05:11,862
+所以 chunk 容器把每份文档切成小块，叫 chunk（文本块）
+So the chunk container cuts every document into pieces called chunks.
+
+73
+00:05:12,100 --> 00:05:15,229
+第一条规则：每个标题开始一个新的 chunk
+Rule one: a heading starts a new chunk,
+
+74
+00:05:15,229 --> 00:05:19,241
+而且每个 chunk 都带着它完整的标题路径
+and every chunk carries its full path of headings.
+
+75
+00:05:19,561 --> 00:05:22,292
+这样，“收入上限 4,855 美元”
+So the line "income limit 4,855 dollars" never travels without the word JACC.
+
+76
+00:05:22,292 --> 00:05:25,875
+这一行就永远不会和 JACC 这个词分开
+So the line "income limit 4,855 dollars" never travels without the word JACC.
+
+77
+00:05:26,117 --> 00:05:28,108
+一张表格放在同一个 chunk 里
+A table stays in one chunk.
+
+78
+00:05:28,428 --> 00:05:31,828
+只有比上限还大的表格才会被切开
+Only a table bigger than the cap is split,
+
+79
+00:05:31,828 --> 00:05:36,444
+按行切，每一块都重复表格的第一行
+between rows, with its first row repeated on every piece.
+
+80
+00:05:36,764 --> 00:05:40,898
+长文本在段落或句子之间切开
+Long text is split at paragraph or sentence breaks,
+
+81
+00:05:40,898 --> 00:05:45,357
+目标大约 1,600 个字符，上限 2,800
+aiming for about 1,600 characters, with a cap of 2,800.
+
+82
+00:05:45,677 --> 00:05:50,299
+少于 200 个字符的碎片会并入相邻的 chunk
+Scraps under 200 characters are merged into a neighbour.
+
+83
+00:05:50,534 --> 00:05:53,655
+20 份文档一共切出 232 个 chunk
+On all 20 documents this gives 232 chunks.
+
+84
+00:05:53,975 --> 00:05:55,619
+最长的两份 PDF
+The two longest PDFs,
+
+85
+00:05:55,619 --> 00:06:01,257
+也就是项目指南和 Medicare 手册，几乎占了一半
+the program guide and the Medicare booklet, make up almost half of them.
+
+86
+00:06:01,577 --> 00:06:04,566
+大多数 chunk 远小于目标
+Most chunks are far below the target:
+
+87
+00:06:04,566 --> 00:06:09,738
+中位数大约 850 个字符，因为标题出现得很频繁
+the median is about 850 characters, because headings come often.
+
+88
+00:06:09,984 --> 00:06:14,524
+每个 chunk 存成单独的文件，有自己的 sidecar
+Each chunk is stored as its own file, with its own sidecar.
+
+89
+00:06:14,844 --> 00:06:18,131
+这个 sidecar 必须小于 1 KB
+That sidecar must stay under 1 kilobyte:
+
+90
+00:06:18,131 --> 00:06:22,898
+元数据一旦更大，Bedrock 就会悄悄跳过这个 chunk
+Bedrock silently skips any chunk whose metadata is bigger,
+
+91
+00:06:22,898 --> 00:06:26,021
+却仍然报告任务完成
+and still reports the job as complete.
+
+92
+00:06:27,067 --> 00:06:31,209
+最后一个容器 kb-sync 把每个 chunk 变成一个向量
+The last container, kb-sync, turns every chunk into a vector.
+
+93
+00:06:31,529 --> 00:06:35,173
+一个 embedding 模型，Amazon Titan Text Embeddings v2
+An embedding model, Amazon Titan Text Embeddings v2,
+
+94
+00:06:35,173 --> 00:06:38,117
+读入 chunk，输出 1,024 个数字
+reads the chunk and returns 1,024 numbers.
+
+95
+00:06:38,437 --> 00:06:42,730
+Titan 运行在 Bedrock 上，Bedrock 是亚马逊的一项服务
+Titan runs on Bedrock, Amazon's service for using AI models
+
+96
+00:06:42,730 --> 00:06:44,914
+不用自己部署，就能调用 AI 模型
+without running them yourself.
+
+97
+00:06:45,150 --> 00:06:49,983
+可以把这些数字想成一个有 1,024 个坐标轴的空间里的一个方向
+Think of those numbers as a direction in a space with 1,024 axes.
+
+98
+00:06:50,303 --> 00:06:54,733
+意思相近的 chunk 指向相近的方向
+Chunks with similar meaning point in similar directions,
+
+99
+00:06:54,733 --> 00:06:59,876
+两个方向之间的夹角用余弦相似度（cosine similarity）来衡量
+and the angle between two of them, measured by cosine similarity,
+
+100
+00:06:59,876 --> 00:07:02,092
+检索就靠它来比较
+is how search compares them.
+
+101
+00:07:02,334 --> 00:07:07,960
+这些向量存在一个叫 program-kb 的 S3 Vectors 索引里
+The vectors live in an S3 Vectors index, a store built for searching vectors,
+
+102
+00:07:07,960 --> 00:07:09,627
+这是一种专门用来检索向量的存储
+called program-kb.
+
+103
+00:07:09,947 --> 00:07:12,694
+上面是一个 Bedrock Knowledge Base（知识库）
+On top sits a Bedrock Knowledge Base
+
+104
+00:07:12,694 --> 00:07:15,670
+它的数据源就是 chunks 文件夹
+whose data source is the chunks folder.
+
+105
+00:07:15,990 --> 00:07:18,609
+知识库自带的切块功能是关掉的
+Its own chunking is switched off,
+
+106
+00:07:18,609 --> 00:07:22,896
+因为我们自己的 chunk 容器已经做完了这件事
+because our chunk container has already done that job.
+
+107
+00:07:23,134 --> 00:07:27,779
+kb-sync 启动一个导入任务（ingestion job），并等它完成
+kb-sync starts an ingestion job and waits for it to finish.
+
+108
+00:07:28,099 --> 00:07:32,695
+然后它把知识库的 ID 写进 bucket
+Then it writes the knowledge base's ID into the bucket,
+
+109
+00:07:32,695 --> 00:07:36,456
+retrieve 容器就是靠这个找到知识库的
+which is how the retrieve container finds it.
+
+110
+00:07:36,700 --> 00:07:38,144
+为什么选 S3 Vectors？
+Why S3 Vectors?
+
+111
+00:07:38,194 --> 00:07:46,187
+它每月只要几美分，而其他方案每月起步大约 45 或 175 美元
+It costs cents a month, while the alternatives start at about 45 or 175 dollars a month.
+
+112
+00:07:46,507 --> 00:07:52,911
+代价是速度：每次检索大约十分之一到三分之一秒
+The price is speed: about a tenth to a third of a second per search,
+
+113
+00:07:52,911 --> 00:07:57,715
+而在电话里，每十分之一秒都很重要
+and on a phone call every tenth of a second counts.
+
+114
+00:07:58,750 --> 00:08:01,916
+整条 pipeline 贯穿着两个习惯
+Two habits run through the whole pipeline.
+
+115
+00:08:02,236 --> 00:08:07,914
+每个容器只管 bucket 里属于自己的那个文件夹，不碰别人的
+Each container owns one folder of the bucket and leaves the others alone.
+
+116
+00:08:08,234 --> 00:08:11,922
+而且每个容器都会跳过已经做完的工作
+And each one skips work that is already done,
+
+117
+00:08:11,922 --> 00:08:15,692
+所以整个重跑一遍既便宜又安全
+so running everything again is cheap and safe.
+
+118
+00:08:15,933 --> 00:08:17,430
+那么，还有哪些问题没解决？
+Now, what is open.
+
+119
+00:08:17,480 --> 00:08:21,150
+做这期视频时，我们发现了三件事
+Three things turned up while we made this video.
+
+120
+00:08:21,470 --> 00:08:23,948
+第一，退伍军人事务部的居家
+First, one page, Veterans Affairs'
+
+121
+00:08:23,948 --> 00:08:26,965
+与社区服务（Home and Community Based Services）页面
+Home and Community Based Services,
+
+122
+00:08:26,965 --> 00:08:31,409
+经过 extract 之后几乎只剩下网站菜单
+comes out of extract as little more than the site menu.
+
+123
+00:08:31,729 --> 00:08:36,333
+它的服务列表放在一个叫 flex-menu 的元素里
+Its list of services sits in an element named flex-menu,
+
+124
+00:08:36,333 --> 00:08:40,115
+而删除菜单的规则把它整个扔掉了
+and the rule that strips menus throws it away.
+
+125
+00:08:40,350 --> 00:08:42,376
+第二，两份来源互相矛盾
+Second, two sources disagree.
+
+126
+00:08:42,696 --> 00:08:46,912
+JACC 网页说服务上限是每月 1,156 美元
+The JACC web page caps services at 1,156 dollars a month.
+
+127
+00:08:47,232 --> 00:08:49,977
+州政府 2026 年的项目对照表
+The state's 2026 side-by-side table,
+
+128
+00:08:49,977 --> 00:08:53,637
+以及团队据此整理的摘要，写的却是 1,090
+and the team's summary built from it, say 1,090.
+
+129
+00:08:53,957 --> 00:08:58,650
+两份都是 2026 年的，所以“优先用最新年份”这条规则也没法裁定
+Both are 2026, so "prefer the newest year" cannot settle it.
+
+130
+00:08:58,883 --> 00:09:02,450
+第三，同一张表格把项目名称藏起来了
+Third, that same table hides its program names.
+
+131
+00:09:02,770 --> 00:09:06,660
+项目名称在 extract 之后还在，就在表格的第二行
+They survive extraction, in the table's second row.
+
+132
+00:09:06,980 --> 00:09:12,490
+但 chunk 容器切分大表格时，只重复第一行
+But when the chunker splits a big table, it repeats only the first row.
+
+133
+00:09:12,810 --> 00:09:17,183
+所以装着 1,090 美元的那个 chunk 里，根本没有 JACC 这个词
+So the chunk that holds 1,090 dollars never says JACC.
+
+134
+00:09:17,417 --> 00:09:22,291
+另外还没解决的：目前没有任何机制定期重跑这条 pipeline
+Also open: nothing re-runs this pipeline on a schedule yet,
+
+135
+00:09:22,291 --> 00:09:25,761
+团队的摘要也是手动更新的
+and the team's summary is updated by hand.
+
+136
+00:09:26,000 --> 00:09:28,640
+三个问题，检验一下自己
+Three questions to test yourself.
+
+137
+00:09:28,960 --> 00:09:33,863
+为什么 extract 对文本算 hash，而不是对下载的文件？
+Why does extract hash the text and not the downloaded file?
+
+138
+00:09:34,183 --> 00:09:38,042
+为什么每个 chunk 上都要盖上标题路径？
+Why is the heading path stamped on every chunk?
+
+139
+00:09:38,362 --> 00:09:46,109
+如果清单里新加一份 PDF，下次运行时哪些容器会真正干活？
+And when one new PDF is added to the list, which containers do real work on the next run?
+
+140
+00:09:46,350 --> 00:09:50,392
+下一集：一个问题进来之后会发生什么
+Next episode: what happens when a question arrives,
+
+141
+00:09:50,392 --> 00:09:55,147
+以及 retrieve 如何从这 232 段里找到正确的 5 段
+and how retrieve finds the right 5 passages among these 232.

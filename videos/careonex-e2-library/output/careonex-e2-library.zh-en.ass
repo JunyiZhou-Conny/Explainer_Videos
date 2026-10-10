@@ -1,0 +1,155 @@
+[Script Info]
+Title: CareOneX E2 · Building the library: from 20 public documents to 232 searchable passages
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.85,Bilingual,,0,0,0,,CareOneX 分成两半\N{\fs33\c&H00C8C0B8&\bord1.4}CareOneX has two halves.
+Dialogue: 0,0:00:02.17,0:00:05.40,Bilingual,,0,0,0,,一半在电话里和家属对话\N{\fs33\c&H00C8C0B8&\bord1.4}One half talks to a family on the phone.
+Dialogue: 0,0:00:05.72,0:00:09.31,Bilingual,,0,0,0,,另一半在任何来电之前就已经运行\N{\fs33\c&H00C8C0B8&\bord1.4}The other half runs long before any call:
+Dialogue: 0,0:00:09.31,0:00:13.78,Bilingual,,0,0,0,,它搭建一座资料库，每个回答都从这里来\N{\fs33\c&H00C8C0B8&\bord1.4}it builds the library that every answer comes from.
+Dialogue: 0,0:00:14.02,0:00:16.48,Bilingual,,0,0,0,,这一集讲资料库：五个容器（container）\N{\fs33\c&H00C8C0B8&\bord1.4}This episode is about the library:
+Dialogue: 0,0:00:16.48,0:00:21.91,Bilingual,,0,0,0,,把 20 份公开文档变成 232 段可以检索的文字\N{\fs33\c&H00C8C0B8&\bord1.4}five containers that turn 20 public documents into 232 searchable passages.
+Dialogue: 0,0:00:22.15,0:00:24.15,Bilingual,,0,0,0,,为什么要先建资料库？\N{\fs33\c&H00C8C0B8&\bord1.4}Why build a library at all?
+Dialogue: 0,0:00:24.47,0:00:31.23,Bilingual,,0,0,0,,来电者问到收入上限时，agent，也就是电话里的 AI 助手\N{\fs33\c&H00C8C0B8&\bord1.4}When a caller asks about an income limit, the agent, the AI assistant on the phone,
+Dialogue: 0,0:00:31.23,0:00:34.33,Bilingual,,0,0,0,,必须根据官方文件回答\N{\fs33\c&H00C8C0B8&\bord1.4}must answer from an official document.
+Dialogue: 0,0:00:34.65,0:00:41.35,Bilingual,,0,0,0,,它不能凭记忆回答，因为这些数字每年都会变\N{\fs33\c&H00C8C0B8&\bord1.4}It is not allowed to answer from memory, because these numbers change every year.
+Dialogue: 0,0:00:41.60,0:00:45.38,Bilingual,,0,0,0,,所以每个回答都从这样一段文字开始\N{\fs33\c&H00C8C0B8&\bord1.4}So every answer starts as one of these passages.
+Dialogue: 0,0:00:45.70,0:00:51.30,Bilingual,,0,0,0,,我们跟着一份文档，依次走过这五个容器\N{\fs33\c&H00C8C0B8&\bord1.4}Let's follow a document through the five containers, one at a time.
+Dialogue: 0,0:00:52.35,0:00:56.16,Bilingual,,0,0,0,,一切从一张表格开始：来源清单（source list）\N{\fs33\c&H00C8C0B8&\bord1.4}Everything starts with one spreadsheet, the source list.
+Dialogue: 0,0:00:56.48,0:01:00.24,Bilingual,,0,0,0,,它列出了团队批准的 20 份公开文档\N{\fs33\c&H00C8C0B8&\bord1.4}It names 20 public documents that the team approved.
+Dialogue: 0,0:01:00.48,0:01:05.38,Bilingual,,0,0,0,,一半以上来自新泽西州老龄服务司（DoAS）\N{\fs33\c&H00C8C0B8&\bord1.4}More than half come from New Jersey's Division of Aging Services.
+Dialogue: 0,0:01:05.70,0:01:09.33,Bilingual,,0,0,0,,其余来自 Medicaid、Medicare、退伍军人\N{\fs33\c&H00C8C0B8&\bord1.4}The rest come from Medicaid, Medicare, Veterans Affairs and Disability Services.
+Dialogue: 0,0:01:09.33,0:01:11.78,Bilingual,,0,0,0,,事务部（VA）和残障服务司\N{\fs33\c&H00C8C0B8&\bord1.4}The rest come from Medicaid, Medicare, Veterans Affairs and Disability Services.
+Dialogue: 0,0:01:12.10,0:01:14.42,Bilingual,,0,0,0,,其中 11 份是网页，8 份是 PDF\N{\fs33\c&H00C8C0B8&\bord1.4}11 are web pages, 8 are PDFs,
+Dialogue: 0,0:01:14.42,0:01:19.69,Bilingual,,0,0,0,,还有 1 份是团队根据州政府 2026 年的文件整理的摘要\N{\fs33\c&H00C8C0B8&\bord1.4}and 1 is a summary the team wrote from the state's 2026 documents.
+Dialogue: 0,0:01:19.93,0:01:23.71,Bilingual,,0,0,0,,每一行都记着回答以后要用到的信息\N{\fs33\c&H00C8C0B8&\bord1.4}Each row carries what an answer needs later:
+Dialogue: 0,0:01:23.71,0:01:28.94,Bilingual,,0,0,0,,项目名称、网址、规则生效的日期\N{\fs33\c&H00C8C0B8&\bord1.4}the program, the web address, the date the rules took effect,
+Dialogue: 0,0:01:28.94,0:01:32.80,Bilingual,,0,0,0,,以及文件的“指纹”，也就是 hash（哈希值）\N{\fs33\c&H00C8C0B8&\bord1.4}and a fingerprint of the file, called a hash.
+Dialogue: 0,0:01:33.05,0:01:36.68,Bilingual,,0,0,0,,来源清单是整条 pipeline 唯一的输入\N{\fs33\c&H00C8C0B8&\bord1.4}The source list is the pipeline's only input.
+Dialogue: 0,0:01:37.00,0:01:40.90,Bilingual,,0,0,0,,要加一份文档，就加一行再重新 build\N{\fs33\c&H00C8C0B8&\bord1.4}To add a document, you add a row and rebuild,
+Dialogue: 0,0:01:40.90,0:01:45.92,Bilingual,,0,0,0,,因为这张清单是打包进 data 容器镜像里的\N{\fs33\c&H00C8C0B8&\bord1.4}because the list is built into the data container's image.
+Dialogue: 0,0:01:46.97,0:01:48.99,Bilingual,,0,0,0,,S3 是亚马逊的文件存储服务\N{\fs33\c&H00C8C0B8&\bord1.4}S3 is Amazon's file storage.
+Dialogue: 0,0:01:49.31,0:01:52.38,Bilingual,,0,0,0,,bucket（存储桶）是里面最顶层的一个文件夹\N{\fs33\c&H00C8C0B8&\bord1.4}A bucket is one top-level folder in it,
+Dialogue: 0,0:01:52.38,0:01:55.61,Bilingual,,0,0,0,,里面的每个文件叫 object（对象）\N{\fs33\c&H00C8C0B8&\bord1.4}and each file inside is called an object.
+Dialogue: 0,0:01:55.93,0:02:00.78,Bilingual,,0,0,0,,第一个容器 data 负责确保团队的 bucket 存在\N{\fs33\c&H00C8C0B8&\bord1.4}The first container, data, makes sure the team's bucket exists.
+Dialogue: 0,0:02:01.10,0:02:08.05,Bilingual,,0,0,0,,它会保留每个文件的旧版本，做了加密，而且只存放公开文档\N{\fs33\c&H00C8C0B8&\bord1.4}It keeps old versions of every file, it is encrypted, and it holds public documents only.
+Dialogue: 0,0:02:08.37,0:02:11.60,Bilingual,,0,0,0,,来电者的任何信息都不会放进去\N{\fs33\c&H00C8C0B8&\bord1.4}No caller information ever goes into it.
+Dialogue: 0,0:02:11.85,0:02:14.44,Bilingual,,0,0,0,,它的名字以 ac215 开头，是有意为之\N{\fs33\c&H00C8C0B8&\bord1.4}Its name starts with ac215 on purpose.
+Dialogue: 0,0:02:14.76,0:02:20.34,Bilingual,,0,0,0,,团队的 S3 权限只覆盖名字以 ac215 开头的 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}The team's S3 permissions only reach buckets whose names start with ac215,
+Dialogue: 0,0:02:20.34,0:02:22.23,Bilingual,,0,0,0,,所以这门课里的任何东西都碰不到\N{\fs33\c&H00C8C0B8&\bord1.4}so nothing in this course
+Dialogue: 0,0:02:22.23,0:02:27.43,Bilingual,,0,0,0,,公司以 careonex 命名的生产环境 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}can touch the company's production buckets, which are named careonex.
+Dialogue: 0,0:02:27.68,0:02:33.37,Bilingual,,0,0,0,,第二个容器 ingest 下载每一份文档，并计算它的 hash\N{\fs33\c&H00C8C0B8&\bord1.4}The second container, ingest, downloads every document and computes its hash.
+Dialogue: 0,0:02:33.69,0:02:38.29,Bilingual,,0,0,0,,如果 bucket 里已经有同样 hash 的文件，就跳过\N{\fs33\c&H00C8C0B8&\bord1.4}If the bucket already holds a file with that hash, it skips it.
+Dialogue: 0,0:02:38.61,0:02:41.46,Bilingual,,0,0,0,,否则就上传新版本\N{\fs33\c&H00C8C0B8&\bord1.4}Otherwise it uploads the new version.
+Dialogue: 0,0:02:41.70,0:02:46.23,Bilingual,,0,0,0,,它还会在每个文件旁边写一个小的元数据文件\N{\fs33\c&H00C8C0B8&\bord1.4}Next to every file it writes a small sidecar of metadata:
+Dialogue: 0,0:02:46.23,0:02:50.43,Bilingual,,0,0,0,,叫 sidecar：项目、年份、州、生效日期\N{\fs33\c&H00C8C0B8&\bord1.4}the program, the year, the state, the effective date.
+Dialogue: 0,0:02:50.75,0:02:55.93,Bilingual,,0,0,0,,之后检索时就能按这些字段过滤，比如只看 JACC\N{\fs33\c&H00C8C0B8&\bord1.4}Later, search can filter on these fields, for example only JACC.
+Dialogue: 0,0:02:56.17,0:02:58.76,Bilingual,,0,0,0,,每次运行还会写一份 manifest（清单）\N{\fs33\c&H00C8C0B8&\bord1.4}Every run also writes a manifest:
+Dialogue: 0,0:02:58.76,0:03:01.51,Bilingual,,0,0,0,,准确记录它看到了哪些文件版本\N{\fs33\c&H00C8C0B8&\bord1.4}exactly which file versions it saw.
+Dialogue: 0,0:03:01.83,0:03:05.87,Bilingual,,0,0,0,,这份 manifest 就是整个数据集的版本号\N{\fs33\c&H00C8C0B8&\bord1.4}That manifest is the version of the whole dataset.
+Dialogue: 0,0:03:06.92,0:03:11.02,Bilingual,,0,0,0,,做这期视频时，我们做了一个测试\N{\fs33\c&H00C8C0B8&\bord1.4}Here is something we tested while making this video.
+Dialogue: 0,0:03:11.34,0:03:14.19,Bilingual,,0,0,0,,我们把每份文档都下载了两次\N{\fs33\c&H00C8C0B8&\bord1.4}We downloaded every document twice,
+Dialogue: 0,0:03:14.19,0:03:17.94,Bilingual,,0,0,0,,间隔几秒钟，方式和 ingest 完全一样\N{\fs33\c&H00C8C0B8&\bord1.4}a few seconds apart, the same way ingest does.
+Dialogue: 0,0:03:18.26,0:03:20.78,Bilingual,,0,0,0,,8 份 PDF 两次都一模一样\N{\fs33\c&H00C8C0B8&\bord1.4}All 8 PDFs came back identical,
+Dialogue: 0,0:03:20.78,0:03:24.69,Bilingual,,0,0,0,,而且仍然和来源清单里的 hash 对得上\N{\fs33\c&H00C8C0B8&\bord1.4}and still matched their hash in the source list.
+Dialogue: 0,0:03:25.01,0:03:31.10,Bilingual,,0,0,0,,但 11 个网页里有 5 个，第二次下载回来的字节不一样\N{\fs33\c&H00C8C0B8&\bord1.4}But 5 of the 11 web pages came back with different bytes the second time.
+Dialogue: 0,0:03:31.33,0:03:34.47,Bilingual,,0,0,0,,这些网页上的文字其实没有变\N{\fs33\c&H00C8C0B8&\bord1.4}The text on those pages had not changed.
+Dialogue: 0,0:03:34.79,0:03:41.81,Bilingual,,0,0,0,,在 nj.gov 上，页面末尾有时会多出一段带随机数的防爬虫脚本\N{\fs33\c&H00C8C0B8&\bord1.4}On nj.gov, a bot-protection script with a random number is sometimes added at the end.
+Dialogue: 0,0:03:42.13,0:03:43.41,Bilingual,,0,0,0,,在 va.gov 上\N{\fs33\c&H00C8C0B8&\bord1.4}On va.gov,
+Dialogue: 0,0:03:43.41,0:03:49.32,Bilingual,,0,0,0,,每次都会给几十个标签打上一个新的随机码，叫 nonce\N{\fs33\c&H00C8C0B8&\bord1.4}a fresh random code, called a nonce, is stamped on dozens of tags every time.
+Dialogue: 0,0:03:49.64,0:03:55.97,Bilingual,,0,0,0,,所以，下载文件的 hash 没法告诉你规则有没有变\N{\fs33\c&H00C8C0B8&\bord1.4}So the hash of a downloaded file cannot tell you whether the rules changed.
+Dialogue: 0,0:03:56.22,0:03:57.85,Bilingual,,0,0,0,,这正是 extract 的任务\N{\fs33\c&H00C8C0B8&\bord1.4}That is extract's job.
+Dialogue: 0,0:03:58.17,0:04:02.95,Bilingual,,0,0,0,,它把每个文件转成干净的文本，格式是 Markdown\N{\fs33\c&H00C8C0B8&\bord1.4}It turns every file into clean text, written as Markdown:
+Dialogue: 0,0:04:02.95,0:04:08.90,Bilingual,,0,0,0,,纯文本加上几个表示结构的符号，比如标题前面加一个 #\N{\fs33\c&H00C8C0B8&\bord1.4}plain text with a few symbols for structure, like a # before a heading.
+Dialogue: 0,0:04:09.22,0:04:15.42,Bilingual,,0,0,0,,这段文本的 hash，才是文档内容真正变化的信号\N{\fs33\c&H00C8C0B8&\bord1.4}The hash of that text is the real signal that a document's content moved.
+Dialogue: 0,0:04:15.67,0:04:18.72,Bilingual,,0,0,0,,网页的处理改了三个版本才做对\N{\fs33\c&H00C8C0B8&\bord1.4}Getting web pages right took three versions.
+Dialogue: 0,0:04:19.04,0:04:23.06,Bilingual,,0,0,0,,第 1 版用了一个自动“猜”正文的库\N{\fs33\c&H00C8C0B8&\bord1.4}Version 1 used a library that guesses the main content,
+Dialogue: 0,0:04:23.06,0:04:26.50,Bilingual,,0,0,0,,结果悄悄丢掉了讲申请资格的段落\N{\fs33\c&H00C8C0B8&\bord1.4}and it silently dropped eligibility paragraphs.
+Dialogue: 0,0:04:26.82,0:04:33.73,Bilingual,,0,0,0,,第 2 版先删导航栏，可 nj.gov 把整个页面包在导航栏里面\N{\fs33\c&H00C8C0B8&\bord1.4}Version 2 deleted navigation first, but nj.gov wraps the whole page inside its navigation bar,
+Dialogue: 0,0:04:33.73,0:04:35.49,Bilingual,,0,0,0,,结果页面变成空的\N{\fs33\c&H00C8C0B8&\bord1.4}so pages came out empty.
+Dialogue: 0,0:04:35.81,0:04:40.30,Bilingual,,0,0,0,,第 3 版先找到正文区域，然后才做删除\N{\fs33\c&H00C8C0B8&\bord1.4}Version 3 finds the main region first, and only then strips.
+Dialogue: 0,0:04:40.55,0:04:44.07,Bilingual,,0,0,0,,PDF 交给一个叫 pymupdf4llm 的库处理\N{\fs33\c&H00C8C0B8&\bord1.4}PDFs go through a library called pymupdf4llm.
+Dialogue: 0,0:04:44.39,0:04:49.45,Bilingual,,0,0,0,,它保留标题，并把表格转成 Markdown 表格\N{\fs33\c&H00C8C0B8&\bord1.4}It keeps headings, and it turns tables into Markdown tables,
+Dialogue: 0,0:04:49.45,0:04:53.42,Bilingual,,0,0,0,,这样一个数字就和它的标签留在同一行\N{\fs33\c&H00C8C0B8&\bord1.4}so a number stays in the same row as its label.
+Dialogue: 0,0:04:54.47,0:04:58.10,Bilingual,,0,0,0,,检索不该把一份 22 页的指南整个丢给 agent\N{\fs33\c&H00C8C0B8&\bord1.4}Search should not hand the agent a 22-page guide.
+Dialogue: 0,0:04:58.42,0:05:02.76,Bilingual,,0,0,0,,它应该返回一段文字：短到一眼能读完\N{\fs33\c&H00C8C0B8&\bord1.4}It should return a passage short enough to read at once,
+Dialogue: 0,0:05:02.76,0:05:06.09,Bilingual,,0,0,0,,又具体到能回答一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}and specific enough to answer one question.
+Dialogue: 0,0:05:06.41,0:05:11.86,Bilingual,,0,0,0,,所以 chunk 容器把每份文档切成小块，叫 chunk（文本块）\N{\fs33\c&H00C8C0B8&\bord1.4}So the chunk container cuts every document into pieces called chunks.
+Dialogue: 0,0:05:12.10,0:05:15.23,Bilingual,,0,0,0,,第一条规则：每个标题开始一个新的 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}Rule one: a heading starts a new chunk,
+Dialogue: 0,0:05:15.23,0:05:19.24,Bilingual,,0,0,0,,而且每个 chunk 都带着它完整的标题路径\N{\fs33\c&H00C8C0B8&\bord1.4}and every chunk carries its full path of headings.
+Dialogue: 0,0:05:19.56,0:05:22.29,Bilingual,,0,0,0,,这样，“收入上限 4,855 美元”\N{\fs33\c&H00C8C0B8&\bord1.4}So the line "income limit 4,855 dollars" never travels without the word JACC.
+Dialogue: 0,0:05:22.29,0:05:25.87,Bilingual,,0,0,0,,这一行就永远不会和 JACC 这个词分开\N{\fs33\c&H00C8C0B8&\bord1.4}So the line "income limit 4,855 dollars" never travels without the word JACC.
+Dialogue: 0,0:05:26.12,0:05:28.11,Bilingual,,0,0,0,,一张表格放在同一个 chunk 里\N{\fs33\c&H00C8C0B8&\bord1.4}A table stays in one chunk.
+Dialogue: 0,0:05:28.43,0:05:31.83,Bilingual,,0,0,0,,只有比上限还大的表格才会被切开\N{\fs33\c&H00C8C0B8&\bord1.4}Only a table bigger than the cap is split,
+Dialogue: 0,0:05:31.83,0:05:36.44,Bilingual,,0,0,0,,按行切，每一块都重复表格的第一行\N{\fs33\c&H00C8C0B8&\bord1.4}between rows, with its first row repeated on every piece.
+Dialogue: 0,0:05:36.76,0:05:40.90,Bilingual,,0,0,0,,长文本在段落或句子之间切开\N{\fs33\c&H00C8C0B8&\bord1.4}Long text is split at paragraph or sentence breaks,
+Dialogue: 0,0:05:40.90,0:05:45.36,Bilingual,,0,0,0,,目标大约 1,600 个字符，上限 2,800\N{\fs33\c&H00C8C0B8&\bord1.4}aiming for about 1,600 characters, with a cap of 2,800.
+Dialogue: 0,0:05:45.68,0:05:50.30,Bilingual,,0,0,0,,少于 200 个字符的碎片会并入相邻的 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}Scraps under 200 characters are merged into a neighbour.
+Dialogue: 0,0:05:50.53,0:05:53.65,Bilingual,,0,0,0,,20 份文档一共切出 232 个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}On all 20 documents this gives 232 chunks.
+Dialogue: 0,0:05:53.97,0:05:55.62,Bilingual,,0,0,0,,最长的两份 PDF\N{\fs33\c&H00C8C0B8&\bord1.4}The two longest PDFs,
+Dialogue: 0,0:05:55.62,0:06:01.26,Bilingual,,0,0,0,,也就是项目指南和 Medicare 手册，几乎占了一半\N{\fs33\c&H00C8C0B8&\bord1.4}the program guide and the Medicare booklet, make up almost half of them.
+Dialogue: 0,0:06:01.58,0:06:04.57,Bilingual,,0,0,0,,大多数 chunk 远小于目标\N{\fs33\c&H00C8C0B8&\bord1.4}Most chunks are far below the target:
+Dialogue: 0,0:06:04.57,0:06:09.74,Bilingual,,0,0,0,,中位数大约 850 个字符，因为标题出现得很频繁\N{\fs33\c&H00C8C0B8&\bord1.4}the median is about 850 characters, because headings come often.
+Dialogue: 0,0:06:09.98,0:06:14.52,Bilingual,,0,0,0,,每个 chunk 存成单独的文件，有自己的 sidecar\N{\fs33\c&H00C8C0B8&\bord1.4}Each chunk is stored as its own file, with its own sidecar.
+Dialogue: 0,0:06:14.84,0:06:18.13,Bilingual,,0,0,0,,这个 sidecar 必须小于 1 KB\N{\fs33\c&H00C8C0B8&\bord1.4}That sidecar must stay under 1 kilobyte:
+Dialogue: 0,0:06:18.13,0:06:22.90,Bilingual,,0,0,0,,元数据一旦更大，Bedrock 就会悄悄跳过这个 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}Bedrock silently skips any chunk whose metadata is bigger,
+Dialogue: 0,0:06:22.90,0:06:26.02,Bilingual,,0,0,0,,却仍然报告任务完成\N{\fs33\c&H00C8C0B8&\bord1.4}and still reports the job as complete.
+Dialogue: 0,0:06:27.07,0:06:31.21,Bilingual,,0,0,0,,最后一个容器 kb-sync 把每个 chunk 变成一个向量\N{\fs33\c&H00C8C0B8&\bord1.4}The last container, kb-sync, turns every chunk into a vector.
+Dialogue: 0,0:06:31.53,0:06:35.17,Bilingual,,0,0,0,,一个 embedding 模型，Amazon Titan Text Embeddings v2\N{\fs33\c&H00C8C0B8&\bord1.4}An embedding model, Amazon Titan Text Embeddings v2,
+Dialogue: 0,0:06:35.17,0:06:38.12,Bilingual,,0,0,0,,读入 chunk，输出 1,024 个数字\N{\fs33\c&H00C8C0B8&\bord1.4}reads the chunk and returns 1,024 numbers.
+Dialogue: 0,0:06:38.44,0:06:42.73,Bilingual,,0,0,0,,Titan 运行在 Bedrock 上，Bedrock 是亚马逊的一项服务\N{\fs33\c&H00C8C0B8&\bord1.4}Titan runs on Bedrock, Amazon's service for using AI models
+Dialogue: 0,0:06:42.73,0:06:44.91,Bilingual,,0,0,0,,不用自己部署，就能调用 AI 模型\N{\fs33\c&H00C8C0B8&\bord1.4}without running them yourself.
+Dialogue: 0,0:06:45.15,0:06:49.98,Bilingual,,0,0,0,,可以把这些数字想成一个有 1,024 个坐标轴的空间里的一个方向\N{\fs33\c&H00C8C0B8&\bord1.4}Think of those numbers as a direction in a space with 1,024 axes.
+Dialogue: 0,0:06:50.30,0:06:54.73,Bilingual,,0,0,0,,意思相近的 chunk 指向相近的方向\N{\fs33\c&H00C8C0B8&\bord1.4}Chunks with similar meaning point in similar directions,
+Dialogue: 0,0:06:54.73,0:06:59.88,Bilingual,,0,0,0,,两个方向之间的夹角用余弦相似度（cosine similarity）来衡量\N{\fs33\c&H00C8C0B8&\bord1.4}and the angle between two of them, measured by cosine similarity,
+Dialogue: 0,0:06:59.88,0:07:02.09,Bilingual,,0,0,0,,检索就靠它来比较\N{\fs33\c&H00C8C0B8&\bord1.4}is how search compares them.
+Dialogue: 0,0:07:02.33,0:07:07.96,Bilingual,,0,0,0,,这些向量存在一个叫 program-kb 的 S3 Vectors 索引里\N{\fs33\c&H00C8C0B8&\bord1.4}The vectors live in an S3 Vectors index, a store built for searching vectors,
+Dialogue: 0,0:07:07.96,0:07:09.63,Bilingual,,0,0,0,,这是一种专门用来检索向量的存储\N{\fs33\c&H00C8C0B8&\bord1.4}called program-kb.
+Dialogue: 0,0:07:09.95,0:07:12.69,Bilingual,,0,0,0,,上面是一个 Bedrock Knowledge Base（知识库）\N{\fs33\c&H00C8C0B8&\bord1.4}On top sits a Bedrock Knowledge Base
+Dialogue: 0,0:07:12.69,0:07:15.67,Bilingual,,0,0,0,,它的数据源就是 chunks 文件夹\N{\fs33\c&H00C8C0B8&\bord1.4}whose data source is the chunks folder.
+Dialogue: 0,0:07:15.99,0:07:18.61,Bilingual,,0,0,0,,知识库自带的切块功能是关掉的\N{\fs33\c&H00C8C0B8&\bord1.4}Its own chunking is switched off,
+Dialogue: 0,0:07:18.61,0:07:22.90,Bilingual,,0,0,0,,因为我们自己的 chunk 容器已经做完了这件事\N{\fs33\c&H00C8C0B8&\bord1.4}because our chunk container has already done that job.
+Dialogue: 0,0:07:23.13,0:07:27.78,Bilingual,,0,0,0,,kb-sync 启动一个导入任务（ingestion job），并等它完成\N{\fs33\c&H00C8C0B8&\bord1.4}kb-sync starts an ingestion job and waits for it to finish.
+Dialogue: 0,0:07:28.10,0:07:32.70,Bilingual,,0,0,0,,然后它把知识库的 ID 写进 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}Then it writes the knowledge base's ID into the bucket,
+Dialogue: 0,0:07:32.70,0:07:36.46,Bilingual,,0,0,0,,retrieve 容器就是靠这个找到知识库的\N{\fs33\c&H00C8C0B8&\bord1.4}which is how the retrieve container finds it.
+Dialogue: 0,0:07:36.70,0:07:38.14,Bilingual,,0,0,0,,为什么选 S3 Vectors？\N{\fs33\c&H00C8C0B8&\bord1.4}Why S3 Vectors?
+Dialogue: 0,0:07:38.19,0:07:46.19,Bilingual,,0,0,0,,它每月只要几美分，而其他方案每月起步大约 45 或 175 美元\N{\fs33\c&H00C8C0B8&\bord1.4}It costs cents a month, while the alternatives start at about 45 or 175 dollars a month.
+Dialogue: 0,0:07:46.51,0:07:52.91,Bilingual,,0,0,0,,代价是速度：每次检索大约十分之一到三分之一秒\N{\fs33\c&H00C8C0B8&\bord1.4}The price is speed: about a tenth to a third of a second per search,
+Dialogue: 0,0:07:52.91,0:07:57.71,Bilingual,,0,0,0,,而在电话里，每十分之一秒都很重要\N{\fs33\c&H00C8C0B8&\bord1.4}and on a phone call every tenth of a second counts.
+Dialogue: 0,0:07:58.75,0:08:01.92,Bilingual,,0,0,0,,整条 pipeline 贯穿着两个习惯\N{\fs33\c&H00C8C0B8&\bord1.4}Two habits run through the whole pipeline.
+Dialogue: 0,0:08:02.24,0:08:07.91,Bilingual,,0,0,0,,每个容器只管 bucket 里属于自己的那个文件夹，不碰别人的\N{\fs33\c&H00C8C0B8&\bord1.4}Each container owns one folder of the bucket and leaves the others alone.
+Dialogue: 0,0:08:08.23,0:08:11.92,Bilingual,,0,0,0,,而且每个容器都会跳过已经做完的工作\N{\fs33\c&H00C8C0B8&\bord1.4}And each one skips work that is already done,
+Dialogue: 0,0:08:11.92,0:08:15.69,Bilingual,,0,0,0,,所以整个重跑一遍既便宜又安全\N{\fs33\c&H00C8C0B8&\bord1.4}so running everything again is cheap and safe.
+Dialogue: 0,0:08:15.93,0:08:17.43,Bilingual,,0,0,0,,那么，还有哪些问题没解决？\N{\fs33\c&H00C8C0B8&\bord1.4}Now, what is open.
+Dialogue: 0,0:08:17.48,0:08:21.15,Bilingual,,0,0,0,,做这期视频时，我们发现了三件事\N{\fs33\c&H00C8C0B8&\bord1.4}Three things turned up while we made this video.
+Dialogue: 0,0:08:21.47,0:08:23.95,Bilingual,,0,0,0,,第一，退伍军人事务部的居家\N{\fs33\c&H00C8C0B8&\bord1.4}First, one page, Veterans Affairs'
+Dialogue: 0,0:08:23.95,0:08:26.96,Bilingual,,0,0,0,,与社区服务（Home and Community Based Services）页面\N{\fs33\c&H00C8C0B8&\bord1.4}Home and Community Based Services,
+Dialogue: 0,0:08:26.96,0:08:31.41,Bilingual,,0,0,0,,经过 extract 之后几乎只剩下网站菜单\N{\fs33\c&H00C8C0B8&\bord1.4}comes out of extract as little more than the site menu.
+Dialogue: 0,0:08:31.73,0:08:36.33,Bilingual,,0,0,0,,它的服务列表放在一个叫 flex-menu 的元素里\N{\fs33\c&H00C8C0B8&\bord1.4}Its list of services sits in an element named flex-menu,
+Dialogue: 0,0:08:36.33,0:08:40.12,Bilingual,,0,0,0,,而删除菜单的规则把它整个扔掉了\N{\fs33\c&H00C8C0B8&\bord1.4}and the rule that strips menus throws it away.
+Dialogue: 0,0:08:40.35,0:08:42.38,Bilingual,,0,0,0,,第二，两份来源互相矛盾\N{\fs33\c&H00C8C0B8&\bord1.4}Second, two sources disagree.
+Dialogue: 0,0:08:42.70,0:08:46.91,Bilingual,,0,0,0,,JACC 网页说服务上限是每月 1,156 美元\N{\fs33\c&H00C8C0B8&\bord1.4}The JACC web page caps services at 1,156 dollars a month.
+Dialogue: 0,0:08:47.23,0:08:49.98,Bilingual,,0,0,0,,州政府 2026 年的项目对照表\N{\fs33\c&H00C8C0B8&\bord1.4}The state's 2026 side-by-side table,
+Dialogue: 0,0:08:49.98,0:08:53.64,Bilingual,,0,0,0,,以及团队据此整理的摘要，写的却是 1,090\N{\fs33\c&H00C8C0B8&\bord1.4}and the team's summary built from it, say 1,090.
+Dialogue: 0,0:08:53.96,0:08:58.65,Bilingual,,0,0,0,,两份都是 2026 年的，所以“优先用最新年份”这条规则也没法裁定\N{\fs33\c&H00C8C0B8&\bord1.4}Both are 2026, so "prefer the newest year" cannot settle it.
+Dialogue: 0,0:08:58.88,0:09:02.45,Bilingual,,0,0,0,,第三，同一张表格把项目名称藏起来了\N{\fs33\c&H00C8C0B8&\bord1.4}Third, that same table hides its program names.
+Dialogue: 0,0:09:02.77,0:09:06.66,Bilingual,,0,0,0,,项目名称在 extract 之后还在，就在表格的第二行\N{\fs33\c&H00C8C0B8&\bord1.4}They survive extraction, in the table's second row.
+Dialogue: 0,0:09:06.98,0:09:12.49,Bilingual,,0,0,0,,但 chunk 容器切分大表格时，只重复第一行\N{\fs33\c&H00C8C0B8&\bord1.4}But when the chunker splits a big table, it repeats only the first row.
+Dialogue: 0,0:09:12.81,0:09:17.18,Bilingual,,0,0,0,,所以装着 1,090 美元的那个 chunk 里，根本没有 JACC 这个词\N{\fs33\c&H00C8C0B8&\bord1.4}So the chunk that holds 1,090 dollars never says JACC.
+Dialogue: 0,0:09:17.42,0:09:22.29,Bilingual,,0,0,0,,另外还没解决的：目前没有任何机制定期重跑这条 pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}Also open: nothing re-runs this pipeline on a schedule yet,
+Dialogue: 0,0:09:22.29,0:09:25.76,Bilingual,,0,0,0,,团队的摘要也是手动更新的\N{\fs33\c&H00C8C0B8&\bord1.4}and the team's summary is updated by hand.
+Dialogue: 0,0:09:26.00,0:09:28.64,Bilingual,,0,0,0,,三个问题，检验一下自己\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions to test yourself.
+Dialogue: 0,0:09:28.96,0:09:33.86,Bilingual,,0,0,0,,为什么 extract 对文本算 hash，而不是对下载的文件？\N{\fs33\c&H00C8C0B8&\bord1.4}Why does extract hash the text and not the downloaded file?
+Dialogue: 0,0:09:34.18,0:09:38.04,Bilingual,,0,0,0,,为什么每个 chunk 上都要盖上标题路径？\N{\fs33\c&H00C8C0B8&\bord1.4}Why is the heading path stamped on every chunk?
+Dialogue: 0,0:09:38.36,0:09:46.11,Bilingual,,0,0,0,,如果清单里新加一份 PDF，下次运行时哪些容器会真正干活？\N{\fs33\c&H00C8C0B8&\bord1.4}And when one new PDF is added to the list, which containers do real work on the next run?
+Dialogue: 0,0:09:46.35,0:09:50.39,Bilingual,,0,0,0,,下一集：一个问题进来之后会发生什么\N{\fs33\c&H00C8C0B8&\bord1.4}Next episode: what happens when a question arrives,
+Dialogue: 0,0:09:50.39,0:09:55.15,Bilingual,,0,0,0,,以及 retrieve 如何从这 232 段里找到正确的 5 段\N{\fs33\c&H00C8C0B8&\bord1.4}and how retrieve finds the right 5 passages among these 232.
