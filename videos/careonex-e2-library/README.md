@@ -33,6 +33,12 @@ and chunk code offline: see [`../careonex-series/checks/`](../careonex-series/ch
    table's second row; when `chunk` splits a table it repeats only the first row (group titles).
    (The 2026-10-07 notes say the names were lost in extraction; they survive extraction.)
 
+**Update, same evening (Marco's branch `feat/sonic_with_rag_updated@1591ed2`, see E6):** item 3 is fixed
+at the chunking step (chunker v4 repeats the header row, so the "$1,090" chunk names JACC), but the new
+DoAS table reader (extract v5) fails on the real PDF and retrieve now drops unverified chunks of that
+table, so for now the table does not reach the agent. Items 1 and 2 are unchanged there. Chapter 7
+has a short beat on this; the checks are in [`../careonex-series/checks/marco/`](../careonex-series/checks/marco/README.md).
+
 Questions to test yourself (answers in [exercises.md](exercises.md)):
 1. Why does extract hash the text and not the downloaded file?
 2. Why is the heading path stamped on every chunk?

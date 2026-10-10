@@ -19,12 +19,18 @@ claim carries a tag: READ IN CODE · TEAM NOTES · MEASURED · INFERRED (with th
 | 5 | `AWS_PROFILE`, `aws sso login` | the team's AWS account, SSO sign-in, the AC215 permission set, 8-hour keys |
 | 6 | `AWS_DEFAULT_REGION` | regions; everything is in us-east-1 |
 | 7 | `$env:HOME = $HOME` | why Windows needs it for `docker compose` (inferred from docker-compose.yml) |
-| 8 | `CAREONEX_KB_ID` | what a Knowledge Base is; how retrieve finds its ID; two possible reasons to set it by hand (inferred) |
+| 8 | `CAREONEX_KB_ID` | what a Knowledge Base is; how retrieve finds its ID; our two guesses, then Marco's branch settles it: a staging test library (read in code) |
 | 9 | `docker compose up --build retrieve` | images, containers, compose, ports |
-| 10 | `CAREONEX_RETRIEVE_URL`, `CAREONEX_VOICE_SEARCH_MODE` | 127.0.0.1:8080; a setting that exists only in Marco's new code (measured: 0 hits on GitHub) |
+| 10 | `CAREONEX_RETRIEVE_URL`, `CAREONEX_VOICE_SEARCH_MODE` | 127.0.0.1:8080; the search mode: 0 hits on GitHub that morning (measured), then read in Marco's branch: `feedback` (default) or `baseline` |
 | 11 | `uv run … python -c "…"` | uv, Python 3.12, the `mic` extra, and why `run()` is called directly (inferred) |
 | 12 | — | the whole picture, a cheat sheet of every new term |
 
-**Open questions this episode raises** (to settle when Marco's branch is up): what
-`CAREONEX_VOICE_SEARCH_MODE=feedback` does; why the KB ID is set by hand; whether `uv run careonex-voice`
-fails under SSO (its `main()` checks only for env keys or `~/.aws/credentials`).
+**Open questions this episode raised, and what Marco's branch (`feat/sonic_with_rag_updated@1591ed2`,
+pushed the same evening) settled:**
+
+- what `CAREONEX_VOICE_SEARCH_MODE=feedback` does: **settled** (S10, E6). Voice reads it in
+  `nova_sonic/tools.py`, default `feedback`; `baseline` turns the extra search off.
+- why the KB ID is set by hand: **settled** (S08, E6). It is Marco's hierarchical staging Knowledge Base
+  (library C of his A/B/C chunking test); his README calls it "example staging KB".
+- whether `uv run careonex-voice` fails under SSO: **still inferred**. `main()` on his branch still checks
+  only for env keys or `~/.aws/credentials`, which is why calling `run()` directly makes sense (S11).

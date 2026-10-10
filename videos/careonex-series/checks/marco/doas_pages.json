@@ -1,0 +1,166 @@
+[
+ {
+  "page": 1,
+  "tables": [
+   {
+    "columns": 9,
+    "rows": 8,
+    "first_rows": [
+     [
+      "",
+      "NJ DEPARTMENT OF HUMAN S",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+     ],
+     [
+      "2026",
+      "Division of Aging Servic",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+     ],
+     [
+      "",
+      "MEDICAID WAIVER PROGRAM",
+      "NON-MEDICAID WAIVER PROG",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "page": 2,
+  "tables": [
+   {
+    "columns": 9,
+    "rows": 13,
+    "first_rows": [
+     [
+      "2026",
+      "MEDICAID WAIVER PROGRAM",
+      "NON-MEDICAID WAIVER PROG",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+     ],
+     [
+      "",
+      "MLTSS/PACE",
+      "JACC",
+      "SRCP",
+      "AADSP",
+      "CHSP",
+      "",
+      "OAA",
+      ""
+     ],
+     [
+      "Program Title",
+      "Managed Long Term Servic",
+      "Jersey Assistance for",
+      "Statewide Respite",
+      "Alzheimer\u2019s Adult Day",
+      "Congregate Housing",
+      "",
+      "Older Americans Act (OAA",
+      ""
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "page": 3,
+  "tables": [
+   {
+    "columns": 7,
+    "rows": 14,
+    "first_rows": [
+     [
+      "",
+      "NJ DEPARTMENT OF HUMAN S",
+      "",
+      "",
+      "",
+      "",
+      ""
+     ],
+     [
+      "2026",
+      "Division of Aging Servic",
+      "",
+      "",
+      "",
+      "",
+      ""
+     ],
+     [
+      "",
+      "PRESCRIPTION PROGRAMS*",
+      "",
+      "MEDICARE, UTILITY, & HEA",
+      "",
+      "",
+      ""
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "page": 4,
+  "tables": [
+   {
+    "columns": 7,
+    "rows": 18,
+    "first_rows": [
+     [
+      "2026",
+      "PRESCRIPTION PROGRAMS",
+      "",
+      "MEDICARE, UTILITY, & HEA",
+      "",
+      "",
+      ""
+     ],
+     [
+      "",
+      "PAAD",
+      "Senior Gold",
+      "MSPs:",
+      "Lifeline",
+      "",
+      "USF/LIHEAP"
+     ],
+     [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "HAAAD/NJHAP",
+      ""
+     ]
+    ]
+   }
+  ]
+ }
+]

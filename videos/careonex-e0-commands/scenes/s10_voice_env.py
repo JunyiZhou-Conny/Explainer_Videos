@@ -3,8 +3,9 @@
 1. `$env:CAREONEX_RETRIEVE_URL = "http://127.0.0.1:8080"` taken apart: http:// · 127.0.0.1 (this
    computer) · :8080 (the door). Without it: the tool says "knowledge base unavailable" (tools.py).
    READ IN CODE.
-2. `$env:CAREONEX_VOICE_SEARCH_MODE = "feedback"`: a search of all four branches finds 0 results
-   (MEASURED) → INFERRED: a switch inside Marco's new code.
+2. `$env:CAREONEX_VOICE_SEARCH_MODE = "feedback"`: the four branches on GitHub that morning: 0 results
+   (MEASURED). Marco's branch (READ IN CODE): tools.py reads it, default "feedback"; "baseline" = one
+   search only. Our earlier guess (a switch for how voice searches) gets a ✓.
 """
 
 from manim import *
@@ -12,8 +13,8 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (BAD_C, CODE_C, NARRATION, PEOPLE, QUERY_C, big_line, code_panel, laptop, mono, sans, serif,
-                    source_tag, text_panel)
+from common import (BAD_C, CODE_C, NARRATION, OK_C, PEOPLE, QUERY_C, big_line, code_panel, laptop, mark_ok, mono,
+                    sans, serif, source_tag, text_panel)
 
 SAY = NARRATION["S10"]
 
@@ -43,32 +44,40 @@ class VoiceSettings(VoiceScene):
             self.play(FadeIn(code, shift=UP * 0.15), FadeIn(src), run_time=0.9)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
-        # 2 ---------------------------------------------------------------- a setting that is not on GitHub
+        # 2 ---------------------------------------------------------------- the search-mode note, settled
         with self.voiceover(SAY[1]) as vo:
             self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.6)
             line2 = big_line('$env:CAREONEX_VOICE_SEARCH_MODE = "feedback"', 28).to_edge(UP, buff=0.45)
             self.play(FadeIn(line2, shift=DOWN * 0.2), run_time=0.7)
-            search = text_panel(['search "SEARCH_MODE" in nadirbt/careonex-agents',
-                                 "  main                  0 results",
-                                 "  data-retrieval        0 results",
-                                 "  feat/sonic_with_rag   0 results",
-                                 "  feat/prompt-tuning    0 results"], size=24, colors={0: S.GREY})
-            search.move_to(UP * 0.6)
-            for k in range(1, 5):
-                search.rows[k][-8:].set_color(BAD_C)
+            vo.wait_until("When we first looked")
+            search = text_panel(['morning: search "SEARCH_MODE" in nadirbt/careonex-agents',
+                                 "  main, data-retrieval, feat/sonic_with_rag,",
+                                 "  feat/prompt-tuning        0 results"], size=22, colors={0: S.GREY})
+            search.rows[2][-8:].set_color(BAD_C)
+            search.move_to(UP * 1.3 + LEFT * 0.8)
             tag = source_tag("measured").next_to(search, RIGHT, buff=0.3).align_to(search, UP)
-            vo.wait_until("We searched all four")
-            self.play(FadeIn(search, shift=UP * 0.15), FadeIn(tag), run_time=1.0)
-            vo.wait_until("So it belongs")
-            marco = VGroup(sans("MARCO'S NEW WORK", 22, PEOPLE["Marco"]), serif("not on GitHub yet", 24, S.GREY)
-                           ).arrange(DOWN, buff=0.08).next_to(search, DOWN, buff=0.5)
-            self.play(FadeIn(marco, shift=UP * 0.15), run_time=0.7)
-            vo.wait_until("It probably switches")
-            guess = VGroup(source_tag("inferred"),
-                           serif("a switch that chooses how voice searches; \"feedback\" is one of its modes", 24, S.PURPLE)
-                           ).arrange(RIGHT, buff=0.25).to_edge(DOWN, buff=0.5)
-            if guess.width > 13:
-                guess.scale_to_fit_width(13)
-            self.play(FadeIn(guess), run_time=0.7)
+            self.play(FadeIn(search, shift=UP * 0.15), FadeIn(tag), run_time=0.9)
+            vo.wait_until("Marco's branch, pushed later")
+            code = code_panel('mode = os.environ.get("CAREONEX_VOICE_SEARCH_MODE", "feedback")', size=22, width=11.0)
+            src = VGroup(mono("feat/sonic_with_rag_updated · services/voice/nova_sonic/tools.py", 20, PEOPLE["Marco"]),
+                         source_tag("code")).arrange(RIGHT, buff=0.3)
+            ev = VGroup(src, code).arrange(DOWN, buff=0.12, aligned_edge=LEFT).move_to(DOWN * 0.3)
+            self.play(search.animate.set_opacity(0.35), tag.animate.set_opacity(0.35), FadeIn(ev, shift=UP * 0.15),
+                      run_time=0.9)
+            vo.wait_until("Feedback runs a first search")
+            modes = VGroup(VGroup(mono('"feedback"', 26, QUERY_C), serif("first search, maybe one more, merged", 26)
+                                  ).arrange(RIGHT, buff=0.3),
+                           VGroup(mono('"baseline"', 26, S.WHITE), serif("one search only (the rollback switch)", 26)
+                                  ).arrange(RIGHT, buff=0.3)).arrange(DOWN, buff=0.2, aligned_edge=LEFT)
+            modes.next_to(ev, DOWN, buff=0.45).align_to(ev, LEFT)
+            self.play(FadeIn(modes[0], shift=RIGHT * 0.15), run_time=0.7)
+            vo.wait_until("Baseline runs")
+            self.play(FadeIn(modes[1], shift=RIGHT * 0.15), run_time=0.7)
+            vo.wait_until("Feedback is also the default")
+            self.play(Circumscribe(code, color=QUERY_C, buff=0.08), run_time=1.0)
+            vo.wait_until("Episode 6")
+            e6 = VGroup(mark_ok(0.35), serif("our guess: a switch for how voice searches", 24, OK_C),
+                        serif("· more in E6", 24, QUERY_C)).arrange(RIGHT, buff=0.2).to_edge(DOWN, buff=0.4)
+            self.play(FadeIn(e6), run_time=0.6)
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.play(FadeOut(*self.mobjects), run_time=0.8)

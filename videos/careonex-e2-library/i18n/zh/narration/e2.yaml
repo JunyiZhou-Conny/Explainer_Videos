@@ -194,6 +194,14 @@ S07:
   - "但 chunk 容器切分大表格时，只重复第一行。"
   - "所以装着 1,090 美元的那个 chunk 里，根本没有 JACC 这个词。"
 
+- en: "An update from the same evening: Marco's branch works on open item 3. Its new chunker repeats the row with the program names, and we checked that the 1,090 dollar chunk now says JACC. But his new table reader fails on the real PDF, and retrieve now drops the table's unverified chunks, so for now the table does not reach the agent at all. Open items 1 and 2 are unchanged there. Episode 6 has the details."
+  zh:
+  - "当天晚上的更新：Marco 的分支处理了第 3 个问题。"
+  - "他的新切块器会重复写着项目名称的那一行，我们验证过：写着 1,090 美元的那个 chunk 现在包含 JACC。"
+  - "但他新写的表格读取器在真实 PDF 上失败了，而 retrieve 现在会丢掉这张表里没被验证过的 chunk，所以目前这张表根本到不了 agent 手里。"
+  - "第 1、2 个问题在他的分支上没有变化。"
+  - "细节见第 6 集。"
+
 - en: "Also open: nothing re-runs this pipeline on a schedule yet, and the team's summary is updated by hand."
   zh:
   - "另外还没解决的：目前没有任何机制定期重跑这条 pipeline，团队的摘要也是手动更新的。"

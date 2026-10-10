@@ -8,6 +8,9 @@
 4. Open 3: the Side-by-Side chunk with $1,090 (chunk 5 of 12) starts with the group-title row only;
    the row with MLTSS/PACE · JACC · SRCP … stayed in chunk 0. Note: Caroline's notes said "lost in
    extraction"; they survive extraction, the split drops them.
+4b. Update, same evening (Marco's branch, E6): chunker v4 names JACC in the $1,090 chunk ✓ (MEASURED);
+   the new table reader fails on the real PDF ✗ (MEASURED); retrieve drops unverified table chunks
+   (READ IN CODE). Open items 1 and 2 unchanged there.
 5. Also open: no schedule; the team summary is updated by hand.
 6. Ponder card: three questions.
 7. Closing: the map; retrieve → Knowledge Base lit; "Next: E3 · Finding the right passage".
@@ -22,7 +25,7 @@ from explainer.components import ponder_card
 from explainer.scene import VoiceScene
 
 from common import (AWS_C, BAD_C, CODE_C, DATA_C, NARRATION, OK_C, PEOPLE, QUERY_C, SERIES, chip,
-                    container, mono, sans, serif, source_tag, store, system_map, text_panel)
+                    container, mark_bad, mark_ok, mono, sans, serif, source_tag, store, system_map, text_panel)
 
 SAY = NARRATION["S07"]
 CHUNKS = json.loads((SERIES / "checks" / "chunks_index.json").read_text())
@@ -189,8 +192,40 @@ class OpenItems(VoiceScene):
             self.play(FadeIn(fix), run_time=0.6)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
-        # 5 ---------------------------------------------------------------- also open
+        # 4b --------------------------------------------------------------- update: Marco's branch
         with self.voiceover(SAY[4]) as vo:
+            self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.6)
+            head = VGroup(sans("UPDATE, SAME EVENING", 22, QUERY_C), mono("feat/sonic_with_rag_updated", 24, PEOPLE["Marco"]),
+                          serif("(details in E6)", 24, S.GREY)).arrange(RIGHT, buff=0.3).to_edge(UP, buff=0.45)
+            self.play(FadeIn(head, shift=DOWN * 0.15), run_time=0.7)
+
+            def upd(name, text, mark, tag):
+                return VGroup(container(name, None, width=2.0, name_size=26), mark, serif(text, 26),
+                              source_tag(tag)).arrange(RIGHT, buff=0.3)
+
+            rows = VGroup(upd("chunk", "repeats the header row → the $1,090 chunk now says JACC", mark_ok(0.35), "measured"),
+                          upd("extract", "new table reader: 9 columns on the real PDF, needs 7 → stops", mark_bad(0.28), "measured"),
+                          upd("retrieve", "drops the table's chunks that were not verified", mono("→", 30, S.GREY), "code")
+                          ).arrange(DOWN, buff=0.45, aligned_edge=LEFT)
+            if rows.width > 13:
+                rows.scale_to_fit_width(13)
+            rows.move_to(UP * 0.3)
+            vo.wait_until("Its new chunker")
+            self.play(FadeIn(rows[0], shift=RIGHT * 0.15), run_time=0.8)
+            vo.wait_until("But his new table reader")
+            self.play(FadeIn(rows[1], shift=RIGHT * 0.15), run_time=0.8)
+            vo.wait_until("and retrieve now drops")
+            self.play(FadeIn(rows[2], shift=RIGHT * 0.15), run_time=0.8)
+            res = serif("for now the table does not reach the agent", 28, BAD_C).next_to(rows, DOWN, buff=0.5)
+            self.play(FadeIn(res), run_time=0.6)
+            vo.wait_until("Open items 1 and 2")
+            same = VGroup(mono("open 1", 24, S.GREY), mono("open 2", 24, S.GREY), serif("unchanged on his branch", 26, S.GREY),
+                          source_tag("measured")).arrange(RIGHT, buff=0.25).to_edge(DOWN, buff=0.5)
+            self.play(FadeIn(same), run_time=0.6)
+            self.wait(max(0.1, vo.remaining() - 0.2))
+
+        # 5 ---------------------------------------------------------------- also open
+        with self.voiceover(SAY[5]) as vo:
             self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.6)
             items = VGroup(VGroup(mono("open 4", 26, S.GREY), serif("nothing re-runs the pipeline on a schedule", 30)).arrange(RIGHT, buff=0.3),
                            VGroup(mono("open 5", 26, S.GREY), serif("the team summary is updated by hand (January, March)", 30)
@@ -201,7 +236,7 @@ class OpenItems(VoiceScene):
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 6 ---------------------------------------------------------------- test yourself
-        with self.voiceover(SAY[5]) as vo:
+        with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(items), run_time=0.5)
             card = ponder_card("1. Why does extract hash the text, not the downloaded file?\n"
                                "2. Why is the heading path stamped on every chunk?\n"
@@ -214,7 +249,7 @@ class OpenItems(VoiceScene):
             self.play(bar.animate(rate_func=linear).become(target), run_time=max(1.0, vo.remaining() - 0.3))
 
         # 7 ---------------------------------------------------------------- next episode
-        with self.voiceover(SAY[6]) as vo:
+        with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(card), run_time=0.5)
             m = system_map()
             m.build.set_opacity(0.25)

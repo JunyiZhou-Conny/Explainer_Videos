@@ -131,13 +131,14 @@ S08:
   - "retrieve 的代码会先找这张便利贴。"
   - "如果没有，它就去团队存储里的一个文件读 ID，这个文件是搭建资料库的那个容器写进去的。"
 
-- en: "Why set it by hand? We see two possible reasons. It saves one read from storage. Or Marco points retrieve at a different knowledge base, perhaps one built for his own experiments. His code will tell us which."
+- en: "Why set it by hand? We had guessed two reasons: to save one read from storage, or to point retrieve at a different knowledge base. Marco's branch, pushed later that day, settles it. This ID is one of three test libraries he built to compare ways of cutting the documents. Without this line, retrieve would use the main library. Episode 6 explains his test."
   zh:
   - "为什么要手动设置？"
-  - "我们想到两种可能。"
-  - "一是省掉一次读存储。"
-  - "二是 Marco 让 retrieve 指向另一个知识库，也许是为他自己的实验专门建的。"
-  - "等他的代码上传了，就知道是哪一种。"
+  - "我们之前猜了两个原因：省掉一次读存储，或者让 retrieve 指向另一个知识库。"
+  - "Marco 当天晚些时候推送的分支给出了答案。"
+  - "这个 ID 是他为了比较几种切分文档的方法而建的三个测试资料库之一。"
+  - "没有这一行，retrieve 就会用主资料库。"
+  - "第 6 集会讲他的这个测试。"
 
 S09:
 - en: "Docker packs a program with everything it needs into an image, like a frozen lunch box. A container is that box, running. It runs the same on Marco's laptop, on yours, and on a server."
@@ -166,13 +167,15 @@ S10:
   - "127.0.0.1 永远指的是这台电脑本身，8080 就是 retrieve 打开的那扇门。"
   - "没有这张便利贴，语音应用就会回答说知识库不可用。"
 
-- en: "The next note, search mode feedback, appears nowhere in the code on GitHub. We searched all four branches. So it belongs to Marco's new work. It probably switches between ways of searching. We will explain it once his code is uploaded."
+- en: "The next note picks how voice searches. When we first looked, it was nowhere in the code on GitHub. Marco's branch, pushed later that day, explains it. Feedback runs a first search, may add one more, and merges the results. Baseline runs one search only. Feedback is also the default when the note is missing. Episode 6 shows what it does."
   zh:
-  - "下一张便利贴，搜索模式 feedback，在 GitHub 的代码里根本找不到。"
-  - "我们把四个分支都搜了一遍。"
-  - "所以它属于 Marco 的新工作。"
-  - "它大概是在几种检索方式之间切换的开关。"
-  - "等他的代码上传后，我们再来讲。"
+  - "下一张便利贴决定语音应用怎么检索。"
+  - "我们第一次查的时候，GitHub 的代码里根本找不到它。"
+  - "Marco 当天晚些时候推送的分支解释了它。"
+  - "feedback 先检索一次，可能再加一次，然后合并结果。"
+  - "baseline 只检索一次。"
+  - "没有这张便利贴时，默认也是 feedback。"
+  - "第 6 集会讲它具体做了什么。"
 
 S11:
 - en: "The last line is the longest. Let's take it apart."

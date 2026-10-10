@@ -1,0 +1,919 @@
+{
+ "chunking": {
+  "averages": {
+   "legacy": {
+    "precision_at_k": 0.52,
+    "mrr_at_k": 0.686,
+    "ndcg_at_k": 0.5976,
+    "latency_ms": 417.96
+   },
+   "section": {
+    "precision_at_k": 0.472,
+    "mrr_at_k": 0.6713,
+    "ndcg_at_k": 0.5346,
+    "latency_ms": 406.04
+   },
+   "hierarchical": {
+    "precision_at_k": 0.504,
+    "mrr_at_k": 0.7333,
+    "ndcg_at_k": 0.5762,
+    "latency_ms": 408.16
+   }
+  },
+  "best_ndcg_per_question": {
+   "hierarchical": 7,
+   "tie": 6,
+   "no relevant passage": 3,
+   "legacy": 9
+  },
+  "questions": 25,
+  "grades": {
+   "medicaid_bathing": {
+    "legacy": [
+     0,
+     0,
+     0,
+     0,
+     2
+    ],
+    "section": [
+     0,
+     0,
+     0,
+     0,
+     2
+    ],
+    "hierarchical": [
+     1,
+     0,
+     0,
+     2,
+     0
+    ]
+   },
+   "medicaid_eligibility": {
+    "legacy": [
+     1,
+     0,
+     1,
+     0,
+     2
+    ],
+    "section": [
+     1,
+     0,
+     1,
+     0,
+     2
+    ],
+    "hierarchical": [
+     0,
+     1,
+     0,
+     0,
+     1
+    ]
+   },
+   "medicaid_enrolled": {
+    "legacy": [
+     2,
+     1,
+     0,
+     1,
+     1
+    ],
+    "section": [
+     2,
+     1,
+     0,
+     1,
+     1
+    ],
+    "hierarchical": [
+     2,
+     0,
+     1,
+     0,
+     1
+    ]
+   },
+   "medicaid_home_aide": {
+    "legacy": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "section": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "hierarchical": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "medicaid_dementia": {
+    "legacy": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "section": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "hierarchical": [
+     1,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "medicaid_weekly_hours": {
+    "legacy": [
+     0,
+     1,
+     0,
+     0,
+     0
+    ],
+    "section": [
+     0,
+     1,
+     0,
+     0,
+     0
+    ],
+    "hierarchical": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "medicaid_caregiver": {
+    "legacy": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "section": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "hierarchical": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "medicaid_apply": {
+    "legacy": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "section": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "hierarchical": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "medicaid_pca": {
+    "legacy": [
+     2,
+     1,
+     1,
+     0,
+     0
+    ],
+    "section": [
+     2,
+     1,
+     1,
+     0,
+     0
+    ],
+    "hierarchical": [
+     2,
+     1,
+     1,
+     0,
+     0
+    ]
+   },
+   "medicaid_mltss": {
+    "legacy": [
+     1,
+     2,
+     1,
+     0,
+     0
+    ],
+    "section": [
+     1,
+     2,
+     1,
+     0,
+     0
+    ],
+    "hierarchical": [
+     1,
+     2,
+     1,
+     1,
+     0
+    ]
+   },
+   "medicaid_assets": {
+    "legacy": [
+     2,
+     0,
+     0,
+     1,
+     0
+    ],
+    "section": [
+     2,
+     0,
+     0,
+     0,
+     1
+    ],
+    "hierarchical": [
+     2,
+     0,
+     1,
+     0,
+     0
+    ]
+   },
+   "medicaid_vs_medicare": {
+    "legacy": [
+     1,
+     1,
+     1,
+     2,
+     1
+    ],
+    "section": [
+     1,
+     1,
+     1,
+     2,
+     1
+    ],
+    "hierarchical": [
+     1,
+     1,
+     1,
+     2,
+     1
+    ]
+   },
+   "jacc_eligibility": {
+    "legacy": [
+     2,
+     2,
+     2,
+     1,
+     0
+    ],
+    "section": [
+     2,
+     2,
+     2,
+     0,
+     0
+    ],
+    "hierarchical": [
+     2,
+     2,
+     0,
+     0,
+     2
+    ]
+   },
+   "jacc_limits": {
+    "legacy": [
+     2,
+     1,
+     1,
+     2,
+     0
+    ],
+    "section": [
+     2,
+     1,
+     1,
+     1,
+     0
+    ],
+    "hierarchical": [
+     2,
+     1,
+     1,
+     0,
+     0
+    ]
+   },
+   "jacc_apply": {
+    "legacy": [
+     2,
+     0,
+     0,
+     1,
+     0
+    ],
+    "section": [
+     0,
+     0,
+     1,
+     0,
+     0
+    ],
+    "hierarchical": [
+     0,
+     0,
+     1,
+     1,
+     0
+    ]
+   },
+   "pace_age_area": {
+    "legacy": [
+     2,
+     2,
+     0,
+     1,
+     1
+    ],
+    "section": [
+     2,
+     2,
+     0,
+     1,
+     1
+    ],
+    "hierarchical": [
+     2,
+     2,
+     0,
+     1,
+     1
+    ]
+   },
+   "pace_services": {
+    "legacy": [
+     2,
+     1,
+     1,
+     2,
+     2
+    ],
+    "section": [
+     2,
+     1,
+     1,
+     0,
+     2
+    ],
+    "hierarchical": [
+     1,
+     2,
+     2,
+     0,
+     1
+    ]
+   },
+   "medicare_bathing": {
+    "legacy": [
+     0,
+     0,
+     0,
+     0,
+     2
+    ],
+    "section": [
+     0,
+     0,
+     0,
+     2,
+     0
+    ],
+    "hierarchical": [
+     2,
+     0,
+     0,
+     0,
+     2
+    ]
+   },
+   "medicare_skilled": {
+    "legacy": [
+     1,
+     2,
+     2,
+     0,
+     2
+    ],
+    "section": [
+     1,
+     2,
+     1,
+     0,
+     2
+    ],
+    "hierarchical": [
+     1,
+     2,
+     1,
+     2,
+     1
+    ]
+   },
+   "medicare_vs_medicaid": {
+    "legacy": [
+     2,
+     1,
+     1,
+     0,
+     0
+    ],
+    "section": [
+     2,
+     2,
+     1,
+     0,
+     0
+    ],
+    "hierarchical": [
+     2,
+     2,
+     2,
+     1,
+     0
+    ]
+   },
+   "respite_caregiver": {
+    "legacy": [
+     2,
+     2,
+     2,
+     1,
+     0
+    ],
+    "section": [
+     2,
+     0,
+     2,
+     1,
+     1
+    ],
+    "hierarchical": [
+     0,
+     2,
+     1,
+     1,
+     2
+    ]
+   },
+   "respite_apply": {
+    "legacy": [
+     2,
+     1,
+     0,
+     0,
+     2
+    ],
+    "section": [
+     2,
+     1,
+     0,
+     0,
+     0
+    ],
+    "hierarchical": [
+     1,
+     0,
+     1,
+     0,
+     0
+    ]
+   },
+   "adrc_phone": {
+    "legacy": [
+     0,
+     0,
+     0,
+     2,
+     1
+    ],
+    "section": [
+     0,
+     2,
+     0,
+     1,
+     0
+    ],
+    "hierarchical": [
+     2,
+     0,
+     2,
+     0,
+     2
+    ]
+   },
+   "adrc_county": {
+    "legacy": [
+     0,
+     2,
+     0,
+     1,
+     2
+    ],
+    "section": [
+     0,
+     2,
+     0,
+     0,
+     2
+    ],
+    "hierarchical": [
+     0,
+     2,
+     2,
+     0,
+     0
+    ]
+   },
+   "payment_options": {
+    "legacy": [
+     0,
+     1,
+     1,
+     1,
+     1
+    ],
+    "section": [
+     0,
+     1,
+     1,
+     0,
+     1
+    ],
+    "hierarchical": [
+     0,
+     1,
+     1,
+     1,
+     0
+    ]
+   }
+  }
+ },
+ "feedback_run": {
+  "kb": "hierarchical staging KB (C)",
+  "questions": 40,
+  "expansion_status": {
+   "used": 18,
+   "no_expansion": 22
+  },
+  "queries_per_search": {
+   "1": 22,
+   "2": 14,
+   "3": 4
+  },
+  "top5_identical": 23,
+  "latency_ms": {
+   "baseline": {
+    "median": 430.0,
+    "mean": 464.4,
+    "p90": 514.3
+   },
+   "feedback": {
+    "median": 514.5,
+    "mean": 675.2,
+    "p90": 1009.2
+   }
+  },
+  "passages_graded": 0,
+  "passages_total": 788,
+  "merge_weights": "equal (fusion scores 1/(60+rank))",
+  "cases": [
+   {
+    "id": "daily_bathing",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 1429,
+    "feedback_ms": 1940
+   },
+   {
+    "id": "daily_dressing",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 414,
+    "feedback_ms": 925
+   },
+   {
+    "id": "daily_meals",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 369,
+    "feedback_ms": 372
+   },
+   {
+    "id": "daily_mobility",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 405,
+    "feedback_ms": 764
+   },
+   {
+    "id": "daily_medication",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 401,
+    "feedback_ms": 402
+   },
+   {
+    "id": "daily_housekeeping",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 356,
+    "feedback_ms": 358
+   },
+   {
+    "id": "companion_loneliness",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 436,
+    "feedback_ms": 438
+   },
+   {
+    "id": "companion_outings",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 436,
+    "feedback_ms": 948
+   },
+   {
+    "id": "dementia_wandering",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 442,
+    "feedback_ms": 445
+   },
+   {
+    "id": "dementia_sundowning",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 421,
+    "feedback_ms": 933
+   },
+   {
+    "id": "dementia_supervision",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 386,
+    "feedback_ms": 388
+   },
+   {
+    "id": "overnight_safety",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 488,
+    "feedback_ms": 490
+   },
+   {
+    "id": "caregiver_break",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 449,
+    "feedback_ms": 453
+   },
+   {
+    "id": "caregiver_burnout",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 374,
+    "feedback_ms": 1049
+   },
+   {
+    "id": "caregiver_training",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 436,
+    "feedback_ms": 439
+   },
+   {
+    "id": "schedule_weekends",
+    "extra_searches": 2,
+    "top5_identical": false,
+    "baseline_ms": 422,
+    "feedback_ms": 946
+   },
+   {
+    "id": "schedule_overnight",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 422,
+    "feedback_ms": 424
+   },
+   {
+    "id": "schedule_shortvisit",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 464,
+    "feedback_ms": 467
+   },
+   {
+    "id": "schedule_lastminute",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 422,
+    "feedback_ms": 833
+   },
+   {
+    "id": "cost_hourly",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 448,
+    "feedback_ms": 452
+   },
+   {
+    "id": "cost_overnight",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 508,
+    "feedback_ms": 511
+   },
+   {
+    "id": "cost_hidden",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 417,
+    "feedback_ms": 850
+   },
+   {
+    "id": "payment_ltc",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 467,
+    "feedback_ms": 877
+   },
+   {
+    "id": "payment_private",
+    "extra_searches": 2,
+    "top5_identical": false,
+    "baseline_ms": 423,
+    "feedback_ms": 837
+   },
+   {
+    "id": "payment_medicare",
+    "extra_searches": 2,
+    "top5_identical": true,
+    "baseline_ms": 474,
+    "feedback_ms": 1016
+   },
+   {
+    "id": "matching_language",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 370,
+    "feedback_ms": 779
+   },
+   {
+    "id": "matching_gender",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 376,
+    "feedback_ms": 786
+   },
+   {
+    "id": "matching_continuity",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 460,
+    "feedback_ms": 868
+   },
+   {
+    "id": "matching_training",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 477,
+    "feedback_ms": 886
+   },
+   {
+    "id": "areas_bergen",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 411,
+    "feedback_ms": 412
+   },
+   {
+    "id": "areas_philly",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 424,
+    "feedback_ms": 425
+   },
+   {
+    "id": "local_contact",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 515,
+    "feedback_ms": 518
+   },
+   {
+    "id": "resistance_to_help",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 382,
+    "feedback_ms": 384
+   },
+   {
+    "id": "after_hospital",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 384,
+    "feedback_ms": 386
+   },
+   {
+    "id": "complex_bilingual",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 641,
+    "feedback_ms": 642
+   },
+   {
+    "id": "complex_nonmedicaid",
+    "extra_searches": 1,
+    "top5_identical": false,
+    "baseline_ms": 568,
+    "feedback_ms": 1081
+   },
+   {
+    "id": "ambiguous_help",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 471,
+    "feedback_ms": 473
+   },
+   {
+    "id": "unsupported_same_day",
+    "extra_searches": 2,
+    "top5_identical": false,
+    "baseline_ms": 502,
+    "feedback_ms": 923
+   },
+   {
+    "id": "unsupported_rate",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 403,
+    "feedback_ms": 405
+   },
+   {
+    "id": "unsupported_language",
+    "extra_searches": 0,
+    "top5_identical": true,
+    "baseline_ms": 481,
+    "feedback_ms": 484
+   }
+  ]
+ }
+}

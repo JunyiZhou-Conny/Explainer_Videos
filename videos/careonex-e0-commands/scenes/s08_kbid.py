@@ -4,7 +4,8 @@
    vectors (as in E2). READ IN CODE.
 2. retrieve/config.py knowledge_base_id(): the sticky note first, else config/knowledge-base.json
    from the S3 bucket. READ IN CODE.
-3. INFERRED: two possible reasons side by side; "settles it: Marco's branch".
+3. Our two guesses (INFERRED), then Marco's branch settles it (READ IN CODE): his README line
+   "# example staging KB" → library C, one of three test libraries (E6); the second guess gets a ✓.
 """
 
 from manim import *
@@ -12,8 +13,8 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (AWS_C, DATA_C, KB_ID_MASKED, NARRATION, QUERY_C, aws, big_line, code_panel, container,
-                    doc_glyph, mono, sans, serif, source_tag, sticky, store)
+from common import (AWS_C, DATA_C, KB_ID_MASKED, NARRATION, OK_C, PEOPLE, QUERY_C, aws, big_line, code_panel,
+                    container, doc_glyph, mark_ok, mono, sans, serif, source_tag, sticky, store)
 
 SAY = NARRATION["S08"]
 
@@ -76,20 +77,38 @@ class KnowledgeBaseId(VoiceScene):
         # 3 ---------------------------------------------------------------- why set it by hand?
         with self.voiceover(SAY[2]) as vo:
             self.play(*[FadeOut(m) for m in self.mobjects if m is not line], run_time=0.6)
-            q = serif("Why set it by hand?", 36).move_to(UP * 1.6)
+            q = serif("Why set it by hand?", 36).move_to(UP * 2.0)
             self.play(FadeIn(q), run_time=0.6)
             r1 = VGroup(source_tag("inferred"), serif("skip one read from storage", 28, S.PURPLE)).arrange(DOWN, buff=0.2)
             r2 = VGroup(source_tag("inferred"), serif("point at a different knowledge base,", 28, S.PURPLE),
                         serif("e.g. one built for Marco's experiments", 28, S.PURPLE)).arrange(DOWN, buff=0.12)
-            VGroup(r1, r2).arrange(RIGHT, buff=1.6, aligned_edge=UP).move_to(DOWN * 0.2)
+            VGroup(r1, r2).arrange(RIGHT, buff=1.6, aligned_edge=UP).move_to(UP * 0.6)
             or_ = serif("or", 30, S.GREY).move_to([(r1.get_right()[0] + r2.get_left()[0]) / 2, r1.get_y(), 0])
-            vo.wait_until("It saves one read")
+            vo.wait_until("We had guessed")
             self.play(FadeIn(r1, shift=UP * 0.15), run_time=0.7)
-            vo.wait_until("Or Marco points")
+            vo.wait_until("or to point retrieve")
             self.play(FadeIn(or_), FadeIn(r2, shift=UP * 0.15), run_time=0.8)
-            vo.wait_until("His code will tell us")
-            settle = VGroup(sans("WHAT WOULD SETTLE IT", 20, S.GREY), serif("Marco's branch, once it is pushed", 28)
-                            ).arrange(DOWN, buff=0.1).to_edge(DOWN, buff=0.6)
-            self.play(FadeIn(settle, shift=UP * 0.15), run_time=0.7)
+            vo.wait_until("Marco's branch, pushed later")
+            readme = VGroup(VGroup(mono("README.md", 20, S.GREY), mono("feat/sonic_with_rag_updated", 20, PEOPLE["Marco"]),
+                                   source_tag("code")).arrange(RIGHT, buff=0.25),
+                            mono(f'$env:CAREONEX_KB_ID = "{KB_ID_MASKED}"  # example staging KB', 24, QUERY_C)
+                            ).arrange(DOWN, buff=0.12, aligned_edge=LEFT).to_edge(DOWN, buff=1.3)
+            self.play(FadeIn(readme, shift=UP * 0.15), run_time=0.8)
+            vo.wait_until("This ID is one of three")
+            tick = mark_ok(0.45).next_to(r2, UP, buff=0.15)
+            self.play(Create(tick), r1.animate.set_opacity(0.3), or_.animate.set_opacity(0.3),
+                      Indicate(r2, color=OK_C, scale_factor=1.03), run_time=0.9)
+            lib = serif("library C: one of three test libraries for comparing chunkers", 26).next_to(readme, DOWN, buff=0.25)
+            lib.align_to(readme, LEFT)
+            self.play(FadeIn(lib), run_time=0.6)
+            vo.wait_until("Without this line")
+            alt = serif("without the line → config/knowledge-base.json → the main library", 24, S.GREY).to_edge(DOWN, buff=0.3)
+            self.play(FadeIn(alt), run_time=0.6)
+            vo.wait_until("Episode 6")
+            e6 = VGroup(serif("more in", 24, S.GREY), serif("E6 · Measuring search", 28, QUERY_C)).arrange(RIGHT, buff=0.2)
+            e6.next_to(lib, RIGHT, buff=0.8)
+            if e6.get_right()[0] > 6.9:
+                e6.next_to(readme, UP, buff=0.3).align_to(readme, RIGHT).shift(RIGHT * 1.5)
+            self.play(FadeIn(e6), run_time=0.5)
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.play(FadeOut(*self.mobjects), run_time=0.8)

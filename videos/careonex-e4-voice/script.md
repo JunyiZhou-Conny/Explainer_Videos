@@ -1,8 +1,11 @@
 # CareOneX E4 · The voice loop — script draft (v0, not rendered)
 
-**Draft.** Based on `data-retrieval@d96a4ad` + `feat/sonic_with_rag@eff4a96` (services/voice). To be
-checked against Marco's branch (his run command sets `CAREONEX_VOICE_SEARCH_MODE=feedback`, which does
-not exist on these branches) before rendering.
+**Draft.** Based on `data-retrieval@d96a4ad` + `feat/sonic_with_rag@eff4a96` (services/voice), now
+checked against Marco's `feat/sonic_with_rag_updated@1591ed2`. Changes there that E4 must show:
+`CAREONEX_VOICE_SEARCH_MODE` (default `feedback`, `baseline` rolls back; E6 explains the search);
+one retrieval per lookup (the age-specific second query is gone); blank or malformed results are
+never presented as evidence; the callback number is saved only after a digit readback and an
+explicit "yes" (`nova_sonic/intake_confirmation.py`).
 
 ## S01 · One stream, both directions — `NovaSonic`
 
@@ -39,9 +42,11 @@ SAY: (to write)
 ## S05 · lookup_program_info — `Lookup`
 
 SHOW: The input (query, program, county, age, situation) → county validation (21 NJ counties; "New
-Jersey" dropped) → query enriched with caller facts → POST /retrieve top_k 5 (+ an age-specific
-second query, top_k 3) → dedupe → speakable passages (Markdown removed; tables → one sentence per
-row) → newest first → guidance text appended.
+Jersey" dropped) → query enriched with caller facts → POST /retrieve top_k 5 with `search_mode`
+(`feedback` by default on Marco's branch) → dedupe → speakable passages (Markdown removed; tables →
+one sentence per row) → newest first → guidance text appended. Before/after strip: on
+`feat/sonic_with_rag` an age also triggered a second, age-specific query (top_k 3); Marco's branch
+removed it ("every age-bearing lookup silently doubled the number of Bedrock queries").
 SAY: (to write)
 
 ## S06 · The intake as a state machine — `Intake`

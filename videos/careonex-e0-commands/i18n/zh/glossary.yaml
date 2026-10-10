@@ -30,6 +30,7 @@ terms:
 - en: pipeline
   zh_subtitle: pipeline
 allowed_spoken_latin:
+- baseline
 - AC215
 - AWS
 - Amazon

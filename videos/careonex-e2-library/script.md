@@ -196,6 +196,13 @@ in an earlier chunk. The word JACC appears nowhere in the chunk. Small note: "Ca
 names lost in extraction → they survive extraction (row 2); the split drops them".
 SAY: Third, that same table hides its program names. They survive extraction, in the table's second row. But when the chunker splits a big table, it repeats only the first row. So the chunk that holds 1,090 dollars never says JACC.
 
+SHOW: Update, same evening: Marco's branch `feat/sonic_with_rag_updated` (details in E6). Three rows:
+chunk (v4) repeats the header row → the $1,090 chunk now names JACC ✓ (MEASURED) · extract (v5)
+reads the PDF's ruled table, but on the real file finds 9 columns where it needs 7 and stops ✗
+(MEASURED) · retrieve drops side-by-side chunks the extractor did not verify (READ IN CODE) → the
+table does not reach the agent for now. Open items 1 and 2: unchanged on his branch (MEASURED).
+SAY: An update from the same evening: Marco's branch works on open item 3. Its new chunker repeats the row with the program names, and we checked that the 1,090 dollar chunk now says JACC. But his new table reader fails on the real PDF, and retrieve now drops the table's unverified chunks, so for now the table does not reach the agent at all. Open items 1 and 2 are unchanged there. Episode 6 has the details.
+
 SHOW: Also open (GREY): nothing re-runs the pipeline on a schedule; the team summary is updated by hand
 each January and March.
 SAY: Also open: nothing re-runs this pipeline on a schedule yet, and the team's summary is updated by hand.

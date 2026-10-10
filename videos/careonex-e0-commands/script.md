@@ -11,7 +11,9 @@ of ~2.2 words/s. Short sentences, one idea each.
 
 **Sources.** The two command blocks Marco posted in the team chat (2026-10-10, 16:08), copied exactly.
 The code on GitHub (`nadirbt/careonex-agents`: `data-retrieval@d96a4ad`, `feat/sonic_with_rag@eff4a96`),
-`TEAM_SETUP.md` on `data-retrieval`. Marco's own code was not on GitHub yet when this was written.
+`TEAM_SETUP.md` on `data-retrieval`. Marco's own code was not on GitHub yet when this was written;
+it arrived the same evening as `feat/sonic_with_rag_updated@1591ed2`, and S08 and S10 now use it to
+settle the two guesses they had made.
 The Knowledge Base id in his command is shown masked (`UYC7······`): this repository is public, and the
 team's own docs keep account identifiers out of it.
 
@@ -151,10 +153,13 @@ read `config/knowledge-base.json` from the S3 bucket. Two arrows into retrieve: 
 (lit) and the bucket file (dimmed). Tag READ IN CODE.
 SAY: The retrieve code looks for this sticky note first. If it is missing, it reads the ID from a file in the team's storage, written there by the container that built the library.
 
-SHOW: Tag INFERRED, two possible reasons, side by side: "skip the extra read from storage" ·
-"point retrieve at a different knowledge base, e.g. one built for Marco's experiments". Under them:
-"settles it: Marco's branch".
-SAY: Why set it by hand? We see two possible reasons. It saves one read from storage. Or Marco points retrieve at a different knowledge base, perhaps one built for his own experiments. His code will tell us which.
+SHOW: The two guesses we made before Marco's code was public (INFERRED, PURPLE): "skip one read from
+storage" · "point at a different knowledge base, e.g. one built for Marco's experiments". Then the
+answer from his branch `feat/sonic_with_rag_updated` (READ IN CODE): his README line
+`$env:CAREONEX_KB_ID = "UYC7······"  # example staging KB`; the second guess gets a ✓, the first fades.
+"library C: one of three test libraries for comparing chunkers (E6)". Without the line: retrieve
+reads `config/knowledge-base.json` → the main library.
+SAY: Why set it by hand? We had guessed two reasons: to save one read from storage, or to point retrieve at a different knowledge base. Marco's branch, pushed later that day, settles it. This ID is one of three test libraries he built to compare ways of cutting the documents. Without this line, retrieve would use the main library. Episode 6 explains his test.
 
 ---
 
@@ -183,10 +188,12 @@ SHOW: Line `$env:CAREONEX_RETRIEVE_URL = "http://127.0.0.1:8080"`. 127.0.0.1 →
 "knowledge base unavailable". Tag READ IN CODE.
 SAY: In terminal 2, the first new note tells voice where retrieve is. 127.0.0.1 always means this same computer, and 8080 is the door retrieve opened. Without this note, the voice app answers that the knowledge base is unavailable.
 
-SHOW: Line `$env:CAREONEX_VOICE_SEARCH_MODE = "feedback"`. A search of all four branches on GitHub:
-0 results (RED). Tag MEASURED. Then INFERRED (PURPLE): "a switch, inside Marco's new code, that
-chooses how voice searches; "feedback" is one of the modes".
-SAY: The next note, search mode feedback, appears nowhere in the code on GitHub. We searched all four branches. So it belongs to Marco's new work. It probably switches between ways of searching. We will explain it once his code is uploaded.
+SHOW: Line `$env:CAREONEX_VOICE_SEARCH_MODE = "feedback"`. First: the search of the four branches that
+were on GitHub that morning: 0 results (MEASURED). Then Marco's branch (READ IN CODE), tools.py:
+`mode = os.environ.get("CAREONEX_VOICE_SEARCH_MODE", "feedback")`; two values: `feedback` = a first
+search, maybe one extra search, merged (E6) · `baseline` = one search only, the rollback switch.
+Our earlier guess ("a switch that chooses how voice searches") gets a ✓.
+SAY: The next note picks how voice searches. When we first looked, it was nowhere in the code on GitHub. Marco's branch, pushed later that day, explains it. Feedback runs a first search, may add one more, and merges the results. Baseline runs one search only. Feedback is also the default when the note is missing. Episode 6 shows what it does.
 
 ---
 

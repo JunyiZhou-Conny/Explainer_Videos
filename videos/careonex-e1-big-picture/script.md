@@ -1,7 +1,7 @@
 # CareOneX E1 · The big picture — script draft (v0, not rendered)
 
-**Draft.** Written before Marco's branch was pushed. S05 (who built what) and S06 (where we are) get
-their Marco parts once his branch is read. Format as in E2: no narrator, SAY = subtitles.
+**Draft.** Written before Marco's branch was pushed; S05 now has his branch (read the same evening).
+S06 (where we are) waits for E7. Format as in E2: no narrator, SAY = subtitles.
 
 Audience: the five teammates. Goal: after E1, anyone can draw the system from memory, say which
 branch holds which layer, and say how far the build is from the Milestone 1 plan.
@@ -55,8 +55,10 @@ SHOW: A branch timeline (colours by person): `main` (Sep 17–29: Junyi's Nova S
 Nadir's team AWS setup) → `data-retrieval` (Nadir, Oct 3–10: all six services, 42 commits) →
 `feat/sonic_with_rag` (Caroline, Oct 8: grounding rules, tool round-trip checks, speakable
 passages) · `feat/prompt-tuning` (Junyi, Sep 28–Oct 2: intake schema with a confidence per field,
-consent model, hard rules) · Marco's branch (TODO) · Helen (TODO).
-SAY: (to be written once Marco's branch is read)
+consent model, hard rules) · `feat/sonic_with_rag_updated` (Marco, Oct 10: ONE commit on `main`,
+213 files; the pipeline and voice app copied in from a ZIP of `feat/sonic_with_rag`, plus his search
+experiments, E6) · Helen (no commits of hers on GitHub yet).
+SAY: Nadir built the library pipeline on one branch. Caroline joined it to the voice app on another. Junyi worked on the intake rules on a third. Marco's branch is different: one big commit on top of main that copies everything in and adds his experiments. So git cannot show what he changed, and merging the branches into one main line is the team's next real job.
 
 SHOW: Divergences, side by side: `data-retrieval` switched from make to just, `sonic_with_rag` still
 uses make; `prompt-tuning` grounds the model with "program cards" pasted into the prompt, but the

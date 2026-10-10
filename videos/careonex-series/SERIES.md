@@ -1,10 +1,12 @@
 # CareOneX, layer by layer — an explainer series
 
-**Status: draft plan, written before Marco's branch was pushed.** Episodes E1–E4 cover what is on
-GitHub today (`nadirbt/careonex-agents`: `main`, `data-retrieval`, `feat/sonic_with_rag`,
-`feat/prompt-tuning`). Marco's work (model-free update, adaptive v3 retrieval, the "latest
-experiment" folders, text-to-text evaluation, the `feedback` search mode) gets its own episodes
-once his branch is up, and E1/E3/E5 are revised against it.
+**Status (2026-10-10, evening):** written first against what was on GitHub that morning
+(`nadirbt/careonex-agents`: `main`, `data-retrieval`, `feat/sonic_with_rag`, `feat/prompt-tuning`).
+Marco's branch `feat/sonic_with_rag_updated@1591ed2` arrived the same evening: one commit on top of
+`main` (213 files, +46,458 lines) that carries the whole pipeline, the voice app and his changes
+(model-free feedback search, the A/B/C chunking test, reranking modes, the DoAS table reader, text
+evaluation, the callback-number gate). **E6** covers his experiments; E0 (S08, S10) and E2 (S07) were
+updated with what his code settles; the E1, E3, E4 and E5 plans below are revised against it.
 
 ## Who it is for, and how we know things
 
@@ -59,13 +61,13 @@ can be watched in any order. A beginner should watch E0 first.
 
 | # | Title | Layer / containers | Source on GitHub | Status |
 | --- | --- | --- | --- | --- |
-| E0 | **Decoding the start-up commands**: every word, for a beginner | the laptop, AWS login, Docker, the two programs | Marco's commands + all branches | script written |
-| E1 | **The big picture**: a family, a phone call, and seven containers | all; the team's branches | all branches + Milestone 1 SOW | plan; branch map waits for Marco |
-| E2 | **Building the library**: from 20 public documents to 232 vectors | `data` → `ingest` → `extract` → `chunk` → `kb-sync` | `data-retrieval` | plan |
-| E3 | **Finding the right passage**: embeddings, cosine similarity, filters | `retrieve` (+ Bedrock KB, S3 Vectors) | `data-retrieval`; Marco's retrieval updates | plan; revise with Marco |
-| E4 | **The voice loop**: Nova 2 Sonic, barge-in and tools | `voice` | `data-retrieval`, `feat/sonic_with_rag` | plan |
-| E5 | **Keeping it honest**: grounding rules, the intake, and measuring answers | prompt, tools, evaluation | `feat/sonic_with_rag`, `feat/prompt-tuning`, Marco's evaluation | plan; needs Marco |
-| E6+ | **Marco's experiments** | to be decided from his branch | Marco's branch | waiting |
+| E0 | **Decoding the start-up commands**: every word, for a beginner | the laptop, AWS login, Docker, the two programs | Marco's commands + all branches | **final cut**; S08/S10 settled by Marco's branch |
+| E1 | **The big picture**: a family, a phone call, and seven containers | all; the team's branches | all branches + Milestone 1 SOW | script draft (branch map now known) |
+| E2 | **Building the library**: from 20 public documents to 232 vectors | `data` → `ingest` → `extract` → `chunk` → `kb-sync` | `data-retrieval` | **final cut**; S07 has a Marco update |
+| E3 | **Finding the right passage**: embeddings, cosine similarity, filters | `retrieve` (+ Bedrock KB, S3 Vectors) | `data-retrieval`; `feat/sonic_with_rag_updated` | plan (revised) |
+| E4 | **The voice loop**: Nova 2 Sonic, barge-in and tools | `voice` | `feat/sonic_with_rag`, `feat/sonic_with_rag_updated` | script draft (revised) |
+| E5 | **Keeping it honest**: grounding rules and the intake | prompt, tools, intake | `feat/sonic_with_rag`, `feat/prompt-tuning`, `feat/sonic_with_rag_updated` | plan (answer checking moved to E6) |
+| E6 | **Measuring search**: Marco's experiments | `retrieve` dials (chunking, feedback search, merge), `text_eval` | `feat/sonic_with_rag_updated@1591ed2` | **final cut** |
 | E7 | **Where we are and what next** | all | all + SOW targets | plan |
 
 ### E1 · The big picture (~6 min)
@@ -79,8 +81,13 @@ can be watched in any order. A beginner should watch E0 first.
    kb-sync → Knowledge Base; caller ↔ voice ↔ Nova 2 Sonic; tools → retrieve → Knowledge Base.
 4. Why containers: one job each, one owner each, one prefix each; `docker compose` wires them; the
    only shared contracts are the S3 prefixes and the retrieve HTTP API.
-5. Who built what: the branch map (main · data-retrieval · sonic_with_rag · prompt-tuning · Marco's
-   branch), and what each branch changes relative to the one it came from.
+5. Who built what: the branch map. `main` holds only the first scaffold; `data-retrieval` (Nadir, the
+   pipeline, `justfile`) and `feat/sonic_with_rag` (voice + RAG, `Makefile`) grew side by side;
+   `feat/prompt-tuning` (Junyi) imports a `nova_sonic.knowledge` module that was never committed;
+   Marco's `feat/sonic_with_rag_updated` is **one commit on `main`**, not a merge: it copies the whole
+   pipeline and voice app in (from a ZIP of `feat/sonic_with_rag`, per his docs) and adds his changes, so git cannot show
+   what he changed relative to either branch. Two build tools (`make` vs `just`) on the way to one
+   main branch.
 6. Where we are vs. the Milestone 1 targets (sub-second turns, grounded answers ≥ 95 %, intake field
    accuracy ≥ 90 %): what exists, what is measured, what is not yet.
 
@@ -111,7 +118,10 @@ can be watched in any order. A beginner should watch E0 first.
 4. The latest-year policy: `figure_year` (latest year named in the text, else effective date) and
    withholding older-year figures for the same program.
 5. The API contract the voice agent sees: passages with title, program, effective date, heading path.
-6. Marco's retrieval changes (adaptive v3 etc.): revised once his branch is read.
+6. Marco's retrieval changes, as code (the measurements are E6): search modes `baseline` (server
+   default) / `expanded` / `intent` (Nova Lite) / `feedback` (voice default); the `table_verified`
+   filter for the DoAS table; optional reranking `none` / `lexical` (TF-IDF) / `titan`; parent context
+   from the hierarchical staging library (opt-in).
 
 ### E4 · The voice loop (~8 min)
 
@@ -122,17 +132,30 @@ can be watched in any order. A beginner should watch E0 first.
    peak (an average drifted to 0.03 and the assistant heard itself); ratio 1.8; hold open at onsets.
 4. A tool call round trip: toolUse → `handle_tool` → contentStart / toolResult / contentEnd, keyed
    by toolUseId (Caroline's fix for overlapping calls).
-5. `lookup_program_info`: caller facts folded into the query, a second age-specific lookup, dedupe,
-   speakable passages (tables → one sentence per row), newest first, guidance text.
+5. `lookup_program_info`: caller facts folded into the query; on `feat/sonic_with_rag` a second
+   age-specific lookup, removed on Marco's branch ("every age-bearing lookup silently doubled the
+   number of Bedrock queries"); `search_mode` from `CAREONEX_VOICE_SEARCH_MODE` (default `feedback`);
+   dedupe, speakable passages (tables → one sentence per row), newest first, guidance text; blank or
+   malformed results are never presented as evidence.
 6. Intake as a state machine owned by the client (`intake_next_question` → one question) and
-   `save_intake` (callback exists only after it succeeds).
+   `save_intake` (callback exists only after it succeeds); on Marco's branch the callback number is
+   saved only after the agent reads the digits back and the caller answers yes
+   (`intake_confirmation.py`).
 
-### E5 · Keeping it honest (~7 min, revised with Marco)
+### E5 · Keeping it honest (~7 min)
 
 Grounding rules in the system prompt and the tool guidance; `--expect-tool` smoke test (before it,
 the test passed with zero tool calls); the intake schema with a confidence per field (Junyi's
-`feat/prompt-tuning`); Marco's text-to-text evaluation with cosine similarity, and what cosine
-similarity can and cannot tell you about an answer.
+`feat/prompt-tuning`). Marco's text-to-text evaluation (word cosine, WER, phrases) is in E6 S07.
+
+### E6 · Measuring search: Marco's experiments (~11 min, built)
+
+How a search is scored (precision@5, MRR, NDCG, and why they need human grades); the A/B/C chunking
+test on three staging Knowledge Bases (25 questions, 375 graded passages; A and C ahead, B, the new
+default, never best alone); feedback search step by step, reciprocal rank fusion, and what today's
+weights imply (an extra search can reorder the top 5 but not add to it); the saved 40-question run
+(speed measured, 0 of 788 passages graded); answer checking with `text_eval`; the DoAS table chain;
+the open list. All numbers: `checks/marco/`.
 
 ### E7 · Where we are and what next (~5 min)
 
