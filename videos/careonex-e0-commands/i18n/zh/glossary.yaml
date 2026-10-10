@@ -1,0 +1,128 @@
+policy: Mandarin first; code names, AWS products and the team's working terms stay in English; numbers as digits; half-width
+  space between Chinese and Latin/digits.
+terms:
+- en: container
+  zh_subtitle: 容器（container）
+- en: source list
+  zh_subtitle: 来源清单（source list）
+- en: hash
+  zh_subtitle: hash（哈希值）
+- en: bucket
+  zh_subtitle: S3 bucket（存储桶）
+- en: sidecar
+  zh_subtitle: sidecar（元数据文件）
+- en: manifest
+  zh_subtitle: manifest（清单）
+- en: chunk
+  zh_subtitle: chunk（文本块）
+- en: embedding
+  zh_subtitle: embedding
+- en: vector
+  zh_subtitle: 向量
+- en: cosine similarity
+  zh_subtitle: 余弦相似度（cosine similarity）
+- en: Knowledge Base
+  zh_subtitle: Bedrock Knowledge Base（知识库）
+- en: ingestion job
+  zh_subtitle: 导入任务（ingestion job）
+- en: nonce
+  zh_subtitle: nonce
+- en: pipeline
+  zh_subtitle: pipeline
+allowed_spoken_latin:
+- AC215
+- AWS
+- Amazon
+- Base
+- Based
+- Bedrock
+- CareOneX
+- Community
+- DoAS
+- Docker
+- Embeddings
+- GitHub
+- HOME
+- Home
+- ID
+- INFERRED
+- JACC
+- KB
+- Knowledge
+- Mac
+- Marco
+- Markdown
+- Medicaid
+- Medicare
+- Nova
+- PDF
+- PowerShell
+- Python
+- S3
+- SSO
+- Services
+- Sonic
+- Text
+- Titan
+- VA
+- Vectors
+- Windows
+- ac
+- ac215
+- agent
+- and
+- aws
+- bucket
+- build
+- careonex
+- careonex-team
+- cd
+- change
+- chunk
+- chunks
+- compose
+- container
+- cosine
+- data
+- directory
+- docker
+- embedding
+- env
+- environment
+- extra
+- extract
+- feedback
+- flex-menu
+- hash
+- image
+- ingest
+- ingestion
+- job
+- kb-sync
+- list
+- llm
+- login
+- manifest
+- mic
+- nj.gov
+- nonce
+- pipeline
+- port
+- profile
+- program-kb
+- pymupdf
+- pymupdf4llm
+- retrieve
+- sidecar
+- similarity
+- source
+- sso
+- terminal
+- up
+- us-east
+- us-east-1
+- uv
+- v2
+- va.gov
+- variable
+- voice

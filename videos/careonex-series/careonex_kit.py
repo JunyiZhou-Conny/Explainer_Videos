@@ -21,7 +21,7 @@ Each episode's scenes/common.py puts this folder on sys.path:
 from __future__ import annotations
 
 import numpy as np
-from manim import (DOWN, LEFT, ORIGIN, RIGHT, UP, Arrow, Circle, Code, CurvedArrow, DashedLine,
+from manim import (DOWN, DL, DR, LEFT, ORIGIN, RIGHT, UP, Arrow, Circle, Code, CurvedArrow, DashedLine,
                    DashedVMobject, Dot, FadeIn, FadeOut, Line, MoveAlongPath, Polygon, Rectangle,
                    RoundedRectangle, SurroundingRectangle, Text, VGroup, VMobject, Write, linear)
 
@@ -41,7 +41,8 @@ QUERY_C = S.YELLOW
 BAD_C = S.RED
 OK_C = S.GREEN
 DIM = S.GREY
-PEOPLE = {"Nadir": S.GOLD, "Caroline": S.PINK, "Junyi": S.PURPLE, "Marco": S.TEAL, "Helen": S.GREY}
+PEOPLE = {"Nadir": S.GOLD, "Caroline": S.PINK, "Junyi": "#9FB4FF", "Marco": S.TEAL, "Helen": S.GREY}
+GUESS_C = S.PURPLE      # INFERRED tags: our own guesses stand out from what we read or measured
 
 
 # ------------------------------------------------------------------ text helpers
@@ -373,3 +374,94 @@ def system_map() -> VGroup:
     m = VGroup(build, part["kb"], links["chunks>kb"], answer)
     m.part, m.links, m.build, m.answer, m.h1, m.h2 = part, links, build, answer, h1, h2
     return m
+
+
+# ------------------------------------------------------------------ beginner kit: where a claim comes from
+SOURCE_TAGS = {"code": "READ IN CODE", "notes": "TEAM NOTES", "measured": "MEASURED", "inferred": "INFERRED"}
+
+
+def source_tag(kind: str, note: str | None = None, size: float = 20) -> VGroup:
+    """A small tag saying where a claim comes from (SERIES.md): code | notes | measured | inferred.
+    INFERRED is PURPLE and may carry a short reason (`note`) after it."""
+    color = GUESS_C if kind == "inferred" else S.GREY
+    t = sans(SOURCE_TAGS[kind], size, color)
+    bg = RoundedRectangle(width=t.width + 0.26, height=t.height + 0.18, corner_radius=0.08,
+                          stroke_color=color, stroke_width=1.5).set_fill(color, 0.12 if kind == "inferred" else 0.0)
+    bg.move_to(t)
+    g = VGroup(bg, t)
+    if note:
+        g.add(serif(note, size + 2, color if kind == "inferred" else S.GREY).next_to(bg, RIGHT, buff=0.15))
+    return g
+
+
+def terminal(lines: list[str], title: str = "terminal", width: float | None = None, size: float = 20,
+             colors: dict[int, str] | None = None) -> VGroup:
+    """A terminal window: title bar with three dots, monospace lines. .rows[i] is line i, .bar the title bar."""
+    body = text_panel(lines, size=size, width=width, colors=colors, border=S.GREY_DARK)
+    bar = RoundedRectangle(width=body.bg.width, height=0.36, corner_radius=0.1, stroke_width=0).set_fill(S.GREY_DARK, 1)
+    bar.next_to(body.bg, UP, buff=-0.02)
+    dots = VGroup(*[Dot(radius=0.055, color=c) for c in (S.RED, S.GOLD, S.GREEN)]).arrange(RIGHT, buff=0.1)
+    dots.move_to(bar).align_to(bar, LEFT).shift(RIGHT * 0.2)
+    ttl = sans(title, 18, S.GREY).move_to(bar)
+    g = VGroup(bar, dots, ttl, body)
+    g.rows, g.bar, g.body = body.rows, bar, body
+    return g
+
+
+def sticky(name: str, value: str, size: float = 20, color: str = QUERY_C) -> VGroup:
+    """An environment variable drawn as a sticky note: NAME over value."""
+    n = mono(name, size, S.BG)
+    v = mono(value, size, S.BG)
+    inner = VGroup(n, v).arrange(DOWN, buff=0.06, aligned_edge=LEFT)
+    bg = Rectangle(width=inner.width + 0.3, height=inner.height + 0.26, stroke_width=0).set_fill(color, 0.92)
+    bg.move_to(inner)
+    fold = Polygon(bg.get_corner(DR) + LEFT * 0.18, bg.get_corner(DR), bg.get_corner(DR) + UP * 0.18,
+                   stroke_width=0).set_fill(S.GREY_DARK, 1)
+    g = VGroup(bg, fold, inner)
+    g.name, g.value = n, v
+    return g
+
+
+def laptop(width: float = 6.0, height: float = 3.8, label: str = "Marco's laptop") -> VGroup:
+    screen = RoundedRectangle(width=width, height=height, corner_radius=0.15, stroke_color=PERSON_C, stroke_width=2.5)
+    base = Polygon(screen.get_corner(DL) + DOWN * 0.08 + LEFT * 0.3, screen.get_corner(DR) + DOWN * 0.08 + RIGHT * 0.3,
+                   screen.get_corner(DR) + DOWN * 0.3 + RIGHT * 0.5, screen.get_corner(DL) + DOWN * 0.3 + LEFT * 0.5,
+                   stroke_color=PERSON_C, stroke_width=2.5)
+    lab = sans(label.upper(), 18, S.GREY).next_to(base, DOWN, buff=0.12)
+    g = VGroup(screen, base, lab)
+    g.screen, g.label = screen, lab
+    return g
+
+
+def cloud(label: str = "AWS · us-east-1", width: float = 4.2, color: str = AWS_C) -> VGroup:
+    """A cloud outline (a few overlapping circles) with a label."""
+    from manim import Union
+    parts = [Circle(radius=r).move_to([x, y, 0]) for x, y, r in
+             [(-1.1, -0.1, 0.75), (-0.3, 0.35, 0.95), (0.7, 0.15, 0.85), (1.3, -0.25, 0.6), (0.0, -0.35, 0.7)]]
+    shape = parts[0]
+    for c in parts[1:]:
+        shape = Union(shape, c)
+    shape.set_stroke(color, 3).set_fill(color, 0.06)
+    shape.scale_to_fit_width(width)
+    lab = sans(label, 22, color).move_to(shape).shift(DOWN * shape.height * 0.18)
+    g = VGroup(shape, lab)
+    g.shape, g.label = shape, lab
+    return g
+
+
+def what_is(term: str, lines: list[str] | str, width: float = 5.2, size: float = 24) -> VGroup:
+    """A beginner's 'what is X?' card: a small heading with the term, then one to three plain lines.
+    Place it in a free corner; it is meant to stay up for one subtitle beat."""
+    if isinstance(lines, str):
+        lines = [lines]
+    head = VGroup(sans("WHAT IS", 18, QUERY_C), mono(term, size, QUERY_C)).arrange(RIGHT, buff=0.15)
+    body = VGroup(*[serif(t, size - 2) for t in lines]).arrange(DOWN, buff=0.08, aligned_edge=LEFT)
+    inner = VGroup(head, body).arrange(DOWN, buff=0.15, aligned_edge=LEFT)
+    if inner.width > width - 0.4:
+        inner.scale_to_fit_width(width - 0.4)
+    bg = RoundedRectangle(width=max(inner.width + 0.4, 2.0), height=inner.height + 0.36, corner_radius=0.12,
+                          stroke_color=QUERY_C, stroke_width=2).set_fill(S.BG, 0.96)
+    inner.move_to(bg)
+    g = VGroup(bg, inner)
+    g.bg, g.head, g.body = bg, head, body
+    return g

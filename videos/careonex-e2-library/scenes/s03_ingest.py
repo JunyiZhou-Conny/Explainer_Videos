@@ -17,7 +17,7 @@ from explainer import style as S
 from explainer.scene import VoiceScene
 
 from common import (BAD_C, CODE_C, DATA_C, NARRATION, OK_C, PERSON_C, QUERY_C, chip, container,
-                    doc_glyph, link, mark_bad, mark_ok, mono, sans, serif, store, text_panel)
+                    doc_glyph, link, mark_bad, mark_ok, mono, sans, serif, source_tag, store, text_panel, what_is)
 
 SAY = NARRATION["S03"]
 
@@ -26,6 +26,19 @@ class Ingest(VoiceScene):
     def construct(self):
         # 1 ---------------------------------------------------------------- the bucket
         with self.voiceover(SAY[0]) as vo:
+            s3card = what_is("S3", ["Amazon's file storage", "bucket = one top-level folder", "object = one file inside it"],
+                             width=5.4, size=26).move_to(LEFT * 3.3 + UP * 0.3)
+            folder = VGroup(sans("A BUCKET", 22, DATA_C),
+                            VGroup(*[VGroup(doc_glyph(DATA_C, 0.42, 0.56), mono(n, 20)).arrange(DOWN, buff=0.08)
+                                     for n in ("a.pdf", "b.html", "c.md")]).arrange(RIGHT, buff=0.4))
+            folder.arrange(DOWN, buff=0.25)
+            fbox = SurroundingRectangle(folder[1], buff=0.3, corner_radius=0.15, color=DATA_C)
+            folder = VGroup(folder, fbox).move_to(RIGHT * 3.2 + UP * 0.3)
+            olab = serif("each file = an object", 22, S.GREY).next_to(fbox, DOWN, buff=0.2)
+            self.play(FadeIn(s3card, shift=UP * 0.15), run_time=0.8)
+            self.play(FadeIn(folder), FadeIn(olab), run_time=0.8)
+            vo.wait_until("The first container")
+            self.play(FadeOut(VGroup(s3card, folder, olab)), run_time=0.6)
             data = container("data", "ensure-buckets", width=2.8, name_size=32, sub_size=22).move_to(LEFT * 4.6 + UP * 0.6)
             bucket = RoundedRectangle(width=6.6, height=3.4, corner_radius=0.25, stroke_color=DATA_C, stroke_width=3)
             bucket = DashedVMobject(bucket, num_dashes=70).move_to(RIGHT * 2.3 + UP * 0.6)
@@ -35,10 +48,10 @@ class Ingest(VoiceScene):
             self.play(FadeIn(data, shift=RIGHT * 0.2), run_time=0.7)
             self.play(GrowArrow(arrow.arrow), FadeIn(arrow.label), Create(bucket), FadeIn(bname), FadeIn(btag),
                       run_time=1.4)
-            chips = VGroup(chip("versioned", DATA_C, 24), chip("encrypted", DATA_C, 24),
+            chips = VGroup(chip("keeps old versions", DATA_C, 24), chip("encrypted", DATA_C, 24),
                            chip("public access blocked", DATA_C, 24)).arrange(DOWN, buff=0.22, aligned_edge=LEFT)
             chips.move_to(bucket).shift(UP * 0.45)
-            vo.wait_until("It is versioned")
+            vo.wait_until("It keeps old versions")
             self.play(LaggedStart(*[FadeIn(c, shift=UP * 0.1) for c in chips], lag_ratio=0.35), run_time=1.6)
             vo.wait_until("public documents only")
             docs = VGroup(*[doc_glyph(DATA_C, 0.36, 0.48, lines=3) for _ in range(6)]).arrange(RIGHT, buff=0.12)
@@ -51,11 +64,13 @@ class Ingest(VoiceScene):
             self.play(caller.animate.shift(UP * 0.25), run_time=0.4)
             x = mark_bad(0.4).move_to(caller)
             self.play(Create(x), caller.animate.set_opacity(0.4), run_time=0.5)
+            ntag = source_tag("notes", "services/data/README.md").to_corner(DL, buff=0.35)
+            self.play(FadeIn(ntag), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 2 ---------------------------------------------------------------- ac215-* vs careonex-*
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(data, arrow, bucket, bname, btag, chips, docs, caller, x)), run_time=0.7)
+            self.play(FadeOut(VGroup(data, arrow, bucket, bname, btag, chips, docs, caller, x, ntag)), run_time=0.7)
             course = VGroup(sans("COURSE", 22, DATA_C), mono("ac215-*", 34, DATA_C),
                             mono("ac215-program-kb-…", 22, S.WHITE), mono("ac215-program-vectors-…", 22, S.WHITE),
                             mono("ac215-program-kb (KB)", 22, S.WHITE)).arrange(DOWN, buff=0.15)
@@ -81,11 +96,13 @@ class Ingest(VoiceScene):
             wall = mark_bad(0.55).move_to(blocked.arrow.point_from_proportion(0.5))
             self.play(GrowArrow(blocked.arrow), run_time=0.6)
             self.play(Create(wall), Wiggle(VGroup(pbox, prod), scale_value=1.03), run_time=0.9)
+            ptag = source_tag("notes", "TEAM_SETUP.md, the AC215 policy").to_corner(DL, buff=0.35)
+            self.play(FadeIn(ptag), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 3 ---------------------------------------------------------------- ingest: hash, compare, skip or upload
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(role, policy, cbox, course, pbox, prod, ok, blocked, wall)), run_time=0.7)
+            self.play(FadeOut(VGroup(role, policy, cbox, course, pbox, prod, ok, blocked, wall, ptag)), run_time=0.7)
             ing = container("ingest", "same image as data", width=3.0, name_size=32, sub_size=22).to_edge(UP, buff=0.5)
             self.play(FadeIn(ing, shift=DOWN * 0.2), run_time=0.6)
             heads = VGroup(serif("download", 26, S.GREY), serif("sha256 of the bytes", 26, S.GREY),

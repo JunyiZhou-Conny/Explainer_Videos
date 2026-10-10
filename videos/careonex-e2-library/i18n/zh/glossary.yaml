@@ -22,4 +22,4 @@ allowed_spoken_latin: [CareOneX, container, agent, source, list, DoAS, Medicaid,
   build, data, S3, bucket, ac215, careonex, ingest, sidecar, JACC, manifest, nj.gov, va.gov, nonce, extract, Markdown,
   pymupdf4llm, chunk, KB, Bedrock, kb-sync, embedding, Amazon, Titan, Text, Embeddings, v2, cosine, similarity,
   program-kb, Vectors, Knowledge, Base, chunks, ingestion, job, ID, retrieve, Home, and, Community, Based, Services,
-  flex-menu, ac, pymupdf, llm]
+  flex-menu, ac, pymupdf, llm, AI, object]

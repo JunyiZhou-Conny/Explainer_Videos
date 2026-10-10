@@ -1,0 +1,20 @@
+id: careonex-e0-commands
+title: "CareOneX E0 · Decoding the start-up commands: every word, for a beginner"
+papers: []                     # not a paper: an explainer of the team's own code (series: videos/careonex-series)
+audience: "a complete beginner who wants to understand the CareOneX system; no AWS, Docker or networking assumed"
+source: "Marco's start-up commands (team chat, 2026-10-10); nadirbt/careonex-agents data-retrieval@d96a4ad, feat/sonic_with_rag@eff4a96"
+voice: {backend: silent, speed: 0.85}
+subtitles_only: true
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,           title: "Two walls of text"}
+  - {file: scenes/s02_two.py,        cls: TwoPrograms,    title: "Two terminals, two programs"}
+  - {file: scenes/s03_cd.py,         cls: ChangeDir,      title: "cd: the project folder"}
+  - {file: scenes/s04_env.py,        cls: EnvVars,        title: "Sticky notes: environment variables"}
+  - {file: scenes/s05_login.py,      cls: Login,          title: "Who are you? AWS profile and SSO login"}
+  - {file: scenes/s06_region.py,     cls: Region,         title: "Where in the world: the region"}
+  - {file: scenes/s07_home.py,       cls: Home,           title: "The strange one: $env:HOME = $HOME"}
+  - {file: scenes/s08_kbid.py,       cls: KnowledgeBaseId, title: "Which library? CAREONEX_KB_ID"}
+  - {file: scenes/s09_docker.py,     cls: Docker,         title: "Boxes: docker compose up --build retrieve"}
+  - {file: scenes/s10_voice_env.py,  cls: VoiceSettings,  title: "Terminal 2: where to ask, and how"}
+  - {file: scenes/s11_uv.py,         cls: UvRun,          title: "The long last line: uv run"}
+  - {file: scenes/s12_picture.py,    cls: WholePicture,   title: "The whole picture"}

@@ -6,13 +6,32 @@ GitHub today (`nadirbt/careonex-agents`: `main`, `data-retrieval`, `feat/sonic_w
 experiment" folders, text-to-text evaluation, the `feedback` search mode) gets its own episodes
 once his branch is up, and E1/E3/E5 are revised against it.
 
+## Who it is for, and how we know things
+
+**Audience: a complete beginner who badly wants to understand the whole system.** No AWS, Docker,
+search or speech background is assumed. Every term is explained the first time it appears, with a
+picture, and the series opens with E0, which decodes the two commands Marco uses to start the app,
+line by line.
+
+**We have no access to the team's AWS account.** Everything about the live system is learned from
+the code on GitHub, the team's notes (`TEAM_SETUP.md`, `NOTES-2026-10-07.md`, the Milestone 1
+statement) and our own offline reruns. Every claim on screen carries a small tag saying where it
+comes from:
+
+| Tag | Meaning |
+| --- | --- |
+| `READ IN CODE` | we read it in the repository, at the commit named in the episode README |
+| `TEAM NOTES` | the team wrote it down (setup guide, session notes, statement of work); we did not check it live |
+| `MEASURED` | we ran it ourselves (offline, without AWS): see `checks/` |
+| `INFERRED` | our best guess, shown with the reason; it may be wrong, and the video says what would settle it |
+
 ## Why a series, not one video
 
 The project is built as layers that run in separate containers, and five people each work on one
 or two of them with their own AI agent. One long video would mix layers that nobody needs at the
 same time. Each episode here covers **one layer**: what goes in, what comes out, the decisions
 inside it and why they were made, and what is still open. Watch E1 first; after that the episodes
-can be watched in any order.
+can be watched in any order. A beginner should watch E0 first.
 
 ## Format
 
@@ -40,6 +59,7 @@ can be watched in any order.
 
 | # | Title | Layer / containers | Source on GitHub | Status |
 | --- | --- | --- | --- | --- |
+| E0 | **Decoding the start-up commands**: every word, for a beginner | the laptop, AWS login, Docker, the two programs | Marco's commands + all branches | script written |
 | E1 | **The big picture**: a family, a phone call, and seven containers | all; the team's branches | all branches + Milestone 1 SOW | plan; branch map waits for Marco |
 | E2 | **Building the library**: from 20 public documents to 232 vectors | `data` → `ingest` → `extract` → `chunk` → `kb-sync` | `data-retrieval` | plan |
 | E3 | **Finding the right passage**: embeddings, cosine similarity, filters | `retrieve` (+ Bedrock KB, S3 Vectors) | `data-retrieval`; Marco's retrieval updates | plan; revise with Marco |

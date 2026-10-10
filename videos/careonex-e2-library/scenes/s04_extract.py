@@ -19,7 +19,7 @@ from explainer import style as S
 from explainer.scene import VoiceScene
 
 from common import (BAD_C, CATALOG, CODE_C, DATA_C, NARRATION, OK_C, QUERY_C, chip, container,
-                    doc_glyph, link, mark_bad, mark_ok, mono, sans, serif, store, text_panel)
+                    doc_glyph, link, mark_bad, mark_ok, mono, sans, serif, source_tag, store, text_panel, what_is)
 
 SAY = NARRATION["S04"]
 CHANGED = {"nj_dmahs_mltss_overview.html", "nj_doas_jacc.html", "va_homemaker_home_health_aide.html",
@@ -49,7 +49,8 @@ class Extract(VoiceScene):
             left = VGroup(pl, pg).arrange(DOWN, buff=0.3)
             right = VGroup(hl, hg).arrange(DOWN, buff=0.3)
             VGroup(left, right).arrange(DOWN, buff=1.3).next_to(head, DOWN, buff=0.5)
-            self.play(FadeIn(head), run_time=0.8)
+            mtag = source_tag("measured").next_to(head, RIGHT, buff=0.3)
+            self.play(FadeIn(head), FadeIn(mtag), run_time=0.8)
             self.play(FadeIn(left), FadeIn(right), run_time=1.0)
             twice_p = pg.copy().set_opacity(0.35).shift(RIGHT * 0.12 + DOWN * 0.08)
             twice_h = hg.copy().set_opacity(0.35).shift(RIGHT * 0.12 + DOWN * 0.08)
@@ -73,7 +74,7 @@ class Extract(VoiceScene):
 
         # 2 ---------------------------------------------------------------- what changed
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(head, left, right, twice_p, twice_h, ticks, same, marks, five)), run_time=0.7)
+            self.play(FadeOut(VGroup(head, mtag, left, right, twice_p, twice_h, ticks, same, marks, five)), run_time=0.7)
             nj = VGroup(mono("nj.gov · JACC page", 24, S.GREY),
                         text_panel(['last line, copy 1:  <script src="/_Incapsula_Resource?SWJIYLWA=…&ns=2&cb=2100165996"',
                                     '                     async></script></body>',
@@ -123,7 +124,12 @@ class Extract(VoiceScene):
             self.play(GrowArrow(a3.arrow), FadeIn(out), run_time=0.6)
             self.play(FadeIn(p_in), GrowArrow(b1.arrow), FadeIn(p1), run_time=0.7)
             self.play(GrowArrow(b2.arrow), run_time=0.5)
+            vo.wait_until("written as Markdown")
+            mdcard = what_is("Markdown", ["plain text with a few symbols for structure:", "# a heading      |a|table|row|"],
+                             width=6.6, size=24).to_edge(DOWN, buff=0.45)
+            self.play(FadeIn(mdcard, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("The hash of that text")
+            self.play(FadeOut(mdcard), run_time=0.4)
             key = VGroup(store("text/nj_doas/nj_doas_jacc.html.md", None, tag="S3 object", width=6.4, name_size=24),
                          mono("+ text_sha256 · extractor_version 3 in its metadata", 20, S.GREY)).arrange(DOWN, buff=0.15)
             key.to_edge(DOWN, buff=0.45)
@@ -145,6 +151,8 @@ class Extract(VoiceScene):
                 r[2].next_to(r[1], DOWN, aligned_edge=LEFT, buff=0.12)
             tbl = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.85)
             tbl.move_to(DOWN * 0.2).to_edge(LEFT, buff=0.6)
+            vtag = source_tag("code", "the EXTRACTOR_VERSION note in convert.py").next_to(ext, RIGHT, buff=0.4)
+            self.play(FadeIn(vtag), run_time=0.4)
             for k, phrase in enumerate(["Version 1", "Version 2", "Version 3"]):
                 vo.wait_until(phrase)
                 self.play(FadeIn(rows[k][0]), FadeIn(rows[k][1], shift=RIGHT * 0.2), run_time=0.7)

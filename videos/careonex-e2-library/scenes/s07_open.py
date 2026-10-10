@@ -22,7 +22,7 @@ from explainer.components import ponder_card
 from explainer.scene import VoiceScene
 
 from common import (AWS_C, BAD_C, CODE_C, DATA_C, NARRATION, OK_C, PEOPLE, QUERY_C, SERIES, chip,
-                    container, mono, sans, serif, store, system_map, text_panel)
+                    container, mono, sans, serif, source_tag, store, system_map, text_panel)
 
 SAY = NARRATION["S07"]
 CHUNKS = json.loads((SERIES / "checks" / "chunks_index.json").read_text())
@@ -31,7 +31,7 @@ CHUNKS = json.loads((SERIES / "checks" / "chunks_index.json").read_text())
 def open_tag(n: int, text: str, found: bool = False) -> VGroup:
     t = VGroup(mono(f"open {n}", 26, BAD_C), serif(text, 30)).arrange(RIGHT, buff=0.3)
     if found:
-        t.add(chip("found while making this video", BAD_C, 20, mono_font=False).next_to(t, RIGHT, buff=0.3))
+        t.add(source_tag("measured", "found while making this video").next_to(t, RIGHT, buff=0.3))
     if t.width > 13:
         t.scale_to_fit_width(13)
     return t.to_edge(UP, buff=0.45).set_x(0)

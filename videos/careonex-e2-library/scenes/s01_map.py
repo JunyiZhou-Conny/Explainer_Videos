@@ -15,8 +15,8 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (AWS_C, BAD_C, CODE_C, DATA_C, NARRATION, QUERY_C, chip, mono, serif, strike,
-                    system_map, text_panel, token)
+from common import (AWS_C, BAD_C, CODE_C, DATA_C, NARRATION, QUERY_C, chip, mono, serif, source_tag, strike,
+                    system_map, text_panel, token, what_is)
 
 SAY = NARRATION["S01"]
 
@@ -91,8 +91,13 @@ class TwoHalves(VoiceScene):
             tag = chip("JACC page · nj.gov · 2026", DATA_C, size=22).next_to(panel, DOWN, buff=0.25).align_to(panel, RIGHT)
             arrow = Arrow(q.get_bottom(), panel.get_top(), buff=0.08, color=S.GREY, stroke_width=3)
             self.play(GrowArrow(arrow), FadeIn(panel, shift=UP * 0.2), run_time=1.2)
-            self.play(FadeIn(tag), run_time=0.6)
+            src = source_tag("measured", "the team's extract code, rerun by us").to_corner(DL, buff=0.4)
+            self.play(FadeIn(tag), FadeIn(src), run_time=0.6)
+            vo.wait_until("the agent, the AI")
+            agent = what_is("agent", ["the AI assistant that talks", "to the caller on the phone"]).to_corner(DR, buff=0.4)
+            self.play(FadeIn(agent, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("It is not allowed")
+            self.play(FadeOut(agent), run_time=0.4)
             box = SurroundingRectangle(VGroup(panel.rows[5], panel.rows[6]), color=QUERY_C, buff=0.06,
                                        corner_radius=0.06, stroke_width=2)
             self.play(Create(box), run_time=0.8)
@@ -108,7 +113,7 @@ class TwoHalves(VoiceScene):
         # 4 ---------------------------------------------------------------- one of 232
         with self.voiceover(SAY[3]) as vo:
             dot = Dot(radius=0.12, color=DATA_C).move_to(panel)
-            others = VGroup(q, caller, arrow, tag, mem, box, st)
+            others = VGroup(q, caller, arrow, tag, mem, box, st, src)
             self.play(FadeOut(others), ReplacementTransform(panel, dot), run_time=1.0)
             one = mono("1 of 232", 26, DATA_C).next_to(dot, RIGHT, buff=0.2)
             self.play(FadeIn(one), run_time=0.5)

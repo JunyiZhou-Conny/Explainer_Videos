@@ -12,10 +12,10 @@ S01:
   zh:
   - "这一集讲资料库：五个容器（container）把 20 份公开文档变成 232 段可以检索的文字。"
 
-- en: "Why build a library at all? When a caller asks about an income limit, the agent must answer from an official document. It is not allowed to answer from memory, because these numbers change every year."
+- en: "Why build a library at all? When a caller asks about an income limit, the agent, the AI assistant on the phone, must answer from an official document. It is not allowed to answer from memory, because these numbers change every year."
   zh:
   - "为什么要先建资料库？"
-  - "来电者问到收入上限时，agent 必须根据官方文件回答。"
+  - "来电者问到收入上限时，agent，也就是电话里的 AI 助手，必须根据官方文件回答。"
   - "它不能凭记忆回答，因为这些数字每年都会变。"
 
 - en: "So every answer starts as one of these passages. Let's follow a document through the five containers, one at a time."
@@ -45,10 +45,12 @@ S02:
   - "要加一份文档，就加一行再重新 build，因为这张清单是打包进 data 容器镜像里的。"
 
 S03:
-- en: "The first container, data, makes sure one S3 bucket exists. It is versioned and encrypted, and it holds public documents only. No caller information ever goes into it."
+- en: "S3 is Amazon's file storage. A bucket is one top-level folder in it, and each file inside is called an object. The first container, data, makes sure the team's bucket exists. It keeps old versions of every file, it is encrypted, and it holds public documents only. No caller information ever goes into it."
   zh:
-  - "第一个容器 data 负责确保有一个 S3 bucket（存储桶）。"
-  - "它开启了版本管理和加密，而且只存放公开文档。"
+  - "S3 是亚马逊的文件存储服务。"
+  - "bucket（存储桶）是里面最顶层的一个文件夹，里面的每个文件叫 object（对象）。"
+  - "第一个容器 data 负责确保团队的 bucket 存在。"
+  - "它会保留每个文件的旧版本，做了加密，而且只存放公开文档。"
   - "来电者的任何信息都不会放进去。"
 
 - en: "Its name starts with ac215 on purpose. The team's S3 permissions only reach buckets whose names start with ac215, so nothing in this course can touch the company's production buckets, which are named careonex."
@@ -87,10 +89,10 @@ S04:
   - "在 va.gov 上，每次都会给几十个标签打上一个新的随机码，叫 nonce。"
   - "所以，下载文件的 hash 没法告诉你规则有没有变。"
 
-- en: "That is extract's job. It turns every file into clean text, written as Markdown. The hash of that text is the real signal that a document's content moved."
+- en: "That is extract's job. It turns every file into clean text, written as Markdown: plain text with a few symbols for structure, like a # before a heading. The hash of that text is the real signal that a document's content moved."
   zh:
   - "这正是 extract 的任务。"
-  - "它把每个文件转成干净的文本，格式是 Markdown。"
+  - "它把每个文件转成干净的文本，格式是 Markdown：纯文本加上几个表示结构的符号，比如标题前面加一个 #。"
   - "这段文本的 hash，才是文档内容真正变化的信号。"
 
 - en: "Getting web pages right took three versions. Version 1 used a library that guesses the main content, and it silently dropped eligibility paragraphs. Version 2 deleted navigation first, but nj.gov wraps the whole page inside its navigation bar, so pages came out empty. Version 3 finds the main region first, and only then strips."
@@ -136,19 +138,20 @@ S05:
   - "这个 sidecar 必须小于 1 KB：元数据一旦更大，Bedrock 就会悄悄跳过这个 chunk，却仍然报告任务完成。"
 
 S06:
-- en: "The last container, kb-sync, turns every chunk into a vector. An embedding model, Amazon Titan Text Embeddings v2, reads the chunk and returns 1,024 numbers."
+- en: "The last container, kb-sync, turns every chunk into a vector. An embedding model, Amazon Titan Text Embeddings v2, reads the chunk and returns 1,024 numbers. Titan runs on Bedrock, Amazon's service for using AI models without running them yourself."
   zh:
   - "最后一个容器 kb-sync 把每个 chunk 变成一个向量。"
   - "一个 embedding 模型，Amazon Titan Text Embeddings v2，读入 chunk，输出 1,024 个数字。"
+  - "Titan 运行在 Bedrock 上，Bedrock 是亚马逊的一项服务：不用自己部署，就能调用 AI 模型。"
 
 - en: "Think of those numbers as a direction in a space with 1,024 axes. Chunks with similar meaning point in similar directions, and the angle between two of them, measured by cosine similarity, is how search compares them."
   zh:
   - "可以把这些数字想成一个有 1,024 个坐标轴的空间里的一个方向。"
   - "意思相近的 chunk 指向相近的方向；两个方向之间的夹角用余弦相似度（cosine similarity）来衡量，检索就靠它来比较。"
 
-- en: "The vectors live in an S3 Vectors index called program-kb. On top sits a Bedrock Knowledge Base whose data source is the chunks folder. Its own chunking is switched off, because our chunk container has already done that job."
+- en: "The vectors live in an S3 Vectors index, a store built for searching vectors, called program-kb. On top sits a Bedrock Knowledge Base whose data source is the chunks folder. Its own chunking is switched off, because our chunk container has already done that job."
   zh:
-  - "这些向量存在一个叫 program-kb 的 S3 Vectors 索引里。"
+  - "这些向量存在一个叫 program-kb 的 S3 Vectors 索引里，这是一种专门用来检索向量的存储。"
   - "上面是一个 Bedrock Knowledge Base（知识库），它的数据源就是 chunks 文件夹。"
   - "知识库自带的切块功能是关掉的，因为我们自己的 chunk 容器已经做完了这件事。"
 

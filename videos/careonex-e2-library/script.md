@@ -13,6 +13,9 @@ burned in under the picture). Their on-screen time comes from a reading pace of 
 one idea per sentence. On-screen text stays short (labels, not sentences): the subtitles carry the
 explanation.
 
+Beginner pass (v2): a WHAT IS card the first time a term appears (agent, S3, Markdown, Bedrock), and a
+source tag (READ IN CODE · TEAM NOTES · MEASURED · INFERRED) on every claim, as in E0.
+
 Verified against: `nadirbt/careonex-agents` branch `data-retrieval` at `d96a4ad` (pipeline code is
 the same on `feat/sonic_with_rag` at `eff4a96`). Numbers from re-running the team's own extract and
 chunk code on all 20 sources (`videos/careonex-series/checks/`): 232 chunks, same as the live
@@ -39,7 +42,7 @@ SAY: This episode is about the library: five containers that turn 20 public docu
 SHOW: Map out. A YELLOW question strip: "What is the JACC income limit for one person?" Under it a
 GREEN passage (from the JACC page) with "$4,855 for an individual" highlighted, and a small tag
 "JACC page · nj.gov · 2026".
-SAY: Why build a library at all? When a caller asks about an income limit, the agent must answer from an official document. It is not allowed to answer from memory, because these numbers change every year.
+SAY: Why build a library at all? When a caller asks about an income limit, the agent, the AI assistant on the phone, must answer from an official document. It is not allowed to answer from memory, because these numbers change every year.
 
 SHOW: The passage shrinks to a dot labelled "1 of 232"; the top half of the map returns, and a dot
 travels along the chain from the source list to the Knowledge Base.
@@ -69,9 +72,10 @@ SAY: The source list is the pipeline's only input. To add a document, you add a 
 
 ## S03 · data and ingest → raw/ — `s03_ingest.py` · `Ingest`
 
-SHOW: The GREEN bucket frame `ac215-program-kb-<account-id>` with chips: versioned · encrypted ·
-public documents only.
-SAY: The first container, data, makes sure one S3 bucket exists. It is versioned and encrypted, and it holds public documents only. No caller information ever goes into it.
+SHOW: A "what is S3?" card (bucket = top-level folder, object = a file in it). Then the GREEN bucket
+frame `ac215-program-kb-<account-id>` with chips: keeps old versions · encrypted · public access
+blocked; public documents only.
+SAY: S3 is Amazon's file storage. A bucket is one top-level folder in it, and each file inside is called an object. The first container, data, makes sure the team's bucket exists. It keeps old versions of every file, it is encrypted, and it holds public documents only. No caller information ever goes into it.
 
 SHOW: Two name-spaces side by side: `ac215-*` (course) and `careonex-*` (production, RED). The team
 permission set's S3 resource line `arn:aws:s3:::ac215-*`; its arrow to `careonex-*` is blocked.
@@ -108,7 +112,7 @@ SAY: The text on those pages had not changed. On nj.gov, a bot-protection script
 SHOW: extract (BLUE): raw HTML → [keep the main region] → [strip scripts, navigation, footer,
 forms] → Markdown; raw PDF → [pymupdf4llm] → Markdown with tables. Output `text/…/nj_doas_jacc.html.md`
 with its text hash.
-SAY: That is extract's job. It turns every file into clean text, written as Markdown. The hash of that text is the real signal that a document's content moved.
+SAY: That is extract's job. It turns every file into clean text, written as Markdown: plain text with a few symbols for structure, like a # before a heading. The hash of that text is the real signal that a document's content moved.
 
 SHOW: A version timeline: v1 "trafilatura guesses the content" → RED "dropped nj.gov eligibility
 paragraphs"; v2 "strip navigation first" → RED "nj.gov puts the page inside its navigation bar →
@@ -149,7 +153,7 @@ SAY: Each chunk is stored as its own file, with its own sidecar. That sidecar mu
 
 SHOW: One chunk (JACC eligibility) → ORANGE box "Titan Text Embeddings v2" → a column of numbers
 `[0.021, -0.113, 0.067, …]` labelled "1,024 numbers".
-SAY: The last container, kb-sync, turns every chunk into a vector. An embedding model, Amazon Titan Text Embeddings v2, reads the chunk and returns 1,024 numbers.
+SAY: The last container, kb-sync, turns every chunk into a vector. An embedding model, Amazon Titan Text Embeddings v2, reads the chunk and returns 1,024 numbers. Titan runs on Bedrock, Amazon's service for using AI models without running them yourself.
 
 SHOW: A 2D picture of the space (caption: "1,024 directions, drawn in 2"): chunk dots in clusters
 (JACC limits, Medicare home health, VA benefits); two arrows from the origin and the angle between
@@ -158,7 +162,7 @@ SAY: Think of those numbers as a direction in a space with 1,024 axes. Chunks wi
 
 SHOW: The stack builds: S3 Vectors bucket + index `program-kb` (1,024 dims · cosine · float32) ←
 Bedrock Knowledge Base `ac215-program-kb` → data source `chunks/` with "chunking: NONE".
-SAY: The vectors live in an S3 Vectors index called program-kb. On top sits a Bedrock Knowledge Base whose data source is the chunks folder. Its own chunking is switched off, because our chunk container has already done that job.
+SAY: The vectors live in an S3 Vectors index, a store built for searching vectors, called program-kb. On top sits a Bedrock Knowledge Base whose data source is the chunks folder. Its own chunking is switched off, because our chunk container has already done that job.
 
 SHOW: An ingestion job bar fills to 232 / 232 → "COMPLETE". `config/knowledge-base.json` is written
 (knowledge_base_id …) and an arrow points to a dimmed `retrieve` box: "next episode".

@@ -15,7 +15,7 @@ from explainer import style as S
 from explainer.scene import VoiceScene
 
 from common import (CATALOG, CODE_C, DATA_C, KINDS, NARRATION, PUBLISHERS, QUERY_C, chip, container,
-                    doc_glyph, mono, sans, serif, text_panel)
+                    doc_glyph, mono, sans, serif, source_tag, text_panel)
 
 SAY = NARRATION["S02"]
 
@@ -44,6 +44,8 @@ class Catalog(VoiceScene):
             cols.next_to(head, DOWN, buff=0.45)
             self.play(FadeIn(head, shift=DOWN * 0.2), run_time=0.8)
             self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.15) for r in rows], lag_ratio=0.12), run_time=3.0)
+            src = source_tag("code", "services/data/catalog/ragfile_list.csv").to_corner(DL, buff=0.35)
+            self.play(FadeIn(src), run_time=0.4)
             self.wait(max(0.2, vo.remaining() - 0.3))
 
         # 2 ---------------------------------------------------------------- by publisher, then by kind
@@ -61,7 +63,7 @@ class Catalog(VoiceScene):
                 tick = Line(g.get_bottom() + DOWN * 0.05, t.get_top() + UP * 0.05, color=S.GREY_DARK,
                             stroke_width=2)
                 labels.append(VGroup(tick, t))
-            self.play(FadeOut(head[1]),
+            self.play(FadeOut(head[1]), FadeOut(src),
                       LaggedStart(*[FadeOut(rows[i], target_position=glyphs[i].get_center(), scale=0.4)
                                     for i in range(len(rows))], lag_ratio=0.04),
                       LaggedStart(*[FadeIn(glyphs[i], scale=0.6) for i in range(len(rows))], lag_ratio=0.04),

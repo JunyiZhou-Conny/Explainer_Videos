@@ -1,0 +1,7 @@
+00:00 Two halves
+00:49 The source list
+01:44 data and ingest → raw/
+02:52 extract → text/
+04:33 chunk → chunks/
+06:05 kb-sync → vectors
+07:28 What is solid, what is open

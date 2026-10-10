@@ -18,7 +18,7 @@ from explainer import style as S
 from explainer.scene import VoiceScene
 
 from common import (BAD_C, CODE_C, DATA_C, NARRATION, OK_C, QUERY_C, REPORT, SERIES, bar_chart, chip,
-                    container, doc_glyph, mono, sans, serif, store, text_panel)
+                    container, doc_glyph, mono, sans, serif, source_tag, store, text_panel)
 
 import json
 
@@ -192,6 +192,8 @@ class Chunk(VoiceScene):
             half = SurroundingRectangle(VGroup(chart[0], chart[1]), color=QUERY_C, buff=0.06, corner_radius=0.06)
             pct = mono("108 / 232", 26, QUERY_C).next_to(counter, DOWN, buff=0.5)
             self.play(Create(half), FadeIn(pct), run_time=0.9)
+            ctag = source_tag("measured").next_to(counter, UP, buff=0.3)
+            self.play(FadeIn(ctag), run_time=0.4)
             vo.wait_until("Most chunks")
             sizes = [c["chars"] for c in CHUNKS["chunks"]]
             med = int(statistics.median(sizes))
@@ -229,5 +231,7 @@ class Chunk(VoiceScene):
             ok = VGroup(serif("… and the job still reports", 26, S.GREY), mono("COMPLETE", 26, OK_C)).arrange(RIGHT, buff=0.2)
             ok.next_to(ghost[1], DOWN, buff=0.3).align_to(bar, LEFT)
             self.play(FadeIn(ok), run_time=0.8)
+            wtag = source_tag("code", "the comment in services/chunk/careonex_chunk/writer.py").to_corner(DL, buff=0.35)
+            self.play(FadeIn(wtag), run_time=0.4)
             self.wait(max(0.1, vo.remaining() - 0.2))
         self.play(FadeOut(*self.mobjects), run_time=0.8)

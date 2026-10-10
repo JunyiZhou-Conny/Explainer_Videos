@@ -1,0 +1,215 @@
+# Chinese subtitles for CareOneX E0 (no narrator: shown only), sentence-aligned to script.md.
+# Rules: GLOSSARY.md (shared with the other CareOneX episodes).
+
+S01:
+- en: "Marco sent the team these two blocks of commands. They start the CareOneX voice app on his laptop. If they look like a wall of noise, that is normal."
+  zh:
+  - "Marco 给团队发了这两段命令。"
+  - "它们会在他的笔记本电脑上启动 CareOneX 语音应用。"
+  - "如果你看着像一堵乱码墙，这很正常。"
+
+- en: "By the end of this video, every line will mean something. Each one turns out to be a small lesson about how the whole system fits together."
+  zh:
+  - "看完这期视频，每一行你都会看懂。"
+  - "每一行背后，都是理解整个系统怎么拼在一起的一小课。"
+
+- en: "One warning first. We cannot log into the team's AWS account. So everything here is learned from the code on GitHub and the team's notes. Each claim carries a tag, and when we are guessing, the tag says INFERRED, with our reason."
+  zh:
+  - "先提醒一句。"
+  - "我们登录不了团队的 AWS 账号。"
+  - "所以这里的一切都来自 GitHub 上的代码和团队写的文档。"
+  - "每个说法都带一个标签；如果是我们推测的，标签会写 INFERRED（推测），并给出理由。"
+
+S02:
+- en: "The two blocks start two programs. Terminal 1 starts retrieve, a small search server. Terminal 2 starts voice, the program you actually talk to."
+  zh:
+  - "这两段命令启动两个程序。"
+  - "终端 1 启动 retrieve，一个小型检索服务器。"
+  - "终端 2 启动 voice，也就是你真正对着说话的那个程序。"
+
+- en: "Voice listens to your microphone and plays the reply. When it needs a fact, it asks retrieve, on the same laptop. Both programs also talk to Amazon's cloud, AWS, where the AI models and the document library live."
+  zh:
+  - "voice 听你的麦克风，再把回答播放出来。"
+  - "需要查资料时，它就去问同一台电脑上的 retrieve。"
+  - "两个程序还都会连到亚马逊的云，也就是 AWS，AI 模型和文档库都在那里。"
+
+- en: "A terminal is a window where you type commands instead of clicking. Marco is on Windows, using PowerShell. We can tell from the way his lines are written."
+  zh:
+  - "终端（terminal）就是一个用打字输入命令、而不是用鼠标点的窗口。"
+  - "Marco 用的是 Windows 上的 PowerShell。"
+  - "从他命令的写法就能看出来。"
+
+S03:
+- en: "Line 1 is cd, short for change directory. It moves the terminal into the project folder. Every later command looks for its files relative to this folder."
+  zh:
+  - "第 1 行是 cd，意思是 change directory（切换目录）。"
+  - "它把终端带进项目文件夹。"
+  - "后面的每条命令，都以这个文件夹为起点去找文件。"
+
+- en: "The folder is Marco's own copy of the team's code, with his newest changes in it. We infer that, because the next commands expect exactly the folders of the team repository."
+  zh:
+  - "这个文件夹是 Marco 自己的一份团队代码，里面有他最新的改动。"
+  - "这是我们推测的，因为后面的命令需要的正好是团队仓库里的那些文件夹。"
+
+S04:
+- en: "Most of the other lines look like this: dollar sign, env, colon, a name, equals, a value. Each one sets an environment variable."
+  zh:
+  - "其余大部分行都长这样：美元符号、env、冒号、一个名字、等号、一个值。"
+  - "每一行设置一个环境变量（environment variable）。"
+
+- en: "Think of environment variables as sticky notes on the terminal window. Every program started from that window can read them. The CareOneX code reads its settings this way, so nothing about Marco's laptop is written into the code."
+  zh:
+  - "可以把环境变量想成贴在终端窗口上的便利贴。"
+  - "从这个窗口启动的每个程序都能读到它们。"
+  - "CareOneX 的代码就是这样读取设置的，所以代码里不会写死任何跟 Marco 电脑有关的东西。"
+
+- en: "The notes belong to one window only. That is why both blocks set the same AWS lines again."
+  zh:
+  - "便利贴只属于一个窗口。"
+  - "所以两段命令里都重复设置了同样的 AWS 那几行。"
+
+S05:
+- en: "An AWS account is the team's own fenced-off corner of Amazon's cloud. Everything CareOneX uses lives inside it, and it has one bill. The team's notes show a budget of 30 dollars a month for the AI models."
+  zh:
+  - "AWS 账号就是团队在亚马逊云里圈出来的一块自己的地方。"
+  - "CareOneX 用到的所有东西都在里面，共用一张账单。"
+  - "团队文档里写着：AI 模型的预算是每月 30 美元。"
+
+- en: "Nobody shares a password. Each teammate signs in through a single sign-on portal, called SSO, with their own email and a second factor. After signing in, everyone gets the same set of permissions, named AC215. It covers the AI models, the course's own storage, and the knowledge base, and nothing in the company's production systems."
+  zh:
+  - "没有人共用密码。"
+  - "每个组员都通过一个统一登录门户，也就是 SSO（单点登录），用自己的邮箱加第二重验证登录。"
+  - "登录之后，每个人得到同一组权限，名字叫 AC215。"
+  - "它包括 AI 模型、课程自己的存储和知识库，但不包括公司生产环境里的任何东西。"
+
+- en: "A profile is a named entry in a settings file on the laptop. \"careonex-team\" says: log in through that portal, into the team account, with the AC215 permissions. The command aws sso login opens a browser, you approve, and the laptop receives temporary keys that last 8 hours."
+  zh:
+  - "profile（配置档）是电脑上一个设置文件里的一个有名字的条目。"
+  - "“careonex-team”的意思是：通过那个门户，登录团队账号，使用 AC215 权限。"
+  - "aws sso login 这条命令会打开浏览器，你点同意，电脑就拿到一把有效期 8 小时的临时钥匙。"
+
+- en: "The CareOneX code finds those temporary keys through the profile name. When they expire, the voice program stops with a one-line message telling you to log in again."
+  zh:
+  - "CareOneX 的代码通过 profile 的名字找到这些临时钥匙。"
+  - "钥匙过期后，voice 程序会停下来，用一行提示告诉你重新登录。"
+
+S06:
+- en: "AWS runs data centers in many regions around the world. Each region is its own copy of the cloud. The team's models and storage are all in us-east-1, in Northern Virginia, so every program must be told to go there."
+  zh:
+  - "AWS 在世界各地的很多区域（region）都有数据中心。"
+  - "每个区域都是一套独立的云。"
+  - "团队的模型和存储都在 us-east-1，也就是北弗吉尼亚，所以每个程序都得被告知去那里。"
+
+S07:
+- en: "Now the strangest line: set HOME to HOME. It looks like it does nothing. It fixes a Windows problem."
+  zh:
+  - "接下来是最奇怪的一行：把 HOME 设成 HOME。"
+  - "看起来什么也没做。"
+  - "其实它修的是一个 Windows 上的问题。"
+
+- en: "The retrieve program will run inside a container, a sealed box. To use your login, the box needs your keys folder. The team's Docker file finds that folder through a variable named HOME."
+  zh:
+  - "retrieve 程序会在一个容器（container）里运行，就像一个密封的盒子。"
+  - "要用你的登录，盒子需要拿到你放钥匙的文件夹。"
+  - "团队的 Docker 配置文件是通过一个叫 HOME 的变量找到这个文件夹的。"
+
+- en: "On a Mac, HOME is always set. On Windows it is not, so the box would look for keys in an empty path and fail to log in. The line copies PowerShell's own home folder into the HOME sticky note. Only terminal 1 needs it, because only terminal 1 uses Docker."
+  zh:
+  - "在 Mac 上，HOME 一直都有。"
+  - "在 Windows 上却没有，于是盒子会去一个空路径里找钥匙，登录就失败了。"
+  - "这一行把 PowerShell 自己知道的用户文件夹，抄到 HOME 这张便利贴上。"
+  - "只有终端 1 需要它，因为只有终端 1 用了 Docker。"
+
+S08:
+- en: "A Knowledge Base is an Amazon service that stores the team's documents as small searchable passages, and searches them on request. Every knowledge base has an ID, a short code like this one."
+  zh:
+  - "Knowledge Base（知识库）是亚马逊的一项服务：它把团队的文档存成一小段一小段可检索的文字，有人问就去搜。"
+  - "每个知识库都有一个 ID，就是像这样的一串短代码。"
+
+- en: "The retrieve code looks for this sticky note first. If it is missing, it reads the ID from a file in the team's storage, written there by the container that built the library."
+  zh:
+  - "retrieve 的代码会先找这张便利贴。"
+  - "如果没有，它就去团队存储里的一个文件读 ID，这个文件是搭建资料库的那个容器写进去的。"
+
+- en: "Why set it by hand? We see two possible reasons. It saves one read from storage. Or Marco points retrieve at a different knowledge base, perhaps one built for his own experiments. His code will tell us which."
+  zh:
+  - "为什么要手动设置？"
+  - "我们想到两种可能。"
+  - "一是省掉一次读存储。"
+  - "二是 Marco 让 retrieve 指向另一个知识库，也许是为他自己的实验专门建的。"
+  - "等他的代码上传了，就知道是哪一种。"
+
+S09:
+- en: "Docker packs a program with everything it needs into an image, like a frozen lunch box. A container is that box, running. It runs the same on Marco's laptop, on yours, and on a server."
+  zh:
+  - "Docker 把一个程序和它需要的一切打包成一个镜像（image），就像一个冷冻好的便当盒。"
+  - "容器就是这个盒子跑起来的样子。"
+  - "它在 Marco 的电脑上、你的电脑上、服务器上，运行起来都一样。"
+
+- en: "Docker compose reads the team's file that describes all the containers. The word up starts one. The option build first rebuilds its image, so Marco's newest code is inside. And retrieve picks just the search server."
+  zh:
+  - "docker compose 读取团队那个描述所有容器的文件。"
+  - "up 表示启动。"
+  - "build 这个选项会先重新构建镜像，这样 Marco 最新的代码就在里面。"
+  - "而 retrieve 表示只启动检索服务器这一个。"
+
+- en: "Inside the box, retrieve becomes a small web server. It listens on port 8080, a numbered door. The Docker file connects that door to the same door on the laptop, so other programs can knock."
+  zh:
+  - "在盒子里，retrieve 变成一个小小的网页服务器。"
+  - "它在 8080 端口（port）上等待，端口就像一扇编了号的门。"
+  - "Docker 配置文件把这扇门接到电脑上同一个号码的门，这样别的程序就能来敲门。"
+
+S10:
+- en: "In terminal 2, the first new note tells voice where retrieve is. 127.0.0.1 always means this same computer, and 8080 is the door retrieve opened. Without this note, the voice app answers that the knowledge base is unavailable."
+  zh:
+  - "在终端 2，第一张新便利贴告诉 voice：retrieve 在哪儿。"
+  - "127.0.0.1 永远指的是这台电脑本身，8080 就是 retrieve 打开的那扇门。"
+  - "没有这张便利贴，语音应用就会回答说知识库不可用。"
+
+- en: "The next note, search mode feedback, appears nowhere in the code on GitHub. We searched all four branches. So it belongs to Marco's new work. It probably switches between ways of searching. We will explain it once his code is uploaded."
+  zh:
+  - "下一张便利贴，搜索模式 feedback，在 GitHub 的代码里根本找不到。"
+  - "我们把四个分支都搜了一遍。"
+  - "所以它属于 Marco 的新工作。"
+  - "它大概是在几种检索方式之间切换的开关。"
+  - "等他的代码上传后，我们再来讲。"
+
+S11:
+- en: "The last line is the longest. Let's take it apart."
+  zh:
+  - "最后一行最长。"
+  - "我们把它拆开来看。"
+
+- en: "uv is a tool that sets up the exact Python and libraries a project needs, then runs a command inside that setup. Python 3.12 is the oldest version Amazon's streaming library accepts. And the directory option says: use the voice project."
+  zh:
+  - "uv 是一个工具：它把项目需要的那个 Python 版本和那些库准备好，再在这个环境里运行命令。"
+  - "Python 3.12 是亚马逊那个流式传输库能接受的最低版本。"
+  - "directory 选项的意思是：用 voice 这个项目。"
+
+- en: "extra mic adds the microphone library. It is optional on purpose: a container has no microphone or speakers, so the voice program runs directly on the laptop instead."
+  zh:
+  - "extra mic 会额外装上麦克风库。"
+  - "它故意做成可选的：容器里没有麦克风也没有扬声器，所以 voice 程序直接在电脑上跑。"
+
+- en: "Finally, the quoted part is a tiny Python program that starts the voice session. The team's instructions use a shorter command, but that one first checks for a kind of saved key file that an SSO login may never create. Calling the session directly skips that check. That is our inference; it fits the code exactly."
+  zh:
+  - "最后，引号里的部分是一个很小的 Python 程序，作用是启动语音会话。"
+  - "团队的说明文档用的是一条更短的命令，但它会先检查一种保存下来的钥匙文件，而 SSO 登录可能根本不会生成这种文件。"
+  - "直接调用会话，就跳过了这个检查。"
+  - "这是我们的推测，但和代码完全吻合。"
+
+S12:
+- en: "Put together, it looks like this. Both programs use your 8-hour login. You speak, voice streams it to Nova 2 Sonic, Nova asks for a fact, voice asks retrieve, retrieve searches the knowledge base, and Nova speaks the answer."
+  zh:
+  - "放在一起，就是这样。"
+  - "两个程序都用你那 8 小时的登录。"
+  - "你说话，voice 把声音实时传给 Nova 2 Sonic；Nova 要查资料，voice 就去问 retrieve，retrieve 去搜知识库，然后 Nova 把答案说出来。"
+
+- en: "Here is every new word from this video on one card. Pause here if you want to keep it."
+  zh:
+  - "这期视频里所有的新词，都在这一张卡片上。"
+  - "想留着的话，可以在这里暂停。"
+
+- en: "Next, the big picture: what CareOneX is for, and who on the team built which part."
+  zh:
+  - "下一集讲全局：CareOneX 是干什么的，团队里谁做了哪一部分。"

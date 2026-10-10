@@ -19,7 +19,7 @@ from explainer import style as S
 from explainer.scene import VoiceScene
 
 from common import (AWS_C, BAD_C, CODE_C, DATA_C, NARRATION, OK_C, QUERY_C, aws, chip, container, dim,
-                    doc_glyph, link, mono, sans, serif, store, text_panel)
+                    doc_glyph, link, mono, sans, serif, source_tag, store, text_panel, what_is)
 
 SAY = NARRATION["S06"]
 
@@ -56,11 +56,15 @@ class Vectors(VoiceScene):
             self.play(GrowArrow(a1.arrow), FadeIn(titan), run_time=0.8)
             self.play(GrowArrow(a2.arrow), FadeIn(vec), run_time=0.9)
             self.play(FadeIn(n, shift=DOWN * 0.1), FadeIn(note), run_time=0.6)
+            vo.wait_until("Titan runs on Bedrock")
+            bcard = what_is("Bedrock", ["Amazon's service for using AI models", "without running them yourself"],
+                            width=6.0, size=24).to_edge(DOWN, buff=0.4)
+            self.play(FadeIn(bcard, shift=UP * 0.15), run_time=0.6)
             self.wait(max(0.1, vo.remaining() - 0.2))
 
         # 2 ---------------------------------------------------------------- directions and angles
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(chunk, titan, a1, a2, note)), VGroup(vec, n).animate.scale(0.6).to_corner(UR, buff=0.55),
+            self.play(FadeOut(VGroup(chunk, titan, a1, a2, note, bcard)), VGroup(vec, n).animate.scale(0.6).to_corner(UR, buff=0.55),
                       run_time=0.8)
             origin = DOWN * 1.9 + LEFT * 1.0
             plane = VGroup(Line(origin + LEFT * 4.5, origin + RIGHT * 6.5, color=S.GREY_DARK),
@@ -136,6 +140,8 @@ class Vectors(VoiceScene):
             if done.get_right()[0] > 6.5:
                 done.next_to(cnt, DOWN, buff=0.15)
             self.play(FadeIn(done), run_time=0.5)
+            itag = source_tag("notes", "232 vectors: session notes, 2026-10-07").to_corner(DR, buff=0.35)
+            self.play(FadeIn(itag), run_time=0.4)
             vo.wait_until("Then it writes")
             cfg = text_panel(['config/knowledge-base.json', '{"knowledge_base_id": "…",',
                               ' "data_source_id": "…",', ' "index_name": "program-kb",',
@@ -172,6 +178,8 @@ class Vectors(VoiceScene):
                          VGroup(mono("OpenSearch", 24), mono("tens of ms", 24, S.GREY)).arrange(RIGHT, buff=0.3)
                          ).arrange(DOWN, buff=0.2, aligned_edge=LEFT).move_to(DOWN * 2.0)
             self.play(FadeIn(lat, shift=UP * 0.2), run_time=0.9)
+            ktag = source_tag("notes", "services/kb-sync/README.md").to_corner(DR, buff=0.35)
+            self.play(FadeIn(ktag), run_time=0.4)
             vo.wait_until("and on a phone call")
             phone = serif("the team's target: a turn under 1 second", 26, S.GREY).next_to(lat, RIGHT, buff=0.8)
             if phone.get_right()[0] > 6.5:
