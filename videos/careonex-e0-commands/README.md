@@ -1,8 +1,9 @@
 # CareOneX E0 · Decoding the start-up commands
 
 *Every word of the two command blocks that start the CareOneX voice app, for a complete beginner.*
-Part of [CareOneX, layer by layer](../careonex-series/SERIES.md); watch this one first. About 9
-minutes, no narrator: English on screen, bilingual subtitles (中文 above, English below) burned in.
+Part of [CareOneX, layer by layer](../careonex-series/SERIES.md); watch this one first. About 7
+minutes, narrated (English voice over quiet background music), with bilingual subtitles (中文 above,
+English below) burned in.
 
 **Watch:** `output/careonex-e0-commands.zh-en.mp4`.
 
