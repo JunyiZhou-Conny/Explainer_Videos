@@ -358,225 +358,246 @@ written there by the container
 that built the library.
 
 77
-00:05:32,966 --> 00:05:34,319
+00:05:32,966 --> 00:05:34,284
 Why set it by hand?
 
 78
-00:05:34,639 --> 00:05:36,744
-We see two possible reasons.
+00:05:34,604 --> 00:05:39,272
+We had guessed two reasons:
+to save one read from storage,
 
 79
-00:05:37,064 --> 00:05:39,420
-It saves one read from storage.
+00:05:39,272 --> 00:05:43,376
+or to point retrieve
+at a different knowledge base.
 
 80
-00:05:39,740 --> 00:05:44,253
-Or Marco points retrieve
-at a different knowledge base,
+00:05:43,696 --> 00:05:47,553
+Marco's branch,
+pushed later that day, settles it.
 
 81
-00:05:44,253 --> 00:05:47,699
-perhaps one built for his own experiments.
+00:05:47,873 --> 00:05:51,640
+This ID is one
+of three test libraries he built
 
 82
-00:05:48,019 --> 00:05:50,361
-His code will tell us which.
+00:05:51,640 --> 00:05:54,925
+to compare ways of cutting the documents.
 
 83
-00:05:51,400 --> 00:05:56,699
+00:05:55,245 --> 00:05:59,512
+Without this line,
+retrieve would use the main library.
+
+84
+00:05:59,832 --> 00:06:02,126
+Episode 6 explains his test.
+
+85
+00:06:03,167 --> 00:06:08,466
 Docker packs a program
 with everything it needs into an image,
 
-84
-00:05:56,699 --> 00:05:58,750
+86
+00:06:08,466 --> 00:06:10,517
 like a frozen lunch box.
 
-85
-00:05:59,070 --> 00:06:01,713
+87
+00:06:10,837 --> 00:06:13,480
 A container is that box, running.
 
-86
-00:06:02,033 --> 00:06:07,437
+88
+00:06:13,800 --> 00:06:19,204
 It runs the same on Marco's laptop,
 on yours, and on a server.
 
-87
-00:06:07,683 --> 00:06:12,885
+89
+00:06:19,450 --> 00:06:24,652
 Docker compose reads the team's file
 that describes all the containers.
 
-88
-00:06:13,205 --> 00:06:14,726
+90
+00:06:24,972 --> 00:06:26,493
 The word up starts one.
 
-89
-00:06:15,046 --> 00:06:20,631
+91
+00:06:26,813 --> 00:06:32,398
 The option build first rebuilds its image,
 so Marco's newest code is inside.
 
-90
-00:06:20,951 --> 00:06:24,173
+92
+00:06:32,718 --> 00:06:35,940
 And retrieve picks just the search server.
 
-91
-00:06:24,417 --> 00:06:28,571
+93
+00:06:36,184 --> 00:06:40,338
 Inside the box,
 retrieve becomes a small web server.
 
-92
-00:06:28,891 --> 00:06:32,116
+94
+00:06:40,658 --> 00:06:43,883
 It listens on port 8080, a numbered door.
 
-93
-00:06:32,436 --> 00:06:38,066
+95
+00:06:44,203 --> 00:06:49,832
 The Docker file connects that door
 to the same door on the laptop,
 
-94
-00:06:38,066 --> 00:06:40,454
+96
+00:06:49,832 --> 00:06:52,221
 so other programs can knock.
 
-95
-00:06:41,500 --> 00:06:44,845
+97
+00:06:53,267 --> 00:06:56,612
 In terminal 2,
 the first new note tells voice
 
-96
-00:06:44,845 --> 00:06:46,183
+98
+00:06:56,612 --> 00:06:57,950
 where retrieve is.
 
-97
-00:06:46,503 --> 00:06:52,417
+99
+00:06:58,270 --> 00:07:04,184
 127.0.0.1 always means this same computer,
 and 8080 is the door retrieve opened.
 
-98
-00:06:52,737 --> 00:06:58,895
+100
+00:07:04,504 --> 00:07:10,662
 Without this note, the voice app answers
 that the knowledge base is unavailable.
 
-99
-00:06:59,133 --> 00:07:04,877
-The next note, search mode feedback,
-appears nowhere in the code on GitHub.
-
-100
-00:07:05,197 --> 00:07:07,351
-We searched all four branches.
-
 101
-00:07:07,671 --> 00:07:10,144
-So it belongs to Marco's new work.
+00:07:10,900 --> 00:07:13,860
+The next note picks how voice searches.
 
 102
-00:07:10,464 --> 00:07:13,974
-It probably switches
-between ways of searching.
+00:07:14,180 --> 00:07:18,781
+When we first looked,
+it was nowhere in the code on GitHub.
 
 103
-00:07:14,294 --> 00:07:17,885
-We will explain it once
-his code is uploaded.
+00:07:19,101 --> 00:07:23,046
+Marco's branch,
+pushed later that day, explains it.
 
 104
-00:07:18,933 --> 00:07:21,448
-The last line is the longest.
+00:07:23,366 --> 00:07:28,951
+Feedback runs a first search,
+may add one more, and merges the results.
 
 105
-00:07:21,768 --> 00:07:23,658
-Let's take it apart.
+00:07:29,271 --> 00:07:31,493
+Baseline runs one search only.
 
 106
-00:07:23,900 --> 00:07:29,595
+00:07:31,813 --> 00:07:36,003
+Feedback is also the default
+when the note is missing.
+
+107
+00:07:36,323 --> 00:07:38,702
+Episode 6 shows what it does.
+
+108
+00:07:39,750 --> 00:07:42,265
+The last line is the longest.
+
+109
+00:07:42,585 --> 00:07:44,475
+Let's take it apart.
+
+110
+00:07:44,717 --> 00:07:50,412
 uv is a tool that sets up the exact Python
 and libraries a project needs,
 
-107
-00:07:29,595 --> 00:07:32,559
+111
+00:07:50,412 --> 00:07:53,376
 then runs a command inside that setup.
 
-108
-00:07:32,879 --> 00:07:38,121
+112
+00:07:53,696 --> 00:07:58,938
 Python 3.12 is the oldest version
 Amazon's streaming library accepts.
 
-109
-00:07:38,441 --> 00:07:42,652
+113
+00:07:59,258 --> 00:08:03,469
 And the directory option says:
 use the voice project.
 
-110
-00:07:42,900 --> 00:07:45,604
+114
+00:08:03,717 --> 00:08:06,421
 extra mic adds the microphone library.
 
-111
-00:07:45,924 --> 00:07:51,316
+115
+00:08:06,741 --> 00:08:12,132
 It is optional on purpose:
 a container has no microphone or speakers,
 
-112
-00:07:51,316 --> 00:07:55,769
+116
+00:08:12,132 --> 00:08:16,586
 so the voice program runs directly
 on the laptop instead.
 
-113
-00:07:56,016 --> 00:08:02,284
+117
+00:08:16,833 --> 00:08:23,101
 Finally, the quoted part is a tiny Python
 program that starts the voice session.
 
-114
-00:08:02,604 --> 00:08:06,320
+118
+00:08:23,421 --> 00:08:27,136
 The team's instructions
 use a shorter command,
 
-115
-00:08:06,320 --> 00:08:10,681
+119
+00:08:27,136 --> 00:08:31,498
 but that one first checks
 for a kind of saved key file
 
-116
-00:08:10,681 --> 00:08:13,508
+120
+00:08:31,498 --> 00:08:34,325
 that an SSO login may never create.
 
-117
-00:08:13,828 --> 00:08:17,331
+121
+00:08:34,645 --> 00:08:38,148
 Calling the session directly
 skips that check.
 
-118
-00:08:17,651 --> 00:08:21,556
+122
+00:08:38,468 --> 00:08:42,373
 That is our inference;
 it fits the code exactly.
 
-119
-00:08:22,600 --> 00:08:24,989
+123
+00:08:43,417 --> 00:08:45,806
 Put together, it looks like this.
 
-120
-00:08:25,309 --> 00:08:27,937
+124
+00:08:46,126 --> 00:08:48,754
 Both programs use your 8-hour login.
 
-121
-00:08:28,257 --> 00:08:35,234
+125
+00:08:49,074 --> 00:08:56,051
 You speak, voice streams it to Nova 2 Sonic,
 Nova asks for a fact, voice asks retrieve,
 
-122
-00:08:35,234 --> 00:08:40,447
+126
+00:08:56,051 --> 00:09:01,264
 retrieve searches the knowledge base,
 and Nova speaks the answer.
 
-123
-00:08:40,683 --> 00:08:45,682
+127
+00:09:01,500 --> 00:09:06,499
 Here is every new word
 from this video on one card.
 
-124
-00:08:46,002 --> 00:08:49,481
+128
+00:09:06,819 --> 00:09:10,298
 Pause here if you want to keep it.
 
-125
-00:08:49,717 --> 00:08:57,156
+129
+00:09:10,534 --> 00:09:17,973
 Next, the big picture: what CareOneX is for,
 and who on the team built which part.
 

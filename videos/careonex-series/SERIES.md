@@ -148,7 +148,7 @@ Grounding rules in the system prompt and the tool guidance; `--expect-tool` smok
 the test passed with zero tool calls); the intake schema with a confidence per field (Junyi's
 `feat/prompt-tuning`). Marco's text-to-text evaluation (word cosine, WER, phrases) is in E6 S07.
 
-### E6 · Measuring search: Marco's experiments (~11 min, built)
+### E6 · Measuring search: Marco's experiments (~10 min, built)
 
 How a search is scored (precision@5, MRR, NDCG, and why they need human grades); the A/B/C chunking
 test on three staging Knowledge Bases (25 questions, 375 graded passages; A and C ahead, B, the new

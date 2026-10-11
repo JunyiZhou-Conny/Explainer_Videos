@@ -36,24 +36,24 @@ On a Mac, HOME is always set. On Windows it is not, so the box would look for ke
 ## 05:02 — Which library? CAREONEX_KB_ID
 A Knowledge Base is an Amazon service that stores the team's documents as small searchable passages, and searches them on request. Every knowledge base has an ID, a short code like this one.
 The retrieve code looks for this sticky note first. If it is missing, it reads the ID from a file in the team's storage, written there by the container that built the library.
-Why set it by hand? We see two possible reasons. It saves one read from storage. Or Marco points retrieve at a different knowledge base, perhaps one built for his own experiments. His code will tell us which.
+Why set it by hand? We had guessed two reasons: to save one read from storage, or to point retrieve at a different knowledge base. Marco's branch, pushed later that day, settles it. This ID is one of three test libraries he built to compare ways of cutting the documents. Without this line, retrieve would use the main library. Episode 6 explains his test.
 
-## 05:51 — Boxes: docker compose up --build retrieve
+## 06:03 — Boxes: docker compose up --build retrieve
 Docker packs a program with everything it needs into an image, like a frozen lunch box. A container is that box, running. It runs the same on Marco's laptop, on yours, and on a server.
 Docker compose reads the team's file that describes all the containers. The word up starts one. The option build first rebuilds its image, so Marco's newest code is inside. And retrieve picks just the search server.
 Inside the box, retrieve becomes a small web server. It listens on port 8080, a numbered door. The Docker file connects that door to the same door on the laptop, so other programs can knock.
 
-## 06:41 — Terminal 2: where to ask, and how
+## 06:53 — Terminal 2: where to ask, and how
 In terminal 2, the first new note tells voice where retrieve is. 127.0.0.1 always means this same computer, and 8080 is the door retrieve opened. Without this note, the voice app answers that the knowledge base is unavailable.
-The next note, search mode feedback, appears nowhere in the code on GitHub. We searched all four branches. So it belongs to Marco's new work. It probably switches between ways of searching. We will explain it once his code is uploaded.
+The next note picks how voice searches. When we first looked, it was nowhere in the code on GitHub. Marco's branch, pushed later that day, explains it. Feedback runs a first search, may add one more, and merges the results. Baseline runs one search only. Feedback is also the default when the note is missing. Episode 6 shows what it does.
 
-## 07:18 — The long last line: uv run
+## 07:39 — The long last line: uv run
 The last line is the longest. Let's take it apart.
 uv is a tool that sets up the exact Python and libraries a project needs, then runs a command inside that setup. Python 3.12 is the oldest version Amazon's streaming library accepts. And the directory option says: use the voice project.
 extra mic adds the microphone library. It is optional on purpose: a container has no microphone or speakers, so the voice program runs directly on the laptop instead.
 Finally, the quoted part is a tiny Python program that starts the voice session. The team's instructions use a shorter command, but that one first checks for a kind of saved key file that an SSO login may never create. Calling the session directly skips that check. That is our inference; it fits the code exactly.
 
-## 08:22 — The whole picture
+## 08:43 — The whole picture
 Put together, it looks like this. Both programs use your 8-hour login. You speak, voice streams it to Nova 2 Sonic, Nova asks for a fact, voice asks retrieve, retrieve searches the knowledge base, and Nova speaks the answer.
 Here is every new word from this video on one card. Pause here if you want to keep it.
 Next, the big picture: what CareOneX is for, and who on the team built which part.

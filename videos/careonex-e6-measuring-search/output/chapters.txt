@@ -1,0 +1,8 @@
+00:00 What is on Marco's branch
+00:38 Scoring a search
+01:35 Three ways to cut
+02:29 What the chunking test shows
+03:38 Feedback search
+05:51 What the 40-question run shows
+06:56 Checking the spoken answer
+07:48 Fixes, and what is still open

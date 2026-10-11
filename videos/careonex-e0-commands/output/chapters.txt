@@ -6,7 +6,7 @@
 03:54 Where in the world: the region
 04:13 The strange one: $env:HOME = $HOME
 05:02 Which library? CAREONEX_KB_ID
-05:51 Boxes: docker compose up --build retrieve
-06:41 Terminal 2: where to ask, and how
-07:18 The long last line: uv run
-08:22 The whole picture
+06:03 Boxes: docker compose up --build retrieve
+06:53 Terminal 2: where to ask, and how
+07:39 The long last line: uv run
+08:43 The whole picture

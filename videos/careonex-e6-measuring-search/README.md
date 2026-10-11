@@ -2,7 +2,7 @@
 
 *Chunking, feedback search, merging and answer checks: what Marco changed, and what the evidence on
 his branch does and does not show.* Part of the series [CareOneX, layer by layer](../careonex-series/SERIES.md).
-About 11 minutes, no narrator: English on screen, bilingual subtitles (中文 above, English below) burned in.
+About 10 minutes, no narrator: English on screen, bilingual subtitles (中文 above, English below) burned in.
 Watch after E0 and E2.
 
 **Watch:** `output/careonex-e6-measuring-search.zh-en.mp4` (subtitles burned in). The clean picture is
