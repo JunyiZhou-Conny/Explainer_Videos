@@ -1,0 +1,147 @@
+[Script Info]
+Title: CareOneX E6 · Measuring search: Marco's experiments with chunking, feedback search and answer checks
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.24,Bilingual,,0,0,0,,Marco 的分支是一次很大的提交（commit）\N{\fs33\c&H00C8C0B8&\bord1.4}Marco's branch arrived as one large commit:
+Dialogue: 0,0:00:03.24,0:00:06.02,Bilingual,,0,0,0,,213 个文件，新增约 46,000 行\N{\fs33\c&H00C8C0B8&\bord1.4}213 files and about 46,000 new lines.
+Dialogue: 0,0:00:06.34,0:00:08.65,Bilingual,,0,0,0,,这些行大多不是代码\N{\fs33\c&H00C8C0B8&\bord1.4}Most of those lines are not code.
+Dialogue: 0,0:00:08.97,0:00:14.23,Bilingual,,0,0,0,,它们是证据：测试问题、保存下来的检索结果，以及打分\N{\fs33\c&H00C8C0B8&\bord1.4}They are evidence: test questions, saved search results, and grades.
+Dialogue: 0,0:00:14.47,0:00:17.71,Bilingual,,0,0,0,,几乎所有内容都围绕一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Almost all of it is about one question:
+Dialogue: 0,0:00:17.71,0:00:24.04,Bilingual,,0,0,0,,来电者问了一个问题，检索能不能把对的段落交给 agent？\N{\fs33\c&H00C8C0B8&\bord1.4}when a caller asks something, does search hand the agent the right passages?
+Dialogue: 0,0:00:24.36,0:00:26.24,Bilingual,,0,0,0,,Marco 调了三个旋钮\N{\fs33\c&H00C8C0B8&\bord1.4}Marco turned three dials.
+Dialogue: 0,0:00:26.56,0:00:28.52,Bilingual,,0,0,0,,文档怎么切\N{\fs33\c&H00C8C0B8&\bord1.4}How the documents are cut.
+Dialogue: 0,0:00:28.84,0:00:30.46,Bilingual,,0,0,0,,检索怎么跑\N{\fs33\c&H00C8C0B8&\bord1.4}How the search is run.
+Dialogue: 0,0:00:30.78,0:00:32.91,Bilingual,,0,0,0,,结果怎么排序\N{\fs33\c&H00C8C0B8&\bord1.4}And how results are ordered.
+Dialogue: 0,0:00:33.23,0:00:37.29,Bilingual,,0,0,0,,他还加了一个检查口头回答的方法\N{\fs33\c&H00C8C0B8&\bord1.4}He also added a way to check the spoken answers.
+Dialogue: 0,0:00:38.33,0:00:41.30,Bilingual,,0,0,0,,先说：怎么给一次检索打分？\N{\fs33\c&H00C8C0B8&\bord1.4}First, how do you score a search?
+Dialogue: 0,0:00:41.62,0:00:49.89,Bilingual,,0,0,0,,提一个问题，取它返回的前 5 段，由人逐段打分\N{\fs33\c&H00C8C0B8&\bord1.4}You ask a question, take the top 5 passages it returns, and a person grades each one:
+Dialogue: 0,0:00:49.89,0:00:57.09,Bilingual,,0,0,0,,没帮助给 0，部分有帮助给 1，能回答问题给 2\N{\fs33\c&H00C8C0B8&\bord1.4}0 if it does not help, 1 if it partly helps, 2 if it answers the question.
+Dialogue: 0,0:00:57.33,0:01:03.20,Bilingual,,0,0,0,,Precision@5（前 5 精确率）是这 5 段里有帮助的比例\N{\fs33\c&H00C8C0B8&\bord1.4}Precision at 5 is the share of the five that help at all,
+Dialogue: 0,0:01:03.20,0:01:04.84,Bilingual,,0,0,0,,这里是 5 段中 2 段\N{\fs33\c&H00C8C0B8&\bord1.4}here 2 out of 5.
+Dialogue: 0,0:01:05.16,0:01:09.70,Bilingual,,0,0,0,,MRR 只看第一段有帮助的段落\N{\fs33\c&H00C8C0B8&\bord1.4}MRR looks only at the first helpful passage:
+Dialogue: 0,0:01:09.70,0:01:14.03,Bilingual,,0,0,0,,它排在第 2 位，所以得分是二分之一\N{\fs33\c&H00C8C0B8&\bord1.4}it is at rank 2, so the score is one half.
+Dialogue: 0,0:01:14.35,0:01:16.54,Bilingual,,0,0,0,,排在第 1 位就得 1 分\N{\fs33\c&H00C8C0B8&\bord1.4}Rank 1 would score 1.
+Dialogue: 0,0:01:16.78,0:01:20.03,Bilingual,,0,0,0,,NDCG 奖励把最好的段落排在前面\N{\fs33\c&H00C8C0B8&\bord1.4}NDCG rewards putting the best passages first.
+Dialogue: 0,0:01:20.35,0:01:27.17,Bilingual,,0,0,0,,它先给我们的排序打分，再给同一批段落的最佳排序打分，然后相除\N{\fs33\c&H00C8C0B8&\bord1.4}It scores our order, then scores the best possible order of the same passages, and divides.
+Dialogue: 0,0:01:27.49,0:01:29.20,Bilingual,,0,0,0,,1 表示排序完美\N{\fs33\c&H00C8C0B8&\bord1.4}1 means perfect order.
+Dialogue: 0,0:01:29.45,0:01:32.58,Bilingual,,0,0,0,,这三个数字都取决于人工打分\N{\fs33\c&H00C8C0B8&\bord1.4}All three numbers depend on the grades.
+Dialogue: 0,0:01:32.90,0:01:34.63,Bilingual,,0,0,0,,没有打分，就没有分数\N{\fs33\c&H00C8C0B8&\bord1.4}No grades, no score.
+Dialogue: 0,0:01:35.67,0:01:37.49,Bilingual,,0,0,0,,第一个旋钮是切块（chunking）\N{\fs33\c&H00C8C0B8&\bord1.4}The first dial is chunking.
+Dialogue: 0,0:01:37.81,0:01:39.87,Bilingual,,0,0,0,,Marco 比较了三种切块器（chunker）\N{\fs33\c&H00C8C0B8&\bord1.4}Marco compared three chunkers.
+Dialogue: 0,0:01:40.19,0:01:42.78,Bilingual,,0,0,0,,A 是第 2 集里原来的那个\N{\fs33\c&H00C8C0B8&\bord1.4}A is the original one from episode 2.
+Dialogue: 0,0:01:43.10,0:01:46.70,Bilingual,,0,0,0,,B 从不把不同标题下的小节合在一起\N{\fs33\c&H00C8C0B8&\bord1.4}B never merges sections with different headings,
+Dialogue: 0,0:01:46.70,0:01:50.44,Bilingual,,0,0,0,,并且会重复表格里写着项目名称的那几行\N{\fs33\c&H00C8C0B8&\bord1.4}and repeats the table rows that name the programs.
+Dialogue: 0,0:01:50.76,0:01:53.63,Bilingual,,0,0,0,,C 切出用来检索的小段落\N{\fs33\c&H00C8C0B8&\bord1.4}C makes small passages for searching,
+Dialogue: 0,0:01:53.63,0:01:57.59,Bilingual,,0,0,0,,每段都连着一个更大的父段落（parent），用来补充上下文\N{\fs33\c&H00C8C0B8&\bord1.4}each linked to a larger parent passage for context.
+Dialogue: 0,0:01:57.83,0:02:03.06,Bilingual,,0,0,0,,为了公平比较，他另建了三个测试资料库\N{\fs33\c&H00C8C0B8&\bord1.4}To compare them fairly, he built three separate test libraries,
+Dialogue: 0,0:02:03.06,0:02:05.63,Bilingual,,0,0,0,,叫做 staging knowledge base（预发布知识库）\N{\fs33\c&H00C8C0B8&\bord1.4}called staging knowledge bases,
+Dialogue: 0,0:02:05.63,0:02:08.28,Bilingual,,0,0,0,,主资料库一点没动\N{\fs33\c&H00C8C0B8&\bord1.4}and left the main one untouched.
+Dialogue: 0,0:02:08.60,0:02:12.49,Bilingual,,0,0,0,,资料库 C 就是他的语音演示所指向的那个\N{\fs33\c&H00C8C0B8&\bord1.4}Library C is the one his voice demo points at,
+Dialogue: 0,0:02:12.49,0:02:14.78,Bilingual,,0,0,0,,也就是第 0 集里见过的那个 ID\N{\fs33\c&H00C8C0B8&\bord1.4}the ID we met in episode 0.
+Dialogue: 0,0:02:15.02,0:02:18.74,Bilingual,,0,0,0,,他向三个库问了同样的 25 个问题\N{\fs33\c&H00C8C0B8&\bord1.4}He asked the same 25 questions to all three,
+Dialogue: 0,0:02:18.74,0:02:23.98,Bilingual,,0,0,0,,每次取前 5 段，并且手工给全部 375 段打了分\N{\fs33\c&H00C8C0B8&\bord1.4}took the top 5 each time, and graded all 375 passages by hand.
+Dialogue: 0,0:02:24.30,0:02:28.34,Bilingual,,0,0,0,,团队文档说这些打分是暂定的（provisional）\N{\fs33\c&H00C8C0B8&\bord1.4}The team's notes call these grades provisional.
+Dialogue: 0,0:02:29.38,0:02:33.28,Bilingual,,0,0,0,,我们用 Marco 自己的评分脚本，在他的打分上重新算了一遍\N{\fs33\c&H00C8C0B8&\bord1.4}We reran Marco's own scoring script on his grades.
+Dialogue: 0,0:02:33.60,0:02:37.92,Bilingual,,0,0,0,,原来的切块器 A 精确率和 NDCG 最高\N{\fs33\c&H00C8C0B8&\bord1.4}The original chunker A has the best precision and NDCG.
+Dialogue: 0,0:02:38.24,0:02:44.20,Bilingual,,0,0,0,,分层切块器 C 能稍早一点找到第一段有帮助的段落\N{\fs33\c&H00C8C0B8&\bord1.4}The hierarchical chunker C finds the first helpful passage a little sooner.
+Dialogue: 0,0:02:44.52,0:02:46.35,Bilingual,,0,0,0,,B 在三项指标上都最低\N{\fs33\c&H00C8C0B8&\bord1.4}B is lowest on all three.
+Dialogue: 0,0:02:46.67,0:02:50.40,Bilingual,,0,0,0,,三者每次检索都大约要 0.4 秒\N{\fs33\c&H00C8C0B8&\bord1.4}All three take about four tenths of a second.
+Dialogue: 0,0:02:50.63,0:02:55.09,Bilingual,,0,0,0,,逐题来看，A 有 9 次最好，C 有 7 次\N{\fs33\c&H00C8C0B8&\bord1.4}Question by question, A was best 9 times and C 7 times.
+Dialogue: 0,0:02:55.41,0:02:59.01,Bilingual,,0,0,0,,6 题打平，B 从来没有单独拿过第一\N{\fs33\c&H00C8C0B8&\bord1.4}6 were ties, and B was never best on its own.
+Dialogue: 0,0:02:59.33,0:03:05.05,Bilingual,,0,0,0,,有 3 个问题，三个库都没找到任何有帮助的段落\N{\fs33\c&H00C8C0B8&\bord1.4}For 3 questions, none of the three libraries found anything helpful,
+Dialogue: 0,0:03:05.05,0:03:09.25,Bilingual,,0,0,0,,尽管文档里确实出现了相关的词\N{\fs33\c&H00C8C0B8&\bord1.4}although related words do appear in the documents.
+Dialogue: 0,0:03:09.57,0:03:17.08,Bilingual,,0,0,0,,换一种切法没能解决它们，所以下一步该研究的就是这几个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Cutting the text differently did not fix them, so these are the questions to study next.
+Dialogue: 0,0:03:17.32,0:03:22.32,Bilingual,,0,0,0,,这很重要，因为在这个分支上 B 成了默认切块器\N{\fs33\c&H00C8C0B8&\bord1.4}That matters, because on this branch B becomes the default chunker.
+Dialogue: 0,0:03:22.64,0:03:28.66,Bilingual,,0,0,0,,只有 25 个问题、打分又是暂定的，这些差距很小，可能会变\N{\fs33\c&H00C8C0B8&\bord1.4}With 25 questions and provisional grades, these gaps are small and could change.
+Dialogue: 0,0:03:28.98,0:03:31.74,Bilingual,,0,0,0,,但这里没有任何证据说明 B 更好\N{\fs33\c&H00C8C0B8&\bord1.4}But nothing here shows B is better,
+Dialogue: 0,0:03:31.74,0:03:37.43,Bilingual,,0,0,0,,在用它重建主资料库之前，值得先讨论一下\N{\fs33\c&H00C8C0B8&\bord1.4}and that is worth discussing before the main library is rebuilt with it.
+Dialogue: 0,0:03:38.47,0:03:41.30,Bilingual,,0,0,0,,第二个旋钮是检索本身\N{\fs33\c&H00C8C0B8&\bord1.4}The second dial is the search itself.
+Dialogue: 0,0:03:41.62,0:03:47.61,Bilingual,,0,0,0,,在 feedback 模式下，retrieve 先用来电者的原话检索一次\N{\fs33\c&H00C8C0B8&\bord1.4}In feedback mode, retrieve first searches with the caller's exact question.
+Dialogue: 0,0:03:47.93,0:03:52.59,Bilingual,,0,0,0,,然后读一读返回的结果，可能再规划一次检索\N{\fs33\c&H00C8C0B8&\bord1.4}Then it reads what came back, and may plan one more search.
+Dialogue: 0,0:03:52.91,0:03:58.29,Bilingual,,0,0,0,,它执行这次检索，新段落只有和问题对得上才会留下\N{\fs33\c&H00C8C0B8&\bord1.4}It runs it, keeps a new passage only if it matches the question,
+Dialogue: 0,0:03:58.29,0:04:00.39,Bilingual,,0,0,0,,再把两份列表合并\N{\fs33\c&H00C8C0B8&\bord1.4}and merges the two lists.
+Dialogue: 0,0:04:00.63,0:04:05.26,Bilingual,,0,0,0,,额外的检索词来自真实存在的文字\N{\fs33\c&H00C8C0B8&\bord1.4}An extra search comes from words that are actually there:
+Dialogue: 0,0:04:05.26,0:04:11.91,Bilingual,,0,0,0,,第一批结果里的某个标题或短语，并且和问题有共同的实词\N{\fs33\c&H00C8C0B8&\bord1.4}a heading or phrase in the first results that shares real words with the question.
+Dialogue: 0,0:04:12.23,0:04:16.64,Bilingual,,0,0,0,,如果都不合格，就用来电者自己的关键词\N{\fs33\c&H00C8C0B8&\bord1.4}If none qualifies, it uses the caller's own key words,
+Dialogue: 0,0:04:16.64,0:04:19.58,Bilingual,,0,0,0,,再加一个来自固定小词表的变体\N{\fs33\c&H00C8C0B8&\bord1.4}plus a variant from a short fixed list,
+Dialogue: 0,0:04:19.58,0:04:22.19,Bilingual,,0,0,0,,比如 lonely（孤单）对应 companionship（陪伴）\N{\fs33\c&H00C8C0B8&\bord1.4}like lonely to companionship.
+Dialogue: 0,0:04:22.51,0:04:25.62,Bilingual,,0,0,0,,对“我母亲洗澡需要帮忙”这个问题\N{\fs33\c&H00C8C0B8&\bord1.4}For "my mother needs help showering",
+Dialogue: 0,0:04:25.62,0:04:27.64,Bilingual,,0,0,0,,有一次运行加了检索词\N{\fs33\c&H00C8C0B8&\bord1.4}one run added the search
+Dialogue: 0,0:04:27.64,0:04:30.92,Bilingual,,0,0,0,,“bathing in bed, in the tub or shower”\N{\fs33\c&H00C8C0B8&\bord1.4}"bathing in bed, in the tub or shower",
+Dialogue: 0,0:04:30.92,0:04:33.86,Bilingual,,0,0,0,,这是个人护理（PCA）页面上的一句话\N{\fs33\c&H00C8C0B8&\bord1.4}a line from the personal care page.
+Dialogue: 0,0:04:34.10,0:04:36.47,Bilingual,,0,0,0,,这就是 model-free（不用模型）的意思\N{\fs33\c&H00C8C0B8&\bord1.4}This is what model-free means:
+Dialogue: 0,0:04:36.47,0:04:40.90,Bilingual,,0,0,0,,额外的检索词不是 AI 模型写的，只靠固定规则\N{\fs33\c&H00C8C0B8&\bord1.4}no AI model writes the extra searches, only fixed rules.
+Dialogue: 0,0:04:41.22,0:04:45.38,Bilingual,,0,0,0,,另一种模式叫 intent，会去问一个语言模型\N{\fs33\c&H00C8C0B8&\bord1.4}Another mode, called intent, asks a language model,
+Dialogue: 0,0:04:45.38,0:04:51.49,Bilingual,,0,0,0,,但 README 提醒，团队账号可能没有调用它的权限\N{\fs33\c&H00C8C0B8&\bord1.4}but the README warns that the team's account may not be allowed to call it.
+Dialogue: 0,0:04:51.73,0:04:58.04,Bilingual,,0,0,0,,合并列表时，每个段落在它出现的每份列表里都能得分\N{\fs33\c&H00C8C0B8&\bord1.4}To merge the lists, each passage gets points from every list it appears in:
+Dialogue: 0,0:04:58.04,0:05:04.01,Bilingual,,0,0,0,,排名越靠前分越高，第一次检索的分数乘以 1.5\N{\fs33\c&H00C8C0B8&\bord1.4}more for a high rank, and the first search counts one and a half times.
+Dialogue: 0,0:05:04.33,0:05:07.84,Bilingual,,0,0,0,,两次检索都找到的段落会往上升\N{\fs33\c&H00C8C0B8&\bord1.4}A passage that both searches agree on rises.
+Dialogue: 0,0:05:08.16,0:05:11.39,Bilingual,,0,0,0,,这叫做倒数排名融合（reciprocal rank fusion，RRF）\N{\fs33\c&H00C8C0B8&\bord1.4}This is called reciprocal rank fusion.
+Dialogue: 0,0:05:11.63,0:05:16.04,Bilingual,,0,0,0,,我们用 Marco 自己的合并代码验证了一个后果\N{\fs33\c&H00C8C0B8&\bord1.4}We checked one consequence with Marco's own merge code.
+Dialogue: 0,0:05:16.36,0:05:21.70,Bilingual,,0,0,0,,只被额外检索找到的段落，最多得 61 分之 1\N{\fs33\c&H00C8C0B8&\bord1.4}A passage found only by the extra search scores at most 1 over 61.
+Dialogue: 0,0:05:22.02,0:05:27.79,Bilingual,,0,0,0,,第一次检索的第 10 名得 70 分之 1.5，比它更高\N{\fs33\c&H00C8C0B8&\bord1.4}The tenth result of the first search scores 1.5 over 70, which is more.
+Dialogue: 0,0:05:28.11,0:05:33.45,Bilingual,,0,0,0,,所以目前额外检索只能给第一次检索找到的结果重新排序\N{\fs33\c&H00C8C0B8&\bord1.4}So today the extra search can reorder what the first search found.
+Dialogue: 0,0:05:33.77,0:05:41.47,Bilingual,,0,0,0,,它无法把新段落加进前 5，除非第一次检索返回的结果不到 5 条\N{\fs33\c&H00C8C0B8&\bord1.4}It cannot add a new passage to the top five, unless the first search returned fewer than five.
+Dialogue: 0,0:05:41.79,0:05:47.08,Bilingual,,0,0,0,,代码注释看起来是希望新段落能进来的\N{\fs33\c&H00C8C0B8&\bord1.4}The code's comments suggest new passages were meant to get in,
+Dialogue: 0,0:05:47.08,0:05:50.75,Bilingual,,0,0,0,,所以这值得和 Marco 聊一聊\N{\fs33\c&H00C8C0B8&\bord1.4}so this is worth a conversation with Marco.
+Dialogue: 0,0:05:51.78,0:05:53.98,Bilingual,,0,0,0,,Marco 保存了一次运行\N{\fs33\c&H00C8C0B8&\bord1.4}Marco saved a run of 40 everyday home-care questions, with and without feedback.
+Dialogue: 0,0:05:53.98,0:05:58.37,Bilingual,,0,0,0,,40 个日常居家护理问题，分别开、关 feedback\N{\fs33\c&H00C8C0B8&\bord1.4}Marco saved a run of 40 everyday home-care questions, with and without feedback.
+Dialogue: 0,0:05:58.69,0:06:01.87,Bilingual,,0,0,0,,其中 18 个问题用上了额外检索\N{\fs33\c&H00C8C0B8&\bord1.4}Extra searches were used for 18 of them.
+Dialogue: 0,0:06:02.19,0:06:07.82,Bilingual,,0,0,0,,40 个里有 23 个，前 5 段完全一样\N{\fs33\c&H00C8C0B8&\bord1.4}For 23 of the 40, the top five passages came out exactly the same.
+Dialogue: 0,0:06:08.07,0:06:09.67,Bilingual,,0,0,0,,feedback 要花时间\N{\fs33\c&H00C8C0B8&\bord1.4}Feedback costs time.
+Dialogue: 0,0:06:09.80,0:06:14.46,Bilingual,,0,0,0,,典型的一次检索从约 0.43 秒变成 0.51 秒\N{\fs33\c&H00C8C0B8&\bord1.4}The typical search went from about 0.43 to 0.51 seconds,
+Dialogue: 0,0:06:14.46,0:06:20.03,Bilingual,,0,0,0,,最慢的十分之一从约半秒变成约 1 秒\N{\fs33\c&H00C8C0B8&\bord1.4}and the slowest tenth from about half a second to about one second.
+Dialogue: 0,0:06:20.27,0:06:26.46,Bilingual,,0,0,0,,关键的缺口在这里：那次运行里的 788 段，一段都没有打分\N{\fs33\c&H00C8C0B8&\bord1.4}And here is the key gap: none of the 788 passages in that run were graded.
+Dialogue: 0,0:06:26.78,0:06:30.82,Bilingual,,0,0,0,,所以它能告诉我们速度和行为\N{\fs33\c&H00C8C0B8&\bord1.4}So the run tells us about speed and behaviour,
+Dialogue: 0,0:06:30.82,0:06:34.95,Bilingual,,0,0,0,,却不能告诉我们 feedback 找到的段落是不是更好\N{\fs33\c&H00C8C0B8&\bord1.4}but not whether feedback finds better passages.
+Dialogue: 0,0:06:35.18,0:06:38.21,Bilingual,,0,0,0,,那次运行之后，规划器（planner）已经改过了\N{\fs33\c&H00C8C0B8&\bord1.4}The planner has changed since that run.
+Dialogue: 0,0:06:38.53,0:06:43.98,Bilingual,,0,0,0,,我们离线用今天的版本重放了同样 40 次第一次检索\N{\fs33\c&H00C8C0B8&\bord1.4}We replayed today's version offline on the same 40 first searches:
+Dialogue: 0,0:06:43.98,0:06:51.33,Bilingual,,0,0,0,,它给 17 个问题加了检索，几乎都是改写来电者自己的话\N{\fs33\c&H00C8C0B8&\bord1.4}it adds a search for 17 questions, almost all of them rewrites of the caller's own words.
+Dialogue: 0,0:06:51.65,0:06:55.75,Bilingual,,0,0,0,,而且 feedback 现在是语音应用的默认设置\N{\fs33\c&H00C8C0B8&\bord1.4}And feedback is now the default in the voice app.
+Dialogue: 0,0:06:56.78,0:06:59.59,Bilingual,,0,0,0,,最后一个旋钮检查的是回答，而不是段落\N{\fs33\c&H00C8C0B8&\bord1.4}The last dial checks answers, not passages.
+Dialogue: 0,0:06:59.91,0:07:02.29,Bilingual,,0,0,0,,一次测试通话会产生两份文字记录\N{\fs33\c&H00C8C0B8&\bord1.4}A test call produces two transcripts.
+Dialogue: 0,0:07:02.61,0:07:08.71,Bilingual,,0,0,0,,一个脚本把助手的回答和人写的参考答案作比较\N{\fs33\c&H00C8C0B8&\bord1.4}A script compares the assistant's answer with a reference answer written by a person:
+Dialogue: 0,0:07:08.71,0:07:11.94,Bilingual,,0,0,0,,共同的词、必须出现和禁止出现的说法\N{\fs33\c&H00C8C0B8&\bord1.4}shared words, required and forbidden phrases,
+Dialogue: 0,0:07:11.94,0:07:15.54,Bilingual,,0,0,0,,以及 agent 有没有真的去查\N{\fs33\c&H00C8C0B8&\bord1.4}and whether the agent actually looked anything up.
+Dialogue: 0,0:07:15.78,0:07:20.01,Bilingual,,0,0,0,,共同的词同样用余弦相似度（cosine similarity）来衡量\N{\fs33\c&H00C8C0B8&\bord1.4}Shared words are measured with cosine similarity again,
+Dialogue: 0,0:07:20.01,0:07:22.08,Bilingual,,0,0,0,,只是这次基于词频\N{\fs33\c&H00C8C0B8&\bord1.4}this time over word counts.
+Dialogue: 0,0:07:22.40,0:07:26.64,Bilingual,,0,0,0,,这里有个陷阱：一个美元金额写错的回答\N{\fs33\c&H00C8C0B8&\bord1.4}That has a trap: an answer with one wrong dollar amount
+Dialogue: 0,0:07:26.64,0:07:30.04,Bilingual,,0,0,0,,和正确答案几乎每个词都一样\N{\fs33\c&H00C8C0B8&\bord1.4}shares almost every word with the right one.
+Dialogue: 0,0:07:30.36,0:07:34.84,Bilingual,,0,0,0,,Marco 的文档说得很直白：相似不等于正确\N{\fs33\c&H00C8C0B8&\bord1.4}Marco's notes say it plainly: similarity is not correctness.
+Dialogue: 0,0:07:35.16,0:07:38.16,Bilingual,,0,0,0,,事实仍然要由人来核对\N{\fs33\c&H00C8C0B8&\bord1.4}A person still has to check the facts.
+Dialogue: 0,0:07:38.40,0:07:43.38,Bilingual,,0,0,0,,目前只有一个参考答案，标注为入门示例（starter）\N{\fs33\c&H00C8C0B8&\bord1.4}Right now there is one reference answer, marked as a starter.
+Dialogue: 0,0:07:43.70,0:07:47.20,Bilingual,,0,0,0,,真正的测试需要 20 到 30 个核对过的参考答案\N{\fs33\c&H00C8C0B8&\bord1.4}Real testing needs 20 to 30 checked ones.
+Dialogue: 0,0:07:48.23,0:07:52.82,Bilingual,,0,0,0,,第 2 集结尾留下了一张藏起项目名称的表格\N{\fs33\c&H00C8C0B8&\bord1.4}Episode 2 ended with a table that hid its program names.
+Dialogue: 0,0:07:53.14,0:07:56.08,Bilingual,,0,0,0,,Marco 的分支从三处下手\N{\fs33\c&H00C8C0B8&\bord1.4}Marco's branch attacks it three ways.
+Dialogue: 0,0:07:56.40,0:07:58.51,Bilingual,,0,0,0,,新的切块器解决了它\N{\fs33\c&H00C8C0B8&\bord1.4}The new chunker fixes it:
+Dialogue: 0,0:07:58.51,0:08:02.97,Bilingual,,0,0,0,,我们验证过，写着 1,090 美元的那个 chunk 现在包含 JACC\N{\fs33\c&H00C8C0B8&\bord1.4}we checked, and the 1,090 dollar chunk now says JACC.
+Dialogue: 0,0:08:03.29,0:08:10.93,Bilingual,,0,0,0,,他为这份 PDF 写了一个新的提取器，但在真实文件上四页全部失败\N{\fs33\c&H00C8C0B8&\bord1.4}A new extractor was written for that PDF, but on the real file it fails on all four pages,
+Dialogue: 0,0:08:10.93,0:08:15.44,Bilingual,,0,0,0,,因为它找到 9 列，而它期望的是 7 列\N{\fs33\c&H00C8C0B8&\bord1.4}because it finds nine columns where it expects seven.
+Dialogue: 0,0:08:15.76,0:08:22.84,Bilingual,,0,0,0,,retrieve 现在会丢掉这张表里所有没被提取器验证过的 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}And retrieve now drops every chunk from that table that the extractor did not verify.
+Dialogue: 0,0:08:23.16,0:08:27.80,Bilingual,,0,0,0,,所以目前这张表根本到不了 agent 手里\N{\fs33\c&H00C8C0B8&\bord1.4}So for now, the table does not reach the agent at all.
+Dialogue: 0,0:08:28.03,0:08:32.50,Bilingual,,0,0,0,,语音这边，电话号码要等 agent 复述\N{\fs33\c&H00C8C0B8&\bord1.4}On the voice side, a phone number is saved only after the agent reads it back and the caller says yes.
+Dialogue: 0,0:08:32.50,0:08:36.77,Bilingual,,0,0,0,,一遍、来电者说“是”之后才会保存\N{\fs33\c&H00C8C0B8&\bord1.4}On the voice side, a phone number is saved only after the agent reads it back and the caller says yes.
+Dialogue: 0,0:08:37.09,0:08:42.71,Bilingual,,0,0,0,,而且空的检索结果不能再被当作证据\N{\fs33\c&H00C8C0B8&\bord1.4}And empty search results can no longer be presented as evidence.
+Dialogue: 0,0:08:42.95,0:08:45.91,Bilingual,,0,0,0,,还没解决的：给 feedback 那次运行打分\N{\fs33\c&H00C8C0B8&\bord1.4}What is open: grade the feedback run,
+Dialogue: 0,0:08:45.91,0:08:50.56,Bilingual,,0,0,0,,最好在不知道哪段来自哪种模式的情况下打\N{\fs33\c&H00C8C0B8&\bord1.4}ideally without knowing which mode produced which passage.
+Dialogue: 0,0:08:50.88,0:08:54.89,Bilingual,,0,0,0,,决定合并时是否应该让新段落进来\N{\fs33\c&H00C8C0B8&\bord1.4}Decide whether the merge should let new passages in.
+Dialogue: 0,0:08:55.21,0:08:57.83,Bilingual,,0,0,0,,针对真实 PDF 修好提取器\N{\fs33\c&H00C8C0B8&\bord1.4}Fix the extractor for the real PDF.
+Dialogue: 0,0:08:58.15,0:09:04.78,Bilingual,,0,0,0,,决定哪个资料库上线，因为这些改动都还没进主资料库\N{\fs33\c&H00C8C0B8&\bord1.4}Decide which library is the live one, since none of this is in the main library yet.
+Dialogue: 0,0:09:05.10,0:09:12.85,Bilingual,,0,0,0,,另外注意，这个分支把 AWS 账号和资料库 ID 放进了公开仓库\N{\fs33\c&H00C8C0B8&\bord1.4}And note that the branch puts the AWS account number and library IDs into a public repository,
+Dialogue: 0,0:09:12.85,0:09:15.73,Bilingual,,0,0,0,,而设置指南原本是把它们排除在外的\N{\fs33\c&H00C8C0B8&\bord1.4}which the setup guide had kept out.
+Dialogue: 0,0:09:15.97,0:09:18.63,Bilingual,,0,0,0,,三个问题，自我检测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions to test yourself.
+Dialogue: 0,0:09:18.95,0:09:24.25,Bilingual,,0,0,0,,为什么一次 MRR 满分的检索，精确率仍然可能很低？\N{\fs33\c&H00C8C0B8&\bord1.4}Why can a search with a perfect MRR still have a low precision?
+Dialogue: 0,0:09:24.57,0:09:30.31,Bilingual,,0,0,0,,为什么今天的额外检索能给前 5 重新排序，却加不进新段落？\N{\fs33\c&H00C8C0B8&\bord1.4}Why can today's extra search reorder the top five but not add to it?
+Dialogue: 0,0:09:30.63,0:09:36.08,Bilingual,,0,0,0,,为什么词的相似度高，并不能证明回答正确？\N{\fs33\c&H00C8C0B8&\bord1.4}And why is high word similarity not proof of a correct answer?
+Dialogue: 0,0:09:36.32,0:09:40.12,Bilingual,,0,0,0,,接下来，第 3 集深入一次检索的内部\N{\fs33\c&H00C8C0B8&\bord1.4}Next, episode 3 goes inside a single search,
+Dialogue: 0,0:09:40.12,0:09:45.57,Bilingual,,0,0,0,,第 4 集跟着一通完整的电话走一遍语音应用\N{\fs33\c&H00C8C0B8&\bord1.4}and episode 4 follows a whole phone call through the voice app.

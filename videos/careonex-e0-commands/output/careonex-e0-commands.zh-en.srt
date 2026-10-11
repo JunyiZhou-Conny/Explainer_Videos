@@ -1,0 +1,659 @@
+1
+00:00:00,000 --> 00:00:04,151
+Marco 给团队发了这两段命令
+Marco sent the team these two blocks of commands.
+
+2
+00:00:04,471 --> 00:00:08,532
+它们会在他的笔记本电脑上启动 CareOneX 语音应用
+They start the CareOneX voice app on his laptop.
+
+3
+00:00:08,852 --> 00:00:13,322
+如果你看着像一堵乱码墙，这很正常
+If they look like a wall of noise, that is normal.
+
+4
+00:00:13,567 --> 00:00:18,428
+看完这期视频，每一行你都会看懂
+By the end of this video, every line will mean something.
+
+5
+00:00:18,748 --> 00:00:25,984
+每一行背后，都是理解整个系统怎么拼在一起的一小课
+Each one turns out to be a small lesson about how the whole system fits together.
+
+6
+00:00:26,233 --> 00:00:27,776
+先提醒一句
+One warning first.
+
+7
+00:00:27,826 --> 00:00:31,112
+我们登录不了团队的 AWS 账号
+We cannot log into the team's AWS account.
+
+8
+00:00:31,432 --> 00:00:37,486
+所以这里的一切都来自 GitHub 上的代码和团队写的文档
+So everything here is learned from the code on GitHub and the team's notes.
+
+9
+00:00:37,806 --> 00:00:39,926
+每个说法都带一个标签
+Each claim carries a tag,
+
+10
+00:00:39,926 --> 00:00:45,438
+如果是我们推测的，标签会写 INFERRED（推测），并给出理由
+and when we are guessing, the tag says INFERRED, with our reason.
+
+11
+00:00:46,483 --> 00:00:48,851
+这两段命令启动两个程序
+The two blocks start two programs.
+
+12
+00:00:49,171 --> 00:00:52,768
+终端 1 启动 retrieve，一个小型检索服务器
+Terminal 1 starts retrieve, a small search server.
+
+13
+00:00:53,088 --> 00:00:57,543
+终端 2 启动 voice，也就是你真正对着说话的那个程序
+Terminal 2 starts voice, the program you actually talk to.
+
+14
+00:00:57,783 --> 00:01:01,894
+voice 听你的麦克风，再把回答播放出来
+Voice listens to your microphone and plays the reply.
+
+15
+00:01:02,214 --> 00:01:06,817
+需要查资料时，它就去问同一台电脑上的 retrieve
+When it needs a fact, it asks retrieve, on the same laptop.
+
+16
+00:01:07,137 --> 00:01:11,033
+两个程序还都会连到亚马逊的云，也就是 AWS
+Both programs also talk to Amazon's cloud, AWS,
+
+17
+00:01:11,033 --> 00:01:15,178
+AI 模型和文档库都在那里
+where the AI models and the document library live.
+
+18
+00:01:15,416 --> 00:01:17,204
+终端（terminal）就是一个用打字
+A terminal is a window
+
+19
+00:01:17,204 --> 00:01:20,779
+输入命令、而不是用鼠标点的窗口
+where you type commands instead of clicking.
+
+20
+00:01:21,099 --> 00:01:24,038
+Marco 用的是 Windows 上的 PowerShell
+Marco is on Windows, using PowerShell.
+
+21
+00:01:24,358 --> 00:01:28,286
+从他命令的写法就能看出来
+We can tell from the way his lines are written.
+
+22
+00:01:29,333 --> 00:01:32,422
+第 1 行是 cd，意思是 change directory（切换目录）
+Line 1 is cd, short for change directory.
+
+23
+00:01:32,742 --> 00:01:36,236
+它把终端带进项目文件夹
+It moves the terminal into the project folder.
+
+24
+00:01:36,556 --> 00:01:41,750
+后面的每条命令，都以这个文件夹为起点去找文件
+Every later command looks for its files relative to this folder.
+
+25
+00:01:42,000 --> 00:01:48,423
+这个文件夹是 Marco 自己的一份团队代码，里面有他最新的改动
+The folder is Marco's own copy of the team's code, with his newest changes in it.
+
+26
+00:01:48,743 --> 00:01:50,143
+这是我们推测的
+We infer that,
+
+27
+00:01:50,143 --> 00:01:56,227
+因为后面的命令需要的正好是团队仓库里的那些文件夹
+because the next commands expect exactly the folders of the team repository.
+
+28
+00:01:57,267 --> 00:02:00,430
+其余大部分行都长这样
+Most of the other lines look like this:
+
+29
+00:02:00,430 --> 00:02:04,405
+美元符号、env、冒号、一个名字、等号、一个值
+dollar sign, env, colon, a name, equals, a value.
+
+30
+00:02:04,725 --> 00:02:07,874
+每一行设置一个环境变量（environment variable）
+Each one sets an environment variable.
+
+31
+00:02:08,117 --> 00:02:13,190
+可以把环境变量想成贴在终端窗口上的便利贴
+Think of environment variables as sticky notes on the terminal window.
+
+32
+00:02:13,510 --> 00:02:17,292
+从这个窗口启动的每个程序都能读到它们
+Every program started from that window can read them.
+
+33
+00:02:17,612 --> 00:02:21,140
+CareOneX 的代码就是这样读取设置的
+The CareOneX code reads its settings this way,
+
+34
+00:02:21,140 --> 00:02:25,512
+所以代码里不会写死任何跟 Marco 电脑有关的东西
+so nothing about Marco's laptop is written into the code.
+
+35
+00:02:25,750 --> 00:02:28,861
+便利贴只属于一个窗口
+The notes belong to one window only.
+
+36
+00:02:29,181 --> 00:02:34,095
+所以两段命令里都重复设置了同样的 AWS 那几行
+That is why both blocks set the same AWS lines again.
+
+37
+00:02:35,133 --> 00:02:40,782
+AWS 账号就是团队在亚马逊云里圈出来的一块自己的地方
+An AWS account is the team's own fenced-off corner of Amazon's cloud.
+
+38
+00:02:41,102 --> 00:02:46,154
+CareOneX 用到的所有东西都在里面，共用一张账单
+Everything CareOneX uses lives inside it, and it has one bill.
+
+39
+00:02:46,474 --> 00:02:52,528
+团队文档里写着：AI 模型的预算是每月 30 美元
+The team's notes show a budget of 30 dollars a month for the AI models.
+
+40
+00:02:52,766 --> 00:02:54,405
+没有人共用密码
+Nobody shares a password.
+
+41
+00:02:54,725 --> 00:02:59,668
+每个组员都通过一个统一登录门户，也就是 SSO（单点登录）
+Each teammate signs in through a single sign-on portal, called SSO,
+
+42
+00:02:59,668 --> 00:03:02,692
+用自己的邮箱加第二重验证登录
+with their own email and a second factor.
+
+43
+00:03:03,012 --> 00:03:08,267
+登录之后，每个人得到同一组权限，名字叫 AC215
+After signing in, everyone gets the same set of permissions, named AC215.
+
+44
+00:03:08,587 --> 00:03:14,208
+它包括 AI 模型、课程自己的存储和知识库
+It covers the AI models, the course's own storage, and the knowledge base,
+
+45
+00:03:14,208 --> 00:03:17,853
+但不包括公司生产环境里的任何东西
+and nothing in the company's production systems.
+
+46
+00:03:18,100 --> 00:03:22,642
+profile（配置档）是电脑上一个设置文件里的一个有名字的条目
+A profile is a named entry in a settings file on the laptop.
+
+47
+00:03:22,962 --> 00:03:24,602
+“careonex-team”的意思是
+"careonex-team" says:
+
+48
+00:03:24,602 --> 00:03:30,693
+通过那个门户，登录团队账号，使用 AC215 权限
+log in through that portal, into the team account, with the AC215 permissions.
+
+49
+00:03:31,013 --> 00:03:35,436
+aws sso login 这条命令会打开浏览器，你点同意
+The command aws sso login opens a browser, you approve,
+
+50
+00:03:35,436 --> 00:03:40,019
+电脑就拿到一把有效期 8 小时的临时钥匙
+and the laptop receives temporary keys that last 8 hours.
+
+51
+00:03:40,266 --> 00:03:45,484
+CareOneX 的代码通过 profile 的名字找到这些临时钥匙
+The CareOneX code finds those temporary keys through the profile name.
+
+52
+00:03:45,804 --> 00:03:53,136
+钥匙过期后，voice 程序会停下来，用一行提示告诉你重新登录
+When they expire, the voice program stops with a one-line message telling you to log in again.
+
+53
+00:03:54,183 --> 00:03:58,652
+AWS 在世界各地的很多区域（region）都有数据中心
+AWS runs data centers in many regions around the world.
+
+54
+00:03:58,972 --> 00:04:02,243
+每个区域都是一套独立的云
+Each region is its own copy of the cloud.
+
+55
+00:04:02,563 --> 00:04:08,860
+团队的模型和存储都在 us-east-1，也就是北弗吉尼亚
+The team's models and storage are all in us-east-1, in Northern Virginia,
+
+56
+00:04:08,860 --> 00:04:12,483
+所以每个程序都得被告知去那里
+so every program must be told to go there.
+
+57
+00:04:13,517 --> 00:04:16,892
+接下来是最奇怪的一行：把 HOME 设成 HOME
+Now the strangest line: set HOME to HOME.
+
+58
+00:04:17,212 --> 00:04:19,619
+看起来什么也没做
+It looks like it does nothing.
+
+59
+00:04:19,939 --> 00:04:22,314
+其实它修的是一个 Windows 上的问题
+It fixes a Windows problem.
+
+60
+00:04:22,550 --> 00:04:26,058
+retrieve 程序会在一个容器（container）里运行
+The retrieve program will run inside a container,
+
+61
+00:04:26,058 --> 00:04:27,658
+就像一个密封的盒子
+a sealed box.
+
+62
+00:04:27,757 --> 00:04:31,586
+要用你的登录，盒子需要拿到你放钥匙的文件夹
+To use your login, the box needs your keys folder.
+
+63
+00:04:31,906 --> 00:04:34,216
+团队的 Docker 配置文件是通过
+The team's Docker file finds
+
+64
+00:04:34,216 --> 00:04:37,682
+一个叫 HOME 的变量找到这个文件夹的
+that folder through a variable named HOME.
+
+65
+00:04:37,917 --> 00:04:40,346
+在 Mac 上，HOME 一直都有
+On a Mac, HOME is always set.
+
+66
+00:04:40,666 --> 00:04:42,558
+在 Windows 上却没有
+On Windows it is not,
+
+67
+00:04:42,558 --> 00:04:48,594
+于是盒子会去一个空路径里找钥匙，登录就失败了
+so the box would look for keys in an empty path and fail to log in.
+
+68
+00:04:48,914 --> 00:04:52,860
+这一行把 PowerShell 自己知道的用户文件夹
+The line copies PowerShell's own home folder
+
+69
+00:04:52,860 --> 00:04:55,192
+抄到 HOME 这张便利贴上
+into the HOME sticky note.
+
+70
+00:04:55,512 --> 00:05:01,194
+只有终端 1 需要它，因为只有终端 1 用了 Docker
+Only terminal 1 needs it, because only terminal 1 uses Docker.
+
+71
+00:05:02,233 --> 00:05:05,134
+Knowledge Base（知识库）是亚马逊的一项服务
+A Knowledge Base is an Amazon service
+
+72
+00:05:05,134 --> 00:05:12,346
+它把团队的文档存成一小段一小段可检索的文字，有人问就去搜
+that stores the team's documents as small searchable passages, and searches them on request.
+
+73
+00:05:12,666 --> 00:05:17,365
+每个知识库都有一个 ID，就是像这样的一串短代码
+Every knowledge base has an ID, a short code like this one.
+
+74
+00:05:17,600 --> 00:05:21,776
+retrieve 的代码会先找这张便利贴
+The retrieve code looks for this sticky note first.
+
+75
+00:05:22,096 --> 00:05:28,025
+如果没有，它就去团队存储里的一个文件读 ID
+If it is missing, it reads the ID from a file in the team's storage,
+
+76
+00:05:28,025 --> 00:05:32,732
+这个文件是搭建资料库的那个容器写进去的
+written there by the container that built the library.
+
+77
+00:05:32,966 --> 00:05:34,554
+为什么要手动设置？
+Why set it by hand?
+
+78
+00:05:34,604 --> 00:05:36,777
+我们之前猜了两个原因
+We had guessed two reasons:
+
+79
+00:05:36,777 --> 00:05:43,376
+省掉一次读存储，或者让 retrieve 指向另一个知识库
+to save one read from storage, or to point retrieve at a different knowledge base.
+
+80
+00:05:43,696 --> 00:05:47,553
+Marco 当天晚些时候推送的分支给出了答案
+Marco's branch, pushed later that day, settles it.
+
+81
+00:05:47,873 --> 00:05:51,640
+这个 ID 是他为了比较几种切分
+This ID is one of three test libraries he built
+
+82
+00:05:51,640 --> 00:05:54,925
+文档的方法而建的三个测试资料库之一
+to compare ways of cutting the documents.
+
+83
+00:05:55,245 --> 00:05:59,512
+没有这一行，retrieve 就会用主资料库
+Without this line, retrieve would use the main library.
+
+84
+00:05:59,832 --> 00:06:02,126
+第 6 集会讲他的这个测试
+Episode 6 explains his test.
+
+85
+00:06:03,167 --> 00:06:08,466
+Docker 把一个程序和它需要的一切打包成一个镜像（image）
+Docker packs a program with everything it needs into an image,
+
+86
+00:06:08,466 --> 00:06:10,517
+就像一个冷冻好的便当盒
+like a frozen lunch box.
+
+87
+00:06:10,837 --> 00:06:13,480
+容器就是这个盒子跑起来的样子
+A container is that box, running.
+
+88
+00:06:13,800 --> 00:06:19,204
+它在 Marco 的电脑上、你的电脑上、服务器上，运行起来都一样
+It runs the same on Marco's laptop, on yours, and on a server.
+
+89
+00:06:19,450 --> 00:06:24,652
+docker compose 读取团队那个描述所有容器的文件
+Docker compose reads the team's file that describes all the containers.
+
+90
+00:06:24,972 --> 00:06:26,572
+up 表示启动
+The word up starts one.
+
+91
+00:06:26,813 --> 00:06:29,940
+build 这个选项会先重新构建镜像
+The option build first rebuilds its image,
+
+92
+00:06:29,940 --> 00:06:32,398
+这样 Marco 最新的代码就在里面
+so Marco's newest code is inside.
+
+93
+00:06:32,718 --> 00:06:35,940
+而 retrieve 表示只启动检索服务器这一个
+And retrieve picks just the search server.
+
+94
+00:06:36,184 --> 00:06:40,338
+在盒子里，retrieve 变成一个小小的网页服务器
+Inside the box, retrieve becomes a small web server.
+
+95
+00:06:40,658 --> 00:06:43,883
+它在 8080 端口（port）上等待，端口就像一扇编了号的门
+It listens on port 8080, a numbered door.
+
+96
+00:06:44,203 --> 00:06:49,832
+Docker 配置文件把这扇门接到电脑上同一个号码的门
+The Docker file connects that door to the same door on the laptop,
+
+97
+00:06:49,832 --> 00:06:52,221
+这样别的程序就能来敲门
+so other programs can knock.
+
+98
+00:06:53,267 --> 00:06:57,950
+在终端 2，第一张新便利贴告诉 voice：retrieve 在哪儿
+In terminal 2, the first new note tells voice where retrieve is.
+
+99
+00:06:58,270 --> 00:07:01,414
+127.0.0.1 永远指的是这台电脑本身
+127.0.0.1 always means this same computer,
+
+100
+00:07:01,414 --> 00:07:04,184
+8080 就是 retrieve 打开的那扇门
+and 8080 is the door retrieve opened.
+
+101
+00:07:04,504 --> 00:07:10,662
+没有这张便利贴，语音应用就会回答说知识库不可用
+Without this note, the voice app answers that the knowledge base is unavailable.
+
+102
+00:07:10,900 --> 00:07:13,860
+下一张便利贴决定语音应用怎么检索
+The next note picks how voice searches.
+
+103
+00:07:14,180 --> 00:07:18,781
+我们第一次查的时候，GitHub 的代码里根本找不到它
+When we first looked, it was nowhere in the code on GitHub.
+
+104
+00:07:19,101 --> 00:07:23,046
+Marco 当天晚些时候推送的分支解释了它
+Marco's branch, pushed later that day, explains it.
+
+105
+00:07:23,366 --> 00:07:28,951
+feedback 先检索一次，可能再加一次，然后合并结果
+Feedback runs a first search, may add one more, and merges the results.
+
+106
+00:07:29,271 --> 00:07:31,493
+baseline 只检索一次
+Baseline runs one search only.
+
+107
+00:07:31,813 --> 00:07:36,003
+没有这张便利贴时，默认也是 feedback
+Feedback is also the default when the note is missing.
+
+108
+00:07:36,323 --> 00:07:38,702
+第 6 集会讲它具体做了什么
+Episode 6 shows what it does.
+
+109
+00:07:39,750 --> 00:07:42,265
+最后一行最长
+The last line is the longest.
+
+110
+00:07:42,585 --> 00:07:45,662
+我们把它拆开来看。uv 是一个工具
+Let's take it apart. uv is a tool
+
+111
+00:07:45,662 --> 00:07:50,385
+它把项目需要的那个 Python 版本和那些库准备好
+that sets up the exact Python and libraries a project needs,
+
+112
+00:07:50,385 --> 00:07:53,376
+再在这个环境里运行命令
+then runs a command inside that setup.
+
+113
+00:07:53,696 --> 00:07:58,938
+Python 3.12 是亚马逊那个流式传输库能接受的最低版本
+Python 3.12 is the oldest version Amazon's streaming library accepts.
+
+114
+00:07:59,258 --> 00:08:03,469
+directory 选项的意思是：用 voice 这个项目
+And the directory option says: use the voice project.
+
+115
+00:08:03,717 --> 00:08:06,421
+extra mic 会额外装上麦克风库
+extra mic adds the microphone library.
+
+116
+00:08:06,741 --> 00:08:12,132
+它故意做成可选的：容器里没有麦克风也没有扬声器
+It is optional on purpose: a container has no microphone or speakers,
+
+117
+00:08:12,132 --> 00:08:16,586
+所以 voice 程序直接在电脑上跑
+so the voice program runs directly on the laptop instead.
+
+118
+00:08:16,833 --> 00:08:20,721
+最后，引号里的部分是一个很小的 Python 程序
+Finally, the quoted part is a tiny Python program
+
+119
+00:08:20,721 --> 00:08:23,101
+作用是启动语音会话
+that starts the voice session.
+
+120
+00:08:23,421 --> 00:08:27,136
+团队的说明文档用的是一条更短的命令
+The team's instructions use a shorter command,
+
+121
+00:08:27,136 --> 00:08:31,498
+但它会先检查一种保存下来的钥匙文件
+but that one first checks for a kind of saved key file
+
+122
+00:08:31,498 --> 00:08:34,325
+而 SSO 登录可能根本不会生成这种文件
+that an SSO login may never create.
+
+123
+00:08:34,645 --> 00:08:38,148
+直接调用会话，就跳过了这个检查
+Calling the session directly skips that check.
+
+124
+00:08:38,468 --> 00:08:42,373
+这是我们的推测，但和代码完全吻合
+That is our inference; it fits the code exactly.
+
+125
+00:08:43,417 --> 00:08:45,806
+放在一起，就是这样
+Put together, it looks like this.
+
+126
+00:08:46,126 --> 00:08:48,754
+两个程序都用你那 8 小时的登录
+Both programs use your 8-hour login.
+
+127
+00:08:49,074 --> 00:08:52,626
+你说话，voice 把声音实时传给 Nova 2 Sonic
+You speak, voice streams it to Nova 2 Sonic,
+
+128
+00:08:52,626 --> 00:08:56,016
+Nova 要查资料，voice 就去问 retrieve
+Nova asks for a fact, voice asks retrieve,
+
+129
+00:08:56,016 --> 00:09:01,264
+retrieve 去搜知识库，然后 Nova 把答案说出来
+retrieve searches the knowledge base, and Nova speaks the answer.
+
+130
+00:09:01,500 --> 00:09:06,499
+这期视频里所有的新词，都在这一张卡片上
+Here is every new word from this video on one card.
+
+131
+00:09:06,819 --> 00:09:10,298
+想留着的话，可以在这里暂停
+Pause here if you want to keep it.
+
+132
+00:09:10,534 --> 00:09:17,973
+下一集讲全局：CareOneX 是干什么的，团队里谁做了哪一部分
+Next, the big picture: what CareOneX is for, and who on the team built which part.

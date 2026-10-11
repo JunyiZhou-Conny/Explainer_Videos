@@ -1,0 +1,25 @@
+# Chinese subtitle glossary for the CareOneX series (subtitles only, no voice).
+# Policy: mainland Simplified Chinese for a Chinese CS graduate student; keep in English what such a
+# student says in English: code names, container and service names, AWS product names, and a few
+# working terms (pipeline, chunk, embedding, hash, sidecar, bucket, agent). Gloss once in （…）.
+policy: "Mandarin first; code names, AWS products and the team's working terms stay in English; numbers as digits; half-width space between Chinese and Latin/digits."
+terms:
+- {en: container, zh_subtitle: "容器（container）"}
+- {en: source list, zh_subtitle: "来源清单（source list）"}
+- {en: hash, zh_subtitle: "hash（哈希值）"}
+- {en: bucket, zh_subtitle: "S3 bucket（存储桶）"}
+- {en: sidecar, zh_subtitle: "sidecar（元数据文件）"}
+- {en: manifest, zh_subtitle: "manifest（清单）"}
+- {en: chunk, zh_subtitle: "chunk（文本块）"}
+- {en: embedding, zh_subtitle: "embedding"}
+- {en: vector, zh_subtitle: "向量"}
+- {en: cosine similarity, zh_subtitle: "余弦相似度（cosine similarity）"}
+- {en: Knowledge Base, zh_subtitle: "Bedrock Knowledge Base（知识库）"}
+- {en: ingestion job, zh_subtitle: "导入任务（ingestion job）"}
+- {en: nonce, zh_subtitle: "nonce"}
+- {en: pipeline, zh_subtitle: "pipeline"}
+allowed_spoken_latin: [CareOneX, container, agent, source, list, DoAS, Medicaid, Medicare, VA, PDF, hash, pipeline,
+  build, data, S3, bucket, ac215, careonex, ingest, sidecar, JACC, manifest, nj.gov, va.gov, nonce, extract, Markdown,
+  pymupdf4llm, chunk, KB, Bedrock, kb-sync, embedding, Amazon, Titan, Text, Embeddings, v2, cosine, similarity,
+  program-kb, Vectors, Knowledge, Base, chunks, ingestion, job, ID, retrieve, Home, and, Community, Based, Services,
+  flex-menu, ac, pymupdf, llm, AI, object]

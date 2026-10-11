@@ -1,0 +1,18 @@
+id: careonex-e6-measuring-search
+title: "CareOneX E6 · Measuring search: Marco's experiments with chunking, feedback search and answer checks"
+papers: []                     # not a paper: an explainer of the team's own code (series: videos/careonex-series)
+audience: "a complete beginner on the CareOneX AC215 team who has watched E0 and E2"
+source: "nadirbt/careonex-agents feat/sonic_with_rag_updated@1591ed2 (Marco Ren); numbers: videos/careonex-series/checks/marco"
+# No narrator: the SAY lines of script.md are subtitles only, shown at a reading pace of ~2.2 words/s,
+# and the English build burns the bilingual (Chinese over English) subtitles in.
+voice: {backend: silent, speed: 0.85}
+subtitles_only: true
+scenes:
+  - {file: scenes/s01_branch.py,          cls: Branch,          title: "What is on Marco's branch"}
+  - {file: scenes/s02_metrics.py,         cls: Metrics,         title: "Scoring a search"}
+  - {file: scenes/s03_chunkers.py,        cls: Chunkers,        title: "Three ways to cut"}
+  - {file: scenes/s04_chunk_results.py,   cls: ChunkResults,    title: "What the chunking test shows"}
+  - {file: scenes/s05_feedback.py,        cls: Feedback,        title: "Feedback search"}
+  - {file: scenes/s06_feedback_results.py, cls: FeedbackResults, title: "What the 40-question run shows"}
+  - {file: scenes/s07_text_eval.py,       cls: TextEval,        title: "Checking the spoken answer"}
+  - {file: scenes/s08_open.py,            cls: OpenItems,       title: "Fixes, and what is still open"}

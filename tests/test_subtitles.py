@@ -784,3 +784,11 @@ def test_r4_english_video_srt_corpus():
                 assert len(ls) <= 2 and all(len(x) <= 44 for x in ls), text
                 assert tuple(ls) == S.wrap_en(" ".join(ls), 44 * 0.55), text
                 assert b - a >= 1.0 - 1e-9, text
+
+
+def test_silent_backend_reading_pace():
+    """Subtitle-only videos time each SAY line by a reading pace: speed scales words per second,
+    and speed 1 keeps the old cache key."""
+    from explainer.voice import SilentBackend
+    assert SilentBackend().params() == {"wps": 2.6}
+    assert SilentBackend(speed=0.85).params() == {"wps": 2.21}

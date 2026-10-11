@@ -1,0 +1,101 @@
+[
+ {
+  "file": "nj_dmahs_mltss_overview.html",
+  "md_chars": 7807,
+  "chunks": 9
+ },
+ {
+  "file": "nj_dmahs_mltss_application_guidance_2026.pdf",
+  "md_chars": 16269,
+  "chunks": 20
+ },
+ {
+  "file": "nj_doas_jacc.html",
+  "md_chars": 5059,
+  "chunks": 4
+ },
+ {
+  "file": "nj_doas_jacc_brochure_en.pdf",
+  "md_chars": 2991,
+  "chunks": 7
+ },
+ {
+  "file": "nj_doas_statewide_respite.html",
+  "md_chars": 4537,
+  "chunks": 4
+ },
+ {
+  "file": "nj_doas_statewide_respite_brochure_en.pdf",
+  "md_chars": 4123,
+  "chunks": 8
+ },
+ {
+  "file": "nj_doas_alzheimers_adult_day.html",
+  "md_chars": 4042,
+  "chunks": 6
+ },
+ {
+  "file": "nj_doas_alzheimers_adult_day_brochure_en.pdf",
+  "md_chars": 4429,
+  "chunks": 7
+ },
+ {
+  "file": "nj_doas_pace.html",
+  "md_chars": 6164,
+  "chunks": 5
+ },
+ {
+  "file": "nj_doas_pace_flyer_en.pdf",
+  "md_chars": 4539,
+  "chunks": 5
+ },
+ {
+  "file": "nj_doas_county_offices_adrc.html",
+  "md_chars": 5363,
+  "chunks": 4
+ },
+ {
+  "file": "nj_doas_program_guide.pdf",
+  "md_chars": 51856,
+  "chunks": 85
+ },
+ {
+  "file": "medicare_home_health_services_coverage.html",
+  "md_chars": 6244,
+  "chunks": 10
+ },
+ {
+  "file": "cms_10969_medicare_and_home_health_care.pdf",
+  "md_chars": 34598,
+  "chunks": 47
+ },
+ {
+  "file": "va_homemaker_home_health_aide.html",
+  "md_chars": 3662,
+  "chunks": 6
+ },
+ {
+  "file": "va_home_community_based_services.html",
+  "md_chars": 560,
+  "chunks": 3
+ },
+ {
+  "file": "va_aid_attendance_housebound.html",
+  "md_chars": 2538,
+  "chunks": 8
+ },
+ {
+  "file": "nj_doas_programs_side_by_side_2026.pdf",
+  "error": "DoAS comparison page 1: program columns could not be verified. Do not index this page as unlabeled Markdown; review the PDF layout."
+ },
+ {
+  "file": "nj_dds_personal_care_assistant.html",
+  "md_chars": 3771,
+  "chunks": 7
+ },
+ {
+  "file": "nj_doas_2026_program_limits.md",
+  "md_chars": 8546,
+  "chunks": 12
+ }
+]

@@ -1,0 +1,17 @@
+id: careonex-e2-library
+title: "CareOneX E2 · Building the library: from 20 public documents to 232 searchable passages"
+papers: []                     # not a paper: an explainer of the team's own code (series: videos/careonex-series)
+audience: "the CareOneX AC215 team; knows Python and LLMs, maybe not S3, embeddings or Bedrock"
+source: "nadirbt/careonex-agents data-retrieval@d96a4ad (pipeline identical on feat/sonic_with_rag@eff4a96)"
+# No narrator: the SAY lines of script.md are subtitles only, shown at a reading pace of ~2.2 words/s,
+# and the English build burns the bilingual (Chinese over English) subtitles in.
+voice: {backend: silent, speed: 0.85}
+subtitles_only: true
+scenes:
+  - {file: scenes/s01_map.py,      cls: TwoHalves,  title: "Two halves"}
+  - {file: scenes/s02_catalog.py,  cls: Catalog,    title: "The source list"}
+  - {file: scenes/s03_ingest.py,   cls: Ingest,     title: "data and ingest → raw/"}
+  - {file: scenes/s04_extract.py,  cls: Extract,    title: "extract → text/"}
+  - {file: scenes/s05_chunk.py,    cls: Chunk,      title: "chunk → chunks/"}
+  - {file: scenes/s06_vectors.py,  cls: Vectors,    title: "kb-sync → vectors"}
+  - {file: scenes/s07_open.py,     cls: OpenItems,  title: "What is solid, what is open"}
