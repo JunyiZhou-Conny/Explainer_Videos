@@ -6,8 +6,8 @@ Audience: a complete beginner who wants to understand everything. No AWS, Docker
 Python-packaging knowledge assumed. Goal: after E0 the viewer can read Marco's two start-up commands
 and say what every line does, why it is there, and which piece of the system it touches.
 
-**No narrator.** SAY lines are the subtitles (Chinese above, English below), shown at a reading pace
-of ~2.2 words/s. Short sentences, one idea each.
+**Narrated.** SAY lines are spoken (Kokoro `af_heart`, 0.95×, over a quiet music bed) and shown as
+subtitles (Chinese above, English below). Short sentences, one idea each.
 
 **Sources.** The two command blocks Marco posted in the team chat (2026-10-10, 16:08), copied exactly.
 The code on GitHub (`nadirbt/careonex-agents`: `data-retrieval@d96a4ad`, `feat/sonic_with_rag@eff4a96`),

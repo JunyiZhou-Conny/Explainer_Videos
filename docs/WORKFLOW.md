@@ -113,8 +113,17 @@ Output in `videos/<id>/output/`: the mp4 (loudness-normalised), `.srt` subtitles
 `subtitles_only: true` in `video.yaml`. The SAY lines are then only subtitles: each block lasts its
 reading time (~2.6 words/s × speed), and the English build burns the bilingual subtitles of every
 translation in `i18n/<lang>/narration/` into `output/<id>.<lang>-en.mp4` (`--no-burn` skips that).
-Write SAY lines for reading, not listening: short sentences, digits for numbers. Example:
-`videos/careonex-e2-library/`.
+Write SAY lines for reading, not listening: short sentences, digits for numbers.
+
+**Burned-in subtitles for a narrated video.** `burn_subtitles: true` in `video.yaml` (same as `--burn`).
+
+**Background music.** `music: {seed: 0, volume_db: 0}` in `video.yaml` mixes a quiet music bed under
+the narration: calm pads, bass and a sparse bell arpeggio, synthesized from scratch by
+`explainer/music.py` (no samples, so nothing to license), different per `seed`. It sits about 12 dB
+under the voice in pauses and ducks to about 20 dB under it while someone speaks. `volume_db` moves it;
+`music: {file: assets/music/track.mp3}` uses a track of your own instead (looped to length).
+Preview a bed alone: `python -m explainer.music sample.wav --seconds 60 --seed 2`.
+Example of both: `videos/careonex-e2-library/`.
 
 Set it per video in `video.yaml` (`voice:`), or per run: `EXPLAINER_TTS=elevenlabs python -m explainer.build ...`.
 Clips are cached in `.cache/tts/`, so switching voices only re-synthesises once.

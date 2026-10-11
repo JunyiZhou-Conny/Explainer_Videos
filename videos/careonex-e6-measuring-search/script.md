@@ -6,7 +6,8 @@ Audience: a complete beginner who has seen E0 (the start-up commands) and E2 (th
 after E6 the viewer can say what Marco's branch changes about search, read a precision / MRR / NDCG
 table, and say honestly what the evidence on the branch does and does not show.
 
-**No narrator.** SAY lines are the subtitles (Chinese above, English below), ~2.2 words/s.
+**Narrated.** SAY lines are spoken (Kokoro `af_heart`, 0.95×, over a quiet music bed) and shown as
+subtitles (Chinese above, English below).
 
 **Sources.** `nadirbt/careonex-agents`, branch `feat/sonic_with_rag_updated` at `1591ed2` (Marco Ren,
 2026-10-10; one commit on top of `main` that carries the whole pipeline plus his changes). Docs on

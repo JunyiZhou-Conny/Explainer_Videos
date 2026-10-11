@@ -3,10 +3,11 @@ title: "CareOneX E6 · Measuring search: Marco's experiments with chunking, feed
 papers: []                     # not a paper: an explainer of the team's own code (series: videos/careonex-series)
 audience: "a complete beginner on the CareOneX AC215 team who has watched E0 and E2"
 source: "nadirbt/careonex-agents feat/sonic_with_rag_updated@1591ed2 (Marco Ren); numbers: videos/careonex-series/checks/marco"
-# No narrator: the SAY lines of script.md are subtitles only, shown at a reading pace of ~2.2 words/s,
-# and the English build burns the bilingual (Chinese over English) subtitles in.
-voice: {backend: silent, speed: 0.85}
-subtitles_only: true
+# Narrated (Kokoro, af_heart) over a quiet generated music bed (explainer/music.py) that ducks under
+# the voice; the English build still burns the bilingual (Chinese over English) subtitles in.
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+burn_subtitles: true
+music: {seed: 2, volume_db: 0}
 scenes:
   - {file: scenes/s01_branch.py,          cls: Branch,          title: "What is on Marco's branch"}
   - {file: scenes/s02_metrics.py,         cls: Metrics,         title: "Scoring a search"}

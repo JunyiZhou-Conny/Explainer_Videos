@@ -1,7 +1,7 @@
 # CareOneX E1 · The big picture — script draft (v0, not rendered)
 
 **Draft.** Written before Marco's branch was pushed; S05 now has his branch (read the same evening).
-S06 (where we are) waits for E7. Format as in E2: no narrator, SAY = subtitles.
+S06 (where we are) waits for E7. Format as in E2: narrated with music, SAY = narration and subtitles.
 
 Audience: the five teammates. Goal: after E1, anyone can draw the system from memory, say which
 branch holds which layer, and say how far the build is from the Milestone 1 plan.

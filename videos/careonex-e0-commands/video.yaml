@@ -3,8 +3,11 @@ title: "CareOneX E0 · Decoding the start-up commands: every word, for a beginne
 papers: []                     # not a paper: an explainer of the team's own code (series: videos/careonex-series)
 audience: "a complete beginner who wants to understand the CareOneX system; no AWS, Docker or networking assumed"
 source: "Marco's start-up commands (team chat, 2026-10-10); nadirbt/careonex-agents data-retrieval@d96a4ad, feat/sonic_with_rag@eff4a96"
-voice: {backend: silent, speed: 0.85}
-subtitles_only: true
+# Narrated (Kokoro, af_heart) over a quiet generated music bed (explainer/music.py) that ducks under
+# the voice; the English build still burns the bilingual (Chinese over English) subtitles in.
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+burn_subtitles: true
+music: {seed: 0, volume_db: 0}
 scenes:
   - {file: scenes/s01_hook.py,       cls: Hook,           title: "Two walls of text"}
   - {file: scenes/s02_two.py,        cls: TwoPrograms,    title: "Two terminals, two programs"}

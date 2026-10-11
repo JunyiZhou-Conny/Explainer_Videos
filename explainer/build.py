@@ -16,6 +16,10 @@ Reads <project>/video.yaml:
     subtitles_only: false                    # true: no narrator (voice: {backend: silent, speed: 0.85}
                                              #   sets the reading pace); the English build burns the
                                              #   bilingual subtitles of each translation in (<id>.<lang>-en.mp4)
+    burn_subtitles: false                    # true: burn them in for a narrated video too (as --burn)
+    music: {seed: 0, volume_db: 0}           # optional background music under the narration, ducked
+                                             #   while someone speaks: a generated bed (explainer/music.py)
+                                             #   or {file: path/to/track.mp3, volume_db: 0}
     scenes:
       - {file: scenes/s01_hook.py, cls: Hook, title: "The differencing attack"}
 
@@ -356,7 +360,8 @@ def main(argv=None):
         meta = lang_meta(lang, project)
     title = meta.get("title") or spec.get("title", spec["id"])
     # a subtitle-only video (no narrator) is unwatchable without its subtitles: always burn them in
-    burn_en = args.burn or (bool(spec.get("subtitles_only")) and not args.no_burn)
+    burn_en = args.burn or ((bool(spec.get("subtitles_only")) or bool(spec.get("burn_subtitles")))
+                            and not args.no_burn)
     ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
                burn=(not args.no_burn) if lang != "en" else burn_en, subs_only=args.subs_only)
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
@@ -400,6 +405,36 @@ def _clips_with_marks(subs_file: Path, env: dict | None) -> list[dict]:
                 else:
                     os.environ[k] = v
     return clips
+
+
+def mix_music(joined: Path, final: Path, music: dict, project: Path, build: Path, seconds: float) -> None:
+    """Narration (loudness-normalized) over a music bed that ducks while someone speaks.
+
+    `music` is video.yaml's block: {seed, bpm, volume_db} for the generated bed (explainer/music.py)
+    or {file, volume_db} for a track of your own, looped to the video's length."""
+    from . import music as music_mod
+
+    gain = float(music.get("volume_db", 0))
+    if music.get("file"):
+        src = (project / music["file"]).resolve()
+        inputs = ["-stream_loop", "-1", "-i", str(src)]
+        bed_chain = (f"[1:a]aresample=48000,aformat=channel_layouts=stereo,atrim=0:{seconds:.3f},"
+                     f"loudnorm=I=-30:LRA=7,volume={gain}dB,afade=t=in:d=3,"
+                     f"afade=t=out:st={max(0, seconds - 5):.3f}:d=5[bed]")
+    else:
+        wav = music_mod.bed(seconds, build, seed=int(music.get("seed", 0)), bpm=float(music.get("bpm", 64)))
+        inputs = ["-i", str(wav)]
+        bed_chain = f"[1:a]aresample=48000,volume={gain}dB[bed]"
+    graph = ";".join([
+        "[0:a]loudnorm=I=-16:TP=-2:LRA=11,aresample=48000,asplit=2[voice][key]",
+        bed_chain,
+        # the bed sits ~12 dB under the voice in pauses and ~20 dB under it while someone speaks
+        "[bed][key]sidechaincompress=threshold=0.015:ratio=4:attack=40:release=600[ducked]",
+        "[voice][ducked]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.89[a]",
+    ])
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), *inputs, "-filter_complex", graph,
+                    "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-ar", "48000", "-c:a", "aac", "-b:a", "160k",
+                    "-movflags", "+faststart", str(final)], check=True)
 
 
 def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
@@ -452,9 +487,13 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         joined = build / f"joined_{stem.name}.mp4"
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
                         "-c", "copy", str(joined)], check=True)
-        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
-                        "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
-                        "-movflags", "+faststart", str(final)], check=True)
+        music = (ctx.get("spec") or {}).get("music")
+        if music and project is not None:
+            mix_music(joined, final, music, project, build, offset)
+        else:
+            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
+                            "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
+                            "-movflags", "+faststart", str(final)], check=True)
         joined.unlink(missing_ok=True)
     made = []
     if lang == "en":

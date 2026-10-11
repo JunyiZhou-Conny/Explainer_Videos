@@ -7,9 +7,9 @@ understand the others. Knows Python and what an LLM is; may not know S3, embeddi
 Goal: after this episode a viewer can explain what each of the five pipeline containers does,
 why it exists, what it writes where, and what is still open.
 
-**No narrator.** `SAY:` lines are not spoken: they are the subtitles (English below, Chinese above,
-burned in under the picture). Their on-screen time comes from a reading pace of ~2.2 words/s
-(`video.yaml`: `voice: {backend: silent, speed: 0.85}`). So: short sentences, digits for numbers,
+**Narrated.** `SAY:` lines are spoken (Kokoro `af_heart`, 0.95×, over a quiet music bed) and shown as
+subtitles (English below, Chinese above, burned in under the picture). Written first for a
+subtitle-only cut (2026-10-10), so: short sentences, digits for numbers,
 one idea per sentence. On-screen text stays short (labels, not sentences): the subtitles carry the
 explanation.
 

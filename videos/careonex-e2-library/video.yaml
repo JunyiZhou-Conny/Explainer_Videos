@@ -3,10 +3,11 @@ title: "CareOneX E2 · Building the library: from 20 public documents to 232 sea
 papers: []                     # not a paper: an explainer of the team's own code (series: videos/careonex-series)
 audience: "the CareOneX AC215 team; knows Python and LLMs, maybe not S3, embeddings or Bedrock"
 source: "nadirbt/careonex-agents data-retrieval@d96a4ad (pipeline identical on feat/sonic_with_rag@eff4a96)"
-# No narrator: the SAY lines of script.md are subtitles only, shown at a reading pace of ~2.2 words/s,
-# and the English build burns the bilingual (Chinese over English) subtitles in.
-voice: {backend: silent, speed: 0.85}
-subtitles_only: true
+# Narrated (Kokoro, af_heart) over a quiet generated music bed (explainer/music.py) that ducks under
+# the voice; the English build still burns the bilingual (Chinese over English) subtitles in.
+voice: {backend: kokoro, voice: af_heart, speed: 0.95}
+burn_subtitles: true
+music: {seed: 1, volume_db: 0}
 scenes:
   - {file: scenes/s01_map.py,      cls: TwoHalves,  title: "Two halves"}
   - {file: scenes/s02_catalog.py,  cls: Catalog,    title: "The source list"}
