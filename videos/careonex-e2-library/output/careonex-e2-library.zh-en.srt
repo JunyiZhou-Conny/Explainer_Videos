@@ -664,41 +664,81 @@ But when the chunker splits a big table, it repeats only the first row.
 So the chunk that holds 1,090 dollars never says JACC.
 
 134
-00:09:17,417 --> 00:09:22,291
+00:09:17,417 --> 00:09:23,139
+当天晚上的更新：Marco 的分支处理了第 3 个问题
+An update from the same evening: Marco's branch works on open item 3.
+
+135
+00:09:23,459 --> 00:09:28,134
+他的新切块器会重复写着项目名称的那一行，我们验证过
+Its new chunker repeats the row with the program names,
+
+136
+00:09:28,134 --> 00:09:32,978
+写着 1,090 美元的那个 chunk 现在包含 JACC
+and we checked that the 1,090 dollar chunk now says JACC.
+
+137
+00:09:33,298 --> 00:09:37,336
+但他新写的表格读取器在真实 PDF 上失败了
+But his new table reader fails on the real PDF,
+
+138
+00:09:37,336 --> 00:09:41,889
+而 retrieve 现在会丢掉这张表里没被验证过的 chunk
+and retrieve now drops the table's unverified chunks,
+
+139
+00:09:41,889 --> 00:09:46,442
+所以目前这张表根本到不了 agent 手里
+so for now the table does not reach the agent at all.
+
+140
+00:09:46,762 --> 00:09:49,895
+第 1、2 个问题在他的分支上没有变化
+Open items 1 and 2 are unchanged there.
+
+141
+00:09:50,215 --> 00:09:52,458
+细节见第 6 集
+Episode 6 has the details.
+
+142
+00:09:52,700 --> 00:09:57,575
 另外还没解决的：目前没有任何机制定期重跑这条 pipeline
 Also open: nothing re-runs this pipeline on a schedule yet,
 
-135
-00:09:22,291 --> 00:09:25,761
+143
+00:09:57,575 --> 00:10:01,045
 团队的摘要也是手动更新的
 and the team's summary is updated by hand.
 
-136
-00:09:26,000 --> 00:09:28,640
+144
+00:10:01,283 --> 00:10:03,923
 三个问题，检验一下自己
 Three questions to test yourself.
 
-137
-00:09:28,960 --> 00:09:33,863
+145
+00:10:04,243 --> 00:10:09,146
 为什么 extract 对文本算 hash，而不是对下载的文件？
 Why does extract hash the text and not the downloaded file?
 
-138
-00:09:34,183 --> 00:09:38,042
+146
+00:10:09,466 --> 00:10:13,325
 为什么每个 chunk 上都要盖上标题路径？
 Why is the heading path stamped on every chunk?
 
-139
-00:09:38,362 --> 00:09:46,109
+147
+00:10:13,645 --> 00:10:21,393
 如果清单里新加一份 PDF，下次运行时哪些容器会真正干活？
 And when one new PDF is added to the list, which containers do real work on the next run?
 
-140
-00:09:46,350 --> 00:09:50,392
+148
+00:10:21,633 --> 00:10:25,675
 下一集：一个问题进来之后会发生什么
 Next episode: what happens when a question arrives,
 
-141
-00:09:50,392 --> 00:09:55,147
+149
+00:10:25,675 --> 00:10:30,431
 以及 retrieve 如何从这 232 段里找到正确的 5 段
 and how retrieve finds the right 5 passages among these 232.

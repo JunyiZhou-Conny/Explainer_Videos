@@ -621,44 +621,82 @@ So the chunk
 that holds 1,090 dollars never says JACC.
 
 134
-00:09:17,417 --> 00:09:22,291
+00:09:17,417 --> 00:09:23,139
+An update from the same evening:
+Marco's branch works on open item 3.
+
+135
+00:09:23,459 --> 00:09:28,134
+Its new chunker repeats the row
+with the program names,
+
+136
+00:09:28,134 --> 00:09:32,978
+and we checked
+that the 1,090 dollar chunk now says JACC.
+
+137
+00:09:33,298 --> 00:09:37,336
+But his new table reader
+fails on the real PDF,
+
+138
+00:09:37,336 --> 00:09:41,889
+and retrieve now drops
+the table's unverified chunks,
+
+139
+00:09:41,889 --> 00:09:46,442
+so for now the table
+does not reach the agent at all.
+
+140
+00:09:46,762 --> 00:09:49,895
+Open items 1 and 2 are unchanged there.
+
+141
+00:09:50,215 --> 00:09:52,458
+Episode 6 has the details.
+
+142
+00:09:52,700 --> 00:09:57,575
 Also open: nothing re-runs
 this pipeline on a schedule yet,
 
-135
-00:09:22,291 --> 00:09:25,761
+143
+00:09:57,575 --> 00:10:01,045
 and the team's summary is updated by hand.
 
-136
-00:09:26,000 --> 00:09:28,640
+144
+00:10:01,283 --> 00:10:03,923
 Three questions to test yourself.
 
-137
-00:09:28,960 --> 00:09:33,863
+145
+00:10:04,243 --> 00:10:09,146
 Why does extract hash the text
 and not the downloaded file?
 
-138
-00:09:34,183 --> 00:09:38,042
+146
+00:10:09,466 --> 00:10:13,325
 Why is the heading path
 stamped on every chunk?
 
-139
-00:09:38,362 --> 00:09:42,059
+147
+00:10:13,645 --> 00:10:17,343
 And when one new PDF is added to the list,
 
-140
-00:09:42,059 --> 00:09:46,109
+148
+00:10:17,343 --> 00:10:21,393
 which containers do real work
 on the next run?
 
-141
-00:09:46,350 --> 00:09:50,392
+149
+00:10:21,633 --> 00:10:25,675
 Next episode:
 what happens when a question arrives,
 
-142
-00:09:50,392 --> 00:09:55,147
+150
+00:10:25,675 --> 00:10:30,431
 and how retrieve finds the right 5 passages
 among these 232.
 

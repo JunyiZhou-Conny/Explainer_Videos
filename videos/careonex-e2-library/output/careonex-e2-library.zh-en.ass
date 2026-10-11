@@ -145,11 +145,19 @@ Dialogue: 0,0:08:58.88,0:09:02.45,Bilingual,,0,0,0,,第三，同一张表格把�
 Dialogue: 0,0:09:02.77,0:09:06.66,Bilingual,,0,0,0,,项目名称在 extract 之后还在，就在表格的第二行\N{\fs33\c&H00C8C0B8&\bord1.4}They survive extraction, in the table's second row.
 Dialogue: 0,0:09:06.98,0:09:12.49,Bilingual,,0,0,0,,但 chunk 容器切分大表格时，只重复第一行\N{\fs33\c&H00C8C0B8&\bord1.4}But when the chunker splits a big table, it repeats only the first row.
 Dialogue: 0,0:09:12.81,0:09:17.18,Bilingual,,0,0,0,,所以装着 1,090 美元的那个 chunk 里，根本没有 JACC 这个词\N{\fs33\c&H00C8C0B8&\bord1.4}So the chunk that holds 1,090 dollars never says JACC.
-Dialogue: 0,0:09:17.42,0:09:22.29,Bilingual,,0,0,0,,另外还没解决的：目前没有任何机制定期重跑这条 pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}Also open: nothing re-runs this pipeline on a schedule yet,
-Dialogue: 0,0:09:22.29,0:09:25.76,Bilingual,,0,0,0,,团队的摘要也是手动更新的\N{\fs33\c&H00C8C0B8&\bord1.4}and the team's summary is updated by hand.
-Dialogue: 0,0:09:26.00,0:09:28.64,Bilingual,,0,0,0,,三个问题，检验一下自己\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions to test yourself.
-Dialogue: 0,0:09:28.96,0:09:33.86,Bilingual,,0,0,0,,为什么 extract 对文本算 hash，而不是对下载的文件？\N{\fs33\c&H00C8C0B8&\bord1.4}Why does extract hash the text and not the downloaded file?
-Dialogue: 0,0:09:34.18,0:09:38.04,Bilingual,,0,0,0,,为什么每个 chunk 上都要盖上标题路径？\N{\fs33\c&H00C8C0B8&\bord1.4}Why is the heading path stamped on every chunk?
-Dialogue: 0,0:09:38.36,0:09:46.11,Bilingual,,0,0,0,,如果清单里新加一份 PDF，下次运行时哪些容器会真正干活？\N{\fs33\c&H00C8C0B8&\bord1.4}And when one new PDF is added to the list, which containers do real work on the next run?
-Dialogue: 0,0:09:46.35,0:09:50.39,Bilingual,,0,0,0,,下一集：一个问题进来之后会发生什么\N{\fs33\c&H00C8C0B8&\bord1.4}Next episode: what happens when a question arrives,
-Dialogue: 0,0:09:50.39,0:09:55.15,Bilingual,,0,0,0,,以及 retrieve 如何从这 232 段里找到正确的 5 段\N{\fs33\c&H00C8C0B8&\bord1.4}and how retrieve finds the right 5 passages among these 232.
+Dialogue: 0,0:09:17.42,0:09:23.14,Bilingual,,0,0,0,,当天晚上的更新：Marco 的分支处理了第 3 个问题\N{\fs33\c&H00C8C0B8&\bord1.4}An update from the same evening: Marco's branch works on open item 3.
+Dialogue: 0,0:09:23.46,0:09:28.13,Bilingual,,0,0,0,,他的新切块器会重复写着项目名称的那一行，我们验证过\N{\fs33\c&H00C8C0B8&\bord1.4}Its new chunker repeats the row with the program names,
+Dialogue: 0,0:09:28.13,0:09:32.98,Bilingual,,0,0,0,,写着 1,090 美元的那个 chunk 现在包含 JACC\N{\fs33\c&H00C8C0B8&\bord1.4}and we checked that the 1,090 dollar chunk now says JACC.
+Dialogue: 0,0:09:33.30,0:09:37.34,Bilingual,,0,0,0,,但他新写的表格读取器在真实 PDF 上失败了\N{\fs33\c&H00C8C0B8&\bord1.4}But his new table reader fails on the real PDF,
+Dialogue: 0,0:09:37.34,0:09:41.89,Bilingual,,0,0,0,,而 retrieve 现在会丢掉这张表里没被验证过的 chunk\N{\fs33\c&H00C8C0B8&\bord1.4}and retrieve now drops the table's unverified chunks,
+Dialogue: 0,0:09:41.89,0:09:46.44,Bilingual,,0,0,0,,所以目前这张表根本到不了 agent 手里\N{\fs33\c&H00C8C0B8&\bord1.4}so for now the table does not reach the agent at all.
+Dialogue: 0,0:09:46.76,0:09:49.90,Bilingual,,0,0,0,,第 1、2 个问题在他的分支上没有变化\N{\fs33\c&H00C8C0B8&\bord1.4}Open items 1 and 2 are unchanged there.
+Dialogue: 0,0:09:50.22,0:09:52.46,Bilingual,,0,0,0,,细节见第 6 集\N{\fs33\c&H00C8C0B8&\bord1.4}Episode 6 has the details.
+Dialogue: 0,0:09:52.70,0:09:57.57,Bilingual,,0,0,0,,另外还没解决的：目前没有任何机制定期重跑这条 pipeline\N{\fs33\c&H00C8C0B8&\bord1.4}Also open: nothing re-runs this pipeline on a schedule yet,
+Dialogue: 0,0:09:57.57,0:10:01.05,Bilingual,,0,0,0,,团队的摘要也是手动更新的\N{\fs33\c&H00C8C0B8&\bord1.4}and the team's summary is updated by hand.
+Dialogue: 0,0:10:01.28,0:10:03.92,Bilingual,,0,0,0,,三个问题，检验一下自己\N{\fs33\c&H00C8C0B8&\bord1.4}Three questions to test yourself.
+Dialogue: 0,0:10:04.24,0:10:09.15,Bilingual,,0,0,0,,为什么 extract 对文本算 hash，而不是对下载的文件？\N{\fs33\c&H00C8C0B8&\bord1.4}Why does extract hash the text and not the downloaded file?
+Dialogue: 0,0:10:09.47,0:10:13.32,Bilingual,,0,0,0,,为什么每个 chunk 上都要盖上标题路径？\N{\fs33\c&H00C8C0B8&\bord1.4}Why is the heading path stamped on every chunk?
+Dialogue: 0,0:10:13.64,0:10:21.39,Bilingual,,0,0,0,,如果清单里新加一份 PDF，下次运行时哪些容器会真正干活？\N{\fs33\c&H00C8C0B8&\bord1.4}And when one new PDF is added to the list, which containers do real work on the next run?
+Dialogue: 0,0:10:21.63,0:10:25.68,Bilingual,,0,0,0,,下一集：一个问题进来之后会发生什么\N{\fs33\c&H00C8C0B8&\bord1.4}Next episode: what happens when a question arrives,
+Dialogue: 0,0:10:25.68,0:10:30.43,Bilingual,,0,0,0,,以及 retrieve 如何从这 232 段里找到正确的 5 段\N{\fs33\c&H00C8C0B8&\bord1.4}and how retrieve finds the right 5 passages among these 232.

@@ -1,7 +1,7 @@
 # CareOneX E2 · Building the library
 
 *From 20 public documents to 232 searchable passages.* Part of the series
-[CareOneX, layer by layer](../careonex-series/SERIES.md). About 9 minutes, no narrator: English on
+[CareOneX, layer by layer](../careonex-series/SERIES.md). About 10 minutes, no narrator: English on
 screen, bilingual subtitles (中文 above, English below) burned in.
 
 **Watch:** `output/careonex-e2-library.zh-en.mp4` (subtitles burned in). The clean picture is
