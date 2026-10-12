@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "preset": "swiss",
+  "duration_seconds": 300,
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "container": "mp4",
+    "codec": "h264"
+  },
+  "narration": {
+    "language": "en",
+    "voice": "af_heart",
+    "speed": 0.95
+  },
+  "subtitles": {
+    "languages": [
+      "zh-CN",
+      "en"
+    ],
+    "layout": "Chinese above English",
+    "burn_in": true,
+    "sidecar_formats": [
+      "srt",
+      "ass"
+    ]
+  },
+  "production": {
+    "workspace": null,
+    "runner": "tools/render_episode.py",
+    "output_subdirectory": "outputs"
+  }
+}

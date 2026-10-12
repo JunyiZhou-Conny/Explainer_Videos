@@ -1,0 +1,349 @@
+1
+00:00:00,400 --> 00:00:03,440
+想象一下，只用一句话就能提出视频需求
+Imagine asking for a video with one sentence:
+
+2
+00:00:03,440 --> 00:00:08,912
+用瑞士风格解释我的 Cursor 技能，五分钟，配中英双语字幕
+explain my Cursor skills, in Swiss style, five minutes, with bilingual subtitles.
+
+3
+00:00:09,067 --> 00:00:11,580
+你不必每次都重新
+You should not have to describe the fonts,
+
+4
+00:00:11,580 --> 00:00:14,571
+描述字体、节奏、结构和导出设置
+pacing, structure, and export settings every time.
+
+5
+00:00:14,891 --> 00:00:20,459
+可复用的技能会保存这些决定，让下一次请求专注于要讲的主题
+A reusable skill stores those decisions, so your next request can focus on the topic.
+
+6
+00:00:22,233 --> 00:00:26,385
+技能就像食谱：它说明何时使用工作流、要按哪些步骤操作
+A skill is a recipe: when to use a workflow, what steps to follow,
+
+7
+00:00:26,385 --> 00:00:28,398
+以及合格的结果包含什么
+and what a good result contains.
+
+8
+00:00:28,566 --> 00:00:32,683
+工具是厨具，比如视频渲染器或图像生成器
+Tools are equipment, such as a video renderer or image generator.
+
+9
+00:00:33,003 --> 00:00:35,755
+Cursor、Codex 和 Claude Code 则是厨师
+Cursor, Codex, and Claude Code are the cooks.
+
+10
+00:00:36,075 --> 00:00:40,577
+共享食谱，并不会自动让每位厨师拥有相同的厨具
+Sharing a recipe does not automatically give every cook the same equipment.
+
+11
+00:00:42,300 --> 00:00:44,625
+你的 Mac 已经有一个共享起点
+Your Mac already has a shared starting point.
+
+12
+00:00:44,945 --> 00:00:48,710
+在安装这次的新技能之前，审计发现你的主目录下
+Before this installation, the audit found eighty-three skill
+
+13
+00:00:48,710 --> 00:00:52,412
+点 agents 里的 skills 文件夹中有八十三个技能文件夹
+folders under dot agents, then skills, in your home folder.
+
+14
+00:00:52,567 --> 00:00:56,195
+Cursor 还在点 cursor 里的 skills-cursor
+Cursor separately maintained twenty-five skills under dot cursor,
+
+15
+00:00:56,195 --> 00:00:57,995
+目录中单独维护了二十五个技能
+then skills cursor.
+
+16
+00:00:58,071 --> 00:01:01,399
+普通的点 cursor 下的 skills 文件夹当时并不存在
+The ordinary dot cursor skills folder did not exist.
+
+17
+00:01:01,719 --> 00:01:05,516
+相近的名称，可能代表不同的位置和管理者
+Similar names can describe very different locations and owners.
+
+18
+00:01:07,333 --> 00:01:10,792
+在点 cursor 中，extensions 提供编辑器功能
+Inside dot cursor, extensions add editor features.
+
+19
+00:01:10,792 --> 00:01:15,288
+plugins 打包助手能力，projects 保存工作状态
+Plugins bundle agent capabilities. Projects stores working state,
+
+20
+00:01:15,288 --> 00:01:21,029
+MCP 配置定义工具连接，而 hooks 可以触发命令
+while the M C P configuration names tool connections and hooks can launch commands.
+
+21
+00:01:21,200 --> 00:01:24,336
+插件缓存可能保留同一技能的多个版本
+Plugin caches can keep several versions of one skill.
+
+22
+00:01:24,656 --> 00:01:27,835
+文件存在，不代表应用正在加载它
+A file's presence does not prove the application loads it.
+
+23
+00:01:28,155 --> 00:01:31,632
+配套目录记录了所有观察到的副本
+The companion catalog records all observed copies.
+
+24
+00:01:33,467 --> 00:01:36,842
+在技能文件夹中，先找 SKILL.md
+Inside a skill folder, find the skill markdown file.
+
+25
+00:01:36,842 --> 00:01:42,555
+文件中的名称和描述说明何时使用它，正文则提供操作流程
+Its name and description identify when it applies. The main text supplies the procedure.
+
+26
+00:01:42,734 --> 00:01:44,689
+references 保存风格指南
+References hold style guidance,
+
+27
+00:01:44,689 --> 00:01:48,601
+scripts 自动完成渲染步骤，assets 提供模板
+scripts automate rendering steps, and assets supply templates.
+
+28
+00:01:48,921 --> 00:01:53,230
+它们一起把反复进行的对话变成可复用的包
+Together they turn a repeated conversation into a reusable package.
+
+29
+00:01:53,550 --> 00:01:56,942
+但这些指令仍然需要相应工具才能执行
+Instructions still need tools capable of carrying them out.
+
+30
+00:01:58,767 --> 00:02:03,283
+追溯来源时，要区分内容作者、管理文件的软件
+To trace origin, distinguish the author, the software managing the files,
+
+31
+00:02:03,283 --> 00:02:05,083
+以及执行安装的人或程序
+and whoever installed them.
+
+32
+00:02:05,134 --> 00:02:08,586
+例如，你的二十六份共享技能文件
+For example, twenty-six shared skill files exactly
+
+33
+00:02:08,586 --> 00:02:12,935
+与 Google Cloud Data Agent Kit
+match copies inside your Google Cloud Data Agent Kit extension.
+
+34
+00:02:12,935 --> 00:02:17,353
+扩展中的副本完全一致。 这证明内容相同，却不能证明是谁复制的
+That proves matching content. It does not prove who copied them.
+
+35
+00:02:17,353 --> 00:02:23,843
+清单和安装代码可以提供证据；仅凭时间戳无法确定安装者
+Manifests and installer code provide evidence; timestamps alone cannot identify the installer.
+
+36
+00:02:25,700 --> 00:02:27,768
+是否有用，取决于具体任务
+Usefulness depends on the job.
+
+37
+00:02:27,768 --> 00:02:31,972
+Bedrock 和存储技能能帮助你处理 AWS 项目
+Bedrock and storage skills can help with your A W S projects.
+
+38
+00:02:31,972 --> 00:02:36,452
+Python 依赖和 notebook 技能则支持研究工作流
+Python dependency and notebook skills support research workflows.
+
+39
+00:02:36,600 --> 00:02:42,498
+制作视频时，优先考虑依据、讲解、视觉设计、旁白和渲染
+For videos, prioritize evidence, explanations, visual design, narration, and rendering.
+
+40
+00:02:42,498 --> 00:02:48,802
+专业技能留给相关主题使用
+Keep specialist skills for relevant topics. A large collection is not automatically wasteful.
+
+41
+00:02:48,802 --> 00:02:53,005
+技能多不等于浪费，装有指令也不代表连接的服务一定可用
+Installed instructions do not prove a connected service works.
+
+42
+00:02:54,933 --> 00:02:57,745
+新的技能库只保留一个可编辑来源
+For the new library, keep one editable source
+
+43
+00:02:57,745 --> 00:03:01,056
+放在主目录的点 agents 下的 skills 中
+under your home folder's dot agents skills directory.
+
+44
+00:03:01,376 --> 00:03:06,240
+当前的 Cursor 和 Codex 文档都支持这个位置
+Current Cursor and Codex documentation both recognize this location.
+
+45
+00:03:06,400 --> 00:03:12,098
+Claude Code 则通过自己 skills 文件夹中的符号链接访问同一套文件
+Claude Code gets a symbolic link from its own skills folder, pointing to the same files.
+
+46
+00:03:12,098 --> 00:03:13,598
+因此修改来源一次即可
+Edit the source once.
+
+47
+00:03:13,598 --> 00:03:17,493
+由应用管理的技能和插件缓存仍保留在原位
+Keep application-managed skills and plugin caches in place.
+
+48
+00:03:19,300 --> 00:03:22,998
+安装后，检查每个应用的技能选择器
+After installation, check each application's skill picker.
+
+49
+00:03:22,998 --> 00:03:27,206
+选中 Conny Explainer Video，先让它生成制作简报
+Select Conny Explainer Video and first ask for a production brief.
+
+50
+00:03:27,206 --> 00:03:30,649
+确认它采用了预期的风格预设和默认设置
+Confirm that it uses the intended preset and defaults.
+
+51
+00:03:30,800 --> 00:03:36,597
+接着测试参数覆盖和短片渲染：应用能否找到技能、遵循指令，并产出结果？
+Then test an override and a short render. Can the app find the skill, follow its instructions,
+
+52
+00:03:36,597 --> 00:03:40,421
+远程电脑需要单独配置
+and produce the result? Remote computers need their own setup.
+
+53
+00:03:42,200 --> 00:03:45,764
+预设菜单把你的偏好变成简短名称
+The preset menu gives your preferences short names:
+
+54
+00:03:45,764 --> 00:03:50,377
+瑞士风格、盒式未来主义、风格派、包豪斯、NASA 朋克、莱茵生命
+Swiss, cassette futurism, De Stijl, Bauhaus, NASA punk, Rhine Lab,
+
+55
+00:03:50,377 --> 00:03:51,683
+以及像素工作室
+and pixel studio.
+
+56
+00:03:51,733 --> 00:03:56,512
+你的科幻参考包括《星空》、NASA 朋克和莱茵生命
+Your science-fiction references include Starfield, NASA punk, and Rhine Lab.
+
+57
+00:03:56,832 --> 00:04:01,525
+每个预设都应定义配色、字体、构图和运动方式
+Each preset should specify palette, typography, composition, and motion.
+
+58
+00:04:01,845 --> 00:04:06,560
+风格名称会选中设计规范，实际样片才能展示效果
+A style name selects a design brief; the rendered sample shows how well it works.
+
+59
+00:04:08,400 --> 00:04:13,713
+这个工作流的默认简报是
+For this workflow, the default brief is Swiss design, five minutes, ten eighty p,
+
+60
+00:04:13,713 --> 00:04:18,960
+瑞士风格、五分钟、1080p、每秒三十帧、英语旁白，以及中英双语字幕
+thirty frames per second, English narration, and Chinese plus English subtitles.
+
+61
+00:04:19,133 --> 00:04:21,074
+你只需说明要改的地方
+You only need to state changes.
+
+62
+00:04:21,394 --> 00:04:24,082
+要求两分钟，就会覆盖默认时长
+Asking for two minutes overrides the duration.
+
+63
+00:04:24,402 --> 00:04:27,627
+保存的工作流延续你惯用的选择
+The saved workflow should carry your usual choices forward
+
+64
+00:04:27,627 --> 00:04:30,184
+同时以你本次的要求为准
+while keeping your current request in control.
+
+65
+00:04:31,967 --> 00:04:37,140
+下次制作时，你可以说：使用 Conny Explainer Video
+For your next video, say: use Conny Explainer Video to explain my Cursor skills,
+
+66
+00:04:37,140 --> 00:04:40,180
+用瑞士风格解释我的 Cursor 技能，五分钟，中英双语字幕
+Swiss style, five minutes, bilingual subtitles.
+
+67
+00:04:40,334 --> 00:04:42,496
+我们的工作流分成三个角色
+Our workflow separates three roles.
+
+68
+00:04:42,496 --> 00:04:48,426
+导演核实事实并安排讲解顺序，设计师把这些想法变成画面
+The director checks the facts and teaching sequence. The designer turns those ideas into frames.
+
+69
+00:04:48,426 --> 00:04:52,750
+工程实现则负责时间安排、旁白、字幕和最终渲染
+The engineer builds timing, narration, captions, and the final render.
+
+70
+00:04:52,900 --> 00:04:58,511
+检查样片，调整保存的偏好，下次就能复用这份改进后的食谱
+Review a sample, adjust the saved preferences, and reuse the improved recipe next time.

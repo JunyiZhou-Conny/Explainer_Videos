@@ -1,0 +1,83 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,43,&H00F3F0E7,&H00F3F0E7,&H00171717,&H00171717,0,0,0,0,100,100,0,0,1,0,0,2,90,90,27,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.40,0:00:03.44,Bilingual,,0,0,0,,想象一下，只用一句话就能提出视频需求\N{\fnInter\fs30\c&H00C9C9C9&}Imagine asking for a video with one sentence:
+Dialogue: 0,0:00:03.44,0:00:08.91,Bilingual,,0,0,0,,用瑞士风格解释我的 Cursor 技能，五分钟，配中英双语字幕\N{\fnInter\fs30\c&H00C9C9C9&}explain my Cursor skills, in Swiss style, five minutes, with bilingual subtitles.
+Dialogue: 0,0:00:09.07,0:00:11.58,Bilingual,,0,0,0,,你不必每次都重新\N{\fnInter\fs30\c&H00C9C9C9&}You should not have to describe the fonts,
+Dialogue: 0,0:00:11.58,0:00:14.57,Bilingual,,0,0,0,,描述字体、节奏、结构和导出设置\N{\fnInter\fs30\c&H00C9C9C9&}pacing, structure, and export settings every time.
+Dialogue: 0,0:00:14.89,0:00:20.46,Bilingual,,0,0,0,,可复用的技能会保存这些决定，让下一次请求专注于要讲的主题\N{\fnInter\fs30\c&H00C9C9C9&}A reusable skill stores those decisions, so your next request can focus on the topic.
+Dialogue: 0,0:00:22.23,0:00:26.39,Bilingual,,0,0,0,,技能就像食谱：它说明何时使用工作流、要按哪些步骤操作\N{\fnInter\fs30\c&H00C9C9C9&}A skill is a recipe: when to use a workflow, what steps to follow,
+Dialogue: 0,0:00:26.39,0:00:28.40,Bilingual,,0,0,0,,以及合格的结果包含什么\N{\fnInter\fs30\c&H00C9C9C9&}and what a good result contains.
+Dialogue: 0,0:00:28.57,0:00:32.68,Bilingual,,0,0,0,,工具是厨具，比如视频渲染器或图像生成器\N{\fnInter\fs30\c&H00C9C9C9&}Tools are equipment, such as a video renderer or image generator.
+Dialogue: 0,0:00:33.00,0:00:35.76,Bilingual,,0,0,0,,Cursor、Codex 和 Claude Code 则是厨师\N{\fnInter\fs30\c&H00C9C9C9&}Cursor, Codex, and Claude Code are the cooks.
+Dialogue: 0,0:00:36.08,0:00:40.58,Bilingual,,0,0,0,,共享食谱，并不会自动让每位厨师拥有相同的厨具\N{\fnInter\fs30\c&H00C9C9C9&}Sharing a recipe does not automatically give every cook the same equipment.
+Dialogue: 0,0:00:42.30,0:00:44.62,Bilingual,,0,0,0,,你的 Mac 已经有一个共享起点\N{\fnInter\fs30\c&H00C9C9C9&}Your Mac already has a shared starting point.
+Dialogue: 0,0:00:44.94,0:00:48.71,Bilingual,,0,0,0,,在安装这次的新技能之前，审计发现你的主目录下\N{\fnInter\fs30\c&H00C9C9C9&}Before this installation, the audit found eighty-three skill
+Dialogue: 0,0:00:48.71,0:00:52.41,Bilingual,,0,0,0,,点 agents 里的 skills 文件夹中有八十三个技能文件夹\N{\fnInter\fs30\c&H00C9C9C9&}folders under dot agents, then skills, in your home folder.
+Dialogue: 0,0:00:52.57,0:00:56.20,Bilingual,,0,0,0,,Cursor 还在点 cursor 里的 skills-cursor\N{\fnInter\fs30\c&H00C9C9C9&}Cursor separately maintained twenty-five skills under dot cursor,
+Dialogue: 0,0:00:56.20,0:00:58.00,Bilingual,,0,0,0,,目录中单独维护了二十五个技能\N{\fnInter\fs30\c&H00C9C9C9&}then skills cursor.
+Dialogue: 0,0:00:58.07,0:01:01.40,Bilingual,,0,0,0,,普通的点 cursor 下的 skills 文件夹当时并不存在\N{\fnInter\fs30\c&H00C9C9C9&}The ordinary dot cursor skills folder did not exist.
+Dialogue: 0,0:01:01.72,0:01:05.52,Bilingual,,0,0,0,,相近的名称，可能代表不同的位置和管理者\N{\fnInter\fs30\c&H00C9C9C9&}Similar names can describe very different locations and owners.
+Dialogue: 0,0:01:07.33,0:01:10.79,Bilingual,,0,0,0,,在点 cursor 中，extensions 提供编辑器功能\N{\fnInter\fs30\c&H00C9C9C9&}Inside dot cursor, extensions add editor features.
+Dialogue: 0,0:01:10.79,0:01:15.29,Bilingual,,0,0,0,,plugins 打包助手能力，projects 保存工作状态\N{\fnInter\fs30\c&H00C9C9C9&}Plugins bundle agent capabilities. Projects stores working state,
+Dialogue: 0,0:01:15.29,0:01:21.03,Bilingual,,0,0,0,,MCP 配置定义工具连接，而 hooks 可以触发命令\N{\fnInter\fs30\c&H00C9C9C9&}while the M C P configuration names tool connections and hooks can launch commands.
+Dialogue: 0,0:01:21.20,0:01:24.34,Bilingual,,0,0,0,,插件缓存可能保留同一技能的多个版本\N{\fnInter\fs30\c&H00C9C9C9&}Plugin caches can keep several versions of one skill.
+Dialogue: 0,0:01:24.66,0:01:27.84,Bilingual,,0,0,0,,文件存在，不代表应用正在加载它\N{\fnInter\fs30\c&H00C9C9C9&}A file's presence does not prove the application loads it.
+Dialogue: 0,0:01:28.16,0:01:31.63,Bilingual,,0,0,0,,配套目录记录了所有观察到的副本\N{\fnInter\fs30\c&H00C9C9C9&}The companion catalog records all observed copies.
+Dialogue: 0,0:01:33.47,0:01:36.84,Bilingual,,0,0,0,,在技能文件夹中，先找 SKILL.md\N{\fnInter\fs30\c&H00C9C9C9&}Inside a skill folder, find the skill markdown file.
+Dialogue: 0,0:01:36.84,0:01:42.55,Bilingual,,0,0,0,,文件中的名称和描述说明何时使用它，正文则提供操作流程\N{\fnInter\fs30\c&H00C9C9C9&}Its name and description identify when it applies. The main text supplies the procedure.
+Dialogue: 0,0:01:42.73,0:01:44.69,Bilingual,,0,0,0,,references 保存风格指南\N{\fnInter\fs30\c&H00C9C9C9&}References hold style guidance,
+Dialogue: 0,0:01:44.69,0:01:48.60,Bilingual,,0,0,0,,scripts 自动完成渲染步骤，assets 提供模板\N{\fnInter\fs30\c&H00C9C9C9&}scripts automate rendering steps, and assets supply templates.
+Dialogue: 0,0:01:48.92,0:01:53.23,Bilingual,,0,0,0,,它们一起把反复进行的对话变成可复用的包\N{\fnInter\fs30\c&H00C9C9C9&}Together they turn a repeated conversation into a reusable package.
+Dialogue: 0,0:01:53.55,0:01:56.94,Bilingual,,0,0,0,,但这些指令仍然需要相应工具才能执行\N{\fnInter\fs30\c&H00C9C9C9&}Instructions still need tools capable of carrying them out.
+Dialogue: 0,0:01:58.77,0:02:03.28,Bilingual,,0,0,0,,追溯来源时，要区分内容作者、管理文件的软件\N{\fnInter\fs30\c&H00C9C9C9&}To trace origin, distinguish the author, the software managing the files,
+Dialogue: 0,0:02:03.28,0:02:05.08,Bilingual,,0,0,0,,以及执行安装的人或程序\N{\fnInter\fs30\c&H00C9C9C9&}and whoever installed them.
+Dialogue: 0,0:02:05.13,0:02:08.59,Bilingual,,0,0,0,,例如，你的二十六份共享技能文件\N{\fnInter\fs30\c&H00C9C9C9&}For example, twenty-six shared skill files exactly
+Dialogue: 0,0:02:08.59,0:02:12.93,Bilingual,,0,0,0,,与 Google Cloud Data Agent Kit\N{\fnInter\fs30\c&H00C9C9C9&}match copies inside your Google Cloud Data Agent Kit extension.
+Dialogue: 0,0:02:12.93,0:02:17.35,Bilingual,,0,0,0,,扩展中的副本完全一致。 这证明内容相同，却不能证明是谁复制的\N{\fnInter\fs30\c&H00C9C9C9&}That proves matching content. It does not prove who copied them.
+Dialogue: 0,0:02:17.35,0:02:23.84,Bilingual,,0,0,0,,清单和安装代码可以提供证据；仅凭时间戳无法确定安装者\N{\fnInter\fs30\c&H00C9C9C9&}Manifests and installer code provide evidence; timestamps alone cannot identify the installer.
+Dialogue: 0,0:02:25.70,0:02:27.77,Bilingual,,0,0,0,,是否有用，取决于具体任务\N{\fnInter\fs30\c&H00C9C9C9&}Usefulness depends on the job.
+Dialogue: 0,0:02:27.77,0:02:31.97,Bilingual,,0,0,0,,Bedrock 和存储技能能帮助你处理 AWS 项目\N{\fnInter\fs30\c&H00C9C9C9&}Bedrock and storage skills can help with your A W S projects.
+Dialogue: 0,0:02:31.97,0:02:36.45,Bilingual,,0,0,0,,Python 依赖和 notebook 技能则支持研究工作流\N{\fnInter\fs30\c&H00C9C9C9&}Python dependency and notebook skills support research workflows.
+Dialogue: 0,0:02:36.60,0:02:42.50,Bilingual,,0,0,0,,制作视频时，优先考虑依据、讲解、视觉设计、旁白和渲染\N{\fnInter\fs30\c&H00C9C9C9&}For videos, prioritize evidence, explanations, visual design, narration, and rendering.
+Dialogue: 0,0:02:42.50,0:02:48.80,Bilingual,,0,0,0,,专业技能留给相关主题使用\N{\fnInter\fs30\c&H00C9C9C9&}Keep specialist skills for relevant topics. A large collection is not automatically wasteful.
+Dialogue: 0,0:02:48.80,0:02:53.00,Bilingual,,0,0,0,,技能多不等于浪费，装有指令也不代表连接的服务一定可用\N{\fnInter\fs30\c&H00C9C9C9&}Installed instructions do not prove a connected service works.
+Dialogue: 0,0:02:54.93,0:02:57.74,Bilingual,,0,0,0,,新的技能库只保留一个可编辑来源\N{\fnInter\fs30\c&H00C9C9C9&}For the new library, keep one editable source
+Dialogue: 0,0:02:57.74,0:03:01.06,Bilingual,,0,0,0,,放在主目录的点 agents 下的 skills 中\N{\fnInter\fs30\c&H00C9C9C9&}under your home folder's dot agents skills directory.
+Dialogue: 0,0:03:01.38,0:03:06.24,Bilingual,,0,0,0,,当前的 Cursor 和 Codex 文档都支持这个位置\N{\fnInter\fs30\c&H00C9C9C9&}Current Cursor and Codex documentation both recognize this location.
+Dialogue: 0,0:03:06.40,0:03:12.10,Bilingual,,0,0,0,,Claude Code 则通过自己 skills 文件夹中的符号链接访问同一套文件\N{\fnInter\fs30\c&H00C9C9C9&}Claude Code gets a symbolic link from its own skills folder, pointing to the same files.
+Dialogue: 0,0:03:12.10,0:03:13.60,Bilingual,,0,0,0,,因此修改来源一次即可\N{\fnInter\fs30\c&H00C9C9C9&}Edit the source once.
+Dialogue: 0,0:03:13.60,0:03:17.49,Bilingual,,0,0,0,,由应用管理的技能和插件缓存仍保留在原位\N{\fnInter\fs30\c&H00C9C9C9&}Keep application-managed skills and plugin caches in place.
+Dialogue: 0,0:03:19.30,0:03:23.00,Bilingual,,0,0,0,,安装后，检查每个应用的技能选择器\N{\fnInter\fs30\c&H00C9C9C9&}After installation, check each application's skill picker.
+Dialogue: 0,0:03:23.00,0:03:27.21,Bilingual,,0,0,0,,选中 Conny Explainer Video，先让它生成制作简报\N{\fnInter\fs30\c&H00C9C9C9&}Select Conny Explainer Video and first ask for a production brief.
+Dialogue: 0,0:03:27.21,0:03:30.65,Bilingual,,0,0,0,,确认它采用了预期的风格预设和默认设置\N{\fnInter\fs30\c&H00C9C9C9&}Confirm that it uses the intended preset and defaults.
+Dialogue: 0,0:03:30.80,0:03:36.60,Bilingual,,0,0,0,,接着测试参数覆盖和短片渲染：应用能否找到技能、遵循指令，并产出结果？\N{\fnInter\fs30\c&H00C9C9C9&}Then test an override and a short render. Can the app find the skill, follow its instructions,
+Dialogue: 0,0:03:36.60,0:03:40.42,Bilingual,,0,0,0,,远程电脑需要单独配置\N{\fnInter\fs30\c&H00C9C9C9&}and produce the result? Remote computers need their own setup.
+Dialogue: 0,0:03:42.20,0:03:45.76,Bilingual,,0,0,0,,预设菜单把你的偏好变成简短名称\N{\fnInter\fs30\c&H00C9C9C9&}The preset menu gives your preferences short names:
+Dialogue: 0,0:03:45.76,0:03:50.38,Bilingual,,0,0,0,,瑞士风格、盒式未来主义、风格派、包豪斯、NASA 朋克、莱茵生命\N{\fnInter\fs30\c&H00C9C9C9&}Swiss, cassette futurism, De Stijl, Bauhaus, NASA punk, Rhine Lab,
+Dialogue: 0,0:03:50.38,0:03:51.68,Bilingual,,0,0,0,,以及像素工作室\N{\fnInter\fs30\c&H00C9C9C9&}and pixel studio.
+Dialogue: 0,0:03:51.73,0:03:56.51,Bilingual,,0,0,0,,你的科幻参考包括《星空》、NASA 朋克和莱茵生命\N{\fnInter\fs30\c&H00C9C9C9&}Your science-fiction references include Starfield, NASA punk, and Rhine Lab.
+Dialogue: 0,0:03:56.83,0:04:01.52,Bilingual,,0,0,0,,每个预设都应定义配色、字体、构图和运动方式\N{\fnInter\fs30\c&H00C9C9C9&}Each preset should specify palette, typography, composition, and motion.
+Dialogue: 0,0:04:01.84,0:04:06.56,Bilingual,,0,0,0,,风格名称会选中设计规范，实际样片才能展示效果\N{\fnInter\fs30\c&H00C9C9C9&}A style name selects a design brief; the rendered sample shows how well it works.
+Dialogue: 0,0:04:08.40,0:04:13.71,Bilingual,,0,0,0,,这个工作流的默认简报是\N{\fnInter\fs30\c&H00C9C9C9&}For this workflow, the default brief is Swiss design, five minutes, ten eighty p,
+Dialogue: 0,0:04:13.71,0:04:18.96,Bilingual,,0,0,0,,瑞士风格、五分钟、1080p、每秒三十帧、英语旁白，以及中英双语字幕\N{\fnInter\fs30\c&H00C9C9C9&}thirty frames per second, English narration, and Chinese plus English subtitles.
+Dialogue: 0,0:04:19.13,0:04:21.07,Bilingual,,0,0,0,,你只需说明要改的地方\N{\fnInter\fs30\c&H00C9C9C9&}You only need to state changes.
+Dialogue: 0,0:04:21.39,0:04:24.08,Bilingual,,0,0,0,,要求两分钟，就会覆盖默认时长\N{\fnInter\fs30\c&H00C9C9C9&}Asking for two minutes overrides the duration.
+Dialogue: 0,0:04:24.40,0:04:27.63,Bilingual,,0,0,0,,保存的工作流延续你惯用的选择\N{\fnInter\fs30\c&H00C9C9C9&}The saved workflow should carry your usual choices forward
+Dialogue: 0,0:04:27.63,0:04:30.18,Bilingual,,0,0,0,,同时以你本次的要求为准\N{\fnInter\fs30\c&H00C9C9C9&}while keeping your current request in control.
+Dialogue: 0,0:04:31.97,0:04:37.14,Bilingual,,0,0,0,,下次制作时，你可以说：使用 Conny Explainer Video\N{\fnInter\fs30\c&H00C9C9C9&}For your next video, say: use Conny Explainer Video to explain my Cursor skills,
+Dialogue: 0,0:04:37.14,0:04:40.18,Bilingual,,0,0,0,,用瑞士风格解释我的 Cursor 技能，五分钟，中英双语字幕\N{\fnInter\fs30\c&H00C9C9C9&}Swiss style, five minutes, bilingual subtitles.
+Dialogue: 0,0:04:40.33,0:04:42.50,Bilingual,,0,0,0,,我们的工作流分成三个角色\N{\fnInter\fs30\c&H00C9C9C9&}Our workflow separates three roles.
+Dialogue: 0,0:04:42.50,0:04:48.43,Bilingual,,0,0,0,,导演核实事实并安排讲解顺序，设计师把这些想法变成画面\N{\fnInter\fs30\c&H00C9C9C9&}The director checks the facts and teaching sequence. The designer turns those ideas into frames.
+Dialogue: 0,0:04:48.43,0:04:52.75,Bilingual,,0,0,0,,工程实现则负责时间安排、旁白、字幕和最终渲染\N{\fnInter\fs30\c&H00C9C9C9&}The engineer builds timing, narration, captions, and the final render.
+Dialogue: 0,0:04:52.90,0:04:58.51,Bilingual,,0,0,0,,检查样片，调整保存的偏好，下次就能复用这份改进后的食谱\N{\fnInter\fs30\c&H00C9C9C9&}Review a sample, adjust the saved preferences, and reuse the improved recipe next time.

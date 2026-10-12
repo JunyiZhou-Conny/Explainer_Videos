@@ -1,100 +1,133 @@
-# Explainer Videos
+# Conny's video incubator
 
-Bespoke, 3Blue1Brown-style explainer videos for the research papers I'm reading, generated with
-an LLM, [Manim](https://www.manim.community/) and a neural narrator. Plus the library they come
-from, organised so that every paper knows which papers it builds on.
+A shared workspace for turning ideas, papers, code and workflows into narrated explainer videos.
+Keep the evidence, reusable styles, production tools and editable episode sources together so
+Codex, Cursor, Claude Code or another agent can pick up the same work.
 
-> *"The output format I am most bullish on is fully custom / bespoke explainer videos generated on
-> any arbitrary topic."* — Andrej Karpathy
+**Start here:** [Watch/download videos](docs/VIDEOS.md) · [Make a video](docs/VIDEO-WORKFLOW.md) ·
+[Choose a style](docs/STYLES.md) · [Add or refine a style](docs/STYLE-LIFECYCLE.md)
 
-## Why this exists
+[![Swiss sample: one sentence becomes a saved brief](docs/images/skills-ecosystem.jpg)](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/incubator-2026-10-12/skills-ecosystem.mp4)
 
-Reading papers is slow, and LLM summaries are a wall of text you forget by tomorrow. An explainer
-video gives the intuition *before* the details: you see the objects move, then you read the
-formula that describes what you just saw. But watching is still passive. Learning is training a
-neural net — the one in your head — and it only updates when you do the work yourself. So each
-video here is built to be a **mentor**, not a substitute:
+## What should I type?
 
-- **It places the paper on a map.** What problem did it inherit? What changed? What grew out of
-  it? Every video opens and closes with the paper's lineage, so papers stop being isolated objects.
-- **It asks you to think.** *Pause and ponder* moments in the video, test-yourself questions at the
-  end, and an `exercises.md` companion with pen-and-paper problems and a small coding task.
-- **It points back into the paper.** A page-referenced `digest.md` tells you exactly which pages
-  to read, in what order, and where the paper has typos.
+Open this repository in your agent and paste:
 
-The next step after videos is interactivity — playgrounds where you have to *produce* something
-(set the noise, break the mechanism, derive the bound). The pieces here are built with that in mind.
+> Read AGENTS.md and use this repository's conny-explainer-video skill. Explain **Git branches**
+> for **a beginner who can already commit**. Use **nasa-punk** and saved production defaults.
+> Use **the attached demo repository** as evidence. Show one change on two branches and a merge.
+> Build a representative narrated sample, fix any issues, then finish the video with bilingual
+> captions, editable source and review notes.
 
-## Videos
+Usually you only need **the idea, the audience, the source material, and a style name**.
+Defaults for new episodes are **five minutes, 1080p30, English narration, Chinese above English
+subtitles, Swiss style**. An explicit request overrides those defaults for that episode.
+You do not need to repeat a long style paragraph. [More prompts and input examples](docs/VIDEO-WORKFLOW.md).
 
-| | Video | Papers | Length |
-| --- | --- | --- | --- |
-| 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~24 min, also cut in two parts (~15 + ~9 min) |
-| 🎬 | [Why are there exactly 255,168 games of tic-tac-toe?](videos/tictactoe-255168/) (for middle school) | — (counting, recursion and backtracking) | ~12½ min |
+To add a style:
 
-**中文版 / Chinese versions.** Both videos also exist in Mandarin, code-switched the way Chinese
-speakers in that setting really talk (English kept for names, symbols, code and the terms Chinese
-researchers say in English), with Chinese on-screen text and bilingual subtitles (Chinese above,
-the English original below): `videos/<id>/output/zh/<id>.mp4`, plus a Chinese README, exercises,
-playground and glossary in `videos/<id>/i18n/zh/`. The English videos ship Chinese and bilingual
-subtitle files too (`output/<id>.zh.srt`, `.zh-en.srt`, `.zh-en.ass`). How it works and how to make
-another language: [docs/LANGUAGES.md](docs/LANGUAGES.md).
+> Study these reference links, especially the timestamped moments I marked. Create an original
+> preset called `my-new-style`, describe the composition and motion rules, and test it with a
+> 20–30 second narrated sample. Save the source links and observations. Keep my default unchanged.
 
-Each video folder has: `output/*.mp4` (the video, plus part cuts for long ones), `output/*.srt`
-(subtitles), `output/chapters*.txt`, `script.md` (narration + visual plan), `exercises.md`, the
-Manim source in `scenes/`, and (for paper videos) `digest.md` (paper notes). Each also has a
-`playground.html`, an interactive page that is a first step from watching to doing. In the privacy
-video you play the attacker against the Laplace mechanism. In the tic-tac-toe video you play moves
-and watch how many games are still possible.
+To improve one:
 
-## Repository layout
+> Refine `swiss`: at 01:20 in the latest episode, path labels are too small and the fades feel
+> disconnected. Demonstrate clearer labels and connected transformations on one scene, then
+> save the successful rules in the shared preset. Keep the original render available.
 
-```
-library/                    the papers, filed by category
-  catalog.yaml              ← single source of truth: metadata, categories, "builds on" links, reading paths
-  README.md                 generated shelf view (by category)
-  MAP.md                    generated knowledge graph + reading paths + multi-paper video ideas
-  <area>/<topic>/<id>.pdf   e.g. reinforcement-learning/policy-optimization/schulman2017ppo.pdf
-videos/<video-id>/          one folder per video (single- or multi-paper)
-explainer/                  the toolkit: TTS backends, narration-synced scenes, components, build
-tools/                      ingest.py (add a paper) · catalog.py (validate + regenerate) · new_video.py
-docs/WORKFLOW.md            paper → digest → script → review → scenes → render, with prompts for Claude
-docs/STYLE_GUIDE.md         visual language: semantic colours, layout, timing, checklist
-docs/LANGUAGES.md           language versions (Chinese): translation files, voice, bilingual subtitles
-setup/install.sh            one-shot environment setup
-```
+[Style ingestion and refinement guide](docs/STYLE-LIFECYCLE.md) explains what to observe,
+what to save, how to review samples and how to version changes.
 
-## Quick start
+## Styles and implementation status
+
+| Preset | Main idea | Current evidence |
+| --- | --- | --- |
+| `3b1b` | Dark mathematical diagrams; picture before formula; semantic colors | Existing toolkit and completed math episodes preserved |
+| `swiss` | Strong grid, clear type, cream/black/red editorial diagrams | Complete five-minute skills episode; technical and sampled-frame checks |
+| `cassette-futurism` | CRTs, physical controls and meaningful equipment states | Reusable design specification; representative render pending |
+| `de-stijl` | Orthogonal planes, primary colors and structural relationships | Design specification; representative render pending |
+| `bauhaus` | Geometric construction or Dessau-inspired typography | Design specification; representative render pending |
+| `nasa-punk` | Starfield-inspired functional aerospace panels and labels | Design specification; representative render pending |
+| `rhine-lab` | Warm glass archives, selection and layered inspection | Design specification; representative render pending |
+| `pixel-studio` | Pixel workspace and agent collaboration storytelling | Design specification; representative render pending |
+
+A preset supplies reusable design instructions. An agent still authors scenes for the topic;
+selecting a name is not an automatic conversion of a movie. [Full catalog and reference links](docs/STYLES.md).
+
+## Share with all agents
+
+The source of truth is [skill-library/conny-explainer-video](skill-library/conny-explainer-video/SKILL.md).
+Project entries under `.agents/skills/` and `.claude/skills/` point to that folder with relative
+symlinks; [AGENTS.md](AGENTS.md) and [CLAUDE.md](CLAUDE.md) provide entry points. If your client
+cannot discover the skill, explicitly tell it to read the canonical `SKILL.md`.
+
+Clone/open this checkout on each machine. Personal skill installations are snapshots and are
+not automatically updated by Git. Existing personal changes are preserved.
+[Cross-agent setup and updates](skill-library/conny-explainer-video/references/cross-agent-use.md).
+
+## Build locally
+
+Read [production setup](skill-library/conny-explainer-video/references/local-production.md)
+for system prerequisites and the difference between the two supported episode formats.
+From the repository root, with Python 3.12, FFmpeg, Cairo/Pango and pkg-config installed:
 
 ```bash
-bash setup/install.sh && source .venv/bin/activate
-
-# add a paper to the library
-python tools/ingest.py ~/Downloads/2402.03300.pdf --category reinforcement-learning/policy-optimization
-
-# render the existing video (fast draft, then final 1080p60)
-python -m explainer.build videos/dwork2006-calibrating-noise -q l
-python -m explainer.build videos/dwork2006-calibrating-noise
-
-# the Chinese version (needs internet for the voice; see docs/LANGUAGES.md)
-python -m explainer.build videos/dwork2006-calibrating-noise --lang zh
-
-# start a new one
-python tools/new_video.py schulman2017ppo --id ppo-explained
+python3.12 tools/setup-runtime
+python3 skill-library/conny-explainer-video/scripts/render.py videos/skills-ecosystem --sample s01
+python3 skill-library/conny-explainer-video/scripts/render.py videos/skills-ecosystem
 ```
 
-Narration defaults to **Kokoro** (free, runs locally on CPU). To use ElevenLabs instead:
-`export ELEVENLABS_API_KEY=...` and set `voice: {backend: elevenlabs, voice: <voice-id>}` in the
-video's `video.yaml` (or `EXPLAINER_TTS=elevenlabs` for one run). See [docs/WORKFLOW.md](docs/WORKFLOW.md).
+Start a new brief:
 
-## Making a video with Claude Code
+```bash
+python3 skill-library/conny-explainer-video/scripts/new_episode.py git-branches --topic "Explain Git branches" --preset nasa-punk --workspace .
+```
 
-The whole pipeline is designed to be driven by an agent. A good opening prompt:
+That saves the specification, storyboard and a style snapshot. The agent then writes the script
+and scenes; scaffolding alone does not produce a video. The new runner currently supports
+English local Kokoro narration and 1080p30 bilingual output. Other formats need a verified route.
 
-> Make a 3Blue1Brown-style explainer video of `library/<category>/<id>.pdf` for a newcomer, about
-> 12–15 minutes. Follow docs/WORKFLOW.md and docs/STYLE_GUIDE.md: digest the paper, write
-> script.md with a lineage map (before/after), pause-and-ponder moments and recap questions,
-> review it for accuracy against the PDF, then build and render the scenes.
+Existing `video.yaml` episodes continue to use `python -m explainer.build` with the original
+[setup/install.sh](setup/install.sh) and [workflow](docs/WORKFLOW.md). Their own settings,
+including 60 fps and language variants, remain intact. The new route reuses the same core
+`explainer/` toolkit; no duplicate vendored engine is needed.
 
-For a multi-paper video, name 2–5 papers (see *Multi-paper video ideas* in `library/MAP.md`) and ask
-for one story that connects them.
+## Where things belong
+
+```text
+skill-library/conny-explainer-video/   shared workflow, defaults and visual presets
+videos/<episode>/                    brief, script, sources, scenes, style snapshot, review
+explainer/                           existing narration/animation/subtitle toolkit
+tools/                               scaffolding, rendering, publishing checks
+catalog/                             machine-readable styles and video download inventory
+docs/                                human and agent workflow guides
+library/                             existing paper collection, metadata and reading maps
+assets/manifest.json                  download URLs and hashes for fonts and speech models
+outputs/                             generated files; ignored by Git
+GitHub Releases                      new final video downloads and checksum manifest
+```
+
+Keep final source and small caption files in Git. Distribute new movies through
+[Releases](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases); the earlier tracked MP4s
+remain available. Private inventories, downloaded reference footage, model files and render
+caches stay outside publication. [Publishing guide](docs/PUBLISHING.md).
+
+## Learn from the earlier episodes
+
+The original 3Blue1Brown-inspired paper/algorithm workflow remains a supported part of this
+incubator: show intuition before formulas, keep concepts visually consistent, include
+pause-and-ponder questions, and connect paper explanations to page-referenced notes and exercises.
+The [paper shelf](library/README.md), [knowledge map](library/MAP.md), interactive playgrounds,
+[original style guide](docs/STYLE_GUIDE.md) and [language guide](docs/LANGUAGES.md) are preserved.
+
+The [video catalog](docs/VIDEOS.md) distinguishes finished downloads, available language
+variants, open-PR work and incomplete source. A release means the files are available; it does
+not imply every video has received human listening or subject-matter approval.
+
+## Attribution
+
+[Reference notes](docs/REFERENCES.md) identify visual influences and observation limits.
+Presets describe original production choices; downloaded reference videos, franchise artwork,
+creator music and logos are not included. Existing papers and dependencies retain their own
+rights. This update does not apply a new blanket license to the repository.

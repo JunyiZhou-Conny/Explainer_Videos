@@ -1,0 +1,70 @@
+# Production from a checkout
+
+Run commands from the repository root. macOS and Linux are the supported setup targets.
+Use Python 3.12 and an isolated `.venv`. Install system prerequisites first: FFmpeg (including
+ffprobe and libass), Cairo/Pango development libraries and pkg-config. On macOS with Homebrew:
+
+```bash
+brew install python@3.12 ffmpeg cairo pango pkg-config
+python3.12 tools/setup-runtime
+```
+
+The setup script installs the episode route's Python requirements and downloads local Kokoro
+speech models and OFL fonts verified against `assets/manifest.json`. It does not install global
+Python packages, register system fonts or change the original toolkit's `requirements.txt`.
+On Linux, install the corresponding distribution packages first (including Python development
+headers and venv support). `setup/install.sh` remains the original full-toolkit setup, including
+LaTeX for equation-heavy episodes; inspect its system-package actions before running it.
+The Swiss example uses text/vector diagrams and does not require LaTeX.
+
+## New episode route
+
+```bash
+python3 skill-library/conny-explainer-video/scripts/new_episode.py git-branches --topic "Explain Git branches" --preset nasa-punk --workspace .
+```
+
+This writes `videos/git-branches/episode.json`, `storyboard.md` and a `style.md` snapshot.
+It does not author the script or scenes. The agent inspects topic evidence, writes bilingual
+`script.json`, and implements topic-specific diagrams in `scenes.py`. Use
+`videos/skills-ecosystem/` as the working timing/voice example, not as a diagram template for
+unrelated lessons. Scene IDs `s01`, `s02`, … map to Manim classes `S01`, `S02`, …; each narration
+line supplies `en` and `zh`. `EpisodeScene` shows `VoiceScene.voiceover()` and the measured
+caption sidecars required by the engine. Register project fonts in each scene process.
+
+```bash
+python3 skill-library/conny-explainer-video/scripts/render.py videos/git-branches --sample s01
+python3 skill-library/conny-explainer-video/scripts/render.py videos/git-branches
+```
+
+The helper selects this checkout's `.venv/bin/python`. The direct command is
+`.venv/bin/python tools/render_episode.py videos/git-branches`. `--prepare-only` synthesizes
+speech and saves timing without rendering frames. `--sample s01` renders one narrated scene;
+`--jobs 2` bounds parallel scene jobs. Saved episode settings override shared defaults.
+Outputs go to `outputs/<slug>/` and are ignored by Git.
+
+This route currently supports English Kokoro narration, 1920×1080 at 30 fps, and burned
+Chinese-above-English captions. Other requested formats/voices require an implemented and
+tested route; a preference in JSON does not add a backend. Presets specify design: scenes
+must implement them. The existing Swiss example is the complete implementation supplied here.
+
+## Original episode route
+
+Existing `video.yaml` projects continue to use:
+
+```bash
+.venv/bin/python -m explainer.build videos/tictactoe-255168 -q l
+.venv/bin/python -m explainer.build videos/tictactoe-255168
+```
+
+Read `docs/WORKFLOW.md`, `docs/STYLE_GUIDE.md`, `docs/LANGUAGES.md`, and the episode's own specs.
+Use the root `requirements.txt` and original setup for these projects. They may require CMU
+fonts, LaTeX and optional narration services. Do not feed `video.yaml` to the JSON runner or
+assume the newer five-minute/30 fps defaults alter an existing episode's 60 fps specification.
+
+## Review and delivery
+
+Inspect the actual speech, captions, diagrams, pacing and boundaries as well as ffprobe
+metadata. A complete review includes playback/listening; numerical validation cannot establish
+pronunciation or teaching quality. Save a candid `REVIEW.md`. Publish final MP4s as GitHub
+release assets and keep editable sources, caption sidecars, source notes and a release checksum
+in Git. See `docs/PUBLISHING.md`. Rendering alone does not publish anything.

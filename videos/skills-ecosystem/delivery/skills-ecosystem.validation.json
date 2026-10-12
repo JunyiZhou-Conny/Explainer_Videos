@@ -1,0 +1,90 @@
+{
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "300.019667"
+    }
+  },
+  "target_seconds": 300.0,
+  "audio_mean_db": -19.6,
+  "caption_cues": 70,
+  "script_sha256": "bffedea7bd1f8dcec014762e3c9878a6c62e48e83156f4b4a8f861b84a2e82be",
+  "source_matches_plan": true,
+  "chapters": [
+    {
+      "start": 0.0,
+      "id": "s01",
+      "title": "Save the preferences. Shorten the prompt."
+    },
+    {
+      "start": 21.833333333333332,
+      "id": "s02",
+      "title": "Recipe · Equipment · Cook"
+    },
+    {
+      "start": 41.9,
+      "id": "s03",
+      "title": "Your actual folder map"
+    },
+    {
+      "start": 66.93333333333334,
+      "id": "s04",
+      "title": "A folder is not always a skill"
+    },
+    {
+      "start": 93.06666666666666,
+      "id": "s05",
+      "title": "Open one skill"
+    },
+    {
+      "start": 118.36666666666666,
+      "id": "s06",
+      "title": "Who authored it? Who installed it?"
+    },
+    {
+      "start": 145.29999999999998,
+      "id": "s07",
+      "title": "Useful for which job?"
+    },
+    {
+      "start": 174.5333333333333,
+      "id": "s08",
+      "title": "One editable home"
+    },
+    {
+      "start": 198.89999999999998,
+      "id": "s09",
+      "title": "Find it. Invoke it. Check it."
+    },
+    {
+      "start": 221.79999999999998,
+      "id": "s10",
+      "title": "Choose a preset by name"
+    },
+    {
+      "start": 247.99999999999997,
+      "id": "s11",
+      "title": "Defaults do the repetitive work"
+    },
+    {
+      "start": 271.56666666666666,
+      "id": "s12",
+      "title": "From one request to a reviewed video"
+    }
+  ]
+}

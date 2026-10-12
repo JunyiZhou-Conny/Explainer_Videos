@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conny's Explainer Videos"
+  short_description: "Named video styles and bilingual production defaults"
+  default_prompt: "Use $conny-explainer-video to explain my Cursor skills with my saved Swiss preset and video specifications."
