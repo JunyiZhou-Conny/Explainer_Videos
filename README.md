@@ -32,6 +32,21 @@ The next step after videos is interactivity — playgrounds where you have to *p
 | 🎬 | [Calibrating Noise to Sensitivity — the paper that invented differential privacy](videos/dwork2006-calibrating-noise/) | Dwork, McSherry, Nissim, Smith (TCC 2006) | ~24 min, also cut in two parts (~15 + ~9 min) |
 | 🎬 | [Why are there exactly 255,168 games of tic-tac-toe?](videos/tictactoe-255168/) (for middle school) | — (counting, recursion and backtracking) | ~12½ min |
 
+### AC215 follow-along series (MLOps & LLMOps, Harvard, Fall 2026)
+
+One video per lecture of the course's hands-on tutorials (the
+[dlops-io](https://github.com/dlops-io) repos), made to be watched with your own clone open: every
+README command typed exactly as written, real captured terminal output, a README step tracker in
+the corner, and the concept behind each command animated first. The course map, study guides and a
+script that clones every tutorial live in
+[MLOps_Learning](https://github.com/JunyiZhou-Conny/MLOps_Learning); format rules in
+[docs/AC215_SERIES.md](docs/AC215_SERIES.md). Course materials belong to the AC215 teaching staff
+(Harvard IACS); the videos are made for study with the instructor's permission.
+
+| | Video | Tutorial | Length |
+| --- | --- | --- | --- |
+| 🚧 | [L1 · Virtual machines, virtual environments and uv](videos/ac215-l01-vms-venvs/) | `simple-translate`: install on a VM manually, then with uv | ~30 min (2 parts), in production |
+
 **中文版 / Chinese versions.** Both videos also exist in Mandarin, code-switched the way Chinese
 speakers in that setting really talk (English kept for names, symbols, code and the terms Chinese
 researchers say in English), with Chinese on-screen text and bilingual subtitles (Chinese above,
