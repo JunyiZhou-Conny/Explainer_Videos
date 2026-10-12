@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+"""Set up the episode.json renderer in an isolated .venv on macOS or Linux.
+
+Python 3.12 is recommended (minimum 3.10). This command installs neither system
+packages nor system fonts, and never rewrites requirements or the asset manifest.
+Install FFmpeg (with libass), Cairo, Pango, and pkg-config using your OS package
+manager first. The existing setup/install.sh remains the legacy video.yaml route.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path, PurePosixPath
+import platform
+import re
+import subprocess
+import sys
+import tempfile
+import urllib.request
+import venv
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class SetupError(Exception):
+    """A setup input or existing file needs attention before continuing."""
+
+def sha256(path):
+    h = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+def load_manifest(root):
+    """Load expected checksums, never manufacture trust from a new download."""
+    manifest = json.loads((root / "assets/manifest.json").read_text())
+    if not isinstance(manifest, dict) or not manifest:
+        raise SetupError("assets/manifest.json must contain pinned asset records.")
+    for relative, record in manifest.items():
+        parts = PurePosixPath(relative)
+        if (parts.is_absolute() or ".." in parts.parts or "\\" in relative
+                or not parts.parts or parts.parts[0] != "assets"):
+            raise SetupError(f"Invalid asset path in manifest: {relative}")
+        path = root / relative
+        if not path.resolve().is_relative_to((root / "assets").resolve()):
+            raise SetupError(f"Asset path escapes assets directory: {relative}")
+        if not isinstance(record, dict):
+            raise SetupError(f"Invalid asset record: {relative}")
+        if not re.fullmatch(r"[0-9a-f]{64}", str(record.get("sha256", ""))):
+            raise SetupError(f"Missing valid expected SHA-256: {relative}")
+        if type(record.get("bytes")) is not int or record["bytes"] <= 0:
+            raise SetupError(f"Missing expected byte size: {relative}")
+        if not isinstance(record.get("url"), str) or not record["url"].startswith("https://"):
+            raise SetupError(f"Asset URL must use HTTPS: {relative}")
+    return manifest
+
+
+def verify_asset(path, record):
+    if not path.is_file():
+        raise SetupError(f"Missing asset: {path}")
+    if path.stat().st_size != record["bytes"] or sha256(path) != record["sha256"]:
+        raise SetupError(
+            f"Asset checksum or size mismatch: {path}. "
+            "Inspect the file and its source before replacing it; setup will not overwrite it."
+        )
+
+
+def prepare_assets(root, *, verify_only=False):
+    manifest = load_manifest(root)
+    for relative, record in manifest.items():
+        path = root / relative
+        if path.exists() or path.is_symlink():
+            verify_asset(path, record)
+            print(f"Verified {relative}", flush=True)
+            continue
+        if verify_only:
+            raise SetupError(f"Missing asset: {relative}; run setup without --verify-only to download it.")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        print(f"Downloading {relative}", flush=True)
+        request = urllib.request.Request(record["url"], headers={"User-Agent": "ExplainerVideoSetup/2.0"})
+        partial = None
+        try:
+            # A unique sibling temporary file keeps interrupted downloads separate
+            # from verified assets and from another setup process's download.
+            with tempfile.NamedTemporaryFile(dir=path.parent, prefix=f".{path.name}.",
+                                             suffix=".partial", delete=False) as dest:
+                partial = Path(dest.name)
+                with urllib.request.urlopen(request, timeout=60) as response:
+                    size = 0
+                    while data := response.read(1024 * 1024):
+                        size += len(data)
+                        if size > record["bytes"]:
+                            raise SetupError(f"Download exceeds expected size: {relative}")
+                        dest.write(data)
+            verify_asset(partial, record)
+            # Link atomically without replacing an existing file, then remove the
+            # private temporary name. macOS and Linux support same-directory links.
+            try:
+                os.link(partial, path)
+            except FileExistsError:
+                verify_asset(path, record)
+            print(f"Verified {relative}: {record['bytes']:,} bytes", flush=True)
+        finally:
+            if partial is not None:
+                partial.unlink(missing_ok=True)
+
+
+def prepare_packages(root, *, verify_only=False, macos_arm64_lock=False):
+    if platform.system() not in {"Darwin", "Linux"}:
+        raise SetupError("This setup route supports macOS and Linux.")
+    if macos_arm64_lock and not (
+        platform.system() == "Darwin" and platform.machine() == "arm64"
+        and sys.version_info[:2] == (3, 12)
+    ):
+        raise SetupError("--macos-arm64-lock requires native macOS arm64 and Python 3.12.")
+    source = root / "setup" / (
+        "requirements-macos-arm64.lock.txt" if macos_arm64_lock else "requirements-swiss.txt"
+    )
+    if not source.is_file():
+        raise SetupError(f"Missing requirements file: {source}")
+    env_dir = root / ".venv"
+    python = env_dir / "bin/python"
+    if env_dir.is_symlink():
+        raise SetupError(".venv is a symlink; use a dedicated virtual environment in this checkout.")
+    if not python.exists():
+        if verify_only:
+            raise SetupError("Missing .venv; run setup without --verify-only first.")
+        if env_dir.exists():
+            raise SetupError("Existing .venv has no Python interpreter; inspect it before trying again.")
+        venv.EnvBuilder(with_pip=True).create(env_dir)
+    probe = subprocess.check_output([
+        str(python), "-c", "import json,sys; print(json.dumps({'version':list(sys.version_info[:2]),"
+        "'prefix':sys.prefix,'base_prefix':sys.base_prefix}))",
+    ], text=True)
+    runtime = json.loads(probe)
+    if (runtime["prefix"] == runtime["base_prefix"]
+            or Path(runtime["prefix"]).resolve() != env_dir.resolve()):
+        raise SetupError(".venv/bin/python is not this checkout's isolated environment.")
+    if tuple(runtime["version"]) < (3, 10):
+        raise SetupError("Existing .venv needs Python >=3.10; Python 3.12 is recommended.")
+    if macos_arm64_lock and runtime["version"] != [3, 12]:
+        raise SetupError("The tested macOS lock requires a Python 3.12 .venv.")
+    if not verify_only:
+        subprocess.run([str(python), "-m", "pip", "install", "-r", str(source)], check=True)
+    subprocess.run([str(python), "-m", "pip", "check"], check=True)
+    subprocess.run([str(python), "-c",
+                    "import manim,kokoro_onnx,onnxruntime,soundfile,numpy,scipy,yaml,pypdf,jieba,PIL; "
+                    "print('Renderer Python imports verified.')"], check=True)
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(description=__doc__)
+    modes = ap.add_mutually_exclusive_group()
+    modes.add_argument("--assets-only", action="store_true", help="Skip Python packages.")
+    modes.add_argument("--packages-only", action="store_true", help="Skip fonts and speech model assets.")
+    ap.add_argument("--verify-only", action="store_true",
+                    help="Check local assets/packages without installing or accessing the network.")
+    ap.add_argument("--macos-arm64-lock", action="store_true",
+                    help="Opt into the tested Python 3.12 macOS arm64 package snapshot.")
+    args = ap.parse_args(argv)
+    if sys.version_info[:2] < (3, 10):
+        ap.error("Python >=3.10 is required; Python 3.12 is recommended.")
+    if args.assets_only and args.macos_arm64_lock:
+        ap.error("--macos-arm64-lock applies to package installation, not --assets-only.")
+    try:
+        if not args.assets_only:
+            prepare_packages(ROOT, verify_only=args.verify_only,
+                             macos_arm64_lock=args.macos_arm64_lock)
+        if not args.packages_only:
+            prepare_assets(ROOT, verify_only=args.verify_only)
+    except (SetupError, OSError, ValueError, subprocess.CalledProcessError) as exc:
+        ap.exit(1, f"Setup failed: {exc}\n")
+    print("Local verification finished." if args.verify_only else
+          "Runtime setup finished. Run a narrated sample before producing an episode.", flush=True)
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "release_tag": "incubator-2026-10-12",
+  "files": [
+    {
+      "filename": "careonex-e0-commands.zh-en.mp4",
+      "bytes": 26359882,
+      "sha256": "42c83c3fe414c1555da2a992368d102b3658443118369b1c1931acb5400c013c",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "60/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "446.876000"
+        }
+      },
+      "decode_passed": true,
+      "decode_error": "",
+      "git_blob": "d4fc72f632d44f9be26918d62651016ebcafdce9"
+    },
+    {
+      "filename": "careonex-e2-library.zh-en.mp4",
+      "bytes": 34069777,
+      "sha256": "b8d0960e0a611c50b5db1566c7b41e919c40438df0299fa03cb47ae551e8394b",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "60/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "527.827000"
+        }
+      },
+      "decode_passed": true,
+      "decode_error": "",
+      "git_blob": "a3ce1208822ee087173f0402a1a52923e50fe98e"
+    },
+    {
+      "filename": "careonex-e6-measuring-search.zh-en.mp4",
+      "bytes": 26577925,
+      "sha256": "ad3b60a8c7f4b2239c8e201061422b32539a6df222fed488d5eb4bbb1d6f3645",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "60/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "463.826000"
+        }
+      },
+      "decode_passed": true,
+      "decode_error": "",
+      "git_blob": "2a585b119eee90bc0c15aade1f4edefe558efde8"
+    },
+    {
+      "filename": "dwork2006-calibrating-noise.mp4",
+      "bytes": 66119213,
+      "sha256": "ae45b33cb6f09be2e6970550fb4c36c15bf10b68e463f4688c5a78d782ba92f8",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "60/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "1453.575000"
+        }
+      },
+      "decode_passed": true,
+      "decode_error": "",
+      "git_blob": "2d38b9522db65e649ecd17c35050cd594cfed29e"
+    },
+    {
+      "filename": "how-these-videos-are-made.mp4",
+      "bytes": 51419426,
+      "sha256": "95d63142764c7b4b7a1f001ad650e857f46449077a3deceb1a19538edf8533d1",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "60/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "819.888000"
+        }
+      },
+      "decode_passed": true,
+      "decode_error": "",
+      "git_blob": "e2ccf47449a68415a96e96a2f2fabf186047febf"
+    },
+    {
+      "filename": "skills-ecosystem.mp4",
+      "bytes": 13966558,
+      "sha256": "2c67d6f129709010b8cf8cbdffa6903d00bb4453d3bb0b90e033e8d3a00addc2",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "30/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "300.019667"
+        }
+      },
+      "decode_passed": true,
+      "decode_error": "",
+      "git_blob": "694500c06b15d3aa8fc1d100d5b7fc03ffe759c4"
+    },
+    {
+      "filename": "tictactoe-255168.zh-en.mp4",
+      "bytes": 40471968,
+      "sha256": "72f3938e4d63c01de5f45a43423bd249d7cf3e2d3d0de436c90882a2e0a6ecc1",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "r_frame_rate": "60/1"
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "756.600000"
+        }
+      },
+      "decode_passed": true,
+      "decode_error": "",
+      "git_blob": "8ff900cffbb58a2b8195a883d3515f5ca6cc0604"
+    }
+  ],
+  "limitations": "Full decoding and metadata only for this publication. No new human listening review claimed."
+}

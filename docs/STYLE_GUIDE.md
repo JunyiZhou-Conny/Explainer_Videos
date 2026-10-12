@@ -1,7 +1,8 @@
 # Explainer video style guide
 
-How every video in this repo should look, sound and be built. It is written for both humans and
-coding agents that implement scenes.
+The visual grammar for this repository’s `3b1b` dark mathematical-diagram family. Other
+presets have their own instructions in [the style catalog](STYLES.md). This guide is written
+for both humans and coding agents that implement scenes.
 
 ## 1. Principles (borrowed from 3Blue1Brown)
 

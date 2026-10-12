@@ -1,0 +1,15 @@
+# Isolated episode.json renderer on macOS/Linux; Python 3.12 is recommended.
+# Manim and Kokoro API versions are pinned; other packages resolve for your platform.
+# For the tested macOS arm64 / Python 3.12 snapshot, explicitly select
+# requirements-macos-arm64.lock.txt with tools/setup-runtime --macos-arm64-lock.
+# This file is separate from the legacy video.yaml route's root requirements.txt.
+manim==0.19.0
+kokoro-onnx==0.6.1
+onnxruntime
+soundfile
+numpy
+scipy
+PyYAML
+pypdf
+jieba==0.42.1
+Pillow

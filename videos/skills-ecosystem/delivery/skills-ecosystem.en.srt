@@ -1,0 +1,363 @@
+1
+00:00:00,400 --> 00:00:03,440
+Imagine asking for a video with one sentence:
+
+2
+00:00:03,440 --> 00:00:08,912
+explain my Cursor skills, in Swiss style,
+five minutes, with bilingual subtitles.
+
+3
+00:00:09,067 --> 00:00:11,580
+You should not have to describe the fonts,
+
+4
+00:00:11,580 --> 00:00:14,571
+pacing, structure,
+and export settings every time.
+
+5
+00:00:14,891 --> 00:00:20,459
+A reusable skill stores those decisions,
+so your next request can focus on the topic.
+
+6
+00:00:22,233 --> 00:00:25,001
+A skill is a recipe: when to use a workflow,
+
+7
+00:00:25,001 --> 00:00:28,398
+what steps to follow,
+and what a good result contains.
+
+8
+00:00:28,566 --> 00:00:32,683
+Tools are equipment,
+such as a video renderer or image generator.
+
+9
+00:00:33,003 --> 00:00:35,755
+Cursor, Codex, and Claude Code are the cooks.
+
+10
+00:00:36,075 --> 00:00:40,577
+Sharing a recipe does not automatically give
+every cook the same equipment.
+
+11
+00:00:42,300 --> 00:00:44,625
+Your Mac already has a shared starting point.
+
+12
+00:00:44,945 --> 00:00:46,532
+Before this installation,
+
+13
+00:00:46,532 --> 00:00:50,341
+the audit found eighty-three skill
+folders under dot agents,
+
+14
+00:00:50,341 --> 00:00:52,412
+then skills, in your home folder.
+
+15
+00:00:52,567 --> 00:00:56,578
+Cursor separately maintained twenty-five skills
+under dot cursor,
+
+16
+00:00:56,578 --> 00:00:58,021
+then skills cursor.
+
+17
+00:00:58,071 --> 00:01:01,399
+The ordinary dot cursor
+skills folder did not exist.
+
+18
+00:01:01,719 --> 00:01:05,516
+Similar names can describe very
+different locations and owners.
+
+19
+00:01:07,333 --> 00:01:10,792
+Inside dot cursor,
+extensions add editor features.
+
+20
+00:01:10,792 --> 00:01:15,288
+Plugins bundle agent capabilities.
+Projects stores working state,
+
+21
+00:01:15,288 --> 00:01:18,929
+while the M C P configuration
+names tool connections
+
+22
+00:01:18,929 --> 00:01:21,029
+and hooks can launch commands.
+
+23
+00:01:21,200 --> 00:01:24,336
+Plugin caches can keep
+several versions of one skill.
+
+24
+00:01:24,656 --> 00:01:27,835
+A file's presence does not prove
+the application loads it.
+
+25
+00:01:28,155 --> 00:01:31,632
+The companion catalog
+records all observed copies.
+
+26
+00:01:33,467 --> 00:01:36,882
+Inside a skill folder,
+find the skill markdown file.
+
+27
+00:01:36,882 --> 00:01:39,049
+Its name and description identify
+
+28
+00:01:39,049 --> 00:01:42,555
+when it applies.
+The main text supplies the procedure.
+
+29
+00:01:42,734 --> 00:01:44,689
+References hold style guidance,
+
+30
+00:01:44,689 --> 00:01:48,601
+scripts automate rendering steps,
+and assets supply templates.
+
+31
+00:01:48,921 --> 00:01:53,230
+Together they turn a repeated conversation
+into a reusable package.
+
+32
+00:01:53,550 --> 00:01:56,942
+Instructions still need tools
+capable of carrying them out.
+
+33
+00:01:58,767 --> 00:02:01,241
+To trace origin, distinguish the author,
+
+34
+00:02:01,241 --> 00:02:04,954
+the software managing the files,
+and whoever installed them.
+
+35
+00:02:05,134 --> 00:02:09,483
+For example, twenty-six shared skill
+files exactly match copies
+
+36
+00:02:09,483 --> 00:02:12,979
+inside your Google Cloud Data Agent Kit
+extension.
+
+37
+00:02:12,979 --> 00:02:15,006
+That proves matching content.
+
+38
+00:02:15,006 --> 00:02:20,598
+It does not prove who copied them.
+Manifests and installer code provide evidence;
+
+39
+00:02:20,598 --> 00:02:23,843
+timestamps alone cannot identify the installer.
+
+40
+00:02:25,700 --> 00:02:27,768
+Usefulness depends on the job.
+
+41
+00:02:27,768 --> 00:02:31,972
+Bedrock and storage skills
+can help with your A W S projects.
+
+42
+00:02:31,972 --> 00:02:36,452
+Python dependency and notebook
+skills support research workflows.
+
+43
+00:02:36,600 --> 00:02:42,522
+For videos, prioritize evidence, explanations,
+visual design, narration, and rendering.
+
+44
+00:02:42,522 --> 00:02:45,449
+Keep specialist skills for relevant topics.
+
+45
+00:02:45,449 --> 00:02:48,785
+A large collection
+is not automatically wasteful.
+
+46
+00:02:48,785 --> 00:02:53,005
+Installed instructions
+do not prove a connected service works.
+
+47
+00:02:54,933 --> 00:02:56,183
+For the new library,
+
+48
+00:02:56,183 --> 00:03:01,056
+keep one editable source under your home
+folder's dot agents skills directory.
+
+49
+00:03:01,376 --> 00:03:06,240
+Current Cursor and Codex documentation
+both recognize this location.
+
+50
+00:03:06,400 --> 00:03:10,362
+Claude Code gets a symbolic link
+from its own skills folder,
+
+51
+00:03:10,362 --> 00:03:13,598
+pointing to the same files.
+Edit the source once.
+
+52
+00:03:13,598 --> 00:03:17,493
+Keep application-managed skills and plugin
+caches in place.
+
+53
+00:03:19,300 --> 00:03:22,998
+After installation,
+check each application's skill picker.
+
+54
+00:03:22,998 --> 00:03:27,206
+Select Conny Explainer Video
+and first ask for a production brief.
+
+55
+00:03:27,206 --> 00:03:30,649
+Confirm that it uses
+the intended preset and defaults.
+
+56
+00:03:30,800 --> 00:03:35,055
+Then test an override and a short render.
+Can the app find the skill,
+
+57
+00:03:35,055 --> 00:03:40,421
+follow its instructions, and produce the result?
+Remote computers need their own setup.
+
+58
+00:03:42,200 --> 00:03:45,738
+The preset menu gives
+your preferences short names:
+
+59
+00:03:45,738 --> 00:03:47,493
+Swiss, cassette futurism,
+
+60
+00:03:47,493 --> 00:03:51,565
+De Stijl, Bauhaus, NASA punk, Rhine Lab,
+and pixel studio.
+
+61
+00:03:51,733 --> 00:03:56,512
+Your science-fiction references include
+Starfield, NASA punk, and Rhine Lab.
+
+62
+00:03:56,832 --> 00:04:01,525
+Each preset should specify palette,
+typography, composition, and motion.
+
+63
+00:04:01,845 --> 00:04:06,560
+A style name selects a design brief;
+the rendered sample shows how well it works.
+
+64
+00:04:08,400 --> 00:04:11,920
+For this workflow,
+the default brief is Swiss design,
+
+65
+00:04:11,920 --> 00:04:13,713
+five minutes, ten eighty p,
+
+66
+00:04:13,713 --> 00:04:18,960
+thirty frames per second, English narration,
+and Chinese plus English subtitles.
+
+67
+00:04:19,133 --> 00:04:21,074
+You only need to state changes.
+
+68
+00:04:21,394 --> 00:04:24,082
+Asking for two minutes overrides the duration.
+
+69
+00:04:24,402 --> 00:04:27,627
+The saved workflow should carry
+your usual choices forward
+
+70
+00:04:27,627 --> 00:04:30,184
+while keeping your current request in control.
+
+71
+00:04:31,967 --> 00:04:33,596
+For your next video, say:
+
+72
+00:04:33,596 --> 00:04:37,116
+use Conny Explainer Video
+to explain my Cursor skills,
+
+73
+00:04:37,116 --> 00:04:40,180
+Swiss style, five minutes, bilingual subtitles.
+
+74
+00:04:40,334 --> 00:04:42,521
+Our workflow separates three roles.
+
+75
+00:04:42,521 --> 00:04:45,770
+The director checks the facts
+and teaching sequence.
+
+76
+00:04:45,770 --> 00:04:48,426
+The designer turns those ideas into frames.
+
+77
+00:04:48,426 --> 00:04:52,750
+The engineer builds timing,
+narration, captions, and the final render.
+
+78
+00:04:52,900 --> 00:04:58,511
+Review a sample, adjust the saved preferences,
+and reuse the improved recipe next time.
