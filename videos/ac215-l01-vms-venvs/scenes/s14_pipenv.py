@@ -62,7 +62,7 @@ ITEM = 24
 CARD_X = 3.3
 CHIP_Y = 0.3
 SHELF_Y, SHELF_HALF = -2.25, 3.0
-SLOT_X, CROSS_X = 2.3, 1.1
+SLOT_X, CROSS_X = 2.3, 1.3
 BOX_X, BOX_Y = 2.05, -2.5
 
 
@@ -139,6 +139,23 @@ def rich_tag(s: str, color: str = S.GREY, size: float = 22, **kw) -> VGroup:
     return g
 
 
+def extend_chip(scene, q: VGroup, v: VGroup, run_time: float = 0.7) -> None:
+    """Morph chip q into chip v when v's text extends q's ("httpx 0.13" -> "httpx 0.13.3"): the box
+    stretches, the shared glyphs slide into place one-to-one and only the new ones appear. (A plain
+    Transform pads the shorter glyph list with duplicates spread through it, so the letters scramble
+    mid-morph.) Falls back to a ReplacementTransform when v doesn't extend q (e.g. translated)."""
+    n = len(q.text)
+    if v.text.text.startswith(q.text.text) and n == len("".join(q.text.text.split())) \
+            and len(v.text) == len("".join(v.text.text.split())):
+        rest = VGroup(*v.text[n:])
+        scene.play(Transform(q.box, v.box), Transform(q.text, VGroup(*v.text[:n])),
+                   FadeIn(rest, shift=LEFT * 0.1), run_time=run_time)
+        scene.remove(q, rest)
+        scene.add(v)
+    else:
+        scene.play(ReplacementTransform(q, v), run_time=run_time)
+
+
 def toolbox(w: float, h: float, color: str, fill: float = 0.1) -> VGroup:
     """A toolbox (as in S08): a rounded body with a handle on top. .body .handle"""
     body = box(w, h, color, fill_opacity=fill, radius=0.12, stroke=3)
@@ -184,11 +201,12 @@ class Pipenv(VoiceScene):
             vo.wait_until("an older way")
             self.play(FadeIn(sub, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("This repo's pipenv branch")
-            self.play(Create(card), FadeIn(repo, shift=RIGHT * 0.15), run_time=0.7)
-            self.play(Create(main_lane.line), LaggedStart(*[GrowFromCenter(d) for d in main_lane.dots], lag_ratio=0.3),
+            # the repo and its main branch come in together, so the pipenv lane lands on "pipenv branch"
+            self.play(Create(card), FadeIn(repo, shift=RIGHT * 0.15), Create(main_lane.line),
+                      LaggedStart(*[GrowFromCenter(d) for d in main_lane.dots], lag_ratio=0.3),
                       FadeIn(main_lane.chip, shift=LEFT * 0.15), run_time=0.8)
             self.play(Create(old_lane.line), LaggedStart(*[GrowFromCenter(d) for d in old_lane.dots], lag_ratio=0.3),
-                      FadeIn(old_lane.chip, shift=LEFT * 0.15), run_time=0.8)
+                      FadeIn(old_lane.chip, shift=LEFT * 0.15), run_time=0.7)
             vo.wait_until("an older version of this tutorial")
             self.play(FadeIn(old_note, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("uses it")
@@ -363,12 +381,12 @@ class Pipenv(VoiceScene):
             self.play(FadeIn(lock_head, shift=DOWN * 0.1), FadeIn(lock, shift=DOWN * 0.1), run_time=0.8)
             vo.wait_until("pins httpx")
             self.play(Create(ul_key), Create(ul_ver), run_time=0.6)
-            self.play(ReplacementTransform(q_old, v_old), run_time=0.7)
+            extend_chip(self, q_old, v_old)
             vo.wait_until("while our uv sync")
             self.play(FadeIn(sync_head, shift=DOWN * 0.1), FadeIn(sync, shift=DOWN * 0.1), run_time=0.8)
             vo.wait_until("installed 0.28.1")
             self.play(Create(ul_new), run_time=0.5)
-            self.play(ReplacementTransform(q_new, v_new), run_time=0.7)
+            extend_chip(self, q_new, v_new)
             vo.wait_until("at the time of recording")
             self.play(FadeIn(when, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("Two versions of the same app")
@@ -380,7 +398,12 @@ class Pipenv(VoiceScene):
 
             # one shared system Python: the last install wins
             vo.wait_until("On one shared system Python")
-            self.play(Create(board), FadeIn(board_label, shift=UP * 0.1), FadeIn(ill), run_time=0.4)
+            # the evidence has done its job: it steps back so the picture (and the two chips feeding it)
+            # carry the sentence. Only visible parts dim (a mono_line's strut must stay invisible).
+            evidence = VGroup(lock.bg, sync.bg, *[r.glyphs for r in (*lock.rows, *sync.rows)],
+                              lock_head, sync_head, ul_key, ul_ver, ul_new)
+            self.play(Create(board), FadeIn(board_label, shift=UP * 0.1), FadeIn(ill),
+                      evidence.animate.set_opacity(0.3), run_time=0.5)
             self.play(GrowFromPoint(j_new, v_new.get_center()), GrowFromPoint(t_new, v_new.get_center()),
                       run_time=0.6)
             self.play(GrowFromPoint(j_old, v_old.get_center()), GrowFromPoint(t_old, v_old.get_center()),

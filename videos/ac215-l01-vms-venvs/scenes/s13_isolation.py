@@ -91,9 +91,9 @@ SITE_S = ".venv/…/site-packages"
 TRACK_LEFT, TRACK_TOP = -6.5, 3.5
 BOTTOM = -3.5                                    # terminal bottom edge
 # beats 1-2: system stack (left) above the 3-row strip, the venv box apart at right
-B1 = [2.1, 1.1, 0.1, -0.9]                       # board heights
+B1 = [2.2, 1.2, 0.2, -0.8]                       # board heights (the light on the last clears the strip)
 S1_L, S1_R = -6.4, 1.2                           # stack x range
-VB_L, VB_R, VB_BOARD = 2.0, 6.4, 0.45            # venv box x range and its board height
+VB_L, VB_R, VB_BOARD = 2.0, 6.4, 0.55            # venv box x range and its board height
 # beats 3-5: inside the part-1 VM frame
 F_TOP, F_BOT = 2.6, -3.35
 B4 = [1.15, -0.2, -1.55, -2.65]                  # board heights (room for a 2-row jar pile + its name tag)
@@ -309,13 +309,13 @@ class Isolation(VoiceScene):
             self.play(Indicate(ev[0], color=VENV, scale_factor=1.12), run_time=0.7)
 
             vo.wait_until("Then ask")
-            cmd = self.type_cmd(t, PY3, 1.0)
+            cmd = self.type_cmd(t, PY3, 0.85)
             r0, r1 = cmd.rows
-            x1 = row_tag("extra")
-            self.pin(r1, beside(x1, r1), run_time=0.3)
-            vo.wait_until("the system's python3")
+            x1 = beside(row_tag("extra"), r1)
             py3 = substring(r0, "python3")
-            self.play(py3.animate.set_color(SYSTEM), run_time=0.3)
+            vo.wait_until("the system's python3")          # (spoken while the command is typed)
+            self.pin(r1, x1, run_time=0.35,
+                     anim=AnimationGroup(FadeIn(x1, shift=LEFT * 0.1), py3.animate.set_color(SYSTEM)))
             self.flash(r0, py3, SYSTEM, 1.3, 0.6)
 
             vo.wait_until("ModuleNotFoundError")
@@ -347,13 +347,15 @@ class Isolation(VoiceScene):
         lt = beam(S1_L - 0.08, S1_R + 0.08, B1[0])
 
         with self.voiceover(SAY[1]) as vo:
-            self.unpin([(l0, x0), (err, only)], 0.3,
-                       FadeOut(VGroup(app_box, lead, old_tag, ev)))
-            # the strip keeps the command's two rows and its error line
-            idx = list(t.lines.submobjects)
-            self.resize(t, 3, keep=[idx.index(r0), idx.index(r1), idx.index(err)], run_time=0.7)
-            self.play(LaggedStart(*[FadeIn(r, shift=DOWN * 0.1) for r in sys_st.rows], lag_ratio=0.12),
-                      FadeIn(apt_j), run_time=0.8)
+            # the strip keeps the command's two rows and its error line; the rest (and the tags) fade
+            # together, then the shelves come in from the top while the terminal shrinks under them
+            gone = [ln for ln in t.lines if ln not in (r0, r1, err)]
+            self.unpin([(err, only)], 0.35, FadeOut(VGroup(*gone)), FadeOut(VGroup(app_box, lead, old_tag, ev)))
+            t.lines.submobjects = [r0, r1, err]
+            rows = list(sys_st.rows)
+            self.resize(t, 3, run_time=0.9,
+                        extra=[LaggedStart(*[FadeIn(r, shift=DOWN * 0.1) for r in rows[:3]],
+                                           FadeIn(VGroup(rows[3], apt_j), shift=DOWN * 0.1), lag_ratio=0.35)])
             self.play(FadeIn(vbox, shift=LEFT * 0.2), run_time=0.5)
 
             vo.wait_until("scans its own list")
