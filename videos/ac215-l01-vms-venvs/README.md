@@ -12,14 +12,14 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l01-vms-venvs.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL |
+| `output/ac215-l01-vms-venvs.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 29:52, 85 MB |
 | `output/ac215-l01-vms-venvs.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player |
-| `output/ac215-l01-vms-venvs_part1.mp4` | part 1, DURATION_P1: a cloud VM and the quick-and-dirty install (S01–S07) |
-| `output/ac215-l01-vms-venvs_part2.mp4` | part 2, DURATION_P2: virtual environments with uv (S08–S15) |
-| `output/ac215-l01-vms-venvs.srt` | English subtitles |
+| `output/ac215-l01-vms-venvs_part1.mp4` | part 1, 14:01: a cloud VM and the quick-and-dirty install (S01–S07) |
+| `output/ac215-l01-vms-venvs_part2.mp4` | part 2, 15:51: virtual environments with uv (S08–S15) |
+| `output/ac215-l01-vms-venvs.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l01-vms-venvs.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l01-vms-venvs.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
-| `output/chapters.txt` | chapter timestamps |
+| `output/chapters.txt`, `chapters_part1.txt`, `chapters_part2.txt` | chapter timestamps |
 | `output/transcript.md` | the full narration by chapter |
 | `exercises.md` | do these after watching: the five test-yourself questions, hands-on predict-then-run tasks, debugging, and a few think questions, with answers |
 | `digest.md` | the tutorial digest: every step, a code tour with `path:line`, gotchas, errata |
@@ -30,7 +30,25 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+
+```
+00:00 Why won't pip install?
+01:34 The app: cli.py
+03:34 Renting a computer: the VM
+05:57 apt, git and the repo
+07:39 The system Python and PEP 668
+10:53 Run it, and read the traceback
+12:58 Delete, don't stop
+14:01 What a virtual environment is
+15:48 Installing uv
+18:03 uv sync: which Python?
+20:37 uv sync: resolve, lock, install
+23:23 Activation is just PATH
+25:55 Prove the isolation
+27:10 The older way: pipenv
+28:16 Tear down, recap, and what's next
+```
 
 ## What you'll learn
 

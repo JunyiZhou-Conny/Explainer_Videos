@@ -1,0 +1,1219 @@
+1
+00:00:00,000 --> 00:00:02,283
+这是一台云上的全新电脑
+Here's a brand-new computer in the cloud.
+
+2
+00:00:02,603 --> 00:00:05,803
+它是我们的，有 root 权限，也就是完整的管理员权限
+It's ours, and we have root, full administrator rights.
+
+3
+00:00:06,123 --> 00:00:09,600
+我们让 pip 装两个 Python 包，pip 说不行
+We ask pip for two Python packages, and pip says no.
+
+4
+00:00:10,083 --> 00:00:14,648
+这条命令不是 README 里的，是我们大多数人最先会敲的那条
+This command isn't from the README; it's the one most of us would type first.
+
+5
+00:00:14,968 --> 00:00:18,373
+报错说这个环境是 externally managed（由外部管理）
+The error says the environment is externally managed,
+
+6
+00:00:18,373 --> 00:00:20,622
+还建议用虚拟环境
+and suggests a virtual environment.
+
+7
+00:00:20,942 --> 00:00:24,163
+看完这个视频，报错的每一行你都会看懂
+By the end of this video, every line of it will make sense.
+
+8
+00:00:24,900 --> 00:00:28,015
+今天这节课，“虚拟”这个词会出现两次
+Today's lecture uses the word virtual twice.
+
+9
+00:00:28,335 --> 00:00:32,132
+虚拟机，就是一整台你租来、用完就扔的电脑
+A virtual machine is a whole computer you rent and throw away.
+
+10
+00:00:32,452 --> 00:00:37,529
+虚拟环境，就是给一个项目专用的一套 Python 包
+A virtual environment is a private set of Python packages for one project.
+
+11
+00:00:37,849 --> 00:00:39,727
+而且，一个会装在另一个里面
+And one will live inside the other.
+
+12
+00:00:39,967 --> 00:00:42,531
+这个教程叫 simple-translate
+The tutorial, simple-translate, runs one small app four ways, each removing a kind of fragility.
+
+13
+00:00:42,531 --> 00:00:46,708
+它用四种方式跑同一个小应用，每一种都去掉一类隐患
+The tutorial, simple-translate, runs one small app four ways, each removing a kind of fragility.
+
+14
+00:00:47,028 --> 00:00:49,713
+今天我们爬前两级
+Today we climb the first two rungs:
+
+15
+00:00:49,713 --> 00:00:55,391
+先在云端 VM 上手动安装，再换一台同样配置的全新 VM，改用 uv
+a manual install on a cloud VM, then a fresh VM of the same kind, with uv.
+
+16
+00:00:55,711 --> 00:00:57,439
+Docker 留到下节课
+Docker comes next lecture.
+
+17
+00:00:57,683 --> 00:01:00,926
+想跟着做的话，把 README 打开，放在视频旁边
+To follow along, open the README beside this video.
+
+18
+00:01:01,246 --> 00:01:03,976
+左上角的进度条显示 README 的步骤
+The tracker, top left, shows the README step.
+
+19
+00:01:04,296 --> 00:01:06,814
+代码面板会标出文件和行号
+Code panels show the file and line numbers.
+
+20
+00:01:07,134 --> 00:01:09,494
+看到黄色的“轮到你了”标签，就暂停
+When the yellow your-turn tag appears,
+
+21
+00:01:09,494 --> 00:01:12,040
+在你自己的 VM 上跑这条命令
+pause and run the command on your own VM.
+
+22
+00:01:12,360 --> 00:01:16,181
+灰色的“额外”标签表示这条命令 README 里没有
+A grey extra tag marks a command that isn't in the README;
+
+23
+00:01:16,181 --> 00:01:18,355
+额外的命令都是安全的，也一起跑吧
+extras are safe, so run them too.
+
+24
+00:01:18,675 --> 00:01:23,326
+每条命令也都在学习指南里，在 MLOps Learning 这个 repo 里
+Every command is also in the study guide, in the MLOps Learning repo.
+
+25
+00:01:23,567 --> 00:01:25,880
+开始前先做完 Tutorial 0
+Before you start, finish Tutorial 0,
+
+26
+00:01:25,880 --> 00:01:29,156
+这样你就有一个 Google Cloud 项目，结算也开好了
+so you have a Google Cloud project with billing on.
+
+27
+00:01:29,476 --> 00:01:33,380
+今天不用服务账号，也不用密钥，有个浏览器就行
+No service account or keys today; all you need is a browser.
+
+28
+00:01:34,417 --> 00:01:37,596
+装东西之前，先看看要装的是什么
+Before we install anything, let's see what we're installing.
+
+29
+00:01:37,916 --> 00:01:42,481
+在 GitHub 上打开 cli.py，待会儿你会把它 clone 到 VM 上
+Open cli.py on GitHub; you'll clone it onto your VM soon.
+
+30
+00:01:42,801 --> 00:01:47,068
+前两个 import，argparse 和 asyncio，是 Python 自带的
+The first two imports, argparse and asyncio, come with Python.
+
+31
+00:01:47,388 --> 00:01:50,033
+后两个，art 和 googletrans，就不是了
+The next two, art and googletrans, don't.
+
+32
+00:01:50,353 --> 00:01:51,953
+它们总得从某个地方来
+They have to come from somewhere.
+
+33
+00:01:52,273 --> 00:01:55,004
+这整节课，讲的就是它们从哪儿来
+This whole lecture is about where they come from.
+
+34
+00:01:55,250 --> 00:01:59,695
+这个 main 函数先打印一个横幅，用 ASCII 字符画写着 AC215
+The main function prints a banner that says AC215 in ASCII art,
+
+35
+00:01:59,695 --> 00:02:03,506
+然后是解析好的参数，最后是要翻译的文本
+then the parsed arguments, then the text to translate.
+
+36
+00:02:03,826 --> 00:02:08,008
+如果用 -f 传一个文件，文本就改从那个文件里读
+If you pass a file with -f, the text comes from that file instead.
+
+37
+00:02:08,250 --> 00:02:13,316
+最下面，argparse 定义了四个选项，各有默认值
+At the bottom, argparse defines four options, and each one has a default:
+
+38
+00:02:13,316 --> 00:02:18,106
+文本是 I love cheese，源语言是英语，目标语言是意大利语
+the text I love cheese, source language English, destination Italian.
+
+39
+00:02:18,426 --> 00:02:21,242
+所以不带任何选项运行 cli.py
+So running cli.py with no options
+
+40
+00:02:21,242 --> 00:02:24,485
+就会把 I love cheese 翻译成意大利语
+translates I love cheese into Italian.
+
+41
+00:02:24,734 --> 00:02:27,980
+最后一行启动事件循环并运行 main
+The last line starts an event loop and runs main,
+
+42
+00:02:27,980 --> 00:02:31,027
+因为 googletrans 4 是异步的
+because googletrans version 4 is asynchronous.
+
+43
+00:02:31,347 --> 00:02:34,356
+在 main 里，一个 Translator 把你的文本发出去
+Inside main, a Translator sends your text off
+
+44
+00:02:34,356 --> 00:02:35,956
+只用一次 await 调用
+with one awaited call.
+
+45
+00:02:36,067 --> 00:02:39,531
+这次调用就是一个 HTTPS 请求
+That call is a single HTTPS request
+
+46
+00:02:39,531 --> 00:02:43,491
+从 VM 发到 translate.googleapis.com
+from the VM to translate.googleapis.com.
+
+47
+00:02:43,811 --> 00:02:47,350
+这是 Google 非官方的翻译接口
+It's Google's unofficial translate endpoint:
+
+48
+00:02:47,350 --> 00:02:49,763
+免费，不用 API key，也不做任何保证
+free, no API key, no promises.
+
+49
+00:02:50,083 --> 00:02:54,584
+返回来一小段 JSON，第 39 行把译文打印出来
+A little JSON comes back, and line 39 prints the translation.
+
+50
+00:02:54,834 --> 00:02:59,869
+第 25 行有个细节以后会用到：raise_exception=True
+One detail on line 25 matters later: raise_exception=True.
+
+51
+00:03:00,189 --> 00:03:03,041
+没有它的话，Google 一旦返回错误
+Without it, when Google answers with an error,
+
+52
+00:03:03,041 --> 00:03:06,141
+googletrans 就把错误藏起来
+googletrans hides it and hands your own input back
+
+53
+00:03:06,141 --> 00:03:08,807
+把你的原文当成译文交回来，看上去一切正常
+as the translation, so nothing looks wrong.
+
+54
+00:03:09,127 --> 00:03:11,986
+有了它，失败就会变成一条你能看懂的报错
+With it, a failure becomes an error you can read.
+
+55
+00:03:12,234 --> 00:03:15,424
+第 32 到 37 行会接住那次调用的任何错误
+Lines 32 to 37 catch any error from that call
+
+56
+00:03:15,424 --> 00:03:19,253
+再包装成一条更友好的消息，说是网络的问题
+and wrap it in a friendlier message about the network.
+
+57
+00:03:19,573 --> 00:03:21,165
+记住这几行
+Remember these lines.
+
+58
+00:03:21,215 --> 00:03:23,092
+几分钟后，它们就会误导我们
+In a few minutes, they'll fool us.
+
+59
+00:03:23,400 --> 00:03:27,837
+所以这个应用很小：参数进去，一次网络请求，一行输出
+So the app is small: arguments in, one web request, one line out.
+
+60
+00:03:28,157 --> 00:03:30,781
+它需要的，是两个第三方包
+What it needs is two third-party packages.
+
+61
+00:03:31,101 --> 00:03:33,576
+我们去弄一台电脑，给它们安个家
+Let's get a computer, and find them a home.
+
+62
+00:03:34,817 --> 00:03:37,784
+虚拟机就是一台真实服务器切出来的一片
+A virtual machine is a slice of a real server
+
+63
+00:03:37,784 --> 00:03:39,894
+在 Google 的某个数据中心里
+in one of Google's data centers.
+
+64
+00:03:40,214 --> 00:03:42,441
+有一种软件叫 hypervisor（虚拟机监控器）
+Software called a hypervisor
+
+65
+00:03:42,441 --> 00:03:44,225
+它把这台机器切成一片一片
+carves the machine into slices.
+
+66
+00:03:44,545 --> 00:03:48,310
+每一片都从这台服务器分到虚拟 CPU 和内存
+Each slice gets virtual CPUs and memory from that server,
+
+67
+00:03:48,310 --> 00:03:52,737
+从 Google 的存储网络分到一块磁盘，还有自己的操作系统
+a disk from Google's storage network, and its own operating system.
+
+68
+00:03:53,057 --> 00:03:54,657
+其中一片会是你的
+One of them will be yours.
+
+69
+00:03:54,884 --> 00:03:59,719
+在控制台里，先确认选中的是你在 Tutorial 0 建的项目
+In the console, check that your Tutorial 0 project is selected,
+
+70
+00:03:59,719 --> 00:04:03,097
+然后打开 Compute Engine，再进 VM instances
+then open Compute Engine, then VM instances.
+
+71
+00:04:03,417 --> 00:04:07,666
+第一次进去，它可能会让你启用 Compute Engine API
+The first time, it may ask you to enable the Compute Engine API;
+
+72
+00:04:07,666 --> 00:04:09,924
+点 Enable，再等它一分钟
+click enable and give it a minute.
+
+73
+00:04:10,244 --> 00:04:11,844
+然后点 Create instance
+Then click Create instance.
+
+74
+00:04:12,084 --> 00:04:15,455
+README 没给任何设置，这里给一套合理的选择
+The README gives no settings, so here are sensible ones.
+
+75
+00:04:15,775 --> 00:04:18,676
+名称，比如 ac215-l01
+A name, like ac215-l01.
+
+76
+00:04:18,996 --> 00:04:22,196
+区域和可用区，就是这台机器实际放在哪里
+A region and zone: where the machine physically lives.
+
+77
+00:04:22,516 --> 00:04:27,465
+机器类型决定 CPU 和内存，e2-small 就够用了
+A machine type, which sets the CPUs and memory; e2-small is plenty.
+
+78
+00:04:27,785 --> 00:04:29,897
+启动磁盘选 Debian 12
+And a boot disk with Debian 12.
+
+79
+00:04:30,217 --> 00:04:33,801
+用 Debian 13 也行，后面会看到它在哪些地方不一样
+Debian 13 works too; we'll see where it changes things.
+
+80
+00:04:34,050 --> 00:04:37,378
+保留外部 IP（也就是公网 IP），它默认就是开着的
+Keep the external IP address; it's on by default.
+
+81
+00:04:37,698 --> 00:04:40,464
+没有它，又没做额外的网络配置
+Without it, and without extra network setup,
+
+82
+00:04:40,464 --> 00:04:44,802
+这台 VM 就上不了网，这里的每次下载都会卡住
+this VM can't reach the internet, and every download here would hang.
+
+83
+00:04:45,050 --> 00:04:46,650
+现在，计价器开始跳了
+And now the meter starts.
+
+84
+00:04:46,927 --> 00:04:52,858
+CPU 和内存在 VM 运行期间按秒计费，闲着也照样算
+CPU and memory are billed by the second while the VM runs, even when it sits idle.
+
+85
+00:04:53,178 --> 00:04:55,631
+磁盘只要还在，就一直计费
+The disk is billed for as long as it exists.
+
+86
+00:04:55,951 --> 00:04:59,578
+费用估算不高，但计价器自己不会停
+The estimate is small, but the meter never stops on its own.
+
+87
+00:04:59,834 --> 00:05:03,418
+点 Create，等绿勾出现，再点 SSH
+Click Create, wait for the green check, then click SSH.
+
+88
+00:05:03,738 --> 00:05:07,215
+要是让你授权这次连接，就点 Authorize
+If it asks you to authorize the connection, click Authorize.
+
+89
+00:05:07,535 --> 00:05:11,375
+浏览器里会打开一个终端，已经登录到新 VM 上
+A terminal opens in your browser, logged in to your new VM.
+
+90
+00:05:11,695 --> 00:05:14,981
+我们的提示符显示 student，你的是你自己的用户名
+Our prompt says student; yours shows your own username.
+
+91
+00:05:15,301 --> 00:05:17,796
+先在这里暂停，把你的 VM 也弄到这一步
+Pause here, and get your VM to this point.
+
+92
+00:05:18,050 --> 00:05:20,823
+来做三个快速的额外检查，README 里都没有
+Three quick extra checks, not in the README.
+
+93
+00:05:21,143 --> 00:05:23,789
+第一，我们拿到的是哪个操作系统？
+First, which operating system did we get?
+
+94
+00:05:24,109 --> 00:05:28,120
+打印 os-release 文件：Debian 12，代号 bookworm
+Print the os-release file: Debian 12, nicknamed bookworm.
+
+95
+00:05:28,384 --> 00:05:30,987
+第二，再问一下 python3 的版本
+Second, ask python3 for its version.
+
+96
+00:05:31,307 --> 00:05:36,960
+Debian 12 自带 Python 3.11.2，给操作系统自己用
+Debian 12 ships Python 3.11.2, for the operating system itself.
+
+97
+00:05:37,280 --> 00:05:40,992
+换成 Debian 13，你会看到 3.13.5
+On Debian 13, you'd see 3.13.5.
+
+98
+00:05:41,312 --> 00:05:42,976
+这两个数字都记住
+Keep both numbers in mind.
+
+99
+00:05:43,234 --> 00:05:45,623
+第三，which python，不带 3
+Third, which python, without the 3.
+
+100
+00:05:45,943 --> 00:05:48,930
+这个 which 命令，查一个名字会运行哪个程序
+The which command asks which program a name would run.
+
+101
+00:05:49,250 --> 00:05:53,943
+查 python，什么都没返回：Debian 有 python3，但没有 python
+For python, nothing comes back: Debian has python3, but no python.
+
+102
+00:05:54,263 --> 00:05:55,970
+记住它，第二部分要用
+Remember this for part 2.
+
+103
+00:05:57,033 --> 00:05:59,550
+第 3 步：输入 sudo apt-get update
+Step 3: type sudo apt-get update.
+
+104
+00:05:59,870 --> 00:06:04,436
+Debian 的包管理器是 apt，sudo 让它以管理员身份运行
+Debian's package manager is apt, and sudo runs it as the administrator.
+
+105
+00:06:04,756 --> 00:06:07,100
+而 update 会下载软件包列表
+Update downloads the package catalog:
+
+106
+00:06:07,100 --> 00:06:10,836
+有哪些软件包，各自最新的版本是什么
+the list of packages that exist, and their latest versions.
+
+107
+00:06:11,156 --> 00:06:12,820
+这时还什么都没装
+Nothing is installed yet.
+
+108
+00:06:13,140 --> 00:06:15,944
+在 Google 的 VM 上，你会看到多出几行
+On a Google VM, you'll see a few more lines,
+
+109
+00:06:15,944 --> 00:06:18,046
+那是 Google 自己的软件源
+for Google's own package sources.
+
+110
+00:06:18,366 --> 00:06:19,716
+暂停一下，自己跑一遍
+Pause and run it.
+
+111
+00:06:19,766 --> 00:06:23,670
+这里 README 有个提示：apt-get 和 apt 做的是同一件事
+The README has a tip here: apt-get and apt do the same job.
+
+112
+00:06:23,990 --> 00:06:27,325
+其中 apt-get 这条命令稳定、适合写进脚本
+The apt-get command is the stable, scriptable one,
+
+113
+00:06:27,325 --> 00:06:29,793
+用在 Dockerfile 和自动化构建里
+for Dockerfiles and automated builds.
+
+114
+00:06:30,113 --> 00:06:33,035
+短一点的 apt，手敲起来更友好
+The shorter apt is friendlier for typing by hand.
+
+115
+00:06:33,355 --> 00:06:34,866
+这里用哪个都行
+Either is fine here.
+
+116
+00:06:34,916 --> 00:06:37,305
+第 4 步：sudo apt install git
+Step 4: sudo apt install git.
+
+117
+00:06:37,625 --> 00:06:39,844
+这次 apt 是真的要装东西了
+This time apt really installs things.
+
+118
+00:06:40,164 --> 00:06:43,556
+它会列出要添加的东西，然后问你：要继续吗？
+It lists what it will add and asks, do you want to continue?
+
+119
+00:06:43,876 --> 00:06:45,476
+输入 Y，按回车
+Type Y and press enter.
+
+120
+00:06:45,775 --> 00:06:50,020
+列表因 VM 而异；如果已经有 git，apt 会直接告诉你
+The list depends on your VM; if git is already there, apt says so.
+
+121
+00:06:50,340 --> 00:06:51,683
+暂停一下，自己跑一遍
+Pause and run it.
+
+122
+00:06:51,733 --> 00:06:53,610
+第 5 步：把 repo clone 下来
+Step 5: clone the repo.
+
+123
+00:06:53,930 --> 00:06:57,322
+输入 git clone，再加上地址；地址从 README 里复制
+Type git clone, then the address; copy it from the README.
+
+124
+00:06:57,642 --> 00:06:59,398
+它会把整个 repo 连同历史
+Git copies the whole repo,
+
+125
+00:06:59,398 --> 00:07:03,044
+复制到一个新目录 simple-translate 里
+with its history, into a new folder, simple-translate,
+
+126
+00:07:03,044 --> 00:07:04,644
+就在你的 home 目录下
+in your home directory.
+
+127
+00:07:04,833 --> 00:07:07,244
+第 6 步：cd simple-translate
+Step 6: cd simple-translate.
+
+128
+00:07:07,564 --> 00:07:11,745
+注意看提示符：冒号后面现在显示你所在的目录
+Watch the prompt: after the colon, it now shows the folder you're in.
+
+129
+00:07:12,065 --> 00:07:14,604
+这个波浪号代表你的 home 目录
+The wavy tilde means your home folder.
+
+130
+00:07:14,924 --> 00:07:16,630
+暂停一下，跟上进度
+Pause, and catch up to here.
+
+131
+00:07:16,866 --> 00:07:19,575
+额外检查一下：用 ls 列出文件
+One extra check: ls lists the files.
+
+132
+00:07:19,895 --> 00:07:21,395
+里面有 cli.py、README
+There's cli.py,
+
+133
+00:07:21,395 --> 00:07:24,510
+一个存成文本文件的 Dockerfile
+the README, a Dockerfile saved as a text file,
+
+134
+00:07:24,510 --> 00:07:28,217
+两个下节课用的脚本，还有 pyproject.toml
+two scripts for next lecture, and pyproject.toml,
+
+135
+00:07:28,217 --> 00:07:30,562
+列着这个应用需要什么
+the list of what the app needs.
+
+136
+00:07:30,882 --> 00:07:33,872
+注意少了什么：没有 requirements 文件
+Notice what's missing: no requirements file,
+
+137
+00:07:33,872 --> 00:07:36,386
+也没有记录精确版本的 lock 文件
+and no lock file with exact versions.
+
+138
+00:07:36,706 --> 00:07:38,306
+先记住这一点
+Hold on to that.
+
+139
+00:07:39,167 --> 00:07:42,324
+第 7 步：sudo apt install python3-pip
+Step 7: sudo apt install python3-pip.
+
+140
+00:07:42,644 --> 00:07:46,570
+这是 Debian 自己打包的 pip，给 Debian 的 Python 用
+That's Debian's own packaged copy of pip, for Debian's Python.
+
+141
+00:07:46,890 --> 00:07:48,440
+再输入一次 Y
+Answer Y again.
+
+142
+00:07:48,490 --> 00:07:53,375
+我们这次连带装了一百多个软件包；真正的 VM 上通常会少一些
+Ours pulled in over a hundred packages; a real VM usually needs fewer.
+
+143
+00:07:53,695 --> 00:07:55,034
+暂停一下，自己跑一遍
+Pause and run it.
+
+144
+00:07:55,084 --> 00:07:58,135
+额外检查一下：问问 pip3 的版本
+An extra check: ask pip3 for its version.
+
+145
+00:07:58,455 --> 00:08:01,679
+它是 pip 23.0.1，对应 Python 3.11
+It's pip 23.0.1, for Python 3.11,
+
+146
+00:08:01,679 --> 00:08:06,369
+在 /usr/lib 下面一个叫 dist-packages 的目录里
+in a folder called dist-packages under /usr/lib.
+
+147
+00:08:06,689 --> 00:08:11,297
+这个 user 拼作 usr：指的是系统的文件，不是你的 home 目录
+That user is spelled usr: the system's files, not your home folder.
+
+148
+00:08:11,534 --> 00:08:15,939
+现在跑视频开头那条命令，不带 sudo，也不带任何参数
+Now the command from the start of the video, without sudo or any flag;
+
+149
+00:08:15,939 --> 00:08:17,827
+它也不在 README 里
+it isn't in the README either.
+
+150
+00:08:18,147 --> 00:08:22,371
+还是一样，pip 拒绝了：这个环境是 externally managed
+Again, pip refuses: this environment is externally managed.
+
+151
+00:08:22,691 --> 00:08:26,851
+提示说：用 apt 安装，或者建一个虚拟环境
+The hint says: install with apt, or create a virtual environment.
+
+152
+00:08:27,171 --> 00:08:29,966
+它最后一句甚至给出了绕过去的办法
+Its last note even names a way around it.
+
+153
+00:08:30,200 --> 00:08:31,537
+为什么要拒绝？
+Why refuse?
+
+154
+00:08:31,587 --> 00:08:33,805
+先想想 Python 怎么找 import 的东西
+Picture how Python finds an import.
+
+155
+00:08:34,125 --> 00:08:37,699
+这条额外的一行命令打印 sys.path 这个列表
+This extra one-liner prints the list called sys.path:
+
+156
+00:08:37,699 --> 00:08:39,587
+也就是 Python 会搜索的那些目录
+the folders Python searches.
+
+157
+00:08:39,907 --> 00:08:41,507
+把它们想成一层层的架子
+Think of them as shelves.
+
+158
+00:08:41,656 --> 00:08:46,755
+每次 import，Python 都从最上面一层往下找，拿第一个对上的
+On every import, Python scans from the top shelf down, and takes the first match.
+
+159
+00:08:47,967 --> 00:08:49,930
+最下面这层是 apt 的
+The bottom shelf belongs to apt.
+
+160
+00:08:50,250 --> 00:08:52,442
+Debian 自己也在跑一些 Python 工具
+Debian itself runs Python tools
+
+161
+00:08:52,442 --> 00:08:56,756
+它们依赖的正是这些罐子，而且正是这些版本
+that depend on exactly those jars, at exactly those versions.
+
+162
+00:08:57,076 --> 00:09:00,831
+系统 Python 是一间公用厨房，掌勺的是 apt
+The system Python is a shared kitchen, and apt is the cook.
+
+163
+00:09:01,151 --> 00:09:03,242
+这就是 externally managed 的意思
+That's what externally managed means.
+
+164
+00:09:03,562 --> 00:09:07,082
+而 PEP 668 就是让 pip 遵守这一点的规则
+PEP 668 is the rule that makes pip respect it.
+
+165
+00:09:07,317 --> 00:09:10,953
+第 8 步是 README 里的命令：sudo pip3 install
+Step 8 is the README's command: sudo pip3 install,
+
+166
+00:09:10,953 --> 00:09:13,717
+加上 --break-system-packages 这个参数
+with the flag --break-system-packages.
+
+167
+00:09:14,037 --> 00:09:18,453
+这个参数绕过了保护；sudo 让 pip 以管理员身份写文件
+The flag overrides the guard; sudo lets pip write as administrator.
+
+168
+00:09:18,773 --> 00:09:20,195
+暂停一下，自己跑一遍
+Pause and run it.
+
+169
+00:09:20,245 --> 00:09:22,693
+我们要了 2 个包，装了 12 个
+We asked for 2 packages and got 12;
+
+170
+00:09:22,693 --> 00:09:25,771
+如果你看到 requirement already satisfied
+if yours says requirement already satisfied,
+
+171
+00:09:25,771 --> 00:09:27,520
+说明 apt 已经装过那个包了
+apt already had that one.
+
+172
+00:09:27,840 --> 00:09:30,176
+还有，警告说以 root 身份运行 pip
+And the warning says running pip as root
+
+173
+00:09:30,176 --> 00:09:32,746
+可能会和系统的包管理器冲突
+can clash with the system's package manager.
+
+174
+00:09:32,984 --> 00:09:34,385
+它们装到哪儿去了？
+Where did they go?
+
+175
+00:09:34,435 --> 00:09:38,171
+这条额外的一行命令问 googletrans 装在哪儿
+This extra one-liner asks googletrans where it lives:
+
+176
+00:09:38,171 --> 00:09:40,568
+在 /usr/local 下面的 dist-packages 里
+in dist-packages under /usr/local,
+
+177
+00:09:40,568 --> 00:09:43,459
+仍然是系统的，所有用户共用
+still the system's, shared by every user.
+
+178
+00:09:43,779 --> 00:09:47,256
+看看这些架子：这一层在 apt 那层的上面
+Look at the shelves: that shelf sits above the one apt owns.
+
+179
+00:09:47,500 --> 00:09:52,556
+现在假设，apt 之前为某个系统工具装过一个旧版的 httpx
+Now suppose apt had installed an older httpx for some system tool.
+
+180
+00:09:52,876 --> 00:09:55,965
+我们的 googletrans 需要 0.27.2 及以上
+Our googletrans needs 0.27.2 or newer,
+
+181
+00:09:55,965 --> 00:10:00,193
+所以 pip 会再装一份，放在更高的那层架子上
+so pip would add a second copy, on the higher shelf.
+
+182
+00:10:00,513 --> 00:10:04,469
+这时 Python 会先找到这一份，把 apt 那份挡住
+Python would find that copy first and hide the one from apt,
+
+183
+00:10:04,469 --> 00:10:08,492
+所有用系统 Python 的程序都这样，不只是我们的
+for every program that uses the system Python, not just ours.
+
+184
+00:10:08,812 --> 00:10:10,412
+这个参数破坏的，正是这一点
+That's what the flag breaks.
+
+185
+00:10:10,567 --> 00:10:14,190
+公平地说，README 里也讲了，这里是故意用这个参数
+To be fair, the README says it uses the flag deliberately,
+
+186
+00:10:14,190 --> 00:10:18,439
+当作快速演示，下一部分就会用正规的做法
+as a quick demonstration, and the next walkthrough does it properly.
+
+187
+00:10:18,684 --> 00:10:20,284
+来想一个问题
+Something to ponder.
+
+188
+00:10:20,348 --> 00:10:26,526
+这台 VM 上有个同学的项目，需要 httpx 0.13
+A classmate's project on this VM needs httpx 0.13,
+
+189
+00:10:26,526 --> 00:10:29,863
+而你的项目，需要的是 httpx 0.28
+and yours needs httpx 0.28.
+
+190
+00:10:30,183 --> 00:10:32,423
+两个项目都像这样，做系统级安装
+Both install system-wide, like this.
+
+191
+00:10:32,743 --> 00:10:34,343
+会怎么样？
+What happens?
+
+192
+00:10:42,584 --> 00:10:46,808
+架子只有一层，所以只放得下一个 httpx
+There's only one shelf, so there's room for only one httpx.
+
+193
+00:10:47,128 --> 00:10:51,608
+最后装的说了算，对所有人都一样，两个项目总有一个会坏
+The last install wins, for everyone, and one of the two projects breaks.
+
+194
+00:10:53,150 --> 00:10:54,750
+第 9 步：把它跑起来
+Step 9: run it.
+
+195
+00:10:54,921 --> 00:11:00,809
+输入 python3 cli.py，要带 3，因为这里没有不带 3 的 python
+Type python3 cli.py, with the 3, since plain python doesn't exist here.
+
+196
+00:11:01,129 --> 00:11:05,359
+你应该会看到横幅、参数、你的输入，还有输出
+You should see the banner, the arguments, your input, and the output:
+
+197
+00:11:05,359 --> 00:11:06,959
+意大利语版的 I love cheese
+I love cheese, in Italian.
+
+198
+00:11:07,273 --> 00:11:10,734
+要是出来一大段红色报错，什么都别改
+If you get a long red error instead, don't change anything;
+
+199
+00:11:10,734 --> 00:11:12,905
+待会儿我们一起读我们录到的那段
+we'll read ours together in a minute.
+
+200
+00:11:13,225 --> 00:11:14,617
+暂停一下，试试看
+Pause and try it.
+
+201
+00:11:14,667 --> 00:11:16,608
+然后跑 README 里的另外两条命令
+Then the README's other two runs.
+
+202
+00:11:16,928 --> 00:11:22,112
+其中 -t 指定文本，-s 指定源语言，-d 指定目标语言
+-t gives the text, -s the source language, -d the destination.
+
+203
+00:11:22,432 --> 00:11:26,443
+从 README 复制，连引号一起，暂停一下，两条都跑一遍
+Copy them from the README, quotes included, and pause to run both.
+
+204
+00:11:26,763 --> 00:11:29,557
+一条返回西班牙语，另一条返回法语
+One comes back in Spanish, the other in French.
+
+205
+00:11:29,800 --> 00:11:34,252
+说实话，我们录的时候，Google 拒绝了我们的请求
+Now, honestly: when we recorded this, Google refused our requests,
+
+206
+00:11:34,252 --> 00:11:37,288
+结果跑出来这一长串红色的 traceback
+and the run ended in this long red traceback.
+
+207
+00:11:37,608 --> 00:11:40,915
+我们来读一读，这种 traceback 整门课你都会碰到
+Let's read it; you'll meet tracebacks like this all course long.
+
+208
+00:11:41,150 --> 00:11:43,625
+这是一个链式 traceback：两个错误
+This is a chained traceback: two errors.
+
+209
+00:11:43,945 --> 00:11:47,913
+中间那一行说，第一个错误直接导致了第二个
+The line between them says the first one directly caused the second.
+
+210
+00:11:48,233 --> 00:11:52,222
+大多数人只看最后一行，可这里它只是外层包装
+Most people read only the last line, but here that's just the wrapper.
+
+211
+00:11:52,542 --> 00:11:55,166
+往上翻到第一个错误：那才是原因
+Scroll up to the first error: that's the cause.
+
+212
+00:11:55,400 --> 00:11:59,539
+原因是状态码 429，也就是请求太多
+The cause is status code 429: too many requests.
+
+213
+00:11:59,859 --> 00:12:03,687
+Google 的非官方接口在对我们的机器限流
+Google's unofficial endpoint was rate-limiting our machine,
+
+214
+00:12:03,687 --> 00:12:06,088
+对云上的机器，它经常这样
+as it often does with cloud machines.
+
+215
+00:12:06,408 --> 00:12:09,478
+这台 VM 上什么都没坏。最后一行的错误
+Nothing on the VM was broken. The error
+
+216
+00:12:09,478 --> 00:12:15,488
+是这个应用自己的外层包装，也就是 cli.py 的第 32 到 37 行
+on the last line is the app's own wrapper, lines 32 to 37 of cli.py.
+
+217
+00:12:15,808 --> 00:12:20,566
+它什么都接住，再抛出一条更友好的消息，接在原来的错误后面
+It catches anything, and raises a friendlier message, chained to the original.
+
+218
+00:12:20,800 --> 00:12:22,400
+为什么要看第一个错误？
+Why read the first error?
+
+219
+00:12:22,592 --> 00:12:26,496
+这条额外的命令故意打错了：xx 不是一种语言
+This extra command has a typo: xx isn't a language.
+
+220
+00:12:26,816 --> 00:12:30,016
+第一个错误说的是：目标语言无效
+The first error says invalid destination language.
+
+221
+00:12:30,336 --> 00:12:35,435
+但最后一行还是在怪网络，因为同一个外层包装什么都接
+But the last line still blames the network, because the same wrapper catches everything.
+
+222
+00:12:35,755 --> 00:12:38,485
+这是代码的小缺陷，不是你的配置有问题
+A small flaw in the code, not in your setup.
+
+223
+00:12:38,805 --> 00:12:42,432
+有效的语言代码，在 README 最下面的一张表里
+The valid codes are in a table at the bottom of the README.
+
+224
+00:12:42,667 --> 00:12:45,329
+如果你遇到 429，可以等一等再试
+If you hit a 429, wait and retry,
+
+225
+00:12:45,329 --> 00:12:48,960
+换个区域，或者在你的笔记本上跑
+try another region, or run it on your laptop.
+
+226
+00:12:49,280 --> 00:12:53,430
+只要走到了 Input 那一行，import 就都成功了
+If you got as far as the Input line, the imports worked;
+
+227
+00:12:53,430 --> 00:12:57,579
+第一个错误是 429 的话，说不行的只是网络
+when the first error is a 429, only the network said no.
+
+228
+00:12:58,817 --> 00:13:01,654
+第 10 步，也是最后一步：把 VM 删掉
+Step 10, the last one: delete the VM.
+
+229
+00:13:01,974 --> 00:13:06,582
+README 也说了，运行中的 VM 会一直计费，闲着也一样
+As the README says, a running VM keeps charging, even when idle.
+
+230
+00:13:06,902 --> 00:13:09,313
+那为什么要删除，而不只是停止？
+So why delete it, and not just stop it?
+
+231
+00:13:09,550 --> 00:13:15,797
+停止之后，CPU 和内存不再计费，但磁盘还在，所以还在计费
+Stopping ends the billing for CPU and memory, but the disk still exists, so it keeps billing,
+
+232
+00:13:15,797 --> 00:13:18,148
+预留的 IP 地址也一样
+and so would a reserved IP address.
+
+233
+00:13:18,400 --> 00:13:23,029
+删除会移除这台 VM，而且默认启动磁盘也一起删掉
+Deleting removes the VM, and by default its boot disk goes with it.
+
+234
+00:13:23,349 --> 00:13:27,232
+这是启动磁盘的一个设置，你没改过就是开着的
+That's a setting on the boot disk, and it's on unless you changed it.
+
+235
+00:13:27,552 --> 00:13:29,152
+计价器也就停了
+And the meter stops.
+
+236
+00:13:29,237 --> 00:13:32,928
+选中你的实例，点 Delete，暂停视频，等它删完
+Select your instance, click Delete, and pause until it's gone.
+
+237
+00:13:33,167 --> 00:13:37,754
+然后检查两个页面：VM instances 和 Disks 都应该是空的
+Then check two pages: VM instances and Disks should both be empty.
+
+238
+00:13:38,074 --> 00:13:40,600
+笔记本上装了 gcloud 命令行工具的话
+With the gcloud tool on your laptop,
+
+239
+00:13:40,600 --> 00:13:44,950
+两条额外的命令也能查：gcloud compute instances list
+two extra commands do the same: gcloud compute instances list,
+
+240
+00:13:44,950 --> 00:13:47,055
+还有 gcloud compute disks list
+and gcloud compute disks list.
+
+241
+00:13:47,375 --> 00:13:49,103
+这两条 README 里都没有
+Neither is in the README.
+
+242
+00:13:49,350 --> 00:13:51,099
+这就是简单粗暴的做法
+That was the quick and dirty way.
+
+243
+00:13:51,419 --> 00:13:55,707
+能用，但它改的是机器上每个程序都在用的系统 Python
+It worked, but it changed the system Python for every program on the machine.
+
+244
+00:13:56,027 --> 00:13:59,846
+第二部分：同一个应用，换台新 VM，用干净的做法
+In part 2: the same app, on a fresh VM, the clean way.
