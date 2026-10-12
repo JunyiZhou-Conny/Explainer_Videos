@@ -1,0 +1,6 @@
+$ python3 -c 'import googletrans'
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import googletrans
+ModuleNotFoundError: No module named 'googletrans'
+[exit 1]

@@ -1,0 +1,7 @@
+$ source .venv/bin/activate; python -c 'import sys; print("\n".join(sys.path))'
+
+/usr/lib/python313.zip
+/usr/lib/python3.13
+/usr/lib/python3.13/lib-dynload
+/home/student/simple-translate/.venv/lib/python3.13/site-packages
+[exit 0]

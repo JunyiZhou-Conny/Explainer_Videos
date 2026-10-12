@@ -1,0 +1,3 @@
+$ uv run python -c 'import googletrans, sys; print(sys.prefix)'
+/home/student/simple-translate/.venv
+[exit 0]

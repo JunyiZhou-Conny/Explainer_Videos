@@ -1,0 +1,37 @@
+id: ac215-l01-vms-venvs
+title: "AC215 · Lecture 1 — Virtual machines, virtual environments and uv (follow-along: simple-translate)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 1
+  lecture_title: "Virtual Environments and Virtual Machines"
+  ed: https://edstem.org/us/courses/97373/lessons/166027/
+  repos:
+    - {repo: dlops-io/simple-translate, branch: main, commit: 62f821bfe09fc1c2ecb0f14354b1f205777c0efa,
+       sections: ["Installing App on VM Manually", "Installing App on VM using UV"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L01-vms-venvs.md
+audience: "AC215 student who knows Python and basic ML, new to cloud VMs, virtual environments and uv; watching with their own clone open, pausing to run each command"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+scenes:
+  - {file: scenes/s01_hook.py,        cls: Hook,          title: "Why won't pip install?"}
+  - {file: scenes/s02_app.py,         cls: TheApp,        title: "The app: cli.py"}
+  - {file: scenes/s03_vm.py,          cls: RentAComputer, title: "Renting a computer: the VM"}
+  - {file: scenes/s04_apt_git.py,     cls: AptAndGit,     title: "apt, git and the repo"}
+  - {file: scenes/s05_system_pip.py,  cls: SystemPip,     title: "The system Python and PEP 668"}
+  - {file: scenes/s06_run.py,         cls: RunIt,         title: "Run it, and read the traceback"}
+  - {file: scenes/s07_delete.py,      cls: DeleteVM,      title: "Delete, don't stop"}
+  - {file: scenes/s08_venv.py,        cls: WhatIsAVenv,   title: "What a virtual environment is"}
+  - {file: scenes/s09_install_uv.py,  cls: InstallUv,     title: "Installing uv"}
+  - {file: scenes/s10_which_python.py, cls: WhichPython,  title: "uv sync: which Python?"}
+  - {file: scenes/s11_lock.py,        cls: ResolveLock,   title: "uv sync: resolve, lock, install"}
+  - {file: scenes/s12_activate.py,    cls: Activate,      title: "Activation is just PATH"}
+  - {file: scenes/s13_isolation.py,   cls: Isolation,     title: "Prove the isolation"}
+  - {file: scenes/s14_pipenv.py,      cls: Pipenv,        title: "The older way: pipenv"}
+  - {file: scenes/s15_recap.py,       cls: Recap,         title: "Tear down, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L1, part 1: a cloud VM and the quick-and-dirty install"
+    scenes: [s01_hook, s02_app, s03_vm, s04_apt_git, s05_system_pip, s06_run, s07_delete]
+  - id: part2
+    title: "AC215 · L1, part 2: virtual environments with uv"
+    scenes: [s08_venv, s09_install_uv, s10_which_python, s11_lock, s12_activate, s13_isolation, s14_pipenv, s15_recap]

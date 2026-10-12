@@ -1,0 +1,6 @@
+$ du -sh .venv ~/.local/share/uv/python 2>/dev/null; ls ~/.local/share/uv/python 2>/dev/null
+13M	.venv
+116M	/home/student/.local/share/uv/python
+cpython-3.15-linux-x86_64-gnu
+cpython-3.15.0-linux-x86_64-gnu
+[exit 0]

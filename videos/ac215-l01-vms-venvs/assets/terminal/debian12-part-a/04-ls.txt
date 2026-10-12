@@ -1,0 +1,8 @@
+$ ls
+Dockerfile.txt
+README.md
+cli.py
+docker-build-push.sh
+docker-shell.sh
+pyproject.toml
+[exit 0]

@@ -1,0 +1,16 @@
+$ source .venv/bin/activate; python cli.py -t "Good morning. It is a good morning for cheese." -s "en" -d "es"
+
+
+    _      ____  ____   _  ____  
+   / \    / ___||___ \ / || ___| 
+  / _ \  | |      __) || ||___ \ 
+ / ___ \ | |___  / __/ | | ___) |
+/_/   \_\ \____||_____||_||____/ 
+                                 
+
+
+Arguments: Namespace(text='Good morning. It is a good morning for cheese.', file='', src='en', dest='es')
+
+Input: Good morning. It is a good morning for cheese.
+Output: Buen día. Es un buen día para el queso.
+[exit 0]

@@ -1,0 +1,43 @@
+$ python3 cli.py -t "Good afternoon. Would you like some cheese?" -s "en" -d "fr"
+
+
+    _      ____  ____   _  ____  
+   / \    / ___||___ \ / || ___| 
+  / _ \  | |      __) || ||___ \ 
+ / ___ \ | |___  / __/ | | ___) |
+/_/   \_\ \____||_____||_||____/ 
+                                 
+
+
+Arguments: Namespace(text='Good afternoon. Would you like some cheese?', file='', src='en', dest='fr')
+
+Input: Good afternoon. Would you like some cheese?
+Traceback (most recent call last):
+  File "/home/student/simple-translate/cli.py", line 27, in main
+    result = await translator.translate(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/googletrans/client.py", line 286, in translate
+    data, response = await self._translate(text, dest, src, kwargs)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/googletrans/client.py", line 137, in _translate
+    raise Exception(
+Exception: Unexpected status code "429" from ['translate.googleapis.com']
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/student/simple-translate/cli.py", line 72, in <module>
+    asyncio.run(main(parser.parse_args()))
+  File "/usr/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/student/simple-translate/cli.py", line 33, in main
+    raise RuntimeError(
+RuntimeError: Translation request to Google Translate failed (the server's network/IP may be rate-limited or blocked by Google's unofficial translate endpoint).
+[exit 1]

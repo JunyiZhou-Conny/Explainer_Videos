@@ -1,0 +1,7 @@
+$ source .venv/bin/activate; python -c 'import sys; print("\n".join(sys.path))'
+
+/home/student/.local/share/uv/python/cpython-3.15.0-linux-x86_64-gnu/lib/python315.zip
+/home/student/.local/share/uv/python/cpython-3.15.0-linux-x86_64-gnu/lib/python3.15
+/home/student/.local/share/uv/python/cpython-3.15.0-linux-x86_64-gnu/lib/python3.15/lib-dynload
+/home/student/simple-translate/.venv/lib/python3.15/site-packages
+[exit 0]

@@ -1,0 +1,9 @@
+$ which python; echo exit:$?; echo $PATH | tr ':' '\n'
+exit:1
+/home/student/.local/bin
+/usr/local/bin
+/usr/bin
+/bin
+/usr/local/games
+/usr/games
+[exit 0]
