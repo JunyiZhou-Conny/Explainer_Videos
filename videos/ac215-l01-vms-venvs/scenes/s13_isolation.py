@@ -466,23 +466,25 @@ class Isolation(VoiceScene):
                       vm_name.animate.move_to([-5.8 + vm_name.width / 2, F_TOP, 0]),
                       vm_ill.animate.move_to([6.05 - vm_ill.width / 2, F_TOP, 0]),
                       ReplacementTransform(sys_py, title_l),
-                      imp_word.animate.move_to(lt4.text).set_color(LOOKUP),
+                      ReplacementTransform(imp_word, lt4.text),      # the command's words become the light
                       run_time=1.0)
             self.play(LaggedStart(*[FadeIn(r, shift=DOWN * 0.1) for r in p1.rows], lag_ratio=0.12),
-                      FadeIn(pip_j), FadeIn(apt4), run_time=0.9)
+                      FadeIn(pip_j), FadeIn(apt4), run_time=0.7)
 
-            vo.wait_until("sudo pip put")
-            self.play(FadeIn(lt4.rect), ReplacementTransform(imp_word, lt4.text), run_time=0.4)
-            self.play(lt4.animate.shift(DOWN * (B4[0] - B4[2])), run_time=1.3, rate_func=linear)
-            vo.wait_until("user local shelf")
-            self.play(Indicate(pip_j[GT_PIP], color=LOOKUP, scale_factor=1.6), FadeIn(p_gt, shift=UP * 0.15),
-                      FadeOut(lt4.text, shift=DOWN * 0.15), run_time=0.7)
-            ok4 = check_mark(0.3, LOOKUP).next_to(where, LEFT, buff=0.22)
-            self.play(FadeIn(where, shift=LEFT * 0.3), Create(ok4), run_time=0.6)
+            vo.wait_until("sudo pip put")                     # (already spoken: the light sets off at once)
+            self.play(FadeIn(lt4.rect), run_time=0.3)
+            self.play(lt4.animate.shift(DOWN * (B4[0] - B4[2])), run_time=1.2, rate_func=linear)
             vo.wait_until("system-wide")
             self.play(FadeIn(sw, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("user local shelf")
+            self.play(Indicate(p1.texts[2], color=SYSTEM, scale_factor=1.08),
+                      Indicate(pip_j[GT_PIP], color=LOOKUP, scale_factor=1.6), FadeIn(p_gt, shift=UP * 0.15),
+                      run_time=0.7)
+            ok4 = check_mark(0.3, LOOKUP).next_to(where, LEFT, buff=0.22)
+            # the light's label becomes the answer: where the import found it (09-where.txt line 2)
+            self.play(FadeTransform(lt4.text, where, stretch=False), Create(ok4), run_time=0.6)
             vo.wait_until("every program")
-            self.play(Indicate(p1.texts[2], color=SYSTEM, scale_factor=1.08), run_time=0.8)
+            self.play(Indicate(sw, color=S.WHITE, scale_factor=1.12), run_time=0.8)
             vo.wait_until("Same import")
             self.play(Indicate(title_l, color=SYSTEM, scale_factor=1.08), run_time=0.7)
             vo.wait_until("different answer")
