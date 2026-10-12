@@ -46,7 +46,7 @@ script that clones every tutorial live in
 
 | | Video | Tutorial | Length |
 | --- | --- | --- | --- |
-| 🚧 | [L1 · Virtual machines, virtual environments and uv](videos/ac215-l01-vms-venvs/) | `simple-translate`: install on a VM manually, then with uv | ~30 min (2 parts), in production |
+| 🎬 | [L1 · Virtual machines, virtual environments and uv](videos/ac215-l01-vms-venvs/) | `simple-translate`: install on a VM manually, then with uv | ~30 min, also cut in two parts (~14 + ~16 min) |
 
 **中文版 / Chinese versions.** Both videos also exist in Mandarin, code-switched the way Chinese
 speakers in that setting really talk (English kept for names, symbols, code and the terms Chinese
