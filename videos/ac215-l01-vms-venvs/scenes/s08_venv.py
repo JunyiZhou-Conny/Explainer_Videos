@@ -20,8 +20,9 @@ Beats (script.md "## S08"):
    a GREY arrow "the classic way" to the venv toolbox; a PURPLE uv chip "today: uv makes it for us".
 7. V7: the venv toolbox inside a dashed GREY "container (L2)" inside the BLUE VM; three
    RED-outlined chips outside the venv: the operating system, system libraries (C), GPU drivers.
-8. The venv opens into its three numbered parts, which shrink into a corner card
-   "coming up: the real files, after uv sync"; fade to an empty frame.
+8. The venv opens into its three numbered parts, which shrink into S12's corner card (same
+   geometry, GREY badges that S12 lights and ticks), captioned "coming up: the real files, after
+   uv sync"; fade to an empty frame.
 """
 
 import numpy as np
@@ -29,8 +30,8 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import person_icon
-from explainer.devops import (MONO, OUTPUT, box, chip, file_glyph, folder_glyph, label, machine_box, mono,
-                              mono_line, step_badge, substring, tag)
+from explainer.devops import (MONO, OUTPUT, box, chip, file_glyph, folder_glyph, label, machine_box,
+                              mono, mono_line, step_badge, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, ERR, INK, NARRATION, SYSTEM, TURN, UV, VENV, Shelves, capture, jar, jars,
@@ -89,6 +90,32 @@ def labelled_toolbox(text: str, color: str, n_jars: int, w: float = 4.4, h: floa
     return tb
 
 
+def dashed_jar(color: str = SYSTEM, height: float = 0.36) -> VGroup:
+    """The empty, dashed httpx slot of S05's ponder picture (same drawing as S05)."""
+    j = jar(color, height)
+    body = DashedVMobject(j[0].copy().set_fill(opacity=0), num_dashes=14, dashed_ratio=0.55)
+    body.set_stroke(color, 2.5)
+    fill = j[0].copy().set_stroke(width=0).set_fill(color, 0.12)
+    lid = DashedVMobject(j[1].copy().set_fill(opacity=0), num_dashes=8, dashed_ratio=0.55)
+    lid.set_stroke(color, 2)
+    return VGroup(fill, body, lid)
+
+
+def parts_card() -> VGroup:
+    """The corner card S12 brings back (same geometry as S12's parts_card: top-right, GREY badges
+    that light up and tick there when each real file is found). .frame .rows"""
+    rows = VGroup()
+    for n, p in enumerate(PARTS, start=1):
+        rows.add(VGroup(step_badge(n, S.GREY_DARK, size=20, radius=0.17), mono(p, 20, INK)).arrange(RIGHT, buff=0.18))
+    rows.arrange(DOWN, aligned_edge=LEFT, buff=0.06)
+    frame = box(rows.width + 0.95, rows.height + 0.22, S.GREY, fill_opacity=0.08)
+    rows.move_to(frame).align_to(frame, LEFT).shift(RIGHT * 0.2)
+    g = VGroup(frame, rows)
+    g.frame, g.rows = frame, rows
+    g.shift(np.array([6.5 - frame.get_right()[0], 3.58 - frame.get_top()[1], 0]))
+    return g
+
+
 def flash_frame(m, color: str, width: float = 7, run_time: float = 0.9):
     """A bright pass along a frame's outline."""
     c = m.copy().set_stroke(color, width).set_fill(opacity=0)
@@ -103,7 +130,7 @@ class WhatIsAVenv(VoiceScene):
         board = Line(LEFT * 2.7, RIGHT * 2.7, color=SYSTEM, stroke_width=6).move_to(UP * 0.85)
         board_label = mono("/usr/local/… (pip's)", 24, SYSTEM)
         board_label.next_to(board, UP, buff=0.08).align_to(board, LEFT)
-        sjar = jar(SYSTEM, 0.6).next_to(board, UP, buff=0.04).align_to(board, RIGHT).shift(LEFT * 0.3)
+        sjar = dashed_jar(SYSTEM, 0.6).next_to(board, UP, buff=0.04).align_to(board, RIGHT).shift(LEFT * 0.3)
         sjar_tag = name_tag(sjar, "httpx", INK, 24)
         shelf = VGroup(board, board_label, sjar, sjar_tag)
 
@@ -161,8 +188,13 @@ class WhatIsAVenv(VoiceScene):
             lid_r = Line(tb_r.body.get_corner(UL), tb_r.body.get_corner(UR), color=VENV, stroke_width=4)
             self.play(FadeOut(VGroup(board_label, sjar, sjar_tag, arr_l, arr_r)),
                       Transform(half_l, lid_l), Transform(half_r, lid_r), run_time=0.8)
-            self.play(ReplacementTransform(half_l, tb_l), ReplacementTransform(half_r, tb_r),
+            self.play(*[GrowFromEdge(tb.body, UP) for tb in (tb_l, tb_r)],
+                      *[Create(tb.handle) for tb in (tb_l, tb_r)],
+                      FadeOut(half_l), FadeOut(half_r),
                       FadeIn(proj_l, shift=UP * 0.1), FadeIn(proj_r, shift=UP * 0.1), run_time=0.8)
+            for tb in (tb_l, tb_r):                  # one top-level group again
+                self.remove(tb.body, tb.handle)
+                self.add(tb)
             # each request is carried round the inner side of its student and drops into the toolbox
             paths = [CubicBezier(r.get_center(), r.get_center() + RIGHT * inward * 2.2,
                                  np.array([-inward * 2.95, 1.0, 0]), np.array([-inward * 2.95, -0.35, 0]))
@@ -231,9 +263,9 @@ class WhatIsAVenv(VoiceScene):
                                          corner_radius=0.05)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(icon_l, who_l, icon_r, who_r, tb_l, proj_l, new_l, proj_r, new_r,
+            self.play(FadeOut(VGroup(icon_l, who_l, icon_r, who_r, tb_l, proj_l, new_l, proj_r,
                                      venv_word, venv_arrows)),
-                      ReplacementTransform(tb_r, closed), run_time=1.0)
+                      FadeTransform(VGroup(tb_r, new_r), closed), run_time=1.0)
             vo.wait_until("usually called")
             self.play(Indicate(closed[1], color=VENV, scale_factor=1.12), run_time=0.8)
             vo.wait_until("with three parts")
@@ -283,7 +315,7 @@ class WhatIsAVenv(VoiceScene):
                          "/usr/lib/python3/… (apt's)"], width=12.4, size=22, pitch=1.3,
                         colors={2: SYSTEM, 3: SYSTEM})
         std_board, std_mono = stack.rows[1]
-        std_text = label("standard library", 24, S.GREY).move_to(std_mono, aligned_edge=LEFT)
+        std_text = label("standard library", 24, S.GREY).next_to(std_board, UP, buff=0.1).align_to(std_board, LEFT)
         stack.rows[1].remove(std_mono)
         stack.rows[1].add(std_text)
         stack.move_to([0, 0, 0]).shift(UP * (1.3 - stack.rows[0][0].get_y()))
@@ -309,8 +341,9 @@ class WhatIsAVenv(VoiceScene):
             vo.wait_until("Started from")
             self.play(ReplacementTransform(title_sys, title_venv), run_time=1.0)
             vo.wait_until("The standard library")
-            self.play(Indicate(std_text, color=INK, scale_factor=1.08), FadeIn(std_tag, shift=LEFT * 0.2),
-                      run_time=1.0)
+            self.play(Indicate(std_text, color=INK, scale_factor=1.08), run_time=0.9)
+            vo.wait_until("from the real interpreter")
+            self.play(FadeIn(std_tag, shift=LEFT * 0.2), band.animate.set_fill(S.GREY, 0.2), run_time=0.8)
             vo.wait_until("But both")
             self.play(FadeOut(leaving, shift=RIGHT * 4.5), run_time=1.3)
             vo.wait_until("and the venv")
@@ -344,8 +377,10 @@ class WhatIsAVenv(VoiceScene):
             return [tb.animate.move_to(home), socket.animate.set_color(S.GREY)]
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(v2_all), FadeIn(VGroup(eng, eng_t, socket)), FadeIn(tb_sys, shift=UP * 0.2),
-                      FadeIn(tb_venv, shift=UP * 0.2), run_time=0.8)
+            self.play(FadeOut(VGroup(*[m for m in v2_all if m is not green])), FadeTransform(green, tb_venv),
+                      run_time=0.6)
+            self.play(FadeIn(VGroup(eng, eng_t, socket), shift=DOWN * 0.15), FadeIn(tb_sys, shift=UP * 0.2),
+                      run_time=0.5)
             self.play(*plug_in(tb_sys, SYSTEM), Rotate(eng, -PI / 3), FadeIn(motto, shift=RIGHT * 0.2),
                       run_time=0.7)
             self.play(*unplug(tb_sys, rest_sys), run_time=0.45)
@@ -425,24 +460,15 @@ class WhatIsAVenv(VoiceScene):
             row = VGroup(badge(n, VENV, 0.26, 24), mono(p, 28, INK)).arrange(RIGHT, buff=0.3)
             big.add(row)
         big.arrange(DOWN, aligned_edge=LEFT, buff=0.35).move_to(ORIGIN)
-
-        small = VGroup()
-        for n, p in enumerate(PARTS, start=1):
-            small.add(VGroup(badge(n, VENV, 0.2, 20), mono(p, 20, INK)).arrange(RIGHT, buff=0.2))
-        small.arrange(DOWN, aligned_edge=LEFT, buff=0.14)
-        card_head = label("coming up: the real files, after uv sync", 20, INK)
-        card_body = VGroup(card_head, small).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
-        card_box = box(card_body.width + 0.45, card_body.height + 0.4, S.GREY, fill_opacity=0.08)
-        card_body.move_to(card_box)
-        card = VGroup(card_box, card_body)
-        card.to_corner(UR, buff=0.6)
+        card = parts_card()                       # S12 brings this card back and ticks it
+        card_head = label("coming up: the real files, after uv sync", 22, INK)
+        card_head.next_to(card.frame, DOWN, buff=0.18).align_to(card.frame, RIGHT)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(vm, ctr, outs)), FadeOut(tb_venv, scale=0.6), run_time=0.7)
-            self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.3) for r in big], lag_ratio=0.3), run_time=1.0)
+            self.play(FadeOut(VGroup(vm, ctr, outs)), FadeTransform(tb_venv, big), run_time=1.0)
             vo.wait_until("find all three")
-            self.play(ReplacementTransform(big, small), run_time=0.8)
-            self.play(FadeIn(card_box), FadeIn(card_head, shift=DOWN * 0.1), run_time=0.5)
+            self.play(ReplacementTransform(big, card.rows), run_time=0.8)
+            self.play(FadeIn(card.frame), FadeIn(card_head, shift=DOWN * 0.1), run_time=0.5)
 
-        self.wait(0.4)
+        self.wait(0.8)
         self.play(FadeOut(*self.mobjects), run_time=0.8)

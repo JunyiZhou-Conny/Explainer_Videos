@@ -146,6 +146,9 @@ def namespace_table(size: float = 22, width: float = 4.6, row_h: float = 0.46) -
 
 
 def light_row(scene, table, i: int, run_time: float = 0.5):
+    """Light row i (its text goes to full opacity) under a brief YELLOW wash; also used to point
+    at a row that is already lit. The wash is translucent, so the text stays readable (an
+    Indicate(color=...) would turn the opaque row fill solid YELLOW over the text)."""
     r, t = table.rows[i]
     flash = r.copy().set_fill(TURN, 0.28).set_stroke(TURN, 3)
     scene.play(t.glyphs.animate.set_opacity(1), FadeIn(flash), run_time=run_time * 0.5)
@@ -205,7 +208,9 @@ class TheApp(VoiceScene):
             vo.wait_until("They have to come")
             self.play(Create(br89), FadeIn(tag89, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("This whole lecture")
-            self.play(Indicate(VGroup(w_art, w_gt), color=LOOKUP, scale_factor=1.12),
+            # each word pulses in place (one Indicate on the pair would scale them about their
+            # common centre and push them onto their neighbours)
+            self.play(*[Indicate(w, color=LOOKUP, scale_factor=1.1) for w in (w_art, w_gt)],
                       Wiggle(tag89, scale_value=1.1), run_time=1.2)
 
         # ========================================================== 1. main(): what it prints
@@ -238,6 +243,7 @@ class TheApp(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             scroll(self, VGroup(p0, bar56, bar89, ul_art, ul_gt, gh, br56, br89, tag56, tag89), pA, run_time=0.9)
+            self.play(Indicate(span(pA, 12, "main"), color=INK, scale_factor=1.2), run_time=0.7)
             vo.wait_until("a banner")
             self.play(FadeIn(bar14), GrowArrow(a14), run_time=0.5)
             self.play(LaggedStart(*[Write(r) for r in banner], lag_ratio=0.25), run_time=1.3)
@@ -281,11 +287,12 @@ class TheApp(VoiceScene):
             self.play(FadeIn(bar49), run_time=0.3)
             light_row(self, table, 0)
             vo.wait_until("source language")
-            # scrolling past lines 52-58 (the -f option, default "") lights the file row on the way
-            scroll(self, VGroup(p45, bar49), VGroup(p59, p65), run_time=0.6)
-            light_row(self, table, 1, run_time=0.4)
+            # scrolling past lines 52-58 (the -f option, default "") quietly lights the file row on
+            # the way; it isn't narrated, so it gets no YELLOW wash (that belongs to src now)
+            scroll(self, VGroup(p45, bar49), VGroup(p59, p65), table.rows[1][1].glyphs.animate.set_opacity(1),
+                   run_time=0.6)
             self.play(FadeIn(bar62), run_time=0.3)
-            light_row(self, table, 2, run_time=0.4)
+            light_row(self, table, 2, run_time=0.5)
             vo.wait_until("destination Italian")
             self.play(FadeIn(bar68), run_time=0.3)
             light_row(self, table, 3)
@@ -293,9 +300,9 @@ class TheApp(VoiceScene):
             self.play(FadeIn(no_opts, shift=UP * 0.1), run_time=0.5)
             self.play(ShowPassingFlash(a_argv.copy().set_stroke(TURN, 6), time_width=0.6), run_time=0.8)
             vo.wait_until("translates I love")
-            self.play(Indicate(table.rows[0], color=TURN, scale_factor=1.05), run_time=0.8)
+            light_row(self, table, 0, run_time=0.8)
             vo.wait_until("into Italian")
-            self.play(Indicate(table.rows[3], color=TURN, scale_factor=1.05), run_time=0.8)
+            light_row(self, table, 3, run_time=0.8)
 
         # ========================================================== 3. asyncio.run -> the event loop
         p72 = panel(72, 72)
@@ -342,7 +349,8 @@ class TheApp(VoiceScene):
         lbl_in = label("event loop", 24, INK).next_to(loop_in, DOWN, buff=0.15)
         gcloud = cloud(2.7, CLOUD).move_to([4.2, 2.05, 0])
         host = mono("translate.googleapis.com", 20, CLOUD).next_to(gcloud, DOWN, buff=0.2)
-        y_req, y_ret = 2.5, 1.25
+        # the answer leaves from the cloud's lower lobe, well clear of the host name under it
+        y_req, y_ret = 2.5, gcloud.get_bottom()[1] + 0.22
         x_vm, x_cl = vm.get_right()[0] + 0.05, gcloud.get_left()[0] + 0.05
         req = Arrow([x_vm, y_req, 0], [x_cl, y_req, 0], buff=0, color=LOOKUP, stroke_width=5,
                     tip_length=0.22, max_tip_length_to_length_ratio=0.1)
@@ -366,9 +374,11 @@ class TheApp(VoiceScene):
         a39 = thin_arrow([x39, p39.code.get_top()[1] + 0.02, 0], [x39, output_line.get_bottom()[1] - 0.04, 0])
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(argv, a_argv, table, a_ns, loop_l2, loop_l1)), run_time=0.6)
-            self.play(ReplacementTransform(VGroup(loop, main_t), loop_in), FadeIn(vm), run_time=0.9)
-            self.play(FadeIn(lbl_in), run_time=0.4)
+            # the rest clears first (so the VM box never fades in over the table), then the loop and
+            # its label carry over into the VM, in time for "a single HTTPS request"
+            self.play(FadeOut(VGroup(argv, a_argv, table, a_ns, loop_l2)), run_time=0.4)
+            self.play(ReplacementTransform(VGroup(loop, main_t), loop_in), ReplacementTransform(loop_l1, lbl_in),
+                      FadeIn(vm), run_time=0.8)
             vo.wait_until("a single HTTPS")
             self.play(GrowArrow(req), FadeIn(req_l, shift=UP * 0.1), run_time=1.0)
             vo.wait_until("to translate dot")
@@ -378,7 +388,9 @@ class TheApp(VoiceScene):
             self.play(FadeOut(VGroup(p25, bar27), shift=DOWN * 0.3), run_time=0.5)
             self.play(picture.animate.shift(DOWN * DROP), FadeIn(unoff, shift=DOWN * (DROP + 0.1)), run_time=0.8)
             vo.wait_until("no API key")
-            self.play(Indicate(unoff, color=S.GREY, scale_factor=1.1), run_time=0.8)
+            # pulse the words, not the whole tag: Indicate(color=...) on the tag would paint its
+            # opaque fill the text's colour
+            self.play(Indicate(unoff.text, color=INK, scale_factor=1.08), run_time=0.8)
             vo.wait_until("no promises")
             self.play(Wiggle(gcloud, scale_value=1.05, rotation_angle=0.03 * TAU), run_time=0.9)
             vo.wait_until("A little JSON")
@@ -449,10 +461,12 @@ class TheApp(VoiceScene):
             vo.wait_until("raise exception equals")
             self.play(Create(rx_box), run_time=0.6)
             self.play(Indicate(rx, color=TURN, scale_factor=1.08), run_time=0.8)
-            vo.wait_until("Without it")
+            # the two pipelines arrive just before "Without it", so the requests are out by the
+            # time the narration reaches "when Google answers"
+            self.wait(max(0.0, vo.time_until("Without it") - 0.6))
             self.play(LaggedStart(FadeIn(titles), FadeIn(gts), FadeIn(gcs), Create(divider), FadeIn(illus),
-                                  lag_ratio=0.15), run_time=1.0)
-            self.play(LaggedStart(*[GrowArrow(r) for r in reqs], lag_ratio=0.2), run_time=0.6)
+                                  lag_ratio=0.15), run_time=0.9)
+            self.play(LaggedStart(*[GrowArrow(r) for r in reqs], lag_ratio=0.2), run_time=0.5)
             vo.wait_until("when Google answers")
             self.play(GrowArrow(ans_l), FadeIn(err_l, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("googletrans hides it")
@@ -466,9 +480,18 @@ class TheApp(VoiceScene):
             self.play(FadeIn(wrong, scale=0.9), run_time=0.6)
             vo.wait_until("With it")
             self.play(GrowArrow(ans_r), run_time=0.5)
-            self.play(TransformFromCopy(ans_r, exc), run_time=0.5)
-            self.play(exc.animate.move_to(exc_end), run_time=1.0, rate_func=rush_from)
-            self.play(GrowArrow(up_r), Indicate(exc, color=ERR, scale_factor=1.08), run_time=0.6)
+            # the RED answer passes up through googletrans and comes out the top as a small exception
+            # box, which grows as it rises up the pipeline; its words fade in on the way. (Moving
+            # the full box through the chip put its words on top of "googletrans".)
+            exc.move_to(exc_end)
+            seed = exc.box.copy().scale(0.25).next_to(gts[1], UP, buff=0.06)
+            self.play(FadeTransform(ans_r.copy(), seed, stretch=True), run_time=0.5)
+            self.play(Transform(seed, exc.box), GrowArrow(up_r),
+                      FadeIn(exc.text, shift=UP * (exc_end[1] - seed.get_center()[1]), scale=0.25),
+                      run_time=0.9, rate_func=rush_from)
+            self.remove(seed, exc.text)
+            self.add(exc)
+            self.play(Indicate(exc, color=ERR, scale_factor=1.08), run_time=0.6)
 
         # ========================================================== 6. lines 32-37: catches everything
         p32 = panel(32, 37, size=21)
@@ -511,7 +534,7 @@ class TheApp(VoiceScene):
         loop2_l = label("event loop", 22, INK).next_to(loop2, RIGHT, buff=0.2)
         gcloud2 = cloud(2.7, CLOUD).move_to([4.2, 1.75, 0])
         host2 = mono("translate.googleapis.com", 20, CLOUD).next_to(gcloud2, DOWN, buff=0.2)
-        y_req2, y_ret2 = 2.2, 0.95
+        y_req2, y_ret2 = 2.2, gcloud2.get_bottom()[1] + 0.22
         x_vm2, x_cl2 = vm2.get_right()[0] + 0.05, gcloud2.get_left()[0] + 0.05
         req2 = Arrow([x_vm2, y_req2, 0], [x_cl2, y_req2, 0], buff=0, color=LOOKUP, stroke_width=5,
                      tip_length=0.22, max_tip_length_to_length_ratio=0.1)
@@ -525,7 +548,7 @@ class TheApp(VoiceScene):
         pk = VGroup(chip("art", LOOKUP, size=26, font=MONO),
                     chip("googletrans", LOOKUP, size=26, font=MONO)).arrange(RIGHT, buff=0.6)
         pk.move_to([vm2.get_center()[0], -2.55, 0])
-        qs = VGroup(*[tag("?", LOOKUP, size=24).next_to(c, UR, buff=-0.08).shift(RIGHT * 0.12) for c in pk])
+        qs = VGroup(*[tag("?", LOOKUP, size=24).next_to(c, UP, buff=0.14) for c in pk])
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(p32, br32, catches, frm_ul, msg_bars)), run_time=0.6)

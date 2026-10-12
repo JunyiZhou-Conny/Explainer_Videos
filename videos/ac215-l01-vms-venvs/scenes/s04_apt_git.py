@@ -138,6 +138,11 @@ def line_under(line, sub, color):
     return under(substring(line, sub), color, y=line.strut.get_bottom()[1] - 0.01)
 
 
+def condense(src, target) -> FadeTransform:
+    """A copy of `src` flies to `target` and cross-fades into it (scaled by width, not stretched)."""
+    return FadeTransform(src.copy(), target, stretch=False, dim_to_match=0)
+
+
 def hl_bar(g, color=TURN, opacity=0.25, buff=0.05) -> Rectangle:
     """A translucent highlight bar behind glyphs `g`."""
     return Rectangle(width=g.width + 2 * buff, height=g.height + 2 * buff, stroke_width=0) \
@@ -277,10 +282,12 @@ class AptAndGit(VoiceScene):
             if m in line.submobjects:
                 line.remove(m)
 
-    def answer_yes(self, t, text, pause=0.6):
-        """apt's question, a pause, then the `Y` keystroke (flashes YELLOW). Returns (line, Y)."""
-        ln = t.print(self, [text], run_time=0.3)[0]
-        self.wait(pause)
+    def type_yes(self, t, ln, text, asked_at, pause=0.6):
+        """The `Y` keystroke after apt's question `ln` (printed at time `asked_at`): at least
+        `pause` s after the question (script.md: [Y/n] Y), then it flashes YELLOW. Returns Y."""
+        left = asked_at + pause - self.renderer.time
+        if left > 1 / 60:
+            self.wait(left)
         y = mono_line(text + " Y", t.size, OUTPUT)
         y.shift(ln.strut.get_corner(UL) - y.strut.get_corner(UL))
         yg = y.glyphs[-1].set_color(TURN)
@@ -288,7 +295,7 @@ class AptAndGit(VoiceScene):
         self.play(Indicate(yg, color=TURN, scale_factor=1.8), run_time=0.5)
         self.play(yg.animate.set_color(INK), run_time=0.2)
         self.attach(ln, yg)
-        return ln, yg
+        return yg
 
     def resize(self, t, rows, run_time=0.8, extra=(), keep=None):
         """Grow or shrink the terminal to `rows` (bottom edge fixed); it keeps its last lines
@@ -437,12 +444,14 @@ class AptAndGit(VoiceScene):
             light("stable", hl_stable)
             vo.wait_until("for Dockerfiles")
             light("ci", hl_ci)
-            self.play(TransformFromCopy(VGroup(*hl_stable, *hl_ci), cap_get),
+            # the highlighted words travel to the chip and cross-fade into its caption (a letter
+            # morph between two different texts would garble them mid-flight)
+            self.play(condense(VGroup(*hl_stable, *hl_ci), cap_get),
                       FadeIn(c_get, shift=UP * 0.2), run_time=0.9)
 
             vo.wait_until("The shorter apt")
             light("human", hl_human)
-            self.play(TransformFromCopy(hl_human, cap_apt), FadeIn(c_apt, shift=UP * 0.2), run_time=0.9)
+            self.play(condense(hl_human, cap_apt), FadeIn(c_apt, shift=UP * 0.2), run_time=0.9)
 
             vo.wait_until("Either is fine")
             light("either", hl_either, 0.3)
@@ -468,12 +477,17 @@ class AptAndGit(VoiceScene):
             self.play(Create(ul_sum), run_time=0.5)
             vo.wait_until("do you want to continue")
             self.play(FadeOut(ul_sum), run_time=0.2)
-            ask, y_key = self.answer_yes(t, GIT_ASK, pause=0.15)
+            ask = t.print(self, [GIT_ASK], run_time=0.3)[0]
+            asked_at = self.renderer.time
+            vo.wait_until("Type Y")
+            self.type_yes(t, ask, GIT_ASK, asked_at, pause=0.6)
             vo.wait_until("press enter")
             tail = t.print(self, ["…", *GIT_TAIL], run_time=0.5)
             # git joins the installed packages on the shelf
             git_box.next_to(shelf.boxes, RIGHT, buff=0.1 * SMALL_K)
-            git_box.shift(UP * (shelf.board.get_center()[1] + 0.03 - git_box[0].get_bottom()[1]))
+            board_y = shelf.board.get_center()[1]          # the box and its name both stand on the
+            git_box[0].shift(UP * (board_y + 0.03 - git_box[0].get_bottom()[1]))   # board ("g" clears it)
+            git_box[1].shift(UP * (board_y + 0.07 - git_box[1].get_bottom()[1]))
             land = git_box.get_center()
             git_box.shift(substring(tail[1], "git").get_center() - git_box[1].get_center())
             self.play(git_box.animate.move_to(land), path_arc=-0.5, run_time=0.8)
@@ -510,7 +524,7 @@ class AptAndGit(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.unpin([(cmd2, yt2), (dots1, vary)], 0.3, FadeOut(VGroup(pic, git_box)), tr.goto(5))
             t.clear(self, run_time=0.3)
-            self.resize(t, 8, run_time=0.6, extra=[FadeIn(home, shift=LEFT * 0.2)])
+            self.resize(t, 8, run_time=0.6)
 
             vo.wait_until("Type git clone")
             self.play(FadeIn(card50, shift=DOWN * 0.1), run_time=0.5)
@@ -525,7 +539,7 @@ class AptAndGit(VoiceScene):
             vo.wait_until("Git copies the whole repo")
             cl_out = t.print(self, CLONE_OUT, run_time=0.4)[0]
             self.play(Indicate(substring(cl_out, "'simple-translate'"), color=CLOUD, scale_factor=1.1),
-                      run_time=0.7)
+                      FadeIn(home, shift=LEFT * 0.2), run_time=0.7)
             vo.wait_until("into a new folder")
             repo.shift(UP * 1.6)
             repo.set_opacity(0)
@@ -574,7 +588,7 @@ class AptAndGit(VoiceScene):
                        FadeOut(VGroup(home, repo)), caption_extra(tr))
             self.resize(t, 11, run_time=0.5)
             ls_line = self.type_cmd(t, LS, 0.3)
-            xt = beside(extra_tag(), ls_line, buff=0.6)
+            xt = beside(extra_tag(), ls_line, buff=0.4)
             self.pin(ls_line, xt, run_time=0.4)
 
             vo.wait_until("There's cli.py")

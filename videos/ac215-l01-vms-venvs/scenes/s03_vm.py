@@ -230,14 +230,21 @@ def place_tracker(tr):
     return tr
 
 
-def caption_extra(tr, on: bool = True):
-    """The tracker caption with (or without) ' · extra' while a non-README command is on screen."""
+def caption_extra(scene, tr, run_time: float = 0.5):
+    """Append ' · extra' to the tracker caption while a non-README command is on screen. Only
+    the new glyphs fade in (a Transform between captions of different lengths scrambles the
+    letters mid-way); the caption's other glyphs sit exactly where the old ones were."""
     k = tr.k
     s = f"step {k} of {len(tr.steps)}: {tr.steps[k - 1]}"
-    new = label(s + " · extra", tr.size, tr.hi_color, t2c={"· extra": S.GREY}) if on else \
-        label(s, tr.size, tr.hi_color)
+    new = label(s + " · extra", tr.size, tr.hi_color, t2c={"· extra": S.GREY})
     new.next_to(tr.dots, RIGHT, buff=0.25)
-    return Transform(tr.caption, new)
+    n = len(tr.caption.submobjects)
+    scene.play(FadeIn(VGroup(*new.submobjects[n:]), shift=LEFT * 0.1), run_time=run_time)
+    scene.remove(tr.caption, *new.submobjects[n:])
+    tr.remove(tr.caption)
+    tr.caption = new
+    tr.add(new)
+    scene.add(tr)
 
 
 class RentAComputer(VoiceScene):
@@ -331,7 +338,8 @@ class RentAComputer(VoiceScene):
         br.shift(np.array([BR_LEFT - br.frame.get_left()[0], BR_TOP - br.frame.get_top()[1], 0]))
         ill = illustration_tag()          # on the bottom edge: the top edge is the address bar
         ill.move_to(br.frame.get_corner(DR) + np.array([-ill.width / 2 - 0.3, 0, 0]))
-        tr = place_tracker(tracker_a())
+        # built at step 1: a goto() from the blank caption grows the text out of the frame's centre
+        tr = place_tracker(tracker_a(1))
 
         sel_t = label("your Tutorial 0 project", 24, INK)
         sel_c = caret(0.16)
@@ -369,7 +377,8 @@ class RentAComputer(VoiceScene):
                       ReplacementTransform(B.storage, C.storage),
                       *[FadeOut(m) for m in big_only], run_time=1.3)
             self.play(FadeIn(br, shift=RIGHT * 0.3), FadeIn(ill), FadeIn(tr, shift=DOWN * 0.1), run_time=0.7)
-            self.play(tr.goto(1), run_time=0.5)
+            self.play(Indicate(tr.dots[0], color=TURN, scale_factor=1.8),
+                      Indicate(tr.caption, color=TURN, scale_factor=1.08), run_time=0.6)
             vo.wait_until("check that your Tutorial 0")
             self.play(FadeIn(sel, shift=DOWN * 0.1), run_time=0.4)
             self.play(sel_box.animate(rate_func=there_and_back).set_stroke(TURN, width=6),
@@ -427,10 +436,11 @@ class RentAComputer(VoiceScene):
 
         rows = form.rows
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(page1, shift=UP * 0.3), FadeOut(prog), run_time=0.5)
-            self.play(FadeIn(ftitle, shift=UP * 0.1),
-                      LaggedStart(*[FadeIn(VGroup(r.label, r.field)) for r in rows], lag_ratio=0.08),
-                      FadeIn(create), FadeIn(estimate), run_time=0.9)
+            # the clicked "Create instance" button becomes the form's title (what became what)
+            self.play(FadeOut(VGroup(sel, heading, note_box, note_t, prog_bg, prog), shift=UP * 0.3),
+                      FadeTransform(create_i, ftitle), run_time=0.7)
+            self.play(LaggedStart(*[FadeIn(VGroup(r.label, r.field)) for r in rows], lag_ratio=0.08),
+                      FadeIn(create), FadeIn(estimate), run_time=0.8)
             vo.wait_until("so here are sensible")
             self.play(FadeIn(foot1, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("A name")
@@ -612,8 +622,10 @@ class RentAComputer(VoiceScene):
 
         # ========================================================== 6 · which OS?
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(yt_name), FadeOut(stem), caption_extra(tr, True), run_time=0.5)
+            self.play(FadeOut(yt_name), FadeOut(stem), run_time=0.4)
             self.unpin(p0, yt)
+            vo.wait_until("extra checks")
+            caption_extra(self, tr)
             vo.wait_until("First, which operating system")
             l_cat = self.type_cmd(t, CAT, type_time=0.9)
             xt1 = extra_tag().next_to(l_cat.strut, RIGHT, buff=0.5)
@@ -655,7 +667,9 @@ class RentAComputer(VoiceScene):
             vo.wait_until("Debian 12 ships")
             self.play(Indicate(substring(out, "3.11.2"), color=SYSTEM, scale_factor=1.25), run_time=0.8)
             vo.wait_until("for the operating system")
-            sp = chip("system Python", SYSTEM, size=22).next_to(out.strut, RIGHT, buff=0.5)
+            # pad_y 0.08: a tag-high pill (0.47); the default chip (0.55) is taller than a terminal
+            # row and its edges cut the glyphs of the rows above and below
+            sp = chip("system Python", SYSTEM, size=22, pad_y=0.08).next_to(out.strut, RIGHT, buff=0.5)
             self.pin(out, sp, run_time=0.5)
             vo.wait_until("On Debian 13")
             self.play(FadeIn(card, shift=LEFT * 0.3), run_time=0.6)

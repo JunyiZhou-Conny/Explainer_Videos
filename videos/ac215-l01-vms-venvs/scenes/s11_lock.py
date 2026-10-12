@@ -788,7 +788,6 @@ class ResolveLock(VoiceScene):
         # ========================================================== 7 · ls -a, git status
         t7 = term(prompt=P_REPO, rows=13)
         t7.shift(np.array([0 - t7.box.get_center()[0], -3.55 - t7.box.get_bottom()[1], 0]))
-        BOTTOM7 = -3.55
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(ill, sA, sB, runA, runB, tA, tB, divider, handoff, ok)), run_time=0.5)
@@ -796,7 +795,7 @@ class ResolveLock(VoiceScene):
             vo.wait_until("First, ls")
             c1 = t7.type(self, "ls -a", type_time=0.4)
             self.pin(c1, short_extra().next_to(c1.strut, RIGHT, buff=0.35), run_time=0.3)
-            ls = self.fast_print(t7, LS_OUT, run_time=0.6)
+            self.fast_print(t7, LS_OUT, run_time=0.6)
             vo.wait_until("the dot venv")
             venv_ln, lock_ln = t7.find(".venv"), t7.find("uv.lock")
             self.play(venv_ln.glyphs.animate.set_color(VENV), run_time=0.4)

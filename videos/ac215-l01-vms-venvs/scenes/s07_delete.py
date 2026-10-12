@@ -34,7 +34,7 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (MONO, PANEL, TERM_BG, box, browser_window, check_mark, chip, label,
+from explainer.devops import (PANEL, TERM_BG, box, browser_window, check_mark, chip, label,
                               layer_bar, mono, server, tag)
 from explainer.scene import VoiceScene
 
@@ -59,6 +59,8 @@ URL = "console.cloud.google.com/compute/instances"
 TRACK_LEFT, TRACK_TOP = -6.5, 3.5
 BR_LEFT, BR_TOP, BR_W, BR_H = -6.55, 2.75, 8.7, 5.3       # the console (left; as in S03)
 C_LEFT = BR_LEFT + 0.35                                   # left edge of the page content
+LIST_RIGHT = 1.75                                         # right end of the instance list
+D_LEFT, D_RIGHT = C_LEFT + 0.55, 1.9                      # the confirm dialog's sides
 TERM_BOTTOM = -3.45
 
 # V1 coda (right of the browser): S03's picture, our slice wide, three thin neighbours
@@ -280,7 +282,7 @@ class DeleteVM(VoiceScene):
         stop_b = icon_chip(stop_icon(), "Stop")
         del_b = icon_chip(trash_icon(), "Delete")
         toolbar = VGroup(stop_b, del_b).arrange(RIGHT, buff=0.3).move_to([0, 1.0, 0]).set_x(C_LEFT, LEFT)
-        sep = Line([C_LEFT - 0.1, 0.5, 0], [br.frame.get_right()[0] - 0.25, 0.5, 0], color=S.GREY_DARK,
+        sep = Line([C_LEFT - 0.1, 0.5, 0], [LIST_RIGHT, 0.5, 0], color=S.GREY_DARK,
                    stroke_width=2)
         X_CB, X_ST, X_NAME, X_ZONE, X_CONN = C_LEFT + 0.2, C_LEFT + 0.62, C_LEFT + 1.7, C_LEFT + 3.75, C_LEFT + 6.5
         Y_HEAD, Y_ROW = 0.12, -0.6
@@ -293,9 +295,9 @@ class DeleteVM(VoiceScene):
         r_name = mono("ac215-l01", 22, INK).move_to([0, Y_ROW, 0]).set_x(X_NAME, LEFT)
         r_zone = mono("us-central1-a", 22, S.GREY).move_to([0, Y_ROW, 0]).set_x(X_ZONE, LEFT)
         r_ssh = chip("SSH", CLOUD, size=22).move_to([0, Y_ROW, 0]).set_x(X_CONN, LEFT)
-        row_frame = box(br.frame.get_right()[0] - 0.25 - (C_LEFT - 0.1), 0.66, S.GREY, fill_opacity=0.05,
+        row_frame = box(LIST_RIGHT - (C_LEFT - 0.1), 0.66, S.GREY, fill_opacity=0.05,
                         radius=0.08)
-        row_frame.move_to([(C_LEFT - 0.1 + br.frame.get_right()[0] - 0.25) / 2, Y_ROW, 0])
+        row_frame.move_to([(C_LEFT - 0.1 + LIST_RIGHT) / 2, Y_ROW, 0])
         row = VGroup(row_frame, cb, running, r_name, r_zone, r_ssh)
         page = VGroup(heading, toolbar, sep, cb_head, heads, row)
 
@@ -363,8 +365,8 @@ class DeleteVM(VoiceScene):
             self.play(FadeIn(rip, shift=LEFT * 0.15), run_time=0.5)
 
         # ========================================================== 2 · Delete: the meter stops
-        dim = Rectangle(width=br.content.width, height=br.content.height, stroke_width=0) \
-            .set_fill(S.BG, 0.62).move_to(br.content)
+        dim = Rectangle(width=BR_W - 0.04, height=BR_H - 0.57, stroke_width=0).set_fill(S.BG, 0.62)
+        dim.align_to(br.frame, DOWN).shift(UP * 0.02).set_x(br.frame.get_x())    # the page, under the address bar
         d_title = VGroup(label("Delete", 28, INK), mono("ac215-l01", 26, INK), label("?", 28, INK))
         d_title.arrange(RIGHT, buff=0.12)
         d_title[2].next_to(d_title[1], RIGHT, buff=0.05)
@@ -377,11 +379,11 @@ class DeleteVM(VoiceScene):
         confirm = chip("Delete", CLOUD, size=22)
         buttons = VGroup(cancel, confirm).arrange(RIGHT, buff=0.25)
         yt = your_turn()
-        d_w = 6.5
+        d_w = D_RIGHT - D_LEFT          # covers Status..Connect; the ticked checkbox stays in view
         d_h = d_text.height + buttons.height + 0.9
         d_frame = RoundedRectangle(width=d_w, height=d_h, corner_radius=0.14, stroke_color=S.GREY,
                                    stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
-        d_frame.move_to([BR_LEFT + BR_W / 2 - 0.25, -0.8, 0])
+        d_frame.move_to([(D_LEFT + D_RIGHT) / 2, -0.8, 0])
         d_text.move_to(d_frame).align_to(d_frame, UP).align_to(d_frame, LEFT).shift(RIGHT * 0.4 + DOWN * 0.32)
         buttons.align_to(d_frame, RIGHT).align_to(d_frame, DOWN).shift(LEFT * 0.35 + UP * 0.26)
         yt.match_y(buttons).align_to(d_frame, LEFT).shift(RIGHT * 0.4)
@@ -433,18 +435,18 @@ class DeleteVM(VoiceScene):
         # ========================================================== 3 · check two pages (+ gcloud)
         items = []
         for name in ("VM instances", "Disks"):
-            sq = RoundedRectangle(width=0.4, height=0.4, corner_radius=0.06, stroke_color=S.GREY,
+            sq = RoundedRectangle(width=0.46, height=0.46, corner_radius=0.07, stroke_color=S.GREY,
                                   stroke_width=2.5).set_fill(TERM_BG, 1)
-            t = label(f"{name}: empty", 30, INK)
-            t.next_to(sq, RIGHT, buff=0.3)
-            tk = check_mark(0.36, S.GREEN, stroke=6)
+            t = label(f"{name}: empty", 34, INK)
+            t.next_to(sq, RIGHT, buff=0.32)
+            tk = check_mark(0.42, S.GREEN, stroke=6)
             it = VGroup(sq, t)
             it.sq, it.text, it.tick, it.empty = sq, t, tk, words(t, "empty")
             items.append(it)
-        rows = VGroup(*items).arrange(DOWN, aligned_edge=LEFT, buff=0.4)
-        c_frame = box(rows.width + 1.2, rows.height + 0.8, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+        rows = VGroup(*items).arrange(DOWN, aligned_edge=LEFT, buff=0.45)
+        c_frame = box(rows.width + 1.4, rows.height + 0.9, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
         rows.move_to(c_frame)
-        check = VGroup(c_frame, rows).move_to([0, 1.15, 0])
+        check = VGroup(c_frame, rows).move_to([0, 1.05, 0])
 
         t = term(prompt="$", rows=3, title="your laptop")
         t.shift(np.array([0 - t.box.get_center()[0], TERM_BOTTOM - t.box.get_bottom()[1], 0]))
@@ -452,11 +454,11 @@ class DeleteVM(VoiceScene):
         opt.next_to(t.box, UP, buff=0.14).align_to(t.box, RIGHT).shift(LEFT * 0.2)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(dialog, yt, d_default, dim), scale=0.96),
-                      FadeOut(row, shift=LEFT * 0.4), run_time=0.5)
+            self.play(FadeOut(VGroup(dialog, yt, d_default, dim), scale=0.96), run_time=0.3)
+            self.play(FadeOut(row, shift=LEFT * 0.4), run_time=0.3)      # gone from the list
             v_rest = VGroup(V.server, V.hyp, *V.slices[1:], *V.os[1:], *V.disks[1:], V.storage)
-            self.play(FadeOut(VGroup(br, ill, page[:-1], v_rest, dial, cost)), run_time=0.5)
-            self.play(FadeIn(check, shift=UP * 0.15), run_time=0.5)
+            self.play(FadeOut(VGroup(br, ill, page[:-1], v_rest, dial, cost)), run_time=0.45)
+            self.play(FadeIn(check, shift=UP * 0.15), run_time=0.45)
             for it, phrase in zip(items, ("VM instances", "and Disks")):
                 vo.wait_until(phrase)
                 it.tick.move_to(it.sq).shift(UP * 0.03 + RIGHT * 0.03)
@@ -485,19 +487,20 @@ class DeleteVM(VoiceScene):
             self.play(pulse(xt, 1.1), run_time=0.6)
 
         # ========================================================== 4 · part 1 in one line; part 2
-        vm = box(2.2, 1.0, CLOUD, fill_opacity=0.15, radius=0.08)
-        vm_os = layer_bar("Debian 12", 2.2, 0.42, CLOUD, size=22, fill_opacity=0.3).next_to(vm, UP, buff=0)
+        vm = box(2.0, 1.0, CLOUD, fill_opacity=0.15, radius=0.08)
+        vm_os = layer_bar("Debian 12", 2.0, 0.42, CLOUD, size=22, fill_opacity=0.3).next_to(vm, UP, buff=0)
         vm_t = mono("ac215-l01", 24, CLOUD).move_to(vm)
         vm_g = VGroup(vm, vm_os, vm_t)
-        jar_row = VGroup(*jars(12, SYSTEM, 0.48)).arrange(RIGHT, buff=0.035)
+        jar_row = VGroup(*jars(12, SYSTEM, 0.44)).arrange(RIGHT, buff=0.035)
         board = Line(LEFT * (jar_row.width / 2 + 0.15), RIGHT * (jar_row.width / 2 + 0.15), color=SYSTEM,
                      stroke_width=6)
         jar_row.next_to(board, UP, buff=0.04)
         shelf_t = mono("/usr/local/… (pip's)", 24, SYSTEM).next_to(board, DOWN, buff=0.16)
         shelf = VGroup(board, jar_row, shelf_t)
-        shared = tag("shared with the whole OS", ERR, size=24)
-        strip = VGroup(vm_g, shelf, shared).arrange(RIGHT, buff=0.85)
-        strip.move_to([0, 1.5, 0])
+        shared = tag("shared with the whole OS", ERR)
+        strip = VGroup(vm_g, shelf, shared).arrange(RIGHT, buff=0.7)
+        assert strip.width < 12.9, strip.width
+        strip.move_to([0, 0.35, 0])
         vm_g.shift(UP * (board.get_y() + 0.3 - vm.get_y()))
         shared.shift(UP * (board.get_y() + 0.3 - shared.get_y()))
         a1 = Arrow(vm.get_right(), [board.get_left()[0], vm.get_y(), 0], buff=0.12, color=S.GREY,
@@ -505,18 +508,18 @@ class DeleteVM(VoiceScene):
         a2 = Arrow([board.get_right()[0], shared.get_y(), 0], shared.get_left(), buff=0.12, color=ERR,
                    stroke_width=3, max_tip_length_to_length_ratio=0.25)
 
-        venv = box(1.5, 1.05, VENV, fill_opacity=0.12, radius=0.12, stroke=3)
-        v_jars = VGroup(*jars(3, VENV, 0.36)).arrange(RIGHT, buff=0.1).move_to(venv).shift(DOWN * 0.14)
-        v_name = mono(".venv", 20, VENV).next_to(v_jars, UP, buff=0.1)
+        venv = box(1.7, 1.25, VENV, fill_opacity=0.12, radius=0.12, stroke=3)
+        v_jars = VGroup(*jars(3, VENV, 0.42)).arrange(RIGHT, buff=0.12).move_to(venv).shift(DOWN * 0.17)
+        v_name = mono(".venv", 22, VENV).next_to(v_jars, UP, buff=0.12)
         venv_g = VGroup(venv, v_jars, v_name)
-        p2 = label("Part 2", 26, S.GREY)
-        p2_t = label("the same app, on a fresh VM, the clean way", 32, INK,
+        p2 = label("Part 2", 28, S.GREY)
+        p2_t = label("the same app, on a fresh VM, the clean way", 36, INK,
                      t2c={"fresh VM": CLOUD, "the clean way": VENV})
         txt = VGroup(p2, p2_t).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
         inner = VGroup(venv_g, txt).arrange(RIGHT, buff=0.55)
         p_frame = box(inner.width + 0.9, inner.height + 0.7, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
         inner.move_to(p_frame)
-        part2 = VGroup(p_frame, inner).move_to([0, -1.55, 0])
+        part2 = VGroup(p_frame, inner).move_to([0, -1.35, 0])
         clean = words(p2_t, "the clean way")
 
         with self.voiceover(SAY[4]) as vo:
@@ -533,7 +536,7 @@ class DeleteVM(VoiceScene):
             self.play(pulse(shared, 1.1), run_time=0.6)
             vo.wait_until("In part 2")
             recap = VGroup(vm_g, a1, shelf, a2, shared)
-            self.play(recap.animate.fade(0.6), FadeIn(part2, shift=UP * 0.2), run_time=0.8)
+            self.play(recap.animate.shift(UP * 1.45).fade(0.6), FadeIn(part2, shift=UP * 0.3), run_time=0.9)
             vo.wait_until("on a fresh VM")
             self.play(Indicate(words(p2_t, "fresh VM"), color=CLOUD, scale_factor=1.1), run_time=0.7)
             vo.wait_until("the clean way")
