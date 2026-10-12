@@ -6,20 +6,22 @@ Beats (script.md, ## S01; one voiceover block each):
    `pip3 install googletrans==4.0.2 art` folds onto two rows, and the real refusal prints
    (07-pip-refused.txt file lines 2-4, …, 10, …, 21, wrapped: 10 rows, nothing scrolls), the
    `error:` line RED.
-1. A GREY extra tag beside the command; the RED error line pulses on "The error says"; YELLOW
+1. A GREY extra tag beside the command; the typed command flashes YELLOW on "the one most of us
+   would type first"; the RED error line pulses on "The error says"; YELLOW
    underlines sweep under "This environment is externally managed" and "create a virtual
    environment"; on "every line of it" a soft YELLOW reading bar runs down the output.
 2. The terminal shrinks into the top-left corner and fades. "virtual" writes large, duplicates
    and the copies slide apart: "virtual machine" (BLUE) over a server-slice glyph (a box whose
    bottom strip is a server's front panel), "virtual environment" (GREEN) over a box of jars; the
-   jar box shrinks and flies inside the slice (V7 preview).
+   jar box and its label shrink into the slice while the nested pair settles at the centre (V7
+   preview).
 3. V7 ladder (README.md lines 9-14): rails, then four rungs from the bottom. A YELLOW "today"
    bracket on rungs 1-2; rung 1 lights BLUE, rung 2 GREEN with the GREY note "a fresh VM of the
    same kind" under it, "uv" pulses PURPLE; on "Docker comes next lecture" rungs 3-4 turn GREY
    dashed with an "L2" bracket.
 4. "open the README beside this video": a GREY player frame ("this video") and a README page
-   glyph beside it; the page becomes the README tracker (top left, no dot lit) in a pulsing YELLOW
-   ring. Then, piece by piece as named: the cli.py 5-9 code panel (its header circled YELLOW); the
+   glyph beside it; the page flies to the corner and becomes the README tracker (left -6.5, top 3.5
+   as in S03-S12, no dot lit) in a pulsing YELLOW ring. Then, piece by piece as named: the cli.py 5-9 code panel (its header circled YELLOW); the
    3-row preview strip at the bottom (tag "preview"): `sudo apt-get update` + ▶ your turn, one `…`
    line (apt's output, elided), `which python` + extra; the study-guide footer.
 5. Prerequisites card (✓ Tutorial 0 / ✓ a web browser / ✗ no service account, GREY; rows appear
@@ -31,8 +33,8 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (INK, box, cell_width, check_mark, code_panel, cross_mark, label, mono,
-                              mono_line, substring, tag)
+from explainer.devops import (INK, box, cell_width, check_mark, code_panel, cross_mark, glyph_range,
+                              label, mono, mono_line, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, COST, ERR, NARRATION, P_HOME, P_REPO, TURN, UV, VENV, capture, excerpt,
@@ -189,8 +191,12 @@ class Hook(VoiceScene):
         bar = Rectangle(width=t.box.width - 0.3, height=t.pitch, stroke_width=0).set_fill(TURN, 0.14)
         bar.move_to([t.box.get_center()[0], out_rows[0].strut.get_center()[1], 0])
 
+        typed = VGroup(*glyph_range(cmd.rows[0], len(P_REPO) + 1), *glyph_range(cmd.rows[1], 0))
+
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(xtag, shift=LEFT * 0.2), run_time=0.6)
+            vo.wait_until("the one most of us")
+            self.play(Indicate(typed, color=TURN, scale_factor=1.04), run_time=1.0)
             vo.wait_until("The error says")
             self.play(Indicate(err_line, color=ERR, scale_factor=1.06), run_time=0.9)
             vo.wait_until("externally managed")
@@ -241,7 +247,14 @@ class Hook(VoiceScene):
                       run_time=1.1)
             self.add(jb)
             vo.wait_until("And one will live")
-            self.play(jb.animate.scale(0.88).move_to(vm_glyph.body), run_time=1.5)
+            # the venv (label and jars) moves into the VM, and the nested pair settles at the centre
+            dx = RIGHT * -vm_glyph.get_center()[0]
+            s_lab, s_box = 26 / 44, 0.8
+            inner = VGroup(ve_t.copy().scale(s_lab), jb.copy().scale(s_box)).arrange(DOWN, buff=0.2)
+            inner.move_to(vm_glyph.body).shift(dx)
+            self.play(VGroup(vm_t, vm_glyph).animate.shift(dx),
+                      ve_t.animate.scale(s_lab).move_to(inner[0]),
+                      jb.animate.scale(s_box).move_to(inner[1]), run_time=1.3)
 
         # ========================================================== 3. the V7 ladder
         pitch, y0 = 1.3, -2.3
@@ -286,11 +299,10 @@ class Hook(VoiceScene):
                       Create(b_l2), FadeIn(l2, shift=LEFT * 0.15), run_time=0.9)
 
         # ========================================================== 4. how to follow along
-        tr = tracker_a()
-        tr.shift([-6.38 - tr.get_left()[0], 3.4 - tr.get_top()[1], 0])
-        ring = RoundedRectangle(width=tr.width + 0.3, height=tr.height + 0.24,
-                                corner_radius=(tr.height + 0.24) / 2, stroke_color=TURN,
-                                stroke_width=3).move_to(tr)
+        tr = tracker_a()                           # where S03-S12 pin it: left -6.5, top 3.5
+        tr.shift([-6.5 - tr.get_left()[0], 3.5 - tr.get_top()[1], 0])
+        ring = RoundedRectangle(width=tr.width + 0.2, height=tr.height + 0.2, corner_radius=0.14,
+                                stroke_color=TURN, stroke_width=3).move_to(tr)
         panel = code_panel(excerpt("cli.py", 5, 9), "cli.py", first_line=5)
         panel.shift([-6.3 - panel.get_left()[0], 2.45 - panel.get_top()[1], 0])
         head_ring = SurroundingRectangle(panel.header, color=TURN, buff=0.08, corner_radius=0.08, stroke_width=3)
@@ -310,11 +322,14 @@ class Hook(VoiceScene):
             vo.wait_until("open the README")
             self.play(FadeIn(page, shift=LEFT * 0.6), run_time=0.8)
             vo.wait_until("The tracker")
-            self.play(FadeTransform(page, tr), FadeOut(video), run_time=0.9)
-            self.remove(video)
+            # the README page flies up to the corner and becomes the tracker
+            self.play(page.animate.scale(0.25).move_to(tr).set_opacity(0),
+                      FadeIn(tr, target_position=page.get_center(), scale=0.8),
+                      FadeOut(video), run_time=1.0)
+            self.remove(video, page)
             self.play(Create(ring), run_time=0.6)
             for _ in range(2):
-                self.play(ring.animate(rate_func=there_and_back).set_stroke(width=9), run_time=0.7)
+                self.play(ring.animate(rate_func=there_and_back).set_stroke(width=6), run_time=0.7)
             vo.wait_until("Code panels")
             self.play(FadeOut(ring), FadeIn(panel, shift=RIGHT * 0.6), run_time=0.8)
             self.remove(ring)
@@ -346,21 +361,24 @@ class Hook(VoiceScene):
                  (check_mark(0.34, VENV), "a web browser", INK),
                  (cross_mark(0.28, S.GREY).set_stroke(width=4), "no service account, no keys today", S.GREY)]
         rows = VGroup()
-        for mark, s, col in items:
-            txt = label(s, 26, col)
-            slot = Rectangle(width=0.4, height=0.4, stroke_width=0, fill_opacity=0)
+        for i, (mark, s, col) in enumerate(items):
+            # fixed pitch, text on a common baseline (each row starts with a letter that has no
+            # descender), so a row with a 'g' or 'y' doesn't push the next one down
+            y = -i * 0.68
+            slot = Rectangle(width=0.4, height=0.4, stroke_width=0, fill_opacity=0).move_to([0, y, 0])
             mark.move_to(slot)
-            row = VGroup(slot, mark, txt)
+            txt = label(s, 26, col)
             txt.next_to(slot, RIGHT, buff=0.25)
+            txt.shift(UP * (y - 0.1 - txt[0].get_bottom()[1]))
+            row = VGroup(slot, mark, txt)
             row.mark, row.text = mark, txt
             rows.add(row)
-        rows.arrange(DOWN, buff=0.36, aligned_edge=LEFT)
         card_frame = box(rows.width + 0.7, rows.height + 0.7, S.GREY, fill_opacity=0.05)
         rows.move_to(card_frame)
         card = VGroup(card_frame, rows)
         money = tag("a VM costs money while it exists", COST)
         VGroup(card, money).arrange(RIGHT, buff=0.4).move_to(ORIGIN)
-        money.match_y(rows[0])                     # level with the billing line
+        money.match_y(rows[0].mark)                # level with the billing line
 
         def show_row(r):
             return AnimationGroup(Create(r.mark), FadeIn(r.text, shift=RIGHT * 0.15))
