@@ -151,6 +151,12 @@ def gold_tag(lines: list[str], size: float = 20) -> VGroup:
     return g
 
 
+def quick(t: float) -> float:
+    """Rate function for a fade that is done in the first third of a longer move (so fading
+    text never crosses what moves through it)."""
+    return min(1.0, 3.0 * t)
+
+
 def pulse(m, factor: float = 1.18):
     """A tag's pulse: grow and settle back (Indicate would flood an opaque tag with its colour)."""
     return m.animate(rate_func=there_and_back).scale(factor)
@@ -238,7 +244,9 @@ def caption_extra(scene, tr, run_time: float = 0.5):
     s = f"step {k} of {len(tr.steps)}: {tr.steps[k - 1]}"
     new = label(s + " · extra", tr.size, tr.hi_color, t2c={"· extra": S.GREY})
     new.next_to(tr.dots, RIGHT, buff=0.25)
-    n = len(tr.caption.submobjects)
+    # glyphs of the current caption text (not len(tr.caption): after goto()'s Transform the old
+    # caption keeps the submobject count of the LONGER step-1 caption, so only "a" faded in)
+    n = len(label(s, tr.size, tr.hi_color).submobjects)
     scene.play(FadeIn(VGroup(*new.submobjects[n:]), shift=LEFT * 0.1), run_time=run_time)
     scene.remove(tr.caption, *new.submobjects[n:])
     tr.remove(tr.caption)
@@ -375,10 +383,14 @@ class RentAComputer(VoiceScene):
                       ReplacementTransform(B.cpus[0], C.cpus[0]),
                       *[ReplacementTransform(B.disks[k], C.disks[k]) for k in range(3)],
                       ReplacementTransform(B.storage, C.storage),
-                      *[FadeOut(m) for m in big_only], run_time=1.3)
-            self.play(FadeIn(br, shift=RIGHT * 0.3), FadeIn(ill), FadeIn(tr, shift=DOWN * 0.1), run_time=0.7)
-            self.play(Indicate(tr.dots[0], color=TURN, scale_factor=1.8),
-                      Indicate(tr.caption, color=TURN, scale_factor=1.08), run_time=0.6)
+                      *[FadeOut(m, rate_func=quick) for m in big_only], run_time=0.9)
+            # the tracker's YELLOW dot grows as it lands (no separate pulse: the selector is due
+            # on "check that your Tutorial 0 project", about 1.2 s into the block)
+            tr_rest = VGroup(tr.head, *tr.dots[1:], tr.caption)
+            self.play(FadeIn(br, shift=RIGHT * 0.3), FadeIn(ill), FadeIn(tr_rest, shift=DOWN * 0.1),
+                      GrowFromCenter(tr.dots[0]), run_time=0.5)
+            self.remove(tr_rest, tr.dots[0])
+            self.add(tr)
             vo.wait_until("check that your Tutorial 0")
             self.play(FadeIn(sel, shift=DOWN * 0.1), run_time=0.4)
             self.play(sel_box.animate(rate_func=there_and_back).set_stroke(TURN, width=6),
@@ -537,14 +549,17 @@ class RentAComputer(VoiceScene):
         h3.arrange(RIGHT, buff=0.2)
         ok = check_mark(0.3, S.GREEN)
         inst_name = mono("ac215-l01", 22, INK)
-        inst_zone = mono("us-central1-a", 22, S.GREY)
-        inst_ip = label("External IP", 22, S.GREY)
+        # zone and IP at 20 pt, gaps 0.3: at 22 pt / 0.4 the row was 8.9 wide and stuck out of
+        # the 8.4-wide page past the browser's right edge
+        inst_zone = mono("us-central1-a", 20, S.GREY)
+        inst_ip = label("External IP", 20, S.GREY)
         ssh = chip("SSH", CLOUD, size=22)
-        inst = VGroup(ok, inst_name, inst_zone, inst_ip, ssh).arrange(RIGHT, buff=0.4)
-        row_frame = box(inst.width + 0.5, inst.height + 0.36, S.GREY, fill_opacity=0.05, radius=0.08)
+        inst = VGroup(ok, inst_name, inst_zone, inst_ip, ssh).arrange(RIGHT, buff=0.3)
+        row_frame = box(inst.width + 0.45, inst.height + 0.36, S.GREY, fill_opacity=0.05, radius=0.08)
         row_frame.move_to(inst)
         page3 = VGroup(h3, VGroup(row_frame, inst)).arrange(DOWN, aligned_edge=LEFT, buff=0.4)
-        page3.move_to(br.content).align_to(br.content, LEFT).align_to(br.content, UP).shift(RIGHT * 0.3 + DOWN * 0.3)
+        page3.move_to(br.content).align_to(br.content, UP).shift(DOWN * 0.3)
+        assert row_frame.width < br.content.width - 0.1, "instance row wider than the page"
 
         beam = Line(ssh.get_right() + RIGHT * 0.05, C.slices[0].get_left() + RIGHT * 0.05 + UP * 0.1,
                     color=LOOKUP, stroke_width=5)
@@ -569,39 +584,55 @@ class RentAComputer(VoiceScene):
         v1_rest = VGroup(C.server, C.hyp, *C.slices[1:], C.os, C.disks, C.link, C.storage, block, disk_lab)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(Indicate(create, color=S.WHITE, scale_factor=1.15), FadeOut(VGroup(*tags)), run_time=0.6)
+            # "Click Create, wait for the green check": the click and the collapse fit in ~1 s
+            self.play(Indicate(create, color=S.WHITE, scale_factor=1.15), FadeOut(VGroup(*tags)), run_time=0.45)
             form_parts = VGroup(ftitle, form, create, estimate, est_tag)
             self.play(form_parts.animate.scale(0.3, about_point=row_frame.get_center()).set_opacity(0),
                       FadeIn(h3), FadeIn(row_frame), FadeIn(VGroup(inst_name, inst_zone, inst_ip, ssh)),
-                      run_time=0.8)
+                      run_time=0.6)
             self.remove(form_parts)
             vo.wait_until("wait for the green check")
             self.play(Create(ok), run_time=0.5)
             self.play(Indicate(ok, color=S.GREEN, scale_factor=1.4), run_time=0.5)
             vo.wait_until("then click SSH")
-            self.play(Indicate(ssh, color=S.WHITE, scale_factor=1.25), tr.goto(2), run_time=0.5)
-            self.play(Create(beam), run_time=0.5)
+            # "...then click SSH. If it asks you..." leaves ~1.1 s: the click shoots the beam
+            self.play(Indicate(ssh, color=S.WHITE, scale_factor=1.25), tr.goto(2), Create(beam), run_time=0.55)
             self.play(ShowPassingFlash(beam.copy().set_stroke(width=10), time_width=0.5),
-                      Indicate(C.slices[0], color=LOOKUP, scale_factor=1.04), run_time=0.7)
-            # V1 and the meter become a badge (the needle keeps sweeping: the VM exists)
+                      Indicate(C.slices[0], color=LOOKUP, scale_factor=1.04), run_time=0.55)
+            # V1 and the meter become a badge (the needle keeps sweeping: the VM exists) while the
+            # first-time Authorize dialog comes up in the browser
             badge_dial.tracker.set_value(dial.tracker.get_value())
             dial.tracker.clear_updaters()
             self.remove(dial.tracker)
             badge_dial.tracker.add_updater(lambda m, dt: m.increment_value(dt * RATE))
             self.add(badge_dial.tracker)
+            vo.wait_until("If it asks you")
+            # the dial itself moves into the badge (one dial on screen, not a fade-out + fade-in):
+            # freeze its needle, morph it onto a still copy of the badge dial, then swap in the
+            # live badge dial (same angle give or take the 0.9 s the morph takes)
+            dial.needle.clear_updaters()
+            badge_dial.needle.update()          # not in the scene yet: point it at the tracker's angle
+            dial_parts = VGroup(dial.face, dial.ticks, dial.needle, dial.hub)
+            dial_to = VGroup(badge_dial.face, badge_dial.ticks, badge_dial.needle, badge_dial.hub).copy()
+            for m in dial_to.get_family():
+                m.clear_updaters()
             self.play(ReplacementTransform(C.slices[0], mini_b), ReplacementTransform(C.name, mini_t),
                       FadeOut(v1_rest, scale=0.3, target_position=mini.get_center()),
-                      FadeOut(beam), FadeOut(dial, scale=0.5, target_position=BADGE_DIAL),
-                      FadeOut(cost, target_position=BADGE_DIAL), FadeIn(badge_dial), run_time=1.0)
-            vo.wait_until("If it asks you")
-            self.play(FadeIn(dlg, scale=0.92), run_time=0.5)
+                      FadeOut(beam), Transform(dial_parts, dial_to),
+                      FadeOut(cost, rate_func=quick),
+                      FadeIn(dlg, scale=0.92), run_time=0.9)
+            self.remove(dial, dial_parts)
+            self.add(badge_dial)
             vo.wait_until("click Authorize")
             self.play(Indicate(dlg_btn, color=S.WHITE, scale_factor=1.2), run_time=0.7)
             self.play(FadeOut(dlg, scale=0.95), run_time=0.4)
             vo.wait_until("A terminal opens")
+            # the page fades out early in the move, so it never sits under the terminal's title
             self.play(ReplacementTransform(br.frame, t.box),
-                      FadeOut(VGroup(*[m for m in br.submobjects if m is not br.frame]), ill, page3),
-                      FadeIn(VGroup(t.bar, t.dots, t.title)), run_time=1.1)
+                      FadeOut(VGroup(*[m for m in br.submobjects if m is not br.frame], ill, page3),
+                              rate_func=quick),
+                      FadeIn(VGroup(t.bar, t.dots, t.title), rate_func=rate_functions.ease_in_quad),
+                      run_time=1.1)
             self.remove(t.box, t.bar, t.dots, t.title)
             self.add(t)
             p0 = self.bare_prompt(t)

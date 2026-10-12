@@ -6,11 +6,12 @@ Beats (script.md "## S04", one voiceover block each):
     prints while an ORANGE "package catalog" book above the terminal flips a page per Get: line.
     Beside it a GREY "installed" shelf stays unchanged ("nothing new"). A GREY note: "on a Google
     VM: a few more lines (Google's package sources)". ▶ your turn.
- 1  The terminal shrinks to the 3-row strip, the book and shelf shrink into the top-right corner.
+ 1  The terminal shrinks to the 3-row strip (the command, Fetched…, Reading… Done), the book and
+    shelf shrink into the top-right corner.
     A GREY README quote card (README.md · line 48, the tip after step 4) appears; its phrases light
     up as they are spoken and condense into two ORANGE chips: `apt-get` "scripts · Dockerfiles · CI"
     and `apt` "humans at a terminal".
- 2  TRACKER A4. The terminal grows to 12 rows and types `sudo apt install git` (02-git.txt lines
+ 2  TRACKER A4. The strip clears, the terminal grows to 12 rows and types `sudo apt install git` (02-git.txt lines
     4-6 +Done, …, 25-28 with [Y/n] Y, …, 160-161); the `Y` flashes YELLOW; a `git` box lands on
     the small "installed" shelf; GREY tag "package list varies by VM" on the elided list. ▶ your turn.
  3  TRACKER A5. A small GREY README card (line 50) with the clone command, which flashes YELLOW
@@ -34,7 +35,7 @@ from explainer.devops import (CAPTION, MONO, OUTPUT, box, chip, folder_glyph, la
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, INK, NARRATION, P_HOME, P_REPO, SYSTEM, TURN, VENV, capture,
-                    extra_tag, term, tracker_a, your_turn)
+                    excerpt, extra_tag, term, tracker_a, your_turn)
 
 SAY = NARRATION["S04"]
 
@@ -83,6 +84,17 @@ TIP48 = ["apt-get vs apt: Both manage Debian packages.",
          "apt is a friendlier wrapper for interactive use",
          "(progress bars, colors). Prefer apt-get in scripts;",
          "either is fine on a VM shell like this one."]
+
+
+def _md_plain(s: str) -> str:
+    """A README line as rendered text: no quote marker, bold or code backticks."""
+    return s.lstrip("> ").replace("**", "").replace("`", "").lstrip("* ").strip()
+
+
+# the card rows are the README's own words (checked against assets/source/README.md)
+assert " ".join(TIP48) == _md_plain(excerpt("README.md", 48, 48)), "README line 48 changed"
+CLONE_HEAD = "Clone App Repo:"
+assert _md_plain(excerpt("README.md", 50, 50)) == f"{CLONE_HEAD} {CLONE}", "README line 50 changed"
 
 # ------------------------------------------------------------------ layout
 BOTTOM = -3.5            # terminal bottom edge (kept fixed when it grows or shrinks)
@@ -138,9 +150,15 @@ def line_under(line, sub, color):
     return under(substring(line, sub), color, y=line.strut.get_bottom()[1] - 0.01)
 
 
-def condense(src, target) -> FadeTransform:
-    """A copy of `src` flies to `target` and cross-fades into it (scaled by width, not stretched)."""
-    return FadeTransform(src.copy(), target, stretch=False, dim_to_match=0)
+def condense(scene, src, target, chip_mob, run_time=1.0):
+    """The highlighted words lift off the card (a copy) and fly, still crisp, to the caption's
+    place; only there do they cross-fade into the short caption while the chip forms above it, so
+    nothing blends over the card's own text."""
+    fly = VGroup(*[m.copy() for m in src])
+    w = min(fly.width, target.width)
+    scene.play(fly.animate(path_arc=-0.35).scale_to_fit_width(w).move_to(target), run_time=0.55 * run_time)
+    scene.play(FadeTransform(fly, target, stretch=False, dim_to_match=0),
+               FadeIn(chip_mob, shift=UP * 0.2), run_time=0.45 * run_time)
 
 
 def hl_bar(g, color=TURN, opacity=0.25, buff=0.05) -> Rectangle:
@@ -298,13 +316,17 @@ class AptAndGit(VoiceScene):
         return yg
 
     def resize(self, t, rows, run_time=0.8, extra=(), keep=None):
-        """Grow or shrink the terminal to `rows` (bottom edge fixed); it keeps its last lines
-        (at most `keep` of them)."""
+        """Grow or shrink the terminal to `rows` (bottom edge fixed). It keeps its last lines (at
+        most `keep` of them), or, when `keep` is a list of line mobjects, exactly those lines."""
         ref = term(prompt=t.prompt, rows=rows)
         ref.shift(np.array([-ref.box.get_center()[0], BOTTOM - ref.box.get_bottom()[1], 0]))
-        n_keep = min(len(t.lines), rows, len(t.lines) if keep is None else keep)
-        kept = t.lines.submobjects[len(t.lines) - n_keep:]
-        gone = t.lines.submobjects[:len(t.lines) - n_keep]
+        if isinstance(keep, (list, tuple)):
+            assert len(keep) <= rows
+            kept = [ln for ln in t.lines.submobjects if ln in keep]
+        else:
+            n_keep = min(len(t.lines), rows, len(t.lines) if keep is None else keep)
+            kept = t.lines.submobjects[len(t.lines) - n_keep:]
+        gone = [ln for ln in t.lines.submobjects if ln not in kept]
         if gone:                       # first the lines that go (nothing slides through them)
             self.play(FadeOut(VGroup(*gone)), run_time=0.25)
             for ln in gone:
@@ -395,8 +417,9 @@ class AptAndGit(VoiceScene):
             nbox = box(note.width + 0.4, note.height + 0.14, S.GREY, fill=S.BG, fill_opacity=0.95)
             note.move_to(nbox)
             note_g = VGroup(nbox, note)
-            l_fetch = t.find("Fetched")
-            note_g.move_to([5.9 - note_g.width / 2, l_fetch.strut.get_bottom()[1], 0])
+            l_fetch, l_read = t.find("Fetched"), t.find("Reading package lists")
+            # beside the short rows at the bottom (clear of the long Get:6 row above them)
+            note_g.move_to([5.9 - note_g.width / 2, l_read.strut.get_center()[1], 0])
             self.play(FadeIn(note_g, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("for Google's own")
             get_rows = VGroup(*[ln for ln in t.lines if ln.text.startswith("Get:")])
@@ -430,7 +453,9 @@ class AptAndGit(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.unpin([(cmd0, yt0)], 0.3, FadeOut(note_g), FadeOut(nothing))
-            self.resize(t, 3, run_time=0.8, extra=[pic.animate.scale(SMALL_K).move_to(corner)])
+            # the strip keeps the command and its key output lines (script.md: terminal width)
+            self.resize(t, 3, run_time=0.8, keep=[cmd0, l_fetch, l_read],
+                        extra=[pic.animate.scale(SMALL_K).move_to(corner)])
             self.play(FadeIn(card48, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("do the same job")
             bars = {}
@@ -444,14 +469,12 @@ class AptAndGit(VoiceScene):
             light("stable", hl_stable)
             vo.wait_until("for Dockerfiles")
             light("ci", hl_ci)
-            # the highlighted words travel to the chip and cross-fade into its caption (a letter
-            # morph between two different texts would garble them mid-flight)
-            self.play(condense(VGroup(*hl_stable, *hl_ci), cap_get),
-                      FadeIn(c_get, shift=UP * 0.2), run_time=0.9)
+            # the highlighted words travel to the chip and become its caption
+            condense(self, VGroup(*hl_stable, *hl_ci), cap_get, c_get)
 
             vo.wait_until("The shorter apt")
             light("human", hl_human)
-            self.play(condense(hl_human, cap_apt), FadeIn(c_apt, shift=UP * 0.2), run_time=0.9)
+            condense(self, hl_human, cap_apt, c_apt)
 
             vo.wait_until("Either is fine")
             light("either", hl_either, 0.3)
@@ -463,7 +486,7 @@ class AptAndGit(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(chips), tr.goto(4), run_time=0.4)
-            self.resize(t, 12, run_time=0.7, keep=1)
+            self.resize(t, 12, run_time=0.7, keep=0)
             cmd2 = self.type_cmd(t, APT_GIT, 0.9)
 
             vo.wait_until("This time apt")
@@ -512,8 +535,10 @@ class AptAndGit(VoiceScene):
         folder_name = mono("simple-translate", 22, INK).next_to(folder, DOWN, buff=0.12)
         repo = VGroup(folder, folder_name).move_to(home_box.get_center() + DOWN * 0.28)
 
-        r1 = VGroup(label("Clone App Repo:", 22, INK), mono("git clone", 22, INK)).arrange(RIGHT, buff=0.18)
-        r2 = mono("https://github.com/dlops-io/simple-translate.git", 22, INK)
+        url = CLONE.split()[-1]                                   # README line 50, as checked above
+        r1 = VGroup(label(CLONE_HEAD, 22, INK), mono(CLONE[:-len(url)].strip(), 22, INK)) \
+            .arrange(RIGHT, buff=0.18)
+        r2 = mono(url, 22, INK)
         body50 = VGroup(r1, r2).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         card50 = readme_card(50, body50)
         card50.move_to([TRACK_LEFT + card50.width / 2, 2.72 - card50.height / 2, 0])
@@ -591,9 +616,10 @@ class AptAndGit(VoiceScene):
             xt = beside(extra_tag(), ls_line, buff=0.4)
             self.pin(ls_line, xt, run_time=0.4)
 
-            vo.wait_until("There's cli.py")
+            vo.wait_until("lists the files")                 # the output follows the command
             files = t.print(self, LS_OUT, run_time=0.6)
             row = {ln.text: ln for ln in files}
+            vo.wait_until("There's cli.py")
 
             def point(name, color=S.WHITE):
                 self.play(Indicate(row[name].glyphs, color=color, scale_factor=1.15), run_time=0.6)
@@ -616,7 +642,9 @@ class AptAndGit(VoiceScene):
                       Create(brk), FadeIn(nl), run_time=0.8)
             vo.wait_until("and pyproject.toml")
             pp = row["pyproject.toml"]
-            pbar = hl_bar(pp.strut, VENV, 0.22, buff=0.04)
+            # the row's full height, the name's width (the strut starts a little left of the name)
+            pbar = Rectangle(width=pp.glyphs.width + 0.12, height=pp.strut.height + 0.06, stroke_width=0) \
+                .set_fill(VENV, 0.22).move_to([pp.glyphs.get_center()[0], pp.strut.get_center()[1], 0])
             need = beside(row_tag("what the app needs", VENV), pp)
             self.play(FadeIn(pbar), pp.glyphs.animate.set_color(VENV), run_time=0.5)
             self.play(FadeIn(need, shift=LEFT * 0.1), Indicate(pp.glyphs, color=VENV, scale_factor=1.15),

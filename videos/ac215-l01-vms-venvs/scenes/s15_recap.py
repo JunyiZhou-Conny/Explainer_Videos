@@ -4,14 +4,16 @@ Beats (script.md "## S15", one voiceover block each):
  0  TRACKER B12. S07's schematic console (GREY browser, tag illustration) with S03's V1 picture and
     the GOLD dial sweeping: the `ac215-l01` row ticks, Delete lights, the confirm dialog "Delete
     ac215-l01? / Its boot disk is deleted with it" (tag illustration; YELLOW bar as it's said, the
-    slice->disk link flashes); the slice and its disk dissolve and the needle stops where it is.
-    The console makes way for the checklist "VM instances: empty" / "Disks: empty" (GREEN ticks as
-    each is named), the frozen dial beside it; ▶ your turn on "Pause".
- 1  V7. A BLUE box "VM" containing a GREEN toolbox "venv" (S08's look). Labels appear as they are
-    said: VM "a whole machine: wreck it, delete it"; venv "one project's Python packages". On
-    "that machine's Python" the ORANGE system Python (a shelf of jars) appears beside the venv,
-    behind a GREY dashed wall. "between the two": a GREY dashed box "container · L2" fades in
-    between the VM and the venv.
+    slice->disk link flashes); Delete: the dialog closes and the row leaves the list (as in S07),
+    the slice and its disk dissolve and the needle stops where it is. The console makes way for
+    the checklist "VM instances: empty" / "Disks: empty" (GREEN ticks as each is named), the
+    frozen dial beside it; ▶ your turn on "Pause".
+ 1  V7. A BLUE box "VM" containing a GREEN toolbox "venv" (S08's look), centred. Labels appear as
+    they are said: VM "a whole machine: wreck it, delete it"; venv "one project's Python
+    packages". On "away from that machine's Python" the venv moves aside as the ORANGE system
+    Python (a shelf of jars) comes in, and a solid GREY wall rises between them (GREY dashed is
+    kept for the future container). "between the two": a GREY dashed box "container · L2" fades
+    in between the VM and the venv.
  2  The dashed box turns solid (GREY, tag "L2"); the picture compacts into a tall column at left
     (the venv dims: not built yet) and CODE(Dockerfile.txt: 21-29) slides in at right. "copy the
     code": line 22 YELLOW, a `cli.py` chip flies into the container; "run the same uv sync": line
@@ -19,16 +21,18 @@ Beats (script.md "## S15", one voiceover block each):
     line 29 GREEN, an `(app) $` shell appears in the container; "baked into an image": the
     container and the panel flash together.
  3  CODE(Dockerfile.txt: 2) and CODE(pyproject.toml: 6) side by side, a YELLOW "?" between them,
-    and S10's number line in miniature: a GREY dot drops from "3.12" in the FROM line onto 3.12; the
-    GREEN glow grows from 3.13 as `>=3.13` is named; the dot turns RED just outside the glow. "what
-    uv will do": a PURPLE `uv sync` chip under the "?" with a dashed PURPLE arrow into the glow.
+    and S10's number line in miniature below: a GREY dot drops from "3.12" in the FROM line onto
+    3.12; the GREEN glow grows from 3.13 as `>=3.13` is named; the dot turns RED just outside the
+    glow. "You already know": a PURPLE `uv sync` chip under the "?"; "what uv will do": a dashed
+    PURPLE arrow from it into the glow, and the "?" pulses (a hint, not the answer).
  4  "Test yourself" (YELLOW underline). Q1 appears (28 pt, YELLOW badge); beside it a thumbnail of
     S05's shelves: pip's ORANGE jars land on the /usr/local shelf, above apt's.
  5  Q1 shrinks to 22 pt GREY, Q2 appears below (thumbnail: the three-part venv card, badges turn
     GREEN one by one); then Q2 shrinks and Q3 appears (thumbnail: PATH doors, the GREEN
     `.venv/bin` door slides in at the front).
- 6  Q4 (thumbnail: the dependency tree rolls into the GREEN uv.lock scroll); Q5 (thumbnail: the
-    number line's glow shrinks to the 3.13 segment).
+ 6  Q4 (thumbnail: the two wishes, art and googletrans; on "became 11 packages" the tree grows
+    level by level to 11 nodes, the real `uv tree` shape; on "which file" it rolls into the GREEN
+    uv.lock scroll); Q5 (thumbnail: the number line's glow shrinks to the 3.13 segment).
  7  The thumbnail goes; the questions reflow to full width and shrink to the top; footer cards
     "Answers: exercises.md" and "Study guide + every command" / the MLOps_Learning link
     (MLOps_Learning underlined YELLOW as it is said); on "Next time: containers" a GREY dashed chip
@@ -425,21 +429,21 @@ def thumb_parts() -> VGroup:
 
 def thumb_doors() -> VGroup:
     """Q3: PATH as mini doors; .new = the GREEN .venv/bin door (+ label) to slide in at the front."""
-    def door(color, w=0.42):
-        f = RoundedRectangle(width=w, height=0.64, corner_radius=0.04, stroke_color=color,
+    def door(color, w=0.46):
+        f = RoundedRectangle(width=w, height=0.76, corner_radius=0.04, stroke_color=color,
                              stroke_width=2.5).set_fill(color, 0.15 if color == S.GREY else 0.35)
         k = Dot(radius=0.03, color=color).move_to(f.get_right() + LEFT * 0.08)
         return VGroup(f, k)
 
-    doors = VGroup(door(UV), door(S.GREY), door(S.GREY), door(S.GREY), door(S.GREY, 0.24))
-    doors.arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
+    doors = VGroup(door(UV), door(S.GREY), door(S.GREY), door(S.GREY), door(S.GREY, 0.26))
+    doors.arrange(RIGHT, buff=0.13, aligned_edge=DOWN)
     path = mono("PATH", 22, LOOKUP)
     row = VGroup(path, doors).arrange(RIGHT, buff=0.3)
     new = door(VENV)
     new_lab = mono(".venv/bin", 20, VENV)
-    slot_w = new.width + 0.14
+    slot_w = new.width + 0.13
     # the content reserves room for the new door (and its label under it)
-    room = Rectangle(width=row.width + slot_w, height=row.height + 0.75, stroke_width=0, fill_opacity=0)
+    room = Rectangle(width=row.width + slot_w, height=row.height + 0.6, stroke_width=0, fill_opacity=0)
     VGroup(row).move_to(room).align_to(room, LEFT).align_to(room, UP)
     g = thumb_frame(VGroup(room, row))
     new.move_to(doors[0])
@@ -486,13 +490,16 @@ def thumb_tree() -> VGroup:
     edges = VGroup(edge(gt, httpx), *[edge(httpx, n) for n in lvl2], edge(lvl2[2], lvl3[0]),
                    edge(lvl2[4], lvl3[1]), edge(lvl2[4], lvl3[2]))
     tree = VGroup(edges, top, httpx, lvl2, lvl3)
-    scroll = lock_scroll(0.78, 0.95)
-    scroll.move_to([art.get_x(), lvl2.get_y() + 0.1, 0])
-    body = VGroup(tree, scroll)
-    g = thumb_frame(body)
-    g.tree, g.scroll, g.scroll_full = tree, scroll, scroll.copy()
-    scroll.scale(0.4).set_opacity(0)
-    g.extras = [g.scroll_full]
+    g = thumb_frame(tree)                 # the card is sized for the whole tree ...
+    tree.remove(edges, httpx, lvl2, lvl3)  # ... but holds only the two wishes at first
+    # the tree grows level by level (art + googletrans + 9 = 11 packages) ...
+    g.levels = [(VGroup(edges[0]), VGroup(httpx)), (VGroup(*edges[1:6]), lvl2), (VGroup(*edges[6:]), lvl3)]
+    g.grown = VGroup(edges, httpx, lvl2, lvl3)
+    # ... and then rolls up into the uv.lock scroll, centred in the card
+    scroll = lock_scroll(1.0, 1.2)
+    scroll.move_to(g.frame)
+    g.top, g.scroll = top, scroll
+    g.extras = [g.grown, scroll]
     return g
 
 
@@ -652,9 +659,12 @@ class Recap(VoiceScene):
                       ShowPassingFlash(V.link.copy().set_stroke(CLOUD, 7), time_width=0.5),
                       Indicate(V.disks[0], color=CLOUD, scale_factor=1.3), run_time=0.6)
             self.play(Indicate(confirm, color=S.WHITE, scale_factor=1.2), run_time=0.35)
-            # Delete: the slice and its disk dissolve; the needle stops where it is (no rewind)
-            self.play(FadeOut(gone_v, scale=0.96), FadeIn(dust_v), run_time=0.3)
-            drift = [d.animate.shift(UP * rng.uniform(0.25, 0.7) + RIGHT * rng.uniform(-0.25, 0.25)).set_opacity(0)
+            # Delete (as in S07): the dialog closes, the row leaves the list, the slice and its
+            # disk dissolve, and the needle stops where it is (no rewind)
+            self.play(FadeOut(VGroup(dialog, body_bar, dim), scale=0.96), FadeOut(row, shift=LEFT * 0.4),
+                      FadeOut(gone_v, scale=0.96), FadeIn(dust_v), run_time=0.35)
+            page.remove(row)                  # (FadeOut resets it: keep it out of the page's fade)
+            drift =[d.animate.shift(UP * rng.uniform(0.25, 0.7) + RIGHT * rng.uniform(-0.25, 0.25)).set_opacity(0)
                      for d in dust_v.family_members_with_points()]
             self.play(*drift, rate.animate.set_value(0), run_time=0.7)
             self.remove(dust_v)
@@ -664,8 +674,7 @@ class Recap(VoiceScene):
             dial_g = VGroup(dial, cost)
             vo.wait_until("then check")
             v_rest = VGroup(V.server, V.hyp, *V.slices[1:], *V.os[1:], *V.disks[1:], V.storage)
-            self.play(FadeOut(VGroup(br, ill, page, dim, dialog, body_bar, v_rest)),
-                      dial_g.animate.move_to(dial_to), run_time=0.5)
+            self.play(FadeOut(VGroup(br, ill, page, v_rest)), dial_g.animate.move_to(dial_to), run_time=0.5)
             self.play(FadeIn(check, shift=UP * 0.15), run_time=0.4)
             for it, phrase in zip(items, ("VM instances", "and Disks")):
                 vo.wait_until(phrase)
@@ -693,15 +702,18 @@ class Recap(VoiceScene):
                       stroke_width=1.5, stroke_opacity=0.6)
         VM_G = VGroup(vm, vm_sep, vm_t)
 
-        ven = venv_box(3.8, 1.55, 28, 4, 0.44).move_to([-2.95, -0.7, 0])
+        # the venv starts in the middle of the VM and moves away when the system Python arrives
+        VEN_X = -2.95
+        ven = venv_box(3.8, 1.55, 28, 4, 0.44).move_to([0, -0.7, 0])
         ven_cap = label("one project's Python packages", 26, INK).next_to(ven, DOWN, buff=0.3)
-        ctr = container_box(6.0, 4.55, dashed=True).move_to([-2.95, -0.62, 0])
+        ctr = container_box(6.0, 4.55, dashed=True).move_to([VEN_X, -0.62, 0])
 
         board = Line(LEFT * 1.8, RIGHT * 1.8, color=SYSTEM, stroke_width=6).move_to([3.55, -0.75, 0])
         sys_j = VGroup(*jars(5, SYSTEM, 0.44)).arrange(RIGHT, buff=0.12).next_to(board, UP, buff=0.04)
         sys_t = label("the system Python", 26, SYSTEM).next_to(board, DOWN, buff=0.22)
         sys_g = VGroup(board, sys_j, sys_t)
-        wall = DashedLine([0.75, 1.35, 0], [0.75, -2.55, 0], color=S.GREY, stroke_width=3, dash_length=0.12)
+        # a solid wall (GREY dashed is reserved for future things such as the container)
+        wall = Line([0.75, 1.35, 0], [0.75, -2.55, 0], color=S.GREY, stroke_width=5)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(check, yt, dial_g, tr)), run_time=0.6)
@@ -714,8 +726,9 @@ class Recap(VoiceScene):
             vo.wait_until("The venv keeps")
             self.play(FadeIn(ven_cap, shift=UP * 0.1), Indicate(ven.jars, color=VENV, scale_factor=1.15),
                       run_time=0.7)
-            vo.wait_until("that machine's Python")
-            self.play(FadeIn(sys_g, shift=LEFT * 0.3), run_time=0.6)
+            vo.wait_until("away from")
+            self.play(VGroup(ven, ven_cap).animate.shift(RIGHT * (VEN_X - ven.get_x())),
+                      FadeIn(sys_g, shift=LEFT * 0.8), run_time=0.9)
             self.play(Create(wall), run_time=0.5)
             vo.wait_until("between the two")
             self.play(FadeIn(ctr, scale=1.06), run_time=0.9)
@@ -796,22 +809,25 @@ class Recap(VoiceScene):
         # ========================================================== 3 · 3.12 image, >=3.13 project
         p2 = code_panel(DOCKER_2, "Dockerfile.txt", first_line=2, language="docker", font_size=22)
         p6 = code_panel(TOML_6, "pyproject.toml", first_line=6, language="toml", font_size=22)
-        p2.move_to([0, 2.45, 0]).align_to([-6.45, 0, 0], LEFT)
-        p6.move_to([0, 2.45, 0]).align_to([6.45, 0, 0], RIGHT)
+        p2.move_to([0, 1.4, 0]).align_to([-6.45, 0, 0], LEFT)
+        p6.move_to([0, 1.4, 0]).align_to([6.45, 0, 0], RIGHT)
         p6.align_to(p2, UP)
-        qmark = label("?", 56, TURN).move_to([(p2.get_right()[0] + p6.get_left()[0]) / 2, p2.code.get_y(), 0])
+        mid_x = (p2.get_right()[0] + p6.get_left()[0]) / 2
+        qmark = label("?", 56, TURN).move_to([mid_x, p2.code.get_y(), 0])
         v312 = code_span(p2.code, 0, "3.12")
         v313 = code_span(p6.code, 0, ">=3.13")
-        vl = VersionLine(10, 16, lo=13, width=11.2, size=22)
+        # S10's number line in miniature, under the two panels
+        vl = VersionLine(10, 16, lo=13, width=8.4, size=22)
         vl.remove(vl.band_label)
-        vl.move_to([0, -1.2, 0])
+        vl.move_to([0.2, -1.55, 0])
         band_full = vl.band.copy()
         vl.band.stretch_to_fit_width(0.01).align_to(band_full, LEFT)
         dot = Dot(v312.get_bottom() + DOWN * 0.2, radius=0.11, color=S.GREY)
         dot_lab = label("3.12 · the image's Python", 24, ERR).next_to(vl.point(12), UP, buff=0.42)
         dot_lab.align_to(vl.point(12) + RIGHT * 0.45, RIGHT)
-        uvc = chip("uv sync", UV, size=24, font=MONO).move_to([qmark.get_x(), 0.95, 0])
-        hint = dashed_arrow(uvc.get_bottom() + DOWN * 0.08, vl.point(15, 0.3), 0.6, UV)
+        # what uv will do (S10): a PURPLE hint from a `uv sync` chip under the "?" into the glow
+        uvc = chip("uv sync", UV, size=24, font=MONO).move_to([mid_x, 0.1, 0])
+        hint = dashed_arrow(uvc.get_right() + RIGHT * 0.1, vl.point(15, 0.3), -0.7, UV)
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(vm, vm_sep, vm_t, ctr.head, ctr_solid.frame, ven, drops, code_chip,
@@ -832,7 +848,7 @@ class Recap(VoiceScene):
             vo.wait_until("You already know")
             self.play(FadeIn(uvc, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("what uv will do")
-            self.play(Create(hint), qmark.animate.scale(0.75).next_to(uvc, RIGHT, buff=0.2), run_time=0.9)
+            self.play(Create(hint), run_time=0.8)
             self.play(Indicate(qmark, color=TURN, scale_factor=1.3),
                       vl.band.animate(rate_func=there_and_back).set_fill(opacity=0.6), run_time=0.9)
 
@@ -892,14 +908,18 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             s3, q4, th4, top4 = step(q3, 3, top3, VGroup(th3, th3.new, th3.new_lab), thumb_tree)
             smalls.append(s3)
+            vo.wait_until("became 11 packages")
+            for edges_k, nodes_k in th4.levels:       # 2 wishes -> 11 packages
+                self.play(Create(edges_k), FadeIn(nodes_k, scale=0.5), run_time=0.4)
+            self.remove(*[m for lv in th4.levels for m in lv])
+            self.add(th4.grown)
             vo.wait_until("which file")
-            sc = th4.scroll
-            self.play(th4.tree.animate.stretch_to_fit_height(0.15).stretch_to_fit_width(0.8)
-                      .move_to(th4.scroll_full[0]).set_opacity(0),
-                      Transform(sc, th4.scroll_full), run_time=1.2)
-            self.play(Indicate(sc, color=VENV, scale_factor=1.15), run_time=0.6)
+            whole = VGroup(th4.top, th4.grown)
+            self.play(whole.animate.scale(0.3).move_to(th4.scroll).set_opacity(0),
+                      FadeIn(th4.scroll, scale=0.3), run_time=1.1)
+            self.play(Indicate(th4.scroll, color=VENV, scale_factor=1.15), run_time=0.6)
             vo.wait_until("Five")
-            s4, q5, th5, top5 = step(q4, 4, top4, th4, thumb_glow)
+            s4, q5, th5, top5 = step(q4, 4, top4, VGroup(th4, th4.grown, th4.scroll), thumb_glow)
             smalls.append(s4)
             vo.wait_until("what would make")
             self.play(Transform(th5.vl.band, th5.seg), Transform(th5.lab, th5.seg_lab), run_time=1.0)

@@ -14,8 +14,10 @@ Beats (script.md "## S08"):
    the standard library band stays ("from the real interpreter"); both ORANGE dist-packages shelves
    slide out right and fade; an empty GREEN `.venv/lib/python3.X/site-packages` shelf slides in
    from the left into their place.
-5. Engine ("interpreter") with two toolboxes that plug in in turn; RED barrier between them; each
-   side's jars dim while the other toolbox is plugged in ("invisible ... and the other way round").
+5. The GREEN shelf packs up into the venv's toolbox (its path shortens glyph by glyph), the
+   project's jars drop in. Engine ("interpreter") with two toolboxes that plug in in turn (each on
+   an outward arc, never across the RED barrier between them); each side's jars dim while the
+   other toolbox is plugged in ("invisible ... and the other way round").
 6. pip's hint (debian12-part-a/07-pip-refused.txt line 10), `python3 -m venv` underlined YELLOW,
    a GREY arrow "the classic way" to the venv toolbox; a PURPLE uv chip "today: uv makes it for us".
 7. V7: the venv toolbox inside a dashed GREY "container (L2)" inside the BLUE VM; three
@@ -116,6 +118,28 @@ def parts_card() -> VGroup:
     return g
 
 
+def glyph_target(src: Text, dst: Text, head: int, tail: int) -> Text:
+    """A copy of `src` whose glyphs sit on `dst`'s: the first `head` and the last `tail` glyphs on
+    their twins, the ones in between folded onto dst's middle (or, when dst has none, shrunk away
+    after the head). Transform(src, glyph_target(...)) shortens a path while the parts the viewer
+    already read stay where they are (a plain Transform between texts of different lengths
+    scrambles every glyph)."""
+    tgt = src.copy()
+    n_s, n_d = len(src), len(dst)
+    s_mid, d_mid = n_s - head - tail, n_d - head - tail
+    for i in range(n_s):
+        if i < head:
+            tgt[i].become(dst[i])
+        elif i >= n_s - tail:
+            tgt[i].become(dst[n_d - (n_s - i)])
+        elif d_mid > 0:
+            tgt[i].become(dst[head + (i - head) * d_mid // s_mid])
+        else:
+            end = dst[head - 1].get_right()
+            tgt[i].become(dst[head - 1].copy().scale(0.05).move_to(end).set_opacity(0))
+    return tgt
+
+
 def flash_frame(m, color: str, width: float = 7, run_time: float = 0.9):
     """A bright pass along a frame's outline."""
     c = m.copy().set_stroke(color, width).set_fill(opacity=0)
@@ -183,14 +207,14 @@ class WhatIsAVenv(VoiceScene):
             half_r = Line(board.get_center(), board.get_end(), color=SYSTEM, stroke_width=6)
             self.remove(board)
             self.add(half_l, half_r)
-            # each half of the shelf drops under a student and becomes the lid of a toolbox
-            lid_l = Line(tb_l.body.get_corner(UL), tb_l.body.get_corner(UR), color=VENV, stroke_width=4)
-            lid_r = Line(tb_r.body.get_corner(UL), tb_r.body.get_corner(UR), color=VENV, stroke_width=4)
+            # each half of the shelf drops under its student, turns GREEN (a flat lid), and opens
+            # downward into that student's toolbox
+            flats = [tb.body.copy().stretch(0.02, 1, about_edge=UP) for tb in (tb_l, tb_r)]
             self.play(FadeOut(VGroup(board_label, sjar, sjar_tag, arr_l, arr_r)),
-                      Transform(half_l, lid_l), Transform(half_r, lid_r), run_time=0.8)
-            self.play(*[GrowFromEdge(tb.body, UP) for tb in (tb_l, tb_r)],
+                      ReplacementTransform(half_l, flats[0]), ReplacementTransform(half_r, flats[1]),
+                      run_time=0.8)
+            self.play(*[ReplacementTransform(f, tb.body) for f, tb in zip(flats, (tb_l, tb_r))],
                       *[Create(tb.handle) for tb in (tb_l, tb_r)],
-                      FadeOut(half_l), FadeOut(half_r),
                       FadeIn(proj_l, shift=UP * 0.1), FadeIn(proj_r, shift=UP * 0.1), run_time=0.8)
             for tb in (tb_l, tb_r):                  # one top-level group again
                 self.remove(tb.body, tb.handle)
@@ -263,9 +287,14 @@ class WhatIsAVenv(VoiceScene):
                                          corner_radius=0.05)
 
         with self.voiceover(SAY[1]) as vo:
+            # your toolbox IS a folder: its box becomes the folder, its handle the folder's tab
             self.play(FadeOut(VGroup(icon_l, who_l, icon_r, who_r, tb_l, proj_l, new_l, proj_r,
                                      venv_word, venv_arrows)),
-                      FadeTransform(VGroup(tb_r, new_r), closed), run_time=1.0)
+                      ReplacementTransform(tb_r.body, closed[0][1]), ReplacementTransform(tb_r.handle, closed[0][0]),
+                      FadeOut(new_r, target_position=closed[0][1].get_center(), scale=0.3),
+                      FadeIn(closed[1], shift=RIGHT * 0.3), run_time=1.0)
+            self.remove(*closed[0], closed[1])          # one top-level group again
+            self.add(closed)
             vo.wait_until("usually called")
             self.play(Indicate(closed[1], color=VENV, scale_factor=1.12), run_time=0.8)
             vo.wait_until("with three parts")
@@ -364,23 +393,36 @@ class WhatIsAVenv(VoiceScene):
         tb_venv.move_to([3.95, rest_y, 0])
         rest_sys, rest_venv = tb_sys.get_center(), tb_venv.get_center()
         plug = socket.get_end() - (tb_sys.handle.get_top() - tb_sys.get_center())
-        barrier = Line([0, -0.85, 0], [0, -3.1, 0], color=ERR, stroke_width=4)
+        barrier = Line([0, -1.0, 0], [0, -2.9, 0], color=ERR, stroke_width=4)
 
-        def plug_in(tb, color, jar_opacity=None):
+        pristine = {id(tb): tb.jars.copy() for tb in (tb_sys, tb_venv)}   # the jars' own look
+        # each toolbox travels on an outward arc, so it never crosses the RED barrier between them
+        arc = {id(tb_sys): -PI / 2, id(tb_venv): PI / 2}
+
+        def plug_in(tb, color, restore_jars=False):
             tb.generate_target()
             tb.target.move_to(plug)
-            if jar_opacity is not None:              # the jar row moves with its box: one target
-                tb.target[3].set_opacity(jar_opacity)
-            return [MoveToTarget(tb), socket.animate.set_color(color)]
+            if restore_jars:                         # the jar row moves with its box: one target
+                tb.target[3].match_style(pristine[id(tb)])
+            return [MoveToTarget(tb, path_arc=arc[id(tb)]), socket.animate.set_color(color)]
 
         def unplug(tb, home):
-            return [tb.animate.move_to(home), socket.animate.set_color(S.GREY)]
+            return [tb.animate(path_arc=-arc[id(tb)]).move_to(home), socket.animate.set_color(S.GREY)]
+
+        g_board, g_text = green.rows[0]
+        venv_jars = tb_venv.jars
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(*[m for m in v2_all if m is not green])), FadeTransform(green, tb_venv),
-                      run_time=0.6)
+            # the venv's shelf packs up into its toolbox (".venv/lib/python3.X/site-packages" ->
+            # ".venv/…/site-packages"); the project's packages drop in
+            self.play(FadeOut(VGroup(*[m for m in v2_all if m is not green])),
+                      Transform(g_board, tb_venv.body), Transform(g_text, glyph_target(g_text, tb_venv.name, 6, 14)),
+                      Create(tb_venv.handle), run_time=0.7)
+            self.remove(green, tb_venv.handle)
+            venv_jars.set_opacity(0).shift(UP * 0.4)
+            self.add(tb_venv)
             self.play(FadeIn(VGroup(eng, eng_t, socket), shift=DOWN * 0.15), FadeIn(tb_sys, shift=UP * 0.2),
-                      run_time=0.5)
+                      venv_jars.animate.shift(DOWN * 0.4).match_style(pristine[id(tb_venv)]), run_time=0.6)
             self.play(*plug_in(tb_sys, SYSTEM), Rotate(eng, -PI / 3), FadeIn(motto, shift=RIGHT * 0.2),
                       run_time=0.7)
             self.play(*unplug(tb_sys, rest_sys), run_time=0.45)
@@ -393,7 +435,7 @@ class WhatIsAVenv(VoiceScene):
                       run_time=0.8)
             vo.wait_until("the other way")
             self.play(*unplug(tb_sys, rest_sys), run_time=0.45)
-            self.play(*plug_in(tb_venv, VENV, jar_opacity=1), Rotate(eng, -PI / 3),
+            self.play(*plug_in(tb_venv, VENV, restore_jars=True), Rotate(eng, -PI / 3),
                       tb_sys.jars.animate.set_opacity(0.2), run_time=0.7)
 
         # ========================================================== 6 · pip's hint, and uv
@@ -413,8 +455,11 @@ class WhatIsAVenv(VoiceScene):
             self.play(FadeOut(VGroup(eng, eng_t, socket, motto, tb_sys, barrier)),
                       tb_venv.animate.move_to(venv_tb_pos), run_time=0.8)
             venv_name.move_to(tb_venv.name)
-            self.play(Transform(tb_venv.name, venv_name), FadeIn(hint_cap), FadeIn(hint, shift=DOWN * 0.1),
-                      run_time=0.8)
+            self.play(Transform(tb_venv.name, glyph_target(tb_venv.name, venv_name, 6, 0)), FadeIn(hint_cap),
+                      FadeIn(hint, shift=DOWN * 0.1), run_time=0.8)
+            tb_venv.remove(tb_venv.name)             # swap in the real ".venv/" text
+            tb_venv.add(venv_name)
+            tb_venv.name = venv_name
             vo.wait_until("It suggested")
             self.play(Create(ul), classic.animate.set_color(TURN), run_time=0.6)
             vo.wait_until("the classic way")
@@ -465,7 +510,11 @@ class WhatIsAVenv(VoiceScene):
         card_head.next_to(card.frame, DOWN, buff=0.18).align_to(card.frame, RIGHT)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(vm, ctr, outs)), FadeTransform(tb_venv, big), run_time=1.0)
+            # the venv opens: its three parts come out of the toolbox
+            src = tb_venv.get_center()
+            self.play(FadeOut(VGroup(vm, ctr, outs)), FadeOut(tb_venv, scale=1.25),
+                      LaggedStart(*[FadeIn(r, target_position=src, scale=0.4) for r in big], lag_ratio=0.2),
+                      run_time=1.0)
             vo.wait_until("find all three")
             self.play(ReplacementTransform(big, card.rows), run_time=0.8)
             self.play(FadeIn(card.frame), FadeIn(card_head, shift=DOWN * 0.1), run_time=0.5)
