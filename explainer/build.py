@@ -293,7 +293,7 @@ def main(argv=None):
     ap.add_argument("--render-only", action="store_true", help="render the selected scenes, don't stitch")
     ap.add_argument("--lang", default="en", help="language version to build (en, zh, ...)")
     ap.add_argument("--burn", action="store_true", help="English build: also burn bilingual subtitles "
-                    "(<id>.<lang>-en.mp4) for each translation")
+                    "(<id>.<lang>-en.mp4, full video only, at --crf if given) for each translation")
     ap.add_argument("--no-burn", action="store_true", help="translated build: keep the video clean")
     ap.add_argument("--subs-only", action="store_true", help="only (re)write subtitles, chapters and transcript "
                     "from existing renders; leave the video files alone")
@@ -351,7 +351,7 @@ def main(argv=None):
         from .i18n import meta as lang_meta
         meta = lang_meta(lang, project)
     title = meta.get("title") or spec.get("title", spec["id"])
-    ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
+    ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env, crf=args.crf,
                burn=(not args.no_burn) if lang != "en" else args.burn, subs_only=args.subs_only)
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
            transcript_file=out_dir / "transcript.md", ctx=ctx)
@@ -359,8 +359,10 @@ def main(argv=None):
         keep = set(part["scenes"])
         subset = [t for t in normalized if Path(t[0]["file"]).stem in keep or t[0]["cls"] in keep]
         ptitle = ((meta.get("parts") or {}).get(part["id"])) or part.get("title", part["id"])
+        # an English build burns subtitles into the full video only; the parts get the subtitle files
+        pctx = ctx if lang != "en" else {**ctx, "burn": False}
         stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", ptitle, build,
-               chapters_file=out_dir / f"chapters_{part['id']}.txt", ctx=ctx)
+               chapters_file=out_dir / f"chapters_{part['id']}.txt", ctx=pctx)
 
 
 def _scene_title(s: dict, meta: dict) -> str:
@@ -465,7 +467,7 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
             subs.write_ass(ass, tr_["zh-en"], title=title)
             made += [f".{code}.srt", f".{code}-en.srt/.ass"]
             if ctx.get("burn") and not subs_only:
-                subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"))
+                subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"), crf=ctx.get("crf") or 23)
                 made.append(f".{code}-en.mp4")
     else:
         tr_ = subs.tracks(own_pairs, timing="tr")
@@ -479,7 +481,7 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         if subs_only:
             pass
         elif ctx.get("burn", True):
-            subs.burn(final, ass, out)
+            subs.burn(final, ass, out, crf=ctx.get("crf") or 23)
             made.append(" (bilingual subtitles burned in)")
         else:
             subprocess.run(["cp", str(final), str(out)], check=True)
