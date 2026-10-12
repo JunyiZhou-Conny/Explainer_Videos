@@ -50,3 +50,10 @@ pyvenv.cfg: {ipa: "pˈaɪvˌɛnv dˈɑːt sˌiːˌɛfdʒˈiː", say: "pie-venv d
 "0.28.1": {ipa: "zˈiəɹoʊ pɔɪnt twˈɛnti ˈeɪt pɔɪnt wˈʌn", say: "zero point twenty-eight point one"}
 "23.0.1": {ipa: "twˈɛnti θɹˈiː pɔɪnt zˈiəɹoʊ pɔɪnt wˈʌn", say: "twenty-three point zero point one"}
 "4.0.2": {ipa: "fˈɔːɹ pɔɪnt zˈiəɹoʊ pɔɪnt tˈuː", say: "four point zero point two"}
+"uv's": {ipa: "jˌuːvˈiːz", say: "you-vee's"}
+"README's": {ipa: "ɹˈiːdmiːz", say: "readme's"}
+asynchronous: {ipa: "eɪsˈɪŋkɹənəs", say: "ay-synchronous"}
+"PEP 668": {ipa: "pˈɛp sˈɪks sˈɪks ˈeɪt", say: "pep six six eight"}
+pipx: {ipa: "pˈɪp ˈɛks", say: "pip-ex"}
+sys: {ipa: "sˈɪs", say: "sis"}
+"0.27.2": {ipa: "zˈiəɹoʊ pɔɪnt twˈɛnti sˈɛvən pɔɪnt tˈuː", say: "zero point twenty-seven point two"}

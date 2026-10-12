@@ -4,7 +4,8 @@ BRIEF.md, loaders for the real captures in assets/, and the video's recurring pi
     Shelves      V2 · sys.path as a stack of shelves, a PINK search-light for `import`
     PathDoors    V3 · PATH as a row of doors; a command name walks along and knocks
     VersionLine  V4 · Python versions on a number line with the `>= 3.13` interval
-    CostMeter    a GOLD running cost while a VM exists
+    CostDial     the GOLD cost dial (needle sweeps, no digits) while a VM exists
+    jar() jars() name_tag()   small package jars for the shelves (V2 layout in script.md)
     term()       the house terminal (prompt student@ac215-l01, title "ssh · ac215-l01")
     capture()    a captured command: .cmd .lines .exit (assets/terminal/<folder>/<name>.txt)
     excerpt()    lines a..b of a tutorial file in assets/source, for code_panel()
@@ -29,9 +30,9 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from manim import (DOWN, LEFT, RIGHT, UP, Arrow, DashedLine, DecimalNumber, FadeIn, FadeOut,
-                   Line, Rectangle, RoundedRectangle, Text, Transform, ValueTracker, VGroup,
-                   always_redraw, linear)
+from manim import (DOWN, LEFT, ORIGIN, RIGHT, UP, Arrow, DashedLine, DecimalNumber, FadeIn,
+                   FadeOut, Line, Rectangle, RoundedRectangle, Text, Transform, ValueTracker,
+                   VGroup, always_redraw, linear)
 
 from explainer import style as S
 from explainer.devops import (CAPTION, LABEL, MONO, SMALL, TAG, Terminal, box, chip, label, mono,
@@ -120,7 +121,7 @@ def capture(name: str, folder: str = "debian12-part-a") -> Capture:
     p = TERMINAL / folder / (name if name.endswith(".txt") else f"{name}.txt")
     if not p.exists():
         raise FileNotFoundError(f"capture {p.relative_to(PROJECT)} is missing (see ASSETS.md)")
-    raw = p.read_text(encoding="utf-8").rstrip("\n").split("\n")
+    raw = [ln.rstrip("\r") for ln in p.read_text(encoding="utf-8").rstrip("\n").split("\n")]
     cmd = raw[0][2:] if raw[0].startswith("$ ") else ""
     body = raw[1:]
     code = 0
@@ -174,6 +175,28 @@ def pkg(name: str, where: str = "system", size: float = SMALL) -> VGroup:
 
 
 # ------------------------------------------------------------------ V2 · sys.path shelves
+def jar(color: str = SYSTEM, height: float = 0.36) -> VGroup:
+    """A small unlabelled jar glyph (a package on a shelf), in its shelf's colour."""
+    w = height * 0.8
+    body = RoundedRectangle(width=w, height=height * 0.78, corner_radius=height * 0.12,
+                            stroke_color=color, stroke_width=2.5).set_fill(color, 0.35)
+    lid = RoundedRectangle(width=w * 0.72, height=height * 0.18, corner_radius=height * 0.05,
+                           stroke_color=color, stroke_width=2).set_fill(color, 0.8)
+    lid.next_to(body, UP, buff=0.02)
+    return VGroup(body, lid)
+
+
+def jars(n: int, color: str = SYSTEM, height: float = 0.36) -> list:
+    return [jar(color, height) for _ in range(n)]
+
+
+def name_tag(target, name: str, color: str = INK, size: float = 22) -> VGroup:
+    """A name floating above a jar (only while the narration names it)."""
+    t = mono(name, size, color)
+    t.next_to(target, UP, buff=0.12)
+    return t
+
+
 class Shelves(VGroup):
     """sys.path drawn as shelves, top = searched first.
 
@@ -263,11 +286,12 @@ class PathDoors(VGroup):
 
     def knock(self, scene, word: str, found: int | None, step_time: float = 0.45,
               color: str = LOOKUP):
-        """`word` walks from the left, pausing at each door; enters door `found` (it turns GREEN-ish
-        in its own colour) or, with None, ends on a RED 'command not found'. Returns the word."""
+        """`word` appears above the first door and walks right, pausing at each door; it enters
+        door `found` (the door lights up in its own colour) or, with None, ends on a RED
+        'command not found' under the row (w.not_found). Returns the word."""
         w = mono(word, 26, color)
-        w.next_to(self.doors[0], LEFT, buff=0.5)
-        scene.play(FadeIn(w), run_time=0.3)
+        w.next_to(self.doors[0].frame, UP, buff=0.15)
+        scene.play(FadeIn(w, shift=DOWN * 0.2), run_time=0.3)
         stop = found if found is not None else len(self.doors) - 1
         for i in range(stop + 1):
             scene.play(w.animate.next_to(self.doors[i].frame, UP, buff=0.15), run_time=step_time)
@@ -275,7 +299,7 @@ class PathDoors(VGroup):
             scene.play(w.animate.move_to(self.doors[found].frame).scale(0.8),
                        self.doors[found].frame.animate.set_fill(self.doors[found].color, 0.35), run_time=0.4)
         else:
-            nf = label("command not found", 24, ERR).next_to(self.doors, RIGHT, buff=0.4)
+            nf = label("command not found", 24, ERR).next_to(self.doors, DOWN, buff=0.3)
             scene.play(w.animate.set_color(ERR), FadeIn(nf), run_time=0.4)
             w.not_found = nf
         return w
@@ -348,6 +372,42 @@ class VersionLine(VGroup):
 
 
 # ------------------------------------------------------------------ cost meter
+class CostDial(VGroup):
+    """The video's cost meter: a GOLD dial whose needle sweeps while a VM exists, with no digits
+    (no invented price). It never rewinds; .run(scene, turns, secs) sweeps it on, and the scene
+    simply stops calling it when the VM is deleted. .needle .tracker (angle in turns)."""
+
+    def __init__(self, radius: float = 0.55, caption: str | None = "cost", **kw):
+        super().__init__(**kw)
+        from manim import Arc, Circle, Dot, TAU
+        self.radius = radius
+        face = Circle(radius=radius, stroke_color=COST, stroke_width=3).set_fill(COST, 0.08)
+        ticks = VGroup(*[Line(UP * radius * 0.78, UP * radius * 0.95, color=COST, stroke_width=2)
+                         .rotate(-k * TAU / 12, about_point=ORIGIN) for k in range(12)])
+        self.tracker = ValueTracker(0.0)
+        hub = Dot(radius=0.05, color=COST)
+
+        def make_needle():
+            n = Line(ORIGIN, UP * radius * 0.75, color=COST, stroke_width=4)
+            n.rotate(-self.tracker.get_value() * TAU, about_point=ORIGIN)
+            return n.shift(face.get_center())
+
+        self.needle = always_redraw(make_needle)
+        self.face, self.ticks, self.hub = face, ticks, hub
+        self.add(face, ticks, self.needle, hub)
+        if caption:
+            self.caption = label(caption, CAPTION, COST).next_to(face, DOWN, buff=0.12)
+            self.add(self.caption)
+
+    def run(self, scene, turns: float = 0.5, seconds: float = 2.0):
+        scene.play(self.tracker.animate(rate_func=linear).increment_value(turns), run_time=seconds)
+
+    def freeze(self):
+        """Stop the needle where it is (call after the last run, e.g. on Delete)."""
+        self.needle.clear_updaters()
+        return self
+
+
 class CostMeter(VGroup):
     """A GOLD '$ 0.000' counter driven by a ValueTracker (dollars). .tracker .run(scene, dollars, secs)"""
 

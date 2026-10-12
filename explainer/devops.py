@@ -200,14 +200,16 @@ class Terminal(VGroup):
 
     Terminal(prompt="conny@instance-1:~$", width=12.0, rows=9, size=22, title="ssh · instance-1")
       .run(scene, cmd, output=None, type_time=None, out_time=0.5)   type a command, then print
-      .type(scene, cmd, type_time=None)                             type a command at the prompt
+      .type(scene, cmd, type_time=None, wrap=True)                  type a command at the prompt;
+                                                                    a long one folds with " \\"
+      .find(substring)                                              the latest line containing it
       .print(scene, lines, color=OUTPUT, run_time=0.5)              print output lines
       .set_prompt(prompt)                                           e.g. after `cd`
       .clear(scene)                                                 like `clear`
       .last(n=1)                                                    the last n line mobjects
-    The prompt is coloured like Debian's: user@host GREEN, path BLUE. A line of output can be a
-    string, or (string, colour). Long lines are cut with '…' (keep commands short on screen, or
-    pass wrap=True to .print to fold output lines).
+    The prompt is coloured like Debian's: user@host GREEN, path BLUE; a leading "(venv) " is
+    GREEN too. A line of output can be a string, or (string, colour). Long output lines are cut
+    with '…' unless .print/.run get wrap=True (then they fold at the edge, like a real terminal).
     """
 
     def __init__(self, prompt: str = "$", width: float = 12.0, rows: int = 9, size: float = 22,
@@ -248,11 +250,15 @@ class Terminal(VGroup):
         return s if len(s) <= self.max_chars else s[: self.max_chars - 1] + "…"
 
     def _prompt_colors(self, prompt: str) -> dict:
-        if "@" in prompt and ":" in prompt:
-            a = prompt.index(":")
+        colors, start = {}, 0
+        if prompt.startswith("(") and ") " in prompt:          # an active venv: "(app) user@host:..."
+            start = prompt.index(") ") + 2
+            colors[f"[0:{start - 1}]"] = S.GREEN
+        if "@" in prompt and ":" in prompt[start:]:
+            a = prompt.index(":", start)
             b = len(prompt.rstrip("$# ").rstrip())
-            return {f"[0:{a}]": PROMPT_USER, f"[{a + 1}:{b}]": PROMPT_PATH}
-        return {}
+            colors.update({f"[{start}:{a}]": PROMPT_USER, f"[{a + 1}:{b}]": PROMPT_PATH})
+        return colors
 
     def set_prompt(self, prompt: str) -> "Terminal":
         self.prompt = prompt
@@ -276,23 +282,79 @@ class Terminal(VGroup):
             self.lines.remove(m)
 
     # -- actions
-    def type(self, scene, cmd: str, type_time: float | None = None, color: str = INK) -> VGroup:
-        """Show the prompt and type `cmd` after it. Returns the line."""
+    def fold(self, text: str, first_prefix: int = 0) -> list[str]:
+        """Split a typed command line (prompt included) into rows of at most `max_chars`.
+        Breaks only at a space outside quotes, ends every row but the last with " \\" and
+        indents the next one by 4 spaces, so the rows paste back as one valid shell command.
+        A single token longer than a row is broken where it must (never inside the prompt)."""
+        limit = self.max_chars
+        if len(text) <= limit:
+            return [text]
+        rows, cur, indent = [], text, ""
+        while len(cur) > limit:
+            room = limit - 2                     # keep space for " \"
+            breaks, quote = [], None
+            for i, ch in enumerate(cur):
+                if quote:
+                    quote = None if ch == quote else quote
+                elif ch in "\"'":
+                    quote = ch
+                elif ch == " " and i > max(first_prefix if not rows else len(indent), len(indent)):
+                    breaks.append(i)
+            ok = [b for b in breaks if b <= room]
+            # prefer to break before an option ("-x" / "--xx"), so an option keeps its value
+            opt = [b for b in ok if b + 1 < len(cur) and cur[b + 1] == "-"]
+            lo = len(indent) + (room - len(indent)) * 0.5
+            if opt and opt[-1] >= lo:
+                ok = opt
+            cut = ok[-1] if ok else (breaks[0] if breaks and breaks[0] < len(cur) - 1 else room)
+            if cut > room:                        # no space early enough: hard break
+                cut = room
+                rows.append(cur[:cut] + " \\")
+                cur = "    " + cur[cut:]
+            else:
+                rows.append(cur[:cut] + " \\")
+                cur = "    " + cur[cut + 1:]
+            indent = "    "
+        rows.append(cur)
+        return rows
+
+    def type(self, scene, cmd: str, type_time: float | None = None, color: str = INK,
+             wrap: bool = True) -> VGroup:
+        """Show the prompt and type `cmd` after it. A command longer than a row folds onto
+        continuation rows (see fold; wrap=False cuts it with '…' instead). Returns the line, or
+        a VGroup of the rows when it folded (.rows)."""
         p = self.prompt + (" " if self.prompt and not self.prompt.endswith(" ") else "")
-        s = self._cut(p + cmd)
         t2c = self._prompt_colors(self.prompt)
-        line = mono_line(s, self.size, color, t2c=t2c)
-        self._make_room(scene, 1)
-        self._place(line, len(self.lines))
-        prompt_glyphs = glyph_range(line, 0, len(p))
-        cmd_glyphs = glyph_range(line, len(p))
-        self.lines.add(line)
+        texts = self.fold(p + cmd, first_prefix=len(p)) if wrap else [self._cut(p + cmd)]
+        self._make_room(scene, len(texts))
+        rows = []
+        for k, t in enumerate(texts):
+            ln = mono_line(t, self.size, color, t2c=t2c if k == 0 else None)
+            self._place(ln, len(self.lines))
+            self.lines.add(ln)
+            rows.append(ln)
+        prompt_glyphs = glyph_range(rows[0], 0, len(p))
+        typed = [glyph_range(rows[0], len(p))] + [glyph_range(r, 0) for r in rows[1:]]
+        cmd_glyphs = VGroup(*[g for grp in typed for g in grp])
         scene.add(prompt_glyphs)
         if len(cmd_glyphs):
-            rt = type_time if type_time is not None else min(2.0, max(0.4, 0.045 * len(cmd)))
+            rt = type_time if type_time is not None else min(2.4, max(0.4, 0.045 * len(cmd)))
             scene.play(ShowIncreasingSubsets(cmd_glyphs, rate_func=linear), run_time=rt)
-        scene.add(line)
-        return line
+        for r in rows:
+            scene.add(r)
+        if len(rows) == 1:
+            return rows[0]
+        g = VGroup(*rows)
+        g.rows, g.text = rows, " ".join(r.text for r in rows)
+        return g
+
+    def find(self, sub: str) -> VGroup:
+        """The most recent line on screen whose text contains `sub` (to highlight or underline it)."""
+        for ln in reversed(self.lines.submobjects):
+            if sub in getattr(ln, "text", ""):
+                return ln
+        raise KeyError(f"no terminal line contains {sub!r}")
 
     def print(self, scene, lines, color: str = OUTPUT, run_time: float = 0.5, wrap: bool = False,
               lag: float = 0.15) -> VGroup:
@@ -322,7 +384,8 @@ class Terminal(VGroup):
 
     def run(self, scene, cmd: str, output=None, type_time: float | None = None,
             out_time: float = 0.5, color: str = OUTPUT, wrap: bool = False) -> VGroup:
-        """Type `cmd`, then print `output` (a list of lines, or None). Returns the command line."""
+        """Type `cmd` (folded if long), then print `output` (a list of lines, or None; `wrap` folds
+        long output lines). Returns the command line (or its rows)."""
         line = self.type(scene, cmd, type_time)
         if output:
             self.print(scene, output, color=color, run_time=out_time, wrap=wrap)
