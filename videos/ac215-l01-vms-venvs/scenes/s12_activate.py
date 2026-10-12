@@ -136,6 +136,17 @@ def short_extra():
     return tag("extra", S.GREY)
 
 
+def row_extra() -> VGroup:
+    """A compact 'extra' tag (20 pt, one row high) for a command row too long for the house tag
+    (`(app) …$ python --version` leaves 1.19 of the 12.6 terminal's width)."""
+    t = label("extra", 20, S.GREY)
+    h = 0.34
+    b = RoundedRectangle(width=t.width + 0.3, height=h, corner_radius=h / 2, stroke_color=S.GREY,
+                         stroke_width=2).set_fill(S.BG, 0.92)
+    t.move_to(b)
+    return VGroup(b, t)
+
+
 def readme_card(line_no: int, body: VGroup, width: float | None = None) -> VGroup:
     head = VGroup(mono("README.md", 20, S.GREY), label(f"· line {line_no}", 20, S.GREY))
     head.arrange(RIGHT, buff=0.12)
@@ -273,8 +284,11 @@ class Activate(VoiceScene):
                 d.frame.set_stroke(col)
         if enter is not None:
             d = doors[enter]
-            self.play(fig.animate.move_to(d.frame).scale(0.78), d.frame.animate.set_fill(d.color, 0.45),
-                      run_time=0.5)
+            # the door opens (its knob goes) and the figure steps in; its word stays >= 20 pt
+            k = 0.77
+            assert fig.width * k <= d.frame.width - 0.1, "figure wider than the door"
+            self.play(fig.animate.scale(k).move_to(d.frame), d.frame.animate.set_fill(d.color, 0.45),
+                      d[1].animate.set_fill(opacity=0), run_time=0.5)
 
     # ------------------------------------------------------------- the scene
     def construct(self):
@@ -328,7 +342,7 @@ class Activate(VoiceScene):
             brace = Brace(ref, RIGHT, buff=0.04, color=S.GREY)
             lab_l = VGroup(label("launchers from", 22, S.GREY), label("the packages", 22, S.GREY))
             lab_l.arrange(DOWN, aligned_edge=LEFT, buff=0.06).next_to(brace, RIGHT, buff=0.12)
-            x_lead = 6.1
+            x_lead = 6.18                                  # clear of the python link's GREEN bar
             lead = VMobject(stroke_color=S.GREY, stroke_width=2).set_points_as_corners([
                 boxes[3].get_right(), [x_lead, boxes[3].get_y(), 0],
                 [x_lead, lab_l.get_bottom()[1] - 0.04, 0], [lab_l.get_right()[0] + 0.08, lab_l.get_bottom()[1] - 0.04, 0]])
@@ -429,7 +443,8 @@ class Activate(VoiceScene):
             self.play(FadeOut(VGroup(site, site_cap, b2, sp_ul, b3, folder)),
                       FadeOut(VGroup(card, *card.ticks)), tr.goto(10), run_time=0.5)
             t.clear(self, run_time=0.3)
-            self.resize(t, 3, run_time=0.6)
+            # the 9-row terminal stays while the command is typed (nothing else needs the frame
+            # yet); it shrinks to the strip as the new prompt is lifted out of it
             vo.wait_until("source dot venv")
             src = t.type(self, ACTIVATE, type_time=1.0)
             t.set_prompt(P_VENV)
@@ -437,11 +452,13 @@ class Activate(VoiceScene):
             vo.wait_until("Pause and run")
             yt = your_turn().next_to(p_venv.glyphs, RIGHT, buff=0.5)
             self.pin(p_venv, yt, run_time=0.4)
+            self.play(Indicate(substring(src, ACTIVATE), color=TURN, scale_factor=1.06), run_time=0.8)
+            self.add(src)
             vo.wait_until("Your prompt now")
             big = mono_line(P_VENV, 32, INK, t2c=t._prompt_colors(P_VENV)).move_to([0, -0.35, 0])
             app_p = substring(big, "(app)")
             app_box = SurroundingRectangle(app_p, buff=0.1, corner_radius=0.08, color=VENV, stroke_width=3)
-            self.play(TransformFromCopy(p_venv.glyphs, big.glyphs), run_time=0.9)
+            self.resize(t, 3, run_time=0.9, extra=[TransformFromCopy(p_venv.glyphs, big.glyphs)])
             self.play(Create(app_box), Indicate(app_p, color=VENV, scale_factor=1.25), run_time=0.8)
             vo.wait_until("The README's example")
             self.play(FadeIn(card92, shift=UP * 0.15), run_time=0.6)
@@ -514,10 +531,11 @@ class Activate(VoiceScene):
         # ========================================================== 4 · which python, python --version, which pip
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(actp, bar98, fig)), caption_extra(tr),
-                      new_door.frame.animate.set_fill(VENV, 0.1), run_time=0.5)
+                      new_door.frame.animate.set_fill(VENV, 0.1), new_door[1].animate.set_fill(opacity=1),
+                      run_time=0.5)
             self.resize(t, 6, run_time=0.6)
             l1 = self.type_cmd(t, "which python", 0.5)
-            self.pin(l1, short_extra().next_to(l1.strut, RIGHT, buff=0.35), run_time=0.25)
+            self.pin(l1, row_extra().next_to(l1.strut, RIGHT, buff=0.15), run_time=0.25)
             o1 = t.print(self, [WHICH_PY], run_time=0.3)[0]
             part = substring(o1, ".venv/bin")
             self.play(part.animate.set_color(VENV), Indicate(new_door.frame, color=VENV, scale_factor=1.08),
@@ -526,7 +544,9 @@ class Activate(VoiceScene):
 
             vo.wait_until("and python reports")
             l2 = self.type_cmd(t, "python --version", 0.5)
-            self.pin(l2, short_extra().next_to(l2.strut, RIGHT, buff=0.35), run_time=0.25)
+            x2 = row_extra().next_to(l2.strut, RIGHT, buff=0.15)
+            assert x2.get_right()[0] <= t.box.get_right()[0] - 0.1, "extra tag runs past the terminal"
+            self.pin(l2, x2, run_time=0.25)
             o2 = t.print(self, [PY_VER], run_time=0.3)[0]
             rec = recorded_tag().next_to(o2.strut, RIGHT, buff=0.4)
             self.pin(o2, rec, run_time=0.4)
@@ -537,15 +557,17 @@ class Activate(VoiceScene):
 
             vo.wait_until("And which pip")
             l3 = self.type_cmd(t, "which pip", 0.4)
-            ex3 = short_extra().next_to(l3.strut, RIGHT, buff=0.35)
-            self.pin(l3, ex3, run_time=0.25)
+            ex3 = row_extra().next_to(l3.strut, RIGHT, buff=0.15)
+            # the lookup first (pip walks past every door), then the empty answer
+            pipf = figure("pip").next_to(doors.doors[0].frame, UP, buff=0.12)
+            self.pin(l3, ex3, run_time=0.25, anim=AnimationGroup(FadeIn(ex3, shift=LEFT * 0.1),
+                                                                 FadeIn(pipf, shift=DOWN * 0.2)))
+            self.walk(pipf, doors.doors, len(doors.doors) - 1, step=0.1, knock=False)
             p_none = self.bare_prompt(t)
             nothing = tag("nothing", ERR).next_to(p_none.glyphs, RIGHT, buff=0.5)
-            self.pin(p_none, nothing, run_time=0.3)
-            pipf = figure("pip").next_to(doors.doors[0].frame, UP, buff=0.12)
-            self.play(FadeIn(pipf, shift=DOWN * 0.2), run_time=0.25)
-            self.walk(pipf, doors.doors, len(doors.doors) - 1, step=0.16, knock=False)
-            self.play(pipf.animate.set_color(ERR), run_time=0.3)
+            self.pin(p_none, nothing, run_time=0.35,
+                     anim=AnimationGroup(FadeIn(nothing, shift=LEFT * 0.1), pipf.animate.set_color(ERR)))
+        self.wait(0.6)                                   # let "nothing" land before the terminal goes
 
         # ========================================================== 5 · erratum: a uv venv has no pip
         dd = doors.doors
@@ -563,7 +585,7 @@ class Activate(VoiceScene):
         ill = VGroup(illustration_tag(), label("a machine with a system pip", 22, S.GREY)).arrange(RIGHT, buff=0.25)
         ill.move_to([0, 3.25, 0]).align_to([6.5, 0, 0], RIGHT)
         refuse = chip("externally-managed-environment", ERR, size=22, font=MONO, fill_opacity=0.12)
-        refuse.move_to([usr_bin.frame.get_x(), lr_y - 0.36, 0])
+        refuse.move_to([usr_bin.frame.get_x(), lr_y - 0.5, 0])          # clear of the PATH arrow
         if refuse.get_right()[0] > 6.4:
             refuse.shift(LEFT * (refuse.get_right()[0] - 6.4))
         uvadd = chip("uv add <package>", VENV, size=26, font=MONO).move_to([-3.4, -2.82, 0])
@@ -599,7 +621,9 @@ class Activate(VoiceScene):
             self.play(Indicate(refuse, color=ERR, scale_factor=1.06), run_time=0.6)
 
             vo.wait_until("To add a package")
-            self.play(FadeIn(uvadd, shift=RIGHT * 0.2), run_time=0.6)
+            # the "what if" picture has made its point: it steps back for the fix
+            self.play(FadeIn(uvadd, shift=RIGHT * 0.2),
+                      VGroup(dd, path_lbl, lr, pipf, refuse, ill).animate.fade(0.65), run_time=0.6)
             vo.wait_until("which also records")
             self.play(GrowArrow(a_toml), FadeIn(f_toml, shift=LEFT * 0.1), run_time=0.6)
             self.play(GrowArrow(a_lock), FadeIn(f_lock, shift=LEFT * 0.1), run_time=0.6)
@@ -637,9 +661,10 @@ class Activate(VoiceScene):
         new_ssh = tag("new SSH window", S.GREY).move_to(t2.bar).align_to(t2.box, LEFT).shift(RIGHT * 0.9)
         new_ssh.set_y(t2.box.get_top()[1] - t2.bar_h / 2)
         mp = mini_path([UV, S.GREY, S.GREY, S.GREY, S.GREY])
-        mp.next_to(t2.box, UP, buff=0.3).align_to(t2.box, RIGHT).shift(LEFT * 0.3)
-        only = label("activation: this shell only", 24, INK).next_to(mp, LEFT, buff=0.6)
         mgreen = mini_door(VENV)
+        door_step = mgreen.width + 0.12                 # the doors make room for the GREEN one
+        mp.next_to(t2.box, UP, buff=0.3).align_to(t2.box, RIGHT).shift(LEFT * (0.3 + door_step))
+        only = label("activation: this shell only", 24, INK).next_to(mp, LEFT, buff=0.6)
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(dd, path_lbl, lr, pipf, card5, err5, pip_ul, nopip_note, ill, refuse,
@@ -676,14 +701,14 @@ class Activate(VoiceScene):
             t2.set_prompt(P_REPO)
             self.bare_prompt(t2)
             vo.wait_until("and activate again")
-            self.type_cmd(t2, ACTIVATE, 0.8)
+            self.type_cmd(t2, ACTIVATE, 0.7)
             t2.set_prompt(P_VENV)
             p_new = self.bare_prompt(t2)
             mgreen.move_to(mp.doors[0])
-            self.play(mp.doors.animate.shift(RIGHT * (mgreen.width + 0.12)), run_time=0.3)
+            self.play(mp.doors.animate.shift(RIGHT * door_step), run_time=0.3)
             mgreen.shift(UP * 0.7).set_opacity(0)
-            self.play(mgreen.animate.shift(DOWN * 0.7).set_opacity(1), run_time=0.4)
-            self.play(Indicate(substring(p_new, "(app)"), color=VENV, scale_factor=1.35), run_time=0.7)
+            self.play(mgreen.animate.shift(DOWN * 0.7).set_opacity(1),
+                      Indicate(substring(p_new, "(app)"), color=VENV, scale_factor=1.35), run_time=0.7)
             self.add(p_new)
 
         # ========================================================== 7 · step 11: the three runs
@@ -748,7 +773,9 @@ class Activate(VoiceScene):
             w.desc.set_opacity(0)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(real, note7)), caption_extra(tr), run_time=0.4)
+            # the YELLOW "look here" on the Input line is done: the chips are the subject now
+            self.play(FadeOut(VGroup(real, note7)), FadeOut(ib), caption_extra(tr), run_time=0.4)
+            in_fr.remove(ib)
             self.resize(t, 3, run_time=0.7)
             self.play(LaggedStart(FadeIn(w1[0], shift=RIGHT * 0.2), FadeIn(w2[0], shift=RIGHT * 0.2), lag_ratio=0.3),
                       run_time=0.9)
@@ -758,11 +785,13 @@ class Activate(VoiceScene):
             vo.wait_until("First, uv run")
             self.play(Indicate(w1.chip, color=VENV, scale_factor=1.08), run_time=0.7)
             vo.wait_until("syncs the venv")
-            self.play(w1.desc.animate.set_opacity(1), run_time=0.5)
+            self.play(text_part(w1.desc, "syncs if needed,").animate.set_opacity(1), run_time=0.5)
+            vo.wait_until("then runs the app")
+            self.play(text_part(w1.desc, "then runs in the venv").animate.set_opacity(1), run_time=0.5)
             vo.wait_until("Or call")
             self.play(Indicate(w2.chip, color=VENV, scale_factor=1.08), run_time=0.7)
             self.play(w2.desc.animate.set_opacity(1), run_time=0.5)
-            self.play(Indicate(code_like(w2.chip, ".venv/bin/python"), color=S.WHITE, scale_factor=1.1), run_time=0.7)
+            self.play(Indicate(code_like(w2.chip, ".venv/bin/python"), color=S.WHITE, scale_factor=1.04), run_time=0.7)
 
         # ========================================================== 9 · why source, not run
         l5 = mono_line(L5, 22, OUTPUT).move_to([0, 2.05, 0])
@@ -788,6 +817,7 @@ class Activate(VoiceScene):
         exits = label("exits at once", 24, ERR).next_to(child.frame, RIGHT, buff=0.3)
         if exits.get_right()[0] > 6.4:
             exits.next_to(child.frame, UP, buff=0.15).align_to(child.frame, RIGHT)
+        ill9 = illustration_tag().next_to(parent.frame, RIGHT, buff=0.4).align_to(parent.frame, UP)
 
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(VGroup(w1, w2)), FadeOut(VGroup(t.box, t.bar, t.dots, t.title, t.lines)),
@@ -795,11 +825,14 @@ class Activate(VoiceScene):
             for ln in list(t.lines):
                 t.lines.remove(ln)
             self.play(FadeIn(l5_cap), FadeIn(l5, shift=DOWN * 0.15), run_time=0.6)
+            vo.wait_until("the activate script")
+            self.play(Indicate(substring(l5, "activate"), color=S.WHITE, scale_factor=1.15), run_time=0.7)
+            self.add(l5)
             vo.wait_until("It isn't even")
             self.play(Create(mode_ul), FadeIn(not_x, shift=UP * 0.1), run_time=0.6)
             self.play(Indicate(mode, color=S.WHITE, scale_factor=1.15), run_time=0.7)
             vo.wait_until("and run as a program")
-            self.play(FadeIn(parent, shift=UP * 0.15), run_time=0.5)
+            self.play(FadeIn(parent, shift=UP * 0.15), FadeIn(ill9), run_time=0.5)
             self.play(Create(spawn), FadeIn(child, shift=DOWN * 0.3, scale=0.85), run_time=0.6)
             cg.move_to(child.row.doors[0])
             self.play(child.row.doors.animate.shift(RIGHT * (cg.width + 0.12)), run_time=0.3)

@@ -29,18 +29,21 @@ Beats (script.md "## S06", one voiceover block each):
  6  TRACKER A9 · extra. The boxes shrink away; a fresh 13-row terminal types `python3 cli.py -t
     hello -d xx` (extra; folds onto 2 rows); `xx` underlines RED; 14-badlang.txt lines 14-15, …,
     21-23, …, 39 (wrap); line 21 lights up RED; then V8 updates: lines 21, 23 and 39 lift into the
-    boxes; "network/IP" underlines RED with a RED "network?" tag; a GREY "erratum · cli.py lines
-    32–37" tag under box 2 (BRIEF erratum 5); a GREY chip "valid codes: README.md · table at the
-    bottom".
+    boxes; "network/IP" underlines RED with a RED "network?" tag on box 2's bottom edge; a GREY
+    "erratum · cli.py lines 32–37" tag under box 2 (BRIEF erratum 5); a GREY chip "valid codes:
+    README.md · table at the bottom".
  7  Three chips at right under "if you hit a 429": wait and retry · a VM in another region · run it
     on your laptop. At left, `Input: I love cheese` (debian12-part-a/10-run-default.txt line 14)
     with a GREEN check, "got this far → your packages work", and a GREY note "can't open file
     'cli.py'? → cd simple-translate". Fade out to an empty frame.
 
 Every terminal line comes from capture(...); every code line from excerpt("cli.py", a, b).
+The terminals scroll with calm_scroll() (rows leaving the top fade in place instead of sliding up
+over the title bar), a scene-local stand-in until devops.Terminal._make_room does the same.
 """
 
 import textwrap
+import types
 
 import numpy as np
 from manim import *
@@ -95,14 +98,39 @@ PT = 20                          # V8 box text
 PITCH = line_pitch(PT)
 BOX_W = 12.6
 X_TEXT = -BOX_W / 2 + 0.22       # left edge of the box text
-PAD_T, PAD_B = 0.25, 0.2
+PAD_T, PAD_B = 0.3, 0.2          # PAD_T leaves room under the legend tag on the top edge
+LEGEND_UP = 0.06                 # the legend tag sits a little above the box's top edge
 Y3 = 1.5                         # box 1 top (beats 3 and 6)
 GAP3 = 1.1                       # room between the boxes for the chain arrow and line 26
-Y4 = 0.1                         # box 1 top while the V6 picture is above it (beat 4)
-Y5 = 2.5                         # box 1 top with the code panel under the boxes (beat 5)
-GAP5 = 0.6
+DY4 = -0.6                       # beat 4: the V6 picture and box 1 sit this much lower
+Y4 = 0.1 + DY4                   # box 1 top while the V6 picture is above it (beat 4)
+Y5 = 2.45                        # box 1 top with the code panel under the boxes (beat 5)
+GAP5 = 0.55
 CHAIN_X = -2.9                   # x of the chain arrow (right of box 2's legend)
 WRAP = 66                        # the RuntimeError line folds at spaces into 3 rows of <= 66
+
+
+def _calm_make_room(self, scene, n_new: int, run_time: float = 0.45) -> None:
+    """Terminal scrolling, scene-local: the rows leaving the top fade out where they are
+    (devops' version slides them up across the title bar and above the box), then the rest
+    moves up. Bound onto this scene's terminals with calm_scroll()."""
+    overflow = len(self.lines) + n_new - self.rows
+    if overflow <= 0:
+        return
+    gone = VGroup(*self.lines.submobjects[:overflow])
+    stay = VGroup(*self.lines.submobjects[overflow:])
+    anims = [FadeOut(gone, rate_func=lambda a: smooth(min(1.0, a / 0.4)))]
+    if len(stay):
+        anims.append(stay.animate(rate_func=lambda a: smooth(max(0.0, (a - 0.3) / 0.7)))
+                     .shift(UP * self.pitch * overflow))
+    scene.play(*anims, run_time=run_time)
+    for m in gone:
+        self.lines.remove(m)
+
+
+def calm_scroll(t):
+    t._make_room = types.MethodType(_calm_make_room, t)
+    return t
 
 
 def place_tracker(tr):
@@ -201,7 +229,7 @@ def err_box(texts, legend: str) -> VGroup:
     frame = box(BOX_W, h, ERR, fill_opacity=0.08).move_to([0, -h / 2, 0])
     rows.shift(DOWN * PAD_T)
     lg = tag(legend, ERR)
-    lg.move_to([frame.get_left()[0] + 0.3 + lg.width / 2, 0, 0])
+    lg.move_to([frame.get_left()[0] + 0.3 + lg.width / 2, LEGEND_UP, 0])
     g = VGroup(frame, rows, lg)
     g.frame, g.rows, g.legend = frame, rows, lg
     return g
@@ -310,7 +338,7 @@ class RunIt(VoiceScene):
         assert len(SAY) == 8, f"S06 has {len(SAY)} SAY lines; this scene times 8"
 
         tr = place_tracker(tracker_a(8))
-        t = term(prompt=P_REPO, rows=12)
+        t = calm_scroll(term(prompt=P_REPO, rows=12))
         t.shift(np.array([-t.box.get_center()[0], BOTTOM - t.box.get_bottom()[1], 0]))
         cw = t.max_chars
 
@@ -336,22 +364,21 @@ class RunIt(VoiceScene):
 
             vo.wait_until("You should see the banner")
             t.print(self, EXP_OUT[0:8], run_time=1.5, lag=0.35)          # file lines 2-9
+            # each line arrives as it is named (the words come ~1 s apart: no extra beats here)
             vo.wait_until("the arguments")
-            args = t.print(self, EXP_OUT[8:11], run_time=0.5)[-1]        # file lines 10-12
-            self.play(Indicate(args.glyphs, color=INK, scale_factor=1.04), run_time=0.6)
+            t.print(self, EXP_OUT[8:11], run_time=0.5)                   # file lines 10-12
             vo.wait_until("your input")
-            inp = t.print(self, EXP_OUT[11:13], run_time=0.4)[-1]        # file lines 13-14
-            self.play(Indicate(inp.glyphs, color=INK, scale_factor=1.08), run_time=0.5)
+            t.print(self, EXP_OUT[11:13], run_time=0.4)                  # file lines 13-14
             vo.wait_until("and the output")
-            out0 = t.print(self, EXP_OUT[13:14], run_time=0.4)[0]        # file line 15
+            out0 = t.print(self, EXP_OUT[13:14], run_time=0.35)[0]       # file line 15
             gbar0 = row_bar([out0], VENV, 0.2)
-            self.play(FadeIn(gbar0), out0.glyphs.animate.set_color(VENV), run_time=0.5)
+            self.play(FadeIn(gbar0), out0.glyphs.animate.set_color(VENV), run_time=0.45)
             self.attach(out0, gbar0, behind=True)
+            vo.wait_until("I love cheese, in Italian")
+            self.play(Indicate(substring(out0, "Adoro il formaggio"), color=INK, scale_factor=1.05),
+                      run_time=0.8)
             exp0 = beside(row_tag("expected output"), out0)
             self.pin(out0, exp0, run_time=0.4)
-            vo.wait_until("I love cheese, in Italian")
-            self.play(Indicate(substring(out0, "Adoro il formaggio"), color=VENV, scale_factor=1.12),
-                      run_time=0.8)
 
             vo.wait_until("If you get a long red error")
             banner_row = t.lines[2]
@@ -395,23 +422,25 @@ class RunIt(VoiceScene):
             opt_marks = [(rb, ul_t), (rb, ul_s), (rc, lab_t), (rc, lab_s), (rc, ul_d), (rc, lab_d)]
             for row, m in opt_marks:                  # they scroll with the command
                 self.attach(row, m)
-            self.wait(0.4)
             es_out = t.print(self, ES_OUT, run_time=0.5)                  # file lines 12-15
             ex_es = beside(row_tag("expected output"), es_out[-1])
-            self.pin(es_out[-1], ex_es, run_time=0.4)
+            self.pin(es_out[-1], ex_es, run_time=0.3)
 
             vo.wait_until("Copy them from the README")
-            fr = t.type(self, RUN_FR, 1.5)
+            self.unpin(opt_marks, 0.3)
+            fr = t.type(self, RUN_FR, 1.1)
             fc = fr.rows[-1]
             yt1 = beside(your_turn(), fc)
             copy_note = beside(row_tag("copy from the README, quotes included"), fc,
                                min_x=yt1.get_right()[0] + 0.3)
-            self.unpin(opt_marks, 0.4, FadeIn(VGroup(yt1, copy_note), shift=LEFT * 0.1))
-            self.attach(fc, yt1)
-            self.attach(fc, copy_note)
             quotes = VGroup(*[g for r in fr.rows for i, ch in enumerate(r.text) if ch == '"'
                               for g in glyph_range(r, i, i + 1)])
-            self.play(*[Indicate(q, color=TURN, scale_factor=1.8) for q in quotes], run_time=0.7)
+            vo.wait_until("quotes included")
+            self.play(FadeIn(copy_note, shift=LEFT * 0.1),
+                      *[Indicate(q, color=TURN, scale_factor=1.8) for q in quotes], run_time=0.7)
+            self.attach(fc, copy_note)
+            vo.wait_until("pause to run both")
+            self.pin(fc, yt1, run_time=0.4)
             fr_out = t.print(self, FR_OUT, run_time=0.4)                  # file lines 12-15
             ex_fr = beside(row_tag("expected output"), fr_out[-1])
             self.pin(fr_out[-1], ex_fr, run_time=0.3)
@@ -424,7 +453,7 @@ class RunIt(VoiceScene):
                 gb = row_bar([o], VENV, 0.2)
                 self.play(FadeIn(gb), o.glyphs.animate.set_color(VENV), run_time=0.4)
                 self.attach(o, gb, behind=True)
-                self.play(Indicate(VGroup(*o.glyphs[7:]), color=VENV, scale_factor=1.08), run_time=0.6)
+                self.play(Indicate(VGroup(*o.glyphs[7:]), color=INK, scale_factor=1.04), run_time=0.6)
 
         # ========================================================== 2 · the real run: a 429
         rec = recorded_tag("real capture · 2026-10-12")
@@ -506,7 +535,7 @@ class RunIt(VoiceScene):
         d429 = substring(b1.rows[0], "429")
         ring429 = Ellipse(width=d429.width + 0.5, height=0.6, color=TURN, stroke_width=4)
         vm = machine_box("VM", "ac215-l01", width=3.3, height=1.75, color=CLOUD)
-        vm.move_to([-6.3 + vm.width / 2, 2.62 - vm.height / 2, 0])
+        vm.move_to([-6.3 + vm.width / 2, 2.62 + DY4 - vm.height / 2, 0])
         app = mono("cli.py", 22, INK).move_to(vm.body).shift(LEFT * 0.35)
         ok = check_mark(0.36, VENV).next_to(app, RIGHT, buff=0.3)
         gcl = cloud(2.4, CLOUD).move_to([4.3, vm.body.get_center()[1] + 0.12, 0])
@@ -580,12 +609,12 @@ class RunIt(VoiceScene):
             self.play(FadeOut(bar32), FadeIn(bars_msg), run_time=0.5)
             self.play(Indicate(b2.rows, color=INK, scale_factor=1.02), run_time=0.7)
             vo.wait_until("chained to the original")
-            self.play(Create(fe_ul), fe.animate.set_color(LOOKUP), run_time=0.4)
+            self.play(Create(fe_ul), fe.animate.set_color(LOOKUP), FadeOut(bars_msg), run_time=0.4)
             self.play(TransformFromCopy(fe, fe_lab), Indicate(arr5, color=LOOKUP, scale_factor=1.15),
                       run_time=0.8)
 
         # ========================================================== 6 · a typo, the same wrapper
-        t2 = term(prompt=P_REPO, rows=13)
+        t2 = calm_scroll(term(prompt=P_REPO, rows=13))
         t2.shift(np.array([-t2.box.get_center()[0], BOTTOM - t2.box.get_bottom()[1], 0]))
         rec2 = on_frame(recorded_tag("real capture · 2026-10-12"), t2)
         lines_bad = []
@@ -596,8 +625,8 @@ class RunIt(VoiceScene):
         c1, arr6, ct6, c2 = v8([B21], wrap39, B23)
         net = substring(c2.rows[1], "network/IP")
         net_ul = under(net, ERR, y=c2.rows[1].strut.get_bottom()[1] - 0.01)
-        net_q = tag("network?", ERR, size=24)
-        net_q.move_to([c2.frame.get_right()[0] - 0.3 - net_q.width / 2, c2.rows[2].strut.get_center()[1], 0])
+        net_q = tag("network?", ERR)                 # on box 2's bottom edge, mirroring its legend
+        net_q.move_to([c2.frame.get_right()[0] - 0.3 - net_q.width / 2, c2.frame.get_bottom()[1], 0])
         errat = tag("erratum · cli.py lines 32–37", S.GREY)
         errat.move_to([c2.frame.get_left()[0] + 0.3 + errat.width / 2, c2.frame.get_bottom()[1] - 0.45, 0])
         codes = boxed(mixed([("valid codes:", "label"), ("README.md", "mono"),
@@ -605,7 +634,7 @@ class RunIt(VoiceScene):
         codes.move_to([0, c2.frame.get_bottom()[1] - 1.3, 0])
 
         with self.voiceover(SAY[6]) as vo:
-            gone = VGroup(b1, b2, arr5, fe_lab, p32, bars_msg, fe_ul)
+            gone = VGroup(b1, b2, arr5, fe_lab, p32, fe_ul)
             self.play(FadeOut(gone, scale=0.5), caption_extra(tr), run_time=0.7)
             self.play(FadeIn(t2), FadeIn(rec2), run_time=0.6)
             vo.wait_until("This extra command")
@@ -619,8 +648,7 @@ class RunIt(VoiceScene):
             xx_ul = line_under(bc, "xx", ERR)
             self.play(Create(xx_ul), xx.animate.set_color(ERR), run_time=0.5)
             self.attach(bc, xx_ul)
-            self.play(Indicate(xx, color=ERR, scale_factor=1.4), run_time=0.6)
-            out6 = t2.print(self, lines_bad, wrap=True, run_time=1.4, lag=0.1)
+            out6 = t2.print(self, lines_bad, wrap=True, run_time=1.1, lag=0.1)
             assert len(t2.lines) == 13, len(t2.lines)
             q21, q23, q39 = [out6[3]], list(out6[5:7]), list(out6[8:11])
             assert q21[0].text == B21 and "".join(r.text for r in q39) == B39
@@ -673,7 +701,7 @@ class RunIt(VoiceScene):
                       mixed([("→", "mono"), ("cd simple-translate", "mono")], S.GREY, 22)) \
             .arrange(DOWN, buff=0.15, aligned_edge=LEFT)
         left = VGroup(VGroup(inp, tick), works, cant).arrange(DOWN, buff=0.45, aligned_edge=LEFT)
-        left.move_to([-3.4, -0.2, 0])
+        left.move_to([-3.4, 0, 0]).align_to(right, UP)          # the two columns share a top line
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(c1, c2, ct6, arr6, net_ul, net_q, errat, codes)), caption_extra(tr, False),

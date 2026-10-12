@@ -56,7 +56,7 @@ from explainer.devops import (CAPTION, HOUSE_CODE_STYLE, MONO, OUTPUT, PANEL, bo
 from explainer.scene import VoiceScene
 
 from common import (ERR, INK, NARRATION, P_REPO, SYSTEM, TURN, UV, VENV, capture, excerpt,
-                    illustration_tag, jar, pkg, term, tracker_b)
+                    illustration_tag, jar, term, tracker_b)
 
 SAY = NARRATION["S11"]
 PA, PB, PB13 = "debian12-part-a", "debian12-part-b", "debian13-part-b"
@@ -162,11 +162,26 @@ def short_extra():
     return tag("extra", S.GREY)
 
 
+def mchip(name: str, color: str, size: float = 22) -> VGroup:
+    """chip(..., font=MONO) with its text on a common baseline: chip() centres the glyphs' bounding
+    box, so 'idna' or 'h11' (no descender) sat lower than 'anyio'. Centre the full-height line
+    instead (the same strut mono_line uses), so every chip in a row reads on one line."""
+    c = chip(name, color, size=size, font=MONO)
+    ref = mono_line(name, size)
+    c.text.move_to(c.box).shift(UP * (ref.glyphs.get_center()[1] - ref.strut.get_center()[1]))
+    return c
+
+
+def vpkg(name: str) -> VGroup:
+    """A package chip in the venv (GREEN), like common.pkg(name, 'venv', 22), baseline-levelled."""
+    return mchip(name, VENV, 22)
+
+
 def node_chip(name: str) -> VGroup:
     """A node of V5: the project itself GREY, a package GREEN (it lives in the venv)."""
     if name == "app":
-        return chip("app", S.GREY, size=22, font=MONO)
-    return pkg(name, "venv", 22)
+        return mchip("app", S.GREY, 22)
+    return vpkg(name)
 
 
 def vtag(v: str) -> VGroup:
@@ -324,12 +339,13 @@ class ResolveLock(VoiceScene):
         t.rows = rows
         return t
 
-    def hl(self, line, color, opacity=0.22, sub=None):
-        """A translucent bar behind a terminal line (or one part of it), pinned to the line."""
+    def hl(self, line, color, opacity=0.22, sub=None, extra=(), run_time=0.3):
+        """A translucent bar behind a terminal line (or one part of it), pinned to the line.
+        `extra` animations play together with it."""
         tgt = sub if sub is not None else line.glyphs
         bar = Rectangle(width=tgt.width + 0.2, height=line.strut.height * 1.08, stroke_width=0) \
             .set_fill(color, opacity).move_to([tgt.get_center()[0], line.strut.get_center()[1], 0])
-        return self.pin(line, bar, behind=True, run_time=0.3, anim=FadeIn(bar))
+        return self.pin(line, bar, behind=True, run_time=run_time, anim=AnimationGroup(FadeIn(bar), *extra))
 
     def ponder_over(self, question, seconds, center):
         """pause_and_ponder's card and draining timer, placed over the terminal (so the
@@ -408,7 +424,7 @@ class ResolveLock(VoiceScene):
         counter.move_to([0, ROW_A, 0]).align_to([-6.3, 0, 0], LEFT)
         p1s = chip("part 1: 12", SYSTEM, size=24)
         p1s.move_to([0, ROW_B, 0]).align_to([-6.3, 0, 0], LEFT)
-        G = {n: pkg(n, "venv", 22) for n in PKGS}
+        G = {n: vpkg(n) for n in PKGS}
         rowa, rowb = VGroup(*[G[n] for n in PKGS[:6]]), VGroup(*[G[n] for n in PKGS[6:]])
         for r, y in ((rowa, ROW_A), (rowb, ROW_B)):
             r.arrange(RIGHT, buff=0.2).move_to([0, y, 0]).align_to([-3.75, 0, 0], LEFT)
@@ -425,15 +441,14 @@ class ResolveLock(VoiceScene):
             return anims
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(card), FadeOut(VGroup(toml, bars, brace, badge)), run_time=0.4)
-            self.play(cur.animate.stretch(0.02, 1, about_edge=UP).set_opacity(0), run_time=0.4)
+            # "It's 11" is the first word: lift the curtain, print and lift the 11 without delay
+            self.resize(t, 8, run_time=0.45, extra=[FadeOut(card), FadeOut(VGroup(toml, bars, brace, badge)),
+                                                     cur.animate.stretch(0.02, 1, about_edge=UP).set_opacity(0)])
             self.remove(cur)
-            self.resize(t, 8, run_time=0.4)
-            res = self.fast_print(t, SYNC_RES, run_time=0.35)
+            res = self.fast_print(t, SYNC_RES, run_time=0.3)
             inst = res[2]
-            self.hl(inst, TURN)
-            self.play(ReplacementTransform(substring(inst, "11").copy(), counter.text), FadeIn(counter.box),
-                      run_time=0.6)
+            self.hl(inst, TURN, run_time=0.6,
+                    extra=[ReplacementTransform(substring(inst, "11").copy(), counter.text), FadeIn(counter.box)])
             self.regroup(counter)
             vo.wait_until("one fewer")
             self.play(ReplacementTransform(part1, p1s), run_time=0.6)
@@ -470,8 +485,7 @@ class ResolveLock(VoiceScene):
 
         # ========================================================== 2 · uv tree
         N = {}
-        wish = {"art": chip("art>=6.5", VENV, size=22, font=MONO),
-                "googletrans": chip("googletrans==4.0.2", VENV, size=22, font=MONO)}
+        wish = {"art": mchip("art>=6.5", VENV), "googletrans": mchip("googletrans==4.0.2", VENV)}
         anims = []
         for n in PKGS:
             if n in wish:
@@ -486,7 +500,7 @@ class ResolveLock(VoiceScene):
         def grow(i0, i1, firsts):
             """Print rows i0..i1-1 of the uv tree output in the strip; each name flies to its node,
             which lights up, and its edge grows from the parent (a repeated row: only the edge)."""
-            new = self.fast_print(t, TREE_OUT[i0:i1], run_time=0.25, scroll=0.18)
+            new = self.fast_print(t, TREE_OUT[i0:i1], run_time=0.2, scroll=0.12)
             anims, flies = [], []
             for k, ln in zip(range(i0, i1), new):
                 if k == 0:                                     # "Resolved 13 packages in 1ms"
@@ -509,7 +523,7 @@ class ResolveLock(VoiceScene):
                     E[(parent, name)] = edge(VGroup(nodes_lit[parent]), VGroup(nodes_lit[name]), bow=parent != "app")
                     e_ = E[(parent, name)]
                     anims.append(GrowArrow(e_) if isinstance(e_, Arrow) else Create(e_))
-            self.play(*anims, run_time=0.6)
+            self.play(*anims, run_time=0.45)        # quick: the names come about 0.8 s apart
             self.remove(*flies)
             return new
 
@@ -546,6 +560,9 @@ class ResolveLock(VoiceScene):
         # ========================================================== 3 · versions, then the receipt
         names = list(N)                                        # app first, then tree order
         tall = {n: N[n].copy().move_to(node_pos(n, ROWS_TALL)) for n in names}
+        # edges first leave from the chips themselves, and stretch below each version tag only as
+        # that tag clicks in (an edge never starts in mid-air)
+        tall_E0 = {k: edge(VGroup(tall[k[0]]), VGroup(tall[k[1]]), bow=k[0] != "app") for k in E}
         tall_E = {k: edge(VGroup(tall[k[0]]), VGroup(tall[k[1]]), room=0 if k[0] == "app" else TAG_ROOM,
                           bow=k[0] != "app") for k in E}
         tags = {n: vtag(VERS[n]).next_to(tall[n], DOWN, buff=0.05) for n in names if n != "app"}
@@ -562,7 +579,7 @@ class ResolveLock(VoiceScene):
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(frame, t.lines), shift=DOWN * 0.4), caption_extra(tr, False),
-                      *[Transform(N[n], tall[n]) for n in names], *[Transform(E[k], tall_E[k]) for k in E],
+                      *[Transform(N[n], tall[n]) for n in names], *[Transform(E[k], tall_E0[k]) for k in E],
                       counter.animate.move_to(counter3), run_time=0.9)
             vo.wait_until("one exact version")
             order = [n for n, _, _ in TREE if n != "app"]
@@ -570,8 +587,10 @@ class ResolveLock(VoiceScene):
             for n in order:
                 if n not in seen:
                     seen.append(n)
-            self.play(LaggedStart(*[FadeIn(tags[n], shift=UP * 0.25, scale=1.25) for n in seen], lag_ratio=0.25),
-                      run_time=2.6)
+            def click(n):
+                return AnimationGroup(FadeIn(tags[n], shift=UP * 0.25, scale=1.25),
+                                      *[Transform(E[k], tall_E[k]) for k in E if k[0] == n])
+            self.play(LaggedStart(*[click(n) for n in seen], lag_ratio=0.25), run_time=2.6)
             for n in seen:
                 N[n].add(tags[n])
             vo.wait_until("versions that all")
@@ -633,9 +652,9 @@ class ResolveLock(VoiceScene):
         te_lab.move_to([0, ROWS_COMPACT[2], 0]).align_to([C["anyio"].get_left()[0] - 0.22, 0, 0], RIGHT)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(wl, wl_cap, rc_cap)), run_time=0.4)
-            self.play(FadeIn(ctree, target_position=scroll.paper.get_center(), scale=0.12),
-                      FadeOut(scroll, scale=0.3), run_time=1.1)
+            self.play(FadeOut(VGroup(wl, wl_cap, rc_cap)),
+                      FadeIn(ctree, target_position=scroll.paper.get_center(), scale=0.12),
+                      FadeOut(scroll, scale=0.3), run_time=1.0)
             self.play(FadeIn(t_q, shift=LEFT * 0.15), run_time=0.4)
             vo.wait_until("It's 11 packages")
             pk = [C[n] for n in names if n != "app"]
@@ -735,7 +754,7 @@ class ResolveLock(VoiceScene):
         def student(day, x):
             p = person_icon(S.GREY, 0.95)
             d = label(day, 26, INK).next_to(p, DOWN, buff=0.15)
-            run = chip("uv sync", UV, size=22, font=MONO)
+            run = mchip("uv sync", UV)
             g = VGroup(p, d)
             g.move_to([x, 1.75, 0])
             run.next_to(p, RIGHT, buff=0.35)
@@ -779,7 +798,8 @@ class ResolveLock(VoiceScene):
             self.play(*[Indicate(newer[i], color=S.WHITE, scale_factor=1.15) for i in newer], run_time=0.8)
             vo.wait_until("With the same")
             self.play(FadeOut(no_lock), FadeIn(handoff, scale=0.5), run_time=0.5)
-            self.play(handoff.animate.next_to(runB, RIGHT, buff=0.3), run_time=1.0)
+            # an arc over the second student (a straight move would slide across the icon and its chip)
+            self.play(handoff.animate(path_arc=-PI / 3).next_to(runB, RIGHT, buff=0.3), run_time=1.0)
             vo.wait_until("they get exactly")
             self.play(*[FadeOut(newer[i], scale=0.6) for i in newer],
                       *[FadeIn(tB.pills[i], scale=1.4) for i in newer], run_time=0.6)
@@ -795,6 +815,7 @@ class ResolveLock(VoiceScene):
             vo.wait_until("First, ls")
             c1 = t7.type(self, "ls -a", type_time=0.4)
             self.pin(c1, short_extra().next_to(c1.strut, RIGHT, buff=0.35), run_time=0.3)
+            vo.wait_until("shows two")              # the command row scrolls off when 13 lines print
             self.fast_print(t7, LS_OUT, run_time=0.6)
             vo.wait_until("the dot venv")
             venv_ln, lock_ln = t7.find(".venv"), t7.find("uv.lock")

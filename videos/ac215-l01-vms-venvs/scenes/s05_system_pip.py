@@ -15,11 +15,14 @@ Beats (script.md "## S05", one voiceover block each):
     lines lift out and become V2 (six full-width shelves; the terminal shrinks to the 3-row strip):
     GREY current folder, three GREY standard-library shelves (bracketed), the ORANGE /usr/local
     shelf (empty) and apt's ORANGE shelf with four jars. A PINK search-light ("import pip") sweeps
-    down and stops on apt's shelf, where the pip jar gets its name tag. The three standard-library
-    shelves merge into one GREY band "standard library".
- 4  apt's shelf glows; GREY gears "OS tools" link to its jars; caption "a shared kitchen" (+ the
-    words "externally managed"); an ORANGE chip "PEP 668" stamps onto the shelf's edge.
- 5  TRACKER A8. The shelves fade, the terminal grows back (14 rows) and types
+    down and stops on apt's shelf; "import " drops away and "pip" becomes the jar's name tag
+    (beside the jar: no room above it at this pitch). The three standard-library shelves merge
+    into one GREY band "standard library".
+ 4  The strip leaves (all picture; tracker drops "· extra"). apt's shelf glows; GREY gears
+    "OS tools" under the shelf link up to its jars; caption "a shared kitchen" (+ "externally
+    managed") under the shelf's left end; an ORANGE chip "PEP 668" stamps onto the shelf's front
+    edge; the pip jar's name tag returns above it on "makes pip respect it".
+ 5  TRACKER A8. The shelves fade, the terminal (14 rows) fades back in and types
     `sudo pip3 install --break-system-packages googletrans==4.0.2 art` (two rows); the flag and `sudo`
     are underlined as named; ▶ your turn; 08-pip-break.txt lines 2-5, …; a row chip "asked for 2"
     by the two `Collecting` lines; lines 34-35 (wrapped): the chip becomes "installed 12" (ORANGE)
@@ -33,16 +36,17 @@ Beats (script.md "## S05", one voiceover block each):
     "system-wide · every user" on that shelf; the two ORANGE shelves glow in turn ("above").
  7  The strip fades (tracker back to A8); the shelves spread out; tag "illustration · what if".
     A dashed ORANGE jar "httpx 0.23.3 (apt's copy)" on apt's shelf; GREY note "googletrans needs
-    httpx ≥ 0.27.2" and the name tag "httpx 0.28.1" on pip's jar; a PINK light "import httpx" stops
-    on pip's shelf; the apt jar dims with a RED "hidden" tag; caption "shadowing · for every
-    program that uses the system Python".
+    httpx ≥ 0.27.2" and the name tag "httpx 0.28.1" on pip's jar; a PINK light stops on pip's shelf,
+    its label "import httpx" riding above it and landing beside "httpx 0.28.1"; the apt jar dims
+    with a RED "hidden" tag; caption "shadowing · for every program that uses the system Python".
  8  A GREY README tip card (README.md · line 56) over the dimmed shelves; "We use it here
     deliberately as a quick demonstration" highlighted YELLOW.
  9  The picture narrows to the /usr/local shelf with one empty slot named httpx (S08's opening
     layout); two GREY students with requests "httpx 0.13" (classmate) and "httpx 0.28" (you).
     PONDER (8 s), card at the bottom.
-10  The 0.28 jar lands in the slot, the 0.13 jar knocks it off; caption "one shelf · the last
-    install wins, for everyone"; "you" turns RED. Fade out to an empty frame.
+10  The picture settles into the room the card leaves; the 0.28 jar lands in the slot, the 0.13
+    jar knocks it off as it lands; caption "one shelf · the last install wins, for everyone";
+    "you" turns RED. Fade out to an empty frame.
 """
 
 import numpy as np
@@ -377,9 +381,12 @@ class SystemPip(VoiceScene):
             vary = beside(row_tag("package list varies by VM"), dots0)
             self.pin(dots0, vary, run_time=0.5)
 
-            vo.wait_until("Pause and run it")
+            # the tag arrives a beat before "Pause and run it", which then shakes it (on screen ~3 s)
+            self.wait(0.8)
             yt0 = beside(your_turn(), cmd0.rows[1])
             self.pin(cmd0.rows[1], yt0, run_time=0.4)
+            vo.wait_until("Pause and run it")
+            self.play(Wiggle(yt0, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
 
         # ========================================================== 1 · pip3 --version (extra)
         with self.voiceover(SAY[1]) as vo:
@@ -468,7 +475,7 @@ class SystemPip(VoiceScene):
         sh.shift(UP * (B6[0] - sh.rows[0][0].get_y()))
         apt_jars = sh.put(5, jars(4, SYSTEM))
         pip_jar = apt_jars[0]
-        pip_tag = name_tag(pip_jar, "pip", INK, 22)
+        pip_tag = mono("pip", 22, INK).next_to(pip_jar, LEFT, buff=0.18)
         std_top = sh.rows[1][1].get_top()[1] + 0.02
         std_bot = sh.rows[3][0].get_y() - 0.04
         std_br = bracket(std_top, std_bot, 6.42, S.GREY)
@@ -477,7 +484,8 @@ class SystemPip(VoiceScene):
         look = mono("import pip", 22, LOOKUP)
 
         with self.voiceover(SAY[3]) as vo:
-            self.unpin([(l4, u4), (l10, u10), (l20, u20)], 0.3)
+            self.unpin([(l4, u4), (l10, u10), (l20, u20)], 0.3,
+                       substring(l20, "--break-system-packages").animate.set_color(OUTPUT))
             self.play(Indicate(err2, color=ERR, scale_factor=1.06), run_time=0.9)
             vo.wait_until("Picture how Python")
             self.play(Indicate(substring(t.find("error:"), "externally-managed-environment"), color=ERR,
@@ -507,18 +515,18 @@ class SystemPip(VoiceScene):
             self.play(FadeOut(VGroup(*t.lines)), run_time=0.3)
             for ln in list(t.lines):
                 t.lines.remove(ln)
-            lift = [*moving,
-                    FadeIn(sh.rows[0][1], shift=UP * (sh.rows[0][1].get_y() - empty_y)),
-                    LaggedStart(*[Create(r[0]) for r in sh.rows], lag_ratio=0.08)]
+            lift = [*moving, FadeIn(sh.rows[0][1], shift=UP * (sh.rows[0][1].get_y() - empty_y))]
             self.resize(t, 3, run_time=1.2, extra=lift)
             for ln in cmd_rows:
                 t._place(ln, len(t.lines))
                 t.lines.add(ln)
-            self.play(FadeIn(VGroup(*cmd_rows), shift=UP * 0.1), run_time=0.4)
+            # the boards slide in under the labels once the terminal is out of the way (none crosses it)
+            self.play(LaggedStart(*[Create(r[0]) for r in sh.rows], lag_ratio=0.1),
+                      FadeIn(VGroup(*cmd_rows), shift=UP * 0.1), run_time=0.7)
             self.bare_prompt(t)
             self.play(Create(std_br), FadeIn(std_br_t, shift=LEFT * 0.1),
                       LaggedStart(*[FadeIn(j, shift=DOWN * 0.15) for j in apt_jars], lag_ratio=0.15),
-                      run_time=0.8)
+                      run_time=0.7)
 
             vo.wait_until("On every import")
             lt = light_band(B6[0])
@@ -527,8 +535,10 @@ class SystemPip(VoiceScene):
             self.play(FadeIn(beam), run_time=0.3)
             self.play(beam.animate.shift(UP * (B6[5] - B6[0])), run_time=2.2, rate_func=linear)
             vo.wait_until("takes the first match")
-            self.play(Indicate(pip_jar, color=LOOKUP, scale_factor=1.5), FadeIn(pip_tag, shift=UP * 0.15),
-                      run_time=0.8)
+            # the looked-up name finds its jar: "import " drops away, "pip" becomes the jar's name tag
+            # (beside it: the six-shelf pitch leaves no room above a jar on the bottom shelf)
+            self.play(Indicate(pip_jar, color=LOOKUP, scale_factor=1.5), FadeOut(look[:6]),
+                      ReplacementTransform(look[6:], pip_tag), run_time=0.8)
             self.wait(0.3)
 
             # the three standard-library shelves merge into one GREY band
@@ -537,7 +547,7 @@ class SystemPip(VoiceScene):
             std_lbl.next_to(std_board, UP, buff=0.1).align_to(std_board, LEFT)
             band = Rectangle(width=12.4, height=0.8, stroke_width=0).set_fill(S.GREY, 0.12)
             band.move_to(std_board, aligned_edge=DOWN)
-            self.play(FadeOut(beam), FadeOut(pip_tag), run_time=0.3)
+            self.play(FadeOut(lt), run_time=0.3)     # the pip tag stays while the shelves merge
             self.play(ReplacementTransform(VGroup(*[sh.rows[i][0] for i in (1, 2, 3)]), std_board),
                       ReplacementTransform(std_br_t, std_lbl),
                       FadeOut(VGroup(*[sh.rows[i][1] for i in (1, 2, 3)]), target_position=std_lbl),
@@ -548,24 +558,29 @@ class SystemPip(VoiceScene):
         std_g = VGroup(band, std_board, std_lbl)
 
         # ========================================================== 4 · a shared kitchen; PEP 668
+        # The strip (the sys.path one-liner) leaves: this beat is all picture, and the room under apt's
+        # shelf takes the OS tools (the shelf's right end is full of jars) and the caption.
         apt_glow = light_band(B4[3], SYSTEM, 0.18)
-        g1, g2 = gear(), gear()
+        g1, g2 = gear(0.22), gear(0.22)
         jx = [j.get_x() for j in apt_jars]
-        g1.move_to([(jx[0] + jx[1]) / 2, -0.4, 0])
-        g2.move_to([(jx[2] + jx[3]) / 2, -0.4, 0])
+        g1.move_to([(jx[0] + jx[1]) / 2, -2.3, 0])
+        g2.move_to([(jx[2] + jx[3]) / 2, -2.3, 0])
         gears = VGroup(g1, g2)
-        os_lbl = label("OS tools", 22, S.GREY).next_to(gears, LEFT, buff=0.3)
-        links = VGroup(*[Line(g.get_bottom() + DOWN * 0.02, apt_jars[k].get_top() + UP * 0.02, color=S.GREY,
-                              stroke_width=2.5)
+        os_lbl = label("OS tools", 24, S.GREY).next_to(gears, LEFT, buff=0.3)
+        links = VGroup(*[Line(g.get_top() + UP * 0.02, apt_jars[k].get_bottom(), color=S.GREY, stroke_width=2.5)
                          for g, ks in ((g1, (0, 1)), (g2, (2, 3))) for k in ks])
         kitchen = label("a shared kitchen", 30, INK)
-        kitchen.move_to([6.4 - kitchen.width / 2, 3.25, 0])
-        ext = label("“externally managed”", 24, S.GREY).next_to(kitchen, DOWN, buff=0.12).align_to(kitchen, RIGHT)
-        pep = chip("PEP 668", SYSTEM, size=24)
-        pep.move_to([1.8, B4[3] + pep.height / 2 + 0.02, 0])
+        kitchen.move_to([-6.2 + kitchen.width / 2, -2.2, 0])
+        ext = label("“externally managed”", 24, S.GREY).next_to(kitchen, DOWN, buff=0.15).align_to(kitchen, LEFT)
+        pep_chip = chip("PEP 668", SYSTEM, size=24)
+        pep = VGroup(pep_chip.box.copy().set_stroke(width=0).set_fill(S.BG, 1), pep_chip)
+        pep.move_to([1.3, B4[3], 0])          # stamped on the shelf's front edge
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeIn(apt_glow), Indicate(apt_row[1], color=SYSTEM, scale_factor=1.06), run_time=0.9)
+            self.play(FadeOut(t), FadeOut(pip_tag), caption_extra(tr, False), FadeIn(apt_glow),
+                      Indicate(apt_row[1], color=SYSTEM, scale_factor=1.06), run_time=0.9)
+            for ln in list(t.lines):
+                t.lines.remove(ln)
             vo.wait_until("Debian itself runs")
             self.play(FadeIn(gears, scale=0.6), FadeIn(os_lbl, shift=RIGHT * 0.1), run_time=0.6)
             self.play(Rotate(g1, -PI / 2), Rotate(g2, PI / 2), run_time=0.8)
@@ -577,7 +592,7 @@ class SystemPip(VoiceScene):
                                   lag_ratio=0.15), run_time=1.0)
 
             vo.wait_until("The system Python is")
-            self.play(FadeIn(kitchen, shift=DOWN * 0.1), run_time=0.6)
+            self.play(FadeIn(kitchen, shift=UP * 0.1), run_time=0.6)
             self.play(Indicate(VGroup(local_row, apt_row), color=SYSTEM, scale_factor=1.02), run_time=0.9)
             vo.wait_until("and apt is the cook")
             self.play(Indicate(apt_row[1], color=SYSTEM, scale_factor=1.08), Rotate(g1, -PI / 2),
@@ -586,18 +601,20 @@ class SystemPip(VoiceScene):
             self.play(FadeIn(ext, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("PEP 668 is the rule")
             self.play(FadeIn(pep, scale=2.4), run_time=0.45, rate_func=rush_into)
-            self.play(Indicate(pep.text, color=SYSTEM, scale_factor=1.15), run_time=0.5)
+            self.play(Indicate(pep_chip.text, color=SYSTEM, scale_factor=1.15), run_time=0.5)
             vo.wait_until("makes pip respect it")
-            self.play(Indicate(apt_jars[0], color=SYSTEM, scale_factor=1.4), run_time=0.8)
+            pip_tag4 = name_tag(pip_jar, "pip", INK, 22)    # the merge left room above the jar
+            self.play(FadeIn(pip_tag4, shift=UP * 0.1), Indicate(pip_jar, color=SYSTEM, scale_factor=1.4),
+                      run_time=0.8)
 
-        beat4 = VGroup(apt_glow, gears, os_lbl, links, kitchen, ext, pep)
+        beat4 = VGroup(apt_glow, gears, os_lbl, links, kitchen, ext, pep, pip_tag4)
         shelves = VGroup(row0, std_g, local_row, apt_row, apt_jars)
 
         # ========================================================== 5 · sudo pip3 install --break-system-packages
+        t = put_bottom(term(prompt=P_REPO, rows=ROWS))       # the terminal comes back, full size
+
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(beat4), FadeOut(shelves), tr.goto(8), run_time=0.6)
-            t.clear(self, run_time=0.3)
-            self.resize(t, ROWS, run_time=0.7)
+            self.play(FadeOut(beat4), FadeOut(shelves), tr.goto(8), FadeIn(t), run_time=0.7)
             cmd5 = self.type_cmd(t, PIP_BREAK, 1.8)
             r0, r1 = cmd5.rows
 
@@ -651,8 +668,7 @@ class SystemPip(VoiceScene):
                       run_time=0.9)
             self.attach(inst_rows[-1], got)
             vo.wait_until("if yours says")
-            sat = row_tag([("yours may say", "label"), ("“Requirement already satisfied”", "label"),
-                           ("for some", "label")], S.GREY)
+            sat = row_tag("yours may say “Requirement already satisfied” for some", S.GREY)
             beside(sat, dots5, buff=0.4)
             self.pin(dots5, sat, run_time=0.5)
             vo.wait_until("apt already had")
@@ -736,7 +752,7 @@ class SystemPip(VoiceScene):
         d_jar = dashed_jar(SYSTEM)
         caption7 = label("shadowing · for every program that uses the system Python", 26, INK)
         caption7.move_to([0, -2.95, 0])
-        look7 = mono("import httpx", 24, LOOKUP)
+        look7 = mono("import httpx", 22, LOOKUP)
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(t), FadeOut(VGroup(n12, gt_tag, sys_tag)), caption_extra(tr, False),
@@ -770,10 +786,14 @@ class SystemPip(VoiceScene):
             self.play(Indicate(local_row[1], color=SYSTEM, scale_factor=1.05), run_time=0.8)
 
             vo.wait_until("Python would find")
+            # the query rides just above the light and lands beside the jar it finds
             lt7 = light_band(B4W[0])
-            look7.move_to([3.6, lt7.get_y(), 0])
+            lt7_end = light_band(B4W[2])
+            look7.move_to([hx_tag.get_left()[0] - 0.6 - look7.width / 2, hx_tag.get_y(), 0])
+            look7.shift(UP * (lt7.get_y() - lt7_end.get_y()))
             self.play(FadeIn(lt7), FadeIn(look7, shift=DOWN * 0.1), run_time=0.4)
-            self.play(lt7.animate.move_to(light_band(B4W[2]).get_center()), run_time=1.4, rate_func=linear)
+            self.play(VGroup(lt7, look7).animate.shift(DOWN * (lt7.get_y() - lt7_end.get_y())), run_time=1.4,
+                      rate_func=linear)
             self.play(Indicate(hx_jar, color=LOOKUP, scale_factor=1.6), run_time=0.7)
             vo.wait_until("and hide the one")
             hidden = tag("hidden", ERR)
@@ -857,22 +877,27 @@ class SystemPip(VoiceScene):
                   run_time=8)
 
         # ========================================================== 10 · the last install wins
+        DY10 = 0.8                     # the picture settles into the room the ponder card leaves
+        picture = VGroup(local_row[0], local_row[1], slot, slot_tag, icon_l, who_l, req_l, icon_r, who_r, req_r)
         j28, j13 = jar(SYSTEM, 0.6).move_to(slot), jar(SYSTEM, 0.6).move_to(slot)
         tag28 = name_tag(slot, "httpx 0.28", INK, 24)
         tag13 = name_tag(slot, "httpx 0.13", INK, 24)
-        caption10 = label("one shelf · the last install wins, for everyone", 28, INK).move_to([0, -0.75, 0])
+        VGroup(j28, j13, tag28, tag13).shift(DOWN * DY10)
+        caption10 = label("one shelf · the last install wins, for everyone", 28, INK).move_to([0, -0.75 - DY10, 0])
 
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(q), FadeOut(VGroup(arr_l, arr_r)), run_time=0.4)
+            self.play(FadeOut(q), FadeOut(VGroup(arr_l, arr_r)), picture.animate.shift(DOWN * DY10), run_time=0.6)
             vo.wait_until("only one shelf")
             self.play(Indicate(VGroup(local_row[0], local_row[1]), color=SYSTEM, scale_factor=1.05), run_time=0.8)
             vo.wait_until("room for only one")
             self.play(ReplacementTransform(req_r, j28, path_arc=PI / 3), FadeOut(slot),
                       Transform(slot_tag, tag28), run_time=1.0)
             vo.wait_until("The last install wins")
-            self.play(ReplacementTransform(req_l, j13, path_arc=-PI / 3), run_time=0.8)
-            self.play(j28.animate.shift(RIGHT * 1.3 + DOWN * 1.2).rotate(-1.4).set_color(ERR),
-                      Transform(slot_tag, tag13), run_time=0.5)
+            # the classmate's jar arrives from the left and knocks yours off as it lands
+            self.play(LaggedStart(ReplacementTransform(req_l, j13, path_arc=-PI / 3, run_time=0.8),
+                                  AnimationGroup(j28.animate.shift(RIGHT * 1.3 + DOWN * 1.2).rotate(-1.4).set_color(ERR),
+                                                 Transform(slot_tag, tag13), run_time=0.55),
+                                  lag_ratio=0.8))
             self.play(FadeOut(j28, shift=DOWN * 0.4), run_time=0.3)
             vo.wait_until("for everyone")
             self.play(FadeIn(caption10, shift=UP * 0.1), run_time=0.6)

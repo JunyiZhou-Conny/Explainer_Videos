@@ -9,15 +9,19 @@ Beats (script.md "## S07", one voiceover block each):
  1  The card leaves; the V1 coda takes its place (S03's picture): server, hypervisor, our BLUE
     slice (Debian 12, `ac215-l01`, a "CPU + memory" block), its linked BLUE disk "disk · Debian 12",
     and the GOLD dial, sweeping. Stop is pressed: the row's status turns GREY, the CPU/memory block
-    greys out and the needle slows to a slow sweep; the disk stays BLUE (it lights up), GOLD tag
-    "disk: still billing"; a dashed GOLD chip "reserved IP: also billing".
- 2  Delete is pressed: the page dims under a confirm dialog (tag illustration) "Delete ac215-l01? /
-    Its boot disk is deleted with it" (YELLOW bar as it's said; the slice->disk link flashes), GREY
-    tag "default · a setting on the boot disk". "And the meter stops": the slice and its disk (and
-    the GOLD billing tags) dissolve, the needle stops where it is (no rewind). ▶ your turn in the
-    dialog; its Delete button pulses on "click Delete".
- 3  The dialog closes and the row leaves the list; browser and V1 make way for a checklist card
-    "VM instances: empty" / "Disks: empty" (GREEN ticks as each is named). TRACKER A10 · extra: a
+    greys out and the needle slows to a slow sweep; the disk stays BLUE (it lights up, then flashes
+    GOLD as the GOLD tag "disk: still billing" appears); a dashed GOLD chip "reserved IP: also
+    billing".
+ 2  Delete is pressed: the page dims under a confirm dialog that pops out of the Delete button (it
+    carries the live `illustration` tag; the browser's own tag dims) "Delete ac215-l01? / Its boot
+    disk is deleted with it" (YELLOW bar as it's said; the slice->disk link flashes), GREY tag
+    "default · a setting on the boot disk". "And the meter stops": the slice and its disk (and the
+    GOLD billing tags) dissolve, the needle stops where it is (no rewind). ▶ your turn beside the
+    toolbar's Delete, just above the dialog; the dialog's Delete pulses on "click Delete" and the
+    dialog closes; on "until it's gone" the row leaves the list.
+ 3  The empty list's heading "VM instances" becomes the first line of a checklist card
+    "VM instances: empty" / "Disks: empty" (GREEN ticks as each is named) while the browser and
+    the rest of V1 clear. TRACKER A10 · extra: a
     3-row laptop terminal along the bottom (title "your laptop", GREY tag "optional · needs the
     gcloud CLI on your laptop") types `gcloud compute instances list` and `gcloud compute disks
     list` (no output shown); each one lights its checklist row; a GREY bracket "extra · not in the
@@ -170,14 +174,32 @@ def place_tracker(tr):
     return tr
 
 
-def caption_extra(tr, on: bool = True):
-    """The tracker caption with (or without) ' · extra' while a non-README command is on screen."""
+def caption_extra(tr):
+    """The tracker caption with ' · extra' while a non-README command is on screen (S03's way):
+    returns (new caption, its ' · extra' glyphs). Fade in only the suffix, then swap_caption():
+    a Transform between captions of different lengths scrambles the letters mid-way."""
     k = tr.k
     s = f"step {k} of {len(tr.steps)}: {tr.steps[k - 1]}"
-    new = label(s + " · extra", tr.size, tr.hi_color, t2c={"· extra": S.GREY}) if on else \
-        label(s, tr.size, tr.hi_color)
+    new = label(s + " · extra", tr.size, tr.hi_color, t2c={"· extra": S.GREY})
     new.next_to(tr.dots, RIGHT, buff=0.25)
-    return Transform(tr.caption, new)
+    n = len(label(s, tr.size, tr.hi_color).submobjects)
+    return new, VGroup(*new.submobjects[n:])
+
+
+def swap_caption(scene, tr, new, suffix):
+    scene.remove(tr.caption, suffix)
+    tr.remove(tr.caption)
+    tr.caption = new
+    tr.add(new)
+    scene.add(tr)
+
+
+def ring(dial, color=COST) -> Succession:
+    """Circumscribe for the dial: a ring just outside its face, drawn from the top and faded.
+    (Circumscribe's Circle surrounds the bounding box's diagonal and crossed the 'cost' label.)"""
+    r = Circle(radius=dial.radius + 0.09, stroke_color=color, stroke_width=4).move_to(dial.face)
+    r.rotate(PI / 2, about_point=dial.face.get_center())
+    return Succession(Create(r, run_time=0.55), FadeOut(r, run_time=0.3))
 
 
 def readme_card(line_no: int, body: VGroup) -> VGroup:
@@ -334,7 +356,7 @@ class DeleteVM(VoiceScene):
         # ========================================================== 1 · Stop: the disk keeps billing
         V = build_v1()
         dial = CostDial(radius=DIAL_R, caption=None).move_to(DIAL_C)
-        cost = label("cost", 22, COST).next_to(dial, UP, buff=0.1)
+        cost = label("cost", 22, COST).next_to(dial, UP, buff=0.18)     # clear of ring()
         rate = ValueTracker(RUN)
         dial.tracker.add_updater(lambda m, dt: m.increment_value(dt * rate.get_value()))
         still = gold_tag(["disk: still billing"])
@@ -346,8 +368,8 @@ class DeleteVM(VoiceScene):
         block_grey[1].set_color(S.GREY)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(card, shift=RIGHT * 0.3), FadeOut(idle_ul, shift=RIGHT * 0.3),
-                      FadeIn(V, shift=LEFT * 0.2), FadeIn(dial, scale=0.8), FadeIn(cost), run_time=0.8)
+            self.play(FadeOut(card, shift=RIGHT * 0.3), FadeOut(idle_ul, shift=RIGHT * 0.3), run_time=0.35)
+            self.play(FadeIn(V, shift=LEFT * 0.2), FadeIn(dial, scale=0.8), FadeIn(cost), run_time=0.6)
             self.add(dial.tracker)        # the needle starts once the dial is in (no jump)
             vo.wait_until("ends the billing")
             self.play(Indicate(stop_b, color=S.WHITE, scale_factor=1.15), run_time=0.5)
@@ -359,8 +381,9 @@ class DeleteVM(VoiceScene):
                       ShowPassingFlash(V.link.copy().set_stroke(CLOUD, 7), time_width=0.5),
                       Indicate(V.disk_lab, color=CLOUD, scale_factor=1.12), run_time=0.9)
             vo.wait_until("so it keeps billing")
-            self.play(FadeIn(still, shift=LEFT * 0.15), run_time=0.5)
-            self.play(Circumscribe(dial.face, Circle, color=COST, buff=0.06), run_time=0.9)
+            self.play(FadeIn(still, shift=LEFT * 0.15), Indicate(V.disks[0], color=COST, scale_factor=1.25),
+                      run_time=0.6)
+            self.play(ring(dial))
             vo.wait_until("a reserved IP")
             self.play(FadeIn(rip, shift=LEFT * 0.15), run_time=0.5)
 
@@ -386,9 +409,14 @@ class DeleteVM(VoiceScene):
         d_frame.move_to([(D_LEFT + D_RIGHT) / 2, -0.8, 0])
         d_text.move_to(d_frame).align_to(d_frame, UP).align_to(d_frame, LEFT).shift(RIGHT * 0.4 + DOWN * 0.32)
         buttons.align_to(d_frame, RIGHT).align_to(d_frame, DOWN).shift(LEFT * 0.35 + UP * 0.26)
-        yt.match_y(buttons).align_to(d_frame, LEFT).shift(RIGHT * 0.4)
         d_ill = illustration_tag()
-        d_ill.move_to(d_frame.get_corner(UR) + np.array([-d_ill.width / 2 - 0.3, 0, 0]))
+        d_ill.move_to(d_frame.get_corner(UR) + np.array([-d_ill.width / 2 - 0.12, 0, 0]))
+        # ▶ your turn beside the toolbar's Delete, just above the dialog: it outlives the dialog,
+        # so it is still up while the row leaves the list ("pause until it's gone")
+        yt.next_to(del_b, RIGHT, buff=0.3)
+        # clear of the dialog's tag even mid-pulse (pulse() scales by 1.15)
+        assert yt.get_right()[0] + 0.08 * yt.width < d_ill.get_left()[0] - 0.12, (yt.get_right(), d_ill.get_left())
+        assert yt.get_bottom()[1] > d_frame.get_top()[1] + 0.05, (yt.get_bottom(), d_frame.get_top())
         dialog = VGroup(d_frame, d_title, d_body, buttons, d_ill)
         body_bar = Rectangle(width=d_body.width + 0.16, height=d_body.height + 0.14, stroke_width=0) \
             .set_fill(TURN, 0.2).move_to(d_body)
@@ -400,7 +428,10 @@ class DeleteVM(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             self.play(Indicate(del_b, color=S.WHITE, scale_factor=1.15), run_time=0.4)
-            self.play(FadeIn(dim), FadeIn(dialog, scale=0.94), run_time=0.5)
+            ill.save_state()                  # the dialog carries the live `illustration` tag now
+            # the dialog pops out of the Delete button (opaque all the way: no ghosting over the row)
+            self.play(FadeIn(dim), GrowFromPoint(dialog, del_b.get_center()), ill.animate.set_opacity(0.25),
+                      run_time=0.5)
             vo.wait_until("removes the VM")
             self.play(Indicate(V.slices[0], color=CLOUD, scale_factor=1.04),
                       Indicate(d_title[1], color=CLOUD, scale_factor=1.12), run_time=0.8)
@@ -423,13 +454,16 @@ class DeleteVM(VoiceScene):
             self.remove(dial.tracker)
             dial.freeze()
             self.remove(rate)
-            self.play(Circumscribe(dial.face, Circle, color=COST, buff=0.06), run_time=0.7)
+            self.play(ring(dial))
             vo.wait_until("Select your instance")
             self.play(FadeIn(yt, shift=RIGHT * 0.1), run_time=0.4)
             self.play(pulse(yt), run_time=0.6)
             vo.wait_until("click Delete")
-            self.play(Indicate(confirm, color=S.WHITE, scale_factor=1.2), run_time=0.7)
+            self.play(Indicate(confirm, color=S.WHITE, scale_factor=1.2), run_time=0.6)
+            # the click: the dialog closes; the row is still listed until the deletion finishes
+            self.play(FadeOut(VGroup(dialog, d_default, dim), scale=0.96), Restore(ill), run_time=0.25)
             vo.wait_until("until it's gone")
+            self.play(FadeOut(row, shift=LEFT * 0.4), run_time=0.5)           # gone from the list
             self.play(pulse(yt), run_time=0.6)
 
         # ========================================================== 3 · check two pages (+ gcloud)
@@ -453,12 +487,25 @@ class DeleteVM(VoiceScene):
         opt = tag("optional · needs the gcloud CLI on your laptop", S.GREY)
         opt.next_to(t.box, UP, buff=0.14).align_to(t.box, RIGHT).shift(LEFT * 0.2)
 
+        # the (now empty) list's own heading "VM instances" becomes the first checklist line
+        vm_words = words(items[0].text, "VM instances")
+        check_rest = VGroup(c_frame, items[0].sq,
+                            *[g for g in items[0].text.submobjects if g not in vm_words.submobjects],
+                            items[1])
+
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(dialog, yt, d_default, dim), scale=0.96), run_time=0.3)
-            self.play(FadeOut(row, shift=LEFT * 0.4), run_time=0.3)      # gone from the list
             v_rest = VGroup(V.server, V.hyp, *V.slices[1:], *V.os[1:], *V.disks[1:], V.storage)
-            self.play(FadeOut(VGroup(br, ill, page[:-1], v_rest, dial, cost)), run_time=0.45)
-            self.play(FadeIn(check, shift=UP * 0.15), run_time=0.45)
+            # z-order: the heading stays above the fading browser and above the arriving card
+            # (play() would otherwise add the new groups on top of it)
+            clear = VGroup(br, ill, heading[:2], page[1:-1], yt, v_rest, dial, cost)
+            self.remove(heading[2])
+            self.add(clear, heading[2])
+            self.play(FadeOut(clear), run_time=0.45)
+            self.add(check_rest)
+            self.bring_to_front(heading[2])
+            self.play(ReplacementTransform(heading[2], vm_words), FadeIn(check_rest, shift=UP * 0.1), run_time=0.6)
+            self.remove(vm_words, check_rest)
+            self.add(check)
             for it, phrase in zip(items, ("VM instances", "and Disks")):
                 vo.wait_until(phrase)
                 it.tick.move_to(it.sq).shift(UP * 0.03 + RIGHT * 0.03)
@@ -469,7 +516,9 @@ class DeleteVM(VoiceScene):
             self.play(*[it.empty.animate.set_color(S.GREEN) for it in items], run_time=0.5)
 
             vo.wait_until("With the gcloud tool")
-            self.play(FadeIn(t, shift=UP * 0.3), caption_extra(tr, True), run_time=0.6)
+            cap_x, suffix = caption_extra(tr)
+            self.play(FadeIn(t, shift=UP * 0.3), FadeIn(suffix, shift=LEFT * 0.1), run_time=0.6)
+            swap_caption(self, tr, cap_x, suffix)
             self.play(FadeIn(opt, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("two extra commands")
             self.play(pulse(opt, 1.08), run_time=0.7)
@@ -523,8 +572,7 @@ class DeleteVM(VoiceScene):
         clean = words(p2_t, "the clean way")
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(check, t, opt, br_x, xt, tr)), run_time=0.6)
-            self.play(FadeIn(vm_g, shift=RIGHT * 0.2), run_time=0.45)
+            self.play(FadeOut(VGroup(check, t, opt, br_x, xt, tr)), FadeIn(vm_g, shift=RIGHT * 0.2), run_time=0.6)
             self.play(GrowArrow(a1), FadeIn(board), FadeIn(shelf_t), run_time=0.45)
             self.play(LaggedStart(*[FadeIn(j, shift=DOWN * 0.25) for j in jar_row], lag_ratio=0.12),
                       run_time=0.9)
@@ -538,9 +586,9 @@ class DeleteVM(VoiceScene):
             recap = VGroup(vm_g, a1, shelf, a2, shared)
             self.play(recap.animate.shift(UP * 1.45).fade(0.6), FadeIn(part2, shift=UP * 0.3), run_time=0.9)
             vo.wait_until("on a fresh VM")
-            self.play(Indicate(words(p2_t, "fresh VM"), color=CLOUD, scale_factor=1.1), run_time=0.7)
+            self.play(Indicate(words(p2_t, "fresh VM"), color=CLOUD, scale_factor=1.04), run_time=0.7)
             vo.wait_until("the clean way")
-            self.play(Indicate(clean, color=VENV, scale_factor=1.1), Indicate(venv_g, color=VENV, scale_factor=1.08),
+            self.play(Indicate(clean, color=VENV, scale_factor=1.04), Indicate(venv_g, color=VENV, scale_factor=1.08),
                       run_time=0.8)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)

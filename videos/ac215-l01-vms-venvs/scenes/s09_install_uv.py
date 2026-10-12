@@ -38,7 +38,7 @@ from explainer.components import person_icon
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, COST, ERR, INK, LOOKUP, NARRATION, P_HOME, P_REPO, SYSTEM, TURN, UV,
-                    CostDial, PathDoors, capture, illustration_tag, jars, recorded_tag, term,
+                    CostDial, PathDoors, capture, illustration_tag, jars, term,
                     tracker_b, your_turn)
 
 SAY = NARRATION["S09"]
@@ -74,6 +74,7 @@ _ver = capture("07-uv-version", PB)
 UV_VERSION, WHICH_UV = _ver.pick(1)[0], _ver.pick(2)[0]                       # file lines 2, 3
 _path = capture("12-python-before", PB).pick((2, 7))                          # file lines 3-8
 assert _path[0] == "/home/student/.local/bin"
+assert _path[1:4] == ["/usr/local/bin", "/usr/bin", "/bin"] and "games" in _path[4] + _path[5]
 _startup = capture("26-startup-files", PB)
 STARTUP = _startup.pick((3, 4))                                               # file lines 4-5
 ENV_EXPORT = _startup.pick(13)[0].strip()                                     # file line 14
@@ -134,6 +135,20 @@ def readme_card(line_no: int, body: VGroup, width: float | None = None) -> VGrou
     inner.move_to(frame).align_to(frame, LEFT).shift(RIGHT * 0.25)
     g = VGroup(frame, inner)
     g.frame, g.body = frame, body
+    return g
+
+
+def code_tag(parts, color: str = S.GREY, size: float = 22) -> VGroup:
+    """tag() with some pieces in the code font: parts = [(text, is_code), ...]. A lone '.' in
+    the house serif is easy to miss; in the code font (and white) it reads as the command."""
+    ms = [mono(s, size + 4, INK) if code else label(s, size, color) for s, code in parts]
+    t = VGroup(*ms).arrange(RIGHT, buff=0.14, aligned_edge=DOWN)
+    h = mono("|", size).height + 0.16
+    b = RoundedRectangle(width=t.width + 0.4, height=h, corner_radius=h / 2, stroke_color=color,
+                         stroke_width=2).set_fill(S.BG, 0.92)
+    t.move_to(b)
+    g = VGroup(b, t)
+    g.box, g.text = b, t
     return g
 
 
@@ -222,11 +237,12 @@ class InstallUv(VoiceScene):
                  t.dots.animate.move_to(ref.dots), t.title.animate.move_to(ref.title)]
         for i, ln in enumerate(kept):
             anims.append(ln.animate.shift(ref._slot(i) - ln.strut.get_corner(UL)))
-        if gone:
-            anims.append(FadeOut(VGroup(*gone)))
+        if gone:            # clear the dropped lines first, so they never slide over the title bar
+            self.play(FadeOut(VGroup(*gone)), run_time=0.25)
+            run_time = max(0.3, run_time - 0.25)
+            for ln in gone:
+                t.lines.remove(ln)
         self.play(*anims, *extra, run_time=run_time)
-        for ln in gone:
-            t.lines.remove(ln)
         t.rows = rows
         return t
 
@@ -272,7 +288,7 @@ class InstallUv(VoiceScene):
         VGroup(shelf, jj).move_to(old.body)
         old.add(shelf, jj)
         old.move_to([-4.95, -1.55, 0])
-        cross = cross_mark(1.3, ERR, stroke=8).move_to(old)
+        cross = cross_mark(1.0, ERR, stroke=8).move_to(jj)      # over the jars: the title stays legible
         not_this = label("not this one", 26, ERR).next_to(old, RIGHT, buff=0.4).shift(UP * 0.45)
         taken = VGroup(label("name taken?", 24, S.GREY),
                        label("the old VM is still being deleted", 24, S.GREY))
@@ -303,7 +319,8 @@ class InstallUv(VoiceScene):
             vo.wait_until("Fresh matters")
             self.play(FadeIn(old, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("never sees pip")
-            self.play(Create(cross), old.animate.set_opacity(0.35), FadeIn(not_this), run_time=0.8)
+            # fade() scales each part's own opacity (set_opacity would fill the invisible .body)
+            self.play(Create(cross), old.animate.fade(0.55), FadeIn(not_this), run_time=0.8)
 
             vo.wait_until("Create it and SSH in")
             self.play(Indicate(inst, color=S.WHITE, scale_factor=1.06), run_time=0.8)
@@ -323,8 +340,8 @@ class InstallUv(VoiceScene):
                       FadeOut(VGroup(*[m for m in br.submobjects if m is not br.frame]), ill, listing),
                       FadeOut(VGroup(old, cross, not_this, taken, bill)),
                       FadeOut(dial, target_position=BADGE, scale=0.5), FadeIn(badge),
+                      FadeIn(VGroup(t.bar, t.dots, t.title), rate_func=lambda a: smooth(max(0, a * 3 - 2))),
                       run_time=0.9)
-            self.play(FadeIn(VGroup(t.bar, t.dots, t.title)), run_time=0.3)
             p0 = self.bare_prompt(t)
             vo.wait_until("Pause until")
             yt = your_turn().next_to(p0.strut, RIGHT, buff=0.35)
@@ -346,7 +363,7 @@ class InstallUv(VoiceScene):
             self.play(tr.goto(4), run_time=0.2)
             self.type_cmd(t, APT_GIT, 0.35, fast=True)
             self.fast_print(t, GIT_HEAD)
-            self.answer_yes(t, GIT_ASK, pause=0.45)
+            self.answer_yes(t, GIT_ASK, pause=0.6)                # script: [Y/n], 0.6 s, Y
             self.fast_print(t, ["…", *GIT_TAIL])
             self.play(tr.goto(5), run_time=0.2)
             self.type_cmd(t, CLONE, 0.6, fast=True)
@@ -430,7 +447,7 @@ class InstallUv(VoiceScene):
             self.play(FadeOut(moving), Indicate(sh, color=S.WHITE, scale_factor=1.2),
                       FadeIn(sh_cap, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("so you're running code")
-            self.play(Indicate(url_g, color=LOOKUP, scale_factor=1.05), run_time=0.9)
+            self.play(Indicate(url_g, color=TURN, scale_factor=1.05), run_time=0.9)    # look here
             vo.wait_until("official installer")
             self.play(FadeIn(note1, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("which you can read first")
@@ -450,7 +467,9 @@ class InstallUv(VoiceScene):
             ver = substring(l_dl, "uv 0.13.0")
             ul = Line(ver.get_corner(DL) + DOWN * 0.07, ver.get_corner(DR) + DOWN * 0.07,
                       color=S.GREY, stroke_width=3)
-            rec = recorded_tag().next_to(l_dl.strut, RIGHT, buff=0.4)
+            # recorded_tag()'s text at 20 pt, so it stays inside the terminal beside a 46-column line
+            rec = tag("at the time of recording", S.GREY, size=20).next_to(l_dl.strut, RIGHT, buff=0.3)
+            assert rec.get_right()[0] < t.box.get_right()[0] - 0.05, rec.get_right()
             self.pin(l_dl, ul, run_time=0.3, anim=Create(ul))
             self.pin(l_dl, rec, run_time=0.5)
 
@@ -458,17 +477,18 @@ class InstallUv(VoiceScene):
             l_to = t.find("installing to")
             hl = SurroundingRectangle(l_to.strut, buff=0.05, corner_radius=0.05, stroke_width=0) \
                 .set_fill(TURN, 0.2)
+            l_uv, l_uvx = line_eq(t, "  uv"), line_eq(t, "  uvx")
+            c_uv = chip("uv", UV, size=22, font=MONO).move_to(substring(l_uv, "uv"))
+            c_uvx = chip("uvx", UV, size=22, font=MONO).move_to(substring(l_uvx, "uvx"))
+            room = c_uv.width + c_uvx.width + 0.1
             folder = folder_glyph(1.45, UV)
+            folder.stretch_to_fit_width(max(folder.width, room + 0.4))       # both chips fit inside
             fname = mono("~/.local/bin", 24, UV)
             fold = VGroup(fname, folder).arrange(RIGHT, buff=0.3)
             fold.move_to([0, (l_to.strut.get_bottom()[1] + t.find("everything").strut.get_bottom()[1]) / 2, 0])
             fold.align_to([6.0, 0, 0], RIGHT)
-            l_uv, l_uvx = line_eq(t, "  uv"), line_eq(t, "  uvx")
-            c_uv = chip("uv", UV, size=22, font=MONO).move_to(substring(l_uv, "uv"))
-            c_uvx = chip("uvx", UV, size=22, font=MONO).move_to(substring(l_uvx, "uvx"))
             self.play(FadeIn(fold, shift=LEFT * 0.2), run_time=0.5)
             self.pin(l_to, hl, run_time=0.3, behind=True)
-            room = c_uv.width + c_uvx.width + 0.1
             spot_uv = folder[1].get_center() + RIGHT * (-room / 2 + c_uv.width / 2)
             spot_uvx = folder[1].get_center() + RIGHT * (room / 2 - c_uvx.width / 2)
             vo.wait_until("into dot local")
@@ -492,8 +512,8 @@ class InstallUv(VoiceScene):
             self.play(Indicate(t.find("installing to"), color=S.WHITE, scale_factor=1.05), run_time=1.0)
 
         # ========================================================== 6 · PATH doors
-        doors = PathDoors(["/usr/local/bin", "/usr/bin", "/bin", "…"], door_w=0.6, door_h=1.3,
-                          gap=0.35, size=24)
+        doors = PathDoors([*_path[1:4], "…"], door_w=0.6, door_h=1.3,      # file lines 4-6, then
+                          gap=0.35, size=24)                                 # one … for the games
         doors.shift(UP * (DOOR_TOP - doors.doors[0].frame.get_top()[1]))
         path_lbl = mono("PATH", 26, LOOKUP).next_to(doors.doors[0].frame, LEFT, buff=0.4)
         row4 = VGroup(path_lbl, doors)
@@ -518,19 +538,22 @@ class InstallUv(VoiceScene):
             self.play(LaggedStart(*[FadeIn(d, shift=DOWN * 0.2) for d in doors.doors], lag_ratio=0.2),
                       FadeIn(path_lbl), run_time=1.0)
             vo.wait_until("left to right")
-            self.play(GrowArrow(lr), run_time=0.6)
-            vo.wait_until("and runs the first")
-            self.play(FadeIn(fig, shift=DOWN * 0.2), run_time=0.3)
+            # the figure starts walking as the words say "left to right"; the four knocks are
+            # budgeted to end when "None contains uv" is spoken
+            self.play(GrowArrow(lr), FadeIn(fig, shift=DOWN * 0.2), run_time=0.5)
+            per = max(0.45, vo.until("None contains uv") / len(doors.doors))
             for i, d in enumerate(doors.doors):
                 if i:
-                    self.play(fig.animate.next_to(d.frame, UP, buff=0.12), run_time=0.35)
+                    prev = doors.doors[i - 1].frame
+                    self.play(fig.animate.next_to(d.frame, UP, buff=0.12),
+                              prev.animate.set_stroke(S.GREY), run_time=per * 0.4)
                 d.frame.set_stroke(LOOKUP)
-                self.play(Wiggle(d.frame, scale_value=1.04, rotation_angle=0.015 * TAU, n_wiggles=2),
-                          run_time=0.4)
-                self.play(d.frame.animate.set_stroke(S.GREY), run_time=0.15)
+                self.play(Wiggle(d.frame, scale_value=1.04, rotation_angle=0.015 * TAU,
+                                 n_wiggles=2 if per >= 0.6 else 1), run_time=per * 0.6)
             nf = label("command not found", 26, ERR).next_to(lr, DOWN, buff=0.2)
             vo.wait_until("None contains uv")
-            self.play(fig.animate.set_color(ERR), FadeIn(nf, shift=UP * 0.1), run_time=0.5)
+            self.play(fig.animate.set_color(ERR), FadeIn(nf, shift=UP * 0.1),
+                      doors.doors[-1].frame.animate.set_stroke(S.GREY), run_time=0.5)
             vo.wait_until("the shell only knows")
             self.play(Indicate(path_lbl, color=S.WHITE, scale_factor=1.25),
                       Indicate(t.find("uv --version"), color=S.WHITE, scale_factor=1.03), run_time=1.0)
@@ -579,33 +602,43 @@ class InstallUv(VoiceScene):
                       run_time=0.9)
             vo.wait_until("Sourcing is quicker")
             self.play(FadeOut(VGroup(reload_ul, rnote)), run_time=0.3)
-            src_ln = self.type_cmd(t, SOURCE, 1.0)
-            p_back = self.bare_prompt(t)
+            src_ln = self.type_cmd(t, SOURCE, 0.8, fast=True)
+            t._make_room(self, 1, run_time=0.15)
+            self.bare_prompt(t)                                   # → (no output)
             self.play(FadeOut(VGroup(pnl, bar10, card83, src_ul)),
                       FadeIn(doors), FadeIn(path_lbl), FadeIn(lr),
-                      FadeIn(env, shift=UP * 0.1), run_time=0.6)
-            vo.wait_until("first in PATH")
+                      FadeIn(env, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("it puts that folder")
             env_part = env.code.code_lines[0]
             lr_new = Arrow(LEFT, RIGHT, color=LOOKUP, stroke_width=4, buff=0, tip_length=0.18,
                            max_tip_length_to_length_ratio=0.05)
             lr_new.put_start_and_end_on(np.array([left0, lr_y, 0]),
                                         np.array([doors.get_right()[0] + shift_old, lr_y, 0]))
+            # the row makes room while the PURPLE door slides in from the left (one motion)
             self.play(doors.doors.animate.shift(RIGHT * shift_old), Transform(lr, lr_new),
-                      path_lbl.animate.next_to(new_door.frame, LEFT, buff=0.4), run_time=0.4)
-            self.play(FadeIn(new_door, shift=RIGHT * 0.8), run_time=0.5)
+                      path_lbl.animate.next_to(new_door.frame, LEFT, buff=0.4),
+                      FadeIn(new_door, shift=RIGHT * 0.8, rate_func=lambda a: smooth(max(0, a * 1.6 - 0.6))),
+                      run_time=0.7)
             self.remove(new_door)                       # it now lives inside the row
             doors.doors.submobjects.insert(0, new_door)
+            vo.wait_until("first in PATH")
             self.play(Indicate(new_door.label, color=S.WHITE, scale_factor=1.15),
-                      Indicate(env_part, color=UV, scale_factor=1.04), run_time=0.7)
+                      Indicate(env_part, color=UV, scale_factor=1.04), run_time=0.6)
             vo.wait_until("Pause and run")
+            # the source line fills all 65 columns: the tag sits on the row above, at its end,
+            # and a YELLOW underline ties it to the command
             yt = your_turn()
             yt.move_to([6.2 - yt.width / 2, src_ln.strut.get_center()[1] + t.pitch, 0])
+            cmd_g = substring(src_ln, SOURCE)
+            src_u = Line(cmd_g.get_corner(DL) + DOWN * 0.07, cmd_g.get_corner(DR) + DOWN * 0.07,
+                         color=TURN, stroke_width=3)
+            self.pin(src_ln, src_u, run_time=0.3, anim=Create(src_u))
             self.pin(src_ln, yt, run_time=0.4)
 
         # ========================================================== 8 · it works
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(yt), caption_extra(tr), run_time=0.3)
-            self.unpin_done([(src_ln, yt)])
+            self.play(FadeOut(yt), FadeOut(src_u), caption_extra(tr), run_time=0.3)
+            self.unpin_done([(src_ln, yt), (src_ln, src_u)])
             l1 = self.type_cmd(t, "uv --version", 0.5)
             ex1 = short_extra().next_to(l1.strut, RIGHT, buff=0.35)
             self.pin(l1, ex1, run_time=0.25)
@@ -651,8 +684,8 @@ class InstallUv(VoiceScene):
             return d
 
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(fig2, doors, path_lbl, lr, env)), caption_extra(tr, False),
-                      run_time=0.5)
+            # `which uv` (extra) stays in the strip, so the caption keeps " · extra" until it goes
+            self.play(FadeOut(VGroup(fig2, doors, path_lbl, lr, env)), run_time=0.5)
             self.play(FadeIn(t_sh), FadeIn(t_src), FadeIn(ill9), FadeIn(parent_l), FadeIn(parent_r),
                       run_time=0.7)
             vo.wait_until("Plain sh")
@@ -679,8 +712,11 @@ class InstallUv(VoiceScene):
             dots_ul = SurroundingRectangle(VGroup(_dot_part(st.code, 0), _dot_part(st.code, 1)), buff=0.08,
                                            corner_radius=0.06, stroke_color=TURN, stroke_width=2.5) \
                 .set_fill(TURN, 0.12)
-            dot_note = tag(". means source", S.GREY).next_to(st, DOWN, buff=0.3).align_to(st, LEFT)
-            new_ssh = tag("a new SSH session finds uv too", S.GREY).next_to(dot_note, RIGHT, buff=0.5)
+            # the note sits right under the highlighted column, its dot in the code font
+            dot_note = code_tag([(".", True), ("means source", False)])
+            dot_note.next_to(st, DOWN, buff=0.3).align_to(dots_ul, LEFT)
+            new_ssh = tag("a new SSH session finds uv too", S.GREY).align_to(st, LEFT).match_y(dot_note)
+            assert new_ssh.get_right()[0] < dot_note.get_left()[0] - 0.4
             vo.wait_until("The installer also")
             self.play(FadeOut(VGroup(t_sh, t_src, ill9, parent_l, parent_r, dr, xl, ck)), run_time=0.5)
             self.play(FadeIn(st, shift=UP * 0.1), run_time=0.6)
@@ -703,9 +739,15 @@ class InstallUv(VoiceScene):
         one = label("one fast tool", 28, UV).next_to(core, DOWN, buff=0.3)
 
         with self.voiceover(SAY[10]) as vo:
+            # the `uv` of `which uv`'s answer stays behind and becomes the big uv chip
+            uv_word = substring(wl, "uv").copy()
+            self.add(uv_word)
             self.play(FadeOut(VGroup(st, dots_ul, dot_note, new_ssh)), FadeOut(t.box), FadeOut(t.bar),
-                      FadeOut(t.dots), FadeOut(t.title), FadeOut(t.lines), run_time=0.6)
-            self.play(FadeIn(core, scale=0.6), run_time=0.6)
+                      FadeOut(t.dots), FadeOut(t.title), FadeOut(t.lines), caption_extra(tr, False),
+                      run_time=0.6)
+            self.play(ReplacementTransform(uv_word, core.text), FadeIn(core.box, scale=0.6), run_time=0.7)
+            self.remove(core.text, core.box)
+            self.add(core)
             vo.wait_until("One fast tool")
             self.play(FadeIn(one, shift=UP * 0.1), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(g, shift=(core.get_center() - g.get_center()) * -0.08) for g in items],
@@ -715,7 +757,7 @@ class InstallUv(VoiceScene):
                 self.play(g.animate.move_to(core).scale(0.2).set_opacity(0),
                           core.animate(rate_func=there_and_back).scale(1.15), run_time=0.6)
                 self.remove(g)
-            self.play(Indicate(one, color=S.WHITE, scale_factor=1.1), run_time=0.8)
+            self.play(Indicate(one, color=S.WHITE, scale_factor=1.1), run_time=min(0.8, vo.remaining(0.5)))
 
         badge.tracker.clear_updaters()
         self.remove(badge.tracker)

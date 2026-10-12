@@ -10,7 +10,7 @@ Beats (script.md "## S10", one voiceover block each):
     PONDER(8 s) after the block: the card covers the panel, the answers stay visible beside it.
  2  The panel shrinks to its line 6 and moves up; the answers line up under it; a 5-row terminal
     strip comes up from the bottom: `uv sync` + ▶ your turn -> 08-uv-sync.txt lines 2-5; "fail?"
-    and "use 3.11 anyway?" are crossed, "something else?" ticked; (35.9MiB) GREY underline;
+    and "use 3.11 anyway?" get a cross beside them, "something else?" a tick; (35.9MiB) underline;
     `3.15.0` "at the time of recording"; `.venv` GREEN; GREY note "no pyproject.toml found? ...".
     (The script's "strip grows to 5 rows": there is no strip before this beat, the 10-line panel
     needs the frame, so the 5-row strip slides in; the panel keeps only line 6.)
@@ -24,17 +24,20 @@ Beats (script.md "## S10", one voiceover block each):
     strip's real line instead of being repeated); a GREEN `.venv/bin/python` chip
     links to it in two hops (11-venv-bin.txt line 18: python -> .../cpython-3.15-.../python3.15).
  5  The glow's right end becomes an arrow, "no upper limit"; caption "a constraint is not a pin";
-    a caption strip steps through 3.14 (ghost) · 3.15.0 (the dot) · newer (ghost).
+    a caption strip steps through 3.14 (ghost) · 3.15.0 (the dot) · newer (ghost). uv's folder,
+    the venv link and the download arrow step back (dimmed) while the constraint is the subject.
  6  The toggle flips to Debian 13; the strip shows debian13-part-b/08-uv-sync.txt lines 2-3 with a
     GREY "Debian 13" tag; the RED dot slides into the glow as `3.13.5 · /usr/bin/python3` (GREEN);
-    the download arrow, the 3.15.0 dot and the folder retract; the venv link swings to 3.13.5.
+    the download arrow and the 3.15.0 dot retract; the venv link swings to 3.13.5 as the unused
+    folder goes.
  7  The toggle flips back; the strip and the links clear. A PURPLE chip `uv python pin 3.13`
     (extra · not in the README; RED "not now · exercise B2") writes a GREEN `.python-version` card
     (`3.13`); the line settles lower (the strip's room is free); the glow shrinks to the 3.13
     segment, `3.13.x`; GREY note "pin 3.13.5 → one release". Fade out.
 
-Note: a terminal line whose glyphs were animated (Indicate on a substring) is split in the scene's
-list; pin() re-adds the line whole so a tag attached to it is drawn.
+Note: animating some glyphs of a line (Indicate / .animate on a substring) makes the scene split that
+line, and its parents, into loose glyphs. pin() re-adds a terminal line whole so a tag attached to
+it is drawn; to drop code lines without a fade, remove their whole family (see beat 2).
 """
 
 import numpy as np
@@ -198,8 +201,8 @@ class WhichPython(VoiceScene):
                  t.dots.animate.move_to(ref.dots), t.title.animate.move_to(ref.title)]
         for j, ln in enumerate(kept):
             anims.append(ln.animate.shift(ref._slot(j) - ln.strut.get_corner(UL)))
-        if gone:
-            anims.append(FadeOut(VGroup(*gone)))
+        if gone:                     # first clear the dropped lines, so no line slides across one
+            self.play(FadeOut(VGroup(*gone)), run_time=0.3)
         self.play(*anims, run_time=run_time)
         for ln in gone:
             t.lines.remove(ln)
@@ -239,7 +242,9 @@ class WhichPython(VoiceScene):
         txt_right = lambda n: L(n).get_right()[0]
 
         bar2 = line_bar(code, 1, S.GREY, 0.14)
-        remember = tag("remember this", S.GREY).move_to(L(2)).align_to([txt_right(2) + 0.45, 0, 0], LEFT)
+        # a tag is taller than a code row: keep it clear of the longer line under it (line 3)
+        remember = tag("remember this", S.GREY).move_to(L(2)) \
+            .align_to([max(txt_right(2), txt_right(3)) + 0.35, 0, 0], LEFT)
         dep_rows = VGroup(L(7), L(10))
         brace_ref = Line([code.background.get_right()[0], dep_rows.get_top()[1], 0],
                          [code.background.get_right()[0], dep_rows.get_bottom()[1], 0])
@@ -250,6 +255,8 @@ class WhichPython(VoiceScene):
         ge8, eq9, ge6 = code_span(code, 7, ">="), code_span(code, 8, "=="), code_span(code, 5, ">=")
         ul8, ul9, ul6 = under(ge8, VENV), under(eq9, VENV), under(ge6, VENV)
         rng8 = tag("range", VENV).move_to(L(8)).align_to([txt_right(8) + 0.45, 0, 0], LEFT)
+        # line 9 runs on under this tag: lift it just clear of line 9's glyphs (line 7 is short)
+        rng8.shift(UP * max(0.0, (L(9).get_top()[1] + 0.04) - rng8.get_bottom()[1]))
         exact9 = tag("exact", VENV).move_to(L(9)).align_to([txt_right(9) + 0.45, 0, 0], LEFT)
         rng6 = tag("range", VENV).move_to(L(6)).align_to([txt_right(6) + 0.45, 0, 0], LEFT)
         bar6 = line_bar(code, 5, TURN, 0.22)
@@ -301,7 +308,8 @@ class WhichPython(VoiceScene):
             vo.wait_until("This VM has")
             self.play(FadeIn(vm, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("The project asks")
-            self.play(Indicate(VGroup(L(6), rng6), color=TURN, scale_factor=1.05), run_time=1.0)
+            # (Indicate would paint the opaque tag solid and the line YELLOW on its YELLOW bar)
+            self.play(Circumscribe(VGroup(bar6, rng6), color=TURN, buff=0.06, stroke_width=4, fade_out=True), run_time=1.2)
             vo.wait_until("What will")
             self.play(FadeIn(quest, shift=LEFT * 0.15), run_time=0.6)
             for a, phrase in zip(answers, ["Fail", "use 3.11", "or something"]):
@@ -316,7 +324,8 @@ class WhichPython(VoiceScene):
         p6.move_to([0, 2.05, 0]).align_to([-6.3, 0, 0], LEFT)
         bar6b = line_bar(p6.code, 0, TURN, 0.22)
         vm_to = vm.copy().next_to(p6.code, RIGHT, buff=0.6)
-        ans_row = answers.copy().arrange(RIGHT, buff=0.35).move_to([0, 0.75, 0]).align_to([-6.3, 0, 0], LEFT)
+        # room after each chip for its verdict mark (a cross or a check sits beside, not on, the words)
+        ans_row = answers.copy().arrange(RIGHT, buff=0.75).move_to([0, 0.75, 0]).align_to([-6.3, 0, 0], LEFT)
 
         t = term(prompt=P_REPO, rows=5)
         t.shift(np.array([0 - t.box.get_center()[0], BOTTOM - t.box.get_bottom()[1], 0]))
@@ -328,24 +337,31 @@ class WhichPython(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             others = VGroup(*[code.code_lines[k] for k in range(10) if k != 5])
-            self.play(FadeOut(card), run_time=0.4)
-            self.play(FadeOut(others), FadeOut(VGroup(ul6, rng6, quest)),
-                      ReplacementTransform(code.code_lines[5], p6.code.code_lines[0]),
+            # the opaque card hides the panel: drop the other lines under it, so the card lifts
+            # off line 6 alone; then line 6 becomes the small panel while the terminal comes up
+            # Every glyph of those lines: animating `>=` / `==` in beat 0 made the scene split the
+            # panel into loose glyphs (and hold ge8 / eq9 as mobjects of their own), so removing
+            # the line groups alone would leave their glyphs behind.
+            self.remove(*others.get_family(), ge8, eq9, ul6, rng6)
+            self.play(FadeOut(card), FadeOut(quest), run_time=0.35)
+            self.play(ReplacementTransform(code.code_lines[5], p6.code.code_lines[0]),
                       ReplacementTransform(code.background, p6.code.background),
                       ReplacementTransform(panel.header, p6.header),
                       ReplacementTransform(bar6, bar6b),
-                      vm.animate.move_to(vm_to), Transform(answers, ans_row), run_time=0.9)
+                      vm.animate.move_to(vm_to), Transform(answers, ans_row),
+                      # the strip rises once the shrinking panel has cleared its place
+                      FadeIn(frame, shift=UP * 0.6, rate_func=lambda a: smooth(min(1.0, max(0.0, (a - 0.45) / 0.55)))),
+                      run_time=0.85)
             self.remove(panel)
             self.add(p6.code.background, bar6b, p6.code.code_lines, p6.header)
-            self.play(FadeIn(frame, shift=UP * 0.6), run_time=0.6)
             cmd = t.type(self, "uv sync", type_time=0.5)
             yt = your_turn().next_to(cmd.strut, RIGHT, buff=0.4)
             self.pin(cmd, yt, run_time=0.4)
 
             vo.wait_until("Instead of failing")
             out = t.print(self, SYNC_OUT, run_time=0.6)
-            xs = [cross_mark(0.34, ERR, stroke=5).move_to(a) for a in answers[:2]]
-            ok = check_mark(0.36, S.GREEN, stroke=6).next_to(answers[2], RIGHT, buff=0.12)
+            xs = [cross_mark(0.3, ERR, stroke=5).next_to(a, RIGHT, buff=0.16) for a in answers[:2]]
+            ok = check_mark(0.36, S.GREEN, stroke=6).next_to(answers[2], RIGHT, buff=0.16)
             self.play(answers[0].animate.set_opacity(0.4), answers[1].animate.set_opacity(0.4),
                       *[Create(x) for x in xs], run_time=0.5)
             self.play(Create(ok), Indicate(answers[2], color=S.WHITE, scale_factor=1.08), run_time=0.6)
@@ -390,7 +406,7 @@ class WhichPython(VoiceScene):
             self.play(FadeOut(VGroup(yt, rec, note)), run_time=0.3)
             self.unpin(cmd, yt)
             self.unpin(out[2], rec)
-            self.strip_to(t, [0, 1, 3], rows=3, run_time=0.8)
+            self.strip_to(t, [0, 1, 3], rows=3, run_time=0.6)
             vo.wait_until("Picture Python")
             self.play(Create(vl.axis), LaggedStart(*[FadeIn(tk, shift=UP * 0.1) for tk in vl.ticks],
                                                    lag_ratio=0.12), run_time=1.3)
@@ -485,8 +501,12 @@ class WhichPython(VoiceScene):
             s_.move_to([0, 1.0, 0]).align_to([COL_X + 0.15, 0, 0], LEFT)
         g14, g16 = ghost(vl.point(14)), ghost(vl.point(16))
 
+        # uv's folder and the venv link are not this beat's subject: they step back (kept for S6)
+        dimmed = VGroup(uvf.solid, uvf.head, uvf.entries, vpy, hop1, drop)
+        vpy.save_state()
+
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(spec), run_time=0.4)
+            self.play(FadeOut(spec), dimmed.animate.fade(0.7), run_time=0.5)
             self.play(FadeIn(ext, shift=LEFT * 0.3), FadeIn(head, shift=LEFT * 0.3), run_time=0.7)
             self.play(FadeIn(nolim, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("a constraint is")
@@ -526,10 +546,11 @@ class WhichPython(VoiceScene):
             self.play(sys_dot.animate.set_color(VENV).scale(1.2), d13_lab.animate.set_color(VENV),
                       vl.band.animate(rate_func=there_and_back).set_fill(opacity=0.65), run_time=0.8)
             vo.wait_until("with no download")
-            self.play(FadeOut(new, shift=UP * 0.6), Uncreate(drop),
-                      FadeOut(uvf.solid), FadeOut(uvf.head), FadeOut(uvf.entries), run_time=0.9)
+            self.play(FadeOut(new, shift=UP * 0.6), Uncreate(drop), run_time=0.9)
             vo.wait_until("and the venv's")
-            self.play(ReplacementTransform(hop1, hop13), run_time=0.9)
+            # the link swings from uv's folder to the system Python; the unused folder goes
+            self.play(ReplacementTransform(hop1, hop13), Restore(vpy),
+                      FadeOut(VGroup(uvf.solid, uvf.head, uvf.entries)), run_time=0.9)
             self.play(Indicate(d13_lab, color=S.WHITE, scale_factor=1.06), run_time=0.7)
             vo.wait_until("Same command")
             self.play(Indicate(substring(cmd13, "uv sync"), color=S.WHITE, scale_factor=1.2), run_time=0.7)
@@ -574,7 +595,7 @@ class WhichPython(VoiceScene):
             vo.wait_until("and the range shrinks")
             self.play(GrowArrow(shrink), run_time=0.4)
             self.play(Transform(vl.band, seg), FadeOut(VGroup(ext, head), shift=LEFT * 1.5),
-                      band_label.animate.set_opacity(0.35), run_time=1.0)
+                      band_label.animate.set_opacity(0.5), run_time=1.0)
             self.play(FadeIn(seg_lab, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("the 3.13 series")
             self.play(FadeIn(one, shift=UP * 0.1), run_time=0.6)
@@ -584,7 +605,8 @@ class WhichPython(VoiceScene):
             vo.wait_until("and the rest")
             self.play(Wiggle(pc, scale_value=1.05, rotation_angle=0.02 * TAU), run_time=0.9)
             vo.wait_until("It's in the exercises")
-            self.play(Indicate(not_now, color=ERR, scale_factor=1.12), run_time=0.9)
+            # (Indicate would paint the opaque tag solid RED and hide its words)
+            self.play(Circumscribe(not_now, color=ERR, buff=0.06, stroke_width=4, fade_out=True), run_time=1.0)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.wait(0.2)
