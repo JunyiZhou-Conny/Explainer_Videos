@@ -11,6 +11,9 @@ a file in `assets/`, never typed by hand into a scene. This file says where each
 quote the exact lines a viewer sees in their own clone. Course material by the AC215 teaching
 staff (Harvard IACS), used for study with the instructor's permission.
 
+`source/pipenv-branch/Pipfile` and `Pipfile.lock` come from the same repo's `pipenv` branch at
+commit `3a354d81f787a064aea3ab061359c9a1e223e4d5` (S14 quotes its pinned `httpx` version).
+
 ## `terminal/` — real terminal sessions
 
 Captured on 2026-10-12 by `terminal/capture.sh`: a fresh `debian:12` (or `debian:13`) container
@@ -38,14 +41,14 @@ Differences from a real Compute Engine VM, and how the scenes handle them:
   its progress lines (`Reading package lists... Done`); scenes put it back.
 - **`26-startup-files.txt`** (part B) was captured in a second run of the same image, after the
   uv installer: the lines it appended to `~/.profile` and `~/.bashrc`, and `~/.local/bin/env`.
-- **The translation itself.** From the capture machine, Google's unofficial endpoint answered
-  every googletrans request with HTTP 429 ("too many requests"); the runs in `debian12-part-a/10-12`
-  show that real failure, and S06 teaches it. A minimal request to the same endpoint
-  (`client=gtx`, `dt=t`) did return the translations, on 2026-10-12:
+- **The translation itself.** Google's unofficial endpoint answered the part-A runs
+  (`debian12-part-a/10-12`, system Python, captured first) with HTTP 429 ("too many requests"),
+  and S06 teaches that real failure. A few minutes later the part-B runs from the venv
+  (`debian12-part-b/14-16`, `debian13-part-b/14-16`) succeeded, and those are real outputs:
   "I love cheese" → *Adoro il formaggio*; "Good morning. It is a good morning for cheese." →
   *Buen día. Es un buen día para el queso.*; "Good afternoon. Would you like some cheese?" →
-  *Bon après-midi. Veux-tu du fromage ?*. `expected/` is the captured output up to `Input:` plus
-  `Output: <that translation>`, which is exactly what `cli.py:39` prints when the request succeeds.
-  The video labels these runs "expected output".
+  *Bon après-midi. Veux-tu du fromage ?*. `expected/` is the part-A output up to `Input:` plus the
+  `Output:` line those runs would have printed (the same translations, `cli.py:39`); the video tags
+  those runs "expected output".
 - **Versions move.** uv 0.13.0 and CPython 3.15.0 were the newest on 2026-10-12; the narration says
   "at the time of recording" wherever a version number would change for a later viewer.

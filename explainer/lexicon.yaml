@@ -20,3 +20,33 @@ Irit: {ipa: "iɹˈiːt", say: "ee-reet"}
 Kobbi: {ipa: "kˈoʊbi", say: "koh-bee"}
 Latanya: {ipa: "lətˈɑːnjə", say: "la-tahn-ya"}
 Andrej: {ipa: "ˈɑːndɹeɪ", say: "ahn-dray"}
+# AC215 series (tools, file names and versions; a "." inside a name is read "dot")
+uvx: {ipa: "jˌuːvˌiːˈɛks", say: "you-vee-ex"}
+pipenv: {ipa: "pˈɪp ˈɛnv", say: "pip-env"}
+Pipfile.lock: {ipa: "pˈɪpfaɪl dˈɑːt lˈɑːk", say: "Pipfile dot lock"}
+asyncio: {ipa: "eɪsˈɪŋk ˌaɪˈoʊ", say: "async I-O"}
+anyio: {ipa: "ˈɛni ˌaɪˈoʊ", say: "any I-O"}
+idna: {ipa: "ˌaɪdˌiːˌɛnˈeɪ", say: "I-D-N-A"}
+googleapis: {ipa: "ɡˈuːɡəl ˌeɪpˌiːˈaɪz", say: "google A-P-Is"}
+AC215: {ipa: "ˌeɪsˈiː tˈuː fˈɪftiːn", say: "A-C two fifteen"}
+ac215-l01: {ipa: "ˌeɪsˈiː tˈuː fˈɪftiːn ˈɛl ˈoʊ wˈʌn", say: "A-C two fifteen L oh one"}
+CPUs: {ipa: "sˌiːpˌiːjˈuːz", say: "C-P-Us"}
+cli.py: {ipa: "sˌiːˌɛlˈaɪ dˈɑːt pˈaɪ", say: "C-L-I dot pie"}
+uv.lock: {ipa: "jˌuːvˈiː dˈɑːt lˈɑːk", say: "you-vee dot lock"}
+pyproject.toml: {ipa: "pˈaɪpɹˌɑːdʒɛkt dˈɑːt tˈɑːməl", say: "pie-project dot toml"}
+pyvenv.cfg: {ipa: "pˈaɪvˌɛnv dˈɑːt sˌiːˌɛfdʒˈiː", say: "pie-venv dot C-F-G"}
+"3.11": {ipa: "θɹˈiː pɔɪnt ɪlˈɛvən", say: "three point eleven"}
+"3.11.2": {ipa: "θɹˈiː pɔɪnt ɪlˈɛvən pɔɪnt tˈuː", say: "three point eleven point two"}
+"3.12": {ipa: "θɹˈiː pɔɪnt twˈɛlv", say: "three point twelve"}
+"3.13": {ipa: "θɹˈiː pɔɪnt θˈɜːtiːn", say: "three point thirteen"}
+"3.13.5": {ipa: "θɹˈiː pɔɪnt θˈɜːtiːn pɔɪnt fˈaɪv", say: "three point thirteen point five"}
+"3.14": {ipa: "θɹˈiː pɔɪnt fˈɔːɹtiːn", say: "three point fourteen"}
+"3.15": {ipa: "θɹˈiː pɔɪnt fˈɪftiːn", say: "three point fifteen"}
+"3.15.0": {ipa: "θɹˈiː pɔɪnt fˈɪftiːn pɔɪnt zˈiəɹoʊ", say: "three point fifteen point zero"}
+"0.13": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːtiːn", say: "zero point thirteen"}
+"0.13.0": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːtiːn pɔɪnt zˈiəɹoʊ", say: "zero point thirteen point zero"}
+"0.13.3": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːtiːn pɔɪnt θɹˈiː", say: "zero point thirteen point three"}
+"0.28": {ipa: "zˈiəɹoʊ pɔɪnt twˈɛnti ˈeɪt", say: "zero point twenty-eight"}
+"0.28.1": {ipa: "zˈiəɹoʊ pɔɪnt twˈɛnti ˈeɪt pɔɪnt wˈʌn", say: "zero point twenty-eight point one"}
+"23.0.1": {ipa: "twˈɛnti θɹˈiː pɔɪnt zˈiəɹoʊ pɔɪnt wˈʌn", say: "twenty-three point zero point one"}
+"4.0.2": {ipa: "fˈɔːɹ pɔɪnt zˈiəɹoʊ pɔɪnt tˈuː", say: "four point zero point two"}
