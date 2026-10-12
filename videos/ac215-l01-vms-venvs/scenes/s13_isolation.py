@@ -14,18 +14,19 @@ Beats (script.md "## S13", one voiceover block each):
     caption "not on python3's list"; the light turns RED at the bottom ("comes up empty") and the
     error line in the strip pulses. (A found lookup gets a PINK check, a failed one a RED cross.)
  2  `uv run python -c 'import googletrans, sys; print(sys.prefix)'` (extra, two rows) ->
-    21-uv-run.txt line 2. `print(sys.prefix)` pulses; on "It works" the light jumps into the GREEN
-    box and finds the googletrans jar (PINK check); on "the answer is" the path prints with a GREEN
-    bar, `.venv` pulses.
+    21-uv-run.txt line 2. `print(sys.prefix)` pulses; the path prints as "It works" is spoken and the
+    light jumps into the GREEN box and finds the googletrans jar (PINK check); on "the answer is"
+    the path gets a GREEN bar and `.venv` turns GREEN; it pulses on "our dot venv".
  3  Everything but the tracker fades. A faint GREY dashed VM glyph, legend "part-1 VM", tag
     "illustration · what if" (no shelves: they are the answer). Inside: `python3 -c 'import
     googletrans'`, then "python3 (system)" in ORANGE, then a GREY dashed "no .venv".
     PONDER (6 s), card at the bottom.
  4  The glyph opens into the part-1 shelves (full width, short labels): current folder, standard
     library · 3.11, /usr/local/… (pip's) with S05's twelve ORANGE jars, apt's with four. The
-    command's `import googletrans` becomes the PINK light; it sweeps down and stops on pip's shelf:
-    the googletrans jar gets its name tag and the light's label becomes the real path
-    (debian12-part-a/09-where.txt line 2); a GREY tag "system-wide" on the shelf.
+    command's `import googletrans` becomes the PINK light's label; it sweeps down and stops on
+    pip's shelf; a GREY tag "system-wide" on the shelf (as named); on "user local shelf" the
+    googletrans jar gets its name tag and the light's label turns into the real path
+    (debian12-part-a/09-where.txt line 2); "every program" pulses the tag.
  5  The part-1 stack slides left to half width (the jars stack in piles to fit); a GREEN venv stack
     (current folder, standard library, .venv/…/site-packages with eleven jars) builds at right,
     behind a dashed divider; its own light runs down its three shelves only and finds googletrans.
@@ -383,7 +384,9 @@ class Isolation(VoiceScene):
             self.flash(u1, substring(u1, "print(sys.prefix)"), S.WHITE, 1.15, 0.8)
             # the output lands as "It works" is spoken (the strip scrolls, then the line fades in: ~0.7 s);
             # the light jumps into the venv's box and finds the jar
-            self.wait(max(0.0, vo.time_until("It works") - 0.7))
+            lead_in = vo.time_until("It works") - 0.7
+            if lead_in > 1 / 15:
+                self.wait(lead_in)
             pre = t.print(self, [PREFIX], run_time=0.35)[0]
             self.play(Transform(lt, lt2), FadeOut(nf), run_time=0.5)
             ok2 = check_mark(0.3, LOOKUP).next_to(lt2.text, LEFT, buff=0.22)

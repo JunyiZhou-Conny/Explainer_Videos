@@ -352,12 +352,13 @@ def wrap_lines(s: str, size: float, width: float, code=()) -> list:
 
 def wrapped(s: str, size: float, color: str, width: float, code=()) -> VGroup:
     """Wrapped house-font text at `width` (see wrap_lines). .lines .glyphs"""
-    rows = [text_line(ln, size, color, code) for ln in wrap_lines(s, size, width, code)]
+    strs = wrap_lines(s, size, width, code)
+    rows = [text_line(ln, size, color, code) for ln in strs]
     pitch = rows[0].strut.height * 1.22
     for k, r in enumerate(rows):
         r.shift(np.array([-r.strut.get_left()[0], -k * pitch - r.strut.get_top()[1], 0]))
     g = VGroup(*rows)
-    g.lines = rows
+    g.lines, g.strs = rows, strs
     g.glyphs = VGroup(*[gl for r in rows for gl in r.glyphs])
     return g
 
@@ -375,6 +376,16 @@ def question(i: int, size: float, color: str, badge_color: str, width: float) ->
     g.badge, g.text = b, txt
     g.flat = VGroup(b, *txt.glyphs)
     return g
+
+
+def q_span(q: VGroup, sub: str) -> VGroup:
+    """The glyphs of `sub` in question q's text (a span never crosses a line break)."""
+    key = "".join(sub.split())
+    for r, s in zip(q.text.lines, q.text.strs):
+        i = "".join(s.split()).find(key)
+        if i >= 0:
+            return VGroup(*r.glyphs[i:i + len(key)])
+    raise AssertionError((sub, q.text.strs))
 
 
 def thumb_frame(content: VGroup, h: float | None = None) -> VGroup:
@@ -505,8 +516,10 @@ def thumb_tree() -> VGroup:
 
 def thumb_glow() -> VGroup:
     """Q5: S10's number line in miniature; .seg = the 3.13 segment the glow shrinks to."""
-    vl = VersionLine(12, 16, lo=13, width=4.3, size=20)
+    vl = VersionLine(12, 16, lo=13, width=4.2, size=20)
     vl.remove(vl.band_label)
+    # a shorter run-off past 3.16 than S10's, so the line keeps a margin inside the card
+    vl.band.stretch_to_fit_width(vl.band.width - 0.15, about_edge=LEFT)
     lab = mono(">=3.13", 20, VENV).next_to(vl.band, UP, buff=0.18).align_to(vl.band, LEFT)
     body = VGroup(vl, lab)
     g = thumb_frame(body, h=body.height + 0.75)
@@ -772,15 +785,22 @@ class Recap(VoiceScene):
         bar29 = line_bar(code, 8, VENV, 0.22)
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(ctr.frame), FadeIn(ctr_solid.frame), Transform(ctr.head, ctr_solid.head),
-                      run_time=0.7)
+            # "container · L2" -> "container (L2)": the word stays, "· L2" becomes the tag
+            w_old, r_old = words(ctr.head, "container"), words(ctr.head, "· L2")
+            self.play(FadeOut(ctr.frame), FadeIn(ctr_solid.frame),
+                      Transform(w_old, ctr_solid.head[0]), Transform(r_old, ctr_solid.head[1]), run_time=0.7)
+            self.remove(ctr, w_old, r_old, ctr_solid.frame)
+            self.add(ctr_solid)
+            head = ctr_solid.head
             vo.wait_until("next lecture")
-            self.play(pulse(ctr.head[1], 1.25), run_time=0.6)
+            self.play(pulse(head[1], 1.25), run_time=0.6)
             vo.wait_until("Dockerfile already")
             self.play(FadeOut(VGroup(vm_sub, ven_cap, sys_g, wall)), run_time=0.4)
+            # the picture compacts first, then the panel slides into the space it freed (no overlap)
             self.play(Transform(vm, vm2), Transform(vm_sep, vm2_sep), Transform(vm_t, vm2_t),
-                      Transform(ctr_solid.frame, ctr2.frame), Transform(ctr.head, ctr2.head),
-                      Transform(ven, ven2_dim), FadeIn(panel, shift=LEFT * 1.2), run_time=1.0)
+                      Transform(ctr_solid.frame, ctr2.frame), Transform(head, ctr2.head),
+                      Transform(ven, ven2_dim), run_time=0.8)
+            self.play(FadeIn(panel, shift=LEFT * 0.6), run_time=0.6)
             vo.wait_until("copy the code")
             self.play(FadeIn(bar22), run_time=0.3)
             fly = code_chip.copy().move_to(code_span(code, 1, "COPY . ./")).set_opacity(0)
@@ -811,7 +831,7 @@ class Recap(VoiceScene):
         p6 = code_panel(TOML_6, "pyproject.toml", first_line=6, language="toml", font_size=22)
         p2.move_to([0, 1.4, 0]).align_to([-6.45, 0, 0], LEFT)
         p6.move_to([0, 1.4, 0]).align_to([6.45, 0, 0], RIGHT)
-        p6.align_to(p2, UP)
+        p6.shift(UP * (p2.code.get_top()[1] - p6.code.get_top()[1]))   # the boxes level, not the headers
         mid_x = (p2.get_right()[0] + p6.get_left()[0]) / 2
         qmark = label("?", 56, TURN).move_to([mid_x, p2.code.get_y(), 0])
         v312 = code_span(p2.code, 0, "3.12")
@@ -830,10 +850,12 @@ class Recap(VoiceScene):
         hint = dashed_arrow(uvc.get_right() + RIGHT * 0.1, vl.point(15, 0.3), -0.7, UV)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(vm, vm_sep, vm_t, ctr.head, ctr_solid.frame, ven, drops, code_chip,
+            self.play(FadeOut(VGroup(vm, vm_sep, vm_t, ctr_solid, ven, drops, code_chip,
                                      shell_g, panel)), run_time=0.7)
             self.play(FadeIn(p2, shift=DOWN * 0.15), run_time=0.6)
             self.play(Create(vl.axis), FadeIn(vl.ticks), run_time=0.8)
+            vo.wait_until("The Dockerfile starts")
+            self.play(Indicate(code_span(p2.code, 0, "FROM"), color=TURN, scale_factor=1.15), run_time=0.8)
             vo.wait_until("a Python 3.12 image")
             ul312 = under(v312, TURN)
             self.play(Create(ul312), v312.animate.set_color(TURN), FadeIn(dot, scale=0.5), run_time=0.5)
@@ -868,8 +890,15 @@ class Recap(VoiceScene):
             vo.wait_until("One")
             self.play(FadeIn(q1, shift=UP * 0.15), run_time=0.6)
             self.play(FadeIn(th1, shift=LEFT * 0.2), run_time=0.5)
+            # the words being read light up in the question (demote() turns them GREY again)
+            vo.wait_until("break-system-packages")
+            flag = q_span(q1, "--break-system-packages")
+            self.play(flag.animate.set_color(TURN), run_time=0.5)
+            vo.wait_until("actually break")
+            self.play(Indicate(flag, color=TURN, scale_factor=1.06), run_time=0.7)
             vo.wait_until("where did sudo pip3")
-            self.play(LaggedStart(*[FadeIn(j, shift=DOWN * 0.5) for j in th1.drop], lag_ratio=0.12),
+            self.play(q_span(q1, "sudo pip3").animate.set_color(TURN), flag.animate.set_color(INK),
+                      LaggedStart(*[FadeIn(j, shift=DOWN * 0.5) for j in th1.drop], lag_ratio=0.12),
                       run_time=1.3)
             self.play(Indicate(th1.content[0][0], color=SYSTEM, scale_factor=1.05), run_time=0.6)
 
@@ -921,8 +950,13 @@ class Recap(VoiceScene):
             vo.wait_until("Five")
             s4, q5, th5, top5 = step(q4, 4, top4, VGroup(th4, th4.grown, th4.scroll), thumb_glow)
             smalls.append(s4)
+            vo.wait_until("a pin")
+            pin = q_span(q5, ">=3.13")
+            self.play(pin.animate.set_color(TURN), Indicate(th5.lab, color=TURN, scale_factor=1.2),
+                      run_time=0.7)
             vo.wait_until("what would make")
-            self.play(Transform(th5.vl.band, th5.seg), Transform(th5.lab, th5.seg_lab), run_time=1.0)
+            self.play(Transform(th5.vl.band, th5.seg), Transform(th5.lab, th5.seg_lab),
+                      pin.animate.set_color(INK), run_time=1.0)
             self.play(Indicate(th5.vl.band, color=VENV, scale_factor=1.2), run_time=0.6)
 
         # ========================================================== 7 · shrink to the top; where next
