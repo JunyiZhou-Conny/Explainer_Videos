@@ -53,9 +53,13 @@ repos with branch and commit, guide link), `script.md`, `scenes/`, `exercises.md
 7. **Length.** 25–35 minutes, cut into two parts at a natural break (`parts:` in video.yaml), each
    part ending on a clean frame. Narration ≈ 3,900–4,300 words at the house voice (Kokoro
    `af_heart`, speed 0.9 ≈ 174 words per minute); typing, output and ponder pauses add the rest.
-8. **Chinese version.** Like every video here: code-switched Mandarin (commands, file names, tool
-   names and the terms Chinese engineers say in English stay in English), bilingual subtitles,
-   `i18n/zh/`. Terminal panels and code are never translated; their captions and labels are.
+8. **Chinese subtitles, English voice.** The series is narrated in English only. Every video
+   ships English subtitles, Chinese subtitles on the English timing (`<id>.zh.srt`), bilingual
+   subtitles (`<id>.zh-en.srt` / `.ass`, Chinese above, English below) and a copy with the bilingual
+   subtitles burned in (`<id>.zh-en.mp4`, `python -m explainer.build videos/<id> --burn`). The
+   Chinese text lives in `i18n/zh/` (glossary + sentence-aligned `narration/*.yaml`, as in
+   `docs/LANGUAGES.md`); there is no Chinese voice and no Chinese on-screen text, so scenes need no
+   language changes. Terminal panels and code are never translated.
 
 ## Series colours (keep across all videos)
 
@@ -81,5 +85,7 @@ repos with branch and commit, guide link), `script.md`, `scenes/`, `exercises.md
    exact, in order?); spoken flow + translatability → merge.
 4. Scenes (one agent per scene, `explainer.devops` + the video's `scenes/common.py`), previews and
    `explainer.check`, an independent frame review.
-5. Render English, write `exercises.md` and `README.md`; then the Chinese version (`docs/LANGUAGES.md`).
+5. Translate the narration for the Chinese subtitles (`i18n/zh/`: glossary, sentence-aligned
+   narration, `python -m explainer.i18n check`), then render English with `--burn`; write
+   `exercises.md` and `README.md`.
 6. Update the course map in MLOps_Learning (`video_status` in `course/lectures.yaml`).

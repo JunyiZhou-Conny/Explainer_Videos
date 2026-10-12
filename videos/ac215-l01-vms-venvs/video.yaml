@@ -12,6 +12,8 @@ course:
   guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L01-vms-venvs.md
 audience: "AC215 student who knows Python and basic ML, new to cloud VMs, virtual environments and uv; watching with their own clone open, pausing to run each command"
 voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
 scenes:
   - {file: scenes/s01_hook.py,        cls: Hook,          title: "Why won't pip install?"}
   - {file: scenes/s02_app.py,         cls: TheApp,        title: "The app: cli.py"}

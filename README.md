@@ -37,7 +37,8 @@ The next step after videos is interactivity — playgrounds where you have to *p
 One video per lecture of the course's hands-on tutorials (the
 [dlops-io](https://github.com/dlops-io) repos), made to be watched with your own clone open: every
 README command typed exactly as written, real captured terminal output, a README step tracker in
-the corner, and the concept behind each command animated first. The course map, study guides and a
+the corner, and the concept behind each command animated first. English narration, with English,
+Chinese and bilingual (中英双语) subtitles. The course map, study guides and a
 script that clones every tutorial live in
 [MLOps_Learning](https://github.com/JunyiZhou-Conny/MLOps_Learning); format rules in
 [docs/AC215_SERIES.md](docs/AC215_SERIES.md). Course materials belong to the AC215 teaching staff
