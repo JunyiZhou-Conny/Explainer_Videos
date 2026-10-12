@@ -381,19 +381,21 @@ class Isolation(VoiceScene):
             self.pin(u1, beside(x2, u1), run_time=0.3)
             vo.wait_until("printing where")
             self.flash(u1, substring(u1, "print(sys.prefix)"), S.WHITE, 1.15, 0.8)
-            vo.wait_until("It works")
-            self.play(Transform(lt, lt2), FadeOut(nf), run_time=0.7)
+            # the output lands as "It works" is spoken (the strip scrolls, then the line fades in: ~0.7 s);
+            # the light jumps into the venv's box and finds the jar
+            self.wait(max(0.0, vo.time_until("It works") - 0.7))
+            pre = t.print(self, [PREFIX], run_time=0.35)[0]
+            self.play(Transform(lt, lt2), FadeOut(nf), run_time=0.5)
             ok2 = check_mark(0.3, LOOKUP).next_to(lt2.text, LEFT, buff=0.22)
             self.play(Indicate(v_jars[GT_VENV], color=LOOKUP, scale_factor=1.6), Indicate(v_gt, color=VENV),
-                      Create(ok2), run_time=0.8)
+                      Create(ok2), run_time=0.6)
             vo.wait_until("and the answer is")
-            pre = t.print(self, [PREFIX], run_time=0.4)[0]
             pb = row_bar(pre, VENV, 0.25)
-            self.pin(pre, pb, run_time=0.4, anim=FadeIn(pb), behind=True)
-            self.play(substring(pre, ".venv").animate.set_color(VENV), run_time=0.3)
-            self.add(pre)
+            pv = substring(pre, ".venv")
+            self.pin(pre, pb, run_time=0.4, anim=AnimationGroup(FadeIn(pb), pv.animate.set_color(VENV)),
+                     behind=True)
             vo.wait_until("our dot venv")
-            self.flash(pre, substring(pre, ".venv"), VENV, 1.35, 0.8)
+            self.flash(pre, pv, VENV, 1.35, 0.8)
 
         # ========================================================== 3 · imagine the part-1 VM (PONDER 4)
         vm = DashedVMobject(RoundedRectangle(width=7.6, height=2.9, corner_radius=0.14), num_dashes=70,
