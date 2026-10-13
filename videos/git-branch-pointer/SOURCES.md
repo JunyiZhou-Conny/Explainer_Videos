@@ -14,6 +14,8 @@ checkout (JunyiZhou-Conny/Explainer_Videos):
   `git switch`, `git merge` follow the Git Book, "Git Branching — Branches in a Nutshell"
   (https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell), cross-checked
   against the real cat-file output above.
-- The short node names in the graph diagrams (`a1f3c2` etc.) are illustrative labels for a
-  generic history, not commits of this repository; the production notes in `script.json`
-  forbid relabeling them as real.
+- Every node name in the graph diagrams (`a1f3c2`, `c99e41`, `f7d2a9`, `e5a1d7`, …) is an
+  illustrative label for a generic history, so the story stays self-consistent; the real
+  merge evidence appears only on the `git cat-file` card, clearly marked as coming from this
+  repository. The production notes in `script.json` forbid relabeling illustrative nodes as
+  real.

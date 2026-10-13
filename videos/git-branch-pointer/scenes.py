@@ -200,7 +200,7 @@ class S03(EpisodeScene):
             self.play(FadeIn(every), run_time=.5)
         with self.say(2) as vo:
             tag = branch_tag("idea", nodes[2], dy=-.95)
-            tag.shift(DOWN * .9 + RIGHT * 2.6)
+            tag.shift(DOWN * .5 + RIGHT * 2.6)
             target = branch_tag("idea", nodes[2], dy=-.95)
             note = at("只是指过去 · just points", 4.3, -.3, 24, RED)
             self.cue(vo, .2, FadeIn(tag))
@@ -282,8 +282,8 @@ class S06(EpisodeScene):
         main_tag = branch_tag("main", m1, dy=.95, color=GRAY, head=True)
         idea_tag = branch_tag("idea", i1, dy=-.85)
         self.add(base, m1, i1, a1, a2, main_tag, idea_tag)
+        merge = commit_node("e5a1d7", .4, 0.0, accent=True)
         with self.say(0) as vo:
-            merge = commit_node("88adfa", .4, 0.0, accent=True)
             vo.wait_until("one new commit")
             self.play(FadeIn(merge, shift=UP * .12), run_time=.5)
             vo.wait_until("from main")
@@ -304,7 +304,7 @@ class S06(EpisodeScene):
             self.cue(vo, .15, Create(box), FadeIn(proof), FadeIn(real), run_time=1.0)
         with self.say(2) as vo:
             vo.wait_until("one node")
-            self.play(Indicate(VGroup(base, m1, i1), color=GRAY, scale_factor=1.03), run_time=.8)
+            self.play(Indicate(merge, color=RED, scale_factor=1.12), run_time=.8)
         self.finish()
 
 
