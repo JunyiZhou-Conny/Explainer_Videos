@@ -1,0 +1,15 @@
+00:00 Why won't pip install?
+01:34 The app: cli.py
+03:34 Renting a computer: the VM
+05:57 apt, git and the repo
+07:39 The system Python and PEP 668
+10:53 Run it, and read the traceback
+12:58 Delete, don't stop
+14:01 What a virtual environment is
+15:48 Installing uv
+18:03 uv sync: which Python?
+20:37 uv sync: resolve, lock, install
+23:23 Activation is just PATH
+25:55 Prove the isolation
+27:10 The older way: pipenv
+28:16 Tear down, recap, and what's next

@@ -1,0 +1,9 @@
+$ source .venv/bin/activate; which python; python --version; which pip; echo pip-exit:$?; echo $PATH | tr ':' '\n' | head -3; echo VIRTUAL_ENV=$VIRTUAL_ENV
+/home/student/simple-translate/.venv/bin/python
+Python 3.13.5
+pip-exit:1
+/home/student/simple-translate/.venv/bin
+/home/student/.local/bin
+/usr/local/bin
+VIRTUAL_ENV=/home/student/simple-translate/.venv
+[exit 0]

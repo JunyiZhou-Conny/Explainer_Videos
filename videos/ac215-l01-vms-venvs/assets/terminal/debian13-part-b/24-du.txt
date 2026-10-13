@@ -1,0 +1,3 @@
+$ du -sh .venv ~/.local/share/uv/python 2>/dev/null; ls ~/.local/share/uv/python 2>/dev/null
+13M	.venv
+[exit 2]

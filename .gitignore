@@ -34,3 +34,7 @@ videos/*/output/*/*.partial.mp4
 # shorts: the music-free copy and the score alone stay local (rebuild with --no-render); the masters are committed
 videos/*-short/output/*.nomusic.mp4
 videos/*-short/output/*.music.wav
+# AC215 series (from L2 on): commit the burned-in bilingual copy + subtitles, chapters, transcript;
+# the clean video and the part cuts are rebuilt with `python -m explainer.build <dir> --no-render`
+videos/ac215-l*/output/*.mp4
+!videos/ac215-l*/output/*.zh-en.mp4

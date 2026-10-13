@@ -1,0 +1,13 @@
+$ ls -l .venv/bin/activate; grep -n 'PATH=\|VIRTUAL_ENV_PROMPT=\|^VIRTUAL_ENV=' .venv/bin/activate | head
+-rw-rw-r-- 1 student student 4095 Oct 12 02:27 .venv/bin/activate
+26:    _OLD_SCRIPT_PATH="$SCRIPT_PATH"
+31:    SCRIPT_PATH="${BASH_SOURCE[0]}"
+38:    SCRIPT_PATH="${(%):-%x}"
+40:    SCRIPT_PATH="${.sh.file}"
+49:        PATH="$_OLD_VIRTUAL_PATH"
+81:VIRTUAL_ENV='/home/student/simple-translate/.venv'
+90:    SCRIPT_PATH="$_OLD_SCRIPT_PATH"
+97:_OLD_VIRTUAL_PATH="$PATH"
+98:PATH="$VIRTUAL_ENV/bin:$PATH"
+102:    VIRTUAL_ENV_PROMPT="app"
+[exit 0]

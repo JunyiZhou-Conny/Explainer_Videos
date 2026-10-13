@@ -366,7 +366,8 @@ def main(argv=None):
     ap.add_argument("--render-only", action="store_true", help="render the selected scenes, don't stitch")
     ap.add_argument("--lang", default="en", help="language version to build (en, zh, ...)")
     ap.add_argument("--burn", action="store_true", help="(the default) burn the bilingual subtitles: the English "
-                    "build writes <id>.<lang>-en.mp4 for each translation, a translated build burns its own video")
+                    "build writes <id>.<lang>-en.mp4 for each translation (full video only, at --crf if given), "
+                    "a translated build burns its own video")
     ap.add_argument("--no-burn", action="store_true", help="no burned copy: English build writes only the clean "
                     "video, a translated build keeps its video clean")
     ap.add_argument("--subs-only", action="store_true", help="only (re)write subtitles, chapters and transcript "
@@ -445,7 +446,7 @@ def main(argv=None):
         from .i18n import meta as lang_meta
         meta = lang_meta(lang, project)
     title = meta.get("title") or spec.get("title", spec["id"])
-    ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
+    ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env, crf=args.crf,
                burn=not args.no_burn, subs_only=args.subs_only,
                music=with_music and not args.subs_only)
     # music.file tracks are mixed inside stitch() (mix_music); composed scores come after, from the event logs
@@ -458,10 +459,12 @@ def main(argv=None):
         keep = set(part["scenes"])
         subset = [t for t in normalized if Path(t[0]["file"]).stem in keep or t[0]["cls"] in keep]
         ptitle = ((meta.get("parts") or {}).get(part["id"])) or part.get("title", part["id"])
+        # an English build burns subtitles into the full video only; the parts get the subtitle files
+        pctx = ctx if lang != "en" else {**ctx, "burn": False}
         stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", ptitle, build,
-               chapters_file=out_dir / f"chapters_{part['id']}.txt", ctx=ctx)
+               chapters_file=out_dir / f"chapters_{part['id']}.txt", ctx=pctx)
         if compose:
-            add_music(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", build, ctx)
+            add_music(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", build, pctx)
 
 
 def _scene_title(s: dict, meta: dict) -> str:
@@ -607,7 +610,7 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
                 if ctx.get("music"):           # burned after the music is mixed in (add_music)
                     ctx.setdefault("pending_burns", []).append((final, ass, Path(f"{stem}.{code}-en.mp4")))
                 else:
-                    subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"))
+                    subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"), crf=ctx.get("crf") or 23)
                 made.append(f".{code}-en.mp4")
     else:
         tr_ = subs.tracks(own_pairs, timing="tr")
@@ -621,7 +624,7 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         if subs_only:
             pass
         elif ctx.get("burn", True):
-            subs.burn(final, ass, out)
+            subs.burn(final, ass, out, crf=ctx.get("crf") or 23)
             made.append(" (bilingual subtitles burned in)")
         else:
             subprocess.run(["cp", str(final), str(out)], check=True)

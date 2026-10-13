@@ -1,0 +1,859 @@
+# Chinese (zh-CN) glossary and translation rules for ac215-l01-vms-venvs (AC215 lecture 1, a follow-along
+# of dlops-io/simple-translate), code-switching version. Audience: Chinese-speaking AC215 grad students who read
+# technical English fluently; register of a Chinese MLOps TA running a lab session.
+# Precedents: videos/dwork2006-calibrating-noise/i18n/zh (closest register) and videos/tictactoe-255168/i18n/zh.
+# Merges build/review_spoken.md finding S16 (the proposed rows: display = the literal token; say: changed from
+# dot/slash/dash to 点/斜杠/杠; shelf 书架 → 架子, receipt 收据 → 购物小票) and the U-S-R note of review_merge_log.
+# Voice: edge zh-CN-XiaoyiNeural (toolkit default). The readings are NOT measured yet: edge could not be reached
+# from the environment this was written in (rule F5, item I2).
+# Human-readable copy in Chinese: GLOSSARY.md (keep the two in sync).
+# terms[].zh_subtitle = display form (Chinese subtitle line and on-screen labels);
+# terms[].zh_spoken = what the voice says, i.e. the narration.yaml say: form ("" = same as zh_subtitle);
+# rules are tagged [A1]..[I4]: A terms, B typography, C numbers, D narration file, E on-screen strings,
+# F TTS, G subtitles, H titles/companions, I toolkit work.
+# Read by: python -m explainer.i18n check (Latin words allowed in spoken text: every Latin word of zh_spoken,
+# zh_subtitle and first_use, plus allowed_spoken_latin) and explainer/subtitles.py (2-3 word English phrases
+# of `en` are kept on one English line; 2-7 character Chinese headwords of zh_subtitle are registered in jieba).
+video: ac215-l01-vms-venvs
+lang: zh-CN (mainland Simplified Chinese)
+audience: 'Chinese-speaking AC215 (MLOps & LLMOps) grad students who know Python and basic ML, read technical English fluently, and are new to cloud VMs, virtual environments and uv; they follow along on their own VM. Register of a Chinese MLOps TA running a lab session.'
+voice:
+  backend: edge
+  voice: zh-CN-XiaoyiNeural
+  speed: 1.0
+policy: 'The Mandarin of a Chinese MLOps TA walking a lab session through the steps, code-switching only where such a speaker really does. The audience are Chinese-speaking AC215 grad students who read technical English fluently and already say 开一台 VM, SSH 进去, 把 repo clone 下来, 激活 venv, uv sync 一下. Every choice passes three tests: what is said in a real lab session; the standard, searchable Chinese name used by the GCP Chinese console and Chinese technical docs; and a reading the Mandarin voice (edge zh-CN-XiaoyiNeural) gets right. (1) Artifacts verbatim: what the viewer types or matches on screen (commands, flags, file and folder names, paths, package names, variables and config keys, names in the code, terminal text and error classes, the English console''s buttons and pages, the README''s section headings) is copied letter for letter into subtitles and labels and spoken in English, with . read 点, / read 斜杠, a flag''s - read 杠, and /usr read ''user'' as the English does; never translated, inflected or quoted. Terminal output, code panels, README quotes and the schematic console stay English; only the explanation is translated. (2) Follow the English: virtual machine → 虚拟机, VM → VM, virtual environment → 虚拟环境, venv → venv; plus a closed list of words Chinese engineers say in English in a lab anyway: shell, root, repo, clone, commit, import, traceback, lock 文件, pin, hypervisor, and the quoted error text externally managed. (3) Everything else in standard Chinese: 终端, 提示符, 命令, 参数, 目录, home 目录, 包, 软件包, 依赖, 包管理器, 解释器, 标准库, 软链接, 环境变量, 管道, 激活, 隔离, 解析, 约束, 范围, 校验和, 容器, 镜像, 接口, 状态码, 限流; GCP concepts with the Chinese console''s names: 区域, 可用区, 机器类型, 启动磁盘, 外部 IP, 结算, 计费. (4) The video''s own metaphors by meaning, one word each: 架子 (一层), 罐子, 公用厨房 and 掌勺的, 工具箱, 门, 愿望清单 and 购物小票, 计价器, 约束不是 pin. (5) Readings as Chinese engineers say them: versions as integer groups (三点十一点二), status codes, PEP numbers and the course number digit by digit (四二九, PEP 六六八, AC 二一五), all in say:. (6) The bilingual subtitles put the English sentence under the Chinese (artifacts the SAY line spells out get their literal form back through en_display), so the Chinese line carries no English glosses; there are exactly three subtitle-only glosses: hypervisor（虚拟机监控器）, externally managed（由外部管理）, 外部 IP（也就是公网 IP）. (7) The toolkit''s constraints are part of the policy: one Chinese sentence per English sentence (118 blocks, 391 sentences), anchors that keep the animation in sync, and a say: field wherever the display is not what the voice should read. Mainland Simplified Chinese; relaxed, clear lab-session speech, never slangy.'
+rules:
+- '[A1] Code-switching scope. English stays in three places only. (a) Artifacts: literal text the viewer types or looks for on screen. Commands and subcommands (sudo, apt, apt-get, git, pip, pip3, python3, uv, uvx, curl, sh, source, which, ls, cd, gcloud, deactivate, pipenv, uv sync / run / add / tree / python pin), flags (-t, -a, -m, --break-system-packages, --locked), file and folder names (pyproject.toml, uv.lock, .venv, cli.py, pyvenv.cfg, Pipfile.lock, os-release, .python-version, ~/.local/bin, /usr/local), package names (googletrans, art, httpx, anyio, certifi, httpcore, h2, idna, typing-extensions, argparse, asyncio), variables and config keys (PATH, VIRTUAL_ENV, sys.path, site-packages, dist-packages, requires-python, include-system-site-packages, home, prompt), names in the code (Translator, Namespace, main, raise_exception), terminal text and error classes (externally managed, command not found, ModuleNotFoundError, requirement already satisfied), the English console''s buttons and pages (Create instance, VM instances, Disks, SSH, Authorize, Delete, Enable), and the README''s section headings. (b) Products, organisations, the course and names: Google Cloud, GCP, Compute Engine, Debian, Ubuntu, Python, CPython, GitHub, PyPI, Docker, AWS, AC215, Tutorial 0, simple-translate, MLOps Learning, cheese app, JSON, HTTPS, API key, CPU, PEP 668, student. (c) A closed list: VM and venv (following the English, A2), plus the words Chinese engineers say in English in a lab session anyway: shell, root, repo, clone, commit, import, traceback, lock 文件, pin, hypervisor. A new word joins (c) only if Chinese MLOps engineers say it in English in a lab, the Chinese is stiff, ambiguous or collides with another term, and the voice reads it correctly (F5). Everything else is Mandarin (term tables). Never English for flavour: no package, dependency, endpoint, flag, folder, terminal, interpreter, container, image, billing, region, zone.'
+- '[A2] Follow the English. virtual machine → 虚拟机, VM → VM; virtual environment → 虚拟环境, venv → venv. Use the full or the short form wherever the English does; definitions always use the full form. Never shorten to 虚拟 or 环境. S01''s ''the word virtual twice'' is the word 虚拟 twice in Chinese. Measure words: 一台 VM / 一台虚拟机, 一个 venv / 一个虚拟环境.'
+- '[A3] Exactly three subtitle-only glosses, each at first use: hypervisor（虚拟机监控器） (S03), externally managed（由外部管理） (S01), 外部 IP（也就是公网 IP） (S03). At the end of a clause, never inside a noun phrase; display only, never in say:; an anchor after a gloss needs an explicit anchors: entry (D2). No English glosses on Chinese terms: the English sentence is right below. All three are in part 1; part 2 does not repeat them.'
+- '[A4] Written vs spoken pairs. Narration and subtitles say repo / clone / commit / 点; labels, chapter titles, meta.yaml and the companion docs write 仓库 / 克隆 / 提交 / 点击. ''The repo'' as a subject is 这个 repo. Commands are unaffected (git clone stays).'
+- '[A5] Writing artifacts. Artifacts are copied verbatim into subtitles and labels (case, dots, slashes, hyphens and underscores unchanged) and read in English (readings: F3); never translated, inflected, quoted, put in 《》 or in code formatting. Add a Chinese head noun where it helps: uv sync 这条命令, pyproject.toml 这个文件, PATH 这个环境变量, .venv 目录, --locked 参数, googletrans 这个包. Never start a sentence with an artifact; put a Chinese word first (而 pipenv shell…, 这个 pyproject.toml 文件…, 输入 uv sync…), for the subtitle and for the voice.'
+- '[A6] Disambiguation pairs. 镜像 = container image only, never a Debian mirror (软件源) or a GCP OS image (系统映像). 目录 = folder (.venv 目录, bin 目录); apt''s package catalog is 软件包列表, not 目录. 包 (a Python package, pip/uv) vs 软件包 (an apt package). 依赖 (what pyproject.toml lists) vs 包 (what gets installed). lock 文件 / 锁定 (uv.lock, --locked, locking exact versions) vs pin (uv python pin, 约束不是 pin). 约束 (the >= 3.13 range) vs 精确版本. 提示符 (prompt) vs 提示 (hint, pip''s suggestion). 参数 (flags, command-line arguments) vs 选项 (argparse options, S02 only). 错误 (generic: 两个错误, 第一个错误) vs 异常 (a Python exception) vs 报错 (the error message on screen). 激活 (activate) vs 启用 (enable an API) vs 启动 (start). 停止 (Stop: the disk stays and bills) vs 删除 (Delete). 结算 (Billing, a project with billing on) vs 计费 (billed per second). 外部 IP vs 预留的 IP 地址. home 目录 (~, yours) vs /usr (the system''s, read ''user'', never translated as 用户). 应用 (the app, the concept) vs app (the literal name = "app"). 软链接 vs 链接 (a web link). 解析 serves both resolve and parse (S02); for dependencies say the full 解析依赖. 架子 (shelf, one sys.path folder) vs 工具箱 (toolbox, a venv''s own shelf) vs 工具 (tool, uv itself).'
+- '[A7] English words inside Chinese never inflect: no plurals, tenses, articles or possessive ''s (很多包, 两个 venv, uv 的, README 的). Measure words: 一台 VM, 一个 venv, 一个 repo, 一条命令, 一个参数, 一个包, 一个依赖, 一个文件, 一个目录, 一层架子, 一个罐子, 一扇门, 一张小票, 一份愿望清单, 一个 lock 文件, 一个 shell, 一个 traceback, 一行代码 / 一行输出, 一个提示符. Plurals with 这些 / 很多 / 几个, never 们.'
+- '[A8] Register: a TA running a lab session. Short instructions, colloquial verbs (装, 跑, 删, 点, 输入); address the viewer as 你 (a one-to-one follow-along; never 您, 大家, 同学们); 我们 is us at recording time (我们录的时候，Google 拒绝了请求). Chinese word order; restructure freely inside a sentence. No translationese: no 让我们… (use 我们来… / 先…), no 这就是为什么… (use 所以…), few 被 passives and chains of 一个…的. No internet slang (yyds, 绝绝子, 一键三连). Carry the spoken rhythm by meaning: Here''s the catch → 问题就在这儿; Now, honestly → 说实话; To be fair → 公平地说; quick and dirty → 简单粗暴; for real → 这次是真的; Fresh matters → 全新很重要.'
+- '[A9] Precision. Translate hedges exactly: by default 默认, usually 通常, may 可能, only 只, every 每个, exactly 正好, or newer 及以上, older than 低于, over a hundred 一百多个. ''at the time of recording'' is always 录制时 and never dropped: it tells the viewer the version will change. Versions, counts, line and step numbers match the screen exactly. Errata are gentle (一个小错误) and always followed by the fix. Ponder questions (S05, S10, S11, S13) ask without answering; the wording must not give the answer away (S10 must not say uv will download one).'
+- '[A10] Names. Products, companies and course names stay Latin (Google, GitHub, Debian, Ubuntu, Docker, AWS, PyPI, Astral, MLOps Learning, cheese app); 哈佛 only in the titles and description. The username student, the VM name ac215-l01 and the project name app stay. Course: AC215 (say: AC 二一五); Lecture 1 is 第 1 讲 in writing and 今天这节课 in speech; next lecture → 下节课; the L2 tag → 第 2 讲 (L2 where it does not fit); Tutorial 0 stays; part 1 / part 2 → 第一部分 / 第二部分.'
+- '[A11] Artifacts verbatim, explanations in Chinese. Terminal output, prompts, the terminal title (ssh · ac215-l01), code panels (comments included: they are the real files the viewer cloned), README quote cards (grey quote, README.md · line N), the schematic console''s English UI text and the README''s section headings (Installing App on VM Manually, Installing App on VM using UV) stay English; only the notes, tags, captions and metaphors around them are translated. Narration paraphrasing the README says README 里说…….'
+- '[A12] Mainland Simplified Chinese only: 默认, 程序, 代码, 文件, 目录, 服务器, 网络, 内存, 磁盘, 脚本, 视频, 用户名, 信息; never 預設, 程式, 程式碼, 檔案, 資料夾, 伺服器, 網路, 記憶體, 磁碟, 腳本, 影片, 使用者.'
+- '[B1] Spacing. One half-width space between Chinese and Latin letters, digits or artifacts, in subtitles, labels, docs and say: (输入 sudo apt-get update, .venv 目录, PATH 里, 第 3 步, 11 个包, Python 3.11.2, home 目录). The checker reports a missing space in say:, and lexicon respellings need it. Spaces inside an artifact stay as they are (uv python pin 3.13); never add one inside an artifact. No space next to full-width punctuation (……cd simple-translate。). Never fake a no-break space with U+00A0 / U+202F (norm() turns it into a plain space).'
+- '[B2] Punctuation. Full-width ，。、；：？！（）“”…… in Chinese text, also next to artifacts (输入 python3 cli.py。). Lists use 、 (anyio、certifi、httpcore、h2). “” only for Chinese tag names (“轮到你了”标签, “额外”标签) and the word “虚拟”; artifacts are never quoted. No 。？！ inside one Chinese sentence (one per English sentence); use ，；： instead. A full-width colon after 第 N 步. Labels have no final 。; questions keep ？. A command''s own quotes, pipe and equals signs appear only on screen; subtitles describe them in words (这根竖线).'
+- '[B3] Artifacts and symbols in subtitles. No backticks or code font. A code fragment that is one piece on screen is shown as is (raise_exception=True, python3 -m venv, ls -a, --locked); a relation or operator is said in words: include-system-site-packages 是 false, prompt 是 app; Python 3.13 及以上 (never >=3.13); 大于等于, 双等号; 低于 3.15. Paths as on screen (.local/bin, /usr/local, .venv/bin/activate); ~ appears only in labels and in 这个波浪号.'
+- '[B4] Fonts. The toolkit pairs the house fonts with Noto Sans / Serif / Sans Mono CJK SC (explainer/i18n.py CJK_FONTS); Chinese inside a mono label falls back to Noto Sans Mono CJK SC while artifacts keep the house mono. No italics for Chinese (set upright under i18n.active() where the English uses slant=ITALIC); bold is fine.'
+- '[C1] Numbers in display text. Arabic digits for everything that echoes the screen, terminal or code: step numbers (第 3 步), line numbers (第 25 行), counts (2 个依赖, 装了 12 个, 11 个包, 解析了 13 个, 另外 9 个), versions, status codes, years. Chinese numerals for small narrative counts and discourse ordinals: 两个项目, 三个部分, 四种方式, 前两级, 一个小错误, 三个额外检查, 五道题, 第一 / 第二 / 第三 (S08''s three parts), 第一部分 / 第二部分, 第一题…第五题. over a hundred → 一百多个.'
+- '[C2] Reading versions (say:). Integer groups joined by 点: 3.11.2 三点十一点二, 3.10 三点十, 3.13 三点十三, 3.13.5 三点十三点五, 3.15.0 三点十五点零, 0.13.0 零点十三点零, 0.27.2 零点二十七点二, 0.28.1 零点二十八点一, 0.13.3 零点十三点三, 4.0.2 四点零点二, 6.5 六点五, 23.0.1 二十三点零点一. That is what a version means (3.10 is newer than 3.9 and sits after it on the S10 number line) and how Python people say it; edge reads decimals (三点一零, 三点一一), so every sentence with a version gets say:. The display keeps the digits.'
+- '[C3] Codes digit by digit. HTTP status 429 → 四二九 (like 四零四); PEP 668 → PEP 六六八; AC215 → AC 二一五; ac215-l01 → AC 二一五 L 零一; e2-small → e2 small. Major versions as integers: Python 3 → Python 三, googletrans 4 → googletrans 四, Debian 12 → Debian 十二 (edge does it). The date 2026-10-12 is on screen only.'
+- '[C4] 两 vs 二. Display 2 个依赖 / 2 个包, say: 两个依赖 / 两个包 (edge says 二个; the tic-tac-toe video measured 二局). A 2 inside a version or a name is 二 (零点二十七点二, e2, h2). Narrative 两 written in characters is unaffected.'
+- '[C5] Symbol readings: >= 大于等于; == 双等号; = in code 等于, in config 是; < 低于; | 竖线 (管道); ~ 波浪号; / 斜杠; . in file names, domains and sys.path 点; a flag''s leading - 杠 (-t 杠 t, ls -a ls 杠 a, python3 -m venv python3 杠 m venv); a long flag''s -- is not read (--locked → locked 参数); a hyphen inside a name is not read (apt-get → apt get); brackets are not read: say 外面带括号.'
+- '[D1] Sentence alignment (explainer/i18n.py). One entry per SAY line in narration/*.yaml (118 blocks); `en` byte-equal to the SAY line; `zh` has exactly one item per English sentence as split by explainer.voice.split_sentences (391 in this script). Restructure only inside a sentence; never merge or split. Short sentences get their own item: Why refuse? → 为什么要拒绝？; Command not found. → 报 command not found。; ModuleNotFoundError. → 报 ModuleNotFoundError。; What happens? → 会怎么样？; Does it work? → 能导入吗？; What changed? → 变了什么？; Now predict. → 先预测一下。; Something to ponder. → 来想一个问题。 Run python -m explainer.i18n check videos/ac215-l01-vms-venvs --lang zh before any TTS.'
+- '[D2] Anchors. Every vo.wait_until phrase that points at an artifact, number, version or term gets an anchors: entry, targeting the display form (pyproject.toml, uv.lock, .venv, PATH, 第 9 步, 429). The target must first occur in the intended sentence: AlignedClip.time_of takes the first sentence of the block that contains it. Artifacts repeat a lot here (uv.lock and pyproject.toml often two or three times per block), so add a neighbouring Chinese word to the target where needed (而 uv.lock, 读 pyproject.toml). Timing is estimated by character position in the display sentence: a long Latin artifact counts every letter as a character but is spoken much faster (source .venv/bin/activate is 25 characters, about 2 s spoken), so later words are estimated late: aim earlier; where say: is longer than the display (三点十一点二 for 3.11.2, 四二九) the opposite holds. Check against word times (Whisper). Where Chinese word order swaps two anchored phrases, the scene waits in the Chinese order under i18n.active().'
+- '[D3] Timing. VoiceScene waits for the Chinese clip: longer audio holds the frame, shorter audio leaves silence after fixed-length animations. Keep each block within ±15% of the English: drop redundant connectives, never content. Versions, artifacts and say: expansions lengthen the Chinese; watch S10, S11 and S14 (already slow in English). Check before rendering: python -m explainer.script videos/ac215-l01-vms-venvs/script.md --lang zh (it also fills the TTS cache for the render).'
+- '[D4] Content parity. Each Chinese sentence translates its English sentence and nothing more: no added commands, flags, Chinese console names or term explanations; 额外 only where the English marks an extra. The only additions are the three subtitle glosses (A3).'
+- '[D5] Fixed spoken patterns. Pause and run it. → 暂停一下，自己跑一遍。 Pause and try it. → 暂停一下，试试看。 Pause here, and get your VM to this point. → 先在这里暂停，把你的 VM 也弄到这一步。 Pause, and catch up to here. → 暂停一下，跟上进度。 Pause until … → 暂停视频，等到…… (等你的终端打开 / 直到提示符以 simple-translate 结尾 / 等它删完). pause to run both / all three → 暂停一下，两条都跑一遍 / 三条都跑一遍. Pause and do it now, before you forget. → 现在就暂停去删，免得忘了。 Something to ponder. → 来想一个问题。 Now predict. → 先预测一下。 A quick puzzle: → 先出个小题：. This command isn''t from the README → 这条命令不是 README 里的. An extra check: / Two extra checks. / Last, an extra: → 额外检查一下： / 两个额外检查。 / 最后再加一个额外步骤：. a small mistake in the README, with an easy fix → README 里有一个小错误，改起来很简单. Step N: → 第 N 步：. Before you go, five questions to test yourself. → 最后，留五道题给你自测。 One: … Five: → 第一题：…… 第五题：. The answers are in the exercises. → 答案在练习里。 Next time: containers. → 下节课：容器。 The card header 暂停想一想 comes from the toolkit (explainer/locales/zh.yaml); the card question is at most two lines and ends in ？; timer seconds unchanged.'
+- '[E1] Labels are Chinese: short noun phrases using the narration''s word (架子, 工具箱, 公用厨房, 愿望清单, 小票, 约束不是 pin, 计价器, 门), with → · ≈ allowed. Artifacts inside labels stay (~ = 你的 home 目录, import httpx, 2 个依赖). Labels carry no small English: the English sentence is in the subtitle.'
+- '[E2] What stays English on screen (A11): terminal output and prompts, the terminal title, code panels (comments included), the quoted text of README cards, the schematic console''s UI text (page names, buttons, form field names, the confirm dialog ''Delete ac215-l01? …''), the browser address bar, the README section headings, file / package / command chips, the path labels on shelves and doors, version chips. Such strings that go through tr() get identity entries in strings.yaml (section headings, console text, quotes), so build/i18n/missing.zh.json lists only real gaps; code-panel comments get no entries (the Code hook only translates comments that have one).'
+- '[E3] README tracker. The head stays as in the README: README › Installing App on VM Manually / README › Installing App on VM using UV. The caption ''step k of N: label'' → 第 k 步，共 N 步：label; '' · extra'' → '' · 额外''. Labels: section A 创建 VM / SSH 登录 / apt-get update / 安装 git / 克隆仓库 / cd / 安装 pip / 安装包 / 运行 / 删除 VM; section B steps 7-10 安装 uv / 重新加载 shell / uv sync / 激活, the rest as in A. Implementation: ideally ReadmeTracker translates the template and the label separately (I1); until then, one re: key per label (''re:step (\d+) of (\d+): Install git'' → ''第 \1 步，共 \2 步：安装 git'') plus one per label with '' · extra''.'
+- '[E4] Panel headers. code_panel''s ''path · lines a–b'' / ''path · line n'' via two re: keys: ''re:(.+) · lines (\d+)–(\d+)'' → ''\1 · 第 \2–\3 行'', ''re:(.+) · line (\d+)'' → ''\1 · 第 \2 行''. Custom PANEL headers are translated: uv installer · its last lines → uv 安装脚本 · 最后几行; uv.lock · lines 5–12 (generated on your VM) → uv.lock · 第 5–12 行（在你的 VM 上生成）; ~/.profile line 29 · ~/.bashrc line 115 · added by the installer → ~/.profile 第 29 行 · ~/.bashrc 第 115 行 · 由安装脚本添加. README card headers (README.md · line 62) use the first kind.'
+- '[E5] Tag table: ▶ your turn → ▶ 轮到你了; extra · not in the README → 额外 · README 里没有; illustration → 示意; what if → 假设; expected output → 预期输出; real capture · 2026-10-12 → 实际输出 · 2026-10-12; at the time of recording → 录制时; erratum → 勘误; preview → 预览; today → 今天; L2 → 第 2 讲; first time only → 仅首次; package list varies by VM → 软件包列表因 VM 而异; copy it from here → 从这里复制; copy from the README, quotes included → 从 README 复制，连引号一起; your username here → 这里是你的用户名; ~ = your home folder → ~ = 你的 home 目录; not in the repo → 仓库里没有; no activation needed → 不用激活; not executable → 不可执行; just read: no pipenv on this VM → 只看不跑：这台 VM 没装 pipenv; optional · needs the gcloud CLI on your laptop → 可选 · 笔记本上要装 gcloud 命令行工具.'
+- '[E6] Unscoped single letters, digits and symbols (Y, ?, 1, 2, 3, L2, xx) never go into strings.yaml: tr() would rewrite every identical string in every scene. Use scene-scoped keys where needed (''s10_which_python|?'': ''？'').'
+- '[E7] Colours. Where a scene colours an English sub-string (t2c), the Chinese label must contain that sub-phrase''s Chinese verbatim; artifacts do not change, so colours keyed on them (art, googletrans, uv.lock, .venv/bin) survive. English CAPS emphasis becomes colour or bold on the Chinese.'
+- '[E8] Width. A CJK glyph is about 1 em: fit each Chinese label to the English label''s box rather than reuse its font_size; if it does not fit, shorten the Chinese, never cut an artifact. Terminals and code panels keep the English width, rows and positions.'
+- '[F1] Voice. The narrator is edge zh-CN-XiaoyiNeural (speed 1.0), the toolkit''s zh default (explainer/build.py DEFAULT_VOICES), so video.yaml needs no languages.zh.voice. In the other two videos it read embedded English words and numbers reliably (an ASR round trip of 417 sentences found no systematic misreading), which is what this artifact-heavy video needs. Publishing: the free Edge endpoint is not licensed for published videos; with AZURE_SPEECH_KEY and AZURE_SPEECH_REGION set the toolkit routes the same voice through the official Azure AI Speech API; the TTS cache is keyed per backend, so the published version re-synthesizes every sentence (re-run D2 and D3). edge takes no custom SSML or pinyin: fix misreadings by rewording or a lexicon.zh.yaml respelling.'
+- '[F2] When say: is required. The display text contains any of: a dot in a file name, domain or sys.path (pyproject.toml, uv.lock, cli.py, pyvenv.cfg, Pipfile.lock, translate.googleapis.com); / or ~ in a path (.local/bin, .venv/bin/activate); a flag''s leading - (-t, ls -a, -m) or -- (--break-system-packages, --locked); an underscore (VIRTUAL_ENV, raise_exception); = == >= < | or brackets; a hyphen inside a name (apt-get, python3-pip, site-packages, dist-packages, simple-translate, typing-extensions, pip-tools, e2-small, ac215-l01, .python-version); a CamelCase error name (ModuleNotFoundError); a version number (C2); a code read digit by digit (429, PEP 668, AC215, C3); a 2 before a measure word (C4); a subtitle gloss (A3); usr (read U S R) or xx (read x x). No say: needed for plain commands and names (uv, pip, apt, sudo, git, venv, PATH, Debian 12), 第 3 步, 第 25 行, or counts other than 2.'
+- '[F3] Reading table (say:). pyproject.toml pyproject 点 toml; uv.lock uv 点 lock; cli.py cli 点 py; pyvenv.cfg pyvenv 点 cfg; Pipfile.lock Pipfile 点 lock; sys.path sys 点 path; translate.googleapis.com translate 点 googleapis 点 com; .venv 点 venv; .venv/bin/activate 点 venv 斜杠 bin 斜杠 activate; .local/bin 点 local 斜杠 bin; .python-version 点 python version; /usr/local user local; /usr/lib user lib; usr U S R; ~ 波浪号; -t 杠 t; ls -a ls 杠 a; python3 -m venv python3 杠 m venv; --break-system-packages break system packages; --locked locked; VIRTUAL_ENV virtual env; raise_exception=True raise exception 等于 True; include-system-site-packages = false include system site packages 是 false; apt-get apt get; python3-pip python3 pip; site-packages site packages; dist-packages dist packages; simple-translate simple translate; typing-extensions typing extensions; pip-tools pip tools; e2-small e2 small; ac215-l01 AC 二一五 L 零一; AC215 AC 二一五; gcloud g cloud; ModuleNotFoundError Module Not Found Error; xx x x; 429 四二九; PEP 668 PEP 六六八; versions: C2.'
+- '[F4] Lexicon. With EXPLAINER_LANG=zh only explainer/lexicon.zh.yaml is loaded (the shared lexicon.yaml is not, so the English entries for uv''s, README''s, sys and pipx do nothing here). Respellings are say:-only and the respelled text is the TTS cache key; matching is case-sensitive and whole-word (a CJK neighbour counts as a boundary), so every Latin word in say: has spaces on both sides (B1). Add an entry only after a listening failure; prepared candidates: README → read me, PATH → path, venv → v env, sudo → soo doo, pyenv → py env, pipx → pip x, uvx → uv x. Never put zh fixes into lexicon.yaml; never change displayed text for the sake of the voice.'
+- '[F5] Measurement status and the listening list. When this glossary was written (2026-10-12) edge could not be synthesized in this environment: Bing''s WebSocket handshake returned 403 (the same endpoint''s HTTPS voice list worked), and the toolkit''s EdgeBackend does not hand the HTTPS proxy to aiohttp (I2). So the readings above come from the two precedents and from how Chinese engineers talk, not from measurement. After the first synthesis, run the ASR round trip (faster-whisper large-v3-turbo, language zh) and listen to these, riskiest first: pin (valid pinyin, may come out as 拼; if so, say 固定版本 throughout: 约束不是固定版本, 把它固定下来, and the S10 label likewise; not 锁定, which is the lock-file word); 行 (第 25 行, 那一行, 行号, 最后一行 may come out as xíng; if so, 代码第 25 行, 那句输出); venv, README, PATH (may be spelled out); sudo, repo, curl, gcloud, googletrans, googleapis, pyproject, toml, pyenv, pipx, uvx, MLOps, CPython; python3 and pip3 (expected python 三, pip 三); Module Not Found Error; every version say: (三点十一点二); 四二九, PEP 六六八, AC 二一五. Homophone or case differences in the transcript are fine, and so are Whisper''s own faults (truncated long sentences, names spelled differently).'
+- '[F6] Polyphones to check by ear: 行 (háng: 第 25 行, 那一行, 行号, 一行命令; the most frequent here), 重 (chóng: 重新, 重建, 重跑, 重连), 长 (zhǎng: 长成一棵树), 载 (zài: 下载), 得 (děi: 你得先 cd), 还 (hái), 空 (kōng: 空的), 数 (shù: 数轴), 种 (zhǒng: 一种语言), 调 (diào: 调用), 为 (wèi: 因为), 处 (chǔ: 处理). Fix whole words by rewording, never with a per-character rule.'
+- '[G1] Bilingual format. Chinese on top (larger), the English SAY sentence below (smaller), paired by narration.yaml, timed by the Chinese audio. Widths in toolkit units: a CJK character 1, a Latin character 0.55 (source .venv/bin/activate ≈ 13.8, include-system-site-packages ≈ 15.4). Write clauses of at most about 24 units; the code splits at 30 (bilingual) and 22 (Chinese-only track).'
+- '[G2] Cue endings: drop a cue-final 。，、；：, keep ？！…… and a closing ”） (done in the toolkit, subtitles.strip_end).'
+- '[G3] English line (en_display). The SAY lines speak artifacts as words (dot venv, user local, dash t, the locked flag, virtual env, raise exception equals True, sys dot path, translate dot googleapis dot com, x x, U-S-R), so every such sentence gets a hand-written en_display that shows the literal on-screen form (.venv, /usr/local, -t, --locked, VIRTUAL_ENV, raise_exception=True, sys.path, translate.googleapis.com, xx, usr), matching the Chinese line and the picture. Sentences without one show the SAY text. The English video''s own .srt is unaffected.'
+- '[G4] Commands are never broken. The subtitle splitter treats a space between two Latin words in a Chinese line as a good cut, so sudo apt-get update, uv python pin 3.13 or source .venv/bin/activate can be split over two lines, which a viewer cannot copy. In writing: put a whole command at the end of a clause after a full-width colon (第 3 步：输入 sudo apt-get update。), at most one command per cue, with little Chinese around it; check every cue with a command in the preview. Toolkit item: I3.'
+- '[H1] Titles (meta.yaml). Video, part and chapter titles as in the term table: written register (仓库, 克隆, 提交), questions keep their question mark, the ''uv sync: …'' colon structure is kept, commands and file names stay. Core-concept chapters carry the English short name for search: 租一台电脑：虚拟机（VM）, 虚拟环境（venv）到底是什么.'
+- '[H2] Description (Bilibili / YouTube): one paragraph saying this is the AC215 lecture 1 follow-along (simple-translate''s first two walkthroughs), what the viewer learns, links to the study guide, the exercises and the English README, the core terms in both languages (虚拟机 VM, 虚拟环境 venv, lock 文件 uv.lock, 约束 constraint, pin, 解析 resolve, externally managed, PEP 668), and the zh-CN console equivalents (H3). Tags: AC215, MLOps, uv, 虚拟环境, 虚拟机, Python, GCP, 跟练.'
+- '[H3] Companions: i18n/zh/README.md and exercises.md (digest.md likewise if made), translated with this glossary and typography in the written register (仓库, 克隆, 提交, 软链接（符号链接）, 幂等, 传递依赖). Headings and <summary>答案</summary> are translated. Two tables at the end: a term table (English | the term used here | common variants: 符号链接, 间接依赖, 锁文件, 端点, 速率限制) and the zh-CN console equivalents (Create instance 创建实例, VM instances VM 实例, Disks 磁盘, Authorize 授权, Delete 删除, Stop 停止, Enable 启用, Billing 结算, Region 区域, Zone 可用区, Machine type 机器类型, Boot disk 启动磁盘, External IP 外部 IP).'
+- '[H4] Code and commands stay byte-identical: code blocks, commands, file names and inline `code` in the companions are unchanged; only # comments and the prose around them are translated (comments may be translated there, since they do not quote the repo''s files).'
+- '[I1] (todo) ReadmeTracker (explainer/devops.py) builds its caption as one string f"step {k} of {N}: {label}", so strings.yaml needs one re: key per label (E3). Proposal: translate the template (locales/zh.yaml: "step {k} of {n}: {label}": "第 {k} 步，共 {n} 步：{label}"), the label and the '' · extra'' suffix separately with tr(), only under i18n.active(), so the English video is frame-identical.'
+- '[I2] (todo) explainer/voice.py''s EdgeBackend does not pass HTTPS_PROXY to edge_tts.Communicate (aiohttp ignores the proxy environment by default), so behind a mandatory proxy it waits until the timeout; pass proxy=os.environ.get("HTTPS_PROXY"). Even with it, on 2026-10-12 Bing answered the WebSocket handshake with 403 in this environment (the HTTPS voice list worked), so zh synthesis has to run on a machine that reaches Bing directly, or through Azure (F1). The bilingual review session (2026-10-12) hit the same 403 after a minute of retries; its egress proxy documents WebSocket upgrades as unsupported, so no setting fixes it there. Its duration check is a model estimate instead (narration/*.yaml headers).'
+- '[I3] (todo) explainer/subtitles.py''s _cuts treats a space between Latin words in a Chinese line as a good cut, so commands get split (G4). The two- or three-word commands in this glossary''s en fields (uv sync, uv python pin, git status, pipenv shell) protect English lines only. Proposal: in a Chinese line, treat a run of Latin tokens separated only by spaces as unbreakable unless it alone exceeds a line.'
+- '[I4] (note) python -m explainer.i18n check checks say: (else the display text) for brackets, maths symbols (= < > …), names with underscores, missing CJK-Latin spaces, and Latin words not in this glossary''s spoken / subtitle / first-use forms or allowed_spoken_latin. It treats a dotted form like pyproject.toml as one word, so once say: writes pyproject 点 toml, both pyproject and toml must be in this glossary (they are). It does not check: whether a version''s say: matches the display, a 2 before 个 (C4), or Latin words in labels.'
+terms:
+# ---- VMs, virtual environments, containers
+- en: virtual machine / VM
+  zh_subtitle: 虚拟机（定义句、概念句）/ VM（具体那台机器、操作步骤、标签）；量词：一台
+  zh_spoken: 虚拟机 / VM
+  first_use: S01：虚拟机就是一整台你租来、用完就扔的电脑。S01 梯子：在云端 VM 上手动安装
+  note: 'Follow the English (A2): virtual machine → 虚拟机, VM → VM. Lab speech says 开一台 VM / SSH 进 VM / 把 VM 删掉; definitions and the S01 pun on ''virtual'' need 虚拟机. Labels prefer the short VM.'
+- en: virtual environment / venv
+  zh_subtitle: 虚拟环境（定义句、概念句）/ venv（简称、操作语境）；量词：一个
+  zh_spoken: 虚拟环境 / venv
+  first_use: S01：虚拟环境就是给一个项目专用的一套 Python 包。S08：虚拟环境其实就是一个目录，通常叫 .venv
+  note: 'Follow the English: virtual environment → 虚拟环境, venv → venv; Chinese engineers say both. Never shorten to 虚拟 or 环境 (环境 stays for the externally managed environment and 环境变量). The voice''s reading of ''venv'' is unverified (F5).'
+- en: hypervisor
+  zh_subtitle: hypervisor（首次字幕括注：虚拟机监控器）
+  zh_spoken: hypervisor
+  first_use: S03：有一种软件叫 hypervisor（虚拟机监控器），它把这台机器切成一片一片。V1 标签：hypervisor
+  note: Cloud people say it in English; the textbook name 虚拟机监控器 is a one-time subtitle-only gloss (A3) for search.
+- en: server / data center / slice of a server / virtual CPUs / memory / disk / storage network
+  zh_subtitle: 服务器 / 数据中心 / 一片（切出来的一块）/ 虚拟 CPU / 内存 / 磁盘 / 存储网络
+  zh_spoken: ''
+  first_use: S03：虚拟机就是 Google 某个数据中心里，一台真实服务器切出来的一片。
+  note: '磁盘 matches the GCP Chinese console (启动磁盘, the Disks page); not 硬盘.'
+- en: operating system / OS / OS tools / system libraries (C) / drivers / GPU drivers
+  zh_subtitle: 操作系统 / 系统工具 / 用 C 写的系统库 / 驱动 / GPU 驱动
+  zh_spoken: ''
+  first_use: S08：有些东西 venv 隔离不了：操作系统、用 C 写的系统库，还有驱动。
+  note: 'Label ''OS tools'' → 系统工具; speech never shortens 操作系统 to OS.'
+- en: container / image / Docker / Dockerfile / Docker image
+  zh_subtitle: 容器 / 镜像 / Docker / Dockerfile / Docker 镜像；标签：容器 · 第 2 讲
+  zh_spoken: 容器 / 镜像 / Docker / Dockerfile
+  first_use: S15：这一层就是容器，下节课讲。S15：今天做的一切，都打包进一个镜像。
+  note: 'Standard Chinese. 镜像 means a container image only: Debian mirrors / package sources are 软件源, and a GCP OS image (never spoken) is 系统映像 (A6).'
+# ---- Cloud console and billing
+- en: Google Cloud / GCP / console / project / Compute Engine / Compute Engine API / enable
+  zh_subtitle: Google Cloud（标签可写 GCP）/ 控制台 / 项目 / Compute Engine / Compute Engine API / 启用
+  zh_spoken: Google Cloud / 控制台 / 项目 / Compute Engine / Compute Engine API / 点 Enable
+  first_use: S03：在控制台里，先确认选中的是你在 Tutorial 0 建的项目，然后打开 Compute Engine，再进 VM instances。
+  note: 'Product names stay English; 控制台, 项目, 启用 are the GCP Chinese console''s words. Buttons are named in English (点 Enable, next entry).'
+- en: 'console buttons and pages: Create instance / VM instances / Disks / SSH / Authorize / Delete / Stop / Enable'
+  zh_subtitle: 示意控制台上保持英文原样；字幕：点 Create instance / 点 SSH / 点 Authorize / 点 Delete / VM instances 页面 / Disks 页面
+  zh_spoken: 点 Create instance / 点 SSH / 点 Authorize / 点 Delete / VM instances / Disks
+  first_use: S03：点 Create，等绿勾出现，再点 SSH。要是让你授权这次连接，就点 Authorize。
+  note: 'What the viewer clicks is named in English, as on the schematic console and in the README''s links. The zh-CN console equivalents (创建实例, VM 实例, 磁盘, 授权, 删除, 停止, 启用) go in the companion README and the description only (H3). Speech says 点, writing says 点击.'
+- en: instance / select your instance
+  zh_subtitle: 实例
+  zh_spoken: ''
+  first_use: S07：选中你的实例，点 Delete，暂停视频，等它删完。
+  note: 'GCP Chinese console: 虚拟机实例. select your instance → 选中你的实例.'
+- en: name / region / zone / machine type / boot disk
+  zh_subtitle: 名称 / 区域 / 可用区 / 机器类型 / 启动磁盘
+  zh_spoken: ''
+  first_use: S03：区域和可用区，就是这台机器实际放在哪里。机器类型决定 CPU 和内存，e2-small 就够用了。启动磁盘选 Debian 12。
+  note: 'The standard names in the GCP (and AWS) Chinese docs and console: region 区域, zone 可用区. Speech does not add the English (the English line has it). The schematic form keeps its English field names (E2).'
+- en: external IP (address) / Ephemeral / reserved IP address / static IP
+  zh_subtitle: 外部 IP（首次字幕括注：也就是公网 IP）/ 临时 / 预留的 IP 地址
+  zh_spoken: 外部 IP / 预留的 IP 地址
+  first_use: S03：保留外部 IP（也就是公网 IP），它默认就是开着的。S07：预留的 IP 地址也一样一直在计费。
+  note: '外部 IP matches the console''s External IPv4; Chinese engineers more often say 公网 IP, glossed once in the subtitle (A3).'
+- en: billing / a project with billing on / billed by the second / charging / costs money / estimate
+  zh_subtitle: 结算（开通了结算的项目）/ 计费（按秒计费）/ 在花钱 / 费用估算
+  zh_spoken: ''
+  first_use: S01：一个开通了结算的 Google Cloud 项目。S03：CPU 和内存在 VM 运行期间按秒计费，闲着也照样算。
+  note: 'The GCP Chinese console calls Billing 结算 (结算账号); 计费 is the verb. Speech never says ''billing''.'
+- en: the meter / cost meter / the meter starts / never stops on its own / stops where it is
+  zh_subtitle: 计价器（金色表盘）；计价器开始跳了；自己不会停；停在原处
+  zh_spoken: ''
+  first_use: S03：从这一刻起，计价器就开始跳了。
+  note: 'A taxi meter (打表): it runs while the VM exists. The dial has no digits, so no amounts are said.'
+- en: 'Stop vs Delete / delete, don''t stop'
+  zh_subtitle: 停止 / 删除；章节：要删除，别只停止
+  zh_spoken: ''
+  first_use: S07：为什么要删除，而不只是停止？
+  note: '停止 = shut down (the disk stays and keeps billing); 删除 = gone, boot disk included.'
+- en: SSH / SSH in / SSH window / SSH session / authorize the connection
+  zh_subtitle: SSH / SSH 进去 / SSH 窗口 / SSH 会话 / 授权这次连接
+  zh_spoken: SSH / SSH 进去 / SSH 窗口
+  first_use: S03：然后点 SSH……浏览器里会打开一个终端，已经登录到你的新 VM 上了。
+  note: Read as letters; never 安全外壳.
+- en: gcloud / the gcloud tool / gcloud compute instances list / gcloud compute disks list
+  zh_subtitle: gcloud 命令行工具 / gcloud compute instances list / gcloud compute disks list
+  zh_spoken: g cloud 命令行工具 / g cloud compute instances list / g cloud compute disks list
+  first_use: S07：如果你笔记本上装了 gcloud 命令行工具，两条额外的命令也能做同样的检查。
+  note: 'say: writes ''g cloud'' (how Chinese engineers say it; the joined spelling is a risk).'
+- en: Tutorial 0 / service account / keys / a web browser / laptop
+  zh_subtitle: Tutorial 0 / 服务账号 / 密钥 / 浏览器 / 笔记本电脑（口语：笔记本）
+  zh_spoken: Tutorial 0 / 服务账号 / 密钥 / 浏览器 / 笔记本
+  first_use: S01：开始之前，先做完 Tutorial 0。今天不用服务账号，也不用密钥，有个浏览器就行。
+  note: 'Tutorial 0 is the course''s name for it; 服务账号 is the GCP Chinese console term.'
+# ---- Terminal, shell and apt
+- en: terminal / command / one-liner / output / type / press enter
+  zh_subtitle: 终端 / 命令 / 一行命令 / 输出 / 输入 / 按回车
+  zh_spoken: ''
+  first_use: S04：第 3 步：输入 sudo apt-get update。
+  note: type → 输入 (not 键入); one-liner → 一行命令.
+- en: shell / child shell / subshell / parent shell / reload your shell / this shell only
+  zh_subtitle: shell / 子 shell / 父 shell / 重新加载 shell / 只对当前这个 shell 有效
+  zh_spoken: shell / 子 shell / 父 shell
+  first_use: S09：安装脚本最后几行和第 8 步给了两个办法：重新加载 shell，或者 source 一下 env 文件。
+  note: 'Chinese engineers say ''shell'' (外壳 / 壳层 are never used).'
+- en: prompt / your prompt now starts with app / your username
+  zh_subtitle: 提示符 / 提示符以 app 开头 / 用户名
+  zh_spoken: ''
+  first_use: S04：注意看提示符：冒号后面现在显示你所在的目录。S12：你的提示符现在以 app 开头，外面带括号。
+  note: '提示符 (prompt) is never 提示 (hint). The subtitle says 以 app 开头，外面带括号 rather than showing (app), so no say: is needed.'
+- en: root / administrator / full administrator rights / sudo / run as administrator
+  zh_subtitle: root / 管理员 / 管理员权限 / sudo
+  zh_spoken: root / 管理员 / sudo
+  first_use: S01：它是我们的，而且我们有 root 权限，也就是完整的管理员权限。S04：sudo 让它以管理员身份运行。
+  note: 'root and sudo stay English; full administrator rights → 完整的管理员权限, run as administrator → 以管理员身份运行. The voice''s ''sudo'' is unverified (F5).'
+- en: apt / apt-get / package manager
+  zh_subtitle: apt / apt-get / 包管理器
+  zh_spoken: apt / apt get / 包管理器
+  first_use: S04：Debian 的包管理器是 apt，sudo 让它以管理员身份运行。S04：其中 apt-get 稳定、适合写进脚本，用在 Dockerfile 和自动化构建里；短一点的 apt 手敲起来更友好。
+  note: 'say: writes ''apt get'' (hyphens inside names are not read, F3).'
+- en: package catalog / list of packages that exist / Debian package / package sources / Debian mirrors
+  zh_subtitle: 软件包列表 / 软件包 / 软件源；标签：Debian 软件源
+  zh_spoken: ''
+  first_use: S04：而 update 会下载软件包列表：有哪些包、各自最新是什么版本。在 Google 的 VM 上会多几行，那是 Google 自己的软件源。
+  note: 'What apt manages is a 软件包. ''catalog'' is never 目录 (= folder), ''mirror'' never 镜像 (= container image), see A6.'
+- en: home folder / home directory / ~ / the wavy tilde
+  zh_subtitle: home 目录 / ~ / 波浪号；标签：~ = 你的 home 目录
+  zh_spoken: home 目录 / 波浪号
+  first_use: S04：这个波浪号代表你的 home 目录。
+  note: 'Lab speech says home 目录 (some say 家目录). It is the counterpart of /usr (the system''s), see A6.'
+- en: folder / directory / path (of a file)
+  zh_subtitle: 目录 / 路径
+  zh_spoken: ''
+  first_use: S12：或者直接用路径调用 venv 里的 python。
+  note: 'In terminal talk a folder is always 目录, never 文件夹; a file''s path is 路径; PATH is a variable name and stays.'
+- en: PATH / a list of folders called PATH / the first match / the PATH it started with
+  zh_subtitle: PATH / 一个叫 PATH 的目录列表 / 第一个匹配的
+  zh_spoken: PATH
+  first_use: S09：你输入一个命令，shell 就去一个叫 PATH 的目录列表里，从左到右找，运行第一个匹配的。
+  note: 'A variable name: shown and spoken as PATH, never 路径. The voice may spell the capitals; unverified (F5; fallback: a lexicon.zh.yaml respelling).'
+- en: environment variable / a variable called virtual env
+  zh_subtitle: 环境变量 / VIRTUAL_ENV
+  zh_spoken: 环境变量 / virtual env
+  first_use: 'S12：激活还会设置一个叫 VIRTUAL_ENV 的环境变量（say: virtual env）。'
+  note: 'The English says ''variable''; 环境变量 is more precise and what engineers say. No underscore in say: (read as 下划线; the checker flags it).'
+- en: source / sourcing / the env file / startup files
+  zh_subtitle: source（source 一下）/ env 文件 / 启动文件
+  zh_spoken: source / env 文件 / 启动文件
+  first_use: S09：用 source 更快：它把那个目录放到 PATH 的最前面。
+  note: source is the command (source 一下); .profile and .bashrc are 启动文件.
+- en: pipe / the vertical bar
+  zh_subtitle: 管道 / 竖线
+  zh_spoken: ''
+  first_use: S09：这根竖线是管道：它把脚本直接交给 shell。
+  note: Standard Chinese.
+- en: curl / follow redirects / silent / still show errors / fail on HTTP errors / error page
+  zh_subtitle: curl / 跟随重定向 / 错误页面
+  zh_spoken: curl
+  first_use: S09：先用 curl 下载一个脚本：它会跟随重定向，安静运行但仍然显示错误，遇到 HTTP 错误就直接失败，而不是把错误页面交给 shell。
+  note: 'S09 wording: 跟随重定向, 安静运行但仍然显示错误, 遇到 HTTP 错误就直接失败. The voice''s ''curl'' is unverified. Flag labels: -L 跟随重定向 / -s 静默 / -S 仍显示错误 / -f 遇到 HTTP 错误就失败.'
+- en: which / the which command / ls / cd / cat / os-release / os-release file
+  zh_subtitle: which / which 命令 / ls / cd / cat / os-release 文件
+  zh_spoken: which / which 命令 / ls / cd / os release 文件
+  first_use: S03：这个 which 命令会告诉你，一个名字会运行哪个程序。
+  note: Command names stay; ls and cd are read as letters.
+- en: git / repo / clone / commit / branch / git status / untracked
+  zh_subtitle: git / repo / 仓库（标签、章节名、文档）/ clone / 克隆（标签）/ commit / 提交（文档）/ 分支 / git status / 未跟踪
+  zh_spoken: git / repo / clone / commit / 分支 / git status / 未跟踪
+  first_use: S04：第 5 步：把 repo clone 下来。S11：而 git status 说，uv.lock 还没被跟踪。
+  note: 'repo / clone / commit are everyday Chinese dev speech; writing (labels, chapter titles, docs) uses 仓库 / 克隆 / 提交 (A4). untracked → 未跟踪, as git''s Chinese messages say.'
+- en: executable / not executable / run as a program
+  zh_subtitle: 可执行 / 不可执行
+  zh_spoken: ''
+  first_use: S12：它本身都不是可执行的。
+  note: run as a program → 当成程序运行.
+# ---- Python, packages and pip
+- en: Python / system Python / python3 / plain python / CPython
+  zh_subtitle: Python / 系统 Python / python3 / 不带 3 的 python / CPython
+  zh_spoken: Python / 系统 Python / python3 / python / CPython
+  first_use: S03：再问一下 python3 的版本。S06：输入 python3 cli.py，要带 3，因为这里没有不带 3 的 python。
+  note: '系统 Python = the Python Debian ships for the OS itself. ''python3'' is expected to be read ''python 三''; unverified.'
+- en: interpreter / a real interpreter / engine (metaphor)
+  zh_subtitle: 解释器 / 引擎（比喻）
+  zh_spoken: ''
+  first_use: S08：它通常不是拷贝，只是一个软链接，指向别处一个真正的解释器。
+  note: Standard Chinese. a real interpreter → 一个真正的解释器.
+- en: symlink / link (to a real interpreter)
+  zh_subtitle: 软链接（文档：软链接，即符号链接）
+  zh_spoken: 软链接
+  first_use: S08：……只是一个软链接，指向别处一个真正的解释器。S12：python，一个指向 uv 下载的那个 Python 的软链接。
+  note: 'The English says ''link''; Chinese always says 软链接 (bare 链接 sounds like a web link); 符号链接 is the written form for the docs.'
+- en: package / Python package / third-party package
+  zh_subtitle: 包 / Python 包 / 第三方包；量词：个
+  zh_spoken: ''
+  first_use: S01：我们让 pip 装两个 Python 包，pip 拒绝了。
+  note: 'pip and uv install 包; apt installs 软件包 (A6). Never ''package'' in speech.'
+- en: dependency / dependencies / dependencies of their own / transitive dependency / dependency tree
+  zh_subtitle: 依赖 / 传递依赖（文档；也叫间接依赖）/ 依赖树
+  zh_spoken: ''
+  first_use: S10：两个依赖：art，6.5 及以上；googletrans，正好是 4.0.2。S11：包自己也有依赖。
+  note: '依赖 = what pyproject.toml lists; 包 = what gets installed: 2 个依赖变成了 11 个包. dependencies of their own → 包自己也有依赖.'
+- en: standard library / comes with Python
+  zh_subtitle: 标准库 / Python 自带
+  zh_spoken: ''
+  first_use: S02：前两个 import，argparse 和 asyncio，是 Python 自带的。
+  note: ''
+- en: import / how Python finds an import
+  zh_subtitle: import（关键字，照写）
+  zh_spoken: import
+  first_use: S05：想象一下 Python 是怎么找到 import 的东西的。
+  note: 'Speech says import; the label ''import httpx'' is unchanged.'
+- en: 'pip / pip3 / python3-pip / Debian''s own packaged copy of pip'
+  zh_subtitle: pip / pip3 / python3-pip
+  zh_spoken: pip / pip3 / python3 pip
+  first_use: S05：第 7 步：sudo apt install python3-pip。这是 Debian 自己打包的 pip，给 Debian 的 Python 用。
+  note: 'Debian''s own packaged copy → Debian 自己打包的 pip. The hyphen inside the name is not read (python3 pip).'
+- en: sys dot path / the list called sys dot path / the folders Python searches
+  zh_subtitle: sys.path
+  zh_spoken: sys 点 path
+  first_use: 'S05：这条额外的一行命令会打印一个叫 sys.path 的列表（say: sys 点 path）：也就是 Python 会搜索的那些目录。'
+  note: 'the folders Python searches → Python 会搜索的那些目录 (not 要找的, which reads as "the folders Python is looking for"). The voice''s ''sys'' is unverified (Kokoro read it ''siz'').'
+- en: site-packages / dist-packages
+  zh_subtitle: site-packages / dist-packages
+  zh_spoken: site packages / dist packages
+  first_use: S08：通常的叫法是 site-packages；Debian 把系统的那几个叫 dist-packages。
+  note: 'Folder names, shown as is; say: drops the hyphen.'
+- en: PEP 668 / the rule that makes pip respect it / the guard
+  zh_subtitle: PEP 668 / 保护机制
+  zh_spoken: PEP 六六八 / 保护机制
+  first_use: 'S05：而 PEP 668 就是让 pip 遵守这一点的规则（say: PEP 六六八）。'
+  note: Python people read PEP numbers digit by digit (C3).
+- en: externally managed / externally-managed-environment
+  zh_subtitle: externally managed（首次字幕括注：由外部管理）/ externally-managed-environment（标签照写）
+  zh_spoken: externally managed
+  first_use: S01：报错说这个环境是 externally managed（由外部管理），还建议用虚拟环境。
+  note: 'Quotes the error, so it stays English, with a one-time subtitle-only gloss (A3). S05''s 这就是 externally managed 的意思 has no gloss.'
+- en: break-system-packages / the flag break-system-packages / overrides the guard
+  zh_subtitle: --break-system-packages（这个参数）/ 绕过保护
+  zh_spoken: break system packages 这个参数
+  first_use: S05：第 8 步是 README 里的命令：sudo pip3 install，加上 --break-system-packages 这个参数。
+  note: 'The flag is shown as is; say: reads neither the leading dashes nor the inner hyphens (the English says just the name).'
+- en: system-wide / shared by every user / for every program on the machine
+  zh_subtitle: 系统级 / 所有用户共用
+  zh_spoken: ''
+  first_use: S05：在 user local 下面的 dist-packages 里，仍然是系统的，所有用户共用。
+  note: for every program on the machine → 机器上的每个程序.
+- en: shadowing / hide the one from apt / hidden
+  zh_subtitle: 遮蔽（标签）/ 挡住（旁白）/ 被挡住（标签 hidden）
+  zh_spoken: 挡住
+  first_use: S05：这时 Python 会先找到这一份，把 apt 那份挡住。标签：遮蔽 · 所有用系统 Python 的程序都受影响
+  note: Speech uses the plain 挡住; labels and docs use the term 遮蔽 (as in variable shadowing).
+- en: clash / conflict / warning
+  zh_subtitle: 冲突 / 警告
+  zh_spoken: ''
+  first_use: S05：警告说，以 root 身份运行 pip，可能会和系统的包管理器冲突。
+  note: ''
+- en: 'terminal messages: requirement already satisfied / command not found / ModuleNotFoundError'
+  zh_subtitle: requirement already satisfied / command not found / ModuleNotFoundError（终端原文照写）
+  zh_spoken: requirement already satisfied / command not found / Module Not Found Error
+  first_use: S05：如果你的输出里有 requirement already satisfied……S09：报 command not found。S13：报 ModuleNotFoundError。
+  note: 'Terminal text the viewer sees is shown and spoken as is, after 报 / 显示 / 提示. CamelCase names are split into words in say:.'
+# ---- Virtual environments and uv
+- en: bin folder / a python inside / launchers from the packages
+  zh_subtitle: bin 目录 / 启动脚本
+  zh_spoken: ''
+  first_use: S08：第一，一个 bin 目录，里面有个 python。
+  note: launchers from the packages → 包带的启动脚本; a python inside → 里面有个 python.
+- en: pyvenv.cfg / config file / include system site packages is false / home / prompt is app
+  zh_subtitle: pyvenv.cfg / 配置文件 / include-system-site-packages 是 false / home / prompt 是 app
+  zh_spoken: pyvenv 点 cfg / 配置文件 / include system site packages 是 false / home / prompt 是 app
+  first_use: S08：第三，一个小小的配置文件，pyvenv.cfg。S12：还有配置文件：home 是真正解释器所在的目录，include-system-site-packages 是 false，prompt 是 app。
+  note: 'Keys shown as is; the screen''s = is said and subtitled as 是 (B3).'
+- en: activate / activation / the activate script / deactivate
+  zh_subtitle: 激活 / activate 脚本 / deactivate
+  zh_spoken: 激活 / activate 脚本 / deactivate
+  first_use: S12：激活其实只改了 PATH。S12：再加一个叫 deactivate 的命令，把这些全部撤销。
+  note: '激活 is the common Chinese verb; activate / deactivate are a script and a command, so they stay.'
+- en: isolate / isolation / prove the isolation
+  zh_subtitle: 隔离 / 验证隔离
+  zh_spoken: ''
+  first_use: S13：我们用几个额外命令来验证隔离。
+  note: ''
+- en: uv / uvx / uv sync / uv run / uv add / uv tree / uv python pin
+  zh_subtitle: uv / uvx / uv sync / uv run / uv add / uv tree / uv python pin
+  zh_spoken: uv / uvx / uv sync / uv run / uv add / uv tree / uv python pin
+  first_use: S09：第 7 步一行命令就能装好 uv。S10：第 9 步是 uv sync。
+  note: 'uv is read U V. Command names are never translated; add a Chinese head noun: uv sync 这条命令, uv 自己的目录.'
+- en: the venv module / pip-tools / pyenv / pipx / python3 dash m venv
+  zh_subtitle: venv 模块 / pip-tools / pyenv / pipx / python3 -m venv
+  zh_spoken: venv 模块 / pip tools / pyenv / pipx / python3 杠 m venv
+  first_use: S09：一个很快的工具顶了好几个：venv 模块、pip、用来锁版本的 pip-tools、用来装 Python 的 pyenv，还有 pipx。
+  note: 'pyenv and pipx are unverified (Kokoro read pipx as ''pips''); fallback say: ''py env'', ''pip x''.'
+- en: pyproject.toml / requires-python / name
+  zh_subtitle: pyproject.toml / requires-python / name
+  zh_spoken: pyproject 点 toml / requires python / name
+  first_use: S04：还有 pyproject.toml，列着这个应用需要什么。S10：第 6 行又是一个范围：Python 3.13 及以上。
+  note: 'File and key names shown as is; say: writes ''pyproject 点 toml''.'
+- en: uv.lock / lock file / a shared lock / a stale lock / the locked flag
+  zh_subtitle: uv.lock / lock 文件 / 共用的 lock 文件 / 过期的 lock 文件 / --locked 参数
+  zh_spoken: uv 点 lock / lock 文件 / locked 参数
+  first_use: S04：也没有记录精确版本的 lock 文件。S11：在自动化构建里，给 uv sync 加上 --locked 参数，lock 文件缺失或过期，它就拒绝执行。
+  note: 'Chinese developers say lock 文件 (for package-lock, poetry.lock too); use it throughout, not 锁文件. The verb is 锁定, kept apart from pin (A6).'
+- en: requirements file / requirements.txt
+  zh_subtitle: requirements 文件 / requirements.txt
+  zh_spoken: requirements 文件
+  first_use: S04：没有 requirements 文件，也没有记录精确版本的 lock 文件。
+  note: ''
+- en: resolve / resolved / resolving / resolver
+  zh_subtitle: 解析 / 解析了 13 个 / 依赖解析 / 解析器（文档）
+  zh_spoken: ''
+  first_use: S11：所谓解析，就是给依赖树里的每个包选定一个精确版本，而且这些版本要彼此兼容。
+  note: 'Standard Chinese (依赖解析). S02''s parsed arguments are also 解析好的参数; different scenes, no clash; for dependencies prefer the full 解析依赖.'
+- en: constraint / range / exact / greater-or-equal / double equals / or newer / older than
+  zh_subtitle: 约束 / 范围 / 精确版本（一个版本）/ 大于等于 / 双等号 / 及以上 / 低于
+  zh_spoken: ''
+  first_use: S10：大于等于表示一个范围；双等号表示一个确定的版本。
+  note: '''3.13 or newer'' is always 3.13 及以上; ''older than 3.15'' is 低于 3.15.'
+- en: pin / pin it / a constraint is not a pin / dot python version / the 3.13 series
+  zh_subtitle: pin（pin 住）/ 约束不是 pin / .python-version / 3.13 系列
+  zh_spoken: pin / pin 住 / 约束不是 pin / 点 python version / 三点十三系列
+  first_use: S10：问题就在这儿：约束不是 pin。S10：想在哪儿都用同一个 Python，就把它 pin 住。
+  note: 'Kept English: the very next command is uv python pin, and 把版本 pin 住 is lab speech. ''pin'' is valid pinyin and may be read 拼: listen (F5). Kept apart from 锁定 (lock files, A6).'
+- en: download addresses / checksums / exact version / plus sign
+  zh_subtitle: 下载地址 / 校验和 / 精确版本 / 加号
+  zh_spoken: ''
+  first_use: S11：然后 uv 把它们写进一个新文件 uv.lock，连同下载地址和校验和。
+  note: ''
+- en: environment marker / only on Python older than 3.15 / skipped
+  zh_subtitle: 只在低于 3.15 的 Python 上 / 跳过；文档：环境标记（marker）
+  zh_spoken: 只在低于三点十五的 Python 上 / 跳过
+  first_use: S11：在 uv.lock 里，anyio 需要 typing-extensions，但只在低于 3.15 的 Python 上。
+  note: ''
+- en: deterministic / reproducible / idempotent / safe to re-run anytime
+  zh_subtitle: 确定下来 / 可复现 / 幂等（文档）/ 随时重跑都没问题
+  zh_spoken: ''
+  first_use: S11：随时重跑都没问题。S15：怎样才能让 Python 版本确定下来？
+  note: Speech never says 幂等 (the English never says idempotent); the docs write 幂等（可以放心重复执行）.
+- en: pipenv / Pipfile / Pipfile.lock / pipenv install / pipenv sync / pipenv shell / exit
+  zh_subtitle: pipenv / Pipfile / Pipfile.lock / pipenv install / pipenv sync / pipenv shell / exit
+  zh_spoken: pipenv / Pipfile / Pipfile 点 lock / pipenv install / pipenv sync / pipenv shell / exit
+  first_use: S14：而 pipenv shell 会在 venv 里开一个新的 shell。输入 exit 就能退出。
+  note: 'Commands and files as is; label ''a subshell · type exit to leave'' → 子 shell · 输入 exit 退出.'
+# ---- The app, the network and errors
+- en: the app / cli.py / command-line app / main / main function
+  zh_subtitle: 应用 / cli.py / 命令行应用 / main 函数
+  zh_spoken: 应用 / cli 点 py / main 函数
+  first_use: S02：在 GitHub 上打开 cli.py，待会儿你会把它 clone 到 VM 上。
+  note: 'The concept is 应用; ''app'' only for the literal name (name = "app", the (app) prompt), so the two never mix.'
+- en: argparse / options / arguments / default / parsed arguments / Namespace
+  zh_subtitle: argparse / 选项 / 参数 / 默认值 / 解析好的参数 / Namespace
+  zh_spoken: argparse / 选项 / 参数 / 默认值
+  first_use: S02：最下面，argparse 定义了四个选项，每个都有默认值。
+  note: 'argparse''s options are 选项; flags on the command line and the printed arguments are 参数.'
+- en: dash t / dash s / dash d / dash f / ls dash a
+  zh_subtitle: -t / -s / -d / -f / ls -a
+  zh_spoken: 杠 t / 杠 s / 杠 d / 杠 f / ls 杠 a
+  first_use: S06：杠 t 指定文本，杠 s 指定源语言，杠 d 指定目标语言。
+  note: 'Chinese engineers read a flag''s leading - as 杠. The subtitle shows the real flag.'
+- en: flag / the flag
+  zh_subtitle: 参数（这个参数）
+  zh_spoken: ''
+  first_use: S05：这个参数绕过了保护；sudo 让 pip 以管理员身份写文件。
+  note: 'Never ''flag'' or 开关.'
+- en: banner / ASCII art / AC215
+  zh_subtitle: 横幅 / ASCII 字符画 / AC215
+  zh_spoken: 横幅 / ASCII 字符画 / AC 二一五
+  first_use: S02：这个 main 函数先打印一个横幅，用 ASCII 字符画写着 AC215。
+  note: The course number is read digit by digit (C3).
+- en: event loop / asynchronous / an awaited call / Translator
+  zh_subtitle: 事件循环 / 异步 / 一次 await 调用 / Translator
+  zh_spoken: 事件循环 / 异步 / await / Translator
+  first_use: S02：最后一行启动事件循环并运行 main，因为 googletrans 4 是异步的。
+  note: 'googletrans 4 is read googletrans 四 (like Python 3, Vue 3).'
+- en: HTTPS request / web request / endpoint / unofficial / API key / JSON / no promises
+  zh_subtitle: HTTPS 请求 / 网络请求 / 接口 / 非官方 / API key / JSON
+  zh_spoken: HTTPS 请求 / 接口 / API key / JSON
+  first_use: S02：这是 Google 非官方的翻译接口：免费，不用 API key，也不做任何保证。
+  note: 'no promises → 不做任何保证. endpoint → 接口 (调接口, 这个接口); never 端点 (bookish). Docs may write 接口（endpoint）.'
+- en: translate dot googleapis dot com
+  zh_subtitle: translate.googleapis.com
+  zh_spoken: translate 点 googleapis 点 com
+  first_use: S02：从 VM 发到 translate.googleapis.com 的一个 HTTPS 请求。
+  note: 'The domain is shown as is; say: reads each dot as 点.'
+- en: status code / 429 / too many requests / rate-limiting / rate limit
+  zh_subtitle: 状态码 / 429 / 请求太多 / 限流
+  zh_spoken: 状态码 / 四二九 / 请求太多 / 限流
+  first_use: S06：原因是状态码 429：请求太多。Google 的非官方接口在对我们的机器限流。
+  note: HTTP status codes are read digit by digit (C3). 限流 is what Chinese engineers say.
+- en: traceback / chained traceback / two errors / the cause / the wrapper / the last line / scroll up
+  zh_subtitle: traceback / 链式 traceback / 两个错误 / 原因 / 外层包装 / 最后一行 / 往上翻
+  zh_spoken: traceback / 链式 traceback
+  first_use: S06：这是一个链式 traceback：两个错误。V8 标签：1 · 原因 / 2 · 外层包装
+  note: 'Python''s own word, on screen as ''Traceback''; Chinese engineers say it. 链式 matches 异常链 in the Chinese Python docs.'
+- en: error / exception / raise / catch / chained to the original / directly caused
+  zh_subtitle: 错误 / 异常 / 抛出 / 捕获 / 接在原来的错误后面 / 直接导致了
+  zh_spoken: ''
+  first_use: S06：它什么错误都接住，再抛出一条更友好的消息，接在原来的错误后面。
+  note: '错误 is generic (两个错误, 第一个错误); 异常 is a Python exception; 报错 is the message on screen (A6).'
+- en: raise exception equals True / library default (False)
+  zh_subtitle: raise_exception=True / 库的默认值（False）
+  zh_spoken: raise exception 等于 True
+  first_use: S02：第 25 行有个细节以后会用到：raise_exception=True。
+  note: 'The code fragment is shown as is (B3); say: may contain neither underscore nor =.'
+- en: typo / x x / invalid destination language / the valid codes
+  zh_subtitle: xx / 语言代码
+  zh_spoken: x x
+  first_use: S06：这条额外的命令故意打错了：xx 不是一种语言。第一个错误说的是：目标语言无效。
+  note: typo → 打错了; invalid destination language → 目标语言无效 (translated; the English is on screen); the valid codes → 有效的语言代码.
+- en: English / Italian / Spanish / French / source language / destination language / translation
+  zh_subtitle: 英语 / 意大利语 / 西班牙语 / 法语 / 源语言 / 目标语言 / 译文
+  zh_spoken: ''
+  first_use: S02：所以不带任何选项运行 cli.py，就会把 I love cheese 翻译成意大利语。
+  note: ''
+- en: I love cheese / the Input line / the Output line
+  zh_subtitle: I love cheese / Input 那一行 / Output 那一行
+  zh_spoken: I love cheese / Input 那一行 / Output 那一行
+  first_use: S06：只要走到了 Input 那一行，import 就都成功了。
+  note: 'The sample text and output prefixes are the program''s real input and output, kept as is.'
+# ---- Paths, files and flags spoken as words (review_spoken #16)
+- en: user local / user lib / U-S-R
+  zh_subtitle: /usr/local / /usr/lib；“这里的 user 拼作 usr”
+  zh_spoken: user local / user lib / U S R
+  first_use: S05：版本是 pip 23.0.1，对应 Python 3.11，在 user lib 下面一个叫 dist-packages 的目录里。这里的 user 拼作 usr：是系统的文件，不是你的 home 目录。
+  note: 'Read ''user'' as the English does (common Linux usage); the next sentence fixes the spelling; the subtitle shows the real path. Never 用户本地 / 用户库 (the misreading review_pedagogy #7 warns about).'
+- en: dot venv / the dot venv folder
+  zh_subtitle: .venv / .venv 目录
+  zh_spoken: 点 venv / 点 venv 目录
+  first_use: S10：然后它在 .venv 里建了一个虚拟环境。
+  note: 'Chinese engineers say 点 venv; review #16''s ''dot venv'' becomes 点.'
+- en: dot local slash bin
+  zh_subtitle: .local/bin（S09：你 home 目录下的 .local/bin）/ ~/.local/bin（标签）
+  zh_spoken: 点 local 斜杠 bin
+  first_use: S09：把 uv 和 uvx 装到你 home 目录下的 .local/bin 里。
+  note: '''/'' is read 斜杠.'
+- en: source dot venv slash bin slash activate
+  zh_subtitle: source .venv/bin/activate
+  zh_spoken: source 点 venv 斜杠 bin 斜杠 activate
+  first_use: S12：第 10 步：source .venv/bin/activate。
+  note: ''
+- en: dot python version
+  zh_subtitle: .python-version
+  zh_spoken: 点 python version
+  first_use: S10：会写一个小文件，叫 .python-version。
+  note: ''
+- en: python3 dash m venv
+  zh_subtitle: python3 -m venv
+  zh_spoken: python3 杠 m venv
+  first_use: S08：它建议用 python3 -m venv，这是建 venv 的经典做法。
+  note: ''
+- en: the locked flag
+  zh_subtitle: --locked 参数
+  zh_spoken: locked 参数
+  first_use: S11：在自动化构建里，给 uv sync 加上 --locked 参数。
+  note: 'Long flags: only the name is read, not the dashes (as in the English).'
+- en: 'file names said as words: pyproject.toml / uv.lock / cli.py / pyvenv.cfg / Pipfile.lock'
+  zh_subtitle: pyproject.toml / uv.lock / cli.py / pyvenv.cfg / Pipfile.lock
+  zh_spoken: pyproject 点 toml / uv 点 lock / cli 点 py / pyvenv 点 cfg / Pipfile 点 lock
+  first_use: S06：输入 python3 cli.py。
+  note: Dots in file names are read 点 (F3).
+- en: 'hyphenated names: simple-translate / apt-get / python3-pip / pip-tools / typing-extensions / e2-small / ac215-l01'
+  zh_subtitle: simple-translate / apt-get / python3-pip / pip-tools / typing-extensions / e2-small / ac215-l01
+  zh_spoken: simple translate / apt get / python3 pip / pip tools / typing extensions / e2 small / AC 二一五 L 零一
+  first_use: S04：第 6 步：cd simple-translate。S03：名称，比如 ac215-l01。
+  note: 'A hyphen inside a name is not read; only a flag''s leading - is read 杠 (F3).'
+# ---- Versions, codes and numbers
+- en: 'Python versions: 3.10 / 3.11 / 3.11.2 / 3.12 / 3.13 / 3.13.5 / 3.14 / 3.15 / 3.15.0'
+  zh_subtitle: 3.10 / 3.11 / 3.11.2 / 3.12 / 3.13 / 3.13.5 / 3.14 / 3.15 / 3.15.0
+  zh_spoken: 三点十 / 三点十一 / 三点十一点二 / 三点十二 / 三点十三 / 三点十三点五 / 三点十四 / 三点十五 / 三点十五点零
+  first_use: 'S03：Debian 12 自带 Python 3.11.2（say: Python 三点十一点二），给操作系统自己用。'
+  note: 'Versions are read as integer groups (C2): 3.10 is newer than 3.9, so 三点十, never the decimal 三点一零. edge reads decimals, so every version needs say:.'
+- en: 'package versions: 0.13 / 0.13.0 / 0.13.3 / 0.27.2 / 0.28 / 0.28.1 / 4.0.2 / 6.5 / 23.0.1'
+  zh_subtitle: 0.13 / 0.13.0 / 0.13.3 / 0.27.2 / 0.28 / 0.28.1 / 4.0.2 / 6.5 / 23.0.1
+  zh_spoken: 零点十三 / 零点十三点零 / 零点十三点三 / 零点二十七点二 / 零点二十八 / 零点二十八点一 / 四点零点二 / 六点五 / 二十三点零点一
+  first_use: 'S05：我们的 googletrans 需要 0.27.2 及以上的 httpx（say: 零点二十七点二）。'
+  note: As C2.
+- en: 'codes: 429 / PEP 668 / AC215 / Python 3 / googletrans 4'
+  zh_subtitle: 429 / PEP 668 / AC215 / Python 3 / googletrans 4
+  zh_spoken: 四二九 / PEP 六六八 / AC 二一五 / Python 三 / googletrans 四
+  first_use: 'S06：原因是状态码 429（say: 四二九）。'
+  note: Codes are read digit by digit (C3).
+- en: Step 3 / step 3 of 10 / line 25 / lines 32 to 37
+  zh_subtitle: 第 3 步 / 第 3 步，共 10 步 / 第 25 行 / 第 32 到 37 行
+  zh_spoken: ''
+  first_use: S02：第 32 到 37 行会接住那次调用的任何错误。
+  note: 'No say: needed (edge reads 第 3 步); 行 is a polyphone: listen (F6).'
+- en: 'counts: 2 dependencies / 2 packages / installed 12 / installed 11 / resolved 13 / the other 9 / over a hundred packages'
+  zh_subtitle: 2 个依赖 / 2 个包 / 装了 12 个 / 装了 11 个 / 解析了 13 个 / 另外 9 个 / 一百多个软件包
+  zh_spoken: '两个依赖 / 两个包（其余个数照显示，不写 say:）'
+  first_use: 'S05：我们要了 2 个包，结果装了 12 个（say: 两个包）。'
+  note: 'Counts that echo the screen are digits (C1); before a measure word, say: writes 两 for 2 (C4). edge reads the other digits, so say: is optional for them.'
+- en: Debian 12 / Debian 13 / bookworm / Ubuntu 24.04
+  zh_subtitle: Debian 12 / Debian 13 / 代号 bookworm / Ubuntu 24.04
+  zh_spoken: Debian 十二 / Debian 十三 / bookworm
+  first_use: S03：结果是 Debian 12，代号 bookworm。
+  note: Release numbers are read as integers (edge does it); Ubuntu 24.04 is on screen only.
+# ---- Phrases and metaphors of this video
+- en: the word virtual (used twice) / one will live inside the other
+  zh_subtitle: “虚拟”这个词 / 一个会装在另一个里面
+  zh_spoken: ''
+  first_use: S01：今天这节课，“虚拟”这个词会出现两次。
+  note: 'The pun works in Chinese: 虚拟机, 虚拟环境.'
+- en: ladder / rung / the first two rungs / four ways / a kind of fragility
+  zh_subtitle: 梯子 / 一级 / 前两级 / 四种方式 / 一类隐患
+  zh_spoken: ''
+  first_use: S01：今天我们爬前两级。
+  note: '''fragility'' is 隐患, not 脆弱性 (sounds like a security flaw). Ladder labels: 1 在 VM 上手动安装 / 2 同样的 VM，改用 uv / 3 Docker，在你的笔记本上 / 4 在 VM 上运行 Docker 镜像.'
+- en: quick and dirty / the clean way / messy
+  zh_subtitle: 简单粗暴 / 干净的做法 / 乱糟糟的
+  zh_spoken: ''
+  first_use: S07：这就是简单粗暴的做法。
+  note: 简单粗暴 is the ready-made Chinese equivalent.
+- en: shelves / shelf / top shelf / bottom shelf / one shared shelf / jar / search-light
+  zh_subtitle: 架子（单位：层）/ 最上面一层 / 最下面一层 / 一层公用的架子 / 罐子 / 探照灯
+  zh_spoken: ''
+  first_use: S05：把它们想成一层一层的架子。每次 import，Python 都从最上面一层往下找，拿第一个对上的。
+  note: 'Review #16 proposed 书架; 架子 instead: jars don''t sit on bookshelves, and it fits the kitchen. 一层 = one sys.path folder. 探照灯 appears in labels and docs only.'
+- en: shared kitchen / apt is the cook
+  zh_subtitle: 公用厨房 / 掌勺的是 apt；标签：公用厨房
+  zh_spoken: ''
+  first_use: S05：系统 Python 是一间公用厨房，掌勺的是 apt。
+  note: '掌勺的 is more idiomatic than 厨师 and carries ''who is in charge''.'
+- en: 'the last install wins, for everyone'
+  zh_subtitle: 最后装的说了算，对所有人都一样
+  zh_spoken: ''
+  first_use: S05：最后装的那个说了算，对所有人都一样，两个项目里总有一个会坏。标签：只有一层 · 最后装的说了算，所有人都一样
+  note: ''
+- en: toolbox / give each project its own toolbox
+  zh_subtitle: 工具箱 / 给每个项目一个自己的工具箱
+  zh_spoken: ''
+  first_use: S08：解决办法是给每个项目一个自己的工具箱。这个工具箱，就是虚拟环境。
+  note: '工具箱 = a venv''s own shelf (review #16), not a third object; labels and speech both say 工具箱.'
+- en: 'Same engine, different toolbox'
+  zh_subtitle: 引擎还是那个引擎，工具箱换了一个（标签：同一个引擎，不同的工具箱）
+  zh_spoken: ''
+  first_use: S08：引擎还是那个引擎，工具箱换了一个。
+  note: '引擎 = the interpreter (label ''interpreter'' → 解释器).'
+- en: doors / knock on every door / the first door / walks in
+  zh_subtitle: 门 / 把每扇门都敲一遍 / 第一扇门 / 走进去
+  zh_spoken: ''
+  first_use: S12：激活之前，python 把 PATH 里的每扇门都敲了一遍，什么也没找到。
+  note: 'The label ''command not found'' stays (terminal text).'
+- en: wish list / receipt / why the receipt matters
+  zh_subtitle: 愿望清单 / 购物小票（简称小票）
+  zh_spoken: ''
+  first_use: S11：这个 pyproject.toml 文件是你的愿望清单。而 uv.lock 文件是购物小票。
+  note: 'Review #16 proposed 收据; 购物小票 instead: a 收据 only proves payment, while a till receipt itemizes every article and price, as a lock file lists every exact version and checksum.'
+- en: Two wishes grow into a tree
+  zh_subtitle: 两个愿望，长成了一棵树
+  zh_spoken: ''
+  first_use: S11：两个愿望，长成了一棵树。
+  note: '长 is zhǎng: listen (F6).'
+- en: 'a whole computer you rent and throw away / wreck it, delete it / one more layer / baked into an image'
+  zh_subtitle: 一整台租来、用完就扔的电脑 / 随便折腾，用完就删 / 再加一层 / 打包进一个镜像
+  zh_spoken: ''
+  first_use: S15：这台 VM 给了我们一整台机器，能随便折腾，用完就删。
+  note: ''
+- en: 'find them a home / that''s the whole lesson in one picture'
+  zh_subtitle: 给它们安个家；整节课的要点，就在这一张图里
+  zh_spoken: ''
+  first_use: S02：我们去弄一台电脑，给它们安个家。
+  note: 'This ''home'' is figurative, not the home folder.'
+# ---- Tags, tracker and fixed patterns
+- en: 'README tracker: README › section / step k of N: label / · extra'
+  zh_subtitle: README › Installing App on VM Manually（章节标题保持原文）/ 第 k 步，共 N 步：步骤名 / · 额外
+  zh_spoken: ''
+  first_use: S03：TRACKER A1 → 第 1 步，共 10 步：创建 VM
+  note: 'Section headings are what the viewer looks for in the README, so they stay (A11); the step captions are translated (E3).'
+- en: 'tracker steps A: Create VM / SSH / apt-get update / Install git / Clone / cd / Install pip / Install packages / Run it / Delete VM'
+  zh_subtitle: 创建 VM / SSH 登录 / apt-get update / 安装 git / 克隆仓库 / cd / 安装 pip / 安装包 / 运行 / 删除 VM
+  zh_spoken: ''
+  first_use: ''
+  note: 'Written register (克隆仓库, not ''clone repo''); command names stay.'
+- en: 'tracker steps B: Install uv / Reload shell / uv sync / Activate (others as in A)'
+  zh_subtitle: 安装 uv / 重新加载 shell / uv sync / 激活
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: your turn / your-turn tag
+  zh_subtitle: ▶ 轮到你了 / “轮到你了”标签
+  zh_spoken: 轮到你了
+  first_use: S01：看到黄色的“轮到你了”标签，就暂停视频，在你自己的 VM 上跑这条命令。
+  note: ''
+- en: extra / extra · not in the README / extras are safe
+  zh_subtitle: 额外 / 额外 · README 里没有 / 额外的命令都是安全的
+  zh_spoken: ''
+  first_use: S01：灰色的“额外”标签表示这条命令 README 里没有；额外的命令都是安全的，也一起跑吧。
+  note: 'Speech: 这条额外的命令 / 再做三个额外的检查 / 最后再加一个额外步骤.'
+- en: illustration / what if
+  zh_subtitle: 示意 / 假设
+  zh_spoken: ''
+  first_use: ''
+  note: As 示意 in the privacy video.
+- en: expected output / real capture / at the time of recording
+  zh_subtitle: 预期输出 / 实际输出 · 2026-10-12 / 录制时
+  zh_spoken: 录制时
+  first_use: S09：录制时的版本是 0.13.0。
+  note: 预期 vs 实际 pair up; 录制时 is never dropped (A9).
+- en: erratum / a small mistake / with an easy fix
+  zh_subtitle: 勘误（标签）/ 一个小错误 / 改起来很简单
+  zh_spoken: ''
+  first_use: S11：这里 README 有一个小错误，改起来很简单。
+  note: 'Speech never says 勘误; gentle, always followed by the fix (A9).'
+- en: preview / today / L2 / first time only / package list varies by VM
+  zh_subtitle: 预览 / 今天 / 第 2 讲（放不下时保留 L2）/ 仅首次 / 软件包列表因 VM 而异
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: Pause and ponder (card) / Something to ponder / Now predict / A quick puzzle
+  zh_subtitle: 暂停想一想（卡片标题，explainer/locales/zh.yaml）/ 来想一个问题 / 先预测一下 / 先出个小题
+  zh_spoken: ''
+  first_use: S05：来想一个问题。
+  note: The card header comes from the toolkit; the card question is at most two lines and ends in ？.
+- en: Pause and run it / Pause and try it / Pause here / Pause until
+  zh_subtitle: 暂停一下，自己跑一遍 / 暂停一下，试试看 / 先在这里暂停 / 暂停视频，等到……
+  zh_spoken: ''
+  first_use: S04：暂停一下，自己跑一遍。
+  note: 'Fixed patterns: D5.'
+- en: 'Test yourself / five questions / One: … Five: / The answers are in the exercises / Next time: containers'
+  zh_subtitle: 自测 / 五道题 / 第一题：…… 第五题： / 答案在练习里 / 下节课：容器
+  zh_spoken: ''
+  first_use: S15：最后，留五道题给你自测。
+  note: ''
+- en: 'code panel header: path · lines a–b / path · line n'
+  zh_subtitle: path · 第 a–b 行 / path · 第 n 行
+  zh_spoken: ''
+  first_use: ''
+  note: 'Translated by re: keys (E4).'
+- en: the tracker / code panels / study guide / exercises
+  zh_subtitle: 进度条 / 代码面板 / 学习指南 / 练习
+  zh_spoken: ''
+  first_use: S01：左上角的进度条显示 README 的步骤。代码面板会标出文件和行号。
+  note: ''
+# ---- Course, products and names
+- en: 'AC215 · MLOps & LLMOps / Harvard / Lecture 1 / next lecture / part 1 / part 2'
+  zh_subtitle: AC215 · MLOps 与 LLMOps / 哈佛 / 第 1 讲 / 下节课 / 第一部分 / 第二部分
+  zh_spoken: AC 二一五 / 下节课 / 第一部分 / 第二部分
+  first_use: S07：第二部分：同一个应用，换一台新的 VM，用干净的做法。
+  note: 'Speech: 今天这节课, 下节课; writing: 第 1 讲, 第 2 讲. 哈佛 only in titles and the description.'
+- en: 'README / the README''s tip / README card / open the README beside this video'
+  zh_subtitle: README / README 里的提示 / README 引文卡
+  zh_spoken: README
+  first_use: S01：想跟着做的话，把 README 打开，放在视频旁边。S04：README 在这里有个提示：apt-get 和 apt 做的是同一件事。
+  note: 'Shown and spoken as is (a file name and the course''s word); the possessive is README 的 / README 里. The voice''s reading is unverified (F5; fallback ''read me''). README quote cards keep their English text (A11).'
+- en: simple-translate / dlops-io / MLOps Learning / the study guide
+  zh_subtitle: simple-translate / dlops-io / MLOps Learning / 学习指南
+  zh_spoken: simple translate / MLOps Learning / 学习指南
+  first_use: S01：每条命令也都在学习指南里，在 MLOps Learning 这个 repo 里。
+  note: 'The voice''s ''MLOps'' is unverified (F5).'
+- en: Google / GitHub / PyPI / Debian / Ubuntu / Docker / AWS / Astral
+  zh_subtitle: Google / GitHub / PyPI / Debian / Ubuntu / Docker / AWS / Astral
+  zh_spoken: Google / GitHub / Debian / Docker / AWS
+  first_use: S03：Google 的数据中心。
+  note: Products and companies stay in Latin script.
+- en: the cheese app / its API service / the AWS version / the pipenv branch
+  zh_subtitle: cheese app / API 服务 / AWS 版本 / pipenv 分支
+  zh_spoken: cheese app / API 服务 / AWS 版本 / pipenv 分支
+  first_use: S14：这个 repo 的 pipenv 分支用的就是它，单独的 AWS 版本和后面 cheese app 的 API 服务也一样。
+  note: 'cheese app is the course project''s name, kept.'
+- en: student (the username) / ac215-l01 (the VM) / app (the project name) / classmate / Monday / next Monday
+  zh_subtitle: student / ac215-l01 / app / 同学 / 周一 / 下周一
+  zh_spoken: student / app / 同学
+  first_use: S03：我们的提示符显示 student；你的会显示你自己的用户名。
+  note: ''
+- en: argparse / asyncio / art / googletrans / httpx / anyio / certifi / httpcore / h2 / idna / typing-extensions
+  zh_subtitle: argparse / asyncio / art / googletrans / httpx / anyio / certifi / httpcore / h2 / idna / typing-extensions（包名照写）
+  zh_spoken: argparse / asyncio / art / googletrans / httpx / anyio / certifi / httpcore / h2 / idna / typing extensions
+  first_use: S11：我们的 googletrans 需要 httpx，一个 HTTP 库；它又需要 anyio、certifi、httpcore、h2，还有更多。
+  note: Package names are never translated; add 这个包 when needed. Lists use 、.
+# ---- Titles and chapters (meta.yaml)
+- en: Video title
+  zh_subtitle: AC215 · 第 1 讲：虚拟机、虚拟环境与 uv（跟练：simple-translate）
+  zh_spoken: ''
+  first_use: ''
+  note: 跟练 is the usual Bilibili word for follow-along.
+- en: Part 1 title
+  zh_subtitle: AC215 · 第 1 讲（上）：云端 VM 与简单粗暴的手动安装
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: Part 2 title
+  zh_subtitle: AC215 · 第 1 讲（下）：用 uv 管理虚拟环境
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S01: Why won''t pip install?'
+  zh_subtitle: pip 为什么不让装？
+  zh_spoken: ''
+  first_use: ''
+  note: Keeps the question.
+- en: 'Chapter S02: The app: cli.py'
+  zh_subtitle: 这个应用：cli.py
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S03: Renting a computer: the VM'
+  zh_subtitle: 租一台电脑：虚拟机（VM）
+  zh_spoken: ''
+  first_use: ''
+  note: Core-concept chapter carries the English short name for search (H1).
+- en: 'Chapter S04: apt, git and the repo'
+  zh_subtitle: apt、git 和仓库
+  zh_spoken: ''
+  first_use: ''
+  note: 'Written register: 仓库 (A4).'
+- en: 'Chapter S05: The system Python and PEP 668'
+  zh_subtitle: 系统 Python 与 PEP 668
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S06: Run it, and read the traceback'
+  zh_subtitle: 运行它，读懂 traceback
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S07: Delete, don''t stop'
+  zh_subtitle: 要删除，别只停止
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S08: What a virtual environment is'
+  zh_subtitle: 虚拟环境（venv）到底是什么
+  zh_spoken: ''
+  first_use: ''
+  note: Core-concept chapter carries the English short name.
+- en: 'Chapter S09: Installing uv'
+  zh_subtitle: 安装 uv
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S10: uv sync: which Python?'
+  zh_subtitle: uv sync：用哪个 Python？
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S11: uv sync: resolve, lock, install'
+  zh_subtitle: uv sync：解析、锁定、安装
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S12: Activation is just PATH'
+  zh_subtitle: 激活，其实只是改 PATH
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S13: Prove the isolation'
+  zh_subtitle: 验证隔离
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S14: The older way: pipenv'
+  zh_subtitle: 老办法：pipenv
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'Chapter S15: Tear down, recap, and what''s next'
+  zh_subtitle: 收尾、回顾和下节预告
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+# ---- Companion docs (README.md, exercises.md, digest.md)
+- en: 'headings of exercises.md: Part A · The five questions from the end of the video / Part B · Hands-on (predict, then run) / Part C · Debugging / Part D · Think'
+  zh_subtitle: A 部分 · 视频最后的五道题 / B 部分 · 动手（先预测，再运行）/ C 部分 · 排错 / D 部分 · 思考
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: '<summary>Answer</summary>'
+  zh_subtitle: '<summary>答案</summary>'
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: symlink / subshell / transitive dependency / resolver / environment marker / wheel / hash
+  zh_subtitle: 软链接（符号链接）/ 子 shell / 传递依赖（间接依赖）/ 解析器 / 环境标记 / wheel 包 / 哈希
+  zh_spoken: ''
+  first_use: ''
+  note: 'Docs use the written forms, with the English at first use.'
+- en: idempotent / reproducible / deterministic / rate-limited / endpoint / shadowing / externally managed environment
+  zh_subtitle: 幂等 / 可复现 / 确定 / 被限流 / 接口 / 遮蔽 / 由外部管理的环境（externally managed）
+  zh_spoken: ''
+  first_use: ''
+  note: ''
+- en: 'zh-CN console equivalents: Create instance / VM instances / Disks / Authorize / Delete / Stop / Enable / Billing'
+  zh_subtitle: 创建实例 / VM 实例 / 磁盘 / 授权 / 删除 / 停止 / 启用 / 结算
+  zh_spoken: ''
+  first_use: ''
+  note: 'Companion README and description only, for viewers whose console is in Chinese (H3).'
+# Latin words spoken in say: that are not in the terms' forms (package names, products, terminal words);
+# used by `python -m explainer.i18n check` together with every Latin word of the spoken/subtitle/first-use forms.
+allowed_spoken_latin: [AC, API, ASCII, AWS, Authorize, CPU, CPUs, CPython, Compute, Create, Debian, Delete, Disks, Docker, Dockerfile, Enable, Engine, Error, False, Found, GitHub, Google, HTTP, HTTPS, I, Input, JSON, LLMOps, Learning, MLOps, Module, Namespace, Not, Output, PATH, Pipfile, PyPI, Python, SSH, Stop, Translator, True, Tutorial, Ubuntu, VM, VMs, activate, add, already, anyio, app, apt, argparse, art, asyncio, bookworm, break, cat, cd, certifi, cfg, cheese, cli, clone, cloud, com, command, commit, compute, curl, deactivate, disks, dist, env, exception, exit, extensions, externally, false, found, get, git, googleapis, googletrans, home, hpack, httpcore, httpx, hyperframe, hypervisor, idna, import, include, install, instance, instances, key, list, lock, locked, love, ls, main, managed, name, not, os, packages, path, pin, pip, pip3, pipenv, pipx, prompt, py, pyenv, pyproject, python, python3, pyvenv, raise, release, repo, requirement, requirements, requires, root, run, satisfied, sh, shell, simple, site, small, source, student, sudo, sync, sys, system, toml, tools, traceback, translate, tree, typing, update, uv, uvx, venv, version, virtual, which]

@@ -1,0 +1,8 @@
+$ cat /etc/os-release | head -4; python3 --version; which python; echo which-python-exit:$?
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+Python 3.11.2
+which-python-exit:1
+[exit 0]

@@ -1,0 +1,8 @@
+00:00 What a virtual environment is
+01:47 Installing uv
+04:02 uv sync: which Python?
+06:36 uv sync: resolve, lock, install
+09:22 Activation is just PATH
+11:54 Prove the isolation
+13:09 The older way: pipenv
+14:15 Tear down, recap, and what's next

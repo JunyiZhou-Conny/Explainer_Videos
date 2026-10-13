@@ -1,0 +1,8 @@
+$ cat /etc/os-release | head -4; python3 --version; which python; echo which-python-exit:$?
+PRETTY_NAME="Debian GNU/Linux 13 (trixie)"
+NAME="Debian GNU/Linux"
+VERSION_ID="13"
+VERSION="13 (trixie)"
+Python 3.13.5
+which-python-exit:1
+[exit 0]

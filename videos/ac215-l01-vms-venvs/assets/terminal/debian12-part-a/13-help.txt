@@ -1,0 +1,12 @@
+$ python3 cli.py --help
+usage: cli.py [-h] [-t TEXT] [-f FILE] [-s SRC] [-d DEST]
+
+A simple translation app
+
+options:
+  -h, --help            show this help message and exit
+  -t TEXT, --text TEXT  Text to translate
+  -f FILE, --file FILE  File to translate
+  -s SRC, --src SRC     Source language
+  -d DEST, --dest DEST  Destination language
+[exit 0]
