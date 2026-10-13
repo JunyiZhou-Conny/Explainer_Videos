@@ -1,0 +1,603 @@
+1
+00:00:00,000 --> 00:00:02,837
+Marco sent the team
+these two blocks of commands.
+
+2
+00:00:03,157 --> 00:00:05,973
+They start the CareOneX
+voice app on his laptop.
+
+3
+00:00:06,293 --> 00:00:08,981
+If they look like a wall of noise,
+that is normal.
+
+4
+00:00:09,217 --> 00:00:12,225
+By the end of this video,
+every line will mean something.
+
+5
+00:00:12,545 --> 00:00:17,153
+Each one turns out to be a small lesson
+about how the whole system fits together.
+
+6
+00:00:17,400 --> 00:00:18,659
+One warning first.
+
+7
+00:00:18,979 --> 00:00:21,944
+We cannot log into the team's AWS account.
+
+8
+00:00:22,264 --> 00:00:26,616
+So everything here is learned from the code
+on GitHub and the team's notes.
+
+9
+00:00:26,936 --> 00:00:29,946
+Each claim carries a tag,
+and when we are guessing,
+
+10
+00:00:29,946 --> 00:00:32,248
+the tag says INFERRED, with our reason.
+
+11
+00:00:33,283 --> 00:00:35,224
+The two blocks start two programs.
+
+12
+00:00:35,544 --> 00:00:38,744
+Terminal 1 starts retrieve,
+a small search server.
+
+13
+00:00:39,064 --> 00:00:42,734
+Terminal 2 starts voice,
+the program you actually talk to.
+
+14
+00:00:42,983 --> 00:00:46,204
+Voice listens to your microphone
+and plays the reply.
+
+15
+00:00:46,524 --> 00:00:49,980
+When it needs a fact,
+it asks retrieve, on the same laptop.
+
+16
+00:00:50,300 --> 00:00:53,980
+Both programs also talk
+to Amazon's cloud, AWS,
+
+17
+00:00:53,980 --> 00:00:57,895
+where the AI models
+and the document library live.
+
+18
+00:00:58,133 --> 00:01:01,866
+A terminal is a window
+where you type commands instead of clicking.
+
+19
+00:01:02,186 --> 00:01:04,661
+Marco is on Windows, using PowerShell.
+
+20
+00:01:04,981 --> 00:01:07,349
+We can tell
+from the way his lines are written.
+
+21
+00:01:08,383 --> 00:01:11,455
+Line 1 is cd, short for change directory.
+
+22
+00:01:11,775 --> 00:01:14,420
+It moves the terminal
+into the project folder.
+
+23
+00:01:14,740 --> 00:01:18,218
+Every later command looks
+for its files relative to this folder.
+
+24
+00:01:18,466 --> 00:01:21,519
+The folder is Marco's
+own copy of the team's code,
+
+25
+00:01:21,519 --> 00:01:23,351
+with his newest changes in it.
+
+26
+00:01:23,671 --> 00:01:24,577
+We infer that,
+
+27
+00:01:24,577 --> 00:01:29,496
+because the next commands expect exactly
+the folders of the team repository.
+
+28
+00:01:30,533 --> 00:01:33,152
+Most of the other lines look like this:
+
+29
+00:01:33,152 --> 00:01:36,442
+dollar sign, env, colon,
+a name, equals, a value.
+
+30
+00:01:36,762 --> 00:01:39,045
+Each one sets an environment variable.
+
+31
+00:01:39,283 --> 00:01:43,272
+Think of environment variables
+as sticky notes on the terminal window.
+
+32
+00:01:43,592 --> 00:01:46,494
+Every program started
+from that window can read them.
+
+33
+00:01:46,814 --> 00:01:49,663
+The CareOneX code reads
+its settings this way,
+
+34
+00:01:49,663 --> 00:01:53,192
+so nothing about Marco's laptop
+is written into the code.
+
+35
+00:01:53,433 --> 00:01:55,460
+The notes belong to one window only.
+
+36
+00:01:55,780 --> 00:01:59,342
+That is why both blocks set
+the same AWS lines again.
+
+37
+00:02:00,383 --> 00:02:05,375
+An AWS account is the team's
+own fenced-off corner of Amazon's cloud.
+
+38
+00:02:05,695 --> 00:02:09,812
+Everything CareOneX uses lives inside it,
+and it has one bill.
+
+39
+00:02:10,132 --> 00:02:14,335
+The team's notes show a budget of 30 dollars
+a month for the AI models.
+
+40
+00:02:14,583 --> 00:02:16,162
+Nobody shares a password.
+
+41
+00:02:16,482 --> 00:02:20,035
+Each teammate signs
+in through a single sign-on portal,
+
+42
+00:02:20,035 --> 00:02:23,458
+called SSO,
+with their own email and a second factor.
+
+43
+00:02:23,778 --> 00:02:25,083
+After signing in,
+
+44
+00:02:25,083 --> 00:02:29,303
+everyone gets the same set of permissions,
+named AC215.
+
+45
+00:02:29,623 --> 00:02:32,613
+It covers the AI models,
+the course's own storage,
+
+46
+00:02:32,613 --> 00:02:34,008
+and the knowledge base,
+
+47
+00:02:34,008 --> 00:02:36,919
+and nothing
+in the company's production systems.
+
+48
+00:02:37,166 --> 00:02:41,049
+A profile is a named entry
+in a settings file on the laptop.
+
+49
+00:02:41,369 --> 00:02:44,759
+"careonex-team" says:
+log in through that portal,
+
+50
+00:02:44,759 --> 00:02:48,217
+into the team account,
+with the AC215 permissions.
+
+51
+00:02:48,537 --> 00:02:52,466
+The command aws sso login opens a browser,
+you approve,
+
+52
+00:02:52,466 --> 00:02:56,537
+and the laptop receives temporary keys
+that last 8 hours.
+
+53
+00:02:56,783 --> 00:03:01,199
+The CareOneX code finds those temporary keys
+through the profile name.
+
+54
+00:03:01,519 --> 00:03:02,533
+When they expire,
+
+55
+00:03:02,533 --> 00:03:07,066
+the voice program stops with a one-line
+message telling you to log in again.
+
+56
+00:03:08,100 --> 00:03:12,473
+AWS runs data centers
+in many regions around the world.
+
+57
+00:03:12,793 --> 00:03:15,353
+Each region is its own copy of the cloud.
+
+58
+00:03:15,673 --> 00:03:19,136
+The team's models
+and storage are all in us-east-1,
+
+59
+00:03:19,136 --> 00:03:23,481
+in Northern Virginia,
+so every program must be told to go there.
+
+60
+00:03:24,517 --> 00:03:27,226
+Now the strangest line: set HOME to HOME.
+
+61
+00:03:27,546 --> 00:03:29,061
+It looks like it does nothing.
+
+62
+00:03:29,381 --> 00:03:31,152
+It fixes a Windows problem.
+
+63
+00:03:31,400 --> 00:03:35,347
+The retrieve program will run
+inside a container, a sealed box.
+
+64
+00:03:35,667 --> 00:03:38,611
+To use your login,
+the box needs your keys folder.
+
+65
+00:03:38,931 --> 00:03:43,006
+The team's Docker file finds that folder
+through a variable named HOME.
+
+66
+00:03:43,250 --> 00:03:45,149
+On a Mac, HOME is always set.
+
+67
+00:03:45,469 --> 00:03:46,782
+On Windows it is not,
+
+68
+00:03:46,782 --> 00:03:50,973
+so the box would look for keys
+in an empty path and fail to log in.
+
+69
+00:03:51,293 --> 00:03:55,474
+The line copies PowerShell's own home
+folder into the HOME sticky note.
+
+70
+00:03:55,794 --> 00:03:59,933
+Only terminal 1 needs it,
+because only terminal 1 uses Docker.
+
+71
+00:04:00,967 --> 00:04:05,435
+A Knowledge Base is an Amazon service
+that stores the team's documents
+
+72
+00:04:05,435 --> 00:04:09,202
+as small searchable passages,
+and searches them on request.
+
+73
+00:04:09,522 --> 00:04:13,106
+Every knowledge base has an ID,
+a short code like this one.
+
+74
+00:04:13,350 --> 00:04:15,974
+The retrieve code looks
+for this sticky note first.
+
+75
+00:04:16,294 --> 00:04:20,373
+If it is missing, it reads the ID
+from a file in the team's storage,
+
+76
+00:04:20,373 --> 00:04:23,612
+written there by the container
+that built the library.
+
+77
+00:04:23,850 --> 00:04:25,194
+Why set it by hand?
+
+78
+00:04:25,514 --> 00:04:28,896
+We had guessed two reasons:
+to save one read from storage,
+
+79
+00:04:28,896 --> 00:04:31,871
+or to point retrieve
+at a different knowledge base.
+
+80
+00:04:32,191 --> 00:04:34,986
+Marco's branch,
+pushed later that day, settles it.
+
+81
+00:04:35,306 --> 00:04:38,371
+This ID is one
+of three test libraries he built
+
+82
+00:04:38,371 --> 00:04:41,045
+to compare ways of cutting the documents.
+
+83
+00:04:41,365 --> 00:04:44,565
+Without this line,
+retrieve would use the main library.
+
+84
+00:04:44,885 --> 00:04:46,976
+Episode 6 explains his test.
+
+85
+00:04:48,017 --> 00:04:51,892
+Docker packs a program
+with everything it needs into an image,
+
+86
+00:04:51,892 --> 00:04:53,393
+like a frozen lunch box.
+
+87
+00:04:53,713 --> 00:04:55,740
+A container is that box, running.
+
+88
+00:04:56,060 --> 00:04:59,942
+It runs the same on Marco's laptop,
+on yours, and on a server.
+
+89
+00:05:00,184 --> 00:05:04,451
+Docker compose reads the team's file
+that describes all the containers.
+
+90
+00:05:04,771 --> 00:05:06,243
+The word up starts one.
+
+91
+00:05:06,563 --> 00:05:11,491
+The option build first rebuilds its image,
+so Marco's newest code is inside.
+
+92
+00:05:11,811 --> 00:05:13,986
+And retrieve picks just the search server.
+
+93
+00:05:14,234 --> 00:05:17,583
+Inside the box,
+retrieve becomes a small web server.
+
+94
+00:05:17,903 --> 00:05:20,634
+It listens on port 8080, a numbered door.
+
+95
+00:05:20,954 --> 00:05:24,818
+The Docker file connects that door
+to the same door on the laptop,
+
+96
+00:05:24,818 --> 00:05:26,458
+so other programs can knock.
+
+97
+00:05:27,500 --> 00:05:30,151
+In terminal 2,
+the first new note tells voice
+
+98
+00:05:30,151 --> 00:05:31,212
+where retrieve is.
+
+99
+00:05:31,532 --> 00:05:39,767
+127.0.0.1 always means this same computer,
+and 8080 is the door retrieve opened.
+
+100
+00:05:40,087 --> 00:05:44,481
+Without this note, the voice app answers
+that the knowledge base is unavailable.
+
+101
+00:05:44,717 --> 00:05:46,786
+The next note picks how voice searches.
+
+102
+00:05:47,106 --> 00:05:50,285
+When we first looked,
+it was nowhere in the code on GitHub.
+
+103
+00:05:50,605 --> 00:05:53,570
+Marco's branch,
+pushed later that day, explains it.
+
+104
+00:05:53,890 --> 00:05:58,264
+Feedback runs a first search,
+may add one more, and merges the results.
+
+105
+00:05:58,584 --> 00:06:00,568
+Baseline runs one search only.
+
+106
+00:06:00,888 --> 00:06:03,896
+Feedback is also the default
+when the note is missing.
+
+107
+00:06:04,216 --> 00:06:06,157
+Episode 6 shows what it does.
+
+108
+00:06:07,200 --> 00:06:08,928
+The last line is the longest.
+
+109
+00:06:09,248 --> 00:06:10,592
+Let's take it apart.
+
+110
+00:06:10,833 --> 00:06:15,813
+uv is a tool that sets up the exact Python
+and libraries a project needs,
+
+111
+00:06:15,813 --> 00:06:18,406
+then runs a command inside that setup.
+
+112
+00:06:18,726 --> 00:06:23,910
+Python 3.12 is the oldest version
+Amazon's streaming library accepts.
+
+113
+00:06:24,230 --> 00:06:27,409
+And the directory option says:
+use the voice project.
+
+114
+00:06:27,650 --> 00:06:30,274
+extra mic adds the microphone library.
+
+115
+00:06:30,594 --> 00:06:35,302
+It is optional on purpose:
+a container has no microphone or speakers,
+
+116
+00:06:35,302 --> 00:06:39,191
+so the voice program runs directly
+on the laptop instead.
+
+117
+00:06:39,433 --> 00:06:44,340
+Finally, the quoted part is a tiny Python
+program that starts the voice session.
+
+118
+00:06:44,660 --> 00:06:47,597
+The team's instructions
+use a shorter command,
+
+119
+00:06:47,597 --> 00:06:51,044
+but that one first checks
+for a kind of saved key file
+
+120
+00:06:51,044 --> 00:06:53,278
+that an SSO login may never create.
+
+121
+00:06:53,598 --> 00:06:56,009
+Calling the session directly
+skips that check.
+
+122
+00:06:56,329 --> 00:06:59,209
+That is our inference;
+it fits the code exactly.
+
+123
+00:07:00,250 --> 00:07:02,106
+Put together, it looks like this.
+
+124
+00:07:02,426 --> 00:07:04,943
+Both programs use your 8-hour login.
+
+125
+00:07:05,263 --> 00:07:10,880
+You speak, voice streams it to Nova 2 Sonic,
+Nova asks for a fact, voice asks retrieve,
+
+126
+00:07:10,880 --> 00:07:15,077
+retrieve searches the knowledge base,
+and Nova speaks the answer.
+
+127
+00:07:15,317 --> 00:07:18,176
+Here is every new word
+from this video on one card.
+
+128
+00:07:18,496 --> 00:07:20,223
+Pause here if you want to keep it.
+
+129
+00:07:20,467 --> 00:07:25,565
+Next, the big picture: what CareOneX is for,
+and who on the team built which part.
+

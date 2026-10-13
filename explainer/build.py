@@ -13,6 +13,13 @@ Reads <project>/video.yaml:
     title: "..."
     papers: [dwork2006calibrating]          # ids from library/catalog.yaml
     voice: {backend: kokoro, voice: af_heart, speed: 1.0}
+    subtitles_only: false                    # true: no narrator (voice: {backend: silent, speed: 0.85}
+                                             #   sets the reading pace); the English build burns the
+                                             #   bilingual subtitles of each translation in (<id>.<lang>-en.mp4)
+    burn_subtitles: false                    # true: burn them in for a narrated video too (as --burn)
+    music: {seed: 0, volume_db: 0}           # optional background music under the narration, ducked
+                                             #   while someone speaks: a generated bed (explainer/music.py)
+                                             #   or {file: path/to/track.mp3, volume_db: 0}
     scenes:
       - {file: scenes/s01_hook.py, cls: Hook, title: "The differencing attack"}
 
@@ -441,9 +448,11 @@ def main(argv=None):
     ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
                burn=not args.no_burn, subs_only=args.subs_only,
                music=with_music and not args.subs_only)
+    # music.file tracks are mixed inside stitch() (mix_music); composed scores come after, from the event logs
+    compose = ctx["music"] and not (isinstance(spec.get("music"), dict) and spec["music"].get("file"))
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
            transcript_file=out_dir / "transcript.md", ctx=ctx)
-    if ctx["music"]:
+    if compose:
         add_music(normalized, out_dir / f"{spec['id']}{suffix}", build, ctx)
     for part in spec.get("parts") or []:
         keep = set(part["scenes"])
@@ -451,7 +460,7 @@ def main(argv=None):
         ptitle = ((meta.get("parts") or {}).get(part["id"])) or part.get("title", part["id"])
         stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", ptitle, build,
                chapters_file=out_dir / f"chapters_{part['id']}.txt", ctx=ctx)
-        if ctx["music"]:
+        if compose:
             add_music(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", build, ctx)
 
 
@@ -486,6 +495,32 @@ def _clips_with_marks(subs_file: Path, env: dict | None) -> list[dict]:
                 else:
                     os.environ[k] = v
     return clips
+
+
+def mix_music(joined: Path, final: Path, music: dict, project: Path, build: Path, seconds: float) -> None:
+    """Narration (loudness-normalized) over a music bed that ducks while someone speaks.
+
+    `music` is video.yaml's block: {file, volume_db} for a track of your own, looped to the
+    video's length. Blocks without file: get a composed score (explainer.music, add_music)."""
+    if not music.get("file"):
+        raise SystemExit("mix_music needs music.file (a track of your own); a music: block without "
+                         "file: is composed from the scenes' event logs by explainer.music instead")
+    gain = float(music.get("volume_db", 0))
+    src = (project / music["file"]).resolve()
+    inputs = ["-stream_loop", "-1", "-i", str(src)]
+    bed_chain = (f"[1:a]aresample=48000,aformat=channel_layouts=stereo,atrim=0:{seconds:.3f},"
+                 f"loudnorm=I=-30:LRA=7,volume={gain}dB,afade=t=in:d=3,"
+                 f"afade=t=out:st={max(0, seconds - 5):.3f}:d=5[bed]")
+    graph = ";".join([
+        "[0:a]loudnorm=I=-16:TP=-2:LRA=11,aresample=48000,asplit=2[voice][key]",
+        bed_chain,
+        # the bed sits ~12 dB under the voice in pauses and ~20 dB under it while someone speaks
+        "[bed][key]sidechaincompress=threshold=0.015:ratio=4:attack=40:release=600[ducked]",
+        "[voice][ducked]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.89[a]",
+    ])
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), *inputs, "-filter_complex", graph,
+                    "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-ar", "48000", "-c:a", "aac", "-b:a", "160k",
+                    "-movflags", "+faststart", str(final)], check=True)
 
 
 def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
@@ -538,15 +573,21 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         joined = build / f"joined_{stem.name}.mp4"
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
                         "-c", "copy", str(joined)], check=True)
-        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
-                        "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
-                        "-movflags", "+faststart", str(final)], check=True)
-        if ctx.get("music"):                   # the same narration before AAC: the music is mixed from it,
-            voice_wav = build / f"voice_{stem.name}.wav"                     # so the voice is encoded once
-            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-vn", "-af",
-                            "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-ac", "2",
-                            "-c:a", "pcm_f32le", str(voice_wav)], check=True)
-            ctx.setdefault("voice_wavs", {})[str(stem)] = voice_wav
+        music_spec = (ctx.get("spec") or {}).get("music")
+        if ctx.get("music") and isinstance(music_spec, dict) and music_spec.get("file") and project is not None:
+            # a track of your own (music.file): looped and ducked under the narration in one pass;
+            # composed scores (explainer.music) are mixed after stitching by add_music()
+            mix_music(joined, final, music_spec, project, build, offset)
+        else:
+            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
+                            "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
+                            "-movflags", "+faststart", str(final)], check=True)
+            if ctx.get("music"):               # the same narration before AAC: the music is mixed from it,
+                voice_wav = build / f"voice_{stem.name}.wav"                 # so the voice is encoded once
+                subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-vn", "-af",
+                                "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-ac", "2",
+                                "-c:a", "pcm_f32le", str(voice_wav)], check=True)
+                ctx.setdefault("voice_wavs", {})[str(stem)] = voice_wav
         joined.unlink(missing_ok=True)
     made = []
     if lang == "en":

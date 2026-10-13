@@ -20,3 +20,16 @@ Irit: {ipa: "iɹˈiːt", say: "ee-reet"}
 Kobbi: {ipa: "kˈoʊbi", say: "koh-bee"}
 Latanya: {ipa: "lətˈɑːnjə", say: "la-tahn-ya"}
 Andrej: {ipa: "ˈɑːndɹeɪ", say: "ahn-dray"}
+# CareOneX series (videos/careonex-*)
+AWS: {ipa: "ˌeɪdˌʌbəljuːˈɛs", say: "A W S"}
+VA: {ipa: "vˌiːˈeɪ", say: "V A"}
+va.gov: {ipa: "vˌiːˈeɪ dˈɑːt ɡˈɑːv", say: "V A dot gov"}
+nj.gov: {ipa: "ˌɛndʒˈeɪ dˈɑːt ɡˈɑːv", say: "N J dot gov"}
+127.0.0.1: {ipa: "wˈʌn tˈuː sˈɛvən dˈɑːt zˈiəɹoʊ dˈɑːt zˈiəɹoʊ dˈɑːt wˈʌn", say: "one two seven dot zero dot zero dot one"}
+"8080": {ipa: "ˈeɪɾi ˈeɪɾi", say: "eighty eighty"}
+AC215: {ipa: "ˌeɪsˈiː tˈuː fˈɪftiːn", say: "A C two fifteen"}
+ac215: {ipa: "ˌeɪsˈiː tˈuː fˈɪftiːn", say: "A C two fifteen"}
+us-east-1: {ipa: "jˌuːˈɛs ˈiːst wˈʌn", say: "U S east one"}
+careonex-team: {ipa: "kˈɛɹ wˈʌn ˈɛks tˈiːm", say: "care one ex team"}
+pymupdf4llm: {ipa: "pˈaɪ mjˈuː pˌiːdˌiːˈɛf fɔːɹ ˌɛlˌɛlˈɛm", say: "pie mew P D F for L L M"}
+IDs: {ipa: "aɪdˈiːz", say: "I Dees"}

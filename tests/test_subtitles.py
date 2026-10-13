@@ -786,6 +786,14 @@ def test_r4_english_video_srt_corpus():
                 assert b - a >= 1.0 - 1e-9, text
 
 
+def test_silent_backend_reading_pace():
+    """Subtitle-only videos time each SAY line by a reading pace: speed scales words per second,
+    and speed 1 keeps the old cache key."""
+    from explainer.voice import SilentBackend
+    assert SilentBackend().params() == {"wps": 2.6}
+    assert SilentBackend(speed=0.85).params() == {"wps": 2.21}
+
+
 def test_r5_meta_video_srt():
     """The .srt of 'How these videos are made' (director's review of the draft): a cue never ends on
     a fragment of the next sentence, and lines never break inside a noun phrase."""

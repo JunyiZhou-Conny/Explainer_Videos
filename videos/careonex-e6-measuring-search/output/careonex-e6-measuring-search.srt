@@ -1,0 +1,640 @@
+1
+00:00:00,000 --> 00:00:07,317
+Marco's branch arrived as one large commit:
+213 files and about 46,000 new lines.
+
+2
+00:00:07,637 --> 00:00:09,621
+Most of those lines are not code.
+
+3
+00:00:09,941 --> 00:00:11,053
+They are evidence:
+
+4
+00:00:11,053 --> 00:00:14,080
+test questions,
+saved search results, and grades.
+
+5
+00:00:14,317 --> 00:00:16,661
+Almost all of it is about one question:
+
+6
+00:00:16,661 --> 00:00:18,427
+when a caller asks something,
+
+7
+00:00:18,427 --> 00:00:21,229
+does search hand the agent
+the right passages?
+
+8
+00:00:21,549 --> 00:00:23,256
+Marco turned three dials.
+
+9
+00:00:23,576 --> 00:00:25,090
+How the documents are cut.
+
+10
+00:00:25,410 --> 00:00:26,776
+How the search is run.
+
+11
+00:00:27,096 --> 00:00:28,738
+And how results are ordered.
+
+12
+00:00:29,058 --> 00:00:31,725
+He also added a way
+to check the spoken answers.
+
+13
+00:00:32,767 --> 00:00:34,580
+First, how do you score a search?
+
+14
+00:00:34,900 --> 00:00:38,633
+You ask a question,
+take the top 5 passages it returns,
+
+15
+00:00:38,633 --> 00:00:40,602
+and a person grades each one:
+
+16
+00:00:40,602 --> 00:00:45,567
+0 if it does not help, 1 if it partly helps,
+2 if it answers the question.
+
+17
+00:00:45,800 --> 00:00:50,429
+Precision at 5 is the share of the five
+that help at all, here 2 out of 5.
+
+18
+00:00:50,749 --> 00:00:56,808
+MRR looks only at the first helpful passage:
+it is at rank 2, so the score is one half.
+
+19
+00:00:57,128 --> 00:00:58,579
+Rank 1 would score 1.
+
+20
+00:00:58,817 --> 00:01:02,230
+NDCG rewards putting
+the best passages first.
+
+21
+00:01:02,550 --> 00:01:03,806
+It scores our order,
+
+22
+00:01:03,806 --> 00:01:08,204
+then scores the best possible order
+of the same passages, and divides.
+
+23
+00:01:08,524 --> 00:01:10,038
+1 means perfect order.
+
+24
+00:01:10,284 --> 00:01:12,545
+All three numbers depend on the grades.
+
+25
+00:01:12,865 --> 00:01:14,401
+No grades, no score.
+
+26
+00:01:15,450 --> 00:01:17,093
+The first dial is chunking.
+
+27
+00:01:17,413 --> 00:01:19,269
+Marco compared three chunkers.
+
+28
+00:01:19,589 --> 00:01:21,935
+A is the original one from episode 2.
+
+29
+00:01:22,255 --> 00:01:25,003
+B never merges sections
+with different headings,
+
+30
+00:01:25,003 --> 00:01:27,866
+and repeats the table rows
+that name the programs.
+
+31
+00:01:28,186 --> 00:01:30,554
+C makes small passages for searching,
+
+32
+00:01:30,554 --> 00:01:33,818
+each linked to a larger parent
+passage for context.
+
+33
+00:01:34,067 --> 00:01:37,866
+To compare them fairly,
+he built three separate test libraries,
+
+34
+00:01:37,866 --> 00:01:41,726
+called staging knowledge bases,
+and left the main one untouched.
+
+35
+00:01:42,046 --> 00:01:47,613
+Library C is the one his voice demo
+points at, the ID we met in episode 0.
+
+36
+00:01:47,850 --> 00:01:51,551
+He asked the same 25 questions to all three,
+
+37
+00:01:51,551 --> 00:01:56,767
+took the top 5 each time,
+and graded all 375 passages by hand.
+
+38
+00:01:57,087 --> 00:01:59,477
+The team's notes call
+these grades provisional.
+
+39
+00:02:00,517 --> 00:02:03,589
+We reran Marco's
+own scoring script on his grades.
+
+40
+00:02:03,909 --> 00:02:07,813
+The original chunker A has
+the best precision and NDCG.
+
+41
+00:02:08,133 --> 00:02:12,848
+The hierarchical chunker C finds
+the first helpful passage a little sooner.
+
+42
+00:02:13,168 --> 00:02:14,746
+B is lowest on all three.
+
+43
+00:02:15,066 --> 00:02:17,498
+All three take
+about four tenths of a second.
+
+44
+00:02:17,734 --> 00:02:21,915
+Question by question,
+A was best 9 times and C 7 times.
+
+45
+00:02:22,235 --> 00:02:25,329
+6 were ties,
+and B was never best on its own.
+
+46
+00:02:25,649 --> 00:02:29,816
+For 3 questions, none of the three libraries
+found anything helpful,
+
+47
+00:02:29,816 --> 00:02:32,881
+although related words
+do appear in the documents.
+
+48
+00:02:33,201 --> 00:02:35,727
+Cutting the text differently
+did not fix them,
+
+49
+00:02:35,727 --> 00:02:37,979
+so these are the questions to study next.
+
+50
+00:02:38,217 --> 00:02:41,993
+That matters, because on this branch
+B becomes the default chunker.
+
+51
+00:02:42,313 --> 00:02:47,476
+With 25 questions and provisional grades,
+these gaps are small and could change.
+
+52
+00:02:47,796 --> 00:02:49,854
+But nothing here shows B is better,
+
+53
+00:02:49,854 --> 00:02:54,089
+and that is worth discussing
+before the main library is rebuilt with it.
+
+54
+00:02:55,133 --> 00:02:57,394
+The second dial is the search itself.
+
+55
+00:02:57,714 --> 00:03:01,917
+In feedback mode, retrieve first searches
+with the caller's exact question.
+
+56
+00:03:02,237 --> 00:03:05,288
+Then it reads what came back,
+and may plan one more search.
+
+57
+00:03:05,608 --> 00:03:09,474
+It runs it, keeps a new passage
+only if it matches the question,
+
+58
+00:03:09,474 --> 00:03:10,984
+and merges the two lists.
+
+59
+00:03:11,233 --> 00:03:14,689
+An extra search comes from words
+that are actually there:
+
+60
+00:03:14,689 --> 00:03:19,660
+a heading or phrase in the first results
+that shares real words with the question.
+
+61
+00:03:19,980 --> 00:03:23,427
+If none qualifies,
+it uses the caller's own key words,
+
+62
+00:03:23,427 --> 00:03:27,830
+plus a variant from a short fixed list,
+like lonely to companionship.
+
+63
+00:03:28,150 --> 00:03:32,985
+For "my mother needs help showering",
+one run added the search "bathing in bed,
+
+64
+00:03:32,985 --> 00:03:36,534
+in the tub or shower",
+a line from the personal care page.
+
+65
+00:03:36,783 --> 00:03:38,867
+This is what model-free means:
+
+66
+00:03:38,867 --> 00:03:42,756
+no AI model writes the extra searches,
+only fixed rules.
+
+67
+00:03:43,076 --> 00:03:46,176
+Another mode,
+called intent, asks a language model,
+
+68
+00:03:46,176 --> 00:03:50,735
+but the README warns that the team's account
+may not be allowed to call it.
+
+69
+00:03:50,983 --> 00:03:52,131
+To merge the lists,
+
+70
+00:03:52,131 --> 00:03:55,455
+each passage gets points
+from every list it appears in:
+
+71
+00:03:55,455 --> 00:03:56,724
+more for a high rank,
+
+72
+00:03:56,724 --> 00:03:59,687
+and the first search
+counts one and a half times.
+
+73
+00:04:00,007 --> 00:04:02,716
+A passage that both searches agree on rises.
+
+74
+00:04:03,036 --> 00:04:05,170
+This is called reciprocal rank fusion.
+
+75
+00:04:05,416 --> 00:04:08,680
+We checked one consequence
+with Marco's own merge code.
+
+76
+00:04:09,000 --> 00:04:14,056
+A passage found only by the extra
+search scores at most 1 over 61.
+
+77
+00:04:14,376 --> 00:04:19,283
+The tenth result of the first search
+scores 1.5 over 70, which is more.
+
+78
+00:04:19,603 --> 00:04:23,229
+So today the extra search can reorder
+what the first search found.
+
+79
+00:04:23,549 --> 00:04:26,093
+It cannot add a new passage to the top five,
+
+80
+00:04:26,093 --> 00:04:28,925
+unless the first search
+returned fewer than five.
+
+81
+00:04:29,245 --> 00:04:32,949
+The code's comments suggest
+new passages were meant to get in,
+
+82
+00:04:32,949 --> 00:04:35,518
+so this is worth a conversation with Marco.
+
+83
+00:04:36,567 --> 00:04:40,030
+Marco saved a run of 40 everyday
+home-care questions,
+
+84
+00:04:40,030 --> 00:04:41,730
+with and without feedback.
+
+85
+00:04:42,050 --> 00:04:44,674
+Extra searches were used for 18 of them.
+
+86
+00:04:44,994 --> 00:04:49,772
+For 23 of the 40, the top five passages
+came out exactly the same.
+
+87
+00:04:50,017 --> 00:04:51,489
+Feedback costs time.
+
+88
+00:04:51,809 --> 00:04:56,160
+The typical search went
+from about 0.43 to 0.51 seconds,
+
+89
+00:04:56,160 --> 00:05:01,366
+and the slowest tenth from about half
+a second to about one second.
+
+90
+00:05:01,600 --> 00:05:03,360
+And here is the key gap:
+
+91
+00:05:03,360 --> 00:05:06,955
+none of the 788 passages
+in that run were graded.
+
+92
+00:05:07,275 --> 00:05:09,997
+So the run tells us
+about speed and behaviour,
+
+93
+00:05:09,997 --> 00:05:12,779
+but not whether feedback
+finds better passages.
+
+94
+00:05:13,017 --> 00:05:15,086
+The planner has changed since that run.
+
+95
+00:05:15,406 --> 00:05:19,703
+We replayed today's version offline
+on the same 40 first searches:
+
+96
+00:05:19,703 --> 00:05:21,917
+it adds a search for 17 questions,
+
+97
+00:05:21,917 --> 00:05:25,433
+almost all of them rewrites
+of the caller's own words.
+
+98
+00:05:25,753 --> 00:05:28,612
+And feedback is now the default
+in the voice app.
+
+99
+00:05:29,650 --> 00:05:32,466
+The last dial checks answers, not passages.
+
+100
+00:05:32,786 --> 00:05:35,026
+A test call produces two transcripts.
+
+101
+00:05:35,346 --> 00:05:40,514
+A script compares the assistant's answer
+with a reference answer written by a person:
+
+102
+00:05:40,514 --> 00:05:43,250
+shared words, required
+and forbidden phrases,
+
+103
+00:05:43,250 --> 00:05:46,290
+and whether the agent
+actually looked anything up.
+
+104
+00:05:46,533 --> 00:05:49,867
+Shared words are measured
+with cosine similarity again,
+
+105
+00:05:49,867 --> 00:05:51,504
+this time over word counts.
+
+106
+00:05:51,824 --> 00:05:52,745
+That has a trap:
+
+107
+00:05:52,745 --> 00:05:57,520
+an answer with one wrong dollar amount
+shares almost every word with the right one.
+
+108
+00:05:57,840 --> 00:06:01,594
+Marco's notes say it plainly:
+similarity is not correctness.
+
+109
+00:06:01,914 --> 00:06:04,176
+A person still has to check the facts.
+
+110
+00:06:04,417 --> 00:06:07,830
+Right now there is one reference answer,
+marked as a starter.
+
+111
+00:06:08,150 --> 00:06:11,115
+Real testing needs 20 to 30 checked ones.
+
+112
+00:06:12,150 --> 00:06:15,798
+Episode 2 ended with a table
+that hid its program names.
+
+113
+00:06:16,118 --> 00:06:18,294
+Marco's branch attacks it three ways.
+
+114
+00:06:18,614 --> 00:06:23,990
+The new chunker fixes it: we checked,
+and the 1,090 dollar chunk now says JACC.
+
+115
+00:06:24,310 --> 00:06:27,020
+A new extractor was written for that PDF,
+
+116
+00:06:27,020 --> 00:06:30,193
+but on the real file it fails
+on all four pages,
+
+117
+00:06:30,193 --> 00:06:33,697
+because it finds nine columns
+where it expects seven.
+
+118
+00:06:34,017 --> 00:06:37,217
+And retrieve now drops every chunk
+from that table
+
+119
+00:06:37,217 --> 00:06:39,393
+that the extractor did not verify.
+
+120
+00:06:39,713 --> 00:06:42,827
+So for now,
+the table does not reach the agent at all.
+
+121
+00:06:43,067 --> 00:06:44,166
+On the voice side,
+
+122
+00:06:44,166 --> 00:06:47,749
+a phone number is saved
+only after the agent reads it back
+
+123
+00:06:47,749 --> 00:06:49,232
+and the caller says yes.
+
+124
+00:06:49,552 --> 00:06:53,563
+And empty search results can no longer
+be presented as evidence.
+
+125
+00:06:53,800 --> 00:06:56,002
+What is open: grade the feedback run,
+
+126
+00:06:56,002 --> 00:06:59,453
+ideally without knowing
+which mode produced which passage.
+
+127
+00:06:59,773 --> 00:07:02,504
+Decide whether the merge
+should let new passages in.
+
+128
+00:07:02,824 --> 00:07:05,299
+Fix the extractor for the real PDF.
+
+129
+00:07:05,619 --> 00:07:07,911
+Decide which library is the live one,
+
+130
+00:07:07,911 --> 00:07:10,760
+since none of this
+is in the main library yet.
+
+131
+00:07:11,080 --> 00:07:15,780
+And note that the branch puts
+the AWS account number and library IDs
+
+132
+00:07:15,780 --> 00:07:19,997
+into a public repository,
+which the setup guide had kept out.
+
+133
+00:07:20,233 --> 00:07:22,089
+Three questions to test yourself.
+
+134
+00:07:22,409 --> 00:07:26,441
+Why can a search with a perfect
+MRR still have a low precision?
+
+135
+00:07:26,761 --> 00:07:29,741
+Why can today's extra
+search reorder the top five
+
+136
+00:07:29,741 --> 00:07:30,836
+but not add to it?
+
+137
+00:07:31,156 --> 00:07:35,081
+And why is high word similarity
+not proof of a correct answer?
+
+138
+00:07:35,317 --> 00:07:38,282
+Next, episode 3 goes inside a single search,
+
+139
+00:07:38,282 --> 00:07:42,527
+and episode 4 follows a whole phone call
+through the voice app.
+
