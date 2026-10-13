@@ -48,14 +48,15 @@ jobs:
       - name: Pick the episode
         id: pick
         env:
-          BASE: ${{ github.event.pull_request.base.sha }}
-          HEAD: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
           INPUT: ${{ inputs.episode }}
         run: |
           set -euo pipefail
           if [ -n "${INPUT:-}" ]; then echo "episode=$INPUT" >> "$GITHUB_OUTPUT"; exit 0; fi
-          git fetch --no-tags --depth=1 origin "$BASE"
-          slug=$(git diff --name-only "$BASE...$HEAD" | grep '^videos/' | cut -d/ -f2 | sort -u | head -1)
+          # Changed files via the PR API: a shallow checkout cannot diff the PR itself.
+          slug=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' \
+                 | grep '^videos/' | cut -d/ -f2 | sort -u | head -1 || true)
           test -n "$slug" || { echo '::error::No episode directory in this PR.'; exit 1; }
           echo "episode=videos/$slug" >> "$GITHUB_OUTPUT"
       - name: "Full render (validated: duration, audio, captions, script integrity)"

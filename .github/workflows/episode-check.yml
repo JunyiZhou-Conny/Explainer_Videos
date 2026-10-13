@@ -15,19 +15,21 @@ permissions:
 jobs:
   guard:
     name: Ownership guard
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      # The PR files API sees the whole changed set without any git history —
+      # a shallow checkout cannot three-dot-diff the PR (its tip and merge-base
+      # are absent), so never derive changed files from git here.
       - name: Episode branches touch only their episode; no PR adds tracked media
         env:
-          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           set -euo pipefail
-          git diff --name-only --diff-filter=ACMR "$BASE...$HEAD" > changed.txt
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate \
+            --jq '.[] | select(.status != "removed") | .filename' > changed.txt
           cat changed.txt
           if grep -E '\.(mp4|mov|wav)$' changed.txt; then
             echo '::error::Rendered media belongs in release assets (docs/PUBLISHING.md), not in git.'
@@ -76,12 +78,16 @@ jobs:
       - name: Pick the episode to sample
         id: pick
         env:
-          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
-          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          git fetch --no-tags --depth=1 origin "$BASE" 2>/dev/null || true
-          slug=$(git diff --name-only "$BASE...$HEAD" 2>/dev/null | grep '^videos/' | cut -d/ -f2 | sort -u | head -1 || true)
+          slug=""
+          if [ -n "${PR:-}" ]; then
+            # Changed files via the PR API: a shallow checkout cannot diff the PR itself.
+            slug=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --paginate --jq '.[].filename' \
+                   | grep '^videos/' | cut -d/ -f2 | sort -u | head -1 || true)
+          fi
           if [ -n "$slug" ] && [ -f "videos/$slug/script.json" ]; then
             echo "episode=videos/$slug" >> "$GITHUB_OUTPUT"
           elif [ -n "$slug" ] && [ -f "videos/$slug/video.yaml" ]; then
