@@ -1,0 +1,38 @@
+# Chinese (zh-CN) metadata for ac215-l02-containers-1 (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 基础镜像, 镜像仓库, 标签, 推送, 仓库, 克隆;
+# A4), the English colon structure kept (Dockerfile 第 1 步：FROM), commands, instructions and file names as
+# they are, the core-concept chapter with its English short name for search (registry), Containers I → 容器 I
+# (L3 is 容器 II), and S16 sharing L1's Chinese for the same English title. 跟练 = follow-along.
+# meta.yaml is not read by `explainer.i18n check`, so brackets are fine here.
+title: "AC215 · 第 2 讲：容器 I——一个镜像，从笔记本到 VM（跟练：simple-translate）"
+
+parts:
+  part1: "AC215 · 第 2 讲（上）：写 Dockerfile，构建并运行镜像"
+  part2: "AC215 · 第 2 讲（下）：层、缓存、Docker Hub 与 VM"
+
+chapters:
+  s01_hook: "全新 VM 上的一条命令"
+  s02_nouns: "镜像、层、容器与镜像仓库（registry）"
+  s03_cleanup: "清理干净，克隆仓库"
+  s04_from: "Dockerfile 第 1 步：FROM"
+  s05_entrypoint: "第 2 步：ENTRYPOINT"
+  s06_copy: "第 3 步：安装 uv，复制代码"
+  s07_uv_sync: "第 4 步：uv sync 与两个 Python"
+  s08_cmd: "第 5 步：CMD、参考答案与构建"
+  s09_run: "运行、翻译、退出"
+  s10_inside: "镜像里有什么"
+  s11_cache: "层缓存"
+  s12_push: "打标签并推送"
+  s13_platforms: "平台：arm64 与 amd64"
+  s14_vm_docker: "只装了 Docker 的 VM"
+  s15_deploy: "一条命令完成部署"
+  s16_recap: "收尾、回顾和下节预告"
+
+# Two or three sentences (rule H2), written register. Facts: README sections "Developing App using
+# Containers", "Pushing Docker Image to Docker Hub", "Running App on VM using Docker" at commit 62f821bf;
+# the README's five Dockerfile steps; Python 3.15.0 in our build (3.14.7 in the instructor's image); captures
+# dated 2026-10-13 (ASSETS.md). Paste the chapter timestamps from output/chapters.txt under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 2 讲的跟练视频：照着 dlops-io/simple-translate 的 README，在笔记本上分五步写出 Dockerfile，构建并运行镜像，再给它打标签、推送到 Docker Hub，最后在一台只装了 Docker 的 VM 上用一条命令部署。片中用动画讲清镜像、层、容器和镜像仓库，ENTRYPOINT 和 CMD 怎样拼成启动命令，为什么写着 Python 3.12 的镜像里跑的是 3.15，层缓存为什么让构建一再重跑，以及 arm64 和 amd64 的平台问题。英文旁白，配中文和中英双语字幕；README 的每条命令都按原样、按顺序出现，终端输出录于 2026-10-13。

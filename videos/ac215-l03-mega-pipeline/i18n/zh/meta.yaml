@@ -1,0 +1,36 @@
+# Chinese (zh-CN) metadata for ac215-l03-mega-pipeline (read by explainer/i18n.py meta(), used by
+# explainer/build.py --lang zh): video title, part titles, chapter titles keyed by scene file stem, and
+# the Bilibili / YouTube description. Titles are the ones decided in GLOSSARY.md (标题与章节, rule H1):
+# written register (容器, 镜像, 存储桶, 仓库, 克隆; A4), questions keep their question mark, the English
+# colon structure is kept (uv add：……, generate_text：……), commands, folder and file names stay as they are
+# (underscores included: meta.yaml is not read by the checker), and the core-concept chapter carries its
+# English short name for search (应用默认凭据（ADC）). 跟练 = follow-along; 容器 II = Containers II.
+# The description follows rule H2: two or three sentences, written register, the terms of the glossary.
+# Facts: captures dated 2026-10-13 (ASSETS.md); recorded without the course key, so the Google calls show
+# the command and what to look for (S01). The study guide, tutorial repo and Ed links (video.yaml course:)
+# are pasted under it at publish time, as in the L1 description.
+title: "AC215 · 第 3 讲：容器 II——五个容器，一个存储桶（跟练：mega-pipeline）"
+
+parts:
+  part1: "AC215 · 第 3 讲（上）：pipeline 与你的第一个 Dockerfile"
+  part2: "AC215 · 第 3 讲（下）：包、密钥与全部五个组件"
+
+chapters:
+  s01_hook: "五个容器，一个存储桶"
+  s02_bucket: "存储桶就是消息总线"
+  s03_clone: "克隆：五个目录，没有 Dockerfile"
+  s04_setup: "密钥与 uv init"
+  s05_dockerfile: "逐行写 Dockerfile"
+  s06_build: "构建：五个步骤，一个特别大的层"
+  s07_run: "运行：一扇通往笔记本的窗"
+  s08_uv_add: "uv add：文件和包各自去了哪里"
+  s09_credentials: "谁在调用？密钥与应用默认凭据（ADC）"
+  s10_transcribe: "转写与上传"
+  s11_rebuild: "退出，把包打进镜像"
+  s12_generate: "generate_text：同一套流程，两个意外"
+  s13_speed_round: "合成、翻译、再合成"
+  s14_secrets: "别让密钥进镜像"
+  s15_recap: "清理、回顾和下节预告"
+
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 3 讲“容器 II”的跟练视频：照着 dlops-io/mega-pipeline 的 README 自己写 Dockerfile，构建并运行五个组件的镜像，把一段录音变成英文和法文播客，五个容器之间只靠一个 Cloud Storage 存储桶传递数据。你会弄清绑定挂载（bind mount）把什么直接写进你的笔记本、为什么 uv add 之后要退出并重新构建镜像、服务账号密钥和应用默认凭据（ADC）怎样让代码调用 Google Cloud，以及怎样用 .dockerignore 把密钥挡在镜像之外。英文旁白，配中文和中英双语字幕；终端输出录于 2026-10-13，录制时没有课程密钥，所以调用 Google 的步骤只展示命令和该看什么。
