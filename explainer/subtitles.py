@@ -1776,7 +1776,7 @@ def burn(src: Path, ass: Path, dst: Path, band: float = BAND, crf: int = 23, bg:
     W, H = (int(x) for x in r.stdout.strip().split("x"))
     ass_filter = f"ass='{str(ass).replace(chr(39), '')}'"
     if fontsdir is not None:
-        ass_filter = ass_filter[:-1] + f":fontsdir='{str(fontsdir).replace(chr(39), '')}'"
+        ass_filter += f":fontsdir='{str(fontsdir).replace(chr(39), '')}'"
     if mode == "overlay":
         band_px = int(round(H * band))
         vf = f"drawbox=x=0:y={H - band_px}:w={W}:h={band_px}:color={bg}:t=fill,{ass_filter}"
