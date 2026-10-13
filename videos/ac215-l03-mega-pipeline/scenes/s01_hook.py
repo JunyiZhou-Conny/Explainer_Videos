@@ -23,8 +23,8 @@ Beats (script.md "## S01", one voiceover block each):
    `ls` + extra (no output: a preview).
 3. The preview clears. Checklist card; each row writes in with a GREEN tick as it is said:
    "Tutorial 0: Docker Desktop + uv" (the tools PURPLE) · "the course key, from Canvas" (GOLD
-   key glyph) · "your team's group name". Footer "every command: MLOps_Learning ·
-   guides/L03-containers-2-mega-pipeline.md" (guide path, then repo name pulse).
+   key glyph) · "your team's group name". Footer, two lines: "every command:" over
+   "MLOps_Learning · guides/L03-containers-2-mega-pipeline.md" (guide path, then repo name pulse).
 4. A TEAL container strip (container · transcribe_audio, prompt app@5b4d4981ec25:/app$, GREY tag
    "preview") types `python cli.py --download`. GREY caption "recorded without the course key";
    a dashed BLUE cloud draws itself; the typed command pulses on "you'll see the command"; the
