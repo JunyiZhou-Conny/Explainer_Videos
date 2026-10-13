@@ -63,7 +63,8 @@ def main() -> int:
 
     deliverables = sorted(p for p in out.iterdir() if p.suffix in {".mp4", ".srt", ".ass"}
                           or p.name.endswith(".chapters.txt"))
-    deliverables = [p for p in deliverables if not p.name.startswith("sample-") and ".clean." not in p.name]
+    deliverables = [p for p in deliverables if not p.name.startswith("sample-")
+                    and ".clean." not in p.name and ".scored." not in p.name]
     if not any(p.suffix == ".mp4" for p in deliverables):
         raise SystemExit(f"No final MP4 under {out}")
 
@@ -103,9 +104,13 @@ def main() -> int:
     if args.dry_run:
         print(tag); [print("  would upload", p.name) for p in uploads]
         return 0
-    subprocess.run(["gh", "release", "create", tag, "--title", script.get("title_en", slug),
-                    "--notes", f"Episode {slug}, release v{n}. See PUBLISH.md for the publish manifest; "
-                               f"REVIEW.md in videos/{slug}/ records what was verified."], check=True)
+    create = ["gh", "release", "create", tag, "--title", script.get("title_en", slug),
+              "--notes", f"Episode {slug}, release v{n}. See PUBLISH.md for the publish manifest; "
+                         f"REVIEW.md in videos/{slug}/ records what was verified."]
+    if os.environ.get("GITHUB_SHA"):
+        # Tag the commit that was actually rendered, not whatever the default branch moved to.
+        create += ["--target", os.environ["GITHUB_SHA"]]
+    subprocess.run(create, check=True)
     subprocess.run(["gh", "release", "upload", tag, *map(str, uploads), "--clobber"], check=True)
     for p in uploads:
         print(f"https://github.com/{os.environ.get('GITHUB_REPOSITORY','')}/releases/download/{tag}/{p.name}")
