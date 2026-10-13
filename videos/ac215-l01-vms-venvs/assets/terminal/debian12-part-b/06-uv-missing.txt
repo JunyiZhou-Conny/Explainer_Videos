@@ -1,0 +1,3 @@
+$ uv --version
+bash: line 1: uv: command not found
+[exit 127]

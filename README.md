@@ -120,6 +120,8 @@ incubator: show intuition before formulas, keep concepts visually consistent, in
 pause-and-ponder questions, and connect paper explanations to page-referenced notes and exercises.
 The [paper shelf](library/README.md), [knowledge map](library/MAP.md), interactive playgrounds,
 [original style guide](docs/STYLE_GUIDE.md) and [language guide](docs/LANGUAGES.md) are preserved.
+The [production playbook](docs/PLAYBOOK.md) records this route's commands, operating rules and
+speed/safety lessons; [SHORTS.md](docs/SHORTS.md) covers the condensed, music-led short format.
 
 The [video catalog](docs/VIDEOS.md) distinguishes finished downloads, available language
 variants, open-PR work and incomplete source. A release means the files are available; it does

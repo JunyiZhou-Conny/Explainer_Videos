@@ -1,0 +1,77 @@
+# Chinese (zh-CN) metadata for ac215-l01-vms-venvs (read by explainer/i18n.py meta(), used by
+# explainer/build.py --lang zh): video title, part titles, chapter titles keyed by scene file stem, and
+# the Bilibili / YouTube description. Titles are the ones decided in GLOSSARY.md (标题与章节, rule H1):
+# written register (仓库, not repo; A4), questions keep their question mark, the 'uv sync: …' colon
+# structure is kept, commands and file names stay as they are, and the two core-concept chapters carry
+# their English short name for search (虚拟机（VM）, 虚拟环境（venv）). 跟练 = follow-along.
+title: "AC215 · 第 1 讲：虚拟机、虚拟环境与 uv（跟练：simple-translate）"
+
+parts:
+  part1: "AC215 · 第 1 讲（上）：云端 VM 与简单粗暴的手动安装"
+  part2: "AC215 · 第 1 讲（下）：用 uv 管理虚拟环境"
+
+chapters:
+  s01_hook: "pip 为什么不让装？"
+  s02_app: "这个应用：cli.py"
+  s03_vm: "租一台电脑：虚拟机（VM）"
+  s04_apt_git: "apt、git 和仓库"
+  s05_system_pip: "系统 Python 与 PEP 668"
+  s06_run: "运行它，读懂 traceback"
+  s07_delete: "要删除，别只停止"
+  s08_venv: "虚拟环境（venv）到底是什么"
+  s09_install_uv: "安装 uv"
+  s10_which_python: "uv sync：用哪个 Python？"
+  s11_lock: "uv sync：解析、锁定、安装"
+  s12_activate: "激活，其实只是改 PATH"
+  s13_isolation: "验证隔离"
+  s14_pipenv: "老办法：pipenv"
+  s15_recap: "收尾、回顾和下节预告"
+
+# Ready to paste into the Bilibili 简介 / YouTube description (rules H2, H3). The line 章节：见下方时间轴
+# points to the chapter timestamps from output/zh/chapters.txt (chapters_part1.txt / chapters_part2.txt
+# for the parts): paste them right under it (YouTube) or into Bilibili's 分段章节 / a pinned comment.
+# About 1,660 characters, so it stays under Bilibili's 2,000-character limit with the 15 timestamps
+# (about 290 characters) pasted in; anything added must be paid for by a cut. The course links are
+# absolute (the study guide and the Ed lesson from video.yaml course:, the tutorial repo); files in this
+# repository are repository-relative paths.
+# The exercises link points to the English exercises.md until i18n/zh/exercises.md exists. The Chinese
+# console names (H3) appear only here and in README.md, never in the narration (D4). Facts: the
+# captures are dated 2026-10-12 (ASSETS.md); 4 pause-and-ponder cards (S05, S10, S11, S13) and 5 recap
+# questions (S15); 2 dependencies → 11 packages is the Debian 12 run the video shows. The credit line
+# is the series' (docs/AC215_SERIES.md, ASSETS.md).
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 1 讲的跟练视频：照着教程仓库 dlops-io/simple-translate 的 README，把一个命令行翻译小应用装两遍。第一部分在 Google Cloud 上开一台 VM，用 sudo pip3 装进系统 Python；第二部分换一台全新的 VM，用 uv 建虚拟环境。README 的每条命令都按原样、按顺序出现。
+
+  适合谁看：上 AC215 的同学，会 Python 和基础机器学习，但第一次在云上开 VM。旁白是助教带实验课的口吻：VM、venv、repo、clone、pin 这些本来就说英文的词照说英文，命令、文件名和报错原文一字不改。
+
+  怎么跟着做：先做完 Tutorial 0（开通了结算的 Google Cloud 项目），把 README 放在视频旁边。左上角的进度条显示 README 的第几步；看到黄色的“轮到你了”就暂停，自己跑一遍；灰色的“额外”是 README 里没有、但可以放心跑的命令。VM 只要还在就在花钱：每部分做完都要连同启动磁盘一起删掉。
+
+  你会学到：
+  · pip 为什么报 externally managed（PEP 668），--break-system-packages 破坏了什么，sudo pip3 把包装到了哪里
+  · 读懂链式 traceback：录制时 Google 返回了 429（限流），先看第一个错误
+  · 为什么要删除 VM，只停止还会计费
+  · 虚拟环境的三个部分；激活其实只是改了 PATH
+  · uv sync 用哪个 Python：“Python 3.13 及以上”是约束，不是 pin
+  · 2 个依赖为什么装了 11 个包，uv.lock 怎样让每个人装到同样的版本
+  · README 里几处小错误的改法；pipenv 和 uv 怎么对应
+  片中有 4 张“暂停想一想”卡片，结尾有 5 道自测题。终端输出录于 2026-10-12，版本号以你的 VM 为准。
+
+  章节：见下方时间轴
+
+  配套材料（后两项是 Explainer_Videos 仓库内的路径）：
+  · 学习指南（全部命令）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L01-vms-venvs.md
+  · 教程仓库：https://github.com/dlops-io/simple-translate
+  · 课程 Ed 页面（选课同学可见）：https://edstem.org/us/courses/97373/lessons/166027/
+  · 练习与答案（英文）：videos/ac215-l01-vms-venvs/exercises.md
+  · 中文版说明、术语表：videos/ac215-l01-vms-venvs/i18n/zh/
+
+  核心术语（中 / 英）：虚拟机 VM；虚拟环境 venv；lock 文件 uv.lock；约束 constraint；pin（固定版本）；解析 resolve；由外部管理 externally managed（PEP 668）
+
+  中文控制台对照：Create instance 创建实例；VM instances VM 实例；Disks 磁盘；Authorize 授权；Delete 删除；Stop 停止；Enable 启用；Billing 结算
+
+  制作说明：
+  · 课程材料归 AC215 教学团队（哈佛 IACS）所有，本视频经授课老师许可用于学习
+  · 旁白为语音合成（TTS），中英双语字幕（中文在上）；动画用 Manim 制作，控制台画面是示意图
+  · 英文原版：AC215 · Lecture 1 — Virtual machines, virtual environments and uv
+
+  标签：AC215、MLOps、uv、虚拟环境、虚拟机、Python、GCP、跟练

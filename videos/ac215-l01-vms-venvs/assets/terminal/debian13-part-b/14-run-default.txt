@@ -1,0 +1,16 @@
+$ source .venv/bin/activate; python cli.py
+
+
+    _      ____  ____   _  ____  
+   / \    / ___||___ \ / || ___| 
+  / _ \  | |      __) || ||___ \ 
+ / ___ \ | |___  / __/ | | ___) |
+/_/   \_\ \____||_____||_||____/ 
+                                 
+
+
+Arguments: Namespace(text='I love cheese', file='', src='en', dest='it')
+
+Input: I love cheese
+Output: Adoro il formaggio
+[exit 0]

@@ -1,0 +1,1304 @@
+1
+00:00:00,000 --> 00:00:01,449
+回到刚才那个问题
+Back to our puzzle:
+
+2
+00:00:01,449 --> 00:00:05,568
+两个项目，两个版本的 httpx，却只有一层公用的架子
+two projects, two versions of httpx, one shared shelf.
+
+3
+00:00:05,888 --> 00:00:09,024
+解决办法是给每个项目一个自己的工具箱
+The fix is to give each project its own toolbox.
+
+4
+00:00:09,344 --> 00:00:11,883
+这个工具箱，就是虚拟环境
+That toolbox is a virtual environment.
+
+5
+00:00:12,117 --> 00:00:17,685
+虚拟环境其实就是一个目录，名字通常是 .venv，分三个部分
+A virtual environment is just a folder, usually called .venv, with three parts.
+
+6
+00:00:18,005 --> 00:00:20,693
+第一，一个 bin 目录，里面有个 python
+First, a bin folder with a python inside.
+
+7
+00:00:21,013 --> 00:00:25,663
+它通常不是拷贝，只是个软链接，指向别处真正的解释器
+It's usually not a copy, just a link to a real interpreter somewhere else.
+
+8
+00:00:25,900 --> 00:00:30,188
+第二，它自己的 site-packages 目录，uv 刚建好时是空的
+Second, its own site-packages folder, empty when uv makes it.
+
+9
+00:00:30,508 --> 00:00:35,905
+一般叫 site-packages；Debian 把系统的叫 dist-packages
+Site-packages is the usual name; Debian calls its system ones dist-packages.
+
+10
+00:00:36,225 --> 00:00:40,172
+这个项目的包就装在这里，而且只装这个项目的
+This is where this project's packages go, and only this project's.
+
+11
+00:00:40,417 --> 00:00:44,044
+第三，一个小配置文件：pyvenv.cfg
+Third, a small config file, pyvenv.cfg.
+
+12
+00:00:44,364 --> 00:00:48,310
+Python 从 venv 的 bin 目录启动时，会读这个文件
+When Python starts from the venv's bin folder, it reads this file.
+
+13
+00:00:48,630 --> 00:00:53,473
+它说：你在 venv 里，所以用我的 site-packages，系统的不算
+It says: you're in a venv, so use my site-packages, and leave the system's out.
+
+14
+00:00:53,717 --> 00:00:55,530
+看看架子上的区别
+Here's the difference on the shelves.
+
+15
+00:00:55,850 --> 00:00:58,986
+从 venv 启动的 Python，建出的列表不一样
+Started from the venv, Python builds a different list.
+
+16
+00:00:59,306 --> 00:01:03,616
+标准库还是来自它软链接指向的那个真正的解释器
+The standard library still comes from the real interpreter it links to.
+
+17
+00:01:03,936 --> 00:01:07,218
+但系统的两层 dist-packages 架子都没了
+But both dist-packages shelves from the system are gone,
+
+18
+00:01:07,218 --> 00:01:09,738
+换成 venv 自己的那层
+and the venv's own shelf takes their place.
+
+19
+00:01:09,983 --> 00:01:12,031
+引擎还是那个引擎，工具箱换了一个
+Same engine, different toolbox.
+
+20
+00:01:12,351 --> 00:01:14,159
+而且两个工具箱互不相干
+And the toolboxes don't mix:
+
+21
+00:01:14,159 --> 00:01:19,391
+venv 里的包，系统 Python 看不见，反过来也一样
+packages in the venv are invisible to the system Python, and the other way round.
+
+22
+00:01:19,633 --> 00:01:21,204
+还记得 pip 的提示吗？
+Remember pip's hint?
+
+23
+00:01:21,254 --> 00:01:25,628
+它建议用 python3 -m venv，这是建 venv 的经典做法
+It suggested python3 -m venv, the classic way to make one.
+
+24
+00:01:25,948 --> 00:01:28,892
+今天用 uv 来建，它还能做更多
+Today, uv makes it for us, and does a lot more.
+
+25
+00:01:29,133 --> 00:01:35,554
+有些东西 venv 隔离不了：操作系统、用 C 写的系统库，还有驱动
+What a venv doesn't isolate: the operating system, system libraries written in C, and drivers.
+
+26
+00:01:35,874 --> 00:01:39,146
+这些要交给一整台机器，比如我们的 VM
+Those are jobs for a whole machine, like our VM,
+
+27
+00:01:39,146 --> 00:01:41,123
+或者交给容器，下节课再讲
+or a container, next lecture.
+
+28
+00:01:41,367 --> 00:01:45,847
+跑完 uv sync，我们打开真正的目录，找齐这三个部分
+After uv sync, we'll open the real folder and find all three parts.
+
+29
+00:01:47,683 --> 00:01:52,526
+第二部分换一台全新的 VM，设置不变，计价器又开始跳了
+Part 2 starts on a fresh VM, same settings, and the meter runs again.
+
+30
+00:01:52,846 --> 00:01:56,024
+全新很重要：pip 从来没碰过这个系统 Python
+Fresh matters: this system Python never sees pip.
+
+31
+00:01:56,344 --> 00:01:57,910
+建好后 SSH 进去
+Create it and SSH in;
+
+32
+00:01:57,910 --> 00:02:03,427
+名称被占用的话，说明旧 VM 还在删除，等一分钟就好
+if the name is taken, the old VM is still being deleted, so wait a minute.
+
+33
+00:02:03,747 --> 00:02:05,966
+暂停视频，等你的终端打开
+Pause until your terminal is open.
+
+34
+00:02:06,216 --> 00:02:11,293
+接着还是那四条：apt-get update、装 git、clone 和 cd
+Then the same four commands: apt-get update, install git, clone, and cd.
+
+35
+00:02:11,613 --> 00:02:14,536
+暂停视频，直到提示符以 simple-translate 结尾
+Pause until your prompt ends in simple-translate.
+
+36
+00:02:14,800 --> 00:02:17,467
+第 7 步一行命令就能装好 uv
+Step 7 installs uv in one line.
+
+37
+00:02:17,787 --> 00:02:19,997
+先用 curl 下载一个脚本
+First, curl downloads a script:
+
+38
+00:02:19,997 --> 00:02:23,633
+它会跟随重定向，安静运行但仍然显示错误
+it follows redirects, stays quiet but shows errors,
+
+39
+00:02:23,633 --> 00:02:28,837
+遇到 HTTP 错误就直接失败，而不是把错误页面交给 shell
+and fails on an HTTP error instead of handing an error page to the shell.
+
+40
+00:02:29,100 --> 00:02:33,571
+这根竖线是管道：它把脚本直接交给 shell
+The vertical bar is a pipe: it hands the script straight to the shell,
+
+41
+00:02:33,571 --> 00:02:37,786
+所以你运行的是网上来的代码，也就是 uv 的官方安装脚本
+so you're running code from the internet: uv's official installer,
+
+42
+00:02:37,786 --> 00:02:39,386
+你可以先读一遍
+which you can read first.
+
+43
+00:02:39,633 --> 00:02:41,055
+暂停一下，自己跑一遍
+Pause and run it.
+
+44
+00:02:41,105 --> 00:02:46,665
+它会装上 uv，录制时的版本是 0.13.0，还有 uvx
+It installs uv, version 0.13.0 at the time of recording,
+
+45
+00:02:46,665 --> 00:02:51,132
+都装到你 home 目录下的 .local/bin 里
+and uvx, into .local/bin in your home folder.
+
+46
+00:02:51,383 --> 00:02:53,751
+试一下 uv，这是个额外检查
+Let's try uv, with an extra check.
+
+47
+00:02:54,071 --> 00:02:55,578
+报 command not found
+Command not found.
+
+48
+00:02:55,628 --> 00:02:57,228
+可我们明明刚装好
+But we just installed it.
+
+49
+00:02:57,466 --> 00:03:01,737
+你输入一个命令，shell 就去一个叫 PATH 的目录列表里
+When you type a command, the shell walks a list of folders called PATH,
+
+50
+00:03:01,737 --> 00:03:04,143
+从左到右找，运行第一个匹配的
+left to right, and runs the first match.
+
+51
+00:03:04,463 --> 00:03:08,837
+哪个目录都没有 uv，而 shell 只认它启动时的 PATH
+None contains uv, and the shell only knows the PATH it started with.
+
+52
+00:03:09,100 --> 00:03:12,797
+安装脚本最后几行和第 8 步给了两个办法
+The installer's last lines, and step 8, give two options:
+
+53
+00:03:12,797 --> 00:03:15,521
+重新加载 shell，或者 source env 文件
+reload your shell, or source the env file.
+
+54
+00:03:15,841 --> 00:03:19,907
+重新加载就是新开一个 SSH 窗口，回到 home 目录
+A reload means a new SSH window, back in your home folder,
+
+55
+00:03:19,907 --> 00:03:22,711
+所以要重新 cd 进 simple-translate
+so you'd cd into simple-translate again.
+
+56
+00:03:23,031 --> 00:03:26,508
+用 source 更快：它把那个目录放到 PATH 最前面
+Sourcing is quicker: it puts that folder first in PATH.
+
+57
+00:03:26,828 --> 00:03:28,762
+暂停一下，跑一遍 source 那条命令
+Pause and run the source line.
+
+58
+00:03:28,966 --> 00:03:34,833
+再做两个额外检查：uv 能报出版本，which uv 也指向那个目录
+Then two extra checks: uv reports its version, and which uv points into that folder.
+
+59
+00:03:35,100 --> 00:03:36,849
+为什么用 source，不用 sh？
+Why source, and not sh?
+
+60
+00:03:37,169 --> 00:03:40,868
+直接用 sh，改的是马上就退出的子 shell
+Plain sh would change a child shell that exits at once;
+
+61
+00:03:40,868 --> 00:03:42,481
+source 改的是当前这个 shell
+source changes this one.
+
+62
+00:03:42,801 --> 00:03:46,968
+安装脚本还让你的启动文件运行这个 env 文件
+The installer also made your startup files run this env file,
+
+63
+00:03:46,968 --> 00:03:50,246
+所以下次连上来，直接就能找到 uv
+so next time you connect, uv is found by itself.
+
+64
+00:03:50,500 --> 00:03:52,029
+那 uv 到底是什么？
+So what is uv?
+
+65
+00:03:52,079 --> 00:03:55,999
+一个很快的工具，顶替好几个：venv 模块和 pip
+One fast tool that replaces several: the venv module,
+
+66
+00:03:55,999 --> 00:04:00,953
+锁版本的 pip-tools，装 Python 的 pyenv，还有 pipx
+pip, pip-tools for locking, pyenv for installing Pythons, and pipx.
+
+67
+00:04:02,400 --> 00:04:03,900
+第 9 步是 uv sync
+Step 9 is uv sync,
+
+68
+00:04:03,900 --> 00:04:08,117
+它会读 pyproject.toml，所以我们先来读一下
+and it reads pyproject.toml, so let's read it first.
+
+69
+00:04:08,437 --> 00:04:09,795
+项目名是 app
+The name is app.
+
+70
+00:04:09,845 --> 00:04:17,397
+两个依赖：art，6.5 及以上；googletrans，正好是 4.0.2
+Two dependencies: art, version 6.5 or newer, and googletrans, exactly 4.0.2.
+
+71
+00:04:17,717 --> 00:04:21,387
+大于等于表示一个范围；双等号表示一个确定的版本
+Greater-or-equal means a range; double equals, one version.
+
+72
+00:04:21,707 --> 00:04:25,867
+第 6 行又是一个范围：Python 3.13 及以上
+Line 6 is a range again: Python 3.13 or newer.
+
+73
+00:04:26,117 --> 00:04:27,432
+先预测一下
+Now predict.
+
+74
+00:04:27,482 --> 00:04:29,957
+这台 VM 上是 Python 3.11
+This VM has Python 3.11.
+
+75
+00:04:30,277 --> 00:04:33,136
+项目要求 3.13 及以上
+The project asks for 3.13 or newer.
+
+76
+00:04:33,456 --> 00:04:35,056
+那 uv sync 会怎么做？
+What will uv sync do?
+
+77
+00:04:35,269 --> 00:04:38,703
+直接失败，照样用 3.11，还是做点别的？
+Fail, use 3.11 anyway, or something else?
+
+78
+00:04:47,550 --> 00:04:49,257
+暂停一下，跑一遍 uv sync
+Pause and run uv sync.
+
+79
+00:04:49,577 --> 00:04:53,823
+它没有失败，而是下载了 uv 自己的 Python
+Instead of failing, uv downloads its own Python:
+
+80
+00:04:53,823 --> 00:04:57,449
+CPython 3.15.0，这是录制时的版本
+CPython 3.15.0, at the time of recording.
+
+81
+00:04:57,769 --> 00:05:01,033
+然后它在 .venv 里建了一个虚拟环境
+Then it creates a virtual environment in .venv.
+
+82
+00:05:01,353 --> 00:05:06,963
+如果 uv 找不到 pyproject.toml，先 cd 进 simple-translate
+If uv can't find a pyproject.toml, cd into simple-translate first.
+
+83
+00:05:07,200 --> 00:05:08,707
+来看看刚才发生了什么
+Here's what happened.
+
+84
+00:05:08,757 --> 00:05:11,296
+把 Python 的各个版本画在一条数轴上
+Picture Python versions on a number line.
+
+85
+00:05:11,616 --> 00:05:15,499
+这个约束点亮了从 3.13 往后的所有版本
+The constraint lights up everything from 3.13 onward.
+
+86
+00:05:15,819 --> 00:05:21,344
+首先，uv 会找它已经有的解释器：先找自己下载过的，再找系统的
+First, uv looks for an interpreter it already has: its own downloads, then the system's.
+
+87
+00:05:21,664 --> 00:05:26,741
+Debian 的 3.11.2 落在范围外面，所以用不了
+Debian's 3.11.2 lands outside the range, so it can't be used.
+
+88
+00:05:26,983 --> 00:05:29,863
+所以 uv 要下载一个。下载哪一个呢？
+So uv downloads one. Which one?
+
+89
+00:05:30,183 --> 00:05:37,564
+不是 3.13，而是范围内最新的版本，我们录制时是 3.15.0
+Not 3.13, but the newest release in the range, which was 3.15.0 when we recorded.
+
+90
+00:05:37,884 --> 00:05:40,392
+它装在你 home 目录下 uv 自己的目录里
+It lives in uv's own folder in your home,
+
+91
+00:05:40,392 --> 00:05:42,471
+venv 的 python 就软链接到它
+and the venv's python links to it.
+
+92
+00:05:42,717 --> 00:05:45,405
+问题就在这儿：约束不是 pin
+That's the catch: a constraint is not a pin.
+
+93
+00:05:45,725 --> 00:05:51,336
+在 Python 3.15 出来之前，同样这条命令装的是 3.14
+Before Python 3.15 came out, this same command gave people 3.14.
+
+94
+00:05:51,656 --> 00:05:55,303
+明年再看这个视频的话，你拿到的可能是更新的版本
+Watch this video next year, and you may get something newer still.
+
+95
+00:05:55,550 --> 00:05:58,238
+到了 Debian 13，情况就不一样了
+On Debian 13, the story changes.
+
+96
+00:05:58,558 --> 00:06:03,635
+它的系统 Python 是 3.13.5，本来就在范围里
+Its system Python, 3.13.5, is already inside the range.
+
+97
+00:06:03,955 --> 00:06:06,568
+所以 uv 直接用它，不用下载
+So uv simply uses it, with no download,
+
+98
+00:06:06,568 --> 00:06:09,651
+venv 的 python 就软链接到系统的那个
+and the venv's python links to the system one.
+
+99
+00:06:09,971 --> 00:06:12,958
+同一条命令，不同的 Debian，不同的 Python
+Same command, different Debian, different Python.
+
+100
+00:06:13,200 --> 00:06:15,739
+想在哪儿都用同一个 Python，就把它 pin 住
+To get the same Python everywhere, pin it.
+
+101
+00:06:16,059 --> 00:06:20,254
+这条命令是 uv python pin 3.13，README 里没有
+The command uv python pin 3.13, not in the README,
+
+102
+00:06:20,254 --> 00:06:23,861
+它会写一个小文件，叫 .python-version
+writes a small file called .python-version,
+
+103
+00:06:23,861 --> 00:06:27,301
+范围就缩小到 3.13 系列
+and the range shrinks to the 3.13 series.
+
+104
+00:06:27,621 --> 00:06:31,032
+现在先别跑：下次 uv sync 会重建 venv
+Don't run it now: your next uv sync would rebuild the venv,
+
+105
+00:06:31,032 --> 00:06:33,403
+视频后面的内容就对不上了
+and the rest of the video wouldn't match.
+
+106
+00:06:33,723 --> 00:06:35,323
+这个放在练习里了
+It's in the exercises.
+
+107
+00:06:36,567 --> 00:06:38,160
+接下来看包
+Now the packages.
+
+108
+00:06:38,210 --> 00:06:42,212
+先出个小题：pyproject.toml 列了 2 个依赖
+A quick puzzle: pyproject.toml lists 2 dependencies,
+
+109
+00:06:42,212 --> 00:06:46,060
+第一部分里，pip 为它们装了 12 个包
+and in part 1, pip installed 12 packages for them.
+
+110
+00:06:46,380 --> 00:06:48,044
+那 uv 会装几个？
+How many will uv install?
+
+111
+00:06:54,884 --> 00:06:57,337
+是 11 个：比第一部分少一个
+It's 11: one fewer than part 1.
+
+112
+00:06:57,657 --> 00:07:03,289
+解析了 13 个，装了 11 个，每个都带一个加号和精确版本
+It resolved 13 and installed 11, each with a plus sign and an exact version.
+
+113
+00:07:03,609 --> 00:07:06,937
+另外 9 个从哪儿来，少的又是哪一个？
+So where did the other 9 come from, and which one went missing?
+
+114
+00:07:07,184 --> 00:07:12,816
+包自己也有依赖；这条额外的命令，uv tree，会把它们画出来
+Packages have dependencies of their own; this extra command, uv tree, draws them.
+
+115
+00:07:13,136 --> 00:07:17,626
+我们的 googletrans 需要 httpx，一个 HTTP 库
+Our googletrans needs httpx, an HTTP library,
+
+116
+00:07:17,626 --> 00:07:22,715
+它又需要 anyio、certifi、httpcore、h2，还有更多
+which needs anyio, certifi, httpcore, h2, and more.
+
+117
+00:07:23,035 --> 00:07:24,890
+两个愿望，长成了一棵树
+Two wishes grow into a tree.
+
+118
+00:07:25,134 --> 00:07:29,686
+所谓解析，就是给依赖树里的每个包选定一个精确版本
+Resolving means choosing one exact version for every package in the tree,
+
+119
+00:07:29,686 --> 00:07:31,619
+而且这些版本要彼此兼容
+versions that all fit together.
+
+120
+00:07:31,939 --> 00:07:38,019
+然后 uv 把它们写进一个新文件 uv.lock，连同下载地址和校验和
+Then uv writes them to a new file, uv.lock, with download addresses and checksums.
+
+121
+00:07:38,339 --> 00:07:41,454
+这个 pyproject.toml 文件是你的愿望清单
+The pyproject.toml file is your wish list.
+
+122
+00:07:41,774 --> 00:07:44,248
+而 uv.lock 文件是购物小票
+The uv.lock file is the receipt.
+
+123
+00:07:44,484 --> 00:07:46,297
+那为什么解析了 13 个？
+So why 13 resolved?
+
+124
+00:07:46,617 --> 00:07:51,076
+是 11 个包，加上这个应用本身，uv 不用下载它
+It's 11 packages, plus the app itself, which uv doesn't download.
+
+125
+00:07:51,396 --> 00:07:53,228
+第 13 个在 uv.lock 里
+The 13th is in uv.lock,
+
+126
+00:07:53,228 --> 00:07:58,009
+它覆盖了项目允许的每一个 Python，不只是我们这个
+which covers every Python the project allows, not just ours.
+
+127
+00:07:58,329 --> 00:08:01,486
+文件里写着，anyio 需要 typing-extensions
+In it, anyio needs typing-extensions,
+
+128
+00:08:01,486 --> 00:08:04,473
+但只在低于 3.15 的 Python 上
+but only on Python older than 3.15.
+
+129
+00:08:04,717 --> 00:08:07,789
+在我们的 3.15 上跳过了，所以是 11 个
+On our 3.15, it's skipped, so 11.
+
+130
+00:08:08,109 --> 00:08:12,760
+第一部分是 Python 3.11，所以 pip 装了它：12 个
+Part 1 ran on Python 3.11, so pip installed it: 12.
+
+131
+00:08:13,080 --> 00:08:18,520
+而 Debian 13 用的是 Python 3.13，uv 也装了 12 个
+And on Debian 13, with Python 3.13, uv installs 12 too.
+
+132
+00:08:18,767 --> 00:08:20,538
+再说说小票为什么重要
+Here's why the receipt matters.
+
+133
+00:08:20,858 --> 00:08:23,546
+两个同学隔一周各跑一次 uv sync
+Two students run uv sync a week apart.
+
+134
+00:08:23,866 --> 00:08:29,007
+没有共用的 lock 文件，各自从头解析，树的深处就可能版本不同
+Without a shared lock, each resolves fresh and may get different versions deep in the tree.
+
+135
+00:08:29,327 --> 00:08:33,530
+有了同一个 uv.lock，他们拿到的包就完全一样
+With the same uv.lock, they get exactly the same packages.
+
+136
+00:08:33,767 --> 00:08:35,360
+两个额外检查
+Two extra checks.
+
+137
+00:08:35,410 --> 00:08:41,042
+第一，ls -a 显示多了两样东西：.venv 目录和 uv.lock
+First, ls -a shows two new things: the .venv folder, and uv.lock.
+
+138
+00:08:41,362 --> 00:08:44,498
+而 git status 说，uv.lock 还没被跟踪
+And git status says uv.lock is untracked.
+
+139
+00:08:44,818 --> 00:08:47,442
+它是这里生成的，不是 repo 自带的
+It was made here; it didn't come with the repo.
+
+140
+00:08:47,684 --> 00:08:51,076
+这里 README 有一个小错误，改起来很简单
+Now, a small mistake in the README, with an easy fix.
+
+141
+00:08:51,396 --> 00:08:55,343
+它说 uv.lock 能让下一个人拿到相同的版本
+It says uv.lock gives the next person the same versions.
+
+142
+00:08:55,663 --> 00:08:57,628
+但这个 repo 从没 commit 过它
+But the repo never committed one,
+
+143
+00:08:57,628 --> 00:09:00,249
+所以大家第一次 sync 都是从头解析
+so each student's first sync resolves fresh.
+
+144
+00:09:00,569 --> 00:09:03,449
+自己的项目里，记得 commit uv.lock
+In your own projects, commit uv.lock.
+
+145
+00:09:03,769 --> 00:09:07,785
+自动化构建里，给 uv sync 加上 --locked 参数
+In automated builds, run uv sync with the --locked flag,
+
+146
+00:09:07,785 --> 00:09:10,510
+lock 文件缺失或过期就拒绝执行
+which refuses a missing or stale lock.
+
+147
+00:09:10,750 --> 00:09:13,481
+最后再加一个额外步骤：重新跑一遍 uv sync
+Last, an extra: run uv sync again.
+
+148
+00:09:13,801 --> 00:09:16,371
+它检查同样的包，这里是 11 个
+It checks the same packages, 11 here,
+
+149
+00:09:16,371 --> 00:09:21,652
+用时不到一毫秒，什么都不改：随时重跑都没问题
+in a fraction of a millisecond, and changes nothing: safe to re-run anytime.
+
+150
+00:09:22,900 --> 00:09:25,055
+按之前说的，打开 venv 看看
+Let's open the venv, as promised.
+
+151
+00:09:25,375 --> 00:09:28,241
+这条额外命令列出 bin 目录
+This extra command lists its bin folder:
+
+152
+00:09:28,241 --> 00:09:31,323
+python 软链接到 uv 下载的 Python
+python, a link to the Python uv downloaded,
+
+153
+00:09:31,323 --> 00:09:32,923
+注意，没有 pip
+and, notice, no pip.
+
+154
+00:09:33,700 --> 00:09:37,770
+还有配置文件：home 是真正解释器的目录
+And the config file: home is the real interpreter's folder,
+
+155
+00:09:37,770 --> 00:09:41,977
+include-system-site-packages 是 false，prompt 是 app
+include-system-site-packages is false, and the prompt is app.
+
+156
+00:09:42,297 --> 00:09:44,111
+三个部分，和画的一样
+All three parts, as drawn.
+
+157
+00:09:44,350 --> 00:09:48,019
+第 10 步：source .venv/bin/activate
+Step 10: source .venv/bin/activate.
+
+158
+00:09:48,339 --> 00:09:49,761
+暂停一下，自己跑一遍
+Pause and run it.
+
+159
+00:09:49,811 --> 00:09:52,691
+提示符现在以 app 开头，外面带括号
+Your prompt now starts with app, in parentheses.
+
+160
+00:09:53,011 --> 00:09:55,529
+README 的例子写的是 simple-translate
+The README's example says simple-translate.
+
+161
+00:09:55,849 --> 00:10:01,161
+但 uv 用项目名做提示符，pyproject.toml 里项目名是 app
+But uv names the prompt after the project, and pyproject.toml calls it app.
+
+162
+00:10:01,400 --> 00:10:02,651
+变了什么？
+What changed?
+
+163
+00:10:02,701 --> 00:10:07,160
+激活之前，python 敲遍了 PATH 里的每扇门，什么也没找到
+Before activating, python knocked on every door in PATH and found nothing.
+
+164
+00:10:07,480 --> 00:10:10,090
+这个 activate 脚本先存下旧的 PATH
+The activate script saves your old PATH,
+
+165
+00:10:10,090 --> 00:10:12,895
+再把 venv 的 bin 目录排到最前
+then puts the bin folder of the venv first,
+
+166
+00:10:12,895 --> 00:10:15,309
+这样在第一扇门就能找到 python
+so python is found at the first door.
+
+167
+00:10:15,550 --> 00:10:20,098
+额外检查一下：which python 指向 .venv 里面
+Extra checks: which python points into .venv,
+
+168
+00:10:20,098 --> 00:10:25,353
+python 报出的版本是 3.15.0，这是录制时的
+and python reports 3.15.0, at the time of recording;
+
+169
+00:10:25,353 --> 00:10:27,475
+在 Debian 13 上是 3.13.5
+on Debian 13, 3.13.5.
+
+170
+00:10:27,795 --> 00:10:29,438
+而 which pip 什么也没找到
+And which pip finds nothing.
+
+171
+00:10:30,333 --> 00:10:36,071
+README 还有一个小错误：它说激活后 pip 会指向 venv
+Another small mistake in the README: it says activation points pip into the venv,
+
+172
+00:10:36,071 --> 00:10:37,842
+但 uv 建的 venv 根本没有 pip
+but a uv venv has no pip.
+
+173
+00:10:38,162 --> 00:10:42,279
+如果机器上有系统 pip，which pip 找到的就是它
+On a machine with a system pip, which pip finds that one instead,
+
+174
+00:10:42,279 --> 00:10:44,306
+而它会拒绝安装，和一开始一样
+and it refuses, as at the start.
+
+175
+00:10:44,626 --> 00:10:47,200
+要添加包，用 uv add
+To add a package, use uv add,
+
+176
+00:10:47,200 --> 00:10:51,816
+它还会把包记进 pyproject.toml 和 uv.lock
+which also records it in pyproject.toml and uv.lock.
+
+177
+00:10:52,050 --> 00:10:55,443
+激活还会设置一个叫 VIRTUAL_ENV 的环境变量
+Activation also sets a variable called VIRTUAL_ENV,
+
+178
+00:10:55,443 --> 00:11:00,498
+改提示符，再加一个 deactivate 命令，撤销这一切
+changes the prompt, and adds a command called deactivate that undoes it all.
+
+179
+00:11:00,818 --> 00:11:04,551
+它只改变 shell 先去哪儿找，而且只在当前 shell 里有效
+It only changes where the shell looks first, and only in this shell.
+
+180
+00:11:04,871 --> 00:11:07,111
+要是 SSH 窗口重连了
+If your SSH window reconnects,
+
+181
+00:11:07,111 --> 00:11:10,397
+就再 cd 进 simple-translate，重新激活
+cd into simple-translate and activate again.
+
+182
+00:11:10,683 --> 00:11:14,459
+第 11 步：同样跑三次，这次用不带 3 的 python
+Step 11: the same three runs, now with plain python.
+
+183
+00:11:14,779 --> 00:11:19,792
+长的两条从 README 复制，连引号一起，暂停一下，三条都跑一遍
+Copy the long ones from the README, quotes included, and pause to run all three.
+
+184
+00:11:20,112 --> 00:11:23,632
+这次 Google 正常回应了：这些是真实的译文
+This time Google answered: these are real translations.
+
+185
+00:11:23,952 --> 00:11:28,945
+如果又碰到 429，但看得到 Input 那一行，你的 venv 就没问题
+If you get a 429 again but see the Input line, your venv works.
+
+186
+00:11:29,183 --> 00:11:32,511
+两个不用激活的额外办法，README 里都没有
+Two extras, not in the README, that skip activation.
+
+187
+00:11:32,831 --> 00:11:37,242
+第一，uv run python cli.py
+First, uv run python cli.py syncs the venv if needed,
+
+188
+00:11:37,242 --> 00:11:39,572
+需要时先同步 venv，再在里面运行应用
+then runs the app inside it.
+
+189
+00:11:39,892 --> 00:11:42,069
+或者用路径调用 venv 的 python
+Or call the venv's python by its path.
+
+190
+00:11:42,317 --> 00:11:45,304
+为什么要 source，而不直接运行 activate 脚本？
+And why source, not just run the activate script?
+
+191
+00:11:45,624 --> 00:11:47,291
+它根本不可执行
+It isn't even executable,
+
+192
+00:11:47,291 --> 00:11:52,059
+就算当程序运行，也只改一个马上退出的子 shell
+and run as a program, it would only change a child shell that exits at once,
+
+193
+00:11:52,059 --> 00:11:53,659
+跟 env 文件一样
+like the env file.
+
+194
+00:11:54,800 --> 00:11:57,424
+我们用几个额外命令来验证隔离
+Let's prove the isolation with a few extras.
+
+195
+00:11:57,744 --> 00:12:02,715
+先 deactivate：venv 激活的时候，连 python3 都指向它
+Deactivate first: while the venv is active, even python3 points into it.
+
+196
+00:12:03,035 --> 00:12:06,789
+再让系统的 python3 去 import googletrans
+Then ask the system's python3 to import googletrans.
+
+197
+00:12:07,109 --> 00:12:08,709
+报 ModuleNotFoundError
+ModuleNotFoundError.
+
+198
+00:12:09,029 --> 00:12:12,400
+在这台 VM 上，包只在 venv 里
+On this VM, the packages exist only in the venv.
+
+199
+00:12:12,633 --> 00:12:17,092
+在架子上看：系统 Python 从上到下扫一遍自己的列表
+On the shelves: the system Python scans its own list, top to bottom.
+
+200
+00:12:17,412 --> 00:12:21,209
+而 venv 的架子不在这个列表上，所以搜了个空
+The venv's shelf isn't on that list, so the search comes up empty.
+
+201
+00:12:21,533 --> 00:12:23,610
+现在用 uv run 做同样的 import
+Now the same import through uv run,
+
+202
+00:12:23,610 --> 00:12:26,162
+顺便打印这个 Python 认为自己在哪儿
+printing where this Python thinks it lives.
+
+203
+00:12:26,482 --> 00:12:29,277
+能导入，打印的正是 .venv 目录
+It works, and the answer is our .venv folder.
+
+204
+00:12:29,517 --> 00:12:32,162
+现在假设你还留着第一部分的 VM
+Now imagine you'd kept your part-1 VM.
+
+205
+00:12:32,482 --> 00:12:36,599
+同样 import，系统 python3，没有 venv。能导入吗？
+Same import, system python3, no venv. Does it work?
+
+206
+00:12:43,433 --> 00:12:46,511
+能：那台 VM 上，sudo pip 装的 googletrans
+Yes: on that VM, sudo pip put googletrans
+
+207
+00:12:46,511 --> 00:12:51,241
+在系统级的 /usr/local 架子上，每个程序都找得到
+on the system-wide /usr/local shelf, so every program finds it.
+
+208
+00:12:51,561 --> 00:12:54,377
+同一个 import，架子不同，答案不同
+Same import, different shelves, different answer.
+
+209
+00:12:54,617 --> 00:12:56,366
+反过来也成立
+And it works the other way too.
+
+210
+00:12:56,686 --> 00:12:58,681
+哪怕在第一部分那台乱糟糟的 VM 上
+Even on that messy part-1 VM,
+
+211
+00:12:58,681 --> 00:13:02,121
+venv 也会无视 sudo pip 装的一切
+a venv would ignore everything sudo pip put there,
+
+212
+00:13:02,121 --> 00:13:04,942
+因为那些架子不在它的列表上
+because those shelves aren't on its list.
+
+213
+00:13:05,262 --> 00:13:07,438
+整节课的要点，就在这一张图里
+That's the whole lesson in one picture.
+
+214
+00:13:09,083 --> 00:13:13,584
+还有一个你会碰到的工具：pipenv，做同一件事的老办法
+One more tool you'll meet: pipenv, an older way to do the same job.
+
+215
+00:13:13,904 --> 00:13:15,697
+这个 repo 的 pipenv 分支
+This repo's pipenv branch,
+
+216
+00:13:15,697 --> 00:13:18,662
+也就是这个教程的旧版本，用的就是它
+an older version of this tutorial, uses it.
+
+217
+00:13:18,982 --> 00:13:20,448
+单独的 AWS 版本
+So do the separate
+
+218
+00:13:20,448 --> 00:13:24,486
+还有后面 cheese app 的 API 服务，也都用它
+AWS version and, later, the cheese app's API service.
+
+219
+00:13:24,733 --> 00:13:26,653
+思路一样，名字不同
+Same ideas, different names.
+
+220
+00:13:26,973 --> 00:13:30,777
+这个 pyproject.toml 换成 Pipfile
+The pyproject.toml file becomes the Pipfile,
+
+221
+00:13:30,777 --> 00:13:33,629
+uv.lock 换成 Pipfile.lock
+and uv.lock becomes Pipfile.lock.
+
+222
+00:13:33,949 --> 00:13:37,960
+venv 放在你 home 目录下的某个目录里，而不是项目里
+The venv lives in a folder in your home instead of in the project.
+
+223
+00:13:38,280 --> 00:13:42,568
+命令 uv sync，换成 pipenv install 或 pipenv sync
+The command uv sync becomes pipenv install, or pipenv sync.
+
+224
+00:13:42,888 --> 00:13:47,560
+而激活换成了 pipenv shell：在 venv 里开一个新的 shell
+And instead of activating, pipenv shell opens a new shell inside the venv.
+
+225
+00:13:47,880 --> 00:13:49,480
+输入 exit 就能退出
+Type exit to leave it.
+
+226
+00:13:49,633 --> 00:13:51,894
+我们那个问题又来了，这次是真的
+And here's our puzzle again, for real.
+
+227
+00:13:52,214 --> 00:13:56,738
+那个分支的 lock 文件锁定的是 httpx 0.13.3
+That branch's lock file pins httpx 0.13.3,
+
+228
+00:13:56,738 --> 00:14:03,308
+而我们的 uv sync 装的是 0.28.1，这是录制时的版本
+while our uv sync installed 0.28.1, at the time of recording.
+
+229
+00:14:03,628 --> 00:14:07,553
+同一个应用的两个版本，两个版本的 httpx
+Two versions of the same app, two versions of httpx.
+
+230
+00:14:07,873 --> 00:14:11,137
+在一个公用的系统 Python 里，它们没法共存
+On one shared system Python, they couldn't live together.
+
+231
+00:14:11,457 --> 00:14:13,057
+放在两个 venv 里，就可以
+In two venvs, they can.
+
+232
+00:14:15,967 --> 00:14:19,182
+第 12 步：把 VM 连同启动磁盘一起删掉
+Step 12: delete the VM, with its boot disk,
+
+233
+00:14:19,182 --> 00:14:23,220
+再确认 VM instances 和 Disks 页面都是空的
+then check that VM instances and Disks are both empty.
+
+234
+00:14:23,540 --> 00:14:25,951
+现在就暂停去删，免得忘了
+Pause and do it now, before you forget.
+
+235
+00:14:26,200 --> 00:14:27,707
+我们小结一下
+Here's where we are.
+
+236
+00:14:27,757 --> 00:14:31,661
+这台 VM 给了我们一整台机器，能随便折腾，用完就删
+The VM gave us a whole machine that we can wreck and delete.
+
+237
+00:14:31,981 --> 00:14:36,056
+而 venv 把一个项目的包，和这台机器的 Python 隔开
+The venv keeps one project's packages away from that machine's Python.
+
+238
+00:14:36,376 --> 00:14:39,278
+在这两者之间，还能再加一层
+And between the two, there's room for one more layer.
+
+239
+00:14:39,517 --> 00:14:42,440
+这一层就是容器，下节课讲
+That layer is a container, and it's next lecture.
+
+240
+00:14:42,760 --> 00:14:46,209
+教程里的 Dockerfile 已经体现了这个思路
+The tutorial's Dockerfile already shows the idea:
+
+241
+00:14:46,209 --> 00:14:48,744
+复制代码，跑同样的 uv sync
+copy the code, run the same uv sync,
+
+242
+00:14:48,744 --> 00:14:51,912
+然后在激活了 venv 的 shell 里启动
+and start in a shell with the venv activated.
+
+243
+00:14:52,232 --> 00:14:54,984
+今天做的一切，都打包进一个镜像
+Everything you did today, baked into an image.
+
+244
+00:14:55,234 --> 00:14:57,197
+下节课有一件事要留意
+One thing to watch for next time.
+
+245
+00:14:57,517 --> 00:15:01,322
+这个 Dockerfile 用的是 Python 3.12 的镜像
+The Dockerfile starts from a Python 3.12 image,
+
+246
+00:15:01,322 --> 00:15:04,237
+但项目要求 3.13 及以上
+but the project wants 3.13 or newer.
+
+247
+00:15:04,557 --> 00:15:07,052
+uv 会怎么处理，你已经知道了
+You already know what uv will do about that.
+
+248
+00:15:07,300 --> 00:15:10,329
+最后，留五道题给你自测
+Before you go, five questions to test yourself.
+
+249
+00:15:10,649 --> 00:15:13,598
+第一题：--break-system-packages 这个参数
+One: what does the --break-system-packages flag
+
+250
+00:15:13,598 --> 00:15:16,986
+到底破坏了什么，sudo pip3 把文件放到了哪儿？
+actually break, and where did sudo pip3 put the files?
+
+251
+00:15:17,234 --> 00:15:20,285
+第二题：说出虚拟环境的三个部分
+Two: name the three parts of a virtual environment.
+
+252
+00:15:20,605 --> 00:15:23,195
+第三题：激活到底改了什么
+Three: what exactly does activation change,
+
+253
+00:15:23,195 --> 00:15:26,087
+不激活的话，有哪两种办法运行这个应用？
+and what are two ways to run the app without it?
+
+254
+00:15:26,334 --> 00:15:29,534
+第四题：2 个依赖变成了 11 个包
+Four: 2 dependencies became 11 packages.
+
+255
+00:15:29,854 --> 00:15:32,883
+为什么会这样，哪个文件让每个人拿到同样的包？
+Why, and which file makes everyone get the same ones?
+
+256
+00:15:33,203 --> 00:15:36,610
+第五题：要求 Python 3.13 及以上
+Five: is requires Python 3.13 or newer a pin,
+
+257
+00:15:36,610 --> 00:15:40,094
+算不算 pin，怎样才能让版本确定下来？
+and what would make the version deterministic?
+
+258
+00:15:40,334 --> 00:15:42,510
+答案在练习里
+The answers are in the exercises.
+
+259
+00:15:42,830 --> 00:15:45,960
+今天的每条命令都在学习指南里
+Every command from today is in the study guide,
+
+260
+00:15:45,960 --> 00:15:47,758
+在 MLOps Learning 这个 repo 里
+in the MLOps Learning repo.
+
+261
+00:15:48,078 --> 00:15:49,784
+下节课：容器
+Next time: containers.

@@ -1,0 +1,192 @@
+# Chinese subtitles for CareOneX E6 (no narrator: these lines are only shown, never spoken),
+# sentence-aligned to script.md. Rules: ../GLOSSARY.md.
+
+S01:
+- en: "Marco's branch arrived as one large commit: 213 files and about 46,000 new lines. Most of those lines are not code. They are evidence: test questions, saved search results, and grades."
+  zh:
+  - "Marco 的分支是一次很大的提交（commit）：213 个文件，新增约 46,000 行。"
+  - "这些行大多不是代码。"
+  - "它们是证据：测试问题、保存下来的检索结果，以及打分。"
+
+- en: "Almost all of it is about one question: when a caller asks something, does search hand the agent the right passages? Marco turned three dials. How the documents are cut. How the search is run. And how results are ordered. He also added a way to check the spoken answers."
+  zh:
+  - "几乎所有内容都围绕一个问题：来电者问了一个问题，检索能不能把对的段落交给 agent？"
+  - "Marco 调了三个旋钮。"
+  - "文档怎么切。"
+  - "检索怎么跑。"
+  - "结果怎么排序。"
+  - "他还加了一个检查口头回答的方法。"
+
+S02:
+- en: "First, how do you score a search? You ask a question, take the top 5 passages it returns, and a person grades each one: 0 if it does not help, 1 if it partly helps, 2 if it answers the question."
+  zh:
+  - "先说：怎么给一次检索打分？"
+  - "提一个问题，取它返回的前 5 段，由人逐段打分：没帮助给 0，部分有帮助给 1，能回答问题给 2。"
+
+- en: "Precision at 5 is the share of the five that help at all, here 2 out of 5. MRR looks only at the first helpful passage: it is at rank 2, so the score is one half. Rank 1 would score 1."
+  zh:
+  - "Precision@5（前 5 精确率）是这 5 段里有帮助的比例，这里是 5 段中 2 段。"
+  - "MRR 只看第一段有帮助的段落：它排在第 2 位，所以得分是二分之一。"
+  - "排在第 1 位就得 1 分。"
+
+- en: "NDCG rewards putting the best passages first. It scores our order, then scores the best possible order of the same passages, and divides. 1 means perfect order."
+  zh:
+  - "NDCG 奖励把最好的段落排在前面。"
+  - "它先给我们的排序打分，再给同一批段落的最佳排序打分，然后相除。"
+  - "1 表示排序完美。"
+
+- en: "All three numbers depend on the grades. No grades, no score."
+  zh:
+  - "这三个数字都取决于人工打分。"
+  - "没有打分，就没有分数。"
+
+S03:
+- en: "The first dial is chunking. Marco compared three chunkers. A is the original one from episode 2. B never merges sections with different headings, and repeats the table rows that name the programs. C makes small passages for searching, each linked to a larger parent passage for context."
+  zh:
+  - "第一个旋钮是切块（chunking）。"
+  - "Marco 比较了三种切块器（chunker）。"
+  - "A 是第 2 集里原来的那个。"
+  - "B 从不把不同标题下的小节合在一起，并且会重复表格里写着项目名称的那几行。"
+  - "C 切出用来检索的小段落，每段都连着一个更大的父段落（parent），用来补充上下文。"
+
+- en: "To compare them fairly, he built three separate test libraries, called staging knowledge bases, and left the main one untouched. Library C is the one his voice demo points at, the ID we met in episode 0."
+  zh:
+  - "为了公平比较，他另建了三个测试资料库，叫做 staging knowledge base（预发布知识库），主资料库一点没动。"
+  - "资料库 C 就是他的语音演示所指向的那个，也就是第 0 集里见过的那个 ID。"
+
+- en: "He asked the same 25 questions to all three, took the top 5 each time, and graded all 375 passages by hand. The team's notes call these grades provisional."
+  zh:
+  - "他向三个库问了同样的 25 个问题，每次取前 5 段，并且手工给全部 375 段打了分。"
+  - "团队文档说这些打分是暂定的（provisional）。"
+
+S04:
+- en: "We reran Marco's own scoring script on his grades. The original chunker A has the best precision and NDCG. The hierarchical chunker C finds the first helpful passage a little sooner. B is lowest on all three. All three take about four tenths of a second."
+  zh:
+  - "我们用 Marco 自己的评分脚本，在他的打分上重新算了一遍。"
+  - "原来的切块器 A 精确率和 NDCG 最高。"
+  - "分层切块器 C 能稍早一点找到第一段有帮助的段落。"
+  - "B 在三项指标上都最低。"
+  - "三者每次检索都大约要 0.4 秒。"
+
+- en: "Question by question, A was best 9 times and C 7 times. 6 were ties, and B was never best on its own. For 3 questions, none of the three libraries found anything helpful, although related words do appear in the documents. Cutting the text differently did not fix them, so these are the questions to study next."
+  zh:
+  - "逐题来看，A 有 9 次最好，C 有 7 次。"
+  - "6 题打平，B 从来没有单独拿过第一。"
+  - "有 3 个问题，三个库都没找到任何有帮助的段落，尽管文档里确实出现了相关的词。"
+  - "换一种切法没能解决它们，所以下一步该研究的就是这几个问题。"
+
+- en: "That matters, because on this branch B becomes the default chunker. With 25 questions and provisional grades, these gaps are small and could change. But nothing here shows B is better, and that is worth discussing before the main library is rebuilt with it."
+  zh:
+  - "这很重要，因为在这个分支上 B 成了默认切块器。"
+  - "只有 25 个问题、打分又是暂定的，这些差距很小，可能会变。"
+  - "但这里没有任何证据说明 B 更好；在用它重建主资料库之前，值得先讨论一下。"
+
+S05:
+- en: "The second dial is the search itself. In feedback mode, retrieve first searches with the caller's exact question. Then it reads what came back, and may plan one more search. It runs it, keeps a new passage only if it matches the question, and merges the two lists."
+  zh:
+  - "第二个旋钮是检索本身。"
+  - "在 feedback 模式下，retrieve 先用来电者的原话检索一次。"
+  - "然后读一读返回的结果，可能再规划一次检索。"
+  - "它执行这次检索，新段落只有和问题对得上才会留下，再把两份列表合并。"
+
+- en: "An extra search comes from words that are actually there: a heading or phrase in the first results that shares real words with the question. If none qualifies, it uses the caller's own key words, plus a variant from a short fixed list, like lonely to companionship. For \"my mother needs help showering\", one run added the search \"bathing in bed, in the tub or shower\", a line from the personal care page."
+  zh:
+  - "额外的检索词来自真实存在的文字：第一批结果里的某个标题或短语，并且和问题有共同的实词。"
+  - "如果都不合格，就用来电者自己的关键词，再加一个来自固定小词表的变体，比如 lonely（孤单）对应 companionship（陪伴）。"
+  - "对“我母亲洗澡需要帮忙”这个问题，有一次运行加了检索词“bathing in bed, in the tub or shower”，这是个人护理（PCA）页面上的一句话。"
+
+- en: "This is what model-free means: no AI model writes the extra searches, only fixed rules. Another mode, called intent, asks a language model, but the README warns that the team's account may not be allowed to call it."
+  zh:
+  - "这就是 model-free（不用模型）的意思：额外的检索词不是 AI 模型写的，只靠固定规则。"
+  - "另一种模式叫 intent，会去问一个语言模型，但 README 提醒，团队账号可能没有调用它的权限。"
+
+- en: "To merge the lists, each passage gets points from every list it appears in: more for a high rank, and the first search counts one and a half times. A passage that both searches agree on rises. This is called reciprocal rank fusion."
+  zh:
+  - "合并列表时，每个段落在它出现的每份列表里都能得分：排名越靠前分越高，第一次检索的分数乘以 1.5。"
+  - "两次检索都找到的段落会往上升。"
+  - "这叫做倒数排名融合（reciprocal rank fusion，RRF）。"
+
+- en: "We checked one consequence with Marco's own merge code. A passage found only by the extra search scores at most 1 over 61. The tenth result of the first search scores 1.5 over 70, which is more. So today the extra search can reorder what the first search found. It cannot add a new passage to the top five, unless the first search returned fewer than five. The code's comments suggest new passages were meant to get in, so this is worth a conversation with Marco."
+  zh:
+  - "我们用 Marco 自己的合并代码验证了一个后果。"
+  - "只被额外检索找到的段落，最多得 61 分之 1。"
+  - "第一次检索的第 10 名得 70 分之 1.5，比它更高。"
+  - "所以目前额外检索只能给第一次检索找到的结果重新排序。"
+  - "它无法把新段落加进前 5，除非第一次检索返回的结果不到 5 条。"
+  - "代码注释看起来是希望新段落能进来的，所以这值得和 Marco 聊一聊。"
+
+S06:
+- en: "Marco saved a run of 40 everyday home-care questions, with and without feedback. Extra searches were used for 18 of them. For 23 of the 40, the top five passages came out exactly the same."
+  zh:
+  - "Marco 保存了一次运行：40 个日常居家护理问题，分别开、关 feedback。"
+  - "其中 18 个问题用上了额外检索。"
+  - "40 个里有 23 个，前 5 段完全一样。"
+
+- en: "Feedback costs time. The typical search went from about 0.43 to 0.51 seconds, and the slowest tenth from about half a second to about one second."
+  zh:
+  - "feedback 要花时间。"
+  - "典型的一次检索从约 0.43 秒变成 0.51 秒，最慢的十分之一从约半秒变成约 1 秒。"
+
+- en: "And here is the key gap: none of the 788 passages in that run were graded. So the run tells us about speed and behaviour, but not whether feedback finds better passages."
+  zh:
+  - "关键的缺口在这里：那次运行里的 788 段，一段都没有打分。"
+  - "所以它能告诉我们速度和行为，却不能告诉我们 feedback 找到的段落是不是更好。"
+
+- en: "The planner has changed since that run. We replayed today's version offline on the same 40 first searches: it adds a search for 17 questions, almost all of them rewrites of the caller's own words. And feedback is now the default in the voice app."
+  zh:
+  - "那次运行之后，规划器（planner）已经改过了。"
+  - "我们离线用今天的版本重放了同样 40 次第一次检索：它给 17 个问题加了检索，几乎都是改写来电者自己的话。"
+  - "而且 feedback 现在是语音应用的默认设置。"
+
+S07:
+- en: "The last dial checks answers, not passages. A test call produces two transcripts. A script compares the assistant's answer with a reference answer written by a person: shared words, required and forbidden phrases, and whether the agent actually looked anything up."
+  zh:
+  - "最后一个旋钮检查的是回答，而不是段落。"
+  - "一次测试通话会产生两份文字记录。"
+  - "一个脚本把助手的回答和人写的参考答案作比较：共同的词、必须出现和禁止出现的说法，以及 agent 有没有真的去查。"
+
+- en: "Shared words are measured with cosine similarity again, this time over word counts. That has a trap: an answer with one wrong dollar amount shares almost every word with the right one. Marco's notes say it plainly: similarity is not correctness. A person still has to check the facts."
+  zh:
+  - "共同的词同样用余弦相似度（cosine similarity）来衡量，只是这次基于词频。"
+  - "这里有个陷阱：一个美元金额写错的回答，和正确答案几乎每个词都一样。"
+  - "Marco 的文档说得很直白：相似不等于正确。"
+  - "事实仍然要由人来核对。"
+
+- en: "Right now there is one reference answer, marked as a starter. Real testing needs 20 to 30 checked ones."
+  zh:
+  - "目前只有一个参考答案，标注为入门示例（starter）。"
+  - "真正的测试需要 20 到 30 个核对过的参考答案。"
+
+S08:
+- en: "Episode 2 ended with a table that hid its program names. Marco's branch attacks it three ways. The new chunker fixes it: we checked, and the 1,090 dollar chunk now says JACC. A new extractor was written for that PDF, but on the real file it fails on all four pages, because it finds nine columns where it expects seven. And retrieve now drops every chunk from that table that the extractor did not verify. So for now, the table does not reach the agent at all."
+  zh:
+  - "第 2 集结尾留下了一张藏起项目名称的表格。"
+  - "Marco 的分支从三处下手。"
+  - "新的切块器解决了它：我们验证过，写着 1,090 美元的那个 chunk 现在包含 JACC。"
+  - "他为这份 PDF 写了一个新的提取器，但在真实文件上四页全部失败，因为它找到 9 列，而它期望的是 7 列。"
+  - "retrieve 现在会丢掉这张表里所有没被提取器验证过的 chunk。"
+  - "所以目前这张表根本到不了 agent 手里。"
+
+- en: "On the voice side, a phone number is saved only after the agent reads it back and the caller says yes. And empty search results can no longer be presented as evidence."
+  zh:
+  - "语音这边，电话号码要等 agent 复述一遍、来电者说“是”之后才会保存。"
+  - "而且空的检索结果不能再被当作证据。"
+
+- en: "What is open: grade the feedback run, ideally without knowing which mode produced which passage. Decide whether the merge should let new passages in. Fix the extractor for the real PDF. Decide which library is the live one, since none of this is in the main library yet. And note that the branch puts the AWS account number and library IDs into a public repository, which the setup guide had kept out."
+  zh:
+  - "还没解决的：给 feedback 那次运行打分，最好在不知道哪段来自哪种模式的情况下打。"
+  - "决定合并时是否应该让新段落进来。"
+  - "针对真实 PDF 修好提取器。"
+  - "决定哪个资料库上线，因为这些改动都还没进主资料库。"
+  - "另外注意，这个分支把 AWS 账号和资料库 ID 放进了公开仓库，而设置指南原本是把它们排除在外的。"
+
+- en: "Three questions to test yourself. Why can a search with a perfect MRR still have a low precision? Why can today's extra search reorder the top five but not add to it? And why is high word similarity not proof of a correct answer?"
+  zh:
+  - "三个问题，自我检测一下。"
+  - "为什么一次 MRR 满分的检索，精确率仍然可能很低？"
+  - "为什么今天的额外检索能给前 5 重新排序，却加不进新段落？"
+  - "为什么词的相似度高，并不能证明回答正确？"
+
+- en: "Next, episode 3 goes inside a single search, and episode 4 follows a whole phone call through the voice app."
+  zh:
+  - "接下来，第 3 集深入一次检索的内部，第 4 集跟着一通完整的电话走一遍语音应用。"

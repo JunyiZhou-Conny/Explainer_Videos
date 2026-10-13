@@ -1,8 +1,11 @@
 # Explainer video style guide
 
 The visual grammar for this repository’s `3b1b` dark mathematical-diagram family. Other
-presets have their own instructions in [the style catalog](STYLES.md). This guide is written
-for both humans and coding agents that implement scenes.
+presets have their own instructions in [the style catalog](STYLES.md). The condensed,
+music-led **short** format has its own profile (black, one glowing accent, hairlines,
+captions instead of narration, a beat grid): [SHORTS.md](SHORTS.md). This guide is written
+for both humans and coding agents that implement scenes; everything below is about the
+long, narrated videos.
 
 ## 1. Principles (borrowed from 3Blue1Brown)
 

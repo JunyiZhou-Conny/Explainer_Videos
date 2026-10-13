@@ -1,0 +1,16 @@
+$ source .venv/bin/activate; python cli.py -t "Good afternoon. Would you like some cheese?" -s "en" -d "fr"
+
+
+    _      ____  ____   _  ____  
+   / \    / ___||___ \ / || ___| 
+  / _ \  | |      __) || ||___ \ 
+ / ___ \ | |___  / __/ | | ___) |
+/_/   \_\ \____||_____||_||____/ 
+                                 
+
+
+Arguments: Namespace(text='Good afternoon. Would you like some cheese?', file='', src='en', dest='fr')
+
+Input: Good afternoon. Would you like some cheese?
+Output: Bon après-midi. Veux-tu du fromage ?
+[exit 0]

@@ -1,0 +1,182 @@
+[
+ {
+  "file": "nj_dmahs_mltss_overview.html",
+  "kind": "html",
+  "program": "NJ FamilyCare / Medicaid MLTSS",
+  "bytes": 55698,
+  "sha_matches_catalog": false,
+  "md_chars": 7807,
+  "chunks": 10
+ },
+ {
+  "file": "nj_dmahs_mltss_application_guidance_2026.pdf",
+  "kind": "pdf",
+  "program": "NJ FamilyCare / Medicaid MLTSS",
+  "bytes": 622779,
+  "sha_matches_catalog": true,
+  "md_chars": 16269,
+  "chunks": 19
+ },
+ {
+  "file": "nj_doas_jacc.html",
+  "kind": "html",
+  "program": "JACC",
+  "bytes": 56973,
+  "sha_matches_catalog": false,
+  "md_chars": 5059,
+  "chunks": 4
+ },
+ {
+  "file": "nj_doas_jacc_brochure_en.pdf",
+  "kind": "pdf",
+  "program": "JACC",
+  "bytes": 5719675,
+  "sha_matches_catalog": true,
+  "md_chars": 2991,
+  "chunks": 5
+ },
+ {
+  "file": "nj_doas_statewide_respite.html",
+  "kind": "html",
+  "program": "Statewide Respite Care Program",
+  "bytes": 55577,
+  "sha_matches_catalog": true,
+  "md_chars": 4537,
+  "chunks": 4
+ },
+ {
+  "file": "nj_doas_statewide_respite_brochure_en.pdf",
+  "kind": "pdf",
+  "program": "Statewide Respite Care Program",
+  "bytes": 2514712,
+  "sha_matches_catalog": true,
+  "md_chars": 4123,
+  "chunks": 6
+ },
+ {
+  "file": "nj_doas_alzheimers_adult_day.html",
+  "kind": "html",
+  "program": "Alzheimer's Adult Day Services Program",
+  "bytes": 52636,
+  "sha_matches_catalog": true,
+  "md_chars": 4042,
+  "chunks": 6
+ },
+ {
+  "file": "nj_doas_alzheimers_adult_day_brochure_en.pdf",
+  "kind": "pdf",
+  "program": "Alzheimer's Adult Day Services Program",
+  "bytes": 2765724,
+  "sha_matches_catalog": true,
+  "md_chars": 4429,
+  "chunks": 5
+ },
+ {
+  "file": "nj_doas_pace.html",
+  "kind": "html",
+  "program": "PACE",
+  "bytes": 56207,
+  "sha_matches_catalog": true,
+  "md_chars": 6164,
+  "chunks": 5
+ },
+ {
+  "file": "nj_doas_pace_flyer_en.pdf",
+  "kind": "pdf",
+  "program": "PACE",
+  "bytes": 645895,
+  "sha_matches_catalog": true,
+  "md_chars": 4539,
+  "chunks": 5
+ },
+ {
+  "file": "nj_doas_county_offices_adrc.html",
+  "kind": "html",
+  "program": "County Offices on Aging / ADRC",
+  "bytes": 58031,
+  "sha_matches_catalog": true,
+  "md_chars": 5363,
+  "chunks": 4
+ },
+ {
+  "file": "nj_doas_program_guide.pdf",
+  "kind": "pdf",
+  "program": "All DoAS programs",
+  "bytes": 4297101,
+  "sha_matches_catalog": true,
+  "md_chars": 51856,
+  "chunks": 68
+ },
+ {
+  "file": "medicare_home_health_services_coverage.html",
+  "kind": "html",
+  "program": "Medicare home health benefit",
+  "bytes": 126187,
+  "sha_matches_catalog": false,
+  "md_chars": 6244,
+  "chunks": 8
+ },
+ {
+  "file": "cms_10969_medicare_and_home_health_care.pdf",
+  "kind": "pdf",
+  "program": "Medicare home health benefit",
+  "bytes": 2788615,
+  "sha_matches_catalog": true,
+  "md_chars": 34598,
+  "chunks": 40
+ },
+ {
+  "file": "va_homemaker_home_health_aide.html",
+  "kind": "html",
+  "program": "VA Homemaker and Home Health Aide Care",
+  "bytes": 74376,
+  "sha_matches_catalog": false,
+  "md_chars": 3662,
+  "chunks": 5
+ },
+ {
+  "file": "va_home_community_based_services.html",
+  "kind": "html",
+  "program": "VA Home and Community Based Services",
+  "bytes": 70153,
+  "sha_matches_catalog": false,
+  "md_chars": 560,
+  "chunks": 2
+ },
+ {
+  "file": "va_aid_attendance_housebound.html",
+  "kind": "html",
+  "program": "VA Aid and Attendance / Housebound",
+  "bytes": 58669,
+  "sha_matches_catalog": false,
+  "md_chars": 2538,
+  "chunks": 6
+ },
+ {
+  "file": "nj_doas_programs_side_by_side_2026.pdf",
+  "kind": "pdf",
+  "program": "All DoAS programs",
+  "bytes": 256779,
+  "sha_matches_catalog": true,
+  "md_chars": 14346,
+  "chunks": 12
+ },
+ {
+  "file": "nj_dds_personal_care_assistant.html",
+  "kind": "html",
+  "program": "NJ FamilyCare / Medicaid PCA",
+  "bytes": 41209,
+  "sha_matches_catalog": false,
+  "md_chars": 3771,
+  "chunks": 6
+ },
+ {
+  "file": "nj_doas_2026_program_limits.md",
+  "kind": "md",
+  "program": "All DoAS programs",
+  "bytes": 8571,
+  "sha_matches_catalog": true,
+  "md_chars": 8546,
+  "chunks": 12
+ }
+]

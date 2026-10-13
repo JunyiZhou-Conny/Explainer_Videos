@@ -1,0 +1,4 @@
+$ source $HOME/.local/bin/env; uv --version; which uv
+uv 0.13.0 (x86_64-unknown-linux-gnu)
+/home/student/.local/bin/uv
+[exit 0]

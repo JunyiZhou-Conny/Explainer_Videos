@@ -1,0 +1,3 @@
+$ git clone https://github.com/dlops-io/simple-translate.git
+Cloning into 'simple-translate'...
+[exit 0]

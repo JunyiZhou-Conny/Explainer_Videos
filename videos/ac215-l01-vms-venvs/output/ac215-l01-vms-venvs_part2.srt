@@ -1,0 +1,1187 @@
+1
+00:00:00,000 --> 00:00:01,449
+Back to our puzzle:
+
+2
+00:00:01,449 --> 00:00:05,568
+two projects, two versions of httpx,
+one shared shelf.
+
+3
+00:00:05,888 --> 00:00:09,024
+The fix is to give
+each project its own toolbox.
+
+4
+00:00:09,344 --> 00:00:11,883
+That toolbox is a virtual environment.
+
+5
+00:00:12,117 --> 00:00:17,685
+A virtual environment is just a folder,
+usually called dot venv, with three parts.
+
+6
+00:00:18,005 --> 00:00:20,693
+First, a bin folder with a python inside.
+
+7
+00:00:21,013 --> 00:00:25,663
+It's usually not a copy, just a link
+to a real interpreter somewhere else.
+
+8
+00:00:25,900 --> 00:00:30,188
+Second, its own site-packages folder,
+empty when uv makes it.
+
+9
+00:00:30,508 --> 00:00:35,905
+Site-packages is the usual name;
+Debian calls its system ones dist-packages.
+
+10
+00:00:36,225 --> 00:00:40,172
+This is where this project's packages go,
+and only this project's.
+
+11
+00:00:40,417 --> 00:00:44,044
+Third, a small config file, pyvenv.cfg.
+
+12
+00:00:44,364 --> 00:00:47,157
+When Python starts
+from the venv's bin folder,
+
+13
+00:00:47,157 --> 00:00:48,310
+it reads this file.
+
+14
+00:00:48,630 --> 00:00:51,797
+It says: you're in a venv,
+so use my site-packages,
+
+15
+00:00:51,797 --> 00:00:53,473
+and leave the system's out.
+
+16
+00:00:53,717 --> 00:00:55,530
+Here's the difference on the shelves.
+
+17
+00:00:55,850 --> 00:00:58,986
+Started from the venv,
+Python builds a different list.
+
+18
+00:00:59,306 --> 00:01:03,616
+The standard library still comes
+from the real interpreter it links to.
+
+19
+00:01:03,936 --> 00:01:07,218
+But both dist-packages shelves
+from the system are gone,
+
+20
+00:01:07,218 --> 00:01:09,738
+and the venv's own shelf takes their place.
+
+21
+00:01:09,983 --> 00:01:12,031
+Same engine, different toolbox.
+
+22
+00:01:12,351 --> 00:01:14,176
+And the toolboxes don't mix:
+
+23
+00:01:14,176 --> 00:01:17,827
+packages in the venv
+are invisible to the system Python,
+
+24
+00:01:17,827 --> 00:01:19,391
+and the other way round.
+
+25
+00:01:19,633 --> 00:01:20,934
+Remember pip's hint?
+
+26
+00:01:21,254 --> 00:01:25,628
+It suggested python3 dash m venv,
+the classic way to make one.
+
+27
+00:01:25,948 --> 00:01:28,892
+Today, uv makes it for us,
+and does a lot more.
+
+28
+00:01:29,133 --> 00:01:32,585
+What a venv doesn't isolate:
+the operating system,
+
+29
+00:01:32,585 --> 00:01:35,554
+system libraries written in C, and drivers.
+
+30
+00:01:35,874 --> 00:01:41,123
+Those are jobs for a whole machine,
+like our VM, or a container, next lecture.
+
+31
+00:01:41,367 --> 00:01:45,847
+After uv sync, we'll open the real folder
+and find all three parts.
+
+32
+00:01:47,683 --> 00:01:52,526
+Part 2 starts on a fresh VM,
+same settings, and the meter runs again.
+
+33
+00:01:52,846 --> 00:01:56,024
+Fresh matters:
+this system Python never sees pip.
+
+34
+00:01:56,344 --> 00:01:59,550
+Create it and SSH in; if the name is taken,
+
+35
+00:01:59,550 --> 00:02:03,427
+the old VM is still being deleted,
+so wait a minute.
+
+36
+00:02:03,747 --> 00:02:05,966
+Pause until your terminal is open.
+
+37
+00:02:06,216 --> 00:02:11,293
+Then the same four commands:
+apt-get update, install git, clone, and cd.
+
+38
+00:02:11,613 --> 00:02:14,536
+Pause until your prompt ends
+in simple-translate.
+
+39
+00:02:14,800 --> 00:02:17,467
+Step 7 installs uv in one line.
+
+40
+00:02:17,787 --> 00:02:20,010
+First, curl downloads a script:
+
+41
+00:02:20,010 --> 00:02:23,666
+it follows redirects,
+stays quiet but shows errors,
+
+42
+00:02:23,666 --> 00:02:28,837
+and fails on an HTTP error instead
+of handing an error page to the shell.
+
+43
+00:02:29,100 --> 00:02:30,825
+The vertical bar is a pipe:
+
+44
+00:02:30,825 --> 00:02:36,189
+it hands the script straight to the shell,
+so you're running code from the internet:
+
+45
+00:02:36,189 --> 00:02:39,382
+uv's official installer,
+which you can read first.
+
+46
+00:02:39,633 --> 00:02:40,785
+Pause and run it.
+
+47
+00:02:41,105 --> 00:02:46,210
+It installs uv,
+version 0.13.0 at the time of recording,
+
+48
+00:02:46,210 --> 00:02:51,132
+and uvx, into dot local slash bin
+in your home folder.
+
+49
+00:02:51,383 --> 00:02:53,751
+Let's try uv, with an extra check.
+
+50
+00:02:54,071 --> 00:02:55,308
+Command not found.
+
+51
+00:02:55,628 --> 00:02:57,207
+But we just installed it.
+
+52
+00:02:57,466 --> 00:02:58,931
+When you type a command,
+
+53
+00:02:58,931 --> 00:03:01,737
+the shell walks a list
+of folders called PATH,
+
+54
+00:03:01,737 --> 00:03:04,143
+left to right, and runs the first match.
+
+55
+00:03:04,463 --> 00:03:05,573
+None contains uv,
+
+56
+00:03:05,573 --> 00:03:08,837
+and the shell only knows
+the PATH it started with.
+
+57
+00:03:09,100 --> 00:03:12,797
+The installer's last lines,
+and step 8, give two options:
+
+58
+00:03:12,797 --> 00:03:15,521
+reload your shell, or source the env file.
+
+59
+00:03:15,841 --> 00:03:19,907
+A reload means a new SSH window,
+back in your home folder,
+
+60
+00:03:19,907 --> 00:03:22,711
+so you'd cd into simple-translate again.
+
+61
+00:03:23,031 --> 00:03:26,508
+Sourcing is quicker:
+it puts that folder first in PATH.
+
+62
+00:03:26,828 --> 00:03:28,705
+Pause and run the source line.
+
+63
+00:03:28,966 --> 00:03:30,521
+Then two extra checks:
+
+64
+00:03:30,521 --> 00:03:34,833
+uv reports its version,
+and which uv points into that folder.
+
+65
+00:03:35,100 --> 00:03:36,849
+Why source, and not sh?
+
+66
+00:03:37,169 --> 00:03:40,868
+Plain sh would change a child shell
+that exits at once;
+
+67
+00:03:40,868 --> 00:03:42,481
+source changes this one.
+
+68
+00:03:42,801 --> 00:03:46,968
+The installer also made
+your startup files run this env file,
+
+69
+00:03:46,968 --> 00:03:50,246
+so next time you connect,
+uv is found by itself.
+
+70
+00:03:50,500 --> 00:03:51,759
+So what is uv?
+
+71
+00:03:52,079 --> 00:03:55,999
+One fast tool that replaces several:
+the venv module,
+
+72
+00:03:55,999 --> 00:04:00,953
+pip, pip-tools for locking,
+pyenv for installing Pythons, and pipx.
+
+73
+00:04:02,400 --> 00:04:06,239
+Step 9 is uv sync,
+and it reads pyproject.toml,
+
+74
+00:04:06,239 --> 00:04:08,117
+so let's read it first.
+
+75
+00:04:08,437 --> 00:04:09,525
+The name is app.
+
+76
+00:04:09,845 --> 00:04:17,397
+Two dependencies: art, version 6.5 or newer,
+and googletrans, exactly 4.0.2.
+
+77
+00:04:17,717 --> 00:04:21,387
+Greater-or-equal means a range;
+double equals, one version.
+
+78
+00:04:21,707 --> 00:04:25,867
+Line 6 is a range again:
+Python 3.13 or newer.
+
+79
+00:04:26,117 --> 00:04:27,162
+Now predict.
+
+80
+00:04:27,482 --> 00:04:29,957
+This VM has Python 3.11.
+
+81
+00:04:30,277 --> 00:04:33,136
+The project asks for 3.13 or newer.
+
+82
+00:04:33,456 --> 00:04:34,949
+What will uv sync do?
+
+83
+00:04:35,269 --> 00:04:38,703
+Fail, use 3.11 anyway, or something else?
+
+84
+00:04:47,550 --> 00:04:49,257
+Pause and run uv sync.
+
+85
+00:04:49,577 --> 00:04:53,823
+Instead of failing,
+uv downloads its own Python:
+
+86
+00:04:53,823 --> 00:04:57,449
+CPython 3.15.0, at the time of recording.
+
+87
+00:04:57,769 --> 00:05:01,033
+Then it creates a virtual environment
+in dot venv.
+
+88
+00:05:01,353 --> 00:05:06,963
+If uv can't find a pyproject.toml,
+cd into simple-translate first.
+
+89
+00:05:07,200 --> 00:05:08,437
+Here's what happened.
+
+90
+00:05:08,757 --> 00:05:11,296
+Picture Python versions on a number line.
+
+91
+00:05:11,616 --> 00:05:15,499
+The constraint lights up everything
+from 3.13 onward.
+
+92
+00:05:15,819 --> 00:05:18,994
+First, uv looks
+for an interpreter it already has:
+
+93
+00:05:18,994 --> 00:05:21,344
+its own downloads, then the system's.
+
+94
+00:05:21,664 --> 00:05:26,741
+Debian's 3.11.2 lands outside the range,
+so it can't be used.
+
+95
+00:05:26,983 --> 00:05:29,863
+So uv downloads one. Which one?
+
+96
+00:05:30,183 --> 00:05:34,427
+Not 3.13,
+but the newest release in the range,
+
+97
+00:05:34,427 --> 00:05:37,564
+which was 3.15.0 when we recorded.
+
+98
+00:05:37,884 --> 00:05:42,471
+It lives in uv's own folder in your home,
+and the venv's python links to it.
+
+99
+00:05:42,717 --> 00:05:45,405
+That's the catch: a constraint is not a pin.
+
+100
+00:05:45,725 --> 00:05:51,336
+Before Python 3.15 came out,
+this same command gave people 3.14.
+
+101
+00:05:51,656 --> 00:05:55,303
+Watch this video next year,
+and you may get something newer still.
+
+102
+00:05:55,550 --> 00:05:58,238
+On Debian 13, the story changes.
+
+103
+00:05:58,558 --> 00:06:03,635
+Its system Python, 3.13.5,
+is already inside the range.
+
+104
+00:06:03,955 --> 00:06:06,568
+So uv simply uses it, with no download,
+
+105
+00:06:06,568 --> 00:06:09,651
+and the venv's python links
+to the system one.
+
+106
+00:06:09,971 --> 00:06:12,958
+Same command,
+different Debian, different Python.
+
+107
+00:06:13,200 --> 00:06:15,739
+To get the same Python everywhere, pin it.
+
+108
+00:06:16,059 --> 00:06:20,162
+The command uv python pin 3.13,
+not in the README,
+
+109
+00:06:20,162 --> 00:06:23,937
+writes a small file
+called dot python version,
+
+110
+00:06:23,937 --> 00:06:27,301
+and the range shrinks to the 3.13 series.
+
+111
+00:06:27,621 --> 00:06:31,032
+Don't run it now:
+your next uv sync would rebuild the venv,
+
+112
+00:06:31,032 --> 00:06:33,403
+and the rest of the video wouldn't match.
+
+113
+00:06:33,723 --> 00:06:35,323
+It's in the exercises.
+
+114
+00:06:36,567 --> 00:06:37,890
+Now the packages.
+
+115
+00:06:38,210 --> 00:06:42,212
+A quick puzzle:
+pyproject.toml lists 2 dependencies,
+
+116
+00:06:42,212 --> 00:06:46,060
+and in part 1,
+pip installed 12 packages for them.
+
+117
+00:06:46,380 --> 00:06:48,044
+How many will uv install?
+
+118
+00:06:54,884 --> 00:06:57,337
+It's 11: one fewer than part 1.
+
+119
+00:06:57,657 --> 00:07:03,289
+It resolved 13 and installed 11,
+each with a plus sign and an exact version.
+
+120
+00:07:03,609 --> 00:07:06,937
+So where did the other 9 come from,
+and which one went missing?
+
+121
+00:07:07,184 --> 00:07:12,816
+Packages have dependencies of their own;
+this extra command, uv tree, draws them.
+
+122
+00:07:13,136 --> 00:07:17,626
+Our googletrans needs httpx,
+an HTTP library,
+
+123
+00:07:17,626 --> 00:07:22,715
+which needs anyio,
+certifi, httpcore, h2, and more.
+
+124
+00:07:23,035 --> 00:07:24,890
+Two wishes grow into a tree.
+
+125
+00:07:25,134 --> 00:07:29,686
+Resolving means choosing one exact version
+for every package in the tree,
+
+126
+00:07:29,686 --> 00:07:31,619
+versions that all fit together.
+
+127
+00:07:31,939 --> 00:07:38,019
+Then uv writes them to a new file, uv.lock,
+with download addresses and checksums.
+
+128
+00:07:38,339 --> 00:07:41,454
+The pyproject.toml file is your wish list.
+
+129
+00:07:41,774 --> 00:07:44,248
+The uv.lock file is the receipt.
+
+130
+00:07:44,484 --> 00:07:46,297
+So why 13 resolved?
+
+131
+00:07:46,617 --> 00:07:51,076
+It's 11 packages, plus the app itself,
+which uv doesn't download.
+
+132
+00:07:51,396 --> 00:07:53,228
+The 13th is in uv.lock,
+
+133
+00:07:53,228 --> 00:07:58,009
+which covers every Python
+the project allows, not just ours.
+
+134
+00:07:58,329 --> 00:08:04,473
+In it, anyio needs typing extensions,
+but only on Python older than 3.15.
+
+135
+00:08:04,717 --> 00:08:07,789
+On our 3.15, it's skipped, so 11.
+
+136
+00:08:08,109 --> 00:08:12,760
+Part 1 ran on Python 3.11,
+so pip installed it: 12.
+
+137
+00:08:13,080 --> 00:08:18,520
+And on Debian 13, with Python 3.13,
+uv installs 12 too.
+
+138
+00:08:18,767 --> 00:08:20,538
+Here's why the receipt matters.
+
+139
+00:08:20,858 --> 00:08:23,546
+Two students run uv sync a week apart.
+
+140
+00:08:23,866 --> 00:08:25,122
+Without a shared lock,
+
+141
+00:08:25,122 --> 00:08:29,007
+each resolves fresh and may get
+different versions deep in the tree.
+
+142
+00:08:29,327 --> 00:08:33,530
+With the same uv.lock,
+they get exactly the same packages.
+
+143
+00:08:33,767 --> 00:08:35,090
+Two extra checks.
+
+144
+00:08:35,410 --> 00:08:41,042
+First, ls dash a shows two new things:
+the dot venv folder, and uv.lock.
+
+145
+00:08:41,362 --> 00:08:44,498
+And git status says uv.lock is untracked.
+
+146
+00:08:44,818 --> 00:08:47,442
+It was made here;
+it didn't come with the repo.
+
+147
+00:08:47,684 --> 00:08:51,076
+Now, a small mistake in the README,
+with an easy fix.
+
+148
+00:08:51,396 --> 00:08:55,343
+It says uv.lock gives
+the next person the same versions.
+
+149
+00:08:55,663 --> 00:09:00,249
+But the repo never committed one,
+so each student's first sync resolves fresh.
+
+150
+00:09:00,569 --> 00:09:03,449
+In your own projects, commit uv.lock.
+
+151
+00:09:03,769 --> 00:09:07,725
+In automated builds,
+run uv sync with the locked flag,
+
+152
+00:09:07,725 --> 00:09:10,510
+which refuses a missing or stale lock.
+
+153
+00:09:10,750 --> 00:09:13,481
+Last, an extra: run uv sync again.
+
+154
+00:09:13,801 --> 00:09:18,595
+It checks the same packages, 11 here,
+in a fraction of a millisecond,
+
+155
+00:09:18,595 --> 00:09:21,652
+and changes nothing: safe to re-run anytime.
+
+156
+00:09:22,900 --> 00:09:25,055
+Let's open the venv, as promised.
+
+157
+00:09:25,375 --> 00:09:28,214
+This extra command lists its bin folder:
+
+158
+00:09:28,214 --> 00:09:32,756
+python, a link to the Python uv downloaded,
+and, notice, no pip.
+
+159
+00:09:33,700 --> 00:09:37,770
+And the config file:
+home is the real interpreter's folder,
+
+160
+00:09:37,770 --> 00:09:41,977
+include system site packages is false,
+and the prompt is app.
+
+161
+00:09:42,297 --> 00:09:44,111
+All three parts, as drawn.
+
+162
+00:09:44,350 --> 00:09:48,019
+Step 10:
+source dot venv slash bin slash activate.
+
+163
+00:09:48,339 --> 00:09:49,491
+Pause and run it.
+
+164
+00:09:49,811 --> 00:09:52,691
+Your prompt now starts with app,
+in parentheses.
+
+165
+00:09:53,011 --> 00:09:55,529
+The README's example says simple-translate.
+
+166
+00:09:55,849 --> 00:10:01,161
+But uv names the prompt after the project,
+and pyproject.toml calls it app.
+
+167
+00:10:01,400 --> 00:10:02,381
+What changed?
+
+168
+00:10:02,701 --> 00:10:07,160
+Before activating, python knocked
+on every door in PATH and found nothing.
+
+169
+00:10:07,480 --> 00:10:10,068
+The activate script saves your old PATH,
+
+170
+00:10:10,068 --> 00:10:15,309
+then puts the bin folder of the venv first,
+so python is found at the first door.
+
+171
+00:10:15,550 --> 00:10:20,242
+Extra checks:
+which python points into dot venv,
+
+172
+00:10:20,242 --> 00:10:25,394
+and python reports 3.15.0,
+at the time of recording;
+
+173
+00:10:25,394 --> 00:10:27,475
+on Debian 13, 3.13.5.
+
+174
+00:10:27,795 --> 00:10:29,438
+And which pip finds nothing.
+
+175
+00:10:30,333 --> 00:10:32,883
+Another small mistake in the README:
+
+176
+00:10:32,883 --> 00:10:37,842
+it says activation points pip into the venv,
+but a uv venv has no pip.
+
+177
+00:10:38,162 --> 00:10:42,279
+On a machine with a system pip,
+which pip finds that one instead,
+
+178
+00:10:42,279 --> 00:10:44,306
+and it refuses, as at the start.
+
+179
+00:10:44,626 --> 00:10:47,200
+To add a package, use uv add,
+
+180
+00:10:47,200 --> 00:10:51,816
+which also records it
+in pyproject.toml and uv.lock.
+
+181
+00:10:52,050 --> 00:10:55,443
+Activation also sets
+a variable called virtual env,
+
+182
+00:10:55,443 --> 00:10:56,723
+changes the prompt,
+
+183
+00:10:56,723 --> 00:11:00,498
+and adds a command called deactivate
+that undoes it all.
+
+184
+00:11:00,818 --> 00:11:04,551
+It only changes where the shell looks first,
+and only in this shell.
+
+185
+00:11:04,871 --> 00:11:10,397
+If your SSH window reconnects,
+cd into simple-translate and activate again.
+
+186
+00:11:10,683 --> 00:11:14,459
+Step 11: the same three runs,
+now with plain python.
+
+187
+00:11:14,779 --> 00:11:18,079
+Copy the long ones from the README,
+quotes included,
+
+188
+00:11:18,079 --> 00:11:19,792
+and pause to run all three.
+
+189
+00:11:20,112 --> 00:11:23,632
+This time Google answered:
+these are real translations.
+
+190
+00:11:23,952 --> 00:11:28,945
+If you get a 429 again
+but see the Input line, your venv works.
+
+191
+00:11:29,183 --> 00:11:32,511
+Two extras, not in the README,
+that skip activation.
+
+192
+00:11:32,831 --> 00:11:39,572
+First, uv run python cli.py syncs the venv
+if needed, then runs the app inside it.
+
+193
+00:11:39,892 --> 00:11:42,069
+Or call the venv's python by its path.
+
+194
+00:11:42,317 --> 00:11:45,304
+And why source,
+not just run the activate script?
+
+195
+00:11:45,624 --> 00:11:48,732
+It isn't even executable,
+and run as a program,
+
+196
+00:11:48,732 --> 00:11:53,559
+it would only change a child shell
+that exits at once, like the env file.
+
+197
+00:11:54,800 --> 00:11:57,424
+Let's prove the isolation with a few extras.
+
+198
+00:11:57,744 --> 00:12:02,715
+Deactivate first: while the venv is active,
+even python3 points into it.
+
+199
+00:12:03,035 --> 00:12:06,789
+Then ask the system's
+python3 to import googletrans.
+
+200
+00:12:07,109 --> 00:12:08,709
+ModuleNotFoundError.
+
+201
+00:12:09,029 --> 00:12:12,400
+On this VM,
+the packages exist only in the venv.
+
+202
+00:12:12,633 --> 00:12:17,092
+On the shelves: the system Python
+scans its own list, top to bottom.
+
+203
+00:12:17,412 --> 00:12:21,209
+The venv's shelf isn't on that list,
+so the search comes up empty.
+
+204
+00:12:21,533 --> 00:12:26,162
+Now the same import through uv run,
+printing where this Python thinks it lives.
+
+205
+00:12:26,482 --> 00:12:29,277
+It works,
+and the answer is our dot venv folder.
+
+206
+00:12:29,517 --> 00:12:32,162
+Now imagine you'd kept your part-1 VM.
+
+207
+00:12:32,482 --> 00:12:36,599
+Same import, system python3, no venv.
+Does it work?
+
+208
+00:12:43,433 --> 00:12:49,289
+Yes: on that VM, sudo pip put googletrans
+on the system-wide user local shelf,
+
+209
+00:12:49,289 --> 00:12:51,241
+so every program finds it.
+
+210
+00:12:51,561 --> 00:12:54,377
+Same import,
+different shelves, different answer.
+
+211
+00:12:54,617 --> 00:12:56,366
+And it works the other way too.
+
+212
+00:12:56,686 --> 00:13:02,145
+Even on that messy part-1 VM, a venv
+would ignore everything sudo pip put there,
+
+213
+00:13:02,145 --> 00:13:04,942
+because those shelves aren't on its list.
+
+214
+00:13:05,262 --> 00:13:07,438
+That's the whole lesson in one picture.
+
+215
+00:13:09,083 --> 00:13:13,584
+One more tool you'll meet:
+pipenv, an older way to do the same job.
+
+216
+00:13:13,904 --> 00:13:18,662
+This repo's pipenv branch,
+an older version of this tutorial, uses it.
+
+217
+00:13:18,982 --> 00:13:24,486
+So do the separate AWS version and,
+later, the cheese app's API service.
+
+218
+00:13:24,733 --> 00:13:26,653
+Same ideas, different names.
+
+219
+00:13:26,973 --> 00:13:33,629
+The pyproject.toml file becomes the Pipfile,
+and uv.lock becomes Pipfile.lock.
+
+220
+00:13:33,949 --> 00:13:37,960
+The venv lives in a folder
+in your home instead of in the project.
+
+221
+00:13:38,280 --> 00:13:42,568
+The command uv sync becomes pipenv install,
+or pipenv sync.
+
+222
+00:13:42,888 --> 00:13:44,552
+And instead of activating,
+
+223
+00:13:44,552 --> 00:13:47,560
+pipenv shell opens
+a new shell inside the venv.
+
+224
+00:13:47,880 --> 00:13:49,394
+Type exit to leave it.
+
+225
+00:13:49,633 --> 00:13:51,894
+And here's our puzzle again, for real.
+
+226
+00:13:52,214 --> 00:13:56,738
+That branch's lock file pins httpx 0.13.3,
+
+227
+00:13:56,738 --> 00:14:03,308
+while our uv sync installed 0.28.1,
+at the time of recording.
+
+228
+00:14:03,628 --> 00:14:07,553
+Two versions of the same app,
+two versions of httpx.
+
+229
+00:14:07,873 --> 00:14:11,137
+On one shared system Python,
+they couldn't live together.
+
+230
+00:14:11,457 --> 00:14:12,929
+In two venvs, they can.
+
+231
+00:14:15,967 --> 00:14:19,182
+Step 12: delete the VM, with its boot disk,
+
+232
+00:14:19,182 --> 00:14:23,220
+then check that VM instances
+and Disks are both empty.
+
+233
+00:14:23,540 --> 00:14:25,951
+Pause and do it now, before you forget.
+
+234
+00:14:26,200 --> 00:14:27,437
+Here's where we are.
+
+235
+00:14:27,757 --> 00:14:31,661
+The VM gave us a whole machine
+that we can wreck and delete.
+
+236
+00:14:31,981 --> 00:14:36,056
+The venv keeps one project's packages away
+from that machine's Python.
+
+237
+00:14:36,376 --> 00:14:39,278
+And between the two,
+there's room for one more layer.
+
+238
+00:14:39,517 --> 00:14:42,440
+That layer is a container,
+and it's next lecture.
+
+239
+00:14:42,760 --> 00:14:47,231
+The tutorial's Dockerfile already
+shows the idea: copy the code,
+
+240
+00:14:47,231 --> 00:14:48,720
+run the same uv sync,
+
+241
+00:14:48,720 --> 00:14:51,912
+and start in a shell
+with the venv activated.
+
+242
+00:14:52,232 --> 00:14:54,984
+Everything you did today,
+baked into an image.
+
+243
+00:14:55,234 --> 00:14:57,197
+One thing to watch for next time.
+
+244
+00:14:57,517 --> 00:15:01,322
+The Dockerfile starts
+from a Python 3.12 image,
+
+245
+00:15:01,322 --> 00:15:04,237
+but the project wants 3.13 or newer.
+
+246
+00:15:04,557 --> 00:15:07,052
+You already know what uv will do about that.
+
+247
+00:15:07,300 --> 00:15:10,329
+Before you go,
+five questions to test yourself.
+
+248
+00:15:10,649 --> 00:15:14,553
+One: what does the break-system-packages
+flag actually break,
+
+249
+00:15:14,553 --> 00:15:16,986
+and where did sudo pip3 put the files?
+
+250
+00:15:17,234 --> 00:15:20,285
+Two: name the three parts
+of a virtual environment.
+
+251
+00:15:20,605 --> 00:15:23,195
+Three: what exactly does activation change,
+
+252
+00:15:23,195 --> 00:15:26,087
+and what are two ways
+to run the app without it?
+
+253
+00:15:26,334 --> 00:15:29,534
+Four: 2 dependencies became 11 packages.
+
+254
+00:15:29,854 --> 00:15:32,883
+Why, and which file makes
+everyone get the same ones?
+
+255
+00:15:33,203 --> 00:15:36,610
+Five:
+is requires Python 3.13 or newer a pin,
+
+256
+00:15:36,610 --> 00:15:40,094
+and what would make
+the version deterministic?
+
+257
+00:15:40,334 --> 00:15:42,510
+The answers are in the exercises.
+
+258
+00:15:42,830 --> 00:15:45,960
+Every command from today
+is in the study guide,
+
+259
+00:15:45,960 --> 00:15:47,758
+in the MLOps Learning repo.
+
+260
+00:15:48,078 --> 00:15:49,784
+Next time: containers.
+

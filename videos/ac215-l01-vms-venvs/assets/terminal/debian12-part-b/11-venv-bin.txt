@@ -1,0 +1,22 @@
+$ ls -la .venv/bin
+total 72
+drwxr-xr-x 2 student student 4096 Oct 12 02:25 .
+drwxr-xr-x 4 student student 4096 Oct 12 02:25 ..
+-rw-r--r-- 1 student student 4095 Oct 12 02:25 activate
+-rw-r--r-- 1 student student 2672 Oct 12 02:25 activate.bat
+-rw-r--r-- 1 student student 2625 Oct 12 02:25 activate.csh
+-rw-r--r-- 1 student student 4336 Oct 12 02:25 activate.fish
+-rw-r--r-- 1 student student 3953 Oct 12 02:25 activate.nu
+-rw-r--r-- 1 student student 2771 Oct 12 02:25 activate.ps1
+-rw-r--r-- 1 student student 3870 Oct 12 02:25 activate.xsh
+-rw-r--r-- 1 student student 2386 Oct 12 02:25 activate_this.py
+-rwxr-xr-x 1 student student  325 Oct 12 02:25 art
+-rw-r--r-- 1 student student 1730 Oct 12 02:25 deactivate.bat
+-rwxr-xr-x 1 student student  318 Oct 12 02:25 httpx
+-rwxr-xr-x 1 student student  321 Oct 12 02:25 idna
+-rw-r--r-- 1 student student 1219 Oct 12 02:25 pydoc.bat
+lrwxrwxrwx 1 student student   81 Oct 12 02:25 python -> /home/student/.local/share/uv/python/cpython-3.15-linux-x86_64-gnu/bin/python3.15
+lrwxrwxrwx 1 student student    6 Oct 12 02:25 python3 -> python
+lrwxrwxrwx 1 student student    6 Oct 12 02:25 python3.15 -> python
+-rwxr-xr-x 1 student student  334 Oct 12 02:25 translate
+[exit 0]

@@ -1,0 +1,1844 @@
+1
+00:00:00,000 --> 00:00:03,076
+这是一个医院数据库，每个病人一条记录
+Here is a hospital database, one row per patient.
+
+2
+00:00:03,396 --> 00:00:08,668
+有位研究者问了个看似无害的问题：有多少病人患有疾病 X？
+A researcher asks an innocent question: how many patients have condition X?
+
+3
+00:00:08,989 --> 00:00:10,687
+医院不公开任何记录
+The hospital releases no records.
+
+4
+00:00:11,007 --> 00:00:13,076
+它只给了一个数：41
+It just says: 41.
+
+5
+00:00:13,317 --> 00:00:16,291
+一周后，一位新病人 Alice 入院了
+A week later, one new patient, Alice, is admitted.
+
+6
+00:00:16,611 --> 00:00:18,211
+研究者又问了一遍
+The researcher asks again.
+
+7
+00:00:18,423 --> 00:00:20,023
+现在答案是 42
+The answer is now 42.
+
+8
+00:00:20,167 --> 00:00:24,627
+两数一减，研究者就知道了 Alice 一件很具体的事
+Subtract, and the researcher has learned something very specific about Alice,
+
+9
+00:00:24,627 --> 00:00:26,310
+却一条记录都没看
+without seeing a single record.
+
+10
+00:00:26,630 --> 00:00:29,697
+继续之前，先自己试着补上这个漏洞
+Before we go on, try to fix this yourself.
+
+11
+00:00:30,017 --> 00:00:34,459
+暂停想一想：人数四舍五入到十位，能保护 Alice 吗？
+Pause and ponder: would rounding the count to the nearest ten protect Alice?
+
+12
+00:00:34,779 --> 00:00:37,954
+需要多想一会儿的话，可以先暂停视频
+Pause the video if you need more time.
+
+13
+00:00:48,200 --> 00:00:50,527
+大多数星期里，确实可以
+Most weeks, yes.
+
+14
+00:00:50,847 --> 00:00:53,461
+但如果人数从 44 变成 45
+But if the count goes from 44 to 45,
+
+15
+00:00:53,461 --> 00:00:58,171
+取整后的答案就从 40 跳到 50，Alice 又暴露了
+the rounded answer jumps from 40 to 50, and Alice is exposed again.
+
+16
+00:00:58,491 --> 00:01:03,659
+任何确定性的规则，只要答案会变，就一定在某处有这样的跳变
+Any fixed rule that ever changes its answer has a jump like that somewhere.
+
+17
+00:01:03,900 --> 00:01:07,524
+那发布统计量，到底怎样才算不泄露隐私？
+So what would it even mean for a statistic to be private?
+
+18
+00:01:07,844 --> 00:01:10,511
+如果靠加噪声，那加多少才够？
+And if the fix is to add noise, how much is enough?
+
+19
+00:01:10,750 --> 00:01:14,116
+2006 年，Cynthia Dwork、Frank McSherry
+In 2006, Cynthia Dwork, Frank McSherry,
+
+20
+00:01:14,116 --> 00:01:16,355
+Kobbi Nissim 和 Adam Smith
+Kobbi Nissim and Adam Smith
+
+21
+00:01:16,355 --> 00:01:18,690
+在这篇 paper 里回答了这两个问题
+answered both questions in this paper:
+
+22
+00:01:18,690 --> 00:01:23,603
+《Calibrating Noise to Sensitivity in Private Data Analysis》
+Calibrating Noise to Sensitivity in Private Data Analysis.
+
+23
+00:01:23,923 --> 00:01:28,821
+它开创了我们今天所说的差分隐私（differential privacy）
+It founded what we now call differential privacy,
+
+24
+00:01:28,821 --> 00:01:31,270
+2017 年还获得了哥德尔奖
+and in 2017 it won the Gödel Prize.
+
+25
+00:01:31,517 --> 00:01:35,529
+这期视频讲它的三个核心想法：隐私的定义
+This video covers its three big ideas: a definition of privacy,
+
+26
+00:01:35,529 --> 00:01:38,748
+一个数叫敏感度（sensitivity）
+a number called sensitivity,
+
+27
+00:01:38,748 --> 00:01:41,958
+以及一个公式，算噪声加多少才够
+and a recipe for how much noise is enough.
+
+28
+00:01:42,278 --> 00:01:44,298
+还有个出人意料的限制
+Plus a surprising limit
+
+29
+00:01:44,298 --> 00:01:48,339
+要满足这个定义，只公开一张表，能做的很有限
+on what one published table can achieve, if it must be private in this sense.
+
+30
+00:01:49,783 --> 00:01:53,262
+先画一张地图，看看这篇 paper 从哪儿来
+First, a map of where this paper comes from.
+
+31
+00:01:53,582 --> 00:01:58,634
+1965 年，Stanley Warner 为敏感问题调查提出了随机响应
+In 1965, Stanley Warner proposed randomized response for sensitive surveys.
+
+32
+00:01:58,954 --> 00:02:01,919
+在常见的版本里，你私下掷一枚硬币
+In a popular version, you flip a coin in private.
+
+33
+00:02:02,239 --> 00:02:04,154
+正面，你就如实回答
+Heads, you answer truthfully.
+
+34
+00:02:04,474 --> 00:02:08,523
+反面，你就再掷一次：正面答“是”，反面答“否”
+Tails, you flip again and say yes for heads, no for tails.
+
+35
+00:02:08,843 --> 00:02:12,334
+任何一个“是”，都可能只是硬币替你说的
+Any single yes could be the coin talking,
+
+36
+00:02:12,334 --> 00:02:15,988
+但问上成千上万人，真实比例照样能估出来
+yet over thousands of people the true rate can still be estimated.
+
+37
+00:02:16,308 --> 00:02:17,666
+记住这枚硬币
+Keep this coin in mind.
+
+38
+00:02:17,716 --> 00:02:22,937
+之后几十年，统计学家和计算机科学家，不断改进这类 trick
+Over the following decades, statisticians and computer scientists refined such tricks,
+
+39
+00:02:22,937 --> 00:02:27,917
+分成两种思路：要么扰动输入的数据，要么扰动输出的答案
+in two flavours: scramble the data going in, or scramble the answers coming out.
+
+40
+00:02:28,166 --> 00:02:33,670
+与此同时，最容易想到的办法，也就是直接去掉姓名，却一再失败
+Meanwhile, the obvious fix, just remove the names, kept failing.
+
+41
+00:02:33,990 --> 00:02:36,267
+Latanya Sweeney 发现
+Latanya Sweeney showed
+
+42
+00:02:36,267 --> 00:02:41,285
+光凭邮编、出生日期和性别，就能唯一识别大多数美国人
+that ZIP code, birth date and sex alone single out most Americans,
+
+43
+00:02:41,285 --> 00:02:46,254
+1997 年，她把号称匿名的病历和公开的选民名单一对照
+and in 1997 she linked supposedly anonymous hospital records to a public voter list
+
+44
+00:02:46,254 --> 00:02:48,569
+就认出了马萨诸塞州州长
+and found the governor of Massachusetts.
+
+45
+00:02:48,889 --> 00:02:52,444
+教训是：隐私必须是发布过程本身的性质
+The lesson: privacy must be a property of the process,
+
+46
+00:02:52,444 --> 00:02:55,250
+而不是看发布出来的表长什么样
+not of how the released table looks,
+
+47
+00:02:55,250 --> 00:02:59,365
+而且无论攻击者还知道什么，这一点都必须成立
+and it must hold whatever else the attacker knows.
+
+48
+00:02:59,600 --> 00:03:01,008
+然后在 2003 年
+Then, in 2003,
+
+49
+00:03:01,008 --> 00:03:05,714
+Irit Dinur 和 Kobbi Nissim 证明了一个令人警醒的结论
+Irit Dinur and Kobbi Nissim proved something sobering.
+
+50
+00:03:06,034 --> 00:03:09,913
+问题答得太多、太准，误差远小于根号 n
+Answer too many questions too accurately, with errors much smaller than the square root of n,
+
+51
+00:03:09,913 --> 00:03:13,162
+攻击者就能重构出几乎整个数据库
+and an attacker can rebuild almost the entire database.
+
+52
+00:03:13,482 --> 00:03:18,821
+我们那个做减法的攻击，其实就是这种攻击只问两个问题的版本
+Our subtraction was the two-question version of this attack.
+
+53
+00:03:19,141 --> 00:03:21,907
+噪声，就是回答很多问题的代价
+Noise is the price of answering many questions.
+
+54
+00:03:22,150 --> 00:03:26,721
+反过来也有好消息：问题数量有限，适量噪声就够了
+The hopeful flip side: with a limited number of questions, modest noise is enough.
+
+55
+00:03:27,041 --> 00:03:31,733
+Dwork、Nissim 和合作者，据此做了个叫 SuLQ 的框架
+Dwork, Nissim and colleagues built this into a framework called SuLQ,
+
+56
+00:03:31,733 --> 00:03:34,616
+意思是只问次线性数量的 query（查询）
+for sub-linear queries,
+
+57
+00:03:34,616 --> 00:03:37,442
+它回答带噪声的求和，比如人数
+which answers noisy sums like counts.
+
+58
+00:03:37,762 --> 00:03:39,362
+记住提问的上限
+Remember that limit on questions.
+
+59
+00:03:39,497 --> 00:03:41,959
+这篇 paper 把它变成一笔预算
+This paper turns it into a budget.
+
+60
+00:03:42,200 --> 00:03:44,430
+但 SuLQ 只能处理求和
+But SuLQ only covered sums,
+
+61
+00:03:44,430 --> 00:03:48,574
+而且它的定义允许有极小的概率发生大量泄露
+and its definition tolerated a tiny chance of a large leak.
+
+62
+00:03:48,894 --> 00:03:53,285
+这篇 paper 迈出了一大步：适用于数据的任意函数
+This paper takes the leap: any function of the data,
+
+63
+00:03:53,285 --> 00:03:56,967
+只用一个干净的定义和一条简单的噪声规则
+one clean definition, and one simple rule for the noise.
+
+64
+00:03:57,287 --> 00:04:02,488
+难怪它发表在密码学会议上：那里的习惯就是先定义安全性
+Fittingly, it appeared at a cryptography conference, where the habit is to define security
+
+65
+00:04:02,488 --> 00:04:06,148
+要求能抵御所有可能的攻击者，再去证明
+against every possible attacker first, and then prove it.
+
+66
+00:04:08,583 --> 00:04:10,277
+先交代一下 setting
+Here is the setting.
+
+67
+00:04:10,597 --> 00:04:13,847
+可信的服务器，也就是数据管理者
+A trusted server, the curator,
+
+68
+00:04:13,847 --> 00:04:17,340
+持有数据库 x：n 条记录，每人一条
+holds a database x: n rows, one per person.
+
+69
+00:04:17,660 --> 00:04:19,746
+分析者发来 query f
+An analyst sends a query f,
+
+70
+00:04:19,746 --> 00:04:23,555
+数据库的任意函数，返回一个数或一组数
+any function of the database that returns a number, or a list of numbers.
+
+71
+00:04:23,800 --> 00:04:27,388
+数据管理者从不公开真实答案 f(x)
+The curator never releases the honest answer, f(x).
+
+72
+00:04:27,708 --> 00:04:32,659
+它的做法是先抽一个随机噪声 Y，再公开 f(x) 加 Y
+Instead it draws random noise, Y, and releases f(x) + Y.
+
+73
+00:04:32,979 --> 00:04:37,677
+因为分析者可以一直问下去，所以这叫交互式的 setting
+Because the analyst can keep asking, this is called the interactive setting.
+
+74
+00:04:37,997 --> 00:04:41,475
+另一种做法是发布一张经过隐私处理的表
+The alternative, publishing one sanitized table
+
+75
+00:04:41,475 --> 00:04:44,038
+然后撒手不管，这叫非交互式
+and walking away, is non-interactive.
+
+76
+00:04:44,358 --> 00:04:47,838
+原文最后证明了，交互式从根本上更强
+At the end, the paper proves the first is fundamentally more powerful.
+
+77
+00:04:48,083 --> 00:04:52,716
+所以一切都归结到一个问题：Y 应该服从什么分布？
+So everything hinges on one question: what distribution should Y have?
+
+78
+00:04:53,036 --> 00:04:55,528
+噪声太少，Alice 就暴露了
+Too little noise, and Alice is exposed.
+
+79
+00:04:55,848 --> 00:04:57,629
+太多，答案就没用了
+Too much, and the answer is useless.
+
+80
+00:04:57,949 --> 00:05:01,676
+标题已经给出了答案：按敏感度校准噪声
+The title gives the answer: calibrate the noise to the sensitivity.
+
+81
+00:05:01,996 --> 00:05:05,750
+不过我们先要搞清楚：到底什么叫不泄露隐私？
+But first, what does private actually mean?
+
+82
+00:05:07,100 --> 00:05:08,755
+关键是想象两个世界
+The key move is to imagine two worlds.
+
+83
+00:05:09,075 --> 00:05:10,924
+一边是数据库 x
+In one, the database is x.
+
+84
+00:05:11,244 --> 00:05:14,715
+另一边是 x′：只有一条记录不同
+In the other, it is x′: identical except for one row.
+
+85
+00:05:15,035 --> 00:05:16,650
+比如 Alice 那条
+Say, Alice's.
+
+86
+00:05:16,970 --> 00:05:19,199
+这样的一对叫相邻数据库（也叫相邻数据集）
+Databases like this are called neighbors.
+
+87
+00:05:19,519 --> 00:05:23,390
+医院例子里多了 Alice；这里是她的记录变了
+In the hospital, Alice was added; here, her row just says something different.
+
+88
+00:05:23,710 --> 00:05:26,490
+总之，谁的记录都不该影响太大
+Either way, no single person's row should matter much.
+
+89
+00:05:26,733 --> 00:05:30,454
+把这个机制，也就是数据管理者随机作答的规则
+Run the mechanism, the curator's randomized answering rule,
+
+90
+00:05:30,454 --> 00:05:32,314
+在两个世界里各跑一次
+in each world.
+
+91
+00:05:32,634 --> 00:05:36,409
+分析者能看到的一切，原文叫 transcript（交互历史）
+Whatever the analyst gets to see, the paper calls the transcript;
+
+92
+00:05:36,409 --> 00:05:38,856
+目前就是一个带噪声的答案
+for now, a single noisy answer.
+
+93
+00:05:39,176 --> 00:05:43,639
+因为机制是随机的，每个世界都对应一个完整的输出分布
+Because the mechanism is random, each world gives a whole distribution of possible outputs.
+
+94
+00:05:43,883 --> 00:05:47,631
+任取一个输出 t，比较两条曲线在这里的高度
+Pick any output t, and compare the heights of the two curves there.
+
+95
+00:05:47,951 --> 00:05:50,083
+滑动 t，看它们的比值
+Slide t along and watch their ratio.
+
+96
+00:05:50,403 --> 00:05:53,992
+满足差分隐私的机制，让比值处处接近 1
+A private mechanism keeps that ratio close to 1 everywhere:
+
+97
+00:05:53,992 --> 00:05:59,149
+不超过 e^ε，也不低于 e^(−ε)
+never above e^ε, never below e^(−ε).
+
+98
+00:05:59,383 --> 00:06:03,134
+这就是原文的定义，叫作 ε-不可区分性（即 ε-差分隐私）
+That is the paper's definition, which it calls ε-indistinguishability.
+
+99
+00:06:03,454 --> 00:06:06,855
+比值的对数，就是输出 t 处的隐私损失
+The log of the ratio is the privacy loss at t.
+
+100
+00:06:07,175 --> 00:06:11,401
+对任意一对相邻数据库、任意分析者、任意输出
+For every pair of neighbors, every analyst and every output,
+
+101
+00:06:11,401 --> 00:06:14,282
+它的绝对值都不能超过 ε
+it must be at most ε in absolute value.
+
+102
+00:06:14,602 --> 00:06:19,452
+取绝对值就对称了：比值是 2 还是 1/2，都算一样
+The absolute value makes it symmetric: a ratio of 2 and a ratio of 1/2 count the same.
+
+103
+00:06:19,772 --> 00:06:25,363
+ε 很小的时候，e^ε 约等于 1 + ε
+For small ε, e^ε is about 1 + ε.
+
+104
+00:06:25,600 --> 00:06:27,914
+拿地图上 Warner 的硬币试试
+Let's test it on Warner's coin from our map.
+
+105
+00:06:28,234 --> 00:06:31,964
+暂停想一想：如果 Alice 的真实答案为“是”
+Pause and ponder: if Alice's true answer is yes,
+
+106
+00:06:31,964 --> 00:06:35,179
+她有多大概率回答“是”？换成“否”呢？
+how likely is she to say yes? And if it is no?
+
+107
+00:06:48,017 --> 00:06:54,096
+真实答案为“是”，她回答“是”的概率是 3/4：正面，或者先反后正
+If the truth is yes, she says yes 3/4 of the time: heads, or tails then heads.
+
+108
+00:06:54,416 --> 00:06:59,017
+换成“否”，只有第二枚硬币能让她回答“是”：1/4
+If it is no, only the second coin can say yes: 1/4.
+
+109
+00:06:59,337 --> 00:07:02,666
+最坏的比值是 3，所以硬币满足定义
+The worst ratio is 3, so the coin satisfies the definition,
+
+110
+00:07:02,666 --> 00:07:06,582
+ε 就等于 3 的自然对数，大约 1.1
+with ε = ln 3, about 1.1.
+
+111
+00:07:06,817 --> 00:07:09,908
+现在你是攻击者，想区分这两个世界
+Now be the attacker, trying to tell the two worlds apart.
+
+112
+00:07:10,228 --> 00:07:15,496
+按贝叶斯公式，后验概率比恰好是先验概率比乘上这个比值
+By Bayes' rule, your new odds are your old odds times exactly this ratio,
+
+113
+00:07:15,496 --> 00:07:21,672
+所以最多只会变成原来的 e^ε 倍，无论你之前知道什么
+so they move by at most a factor of e^ε, whatever you knew before.
+
+114
+00:07:21,992 --> 00:07:28,935
+一开始是五五开的话，ε 取 0.1 最多有 52.5% 的把握
+Starting from 50/50, ε = 0.1 leaves you at most 52.5% sure;
+
+115
+00:07:28,935 --> 00:07:31,386
+取 1 最多 73%
+ε = 1, at most 73%.
+
+116
+00:07:31,706 --> 00:07:35,564
+ε 是人为选定的；原文管它叫 leakage（泄露量）
+ε is set by policy; the paper calls it the leakage.
+
+117
+00:07:35,800 --> 00:07:37,465
+再来看它不保证什么
+Notice what this does not promise.
+
+118
+00:07:37,785 --> 00:07:40,984
+假如研究发现吸烟者更容易得心脏病
+If a study reveals that smokers get more heart disease,
+
+119
+00:07:40,984 --> 00:07:45,284
+而 Alice 吸烟，别人现在就可能觉得她风险更高
+and Alice smokes, people may now think she is at higher risk.
+
+120
+00:07:45,604 --> 00:07:50,350
+这不算侵犯隐私：同样的结论从其他人的数据里也能得出
+That is not a privacy violation: the same lesson could be learned from everyone else's data,
+
+121
+00:07:50,350 --> 00:07:54,887
+所以就算把 Alice 的记录换成别人的，也照样会发生
+so it would happen even if Alice's row were replaced by someone else's.
+
+122
+00:07:56,333 --> 00:07:59,099
+为什么每个输出的比值都要有上界？
+Why demand a ratio bound for every single output?
+
+123
+00:07:59,419 --> 00:08:02,065
+密码学常常满足于更弱的标准
+Cryptography often settles for something weaker:
+
+124
+00:08:02,065 --> 00:08:05,655
+统计距离（即 TV 距离），也就是两条曲线间面积的一半
+statistical distance, half the area between the two curves.
+
+125
+00:08:05,975 --> 00:08:10,470
+等价地说，就是任意事件的概率在两个世界间的最大差距
+Equivalently, the most the probability of any event can differ between the worlds.
+
+126
+00:08:10,790 --> 00:08:13,238
+原文说明了它在这里为什么不够
+The paper shows why that is not enough here.
+
+127
+00:08:13,483 --> 00:08:17,122
+看这个机制：随机挑一条记录，原样发布
+Consider this mechanism: pick one row at random and publish it, word for word.
+
+128
+00:08:17,442 --> 00:08:21,719
+改动一个人的记录，输出分布只会变化 1/n
+Change one person's row, and the output distribution moves by only 1/n.
+
+129
+00:08:22,039 --> 00:08:24,940
+数据库很大时这点变化微不足道
+For a big database that is tiny,
+
+130
+00:08:24,940 --> 00:08:29,580
+所以按这种平均意义上的度量，它看起来不泄露隐私
+so by the averaged measure this looks private.
+
+131
+00:08:29,816 --> 00:08:32,666
+可每个输出都是某个人的完整记录
+But every output is somebody's complete record.
+
+132
+00:08:32,986 --> 00:08:37,418
+比值这一关能拦住它：显示 Alice 真实取值的输出
+The ratio test catches it: the output showing Alice's real value
+
+133
+00:08:37,418 --> 00:08:41,069
+一个世界里概率是 1/n，另一个是 0
+has probability 1/n in one world, and 0 in the other.
+
+134
+00:08:41,389 --> 00:08:42,900
+比值是无穷大
+The ratio is infinite.
+
+135
+00:08:42,950 --> 00:08:47,365
+平均值会放过那些对每个人来说都很罕见的灾难
+Averages let catastrophes slip through, as long as each is rare for any single person.
+
+136
+00:08:47,685 --> 00:08:50,585
+而比值上界会处处把它们排除在外
+A ratio bound rules them out everywhere.
+
+137
+00:08:50,905 --> 00:08:53,255
+它也解答了四舍五入那道题
+It also settles our rounding question:
+
+138
+00:08:53,255 --> 00:08:58,135
+在跳变处，一个世界给出这个答案的概率是 1，另一个是 0
+at the jump, one world gives that answer with probability 1, the other with probability 0.
+
+139
+00:08:58,455 --> 00:09:01,547
+想过这一关，机制就必须是随机的
+To pass this test, a mechanism has to be random.
+
+140
+00:09:02,983 --> 00:09:04,701
+那噪声到底要加多少？
+So how much noise do we need?
+
+141
+00:09:05,021 --> 00:09:07,709
+这只取决于 query 的一个性质
+It depends on a single property of the query:
+
+142
+00:09:07,709 --> 00:09:12,415
+它的敏感度，也就是改变一条记录最多能让答案变化多少
+its sensitivity, the most that changing one row can ever change the answer,
+
+143
+00:09:12,415 --> 00:09:16,215
+取遍每一对相邻数据库，包括还不存在的那些
+over all pairs of neighboring databases, including ones that do not exist yet.
+
+144
+00:09:16,450 --> 00:09:18,179
+对 counting query（计数查询）
+For a counting query,
+
+145
+00:09:18,179 --> 00:09:21,382
+比如医院那个，一条记录最多让答案变 1
+like our hospital count, one row changes the answer by at most 1.
+
+146
+00:09:21,702 --> 00:09:23,000
+敏感度是 1
+Sensitivity 1.
+
+147
+00:09:23,050 --> 00:09:27,167
+再看直方图：把一条记录的可能取值分成 d 个桶
+Now a histogram: split the possible values of a row into d bins,
+
+148
+00:09:27,167 --> 00:09:28,984
+发布每个桶的记录数
+and release how many rows fall in each.
+
+149
+00:09:29,304 --> 00:09:31,831
+先别急着看答案，暂停一下
+Before I show you, pause:
+
+150
+00:09:31,831 --> 00:09:36,466
+如果 Alice 的记录变了，整个直方图总共能变多少？
+if Alice's row changes, how much can the whole histogram change in total?
+
+151
+00:09:36,786 --> 00:09:38,447
+这跟桶的数量有关吗？
+Does it depend on the number of bins?
+
+152
+00:09:47,283 --> 00:09:52,133
+她从一个桶搬到另一个桶：一个桶少了 1，另一个桶多了 1
+She moves out of one bin and into another: one count goes down by 1, another goes up by 1.
+
+153
+00:09:52,453 --> 00:09:54,053
+总变化量：2
+Total change: 2.
+
+154
+00:09:54,260 --> 00:09:57,802
+像这样把各个分量变化的绝对值加起来
+Adding up absolute changes across coordinates like this
+
+155
+00:09:57,802 --> 00:10:02,366
+就是 L1 范数，原文就用它来衡量一列数的敏感度
+is the L1 norm, the paper's way to measure sensitivity for lists of numbers.
+
+156
+00:10:02,686 --> 00:10:06,646
+而且它总是 2，不管是 5 个桶还是 5000 个桶
+And it is 2 whether there are 5 bins or 5000.
+
+157
+00:10:06,966 --> 00:10:08,620
+它和维度完全无关
+It does not depend on the dimension at all.
+
+158
+00:10:08,866 --> 00:10:12,028
+对比一下：数据库里最高的收入是多少？
+Contrast that with: what is the largest income in the database?
+
+159
+00:10:12,348 --> 00:10:17,523
+一个亿万富翁，就能让答案变动 10 亿，不封顶就根本没有上限
+One billionaire can move that answer by $1B, and with no cap there is no limit at all.
+
+160
+00:10:17,843 --> 00:10:21,620
+标准做法是先给每个值封顶，比如 100 万
+The standard fix is to cap every value, say at $1M, first.
+
+161
+00:10:21,940 --> 00:10:26,918
+这个 trick 要记住：差分隐私深度学习对梯度做的就是这个
+Remember that trick: it is exactly what private deep learning does to gradients.
+
+162
+00:10:27,166 --> 00:10:28,570
+再强调两点
+Two things to remember.
+
+163
+00:10:28,620 --> 00:10:30,872
+敏感度只取决于函数本身
+Sensitivity is a property of the function alone,
+
+164
+00:10:30,872 --> 00:10:34,438
+与具体的数据库无关，也不是人为选定的
+not of the particular database, and it is not chosen by policy.
+
+165
+00:10:34,758 --> 00:10:36,518
+ε 是选出来的
+ε is a choice.
+
+166
+00:10:36,838 --> 00:10:38,438
+敏感度是算出来的
+Sensitivity is a fact.
+
+167
+00:10:39,817 --> 00:10:41,394
+下面来看噪声
+Now for the noise.
+
+168
+00:10:41,444 --> 00:10:43,874
+原文用的是拉普拉斯分布
+The paper uses the Laplace distribution:
+
+169
+00:10:43,874 --> 00:10:48,736
+左右对称，峰很尖，并且随着离中心的距离指数衰减
+symmetric, sharply peaked, and falling off exponentially with distance from the center.
+
+170
+00:10:49,056 --> 00:10:51,969
+它的宽度由尺度参数 λ 决定
+Its width is set by a scale parameter, λ.
+
+171
+00:10:53,017 --> 00:10:54,617
+关键的 trick 来了
+Here is the trick.
+
+172
+00:10:54,689 --> 00:10:58,992
+一条拉普拉斯曲线的中心在 f(x)，也就是 41
+Center one Laplace curve at f(x), 41,
+
+173
+00:10:58,992 --> 00:11:04,905
+另一条在 f(x′)，也就是 42：这就是两个世界的输出分布
+and another at f(x′), 42: the output distributions of our two worlds.
+
+174
+00:11:05,150 --> 00:11:09,279
+现在对每个输出 t，画出两条曲线比值的对数
+Now plot the log of their ratio for every output t.
+
+175
+00:11:09,599 --> 00:11:12,343
+在 41 左边，它完全是个常数
+To the left of 41, it is exactly constant.
+
+176
+00:11:12,663 --> 00:11:14,937
+在 42 右边，又是个常数
+To the right of 42, constant again.
+
+177
+00:11:15,257 --> 00:11:17,220
+中间是一段直线斜坡
+In between, a straight ramp.
+
+178
+00:11:17,540 --> 00:11:24,549
+它从不超过 1/λ，也从不低于 −1/λ：也就是平移量除以尺度
+It never rises above 1/λ, and never falls below −1/λ: the shift, divided by the scale.
+
+179
+00:11:25,184 --> 00:11:29,523
+为什么？取对数之后，拉普拉斯密度是个帐篷形
+Why? On a log scale, a Laplace density is a tent,
+
+180
+00:11:29,523 --> 00:11:33,276
+两边的斜率是 1/λ，绝不会更陡
+whose sides have slope 1/λ, never steeper.
+
+181
+00:11:33,596 --> 00:11:36,561
+把帐篷平移过去，两个帐篷的高度差
+Slide the tent over, and the gap between the tents
+
+182
+00:11:36,561 --> 00:11:39,177
+永远不超过平移量乘以这个斜率
+can never exceed the slide times that slope.
+
+183
+00:11:39,497 --> 00:11:45,043
+这就是整个设计原则：隐私需要的噪声，对数密度必须处处不陡
+That is the whole design principle: privacy needs noise whose log density is never steep.
+
+184
+00:11:45,784 --> 00:11:51,157
+用符号写出来：t 到两个中心的距离，最多相差中心之间的距离
+In symbols: two distances to t can differ by at most the distance between the centers.
+
+185
+00:11:51,477 --> 00:11:56,252
+所以任意输出的隐私损失，最多是敏感度除以 λ
+So the privacy loss of any output is at most the sensitivity divided by λ.
+
+186
+00:11:56,572 --> 00:12:02,966
+让 λ 取敏感度除以 ε，比值就始终在 e^ε 以内
+Set λ to the sensitivity over ε, and the ratio stays within e^ε,
+
+187
+00:12:02,966 --> 00:12:06,535
+对任意输出、任意一对相邻数据库都成立
+for every output and every pair of neighbors.
+
+188
+00:12:06,855 --> 00:12:09,188
+隐私，一个不等式就证完了
+Privacy, proven in one line.
+
+189
+00:12:09,434 --> 00:12:14,998
+如果 query 返回好几个数，就给每个数加上独立的拉普拉斯噪声
+If the query returns several numbers, add independent Laplace noise to each.
+
+190
+00:12:15,318 --> 00:12:18,376
+这时联合密度取决于 L1 距离
+The joint density then depends on the L1 distance,
+
+191
+00:12:18,376 --> 00:12:22,512
+正因为这样，敏感度才用 L1 范数来衡量
+which is exactly why sensitivity is measured in the L1 norm.
+
+192
+00:12:22,832 --> 00:12:29,661
+这就是命题 1：在每个分量上加尺度为 S(f)/ε 的拉普拉斯噪声
+That is Proposition 1: Laplace noise of scale S(f)/ε in every coordinate.
+
+193
+00:12:29,900 --> 00:12:32,923
+暂停想一想：为什么不用更简单的
+Pause and ponder: why not something simpler,
+
+194
+00:12:32,923 --> 00:12:36,324
+比如在 −10 到 +10 之间均匀分布的噪声？
+like uniform noise anywhere between −10 and +10?
+
+195
+00:12:47,167 --> 00:12:48,365
+看看边缘
+Look at the edges.
+
+196
+00:12:48,415 --> 00:12:53,545
+输出 51.5，真实人数是 42 就可能，是 41 就不可能
+An output of 51.5 is possible if the true count is 42 but impossible if it is 41:
+
+197
+00:12:53,545 --> 00:12:59,664
+又是那个无穷大比值，随机发布一条记录的机制当初就栽在这上面
+the same infinite ratio that sank the random-row mechanism.
+
+198
+00:12:59,984 --> 00:13:03,383
+好的噪声，绝不能把任何输出排除在外
+Good noise must never rule an output out.
+
+199
+00:13:03,617 --> 00:13:06,116
+那为什么不用熟悉的钟形曲线？
+And why not the familiar bell curve?
+
+200
+00:13:06,436 --> 00:13:10,530
+取对数之后，高斯是一条抛物线，越来越陡
+On a log scale a Gaussian is a parabola, steeper and steeper,
+
+201
+00:13:10,530 --> 00:13:14,830
+所以两条平移开的抛物线，高度差会无限增大
+so the gap between two shifted parabolas grows without bound.
+
+202
+00:13:15,150 --> 00:13:19,154
+到了尾部，比值会爆炸，没有哪个 ε 能管用
+In the tails the ratio explodes, and no single ε works.
+
+203
+00:13:19,474 --> 00:13:21,407
+不过先记住这个高斯
+Hold on to that Gaussian, though:
+
+204
+00:13:21,407 --> 00:13:26,629
+它还会回来，用差分隐私训练神经网络时，实际用的就是它
+it comes back, and it is the noise you would actually use to train a neural network privately.
+
+205
+00:13:26,867 --> 00:13:33,486
+这就是标题里说的按敏感度校准噪声：噪声尺度等于敏感度除以 ε
+So here is the recipe in the title: noise scale equals sensitivity divided by ε.
+
+206
+00:13:33,806 --> 00:13:36,388
+敏感度越高的 query，噪声越大
+A more sensitive question needs more noise.
+
+207
+00:13:36,708 --> 00:13:38,820
+隐私越强，噪声越大
+Stronger privacy needs more noise.
+
+208
+00:13:40,367 --> 00:13:45,770
+回到医院的例子，ε 取 0.5：尺度为 2 的拉普拉斯噪声
+Back to the hospital, with ε = 0.5: Laplace noise of scale 2.
+
+209
+00:13:46,090 --> 00:13:49,510
+第一周，管理者报出大约 43.7
+Week 1, the curator reports about 43.7.
+
+210
+00:13:49,830 --> 00:13:54,031
+第二周，真实人数是 42，报出大约 40.6
+Week 2, when the true count is 42, about 40.6.
+
+211
+00:13:54,351 --> 00:13:58,347
+跟之前一样做减法，Alice 好像让人数少了 3
+Subtract as before, and Alice seems to have lowered the count by 3.
+
+212
+00:13:58,667 --> 00:14:04,166
+原本对她的判断是五五开，现在最多能有大约 62% 的把握
+A 50/50 guess about her can now move to at most about 62%.
+
+213
+00:14:04,400 --> 00:14:08,505
+再看噪声尺度取决于什么：敏感度和 ε
+Now look at what the noise scale depends on: the sensitivity and ε.
+
+214
+00:14:08,825 --> 00:14:10,511
+而不是数据库的规模
+Not the size of the database.
+
+215
+00:14:11,350 --> 00:14:16,088
+有 100 个病人时，噪声一般在 2 左右，占答案的百分之几
+With 100 patients, noise of typical size 2 is a few percent of the answer.
+
+216
+00:14:16,408 --> 00:14:19,678
+到了 100 万人，这点噪声可以忽略不计
+With a million, it is a rounding error.
+
+217
+00:14:19,998 --> 00:14:25,313
+保护 Alice 的噪声，比起她自己的贡献，也就是 1，算是很大
+Alice is protected by noise that is large compared to her own contribution, which is 1,
+
+218
+00:14:25,313 --> 00:14:27,149
+但比起总体微不足道
+but tiny compared to the population's.
+
+219
+00:14:28,384 --> 00:14:30,180
+隐私，留给个体
+Privacy for individuals.
+
+220
+00:14:30,500 --> 00:14:32,163
+准确，留给总体
+Accuracy for populations.
+
+221
+00:14:32,483 --> 00:14:34,405
+这就是差分隐私的取舍
+That is the bargain.
+
+222
+00:14:34,650 --> 00:14:36,627
+这一题你可以自己回答
+Here is one you can answer yourself.
+
+223
+00:14:36,947 --> 00:14:40,948
+暂停想一想：噪声大约有 1/ε 那么大
+Pause and ponder: the noise has size about 1/ε.
+
+224
+00:14:41,268 --> 00:14:45,338
+如果 ε 远小于 1/n，会出什么问题？
+What goes wrong if ε is much smaller than 1/n?
+
+225
+00:14:58,184 --> 00:15:03,685
+噪声超过了 n，比人数可能取到的任何值都大，答案成了纯噪声
+The noise outgrows n, bigger than the count could ever be, and the answer is pure noise.
+
+226
+00:15:04,005 --> 00:15:06,129
+这不是拉普拉斯噪声的问题
+This is not Laplace's fault.
+
+227
+00:15:06,449 --> 00:15:12,284
+任意两个数据库之间，都有一条最多 n 步的链，每步只改一条记录
+Any two databases are linked by a chain of at most n single-row changes,
+
+228
+00:15:12,284 --> 00:15:19,509
+概率之比最多是 e^ε，所以两端之比最多是 e^(nε)
+each changing probabilities by at most e^ε, so the ends differ by at most e^(nε).
+
+229
+00:15:19,829 --> 00:15:25,381
+如果 nε 极小，所有数据库看起来都一样，什么也学不到
+If nε is tiny, every database looks alike, and nothing can be learned.
+
+230
+00:15:25,701 --> 00:15:28,751
+这种链式 trick 叫 hybrid argument（混合论证）
+This chain trick is called a hybrid argument,
+
+231
+00:15:28,751 --> 00:15:30,351
+最后还会再出现
+and it comes back at the end.
+
+232
+00:15:32,400 --> 00:15:34,573
+只问一个问题，远远不够
+One question is never enough.
+
+233
+00:15:34,893 --> 00:15:37,898
+现实中的分析者会自适应地问很多个
+Real analysts ask many, adaptively,
+
+234
+00:15:37,898 --> 00:15:40,550
+每个都是看了前面的答案才选的
+each chosen after seeing earlier answers.
+
+235
+00:15:40,870 --> 00:15:43,952
+比如某个桶冒出尖峰，就放大看看
+Maybe you spot a spike in one bin, and zoom in.
+
+236
+00:15:44,200 --> 00:15:46,590
+原文的定理 1 处理的就是这个
+The paper's Theorem 1 handles this.
+
+237
+00:15:46,910 --> 00:15:51,419
+看整份 transcript（交互历史）：把它的概率一步一步写成乘积
+Write the probability of the whole transcript, as a product, step by step.
+
+238
+00:15:51,739 --> 00:15:55,699
+分析者怎么选下一个问题，在两个世界里都一样
+The analyst's choice of the next question is the same in both worlds,
+
+239
+00:15:55,699 --> 00:16:00,200
+所以在比值里会约掉，每个答案只剩一个拉普拉斯比值
+so in the ratio it cancels, leaving one Laplace ratio per answer.
+
+240
+00:16:00,520 --> 00:16:05,025
+懂强化学习的话，这就是算轨迹概率比时的那个 trick
+If you know reinforcement learning, this is the trajectory-ratio trick:
+
+241
+00:16:05,025 --> 00:16:09,476
+凡是两个世界里相同的都约掉，每一步的对数比值相加
+whatever is identical in both worlds cancels, and the per-step log ratios add up.
+
+242
+00:16:09,717 --> 00:16:15,799
+所以隐私损失会累加，ε 就像一笔隐私预算，privacy budget
+So privacy losses add up, and ε behaves like a budget.
+
+243
+00:16:16,119 --> 00:16:20,642
+每个答案花掉一部分；一旦花完，数据管理者就不答了
+Each answer spends part of it; once it is spent, the curator stops.
+
+244
+00:16:20,962 --> 00:16:23,693
+这就回应了 Dinur 和 Nissim
+That is the answer to Dinur and Nissim:
+
+245
+00:16:23,693 --> 00:16:26,852
+预算让提问的上限变得明确、可度量
+the budget makes the limit on questions explicit and measurable.
+
+246
+00:16:28,400 --> 00:16:31,506
+现在你可以自己算算能省多少噪声
+You can now compute a real saving yourself.
+
+247
+00:16:31,826 --> 00:16:36,530
+暂停一下：直方图有 d 个桶，总预算是 ε
+Pause: a histogram with d bins, total budget ε.
+
+248
+00:16:36,850 --> 00:16:41,063
+每个桶单独算一个 counting query（计数查询），预算平均分配
+Treat each bin as its own counting query and split the budget evenly.
+
+249
+00:16:41,383 --> 00:16:43,194
+每个桶要加多大的噪声？
+How much noise does each bin get?
+
+250
+00:16:56,033 --> 00:17:01,450
+每个桶分到 1/d 的预算，噪声尺度就是 d/ε
+Each bin gets 1/d of the budget, so noise of scale d/ε.
+
+251
+00:17:01,770 --> 00:17:05,322
+把整个直方图当成一个敏感度为 2 的 query
+Treated as one query with sensitivity 2,
+
+252
+00:17:05,322 --> 00:17:09,110
+每个桶就都是 2/ε，不管 d 是多少
+each bin gets 2/ε, whatever d is.
+
+253
+00:17:09,430 --> 00:17:12,020
+早先的 SuLQ 框架分析得更细
+The earlier framework's sharper analysis
+
+254
+00:17:12,020 --> 00:17:15,598
+把噪声降到大约根号 d，但还是随 d 增大
+got this down to about √d, but it still grew with d.
+
+255
+00:17:16,933 --> 00:17:19,557
+敏感度的用处远不止 counting query
+Sensitivity reaches far beyond counts.
+
+256
+00:17:19,877 --> 00:17:21,693
+原文举了三个例子
+Three examples from the paper.
+
+257
+00:17:22,383 --> 00:17:27,617
+第一，想象一个社交网络，每条可能的边都是数据库里的一条记录
+First, picture a social network where each possible link is one row of the database.
+
+258
+00:17:27,937 --> 00:17:31,539
+至少要切断多少条边，才能把网络一分为二？
+How many links must you cut to split the network in two?
+
+259
+00:17:31,859 --> 00:17:37,184
+这个最小割在改动一条边时最多变化 1，所以敏感度是 1
+That minimum cut moves by at most 1 when one link changes, so it is 1-sensitive.
+
+260
+00:17:37,504 --> 00:17:42,557
+一般来说，凡是“至少要改动多少条记录，才能让某件事成立”
+In general, any question of the form, how many rows would you have to change to make something true,
+
+261
+00:17:42,557 --> 00:17:44,813
+这类问题，敏感度都是 1
+has sensitivity 1.
+
+262
+00:17:45,050 --> 00:17:49,113
+第二：如果一个算法读到每条记录的概率都很小
+Second: if an algorithm that rarely looks at any particular row,
+
+263
+00:17:49,113 --> 00:17:51,699
+比如只看一个小规模随机样本
+like one working from a small random sample,
+
+264
+00:17:51,699 --> 00:17:55,669
+而且大多数时候都能把 f 近似到 σ 以内
+approximates f to within σ most of the time,
+
+265
+00:17:55,669 --> 00:17:57,885
+在每个数据库上都是这样
+on every database,
+
+266
+00:17:57,885 --> 00:18:01,015
+那么 f 的敏感度最多是两倍 σ
+then f has sensitivity at most 2σ.
+
+267
+00:18:01,335 --> 00:18:02,616
+这就是引理 1
+That is Lemma 1.
+
+268
+00:18:02,666 --> 00:18:05,152
+第三，答案不一定是一个数
+Third, the answer need not be a number:
+
+269
+00:18:05,152 --> 00:18:11,078
+一个排名、一个集合、一个比特串，凡是答案之间能定义距离的都行
+a ranking, a set, a string of bits, anything with a distance between answers.
+
+270
+00:18:11,398 --> 00:18:16,607
+选中某个输出的概率，随它到真实答案的距离呈指数衰减
+Pick an output with probability that decays exponentially with its distance from the true answer,
+
+271
+00:18:16,607 --> 00:18:19,612
+速率是 ε 除以两倍敏感度
+at a rate of ε over twice the sensitivity.
+
+272
+00:18:19,932 --> 00:18:24,944
+对比特串来说，这就是每个比特以略低于 1/2 的概率翻转
+For bit strings, that flips each bit with probability a little below 1/2:
+
+273
+00:18:24,944 --> 00:18:28,416
+又是 Warner 的硬币，这次用在了答案上
+Warner's coin again, applied to the answer.
+
+274
+00:18:31,267 --> 00:18:33,472
+来看这篇 paper 的最后一部分
+Now the last part of the paper.
+
+275
+00:18:33,792 --> 00:18:38,668
+统计学家和数据挖掘研究者传统上偏爱非交互式模型
+Statisticians and data miners traditionally prefer the non-interactive model:
+
+276
+00:18:38,668 --> 00:18:43,544
+数据只做一次隐私处理，发布出去，谁想算什么都行
+sanitize the data once, publish it, and let anyone compute anything.
+
+277
+00:18:43,864 --> 00:18:45,905
+在这个定义下，行得通吗？
+Can that work under this definition?
+
+278
+00:18:46,150 --> 00:18:48,222
+原文证明了一个惊人的局限
+The paper proves a striking limit.
+
+279
+00:18:48,542 --> 00:18:51,435
+假设每条记录都是一个 d 位的比特串
+Let each row be a string of d bits.
+
+280
+00:18:51,755 --> 00:18:54,817
+这里有一族简单的 counting query
+Here is a family of simple counting queries:
+
+281
+00:18:54,817 --> 00:18:59,034
+给每条记录一个自己的 mask（掩码），也就是一组比特位置
+give each row its own mask, a subset of bit positions,
+
+282
+00:18:59,034 --> 00:19:02,993
+统计有多少条记录在自己的 mask 内有奇数个 1
+and count the rows with an odd number of ones inside their mask.
+
+283
+00:19:03,313 --> 00:19:05,935
+每个 query 的敏感度都是 1
+Each query has sensitivity 1,
+
+284
+00:19:05,935 --> 00:19:11,616
+所以交互式的管理者回答任意一个，噪声只要 1/ε 左右
+so an interactive curator can answer any one of them with noise of about 1/ε.
+
+285
+00:19:11,850 --> 00:19:15,801
+但一次性发布必须同时为所有 query 做好准备
+But a one-shot release must prepare for all of them at once.
+
+286
+00:19:16,121 --> 00:19:19,787
+定理 3 表明，对其中至少 2/3 的 query
+Theorem 3 shows that for at least 2/3 of these queries,
+
+287
+00:19:19,787 --> 00:19:22,857
+两个随机数据库的发布结果几乎一样
+the release looks almost the same for a random database
+
+288
+00:19:22,857 --> 00:19:27,607
+一个里每条记录的 mask 内都有偶数个 1，真实答案为 0
+where every row has even parity, true answer 0,
+
+289
+00:19:27,607 --> 00:19:31,599
+另一个里每条记录都有奇数个 1，真实答案为 n
+as for one where every row is odd, true answer n.
+
+290
+00:19:31,919 --> 00:19:37,514
+这已经是最大的差别了，却根本看不出来，除非数据库大到指数级
+The most extreme difference possible, and it cannot be seen, unless the database is exponentially large:
+
+291
+00:19:37,514 --> 00:19:42,671
+粗略地说，每条记录每多 4 个比特，需要的记录数就翻一倍
+roughly, every 4 extra bits per row doubles the rows you would need.
+
+292
+00:19:42,917 --> 00:19:43,976
+暂停想一想
+Pause and ponder:
+
+293
+00:19:43,976 --> 00:19:48,715
+分析者就不能把这些 query 也都拿去问交互式的管理者吗？
+couldn't an analyst just ask the interactive curator all of these queries too?
+
+294
+00:19:59,550 --> 00:20:01,385
+不行：预算会用光
+No: the budget would run out.
+
+295
+00:20:01,705 --> 00:20:07,050
+管理者只需回答真正有人问的那几个问题，而且是后来才选的
+The curator only has to answer the few questions someone actually asks, chosen later.
+
+296
+00:20:07,370 --> 00:20:10,218
+发布的结果没法预知会是哪几个
+A published release cannot know which few those will be,
+
+297
+00:20:10,218 --> 00:20:13,257
+所以必须同时为所有问题做好准备
+so it must be ready for all of them at once.
+
+298
+00:20:13,577 --> 00:20:15,511
+一次性发布就败在这里
+That is where it breaks.
+
+299
+00:20:15,750 --> 00:20:17,835
+证明思路用到两个事实
+The proof idea uses two facts.
+
+300
+00:20:18,155 --> 00:20:22,713
+差分隐私要求：发布结果对每种记录几乎一视同仁
+Privacy forces the release to treat every possible row almost alike.
+
+301
+00:20:23,033 --> 00:20:28,303
+而随机的 mask 把所有记录分成两半，像椒盐一样混在一起
+And a random mask splits all rows into two halves mixed like salt and pepper,
+
+302
+00:20:28,303 --> 00:20:31,778
+所以偶数那一半就像对全体的随机抽样
+so the even half is like a random poll of everything.
+
+303
+00:20:32,098 --> 00:20:35,877
+接着是链式 trick：从完全随机的记录出发
+Then the chain trick: start from completely random rows,
+
+304
+00:20:35,877 --> 00:20:39,656
+一条一条地换成 mask 内有偶数个 1 的记录
+and swap them one at a time for even ones.
+
+305
+00:20:39,976 --> 00:20:42,516
+每次替换对输出几乎没影响
+Each swap barely moves the output,
+
+306
+00:20:42,516 --> 00:20:46,180
+除非 n 极大，n 次加起来也几乎没影响
+and unless n is huge, all n swaps together barely move it.
+
+307
+00:20:46,500 --> 00:20:51,510
+换成奇数记录也一样，所以两个数据库看起来都像随机记录
+The same goes for odd rows, so both databases look like random rows.
+
+308
+00:20:51,750 --> 00:20:54,587
+Warner 的硬币，也就是随机响应
+Warner's coin, randomized response,
+
+309
+00:20:54,587 --> 00:20:59,241
+每个人自己扰动自己的记录，所以谁手里都没有原始数据
+where each person scrambles their own row so nobody holds the raw data,
+
+310
+00:20:59,241 --> 00:21:00,852
+它的局限还要更大
+is even more limited.
+
+311
+00:21:01,172 --> 00:21:04,612
+命题 2：即使每条记录都用同一个 mask
+Proposition 2: even when every row uses the same mask,
+
+312
+00:21:04,612 --> 00:21:08,602
+对大多数 mask，它也估计不出奇数记录的个数
+for most masks it cannot estimate the odd count
+
+313
+00:21:08,602 --> 00:21:11,586
+除非 n 大到指数级。注意量词
+unless n is exponentially large. Careful with the quantifiers.
+
+314
+00:21:11,906 --> 00:21:16,334
+对任何一个事先就知道的 query，一次性发布都能答好
+For any one query known in advance, a one-shot release can answer it well.
+
+315
+00:21:16,654 --> 00:21:20,556
+除非数据库大到指数级，否则单单一次发布
+What is impossible, unless the database is exponentially large,
+
+316
+00:21:20,556 --> 00:21:24,654
+不可能既满足差分隐私，又答好其中的大多数
+is one private release that answers most of them.
+
+317
+00:21:24,974 --> 00:21:28,940
+结论是：想对各种问题都答得准，又要强隐私
+The lesson: for broad, flexible accuracy with strong privacy,
+
+318
+00:21:28,940 --> 00:21:31,585
+就让可信的管理者留在回路里
+keep the curator in the loop.
+
+319
+00:21:33,233 --> 00:21:36,506
+回到地图上，看看这篇 paper 的后续发展
+Back to our map, to see what grew from this paper.
+
+320
+00:21:36,826 --> 00:21:41,729
+同一年，Dwork 的特邀论文标题就叫《Differential Privacy》
+The same year, in an invited paper titled simply Differential Privacy,
+
+321
+00:21:41,729 --> 00:21:44,278
+给这个领域起了沿用至今的名字
+Dwork introduced the name the field still uses.
+
+322
+00:21:44,598 --> 00:21:49,593
+同年她与 Kenthapadi、McSherry、Mironov 和 Naor 合作
+Another 2006 paper, with Kenthapadi, McSherry, Mironov and Naor,
+
+323
+00:21:49,593 --> 00:21:53,877
+在另一篇 paper 里引入了一个极小的松弛量 δ
+added a tiny slack, δ.
+
+324
+00:21:54,197 --> 00:21:57,605
+还记得高斯噪声的比值在尾部冲出带外吗？
+Remember the Gaussian whose ratio escaped the band in the tails?
+
+325
+00:21:57,925 --> 00:22:01,959
+δ 来替罕见的尾部买单，钟形曲线就回来了
+δ pays for those rare tails, and lets the bell curve back in.
+
+326
+00:22:02,200 --> 00:22:07,010
+给每个可能的答案打分，成了 McSherry 和 Talwar 的指数机制
+Scoring every possible answer became McSherry and Talwar's exponential mechanism.
+
+327
+00:22:07,330 --> 00:22:10,082
+隐私预算发展成了一套组合定理
+The privacy budget grew into a theory of composition,
+
+328
+00:22:10,082 --> 00:22:14,319
+Dwork、Rothblum 和 Vadhan 还带来了一个惊喜
+with a surprise from Dwork, Rothblum and Vadhan:
+
+329
+00:22:14,319 --> 00:22:20,014
+只要允许那个极小的 δ，k 个问题的总损失就只按根号 k 增长
+allow that tiny δ, and the total loss of k questions grows only like the square root of k.
+
+330
+00:22:20,250 --> 00:22:24,992
+Warner 的硬币，也就是第 4 节里证明局限最大的那个模型
+Warner's coin, the model Section 4 showed is most limited,
+
+331
+00:22:24,992 --> 00:22:27,579
+正是今天所说的本地化差分隐私
+is what we now call local differential privacy,
+
+332
+00:22:27,579 --> 00:22:32,001
+Google 用在 Chrome 浏览器里，苹果用在 iPhone 上
+used by Google in Chrome and by Apple on iPhones.
+
+333
+00:22:32,321 --> 00:22:35,002
+为什么偏偏是局限最大的这个模型？
+Why the weakest model?
+
+334
+00:22:35,322 --> 00:22:37,916
+原始数据不用托付给任何人
+Nobody has to be trusted with the raw data,
+
+335
+00:22:37,916 --> 00:22:42,304
+用户上百万时，几个简单的统计量也扛得住噪声
+and with millions of users, a few simple statistics can afford the noise.
+
+336
+00:22:42,550 --> 00:22:48,157
+2016 年，Abadi 和合作者让差分隐私深度学习真正可行
+In 2016, Abadi and colleagues made it practical to train deep networks privately:
+
+337
+00:22:48,157 --> 00:22:50,775
+对每个样本的梯度做 clip（梯度裁剪）
+clip each example's gradient,
+
+338
+00:22:50,775 --> 00:22:54,677
+就像我们的收入上限，从而限制了敏感度
+like our income cap, which bounds its sensitivity;
+
+339
+00:22:54,677 --> 00:22:58,784
+加上高斯噪声；并在成千上万步里跟踪预算
+add Gaussian noise; and track the budget over thousands of steps.
+
+340
+00:22:59,104 --> 00:23:02,798
+用病人数据训练模型的话，这就是你的切入点
+If you train models on patient data, this is your entry point.
+
+341
+00:23:03,118 --> 00:23:05,909
+训练好的网络不过是又一个 f(x)
+A trained network is just another f(x),
+
+342
+00:23:05,909 --> 00:23:08,846
+问“某个病人在不在训练集里”的攻击
+and attacks that ask whether a patient was in the training set
+
+343
+00:23:08,846 --> 00:23:11,966
+就是我们那个做减法的攻击的放大版
+are our subtraction attack, scaled up.
+
+344
+00:23:12,200 --> 00:23:14,709
+还有 2020 年的人口普查
+And for the 2020 census,
+
+345
+00:23:14,709 --> 00:23:19,195
+美国人口普查局用差分隐私保护了公开发布的表
+the US Census Bureau protected its published tables with differential privacy;
+
+346
+00:23:19,195 --> 00:23:23,069
+只有少数几项，比如各州人口，是精确的
+only a few counts, like state populations, were exact.
+
+347
+00:23:23,389 --> 00:23:24,989
+但这是一次性发布
+But that is a one-shot release.
+
+348
+00:23:25,144 --> 00:23:28,994
+暂停想一想：这和第 4 节证明的局限矛盾吗？
+Pause and ponder: does Section 4 forbid it?
+
+349
+00:23:37,833 --> 00:23:38,833
+不矛盾
+No.
+
+350
+00:23:38,883 --> 00:23:44,415
+人口普查局的发布，是针对一组事先选定的固定表格量身定制的
+The Census tuned its release for a fixed set of tables chosen in advance.
+
+351
+00:23:44,735 --> 00:23:47,371
+第 4 节排除的只是这样一种发布
+Section 4 only rules out one release
+
+352
+00:23:47,371 --> 00:23:50,065
+对一大类问题里的大多数都答得准
+that is accurate for most of a huge family of questions.
+
+353
+00:23:53,400 --> 00:23:54,838
+我们来回顾一下
+Let's recap.
+
+354
+00:23:54,888 --> 00:23:58,644
+第一，隐私指的是：改动任何一个人的记录
+One: privacy means changing any one person's row
+
+355
+00:23:58,644 --> 00:24:02,710
+任何输出的概率之比最多是 e^ε
+changes the probability of any output by at most a factor of e^ε.
+
+356
+00:24:03,030 --> 00:24:08,177
+第二，query 的敏感度，就是一条记录最多能让答案变化多少
+Two: a query's sensitivity is the most one row can change its answer.
+
+357
+00:24:08,497 --> 00:24:13,233
+第三，尺度为敏感度除以 ε 的拉普拉斯噪声
+Three: Laplace noise with scale sensitivity/ε
+
+358
+00:24:13,233 --> 00:24:18,381
+就能让它满足差分隐私，数据库再大，误差也不会变大
+makes it private, with error that does not grow with the database.
+
+359
+00:24:18,701 --> 00:24:21,798
+第四，一张满足差分隐私的公开表
+Four: one private published table
+
+360
+00:24:21,798 --> 00:24:26,889
+答不好大多数简单的奇偶 query，除非数据库大到指数级
+cannot answer most simple parity counts unless the database is exponentially large.
+
+361
+00:24:27,533 --> 00:24:32,099
+最后留几道题给大家自测，每道题后面都可以暂停一下
+Some questions to test yourself; pause after each.
+
+362
+00:24:32,419 --> 00:24:36,959
+第一题：n 个 0 到 1 之间的数，平均值的敏感度是多少？
+First: what is the sensitivity of the average of n numbers between 0 and 1?
+
+363
+00:24:45,200 --> 00:24:50,330
+第二题：在一个医学影像数据集里，每个病人贡献 50 张切片
+Second: in a medical imaging dataset, each patient contributes 50 slices,
+
+364
+00:24:50,330 --> 00:24:53,414
+每张切片的梯度都 clip 到 C 以内
+and each slice's gradient is clipped to size C.
+
+365
+00:24:53,734 --> 00:24:56,794
+一个病人能让梯度之和改变多少？
+How much can one patient change the summed gradient?
+
+366
+00:25:07,033 --> 00:25:11,263
+第三题：为什么中位数会给拉普拉斯机制带来麻烦？
+Third: why does the median give the Laplace mechanism trouble?
+
+367
+00:25:11,583 --> 00:25:14,354
+答案和更多练习，都在配套笔记里
+Answers, and more exercises, are in the companion notes.
+
+368
+00:25:22,600 --> 00:25:28,195
+下次有人说数据集匿名化了，所以很安全，你就知道真正该问的是
+Next time someone says a dataset is safe because it is anonymized, you will know the better questions:
+
+369
+00:25:28,195 --> 00:25:32,671
+用的是多大的 ε，什么才算一个人的一条记录？
+what is the ε, and what counts as one person's row?

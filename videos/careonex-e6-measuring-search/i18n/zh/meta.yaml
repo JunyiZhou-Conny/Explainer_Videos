@@ -1,0 +1,11 @@
+title: "CareOneX 第 6 集 · 衡量检索：Marco 关于切块、feedback 检索和回答检查的实验"
+description: "Marco 分支上的检索实验：怎么给检索打分、三种切块器、feedback 检索与合并、回答检查，以及还没解决的问题。"
+chapters:
+  s01_branch: "Marco 的分支里有什么"
+  s02_metrics: "怎么给一次检索打分"
+  s03_chunkers: "三种切法"
+  s04_chunk_results: "切块测试说明了什么"
+  s05_feedback: "feedback 检索"
+  s06_feedback_results: "40 个问题的运行说明了什么"
+  s07_text_eval: "检查口头回答"
+  s08_open: "修好的，以及还没解决的"

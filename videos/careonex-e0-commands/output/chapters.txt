@@ -1,0 +1,12 @@
+00:00 Two walls of text
+00:33 Two terminals, two programs
+01:08 cd: the project folder
+01:30 Sticky notes: environment variables
+02:00 Who are you? AWS profile and SSO login
+03:08 Where in the world: the region
+03:24 The strange one: $env:HOME = $HOME
+04:00 Which library? CAREONEX_KB_ID
+04:48 Boxes: docker compose up --build retrieve
+05:27 Terminal 2: where to ask, and how
+06:07 The long last line: uv run
+07:00 The whole picture

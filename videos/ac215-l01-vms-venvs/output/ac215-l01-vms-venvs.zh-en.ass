@@ -1,0 +1,519 @@
+[Script Info]
+Title: AC215 · Lecture 1 — Virtual machines, virtual environments and uv (follow-along: simple-translate)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:02.28,Bilingual,,0,0,0,,这是一台云上的全新电脑\N{\fs33\c&H00C8C0B8&\bord1.4}Here's a brand-new computer in the cloud.
+Dialogue: 0,0:00:02.60,0:00:05.80,Bilingual,,0,0,0,,它是我们的，有 root 权限，也就是完整的管理员权限\N{\fs33\c&H00C8C0B8&\bord1.4}It's ours, and we have root, full administrator rights.
+Dialogue: 0,0:00:06.12,0:00:09.60,Bilingual,,0,0,0,,我们让 pip 装两个 Python 包，pip 说不行\N{\fs33\c&H00C8C0B8&\bord1.4}We ask pip for two Python packages, and pip says no.
+Dialogue: 0,0:00:10.08,0:00:14.65,Bilingual,,0,0,0,,这条命令不是 README 里的，是我们大多数人最先会敲的那条\N{\fs33\c&H00C8C0B8&\bord1.4}This command isn't from the README; it's the one most of us would type first.
+Dialogue: 0,0:00:14.97,0:00:18.37,Bilingual,,0,0,0,,报错说这个环境是 externally managed（由外部管理）\N{\fs33\c&H00C8C0B8&\bord1.4}The error says the environment is externally managed,
+Dialogue: 0,0:00:18.37,0:00:20.62,Bilingual,,0,0,0,,还建议用虚拟环境\N{\fs33\c&H00C8C0B8&\bord1.4}and suggests a virtual environment.
+Dialogue: 0,0:00:20.94,0:00:24.16,Bilingual,,0,0,0,,看完这个视频，报错的每一行你都会看懂\N{\fs33\c&H00C8C0B8&\bord1.4}By the end of this video, every line of it will make sense.
+Dialogue: 0,0:00:24.90,0:00:28.01,Bilingual,,0,0,0,,今天这节课，“虚拟”这个词会出现两次\N{\fs33\c&H00C8C0B8&\bord1.4}Today's lecture uses the word virtual twice.
+Dialogue: 0,0:00:28.33,0:00:32.13,Bilingual,,0,0,0,,虚拟机，就是一整台你租来、用完就扔的电脑\N{\fs33\c&H00C8C0B8&\bord1.4}A virtual machine is a whole computer you rent and throw away.
+Dialogue: 0,0:00:32.45,0:00:37.53,Bilingual,,0,0,0,,虚拟环境，就是给一个项目专用的一套 Python 包\N{\fs33\c&H00C8C0B8&\bord1.4}A virtual environment is a private set of Python packages for one project.
+Dialogue: 0,0:00:37.85,0:00:39.73,Bilingual,,0,0,0,,而且，一个会装在另一个里面\N{\fs33\c&H00C8C0B8&\bord1.4}And one will live inside the other.
+Dialogue: 0,0:00:39.97,0:00:42.53,Bilingual,,0,0,0,,这个教程叫 simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}The tutorial, simple-translate, runs one small app four ways, each removing a kind of fragility.
+Dialogue: 0,0:00:42.53,0:00:46.71,Bilingual,,0,0,0,,它用四种方式跑同一个小应用，每一种都去掉一类隐患\N{\fs33\c&H00C8C0B8&\bord1.4}The tutorial, simple-translate, runs one small app four ways, each removing a kind of fragility.
+Dialogue: 0,0:00:47.03,0:00:49.71,Bilingual,,0,0,0,,今天我们爬前两级\N{\fs33\c&H00C8C0B8&\bord1.4}Today we climb the first two rungs:
+Dialogue: 0,0:00:49.71,0:00:55.39,Bilingual,,0,0,0,,先在云端 VM 上手动安装，再换一台同样配置的全新 VM，改用 uv\N{\fs33\c&H00C8C0B8&\bord1.4}a manual install on a cloud VM, then a fresh VM of the same kind, with uv.
+Dialogue: 0,0:00:55.71,0:00:57.44,Bilingual,,0,0,0,,Docker 留到下节课\N{\fs33\c&H00C8C0B8&\bord1.4}Docker comes next lecture.
+Dialogue: 0,0:00:57.68,0:01:00.93,Bilingual,,0,0,0,,想跟着做的话，把 README 打开，放在视频旁边\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along, open the README beside this video.
+Dialogue: 0,0:01:01.25,0:01:03.98,Bilingual,,0,0,0,,左上角的进度条显示 README 的步骤\N{\fs33\c&H00C8C0B8&\bord1.4}The tracker, top left, shows the README step.
+Dialogue: 0,0:01:04.30,0:01:06.81,Bilingual,,0,0,0,,代码面板会标出文件和行号\N{\fs33\c&H00C8C0B8&\bord1.4}Code panels show the file and line numbers.
+Dialogue: 0,0:01:07.13,0:01:09.49,Bilingual,,0,0,0,,看到黄色的“轮到你了”标签，就暂停\N{\fs33\c&H00C8C0B8&\bord1.4}When the yellow your-turn tag appears,
+Dialogue: 0,0:01:09.49,0:01:12.04,Bilingual,,0,0,0,,在你自己的 VM 上跑这条命令\N{\fs33\c&H00C8C0B8&\bord1.4}pause and run the command on your own VM.
+Dialogue: 0,0:01:12.36,0:01:16.18,Bilingual,,0,0,0,,灰色的“额外”标签表示这条命令 README 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}A grey extra tag marks a command that isn't in the README;
+Dialogue: 0,0:01:16.18,0:01:18.36,Bilingual,,0,0,0,,额外的命令都是安全的，也一起跑吧\N{\fs33\c&H00C8C0B8&\bord1.4}extras are safe, so run them too.
+Dialogue: 0,0:01:18.68,0:01:23.33,Bilingual,,0,0,0,,每条命令也都在学习指南里，在 MLOps Learning 这个 repo 里\N{\fs33\c&H00C8C0B8&\bord1.4}Every command is also in the study guide, in the MLOps Learning repo.
+Dialogue: 0,0:01:23.57,0:01:25.88,Bilingual,,0,0,0,,开始前先做完 Tutorial 0\N{\fs33\c&H00C8C0B8&\bord1.4}Before you start, finish Tutorial 0,
+Dialogue: 0,0:01:25.88,0:01:29.16,Bilingual,,0,0,0,,这样你就有一个 Google Cloud 项目，结算也开好了\N{\fs33\c&H00C8C0B8&\bord1.4}so you have a Google Cloud project with billing on.
+Dialogue: 0,0:01:29.48,0:01:33.38,Bilingual,,0,0,0,,今天不用服务账号，也不用密钥，有个浏览器就行\N{\fs33\c&H00C8C0B8&\bord1.4}No service account or keys today; all you need is a browser.
+Dialogue: 0,0:01:34.42,0:01:37.60,Bilingual,,0,0,0,,装东西之前，先看看要装的是什么\N{\fs33\c&H00C8C0B8&\bord1.4}Before we install anything, let's see what we're installing.
+Dialogue: 0,0:01:37.92,0:01:42.48,Bilingual,,0,0,0,,在 GitHub 上打开 cli.py，待会儿你会把它 clone 到 VM 上\N{\fs33\c&H00C8C0B8&\bord1.4}Open cli.py on GitHub; you'll clone it onto your VM soon.
+Dialogue: 0,0:01:42.80,0:01:47.07,Bilingual,,0,0,0,,前两个 import，argparse 和 asyncio，是 Python 自带的\N{\fs33\c&H00C8C0B8&\bord1.4}The first two imports, argparse and asyncio, come with Python.
+Dialogue: 0,0:01:47.39,0:01:50.03,Bilingual,,0,0,0,,后两个，art 和 googletrans，就不是了\N{\fs33\c&H00C8C0B8&\bord1.4}The next two, art and googletrans, don't.
+Dialogue: 0,0:01:50.35,0:01:51.95,Bilingual,,0,0,0,,它们总得从某个地方来\N{\fs33\c&H00C8C0B8&\bord1.4}They have to come from somewhere.
+Dialogue: 0,0:01:52.27,0:01:55.00,Bilingual,,0,0,0,,这整节课，讲的就是它们从哪儿来\N{\fs33\c&H00C8C0B8&\bord1.4}This whole lecture is about where they come from.
+Dialogue: 0,0:01:55.25,0:01:59.70,Bilingual,,0,0,0,,这个 main 函数先打印一个横幅，用 ASCII 字符画写着 AC215\N{\fs33\c&H00C8C0B8&\bord1.4}The main function prints a banner that says AC215 in ASCII art,
+Dialogue: 0,0:01:59.70,0:02:03.51,Bilingual,,0,0,0,,然后是解析好的参数，最后是要翻译的文本\N{\fs33\c&H00C8C0B8&\bord1.4}then the parsed arguments, then the text to translate.
+Dialogue: 0,0:02:03.83,0:02:08.01,Bilingual,,0,0,0,,如果用 -f 传一个文件，文本就改从那个文件里读\N{\fs33\c&H00C8C0B8&\bord1.4}If you pass a file with -f, the text comes from that file instead.
+Dialogue: 0,0:02:08.25,0:02:13.32,Bilingual,,0,0,0,,最下面，argparse 定义了四个选项，各有默认值\N{\fs33\c&H00C8C0B8&\bord1.4}At the bottom, argparse defines four options, and each one has a default:
+Dialogue: 0,0:02:13.32,0:02:18.11,Bilingual,,0,0,0,,文本是 I love cheese，源语言是英语，目标语言是意大利语\N{\fs33\c&H00C8C0B8&\bord1.4}the text I love cheese, source language English, destination Italian.
+Dialogue: 0,0:02:18.43,0:02:21.24,Bilingual,,0,0,0,,所以不带任何选项运行 cli.py\N{\fs33\c&H00C8C0B8&\bord1.4}So running cli.py with no options
+Dialogue: 0,0:02:21.24,0:02:24.48,Bilingual,,0,0,0,,就会把 I love cheese 翻译成意大利语\N{\fs33\c&H00C8C0B8&\bord1.4}translates I love cheese into Italian.
+Dialogue: 0,0:02:24.73,0:02:27.98,Bilingual,,0,0,0,,最后一行启动事件循环并运行 main\N{\fs33\c&H00C8C0B8&\bord1.4}The last line starts an event loop and runs main,
+Dialogue: 0,0:02:27.98,0:02:31.03,Bilingual,,0,0,0,,因为 googletrans 4 是异步的\N{\fs33\c&H00C8C0B8&\bord1.4}because googletrans version 4 is asynchronous.
+Dialogue: 0,0:02:31.35,0:02:34.36,Bilingual,,0,0,0,,在 main 里，一个 Translator 把你的文本发出去\N{\fs33\c&H00C8C0B8&\bord1.4}Inside main, a Translator sends your text off
+Dialogue: 0,0:02:34.36,0:02:35.96,Bilingual,,0,0,0,,只用一次 await 调用\N{\fs33\c&H00C8C0B8&\bord1.4}with one awaited call.
+Dialogue: 0,0:02:36.07,0:02:39.53,Bilingual,,0,0,0,,这次调用就是一个 HTTPS 请求\N{\fs33\c&H00C8C0B8&\bord1.4}That call is a single HTTPS request
+Dialogue: 0,0:02:39.53,0:02:43.49,Bilingual,,0,0,0,,从 VM 发到 translate.googleapis.com\N{\fs33\c&H00C8C0B8&\bord1.4}from the VM to translate.googleapis.com.
+Dialogue: 0,0:02:43.81,0:02:47.35,Bilingual,,0,0,0,,这是 Google 非官方的翻译接口\N{\fs33\c&H00C8C0B8&\bord1.4}It's Google's unofficial translate endpoint:
+Dialogue: 0,0:02:47.35,0:02:49.76,Bilingual,,0,0,0,,免费，不用 API key，也不做任何保证\N{\fs33\c&H00C8C0B8&\bord1.4}free, no API key, no promises.
+Dialogue: 0,0:02:50.08,0:02:54.58,Bilingual,,0,0,0,,返回来一小段 JSON，第 39 行把译文打印出来\N{\fs33\c&H00C8C0B8&\bord1.4}A little JSON comes back, and line 39 prints the translation.
+Dialogue: 0,0:02:54.83,0:02:59.87,Bilingual,,0,0,0,,第 25 行有个细节以后会用到：raise_exception=True\N{\fs33\c&H00C8C0B8&\bord1.4}One detail on line 25 matters later: raise_exception=True.
+Dialogue: 0,0:03:00.19,0:03:03.04,Bilingual,,0,0,0,,没有它的话，Google 一旦返回错误\N{\fs33\c&H00C8C0B8&\bord1.4}Without it, when Google answers with an error,
+Dialogue: 0,0:03:03.04,0:03:06.14,Bilingual,,0,0,0,,googletrans 就把错误藏起来\N{\fs33\c&H00C8C0B8&\bord1.4}googletrans hides it and hands your own input back
+Dialogue: 0,0:03:06.14,0:03:08.81,Bilingual,,0,0,0,,把你的原文当成译文交回来，看上去一切正常\N{\fs33\c&H00C8C0B8&\bord1.4}as the translation, so nothing looks wrong.
+Dialogue: 0,0:03:09.13,0:03:11.99,Bilingual,,0,0,0,,有了它，失败就会变成一条你能看懂的报错\N{\fs33\c&H00C8C0B8&\bord1.4}With it, a failure becomes an error you can read.
+Dialogue: 0,0:03:12.23,0:03:15.42,Bilingual,,0,0,0,,第 32 到 37 行会接住那次调用的任何错误\N{\fs33\c&H00C8C0B8&\bord1.4}Lines 32 to 37 catch any error from that call
+Dialogue: 0,0:03:15.42,0:03:19.25,Bilingual,,0,0,0,,再包装成一条更友好的消息，说是网络的问题\N{\fs33\c&H00C8C0B8&\bord1.4}and wrap it in a friendlier message about the network.
+Dialogue: 0,0:03:19.57,0:03:21.16,Bilingual,,0,0,0,,记住这几行\N{\fs33\c&H00C8C0B8&\bord1.4}Remember these lines.
+Dialogue: 0,0:03:21.21,0:03:23.09,Bilingual,,0,0,0,,几分钟后，它们就会误导我们\N{\fs33\c&H00C8C0B8&\bord1.4}In a few minutes, they'll fool us.
+Dialogue: 0,0:03:23.40,0:03:27.84,Bilingual,,0,0,0,,所以这个应用很小：参数进去，一次网络请求，一行输出\N{\fs33\c&H00C8C0B8&\bord1.4}So the app is small: arguments in, one web request, one line out.
+Dialogue: 0,0:03:28.16,0:03:30.78,Bilingual,,0,0,0,,它需要的，是两个第三方包\N{\fs33\c&H00C8C0B8&\bord1.4}What it needs is two third-party packages.
+Dialogue: 0,0:03:31.10,0:03:33.58,Bilingual,,0,0,0,,我们去弄一台电脑，给它们安个家\N{\fs33\c&H00C8C0B8&\bord1.4}Let's get a computer, and find them a home.
+Dialogue: 0,0:03:34.82,0:03:37.78,Bilingual,,0,0,0,,虚拟机就是一台真实服务器切出来的一片\N{\fs33\c&H00C8C0B8&\bord1.4}A virtual machine is a slice of a real server
+Dialogue: 0,0:03:37.78,0:03:39.89,Bilingual,,0,0,0,,在 Google 的某个数据中心里\N{\fs33\c&H00C8C0B8&\bord1.4}in one of Google's data centers.
+Dialogue: 0,0:03:40.21,0:03:42.44,Bilingual,,0,0,0,,有一种软件叫 hypervisor（虚拟机监控器）\N{\fs33\c&H00C8C0B8&\bord1.4}Software called a hypervisor
+Dialogue: 0,0:03:42.44,0:03:44.22,Bilingual,,0,0,0,,它把这台机器切成一片一片\N{\fs33\c&H00C8C0B8&\bord1.4}carves the machine into slices.
+Dialogue: 0,0:03:44.54,0:03:48.31,Bilingual,,0,0,0,,每一片都从这台服务器分到虚拟 CPU 和内存\N{\fs33\c&H00C8C0B8&\bord1.4}Each slice gets virtual CPUs and memory from that server,
+Dialogue: 0,0:03:48.31,0:03:52.74,Bilingual,,0,0,0,,从 Google 的存储网络分到一块磁盘，还有自己的操作系统\N{\fs33\c&H00C8C0B8&\bord1.4}a disk from Google's storage network, and its own operating system.
+Dialogue: 0,0:03:53.06,0:03:54.66,Bilingual,,0,0,0,,其中一片会是你的\N{\fs33\c&H00C8C0B8&\bord1.4}One of them will be yours.
+Dialogue: 0,0:03:54.88,0:03:59.72,Bilingual,,0,0,0,,在控制台里，先确认选中的是你在 Tutorial 0 建的项目\N{\fs33\c&H00C8C0B8&\bord1.4}In the console, check that your Tutorial 0 project is selected,
+Dialogue: 0,0:03:59.72,0:04:03.10,Bilingual,,0,0,0,,然后打开 Compute Engine，再进 VM instances\N{\fs33\c&H00C8C0B8&\bord1.4}then open Compute Engine, then VM instances.
+Dialogue: 0,0:04:03.42,0:04:07.67,Bilingual,,0,0,0,,第一次进去，它可能会让你启用 Compute Engine API\N{\fs33\c&H00C8C0B8&\bord1.4}The first time, it may ask you to enable the Compute Engine API;
+Dialogue: 0,0:04:07.67,0:04:09.92,Bilingual,,0,0,0,,点 Enable，再等它一分钟\N{\fs33\c&H00C8C0B8&\bord1.4}click enable and give it a minute.
+Dialogue: 0,0:04:10.24,0:04:11.84,Bilingual,,0,0,0,,然后点 Create instance\N{\fs33\c&H00C8C0B8&\bord1.4}Then click Create instance.
+Dialogue: 0,0:04:12.08,0:04:15.45,Bilingual,,0,0,0,,README 没给任何设置，这里给一套合理的选择\N{\fs33\c&H00C8C0B8&\bord1.4}The README gives no settings, so here are sensible ones.
+Dialogue: 0,0:04:15.77,0:04:18.68,Bilingual,,0,0,0,,名称，比如 ac215-l01\N{\fs33\c&H00C8C0B8&\bord1.4}A name, like ac215-l01.
+Dialogue: 0,0:04:19.00,0:04:22.20,Bilingual,,0,0,0,,区域和可用区，就是这台机器实际放在哪里\N{\fs33\c&H00C8C0B8&\bord1.4}A region and zone: where the machine physically lives.
+Dialogue: 0,0:04:22.52,0:04:27.46,Bilingual,,0,0,0,,机器类型决定 CPU 和内存，e2-small 就够用了\N{\fs33\c&H00C8C0B8&\bord1.4}A machine type, which sets the CPUs and memory; e2-small is plenty.
+Dialogue: 0,0:04:27.78,0:04:29.90,Bilingual,,0,0,0,,启动磁盘选 Debian 12\N{\fs33\c&H00C8C0B8&\bord1.4}And a boot disk with Debian 12.
+Dialogue: 0,0:04:30.22,0:04:33.80,Bilingual,,0,0,0,,用 Debian 13 也行，后面会看到它在哪些地方不一样\N{\fs33\c&H00C8C0B8&\bord1.4}Debian 13 works too; we'll see where it changes things.
+Dialogue: 0,0:04:34.05,0:04:37.38,Bilingual,,0,0,0,,保留外部 IP（也就是公网 IP），它默认就是开着的\N{\fs33\c&H00C8C0B8&\bord1.4}Keep the external IP address; it's on by default.
+Dialogue: 0,0:04:37.70,0:04:40.46,Bilingual,,0,0,0,,没有它，又没做额外的网络配置\N{\fs33\c&H00C8C0B8&\bord1.4}Without it, and without extra network setup,
+Dialogue: 0,0:04:40.46,0:04:44.80,Bilingual,,0,0,0,,这台 VM 就上不了网，这里的每次下载都会卡住\N{\fs33\c&H00C8C0B8&\bord1.4}this VM can't reach the internet, and every download here would hang.
+Dialogue: 0,0:04:45.05,0:04:46.65,Bilingual,,0,0,0,,现在，计价器开始跳了\N{\fs33\c&H00C8C0B8&\bord1.4}And now the meter starts.
+Dialogue: 0,0:04:46.93,0:04:52.86,Bilingual,,0,0,0,,CPU 和内存在 VM 运行期间按秒计费，闲着也照样算\N{\fs33\c&H00C8C0B8&\bord1.4}CPU and memory are billed by the second while the VM runs, even when it sits idle.
+Dialogue: 0,0:04:53.18,0:04:55.63,Bilingual,,0,0,0,,磁盘只要还在，就一直计费\N{\fs33\c&H00C8C0B8&\bord1.4}The disk is billed for as long as it exists.
+Dialogue: 0,0:04:55.95,0:04:59.58,Bilingual,,0,0,0,,费用估算不高，但计价器自己不会停\N{\fs33\c&H00C8C0B8&\bord1.4}The estimate is small, but the meter never stops on its own.
+Dialogue: 0,0:04:59.83,0:05:03.42,Bilingual,,0,0,0,,点 Create，等绿勾出现，再点 SSH\N{\fs33\c&H00C8C0B8&\bord1.4}Click Create, wait for the green check, then click SSH.
+Dialogue: 0,0:05:03.74,0:05:07.21,Bilingual,,0,0,0,,要是让你授权这次连接，就点 Authorize\N{\fs33\c&H00C8C0B8&\bord1.4}If it asks you to authorize the connection, click Authorize.
+Dialogue: 0,0:05:07.53,0:05:11.37,Bilingual,,0,0,0,,浏览器里会打开一个终端，已经登录到新 VM 上\N{\fs33\c&H00C8C0B8&\bord1.4}A terminal opens in your browser, logged in to your new VM.
+Dialogue: 0,0:05:11.69,0:05:14.98,Bilingual,,0,0,0,,我们的提示符显示 student，你的是你自己的用户名\N{\fs33\c&H00C8C0B8&\bord1.4}Our prompt says student; yours shows your own username.
+Dialogue: 0,0:05:15.30,0:05:17.80,Bilingual,,0,0,0,,先在这里暂停，把你的 VM 也弄到这一步\N{\fs33\c&H00C8C0B8&\bord1.4}Pause here, and get your VM to this point.
+Dialogue: 0,0:05:18.05,0:05:20.82,Bilingual,,0,0,0,,来做三个快速的额外检查，README 里都没有\N{\fs33\c&H00C8C0B8&\bord1.4}Three quick extra checks, not in the README.
+Dialogue: 0,0:05:21.14,0:05:23.79,Bilingual,,0,0,0,,第一，我们拿到的是哪个操作系统？\N{\fs33\c&H00C8C0B8&\bord1.4}First, which operating system did we get?
+Dialogue: 0,0:05:24.11,0:05:28.12,Bilingual,,0,0,0,,打印 os-release 文件：Debian 12，代号 bookworm\N{\fs33\c&H00C8C0B8&\bord1.4}Print the os-release file: Debian 12, nicknamed bookworm.
+Dialogue: 0,0:05:28.38,0:05:30.99,Bilingual,,0,0,0,,第二，再问一下 python3 的版本\N{\fs33\c&H00C8C0B8&\bord1.4}Second, ask python3 for its version.
+Dialogue: 0,0:05:31.31,0:05:36.96,Bilingual,,0,0,0,,Debian 12 自带 Python 3.11.2，给操作系统自己用\N{\fs33\c&H00C8C0B8&\bord1.4}Debian 12 ships Python 3.11.2, for the operating system itself.
+Dialogue: 0,0:05:37.28,0:05:40.99,Bilingual,,0,0,0,,换成 Debian 13，你会看到 3.13.5\N{\fs33\c&H00C8C0B8&\bord1.4}On Debian 13, you'd see 3.13.5.
+Dialogue: 0,0:05:41.31,0:05:42.98,Bilingual,,0,0,0,,这两个数字都记住\N{\fs33\c&H00C8C0B8&\bord1.4}Keep both numbers in mind.
+Dialogue: 0,0:05:43.23,0:05:45.62,Bilingual,,0,0,0,,第三，which python，不带 3\N{\fs33\c&H00C8C0B8&\bord1.4}Third, which python, without the 3.
+Dialogue: 0,0:05:45.94,0:05:48.93,Bilingual,,0,0,0,,这个 which 命令，查一个名字会运行哪个程序\N{\fs33\c&H00C8C0B8&\bord1.4}The which command asks which program a name would run.
+Dialogue: 0,0:05:49.25,0:05:53.94,Bilingual,,0,0,0,,查 python，什么都没返回：Debian 有 python3，但没有 python\N{\fs33\c&H00C8C0B8&\bord1.4}For python, nothing comes back: Debian has python3, but no python.
+Dialogue: 0,0:05:54.26,0:05:55.97,Bilingual,,0,0,0,,记住它，第二部分要用\N{\fs33\c&H00C8C0B8&\bord1.4}Remember this for part 2.
+Dialogue: 0,0:05:57.03,0:05:59.55,Bilingual,,0,0,0,,第 3 步：输入 sudo apt-get update\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3: type sudo apt-get update.
+Dialogue: 0,0:05:59.87,0:06:04.44,Bilingual,,0,0,0,,Debian 的包管理器是 apt，sudo 让它以管理员身份运行\N{\fs33\c&H00C8C0B8&\bord1.4}Debian's package manager is apt, and sudo runs it as the administrator.
+Dialogue: 0,0:06:04.76,0:06:07.10,Bilingual,,0,0,0,,而 update 会下载软件包列表\N{\fs33\c&H00C8C0B8&\bord1.4}Update downloads the package catalog:
+Dialogue: 0,0:06:07.10,0:06:10.84,Bilingual,,0,0,0,,有哪些软件包，各自最新的版本是什么\N{\fs33\c&H00C8C0B8&\bord1.4}the list of packages that exist, and their latest versions.
+Dialogue: 0,0:06:11.16,0:06:12.82,Bilingual,,0,0,0,,这时还什么都没装\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing is installed yet.
+Dialogue: 0,0:06:13.14,0:06:15.94,Bilingual,,0,0,0,,在 Google 的 VM 上，你会看到多出几行\N{\fs33\c&H00C8C0B8&\bord1.4}On a Google VM, you'll see a few more lines,
+Dialogue: 0,0:06:15.94,0:06:18.05,Bilingual,,0,0,0,,那是 Google 自己的软件源\N{\fs33\c&H00C8C0B8&\bord1.4}for Google's own package sources.
+Dialogue: 0,0:06:18.37,0:06:19.72,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:06:19.77,0:06:23.67,Bilingual,,0,0,0,,这里 README 有个提示：apt-get 和 apt 做的是同一件事\N{\fs33\c&H00C8C0B8&\bord1.4}The README has a tip here: apt-get and apt do the same job.
+Dialogue: 0,0:06:23.99,0:06:27.33,Bilingual,,0,0,0,,其中 apt-get 这条命令稳定、适合写进脚本\N{\fs33\c&H00C8C0B8&\bord1.4}The apt-get command is the stable, scriptable one,
+Dialogue: 0,0:06:27.33,0:06:29.79,Bilingual,,0,0,0,,用在 Dockerfile 和自动化构建里\N{\fs33\c&H00C8C0B8&\bord1.4}for Dockerfiles and automated builds.
+Dialogue: 0,0:06:30.11,0:06:33.04,Bilingual,,0,0,0,,短一点的 apt，手敲起来更友好\N{\fs33\c&H00C8C0B8&\bord1.4}The shorter apt is friendlier for typing by hand.
+Dialogue: 0,0:06:33.36,0:06:34.87,Bilingual,,0,0,0,,这里用哪个都行\N{\fs33\c&H00C8C0B8&\bord1.4}Either is fine here.
+Dialogue: 0,0:06:34.92,0:06:37.31,Bilingual,,0,0,0,,第 4 步：sudo apt install git\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: sudo apt install git.
+Dialogue: 0,0:06:37.63,0:06:39.84,Bilingual,,0,0,0,,这次 apt 是真的要装东西了\N{\fs33\c&H00C8C0B8&\bord1.4}This time apt really installs things.
+Dialogue: 0,0:06:40.16,0:06:43.56,Bilingual,,0,0,0,,它会列出要添加的东西，然后问你：要继续吗？\N{\fs33\c&H00C8C0B8&\bord1.4}It lists what it will add and asks, do you want to continue?
+Dialogue: 0,0:06:43.88,0:06:45.48,Bilingual,,0,0,0,,输入 Y，按回车\N{\fs33\c&H00C8C0B8&\bord1.4}Type Y and press enter.
+Dialogue: 0,0:06:45.78,0:06:50.02,Bilingual,,0,0,0,,列表因 VM 而异；如果已经有 git，apt 会直接告诉你\N{\fs33\c&H00C8C0B8&\bord1.4}The list depends on your VM; if git is already there, apt says so.
+Dialogue: 0,0:06:50.34,0:06:51.68,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:06:51.73,0:06:53.61,Bilingual,,0,0,0,,第 5 步：把 repo clone 下来\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5: clone the repo.
+Dialogue: 0,0:06:53.93,0:06:57.32,Bilingual,,0,0,0,,输入 git clone，再加上地址；地址从 README 里复制\N{\fs33\c&H00C8C0B8&\bord1.4}Type git clone, then the address; copy it from the README.
+Dialogue: 0,0:06:57.64,0:06:59.40,Bilingual,,0,0,0,,它会把整个 repo 连同历史\N{\fs33\c&H00C8C0B8&\bord1.4}Git copies the whole repo,
+Dialogue: 0,0:06:59.40,0:07:03.04,Bilingual,,0,0,0,,复制到一个新目录 simple-translate 里\N{\fs33\c&H00C8C0B8&\bord1.4}with its history, into a new folder, simple-translate,
+Dialogue: 0,0:07:03.04,0:07:04.64,Bilingual,,0,0,0,,就在你的 home 目录下\N{\fs33\c&H00C8C0B8&\bord1.4}in your home directory.
+Dialogue: 0,0:07:04.83,0:07:07.24,Bilingual,,0,0,0,,第 6 步：cd simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}Step 6: cd simple-translate.
+Dialogue: 0,0:07:07.56,0:07:11.75,Bilingual,,0,0,0,,注意看提示符：冒号后面现在显示你所在的目录\N{\fs33\c&H00C8C0B8&\bord1.4}Watch the prompt: after the colon, it now shows the folder you're in.
+Dialogue: 0,0:07:12.07,0:07:14.60,Bilingual,,0,0,0,,这个波浪号代表你的 home 目录\N{\fs33\c&H00C8C0B8&\bord1.4}The wavy tilde means your home folder.
+Dialogue: 0,0:07:14.92,0:07:16.63,Bilingual,,0,0,0,,暂停一下，跟上进度\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and catch up to here.
+Dialogue: 0,0:07:16.87,0:07:19.58,Bilingual,,0,0,0,,额外检查一下：用 ls 列出文件\N{\fs33\c&H00C8C0B8&\bord1.4}One extra check: ls lists the files.
+Dialogue: 0,0:07:19.90,0:07:21.40,Bilingual,,0,0,0,,里面有 cli.py、README\N{\fs33\c&H00C8C0B8&\bord1.4}There's cli.py,
+Dialogue: 0,0:07:21.40,0:07:24.51,Bilingual,,0,0,0,,一个存成文本文件的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}the README, a Dockerfile saved as a text file,
+Dialogue: 0,0:07:24.51,0:07:28.22,Bilingual,,0,0,0,,两个下节课用的脚本，还有 pyproject.toml\N{\fs33\c&H00C8C0B8&\bord1.4}two scripts for next lecture, and pyproject.toml,
+Dialogue: 0,0:07:28.22,0:07:30.56,Bilingual,,0,0,0,,列着这个应用需要什么\N{\fs33\c&H00C8C0B8&\bord1.4}the list of what the app needs.
+Dialogue: 0,0:07:30.88,0:07:33.87,Bilingual,,0,0,0,,注意少了什么：没有 requirements 文件\N{\fs33\c&H00C8C0B8&\bord1.4}Notice what's missing: no requirements file,
+Dialogue: 0,0:07:33.87,0:07:36.39,Bilingual,,0,0,0,,也没有记录精确版本的 lock 文件\N{\fs33\c&H00C8C0B8&\bord1.4}and no lock file with exact versions.
+Dialogue: 0,0:07:36.71,0:07:38.31,Bilingual,,0,0,0,,先记住这一点\N{\fs33\c&H00C8C0B8&\bord1.4}Hold on to that.
+Dialogue: 0,0:07:39.17,0:07:42.32,Bilingual,,0,0,0,,第 7 步：sudo apt install python3-pip\N{\fs33\c&H00C8C0B8&\bord1.4}Step 7: sudo apt install python3-pip.
+Dialogue: 0,0:07:42.64,0:07:46.57,Bilingual,,0,0,0,,这是 Debian 自己打包的 pip，给 Debian 的 Python 用\N{\fs33\c&H00C8C0B8&\bord1.4}That's Debian's own packaged copy of pip, for Debian's Python.
+Dialogue: 0,0:07:46.89,0:07:48.44,Bilingual,,0,0,0,,再输入一次 Y\N{\fs33\c&H00C8C0B8&\bord1.4}Answer Y again.
+Dialogue: 0,0:07:48.49,0:07:53.37,Bilingual,,0,0,0,,我们这次连带装了一百多个软件包；真正的 VM 上通常会少一些\N{\fs33\c&H00C8C0B8&\bord1.4}Ours pulled in over a hundred packages; a real VM usually needs fewer.
+Dialogue: 0,0:07:53.69,0:07:55.03,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:07:55.08,0:07:58.13,Bilingual,,0,0,0,,额外检查一下：问问 pip3 的版本\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check: ask pip3 for its version.
+Dialogue: 0,0:07:58.45,0:08:01.68,Bilingual,,0,0,0,,它是 pip 23.0.1，对应 Python 3.11\N{\fs33\c&H00C8C0B8&\bord1.4}It's pip 23.0.1, for Python 3.11,
+Dialogue: 0,0:08:01.68,0:08:06.37,Bilingual,,0,0,0,,在 /usr/lib 下面一个叫 dist-packages 的目录里\N{\fs33\c&H00C8C0B8&\bord1.4}in a folder called dist-packages under /usr/lib.
+Dialogue: 0,0:08:06.69,0:08:11.30,Bilingual,,0,0,0,,这个 user 拼作 usr：指的是系统的文件，不是你的 home 目录\N{\fs33\c&H00C8C0B8&\bord1.4}That user is spelled usr: the system's files, not your home folder.
+Dialogue: 0,0:08:11.53,0:08:15.94,Bilingual,,0,0,0,,现在跑视频开头那条命令，不带 sudo，也不带任何参数\N{\fs33\c&H00C8C0B8&\bord1.4}Now the command from the start of the video, without sudo or any flag;
+Dialogue: 0,0:08:15.94,0:08:17.83,Bilingual,,0,0,0,,它也不在 README 里\N{\fs33\c&H00C8C0B8&\bord1.4}it isn't in the README either.
+Dialogue: 0,0:08:18.15,0:08:22.37,Bilingual,,0,0,0,,还是一样，pip 拒绝了：这个环境是 externally managed\N{\fs33\c&H00C8C0B8&\bord1.4}Again, pip refuses: this environment is externally managed.
+Dialogue: 0,0:08:22.69,0:08:26.85,Bilingual,,0,0,0,,提示说：用 apt 安装，或者建一个虚拟环境\N{\fs33\c&H00C8C0B8&\bord1.4}The hint says: install with apt, or create a virtual environment.
+Dialogue: 0,0:08:27.17,0:08:29.97,Bilingual,,0,0,0,,它最后一句甚至给出了绕过去的办法\N{\fs33\c&H00C8C0B8&\bord1.4}Its last note even names a way around it.
+Dialogue: 0,0:08:30.20,0:08:31.54,Bilingual,,0,0,0,,为什么要拒绝？\N{\fs33\c&H00C8C0B8&\bord1.4}Why refuse?
+Dialogue: 0,0:08:31.59,0:08:33.80,Bilingual,,0,0,0,,先想想 Python 怎么找 import 的东西\N{\fs33\c&H00C8C0B8&\bord1.4}Picture how Python finds an import.
+Dialogue: 0,0:08:34.12,0:08:37.70,Bilingual,,0,0,0,,这条额外的一行命令打印 sys.path 这个列表\N{\fs33\c&H00C8C0B8&\bord1.4}This extra one-liner prints the list called sys.path:
+Dialogue: 0,0:08:37.70,0:08:39.59,Bilingual,,0,0,0,,也就是 Python 会搜索的那些目录\N{\fs33\c&H00C8C0B8&\bord1.4}the folders Python searches.
+Dialogue: 0,0:08:39.91,0:08:41.51,Bilingual,,0,0,0,,把它们想成一层层的架子\N{\fs33\c&H00C8C0B8&\bord1.4}Think of them as shelves.
+Dialogue: 0,0:08:41.66,0:08:46.75,Bilingual,,0,0,0,,每次 import，Python 都从最上面一层往下找，拿第一个对上的\N{\fs33\c&H00C8C0B8&\bord1.4}On every import, Python scans from the top shelf down, and takes the first match.
+Dialogue: 0,0:08:47.97,0:08:49.93,Bilingual,,0,0,0,,最下面这层是 apt 的\N{\fs33\c&H00C8C0B8&\bord1.4}The bottom shelf belongs to apt.
+Dialogue: 0,0:08:50.25,0:08:52.44,Bilingual,,0,0,0,,Debian 自己也在跑一些 Python 工具\N{\fs33\c&H00C8C0B8&\bord1.4}Debian itself runs Python tools
+Dialogue: 0,0:08:52.44,0:08:56.76,Bilingual,,0,0,0,,它们依赖的正是这些罐子，而且正是这些版本\N{\fs33\c&H00C8C0B8&\bord1.4}that depend on exactly those jars, at exactly those versions.
+Dialogue: 0,0:08:57.08,0:09:00.83,Bilingual,,0,0,0,,系统 Python 是一间公用厨房，掌勺的是 apt\N{\fs33\c&H00C8C0B8&\bord1.4}The system Python is a shared kitchen, and apt is the cook.
+Dialogue: 0,0:09:01.15,0:09:03.24,Bilingual,,0,0,0,,这就是 externally managed 的意思\N{\fs33\c&H00C8C0B8&\bord1.4}That's what externally managed means.
+Dialogue: 0,0:09:03.56,0:09:07.08,Bilingual,,0,0,0,,而 PEP 668 就是让 pip 遵守这一点的规则\N{\fs33\c&H00C8C0B8&\bord1.4}PEP 668 is the rule that makes pip respect it.
+Dialogue: 0,0:09:07.32,0:09:10.95,Bilingual,,0,0,0,,第 8 步是 README 里的命令：sudo pip3 install\N{\fs33\c&H00C8C0B8&\bord1.4}Step 8 is the README's command: sudo pip3 install,
+Dialogue: 0,0:09:10.95,0:09:13.72,Bilingual,,0,0,0,,加上 --break-system-packages 这个参数\N{\fs33\c&H00C8C0B8&\bord1.4}with the flag --break-system-packages.
+Dialogue: 0,0:09:14.04,0:09:18.45,Bilingual,,0,0,0,,这个参数绕过了保护；sudo 让 pip 以管理员身份写文件\N{\fs33\c&H00C8C0B8&\bord1.4}The flag overrides the guard; sudo lets pip write as administrator.
+Dialogue: 0,0:09:18.77,0:09:20.19,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:09:20.24,0:09:22.69,Bilingual,,0,0,0,,我们要了 2 个包，装了 12 个\N{\fs33\c&H00C8C0B8&\bord1.4}We asked for 2 packages and got 12;
+Dialogue: 0,0:09:22.69,0:09:25.77,Bilingual,,0,0,0,,如果你看到 requirement already satisfied\N{\fs33\c&H00C8C0B8&\bord1.4}if yours says requirement already satisfied,
+Dialogue: 0,0:09:25.77,0:09:27.52,Bilingual,,0,0,0,,说明 apt 已经装过那个包了\N{\fs33\c&H00C8C0B8&\bord1.4}apt already had that one.
+Dialogue: 0,0:09:27.84,0:09:30.18,Bilingual,,0,0,0,,还有，警告说以 root 身份运行 pip\N{\fs33\c&H00C8C0B8&\bord1.4}And the warning says running pip as root
+Dialogue: 0,0:09:30.18,0:09:32.75,Bilingual,,0,0,0,,可能会和系统的包管理器冲突\N{\fs33\c&H00C8C0B8&\bord1.4}can clash with the system's package manager.
+Dialogue: 0,0:09:32.98,0:09:34.38,Bilingual,,0,0,0,,它们装到哪儿去了？\N{\fs33\c&H00C8C0B8&\bord1.4}Where did they go?
+Dialogue: 0,0:09:34.43,0:09:38.17,Bilingual,,0,0,0,,这条额外的一行命令问 googletrans 装在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}This extra one-liner asks googletrans where it lives:
+Dialogue: 0,0:09:38.17,0:09:40.57,Bilingual,,0,0,0,,在 /usr/local 下面的 dist-packages 里\N{\fs33\c&H00C8C0B8&\bord1.4}in dist-packages under /usr/local,
+Dialogue: 0,0:09:40.57,0:09:43.46,Bilingual,,0,0,0,,仍然是系统的，所有用户共用\N{\fs33\c&H00C8C0B8&\bord1.4}still the system's, shared by every user.
+Dialogue: 0,0:09:43.78,0:09:47.26,Bilingual,,0,0,0,,看看这些架子：这一层在 apt 那层的上面\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the shelves: that shelf sits above the one apt owns.
+Dialogue: 0,0:09:47.50,0:09:52.56,Bilingual,,0,0,0,,现在假设，apt 之前为某个系统工具装过一个旧版的 httpx\N{\fs33\c&H00C8C0B8&\bord1.4}Now suppose apt had installed an older httpx for some system tool.
+Dialogue: 0,0:09:52.88,0:09:55.97,Bilingual,,0,0,0,,我们的 googletrans 需要 0.27.2 及以上\N{\fs33\c&H00C8C0B8&\bord1.4}Our googletrans needs 0.27.2 or newer,
+Dialogue: 0,0:09:55.97,0:10:00.19,Bilingual,,0,0,0,,所以 pip 会再装一份，放在更高的那层架子上\N{\fs33\c&H00C8C0B8&\bord1.4}so pip would add a second copy, on the higher shelf.
+Dialogue: 0,0:10:00.51,0:10:04.47,Bilingual,,0,0,0,,这时 Python 会先找到这一份，把 apt 那份挡住\N{\fs33\c&H00C8C0B8&\bord1.4}Python would find that copy first and hide the one from apt,
+Dialogue: 0,0:10:04.47,0:10:08.49,Bilingual,,0,0,0,,所有用系统 Python 的程序都这样，不只是我们的\N{\fs33\c&H00C8C0B8&\bord1.4}for every program that uses the system Python, not just ours.
+Dialogue: 0,0:10:08.81,0:10:10.41,Bilingual,,0,0,0,,这个参数破坏的，正是这一点\N{\fs33\c&H00C8C0B8&\bord1.4}That's what the flag breaks.
+Dialogue: 0,0:10:10.57,0:10:14.19,Bilingual,,0,0,0,,公平地说，README 里也讲了，这里是故意用这个参数\N{\fs33\c&H00C8C0B8&\bord1.4}To be fair, the README says it uses the flag deliberately,
+Dialogue: 0,0:10:14.19,0:10:18.44,Bilingual,,0,0,0,,当作快速演示，下一部分就会用正规的做法\N{\fs33\c&H00C8C0B8&\bord1.4}as a quick demonstration, and the next walkthrough does it properly.
+Dialogue: 0,0:10:18.68,0:10:20.28,Bilingual,,0,0,0,,来想一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder.
+Dialogue: 0,0:10:20.35,0:10:26.53,Bilingual,,0,0,0,,这台 VM 上有个同学的项目，需要 httpx 0.13\N{\fs33\c&H00C8C0B8&\bord1.4}A classmate's project on this VM needs httpx 0.13,
+Dialogue: 0,0:10:26.53,0:10:29.86,Bilingual,,0,0,0,,而你的项目，需要的是 httpx 0.28\N{\fs33\c&H00C8C0B8&\bord1.4}and yours needs httpx 0.28.
+Dialogue: 0,0:10:30.18,0:10:32.42,Bilingual,,0,0,0,,两个项目都像这样，做系统级安装\N{\fs33\c&H00C8C0B8&\bord1.4}Both install system-wide, like this.
+Dialogue: 0,0:10:32.74,0:10:34.34,Bilingual,,0,0,0,,会怎么样？\N{\fs33\c&H00C8C0B8&\bord1.4}What happens?
+Dialogue: 0,0:10:42.58,0:10:46.81,Bilingual,,0,0,0,,架子只有一层，所以只放得下一个 httpx\N{\fs33\c&H00C8C0B8&\bord1.4}There's only one shelf, so there's room for only one httpx.
+Dialogue: 0,0:10:47.13,0:10:51.61,Bilingual,,0,0,0,,最后装的说了算，对所有人都一样，两个项目总有一个会坏\N{\fs33\c&H00C8C0B8&\bord1.4}The last install wins, for everyone, and one of the two projects breaks.
+Dialogue: 0,0:10:53.15,0:10:54.75,Bilingual,,0,0,0,,第 9 步：把它跑起来\N{\fs33\c&H00C8C0B8&\bord1.4}Step 9: run it.
+Dialogue: 0,0:10:54.92,0:11:00.81,Bilingual,,0,0,0,,输入 python3 cli.py，要带 3，因为这里没有不带 3 的 python\N{\fs33\c&H00C8C0B8&\bord1.4}Type python3 cli.py, with the 3, since plain python doesn't exist here.
+Dialogue: 0,0:11:01.13,0:11:05.36,Bilingual,,0,0,0,,你应该会看到横幅、参数、你的输入，还有输出\N{\fs33\c&H00C8C0B8&\bord1.4}You should see the banner, the arguments, your input, and the output:
+Dialogue: 0,0:11:05.36,0:11:06.96,Bilingual,,0,0,0,,意大利语版的 I love cheese\N{\fs33\c&H00C8C0B8&\bord1.4}I love cheese, in Italian.
+Dialogue: 0,0:11:07.27,0:11:10.73,Bilingual,,0,0,0,,要是出来一大段红色报错，什么都别改\N{\fs33\c&H00C8C0B8&\bord1.4}If you get a long red error instead, don't change anything;
+Dialogue: 0,0:11:10.73,0:11:12.90,Bilingual,,0,0,0,,待会儿我们一起读我们录到的那段\N{\fs33\c&H00C8C0B8&\bord1.4}we'll read ours together in a minute.
+Dialogue: 0,0:11:13.22,0:11:14.62,Bilingual,,0,0,0,,暂停一下，试试看\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and try it.
+Dialogue: 0,0:11:14.67,0:11:16.61,Bilingual,,0,0,0,,然后跑 README 里的另外两条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Then the README's other two runs.
+Dialogue: 0,0:11:16.93,0:11:22.11,Bilingual,,0,0,0,,其中 -t 指定文本，-s 指定源语言，-d 指定目标语言\N{\fs33\c&H00C8C0B8&\bord1.4}-t gives the text, -s the source language, -d the destination.
+Dialogue: 0,0:11:22.43,0:11:26.44,Bilingual,,0,0,0,,从 README 复制，连引号一起，暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Copy them from the README, quotes included, and pause to run both.
+Dialogue: 0,0:11:26.76,0:11:29.56,Bilingual,,0,0,0,,一条返回西班牙语，另一条返回法语\N{\fs33\c&H00C8C0B8&\bord1.4}One comes back in Spanish, the other in French.
+Dialogue: 0,0:11:29.80,0:11:34.25,Bilingual,,0,0,0,,说实话，我们录的时候，Google 拒绝了我们的请求\N{\fs33\c&H00C8C0B8&\bord1.4}Now, honestly: when we recorded this, Google refused our requests,
+Dialogue: 0,0:11:34.25,0:11:37.29,Bilingual,,0,0,0,,结果跑出来这一长串红色的 traceback\N{\fs33\c&H00C8C0B8&\bord1.4}and the run ended in this long red traceback.
+Dialogue: 0,0:11:37.61,0:11:40.92,Bilingual,,0,0,0,,我们来读一读，这种 traceback 整门课你都会碰到\N{\fs33\c&H00C8C0B8&\bord1.4}Let's read it; you'll meet tracebacks like this all course long.
+Dialogue: 0,0:11:41.15,0:11:43.62,Bilingual,,0,0,0,,这是一个链式 traceback：两个错误\N{\fs33\c&H00C8C0B8&\bord1.4}This is a chained traceback: two errors.
+Dialogue: 0,0:11:43.94,0:11:47.91,Bilingual,,0,0,0,,中间那一行说，第一个错误直接导致了第二个\N{\fs33\c&H00C8C0B8&\bord1.4}The line between them says the first one directly caused the second.
+Dialogue: 0,0:11:48.23,0:11:52.22,Bilingual,,0,0,0,,大多数人只看最后一行，可这里它只是外层包装\N{\fs33\c&H00C8C0B8&\bord1.4}Most people read only the last line, but here that's just the wrapper.
+Dialogue: 0,0:11:52.54,0:11:55.17,Bilingual,,0,0,0,,往上翻到第一个错误：那才是原因\N{\fs33\c&H00C8C0B8&\bord1.4}Scroll up to the first error: that's the cause.
+Dialogue: 0,0:11:55.40,0:11:59.54,Bilingual,,0,0,0,,原因是状态码 429，也就是请求太多\N{\fs33\c&H00C8C0B8&\bord1.4}The cause is status code 429: too many requests.
+Dialogue: 0,0:11:59.86,0:12:03.69,Bilingual,,0,0,0,,Google 的非官方接口在对我们的机器限流\N{\fs33\c&H00C8C0B8&\bord1.4}Google's unofficial endpoint was rate-limiting our machine,
+Dialogue: 0,0:12:03.69,0:12:06.09,Bilingual,,0,0,0,,对云上的机器，它经常这样\N{\fs33\c&H00C8C0B8&\bord1.4}as it often does with cloud machines.
+Dialogue: 0,0:12:06.41,0:12:09.48,Bilingual,,0,0,0,,这台 VM 上什么都没坏。最后一行的错误\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing on the VM was broken. The error
+Dialogue: 0,0:12:09.48,0:12:15.49,Bilingual,,0,0,0,,是这个应用自己的外层包装，也就是 cli.py 的第 32 到 37 行\N{\fs33\c&H00C8C0B8&\bord1.4}on the last line is the app's own wrapper, lines 32 to 37 of cli.py.
+Dialogue: 0,0:12:15.81,0:12:20.57,Bilingual,,0,0,0,,它什么都接住，再抛出一条更友好的消息，接在原来的错误后面\N{\fs33\c&H00C8C0B8&\bord1.4}It catches anything, and raises a friendlier message, chained to the original.
+Dialogue: 0,0:12:20.80,0:12:22.40,Bilingual,,0,0,0,,为什么要看第一个错误？\N{\fs33\c&H00C8C0B8&\bord1.4}Why read the first error?
+Dialogue: 0,0:12:22.59,0:12:26.50,Bilingual,,0,0,0,,这条额外的命令故意打错了：xx 不是一种语言\N{\fs33\c&H00C8C0B8&\bord1.4}This extra command has a typo: xx isn't a language.
+Dialogue: 0,0:12:26.82,0:12:30.02,Bilingual,,0,0,0,,第一个错误说的是：目标语言无效\N{\fs33\c&H00C8C0B8&\bord1.4}The first error says invalid destination language.
+Dialogue: 0,0:12:30.34,0:12:35.44,Bilingual,,0,0,0,,但最后一行还是在怪网络，因为同一个外层包装什么都接\N{\fs33\c&H00C8C0B8&\bord1.4}But the last line still blames the network, because the same wrapper catches everything.
+Dialogue: 0,0:12:35.76,0:12:38.48,Bilingual,,0,0,0,,这是代码的小缺陷，不是你的配置有问题\N{\fs33\c&H00C8C0B8&\bord1.4}A small flaw in the code, not in your setup.
+Dialogue: 0,0:12:38.80,0:12:42.43,Bilingual,,0,0,0,,有效的语言代码，在 README 最下面的一张表里\N{\fs33\c&H00C8C0B8&\bord1.4}The valid codes are in a table at the bottom of the README.
+Dialogue: 0,0:12:42.67,0:12:45.33,Bilingual,,0,0,0,,如果你遇到 429，可以等一等再试\N{\fs33\c&H00C8C0B8&\bord1.4}If you hit a 429, wait and retry,
+Dialogue: 0,0:12:45.33,0:12:48.96,Bilingual,,0,0,0,,换个区域，或者在你的笔记本上跑\N{\fs33\c&H00C8C0B8&\bord1.4}try another region, or run it on your laptop.
+Dialogue: 0,0:12:49.28,0:12:53.43,Bilingual,,0,0,0,,只要走到了 Input 那一行，import 就都成功了\N{\fs33\c&H00C8C0B8&\bord1.4}If you got as far as the Input line, the imports worked;
+Dialogue: 0,0:12:53.43,0:12:57.58,Bilingual,,0,0,0,,第一个错误是 429 的话，说不行的只是网络\N{\fs33\c&H00C8C0B8&\bord1.4}when the first error is a 429, only the network said no.
+Dialogue: 0,0:12:58.82,0:13:01.65,Bilingual,,0,0,0,,第 10 步，也是最后一步：把 VM 删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Step 10, the last one: delete the VM.
+Dialogue: 0,0:13:01.97,0:13:06.58,Bilingual,,0,0,0,,README 也说了，运行中的 VM 会一直计费，闲着也一样\N{\fs33\c&H00C8C0B8&\bord1.4}As the README says, a running VM keeps charging, even when idle.
+Dialogue: 0,0:13:06.90,0:13:09.31,Bilingual,,0,0,0,,那为什么要删除，而不只是停止？\N{\fs33\c&H00C8C0B8&\bord1.4}So why delete it, and not just stop it?
+Dialogue: 0,0:13:09.55,0:13:15.80,Bilingual,,0,0,0,,停止之后，CPU 和内存不再计费，但磁盘还在，所以还在计费\N{\fs33\c&H00C8C0B8&\bord1.4}Stopping ends the billing for CPU and memory, but the disk still exists, so it keeps billing,
+Dialogue: 0,0:13:15.80,0:13:18.15,Bilingual,,0,0,0,,预留的 IP 地址也一样\N{\fs33\c&H00C8C0B8&\bord1.4}and so would a reserved IP address.
+Dialogue: 0,0:13:18.40,0:13:23.03,Bilingual,,0,0,0,,删除会移除这台 VM，而且默认启动磁盘也一起删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Deleting removes the VM, and by default its boot disk goes with it.
+Dialogue: 0,0:13:23.35,0:13:27.23,Bilingual,,0,0,0,,这是启动磁盘的一个设置，你没改过就是开着的\N{\fs33\c&H00C8C0B8&\bord1.4}That's a setting on the boot disk, and it's on unless you changed it.
+Dialogue: 0,0:13:27.55,0:13:29.15,Bilingual,,0,0,0,,计价器也就停了\N{\fs33\c&H00C8C0B8&\bord1.4}And the meter stops.
+Dialogue: 0,0:13:29.24,0:13:32.93,Bilingual,,0,0,0,,选中你的实例，点 Delete，暂停视频，等它删完\N{\fs33\c&H00C8C0B8&\bord1.4}Select your instance, click Delete, and pause until it's gone.
+Dialogue: 0,0:13:33.17,0:13:37.75,Bilingual,,0,0,0,,然后检查两个页面：VM instances 和 Disks 都应该是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Then check two pages: VM instances and Disks should both be empty.
+Dialogue: 0,0:13:38.07,0:13:40.60,Bilingual,,0,0,0,,笔记本上装了 gcloud 命令行工具的话\N{\fs33\c&H00C8C0B8&\bord1.4}With the gcloud tool on your laptop,
+Dialogue: 0,0:13:40.60,0:13:44.95,Bilingual,,0,0,0,,两条额外的命令也能查：gcloud compute instances list\N{\fs33\c&H00C8C0B8&\bord1.4}two extra commands do the same: gcloud compute instances list,
+Dialogue: 0,0:13:44.95,0:13:47.05,Bilingual,,0,0,0,,还有 gcloud compute disks list\N{\fs33\c&H00C8C0B8&\bord1.4}and gcloud compute disks list.
+Dialogue: 0,0:13:47.37,0:13:49.10,Bilingual,,0,0,0,,这两条 README 里都没有\N{\fs33\c&H00C8C0B8&\bord1.4}Neither is in the README.
+Dialogue: 0,0:13:49.35,0:13:51.10,Bilingual,,0,0,0,,这就是简单粗暴的做法\N{\fs33\c&H00C8C0B8&\bord1.4}That was the quick and dirty way.
+Dialogue: 0,0:13:51.42,0:13:55.71,Bilingual,,0,0,0,,能用，但它改的是机器上每个程序都在用的系统 Python\N{\fs33\c&H00C8C0B8&\bord1.4}It worked, but it changed the system Python for every program on the machine.
+Dialogue: 0,0:13:56.03,0:13:59.85,Bilingual,,0,0,0,,第二部分：同一个应用，换台新 VM，用干净的做法\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2: the same app, on a fresh VM, the clean way.
+Dialogue: 0,0:14:01.08,0:14:02.53,Bilingual,,0,0,0,,回到刚才那个问题\N{\fs33\c&H00C8C0B8&\bord1.4}Back to our puzzle:
+Dialogue: 0,0:14:02.53,0:14:06.65,Bilingual,,0,0,0,,两个项目，两个版本的 httpx，却只有一层公用的架子\N{\fs33\c&H00C8C0B8&\bord1.4}two projects, two versions of httpx, one shared shelf.
+Dialogue: 0,0:14:06.97,0:14:10.11,Bilingual,,0,0,0,,解决办法是给每个项目一个自己的工具箱\N{\fs33\c&H00C8C0B8&\bord1.4}The fix is to give each project its own toolbox.
+Dialogue: 0,0:14:10.43,0:14:12.97,Bilingual,,0,0,0,,这个工具箱，就是虚拟环境\N{\fs33\c&H00C8C0B8&\bord1.4}That toolbox is a virtual environment.
+Dialogue: 0,0:14:13.20,0:14:18.77,Bilingual,,0,0,0,,虚拟环境其实就是一个目录，名字通常是 .venv，分三个部分\N{\fs33\c&H00C8C0B8&\bord1.4}A virtual environment is just a folder, usually called .venv, with three parts.
+Dialogue: 0,0:14:19.09,0:14:21.78,Bilingual,,0,0,0,,第一，一个 bin 目录，里面有个 python\N{\fs33\c&H00C8C0B8&\bord1.4}First, a bin folder with a python inside.
+Dialogue: 0,0:14:22.10,0:14:26.75,Bilingual,,0,0,0,,它通常不是拷贝，只是个软链接，指向别处真正的解释器\N{\fs33\c&H00C8C0B8&\bord1.4}It's usually not a copy, just a link to a real interpreter somewhere else.
+Dialogue: 0,0:14:26.98,0:14:31.27,Bilingual,,0,0,0,,第二，它自己的 site-packages 目录，uv 刚建好时是空的\N{\fs33\c&H00C8C0B8&\bord1.4}Second, its own site-packages folder, empty when uv makes it.
+Dialogue: 0,0:14:31.59,0:14:36.99,Bilingual,,0,0,0,,一般叫 site-packages；Debian 把系统的叫 dist-packages\N{\fs33\c&H00C8C0B8&\bord1.4}Site-packages is the usual name; Debian calls its system ones dist-packages.
+Dialogue: 0,0:14:37.31,0:14:41.26,Bilingual,,0,0,0,,这个项目的包就装在这里，而且只装这个项目的\N{\fs33\c&H00C8C0B8&\bord1.4}This is where this project's packages go, and only this project's.
+Dialogue: 0,0:14:41.50,0:14:45.13,Bilingual,,0,0,0,,第三，一个小配置文件：pyvenv.cfg\N{\fs33\c&H00C8C0B8&\bord1.4}Third, a small config file, pyvenv.cfg.
+Dialogue: 0,0:14:45.45,0:14:49.39,Bilingual,,0,0,0,,Python 从 venv 的 bin 目录启动时，会读这个文件\N{\fs33\c&H00C8C0B8&\bord1.4}When Python starts from the venv's bin folder, it reads this file.
+Dialogue: 0,0:14:49.71,0:14:54.56,Bilingual,,0,0,0,,它说：你在 venv 里，所以用我的 site-packages，系统的不算\N{\fs33\c&H00C8C0B8&\bord1.4}It says: you're in a venv, so use my site-packages, and leave the system's out.
+Dialogue: 0,0:14:54.80,0:14:56.61,Bilingual,,0,0,0,,看看架子上的区别\N{\fs33\c&H00C8C0B8&\bord1.4}Here's the difference on the shelves.
+Dialogue: 0,0:14:56.93,0:15:00.07,Bilingual,,0,0,0,,从 venv 启动的 Python，建出的列表不一样\N{\fs33\c&H00C8C0B8&\bord1.4}Started from the venv, Python builds a different list.
+Dialogue: 0,0:15:00.39,0:15:04.70,Bilingual,,0,0,0,,标准库还是来自它软链接指向的那个真正的解释器\N{\fs33\c&H00C8C0B8&\bord1.4}The standard library still comes from the real interpreter it links to.
+Dialogue: 0,0:15:05.02,0:15:08.30,Bilingual,,0,0,0,,但系统的两层 dist-packages 架子都没了\N{\fs33\c&H00C8C0B8&\bord1.4}But both dist-packages shelves from the system are gone,
+Dialogue: 0,0:15:08.30,0:15:10.82,Bilingual,,0,0,0,,换成 venv 自己的那层\N{\fs33\c&H00C8C0B8&\bord1.4}and the venv's own shelf takes their place.
+Dialogue: 0,0:15:11.07,0:15:13.11,Bilingual,,0,0,0,,引擎还是那个引擎，工具箱换了一个\N{\fs33\c&H00C8C0B8&\bord1.4}Same engine, different toolbox.
+Dialogue: 0,0:15:13.43,0:15:15.24,Bilingual,,0,0,0,,而且两个工具箱互不相干\N{\fs33\c&H00C8C0B8&\bord1.4}And the toolboxes don't mix:
+Dialogue: 0,0:15:15.24,0:15:20.47,Bilingual,,0,0,0,,venv 里的包，系统 Python 看不见，反过来也一样\N{\fs33\c&H00C8C0B8&\bord1.4}packages in the venv are invisible to the system Python, and the other way round.
+Dialogue: 0,0:15:20.72,0:15:22.29,Bilingual,,0,0,0,,还记得 pip 的提示吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Remember pip's hint?
+Dialogue: 0,0:15:22.34,0:15:26.71,Bilingual,,0,0,0,,它建议用 python3 -m venv，这是建 venv 的经典做法\N{\fs33\c&H00C8C0B8&\bord1.4}It suggested python3 -m venv, the classic way to make one.
+Dialogue: 0,0:15:27.03,0:15:29.98,Bilingual,,0,0,0,,今天用 uv 来建，它还能做更多\N{\fs33\c&H00C8C0B8&\bord1.4}Today, uv makes it for us, and does a lot more.
+Dialogue: 0,0:15:30.22,0:15:36.64,Bilingual,,0,0,0,,有些东西 venv 隔离不了：操作系统、用 C 写的系统库，还有驱动\N{\fs33\c&H00C8C0B8&\bord1.4}What a venv doesn't isolate: the operating system, system libraries written in C, and drivers.
+Dialogue: 0,0:15:36.96,0:15:40.23,Bilingual,,0,0,0,,这些要交给一整台机器，比如我们的 VM\N{\fs33\c&H00C8C0B8&\bord1.4}Those are jobs for a whole machine, like our VM,
+Dialogue: 0,0:15:40.23,0:15:42.21,Bilingual,,0,0,0,,或者交给容器，下节课再讲\N{\fs33\c&H00C8C0B8&\bord1.4}or a container, next lecture.
+Dialogue: 0,0:15:42.45,0:15:46.93,Bilingual,,0,0,0,,跑完 uv sync，我们打开真正的目录，找齐这三个部分\N{\fs33\c&H00C8C0B8&\bord1.4}After uv sync, we'll open the real folder and find all three parts.
+Dialogue: 0,0:15:48.77,0:15:53.61,Bilingual,,0,0,0,,第二部分换一台全新的 VM，设置不变，计价器又开始跳了\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 starts on a fresh VM, same settings, and the meter runs again.
+Dialogue: 0,0:15:53.93,0:15:57.11,Bilingual,,0,0,0,,全新很重要：pip 从来没碰过这个系统 Python\N{\fs33\c&H00C8C0B8&\bord1.4}Fresh matters: this system Python never sees pip.
+Dialogue: 0,0:15:57.43,0:15:58.99,Bilingual,,0,0,0,,建好后 SSH 进去\N{\fs33\c&H00C8C0B8&\bord1.4}Create it and SSH in;
+Dialogue: 0,0:15:58.99,0:16:04.51,Bilingual,,0,0,0,,名称被占用的话，说明旧 VM 还在删除，等一分钟就好\N{\fs33\c&H00C8C0B8&\bord1.4}if the name is taken, the old VM is still being deleted, so wait a minute.
+Dialogue: 0,0:16:04.83,0:16:07.05,Bilingual,,0,0,0,,暂停视频，等你的终端打开\N{\fs33\c&H00C8C0B8&\bord1.4}Pause until your terminal is open.
+Dialogue: 0,0:16:07.30,0:16:12.38,Bilingual,,0,0,0,,接着还是那四条：apt-get update、装 git、clone 和 cd\N{\fs33\c&H00C8C0B8&\bord1.4}Then the same four commands: apt-get update, install git, clone, and cd.
+Dialogue: 0,0:16:12.70,0:16:15.62,Bilingual,,0,0,0,,暂停视频，直到提示符以 simple-translate 结尾\N{\fs33\c&H00C8C0B8&\bord1.4}Pause until your prompt ends in simple-translate.
+Dialogue: 0,0:16:15.88,0:16:18.55,Bilingual,,0,0,0,,第 7 步一行命令就能装好 uv\N{\fs33\c&H00C8C0B8&\bord1.4}Step 7 installs uv in one line.
+Dialogue: 0,0:16:18.87,0:16:21.08,Bilingual,,0,0,0,,先用 curl 下载一个脚本\N{\fs33\c&H00C8C0B8&\bord1.4}First, curl downloads a script:
+Dialogue: 0,0:16:21.08,0:16:24.72,Bilingual,,0,0,0,,它会跟随重定向，安静运行但仍然显示错误\N{\fs33\c&H00C8C0B8&\bord1.4}it follows redirects, stays quiet but shows errors,
+Dialogue: 0,0:16:24.72,0:16:29.92,Bilingual,,0,0,0,,遇到 HTTP 错误就直接失败，而不是把错误页面交给 shell\N{\fs33\c&H00C8C0B8&\bord1.4}and fails on an HTTP error instead of handing an error page to the shell.
+Dialogue: 0,0:16:30.18,0:16:34.65,Bilingual,,0,0,0,,这根竖线是管道：它把脚本直接交给 shell\N{\fs33\c&H00C8C0B8&\bord1.4}The vertical bar is a pipe: it hands the script straight to the shell,
+Dialogue: 0,0:16:34.65,0:16:38.87,Bilingual,,0,0,0,,所以你运行的是网上来的代码，也就是 uv 的官方安装脚本\N{\fs33\c&H00C8C0B8&\bord1.4}so you're running code from the internet: uv's official installer,
+Dialogue: 0,0:16:38.87,0:16:40.47,Bilingual,,0,0,0,,你可以先读一遍\N{\fs33\c&H00C8C0B8&\bord1.4}which you can read first.
+Dialogue: 0,0:16:40.72,0:16:42.14,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:16:42.19,0:16:47.75,Bilingual,,0,0,0,,它会装上 uv，录制时的版本是 0.13.0，还有 uvx\N{\fs33\c&H00C8C0B8&\bord1.4}It installs uv, version 0.13.0 at the time of recording,
+Dialogue: 0,0:16:47.75,0:16:52.22,Bilingual,,0,0,0,,都装到你 home 目录下的 .local/bin 里\N{\fs33\c&H00C8C0B8&\bord1.4}and uvx, into .local/bin in your home folder.
+Dialogue: 0,0:16:52.47,0:16:54.83,Bilingual,,0,0,0,,试一下 uv，这是个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Let's try uv, with an extra check.
+Dialogue: 0,0:16:55.15,0:16:56.66,Bilingual,,0,0,0,,报 command not found\N{\fs33\c&H00C8C0B8&\bord1.4}Command not found.
+Dialogue: 0,0:16:56.71,0:16:58.31,Bilingual,,0,0,0,,可我们明明刚装好\N{\fs33\c&H00C8C0B8&\bord1.4}But we just installed it.
+Dialogue: 0,0:16:58.55,0:17:02.82,Bilingual,,0,0,0,,你输入一个命令，shell 就去一个叫 PATH 的目录列表里\N{\fs33\c&H00C8C0B8&\bord1.4}When you type a command, the shell walks a list of folders called PATH,
+Dialogue: 0,0:17:02.82,0:17:05.23,Bilingual,,0,0,0,,从左到右找，运行第一个匹配的\N{\fs33\c&H00C8C0B8&\bord1.4}left to right, and runs the first match.
+Dialogue: 0,0:17:05.55,0:17:09.92,Bilingual,,0,0,0,,哪个目录都没有 uv，而 shell 只认它启动时的 PATH\N{\fs33\c&H00C8C0B8&\bord1.4}None contains uv, and the shell only knows the PATH it started with.
+Dialogue: 0,0:17:10.18,0:17:13.88,Bilingual,,0,0,0,,安装脚本最后几行和第 8 步给了两个办法\N{\fs33\c&H00C8C0B8&\bord1.4}The installer's last lines, and step 8, give two options:
+Dialogue: 0,0:17:13.88,0:17:16.60,Bilingual,,0,0,0,,重新加载 shell，或者 source env 文件\N{\fs33\c&H00C8C0B8&\bord1.4}reload your shell, or source the env file.
+Dialogue: 0,0:17:16.92,0:17:20.99,Bilingual,,0,0,0,,重新加载就是新开一个 SSH 窗口，回到 home 目录\N{\fs33\c&H00C8C0B8&\bord1.4}A reload means a new SSH window, back in your home folder,
+Dialogue: 0,0:17:20.99,0:17:23.79,Bilingual,,0,0,0,,所以要重新 cd 进 simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}so you'd cd into simple-translate again.
+Dialogue: 0,0:17:24.11,0:17:27.59,Bilingual,,0,0,0,,用 source 更快：它把那个目录放到 PATH 最前面\N{\fs33\c&H00C8C0B8&\bord1.4}Sourcing is quicker: it puts that folder first in PATH.
+Dialogue: 0,0:17:27.91,0:17:29.85,Bilingual,,0,0,0,,暂停一下，跑一遍 source 那条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run the source line.
+Dialogue: 0,0:17:30.05,0:17:35.92,Bilingual,,0,0,0,,再做两个额外检查：uv 能报出版本，which uv 也指向那个目录\N{\fs33\c&H00C8C0B8&\bord1.4}Then two extra checks: uv reports its version, and which uv points into that folder.
+Dialogue: 0,0:17:36.18,0:17:37.93,Bilingual,,0,0,0,,为什么用 source，不用 sh？\N{\fs33\c&H00C8C0B8&\bord1.4}Why source, and not sh?
+Dialogue: 0,0:17:38.25,0:17:41.95,Bilingual,,0,0,0,,直接用 sh，改的是马上就退出的子 shell\N{\fs33\c&H00C8C0B8&\bord1.4}Plain sh would change a child shell that exits at once;
+Dialogue: 0,0:17:41.95,0:17:43.56,Bilingual,,0,0,0,,source 改的是当前这个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}source changes this one.
+Dialogue: 0,0:17:43.88,0:17:48.05,Bilingual,,0,0,0,,安装脚本还让你的启动文件运行这个 env 文件\N{\fs33\c&H00C8C0B8&\bord1.4}The installer also made your startup files run this env file,
+Dialogue: 0,0:17:48.05,0:17:51.33,Bilingual,,0,0,0,,所以下次连上来，直接就能找到 uv\N{\fs33\c&H00C8C0B8&\bord1.4}so next time you connect, uv is found by itself.
+Dialogue: 0,0:17:51.58,0:17:53.11,Bilingual,,0,0,0,,那 uv 到底是什么？\N{\fs33\c&H00C8C0B8&\bord1.4}So what is uv?
+Dialogue: 0,0:17:53.16,0:17:57.08,Bilingual,,0,0,0,,一个很快的工具，顶替好几个：venv 模块和 pip\N{\fs33\c&H00C8C0B8&\bord1.4}One fast tool that replaces several: the venv module,
+Dialogue: 0,0:17:57.08,0:18:02.04,Bilingual,,0,0,0,,锁版本的 pip-tools，装 Python 的 pyenv，还有 pipx\N{\fs33\c&H00C8C0B8&\bord1.4}pip, pip-tools for locking, pyenv for installing Pythons, and pipx.
+Dialogue: 0,0:18:03.48,0:18:04.98,Bilingual,,0,0,0,,第 9 步是 uv sync\N{\fs33\c&H00C8C0B8&\bord1.4}Step 9 is uv sync,
+Dialogue: 0,0:18:04.98,0:18:09.20,Bilingual,,0,0,0,,它会读 pyproject.toml，所以我们先来读一下\N{\fs33\c&H00C8C0B8&\bord1.4}and it reads pyproject.toml, so let's read it first.
+Dialogue: 0,0:18:09.52,0:18:10.88,Bilingual,,0,0,0,,项目名是 app\N{\fs33\c&H00C8C0B8&\bord1.4}The name is app.
+Dialogue: 0,0:18:10.93,0:18:18.48,Bilingual,,0,0,0,,两个依赖：art，6.5 及以上；googletrans，正好是 4.0.2\N{\fs33\c&H00C8C0B8&\bord1.4}Two dependencies: art, version 6.5 or newer, and googletrans, exactly 4.0.2.
+Dialogue: 0,0:18:18.80,0:18:22.47,Bilingual,,0,0,0,,大于等于表示一个范围；双等号表示一个确定的版本\N{\fs33\c&H00C8C0B8&\bord1.4}Greater-or-equal means a range; double equals, one version.
+Dialogue: 0,0:18:22.79,0:18:26.95,Bilingual,,0,0,0,,第 6 行又是一个范围：Python 3.13 及以上\N{\fs33\c&H00C8C0B8&\bord1.4}Line 6 is a range again: Python 3.13 or newer.
+Dialogue: 0,0:18:27.20,0:18:28.52,Bilingual,,0,0,0,,先预测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Now predict.
+Dialogue: 0,0:18:28.57,0:18:31.04,Bilingual,,0,0,0,,这台 VM 上是 Python 3.11\N{\fs33\c&H00C8C0B8&\bord1.4}This VM has Python 3.11.
+Dialogue: 0,0:18:31.36,0:18:34.22,Bilingual,,0,0,0,,项目要求 3.13 及以上\N{\fs33\c&H00C8C0B8&\bord1.4}The project asks for 3.13 or newer.
+Dialogue: 0,0:18:34.54,0:18:36.14,Bilingual,,0,0,0,,那 uv sync 会怎么做？\N{\fs33\c&H00C8C0B8&\bord1.4}What will uv sync do?
+Dialogue: 0,0:18:36.35,0:18:39.79,Bilingual,,0,0,0,,直接失败，照样用 3.11，还是做点别的？\N{\fs33\c&H00C8C0B8&\bord1.4}Fail, use 3.11 anyway, or something else?
+Dialogue: 0,0:18:48.63,0:18:50.34,Bilingual,,0,0,0,,暂停一下，跑一遍 uv sync\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run uv sync.
+Dialogue: 0,0:18:50.66,0:18:54.91,Bilingual,,0,0,0,,它没有失败，而是下载了 uv 自己的 Python\N{\fs33\c&H00C8C0B8&\bord1.4}Instead of failing, uv downloads its own Python:
+Dialogue: 0,0:18:54.91,0:18:58.53,Bilingual,,0,0,0,,CPython 3.15.0，这是录制时的版本\N{\fs33\c&H00C8C0B8&\bord1.4}CPython 3.15.0, at the time of recording.
+Dialogue: 0,0:18:58.85,0:19:02.12,Bilingual,,0,0,0,,然后它在 .venv 里建了一个虚拟环境\N{\fs33\c&H00C8C0B8&\bord1.4}Then it creates a virtual environment in .venv.
+Dialogue: 0,0:19:02.44,0:19:08.05,Bilingual,,0,0,0,,如果 uv 找不到 pyproject.toml，先 cd 进 simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}If uv can't find a pyproject.toml, cd into simple-translate first.
+Dialogue: 0,0:19:08.28,0:19:09.79,Bilingual,,0,0,0,,来看看刚才发生了什么\N{\fs33\c&H00C8C0B8&\bord1.4}Here's what happened.
+Dialogue: 0,0:19:09.84,0:19:12.38,Bilingual,,0,0,0,,把 Python 的各个版本画在一条数轴上\N{\fs33\c&H00C8C0B8&\bord1.4}Picture Python versions on a number line.
+Dialogue: 0,0:19:12.70,0:19:16.58,Bilingual,,0,0,0,,这个约束点亮了从 3.13 往后的所有版本\N{\fs33\c&H00C8C0B8&\bord1.4}The constraint lights up everything from 3.13 onward.
+Dialogue: 0,0:19:16.90,0:19:22.43,Bilingual,,0,0,0,,首先，uv 会找它已经有的解释器：先找自己下载过的，再找系统的\N{\fs33\c&H00C8C0B8&\bord1.4}First, uv looks for an interpreter it already has: its own downloads, then the system's.
+Dialogue: 0,0:19:22.75,0:19:27.82,Bilingual,,0,0,0,,Debian 的 3.11.2 落在范围外面，所以用不了\N{\fs33\c&H00C8C0B8&\bord1.4}Debian's 3.11.2 lands outside the range, so it can't be used.
+Dialogue: 0,0:19:28.07,0:19:30.95,Bilingual,,0,0,0,,所以 uv 要下载一个。下载哪一个呢？\N{\fs33\c&H00C8C0B8&\bord1.4}So uv downloads one. Which one?
+Dialogue: 0,0:19:31.27,0:19:38.65,Bilingual,,0,0,0,,不是 3.13，而是范围内最新的版本，我们录制时是 3.15.0\N{\fs33\c&H00C8C0B8&\bord1.4}Not 3.13, but the newest release in the range, which was 3.15.0 when we recorded.
+Dialogue: 0,0:19:38.97,0:19:41.47,Bilingual,,0,0,0,,它装在你 home 目录下 uv 自己的目录里\N{\fs33\c&H00C8C0B8&\bord1.4}It lives in uv's own folder in your home,
+Dialogue: 0,0:19:41.47,0:19:43.55,Bilingual,,0,0,0,,venv 的 python 就软链接到它\N{\fs33\c&H00C8C0B8&\bord1.4}and the venv's python links to it.
+Dialogue: 0,0:19:43.80,0:19:46.49,Bilingual,,0,0,0,,问题就在这儿：约束不是 pin\N{\fs33\c&H00C8C0B8&\bord1.4}That's the catch: a constraint is not a pin.
+Dialogue: 0,0:19:46.81,0:19:52.42,Bilingual,,0,0,0,,在 Python 3.15 出来之前，同样这条命令装的是 3.14\N{\fs33\c&H00C8C0B8&\bord1.4}Before Python 3.15 came out, this same command gave people 3.14.
+Dialogue: 0,0:19:52.74,0:19:56.39,Bilingual,,0,0,0,,明年再看这个视频的话，你拿到的可能是更新的版本\N{\fs33\c&H00C8C0B8&\bord1.4}Watch this video next year, and you may get something newer still.
+Dialogue: 0,0:19:56.63,0:19:59.32,Bilingual,,0,0,0,,到了 Debian 13，情况就不一样了\N{\fs33\c&H00C8C0B8&\bord1.4}On Debian 13, the story changes.
+Dialogue: 0,0:19:59.64,0:20:04.72,Bilingual,,0,0,0,,它的系统 Python 是 3.13.5，本来就在范围里\N{\fs33\c&H00C8C0B8&\bord1.4}Its system Python, 3.13.5, is already inside the range.
+Dialogue: 0,0:20:05.04,0:20:07.65,Bilingual,,0,0,0,,所以 uv 直接用它，不用下载\N{\fs33\c&H00C8C0B8&\bord1.4}So uv simply uses it, with no download,
+Dialogue: 0,0:20:07.65,0:20:10.73,Bilingual,,0,0,0,,venv 的 python 就软链接到系统的那个\N{\fs33\c&H00C8C0B8&\bord1.4}and the venv's python links to the system one.
+Dialogue: 0,0:20:11.05,0:20:14.04,Bilingual,,0,0,0,,同一条命令，不同的 Debian，不同的 Python\N{\fs33\c&H00C8C0B8&\bord1.4}Same command, different Debian, different Python.
+Dialogue: 0,0:20:14.28,0:20:16.82,Bilingual,,0,0,0,,想在哪儿都用同一个 Python，就把它 pin 住\N{\fs33\c&H00C8C0B8&\bord1.4}To get the same Python everywhere, pin it.
+Dialogue: 0,0:20:17.14,0:20:21.34,Bilingual,,0,0,0,,这条命令是 uv python pin 3.13，README 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}The command uv python pin 3.13, not in the README,
+Dialogue: 0,0:20:21.34,0:20:24.94,Bilingual,,0,0,0,,它会写一个小文件，叫 .python-version\N{\fs33\c&H00C8C0B8&\bord1.4}writes a small file called .python-version,
+Dialogue: 0,0:20:24.94,0:20:28.38,Bilingual,,0,0,0,,范围就缩小到 3.13 系列\N{\fs33\c&H00C8C0B8&\bord1.4}and the range shrinks to the 3.13 series.
+Dialogue: 0,0:20:28.70,0:20:32.12,Bilingual,,0,0,0,,现在先别跑：下次 uv sync 会重建 venv\N{\fs33\c&H00C8C0B8&\bord1.4}Don't run it now: your next uv sync would rebuild the venv,
+Dialogue: 0,0:20:32.12,0:20:34.49,Bilingual,,0,0,0,,视频后面的内容就对不上了\N{\fs33\c&H00C8C0B8&\bord1.4}and the rest of the video wouldn't match.
+Dialogue: 0,0:20:34.81,0:20:36.41,Bilingual,,0,0,0,,这个放在练习里了\N{\fs33\c&H00C8C0B8&\bord1.4}It's in the exercises.
+Dialogue: 0,0:20:37.65,0:20:39.24,Bilingual,,0,0,0,,接下来看包\N{\fs33\c&H00C8C0B8&\bord1.4}Now the packages.
+Dialogue: 0,0:20:39.29,0:20:43.29,Bilingual,,0,0,0,,先出个小题：pyproject.toml 列了 2 个依赖\N{\fs33\c&H00C8C0B8&\bord1.4}A quick puzzle: pyproject.toml lists 2 dependencies,
+Dialogue: 0,0:20:43.29,0:20:47.14,Bilingual,,0,0,0,,第一部分里，pip 为它们装了 12 个包\N{\fs33\c&H00C8C0B8&\bord1.4}and in part 1, pip installed 12 packages for them.
+Dialogue: 0,0:20:47.46,0:20:49.13,Bilingual,,0,0,0,,那 uv 会装几个？\N{\fs33\c&H00C8C0B8&\bord1.4}How many will uv install?
+Dialogue: 0,0:20:55.97,0:20:58.42,Bilingual,,0,0,0,,是 11 个：比第一部分少一个\N{\fs33\c&H00C8C0B8&\bord1.4}It's 11: one fewer than part 1.
+Dialogue: 0,0:20:58.74,0:21:04.37,Bilingual,,0,0,0,,解析了 13 个，装了 11 个，每个都带一个加号和精确版本\N{\fs33\c&H00C8C0B8&\bord1.4}It resolved 13 and installed 11, each with a plus sign and an exact version.
+Dialogue: 0,0:21:04.69,0:21:08.02,Bilingual,,0,0,0,,另外 9 个从哪儿来，少的又是哪一个？\N{\fs33\c&H00C8C0B8&\bord1.4}So where did the other 9 come from, and which one went missing?
+Dialogue: 0,0:21:08.27,0:21:13.90,Bilingual,,0,0,0,,包自己也有依赖；这条额外的命令，uv tree，会把它们画出来\N{\fs33\c&H00C8C0B8&\bord1.4}Packages have dependencies of their own; this extra command, uv tree, draws them.
+Dialogue: 0,0:21:14.22,0:21:18.71,Bilingual,,0,0,0,,我们的 googletrans 需要 httpx，一个 HTTP 库\N{\fs33\c&H00C8C0B8&\bord1.4}Our googletrans needs httpx, an HTTP library,
+Dialogue: 0,0:21:18.71,0:21:23.80,Bilingual,,0,0,0,,它又需要 anyio、certifi、httpcore、h2，还有更多\N{\fs33\c&H00C8C0B8&\bord1.4}which needs anyio, certifi, httpcore, h2, and more.
+Dialogue: 0,0:21:24.12,0:21:25.97,Bilingual,,0,0,0,,两个愿望，长成了一棵树\N{\fs33\c&H00C8C0B8&\bord1.4}Two wishes grow into a tree.
+Dialogue: 0,0:21:26.22,0:21:30.77,Bilingual,,0,0,0,,所谓解析，就是给依赖树里的每个包选定一个精确版本\N{\fs33\c&H00C8C0B8&\bord1.4}Resolving means choosing one exact version for every package in the tree,
+Dialogue: 0,0:21:30.77,0:21:32.70,Bilingual,,0,0,0,,而且这些版本要彼此兼容\N{\fs33\c&H00C8C0B8&\bord1.4}versions that all fit together.
+Dialogue: 0,0:21:33.02,0:21:39.10,Bilingual,,0,0,0,,然后 uv 把它们写进一个新文件 uv.lock，连同下载地址和校验和\N{\fs33\c&H00C8C0B8&\bord1.4}Then uv writes them to a new file, uv.lock, with download addresses and checksums.
+Dialogue: 0,0:21:39.42,0:21:42.54,Bilingual,,0,0,0,,这个 pyproject.toml 文件是你的愿望清单\N{\fs33\c&H00C8C0B8&\bord1.4}The pyproject.toml file is your wish list.
+Dialogue: 0,0:21:42.86,0:21:45.33,Bilingual,,0,0,0,,而 uv.lock 文件是购物小票\N{\fs33\c&H00C8C0B8&\bord1.4}The uv.lock file is the receipt.
+Dialogue: 0,0:21:45.57,0:21:47.38,Bilingual,,0,0,0,,那为什么解析了 13 个？\N{\fs33\c&H00C8C0B8&\bord1.4}So why 13 resolved?
+Dialogue: 0,0:21:47.70,0:21:52.16,Bilingual,,0,0,0,,是 11 个包，加上这个应用本身，uv 不用下载它\N{\fs33\c&H00C8C0B8&\bord1.4}It's 11 packages, plus the app itself, which uv doesn't download.
+Dialogue: 0,0:21:52.48,0:21:54.31,Bilingual,,0,0,0,,第 13 个在 uv.lock 里\N{\fs33\c&H00C8C0B8&\bord1.4}The 13th is in uv.lock,
+Dialogue: 0,0:21:54.31,0:21:59.09,Bilingual,,0,0,0,,它覆盖了项目允许的每一个 Python，不只是我们这个\N{\fs33\c&H00C8C0B8&\bord1.4}which covers every Python the project allows, not just ours.
+Dialogue: 0,0:21:59.41,0:22:02.57,Bilingual,,0,0,0,,文件里写着，anyio 需要 typing-extensions\N{\fs33\c&H00C8C0B8&\bord1.4}In it, anyio needs typing-extensions,
+Dialogue: 0,0:22:02.57,0:22:05.56,Bilingual,,0,0,0,,但只在低于 3.15 的 Python 上\N{\fs33\c&H00C8C0B8&\bord1.4}but only on Python older than 3.15.
+Dialogue: 0,0:22:05.80,0:22:08.87,Bilingual,,0,0,0,,在我们的 3.15 上跳过了，所以是 11 个\N{\fs33\c&H00C8C0B8&\bord1.4}On our 3.15, it's skipped, so 11.
+Dialogue: 0,0:22:09.19,0:22:13.84,Bilingual,,0,0,0,,第一部分是 Python 3.11，所以 pip 装了它：12 个\N{\fs33\c&H00C8C0B8&\bord1.4}Part 1 ran on Python 3.11, so pip installed it: 12.
+Dialogue: 0,0:22:14.16,0:22:19.60,Bilingual,,0,0,0,,而 Debian 13 用的是 Python 3.13，uv 也装了 12 个\N{\fs33\c&H00C8C0B8&\bord1.4}And on Debian 13, with Python 3.13, uv installs 12 too.
+Dialogue: 0,0:22:19.85,0:22:21.62,Bilingual,,0,0,0,,再说说小票为什么重要\N{\fs33\c&H00C8C0B8&\bord1.4}Here's why the receipt matters.
+Dialogue: 0,0:22:21.94,0:22:24.63,Bilingual,,0,0,0,,两个同学隔一周各跑一次 uv sync\N{\fs33\c&H00C8C0B8&\bord1.4}Two students run uv sync a week apart.
+Dialogue: 0,0:22:24.95,0:22:30.09,Bilingual,,0,0,0,,没有共用的 lock 文件，各自从头解析，树的深处就可能版本不同\N{\fs33\c&H00C8C0B8&\bord1.4}Without a shared lock, each resolves fresh and may get different versions deep in the tree.
+Dialogue: 0,0:22:30.41,0:22:34.61,Bilingual,,0,0,0,,有了同一个 uv.lock，他们拿到的包就完全一样\N{\fs33\c&H00C8C0B8&\bord1.4}With the same uv.lock, they get exactly the same packages.
+Dialogue: 0,0:22:34.85,0:22:36.44,Bilingual,,0,0,0,,两个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Two extra checks.
+Dialogue: 0,0:22:36.49,0:22:42.13,Bilingual,,0,0,0,,第一，ls -a 显示多了两样东西：.venv 目录和 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}First, ls -a shows two new things: the .venv folder, and uv.lock.
+Dialogue: 0,0:22:42.45,0:22:45.58,Bilingual,,0,0,0,,而 git status 说，uv.lock 还没被跟踪\N{\fs33\c&H00C8C0B8&\bord1.4}And git status says uv.lock is untracked.
+Dialogue: 0,0:22:45.90,0:22:48.53,Bilingual,,0,0,0,,它是这里生成的，不是 repo 自带的\N{\fs33\c&H00C8C0B8&\bord1.4}It was made here; it didn't come with the repo.
+Dialogue: 0,0:22:48.77,0:22:52.16,Bilingual,,0,0,0,,这里 README 有一个小错误，改起来很简单\N{\fs33\c&H00C8C0B8&\bord1.4}Now, a small mistake in the README, with an easy fix.
+Dialogue: 0,0:22:52.48,0:22:56.43,Bilingual,,0,0,0,,它说 uv.lock 能让下一个人拿到相同的版本\N{\fs33\c&H00C8C0B8&\bord1.4}It says uv.lock gives the next person the same versions.
+Dialogue: 0,0:22:56.75,0:22:58.71,Bilingual,,0,0,0,,但这个 repo 从没 commit 过它\N{\fs33\c&H00C8C0B8&\bord1.4}But the repo never committed one,
+Dialogue: 0,0:22:58.71,0:23:01.33,Bilingual,,0,0,0,,所以大家第一次 sync 都是从头解析\N{\fs33\c&H00C8C0B8&\bord1.4}so each student's first sync resolves fresh.
+Dialogue: 0,0:23:01.65,0:23:04.53,Bilingual,,0,0,0,,自己的项目里，记得 commit uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}In your own projects, commit uv.lock.
+Dialogue: 0,0:23:04.85,0:23:08.87,Bilingual,,0,0,0,,自动化构建里，给 uv sync 加上 --locked 参数\N{\fs33\c&H00C8C0B8&\bord1.4}In automated builds, run uv sync with the --locked flag,
+Dialogue: 0,0:23:08.87,0:23:11.59,Bilingual,,0,0,0,,lock 文件缺失或过期就拒绝执行\N{\fs33\c&H00C8C0B8&\bord1.4}which refuses a missing or stale lock.
+Dialogue: 0,0:23:11.83,0:23:14.56,Bilingual,,0,0,0,,最后再加一个额外步骤：重新跑一遍 uv sync\N{\fs33\c&H00C8C0B8&\bord1.4}Last, an extra: run uv sync again.
+Dialogue: 0,0:23:14.88,0:23:17.45,Bilingual,,0,0,0,,它检查同样的包，这里是 11 个\N{\fs33\c&H00C8C0B8&\bord1.4}It checks the same packages, 11 here,
+Dialogue: 0,0:23:17.45,0:23:22.74,Bilingual,,0,0,0,,用时不到一毫秒，什么都不改：随时重跑都没问题\N{\fs33\c&H00C8C0B8&\bord1.4}in a fraction of a millisecond, and changes nothing: safe to re-run anytime.
+Dialogue: 0,0:23:23.98,0:23:26.14,Bilingual,,0,0,0,,按之前说的，打开 venv 看看\N{\fs33\c&H00C8C0B8&\bord1.4}Let's open the venv, as promised.
+Dialogue: 0,0:23:26.46,0:23:29.32,Bilingual,,0,0,0,,这条额外命令列出 bin 目录\N{\fs33\c&H00C8C0B8&\bord1.4}This extra command lists its bin folder:
+Dialogue: 0,0:23:29.32,0:23:32.41,Bilingual,,0,0,0,,python 软链接到 uv 下载的 Python\N{\fs33\c&H00C8C0B8&\bord1.4}python, a link to the Python uv downloaded,
+Dialogue: 0,0:23:32.41,0:23:34.01,Bilingual,,0,0,0,,注意，没有 pip\N{\fs33\c&H00C8C0B8&\bord1.4}and, notice, no pip.
+Dialogue: 0,0:23:34.78,0:23:38.85,Bilingual,,0,0,0,,还有配置文件：home 是真正解释器的目录\N{\fs33\c&H00C8C0B8&\bord1.4}And the config file: home is the real interpreter's folder,
+Dialogue: 0,0:23:38.85,0:23:43.06,Bilingual,,0,0,0,,include-system-site-packages 是 false，prompt 是 app\N{\fs33\c&H00C8C0B8&\bord1.4}include-system-site-packages is false, and the prompt is app.
+Dialogue: 0,0:23:43.38,0:23:45.19,Bilingual,,0,0,0,,三个部分，和画的一样\N{\fs33\c&H00C8C0B8&\bord1.4}All three parts, as drawn.
+Dialogue: 0,0:23:45.43,0:23:49.10,Bilingual,,0,0,0,,第 10 步：source .venv/bin/activate\N{\fs33\c&H00C8C0B8&\bord1.4}Step 10: source .venv/bin/activate.
+Dialogue: 0,0:23:49.42,0:23:50.84,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:23:50.89,0:23:53.77,Bilingual,,0,0,0,,提示符现在以 app 开头，外面带括号\N{\fs33\c&H00C8C0B8&\bord1.4}Your prompt now starts with app, in parentheses.
+Dialogue: 0,0:23:54.09,0:23:56.61,Bilingual,,0,0,0,,README 的例子写的是 simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}The README's example says simple-translate.
+Dialogue: 0,0:23:56.93,0:24:02.24,Bilingual,,0,0,0,,但 uv 用项目名做提示符，pyproject.toml 里项目名是 app\N{\fs33\c&H00C8C0B8&\bord1.4}But uv names the prompt after the project, and pyproject.toml calls it app.
+Dialogue: 0,0:24:02.48,0:24:03.73,Bilingual,,0,0,0,,变了什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What changed?
+Dialogue: 0,0:24:03.78,0:24:08.24,Bilingual,,0,0,0,,激活之前，python 敲遍了 PATH 里的每扇门，什么也没找到\N{\fs33\c&H00C8C0B8&\bord1.4}Before activating, python knocked on every door in PATH and found nothing.
+Dialogue: 0,0:24:08.56,0:24:11.17,Bilingual,,0,0,0,,这个 activate 脚本先存下旧的 PATH\N{\fs33\c&H00C8C0B8&\bord1.4}The activate script saves your old PATH,
+Dialogue: 0,0:24:11.17,0:24:13.98,Bilingual,,0,0,0,,再把 venv 的 bin 目录排到最前\N{\fs33\c&H00C8C0B8&\bord1.4}then puts the bin folder of the venv first,
+Dialogue: 0,0:24:13.98,0:24:16.39,Bilingual,,0,0,0,,这样在第一扇门就能找到 python\N{\fs33\c&H00C8C0B8&\bord1.4}so python is found at the first door.
+Dialogue: 0,0:24:16.63,0:24:21.18,Bilingual,,0,0,0,,额外检查一下：which python 指向 .venv 里面\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks: which python points into .venv,
+Dialogue: 0,0:24:21.18,0:24:26.44,Bilingual,,0,0,0,,python 报出的版本是 3.15.0，这是录制时的\N{\fs33\c&H00C8C0B8&\bord1.4}and python reports 3.15.0, at the time of recording;
+Dialogue: 0,0:24:26.44,0:24:28.56,Bilingual,,0,0,0,,在 Debian 13 上是 3.13.5\N{\fs33\c&H00C8C0B8&\bord1.4}on Debian 13, 3.13.5.
+Dialogue: 0,0:24:28.88,0:24:30.52,Bilingual,,0,0,0,,而 which pip 什么也没找到\N{\fs33\c&H00C8C0B8&\bord1.4}And which pip finds nothing.
+Dialogue: 0,0:24:31.42,0:24:37.15,Bilingual,,0,0,0,,README 还有一个小错误：它说激活后 pip 会指向 venv\N{\fs33\c&H00C8C0B8&\bord1.4}Another small mistake in the README: it says activation points pip into the venv,
+Dialogue: 0,0:24:37.15,0:24:38.93,Bilingual,,0,0,0,,但 uv 建的 venv 根本没有 pip\N{\fs33\c&H00C8C0B8&\bord1.4}but a uv venv has no pip.
+Dialogue: 0,0:24:39.25,0:24:43.36,Bilingual,,0,0,0,,如果机器上有系统 pip，which pip 找到的就是它\N{\fs33\c&H00C8C0B8&\bord1.4}On a machine with a system pip, which pip finds that one instead,
+Dialogue: 0,0:24:43.36,0:24:45.39,Bilingual,,0,0,0,,而它会拒绝安装，和一开始一样\N{\fs33\c&H00C8C0B8&\bord1.4}and it refuses, as at the start.
+Dialogue: 0,0:24:45.71,0:24:48.28,Bilingual,,0,0,0,,要添加包，用 uv add\N{\fs33\c&H00C8C0B8&\bord1.4}To add a package, use uv add,
+Dialogue: 0,0:24:48.28,0:24:52.90,Bilingual,,0,0,0,,它还会把包记进 pyproject.toml 和 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}which also records it in pyproject.toml and uv.lock.
+Dialogue: 0,0:24:53.13,0:24:56.53,Bilingual,,0,0,0,,激活还会设置一个叫 VIRTUAL_ENV 的环境变量\N{\fs33\c&H00C8C0B8&\bord1.4}Activation also sets a variable called VIRTUAL_ENV,
+Dialogue: 0,0:24:56.53,0:25:01.58,Bilingual,,0,0,0,,改提示符，再加一个 deactivate 命令，撤销这一切\N{\fs33\c&H00C8C0B8&\bord1.4}changes the prompt, and adds a command called deactivate that undoes it all.
+Dialogue: 0,0:25:01.90,0:25:05.63,Bilingual,,0,0,0,,它只改变 shell 先去哪儿找，而且只在当前 shell 里有效\N{\fs33\c&H00C8C0B8&\bord1.4}It only changes where the shell looks first, and only in this shell.
+Dialogue: 0,0:25:05.95,0:25:08.19,Bilingual,,0,0,0,,要是 SSH 窗口重连了\N{\fs33\c&H00C8C0B8&\bord1.4}If your SSH window reconnects,
+Dialogue: 0,0:25:08.19,0:25:11.48,Bilingual,,0,0,0,,就再 cd 进 simple-translate，重新激活\N{\fs33\c&H00C8C0B8&\bord1.4}cd into simple-translate and activate again.
+Dialogue: 0,0:25:11.77,0:25:15.54,Bilingual,,0,0,0,,第 11 步：同样跑三次，这次用不带 3 的 python\N{\fs33\c&H00C8C0B8&\bord1.4}Step 11: the same three runs, now with plain python.
+Dialogue: 0,0:25:15.86,0:25:20.88,Bilingual,,0,0,0,,长的两条从 README 复制，连引号一起，暂停一下，三条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Copy the long ones from the README, quotes included, and pause to run all three.
+Dialogue: 0,0:25:21.20,0:25:24.72,Bilingual,,0,0,0,,这次 Google 正常回应了：这些是真实的译文\N{\fs33\c&H00C8C0B8&\bord1.4}This time Google answered: these are real translations.
+Dialogue: 0,0:25:25.04,0:25:30.03,Bilingual,,0,0,0,,如果又碰到 429，但看得到 Input 那一行，你的 venv 就没问题\N{\fs33\c&H00C8C0B8&\bord1.4}If you get a 429 again but see the Input line, your venv works.
+Dialogue: 0,0:25:30.27,0:25:33.59,Bilingual,,0,0,0,,两个不用激活的额外办法，README 里都没有\N{\fs33\c&H00C8C0B8&\bord1.4}Two extras, not in the README, that skip activation.
+Dialogue: 0,0:25:33.91,0:25:38.33,Bilingual,,0,0,0,,第一，uv run python cli.py\N{\fs33\c&H00C8C0B8&\bord1.4}First, uv run python cli.py syncs the venv if needed,
+Dialogue: 0,0:25:38.33,0:25:40.66,Bilingual,,0,0,0,,需要时先同步 venv，再在里面运行应用\N{\fs33\c&H00C8C0B8&\bord1.4}then runs the app inside it.
+Dialogue: 0,0:25:40.98,0:25:43.15,Bilingual,,0,0,0,,或者用路径调用 venv 的 python\N{\fs33\c&H00C8C0B8&\bord1.4}Or call the venv's python by its path.
+Dialogue: 0,0:25:43.40,0:25:46.39,Bilingual,,0,0,0,,为什么要 source，而不直接运行 activate 脚本？\N{\fs33\c&H00C8C0B8&\bord1.4}And why source, not just run the activate script?
+Dialogue: 0,0:25:46.71,0:25:48.37,Bilingual,,0,0,0,,它根本不可执行\N{\fs33\c&H00C8C0B8&\bord1.4}It isn't even executable,
+Dialogue: 0,0:25:48.37,0:25:53.14,Bilingual,,0,0,0,,就算当程序运行，也只改一个马上退出的子 shell\N{\fs33\c&H00C8C0B8&\bord1.4}and run as a program, it would only change a child shell that exits at once,
+Dialogue: 0,0:25:53.14,0:25:54.74,Bilingual,,0,0,0,,跟 env 文件一样\N{\fs33\c&H00C8C0B8&\bord1.4}like the env file.
+Dialogue: 0,0:25:55.88,0:25:58.51,Bilingual,,0,0,0,,我们用几个额外命令来验证隔离\N{\fs33\c&H00C8C0B8&\bord1.4}Let's prove the isolation with a few extras.
+Dialogue: 0,0:25:58.83,0:26:03.80,Bilingual,,0,0,0,,先 deactivate：venv 激活的时候，连 python3 都指向它\N{\fs33\c&H00C8C0B8&\bord1.4}Deactivate first: while the venv is active, even python3 points into it.
+Dialogue: 0,0:26:04.12,0:26:07.87,Bilingual,,0,0,0,,再让系统的 python3 去 import googletrans\N{\fs33\c&H00C8C0B8&\bord1.4}Then ask the system's python3 to import googletrans.
+Dialogue: 0,0:26:08.19,0:26:09.79,Bilingual,,0,0,0,,报 ModuleNotFoundError\N{\fs33\c&H00C8C0B8&\bord1.4}ModuleNotFoundError.
+Dialogue: 0,0:26:10.11,0:26:13.48,Bilingual,,0,0,0,,在这台 VM 上，包只在 venv 里\N{\fs33\c&H00C8C0B8&\bord1.4}On this VM, the packages exist only in the venv.
+Dialogue: 0,0:26:13.72,0:26:18.18,Bilingual,,0,0,0,,在架子上看：系统 Python 从上到下扫一遍自己的列表\N{\fs33\c&H00C8C0B8&\bord1.4}On the shelves: the system Python scans its own list, top to bottom.
+Dialogue: 0,0:26:18.50,0:26:22.29,Bilingual,,0,0,0,,而 venv 的架子不在这个列表上，所以搜了个空\N{\fs33\c&H00C8C0B8&\bord1.4}The venv's shelf isn't on that list, so the search comes up empty.
+Dialogue: 0,0:26:22.62,0:26:24.69,Bilingual,,0,0,0,,现在用 uv run 做同样的 import\N{\fs33\c&H00C8C0B8&\bord1.4}Now the same import through uv run,
+Dialogue: 0,0:26:24.69,0:26:27.25,Bilingual,,0,0,0,,顺便打印这个 Python 认为自己在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}printing where this Python thinks it lives.
+Dialogue: 0,0:26:27.57,0:26:30.36,Bilingual,,0,0,0,,能导入，打印的正是 .venv 目录\N{\fs33\c&H00C8C0B8&\bord1.4}It works, and the answer is our .venv folder.
+Dialogue: 0,0:26:30.60,0:26:33.25,Bilingual,,0,0,0,,现在假设你还留着第一部分的 VM\N{\fs33\c&H00C8C0B8&\bord1.4}Now imagine you'd kept your part-1 VM.
+Dialogue: 0,0:26:33.57,0:26:37.68,Bilingual,,0,0,0,,同样 import，系统 python3，没有 venv。能导入吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Same import, system python3, no venv. Does it work?
+Dialogue: 0,0:26:44.52,0:26:47.59,Bilingual,,0,0,0,,能：那台 VM 上，sudo pip 装的 googletrans\N{\fs33\c&H00C8C0B8&\bord1.4}Yes: on that VM, sudo pip put googletrans
+Dialogue: 0,0:26:47.59,0:26:52.32,Bilingual,,0,0,0,,在系统级的 /usr/local 架子上，每个程序都找得到\N{\fs33\c&H00C8C0B8&\bord1.4}on the system-wide /usr/local shelf, so every program finds it.
+Dialogue: 0,0:26:52.64,0:26:55.46,Bilingual,,0,0,0,,同一个 import，架子不同，答案不同\N{\fs33\c&H00C8C0B8&\bord1.4}Same import, different shelves, different answer.
+Dialogue: 0,0:26:55.70,0:26:57.45,Bilingual,,0,0,0,,反过来也成立\N{\fs33\c&H00C8C0B8&\bord1.4}And it works the other way too.
+Dialogue: 0,0:26:57.77,0:26:59.76,Bilingual,,0,0,0,,哪怕在第一部分那台乱糟糟的 VM 上\N{\fs33\c&H00C8C0B8&\bord1.4}Even on that messy part-1 VM,
+Dialogue: 0,0:26:59.76,0:27:03.20,Bilingual,,0,0,0,,venv 也会无视 sudo pip 装的一切\N{\fs33\c&H00C8C0B8&\bord1.4}a venv would ignore everything sudo pip put there,
+Dialogue: 0,0:27:03.20,0:27:06.03,Bilingual,,0,0,0,,因为那些架子不在它的列表上\N{\fs33\c&H00C8C0B8&\bord1.4}because those shelves aren't on its list.
+Dialogue: 0,0:27:06.35,0:27:08.52,Bilingual,,0,0,0,,整节课的要点，就在这一张图里\N{\fs33\c&H00C8C0B8&\bord1.4}That's the whole lesson in one picture.
+Dialogue: 0,0:27:10.17,0:27:14.67,Bilingual,,0,0,0,,还有一个你会碰到的工具：pipenv，做同一件事的老办法\N{\fs33\c&H00C8C0B8&\bord1.4}One more tool you'll meet: pipenv, an older way to do the same job.
+Dialogue: 0,0:27:14.99,0:27:16.78,Bilingual,,0,0,0,,这个 repo 的 pipenv 分支\N{\fs33\c&H00C8C0B8&\bord1.4}This repo's pipenv branch,
+Dialogue: 0,0:27:16.78,0:27:19.75,Bilingual,,0,0,0,,也就是这个教程的旧版本，用的就是它\N{\fs33\c&H00C8C0B8&\bord1.4}an older version of this tutorial, uses it.
+Dialogue: 0,0:27:20.07,0:27:21.53,Bilingual,,0,0,0,,单独的 AWS 版本\N{\fs33\c&H00C8C0B8&\bord1.4}So do the separate
+Dialogue: 0,0:27:21.53,0:27:25.57,Bilingual,,0,0,0,,还有后面 cheese app 的 API 服务，也都用它\N{\fs33\c&H00C8C0B8&\bord1.4}AWS version and, later, the cheese app's API service.
+Dialogue: 0,0:27:25.82,0:27:27.74,Bilingual,,0,0,0,,思路一样，名字不同\N{\fs33\c&H00C8C0B8&\bord1.4}Same ideas, different names.
+Dialogue: 0,0:27:28.06,0:27:31.86,Bilingual,,0,0,0,,这个 pyproject.toml 换成 Pipfile\N{\fs33\c&H00C8C0B8&\bord1.4}The pyproject.toml file becomes the Pipfile,
+Dialogue: 0,0:27:31.86,0:27:34.71,Bilingual,,0,0,0,,uv.lock 换成 Pipfile.lock\N{\fs33\c&H00C8C0B8&\bord1.4}and uv.lock becomes Pipfile.lock.
+Dialogue: 0,0:27:35.03,0:27:39.04,Bilingual,,0,0,0,,venv 放在你 home 目录下的某个目录里，而不是项目里\N{\fs33\c&H00C8C0B8&\bord1.4}The venv lives in a folder in your home instead of in the project.
+Dialogue: 0,0:27:39.36,0:27:43.65,Bilingual,,0,0,0,,命令 uv sync，换成 pipenv install 或 pipenv sync\N{\fs33\c&H00C8C0B8&\bord1.4}The command uv sync becomes pipenv install, or pipenv sync.
+Dialogue: 0,0:27:43.97,0:27:48.64,Bilingual,,0,0,0,,而激活换成了 pipenv shell：在 venv 里开一个新的 shell\N{\fs33\c&H00C8C0B8&\bord1.4}And instead of activating, pipenv shell opens a new shell inside the venv.
+Dialogue: 0,0:27:48.96,0:27:50.56,Bilingual,,0,0,0,,输入 exit 就能退出\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit to leave it.
+Dialogue: 0,0:27:50.72,0:27:52.98,Bilingual,,0,0,0,,我们那个问题又来了，这次是真的\N{\fs33\c&H00C8C0B8&\bord1.4}And here's our puzzle again, for real.
+Dialogue: 0,0:27:53.30,0:27:57.82,Bilingual,,0,0,0,,那个分支的 lock 文件锁定的是 httpx 0.13.3\N{\fs33\c&H00C8C0B8&\bord1.4}That branch's lock file pins httpx 0.13.3,
+Dialogue: 0,0:27:57.82,0:28:04.39,Bilingual,,0,0,0,,而我们的 uv sync 装的是 0.28.1，这是录制时的版本\N{\fs33\c&H00C8C0B8&\bord1.4}while our uv sync installed 0.28.1, at the time of recording.
+Dialogue: 0,0:28:04.71,0:28:08.64,Bilingual,,0,0,0,,同一个应用的两个版本，两个版本的 httpx\N{\fs33\c&H00C8C0B8&\bord1.4}Two versions of the same app, two versions of httpx.
+Dialogue: 0,0:28:08.96,0:28:12.22,Bilingual,,0,0,0,,在一个公用的系统 Python 里，它们没法共存\N{\fs33\c&H00C8C0B8&\bord1.4}On one shared system Python, they couldn't live together.
+Dialogue: 0,0:28:12.54,0:28:14.14,Bilingual,,0,0,0,,放在两个 venv 里，就可以\N{\fs33\c&H00C8C0B8&\bord1.4}In two venvs, they can.
+Dialogue: 0,0:28:17.05,0:28:20.27,Bilingual,,0,0,0,,第 12 步：把 VM 连同启动磁盘一起删掉\N{\fs33\c&H00C8C0B8&\bord1.4}Step 12: delete the VM, with its boot disk,
+Dialogue: 0,0:28:20.27,0:28:24.30,Bilingual,,0,0,0,,再确认 VM instances 和 Disks 页面都是空的\N{\fs33\c&H00C8C0B8&\bord1.4}then check that VM instances and Disks are both empty.
+Dialogue: 0,0:28:24.62,0:28:27.03,Bilingual,,0,0,0,,现在就暂停去删，免得忘了\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it now, before you forget.
+Dialogue: 0,0:28:27.28,0:28:28.79,Bilingual,,0,0,0,,我们小结一下\N{\fs33\c&H00C8C0B8&\bord1.4}Here's where we are.
+Dialogue: 0,0:28:28.84,0:28:32.74,Bilingual,,0,0,0,,这台 VM 给了我们一整台机器，能随便折腾，用完就删\N{\fs33\c&H00C8C0B8&\bord1.4}The VM gave us a whole machine that we can wreck and delete.
+Dialogue: 0,0:28:33.06,0:28:37.14,Bilingual,,0,0,0,,而 venv 把一个项目的包，和这台机器的 Python 隔开\N{\fs33\c&H00C8C0B8&\bord1.4}The venv keeps one project's packages away from that machine's Python.
+Dialogue: 0,0:28:37.46,0:28:40.36,Bilingual,,0,0,0,,在这两者之间，还能再加一层\N{\fs33\c&H00C8C0B8&\bord1.4}And between the two, there's room for one more layer.
+Dialogue: 0,0:28:40.60,0:28:43.52,Bilingual,,0,0,0,,这一层就是容器，下节课讲\N{\fs33\c&H00C8C0B8&\bord1.4}That layer is a container, and it's next lecture.
+Dialogue: 0,0:28:43.84,0:28:47.29,Bilingual,,0,0,0,,教程里的 Dockerfile 已经体现了这个思路\N{\fs33\c&H00C8C0B8&\bord1.4}The tutorial's Dockerfile already shows the idea:
+Dialogue: 0,0:28:47.29,0:28:49.83,Bilingual,,0,0,0,,复制代码，跑同样的 uv sync\N{\fs33\c&H00C8C0B8&\bord1.4}copy the code, run the same uv sync,
+Dialogue: 0,0:28:49.83,0:28:53.00,Bilingual,,0,0,0,,然后在激活了 venv 的 shell 里启动\N{\fs33\c&H00C8C0B8&\bord1.4}and start in a shell with the venv activated.
+Dialogue: 0,0:28:53.31,0:28:56.07,Bilingual,,0,0,0,,今天做的一切，都打包进一个镜像\N{\fs33\c&H00C8C0B8&\bord1.4}Everything you did today, baked into an image.
+Dialogue: 0,0:28:56.32,0:28:58.28,Bilingual,,0,0,0,,下节课有一件事要留意\N{\fs33\c&H00C8C0B8&\bord1.4}One thing to watch for next time.
+Dialogue: 0,0:28:58.60,0:29:02.41,Bilingual,,0,0,0,,这个 Dockerfile 用的是 Python 3.12 的镜像\N{\fs33\c&H00C8C0B8&\bord1.4}The Dockerfile starts from a Python 3.12 image,
+Dialogue: 0,0:29:02.41,0:29:05.32,Bilingual,,0,0,0,,但项目要求 3.13 及以上\N{\fs33\c&H00C8C0B8&\bord1.4}but the project wants 3.13 or newer.
+Dialogue: 0,0:29:05.64,0:29:08.14,Bilingual,,0,0,0,,uv 会怎么处理，你已经知道了\N{\fs33\c&H00C8C0B8&\bord1.4}You already know what uv will do about that.
+Dialogue: 0,0:29:08.38,0:29:11.41,Bilingual,,0,0,0,,最后，留五道题给你自测\N{\fs33\c&H00C8C0B8&\bord1.4}Before you go, five questions to test yourself.
+Dialogue: 0,0:29:11.73,0:29:14.68,Bilingual,,0,0,0,,第一题：--break-system-packages 这个参数\N{\fs33\c&H00C8C0B8&\bord1.4}One: what does the --break-system-packages flag
+Dialogue: 0,0:29:14.68,0:29:18.07,Bilingual,,0,0,0,,到底破坏了什么，sudo pip3 把文件放到了哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}actually break, and where did sudo pip3 put the files?
+Dialogue: 0,0:29:18.32,0:29:21.37,Bilingual,,0,0,0,,第二题：说出虚拟环境的三个部分\N{\fs33\c&H00C8C0B8&\bord1.4}Two: name the three parts of a virtual environment.
+Dialogue: 0,0:29:21.69,0:29:24.28,Bilingual,,0,0,0,,第三题：激活到底改了什么\N{\fs33\c&H00C8C0B8&\bord1.4}Three: what exactly does activation change,
+Dialogue: 0,0:29:24.28,0:29:27.17,Bilingual,,0,0,0,,不激活的话，有哪两种办法运行这个应用？\N{\fs33\c&H00C8C0B8&\bord1.4}and what are two ways to run the app without it?
+Dialogue: 0,0:29:27.42,0:29:30.62,Bilingual,,0,0,0,,第四题：2 个依赖变成了 11 个包\N{\fs33\c&H00C8C0B8&\bord1.4}Four: 2 dependencies became 11 packages.
+Dialogue: 0,0:29:30.94,0:29:33.97,Bilingual,,0,0,0,,为什么会这样，哪个文件让每个人拿到同样的包？\N{\fs33\c&H00C8C0B8&\bord1.4}Why, and which file makes everyone get the same ones?
+Dialogue: 0,0:29:34.29,0:29:37.69,Bilingual,,0,0,0,,第五题：要求 Python 3.13 及以上\N{\fs33\c&H00C8C0B8&\bord1.4}Five: is requires Python 3.13 or newer a pin,
+Dialogue: 0,0:29:37.69,0:29:41.18,Bilingual,,0,0,0,,算不算 pin，怎样才能让版本确定下来？\N{\fs33\c&H00C8C0B8&\bord1.4}and what would make the version deterministic?
+Dialogue: 0,0:29:41.42,0:29:43.59,Bilingual,,0,0,0,,答案在练习里\N{\fs33\c&H00C8C0B8&\bord1.4}The answers are in the exercises.
+Dialogue: 0,0:29:43.91,0:29:47.04,Bilingual,,0,0,0,,今天的每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}Every command from today is in the study guide,
+Dialogue: 0,0:29:47.04,0:29:48.84,Bilingual,,0,0,0,,在 MLOps Learning 这个 repo 里\N{\fs33\c&H00C8C0B8&\bord1.4}in the MLOps Learning repo.
+Dialogue: 0,0:29:49.16,0:29:50.87,Bilingual,,0,0,0,,下节课：容器\N{\fs33\c&H00C8C0B8&\bord1.4}Next time: containers.

@@ -275,12 +275,16 @@ class Backend:
 
 
 class SilentBackend(Backend):
-    """Silence of a plausible length (~2.6 words/s). Fast layout previews, no TTS needed."""
+    """Silence of a plausible length (~2.6 words/s). Fast layout previews, no TTS needed.
+
+    Also the clock of a subtitle-only video (no narrator; the SAY lines are only subtitles):
+    `voice: {backend: silent, speed: 0.85}` in video.yaml gives each line ~2.2 words/s of reading
+    time, and `subtitles_only: true` burns the bilingual subtitles in (see explainer.build)."""
 
     name = "silent"
 
-    def __init__(self, wps: float = 2.6):
-        self.wps = wps
+    def __init__(self, wps: float = 2.6, speed: float = 1.0):
+        self.wps = round(wps * speed, 3)
 
     def params(self):
         return {"wps": self.wps}
@@ -378,7 +382,9 @@ class KokoroBackend(Backend):
 
     def speak(self, text: str) -> Clip:
         sentences = split_sentences(text)
-        joined = self._cache_path("\x1e".join(s for _, s in sentences) + f"|gap={SENTENCE_GAP}")
+        lex = [self._lexicon_key(s) for _, s in sentences]   # a lexicon edit must re-join the line too
+        joined = self._cache_path("\x1e".join(s for _, s in sentences) + f"|gap={SENTENCE_GAP}"
+                                  + ("|lex=" + "\x1e".join(lex) if any(lex) else ""))
         pieces = [self._sentence_wav(s) for _, s in sentences]
         marks, t = [], 0.0
         durations = [audio_duration(p) for p in pieces]
@@ -586,7 +592,7 @@ def get_backend() -> Backend:
     if name == "espeak":
         return EspeakBackend(voice or "en-us", speed)
     if name == "silent":
-        return SilentBackend()
+        return SilentBackend(speed=speed)
     raise ValueError(f"unknown EXPLAINER_TTS backend {name!r}")
 
 

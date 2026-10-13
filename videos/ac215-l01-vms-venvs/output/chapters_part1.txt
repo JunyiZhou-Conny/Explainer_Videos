@@ -1,0 +1,7 @@
+00:00 Why won't pip install?
+01:34 The app: cli.py
+03:34 Renting a computer: the VM
+05:57 apt, git and the repo
+07:39 The system Python and PEP 668
+10:53 Run it, and read the traceback
+12:58 Delete, don't stop

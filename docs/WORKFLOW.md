@@ -2,6 +2,8 @@
 
 The production pipeline, step by step, with the prompts that work well when you hand a step to
 Claude Code. Every step leaves a file behind, so you can stop, review, and resume.
+[PLAYBOOK.md](PLAYBOOK.md) has the lessons from the first videos: where the time went, and the
+rules that make the next one faster.
 
 ```
 PDF ──ingest──▶ library/catalog.yaml ──plan──▶ videos/<id>/
@@ -97,7 +99,21 @@ python -m explainer.build videos/<id> --crf 26  # smaller file for sharing
 ```
 
 Output in `videos/<id>/output/`: the mp4 (loudness-normalised), `.srt` subtitles,
-`chapters.txt` (paste into a YouTube/Bilibili description), `transcript.md`.
+`chapters.txt` (paste into a YouTube/Bilibili description), `transcript.md`. With a Chinese
+translation of the narration (`i18n/zh/narration/*.yaml`, [LANGUAGES.md](LANGUAGES.md)), also
+`<id>.zh-en.mp4`: the same video with bilingual subtitles burned in, the standard copy for Bilibili
+(`--no-burn` skips it), and `.zh.srt` / `.zh-en.srt` / `.zh-en.ass`.
+
+A build re-renders a scene when its movie is missing or older than what it is built from: the
+scene's folder, `script.md`, `video.yaml`, `assets/`, and the toolkit modules a scene imports.
+Command-line tooling (`build.py`, `check.py`, `preview.py`), the after-render modules (`music.py`,
+`finishing.py`) and, for narrated videos, the short-only modules (`short.py`, `grid.py`,
+`captions.py`) do not count; a change to the render command itself needs `--only`.
+
+Background music composed from the picture (every scene writes `<Scene>.events.json` as it renders):
+`python -m explainer.build videos/<id> --music` mixes it under the narration and keeps the
+narration-only master as `<id>.nomusic.mp4`. A condensed, music-led short of a video is its own
+project (`format: short`): see [SHORTS.md](SHORTS.md).
 
 ## Voices
 
@@ -108,6 +124,22 @@ Output in `videos/<id>/output/`: the mp4 (loudness-normalised), `.srt` subtitles
 | `edge` | free, online | good | `pip install edge-tts`, `voice.backend: edge`, `voice.voice: en-US-AndrewNeural` |
 | `espeak` | free, local | robotic | fallback |
 | `silent` | — | — | layout previews without audio |
+
+**Subtitle-only videos (no narrator).** Set `voice: {backend: silent, speed: 0.85}` and
+`subtitles_only: true` in `video.yaml`. The SAY lines are then only subtitles: each block lasts its
+reading time (~2.6 words/s × speed), and the English build burns the bilingual subtitles of every
+translation in `i18n/<lang>/narration/` into `output/<id>.<lang>-en.mp4` (`--no-burn` skips that).
+Write SAY lines for reading, not listening: short sentences, digits for numbers.
+
+**Burned-in subtitles for a narrated video.** `burn_subtitles: true` in `video.yaml` (same as `--burn`).
+
+**Background music.** `music: {seed: 0, volume_db: 0}` in `video.yaml` mixes a quiet music bed under
+the narration: calm pads, bass and a sparse bell arpeggio, synthesized from scratch by
+`explainer/music.py` (no samples, so nothing to license), different per `seed`. It sits about 12 dB
+under the voice in pauses and ducks to about 20 dB under it while someone speaks. `volume_db` moves it;
+`music: {file: assets/music/track.mp3}` uses a track of your own instead (looped to length).
+Preview a bed alone: `python -m explainer.music sample.wav --seconds 60 --seed 2`.
+Example of both: `videos/careonex-e2-library/`.
 
 Set it per video in `video.yaml` (`voice:`), or per run: `EXPLAINER_TTS=elevenlabs python -m explainer.build ...`.
 Clips are cached in `.cache/tts/`, so switching voices only re-synthesises once.

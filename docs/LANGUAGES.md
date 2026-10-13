@@ -72,7 +72,11 @@ All commands below run from the repository root (the toolkit is imported from th
    `<id>.zh-en.srt` / `.ass`, `chapters.txt` and `transcript.md`; each part gets its own
    `<id>_<part>.mp4`, subtitle files and `chapters_<part>.txt` (the transcript covers the whole
    video). The English build also writes `<id>.zh.srt` / `<id>.zh-en.srt` / `.ass` for the English
-   video.
+   video, and **`<id>.zh-en.mp4`: the English video with the bilingual subtitles burned in** under
+   the picture, the same layout as the Chinese version. This is the standard upload copy for
+   Bilibili, made for the full video and each part whenever a translation exists (`--no-burn`
+   skips it). A video that has no Chinese version yet still gets it: translate the narration only
+   (step 2, `narration/*.yaml`); the on-screen strings are needed only for a Chinese-voiced render.
 
 ## Subtitles
 
@@ -149,7 +153,13 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
 - The English video's own .srt (build.split_cues, 44 characters a line) uses the same cues as the
   English track of the Chinese video: split_balanced with clause cuts, _two_lines and _reflow_en,
   and the lines of subtitles.wrap_en, never the greedy textwrap fallback (that is what gave its
-  published / tables, …of the / average…).
+  published / tables, …of the / average…). A cue too short to read joins a neighbour of its own
+  sentence first; across a sentence end only when the joined cue ends at a sentence end or a whole
+  short sentence starts it (Why? On a log scale,), never as a fragment of the next sentence at its
+  end (…on day one. Minutes later,): that sentence is cut again with no piece that short, and a
+  short cue the pause after it can hold stays up there (It wasn't.). Lines do not break inside a
+  noun phrase (an early / draft, the Chinese / version, the fixers' / work, no recorded human /
+  review) or before the adverb yet (no record / yet).
 - In the bilingual band (Chinese line ≤ 30 units, a whole 《…》 title ≤ 35; English line ≤ 96
   characters, ≤ 110 for a clause piece — burned at 1080p a 110-character line is about 1170 px of
   the 1840 px line) the English sentence is cut where the Chinese one is: at the nearest clause
@@ -176,6 +186,31 @@ Made by `explainer/subtitles.py` from the narration timings recorded while rende
   the cue switches to where the voice is, in the .zh.srt as in the band.
 - Sidecar cues have at most 2 lines (22 units per Chinese line, 48 characters per English line);
   short cues stay up 1.6 s when the next one leaves room. Regression tests: tests/test_subtitles.py.
+
+## Shorts: one picture, both languages
+
+A short (docs/SHORTS.md) has no narration, so there is nothing to dub and no `--lang` build: its
+words are bilingual captions, a Chinese line and an English line for each, kept per scene in the
+project's `captions.yaml` and drawn into the picture when the video is stitched.
+
+- **Layouts.** `captions: {layouts: [zh-first, en-first]}` in video.yaml makes one master per layout
+  from the same render: `<id>.mp4` (the first; zh-first for Bilibili: the Chinese line in a Song/Ming
+  serif, the English under it in small letter-spaced capitals) and `<id>.en-first.mp4` (for YouTube:
+  English sentence case on top, the Chinese line under it). `--layout en-first` builds just one.
+  Sidecars come from the same lines: `<id>.zh.srt`, `<id>.en.srt`, `<id>.zh-en.srt`.
+- **Writing the lines.** One claim, question or number per caption, at most about 20 CJK characters
+  and 14 English words, the two lines saying the same thing (no line-by-line paraphrase drift: a
+  reviewer reads them as a pair). The video's glossary still binds the terms (幽灵对局 = ghost games).
+  Numbers are written the way the picture shows them (255,168; 9!), not spelled out.
+- **Editing.** captions.yaml is read again at stitch time (under the key the scene rendered with:
+  its `captions_key`, file stem or class name), so a wording fix is
+  `python -m explainer.build videos/<id> --no-render`; only a caption placed by scene code
+  (`self.caption("id")`) keeps the moment the scene chose. A line the render placed that
+  captions.yaml has lost is reported, never dropped silently.
+- **Sizes.** zh-first at 1080p: Chinese glyphs 38 px, English capitals 22 px (the reference's 14 px
+  is too small on a phone); a line wider than 86 % of the frame wraps.
+- **Music** is the same for every layout; for a narrated video each language version gets its own
+  score from its own event log (the Chinese timing differs), mixed under its own voice.
 
 ## Lessons from the Chinese versions
 

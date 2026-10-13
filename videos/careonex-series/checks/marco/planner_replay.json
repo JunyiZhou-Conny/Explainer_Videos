@@ -1,0 +1,365 @@
+{
+ "reasons": {
+  "already_supported": 3,
+  "question_rewrite_used": 16,
+  "no_safe_expansion": 14,
+  "feedback_used": 1,
+  "unverified_provider_claim": 6
+ },
+ "cases": [
+  {
+   "id": "daily_bathing",
+   "query": "My mother needs help showering. What kind of assistance might be available?",
+   "reason": "already_supported",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "bathing in bed, in the tub or shower. Relevant to caller question: My mother needs help showering. What kind of assistance might be available?"
+   ]
+  },
+  {
+   "id": "daily_dressing",
+   "query": "My dad struggles to dress himself in the morning. Can home care help?",
+   "reason": "already_supported",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "assistance with dressing. Relevant to caller question: My dad struggles to dress himself in the morning. Can home care help?"
+   ]
+  },
+  {
+   "id": "daily_meals",
+   "query": "Can a caregiver help prepare meals at home?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "prepare meals preparation"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "daily_mobility",
+   "query": "Can someone help my grandmother move around safely at home?",
+   "reason": "already_supported",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "Moving from one place to another. Relevant to caller question: Can someone help my grandmother move around safely at home?"
+   ]
+  },
+  {
+   "id": "daily_medication",
+   "query": "What is the difference between medication reminders and administering medication?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "medication reminders administering medication medicine administration comparison"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "daily_housekeeping",
+   "query": "Do home-care visits include light housekeeping and laundry?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "companion_loneliness",
+   "query": "My father lives alone and feels lonely. What kind of companionship can he get?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "lives alone feels lonely companionship"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "companion_outings",
+   "query": "Could a caregiver accompany my mother to appointments or social activities?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "accompany appointments social activities"
+   ],
+   "saved_run_queries": [
+    "Eligibility Requirements \u2014 HELP FOR CAREGIVERS. Relevant to caller question: Could a caregiver accompany my mother to appointments or social activities?"
+   ]
+  },
+  {
+   "id": "dementia_wandering",
+   "query": "My mother has dementia and sometimes wanders outside. What support is available?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "dementia sometimes wanders outside wandering"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "dementia_sundowning",
+   "query": "Dad becomes confused late in the day. Is there evening support for families?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "becomes confused late evening confusion"
+   ],
+   "saved_run_queries": [
+    "Adult Day Services Program. Relevant to caller question: Dad becomes confused late in the day. Is there evening support for families?"
+   ]
+  },
+  {
+   "id": "dementia_supervision",
+   "query": "Can someone supervise my grandmother when we are at work?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "overnight_safety",
+   "query": "What if my dad needs someone nearby overnight?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "nearby overnight nighttime"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "caregiver_break",
+   "query": "I care for my wife all day and need a break. What options are there?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "caregiver_burnout",
+   "query": "My sister is exhausted from caregiving. Is short-term relief available?",
+   "reason": "feedback_used",
+   "extra_searches": [
+    "Services To Provide Short-Term, Intermittent Relief to New Jersey\u2019s Caregivers"
+   ],
+   "saved_run_queries": [
+    "Services To Provide Short-Term, Intermittent Relief to New Jersey\u2019s Caregivers. Relevant to caller question: My sister is exhausted from caregiving. Is short-term relief available?"
+   ]
+  },
+  {
+   "id": "caregiver_training",
+   "query": "Are there resources to help family members learn safe caregiving?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "resources learn safe caregiving"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "schedule_weekends",
+   "query": "Can we arrange a caregiver to come only on weekends?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "Jersey Assistance for Community Caregiving (JACC) \u2014 HELP FOR CAREGIVERS. Relevant to caller question: Can we arrange a caregiver to come only on weekends?",
+    "Statewide Respite Care Program (SRCP) \u2014 HELP FOR CAREGIVERS. Relevant to caller question: Can we arrange a caregiver to come only on weekends?"
+   ]
+  },
+  {
+   "id": "schedule_overnight",
+   "query": "Is overnight care available and how is it different from live-in care?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "overnight different live nighttime"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "schedule_shortvisit",
+   "query": "Is a two-hour visit possible, or is there a minimum visit length?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "two visit minimum visit length"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "schedule_lastminute",
+   "query": "Can someone start tomorrow if our usual caregiver is sick?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "Jersey Assistance for Community Caregiving (JACC) \u2014 HELP FOR CAREGIVERS. Relevant to caller question: Can someone start tomorrow if our usual caregiver is sick?"
+   ]
+  },
+  {
+   "id": "cost_hourly",
+   "query": "How much does an hour of home-care assistance cost in New Jersey?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "cost_overnight",
+   "query": "Would overnight home care be charged differently from daytime visits?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "overnight charged differently daytime visits nighttime"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "cost_hidden",
+   "query": "Are there cancellation fees, deposits, or other charges?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "Deposits into Bank Accounts. Relevant to caller question: Are there cancellation fees, deposits, or other charges?"
+   ]
+  },
+  {
+   "id": "payment_ltc",
+   "query": "Can long-term care insurance pay for help with bathing at home?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "long term insurance pay bathing"
+   ],
+   "saved_run_queries": [
+    "Bathing or grooming. Relevant to caller question: Can long-term care insurance pay for help with bathing at home?"
+   ]
+  },
+  {
+   "id": "payment_private",
+   "query": "Can families pay privately if they do not qualify for public assistance?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "In order to qualify for PCA services, recipients must. Relevant to caller question: Can families pay privately if they do not qualify for public assistance?",
+    "Does the Person You Care for Qualify?. Relevant to caller question: Can families pay privately if they do not qualify for public assistance?"
+   ]
+  },
+  {
+   "id": "payment_medicare",
+   "query": "Does Medicare pay for ongoing help with dressing if no skilled care is needed?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "medicare pay ongoing dressing skilled"
+   ],
+   "saved_run_queries": [
+    "Skilled nursing care:** Medicare covers skilled nursing care when the services you need. Relevant to caller question: Does Medicare pay for ongoing help with dressing if no skilled care is needed?",
+    "Medicare doesn\u2019t pay for. Relevant to caller question: Does Medicare pay for ongoing help with dressing if no skilled care is needed?"
+   ]
+  },
+  {
+   "id": "matching_language",
+   "query": "Do you have a caregiver who speaks Mandarin?",
+   "reason": "unverified_provider_claim",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "Jersey Assistance for Community Caregiving (JACC) \u2014 HELP FOR CAREGIVERS. Relevant to caller question: Do you have a caregiver who speaks Mandarin?"
+   ]
+  },
+  {
+   "id": "matching_gender",
+   "query": "Can my mother request a female caregiver?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "Jersey Assistance for Community Caregiving (JACC) \u2014 HELP FOR CAREGIVERS. Relevant to caller question: Can my mother request a female caregiver?"
+   ]
+  },
+  {
+   "id": "matching_continuity",
+   "query": "Can the same caregiver visit each week?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "same visit each"
+   ],
+   "saved_run_queries": [
+    "Stress-Busting for Family Caregivers. Relevant to caller question: Can the same caregiver visit each week?"
+   ]
+  },
+  {
+   "id": "matching_training",
+   "query": "What training or background checks do caregivers have?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "training background checks"
+   ],
+   "saved_run_queries": [
+    "Jersey Assistance for Community Caregiving (JACC) \u2014 HELP FOR CAREGIVERS. Relevant to caller question: What training or background checks do caregivers have?"
+   ]
+  },
+  {
+   "id": "areas_bergen",
+   "query": "Is your home-care network available in Bergen County?",
+   "reason": "unverified_provider_claim",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "areas_philly",
+   "query": "Do you serve families in Philadelphia?",
+   "reason": "unverified_provider_claim",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "local_contact",
+   "query": "Who should I call to ask about care near my home in New Jersey?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "resistance_to_help",
+   "query": "My father refuses help from strangers. What options can our family consider?",
+   "reason": "question_rewrite_used",
+   "extra_searches": [
+    "refuses strangers consider"
+   ],
+   "saved_run_queries": []
+  },
+  {
+   "id": "after_hospital",
+   "query": "My mother is being discharged from the hospital. How might home care help?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "complex_bilingual",
+   "query": "I need weekend visits in Bergen County with someone who speaks Spanish, but not live-in care. What can I explore?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "complex_nonmedicaid",
+   "query": "My dad does not have Medicaid and needs a few hours of help with meals. What might be available?",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "May include, but are not limited to. Relevant to caller question: My dad does not have Medicaid and needs a few hours of help with meals. What might be available?"
+   ]
+  },
+  {
+   "id": "ambiguous_help",
+   "query": "I need help for my mom, but I do not know what sort of care she needs.",
+   "reason": "no_safe_expansion",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "unsupported_same_day",
+   "query": "Can CareOneX guarantee that a caregiver will come to my house by 8 AM tomorrow?",
+   "reason": "unverified_provider_claim",
+   "extra_searches": [],
+   "saved_run_queries": [
+    "For example, an aide may be able to come to your house several times a week or just once in a while. Relevant to caller question: Can CareOneX guarantee that a caregiver will come to my house by 8 AM tomorrow?",
+    "Statewide Respite Care Program (SRCP) \u2014 HELP FOR CAREGIVERS. Relevant to caller question: Can CareOneX guarantee that a caregiver will come to my house by 8 AM tomorrow?"
+   ]
+  },
+  {
+   "id": "unsupported_rate",
+   "query": "What is CareOneX\u2019s exact hourly price this Saturday?",
+   "reason": "unverified_provider_claim",
+   "extra_searches": [],
+   "saved_run_queries": []
+  },
+  {
+   "id": "unsupported_language",
+   "query": "How many Mandarin-speaking caregivers does CareOneX currently have?",
+   "reason": "unverified_provider_claim",
+   "extra_searches": [],
+   "saved_run_queries": []
+  }
+ ]
+}

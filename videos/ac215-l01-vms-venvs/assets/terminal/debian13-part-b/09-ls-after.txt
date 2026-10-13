@@ -1,0 +1,15 @@
+$ ls -a
+.
+..
+.git
+.gitignore
+.venv
+.vscode
+Dockerfile.txt
+README.md
+cli.py
+docker-build-push.sh
+docker-shell.sh
+pyproject.toml
+uv.lock
+[exit 0]

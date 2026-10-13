@@ -1,0 +1,524 @@
+# zh narration for S01-S07 (part 1, group g1), sentence-aligned to script.md: one zh sentence per
+# English sentence (explainer.voice.split_sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# say: = what the voice reads (null = the display text): 点 / 杠 for dotted names and flags, no hyphens
+# inside names (apt get, python3 pip, dist packages, simple translate, e2 small), /usr read user (user lib,
+# user local) and usr read U S R, versions as integer groups (三点十一点二, rule C2), 429 / PEP 668 / AC215
+# digit by digit (C3), 两 before a measure word (C4), g cloud, x x, and the three subtitle-only glosses
+# (hypervisor, externally managed, 外部 IP; rule A3) left out of the voice.
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule G3: -f, -t / -s / -d,
+# translate.googleapis.com, raise_exception=True, /usr/lib, usr, sys.path, --break-system-packages,
+# /usr/local, xx); null = the SAY text.
+# anchors: not written yet (added once the scenes are adapted); the zh word order keeps the order of the
+# English phrases the S01-S07 scenes wait for (vo.wait_until), e.g. S03[0] says the real server before
+# Google's data centers, S04[3] the new folder before the home directory, S01[5] the project before billing.
+# Durations: not synthesized yet. edge cannot be reached from the environments this was written and
+# reviewed in (Bing answers the WebSocket handshake with 403; the review session's egress proxy does not
+# support WebSocket upgrades at all; glossary F5 / I2). Review estimate (2026-10-12): Xiaoyi per-sentence
+# model fitted on the 148 aligned sentences of the tic-tac-toe zh .srt (0.185 s per Hanzi or read numeral
+# syllable, 0.23 s per syllable of an English word or spelled letter, 0.27 s per ，、；：, + 0.15 s;
+# R^2 0.98, median error 5 %) against the cached Kokoro af_heart 0.9 English sentences: whole video
+# zh/en 1.01, every SAY block within 0.85-1.18, no at-risk line over 1.35 even at 0.41 s per English
+# syllable. Run python -m explainer.script videos/ac215-l01-vms-venvs/script.md --lang zh before
+# rendering (rule D3) and listen to the F5 list.
+S01:
+- en: "Here's a brand-new computer in the cloud. It's ours, and we have root, full administrator rights. We ask pip for two Python packages, and pip says no."
+  zh:
+  - "这是一台云上的全新电脑。"
+  - "它是我们的，有 root 权限，也就是完整的管理员权限。"
+  - "我们让 pip 装两个 Python 包，pip 说不行。"
+- en: "This command isn't from the README; it's the one most of us would type first. The error says the environment is externally managed, and suggests a virtual environment. By the end of this video, every line of it will make sense."
+  zh:
+  - "这条命令不是 README 里的，是我们大多数人最先会敲的那条。"
+  - "报错说这个环境是 externally managed（由外部管理），还建议用虚拟环境。"
+  - "看完这个视频，报错的每一行你都会看懂。"
+  say:
+  - null
+  - "报错说这个环境是 externally managed，还建议用虚拟环境。"
+  - null
+- en: "Today's lecture uses the word virtual twice. A virtual machine is a whole computer you rent and throw away. A virtual environment is a private set of Python packages for one project. And one will live inside the other."
+  zh:
+  - "今天这节课，“虚拟”这个词会出现两次。"
+  - "虚拟机，就是一整台你租来、用完就扔的电脑。"
+  - "虚拟环境，就是给一个项目专用的一套 Python 包。"
+  - "而且，一个会装在另一个里面。"
+- en: "The tutorial, simple-translate, runs one small app four ways, each removing a kind of fragility. Today we climb the first two rungs: a manual install on a cloud VM, then a fresh VM of the same kind, with uv. Docker comes next lecture."
+  zh:
+  - "这个教程叫 simple-translate，它用四种方式跑同一个小应用，每一种都去掉一类隐患。"
+  - "今天我们爬前两级：先在云端 VM 上手动安装，再换一台同样配置的全新 VM，改用 uv。"
+  - "Docker 留到下节课。"
+  say:
+  - "这个教程叫 simple translate，它用四种方式跑同一个小应用，每一种都去掉一类隐患。"
+  - null
+  - null
+- en: "To follow along, open the README beside this video. The tracker, top left, shows the README step. Code panels show the file and line numbers. When the yellow your-turn tag appears, pause and run the command on your own VM. A grey extra tag marks a command that isn't in the README; extras are safe, so run them too. Every command is also in the study guide, in the MLOps Learning repo."
+  zh:
+  - "想跟着做的话，把 README 打开，放在视频旁边。"
+  - "左上角的进度条显示 README 的步骤。"
+  - "代码面板会标出文件和行号。"
+  - "看到黄色的“轮到你了”标签，就暂停，在你自己的 VM 上跑这条命令。"
+  - "灰色的“额外”标签表示这条命令 README 里没有；额外的命令都是安全的，也一起跑吧。"
+  - "每条命令也都在学习指南里，在 MLOps Learning 这个 repo 里。"
+- en: "Before you start, finish Tutorial 0, so you have a Google Cloud project with billing on. No service account or keys today; all you need is a browser."
+  zh:
+  - "开始前先做完 Tutorial 0，这样你就有一个 Google Cloud 项目，结算也开好了。"
+  - "今天不用服务账号，也不用密钥，有个浏览器就行。"
+S02:
+- en: "Before we install anything, let's see what we're installing. Open cli.py on GitHub; you'll clone it onto your VM soon. The first two imports, argparse and asyncio, come with Python. The next two, art and googletrans, don't. They have to come from somewhere. This whole lecture is about where they come from."
+  zh:
+  - "装东西之前，先看看要装的是什么。"
+  - "在 GitHub 上打开 cli.py，待会儿你会把它 clone 到 VM 上。"
+  - "前两个 import，argparse 和 asyncio，是 Python 自带的。"
+  - "后两个，art 和 googletrans，就不是了。"
+  - "它们总得从某个地方来。"
+  - "这整节课，讲的就是它们从哪儿来。"
+  say:
+  - null
+  - "在 GitHub 上打开 cli 点 py，待会儿你会把它 clone 到 VM 上。"
+  - null
+  - null
+  - null
+  - null
+- en: "The main function prints a banner that says AC215 in ASCII art, then the parsed arguments, then the text to translate. If you pass a file with dash f, the text comes from that file instead."
+  zh:
+  - "这个 main 函数先打印一个横幅，用 ASCII 字符画写着 AC215，然后是解析好的参数，最后是要翻译的文本。"
+  - "如果用 -f 传一个文件，文本就改从那个文件里读。"
+  say:
+  - "这个 main 函数先打印一个横幅，用 ASCII 字符画写着 AC 二一五，然后是解析好的参数，最后是要翻译的文本。"
+  - "如果用杠 f 传一个文件，文本就改从那个文件里读。"
+  en_display:
+  - null
+  - "If you pass a file with -f, the text comes from that file instead."
+- en: "At the bottom, argparse defines four options, and each one has a default: the text I love cheese, source language English, destination Italian. So running cli.py with no options translates I love cheese into Italian."
+  zh:
+  - "最下面，argparse 定义了四个选项，各有默认值：文本是 I love cheese，源语言是英语，目标语言是意大利语。"
+  - "所以不带任何选项运行 cli.py，就会把 I love cheese 翻译成意大利语。"
+  say:
+  - null
+  - "所以不带任何选项运行 cli 点 py，就会把 I love cheese 翻译成意大利语。"
+- en: "The last line starts an event loop and runs main, because googletrans version 4 is asynchronous. Inside main, a Translator sends your text off with one awaited call."
+  zh:
+  - "最后一行启动事件循环并运行 main，因为 googletrans 4 是异步的。"
+  - "在 main 里，一个 Translator 把你的文本发出去，只用一次 await 调用。"
+  say:
+  - "最后一行启动事件循环并运行 main，因为 googletrans 四是异步的。"
+  - null
+- en: "That call is a single HTTPS request from the VM to translate dot googleapis dot com. It's Google's unofficial translate endpoint: free, no API key, no promises. A little JSON comes back, and line 39 prints the translation."
+  zh:
+  - "这次调用就是一个 HTTPS 请求，从 VM 发到 translate.googleapis.com。"
+  - "这是 Google 非官方的翻译接口：免费，不用 API key，也不做任何保证。"
+  - "返回来一小段 JSON，第 39 行把译文打印出来。"
+  say:
+  - "这次调用就是一个 HTTPS 请求，从 VM 发到 translate 点 googleapis 点 com。"
+  - null
+  - null
+  en_display:
+  - "That call is a single HTTPS request from the VM to translate.googleapis.com."
+  - null
+  - null
+- en: "One detail on line 25 matters later: raise exception equals True. Without it, when Google answers with an error, googletrans hides it and hands your own input back as the translation, so nothing looks wrong. With it, a failure becomes an error you can read."
+  zh:
+  - "第 25 行有个细节以后会用到：raise_exception=True。"
+  - "没有它的话，Google 一旦返回错误，googletrans 就把错误藏起来，把你的原文当成译文交回来，看上去一切正常。"
+  - "有了它，失败就会变成一条你能看懂的报错。"
+  say:
+  - "第 25 行有个细节以后会用到：raise exception 等于 True。"
+  - null
+  - null
+  en_display:
+  - "One detail on line 25 matters later: raise_exception=True."
+  - null
+  - null
+- en: "Lines 32 to 37 catch any error from that call and wrap it in a friendlier message about the network. Remember these lines. In a few minutes, they'll fool us."
+  zh:
+  - "第 32 到 37 行会接住那次调用的任何错误，再包装成一条更友好的消息，说是网络的问题。"
+  - "记住这几行。"
+  - "几分钟后，它们就会误导我们。"
+- en: "So the app is small: arguments in, one web request, one line out. What it needs is two third-party packages. Let's get a computer, and find them a home."
+  zh:
+  - "所以这个应用很小：参数进去，一次网络请求，一行输出。"
+  - "它需要的，是两个第三方包。"
+  - "我们去弄一台电脑，给它们安个家。"
+S03:
+- en: "A virtual machine is a slice of a real server in one of Google's data centers. Software called a hypervisor carves the machine into slices. Each slice gets virtual CPUs and memory from that server, a disk from Google's storage network, and its own operating system. One of them will be yours."
+  zh:
+  - "虚拟机就是一台真实服务器切出来的一片，在 Google 的某个数据中心里。"
+  - "有一种软件叫 hypervisor（虚拟机监控器），它把这台机器切成一片一片。"
+  - "每一片都从这台服务器分到虚拟 CPU 和内存，从 Google 的存储网络分到一块磁盘，还有自己的操作系统。"
+  - "其中一片会是你的。"
+  say:
+  - null
+  - "有一种软件叫 hypervisor，它把这台机器切成一片一片。"
+  - null
+  - null
+- en: "In the console, check that your Tutorial 0 project is selected, then open Compute Engine, then VM instances. The first time, it may ask you to enable the Compute Engine API; click enable and give it a minute. Then click Create instance."
+  zh:
+  - "在控制台里，先确认选中的是你在 Tutorial 0 建的项目，然后打开 Compute Engine，再进 VM instances。"
+  - "第一次进去，它可能会让你启用 Compute Engine API；点 Enable，再等它一分钟。"
+  - "然后点 Create instance。"
+- en: "The README gives no settings, so here are sensible ones. A name, like ac215-l01. A region and zone: where the machine physically lives. A machine type, which sets the CPUs and memory; e2-small is plenty. And a boot disk with Debian 12. Debian 13 works too; we'll see where it changes things."
+  zh:
+  - "README 没给任何设置，这里给一套合理的选择。"
+  - "名称，比如 ac215-l01。"
+  - "区域和可用区，就是这台机器实际放在哪里。"
+  - "机器类型决定 CPU 和内存，e2-small 就够用了。"
+  - "启动磁盘选 Debian 12。"
+  - "用 Debian 13 也行，后面会看到它在哪些地方不一样。"
+  say:
+  - null
+  - "名称，比如 AC 二一五 L 零一。"
+  - null
+  - "机器类型决定 CPU 和内存，e2 small 就够用了。"
+  - null
+  - null
+- en: "Keep the external IP address; it's on by default. Without it, and without extra network setup, this VM can't reach the internet, and every download here would hang."
+  zh:
+  - "保留外部 IP（也就是公网 IP），它默认就是开着的。"
+  - "没有它，又没做额外的网络配置，这台 VM 就上不了网，这里的每次下载都会卡住。"
+  say:
+  - "保留外部 IP，它默认就是开着的。"
+  - null
+- en: "And now the meter starts. CPU and memory are billed by the second while the VM runs, even when it sits idle. The disk is billed for as long as it exists. The estimate is small, but the meter never stops on its own."
+  zh:
+  - "现在，计价器开始跳了。"
+  - "CPU 和内存在 VM 运行期间按秒计费，闲着也照样算。"
+  - "磁盘只要还在，就一直计费。"
+  - "费用估算不高，但计价器自己不会停。"
+- en: "Click Create, wait for the green check, then click SSH. If it asks you to authorize the connection, click Authorize. A terminal opens in your browser, logged in to your new VM. Our prompt says student; yours shows your own username. Pause here, and get your VM to this point."
+  zh:
+  - "点 Create，等绿勾出现，再点 SSH。"
+  - "要是让你授权这次连接，就点 Authorize。"
+  - "浏览器里会打开一个终端，已经登录到新 VM 上。"
+  - "我们的提示符显示 student，你的是你自己的用户名。"
+  - "先在这里暂停，把你的 VM 也弄到这一步。"
+- en: "Three quick extra checks, not in the README. First, which operating system did we get? Print the os-release file: Debian 12, nicknamed bookworm."
+  zh:
+  - "来做三个快速的额外检查，README 里都没有。"
+  - "第一，我们拿到的是哪个操作系统？"
+  - "打印 os-release 文件：Debian 12，代号 bookworm。"
+  say:
+  - null
+  - null
+  - "打印 os release 文件：Debian 12，代号 bookworm。"
+- en: "Second, ask python3 for its version. Debian 12 ships Python 3.11.2, for the operating system itself. On Debian 13, you'd see 3.13.5. Keep both numbers in mind."
+  zh:
+  - "第二，再问一下 python3 的版本。"
+  - "Debian 12 自带 Python 3.11.2，给操作系统自己用。"
+  - "换成 Debian 13，你会看到 3.13.5。"
+  - "这两个数字都记住。"
+  say:
+  - null
+  - "Debian 12 自带 Python 三点十一点二，给操作系统自己用。"
+  - "换成 Debian 13，你会看到三点十三点五。"
+  - null
+- en: "Third, which python, without the 3. The which command asks which program a name would run. For python, nothing comes back: Debian has python3, but no python. Remember this for part 2."
+  zh:
+  - "第三，which python，不带 3。"
+  - "这个 which 命令，查一个名字会运行哪个程序。"
+  - "查 python，什么都没返回：Debian 有 python3，但没有 python。"
+  - "记住它，第二部分要用。"
+S04:
+- en: "Step 3: type sudo apt-get update. Debian's package manager is apt, and sudo runs it as the administrator. Update downloads the package catalog: the list of packages that exist, and their latest versions. Nothing is installed yet. On a Google VM, you'll see a few more lines, for Google's own package sources. Pause and run it."
+  zh:
+  - "第 3 步：输入 sudo apt-get update。"
+  - "Debian 的包管理器是 apt，sudo 让它以管理员身份运行。"
+  - "而 update 会下载软件包列表：有哪些软件包，各自最新的版本是什么。"
+  - "这时还什么都没装。"
+  - "在 Google 的 VM 上，你会看到多出几行，那是 Google 自己的软件源。"
+  - "暂停一下，自己跑一遍。"
+  say:
+  - "第 3 步：输入 sudo apt get update。"
+  - null
+  - null
+  - null
+  - null
+  - null
+- en: "The README has a tip here: apt-get and apt do the same job. The apt-get command is the stable, scriptable one, for Dockerfiles and automated builds. The shorter apt is friendlier for typing by hand. Either is fine here."
+  zh:
+  - "这里 README 有个提示：apt-get 和 apt 做的是同一件事。"
+  - "其中 apt-get 这条命令稳定、适合写进脚本，用在 Dockerfile 和自动化构建里。"
+  - "短一点的 apt，手敲起来更友好。"
+  - "这里用哪个都行。"
+  say:
+  - "这里 README 有个提示：apt get 和 apt 做的是同一件事。"
+  - "其中 apt get 这条命令稳定、适合写进脚本，用在 Dockerfile 和自动化构建里。"
+  - null
+  - null
+- en: "Step 4: sudo apt install git. This time apt really installs things. It lists what it will add and asks, do you want to continue? Type Y and press enter. The list depends on your VM; if git is already there, apt says so. Pause and run it."
+  zh:
+  - "第 4 步：sudo apt install git。"
+  - "这次 apt 是真的要装东西了。"
+  - "它会列出要添加的东西，然后问你：要继续吗？"
+  - "输入 Y，按回车。"
+  - "列表因 VM 而异；如果已经有 git，apt 会直接告诉你。"
+  - "暂停一下，自己跑一遍。"
+- en: "Step 5: clone the repo. Type git clone, then the address; copy it from the README. Git copies the whole repo, with its history, into a new folder, simple-translate, in your home directory."
+  zh:
+  - "第 5 步：把 repo clone 下来。"
+  - "输入 git clone，再加上地址；地址从 README 里复制。"
+  - "它会把整个 repo 连同历史，复制到一个新目录 simple-translate 里，就在你的 home 目录下。"
+  say:
+  - null
+  - null
+  - "它会把整个 repo 连同历史，复制到一个新目录 simple translate 里，就在你的 home 目录下。"
+- en: "Step 6: cd simple-translate. Watch the prompt: after the colon, it now shows the folder you're in. The wavy tilde means your home folder. Pause, and catch up to here."
+  zh:
+  - "第 6 步：cd simple-translate。"
+  - "注意看提示符：冒号后面现在显示你所在的目录。"
+  - "这个波浪号代表你的 home 目录。"
+  - "暂停一下，跟上进度。"
+  say:
+  - "第 6 步：cd simple translate。"
+  - null
+  - null
+  - null
+- en: "One extra check: ls lists the files. There's cli.py, the README, a Dockerfile saved as a text file, two scripts for next lecture, and pyproject.toml, the list of what the app needs. Notice what's missing: no requirements file, and no lock file with exact versions. Hold on to that."
+  zh:
+  - "额外检查一下：用 ls 列出文件。"
+  - "里面有 cli.py、README，一个存成文本文件的 Dockerfile，两个下节课用的脚本，还有 pyproject.toml，列着这个应用需要什么。"
+  - "注意少了什么：没有 requirements 文件，也没有记录精确版本的 lock 文件。"
+  - "先记住这一点。"
+  say:
+  - null
+  - "里面有 cli 点 py、README，一个存成文本文件的 Dockerfile，两个下节课用的脚本，还有 pyproject 点 toml，列着这个应用需要什么。"
+  - null
+  - null
+S05:
+- en: "Step 7: sudo apt install python3-pip. That's Debian's own packaged copy of pip, for Debian's Python. Answer Y again. Ours pulled in over a hundred packages; a real VM usually needs fewer. Pause and run it."
+  zh:
+  - "第 7 步：sudo apt install python3-pip。"
+  - "这是 Debian 自己打包的 pip，给 Debian 的 Python 用。"
+  - "再输入一次 Y。"
+  - "我们这次连带装了一百多个软件包；真正的 VM 上通常会少一些。"
+  - "暂停一下，自己跑一遍。"
+  say:
+  - "第 7 步：sudo apt install python3 pip。"
+  - null
+  - null
+  - null
+  - null
+- en: "An extra check: ask pip3 for its version. It's pip 23.0.1, for Python 3.11, in a folder called dist-packages under user lib. That user is spelled U-S-R: the system's files, not your home folder."
+  zh:
+  - "额外检查一下：问问 pip3 的版本。"
+  - "它是 pip 23.0.1，对应 Python 3.11，在 /usr/lib 下面一个叫 dist-packages 的目录里。"
+  - "这个 user 拼作 usr：指的是系统的文件，不是你的 home 目录。"
+  say:
+  - null
+  - "它是 pip 二十三点零点一，对应 Python 三点十一，在 user lib 下面一个叫 dist packages 的目录里。"
+  - "这个 user 拼作 U S R：指的是系统的文件，不是你的 home 目录。"
+  en_display:
+  - null
+  - "It's pip 23.0.1, for Python 3.11, in a folder called dist-packages under /usr/lib."
+  - "That user is spelled usr: the system's files, not your home folder."
+- en: "Now the command from the start of the video, without sudo or any flag; it isn't in the README either. Again, pip refuses: this environment is externally managed. The hint says: install with apt, or create a virtual environment. Its last note even names a way around it."
+  zh:
+  - "现在跑视频开头那条命令，不带 sudo，也不带任何参数；它也不在 README 里。"
+  - "还是一样，pip 拒绝了：这个环境是 externally managed。"
+  - "提示说：用 apt 安装，或者建一个虚拟环境。"
+  - "它最后一句甚至给出了绕过去的办法。"
+- en: "Why refuse? Picture how Python finds an import. This extra one-liner prints the list called sys dot path: the folders Python searches. Think of them as shelves. On every import, Python scans from the top shelf down, and takes the first match."
+  zh:
+  - "为什么要拒绝？"
+  - "先想想 Python 怎么找 import 的东西。"
+  - "这条额外的一行命令打印 sys.path 这个列表，也就是 Python 会搜索的那些目录。"
+  - "把它们想成一层层的架子。"
+  - "每次 import，Python 都从最上面一层往下找，拿第一个对上的。"
+  say:
+  - null
+  - null
+  - "这条额外的一行命令打印 sys 点 path 这个列表，也就是 Python 会搜索的那些目录。"
+  - null
+  - null
+  en_display:
+  - null
+  - null
+  - "This extra one-liner prints the list called sys.path: the folders Python searches."
+  - null
+  - null
+- en: "The bottom shelf belongs to apt. Debian itself runs Python tools that depend on exactly those jars, at exactly those versions. The system Python is a shared kitchen, and apt is the cook. That's what externally managed means. PEP 668 is the rule that makes pip respect it."
+  zh:
+  - "最下面这层是 apt 的。"
+  - "Debian 自己也在跑一些 Python 工具，它们依赖的正是这些罐子，而且正是这些版本。"
+  - "系统 Python 是一间公用厨房，掌勺的是 apt。"
+  - "这就是 externally managed 的意思。"
+  - "而 PEP 668 就是让 pip 遵守这一点的规则。"
+  say:
+  - null
+  - null
+  - null
+  - null
+  - "而 PEP 六六八就是让 pip 遵守这一点的规则。"
+- en: "Step 8 is the README's command: sudo pip3 install, with the flag break-system-packages. The flag overrides the guard; sudo lets pip write as administrator. Pause and run it. We asked for 2 packages and got 12; if yours says requirement already satisfied, apt already had that one. And the warning says running pip as root can clash with the system's package manager."
+  zh:
+  - "第 8 步是 README 里的命令：sudo pip3 install，加上 --break-system-packages 这个参数。"
+  - "这个参数绕过了保护；sudo 让 pip 以管理员身份写文件。"
+  - "暂停一下，自己跑一遍。"
+  - "我们要了 2 个包，装了 12 个；如果你看到 requirement already satisfied，说明 apt 已经装过那个包了。"
+  - "还有，警告说以 root 身份运行 pip，可能会和系统的包管理器冲突。"
+  say:
+  - "第 8 步是 README 里的命令：sudo pip3 install，加上 break system packages 这个参数。"
+  - null
+  - null
+  - "我们要了两个包，装了 12 个；如果你看到 requirement already satisfied，说明 apt 已经装过那个包了。"
+  - null
+  en_display:
+  - "Step 8 is the README's command: sudo pip3 install, with the flag --break-system-packages."
+  - null
+  - null
+  - null
+  - null
+- en: "Where did they go? This extra one-liner asks googletrans where it lives: in dist-packages under user local, still the system's, shared by every user. Look at the shelves: that shelf sits above the one apt owns."
+  zh:
+  - "它们装到哪儿去了？"
+  - "这条额外的一行命令问 googletrans 装在哪儿：在 /usr/local 下面的 dist-packages 里，仍然是系统的，所有用户共用。"
+  - "看看这些架子：这一层在 apt 那层的上面。"
+  say:
+  - null
+  - "这条额外的一行命令问 googletrans 装在哪儿：在 user local 下面的 dist packages 里，仍然是系统的，所有用户共用。"
+  - null
+  en_display:
+  - null
+  - "This extra one-liner asks googletrans where it lives: in dist-packages under /usr/local, still the system's, shared by every user."
+  - null
+- en: "Now suppose apt had installed an older httpx for some system tool. Our googletrans needs 0.27.2 or newer, so pip would add a second copy, on the higher shelf. Python would find that copy first and hide the one from apt, for every program that uses the system Python, not just ours. That's what the flag breaks."
+  zh:
+  - "现在假设，apt 之前为某个系统工具装过一个旧版的 httpx。"
+  - "我们的 googletrans 需要 0.27.2 及以上，所以 pip 会再装一份，放在更高的那层架子上。"
+  - "这时 Python 会先找到这一份，把 apt 那份挡住；所有用系统 Python 的程序都这样，不只是我们的。"
+  - "这个参数破坏的，正是这一点。"
+  say:
+  - null
+  - "我们的 googletrans 需要零点二十七点二及以上，所以 pip 会再装一份，放在更高的那层架子上。"
+  - null
+  - null
+- en: "To be fair, the README says it uses the flag deliberately, as a quick demonstration, and the next walkthrough does it properly."
+  zh:
+  - "公平地说，README 里也讲了，这里是故意用这个参数，当作快速演示，下一部分就会用正规的做法。"
+- en: "Something to ponder. A classmate's project on this VM needs httpx 0.13, and yours needs httpx 0.28. Both install system-wide, like this. What happens?"
+  zh:
+  - "来想一个问题。"
+  - "这台 VM 上有个同学的项目，需要 httpx 0.13；而你的项目，需要的是 httpx 0.28。"
+  - "两个项目都像这样，做系统级安装。"
+  - "会怎么样？"
+  say:
+  - null
+  - "这台 VM 上有个同学的项目，需要 httpx 零点十三；而你的项目，需要的是 httpx 零点二十八。"
+  - null
+  - null
+- en: "There's only one shelf, so there's room for only one httpx. The last install wins, for everyone, and one of the two projects breaks."
+  zh:
+  - "架子只有一层，所以只放得下一个 httpx。"
+  - "最后装的说了算，对所有人都一样，两个项目总有一个会坏。"
+S06:
+- en: "Step 9: run it. Type python3 cli.py, with the 3, since plain python doesn't exist here. You should see the banner, the arguments, your input, and the output: I love cheese, in Italian. If you get a long red error instead, don't change anything; we'll read ours together in a minute. Pause and try it."
+  zh:
+  - "第 9 步：把它跑起来。"
+  - "输入 python3 cli.py，要带 3，因为这里没有不带 3 的 python。"
+  - "你应该会看到横幅、参数、你的输入，还有输出：意大利语版的 I love cheese。"
+  - "要是出来一大段红色报错，什么都别改；待会儿我们一起读我们录到的那段。"
+  - "暂停一下，试试看。"
+  say:
+  - null
+  - "输入 python3 cli 点 py，要带 3，因为这里没有不带 3 的 python。"
+  - null
+  - null
+  - null
+- en: "Then the README's other two runs. Dash t gives the text, dash s the source language, dash d the destination. Copy them from the README, quotes included, and pause to run both. One comes back in Spanish, the other in French."
+  zh:
+  - "然后跑 README 里的另外两条命令。"
+  - "其中 -t 指定文本，-s 指定源语言，-d 指定目标语言。"
+  - "从 README 复制，连引号一起，暂停一下，两条都跑一遍。"
+  - "一条返回西班牙语，另一条返回法语。"
+  say:
+  - null
+  - "其中杠 t 指定文本，杠 s 指定源语言，杠 d 指定目标语言。"
+  - null
+  - null
+  en_display:
+  - null
+  - "-t gives the text, -s the source language, -d the destination."
+  - null
+  - null
+- en: "Now, honestly: when we recorded this, Google refused our requests, and the run ended in this long red traceback. Let's read it; you'll meet tracebacks like this all course long."
+  zh:
+  - "说实话，我们录的时候，Google 拒绝了我们的请求，结果跑出来这一长串红色的 traceback。"
+  - "我们来读一读，这种 traceback 整门课你都会碰到。"
+- en: "This is a chained traceback: two errors. The line between them says the first one directly caused the second. Most people read only the last line, but here that's just the wrapper. Scroll up to the first error: that's the cause."
+  zh:
+  - "这是一个链式 traceback：两个错误。"
+  - "中间那一行说，第一个错误直接导致了第二个。"
+  - "大多数人只看最后一行，可这里它只是外层包装。"
+  - "往上翻到第一个错误：那才是原因。"
+- en: "The cause is status code 429: too many requests. Google's unofficial endpoint was rate-limiting our machine, as it often does with cloud machines. Nothing on the VM was broken."
+  zh:
+  - "原因是状态码 429，也就是请求太多。"
+  - "Google 的非官方接口在对我们的机器限流，对云上的机器，它经常这样。"
+  - "这台 VM 上什么都没坏。"
+  say:
+  - "原因是状态码四二九，也就是请求太多。"
+  - null
+  - null
+- en: "The error on the last line is the app's own wrapper, lines 32 to 37 of cli.py. It catches anything, and raises a friendlier message, chained to the original."
+  zh:
+  - "最后一行的错误，是这个应用自己的外层包装，也就是 cli.py 的第 32 到 37 行。"
+  - "它什么都接住，再抛出一条更友好的消息，接在原来的错误后面。"
+  say:
+  - "最后一行的错误，是这个应用自己的外层包装，也就是 cli 点 py 的第 32 到 37 行。"
+  - null
+- en: "Why read the first error? This extra command has a typo: x x isn't a language. The first error says invalid destination language. But the last line still blames the network, because the same wrapper catches everything. A small flaw in the code, not in your setup. The valid codes are in a table at the bottom of the README."
+  zh:
+  - "为什么要看第一个错误？"
+  - "这条额外的命令故意打错了：xx 不是一种语言。"
+  - "第一个错误说的是：目标语言无效。"
+  - "但最后一行还是在怪网络，因为同一个外层包装什么都接。"
+  - "这是代码的小缺陷，不是你的配置有问题。"
+  - "有效的语言代码，在 README 最下面的一张表里。"
+  say:
+  - null
+  - "这条额外的命令故意打错了：x x 不是一种语言。"
+  - null
+  - null
+  - null
+  - null
+  en_display:
+  - null
+  - "This extra command has a typo: xx isn't a language."
+  - null
+  - null
+  - null
+  - null
+- en: "If you hit a 429, wait and retry, try another region, or run it on your laptop. If you got as far as the Input line, the imports worked; when the first error is a 429, only the network said no."
+  zh:
+  - "如果你遇到 429，可以等一等再试，换个区域，或者在你的笔记本上跑。"
+  - "只要走到了 Input 那一行，import 就都成功了；第一个错误是 429 的话，说不行的只是网络。"
+  say:
+  - "如果你遇到四二九，可以等一等再试，换个区域，或者在你的笔记本上跑。"
+  - "只要走到了 Input 那一行，import 就都成功了；第一个错误是四二九的话，说不行的只是网络。"
+S07:
+- en: "Step 10, the last one: delete the VM. As the README says, a running VM keeps charging, even when idle. So why delete it, and not just stop it?"
+  zh:
+  - "第 10 步，也是最后一步：把 VM 删掉。"
+  - "README 也说了，运行中的 VM 会一直计费，闲着也一样。"
+  - "那为什么要删除，而不只是停止？"
+- en: "Stopping ends the billing for CPU and memory, but the disk still exists, so it keeps billing, and so would a reserved IP address."
+  zh:
+  - "停止之后，CPU 和内存不再计费，但磁盘还在，所以还在计费；预留的 IP 地址也一样。"
+- en: "Deleting removes the VM, and by default its boot disk goes with it. That's a setting on the boot disk, and it's on unless you changed it. And the meter stops. Select your instance, click Delete, and pause until it's gone."
+  zh:
+  - "删除会移除这台 VM，而且默认启动磁盘也一起删掉。"
+  - "这是启动磁盘的一个设置，你没改过就是开着的。"
+  - "计价器也就停了。"
+  - "选中你的实例，点 Delete，暂停视频，等它删完。"
+- en: "Then check two pages: VM instances and Disks should both be empty. With the gcloud tool on your laptop, two extra commands do the same: gcloud compute instances list, and gcloud compute disks list. Neither is in the README."
+  zh:
+  - "然后检查两个页面：VM instances 和 Disks 都应该是空的。"
+  - "笔记本上装了 gcloud 命令行工具的话，两条额外的命令也能查：gcloud compute instances list，还有 gcloud compute disks list。"
+  - "这两条 README 里都没有。"
+  say:
+  - null
+  - "笔记本上装了 g cloud 命令行工具的话，两条额外的命令也能查：g cloud compute instances list，还有 g cloud compute disks list。"
+  - null
+- en: "That was the quick and dirty way. It worked, but it changed the system Python for every program on the machine. In part 2: the same app, on a fresh VM, the clean way."
+  zh:
+  - "这就是简单粗暴的做法。"
+  - "能用，但它改的是机器上每个程序都在用的系统 Python。"
+  - "第二部分：同一个应用，换台新 VM，用干净的做法。"

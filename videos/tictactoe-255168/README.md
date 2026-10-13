@@ -12,6 +12,7 @@ program that plays every possible game. No algebra or programming background is 
 | `output/transcript.md` | full narration by chapter |
 | `output/zh/tictactoe-255168.mp4` | **中文版**: the Chinese version (Mandarin narration, Chinese on-screen text, bilingual subtitles burned in); see [`i18n/zh/README.md`](i18n/zh/README.md) |
 | `output/zh/tictactoe-255168.zh.srt`, `.en.srt`, `.zh-en.srt` / `.ass` | its subtitle files (Chinese, English on the Chinese timing, bilingual) |
+| `output/tictactoe-255168.zh-en.mp4` | the English video with bilingual subtitles burned in (Chinese above, English below): the upload copy for Bilibili |
 | `output/tictactoe-255168.zh.srt`, `.zh-en.srt` / `.ass` | Chinese and bilingual subtitles for the English video |
 | `i18n/zh/` | the Chinese translation (narration, on-screen text, glossary) and companions (exercises, playground, program) |
 | `assets/play_all_games.py` | the program from the video: `python assets/play_all_games.py` prints `255168` |
