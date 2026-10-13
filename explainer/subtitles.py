@@ -1721,15 +1721,20 @@ BAND = 0.13        # fraction of the frame height reserved for subtitles when bu
 
 
 def write_ass(path: Path, bi_cues, width: int = 1920, height: int = 1080, band: float = BAND,
-              title: str = "") -> None:
+              title: str = "", style: dict | None = None) -> None:
     """Bilingual .ass: the translated line (larger, white) above the English line (smaller, grey),
     as ONE event per cue so the two lines always stack in that order. Positioned for `burn()`'s
     layout (both lines inside the band under the scaled picture); as a soft subtitle over the full
     picture they sit at the bottom as usual."""
     band_px = int(round(height * band))
-    zh_size, en_size = int(height * 0.047), int(height * 0.031)
-    margin = max(6, int(band_px * 0.12))
-    en_tag = r"{\fs%d\c&H00C8C0B8&\bord1.4}" % en_size
+    s = {"font": "Noto Sans CJK SC", "zh_size": int(height * 0.047), "en_size": int(height * 0.031),
+         "zh_colour": "&H00F2F2F2", "en_colour": "&H00C8C0B8", "en_font": None,
+         "outline_colour": "&H00000000", "back_colour": "&H64000000", "border_style": 1,
+         "outline": 2, "shadow": 0, "margin_l": 40, "margin_r": 40,
+         "margin_v": max(6, int(band_px * 0.12)), "en_border": 1.4, **(style or {})}
+    zh_size, en_size, margin = s["zh_size"], s["en_size"], s["margin_v"]
+    en_tag = r"{\fs%d" % en_size + (r"\fn" + s["en_font"] if s["en_font"] else "") + \
+        r"\c" + s["en_colour"] + r"&\bord%s}" % s["en_border"]
     head = f"""[Script Info]
 Title: {title}
 ScriptType: v4.00+
@@ -1740,7 +1745,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Bilingual,Noto Sans CJK SC,{zh_size},&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,{margin},1
+Style: Bilingual,{s["font"]},{zh_size},{s["zh_colour"]},{s["zh_colour"]},{s["outline_colour"]},{s["back_colour"]},0,0,0,0,100,100,0,0,{s["border_style"]},{s["outline"]},{s["shadow"]},2,{s["margin_l"]},{s["margin_r"]},{margin},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -1756,16 +1761,29 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     Path(path).write_text(head + "\n".join(ev) + "\n", encoding="utf-8")
 
 
-def burn(src: Path, ass: Path, dst: Path, band: float = BAND, crf: int = 23, bg: str = "0x0D0F14") -> None:
-    """Scale the picture to (1 - band) of the frame, centred at the top, and draw the bilingual
-    subtitles in the band underneath. Re-encodes the video (x264), copies the audio."""
+def burn(src: Path, ass: Path, dst: Path, band: float = BAND, crf: int = 23, bg: str = "0x0D0F14",
+         mode: str = "scale", fontsdir: Path | None = None, cwd: Path | None = None) -> None:
+    """Burn the bilingual subtitles into the picture. Re-encodes the video (x264), copies the audio.
+
+    mode "scale" (the 3b1b family): scale the picture to (1 - band) of the frame, centred at the
+    top, and draw the subtitles in the band underneath. mode "overlay" (presets that reserve the
+    caption area themselves, e.g. Swiss): draw a bg-coloured band over the bottom `band` of the
+    frame and the subtitles on it. Pass `cwd` to resolve relative paths (relative ass/fontsdir
+    paths avoid FFmpeg filter escaping of arbitrary checkout names)."""
     r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
                         "stream=width,height", "-of", "csv=p=0:s=x", str(src)],
-                       capture_output=True, text=True, check=True)
+                       capture_output=True, text=True, cwd=cwd, check=True)
     W, H = (int(x) for x in r.stdout.strip().split("x"))
-    w, h = int(W * (1 - band)) // 2 * 2, int(H * (1 - band)) // 2 * 2
-    vf = (f"scale={w}:{h}:flags=lanczos,pad={W}:{H}:{(W - w) // 2}:0:color={bg},"
-          f"ass='{str(ass).replace(chr(39), '')}'")
+    ass_filter = f"ass='{str(ass).replace(chr(39), '')}'"
+    if fontsdir is not None:
+        ass_filter += f":fontsdir='{str(fontsdir).replace(chr(39), '')}'"
+    if mode == "overlay":
+        band_px = int(round(H * band))
+        vf = f"drawbox=x=0:y={H - band_px}:w={W}:h={band_px}:color={bg}:t=fill,{ass_filter}"
+    else:
+        w, h = int(W * (1 - band)) // 2 * 2, int(H * (1 - band)) // 2 * 2
+        vf = (f"scale={w}:{h}:flags=lanczos,pad={W}:{H}:{(W - w) // 2}:0:color={bg},"
+              f"{ass_filter}")
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-vf", vf, "-c:v", "libx264",
                     "-preset", "medium", "-tune", "animation", "-crf", str(crf), "-pix_fmt", "yuv420p",
-                    "-c:a", "copy", "-movflags", "+faststart", str(dst)], check=True)
+                    "-c:a", "copy", "-movflags", "+faststart", str(dst)], cwd=cwd, check=True)

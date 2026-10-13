@@ -26,6 +26,9 @@
       "ass"
     ]
   },
+  "music": {
+    "enabled": true
+  },
   "production": {
     "workspace": null,
     "runner": "tools/render_episode.py",

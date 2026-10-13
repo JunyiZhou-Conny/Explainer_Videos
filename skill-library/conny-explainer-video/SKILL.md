@@ -3,7 +3,7 @@ name: conny-explainer-video
 description: Create Conny's narrated explainer videos using saved visual presets, production specifications, and bilingual subtitles. Use when asked to make or revise an explainer video, reuse a named video style, or turn a reference video into a reusable preset.
 metadata:
   owner: conny
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Conny's explainer videos
@@ -22,6 +22,8 @@ Use this precedence: **current explicit request → saved episode specification 
 6. **Deliver.** Provide the playable video and its actual path, plus the episode specification, script, editable source, subtitle files, and source/evidence notes. Report what was rendered and reviewed, and any unresolved limitations. Rendering does not establish publication or user approval.
 
 Keep generated media and episode-specific source outside this installed skill. Update saved preferences only when the user asks to change future defaults. A one-video override belongs in that episode's specification.
+
+New episodes carry background music by default: the engine composes a score from the scenes' event logs and ducks it under the narration (`music.enabled` in defaults/episode.json; `--no-music` for one build), and the validation sidecar records the mix loudness. In the production checkout, episodes follow the lifecycle and content gates in `AGENTS.md` (hook, intuition-first, ponder moments, recap, an animated mechanism per core idea, simulated-viewer QA, and the owner's listening sign-off recorded in `REVIEW.md`).
 
 For installation, cross-agent invocation, and where to edit preferences, read [references/cross-agent-use.md](references/cross-agent-use.md). The workflow does not require a particular model, provider, renderer, or paid service; use tools that meet the selected specification and are available in the executing environment.
 

@@ -27,7 +27,11 @@ def main():
     if args.minutes is not None:
         if args.minutes <= 0: parser.error('--minutes must be positive')
         spec['duration_seconds'] = round(args.minutes*60, 3)
-    if args.narration_language: spec['narration']['language'] = args.narration_language
+    if args.narration_language:
+        if args.narration_language.split('-')[0].lower() not in ('en', 'zh'):
+            parser.error(f"narration language {args.narration_language!r} has no verified render "
+                         "route (the engine speaks en or zh); sample-review a new backend first")
+        spec['narration']['language'] = args.narration_language
     try:
         workspace = resolve_workspace(args.workspace, spec, skill=SKILL)
     except ValueError as error:

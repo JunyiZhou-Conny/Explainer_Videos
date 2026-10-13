@@ -24,6 +24,13 @@ def check():
         spec = json.loads(spec_path.read_text())
         snapshot = spec_path.parent/spec['style_snapshot']
         assert hashlib.sha256(snapshot.read_bytes()).hexdigest() == spec['style_sha256'], f'Style snapshot changed: {spec_path.parent.name}'
+        # A committed delivery validation must have been produced from the committed script.
+        script = spec_path.parent/'script.json'
+        for validation_path in (spec_path.parent/'delivery').glob('*.validation.json'):
+            recorded = json.loads(validation_path.read_text()).get('script_sha256')
+            actual = hashlib.sha256(script.read_bytes()).hexdigest()
+            assert recorded == actual, (f'Delivery provenance broken: {validation_path.relative_to(ROOT)} '
+                                        f'was made from a different script.json than the committed one; re-render.')
     catalog = json.loads((ROOT/'catalog/videos.json').read_text())
     keys = [(v['source_commit'], v['path']) for v in catalog['artifacts']]
     assert len(keys) == len(set(keys)), 'Duplicate video variants'

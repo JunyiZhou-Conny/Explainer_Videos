@@ -1,0 +1,28 @@
+{
+  "id": "3b1b",
+  "source": "codified from explainer/style.py and docs/STYLE_GUIDE.md; edit explainer/style.py first",
+  "canvas": {"width": 1920, "height": 1080, "fps": 60},
+  "palette": {
+    "background": "#0D0F14",
+    "ink": "#ECECEC",
+    "accent": "#FFC857",
+    "blue": "#58C4DD",
+    "green": "#83C167",
+    "red": "#FC6255",
+    "muted": "#8B93A7"
+  },
+  "type": {
+    "latin": "CMU Sans Serif",
+    "mono": "DejaVu Sans Mono",
+    "cjk": "Noto Sans CJK SC",
+    "body_min_pt": 20
+  },
+  "captions": {
+    "reserve_px": 140,
+    "band_colour": "#0D0F14",
+    "zh_colour": "#F2F2F2",
+    "en_colour": "#C8C0B8"
+  },
+  "motion": {"principle": "one idea per beat; picture before formula; semantic colour"},
+  "checks": {"background_tolerance": 30, "band_tolerance": 40, "min_background_share": 0.45}
+}

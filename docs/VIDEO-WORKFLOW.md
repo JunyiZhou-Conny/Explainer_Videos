@@ -18,7 +18,7 @@ The saved defaults for new preset-based episodes are **five minutes, 1920 × 108
 
 > Use `rhine-lab`, make this episode two minutes, and keep the usual narration and subtitles. These are overrides for this episode only.
 
-Changing the requested duration or language does not prove the renderer supports it. The agent must select and verify a suitable route. The newer `episode.json` engine currently supports English narration and the 1080p30 layout; existing language-version tooling has a separate documented route in [LANGUAGES.md](LANGUAGES.md).
+Changing the requested duration or language does not prove the renderer supports it. The agent must select and verify a suitable route. The `episode.json` engine (explainer/episode.py) speaks English (Kokoro) or Chinese (edge/Azure), always burns Chinese-above-English captions, and mixes a composed score by default (`music.enabled`); 1920×1080@30 is its validated profile and other layouts need their own sample review. The existing `video.yaml` language-version tooling has a separate documented route in [LANGUAGES.md](LANGUAGES.md).
 
 ## What to provide
 

@@ -12,8 +12,18 @@ python3.12 tools/setup-runtime
 The setup script installs the episode route's Python requirements and downloads local Kokoro
 speech models and OFL fonts verified against `assets/manifest.json`. It does not install global
 Python packages, register system fonts or change the original toolkit's `requirements.txt`.
-On Linux, install the corresponding distribution packages first (including Python development
-headers and venv support). `setup/install.sh` remains the original full-toolkit setup, including
+On Linux (verified on Ubuntu 24.04, including GitHub Actions runners) install exactly:
+
+```bash
+sudo apt-get install -y python3.12-venv libpango1.0-dev libcairo2-dev pkg-config ffmpeg
+python3.12 tools/setup-runtime --dev
+```
+
+ManimPango has no Linux wheel, so the pangocairo *development* headers are required (the
+runtime libraries are not enough); the setup now preflights this and fails fast with the
+command above. `--dev` also installs pytest. **The test command is `python -m pytest -q tests`**;
+`unittest discover` silently collects only a fraction of the suite — never trust its green.
+`setup/install.sh` remains the original full-toolkit setup, including
 LaTeX for equation-heavy episodes; inspect its system-package actions before running it.
 The Swiss example uses text/vector diagrams and does not require LaTeX.
 
@@ -42,10 +52,16 @@ speech and saves timing without rendering frames. `--sample s01` renders one nar
 `--jobs 2` bounds parallel scene jobs. Saved episode settings override shared defaults.
 Outputs go to `outputs/<slug>/` and are ignored by Git.
 
-This route currently supports English Kokoro narration, 1920×1080 at 30 fps, and burned
-Chinese-above-English captions. Other requested formats/voices require an implemented and
-tested route; a preference in JSON does not add a backend. Presets specify design: scenes
-must implement them. The existing Swiss example is the complete implementation supplied here.
+The engine (explainer/episode.py) speaks **English (Kokoro, sentence-exact timing)** or
+**Chinese (`narration.language: zh-CN`; edge-tts by default, upgraded to Azure when
+`AZURE_SPEECH_KEY/REGION` are set — timing marks are then estimated)**, always with burned
+Chinese-above-English captions, and mixes a **composed score by default** (`music.enabled`
+in defaults/episode.json; `--no-music` for one build) from the scenes' event logs, ducked
+under the narration and asserted in the validation sidecar. 1920×1080@30 is the validated
+profile; other resolutions render with a warning and need their own sample review. Any other
+voice/subtitle format still requires an implemented and sample-reviewed route; a preference
+in JSON does not add a backend. Presets specify design: scenes must implement them. The
+existing Swiss example is the complete implementation supplied here.
 
 ## Original episode route
 

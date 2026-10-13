@@ -29,3 +29,17 @@ not freshly tested. These checks do not establish a new full-episode or listenin
 
 The original full MP4 passed another complete FFmpeg decode during release preparation.
 Release file hash and metadata are in `catalog/release-media.json` at the repository root.
+
+## Engine convergence, 2026-10-13
+
+The episode route now runs on explainer/episode.py (shared subtitles/burn/voice/music
+toolkit; tools/render_episode.py is a shim). Verified in this checkout: the pre-music
+build reproduces the released master's numbers exactly (300.019667 s, −19.6 dB, 70 cues;
+delivery sidecars re-committed from that build, so their script_sha256 matches the
+committed script.json — checked by tools/check_incubator.py). A scored build (music now
+on by default) validates at 300.074 s, 70 cues, mix −16.19 LUFS / peak −1.14 dBTP, score
+coverage 0.93; the swiss pixel style-check passes on sampled frames. scenes.py now imports
+the shared swiss components (explainer/styles/swiss.py); a sample re-render after the
+refactor reproduced s01 (22.200 s, 5 cues). The released incubator-2026-10-12 master is
+unchanged; the scored cut is a new capability, not a replacement, and no human listening
+review of the score is claimed yet.
