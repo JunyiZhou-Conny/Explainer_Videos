@@ -390,16 +390,21 @@ class Hook(VoiceScene):
         items = [(True, "Docker Desktop running (Tutorial 0)"),
                  (True, "a free Docker Hub account"),
                  (True, "your GCP project, for the VM at the end"),
-                 (False, "no service account, no keys (README.md · line 23)")]
+                 (False, "no service account, no keys")]
         card_rows = VGroup()
         for i, (ok, s) in enumerate(items):
             y = -i * 0.68
             slot = Rectangle(width=0.4, height=0.4, stroke_width=0, fill_opacity=0).move_to([0, y, 0])
             mark = check_mark(0.34, VENV) if ok else cross_mark(0.28, S.GREY).set_stroke(width=4)
             mark.move_to(slot)
-            txt = label(s, 24, INK if ok else S.GREY)
-            txt.next_to(slot, RIGHT, buff=0.25)
-            txt.shift(UP * (y - 0.09 - txt[0].get_bottom()[1]))     # common baseline (no descender)
+            words = label(s, 24, INK if ok else S.GREY)
+            words.next_to(slot, RIGHT, buff=0.25)
+            words.shift(UP * (y - 0.09 - words[0].get_bottom()[1]))     # common baseline (no descender)
+            txt = VGroup(words)
+            if not ok:                                # where the README says so, under the row
+                where = VGroup(mono("README.md", 20, S.GREY), label("· line 23", 20, S.GREY))
+                where.arrange(RIGHT, buff=0.12).next_to(words, DOWN, buff=0.12, aligned_edge=LEFT)
+                txt.add(where)
             r = VGroup(slot, mark, txt)
             r.mark, r.text = mark, txt
             card_rows.add(r)
@@ -407,7 +412,7 @@ class Hook(VoiceScene):
         card_rows.move_to(card_frame)
         card = VGroup(card_frame, card_rows)
         money = tag("a VM costs money while it exists", COST)
-        VGroup(card, money).arrange(RIGHT, buff=0.4).move_to(ORIGIN)
+        VGroup(card, money).arrange(RIGHT, buff=0.35).move_to(ORIGIN)
         money.match_y(card_rows[2].mark)
 
         def show_row(r):

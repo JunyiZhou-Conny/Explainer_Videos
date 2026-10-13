@@ -202,19 +202,19 @@ class Hook(VoiceScene):
             self.play(Write(qs[1]), run_time=0.7)
 
         # ========================================================== 1. what changes since L2
-        x_l, x_r, y_head = -5.85, -2.0, 1.88
+        x_l, x_r, y_head = -6.1, -2.05, 1.88
         ys = [0.98, 0.02, -0.94, -1.9]
-        frame = box(12.5, 5.15, S.GREY, fill_opacity=0.03).move_to([0, -0.22, 0])
+        frame = box(12.9, 5.15, S.GREY, fill_opacity=0.03).move_to([0, -0.22, 0])
         h2 = label("L2", 32, S.GREY, weight=BOLD)
         h3 = label("L3", 32, TURN, weight=BOLD)
         on_baseline(h2.move_to([x_l, 0, 0], aligned_edge=LEFT), "L2", y_head - 0.13)
         on_baseline(h3.move_to([x_r, 0, 0], aligned_edge=LEFT), "L3", y_head - 0.13)
-        rule = Line([-5.95, 1.45, 0], [5.95, 1.45, 0], color=S.GREY_DARK, stroke_width=2)
+        rule = Line([-6.2, 1.45, 0], [6.2, 1.45, 0], color=S.GREY_DARK, stroke_width=2)
         lefts = [on_baseline(label(s, 26, S.GREY).move_to([x_l, 0, 0], aligned_edge=LEFT), s, y - 0.1)
                  for s, y in zip(L2, ys)]
         rights = [on_baseline(label(s, 26, INK).move_to([x_r, 0, 0], aligned_edge=LEFT), s, y - 0.1)
                   for s, y in zip(L3, ys)]
-        arrows = [Arrow([-2.95, y, 0], [-2.2, y, 0], buff=0, color=S.GREY, stroke_width=3,
+        arrows = [Arrow([-3.05, y, 0], [-2.3, y, 0], buff=0, color=S.GREY, stroke_width=3,
                         max_tip_length_to_length_ratio=0.3) for y in ys]
         imgs = mini_boxes().next_to(rights[1], RIGHT, buff=0.3).set_y(ys[1])
         route = mini_route().next_to(rights[2], RIGHT, buff=0.3).set_y(ys[2])
@@ -306,9 +306,9 @@ class Hook(VoiceScene):
         gold = key_glyph(0.34).next_to(rows[1].text, RIGHT, buff=0.3).set_y(rows[1].slot.get_y())
         body = VGroup(rows, gold)
         card = box(body.width + 0.9, body.height + 0.8, S.GREY, fill_opacity=0.04).move_to(body)
-        VGroup(card, body).move_to([0, 0.75, 0])
-        foot = VGroup(label("every command:", 20, S.GREY), mono(GUIDE, 20, INK)).arrange(RIGHT, buff=0.2)
-        foot.move_to([0, -1.75, 0])
+        VGroup(card, body).move_to([0, 0.9, 0])
+        foot = VGroup(label("every command:", 22, S.GREY), mono(GUIDE, 22, INK)).arrange(DOWN, buff=0.16)
+        foot.move_to([0, -1.25, 0])
         guide_path = VGroup(*foot[1][len("MLOps_Learning·"):])        # glyphs: no spaces
         repo_name = VGroup(*foot[1][:len("MLOps_Learning")])
 
