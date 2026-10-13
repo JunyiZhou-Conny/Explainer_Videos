@@ -1,0 +1,47 @@
+name: Rehost media as release assets
+
+# One-time (re-runnable) migration: extract every published MP4 variant from git
+# history (tools/rehost_media.py pins each file by sha256) and attach them to the
+# media release, so no download link depends on a branch staying alive.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to create or update
+        default: media-2026-10-13
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  rehost:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the blobs live on archive/* and merged history
+      - name: Stage and verify the assets
+        run: python3 tools/rehost_media.py --stage release-staging
+      - name: Create or update the release and upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" \
+            --target "$GITHUB_SHA" \
+            --title "Media archive: every published variant as a release asset" \
+            --notes "All previously branch-pinned MP4 variants, re-hosted as release assets so no download depends on git branch reachability. Mandarin-narration files carry a .zh suffix. SHA256SUMS.txt covers every asset. Sources: 52c3234 (post-PR1 line), a70e4e2 (CareOneX), 3168d86 (AC215 L1)."
+          gh release upload "$TAG" release-staging/* --clobber
+      - name: Verify the uploaded sizes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
+            --jq '.assets[] | "\(.name) \(.size)"' | sort > uploaded.txt
+          (cd release-staging && for f in *; do echo "$f $(stat -c%s "$f")"; done) | sort > staged.txt
+          diff uploaded.txt staged.txt
+          echo "All $(wc -l < staged.txt) assets uploaded with matching sizes."
