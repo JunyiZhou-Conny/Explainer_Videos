@@ -1,0 +1,58 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 847B done
+#1 DONE 0.0s
+
+#2 [context python:3.12-slim-bookworm] load metadata for l02ex/base:3.12
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 71B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 571B done
+#4 DONE 0.0s
+
+#5 [context python:3.12-slim-bookworm] l02ex/base:3.12
+#5 resolve docker.io/l02ex/base:3.12
+#5 resolve docker.io/l02ex/base:3.12 0.4s done
+#5 DONE 0.4s
+
+#6 [1/5] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get clean &&     pip install --no-cache-dir --upgrade pip &&     pip install uv
+#6 CACHED
+
+#7 [2/5] COPY pyproject.toml uv.lock ./
+#7 DONE 0.2s
+
+#8 [3/5] RUN uv sync --locked
+#8 0.492 Downloading cpython-3.15.0-linux-x86_64-gnu (download) (35.9MiB)
+#8 2.485  Downloaded cpython-3.15.0-linux-x86_64-gnu (download)
+#8 2.683 Using CPython 3.15.0
+#8 2.683 Creating virtual environment at: /.venv
+#8 3.447 Resolved 17 packages in 762ms
+#8 3.450 error: The lockfile at `uv.lock` needs to be updated, but `--locked` was provided.
+#8 3.450 
+#8 3.450 hint: To update the lockfile, run `uv lock`.
+#8 ERROR: process "/bin/sh -c uv sync --locked" did not complete successfully: exit code: 1
+------
+ > [3/5] RUN uv sync --locked:
+0.492 Downloading cpython-3.15.0-linux-x86_64-gnu (download) (35.9MiB)
+2.485  Downloaded cpython-3.15.0-linux-x86_64-gnu (download)
+2.683 Using CPython 3.15.0
+2.683 Creating virtual environment at: /.venv
+3.447 Resolved 17 packages in 762ms
+3.450 error: The lockfile at `uv.lock` needs to be updated, but `--locked` was provided.
+3.450 
+3.450 hint: To update the lockfile, run `uv lock`.
+------
+Dockerfile:23
+--------------------
+  21 |     # Copy only the files uv sync needs, then install the packages
+  22 |     COPY pyproject.toml uv.lock ./
+  23 | >>> RUN uv sync --locked
+  24 |     
+  25 |     # Copy the rest of the source code
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c uv sync --locked" did not complete successfully: exit code: 1

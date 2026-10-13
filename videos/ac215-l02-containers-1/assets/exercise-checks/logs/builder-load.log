@@ -1,0 +1,26 @@
+#0 building with "l02ex-multi" instance using docker-container driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 76B done
+#1 DONE 0.0s
+
+#2 [internal] load .dockerignore
+#2 transferring context: 2B done
+#2 DONE 0.0s
+
+#3 [internal] load build context
+#3 transferring context: 30B done
+#3 DONE 0.0s
+
+#4 [1/1] COPY hello.txt /hello.txt
+#4 CACHED
+
+#5 importing to docker
+#5 DONE 0.0s
+
+#6 exporting to oci image format
+#6 exporting layers 0.0s done
+#6 exporting manifest sha256:c64362de33af18c255c3a900bac2b0af55465bf3320e4249a2c2a8bb3a5320bf done
+#6 exporting config sha256:0245cc40b754aa3e0b8eebd2d5ada1f0d7d8043ce83896724ea9c402db52d242 done
+#6 sending tarball 0.1s done
+#6 DONE 0.1s

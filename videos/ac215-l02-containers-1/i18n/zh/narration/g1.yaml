@@ -1,0 +1,495 @@
+# zh narration for S01-S09 (part 1, group g1), sentence-aligned to script.md: one zh sentence per
+# English sentence (explainer.voice.split_sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh
+# line is shown on the English timing, so each sentence keeps the English order of ideas (D8).
+# Artifacts the checker does not allow in a displayed line are described in words (rule A6): exit() ->
+# 带括号的 exit, (app) -> 带括号的 app, --progress=plain -> --progress 参数设成 plain, VIRTUAL_ENV ->
+# virtual env 这个变量, ENTRYPOINT ["/bin/bash"] -> ENTRYPOINT /bin/bash, the CMD line -> CMD 包含 -c 和一条
+# 带引号的命令, No module named 'art' -> No module named art; the lone . and ./ of the COPY line -> 那个点,
+# 点斜杠 (B3). Whole commands sit at the end of a clause, after a full-width colon (G3).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: --rm, -a, -ti,
+# -t, -f, -i, -c, -u, ls -a, FROM python:3.12-slim-bookworm, --progress=plain, desktop-linux, exit(),
+# the .gitignore file, git add -f, ENTRYPOINT /bin/bash, @, . and ./, .dockerignore, No module named 'art',
+# /.venv, .venv, /usr/local/bin, bash -c, VIRTUAL_ENV, docker ps -a, echo $$); null = the SAY text.
+S01:
+- en: "Here's a fresh virtual machine in the cloud: no copy of our code, no virtual environment, no uv. It has only Docker, and we type one command. Just watch; you'll run it yourself at the end."
+  zh:
+  - "这是云上一台全新的虚拟机：没有我们代码的副本，没有虚拟环境，没有 uv。"
+  - "它只有 Docker，我们只输入一条命令。"
+  - "先看就好；最后你会自己跑一遍。"
+- en: "Docker downloads an image, in seven layers, and starts a shell inside it. There we run the app, and its default text, I love cheese, comes back in Italian."
+  zh:
+  - "Docker 下载了一个 image，一共 7 层，然后在里面启动一个 shell。"
+  - "我们在里面运行这个应用，它的默认文本 I love cheese 翻成了意大利语。"
+- en: "One extra check, not in the README: which Python is this? It's 3.14.7. Yet the recipe for this image starts from Python 3.12. Hold that thought; we'll solve it twice today."
+  zh:
+  - "额外检查一下，README 里没有这一步：这是哪个 Python？"
+  - "是 3.14.7。"
+  - "可这个 image 的配方是从 Python 3.12 开始的。"
+  - "先记住这个问题；今天我们会分两次解开它。"
+- en: "That's where today's tutorial, simple-translate, ends. Last lecture we climbed its first two rungs: a manual install on a VM, then uv. Today, the other two: package the app as a Docker image on your laptop, push it to Docker Hub, and run it on a VM."
+  zh:
+  - "今天的教程 simple-translate 就在这里收尾。"
+  - "上节课我们爬了它的前两级：先在 VM 上手动安装，再用 uv。"
+  - "今天爬另外两级：在笔记本上把应用打包成一个 Docker image，push 到 Docker Hub，再在 VM 上运行它。"
+- en: "To follow along, open the README beside this video. Three trackers, top left, show where we are: on the laptop, on Docker Hub, on the VM. When the yellow your-turn tag appears, pause and run the command; a gray extra tag marks a check that isn't in the README."
+  zh:
+  - "想跟着做的话，把 README 打开，放在视频旁边。"
+  - "左上角的三个进度条显示我们在哪儿：在笔记本上，在 Docker Hub 上，还是在 VM 上。"
+  - "看到黄色的 your turn 标签，就暂停，自己跑这条命令；灰色的 extra 标签表示这个检查 README 里没有。"
+- en: "You need Docker Desktop running, a free Docker Hub account, and your Google Cloud project for the VM at the end. No service account or keys today."
+  zh:
+  - "你需要运行着的 Docker Desktop、一个免费的 Docker Hub 账号，还有你的 Google Cloud 项目，最后开 VM 要用。"
+  - "今天不需要服务账号，也不需要密钥。"
+S02:
+- en: "First, four words for the whole lecture. In lecture 1, every new VM needed the same setup, on an operating system that had to cooperate. A Docker image packs it all into one thing you can copy: system files, Python, the packages and the code."
+  zh:
+  - "先来看贯穿整节课的四个词。"
+  - "在第 1 讲里，每台新 VM 都要做一遍同样的配置，还得操作系统配合。"
+  - "一个 Docker image 把这些全都打包成一个可以复制的东西：系统文件、Python、各种包和代码。"
+- en: "An image is a stack of read-only layers. Each layer holds the files that one build step added or changed. Beside it sits a small config card: settings like environment variables, and which program to start."
+  zh:
+  - "一个 image 就是一叠只读层。"
+  - "每一层放的是某个构建步骤新增或改动的文件。"
+  - "旁边还有一张小小的配置卡片：放环境变量这类设置，还有要启动哪个程序。"
+- en: "The recipe is a Dockerfile, read one instruction at a time. Instructions that change files, like RUN and COPY, add a layer. Others, like CMD, only write on the card."
+  zh:
+  - "配方就是 Dockerfile，Docker 一次读一条指令。"
+  - "会改文件的指令，比如 RUN 和 COPY，会加一层。"
+  - "别的指令，比如 CMD，只写在卡片上。"
+- en: "Run an image and you get a container: the same layers, shared, plus a thin writable layer on top, and one main process. When that process ends, the container stops, and dash dash rm deletes it, writable layer and all. The image never changes."
+  zh:
+  - "运行一个 image，就得到一个 container：还是那些层，共用，再在最上面加一层薄薄的可写层，外加一个主进程。"
+  - "进程结束，container 就停了，而 --rm 会把它删掉，连同可写层一起。"
+  - "而 image 从来不变。"
+  en_display:
+  - null
+  - "When that process ends, the container stops, and --rm deletes it, writable layer and all."
+  - null
+- en: "Think of the image as a class, and each container as an instance. One small slip in the README: it says build the docker container. Building makes an image; running makes a container."
+  zh:
+  - "可以把 image 想成一个类，每个 container 就是一个实例。"
+  - "README 里有一个小疏漏：它说要构建 docker container。"
+  - "构建得到的是 image；运行得到的才是 container。"
+- en: "A registry, like Docker Hub, stores images by name, on shelves. A tag is a name that points at one image, such as latest."
+  zh:
+  - "像 Docker Hub 这样的 registry，按名字把 image 存在货架上。"
+  - "所谓 tag，就是指向某一个 image 的名字，比如 latest。"
+- en: "And a container is not a small VM. A VM boots its own kernel, the core of the operating system. Containers are isolated processes that share one Linux kernel."
+  zh:
+  - "而且，container 不是一台小 VM。"
+  - "VM 会启动自己的内核，也就是操作系统的核心。"
+  - "而 container 是一些相互隔离的进程，共用同一个 Linux 内核。"
+- en: "On a Mac or Windows laptop, Docker Desktop provides that kernel with a small, hidden Linux VM. On a cloud VM, Docker runs right on the VM's own Linux."
+  zh:
+  - "在 Mac 或 Windows 笔记本上，Docker Desktop 用一台隐藏的小 Linux VM 来提供这个内核。"
+  - "在云上的 VM 里，Docker 直接跑在 VM 自己的 Linux 上。"
+- en: "What a venv couldn't isolate in lecture 1, the system's files and libraries, is now inside the box."
+  zh:
+  - "第 1 讲里 venv 隔离不了的东西，系统文件和库，现在都装进了盒子里。"
+S03:
+- en: "Now the README section Developing App using Containers. Open a terminal on your laptop. On a Mac your prompt looks different; on Windows, use Git Bash."
+  zh:
+  - "现在进入 README 的 Developing App using Containers 这一节。"
+  - "在你的笔记本上打开一个终端。"
+  - "在 Mac 上，你的提示符会不一样；在 Windows 上，用 Git Bash。"
+- en: "First, docker container ls lists running containers. Here it shows only the header, so nothing is running. If yours can't connect to the Docker daemon, start Docker Desktop and try again. Pause and run it."
+  zh:
+  - "首先，docker container ls 列出正在运行的 container。"
+  - "这里只显示了表头，所以什么都没在运行。"
+  - "如果你的连不上 Docker daemon，就启动 Docker Desktop 再试。"
+  - "暂停一下，自己跑一遍。"
+- en: "Next, stop any running container. There's nothing to stop here; if you have one, docker stop with its ID does it."
+  zh:
+  - "接着，停掉所有正在运行的 container。"
+  - "这里没有要停的；如果你有，docker stop 加上它的 ID 就行。"
+- en: "Then docker system prune. It lists what it will remove and asks; type y. Nothing to reclaim here; yours may delete the stopped hello-world container from Tutorial 0. Pause and run it."
+  zh:
+  - "然后是 docker system prune。"
+  - "它会列出要删掉的东西，再问你；输入 y。"
+  - "这里没有空间可回收；你的可能会删掉 Tutorial 0 留下的那个停了的 hello-world container。"
+  - "暂停一下，自己跑一遍。"
+- en: "Look at the third item: dangling images, the ones without a name. Despite the README's heading, named images survive. With dash a, prune would remove every unused image."
+  zh:
+  - "看第三项：dangling images，也就是没有名字的 image。"
+  - "虽然 README 的标题这么写，有名字的 image 还是会留下来。"
+  - "加上 -a 的话，prune 会删掉所有没在用的 image。"
+  en_display:
+  - null
+  - null
+  - "With -a, prune would remove every unused image."
+- en: "Then docker image ls lists your images. The list is empty here; yours may still show hello-world: it has a name, so it survived. Your columns may differ: this is Docker 29, at the time of recording."
+  zh:
+  - "然后，docker image ls 列出你的 image。"
+  - "这里列表是空的；你的可能还会显示 hello-world：它有名字，所以留了下来。"
+  - "你的列可能不一样：这是录制时的 Docker 29。"
+- en: "Now the code. As the README notes, a clone on last lecture's VM doesn't help: Docker Desktop runs on your laptop. Clone it here, then cd into simple-translate. Pause and run both."
+  zh:
+  - "接下来是代码。"
+  - "README 也提醒了，上节课在 VM 上 clone 的那份帮不上忙：Docker Desktop 跑在你的笔记本上。"
+  - "在这里 clone，然后 cd 进 simple-translate。"
+  - "暂停一下，两条都跑一遍。"
+- en: "An extra check, not in the README: ls dash a. There's the solution, Dockerfile.txt, but no file called just Dockerfile, and no uv.lock."
+  zh:
+  - "额外检查一下，README 里没有这一步：ls -a。"
+  - "参考答案 Dockerfile.txt 在这儿，但没有一个就叫 Dockerfile 的文件，也没有 uv.lock。"
+  en_display:
+  - "An extra check, not in the README: ls -a."
+  - null
+- en: "Run the README's build command now, as an extra: failed to read dockerfile. The README wants you to write it, in five steps."
+  zh:
+  - "现在就跑一下 README 里的构建命令，这是额外的一步：报 failed to read dockerfile。"
+  - "README 是要你自己写这个文件，分五步。"
+S04:
+- en: "Next, inside the simple-translate folder, create a file called Dockerfile: capital D, no extension. The README fills it in five steps, with a build and a run after each. Pause and create the file."
+  zh:
+  - "接下来，在 simple-translate 目录里建一个叫 Dockerfile 的文件：大写 D，没有扩展名。"
+  - "README 分五步把它填满，每一步之后都构建一次、运行一次。"
+  - "暂停一下，把文件建好。"
+- en: "Dockerfile step 1 is one instruction: FROM python, 3.12, slim bookworm. That's the official Python image, on a slim Debian 12 called bookworm. Paste it in, save, and check with cat, an extra."
+  zh:
+  - "Dockerfile 的第 1 步只有一条指令：FROM python:3.12-slim-bookworm。"
+  - "这是官方的 Python image，基于精简版的 Debian 12，代号 bookworm。"
+  - "粘贴进去，保存，再用 cat 检查一下，这是额外的一步。"
+  en_display:
+  - "Dockerfile step 1 is one instruction: FROM python:3.12-slim-bookworm."
+  - null
+  - null
+- en: "Now the build command. Dash t names the image simple-translate; dash f picks the recipe. And the final dot is the build context: this folder, which Docker sends to the builder. Step 3 shows why that matters."
+  zh:
+  - "接下来是构建命令。"
+  - "参数 -t 给 image 起名叫 simple-translate；-f 指定配方。"
+  - "末尾那个点就是构建上下文：也就是这个目录，Docker 会把它发给构建器。"
+  - "第 3 步会说明这为什么重要。"
+  en_display:
+  - null
+  - "-t names the image simple-translate; -f picks the recipe."
+  - null
+  - null
+- en: "Pause and run the build. Your terminal shows a compact view. Here you see the full log; to get it, add dash dash progress equals plain. On Docker Desktop, the builder is called desktop linux, not default."
+  zh:
+  - "暂停一下，跑一下构建。"
+  - "你的终端显示的是精简视图。"
+  - "这里看到的是完整日志；要看到它，就加上 --progress 参数，设成 plain。"
+  - "在 Docker Desktop 上，构建器叫 desktop-linux，不叫 default。"
+  en_display:
+  - null
+  - null
+  - "Here you see the full log; to get it, add --progress=plain."
+  - "On Docker Desktop, the builder is called desktop-linux, not default."
+- en: "Docker fetches the base image, four layers, under 50 megabytes compressed, and saves the result as simple-translate, tagged latest. Those four layers are the bottom of our stack."
+  zh:
+  - "Docker 下载了 base image：4 层，压缩后不到 50 MB，然后把结果存为 simple-translate，tag 是 latest。"
+  - "这 4 层就是我们这叠层的最底部。"
+- en: "What will it do when it starts? An extra docker image inspect reads the config card: no entrypoint, and the command python3, inherited from the base image. So we predict a Python prompt."
+  zh:
+  - "它启动的时候会做什么？"
+  - "额外用 docker image inspect 读一下配置卡片：没有 ENTRYPOINT，CMD 是 python3，是从 base image 继承来的。"
+  - "所以我们预测会出现 Python 提示符。"
+- en: "Now the run command: docker run, dash dash rm, dash t i, simple-translate. Dash dash rm cleans up afterwards; dash t i lets you type into it. Pause and run it. There's the Python prompt, 3.12.15 at the time of recording. Type exit with parentheses to leave."
+  zh:
+  - "现在是运行命令：docker run --rm -ti simple-translate。"
+  - "其中 --rm 负责事后清理；-ti 让你能往里面输入。"
+  - "暂停一下，自己跑一遍。"
+  - "Python 提示符出来了，录制时是 3.12.15。"
+  - "输入带括号的 exit 就能离开。"
+  en_display:
+  - "Now the run command: docker run --rm -ti simple-translate."
+  - "--rm cleans up afterwards; -ti lets you type into it."
+  - null
+  - null
+  - "Type exit() to leave."
+- en: "One surprise: an extra git status says nothing to commit, though we just made a file. The gitignore file here lists Dockerfile on line 3, so git hides yours. To commit it anyway, use git add dash f."
+  zh:
+  - "有个意外：额外用 git status 看一下，显示 nothing to commit，可我们刚建了一个文件。"
+  - "这里的 .gitignore 文件第 3 行写着 Dockerfile，所以 git 把你的忽略了。"
+  - "想照样 commit 它，就用 git add -f。"
+  en_display:
+  - null
+  - "The .gitignore file here lists Dockerfile on line 3, so git hides yours."
+  - "To commit it anyway, use git add -f."
+S05:
+- en: "Step 2 adds one line: ENTRYPOINT, slash bin slash bash. Put it under the FROM line, and save."
+  zh:
+  - "第 2 步加一行：ENTRYPOINT /bin/bash。"
+  - "放在 FROM 那一行下面，保存。"
+  en_display:
+  - "Step 2 adds one line: ENTRYPOINT /bin/bash."
+  - null
+- en: "Pause and build again. The FROM step says CACHED: nothing is downloaded, and no layer is added. ENTRYPOINT only writes on the config card."
+  zh:
+  - "暂停一下，再构建一次。"
+  - "FROM 那一步显示 CACHED：什么都没下载，也没有加层。"
+  - "ENTRYPOINT 只写在配置卡片上。"
+- en: "Think of ENTRYPOINT as the program to start, and CMD as its default arguments. The entrypoint is now bash, and the command slot still says python3. So will the container start bash, running python3?"
+  zh:
+  - "可以把 ENTRYPOINT 想成要启动的程序，把 CMD 想成它的默认参数。"
+  - "现在 ENTRYPOINT 是 bash，而 CMD 那一格还写着 python3。"
+  - "那么 container 会启动 bash，再让它运行 python3 吗？"
+- en: "This extra inspect says no: the entrypoint is bash, and the command is now null. Setting an entrypoint resets the command you inherited from the base image. So bash starts on its own."
+  zh:
+  - "这个额外的 inspect 说不会：ENTRYPOINT 是 bash，CMD 现在是 null。"
+  - "一设置 ENTRYPOINT，从 base image 继承来的 CMD 就被清空了。"
+  - "所以启动的就只有 bash 本身。"
+- en: "Pause and run it: a bare prompt. Read it left to right. You're root, the administrator, inside the container. After the at sign comes the container's ID, which changes every run, so yours will differ."
+  zh:
+  - "暂停一下，自己跑一遍：只有一个光秃秃的提示符。"
+  - "从左往右读。"
+  - "你是 root，也就是 container 里的管理员。"
+  - "@ 符号后面是 container 的 ID，每次运行都不一样，所以你的会不同。"
+  en_display:
+  - null
+  - null
+  - null
+  - "After the @ sign comes the container's ID, which changes every run, so yours will differ."
+- en: "And the slash means you start in the top folder of the image, because this image sets no working directory. Type exit to leave."
+  zh:
+  - "而那个斜杠表示你从 image 的根目录开始，因为这个 image 没有设置工作目录。"
+  - "输入 exit 退出。"
+S06:
+- en: "Step 3 adds two instructions. RUN pip install uv uses the pip of the base image to install uv. And the COPY line copies this folder, dot, into the image's top folder, dot slash. Add both at the end, and save."
+  zh:
+  - "第 3 步加两条指令。"
+  - "RUN pip install uv 用 base image 自带的 pip 来装 uv。"
+  - "而 COPY 那一行把这个目录，也就是那个点，复制到 image 的根目录，也就是点斜杠。"
+  - "两行都加在末尾，保存。"
+  en_display:
+  - null
+  - null
+  - "And the COPY line copies this folder, ., into the image's top folder, ./."
+  - null
+- en: "Here's why the final dot matters. Docker packs the whole folder into one parcel, the build context, and sends it to the builder. Every file goes in, the hidden git folder and your Dockerfile too; a file called dot dockerignore could leave some out, but this repo has none. The COPY line unpacks it all into the image's top folder."
+  zh:
+  - "末尾那个点为什么重要，原因在这儿。"
+  - "Docker 把整个目录打成一个包裹，也就是构建上下文，发给构建器。"
+  - "每个文件都会进去，隐藏的 .git 目录和你的 Dockerfile 也不例外；一个叫 .dockerignore 的文件可以把一些文件排除在外，但这个 repo 里没有。"
+  - "COPY 那一行把它全部拆开，放进 image 的根目录。"
+  en_display:
+  - null
+  - null
+  - "Every file goes in, the hidden git folder and your Dockerfile too; a file called .dockerignore could leave some out, but this repo has none."
+  - null
+- en: "Pause and build. The log confirms it: there's no dockerignore file, so nothing is filtered out, and the whole context, 63 kilobytes here, travels to the builder."
+  zh:
+  - "暂停一下，构建一次。"
+  - "日志也证实了：没有 .dockerignore 文件，所以什么都没被过滤掉，整个构建上下文，这里是 63 KB，都传给了构建器。"
+  en_display:
+  - null
+  - "The log confirms it: there's no .dockerignore file, so nothing is filtered out, and the whole context, 63 kilobytes here, travels to the builder."
+- en: "Then pip installs uv, version 0.13.0 at the time of recording, and COPY runs: two new layers. Pip also warns about running as root. In lecture 1 that warning mattered; here, the image itself is the isolation."
+  zh:
+  - "接着 pip 装了 uv，录制时是 0.13.0 版，然后 COPY 运行：多了两个新层。"
+  - "另外，pip 还警告说不该用 root 运行。"
+  - "在第 1 讲里这个警告很重要；在这里，image 本身就是隔离。"
+- en: "Something to ponder: uv is installed, and the code is in the image. Will python cli.py run?"
+  zh:
+  - "来想一个问题：uv 装好了，代码也进了 image。"
+  - "那 python cli.py 能跑起来吗？"
+- en: "No. Pause and run it, then look around with ls, an extra: our files sit right next to the system's own folders."
+  zh:
+  - "不能。"
+  - "暂停一下，自己跑一遍，然后用 ls 四处看看，这是额外的一步：我们的文件就挨着系统自己的目录。"
+- en: "Then python cli.py, another extra: ModuleNotFoundError, no module named art. We installed the installer, not the packages. Type exit."
+  zh:
+  - "然后是 python cli.py，又一个额外检查：报 ModuleNotFoundError，No module named art。"
+  - "我们装了装包的工具，却没装包。"
+  - "输入 exit。"
+  en_display:
+  - "Then python cli.py, another extra: ModuleNotFoundError, No module named 'art'."
+  - null
+  - null
+S07:
+- en: "Step 4 adds RUN uv sync; add it at the end, and save. Like on last lecture's VM, it reads pyproject.toml and installs the packages into a venv."
+  zh:
+  - "第 4 步加上 RUN uv sync；加在末尾，保存。"
+  - "和上节课在 VM 上一样，它读 pyproject.toml，把包装进一个 venv。"
+- en: "Now predict. This image's Python is 3.12, and line 6 of pyproject.toml asks for 3.13 or newer. What will uv sync do during the build?"
+  zh:
+  - "先预测一下。"
+  - "这个 image 的 Python 是 3.12，而 pyproject.toml 第 6 行要求 3.13 及以上。"
+  - "构建的时候，uv sync 会做什么？"
+- en: "Pause and build. First, notice: the pip step says CACHED, but COPY says DONE: it ran again, although we only added a line. Keep that question for part 2."
+  zh:
+  - "暂停一下，构建一次。"
+  - "先注意：pip 那一步是 CACHED，COPY 却是 DONE：它又跑了一遍，虽然我们只加了一行。"
+  - "这个问题留到第二部分。"
+- en: "Now the answer. As on the Debian 12 VM in lecture 1, uv downloads its own Python: CPython 3.15.0, at the time of recording. Then it creates a venv at slash dot venv, and installs 11 packages."
+  zh:
+  - "现在揭晓答案。"
+  - "和第 1 讲里那台 Debian 12 的 VM 一样，uv 自己下载了一个 Python：录制时是 CPython 3.15.0。"
+  - "然后它在 /.venv 建了一个 venv，装了 11 个包。"
+  en_display:
+  - null
+  - null
+  - "Then it creates a venv at /.venv, and installs 11 packages."
+- en: "On the number line, the requirement covers 3.13 and newer. The base image's 3.12 falls outside, so uv downloads the newest stable Python it knows in the range, and the venv's python links to it."
+  zh:
+  - "在数轴上，这个要求覆盖 3.13 及以上。"
+  - "而 base image 的 3.12 落在范围外，所以 uv 下载了范围内它知道的最新稳定版 Python，venv 里的 python 软链接到它。"
+- en: "Pause and run it, then try the same two extras. Now the listing shows dot venv, and a new uv.lock. But python cli.py fails exactly as before. Why?"
+  zh:
+  - "暂停一下，自己跑一遍，再试试同样的两个额外检查。"
+  - "现在列表里多了 .venv，还有一个新的 uv.lock。"
+  - "可 python cli.py 还是和之前一模一样地失败了。"
+  - "为什么？"
+  en_display:
+  - null
+  - "Now the listing shows .venv, and a new uv.lock."
+  - null
+  - null
+- en: "Remember lecture 1: activation is just PATH. Nothing has activated the venv, so the word python first finds the Python in user local bin, from the base image. That's 3.12, and it has none of our packages."
+  zh:
+  - "回想一下第 1 讲：激活其实只是改 PATH。"
+  - "没有任何东西激活这个 venv，所以 python 这个词先找到的是 /usr/local/bin 里的 Python，来自 base image。"
+  - "那是 3.12，我们的包它一个都没有。"
+  en_display:
+  - null
+  - "Nothing has activated the venv, so the word python first finds the Python in /usr/local/bin, from the base image."
+  - null
+- en: "Activating the venv would put its bin folder in front, and python would find 3.15.0. Two extra checks confirm it: the venv's own python reports 3.15.0, and after sourcing the activate script, python cli.py works. The prompt now shows app in parentheses. Type exit to get back to your laptop."
+  zh:
+  - "激活 venv 会把它的 bin 目录放到最前面，python 就会找到 3.15.0。"
+  - "两个额外检查证实了这一点：venv 自己的 python 显示版本是 3.15.0；source 一下 activate 脚本之后，python cli.py 就能跑了。"
+  - "提示符前面多了带括号的 app。"
+  - "输入 exit，回到你的笔记本。"
+- en: "So this image carries two Pythons: 3.12 from the base, which only installed uv, and 3.15 for the app. That's half of the opening puzzle, and a small mismatch in the tutorial. In your own projects, start from a Python 3.13 image, or make requires-python match the image."
+  zh:
+  - "所以这个 image 里有两个 Python：base image 带的 3.12，只用来装了 uv；还有给应用用的 3.15。"
+  - "这解开了开头那个谜题的一半，也是教程里一个小小的不一致。"
+  - "在你自己的项目里，要么从 Python 3.13 的 image 开始，要么让 requires-python 和 image 对上。"
+S08:
+- en: "Step 5 adds the last instruction, CMD. It holds dash c and one quoted command: source the activate script, then exec bash. Add it at the end, and save."
+  zh:
+  - "第 5 步加上最后一条指令：CMD。"
+  - "CMD 包含 -c 和一条带引号的命令：先 source activate 脚本，再 exec bash。"
+  - "加在末尾，保存。"
+  en_display:
+  - null
+  - "It holds -c and one quoted command: source the activate script, then exec bash."
+  - null
+- en: "On the card, the entrypoint and the command join into one command line: bash, dash c, then that string. On its own, bash dash c runs the string and exits."
+  zh:
+  - "在卡片上，ENTRYPOINT 和 CMD 拼成一条命令行：bash、-c，再加上那个字符串。"
+  - "单独的 bash -c 会运行这个字符串，然后退出。"
+  en_display:
+  - "On the card, the entrypoint and the command join into one command line: bash, -c, then that string."
+  - "On its own, bash -c runs the string and exits."
+- en: "Here the string first sources the activate script, which puts the venv's bin folder first in PATH. Then exec bash swaps this bash for an interactive one that keeps the new PATH and gives you a prompt."
+  zh:
+  - "这里的字符串先 source activate 脚本，它会把 venv 的 bin 目录放到 PATH 的最前面。"
+  - "接着 exec bash 把这个 bash 换成一个交互式的 bash，它保留新的 PATH，还给你一个提示符。"
+- en: "Pause and build. Again COPY and uv sync run, and Python downloads again, for one added line. Part 2 explains why."
+  zh:
+  - "暂停一下，构建一次。"
+  - "COPY 和 uv sync 又跑了一遍，Python 也重新下载了，只因为加了一行。"
+  - "原因第二部分再讲。"
+- en: "Pause and run it. No app in parentheses this time; is the venv active? These extra checks say yes: which python points into dot venv, it's 3.15.0, and the virtual env variable is set. The fresh bash set its own prompt. Then type exit, back to your laptop."
+  zh:
+  - "暂停一下，自己跑一遍。"
+  - "这次提示符前面没有带括号的 app；venv 激活了吗？"
+  - "这几个额外检查说是：which python 指向 .venv 里面，版本是 3.15.0，virtual env 这个变量也设置好了。"
+  - "新起的 bash 设置了自己的提示符。"
+  - "然后输入 exit，回到你的笔记本。"
+  en_display:
+  - null
+  - null
+  - "These extra checks say yes: which python points into .venv, it's 3.15.0, and the VIRTUAL_ENV variable is set."
+  - null
+  - null
+- en: "The README then points to a solution, Dockerfile.txt. An extra diff shows what it adds; if yours prints less-than and greater-than signs, add dash u. First, three ENV lines: no questions from apt, a UTF-8 locale, and unbuffered logs."
+  zh:
+  - "README 接着给了一个参考答案：Dockerfile.txt 这个文件。"
+  - "额外用 diff 看一下它多了什么；如果你的输出是小于号和大于号，就加上 -u。"
+  - "首先是三行 ENV：让 apt 不再提问，用 UTF-8 的 locale，日志不缓冲。"
+  en_display:
+  - null
+  - "An extra diff shows what it adds; if yours prints less-than and greater-than signs, add -u."
+  - null
+- en: "Second, one bigger RUN: update and upgrade the Debian packages, clean up, upgrade pip, and install uv. And ENTRYPOINT moved to the end: the order of ENTRYPOINT and CMD doesn't matter."
+  zh:
+  - "其次是一条更大的 RUN：更新并升级 Debian 软件包，做清理，升级 pip，再装 uv。"
+  - "还有，ENTRYPOINT 挪到了最后：ENTRYPOINT 和 CMD 的顺序无所谓。"
+- en: "The README only names the file. So here's the quickest way, an extra command: copy it over yours with cp. Pause and do that."
+  zh:
+  - "README 只提到了这个文件名。"
+  - "所以最快的办法是一条额外的命令：用 cp 把它复制过来，覆盖你的 Dockerfile。"
+  - "暂停一下，照着做。"
+- en: "Now the README's Build Docker Image section: from the simple-translate folder, the same build. Pause and run it. This compact view is what you'll see: four steps, the apt and pip step the slowest."
+  zh:
+  - "现在是 README 的 Build Docker Image 这一节：在 simple-translate 目录里，跑同样的构建。"
+  - "暂停一下，自己跑一遍。"
+  - "你看到的会是这样的精简视图：四个构建步骤，apt 和 pip 那一步最慢。"
+S09:
+- en: "Now the README's Run Docker Container step: docker run, dash dash rm, dash t i, simple-translate. At the prompt, type the README's translation: Good morning, from English to Spanish. Pause and run both."
+  zh:
+  - "现在是 README 的 Run Docker Container 这一步：docker run --rm -ti simple-translate。"
+  - "在提示符后面，输入 README 里的翻译：Good morning，从英语翻成西班牙语。"
+  - "暂停一下，两条都跑一遍。"
+  en_display:
+  - "Now the README's Run Docker Container step: docker run --rm -ti simple-translate."
+  - null
+  - null
+- en: "Good morning comes back in Spanish: the request went from the container, through your laptop's network, to Google. If yours ends in a runtime error, Google refused the request: try later; Docker is fine."
+  zh:
+  - "Good morning 翻成了西班牙语：请求从 container 出发，经过你笔记本的网络，到了 Google。"
+  - "如果你的最后报了运行时错误，那是 Google 拒绝了请求：过一会儿再试；Docker 没问题。"
+- en: "To leave, type exit, and you're back on your laptop. Pause and do it."
+  zh:
+  - "要离开，输入 exit，就回到你的笔记本上了。"
+  - "暂停一下，照着做。"
+- en: "What did exit do? It ended the container's process, so the container stopped, and dash dash rm deleted it. An extra check, docker ps dash a, lists every container, even stopped ones. Nothing is left; the image is untouched."
+  zh:
+  - "那 exit 做了什么？"
+  - "它结束了 container 的进程，所以 container 停了，然后 --rm 把它删掉了。"
+  - "额外检查 docker ps -a，会列出所有 container，连停了的也算。"
+  - "什么都没剩下；image 原封不动。"
+  en_display:
+  - null
+  - "It ended the container's process, so the container stopped, and --rm deleted it."
+  - "An extra check, docker ps -a, lists every container, even stopped ones."
+  - null
+- en: "In a second run, an extra check, echo dollar dollar, shows that bash is process number 1. The container lives as long as that process. Dash i connects your keyboard, and dash t gives it a terminal. Then type exit."
+  zh:
+  - "第二次运行时，额外检查 echo $$ 显示 bash 是 1 号进程。"
+  - "只要这个进程还在，container 就还在。"
+  - "参数 -i 接上你的键盘，-t 给它一个终端。"
+  - "然后输入 exit。"
+  en_display:
+  - "In a second run, an extra check, echo $$, shows that bash is process number 1."
+  - null
+  - "-i connects your keyboard, and -t gives it a terminal."
+  - null
+- en: "Now a puzzle. Remember, CMD only holds the default arguments. What if you put words right after the image name: docker run, simple-translate, python cli.py? What command line does the container run?"
+  zh:
+  - "先出个小题。"
+  - "记住，CMD 只放默认参数。"
+  - "如果在 image 名后面直接写几个词会怎样：docker run simple-translate python cli.py？"
+  - "这个 container 会运行哪条命令行？"
+  en_display:
+  - null
+  - null
+  - "What if you put words right after the image name: docker run simple-translate python cli.py?"
+  - null
+- en: "Words after the image name replace CMD, and only CMD. So the container runs bash, python cli.py. Bash takes python as a script name, and finds the Python program in user local bin. That's a binary, so bash refuses: cannot execute binary file, exit code 126."
+  zh:
+  - "写在 image 名后面的词会替换 CMD，而且只替换 CMD。"
+  - "所以 container 运行的是：bash python cli.py。"
+  - "于是 bash 把 python 当成脚本名，在 /usr/local/bin 里找到了 Python 程序。"
+  - "那是一个二进制文件，所以 bash 拒绝了：cannot execute binary file，退出码 126。"
+  en_display:
+  - null
+  - null
+  - "Bash takes python as a script name, and finds the Python program in /usr/local/bin."
+  - null
+- en: "To run it in one go, replace CMD with your own dash c string, as in this extra: activate, then translate to French."
+  zh:
+  - "想一次就跑完，就像这个额外命令一样，用你自己的 -c 字符串替换 CMD：先激活，再翻译成法语。"
+  en_display:
+  - "To run it in one go, replace CMD with your own -c string, as in this extra: activate, then translate to French."
+- en: "A repo helper, docker-shell.sh, builds and runs in one go."
+  zh:
+  - "这个 repo 里有个辅助脚本 docker-shell.sh，一次就能构建并运行。"
+- en: "You've built and run your own image. In part 2: what's inside it, why it keeps rebuilding, and how to ship it to a VM."
+  zh:
+  - "你已经构建并运行了自己的 image。"
+  - "第二部分讲：image 里有什么，为什么老是重新构建，以及怎么把它送到 VM 上。"
