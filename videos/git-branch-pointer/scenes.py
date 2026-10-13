@@ -274,15 +274,15 @@ class S05(EpisodeScene):
 class S06(EpisodeScene):
     def construct(self):
         self.header("A merge is one commit with two parents")
-        base = commit_node("c99e41", -4.6, 0.0)
-        m1 = commit_node("2b61e0", -2.2, .85)
-        i1 = commit_node("f7d2a9", -2.2, -.95, accent=True)
+        base = commit_node("c99e41", -4.6, -.15)
+        m1 = commit_node("2b61e0", -2.2, .7)
+        i1 = commit_node("f7d2a9", -2.2, -1.05, accent=True)
         a1 = parent_arrow(m1, base)
         a2 = parent_arrow(i1, base)
-        main_tag = branch_tag("main", m1, dy=.95, color=GRAY, head=True)
+        main_tag = branch_tag("main", m1, dy=.72, color=GRAY, head=True)
         idea_tag = branch_tag("idea", i1, dy=-.85)
         self.add(base, m1, i1, a1, a2, main_tag, idea_tag)
-        merge = commit_node("e5a1d7", .4, 0.0, accent=True)
+        merge = commit_node("e5a1d7", .4, -.15, accent=True)
         with self.say(0) as vo:
             vo.wait_until("one new commit")
             self.play(FadeIn(merge, shift=UP * .12), run_time=.5)
