@@ -154,20 +154,20 @@ class S02(EpisodeScene):
                            line(-4.55, 0, -4.55, -.35, FAINT))
             self.cue(vo, .3, FadeIn(rails), *[FadeIn(t, shift=RIGHT * .1) for t in tree], run_time=1.0)
         with self.say(1) as vo:
-            file_card = Rectangle(width=9.6, height=1.5, stroke_color=INK, stroke_width=2,
-                                  fill_color=PAPER, fill_opacity=1).move_to([.9, .55, 0])
+            file_card = Rectangle(width=8.2, height=1.5, stroke_color=INK, stroke_width=2,
+                                  fill_color=PAPER, fill_opacity=1).move_to([2.0, .55, 0])
             sha = mono(SHA_MAIN, 24)
-            if sha.width > 8.6:
-                sha.scale_to_fit_width(8.6)
-            sha.move_to(file_card.get_center() + UP * .25)
+            if sha.width > 7.0:
+                sha.scale_to_fit_width(7.0)
+            sha.move_to(file_card.get_center() + UP * .25 + LEFT * .3)
             nl = mono("\\n", 24, GRAY).next_to(sha, RIGHT, buff=.12)
             self.cue(vo, .05, Create(file_card), run_time=.5)
             self.play(Write(sha), FadeIn(nl), run_time=1.2)
-            brace_chars = line(-3.85, .05, 5.0, .05, RED, 3)
-            n40 = at("40 characters", .6, -.35, 26, RED)
-            n1 = at("+ 1 newline", 5.0, -.35, 26, GRAY)
+            brace_chars = line(-1.75, .05, 5.25, .05, RED, 3)
+            n40 = at("40 characters", 1.3, -.35, 26, RED)
+            n1 = at("+ 1 newline", 5.2, -.35, 26, GRAY)
             vo.wait_until("Forty-one bytes")
-            big = at("41 bytes", .9, 1.7, 56, RED, bold=True)
+            big = at("41 bytes", 2.0, 1.7, 56, RED, bold=True)
             self.play(FadeIn(big, shift=UP * .1), run_time=.6)
             self.play(Create(brace_chars), FadeIn(n40), FadeIn(n1), run_time=.8)
         with self.say(2) as vo:
@@ -199,9 +199,9 @@ class S03(EpisodeScene):
             vo.wait_until("every version")
             self.play(FadeIn(every), run_time=.5)
         with self.say(2) as vo:
-            tag = branch_tag("idea", nodes[2], dy=1.05)
-            tag.shift(DOWN * 3.3 + RIGHT * 2.6)
-            target = branch_tag("idea", nodes[2], dy=1.05)
+            tag = branch_tag("idea", nodes[2], dy=-.95)
+            tag.shift(DOWN * .9 + RIGHT * 2.6)
+            target = branch_tag("idea", nodes[2], dy=-.95)
             note = at("只是指过去 · just points", 4.3, -.3, 24, RED)
             self.cue(vo, .2, FadeIn(tag))
             vo.wait_until("points at one node")
@@ -274,17 +274,16 @@ class S05(EpisodeScene):
 class S06(EpisodeScene):
     def construct(self):
         self.header("A merge is one commit with two parents")
-        base = commit_node("c99e41", -4.6, -.4)
-        m1 = commit_node("2b61e0", -2.2, .5)
-        i1 = commit_node("f7d2a9", -2.2, -1.3, accent=True)
+        base = commit_node("c99e41", -4.6, 0.0)
+        m1 = commit_node("2b61e0", -2.2, .85)
+        i1 = commit_node("f7d2a9", -2.2, -.95, accent=True)
         a1 = parent_arrow(m1, base)
         a2 = parent_arrow(i1, base)
         main_tag = branch_tag("main", m1, dy=.95, color=GRAY, head=True)
-        idea_tag = branch_tag("idea", i1, dy=-.95)
-        idea_tag[2].rotate(PI)  # the tag sits below its node; flip the little arrow up
+        idea_tag = branch_tag("idea", i1, dy=-.85)
         self.add(base, m1, i1, a1, a2, main_tag, idea_tag)
         with self.say(0) as vo:
-            merge = commit_node("88adfa", .4, -.4, accent=True)
+            merge = commit_node("88adfa", .4, 0.0, accent=True)
             vo.wait_until("one new commit")
             self.play(FadeIn(merge, shift=UP * .12), run_time=.5)
             vo.wait_until("from main")
