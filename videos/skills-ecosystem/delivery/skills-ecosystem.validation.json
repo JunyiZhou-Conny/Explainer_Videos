@@ -1,7 +1,6 @@
 {
   "probe": {
     "programs": [],
-    "stream_groups": [],
     "streams": [
       {
         "codec_name": "h264",
@@ -23,7 +22,7 @@
   "target_seconds": 300.0,
   "audio_mean_db": -19.6,
   "caption_cues": 70,
-  "script_sha256": "bffedea7bd1f8dcec014762e3c9878a6c62e48e83156f4b4a8f861b84a2e82be",
+  "script_sha256": "23da5326858d520f178eab558110d5cf8cb4bbed4549d71bb38cbd532c7bb454",
   "source_matches_plan": true,
   "chapters": [
     {

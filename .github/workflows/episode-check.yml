@@ -20,10 +20,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Episode PRs touch only their episode; no PR adds tracked MP4s
+      - name: Episode branches touch only their episode; no PR adds tracked media
         env:
           BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
           HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref || github.ref_name }}
         run: |
           set -euo pipefail
           git diff --name-only --diff-filter=ACMR "$BASE...$HEAD" > changed.txt
@@ -32,11 +33,14 @@ jobs:
             echo '::error::Rendered media belongs in release assets (docs/PUBLISHING.md), not in git.'
             exit 1
           fi
-          if grep -q '^videos/' changed.txt && \
-             grep -Eq '^(explainer|tools|skill-library|\.github)/' changed.txt; then
-            echo '::error::Episode PRs touch only videos/<slug>/; toolkit and preset changes go in their own small PRs (AGENTS.md).'
-            exit 1
-          fi
+          case "$HEAD_REF" in
+            episode/*)
+              slug="${HEAD_REF#episode/}"
+              if grep -v "^videos/$slug/" changed.txt | grep -q .; then
+                echo "::error::Episode branches touch only videos/$slug/; toolkit and preset changes go in their own small PRs (AGENTS.md)."
+                exit 1
+              fi ;;
+          esac
 
   check:
     name: Tests + sample render

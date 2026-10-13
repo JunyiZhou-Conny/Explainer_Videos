@@ -31,6 +31,28 @@ Git history. See [GitHub's documentation](https://docs.github.com/en/repositorie
 For a release that is not public yet, `gh release create` supports `--draft`; use `--notes-file`
 for exact multiline notes. Attach the final review record to the episode. Do not upload API
 keys, environment files, application logins, private chats or local configuration dumps.
+Claude Code cloud sessions cannot create releases; they run `.github/workflows/` jobs
+(`rehost-media.yml`, or a release step) whose Actions token can.
+
+## The publish manifest and the Mac worker
+
+`tools/release_episode.py` runs after an episode merges: it refuses to release without a
+matching `validation.json` (its `script_sha256` must equal the committed `script.json`) and a
+human-review line in `REVIEW.md`, then tags `episode/<slug>-vN`, uploads the deliverables plus
+`SHA256SUMS.txt`, and emits **`PUBLISH.md` / `PUBLISH.json`** — a mechanical manifest any
+executor can follow: asset name + sha256, bilingual title/description/tags/cover, the issue
+number to report back to. The fenced JSON in `PUBLISH.md` is ground truth.
+
+`tools/publish_worker.py` is the primary executor. It runs on Conny's Mac (launchd/cron,
+~15 min; `--upload` to act, default is a dry run) because that is the one machine holding a
+Bilibili login: it polls releases for unpublished `PUBLISH.json` manifests, downloads and
+sha256-verifies the MP4, uploads with `biliup` (one-time QR login; `cookies.json` stays in
+`~/.config/biliup/`, never in git or CI secrets; renew weekly with `biliup renew`; benchmark
+upload lines once and pin `--line`), comments the BV link on the episode issue, flips the
+label to `state:published` and closes it. Failures (geetest `-352`, error 601 rate limits)
+are commented on the issue and retried next run; a computer-use agent or a human rescues the
+rest. Setup, once: `npm i -g @biliup/cli && biliup login && gh auth login`, then schedule
+`python3 tools/publish_worker.py --repo JunyiZhou-Conny/Explainer_Videos --upload`.
 
 ## Current collection
 

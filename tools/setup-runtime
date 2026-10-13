@@ -15,6 +15,7 @@ import os
 from pathlib import Path, PurePosixPath
 import platform
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -108,9 +109,31 @@ def prepare_assets(root, *, verify_only=False):
                 partial.unlink(missing_ok=True)
 
 
-def prepare_packages(root, *, verify_only=False, macos_arm64_lock=False):
+LINUX_APT_PACKAGES = "python3.12-venv libpango1.0-dev libcairo2-dev pkg-config ffmpeg"
+
+
+def preflight_system_libraries():
+    """Fail fast with the exact install command instead of a pip build traceback minutes later.
+    ManimPango builds from source on Linux and needs the pangocairo DEV headers (the runtime
+    libraries are not enough); every probe and encode needs ffmpeg."""
+    problems = []
+    if shutil.which("pkg-config") is None:
+        problems.append("pkg-config is missing")
+    elif subprocess.run(["pkg-config", "--exists", "pangocairo"]).returncode != 0:
+        problems.append("pangocairo development headers are missing")
+    if shutil.which("ffmpeg") is None or shutil.which("ffprobe") is None:
+        problems.append("ffmpeg/ffprobe is missing")
+    if problems:
+        fix = (f"sudo apt-get install -y {LINUX_APT_PACKAGES}" if platform.system() == "Linux"
+               else "brew install pango cairo pkg-config ffmpeg")
+        raise SetupError("; ".join(problems) + f". Install the system libraries first: {fix}")
+
+
+def prepare_packages(root, *, verify_only=False, macos_arm64_lock=False, dev=False):
     if platform.system() not in {"Darwin", "Linux"}:
         raise SetupError("This setup route supports macOS and Linux.")
+    if not verify_only:
+        preflight_system_libraries()
     if macos_arm64_lock and not (
         platform.system() == "Darwin" and platform.machine() == "arm64"
         and sys.version_info[:2] == (3, 12)
@@ -145,6 +168,9 @@ def prepare_packages(root, *, verify_only=False, macos_arm64_lock=False):
         raise SetupError("The tested macOS lock requires a Python 3.12 .venv.")
     if not verify_only:
         subprocess.run([str(python), "-m", "pip", "install", "-r", str(source)], check=True)
+        if dev:
+            subprocess.run([str(python), "-m", "pip", "install", "-r",
+                            str(root / "setup/requirements-dev.txt")], check=True)
     subprocess.run([str(python), "-m", "pip", "check"], check=True)
     subprocess.run([str(python), "-c",
                     "import manim,kokoro_onnx,onnxruntime,soundfile,numpy,scipy,yaml,pypdf,jieba,PIL; "
@@ -160,6 +186,9 @@ def main(argv=None):
                     help="Check local assets/packages without installing or accessing the network.")
     ap.add_argument("--macos-arm64-lock", action="store_true",
                     help="Opt into the tested Python 3.12 macOS arm64 package snapshot.")
+    ap.add_argument("--dev", action="store_true",
+                    help="Also install setup/requirements-dev.txt (pytest; needed to run tests - "
+                         "unittest discovery silently collects only a fraction of the suite).")
     args = ap.parse_args(argv)
     if sys.version_info[:2] < (3, 10):
         ap.error("Python >=3.10 is required; Python 3.12 is recommended.")
@@ -168,7 +197,7 @@ def main(argv=None):
     try:
         if not args.assets_only:
             prepare_packages(ROOT, verify_only=args.verify_only,
-                             macos_arm64_lock=args.macos_arm64_lock)
+                             macos_arm64_lock=args.macos_arm64_lock, dev=args.dev)
         if not args.packages_only:
             prepare_assets(ROOT, verify_only=args.verify_only)
     except (SetupError, OSError, ValueError, subprocess.CalledProcessError) as exc:
