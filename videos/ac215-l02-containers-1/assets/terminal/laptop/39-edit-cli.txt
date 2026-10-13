@@ -1,0 +1,15 @@
+$ git diff
+diff --git a/cli.py b/cli.py
+index 1d947cb..6c76b43 100644
+--- a/cli.py
++++ b/cli.py
+@@ -46,7 +46,7 @@ if __name__ == "__main__":
+         "-t",
+         "--text",
+         type=str,
+-        default="I love cheese",
++        default="I love brie",
+         help="Text to translate",
+     )
+     parser.add_argument(
+[exit 0]

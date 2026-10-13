@@ -1,0 +1,6 @@
+$ grep -n requires-python pyproject.toml; git status --short .
+4:requires-python = ">=3.12"
+ M pyproject.toml
+?? Dockerfile
+?? uv.lock
+[exit 0]

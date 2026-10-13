@@ -1,0 +1,5 @@
+$ ls -ld /app; id; uv add requests
+drwxr-xr-x 5 root root 4096 Oct 13 01:48 /app
+uid=1000(app) gid=1000(app) groups=1000(app)
+error: failed to create file `/app/pyproject.toml`: Permission denied (os error 13)
+[exit 2]

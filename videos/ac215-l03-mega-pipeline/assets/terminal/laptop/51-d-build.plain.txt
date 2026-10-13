@@ -1,0 +1,46 @@
+$ docker buildx history logs omk7tnaa86owv627rtbrezack
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 833B done
+#1 WARN: SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/l03-capture/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80
+#4 resolve docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 11.01kB done
+#5 DONE 0.0s
+
+#6 [2/5] RUN apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#6 CACHED
+
+#7 [3/5] WORKDIR /app
+#7 CACHED
+
+#8 [4/5] COPY --chown=app:app . ./
+#8 DONE 0.0s
+
+#9 [5/5] RUN uv sync
+#9 0.146 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+#9 0.146 Creating virtual environment at: /home/app/.venv
+#9 0.149 Resolved 1 package in 1ms
+#9 0.152 Checked in 0.00ms
+#9 DONE 0.2s
+
+#10 exporting to image
+#10 exporting layers 0.1s done
+#10 exporting manifest sha256:935250f53407ab5255833c7eaa5b88359e2d88c4b2cd6095dec5a4da5cadafb4 done
+#10 exporting config sha256:3fbea305442c988107524d2b1e190a5918d441c247e216a09e25d003434bf1ca done
+#10 exporting attestation manifest sha256:c63dec838c3a6a1d4d8d44fb54a555313bb62923d482faa6594182ee28f1cdda done
+#10 exporting manifest list sha256:1e37ba02781d9fd79f016273eb867b79d1dfa1a5667a7aa3ae383c9ef0d50bde done
+#10 naming to docker.io/library/translate_text:latest done
+#10 unpacking to docker.io/library/translate_text:latest 0.0s done
+#10 DONE 0.2s
+[exit 0]

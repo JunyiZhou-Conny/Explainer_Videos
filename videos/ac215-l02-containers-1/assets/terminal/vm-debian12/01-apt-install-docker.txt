@@ -1,0 +1,9 @@
+$ yes | sudo apt install docker.io
+
+
+Reading package lists...
+Building dependency tree...
+Reading state information...
+E: Unable to locate package docker.io
+E: Couldn't find any package by glob 'docker.io'
+[exit 100]

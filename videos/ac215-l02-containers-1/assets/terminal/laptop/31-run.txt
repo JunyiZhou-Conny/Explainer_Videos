@@ -1,0 +1,19 @@
+$ docker run --rm -ti simple-translate
+root@93d61f44d3d7:/# python cli.py -t "Good morning" -s "en" -d "es"
+
+
+    _      ____  ____   _  ____
+   / \    / ___||___ \ / || ___|
+  / _ \  | |      __) || ||___ \
+ / ___ \ | |___  / __/ | | ___) |
+/_/   \_\ \____||_____||_||____/
+
+
+
+Arguments: Namespace(text='Good morning', file='', src='en', dest='es')
+
+Input: Good morning
+Output: Buen día
+root@93d61f44d3d7:/# exit
+exit
+[exit 0]

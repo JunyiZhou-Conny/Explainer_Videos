@@ -1,0 +1,2 @@
+$ cp Dockerfile.txt Dockerfile
+[exit 0]

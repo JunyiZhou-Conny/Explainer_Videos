@@ -1,0 +1,4 @@
+$ docker images transcribe_audio
+IMAGE                     ID             DISK USAGE   CONTENT SIZE   EXTRA
+transcribe_audio:latest   55af020104ea       1.48GB          388MB        
+[exit 0]

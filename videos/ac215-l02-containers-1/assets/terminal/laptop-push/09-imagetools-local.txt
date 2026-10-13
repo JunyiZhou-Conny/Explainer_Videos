@@ -1,0 +1,17 @@
+$ docker buildx imagetools inspect localhost:5000/student/simple-translate-ac215
+Name:      localhost:5000/student/simple-translate-ac215:latest
+MediaType: application/vnd.oci.image.index.v1+json
+Digest:    sha256:2c302ec4c53645e102eaf2fcbd80f8838737a5b7325971c58eb28bff279a0b85
+           
+Manifests: 
+  Name:        localhost:5000/student/simple-translate-ac215:latest@sha256:ed3bc64514884f6a622905051dc6178e4730a398f60ff7ac938b7644595669e9
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    linux/amd64
+               
+  Name:        localhost:5000/student/simple-translate-ac215:latest@sha256:b6a06b6c92ebe5186c4e7c69b6fb1d6b4bb37cb66008ab9f1301088ab5786290
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    unknown/unknown
+  Annotations: 
+    vnd.docker.reference.digest: sha256:ed3bc64514884f6a622905051dc6178e4730a398f60ff7ac938b7644595669e9
+    vnd.docker.reference.type:   attestation-manifest
+[exit 0]

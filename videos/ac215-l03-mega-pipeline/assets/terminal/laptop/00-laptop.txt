@@ -1,0 +1,9 @@
+$ head -4 /etc/os-release; python3 --version; git --version; date -u '+%Y-%m-%d %H:%M UTC'
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+Python 3.11.2
+git version 2.39.5
+2026-10-13 01:42 UTC
+[exit 0]

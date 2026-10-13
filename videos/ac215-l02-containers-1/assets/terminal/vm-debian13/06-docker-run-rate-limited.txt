@@ -1,0 +1,5 @@
+$ sudo docker run --rm -ti dlops/simple-translate
+Unable to find image 'dlops/simple-translate:latest' locally
+docker: Error response from daemon: toomanyrequests: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit.
+See 'docker run --help'.
+[exit 125]

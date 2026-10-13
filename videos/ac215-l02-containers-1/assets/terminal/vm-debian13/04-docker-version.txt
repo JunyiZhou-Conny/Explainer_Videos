@@ -1,0 +1,3 @@
+$ sudo docker --version
+Docker version 26.1.5+dfsg1, build a72d7cd
+[exit 0]

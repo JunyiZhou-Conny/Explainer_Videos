@@ -1,0 +1,30 @@
+$ docker build --network host -t translate_text .
+
+[+] Building 8.3s (10/10) FINISHED                               docker:default
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 833B                                       0.0s
+ => WARN: SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for s  0.0s
+ => [internal] load metadata for docker.io/l03-capture/python:3.12-slim-b  0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/5] FROM docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d  0.0s
+ => => resolve docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d  0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 138.39kB                                      0.0s
+ => CACHED [2/5] RUN apt-get update &&     apt-get upgrade -y &&     apt-  0.0s
+ => CACHED [3/5] WORKDIR /app                                              0.0s
+ => [4/5] COPY --chown=app:app . ./                                        0.0s
+ => [5/5] RUN uv sync                                                      1.2s
+ => exporting to image                                                     6.8s
+ => => exporting layers                                                    5.1s
+ => => exporting manifest sha256:2a7e8eed95a70222265553d90632a8624e2e2e16  0.0s
+ => => exporting config sha256:be7192dd335d4792a6206692db598279382c7396eb  0.0s
+ => => exporting attestation manifest sha256:229c70a35defff0643af79f8f3d8  0.0s
+ => => exporting manifest list sha256:2c1279b01d87ca82c5616ac2d439b5c5d34  0.0s
+ => => naming to docker.io/library/translate_text:latest                   0.0s
+ => => unpacking to docker.io/library/translate_text:latest                1.6s
+
+ 1 warning found (use docker --debug to expand):
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data
+(ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+[exit 0]

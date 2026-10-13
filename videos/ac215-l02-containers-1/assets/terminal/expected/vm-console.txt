@@ -1,0 +1,4 @@
+# expected · source: README.md lines 207-208 and 220 of dlops-io/simple-translate @ 62f821b (assets/source/README.md); cloud console steps, not runnable here (no GCP account in the recording sandbox). The README gives no machine type, zone or image; scenes draw a schematic console tagged 'illustration'.
+* Create a VM Instance from [GCP](https://console.cloud.google.com/compute/instances)
+* SSH into your newly created instance
+* Delete your VM when you're done. A running VM keeps charging even when idle. Go to [VM instances](https://console.cloud.google.com/compute/instances), select your instance, and click Delete.

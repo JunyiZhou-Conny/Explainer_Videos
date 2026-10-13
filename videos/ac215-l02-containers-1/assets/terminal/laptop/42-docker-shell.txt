@@ -1,0 +1,26 @@
+$ sh docker-shell.sh
+
+[+] Building 0.2s (9/9) FINISHED                                                     docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 728B                                                           0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookworm                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809  0.0s
+ => => resolve docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809  0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 2.22kB                                                            0.0s
+ => CACHED [2/4] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get cle  0.0s
+ => CACHED [3/4] COPY . ./                                                                     0.0s
+ => CACHED [4/4] RUN uv sync                                                                   0.0s
+ => exporting to image                                                                         0.1s
+ => => exporting layers                                                                        0.0s
+ => => exporting manifest sha256:323472f99985883a7addbd0af87889347c7ac25a11877bad344a432172db  0.0s
+ => => exporting config sha256:de6582479392e5116cb547a444e72b63a610fd7e683965652c9939d037f982  0.0s
+ => => exporting attestation manifest sha256:0e03041bb28b34dc2114187e1c1b2f58ba8f721e8d7a1dbc  0.0s
+ => => exporting manifest list sha256:b5c531a6b5553de7a36c5a10bd34f648bb1de6d1b4a4aa99c1be334  0.0s
+ => => naming to docker.io/library/simple-translate:latest                                     0.0s
+ => => unpacking to docker.io/library/simple-translate:latest                                  0.0s
+root@cbd2b3516e5f:/# exit
+exit
+[exit 0]

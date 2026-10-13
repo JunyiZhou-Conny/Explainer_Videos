@@ -1,0 +1,52 @@
+$ docker build --network host -t transcribe_audio .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 840B done
+#1 WARN: SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/l03-capture/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80
+#4 resolve docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 4.60kB done
+#5 DONE 0.0s
+
+#6 [3/5] WORKDIR /app
+#6 CACHED
+
+#7 [2/5] RUN apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential ffmpeg &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#7 CACHED
+
+#8 [4/5] COPY --chown=app:app . ./
+#8 CACHED
+
+#9 [5/5] RUN uv sync
+#9 0.077 error: No `pyproject.toml` found in current directory or any parent directory
+#9 ERROR: process "/bin/sh -c uv sync" did not complete successfully: exit code: 2
+------
+ > [5/5] RUN uv sync:
+0.077 error: No `pyproject.toml` found in current directory or any parent directory
+------
+
+ 1 warning found (use docker --debug to expand):
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+Dockerfile:27
+--------------------
+  25 |     
+  26 |     COPY --chown=app:app . ./
+  27 | >>> RUN uv sync
+  28 |     
+  29 |     ENTRYPOINT ["/bin/bash"]
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c uv sync" did not complete successfully: exit code: 2
+[exit 1]

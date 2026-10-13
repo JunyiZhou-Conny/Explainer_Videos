@@ -1,0 +1,24 @@
+$ docker run -d -p 5000:5000 --name registry -v $HOME/registry-auth:/auth -e REGISTRY_AUTH=htpasswd -e REGISTRY_AUTH_HTPASSWD_REALM=local -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd registry:3 >/dev/null && sleep 3 && docker ps --format '{{.Image}}  {{.Ports}}  {{.Names}}'
+Unable to find image 'registry:3' locally
+3: Pulling from library/registry
+8dc2188d2a74: Pulling fs layer
+e2de96513ba9: Pulling fs layer
+90764beeca7f: Pulling fs layer
+2aef3a8beb68: Pulling fs layer
+783ed5b12fca: Pulling fs layer
+6c18a739ea63: Download complete
+d561fdf230c8: Download complete
+783ed5b12fca: Download complete
+8dc2188d2a74: Download complete
+e2de96513ba9: Download complete
+90764beeca7f: Download complete
+e2de96513ba9: Pull complete
+90764beeca7f: Pull complete
+2aef3a8beb68: Download complete
+783ed5b12fca: Pull complete
+8dc2188d2a74: Pull complete
+2aef3a8beb68: Pull complete
+Digest: sha256:ddf754342cfc8acc51a56d5d0ab6af06826461864460636d8bd5c546dab2a7b8
+Status: Downloaded newer image for registry:3
+registry:3  0.0.0.0:5000->5000/tcp  registry
+[exit 0]

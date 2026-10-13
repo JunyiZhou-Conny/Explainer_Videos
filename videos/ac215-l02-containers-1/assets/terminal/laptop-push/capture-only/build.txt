@@ -1,0 +1,98 @@
+$ docker build -t simple-translate -f Dockerfile .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 728B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:64974af00f360a3df26a8f630091f88484019c8ba1ee034f5720b92b283b5f34
+#4 resolve docker.io/library/python:3.12-slim-bookworm@sha256:64974af00f360a3df26a8f630091f88484019c8ba1ee034f5720b92b283b5f34 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 63.63kB done
+#5 DONE 0.0s
+
+#6 [2/4] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get clean &&     pip install --no-cache-dir --upgrade pip &&     pip install uv
+#6 0.173 + apt-get update
+#6 0.362 Get:1 https://deb.debian.org/debian bookworm InRelease [151 kB]
+#6 0.470 Get:2 https://deb.debian.org/debian bookworm-updates InRelease [55.4 kB]
+#6 0.534 Get:3 https://deb.debian.org/debian-security bookworm-security InRelease [34.8 kB]
+#6 0.585 Get:4 https://deb.debian.org/debian bookworm/main amd64 Packages [8790 kB]
+#6 0.980 Get:5 https://deb.debian.org/debian bookworm-updates/main amd64 Packages [6924 B]
+#6 0.985 Get:6 https://deb.debian.org/debian-security bookworm-security/main amd64 Packages [349 kB]
+#6 2.076 Fetched 9388 kB in 2s (5042 kB/s)
+#6 2.076 Reading package lists...
+#6 2.764 + apt-get upgrade -y
+#6 2.772 Reading package lists...
+#6 3.404 Building dependency tree...
+#6 3.581 Reading state information...
+#6 3.613 Calculating upgrade...
+#6 3.808 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+#6 3.808 + apt-get clean
+#6 3.815 + pip install --no-cache-dir --upgrade pip
+#6 5.594 Requirement already satisfied: pip in /usr/local/lib/python3.12/site-packages (25.0.1)
+#6 6.183 Collecting pip
+#6 6.711   Downloading pip-26.2.1-py3-none-any.whl.metadata (4.6 kB)
+#6 6.774 Downloading pip-26.2.1-py3-none-any.whl (1.8 MB)
+#6 6.980    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 11.0 MB/s eta 0:00:00
+#6 7.005 Installing collected packages: pip
+#6 7.005   Attempting uninstall: pip
+#6 7.007     Found existing installation: pip 25.0.1
+#6 7.048     Uninstalling pip-25.0.1:
+#6 7.211       Successfully uninstalled pip-25.0.1
+#6 8.376 Successfully installed pip-26.2.1
+#6 8.376 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#6 9.213 + pip install uv
+#6 11.40 Collecting uv
+#6 11.85   Downloading uv-0.13.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)
+#6 11.92 Downloading uv-0.13.0-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (17.9 MB)
+#6 12.20    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17.9/17.9 MB 80.7 MB/s  0:00:00
+#6 12.30 Installing collected packages: uv
+#6 12.56 Successfully installed uv-0.13.0
+#6 12.56 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#6 DONE 13.3s
+
+#7 [3/4] COPY . ./
+#7 DONE 0.0s
+
+#8 [4/4] RUN uv sync
+#8 0.861 Downloading cpython-3.15.0-linux-x86_64-gnu (download) (35.9MiB)
+#8 2.997  Downloaded cpython-3.15.0-linux-x86_64-gnu (download)
+#8 3.265 Using CPython 3.15.0
+#8 3.265 Creating virtual environment at: /.venv
+#8 3.970 Resolved 13 packages in 699ms
+#8 4.327 Prepared 11 packages in 354ms
+#8 4.339 Installed 11 packages in 11ms
+#8 4.339  + anyio==4.15.1
+#8 4.339  + art==6.5
+#8 4.339  + certifi==2026.7.22
+#8 4.339  + googletrans==4.0.2
+#8 4.339  + h11==0.16.0
+#8 4.339  + h2==4.4.1
+#8 4.339  + hpack==4.2.0
+#8 4.339  + httpcore==1.0.9
+#8 4.339  + httpx==0.28.1
+#8 4.339  + hyperframe==6.1.0
+#8 4.339  + idna==3.20
+#8 DONE 4.5s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 5.8s done
+#9 exporting manifest sha256:ed3bc64514884f6a622905051dc6178e4730a398f60ff7ac938b7644595669e9 done
+#9 exporting config sha256:e25afacb7c4cb3b3a43f36a8219bf3d65db6e4a45a6dfe1e3df090a16addec84 done
+#9 exporting attestation manifest sha256:b6a06b6c92ebe5186c4e7c69b6fb1d6b4bb37cb66008ab9f1301088ab5786290 done
+#9 exporting manifest list sha256:2c302ec4c53645e102eaf2fcbd80f8838737a5b7325971c58eb28bff279a0b85 done
+#9 naming to docker.io/library/simple-translate:latest done
+#9 unpacking to docker.io/library/simple-translate:latest
+#9 unpacking to docker.io/library/simple-translate:latest 2.8s done
+#9 DONE 8.7s
+[exit 0]

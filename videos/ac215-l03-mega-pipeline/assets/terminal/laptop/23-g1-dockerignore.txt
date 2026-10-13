@@ -1,0 +1,3 @@
+$ cat .dockerignore
+secrets/
+[exit 0]

@@ -1,0 +1,46 @@
+id: ac215-l03-mega-pipeline
+title: "AC215 · Lecture 3 — Containers II: five containers, one bucket (follow-along: mega-pipeline)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 3
+  lecture_title: "Containers II"
+  ed: https://edstem.org/us/courses/97373/lessons/166033/
+  repos:
+    - {repo: dlops-io/mega-pipeline, branch: main, commit: c6bbc9ba88984e1234b68ccf5cdf7c00f7e9accc,
+       sections: ["Clone this Repository", "Connecting the Pipeline Components", "GCS Bucket Details",
+                  "GCP Credentials File", "Time to Build — The Five Components",
+                  "Quick Reference — Running Each Component", "Appendix",
+                  "transcribe_audio/README.md", "generate_text/README.md", "synthesis_audio_en/README.md",
+                  "translate_text/README.md", "synthesis_audio/README.md"]}
+    # quoted once (S14) as "where the course goes next", not followed:
+    - {repo: dlops-io/mega-pipeline, branch: solution, commit: 8083187ec0e022ba34440892689145ff703a34e0,
+       sections: ["transcribe_audio/docker-shell.sh"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L03-containers-2-mega-pipeline.md
+audience: "AC215 student who has done L1 (VMs, venvs, uv) and L2 (a given Dockerfile, images, Docker Hub), writing their own Dockerfiles for the first time; watching with their own clone of mega-pipeline open, pausing to run each command"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,        cls: Hook,             title: "Five containers, one bucket"}
+  - {file: scenes/s02_bucket.py,      cls: BucketBus,        title: "The bucket is the message bus"}
+  - {file: scenes/s03_clone.py,       cls: CloneRepo,        title: "Clone: five folders, no Dockerfile"}
+  - {file: scenes/s04_setup.py,       cls: KeyAndInit,       title: "The key, and uv init"}
+  - {file: scenes/s05_dockerfile.py,  cls: WriteDockerfile,  title: "Write the Dockerfile, line by line"}
+  - {file: scenes/s06_build.py,       cls: BuildImage,       title: "Build: five steps, one fat layer"}
+  - {file: scenes/s07_run.py,         cls: RunContainer,     title: "Run: a window into your laptop"}
+  - {file: scenes/s08_uv_add.py,      cls: UvAdd,            title: "uv add: what lands where"}
+  - {file: scenes/s09_credentials.py, cls: WhoIsCalling,     title: "Who is calling? The key and ADC"}
+  - {file: scenes/s10_transcribe.py,  cls: TranscribeUpload, title: "Transcribe and upload"}
+  - {file: scenes/s11_rebuild.py,     cls: BakeItIn,         title: "Exit, and bake it in"}
+  - {file: scenes/s12_generate.py,    cls: GenerateText,     title: "generate_text: same recipe, two surprises"}
+  - {file: scenes/s13_speed_round.py, cls: SpeedRound,       title: "Synthesize, translate, synthesize"}
+  - {file: scenes/s14_secrets.py,     cls: KeepTheKeyOut,    title: "Keep the key out of the image"}
+  - {file: scenes/s15_recap.py,       cls: Recap,            title: "Clean up, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L3, part 1: the pipeline, and your first Dockerfile"
+    scenes: [s01_hook, s02_bucket, s03_clone, s04_setup, s05_dockerfile, s06_build, s07_run]
+  - id: part2
+    title: "AC215 · L3, part 2: packages, the key, and all five components"
+    scenes: [s08_uv_add, s09_credentials, s10_transcribe, s11_rebuild, s12_generate, s13_speed_round, s14_secrets, s15_recap]

@@ -1,0 +1,5 @@
+$ docker buildx imagetools inspect dlops/simple-translate
+Name:      docker.io/dlops/simple-translate:latest
+MediaType: application/vnd.docker.distribution.manifest.v2+json
+Digest:    sha256:2454010bcf64b211d81805c38ae3dfc7842bff6fed558bb3bb6dc7659a63f916
+[exit 0]

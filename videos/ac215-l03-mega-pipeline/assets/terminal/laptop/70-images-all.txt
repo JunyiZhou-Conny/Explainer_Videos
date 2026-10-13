@@ -1,0 +1,8 @@
+$ docker image ls --filter reference=transcribe_audio --filter reference=generate_text --filter reference=synthesis_audio_en --filter reference=translate_text --filter reference=synthesis_audio
+IMAGE                       ID             DISK USAGE   CONTENT SIZE   EXTRA
+generate_text:latest        66b13d455fc8        846MB          212MB        
+synthesis_audio:latest      b56ca53bbd2d        842MB          216MB        
+synthesis_audio_en:latest   67635b572cbb        842MB          216MB        
+transcribe_audio:latest     42dc79356e2b       1.48GB          388MB        
+translate_text:latest       2c1279b01d87        845MB          216MB        
+[exit 0]

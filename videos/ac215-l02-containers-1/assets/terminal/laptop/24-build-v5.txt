@@ -1,0 +1,61 @@
+$ docker build -t simple-translate -f Dockerfile .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 319B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809a5d4b6e51b264d5b5c4549626c27110ca664c
+#4 resolve docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809a5d4b6e51b264d5b5c4549626c27110ca664c 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 2.52kB done
+#5 DONE 0.0s
+
+#6 [2/4] RUN pip install uv
+#6 CACHED
+
+#7 [3/4] COPY . ./
+#7 DONE 0.0s
+
+#8 [4/4] RUN uv sync
+#8 0.731 Downloading cpython-3.15.0-linux-x86_64-gnu (download) (35.9MiB)
+#8 2.946  Downloaded cpython-3.15.0-linux-x86_64-gnu (download)
+#8 3.288 Using CPython 3.15.0
+#8 3.288 Creating virtual environment at: /.venv
+#8 4.334 Resolved 13 packages in 1.04s
+#8 4.940 Prepared 11 packages in 598ms
+#8 4.955 Installed 11 packages in 15ms
+#8 4.955  + anyio==4.15.1
+#8 4.955  + art==6.5
+#8 4.955  + certifi==2026.7.22
+#8 4.955  + googletrans==4.0.2
+#8 4.955  + h11==0.16.0
+#8 4.955  + h2==4.4.1
+#8 4.955  + hpack==4.2.0
+#8 4.955  + httpcore==1.0.9
+#8 4.955  + httpx==0.28.1
+#8 4.955  + hyperframe==6.1.0
+#8 4.955  + idna==3.20
+#8 DONE 5.4s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 6.8s done
+#9 exporting manifest sha256:ba6c899b491e60768ebc78ca5410474e361013117312b4e08935114c0627ab39 done
+#9 exporting config sha256:7c9de4ea297b88d4974669f6698204cc684c5db99f923e61d9bb5a8246c965ed done
+#9 exporting attestation manifest sha256:e21b1e21d86000e4aacbd83cbc2f2cc1e9d88a5ad6fe8ff3260fef25b7532744 done
+#9 exporting manifest list sha256:defab688dde3b3048dff7b846596e7f505528324df3939d676b3095dd6f9ed09 done
+#9 naming to docker.io/library/simple-translate:latest done
+#9 unpacking to docker.io/library/simple-translate:latest
+#9 unpacking to docker.io/library/simple-translate:latest 2.5s done
+#9 DONE 9.4s
+[exit 0]

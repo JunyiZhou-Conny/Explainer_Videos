@@ -1,0 +1,4 @@
+$ uv add requests
+Resolved 25 packages in 12ms
+Checked 24 packages in 0.63ms
+[exit 0]

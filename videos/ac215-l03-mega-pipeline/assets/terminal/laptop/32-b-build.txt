@@ -1,0 +1,30 @@
+$ docker build --network host -t generate_text .
+
+[+] Building 54.0s (10/10) FINISHED                              docker:default
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 833B                                       0.0s
+ => WARN: SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for s  0.0s
+ => [internal] load metadata for docker.io/l03-capture/python:3.12-slim-b  0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => CACHED [1/5] FROM docker.io/l03-capture/python:3.12-slim-bookworm@sha  0.0s
+ => => resolve docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d  0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 11.79kB                                       0.0s
+ => [2/5] RUN apt-get update &&     apt-get upgrade -y &&     apt-get in  22.8s
+ => [3/5] WORKDIR /app                                                     0.1s
+ => [4/5] COPY --chown=app:app . ./                                        0.0s
+ => [5/5] RUN uv sync                                                      5.9s
+ => exporting to image                                                    25.1s
+ => => exporting layers                                                   17.8s
+ => => exporting manifest sha256:189c79766114af042b95f4dd9e62b83ef712f498  0.0s
+ => => exporting config sha256:865e03329c951e75d39e30e6ddd79f25eb72f2ef27  0.0s
+ => => exporting attestation manifest sha256:1fea45f76af7c6e9213fa1277320  0.0s
+ => => exporting manifest list sha256:fc5ee17f2a552213b9d72a3d75ca755d8cf  0.0s
+ => => naming to docker.io/library/generate_text:latest                    0.0s
+ => => unpacking to docker.io/library/generate_text:latest                 7.3s
+
+ 1 warning found (use docker --debug to expand):
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data
+(ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+[exit 0]

@@ -1,0 +1,9 @@
+$ docker push student/simple-translate-ac215
+Using default tag: latest
+The push refers to repository [docker.io/student/simple-translate-ac215]
+6e0ba8ba0487: Waiting
+cef1a1b4c9a2: Waiting
+44136fa355b3: Waiting
+7fd1ebe418b5: Waiting
+push access denied, repository does not exist or may require authorization: server message: insufficient_scope: authorization failed
+[exit 1]

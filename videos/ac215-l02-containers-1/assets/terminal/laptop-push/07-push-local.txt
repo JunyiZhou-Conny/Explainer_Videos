@@ -1,0 +1,16 @@
+$ docker push localhost:5000/student/simple-translate-ac215
+Using default tag: latest
+The push refers to repository [localhost:5000/student/simple-translate-ac215]
+cef1a1b4c9a2: Pushed
+7fd1ebe418b5: Pushed
+6e0ba8ba0487: Pushed
+44136fa355b3: Pushed
+86a9e13e035d: Pushed
+f9d2fb07d6f0: Pushed
+98d05057aa0b: Pushed
+24eb33f95cdd: Pushed
+ea71b959f680: Pushed
+7c5bc77b992b: Pushed
+e89227199569: Pushed
+latest: digest: sha256:2c302ec4c53645e102eaf2fcbd80f8838737a5b7325971c58eb28bff279a0b85 size: 856
+[exit 0]

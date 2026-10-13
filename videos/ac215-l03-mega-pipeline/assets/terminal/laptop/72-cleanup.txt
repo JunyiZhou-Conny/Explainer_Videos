@@ -1,0 +1,12 @@
+$ docker image rm transcribe_audio generate_text synthesis_audio_en translate_text synthesis_audio
+Untagged: transcribe_audio:latest
+Deleted: sha256:42dc79356e2bb7a36092573b2883b11eae823ee2f215158736ee97d96978de97
+Untagged: generate_text:latest
+Deleted: sha256:66b13d455fc87701012c17ac772f0ba7f91170edc7b18fca9b84695d602de993
+Untagged: synthesis_audio_en:latest
+Deleted: sha256:67635b572cbb9e40191472ffd663779e6479b8d08575274f7b3571dac7723a4c
+Untagged: translate_text:latest
+Deleted: sha256:2c1279b01d87ca82c5616ac2d439b5c5d3415d42f2b727467553923aa7844c99
+Untagged: synthesis_audio:latest
+Deleted: sha256:b56ca53bbd2d4b62a0701ff537bc0baae57c7cc002b469a6c68eba656f1177b5
+[exit 0]

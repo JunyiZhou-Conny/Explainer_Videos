@@ -1,0 +1,5 @@
+$ python -c "import google.cloud.storage, google.cloud.speech, ffmpeg; print(\"imports ok\")"; uv --version; python --version
+imports ok
+uv 0.13.0 (x86_64-unknown-linux-gnu)
+Python 3.12.15
+[exit 0]

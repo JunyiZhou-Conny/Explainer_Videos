@@ -1,0 +1,12 @@
+$ ls -la
+total 176
+drwxr-xr-x 3 app  app    4096 Oct 13 01:47 .
+drwxr-xr-x 1 root root   4096 Oct 13 01:47 ..
+-rw-r--r-- 1 app  app     104 Oct 13 01:42 .gitignore
+-rw-r--r-- 1 app  app     801 Oct 13 01:42 Dockerfile
+-rw-r--r-- 1 app  app    6161 Oct 13 01:42 README.md
+-rw-r--r-- 1 app  app    4417 Oct 13 01:47 cli.py
+-rw-r--r-- 1 app  app     199 Oct 13 01:47 pyproject.toml
+drwxr-xr-x 2 app  app    4096 Oct 13 01:45 secrets
+-rw-r--r-- 1 app  app  138445 Oct 13 01:47 uv.lock
+[exit 0]
