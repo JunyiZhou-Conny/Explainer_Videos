@@ -1,0 +1,3 @@
+$ docker rm gateway-all
+gateway-all
+[exit 0]

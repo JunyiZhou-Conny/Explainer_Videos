@@ -1,0 +1,5 @@
+$ docker ps
+CONTAINER ID   IMAGE           COMMAND                  CREATED         STATUS         PORTS                      NAMES
+d8d7a164c6db   toy-gateway     "python -u gateway.py"   3 seconds ago   Up 3 seconds   127.0.0.1:8090->9100/tcp   gateway
+b2d4c377813c   toy-processor   "python -u processor…"   3 seconds ago   Up 3 seconds                              processor
+[exit 0]

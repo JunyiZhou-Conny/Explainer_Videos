@@ -1,0 +1,4 @@
+$ docker logs gateway
+gateway listening on port 9100  →  open http://localhost:8090
+172.19.0.1 - - [13/Oct/2026 20:12:31] "POST / HTTP/1.1" 200 -
+[exit 0]

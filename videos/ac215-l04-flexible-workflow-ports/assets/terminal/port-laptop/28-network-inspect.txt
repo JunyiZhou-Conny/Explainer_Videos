@@ -1,0 +1,58 @@
+$ docker network inspect toynet
+[
+    {
+        "Name": "toynet",
+        "Id": "232a7adb827b32e0bb32eae5154c64f2d42b62d26c94c6900239acdf49eae05b",
+        "Created": "2026-10-13T20:12:11.858087928Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.19.0.0/16",
+                    "Gateway": "172.19.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {},
+        "Containers": {
+            "b2d4c377813cb60b8eaad72ed02c473d8fe3085155bc39b3df0a3356274b6969": {
+                "Name": "processor",
+                "EndpointID": "41db67d70e749c26a4f778236c097d3629171405dbe22e97dcacaccaa62e59f2",
+                "MacAddress": "6a:4f:fa:be:c9:e6",
+                "IPv4Address": "172.19.0.2/16",
+                "IPv6Address": ""
+            },
+            "d8d7a164c6db5703e0daf32bca0eb8d5786c8262dc216c9a1365aa8f0915a56f": {
+                "Name": "gateway",
+                "EndpointID": "0ee0134ff522a1bd9b839b18f9610fc426eb1576315f2fe3dc002fe58f380ee4",
+                "MacAddress": "c6:0c:3c:9d:82:67",
+                "IPv4Address": "172.19.0.3/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.19.0.0/16": {
+                        "IPsInUse": 5,
+                        "DynamicIPsAvailable": 65531
+                    }
+                }
+            }
+        }
+    }
+]
+[exit 0]

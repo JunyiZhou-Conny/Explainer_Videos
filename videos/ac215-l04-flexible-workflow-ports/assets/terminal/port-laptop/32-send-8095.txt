@@ -1,0 +1,3 @@
+$ curl -s -X POST http://localhost:8095 -H 'Content-Type: application/json' -d '{"text": "hello from the laptop"}'; echo
+{"upper": "HELLO FROM THE LAPTOP", "listen_port": 9200, "sender_port": 45848, "gateway_out_port": 45848}
+[exit 0]

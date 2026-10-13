@@ -1,0 +1,24 @@
+$ docker build -t toy-gateway ./gateway
+
+[+] Building 0.3s (9/9) FINISHED                                 docker:default
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 219B                                       0.0s
+ => [internal] load metadata for docker.io/library/python:3.14-slim        0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/4] FROM docker.io/library/python:3.14-slim@sha256:b69f105664082b4b  0.0s
+ => => resolve docker.io/library/python:3.14-slim@sha256:b69f105664082b4b  0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 8.79kB                                        0.0s
+ => CACHED [2/4] RUN apt-get update && apt-get install -y --no-install-re  0.0s
+ => CACHED [3/4] WORKDIR /app                                              0.0s
+ => [4/4] COPY . .                                                         0.0s
+ => exporting to image                                                     0.1s
+ => => exporting layers                                                    0.0s
+ => => exporting manifest sha256:ef5d8c084f1102b5f1ecfeb817a667701c7ca0cd  0.0s
+ => => exporting config sha256:422356d57b4485967251165ceb84389eb1e3cdbfb0  0.0s
+ => => exporting attestation manifest sha256:18f744dcac60ab0ff3716a28994c  0.0s
+ => => exporting manifest list sha256:5513e77f6ee8864979e666258bf8e836371  0.0s
+ => => naming to docker.io/library/toy-gateway:latest                      0.0s
+ => => unpacking to docker.io/library/toy-gateway:latest                   0.0s
+[exit 0]

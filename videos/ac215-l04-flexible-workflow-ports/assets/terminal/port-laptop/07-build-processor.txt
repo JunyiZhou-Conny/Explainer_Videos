@@ -1,0 +1,24 @@
+$ docker build -t toy-processor ./processor
+
+[+] Building 7.9s (9/9) FINISHED                                 docker:default
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 221B                                       0.0s
+ => [internal] load metadata for docker.io/library/python:3.14-slim        0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/4] FROM docker.io/library/python:3.14-slim@sha256:b69f105664082b4b  0.1s
+ => => resolve docker.io/library/python:3.14-slim@sha256:b69f105664082b4b  0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 1.89kB                                        0.0s
+ => [2/4] RUN apt-get update && apt-get install -y --no-install-recommend  6.9s
+ => [3/4] WORKDIR /app                                                     0.0s
+ => [4/4] COPY . .                                                         0.0s
+ => exporting to image                                                     0.8s
+ => => exporting layers                                                    0.6s
+ => => exporting manifest sha256:90e7d7322cb31b2582638e48c3596d6723de201c  0.0s
+ => => exporting config sha256:e60fc4094ec569a46cf3e4ebcc08aa56f521416a51  0.0s
+ => => exporting attestation manifest sha256:28abf502d77648f477b8ad9e5e34  0.0s
+ => => exporting manifest list sha256:9eb1eef3d0df152032575e9bf66a085c0ea  0.0s
+ => => naming to docker.io/library/toy-processor:latest                    0.0s
+ => => unpacking to docker.io/library/toy-processor:latest                 0.1s
+[exit 0]

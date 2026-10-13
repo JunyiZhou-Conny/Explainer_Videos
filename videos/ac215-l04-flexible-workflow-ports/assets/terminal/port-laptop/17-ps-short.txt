@@ -1,0 +1,5 @@
+$ docker ps --format 'table {{.Image}}\t{{.Ports}}\t{{.Names}}'
+IMAGE           PORTS                      NAMES
+toy-gateway     127.0.0.1:8090->9100/tcp   gateway
+toy-processor                              processor
+[exit 0]

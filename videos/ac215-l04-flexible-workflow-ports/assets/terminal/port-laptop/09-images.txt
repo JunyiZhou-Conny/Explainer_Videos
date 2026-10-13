@@ -1,0 +1,5 @@
+$ docker image ls 'toy-*'
+IMAGE                  ID             DISK USAGE   CONTENT SIZE   EXTRA
+toy-gateway:latest     5513e77f6ee8        198MB         48.8MB        
+toy-processor:latest   9eb1eef3d0df        198MB         48.8MB        
+[exit 0]

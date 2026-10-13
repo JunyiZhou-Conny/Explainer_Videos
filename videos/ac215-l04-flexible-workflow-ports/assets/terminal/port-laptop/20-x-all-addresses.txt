@@ -1,0 +1,3 @@
+$ docker run -d --name gateway-all --network toynet -p 8091:9100 toy-gateway
+c47463b5219a51b75638436045516286c7ebf613486c896fbd0bf0ae47d641ad
+[exit 0]

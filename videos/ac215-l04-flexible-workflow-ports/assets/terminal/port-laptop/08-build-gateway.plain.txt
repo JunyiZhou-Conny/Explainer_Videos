@@ -1,0 +1,38 @@
+$ docker buildx history logs noqbuas3z9gsqltsw0cerwxiq
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 219B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14-slim
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 8.79kB done
+#4 DONE 0.0s
+
+#5 [1/4] FROM docker.io/library/python:3.14-slim@sha256:b69f105664082b4b827ff8ecb9e787e77a8d8a0981b9a4ec6a01acb73012916a
+#5 resolve docker.io/library/python:3.14-slim@sha256:b69f105664082b4b827ff8ecb9e787e77a8d8a0981b9a4ec6a01acb73012916a 0.0s done
+#5 DONE 0.0s
+
+#6 [2/4] RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+#6 CACHED
+
+#7 [3/4] WORKDIR /app
+#7 CACHED
+
+#8 [4/4] COPY . .
+#8 DONE 0.0s
+
+#9 exporting to image
+#9 exporting layers 0.0s done
+#9 exporting manifest sha256:ef5d8c084f1102b5f1ecfeb817a667701c7ca0cd1a1cd92d86e30ea2847852f6 done
+#9 exporting config sha256:422356d57b4485967251165ceb84389eb1e3cdbfb06f981dbc1fe531a23197eb done
+#9 exporting attestation manifest sha256:18f744dcac60ab0ff3716a28994c2a94b47af1323e788e8ed43c195394760937 0.0s done
+#9 exporting manifest list sha256:5513e77f6ee8864979e666258bf8e836371d2e8fd21d8221101ca95e29726873 done
+#9 naming to docker.io/library/toy-gateway:latest done
+#9 unpacking to docker.io/library/toy-gateway:latest 0.0s done
+#9 DONE 0.1s
+[exit 0]

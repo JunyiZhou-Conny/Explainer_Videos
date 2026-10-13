@@ -1,0 +1,7 @@
+$ docker ps --format 'table {{.Image}}\t{{.Ports}}\t{{.Names}}'; docker rm -f gateway-all
+IMAGE           PORTS                      NAMES
+toy-gateway     0.0.0.0:8091->9100/tcp     gateway-all
+toy-gateway     127.0.0.1:8090->9100/tcp   gateway
+toy-processor                              processor
+gateway-all
+[exit 0]

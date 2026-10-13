@@ -1,0 +1,8 @@
+$ docker ps -a; docker network ls
+CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES
+ecf080fdaf68   hello-world   "/hello"   28 seconds ago   Exited (0) 27 seconds ago             focused_bose
+NETWORK ID     NAME      DRIVER    SCOPE
+2c1546e7d80a   bridge    bridge    local
+a17c333b75a4   host      host      local
+4150efb11a3c   none      null      local
+[exit 0]
