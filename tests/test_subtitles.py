@@ -784,3 +784,39 @@ def test_r4_english_video_srt_corpus():
                 assert len(ls) <= 2 and all(len(x) <= 44 for x in ls), text
                 assert tuple(ls) == S.wrap_en(" ".join(ls), 44 * 0.55), text
                 assert b - a >= 1.0 - 1e-9, text
+
+
+def test_r5_meta_video_srt():
+    """The .srt of 'How these videos are made' (director's review of the draft): a cue never ends on
+    a fragment of the next sentence, and lines never break inside a noun phrase."""
+    from explainer import build
+
+    def srt(t):
+        return [c[2].replace("\n", " / ") for c in build.split_cues(0.0, len(t) / 15, t)]
+    cases = {                                            # was "…looked like in an early // draft of…"
+        "Here's what a paused frame looked like in an early draft of one of these videos, about tic-tac-toe, "
+        "for kids around 12.": ["Here's what a paused frame looked like / in an early draft of one of these videos,",
+                                "about tic-tac-toe, for kids around 12."],
+        "There's no record yet of anyone checking it by ear.":                  # not "no record / yet"
+            ["There's no record yet / of anyone checking it by ear."],
+        "Both AI reviewers of the Chinese version caught it.":                  # not "the Chinese / version"
+            ["Both AI reviewers / of the Chinese version caught it."],
+        "Then skeptical verifiers checked the fixers' work, and made 12 more corrections.":   # "fixers' / work"
+            ["Then skeptical verifiers / checked the fixers' work,", "and made 12 more corrections."],
+        "Every test viewer on record was simulated, and there's no measure yet of what anyone learned.":
+            ["Every test viewer on record was simulated,", "and there's no measure yet / of what anyone learned."],
+        "There's no recorded human review of any narration yet.":               # not "recorded human / review"
+            ["There's no recorded human review / of any narration yet."],
+    }
+    for t, cues in cases.items():
+        assert srt(t) == cues, t
+    # "Minutes later," (too short to read alone) no longer folds back into the sentence before
+    # ("…into its own guide / on day one. Minutes later,"): its own sentence is cut again instead
+    cues = srt("The agent wrote that rule into its own guide on day one. Minutes later, it started six "
+               "sub-agents building scenes while the review was still running.")
+    assert cues == ["The agent wrote that rule / into its own guide on day one.",
+                    "Minutes later, / it started six sub-agents building scenes", "while the review was still running."]
+    # a short sentence the pause after it can hold stays up 1 s alone, not run into the next one
+    t = "It wasn't. The translation had a full stop after that no, so the cue split there."
+    out = build.split_cues(10.0, 15.0, t, marks=[(0, 0.0), (11, 1.22)])
+    assert out[0] == (10.0, 11.0, "It wasn't.") and out[1][0] == 11.22

@@ -14,6 +14,7 @@ privacy and won the 2017 Gödel Prize.
 | `output/zh/dwork2006-calibrating-noise.mp4` | **中文版**: the Chinese version (Mandarin narration, Chinese on-screen text, bilingual subtitles burned in); see [`i18n/zh/README.md`](i18n/zh/README.md) |
 | `output/zh/dwork2006-calibrating-noise_part1.mp4` / `_part2.mp4` | the Chinese version in two parts |
 | `output/zh/dwork2006-calibrating-noise.zh.srt`, `.en.srt`, `.zh-en.srt` / `.ass` | its subtitle files (Chinese, English on the Chinese timing, bilingual) |
+| `output/dwork2006-calibrating-noise.zh-en.mp4` | the English video with bilingual subtitles burned in (Chinese above, English below): the upload copy for Bilibili |
 | `output/dwork2006-calibrating-noise.zh.srt`, `.zh-en.srt` / `.ass` | Chinese and bilingual subtitles for the English video |
 | `i18n/zh/` | the Chinese translation (narration, on-screen text, glossary) and companions (exercises, playground, digest) |
 | `exercises.md` | do these after watching: pen-and-paper problems + a 15-minute coding task |

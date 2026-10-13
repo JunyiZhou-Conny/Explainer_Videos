@@ -1,0 +1,245 @@
+[Script Info]
+Title: 差分隐私（上）：定义与拉普拉斯机制
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.08,Bilingual,,0,0,0,,这是一个医院数据库，每个病人一条记录\N{\fs33\c&H00C8C0B8&\bord1.4}Here is a hospital database, one row per patient.
+Dialogue: 0,0:00:03.40,0:00:08.67,Bilingual,,0,0,0,,有位研究者问了个看似无害的问题：有多少病人患有疾病 X？\N{\fs33\c&H00C8C0B8&\bord1.4}A researcher asks an innocent question: how many patients have condition X?
+Dialogue: 0,0:00:08.99,0:00:10.69,Bilingual,,0,0,0,,医院不公开任何记录\N{\fs33\c&H00C8C0B8&\bord1.4}The hospital releases no records.
+Dialogue: 0,0:00:11.01,0:00:13.08,Bilingual,,0,0,0,,它只给了一个数：41\N{\fs33\c&H00C8C0B8&\bord1.4}It just says: 41.
+Dialogue: 0,0:00:13.32,0:00:16.29,Bilingual,,0,0,0,,一周后，一位新病人 Alice 入院了\N{\fs33\c&H00C8C0B8&\bord1.4}A week later, one new patient, Alice, is admitted.
+Dialogue: 0,0:00:16.61,0:00:18.21,Bilingual,,0,0,0,,研究者又问了一遍\N{\fs33\c&H00C8C0B8&\bord1.4}The researcher asks again.
+Dialogue: 0,0:00:18.42,0:00:20.02,Bilingual,,0,0,0,,现在答案是 42\N{\fs33\c&H00C8C0B8&\bord1.4}The answer is now 42.
+Dialogue: 0,0:00:20.17,0:00:24.63,Bilingual,,0,0,0,,两数一减，研究者就知道了 Alice 一件很具体的事\N{\fs33\c&H00C8C0B8&\bord1.4}Subtract, and the researcher has learned something very specific about Alice,
+Dialogue: 0,0:00:24.63,0:00:26.31,Bilingual,,0,0,0,,却一条记录都没看\N{\fs33\c&H00C8C0B8&\bord1.4}without seeing a single record.
+Dialogue: 0,0:00:26.63,0:00:29.70,Bilingual,,0,0,0,,继续之前，先自己试着补上这个漏洞\N{\fs33\c&H00C8C0B8&\bord1.4}Before we go on, try to fix this yourself.
+Dialogue: 0,0:00:30.02,0:00:34.46,Bilingual,,0,0,0,,暂停想一想：人数四舍五入到十位，能保护 Alice 吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and ponder: would rounding the count to the nearest ten protect Alice?
+Dialogue: 0,0:00:34.78,0:00:37.95,Bilingual,,0,0,0,,需要多想一会儿的话，可以先暂停视频\N{\fs33\c&H00C8C0B8&\bord1.4}Pause the video if you need more time.
+Dialogue: 0,0:00:48.20,0:00:50.53,Bilingual,,0,0,0,,大多数星期里，确实可以\N{\fs33\c&H00C8C0B8&\bord1.4}Most weeks, yes.
+Dialogue: 0,0:00:50.85,0:00:53.46,Bilingual,,0,0,0,,但如果人数从 44 变成 45\N{\fs33\c&H00C8C0B8&\bord1.4}But if the count goes from 44 to 45,
+Dialogue: 0,0:00:53.46,0:00:58.17,Bilingual,,0,0,0,,取整后的答案就从 40 跳到 50，Alice 又暴露了\N{\fs33\c&H00C8C0B8&\bord1.4}the rounded answer jumps from 40 to 50, and Alice is exposed again.
+Dialogue: 0,0:00:58.49,0:01:03.66,Bilingual,,0,0,0,,任何确定性的规则，只要答案会变，就一定在某处有这样的跳变\N{\fs33\c&H00C8C0B8&\bord1.4}Any fixed rule that ever changes its answer has a jump like that somewhere.
+Dialogue: 0,0:01:03.90,0:01:07.52,Bilingual,,0,0,0,,那发布统计量，到底怎样才算不泄露隐私？\N{\fs33\c&H00C8C0B8&\bord1.4}So what would it even mean for a statistic to be private?
+Dialogue: 0,0:01:07.84,0:01:10.51,Bilingual,,0,0,0,,如果靠加噪声，那加多少才够？\N{\fs33\c&H00C8C0B8&\bord1.4}And if the fix is to add noise, how much is enough?
+Dialogue: 0,0:01:10.75,0:01:14.12,Bilingual,,0,0,0,,2006 年，Cynthia Dwork、Frank McSherry\N{\fs33\c&H00C8C0B8&\bord1.4}In 2006, Cynthia Dwork, Frank McSherry,
+Dialogue: 0,0:01:14.12,0:01:16.36,Bilingual,,0,0,0,,Kobbi Nissim 和 Adam Smith\N{\fs33\c&H00C8C0B8&\bord1.4}Kobbi Nissim and Adam Smith
+Dialogue: 0,0:01:16.36,0:01:18.69,Bilingual,,0,0,0,,在这篇 paper 里回答了这两个问题\N{\fs33\c&H00C8C0B8&\bord1.4}answered both questions in this paper:
+Dialogue: 0,0:01:18.69,0:01:23.60,Bilingual,,0,0,0,,《Calibrating Noise to Sensitivity in Private Data Analysis》\N{\fs33\c&H00C8C0B8&\bord1.4}Calibrating Noise to Sensitivity in Private Data Analysis.
+Dialogue: 0,0:01:23.92,0:01:28.82,Bilingual,,0,0,0,,它开创了我们今天所说的差分隐私（differential privacy）\N{\fs33\c&H00C8C0B8&\bord1.4}It founded what we now call differential privacy,
+Dialogue: 0,0:01:28.82,0:01:31.27,Bilingual,,0,0,0,,2017 年还获得了哥德尔奖\N{\fs33\c&H00C8C0B8&\bord1.4}and in 2017 it won the Gödel Prize.
+Dialogue: 0,0:01:31.52,0:01:35.53,Bilingual,,0,0,0,,这期视频讲它的三个核心想法：隐私的定义\N{\fs33\c&H00C8C0B8&\bord1.4}This video covers its three big ideas: a definition of privacy,
+Dialogue: 0,0:01:35.53,0:01:38.75,Bilingual,,0,0,0,,一个数叫敏感度（sensitivity）\N{\fs33\c&H00C8C0B8&\bord1.4}a number called sensitivity,
+Dialogue: 0,0:01:38.75,0:01:41.96,Bilingual,,0,0,0,,以及一个公式，算噪声加多少才够\N{\fs33\c&H00C8C0B8&\bord1.4}and a recipe for how much noise is enough.
+Dialogue: 0,0:01:42.28,0:01:44.30,Bilingual,,0,0,0,,还有个出人意料的限制\N{\fs33\c&H00C8C0B8&\bord1.4}Plus a surprising limit
+Dialogue: 0,0:01:44.30,0:01:48.34,Bilingual,,0,0,0,,要满足这个定义，只公开一张表，能做的很有限\N{\fs33\c&H00C8C0B8&\bord1.4}on what one published table can achieve, if it must be private in this sense.
+Dialogue: 0,0:01:49.78,0:01:53.26,Bilingual,,0,0,0,,先画一张地图，看看这篇 paper 从哪儿来\N{\fs33\c&H00C8C0B8&\bord1.4}First, a map of where this paper comes from.
+Dialogue: 0,0:01:53.58,0:01:58.63,Bilingual,,0,0,0,,1965 年，Stanley Warner 为敏感问题调查提出了随机响应\N{\fs33\c&H00C8C0B8&\bord1.4}In 1965, Stanley Warner proposed randomized response for sensitive surveys.
+Dialogue: 0,0:01:58.95,0:02:01.92,Bilingual,,0,0,0,,在常见的版本里，你私下掷一枚硬币\N{\fs33\c&H00C8C0B8&\bord1.4}In a popular version, you flip a coin in private.
+Dialogue: 0,0:02:02.24,0:02:04.15,Bilingual,,0,0,0,,正面，你就如实回答\N{\fs33\c&H00C8C0B8&\bord1.4}Heads, you answer truthfully.
+Dialogue: 0,0:02:04.47,0:02:08.52,Bilingual,,0,0,0,,反面，你就再掷一次：正面答“是”，反面答“否”\N{\fs33\c&H00C8C0B8&\bord1.4}Tails, you flip again and say yes for heads, no for tails.
+Dialogue: 0,0:02:08.84,0:02:12.33,Bilingual,,0,0,0,,任何一个“是”，都可能只是硬币替你说的\N{\fs33\c&H00C8C0B8&\bord1.4}Any single yes could be the coin talking,
+Dialogue: 0,0:02:12.33,0:02:15.99,Bilingual,,0,0,0,,但问上成千上万人，真实比例照样能估出来\N{\fs33\c&H00C8C0B8&\bord1.4}yet over thousands of people the true rate can still be estimated.
+Dialogue: 0,0:02:16.31,0:02:17.67,Bilingual,,0,0,0,,记住这枚硬币\N{\fs33\c&H00C8C0B8&\bord1.4}Keep this coin in mind.
+Dialogue: 0,0:02:17.72,0:02:22.94,Bilingual,,0,0,0,,之后几十年，统计学家和计算机科学家，不断改进这类 trick\N{\fs33\c&H00C8C0B8&\bord1.4}Over the following decades, statisticians and computer scientists refined such tricks,
+Dialogue: 0,0:02:22.94,0:02:27.92,Bilingual,,0,0,0,,分成两种思路：要么扰动输入的数据，要么扰动输出的答案\N{\fs33\c&H00C8C0B8&\bord1.4}in two flavours: scramble the data going in, or scramble the answers coming out.
+Dialogue: 0,0:02:28.17,0:02:33.67,Bilingual,,0,0,0,,与此同时，最容易想到的办法，也就是直接去掉姓名，却一再失败\N{\fs33\c&H00C8C0B8&\bord1.4}Meanwhile, the obvious fix, just remove the names, kept failing.
+Dialogue: 0,0:02:33.99,0:02:36.27,Bilingual,,0,0,0,,Latanya Sweeney 发现\N{\fs33\c&H00C8C0B8&\bord1.4}Latanya Sweeney showed
+Dialogue: 0,0:02:36.27,0:02:41.28,Bilingual,,0,0,0,,光凭邮编、出生日期和性别，就能唯一识别大多数美国人\N{\fs33\c&H00C8C0B8&\bord1.4}that ZIP code, birth date and sex alone single out most Americans,
+Dialogue: 0,0:02:41.28,0:02:46.25,Bilingual,,0,0,0,,1997 年，她把号称匿名的病历和公开的选民名单一对照\N{\fs33\c&H00C8C0B8&\bord1.4}and in 1997 she linked supposedly anonymous hospital records to a public voter list
+Dialogue: 0,0:02:46.25,0:02:48.57,Bilingual,,0,0,0,,就认出了马萨诸塞州州长\N{\fs33\c&H00C8C0B8&\bord1.4}and found the governor of Massachusetts.
+Dialogue: 0,0:02:48.89,0:02:52.44,Bilingual,,0,0,0,,教训是：隐私必须是发布过程本身的性质\N{\fs33\c&H00C8C0B8&\bord1.4}The lesson: privacy must be a property of the process,
+Dialogue: 0,0:02:52.44,0:02:55.25,Bilingual,,0,0,0,,而不是看发布出来的表长什么样\N{\fs33\c&H00C8C0B8&\bord1.4}not of how the released table looks,
+Dialogue: 0,0:02:55.25,0:02:59.37,Bilingual,,0,0,0,,而且无论攻击者还知道什么，这一点都必须成立\N{\fs33\c&H00C8C0B8&\bord1.4}and it must hold whatever else the attacker knows.
+Dialogue: 0,0:02:59.60,0:03:01.01,Bilingual,,0,0,0,,然后在 2003 年\N{\fs33\c&H00C8C0B8&\bord1.4}Then, in 2003,
+Dialogue: 0,0:03:01.01,0:03:05.71,Bilingual,,0,0,0,,Irit Dinur 和 Kobbi Nissim 证明了一个令人警醒的结论\N{\fs33\c&H00C8C0B8&\bord1.4}Irit Dinur and Kobbi Nissim proved something sobering.
+Dialogue: 0,0:03:06.03,0:03:09.91,Bilingual,,0,0,0,,问题答得太多、太准，误差远小于根号 n\N{\fs33\c&H00C8C0B8&\bord1.4}Answer too many questions too accurately, with errors much smaller than the square root of n,
+Dialogue: 0,0:03:09.91,0:03:13.16,Bilingual,,0,0,0,,攻击者就能重构出几乎整个数据库\N{\fs33\c&H00C8C0B8&\bord1.4}and an attacker can rebuild almost the entire database.
+Dialogue: 0,0:03:13.48,0:03:18.82,Bilingual,,0,0,0,,我们那个做减法的攻击，其实就是这种攻击只问两个问题的版本\N{\fs33\c&H00C8C0B8&\bord1.4}Our subtraction was the two-question version of this attack.
+Dialogue: 0,0:03:19.14,0:03:21.91,Bilingual,,0,0,0,,噪声，就是回答很多问题的代价\N{\fs33\c&H00C8C0B8&\bord1.4}Noise is the price of answering many questions.
+Dialogue: 0,0:03:22.15,0:03:26.72,Bilingual,,0,0,0,,反过来也有好消息：问题数量有限，适量噪声就够了\N{\fs33\c&H00C8C0B8&\bord1.4}The hopeful flip side: with a limited number of questions, modest noise is enough.
+Dialogue: 0,0:03:27.04,0:03:31.73,Bilingual,,0,0,0,,Dwork、Nissim 和合作者，据此做了个叫 SuLQ 的框架\N{\fs33\c&H00C8C0B8&\bord1.4}Dwork, Nissim and colleagues built this into a framework called SuLQ,
+Dialogue: 0,0:03:31.73,0:03:34.62,Bilingual,,0,0,0,,意思是只问次线性数量的 query（查询）\N{\fs33\c&H00C8C0B8&\bord1.4}for sub-linear queries,
+Dialogue: 0,0:03:34.62,0:03:37.44,Bilingual,,0,0,0,,它回答带噪声的求和，比如人数\N{\fs33\c&H00C8C0B8&\bord1.4}which answers noisy sums like counts.
+Dialogue: 0,0:03:37.76,0:03:39.36,Bilingual,,0,0,0,,记住提问的上限\N{\fs33\c&H00C8C0B8&\bord1.4}Remember that limit on questions.
+Dialogue: 0,0:03:39.50,0:03:41.96,Bilingual,,0,0,0,,这篇 paper 把它变成一笔预算\N{\fs33\c&H00C8C0B8&\bord1.4}This paper turns it into a budget.
+Dialogue: 0,0:03:42.20,0:03:44.43,Bilingual,,0,0,0,,但 SuLQ 只能处理求和\N{\fs33\c&H00C8C0B8&\bord1.4}But SuLQ only covered sums,
+Dialogue: 0,0:03:44.43,0:03:48.57,Bilingual,,0,0,0,,而且它的定义允许有极小的概率发生大量泄露\N{\fs33\c&H00C8C0B8&\bord1.4}and its definition tolerated a tiny chance of a large leak.
+Dialogue: 0,0:03:48.89,0:03:53.29,Bilingual,,0,0,0,,这篇 paper 迈出了一大步：适用于数据的任意函数\N{\fs33\c&H00C8C0B8&\bord1.4}This paper takes the leap: any function of the data,
+Dialogue: 0,0:03:53.29,0:03:56.97,Bilingual,,0,0,0,,只用一个干净的定义和一条简单的噪声规则\N{\fs33\c&H00C8C0B8&\bord1.4}one clean definition, and one simple rule for the noise.
+Dialogue: 0,0:03:57.29,0:04:02.49,Bilingual,,0,0,0,,难怪它发表在密码学会议上：那里的习惯就是先定义安全性\N{\fs33\c&H00C8C0B8&\bord1.4}Fittingly, it appeared at a cryptography conference, where the habit is to define security
+Dialogue: 0,0:04:02.49,0:04:06.15,Bilingual,,0,0,0,,要求能抵御所有可能的攻击者，再去证明\N{\fs33\c&H00C8C0B8&\bord1.4}against every possible attacker first, and then prove it.
+Dialogue: 0,0:04:08.58,0:04:10.28,Bilingual,,0,0,0,,先交代一下 setting\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the setting.
+Dialogue: 0,0:04:10.60,0:04:13.85,Bilingual,,0,0,0,,可信的服务器，也就是数据管理者\N{\fs33\c&H00C8C0B8&\bord1.4}A trusted server, the curator,
+Dialogue: 0,0:04:13.85,0:04:17.34,Bilingual,,0,0,0,,持有数据库 x：n 条记录，每人一条\N{\fs33\c&H00C8C0B8&\bord1.4}holds a database x: n rows, one per person.
+Dialogue: 0,0:04:17.66,0:04:19.75,Bilingual,,0,0,0,,分析者发来 query f\N{\fs33\c&H00C8C0B8&\bord1.4}An analyst sends a query f,
+Dialogue: 0,0:04:19.75,0:04:23.56,Bilingual,,0,0,0,,数据库的任意函数，返回一个数或一组数\N{\fs33\c&H00C8C0B8&\bord1.4}any function of the database that returns a number, or a list of numbers.
+Dialogue: 0,0:04:23.80,0:04:27.39,Bilingual,,0,0,0,,数据管理者从不公开真实答案 f(x)\N{\fs33\c&H00C8C0B8&\bord1.4}The curator never releases the honest answer, f(x).
+Dialogue: 0,0:04:27.71,0:04:32.66,Bilingual,,0,0,0,,它的做法是先抽一个随机噪声 Y，再公开 f(x) 加 Y\N{\fs33\c&H00C8C0B8&\bord1.4}Instead it draws random noise, Y, and releases f(x) + Y.
+Dialogue: 0,0:04:32.98,0:04:37.68,Bilingual,,0,0,0,,因为分析者可以一直问下去，所以这叫交互式的 setting\N{\fs33\c&H00C8C0B8&\bord1.4}Because the analyst can keep asking, this is called the interactive setting.
+Dialogue: 0,0:04:38.00,0:04:41.48,Bilingual,,0,0,0,,另一种做法是发布一张经过隐私处理的表\N{\fs33\c&H00C8C0B8&\bord1.4}The alternative, publishing one sanitized table
+Dialogue: 0,0:04:41.48,0:04:44.04,Bilingual,,0,0,0,,然后撒手不管，这叫非交互式\N{\fs33\c&H00C8C0B8&\bord1.4}and walking away, is non-interactive.
+Dialogue: 0,0:04:44.36,0:04:47.84,Bilingual,,0,0,0,,原文最后证明了，交互式从根本上更强\N{\fs33\c&H00C8C0B8&\bord1.4}At the end, the paper proves the first is fundamentally more powerful.
+Dialogue: 0,0:04:48.08,0:04:52.72,Bilingual,,0,0,0,,所以一切都归结到一个问题：Y 应该服从什么分布？\N{\fs33\c&H00C8C0B8&\bord1.4}So everything hinges on one question: what distribution should Y have?
+Dialogue: 0,0:04:53.04,0:04:55.53,Bilingual,,0,0,0,,噪声太少，Alice 就暴露了\N{\fs33\c&H00C8C0B8&\bord1.4}Too little noise, and Alice is exposed.
+Dialogue: 0,0:04:55.85,0:04:57.63,Bilingual,,0,0,0,,太多，答案就没用了\N{\fs33\c&H00C8C0B8&\bord1.4}Too much, and the answer is useless.
+Dialogue: 0,0:04:57.95,0:05:01.68,Bilingual,,0,0,0,,标题已经给出了答案：按敏感度校准噪声\N{\fs33\c&H00C8C0B8&\bord1.4}The title gives the answer: calibrate the noise to the sensitivity.
+Dialogue: 0,0:05:02.00,0:05:05.75,Bilingual,,0,0,0,,不过我们先要搞清楚：到底什么叫不泄露隐私？\N{\fs33\c&H00C8C0B8&\bord1.4}But first, what does private actually mean?
+Dialogue: 0,0:05:07.10,0:05:08.76,Bilingual,,0,0,0,,关键是想象两个世界\N{\fs33\c&H00C8C0B8&\bord1.4}The key move is to imagine two worlds.
+Dialogue: 0,0:05:09.08,0:05:10.92,Bilingual,,0,0,0,,一边是数据库 x\N{\fs33\c&H00C8C0B8&\bord1.4}In one, the database is x.
+Dialogue: 0,0:05:11.24,0:05:14.72,Bilingual,,0,0,0,,另一边是 x′：只有一条记录不同\N{\fs33\c&H00C8C0B8&\bord1.4}In the other, it is x′: identical except for one row.
+Dialogue: 0,0:05:15.04,0:05:16.65,Bilingual,,0,0,0,,比如 Alice 那条\N{\fs33\c&H00C8C0B8&\bord1.4}Say, Alice's.
+Dialogue: 0,0:05:16.97,0:05:19.20,Bilingual,,0,0,0,,这样的一对叫相邻数据库（也叫相邻数据集）\N{\fs33\c&H00C8C0B8&\bord1.4}Databases like this are called neighbors.
+Dialogue: 0,0:05:19.52,0:05:23.39,Bilingual,,0,0,0,,医院例子里多了 Alice；这里是她的记录变了\N{\fs33\c&H00C8C0B8&\bord1.4}In the hospital, Alice was added; here, her row just says something different.
+Dialogue: 0,0:05:23.71,0:05:26.49,Bilingual,,0,0,0,,总之，谁的记录都不该影响太大\N{\fs33\c&H00C8C0B8&\bord1.4}Either way, no single person's row should matter much.
+Dialogue: 0,0:05:26.73,0:05:30.45,Bilingual,,0,0,0,,把这个机制，也就是数据管理者随机作答的规则\N{\fs33\c&H00C8C0B8&\bord1.4}Run the mechanism, the curator's randomized answering rule,
+Dialogue: 0,0:05:30.45,0:05:32.31,Bilingual,,0,0,0,,在两个世界里各跑一次\N{\fs33\c&H00C8C0B8&\bord1.4}in each world.
+Dialogue: 0,0:05:32.63,0:05:36.41,Bilingual,,0,0,0,,分析者能看到的一切，原文叫 transcript（交互历史）\N{\fs33\c&H00C8C0B8&\bord1.4}Whatever the analyst gets to see, the paper calls the transcript;
+Dialogue: 0,0:05:36.41,0:05:38.86,Bilingual,,0,0,0,,目前就是一个带噪声的答案\N{\fs33\c&H00C8C0B8&\bord1.4}for now, a single noisy answer.
+Dialogue: 0,0:05:39.18,0:05:43.64,Bilingual,,0,0,0,,因为机制是随机的，每个世界都对应一个完整的输出分布\N{\fs33\c&H00C8C0B8&\bord1.4}Because the mechanism is random, each world gives a whole distribution of possible outputs.
+Dialogue: 0,0:05:43.88,0:05:47.63,Bilingual,,0,0,0,,任取一个输出 t，比较两条曲线在这里的高度\N{\fs33\c&H00C8C0B8&\bord1.4}Pick any output t, and compare the heights of the two curves there.
+Dialogue: 0,0:05:47.95,0:05:50.08,Bilingual,,0,0,0,,滑动 t，看它们的比值\N{\fs33\c&H00C8C0B8&\bord1.4}Slide t along and watch their ratio.
+Dialogue: 0,0:05:50.40,0:05:53.99,Bilingual,,0,0,0,,满足差分隐私的机制，让比值处处接近 1\N{\fs33\c&H00C8C0B8&\bord1.4}A private mechanism keeps that ratio close to 1 everywhere:
+Dialogue: 0,0:05:53.99,0:05:59.15,Bilingual,,0,0,0,,不超过 e^ε，也不低于 e^(−ε)\N{\fs33\c&H00C8C0B8&\bord1.4}never above e^ε, never below e^(−ε).
+Dialogue: 0,0:05:59.38,0:06:03.13,Bilingual,,0,0,0,,这就是原文的定义，叫作 ε-不可区分性（即 ε-差分隐私）\N{\fs33\c&H00C8C0B8&\bord1.4}That is the paper's definition, which it calls ε-indistinguishability.
+Dialogue: 0,0:06:03.45,0:06:06.86,Bilingual,,0,0,0,,比值的对数，就是输出 t 处的隐私损失\N{\fs33\c&H00C8C0B8&\bord1.4}The log of the ratio is the privacy loss at t.
+Dialogue: 0,0:06:07.18,0:06:11.40,Bilingual,,0,0,0,,对任意一对相邻数据库、任意分析者、任意输出\N{\fs33\c&H00C8C0B8&\bord1.4}For every pair of neighbors, every analyst and every output,
+Dialogue: 0,0:06:11.40,0:06:14.28,Bilingual,,0,0,0,,它的绝对值都不能超过 ε\N{\fs33\c&H00C8C0B8&\bord1.4}it must be at most ε in absolute value.
+Dialogue: 0,0:06:14.60,0:06:19.45,Bilingual,,0,0,0,,取绝对值就对称了：比值是 2 还是 1/2，都算一样\N{\fs33\c&H00C8C0B8&\bord1.4}The absolute value makes it symmetric: a ratio of 2 and a ratio of 1/2 count the same.
+Dialogue: 0,0:06:19.77,0:06:25.36,Bilingual,,0,0,0,,ε 很小的时候，e^ε 约等于 1 + ε\N{\fs33\c&H00C8C0B8&\bord1.4}For small ε, e^ε is about 1 + ε.
+Dialogue: 0,0:06:25.60,0:06:27.91,Bilingual,,0,0,0,,拿地图上 Warner 的硬币试试\N{\fs33\c&H00C8C0B8&\bord1.4}Let's test it on Warner's coin from our map.
+Dialogue: 0,0:06:28.23,0:06:31.96,Bilingual,,0,0,0,,暂停想一想：如果 Alice 的真实答案为“是”\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and ponder: if Alice's true answer is yes,
+Dialogue: 0,0:06:31.96,0:06:35.18,Bilingual,,0,0,0,,她有多大概率回答“是”？换成“否”呢？\N{\fs33\c&H00C8C0B8&\bord1.4}how likely is she to say yes? And if it is no?
+Dialogue: 0,0:06:48.02,0:06:54.10,Bilingual,,0,0,0,,真实答案为“是”，她回答“是”的概率是 3/4：正面，或者先反后正\N{\fs33\c&H00C8C0B8&\bord1.4}If the truth is yes, she says yes 3/4 of the time: heads, or tails then heads.
+Dialogue: 0,0:06:54.42,0:06:59.02,Bilingual,,0,0,0,,换成“否”，只有第二枚硬币能让她回答“是”：1/4\N{\fs33\c&H00C8C0B8&\bord1.4}If it is no, only the second coin can say yes: 1/4.
+Dialogue: 0,0:06:59.34,0:07:02.67,Bilingual,,0,0,0,,最坏的比值是 3，所以硬币满足定义\N{\fs33\c&H00C8C0B8&\bord1.4}The worst ratio is 3, so the coin satisfies the definition,
+Dialogue: 0,0:07:02.67,0:07:06.58,Bilingual,,0,0,0,,ε 就等于 3 的自然对数，大约 1.1\N{\fs33\c&H00C8C0B8&\bord1.4}with ε = ln 3, about 1.1.
+Dialogue: 0,0:07:06.82,0:07:09.91,Bilingual,,0,0,0,,现在你是攻击者，想区分这两个世界\N{\fs33\c&H00C8C0B8&\bord1.4}Now be the attacker, trying to tell the two worlds apart.
+Dialogue: 0,0:07:10.23,0:07:15.50,Bilingual,,0,0,0,,按贝叶斯公式，后验概率比恰好是先验概率比乘上这个比值\N{\fs33\c&H00C8C0B8&\bord1.4}By Bayes' rule, your new odds are your old odds times exactly this ratio,
+Dialogue: 0,0:07:15.50,0:07:21.67,Bilingual,,0,0,0,,所以最多只会变成原来的 e^ε 倍，无论你之前知道什么\N{\fs33\c&H00C8C0B8&\bord1.4}so they move by at most a factor of e^ε, whatever you knew before.
+Dialogue: 0,0:07:21.99,0:07:28.94,Bilingual,,0,0,0,,一开始是五五开的话，ε 取 0.1 最多有 52.5% 的把握\N{\fs33\c&H00C8C0B8&\bord1.4}Starting from 50/50, ε = 0.1 leaves you at most 52.5% sure;
+Dialogue: 0,0:07:28.94,0:07:31.39,Bilingual,,0,0,0,,取 1 最多 73%\N{\fs33\c&H00C8C0B8&\bord1.4}ε = 1, at most 73%.
+Dialogue: 0,0:07:31.71,0:07:35.56,Bilingual,,0,0,0,,ε 是人为选定的；原文管它叫 leakage（泄露量）\N{\fs33\c&H00C8C0B8&\bord1.4}ε is set by policy; the paper calls it the leakage.
+Dialogue: 0,0:07:35.80,0:07:37.46,Bilingual,,0,0,0,,再来看它不保证什么\N{\fs33\c&H00C8C0B8&\bord1.4}Notice what this does not promise.
+Dialogue: 0,0:07:37.78,0:07:40.98,Bilingual,,0,0,0,,假如研究发现吸烟者更容易得心脏病\N{\fs33\c&H00C8C0B8&\bord1.4}If a study reveals that smokers get more heart disease,
+Dialogue: 0,0:07:40.98,0:07:45.28,Bilingual,,0,0,0,,而 Alice 吸烟，别人现在就可能觉得她风险更高\N{\fs33\c&H00C8C0B8&\bord1.4}and Alice smokes, people may now think she is at higher risk.
+Dialogue: 0,0:07:45.60,0:07:50.35,Bilingual,,0,0,0,,这不算侵犯隐私：同样的结论从其他人的数据里也能得出\N{\fs33\c&H00C8C0B8&\bord1.4}That is not a privacy violation: the same lesson could be learned from everyone else's data,
+Dialogue: 0,0:07:50.35,0:07:54.89,Bilingual,,0,0,0,,所以就算把 Alice 的记录换成别人的，也照样会发生\N{\fs33\c&H00C8C0B8&\bord1.4}so it would happen even if Alice's row were replaced by someone else's.
+Dialogue: 0,0:07:56.33,0:07:59.10,Bilingual,,0,0,0,,为什么每个输出的比值都要有上界？\N{\fs33\c&H00C8C0B8&\bord1.4}Why demand a ratio bound for every single output?
+Dialogue: 0,0:07:59.42,0:08:02.06,Bilingual,,0,0,0,,密码学常常满足于更弱的标准\N{\fs33\c&H00C8C0B8&\bord1.4}Cryptography often settles for something weaker:
+Dialogue: 0,0:08:02.06,0:08:05.66,Bilingual,,0,0,0,,统计距离（即 TV 距离），也就是两条曲线间面积的一半\N{\fs33\c&H00C8C0B8&\bord1.4}statistical distance, half the area between the two curves.
+Dialogue: 0,0:08:05.98,0:08:10.47,Bilingual,,0,0,0,,等价地说，就是任意事件的概率在两个世界间的最大差距\N{\fs33\c&H00C8C0B8&\bord1.4}Equivalently, the most the probability of any event can differ between the worlds.
+Dialogue: 0,0:08:10.79,0:08:13.24,Bilingual,,0,0,0,,原文说明了它在这里为什么不够\N{\fs33\c&H00C8C0B8&\bord1.4}The paper shows why that is not enough here.
+Dialogue: 0,0:08:13.48,0:08:17.12,Bilingual,,0,0,0,,看这个机制：随机挑一条记录，原样发布\N{\fs33\c&H00C8C0B8&\bord1.4}Consider this mechanism: pick one row at random and publish it, word for word.
+Dialogue: 0,0:08:17.44,0:08:21.72,Bilingual,,0,0,0,,改动一个人的记录，输出分布只会变化 1/n\N{\fs33\c&H00C8C0B8&\bord1.4}Change one person's row, and the output distribution moves by only 1/n.
+Dialogue: 0,0:08:22.04,0:08:24.94,Bilingual,,0,0,0,,数据库很大时这点变化微不足道\N{\fs33\c&H00C8C0B8&\bord1.4}For a big database that is tiny,
+Dialogue: 0,0:08:24.94,0:08:29.58,Bilingual,,0,0,0,,所以按这种平均意义上的度量，它看起来不泄露隐私\N{\fs33\c&H00C8C0B8&\bord1.4}so by the averaged measure this looks private.
+Dialogue: 0,0:08:29.82,0:08:32.67,Bilingual,,0,0,0,,可每个输出都是某个人的完整记录\N{\fs33\c&H00C8C0B8&\bord1.4}But every output is somebody's complete record.
+Dialogue: 0,0:08:32.99,0:08:37.42,Bilingual,,0,0,0,,比值这一关能拦住它：显示 Alice 真实取值的输出\N{\fs33\c&H00C8C0B8&\bord1.4}The ratio test catches it: the output showing Alice's real value
+Dialogue: 0,0:08:37.42,0:08:41.07,Bilingual,,0,0,0,,一个世界里概率是 1/n，另一个是 0\N{\fs33\c&H00C8C0B8&\bord1.4}has probability 1/n in one world, and 0 in the other.
+Dialogue: 0,0:08:41.39,0:08:42.90,Bilingual,,0,0,0,,比值是无穷大\N{\fs33\c&H00C8C0B8&\bord1.4}The ratio is infinite.
+Dialogue: 0,0:08:42.95,0:08:47.37,Bilingual,,0,0,0,,平均值会放过那些对每个人来说都很罕见的灾难\N{\fs33\c&H00C8C0B8&\bord1.4}Averages let catastrophes slip through, as long as each is rare for any single person.
+Dialogue: 0,0:08:47.69,0:08:50.59,Bilingual,,0,0,0,,而比值上界会处处把它们排除在外\N{\fs33\c&H00C8C0B8&\bord1.4}A ratio bound rules them out everywhere.
+Dialogue: 0,0:08:50.91,0:08:53.26,Bilingual,,0,0,0,,它也解答了四舍五入那道题\N{\fs33\c&H00C8C0B8&\bord1.4}It also settles our rounding question:
+Dialogue: 0,0:08:53.26,0:08:58.14,Bilingual,,0,0,0,,在跳变处，一个世界给出这个答案的概率是 1，另一个是 0\N{\fs33\c&H00C8C0B8&\bord1.4}at the jump, one world gives that answer with probability 1, the other with probability 0.
+Dialogue: 0,0:08:58.46,0:09:01.55,Bilingual,,0,0,0,,想过这一关，机制就必须是随机的\N{\fs33\c&H00C8C0B8&\bord1.4}To pass this test, a mechanism has to be random.
+Dialogue: 0,0:09:02.98,0:09:04.70,Bilingual,,0,0,0,,那噪声到底要加多少？\N{\fs33\c&H00C8C0B8&\bord1.4}So how much noise do we need?
+Dialogue: 0,0:09:05.02,0:09:07.71,Bilingual,,0,0,0,,这只取决于 query 的一个性质\N{\fs33\c&H00C8C0B8&\bord1.4}It depends on a single property of the query:
+Dialogue: 0,0:09:07.71,0:09:12.41,Bilingual,,0,0,0,,它的敏感度，也就是改变一条记录最多能让答案变化多少\N{\fs33\c&H00C8C0B8&\bord1.4}its sensitivity, the most that changing one row can ever change the answer,
+Dialogue: 0,0:09:12.41,0:09:16.22,Bilingual,,0,0,0,,取遍每一对相邻数据库，包括还不存在的那些\N{\fs33\c&H00C8C0B8&\bord1.4}over all pairs of neighboring databases, including ones that do not exist yet.
+Dialogue: 0,0:09:16.45,0:09:18.18,Bilingual,,0,0,0,,对 counting query（计数查询）\N{\fs33\c&H00C8C0B8&\bord1.4}For a counting query,
+Dialogue: 0,0:09:18.18,0:09:21.38,Bilingual,,0,0,0,,比如医院那个，一条记录最多让答案变 1\N{\fs33\c&H00C8C0B8&\bord1.4}like our hospital count, one row changes the answer by at most 1.
+Dialogue: 0,0:09:21.70,0:09:23.00,Bilingual,,0,0,0,,敏感度是 1\N{\fs33\c&H00C8C0B8&\bord1.4}Sensitivity 1.
+Dialogue: 0,0:09:23.05,0:09:27.17,Bilingual,,0,0,0,,再看直方图：把一条记录的可能取值分成 d 个桶\N{\fs33\c&H00C8C0B8&\bord1.4}Now a histogram: split the possible values of a row into d bins,
+Dialogue: 0,0:09:27.17,0:09:28.98,Bilingual,,0,0,0,,发布每个桶的记录数\N{\fs33\c&H00C8C0B8&\bord1.4}and release how many rows fall in each.
+Dialogue: 0,0:09:29.30,0:09:31.83,Bilingual,,0,0,0,,先别急着看答案，暂停一下\N{\fs33\c&H00C8C0B8&\bord1.4}Before I show you, pause:
+Dialogue: 0,0:09:31.83,0:09:36.47,Bilingual,,0,0,0,,如果 Alice 的记录变了，整个直方图总共能变多少？\N{\fs33\c&H00C8C0B8&\bord1.4}if Alice's row changes, how much can the whole histogram change in total?
+Dialogue: 0,0:09:36.79,0:09:38.45,Bilingual,,0,0,0,,这跟桶的数量有关吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Does it depend on the number of bins?
+Dialogue: 0,0:09:47.28,0:09:52.13,Bilingual,,0,0,0,,她从一个桶搬到另一个桶：一个桶少了 1，另一个桶多了 1\N{\fs33\c&H00C8C0B8&\bord1.4}She moves out of one bin and into another: one count goes down by 1, another goes up by 1.
+Dialogue: 0,0:09:52.45,0:09:54.05,Bilingual,,0,0,0,,总变化量：2\N{\fs33\c&H00C8C0B8&\bord1.4}Total change: 2.
+Dialogue: 0,0:09:54.26,0:09:57.80,Bilingual,,0,0,0,,像这样把各个分量变化的绝对值加起来\N{\fs33\c&H00C8C0B8&\bord1.4}Adding up absolute changes across coordinates like this
+Dialogue: 0,0:09:57.80,0:10:02.37,Bilingual,,0,0,0,,就是 L1 范数，原文就用它来衡量一列数的敏感度\N{\fs33\c&H00C8C0B8&\bord1.4}is the L1 norm, the paper's way to measure sensitivity for lists of numbers.
+Dialogue: 0,0:10:02.69,0:10:06.65,Bilingual,,0,0,0,,而且它总是 2，不管是 5 个桶还是 5000 个桶\N{\fs33\c&H00C8C0B8&\bord1.4}And it is 2 whether there are 5 bins or 5000.
+Dialogue: 0,0:10:06.97,0:10:08.62,Bilingual,,0,0,0,,它和维度完全无关\N{\fs33\c&H00C8C0B8&\bord1.4}It does not depend on the dimension at all.
+Dialogue: 0,0:10:08.87,0:10:12.03,Bilingual,,0,0,0,,对比一下：数据库里最高的收入是多少？\N{\fs33\c&H00C8C0B8&\bord1.4}Contrast that with: what is the largest income in the database?
+Dialogue: 0,0:10:12.35,0:10:17.52,Bilingual,,0,0,0,,一个亿万富翁，就能让答案变动 10 亿，不封顶就根本没有上限\N{\fs33\c&H00C8C0B8&\bord1.4}One billionaire can move that answer by $1B, and with no cap there is no limit at all.
+Dialogue: 0,0:10:17.84,0:10:21.62,Bilingual,,0,0,0,,标准做法是先给每个值封顶，比如 100 万\N{\fs33\c&H00C8C0B8&\bord1.4}The standard fix is to cap every value, say at $1M, first.
+Dialogue: 0,0:10:21.94,0:10:26.92,Bilingual,,0,0,0,,这个 trick 要记住：差分隐私深度学习对梯度做的就是这个\N{\fs33\c&H00C8C0B8&\bord1.4}Remember that trick: it is exactly what private deep learning does to gradients.
+Dialogue: 0,0:10:27.17,0:10:28.57,Bilingual,,0,0,0,,再强调两点\N{\fs33\c&H00C8C0B8&\bord1.4}Two things to remember.
+Dialogue: 0,0:10:28.62,0:10:30.87,Bilingual,,0,0,0,,敏感度只取决于函数本身\N{\fs33\c&H00C8C0B8&\bord1.4}Sensitivity is a property of the function alone,
+Dialogue: 0,0:10:30.87,0:10:34.44,Bilingual,,0,0,0,,与具体的数据库无关，也不是人为选定的\N{\fs33\c&H00C8C0B8&\bord1.4}not of the particular database, and it is not chosen by policy.
+Dialogue: 0,0:10:34.76,0:10:36.52,Bilingual,,0,0,0,,ε 是选出来的\N{\fs33\c&H00C8C0B8&\bord1.4}ε is a choice.
+Dialogue: 0,0:10:36.84,0:10:38.44,Bilingual,,0,0,0,,敏感度是算出来的\N{\fs33\c&H00C8C0B8&\bord1.4}Sensitivity is a fact.
+Dialogue: 0,0:10:39.82,0:10:41.39,Bilingual,,0,0,0,,下面来看噪声\N{\fs33\c&H00C8C0B8&\bord1.4}Now for the noise.
+Dialogue: 0,0:10:41.44,0:10:43.87,Bilingual,,0,0,0,,原文用的是拉普拉斯分布\N{\fs33\c&H00C8C0B8&\bord1.4}The paper uses the Laplace distribution:
+Dialogue: 0,0:10:43.87,0:10:48.74,Bilingual,,0,0,0,,左右对称，峰很尖，并且随着离中心的距离指数衰减\N{\fs33\c&H00C8C0B8&\bord1.4}symmetric, sharply peaked, and falling off exponentially with distance from the center.
+Dialogue: 0,0:10:49.06,0:10:51.97,Bilingual,,0,0,0,,它的宽度由尺度参数 λ 决定\N{\fs33\c&H00C8C0B8&\bord1.4}Its width is set by a scale parameter, λ.
+Dialogue: 0,0:10:53.02,0:10:54.62,Bilingual,,0,0,0,,关键的 trick 来了\N{\fs33\c&H00C8C0B8&\bord1.4}Here is the trick.
+Dialogue: 0,0:10:54.69,0:10:58.99,Bilingual,,0,0,0,,一条拉普拉斯曲线的中心在 f(x)，也就是 41\N{\fs33\c&H00C8C0B8&\bord1.4}Center one Laplace curve at f(x), 41,
+Dialogue: 0,0:10:58.99,0:11:04.90,Bilingual,,0,0,0,,另一条在 f(x′)，也就是 42：这就是两个世界的输出分布\N{\fs33\c&H00C8C0B8&\bord1.4}and another at f(x′), 42: the output distributions of our two worlds.
+Dialogue: 0,0:11:05.15,0:11:09.28,Bilingual,,0,0,0,,现在对每个输出 t，画出两条曲线比值的对数\N{\fs33\c&H00C8C0B8&\bord1.4}Now plot the log of their ratio for every output t.
+Dialogue: 0,0:11:09.60,0:11:12.34,Bilingual,,0,0,0,,在 41 左边，它完全是个常数\N{\fs33\c&H00C8C0B8&\bord1.4}To the left of 41, it is exactly constant.
+Dialogue: 0,0:11:12.66,0:11:14.94,Bilingual,,0,0,0,,在 42 右边，又是个常数\N{\fs33\c&H00C8C0B8&\bord1.4}To the right of 42, constant again.
+Dialogue: 0,0:11:15.26,0:11:17.22,Bilingual,,0,0,0,,中间是一段直线斜坡\N{\fs33\c&H00C8C0B8&\bord1.4}In between, a straight ramp.
+Dialogue: 0,0:11:17.54,0:11:24.55,Bilingual,,0,0,0,,它从不超过 1/λ，也从不低于 −1/λ：也就是平移量除以尺度\N{\fs33\c&H00C8C0B8&\bord1.4}It never rises above 1/λ, and never falls below −1/λ: the shift, divided by the scale.
+Dialogue: 0,0:11:25.18,0:11:29.52,Bilingual,,0,0,0,,为什么？取对数之后，拉普拉斯密度是个帐篷形\N{\fs33\c&H00C8C0B8&\bord1.4}Why? On a log scale, a Laplace density is a tent,
+Dialogue: 0,0:11:29.52,0:11:33.28,Bilingual,,0,0,0,,两边的斜率是 1/λ，绝不会更陡\N{\fs33\c&H00C8C0B8&\bord1.4}whose sides have slope 1/λ, never steeper.
+Dialogue: 0,0:11:33.60,0:11:36.56,Bilingual,,0,0,0,,把帐篷平移过去，两个帐篷的高度差\N{\fs33\c&H00C8C0B8&\bord1.4}Slide the tent over, and the gap between the tents
+Dialogue: 0,0:11:36.56,0:11:39.18,Bilingual,,0,0,0,,永远不超过平移量乘以这个斜率\N{\fs33\c&H00C8C0B8&\bord1.4}can never exceed the slide times that slope.
+Dialogue: 0,0:11:39.50,0:11:45.04,Bilingual,,0,0,0,,这就是整个设计原则：隐私需要的噪声，对数密度必须处处不陡\N{\fs33\c&H00C8C0B8&\bord1.4}That is the whole design principle: privacy needs noise whose log density is never steep.
+Dialogue: 0,0:11:45.78,0:11:51.16,Bilingual,,0,0,0,,用符号写出来：t 到两个中心的距离，最多相差中心之间的距离\N{\fs33\c&H00C8C0B8&\bord1.4}In symbols: two distances to t can differ by at most the distance between the centers.
+Dialogue: 0,0:11:51.48,0:11:56.25,Bilingual,,0,0,0,,所以任意输出的隐私损失，最多是敏感度除以 λ\N{\fs33\c&H00C8C0B8&\bord1.4}So the privacy loss of any output is at most the sensitivity divided by λ.
+Dialogue: 0,0:11:56.57,0:12:02.97,Bilingual,,0,0,0,,让 λ 取敏感度除以 ε，比值就始终在 e^ε 以内\N{\fs33\c&H00C8C0B8&\bord1.4}Set λ to the sensitivity over ε, and the ratio stays within e^ε,
+Dialogue: 0,0:12:02.97,0:12:06.53,Bilingual,,0,0,0,,对任意输出、任意一对相邻数据库都成立\N{\fs33\c&H00C8C0B8&\bord1.4}for every output and every pair of neighbors.
+Dialogue: 0,0:12:06.85,0:12:09.19,Bilingual,,0,0,0,,隐私，一个不等式就证完了\N{\fs33\c&H00C8C0B8&\bord1.4}Privacy, proven in one line.
+Dialogue: 0,0:12:09.43,0:12:15.00,Bilingual,,0,0,0,,如果 query 返回好几个数，就给每个数加上独立的拉普拉斯噪声\N{\fs33\c&H00C8C0B8&\bord1.4}If the query returns several numbers, add independent Laplace noise to each.
+Dialogue: 0,0:12:15.32,0:12:18.38,Bilingual,,0,0,0,,这时联合密度取决于 L1 距离\N{\fs33\c&H00C8C0B8&\bord1.4}The joint density then depends on the L1 distance,
+Dialogue: 0,0:12:18.38,0:12:22.51,Bilingual,,0,0,0,,正因为这样，敏感度才用 L1 范数来衡量\N{\fs33\c&H00C8C0B8&\bord1.4}which is exactly why sensitivity is measured in the L1 norm.
+Dialogue: 0,0:12:22.83,0:12:29.66,Bilingual,,0,0,0,,这就是命题 1：在每个分量上加尺度为 S(f)/ε 的拉普拉斯噪声\N{\fs33\c&H00C8C0B8&\bord1.4}That is Proposition 1: Laplace noise of scale S(f)/ε in every coordinate.
+Dialogue: 0,0:12:29.90,0:12:32.92,Bilingual,,0,0,0,,暂停想一想：为什么不用更简单的\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and ponder: why not something simpler,
+Dialogue: 0,0:12:32.92,0:12:36.32,Bilingual,,0,0,0,,比如在 −10 到 +10 之间均匀分布的噪声？\N{\fs33\c&H00C8C0B8&\bord1.4}like uniform noise anywhere between −10 and +10?
+Dialogue: 0,0:12:47.17,0:12:48.36,Bilingual,,0,0,0,,看看边缘\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the edges.
+Dialogue: 0,0:12:48.41,0:12:53.54,Bilingual,,0,0,0,,输出 51.5，真实人数是 42 就可能，是 41 就不可能\N{\fs33\c&H00C8C0B8&\bord1.4}An output of 51.5 is possible if the true count is 42 but impossible if it is 41:
+Dialogue: 0,0:12:53.54,0:12:59.66,Bilingual,,0,0,0,,又是那个无穷大比值，随机发布一条记录的机制当初就栽在这上面\N{\fs33\c&H00C8C0B8&\bord1.4}the same infinite ratio that sank the random-row mechanism.
+Dialogue: 0,0:12:59.98,0:13:03.38,Bilingual,,0,0,0,,好的噪声，绝不能把任何输出排除在外\N{\fs33\c&H00C8C0B8&\bord1.4}Good noise must never rule an output out.
+Dialogue: 0,0:13:03.62,0:13:06.12,Bilingual,,0,0,0,,那为什么不用熟悉的钟形曲线？\N{\fs33\c&H00C8C0B8&\bord1.4}And why not the familiar bell curve?
+Dialogue: 0,0:13:06.44,0:13:10.53,Bilingual,,0,0,0,,取对数之后，高斯是一条抛物线，越来越陡\N{\fs33\c&H00C8C0B8&\bord1.4}On a log scale a Gaussian is a parabola, steeper and steeper,
+Dialogue: 0,0:13:10.53,0:13:14.83,Bilingual,,0,0,0,,所以两条平移开的抛物线，高度差会无限增大\N{\fs33\c&H00C8C0B8&\bord1.4}so the gap between two shifted parabolas grows without bound.
+Dialogue: 0,0:13:15.15,0:13:19.15,Bilingual,,0,0,0,,到了尾部，比值会爆炸，没有哪个 ε 能管用\N{\fs33\c&H00C8C0B8&\bord1.4}In the tails the ratio explodes, and no single ε works.
+Dialogue: 0,0:13:19.47,0:13:21.41,Bilingual,,0,0,0,,不过先记住这个高斯\N{\fs33\c&H00C8C0B8&\bord1.4}Hold on to that Gaussian, though:
+Dialogue: 0,0:13:21.41,0:13:26.63,Bilingual,,0,0,0,,它还会回来，用差分隐私训练神经网络时，实际用的就是它\N{\fs33\c&H00C8C0B8&\bord1.4}it comes back, and it is the noise you would actually use to train a neural network privately.
+Dialogue: 0,0:13:26.87,0:13:33.49,Bilingual,,0,0,0,,这就是标题里说的按敏感度校准噪声：噪声尺度等于敏感度除以 ε\N{\fs33\c&H00C8C0B8&\bord1.4}So here is the recipe in the title: noise scale equals sensitivity divided by ε.
+Dialogue: 0,0:13:33.81,0:13:36.39,Bilingual,,0,0,0,,敏感度越高的 query，噪声越大\N{\fs33\c&H00C8C0B8&\bord1.4}A more sensitive question needs more noise.
+Dialogue: 0,0:13:36.71,0:13:38.82,Bilingual,,0,0,0,,隐私越强，噪声越大\N{\fs33\c&H00C8C0B8&\bord1.4}Stronger privacy needs more noise.
+Dialogue: 0,0:13:40.37,0:13:45.77,Bilingual,,0,0,0,,回到医院的例子，ε 取 0.5：尺度为 2 的拉普拉斯噪声\N{\fs33\c&H00C8C0B8&\bord1.4}Back to the hospital, with ε = 0.5: Laplace noise of scale 2.
+Dialogue: 0,0:13:46.09,0:13:49.51,Bilingual,,0,0,0,,第一周，管理者报出大约 43.7\N{\fs33\c&H00C8C0B8&\bord1.4}Week 1, the curator reports about 43.7.
+Dialogue: 0,0:13:49.83,0:13:54.03,Bilingual,,0,0,0,,第二周，真实人数是 42，报出大约 40.6\N{\fs33\c&H00C8C0B8&\bord1.4}Week 2, when the true count is 42, about 40.6.
+Dialogue: 0,0:13:54.35,0:13:58.35,Bilingual,,0,0,0,,跟之前一样做减法，Alice 好像让人数少了 3\N{\fs33\c&H00C8C0B8&\bord1.4}Subtract as before, and Alice seems to have lowered the count by 3.
+Dialogue: 0,0:13:58.67,0:14:04.17,Bilingual,,0,0,0,,原本对她的判断是五五开，现在最多能有大约 62% 的把握\N{\fs33\c&H00C8C0B8&\bord1.4}A 50/50 guess about her can now move to at most about 62%.
+Dialogue: 0,0:14:04.40,0:14:08.50,Bilingual,,0,0,0,,再看噪声尺度取决于什么：敏感度和 ε\N{\fs33\c&H00C8C0B8&\bord1.4}Now look at what the noise scale depends on: the sensitivity and ε.
+Dialogue: 0,0:14:08.82,0:14:10.51,Bilingual,,0,0,0,,而不是数据库的规模\N{\fs33\c&H00C8C0B8&\bord1.4}Not the size of the database.
+Dialogue: 0,0:14:11.35,0:14:16.09,Bilingual,,0,0,0,,有 100 个病人时，噪声一般在 2 左右，占答案的百分之几\N{\fs33\c&H00C8C0B8&\bord1.4}With 100 patients, noise of typical size 2 is a few percent of the answer.
+Dialogue: 0,0:14:16.41,0:14:19.68,Bilingual,,0,0,0,,到了 100 万人，这点噪声可以忽略不计\N{\fs33\c&H00C8C0B8&\bord1.4}With a million, it is a rounding error.
+Dialogue: 0,0:14:20.00,0:14:25.31,Bilingual,,0,0,0,,保护 Alice 的噪声，比起她自己的贡献，也就是 1，算是很大\N{\fs33\c&H00C8C0B8&\bord1.4}Alice is protected by noise that is large compared to her own contribution, which is 1,
+Dialogue: 0,0:14:25.31,0:14:27.15,Bilingual,,0,0,0,,但比起总体微不足道\N{\fs33\c&H00C8C0B8&\bord1.4}but tiny compared to the population's.
+Dialogue: 0,0:14:28.38,0:14:30.18,Bilingual,,0,0,0,,隐私，留给个体\N{\fs33\c&H00C8C0B8&\bord1.4}Privacy for individuals.
+Dialogue: 0,0:14:30.50,0:14:32.16,Bilingual,,0,0,0,,准确，留给总体\N{\fs33\c&H00C8C0B8&\bord1.4}Accuracy for populations.
+Dialogue: 0,0:14:32.48,0:14:34.40,Bilingual,,0,0,0,,这就是差分隐私的取舍\N{\fs33\c&H00C8C0B8&\bord1.4}That is the bargain.
+Dialogue: 0,0:14:34.65,0:14:36.63,Bilingual,,0,0,0,,这一题你可以自己回答\N{\fs33\c&H00C8C0B8&\bord1.4}Here is one you can answer yourself.
+Dialogue: 0,0:14:36.95,0:14:40.95,Bilingual,,0,0,0,,暂停想一想：噪声大约有 1/ε 那么大\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and ponder: the noise has size about 1/ε.
+Dialogue: 0,0:14:41.27,0:14:45.34,Bilingual,,0,0,0,,如果 ε 远小于 1/n，会出什么问题？\N{\fs33\c&H00C8C0B8&\bord1.4}What goes wrong if ε is much smaller than 1/n?
+Dialogue: 0,0:14:58.18,0:15:03.68,Bilingual,,0,0,0,,噪声超过了 n，比人数可能取到的任何值都大，答案成了纯噪声\N{\fs33\c&H00C8C0B8&\bord1.4}The noise outgrows n, bigger than the count could ever be, and the answer is pure noise.
+Dialogue: 0,0:15:04.00,0:15:06.13,Bilingual,,0,0,0,,这不是拉普拉斯噪声的问题\N{\fs33\c&H00C8C0B8&\bord1.4}This is not Laplace's fault.
+Dialogue: 0,0:15:06.45,0:15:12.28,Bilingual,,0,0,0,,任意两个数据库之间，都有一条最多 n 步的链，每步只改一条记录\N{\fs33\c&H00C8C0B8&\bord1.4}Any two databases are linked by a chain of at most n single-row changes,
+Dialogue: 0,0:15:12.28,0:15:19.51,Bilingual,,0,0,0,,概率之比最多是 e^ε，所以两端之比最多是 e^(nε)\N{\fs33\c&H00C8C0B8&\bord1.4}each changing probabilities by at most e^ε, so the ends differ by at most e^(nε).
+Dialogue: 0,0:15:19.83,0:15:25.38,Bilingual,,0,0,0,,如果 nε 极小，所有数据库看起来都一样，什么也学不到\N{\fs33\c&H00C8C0B8&\bord1.4}If nε is tiny, every database looks alike, and nothing can be learned.
+Dialogue: 0,0:15:25.70,0:15:28.75,Bilingual,,0,0,0,,这种链式 trick 叫 hybrid argument（混合论证）\N{\fs33\c&H00C8C0B8&\bord1.4}This chain trick is called a hybrid argument,
+Dialogue: 0,0:15:28.75,0:15:30.35,Bilingual,,0,0,0,,最后还会再出现\N{\fs33\c&H00C8C0B8&\bord1.4}and it comes back at the end.

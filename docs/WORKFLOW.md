@@ -2,6 +2,8 @@
 
 The production pipeline, step by step, with the prompts that work well when you hand a step to
 Claude Code. Every step leaves a file behind, so you can stop, review, and resume.
+[PLAYBOOK.md](PLAYBOOK.md) has the lessons from the first videos: where the time went, and the
+rules that make the next one faster.
 
 ```
 PDF ──ingest──▶ library/catalog.yaml ──plan──▶ videos/<id>/
@@ -97,7 +99,21 @@ python -m explainer.build videos/<id> --crf 26  # smaller file for sharing
 ```
 
 Output in `videos/<id>/output/`: the mp4 (loudness-normalised), `.srt` subtitles,
-`chapters.txt` (paste into a YouTube/Bilibili description), `transcript.md`.
+`chapters.txt` (paste into a YouTube/Bilibili description), `transcript.md`. With a Chinese
+translation of the narration (`i18n/zh/narration/*.yaml`, [LANGUAGES.md](LANGUAGES.md)), also
+`<id>.zh-en.mp4`: the same video with bilingual subtitles burned in, the standard copy for Bilibili
+(`--no-burn` skips it), and `.zh.srt` / `.zh-en.srt` / `.zh-en.ass`.
+
+A build re-renders a scene when its movie is missing or older than what it is built from: the
+scene's folder, `script.md`, `video.yaml`, `assets/`, and the toolkit modules a scene imports.
+Command-line tooling (`build.py`, `check.py`, `preview.py`), the after-render modules (`music.py`,
+`finishing.py`) and, for narrated videos, the short-only modules (`short.py`, `grid.py`,
+`captions.py`) do not count; a change to the render command itself needs `--only`.
+
+Background music composed from the picture (every scene writes `<Scene>.events.json` as it renders):
+`python -m explainer.build videos/<id> --music` mixes it under the narration and keeps the
+narration-only master as `<id>.nomusic.mp4`. A condensed, music-led short of a video is its own
+project (`format: short`): see [SHORTS.md](SHORTS.md).
 
 ## Voices
 

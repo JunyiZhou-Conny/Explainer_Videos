@@ -1,0 +1,115 @@
+1
+00:00:07,500 --> 00:00:11,000
+How many different games of tic-tac-toe are there?
+
+2
+00:00:11,400 --> 00:00:14,800
+Same final board: one game or two?
+
+3
+00:00:16,500 --> 00:00:20,100
+A different order, or a flipped or turned board: a different game.
+
+4
+00:00:26,700 --> 00:00:30,300
+Forget winning: in how many orders can the board fill up?
+
+5
+00:00:41,100 --> 00:00:44,700
+Multiplying from 9 down to 1 is called nine factorial: 362,880.
+
+6
+00:00:45,000 --> 00:00:48,800
+More than 255,168: what did nine factorial count too often?
+
+7
+00:00:51,300 --> 00:00:54,600
+A real game ends as soon as someone wins.
+
+8
+00:01:00,300 --> 00:01:03,700
+Nine factorial counted this one game 24 times.
+
+9
+00:01:04,500 --> 00:01:08,000
+These made-up games are called ghost games.
+
+10
+00:01:09,300 --> 00:01:12,300
+The earliest a game can end is move 5.
+
+11
+00:01:12,900 --> 00:01:16,500
+The earlier a game ends, the more ghost games it drags along.
+
+12
+00:01:26,700 --> 00:01:29,700
+Games that X wins on move 5: 1,440.
+
+13
+00:01:33,000 --> 00:01:36,000
+After that, counting by hand becomes a tangled mess.
+
+14
+00:01:36,300 --> 00:01:39,900
+What if a computer plays every game, one by one?
+
+15
+00:01:48,300 --> 00:01:51,800
+Try a move, explore what follows, then undo it.
+
+16
+00:01:54,900 --> 00:01:58,700
+Someone won, or the board is full: that game is finished.
+
+17
+00:02:03,900 --> 00:02:07,500
+In order, through the whole tree, without missing a game.
+
+18
+00:02:19,500 --> 00:02:22,900
+Every game counted exactly once: 255,168.
+
+19
+00:02:27,300 --> 00:02:30,700
+Delete the winner check, and run it again.
+
+20
+00:02:39,900 --> 00:02:43,200
+362,880: the ghost games are back.
+
+21
+00:02:45,900 --> 00:02:49,500
+How do 255,168 games become 362,880?
+
+22
+00:03:02,700 --> 00:03:06,700
+Multiply each by how often it was counted, and add: nine factorial again.
+
+23
+00:03:09,900 --> 00:03:13,400
+X, who goes first, wins just over half of all games.
+
+24
+00:03:14,700 --> 00:03:18,100
+If X goes first and makes no mistakes, can X always win?
+
+25
+00:03:26,700 --> 00:03:30,300
+But if neither side makes a mistake, it is always a draw.
+
+26
+00:03:33,900 --> 00:03:37,100
+And how many games of chess are there?
+
+27
+00:03:41,100 --> 00:03:44,900
+By Shannon's estimate, chess has at least 10¹²⁰ games.
+
+28
+00:03:45,900 --> 00:03:49,900
+The whole observable universe has only about 10⁸⁰ atoms.
+
+29
+00:04:03,300 --> 00:04:06,900
+255,168 games: each one is a path through this tree.

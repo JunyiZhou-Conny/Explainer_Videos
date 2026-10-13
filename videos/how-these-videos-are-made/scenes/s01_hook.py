@@ -7,11 +7,12 @@ real fixed frame (A01's moment, 23.0 s, from the final render) -> RED tag "the m
 the layout was wrong" -> the reviewer who caught it: a faded-BLUE icon that turns out to be an AI
 (A10, qa_round1.txt line 30) -> the team row (user, agent, sub-agents), the three things they
 made, and the motif of the whole video: headphones and play button struck through in RED ->
-the five chapters of this video, each formed from what was just on screen.
+the five chapters of this video, one chip per chapter, once the stage is clear.
 
 Idioms for the other scenes: colours and helpers from common.py only; real images through
 Player.show()/exhibit() with their tag and caption; anchors on sentence starts; the ponder card
-comes in on "Pause" (ponder_in) and drains after the block (ponder_drain); text is never scaled
+comes in on "Pause" (ponder_in; or ponder_card placed by hand, as here, so the detail being
+pondered stays visible) and drains after the block (ponder_drain); text is never scaled
 below 20 pt (shrink the pictures, fade or rebuild the text); what became what is a Transform.
 """
 
@@ -19,11 +20,12 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
+from explainer.components import ponder_card
 from explainer.scene import VoiceScene
 
 from common import (AGENT, BUG, EXCERPTS, MEASURED, NARRATION, OPEN, SUB_AGENT_TEXT, TOOL, USER, bug_tag,
                     cant_hear_or_play, caption, chip, dim, emphasize, fade_out_all, gather, gloss, label,
-                    play_button, ponder_drain, ponder_in, pulse, rerender_tag, role_icon, speech_bubble,
+                    play_button, ponder_drain, pulse, rerender_tag, role_icon, source_caption, speech_bubble,
                     split_chip, sub_agent_cluster, tag, undim, video_player, zh)
 
 SAY = NARRATION["S01"]
@@ -41,7 +43,7 @@ PATCH = "#0D0E13"                      # the frames' background colour (sampled)
 
 SCREEN_W = 8.6
 PLAYER_Y = 0.35
-ASIDE = RIGHT * 1.75                   # where the player moves when the reviewer comes in
+ASIDE = RIGHT * 2.05                   # where the player moves when the reviewer comes in (right edge 6.5)
 
 DRAFT_CAPTION = "from a draft of 'Why are there exactly 255,168 games of tic-tac-toe?' · made for ages 11 to 14"
 FINAL_CAPTION = "real frame · tic-tac-toe video, scene 3 (final render)"
@@ -61,16 +63,20 @@ class Hook(VoiceScene):
         rtag = tag_on_top(rerender_tag(), player.screen)
         cap = caption(DRAFT_CAPTION, 22).next_to(player, DOWN, buff=0.22)
         play = play_button(0.3, TOOL).move_to(player.pause)
-        play[0].set_stroke(width=0)                          # paused: just the triangle
+        play[0].set_stroke(width=0).set_fill(TOOL, 0)        # paused: just the triangle (GREY fill: the
+                                                             # ring's default RED fill tinted the transform)
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(player.frame), FadeIn(old), run_time=0.9)
-            self.play(FadeIn(VGroup(player.pause, player.bar, player.done, player.knob)), run_time=0.4)
+            # plays for a moment, then pauses while "a paused frame" is spoken (0.75 s)
+            # the tag comes with the frame, so the redrawn picture is never on screen untagged
+            # (director review of the draft, 0:01)
+            self.play(FadeIn(player.frame), FadeIn(old), FadeIn(rtag, shift=DOWN * 0.1),
+                      FadeIn(VGroup(player.pause, player.bar, player.done, player.knob)), run_time=0.6)
             self.play(player.knob.animate.move_to(player.at(0.31)),
                       player.done.animate.put_start_and_end_on(player.bar.get_start(), player.at(0.31)),
-                      run_time=1.2, rate_func=smooth)
+                      run_time=0.6, rate_func=smooth)
             vo.wait_until("a paused frame")
-            self.play(ReplacementTransform(player.pause, play), FadeIn(rtag, shift=DOWN * 0.1), run_time=0.6)
+            self.play(ReplacementTransform(player.pause, play), run_time=0.4)
             vo.wait_until("about tic-tac-toe")
             self.play(FadeIn(cap, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("Look at the line")
@@ -83,10 +89,13 @@ class Hook(VoiceScene):
 
         # ---------------------------------------------------------- ponder
         shown = (player.frame, old, play, player.bar, player.done, player.knob, rtag, cap)
+        # The card sits under the formula line, so "4 × 3 × 2 … 12" (what the viewer ponders) stays
+        # visible, dimmed with the frame. "Pause" is the block's first word: card and dim go together.
+        card = ponder_card("If you were 12,\nwhat would you think went wrong?")
+        card.move_to([0, old.px(0, OLD_FORMULA[3])[1] - 0.25 - card.height / 2, 0])
         with self.voiceover(SAY[1]) as vo:
-            self.play(*dim(*shown, opacity=0.4), run_time=0.5)
             vo.wait_until("Pause")
-            card = ponder_in(self, "If you were 12,\nwhat would you think went wrong?")
+            self.play(*dim(*shown, opacity=0.4), FadeIn(card, scale=0.95), run_time=0.6)
         ponder_drain(self, card, 6)
 
         # ---------------------------------------------------------- it was a running count
@@ -126,8 +135,11 @@ class Hook(VoiceScene):
             self.add(patch, moving)
             self.play(count.animate.set_value(1.0), run_time=2.0, rate_func=smooth)
             moving.clear_updaters()
-            self.play(FadeIn(new), FadeOut(old), FadeOut(patch), FadeOut(moving),
+            # the patch stays opaque until the old frame is gone (fading both would bring a ghost of
+            # the old 12 back mid-crossfade); the new frame fades in above it, plain background there
+            self.play(FadeIn(new), FadeOut(old), FadeOut(moving),
                       FadeTransform(rtag, ftag), FadeTransform(cap, fcap), run_time=1.1)
+            self.remove(patch)
             g = gloss("a running count,\nnow under the board", tally, RIGHT, length=0.6)
             g.text.shift(UP * 0.14)
             self.play(GrowArrow(g.arrow), FadeIn(g.text, shift=LEFT * 0.1), run_time=0.8)
@@ -144,14 +156,18 @@ class Hook(VoiceScene):
             badge = reviewer.badge
             reviewer.remove(badge)
             reviewer.move_to([-4.75, -0.55, 0])
-            badge.move_to(reviewer.person.get_corner(DR) + np.array([0.02, 0.12, 0]))
             bubble = speech_bubble(EXCERPTS["A10"]["s01_bubble"].replace(" read ", " read\n", 1)
                                    .replace(" … ", " …\n", 1).replace("look like ", "look like\n", 1),
-                                   chars=40, tail=DOWN, tail_shift=-0.12)
-            bubble.next_to(reviewer, UP, buff=0.12).set_x(-4.3)
-            bubble.shift(RIGHT * (reviewer.person.get_x() + 0.1 - bubble.tail.get_vertices()[2][0]))
+                                   chars=40, tail=DOWN, tail_shift=-0.04)
+            # the bubble ends 0.3 left of the moved player (it used to cross the player's frame);
+            # the reviewer stands under its tail
+            bubble.next_to(reviewer, UP, buff=0.12)
+            bubble.shift(RIGHT * (player.frame.get_left()[0] - 0.3 - bubble.box.get_right()[0]))
+            reviewer.shift(RIGHT * (bubble.tail.get_vertices()[2][0] - 0.1 - reviewer.person.get_x()))
+            badge.move_to(reviewer.person.get_corner(DR) + np.array([0.02, 0.12, 0]))
+            qa_cap = source_caption("from the review notes on the draft · qa_round1.txt, line 30")
             self.play(FadeIn(reviewer, shift=RIGHT * 0.4), run_time=0.6)
-            self.play(FadeIn(bubble, shift=UP * 0.15), run_time=0.7)
+            self.play(FadeIn(bubble, shift=UP * 0.15), FadeIn(qa_cap), run_time=0.7)
             vo.wait_until("It was an AI")
             who = label("a simulated 12-year-old\n(an AI reviewer)", 24, SUB_AGENT_TEXT).next_to(reviewer, DOWN, buff=0.25)
             self.play(FadeIn(badge, scale=1.6), run_time=0.5)
@@ -168,7 +184,7 @@ class Hook(VoiceScene):
         made.move_to([2.1, -2.35, 0])        # low: clear of the chapter slots that come next
         glyphs = cant_hear_or_play(0.72, gap=0.6).move_to([2.95, 1.85, 0])   # clear of the title that comes next
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(ftag, g, old_spot, red, red_arrow, bubble, who, badge, reviewer)), run_time=0.5)
+            self.play(FadeOut(VGroup(ftag, g, old_spot, red, red_arrow, bubble, who, badge, reviewer, qa_cap)), run_time=0.5)
             thumb = gather(self, player.frame, new, play, player.bar, player.done, player.knob)
             self.play(thumb.animate.scale(0.27).move_to([-5.15, 2.75, 0]), run_time=0.9)
             self.play(FadeIn(user, shift=UP * 0.2), FadeIn(user_l), run_time=0.6)
@@ -198,26 +214,24 @@ class Hook(VoiceScene):
             split_chip("who did what", USER, AGENT, size=30),
             chip("how it's checked", MEASURED, size=30),
             chip("the Chinese versions", TOOL, size=30, icon=zh("中", 28)),
-            chip("what still needs a human", OPEN, size=30, dashed=True),
+            chip("what still needs a human, and what to improve", OPEN, size=30, dashed=True),
         ]
         for ch, y in zip(chapters, ys):
             ch.move_to([0, y, 0])
-        sources = [(made[0], made[1]), (user, agent, subs), (made[2],), None, None]
         anchors = ["the pipeline", "who did what", "how work gets", "the Chinese versions", "what still needs"]
 
         with self.voiceover(SAY[4]) as vo:
-            sources[4] = gather(self, glyphs[0][0], glyphs[0][1], glyphs[1][0], glyphs[1][1])
-            self.play(Write(title), FadeOut(VGroup(user_l, agent_l, subs_l)), run_time=0.9)
-            for ch, src, phrase in zip(chapters, sources, anchors):
+            # the team row, its three chips and the struck glyphs leave together, then the chapters come
+            # in one by one (morphing the people into "who did what" made blobs, and left "checks"
+            # alone in a corner meanwhile: viewer review of the draft, 0:54)
+            team = gather(self, user, user_l, agent, agent_l, *subs.icons, subs.badge, subs_l, *made,
+                          glyphs[0][0], glyphs[0][1], glyphs[1][0], glyphs[1][1])
+            self.play(Write(title), FadeOut(team, shift=DOWN * 0.2), run_time=0.9)
+            for ch, phrase in zip(chapters, anchors):
                 vo.wait_until(phrase)
-                if isinstance(src, tuple):
-                    src = gather(self, *src)
-                if src is None:
-                    self.play(FadeIn(ch, shift=UP * 0.2), run_time=0.6)
-                else:
-                    # the struck glyphs arc round the right of the column on their way to the last slot
-                    self.play(ReplacementTransform(src, ch, path_arc=-PI / 2 if ch is chapters[4] else 0),
-                              run_time=0.8 if ch is chapters[4] else 0.7)
-                self.play(pulse(ch, 1.08, run_time=0.45))
+                self.play(FadeIn(ch, shift=UP * 0.2), run_time=0.6)
+                self.play(pulse(ch, 1.08, run_time=0.35))
+            vo.wait_until("and what to improve")         # the last chapter promises improvements too
+            self.play(emphasize(chapters[-1], run_time=0.8))
         self.wait(0.6)
         fade_out_all(self)

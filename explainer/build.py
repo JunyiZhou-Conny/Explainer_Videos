@@ -24,11 +24,24 @@ and <id>_<part>.mp4 / .srt / chapters_<part>.txt for each part.
 
 Language versions (videos/<id>/i18n/<lang>/narration.yaml, see explainer/i18n.py):
   - the English build also writes <id>.<lang>.srt (translated subtitles on the English timing),
-    <id>.<lang>-en.srt and <id>.<lang>-en.ass (bilingual), and with --burn <id>.<lang>-en.mp4;
+    <id>.<lang>-en.srt and <id>.<lang>-en.ass (bilingual), and <id>.<lang>-en.mp4: the English video
+    with the bilingual subtitles burned in under the picture (the standard upload copy for Bilibili;
+    --no-burn skips it);
   - `--lang zh` renders the Chinese version into output/zh/: <id>.mp4 with bilingual subtitles
     burned in under the picture (--no-burn keeps it clean), <id>.zh.srt, <id>.en.srt (English on the
     Chinese timing), <id>.zh-en.srt / .ass, chapters.txt and a bilingual transcript.md.
     video.yaml may set the voice per language:  languages: {zh: {voice: {backend: ..., voice: ...}}}
+
+Music (explainer.music, composed from the scenes' event logs): `--music` (or a `music:` block in
+video.yaml) mixes the score under the narration: <id>.mp4 with music, <id>.nomusic.mp4 as before,
+<id>.music.wav (the bilingual <id>.<lang>-en.mp4 is burned from the music version).
+Without either, nothing changes.
+
+A short (video.yaml `format: short`, docs/SHORTS.md) is stitched by stitch_short: finishing pass
+(`finish:`), bilingual captions from captions.yaml drawn into the picture (one master per
+`captions.layouts`, or --layout), music at -14 LUFS; <id>.mp4, <id>.<layout>.mp4, <id>.nomusic.mp4,
+<id>.music.wav, <id>.zh.srt / .en.srt / .zh-en.srt / .<layout>.ass, chapters.txt, transcript.md.
+A short has music unless video.yaml says `music: false` (or --no-music).
 """
 
 from __future__ import annotations
@@ -63,7 +76,8 @@ def load_project(project: Path) -> dict:
 
 def voice_spec(spec: dict, lang: str = "en") -> dict:
     if lang == "en":
-        return spec.get("voice", {}) or {}
+        v = spec.get("voice")
+        return v if isinstance(v, dict) else {}         # (a short may say `voice: none`)
     v = ((spec.get("languages") or {}).get(lang) or {}).get("voice")
     return v or DEFAULT_VOICES.get(lang, {})
 
@@ -110,6 +124,29 @@ def voice_stamp(project: Path, quality: str, scene: dict, lang: str = "en") -> P
     return media_dir(project, quality, scene, lang) / "voice.json"
 
 
+# toolkit modules that run only after rendering (music, the finishing pass), command-line tooling that
+# no scene imports (the build itself, the linter, contact sheets), and modules that only short-format
+# scenes import: none of them changes a narrated video's scene renders. (A change to the render
+# command in build.py itself therefore needs --only or a deleted render to take effect.)
+AFTER_RENDER = {"music.py", "finishing.py"}
+TOOLING = {"build.py", "check.py", "preview.py"}
+SHORT_ONLY = {"short.py", "grid.py", "captions.py"}
+
+
+def is_short(spec: dict) -> bool:
+    return str(spec.get("format", "")).lower() == "short"
+
+
+def toolkit_sources(project: Path) -> list[Path]:
+    """The toolkit files a scene render of this project depends on."""
+    try:
+        short = is_short(load_project(project))
+    except Exception:
+        short = False
+    skip = AFTER_RENDER | TOOLING | (set() if short else SHORT_ONLY)
+    return [p for p in Path(__file__).parent.glob("*.py") if p.name not in skip]
+
+
 def is_stale(project: Path, quality: str, scene: dict, lang: str = "en", voice: str | None = None) -> bool:
     """A scene needs rendering if its movie is missing or older than anything it is built from:
     its own file, the other .py files next to it (shared helpers), the script, video.yaml, assets,
@@ -124,7 +161,7 @@ def is_stale(project: Path, quality: str, scene: dict, lang: str = "en", voice: 
             return True
     scene_file = project / scene["file"]
     sources = [scene_file, *scene_file.parent.glob("*.py"), project / "script.md", project / "video.yaml",
-               *(project / "assets").glob("*"), *Path(__file__).parent.glob("*.py"),
+               *(project / "assets").glob("*"), *toolkit_sources(project),
                *Path(__file__).parent.glob("*.yaml")]
     if lang != "en":
         tr = project / "i18n" / lang                 # what a render reads (not the glossary or companions)
@@ -204,15 +241,15 @@ def _fits(text: str, width: int, lines: int) -> bool:
     return len(_lines(text, width, lines)) <= lines
 
 
-def _split_sentence(sent: str, width: int, lines: int) -> list[str]:
+def _split_sentence(sent: str, width: int, lines: int, min_units: float = 0.0) -> list[str]:
     """Split one sentence into the fewest pieces that each fit in `lines` lines, by the rules of the
     Chinese video's English track (subtitles.tracks, subtitles.split_balanced with clauses=True): cut
     at a clause boundary, or a gap before and / but / which …, never inside a list or a name (a cue
     cut is scored by subtitles._cue_cost: "Latanya Sweeney showed" + "that ZIP code, birth date and
     sex alone / single out most Americans,"), and each piece must have a 2-line layout that does not
-    split a name."""
+    split a name. `min_units`: no piece shorter than that (subtitles.split_balanced's min_piece)."""
     sent = " ".join(sent.split())
-    return subs.split_balanced(sent, lines * width * 0.55, clauses=lines == 2)
+    return subs.split_balanced(sent, lines * width * 0.55, clauses=lines == 2, min_piece=min_units)
 
 
 def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2,
@@ -222,7 +259,12 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
     With `marks` ((char offset, seconds) of each sentence start, from the voice clip), every
     sentence's cues sit exactly where that sentence is spoken; without them, the whole clip is
     timed proportionally to characters. Inside a sentence, cues are timed by characters. Cues
-    shorter than `min_dur` are merged with a neighbour when the result still fits. A cue whose two
+    shorter than `min_dur` are merged with a neighbour when the result still fits: one of the same
+    sentence first, and across a sentence end only when the merged cue ends at a sentence end
+    ("…fit its time limit. It didn't.") or a whole short sentence starts it ("Why? On a log scale,"),
+    never as a fragment of the next sentence at its end ("…on day one. Minutes later,"); a fragment
+    that can join neither is avoided by cutting its sentence again with no piece that short. A short
+    cue that the pause after it can hold stays up into the pause instead ("It wasn't."). A cue whose two
     lines would break mid-phrase becomes two cues at a clean break when that reads better, as in
     the English track of the Chinese video (subtitles._two_lines: "Explore walks down every branch,
     one at a time," + "and counts the leaves it reaches."). Lines: _lines."""
@@ -240,36 +282,60 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
             dt = (end - start) * len(sent) / total
             spans.append((t, t + dt))
             t += dt
-    cues = []
-    for (a, b), (_, sent) in zip(spans, sentences):
+    cues = []                           # [start, end, text, sentence index]
+    for si, ((a, b), (_, sent)) in enumerate(zip(spans, sentences)):
         pieces = _split_sentence(sent, width, lines)
         total = sum(len(c) for c in pieces) or 1
+        if len(pieces) > 1 and b - a > 0:   # a fragment too short to read that can't join its neighbours
+            stuck = [k for k, c in enumerate(pieces) if (b - a) * len(c) / total < min_dur
+                     and not any(_fits(" ".join(pieces[min(j, k):max(j, k) + 1]), width, lines)
+                                 for j in (k - 1, k + 1) if 0 <= j < len(pieces))]
+            if stuck:                       # ("Minutes later," + a piece too long to take it)
+                alt = _split_sentence(sent, width, lines, min_units=min_dur * total / (b - a) * 0.55)
+                if len(alt) > 1:
+                    pieces = alt
+                    total = sum(len(c) for c in pieces) or 1
         t = a
         for c in pieces:
             dt = max(0.0, b - a) * len(c) / total
-            cues.append([t, t + dt, c])
+            cues.append([t, t + dt, c, si])
             t += dt
+
+    def ends_sentence(k):
+        return k == len(cues) - 1 or cues[k + 1][3] != cues[k][3]
+
+    def starts_sentence(k):
+        return k == 0 or cues[k - 1][3] != cues[k][3]
     merged = True
     while merged:                       # fold too-short cues into a neighbour when the text fits
         merged = False
-        for i, (a, b, c) in enumerate(cues):
-            if b - a >= min_dur or len(cues) == 1:
+        for i, (a, b, c, si) in enumerate(cues):
+            room = (cues[i + 1][0] - 0.05 if i + 1 < len(cues) else b) - a   # it may linger into a pause
+            if b - a >= min_dur or room >= min_dur or len(cues) == 1:
                 continue
-            for j in (i - 1, i + 1) if i > 0 else (i + 1,):
-                if 0 <= j < len(cues):
-                    lo, hi = min(i, j), max(i, j)
-                    joined = cues[lo][2] + " " + cues[hi][2]
-                    if _fits(joined, width, lines):
-                        cues[lo:hi + 1] = [[cues[lo][0], cues[hi][1], joined]]
-                        merged = True
-                        break
+            near = [j for j in (i - 1, i + 1) if 0 <= j < len(cues)]
+            for j in sorted(near, key=lambda j: cues[j][3] != si):      # its own sentence first
+                lo, hi = min(i, j), max(i, j)
+                whole = lo == i and starts_sentence(i) and ends_sentence(i)   # "Why? On a log scale,"
+                if cues[lo][3] != cues[hi][3] and not (ends_sentence(hi) or whole):
+                    continue                # not "…on day one. Minutes later,"
+                joined = cues[lo][2] + " " + cues[hi][2]
+                if _fits(joined, width, lines):
+                    cues[lo:hi + 1] = [[cues[lo][0], cues[hi][1], joined, cues[hi][3]]]
+                    merged = True
+                    break
             if merged:
                 break
     out = []
-    for a, b, c in cues:
+    for a, b, c, _ in cues:
         out += subs._two_lines((a, b, " ".join(c.split())), width * 0.55, min_dur) if lines == 2 else [(a, b, c)]
     if lines == 2:                      # (and a cue cut that is not a clean break moves to one: subs._reflow_en)
         out = subs._reflow_en(out, width * 0.55)
+    out = [list(c) for c in out]        # a short cue stays up into the pause after it (not past the clip
+    for i, c in enumerate(out):         # or into the next cue): "It wasn't." alone, 0.9 s -> 1 s
+        if c[1] - c[0] < min_dur:
+            nxt = out[i + 1][0] - 0.05 if i + 1 < len(out) else c[1]
+            c[1] = max(c[1], min(c[0] + min_dur, nxt))
     return [(a, b, "\n".join(_lines(c.replace("\n", " "), width, lines))) for a, b, c in out]
 
 
@@ -292,17 +358,27 @@ def main(argv=None):
     ap.add_argument("--crf", type=int, help="re-encode each scene with x264 at this CRF (smaller files; ~25 is good)")
     ap.add_argument("--render-only", action="store_true", help="render the selected scenes, don't stitch")
     ap.add_argument("--lang", default="en", help="language version to build (en, zh, ...)")
-    ap.add_argument("--burn", action="store_true", help="English build: also burn bilingual subtitles "
-                    "(<id>.<lang>-en.mp4) for each translation")
-    ap.add_argument("--no-burn", action="store_true", help="translated build: keep the video clean")
+    ap.add_argument("--burn", action="store_true", help="(the default) burn the bilingual subtitles: the English "
+                    "build writes <id>.<lang>-en.mp4 for each translation, a translated build burns its own video")
+    ap.add_argument("--no-burn", action="store_true", help="no burned copy: English build writes only the clean "
+                    "video, a translated build keeps its video clean")
     ap.add_argument("--subs-only", action="store_true", help="only (re)write subtitles, chapters and transcript "
                     "from existing renders; leave the video files alone")
+    ap.add_argument("--music", action="store_true", help="add the score composed from the scenes' event logs "
+                    "(explainer.music); also on when video.yaml has a music: block")
+    ap.add_argument("--no-music", action="store_true", help="leave the music out even if video.yaml asks for it")
+    ap.add_argument("--layout", help="short: caption layout(s) to make, comma-separated (zh-first, en-first, zh, "
+                    "en); default video.yaml captions.layout(s)")
+    ap.add_argument("--no-finish", action="store_true", help="short: skip the finishing pass (bloom, grain, vignette)")
     args = ap.parse_args(argv)
 
     project = args.project.resolve()
     spec = load_project(project)
     scenes = spec["scenes"]
     lang = args.lang
+    if is_short(spec) and lang != "en":
+        raise SystemExit("a short has no narration to translate: its captions carry both languages "
+                         "(video.yaml captions.layout: zh-first | en-first); build it without --lang")
     env = scene_env(spec, args.tts, lang)
     env["EXPLAINER_PROJECT"] = str(project)
     only = set(args.only.split(",")) if args.only else None
@@ -320,9 +396,10 @@ def main(argv=None):
         voice = voice_identity(env)
         todo = [s for s in scenes if is_stale(project, args.quality, s, lang, voice)]
     if todo:
-        print(f"Rendering {len(todo)} scene(s) at {QUALITY_DIRS[args.quality]} lang={lang} "
-              f"with TTS={backend_name(env)} voice={env.get('EXPLAINER_VOICE', '-')} (jobs={args.jobs})",
-              flush=True)
+        voice_note = "(no narration: a short)" if is_short(spec) else \
+            f"with TTS={backend_name(env)} voice={env.get('EXPLAINER_VOICE', '-')}"
+        print(f"Rendering {len(todo)} scene(s) at {QUALITY_DIRS[args.quality]} lang={lang} {voice_note} "
+              f"(jobs={args.jobs})", flush=True)
         with ThreadPoolExecutor(max_workers=args.jobs) as pool:
             list(pool.map(lambda s: render_scene(project, args.quality, s, env), todo))
     if args.render_only:
@@ -346,21 +423,36 @@ def main(argv=None):
         normalized.append((s, movie, norm))
 
     suffix = "" if args.quality == "h" else "_" + QUALITY_DIRS[args.quality]
+    from .music import music_enabled
+    with_music = not args.no_music and (args.music or music_enabled(spec))
+    if is_short(spec) and with_music and spec.get("music") is None and not args.music:
+        print("  music: on (a short has music; video.yaml `music: false` or --no-music leaves it out)")
+    if is_short(spec):
+        layouts = args.layout.split(",") if args.layout else None
+        stitch_short(normalized, out_dir / f"{spec['id']}{suffix}", spec.get("title", spec["id"]), build,
+                     ctx=dict(project=project, spec=spec, quality=args.quality, music=with_music, layouts=layouts,
+                              finish=not args.no_finish, crf=args.crf, subs_only=args.subs_only))
+        return
     meta = {}
     if lang != "en":
         from .i18n import meta as lang_meta
         meta = lang_meta(lang, project)
     title = meta.get("title") or spec.get("title", spec["id"])
     ctx = dict(project=project, spec=spec, lang=lang, meta=meta, build=build, env=env,
-               burn=(not args.no_burn) if lang != "en" else args.burn, subs_only=args.subs_only)
+               burn=not args.no_burn, subs_only=args.subs_only,
+               music=with_music and not args.subs_only)
     stitch(normalized, out_dir / f"{spec['id']}{suffix}", title, build, chapters_file=out_dir / "chapters.txt",
            transcript_file=out_dir / "transcript.md", ctx=ctx)
+    if ctx["music"]:
+        add_music(normalized, out_dir / f"{spec['id']}{suffix}", build, ctx)
     for part in spec.get("parts") or []:
         keep = set(part["scenes"])
         subset = [t for t in normalized if Path(t[0]["file"]).stem in keep or t[0]["cls"] in keep]
         ptitle = ((meta.get("parts") or {}).get(part["id"])) or part.get("title", part["id"])
         stitch(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", ptitle, build,
                chapters_file=out_dir / f"chapters_{part['id']}.txt", ctx=ctx)
+        if ctx["music"]:
+            add_music(subset, out_dir / f"{spec['id']}_{part['id']}{suffix}", build, ctx)
 
 
 def _scene_title(s: dict, meta: dict) -> str:
@@ -449,6 +541,12 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
                         "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
                         "-movflags", "+faststart", str(final)], check=True)
+        if ctx.get("music"):                   # the same narration before AAC: the music is mixed from it,
+            voice_wav = build / f"voice_{stem.name}.wav"                     # so the voice is encoded once
+            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-vn", "-af",
+                            "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-ac", "2",
+                            "-c:a", "pcm_f32le", str(voice_wav)], check=True)
+            ctx.setdefault("voice_wavs", {})[str(stem)] = voice_wav
         joined.unlink(missing_ok=True)
     made = []
     if lang == "en":
@@ -465,7 +563,10 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
             subs.write_ass(ass, tr_["zh-en"], title=title)
             made += [f".{code}.srt", f".{code}-en.srt/.ass"]
             if ctx.get("burn") and not subs_only:
-                subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"))
+                if ctx.get("music"):           # burned after the music is mixed in (add_music)
+                    ctx.setdefault("pending_burns", []).append((final, ass, Path(f"{stem}.{code}-en.mp4")))
+                else:
+                    subs.burn(final, ass, Path(f"{stem}.{code}-en.mp4"))
                 made.append(f".{code}-en.mp4")
     else:
         tr_ = subs.tracks(own_pairs, timing="tr")
@@ -489,6 +590,183 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
         transcript_file.write_text("".join(transcript))
     size = f"{final.stat().st_size / 1e6:.1f} MB" if final.exists() else "video not written"
     print(f"Done: {final.name}  ({fmt_chapter(offset)}, {size}) + {', '.join(made)}, {chapters_file.name}")
+
+
+# ---------------------------------------------------------------- music and the short format
+
+def _offsets(items) -> list[float]:
+    """Start of each normalized scene in the joined video (from frame counts when the logs have them)."""
+    out, t = [], 0.0
+    for s, movie, norm in items:
+        out.append(t)
+        ev = movie.with_suffix(".events.json")
+        dur = None
+        if ev.exists():
+            log = json.loads(ev.read_text())
+            if log.get("frames") and log.get("fps"):
+                dur = log["frames"] / log["fps"]
+        t += dur if dur is not None else ffprobe_duration(norm)
+    return out
+
+
+def add_music(items, stem: Path, build: Path, ctx: dict) -> None:
+    """Narrated video: compose the score from the scenes' event logs, mix it under the narration
+    (ducked, explainer.music.mix_under_voice), write <stem>.mp4 with the mix, <stem>.nomusic.mp4 with the
+    narration only, and <stem>.music.wav."""
+    from . import finishing as fin
+    final = stem.with_suffix(".mp4")
+    nomusic = Path(f"{stem}.nomusic.mp4")
+    if not final.exists():
+        raise SystemExit(f"no video to add music to: {final}")
+    offsets = [0.0]
+    for _, _, norm in items[:-1]:
+        offsets.append(offsets[-1] + ffprobe_duration(norm))
+    total = offsets[-1] + ffprobe_duration(items[-1][2]) if items else 0.0
+    scenes = [(Path(s["file"]).stem, o, movie.with_suffix(".events.json")) for (s, movie, _), o in zip(items, offsets)]
+    work = build / "music" / stem.name
+    work.mkdir(parents=True, exist_ok=True)
+    subprocess.run(["cp", str(final), str(nomusic)], check=True)
+    voice = (ctx.get("voice_wavs") or {}).get(str(stem))      # the narration as stitch() wrote it, before AAC
+    if voice is None or not Path(voice).exists():
+        voice = fin.extract_audio(nomusic, work / "voice.wav")   # (fallback: decode the AAC master)
+    res = fin.compose_music(ctx["project"], ctx["spec"], scenes, total, work, voice_wav=voice)
+    fin.mux(nomusic, res["mix"], final)
+    subprocess.run(["cp", str(res["music"]), f"{stem}.music.wav"], check=True)
+    pending = [b for b in ctx.get("pending_burns") or [] if b[0] == final]
+    for src, ass, dst in pending:                      # bilingual masters, now with the music
+        subs.burn(src, ass, dst)
+        ctx["pending_burns"].remove((src, ass, dst))
+    r = res["report"]
+    print(f"Music: {final.name} (+ {nomusic.name}, {stem.name}.music.wav): voice {r.get('voice_lufs')} LUFS, "
+          f"music {r.get('music_under_speech_lufs')} LUFS under speech / {r.get('music_in_gaps_lufs')} in gaps, "
+          f"peak {r.get('mix_true_peak_dbtp')} dBTP")
+
+
+def stitch_short(items, stem: Path, title: str, build: Path, ctx: dict) -> None:
+    """A short: join the scenes, run the finishing pass, burn the captions into the picture (one master
+    per layout), add the music; write the caption sidecars, chapters and a caption transcript."""
+    from . import captions as cap
+    from . import finishing as fin
+    from .grid import Grid
+    project, spec = ctx["project"], ctx["spec"]
+    out_dir = stem.parent
+    offsets = _offsets(items)
+    n_frames, fps = 0, 0.0
+    listing = build / f"concat_{stem.name}.txt"
+    listing.write_text("".join(f"file '{n}'\n" for _, _, n in items))
+    joined = build / f"joined_{stem.name}.mp4"
+    if not ctx.get("subs_only"):
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", str(listing),
+                        "-map", "0:v", "-c", "copy", str(joined)], check=True)
+        n_frames, fps = fin.frame_count(joined)
+    total = n_frames / fps if fps else (offsets[-1] + ffprobe_duration(items[-1][2]) if items else 0.0)
+
+    # captions, sidecars, chapters, transcript
+    ccfg = cap.caption_config(spec)
+    track = fin.gather_captions(project, spec, [(s, movie, o) for (s, movie, _), o in zip(items, offsets)]) \
+        if ccfg["enabled"] else cap.Track()
+    for w in track.warnings:
+        print("  WARNING", w)
+    cap.write_srt(Path(f"{stem}.zh.srt"), track.cues, ("zh",))
+    cap.write_srt(Path(f"{stem}.en.srt"), track.cues, ("en",))
+    cap.write_srt(Path(f"{stem}.zh-en.srt"), track.cues, ("zh", "en"))
+    layouts = ctx.get("layouts") or ccfg["layouts"]
+    w, h = fin._video_size(joined) if joined.exists() else (1920, 1080)
+    ass_files = {}
+    for lay in layouts:
+        ass = Path(f"{stem}.{lay}.ass")
+        cap.write_ass(ass, track.cues, lay, w, h, title=title)
+        ass_files[lay] = ass
+    chapters, transcript = [], [f"# {title}\n"]
+    ends = offsets[1:] + [total + 1.0]
+    for (s, _, _), o, e in zip(items, offsets, ends):
+        if s.get("chapter", True):
+            chapters.append(f"{fmt_chapter(o)} {s.get('title', s['cls'])}")
+        transcript.append(f"\n## {fmt_chapter(o)} — {s.get('title', s['cls'])}\n")
+        for c in track.cues:
+            if o - 1e-6 <= c.t < e - 1e-6:
+                transcript.append(f"- {fmt_chapter(c.t)} {c.zh}\n  {c.en}\n")
+    (out_dir / "chapters.txt").write_text("\n".join(chapters) + "\n")
+    (out_dir / "transcript.md").write_text("".join(transcript))
+    if ctx.get("subs_only"):
+        print(f"Done: captions for {stem.name} ({len(track.cues)} lines): .zh.srt, .en.srt, .zh-en.srt, "
+              + ", ".join(f".{k}.ass" for k in ass_files))
+        return
+
+    # picture: finishing pass, once
+    fcfg = fin.finish_config(spec, ctx.get("finish", True))
+    picture = fin.apply_finish(joined, build / f"{stem.name}.finished.mp4", fcfg) if fcfg else joined
+
+    # music
+    music_wav = None
+    report = {}
+    if ctx.get("music"):
+        scenes = [(Path(s["file"]).stem, o, movie.with_suffix(".events.json")) for (s, movie, _), o in zip(items, offsets)]
+        res = fin.compose_music(project, spec, scenes, total, build / "music" / stem.name)
+        music_wav = res["music"]
+        report = res["report"]
+        subprocess.run(["cp", str(music_wav), f"{stem}.music.wav"], check=True)
+
+    crf = ctx.get("crf") or 18
+    tune = "film" if fcfg and fcfg.get("grain") else "animation"
+    made = []
+    for i, lay in enumerate(layouts):
+        dst = stem.with_suffix(".mp4") if i == 0 else Path(f"{stem}.{lay}.mp4")
+        fin.mux(picture, music_wav, dst, ass=ass_files[lay] if track.cues else None, crf=crf, tune=tune,
+                encode=picture != joined)
+        made.append(dst.name)
+    fin.silent_copy(stem.with_suffix(".mp4"), Path(f"{stem}.nomusic.mp4"))
+    made.append(f"{stem.name}.nomusic.mp4")
+    g = None
+    logs = []
+    for s, movie, _ in items:
+        ev = movie.with_suffix(".events.json")
+        log = json.loads(ev.read_text()) if ev.exists() else {}
+        logs.append(log)
+        gg = log.get("grid")
+        if gg and g is None:
+            g = Grid(float(gg["bpm"]), int(gg.get("beats_per_bar", 4)))
+    qa = fin.short_qa(track, offsets, total, g, logs if all(logs) else None)
+    plays = [o + float(e["t"]) for lg, o in zip(logs, offsets) for e in lg.get("events", [])
+             if e.get("type") == "play" and float(e.get("dur") or 0) > 0]
+    try:                                                # sync measured on the shipped file and the joined picture
+        qa["sync"] = fin.measure_sync(stem.with_suffix(".mp4"), music_wav, joined, plays, cuts=offsets[1:])
+    except Exception as e:                              # (QA must never fail a build)
+        qa["sync"] = {"error": str(e)}
+    if g is not None:                                   # video.yaml scenes may say where they sit: bars: [a, b]
+        for (s, _, _), o, e in zip(items, offsets, offsets[1:] + [total]):
+            if isinstance(s.get("bars"), (list, tuple)) and len(s["bars"]) == 2:
+                a, b = s["bars"]
+                want_o, want_d = (a - 1) * g.bar, (b - a + 1) * g.bar
+                if abs(o - want_o) > 0.01 or abs((e - o) - want_d) > 0.01:
+                    msg = (f"{s['cls']}: planned bars {a}-{b} ({want_o:.1f}-{want_o + want_d:.1f} s), rendered "
+                           f"{o:.2f}-{e:.2f} s ({(e - o) / g.bar:.2f} bars)")
+                    qa.setdefault("bar_plan", []).append(msg)
+                    print("  WARNING", msg)
+    qa.update({k: report[k] for k in ("lufs", "true_peak_dbtp", "lr_correlation", "score_coverage", "clicks",
+                                      "clicks_dry_accents", "click_times", "dropped_in_silences") if k in report})
+    (build / f"{stem.name}.qa.json").write_text(json.dumps(qa, indent=1))
+    sy = qa.get("sync") or {}
+    pdl = sy.get("picture_delay_frames") or {}
+    print(f"Done: {', '.join(made)} ({fmt_chapter(total)}; {len(track.cues)} captions, picture only "
+          f"{qa['picture_only']:.0%}, cuts on bars {qa.get('cuts_on_bars', '-')}, scenes in whole bars "
+          f"{qa.get('scenes_whole_bars', '-')}, plays on the beat {qa.get('plays_on_beat', 0):.0%}"
+          + (f", motion {sy['motion_share']:.0%} of seconds" if sy.get("motion_share") is not None else "")
+          + (f"; picture follows the log by {pdl['median']:g} frame(s) ({pdl['within_4']} plays within 4)"
+             if pdl else "")
+          + (f"; music {qa.get('lufs')} LUFS, peak {qa.get('true_peak_dbtp')} dBTP, sound lag "
+             f"{sy.get('audio_lag_ms')} ms, {qa.get('clicks', 0)} clicks, {qa.get('score_coverage', 0):.0%} of "
+             f"visual events with a sound" if music_wav else "")
+          + ") + .zh.srt, .en.srt, .zh-en.srt, " + ", ".join(f".{k}.ass" for k in ass_files)
+          + (", .music.wav" if music_wav else ""))
+    for k, msg in (("audio_lag_ms", "the sound is {v} ms off the score"),):
+        v = sy.get(k)
+        if v is not None and abs(v) > 2:
+            print("  WARNING", msg.format(v=v))
+    if sy.get("frames_match") is False:
+        print("  WARNING the master has a different number of frames from the joined picture")
+    if qa.get("clicks"):
+        print(f"  WARNING {qa['clicks']} click(s) in the music at {qa.get('click_times')} s")
 
 
 if __name__ == "__main__":

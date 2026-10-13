@@ -24,3 +24,13 @@ videos/*/output/*_480p15.*
 videos/*/output/*_720p30.*
 videos/*/output/*/*_480p15.*
 videos/*/output/*/*_720p30.*
+# pilot excerpts (superseded by the full short): media stay local
+videos/*/output/*/*_opening.mp4
+videos/*/output/*/*_opening.*.mp4
+videos/*/output/*/*_opening.music.wav
+# partial burns (renamed when complete)
+videos/*/output/*.partial.mp4
+videos/*/output/*/*.partial.mp4
+# shorts: the music-free copy and the score alone stay local (rebuild with --no-render); the masters are committed
+videos/*-short/output/*.nomusic.mp4
+videos/*-short/output/*.music.wav

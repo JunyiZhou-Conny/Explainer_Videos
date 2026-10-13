@@ -378,7 +378,9 @@ class KokoroBackend(Backend):
 
     def speak(self, text: str) -> Clip:
         sentences = split_sentences(text)
-        joined = self._cache_path("\x1e".join(s for _, s in sentences) + f"|gap={SENTENCE_GAP}")
+        lex = [self._lexicon_key(s) for _, s in sentences]   # a lexicon edit must re-join the line too
+        joined = self._cache_path("\x1e".join(s for _, s in sentences) + f"|gap={SENTENCE_GAP}"
+                                  + ("|lex=" + "\x1e".join(lex) if any(lex) else ""))
         pieces = [self._sentence_wav(s) for _, s in sentences]
         marks, t = [], 0.0
         durations = [audio_duration(p) for p in pieces]

@@ -16,9 +16,14 @@ if command -v apt-get >/dev/null; then
     texlive-science dvisvgm cm-super fonts-cmu python3-venv python3-dev
   # Chinese versions (EXPLAINER_LANG=zh): CJK fonts for labels/subtitles, XeLaTeX + ctex for maths
   $SUDO apt-get install -y --no-install-recommends fonts-noto-cjk texlive-xetex texlive-lang-chinese
+  # the short format (docs/SHORTS.md): free OFL fonts for captions, tracked titles, hero numbers and
+  # old-style maths (Noto Serif / Sans Mono, Montserrat, Inter, EB Garamond)
+  $SUDO apt-get install -y --no-install-recommends fonts-noto-core fonts-noto-mono fonts-montserrat \
+    fonts-inter fonts-ebgaramond
 elif command -v brew >/dev/null; then
   brew install ffmpeg poppler espeak-ng pkg-config cairo pango
   brew install --cask mactex-no-gui font-computer-modern font-noto-sans-cjk-sc font-noto-serif-cjk-sc || true
+  brew install --cask font-noto-serif font-noto-sans-mono font-montserrat font-inter font-eb-garamond || true
 else
   echo "Install ffmpeg, poppler, espeak-ng, cairo, pango and a LaTeX distribution manually." >&2
 fi
