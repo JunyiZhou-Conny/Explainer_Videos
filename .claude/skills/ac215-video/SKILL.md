@@ -28,7 +28,10 @@ tutorials (repo, branch, README section, Colab), pinned commits, guide path and 
 - Docker: if `docker info` fails, start the daemon with
   `(setsid dockerd > <scratchpad>/dockerd.log 2>&1 &)` from a shell where `$HTTPS_PROXY` is set.
   Docker Hub pulls work. `docker run --network host -e https_proxy=$HTTPS_PROXY -e HTTPS_PROXY=$HTTPS_PROXY ...`
-  gives a container network access. `docker build --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY
+  gives a container network access. Never start a nested `dockerd` inside a container that shares
+  the host network namespace (`--network host`, `--privileged`): with `--bridge=none` it deletes the
+  host's `docker0` and breaks every default-bridge `docker run` for the other agents. Docker-in-Docker
+  checks run in their own network namespace (no `--network host`), or are skipped and noted. `docker build --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY
   --build-arg https_proxy=$HTTPS_PROXY ...` lets build steps download, but the CA is still missing
   inside the build: build a capture-only copy of the Dockerfile that adds the CA first (say so in
   ASSETS.md) rather than editing the tutorial's file.
