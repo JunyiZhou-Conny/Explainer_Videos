@@ -70,3 +70,28 @@ asynchronous: {ipa: "eɪsˈɪŋkɹənəs", say: "ay-synchronous"}
 pipx: {ipa: "pˈɪp ˈɛks", say: "pip-ex"}
 sys: {ipa: "sˈɪs", say: "sis"}
 "0.27.2": {ipa: "zˈiəɹoʊ pɔɪnt twˈɛnti sˈɛvən pɔɪnt tˈuː", say: "zero point twenty-seven point two"}
+# AC215 L03
+RUN: {ipa: "ɹˈʌn", say: "run"}
+READMEs: {ipa: "ɹˈiːdmiːz", say: "readmes"}
+winpty: {ipa: "wˈɪn pˌiːtˌiːwˈaɪ", say: "win P-T-Y"}
+rm: {ipa: "ˈɑːɹ ˈɛm", say: "R M"}
+ADC: {ipa: "ˌeɪdˌiːsˈiː", say: "A-D-C"}
+"46.9": {ipa: "fˈɔːɹɾi sˈɪks pɔɪnt nˈaɪn", say: "forty-six point nine"}
+"1.35": {ipa: "wˈʌn pɔɪnt θɹˈiː fˈaɪv", say: "one point three five"}
+"1.48": {ipa: "wˈʌn pɔɪnt fˈɔːɹ ˈeɪt", say: "one point four eight"}
+"2.5": {ipa: "tˈuː pɔɪnt fˈaɪv", say: "two point five"}
+"0.6": {ipa: "zˈiəɹoʊ pɔɪnt sˈɪks", say: "zero point six"}
+# AC215 L02 (RUN is in the L03 block above)
+"3.12.15": {ipa: "θɹˈiː pɔɪnt twˈɛlv pɔɪnt fˈɪftiːn", say: "three point twelve point fifteen"}
+"3.14.7": {ipa: "θɹˈiː pɔɪnt fˈɔːɹtiːn pɔɪnt sˈɛvən", say: "three point fourteen point seven"}
+"0.12.15": {ipa: "zˈiəɹoʊ pɔɪnt twˈɛlv pɔɪnt fˈɪftiːn", say: "zero point twelve point fifteen"}
+"20.10.24": {ipa: "twˈɛnti pɔɪnt tˈɛn pɔɪnt twˈɛnti fˈɔːɹ", say: "twenty point ten point twenty-four"}
+"26.1.5": {ipa: "twˈɛnti sˈɪks pɔɪnt wˈʌn pɔɪnt fˈaɪv", say: "twenty-six point one point five"}
+Dockerfile.txt: {ipa: "dˈɑːkɚfˌaɪl dˈɑːt tˌiːˌɛkstˈiː", say: "Dockerfile dot T-X-T"}
+docker-shell.sh: {ipa: "dˈɑːkɚ ʃˈɛl dˈɑːt ˌɛsˈeɪtʃ", say: "docker shell dot S-H"}
+docker-build-push.sh: {ipa: "dˈɑːkɚ bˈɪld pˈʊʃ dˈɑːt ˌɛsˈeɪtʃ", say: "docker build push dot S-H"}
+simple-translate-ac215: {ipa: "sˈɪmpəl tɹænslˈeɪt ˌeɪsˈiː tˈuː fˈɪftiːn", say: "simple translate A-C two fifteen"}
+ENV: {ipa: "ˌiːˌɛnvˈiː", say: "E-N-V"}
+ENTRYPOINT: {ipa: "ˈɛntɹi pˌɔɪnt", say: "entry point"}
+entrypoint: {ipa: "ˈɛntɹi pˌɔɪnt", say: "entry point"}
+buildx: {ipa: "bˈɪld ˈɛks", say: "build-ex"}
