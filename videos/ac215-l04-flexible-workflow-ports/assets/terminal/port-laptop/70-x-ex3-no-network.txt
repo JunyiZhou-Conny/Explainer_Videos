@@ -1,0 +1,11 @@
+$ docker network create toynet
+docker run -d --name processor -e PORT=9200 toy-processor
+docker run -d --name gateway --network toynet \
+  -p 127.0.0.1:8090:9100 \
+  -e PROCESSOR_HOST=processor \
+  -e PROCESSOR_PORT=9200 \
+  toy-gateway
+8e64cf9eb94d490ba2333a0bd2d544314d1c024bcca4c41c0d4bca2c189cc8a6
+abdc534c191b4c44cb0c0601218fbeea4db71d09c2ad710b0191079babeadaec
+8fee022120f8a1f5d1d3b5b47b594c94d10f5ec0b8ec1bccf01f5547cf936332
+[exit 0]

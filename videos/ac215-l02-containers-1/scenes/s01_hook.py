@@ -146,7 +146,8 @@ class Hook(VoiceScene):
         chips = VGroup(gone, dock, tick).arrange(RIGHT, buff=0.55)
         tick.shift(LEFT * 0.3)
         chips.move_to([t.box.get_right()[0] - chips.width / 2, row_y, 0])
-        crosses = VGroup(*[cross_mark(0.42, ERR).move_to(c) for c in gone])
+        crosses = VGroup(*[Line(c.get_left() + LEFT * 0.1 + DOWN * 0.04, c.get_right() + RIGHT * 0.1 + UP * 0.04,
+                                color=ERR, stroke_width=5) for c in gone])     # struck out
         prev = preview_tag()
         prev.move_to([t.box.get_left()[0] + prev.width / 2, row_y, 0])
 
@@ -243,7 +244,12 @@ class Hook(VoiceScene):
         ver_cap = RUN6.line(29)                       # "Python 3.14.7"
         assert ver_cap == "Python 3.14.7", ver_cap
         panel = code("Dockerfile.txt", 2, font_size=28)
-        panel.move_to([t.box.get_left()[0] + panel.width / 2, 0.55, 0])
+        num_up = mono("3.14.7", 32, TURN)
+        q = label("?", 64, TURN)
+        pair = VGroup(q, num_up).arrange(RIGHT, buff=0.55)
+        row_w = panel.width + 0.55 + pair.width
+        panel.move_to([-row_w / 2 + panel.width / 2, 0.75, 0])
+        pair.next_to(panel.code, RIGHT, buff=0.55).match_y(panel.code)
         span = code_span(panel.code, 0, "python:3.12")
         ul = Line(span.get_corner(DL) + DOWN * 0.08, span.get_corner(DR) + DOWN * 0.08, color=SYSTEM,
                   stroke_width=4)
@@ -274,10 +280,6 @@ class Hook(VoiceScene):
             self.play(span.animate.set_color(SYSTEM), Create(ul), run_time=0.6)
             self.play(Indicate(span, color=SYSTEM, scale_factor=1.12), run_time=0.6)
             # 3.14.7 rises out of the strip to the right of the panel, a "?" between the two
-            num_up = mono("3.14.7", 32, TURN)
-            q = label("?", 64, TURN)
-            pair = VGroup(q, num_up).arrange(RIGHT, buff=0.55)
-            pair.next_to(panel.code, RIGHT, buff=0.55).match_y(panel.code)
             self.play(TransformFromCopy(num, num_up), run_time=0.8)
             self.play(FadeIn(q, scale=0.6), run_time=0.4)
             vo.wait_until("Hold that thought")
@@ -300,14 +302,13 @@ class Hook(VoiceScene):
         ring4 = SurroundingRectangle(r_frame(3), color=TURN, buff=0.08, corner_radius=0.14, stroke_width=3)
         hub_shelf = shelf_glyph(0.9)
         hub_lab = label("Docker Hub", 20, CLOUD)
-        hub_g = VGroup(hub_shelf, hub_lab).arrange(DOWN, buff=0.12)
+        hub_g = VGroup(hub_lab, hub_shelf).arrange(DOWN, buff=0.12)
         y34 = (lad.icons[2].get_center()[1] + lad.icons[3].get_center()[1]) / 2
-        hub_g.move_to([lad.rails.get_right()[0] + 0.25 + hub_g.width / 2, y34, 0])
-        hub_g.shift(RIGHT * min(0, 6.5 - hub_g.get_right()[0]))
-        push = Arrow(lad.icons[2].get_right() + RIGHT * 0.05, hub_shelf.get_bottom() + DOWN * 0.05 + LEFT * 0.15,
+        hub_g.shift([lad.rails.get_right()[0] + 1.3 - hub_shelf.get_center()[0], y34 - hub_shelf.get_center()[1], 0])
+        push = Arrow(lad.icons[2].get_right() + RIGHT * 0.05, hub_shelf.get_left() + DOWN * 0.18 + LEFT * 0.06,
                      buff=0, path_arc=0.9, color=ROUTE, stroke_width=4, tip_length=0.18,
                      max_tip_length_to_length_ratio=0.3)
-        pull = Arrow(hub_shelf.get_top() + UP * 0.05 + LEFT * 0.15, lad.icons[3].get_right() + RIGHT * 0.05,
+        pull = Arrow(hub_shelf.get_left() + UP * 0.18 + LEFT * 0.06, lad.icons[3].get_right() + RIGHT * 0.05,
                      buff=0, path_arc=0.9, color=ROUTE, stroke_width=4, tip_length=0.18,
                      max_tip_length_to_length_ratio=0.3)
 
@@ -348,6 +349,8 @@ class Hook(VoiceScene):
         tchips = VGroup(*[tracker_chip(a, s, n, ic, chip_w) for (a, s, n), ic in zip(rows, icons)])
         tchips.arrange(DOWN, buff=0.14, aligned_edge=LEFT)
         tchips.move_to([-6.4 + tchips.width / 2 + 0.12, 3.42 - tchips.height / 2 - 0.12, 0])
+        veils = VGroup(*[Rectangle(width=c.width + 0.04, height=c.height + 0.04, stroke_width=0)
+                         .set_fill(S.BG, 0.72).move_to(c) for c in tchips])
         ring = RoundedRectangle(width=tchips.width + 0.24, height=tchips.height + 0.24, corner_radius=0.16,
                                 stroke_color=TURN, stroke_width=3).move_to(tchips)
         t2 = term(P_LAPTOP_HOME, rows=2)              # the 2-row preview strip
@@ -362,12 +365,15 @@ class Hook(VoiceScene):
             vo.wait_until("open the README")
             self.play(FadeIn(page, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("Three trackers")
+            # the page flies into the corner and becomes the three trackers (dim until named)
             self.play(page.animate.scale(0.3).move_to(tchips).set_opacity(0),
-                      Create(ring), run_time=0.9)
+                      FadeIn(tchips, target_position=page.get_center(), scale=0.6), FadeIn(veils),
+                      Create(ring), run_time=1.0)
             self.remove(page)
-            for c, anchor in zip(tchips, ("on the laptop", "on Docker Hub", "on the VM")):
+            for c, v, anchor in zip(tchips, veils, ("on the laptop", "on Docker Hub", "on the VM")):
                 vo.wait_until(anchor)
-                self.play(FadeIn(c, shift=RIGHT * 0.2), run_time=0.45)
+                self.play(FadeOut(v), run_time=0.35)
+                self.remove(v)
                 self.play(Indicate(c.icon, color=INK, scale_factor=1.3), run_time=0.5)
             self.play(ring.animate(rate_func=there_and_back).set_stroke(width=7), run_time=0.7)
             vo.wait_until("When the yellow")

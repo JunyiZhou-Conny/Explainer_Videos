@@ -1,0 +1,12 @@
+$ docker network create toynet; docker compose up -d
+01603248db1c4f87879b44ede5128f8ba154eb6fb0009684e1eafa73dc44b7f8
+time="2026-10-13T20:14:02Z" level=warning msg="a network with name toynet exists but was not created by compose.\nSet `external: true` to use an existing network"
+ Container processor Creating 
+ Container processor Created 
+ Container gateway Creating 
+ Container gateway Created 
+ Container processor Starting 
+ Container processor Started 
+ Container gateway Starting 
+ Container gateway Started 
+[exit 0]

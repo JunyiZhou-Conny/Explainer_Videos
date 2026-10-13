@@ -1,0 +1,12 @@
+$ git diff
+diff --git a/processor/processor.py b/processor/processor.py
+index 54519a4..8d15e63 100644
+--- a/processor/processor.py
++++ b/processor/processor.py
+@@ -43,3 +43,5 @@ port = int(os.environ.get("PORT", "9200"))
+ server = HTTPServer(("", port), Processor)
+ print(f"processor listening on port {server.server_address[1]} (internal only)")
+ server.serve_forever()
++
++# edited
+[exit 0]

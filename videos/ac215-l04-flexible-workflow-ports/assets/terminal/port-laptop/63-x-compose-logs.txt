@@ -1,0 +1,4 @@
+$ docker compose logs
+processor  | processor listening on port 9200 (internal only)
+gateway    | gateway listening on port 9100  →  open http://localhost:8090
+[exit 0]

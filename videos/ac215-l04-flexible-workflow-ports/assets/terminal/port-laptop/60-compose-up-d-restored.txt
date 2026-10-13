@@ -1,0 +1,7 @@
+$ docker compose up -d
+ Container processor Running 
+ Container gateway Recreate 
+ Container gateway Recreated 
+ Container gateway Starting 
+ Container gateway Started 
+[exit 0]

@@ -1,0 +1,7 @@
+$ docker compose up -d
+time="2026-10-13T20:14:01Z" level=warning msg="a network with name toynet exists but was not created by compose.\nSet `external: true` to use an existing network"
+ Container processor Creating 
+ service:processor:1 Error response from daemon: Conflict. The container name "/processor" is already in use by container "12b40606abb94daf3128507bb555f45abcd7a7ed2a2e8e3e11e14910740e8ef8". You have to remove (or rename) that container to be able to reuse that name. 
+ Container gateway Creating 
+Error response from daemon: Conflict. The container name "/processor" is already in use by container "12b40606abb94daf3128507bb555f45abcd7a7ed2a2e8e3e11e14910740e8ef8". You have to remove (or rename) that container to be able to reuse that name.
+[exit 1]

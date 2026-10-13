@@ -1,0 +1,83 @@
+$ docker compose up -d --build
+ Image port_toy-processor Building 
+ Image port_toy-gateway Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.41kB done
+#1 DONE 0.0s
+
+#2 [processor internal] load build definition from Dockerfile
+#2 transferring dockerfile: 221B done
+#2 DONE 0.0s
+
+#3 [gateway internal] load build definition from Dockerfile
+#3 transferring dockerfile: 219B done
+#3 DONE 0.0s
+
+#4 [processor internal] load metadata for docker.io/library/python:3.14-slim
+#4 DONE 0.0s
+
+#5 [gateway internal] load .dockerignore
+#5 transferring context: 2B done
+#5 DONE 0.0s
+
+#6 [processor internal] load .dockerignore
+#6 transferring context: 2B done
+#6 DONE 0.0s
+
+#7 [processor internal] load build context
+#7 transferring context: 1.71kB done
+#7 DONE 0.0s
+
+#8 [gateway internal] load build context
+#8 transferring context: 92B done
+#8 DONE 0.0s
+
+#9 [processor 1/4] FROM docker.io/library/python:3.14-slim@sha256:b69f105664082b4b827ff8ecb9e787e77a8d8a0981b9a4ec6a01acb73012916a
+#9 resolve docker.io/library/python:3.14-slim@sha256:b69f105664082b4b827ff8ecb9e787e77a8d8a0981b9a4ec6a01acb73012916a 0.0s done
+#9 DONE 0.0s
+
+#10 [gateway 2/4] RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+#10 CACHED
+
+#11 [gateway 3/4] WORKDIR /app
+#11 CACHED
+
+#12 [gateway 4/4] COPY . .
+#12 CACHED
+
+#13 [processor 4/4] COPY . .
+#13 DONE 0.0s
+
+#14 [gateway] exporting to image
+#14 exporting layers done
+#14 exporting manifest sha256:b8e6b0619cdd747fc926ed27495268e7c4e150b597d94c358379ce48840c9c46 done
+#14 exporting config sha256:a2fe570a8d4a9d95aa38a415cd515baf4169d0e050d55444f6b7928f82bddc58 done
+#14 exporting attestation manifest sha256:5fb2c21a55687fe72c48bcb1b70bb1977778f36dedad2ae40994c351abb1a48b done
+#14 exporting manifest list sha256:d72867821fc2850e0fb2e636f13e9193c1b763f8bae330ab53ebf47e409c86e9 done
+#14 naming to docker.io/library/port_toy-gateway:latest done
+#14 unpacking to docker.io/library/port_toy-gateway:latest 0.0s done
+#14 DONE 0.1s
+
+#15 [gateway] resolving provenance for metadata file
+#15 DONE 0.0s
+
+#16 [processor] exporting to image
+#16 exporting layers 0.0s done
+#16 exporting manifest sha256:f213983fe3c49dc2176c3cee3f15bf0e58482eade371f68b6444d5b958945128 done
+#16 exporting config sha256:03b9997ef8fdeba2514467521114277473c5f0d594ab8ff49c16140d09addc9b done
+#16 exporting attestation manifest sha256:ba803a0b56a16e7e3d915a09f5298854e977a4085a940bbe5ce5ead05a8cdb57 done
+#16 exporting manifest list sha256:7779a07e10317175a8c6e5ace30dc1d6a38715bdc48c82f3895e8d687263615c 0.0s done
+#16 naming to docker.io/library/port_toy-processor:latest done
+#16 unpacking to docker.io/library/port_toy-processor:latest 0.0s done
+#16 DONE 0.1s
+
+#17 [processor] resolving provenance for metadata file
+#17 DONE 0.0s
+ Image port_toy-processor Built 
+ Image port_toy-gateway Built 
+ Container gateway Running 
+ Container processor Recreate 
+ Container processor Recreated 
+ Container processor Starting 
+ Container processor Started 
+[exit 0]
