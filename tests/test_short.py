@@ -265,6 +265,9 @@ def test_stitch_finds_captions_under_the_scene_captions_key(project, tmp_path):
 
 def test_counter_comma_sits_like_typeset_text():
     """The thousands separator is set as Inter sets "255,168": just clear of the digit before it."""
+    from conftest import MISSING_FONTS
+    if "Inter-Variable.ttf" in MISSING_FONTS:
+        pytest.skip("Inter not available; run tools/setup-runtime to fetch the project fonts")
     from manim import HEAVY, Text
     c = sh.RollingCounter(255168, digits=6, size=96)
     c.layout()

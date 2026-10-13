@@ -1,0 +1,105 @@
+name: Episode check
+
+# Every PR: the full test suite, the incubator inventory check, and a narrated
+# sample-scene render whose validation sidecar must pass. An episode PR renders
+# its own first scene; a toolkit PR renders the reference episode instead, which
+# must keep reproducing its committed numbers (the render is deterministic).
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  guard:
+    name: Ownership guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Episode PRs touch only their episode; no PR adds tracked MP4s
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          git diff --name-only --diff-filter=ACMR "$BASE...$HEAD" > changed.txt
+          cat changed.txt
+          if grep -E '\.(mp4|mov|wav)$' changed.txt; then
+            echo '::error::Rendered media belongs in release assets (docs/PUBLISHING.md), not in git.'
+            exit 1
+          fi
+          if grep -q '^videos/' changed.txt && \
+             grep -Eq '^(explainer|tools|skill-library|\.github)/' changed.txt; then
+            echo '::error::Episode PRs touch only videos/<slug>/; toolkit and preset changes go in their own small PRs (AGENTS.md).'
+            exit 1
+          fi
+
+  check:
+    name: Tests + sample render
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: System packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            python3.12-venv libpango1.0-dev libcairo2-dev pkg-config ffmpeg
+      - name: Cache the virtualenv
+        uses: actions/cache@v4
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ hashFiles('setup/requirements-swiss.txt', 'setup/requirements-dev.txt') }}
+      - name: Cache fonts and the TTS model
+        uses: actions/cache@v4
+        with:
+          path: |
+            assets/fonts
+            assets/tts-models
+          key: assets-${{ hashFiles('assets/manifest.json') }}
+      - name: Runtime setup (installs the pinned engine, fonts and Kokoro model)
+        run: python3.12 tools/setup-runtime
+      - name: Dev dependencies
+        run: .venv/bin/python -m pip install -q -r setup/requirements-dev.txt
+      - name: Test suite (pytest runs the whole suite; unittest discovery misses most of it)
+        run: .venv/bin/python -m pytest -q tests
+      - name: Incubator inventory check
+        run: python3 tools/check_incubator.py
+      - name: Pick the episode to sample
+        id: pick
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin "$BASE" 2>/dev/null || true
+          slug=$(git diff --name-only "$BASE...$HEAD" 2>/dev/null | grep '^videos/' | cut -d/ -f2 | sort -u | head -1 || true)
+          if [ -n "$slug" ] && [ -f "videos/$slug/script.json" ]; then
+            echo "episode=videos/$slug" >> "$GITHUB_OUTPUT"
+          elif [ -n "$slug" ] && [ -f "videos/$slug/video.yaml" ]; then
+            # legacy-route episode: no episode.json sample runner; the test suite covers the toolkit
+            echo "episode=" >> "$GITHUB_OUTPUT"
+          else
+            echo "episode=videos/skills-ecosystem" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Sample render (first scene, narrated, validated)
+        if: steps.pick.outputs.episode != ''
+        run: |
+          set -euo pipefail
+          ep="${{ steps.pick.outputs.episode }}"
+          first=$(python3 -c "import json,sys; print(json.load(open('$ep/script.json'))['scenes'][0]['id'])")
+          python3 skill-library/conny-explainer-video/scripts/render.py "$ep" --sample "$first"
+          ls -l "outputs/$(basename "$ep")/"
+      - name: Upload the sample
+        if: steps.pick.outputs.episode != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-${{ github.event.pull_request.number || github.run_id }}
+          path: |
+            outputs/*/sample-*.mp4
+            outputs/*/sample-*.validation.json
+          retention-days: 14

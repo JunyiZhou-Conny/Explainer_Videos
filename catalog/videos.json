@@ -1,11 +1,12 @@
 {
   "schema_version": 1,
-  "collection_date": "2026-10-12",
+  "collection_date": "2026-10-13",
   "release_tag": "incubator-2026-10-12",
   "source_refs": {
     "main_at_inspection": "0ad23be06f3718c5b772d7e9403eefa5927d6b92",
     "post_pr1_branch": "52c32347afe8f58810868b5fa7c08e36312773ae",
-    "careonex_pr2": "a70e4e2d841b55668bddfed547b165a62b4cd839"
+    "careonex_pr2": "a70e4e2d841b55668bddfed547b165a62b4cd839",
+    "integration_merge": "37d1cda0192054073a030ff31fb38d58c73fef8e"
   },
   "artifacts": [
     {
@@ -31,11 +32,12 @@
       "bytes": 74760087,
       "git_blob": "76faed4e7be0a029745887ede273e9baccbdfd1d",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise/output/dwork2006-calibrating-noise.zh-en.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/dwork2006-calibrating-noise.zh-en.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / bilingual captions",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -44,11 +46,12 @@
       "bytes": 37972159,
       "git_blob": "4995e8345bb92ab5bf563e740b6ac3038a2170b1",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise/output/dwork2006-calibrating-noise_part1.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/dwork2006-calibrating-noise_part1.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean / part 1",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -57,11 +60,12 @@
       "bytes": 43064781,
       "git_blob": "988253dbb745c4c7bff24b68fac866aa40ffcff2",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise/output/dwork2006-calibrating-noise_part1.zh-en.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/dwork2006-calibrating-noise_part1.zh-en.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / bilingual captions / part 1",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -70,11 +74,12 @@
       "bytes": 28145451,
       "git_blob": "5e35c3897834fcbcf221d794cc093a52f9a211c2",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise/output/dwork2006-calibrating-noise_part2.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/dwork2006-calibrating-noise_part2.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean / part 2",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -83,11 +88,12 @@
       "bytes": 31667127,
       "git_blob": "3976a8c76ccf99e44c91bcb554d2ff91abda3db8",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise/output/dwork2006-calibrating-noise_part2.zh-en.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/dwork2006-calibrating-noise_part2.zh-en.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / bilingual captions / part 2",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -96,11 +102,12 @@
       "bytes": 78463698,
       "git_blob": "07ce210e0b93e500199604996392794e19dd5a6e",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise/output/zh/dwork2006-calibrating-noise.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/dwork2006-calibrating-noise.zh.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Mandarin narration",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -109,11 +116,12 @@
       "bytes": 45044572,
       "git_blob": "c857d6ed7f03b7de4a07d81af7960bbd0a7c6753",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise/output/zh/dwork2006-calibrating-noise_part1.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/dwork2006-calibrating-noise_part1.zh.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Mandarin narration / part 1",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "dwork2006-calibrating-noise",
@@ -122,11 +130,12 @@
       "bytes": 33450517,
       "git_blob": "666d5eb504a0cf53410ef5f7c29010da98feccf3",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise/output/zh/dwork2006-calibrating-noise_part2.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/dwork2006-calibrating-noise_part2.zh.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Mandarin narration / part 2",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "how-these-videos-are-made",
@@ -151,11 +160,12 @@
       "bytes": 56690532,
       "git_blob": "b41c54df4c0534f3df1519610335232860c15338",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/how-these-videos-are-made",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/how-these-videos-are-made/output/how-these-videos-are-made.zh-en.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/how-these-videos-are-made.zh-en.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / bilingual captions",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "tictactoe-255168-short",
@@ -164,11 +174,12 @@
       "bytes": 99214519,
       "git_blob": "bba2a215107493f4798769594f21fa81ed8fa726",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168-short",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168-short/output/tictactoe-255168-short.en-first.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/tictactoe-255168-short.en-first.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Short / English-first captions",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "tictactoe-255168-short",
@@ -177,11 +188,12 @@
       "bytes": 99369018,
       "git_blob": "2f2727a53f8fe931ecac737c1355769346d0d981",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168-short",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168-short/output/tictactoe-255168-short.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/tictactoe-255168-short.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Short / Chinese-first captions",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "tictactoe-255168",
@@ -190,11 +202,12 @@
       "bytes": 36484661,
       "git_blob": "c16375eb9c414a36d069fd407e9b8450ebe062f6",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168/output/tictactoe-255168.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/tictactoe-255168.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "tictactoe-255168",
@@ -219,11 +232,12 @@
       "bytes": 43200624,
       "git_blob": "55b73cf49e1acd73bf7a75789538cd285261410f",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168/output/zh/tictactoe-255168.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/tictactoe-255168.zh.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "Mandarin narration",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "careonex-e0-commands",
@@ -232,11 +246,12 @@
       "bytes": 32948333,
       "git_blob": "9f6e06b1970069afdc3661fac42d9eaddfbcde70",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/a70e4e2d841b55668bddfed547b165a62b4cd839/videos/careonex-e0-commands",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/a70e4e2d841b55668bddfed547b165a62b4cd839/videos/careonex-e0-commands/output/careonex-e0-commands.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/careonex-e0-commands.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "careonex-e0-commands",
@@ -261,11 +276,12 @@
       "bytes": 41707465,
       "git_blob": "19496f0ba8b89fcd16edb66c1a44497245a91e49",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/a70e4e2d841b55668bddfed547b165a62b4cd839/videos/careonex-e2-library",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/a70e4e2d841b55668bddfed547b165a62b4cd839/videos/careonex-e2-library/output/careonex-e2-library.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/careonex-e2-library.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "careonex-e2-library",
@@ -290,11 +306,12 @@
       "bytes": 32782039,
       "git_blob": "b0a40cb490817016a6847627ab38129527e596fd",
       "source_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/a70e4e2d841b55668bddfed547b165a62b4cd839/videos/careonex-e6-measuring-search",
-      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/raw/a70e4e2d841b55668bddfed547b165a62b4cd839/videos/careonex-e6-measuring-search/output/careonex-e6-measuring-search.mp4",
-      "availability": "public-source-branch",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/careonex-e6-measuring-search.mp4",
+      "availability": "release-asset",
       "technical_review": "not-redecoded-for-this-publication",
       "variant": "English narration / clean",
-      "human_review": "not-established-by-this-publication"
+      "human_review": "not-established-by-this-publication",
+      "release_tag": "media-2026-10-13"
     },
     {
       "episode": "careonex-e6-measuring-search",
@@ -326,6 +343,62 @@
       "duration_seconds": 300.019667,
       "technical_review": "full-decode-and-original-sampled-visual-checks-passed",
       "human_review": "listening-and-full-playback-not-established"
+    },
+    {
+      "episode": "ac215-l01-vms-venvs",
+      "title": "AC215 L1: VMs, venvs and uv",
+      "variant": "English narration / clean",
+      "source_commit": "3168d86269177bc293f44204c4003fd757eae471",
+      "path": "videos/ac215-l01-vms-venvs/output/ac215-l01-vms-venvs.mp4",
+      "bytes": 85917852,
+      "sha256": "e0440bb140eac85984e474437471e3ccaebb8bfd5f89bd2ca0ef6151017bd929",
+      "availability": "release-asset",
+      "release_tag": "media-2026-10-13",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs.mp4",
+      "technical_review": "ffprobe-metadata-recorded-by-producer",
+      "human_review": "not-established-by-this-publication"
+    },
+    {
+      "episode": "ac215-l01-vms-venvs",
+      "title": "AC215 L1: VMs, venvs and uv",
+      "variant": "English narration / bilingual captions",
+      "source_commit": "3168d86269177bc293f44204c4003fd757eae471",
+      "path": "videos/ac215-l01-vms-venvs/output/ac215-l01-vms-venvs.zh-en.mp4",
+      "bytes": 85094816,
+      "sha256": "429ce43009ce7f13a6af45e32d719147b3650840627252954332b0d80e283987",
+      "availability": "release-asset",
+      "release_tag": "media-2026-10-13",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs.zh-en.mp4",
+      "technical_review": "ffprobe-metadata-recorded-by-producer",
+      "human_review": "not-established-by-this-publication"
+    },
+    {
+      "episode": "ac215-l01-vms-venvs",
+      "title": "AC215 L1: VMs, venvs and uv",
+      "variant": "English narration / clean / part 1",
+      "source_commit": "3168d86269177bc293f44204c4003fd757eae471",
+      "path": "videos/ac215-l01-vms-venvs/output/ac215-l01-vms-venvs_part1.mp4",
+      "bytes": 40683565,
+      "sha256": "e8cd032414701e345a7991a21db37618e210c764eae84e2362616a4c9458b064",
+      "availability": "release-asset",
+      "release_tag": "media-2026-10-13",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs_part1.mp4",
+      "technical_review": "ffprobe-metadata-recorded-by-producer",
+      "human_review": "not-established-by-this-publication"
+    },
+    {
+      "episode": "ac215-l01-vms-venvs",
+      "title": "AC215 L1: VMs, venvs and uv",
+      "variant": "English narration / clean / part 2",
+      "source_commit": "3168d86269177bc293f44204c4003fd757eae471",
+      "path": "videos/ac215-l01-vms-venvs/output/ac215-l01-vms-venvs_part2.mp4",
+      "bytes": 45239046,
+      "sha256": "15d54ed3668bf1e3f4ee4ba23287c5432e276ebe656a8eee8408f968acd6ab96",
+      "availability": "release-asset",
+      "release_tag": "media-2026-10-13",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs_part2.mp4",
+      "technical_review": "ffprobe-metadata-recorded-by-producer",
+      "human_review": "not-established-by-this-publication"
     }
   ],
   "unfinished": [
