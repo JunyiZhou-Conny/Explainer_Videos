@@ -63,7 +63,8 @@ def main() -> int:
 
     deliverables = sorted(p for p in out.iterdir() if p.suffix in {".mp4", ".srt", ".ass"}
                           or p.name.endswith(".chapters.txt"))
-    deliverables = [p for p in deliverables if not p.name.startswith("sample-") and ".clean." not in p.name]
+    deliverables = [p for p in deliverables if not p.name.startswith("sample-")
+                    and ".clean." not in p.name and ".scored." not in p.name]
     if not any(p.suffix == ".mp4" for p in deliverables):
         raise SystemExit(f"No final MP4 under {out}")
 
