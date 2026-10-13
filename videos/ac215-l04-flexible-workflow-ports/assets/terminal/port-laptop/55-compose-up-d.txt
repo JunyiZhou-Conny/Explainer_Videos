@@ -1,0 +1,14 @@
+$ docker compose up -d
+ Network toynet Creating 
+ Network toynet Creating 
+ Network toynet Created 
+ Network toynet Created 
+ Container processor Creating 
+ Container processor Created 
+ Container gateway Creating 
+ Container gateway Created 
+ Container processor Starting 
+ Container processor Started 
+ Container gateway Starting 
+ Container gateway Started 
+[exit 0]

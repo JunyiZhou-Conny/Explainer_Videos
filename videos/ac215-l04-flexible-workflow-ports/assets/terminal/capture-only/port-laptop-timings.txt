@@ -49,3 +49,10 @@
 49-send-compose	20:12:42 UTC	0.1s
 50-network-ls-compose	20:12:42 UTC	0.1s
 51-compose-exec	20:12:42 UTC	0.3s
+47-compose-up.txt	ctrl-c=+4.9s exit=+25.4s
+52-compose-ps-a-stopped	20:13:03 UTC	0.2s
+53-compose-down	20:13:04 UTC	0.4s
+54-compose-ps-a-after	20:13:04 UTC	0.2s
+55-compose-up-d	20:13:05 UTC	0.8s
+56-compose-ps-d	20:13:05 UTC	0.2s
+57-x-edit-port	20:13:05 UTC	0.1s
