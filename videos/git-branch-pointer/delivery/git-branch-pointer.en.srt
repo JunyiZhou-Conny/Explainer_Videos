@@ -1,0 +1,191 @@
+1
+00:00:00,400 --> 00:00:01,651
+Here's a puzzle.
+
+2
+00:00:01,701 --> 00:00:06,843
+This project's history holds hundreds of files
+and half a gigabyte of finished videos.
+
+3
+00:00:07,163 --> 00:00:08,850
+Now, I create a branch.
+
+4
+00:00:08,900 --> 00:00:11,908
+One command —
+and it finishes faster than this sentence.
+
+5
+00:00:12,228 --> 00:00:16,132
+If a branch really copied the project,
+that speed would be impossible.
+
+6
+00:00:16,300 --> 00:00:17,581
+So pause for a second.
+
+7
+00:00:17,581 --> 00:00:21,655
+What is the smallest thing git could write down,
+to remember a branch?
+
+8
+00:00:29,067 --> 00:00:33,088
+The answer sits in one tiny file
+inside the dot git folder:
+
+9
+00:00:33,088 --> 00:00:34,417
+refs, heads, idea.
+
+10
+00:00:34,467 --> 00:00:35,506
+Forty-one bytes:
+
+11
+00:00:35,506 --> 00:00:38,819
+forty characters naming one commit,
+plus a newline.
+
+12
+00:00:39,139 --> 00:00:44,003
+That is the entire branch —
+these exact bytes are from a real repository.
+
+13
+00:00:44,167 --> 00:00:45,717
+Nothing was copied.
+
+14
+00:00:45,767 --> 00:00:47,567
+Git wrote one line.
+
+15
+00:00:53,633 --> 00:00:55,980
+The real structure lives in the commits.
+
+16
+00:00:56,300 --> 00:01:00,716
+Each commit stores a snapshot of your files,
+plus the name of its parent commit.
+
+17
+00:01:00,866 --> 00:01:03,810
+Follow the parents,
+and the commits chain into a graph.
+
+18
+00:01:04,130 --> 00:01:07,117
+That graph already holds
+every version of the project.
+
+19
+00:01:07,266 --> 00:01:09,066
+A branch owns none of this.
+
+20
+00:01:09,122 --> 00:01:10,922
+It simply points at one node.
+
+21
+00:01:17,100 --> 00:01:18,900
+Watch the pointer do its job.
+
+22
+00:01:19,148 --> 00:01:23,159
+You are on idea, and a second pointer,
+called HEAD, remembers that.
+
+23
+00:01:23,333 --> 00:01:27,341
+Commit. Git stores the new snapshot,
+records its parent —
+
+24
+00:01:27,341 --> 00:01:29,801
+and then moves exactly one pointer.
+
+25
+00:01:29,801 --> 00:01:31,888
+Idea now names the new commit.
+
+26
+00:01:32,067 --> 00:01:33,553
+Main never moved.
+
+27
+00:01:33,603 --> 00:01:37,507
+The entire difference
+between your two branches is two small files.
+
+28
+00:01:37,667 --> 00:01:42,659
+Think about it: if a branch is just a pointer,
+what does being on a branch actually mean?
+
+29
+00:01:51,233 --> 00:01:53,099
+Git switch main moves HEAD back,
+
+30
+00:01:53,099 --> 00:01:56,246
+and rebuilds your working folder
+from main's snapshot.
+
+31
+00:01:56,400 --> 00:01:58,057
+Nothing about idea is lost.
+
+32
+00:01:58,057 --> 00:02:02,842
+Its forty-one bytes still name its commit,
+and the graph keeps every snapshot.
+
+33
+00:02:07,633 --> 00:02:11,058
+Back on main,
+git merge idea creates one new commit —
+
+34
+00:02:11,058 --> 00:02:12,426
+with two parents.
+
+35
+00:02:12,476 --> 00:02:15,889
+One line of ancestry comes from main,
+one from idea.
+
+36
+00:02:16,566 --> 00:02:22,582
+This is real: the newest merge in this very
+repository lists exactly two parent lines.
+
+37
+00:02:22,733 --> 00:02:26,104
+The graph grew by one node,
+and main moved by one line.
+
+38
+00:02:26,424 --> 00:02:28,224
+That's all a merge is.
+
+39
+00:02:34,167 --> 00:02:40,183
+Recap. A branch is a forty-one byte pointer.
+Commits and their parents are the real graph.
+
+40
+00:02:40,334 --> 00:02:45,262
+Committing moves the current branch's pointer.
+Merging adds one commit with two parents.
+
+41
+00:02:45,434 --> 00:02:48,826
+That is why branches are free —
+so make one for everything.
+
+42
+00:02:49,146 --> 00:02:53,455
+Then open dot git, refs, heads,
+and read your branch with your own eyes.

@@ -1,0 +1,52 @@
+[Script Info]
+Title: 
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,43,&H00F3F0E7,&H00F3F0E7,&H00171717,&H00171717,0,0,0,0,100,100,0,0,1,0,0,2,90,90,27,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.40,0:00:01.65,Bilingual,,0,0,0,,先出一个谜题\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Here's a puzzle.
+Dialogue: 0,0:00:01.70,0:00:06.84,Bilingual,,0,0,0,,这个项目的历史里存着上百个文件、半个 GB 的成品视频\N{\fs30\fnInter\c&H00C9C9C9&\bord0}This project's history holds hundreds of files and half a gigabyte of finished videos.
+Dialogue: 0,0:00:07.16,0:00:08.85,Bilingual,,0,0,0,,现在，我来创建一个分支\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now, I create a branch.
+Dialogue: 0,0:00:08.90,0:00:11.91,Bilingual,,0,0,0,,一条命令——还没等这句话说完它就结束了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}One command — and it finishes faster than this sentence.
+Dialogue: 0,0:00:12.23,0:00:16.13,Bilingual,,0,0,0,,如果分支真的是复制整个项目，不可能这么快\N{\fs30\fnInter\c&H00C9C9C9&\bord0}If a branch really copied the project, that speed would be impossible.
+Dialogue: 0,0:00:16.30,0:00:20.16,Bilingual,,0,0,0,,停一秒想一想：git 最少需要记下什么\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So pause for a second. What is the smallest thing git could write down,
+Dialogue: 0,0:00:20.16,0:00:21.96,Bilingual,,0,0,0,,才能记住一个分支？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}to remember a branch?
+Dialogue: 0,0:00:29.07,0:00:34.31,Bilingual,,0,0,0,,答案就在 .git 文件夹里一个很小的文件中：refs、heads、idea\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The answer sits in one tiny file inside the dot git folder: refs, heads, idea.
+Dialogue: 0,0:00:34.47,0:00:38.82,Bilingual,,0,0,0,,四十一个字节：四十个字符写着某个提交的名字，外加一个换行符\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Forty-one bytes: forty characters naming one commit, plus a newline.
+Dialogue: 0,0:00:39.14,0:00:44.00,Bilingual,,0,0,0,,这就是整个分支——屏幕上的字节来自一个真实仓库\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That is the entire branch — these exact bytes are from a real repository.
+Dialogue: 0,0:00:44.17,0:00:45.72,Bilingual,,0,0,0,,什么都没有被复制\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Nothing was copied.
+Dialogue: 0,0:00:45.77,0:00:47.57,Bilingual,,0,0,0,,git 只写了一行字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Git wrote one line.
+Dialogue: 0,0:00:53.63,0:00:55.98,Bilingual,,0,0,0,,真正的结构在提交里\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The real structure lives in the commits.
+Dialogue: 0,0:00:56.30,0:01:00.72,Bilingual,,0,0,0,,每个提交保存一份文件快照，再记下它父提交的名字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Each commit stores a snapshot of your files, plus the name of its parent commit.
+Dialogue: 0,0:01:00.87,0:01:03.81,Bilingual,,0,0,0,,顺着 parent 连起来，提交就串成一张图\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Follow the parents, and the commits chain into a graph.
+Dialogue: 0,0:01:04.13,0:01:07.12,Bilingual,,0,0,0,,项目的每一个版本，这张图里本来就都有\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That graph already holds every version of the project.
+Dialogue: 0,0:01:07.27,0:01:09.07,Bilingual,,0,0,0,,分支并不拥有这里的任何东西\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A branch owns none of this.
+Dialogue: 0,0:01:09.12,0:01:10.92,Bilingual,,0,0,0,,它只是指向其中一个节点\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It simply points at one node.
+Dialogue: 0,0:01:17.10,0:01:18.90,Bilingual,,0,0,0,,看指针怎么干活\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Watch the pointer do its job.
+Dialogue: 0,0:01:19.15,0:01:23.16,Bilingual,,0,0,0,,你现在在 idea 上，另一个叫 HEAD 的指针记住了这件事\N{\fs30\fnInter\c&H00C9C9C9&\bord0}You are on idea, and a second pointer, called HEAD, remembers that.
+Dialogue: 0,0:01:23.33,0:01:27.30,Bilingual,,0,0,0,,提交。 git 保存新的快照、记下它的 parent——\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Commit. Git stores the new snapshot, records its parent —
+Dialogue: 0,0:01:27.30,0:01:31.89,Bilingual,,0,0,0,,然后只移动一个指针：idea 现在指向新的提交\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and then moves exactly one pointer. Idea now names the new commit.
+Dialogue: 0,0:01:32.07,0:01:33.55,Bilingual,,0,0,0,,main 一动没动\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Main never moved.
+Dialogue: 0,0:01:33.60,0:01:37.51,Bilingual,,0,0,0,,两个分支之间的全部差别，就是两个小文件\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The entire difference between your two branches is two small files.
+Dialogue: 0,0:01:37.67,0:01:42.66,Bilingual,,0,0,0,,想一想：如果分支只是一个指针，那「在某个分支上」到底是什么意思？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Think about it: if a branch is just a pointer, what does being on a branch actually mean?
+Dialogue: 0,0:01:51.23,0:01:56.25,Bilingual,,0,0,0,,git switch main 移动的是 HEAD，然后按 main 的快照重建你的工作目录\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Git switch main moves HEAD back, and rebuilds your working folder from main's snapshot.
+Dialogue: 0,0:01:56.40,0:01:58.06,Bilingual,,0,0,0,,idea 没有丢失任何东西\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Nothing about idea is lost.
+Dialogue: 0,0:01:58.06,0:02:02.84,Bilingual,,0,0,0,,它那四十一个字节仍然指着它的提交，图里也保留着每一份快照\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Its forty-one bytes still name its commit, and the graph keeps every snapshot.
+Dialogue: 0,0:02:07.63,0:02:12.16,Bilingual,,0,0,0,,回到 main，git merge idea 会创建一个新的提交——它有两个父亲\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Back on main, git merge idea creates one new commit — with two parents.
+Dialogue: 0,0:02:12.48,0:02:15.89,Bilingual,,0,0,0,,一条血缘来自 main，一条来自 idea\N{\fs30\fnInter\c&H00C9C9C9&\bord0}One line of ancestry comes from main, one from idea.
+Dialogue: 0,0:02:16.57,0:02:22.58,Bilingual,,0,0,0,,这是真实的：就在这个仓库里，最新的一次合并提交恰好写着两行 parent\N{\fs30\fnInter\c&H00C9C9C9&\bord0}This is real: the newest merge in this very repository lists exactly two parent lines.
+Dialogue: 0,0:02:22.73,0:02:26.10,Bilingual,,0,0,0,,图里多了一个节点，main 往前挪了一行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The graph grew by one node, and main moved by one line.
+Dialogue: 0,0:02:26.42,0:02:28.22,Bilingual,,0,0,0,,合并就只是这么一回事\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's all a merge is.
+Dialogue: 0,0:02:34.17,0:02:37.14,Bilingual,,0,0,0,,回顾一下。 分支是一个四十一字节的指针\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Recap. A branch is a forty-one byte pointer.
+Dialogue: 0,0:02:37.14,0:02:40.18,Bilingual,,0,0,0,,提交和它们的 parent 才是真正的图\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Commits and their parents are the real graph.
+Dialogue: 0,0:02:40.33,0:02:45.26,Bilingual,,0,0,0,,提交会移动当前分支的指针；合并则是加入一个有两个父亲的提交\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Committing moves the current branch's pointer. Merging adds one commit with two parents.
+Dialogue: 0,0:02:45.43,0:02:48.83,Bilingual,,0,0,0,,所以分支才几乎零成本——放心大胆地为每件事开分支\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That is why branches are free — so make one for everything.
+Dialogue: 0,0:02:49.15,0:02:53.45,Bilingual,,0,0,0,,然后打开 .git/refs/heads，亲眼读一读你的分支\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then open dot git, refs, heads, and read your branch with your own eyes.

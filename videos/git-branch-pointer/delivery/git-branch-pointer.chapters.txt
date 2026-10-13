@@ -1,0 +1,7 @@
+00:00 One command, no copy
+00:28 The whole branch is 41 bytes
+00:53 Commits are the real graph
+01:16 Committing moves one pointer
+01:50 Switching is moving HEAD
+02:07 A merge is one commit with two parents
+02:33 Recap: pointers all the way
