@@ -195,7 +195,7 @@ class S03(EpisodeScene):
             self.cue(vo, .1, FadeIn(nodes[2]), FadeIn(snaps[2], shift=DOWN * .1),
                      Create(line(xs[2], .7, xs[2], .1, FAINT)))
             self.play(Create(parent_arrow(nodes[2], nodes[1])), run_time=.6)
-            every = at("每个版本都在图里 · every version lives here", -1.4, -1.5, 26, GRAY)
+            every = at("每个版本都在图里 · every version lives here", -2.7, -1.5, 26, GRAY)
             vo.wait_until("every version")
             self.play(FadeIn(every), run_time=.5)
         with self.say(2) as vo:
