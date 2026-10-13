@@ -96,7 +96,7 @@ S03:
   zh:
   - "有两处不同要记住。"
   - "其中 generate text 目录已经有自己的 pyproject.toml 和一个 main.py 文件，但没有 .gitignore 文件。"
-  - "还有，synthesis audio 目录里有一个附加脚本。"
+  - "还有，synthesis audio 目录里有个附加脚本。"
   en_display:
   - null
   - "The generate text folder already has its own pyproject.toml and a main.py file, but no .gitignore file."
@@ -151,7 +151,7 @@ S04:
 - en: "Otherwise, use the README's installer: on macOS or Linux, this curl line, which installed uv 0.13.0 at the time of recording. On Windows, the PowerShell line; on any system, pip install uv."
   zh:
   - "否则就用 README 里的安装脚本：在 macOS 或 Linux 上，用这行 curl 命令，录制时它装的是 uv 0.13.0。"
-  - "在 Windows 上，用 PowerShell 那一行；任何系统上都可以用：pip install uv。"
+  - "在 Windows 上，用 PowerShell 那一行；任何系统都能用：pip install uv。"
 - en: "Then restart your terminal, as the installer says, cd back into transcribe audio, and uv answers."
   zh:
   - "然后按安装脚本说的重启终端，再 cd 回 transcribe audio 目录，uv 就有回应了。"
@@ -236,7 +236,7 @@ S05:
   - "第 27 行运行 uv sync，按 pyproject.toml 建好 venv；第 29 和 30 行启动 bash，并激活 venv，和第 2 讲一样。"
 - en: "The main README's appendix has a sample Dockerfile, but its build argument has curl instead of ffmpeg: don't paste it into transcribe audio."
   zh:
-  - "主 README 的 Appendix 部分有一个示例 Dockerfile，但它的构建参数里是 curl 而不是 ffmpeg：别把它贴进 transcribe audio 组件。"
+  - "主 README 的 Appendix 部分有个示例 Dockerfile，但它的构建参数是 curl 而不是 ffmpeg：别把它贴进 transcribe audio 组件。"
 - en: "Pause now and write it: a file named Dockerfile, with no extension. Type the FROM line, then copy the README's six code blocks below it, in order."
   zh:
   - "现在暂停，把它写出来：一个名叫 Dockerfile、没有扩展名的文件。"
@@ -244,7 +244,7 @@ S05:
 S06:
 - en: "First, an extra check: your Dockerfile, named exactly that, sits next to pyproject.toml."
   zh:
-  - "先做一个额外检查：你的 Dockerfile，名字一字不差，就放在 pyproject.toml 旁边。"
+  - "先额外检查一下：你的 Dockerfile，名字一字不差，就在 pyproject.toml 旁边。"
 - en: "Step 5 builds the image. A small gap: the README names it, transcribe audio, but gives no command. Here it is: docker build, dash t and the name, then a dot for this folder, the build context."
   zh:
   - "第 5 步构建 image。"
@@ -269,7 +269,7 @@ S06:
   - "它的值只是一个路径，所以无害，而且每次构建你都会看到它。"
 - en: "An extra check, docker images, says 1.35 gigabytes on this machine. By far the biggest layer is that one RUN, 842 megabytes of compilers, ffmpeg and their libraries, while the copied folder is tiny."
   zh:
-  - "一个额外检查：docker images 显示，在这台机器上是 1.35 GB。"
+  - "额外跑一下 docker images：在这台机器上是 1.35 GB。"
   - "最大的一层远远超过其他，就是那个 RUN：842 MB 的编译器、ffmpeg 和它们的库；复制进来的目录则非常小。"
 - en: "And if you skipped uv init, build step 5 fails, because there's no pyproject.toml to sync."
   zh:
@@ -317,7 +317,7 @@ S07:
 - en: "It would find your laptop's folder, with no venv in it, so activation would fail. That's what line 9, uv project environment, prevents."
   zh:
   - "它会看到你笔记本上的目录，里面没有 venv，所以激活会失败。"
-  - "第 9 行，也就是 uv project environment 这个变量，防的就是这个。"
+  - "第 9 行的 uv project environment 变量，防的就是这个。"
 - en: "Type docker run, dash dash r m, dash t i, dash v with the mount, and the image name. Copy it from the README, quotes included, and pause to run it."
   zh:
   - "输入 docker run，加上 --rm、-ti、带挂载的 -v，再加上 image 名。"
@@ -337,12 +337,12 @@ S07:
   - "The prompt changes: you're user app, in /app, and after the @ sign comes the container's ID, new on every run."
 - en: "No venv name shows in the prompt, yet the venv is active: two extra checks find python in slash home, version 3.12."
   zh:
-  - "提示符里没有显示 venv 的名字，但 venv 其实已经激活了：两个额外检查显示 python 在 /home 下面，版本是 3.12。"
+  - "提示符里没有显示 venv 的名字，但 venv 其实已经激活了：两个额外检查显示 python 在 /home 下，版本 3.12。"
   en_display:
   - "No venv name shows in the prompt, yet the venv is active: two extra checks find python in /home, version 3.12."
 - en: "Two more extras: listing the folder shows your laptop's files, and the key variable from line 10 is set."
   zh:
-  - "再做两个额外检查：列出目录，看到的是你笔记本上的文件；第 10 行那个指向密钥的变量也已经设好了。"
+  - "再做两个额外检查：列出目录，是你笔记本上的文件；第 10 行那个指向密钥的变量也设好了。"
 - en: "Last extra: ask cli.py for its help. Module not found, no module named google: the packages aren't installed yet."
   zh:
   - "最后一个额外检查：让 cli.py 打印帮助。"
