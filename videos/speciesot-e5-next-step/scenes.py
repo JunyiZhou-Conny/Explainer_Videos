@@ -181,11 +181,14 @@ class S01(Ep):
     def construct(self):
         self.header()
         frame, shape = file_shape(-6.0, 1.7, -.75)
-        f_path = mono("speciesot_core.py", 16, GRAY).move_to([-4.8, -1.2, 0])
-        f_lab = at("346 lines", -4.8, -1.62, 26, INK, bold=True)   # editor count; wc -l says 345 (no final newline)
+        f_path = mono("speciesot_core.py", 16, GRAY).move_to([-4.5, -1.2, 0])
+        # 346 = editor line count (wc -l says 345: the last line has no newline)
+        f_lab = VGroup(label("346 lines", 26, INK, bold=True), source_tag("READ IN CODE"))\
+            .arrange(RIGHT, buff=.2).move_to([-4.5, -1.62, 0])
         grid = tiles(-.2, .47)
         g_path = mono("speciesOT repo · *.ipynb", 16, GRAY).move_to([-.2, -1.2, 0])
-        g_lab = at("83 notebooks", -.2, -1.62, 26, INK, bold=True)
+        g_lab = VGroup(label("83 notebooks", 26, INK, bold=True), source_tag("READ IN CODE"))\
+            .arrange(RIGHT, buff=.2).move_to([-.2, -1.62, 0])
         ax_y, x_feb, x_oct = .47, 2.75, 5.95
         months = ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"]
         mx = [x_feb + i * (x_oct - x_feb) / 8 for i in range(9)]
@@ -309,8 +312,8 @@ class S02(Ep):
         none = mono("returned None", 22, RED).move_to([ex, -1.12, 0])
         scores = VGroup(mono("R2   0.103", 20), mono("MMD  0.326", 20))
         for k, sc in enumerate(scores):
-            sc.move_to([2.45, -.62 - k * .42, 0])
-        toy = at("computed on toy data", 2.45, -1.5, 17, GRAY)
+            sc.move_to([1.6, -.62 - k * .42, 0])
+        toy = at("computed on toy data", 1.6, -1.5, 17, GRAY)
         # card 1: evaluate returns a table, models × metrics
         cx0, cx1, cy0, cy1 = -6.2, 1.6, -2.42, -.55
         frame = Rectangle(width=cx1 - cx0, height=cy1 - cy0, stroke_color=INK, stroke_width=2,
@@ -460,7 +463,7 @@ class S03(Ep):
             vo.wait_until("line 253")
             m = highlight(self, panel, 253, run_time=.35)
             note = VGroup(label("→ episode 2", 22, INK, bold=True),
-                          label("one name, four places", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT,
+                          label("one name, five places", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT,
                                                                             buff=.12)
             note.move_to([2.7 + note.width / 2, -.55, 0])
             vo.wait_until("That was")
@@ -515,35 +518,43 @@ class S03(Ep):
                       human[5:].animate.set_color(RED), run_time=.6)
             vo.wait_until("at line 313")
             m = highlight(self, panel4, 313, run_time=.35)
-        rows_y = [-.62, -1.07, -1.52, -1.97]
-        board = Rectangle(width=8.8, height=2.65, stroke_color=INK, stroke_width=2).move_to(
-            [-1.8, -1.08, 0])
-        head = left("TO-DO · 待办", -5.95, -.1, 22, INK, bold=True)
+        rows_y = [-.5, -.92, -1.34, -1.88]
+        board = Rectangle(width=8.8, height=2.67, stroke_color=INK, stroke_width=2).move_to(
+            [-1.8, -1.085, 0])
+        head = left("TO-DO · 待办", -5.95, -.08, 22, INK, bold=True)
+        sep = DashedLine([-6.05, -1.62, 0], [2.45, -1.62, 0], color=GRAY, dash_length=.08)
         todo = []
         for k, (stage, etype, _, ln, *_r) in enumerate(TRAIL):
-            box = Square(.26, stroke_color=INK, stroke_width=2).move_to([-5.8, rows_y[k], 0])
-            num = mono(str(k + 1), 20, RED, bold=True).move_to([-5.3, rows_y[k], 0])
-            txt = mono_left(f"{stage:<9}{etype:<14} line {ln}", -4.9, rows_y[k], 19)
-            if k == 3:
-                txt = VGroup(txt, left("identity run, 5 vs 7", txt.get_right()[0] + .2,
-                                       rows_y[k], 17, GRAY))
+            box = Square(.26, stroke_color=INK, stroke_width=2).move_to([-5.62, rows_y[k], 0])
+            num = mono(str(k + 1), 20, RED, bold=True).move_to([-5.18, rows_y[k], 0])
+            txt = mono_left(f"{stage:<9}{etype:<14} line {ln}", -4.85, rows_y[k], 19)
             todo.append(VGroup(box, num, txt))
-        given = VGroup(label("program order", 24, RED, bold=True),
-                       label("顺序由程序给出", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT, buff=.1)
-        given.move_to([2.7 + given.width / 2, -.62, 0])
+        # scGen's path: the three stops it hits, in program order
+        path = VGroup(Line([-5.98, rows_y[0], 0], [-5.98, rows_y[2] + .06, 0], color=RED,
+                           stroke_width=4),
+                      *[Dot([-5.98, y, 0], radius=.06, color=RED) for y in rows_y[:3]],
+                      Triangle(color=RED, fill_color=RED, fill_opacity=1, stroke_width=0)
+                      .scale(.07).rotate(PI).move_to([-5.98, rows_y[2] - .02, 0]))
+        p_lab = VGroup(label("scGen's path", 22, RED, bold=True),
+                       mono("253 → 133 → 288", 19, RED)).arrange(DOWN, aligned_edge=LEFT, buff=.1)
+        p_lab.move_to([2.75 + p_lab.width / 2, -.62, 0])
+        idn = left("identity run · fixed by R² of means (E5 · s05)", -4.85, -2.2, 17, GRAY)
+        choose = left("you choose which path first", 2.75, -1.2, 19, INK)
         with self.say(4) as vo:
             self.cue(vo, .0, FadeOut(m), FadeOut(panel4), FadeOut(msg4), FadeOut(mouse),
                      FadeOut(human), FadeOut(ml), FadeOut(hl), FadeOut(pairs),
                      FadeOut(run4),
                      numbered[3].animate.set_color(INK), run_time=.4)
-            self.play(Create(board), FadeIn(head), run_time=.4)
+            self.play(Create(board), FadeIn(head), Create(sep), run_time=.4)
             self.play(LaggedStart(*[ReplacementTransform(cards[k], todo[k]) for k in range(4)],
-                                  lag_ratio=.3), run_time=1.6)
-            vo.wait_until("You don't")
-            self.play(LaggedStart(*[Indicate(t[1], color=RED, scale_factor=1.4) for t in todo],
-                                  lag_ratio=.2), run_time=1.0)
-            vo.wait_until("The program")
-            self.play(FadeIn(given, shift=LEFT * .1), run_time=.5)
+                                  lag_ratio=.3), run_time=1.4)
+            vo.wait_until("Along scGen's path")
+            self.play(Create(path), FadeIn(p_lab, shift=LEFT * .1), run_time=.6)
+            vo.wait_until("hands you the order")
+            self.play(LaggedStart(*[Indicate(t[1], color=RED, scale_factor=1.4) for t in todo[:3]],
+                                  lag_ratio=.2), run_time=.8)
+            vo.wait_until("You only choose")
+            self.play(FadeIn(idn, shift=UP * .05), FadeIn(choose, shift=LEFT * .1), run_time=.5)
         self.finish()
 
 
