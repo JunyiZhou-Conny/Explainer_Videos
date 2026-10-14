@@ -1,0 +1,93 @@
+{
+  "title_en": "Which door already runs this notebook?",
+  "title_zh": "这个笔记本走的是哪一扇门？",
+  "preset": "swiss",
+  "description_en": "A notebook titled scGen training analysis only reads loss numbers. The spec and hub prep are the doors that already build and train.",
+  "description_zh": "一个标题写着 scGen 训练分析的笔记本，只是在读损失数字。Spec 和 hub prep 才是已经在准备数据和训练的门。",
+  "tags_zh": ["scGen", "科研", "教程"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "Notebook 02, prep.py, and m2_baseline.yaml are commits on the research repository.",
+    "Do not tell the viewer to add a training-curve method to scGenModel."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "The title overclaims",
+      "title_zh": "标题说得太多了",
+      "lines": [
+        {"en": "Here's a title that overclaims. The notebook is called scGen training analysis. It sounds like the model is being trained right there.",
+         "zh": "这里有一个说得太多的标题。这个笔记本叫做 scGen 训练分析。听起来好像模型就在这里被训练。"},
+        {"en": "Open the first code. It does not train. It reads loss numbers that a finished run already wrote.",
+         "zh": "打开第一段代码。它并不训练。它读的是一次已经跑完的实验写下的损失数字。"},
+        {"en": "Pause and think. If the training already happened somewhere else, where is the door that started it?",
+         "zh": "停一下想一想。如果训练已经在别的地方发生了，启动它的那扇门在哪里？"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "A file of numbers comes out",
+      "title_zh": "流出来的是一文件数字",
+      "lines": [
+        {"en": "The function is called load scalars. It opens cache slash scalars inside a result directory.",
+         "zh": "这个函数叫 load scalars。它打开结果目录里的 cache 斜杠 scalars。"},
+        {"en": "Two tables come out, train and eval. Then the notebook draws them. Nothing in that door calls train.",
+         "zh": "出来两张表，train 和 eval。然后笔记本把它们画出来。这扇门里没有任何东西调用 train。"},
+        {"en": "So a notebook can study a run without being the run.",
+         "zh": "所以一个笔记本可以研究一次运行，而它自己并不是那次运行。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "The spec is the door",
+      "title_zh": "Spec 才是那扇门",
+      "lines": [
+        {"en": "The door that trains starts in a yaml spec. Its first line is an experiment tag.",
+         "zh": "真正训练的门从一份 yaml spec 开始。它的第一行是一个实验标签。"},
+        {"en": "That tag names the result directory. Render scgen config writes a model whose name is scgen.",
+         "zh": "这个标签给结果目录起名。Render scgen config 写出一个模型，名字是 scgen。"},
+        {"en": "Hub generate writes the job file. It does not submit the job. You still paste the command.",
+         "zh": "Hub generate 写出作业文件。它不提交作业。你仍然要自己粘贴命令。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "Prep already absorbed a notebook",
+      "title_zh": "Prep 已经吸收了一个笔记本",
+      "lines": [
+        {"en": "The same test works for data prep. Notebook zero one point five built the training table by hand.",
+         "zh": "同一个检验也适用于数据准备。笔记本 01.5 曾经手工做出训练表。"},
+        {"en": "Hub prep says, in its own first lines, that it ports that notebook.",
+         "zh": "Hub prep 在它自己的开头几行里说，它移植了那个笔记本。"},
+        {"en": "You do not add a method to scGen model to rebuild a door that already exists.",
+         "zh": "一扇门已经存在，你不必给 scGen 模型再加一个方法去重建它。"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "What to search for",
+      "title_zh": "你该搜索什么",
+      "lines": [
+        {"en": "For a notebook you do not remember, search the specs folder for a word from its paths.",
+         "zh": "对于一个你不记得的笔记本，用它路径里的一个词，去 specs 文件夹里搜索。"},
+        {"en": "If a spec names the same result directory, the notebook is a viewer.",
+         "zh": "如果一份 spec 指向同一个结果目录，这个笔记本就是观察者。"},
+        {"en": "Pause. Which string from notebook zero two would you search for first?",
+         "zh": "停一下。笔记本 02 里的哪个字符串，你会第一个拿去搜索？"}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "Viewer, door, and the class",
+      "title_zh": "观察者、门，和那个类",
+      "lines": [
+        {"en": "A notebook that reads scalars, evals, or imputed data is a viewer.",
+         "zh": "一个读取 scalars、evals 或 imputed 数据的笔记本，是观察者。"},
+        {"en": "A spec plus hub generate is the train. Hub prep is the table.",
+         "zh": "一份 spec 加上 hub generate 才是训练。Hub prep 才是那张表。"},
+        {"en": "Src speciesot is the class you are still writing. The upload's scGen model is the stub, not a second hub.",
+         "zh": "Src 里的 speciesot 是你还在写的类。上传里的 scGen 模型是草稿，不是第二个 hub。"}
+      ]
+    }
+  ]
+}
