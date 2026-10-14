@@ -18,8 +18,8 @@ cloud session. Verified facts and unclaimed reviews are kept separate.
    ".git" spoken as "dot git", no SHA read aloud; 14 `wait_until` word anchors drive the
    key reveals (Kokoro sentence marks; the full build fails on missing anchors). ✔
 5. **Simulated-viewer QA over the full draft** — findings below, all fixed and re-rendered. ✔
-6. **Measured checks** — see Verified; **Conny's listening sign-off (2026-10-14, in the
-   production session, after watching the delivered full cut)**: ✔
+6. **Measured checks** — see Verified; **human review: Conny's listening sign-off
+   (2026-10-14, in the production session, after watching the delivered full cut)**: ✔
 
    > 听过了，发音和配乐都可以，合并吧
 
