@@ -18,8 +18,10 @@ cloud session. Verified facts and unclaimed reviews are kept separate.
    ".git" spoken as "dot git", no SHA read aloud; 14 `wait_until` word anchors drive the
    key reveals (Kokoro sentence marks; the full build fails on missing anchors). ✔
 5. **Simulated-viewer QA over the full draft** — findings below, all fixed and re-rendered. ✔
-6. **Measured checks** — see Verified; **Conny's listening sign-off: NOT YET CLAIMED** —
-   this section must quote it before merge.
+6. **Measured checks** — see Verified; **Conny's listening sign-off (2026-10-14, in the
+   production session, after watching the delivered full cut)**: ✔
+
+   > 听过了，发音和配乐都可以，合并吧
 
 ## Whole-video QA (first full render, 2026-10-13)
 
@@ -54,6 +56,6 @@ Reviewed 14 encoded frames across all seven scenes, as the target viewer:
 
 ## Not claimed
 
-- No human has yet listened to the narration or watched the full cut; pronunciation,
-  pacing preference and music taste await Conny's review (the lifecycle's blocking gate).
 - The Chinese caption translation was self-reviewed only; no independent translation pass.
+- Conny's sign-off covers pronunciation and music on a full listen; no second human
+  reviewer has watched the cut.
