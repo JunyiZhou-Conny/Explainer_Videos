@@ -216,6 +216,30 @@ def note_box(lines, size: float = 20) -> VGroup:
     return g
 
 
+def pulse_tag(tg, color, scale: float = 1.15):
+    """Point at a row tag: its text pulses in `color` and its outline flashes (an Indicate on the
+    whole tag would also colour its opaque fill)."""
+    return AnimationGroup(Indicate(tg.text, color=color, scale_factor=scale),
+                          tg.box.animate(rate_func=there_and_back).set_stroke(color, width=3))
+
+
+def scroll_in_place(scene, t, n_new: int, run_time: float = 0.4) -> None:
+    """Make room for n_new rows: the rows that would scroll off fade where they are (instead of
+    flying up over the frame), the rest move up."""
+    overflow = len(t.lines) + n_new - t.rows
+    if overflow <= 0:
+        return
+    gone = VGroup(*t.lines.submobjects[:overflow])
+    stay = VGroup(*t.lines.submobjects[overflow:])
+    anims = [FadeOut(gone)]
+    if len(stay):
+        anims.append(stay.animate.shift(UP * t.pitch * overflow))
+    scene.play(*anims, run_time=run_time)
+    for m in gone:
+        t.lines.remove(m)
+        scene.remove(m)
+
+
 def clear_with(scene, t, *anims, keep=None, run_time: float = 0.4) -> None:
     """Fade the terminal's lines (all but `keep`) together with other animations."""
     gone = [m for m in t.lines if m is not keep]
@@ -306,7 +330,7 @@ class StepCmd(VoiceScene):
             self.play(Indicate(l_bash, color=TURN, scale_factor=1.15), run_time=0.45)
             self.play(Indicate(l_c, color=TURN, scale_factor=1.4), run_time=0.45)
             vo.wait_until("then that string")
-            self.play(Indicate(l_str, color=TURN, scale_factor=1.06), run_time=0.8)
+            self.play(Indicate(l_str, color=TURN, scale_factor=1.03), run_time=0.8)
             vo.wait_until("On its own")
             self.play(FadeIn(note1, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("runs the string")
@@ -366,7 +390,8 @@ class StepCmd(VoiceScene):
                       TransformFromCopy(l_exec, runs_exec), Transform(runs_w, runs_w2), run_time=0.7)
             self.play(Transform(name1, name2), Indicate(bubble, color=IMAGE, scale_factor=1.02), run_time=0.8)
             vo.wait_until("that keeps the new PATH")
-            self.play(Indicate(VGroup(path_l, venv_door), color=VENV, scale_factor=1.08), run_time=0.8)
+            self.play(Indicate(path_l, color=ROUTE, scale_factor=1.15),
+                      Indicate(venv_door, color=VENV, scale_factor=1.1), run_time=0.8)
             vo.wait_until("and gives you a prompt")
             self.play(FadeOut(VGroup(runs_w, runs_exec), shift=UP * 0.2), FadeIn(prompt_g, shift=UP * 0.2),
                       run_time=0.5)
@@ -398,7 +423,7 @@ class StepCmd(VoiceScene):
             n3 = beside(row_tag("one line added · part 2 explains"), r29)
             pin(self, r29, n3, run_time=0.4)
             vo.wait_until("Part 2 explains")
-            self.play(Indicate(n3, color=INK, scale_factor=1.08), run_time=0.7)
+            self.play(pulse_tag(n3, INK), run_time=0.7)
 
         # ========================================================== 4 · run: the venv is active, no (app)
         with self.voiceover(SAY[4]) as vo:
@@ -416,7 +441,7 @@ class StepCmd(VoiceScene):
             self.play(FadeIn(noapp, shift=LEFT * 0.1), Indicate(p4.glyphs, color=INK, scale_factor=1.06),
                       run_time=0.6)
             vo.wait_until("is the venv active")
-            self.play(Indicate(noapp, color=TURN, scale_factor=1.12), run_time=0.7)
+            self.play(pulse_tag(noapp, TURN), run_time=0.7)
             vo.wait_until("These extra checks")
             self.play(noapp.animate.move_to([EXTRA_X + 0.96 + 0.2 + noapp.width / 2, noapp.get_center()[1], 0]),
                       track(tr, 11, extra=True), run_time=0.4)
@@ -434,7 +459,7 @@ class StepCmd(VoiceScene):
             vo.wait_until("The fresh bash")
             nae = row_tag("not an error")
             nae.next_to(noapp, RIGHT, buff=0.2)
-            self.play(FadeIn(nae, shift=LEFT * 0.1), Indicate(noapp, color=INK, scale_factor=1.1), run_time=0.6)
+            self.play(FadeIn(nae, shift=LEFT * 0.1), pulse_tag(noapp, INK), run_time=0.6)
             vo.wait_until("Then type exit")
             istep(self, t, C26.line(8), 0.25)
             t.print(self, C26.at(9), run_time=0.25)
@@ -459,7 +484,7 @@ class StepCmd(VoiceScene):
             unpin(self, [(c4.rows[-1], yt4)], 0.3, *[FadeOut(m) for m in marks4], track(tr, 12))
             resize(self, t, STRIP_ROWS, keep=[p4b], extra=[FadeIn(card_c, shift=UP * 0.1)], run_time=0.7)
             vo.wait_until("Dockerfile.txt")
-            self.play(Indicate(card_c.file, color=TURN, scale_factor=1.12), run_time=0.8)
+            self.play(Indicate(card_c.file, color=TURN, scale_factor=1.06), run_time=0.8)
             vo.wait_until("An extra diff")
             resize(self, t, 12, extra=[Transform(card_c, card_k), track(tr, 12, extra=True)], run_time=0.7)
             type_cmd(self, t, DIFF, 0.6)
@@ -469,14 +494,14 @@ class StepCmd(VoiceScene):
             vo.wait_until("if yours prints")
             pm = VGroup(*[glyph_range(r, 0, 1) for r in out5 if r.text[:1] in "+-"])
             at_right(note5, out5[4])                     # over rows 11-13 (all short)
-            self.play(Indicate(pm, color=TURN, scale_factor=1.6), run_time=0.8)
+            self.play(*[Indicate(g, color=TURN, scale_factor=1.6) for g in pm], run_time=0.8)
             self.play(FadeIn(note5, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("add dash u")
-            self.play(Indicate(note5_diffu, color=TURN, scale_factor=1.2), run_time=0.7)
+            self.play(Indicate(note5_diffu, color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("First, three")
             env_rows = [t.find("+ENV DEBIAN"), t.find("+ENV LANG"), t.find("+ENV PYTHONUNBUFFERED")]
             self.play(FadeOut(note5), run_time=0.3)
-            self.play(Indicate(VGroup(*[r.glyphs for r in env_rows]), color=VENV, scale_factor=1.06), run_time=0.8)
+            self.play(*[Indicate(r.glyphs, color=VENV, scale_factor=1.06) for r in env_rows], run_time=0.8)
             env_marks = []
             for r, s, phrase in zip(env_rows, env_tags, ("no questions from apt", "a UTF-8 locale",
                                                          "and unbuffered logs")):
@@ -490,6 +515,7 @@ class StepCmd(VoiceScene):
         # ========================================================== 6 · one bigger RUN, ENTRYPOINT moved
         with self.voiceover(SAY[6]) as vo:
             unpin(self, [(out5[0], x5), *env_marks], 0.25)
+            scroll_in_place(self, t, len(DIFF_B))
             out6 = t.print(self, diff_rows(DIFF_B), run_time=0.5, lag=0.05)
             run_rows = list(out6[2:8])                       # lines 21-26
             ep_rows = list(out6[9:11])                       # lines 33-34
@@ -507,7 +533,7 @@ class StepCmd(VoiceScene):
                       Indicate(run_rows[0].glyphs, color=SYSTEM, scale_factor=1.08), run_time=0.6)
             vo.wait_until("update and upgrade")
             self.play(FadeIn(lab_run[1], shift=LEFT * 0.1),
-                      Indicate(VGroup(run_rows[1].glyphs, run_rows[2].glyphs), color=SYSTEM, scale_factor=1.06),
+                      *[Indicate(r.glyphs, color=SYSTEM, scale_factor=1.06) for r in run_rows[1:3]],
                       run_time=0.8)
             vo.wait_until("clean up")
             self.play(Indicate(run_rows[3].glyphs, color=SYSTEM, scale_factor=1.06), run_time=0.6)
@@ -531,7 +557,7 @@ class StepCmd(VoiceScene):
             bare_prompt(self, t)
             self.play(FadeIn(note7, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("So here's the quickest")
-            self.play(Indicate(card_c.file, color=TURN, scale_factor=1.12), run_time=0.8)
+            self.play(Indicate(card_c.file, color=TURN, scale_factor=1.06), run_time=0.8)
             vo.wait_until("an extra command")
             c7 = type_cmd(self, t, CP, 0.55)
             p7 = bare_prompt(self, t)
@@ -557,7 +583,7 @@ class StepCmd(VoiceScene):
             resize(self, t, 10, run_time=0.6)
             p8 = bare_prompt(self, t)
             vo.wait_until("from the simple-translate")
-            self.play(Indicate(body8[1], color=TURN, scale_factor=1.12),
+            self.play(Indicate(body8[1], color=TURN, scale_factor=1.06),
                       Indicate(substring(p8, "~/simple-translate"), color=TURN, scale_factor=1.12), run_time=0.9)
             vo.wait_until("the same build")
             c8 = type_cmd(self, t, BUILD, 0.7)
@@ -574,7 +600,7 @@ class StepCmd(VoiceScene):
                       FadeIn(wy, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("four steps")
             steps = VGroup(*[substring(t.find(f"[{k}/4]"), f"[{k}/4]") for k in (1, 2, 3, 4)])
-            self.play(Indicate(steps, color=TURN, scale_factor=1.2), run_time=0.8)
+            self.play(*[Indicate(g, color=TURN, scale_factor=1.2) for g in steps], run_time=0.8)
             vo.wait_until("the apt and pip step")
             r13, r15 = t.find("[2/4] RUN"), t.find("[4/4] RUN uv sync")
             g13, g15 = substring(r13, "13.3s"), substring(r15, "4.9s")

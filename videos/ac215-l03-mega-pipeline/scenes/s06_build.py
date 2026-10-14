@@ -45,13 +45,14 @@ Beats (script.md "## S06", one voiceover block each):
     init", GREY tag "illustration · what if", TERM(26-g21-no-pyproject.txt: 34, 51) in RED (folded
     at spaces to the panel's 66 characters). On "build step 5 fails" badge 5 and the sync slab
     flash RED.
- 7  The panel fades. A GREY chip "edit: group_name in cli.py" hovers right of the stack. After the
-    SAY: PONDER (8 s) at the bottom, "You change only group_name in cli.py / and build again. /
+ 7  The panel fades. A GREY chip "edit: group_name in cli.py" hovers right of the stack; the five
+    badges pulse on "which of the five". After the SAY: PONDER (8 s) at the bottom, "You change only group_name in cli.py / and build again. /
     Which of the five build steps run again?".
- 8  The card goes. The chip drops into the COPY slab, which flashes YELLOW; the COPY slab and
-    then the uv sync slab dissolve and re-form (badges 4, 5 pulse YELLOW); badges 1-3 pulse GREEN
-    and the apt and WORKDIR slabs get GREEN "CACHED" stamps (the base slab stays as is). GREY
-    caption "part 2: for real". Fade out: empty frame.
+ 8  The card goes. The chip drops into the COPY slab, which flashes YELLOW; V2 settles nearer
+    the centre (the bottom band is free) and badges 4, 5 turn YELLOW; the COPY slab and then the
+    uv sync slab dissolve and re-form; badges 1-3 turn GREEN and the apt and WORKDIR slabs get
+    GREEN "CACHED" stamps (the base slab stays as is). GREY caption "part 2: for real" under the
+    floor. Fade out: empty frame.
 """
 
 import numpy as np
@@ -64,10 +65,10 @@ from explainer.devops import (cell_width, code_span, file_glyph, folder_glyph, l
 from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, P_A, SYSTEM, TERMINAL, TOOL, TURN, VENV,
-                    LayerStack, asset_lines, beside, builder_box, capture, caption_extra, cached_stamp,
-                    extra_tag, file_panel, history_row, illustration_tag, key_glyph, log_panel,
-                    parcel_glyph, pin, readme_chip, bare_prompt, resize, sans, source_text, term, tracker, type_cmd,
-                    your_turn)
+                    LayerStack, asset_lines, bare_prompt, beside, builder_box, cached_stamp, capture,
+                    caption_extra, extra_tag, file_panel, history_row, illustration_tag, key_glyph,
+                    log_panel, parcel_glyph, pin, readme_chip, resize, sans, source_text, term, tracker,
+                    type_cmd, your_turn)
 
 SAY = NARRATION["S06"]
 
@@ -711,13 +712,17 @@ class BuildImage(VoiceScene):
         # ========================================================== 8 · the answer
         cp, sync = st.slabs["copy"], st.slabs["sync"]
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(card), st.animate.shift(DROP), chip.animate.shift(UP * DROP[1]), run_time=0.7)
             saved_cp = VGroup(cp.box.copy(), st.copy_files.copy())
             saved_sync = sync.box.copy()
+            self.play(FadeOut(card), run_time=0.3)
             self.play(chip.animate.move_to(cp.box).scale(0.5).set_opacity(0),
-                      cp.box.animate.set_stroke(TURN, 3).set_fill(TURN, 0.35), run_time=0.8)
+                      cp.box.animate.set_stroke(TURN, 3).set_fill(TURN, 0.35), run_time=0.7)
             self.remove(chip)
-            self.play(recolor(badges[3], TURN), recolor(badges[4], TURN), run_time=0.5)
+            # the bottom band is free: V2 settles nearer the centre (the saved looks ride along)
+            saved_cp.shift(DROP)
+            saved_sync.shift(DROP)
+            self.play(st.animate.shift(DROP), run_time=0.6)
+            self.play(recolor(badges[3], TURN), recolor(badges[4], TURN), run_time=0.4)
             vo.wait_until("The copied folder changed")
             self.play(cp.box.animate.set_opacity(0).scale(1.04), st.copy_files.animate.set_opacity(0),
                       run_time=0.6)
