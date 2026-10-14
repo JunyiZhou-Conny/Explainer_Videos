@@ -316,7 +316,9 @@ class Hook(VoiceScene):
         x_ptr = ps[0] + (pe[0] - ps[0]) * (ps[1] - y_c) / (ps[1] - pe[1])
         pushed.move_to([(stick_x + x_ptr) / 2, y_c, 0])
         assert pushed.get_left()[0] > stick_x + 0.05 and pushed.get_right()[0] < x_ptr - 0.05
-        qm = label("?", 56, TURN).move_to([(cardg.get_right()[0] + stick_x) / 2, v1.box.get_center()[1], 0])
+        gap_l, gap_r = cardg.get_right()[0], v1.hub_shelf.get_left()[0]
+        qm = label("?", 72, TURN).move_to([(gap_l + gap_r) / 2, cardg.get_center()[1], 0])
+        assert qm.get_left()[0] > gap_l + 0.1 and qm.get_right()[0] < gap_r - 0.1, (gap_l, gap_r, qm.width)
         v1_pic = VGroup(v1.hub_shelf, v1.box, v1.post, v1.pointer)     # for the thumbnail (beat 3)
 
         with self.voiceover(SAY[1]) as vo:

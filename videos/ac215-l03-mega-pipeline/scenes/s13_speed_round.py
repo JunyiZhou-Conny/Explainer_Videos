@@ -18,10 +18,11 @@ Beats (script.md "## S13", one voiceover block each):
  1  TRACKER C4. The terminal shrinks to the strip. PANEL(files/synthesis_audio_en.Dockerfile: 3)
     headed `synthesis_audio_en/Dockerfile · line 3`, GREY "= generate_text's Dockerfile" beside it.
     "A small slip": README card `synthesis_audio_en/README.md · line 38` ("so keep ffmpeg in the
-    system packages") + tag erratum; "here and in E": GREY tag "same in synthesis_audio/README.md";
-    "the README's text says": the card's line pulses; "but its code block": card `… · line 45`
-    (the ARG, mono); "which is right": GREEN check + "right", line 38 struck GREY; "leaves it
-    out": GREY note "neither synthesis cli.py uses ffmpeg".
+    system packages") + tag erratum by its header; "here and in E": GREY tag "same in
+    synthesis_audio/README.md" right of the card; "the README's text says": the card's line
+    pulses; "but its code block": card `… · line 45` (the ARG, mono); "which is right": GREEN
+    check + "right", line 38 struck GREY; "leaves it out": GREY note "neither synthesis cli.py /
+    uses ffmpeg".
  2  TRACKER C5. The panel and cards go; the terminal clears and grows to 7 rows while B's V2 stack
     (generate_text, five slabs) fades in above. It types `docker build -t synthesis_audio_en .` →
     41-c-build.txt lines 3, 14–17 (each row's time in a compact GREY tag). "build step 2 is
@@ -46,91 +47,96 @@ Beats (script.md "## S13", one voiceover block each):
     strip's RED line pulses. "before reading any flags": a dim `parse_args()` chip (line 118 ·
     reads --help) with GREY "never reached". "Pause and catch up": the picture gives way to
     PANEL(expected/synthesis_audio_en-help.txt: 3–10, "synthesis_audio_en/README.md · lines
-    116–123"), tag expected + "with your key"; its help text gets a YELLOW bar; ▶ your turn beside
-    the strip's `python cli.py --help`.
+    116–123"), tag expected + "with your key"; its help text gets a YELLOW outline; ▶ your turn
+    beside the strip's `python cli.py --help` (held 1 s).
  5  The terminal and panel go. V8, Text-to-Speech half: TEAL container "C · synthesis_audio_en"
     left, BLUE cloud "Text-to-Speech · long audio" right, the drawer text_audios/group-01/ under
     the cloud; CODE(cli.py: 78) at the top. "The request carries the text": a long page in C.
     "and an address in the bucket": `gs://{bucket_name}/{audio_blob_name}` turns PINK; a copy
     flies down and becomes the PINK address label gs://…/text_audios/group-01/… above the link.
-    "line 78": the panel's line pulses. "Google's long audio service": page and label ride to the
-    cloud; GOLD "billed to the course project". "writes the speech straight there": a PINK dashed
-    route from the cloud down to the drawer; the label lands on it and the drawer's name turns
-    PINK. "never through your container": a GREY dashed return arrow to C, crossed RED.
+    "line 78": the panel's header pulses. "Google's long audio service": the page rides into the
+    cloud and the label slides along the link up to it; GOLD "billed to the course project".
+    "writes the speech straight there": a PINK dashed route from the cloud down to the drawer; the
+    label lands on it and the drawer's name turns PINK. "never through your container": a GREY
+    dashed return arrow to C, crossed RED.
  6  The panel swaps to CODE(cli.py: 88–91, comment cut). Line 88 bar: a TEAL ticket stub
     "operation" comes back to C. "for up to 300 seconds": line 90 bar; the ring beside the stub
     fills ("up to 300 s") while a waveform crate travels from the cloud straight down into
-    text_audios/group-01/. "then prints that": line 91 bar, the print pulses. "so C has no upload
-    step": the README chip `README.md · line 151` "no separate --upload" (top right); the crate
-    pulses.
+    text_audios/group-01/ (under its name). "then prints that": line 91 bar, the print pulses.
+    "so C has no upload step": the README chip `README.md · line 151` "no separate --upload" (top
+    right); the crate pulses.
  7  TRACKER C10 → C12. V8 goes; the terminal returns (10 rows, container). One-line README chip
     `README.md · lines 148–149` + GREY tag "same as -d · -s" under the tracker. It types
-    `python cli.py --download`, `python cli.py --synthesis` (GOLD "billed to the course project"
-    beside it), `exit` (GREY frame, laptop), `docker build -t synthesis_audio_en .` →
-    42-c-rebuild.txt lines 3, 14–17; CACHED GREEN; ▶ your turn by the build.
+    `python cli.py --download`, `python cli.py --synthesis` (a compact GOLD "billed" tag beside
+    it), `exit` (GREY frame, laptop), `docker build -t synthesis_audio_en .` → 42-c-rebuild.txt
+    lines 3, 14–17; CACHED GREEN; ▶ your turn by the build (held 1 s).
  8  The terminal clears; the tracker switches: "README › translate_text", 13 dots. Montage (fast
     typing): TRACKER D1 `cd ../translate_text`; D2 the GOLD key drops into secrets/; D3
     `uv init --bare` → 50-d-uv-init.txt line 2; D4 PANEL(files/translate_text.Dockerfile: 3)
-    flashes by (top right); D5 `docker build -t translate_text .` → 51-d-build.txt lines 3, 14
-    (CACHED GREEN).
+    flashes by (top right, its line barred YELLOW); D5 `docker build -t translate_text .` →
+    51-d-build.txt lines 3, 14 (CACHED GREEN).
  9  The terminal shrinks to 8 rows. TRACKER D6 `docker run … translate_text` (TEAL); D7 `uv add
     google-cloud-storage google-cloud-translate` → translate_text/01-uv-add.txt lines 2, 8;
-    "and set the group name": D8, editor inset CODE(translate_text/cli.py: 18, comment cut) flashes;
-    "Like C": D9, `python cli.py --help` → 03-help.txt lines 2–4, …, 22 (wrap), line 22 RED + tag
-    "recorded without the key"; the terminal shrinks to the strip and PANEL(expected/
-    translate_text-help.txt: 3–11, "translate_text/README.md · lines 116–124") appears above
-    (expected, "with your key"). "Pause and catch up": the panel gives way to the static GREY
-    card "translate_text · steps 1–9" (held ≥ 4 s) and ▶ your turn.
+    "and set the group name": D8, editor inset CODE(translate_text/cli.py: 18, comment cut)
+    flashes; D9, `python cli.py --help` → 03-help.txt lines 2–4, …, 22 (wrap), line 22 RED. "Like
+    C, even help": tag "recorded without the key"; the terminal shrinks to the strip and
+    PANEL(expected/translate_text-help.txt: 3–11, "translate_text/README.md · lines 116–124")
+    appears above (expected, "with your key"). "Pause and catch up": the panel gives way to the
+    static GREY card "translate_text · steps 1–9" (held ≥ 4 s) and ▶ your turn.
 10  V8, Translation half: CODE(translate_text/cli.py: 58–65) top left; container "D ·
     translate_text" (with the laptop folder text_translated/group-01/ inside, GREY) and the BLUE
     cloud "Translation" along the bottom. A long page rides to the cloud (lines 60–61 YELLOW,
-    "en" → "fr"), GOLD tag; GREY tag "no ticket stub". "the French comes straight back": a French
-    page (FR chip) returns to D at once. "is printed": line 65 bar. "and saved under": the page
-    drops onto text_translated/group-01/, GREY "saved here · line 68 · on your laptop". "so D
-    needs an upload": a dashed BLUE bucket drawer text_translated/group-01/ (top right, empty) with
-    GREY "--upload puts it here".
+    "en" → "fr"), GOLD tag and GREY "no ticket stub" above the link. "the French comes straight
+    back": a French page (FR chip) returns to D at once. "is printed": line 65 bar. "and saved
+    under": the page drops onto text_translated/group-01/, GREY "saved here · line 68 / on your
+    laptop". "so D needs an upload": a dashed BLUE bucket drawer text_translated/group-01/ (top
+    right, empty) with GREY "--upload puts it here · still empty".
 11  TRACKER D10 → D13. V8 goes; the terminal returns (11 rows, container). README chip
-    `README.md · lines 155–157` + "same as -d · -t · -u". It types the three commands (GOLD tag by
-    --translate), `exit`, `docker build -t translate_text .` → 52-d-rebuild.txt lines 3, 14–17;
-    ▶ your turn.
-12  The terminal clears; the tracker switches: "README › synthesis_audio", 12 dots. Montage: E1
-    `cd ../synthesis_audio`; E2 key; E3 `uv init --bare` → 60 line 2; E4 the Dockerfile line 3
-    flashes; E5 `docker build -t synthesis_audio .` → 61 lines 3, 14; E6 (8 rows) `docker run …
-    synthesis_audio`; E7 `uv add …texttospeech` → synthesis_audio/01 lines 2, 8; E8 the cli.py:18
-    inset flashes; E9 `python cli.py --help` → 03-help.txt line 25 (wrap, RED, recorded without
-    the key). The strip; PANEL(expected/synthesis_audio-help.txt: 3–10) above (expected). "its help
-    text says": its line 5 "Synthesis audio from text" gets a GREEN bar + GREY "README"; the excerpt
-    chip `synthesis_audio/cli.py · line 105 (excerpt)` slides up over the strip,
-    `ArgumentParser(description="Transcribe audio file to text")`, the description RED; "pasted from
-    A's code": tag erratum + GREY "pasted from transcribe_audio/cli.py". "Pause and catch up": the
-    static GREY card "synthesis_audio · steps 1–9" (≥ 4 s), ▶ your turn.
+    `README.md · lines 155–157` + "same as -d · -t · -u". It types the three commands (compact
+    GOLD "billed" by --translate), `exit`, `docker build -t translate_text .` → 52-d-rebuild.txt
+    lines 3, 14–17; ▶ your turn (held 1 s).
+12  The terminal clears to 8 rows while the tracker switches: "README › synthesis_audio", 12 dots.
+    A quicker montage: E1 `cd ../synthesis_audio`; E2 key; E3 `uv init --bare` → 60 line 2; E4
+    the Dockerfile line 3 flashes; E5 `docker build -t synthesis_audio .` → 61 lines 3, 14; E6
+    `docker run … synthesis_audio`; E7 `uv add …texttospeech` → synthesis_audio/01 lines 2, 8; E8
+    the cli.py:18 inset flashes; E9 `python cli.py --help` → 03-help.txt line 25 (wrap, RED,
+    recorded without the key). "its help text says": the strip; PANEL(expected/synthesis_audio-
+    help.txt: 3–10) above (expected). "transcribe audio file to text": its line 5 "Synthesis audio
+    from text" gets a GREEN bar + GREY "README"; the excerpt `synthesis_audio/cli.py · line 105
+    (excerpt)` slides up over the whole strip, `ArgumentParser(description="Transcribe audio file
+    to text")`, the description RED; "pasted from A's code": tag erratum + GREY "pasted from
+    transcribe_audio/cli.py". "Pause and catch up": the static GREY card "synthesis_audio · steps
+    1–9" (≥ 4 s), ▶ your turn.
 13  TRACKER E10 → E11. README chip `README.md · lines 162–163` + "same as -d · -s" above the strip;
-    `python cli.py --download`, `python cli.py --synthesis` (GOLD tag); ▶ your turn.
+    `python cli.py --download`, `python cli.py --synthesis` (compact GOLD "billed"); "with your
+    key": ▶ your turn beside the chips.
 14  The tracker switches: "README › ElevenLabs bonus" + tag optional, 3 dots. A small schematic
-    (illustration): a French page → GREY cloud "ElevenLabs" ("the instructor's voice") → a wave into
-    the dashed bonus drawer output_audios_pp/. "It uses your own": the schematic goes; GREY note
-    "synthesis_audio_en/README.md mentions cli_11.py too · the file is in synthesis_audio/". "a key
-    file in secrets": TRACKER X1, GREY card `synthesis_audio/README.md · lines 139–142`: file
+    (illustration): a French page → GREY cloud "ElevenLabs" → a wave into the dashed bonus drawer
+    output_audios_pp/, with the GREY note "synthesis_audio_en/README.md mentions cli_11.py too ·
+    the file is in synthesis_audio/" under it; "in the instructor's voice" under the cloud. "It
+    uses your own": the schematic goes; GOLD tag "your own ElevenLabs key and quota" (right). "a
+    key file in secrets": TRACKER X1, GREY card `synthesis_audio/README.md · lines 139–142`: file
     secrets/11lab_api_key.txt holding `XI_API_KEY=…`. "your group name": editor inset
     CODE(synthesis_audio/cli_11.py: 19, comment cut), group_name YELLOW, caption
     "synthesis_audio/README.md · line 112: here too". "and uv add requests": TRACKER X2, the strip
     types `uv add requests` → 04-bonus-uv-add-requests.txt lines 2–3, GREY tag "already
     installed · now listed".
 15  TRACKER X3. The cards go; a GREY README card `synthesis_audio/README.md · lines 151–153` with
-    the three cli_11.py commands, GOLD tag "your own ElevenLabs quota"; the terminal grows to 7
-    rows; it types `python cli_11.py --download` → 05-bonus-cli11-download.txt lines 2–3, 6 (wrap),
-    line 6 RED. "even download fails": underline + tag "recorded without the key". "the script
-    reads that file": the card goes, the terminal shrinks to the strip, CODE(synthesis_audio/
-    cli_11.py: 30–39) slides in above; lines 33–37 YELLOW, GREY "read at start-up". "as soon as it
-    starts": line 30 (the path) and line 33 pulse.
+    the three cli_11.py commands, the GOLD tag moves beside it; the terminal grows to 7 rows; it
+    types `python cli_11.py --download` → 05-bonus-cli11-download.txt lines 2–3, 6 (wrap), line 6
+    RED. "even download fails": underline + tag "recorded without the key". "the script reads that
+    file": the card goes, the terminal shrinks to the strip, CODE(synthesis_audio/cli_11.py:
+    30–39) slides in above; lines 33–37 YELLOW, YELLOW "read at start-up". "as soon as it starts":
+    line 30 (the path) and line 33 pulse.
 16  The tracker returns to "synthesis_audio", TRACKER E12; the panel goes; the terminal grows to 8
     rows: `exit` (laptop), `docker build -t synthesis_audio .` → 62-e-rebuild.txt lines 3, 14–17;
     ▶ your turn. "With all five done": the terminal goes; V1 (letters, drawer labels, the dashed
     bonus drawer) with A's and B's drawers already filled; GREY "your group's files:" + PINK
-    `<prefix>/group-01/…`; C, D, E pulse and drop a wave, a French page and a wave into
-    text_audios/, text_translated/, output_audios/; GOLD "billed" on C, D, E. "and your
-    leaderboard row": the schematic leaderboard (illustration) lights group-01's last three cells
-    (the first two already lit). Fade out: empty frame.
+    `<prefix>/group-01/…`. "your group's drawers fill": C, D, E pulse and drop a wave, a French
+    page and a wave into text_audios/, text_translated/, output_audios/; their letters step left
+    for a compact GOLD "billed" inside each box. "and your leaderboard row": the schematic
+    leaderboard (illustration) lights group-01's last three cells (the first two already lit),
+    held, then everything fades: empty frame.
 """
 
 import textwrap
@@ -139,17 +145,18 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (box, check_mark, chip, cloud, code_panel, code_span, cross_mark, file_glyph,
-                              folder_glyph, label, line_bar, mono, mono_line, step_badge, substring, tag)
+from explainer.devops import (box, check_mark, chip, cloud, code_panel, code_span, cross_mark, folder_glyph,
+                              label, line_bar, mono, mono_line, step_badge, substring, tag)
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, COST, CTR, ERR, GROUP, INK, KEY, LAPTOP, LOOKUP, NARRATION, P_CTR, SYSTEM,
-                    TURN, VENV, ApiCall, LayerStack, Leaderboard, Relay, asset_lines, bare_prompt, beside,
-                    capture, caption_extra, cost_tag, editor_inset, enter_container, erratum_tag, excerpt,
-                    expected_tag, extra_tag, file_panel, file_row, illustration_tag, key_glyph,
-                    leave_container, live_split, log_panel, optional_tag, p_comp, page_token, pin,
-                    readme_card, readme_chip, resize, sans, signpost, source_text, src_panel, strike,
-                    strip_top, stub_glyph, switch_section, term, tracker, type_cmd, wave_token, your_turn)
+# after `from manim import *`: manim exports a `capture` too
+from common import (CLOUD, COST, CTR, ERR, GROUP, INK, KEY, LAPTOP, LOOKUP, NARRATION, P_CTR, TURN, VENV,
+                    ApiCall, LayerStack, Leaderboard, Relay, asset_lines, bare_prompt, beside, caption_extra,
+                    capture, cost_tag, editor_inset, erratum_tag, excerpt, expected_tag, extra_tag,
+                    file_panel, file_row, illustration_tag, key_glyph, live_split, log_panel, optional_tag,
+                    p_comp, page_token, pin, readme_card, readme_chip, resize, sans, signpost, source_text,
+                    src_panel, strike, strip_top, switch_section, term, tracker, type_cmd, wave_token,
+                    your_turn)
 
 SAY = NARRATION["S13"]
 
@@ -235,8 +242,7 @@ assert C11_OUT[2] == "FileNotFoundError: [Errno 2] No such file or directory: 's
 DF_LINE = 'ARG DEBIAN_PACKAGES="build-essential"'
 for _c in (C, D, E):
     assert asset_lines(f"files/{_c}.Dockerfile", 3, 3) == DF_LINE
-    assert (TERMINAL_FILES := f"files/{_c}.Dockerfile") and \
-        asset_lines(TERMINAL_FILES, 1, 27) == asset_lines("files/generate_text.Dockerfile", 1, 27)
+    assert asset_lines(f"files/{_c}.Dockerfile", 1, 27) == asset_lines("files/generate_text.Dockerfile", 1, 27)
 
 # source lines the panels quote
 assert excerpt(CLI_C, 18, 18, cut_comments=True) == 'group_name = "pavlos"  # …'
@@ -265,6 +271,7 @@ TOP = 2.8                         # top of a picture under the tracker band (y 2
 EDGE = 6.45
 BAND_Y = 3.2                      # the top band, right of the tracker
 STRIP = strip_top(3)              # -1.44
+BOTTOM_Y = -3.5                   # the terminal's bottom edge (common.BOTTOM)
 H_V2 = {"base": 0.42, "apt": 0.55, "workdir": 0.07, "copy": 0.26, "sync": 0.38}
 STB_X, STC_X, ST_FLOOR = -4.3, 0.85, 0.45
 
@@ -295,6 +302,9 @@ def seed_prompt(t):
     return ln
 
 
+PACE = [1.0]                      # run-time factor for room()'s scrolls (the E montage runs quicker)
+
+
 def room(scene, t, n: int):
     """Make room for n new rows: the oldest rows fade where they are, then the rest move up."""
     over = len(t.lines) + n - t.rows
@@ -304,12 +314,12 @@ def room(scene, t, n: int):
         return
     gone = t.lines.submobjects[:over]
     stay = VGroup(*t.lines.submobjects[over:])
-    scene.play(FadeOut(VGroup(*gone)), run_time=0.15)
+    scene.play(FadeOut(VGroup(*gone)), run_time=0.15 * PACE[0])
     for m in gone:
         t.lines.remove(m)
         scene.remove(m)
     if len(stay):
-        scene.play(stay.animate.shift(UP * t.pitch * over), run_time=0.2)
+        scene.play(stay.animate.shift(UP * t.pitch * over), run_time=0.2 * PACE[0])
 
 
 def reset(scene, t, rows: int, extra=(), run_time: float = 0.5):
@@ -459,12 +469,13 @@ def secrets_row(cy: float = 2.5):
     return VGroup(fold, sname, ill), key, kname, fold[1].get_center() + DOWN * 0.02, fold
 
 
-def drop_key(scene, cy: float = 2.5, extra=()):
-    """The GOLD key drops into secrets/ (README step 2). Returns what to fade later."""
+def drop_key(scene, cy: float = 2.5, extra=(), k: float = 1.0):
+    """The GOLD key drops into secrets/ (README step 2); k scales the run times. Returns what to
+    fade later."""
     row, key, kname, target, fold = secrets_row(cy)
-    scene.play(FadeIn(row), FadeIn(key, shift=DOWN * 0.2), *extra, run_time=0.35)
-    scene.play(key.animate.scale(0.62).move_to(target), run_time=0.4)
-    scene.play(FadeIn(kname, shift=LEFT * 0.15), Indicate(fold, color=KEY, scale_factor=1.15), run_time=0.35)
+    scene.play(FadeIn(row), FadeIn(key, shift=DOWN * 0.2), *extra, run_time=0.35 * k)
+    scene.play(key.animate.scale(0.62).move_to(target), run_time=0.4 * k)
+    scene.play(FadeIn(kname, shift=LEFT * 0.15), Indicate(fold, color=KEY, scale_factor=1.15), run_time=0.35 * k)
     return VGroup(row, key, kname)
 
 
@@ -483,7 +494,7 @@ def steps_card(comp: str, items) -> VGroup:
         y = -i * pitch
         n.move_to([0.0, y, 0], aligned_edge=RIGHT)
         if isinstance(body, VGroup) and hasattr(body, "strut"):
-            body.shift(np.array([0.2 - body.strut.get_left()[0], y - body.strut.get_center()[1], 0]))
+            body.shift(np.array([0.2 - body.glyphs.get_left()[0], y - body.strut.get_center()[1], 0]))
         else:
             body.move_to([0.2, y, 0], aligned_edge=LEFT)
     fr = box(rows.width + 0.6, rows.height + 0.4, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.12)
@@ -531,6 +542,28 @@ def cached_green(scene, row, run_time: float = 0.35):
     scene.play(substring(row, "CACHED").animate.set_color(VENV), run_time=run_time)
 
 
+def _retitle(scene, t, text: str, color, stroke: tuple, prompt: str, run_time: float, extra=()):
+    """enter_container / leave_container with a cross-fade of the title instead of a Transform
+    (a Transform between titles of different widths squeezes the 20 pt text below 20 pt)."""
+    t.set_prompt(prompt)
+    old = t.title
+    new = mono(text, 20, color).move_to(old).set_opacity(0)
+    t.add(new)
+    t.title = new
+    scene.play(t.box.animate.set_stroke(*stroke), old.animate.set_opacity(0), new.animate.set_opacity(1),
+               *extra, run_time=run_time)
+    t.remove(old)
+    scene.remove(old)
+
+
+def enter(scene, t, comp: str, run_time: float = 0.3, extra=()):
+    _retitle(scene, t, f"container · {comp}", CTR, (CTR, 3), P_CTR, run_time, extra)
+
+
+def leave(scene, t, prompt: str, run_time: float = 0.3, extra=()):
+    _retitle(scene, t, "laptop", S.GREY, (S.GREY_DARK, 2), prompt, run_time, extra)
+
+
 # ------------------------------------------------------------------ the scene
 class SpeedRound(VoiceScene):
     def construct(self):
@@ -574,22 +607,25 @@ class SpeedRound(VoiceScene):
         # ========================================================== 1 · C4: the Dockerfile; the ffmpeg slip
         df = file_panel(f"files/{C}.Dockerfile", 3, 3, f"{C}/Dockerfile")
         place(df, left=-6.4, top=TOP)
-        same = gray_line("=", ("generate_text",), "'s Dockerfile")
+        same = VGroup(label("=", 20, S.GREY), mono("generate_text", 20, S.GREY), label("'s Dockerfile", 20, S.GREY))
+        same.arrange(RIGHT, buff=0.12)
+        same[2].align_to(same[1], UP).shift(DOWN * 0.02)    # the apostrophe sits at the mono cap height
         place(same, left=df.get_right()[0] + 0.4, cy=df.code.get_center()[1])
         card38 = readme_card(f"{C}/README.md · line 38", ["so keep ffmpeg in the system packages"])
         place(card38, left=-6.4, top=df.get_bottom()[1] - 0.25)
         err1 = erratum_tag()
-        place(err1, left=card38.frame.get_right()[0] + 0.35, cy=card38.frame.get_center()[1])
+        place(err1, left=card38.header.get_right()[0] + 0.3, cy=card38.header.get_center()[1])
         same_e = VGroup(label("same in", 22, S.GREY), mono(f"{E}/README.md", 22, S.GREY)).arrange(RIGHT, buff=0.12)
         sefr = RoundedRectangle(width=same_e.width + 0.4, height=0.47, corner_radius=0.23, stroke_color=S.GREY,
                                 stroke_width=2).set_fill(S.BG, 0.92).move_to(same_e)
         same_e = VGroup(sefr, same_e)
-        place(same_e, left=err1.get_right()[0] + 0.25, cy=err1.get_center()[1])
+        place(same_e, left=card38.frame.get_right()[0] + 0.35, cy=card38.frame.get_center()[1])
         card45 = code_card(f"{C}/README.md · line 45", DF_LINE)
         place(card45, left=-6.4, top=card38.frame.get_bottom()[1] - 0.22)
         ok = VGroup(check_mark(0.3, VENV), label("right", 22, VENV)).arrange(RIGHT, buff=0.12)
         place(ok, left=card45.frame.get_right()[0] + 0.3, cy=card45.frame.get_center()[1])
-        note1 = gray_line("neither synthesis", ("cli.py",), "uses ffmpeg")
+        note1 = VGroup(gray_line("neither synthesis", ("cli.py",)), gray_line("uses ffmpeg"))
+        note1.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         place(note1, left=ok.get_right()[0] + 0.45, cy=ok.get_center()[1])
         s38 = strike(card38.rows[0])
         assert card45.frame.get_bottom()[1] > STRIP + 0.1, card45.frame.get_bottom()
@@ -656,8 +692,8 @@ class SpeedRound(VoiceScene):
             reset(self, t, 7, run_time=0.6,
                   extra=[FadeOut(VGroup(df, same, card38, err1, same_e, card45, ok, note1, s38)), tr.goto(5),
                          FadeIn(VGroup(stB, nameB), shift=UP * 0.15)])
-            c2 = tcmd(self, t, BUILD[C], 0.6)
-            o2, tg2 = live_build(self, t, BLD[C])
+            tcmd(self, t, BUILD[C], 0.6)
+            o2, _ = live_build(self, t, BLD[C])
             vo.wait_until("build step 2 is cached")
             r14 = o2[1]
             k2 = substring(r14, "[2/5]")
@@ -687,7 +723,7 @@ class SpeedRound(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             reset(self, t, 10, run_time=0.5, extra=[FadeOut(v2_all), tr.goto(6)])
             tcmd(self, t, RUN[C], 0.6)
-            self.play(*enter_container(t, C), run_time=0.3)
+            enter(self, t, C)
             self.play(tr.goto(7), run_time=0.25)
             tcmd(self, t, UVA[C].cmd, 0.6)
             o3 = tprint(self, t, UVA[C].at(2, 8), run_time=0.3)
@@ -713,7 +749,7 @@ class SpeedRound(VoiceScene):
         place(gauth, left=-5.9, cy=0.45)
         a22 = Arrow([gauth.get_center()[0], p22.code.get_bottom()[1] - 0.02, 0], gauth.get_top() + UP * 0.02,
                     buff=0, color=S.GREY, stroke_width=3, max_tip_length_to_length_ratio=0.25)
-        post = signpost(["GOOGLE_APPLICATION_CREDENTIALS=", "secrets/mega-pipeline.json"], post_h=0.4)
+        post = signpost(["GOOGLE_APPLICATION_CREDENTIALS=", "secrets/mega-pipeline.json"], post_h=0.25)
         post.shift(np.array([gauth.get_right()[0] + 0.5 - post.board.get_left()[0],
                              gauth.get_center()[1] - post.board.get_center()[1], 0]))
         sec = file_row("secrets/")
@@ -761,21 +797,21 @@ class SpeedRound(VoiceScene):
             self.play(GrowArrow(pa2), FadeIn(sec), run_time=0.45)
             self.play(Create(xk), Indicate(e1.glyphs, color=ERR, scale_factor=1.04), run_time=0.5)
             vo.wait_until("before reading any flags")
-            pg.set_opacity(0.55)
+            pg.set_opacity(0.75)
             self.play(FadeIn(pg, shift=UP * 0.1), run_time=0.45)
             vo.wait_until("Pause and catch up")
             self.play(FadeOut(v5), FadeIn(hp_c, shift=DOWN * 0.1), run_time=0.55)
-            hb = Rectangle(width=12.2, height=hp_c.rows[7].strut.get_bottom()[1] - hp_c.rows[0].strut.get_top()[1],
-                           stroke_width=0)
-            hb = rbar([hp_c.rows[0], hp_c.rows[7]], TURN, 0.12, right=hp_c.frame.get_right()[0] - 0.15)
-            self.play(FadeIn(hb), run_time=0.4)
+            hb = SurroundingRectangle(VGroup(*hp_c.rows), color=TURN, buff=0.1, stroke_width=2.5, corner_radius=0.08)
+            self.play(Create(hb), run_time=0.5)
             yt4 = beside(your_turn(), t, c4)
             pin(self, c4, yt4, run_time=0.35)
             self.play(Wiggle(yt4, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.6)
+            self.wait(1.0)                                    # hold the pause point
 
         # ========================================================== 5 · V8: the request carries an address
         api = ApiCall("Text-to-Speech · long audio", "C · synthesis_audio_en", drawers=[f"text_audios/{GROUP}/"])
-        api.drawers.shift(UP * 0.35)
+        api.drawers.shift(UP * 0.6)
+        api.drawers[0].frame.stretch_to_fit_height(1.1, about_edge=UP)
         api.shift(DOWN * 1.6)
         cloud_c = api.api.shape.get_center()
         link_y = api.link.get_center()[1]
@@ -812,7 +848,8 @@ class SpeedRound(VoiceScene):
             vo.wait_until("line 78")
             self.play(Indicate(p78.header, color=INK, scale_factor=1.08), run_time=0.5)
             vo.wait_until("Google's long audio service")
-            self.play(page.animate.move_to(cloud_c), addr.animate.shift(RIGHT * 0.6), run_time=0.9)
+            ride = max(0.0, api.api.shape.get_left()[0] - 0.15 - addr.get_right()[0])
+            self.play(page.animate.move_to(cloud_c), addr.animate.shift(RIGHT * ride), run_time=0.9)
             self.play(FadeOut(page, scale=0.4), Indicate(api.api.shape, color=CLOUD, scale_factor=1.05),
                       FadeIn(cost5, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("writes the speech straight there")
@@ -831,10 +868,11 @@ class SpeedRound(VoiceScene):
         assert api.get_top()[1] < p88.get_bottom()[1] - 0.08, (api.get_top(), p88.get_bottom())
         r151 = readme_chip("README.md · line 151", "no separate --upload")
         place(r151, right=EDGE, cy=BAND_Y)
-        crate_w = wave_token(0.36)
-        crate_b = box(crate_w.width + 0.36, 0.62, S.GREY, fill=S.BG, fill_opacity=0.9, radius=0.08).move_to(crate_w)
+        crate_w = wave_token(0.3)
+        crate_b = box(crate_w.width + 0.3, 0.46, S.GREY, fill=S.BG, fill_opacity=0.9, radius=0.08).move_to(crate_w)
         crate = VGroup(crate_b, crate_w).move_to(cloud_c)
-        crate_to = drawer.frame.get_bottom() + UP * 0.3 + LEFT * 0.9
+        crate_to = drawer.frame.get_bottom() + UP * 0.32
+        assert crate_to[1] + 0.23 < drawer.text.get_bottom()[1] - 0.1, (crate_to, drawer.text.get_bottom())
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(p78, u78, back, back_x)), FadeIn(p88, shift=DOWN * 0.1), run_time=0.5)
@@ -874,16 +912,17 @@ class SpeedRound(VoiceScene):
             tcmd(self, t2, CMDS[C][0], 0.45)
             self.play(tr.goto(11), run_time=0.25)
             l7 = tcmd(self, t2, CMDS[C][1], 0.45)
-            ct7 = beside(cost_tag(), t2, l7)
+            ct7 = beside(ttag("billed", COST), t2, l7)
             pin(self, l7, ct7, run_time=0.3)
             self.play(tr.goto(12), run_time=0.25)
             tcmd(self, t2, "exit", 0.25)
-            self.play(*leave_container(t2, P_C), run_time=0.3)
+            leave(self, t2, P_C)
             c7 = tcmd(self, t2, BUILD[C], 0.5)
             o7, _ = live_build(self, t2, RBLD[C])
             cached_green(self, o7[1])
             yt7 = beside(your_turn(), t2, c7)
             pin(self, c7, yt7, run_time=0.35)
+            self.wait(1.0)                                    # hold the pause point
 
         # ========================================================== 8 · D1-D5: the montage, first half
         dfD = file_panel(f"files/{D}.Dockerfile", 3, 3, f"{D}/Dockerfile")
@@ -902,8 +941,10 @@ class SpeedRound(VoiceScene):
             tcmd(self, t2, UVI_CMD, 0.4)
             tprint(self, t2, [UVI[D].line(2)], run_time=0.2)
             self.play(tr.goto(4), FadeIn(dfD, shift=DOWN * 0.1), run_time=0.35)
-            self.play(Indicate(dfD.code, color=INK, scale_factor=1.04), run_time=0.5)
-            self.play(FadeOut(dfD, shift=UP * 0.1), tr.goto(5), run_time=0.3)
+            barD = line_bar(dfD.code, 0, TURN)
+            self.play(FadeIn(barD), run_time=0.3)
+            self.wait(0.2)
+            self.play(FadeOut(VGroup(dfD, barD), shift=UP * 0.1), tr.goto(5), run_time=0.3)
             tcmd(self, t2, BUILD[D], 0.45)
             o8, _ = live_build(self, t2, BLD[D], rows_=(14,), run_time=0.25)
             cached_green(self, o8[1], run_time=0.3)
@@ -921,7 +962,7 @@ class SpeedRound(VoiceScene):
         with self.voiceover(SAY[9]) as vo:
             resize(self, t2, 8, run_time=0.35, extra=[tr.goto(6)])
             tcmd(self, t2, RUN[D], 0.45)
-            self.play(*enter_container(t2, D), run_time=0.25)
+            enter(self, t2, D, run_time=0.25)
             self.play(tr.goto(7), run_time=0.2)
             tcmd(self, t2, UVA[D].cmd, 0.45)
             tprint(self, t2, UVA[D].at(2, 8), run_time=0.25)
@@ -929,12 +970,11 @@ class SpeedRound(VoiceScene):
             self.play(tr.goto(8), FadeIn(ins_d, shift=DOWN * 0.1), run_time=0.35)
             self.play(gn_d.animate.set_color(TURN), Create(u_gn_d), run_time=0.4)
             self.wait(0.4)
-            self.play(FadeOut(VGroup(ins_d, u_gn_d), shift=UP * 0.1), run_time=0.3)
-            vo.wait_until("Like C, even help")
-            self.play(tr.goto(9), run_time=0.2)
+            self.play(FadeOut(VGroup(ins_d, u_gn_d), shift=UP * 0.1), tr.goto(9), run_time=0.3)
             c9 = tcmd(self, t2, "python cli.py --help", 0.4)
             o9 = tprint(self, t2, HELP_D_OUT[:-1] + [(HELP_D_OUT[-1], ERR)], wrap=True, run_time=0.35, lag=0.06)
             d1, d2 = o9[-2], o9[-1]
+            vo.wait_until("Like C, even help")
             nk9 = at_right(ttag("recorded without the key"), t2, d2)
             pin(self, d2, nk9, run_time=0.25)
             resize(self, t2, 3, keep=[c9, d1, d2], run_time=0.45, extra=[FadeIn(hp_d, shift=DOWN * 0.1)])
@@ -964,12 +1004,15 @@ class SpeedRound(VoiceScene):
         en_pg = page_token(long=True).move_to(fr2.get_center() + UP * 0.25)
         fr_pg = page_token(fr=True)
         cost10 = cost_tag()
-        place(cost10, cx=lk2[0], cy=lk2[1] + 0.42)
+        place(cost10, cx=lk2[0], cy=lk2[1] + 0.9)
         nostub = ttag("no ticket stub")
-        place(nostub, cx=lk2[0], cy=lk2[1] - 0.45)
-        saved = gray_line("saved here · line 68 ·", "on your laptop")
+        place(nostub, cx=lk2[0], cy=lk2[1] + 0.36)
+        assert cost10.get_top()[1] < p58.get_bottom()[1] - 0.08, (cost10.get_top(), p58.get_bottom())
+        saved = VGroup(gray_line("saved here · line 68"), gray_line("on your laptop"))
+        saved.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
         place(saved, left=fr2.get_right()[0] + 0.3, cy=folder.get_center()[1])
-        assert saved.get_right()[0] < api2.api.shape.get_left()[0] + 0.4, saved.get_right()
+        assert saved.get_right()[0] < api2.api.shape.get_left()[0] - 0.15, saved.get_right()
+        assert saved.get_top()[1] < nostub.get_bottom()[1] - 0.1, (saved.get_top(), nostub.get_bottom())
         bt = mono(f"text_translated/{GROUP}/", 20, INK)
         bfr = box(bt.width + 0.5, 0.8, CLOUD, dashed=True)
         bt.move_to(bfr.get_top() + DOWN * 0.24)
@@ -1022,20 +1065,21 @@ class SpeedRound(VoiceScene):
                     self.play(tr.goto(10 + k), run_time=0.2)
                 ln = tcmd(self, t3, cmd, 0.4)
                 if k == 1:
-                    pin(self, ln, beside(cost_tag(), t3, ln), run_time=0.25)
+                    pin(self, ln, beside(ttag("billed", COST), t3, ln), run_time=0.25)
             self.play(tr.goto(13), run_time=0.2)
             tcmd(self, t3, "exit", 0.25)
-            self.play(*leave_container(t3, P_D), run_time=0.3)
+            leave(self, t3, P_D)
             c11 = tcmd(self, t3, BUILD[D], 0.45)
             o11, _ = live_build(self, t3, RBLD[D])
             cached_green(self, o11[1], run_time=0.3)
             yt11 = beside(your_turn(), t3, c11)
             pin(self, c11, yt11, run_time=0.35)
+            self.wait(1.0)                                    # hold the pause point
 
         # ========================================================== 12 · E1-E9: the montage again; the help slip
         dfE = file_panel(f"files/{E}.Dockerfile", 3, 3, f"{E}/Dockerfile")
         place(dfE, right=EDGE, top=TOP)
-        ins_e, gn_e, u_gn_e = inset18(CLI_E)
+        ins_e, gn_e, _ = inset18(CLI_E)
         hp_e = help_panel(E)
         r5 = hp_e.rows[2]
         assert r5.text == "Synthesis audio from text"
@@ -1047,55 +1091,56 @@ class SpeedRound(VoiceScene):
         x_row.move_to(x_fr)
         x_head = VGroup(mono(CLI_E, 20, S.GREY), label("· line 105 (excerpt)", 20, S.GREY)).arrange(RIGHT, buff=0.12)
         x_head.next_to(x_fr, UP, buff=0.08).align_to(x_fr, LEFT).shift(RIGHT * 0.1)
-        x_bg = Rectangle(width=x_fr.width + 0.2, height=x_fr.height + x_head.height + 0.3, stroke_width=0)
-        x_bg.set_fill(S.BG, 1).move_to(VGroup(x_fr, x_head))
-        xchip = VGroup(x_bg, x_fr, x_row, x_head)
-        place(xchip, left=-6.4, cy=-2.4)
+        x_top, x_bot = STRIP + 0.06, BOTTOM_Y - 0.08          # covers the whole strip
+        x_bg = Rectangle(width=13.0, height=x_top - x_bot, stroke_width=0).set_fill(S.BG, 1)
+        x_bg.move_to([0, (x_top + x_bot) / 2, 0])
+        x_body = VGroup(x_fr, x_row, x_head)
+        place(x_body, left=-6.2, top=STRIP - 0.12)
+        xchip = VGroup(x_bg, x_body)
         x_err = erratum_tag()
         place(x_err, left=x_head.get_right()[0] + 0.3, cy=x_head.get_center()[1])
         x_note = gray_line("pasted from", ("transcribe_audio/cli.py",))
-        place(x_note, left=x_fr.get_left()[0] + 0.1, top=x_fr.get_bottom()[1] - 0.12)
-        x_bg.stretch_to_fit_height(x_bg.height + x_note.height + 0.15).align_to(x_head, UP).shift(UP * 0.1)
-        assert x_note.get_bottom()[1] > -3.6 and x_err.get_right()[0] < EDGE
+        place(x_note, left=x_fr.get_left()[0] + 0.1, top=x_fr.get_bottom()[1] - 0.14)
+        assert x_note.get_bottom()[1] > BOTTOM_Y and x_err.get_right()[0] < EDGE, (x_note.get_bottom(), x_err.get_right())
         card_e = steps_card(E, montage_items(E))
         place(card_e, left=-6.4, top=TOP)
         yt12 = your_turn()
         place(yt12, left=card_e.frame.get_right()[0] + 0.35, bottom=card_e.frame.get_bottom()[1])
 
         with self.voiceover(SAY[12]) as vo:
-            reset(self, t3, 10, run_time=0.4, extra=[FadeOut(VGroup(rc11, sm11))])
-            tr = switch_section(self, tr, "E", None, run_time=0.55)
-            self.play(tr.goto(1), run_time=0.2)
-            tcmd(self, t3, CD[E], 0.4)
+            PACE[0] = 0.5                                     # the montage: quicker scrolls
+            trE = tracker("E", 1)
+            reset(self, t3, 8, run_time=0.45, extra=[FadeOut(VGroup(rc11, sm11)), FadeOut(tr, shift=UP * 0.25),
+                                                    FadeIn(trE, shift=DOWN * 0.25)])
+            tr = trE
+            tcmd(self, t3, CD[E], 0.25)
             t3.set_prompt(P_E)
             bare_prompt(self, t3)
-            self.play(tr.goto(2), run_time=0.2)
-            keyg = drop_key(self, cy=2.45)
-            self.play(FadeOut(keyg), tr.goto(3), run_time=0.25)
-            tcmd(self, t3, UVI_CMD, 0.35)
-            tprint(self, t3, [UVI[E].line(2)], run_time=0.2)
-            self.play(tr.goto(4), FadeIn(dfE, shift=DOWN * 0.1), run_time=0.3)
-            self.wait(0.35)
-            self.play(FadeOut(dfE, shift=UP * 0.1), tr.goto(5), run_time=0.25)
-            tcmd(self, t3, BUILD[E], 0.4)
-            o12, _ = live_build(self, t3, BLD[E], rows_=(14,), run_time=0.25)
-            cached_green(self, o12[1], run_time=0.25)
-            resize(self, t3, 8, run_time=0.3, extra=[tr.goto(6)])
-            tcmd(self, t3, RUN[E], 0.4)
-            self.play(*enter_container(t3, E), tr.goto(7), run_time=0.25)
-            tcmd(self, t3, UVA[E].cmd, 0.4)
-            tprint(self, t3, UVA[E].at(2, 8), run_time=0.2)
-            self.play(tr.goto(8), FadeIn(ins_e, shift=DOWN * 0.1), gn_e.animate.set_color(TURN), run_time=0.3)
-            self.wait(0.3)
-            self.play(FadeOut(ins_e, shift=UP * 0.1), tr.goto(9), run_time=0.25)
-            c12 = tcmd(self, t3, "python cli.py --help", 0.35)
-            o12b = tprint(self, t3, [(HELP_E_OUT[0], ERR)], wrap=True, run_time=0.25)
+            keyg = drop_key(self, cy=2.45, extra=[tr.goto(2)], k=0.55)
+            self.play(FadeOut(keyg), tr.goto(3), run_time=0.15)
+            tcmd(self, t3, UVI_CMD, 0.25)
+            tprint(self, t3, [UVI[E].line(2)], run_time=0.15)
+            self.play(tr.goto(4), FadeIn(dfE, shift=DOWN * 0.1), run_time=0.25)
+            self.play(FadeOut(dfE, shift=UP * 0.1), tr.goto(5), run_time=0.2)
+            tcmd(self, t3, BUILD[E], 0.25)
+            o12, _ = live_build(self, t3, BLD[E], rows_=(14,), run_time=0.2)
+            self.play(substring(o12[1], "CACHED").animate.set_color(VENV), tr.goto(6), run_time=0.15)
+            tcmd(self, t3, RUN[E], 0.25)
+            enter(self, t3, E, run_time=0.15, extra=[tr.goto(7)])
+            tcmd(self, t3, UVA[E].cmd, 0.25)
+            tprint(self, t3, UVA[E].at(2, 8), run_time=0.15)
+            self.play(tr.goto(8), FadeIn(ins_e, shift=DOWN * 0.1), gn_e.animate.set_color(TURN), run_time=0.25)
+            self.play(FadeOut(ins_e, shift=UP * 0.1), tr.goto(9), run_time=0.2)
+            c12 = tcmd(self, t3, "python cli.py --help", 0.25)
+            o12b = tprint(self, t3, [(HELP_E_OUT[0], ERR)], wrap=True, run_time=0.15)
             nk12 = at_right(ttag("recorded without the key"), t3, o12b[-1])
-            pin(self, o12b[-1], nk12, run_time=0.2)
+            pin(self, o12b[-1], nk12, run_time=0.15)
+            PACE[0] = 1.0
+            vo.wait_until("its help text says")
             resize(self, t3, 3, keep=[c12, o12b[0], o12b[1]], run_time=0.4, extra=[FadeIn(hp_e, shift=DOWN * 0.1)])
             vo.wait_until("transcribe audio file to text")
             self.play(FadeIn(b5), FadeIn(readme_t, shift=LEFT * 0.1), run_time=0.35)
-            self.play(FadeIn(xchip, shift=UP * 0.4), run_time=0.5)
+            self.play(FadeIn(xchip, shift=UP * 0.3), run_time=0.5)
             desc = substring(x_row, '"Transcribe audio file to text"')
             self.play(desc.animate.set_color(ERR), run_time=0.35)
             vo.wait_until("pasted from A's code")
@@ -1119,34 +1164,38 @@ class SpeedRound(VoiceScene):
             tcmd(self, t3, CMDS[E][0], 0.4)
             self.play(tr.goto(11), run_time=0.2)
             l13 = tcmd(self, t3, CMDS[E][1], 0.4)
-            pin(self, l13, beside(cost_tag(), t3, l13), run_time=0.25)
+            pin(self, l13, beside(ttag("billed", COST), t3, l13), run_time=0.25)
             vo.wait_until("with your key")
-            yt13 = beside(your_turn(), t3, l13)
-            yt13.next_to(l13.glyphs, RIGHT, buff=0.3).set_y(l13.strut.get_center()[1])
-            pin(self, l13, yt13, run_time=0.3)
+            yt13 = your_turn()
+            place(yt13, left=sm13.get_right()[0] + 0.35, cy=sm13.get_center()[1])
+            self.play(FadeIn(yt13, shift=LEFT * 0.1), run_time=0.3)
+            self.play(Wiggle(yt13, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.6)
+            self.wait(0.6)                                    # hold the pause point
 
         # ========================================================== 14 · the ElevenLabs bonus: X1-X2
         opt = optional_tag()
         fr14 = page_token(fr=True)
         el = cloud(2.6, color=S.GREY)
-        el_t = sans("ElevenLabs", 20, INK).move_to(el)
+        el_t = sans("ElevenLabs", 20, INK)
         el_c = label("the instructor's voice", 20, S.GREY).next_to(el, DOWN, buff=0.12)
         bdr_t = mono("output_audios_pp/", 20, INK)
-        bdr_f = box(bdr_t.width + 0.5, 0.8, CLOUD, dashed=True)
+        bdr_f = box(bdr_t.width + 0.5, 1.1, CLOUD, dashed=True)
         bdr_t.move_to(bdr_f.get_top() + DOWN * 0.24)
         bdr = VGroup(bdr_f, bdr_t)
         bonus_t = tag("bonus", S.GREY)
         row14 = VGroup(fr14, el, bdr).arrange(RIGHT, buff=1.6)
         place(row14, cx=0, cy=1.0)
-        el_t.move_to(el)
+        el_t.next_to(el, UP, buff=0.12)
         el_c.next_to(el, DOWN, buff=0.12)
         bonus_t.next_to(bdr_f, DOWN, buff=0.12)
         a14a = Arrow(fr14.get_right(), el.get_left(), buff=0.15, color=S.GREY, stroke_width=3)
         a14b = Arrow(el.get_right(), bdr_f.get_left(), buff=0.15, color=S.GREY, stroke_width=3)
-        wv14 = wave_token().move_to(el)
+        wv14 = wave_token(0.34).move_to(el)
+        wv14_to = bdr_f.get_bottom() + UP * 0.32
+        assert wv14_to[1] + 0.17 < bdr_t.get_bottom()[1] - 0.08
+        quota14 = cost_tag("your own ElevenLabs key and quota")
         ill14 = illustration_tag()
         place(ill14, right=EDGE, top=TOP)
-        flow14 = VGroup(fr14, el, el_t, el_c, bdr, bonus_t, a14a, a14b, ill14)
         # X1: the key file; the group name in cli_11.py
         kf_name = file_row("secrets/11lab_api_key.txt", color=INK, glyph_color=S.GREY)
         kf_line = mono_line("XI_API_KEY=…", 20, INK)
@@ -1158,36 +1207,40 @@ class SpeedRound(VoiceScene):
         kf_head.next_to(kf_fr, UP, buff=0.08).align_to(kf_fr, LEFT).shift(RIGHT * 0.1)
         kcard = VGroup(kf_fr, kf_body, kf_head)
         place(kcard, left=-6.4, top=TOP)
+        place(quota14, right=EDGE, cy=kf_fr.get_center()[1])
+        assert quota14.get_left()[0] > kcard.get_right()[0] + 0.2, (quota14.get_left(), kcard.get_right())
         p19 = src_panel(CLI_11, 19, 19, cut_comments=True, size=20)
         ins19 = editor_inset(p19)
-        place(ins19, right=EDGE, top=kcard.get_bottom()[1] - 0.25)
+        place(ins19, left=-6.4, top=kcard.get_bottom()[1] - 0.3)
         gn19 = code_span(p19.code, 0, "group_name")
         u19 = Line(gn19.get_corner(DL) + DOWN * 0.05, gn19.get_corner(DR) + DOWN * 0.05, color=TURN, stroke_width=4)
-        cap19 = gray_line((f"{E}/README.md",), "· line 112: here too")
-        place(cap19, right=EDGE, top=ins19.get_bottom()[1] - 0.12)
+        cap19 = VGroup(gray_line((f"{E}/README.md",)), gray_line("· line 112: here too"))
+        cap19.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        place(cap19, left=ins19.get_right()[0] + 0.4, cy=p19.code.get_center()[1])
         note14 = gray_line((f"{C}/README.md",), "mentions", ("cli_11.py",), "too · the file is in", (f"{E}/",))
-        place(note14, left=-6.4, cy=-1.05)
-        assert cap19.get_bottom()[1] > note14.get_top()[1] + 0.08, (cap19.get_bottom(), note14.get_top())
-        assert note14.get_right()[0] < EDGE and note14.get_bottom()[1] > STRIP + 0.05, note14.get_right()
+        place(note14, cx=0, top=row14.get_bottom()[1] - 0.75)
+        assert ins19.get_bottom()[1] > STRIP + 0.1 and cap19.get_right()[0] < EDGE, (ins19.get_bottom(), cap19.get_right())
+        assert note14.get_right()[0] < EDGE and note14.get_bottom()[1] > STRIP + 0.1, (note14.get_right(), note14.get_bottom())
 
         with self.voiceover(SAY[14]) as vo:
-            self.play(FadeOut(VGroup(rc13, sm13)), run_time=0.3)
+            self.play(FadeOut(VGroup(rc13, sm13, yt13)), run_time=0.3)
             tr = switch_section(self, tr, "X", None, run_time=0.6)
-            place(opt, left=tr.head.get_right()[0] + 0.3, cy=tr.head.get_center()[1])
+            place(opt, left=tr.head.get_right()[0] + 0.3, top=3.54)
             self.play(FadeIn(opt, shift=LEFT * 0.1), run_time=0.3)
             self.play(FadeIn(fr14, shift=RIGHT * 0.1), FadeIn(VGroup(el, el_t)), FadeIn(bdr), FadeIn(bonus_t),
                       FadeIn(ill14), run_time=0.5)
+            self.play(FadeIn(note14, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("speaks the French")
             self.play(GrowArrow(a14a), fr14.animate.move_to(el.get_center()).set_opacity(0), run_time=0.7)
             self.remove(fr14)
             self.play(FadeIn(wv14, scale=0.6), Indicate(el, color=INK, scale_factor=1.05), run_time=0.35)
-            self.play(GrowArrow(a14b), wv14.animate.move_to(bdr_f.get_bottom() + UP * 0.28), run_time=0.7)
+            self.play(GrowArrow(a14b), wv14.animate.move_to(wv14_to), run_time=0.7)
             vo.wait_until("in the instructor's voice")
             self.play(FadeIn(el_c, shift=UP * 0.1), run_time=0.4)
             self.play(Indicate(wv14, color=INK, scale_factor=1.2), run_time=0.6)
             vo.wait_until("It uses your own")
-            self.play(FadeOut(VGroup(fr14, el, el_t, el_c, bdr, bonus_t, a14a, a14b, ill14, wv14)), run_time=0.45)
-            self.play(FadeIn(note14, shift=UP * 0.1), run_time=0.4)
+            self.play(FadeOut(VGroup(fr14, el, el_t, el_c, bdr, bonus_t, a14a, a14b, ill14, wv14, note14)), run_time=0.45)
+            self.play(FadeIn(quota14, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("a key file in secrets")
             self.play(tr.goto(1), FadeIn(kcard, shift=DOWN * 0.1), run_time=0.5)
             self.play(Indicate(kf_line, color=INK, scale_factor=1.08), run_time=0.5)
@@ -1212,9 +1265,9 @@ class SpeedRound(VoiceScene):
         rc15_h.next_to(rc15_fr, UP, buff=0.08).align_to(rc15_fr, LEFT).shift(RIGHT * 0.1)
         card15 = VGroup(rc15_fr, rc15, rc15_h)
         place(card15, left=-6.4, top=TOP)
-        quota = cost_tag("your own ElevenLabs quota")
-        place(quota, left=card15.get_right()[0] + 0.4, cy=rc15_fr.get_center()[1])
-        assert card15.get_bottom()[1] > strip_top(7) + 0.1 and quota.get_right()[0] < EDGE
+        quota_to = quota14.copy()                     # the X1 tag moves next to the commands
+        place(quota_to, left=card15.get_right()[0] + 0.4, cy=rc15_fr.get_center()[1])
+        assert card15.get_bottom()[1] > strip_top(7) + 0.1 and quota_to.get_right()[0] < EDGE, quota_to.get_right()
         p30 = src_panel(CLI_11, 30, 39, size=20)
         place(p30, left=-6.4, top=TOP + 0.02)
         assert p30.get_bottom()[1] > STRIP + 0.03, p30.get_bottom()
@@ -1224,8 +1277,9 @@ class SpeedRound(VoiceScene):
         assert startup.get_right()[0] < EDGE
 
         with self.voiceover(SAY[15]) as vo:
-            self.play(FadeOut(VGroup(kcard, ins19, u19, cap19, note14)), tr.goto(3), run_time=0.4)
-            resize(self, t3, 7, run_time=0.45, extra=[FadeIn(card15, shift=DOWN * 0.1), FadeIn(quota, shift=DOWN * 0.1)])
+            self.play(FadeOut(VGroup(kcard, ins19, u19, cap19)), tr.goto(3), run_time=0.4)
+            resize(self, t3, 7, run_time=0.45, extra=[FadeIn(card15, shift=DOWN * 0.1),
+                                                     quota14.animate.move_to(quota_to)])
             c15 = tcmd(self, t3, BONUS_CMDS[0], 0.45)
             o15 = tprint(self, t3, C11_OUT[:-1] + [(C11_OUT[-1], ERR)], wrap=True, run_time=0.35, lag=0.08)
             f1, f2 = o15[-2], o15[-1]
@@ -1238,7 +1292,7 @@ class SpeedRound(VoiceScene):
             pin(self, f2, nk15, run_time=0.3)
             vo.wait_until("the script reads that file")
             resize(self, t3, 3, keep=[c15, f1, f2], run_time=0.45,
-                   extra=[FadeOut(VGroup(card15, quota)), FadeIn(p30, shift=UP * 0.2)])
+                   extra=[FadeOut(VGroup(card15, quota14)), FadeIn(p30, shift=UP * 0.2)])
             self.play(FadeIn(bar30), FadeIn(startup, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("as soon as it starts")
             self.play(Indicate(code_span(p30.code, 0, "'secrets/11lab_api_key.txt'"), color=INK, scale_factor=1.06),
@@ -1252,35 +1306,41 @@ class SpeedRound(VoiceScene):
             let.move_to(b)
         relay.parts["bonus_tag"].next_to(relay.bonus.frame, LEFT, buff=0.2)
         done = VGroup(*[relay.token_at(i) for i in (0, 1, 2)])
+        done[2].scale(0.8, about_edge=DOWN)
         news = [(2, "wave"), (3, "fr"), (4, "wave")]
         toks = [token_at_box(relay, j, k) for j, k in news]
         grp = VGroup(label("your group's files:", 20, S.GREY), mono(f"<prefix>/{GROUP}/…", 20, LOOKUP))
         grp.arrange(RIGHT, buff=0.15)
         place(grp, left=relay.cabinet.get_left()[0] + 0.05, top=relay.cabinet.get_bottom()[1] - 0.15)
-        billed = VGroup(*[tag("billed", COST, size=20).move_to(relay.boxes[j].get_bottom()) for j in (2, 3, 4)])
-        lb = Leaderboard()
-        place(lb, cx=0, top=grp.get_bottom()[1] - 0.25)
+        # GOLD "billed" inside C, D and E, right of their letters (which step left)
+        billed = VGroup(*[ttag("billed", COST).move_to(relay.boxes[j].get_center() + RIGHT * 0.36) for j in (2, 3, 4)])
+        for j, bt in zip((2, 3, 4), billed):
+            assert bt.get_right()[0] < relay.boxes[j].get_right()[0] - 0.05, j
+        lb = Leaderboard(row_h=0.46)
+        place(lb, cx=0.35, top=relay.bonus.frame.get_bottom()[1] - 0.15)
         for c in (0, 1):
             lb.cells[0][c].set_fill(VENV, 0.55).set_stroke(VENV, 2)
         lb_ill = illustration_tag()
-        place(lb_ill, right=EDGE, top=lb.get_bottom()[1] - 0.12)
-        assert lb_ill.get_bottom()[1] > -3.6 and grp.get_right()[0] < relay.bonus.frame.get_left()[0] - 0.1, \
-            (lb_ill.get_bottom(), grp.get_right())
-        assert billed.get_top()[1] < 2.9
+        place(lb_ill, right=lb.col_names[0].get_left()[0] - 0.3, cy=lb.col_names[0].get_center()[1])
+        assert lb.get_bottom()[1] > -3.55 and lb_ill.get_left()[0] > -6.5 and lb.get_right()[0] < EDGE, \
+            (lb.get_bottom(), lb_ill.get_left(), lb.get_right())
+        assert grp.get_right()[0] < relay.bonus.frame.get_left()[0] - 0.1 and grp.get_bottom()[1] > lb.get_top()[1], \
+            (grp.get_right(), grp.get_bottom(), lb.get_top())
 
         with self.voiceover(SAY[16]) as vo:
-            self.play(FadeOut(VGroup(p30, bar30, startup)), FadeOut(opt), run_time=0.35)
-            tr = switch_section(self, tr, "E", 12, run_time=0.5)
-            resize(self, t3, 8, run_time=0.4)
-            tcmd(self, t3, "exit", 0.25)
-            self.play(*leave_container(t3, P_E), run_time=0.3)
-            c16 = tcmd(self, t3, BUILD[E], 0.45)
-            o16, _ = live_build(self, t3, RBLD[E], run_time=0.3)
-            cached_green(self, o16[1], run_time=0.25)
+            trE = tracker("E", 12)
+            resize(self, t3, 8, run_time=0.45, extra=[FadeOut(VGroup(tr, opt), shift=UP * 0.25),
+                                                     FadeIn(trE, shift=DOWN * 0.25), FadeOut(VGroup(p30, bar30, startup))])
+            tr = trE
+            tcmd(self, t3, "exit", 0.2)
+            leave(self, t3, P_E, run_time=0.2)
+            c16 = tcmd(self, t3, BUILD[E], 0.35)
+            o16, _ = live_build(self, t3, RBLD[E], run_time=0.25)
+            cached_green(self, o16[1], run_time=0.2)
             yt16 = beside(your_turn(), t3, c16)
-            pin(self, c16, yt16, run_time=0.3)
+            pin(self, c16, yt16, run_time=0.25)
+            self.wait(0.5)                                    # hold the pause point
             vo.wait_until("With all five done")
-            self.wait(0.4)
             self.play(FadeOut(t3), FadeIn(VGroup(relay.cabinet, relay.drawers, relay.boxes)), run_time=0.5)
             relay.reveal(self, "letters", "drawer_labels", "bonus_tag", run_time=0.4,
                          extra=[FadeIn(done), FadeIn(relay.bonus), FadeIn(grp, shift=UP * 0.1)])
@@ -1288,12 +1348,14 @@ class SpeedRound(VoiceScene):
             self.play(*[FadeIn(tk, scale=0.5) for tk in toks],
                       *[Indicate(relay.boxes[j], color=CTR, scale_factor=1.08) for j, _ in news], run_time=0.5)
             self.play(*[tk.animate.move_to(relay.slot(j + 1)) for tk, (j, _) in zip(toks, news)],
-                      FadeIn(billed, shift=UP * 0.05), run_time=0.8)
+                      *[relay.letters[j].animate.shift(LEFT * 0.45) for j in (2, 3, 4)],
+                      FadeIn(billed, shift=LEFT * 0.1), run_time=0.8)
             vo.wait_until("and your leaderboard row")
             self.play(FadeIn(lb), FadeIn(lb_ill), run_time=0.45)
             self.play(LaggedStart(*[lb.light(0, c) for c in (2, 3, 4)], lag_ratio=0.35),
                       Indicate(lb.row_names[0], color=INK, scale_factor=1.1), run_time=0.9)
 
+        self.wait(0.8)                                        # the lit row, before the fade
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
         self.wait(0.3)
 

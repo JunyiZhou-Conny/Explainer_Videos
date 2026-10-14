@@ -27,10 +27,11 @@ Beats (script.md "## S02", one voiceover block each):
    support both"): Git shelf + GREEN recipe card | BLUE Docker Hub shelf (illustration); a PURPLE
    `docker build` arrow, a GREY laptop, and a copy of the card's outline turns into the TEAL image
    `Python 3.14.8 · uv`. "early in development": three GREY teammates; three PURPLE build arrows
-   from the card, a small image on each laptop. "later in development": the build arrows leave;
-   the right teammate's image flies up onto the BLUE shelf and becomes the sealed box; BLUE pull
-   arrows run from it down to the other two, a sealed box lands on each of their laptops.
-5. Teammates, laptop and README card leave; the PINK signpost
+   from the card, a small image on each laptop. "later in development": the build arrows, the
+   middle laptop and its `docker build` arrow leave; a copy of the right teammate's image flies up
+   onto the BLUE shelf and becomes the sealed box; BLUE pull arrows run from it down to the other
+   two, a sealed box lands on each of their laptops.
+5. Teammates and README card leave and the rest of V1 moves down to the centre; the PINK signpost
    dlops/mega-pipeline-transcribe-audio:latest appears beside the box, its pointer on the box (the
    pointer and the box flash); a dashed GREY "?" line from the card to the box and the GREY
    caption "built on some day, from some commit". On "Nothing promises": the box slides left (the
@@ -40,14 +41,27 @@ Beats (script.md "## S02", one voiceover block each):
    switchboard silhouette (V4, no labels) captioned `docker-shell.sh`. Fade out to an empty frame.
 
 Deviations from SHOW (and why):
+- Beat 3: the token's hop is built here (relay_hop): common.MiniRelay.hop() creates all its
+  `.animate` steps up front, they share the token's one `.target`, and the token slid straight
+  along the drawers to the last one without visiting a box.
 - Beat 4: the Docker Hub shelf starts empty; the sealed box appears when the teammate pushes it
   (phase 2). With a box already on the shelf, phase 2's push and beat 5's "second box" would make
   three boxes; and "early in development" nothing has been published yet.
 - Beat 4: V1's illustration tag sits under the "Docker Hub" caption (not beside it) so the BLUE
   pull arrows and the tag never cross and the piece stays inside x <= 6.6.
+- Beat 4, phase 2: the middle laptop and its `docker build` arrow fade with the PURPLE build
+  arrows ("later", nobody builds but the publisher): the BLUE pull arrows to the left teammates
+  would otherwise cross the `Python 3.14.8 · uv` label. The publisher keeps its local image (a
+  push copies it).
 - Beat 5: no camera zoom (VoiceScene has a fixed camera): the focus on the shelf comes from
-  clearing the teammates, the laptop and the README card. The old box slides left before the
-  second box arrives, so the dashed "?" line from the card never runs through the new box.
+  clearing the teammates and the README card and moving what is left 0.7 down to the frame's
+  centre. The old box slides left before the second box arrives, so the dashed "?" line from the
+  card never runs through the new box. The signpost board is drawn above its pointer
+  (z-index), so a pointer aimed at the left box leaves from under the board instead of crossing
+  the tag's text; the post's stick likewise covers the "?" line where they cross.
+- Beats 0 and 2: the glyphs morph L03 -> L04 (drawer, folders -> repo, keys -> one key, pencil
+  -> recipe card, command chip -> script chip); the L04 texts slide in beside them instead of
+  morphing letter by letter (a letter morph between two different sentences is unreadable).
 - The small drawers, folders and keys inside the L03 | L04 card are icons, not schematics: no
   illustration tag on them (the Docker Hub shelf, the only schematic, keeps its tag).
 
@@ -55,11 +69,78 @@ Sources: README.md lines 58, 60, 62–65, 67, 140, 142 and mega-pipeline-main RE
 and 235 (the `docker run --rm -ti -v` prefix), all checked against assets/source below.
 """
 
-from manim import *  # noqa: F401,F403
+import numpy as np
+from common import (
+    CLOUD,
+    CTR,
+    HUB,
+    KEY,
+    LAPTOP,
+    LOOKUP,
+    NARRATION,
+    TOOL,
+    TURN,
+    VENV,
+    BuildOrPull,
+    MiniRelay,
+    Switchboard,
+    cmd_chip,
+    drawer,
+    excerpt,
+    grey_tag,
+    key_glyph,
+    note,
+    pencil,
+    readme_card,
+    readme_chip,
+    recipe_card,
+    sans,
+    sealed_box,
+    under,
+)
+from manim import (
+    DOWN,
+    LEFT,
+    PI,
+    RIGHT,
+    UP,
+    ArcBetweenPoints,
+    Arrow,
+    Create,
+    DashedVMobject,
+    Dot,
+    FadeIn,
+    FadeOut,
+    FadeTransform,
+    GrowArrow,
+    Indicate,
+    LaggedStart,
+    Line,
+    MoveAlongPath,
+    ReplacementTransform,
+    Restore,
+    Succession,
+    Text,
+    Transform,
+    TransformFromCopy,
+    VGroup,
+    VMobject,
+    smooth,
+)
 
+from explainer import style as S
+from explainer.devops import (
+    CAPTION,
+    INK,
+    MONO,
+    box,
+    chip,
+    folder_glyph,
+    label,
+    laptop,
+    mono,
+)
 from explainer.scene import VoiceScene
-
-from common import *  # noqa: F401,F403
 
 SAY = NARRATION["S02"]
 assert len(SAY) == 7, len(SAY)
@@ -111,7 +192,8 @@ BOT12 = 0.235                         # the card's bottom edge with two rows
 Y3 = -0.465                           # row 3
 Y4 = -1.815                           # row 4
 BOT = -2.465                          # the card's bottom edge with four rows
-BASE = 0.0                            # V1's shelves (beats 4-6)
+BASE = 0.0                            # V1's shelves (beat 4)
+D5 = 0.7                              # beat 5 re-centres V1 this far down
 
 
 def ltext(s: str, color: str = INK, size: float = CAPTION) -> Text:
@@ -168,6 +250,22 @@ def small_image(sealed: bool = False) -> VGroup:
     return b
 
 
+def relay_hop(relay, run_time: float = 3.2):
+    """The token's relay through MiniRelay: drawer 0 -> box 0 -> drawer 1 -> box 1 ... -> drawer 5.
+    Returns (token, Succession). Built here because MiniRelay.hop() creates every `.animate` step
+    up front, so all steps share the token's one `.target` and it slides straight to drawer 5."""
+    tok = Dot(radius=0.08, color=INK).move_to(relay.drawers[0])
+    stops = []
+    for j in range(5):
+        stops += [relay.boxes[j].get_center(), relay.drawers[j + 1].get_center()]
+    per = run_time / len(stops)
+    prev, steps = relay.drawers[0].get_center(), []
+    for q in stops:
+        steps.append(MoveAlongPath(tok, Line(prev, q), rate_func=smooth, run_time=per))
+        prev = q
+    return tok, Succession(*steps)
+
+
 def dashed_arc(a, b, color: str = S.GREY) -> VGroup:
     """A dashed arrow arcing up from the top of `a` to the top of `b`."""
     arc = ArcBetweenPoints(a.get_top() + UP * 0.08, b.get_top() + UP * 0.08, angle=-PI * 0.55)
@@ -175,6 +273,17 @@ def dashed_arc(a, b, color: str = S.GREY) -> VGroup:
     tip = arc.pop_tips()[0].set_color(color)
     dashed = DashedVMobject(arc, num_dashes=10, dashed_ratio=0.55).set_stroke(color, 3)
     return VGroup(dashed, tip)
+
+
+def shell_morph(scene, src_shell, dst, dst_shell, dst_text, *extra, run_time: float = 1.0):
+    """A copy of the shapes `src_shell` morphs into `dst_shell` (the shapes of `dst`) while the
+    text `dst_text` of `dst` slides in: a letter-by-letter morph between two labels is unreadable.
+    Leaves `dst` on the scene as one group."""
+    wrap = VGroup(*dst_shell)
+    scene.play(TransformFromCopy(VGroup(*src_shell), wrap), FadeIn(dst_text, shift=RIGHT * 0.3),
+               *extra, run_time=run_time)
+    scene.remove(wrap, dst_text)
+    scene.add(dst)
 
 
 class TeamWorkflow(VoiceScene):
@@ -201,9 +310,9 @@ class TeamWorkflow(VoiceScene):
         div_full = divider(BOT)
 
         # row 1: the bucket
-        d1_03 = drawer("course", 1.9).move_to([TL + SLOT1 / 2, Y1, 0])
+        d1_03 = drawer("course", 2.3).move_to([TL + SLOT1 / 2, Y1, 0])
         t1_03 = at_text(ltext("a shared bucket"), T1, Y1)
-        d1_04 = drawer("your team", 1.9).move_to([C2 + SLOT2 / 2, Y1, 0])
+        d1_04 = drawer("your team", 2.3).move_to([C2 + SLOT2 / 2, Y1, 0])
         t1_04 = at_text(ltext("your own bucket"), T2, Y1)
         # row 2: the key
         folders, keys = folders_with_keys()
@@ -249,17 +358,18 @@ class TeamWorkflow(VoiceScene):
                       TransformFromCopy(chars(r58b, R58B, "a shared bucket"), t1_03),
                       TransformFromCopy(chars(r58b, R58B, "a shared service account"), t2_03),
                       FadeIn(head03), FadeIn(head04), Create(sep), Create(div), FadeIn(d1_03),
-                      run_time=1.1)
+                      run_time=0.9)
             vo.wait_until("copied into")
             self.play(LaggedStart(*[FadeIn(VGroup(f, k), shift=DOWN * 0.15) for f, k in zip(folders, keys)],
                                   lag_ratio=0.18), run_time=1.0)
             self.play(FadeIn(chip97, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("This branch")
-            u60 = under(chip60.phrase, TURN)
+            u60 = under(VGroup(*chip60.phrase.submobjects[1:-1]), TURN)   # the words, not the quotes
             self.play(Create(u60), Indicate(head04, color=TURN, scale_factor=1.25), run_time=0.8)
-            self.play(TransformFromCopy(d1_03, d1_04), TransformFromCopy(t1_03, t1_04), run_time=1.0)
+            shell_morph(self, (d1_03.frame, d1_03.handle), d1_04, (d1_04.frame, d1_04.handle), d1_04.label,
+                        FadeIn(t1_04, shift=RIGHT * 0.4))
             self.play(TransformFromCopy(folders, repo), TransformFromCopy(keys, key04),
-                      TransformFromCopy(t2_03, t2_04), run_time=1.2)
+                      FadeIn(t2_04, shift=RIGHT * 0.4), run_time=1.2)
 
         # ------------------------------------------------------------ 1. yours: bucket, account, key
         with self.voiceover(SAY[1]) as vo:
@@ -277,7 +387,7 @@ class TeamWorkflow(VoiceScene):
                       ReplacementTransform(chip62, chip64), run_time=0.8)
             self.play(FadeIn(pen), FadeIn(t3_03), run_time=0.6)
             vo.wait_until("it's committed")
-            self.play(TransformFromCopy(pen, recipe), TransformFromCopy(t3_03, t3_04), run_time=1.0)
+            self.play(TransformFromCopy(pen, recipe), FadeIn(t3_04, shift=RIGHT * 0.4), run_time=1.0)
             vo.wait_until("together with")
             self.play(LaggedStart(Indicate(recipe.rows[1], color=VENV, scale_factor=1.12),
                                   Indicate(recipe.rows[2], color=VENV, scale_factor=1.12),
@@ -285,7 +395,7 @@ class TeamWorkflow(VoiceScene):
             vo.wait_until("And each component")
             self.play(FadeIn(run_chip), FadeIn(t4_03), run_time=0.7)
             vo.wait_until("one script")
-            self.play(TransformFromCopy(run_chip, sh_chip), run_time=1.0)
+            shell_morph(self, (run_chip.box,), sh_chip, (sh_chip.box,), sh_chip.text)
             vo.wait_until("that holds")
             for m in holds:
                 m.save_state()
@@ -307,19 +417,18 @@ class TeamWorkflow(VoiceScene):
         arc = dashed_arc(relay.boxes[1], relay.boxes[2])
         part2 = grey_tag("part 2").next_to(arc, UP, buff=0.08)
         with self.voiceover(SAY[3]) as vo:
-            self.play(*[FadeOut(m) for m in list(self.mobjects)], run_time=0.6)
-            self.play(FadeIn(relay), FadeIn(tag_l3), run_time=0.8)
+            self.play(*[FadeOut(m) for m in list(self.mobjects)], run_time=0.5)
+            self.play(FadeIn(relay), FadeIn(tag_l3), run_time=0.6)
             self.play(LaggedStart(*[Indicate(b, color=CTR, scale_factor=1.15) for b in relay.boxes],
-                                  lag_ratio=0.15), run_time=1.0)
+                                  lag_ratio=0.15), run_time=0.9)
             vo.wait_until("and they still never call each other")
             self.play(FadeIn(card140), run_time=0.6)
             vo.wait_until("each writes to the bucket")
-            tok, hop = relay.hop(5, run_time=3.2)
-            self.play(*hop, Create(u_store, run_time=0.6))
-            for a in hop:                           # the Succession's wrapper group
-                if getattr(a, "group", None) in self.mobjects:
-                    self.remove(a.group)
-                    self.add(tok)
+            tok, hop = relay_hop(relay, run_time=3.2)
+            self.play(hop, Create(u_store, run_time=0.6))
+            if hop.group in self.mobjects:          # the Succession's wrapper group
+                self.remove(hop.group)
+                self.add(tok)
             vo.wait_until("Containers that talk directly")
             self.play(FadeOut(tok), Create(arc), FadeIn(part2, shift=DOWN * 0.1), Create(u_api),
                       run_time=0.9)
@@ -342,11 +451,10 @@ class TeamWorkflow(VoiceScene):
         mini = [small_image().move_to(m.laptop[0]) for m in mates]
         cap = note("early in development").move_to([0, BASE - 2.2, 0])
         with self.voiceover(SAY[4]) as vo:
-            self.play(*[FadeOut(m) for m in list(self.mobjects)], run_time=0.5)
-            self.play(FadeIn(v1), FadeIn(card67), run_time=0.7)
+            self.play(*[FadeOut(m) for m in list(self.mobjects)], FadeIn(v1), FadeIn(card67), run_time=0.8)
             self.play(*v1.parts_in("build", anim=lambda m: FadeIn(m, shift=RIGHT * 0.2)), FadeIn(lp),
-                      run_time=0.6)
-            self.play(TransformFromCopy(v1.card.frame, img), FadeIn(img_label), run_time=0.9)
+                      run_time=0.5)
+            self.play(TransformFromCopy(v1.card.frame, img), FadeIn(img_label), run_time=0.8)
             vo.wait_until("Early in a project")
             self.play(LaggedStart(*[FadeIn(m, shift=UP * 0.15) for m in mates], lag_ratio=0.2),
                       FadeIn(cap), run_time=0.9)
@@ -357,11 +465,12 @@ class TeamWorkflow(VoiceScene):
             vo.wait_until("Later, one person")
             cap2 = note("later in development").move_to(cap)
             self.play(Transform(cap, cap2), *[FadeOut(a) for a in b_arrows], FadeOut(mini[0]),
-                      FadeOut(mini[1]), Indicate(mates[2][0], color=INK), run_time=0.8)
+                      FadeOut(mini[1]), FadeOut(lp), FadeOut(img), FadeOut(img_label),
+                      *v1.parts_out("build"), Indicate(mates[2][0], color=INK), run_time=0.8)
             box = sealed_box(1.3, CTR).move_to(v1.box)          # the pushed image (the box)
-            self.play(ReplacementTransform(mini[2], box, path_arc=-PI / 4), run_time=1.2)
+            self.play(TransformFromCopy(mini[2], box, path_arc=PI / 2), run_time=1.2)
             vo.wait_until("and everyone else pulls")
-            p_arrows = [Arrow(box.front.get_left() + LEFT * 0.04, mates[i].get_top() + UP * 0.06,
+            p_arrows = [Arrow(box.front.get_left() + LEFT * 0.04, mates[i].laptop.get_top() + UP * 0.1,
                               buff=0.08, color=HUB, stroke_width=4, max_tip_length_to_length_ratio=0.12)
                         for i in (0, 1)]
             pulled = [small_image(sealed=True).move_to(mates[i].laptop[0]) for i in (0, 1)]
@@ -371,8 +480,9 @@ class TeamWorkflow(VoiceScene):
         # ------------------------------------------------------------ 5. the tag is a signpost
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(mates), *[FadeOut(a) for a in p_arrows], *[FadeOut(p) for p in pulled],
-                      FadeOut(cap), FadeOut(card67), FadeOut(lp), FadeOut(img), FadeOut(img_label),
-                      *v1.parts_out("build"), run_time=0.7)
+                      FadeOut(mini[2]), FadeOut(cap), FadeOut(card67), v1.animate.shift(DOWN * D5),
+                      box.animate.shift(DOWN * D5), run_time=0.8)
+            v1.post.set_z_index(1)              # the board covers the pointer's start (see docstring)
             self.play(*v1.parts_in("post"), *v1.parts_in("pointer", anim=GrowArrow), run_time=0.8)
             vo.wait_until("It's a signpost")
             self.play(Indicate(v1.pointer, color=LOOKUP, scale_factor=1.15),
@@ -381,7 +491,7 @@ class TeamWorkflow(VoiceScene):
             link = BuildOrPull.dashed_link(v1.card, box, text="?")
             self.play(Create(link[0]), FadeIn(link[1]), run_time=0.8)
             cap5 = note("built on some day, from some commit")
-            cap5.move_to([-0.6, link[0].get_center()[1] - 0.42, 0])
+            cap5.move_to([-0.95, link[0].get_center()[1] - 0.42, 0])
             self.play(FadeIn(cap5, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Nothing promises")
             d = box.width + 0.35
@@ -398,7 +508,7 @@ class TeamWorkflow(VoiceScene):
         # ------------------------------------------------------------ 6. one script decides
         sw = Switchboard(labels=False)
         vis = VGroup(sw.input, sw.junction, *sw.tracks.values(), *[st.dot for st in sw.stations.values()])
-        sw.shift(np.array([-0.95, BASE + 0.65, 0]) - vis.get_center())
+        sw.shift(np.array([-0.95, BASE - D5 + 0.65, 0]) - vis.get_center())
         sw_cap = mono("docker-shell.sh", CAPTION, TOOL).next_to(vis, DOWN, buff=0.25)
         left = [v1.git_shelf, v1.card, v1.parts["build"], v1.parts["local"]]
         right = [v1.hub_shelf, hub_tag, v1.post, v1.pointer, v1.box, box, box2]

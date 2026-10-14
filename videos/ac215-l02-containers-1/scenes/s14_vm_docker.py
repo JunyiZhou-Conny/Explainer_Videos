@@ -54,8 +54,9 @@ Beats (script.md "## S14", one voiceover block each):
     vm-debian12/05: 2 (wrap) in RED. "permission denied on the Docker socket": `permission denied` and
     `/var/run/docker.sock` underline RED, the door label pulses; "the door to Docker's background
     service": GREY caption "background service" under `dockerd`. "Only root and the docker group":
-    two GREY keys "root" and "docker group" fade in; the first one slides into the lock. Fade out to
-    an empty frame.
+    two GREY keys "root" and "docker group" fade in at the left; root's key glyph slides into the
+    padlock (in the gap between the door's panels; its label stays and pulses) and the shackle lifts.
+    Fade out to an empty frame.
 """
 
 import numpy as np  # noqa: I001  (manim first, then common: common must win)
@@ -226,16 +227,15 @@ def book_lines(book: VGroup, n: int = 6, color=SYSTEM) -> VGroup:
 
 
 def door_glyph(door_w: float = 1.3, door_h: float = 1.9, color=TOOL) -> VGroup:
-    """A PURPLE door: frame, two panels with a gap at mid-height (where the lock goes), a knob.
-    .frame .knob .lock_spot (a point at mid-height, right of the panels)"""
+    """A PURPLE door: frame, two centred panels with a gap at mid-height (the lock goes in the gap,
+    at door.frame's centre, once the door is placed), a knob on the right. .frame .panels .knob"""
     fr = Rectangle(width=door_w, height=door_h, stroke_color=color, stroke_width=3.5).set_fill(color, 0.12)
-    panels = VGroup(*[RoundedRectangle(width=door_w * 0.5, height=door_h * 0.3, corner_radius=0.05,
+    panels = VGroup(*[RoundedRectangle(width=door_w * 0.5, height=door_h * 0.28, corner_radius=0.05,
                                        stroke_color=color, stroke_width=2) for _ in range(2)])
-    panels.arrange(DOWN, buff=door_h * 0.18).move_to(fr).shift(LEFT * door_w * 0.14)
-    spot = fr.get_center() + RIGHT * door_w * 0.3
-    knob = Dot(radius=0.06, color=color).move_to(spot + DOWN * door_h * 0.16)
+    panels.arrange(DOWN, buff=door_h * 0.22).move_to(fr)
+    knob = Dot(radius=0.06, color=color).move_to(fr.get_center() + RIGHT * door_w * 0.37)
     g = VGroup(fr, panels, knob)
-    g.frame, g.knob, g.lock_spot = fr, knob, spot
+    g.frame, g.panels, g.knob = fr, panels, knob
     return g
 
 
@@ -587,7 +587,7 @@ class DockerOnVM(VoiceScene):
         # ========================================================== 7 · why sudo: the socket's door
         door = door_glyph().move_to([0.6, 0.95, 0])
         sock = mono("/var/run/docker.sock", 22, TOOL).next_to(door, UP, buff=0.2)
-        lock = lock_glyph(0.36, S.GREY).move_to(door.lock_spot)
+        lock = lock_glyph(0.36, S.GREY).move_to(door.frame.get_center())
         dk = VGroup(box(2.0, 0.7, TOOL, fill_opacity=0.18), mono("dockerd", 22, TOOL))
         dk[1].move_to(dk[0])
         dk.move_to([4.0, 0.95, 0])
@@ -634,10 +634,12 @@ class DockerOnVM(VoiceScene):
             vo.wait_until("Only root and the docker group")
             self.play(FadeOut(VGroup(x7, path)), LaggedStart(*[FadeIn(k, shift=RIGHT * 0.15) for k in keys],
                                                               lag_ratio=0.3), run_time=0.8)
-            vo.wait_until("may open it")
+            # root's key (only the glyph: its label stays put) goes into the padlock, which opens
             k0 = keys[0]
-            self.play(k0.animate.shift(lock.get_left() + LEFT * 0.05 - k0.key.tip()), FadeOut(ps_chip), run_time=0.8)
-            self.play(lock[0].animate.shift(UP * 0.1), Indicate(lock[1], color=S.WHITE, scale_factor=1.25),
+            slot = np.array([lock[1].get_left()[0] - 0.02, lock[1].get_center()[1], 0])
+            self.play(k0.key.animate.shift(slot - k0.key.tip()), Indicate(k0[0], color=INK, scale_factor=1.15),
+                      FadeOut(ps_chip), run_time=0.8)
+            self.play(lock[0].animate.shift(UP * 0.07), Indicate(lock[1], color=S.WHITE, scale_factor=1.25),
                       run_time=0.6)
 
         # ========================================================== end · empty frame

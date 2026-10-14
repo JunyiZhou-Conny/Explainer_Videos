@@ -193,15 +193,15 @@ class Hook(VoiceScene):
         top_right.move_to([t.box.get_right()[0] - top_right.width / 2, row_y, 0])
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(gone, crosses, dock, tick), shift=UP * 0.15), run_time=0.4)
+            self.play(FadeOut(VGroup(gone, crosses, dock, tick), shift=UP * 0.15), run_time=0.35)
             self.remove(gone, crosses, dock, tick)
-            self.play(FadeIn(top_right, shift=LEFT * 0.2), run_time=0.4)
-            t.print(self, RUN6.at(2, 3), run_time=0.4)
-            vo.wait_until("in seven layers")
-            first = t.print(self, RUN6.at(4), run_time=0.25)[0]
-            # the counter rides on the "…" row, under the shelf; the arrow runs from the shelf to it
+            self.play(FadeIn(top_right, shift=LEFT * 0.2), run_time=0.35)
+            t.print(self, RUN6.at(2, 3), run_time=0.35)
+            # "downloads": the route from Docker Hub to the "…" row (two rows down), where a counter
+            # rides; it counts the seven layers while "in seven layers" is said, and the pull is
+            # over by "starts a shell"
             cb, ct = counter_box(1, 1.45)
-            row_c = first.strut.get_center()[1] - t.pitch
+            row_c = t.lines[-1].strut.get_center()[1] - 2 * t.pitch
             cb.move_to([t.box.get_right()[0] - 0.3 - cb.width / 2, row_c, 0])
             ct = counter_text(1, cb)
             a0 = np.array([shelf.get_center()[0], shelf.get_bottom()[1] - 0.08, 0])
@@ -210,29 +210,29 @@ class Hook(VoiceScene):
                           max_tip_length_to_length_ratio=0.2)
             lane = Line(a0, a1, color=IMAGE, stroke_width=8)
             self.play(GrowArrow(arrow), run_time=0.35)
-            self.play(ShowPassingFlash(lane.copy(), time_width=0.6), FadeIn(cb), FadeIn(ct), run_time=0.35)
-            dots = t.print(self, ["…"], run_time=0.15)[0]
+            t.print(self, RUN6.at(4), run_time=0.2)
+            self.play(ShowPassingFlash(lane.copy(), time_width=0.6), FadeIn(cb), FadeIn(ct), run_time=0.25)
+            dots = t.print(self, ["…"], run_time=0.12)[0]
             for k in range(2, 7):
                 new = counter_text(k, cb)
-                self.play(ShowPassingFlash(lane.copy(), time_width=0.6), Transform(ct, new), run_time=0.2)
-            t.print(self, RUN6.at(10), run_time=0.15)
+                self.play(ShowPassingFlash(lane.copy(), time_width=0.6), Transform(ct, new), run_time=0.14)
+            t.print(self, RUN6.at(10), run_time=0.12)
             self.play(ShowPassingFlash(lane.copy(), time_width=0.6), Transform(ct, counter_text(7, cb)),
-                      run_time=0.25)
-            self.play(Indicate(VGroup(cb, ct), color=IMAGE, scale_factor=1.12), run_time=0.5)
+                      Indicate(cb, color=IMAGE, scale_factor=1.08), run_time=0.3)
             # the counter becomes part of the "…" row, so it scrolls away with it
             self.remove(cb, ct)
             dots.add(cb, ct)
             self.add(dots)
-            t.print(self, [hash12(s) for s in RUN6.at(11, 12)], run_time=0.35)
+            t.print(self, [hash12(s) for s in RUN6.at(11, 12)], run_time=0.25)
             vo.wait_until("starts a shell")
-            self.play(FadeOut(arrow), FadeOut(top_right), run_time=0.4)
-            self.remove(arrow, top_right)
             prompt, typed = split_prompt(RUN6.line(13))
             assert typed == "python cli.py", typed
             t.set_prompt(prompt)
             shell = t.type(self, "", type_time=0)
             shell.bare = True
-            self.play(Indicate(substring(shell, prompt), color=IMAGE, scale_factor=1.06), run_time=0.7)
+            self.play(FadeOut(arrow), FadeOut(top_right),
+                      Indicate(substring(shell, prompt), color=IMAGE, scale_factor=1.06), run_time=0.8)
+            self.remove(arrow, top_right)
             self.add(shell)
             vo.wait_until("There we run the app")
             type_cmd(self, t, typed, type_time=0.6)
@@ -285,11 +285,11 @@ class Hook(VoiceScene):
                    extra=[prev.animate.move_to([prev.get_center()[0], STRIP_TOP + 0.06 + prev.height / 2, 0])])
             self.play(FadeIn(panel, shift=RIGHT * 0.8), run_time=0.8)
             vo.wait_until("starts from Python")
-            self.play(span.animate.set_color(SYSTEM), Create(ul), run_time=0.6)
-            self.play(Indicate(span, color=SYSTEM, scale_factor=1.12), run_time=0.6)
+            self.play(span.animate.set_color(SYSTEM), Create(ul), run_time=0.5)
             # 3.14.7 rises out of the strip to the right of the panel, a "?" between the two
-            self.play(TransformFromCopy(num, num_up), run_time=0.8)
-            self.play(FadeIn(q, scale=0.6), run_time=0.4)
+            self.play(TransformFromCopy(num, num_up), Indicate(span, color=SYSTEM, scale_factor=1.1),
+                      run_time=0.8)
+            self.play(FadeIn(q, scale=0.6), run_time=0.35)
             vo.wait_until("Hold that thought")
             self.play(Wiggle(q, scale_value=1.3), run_time=1.0)
 
