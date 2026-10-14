@@ -4,7 +4,7 @@
   five jobs it does (data, contract, conductor, model, metric); knows what a class, an object,
   `__init__` and `self` are; knows that an abstract class is a contract that Python checks by
   method *name* at construction, never by arguments.
-- **Hook.** Four calls in a notebook run a whole experiment — which of 345 lines matter?
+- **Hook.** Four calls in a notebook run a whole experiment — which of 346 lines matter?
 - **Mechanisms.** The file's real shape partitioned into five jobs; an object filling up line by
   line as `__init__` runs; a contract with blank slots and the measured TypeError; one call
   (`model.predict`, line 137) giving two different answers.

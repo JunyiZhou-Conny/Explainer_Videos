@@ -3,7 +3,7 @@
 - **Learning objective.** Conny has a repeatable way to choose the next step (run, read the last
   traceback line, smallest change, test, commit), an ordered first set of cards, a single first
   replication target with golden numbers, and SOLID as a diagnostic compass.
-- **Hook.** Monday morning: 345 lines, 83 notebooks, results since February. Where does the
+- **Hook.** Monday morning: 346 lines, 83 notebooks, results since February. Where does the
   next hour go?
 - **Mechanisms.** The identity skeleton walking end to end; measured error cards sliding onto a
   board in program order; three gene axes; one table split into four files.

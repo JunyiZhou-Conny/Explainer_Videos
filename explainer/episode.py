@@ -197,7 +197,9 @@ def add_score(clean: Path, final: Path, rendered: list[tuple], music: dict, proj
     work = build_dir / "music"
     work.mkdir(parents=True, exist_ok=True)
     voice_wav = work / "voice.wav"
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(clean), "-vn",
+    # Trimmed to the target: each scene's AAC track ends on a frame boundary, so the concatenated
+    # narration can run ~15 ms per scene long, and the score follows the voice's length.
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(clean), "-vn", "-t", f"{target:.3f}",
                     "-ar", "48000", "-ac", "2", "-c:a", "pcm_f32le", str(voice_wav)], check=True)
     result = fin.compose_music(project, {"music": music}, scenes, target, work, voice_wav=voice_wav)
     fin.mux(clean, result["mix"], final)

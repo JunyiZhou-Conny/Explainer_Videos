@@ -85,7 +85,7 @@ class S01(Ep):
             vo.wait_until("speciesot_core.py")
             self.play(FadeIn(frame_map), FadeIn(path), run_time=.4)
             self.play(LaggedStart(*[Create(l) for l in m], lag_ratio=.004), run_time=1.8)
-            count = at("345 lines", -3.4, -.5, 32, INK, bold=True)
+            count = at("346 lines", -3.4, -.5, 32, INK, bold=True)
             vo.wait_until("three hundred")
             self.play(FadeIn(count, shift=UP * .1), run_time=.5)
             q = at("which lines matter?", -3.4, -1.15, 26, RED)

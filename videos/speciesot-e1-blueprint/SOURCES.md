@@ -8,7 +8,7 @@ produced in this session (Python 3.12.3, anndata 0.13.4, scikit-learn 1.9.1, pyt
 | Claim on screen | Evidence | Kind |
 | --- | --- | --- |
 | Four calls setup/train/predict/evaluate | Repo `e24_src_example.ipynb` cell 1 (written; no recorded execution) | READ IN CODE |
-| 345 lines; the five jobs and their line ranges | Josh's src `speciesot_core.py` (20–33, 35–57, 67–146, 151–294, 300–335) | READ IN CODE |
+| 346 lines (an editor's count; `wc -l` says 345, no final newline); the five jobs and their line ranges | Josh's src `speciesot_core.py` (20–33, 35–57, 67–146, 151–294, 300–335) | READ IN CODE |
 | Line 115 builds `scGenModel(config)`; `__init__` lines 214–225 | Josh's src `speciesot_core.py` | READ IN CODE |
 | Attribute values on the object card | Josh's src `Tests/config.yaml` 32–40; `model_path` set at line 114 | READ IN CODE |
 | `TypeError: Can't instantiate abstract class AbstractModel without an implementation for abstract methods 'predict', 'setup', 'train'` | Checks `error_trail.json`, stage `abstract` (Python 3.12 wording) | MEASURED |

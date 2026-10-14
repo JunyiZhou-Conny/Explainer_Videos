@@ -26,6 +26,7 @@ CORE_PATH = "src/speciesot/speciesot_core.py"
 SPEC_PATH = "speciesOT · specs/m1_modern.yaml"
 CARD_PATH = "speciesOT · speciesOT/baseline/analysis/v08_scorecard_dual.csv"
 METRICS_PATH = "speciesOT · cellot/cellot_gpu/scripts/extended_metrics.py"
+CSV5 = "m1 v08 scGen,0.927,0.1737,…,0.5542,…"   # v08_scorecard_dual.csv line 5, columns elided
 N_NOTEBOOKS = 83            # .ipynb files in the speciesOT repo at 109bf12 (no checkpoints)
 STAGES = ["setup", "train", "predict", "evaluate"]
 STAGE_X = [-4.65, -1.55, 1.55, 4.65]
@@ -147,6 +148,18 @@ def pill(text, x, y, color=INK, size=20, font=MONO, pad=.22):
     return VGroup(box, t)
 
 
+def glyphs(text_mob, full, sub):
+    """The glyphs of `sub` inside a Text built from `full` (Text drops spaces)."""
+    f, t = full.replace(" ", ""), sub.replace(" ", "")
+    i = f.index(t)
+    return VGroup(*text_mob[i:i + len(t)])
+
+
+def fly(src_point, target):
+    """A copy of `target` that starts at src_point (for ReplacementTransform into target)."""
+    return target.copy().move_to(src_point).set_opacity(0)
+
+
 def paint(ch, color):
     """Recolour a chip's outline and text (not its paper fill)."""
     ch[0].set_stroke(color=color)
@@ -233,11 +246,10 @@ class S01(Ep):
             vo.wait_until("fixes only")
             paint(nodes[2], RED)
             self.play(GrowArrow(a23), FadeIn(nodes[2], shift=UP * .1), Transform(nodes[1], paint(nodes[1].copy(), INK)),
-                      token.animate.move_to(nodes[2].get_top() + UP * .2), run_time=.6)
-            self.play(Create(back), run_time=.5)
-            self.play(MoveAlongPath(token, back.copy()), Transform(nodes[2], paint(nodes[2].copy(), INK)), run_time=.9)
-            self.play(token.animate.move_to(nodes[0].get_top() + UP * .2),
-                      Transform(nodes[0], paint(nodes[0].copy(), RED)), run_time=.3)
+                      token.animate.move_to(nodes[2].get_bottom() + DOWN * .08), run_time=.5)
+            self.play(Create(back), MoveAlongPath(token, back.copy()),
+                      Transform(nodes[2], paint(nodes[2].copy(), INK)),
+                      Transform(nodes[0], paint(nodes[0].copy(), RED)), run_time=.8)
             vo.wait_until("This episode")
             self.play(FadeIn(habit, shift=UP * .1), run_time=.5)
         self.finish()
@@ -322,8 +334,8 @@ class S02(Ep):
             vo.wait_until("nothing")
             self.play(FadeIn(none, shift=DOWN * .1), run_time=.35)
             vo.wait_until("The scores")
-            self.play(*[TransformFromCopy(boxes[3], sc) for sc in scores], FadeIn(toy),
-                      run_time=.6)
+            self.play(*[ReplacementTransform(fly(boxes[3].get_center(), sc), sc) for sc in scores],
+                      FadeIn(toy), run_time=.6)
             vo.wait_until("dropped")
             self.play(scores.animate.shift(DOWN * .9).set_opacity(0), FadeOut(toy), run_time=.6)
             vo.wait_until("So the first")
@@ -335,8 +347,8 @@ class S02(Ep):
             vals = VGroup(*[mono(t, 20, RED).move_to([x, rows_y[0], 0]) for t, x in
                             zip(("0.103", "0.326"), cols_x)])
             toy2 = left("toy data", .62, rows_y[0], 17, GRAY)
-            self.play(*[TransformFromCopy(boxes[3], v) for v in vals], FadeIn(later), FadeIn(toy2),
-                      run_time=.6)
+            self.play(*[ReplacementTransform(fly(boxes[3].get_center(), v), v) for v in vals],
+                      FadeIn(later), FadeIn(toy2), run_time=.6)
         self.finish()
 
 
@@ -543,6 +555,9 @@ GENES = [  # (row label, genes, evidence shown under the bar, READ IN NOTEBOOK)
     ("human train", 61759, "Tests/e24_replica.ipynb   n_obs × n_vars = 58931 × 61759"),
     ("test files", 1000, "e22_batch_correction.ipynb   n_obs=251, n_vars=1000"),
 ]
+# the notebook text on screen must stay verbatim (Josh's e24_replica.ipynb outputs, cells 3 and 6)
+assert "'x_dimensions': 18024" in E24_OUTPUTS[3]
+assert "n_obs × n_vars = 58931 × 61759" in E24_OUTPUTS[6]
 SLOTS = [("train · mouse", "source_training_data_path"), ("train · human", "target_training_data_path"),
          ("test · mouse", "source_test_data_path"), ("test · human", "target_test_data_path")]
 
@@ -727,7 +742,7 @@ class S05(Ep):
             mk = highlight(self, core, 212, run_time=.35)
         # L2: the scorecard row and the first golden number
         csv = panel_at([(1, "model,R2,MMD,…,r2_identity,…"),
-                        (5, "m1 v08 scGen,0.927,0.1737,…,0.5542,…")], CARD_PATH, -2.1, 2.0, 8.2, 18)
+                        (5, CSV5)], CARD_PATH, -2.1, 2.0, 8.2, 18)
         gold = mono("0.5542", 64, RED, bold=True).move_to([4.35, 1.5, 0])
         gold_lab = VGroup(label("identity · R² of means", 20, INK),
                           label("均值 R²", 18, GRAY)).arrange(DOWN, buff=.06).move_to([4.35, .68, 0])
@@ -752,7 +767,8 @@ class S05(Ep):
             self.play(FadeIn(csv, shift=DOWN * .1), run_time=.5)
             vo.wait_until("The identity")
             m5 = highlight(self, csv, 5, run_time=.3)
-            self.play(TransformFromCopy(csv.row(5), gold), FadeIn(gold_lab), run_time=.8)
+            self.play(TransformFromCopy(glyphs(csv.row(5), CSV5, "0.5542"), gold), FadeIn(gold_lab),
+                      run_time=.8)
             vo.wait_until("No training")
             self.play(FadeIn(metr, shift=UP * .1), run_time=.5)
             mm = highlight(self, metr, 155, run_time=.3)
@@ -796,8 +812,8 @@ class S05(Ep):
                       FadeIn(s_cap[:2]), run_time=.6)
             vo.wait_until("zero point nine")
             m5 = highlight(self, csv, 5, run_time=.25)
-            self.play(GrowFromEdge(steps[2], DOWN), TransformFromCopy(csv.row(5), s_txt[3:]),
-                      run_time=.8)
+            self.play(GrowFromEdge(steps[2], DOWN), FadeIn(s_txt[3]),
+                      TransformFromCopy(glyphs(csv.row(5), CSV5, "0.927"), s_txt[4]), run_time=.8)
             vo.wait_until("cellot autoencoder")
             self.play(FadeIn(adapter, shift=RIGHT * .1), run_time=.5)
             vo.wait_until("It averages")
