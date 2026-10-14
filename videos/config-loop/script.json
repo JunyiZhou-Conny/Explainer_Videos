@@ -1,0 +1,93 @@
+{
+  "title_en": "The key and the attribute must match",
+  "title_zh": "配置键和属性必须是同一个字符串",
+  "preset": "swiss",
+  "description_en": "Follow one gene-count from a yaml key, through Experiment.setup, into scGenModel, and see where a single extra letter drops it.",
+  "description_zh": "跟着一个基因数，从 yaml 的键走到 Experiment.setup，再走进 scGenModel，看多出来的一个字母把它丢在哪里。",
+  "tags_zh": ["python", "科研", "教程"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "Say x dimension and x dimensions as the two spellings. Do not read the number 18024 as a hash.",
+    "Lines from the upload are labeled on screen as not a commit. The IdentityModel check is commit 109bf12."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "A number under the wrong key",
+      "title_zh": "数字写在了错误的键下面",
+      "lines": [
+        {"en": "Here's a broken number. A notebook printed eighteen thousand twenty four genes. The key beside that number is not the key the class reads.",
+         "zh": "这里有一个坏掉的数字。笔记本打印出一万八千零二十四个基因。数字旁边的键，不是类在读取的那个键。"},
+        {"en": "The class asks for x dimension, singular. Setup writes x dimensions, with an s on the end.",
+         "zh": "类要的是 x dimension，单数。Setup 写下的是 x dimensions，末尾多了一个 s。"},
+        {"en": "Pause and think. If those strings differ by one letter, which value does the model actually receive?",
+         "zh": "停一下想一想。如果这两个字符串只差一个字母，模型真正拿到的是哪个值？"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "Setup looks up a name",
+      "title_zh": "Setup 按名字查找",
+      "lines": [
+        {"en": "The yaml is a dictionary, not a shopping list. Setup looks for the key scGen model, and it builds the class from the nested dictionary.",
+         "zh": "这份 yaml 是字典，不是购物清单。Setup 寻找键 scGen model，再用里面的嵌套字典去构造类。"},
+        {"en": "In git today, the same method only checks for Identity model. There is no scGen branch in that committed file.",
+         "zh": "在今天的 git 里，同一个方法只检查 Identity model。已提交的文件里没有 scGen 这一支。"},
+        {"en": "So the loop is three places. You edit the class, you keep the yaml key identical, then the notebook prints the dictionary.",
+         "zh": "所以这个循环有三处。你改类，你让 yaml 的键保持同一个字符串，然后笔记本打印出字典。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "Three spellings, one number",
+      "title_zh": "三种拼写，一个数字",
+      "lines": [
+        {"en": "Watch one number try to move. The config file stores it under x dimension, singular.",
+         "zh": "看一个数字怎么搬家。配置文件把它存在 x dimension 下面，单数。"},
+        {"en": "When use all genes is true, setup overwrites a different key, x dimensions, with the gene count from the data.",
+         "zh": "当 use all genes 为真时，setup 改写的是另一个键，x dimensions，用数据里的基因数。"},
+        {"en": "The constructor then reads the singular key. The network call reads the plural attribute, which was never set.",
+         "zh": "构造函数读的是单数键。网络调用读的是复数属性，而那个属性从未被赋值。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "Train is called with nothing",
+      "title_zh": "Train 被空着手调用",
+      "lines": [
+        {"en": "There is a second mismatch in the same file. Experiment train calls model dot train with no arguments.",
+         "zh": "同一个文件里还有第二处对不上。Experiment 的 train 调用 model.train，不传任何参数。"},
+        {"en": "The scGen train method requires the training data. Identity model does not. Only one of them survives that call.",
+         "zh": "scGen 的 train 方法需要训练数据。Identity 模型不需要。这次调用只有其中一个能活下来。"},
+        {"en": "The notebook would show you this the moment you uncomment train. You do not have to guess.",
+         "zh": "只要你把 train 那一行取消注释，笔记本就会把这件事显示出来。你不用猜。"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "What the notebook already printed",
+      "title_zh": "笔记本已经打印过的结果",
+      "lines": [
+        {"en": "The saved output in the replica notebook already shows the plural key, set to eighteen thousand twenty four.",
+         "zh": "副本笔记本里保存的输出，已经显示了复数键，值是一万八千零二十四。"},
+        {"en": "That output is stored in the upload. This session did not re-run the cell, and that upload is not a commit.",
+         "zh": "那份输出存在上传文件里。这次没有重跑那个单元格，而且那份上传不是一次提交。"},
+        {"en": "Pause again. After setup, which spelling would models bracket one bracket config show you?",
+         "zh": "再停一下。setup 之后，models 下标 1 的 config 会让你看到哪一种拼写？"}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "Edit, then look",
+      "title_zh": "改完，再看",
+      "lines": [
+        {"en": "The loop is short. Change the class. Make the yaml key the same string. Print the config from the notebook.",
+         "zh": "这个循环很短。改类。让 yaml 的键成为同一个字符串。从笔记本打印 config。"},
+        {"en": "If the printed key is not the key the constructor reads, the model did not receive your number.",
+         "zh": "如果打印出来的键不是构造函数在读的键，模型就没有拿到你的数字。"},
+        {"en": "Try it on the upload's config file. Find the singular spelling, and the plural one, before you train anything.",
+         "zh": "在上传的配置文件上试一次。在训练任何东西之前，先找到单数拼写和复数拼写。"}
+      ]
+    }
+  ]
+}
