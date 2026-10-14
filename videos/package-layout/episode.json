@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "preset": "swiss",
+  "duration_seconds": 240.0,
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "container": "mp4",
+    "codec": "h264"
+  },
+  "narration": {
+    "language": "en",
+    "voice": "af_heart",
+    "speed": 0.95
+  },
+  "subtitles": {
+    "languages": ["zh-CN", "en"],
+    "layout": "Chinese above English",
+    "burn_in": true,
+    "sidecar_formats": ["srt", "ass"]
+  },
+  "music": {"enabled": true},
+  "production": {
+    "workspace": ".",
+    "runner": "tools/render_episode.py",
+    "output_subdirectory": "outputs"
+  },
+  "topic": "What file runs when you type from speciesot import Experiment?",
+  "skill_source": "conny-explainer-video",
+  "scene_implementation_status": "authored",
+  "sources": ["SOURCES.md"],
+  "style_snapshot": "style.md",
+  "style_sha256": "76c5f8f3be7981d6670c94e286fa8c392159bd6b68ddd632bc26fc1444bdcce8"
+}

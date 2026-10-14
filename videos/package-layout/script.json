@@ -1,0 +1,94 @@
+{
+  "title_en": "What does import speciesot load?",
+  "title_zh": "import speciesot 到底加载了哪个文件？",
+  "preset": "swiss",
+  "description_en": "Follow one import from pyproject.toml through __init__.py to the Experiment class, and see why a second copy of the file does not change the notebook.",
+  "description_zh": "顺着一条 import，从 pyproject.toml 走到 __init__.py，再走到 Experiment 类。看清为什么另一份同名文件不会改变笔记本。",
+  "tags_zh": ["python", "科研", "教程"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "Say species O T for the capital-OT folder, and speciesot as one word for the package.",
+    "Do not read commit hashes aloud. On-screen code keeps exact spelling.",
+    "The 128-line class is commit 109bf12. The 346-line file is the 2026-10-14 upload and is not a commit."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "Which file answered?",
+      "title_zh": "哪个文件回答了你？",
+      "lines": [
+        {"en": "Here's a puzzle. You type from speciesot import Experiment, and Python answers. Notebooks, a capital species O T folder, and src could all own that name.",
+         "zh": "先出一个谜题。你写下 from speciesot import Experiment，Python 接受了。笔记本、大写的 speciesOT 文件夹、还有 src，好像都能拥有这个名字。"},
+        {"en": "The notebook is not the owner. It can call Experiment. It does not create the name.",
+         "zh": "笔记本不是主人。它可以调用 Experiment，但它并不创造这个名字。"},
+        {"en": "Pause and think. If two files both define Experiment, which file did that import load?",
+         "zh": "停一下想一想。如果有两个文件都定义了 Experiment，这条 import 加载的是哪一个？"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "The installer looks in src",
+      "title_zh": "安装器只看 src",
+      "lines": [
+        {"en": "The installer does not wander the repository. Open the project file. The last setting is the map.",
+         "zh": "安装器不会在仓库里乱走。打开项目文件，最后一项设置就是地图。"},
+        {"en": "It says where equals src. Setuptools may look in that one folder, and nowhere else.",
+         "zh": "它写着 where 等于 src。setuptools 只能看这一个文件夹，别的地方都不看。"},
+        {"en": "Those two lines are real. They are the project file in the research repository, not a sketch.",
+         "zh": "这两行是真的。它们来自研究仓库里的项目文件，不是示意图。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "One import is the door",
+      "title_zh": "一扇门，只有一行 import",
+      "lines": [
+        {"en": "Inside src, the folder speciesot is the package. Its init file is three lines long.",
+         "zh": "在 src 里面，speciesot 文件夹才是包。它的 init 文件只有三行。"},
+        {"en": "Line one imports Experiment from speciesot core. That is the whole public door.",
+         "zh": "第一行从 speciesot core 导入 Experiment。这就是整扇对外的门。"},
+        {"en": "So the name you typed is an alias. It points at one class, in one file.",
+         "zh": "所以你打出的名字只是别名。它指向一个文件里的一个类。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "The name lands on the class",
+      "title_zh": "名字落到类上",
+      "lines": [
+        {"en": "Watch the name travel. It leaves the init file, and it lands on the class called Experiment.",
+         "zh": "看这个名字怎么走。它离开 init 文件，落到名叫 Experiment 的类上。"},
+        {"en": "Call it with a yaml path. The class opens that file and keeps the dictionary. Then train walks every model and calls train, with no extra arguments.",
+         "zh": "用一个 yaml 路径去调用它。类打开那个文件，留下字典。然后 train 遍历每个模型，调用 train，不再多传参数。"},
+        {"en": "This is the file in git today. One hundred twenty eight lines. There is no scGen model in it.",
+         "zh": "这就是今天 git 里的文件。一百二十八行。里面没有 scGen 模型。"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "Two files, one name",
+      "title_zh": "两个文件，同一个名字",
+      "lines": [
+        {"en": "Your mentor's later file is longer. Three hundred forty six lines, and that one does contain scGen model.",
+         "zh": "导师后来的文件更长。三百四十六行，那一份里确实有 scGen 模型。"},
+        {"en": "That longer file is an upload from October fourteenth. It is not a commit on main. The notebook cannot see it just because the names match.",
+         "zh": "更长的那份是十月十四日的上传，不是 main 上的一次提交。名字相同，笔记本也看不见它。"},
+        {"en": "Pause again. If the notebook imported the installed package, which of these two files actually ran?",
+         "zh": "再停一下。如果笔记本导入的是已经安装的包，实际运行的是这两个文件中的哪一个？"}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "The path, once",
+      "title_zh": "把这条路径记住",
+      "lines": [
+        {"en": "Remember the path. The project file points at src. Init imports Experiment. The class lives in speciesot core.",
+         "zh": "记住这条路径。项目文件指向 src。Init 导入 Experiment。类住在 speciesot core 里。"},
+        {"en": "A notebook is a caller. Editing a second copy does nothing, until that copy is the one installed.",
+         "zh": "笔记本只是调用者。改另一份拷贝没有用，除非安装的就是那一份。"},
+        {"en": "Try it yourself. Open the init file, and read the one name it exports.",
+         "zh": "你自己试一次。打开 init 文件，读它导出的那一个名字。"}
+      ]
+    }
+  ]
+}
