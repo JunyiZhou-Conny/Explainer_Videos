@@ -38,6 +38,8 @@ Each episode folder has `README.md` (a code companion: timestamp → file and li
 | `INFERRED` | our reasoning or recommendation (the SOLID mapping, the card order, which scgen to wrap); it may be wrong, and the video says what would settle it |
 | `EXAMPLE` | code we wrote to illustrate an idea; not from Josh or the repo |
 
+**Which `speciesot_core.py`?** Every code panel titled `src/speciesot/speciesot_core.py` shows Josh's attached copy (346 lines, sha256 in `excerpts.py`). The file at the same path in the speciesOT repo at `109bf12` is an older 128-line version, so line numbers only match Josh's copy.
+
 Not run here: anything on the cluster (real atlas files, TensorFlow, the scvi-tools scgen,
 model training). Cluster behaviour is marked INFERRED.
 
