@@ -66,15 +66,14 @@ Beats (script.md "## S08", one voiceover block each):
     frame.
 """
 
-import numpy as np  # noqa: I001  (manim first, then common: common must win)
-from manim import *
+from manim import *  # noqa: I001  (manim first, then common: common must win)
 
 from explainer import style as S
 from explainer.devops import code_span
 from explainer.scene import VoiceScene
 
 from common import (BUILD, CAT, ERR, IMAGE, INK, LAPTOP_DIR, NARRATION, OUTPUT, P_LAPTOP, ROUTE, RUN,
-                    STRIP_ROWS, SYSTEM, TURN, VENV, ConfigCard, PathDoors, attach, bare_prompt,
+                    STRIP_ROWS, SYSTEM, TURN, VENV, ConfigCard, PathDoors, bare_prompt,
                     beside, capture, code, cut, fit, glyph_range, hl_bar, istep, label, laptop_term,
                     mono, pin, readme_card, resize, row_tag, steady, substring, track, tracker_a,
                     type_cmd, under, unpin)
@@ -301,7 +300,7 @@ class StepCmd(VoiceScene):
             vo.wait_until("join into one")
             self.play(TransformFromCopy(e_bash, l_bash), TransformFromCopy(c_c, l_c),
                       TransformFromCopy(c_str, l_str), run_time=1.2)
-            self.remove(*l_bash, *l_c, *l_str)
+            self.remove(l_bash, l_c, l_str, *l_bash, *l_c, *l_str)
             self.add(line)
             vo.wait_until("bash, dash c")
             self.play(Indicate(l_bash, color=TURN, scale_factor=1.15), run_time=0.45)
@@ -359,6 +358,8 @@ class StepCmd(VoiceScene):
             self.play(doors.doors.animate.shift(slide), run_time=0.45)
             self.play(FadeIn(VGroup(venv_door.frame, venv_door[1])),
                       TransformFromCopy(venv_src, venv_door.label), run_time=0.8)
+            self.remove(venv_door.frame, venv_door[1], venv_door.label)
+            self.add(venv_door)
             self.play(Indicate(venv_door, color=VENV, scale_factor=1.1), run_time=0.6)
             vo.wait_until("Then exec bash")
             self.play(FadeOut(u_src), Create(u_exec), FadeOut(runs_src, shift=UP * 0.2),
@@ -467,7 +468,7 @@ class StepCmd(VoiceScene):
             pin(self, out5[0], x5, run_time=0.3)
             vo.wait_until("if yours prints")
             pm = VGroup(*[glyph_range(r, 0, 1) for r in out5 if r.text[:1] in "+-"])
-            at_right(note5, out5[4]).shift(DOWN * (out5[5].strut.get_center()[1] - out5[4].strut.get_center()[1]))
+            at_right(note5, out5[4])                     # over rows 11-13 (all short)
             self.play(Indicate(pm, color=TURN, scale_factor=1.6), run_time=0.8)
             self.play(FadeIn(note5, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("add dash u")

@@ -184,6 +184,22 @@ def row_badge(k: int) -> VGroup:
     return VGroup(b, sans(f"build step {k}", 20, CTR)).arrange(RIGHT, buff=0.1)
 
 
+def scroll(scene, t, lines, wrap: bool = False):
+    """Make room for `lines` before t.print: the oldest rows fade where they are, then the rest
+    move up (Terminal's own scroll slides the old rows up over the title bar and the tracker)."""
+    n = sum(max(1, -(-len(s) // t.max_chars)) if wrap else 1 for s in lines)
+    over = len(t.lines) + n - t.rows
+    if over <= 0:
+        return
+    gone = t.lines.submobjects[:over]
+    stay = VGroup(*t.lines.submobjects[over:])
+    scene.play(FadeOut(VGroup(*gone)), run_time=0.25)
+    for m in gone:
+        t.lines.remove(m)
+        scene.remove(m)
+    scene.play(stay.animate.shift(UP * t.pitch * over), run_time=0.35)
+
+
 def stick(scene, line, *mobs):
     """Make mobs (already on screen) part of terminal row `line` (its last row when folded), so
     they scroll, shrink and clear with it."""
@@ -385,11 +401,9 @@ def what_if_panel() -> VGroup:
 
 
 def edit_chip() -> VGroup:
-    t = VGroup(label("edit:", 20, INK), mono("group_name", 20, INK), label("in", 20, INK),
-               mono("cli.py", 20, INK)).arrange(RIGHT, buff=0.12)
-    for m in t[1:]:
-        m.align_to(t[0], DOWN)
-    fr = RoundedRectangle(width=t.width + 0.44, height=0.5, corner_radius=0.18, stroke_color=S.GREY,
+    """GREY chip "edit: group_name in cli.py" (mono: the names are code). .frame .text"""
+    t = mono("edit: group_name in cli.py", 22, INK)
+    fr = RoundedRectangle(width=t.width + 0.44, height=0.52, corner_radius=0.18, stroke_color=S.GREY,
                           stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
     t.move_to(fr)
     g = VGroup(fr, t)
@@ -472,18 +486,20 @@ class BuildImage(VoiceScene):
             l_dot = label("this folder = the build context", 20, LOOKUP)
             place(l_dot, left=dot.get_left()[0] - 0.08, cy=row_y(t, 2))
             self.play(dot.animate.set_color(LOOKUP), Create(u_dot), run_time=0.4)
-            self.play(FadeIn(l_dot, shift=UP * 0.1), FadeIn(folder, shift=UP * 0.15), run_time=0.6)
-            self.play(Indicate(folder.frame, color=LOOKUP, scale_factor=1.04), run_time=0.6)
-            vo.wait_until("the build context")
-            # lecture 2's parcel (1.5 s): copies of the files pack into it, it slides to the builder
+            self.play(FadeIn(l_dot, shift=UP * 0.1), FadeIn(folder, shift=UP * 0.15), FadeIn(builder),
+                      run_time=0.5)
+            # as the PINK label lands, lecture 2's parcel (1.5 s): copies of the folder's files pack
+            # into it and it slides to the builder
             flying = VGroup(*[m.copy() for m in folder.files], folder.key.copy())
             self.add(flying)
-            self.play(FadeIn(parcel, scale=0.8), FadeIn(builder),
+            self.play(FadeIn(parcel, scale=0.8),
                       *[m.animate.move_to(parcel.frame).scale(0.3).set_opacity(0) for m in flying],
                       run_time=0.7)
             self.remove(flying)
             self.play(Transform(parcel, parcel_end), run_time=0.8)
-            self.play(Indicate(builder.frame, color=TOOL, scale_factor=1.08), run_time=0.5)
+            vo.wait_until("the build context")
+            self.play(Indicate(parcel[-1], color=INK, scale_factor=1.15),
+                      Indicate(builder.frame, color=TOOL, scale_factor=1.06), run_time=0.8)
 
         # ========================================================== 2 · Enter: the full log, build step 2
         live = VGroup(label("your terminal shows a compact live view;", 20, S.GREY),
@@ -548,6 +564,7 @@ class BuildImage(VoiceScene):
             self.play(Indicate(substring(outB1[1], "COPY --chown=app:app . ./"), color=INK,
                                scale_factor=1.08), run_time=0.7)
             vo.wait_until("Build step 5")
+            scroll(self, t, LOG_B2, wrap=True)
             outB2 = t.print(self, LOG_B2, run_time=0.8, wrap=True)
             r1385, r1386a, r1386b, r1387, r1388 = outB2
             assert r1386b.text == "hon3", r1386b.text
@@ -585,6 +602,7 @@ class BuildImage(VoiceScene):
         place(harmless, left=inset.code.get_left()[0] + 0.1, top=inset.code.get_bottom()[1] - 0.18)
 
         with self.voiceover(SAY[4]) as vo:
+            scroll(self, t, LOG_C, wrap=True)
             outC = t.print(self, LOG_C, run_time=0.8, wrap=True)
             r1399, r1404, r1405a, r1405b = outC[1], outC[3], outC[4], outC[5]
             assert r1405b.text.endswith("(line 10)"), r1405b.text
@@ -622,10 +640,9 @@ class BuildImage(VoiceScene):
         # ========================================================== 5 · docker images (extra), V2 sizes
         st = make_stack()
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(inset, src_cap, harmless, u_cred, u_val)), run_time=0.4)
+            self.play(FadeOut(VGroup(inset, src_cap, harmless, u_cred, u_val)), caption_extra(tr),
+                      Transform(t.title, mono("laptop", 20, S.GREY).move_to(t.title)), run_time=0.4)
             t.clear(self, run_time=0.3)
-            self.play(Transform(t.title, mono("laptop", 20, S.GREY).move_to(t.title)), caption_extra(tr),
-                      run_time=0.3)
             resize(self, t, 4, run_time=0.7, extra=[FadeIn(st, shift=UP * 0.2)])
             c5 = type_cmd(self, t, IMG.cmd, 0.9)
             pin(self, c5, beside(extra_tag(), t, c5), run_time=0.3)
