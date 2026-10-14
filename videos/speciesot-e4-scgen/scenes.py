@@ -632,7 +632,7 @@ class S05(Ep):
         env = chip("scgen_tf1 · TF 1.15", -4.3, .17, INK, 18)
         env.move_to([-5.6 + env.width / 2, .17, 0])
         helpers = left("Josh's helpers ≡ these lines:", -2.1, .17, 18, RED)
-        hpath = mono_left("atlas-paper-vae/scripts/02_eval_metrics.py:151–171", -5.6, -.25,
+        hpath = mono_left("atlas-paper-vae/scripts/02_eval_metrics.py:151–171", -5.95, -.25,
                           16, INK)
         t1 = tag_at("READ IN CODE", 1.6, -.25)
         with self.say(1) as vo:
@@ -669,7 +669,7 @@ class S05(Ep):
         core_p = code_panel([(10, "# … (~20s, pulls in scvi-tools/torch) …"), (248, CORE[248]),
                              (252, CORE[252])], CORE_PATH, -2.85, -1.45, width=6.6, size=16)
         with self.say(2) as vo:
-            self.cue(vo, .02, q3[2].animate.scale(.85).move_to([1.45, -2.12, 0]),
+            self.cue(vo, .02, FadeOut(q3[2]),
                      ReplacementTransform(q3[1], VGroup(box2, b2, hdr)), run_time=.6)
             vo.wait_until("import scgen")
             self.play(FadeIn(core_p, shift=UP * .1), run_time=.45)
@@ -698,15 +698,14 @@ class S05(Ep):
                     left("PyTorch AutoEncoder · cellot folder", -5.6, -.75, 20, INK, bold=True))
         f3 = path_folder(-5.6, -1.27, 2.85, .44)
         p3 = mono_left("cellot/cellot_gpu", -5.45, -1.27, 18, INK)
-        vend = left("vendored bunnech/cellot · BSD · your edits", -2.55, -1.27, 18, GRAY)
+        vend = left("vendored bunnech/cellot · BSD · your edits", -2.6, -1.27, 17, GRAY)
         ae = mono_left("AutoEncoder + compute_scgen_shift", -5.6, -1.75, 18, INK)
         aeloc = mono_left("models/ae.py:22, 175", -.5, -1.75, 16, GRAY)
         made = left("→ made your benchmark numbers", -5.6, -2.17, 20, RED, bold=True)
-        t3 = tag_at("READ IN CODE", -.6, -2.17)
+        t3 = tag_at("READ IN CODE", 1.25, -2.17)
         with self.say(3) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in (core_p, m252, go, stop, stop_l)],
-                     q3[2].animate.scale(1 / .85).move_to([*spots[2], 0]),
-                     run_time=.4)
+                     FadeIn(q3[2]), run_time=.4)
             self.play(ReplacementTransform(q3[2], h3), run_time=.6)
             vo.wait_until("CellOT's source")
             self.play(Create(f3), FadeIn(p3), run_time=.5)
@@ -755,7 +754,7 @@ class S05(Ep):
             nb = np.array([b1.get_left()[0] - .05, -1.55, 0])
             nowhere = DashedLine(na, nb, color=RED, stroke_width=3, dash_length=.1)
             self.play(Create(nowhere), run_time=.45)
-            mid = na + .5 * (nb - na)
+            mid = na + .75 * (nb - na)
             self.play(Create(strike(tf[1])), Create(cross(mid[0], mid[1], RED, .14, 4)),
                       run_time=.45)
         self.finish()

@@ -355,28 +355,28 @@ TRAIL = [
 ]
 
 
-def trail_card(i, y=.93, w=2.9):
+def trail_card(i, y=.98, w=2.9):
     stage, etype, _, ln, frag, _ = TRAIL[i]
     x = STAGE_X[i]
-    frame = Rectangle(width=w, height=.97, stroke_color=INK, stroke_width=2, fill_color=PAPER,
+    frame = Rectangle(width=w, height=.9, stroke_color=INK, stroke_width=2, fill_color=PAPER,
                       fill_opacity=1).move_to([x, y, 0])
     bar = Rectangle(width=w, height=.07, stroke_width=0, fill_color=RED,
                     fill_opacity=1).move_to([x, frame.get_top()[1] - .035, 0])
     lx = x - w / 2 + .18
     g = VGroup(frame, bar, mono_line(etype, lx, y + .2, 19, RED, bold=True),
-               mono_line(frag, lx, y - .07, 16), mono_line(f"line {ln}", lx, y - .32, 16, GRAY))
+               mono_line(frag, lx, y - .05, 16), mono_line(f"line {ln}", lx, y - .29, 16, GRAY))
     g.set_z_index(3)
     return g
 
 
-def message_line(i, y=.12, x=-6.2):
+def message_line(i, y=.05, x=-6.2):
     _, etype, msg, *_ = TRAIL[i]
     a = mono_line(etype + ":", x, y, 17, RED, bold=True)
     b = mono_line(msg, x + ADVANCE * 17 * (len(etype) + 2), y, 17)
     return VGroup(a, b)
 
 
-def trail_panel(i, top=-.12):
+def trail_panel(i, top=-.2):
     return panel_at(TRAIL[i][5], CORE_PATH, -1.95, top, 8.6, 17)
 
 
@@ -432,7 +432,7 @@ class S03(Ep):
             c.shift(RIGHT * (8.3 - c.get_x()))
 
         def slide(i):
-            return cards[i].animate.move_to([STAGE_X[i], .93, 0])
+            return cards[i].animate.move_to([STAGE_X[i], .98, 0])
 
         with self.say(2) as vo:
             self.cue(vo, .0, slide(0), numbered[0].animate.set_color(RED), run_time=.8)
@@ -483,36 +483,43 @@ class S03(Ep):
             self.play(slide(3), numbered[2].animate.set_color(INK), numbered[3].animate.set_color(RED),
                       FadeOut(m3), FadeOut(n1), FadeOut(n2), ReplacementTransform(msg3, msg4),
                       FadeOut(panel3), FadeIn(panel4), run_time=.8)
-            mx, hx, top = 3.7, 4.9, -.35
-            mouse = VGroup(*[Dot([mx, top - k * .155, 0], radius=.055, color=INK) for k in range(5)])
-            human = VGroup(*[Dot([hx, top - k * .155, 0], radius=.055, color=INK) for k in range(7)])
+            self.play(FadeIn(run4), run_time=.3)
+            mx, hx, top, dy = 3.7, 4.9, -.47, .14
+            mouse = VGroup(*[Dot([mx, top - k * dy, 0], radius=.05, color=INK) for k in range(5)])
+            human = VGroup(*[Dot([hx, top - k * dy, 0], radius=.05, color=INK) for k in range(7)])
+            uneq = at("real data are unequal", (mx + hx) / 2, -.2, 17, GRAY)
+            run4 = left("identity run · 5 vs 7 cells", STAGE_X[3] - 1.4, .33, 17, GRAY)
             ml = label("5 mouse", 17, GRAY).next_to(mouse, LEFT, buff=.15)
             hl = label("7 human", 17, GRAY).next_to(human, RIGHT, buff=.15)
             vo.wait_until("different cell counts")
-            self.play(FadeIn(mouse), FadeIn(human), FadeIn(ml), FadeIn(hl), run_time=.5)
+            self.play(FadeIn(mouse), FadeIn(human), FadeIn(ml), FadeIn(hl), FadeIn(uneq), run_time=.5)
             vo.wait_until("line them up")
-            pairs = VGroup(*[line(mx + .07, top - k * .155, hx - .07, top - k * .155, GRAY, 2)
+            pairs = VGroup(*[line(mx + .07, top - k * dy, hx - .07, top - k * dy, GRAY, 2)
                              for k in range(5)])
             self.play(LaggedStart(*[Create(p) for p in pairs], lag_ratio=.15),
                       human[5:].animate.set_color(RED), run_time=.6)
             vo.wait_until("at line 313")
             m = highlight(self, panel4, 313, run_time=.35)
         rows_y = [-.62, -1.07, -1.52, -1.97]
-        board = Rectangle(width=7.6, height=2.65, stroke_color=INK, stroke_width=2).move_to(
-            [-2.4, -1.08, 0])
+        board = Rectangle(width=8.5, height=2.65, stroke_color=INK, stroke_width=2).move_to(
+            [-1.95, -1.08, 0])
         head = left("TO-DO · 待办", -5.95, -.1, 22, INK, bold=True)
         todo = []
         for k, (stage, etype, _, ln, *_r) in enumerate(TRAIL):
             box = Square(.26, stroke_color=INK, stroke_width=2).move_to([-5.8, rows_y[k], 0])
             num = mono(str(k + 1), 20, RED, bold=True).move_to([-5.3, rows_y[k], 0])
             txt = mono_left(f"{stage:<9}{etype:<15}line {ln}", -4.9, rows_y[k], 19)
+            if k == 3:
+                txt = VGroup(txt, left("· identity run, 5 vs 7 cells", txt.get_right()[0] + .15,
+                                       rows_y[k], 17, GRAY))
             todo.append(VGroup(box, num, txt))
         given = VGroup(label("program order", 24, RED, bold=True),
                        label("顺序由程序给出", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT, buff=.1)
         given.move_to([2.7 + given.width / 2, -.62, 0])
         with self.say(4) as vo:
             self.cue(vo, .0, FadeOut(m), FadeOut(panel4), FadeOut(msg4), FadeOut(mouse),
-                     FadeOut(human), FadeOut(ml), FadeOut(hl), FadeOut(pairs),
+                     FadeOut(human), FadeOut(ml), FadeOut(hl), FadeOut(pairs), FadeOut(uneq),
+                     FadeOut(run4),
                      numbered[3].animate.set_color(INK), run_time=.4)
             self.play(Create(board), FadeIn(head), run_time=.4)
             self.play(LaggedStart(*[ReplacementTransform(cards[k], todo[k]) for k in range(4)],
@@ -682,9 +689,9 @@ class S05(Ep):
         spec_rows = [(1, "experiment_tag: …_m1_v08_ood"),
                      (4, "data_file: …/hvg_pearson_residuals_m1_v08.h5ad")] + \
                     [(n, SPEC[n]) for n in (25, 26, 28, 31, 32, 33, 34, 35)]
-        spec = panel_at(spec_rows, SPEC_PATH, -2.8, 1.95, 6.9, 16)
+        spec = panel_at(spec_rows, SPEC_PATH, -2.75, 1.95, 7.0, 16)
         core_rows = rows(CORE, 162, 166) + [(None, "…"), (212, CORE[212])]
-        core = panel_at(core_rows, CORE_PATH, 3.55, 1.95 - 5 * spec.gap, 5.4, 16)
+        core = panel_at(core_rows, CORE_PATH, 3.6, 1.95 - 5 * spec.gap, 5.3, 16)
         pasted = VGroup(label("pasted · 粘贴", 22, RED, bold=True),
                         label("same settings, as comments", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT,
                                                                               buff=.1)
@@ -714,7 +721,7 @@ class S05(Ep):
                         (5, "m1 v08 scGen,0.927,0.1737,…,0.5542,…")], CARD_PATH, -2.1, 2.0, 8.2, 18)
         gold = mono("0.5542", 64, RED, bold=True).move_to([4.35, 1.5, 0])
         gold_lab = VGroup(label("identity · R² of means", 20, INK),
-                          label("均值 R²", 18, GRAY)).arrange(DOWN, buff=.06).move_to([4.35, .78, 0])
+                          label("均值 R²", 18, GRAY)).arrange(DOWN, buff=.06).move_to([4.35, .68, 0])
         metr = panel_at([(n, METRICS[n]) for n in (154, 155, 156, 157)] +
                         [(None, "    …"), (166, "    r2_identity = _r2_means(control, treated) if …")],
                         METRICS_PATH, -2.0, .35, 8.4, 16)
@@ -759,7 +766,7 @@ class S05(Ep):
                        at("identity", -3.325, -1.95, 20, PAPER, bold=True),
                        mono("0.5542", 19, PAPER).move_to([-3.325, -1.55, 0]),
                        at("scGen", -1.375, -1.8, 20, PAPER, bold=True),
-                       mono("0.927", 19, PAPER).move_to([-1.375, -1.4, 0]))
+                       mono("0.927", 19, PAPER).move_to([-1.375, -1.4, 0])).set_z_index(3)
         s_cap = VGroup(at("file + split", -5.275, -1.5, 17, GRAY), at("exact", -3.325, -.9, 17, GRAY),
                        at("± tolerance", -1.375, -.3, 17, RED))
         adapter = VGroup(label("from the cellot autoencoder", 20, INK, bold=True),
@@ -801,4 +808,224 @@ class S05(Ep):
             band = Rectangle(width=1.3, height=.42, stroke_width=0, fill_color=RED, fill_opacity=.18)\
                 .move_to([center, nl_y, 0])
             self.play(FadeIn(band), FadeIn(s_cap[2]), run_time=.5)
+        self.finish()
+
+
+
+# ---------------------------------------------------------------- s06
+
+PRINCIPLES = [("S", "Single responsibility", "单一职责"), ("O", "Open–closed", "开闭原则"),
+              ("L", "Liskov substitution", "里氏替换"), ("I", "Interface segregation", "接口隔离"),
+              ("D", "Dependency inversion", "依赖倒置")]
+SPOTS = {"S": [(20, 33)], "O": [(107, 115)], "L": [(43, 43), (133, 133), (155, 155)],
+         "I": [(54, 57)], "D": [(248, 248)]}       # where each letter points (INFERRED mapping)
+
+
+def barcode(x0=-6.0, x1=6.0, base=-2.3, hscale=.0095, hmax=1.7):
+    """speciesot_core.py on its side: one hairline per line, height ~ characters."""
+    n = len(LINE_LENGTHS)
+    dx = (x1 - x0) / n
+    g = VGroup(*[Line([x0 + (i + .5) * dx, base, 0], [x0 + (i + .5) * dx, base + min(ln * hscale, hmax), 0],
+                      stroke_width=1.6, color=FAINT if k == "c" else GRAY)
+                 for i, (ln, k) in enumerate(zip(LINE_LENGTHS, LINE_KINDS)) if ln])
+    g.x_of = lambda line_no: x0 + (line_no - .5) * dx
+    g.dx = dx
+    return g
+
+
+class S06(Ep):
+    def construct(self):
+        self.header()
+        ly = 1.72
+        letters = VGroup(*[at(c, -5.95 + k * .6, ly, 40, INK, bold=True)
+                           for k, (c, *_r) in enumerate(PRINCIPLES)])
+        tag = source_tag("INFERRED").move_to([5.6, ly, 0])
+        names = []
+        for c, en, zh in PRINCIPLES:
+            a = left(en, -3.0, ly, 26, INK, bold=True)
+            names.append(VGroup(a, left(zh, a.get_right()[0] + .25, ly, 20, GRAY)))
+
+        def focus(k, *extra, run_time=.5):
+            anims = [letters[j].animate.set_color(RED if j == k else GRAY) for j in range(5)]
+            return self.play(*anims, *extra, run_time=run_time)
+
+        # L0: a compass, not a checklist; each letter points at a spot in the file
+        comp_c = (-2.6, -.55)
+        dial = Circle(radius=.95, color=INK, stroke_width=2.5).move_to([*comp_c, 0])
+        needle = VGroup(Polygon([0, .85, 0], [-.11, 0, 0], [.11, 0, 0], color=RED, fill_color=RED,
+                                fill_opacity=1, stroke_width=0),
+                        Polygon([0, -.85, 0], [-.11, 0, 0], [.11, 0, 0], color=INK, fill_color=PAPER,
+                                fill_opacity=1, stroke_width=2)).move_to([*comp_c, 0])
+        comp_lab = at("a compass: when something hurts", comp_c[0], -1.85, 20, INK)
+        boxes = VGroup(*[VGroup(Square(.32, stroke_color=GRAY, stroke_width=2).move_to([2.0, .3 - k * .45, 0]),
+                                left(c, 2.35, .3 - k * .45, 20, GRAY, bold=True))
+                         for k, (c, *_r) in enumerate(PRINCIPLES)])
+        no_check = at("not a day-one checklist", 2.6, -1.85, 20, GRAY)
+        code = barcode()
+        bands, drops, srcs = VGroup(), VGroup(), []
+        for k, (c, *_r) in enumerate(PRINCIPLES):
+            for a, b in SPOTS[c]:
+                srcs.append(letters[k])
+                xc = (code.x_of(a) + code.x_of(b)) / 2
+                bands.add(Rectangle(width=max(code.dx * (b - a + 1), .07), height=1.85, stroke_width=0,
+                                    fill_color=RED, fill_opacity=.22).move_to([xc, -2.3 + .925, 0]))
+                drops.add(at(c, xc, -.2, 26, RED, bold=True))
+        f_lab = mono_left(CORE_PATH, -6.0, .25, 16, GRAY)
+        with self.say(0) as vo:
+            self.cue(vo, .02, LaggedStart(*[FadeIn(l, shift=DOWN * .1) for l in letters], lag_ratio=.15),
+                     FadeIn(tag), run_time=.8)
+            vo.wait_until("compass")
+            self.play(Create(dial), FadeIn(needle), FadeIn(comp_lab), run_time=.5)
+            self.play(Rotate(needle, -PI / 3, about_point=[*comp_c, 0]), run_time=.4)
+            self.play(Rotate(needle, PI / 3 + PI / 8, about_point=[*comp_c, 0]), run_time=.4)
+            vo.wait_until("not a checklist")
+            self.play(FadeIn(boxes), FadeIn(no_check), run_time=.4)
+            st = strike(boxes, RED, 4)
+            self.play(Create(st), run_time=.3)
+            vo.wait_until("Each letter")
+            self.play(*[FadeOut(m) for m in (dial, needle, comp_lab, boxes, no_check, st)],
+                      FadeIn(f_lab), LaggedStart(*[Create(l) for l in code], lag_ratio=.002),
+                      run_time=.9)
+            self.play(*[TransformFromCopy(s_, d) for s_, d in zip(srcs, drops)], FadeIn(bands),
+                      run_time=.8)
+        # L1: S — the data classes only load data; O — add a class, not an if
+        s_panel = panel_at([(20, CORE[20]), (24, CORE[24]), (25, CORE[25]), (None, ""), (27, CORE[27]),
+                            (32, CORE[32]), (33, CORE[33])], CORE_PATH, -.95, 1.25, 10.5, 17)
+        slots = VGroup()
+        for k, t in enumerate(("gene alignment", "split the M1 table")):
+            r = DashedVMobject(Rectangle(width=3.3, height=.6, color=RED), num_dashes=40)\
+                .move_to([-4.5 + k * 3.6, -2.0, 0])
+            slots.add(VGroup(r, at(t, r.get_x(), -2.0, 19, RED)))
+        beside = left("beside them", 1.0, -2.0, 19, GRAY)
+        o_panel = panel_at([(107, CORE[107]), (108, CORE[108]), (None, ""), (112, CORE[112]),
+                            (None, "        …"),
+                            (115, "            self.models.append(scGenModel(self.experiment_spec[…]))")],
+                           CORE_PATH, -1.45, 1.25, 9.5, 16)
+        ghost = DashedVMobject(RoundedRectangle(corner_radius=.06, width=2.4, height=.55, color=GRAY),
+                               num_dashes=30).move_to([4.95, .65, 0])
+        ghost_t = mono("CellOTModel", 19, GRAY).move_to(ghost)
+        add_cls = VGroup(left("+ a new class", 4.15, .05, 19, INK), tick(3.85, .05, .12, INK))
+        no_if = VGroup(left("not another if", 4.15, -.4, 19, RED), cross(3.85, -.4, .1, RED))
+        reg = code_panel([(None, 'MODELS = {"IdentityModel": IdentityModel, …}')],
+                         "our sketch · not in the repo", -2.9, -1.75, width=6.6, size=16, numbers=False)
+        reg_tag = source_tag("EXAMPLE").move_to([1.1, -1.75, 0])
+        reg_note = left("CellOT = one new entry", 2.0, -1.75, 19, GRAY)
+        with self.say(1) as vo:
+            self.cue(vo, .0, FadeOut(code), FadeOut(bands), FadeOut(drops), FadeOut(f_lab),
+                     FadeIn(names[0]), run_time=.4)
+            focus(0, FadeIn(s_panel, shift=UP * .1))
+            vo.wait_until("only load data")
+            m = highlight(self, s_panel, 24, 25, 32, 33, run_time=.35)
+            vo.wait_until("gene alignment")
+            self.play(LaggedStart(*[Create(sl) for sl in slots], lag_ratio=.3), run_time=.7)
+            self.play(FadeIn(beside), run_time=.3)
+            vo.wait_until("Open-closed")
+            self.play(FadeOut(s_panel), FadeOut(m), FadeOut(slots), FadeOut(beside),
+                      ReplacementTransform(names[0], names[1]), run_time=.4)
+            focus(1, FadeIn(o_panel, shift=UP * .1), run_time=.4)
+            vo.wait_until("adding CellOT")
+            self.play(Create(ghost), FadeIn(ghost_t), run_time=.4)
+            self.play(FadeIn(add_cls), run_time=.3)
+            vo.wait_until("chain of ifs")
+            m = highlight(self, o_panel, 107, 112, run_time=.3)
+            self.play(FadeIn(no_if), run_time=.3)
+            vo.wait_until("A dictionary")
+            self.play(FadeIn(reg, shift=UP * .1), FadeIn(reg_tag), run_time=.5)
+            self.play(FadeIn(reg_note), ghost_t.animate.set_color(INK), run_time=.4)
+        # L2: L — every model keeps the contract's promise
+        l_rows = [(43, CORE[43]), (None, "    …"), (133, CORE[133]), (None, "    …"), (155, CORE[155]),
+                  (None, "    …"), (261, CORE[261])]
+        l_panel = panel_at(l_rows, CORE_PATH, -2.5, 1.25, 7.4, 17)
+        notes = {43: ("contract: needs training_data", INK), 133: ("Experiment calls train()", INK),
+                 155: ("IdentityModel: takes none", INK),
+                 261: ("scGenModel keeps the contract → breaks", RED)}
+        ann = {n: left(t, 1.55, l_panel.row_y(n), 18, c) for n, (t, c) in notes.items()}
+        follow = Arrow([1.4, l_panel.row_y(155), 0], [1.4, l_panel.row_y(133), 0], buff=.05, color=RED,
+                       stroke_width=3, max_tip_length_to_length_ratio=.25)
+        lesson = VGroup(label("Python checks names, not inputs", 24, RED, bold=True),
+                        label("only a test can catch this · 只有测试能抓到", 19, GRAY))\
+            .arrange(DOWN, aligned_edge=LEFT, buff=.1).move_to([-6.2, -2.0, 0], aligned_edge=LEFT)
+        with self.say(2) as vo:
+            self.cue(vo, .0, FadeOut(o_panel), FadeOut(m), FadeOut(ghost), FadeOut(ghost_t), FadeOut(add_cls),
+                     FadeOut(no_if), FadeOut(reg), FadeOut(reg_tag), FadeOut(reg_note),
+                     ReplacementTransform(names[1], names[2]), run_time=.4)
+            focus(2, FadeIn(l_panel, shift=UP * .1))
+            vo.wait_until("The contract's train")
+            m = highlight(self, l_panel, 43, run_time=.3)
+            self.play(FadeIn(ann[43]), run_time=.3)
+            vo.wait_until("IdentityModel's takes")
+            m2 = l_panel.mark(155)
+            self.play(ReplacementTransform(m, m2), FadeIn(ann[155]), run_time=.4)
+            vo.wait_until("Line 133")
+            m3 = l_panel.mark(133)
+            self.play(ReplacementTransform(m2, m3), FadeIn(ann[133]), GrowArrow(follow), run_time=.5)
+            vo.wait_until("so scGen")
+            m4 = l_panel.mark(261)
+            self.play(ReplacementTransform(m3, m4), FadeIn(ann[261]), run_time=.4)
+            vo.wait_until("Python checks")
+            self.play(FadeIn(lesson, shift=UP * .1), run_time=.5)
+        # L3: I — one method; D — Experiment talks to the contract, never to scgen
+        i_panel = panel_at(rows(CORE, 54, 57), CORE_PATH, -1.0, 1.25, 10.4, 17)
+        one = at("one method", 5.25, .35, 22, RED, bold=True)
+        dy = -1.95
+        e_p = pill("Experiment", -4.85, dy, INK, 20)
+        a_p = pill("AbstractModel", -1.15, dy, INK, 20)
+        s_p = pill("scGenModel", 2.2, dy, INK, 20)
+        g_p = pill("scgen", 5.0, dy, GRAY, 20)
+        a1 = arrow(e_p.get_right(), a_p.get_left(), INK)
+        a2 = arrow(s_p.get_left(), a_p.get_right(), INK)
+        a3 = arrow(s_p.get_right(), g_p.get_left(), GRAY)
+        a1_l = at("model.train() …", (e_p.get_right()[0] + a_p.get_left()[0]) / 2, dy + .38, 17, GRAY)
+        a3_l = at("import · line 248", (s_p.get_right()[0] + g_p.get_left()[0]) / 2, dy + .38, 17, GRAY)
+        never = DashedVMobject(ArcBetweenPoints(e_p.get_top() + UP * .05, g_p.get_top() + UP * .05,
+                                                angle=-PI / 5, color=RED, stroke_width=2.5), num_dashes=40)
+        no = cross(.0, never.get_top()[1], .12, RED)
+        no_l = at("never directly", .5, -1.22, 18, RED)
+        with self.say(3) as vo:
+            self.cue(vo, .0, FadeOut(l_panel), FadeOut(m4), *[FadeOut(a) for a in ann.values()],
+                     FadeOut(follow), FadeOut(lesson), ReplacementTransform(names[2], names[3]), run_time=.4)
+            focus(3, FadeIn(i_panel, shift=UP * .1))
+            vo.wait_until("one method")
+            m = highlight(self, i_panel, 56, run_time=.3)
+            self.play(FadeIn(one), run_time=.3)
+            vo.wait_until("Dependency inversion")
+            self.play(ReplacementTransform(names[3], names[4]), FadeOut(one), FadeOut(m),
+                      i_panel.animate.set_opacity(.25), run_time=.4)
+            focus(4, FadeIn(e_p), FadeIn(a_p), FadeIn(s_p), FadeIn(g_p), run_time=.4)
+            vo.wait_until("talks to the contract")
+            self.play(GrowArrow(a1), FadeIn(a1_l), GrowArrow(a2), run_time=.5)
+            self.play(GrowArrow(a3), FadeIn(a3_l), run_time=.3)
+            vo.wait_until("never to scgen")
+            self.play(Create(never), run_time=.5)
+            self.play(Create(no), FadeIn(no_l), run_time=.3)
+        # L4: refactor when the third model arrives
+        rng = np.random.default_rng(3)
+        messy = VGroup(*[line(-6.0 + rng.uniform(0, .6), .95 - k * .2, -6.0 + rng.uniform(1.2, 3.0),
+                              .95 - k * .2, GRAY, 3) for k in range(7)])
+        tidy = VGroup(*[line(-6.0 + (.3 if k % 3 else 0), .95 - k * .2, -6.0 + (2.2 if k % 3 else 2.6),
+                             .95 - k * .2, INK, 3) for k in range(7)])
+        same = VGroup(arrow([-2.9, .35, 0], [-2.1, .35, 0], INK), mono("0.5542", 22, INK).move_to([-1.3, .35, 0]),
+                      at("same result", -1.3, -.05, 17, GRAY))
+        r_lab = VGroup(label("refactoring", 24, INK, bold=True), label("reshape, same behaviour · 重构", 18, GRAY))\
+            .arrange(DOWN, aligned_edge=LEFT, buff=.08).move_to([.6, .7, 0], aligned_edge=LEFT)
+        m_y = -1.65
+        line_t = line(-6.0, m_y, 5.5, m_y, FAINT, 2)
+        mods = [pill("IdentityModel", -4.4, m_y, INK, 19), pill("scGenModel", -1.0, m_y, INK, 19)]
+        third = DashedVMobject(RoundedRectangle(corner_radius=.06, width=2.4, height=.55, color=RED),
+                               num_dashes=30).move_to([2.6, m_y, 0])
+        third_t = at("3rd model", 2.6, m_y, 19, RED)
+        here = at("refactor here", 2.6, m_y + .62, 20, RED, bold=True)
+        with self.say(4) as vo:
+            self.cue(vo, .0, *[FadeOut(x) for x in (i_panel, e_p, a_p, s_p, g_p, a1, a2, a3, a1_l, a3_l,
+                                                   never, no, no_l, names[4])],
+                     *[l.animate.set_color(GRAY) for l in letters], run_time=.4)
+            self.play(FadeIn(messy), FadeIn(same[1]), FadeIn(same[0]), FadeIn(r_lab), run_time=.4)
+            vo.wait_until("reshaping")
+            self.play(Transform(messy, tidy), Indicate(same[1], color=RED, scale_factor=1.1),
+                      FadeIn(same[2]), run_time=1.0)
+            vo.wait_until("can wait")
+            self.play(Create(line_t), FadeIn(mods[0]), FadeIn(mods[1]), run_time=.4)
+            vo.wait_until("third model")
+            self.play(Create(third), FadeIn(third_t, shift=LEFT * .2), run_time=.4)
+            self.play(FadeIn(here, shift=DOWN * .1), run_time=.3)
         self.finish()

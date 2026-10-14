@@ -628,7 +628,7 @@ class S04(Ep):
         p253 = cpanel(rows(CORE, 252, 253), CORE_PATH, 3.17, 1.36, width=6.26, size=18)
         s253 = plural_s(p253.row(253), CORE[253])
         aerr = error_card("AttributeError", ATTR_MSG, "speciesot_core.py:253 in setup", 1.95,
-                          -1.5, width=8.6, size=19, tag=None)
+                          -1.42, width=8.6, size=19, tag=None)
         plural_s(aerr[3][0], ATTR_MSG)
         atag = tag_text("MEASURED · stand-in scgen")
         atag.move_to([aerr[0].get_right()[0] - atag.width / 2 - .14,
@@ -878,11 +878,12 @@ class S06(Ep):
         c2 = rule_card(2, "derived values are derived", xs[1], ys[0])
         L2, T2 = c2.L, c2.T
         ex2 = mono_left("x_dimension = data.shape[1]", L2 + .35, T2 - .9, 17)
-        tag2 = source_tag("EXAMPLE").move_to([L2 + 6.2 - .55, T2 - .38, 0])
-        cells = VGroup(*[Square(.2, stroke_color=INK, stroke_width=1.5).move_to(
-            [L2 + .55 + c * .24, T2 - 1.45 - r * .24, 0]) for r in range(3) for c in range(4)])
-        top_line = line(L2 + .45, T2 - 1.22, L2 + 1.37, T2 - 1.22, INK, 2)
-        glab = left("data: 3 cells × 4 genes", L2 + 1.65, T2 - 1.69, 17, GRAY)
+        tag2 = source_tag("EXAMPLE")
+        tag2.move_to([L2 + 6.2 - .15 - tag2.width / 2, T2 - 2.05 + .3, 0])
+        cells = VGroup(*[Square(.18, stroke_color=INK, stroke_width=1.5).move_to(
+            [L2 + .55 + c * .22, T2 - 1.4 - r * .21, 0]) for r in range(3) for c in range(4)])
+        top_line = line(L2 + .46, T2 - 1.21, L2 + 1.30, T2 - 1.21, INK, 2)
+        glab = left("data: 3 cells × 4 genes", L2 + 1.6, T2 - 1.6, 17, GRAY)
         with self.say(1) as vo:
             vo.wait_until("One:")
             self.play(FadeIn(c1), FadeOut(slots[0]), run_time=.45)
@@ -931,15 +932,12 @@ class S06(Ep):
         cmd = 'grep -rn "x_dimensions" .'
         ex4 = mono_left(cmd, L4 + .35, T4 - .9, 17)
         plural_s(ex4, cmd)
-        tag4 = source_tag("EXAMPLE").move_to([L4 + 6.2 - .55, T4 - .38, 0])
-        files = [("speciesot_core.py", "103 104 253"), ("Tests/toy_config.yaml", "19"),
-                 ("Tests/config.yaml", "–")]
-        frows = VGroup()
-        for i, (f, hits) in enumerate(files):
-            yy = T4 - 1.28 - i * .29
-            frows.add(VGroup(mono_left(f, L4 + .35, yy, 16, GRAY), mono_left(hits, L4 + 3.4, yy,
-                                                                               16, GRAY)))
-        rerun = chip("↻ rerun", L4 + 5.35, T4 - 1.57, INK, 18, font=LATIN)
+        tag4 = source_tag("EXAMPLE")
+        tag4.move_to([L4 + 6.2 - .15 - tag4.width / 2, T4 - .38, 0])
+        files = ["src/speciesot/*.py", "Tests/*.yaml", "Tests/*.ipynb"]
+        frows = VGroup(*[mono_left(f, L4 + .35, T4 - 1.28 - i * .29, 16, GRAY)
+                         for i, f in enumerate(files)])
+        rerun = chip("↻ rerun the smallest example", L4 + 4.55, T4 - 1.57, INK, 17, font=LATIN)
         with self.say(3) as vo:
             vo.wait_until("Four:")
             self.play(FadeIn(c4), FadeOut(slots[3]), FadeIn(ex4), FadeIn(tag4),
@@ -949,11 +947,10 @@ class S06(Ep):
             self.play(FadeIn(frows), FadeIn(scan), run_time=.3)
             self.play(scan.animate.shift(RIGHT * 4.0), run_time=.7)
             vo.wait_until("YAML files included")
-            self.play(FadeOut(scan), frows[0][1].animate.set_color(INK),
-                      frows[1][1].animate.set_color(RED), frows[1][0].animate.set_color(INK),
-                      run_time=.4)
+            self.play(FadeOut(scan), frows[1].animate.set_color(RED), run_time=.4)
             vo.wait_until("Then rerun")
-            self.play(FadeIn(rerun, shift=LEFT * .1), run_time=.4)
+            self.play(FadeIn(rerun, shift=LEFT * .1), frows[1].animate.set_color(INK),
+                      run_time=.4)
 
         tp = cpanel([(n, TOY_CONFIG[n]) for n in (1, 7, 12, 21)], TOY_PATH, -4.5, .62,
                     width=3.6, size=17)
@@ -963,10 +960,10 @@ class S06(Ep):
         gap_box.move_to([-1.45, 1.15, 0])
         gap_box[1].move_to(gap_box[0])
         gap_note = at("missing", -1.45, .7, 17, RED)
-        kerr = error_card("KeyError", "'experiment'", "speciesot_core.py:86 in setup", -3.25,
-                          -1.48, width=5.9, size=20)
-        t1 = left("trap 1 · toy config drifted", -6.2, 1.82, 22, INK, bold=True)
-        t2 = left("trap 2 · YAML None", .3, 1.82, 22, INK, bold=True)
+        kerr = error_card("KeyError", "'experiment'", "speciesot_core.py:86 in setup", -3.35,
+                          -1.38, width=5.9, size=20)
+        t1 = left("trap 1 · toy config drifted", -6.3, 1.82, 22, INK, bold=True)
+        t2 = left("trap 2 · YAML None", .4, 1.82, 22, INK, bold=True)
         div = line(0, 1.95, 0, -2.4, FAINT, 1.5)
         ra = mono_left(CONFIG[31].strip(), .4, 1.05, 19)
         ra_src = left("config.yaml:31", .4, .68, 16, GRAY)
@@ -997,4 +994,110 @@ class S06(Ep):
             self.play(FadeIn(rb), GrowArrow(a2), FadeIn(vb, shift=RIGHT * .1), FadeIn(lb),
                       run_time=.4)
             self.play(FadeIn(meas), FadeIn(msrc), FadeIn(mtag), run_time=.4)
+        self.finish()
+
+
+# ================================================================ s07
+
+class S07(Ep):
+    def construct(self):
+        self.header()
+        hx = [-4.65, -1.55, 1.55, 4.65]
+        hy = 1.45
+        names = ["a YAML line", "a dictionary drawer", "init", "an attribute"]
+        codes = ["z_dimension: 50", "['z_dimension']", "self.config[…]", "self.z_dimension"]
+        boxes = VGroup(*[RoundedRectangle(corner_radius=.06, width=2.75, height=.95,
+                                          stroke_color=INK, stroke_width=2, fill_color=PAPER,
+                                          fill_opacity=1).move_to([x, hy, 0]) for x in hx])
+        caps = VGroup(*[at(n, x, hy + .2, 19, GRAY) for n, x in zip(names, hx)])
+        cods = VGroup(*[mono(c, 17, INK).move_to([x, hy - .2, 0]) for c, x in zip(codes, hx)])
+        badges = VGroup(*[hop_badge(i + 1, x - 1.375, hy + .475, r=.17)
+                          for i, x in enumerate(hx)])
+        links = VGroup(*[Arrow([hx[i] + 1.4, hy, 0], [hx[i + 1] - 1.4, hy, 0], buff=0,
+                               color=GRAY, stroke_width=2, tip_length=.14,
+                               max_tip_length_to_length_ratio=1) for i in range(3)])
+        same = at("same spelling at every hop", 0, .62, 22, RED, bold=True)
+        with self.say(0) as vo:
+            vo.wait_until("four hops")
+            self.play(FadeIn(boxes), FadeIn(badges), Create(links), run_time=.5)
+            for i, w in enumerate(("a YAML line", "a dictionary drawer", "init,",
+                                   "an attribute")):
+                vo.wait_until(w)
+                self.play(FadeIn(caps[i]), FadeIn(cods[i], shift=UP * .06), run_time=.35)
+            tok = token([hx[0] - 1.1, hy - .2, 0], r=.08)
+            vo.wait_until("Every hop")
+            path = VMobject().set_points_as_corners([[hx[0] - 1.1, hy - .52, 0],
+                                                     [hx[3] + 1.1, hy - .52, 0]])
+            self.play(FadeIn(tok), run_time=.1)
+            tok.move_to(path.get_start())
+            self.play(MoveAlongPath(tok, path), FadeIn(same), run_time=1.0)
+            self.play(FadeOut(tok), run_time=.2)
+
+        cx = [-3.2, 3.2]
+        k_chip = chip("KeyError", cx[0], -.25, INK, 24)
+        a_chip = chip("AttributeError", cx[1], -.25, INK, 24)
+        k_txt = at("a drawer is missing · 少了抽屉", cx[0], -.85, 20, GRAY)
+        a_txt = at("the object never got the fact · 少了事实", cx[1], -.85, 20, GRAY)
+        quiet = VGroup(left("a quiet bug can hide behind a fixed crash", -6.1, -1.7, 24, RED,
+                            bold=True),
+                       mono_left("x_dimension = 1000  ≠  4 genes", 1.95, -1.7, 19, INK))
+        quiet[1].move_to([6.3 - quiet[1].width / 2, -1.7, 0])
+        with self.say(1) as vo:
+            self.cue(vo, .02, same.animate.set_color(INK), run_time=.3)
+            vo.wait_until("A key error")
+            self.play(FadeIn(k_chip, shift=UP * .08), run_time=.35)
+            vo.wait_until("a drawer is missing")
+            self.play(FadeIn(k_txt), k_chip[0].animate.set_stroke(RED), k_chip[1].animate.set_color(RED),
+                      run_time=.4)
+            vo.wait_until("An attribute error")
+            self.play(FadeIn(a_chip, shift=UP * .08), k_chip[0].animate.set_stroke(INK),
+                      k_chip[1].animate.set_color(INK), run_time=.35)
+            vo.wait_until("never got the fact")
+            self.play(FadeIn(a_txt), a_chip[0].animate.set_stroke(RED),
+                      a_chip[1].animate.set_color(RED), run_time=.4)
+            vo.wait_until("And a quiet bug")
+            self.play(FadeIn(quiet[0], shift=RIGHT * .1), a_chip[0].animate.set_stroke(INK),
+                      a_chip[1].animate.set_color(INK), run_time=.45)
+            self.play(FadeIn(quiet[1]), run_time=.35)
+
+        title = left("exercise · 练习", -6.3, 1.75, 26, INK, bold=True)
+        places = [(CFG_PATH + ":37", CONFIG[37].strip()), (TOY_PATH + ":19", TOY_CONFIG[19].strip()),
+                  ("speciesot_core.py:104", 'model_config["x_dimensions"] = …'),
+                  ("speciesot_core.py:220", CORE[220].strip()),
+                  ("speciesot_core.py:253", CORE[253].strip())]
+        rows_ = VGroup()
+        boxes2 = VGroup()
+        for i, (where, code) in enumerate(places):
+            yy = 1.12 - i * .5
+            b = Square(.26, stroke_color=INK, stroke_width=2).move_to([-6.05, yy, 0])
+            w = mono_left(where, -5.7, yy, 17, GRAY)
+            c = mono_left(code, -1.25, yy, 18, INK)
+            plural_s(c, code)
+            boxes2.add(b)
+            rows_.add(VGroup(b, w, c))
+        rerun = chip("then rerun e24_replica.ipynb", -2.55, -1.55, INK, 20, font=LATIN)
+        e5 = VGroup(left("which data should the number come from?", 1.0, -1.55, 20, GRAY),
+                    chip("episode 5", 5.4, -1.55, RED, 19, font=LATIN))
+        e5[0].move_to([e5[1].get_left()[0] - .25 - e5[0].width / 2, -2.15, 0])
+        e5[1].move_to([5.4, -2.15, 0])
+        with self.say(2) as vo:
+            self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.4)
+            self.play(FadeIn(title), run_time=.3)
+            vo.wait_until("both spellings")
+            lag(self, *[FadeIn(r, shift=RIGHT * .08) for r in rows_], lag_ratio=.15,
+                run_time=.9)
+            vo.wait_until("Pick one")
+            pick = chip("x_dimension", 4.6, 1.75, RED, 20)
+            plab = left("pick one:", pick.get_left()[0] - 1.45, 1.75, 19, GRAY)
+            self.play(FadeIn(pick), FadeIn(plab), run_time=.4)
+            vo.wait_until("both YAML files")
+            self.play(*[Indicate(rows_[i][1], color=RED, scale_factor=1.06) for i in (0, 1)],
+                      run_time=.6)
+            vo.wait_until("lines 104, 220 and 253")
+            lag(self, *[Indicate(rows_[i][1], color=RED, scale_factor=1.06) for i in (2, 3, 4)],
+                lag_ratio=.25, run_time=.9)
+            vo.wait_until("Then rerun")
+            self.play(FadeIn(rerun, shift=UP * .08), run_time=.4)
+            vo.wait_until("episode five")
+            self.play(FadeIn(e5), run_time=.4)
         self.finish()
