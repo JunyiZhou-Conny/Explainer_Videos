@@ -4,16 +4,17 @@ Beats (script.md "## S03", one voiceover block each):
  0  TRACKER F/1. The 12-row terminal (title `laptop`, prompt ~/AC215) and a GREY note under the
     tracker "~/AC215 = the README's <your-workspace>" (the prompt's ~/AC215 flashes). It types the
     README's `git clone --branch flexible-workflow https://github.com/dlops-io/mega-pipeline.git`
-    (folds with " \\") -> mega-laptop/01 line 2; `--branch flexible-workflow` flashes, a GREY
-    underline and a GREY label above the terminal "checks out this branch · the others come
-    along" (thin connector). TRACKER F/2: `cd mega-pipeline` (no output), the new path part
-    flashes BLUE. ▶ your turn on the cd row.
+    (house fold: three rows ending in " \\") -> mega-laptop/01 line 2; `--branch
+    flexible-workflow` (its own row) flashes, gets a GREY underline and, beside it, the GREY label
+    "checks out this branch · the others come along". TRACKER F/2: `cd mega-pipeline` (no
+    output), the new path part flashes BLUE. ▶ your turn on the cd row.
  1  TRACKER F/2 · extra. The terminal clears; `git branch` and `git log --oneline -1` (the two
     commands of mega-laptop/03, typed separately, each with an `extra` tag) -> lines 2, 3;
-    `* flexible-workflow` flashes, `cc67f3b` flashes and gets the GREY tag "the pinned commit ·
-    2026-09-18" on the row under it. The terminal clears; `ls -a transcribe_audio` (extra; the
-    second command of mega-laptop/04) -> lines 10-18; Dockerfile, docker-shell.sh, pyproject.toml,
-    uv.lock turn GREEN as they are named; a GREEN recipe card "committed" gathers copies of them.
+    `* flexible-workflow` flashes, `cc67f3b` flashes and its row gets the GREY tag "the pinned
+    commit · 2026-09-18". `ls -a transcribe_audio` (extra; the second command of mega-laptop/04)
+    -> lines 10-18 (the two `git branch` rows scroll away); Dockerfile, docker-shell.sh,
+    pyproject.toml, uv.lock turn GREEN as they are named and a copy of each flies into a GREEN
+    recipe card; its caption "committed" on "which you wrote".
  2  TRACKER L/1 (the tracker switches section). The terminal clears, title `laptop · lecture 3
     clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to the next chapter".
     `cd mega-pipeline` (no output). TRACKER L/1 · extra: `git status --short` -> mega-l03-laptop/01
@@ -55,7 +56,7 @@ Beats (script.md "## S03", one voiceover block each):
     `FROM python:3.14-slim-bookworm` (11 line 3, "line 2 · after"). `ls -la transcribe_audio`
     (extra) -> 10 lines 8, 12, 14; the pyproject.toml and uv.lock cards flip; GREY tag "the
     branch's files · same sizes as a fresh clone"; GREY tag "replaced · no warning" + `erratum`;
-    a GREY fix card "want your lecture 3 Dockerfile, pyproject.toml, uv.lock (or
+    a GREY fix card "want your lecture 3 Dockerfile, / pyproject.toml, uv.lock (or
     docker-shell.sh)? / copy them out before switching".
 11  `ls transcribe_audio/secrets` (extra) -> 11 line 4; the GOLD key pulses and stays put.
     README chip line 50 "Your secrets/ folder … stay put". GREY fix card "delete each
@@ -64,13 +65,16 @@ Beats (script.md "## S03", one voiceover block each):
     cli.py box `stash@{1}`. Fade out to an empty frame.
 
 Deviations from SHOW (and why):
+- Beat 0: the house fold puts `--branch flexible-workflow` on its own row, so its label sits
+  beside that row instead of above the terminal.
 - Beat 1: the capture's `git branch; git log --oneline -1` and `ls; ls -a transcribe_audio` are
   typed as separate commands (conventions: `;` lines are typed one command at a time; `ls` is not
-  shown, so it is not typed). The pinned-commit tag sits on the row under `cc67f3b …` (beside it
-  it would cover the line's end).
+  shown, so it is not typed). The terminal does not clear before `ls -a`: it scrolls, so the
+  pinned-commit tag (20 pt, beside `cc67f3b …`) stays readable while the sentence goes on.
 - Beat 1: the recipe card holds all four files the SHOW highlights (docker-shell.sh included).
-- Beat 3: the strip keeps the last rows of the status output; the piles are built from copies of
-  the lines in one move at "Three piles", then each pile is emphasised as it is named.
+- Beat 3: the strip keeps the second status command and the prompt; copies of the seven output
+  lines rise clear of the strip and sort into the piles line by line at "Three piles", then each
+  pile is emphasised as it is named.
 - Beat 4: the tag "nothing new upstream · yours may list updates" (6.7 wide) sits in the top band
   right of the tracker: it fits neither beside the returned prompt in the strip nor beside the
   README chip, which is under the tracker because at 7.7 wide it doesn't fit right of it.
@@ -79,10 +83,13 @@ Deviations from SHOW (and why):
   cross the tracker.
 - Beats 6-9: V2 sits lower than in beats 3-4 (frames on the strip) and its stand-in tag is put
   away (it would cross the strip); beats 10-11 raise V2 above a 4-row strip.
-- Beat 10: the strip grows to 4 rows so `ls -la transcribe_audio` stays on screen with its three
-  output rows; its `extra` tag sits on the strip's title bar (the 64-character row has no room).
+- Beat 10: the FROM chip shows the lecture 3 line as V2 returns, before `head -2` is typed (the
+  narration names the old Dockerfile first). The strip grows to 4 rows so `ls -la
+  transcribe_audio` stays on screen with its three output rows; its `extra` tag sits on the
+  strip's title bar (the 64-character row has no room).
   `ls -la transcribe_audio` is typed as the SHOW gives it; the capture ran
   `ls -la transcribe_audio transcribe_audio/secrets`, whose rows 8, 12 and 14 are printed.
+- Rows of 60+ characters (the long prompts) take a 20 pt `extra` tag at the frame's edge.
 - Beats 10-11: the fix chips are 3-line GREY cards at the top right (as one-line chips they are
   13+ wide); beat 10's "replaced · no warning" + `erratum` sit under the tracker.
 """

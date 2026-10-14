@@ -36,16 +36,19 @@ Beats (script.md "## S03", one voiceover block each):
     the time of recording" beside the header. ▶ your turn.
  6  TRACKER A5. The picture changes: README card (README.md · lines 122-123, NOTE quote, "your
     laptop" bold); a small BLUE VM ("last lecture") holding a GREY folder gets a RED cross on
-    "doesn't help"; a GREY laptop with a PURPLE `docker` chip on its screen appears on "Docker
-    Desktop runs on your laptop". The strip types `git clone https://github.com/dlops-io/simple-
+    "doesn't help" and dims (fade, so its fill stays faint); a GREY laptop with a PURPLE `docker`
+    chip on its screen appears on "Docker Desktop runs on your laptop". The card leaves and the strip
+    grows to 5 rows while the picture rises into the card's room, so both commands stay on screen
+    for "Pause and run both". The strip types `git clone https://github.com/dlops-io/simple-
     translate.git` (folds onto a second row) -> laptop/04 line 2; the word simple-translate copies
     down from the output into the laptop's new folder label while a GREY folder appears on its
-    screen; then `cd simple-translate` (no output) and the prompt becomes
-    `student@laptop:~/simple-translate$`, its new path flashing BLUE. In the strip, a GREY row tag
-    "README.md · lines 50–51 · same as L1" beside the Cloning row and, under it, ▶ your turn beside
-    the cd row (wiggles on "Pause and run both").
+    screen; on "then cd into" `cd simple-translate` (no output) and the prompt becomes
+    `student@laptop:~/simple-translate$`, its new path flashing BLUE. A GREY row tag "README.md ·
+    lines 50–51 · same as L1" beside the first `git clone` row and ▶ your turn beside the cd row
+    (wiggles on "Pause and run both").
  7  TRACKER A5 · extra. The picture leaves; the strip clears and grows back to 10 rows. `ls -a`
-    (row tag `extra`) -> laptop/05 lines 4-12 (the clone's own listing; lines 2-3 are . and ..). Dockerfile.txt gets a YELLOW bar and the GREY row
+    (row tag `extra`) -> laptop/05 lines 4-12 (the clone's own listing; lines 2-3 are . and ..).
+    Dockerfile.txt gets a YELLOW bar and the GREY row
     tag "the solution"; dashed GREY ghost chips `Dockerfile` and `uv.lock` appear side by side on
     that row, right of the listing, as they are named; "not in the repo" under them.
  8  TRACKER A5 · extra. The listing clears (the `Dockerfile` ghost stays); `docker build -t
@@ -60,9 +63,10 @@ import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
+from explainer.devops import line_pitch
 from explainer.scene import VoiceScene
 
-from common import (BUILD, CD, CLONE, CLOUD, CONTAINER_LS, ERR, IMAGE_LS, INK, LAPTOP, MONO,
+from common import (BOTTOM, BUILD, CD, CLONE, CLOUD, CONTAINER_LS, ERR, IMAGE_LS, INK, LAPTOP, MONO,
                     NARRATION, P_LAPTOP, P_LAPTOP_HOME, PRUNE, STRIP_ROWS, SYSTEM, TRACK_BOTTOM,
                     TURN, ask, attach, bare_prompt, beside, box, capture, check_mark, chip, cross_mark,
                     docker_chip, erratum_tag, folder_glyph, glyph_range, hl_bar, illustration_tag, label, laptop,
@@ -147,8 +151,12 @@ def status_chip(s: str, size: float = 22) -> VGroup:
 def ghost(s: str, size: float = 20) -> VGroup:
     """A dashed GREY chip the height of a terminal row: a file that is not there. .box .text"""
     t = mono(s, size, S.GREY)
-    h = 0.36
-    b = box(t.width + 0.42, h, S.GREY, dashed=True, radius=0.08)
+    w, h = t.width + 0.42, 0.38
+    # short, dense dashes and nearly square corners: box(dashed=True)'s long dashes put a single
+    # curved dash on each short side, which reads as a pair of brackets around the name
+    r = RoundedRectangle(width=w, height=h, corner_radius=0.04)
+    b = DashedVMobject(r, num_dashes=round(2 * (w + h) / 0.15), dashed_ratio=0.6)
+    b.set_stroke(S.GREY, 2.5)
     t.move_to(b)
     g = VGroup(b, t)
     g.box, g.text = b, t
@@ -265,7 +273,8 @@ class CleanSlate(VoiceScene):
             vo.wait_until("if you have one")
             self.play(FadeIn(stop, shift=LEFT * 0.2), run_time=0.5)
             vo.wait_until("docker stop with")
-            self.play(Indicate(substring_text(stop.text, STOP, "<CONTAINER ID>"), color=INK, scale_factor=1.15),
+            # a small scale: at 1.15 the 14 glyphs grow over the space and read "stop<CONTAINER ID>"
+            self.play(Indicate(substring_text(stop.text, STOP, "<CONTAINER ID>"), color=TURN, scale_factor=1.05),
                       run_time=0.7)
             self.play(FadeIn(only, shift=UP * 0.1), run_time=0.4)
 
@@ -380,9 +389,16 @@ class CleanSlate(VoiceScene):
         lap = laptop(2.4, LAPTOP)
         lap.shift(np.array([2.6, glyph_top, 0]) - lap.screen.get_top())
         dock = docker_chip("docker", size=20).move_to(lap.screen.get_center() + UP * 0.36)
-        fold = folder_glyph(0.5, LAPTOP).move_to(lap.screen.get_center() + DOWN * 0.3)
-        lap_name = mono("simple-translate", 20, S.GREY).next_to(lap, DOWN, buff=0.15)
+        pic = VGroup(vm, x_vm, lap, dock)
+        fold = folder_glyph(0.5, LAPTOP)
+        lap_name = mono("simple-translate", 20, S.GREY)
         same = row_tag([("README.md", "mono"), ("· lines 50–51 · same as L1", "label")])
+        # Before the clone the card leaves and the strip grows to 5 rows, so that both commands
+        # (git clone on two rows, its output, cd, the new prompt) stay on screen for "Pause and
+        # run both"; the picture rises into the card's room, centred between tracker and strip.
+        strip5_top = BOTTOM + 5 * line_pitch(t.size) + 0.85
+        pic_low = lap.get_bottom()[1] - 0.15 - lap_name.height        # the folder label's bottom
+        rise = (strip5_top + TRACK_BOTTOM) / 2 - (glyph_top + pic_low) / 2
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(survivor, ill), shift=UP * 0.1), track(tr, 5), run_time=0.6)
@@ -392,24 +408,28 @@ class CleanSlate(VoiceScene):
             vo.wait_until("a clone on last")
             self.play(FadeIn(vm, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("doesn't help")
-            self.play(Create(x_vm), vm.animate.set_opacity(0.45), run_time=0.6)
+            # fade(), not set_opacity(): the VM keeps its faint fill (set_opacity(0.45) filled it solid)
+            self.play(Create(x_vm), vm.animate.fade(0.55), run_time=0.6)
             vo.wait_until("Docker Desktop runs")
             self.play(FadeIn(lap, shift=UP * 0.15), run_time=0.6)
-            self.play(FadeIn(dock, scale=0.8), run_time=0.4)
-            lead(vo, "Clone it here", 0.7)
-            type_cmd(self, t, CLONE, 1.2)
+            self.play(FadeIn(dock, scale=0.8), run_time=0.3)
+            self.play(FadeOut(card6, shift=UP * 0.15), run_time=0.3)
+            resize(self, t, 5, extra=[pic.animate.shift(UP * rise)], run_time=0.6)
+            fold.move_to(lap.screen.get_center() + DOWN * 0.3)
+            lap_name.next_to(lap, DOWN, buff=0.15)
+            lead(vo, "Clone it here", 0.8)
+            c6a = type_cmd(self, t, CLONE, 1.0)
             out6 = t.print(self, CLONE_OUT, run_time=0.3)[0]
             self.play(TransformFromCopy(substring(out6, "simple-translate"), lap_name),
-                      GrowFromCenter(fold), run_time=0.7)
-            tag_x = out6.strut.get_left()[0] + mono_line(P_LAPTOP_HOME + " " + CD, t.size).width + 0.45
-            same.move_to([tag_x + same.width / 2, out6.strut.get_center()[1], 0])
-            pin(self, out6, same, run_time=0.4)
+                      GrowFromCenter(fold), run_time=0.6)
+            vo.wait_until("then cd into")
             c6 = type_cmd(self, t, CD, 0.5)
             t.set_prompt(P_LAPTOP)
             p6 = bare_prompt(self, t)
             self.play(Indicate(substring(p6, "~/simple-translate"), color=CLOUD, scale_factor=1.15), run_time=0.5)
-            yt6 = turn_tag()
-            yt6.move_to([tag_x + yt6.width / 2, c6.strut.get_center()[1], 0])
+            # the README tag beside the clone command (README.md:50-51), ▶ your turn beside cd
+            pin(self, c6a.rows[0], beside(same, c6a.rows[0]), run_time=0.4)
+            yt6 = beside(turn_tag(), c6)
             lead(vo, "Pause and run both", 0.4)
             pin(self, c6, yt6, run_time=0.4)
             self.play(Wiggle(yt6, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.6)
@@ -420,7 +440,7 @@ class CleanSlate(VoiceScene):
         sol = row_tag("the solution")
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(card6, vm, x_vm, lap, dock, fold, lap_name), shift=UP * 0.1),
+            self.play(FadeOut(VGroup(vm, x_vm, lap, dock, fold, lap_name), shift=UP * 0.1),
                       track(tr, 5, extra=True), run_time=0.6)
             t.clear(self)
             resize(self, t, 10)
@@ -467,13 +487,13 @@ class CleanSlate(VoiceScene):
             assert cut == t.max_chars
             u1 = under(part1, TURN, y=err[0].strut.get_bottom()[1] - 0.01)
             u2 = under(part2, TURN, y=err[1].strut.get_bottom()[1] - 0.01)
-            self.play(Create(u1), Create(u2), run_time=0.6)
+            self.play(Create(u1), Create(u2), run_time=0.5)
             attach(self, err[0], u1)
             attach(self, err[1], u2)
             gone = substring(err[1], "no such file or directory")
             self.play(g_df.animate.move_to([gone.get_right()[0] + 0.45 + g_df.width / 2, row_y(t, 3), 0]),
-                      run_time=0.6)
-            self.play(Wiggle(g_df, scale_value=1.15, rotation_angle=0.02 * TAU), run_time=0.7)
+                      run_time=0.5)
+            self.play(Wiggle(g_df, scale_value=1.15, rotation_angle=0.02 * TAU), run_time=0.45)
             vo.wait_until("The README wants")
             steps5.next_to(br, DOWN, buff=0.2)
             row5 = VGroup(g_df.copy(), steps5.copy()).arrange(RIGHT, buff=0.25)
@@ -483,7 +503,7 @@ class CleanSlate(VoiceScene):
                       run_time=0.7)
             vo.wait_until("in five steps")
             self.play(LaggedStart(*[Indicate(d, color=TURN, scale_factor=2.0) for d in five], lag_ratio=0.25),
-                      run_time=1.2)
+                      run_time=1.0)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

@@ -3,7 +3,8 @@
 Beats (script.md "## S02", one voiceover block each):
 0. A GREY README card (README.md · lines 60–67: lines 61 and 63, quoted) condenses into two
    rows. Top: "production: services call each other's APIs", five small TEAL boxes joined by
-   direct GREY arrows (A→B, B→C, B→D over C, D→E); the arrows fade and each gets a GREY cross.
+   direct GREY arrows (A→B, B→C, B→D over C, D→E); the arrows fade (stroke and tips only) and
+   each gets a GREY cross.
    Bottom: "here: write outputs to shared storage; the next stage reads them", the same boxes
    (copied down) over a small BLUE cabinet; on the words, every box writes into a drawer, then
    reads from one (thin GREY arrows, always box↔drawer).
@@ -11,7 +12,7 @@ Beats (script.md "## S02", one voiceover block each):
    (README.md · lines 74–80: the seven prefixes in the README's order, two columns) writes in
    above; letter by letter each prefix flies down into its drawer's two-line label (pipeline
    order, so text_translated/ and text_audios/ cross), output_audios_pp/ into the dashed bonus
-   drawer (tag "bonus"); the content icons fade in; the card leaves and V1 rises to the middle;
+   drawer (tag "bonus"); the content icons fade in; the card leaves, then V1 rises to the middle;
    tag "illustration" on the cabinet. A's letter and name appear; a copy of the waveform rises
    from input_audios/ into A (A's label dims while it is inside) and comes out as a short page
    into text_prompts/; then B: a long page into text_paragraphs/.
@@ -20,7 +21,8 @@ Beats (script.md "## S02", one voiceover block each):
    text_translated/ as an FR page; E's label; through E into output_audios/ as a waveform. The
    reads and writes fade in as thin arrows (every one box↔drawer); GREY caption under V1: "every
    arrow goes through a drawer".
-3. The caption becomes "you run each one, by hand"; a small GREY hand taps A, then B, then C.
+3. The caption pulses on "Nothing triggers anything" (so it stays readable), then becomes "you
+   run each one, by hand"; a small GREY hand taps A, then B, then C.
 4. Zoom: text_prompts/ grows into one big BLUE drawer while the rest of V1 fades. The PINK object
    name writes across it as it is spoken: text_prompts, /group-01, /input-….txt (each slash
    pulses as it is said); on "one single object name" both slashes pulse again and a PINK
@@ -198,6 +200,15 @@ def prod_row(xs, y: float, w: float = 0.72, h: float = 0.6) -> VGroup:
     return g
 
 
+def faded_arrow(a, k: float):
+    """A copy of arrow `a` at opacity k: the stroke and the tip's fill only (set_opacity would
+    also fill the curved arrow's body, a grey lens between the arc and its chord)."""
+    t = a.copy().set_stroke(opacity=k)
+    for tip in t.get_tips():
+        tip.set_fill(opacity=k)
+    return t
+
+
 def prefix_card() -> VGroup:
     """README.md · lines 74–80: the seven prefixes in the README's order, two columns of mono
     rows (fixed baselines). .items (README order) .frame .header"""
@@ -206,7 +217,7 @@ def prefix_card() -> VGroup:
     for k, it in enumerate(items):
         col, row = divmod(k, 4)
         it.shift(np.array([col * 3.6, -row * pitch, 0]) - it.strut.get_corner(UL))
-    fr = RoundedRectangle(width=items.width + 0.6, height=items.height + 0.4, corner_radius=0.12,
+    fr = RoundedRectangle(width=items.width + 0.6, height=items.height + 0.32, corner_radius=0.12,
                           stroke_color=S.GREY, stroke_width=2.5).set_fill(S.BG, 0.92).move_to(items)
     head = VGroup(mono("README.md", 20, S.GREY), label("· lines 74–80", 20, S.GREY)).arrange(RIGHT, buff=0.12)
     head.next_to(fr, UP, buff=0.08).align_to(fr, LEFT).shift(RIGHT * 0.1)
@@ -314,7 +325,7 @@ class BucketBus(VoiceScene):
             self.play(LaggedStart(*[FadeIn(b, scale=0.8) for b in prod.boxes], lag_ratio=0.15), run_time=0.7)
             self.play(LaggedStart(*[Create(a) for a in prod.arrows], lag_ratio=0.25), run_time=0.8)
             vo.wait_until("This tutorial simplifies")
-            self.play(prod.arrows.animate.set_opacity(0.3),
+            self.play(*[Transform(a, faded_arrow(a, 0.3)) for a in prod.arrows],
                       LaggedStart(*[Create(c) for c in crosses], lag_ratio=0.2), run_time=0.8)
             vo.wait_until("each component writes")
             self.add(mini)                     # cabinet + drawers fade in; the boxes come down from the top row
@@ -332,7 +343,9 @@ class BucketBus(VoiceScene):
         retip([*relay.read_edges, *relay.write_edges], 0.18)
         relay.icons[2].scale(0.86)     # the long page clears its two-line label and the drawer's edge
         relay.shift(UP * (RELAY_BOTTOM - relay.get_bottom()[1]))
-        pc = prefix_card().move_to([0, 2.28, 0])
+        pc = prefix_card().move_to(ORIGIN)     # a clear gap above the boxes, inside the safe frame
+        pc.shift(UP * (relay.boxes.get_top()[1] + 0.18 - pc.frame.get_bottom()[1]))
+        assert pc.get_top()[1] <= 3.52, pc.get_top()[1]
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(prod, crosses, cap_top, cap_bot)), ReplacementTransform(mini, relay),
@@ -362,24 +375,27 @@ class BucketBus(VoiceScene):
             unhide(relay, relay.icons, relay.parts["bonus_tag"])
             self.play(LaggedStart(*[FadeIn(ic, shift=UP * 0.1) for ic in relay.icons], lag_ratio=0.12),
                       FadeIn(relay.parts["bonus_tag"]), run_time=0.9)
-            # the card leaves and V1 rises to the middle of the frame
+            # the card leaves, then V1 rises to the middle of the frame (the card never slides
+            # over the boxes)
             rise = -relay.get_center()[1]
-            self.play(FadeOut(pc.frame), FadeOut(pc.header), FadeOut(pc.items), relay.animate.shift(UP * rise),
-                      run_time=0.8)
+            self.play(FadeOut(pc.frame), FadeOut(pc.header), FadeOut(pc.items), run_time=0.35)
             self.remove(pc)
+            self.play(relay.animate.shift(UP * rise), run_time=0.6)
             ill = illustration_tag().next_to(relay.cabinet, DOWN, buff=0.17).align_to(relay.drawers[0].frame, LEFT)
             relay.attach(self, ill, run_time=0.4)
             vo.wait_until("The first stage")
             self.show_box(relay, 0)
-            vo.wait_until("turns recordings")
+            # each token lands in its drawer as the drawer is named
+            vo.wait_until("from input audios")
             tok = relay.icons[0].copy()
             self.add(tok)
-            self.route(relay, tok, 0, run_time=2.2)
+            self.route(relay, tok, 0, run_time=2.6)
             vo.wait_until("Then B turns")
             self.show_box(relay, 1)
+            vo.wait_until("each transcript")
             tok = relay.icons[1].copy()
             self.add(tok)
-            self.route(relay, tok, 1, run_time=2.2)
+            self.route(relay, tok, 1, run_time=3.0)
 
         # ========================================================== 2. the split: C, D, E; the arrows
         every = label("every arrow goes through a drawer", 26, S.GREY).move_to([0, CAP_Y, 0])
@@ -392,7 +408,8 @@ class BucketBus(VoiceScene):
                       Indicate(relay.drawers[2].frame, color=CLOUD, scale_factor=1.04), run_time=0.9)
             vo.wait_until("C turns")
             self.show_box(relay, 2)
-            self.route(relay, tc, 2, run_time=2.0)
+            vo.wait_until("into English speech")
+            self.route(relay, tc, 2, run_time=3.0)
             vo.wait_until("D translates")
             self.show_box(relay, 3)
             self.route(relay, td, 3, run_time=1.8)
@@ -414,9 +431,11 @@ class BucketBus(VoiceScene):
             return hand.copy().shift(b.get_top() + UP * lift - hand_tip(hand))
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(Transform(every, by_hand), run_time=0.7)
+            # "Nothing triggers anything": the caption that says why stays up, and pulses
+            self.play(Indicate(every, color=TURN, scale_factor=1.06), run_time=0.9)
+            vo.wait_until("you run each component")
             hand.become(at_box(0))
-            self.play(FadeIn(hand, shift=DOWN * 0.2), run_time=0.4)
+            self.play(Transform(every, by_hand), FadeIn(hand, shift=DOWN * 0.2), run_time=0.6)
             for j in range(3):
                 if j:
                     self.play(hand.animate.become(at_box(j)), run_time=0.45)
@@ -446,14 +465,14 @@ class BucketBus(VoiceScene):
                       TransformFromCopy(relay.drawers[1], VGroup(big_fr, big_handle)),
                       TransformFromCopy(relay.drawer_labels[1], big_label), run_time=1.3)
             self.play(FadeIn(ill4), run_time=0.4)
-            vo.wait_until("a name like")
+            vo.wait_until("text prompts, slash")
             self.play(Write(n_pre), run_time=0.8)
             vo.wait_until("slash, group-01")
             self.play(FadeIn(n_s1, scale=1.6), run_time=0.3)
             self.play(Write(n_grp), Indicate(n_s1[0], color=TURN, scale_factor=1.6), run_time=0.8)
             vo.wait_until("slash, input")
             self.play(FadeIn(n_s2, scale=1.6), run_time=0.3)
-            self.play(Write(n_file), Indicate(n_s2[0], color=TURN, scale_factor=1.6), run_time=1.0)
+            self.play(Write(n_file), Indicate(n_s2[0], color=TURN, scale_factor=1.6), run_time=1.4)
             self.remove(n_pre, n_s1, n_grp, n_s2, n_file)
             self.add(name)                                       # the same glyphs, now one group
             vo.wait_until("is one single object name")

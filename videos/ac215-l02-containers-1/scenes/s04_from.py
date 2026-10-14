@@ -18,20 +18,19 @@ Beats (script.md "## S04", one voiceover block each):
     WHITE ("the recipe"), the final `.` gets a PINK ring ("build context: this folder"); a GREY
     folder pops out of the dot and rides a PINK route into a PURPLE "builder" box. On "Step 3" the
     tracker's step-9 dot pulses.
- 3  The 13-row laptop terminal fades in and the big command's glyphs fly into its two folded rows
-    (the slide is the typing). ▶ your turn. laptop/09 lines 2, …, 15 (cut after
-    `@sha256:34386ef0`, folds onto 2 rows), …, 31-34 (hash12), …, 38, printed in chunks like a
+ 3  The labels leave and the 13-row laptop terminal fades in while the big command's glyphs fly
+    into its two folded rows (the slide is the typing). ▶ your turn. laptop/09 lines 2, …, 15 (cut
+    after `@sha256:34386ef0`, folds onto 2 rows), …, 31-34 (hash12), …, 38, printed in chunks like a
     progress log. GREY row tags on the `…` rows: "your terminal: a compact view · this is the full
     log (--progress=plain)" (its flag pulses on "add dash dash progress"), then "default" in line 2
     underlines YELLOW and 'Docker Desktop: builder "desktop-linux" · …' appears under it; last, on
     the bottom `…` row: "stops with toomanyrequests? → wait a while, or docker login (part 2)".
  4  The notes leave. The four sizes turn ORANGE in turn ("four layers"); on "under 50" copies of
     them fly up into a right-aligned list while the terminal shrinks to the 3-row strip (keeping
-    the command and line 38), summed "≈ 47.6 MB compressed". V2: four thin equal ORANGE slabs (TEAL
-    outlines) drop as one group left of the list, brace "base image" between them,
-    `python:3.12-slim-bookworm` (mono, TEAL) under the stack. `simple-translate:latest` in line 38
-    turns TEAL on "saves the result", ":latest" pulses on "tagged latest"; the four slabs pulse on
-    "Those four layers".
+    the command and line 38), summed "≈ 47.6 MB compressed". `simple-translate:latest` in line 38
+    turns TEAL on "saves the result", ":latest" pulses on "tagged latest". On "Those four layers"
+    V2 starts: four thin equal ORANGE slabs (TEAL outlines) drop as one group left of the list,
+    brace "base image" between them, `python:3.12-slim-bookworm` (mono, TEAL) under the stack.
  5  TRACKER A7 · extra. The list leaves; the strip grows to 5 rows and types
     `docker image inspect simple-translate --format '…'` (row tag `extra`; the quoted format wraps at
     the terminal edge like a real terminal's soft wrap) -> laptop/10 line 2. V3: the TEAL config
@@ -40,7 +39,8 @@ Beats (script.md "## S04", one voiceover block each):
     GREY "inherited from / the base image" points at the CMD row while the base slabs pulse. Under
     the card the start-up line `python3` copies down from the tile, then "→ >>>" (prediction).
  6  TRACKER A7. The picture leaves except the prediction, which moves top right with "predicted:".
-    The terminal clears and grows to 10 rows; `docker run --rm -ti simple-translate` (two rows);
+    The terminal clears and grows to 10 rows; `docker run --rm -ti simple-translate` (two rows),
+    typed at the pace it is spoken;
     `--rm` underlines with "clean up on exit" under it, `-ti` with "type into it" under it (in the
     empty row 2); ▶ your turn on "Pause and run it". The -ti label leaves just before the output
     takes its row: laptop/11 lines 2-3 (cut at the 65-column edge) and the `>>>` prompt; GREEN check
@@ -51,7 +51,8 @@ Beats (script.md "## S04", one voiceover block each):
     line 5 YELLOW bar. Top right a YELLOW `Dockerfile` file chip ("you just made it");
     CODE(dot-gitignore.txt: 1–4) slides in left (header `.gitignore · lines 1–4`), line 3 YELLOW,
     tag `erratum`; the file chip dims with "hidden from git"; a GREEN chip `git add -f Dockerfile`
-    "to commit it anyway", `-f` pulses. Fade out to an empty frame.
+    "to commit it anyway", `-f` pulses as the file chip returns ("hidden from git" leaves). Fade
+    out to an empty frame.
 """
 
 import numpy as np  # noqa: I001  (manim first, then common: common must win)
@@ -373,15 +374,22 @@ class StepFrom(VoiceScene):
         texts = t.fold(P + BUILD, first_prefix=len(P))
         assert len(texts) == 2 and texts[0].endswith(" \\")
 
+        # the command's rows, placed but not yet in t.lines (so FadeIn(t) below leaves them alone)
+        t2c = t._prompt_colors(t.prompt)
+        r0, r1 = [mono_line(s, t.size, INK, t2c=t2c if k == 0 else None) for k, s in enumerate(texts)]
+        t._place(r0, 0)
+        t._place(r1, 1)
+        typed = VGroup(*glyph_range(r0, len(P), len(texts[0]) - 2), *glyph_range(r1, 0))
+        assert len(typed) == len(big.glyphs)
+
         with self.voiceover(SAY[3]) as vo:
+            # the labels leave and the terminal appears while the command flies into its rows
             self.play(FadeOut(VGroup(head2, ul_name, ul_recipe, lab_name, lab_recipe, ring, lab_ctx, folder,
-                                     builder, path2)), FadeIn(t), run_time=0.5)
-            r0, r1 = make_rows(t, texts)
-            typed = VGroup(*glyph_range(r0, len(P), len(texts[0]) - 2), *glyph_range(r1, 0))
-            assert len(typed) == len(big.glyphs)
-            self.play(*[ReplacementTransform(a, b) for a, b in zip(big.glyphs, typed)],
+                                     builder, path2)), FadeIn(t),
+                      *[ReplacementTransform(a, b) for a, b in zip(big.glyphs, typed)],
                       FadeIn(glyph_range(r0, 0, len(P))), FadeIn(glyph_range(r0, len(texts[0]) - 1)),
                       run_time=0.9)
+            t.lines.add(r0, r1)
             self.remove(*typed)
             self.add(r0, r1)
             yt3 = beside(turn_tag(), r1)
@@ -442,21 +450,19 @@ class StepFrom(VoiceScene):
             resize(self, t, STRIP_ROWS, keep=[r0, r1, o38], run_time=0.8,
                    extra=[ReplacementTransform(c, s) for c, s in zip(copies, sz_targets)])
             self.play(Create(rule), FadeIn(total, shift=UP * 0.1), run_time=0.5)
-            stack.drop(self, *base, run_time=0.7)
-            self.play(GrowFromCenter(br.brace), FadeIn(br.text), FadeIn(cap, shift=UP * 0.1), run_time=0.6)
             lead(vo, "and saves the result", 0.2)
             name38 = substring(o38, "simple-translate:latest")
             self.play(name38.animate.set_color(IMAGE), run_time=0.5)
-            self.play(Indicate(name38, color=IMAGE, scale_factor=1.12), run_time=0.7)
+            self.play(Indicate(name38, color=IMAGE, scale_factor=1.12), run_time=0.6)
             vo.wait_until("tagged latest")
-            self.play(Indicate(substring(o38, ":latest"), color=IMAGE, scale_factor=1.12), run_time=0.7)
-            vo.wait_until("Those four layers")
-            self.play(LaggedStart(*[Indicate(s, color=SYSTEM, scale_factor=1.06) for s in base], lag_ratio=0.2),
-                      Indicate(br.text, color=SYSTEM, scale_factor=1.15), run_time=1.1)
+            self.play(Indicate(substring(o38, ":latest"), color=IMAGE, scale_factor=1.12), run_time=0.6)
+            vo.wait_until("Those four layers")          # the narrated thing: the base slabs land now
+            stack.drop(self, *base, run_time=0.8)
+            self.play(GrowFromCenter(br.brace), FadeIn(br.text), FadeIn(cap, shift=UP * 0.1), run_time=0.6)
 
         # ========================================================== 5 · inspect: the config card (V3)
-        card = ConfigCard(card_w=4.8, inline=True)
-        card.move_to([6.25 - card.width / 2, 2.86 - card.height / 2, 0])
+        card = ConfigCard(card_w=4.65, inline=True)     # left edge clear of the tracker's "· extra"
+        card.move_to([6.45 - card.width / 2, 2.86 - card.height / 2, 0])
         n_entry = card.note("ENTRYPOINT", "null")
         n_wd = card.note("WorkingDir", '""')
         cmd_tile = card.place("CMD", card.tile('["python3"]'))
@@ -485,9 +491,9 @@ class StepFrom(VoiceScene):
             vo.wait_until("reads the config card")
             self.play(FadeIn(card, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("no entrypoint")
-            self.play(TransformFromCopy(substring(out5, "null"), n_entry), run_time=0.6)
-            self.play(Indicate(card.keys["ENTRYPOINT"], color=IMAGE, scale_factor=1.1), run_time=0.5)
-            self.play(TransformFromCopy(substring(out5, '""'), n_wd), run_time=0.4)
+            self.play(TransformFromCopy(substring(out5, "null"), n_entry), run_time=0.5)
+            self.play(Indicate(card.keys["ENTRYPOINT"], color=IMAGE, scale_factor=1.1), run_time=0.4)
+            self.play(TransformFromCopy(substring(out5, '""'), n_wd), run_time=0.35)
             vo.wait_until("and the command python3")
             self.play(TransformFromCopy(substring(out5, '["python3"]'), cmd_tile), run_time=0.7)
             vo.wait_until("inherited from the base")
@@ -510,8 +516,8 @@ class StepFrom(VoiceScene):
                       run_time=0.7)
             t.clear(self)
             resize(self, t, 10, run_time=0.6)
-            lead(vo, "docker run, dash", 0.6)
-            c6 = type_cmd(self, t, RUN, 1.0)
+            lead(vo, "docker run, dash", 0.15)
+            c6 = type_cmd(self, t, RUN, 3.3)                 # typed as it is spoken
             r6a, r6b = c6.rows
             vo.wait_until("Dash dash rm cleans")
             g_rm = substring(r6a, "--rm")
@@ -566,9 +572,11 @@ class StepFrom(VoiceScene):
         anyway = label("to commit it anyway", 20, S.GREY).next_to(add_f, DOWN, buff=0.14)
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(said, pred, tick, rec)), track(tr, 7, extra=True), run_time=0.4)
-            t.clear(self)
-            resize(self, t, 5, run_time=0.5)
+            self.play(FadeOut(VGroup(said, pred, tick, rec)), FadeOut(t.lines), track(tr, 7, extra=True),
+                      run_time=0.4)                          # the picture and the run's rows go together
+            for m in list(t.lines):
+                t.lines.remove(m)
+            resize(self, t, 5, run_time=0.45)
             lead(vo, "an extra git status", 0.2)
             c7 = type_cmd(self, t, GIT_STATUS, 0.5)
             pin(self, c7, beside(row_tag("extra"), c7), run_time=0.3)
@@ -594,7 +602,7 @@ class StepFrom(VoiceScene):
             self.play(FadeIn(add_f, shift=UP * 0.15), FadeIn(anyway), run_time=0.6)
             vo.wait_until("use git add dash f")
             self.play(Indicate(text_span(add_f.text, GIT_ADD_F, "-f"), color=TURN, scale_factor=1.6),
-                      Restore(fchip), run_time=0.8)
+                      Restore(fchip), FadeOut(hidden), run_time=0.8)   # no longer hidden once added
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

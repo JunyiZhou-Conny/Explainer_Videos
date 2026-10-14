@@ -9,11 +9,12 @@ Beats (script.md "## S02", one voiceover block each):
     becomes what it produced as it is named: `apt` -> ORANGE "OS files" and ORANGE "Python",
     `uv sync` -> GREEN "packages", `git clone` -> GREY "your code"; the box closes solid TEAL,
     caption "an image".
- 1. The VM picture fades; the box moves center-left and opens: its items become three translucent
-    slabs with TEAL outlines, bottom-up "OS files + Python" (ORANGE), "packages" (GREEN), "your
-    code" (GREY); a lock glyph "read-only" on the stack's top corner. Each slab pulses on "Each
-    layer". At "Beside it" a TEAL config card with four empty rows ENV, ENTRYPOINT, CMD, WorkingDir
-    slides in at right; ENV lights on "settings like", ENTRYPOINT + CMD on "which program".
+ 1. The VM picture fades; the box (with "an image") moves center-left and opens: its items become
+    three translucent slabs with TEAL outlines, bottom-up "OS files + Python" (ORANGE; the two
+    items' boxes merge and their letters regroup into the label), "packages" (GREEN), "your code"
+    (GREY); a lock glyph "read-only" on the stack's top corner. Each slab pulses on "Each layer".
+    At "Beside it" a TEAL config card with four empty rows ENV, ENTRYPOINT, CMD, WorkingDir slides
+    in at right; ENV lights on "settings like", ENTRYPOINT + CMD on "which program".
  2. A GREY page "Dockerfile" at far left, lines `FROM …`, `RUN …`, `COPY …`, `CMD …`. A YELLOW bar
     reads them one at a time and each keyword flies (TransformFromCopy) to what it makes, landing as
     a TEAL tile just left of its slab: FROM by the base slab, RUN and COPY by theirs (a brace on
@@ -21,18 +22,19 @@ Beats (script.md "## S02", one voiceover block each):
     `["…"]` ("config only" under the card). No arrows: the flying keywords are the arrows.
  3. The page, the card and the tags fade; the lock moves to the stack's side. A PURPLE `docker run`
     chip: a dashed, glowing TEAL glass slab lands on the stack ("writable layer") with a TEAL dot
-    "main process"; label "container". At "the same layers" it lifts left and a second container
-    appears beside it, both linked by thin TEAL lines to the SAME stack, caption "shared, not
-    copied". The glass slabs pulse on "plus a thin", the dots on "one main process". The first dot
-    goes out ("stopped"); a `--rm` chip dissolves that whole container (glass, labels, link).
-    GREEN check "image unchanged".
+    "main process"; the chip turns into the label "container". At "the same layers" it lifts left
+    and a second container appears beside it, both linked by thin TEAL lines to the SAME stack,
+    caption "shared, not copied". The glass slabs pulse on "plus a thin", the dots on "one main
+    process". The first dot
+    goes out ("stopped"); a `--rm` chip lands on it and, at "deletes it", that whole container
+    (glass, labels, link) dissolves; the chip leaves with the GREEN check "image unchanged".
  4. The remaining container settles on the stack and the picture moves left; captions under it:
     "image = class", "container = instance" (TEAL). They fade; README card (README.md · line 173)
-    "Build the docker container by running", "container" struck YELLOW with "image" above it, tag
-    "erratum"; a second card slides in under it (README.md · line 146) "Install uv & copy source
-    code into the container", struck the same way. "Building makes an image" pulses the stack,
-    "running makes a container" the glass. (The keyword tiles fade; the picture keeps its size,
-    since shrinking it would take its labels under 20 pt.)
+    "Build the docker container by running", and a second card slides in under it (README.md ·
+    line 146) "Install uv & copy source code into the container". At "the docker container" both
+    "container"s are struck YELLOW with "image" above them, tag "erratum". "Building makes an
+    image" pulses the stack, "running makes a container" the glass. (The keyword tiles fade; the
+    picture keeps its size, since shrinking it would take its labels under 20 pt.)
  5. The cards and the picture fade. A BLUE shelf unit "registry · Docker Hub": small TEAL stacks
     with sticky notes `python:3.12-slim-bookworm` and `dlops/simple-translate:latest`. A newer stack
     lands; `:latest` lights YELLOW and the note peels off the old stack and sticks to the newer one;
@@ -44,10 +46,12 @@ Beats (script.md "## S02", one voiceover block each):
     one GREY "Linux kernel · shared", which pulses.
  7. V8, second half: a GREY laptop outline wraps the picture ("Mac · Windows"); a dashed GREY box
     "Linux VM · Docker Desktop" slides in under the kernel bar. Then the laptop outline morphs into
-    a BLUE VM outline ("cloud VM"), the dashed box fades: caption "on a cloud VM: its own Linux".
- 8. L1's three chips return beside a stack whose two bottom slots are empty (dashed): two
-    RED-outlined, "the operating system's files" and "system libraries", fly into the slots and
-    become ORANGE slabs (GREEN check); the third, "GPU drivers", stays outside, GREY, "still the
+    a BLUE VM outline ("cloud VM", ending under the kernel bar), the dashed box fades: caption "on a
+    cloud VM: its own Linux".
+ 8. L1's three chips return beside a stack whose two bottom slots are empty (dashed), each RED-
+    outlined chip level with its slot: "the operating system's files" slides into the bottom slot at
+    "the system's files", "system libraries" into the next at "and libraries", both becoming ORANGE
+    slabs (GREEN check); the third, "GPU drivers", stays outside below them, GREY, "still the
     host's". Fade out to an empty frame.
 """
 
@@ -57,7 +61,7 @@ from manim import *
 from explainer import style as S
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, ERR, IMAGE, INK, LAPTOP, MONO, NARRATION, SYSTEM, TURN, VENV, ConfigCard,
+from common import (CLOUD, ERR, IMAGE, INK, LAPTOP, MONO, NARRATION, SYSTEM, TOOL, TURN, VENV, ConfigCard,
                     Glass, KernelPicture, LayerStack, Nest, RegistryShelf, Slab, box, check_mark, chip,
                     docker_chip, erratum_tag, label, lock_glyph, mini_stack, mono, outline_box,
                     readme_card, steady, sticky, tag)
@@ -211,14 +215,18 @@ class FourNouns(VoiceScene):
         card.move_to([4.9, 0, 0]).align_to(s_os.box, DOWN)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(head.words[0].animate.set_color(IMAGE), FadeOut(VGroup(nest, right_os, an_image)),
-                      VGroup(ibox_solid, items).animate.move_to([STACK_X, FLOOR_Y + 1.6, 0]), run_time=0.9)
-            # the box opens: what it held becomes three slabs, bottom-up
-            self.play(FadeOut(ibox_solid, scale=1.12),
-                      LaggedStart(ReplacementTransform(VGroup(i_os, i_py), s_os),
+            self.play(head.words[0].animate.set_color(IMAGE), FadeOut(VGroup(nest, right_os)),
+                      VGroup(ibox_solid, items, an_image).animate.shift(
+                          np.array([STACK_X, FLOOR_Y + 1.6, 0]) - ibox_solid.get_center()), run_time=0.9)
+            # the box opens: what it held becomes three slabs, bottom-up. "OS files" and "Python"
+            # merge into one slab: the boxes become its box, their letters regroup into its label.
+            self.play(FadeOut(ibox_solid, scale=1.12), FadeOut(an_image),
+                      LaggedStart(AnimationGroup(ReplacementTransform(VGroup(i_os.box, i_py.box), s_os.box),
+                                                 TransformMatchingShapes(VGroup(i_os.text, i_py.text), s_os.text)),
                                   ReplacementTransform(i_pkg, s_pkg),
                                   ReplacementTransform(i_code, s_code), lag_ratio=0.3),
                       run_time=1.2)
+            self.remove(s_os.box, s_os.text)
             stack.accept(self, *slabs)
             vo.wait_until("read-only layers")
             self.play(FadeIn(lock_g, shift=DOWN * 0.15), head.words[1].animate.set_color(IMAGE), run_time=0.6)
@@ -263,7 +271,8 @@ class FourNouns(VoiceScene):
             self.play(Indicate(s_os.box, color=SYSTEM, scale_factor=1.03), run_time=0.6)
             vo.wait_until("Instructions that change")
             self.play(hb.animate.move_to(bar(ln_run)), run_time=0.3)
-            self.play(TransformFromCopy(VGroup(*ln_run[:3]), k_run), run_time=0.7)
+            vo.wait_until("like RUN")
+            self.play(TransformFromCopy(VGroup(*ln_run[:3]), k_run), run_time=0.6)
             vo.wait_until("and COPY")
             self.play(hb.animate.move_to(bar(ln_copy)), run_time=0.3)
             self.play(TransformFromCopy(VGroup(*ln_copy[:4]), k_copy), run_time=0.7)
@@ -306,13 +315,14 @@ class FourNouns(VoiceScene):
                       FadeIn(run_chip, shift=RIGHT * 0.3), run_time=0.7)
             self.play(FadeIn(g1, shift=DOWN * 0.6), run_time=0.7)
             vo.wait_until("you get a container")
-            self.play(FadeOut(run_chip, shift=LEFT * 0.2), FadeIn(c1, shift=RIGHT * 0.2), run_time=0.5)
+            self.play(FadeTransform(run_chip, c1), run_time=0.6)
             vo.wait_until("the same layers")
             self.play(VGroup(g1, c1).animate.shift(left_c - g1.slab.get_center()),
                       FadeIn(VGroup(g2, c2), shift=DOWN * 0.3), run_time=0.8)
             self.play(Create(l1), Create(l2), FadeIn(shared, shift=LEFT * 0.2), run_time=0.6)
             vo.wait_until("plus a thin")
-            self.play(Indicate(g1.text, color=IMAGE), Indicate(g2.text, color=IMAGE),
+            self.play(Indicate(g1.text, color=IMAGE, scale_factor=1.08),
+                      Indicate(g2.text, color=IMAGE, scale_factor=1.08),
                       g1.glow.animate.set_stroke(opacity=0.5), g2.glow.animate.set_stroke(opacity=0.5),
                       run_time=1.0)
             vo.wait_until("and one main process")
@@ -324,9 +334,12 @@ class FourNouns(VoiceScene):
             vo.wait_until("and dash dash rm")
             rm.next_to(g1.slab, UP, buff=0.12).align_to(g1.slab, LEFT)
             self.play(FadeIn(rm, shift=DOWN * 0.2), run_time=0.5)
-            self.play(FadeOut(VGroup(g1, c1, l1, rm), shift=UP * 0.3), run_time=0.8)
+            vo.wait_until("deletes it")
+            # --rm stays on screen while the whole stopped container (glass, label, link) dissolves
+            self.play(Indicate(rm, color=TOOL, scale_factor=1.1), FadeOut(VGroup(g1, c1, l1), shift=UP * 0.3),
+                      run_time=1.0)
             vo.wait_until("The image never")
-            self.play(Create(ok[0]), FadeIn(ok[1], shift=RIGHT * 0.1),
+            self.play(FadeOut(rm, shift=UP * 0.2), Create(ok[0]), FadeIn(ok[1], shift=RIGHT * 0.1),
                       Indicate(VGroup(*[s.box for s in slabs]), color=IMAGE, scale_factor=1.03),
                       run_time=0.8)
 
@@ -363,18 +376,19 @@ class FourNouns(VoiceScene):
             self.play(FadeIn(cls_cap[1], shift=UP * 0.1), Indicate(g2.slab, color=IMAGE, scale_factor=1.04),
                       run_time=0.6)
             vo.wait_until("One small slip")
+            # both README lines come in as one group; both get corrected when "container" is said
             self.play(FadeOut(cls_cap), FadeIn(card173, shift=LEFT * 0.4), run_time=0.7)
-            vo.wait_until("it says build")
+            self.play(FadeIn(card146, shift=UP * 0.3), run_time=0.6)
             w1 = word_glyphs(t173, s173, "container")
             k1 = strike(w1)
             im1 = label("image", 24, TURN).next_to(w1, UP, buff=0.08)
-            self.play(Create(k1), w1.animate.set_opacity(0.55), run_time=0.4)
-            self.play(FadeIn(im1, shift=DOWN * 0.1), FadeIn(err), run_time=0.4)
-            self.play(FadeIn(card146, shift=UP * 0.3), run_time=0.6)
             w2 = word_glyphs(t146, s146, "container")
             k2 = strike(w2)
             im2 = label("image", 24, TURN).next_to(w2, UP, buff=0.08)
-            self.play(Create(k2), w2.animate.set_opacity(0.55), FadeIn(im2, shift=DOWN * 0.1), run_time=0.5)
+            vo.wait_until("the docker container")
+            self.play(Create(k1), w1.animate.set_opacity(0.55), Create(k2), w2.animate.set_opacity(0.55),
+                      run_time=0.5)
+            self.play(FadeIn(im1, shift=DOWN * 0.1), FadeIn(im2, shift=DOWN * 0.1), FadeIn(err), run_time=0.5)
             vo.wait_until("Building makes")
             self.play(Indicate(stack.slabs, color=IMAGE, scale_factor=1.04), run_time=0.9)
             vo.wait_until("running makes")
@@ -436,7 +450,11 @@ class FourNouns(VoiceScene):
             shrink = [a for k, a in enumerate(anims) if k % 4 != 3]
             merge = [a for k, a in enumerate(anims) if k % 4 == 3]
             vo.wait_until("Containers are")
-            self.play(*shrink, FadeTransform(core, iso), run_time=1.1)
+            # the kernel bars drop to the shared bar's height as the VMs shrink, so the containers
+            # stand clear of them until they merge (Transform starts from where they are then)
+            drop = kp.vms[0].kernel.get_center()[1] - (kp.vms.get_bottom()[1] + 0.23)
+            self.play(*shrink, *[v.kernel.animate.shift(DOWN * drop) for v in kp.vms],
+                      FadeTransform(core, iso), run_time=1.1)
             vo.wait_until("that share one")
             self.play(*merge, run_time=1.0)
             self.play(Indicate(kp.bar, color=TURN, scale_factor=1.03), run_time=0.7)
@@ -449,7 +467,10 @@ class FourNouns(VoiceScene):
         lap.screen.move_to(inside.get_center() + UP * (mac.height + 0.25) / 2)
         lap.base.next_to(lap.screen, DOWN, buff=0.05)
         mac.move_to(lap.screen.get_corner(UL) + np.array([0.3, -0.22, 0]), aligned_edge=UL)
-        vm_out = box(lap.screen.width, lap.screen.height, CLOUD, fill_opacity=0.04).move_to(lap.screen)
+        # the cloud VM wraps only what remains (no hidden Linux VM): same top, ends under the kernel bar
+        vm_top, vm_bot = lap.screen.get_top()[1], kp.bar.get_bottom()[1] - 0.3
+        vm_out = box(lap.screen.width, vm_top - vm_bot, CLOUD, fill_opacity=0.04)
+        vm_out.move_to([lap.screen.get_center()[0], (vm_top + vm_bot) / 2, 0])
         vm_lab = label("cloud VM", 26, CLOUD).move_to(mac, aligned_edge=LEFT)
         own = label("on a cloud VM: its own Linux", 28, CLOUD)
 
@@ -471,7 +492,7 @@ class FourNouns(VoiceScene):
         # ================================================================ 8 · what a venv couldn't isolate
         h8 = 0.68
         st2 = LayerStack(stack_w=STACK_W, gap=GAP)
-        st2.floor.move_to([-2.9, -2.55, 0])
+        st2.floor.move_to([-2.9, -2.05, 0])
         hole1 = st2.make(None, SYSTEM, h8, dashed=True)
         hole2 = st2.make(None, SYSTEM, h8, dashed=True)
         p2 = slab_label(st2.make(None, VENV, h8), "packages")
@@ -479,22 +500,28 @@ class FourNouns(VoiceScene):
         new_os = slab_label(Slab(None, SYSTEM, STACK_W, h8).move_to(hole1), "OS files")
         new_lib = slab_label(Slab(None, SYSTEM, STACK_W, h8).move_to(hole2), "system libraries")
         img_lab = label("image", 28, IMAGE).next_to(y2, UP, buff=0.2)
-        names = ["the operating system's files", "system libraries", "GPU drivers"]
-        outs = VGroup(*[chip(n, ERR, size=26, fill_opacity=0.06) for n in names])
-        outs.arrange(DOWN, buff=0.4, aligned_edge=LEFT).move_to([3.2, -1.05, 0])
+        # L1's chips stand level with the slots they will fill, so each slides straight in as it is
+        # named (stacked in reading order they would cross paths); GPU drivers stays below, outside.
+        lib_c, os_c, gpu_c = VGroup(*[chip(n, ERR, size=26, fill_opacity=0.06) for n in (
+            "system libraries", "the operating system's files", "GPU drivers")])
+        chips_x = 0.3
+        lib_c.move_to([chips_x, hole2.get_center()[1], 0], aligned_edge=LEFT)
+        os_c.move_to([chips_x, hole1.get_center()[1], 0], aligned_edge=LEFT)
+        gpu_c.move_to([chips_x, hole1.get_center()[1] - 0.85, 0], aligned_edge=LEFT)
         ok2 = check_mark(0.45).next_to(VGroup(hole1, hole2), LEFT, buff=0.3)
-        gpu_grey = chip("GPU drivers", S.GREY, size=26, fill_opacity=0.06).move_to(outs[2], aligned_edge=LEFT)
+        gpu_grey = chip("GPU drivers", S.GREY, size=26, fill_opacity=0.06).move_to(gpu_c, aligned_edge=LEFT)
         hosts = label("still the host's", 26, S.GREY).next_to(gpu_grey, RIGHT, buff=0.3)
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(kp, vm_out, vm_lab, own)), run_time=0.6)
             self.play(FadeIn(VGroup(hole1, hole2, p2, y2, img_lab), shift=UP * 0.2),
-                      LaggedStart(*[FadeIn(c, shift=LEFT * 0.3) for c in outs], lag_ratio=0.2), run_time=1.0)
+                      LaggedStart(*[FadeIn(c, shift=LEFT * 0.3) for c in (os_c, lib_c, gpu_c)], lag_ratio=0.2),
+                      run_time=1.0)
             vo.wait_until("the system's files")
-            self.play(ReplacementTransform(outs[0], new_os), ReplacementTransform(outs[1], new_lib),
-                      FadeOut(hole1), FadeOut(hole2), run_time=1.0)
-            self.play(Create(ok2), ReplacementTransform(outs[2], gpu_grey), FadeIn(hosts, shift=LEFT * 0.1),
-                      run_time=0.6)
+            self.play(FadeTransform(os_c, new_os), FadeOut(hole1), run_time=0.8)
+            vo.wait_until("and libraries")
+            self.play(FadeTransform(lib_c, new_lib), FadeOut(hole2), Create(ok2),
+                      ReplacementTransform(gpu_c, gpu_grey), FadeIn(hosts, shift=LEFT * 0.1), run_time=0.8)
             vo.wait_until("is now inside")
             self.play(Indicate(VGroup(new_os.box, new_lib.box), color=SYSTEM, scale_factor=1.04),
                       Indicate(img_lab, color=IMAGE), run_time=0.9)

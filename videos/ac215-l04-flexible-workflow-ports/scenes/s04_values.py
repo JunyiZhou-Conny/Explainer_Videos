@@ -21,7 +21,7 @@ Beats (script.md "## S04", one voiceover block each):
     said (the values themselves stay in the strip only).
  3  TRACKER B/2. The strip fades; the grid shrinks into a glyph-only miniature at the top right.
     README chip README.md · line 134 "if you forget, the script stops before doing anything" +
-    erratum tag. generate_text/cli.py · line 21: `!= ""` highlights; a GREEN tick lands on the
+    erratum tag (right of the chip). generate_text/cli.py · line 21: `!= ""` highlights; a GREEN tick lands on the
     miniature's RED generate_text row, note "not empty → passes". The chip and panel go; both RED
     rows flash; a PINK arrow runs from the row to a BLUE cloud "course project · not yours" and
     bounces RED (cross); RED chip "permission error".
@@ -63,9 +63,15 @@ Deviations from SHOW (and why):
   and stays to the ▶; the ▶ your turn sits beside it (the checkpoint is an edit, not a command).
   One "type your own" tag (beside line 12, where there is room) and YELLOW boxes on the three
   placeholders: line 13 is 57 characters, no room for a tag beside it.
+- Beat 3: the erratum tag sits right of the README chip (on its corner it covered the frame line).
+- Beat 4: the editor comes first, then the terminal (both do not fit at once above/beside a
+  10-row terminal); the edited lines are the capture's `+` lines. The `cd ..` row (60 characters
+  after the long prompt) has no room for its `extra` tag, so that tag sits on the terminal's title
+  bar. `cd transcribe_audio` scrolls off when the diff prints (11 rows in a 10-row terminal).
 - Beat 4: the chip "translate_text/cli.py · line 64 …" is one GREY chip with mono parts.
 - Beat 7: the `"input-*.txt"` gate stands beside the cabinet's text_prompts/ row (between the
-  local folder and the bucket's text_prompts/ group-01/), the local folder below it.
+  local folder and the bucket's text_prompts/ group-01/), the local folder below it, drawn as a
+  drawer: name on its front (bottom row), files on top, so they leave upwards without crossing it.
 """
 
 from common import *
@@ -86,7 +92,6 @@ from manim import (
     Line,
     ShowIncreasingSubsets,
     Transform,
-    TransformFromCopy,
     VGroup,
     Wiggle,
     linear,
@@ -175,7 +180,7 @@ Y_UNDER = 2.57          # the row under the tracker (tracker bottom 2.92)
 Y_BAND = 3.21           # the top band, right of the tracker
 X_L, X_R = -6.45, 6.32
 TOP = 2.8               # top of the pictures under the tracker
-CAB_TOP = 2.8           # cabinet frame top (beats 5-7)
+CAB_TOP = 2.65          # cabinet frame top (beats 5-7): its illustration tag clears the tracker
 
 
 def at_left(m, x: float, y: float):
@@ -200,6 +205,24 @@ def fit_tag(t, line, s: str = "extra"):
         if tg.get_left()[0] >= end + 0.1:
             return tg
     raise ValueError(f"no room for the tag {s!r} beside {row.text!r}")
+
+
+def glyph_box(line, sub: str, color: str = TURN, pad: float = 0.06):
+    """A box around the glyphs of `sub` in a terminal line, as tall as the row (not added).
+    common.col_box() sits about one cell-bearing (~0.1) left of the glyphs."""
+    g = substring(line, sub)
+    r = box(g.width + 2 * pad + 0.04, line.strut.height + 0.06, color, fill_opacity=0.0, radius=0.06,
+            stroke=3)
+    return r.move_to([g.get_center()[0], line.strut.get_center()[1], 0])
+
+
+def adopt(scene, group):
+    """Put `group` on the scene as one mobject: members that are on the scene on their own
+    (FadeIn / Create targets) are taken off first, so nothing is drawn twice or left behind
+    when the group is faded or transformed."""
+    fam = set(group.get_family())
+    scene.remove(*[m for m in scene.mobjects if m in fam])
+    scene.add(group)
 
 
 def type_extra(scene, t, cmd: str, type_time: float = 0.5):
@@ -456,58 +479,62 @@ class YourValues(VoiceScene):
         grid.move_to([0, 0, 0])
         grid.shift(UP * (STRIP_TOP + 0.22 - grid.frame.get_bottom()[1]))
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(p130, *labs)), caption_extra(tr, True), run_time=0.4)
-            resize(self, t, 12, keep=0, run_time=0.5)
-            type_extra(self, t, CD_REPO, type_time=0.4)
-            cd_prompt(self, t, P_REPO, run_time=0.5)
-            type_extra(self, t, GREP.cmd, type_time=0.9)
-            out = t.print(self, GREP_OUT, run_time=0.5, lag=0.06)
+            resize(self, t, 12, keep=0, run_time=0.45,
+                   extra=(FadeOut(VGroup(p130, *labs)), caption_extra(tr, True)))
+            type_extra(self, t, CD_REPO, type_time=0.35)
+            cd_prompt(self, t, P_REPO, run_time=0.4)
+            type_extra(self, t, GREP.cmd, type_time=0.8)
+            out = t.print(self, GREP_OUT, run_time=0.4, lag=0.05)
             by_line = dict(zip([2, 3, 4, None, 11, 12, 13, 14, 15, 16], out))
             dots = out[3]
             vo.wait_until("three files are blank")
             blanks = [substring(by_line[n], '""') for n in (11, 12, 13)]
-            self.play(*[flash(b, INK, 1.4, 0.8) for b in blanks], flash(dots.glyphs, INK, 1.3, 0.8))
+            self.play(*[flash(b, INK, 1.4, 0.7) for b in blanks], flash(dots.glyphs, INK, 1.3, 0.7))
             vals = {n: substring(by_line[n], v) for n, v in SHIPPED.items()}
-            vo.wait_until("but generate text")
-            self.play(*[vals[n].animate.set_color(ERR) for n in (2, 3, 4)], run_time=0.3)
-            self.play(*[flash(vals[n], ERR, 1.12, 0.6) for n in (2, 3, 4)])
-            vo.wait_until("and translate text")
-            self.play(*[vals[n].animate.set_color(ERR) for n in (14, 15, 16)], run_time=0.3)
-            self.play(*[flash(vals[n], ERR, 1.12, 0.6) for n in (14, 15, 16)])
+            for ns, cue in (((2, 3, 4), "but generate text"), ((14, 15, 16), "and translate text")):
+                vo.wait_until(cue)
+                self.play(*[vals[n].animate.set_color(ERR) for n in ns], run_time=0.25)
+                self.play(*[flash(vals[n], ERR, 1.12, 0.5) for n in ns])
 
-            # copies lift into the grid as the terminal shrinks to the strip
-            pairs = []
+            # copies lift into the grid while the terminal shrinks to the strip: names and the
+            # blank values fly to their cells, the course's values sink into RED-outlined cells
+            pairs, sinks = [], []
             for r, f in enumerate(GRID_ROWS):
                 ns = ROWS[f]
-                if ns[0] in by_line:
-                    pairs.append((substring(by_line[ns[0]], f), grid.names[r]))
-                    for c, n in enumerate(ns):
-                        src = vals[n] if n in vals else substring(by_line[n], '""')
-                        dst = grid.cells[r][c].rect if n in vals else grid.cells[r][c]
-                        pairs.append((src, dst))
+                if ns[0] not in by_line:
+                    continue
+                pairs.append((substring(by_line[ns[0]], f), grid.names[r]))
+                for c, n in enumerate(ns):
+                    if n in vals:
+                        sinks.append((vals[n], grid.cells[r][c].rect))
+                    else:
+                        pairs.append((substring(by_line[n], '""'), grid.cells[r][c]))
             hidden_rows = VGroup(*[m for r, f in enumerate(GRID_ROWS) if ROWS[f][0] not in by_line
                                    for m in (grid.names[r], *grid.cells[r])])
             movers = [a.copy() for a, _ in pairs]
+            sinkers = [a.copy() for a, _ in sinks]
             dots_mv = dots.glyphs.copy()
-            self.add(*movers, dots_mv)
-            resize(self, t, 3, run_time=0.6)
-            self.play(Create(grid.frame), FadeIn(grid.sep), *[FadeIn(h) for h in grid.heads],
-                      *[Transform(m, b) for m, (_, b) in zip(movers, pairs)],
-                      Transform(dots_mv, hidden_rows), run_time=1.2)
-            self.remove(*movers, dots_mv)
+            self.add(*movers, *sinkers, dots_mv)
+            resize(self, t, 3, run_time=1.1, extra=(
+                Create(grid.frame), FadeIn(grid.sep), *[FadeIn(h) for h in grid.heads],
+                *[Transform(m, b) for m, (_, b) in zip(movers, pairs)],
+                *[m.animate.move_to(r.get_center()).set_opacity(0) for m, (_, r) in zip(sinkers, sinks)],
+                *[Create(r) for _, r in sinks],
+                FadeOut(dots_mv, target_position=hidden_rows.get_center()), FadeIn(hidden_rows)))
+            self.remove(*movers, *sinkers, dots_mv, hidden_rows)
             red_labels = [[grid.cells[r][c].label for r in (0, 4)] for c in range(3)]
             all_labels = [m for col in red_labels for m in col]
             fam = set(all_labels)
             no_labels = VGroup(*[m for m in grid.submobjects if m not in fam and not any(
-                x in fam for x in m.get_family())], *[grid.cells[r][c].rect for r in (0, 4) for c in range(3)])
-            self.add(no_labels)
+                x in fam for x in m.get_family())], *[r for _, r in sinks])
+            adopt(self, no_labels)
             vo.wait_until("the course's project and bucket")
             self.play(*[FadeIn(m) for m in red_labels[0]], run_time=0.4)
             self.play(*[FadeIn(m) for m in red_labels[1]], run_time=0.4)
             vo.wait_until("and the instructor's group name")
             self.play(*[FadeIn(m) for m in red_labels[2]], run_time=0.5)
-            self.remove(no_labels, *all_labels)
-            self.add(grid)
+            self.remove(no_labels)
+            adopt(self, grid)
 
         # ========================================================== 3 · the assert only rejects ""
         mini = mini_grid(grid)
@@ -519,7 +546,7 @@ class YourValues(VoiceScene):
         chip134 = readme_chip("README.md · line 134", PH134, max_w=12.6)
         at_left(chip134, X_L, Y_UNDER)
         err134 = erratum_tag()
-        err134.move_to(chip134.frame.get_corner(UP + RIGHT) + LEFT * (err134.width / 2 + 0.3) + UP * 0.1)
+        at_left(err134, chip134.frame.get_right()[0] + 0.2, Y_UNDER)
         p21 = src_panel(CLI_B, 21, 21)
         at_left(p21, X_L, 1.25)
         neq = p21.span(21, '!= ""')
@@ -572,32 +599,35 @@ class YourValues(VoiceScene):
         es_chip.move_to([0, strip_top(10) + 0.14 + es_chip.height / 2, 0])
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(mini, tick, ok_note, cl, cl_lab, arr, xm, perm)),
-                      caption_extra(tr, True), run_time=0.5)
-            self.play(FadeIn(VGroup(ed.frame, ed[1], ed.title)), FadeIn(before), run_time=0.5)
-            vo.wait_until("in all five files")
-            self.play(FadeIn(five_chip, shift=LEFT * 0.15), run_time=0.4)
+                      caption_extra(tr, True), FadeIn(VGroup(ed.frame, ed[1], ed.title)), FadeIn(before),
+                      run_time=0.6)
             pen.move_to(before.code.code_lines[0].get_right() + RIGHT * 0.5 + UP * 0.2)
             self.play(FadeIn(pen), run_time=0.2)
             for i, k in enumerate((0, 1, 4)):
+                if i == 1:
+                    vo.wait_until("in all five files")
+                    self.play(FadeIn(five_chip, shift=LEFT * 0.15), run_time=0.35)
                 tip = after.code.code_lines[k].get_right()
                 anims = [Transform(before.code.code_lines[k], after.code.code_lines[k])]
                 if i == 0:
                     anims.append(Transform(before.code.background, after.code.background))
                 self.play(pen.animate.shift(tip - pen.tip_point() + UP * 0.05), *anims, run_time=0.45)
+            self.play(pen.animate.shift(RIGHT * 0.4 + UP * 0.3).set_opacity(0.0), run_time=0.3)
             vo.wait_until("An extra git diff")
-            self.play(FadeOut(VGroup(ed.frame, ed[1], ed.title, before, pen)), FadeIn(t4), run_time=0.5)
+            self.wait(0.4)                       # the edited lines stay a moment
+            self.play(FadeOut(VGroup(ed.frame, ed[1], ed.title, before)), FadeIn(t4), run_time=0.5)
+            self.remove(pen)
             bare_prompt(self, t4)
-            type_extra(self, t4, CD_A, type_time=0.45)
-            cd_prompt(self, t4, p_comp("transcribe_audio"), run_time=0.5)
-            type_extra(self, t4, EDIT.cmd, type_time=0.4)
-            d = t4.print(self, [(s, DIFF_COL[s[0]]) for s in DIFF], run_time=0.5, lag=0.06)
+            type_extra(self, t4, CD_A, type_time=0.4)
+            cd_prompt(self, t4, p_comp("transcribe_audio"), run_time=0.4)
+            type_extra(self, t4, EDIT.cmd, type_time=0.35)
+            d = t4.print(self, [(s, DIFF_COL[s[0]]) for s in DIFF], run_time=0.45, lag=0.06)
             plus = {12: d[2], 13: d[3], 17: d[7]}
             boxes = []
             for (n, ln), p, cue in zip(plus.items(), PLACEHOLDERS,
                                        ("your-project-id,", "your-team-bucket and", "and group-01")):
                 vo.wait_until(cue)
-                i = ln.text.index(f'"{p}"') + 1
-                bx = col_box(ln, i, i + len(p), TURN)
+                bx = glyph_box(ln, p, TURN)
                 pin(self, ln, bx, anim=Create(bx), run_time=0.35)
                 boxes.append(bx)
             vo.wait_until("type your own")
@@ -620,12 +650,12 @@ class YourValues(VoiceScene):
         cab = Cabinet()
         cab.shift(np.array([X_L - cab.frame.get_left()[0], CAB_TOP - cab.frame.get_top()[1], 0]))
         ill5 = illustration_tag()
-        ill5.move_to(cab.frame.get_corner(UP + RIGHT) + LEFT * (ill5.width / 2 + 0.25))
+        ill5.move_to(cab.frame.get_corner(UP + RIGHT) + LEFT * (ill5.width / 2 + 0.15))
         pays = cost_tag("your project pays · storage (tiny)")
         pays.move_to(cab.frame.get_bottom())
         with self.voiceover(SAY[5]) as vo:
-            self.play(tr.goto(3), FadeOut(VGroup(t4, es_chip, five_chip, yt)), run_time=0.6)
-            self.play(FadeIn(cab, shift=RIGHT * 0.2), FadeIn(ill5), run_time=0.8)
+            self.play(tr.goto(3), FadeOut(VGroup(t4, es_chip, five_chip, yt)), run_time=0.45)
+            self.play(FadeIn(cab, shift=RIGHT * 0.2), FadeIn(ill5), run_time=0.7)
             vo.wait_until("read and write these prefixes")
             self.play(LaggedStart(*[cab.light(p, CLOUD, run_time=0.6) for p in PREFIXES], lag_ratio=0.25),
                       run_time=1.6)
@@ -638,10 +668,10 @@ class YourValues(VoiceScene):
         err6 = erratum_tag("no command given")
         at_right(err6, X_R, Y_BAND)
         con = console()
-        con.shift(np.array([X_R + 0.03 - con.win.frame.get_right()[0], TOP - con.win.frame.get_top()[1], 0]))
-        p313 = src_panel(README, 313, suffix="Appendix")
+        con.shift(np.array([X_R + 0.03 - con.win.frame.get_right()[0], CAB_TOP - con.win.frame.get_top()[1], 0]))
+        p313 = src_panel(README, 313, suffix="Appendix", size=20)
         at_left(p313, X_L, 0)
-        p313.shift(UP * (-2.2 - p313.get_top()[1]))
+        p313.shift(UP * (-2.22 - p313.get_top()[1]))
         test_span = p313.span(313, TEST_MP3)
         st = strike(test_span, ERR)
         with self.voiceover(SAY[6]) as vo:
@@ -671,8 +701,9 @@ class YourValues(VoiceScene):
         fol_lab.arrange(RIGHT, buff=0.15)
         fol = box(5.3, 1.35, LAPTOP, fill_opacity=0.06, radius=0.12)
         at_right(fol, X_R, -1.15)
-        fol_lab.move_to(fol.get_corner(UP + LEFT) + np.array([0.2 + fol_lab.width / 2, -0.32, 0]))
-        slot = fol.get_bottom() + UP * 0.4
+        # a drawer: its name on the front (bottom row), the files on top, so they leave upwards
+        fol_lab.move_to(fol.get_corner(DOWN + LEFT) + np.array([0.2 + fol_lab.width / 2, 0.32, 0]))
+        slot = fol.get_top() + DOWN * 0.42
         txt = name_chip("input-<something>.txt").move_to(slot)
         cap62 = note("transcribe · cli.py line 62: same name, .txt").next_to(fol, DOWN, buff=0.15)
         cap62.align_to(fol, RIGHT)
@@ -687,7 +718,7 @@ class YourValues(VoiceScene):
                       FadeOut(VGroup(p313, st, err6)), run_time=0.7)
             vo.wait_until("upload a short recording")
             self.play(FadeIn(arrive, shift=LEFT * 0.3), run_time=0.5)
-            self.play(wf.animate.move_to(wf_end), mp3.animate.move_to(mp3_end), run_time=0.9)
+            self.play(wf.animate.scale(0.72).move_to(wf_end), mp3.animate.move_to(mp3_end), run_time=0.9)
             self.play(flash(d_in, CLOUD, 1.05, 0.6))
             vo.wait_until("as input, dash")
             self.play(flash(mp3, TURN, 1.12, 0.9))
@@ -705,7 +736,7 @@ class YourValues(VoiceScene):
             self.play(flash(sub_tp, LOOKUP, 1.2, 0.6), flash(d_tp, CLOUD, 1.05, 0.6))
             self.play(FadeIn(test, shift=UP * 0.1), run_time=0.4)
             self.play(test.animate.move_to([wait_x + test.width / 2, d_tp.get_center()[1], 0]), run_time=0.6)
-            self.play(test.animate(rate_func=there_and_back).shift(LEFT * 0.35),
+            self.play(test.animate(rate_func=there_and_back).shift(LEFT * 0.2),
                       flash(gate.chip, S.GREY, 1.1, 0.6), run_time=0.6)
             self.play(test.animate.set_color(S.GREY_DARK), run_time=0.3)
             self.wait(0.6)

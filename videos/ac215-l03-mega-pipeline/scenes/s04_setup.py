@@ -3,11 +3,11 @@ secrets/ folders, uv if you don't have it, uv init --bare, and the first half of
 
 Beats (script.md "## S04", one voiceover block each):
  0  TRACKER A1 -> A2. Schematic (illustration): a GREY card "course site · Files" (text only, no
-    logo: two text-free placeholder rows and the GOLD key glyph `mega-pipeline.json`). On "It lets
-    your code act" the key leaves the card, enlarges centre-right and gets a GOLD glow; GREY label
-    under it: "the course's service account", then (on "so guard it") "spends the course's money".
- 1  The glow and labels go; the key shrinks back into the card. Right: the five GREY folders
-    `<component>/secrets/` of the clone; bottom-left: the GREY README card "README.md · lines
+    logo: two text-free placeholder rows and the GOLD key glyph `mega-pipeline.json`), drawn LIFT
+    lower than in beat 1 so the picture sits centred. On "It lets your code act" the key leaves
+    the card, enlarges centre-right and gets a GOLD glow; GREY label under it: "the course's service account", then (on "so guard it") "spends the course's money".
+ 1  The glow and labels go; the key shrinks back into the card as the card rises. Right: the
+    five GREY folders `<component>/secrets/` of the clone; bottom-left: the GREY README card "README.md · lines
     97–99" (the README's own words). On "download it" an arrow carries a copy of the key onto
     `transcribe_audio/secrets/`; on "with a copy in each" the card's "each component folder" line
     gets a YELLOW underline and four copies drop onto the other four folders. Then ▶ your turn
@@ -17,7 +17,8 @@ Beats (script.md "## S04", one voiceover block each):
     through RED); on "rename it" a GREY "rename" arc points from the bad name to the good one.
  3  Two GREY link cards side by side: left `README.md · line 99` (link `mega-pipeline.json` ->
     Canvas file 25687801), right `transcribe_audio/README.md · line 17` (the same link text ->
-    Canvas file 23163432), GREY `erratum` above the right one. On "older Canvas file" the right
+    Canvas file 23163432), GREY `erratum` above the right one; beat 2's exact name becomes both
+    cards' link text (transform, not a fade). On "the component READMEs" the right
     number flashes; on "so use the main" the left card gets a GREEN check "use this one" and the
     right one a GREY "older" stamp. GREY note "how the code finds the key: part 2".
  4  TRACKER A3. The house terminal (12 rows, laptop, transcribe_audio prompt). The README chip
@@ -38,7 +39,8 @@ Beats (script.md "## S04", one voiceover block each):
  6  Line 8's "either restart your shell" gets a YELLOW bar. On "as the installer says" the chips
     go, the terminal clears and grows back to 12 rows (GREY "new terminal" in its title bar,
     prompt student@laptop:~$). TRACKER A3 · extra: `cd mega-pipeline/transcribe_audio` (extra) ->
-    no output, the transcribe_audio prompt; `uv --version` -> 08-uv-version.txt line 2.
+    no output, the transcribe_audio prompt; `uv --version` (extra, tag on the row below) ->
+    08-uv-version.txt line 2.
  7  TRACKER A3 (extra off; chip and "new terminal" go). `uv init --bare` -> 09-uv-init.txt
     line 2; on "pyproject.toml" a GREEN file glyph `pyproject.toml` appears above the terminal;
     `transcribe-audio` underlined GREEN; ▶ your turn on "Pause and run it" (at the right end of
@@ -46,8 +48,8 @@ Beats (script.md "## S04", one voiceover block each):
  8  TRACKER A3 · extra. `cat pyproject.toml` (extra; folds after `cat`) -> 10-cat-pyproject.txt
     lines 2-6. "name" and "version" pulse as named; GREY tag "none yet" beside `dependencies = []`;
     YELLOW bar on `requires-python = ">=3.11"` and its 3.11 pulses.
- 9  The terminal shrinks to the strip (the cat command and the requires-python line). V7 above
-    it: the axis 3.10 … 3.16; a GREY dot "laptop · 3.11.2" drops onto 3.11; the GREEN interval
+ 9  "That 3.11" pulses in the terminal, which then shrinks to the strip (the cat command and the
+    requires-python line). V7 above it: the axis 3.10 … 3.16; a GREY dot "laptop · 3.11.2" drops onto 3.11; the GREEN interval
     grows from 3.11 while the strip's `requires-python = ">=3.11"` flies up to become its label.
     ORANGE dot "image · Python 3.12" lands inside; PURPLE `uv sync` chip + "in range?" (the dot
     pulses PURPLE), then a GREEN check.
@@ -114,8 +116,9 @@ assert "`uv init --bare`" in _A[33] and "restart your terminal" in _A[33]
 
 # ------------------------------------------------------------------ layout
 TRACK_BOTTOM = 2.917               # the tracker band's lower edge
-CARD_C = np.array([-4.25, 0.9, 0])  # the course-site card (beats 0-1)
-BIG_C = np.array([2.6, 0.7, 0])     # the enlarged key (beat 0)
+CARD_C = np.array([-4.25, 0.9, 0])  # the course-site card (beat 1; README card under it)
+LIFT = 0.8                          # beat 0 shows the card this much lower (centred), beat 1 lifts it
+BIG_C = np.array([2.6, -0.1, 0])    # the enlarged key (beat 0)
 ROWS_X = -0.8                      # left edge of the five secrets/ folders (beat 1)
 ROW_Y = [1.8, 0.65, 0.05, -0.55, -1.15]
 AXIS_Y = 0.3                       # V7's axis (beats 9-10), above the 3-row strip
@@ -237,7 +240,8 @@ def link_card(path: str, line_no: int, number: str, width: float = 5.9) -> VGrou
     head = VGroup(mono(path, CAPTION, LAPTOP), label(f"· line {line_no}", CAPTION, LAPTOP))
     head.arrange(RIGHT, buff=0.12).next_to(fr, UP, buff=0.1).align_to(fr, LEFT).shift(RIGHT * 0.1)
     g = VGroup(fr, body, head)
-    g.frame, g.number, g.head = fr, num, head
+    g.frame, g.number, g.head, g.link = fr, num, head, link
+    g.rest = VGroup(fr, head, k, ul, r2)          # everything but the link text
     return g
 
 
@@ -266,9 +270,9 @@ def lo_label(vl, lo: int):
 
 def down_arrow(top, tip, color=TOOL) -> VGroup:
     """A dashed arrow from `top` down to `tip`."""
-    head = Triangle(stroke_width=0).set_fill(color, 1).rotate(PI).scale(0.11)
+    head = Triangle(stroke_width=0).set_fill(color, 1).rotate(PI).scale(0.13)
     head.move_to(tip, aligned_edge=DOWN)
-    shaft = DashedLine(top, head.get_top(), dash_length=0.08, color=color, stroke_width=4)
+    shaft = DashedLine(top, head.get_top(), dash_length=0.08, color=color, stroke_width=5)
     return VGroup(shaft, head)
 
 
@@ -280,9 +284,10 @@ class KeyAndInit(VoiceScene):
 
         # ========================================================== 0 · the key
         card, keyrow = site_card()
+        slot = keyrow.get_center()           # the key's place in the card once it is lifted (beat 1)
+        VGroup(card, keyrow).shift(DOWN * LIFT)
         ill0 = illustration_tag()
         place(ill0, left=card[0].get_left()[0], top=card[0].get_bottom()[1] - 0.18)
-        slot = keyrow.get_center()
         lab1 = sans("the course's service account", 22, LAPTOP)
         lab2 = sans("spends the course's money", 22, LAPTOP)
 
@@ -322,7 +327,7 @@ class KeyAndInit(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(glow), FadeOut(labs), keyrow.animate.scale(1 / 1.8).move_to(slot),
-                      run_time=0.7)
+                      card.animate.shift(UP * LIFT), ill0.animate.shift(UP * LIFT), run_time=0.7)
             self.play(FadeIn(rows, shift=LEFT * 0.15), FadeIn(rc, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("download it")
             k0 = keyrow.key.copy()
@@ -344,7 +349,7 @@ class KeyAndInit(VoiceScene):
         # ========================================================== 2 · the exact name
         good = mono("mega-pipeline.json", 40, COST)
         bad = mono("mega-pipeline (1).json", 40, COST)
-        good.move_to([0.0, 1.0, 0])
+        good.move_to([0.0, 0.2, 0])         # the three rows sit centred in the frame
         bad.next_to(good, DOWN, buff=0.75).align_to(good, LEFT)
         names = VGroup(good, bad)
         names.set_x(0.0)
@@ -381,9 +386,12 @@ class KeyAndInit(VoiceScene):
         note3 = sans("how the code finds the key: part 2", 22, LAPTOP).move_to([0, -2.2, 0])
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(cap[3], bad, chk2, crs2, st2, exact, ren, ren_l)), run_time=0.4)
-            self.play(FadeIn(left, shift=UP * 0.15), FadeIn(right, shift=UP * 0.15), run_time=0.6)
-            self.play(FadeIn(err3, shift=DOWN * 0.1), run_time=0.4)
+            self.play(FadeOut(VGroup(bad, chk2, crs2, st2, exact, ren, ren_l)), run_time=0.4)
+            # the exact name becomes the link text of both README links (the same name, two files)
+            self.play(FadeIn(left.rest), FadeIn(right.rest), ReplacementTransform(cap[3], left.link),
+                      TransformFromCopy(cap[3], right.link), FadeIn(err3, shift=DOWN * 0.1), run_time=0.8)
+            self.remove(left.rest, right.rest, left.link, right.link)
+            self.add(left, right)
             vo.wait_until("the component READMEs")
             self.play(Indicate(right.head, color=INK, scale_factor=1.05), run_time=0.6)
             self.play(Indicate(right.number, color=INK, scale_factor=1.2), run_time=0.6)
@@ -487,9 +495,12 @@ class KeyAndInit(VoiceScene):
             t.set_prompt(P_A)
             bare_prompt(self, t)
             vo.wait_until("and uv answers")
-            type_cmd(self, t, VERSION.cmd, 0.5)
+            c2b = type_cmd(self, t, VERSION.cmd, 0.5)
             o2 = t.print(self, VERSION_OUT, run_time=0.4)[0]
-            self.play(Indicate(substring(o2, "uv 0.13.0"), color=INK, scale_factor=1.12), run_time=0.6)
+            x2b = under_row(extra_tag(), t, c2b)   # 62-character row: the tag sits on the row below
+            self.play(Indicate(substring(o2, "uv 0.13.0"), color=INK, scale_factor=1.12),
+                      FadeIn(x2b, shift=LEFT * 0.1), run_time=0.6)
+            stick(self, c2b, x2b)
 
         # ========================================================== 7 · uv init --bare
         pyfile = VGroup(file_glyph(0.4, VENV), mono("pyproject.toml", 22, VENV)).arrange(RIGHT, buff=0.15)
@@ -549,10 +560,11 @@ class KeyAndInit(VoiceScene):
         ck = check_mark(0.36, VENV).next_to(q, RIGHT, buff=0.3)
 
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(pyfile), run_time=0.3)
+            # "That 3.11": its pulse comes first, then the terminal makes room for the picture
+            self.play(Indicate(substring(l5, "3.11"), color=TURN, scale_factor=1.3), FadeOut(pyfile),
+                      run_time=0.7)
             resize(self, t, 3, keep=[*rows_of(c4), l5], run_time=0.8)
             self.play(FadeIn(vl.axis), FadeIn(vl.ticks), run_time=0.6)
-            self.play(Indicate(substring(l5, "3.11"), color=TURN, scale_factor=1.3), run_time=0.6)
             vo.wait_until("this laptop's Python")
             self.play(FadeIn(d1, shift=DOWN * 0.4), run_time=0.6)
             self.play(GrowFromEdge(vl.band, LEFT), TransformFromCopy(l5.glyphs, vl.band_label),
@@ -577,7 +589,7 @@ class KeyAndInit(VoiceScene):
         crs = cross_mark(0.3, ERR).move_to(ck)
         ck_back = check_mark(0.36, VENV).move_to(ck)
         tip = vl.point(15, 0.05)
-        dl = down_arrow(vl.point(15, 0.7), tip)
+        dl = down_arrow(vl.point(15, 0.84), tip)   # from just under the interval label (0.90 up)
         prev = VGroup(sans("preview:", CAPTION, LAPTOP), mono("generate_text", CAPTION, LAPTOP))
         prev.arrange(RIGHT, buff=0.12)
         place(prev, left=dl.get_right()[0] + 0.1, cy=vl.point(15, 0.55)[1])

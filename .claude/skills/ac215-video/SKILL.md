@@ -141,6 +141,9 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   agent, it starts a second copy from its transcript, and the two then edit the same file. Review
   findings that arrive while scenes are being built go into the video's `build/qa_followups.md` for the
   whole-video QA pass instead.
+- An agent inside a workflow returns its final message when its turn ends. Run `explainer.check` and
+  `explainer.preview` in the foreground (long timeout, or `--at`/`-q l` for long scenes); never end the turn
+  "waiting for the monitor's notice" on a background render, or the scene comes back unreviewed.
 - Agents working in parallel never edit shared files (`explainer/*.py`, `scenes/common.py` once
   scenes start); they put requests in their report.
 

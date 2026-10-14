@@ -11,17 +11,18 @@ Beats (script.md "## S03", one voiceover block each):
     returns and its new path part flashes BLUE. TRACKER R2 · extra; the chip leaves.
     `ls; git log --oneline -1; git branch` (extra; folds after "-1;") -> 04-ls.txt lines 2-11
     (rows that scroll away fade in place: nothing slides over the title bar). GREY bars on the
-    five folder names, then on `* main` (line 11), then on `c6bbc9b` (line 10, cut with …) with
-    the GREY tag "the commit in this video" over that row's cut end.
+    five folder names, then on `* main` (line 11), then on `c6bbc9b` (line 10): the row's cut
+    tail ("automatically breaks longe…") folds into its own "…" and the GREY tag "the commit in
+    this video" sits after it.
  2  `ls -a transcribe_audio generate_text synthesis_audio_en translate_text synthesis_audio`
     (extra, tagged on its first row; two rows, the second indented 2 spaces so that it fits)
     -> `…`; the terminal shrinks to the 3-row strip while the listing of 05-ls-components.txt
     lines 2-42 (parsed from the capture, never retyped) appears above it: at left the full
     transcribe_audio/ tree (22 pt), at right, level with the tree's entries, four one-line rows
     saying only how each other folder differs (20 pt). README.md, cli.py and secrets/ get GREY
-    bars as named; a dashed GREY ghost Dockerfile draws in as the tree's last row with the GREY
-    caption "none of the five has a Dockerfile" under the rows; then YELLOW "you write it" +
-    GREY "README.md · line 114" beside the ghost.
+    bars, each on its clause; a dashed GREY ghost Dockerfile draws in as the tree's last row
+    with the GREY caption "none of the five has a Dockerfile" under the rows; then YELLOW
+    "you write it" + GREY "README.md · line 114" beside the ghost.
  3  The two "same" rows dim. In the generate_text/ row, pyproject.toml and main.py get YELLOW
     bars as named and "no .gitignore" a YELLOW tag "keep in mind"; in the synthesis_audio/ row,
     cli_11.py gets a GREY tag "bonus".
@@ -46,12 +47,12 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (code_span, file_glyph, file_tree, label, line_bar, line_pitch, mono,
-                              mono_line, step_badge, substring, tag)
+from explainer.devops import (code_span, file_glyph, file_tree, glyph_range, label, line_bar,
+                              line_pitch, mono, mono_line, step_badge, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CAPTION, CLOUD, COMPONENTS, INK, LAPTOP, LOOKUP, NARRATION, P_A, P_HOME, P_REPO,
-                    TERM_BG, TURN, bare_prompt, beside, capture, caption_extra, extra_tag, readme_chip,
+                    TURN, bare_prompt, beside, capture, caption_extra, extra_tag, readme_chip,
                     resize, sans, src_panel, switch_section, term, tracker, type_cmd, your_turn)
 
 SAY = NARRATION["S03"]
@@ -384,10 +385,18 @@ class CloneRepo(VoiceScene):
             stick(self, main_ln, bm)
             vo.wait_until("at the commit this video")
             bc = row_bar(commit_ln, COMMIT)
-            ctag = tag("the commit in this video", S.GREY)
-            ctag.box.set_fill(TERM_BG, 1)          # opaque: it covers the row's cut end
-            ctag.move_to(commit_ln.strut).align_to(t.box, RIGHT).shift(LEFT * 0.12)
-            self.play(FadeIn(bc), FadeIn(ctag, shift=LEFT * 0.1), run_time=0.5)
+            # the message's cut tail folds into the row's own "…" (the terminal's cut mark), so
+            # the tag sits after it and covers no half-word
+            tail = glyph_range(commit_ln, commit_ln.text.index(" automatically") + 1)
+            assert commit_ln.text.endswith("…"), commit_ln.text
+            ell = tail[-1].copy()
+            ell.shift(RIGHT * (tail[0].get_left()[0] - ell.get_left()[0]))
+            ctag = tag("the commit in this video", S.GREY).next_to(ell, RIGHT, buff=0.3)
+            ctag.set_y(commit_ln.strut.get_center()[1])
+            self.play(FadeIn(bc), Transform(tail[-1], ell),
+                      *[g.animate.move_to(ell).set_opacity(0) for g in tail[:-1]], run_time=0.5)
+            commit_ln.remove(*tail[:-1])
+            self.play(FadeIn(ctag, shift=LEFT * 0.1), run_time=0.4)
             stick(self, commit_ln, bc, ctag)
 
         # ========================================================== 2 · ls -a of the five folders
@@ -408,20 +417,20 @@ class CloneRepo(VoiceScene):
             make_room(self, t, 3)                         # the two command rows and the …
             c2 = type_folded(self, t, LSA.cmd,
                              [P_REPO + " ls -a transcribe_audio \\",
-                              "  generate_text synthesis_audio_en translate_text synthesis_audio"], 1.5)
+                              "  generate_text synthesis_audio_en translate_text synthesis_audio"], 1.2)
             x2 = beside(extra_tag(), t, c2.rows[0])       # the second row is full
             self.play(FadeIn(x2, shift=LEFT * 0.1), run_time=0.3)
             stick(self, c2.rows[0], x2)
             t.print(self, ["…"], run_time=0.25)
-            resize(self, t, 3, keep=3, run_time=1.0,
+            resize(self, t, 3, keep=3, run_time=0.9,
                    extra=[FadeIn(tree, shift=UP * 0.2, rate_func=late()),
                           FadeIn(rows, shift=UP * 0.2, rate_func=late())])
 
-            vo.wait_until("Each has a README")
+            # each bar on the clause that names it
             cbars = [hl(r.name_text.glyphs) for r in common_rows]
-            for b in cbars:
-                self.play(FadeIn(b), run_time=0.45)
-                self.wait(0.3)
+            for b, phrase in zip(cbars, ["Each has a README", "its own cli.py", "and a secrets folder"]):
+                vo.wait_until(phrase)
+                self.play(FadeIn(b), run_time=0.4)
             vo.wait_until("and not one has a Dockerfile")
             self.play(Create(ghost.glyph), FadeIn(ghost.name_text), run_time=0.8)
             self.play(FadeIn(none_cap, shift=UP * 0.1), run_time=0.5)

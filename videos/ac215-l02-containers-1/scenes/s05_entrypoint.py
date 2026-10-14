@@ -15,28 +15,33 @@ Beats (script.md "## S05", one voiceover block each):
     returns unchanged: the V2 stack (four thin ORANGE slabs, brace "base image", mono caption
     `python:3.12-slim-bookworm`) and the TEAL config card (ENTRYPOINT "null", CMD tile
     `["python3"]`, WorkingDir `""`, start-up line `python3`). On "ENTRYPOINT only writes" the
-    panel's `["/bin/bash"]` is copied down (TransformFromCopy) into the ENTRYPOINT slot as a tile
-    (the "null" note fades) and the caption "config only: / nothing downloaded, / no new layer"
-    appears between stack and card.
+    panel's `["/bin/bash"]` is copied (TransformFromCopy, glyph to glyph, arcing over the card's
+    rows) into the ENTRYPOINT slot, where its tile frame closes round it (the "null" note fades),
+    and the caption "config only: / nothing downloaded, / no new layer" appears between stack
+    and card.
  2  V3 close-up of the card: the README panel and caption leave, the stack dims. GREY labels with
     short arrows point at the slots from the left (the stacked card has no room under its slots):
     ENTRYPOINT "the program", CMD "its default arguments", each as it is said. The `["/bin/bash"]`
     tile pulses on "The entrypoint is now bash"; the inherited `["python3"]` tile turns dashed on
     "the command slot still says python3". On "So will the container start" the start-up line
     becomes `/bin/bash python3` (the tile's /bin/bash is copied down in front of python3) with a
-    YELLOW "?".
- 3  TRACKER A8 · extra. The strip clears and grows to 4 rows; it types `docker image inspect
-    simple-translate --format 'Entrypoint={{json .Config.Entrypoint}} Cmd={{json .Config.Cmd}}'`
+    YELLOW "?". While the "?" wiggles, the strip clears and grows to 4 rows (so beat 3's command
+    is typed on its first words).
+ 3  TRACKER A8 · extra (only the " · extra" suffix fades in: extra_caption()). The strip types
+    `docker image inspect simple-translate --format 'Entrypoint={{json .Config.Entrypoint}}
+    Cmd={{json .Config.Cmd}}'`
     (folded by hand at the two spaces outside the quotes, so it pastes back as one command: the
     quoted format string is exactly one row; row tag `extra`) -> laptop/15 line 2.
     `Entrypoint=["/bin/bash"]` gets a TEAL underline (the tile pulses), `Cmd=null` a YELLOW bar;
     on "Setting an entrypoint resets" the `["python3"]` tile falls off the card and fades, a GREY
     "null" takes its slot; "base image" pulses on "inherited from the base image"; on "So bash
     starts on its own" the start-up line becomes `/bin/bash` and the "?" goes.
- 4  TRACKER A8. The picture leaves; the strip clears and grows to 6 rows: `docker run --rm -ti
-    simple-translate` (2 rows) + ▶ your turn -> the bare prompt `root@f72851da4a58:/#`
-    (laptop/16 line 2). On "Read it left to right" the prompt is copied large above the terminal
-    and a YELLOW arrow runs under it; on "You're root" it splits into its parts: `root` gets a
+ 4  TRACKER A8 (" · extra" fades out). The picture leaves except the prediction: the start-up
+    line `/bin/bash` moves top right with a GREY "predicted:" (S04's idiom); the strip clears and
+    grows to 6 rows: `docker run --rm -ti simple-translate` (2 rows) + ▶ your turn -> the bare
+    prompt `root@f72851da4a58:/#` (laptop/16 line 2), and the prediction gets a GREEN check. On
+    "Read it left to right" the prompt is copied large above the terminal and a YELLOW arrow runs
+    under it; on "You're root" it splits into its parts: `root` gets a
     YELLOW underline and "you, the administrator, / inside the container"; on "After the at sign"
     `f72851da4a58` gets "the container's ID / new every run" (TEAL); "which changes every run"
     pulses it.
@@ -54,8 +59,8 @@ from explainer.devops import code_span
 from explainer.scene import VoiceScene
 
 from common import (BUILD, CAT, INK, INSPECT_V2, IMAGE, LAPTOP_DIR, MONO, NARRATION, P_LAPTOP, RUN,
-                    STRIP_ROWS, SYSTEM, TURN, ConfigCard, LayerStack, attach,
-                    bare_prompt, beside, capture, chip, code, cut, glyph_range, hl_bar, istep,
+                    STRIP_ROWS, SYSTEM, TURN, VENV, ConfigCard, LayerStack, _caption, attach,
+                    bare_prompt, beside, capture, check_mark, chip, code, cut, glyph_range, hl_bar, istep,
                     label, laptop_term, mono, mono_line, pin, resize, row_tag, steady, substring,
                     track, tracker_a, type_cmd, under, unpin)
 
@@ -107,8 +112,9 @@ def turn_tag() -> VGroup:
     return row_tag("▶ your turn", TURN)
 
 
-def type_rows(scene, t, rows_text: list[str], type_time: float) -> VGroup:
-    """Terminal.type with rows folded by the caller (rows_text[0] starts with the prompt)."""
+def type_rows(scene, t, rows_text: list[str], type_time: float, extra=()) -> VGroup:
+    """Terminal.type with rows folded by the caller (rows_text[0] starts with the prompt);
+    `extra` animations play during the typing."""
     p = t.prompt + " "
     assert rows_text[0].startswith(p) and all(len(s) <= t.max_chars for s in rows_text)
     t2c = t._prompt_colors(t.prompt)
@@ -122,12 +128,33 @@ def type_rows(scene, t, rows_text: list[str], type_time: float) -> VGroup:
     typed = [glyph_range(rows[0], len(p))] + [glyph_range(r, 0) for r in rows[1:]]
     scene.add(glyph_range(rows[0], 0, len(p)))
     scene.play(ShowIncreasingSubsets(VGroup(*[g for grp in typed for g in grp]), rate_func=linear),
-               run_time=type_time)
+               *extra, run_time=type_time)
     for r in rows:
         scene.add(r)
     g = VGroup(*rows)
     g.rows, g.text = rows, " ".join(r.text for r in rows)
     return g
+
+
+def extra_caption(scene, tr, on: bool, run_time: float = 0.5) -> Animation:
+    """Animation: ' · extra' fades in (on) or out after the tracker's caption while the shared text
+    stays still. (common.track() morphs the whole caption, which scrambles it for a few frames
+    when only the suffix changes.) The caption is swapped for its new version at once: the shared
+    glyphs sit at the same place in both."""
+    old, new = tr.caption, _caption(tr, tr.k, on)
+    short, long_ = (old, new) if on else (new, old)
+    n = len(short)
+    assert len(long_) > n and np.allclose(short.get_left(), long_.get_left(), atol=1e-3) \
+        and np.allclose(short[n - 1].get_center(), long_[n - 1].get_center(), atol=1e-3)
+    suffix = VGroup(*long_[n:])
+    tr.remove(old)
+    tr.add(new)
+    tr.caption = new
+    if on:
+        suffix.set_opacity(0)
+        return suffix.animate(run_time=run_time).set_opacity(1)
+    scene.add(suffix)                                    # the old suffix, on its own while it fades
+    return FadeOut(suffix, run_time=run_time)
 
 
 def startup_line(card: ConfigCard, s: str) -> Text:
@@ -237,7 +264,12 @@ class StepEntrypoint(VoiceScene):
             self.play(FadeIn(picture, shift=UP * 0.1), run_time=0.6)
             stack.accept(self, *base)
             vo.wait_until("ENTRYPOINT only writes")
-            self.play(TransformFromCopy(p_val, t_ent, path_arc=-0.5), FadeOut(n_ent), run_time=1.0)
+            # glyph to glyph (the tile's text has an invisible strut first); the frame closes round it
+            self.play(TransformFromCopy(p_val, VGroup(*t_ent.text[1:]), path_arc=1.0),
+                      FadeIn(t_ent.frame, rate_func=lambda a: smooth(max(0.0, 2 * a - 1))),
+                      FadeOut(n_ent), run_time=1.0)
+            self.remove(t_ent.frame, *t_ent.text)
+            self.add(t_ent)
             card.tiles["ENTRYPOINT"] = t_ent
             card.notes.pop("ENTRYPOINT")
             self.play(FadeIn(cfg_cap, shift=UP * 0.1), Indicate(card.keys["ENTRYPOINT"], color=IMAGE),
@@ -275,16 +307,16 @@ class StepEntrypoint(VoiceScene):
             self.add(line1)
             card.line = line1
             self.play(FadeIn(qmark, scale=1.5), run_time=0.4)
-            self.play(Wiggle(qmark, scale_value=1.3), run_time=0.7)
+            # the build's rows leave while the question hangs, so the inspect is typed on its first words
+            clear_with(self, t, Wiggle(qmark, scale_value=1.3), run_time=0.7)
+            resize(self, t, 4, run_time=0.45)
 
         # ========================================================== 3 · inspect: Cmd=null
         line2 = steady("/bin/bash", 22, INK, mono_font=True).move_to(line1, aligned_edge=LEFT)
         null_cmd = card.note("CMD", "null")
 
         with self.voiceover(SAY[3]) as vo:
-            clear_with(self, t, track(tr, 8, extra=True), run_time=0.4)
-            resize(self, t, 4, run_time=0.45)
-            c3 = type_rows(self, t, INSPECT_ROWS, 1.3)
+            c3 = type_rows(self, t, INSPECT_ROWS, 1.1, extra=[extra_caption(self, tr, True)])
             pin(self, c3.rows[0], beside(row_tag("extra"), c3.rows[0]), run_time=0.25)
             out3 = t.print(self, [INSPECT_OUT], run_time=0.3)[0]
             vo.wait_until("the entrypoint is bash")
@@ -321,21 +353,29 @@ class StepEntrypoint(VoiceScene):
         assert C_PROMPT[5:17] == "f72851da4a58" and C_PROMPT[18] == "/"
         sweep = Arrow([-3.6, 1.82, 0], [3.6, 1.82, 0], buff=0, color=TURN, stroke_width=4,
                       max_tip_length_to_length_ratio=0.05)
-        everything3 = VGroup(*card.everything(), lab_ent, lab_cmd, dim)
+        # the picture leaves but the prediction stays: the start-up line moves top right (S04's idiom)
+        everything3 = VGroup(card, *card.tiles.values(), *card.notes.values(), lab_ent, lab_cmd, dim)
+        said = label("predicted:", 22, S.GREY)
+        pred_to = VGroup(said, line2.copy()).arrange(RIGHT, buff=0.25)
+        pred_to.move_to([5.9 - pred_to.width / 2, 3.2, 0])
+        tick = check_mark(0.36, VENV).next_to(pred_to, RIGHT, buff=0.22)
 
         with self.voiceover(SAY[4]) as vo:
-            clear_with(self, t, FadeOut(everything3, shift=UP * 0.1), track(tr, 8), run_time=0.5)
-            resize(self, t, 6, run_time=0.45)
-            c4 = type_cmd(self, t, RUN, 0.7)
-            t.set_prompt(C_PROMPT)
-            p4 = bare_prompt(self, t)
+            clear_with(self, t, FadeOut(everything3, shift=UP * 0.1), extra_caption(self, tr, False),
+                       run_time=0.4)
+            resize(self, t, 6, run_time=0.45,
+                   extra=[line2.animate.move_to(pred_to[1]), FadeIn(said, shift=LEFT * 0.1)])
+            c4 = type_cmd(self, t, RUN, 0.6)
             yt4 = beside(turn_tag(), c4.rows[0])
-            pin(self, c4.rows[0], yt4, run_time=0.35)
-            self.play(Wiggle(yt4, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.6)
+            pin(self, c4.rows[0], yt4, run_time=0.3)
+            t.set_prompt(C_PROMPT)
+            p4 = bare_prompt(self, t)                    # bash, on its own: as predicted
+            self.play(Create(tick), Indicate(line2, color=VENV, scale_factor=1.12),
+                      Wiggle(yt4, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.6)
             vo.wait_until("Read it left")
-            self.play(TransformFromCopy(p4.glyphs, big.glyphs), run_time=0.9)
-            self.play(GrowArrow(sweep), run_time=0.8)
-            self.play(FadeOut(sweep), run_time=0.3)
+            self.play(TransformFromCopy(p4.glyphs, big.glyphs), run_time=0.8)
+            self.play(GrowArrow(sweep), run_time=0.7)
+            self.play(FadeOut(sweep), run_time=0.25)
             # the parts move apart (spaced), then each gets its label as it is read
             vo.wait_until("You're root")
             self.play(p_root.animate.shift(LEFT * 0.9), p_at.animate.shift(LEFT * 0.45),

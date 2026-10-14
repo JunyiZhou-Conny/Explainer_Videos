@@ -8,27 +8,29 @@ Beats (script.md, ## S01; one voiceover block each):
    `sudo docker run --rm -ti dlops/simple-translate` (README.md line 215) types (two rows); on
    "Just watch" the GREY tag "preview · you'll run it in part 2" sits on the terminal's top-left.
 1. The chips fade; a small BLUE shelf glyph "Docker Hub" sits at the top right. vm-debian12/06 lines
-   2-3 print; on "in seven layers" a PINK arrow runs from the shelf into the terminal and pulses
-   seven times while lines 4, …, 10 print and a TEAL counter beside them counts "1 layer" to
-   "7 layers"; lines 11-12 (hash12). On "starts a shell" the arrow and shelf leave and the prompt
-   becomes `root@c7c280390994:/#` (line 13); on "There we run the app" it types `python cli.py`
+   2-3 print; a PINK arrow grows from the shelf into the terminal ("downloads") and pulses seven
+   times while lines 4, …, 10 print and a TEAL counter on the "…" row counts "1 layer" to
+   "7 layers" (during "in seven layers"); lines 11-12 (hash12). On "starts a shell" the prompt
+   becomes `root@c7c280390994:/#` (line 13) and pulses while the arrow and shelf leave; on
+   "There we run the app" it types `python cli.py`
    -> lines 16-20, 24 (wrapped), 26-27; the terminal scrolls. "I love cheese" pulses on the
    Input line; on "comes back in Italian" `Adoro il formaggio` turns GREEN and stays on screen.
 2. `python --version` (line 28, GREY `extra` tag) -> line 29; on "It's 3.14.7" `3.14.7` turns
    YELLOW. On "Yet the recipe" the terminal shrinks to the 3-row bottom strip (the preview tag rides
    on its top edge) and CODE(Dockerfile.txt: 2) slides in above it; `python:3.12` turns ORANGE and
-   is underlined; a copy of `3.14.7` rises from the strip to the right of the panel with a YELLOW
-   "?" between them; the "?" wiggles on "Hold that thought".
+   is underlined; a copy of `3.14.7` rises from the strip to the right of the panel (as `python:3.12`
+   pulses) and a YELLOW "?" appears between them; the "?" wiggles on "Hold that thought".
 3. V1 ladder (README.md lines 9-16, all rungs dim): rung 4 is circled YELLOW ("that's where ...
    ends"); on "Last lecture" rungs 1-2 light softly with a GREY bracket "L1" (rung 1, then rung 2,
    pulse as named); on "Today" rungs 3-4 light fully with a YELLOW bracket "today"; rung 3's laptop
    icon pulses on "package the app"; a BLUE "Docker Hub" shelf right of the ladder gets a PINK route
    from rung 3 on "push it", and a second route up to rung 4's VM on "run it on a VM".
-4. Layout preview: a README page glyph appears ("open the README"); on "Three trackers" it flies to
-   the top-left corner and becomes a YELLOW ring; three tracker chips appear in it as named, each
-   with its icon: "A · Developing App using Containers · 16" (GREY laptop), "B · Pushing Docker
-   Image to Docker Hub · 4" (BLUE shelf), "C · Running App on VM using Docker · 7" (BLUE VM); the
-   ring pulses. On "When the yellow" a 2-row strip (GREY tag "preview") types `docker image ls` with
+4. Layout preview: a README page glyph appears ("open the README"); on "Three trackers" its outline
+   flies to the top-left corner and becomes a YELLOW ring (its text shrinks away into it); three
+   tracker chips appear in it, dim, and the ring pulses; each chip lights as named, its icon
+   pulsing: "A · Developing App using Containers · 16" (GREY laptop), "B · Pushing Docker
+   Image to Docker Hub · 4" (BLUE shelf), "C · Running App on VM using Docker · 7" (BLUE VM).
+   On "When the yellow" a 2-row strip (GREY tag "preview") types `docker image ls` with
    a YELLOW `▶ your turn` row tag (pulses on "pause and run"), then `ls -a` with the GREY `extra`
    tag; the footer "every command: MLOps_Learning · guides/L02-containers-1.md" fades in.
 5. Checklist card, rows as named: ✓ Docker Desktop running (Tutorial 0), ✓ a free Docker Hub
@@ -120,6 +122,23 @@ def baseline_y(t: Text, s: str) -> float:
         if c.isalnum() and c not in "gjpqyQ":
             return g.get_bottom()[1]
     return t.get_bottom()[1]
+
+
+def make_room(scene, t, lines, wrap: bool = False, run_time: float = 0.4):
+    """Terminal scrolling for `lines` about to be printed (or typed): like Terminal._make_room, but
+    the rows that leave fade where they are instead of sliding up over the title bar and the tag
+    above the terminal; then the rows that stay move up."""
+    n_new = sum(max(1, -(-len(s) // t.max_chars)) if wrap else 1 for s in lines)
+    overflow = len(t.lines) + n_new - t.rows
+    if overflow <= 0:
+        return
+    gone = t.lines.submobjects[:overflow]
+    stay = VGroup(*t.lines.submobjects[overflow:])
+    scene.play(*[FadeOut(m) for m in gone], run_time=run_time * 0.4)
+    for m in gone:
+        t.lines.remove(m)
+    if len(stay):
+        scene.play(stay.animate.shift(UP * t.pitch * overflow), run_time=run_time * 0.6)
 
 
 def clear_stage(scene, *anims, run_time: float = 0.6):
@@ -236,7 +255,9 @@ class Hook(VoiceScene):
             self.add(shell)
             vo.wait_until("There we run the app")
             type_cmd(self, t, typed, type_time=0.6)
-            t.print(self, RUN6.at((16, 20), 24, 26, 27), wrap=True, run_time=0.8, lag=0.1)
+            out_lines = RUN6.at((16, 20), 24, 26, 27)
+            make_room(self, t, out_lines, wrap=True)
+            t.print(self, out_lines, wrap=True, run_time=0.8, lag=0.1)
             inp = t.find("Input: I love cheese")
             out = t.find("Output: Adoro il formaggio")
             vo.wait_until("I love cheese")
@@ -266,6 +287,7 @@ class Hook(VoiceScene):
             prompt, typed = split_prompt(RUN6.line(28))
             assert typed == "python --version", typed
             t.set_prompt(prompt)
+            make_room(self, t, [typed])
             ver_cmd = type_cmd(self, t, typed, type_time=0.7)
             xt = short_extra().next_to(ver_cmd.strut, RIGHT, buff=0.45)
             self.play(FadeIn(xt, shift=LEFT * 0.1), run_time=0.4)
@@ -273,6 +295,7 @@ class Hook(VoiceScene):
             ver_cmd.add(xt)
             self.add(ver_cmd)
             vo.wait_until("which Python")
+            make_room(self, t, [ver_cap])
             ver = t.print(self, [ver_cap], run_time=0.3)[0]
             vo.wait_until("It's 3.14.7")
             num = substring(ver, "3.14.7")
@@ -360,7 +383,7 @@ class Hook(VoiceScene):
         veils = VGroup(*[Rectangle(width=c.width + 0.04, height=c.height + 0.04, stroke_width=0)
                          .set_fill(S.BG, 0.72).move_to(c) for c in tchips])
         ring = RoundedRectangle(width=tchips.width + 0.24, height=tchips.height + 0.24, corner_radius=0.16,
-                                stroke_color=TURN, stroke_width=3).move_to(tchips)
+                                stroke_color=TURN, stroke_width=3).set_fill(S.BG, 0).move_to(tchips)
         t2 = term(P_LAPTOP_HOME, rows=2)              # the 2-row preview strip
         t2.shift([0, -2.9 - t2.box.get_bottom()[1], 0])
         prev2 = tag("preview", S.GREY)
@@ -373,17 +396,20 @@ class Hook(VoiceScene):
             vo.wait_until("open the README")
             self.play(FadeIn(page, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("Three trackers")
-            # the page flies into the corner and becomes the three trackers (dim until named)
-            self.play(page.animate.scale(0.3).move_to(tchips).set_opacity(0),
-                      FadeIn(tchips, target_position=page.get_center(), scale=0.6), FadeIn(veils),
-                      Create(ring), run_time=1.0)
+            # the page flies into the corner: its outline becomes the YELLOW ring (its text shrinks
+            # away inside it), then the three trackers appear in the ring, dim until named
+            outline, *words = page.submobjects
             self.remove(page)
+            self.add(outline, *words)                 # each piece on the scene on its own
+            self.play(ReplacementTransform(outline, ring),
+                      *[FadeOut(w, target_position=ring.get_center(), scale=0.25) for w in words],
+                      run_time=0.9)
+            self.play(FadeIn(tchips, shift=DOWN * 0.1), FadeIn(veils, shift=DOWN * 0.1), run_time=0.45)
+            self.play(ring.animate(rate_func=there_and_back).set_stroke(width=6), run_time=0.6)
             for c, v, anchor in zip(tchips, veils, ("on the laptop", "on Docker Hub", "on the VM")):
                 vo.wait_until(anchor)
-                self.play(FadeOut(v), run_time=0.35)
+                self.play(FadeOut(v), Indicate(c.icon, color=INK, scale_factor=1.3), run_time=0.6)
                 self.remove(v)
-                self.play(Indicate(c.icon, color=INK, scale_factor=1.3), run_time=0.5)
-            self.play(ring.animate(rate_func=there_and_back).set_stroke(width=7), run_time=0.7)
             vo.wait_until("When the yellow")
             self.play(FadeIn(t2), FadeIn(prev2), ring.animate.set_stroke(width=2, opacity=0.5), run_time=0.5)
             l1_ = t2.type(self, IMAGE_LS, type_time=0.7)
@@ -397,7 +423,7 @@ class Hook(VoiceScene):
             l2_ = t2.type(self, "ls -a", type_time=0.4)
             xt2 = row_tag("extra").next_to(l2_.strut, RIGHT, buff=0.45)
             self.play(FadeIn(xt2, scale=0.8), run_time=0.45)
-            vo.wait_until("isn't in the README")
+            vo.wait_until("marks a check")             # the footer stays ~3.5 s
             self.play(FadeIn(foot, shift=UP * 0.15), run_time=0.6)
 
         # ========================================================== 5. before you start

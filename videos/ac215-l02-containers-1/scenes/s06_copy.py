@@ -38,13 +38,14 @@ Beats (script.md "## S06", one voiceover block each):
     copied up into two slabs: ORANGE with a PURPLE `uv` chip beside it, GREY with file glyphs;
     "adds a layer" (TEAL) beside each.
  4  The stack above the strip; the `uv` chip pulses on "uv is installed", the COPY slab on "and the
-    code is in the image", its glyphs on "Will python cli.py run?". PONDER (6 s) card at the bottom
-    (over the strip).
- 5  The ponder card gets a RED cross on "No." and leaves with the picture. Full wide terminal (13.2
-    wide, 20 pt, 13 rows): `docker run --rm -ti simple-translate` + ▶ your turn (on the next row:
-    the command fills its row) -> at the capture's prompt `root@1f2c7df8735d:/#`, TRACKER A9 ·
-    extra, `ls` (row tag `extra`) -> laptop/19 lines 3–7 in columns. "our files sit": the seven
-    repo entries turn white and pulse; "the system's own folders": the others dim ORANGE.
+    code is in the image", its glyphs on "Will python cli.py run?". PONDER (6 s) card at the bottom:
+    the strip fades out as it comes in (its rows would show through the card and past its sides).
+ 5  The ponder card gets a RED cross beside the question on "No." and leaves with the picture.
+    Full wide terminal (13.2 wide, 20 pt, 13 rows): `docker run --rm -ti simple-translate` +
+    ▶ your turn (on the next row: the command fills its row) -> at the capture's prompt
+    `root@1f2c7df8735d:/#`, TRACKER A9 · extra, `ls` (row tag `extra`) -> laptop/19 lines 3–7 in
+    columns. "our files sit": the seven repo entries turn white and pulse; "the system's own
+    folders": the others dim ORANGE.
  6  At the same prompt `python cli.py` (row tag `extra`) -> laptop/19 lines 9–12, RED;
     `ModuleNotFoundError` pulses, then both `art`s. "We installed the installer": the terminal
     shrinks to the 3-row strip (the command, the RED line, the prompt); above it the V2 stack
@@ -338,6 +339,7 @@ class StepCopy(VoiceScene):
             self.play(FadeIn(none_tag, shift=UP * 0.1), run_time=0.4)
             # the parcel closes (names hidden), shrinks and rides the route through the empty sieve
             mover = VGroup(parcel.frame, parcel.tape, glyphs)
+            mover.set_z_index(1)                           # it rides on the route, not under it
             self.play(FadeOut(names), FadeOut(parcel.title), run_time=0.3)
             self.play(mover.animate.scale(SHRINK).move_to(r_a + RIGHT * 0.1), run_time=0.5)
             line = Line(mover.get_center(), r_b + LEFT * 0.05)
@@ -448,29 +450,33 @@ class StepCopy(VoiceScene):
         # ========================================================== 4 · ponder
         with self.voiceover(SAY[4]) as vo:
             vo.wait_until("uv is installed")
-            self.play(Indicate(uv_tag, color=TOOL, scale_factor=1.3), Indicate(uv_slab, color=TOOL, scale_factor=1.04),
-                      run_time=0.8)
+            # the slabs pulse in their own colours (fill = what they hold); only the chip flashes PURPLE
+            self.play(Indicate(uv_tag, color=TOOL, scale_factor=1.3),
+                      uv_slab.animate(rate_func=there_and_back).scale(1.05), run_time=0.8)
             vo.wait_until("and the code is in")
-            self.play(Indicate(cp_slab, color=INK, scale_factor=1.05), run_time=0.8)
+            self.play(cp_slab.animate(rate_func=there_and_back).scale(1.06), run_time=0.8)
             vo.wait_until("Will python cli.py")
             self.play(Indicate(cp_slab.glyphs, color=TURN, scale_factor=1.25), run_time=0.8)
 
         q = ponder_card(PONDER_Q)
         q.move_to([0, -3.45 + q.height / 2, 0])
-        self.play(FadeIn(q, scale=0.95), run_time=0.6)
+        # the card takes the strip's place (the strip's rows would show through the card and past its sides)
+        self.play(FadeIn(q, scale=0.95), FadeOut(t), run_time=0.6)
         bar = q[3]
         self.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
                   run_time=6)
 
         # ========================================================== 5 · run it: ls
         w = wide_term(13)
-        no = cross_mark(0.45, ERR).next_to(q[1], RIGHT, buff=0.3)
+        q_text = q[2]                                       # the question; its last glyph is the "?"
+        no = cross_mark(0.55, ERR, stroke=7).next_to(q_text[-1], RIGHT, buff=0.45)
+        no.set_y(q_text[-1].get_center()[1])
         picture4 = VGroup(*stack.slabs, brace, base_name, uv_tag)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(Create(no), run_time=0.35)
-            self.wait(0.25)
-            self.play(FadeOut(VGroup(q, no)), FadeOut(picture4), FadeOut(VGroup(*adds)), FadeOut(t), run_time=0.5)
+            self.play(Create(no), run_time=0.4)
+            self.play(Indicate(no, color=ERR, scale_factor=1.25), run_time=0.5)
+            self.play(FadeOut(VGroup(q, no)), FadeOut(picture4), FadeOut(VGroup(*adds)), run_time=0.5)
             self.play(FadeIn(w), run_time=0.3)
             bare_prompt(self, w)
             vo.wait_until("Pause and run it")

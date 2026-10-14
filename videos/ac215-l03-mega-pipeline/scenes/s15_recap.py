@@ -19,10 +19,10 @@ Beats (script.md "## S15", one voiceover block each):
     also lists the other four cli.py and, / with your key, generate_text's text_prompts/ and
     text_paragraphs/" appears above the terminal; lines 8, 13, 14 get bars on "the files in
     generate text". On "but the other four folders hide" the caption goes, the terminal shrinks to
-    a 3-row strip (`git status`, lines 13-14), CODE(transcribe_audio/.gitignore: 3-9, lines 5-7 in
-    focus) slides in top right and four GREY dashed ghost chips, the other four Dockerfiles
+    a 3-row strip (`git status`, lines 13-14), CODE(transcribe_audio/.gitignore: 3-9, 24 pt, lines
+    5-7 in focus) slides in top right and four GREY dashed ghost chips, the other four Dockerfiles
     (`transcribe_audio/Dockerfile` ...), appear top left under "missing from git status:" and are
-    struck through; on "and project files" lines 5-7 get YELLOW bars and the note "and their
+    struck through; on "and project files" lines 5-7 get one YELLOW bar and the note "and their
     pyproject.toml, uv.lock" appears.
  3  Tag `erratum` beside the ghosts' heading. "add those Dockerfiles": the ghosts and lines 5-7
     pulse; "with git add dash f": a GREEN chip `git add -f` ("in your own repo") under the ghosts,
@@ -34,12 +34,12 @@ Beats (script.md "## S15", one voiceover block each):
     synthesis_audio` (extra; folds onto three rows) with `extra` and `▶ your turn` -> 72-cleanup.txt
     lines 2-11, printed pair by pair while V1's boxes A-E dissolve one by one (the cabinet stays).
     "Older builds stay behind untagged": the terminal shrinks to the strip (the last pair) and
-    four dashed TEAL "older builds · untagged" boxes appear above it, each with a GOLD key (they
-    pulse on "each holding your key"). `docker image prune -f` (extra; no output: not captured), the
-    GREY caption "removes the untagged older builds · each held your key", and the dashed boxes
-    dissolve. Then the GREY caption "still on disk: the base image (L4 uses it again) and the build
-    cache · docker builder prune frees it" and a GREEN check "no containers left: every run used
-    --rm"; a short hold.
+    four dashed TEAL boxes, each with a GOLD key, appear above it over the GREY label "older builds
+    · untagged" (the keys pulse on "each holding your key"). `docker image prune -f` (extra; no
+    output: not captured), the GREY caption "removes the untagged older builds · each held your
+    key" above them, and the boxes and their label dissolve. In their place the GREY caption "still
+    on disk: the base image (L4 uses it again) and the build cache / docker builder prune frees it"
+    and a GREEN check "no containers left: every run used --rm"; a 2.4 s hold (silent) to read them.
  5  Everything goes. "Test yourself" (YELLOW underline). Q1 (26 pt, YELLOW badge) with a text-free
     thumbnail of V1 (box D pulses on "translate text", the cabinet on "who wrote it"); Q1 shrinks to
     22 pt GREY and Q2 comes in below (thumbnail: V3's window, the image block with its /app cavity,
@@ -50,9 +50,11 @@ Beats (script.md "## S15", one voiceover block each):
     from slash app"), Q5 (a sieve with the GOLD key on it over a TEAL box; the key pulses on "a
     git-ignored key", the sieve on "and the fix").
  7  The thumbnail goes; the five questions reflow to full width at the top; footer cards "Answers:
-    exercises.md" and "Study guide + every command:" with the MLOps_Learning link and the guide's
-    path; on "Next lecture" a dashed GREY card "next: L4 · branch flexible-workflow" whose three
-    lines appear as they are said. Everything fades to an empty frame (end of part 2).
+    exercises.md" and, under it, "Study guide + every command:" with the MLOps_Learning link and the
+    guide's path (it pulses on "study guide"); on "Next lecture" a dashed GREY card at the right,
+    "next: L4" / "branch flexible-workflow", whose three lines appear as they are said ("your own
+    bucket + service account", "the key outside the repo", "docker-shell.sh / builds and runs for
+    you"). Everything fades to an empty frame (end of part 2).
 
 Terminal output comes only from assets/terminal/laptop/70-72 (capture()); the .gitignore panel quotes
 assets/source/transcribe_audio/.gitignore with its real line numbers. The question text helpers are
@@ -70,9 +72,9 @@ from explainer.devops import (MONO, box, check_mark, chip, cross_mark, folder_gl
                               mono_line, step_badge, substring)
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, CTR, ERR, GROUP, INK, KEY, LAPTOP, LETTERS, LOOKUP, NARRATION, P_A, P_REPO,
+from common import (CLOUD, CTR, ERR, GROUP, INK, KEY, LAPTOP, LOOKUP, NARRATION, P_A, P_REPO,
                     TRACK_LEFT, TRACK_TOP, TURN, VENV, Relay, _set_op, beside, capture, erratum_tag,
-                    extra_tag, key_glyph, padlock, pin, pkg_dots, resize, source_text, src_panel,
+                    extra_tag, key_glyph, padlock, pkg_dots, resize, source_text, src_panel,
                     strike, strip_top, term, your_turn)
 
 SAY = NARRATION["S15"]
@@ -136,7 +138,7 @@ CORNER_TOP = 3.52                      # V1 in the top-right corner: y 2.70..3.5
 Q_X = -5.72
 Q_W = 7.0
 Q_TOP = 2.35
-Q_BIG, Q_SMALL, Q_FINAL = 26, 22, 21
+Q_BIG, Q_SMALL, Q_FINAL = 26, 22, 22
 THUMB_X, THUMB_W = 4.15, 4.7
 
 
@@ -157,24 +159,30 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
     return m
 
 
-def words(*parts, size: float = 20, color=S.GREY, code_color=None) -> VGroup:
-    """A caption row: plain strings in serif, 1-tuples in mono. A part that starts with
-    punctuation hugs the part before it."""
-    ms, gaps = [], []
+def words(*parts, size: float = 20, color=S.GREY, code_color=None, t2c=None) -> Text:
+    """A caption line as ONE Text (one baseline): plain strings in serif, 1-tuples in the code font
+    (and code_color). A part that starts with punctuation hugs the part before it. .src"""
+    s, code = "", []
     for p in parts:
+        txt = p[0] if isinstance(p, tuple) else p
         if isinstance(p, tuple):
-            ms.append(mono(p[0], size, code_color or color))
-            gaps.append(0.12)
-        else:
-            ms.append(label(p, size, color))
-            gaps.append(0.04 if p[:1] in ",.:;'’" else 0.12)
-    g = VGroup(ms[0])
-    for m, gap in zip(ms[1:], gaps[1:]):
-        m.next_to(g, RIGHT, buff=gap)
-        m.align_to(ms[0], DOWN)
-        g.add(m)
-    g.parts = ms
-    return g
+            code.append(txt)
+        if s and txt[:1] not in ",.:;'’":
+            s += " "
+        s += txt
+    cmap = {c: code_color for c in code} if code_color else {}
+    cmap.update(t2c or {})
+    t = S.text(s, size, color, t2f={c: MONO for c in code}, t2c=cmap)
+    t.src = s
+    return t
+
+
+def span(t: Text, sub: str) -> VGroup:
+    """The glyphs of `sub` in a words() line (glyphs skip spaces)."""
+    i = t.src.find(sub)
+    assert i >= 0, (sub, t.src)
+    a = len("".join(t.src[:i].split()))
+    return VGroup(*t.submobjects[a:a + len("".join(sub.split()))])
 
 
 def make_room(scene, t, n: int):
@@ -293,40 +301,55 @@ def relay_at(width: float, box_h: float, drawer_h: float, gap: float, letter_pt:
     return r
 
 
+def seen(r: Relay) -> VGroup:
+    """The parts of V1 that are drawn here (the hidden bonus drawer and labels still take room)."""
+    return VGroup(r.cabinet, r.boxes)
+
+
+def put(r: Relay, **kw) -> Relay:
+    """place() by the drawn parts."""
+    v = seen(r)
+    c0 = v.get_center()
+    place(v, **kw)
+    d = v.get_center() - c0
+    v.shift(-d)
+    r.shift(d)
+    return r
+
+
 def relay_big() -> Relay:
-    return place(relay_at(12.4, 1.0, 1.25, 0.8), cx=0, cy=0.2)
+    return put(relay_at(12.4, 1.0, 1.25, 0.8), cx=0, cy=0.2)
 
 
 def relay_mid() -> Relay:
-    return place(relay_at(7.4, 0.62, 0.8, 0.45), cx=0, top=2.55)
+    return put(relay_at(7.4, 0.62, 0.8, 0.45), cx=0, top=2.55)
 
 
 def relay_corner() -> Relay:
-    return place(relay_at(4.4, 0.32, 0.3, 0.12, letter_pt=22, icons=False), right=EDGE, top=CORNER_TOP)
+    return put(relay_at(4.4, 0.32, 0.3, 0.12, letter_pt=22, icons=False), right=EDGE, top=CORNER_TOP)
 
 
 # ------------------------------------------------------------------ pictures for beats 0-4
 def checklist_card() -> VGroup:
     """Beat 0: "cloud: nothing to delete", three GREY items with GREEN ticks, the outputs line.
     .frame .title .items[i] (.tick .text) .outputs .group (the mono group-01)"""
-    title = words("cloud:", "nothing to delete", size=28, color=INK)
-    title.parts[0].set_color(CLOUD)
+    title = words("cloud:", "nothing to delete", size=34, color=INK, t2c={"cloud:": CLOUD})
     items = VGroup()
     for s in ("no VM", "no bucket", "no service account"):
-        tk = check_mark(0.26, VENV)
-        tx = label(s, 24, S.GREY)
+        tk = check_mark(0.3, VENV)
+        tx = label(s, 28, S.GREY)
         it = VGroup(tk, tx).arrange(RIGHT, buff=0.14)
         it.tick, it.text = tk, tx
         items.add(it)
-    items.arrange(RIGHT, buff=0.6)
-    outs = words("your outputs stay in the bucket, under", (GROUP,), size=22, color=INK, code_color=LOOKUP)
-    body = VGroup(title, items, outs).arrange(DOWN, buff=0.36, aligned_edge=LEFT)
+    items.arrange(RIGHT, buff=0.7)
+    outs = words("your outputs stay in the bucket, under", (GROUP,), size=26, color=INK, code_color=LOOKUP)
+    body = VGroup(title, items, outs).arrange(DOWN, buff=0.42, aligned_edge=LEFT)
     items.shift(RIGHT * 0.3)
-    fr = box(body.width + 0.9, body.height + 0.7, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+    fr = box(body.width + 1.0, body.height + 0.8, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
     fr.move_to(body)
     g = VGroup(fr, body)
     g.frame, g.title, g.items, g.outputs = fr, title, items, outs
-    g.group = outs.parts[-1]
+    g.group = span(outs, GROUP)
     return g
 
 
@@ -334,18 +357,18 @@ def ghost_chips() -> VGroup:
     """Beat 2: the other four Dockerfiles as GREY dashed chips (all one width), the heading above,
     a note below. .head .chips[i] (.dashed .solid .text .strike) .note"""
     head = label("missing from git status:", 22, S.GREY)
-    texts = [mono(f"{c}/Dockerfile", 20, S.GREY) for c in OTHER_FOUR]
-    w = max(t.width for t in texts) + 0.5
-    h = 0.44
+    texts = [mono(f"{c}/Dockerfile", 22, S.GREY) for c in OTHER_FOUR]
+    w = max(t.width for t in texts) + 0.4
+    h = 0.48
     chips = VGroup()
     for t in texts:
         dashed = box(w, h, S.GREY, dashed=True, stroke=2)
-        t.move_to(dashed).align_to(dashed, LEFT).shift(RIGHT * 0.25)
+        t.move_to(dashed).align_to(dashed, LEFT).shift(RIGHT * 0.2)
         c = VGroup(dashed, t)
         c.dashed, c.text = dashed, t
         chips.add(c)
     chips.arrange(DOWN, buff=0.12, aligned_edge=LEFT)
-    note = words("and their", ("pyproject.toml",), ",", ("uv.lock",), size=20)
+    note = words("and their", ("pyproject.toml",), ",", ("uv.lock",), size=22)
     g = VGroup(head, chips, note)
     head.next_to(chips, UP, buff=0.22).align_to(chips, LEFT)
     note.next_to(chips, DOWN, buff=0.2).align_to(chips, LEFT)
@@ -367,13 +390,13 @@ def older_builds(n: int = 4) -> VGroup:
     .boxes[i] (.frame .key) .label"""
     boxes = VGroup()
     for _ in range(n):
-        fr = box(1.15, 0.72, CTR, dashed=True, stroke=2.5)
-        k = key_glyph(0.26).move_to(fr)
+        fr = box(1.5, 0.95, CTR, dashed=True, stroke=2.5)
+        k = key_glyph(0.34).move_to(fr)
         b = VGroup(fr, k)
         b.frame, b.key = fr, k
         boxes.add(b)
-    boxes.arrange(RIGHT, buff=0.3)
-    lab = label("older builds · untagged", 22, S.GREY).next_to(boxes, DOWN, buff=0.16)
+    boxes.arrange(RIGHT, buff=0.4)
+    lab = label("older builds · untagged", 24, S.GREY).next_to(boxes, DOWN, buff=0.18)
     g = VGroup(boxes, lab)
     g.boxes, g.label = boxes, lab
     return g
@@ -465,13 +488,26 @@ def question(i: int, size: float, color: str, badge_color: str, width: float) ->
     return g
 
 
+LIGATURES = ("ff", "fi", "fl")            # the serif font joins these into one glyph
+
+
 def q_span(q: VGroup, sub: str) -> VGroup:
-    """The glyphs of `sub` in question q's text (a span never crosses a line break)."""
+    """The glyphs of `sub` in question q's text (a span never crosses a line break). The serif
+    font draws "fi" etc. as one glyph, so a span after such a pair is counted from the line's end
+    (asserting no such pair follows it)."""
     key = "".join(sub.split())
     for r, s in zip(q.text.lines, q.text.strs):
-        i = "".join(s.split()).find(key)
-        if i >= 0:
+        flat = "".join(s.split())
+        i = flat.find(key)
+        if i < 0:
+            continue
+        n = len(r.glyphs)
+        if n == len(flat):
             return VGroup(*r.glyphs[i:i + len(key)])
+        tail = flat[i + len(key):]
+        assert not any(lg in tail for lg in LIGATURES), (sub, s)
+        j = n - len(tail) - len(key)
+        return VGroup(*r.glyphs[j:j + len(key)])
     raise AssertionError((sub, q.text.strs))
 
 
@@ -603,7 +639,7 @@ class Recap(VoiceScene):
         relay = relay_big()
         mid = relay_mid()
         card = checklist_card()
-        place(card, cx=0, top=mid.get_bottom()[1] - 0.55)
+        place(card, cx=0, top=seen(mid).get_bottom()[1] - 0.55)
         assert card.get_bottom()[1] > -3.4, card.get_bottom()
 
         with self.voiceover(SAY[0]) as vo:
@@ -624,7 +660,8 @@ class Recap(VoiceScene):
         t = term(P_A, rows=ROWS_FULL)
         seed(t, P_A)
         corner = relay_corner()
-        assert corner.get_bottom()[1] > TOP_FULL + 0.06 and corner.get_left()[0] > cap.get_right()[0] + 0.5
+        assert seen(corner).get_bottom()[1] > TOP_FULL + 0.06 and seen(corner).get_left()[0] > cap.get_right()[0] + 0.5, \
+            seen(corner).get_bottom()
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(card, shift=DOWN * 0.2), Transform(relay, corner), run_time=0.8)
@@ -650,25 +687,26 @@ class Recap(VoiceScene):
         # ========================================================== 2 · git status
         gcap = VGroup(
             words("we set", ("group_name",), "only in", ("transcribe_audio",), ": yours also lists the other four",
-                  ("cli.py",), "and,"),
-            words("with your key,", ("generate_text",), "'s", ("text_prompts/",), "and", ("text_paragraphs/",)),
-        ).arrange(DOWN, buff=0.14, aligned_edge=LEFT)
-        place(gcap, left=-6.3, bottom=TOP_GIT + 0.2)
+                  ("cli.py",), size=22),
+            words("and, with your key,", ("generate_text",), "'s", ("text_prompts/",), "and", ("text_paragraphs/",),
+                  size=22),
+        ).arrange(DOWN, buff=0.16, aligned_edge=LEFT)
+        place(gcap, left=-6.3, cy=(cap.get_bottom()[1] + TOP_GIT) / 2)
         assert gcap.get_top()[1] < cap.get_bottom()[1] - 0.15 and gcap.get_right()[0] < EDGE, (gcap.get_top(), gcap.get_right())
 
         ghosts = ghost_chips()
-        place(ghosts, left=-6.4, top=2.95)
+        place(ghosts, left=-6.4, top=2.88)
         finish_ghosts(ghosts)
-        panel = src_panel(GITIGNORE, 3, 9, focus=[2, 3, 4])
-        place(panel, left=ghosts.chips.get_right()[0] + 0.45, top=2.95)
+        panel = src_panel(GITIGNORE, 3, 9, focus=[2, 3, 4], size=24)
+        place(panel, left=ghosts.chips.get_right()[0] + 0.35, top=2.88)
         assert panel.get_right()[0] < EDGE and ghosts.get_bottom()[1] > STRIP + 1.0, \
             (panel.get_right(), ghosts.get_bottom())
         assert panel.get_bottom()[1] > STRIP + 0.25, panel.get_bottom()
         code = panel.code
-        g_bars = [Rectangle(width=code.background.width - 0.12, height=code.code_lines[k].height + 0.14,
-                            stroke_width=0).set_fill(TURN, 0.2).move_to([code.background.get_center()[0],
-                                                                          code.code_lines[k].get_center()[1], 0])
-                  for k in (2, 3, 4)]
+        _l5, _l7 = code.code_lines[2], code.code_lines[4]       # one bar over lines 5-7
+        g_bars = [Rectangle(width=code.background.width - 0.12, height=_l5.get_top()[1] - _l7.get_bottom()[1] + 0.14,
+                            stroke_width=0).set_fill(TURN, 0.2)
+                  .move_to([code.background.get_center()[0], (_l5.get_top()[1] + _l7.get_bottom()[1]) / 2, 0])]
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(relay), run_time=0.4)
@@ -735,18 +773,18 @@ class Recap(VoiceScene):
 
         # ========================================================== 4 · remove the images; prune
         olds = older_builds()
-        place(olds, cx=0, top=1.95)
-        pr_cap = words("removes the untagged older builds · each held your key", size=22)
-        place(pr_cap, cx=0, bottom=olds.boxes.get_top()[1] + 0.25)
-        disk = words("still on disk: the base image (L4 uses it again) and the build cache ·", ("docker builder prune",),
-                     "frees it", size=20)
-        place(disk, cx=0, top=olds.label.get_bottom()[1] - 0.45)
-        nocon = VGroup(check_mark(0.26, VENV), words("no containers left: every run used", ("--rm",), size=22, color=INK))
+        place(olds.boxes, cx=0, cy=0.85)
+        olds.label.next_to(olds.boxes, DOWN, buff=0.18)
+        pr_cap = words("removes the untagged older builds · each held your key", size=24)
+        place(pr_cap, cx=0, bottom=olds.boxes.get_top()[1] + 0.3)
+        disk = VGroup(words("still on disk: the base image (L4 uses it again) and the build cache", size=22),
+                      words(("docker builder prune",), "frees it", size=22)).arrange(DOWN, buff=0.14)
+        nocon = VGroup(check_mark(0.28, VENV), words("no containers left: every run used", ("--rm",), size=24, color=INK))
         nocon.arrange(RIGHT, buff=0.15)
-        place(nocon, cx=0, top=disk.get_bottom()[1] - 0.3)
+        VGroup(disk, nocon).arrange(DOWN, buff=0.4).move_to([0, 0.2, 0])
         assert disk.get_right()[0] < EDGE and disk.get_left()[0] > -EDGE, disk.get_left()
         assert nocon.get_bottom()[1] > STRIP + 0.1, nocon.get_bottom()
-        assert pr_cap.get_top()[1] < corner.get_bottom()[1] - 0.1, pr_cap.get_top()
+        assert pr_cap.get_top()[1] < seen(corner).get_bottom()[1] - 0.1, pr_cap.get_top()
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(panel, ghosts, err, addf_g, crosses, not_these, lock, keep_ig, *g_bars, bar3)),
@@ -771,10 +809,10 @@ class Recap(VoiceScene):
             pin_tags(self, t, c_pr, extra_tag())
             self.play(FadeIn(pr_cap, shift=DOWN * 0.1), run_time=0.4)
             self.play(LaggedStart(*[b.animate.scale(0.3).set_opacity(0) for b in olds.boxes], lag_ratio=0.12),
-                      olds.label.animate.set_opacity(0.35), run_time=0.8)
+                      olds.label.animate.set_opacity(0), run_time=0.8)
             self.play(FadeIn(disk, shift=UP * 0.1), run_time=0.5)
             self.play(Create(nocon[0]), FadeIn(nocon[1], shift=UP * 0.1), run_time=0.5)
-            self.wait(1.6)                                    # the teardown checklist, before the recap
+            self.wait(2.4)                                    # the teardown checklist, before the recap
 
         # ========================================================== 5 · Test yourself: Q1, Q2
         title = label("Test yourself", 40, INK)
@@ -861,26 +899,27 @@ class Recap(VoiceScene):
         g_box = box(g_body.width + 0.7, g_body.height + 0.45, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
         g_body.move_to(g_box)
         card2 = VGroup(g_box, g_body)
-        place(card1, left=-6.35, top=top - 0.25)
-        card2.next_to(card1, RIGHT, buff=0.3, aligned_edge=UP)
-        n_head = VGroup(label("next:", 24, S.GREY), label("L4 · branch", 24, INK), mono("flexible-workflow", 22, INK))
-        n_head.arrange(RIGHT, buff=0.14)
-        for m in n_head[1:]:
-            m.align_to(n_head[0], DOWN)
+        place(card1, left=-6.35, top=top - 0.2)
+        card2.next_to(card1, DOWN, buff=0.25, aligned_edge=LEFT)
+        n_head = VGroup(label("next:", 24, S.GREY), label("L4", 24, INK)).arrange(RIGHT, buff=0.14)
+        n_head[1].align_to(n_head[0], DOWN)
+        n_branch = words("branch", ("flexible-workflow",), size=20)
         n_items = VGroup(
-            words("your own bucket + service account", size=22, color=INK),
-            words("· the key outside the repo", size=22, color=INK),
-            words("·", ("docker-shell.sh",), "builds and runs for you", size=22, color=INK),
-        ).arrange(RIGHT, buff=0.16)
-        for m in n_items[1:]:
-            m.align_to(n_items[0], DOWN)
-        n_body = VGroup(n_head, n_items).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
-        n_box = box(12.7, n_body.height + 0.5, S.GREY, dashed=True)
-        n_body.move_to(n_box).align_to(n_box, LEFT).shift(RIGHT * 0.35)
+            words("your own bucket + service account", size=20, color=INK),
+            words("the key outside the repo", size=20, color=INK),
+            VGroup(mono("docker-shell.sh", 20, INK), label("builds and runs for you", 20, INK))
+            .arrange(DOWN, aligned_edge=LEFT, buff=0.1),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
+        n_body = VGroup(VGroup(n_head, n_branch).arrange(DOWN, aligned_edge=LEFT, buff=0.1), n_items)
+        n_body.arrange(DOWN, aligned_edge=LEFT, buff=0.3)
+        n_items.shift(RIGHT * 0.15)
+        n_box = box(EDGE - card2.get_right()[0] - 0.35, n_body.height + 0.5, S.GREY, dashed=True)
+        n_body.move_to(n_box).align_to(n_box, LEFT).shift(RIGHT * 0.3)
         nxt = VGroup(n_box, n_body)
-        place(nxt, left=-6.35, top=card2.get_bottom()[1] - 0.3)
-        assert card2.get_right()[0] < EDGE and nxt.get_bottom()[1] > -3.5, (card2.get_right(), nxt.get_bottom())
-        assert n_items.get_right()[0] < n_box.get_right()[0] - 0.2, n_items.get_right()
+        place(nxt, right=EDGE, top=card1.get_top()[1])
+        assert card2.get_right()[0] < nxt.get_left()[0] - 0.2 and card2.get_bottom()[1] > -3.5, card2.get_right()
+        assert nxt.get_bottom()[1] > -3.5, nxt.get_bottom()
+        assert n_body.get_right()[0] < n_box.get_right()[0] - 0.15, n_body.get_right()
         assert finals[-1].get_bottom()[1] > card1.get_top()[1] + 0.15
 
         with self.voiceover(SAY[7]) as vo:
@@ -898,7 +937,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(card2, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(g_url, color=TURN, scale_factor=1.04), run_time=0.7)
             vo.wait_until("Next lecture")
-            self.play(FadeIn(n_box), FadeIn(n_head, shift=LEFT * 0.15), run_time=0.5)
+            self.play(FadeIn(n_box), FadeIn(n_head, shift=LEFT * 0.15), FadeIn(n_branch), run_time=0.5)
             for it, anchor in zip(n_items, ("your own bucket", "the key outside", "a script that builds")):
                 vo.wait_until(anchor)
                 self.play(FadeIn(it, shift=UP * 0.1), run_time=0.4)
