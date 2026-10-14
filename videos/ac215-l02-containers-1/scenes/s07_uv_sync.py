@@ -187,12 +187,14 @@ def flow_arrow(a, b, color=S.GREY) -> Arrow:
 
 
 def copy_slab(stack: LayerStack):
-    """S06's GREY `COPY . ./` slab with a row of file glyphs (a folder for .git/ first) beside its text."""
+    """S06's GREY `COPY . ./` slab with a row of file glyphs (a folder for .git/ first) beside its text
+    (here three files, so the row stays inside the slab)."""
     s = stack.make("COPY . ./", LAPTOP)
-    glyphs = VGroup(folder_glyph(0.22, LAPTOP), *[file_glyph(0.26, LAPTOP) for _ in range(5)])
+    glyphs = VGroup(folder_glyph(0.22, LAPTOP), *[file_glyph(0.26, LAPTOP) for _ in range(3)])
     glyphs.arrange(RIGHT, buff=0.1)
-    s.text.shift(LEFT * 0.85)
-    glyphs.next_to(s.text, RIGHT, buff=0.3).set_y(s.box.get_center()[1])
+    s.text.shift(LEFT * 0.75)
+    glyphs.next_to(s.text, RIGHT, buff=0.25).set_y(s.box.get_center()[1])
+    assert glyphs.get_right()[0] < s.box.get_right()[0] - 0.1
     s.add(glyphs)
     s.glyphs = glyphs
     return s
@@ -386,8 +388,15 @@ class StepUvSync(VoiceScene):
         g_lab = two_line(V_UV, "uv download · 35.9 MiB", VENV).next_to(Dot(g_end), UP, buff=0.32)
         vpy = chip("/.venv/bin/python", VENV, size=22, font=MONO)
         vpy.move_to([6.45 - vpy.width / 2, AX_Y - 1.08, 0])
-        link_start = np.array([vpy.get_center()[0] - 0.28, vpy.get_top()[1], 0])
-        link = Arrow(link_start, g_end + np.array([0.1, -0.1, 0]), buff=0.05, color=VENV, stroke_width=4,
+        # the link threads the gap between the 3.15 and 3.16 tick labels (through x = 3.92 at the
+        # labels' height) and reaches the dot from below right
+        link_end = g_end + np.array([0.1, -0.06, 0])
+        gap_pt = np.array([(vl.ticks[5][1].get_right()[0] + vl.ticks[6][1].get_left()[0]) / 2,
+                           vl.ticks[5][1].get_center()[1], 0])
+        k = (vpy.get_top()[1] - link_end[1]) / (gap_pt[1] - link_end[1])
+        link_start = link_end + k * (gap_pt - link_end)
+        assert abs(link_start[0] - vpy.get_center()[0]) < vpy.width / 2 - 0.3, link_start
+        link = Arrow(link_start, link_end, buff=0.05, color=VENV, stroke_width=4,
                      tip_length=0.18, max_tip_length_to_length_ratio=0.25)
 
         stack = LayerStack(stack_w=3.2)
@@ -521,7 +530,7 @@ class StepUvSync(VoiceScene):
             vo.wait_until("in user local bin")
             self.play(Indicate(d0.label, color=SYSTEM, scale_factor=1.15), run_time=0.7)
             vo.wait_until("from the base image")
-            fig_at = np.array([orange.dot.get_left()[0] - 0.15 - fig.width / 2, DEST_Y, 0])
+            fig_at = np.array([orange.dot.get_left()[0] - 0.25 - fig.width / 2, DEST_Y, 0])
             self.play(fig.animate.move_to(fig_at), run_time=0.6)
             self.play(FadeIn(orange, scale=0.8), run_time=0.4)
             vo.wait_until("That's 3.12")
@@ -550,7 +559,7 @@ class StepUvSync(VoiceScene):
             self.play(FadeIn(fig2, shift=DOWN * 0.2), run_time=0.3)
             self.play(fig2.animate.move_to(green_door.frame), green_door.frame.animate.set_fill(VENV, 0.4),
                       green_door[1].animate.set_fill(opacity=0), run_time=0.6)
-            fig2_at = np.array([green.dot.get_left()[0] - 0.15 - fig2.width / 2, DEST_Y, 0])
+            fig2_at = np.array([green.dot.get_left()[0] - 0.25 - fig2.width / 2, DEST_Y, 0])
             self.play(fig2.animate.move_to(fig2_at), run_time=0.5)
             self.play(FadeIn(green, scale=0.8), run_time=0.4)
             self.play(Indicate(green, color=VENV, scale_factor=1.2), run_time=0.6)
@@ -584,10 +593,10 @@ class StepUvSync(VoiceScene):
             self.play(Indicate(substring(p7b, P_LAPTOP), color=INK, scale_factor=1.05), run_time=0.6)
 
         # ========================================================== 8 · two Pythons; half the puzzle; the fix
-        o_sum = Dot(radius=0.14, color=SYSTEM).move_to([-3.3, 2.15, 0])
-        g_sum = Dot(radius=0.14, color=VENV).move_to([3.3, 2.15, 0])
-        o_top = mono(V_BASE, 22, SYSTEM).next_to(o_sum, RIGHT, buff=0.2)
-        g_top = mono(V_UV, 22, VENV).next_to(g_sum, RIGHT, buff=0.2)
+        o_sum = Dot(radius=0.16, color=SYSTEM).move_to([-3.6, 2.1, 0])
+        g_sum = Dot(radius=0.16, color=VENV).move_to([2.6, 2.1, 0])
+        o_top = mono(V_BASE, 28, SYSTEM).next_to(o_sum, RIGHT, buff=0.22)
+        g_top = mono(V_UV, 28, VENV).next_to(g_sum, RIGHT, buff=0.22)
         o_role = label("base · only ran pip install uv", 22, S.GREY).next_to(VGroup(o_sum, o_top), DOWN, buff=0.15)
         g_role = label("uv download · runs the app", 22, S.GREY).next_to(VGroup(g_sum, g_top), DOWN, buff=0.15)
         p_old = mono("3.12", 32, SYSTEM)

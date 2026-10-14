@@ -66,7 +66,7 @@ from explainer.scene import VoiceScene
 from common import (CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, P_A, SYSTEM, TERMINAL, TOOL, TURN, VENV,
                     LayerStack, asset_lines, beside, builder_box, capture, caption_extra, cached_stamp,
                     extra_tag, file_panel, history_row, illustration_tag, key_glyph, log_panel,
-                    parcel_glyph, pin, readme_chip, resize, sans, source_text, term, tracker, type_cmd,
+                    parcel_glyph, pin, readme_chip, bare_prompt, resize, sans, source_text, term, tracker, type_cmd,
                     your_turn)
 
 SAY = NARRATION["S06"]
@@ -144,9 +144,11 @@ PONDER_Q = ("You change only group_name in cli.py\nand build again.\n"
 # ------------------------------------------------------------------ layout
 BIG = 13                          # the terminal's rows while the log is up (top at y 2.59)
 TRACK_BOTTOM = 2.916
-SLAB_W = 3.6
-SX, FLOOR_Y = -2.4, -0.85         # V2 above the 4-row strip (strip top -1.04)
-APT_H, THIN = 1.45, 0.08          # the apt slab after it swells; the WORKDIR / uv sync hairlines
+SLAB_W = 5.2
+SX, FLOOR_Y = -1.6, -0.85         # V2 above the 4-row strip (strip top -1.04)
+APT_H, THIN = 1.9, 0.08           # the apt slab after it swells; the WORKDIR / uv sync hairlines
+H0 = {"base": 0.5, "apt": 0.7, "workdir": THIN, "copy": 0.36, "sync": 0.42}   # as S05 left it
+DROP = 0.8                        # beat 8: V2 settles lower once the bottom band is free
 
 
 # ------------------------------------------------------------------ small helpers
@@ -190,6 +192,22 @@ def stick(scene, line, *mobs):
         scene.remove(m)
         row.add(m)
     scene.add(row)
+
+
+def pulse(b, color, k: float = 1.25):
+    """A badge (circle, number) grows and takes `color`, then returns (no fill flash)."""
+    tgt = b.copy().scale(k)
+    tgt[0].set_stroke(color)
+    tgt[1].set_color(color)
+    return Transform(b, tgt, rate_func=there_and_back)
+
+
+def recolor(b, color):
+    """A badge's ring and number take `color` (and keep it)."""
+    tgt = b.copy()
+    tgt[0].set_stroke(color)
+    tgt[1].set_color(color)
+    return Transform(b, tgt)
 
 
 def row_tag(s: str, color=S.GREY) -> VGroup:
@@ -263,12 +281,12 @@ def compact_ponder(question: str, width: float = 9.5, size: float = 24) -> VGrou
 def context_folder() -> VGroup:
     """The transcribe_audio/ folder on the laptop: a GREY frame, its name, five files and the
     secrets/ folder with a tiny GOLD key. .frame .files (the six glyphs) .key"""
-    fr = box_frame(3.3, 1.55)
-    head = VGroup(folder_glyph(0.26, LAPTOP), mono("transcribe_audio/", 20, INK)).arrange(RIGHT, buff=0.12)
-    head.move_to(fr.get_corner(UL) + np.array([0.22, -0.3, 0]), aligned_edge=LEFT)
-    files = VGroup(*[file_glyph(0.42, LAPTOP) for _ in range(5)], folder_glyph(0.34, LAPTOP))
-    files.arrange(RIGHT, buff=0.2).move_to(fr.get_center() + DOWN * 0.22)
-    k = key_glyph(0.16).move_to(files[5].get_center() + np.array([0.04, -0.03, 0]))
+    fr = box_frame(4.5, 2.1)
+    head = VGroup(folder_glyph(0.3, LAPTOP), mono("transcribe_audio/", 22, INK)).arrange(RIGHT, buff=0.14)
+    head.move_to(fr.get_corner(UL) + np.array([0.25, -0.36, 0]), aligned_edge=LEFT)
+    files = VGroup(*[file_glyph(0.6, LAPTOP) for _ in range(5)], folder_glyph(0.48, LAPTOP))
+    files.arrange(RIGHT, buff=0.24).move_to(fr.get_center() + DOWN * 0.28)
+    k = key_glyph(0.22).move_to(files[5].get_center() + np.array([0.06, -0.05, 0]))
     g = VGroup(fr, head, files, k)
     g.frame, g.files, g.key = fr, files, k
     return g
@@ -284,7 +302,7 @@ def make_stack() -> LayerStack:
     GOLD key, the empty GREEN uv sync slab), floor at (SX, FLOOR_Y)."""
     st = LayerStack(slab_w=SLAB_W)
     for name in ("base", "apt", "workdir", "copy", "sync"):
-        s = st.make(name)
+        s = st.make(name, h=H0[name])
         st.slabs[name] = s
         st.order.append(name)
         st.add(s)
@@ -418,17 +436,19 @@ class BuildImage(VoiceScene):
         if err.get_top()[1] > 3.55:
             err.shift(DOWN * (err.get_top()[1] - 3.55))
         folder = context_folder()
-        folder.move_to([-4.05, 0.45, 0])
-        parcel = parcel_glyph(0.8, "build context")
-        parcel.move_to([-0.8, 0.45 - 0.12, 0])          # box at the folder's height, caption under
+        folder.move_to([-3.75, 0.4, 0])
+        parcel = parcel_glyph(1.1, "build context")
+        parcel.move_to([-0.3, 0, 0])
         parcel.shift(UP * (folder.files.get_center()[1] - parcel.frame.get_center()[1]))
-        builder = builder_box("builder").move_to([4.3, parcel.frame.get_center()[1], 0])
+        builder = builder_box("builder").scale(1.5)
+        builder.move_to([4.6, parcel.frame.get_center()[1], 0])
         parcel_end = parcel.copy().shift(RIGHT * (builder.get_left()[0] - 0.25 - parcel.frame.get_right()[0]))
 
         with self.voiceover(SAY[1]) as vo:
             self.play(caption_extra(tr, False), run_time=0.3)
             t.clear(self, run_time=0.3)
             resize(self, t, 3, run_time=0.7)
+            bare_prompt(self, t)
             self.play(Indicate(tr.caption, color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("A small gap")
             self.play(FadeIn(chip_r, shift=DOWN * 0.1), run_time=0.5)
@@ -646,7 +666,7 @@ class BuildImage(VoiceScene):
             self.play(FadeIn(panel, shift=UP * 0.15), FadeIn(ill), run_time=0.6)
             vo.wait_until("build step 5 fails")
             sync = st.slabs["sync"]
-            self.play(Indicate(VGroup(badges[4], sync.box), color=ERR, scale_factor=1.15),
+            self.play(pulse(badges[4], ERR, 1.35), Indicate(sync.box, color=ERR, scale_factor=1.06),
                       Indicate(panel.rows[0], color=ERR, scale_factor=1.03), run_time=0.9)
             vo.wait_until("because there's no")
             self.play(Indicate(substring(panel.rows[0], "No `pyproject.toml` found"), color=INK,
@@ -654,7 +674,7 @@ class BuildImage(VoiceScene):
 
         # ========================================================== 7 · ponder
         chip = edit_chip()
-        place(chip, left=st.slabs["copy"].box.get_right()[0] + 0.7, cy=st.slabs["copy"].box.get_center()[1])
+        place(chip, left=st.slabs["copy"].box.get_right()[0] + 0.6, cy=st.slabs["copy"].box.get_center()[1])
         card = compact_ponder(PONDER_Q)
         place(card, cx=0, bottom=-3.55)
         assert card.get_top()[1] < st.floor.get_center()[1] - 0.12, card.get_top()[1]
@@ -664,7 +684,7 @@ class BuildImage(VoiceScene):
             self.play(FadeIn(chip, shift=LEFT * 0.2), run_time=0.6)
             self.play(chip.animate(rate_func=there_and_back).shift(UP * 0.1), run_time=1.2)
             vo.wait_until("which of the five")
-            self.play(Indicate(badges, color=TURN, scale_factor=1.15), run_time=0.9)
+            self.play(LaggedStart(*[pulse(b, TURN) for b in badges], lag_ratio=0.15), run_time=1.1)
             self.play(chip.animate(rate_func=there_and_back).shift(UP * 0.1), run_time=1.2)
         self.play(FadeIn(card, scale=0.95), run_time=0.6)
         bar = card[3]
@@ -673,40 +693,40 @@ class BuildImage(VoiceScene):
 
         # ========================================================== 8 · the answer
         cp, sync = st.slabs["copy"], st.slabs["sync"]
-        st_apt = cached_stamp()
-        st_wd = cached_stamp()
-        stamps, stamp_leads = VGroup(), VGroup()
-        for s_, n in ((st_apt, "apt"), (st_wd, "workdir")):
-            b = st.slabs[n].box
-            s_.move_to([b.get_right()[0] + 0.45 + s_.width / 2, b.get_center()[1], 0])
-            stamp_leads.add(Line([b.get_right()[0] + 0.03, b.get_center()[1], 0], s_.get_left(),
-                                 color=VENV, stroke_width=2.5))
-            stamps.add(s_)
-        part2 = label("part 2: for real", 22, S.GREY)
-        place(part2, cx=st.floor.get_center()[0], top=st.floor.get_center()[1] - 0.35)
-
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(card), run_time=0.4)
+            self.play(FadeOut(card), st.animate.shift(DOWN * DROP), chip.animate.shift(DOWN * DROP),
+                      run_time=0.6)
             saved_cp = VGroup(cp.box.copy(), st.copy_files.copy())
             saved_sync = sync.box.copy()
             self.play(chip.animate.move_to(cp.box).scale(0.5).set_opacity(0),
                       cp.box.animate.set_stroke(TURN, 3).set_fill(TURN, 0.35), run_time=0.8)
             self.remove(chip)
-            self.play(Indicate(badges[3:], color=TURN, scale_factor=1.2), run_time=0.7)
+            self.play(recolor(badges[3], TURN), recolor(badges[4], TURN), run_time=0.5)
             vo.wait_until("The copied folder changed")
-            self.play(cp.box.animate.set_opacity(0).scale(1.06), st.copy_files.animate.set_opacity(0),
+            self.play(cp.box.animate.set_opacity(0).scale(1.04), st.copy_files.animate.set_opacity(0),
                       run_time=0.6)
-            self.play(Transform(cp.box, saved_cp[0]), Transform(st.copy_files, saved_cp[1]), run_time=0.7)
+            self.play(Transform(cp.box, saved_cp[0]), Transform(st.copy_files, saved_cp[1]),
+                      pulse(badges[3], TURN), run_time=0.8)
             vo.wait_until("and so does every step")
-            self.play(sync.box.animate.set_opacity(0).scale(1.06), run_time=0.5)
-            self.play(Transform(sync.box, saved_sync), Indicate(badges[4], color=TURN, scale_factor=1.25),
-                      run_time=0.7)
+            self.play(sync.box.animate.set_opacity(0).scale(1.04), run_time=0.5)
+            self.play(Transform(sync.box, saved_sync), pulse(badges[4], TURN), run_time=0.8)
+
+            stamps, stamp_leads = VGroup(), VGroup()
+            for n in ("apt", "workdir"):
+                b = st.slabs[n].box
+                s_ = cached_stamp()
+                s_.move_to([b.get_right()[0] + 0.45 + s_.width / 2, b.get_center()[1], 0])
+                stamp_leads.add(Line([b.get_right()[0] + 0.03, b.get_center()[1], 0], s_.get_left(),
+                                     color=VENV, stroke_width=2.5))
+                stamps.add(s_)
+            part2 = label("part 2: for real", 22, S.GREY)
+            place(part2, cx=st.floor.get_center()[0], top=st.floor.get_center()[1] - 0.4)
+
             vo.wait_until("build steps 1 to 3")
-            self.play(Indicate(badges[:3], color=VENV, scale_factor=1.2), run_time=0.8)
+            self.play(*[recolor(b, VENV) for b in badges[:3]], run_time=0.6)
             self.play(LaggedStart(*[AnimationGroup(Create(ln), FadeIn(s_, scale=1.4))
                                     for ln, s_ in zip(stamp_leads, stamps)], lag_ratio=0.4), run_time=0.9)
             vo.wait_until("We'll see it")
             self.play(FadeIn(part2, shift=UP * 0.1), run_time=0.6)
         self.wait(0.6)
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
-

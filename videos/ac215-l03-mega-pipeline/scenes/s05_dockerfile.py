@@ -63,7 +63,7 @@ from explainer.devops import (MONO, PANEL, box, chip, code_span, file_glyph, fol
                               line_bar, mono, mono_line, substring, tag)
 from explainer.scene import VoiceScene
 
-from common import (CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, SYSTEM, TOOL, TURN, VENV, ConfigCard,
+from common import (CTR, ERR, INK, LOOKUP, NARRATION, SYSTEM, TOOL, TURN, VENV, ConfigCard,
                     LayerStack, _drop_groups, file_panel, ghost_file, page_token, pkg_dots,
                     readme_card, sans, source_text, src_panel, stamp, tracker, under, your_turn)
 
