@@ -36,7 +36,7 @@
   },
   "topic": "speciesOT E4: scGen as latent arithmetic, mapped onto setup/train/predict, and how much of the scgen library you need (the adapter).",
   "skill_source": "conny-explainer-video",
-  "scene_implementation_status": "not-authored",
+  "scene_implementation_status": "authored",
   "sources": [],
   "style_snapshot": "style.md",
   "style_sha256": "76c5f8f3be7981d6670c94e286fa8c392159bd6b68ddd632bc26fc1444bdcce8",

@@ -36,7 +36,7 @@
   },
   "topic": "speciesOT E3: a test is a question your code answers by itself — pytest, known-answer tests, toy data, and a test that exposes which R-squared we mean.",
   "skill_source": "conny-explainer-video",
-  "scene_implementation_status": "not-authored",
+  "scene_implementation_status": "authored",
   "sources": [],
   "style_snapshot": "style.md",
   "style_sha256": "76c5f8f3be7981d6670c94e286fa8c392159bd6b68ddd632bc26fc1444bdcce8",

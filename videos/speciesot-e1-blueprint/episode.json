@@ -36,9 +36,9 @@
   },
   "topic": "speciesOT E1: read speciesot_core.py as five jobs — classes, objects, __init__, abstract contracts, and the Experiment that conducts them.",
   "skill_source": "conny-explainer-video",
-  "scene_implementation_status": "not-authored",
+  "scene_implementation_status": "authored",
   "sources": [],
   "style_snapshot": "style.md",
   "style_sha256": "76c5f8f3be7981d6670c94e286fa8c392159bd6b68ddd632bc26fc1444bdcce8",
-  "duration_note": "Fitted to the reviewed narration plus ~12% reading time for on-screen code (default 300 s); this episode's override."
+  "duration_note": "Fitted to the narration minimum (258.5 s) plus ~6.5% for ponder holds and reading time (default 300 s); this episode's override."
 }
