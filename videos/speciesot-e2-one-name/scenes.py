@@ -884,7 +884,7 @@ class S05(Ep):
         s104 = plural_s(p104.row(104), CORE[104])[0]
         m104 = rmark(p104, 104)
         dfr = dict_frame("model_config", -6.3, .55, 4.6, 1.75)
-        dsrc = left("config.yaml + our 4-gene toy data", -6.3, .8, 17, GRAY)
+        dsrc = left("config.yaml + our 4-gene toy data", -6.3, -1.42, 17, GRAY)
         dsing = drawer("x_dimension", "1000", -4.0, -.12, width=4.3, size=19)
         dplur = drawer("x_dimensions", "4", -4.0, -.74, width=4.3, size=19)
         plural_s(dplur[2], "'x_dimensions'")
@@ -906,18 +906,18 @@ class S05(Ep):
                       Create(slot), run_time=.6)
             vo.wait_until("Python just adds")
             key = glyphs(p104.row(104), CORE[104], '"x_dimensions"')
-            wr = arrow(key.get_bottom() + DOWN * .05, slot.get_corner(UR) + LEFT * .6, RED)
-            self.play(GrowArrow(wr), Indicate(key, color=RED), run_time=.5)
-            self.play(ReplacementTransform(real, dplur), FadeOut(slot), run_time=.7)
+            self.play(Indicate(key, color=RED), run_time=.45)
+            self.play(TransformFromCopy(key, dplur[2]), ReplacementTransform(real, dplur[3]),
+                      FadeIn(dplur[:2]), FadeOut(slot), run_time=.9)
             vo.wait_until("two drawers")
-            self.play(FadeOut(wr), Indicate(dsing[0], color=INK, scale_factor=1.03),
+            self.play(Indicate(dsing[0], color=INK, scale_factor=1.03),
                       Indicate(dplur[0], color=INK, scale_factor=1.03), run_time=.5)
             vo.wait_until("x_dimension, singular")
             self.play(FadeIn(lab1, shift=RIGHT * .1), Indicate(dsing[2], color=INK), run_time=.5)
             vo.wait_until("and x_dimensions")
             self.play(FadeIn(lab2, shift=RIGHT * .1), Indicate(dplur[2], color=RED), run_time=.5)
             snap = tag_text("MEASURED · stand-in scgen")
-            snap.move_to([-6.3 + snap.width / 2, -1.5, 0])
+            snap.move_to([-6.3 + snap.width / 2, -1.88, 0])
             self.play(FadeIn(snap), run_time=.3)
 
         p220 = cpanel([(220, CORE[220])], CORE_PATH, -2.8, 1.55, width=7.0, size=16)
@@ -929,7 +929,7 @@ class S05(Ep):
         nb_tag.move_to([4.08, -1.92, 0])
         nobody = left("nobody reads this drawer", -1.4, -.74, 17, RED)
         with self.say(2) as vo:
-            self.cue(vo, .01, FadeOut(m104), FadeOut(dsrc), ReplacementTransform(p104, p220),
+            self.cue(vo, .01, FadeOut(m104), ReplacementTransform(p104, p220),
                      run_time=.6)
             self.play(FadeIn(m220), run_time=.3)
             key = glyphs(p220.row(220), CORE[220], "'x_dimension'")

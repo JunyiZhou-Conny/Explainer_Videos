@@ -347,6 +347,7 @@ class S02(Ep):
             self.play(*[TransformFromCopy(vals[2 * i], truth[i]) for i in range(3)],
                       *[TransformFromCopy(vals[2 * i + 1], pred[i]) for i in range(3)],
                       run_time=.9)
+            self.settle(truth, pred)     # the dots arrived one by one: re-add them as two clouds
             self.play(FadeIn(same, shift=UP * .08), run_time=.4)
 
         # the kernel: similarity of every pair of points, exp(-gamma * d^2), gamma = 0.5 (line 19)
@@ -385,7 +386,8 @@ class S02(Ep):
         with self.say(1) as vo:
             keep = (pbox, truth, pred)
             self.cue(vo, .01, *[FadeOut(mm) for mm in self.content() if mm not in keep],
-                     ReplacementTransform(VGroup(pbox, truth, pred), VGroup(sbox, struth, spred)),
+                     ReplacementTransform(pbox, sbox), ReplacementTransform(truth, struth),
+                     ReplacementTransform(pred, spred),
                      run_time=.5)
             self.play(LaggedStart(*[FadeIn(c) for g_ in grids for c in g_.cells],
                                   lag_ratio=.03),
