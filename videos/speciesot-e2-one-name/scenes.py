@@ -1086,17 +1086,16 @@ class S06(Ep):
         gap_box = VGroup(DashedVMobject(Rectangle(width=2.15, height=.5, color=RED,
                                                   stroke_width=2), num_dashes=26),
                          mono("experiment:", 17, RED))
-        gap_box.move_to([-1.45, 1.05, 0])
+        gap_box.move_to([-1.45, 1.15, 0])
         gap_box[1].move_to(gap_box[0])
-        gap_note = at("missing", -1.45, 1.47, 17, RED)
-        also = VGroup(*[mono_left(k, -2.32, .45 - i * .27, 16, RED)
+        gap_note = at("missing", -1.45, 1.62, 17, RED)
+        also = VGroup(*[mono_left(k, -2.32, .38 - i * .27, 16, RED)
                         for i, k in enumerate(("z_dimension:", "alpha:", "dropout_rate:"))])
         also_box = DashedVMobject(Rectangle(width=2.15, height=.95, color=RED, stroke_width=2),
                                   num_dashes=34).move_to([-1.45, also.get_y(), 0])
-        also_l = left("also missing", -2.52, .73, 17, RED)
-        also_l.move_to([-1.45, .76, 0])
-        kerr = error_card("KeyError", "'experiment'", "speciesot_core.py:86 in setup", -3.35,
-                          -1.48, width=5.9, size=19)
+        also_l = at("also missing", -1.45, .7, 17, RED)
+        kerr = error_card("KeyError", "'experiment'", "speciesot_core.py:86 in setup", -4.0,
+                          -1.48, width=4.6, size=19)
         t1 = left("trap 1 · toy config drifted", -6.3, 1.82, 22, INK, bold=True)
         t2 = left("trap 2 · YAML None", .4, 1.82, 22, INK, bold=True)
         div = line(0, 1.95, 0, -2.4, FAINT, 1.5)
