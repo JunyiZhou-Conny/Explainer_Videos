@@ -1,0 +1,4 @@
+$ git branch; git log --oneline -1
+* flexible-workflow
+cc67f3b latest mega pipeline flexible flow
+[exit 0]

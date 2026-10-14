@@ -1,0 +1,3 @@
+$ which python
+/home/app/.venv/bin/python
+[exit 0]

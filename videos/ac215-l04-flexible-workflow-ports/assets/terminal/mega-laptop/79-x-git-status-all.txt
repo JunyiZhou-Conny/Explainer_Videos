@@ -1,0 +1,9 @@
+$ git status --short --ignored
+ M generate_text/cli.py
+ M synthesis_audio/cli.py
+ M synthesis_audio_en/cli.py
+ M transcribe_audio/cli.py
+ M translate_text/cli.py
+?? generate_text/Pipfile
+?? transcribe_audio/Pipfile
+[exit 0]

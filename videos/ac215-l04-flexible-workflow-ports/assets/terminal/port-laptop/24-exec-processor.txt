@@ -1,5 +1,6 @@
 $ docker exec gateway curl http://processor:9200/health
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100     2    0     2    0     0    548      0 --:--:-- --:--:-- --:--:--   666
-ok[exit 0]
+100     2    0     2    0     0    766      0 --:--:-- --:--:-- --:--:--  1000
+ok
+[exit 0]

@@ -37,7 +37,7 @@ Beats (script.md, ## S01; one voiceover block each):
    empty frame.
 """
 
-import numpy as np
+import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
@@ -90,8 +90,8 @@ def vm_icon(w: float = 0.62) -> VGroup:
 
 def tracker_chip(letter: str, section: str, n: int, icon: VGroup, chip_w: float) -> VGroup:
     """One tracker of the video, as a chip: icon, 'A · <README section> · <steps>'. .icon .text"""
-    t = VGroup(label(letter, 22, TURN), label(f"· {section} · {n}", 22, INK)).arrange(RIGHT, buff=0.12)
-    t[1].align_to(t[0], DOWN)
+    t = label(f"{letter} · {section} · {n}", 22, INK)
+    t[0].set_color(TURN)                          # one Text: the letter shares the baseline
     icon.scale_to_fit_height(0.4)
     frame = box(chip_w, 0.62, S.GREY, fill_opacity=0.06, radius=0.12)
     icon.move_to(frame.get_left() + RIGHT * (0.22 + icon.width / 2))
@@ -112,6 +112,14 @@ def counter_text(k: int, b) -> Text:
     s = f"{k} layer" + ("" if k == 1 else "s")
     t = steady(s, 20, IMAGE)
     return t.move_to(b).align_to(b, LEFT).shift(RIGHT * 0.17)
+
+
+def baseline_y(t: Text, s: str) -> float:
+    """The baseline of text `t` (made from `s`): the bottom of its first glyph without a descender."""
+    for c, g in zip([c for c in s if not c.isspace()], t):
+        if c.isalnum() and c not in "gjpqyQ":
+            return g.get_bottom()[1]
+    return t.get_bottom()[1]
 
 
 def clear_stage(scene, *anims, run_time: float = 0.6):
@@ -185,9 +193,9 @@ class Hook(VoiceScene):
         top_right.move_to([t.box.get_right()[0] - top_right.width / 2, row_y, 0])
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(gone, crosses, dock, tick)), FadeIn(top_right, shift=LEFT * 0.2),
-                      run_time=0.6)
+            self.play(FadeOut(VGroup(gone, crosses, dock, tick), shift=UP * 0.15), run_time=0.4)
             self.remove(gone, crosses, dock, tick)
+            self.play(FadeIn(top_right, shift=LEFT * 0.2), run_time=0.4)
             t.print(self, RUN6.at(2, 3), run_time=0.4)
             vo.wait_until("in seven layers")
             first = t.print(self, RUN6.at(4), run_time=0.25)[0]
@@ -314,9 +322,9 @@ class Hook(VoiceScene):
 
         with self.voiceover(SAY[3]) as vo:
             clear_stage(self, run_time=0.6)
-            self.play(FadeIn(lad.header, shift=DOWN * 0.1), Create(lad.rails), run_time=0.7)
+            self.play(FadeIn(lad.header, shift=DOWN * 0.1), Create(lad.rails), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(VGroup(r, v), shift=UP * 0.2) for r, v in zip(lad.rungs, lad.veils)],
-                                  lag_ratio=0.3), run_time=1.3)
+                                  lag_ratio=0.3), run_time=1.0)
             self.add(lad)
             self.play(Create(ring4), run_time=0.6)
             self.play(ring4.animate(rate_func=there_and_back).set_stroke(width=6), run_time=0.6)
@@ -405,7 +413,7 @@ class Hook(VoiceScene):
             mark.move_to(slot)
             words = label(s, 24, INK if ok else S.GREY)
             words.next_to(slot, RIGHT, buff=0.25)
-            words.shift(UP * (y - 0.09 - words[0].get_bottom()[1]))     # common baseline (no descender)
+            words.shift(UP * (y - 0.09 - baseline_y(words, s)))       # common baseline
             txt = VGroup(words)
             if not ok:                                # where the README says so, under the row
                 where = VGroup(mono("README.md", 20, S.GREY), label("· line 23", 20, S.GREY))

@@ -1,0 +1,23 @@
+$ git status --short --ignored; ls -la transcribe_audio transcribe_audio/secrets; git stash list
+!! transcribe_audio/secrets/
+transcribe_audio:
+total 124
+drwxr-sr-x 3 student student  4096 Oct 14 00:40 .
+drwxr-sr-x 8 student student  4096 Oct 14 00:40 ..
+-rw-r--r-- 1 student student    54 Oct 14 00:40 .gitignore
+-rw-r--r-- 1 student student  1274 Oct 14 00:40 Dockerfile
+-rw-r--r-- 1 student student  4929 Oct 14 00:40 README.md
+-rw-r--r-- 1 student student  4096 Oct 14 00:40 cli.py
+-rwxr-xr-x 1 student student  2891 Oct 14 00:40 docker-shell.sh
+-rw-r--r-- 1 student student   249 Oct 14 00:40 pyproject.toml
+drwxr-sr-x 2 student student  4096 Oct 14 00:40 secrets
+-rw-r--r-- 1 student student 85761 Oct 14 00:40 uv.lock
+
+transcribe_audio/secrets:
+total 12
+drwxr-sr-x 2 student student 4096 Oct 14 00:40 .
+drwxr-sr-x 3 student student 4096 Oct 14 00:40 ..
+-rw-rw-rw- 1 student student   79 Oct 14 00:40 mega-pipeline.json
+stash@{0}: WIP on main: c6bbc9b fix for Google Speech-to-Text automatically breaks longer audio files into chunks separated by natural pauses.
+stash@{1}: WIP on main: c6bbc9b fix for Google Speech-to-Text automatically breaks longer audio files into chunks separated by natural pauses.
+[exit 0]

@@ -1,0 +1,4 @@
+# expected, not a capture: the README's own block, port_toy README.md:154-156 (dlops-io/port_toy main @ d190c71): the port information the web page shows after Send (browser, http://localhost:8090); the page builds these lines from the JSON reply with label.padEnd(30) + value (index.html:84, 107-111)
+gateway sent from port          44456
+processor listening on port      9200
+processor saw it arrive from     44456

@@ -1,0 +1,19 @@
+$ ls; ls -a transcribe_audio
+README.md
+generate_text
+mega-pipeline-bucket.png
+mega-pipeline-flow.png
+synthesis_audio
+synthesis_audio_en
+transcribe_audio
+translate_text
+.
+..
+.gitignore
+Dockerfile
+README.md
+cli.py
+docker-shell.sh
+pyproject.toml
+uv.lock
+[exit 0]

@@ -1,9 +1,9 @@
 $ docker image ls
 IMAGE                       ID             DISK USAGE   CONTENT SIZE   EXTRA
 hello-world:latest          5e2309035332       25.9kB         9.49kB   U    
-port_toy-gateway:latest     d72867821fc2        198MB         48.8MB        
-port_toy-processor:latest   7779a07e1031        198MB         48.8MB        
-python:3.14-slim            b69f10566408        179MB         43.8MB        
-toy-gateway:latest          5513e77f6ee8        198MB         48.8MB        
-toy-processor:latest        9eb1eef3d0df        198MB         48.8MB        
+port_toy-gateway:latest     13dee7c79341        198MB         48.8MB        
+port_toy-processor:latest   78522b0fbda8        198MB         48.8MB        
+python:3.14-slim            dcc61fa5aee7        179MB         43.8MB        
+toy-gateway:latest          efc8b3084509        198MB         48.8MB        
+toy-processor:latest        8221f0ec3dfe        198MB         48.8MB        
 [exit 0]

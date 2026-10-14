@@ -1,0 +1,21 @@
+$ ls -la . text_prompts
+.:
+total 132
+drwxr-sr-x 4 app  app   4096 Oct 14 00:36 .
+drwxr-xr-x 1 root root  4096 Oct 14 00:36 ..
+-rw-r--r-- 1 app  app     54 Oct 14 00:34 .gitignore
+-rw-r--r-- 1 app  app   1274 Oct 14 00:34 Dockerfile
+-rw-r--r-- 1 app  app   4929 Oct 14 00:34 README.md
+-rw-r--r-- 1 app  app   4135 Oct 14 00:34 cli.py
+-rwxr-xr-x 1 app  app   2891 Oct 14 00:34 docker-shell.sh
+drwxrwsrwx 2 app  app   4096 Oct 14 00:36 input_audios
+-rw-r--r-- 1 app  app    249 Oct 14 00:34 pyproject.toml
+drwxrwsrwx 3 app  app   4096 Oct 14 00:36 text_prompts
+-rw-r--r-- 1 app  app  85761 Oct 14 00:34 uv.lock
+
+text_prompts:
+total 12
+drwxrwsrwx 3 app app 4096 Oct 14 00:36 .
+drwxr-sr-x 4 app app 4096 Oct 14 00:36 ..
+drwxrwsrwx 2 app app 4096 Oct 14 00:36 group-01
+[exit 0]

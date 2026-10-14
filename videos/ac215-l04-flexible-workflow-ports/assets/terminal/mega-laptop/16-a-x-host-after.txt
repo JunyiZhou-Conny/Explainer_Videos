@@ -1,0 +1,11 @@
+$ ls; git status --short --ignored .
+Dockerfile
+README.md
+cli.py
+docker-shell.sh
+input_audios
+pyproject.toml
+text_prompts
+uv.lock
+ M cli.py
+[exit 0]

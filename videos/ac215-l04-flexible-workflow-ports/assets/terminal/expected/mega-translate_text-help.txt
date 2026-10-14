@@ -1,0 +1,11 @@
+# expected, not a capture: the README's own block, translate_text/README.md:114-123 (dlops-io/mega-pipeline flexible-workflow @ cc67f3b), command line marked with $
+$ python cli.py --help
+usage: cli.py [-h] [-d] [-t] [-u]
+
+Translate English to French
+
+options:
+  -h, --help       show this help message and exit
+  -d, --download   Download text paragraphs from GCS bucket
+  -t, --translate  Translate text
+  -u, --upload     Upload translated text to GCS bucket

@@ -1,0 +1,53 @@
+$ docker build -t python:3.14-slim-bookworm -f base-python-3.14-slim-bookworm.Dockerfile .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from base-python-3.14-slim-bookworm.Dockerfile
+#1 transferring dockerfile: 739B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 197.24kB 0.0s done
+#4 DONE 0.0s
+
+#5 [1/4] FROM docker.io/library/python:3.14-slim-bookworm@sha256:48b13b003dda20b16f9442b8475aa05fe21bf6579a8c881db92ffb4d8fd20f83
+#5 resolve docker.io/library/python:3.14-slim-bookworm@sha256:48b13b003dda20b16f9442b8475aa05fe21bf6579a8c881db92ffb4d8fd20f83 0.0s done
+#5 extracting sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39
+#5 extracting sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39 2.3s done
+#5 DONE 2.4s
+
+#5 [1/4] FROM docker.io/library/python:3.14-slim-bookworm@sha256:48b13b003dda20b16f9442b8475aa05fe21bf6579a8c881db92ffb4d8fd20f83
+#5 extracting sha256:ea95d2ab382ff97ec2d6ac25327d00c3f08fe2877dfa8ab6cb9cfb7e4245185a 0.1s done
+#5 extracting sha256:902d5fe0cd9225c8c113f6af022b926275f3c1851e7c81a0ab561f11580230eb
+#5 extracting sha256:902d5fe0cd9225c8c113f6af022b926275f3c1851e7c81a0ab561f11580230eb 1.1s done
+#5 DONE 3.6s
+
+#5 [1/4] FROM docker.io/library/python:3.14-slim-bookworm@sha256:48b13b003dda20b16f9442b8475aa05fe21bf6579a8c881db92ffb4d8fd20f83
+#5 extracting sha256:496c1a902b3a93cea3e54b90b79dbcaa0e58ad90c3fe9dd0a43c9557dc47f17d 0.0s done
+#5 DONE 3.6s
+
+#6 [2/4] COPY capture-ca.crt /usr/local/share/ca-certificates/capture-proxy-ca.crt
+#6 DONE 0.5s
+
+#7 [3/4] COPY capture-ca.crt /etc/ssl/certs/ca-certificates.crt
+#7 DONE 0.0s
+
+#8 [4/4] RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources
+#8 DONE 0.2s
+
+#9 exporting to image
+#9 exporting layers 0.1s done
+#9 exporting manifest sha256:c577cbcf071b1b7d7854277492985266f54563f27aaed2547e4b4928e3396a21 done
+#9 exporting config sha256:b64a7a21dfd03b3be8b713743344a7db000c5ffd8c62a576337f2b32783322ee done
+#9 exporting attestation manifest sha256:c87d0fa337f7ddfc85634e9faffbdd281d1ac8ce370b8fc5b9f1f38c13aa6cc4 0.0s done
+#9 exporting manifest list sha256:d86a6f29b2bed401b72d72551257c0cd0ee36a41edc23ff60bec98fba7fed3e7 done
+#9 naming to docker.io/library/python:3.14-slim-bookworm done
+#9 unpacking to docker.io/library/python:3.14-slim-bookworm 0.0s done
+#9 DONE 0.2s
+[exit 0]

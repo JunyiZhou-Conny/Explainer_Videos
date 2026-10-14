@@ -1,0 +1,10 @@
+$ date -u "+%Y-%m-%d %H:%M UTC"; . /etc/os-release; echo "$PRETTY_NAME"; gcloud --version
+2026-10-14 00:29 UTC
+Debian GNU/Linux 12 (bookworm)
+Google Cloud SDK 570.0.0
+bq 2.1.32
+bundled-python3-unix 3.14.5
+core 2026.05.22
+gcloud-crc32c 1.0.0
+gsutil 5.37
+[exit 0]

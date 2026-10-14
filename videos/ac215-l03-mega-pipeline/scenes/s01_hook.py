@@ -104,6 +104,12 @@ def clear_stage(scene, *anims, run_time: float = 0.6):
         scene.play(*anims, run_time=run_time)
 
 
+def above_right(tg: VGroup, t) -> VGroup:
+    """Sit tag tg just above terminal t's top-right corner (a 22 pt tag is taller than the
+    0.4 title bar)."""
+    return tg.next_to(t.box, UP, buff=0.12).align_to(t.box, RIGHT).shift(LEFT * 0.2)
+
+
 def this_video(w: float = 4.4, h: float = 2.5) -> VGroup:
     """'this video': a GREY player frame with a play triangle and a progress bar, captioned."""
     frame = box(w, h, S.GREY, fill_opacity=0.05)
@@ -252,15 +258,18 @@ class Hook(VoiceScene):
         page = readme_page().move_to([2.6, 0.25, 0])
         video = this_video().move_to([-2.5, 0.25, 0])
         tr = tracker("R")                        # where S03 pins it: left -6.5, top 3.5
-        ring = RoundedRectangle(width=tr.width + 0.16, height=tr.height + 0.16, corner_radius=0.12,
-                                stroke_color=TURN, stroke_width=3).move_to(tr)
+        # the ring: as close to the frame's edge as the safe area allows on the left and top,
+        # roomier on the right and bottom
+        x0, y0 = -6.59, 3.59
+        x1, y1 = tr.get_right()[0] + 0.18, tr.get_bottom()[1] - 0.14
+        ring = RoundedRectangle(width=x1 - x0, height=y0 - y1, corner_radius=0.12, stroke_color=TURN,
+                                stroke_width=3).move_to([(x0 + x1) / 2, (y0 + y1) / 2, 0])
         panel = src_panel("transcribe_audio/cli.py", 18, 20)
         panel.shift([-6.3 - panel.get_left()[0], 1.9 - panel.get_top()[1], 0])
         head_ring = SurroundingRectangle(panel.header, color=TURN, buff=0.08, corner_radius=0.08,
                                          stroke_width=3)
         t = term(P_HOME, rows=3)
-        prev = preview_tag()
-        prev.move_to([t.box.get_right()[0] - 0.35 - prev.width / 2, t.box.get_top()[1] - t.bar_h / 2, 0])
+        prev = above_right(preview_tag(), t)
 
         with self.voiceover(SAY[2]) as vo:
             clear_stage(self, FadeIn(page, shift=LEFT * 0.6), run_time=0.8)
@@ -334,13 +343,12 @@ class Hook(VoiceScene):
 
         # ========================================================== 4. the honest limit
         t4 = term(component="transcribe_audio", rows=3)
-        prev4 = preview_tag()
-        prev4.move_to([t4.box.get_right()[0] - 0.35 - prev4.width / 2, t4.box.get_top()[1] - t4.bar_h / 2, 0])
+        prev4 = above_right(preview_tag(), t4)
         sky = cloud(6.4, CLOUD, fill_opacity=0.0)
         sky = DashedVMobject(sky, num_dashes=70, dashed_ratio=0.55).set_stroke(CLOUD, 3)
         sky.move_to([0, 0.95, 0])
         caption = label("recorded without the course key", 24, S.GREY).move_to([0, 3.05, 0])
-        lf = look_for_card().move_to([0, 0.45, 0])
+        lf = look_for_card(4.0).move_to([0, 0.45, 0])     # inside the cloud's body, in front of it
         hole = box(t4.box.width - 0.45, 2 * t4.pitch, S.GREY, dashed=True, radius=0.08)
         hole.move_to(t4._slot(1) + np.array([-0.1 + hole.width / 2, 0.03 - hole.height / 2, 0]))
 

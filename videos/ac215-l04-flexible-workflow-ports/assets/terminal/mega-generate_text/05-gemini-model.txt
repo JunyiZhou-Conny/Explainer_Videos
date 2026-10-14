@@ -1,0 +1,5 @@
+$ export GEMINI_MODEL=gemini-2.5-flash
+python cli.py --generate
+Args: Namespace(download=False, generate=True, upload=False)
+generate
+[exit 0]

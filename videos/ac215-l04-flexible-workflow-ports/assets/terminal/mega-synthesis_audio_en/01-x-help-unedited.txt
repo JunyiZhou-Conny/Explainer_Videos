@@ -1,0 +1,7 @@
+$ python cli.py --help
+Traceback (most recent call last):
+  File "/app/cli.py", line 19, in <module>
+    assert group_name!="", "Update group name"
+           ^^^^^^^^^^^^^^
+AssertionError: Update group name
+[exit 1]

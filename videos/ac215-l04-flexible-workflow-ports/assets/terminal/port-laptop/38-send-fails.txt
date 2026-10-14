@@ -1,3 +1,4 @@
-$ curl -s -X POST http://localhost:8095 -H 'Content-Type: application/json' -d '{"text": "hello from the laptop"}'; echo
+$ curl -sS -X POST http://localhost:8095 -H 'Content-Type: application/json' -d '{"text": "hello from the laptop"}' -w '\n'
 
-[exit 0]
+curl: (52) Empty reply from server
+[exit 52]

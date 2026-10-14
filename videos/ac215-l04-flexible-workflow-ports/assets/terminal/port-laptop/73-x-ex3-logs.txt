@@ -1,7 +1,6 @@
 $ docker logs gateway
-gateway listening on port 9100  →  open http://localhost:8090
 ----------------------------------------
-Exception occurred during processing of request from ('172.19.0.1', 52232)
+Exception occurred during processing of request from ('172.19.0.1', 48272)
 Traceback (most recent call last):
   File "/usr/local/lib/python3.14/socketserver.py", line 318, in _handle_request_noblock
     self.process_request(request, client_address)
@@ -46,6 +45,7 @@ Traceback (most recent call last):
                 ~~~~~~~~~~~~~~~~~~~~~~~^
         (self.host,self.port), self.timeout, self.source_address)
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gateway listening on port 9100  →  open http://localhost:8090
   File "/usr/local/lib/python3.14/socket.py", line 850, in create_connection
     for res in getaddrinfo(host, port, 0, SOCK_STREAM):
                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^

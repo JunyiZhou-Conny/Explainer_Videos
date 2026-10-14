@@ -1,0 +1,74 @@
+$ docker buildx history logs exfgv9wud1mismlcf4ojxjy2z
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.31kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f29b2bed401b72d72551257c0cd0ee36a41edc23ff60bec98fba7fed3e7
+#4 resolve docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f29b2bed401b72d72551257c0cd0ee36a41edc23ff60bec98fba7fed3e7 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 98.15kB done
+#5 DONE 0.0s
+
+#6 [2/5] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#6 CACHED
+
+#7 [3/5] WORKDIR /app
+#7 CACHED
+
+#8 [4/5] COPY --chown=app:app . ./
+#8 DONE 0.0s
+
+#9 [5/5] RUN uv sync
+#9 0.281 Using CPython 3.14.8 interpreter at: /usr/local/bin/python3
+#9 0.281 Creating virtual environment at: /home/app/.venv
+#9 0.286 Resolved 25 packages in 1ms
+#9 0.823 Downloading cryptography (4.5MiB)
+#9 0.839 Downloading grpcio (6.8MiB)
+#9 1.186  Downloaded cryptography
+#9 1.246  Downloaded grpcio
+#9 1.247 Prepared 24 packages in 960ms
+#9 1.490 Installed 24 packages in 242ms
+#9 1.490  + certifi==2026.7.22
+#9 1.490  + cffi==2.1.1
+#9 1.491  + charset-normalizer==3.5.1
+#9 1.491  + cryptography==50.0.1
+#9 1.492  + google-api-core==2.37.0
+#9 1.492  + google-auth==2.58.0
+#9 1.493  + google-cloud-core==2.7.0
+#9 1.493  + google-cloud-storage==3.14.1
+#9 1.493  + google-cloud-texttospeech==2.37.0
+#9 1.493  + google-crc32c==1.8.0
+#9 1.493  + google-resumable-media==2.10.2
+#9 1.494  + googleapis-common-protos==1.75.3
+#9 1.494  + grpcio==1.84.0
+#9 1.494  + grpcio-status==1.84.0
+#9 1.494  + idna==3.19
+#9 1.494  + opentelemetry-api==1.44.0
+#9 1.494  + proto-plus==1.28.4
+#9 1.494  + protobuf==7.36.1
+#9 1.494  + pyasn1==0.6.4
+#9 1.494  + pyasn1-modules==0.4.2
+#9 1.494  + pycparser==3.0
+#9 1.494  + requests==2.34.2
+#9 1.494  + typing-extensions==4.16.0
+#9 1.494  + urllib3==2.7.0
+#9 DONE 1.6s
+
+#10 exporting to image
+#10 exporting layers 4.9s done
+#10 exporting manifest sha256:9d91b26e80ce2bb813c7f35dcb88a0621cd61b5550a313fec755076d05ec973f done
+#10 exporting config sha256:415f0c023def92da0ac9d95c3a12633a2ee28adf943fd87ea2cb868d0c63d214 done
+#10 exporting attestation manifest sha256:0969f798a017c2c90f2c1c7ece4be9eb3a5ef1cc6dd30e78b6aa651065df264f done
+#10 exporting manifest list sha256:9c0982238d0b038f865439803a434e7e097ae7cfc8df71057343a92a392a85f9 done
+#10 naming to docker.io/library/mega-pipeline-synthesis-audio-en:latest done
+#10 unpacking to docker.io/library/mega-pipeline-synthesis-audio-en:latest 1.5s done
+#10 DONE 6.4s
+[exit 0]

@@ -1,0 +1,38 @@
+00-env	00:34:42 UTC	0.3s
+01-clone	00:34:43 UTC	0.8s
+02-cd	00:34:43 UTC	0.1s
+03-x-branch	00:34:43 UTC	0.1s
+04-x-ls	00:34:43 UTC	0.1s
+05-x-modes	00:34:43 UTC	0.1s
+06-x-secrets-folder	00:34:43 UTC	0.1s
+07-x-cli-values	00:34:43 UTC	0.1s
+10-a-x-ls-l	00:34:44 UTC	0.1s
+11-a-x-edit-cli	00:34:44 UTC	0.1s
+13-a-x-docker-ps	00:36:34 UTC	0.1s
+14-a-x-mounts	00:36:34 UTC	0.1s
+15-a-x-g9-second-shell.txt	exit=+9.8s
+12-a-docker-shell.txt	exit=+123.1s
+16-a-x-host-after	00:36:52 UTC	0.1s
+17-a-dev.txt	exit=+0.6s
+18-a-run-local.txt	exit=+1.4s
+19-a-x-ls-l-script	00:36:54 UTC	0.1s
+20-a-chmod	00:36:55 UTC	0.1s
+21-a-x-images	00:36:55 UTC	0.2s
+30-b-x-edit-cli	00:36:55 UTC	0.1s
+31-b-docker-shell.txt	exit=+67.4s
+41-c-x-edit-cli	00:38:18 UTC	0.1s
+40-c-docker-shell.txt	exit=+17.2s
+50-d-x-edit-cli	00:38:22 UTC	0.1s
+51-d-docker-shell.txt	exit=+17.5s
+60-e-x-edit-cli	00:38:40 UTC	0.1s
+61-e-docker-shell.txt	exit=+16.9s
+70-x-images	00:38:58 UTC	0.2s
+71-x-rm-local-image	00:39:01 UTC	3.0s
+72-run-registry.txt	exit=+37.6s
+73-x-host-after-registry	00:39:39 UTC	0.1s
+74-x-registry-image	00:39:39 UTC	0.3s
+75-x-rm-local-image-b	00:39:40 UTC	1.3s
+76-run-registry-b.txt	exit=+29.1s
+77-x-host-after-registry-b	00:40:10 UTC	0.1s
+78-x-images-all	00:40:10 UTC	0.3s
+79-x-git-status-all	00:40:10 UTC	0.1s

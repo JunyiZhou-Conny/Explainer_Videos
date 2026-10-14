@@ -1,0 +1,6 @@
+$ (a new terminal, bash on Debian 12; the lines below are typed at its prompt)
+student@laptop:~$ gcloud config set project <your-project-id>
+-bash: syntax error near unexpected token `newline'
+student@laptop:~$ exit
+logout
+[exit 2]

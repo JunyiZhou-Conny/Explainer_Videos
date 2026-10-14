@@ -1,0 +1,4 @@
+# expected, not a capture: the README's own block, port_toy README.md:204-206 ("You should see something like", dlops-io/port_toy main @ d190c71), after $ docker ps (README.md:198)
+IMAGE           PORTS                       NAMES
+toy-gateway     127.0.0.1:8090->9100/tcp      gateway
+toy-processor                               processor

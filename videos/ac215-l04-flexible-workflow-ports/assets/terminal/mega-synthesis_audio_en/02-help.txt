@@ -1,0 +1,56 @@
+$ python cli.py --help
+Traceback (most recent call last):
+  File "/app/cli.py", line 23, in <module>
+    client = texttospeech.TextToSpeechLongAudioSynthesizeClient()
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/texttospeech_v1/services/text_to_speech_long_audio_synthesize/client.py", line 727, in __init__
+    self._transport = transport_init(
+                      ~~~~~~~~~~~~~~^
+        credentials=credentials,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+        api_audience=self._client_options.api_audience,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/texttospeech_v1/services/text_to_speech_long_audio_synthesize/transports/grpc.py", line 241, in __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        host=host,
+        ^^^^^^^^^^
+    ...<6 lines>...
+        api_audience=api_audience,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/texttospeech_v1/services/text_to_speech_long_audio_synthesize/transports/base.py", line 110, in __init__
+    credentials, _ = google.auth.default(
+                     ~~~~~~~~~~~~~~~~~~~^
+        scopes=scopes,
+        ^^^^^^^^^^^^^^
+        quota_project_id=quota_project_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        default_scopes=self.AUTH_SCOPES,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", line 714, in default
+    credentials, project_id = checker()
+                              ~~~~~~~^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", line 707, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", line 352, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        os.environ[environment_vars.CREDENTIALS],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quota_project_id=quota_project_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", line 178, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+        "File {} was not found.".format(filename)
+    )
+google.auth.exceptions.DefaultCredentialsError: File /secrets/mega-pipeline.json was not found.
+[exit 1]

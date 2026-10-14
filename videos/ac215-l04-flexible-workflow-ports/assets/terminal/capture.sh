@@ -1,9 +1,11 @@
 #!/bin/bash
 # Re-capture the L04 terminal transcripts. Needs Docker with privileged containers, and python3 with `pyte`
 # (pip install pyte; set PYTHON to it) so the live progress views of docker build / docker compose render.
-#   bash assets/terminal/capture.sh port        -> port-laptop/   (dlops-io/port_toy, the whole README)
-#   bash assets/terminal/capture.sh mega        -> mega-laptop/   (dlops-io/mega-pipeline, branch flexible-workflow)
-#   bash assets/terminal/capture.sh gcloud      -> gcloud-laptop/ (the README's two gcloud commands, no account)
+#   bash assets/terminal/capture.sh port    -> port-laptop/   (dlops-io/port_toy, the whole README)
+#   bash assets/terminal/capture.sh mega    -> mega-laptop/, mega-<component>/ (inside each component's container),
+#                                              mega-l03-laptop/ (dlops-io/mega-pipeline, branch flexible-workflow)
+#   bash assets/terminal/capture.sh gcloud  -> gcloud-laptop/ (the README's gcloud commands, Cloud SDK without an account)
+# Each part empties its folders first. Behind the proxy also export CA_BUNDLE; set TMPDIR to put the temp files elsewhere.
 #
 # "Your laptop" is a fresh, empty Docker engine standing in for Docker Desktop: a docker:29.8.2-dind container
 # (its own network namespace, so `localhost:8090` and the fixed container names `gateway`/`processor` are the
@@ -17,11 +19,17 @@
 #    (a PEM file with the proxy's CA) first. proxy_relay.py (container l04-relay) makes the proxy reachable from
 #    Docker's bridge network; the laptop's engine, git and curl use it, and ~/.docker/config.json "proxies"
 #    (Docker Desktop: Settings > Resources > Proxies) passes it to builds and containers.
-#  - The base images python:3.14-slim-bookworm (mega-pipeline) and python:3.14-slim (port_toy) are pulled on the
-#    recording machine, loaded into the laptop, and rebuilt under the same name with the proxy's CA and https apt
-#    sources (capture-only/base-*.Dockerfile), so the tutorial's own Dockerfiles build unchanged.
+#  - The base images python:3.14-slim-bookworm (mega-pipeline) and python:3.14-slim (port_toy) are pulled into the
+#    laptop and rebuilt under the same name with the proxy's CA and https apt sources (capture-only/base-*.Dockerfile),
+#    so the tutorial's own Dockerfiles build unchanged.
+#  - The laptop's engine pulls Docker Hub images through the registry mirror mirror.gcr.io (dockerd
+#    --registry-mirror; Docker Desktop: Settings > Docker Engine > "registry-mirrors"): the recording machine shares
+#    Docker Hub's anonymous pull limit with other jobs and got "429 Too Many Requests". docker pull prints the same
+#    lines either way.
+#  - run_steps.sh is copied to a temporary file before it runs (so it can be edited while a capture runs).
 set -e
 HERE="$(cd "$(dirname "$0")" && pwd)"
+RS=$(mktemp); cp "$HERE/run_steps.sh" "$RS"
 PART=$1
 CA=${CA_BUNDLE:-/etc/ssl/certs/ca-certificates.crt}
 LAPTOP=l04-laptop
@@ -40,7 +48,7 @@ fi
 export RELAY NOPX LAPTOP
 
 if [ "$PART" = gcloud ]; then
-  bash "$HERE/run_steps.sh" "$HERE" gcloud
+  bash "$RS" "$HERE" gcloud
   exit
 fi
 
@@ -52,7 +60,7 @@ docker run -d --privileged --name $LAPTOP --hostname laptop \
   -e HTTPS_PROXY="$RELAY" -e https_proxy="$RELAY" -e NO_PROXY=$NOPX -e no_proxy=$NOPX \
   --entrypoint sh docker:29.8.2-dind -c '
     cp /ca.crt /etc/ssl/certs/ca-certificates.crt
-    exec dockerd-entrypoint.sh dockerd --host=unix:///var/run/docker.sock' >/dev/null
+    exec dockerd-entrypoint.sh dockerd --host=unix:///var/run/docker.sock --registry-mirror=https://mirror.gcr.io' >/dev/null
 PROXY_JSON=
 [ -n "$RELAY" ] && PROXY_JSON="{\"proxies\":{\"default\":{\"httpsProxy\":\"$RELAY\",\"noProxy\":\"$NOPX\"}}}"
 docker exec -e PROXY_JSON="$PROXY_JSON" $LAPTOP sh -c '
@@ -67,8 +75,7 @@ docker exec -e PROXY_JSON="$PROXY_JSON" $LAPTOP sh -c '
 # ---- capture-only base images (same names as the tutorial's FROM lines) ----
 mkdir -p "$HERE/capture-only"
 base() {  # base <image> <Dockerfile name>
-  docker image inspect "$1" >/dev/null 2>&1 || docker pull -q "$1" >/dev/null
-  docker save "$1" | docker exec -i $LAPTOP docker load -q >/dev/null
+  docker exec $LAPTOP docker pull -q "$1" >/dev/null
   docker exec $LAPTOP mkdir -p /capture-ctx
   docker cp "$CA" $LAPTOP:/capture-ctx/capture-ca.crt
   docker cp "$HERE/capture-only/$2" $LAPTOP:/capture-ctx/$2
@@ -78,10 +85,10 @@ base() {  # base <image> <Dockerfile name>
 }
 if [ "$PART" = port ]; then
   base python:3.14-slim base-python-3.14-slim.Dockerfile
-  bash "$HERE/run_steps.sh" "$HERE" port
+  bash "$RS" "$HERE" port
 elif [ "$PART" = mega ]; then
   base python:3.14-slim-bookworm base-python-3.14-slim-bookworm.Dockerfile
-  bash "$HERE/run_steps.sh" "$HERE" mega
+  bash "$RS" "$HERE" mega
 fi
 docker rm -f $LAPTOP >/dev/null
 docker volume rm l04-laptop-docker >/dev/null

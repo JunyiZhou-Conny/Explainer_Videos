@@ -1,0 +1,7 @@
+$ git checkout flexible-workflow
+error: The following untracked working tree files would be overwritten by checkout:
+	generate_text/Dockerfile
+	generate_text/uv.lock
+Please move or remove them before you switch branches.
+Aborting
+[exit 1]

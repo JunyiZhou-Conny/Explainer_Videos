@@ -14,11 +14,14 @@ Each line of <script_file> is either a line to type or a directive:
   @@waitfile <path>   wait until <path> exists (run_steps.sh ran the commands of "another terminal")
   @@sleep <seconds>
   @@ctrl-c            press Ctrl+C
+  @@prompt            wait for a shell prompt without typing anything
+Timeouts: TTY_PROMPT_TIMEOUT (default 900 s) per prompt wait; TTY_END_TIMEOUT (default 1800 s) for the command to
+end after the last script line, after which it is killed (noted as "killed" in the timings).
 The first line of <out_file> is "$ " + $SHOW_CMD (default: the command itself); the last is "[exit N]",
 like run_steps.sh's step files. Timings (Ctrl+C -> exit) go to $TIMING_FILE when it is set.
 L04 version of the L03 helper (videos/ac215-l03-mega-pipeline/assets/terminal/tty_session.py), plus the
 directives above."""
-import fcntl, os, pty, re, select, struct, sys, termios, time
+import fcntl, os, pty, re, select, signal, struct, sys, termios, time
 
 out_path, script_path, cmd = sys.argv[1], sys.argv[2], sys.argv[3:]
 COLS, ROWS = int(os.environ.get('TTY_COLS', 80)), int(os.environ.get('TTY_ROWS', 40))
@@ -56,10 +59,18 @@ def read_some(timeout):
     return True
 
 
-def wait_prompt(timeout=900):
+mark = 0          # len(buf) when we last typed: only a prompt printed after that counts
+
+
+PROMPT_TIMEOUT = float(os.environ.get('TTY_PROMPT_TIMEOUT', 900))
+END_TIMEOUT = float(os.environ.get('TTY_END_TIMEOUT', 1800))
+
+
+def wait_prompt(timeout=PROMPT_TIMEOUT):
     end = time.time() + timeout
     while alive and time.time() < end:
-        if read_some(0.2) and PROMPT.search(ANSI.sub(b'', buf[-400:])):
+        read_some(0.2)
+        if len(buf) > mark and PROMPT.search(ANSI.sub(b'', buf[-400:])):
             if not read_some(0.5):   # nothing else still arriving
                 return True
     return False
@@ -94,15 +105,22 @@ for line in script:
                 read_some(0.1)
         elif op == 'ctrl-c':
             os.write(fd, b'\x03')
+            mark = len(buf)
             events.append(('ctrl-c', time.time()))
+        elif op == 'prompt':
+            wait_prompt()
         continue
     if not wait_prompt():
         break
     time.sleep(0.2)
     os.write(fd, line.encode() + b'\r')
-end = time.time() + 1800
+    mark = len(buf)
+end = time.time() + END_TIMEOUT
 while alive and time.time() < end:
     read_some(0.5)
+if alive:                                    # still running after END_TIMEOUT: stop it, and say so in the timings
+    os.kill(pid, signal.SIGKILL)
+    events.append(('killed', time.time()))
 _, status = os.waitpid(pid, 0)
 code = os.waitstatus_to_exitcode(status)
 events.append(('exit', time.time()))

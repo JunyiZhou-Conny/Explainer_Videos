@@ -1,8 +1,8 @@
 $ docker ps -a; docker network ls
 CONTAINER ID   IMAGE         COMMAND    CREATED          STATUS                      PORTS     NAMES
-ecf080fdaf68   hello-world   "/hello"   28 seconds ago   Exited (0) 27 seconds ago             focused_bose
+8be17acbbd88   hello-world   "/hello"   24 seconds ago   Exited (0) 23 seconds ago             youthful_feistel
 NETWORK ID     NAME      DRIVER    SCOPE
-2c1546e7d80a   bridge    bridge    local
-a17c333b75a4   host      host      local
-4150efb11a3c   none      null      local
+6dc501e6db46   bridge    bridge    local
+2423b89bf480   host      host      local
+8ed9d78f7e8c   none      null      local
 [exit 0]

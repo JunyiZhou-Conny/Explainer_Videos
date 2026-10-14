@@ -1,0 +1,9 @@
+$ gcloud config list
+
+Your active configuration is: [default]
+[component_manager]
+disable_update_check = true
+[core]
+disable_usage_reporting = true
+project = your-project-id
+[exit 0]

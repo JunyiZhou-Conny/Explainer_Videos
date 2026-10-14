@@ -1,0 +1,7 @@
+$ ./docker-shell.sh run
+Docker Username: dlops, Build Mode: run
+Run Docker container...
+Using local image...
+app@631fac50f92b:/app$ exit
+exit
+[exit 0]

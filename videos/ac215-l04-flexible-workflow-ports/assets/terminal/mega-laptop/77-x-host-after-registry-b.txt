@@ -1,0 +1,22 @@
+$ ls -la; git status --short
+total 156
+drwxr-sr-x 4 student student   4096 Oct 14 00:40 .
+drwxr-sr-x 8 student student   4096 Oct 14 00:34 ..
+-rw-r--r-- 1 student student     58 Oct 14 00:34 .gitignore
+-rw-r--r-- 1 student student   1267 Oct 14 00:34 Dockerfile
+-rw-r--r-- 1 root    student    138 Oct 14 00:40 Pipfile
+-rw-r--r-- 1 student student   5433 Oct 14 00:34 README.md
+-rw-r--r-- 1 student student   4436 Oct 14 00:36 cli.py
+-rwxr-xr-x 1 student student   2889 Oct 14 00:34 docker-shell.sh
+-rw-r--r-- 1 student student    213 Oct 14 00:34 pyproject.toml
+drwxrwsrwx 3 student student   4096 Oct 14 00:37 text_paragraphs
+drwxrwsrwx 3 student student   4096 Oct 14 00:37 text_prompts
+-rw-r--r-- 1 student student 106411 Oct 14 00:34 uv.lock
+ M cli.py
+ M ../synthesis_audio/cli.py
+ M ../synthesis_audio_en/cli.py
+ M ../transcribe_audio/cli.py
+ M ../translate_text/cli.py
+?? Pipfile
+?? ../transcribe_audio/Pipfile
+[exit 0]

@@ -1,0 +1,10 @@
+$ git status --short; git status --short --ignored | grep '^!!'; head -1 transcribe_audio/Dockerfile
+ M transcribe_audio/cli.py
+?? generate_text/Dockerfile
+?? generate_text/uv.lock
+!! transcribe_audio/Dockerfile
+!! transcribe_audio/pyproject.toml
+!! transcribe_audio/secrets/mega-pipeline.json
+!! transcribe_audio/uv.lock
+FROM python:3.12-slim-bookworm
+[exit 0]

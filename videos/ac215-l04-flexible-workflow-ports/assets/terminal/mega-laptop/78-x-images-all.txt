@@ -1,0 +1,9 @@
+$ docker images
+IMAGE                                         ID             DISK USAGE   CONTENT SIZE   EXTRA
+dlops/mega-pipeline-generate-text:latest      c1f1ccbe43b3       1.02GB          265MB        
+dlops/mega-pipeline-transcribe-audio:latest   30e5dbdda6c9       1.17GB          315MB        
+mega-pipeline-synthesis-audio-en:latest       9c0982238d0b        833MB          214MB        
+mega-pipeline-synthesis-audio:latest          cc9d97e6e0cc        833MB          214MB        
+mega-pipeline-translate-text:latest           584f73c40dd9        836MB          214MB        
+python:3.14-slim-bookworm                     d86a6f29b2be        195MB         47.2MB        
+[exit 0]

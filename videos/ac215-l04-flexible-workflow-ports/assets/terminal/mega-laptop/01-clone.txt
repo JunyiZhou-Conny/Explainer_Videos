@@ -1,0 +1,3 @@
+$ git clone --branch flexible-workflow https://github.com/dlops-io/mega-pipeline.git
+Cloning into 'mega-pipeline'...
+[exit 0]

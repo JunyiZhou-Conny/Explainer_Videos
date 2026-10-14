@@ -1,5 +1,6 @@
 $ docker exec gateway curl --max-time 3 http://processor:9200/health
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (6) Could not resolve host: processor
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0cu
+rl: (6) Could not resolve host: processor
 [exit 6]

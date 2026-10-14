@@ -1,0 +1,97 @@
+$ ./docker-shell.sh
+Docker Username: dlops, Build Mode: dev-run
+Building development image locally...
+[+] Building 7.9s (10/10) FINISHED                               docker:default
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 1.31kB                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.14-slim-bookw  0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/5] FROM docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f2  0.0s
+ => => resolve docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f2  0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 103.81kB                                      0.0s
+ => CACHED [2/5] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/  0.0s
+ => CACHED [3/5] WORKDIR /app                                              0.0s
+ => [4/5] COPY --chown=app:app . ./                                        0.0s
+ => [5/5] RUN uv sync                                                      1.6s
+ => exporting to image                                                     6.1s
+ => => exporting layers                                                    4.7s
+ => => exporting manifest sha256:6f43fca4e6f922294f92f4bddefabd8acbe8a0a8  0.0s
+ => => exporting config sha256:e2889154487a0411ad2e550f6f4e7a8a71bd737fe1  0.0s
+ => => exporting attestation manifest sha256:6f2b7c8531b25a774bed3cae7679  0.0s
+ => => exporting manifest list sha256:cc9d97e6e0cc0c9b3496d754d1eb0ba957a  0.0s
+ => => naming to docker.io/library/mega-pipeline-synthesis-audio:latest    0.0s
+ => => unpacking to docker.io/library/mega-pipeline-synthesis-audio:lates  1.3s
+Run Docker container...
+Using local image...
+app@6172f2cd7728:/app$ python cli.py --help
+Traceback (most recent call last):
+  File "/app/cli.py", line 22, in <module>
+    client = texttospeech.TextToSpeechLongAudioSynthesizeClient()
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/texttospeech_v
+1/services/text_to_speech_long_audio_synthesize/client.py", line 727, in __init_
+_
+    self._transport = transport_init(
+                      ~~~~~~~~~~~~~~^
+        credentials=credentials,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<7 lines>...
+        api_audience=self._client_options.api_audience,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/texttospeech_v
+1/services/text_to_speech_long_audio_synthesize/transports/grpc.py", line 241, i
+n __init__
+    super().__init__(
+    ~~~~~~~~~~~~~~~~^
+        host=host,
+        ^^^^^^^^^^
+    ...<6 lines>...
+        api_audience=api_audience,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/texttospeech_v
+1/services/text_to_speech_long_audio_synthesize/transports/base.py", line 110, i
+n __init__
+    credentials, _ = google.auth.default(
+                     ~~~~~~~~~~~~~~~~~~~^
+        scopes=scopes,
+        ^^^^^^^^^^^^^^
+        quota_project_id=quota_project_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        default_scopes=self.AUTH_SCOPES,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", l
+ine 714, in default
+    credentials, project_id = checker()
+                              ~~~~~~~^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", l
+ine 707, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id)
+,
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", l
+ine 352, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        os.environ[environment_vars.CREDENTIALS],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quota_project_id=quota_project_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", l
+ine 178, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+        "File {} was not found.".format(filename)
+    )
+google.auth.exceptions.DefaultCredentialsError: File /secrets/mega-pipeline.json
+ was not found.
+app@6172f2cd7728:/app$ exit
+exit
+[exit 1]

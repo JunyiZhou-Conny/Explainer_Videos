@@ -1,8 +1,8 @@
 $ docker logs gateway
 gateway listening on port 9100  →  open http://localhost:8090
-172.19.0.1 - - [13/Oct/2026 20:12:31] "POST / HTTP/1.1" 200 -
+172.19.0.1 - - [14/Oct/2026 00:32:26] "POST / HTTP/1.1" 200 -
 ----------------------------------------
-Exception occurred during processing of request from ('172.19.0.1', 50732)
+Exception occurred during processing of request from ('172.19.0.1', 46328)
 Traceback (most recent call last):
   File "/usr/local/lib/python3.14/socketserver.py", line 318, in _handle_request_noblock
     self.process_request(request, client_address)

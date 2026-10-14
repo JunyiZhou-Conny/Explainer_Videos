@@ -1,0 +1,21 @@
+$ git diff cli.py
+diff --git a/synthesis_audio_en/cli.py b/synthesis_audio_en/cli.py
+index 7ae3162..33cfa8b 100644
+--- a/synthesis_audio_en/cli.py
++++ b/synthesis_audio_en/cli.py
+@@ -11,11 +11,11 @@ from google.cloud import texttospeech
+ # Generate the inputs arguments parser
+ parser = argparse.ArgumentParser(description="Command description.")
+ 
+-gcp_project = "" #"ac215-project"
+-bucket_name = ""  #"mega-pipeline-bucket"
++gcp_project = "your-project-id" #"ac215-project"
++bucket_name = "your-team-bucket"  #"mega-pipeline-bucket"
+ text_paragraphs = "text_paragraphs"
+ text_audios = "text_audios"
+-group_name = "" #"pavlos-advanced"
++group_name = "group-01" #"pavlos-advanced"
+ assert group_name!="", "Update group name"
+ #assert group_name!="pavlos-advanced", "Update group name"
+ # Instantiates a client
+[exit 0]

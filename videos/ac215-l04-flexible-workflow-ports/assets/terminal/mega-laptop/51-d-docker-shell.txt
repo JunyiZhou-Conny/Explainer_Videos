@@ -1,0 +1,68 @@
+$ ./docker-shell.sh
+Docker Username: dlops, Build Mode: dev-run
+Building development image locally...
+[+] Building 7.9s (10/10) FINISHED                               docker:default
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 1.31kB                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.14-slim-bookw  0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/5] FROM docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f2  0.0s
+ => => resolve docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f2  0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 99.17kB                                       0.0s
+ => CACHED [2/5] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/  0.0s
+ => CACHED [3/5] WORKDIR /app                                              0.0s
+ => [4/5] COPY --chown=app:app . ./                                        0.0s
+ => [5/5] RUN uv sync                                                      1.7s
+ => exporting to image                                                     6.0s
+ => => exporting layers                                                    4.7s
+ => => exporting manifest sha256:6dc66106a2deca2919dff3abaef9b548aee03f57  0.0s
+ => => exporting config sha256:f92ec2dc4df4ae8d09c14acddf2a60dc9deebbd5c5  0.0s
+ => => exporting attestation manifest sha256:dc4937eea9ae9db716ab2c0f67ff  0.0s
+ => => exporting manifest list sha256:584f73c40dd9c42e495f9ec9327d753c746  0.0s
+ => => naming to docker.io/library/mega-pipeline-translate-text:latest     0.0s
+ => => unpacking to docker.io/library/mega-pipeline-translate-text:latest  1.2s
+Run Docker container...
+Using local image...
+app@40d7497c50f2:/app$ python cli.py --help
+Traceback (most recent call last):
+  File "/app/cli.py", line 22, in <module>
+    translate_client = translate.Client()
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/translate_v2/c
+lient.py", line 78, in __init__
+    super(Client, self).__init__(credentials=credentials, _http=_http)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/client/__init_
+_.py", line 218, in __init__
+    credentials, _ = google.auth.default(scopes=scopes)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", l
+ine 714, in default
+    credentials, project_id = checker()
+                              ~~~~~~~^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", l
+ine 707, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id)
+,
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", l
+ine 352, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        os.environ[environment_vars.CREDENTIALS],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quota_project_id=quota_project_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", l
+ine 178, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+        "File {} was not found.".format(filename)
+    )
+google.auth.exceptions.DefaultCredentialsError: File /secrets/mega-pipeline.json
+ was not found.
+app@40d7497c50f2:/app$ exit
+exit
+[exit 1]

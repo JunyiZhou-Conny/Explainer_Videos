@@ -1,0 +1,9 @@
+$ echo $VIRTUAL_ENV; ls /home/app/.venv; uv --version
+/home/app/.venv
+CACHEDIR.TAG
+bin
+lib
+lib64
+pyvenv.cfg
+uv 0.13.0 (x86_64-unknown-linux-gnu)
+[exit 0]

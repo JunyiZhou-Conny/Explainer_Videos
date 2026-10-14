@@ -1,0 +1,3 @@
+# expected, not a capture: the README's own block, port_toy README.md:139-140 ("Look for messages like these", dlops-io/port_toy main @ d190c71); the two lines come from `docker logs processor` and `docker logs gateway` (README.md:131-134)
+processor listening on port 9200 (internal only)
+gateway listening on port 9100 → open http://localhost:8090
