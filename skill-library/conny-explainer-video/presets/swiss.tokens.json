@@ -1,0 +1,36 @@
+{
+  "id": "swiss",
+  "source": "presets/swiss.md — the prose token table is generated FROM this file; edit here",
+  "canvas": {"width": 1920, "height": 1080, "fps": 30},
+  "palette": {
+    "background": "#F3F0E7",
+    "ink": "#171717",
+    "accent": "#DA2D24",
+    "muted": "#77756F",
+    "faint": "#DEDAD0"
+  },
+  "grid": {"columns": 12, "outer_margin_px": 108, "gutter_px": 24},
+  "type": {
+    "latin": "Inter",
+    "cjk": "Noto Sans CJK SC",
+    "display_px": [112, 160],
+    "heading_px": [64, 88],
+    "body_px": [36, 48],
+    "label_min_px": 28,
+    "path_min_px": 30
+  },
+  "captions": {
+    "reserve_px": 170,
+    "band_colour": "#171717",
+    "zh_size": 43,
+    "en_size": 30,
+    "zh_colour": "#F3F0E7",
+    "en_colour": "#C9C9C9",
+    "en_font": "Inter",
+    "margin_l": 90,
+    "margin_r": 90,
+    "margin_v": 27
+  },
+  "motion": {"entrance_s": [0.4, 0.8], "transform_s": [0.8, 1.5], "easing": "cubic, no bounce"},
+  "checks": {"background_tolerance": 28, "band_tolerance": 36, "min_background_share": 0.35}
+}

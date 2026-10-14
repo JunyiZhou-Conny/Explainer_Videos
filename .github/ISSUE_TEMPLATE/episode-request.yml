@@ -1,0 +1,65 @@
+name: Episode request
+description: Ask for a new explainer video. Filing this issue wakes the producing agent.
+title: "[episode] "
+labels: [episode, "state:scripting"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: The question to understand
+      description: What should the viewer understand after watching? One clear destination.
+      placeholder: "Why does a git branch cost nothing? Explain branch pointers and one ordinary merge."
+    validations:
+      required: true
+  - type: input
+    id: audience
+    attributes:
+      label: Audience and assumed knowledge
+      placeholder: "Knows git add/commit; has never used branches."
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Topic sources (evidence)
+      description: Repository paths, a paper and its relevant pages, links, or notes. The agent teaches only what the sources support.
+      placeholder: "The attached demo repository and its commit history."
+    validations:
+      required: true
+  - type: dropdown
+    id: style
+    attributes:
+      label: Style
+      description: Ready styles have reusable components and a rendered sample. Experimental styles need your approval of a 20-30s sample scene first (see docs/STYLES.md).
+      options:
+        - swiss (ready)
+        - 3b1b (ready)
+        - cassette-futurism (experimental)
+        - de-stijl (experimental)
+        - bauhaus (experimental)
+        - nasa-punk (experimental)
+      default: 0
+    validations:
+      required: true
+  - type: input
+    id: length
+    attributes:
+      label: Length
+      description: Saved default is five minutes.
+      placeholder: "5 minutes"
+  - type: textarea
+    id: scope
+    attributes:
+      label: Must include / skip (optional)
+      placeholder: "Show the actual commands; skip rebasing."
+  - type: markdown
+    attributes:
+      value: |
+        Saved production defaults apply unless overridden above: English narration, Chinese-above-English
+        bilingual subtitles burned in, background music, 1920x1080. The producing agent will open a draft
+        PR for this episode, post a narrated sample for your review, and move the `state:` label as it goes.
+        The full lifecycle and content gates are in AGENTS.md.
+
+        @claude Read AGENTS.md and the conny-explainer-video skill, then produce this episode on a branch
+        `episode/<slug>`, touching only `videos/<slug>/`. Start with the brief and a narrated sample of the
+        hardest scene; post the sample and wait for review before the full render.

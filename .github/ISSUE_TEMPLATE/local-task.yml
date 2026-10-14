@@ -1,0 +1,24 @@
+name: Local task (Mac agent)
+description: Pull-based work that needs the logged-in Mac — Bilibili uploads/rescues, reference-video capture, on-device checks.
+title: "[local] "
+labels: [local-task]
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: What to do
+      description: Written for the local agent (Codex/computer-use) that Conny opens by hand; cloud agents cannot do this work. Name files by repository path.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: What done looks like
+      placeholder: "The BV link is commented on issue #N / the distilled notes are committed under presets/<id>/reference/."
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: |
+        The local agent closes the issue with a comment saying what was actually done.
+        Credentials (biliup cookies.json, logins) stay on the Mac and never enter git.

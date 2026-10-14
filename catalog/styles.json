@@ -1,62 +1,80 @@
 {
   "schema_version": 1,
-  "skill_version": "1.1.0",
+  "skill_version": "1.2.0",
   "styles": [
     {
       "id": "3b1b",
       "path": "skill-library/conny-explainer-video/presets/3b1b.md",
       "sha256": "2459aa36f62367f8bcffd95219cd9a8f6c43c1872456aa3b6662cf11093dd027",
       "status": "existing-complete-episodes",
-      "example": "videos/tictactoe-255168"
+      "example": "videos/tictactoe-255168",
+      "useful_for": "Math, algorithms, quantitative intuition",
+      "doc_name": "Dark diagrams"
     },
     {
       "id": "bauhaus",
       "path": "skill-library/conny-explainer-video/presets/bauhaus.md",
       "sha256": "d62925b8d7f0adf965c1d417d02beeeb9dd6275eb4aa0813e735903f33a9c063",
       "status": "design-specification-sample-pending",
-      "example": null
+      "example": null,
+      "useful_for": "Construction, form/function, typographic explanation",
+      "doc_name": "Bauhaus"
     },
     {
       "id": "cassette-futurism",
       "path": "skill-library/conny-explainer-video/presets/cassette-futurism.md",
       "sha256": "7245c2b9494d8220943bde16c9ee9511eed4e1b7df227512ce59f26736633b5d",
       "status": "design-specification-sample-pending",
-      "example": null
+      "example": null,
+      "useful_for": "Hardware/software, terminals and states",
+      "doc_name": "Cassette futurism"
     },
     {
       "id": "de-stijl",
       "path": "skill-library/conny-explainer-video/presets/de-stijl.md",
       "sha256": "28e854691f3eaa4d8a8a2cd2696d93101efb04b9741c766f71f9d6b8506aab91",
       "status": "design-specification-sample-pending",
-      "example": null
+      "example": null,
+      "useful_for": "Components, partitions, allocation and relationships",
+      "doc_name": "De Stijl"
     },
     {
       "id": "nasa-punk",
       "path": "skill-library/conny-explainer-video/presets/nasa-punk.md",
       "sha256": "e243f71f690d15c3c25a09f4f31ac22dde276532edec6db749ef1393e88683df",
       "status": "design-specification-sample-pending",
-      "example": null
+      "example": null,
+      "useful_for": "Engineering systems, exploration and equipment",
+      "doc_name": "NASA-punk / Starfield"
     },
     {
       "id": "pixel-studio",
       "path": "skill-library/conny-explainer-video/presets/pixel-studio.md",
       "sha256": "869a34b332f7b725db4950bff6e8793eb74e9057e27aa195044bd2293d5ebec3",
-      "status": "design-specification-sample-pending",
-      "example": null
+      "status": "blocked-on-renderer",
+      "example": null,
+      "blocked_reason": "needs logical-resolution integer upscaling the engine does not provide",
+      "useful_for": "Making-of and collaboration stories",
+      "doc_name": "Pixel studio"
     },
     {
       "id": "rhine-lab",
       "path": "skill-library/conny-explainer-video/presets/rhine-lab.md",
       "sha256": "b5ec81b13ca1624b2bb26468b012464160920ab89f95994cb409854aedceb971",
-      "status": "design-specification-sample-pending",
-      "example": null
+      "status": "blocked-on-renderer",
+      "example": null,
+      "blocked_reason": "needs 3D/glass compositing the engine does not provide",
+      "useful_for": "Research, archives, retrieval and layered systems",
+      "doc_name": "Rhine Lab"
     },
     {
       "id": "swiss",
       "path": "skill-library/conny-explainer-video/presets/swiss.md",
       "sha256": "76c5f8f3be7981d6670c94e286fa8c392159bd6b68ddd632bc26fc1444bdcce8",
       "status": "complete-example-technical-and-sampled-visual-review",
-      "example": "videos/skills-ecosystem"
+      "example": "videos/skills-ecosystem",
+      "useful_for": "Folder maps, processes, evidence and comparisons",
+      "doc_name": "Swiss"
     }
   ]
 }
