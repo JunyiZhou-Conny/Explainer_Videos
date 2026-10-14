@@ -129,8 +129,8 @@ QUESTION = "docker run --rm -ti simple-translate python cli.py\nWhat command lin
 
 # ------------------------------------------------------------------ layout
 STACK_X, FLOOR_Y = -2.4, -0.85        # beats 3-4: the V2 stack over the strip (4 rows: top -1.04)
-CARD_X, CARD_Y = 2.0, 0.1             # beat 5: the stacked V3 card (6.0 wide), labels at its left
-PONDER_Y, CARD_DROP = 1.55, 1.25      # the ponder card covers the chip; the card group drops under it
+CARD_X, CARD_Y = 2.0, -0.3            # beat 5: the stacked V3 card (6.0 wide), labels at its left
+PONDER_Y, CARD_DROP = 1.55, 0.85      # the ponder card covers the chip; the card group drops under it
 LINE_TOP = 2.3                        # beat 6: the start-up line, up top
 BIG = 34                              # beat 1: the enlarged output line
 
@@ -211,7 +211,7 @@ class RunIt(VoiceScene):
     def ponder_at(self, question: str, seconds: float, center) -> VGroup:
         """pause_and_ponder's card and draining timer, placed at `center` (opaque), so the config
         card under it stays visible. Returns the card (removed at the start of the next block)."""
-        card = ponder_card(question).move_to(center)
+        card = ponder_card(question, width=10.2).move_to(center)      # wide enough to hide the chip
         card[0].set_fill(S.BG, 1)
         self.play(FadeIn(card, scale=0.95), run_time=0.6)
         bar = card[3]
@@ -243,15 +243,15 @@ class RunIt(VoiceScene):
             vo.wait_until("Good morning")
             out = t.print(self, OUT31[:-1] + [(OUT31[-1], VENV)], run_time=0.8, wrap=True, lag=0.08)
             out_line = out[-1]
-            vo.wait_until("from English")
-            self.play(Indicate(out_line.glyphs, color=VENV, scale_factor=1.12), run_time=0.8)
-            vo.wait_until("Pause and run both")
             yt_run = beside(turn_tag(), c_run.rows[1])
             yt_tr = beside(turn_tag(), c_tr.rows[1])
             self.play(FadeIn(yt_run, shift=LEFT * 0.1), FadeIn(yt_tr, shift=LEFT * 0.1), run_time=0.4)
             attach(self, c_run.rows[1], yt_run)
             attach(self, c_tr.rows[1], yt_tr)
-            self.play(Wiggle(VGroup(yt_run, yt_tr), scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.7)
+            vo.wait_until("from English")
+            self.play(Indicate(out_line.glyphs, color=VENV, scale_factor=1.12), run_time=0.8)
+            vo.wait_until("Pause and run both")
+            self.play(Wiggle(VGroup(yt_run, yt_tr), scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.8)
 
         # ========================================================== 1 · the request goes to Google
         big = mono_line(OUT31[-1], BIG, VENV)
@@ -277,14 +277,16 @@ class RunIt(VoiceScene):
             vo.wait_until("the request")
             self.play(FadeIn(lap), FadeIn(lap_l), FadeIn(VGroup(con, con_l), scale=0.9), run_time=0.6)
             vo.wait_until("through your laptop")
-            w_req.move_to(req.get_start())
+            p_req = req.copy().shift(UP * 0.28)              # the words ride just beside the routes
+            p_ret = ret.copy().shift(DOWN * 0.28)
+            w_req.move_to(p_req.get_start())
             self.play(GrowArrow(req), FadeIn(w_req), run_time=0.6)
-            self.play(Indicate(lap, color=INK, scale_factor=1.04), travel(w_req, req, 1.0))
+            self.play(Indicate(lap, color=INK, scale_factor=1.04), travel(w_req, p_req, 1.0))
             vo.wait_until("to Google")
             self.play(FadeIn(gcl, scale=0.85), FadeIn(host), FadeOut(w_req, scale=0.6), run_time=0.6)
-            w_ret.move_to(ret.get_start())
+            w_ret.move_to(p_ret.get_start())
             self.play(GrowArrow(ret), FadeIn(w_ret), run_time=0.5)
-            self.play(travel(w_ret, ret, 1.0))
+            self.play(travel(w_ret, p_ret, 1.0))
             self.play(FadeOut(w_ret, scale=0.6), Indicate(big.glyphs, color=VENV, scale_factor=1.06), run_time=0.6)
             vo.wait_until("If yours ends")
             self.play(FadeIn(oops, shift=UP * 0.1), run_time=0.5)
@@ -319,12 +321,12 @@ class RunIt(VoiceScene):
         fly = mono("exit", 22, INK)
 
         with self.voiceover(SAY[3]) as vo:
-            unpin(self, [(c_exit, yt_exit)], 0.25)
             resize(self, t, STRIP_ROWS, keep=3, extra=[FadeIn(VGroup(*slabs, brace), shift=UP * 0.15)],
                    run_time=0.7)
             self.add(stack)
             self.play(FadeIn(glass, shift=DOWN * 0.15), run_time=0.6)
             vo.wait_until("It ended")
+            unpin(self, [(c_exit, yt_exit)], 0.25)
             fly.move_to(substring(c_exit, "exit"))
             self.play(Indicate(substring(c_exit, "exit"), color=TURN, scale_factor=1.2), run_time=0.5)
             self.play(fly.animate.next_to(glass.dot, LEFT, buff=0.15).set_color(TURN), run_time=0.7)
@@ -427,14 +429,14 @@ class RunIt(VoiceScene):
         # ========================================================== 6 · words replace CMD: exit 126
         new_tile = card.tile(WORDS, color=INK)
         spot = card.slots["CMD"].get_left() + RIGHT * (0.08 + new_tile.width / 2)
-        new_tile.move_to(spot + RIGHT * 3.2 + UP * 0.6)
+        new_tile.move_to([spot[0] + 1.8, card.frame.get_top()[1] + 0.6, 0])
         bad = steady(LINE_BAD, 22, INK, mono_font=True).move_to(q_line, aligned_edge=LEFT)
         bad_top = bad.copy().move_to([0, LINE_TOP, 0])
         py_top = steady_span(bad_top, LINE_BAD, "python")
-        doors = PathDoors(["/usr/local/bin", "…"], colors={"/usr/local/bin": SYSTEM}, door_w=2.5,
-                          door_h=1.6)
+        doors = PathDoors(["/usr/local/bin", "…"], colors={"/usr/local/bin": SYSTEM}, door_w=3.0,
+                          door_h=1.7)
         d0 = doors.doors[0]
-        doors.shift(np.array([-4.6 - d0.frame.get_left()[0], 1.2 - d0.frame.get_top()[1], 0]))
+        doors.shift(np.array([-4.8 - d0.frame.get_left()[0], 1.4 - d0.frame.get_top()[1], 0]))
         no_venv = label("venv not activated", 22, S.GREY).next_to(doors.doors, RIGHT, buff=0.5)
         no_venv.set_y(d0.frame.get_center()[1])
         t2 = laptop_term(4)
@@ -466,15 +468,15 @@ class RunIt(VoiceScene):
             vo.wait_until("and finds")
             walker = mono("python", 24, ROUTE).next_to(d0.frame, UP, buff=0.15)
             self.play(TransformFromCopy(steady_span(bad, LINE_BAD, "python"), walker), run_time=0.7)
-            prog = mono("python", 24, SYSTEM).move_to(d0.frame).shift(UP * 0.35)
+            prog = mono("python", 24, SYSTEM).move_to(d0.frame).shift(UP * 0.42)
             self.play(walker.animate.move_to(prog), d0.frame.animate.set_fill(SYSTEM, 0.3), run_time=0.6)
             self.play(Transform(walker, prog), run_time=0.4)
             vo.wait_until("in user local bin")
             self.play(Indicate(d0.label, color=SYSTEM, scale_factor=1.1), run_time=0.7)
             vo.wait_until("That's a binary")
-            st = stamp(["a program,", "not a script"]).move_to(d0.frame).shift(DOWN * 0.3)
+            st = stamp(["a program,", "not a script"]).move_to(d0.frame).shift(DOWN * 0.32)
             self.play(FadeIn(st, scale=1.4), run_time=0.4)
-            self.play(Indicate(st, color=ERR, scale_factor=1.06), run_time=0.5)
+            self.play(Indicate(st[1], color=ERR, scale_factor=1.1), run_time=0.5)
             self.play(FadeIn(t2), run_time=0.35)
             bare_prompt(self, t2)
             c36 = type_cmd(self, t2, RUN_ARGS, 1.3)
@@ -497,13 +499,13 @@ class RunIt(VoiceScene):
         assert good.get_bottom()[1] > -0.5, good.get_bottom()
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(doors, no_venv, walker, st, u_py, l_py)),
-                      FadeIn(VGroup(card2, t_ent2, t_words2), shift=DOWN * 0.15),
-                      bad.animate.move_to(bad_under), run_time=0.8)
+            self.play(FadeOut(VGroup(doors, no_venv, walker, st, u_py, l_py)), run_time=0.4)
+            self.play(bad.animate.move_to(bad_under), run_time=0.5)
+            self.play(FadeIn(VGroup(card2, t_ent2, t_words2), shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("replace CMD")
-            t_c.move_to(t_c_spot + UP * 0.8)
-            card2.take(self, "CMD", run_time=0.5, extra=[FadeIn(t_c, shift=DOWN * 0.3)])
-            self.play(t_c.animate.move_to(t_c_spot), run_time=0.5)
+            card2.take(self, "CMD", run_time=0.5)
+            t_c.move_to(t_c_spot)
+            self.play(FadeIn(t_c, shift=LEFT * 0.3), run_time=0.4)
             card2.tiles["CMD"] = t_c
             self.play(ReplacementTransform(steady_span(bad, LINE_BAD, "/bin/bash"), steady_span(good, LINE_GOOD, "/bin/bash")),
                       FadeOut(steady_span(bad, LINE_BAD, WORDS), shift=DOWN * 0.25),
@@ -512,8 +514,10 @@ class RunIt(VoiceScene):
             self.remove(bad, *bad, *good)
             self.add(good)
             vo.wait_until("as in this extra")
-            clear_with(self, t2, run_time=0.3)
-            resize(self, t2, 5, run_time=0.4)
+            # the card has said its piece: the line goes up, the terminal takes the frame (7 rows, so
+            # the folded command and its row tags stay on screen with the output)
+            clear_with(self, t2, FadeOut(VGroup(card2, t_ent2, t_c)), run_time=0.35)
+            resize(self, t2, 7, extra=[good.animate.move_to([0, LINE_TOP, 0])], run_time=0.5)
             bare_prompt(self, t2)
             c37 = type_cmd(self, t2, RUN_C, 1.4)
             assert len(c37.rows) == 3 and "--rm simple-translate -c" in c37.rows[1].text, [r.text for r in c37.rows]
@@ -526,6 +530,7 @@ class RunIt(VoiceScene):
             out37 = t2.print(self, OUT37[:-1] + [(OUT37[-1], VENV)], run_time=0.5, wrap=True, lag=0.1)
             self.play(Indicate(out37[-1].glyphs, color=VENV, scale_factor=1.1),
                       Indicate(good, color=VENV, scale_factor=1.04), run_time=0.7)
+        self.wait(1.0)                    # the French output stays a moment before the helper script
 
         # ========================================================== 8 · docker-shell.sh
         panel = code("docker-shell.sh", 10, 15, focus=[0, 1, 3, 4, 5])
@@ -536,7 +541,7 @@ class RunIt(VoiceScene):
         helper.next_to(panel, DOWN, buff=0.35)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(card2, t_ent2, t_c, good)), FadeOut(t2), run_time=0.5)
+            self.play(FadeOut(good), FadeOut(t2), run_time=0.5)
             self.remove(t2, *t2.lines)
             self.play(FadeIn(panel, shift=UP * 0.15), run_time=0.5)
             self.play(FadeIn(helper, shift=UP * 0.1), run_time=0.4)
@@ -570,6 +575,8 @@ class RunIt(VoiceScene):
             self.play(Indicate(VGroup(*slabs9), color=IMAGE, scale_factor=1.03), run_time=0.6)
             vo.wait_until("In part 2")
             self.play(FadeIn(closing, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("and how to ship")
+            self.play(Indicate(nxt, color=TURN, scale_factor=1.05), run_time=0.9)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

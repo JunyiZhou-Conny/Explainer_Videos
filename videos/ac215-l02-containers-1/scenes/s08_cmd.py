@@ -36,7 +36,7 @@ Beats (script.md "## S08", one voiceover block each):
     "no (app)". "Then type exit": `exit` (line 8) -> line 9; the laptop prompt returns and pulses
     YELLOW on "back to your laptop".
  5  TRACKER A12. The terminal clears to the laptop prompt and shrinks to the 3-row strip; the README
-    card (`README.md · lines 167-168`: "Solution Dockerfile:" / `Dockerfile.txt`) appears above it;
+    card (`README.md · lines 167-168`: "Solution Dockerfile:" / `Dockerfile.txt`, 26 pt) appears above it;
     `Dockerfile.txt` pulses on "Dockerfile.txt". "An extra diff" (A12 · extra): the card moves to
     the top-right corner (20 pt), the terminal grows to 12 rows and types `diff Dockerfile
     Dockerfile.txt` (a full row: its `extra` tag sits right-aligned on the next row) -> laptop/27
@@ -45,13 +45,13 @@ Beats (script.md "## S08", one voiceover block each):
     Mac, Linux or Git Bash: diff -u for this layout" (`diff -u` pulses YELLOW on "add dash u").
     "First, three ENV lines": the note goes, the three `+ENV` rows pulse, and GREY row tags appear
     one by one as said: "no apt questions", "UTF-8 text", "logs appear at once".
- 6  The tags go; the terminal continues -> laptop/27 "…", 20-26, "…", 33-34 (it scrolls; line 20
-    is cut by the terminal). "one bigger RUN": an ORANGE bracket right of lines 21-26 with "one
+ 6  The tags go; the terminal continues -> laptop/27 "…", 20-26, "…", 33-34 (it scrolls: the rows
+    that leave fade in place rather than fly over the tracker; line 20 is cut by the terminal). "one bigger RUN": an ORANGE bracket right of lines 21-26 with "one
     RUN: / update, upgrade, / clean, newer pip, uv"; the rows pulse as they are said. "And
     ENTRYPOINT moved to the end": a YELLOW bracket at lines 33-34, "ENTRYPOINT moved to the end";
     the ENTRYPOINT row pulses on "the order of ENTRYPOINT and CMD".
- 7  TRACKER A12. The terminal clears and shrinks to the strip; the README card returns to the
-    centre with the GREY note "the README only names the file" under it. "an extra command"
+ 7  TRACKER A12. The terminal clears and shrinks to the strip (the laptop prompt); the README card
+    returns to the centre (26 pt) with the GREY note "the README only names the file" under it. "an extra command"
     (A12 · extra): `cp Dockerfile.txt Dockerfile` (laptop/28: no output; the prompt returns, row
     tag `extra` on it); `Dockerfile.txt`, then `Dockerfile`, pulse on "copy it over yours";
     ▶ your turn on "Pause and do that".
@@ -216,11 +216,13 @@ def note_box(lines, size: float = 20) -> VGroup:
     return g
 
 
-def pulse_tag(tg, color, scale: float = 1.15):
+def pulse_tag(tg, color, scale: float = 1.08):
     """Point at a row tag: its text pulses in `color` and its outline flashes (an Indicate on the
     whole tag would also colour its opaque fill)."""
-    return AnimationGroup(Indicate(tg.text, color=color, scale_factor=scale),
-                          tg.box.animate(rate_func=there_and_back).set_stroke(color, width=3))
+    # box first: the group an AnimationGroup adds to the scene draws its parts in this order, and
+    # the box's opaque fill must stay under the text
+    return AnimationGroup(tg.box.animate(rate_func=there_and_back).set_stroke(color, width=3),
+                          Indicate(tg.text, color=color, scale_factor=scale))
 
 
 def scroll_in_place(scene, t, n_new: int, run_time: float = 0.4) -> None:
@@ -423,7 +425,7 @@ class StepCmd(VoiceScene):
             n3 = beside(row_tag("one line added · part 2 explains"), r29)
             pin(self, r29, n3, run_time=0.4)
             vo.wait_until("Part 2 explains")
-            self.play(pulse_tag(n3, INK), run_time=0.7)
+            self.play(pulse_tag(n3, INK, 1.04), run_time=0.7)
 
         # ========================================================== 4 · run: the venv is active, no (app)
         with self.voiceover(SAY[4]) as vo:

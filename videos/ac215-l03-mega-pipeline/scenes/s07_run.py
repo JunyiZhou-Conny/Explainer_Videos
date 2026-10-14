@@ -38,7 +38,7 @@ Beats (script.md "## S07", one voiceover block each):
     lower, with a tick), -v "$(pwd):/app" "the window" (PINK, as the route), the image name "the
     image". The chip pulses on "README"; the quotes turn YELLOW on "quotes included"; ▶ your turn.
  6  The labels go; the terminal shrinks to the 3-row strip (command still on it). Above, a GREY
-    card "README.md · lines 230–235", "Notes for running on Windows": Git BASH, quote $(pwd), the
+    card "README.md · lines 227–235", "Notes for running on Windows": Git BASH, quote $(pwd), the
     TTY error -> winpty, written on the word; the command chip
     `winpty docker run --rm -ti -v "$(pwd)":/app generate_text` (shown, not typed) with
     "swap in your component's name"; `winpty` turns YELLOW.
@@ -68,13 +68,13 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import box, check_mark, chip, code_span, cross_mark, label, line_bar, mono, substring, tag
+from explainer.devops import MONO, box, check_mark, chip, code_span, cross_mark, label, line_bar, mono, substring, tag
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, P_A, P_CTR, SYSTEM, TURN, VENV,
                     Window, _save_op, _set_op, asset_lines, bare_prompt, beside, capture, caption_extra,
                     cmd_chip, enter_container, extra_tag, file_panel, illustration_tag, page_token, pin,
-                    readme_chip, resize, sans, source_text, term, tracker, type_cmd, your_turn)
+                    readme_chip, resize, sans, source_text, term, tracker, type_cmd, unpin, your_turn)
 
 SAY = NARRATION["S07"]
 
@@ -83,6 +83,7 @@ RUN = 'docker run --rm -ti -v "$(pwd):/app" transcribe_audio'          # transcr
 _ra = source_text("transcribe_audio/README.md").split("\n")
 assert _ra[98] == RUN, _ra[98]
 _rm = source_text("README.md").split("\n")
+assert _rm[226] == "### Notes for running on Windows", _rm[226]
 assert _rm[229].startswith("* Run docker commands from **Git BASH**"), _rm[229]
 assert _rm[230].startswith("* **Always quote `$(pwd)`**"), _rm[230]
 assert "`the input device is not a TTY`" in _rm[231] and "`winpty`" in _rm[231], _rm[231]
@@ -113,9 +114,10 @@ PONDER_Q = ("In lecture 2 the venv sat right next to the code.\n"
             "what would the container find there with this mount?")
 
 # ------------------------------------------------------------------ layout
-Y_WIN = 0.75                  # V3's centre: it fits between a 3-row strip and the tracker band
+Y0 = 0.35                     # V3's centre in beats 0-2 (no terminal: the frame's middle)
+Y_WIN = 0.75                  # from beat 3: room for the ponder card under it; above a 3-row strip
 X_SOLO = -3.125               # beat 0: the image block alone, centred (the laptop still hidden)
-CAP_Y = -1.72                 # captions under V3
+CAP_Y = Y0 - 2.47             # captions under V3 (beats 0-2)
 TRACK_BOTTOM = 2.917
 BIG = 10                      # the terminal's rows (top at y 1.38)
 SZ = 20
@@ -157,7 +159,6 @@ def unhide(piece, *names):
             _set_op(m)
         piece._flag(m, False)
         out.append(m)
-    piece._ensure
     return out
 
 
@@ -224,7 +225,7 @@ def pencil(h: float = 0.62) -> VGroup:
     band.next_to(body, UP, buff=0)
     tip = Polygon(body.get_corner(DL), body.get_corner(DR), body.get_bottom() + DOWN * 0.18,
                   stroke_color=S.GREY, stroke_width=2).set_fill(INK, 1)
-    g = VGroup(body, band, tip).rotate(-0.75)
+    g = VGroup(body, band, tip).rotate(-1.3)
     g.tip = tip
     return g
 
@@ -248,14 +249,20 @@ def compact_ponder(question: str, width: float = 10.4, size: float = 24) -> VGro
     return card
 
 
+def frame_pulse(m, color, width: float = 5):
+    """A frame's stroke brightens and thickens, then returns (its fill is left alone)."""
+    return m.animate(rate_func=there_and_back).set_stroke(color=color, width=width)
+
+
 def route_pulse(win, width: float = 12):
     """The PINK route thickens and returns (nothing travels along it)."""
     return win.route.animate(rate_func=there_and_back).set_stroke(width=width)
 
 
 def windows_card() -> VGroup:
-    """The README's Windows notes (README.md · lines 230–235), one row per bullet, and the
-    command chip with its caption. .frame .header .title .rows .chip .note .winpty"""
+    """The README's Windows notes: its heading (README.md line 227) and bullets (230–235), one row
+    per bullet, and the command chip with its caption. .frame .header .title .rows .chip .note
+    .winpty"""
     r1 = caption("Run docker commands from", color=INK)
     r1.add(label("Git BASH", SZ, INK, weight="BOLD").next_to(r1, RIGHT, buff=0.12).align_to(r1, DOWN))
     r2 = caption("Always quote", "`$(pwd)`", color=INK)
@@ -270,7 +277,7 @@ def windows_card() -> VGroup:
     body = VGroup(title, rows, c).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
     fr = box(body.width + 0.6, body.height + 0.5, S.GREY, fill=S.BG, fill_opacity=0.92, radius=0.12)
     body.move_to(fr)
-    head = VGroup(mono("README.md", SZ, S.GREY), label("· lines 230–235", SZ, S.GREY)).arrange(RIGHT, buff=0.12)
+    head = VGroup(mono("README.md", SZ, S.GREY), label("· lines 227–235", SZ, S.GREY)).arrange(RIGHT, buff=0.12)
     head.next_to(fr, UP, buff=0.08).align_to(fr, LEFT).shift(RIGHT * 0.1)
     g = VGroup(fr, head, title, rows, c)
     g.frame, g.header, g.title, g.rows, g.chip, g.note = fr, head, title, rows, c.chip, c.note
@@ -287,7 +294,7 @@ class RunContainer(VoiceScene):
 
         # V3, every member hidden until its beat
         win = Window(rows=5, sheet=False)
-        win.shift(UP * Y_WIN + RIGHT * X_SOLO)
+        win.shift(UP * Y0 + RIGHT * X_SOLO)
         _save_op(win.copied, "_orig")
         hide_part(win, "laptop", win.laptop)
         hide_part(win, "img", win.image.frame)
@@ -345,14 +352,14 @@ class RunContainer(VoiceScene):
             win.mounted = True
             vo.wait_until("so slash app is now")
             self.play(FadeIn(cap1, shift=UP * 0.1), run_time=0.5)
-            self.play(Indicate(win.image.app, color=INK, scale_factor=1.3),
-                      Indicate(win.cover.frame, color=LAPTOP, scale_factor=1.03), run_time=0.8)
+            self.play(Indicate(win.image.app, color=INK, scale_factor=1.3), frame_pulse(win.cover.frame, INK),
+                      run_time=0.8)
 
         # ========================================================== 2 · one folder, two sides
         cap2 = caption("one folder, seen from two sides").move_to([0, CAP_Y, 0])
         pen = pencil()
         cli_l = win.row("cli.py", "laptop")
-        pen.shift(cli_l.text.get_right() + RIGHT * 0.08 + UP * 0.04 - pen.tip.get_bottom())
+        pen.shift(cli_l.text.get_right() + RIGHT * 0.1 - pen.tip.get_bottom())
         pages = []
         for area in (win.laptop.area, win.cover.frame):
             pg = page_glyph()
@@ -364,7 +371,8 @@ class RunContainer(VoiceScene):
         tmp_tag = row_tag("/tmp · throwaway")
         place(tmp_tag, cx=tmp_pg.get_center()[0] + 0.55, bottom=win.sheet.frame.get_top()[1] + 0.1)
         with self.voiceover(SAY[2]) as vo:
-            self.play(Transform(cap1, cap2), FadeIn(pen, shift=DOWN * 0.2), run_time=0.6)
+            self.play(FadeOut(cap1, shift=UP * 0.1), FadeIn(cap2, shift=UP * 0.1), FadeIn(pen, shift=DOWN * 0.2),
+                      run_time=0.6)
             vo.wait_until("show up inside")
             self.play(pen.animate(rate_func=wiggle).shift(RIGHT * 0.12), win.blink("cli.py"),
                       route_pulse(win), run_time=1.1)
@@ -387,27 +395,39 @@ class RunContainer(VoiceScene):
                       run_time=0.6)
 
         # ========================================================== 3 · ponder: lecture 2's layout
-        ill = illustration_tag("lecture 2's layout: .venv next to the code")
-        place(ill, left=win.laptop.frame.get_left()[0], cy=(win.laptop.frame.get_top()[1] + TRACK_BOTTOM) / 2)
         cav = win.image.cavity
-        home_fr, home_lab = win.venv.frame.copy(), win.venv.label.copy()
-        v_fr = box(cav.width - 0.3, 0.34, VENV, fill_opacity=0.12)
-        v_fr.move_to(win._row_pos(cav, 4), aligned_edge=LEFT).shift(LEFT * 0.03)
-        v_lab = mono("/app/.venv", SZ, VENV).move_to(v_fr).align_to(v_fr, LEFT).shift(RIGHT * 0.15)
         card = compact_ponder(PONDER_Q)
-        place(card, cx=0, top=win.laptop.caption.get_bottom()[1] - 0.1)
-        assert card.get_bottom()[1] > -3.58, card.get_bottom()[1]
+
+        def layout3():
+            """What is placed against V3 once it has moved up to Y_WIN: the illustration tag,
+            lecture 2's /app/.venv box (frame, label), and the ponder card."""
+            ill = illustration_tag("lecture 2's layout")
+            place(ill, left=win.laptop.frame.get_left()[0],
+                  cy=(win.laptop.frame.get_top()[1] + TRACK_BOTTOM) / 2)
+            fr = box(cav.width - 0.3, 0.34, VENV, fill_opacity=0.12)
+            fr.move_to(win._row_pos(cav, 4), aligned_edge=LEFT).shift(LEFT * 0.03)
+            lab = mono("/app/.venv", SZ, VENV).move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.15)
+            place(card, cx=0, top=win.laptop.caption.get_bottom()[1] - 0.1)
+            assert card.get_bottom()[1] > -3.58, card.get_bottom()[1]
+            return ill, fr, lab
+
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(cap1, chk, tmp_pg, tmp_tag)), run_time=0.5)
+            self.play(FadeOut(VGroup(cap2, chk, tmp_pg, tmp_tag)), win.animate.shift(UP * (Y_WIN - Y0)),
+                      run_time=0.6)
+            ill, v_fr, v_lab = layout3()
+            home_fr, home_lab = win.venv.frame.copy(), win.venv.label.copy()
             vo.wait_until("In lecture 2")
             self.play(FadeIn(ill, shift=DOWN * 0.1), run_time=0.4)
             self.play(win.cover_to(0.5), Transform(win.copied, op_target(win.copied, 1.0)), run_time=1.0)
             vo.wait_until("the venv sat next to")
-            self.play(Transform(win.venv.frame, v_fr), Transform(win.venv.label, v_lab), run_time=1.1)
+            v_lab.set_opacity(0)
+            win.venv.add(v_lab)              # under the laptop sheet, like the rest of the venv box
+            self.play(Transform(win.venv.frame, v_fr), win.venv.label.animate.move_to(v_lab).set_opacity(0),
+                      v_lab.animate.set_opacity(1), run_time=1.1)
             vo.wait_until("If it sat in slash app")
             self.play(Indicate(win.venv, color=VENV, scale_factor=1.08), run_time=0.8)
             vo.wait_until("with this mount")
-            self.play(Indicate(win.cover.frame, color=LAPTOP, scale_factor=1.03), route_pulse(win), run_time=0.8)
+            self.play(frame_pulse(win.cover.frame, INK), route_pulse(win), run_time=0.8)
         self.play(FadeIn(card, scale=0.95), run_time=0.6)
         bar = card[3]
         self.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
@@ -442,10 +462,12 @@ class RunContainer(VoiceScene):
             self.play(GrowArrow(arr), FadeIn(act), run_time=0.6)
             vo.wait_until("so activation would fail")
             self.play(arr.animate.set_color(ERR), act.animate.set_color(ERR), FadeIn(xm, scale=1.4), run_time=0.5)
-            self.play(Transform(act, nov), run_time=0.5)
+            self.play(FadeOut(act), FadeIn(nov), run_time=0.5)
             vo.wait_until("That's what line 9")
-            self.play(FadeOut(VGroup(start, arr, act, xm, ill)), run_time=0.4)
-            self.play(Transform(win.venv.frame, home_fr), Transform(win.venv.label, home_lab), run_time=1.0)
+            self.play(FadeOut(VGroup(start, arr, nov, xm, ill)), run_time=0.4)
+            self.play(Transform(win.venv.frame, home_fr), Transform(win.venv.label, home_lab),
+                      v_lab.animate.set_opacity(0), run_time=1.0)
+            win.venv.remove(v_lab)
             self.play(FadeIn(p9, shift=UP * 0.15), FadeIn(src9), run_time=0.5)
             self.play(FadeIn(bar9), run_time=0.3)
             vo.wait_until("uv project environment")
@@ -459,8 +481,8 @@ class RunContainer(VoiceScene):
         place(chip_r, right=6.45, cy=tr.get_center()[1])
         assert chip_r.get_left()[0] > tr.get_right()[0] + 0.15
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(win, shift=UP * 0.2), FadeOut(VGroup(p9, src9, bar9, u9)), run_time=0.5)
-            self.play(FadeIn(t, shift=UP * 0.2), FadeIn(chip_r, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeOut(win, shift=UP * 0.3), FadeOut(VGroup(p9, src9, bar9, u9), shift=UP * 0.3),
+                      FadeIn(t, shift=UP * 0.3), FadeIn(chip_r, shift=DOWN * 0.1), run_time=0.7)
             c5 = type_cmd(self, t, RUN, 1.1)
             r2 = c5.rows[1]
             assert r2.text == '    --rm -ti -v "$(pwd):/app" transcribe_audio', r2.text
@@ -492,7 +514,8 @@ class RunContainer(VoiceScene):
             self.play(Create(l_img[0]), FadeIn(l_img[1], shift=UP * 0.08), run_time=0.4)
             self.play(Indicate(substring(r2, "transcribe_audio"), color=CTR, scale_factor=1.1), run_time=0.6)
             vo.wait_until("Copy it from the README")
-            self.play(Indicate(chip_r, color=TURN, scale_factor=1.06), run_time=0.7)
+            self.play(frame_pulse(chip_r.frame, TURN, 4), Indicate(chip_r.where, color=TURN, scale_factor=1.06),
+                      run_time=0.7)
             vo.wait_until("quotes included")
             q1, q2 = substring(r2, '"', 0), substring(r2, '"', 1)
             self.play(q1.animate.set_color(TURN).scale(1.3), q2.animate.set_color(TURN).scale(1.3), run_time=0.4)
@@ -529,10 +552,11 @@ class RunContainer(VoiceScene):
         with self.voiceover(SAY[7]) as vo:
             unpin(self, c5, yt)
             self.play(FadeOut(wc), FadeOut(chip_r), run_time=0.4)
-            resize(self, t, BIG, run_time=0.8, extra=enter_container(t, "transcribe_audio"))
+            resize(self, t, BIG, run_time=0.7)
+            self.play(*enter_container(t, "transcribe_audio"), run_time=0.5)
             pr = bare_prompt(self, t)
             self.play(Indicate(pr, color=INK, scale_factor=1.06), run_time=0.6)
-            ya, yb = row_y(t, 3), row_y(t, 4)
+            ya, yb = row_y(t, 3), row_y(t, 4) - 0.14      # the id tag clears the two tags above it
 
             def ptag(sub, words, color, y, tick=False):
                 u = uline(pr, sub, color)
@@ -587,6 +611,7 @@ class RunContainer(VoiceScene):
             u8b = uline(o8b, "3.12.15", SYSTEM)
             self.play(substring(o8b, "3.12.15").animate.set_color(SYSTEM), Create(u8b), run_time=0.4)
             stick(self, o8b, u8b)
+            self.play(FadeOut(VGroup(note, nm_x)), run_time=0.3)
 
         # ========================================================== 9 · ls -a, echo (extras)
         p10 = file_panel(DF, 10, 10, "transcribe_audio/Dockerfile", size=SZ)
@@ -596,7 +621,6 @@ class RunContainer(VoiceScene):
         u10 = Line(val10.get_corner(DL) + DOWN * 0.07, val10.get_corner(DR) + DOWN * 0.07, color=LOOKUP,
                    stroke_width=4)
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(note, nm_x)), run_time=0.3)
             c9a = t.type(self, LS, 0.3)
             pin(self, c9a, beside(extra_tag(), t, c9a), run_time=0.3)
             o9 = t.print(self, [OUT_LS], run_time=0.4, wrap=True)
@@ -610,10 +634,10 @@ class RunContainer(VoiceScene):
             stick(self, ra, bars[0], bars[1])
             stick(self, rb, bars[2])
             pin(self, rb, yf, run_time=0.4)
-            vo.wait_until("and the key variable")
             c9b = t.type(self, ECHO, 0.9)
             pin(self, c9b, beside(extra_tag(), t, c9b), run_time=0.3)
             o9b = t.print(self, [OUT_ECHO], run_time=0.3)[0]
+            vo.wait_until("from line 10")
             self.play(FadeIn(p10, shift=DOWN * 0.1), run_time=0.4)
             u9b = uline(o9b, OUT_ECHO, LOOKUP)
             self.play(o9b.glyphs.animate.set_color(LOOKUP), Create(u9b), Create(u10),
@@ -622,9 +646,9 @@ class RunContainer(VoiceScene):
 
         # ========================================================== 10 · python cli.py --help (extra)
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(p10, u10)), run_time=0.3)
             c10 = t.type(self, HELP, 0.8)
             pin(self, c10, beside(extra_tag(), t, c10), run_time=0.3)
+            self.play(FadeOut(VGroup(p10, u10), shift=UP * 0.1), run_time=0.3)
             o10 = t.print(self, [*OUT_HELP[:3], (OUT_HELP[3], ERR)], run_time=0.8)
             r13, r14 = o10[2], o10[3]
             vo.wait_until("Module not found")
@@ -641,7 +665,6 @@ class RunContainer(VoiceScene):
             self.play(Indicate(r13.glyphs, color=INK, scale_factor=1.06), run_time=0.8)
 
         # ========================================================== 11 · V3 returns; end of part 1
-        _set_op(win.sheet)                   # (the layer is a shown part again)
         q = sans("?", 40, ERR, weight="BOLD")
         gchip = chip("google", CLOUD, size=SZ, font=MONO)
         cli_c = win.row("cli.py", "cover")
@@ -655,21 +678,16 @@ class RunContainer(VoiceScene):
                   cy=(win.image.frame.get_top()[1] + win.venv.label.get_top()[1]) / 2 + 0.02)
             place(q, cx=(cav.get_right()[0] + gchip.get_left()[0]) / 2 - 0.25, cy=gchip.get_center()[1])
             vo.wait_until("and sees your folder")
-            self.play(route_pulse(win), Indicate(win.cover.frame, color=LAPTOP, scale_factor=1.03), run_time=0.8)
+            self.play(route_pulse(win), frame_pulse(win.cover.frame, INK), run_time=0.8)
             vo.wait_until("but Python can't find")
             self.play(cli_c.text.animate.set_color(ERR), FadeIn(gchip, shift=DOWN * 0.1), run_time=0.5)
-            self.play(FadeIn(q, scale=1.5), Indicate(win.venv.frame, color=VENV, scale_factor=1.06), run_time=0.6)
+            link = DashedLine(cli_c.text.get_right() + RIGHT * 0.1, q.get_left() + LEFT * 0.06, color=ERR,
+                              stroke_width=2.5, dash_length=0.08)
+            self.play(Create(link), FadeIn(q, scale=1.5), Indicate(win.venv.frame, color=VENV, scale_factor=1.06),
+                      run_time=0.6)
             self.play(Wiggle(q, scale_value=1.2), run_time=0.8)
             vo.wait_until("In part 2")
             self.play(FadeOut(t), FadeIn(part2, shift=UP * 0.1), run_time=0.6)
         self.wait(0.6)
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
 
-
-def unpin(scene, line, mob, run_time: float = 0.3):
-    """Take a pinned tag off a terminal row and fade it."""
-    row = line.rows[-1] if hasattr(line, "rows") else line
-    if mob in row.submobjects:
-        row.remove(mob)
-    scene.add(mob)
-    scene.play(FadeOut(mob), run_time=run_time)
