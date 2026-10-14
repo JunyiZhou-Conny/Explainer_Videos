@@ -114,7 +114,7 @@ def stage_row(y, w=2.5, h=1.0, size=24, stroke=2.5):
     for x, s in zip(STAGE_X, STAGES):
         boxes.add(Rectangle(width=w, height=h, stroke_color=INK, stroke_width=stroke,
                             fill_color=PAPER, fill_opacity=1).move_to([x, y, 0]))
-        names.add(mono(s, size).move_to([x, y + h * .18, 0]).set_z_index(2))
+        names.add(mono_line(s, x - ADVANCE * size * len(s) / 2, y + h * .18, size).set_z_index(2))
     for a, b in zip(boxes, boxes[1:]):
         arrows.add(Arrow(a.get_right(), b.get_left(), buff=.06, color=INK, stroke_width=2.5,
                          max_tip_length_to_length_ratio=.3))
@@ -169,7 +169,7 @@ class S01(Ep):
         self.header()
         frame, shape = file_shape(-6.0, 1.7, -.75)
         f_path = mono("speciesot_core.py", 16, GRAY).move_to([-4.8, -1.2, 0])
-        f_lab = at("345 lines", -4.8, -1.62, 26, INK, bold=True)
+        f_lab = at("346 lines", -4.8, -1.62, 26, INK, bold=True)   # editor count; wc -l says 345 (no final newline)
         grid = tiles(-.2, .47)
         g_path = mono("speciesOT repo · *.ipynb", 16, GRAY).move_to([-.2, -1.2, 0])
         g_lab = at("83 notebooks", -.2, -1.62, 26, INK, bold=True)
@@ -212,7 +212,7 @@ class S01(Ep):
         a12 = arrow(nodes[0].get_right(), nodes[1].get_left(), INK)
         a23 = arrow(nodes[1].get_right(), nodes[2].get_left(), INK)
         back = CurvedArrow(nodes[2].get_bottom() + DOWN * .08, nodes[0].get_bottom() + DOWN * .08,
-                           angle=-PI / 4, color=INK, stroke_width=2.5)
+                           angle=-PI / 4, color=INK, stroke_width=2.5, tip_length=.2)
         token = Dot(radius=.1, color=RED).set_z_index(5)
         habit = VGroup(at("Josh's habit  →  a method", 0, -1.78, 30, RED, bold=True),
                        at("习惯 → 方法", 0, -2.25, 22, GRAY))
@@ -277,7 +277,8 @@ class S02(Ep):
         skel = VGroup(at("walking skeleton", 0, -.72, 32, RED, bold=True),
                       at("会走路的骨架", 0, -1.2, 22, GRAY))
         with self.say(1) as vo:
-            self.cue(vo, .0, FadeOut(ok), FadeIn(skel, shift=UP * .1), run_time=.5)
+            self.cue(vo, .0, FadeOut(ok), FadeIn(skel, shift=UP * .1),
+                     Transform(who, paint(who.copy(), INK)), run_time=.5)
             vo.wait_until("end to end")
             self.play(Create(span), run_time=.5)
             vo.wait_until("most are thin")
@@ -333,7 +334,9 @@ class S02(Ep):
             vo.wait_until("models by metrics")
             vals = VGroup(*[mono(t, 20, RED).move_to([x, rows_y[0], 0]) for t, x in
                             zip(("0.103", "0.326"), cols_x)])
-            self.play(*[TransformFromCopy(boxes[3], v) for v in vals], FadeIn(later), run_time=.6)
+            toy2 = left("toy data", .62, rows_y[0], 17, GRAY)
+            self.play(*[TransformFromCopy(boxes[3], v) for v in vals], FadeIn(later), FadeIn(toy2),
+                      run_time=.6)
         self.finish()
 
 
@@ -480,6 +483,8 @@ class S03(Ep):
             self.play(ReplacementTransform(m2, m3), FadeIn(n2), run_time=.4)
             vo.wait_until("Evaluate:")
             msg4, panel4 = message_line(3, y=-.3), trail_panel(3, top=-.55)
+            run4 = VGroup(left("identity run ·", STAGE_X[3] - 1.4, .3, 17, GRAY),
+                          left("5 mouse vs 7 human cells", STAGE_X[3] - 1.4, .07, 17, GRAY))
             self.play(slide(3), numbered[2].animate.set_color(INK), numbered[3].animate.set_color(RED),
                       FadeOut(m3), FadeOut(n1), FadeOut(n2), ReplacementTransform(msg3, msg4),
                       FadeOut(panel3), FadeIn(panel4), run_time=.8)
@@ -487,8 +492,6 @@ class S03(Ep):
             x0d, my, hy, dx = 2.95, -.8, -1.2, .27
             mouse = VGroup(*[Dot([x0d + k * dx, my, 0], radius=.055, color=INK) for k in range(5)])
             human = VGroup(*[Dot([x0d + k * dx, hy, 0], radius=.055, color=INK) for k in range(7)])
-            run4 = VGroup(left("identity run ·", STAGE_X[3] - 1.4, .3, 17, GRAY),
-                          left("5 mouse vs 7 human cells", STAGE_X[3] - 1.4, .07, 17, GRAY))
             ml = label("5 mouse", 17, GRAY).next_to(mouse, RIGHT, buff=.2)
             hl = label("7 human", 17, GRAY).next_to(human, RIGHT, buff=.2)
             vo.wait_until("different cell counts")
@@ -501,16 +504,16 @@ class S03(Ep):
             vo.wait_until("at line 313")
             m = highlight(self, panel4, 313, run_time=.35)
         rows_y = [-.62, -1.07, -1.52, -1.97]
-        board = Rectangle(width=8.5, height=2.65, stroke_color=INK, stroke_width=2).move_to(
-            [-1.95, -1.08, 0])
+        board = Rectangle(width=8.8, height=2.65, stroke_color=INK, stroke_width=2).move_to(
+            [-1.8, -1.08, 0])
         head = left("TO-DO · 待办", -5.95, -.1, 22, INK, bold=True)
         todo = []
         for k, (stage, etype, _, ln, *_r) in enumerate(TRAIL):
             box = Square(.26, stroke_color=INK, stroke_width=2).move_to([-5.8, rows_y[k], 0])
             num = mono(str(k + 1), 20, RED, bold=True).move_to([-5.3, rows_y[k], 0])
-            txt = mono_left(f"{stage:<9}{etype:<15}line {ln}", -4.9, rows_y[k], 19)
+            txt = mono_left(f"{stage:<9}{etype:<14} line {ln}", -4.9, rows_y[k], 19)
             if k == 3:
-                txt = VGroup(txt, left("· identity run, 5 vs 7", txt.get_right()[0] + .15,
+                txt = VGroup(txt, left("identity run, 5 vs 7", txt.get_right()[0] + .2,
                                        rows_y[k], 17, GRAY))
             todo.append(VGroup(box, num, txt))
         given = VGroup(label("program order", 24, RED, bold=True),
@@ -711,8 +714,11 @@ class S05(Ep):
             vo.wait_until("holding out")
             self.play(FadeIn(m1[1]), run_time=.4)
             vo.wait_until("Its spec")
-            self.play(FadeOut(grid), FadeOut(quote), FadeOut(m1), ReplacementTransform(pick, spec),
-                      run_time=.8)
+            box = spec.frame.copy()
+            self.play(FadeOut(grid), FadeOut(quote), FadeOut(m1), ReplacementTransform(pick, box),
+                      run_time=.6)
+            self.play(FadeIn(spec), run_time=.3)
+            self.remove(box)
             vo.wait_until("pasted its model")
             self.play(FadeIn(core, shift=LEFT * .1), FadeIn(pasted), run_time=.5)
             ms = highlight(self, spec, 31, 32, 33, 34, 35, run_time=.3)
@@ -778,7 +784,7 @@ class S05(Ep):
         rng = np.random.default_rng(5)
         pts = np.clip(rng.normal(0, 1, size=(200, 2)), -2, 2) * [.55, .5] + [1.7, -1.3]
         dots = VGroup(*[Dot([x, y, 0], radius=.03, color=GRAY) for x, y in pts])
-        cart = left("cartoon · 80-cell subsamples", .55, .25, 17, GRAY)
+        cart = left("cartoon · 80-cell subsamples", .55, .02, 17, GRAY)
         nl_y, nl0, nl1 = -.55, 3.4, 6.1
         nline = VGroup(line(nl0, nl_y, nl1, nl_y, INK, 2),
                        mono("0.927", 18, INK).move_to([(nl0 + nl1) / 2, nl_y - .35, 0]))
@@ -1058,7 +1064,7 @@ class S07(Ep):
             pa = a.get_center() + u * min(a.width / 2 / max(abs(u[0]), 1e-3), a.height / 2 / max(abs(u[1]), 1e-3))
             pb = b.get_center() - u * min(b.width / 2 / max(abs(u[0]), 1e-3), b.height / 2 / max(abs(u[1]), 1e-3))
             edges[k] = Arrow(pa + u * .08, pb - u * .08, buff=0, color=INK, stroke_width=2.5,
-                             max_tip_length_to_length_ratio=.12)
+                             tip_length=.18, max_tip_length_to_length_ratio=.3)
         token = Dot(radius=.1, color=RED).set_z_index(5)
         term = terminal(["$ pytest", "…", "NameError: name '_dense' is not defined"], 0, -.35, width=6.2,
                         size=17)
@@ -1159,7 +1165,7 @@ class S07(Ep):
             self.play(FadeIn(near, shift=UP * .1), run_time=.4)
         board = VGroup(*cards, order, t1, t1f, quads, num_end, *oks4, near)
         # L3: recap
-        rows_y = [1.45, .75, .05, -.65]
+        rows_y = [1.15, .45, -.25, -.95]
         icons = VGroup(
             VGroup(*[VGroup(Square(.26, stroke_color=INK, stroke_width=2).move_to([-5.7 + i * .34, rows_y[0], 0]),
                             tick(-5.7 + i * .34, rows_y[0], .07, INK, 3)) for i in range(4)]),
@@ -1172,10 +1178,10 @@ class S07(Ep):
         texts = VGroup(*[left(t, -4.3, y, 26, INK) for t, y in zip(
             ["the skeleton already walks", "the errors give the order",
              "first golden number: identity 0.554", "SOLID is for when something hurts"], rows_y)])
-        recap = left("RECAP · 回顾", -6.2, 2.0, 18, GRAY, bold=True)
+        recap = left("RECAP · 回顾", -6.2, 1.8, 18, GRAY, bold=True)
         motto = VGroup(label("Momentum beats a perfect plan.", 32, RED, bold=True),
                        label("动起来，比完美的计划更重要", 20, GRAY)).arrange(DOWN, aligned_edge=LEFT, buff=.12)
-        motto.move_to([-6.2, -1.85, 0], aligned_edge=LEFT)
+        motto.move_to([-6.2, -1.98, 0], aligned_edge=LEFT)
         with self.say(3) as vo:
             self.cue(vo, .0, FadeOut(board, shift=UP * .2), FadeIn(recap), run_time=.4)
             for k, w in enumerate(["The skeleton", "the errors give", "the first golden", "and SOLID"]):

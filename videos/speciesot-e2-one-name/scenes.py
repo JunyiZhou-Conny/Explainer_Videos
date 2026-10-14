@@ -240,7 +240,7 @@ class S02(Ep):
         cfg = cpanel(rows(CONFIG, 32, 36), CFG_PATH, -3.95, -1.33, width=4.7, size=17)
         nb_rows = [(1, "%load_ext autoreload"), (2, "%autoreload 2"), (3, "…"),
                    (4, "experiment = Experiment(…)"), (5, "experiment.setup()")]
-        nb = cpanel(nb_rows, NB_PATH, 4.15, -1.39, width=4.3, size=17, numbers=False)
+        nb = cpanel(nb_rows, NB_PATH, 4.15, -1.33, width=4.3, size=17, numbers=False)
         with self.say(0) as vo:
             vo.wait_until("three windows")
             ghosts = VGroup(*[DashedVMobject(Rectangle(width=p.frame.width, height=p.frame.height,
@@ -1099,11 +1099,13 @@ class S07(Ep):
             lag(self, *[FadeIn(r, shift=RIGHT * .08) for r in rows_], lag_ratio=.15,
                 run_time=.9)
             vo.wait_until("Pick one")
-            pick = VGroup(chip("x_dimension", 2.75, 1.75, INK, 20),
-                          chip("x_dimensions", 5.15, 1.75, INK, 20))
+            pick = VGroup(chip("x_dimension", 0, 1.75, INK, 19),
+                          chip("x_dimensions", 0, 1.75, INK, 19))
             plural_s(pick[1][1], "x_dimensions")
-            orr = at("or", 3.95, 1.75, 19, GRAY)
-            plab = left("pick one:", .2, 1.75, 19, GRAY)
+            pick[1].move_to([6.3 - pick[1].width / 2, 1.75, 0])
+            orr = label("or", 19, GRAY).next_to(pick[1], LEFT, buff=.2)
+            pick[0].next_to(orr, LEFT, buff=.2)
+            plab = label("pick one:", 19, GRAY).next_to(pick[0], LEFT, buff=.3)
             self.play(FadeIn(pick), FadeIn(orr), FadeIn(plab), run_time=.4)
             vo.wait_until("both YAML files")
             self.play(*[Indicate(rows_[i][1], color=RED, scale_factor=1.06) for i in (0, 1)],
@@ -1113,6 +1115,8 @@ class S07(Ep):
                 self.play(Indicate(rows_[i][1], color=RED, scale_factor=1.06), run_time=.4)
             vo.wait_until("Then rerun")
             self.play(FadeIn(rerun, shift=UP * .08), run_time=.4)
+            vo.wait_until("Which data")
+            self.play(FadeIn(e5[0]), run_time=.4)
             vo.wait_until("episode five")
-            self.play(FadeIn(e5), run_time=.4)
+            self.play(FadeIn(e5[1], shift=LEFT * .08), run_time=.4)
         self.finish()

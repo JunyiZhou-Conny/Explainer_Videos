@@ -170,7 +170,8 @@ class S02(Ep):
         with self.say(3) as vo:
             m = highlight(self, init, 218, run_time=.3)
             selfword = word_box(init.row(218), 0, 3)
-            pointer = arrow(selfword.get_top() + UP * .02, full[1].get_left() + LEFT * .05)
+            pointer = arrow([init.frame.get_right()[0] + .05, init.row_y(218), 0],
+                            full[1].get_left() + LEFT * .05)
             this = at("self = this object", 4.45, 2.0, 22, RED)
             vo.wait_until("this particular object")
             self.play(Create(selfword), Create(pointer), FadeIn(this), run_time=.6)
@@ -182,8 +183,9 @@ class S02(Ep):
                       FadeOut(pointer), FadeOut(this),
                       VGroup(*full[:4], full.rows).animate.move_to([-3.2, -.4, 0]), run_time=.6)
             twin.rows[3].set_color(RED)
-            ex = source_tag("EXAMPLE").next_to(twin, DOWN, buff=.12)
+            ex = source_tag("EXAMPLE")
             ex_lab = at("a second scGenModel, built with lr = 0.01", 3.2, 1.95, 19, GRAY)
+            VGroup(ex_lab, ex).arrange(RIGHT, buff=.2).move_to([3.2, 1.95, 0])
             self.play(FadeIn(twin, shift=LEFT * .2), FadeIn(ex), FadeIn(ex_lab), run_time=.6)
             s1 = at("self = this object", -3.2, 1.95, 22, RED)
             self.play(FadeIn(s1), run_time=.4)
@@ -205,9 +207,9 @@ class S03(Ep):
         contract = class_card("AbstractModel", ["setup()", "train(training_data)",
                                                 "predict(test_data)"],
                               3.35, .9, width=5.2, abstract=True)
-        slots = VGroup(*[DashedVMobject(Rectangle(width=1.2, height=.24, color=RED),
+        slots = VGroup(*[DashedVMobject(Rectangle(width=1.45, height=.24, color=RED),
                                         num_dashes=12)
-                         .move_to([contract.get_right()[0] - .7, t.get_y(), 0])
+                         .move_to([contract.get_right()[0] - .85, t.get_y(), 0])
                          for t in contract.methods])
         clab = left("contract · 契约", -1.85, 1.65, 22, RED, bold=True)
         blank = left("blank · 空白", contract.get_right()[0] - 1.45, -.35, 18, RED)
@@ -253,9 +255,13 @@ class S03(Ep):
             self.play(FadeIn(ident, shift=UP * .1), FadeIn(scg, shift=UP * .1), FadeIn(planned),
                       run_time=.6)
             vo.wait_until("fill in the blanks")
-            fills = [ident.methods[k].copy() for k in range(3)]
-            self.play(*[f.animate.scale(.8).move_to(slots[k].get_center())
-                        for k, f in enumerate(fills)], run_time=.8)
+            fills = [mono(b, 15, INK).move_to(slots[k].get_center())
+                     for k, b in enumerate(["pass", "pass", "return mouse"])]
+            for f in fills:
+                if f.width > 1.35:
+                    f.scale_to_fit_width(1.35)
+            self.play(*[TransformFromCopy(ident.methods[k], f) for k, f in enumerate(fills)],
+                      run_time=.8)
             bottom = contract.get_bottom()[1]
             up1 = Arrow(ident.get_top(), [-2.0, bottom, 0], buff=.08, color=INK, stroke_width=2.5,
                         max_tip_length_to_length_ratio=.15)
@@ -290,15 +296,15 @@ class S03(Ep):
             verdict = at("checks names, not inputs · 只查名字，不查参数", 0, -.24, 24, RED, bold=True)
             self.play(FadeIn(verdict, shift=UP * .1), run_time=.5)
         note = code_panel(rows(CORE, 19, 20) + [(None, "…"), (67, CORE[67])], CORE_PATH,
-                          -1.6, -1.05, width=8.0, size=19)
+                          -2.0, -1.05, width=8.0, size=19)
         with self.say(6) as vo:
             self.cue(vo, .03, FadeOut(sig), FadeOut(h43), FadeOut(h155), FadeOut(need),
                      FadeOut(nothing_in), FadeOut(built), FadeOut(verdict), run_time=.4)
             self.play(FadeIn(note, shift=UP * .1), run_time=.5)
             vo.wait_until("nothing to sign")
-            nothing = VGroup(label("abc.ABC + no abstract methods", 20, GRAY),
-                             label("= nothing to sign", 20, GRAY)).arrange(DOWN, buff=.12)\
-                .move_to([4.55, -1.05, 0])
+            nothing = VGroup(label("abc.ABC + no abstract methods", 18, GRAY),
+                             label("= nothing to sign", 18, GRAY)).arrange(DOWN, buff=.12)\
+                .move_to([4.6, -1.05, 0])
             self.play(FadeIn(nothing), run_time=.4)
             vo.wait_until("line 19")
             highlight(self, note, 19, run_time=.4)
@@ -374,7 +380,7 @@ class S04(Ep):
             ph = left("x.xxx = placeholder", 4.3, -1.35, 16, GRAY)
             self.play(FadeIn(four), FadeIn(ph), run_time=.4)
         table = VGroup(models, evals, grid)
-        ev = code_panel(rows(CORE, 141, 145), CORE_PATH, -.6, -1.35, width=10.6, size=19)
+        ev = code_panel(rows(CORE, 141, 145), CORE_PATH, -.6, -1.3, width=10.6, size=19)
         with self.say(4) as vo:
             self.cue(vo, .03, FadeOut(four), FadeOut(ph),
                      table.animate.scale(.85).move_to([2.7, 1.05, 0]), run_time=.6)
@@ -435,7 +441,7 @@ class S05(Ep):
             b1 = arrow([mouse_x + .55, lane_y[1], 0], sb.get_left(), INK)
             self.cue(vo, .03, FadeIn(mouse[1]), Create(b1), FadeIn(sb), FadeIn(v1), run_time=.6)
             out2 = mouse[1].copy()
-            target = [out_x + 1.35, lane_y[1] + .45, 0]
+            target = [out_x + 1.35, lane_y[1] + .15, 0]
             b2 = arrow(sb.get_right(), [target[0] - .4, target[1], 0], RED)
             vo.wait_until("toward human")
             self.play(Create(b2), out2.animate.move_to(target).set_color(RED), run_time=1.0)
@@ -454,7 +460,7 @@ class S05(Ep):
         chain = code_panel([(107, CORE[107]), (108, CORE[108]), (None, ""),
                             (112, CORE[112]), (None, "        …"),
                             (115, "            self.models.append(scGenModel(self.experiment_spec[…]))")],
-                           CORE_PATH, -1.5, -.6, width=9.4, size=19)
+                           CORE_PATH, -1.8, -.6, width=9.2, size=19)
         ideal = at("ideally: none · 理想情况：一行都不用改", 0, 1.2, 30, INK, bold=True)
         with self.say(4) as vo:
             self.cue(vo, .02, *[FadeOut(mm) for mm in self.content()], run_time=.4)
@@ -464,11 +470,12 @@ class S05(Ep):
             self.play(ideal.animate.scale(.75).move_to([0, 1.78, 0]), FadeIn(chain), run_time=.6)
             vo.wait_until("chain of if")
             highlight(self, chain, 107, 112, run_time=.4)
-            ghost = chip("CellOTModel ?", 4.75, -.3, GRAY, 20)
-            same = VGroup(mono("train · predict · evaluate", 15, GRAY),
-                          mono("(lines 131–145) unchanged", 15, GRAY))\
-                .arrange(DOWN, buff=.08).move_to([4.75, -1.15, 0])
-            e5 = at("→ episode 5", 4.75, -1.85, 18, RED)
+            ghost = chip("CellOTModel ?", 4.8, -.3, GRAY, 20)
+            same = VGroup(label("lines 131–145", 16, GRAY),
+                          label("train · predict · evaluate", 16, GRAY),
+                          label("stay unchanged", 16, GRAY))\
+                .arrange(DOWN, buff=.08).move_to([4.8, -1.25, 0])
+            e5 = at("→ episode 5", 4.8, -2.05, 18, RED)
             self.play(FadeIn(ghost), FadeIn(same), FadeIn(e5), run_time=.5)
         self.finish()
 

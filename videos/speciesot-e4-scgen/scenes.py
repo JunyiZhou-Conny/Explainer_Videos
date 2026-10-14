@@ -401,15 +401,13 @@ class S03(Ep):
             vo.wait_until("Out come")
             self.play(FadeIn(out_l, shift=UP * .08), steps[2].animate.set_color(INK),
                       run_time=.45)
-        saved = self.content()   # dim_rest() regroups these, so keep the list
-        for m in saved:
-            m.save_state()
         with self.say(2) as vo:
             card = ponder("要让同一个箭头对每种细胞类型都管用，必须满足什么？",
                           "What must be true for one arrow to work for every cell type?",
                           y=-.6)
-            self.cue(vo, .08, self.dim_rest(), run_time=.5)
+            self.cue(vo, .08, self.veil(), run_time=.5)
             self.play(FadeIn(card, shift=UP * .1), run_time=.5)
+        self.hold(2)
         typeb = squares(10, *B_C[:2], .15, GRAY, seed=24)
         bl = at("mouse type B", B_C[0] + .05, B_C[1] + .55, 18, GRAY)
         true_a = cloud(12, *(A_C + DELTA)[:2], .16, INK, seed=25, radius=.045)
@@ -421,7 +419,7 @@ class S03(Ep):
         cellot = left("CellOT: a map,", x0, -.85, 26, RED, bold=True)
         cellot2 = left("not one arrow", x0, -1.3, 26, RED, bold=True)
         with self.say(3) as vo:
-            self.cue(vo, .01, FadeOut(card), *[Restore(m) for m in saved], run_time=.45)
+            self.cue(vo, .01, FadeOut(card), self.unveil(), run_time=.45)
             a_l = left("mouse type A (held-out)", -6.0, -2.15, 18, GRAY)
             self.play(*[FadeOut(m) for m in (mouse, human, ml, hl, xm, xh, ta, r1, r2, r3,
                                              shift_l, tb, *steps, out_bar, out_l, link, al)],
@@ -447,6 +445,14 @@ class S03(Ep):
         self.finish()
 
 
+def planned_tag(x, y):
+    """Grey provenance chip for behaviour that does not exist in the code yet."""
+    t = source_tag("PLANNED")
+    t[0].set_stroke(GRAY)
+    t[1].set_color(GRAY)
+    return t.move_to([x, y, 0])
+
+
 def tint(ch, color):
     """Recolour a chip's outline and text (not its paper fill)."""
     return [ch[0].animate.set_stroke(color), ch[1].animate.set_color(color)]
@@ -466,6 +472,11 @@ class S04(Ep):
         names = {"setup": "setup()", "train": "train()", "predict": "predict()"}
         chips = {k: chip(names[k], -5.15, ly[k], INK, 22) for k in ly}
         cls = mono_left("class scGenModel(AbstractModel)", -6.2, 1.88, 17, GRAY)
+        plan = planned_tag(0, 1.88)
+        plan.move_to([cls.get_right()[0] + .25 + plan.width / 2, 1.88, 0])
+        plan_l = left("what each method should do · not in the code yet",
+                      plan.get_right()[0] + .2, 1.88, 17, GRAY)
+        cls = VGroup(cls, plan, plan_l)
         xs = [-2.85, -.35, 1.85, 4.6]
 
         def under(t, x, k, color=GRAY):
@@ -759,4 +770,257 @@ class S05(Ep):
             mid = na + .75 * (nb - na)
             self.play(Create(strike(tf[1])), Create(cross(mid[0], mid[1], RED, .14, 4)),
                       run_time=.45)
+        self.finish()
+
+
+CELLOT = "cellot/cellot_gpu/cellot/"
+CALLS = [  # (narration phrase, call, file:line in the speciesOT repo at 109bf12)
+    ("build or load", "load_autoencoder_model", "models/ae.py:33"),
+    ("train it", "train_auto_encoder", "train/train.py:173"),
+    ("encode,", "model.encode", "models/ae.py:149"),
+    ("decode,", "model.decode", "models/ae.py:152"),
+    ("compute the shift", "compute_scgen_shift", "models/ae.py:175"),
+]
+# videos/speciesot-series/checks/error_trail.py, verbatim
+FAKE_ROWS = [(32, "class FakeVAEArith:"), (33, "    def __init__(self, **kwargs):"),
+             (34, "        self.kwargs = kwargs"), (35, ""), (36, ""),
+             (37, "fake.VAEArith = FakeVAEArith"), (38, 'sys.modules["scgen"] = fake')]
+
+
+def package(cx, cy, r, inside=True, size=18):
+    """The package as a boundary, with its classes inside and scGenModel as the door."""
+    ring = Circle(radius=r, stroke_color=INK, stroke_width=2.5).move_to([cx, cy, 0])
+    parts = VGroup()
+    if inside:
+        for name, dx, dy in (("Experiment", -.1, 1.1), ("IdentityModel", -.35, .35),
+                             ("R2 · MMD metrics", -.15, -.4)):
+            parts.add(chip(name, cx + dx * r / 2.0, cy + dy * r / 2.0, INK, size,
+                           font=MONO if " " not in name else LATIN))
+    door = chip("scGenModel", cx + r, cy, RED, size + 2)
+    return ring, parts, door
+
+
+class S06(Ep):
+    def construct(self):
+        self.header()
+        cx, cy, r = -3.75, -.3, 1.95
+        ring, parts, door = package(cx, cy, r)
+        plab = left("your speciesot package", -6.25, 1.9, 20, INK, bold=True)
+        contract = at("setup · train · predict", cx - .1, cy - 1.0, 17, GRAY)
+        dlab = left("adapter · the one door", door.get_left()[0] + 1.0, cy - .72, 18, RED,
+                    bold=True)
+        out_word = mono("scgen", 20, RED).move_to([door.get_right()[0] + .7, cy + .35, 0])
+        out_arrow = arrow(door.get_right() + RIGHT * .05, [door.get_right()[0] + 1.35, cy, 0],
+                          RED)
+        with self.say(0) as vo:
+            self.cue(vo, .02, Create(ring), FadeIn(plab), run_time=.6)
+            self.play(LaggedStart(*[FadeIn(pp, scale=.9) for pp in parts], lag_ratio=.25),
+                      run_time=.7)
+            vo.wait_until("is an adapter")
+            self.play(FadeIn(door, scale=1.15), run_time=.5)
+            vo.wait_until("the only place")
+            self.play(GrowArrow(out_arrow), FadeIn(out_word), FadeIn(dlab), run_time=.6)
+            vo.wait_until("Everything else")
+            tok = Dot(parts[0].get_right() + RIGHT * .1, radius=.08, color=INK)
+            self.play(FadeIn(contract), FadeIn(tok), run_time=.4)
+            self.play(tok.animate.move_to(door.get_left() + LEFT * .1), run_time=.8)
+            self.play(FadeOut(tok), Indicate(door, color=RED, scale_factor=1.05), run_time=.5)
+        libs = [("1", "TF VAEArith · git-ignored clone", 1.35),
+                ("2", "scgen 2.x · pip (scvi-tools)", .2),
+                ("3", "cellot AutoEncoder", -.95)]
+        lib_g = []
+        for n, text, y in libs:
+            c = chip(text, 3.55, y, GRAY if n != "3" else INK, 18, font=LATIN)
+            lib_g.append(VGroup(badge(n, c.get_left()[0] - .3, y, GRAY if n != "3" else RED),
+                                c))
+        wires = [DashedLine(door.get_right() + RIGHT * .05, g[0].get_left() + LEFT * .05,
+                            color=GRAY, stroke_width=2.5, dash_length=.1) for g in lib_g]
+        made = left("made your benchmark numbers", lib_g[2][1].get_left()[0], -1.5, 18, GRAY)
+        josh = VGroup(tag_at("INFERRED", 0, -2.05), left("our pick · decide with Josh", 0, -2.05,
+                                                           19, INK))
+        josh[0].move_to([made.get_left()[0] + josh[0].width / 2, -2.05, 0])
+        josh[1].next_to(josh[0], RIGHT, buff=.2)
+        if josh.get_right()[0] > 6.2:
+            josh.shift(LEFT * (josh.get_right()[0] - 6.2))
+        with self.say(1) as vo:
+            self.cue(vo, .02, FadeOut(out_arrow), FadeOut(out_word), run_time=.3)
+            self.play(LaggedStart(*[FadeIn(g, shift=LEFT * .1) for g in lib_g], lag_ratio=.2),
+                      *[Create(w) for w in wires], run_time=.9)
+            vo.wait_until("exactly one")
+            self.play(*[w.animate.set_opacity(.25) for w in wires[:2]], run_time=.4)
+            vo.wait_until("wrap the cellot")
+            solid = Line(door.get_right() + RIGHT * .05, lib_g[2][0].get_left() + LEFT * .05,
+                         color=RED, stroke_width=4)
+            self.play(ReplacementTransform(wires[2], solid), *tint(lib_g[2][1], RED),
+                      run_time=.5)
+            vo.wait_until("because it made")
+            self.play(FadeIn(made), run_time=.4)
+            vo.wait_until("Settle that")
+            self.play(FadeIn(josh, shift=UP * .08), run_time=.45)
+        # the few calls, with file and line (cellot/cellot_gpu/cellot, repo @109bf12)
+        bx0, bx1, by0, by1 = -.35, 6.3, -1.85, 1.75
+        box = Rectangle(width=bx1 - bx0, height=by1 - by0, stroke_color=INK, stroke_width=2)\
+            .move_to([(bx0 + bx1) / 2, (by0 + by1) / 2, 0])
+        bhead = VGroup(badge(3, bx0 + .2, 1.92),
+                       left("cellot AutoEncoder", bx0 + .5, 1.92, 20, INK, bold=True),
+                       mono_left(CELLOT, bx0 + .3, by1 - .32, 16, GRAY))
+        rows_ = []
+        for i, (_, call, loc) in enumerate(CALLS):
+            yy = by1 - .95 - i * .5
+            rows_.append(VGroup(mono_left(call, bx0 + .3, yy, 19, INK),
+                                mono_left(loc, bx0 + 3.95, yy, 17, GRAY)))
+        rtag = source_tag("READ IN CODE")
+        rtag.move_to([bx1 - .15 - rtag.width / 2, by1 - .32, 0])
+        nowhere = left("read the source here — nowhere else", bx0 + .3, by0 + .3, 19, RED)
+        with self.say(2) as vo:
+            self.cue(vo, .02, *[FadeOut(m) for m in (*lib_g[:2], *wires[:2], made, josh, dlab)],
+                     ReplacementTransform(lib_g[2], bhead), FadeIn(box),
+                     solid.animate.put_start_and_end_on(door.get_right() + RIGHT * .05,
+                                                        [bx0 - .05, cy, 0]), run_time=.7)
+            prev = None
+            for (phrase, _, _), row in zip(CALLS, rows_):
+                vo.wait_until(phrase)
+                row[0].set_color(RED)
+                anims = [FadeIn(row, shift=LEFT * .1)]
+                if prev is not None:
+                    anims.append(prev[0].animate.set_color(INK))
+                self.play(*anims, run_time=.35)
+                prev = row
+            vo.wait_until("Read the library")
+            self.play(prev[0].animate.set_color(INK), FadeIn(nowhere), FadeIn(rtag),
+                      run_time=.45)
+        fake = code_panel(FAKE_ROWS, "videos/speciesot-series/checks/error_trail.py", 3.0,
+                          -.12, width=6.3, size=18)
+        tests = DashedVMobject(Rectangle(width=6.75, height=4.4, stroke_color=GRAY,
+                                         stroke_width=2).move_to([2.97, -.2, 0]), num_dashes=70)
+        tlab = left("in tests: no scgen installed", -.2, 1.72, 19, GRAY, bold=True)
+        mtag = tag_at("MEASURED", 0, -1.85)
+        mlab = left("how we ran Josh's code for this series", 0, -1.85, 18, INK)
+        mtag.move_to([-.2 + mtag.width / 2, -1.85, 0])
+        mlab.next_to(mtag, RIGHT, buff=.2)
+        with self.say(3) as vo:
+            lib = VGroup(box, bhead, *rows_, rtag, nowhere)
+            self.cue(vo, .02, lib.animate.shift(RIGHT * 7).set_opacity(0), run_time=.7)
+            self.remove(lib)
+            vo.wait_until("a few-line fake")
+            self.play(FadeIn(fake, shift=LEFT * .6),
+                      solid.animate.put_start_and_end_on(door.get_right() + RIGHT * .05,
+                                                         [fake.frame.get_left()[0] - .05, cy,
+                                                          0]), run_time=.7)
+            m = highlight(self, fake, 32, 33, 34, run_time=.35)
+            vo.wait_until("never need it")
+            self.play(Create(tests), FadeIn(tlab), run_time=.6)
+            vo.wait_until("That's exactly")
+            self.play(FadeIn(mtag), FadeIn(mlab), FadeOut(m), run_time=.45)
+        with self.say(4) as vo:
+            card = ponder("以后换成另一种 scGen 实现，包里有几个文件要改？",
+                          "Switch to another scGen implementation: how many files change?",
+                          y=-.55)
+            self.cue(vo, .06, self.veil(), run_time=.5)
+            self.play(FadeIn(card, shift=UP * .1), run_time=.5)
+        self.hold(4)
+        self.finish()
+
+
+COMMENTS = [(None, "def train(self, training_data):"),
+            (None, "    # 1. join mouse + human (species)"),
+            (None, "    # 2. fit the network"),
+            (None, "    # 3. delta = mean(z_h) - mean(z_m)"),
+            (None, "    # 4. keep it: self.delta = delta"),
+            (None, "def predict(self, test_data):"),
+            (None, "    # 1. encode the test mouse cells"),
+            (None, "    # 2. add self.delta, then decode"),
+            (None, "    # 3. return an AnnData")]
+
+
+class S07(Ep):
+    def construct(self):
+        self.header()
+        y = 1.15
+        bar1 = gene_bar(-5.85, y, MOUSE_CELL, w=.3, h=1.4, color=GRAY, outline=GRAY)
+        enc = trapezoid(-5.5, -4.45, 1.4, .5, y)
+        lat = Rectangle(width=3.3, height=1.6, stroke_color=INK, stroke_width=2)\
+            .move_to([-2.45, y, 0])
+        sk = left(SKETCH, -4.05, y - 1.0, 16, GRAY)
+        cells = cloud(12, -3.4, y - .25, .14, GRAY, seed=41, radius=.045)
+        d = DELTA / np.linalg.norm(DELTA) * 1.75
+        dar = delta_arrow([-3.3, y - .55, 0], [-3.3 + d[0], y - .55 + d[1], 0])
+        dec = trapezoid(-.6, .45, .5, 1.4, y)
+        bar2 = gene_bar(.8, y, PRED_CELL, w=.3, h=1.4, color=INK, outline=RED)
+        meths = [("setup", "builds the network", 1.65), ("train", "learns network + δ", 1.05),
+                 ("predict", "applies them", .45)]
+        mrows = [VGroup(chip(m + "()", 2.85, yy, INK, 20),
+                        left(t, 4.0, yy, 20, INK)) for m, t, yy in meths]
+        for r_ in mrows:
+            r_[0].move_to([1.75 + r_[0].width / 2, r_[0].get_y(), 0])
+            r_[1].next_to(r_[0], RIGHT, buff=.2)
+        with self.say(0) as vo:
+            self.cue(vo, .03, FadeIn(bar1), run_time=.3)
+            vo.wait_until("encodes")
+            self.play(Create(enc), FadeIn(lat), FadeIn(cells), FadeIn(sk), run_time=.6)
+            vo.wait_until("shifts every cell")
+            self.play(GrowArrow(dar), run_time=.4)
+            self.play(cells.animate.shift([d[0], d[1], 0]).set_color(RED), run_time=.9)
+            vo.wait_until("and decodes")
+            self.play(Create(dec), FadeIn(bar2, shift=RIGHT * .1), run_time=.5)
+            for (m, _, _), r_ in zip(meths, mrows):
+                vo.wait_until({"setup": "Setup builds", "train": "train learns",
+                               "predict": "predict applies"}[m])
+                self.play(FadeIn(r_, shift=LEFT * .1), run_time=.35)
+        cx, cy, r = -4.75, -1.33, 1.05
+        ring = Circle(radius=r, stroke_color=INK, stroke_width=2.5).move_to([cx, cy, 0])
+        inner = at("your package", cx, cy + .55, 17, GRAY)
+        door = chip("adapter", cx + r, cy, RED, 18)
+        three = [VGroup(badge(n, -1.95, yy, RED if n == "3" else GRAY),
+                        left(t, -1.65, yy, 18, INK if n == "3" else GRAY))
+                 for n, t, yy in (("1", "TF VAEArith", -.65), ("2", "scgen 2.x", -1.3),
+                                  ("3", "cellot AE", -1.95))]
+        wire = Line(door.get_right() + RIGHT * .05, three[2][0].get_left() + LEFT * .05,
+                    color=RED, stroke_width=4)
+        ans = left("1 file changes", .9, -1.0, 30, RED, bold=True)
+        ans2 = left("the adapter + its section of the config", .9, -1.55, 20, INK)
+        with self.say(1) as vo:
+            self.cue(vo, .02, *[r_.animate.set_opacity(.45) for r_ in mrows], run_time=.3)
+            self.play(LaggedStart(*[FadeIn(t) for t in three], lag_ratio=.2), run_time=.6)
+            vo.wait_until("Your adapter")
+            self.play(Create(ring), FadeIn(inner), FadeIn(door), run_time=.6)
+            self.play(Create(wire), run_time=.4)
+            vo.wait_until("The answer")
+            new = Line(door.get_right() + RIGHT * .05, three[1][0].get_left() + LEFT * .05,
+                       color=RED, stroke_width=4)
+            self.play(Transform(wire, new), Indicate(door, color=RED, scale_factor=1.15),
+                      run_time=.8)
+            vo.wait_until("one file changes")
+            self.play(FadeIn(ans, shift=UP * .08), run_time=.45)
+            vo.wait_until("plus its section")
+            self.play(FadeIn(ans2), run_time=.4)
+        ex = left("EXERCISE · 练习", -6.2, 1.85, 22, RED, bold=True)
+        s1 = left("1 · find the calls, with file:line", -6.2, 1.3, 20, INK, bold=True)
+        s1p = mono_left("in " + CELLOT, -6.2, .88, 16, GRAY)
+        slots = []
+        for i, (_, call, _) in enumerate(CALLS):
+            yy = .38 - i * .5
+            slot = DashedVMobject(Rectangle(width=1.25, height=.34, stroke_color=GRAY,
+                                            stroke_width=2), num_dashes=16)\
+                .move_to([-1.35, yy, 0])
+            slots.append(VGroup(mono_left(call, -6.2, yy, 17, INK), slot,
+                                at("?", -1.35, yy, 18, GRAY)))
+        s2 = left("2 · train and predict as comments", .0, 1.3, 20, INK, bold=True)
+        panel = code_panel(COMMENTS, "", 3.15, -.55, width=6.3, size=18, numbers=False)
+        etag = tag_at("EXAMPLE", 5.6, 1.3)
+        with self.say(2) as vo:
+            self.cue(vo, .01, *[FadeOut(mm) for mm in self.content()], run_time=.4)
+            self.play(FadeIn(ex), run_time=.3)
+            vo.wait_until("in the cellot")
+            self.play(FadeIn(s1), FadeIn(s1p), run_time=.4)
+            self.play(LaggedStart(*[FadeIn(sl, shift=RIGHT * .1) for sl in slots],
+                                  lag_ratio=.2), run_time=1.0)
+            vo.wait_until("Then write")
+            self.play(FadeIn(s2), FadeIn(etag), FadeIn(panel.frame), run_time=.4)
+            lines = list(panel.texts)
+            per = max(.2, (vo.remaining() - .8) / len(lines))
+            for t in lines:
+                self.play(FadeIn(t, shift=RIGHT * .08), run_time=min(.3, per))
+                if per > .3:
+                    self.wait(per - .3)
         self.finish()
