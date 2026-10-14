@@ -59,8 +59,8 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import cell_width, file_glyph, folder_glyph, label, line_pitch, mono, step_badge, \
-    substring, tag
+from explainer.devops import (cell_width, code_span, file_glyph, folder_glyph, label, line_pitch, mono,
+                              step_badge, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, P_A, SYSTEM, TERMINAL, TOOL, TURN, VENV,
@@ -180,6 +180,16 @@ def row_badge(k: int) -> VGroup:
     """TEAL 'build step k' badge that fits inside one terminal row (0.34 tall)."""
     b = step_badge(k, CTR, size=20, radius=0.17)
     return VGroup(b, sans(f"build step {k}", 20, CTR)).arrange(RIGHT, buff=0.1)
+
+
+def stick(scene, line, *mobs):
+    """Make mobs (already on screen) part of terminal row `line` (its last row when folded), so
+    they scroll, shrink and clear with it."""
+    row = line.rows[-1] if hasattr(line, "rows") else line
+    for m in mobs:
+        scene.remove(m)
+        row.add(m)
+    scene.add(row)
 
 
 def row_tag(s: str, color=S.GREY) -> VGroup:
@@ -389,13 +399,13 @@ class BuildImage(VoiceScene):
             vo.wait_until("your Dockerfile")
             b0 = rbar(dock, VENV, 0.22, right=dock.glyphs.get_right()[0] + 0.1)
             self.play(FadeIn(b0), dock.glyphs.animate.set_color(VENV), run_time=0.5)
-            pin(self, dock, b0, run_time=0.01, anim=Wait(0.01))
+            stick(self, dock, b0)
             vo.wait_until("named exactly that")
             self.play(Indicate(dock.glyphs, color=VENV, scale_factor=1.25), run_time=0.8)
             vo.wait_until("sits next to")
             b1 = rbar(pyp, VENV, 0.22)
             self.play(FadeIn(b1), pyp.glyphs.animate.set_color(VENV), run_time=0.5)
-            pin(self, pyp, b1, run_time=0.01, anim=Wait(0.01))
+            stick(self, pyp, b1)
             self.play(Indicate(pyp.glyphs, color=VENV, scale_factor=1.15), run_time=0.7)
 
         # ========================================================== 1 · the command (no Enter yet)
@@ -419,7 +429,6 @@ class BuildImage(VoiceScene):
             self.play(caption_extra(tr, False), run_time=0.3)
             t.clear(self, run_time=0.3)
             resize(self, t, 3, run_time=0.7)
-            bare_ln = None
             self.play(Indicate(tr.caption, color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("A small gap")
             self.play(FadeIn(chip_r, shift=DOWN * 0.1), run_time=0.5)
@@ -467,7 +476,7 @@ class BuildImage(VoiceScene):
             yt = beside(your_turn(), t, c1)
             self.play(FadeIn(yt, shift=LEFT * 0.1), FadeOut(VGroup(l_name, l_dot, u_name, u_dot)),
                       run_time=0.4)
-            pin(self, c1, yt, run_time=0.01, anim=Wait(0.01))
+            stick(self, c1, yt)
             self.play(Wiggle(yt, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
             self.play(FadeOut(VGroup(folder, parcel, builder, chip_r, err)), run_time=0.4)
             resize(self, t, BIG, run_time=0.8)
@@ -485,7 +494,7 @@ class BuildImage(VoiceScene):
             bd2 = row_badge(2)
             place(bd2, left=k2.get_left()[0] - 0.05, cy=dots1.strut.get_center()[1])
             self.play(Create(box2), k2.animate.set_color(CTR), run_time=0.4)
-            pin(self, r23, box2, run_time=0.01, anim=Wait(0.01))
+            stick(self, r23, box2)
             pin(self, dots1, bd2, run_time=0.4, anim=FadeIn(bd2, shift=UP * 0.1))
             vo.wait_until("apt installs")
             u148 = uline(r148, "237 newly installed", SYSTEM)
@@ -497,7 +506,7 @@ class BuildImage(VoiceScene):
             uvg = substring(r1375, "uv-0.13.0")
             u1375 = uline(r1375, "uv-0.13.0", TOOL)
             self.play(uvg.animate.set_color(TOOL), Create(u1375), run_time=0.5)
-            pin(self, r1375, u1375, run_time=0.01, anim=Wait(0.01))
+            stick(self, r1375, u1375)
             vo.wait_until("all in 46.9")
             u1377 = uline(r1377, "DONE 46.9s", TURN)
             pin(self, r1377, u1377, run_time=0.5, anim=Create(u1377))
@@ -529,14 +538,14 @@ class BuildImage(VoiceScene):
             ub = uline(r1386b, "hon3", SYSTEM)
             self.play(Create(ua), run_time=0.6)
             self.play(Create(ub), run_time=0.2)
-            pin(self, r1386a, ua, run_time=0.01, anim=Wait(0.01))
-            pin(self, r1386b, ub, run_time=0.01, anim=Wait(0.01))
+            stick(self, r1386a, ua)
+            stick(self, r1386b, ub)
             self.play(Indicate(substring(r1386a, "3.12.15"), color=SYSTEM, scale_factor=1.2), run_time=0.7)
             vo.wait_until("creates the venv")
             vg = substring(r1387, "/home/app/.venv")
             u1387 = uline(r1387, "/home/app/.venv", VENV)
             self.play(vg.animate.set_color(VENV), Create(u1387), run_time=0.5)
-            pin(self, r1387, u1387, run_time=0.01, anim=Wait(0.01))
+            stick(self, r1387, u1387)
             vo.wait_until("and resolves 1 package")
             self.play(Indicate(substring(r1388, "Resolved 1 package"), color=INK, scale_factor=1.1),
                       run_time=0.7)
@@ -550,9 +559,8 @@ class BuildImage(VoiceScene):
                          .arrange(RIGHT, buff=0.12), label("lines 41–90", 20, S.GREY))
         src_cap.arrange(DOWN, aligned_edge=RIGHT, buff=0.08)
         place(src_cap, right=6.45, top=3.47)
-        code_ln = inset.code.code_lines[0]
-        cred = _code_sub(code_ln, "CREDENTIALS")
-        val = _code_sub(code_ln, "secrets/mega-pipeline.json")
+        cred = code_span(inset.code, 0, "CREDENTIALS")
+        val = code_span(inset.code, 0, "secrets/mega-pipeline.json")
         harmless = tag("a name check · harmless here", S.GREY)
         place(harmless, left=inset.code.get_left()[0] + 0.1, top=inset.code.get_bottom()[1] - 0.18)
 
@@ -562,7 +570,7 @@ class BuildImage(VoiceScene):
             assert r1405b.text.endswith("(line 10)"), r1405b.text
             g1399 = rbar(r1399, VENV, 0.24)
             self.play(FadeIn(g1399), run_time=0.4)
-            pin(self, r1399, g1399, run_time=0.01, anim=Wait(0.01))
+            stick(self, r1399, g1399)
             self.play(Indicate(substring(r1399, "transcribe_audio:latest"), color=VENV, scale_factor=1.1),
                       run_time=0.6)
             vo.wait_until("with a warning")
@@ -570,8 +578,8 @@ class BuildImage(VoiceScene):
             l10 = substring(r1405b, "(line 10)")
             box10 = SurroundingRectangle(l10, color=S.GREY, buff=0.04, stroke_width=2.5, corner_radius=0.05)
             self.play(FadeIn(gw), Create(box10), run_time=0.5)
-            pin(self, r1404, gw, run_time=0.01, anim=Wait(0.01))
-            pin(self, r1405b, box10, run_time=0.01, anim=Wait(0.01))
+            stick(self, r1404, gw)
+            stick(self, r1405b, box10)
             resize(self, t, 6, run_time=0.7, extra=[FadeOut(live)])
             self.play(FadeIn(inset.code), FadeIn(inset.header[0]), FadeIn(src_cap),
                       TransformFromCopy(l10, inset.header[1]), run_time=0.8)
@@ -702,8 +710,3 @@ class BuildImage(VoiceScene):
         self.wait(0.6)
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
 
-
-def _code_sub(code_line, sub: str) -> VGroup:
-    """Glyphs of `sub` in one line of a code_block (its text without spaces)."""
-    from explainer.devops import code_span  # noqa: F401  (kept for reference)
-    raise NotImplementedError

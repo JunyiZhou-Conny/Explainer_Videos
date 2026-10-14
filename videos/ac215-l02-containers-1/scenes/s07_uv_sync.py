@@ -141,8 +141,8 @@ V_BASE, V_UV, V_VM = BASE_PY.split()[1], VER_OUT[0].split()[1], VM_PY.split()[1]
 # ------------------------------------------------------------------ layout
 AX_Y = 0.45                           # beat 4: the number line (full width, 11 units)
 STACK_X, FLOOR_Y = -1.2, -0.25        # the V2 stack where S06 left it (3.2 wide)
-DOOR_LEFT, DOOR_TOP, DOOR_H = -6.0, 1.4, 0.95   # beats 6-7: the PATH doors
-DEST_Y = -0.45                        # beats 6-7: the Pythons the doors lead to (clear of a 5-row strip)
+DOOR_LEFT, DOOR_TOP, DOOR_H = -6.0, 1.75, 0.95  # beats 6-7: the PATH doors
+DEST_Y = -0.1                         # beats 6-7: the Pythons the doors lead to (clear of a 5-row strip)
 DEST_DX = 1.55                        # a destination dot sits this far right of its door's left edge
 PONDER_Q = ("This image's Python is 3.12.\npyproject.toml asks for 3.13 or newer.\n"
             "What will uv sync do during the build?")
@@ -332,7 +332,7 @@ class StepUvSync(VoiceScene):
             note27 = beside(row_tag("COPY ran again · part 2"), r27)
             pin(self, r27, note27, run_time=0.4)
             vo.wait_until("Keep that question")
-            self.play(Indicate(note27, color=INK, scale_factor=1.08), run_time=0.8)
+            self.play(Wiggle(note27, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.8)
 
         # ========================================================== 3 · the answer: uv downloads a Python
         with self.voiceover(SAY[3]) as vo:
@@ -607,8 +607,9 @@ class StepUvSync(VoiceScene):
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(w, env, doors, cap_off, fig2)), track(tr, 10), run_time=0.6)
-            self.play(ReplacementTransform(orange.dot, o_sum), ReplacementTransform(orange.text, o_top),
-                      ReplacementTransform(green.dot, g_sum), ReplacementTransform(green.text, g_top), run_time=0.9)
+            # ORANGE first (up and left), then GREEN (up and right, passing under it): no crossing
+            self.play(ReplacementTransform(orange.dot, o_sum), ReplacementTransform(orange.text, o_top), run_time=0.6)
+            self.play(ReplacementTransform(green.dot, g_sum), ReplacementTransform(green.text, g_top), run_time=0.8)
             vo.wait_until("3.12 from the base")
             self.play(FadeIn(o_role, shift=DOWN * 0.1), Indicate(o_top, color=SYSTEM, scale_factor=1.2), run_time=0.6)
             vo.wait_until("and 3.15 for the app")

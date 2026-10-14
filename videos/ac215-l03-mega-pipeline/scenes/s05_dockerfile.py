@@ -349,8 +349,9 @@ class WriteDockerfile(VoiceScene):
             self.play(Transform(b, bar(p5, 10)), FadeOut(rem), run_time=0.5)
             vo.wait_until("where the key is")
             self.play(card.restyle("gac", "where the key is · a relative path", LOOKUP), run_time=0.9)
-            card.lines["post"] = post
-            post.move_to(card._layout(list(card.lines.values()))[-1], aligned_edge=LEFT)
+            # the glyph is a member of the card but NOT one of its config lines (card.lines):
+            # it sits right after the credentials line; USER app is shifted past it in beat 9
+            post.next_to(card.lines["gac"], RIGHT, buff=0.18).align_to(card.lines["gac"], DOWN)
             card.attach(self, post, anims=[GrowFromEdge(post, DOWN)], run_time=0.4)
             vo.wait_until("secrets, slash")
             u_sec = under(span(p5, 10, "secrets/"), LOOKUP)
@@ -469,7 +470,14 @@ class WriteDockerfile(VoiceScene):
             b = bar(p23, 23, 24)
             self.play(FadeIn(b), run_time=0.3)
             vo.wait_until("switch to that user")
-            card.write(self, "USER app", INK, key="user", src=span(p23, 23, "USER").copy(), run_time=0.8)
+            user = card.line("USER app", INK, key="user")          # flow position after gac ...
+            if abs(user.get_y() - post.get_y()) < 0.3 and user.get_left()[0] < post.get_right()[0] + 0.3:
+                user.shift(RIGHT * (post.get_right()[0] + 0.4 - user.get_left()[0]))   # ... past the glyph
+            assert user.get_right()[0] < card.frame.get_right()[0] - 0.15, user.get_right()
+            u_src = span(p23, 23, "USER").copy()
+            self.play(Transform(u_src, user), run_time=0.8)
+            self.remove(u_src)
+            card.add(user)
             vo.wait_until("and make slash app")
             st.drop(self, "workdir", src=span(p23, 24, "WORKDIR").copy(), run_time=0.8)
             vo.wait_until("Line 26 copies")
