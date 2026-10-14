@@ -1,0 +1,349 @@
+1
+00:00:00,400 --> 00:00:05,179
+这是 Josh 在示例 notebook 里写下的一整个科研实验
+Here is a whole research experiment, as Josh's example notebook writes it.
+
+2
+00:00:05,499 --> 00:00:08,592
+只有四个调用：setup、train、predict、evaluate
+Four calls: set up, train, predict, evaluate.
+
+3
+00:00:08,767 --> 00:00:10,541
+它们背后是一个文件
+Behind them sits one file,
+
+4
+00:00:10,541 --> 00:00:14,635
+speciesot_core.py，大约三百五十行
+speciesot_core.py, about three hundred and fifty lines long.
+
+5
+00:00:14,635 --> 00:00:15,932
+哪些行重要？
+Which lines matter,
+
+6
+00:00:15,932 --> 00:00:18,388
+到底该从哪里读起？
+and where do you even start reading?
+
+7
+00:00:18,567 --> 00:00:20,451
+诀窍是：这个文件里的每一个类
+Here's the trick: every class
+
+8
+00:00:20,451 --> 00:00:25,712
+都属于五种分工之一——数据、契约、指挥、模型、指标
+in that file does one of five jobs. Data, contract, conductor, model, and metric.
+
+9
+00:00:25,712 --> 00:00:27,512
+我们来学会看出它们
+Let's learn to see them.
+
+10
+00:00:30,367 --> 00:00:33,661
+先从撑起整个文件的那个词开始：class，类
+Start with the word the whole file is built from: class.
+
+11
+00:00:33,661 --> 00:00:38,309
+类是一张蓝图：它描述一个东西会知道什么、能做什么
+A class is a blueprint. It describes what a thing will know and what it can do,
+
+12
+00:00:38,309 --> 00:00:40,109
+但它本身还不是那个东西
+but it isn't the thing itself.
+
+13
+00:00:40,234 --> 00:00:43,477
+像调用函数一样调用一个类，就会按蓝图造出一个对象
+Calling a class like a function builds an object from it.
+
+14
+00:00:43,797 --> 00:00:49,727
+第 115 行正是这么做的：scGenModel，传入属于它的那一段配置
+Line 115 does exactly that: scGenModel, given its slice of the config.
+
+15
+00:00:49,900 --> 00:00:53,527
+对象一造好，Python 就会运行它的 init 方法
+The moment the object is built, Python runs its init method.
+
+16
+00:00:53,847 --> 00:00:57,100
+init 的每一行都往新对象身上写一个事实
+Each line of init writes one fact onto the new object:
+
+17
+00:00:57,100 --> 00:01:00,716
+学习率、潜空间大小、模型保存在哪里
+the learning rate, the latent size, where to save the model.
+
+18
+00:01:00,867 --> 00:01:03,888
+self 的意思就是「这个对象自己」
+And self just means this particular object.
+
+19
+00:01:03,888 --> 00:01:06,558
+self.lr 就是这个模型自己的学习率
+self.lr is this model's learning rate.
+
+20
+00:01:06,558 --> 00:01:09,720
+造两个模型，它们各自保存各自的
+Build two models, and each one keeps its own.
+
+21
+00:01:13,667 --> 00:01:17,678
+文件开头附近有一种不一样的类：AbstractModel
+Near the top of the file is a different kind of class: AbstractModel.
+
+22
+00:01:17,998 --> 00:01:22,115
+它的每个方法都标着 abstract（抽象），方法体里只会抛出错误
+Every method is marked abstract, and its body only raises an error.
+
+23
+00:01:22,267 --> 00:01:25,639
+这是一份契约：任何自称「模型」的东西
+It's a contract. Anything that calls itself a model
+
+24
+00:01:25,639 --> 00:01:28,548
+都必须会 setup、train 和 predict
+must know how to set up, train, and predict.
+
+25
+00:01:28,548 --> 00:01:32,251
+契约只写下方法的名字，不负责填写内容
+The contract names the methods. It doesn't fill them in.
+
+26
+00:01:32,400 --> 00:01:37,136
+停下来猜一猜：如果直接去造一个 AbstractModel，会发生什么？
+Pause and predict: what happens if you try to build an AbstractModel directly?
+
+27
+00:01:40,300 --> 00:01:41,829
+Python 会拒绝
+Python refuses.
+
+28
+00:01:41,879 --> 00:01:45,646
+我们实际跑过：无法实例化抽象类 AbstractModel
+We ran it: can't instantiate abstract class AbstractModel
+
+29
+00:01:45,646 --> 00:01:49,282
+因为 predict、setup、train 都还没有实现
+without an implementation for predict, setup and train.
+
+30
+00:01:49,434 --> 00:01:52,805
+IdentityModel 和 scGenModel 把空白填上了
+IdentityModel and scGenModel fill in the blanks.
+
+31
+00:01:53,125 --> 00:01:58,458
+在类名后面的圆括号里写上 AbstractModel，就是它们签下契约的方式
+Writing AbstractModel in parentheses after the class name is how they sign the contract.
+
+32
+00:01:58,778 --> 00:02:00,350
+这叫继承
+That's called inheritance.
+
+33
+00:02:00,400 --> 00:02:03,969
+看 train：契约里的 train 接收训练数据
+Look at train. The contract's train takes training data,
+
+34
+00:02:03,969 --> 00:02:07,920
+IdentityModel 的 train 什么都不接收，可 Python 照样把它造了出来
+but IdentityModel's takes nothing, and Python still builds it.
+
+35
+00:02:07,920 --> 00:02:10,342
+契约只检查名字，不检查参数
+The contract checks names, not inputs.
+
+36
+00:02:10,500 --> 00:02:15,193
+你还会在 Experiment 和数据类上看到 abc.ABC
+You'll also see abc.ABC on Experiment and the data classes.
+
+37
+00:02:15,513 --> 00:02:18,351
+它们没有抽象方法，也就没有要签的条款
+With no abstract methods, there's nothing to sign.
+
+38
+00:02:18,671 --> 00:02:24,708
+Josh 第 19 行的注释说数据类可以去掉它，Experiment 也一样
+Josh's note on line 19 says the data classes can drop it, and the same goes for Experiment.
+
+39
+00:02:27,600 --> 00:02:29,981
+Experiment 类是指挥
+The Experiment class is the conductor.
+
+40
+00:02:29,981 --> 00:02:36,624
+它自己从不做科学计算：它读配置、造出各个部件，再告诉每个部件何时上场
+It never does the science itself. It reads the config, builds the pieces, and tells each one when to play.
+
+41
+00:02:36,800 --> 00:02:41,795
+setup 会填好两个列表：models 来自 config.yaml 的 models 部分
+Setup fills two lists: models, from the models section of config.yaml,
+
+42
+00:02:41,795 --> 00:02:45,077
+evaluations 来自 evaluations 部分
+and evaluations, from the evaluations section.
+
+43
+00:02:45,233 --> 00:02:47,750
+train 和 predict 沿着 models 列表逐个执行
+Train and predict walk down the models list.
+
+44
+00:02:48,006 --> 00:02:52,657
+predict 从每个模型收集一个答案：一组预测出的人类细胞
+Predict collects one answer from each model: a set of predicted human cells.
+
+45
+00:02:52,833 --> 00:02:57,889
+evaluate 把两个列表交叉起来：两个模型乘以两个指标，得到四个数字
+Evaluate crosses the two lists. Two models times two metrics: four numbers.
+
+46
+00:02:58,067 --> 00:02:59,425
+说一个实情
+One honest detail:
+
+47
+00:02:59,425 --> 00:03:04,252
+按现在的写法，evaluate 算出这些数字后就把它们丢掉了
+as written, evaluate computes those numbers and then drops them.
+
+48
+00:03:04,252 --> 00:03:06,289
+第 145 行没有存下来
+Line 145 never stores them.
+
+49
+00:03:06,289 --> 00:03:08,627
+第五集会回到这一点
+Remember that for episode five.
+
+50
+00:03:12,633 --> 00:03:16,537
+回报在这里：第 137 行调用 model.predict
+Here's the payoff. Line 137 calls model.predict,
+
+51
+00:03:16,537 --> 00:03:20,441
+却从不过问自己在和哪个模型说话
+without ever asking which model it's talking to.
+
+52
+00:03:20,600 --> 00:03:24,525
+IdentityModel 的回答是原封不动地交回小鼠细胞
+IdentityModel answers by handing back the mouse cells unchanged.
+
+53
+00:03:24,845 --> 00:03:29,752
+它是「什么都不做」的基线：真正的模型至少要胜过直接照抄小鼠
+It's the do-nothing baseline: a real model has to beat simply copying the mouse.
+
+54
+00:03:29,900 --> 00:03:34,390
+scGenModel 则会把小鼠细胞往人类方向平移
+scGenModel will answer by shifting the mouse cells toward human.
+
+55
+00:03:34,390 --> 00:03:38,177
+同一个问题，不同的回答——这就是多态
+Same question, different answers. That's polymorphism.
+
+56
+00:03:38,333 --> 00:03:41,762
+那么想一想：当你把 CellOT 加进来作为第三个模型时
+So think about it: when you add CellOT as a third model,
+
+57
+00:03:41,762 --> 00:03:44,946
+Experiment 里有哪些行应该改动？
+which lines of the Experiment should have to change?
+
+58
+00:03:47,566 --> 00:03:48,945
+理想情况是一行都不用改
+Ideally, none.
+
+59
+00:03:48,995 --> 00:03:53,433
+但目前 setup 里还用一串 if 语句逐个点名模型
+Today, setup still names each model by hand, in a chain of if statements.
+
+60
+00:03:53,753 --> 00:03:55,758
+第五集会接着解决这个问题
+Episode five pulls on that thread.
+
+61
+00:03:57,367 --> 00:04:01,570
+回顾一下。类是蓝图，对象按蓝图造出来
+Recap. A class is a blueprint, and an object is built from it.
+
+62
+00:04:01,890 --> 00:04:05,047
+init 写下对象的事实，self 指的就是这个对象本身
+Init writes the object's facts, and self means this one.
+
+63
+00:04:05,200 --> 00:04:07,273
+抽象类是一份契约
+An abstract class is a contract.
+
+64
+00:04:07,273 --> 00:04:13,169
+它写下方法名，在每个方法都填好之前，Python 不会造出这个模型
+It names the methods, and Python won't build a model until every named method is filled in.
+
+65
+00:04:13,169 --> 00:04:14,984
+但它只检查名字，不检查参数
+It checks names, not inputs.
+
+66
+00:04:14,984 --> 00:04:17,446
+第五集会看到什么会漏过去
+Episode five shows what slips through.
+
+67
+00:04:17,600 --> 00:04:22,251
+Experiment 负责指挥，模型和指标通过各自的契约接进来
+The Experiment conducts, and models and metrics plug into it through their contracts.
+
+68
+00:04:22,400 --> 00:04:25,939
+轮到你了：在这里暂停，打开 speciesot_core.py
+Your turn: pause here, open speciesot_core.py,
+
+69
+00:04:25,939 --> 00:04:29,632
+给每个类标上五种分工之一
+and label every class with one of the five jobs.
+
+70
+00:04:29,952 --> 00:04:31,766
+这张表就是你的答案
+This table is your answer key.

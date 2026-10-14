@@ -1,0 +1,84 @@
+[Script Info]
+Title: 
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,43,&H00F3F0E7,&H00F3F0E7,&H00171717,&H00171717,0,0,0,0,100,100,0,0,1,0,0,2,90,90,27,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.40,0:00:05.18,Bilingual,,0,0,0,,这是 Josh 在示例 notebook 里写下的一整个科研实验\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Here is a whole research experiment, as Josh's example notebook writes it.
+Dialogue: 0,0:00:05.50,0:00:08.59,Bilingual,,0,0,0,,只有四个调用：setup、train、predict、evaluate\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Four calls: set up, train, predict, evaluate.
+Dialogue: 0,0:00:08.77,0:00:10.54,Bilingual,,0,0,0,,它们背后是一个文件\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Behind them sits one file,
+Dialogue: 0,0:00:10.54,0:00:14.64,Bilingual,,0,0,0,,speciesot_core.py，大约三百五十行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}speciesot_core.py, about three hundred and fifty lines long.
+Dialogue: 0,0:00:14.64,0:00:15.93,Bilingual,,0,0,0,,哪些行重要？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Which lines matter,
+Dialogue: 0,0:00:15.93,0:00:18.39,Bilingual,,0,0,0,,到底该从哪里读起？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and where do you even start reading?
+Dialogue: 0,0:00:18.57,0:00:20.45,Bilingual,,0,0,0,,诀窍是：这个文件里的每一个类\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Here's the trick: every class
+Dialogue: 0,0:00:20.45,0:00:25.71,Bilingual,,0,0,0,,都属于五种分工之一——数据、契约、指挥、模型、指标\N{\fs30\fnInter\c&H00C9C9C9&\bord0}in that file does one of five jobs. Data, contract, conductor, model, and metric.
+Dialogue: 0,0:00:25.71,0:00:27.51,Bilingual,,0,0,0,,我们来学会看出它们\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Let's learn to see them.
+Dialogue: 0,0:00:30.37,0:00:33.66,Bilingual,,0,0,0,,先从撑起整个文件的那个词开始：class，类\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Start with the word the whole file is built from: class.
+Dialogue: 0,0:00:33.66,0:00:38.31,Bilingual,,0,0,0,,类是一张蓝图：它描述一个东西会知道什么、能做什么\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A class is a blueprint. It describes what a thing will know and what it can do,
+Dialogue: 0,0:00:38.31,0:00:40.11,Bilingual,,0,0,0,,但它本身还不是那个东西\N{\fs30\fnInter\c&H00C9C9C9&\bord0}but it isn't the thing itself.
+Dialogue: 0,0:00:40.23,0:00:43.48,Bilingual,,0,0,0,,像调用函数一样调用一个类，就会按蓝图造出一个对象\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Calling a class like a function builds an object from it.
+Dialogue: 0,0:00:43.80,0:00:49.73,Bilingual,,0,0,0,,第 115 行正是这么做的：scGenModel，传入属于它的那一段配置\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Line 115 does exactly that: scGenModel, given its slice of the config.
+Dialogue: 0,0:00:49.90,0:00:53.53,Bilingual,,0,0,0,,对象一造好，Python 就会运行它的 init 方法\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The moment the object is built, Python runs its init method.
+Dialogue: 0,0:00:53.85,0:00:57.10,Bilingual,,0,0,0,,init 的每一行都往新对象身上写一个事实\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Each line of init writes one fact onto the new object:
+Dialogue: 0,0:00:57.10,0:01:00.72,Bilingual,,0,0,0,,学习率、潜空间大小、模型保存在哪里\N{\fs30\fnInter\c&H00C9C9C9&\bord0}the learning rate, the latent size, where to save the model.
+Dialogue: 0,0:01:00.87,0:01:03.89,Bilingual,,0,0,0,,self 的意思就是「这个对象自己」\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And self just means this particular object.
+Dialogue: 0,0:01:03.89,0:01:06.56,Bilingual,,0,0,0,,self.lr 就是这个模型自己的学习率\N{\fs30\fnInter\c&H00C9C9C9&\bord0}self.lr is this model's learning rate.
+Dialogue: 0,0:01:06.56,0:01:09.72,Bilingual,,0,0,0,,造两个模型，它们各自保存各自的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Build two models, and each one keeps its own.
+Dialogue: 0,0:01:13.67,0:01:17.68,Bilingual,,0,0,0,,文件开头附近有一种不一样的类：AbstractModel\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Near the top of the file is a different kind of class: AbstractModel.
+Dialogue: 0,0:01:18.00,0:01:22.11,Bilingual,,0,0,0,,它的每个方法都标着 abstract（抽象），方法体里只会抛出错误\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Every method is marked abstract, and its body only raises an error.
+Dialogue: 0,0:01:22.27,0:01:25.64,Bilingual,,0,0,0,,这是一份契约：任何自称「模型」的东西\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It's a contract. Anything that calls itself a model
+Dialogue: 0,0:01:25.64,0:01:28.55,Bilingual,,0,0,0,,都必须会 setup、train 和 predict\N{\fs30\fnInter\c&H00C9C9C9&\bord0}must know how to set up, train, and predict.
+Dialogue: 0,0:01:28.55,0:01:32.25,Bilingual,,0,0,0,,契约只写下方法的名字，不负责填写内容\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The contract names the methods. It doesn't fill them in.
+Dialogue: 0,0:01:32.40,0:01:37.14,Bilingual,,0,0,0,,停下来猜一猜：如果直接去造一个 AbstractModel，会发生什么？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause and predict: what happens if you try to build an AbstractModel directly?
+Dialogue: 0,0:01:40.30,0:01:41.83,Bilingual,,0,0,0,,Python 会拒绝\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Python refuses.
+Dialogue: 0,0:01:41.88,0:01:45.65,Bilingual,,0,0,0,,我们实际跑过：无法实例化抽象类 AbstractModel\N{\fs30\fnInter\c&H00C9C9C9&\bord0}We ran it: can't instantiate abstract class AbstractModel
+Dialogue: 0,0:01:45.65,0:01:49.28,Bilingual,,0,0,0,,因为 predict、setup、train 都还没有实现\N{\fs30\fnInter\c&H00C9C9C9&\bord0}without an implementation for predict, setup and train.
+Dialogue: 0,0:01:49.43,0:01:52.80,Bilingual,,0,0,0,,IdentityModel 和 scGenModel 把空白填上了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}IdentityModel and scGenModel fill in the blanks.
+Dialogue: 0,0:01:53.12,0:01:58.46,Bilingual,,0,0,0,,在类名后面的圆括号里写上 AbstractModel，就是它们签下契约的方式\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Writing AbstractModel in parentheses after the class name is how they sign the contract.
+Dialogue: 0,0:01:58.78,0:02:00.35,Bilingual,,0,0,0,,这叫继承\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's called inheritance.
+Dialogue: 0,0:02:00.40,0:02:03.97,Bilingual,,0,0,0,,看 train：契约里的 train 接收训练数据\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Look at train. The contract's train takes training data,
+Dialogue: 0,0:02:03.97,0:02:07.92,Bilingual,,0,0,0,,IdentityModel 的 train 什么都不接收，可 Python 照样把它造了出来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}but IdentityModel's takes nothing, and Python still builds it.
+Dialogue: 0,0:02:07.92,0:02:10.34,Bilingual,,0,0,0,,契约只检查名字，不检查参数\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The contract checks names, not inputs.
+Dialogue: 0,0:02:10.50,0:02:15.19,Bilingual,,0,0,0,,你还会在 Experiment 和数据类上看到 abc.ABC\N{\fs30\fnInter\c&H00C9C9C9&\bord0}You'll also see abc.ABC on Experiment and the data classes.
+Dialogue: 0,0:02:15.51,0:02:18.35,Bilingual,,0,0,0,,它们没有抽象方法，也就没有要签的条款\N{\fs30\fnInter\c&H00C9C9C9&\bord0}With no abstract methods, there's nothing to sign.
+Dialogue: 0,0:02:18.67,0:02:24.71,Bilingual,,0,0,0,,Josh 第 19 行的注释说数据类可以去掉它，Experiment 也一样\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Josh's note on line 19 says the data classes can drop it, and the same goes for Experiment.
+Dialogue: 0,0:02:27.60,0:02:29.98,Bilingual,,0,0,0,,Experiment 类是指挥\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The Experiment class is the conductor.
+Dialogue: 0,0:02:29.98,0:02:36.62,Bilingual,,0,0,0,,它自己从不做科学计算：它读配置、造出各个部件，再告诉每个部件何时上场\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It never does the science itself. It reads the config, builds the pieces, and tells each one when to play.
+Dialogue: 0,0:02:36.80,0:02:41.79,Bilingual,,0,0,0,,setup 会填好两个列表：models 来自 config.yaml 的 models 部分\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Setup fills two lists: models, from the models section of config.yaml,
+Dialogue: 0,0:02:41.79,0:02:45.08,Bilingual,,0,0,0,,evaluations 来自 evaluations 部分\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and evaluations, from the evaluations section.
+Dialogue: 0,0:02:45.23,0:02:47.75,Bilingual,,0,0,0,,train 和 predict 沿着 models 列表逐个执行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Train and predict walk down the models list.
+Dialogue: 0,0:02:48.01,0:02:52.66,Bilingual,,0,0,0,,predict 从每个模型收集一个答案：一组预测出的人类细胞\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Predict collects one answer from each model: a set of predicted human cells.
+Dialogue: 0,0:02:52.83,0:02:57.89,Bilingual,,0,0,0,,evaluate 把两个列表交叉起来：两个模型乘以两个指标，得到四个数字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Evaluate crosses the two lists. Two models times two metrics: four numbers.
+Dialogue: 0,0:02:58.07,0:02:59.42,Bilingual,,0,0,0,,说一个实情\N{\fs30\fnInter\c&H00C9C9C9&\bord0}One honest detail:
+Dialogue: 0,0:02:59.42,0:03:04.25,Bilingual,,0,0,0,,按现在的写法，evaluate 算出这些数字后就把它们丢掉了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}as written, evaluate computes those numbers and then drops them.
+Dialogue: 0,0:03:04.25,0:03:06.29,Bilingual,,0,0,0,,第 145 行没有存下来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Line 145 never stores them.
+Dialogue: 0,0:03:06.29,0:03:08.63,Bilingual,,0,0,0,,第五集会回到这一点\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Remember that for episode five.
+Dialogue: 0,0:03:12.63,0:03:16.54,Bilingual,,0,0,0,,回报在这里：第 137 行调用 model.predict\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Here's the payoff. Line 137 calls model.predict,
+Dialogue: 0,0:03:16.54,0:03:20.44,Bilingual,,0,0,0,,却从不过问自己在和哪个模型说话\N{\fs30\fnInter\c&H00C9C9C9&\bord0}without ever asking which model it's talking to.
+Dialogue: 0,0:03:20.60,0:03:24.53,Bilingual,,0,0,0,,IdentityModel 的回答是原封不动地交回小鼠细胞\N{\fs30\fnInter\c&H00C9C9C9&\bord0}IdentityModel answers by handing back the mouse cells unchanged.
+Dialogue: 0,0:03:24.85,0:03:29.75,Bilingual,,0,0,0,,它是「什么都不做」的基线：真正的模型至少要胜过直接照抄小鼠\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It's the do-nothing baseline: a real model has to beat simply copying the mouse.
+Dialogue: 0,0:03:29.90,0:03:34.39,Bilingual,,0,0,0,,scGenModel 则会把小鼠细胞往人类方向平移\N{\fs30\fnInter\c&H00C9C9C9&\bord0}scGenModel will answer by shifting the mouse cells toward human.
+Dialogue: 0,0:03:34.39,0:03:38.18,Bilingual,,0,0,0,,同一个问题，不同的回答——这就是多态\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Same question, different answers. That's polymorphism.
+Dialogue: 0,0:03:38.33,0:03:41.76,Bilingual,,0,0,0,,那么想一想：当你把 CellOT 加进来作为第三个模型时\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So think about it: when you add CellOT as a third model,
+Dialogue: 0,0:03:41.76,0:03:44.95,Bilingual,,0,0,0,,Experiment 里有哪些行应该改动？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}which lines of the Experiment should have to change?
+Dialogue: 0,0:03:47.57,0:03:48.95,Bilingual,,0,0,0,,理想情况是一行都不用改\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Ideally, none.
+Dialogue: 0,0:03:49.00,0:03:53.43,Bilingual,,0,0,0,,但目前 setup 里还用一串 if 语句逐个点名模型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Today, setup still names each model by hand, in a chain of if statements.
+Dialogue: 0,0:03:53.75,0:03:55.76,Bilingual,,0,0,0,,第五集会接着解决这个问题\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Episode five pulls on that thread.
+Dialogue: 0,0:03:57.37,0:04:01.57,Bilingual,,0,0,0,,回顾一下。类是蓝图，对象按蓝图造出来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Recap. A class is a blueprint, and an object is built from it.
+Dialogue: 0,0:04:01.89,0:04:05.05,Bilingual,,0,0,0,,init 写下对象的事实，self 指的就是这个对象本身\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Init writes the object's facts, and self means this one.
+Dialogue: 0,0:04:05.20,0:04:07.27,Bilingual,,0,0,0,,抽象类是一份契约\N{\fs30\fnInter\c&H00C9C9C9&\bord0}An abstract class is a contract.
+Dialogue: 0,0:04:07.27,0:04:13.17,Bilingual,,0,0,0,,它写下方法名，在每个方法都填好之前，Python 不会造出这个模型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It names the methods, and Python won't build a model until every named method is filled in.
+Dialogue: 0,0:04:13.17,0:04:14.98,Bilingual,,0,0,0,,但它只检查名字，不检查参数\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It checks names, not inputs.
+Dialogue: 0,0:04:14.98,0:04:17.45,Bilingual,,0,0,0,,第五集会看到什么会漏过去\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Episode five shows what slips through.
+Dialogue: 0,0:04:17.60,0:04:22.25,Bilingual,,0,0,0,,Experiment 负责指挥，模型和指标通过各自的契约接进来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The Experiment conducts, and models and metrics plug into it through their contracts.
+Dialogue: 0,0:04:22.40,0:04:25.94,Bilingual,,0,0,0,,轮到你了：在这里暂停，打开 speciesot_core.py\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your turn: pause here, open speciesot_core.py,
+Dialogue: 0,0:04:25.94,0:04:29.63,Bilingual,,0,0,0,,给每个类标上五种分工之一\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and label every class with one of the five jobs.
+Dialogue: 0,0:04:29.95,0:04:31.77,Bilingual,,0,0,0,,这张表就是你的答案\N{\fs30\fnInter\c&H00C9C9C9&\bord0}This table is your answer key.
