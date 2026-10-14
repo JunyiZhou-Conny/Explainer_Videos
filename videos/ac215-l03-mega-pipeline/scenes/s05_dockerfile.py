@@ -156,7 +156,7 @@ def readme_chip2(where: str, phrase: str) -> VGroup:
     w = VGroup(mono(path, PT, S.GREY), label(f"· {rest}", PT, S.GREY)).arrange(RIGHT, buff=0.12)
     ph = label(f"“{phrase}”", PT, INK)
     rows = VGroup(w, ph).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-    fr = box(rows.width + 0.4, rows.height + 0.26, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.1)
+    fr = box(rows.width + 0.3, rows.height + 0.24, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.1)
     fr.move_to(rows)
     g = VGroup(fr, rows)
     g.frame, g.where, g.phrase = fr, w, ph
@@ -272,16 +272,16 @@ class WriteDockerfile(VoiceScene):
             self.play(Indicate(note1, color=INK, scale_factor=1.04), run_time=0.8)
 
         # ========================================================== 2 · line 3: ARG; ffmpeg
-        inset = src_panel(CLI, 67, 69, size=PT)
-        inset.code.background.set_fill(PANEL, 1)
-        back = Rectangle(width=inset.width + 0.24, height=inset.height + 0.2, stroke_width=0)
-        back.set_fill(S.BG, 1).move_to(inset)
-        inset = VGroup(back, *inset.submobjects).set_z_index(0)
-        icode = inset[1]
-        inset.move_to([-6.42, -3.52, 0], aligned_edge=DL)
+        cli = src_panel(CLI, 67, 69, size=PT)
+        cli.code.background.set_fill(PANEL, 1)
+        cli.move_to(card.get_corner(DL) + UR * 0.06, aligned_edge=DL)
+        back = Rectangle(width=card.width + 0.1, height=card.height + 0.08, stroke_width=0)
+        back.set_fill(S.BG, 1).move_to(card)          # the inset covers the card while it is up
+        inset = VGroup(back, cli)
+        icode = cli.code
         ib = line_bar(icode, 2, TURN)
         itag = tag("runs the ffmpeg program", S.GREY)
-        itag.next_to(icode.code_lines[2], RIGHT, buff=0.35)
+        itag.next_to(icode.code_lines[2], RIGHT, buff=0.25)
         with self.voiceover(SAY[2]) as vo:
             self.play(Transform(b, bar(p1, 3)), FadeOut(note1), run_time=0.5)
             vo.wait_until("a variable that exists")
@@ -439,7 +439,8 @@ class WriteDockerfile(VoiceScene):
         own_t = sans("owns", PT, S.GREY).next_to(own, UP, buff=0.06)
         r72 = readme_chip2("transcribe_audio/README.md · line 72",
                            "Running containers as root is a security risk.")
-        r72.move_to([6.45, 3.48, 0], aligned_edge=UR)
+        r72.move_to([6.55, 3.5, 0], aligned_edge=UR)
+        assert r72.get_left()[0] > tr.get_right()[0] + 0.15, (r72.get_left(), tr.get_right())
         inside = VGroup(gone, dots, lab_pk, pip_c, uv_c, note7, who, lab_who, fold, lab_app,
                         own, own_t)
         with self.voiceover(SAY[8]) as vo:
@@ -542,22 +543,23 @@ class WriteDockerfile(VoiceScene):
             txt.shift(num.strut.get_corner(UL) + RIGHT * gut - txt.strut.get_corner(UL))
             rws.add(VGroup(num, txt))
         rws.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
-        ttl = label("Appendix · Sample Dockerfile", PT, INK)
-        inner = VGroup(ttl, rws).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
+        inner = rws
         afr = box(inner.width + 0.6, inner.height + 0.44, S.GREY, fill=S.BG, fill_opacity=0.95,
                   radius=0.12)
         afr.move_to(inner)
-        ahead = VGroup(mono("README.md", PT, S.GREY), label("· lines 175–225", PT, S.GREY))
+        ahead = VGroup(mono("README.md", PT, S.GREY), label("· lines 175–225 · Appendix · Sample Dockerfile",
+                                                              PT, S.GREY))
         ahead.arrange(RIGHT, buff=0.12).next_to(afr, UP, buff=0.08).align_to(afr, LEFT).shift(RIGHT * 0.1)
         appx = VGroup(afr, inner, ahead)
-        appx.move_to([-0.3, 0.45, 0])
+        appx.move_to([-0.3, 0.0, 0]).align_to(frow, DOWN).shift(DOWN * (0.24 + appx.height))
         r179 = rws[0]
         curl = substring(r179[1], "curl")
         b179 = Rectangle(width=afr.width - 0.2, height=r179.height + 0.14, stroke_width=0)
         b179.set_fill(TURN, 0.16).move_to([afr.get_x(), r179.get_y(), 0])
         noff = tag("no ffmpeg", ERR).next_to(r179, RIGHT, buff=0.35)
-        nopaste = stamp("don't paste into transcribe_audio", ERR, size=PT)
-        nopaste.next_to(afr, DOWN, buff=0.22).align_to(afr, LEFT).shift(RIGHT * 0.35)
+        nopaste = stamp("don't paste into transcribe_audio", ERR, size=PT, angle=0.04)
+        nopaste.next_to(afr, DOWN, buff=0.1).align_to(afr, LEFT).shift(RIGHT * 0.35)
+        assert nopaste.get_bottom()[1] > card.get_top()[1] + 0.05, nopaste.get_bottom()
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(chips, shift=DOWN * 0.1), FadeIn(appx, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("but its build argument")

@@ -8,12 +8,13 @@ Beats (script.md "## S06", one voiceover block each):
     label "this folder" (leader to the left), `./` a TEAL label "the image's top folder" (leader to
     the right). On "Add both at the end" the 6-row strip below types `cat Dockerfile` (TRACKER A9 ·
     extra, row tag `extra`) -> laptop/17 "…", 7–10; "and save": YELLOW bar on the four new rows.
- 1  V5 seed. The panel leaves; the build command writes small at the top (the strip stays for the
-    first sentence, so the cat output can be read); its final `.` turns PINK with a ring on "the
-    final dot". On "Docker packs" the strip leaves and a PINK ring flies from the dot to the left
-    and becomes a GREY folder `simple-translate/` holding ten file glyphs (`.git/`, `cli.py`,
-    `Dockerfile` named: ten entries, as in the clone). "into one parcel": the folder's tab goes, PINK
-    tape closes it, its title becomes "build context" (PINK). "and sends it to the builder": S04's
+ 1  V5 seed. The panel leaves and the build command writes small at the top (the strip stays a
+    moment longer, so the cat output can be read); its final `.` turns PINK with a ring on "the
+    final dot", the strip leaves and a copy of the ring flies down-left and becomes a GREY folder
+    `simple-translate/` holding ten file glyphs (`.git/`, `cli.py`, `Dockerfile` named: ten
+    entries, as in the clone); the folder pulses on "Docker packs". "into one parcel": the folder's
+    tab goes, PINK tape closes it, its title becomes "build context" (PINK). "and sends it to the
+    builder": S04's
     PURPLE builder chip appears on the right and grows into a box holding the image: four thin
     ORANGE base slabs and on them the TEAL box `/` "the image's top folder" with the system's own
     `bin etc usr …` (ORANGE); a PINK route draws from the parcel to it. "Every file goes in": the
@@ -99,7 +100,7 @@ PANEL_X = -0.9                       # beat 0: README panel (4.6 wide) left of c
 STACK_X, FLOOR_Y = -1.2, -0.25       # the V2 stack (3.2 wide; S05's height, centred: no config card here)
 PARCEL_X = -3.95                     # beat 1: the folder / parcel (left)
 BUILDER_X, BUILDER_Y = 3.85, -0.55   # beat 1: the builder box (right)
-SHRINK = 0.3                         # the parcel's size while it travels (names hidden)
+SHRINK = 0.4                         # the parcel's size while it travels (names hidden)
 
 
 # ------------------------------------------------------------------ helpers
@@ -248,13 +249,13 @@ class StepCopy(VoiceScene):
         big = mono_line(BUILD, 22, INK)
         big.move_to([0.55, 2.4, 0])
         g_ctx = glyph_range(big, len(BUILD) - 1)
-        ring = Circle(radius=0.2, color=ROUTE, stroke_width=4).move_to(g_ctx)
+        ring = Circle(radius=0.17, color=ROUTE, stroke_width=4).move_to(g_ctx)
 
-        # the builder: the image as four base slabs, its top folder `/` on them
         parcel = Parcel((".git/", "cli.py", "Dockerfile"), extra=7)   # 3 named + 7 = the ten entries
         names = VGroup(*[it.name_text for it in parcel.items.values()])
         glyphs = VGroup(parcel.crowd, *[it.glyph for it in parcel.items.values()])
         inner = VGroup(glyphs, names)
+        # the builder: the image as four base slabs, its top folder `/` on them (room for the parcel's items)
         sys_row = VGroup()
         for n in ("bin", "etc", "usr"):
             sys_row.add(VGroup(folder_glyph(0.22, SYSTEM), mono(n, 20, SYSTEM)).arrange(RIGHT, buff=0.1))
@@ -463,11 +464,12 @@ class StepCopy(VoiceScene):
 
         # ========================================================== 5 · run it: ls
         w = wide_term(13)
-        no = cross_mark(0.4, ERR).next_to(q[1], RIGHT, buff=0.3)
+        no = cross_mark(0.45, ERR).next_to(q[1], RIGHT, buff=0.3)
         picture4 = VGroup(*stack.slabs, brace, base_name, uv_tag)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(Create(no), run_time=0.4)
+            self.play(Create(no), run_time=0.35)
+            self.wait(0.25)
             self.play(FadeOut(VGroup(q, no)), FadeOut(picture4), FadeOut(VGroup(*adds)), FadeOut(t), run_time=0.5)
             self.play(FadeIn(w), run_time=0.3)
             bare_prompt(self, w)
@@ -528,6 +530,6 @@ class StepCopy(VoiceScene):
             w.set_prompt(P_LAPTOP)
             bare_prompt(self, w)
 
-        self.wait(0.5)
+        self.wait(0.8)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
