@@ -494,7 +494,8 @@ class S03(Ep):
             vo.wait_until("init opens")
             m221 = rmark(st3, 221)
             l23 = link(dframe.get_corner(UR), st3.frame.get_corner(DL) + RIGHT * .3)
-            self.play(FadeIn(m221), Create(l23), run_time=.4)
+            self.play(FadeIn(m221), Create(l23), FadeOut(p115), FadeOut(t115), FadeOut(m115),
+                      run_time=.4)
             vo.wait_until("labelled z_dimension")
             key = glyphs(st3.row(221), CORE[221], "self.config['z_dimension']")
             zdr.generate_target()
@@ -510,8 +511,7 @@ class S03(Ep):
             zdr.generate_target()
             zdr.target.shift(LEFT * .3)
             zdr.target[2].set_color(INK)
-            self.play(FadeOut(p115), FadeOut(t115), FadeOut(m115), FadeIn(obj, shift=UP * .1),
-                      FadeIn(b4), MoveToTarget(zdr), run_time=.5)
+            self.play(FadeIn(obj, shift=UP * .1), FadeIn(b4), MoveToTarget(zdr), run_time=.5)
             vo.wait_until("as self.z_dimension")
             attr0 = glyphs(st3.row(221), CORE[221], "self.z_dimension")
             cp = value_token().move_to(attr0)
@@ -767,10 +767,11 @@ class S04(Ep):
         dym = glyphs(lines[7], tb[7], "'x_dimension'")
         dym_u = Line(dym.get_corner(DL) + DOWN * .05, dym.get_corner(DR) + DOWN * .05,
                      color=RED, stroke_width=3).set_z_index(3)
-        lab119 = left("← Experiment.setup · 119", lines[2].get_right()[0] + .35, ly_[2], 17,
-                      PAPER).set_z_index(3)
-        lab253 = left("← scGenModel.setup · 253", lines[2].get_right()[0] + .35, ly_[4], 17,
-                      PAPER).set_z_index(3)
+        lab119 = label("← Experiment.setup · 119", 16, PAPER).set_z_index(3)
+        lab253 = label("← scGenModel.setup · 253", 16, PAPER).set_z_index(3)
+        for lab, i in ((lab119, 2), (lab253, 4)):
+            lab.move_to([tx - .2 - lab.width / 2, ly_[i], 0])
+            assert lab.get_left()[0] > lines[i].get_right()[0] + .15
         ttag = tag_text("MEASURED frames · stand-in scgen · message text from Python 3.12")
         ttag.move_to([bx0 + ttag.width / 2, term.box.get_bottom()[1] - .3, 0])
         wrap = left("↩ one line, wrapped to fit", ttag.get_right()[0] + .3, ttag.get_y(), 17, GRAY)
@@ -1146,34 +1147,35 @@ class S06(Ep):
 class S07(Ep):
     def construct(self):
         self.header()
-        hx = [-4.65, -1.55, 1.55, 4.65]
+        bw, step = 2.3, 2.575
+        hx = [-6.3 + bw / 2 + i * step for i in range(5)]
         hy = 1.45
-        names = ["a YAML line", "a dictionary drawer", "init", "an attribute"]
-        codes = ["z_dimension: 50", "['z_dimension']", "self.config[…]", "self.z_dimension"]
-        boxes = VGroup(*[RoundedRectangle(corner_radius=.06, width=2.75, height=.95,
+        names = ["a YAML line", "dictionary drawer", "init", "an attribute", "setup reads it"]
+        codes = ["z_dimension: 50", "['z_dimension']", "self.config[…]", "self.z_dimension",
+                 "self.z_dimension"]
+        boxes = VGroup(*[RoundedRectangle(corner_radius=.06, width=bw, height=.95,
                                           stroke_color=INK, stroke_width=2, fill_color=PAPER,
                                           fill_opacity=1).move_to([x, hy, 0]) for x in hx])
-        caps = VGroup(*[at(n, x, hy + .2, 19, GRAY) for n, x in zip(names, hx)])
-        cods = VGroup(*[mono(c, 17, INK).move_to([x, hy - .2, 0]) for c, x in zip(codes, hx)])
-        badges = VGroup(*[hop_badge(i + 1, x - 1.375, hy + .475, r=.17)
+        caps = VGroup(*[at(n, x, hy + .2, 17, GRAY) for n, x in zip(names, hx)])
+        cods = VGroup(*[mono(c, 16, INK).move_to([x, hy - .2, 0]) for c, x in zip(codes, hx)])
+        badges = VGroup(*[hop_badge(i + 1, x - bw / 2, hy + .475, r=.16)
                           for i, x in enumerate(hx)])
-        links = VGroup(*[Arrow([hx[i] + 1.4, hy, 0], [hx[i + 1] - 1.4, hy, 0], buff=0,
-                               color=GRAY, stroke_width=2, tip_length=.14,
-                               max_tip_length_to_length_ratio=1) for i in range(3)])
-        same = at("same spelling at every hop", 0, .62, 22, RED, bold=True)
+        links = VGroup(*[Arrow([hx[i] + bw / 2, hy, 0], [hx[i + 1] - bw / 2, hy, 0], buff=.02,
+                               color=GRAY, stroke_width=2, tip_length=.1,
+                               max_tip_length_to_length_ratio=1) for i in range(4)])
+        same = at("same spelling at every place", 0, .62, 22, RED, bold=True)
         with self.say(0) as vo:
-            vo.wait_until("four hops")
+            vo.wait_until("five places")
             self.play(FadeIn(boxes), FadeIn(badges), Create(links), run_time=.5)
             for i, w in enumerate(("a YAML line", "a dictionary drawer", "init,",
-                                   "an attribute")):
+                                   "an attribute", "the setup that reads")):
                 vo.wait_until(w)
-                self.play(FadeIn(caps[i]), FadeIn(cods[i], shift=UP * .06), run_time=.35)
-            tok = token([hx[0] - 1.1, hy - .2, 0], r=.08)
-            vo.wait_until("Every hop")
-            path = VMobject().set_points_as_corners([[hx[0] - 1.1, hy - .52, 0],
-                                                     [hx[3] + 1.1, hy - .52, 0]])
+                self.play(FadeIn(caps[i]), FadeIn(cods[i], shift=UP * .06), run_time=.3)
+            vo.wait_until("Every place")
+            path = VMobject().set_points_as_corners([[hx[0] - 1.0, hy - .52, 0],
+                                                     [hx[4] + 1.0, hy - .52, 0]])
+            tok = token(path.get_start(), r=.08)
             self.play(FadeIn(tok), run_time=.1)
-            tok.move_to(path.get_start())
             self.play(MoveAlongPath(tok, path), FadeIn(same), run_time=1.0)
             self.play(FadeOut(tok), run_time=.2)
 
@@ -1181,7 +1183,7 @@ class S07(Ep):
         k_chip = chip("KeyError", cx[0], -.25, INK, 24)
         a_chip = chip("AttributeError", cx[1], -.25, INK, 24)
         k_txt = at("a drawer is missing · 少了抽屉", cx[0], -.85, 20, GRAY)
-        a_txt = at("the object never got the fact · 少了事实", cx[1], -.85, 20, GRAY)
+        a_txt = at("the object never got that attribute · 少了属性", cx[1], -.85, 20, GRAY)
         quiet = VGroup(left("a quiet bug can hide behind a fixed crash", -6.1, -1.7, 24, RED,
                             bold=True),
                        mono_left("x_dimension = 1000  ≠  4 genes", 1.95, -1.7, 19, INK))
@@ -1191,12 +1193,12 @@ class S07(Ep):
             vo.wait_until("A key error")
             self.play(FadeIn(k_chip, shift=UP * .08), run_time=.35)
             vo.wait_until("a drawer is missing")
-            self.play(FadeIn(k_txt), k_chip[0].animate.set_stroke(RED), k_chip[1].animate.set_color(RED),
-                      run_time=.4)
+            self.play(FadeIn(k_txt), k_chip[0].animate.set_stroke(RED),
+                      k_chip[1].animate.set_color(RED), run_time=.4)
             vo.wait_until("An attribute error")
             self.play(FadeIn(a_chip, shift=UP * .08), k_chip[0].animate.set_stroke(INK),
                       k_chip[1].animate.set_color(INK), run_time=.35)
-            vo.wait_until("never got the fact")
+            vo.wait_until("never got that attribute")
             self.play(FadeIn(a_txt), a_chip[0].animate.set_stroke(RED),
                       a_chip[1].animate.set_color(RED), run_time=.4)
             vo.wait_until("And a quiet bug")
@@ -1204,51 +1206,71 @@ class S07(Ep):
                       a_chip[1].animate.set_color(INK), run_time=.45)
             self.play(FadeIn(quiet[1]), run_time=.35)
 
-        title = left("exercise · 练习", -6.3, 1.75, 26, INK, bold=True)
-        places = [(CFG_PATH + ":37", CONFIG[37].strip()), (TOY_PATH + ":19", TOY_CONFIG[19].strip()),
-                  ("speciesot_core.py:104", 'model_config["x_dimensions"] = …'),
-                  ("speciesot_core.py:220", CORE[220].strip()),
-                  ("speciesot_core.py:253", CORE[253].strip())]
-        rows_ = VGroup()
-        boxes2 = VGroup()
-        for i, (where, code) in enumerate(places):
-            yy = 1.12 - i * .5
-            b = Square(.26, stroke_color=INK, stroke_width=2).move_to([-6.05, yy, 0])
-            w = mono_left(where, -5.7, yy, 17, GRAY)
-            c = mono_left(code, -1.25, yy, 18, INK)
-            plural_s(c, code)
-            boxes2.add(b)
-            rows_.add(VGroup(b, w, c))
-        rerun = chip("then rerun e24_replica.ipynb", -2.55, -1.55, INK, 20, font=LATIN)
-        e5 = VGroup(left("which data should the number come from?", 1.0, -1.55, 20, GRAY),
-                    chip("episode 5", 5.4, -1.55, RED, 19, font=LATIN))
-        e5[0].move_to([e5[1].get_left()[0] - .25 - e5[0].width / 2, -2.15, 0])
-        e5[1].move_to([5.4, -2.15, 0])
+        title = left("exercise · 练习", -6.3, 1.8, 26, INK, bold=True)
+        keep = chip("x_dimension", 0, 1.8, RED, 19)
+        keep.move_to([6.3 - keep.width / 2, 1.8, 0])
+        keep_l = label("keep the singular:", 19, GRAY).next_to(keep, LEFT, buff=.25)
+        agree_l = left("already agrees with", -6.05, 1.22, 17, GRAY)
+        agree = VGroup(chip("config.yaml:37 ✓", 0, 1.22, INK, 16),
+                       chip("init · 220 ✓", 0, 1.22, INK, 16),
+                       chip("scgen's parameter name ✓", 0, 1.22, INK, 16, font=LATIN))
+        agree[0].next_to(agree_l, RIGHT, buff=.3)
+        agree[1].next_to(agree[0], RIGHT, buff=.2)
+        agree[2].next_to(agree[1], RIGHT, buff=.2)
+        edits = [("speciesot_core.py:104", 'model_config["x_dimensions"]', 'model_config["x_dimension"]'),
+                 ("speciesot_core.py:253", CORE[253].strip(), "x_dimension= self.x_dimension,"),
+                 ("toy_config.yaml:19", TOY_CONFIG[19].strip(), "x_dimension: 1000")]
+        erows = VGroup()
+        for i, (where, now, after) in enumerate(edits):
+            yy = .7 - i * .55
+            b = Square(.24, stroke_color=INK, stroke_width=2).move_to([-6.05, yy, 0])
+            w = mono_left(where, -5.75, yy, 16, GRAY)
+            n = mono_left(now, -2.75, yy, 16, INK)
+            plural_s(n, now)
+            ar = mono_left("→", 1.5, yy, 16, GRAY)
+            t = mono_left(after, 1.85, yy, 16, GRAY)
+            erows.add(VGroup(b, w, n, ar, t))
+        kw = glyphs(erows[1][2], edits[1][1], "x_dimension=")
+        kw_l = label("scgen's · leave it", 17, GRAY)
+        etag = tag_text("EXAMPLE · your edits", GRAY)
+        etag.move_to([6.3 - etag.width / 2, -.72, 0])
+        rr = VGroup(label("rerun e24_replica, then print", 17, INK),
+                    mono("experiment.models[1].x_dimension", 17, INK),
+                    label("→ the real gene count", 17, RED))
+        rr.arrange(RIGHT, buff=.18).move_to([0, -1.18, 0])
+        rr.shift(RIGHT * (-6.05 - rr.get_left()[0]))
+        why = left("models[1] exists: line 115 appends it before line 119 calls setup", -6.05,
+                   -1.64, 17, GRAY)
+        stop = left("setup may still stop at line 252", -6.05, -2.1, 17, GRAY)
+        e4 = chip("episode 4", 0, -2.1, RED, 18, font=LATIN)
+        e4.next_to(stop, RIGHT, buff=.3)
         with self.say(2) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.4)
             self.play(FadeIn(title), run_time=.3)
-            vo.wait_until("both spellings")
-            lag(self, *[FadeIn(r, shift=RIGHT * .08) for r in rows_], lag_ratio=.15,
-                run_time=.9)
-            vo.wait_until("Pick one")
-            pick = VGroup(chip("x_dimension", 0, 1.75, INK, 19),
-                          chip("x_dimensions", 0, 1.75, INK, 19))
-            plural_s(pick[1][1], "x_dimensions")
-            pick[1].move_to([6.3 - pick[1].width / 2, 1.75, 0])
-            orr = label("or", 19, GRAY).next_to(pick[1], LEFT, buff=.2)
-            pick[0].next_to(orr, LEFT, buff=.2)
-            plab = label("pick one:", 19, GRAY).next_to(pick[0], LEFT, buff=.3)
-            self.play(FadeIn(pick), FadeIn(orr), FadeIn(plab), run_time=.4)
-            vo.wait_until("both YAML files")
-            self.play(*[Indicate(rows_[i][1], color=RED, scale_factor=1.06) for i in (0, 1)],
-                      run_time=.6)
-            for i, n in zip((2, 3, 4), ("104", "220", "253")):
-                vo.wait_until(n)
-                self.play(Indicate(rows_[i][1], color=RED, scale_factor=1.06), run_time=.4)
+            vo.wait_until("keep the singular")
+            self.play(FadeIn(keep_l), FadeIn(keep, shift=LEFT * .08), run_time=.4)
+            vo.wait_until("It already matches")
+            self.play(FadeIn(agree_l), FadeIn(agree[0]), run_time=.35)
+            vo.wait_until("and init")
+            self.play(FadeIn(agree[1]), run_time=.3)
+            vo.wait_until("scgen's own parameter")
+            self.play(FadeIn(agree[2]), run_time=.35)
+            for i, w in enumerate(("Change line 104", "right-hand side", "the toy config")):
+                vo.wait_until(w)
+                self.play(FadeIn(erows[i][:3], shift=RIGHT * .06), run_time=.35)
+                anims = [FadeIn(erows[i][3:], shift=RIGHT * .06)]
+                if i == 1:
+                    kw_l.move_to([kw.get_x(), kw.get_y() - .28, 0])
+                    anims.append(FadeIn(kw_l))
+                if i == 0:
+                    anims.append(FadeIn(etag))
+                self.play(*anims, run_time=.35)
             vo.wait_until("Then rerun")
-            self.play(FadeIn(rerun, shift=UP * .08), run_time=.4)
-            vo.wait_until("Which data")
-            self.play(FadeIn(e5[0]), run_time=.4)
-            vo.wait_until("episode five")
-            self.play(FadeIn(e5[1], shift=LEFT * .08), run_time=.4)
+            self.play(FadeIn(rr[:2], shift=UP * .06), run_time=.4)
+            vo.wait_until("real gene count")
+            self.play(FadeIn(rr[2]), FadeIn(why), run_time=.4)
+            vo.wait_until("still stops at line 252")
+            self.play(FadeIn(stop), run_time=.35)
+            vo.wait_until("Episode four")
+            self.play(FadeIn(e4, shift=LEFT * .08), run_time=.35)
         self.finish()

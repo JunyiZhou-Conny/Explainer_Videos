@@ -20,3 +20,7 @@ produced in this session (Python 3.12.3, anndata 0.13.4, scikit-learn 1.9.1, pyt
 | SOLID mapping; card order | our recommendation | INFERRED |
 | `MODELS = {…}` registry sketch | written for this video | EXAMPLE |
 | Held-out split picture (no proportions; the real split halves held-out cells into ignore / ood) | `specs/m1_modern.yaml` 28 (`toggle_ood`); repo `cellot/cellot_gpu/cellot/data/cell.py` 330–340 (50/50 ignore/ood) | INFERRED (schematic, tagged) |
+| The scorecard is written by `22_v08_results.ipynb`; the scGen run lives under `cellot/cellot_gpu/results/hvg_pearson_residuals_m1_v08_ood/scgen/` (on the cluster, not in git) | repo `speciesOT/baseline/analysis/22_v08_results.ipynb` cell 3 (`dual.to_csv(… v08_scorecard_dual.csv)`), cell 1 (`MODELS`: "m1 v08 scGen" → `hvg_pearson_residuals_m1_v08_ood/scgen`) | READ IN NOTEBOOK |
+| Identity R² of means 0.5542 is the same on every M1 v08 row: it describes the data | repo `v08_scorecard_dual.csv` rows 4 and 5 (`r2_identity` 0.5542 for IMPACT and scGen); `cellot/cellot_gpu/scripts/extended_metrics.py` 165 (`r2_identity = _r2_means(control, treated)`) | READ IN CODE |
+| Comparing means, not cells, removes the line-313 crash | `_r2_means` averages each set over cells before correlating (extended_metrics.py 154–157), so unequal cell counts are fine; Josh's `R2Evaluation` multiplies row i by row i (core 311–313) | READ IN CODE |
+| "open only the few calls your adapter makes" | E4's adapter list (`ae.py` 33, 149, 152, 175; `train.py` 173) | INFERRED (our recommendation) |

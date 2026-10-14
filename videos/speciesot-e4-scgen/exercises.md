@@ -7,7 +7,12 @@
    (inputs → outputs): `cellot/cellot_gpu/cellot/models/ae.py` 33 (`load_autoencoder_model`),
    149 (`encode`), 152 (`decode`), 175 (`compute_scgen_shift`);
    `cellot/cellot_gpu/cellot/transport.py` 61 (`transport_scgen`);
-   `cellot/cellot_gpu/cellot/train/train.py` 173 (`train_auto_encoder`).
+   `cellot/cellot_gpu/cellot/train/train.py` 173 (`train_auto_encoder`; note it already calls
+   `compute_scgen_shift` at 250–252, and takes a cellot config plus an `.h5ad` path, not an
+   AnnData; template `cellot/cellot_gpu/configs/models/scgen.yaml`).
+   Then read `scripts/predict_new_input.sh` 623–663: your repo already does load → `model.eval()`
+   → shift → encode → decode there. Why must `model.eval()` come before encoding
+   (hint: `scripts/bake_model_artifacts.py` 119–120)?
 3. **Comments before code.** In `scGenModel`, write `train` and `predict` as numbered comments
    only. Where does δ live after `train` returns? What exactly does `predict` return (an AnnData
    with which `var_names`)?

@@ -22,7 +22,7 @@
       "title_zh": "用算术做预测",
       "lines": [
         {"en": "Can you predict a human cell from a mouse cell with one subtraction and one addition? That's the bet scGen makes, and it's the model your package is wiring up right now.",
-         "zh": "能不能只靠一次减法和一次加法，就从小鼠细胞预测出人类细胞？这正是 scGen 押下的赌注，也是你的包现在正在接入的模型。"},
+         "zh": "能不能只靠一次减法和一次加法，就从小鼠细胞预测出人类细胞？scGen 赌的就是这一点，它也是你的包现在正在接入的模型。"},
         {"en": "To write its class, you need two things: the idea, in one picture, and a clear answer to which library code it calls.",
          "zh": "要写好它的类，你需要两样东西：一张图讲清楚的思路，以及一个明确的答案——它到底调用哪一份库代码。"}
       ]
@@ -32,8 +32,8 @@
       "title_en": "Squeeze, then rebuild",
       "title_zh": "先压缩，再重建",
       "lines": [
-        {"en": "Start with the autoencoder. An encoder squeezes each cell, about a thousand gene values in your benchmark, into a short code. In Josh's config, that's fifty numbers. A decoder rebuilds the cell from the code.",
-         "zh": "先从自编码器说起。编码器把每个细胞——在你的基准里大约一千个基因的数值——压缩成一段很短的编码，在 Josh 的配置里是 50 个数。解码器再从编码把细胞重建出来。"},
+        {"en": "Start with the autoencoder. An encoder squeezes each cell into a short code. In your benchmark, a cell has about a thousand gene values; in Josh's config, the code is fifty numbers. A decoder rebuilds the cell from the code.",
+         "zh": "先从自编码器说起。编码器把每个细胞压缩成一段很短的编码。在你的基准里，一个细胞约有一千个基因值；在 Josh 的配置里，编码只有 50 个数。解码器再从编码把细胞重建出来。"},
         {"en": "Training means learning to rebuild well. Mouse and human cells train the same network together, so both species land in one shared code space.",
          "zh": "训练就是学会把细胞重建好。小鼠和人类细胞一起训练同一个网络，于是两个物种都落进同一个共享的编码空间。"},
         {"en": "In that space, similar cells sit close together. That's what makes the next step possible.",
@@ -50,7 +50,7 @@
         {"en": "Now take cells the model never trained on, like a held-out mouse cell type. Encode them, add delta, decode. Out come predicted human cells.",
          "zh": "现在拿一些模型训练时从没见过的细胞，比如一个被留出的小鼠细胞类型：编码、加上 delta、解码，出来的就是预测的人类细胞。"},
         {"en": "Pause and ponder: what must be true of mouse and human cells for one arrow to work for every cell type?",
-         "zh": "停下来想一想：要让同一个箭头对每种细胞类型都管用，小鼠和人类细胞之间必须满足什么？"},
+         "zh": "停下来想一想：小鼠和人类细胞之间必须满足什么，才能让同一个箭头对每种细胞类型都管用？", "pause_after": 4.0},
         {"en": "That's the assumption: one arrow, the same for every cell type. If species differences depend on the cell type, one arrow can't capture them. That's the gap CellOT tries to close.",
          "zh": "这就是它的假设：只有一个箭头，对每种细胞类型都一样。如果物种差异依赖于细胞类型，一个箭头就抓不住。这正是 CellOT 想要弥补的缺口。"}
       ]
@@ -61,11 +61,11 @@
       "title_zh": "三个方法，三项工作",
       "lines": [
         {"en": "Now map the picture onto the class. Setup builds the untrained network. Train joins mouse and human into one table with a species label, fits the network, then computes delta and keeps it on the object.",
-         "zh": "现在把这张图对应到类上。setup 搭好一个还没训练的网络。train 把小鼠和人类细胞合成一张带物种标签的表，训练网络，然后算出 delta 并保存在对象身上。"},
-        {"en": "Predict encodes the test mouse cells, adds the stored delta, decodes, and returns an AnnData, so every metric can read it.",
-         "zh": "predict 对测试集的小鼠细胞编码、加上保存好的 delta、再解码，最后返回一个 AnnData，这样每个指标都能读取它。"},
-        {"en": "Now compare the stubs. Train computes delta but never fits the network, and delta vanishes when train returns. Predict ends by handing back the mouse cells untouched. Those are your blanks.",
-         "zh": "再对照一下现在的草稿：train 算了 delta，却从没训练网络，而且 train 一返回 delta 就消失了。predict 最后原封不动地交回小鼠细胞。这些就是你要填的空。"}
+         "zh": "现在把这张图对应到类上。setup 搭好一个还没训练的网络。train 把小鼠和人类细胞合成一张带物种标签的表，训练网络，然后算出 delta，存成对象属性 self.delta。"},
+        {"en": "Predict encodes the test mouse cells, adds the stored delta, decodes, and returns an AnnData with the human test genes, in the same order, so evaluate can score it against the human test cells.",
+         "zh": "predict 对测试集的小鼠细胞编码、加上保存好的 delta、再解码，最后返回一个 AnnData，基因和人类测试集一致、顺序相同，这样 evaluate 才能拿它和人类测试细胞比较打分。"},
+        {"en": "Now compare the stubs. Train computes delta but never fits the network, and delta vanishes when train returns. Predict's last line would hand back the mouse cells untouched, but it never gets there: line 288 uses names that only exist in the atlas script. Those are your blanks.",
+         "zh": "再对照一下现在的占位代码（stub）：train 算了 delta，却从没训练网络，而且 train 一返回，delta 就没了。predict 的最后一行本会原封不动地交回小鼠细胞，但它根本走不到那里：第 288 行用到的名字只存在于图谱脚本里。这些就是你要填的空。"}
       ]
     },
     {
@@ -78,11 +78,11 @@
         {"en": "One: the TensorFlow model in your atlas scripts. Its code is a separate clone, in a git-ignored folder inside your project, and it runs in its own TensorFlow one environment. Josh's helper functions match those scripts line for line.",
          "zh": "第一个：图谱脚本里的 TensorFlow 模型。它的代码是一份单独的克隆，放在项目里一个被 Git 忽略的文件夹中，在它专用的 TensorFlow 1 环境里运行。Josh 的辅助函数和这些脚本逐行一致。"},
         {"en": "Two: the package that import scgen loads in Josh's environment. His comment says it pulls in scvi-tools. And we checked that package: it has no VAEArith at all. If that's what loads, setup stops right at that name.",
-         "zh": "第二个：在 Josh 的环境里，import scgen 加载的那个包。他的注释说它会拉进 scvi-tools。我们也检查过这个包：它根本没有 VAEArith。如果加载的是它，setup 就会正好停在这个名字上。"},
+         "zh": "第二个：在 Josh 的环境里，import scgen 加载的那个包。他的注释说它会拉进 scvi-tools。我们也检查过这个包：它根本没有 VAEArith。如果加载的是它，setup 会在 scgen.VAEArith 这一行直接报错。"},
         {"en": "Three: the autoencoder in your cellot folder. CellOT's source is copied into your repository, with your own edits, and its model named scgen is a plain autoencoder with the same mean shift. That one produced your benchmark numbers.",
          "zh": "第三个：cellot 文件夹里的自编码器。CellOT 的源码复制了一份放在你的仓库里，还带着你自己的修改；它里面叫 scgen 的模型是一个普通自编码器，加上同样的均值位移。你的基准数字就是它跑出来的。"},
-        {"en": "Now look at Josh's config: two layers of two hundred fifty-six, fifty latent dimensions, and a learning rate of point zero zero one. That's the cellot autoencoder's spec. The TensorFlow model fixes its own two layers at eight hundred units each, so those numbers would go nowhere.",
-         "zh": "再看 Josh 的配置：两层、每层 256，潜空间 50 维，学习率 0.001。这正是 cellot 自编码器的规格。而 TensorFlow 版的模型在内部把两层隐藏层固定为每层 800 个单元，所以这些数字根本没有去处。"}
+        {"en": "Now look at Josh's config: two layers of two hundred fifty-six, fifty latent dimensions, and a learning rate of point zero zero one. Those three match the cellot autoencoder's spec. The TensorFlow model fixes its own two layers at eight hundred units each, so the layer sizes would go nowhere. So today, Josh's class mixes all three: helpers from the first, the import from the second, settings from the third. That's why it has to pick exactly one.",
+         "zh": "再看 Josh 的配置：两层、每层 256，潜空间 50 维，学习率 0.001。这三项正是 cellot 自编码器的规格。而 TensorFlow 版的模型在内部把两层隐藏层固定为每层 800 个单元，所以这里的层大小根本用不上。所以现在，Josh 的类把三者混在了一起：辅助函数来自第一个，import 来自第二个，参数来自第三个。这就是为什么它必须只选一个。"}
       ]
     },
     {
@@ -91,15 +91,15 @@
       "title_zh": "一个适配器，一个选择",
       "lines": [
         {"en": "So here's the rule. Your scGenModel class is an adapter: the only place in your package that speaks scgen. Everything else speaks your contract: setup, train, predict.",
-         "zh": "所以规则是：你的 scGenModel 类是一个适配器，是包里唯一「说 scgen 语言」的地方。其余一切都只说你的契约：setup、train、predict。"},
+         "zh": "所以规则是：你的 scGenModel 类是一个适配器，是包里唯一直接和 scgen 打交道的地方。其余部分都只通过你定义的接口打交道：setup、train、predict。"},
         {"en": "The adapter wraps exactly one of the three. If the goal is to reproduce your benchmark numbers, wrap the cellot autoencoder, because it made them. Settle that with Josh first.",
          "zh": "适配器只包住三者之一。如果目标是复现你的基准数字，那就包住 cellot 的自编码器，因为那些数字就是它跑出来的。先和 Josh 把这件事定下来。"},
-        {"en": "Whichever you pick, the adapter needs only a handful of calls: build or load the network, train it, encode, decode, and compute the shift. Read the library's source at those points, and nowhere else.",
-         "zh": "不管选哪个，适配器都只需要几个调用：建立或加载网络、训练、编码、解码、计算位移。只在这几处读库的源码，别处都不用读。"},
+        {"en": "So, to your question: no, you don't need the original scgen code. For the cellot autoencoder, the adapter needs only a handful of calls: load the model, train it, which also computes the shift, switch it to eval mode, and transport the cells. Your repo already makes these calls in predict new input dot sh. Start reading there.",
+         "zh": "所以回答你的问题：不需要，你不用去读原始的 scgen 代码。对 cellot 自编码器来说，适配器只需要几个调用：加载模型；训练它，训练时会顺带算出位移；切换到 eval 模式；再把细胞平移过去。你的仓库里 predict_new_input.sh 已经调用过这些函数，从那里开始读。"},
         {"en": "The payoff: in tests, a few-line fake can stand in for the library, so your tests never need it installed. That's exactly how we ran Josh's code for this series.",
-         "zh": "回报是：在测试中，一个只有几行的假库就能顶替它，你的测试永远不需要安装它。我们为这个系列运行 Josh 的代码时，用的正是这个办法。"},
+         "zh": "回报是：在测试中，一个只有几行的假库就能顶替它，测试时根本不用安装它。我们为这个系列运行 Josh 的代码时，用的正是这个办法。"},
         {"en": "Pause and ponder: if you later switch to a different scGen implementation, how many files in your package should change?",
-         "zh": "停下来想一想：如果以后换成另一种 scGen 实现，你的包里应该有几个文件需要改动？"}
+         "zh": "停下来想一想：如果以后换成另一种 scGen 实现，你的包里应该有几个文件需要改动？", "pause_after": 4.0}
       ]
     },
     {
@@ -109,10 +109,10 @@
       "lines": [
         {"en": "Recap. scGen encodes, shifts every cell along one learned arrow, and decodes. Setup builds, train learns the network and delta, and predict applies them.",
          "zh": "回顾一下。scGen 先编码，把每个细胞都沿同一个学到的箭头平移，再解码。setup 负责搭建，train 学习网络和 delta，predict 应用它们。"},
-        {"en": "Three things are called scgen. Your adapter wraps exactly one, and it's the only doorway to it. The answer to the pause: one file changes, the adapter, plus its section of the config.",
-         "zh": "有三个东西都叫 scgen。你的适配器只包住其中一个，也是通往它的唯一一扇门。刚才那个问题的答案：只改一个文件——适配器，再加上它在配置里的那一段。"},
-        {"en": "Your exercise: in the cellot folder, find those few calls, with file and line. Then write train and predict as plain comments, step by step, before writing any code.",
-         "zh": "你的练习：在 cellot 文件夹里找到那几个调用，记下文件和行号。然后在写任何代码之前，先用注释把 train 和 predict 一步一步写出来。"}
+        {"en": "Three things are called scgen. Your adapter wraps exactly one, and it's the only doorway to it. The answer to the pause: one code file changes, the adapter, plus its section of the config and the dependency it needs.",
+         "zh": "有三个东西都叫 scgen。你的适配器只包住其中一个，也是通往它的唯一一扇门。刚才那个问题的答案：只改一个代码文件，也就是适配器，再加上它在配置里的那一段和它需要的依赖。"},
+        {"en": "Your exercise: open those calls in cellot, plus transport scgen, and write down each one's inputs and outputs. Then write train and predict as plain comments, step by step, before writing any code.",
+         "zh": "你的练习：在 cellot 里打开这几个调用，再加上 transport_scgen，写下每个调用的输入和输出。然后在写任何代码之前，先用注释把 train 和 predict 一步一步写出来。"}
       ]
     }
   ]
