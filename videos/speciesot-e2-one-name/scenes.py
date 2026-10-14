@@ -1,10 +1,10 @@
-"""speciesOT E2 · One name, four places — Swiss scenes.
+"""speciesOT E2 · One name, five places — Swiss scenes.
 
 Narration and budgets come from the plan (script.json). Code on screen is Josh's real
 speciesot_core.py, Tests/config.yaml and Tests/toy_config.yaml (videos/speciesot-series/
 excerpts.py, real line numbers; a long line may be elided with "…", never rewritten). Error
 texts are MEASURED by videos/speciesot-series/checks/error_trail.py on toy data with a
-STAND-IN scgen. The diagrams here (a value token travelling four hops, dictionary drawers,
+STAND-IN scgen. The diagrams here (a value token travelling five places, dictionary drawers,
 the twin drawers, the traceback read bottom-up) are this episode's own.
 """
 import sys
@@ -151,7 +151,10 @@ class S01(Ep):
         cell = cpanel([(1, "experiment.setup()")], NB_PATH, -3.85, 1.5, width=4.9, size=22,
                       numbers=False)
         err = error_card("AttributeError", ATTR_MSG, "speciesot_core.py:253 in setup",
-                         -1.25, -.85, width=10.1, size=22)
+                         -1.25, -.85, width=10.1, size=22, tag=None)
+        etag = tag_text("MEASURED · toy data, stand-in scgen")
+        etag.move_to([err[0].get_right()[0] - etag.width / 2 - .14,
+                      err[0].get_top()[1] - .34, 0]).set_z_index(6)
         msg = err[3][0]
         red_s = msg[-2]
         red_s.set_color(RED)
@@ -166,9 +169,11 @@ class S01(Ep):
             self.play(FadeIn(m), FadeIn(tok), run_time=.3)
             self.play(Create(wire), tok.animate.move_to(wire.get_end()), run_time=.6)
             vo.wait_until("attribute error")
-            self.play(FadeOut(tok, scale=2.5), FadeIn(err, shift=UP * .12), run_time=.5)
+            self.play(FadeOut(tok, scale=2.5), FadeIn(err, shift=UP * .12),
+                      FadeIn(etag, shift=UP * .12), run_time=.5)
             vo.wait_until("with an s")
-            ring = Circle(radius=.2, color=RED, stroke_width=3).move_to(red_s).set_z_index(9)
+            ring = Circle(radius=.16, color=RED, stroke_width=3).move_to(red_s)\
+                .shift(DOWN * .02).set_z_index(9)
             self.play(Create(ring), run_time=.45)
 
         line_body = CORE[253]
@@ -181,15 +186,16 @@ class S01(Ep):
         st = tag_text("MEASURED · stand-in scgen").move_to([0, 0, 0])
         st.next_to(toy, RIGHT, buff=.35)
         with self.say(1) as vo:
-            self.cue(vo, .02, FadeOut(ring), FadeOut(m), FadeOut(wire), FadeIn(fixp, shift=LEFT * .1),
-                     run_time=.5)
+            self.cue(vo, .02, FadeOut(ring), FadeOut(m), FadeOut(wire),
+                     FadeIn(fixp, shift=LEFT * .1), run_time=.5)
             vo.wait_until("Delete the s")
             self.play(FadeIn(patch), Circumscribe(s253, color=RED, buff=.05), run_time=.5)
             self.play(FadeOut(s253, shift=UP * .25), comma.animate.shift(LEFT * ADVANCE * 22),
                       red_s.animate.set_opacity(.25), run_time=.6)
             vo.wait_until("crash disappears")
-            self.play(err.animate.stretch_to_fit_height(.02).set_opacity(0), run_time=.5)
-            self.remove(err)
+            self.play(VGroup(err, etag).animate.stretch_to_fit_height(.02).set_opacity(0),
+                      run_time=.5)
+            self.remove(err, etag)
             vo.wait_until("toy data")
             self.play(FadeIn(toy, shift=RIGHT * .1), run_time=.4)
             vo.wait_until("stand-in")
@@ -198,17 +204,20 @@ class S01(Ep):
             self.play(FadeIn(ok, shift=UP * .1), run_time=.5)
 
         y1, y2, x0, L = .35, -.75, -1.6, 6.4
-        net_lab = left("network built for", -6.1, y1 + .02, 22, INK)
+        net_lab = left("network would be built for", -6.1, y1 + .02, 22, INK)
         net_val = mono_left("x_dimension = 1000", -6.1, y1 - .38, 20, INK)
         dat_lab = left("toy data has", -6.1, y2 + .02, 22, INK)
         dat_val = mono_left("4 genes", -6.1, y2 - .38, 20, GRAY)
         bar1 = Rectangle(width=L, height=.42, stroke_width=0, fill_color=INK,
                          fill_opacity=1).move_to([x0 + L / 2, y1 - .18, 0])
         bar2 = Rectangle(width=max(L * 4 / 1000, .05), height=.42, stroke_width=0,
-                         fill_color=INK, fill_opacity=1).move_to([x0, y2 - .18, 0], aligned_edge=LEFT)
+                         fill_color=INK, fill_opacity=1).move_to([x0, y2 - .18, 0],
+                                                                aligned_edge=LEFT)
         n1 = mono("1000", 20, INK).next_to(bar1, RIGHT, buff=.15)
         n2 = mono("4", 20, GRAY).next_to(bar2, RIGHT, buff=.15)
-        neq = mono("≠", 54, RED, bold=True).move_to([x0 - .55, (y1 + y2) / 2 - .18, 0])
+        neq = mono("≠", 54, RED, bold=True).move_to([x0 - .45, (y1 + y2) / 2 - .18, 0])
+        btag = tag_text("MEASURED · stand-in scgen records the argument")
+        btag.move_to([6.3 - btag.width / 2, -1.3, 0])
         verdict = at("error gone · bug stays", 0, -1.85, 34, RED, bold=True)
         with self.say(2) as vo:
             self.cue(vo, .02, FadeOut(cell), FadeOut(ok), FadeOut(toy), FadeOut(st),
@@ -216,18 +225,18 @@ class S01(Ep):
             self.play(FadeIn(net_lab), FadeIn(net_val), FadeIn(dat_lab), FadeIn(dat_val),
                       run_time=.4)
             vo.wait_until("one thousand genes")
-            self.play(GrowFromEdge(bar1, LEFT), FadeIn(n1), run_time=.8)
+            self.play(GrowFromEdge(bar1, LEFT), FadeIn(n1), FadeIn(btag), run_time=.8)
             vo.wait_until("not four")
             self.play(GrowFromEdge(bar2, LEFT), FadeIn(n2), run_time=.4)
             self.play(FadeIn(neq, scale=1.4), run_time=.35)
             vo.wait_until("The error is gone")
             self.play(FadeIn(verdict, shift=UP * .1), neq.animate.set_color(INK), run_time=.5)
             vo.wait_until("follow one name")
-            dots = VGroup(*[hop_badge(i + 1, 3.0 + i * .75, -1.85, r=.17) for i in range(4)])
-            path = Line([3.0, -1.85, 0], [3.0 + 3 * .75, -1.85, 0], color=INK, stroke_width=2)
-            self.play(verdict.animate.move_to([-2.3, -1.85, 0]), run_time=.4)
+            dots = VGroup(*[hop_badge(i + 1, 2.9 + i * .78, -1.85, r=.17) for i in range(5)])
+            path = Line([2.9, -1.85, 0], [2.9 + 4 * .78, -1.85, 0], color=INK, stroke_width=2)
+            self.play(verdict.animate.move_to([-2.4, -1.85, 0]), run_time=.4)
             self.play(Create(path), run_time=.3)
-            lag(self, *[FadeIn(d, scale=.6) for d in dots], lag_ratio=.25, run_time=.6)
+            lag(self, *[FadeIn(d, scale=.6) for d in dots], lag_ratio=.25, run_time=.7)
         self.finish()
 
 
@@ -282,8 +291,11 @@ class S02(Ep):
             vo.wait_until("Two wires")
             self.play(Create(dash1), Create(dash2), run_time=.6)
             vo.wait_until("editable install")
+            nb_tag = tag_text("READ IN NOTEBOOK · cell 0, commented", INK)
+            nb_tag.move_to([6.3 - nb_tag.width / 2, 1.8, 0])
+            code_tag = source_tag("READ IN CODE").move_to([5.45, .3, 0])
             self.play(Create(w1), FadeIn(w1_tip), FadeOut(dash1), FadeIn(pip, shift=DOWN * .08),
-                      run_time=.7)
+                      FadeIn(nb_tag), FadeIn(code_tag), run_time=.7)
             vo.wait_until("dash e")
             self.play(pip_e.animate.set_color(RED), Circumscribe(pip_e, color=RED, buff=.05),
                       run_time=.6)
@@ -300,11 +312,13 @@ class S02(Ep):
             self.play(FadeIn(m_nb), FadeOut(tok), run_time=.4)
             vo.wait_until("re-reads the file")
             m_core = rmark(core, 218)
-            self.play(FadeIn(m_core), run_time=.35)
+            edit_l = left("← you edit here", core.row(218).get_right()[0] + .3,
+                          core.row(218).get_y(), 17, RED).set_z_index(3)
+            self.play(FadeIn(m_core), FadeIn(edit_l), run_time=.35)
             tok2 = token(corners[0])
             self.play(FadeIn(tok2), run_time=.15)
             self.play(MoveAlongPath(tok2, w1_path), run_time=1.0)
-            self.play(FadeOut(tok2), FadeOut(m_core), run_time=.3)
+            self.play(FadeOut(tok2), FadeOut(m_core), FadeOut(edit_l), run_time=.3)
 
         core2 = cpanel(rows(CORE, 80, 82), CORE_PATH, -2.4, 1.24, width=7.8, size=16)
         exp_l = mono("Experiment(path)", 17, INK).move_to([w2.get_x(), y2 + .3, 0])
@@ -329,7 +343,8 @@ class S02(Ep):
         names = ("edit a file", "rerun the cell", "read what breaks")
         steps = VGroup(*[chip(t, x, ly, INK, 26, font=LATIN) for t, x in zip(names, lx)])
         subs = VGroup(*[mono(t, 16, GRAY).move_to([x, ly - .62, 0]) for t, x in
-                        zip(("core.py · config.yaml", "e24_replica.ipynb", "the traceback"), lx)])
+                        zip(("speciesot_core.py · config.yaml", "e24_replica.ipynb",
+                             "the traceback"), lx)])
         fwd = VGroup(*[Arrow(steps[i].get_right(), steps[i + 1].get_left(), buff=.12, color=INK,
                              stroke_width=3, tip_length=.2, max_tip_length_to_length_ratio=1)
                        for i in range(2)])
