@@ -1,5 +1,6 @@
 """Static check: every vo.wait_until("phrase") in scenes.py occurs in the narration line of
-the `with self.say(i)` block it sits in, and every say(i) index exists. No rendering.
+the `with self.say(i)` block it sits in, in the order the line speaks them, and every say(i)
+index exists. No rendering.
 
     python3 videos/speciesot-series/check_anchors.py videos/speciesot-e1-blueprint [...]
 """
@@ -32,14 +33,27 @@ def check(project):
                                         f"{len(lines[cls.name])} lines")
                         continue
                     text = lines[cls.name][i]
-                    for sub in ast.walk(node):
-                        if (isinstance(sub, ast.Call) and isinstance(sub.func, ast.Attribute)
-                                and sub.func.attr in ("wait_until", "until", "time_until")
-                                and sub.args and isinstance(sub.args[0], ast.Constant)):
-                            phrase = sub.args[0].value
-                            if phrase not in text and phrase.lower() not in text.lower():
-                                problems.append(f"{cls.name} say({i}): anchor {phrase!r} not in "
-                                                f"{text[:70]!r}…")
+                    calls = sorted((sub for sub in ast.walk(node)
+                                    if isinstance(sub, ast.Call)
+                                    and isinstance(sub.func, ast.Attribute)
+                                    and sub.func.attr in ("wait_until", "until", "time_until")
+                                    and sub.args and isinstance(sub.args[0], ast.Constant)),
+                                   key=lambda c: (c.lineno, c.col_offset))
+                    last, last_phrase = -1, None
+                    for sub in calls:
+                        phrase = sub.args[0].value
+                        at = text.lower().find(phrase.lower())
+                        if at < 0:
+                            problems.append(f"{cls.name} say({i}): anchor {phrase!r} not in "
+                                            f"{text[:70]!r}…")
+                            continue
+                        # wait_until never waits for a phrase already spoken, so the anchors
+                        # must follow the order of the sentence
+                        if at < last:
+                            problems.append(f"{cls.name} say({i}): anchor {phrase!r} (line "
+                                            f"{sub.lineno}) is spoken before {last_phrase!r}; "
+                                            "it would fire late")
+                        last, last_phrase = max(last, at), phrase
         used[cls.name] = said
         # say(i) inside a loop (e.g. range) can't be resolved statically; only report gaps
         # when every index is a literal.
