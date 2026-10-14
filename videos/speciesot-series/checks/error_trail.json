@@ -1,0 +1,190 @@
+{
+ "package_dir": "<josh-src>",
+ "python": "3.12.3",
+ "anndata": "0.13.4",
+ "results": [
+  {
+   "stage": "yaml_none",
+   "note": "What does `IdentityModel: None` (Tests/config.yaml line 31) load as?",
+   "ok": true,
+   "value": "{'IdentityModel': 'None', 'Other': None}",
+   "stub_scgen": false
+  },
+  {
+   "stage": "abstract",
+   "note": "AbstractModel() directly",
+   "ok": false,
+   "error": {
+    "type": "TypeError",
+    "message": "Can't instantiate abstract class AbstractModel without an implementation for abstract methods 'predict', 'setup', 'train'",
+    "speciesot_frames": []
+   },
+   "stub_scgen": false
+  },
+  {
+   "stage": "toy_config_setup",
+   "note": "Tests/toy_config.yaml shape -> Experiment.setup()",
+   "ok": false,
+   "error": {
+    "type": "KeyError",
+    "message": "'experiment'",
+    "speciesot_frames": [
+     "speciesot_core.py:86 in setup"
+    ]
+   },
+   "stub_scgen": true
+  },
+  {
+   "stage": "toy_config_plus_experiment",
+   "note": "toy_config + experiment section -> setup()",
+   "ok": false,
+   "error": {
+    "type": "KeyError",
+    "message": "'x_dimension'",
+    "speciesot_frames": [
+     "speciesot_core.py:115 in setup",
+     "speciesot_core.py:220 in __init__"
+    ]
+   },
+   "stub_scgen": true
+  },
+  {
+   "stage": "config_setup",
+   "note": "Tests/config.yaml shape -> setup()",
+   "ok": false,
+   "error": {
+    "type": "AttributeError",
+    "message": "'scGenModel' object has no attribute 'x_dimensions'",
+    "speciesot_frames": [
+     "speciesot_core.py:119 in setup",
+     "speciesot_core.py:253 in setup"
+    ]
+   },
+   "stub_scgen": true
+  },
+  {
+   "stage": "config_snapshot",
+   "note": "after the failed setup: the dict vs the object",
+   "ok": true,
+   "value": {
+    "config_dict_after_setup": {
+     "random_state": 0,
+     "hidden_units": [
+      256,
+      256
+     ],
+     "lr": 0.001,
+     "use_all_genes": true,
+     "x_dimension": 1000,
+     "z_dimension": 50,
+     "alpha": 0.5,
+     "dropout_rate": 0.2,
+     "x_dimensions": 4,
+     "model_path": "<tmp>/export/scGen"
+    },
+    "x_dimension_attribute": 1000,
+    "has_x_dimensions_attribute": false
+   },
+   "stub_scgen": true
+  },
+  {
+   "stage": "identity_end_to_end",
+   "note": "IdentityModel only: setup/train/predict/evaluate",
+   "ok": true,
+   "value": {
+    "evaluate_returned": null,
+    "direct_scores": {
+     "R2Evaluation": 0.1030263751745224,
+     "MMDEvaluation": 0.32616138458251953
+    },
+    "n_predictions": 1
+   },
+   "stub_scgen": false
+  },
+  {
+   "stage": "r2_uneven_cells",
+   "note": "5 mouse test cells vs 7 human test cells",
+   "ok": false,
+   "error": {
+    "type": "ValueError",
+    "message": "operands could not be broadcast together with shapes (5,4) (7,4) ",
+    "speciesot_frames": [
+     "speciesot_core.py:313 in evaluate"
+    ]
+   },
+   "stub_scgen": false
+  },
+  {
+   "stage": "mmd_uneven_cells",
+   "note": "MMD alone with 5 vs 7 cells",
+   "ok": true,
+   "value": 0.21976202726364136,
+   "stub_scgen": false
+  },
+  {
+   "stage": "scgen_setup_patched",
+   "note": "setup() with self.x_dimension (one-word patch)",
+   "ok": true,
+   "value": {
+    "x_dimension_passed": 1000
+   },
+   "stub_scgen": true
+  },
+  {
+   "stage": "scgen_train",
+   "note": "Experiment.train() with scGenModel present",
+   "ok": false,
+   "error": {
+    "type": "TypeError",
+    "message": "scGenModel.train() missing 1 required positional argument: 'training_data'",
+    "speciesot_frames": [
+     "speciesot_core.py:133 in train"
+    ]
+   },
+   "stub_scgen": true
+  },
+  {
+   "stage": "scgen_predict",
+   "note": "scGenModel.predict(test_data)",
+   "ok": false,
+   "error": {
+    "type": "NameError",
+    "message": "name '_dense' is not defined",
+    "speciesot_frames": [
+     "speciesot_core.py:288 in predict"
+    ]
+   },
+   "stub_scgen": true
+  },
+  {
+   "stage": "toy_model_section",
+   "note": "scGenModel(toy_config['models']['scGenModel'] + model_path)",
+   "ok": false,
+   "error": {
+    "type": "KeyError",
+    "message": "'x_dimension'",
+    "speciesot_frames": [
+     "speciesot_core.py:220 in __init__"
+    ]
+   },
+   "stub_scgen": false
+  },
+  {
+   "stage": "known_answers",
+   "note": "MMD grows with shift; R2 of a perfect prediction",
+   "ok": true,
+   "value": {
+    "mmd_vs_shift": {
+     "0.0": 0.0,
+     "0.5": 0.0797,
+     "1.0": 0.2923,
+     "2.0": 0.8473
+    },
+    "r2_perfect": 1.0,
+    "r2_shuffled_rows": 0.0197,
+    "josh_test_mmd_identical": 0.0
+   },
+   "stub_scgen": false
+  }
+ ]
+}

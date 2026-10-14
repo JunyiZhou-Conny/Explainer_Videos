@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "preset": "swiss",
+  "duration_seconds": 320.0,
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "container": "mp4",
+    "codec": "h264"
+  },
+  "narration": {
+    "language": "en",
+    "voice": "af_heart",
+    "speed": 0.95
+  },
+  "subtitles": {
+    "languages": [
+      "zh-CN",
+      "en"
+    ],
+    "layout": "Chinese above English",
+    "burn_in": true,
+    "sidecar_formats": [
+      "srt",
+      "ass"
+    ]
+  },
+  "music": {
+    "enabled": true
+  },
+  "production": {
+    "workspace": ".",
+    "runner": "tools/render_episode.py",
+    "output_subdirectory": "outputs"
+  },
+  "topic": "speciesOT E4: scGen as latent arithmetic, mapped onto setup/train/predict, and how much of the scgen library you need (the adapter).",
+  "skill_source": "conny-explainer-video",
+  "scene_implementation_status": "not-authored",
+  "sources": [],
+  "style_snapshot": "style.md",
+  "style_sha256": "76c5f8f3be7981d6670c94e286fa8c392159bd6b68ddd632bc26fc1444bdcce8",
+  "duration_note": "Fitted to the reviewed narration plus ~12% reading time for on-screen code (default 300 s); this episode's override."
+}

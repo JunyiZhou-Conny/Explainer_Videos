@@ -1,0 +1,119 @@
+{
+  "title_en": "speciesOT E4 · scGen as arithmetic, behind one adapter",
+  "title_zh": "speciesOT 第四集 · scGen 是一道算术题，藏在一个适配器后面",
+  "preset": "swiss",
+  "description_en": "scGen in one picture (encode, add one species arrow, decode), mapped onto setup, train and predict; the three different things called scgen in the speciesOT project; and why your scGenModel should be an adapter around exactly one of them.",
+  "description_zh": "一张图看懂 scGen（编码、加上一个物种箭头、解码），并对应到 setup、train、predict；speciesOT 项目里三个都叫 scgen 的东西；以及为什么你的 scGenModel 应该是只包住其中一个的适配器。",
+  "tags_zh": ["scGen", "单细胞", "自编码器", "Python", "教程"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "READ IN CODE (speciesOT repo at 109bf12): the TF scgen is a nested, git-ignored clone inside the project (atlas-paper-vae/configs/m2_v08.yaml:44 scgen_code_path; .gitignore:44-47 'Nested clones / local sandboxes'), put on sys.path at runtime (atlas-paper-vae/scripts/01_train_vae.py:86, 107-108), env scgen_tf1, TF 1.15 (m2_v08.yaml:46-48). Josh's encode_mean/decode/delta lines match atlas-paper-vae/scripts/02_eval_metrics.py:151-171.",
+    "READ IN PACKAGE: scgen 2.1.0 on PyPI (scvi-tools based) exports only SCGEN and SCGENVAE; no VAEArith (videos/speciesot-series/checks/scgen_package.txt). That Josh's environment loads this package is INFERRED from his comment at speciesot_core.py lines 10-11 ('pulls in scvi-tools/torch'); say 'if' and tag INFERRED.",
+    "READ IN CODE: cellot/cellot_gpu is a vendored copy of bunnech/cellot (setup.py url, BSD LICENSE). Its 'scgen' is AutoEncoder (cellot/models/ae.py:21-22, beta 0 in the hub template) with compute_scgen_shift (ae.py:175-187) and transport_scgen (transport.py:61-69); training via train_auto_encoder (train/train.py:173). The v08 scorecard scGen numbers come from this hub AE (logs/research_logs/agent_plans_2026-07-21/DELIVERABLE_A_atlas_memory.md:20).",
+    "READ IN CODE: Josh's config hidden_units [256, 256], z_dimension 50, lr 0.001 equal specs/m1_modern.yaml scgen_hidden_units / scgen_latent_dim / scgen_lr (the cellot AE spec); TF VAEArith hard-codes two hidden layers of 800 (atlas-paper-vae/configs/m2_v08.yaml:27) and Josh's setup (lines 252-258) passes no hidden_units.",
+    "The recommendation to wrap the cellot autoencoder is OUR recommendation (INFERRED), justified by where the golden numbers came from; the narration says 'decide with Josh'.",
+    "The latent-space diagram is an illustrative 2-D cartoon (the real code has 50 dimensions in Josh's config); label it on screen.",
+    "MEASURED: the stand-in scgen (FakeVAEArith, 3 lines) used by videos/speciesot-series/checks/error_trail.py."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "Prediction by arithmetic",
+      "title_zh": "用算术做预测",
+      "lines": [
+        {"en": "Can you predict a human cell from a mouse cell with one subtraction and one addition? That's the bet scGen makes, and it's the model your package is wiring up right now.",
+         "zh": "能不能只靠一次减法和一次加法，就从小鼠细胞预测出人类细胞？这正是 scGen 押下的赌注，也是你的包现在正在接入的模型。"},
+        {"en": "To write its class, you need two things: the idea, in one picture, and a clear answer to which library code it calls.",
+         "zh": "要写好它的类，你需要两样东西：一张图讲清楚的思路，以及一个明确的答案——它到底调用哪一份库代码。"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "Squeeze, then rebuild",
+      "title_zh": "先压缩，再重建",
+      "lines": [
+        {"en": "Start with the autoencoder. An encoder squeezes each cell, about a thousand gene values in your benchmark, into a short code. In Josh's config, that's fifty numbers. A decoder rebuilds the cell from the code.",
+         "zh": "先从自编码器说起。编码器把每个细胞——在你的基准里大约一千个基因的数值——压缩成一段很短的编码，在 Josh 的配置里是 50 个数。解码器再从编码把细胞重建出来。"},
+        {"en": "Training means learning to rebuild well. Mouse and human cells train the same network together, so both species land in one shared code space.",
+         "zh": "训练就是学会把细胞重建好。小鼠和人类细胞一起训练同一个网络，于是两个物种都落进同一个共享的编码空间。"},
+        {"en": "In that space, similar cells sit close together. That's what makes the next step possible.",
+         "zh": "在这个空间里，相似的细胞挨得很近。正是这一点让下一步成为可能。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "The arithmetic",
+      "title_zh": "这道算术题",
+      "lines": [
+        {"en": "Take the mouse training cells and average their codes. Do the same for the human cells. The difference between the two averages is delta: the species shift.",
+         "zh": "把小鼠训练细胞的编码取平均，人类细胞也一样。这两个平均值之差就是 delta，也就是物种位移。"},
+        {"en": "Now take cells the model never trained on, like a held-out mouse cell type. Encode them, add delta, decode. Out come predicted human cells.",
+         "zh": "现在拿一些模型训练时从没见过的细胞，比如一个被留出的小鼠细胞类型：编码、加上 delta、解码，出来的就是预测的人类细胞。"},
+        {"en": "Pause and ponder: what must be true of mouse and human cells for one arrow to work for every cell type?",
+         "zh": "停下来想一想：要让同一个箭头对每种细胞类型都管用，小鼠和人类细胞之间必须满足什么？"},
+        {"en": "That's the assumption: one arrow, the same for every cell type. If species differences depend on the cell type, one arrow can't capture them. That's the gap CellOT tries to close.",
+         "zh": "这就是它的假设：只有一个箭头，对每种细胞类型都一样。如果物种差异依赖于细胞类型，一个箭头就抓不住。这正是 CellOT 想要弥补的缺口。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "Three methods, three jobs",
+      "title_zh": "三个方法，三项工作",
+      "lines": [
+        {"en": "Now map the picture onto the class. Setup builds the untrained network. Train joins mouse and human into one table with a species label, fits the network, then computes delta and keeps it on the object.",
+         "zh": "现在把这张图对应到类上。setup 搭好一个还没训练的网络。train 把小鼠和人类细胞合成一张带物种标签的表，训练网络，然后算出 delta 并保存在对象身上。"},
+        {"en": "Predict encodes the test mouse cells, adds the stored delta, decodes, and returns an AnnData, so every metric can read it.",
+         "zh": "predict 对测试集的小鼠细胞编码、加上保存好的 delta、再解码，最后返回一个 AnnData，这样每个指标都能读取它。"},
+        {"en": "Now compare the stubs. Train computes delta but never fits the network, and delta vanishes when train returns. Predict ends by handing back the mouse cells untouched. Those are your blanks.",
+         "zh": "再对照一下现在的草稿：train 算了 delta，却从没训练网络，而且 train 一返回 delta 就消失了。predict 最后原封不动地交回小鼠细胞。这些就是你要填的空。"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "Three things called scgen",
+      "title_zh": "三个都叫 scgen 的东西",
+      "lines": [
+        {"en": "Now your question: do you need to trace back into the original scgen code? First, notice that three different things in your project are called scgen.",
+         "zh": "现在回答你的问题：需要追溯到 scgen 的原始代码吗？先注意一件事：你的项目里有三个不同的东西都叫 scgen。"},
+        {"en": "One: the TensorFlow model in your atlas scripts. Its code is a separate clone, in a git-ignored folder inside your project, and it runs in its own TensorFlow one environment. Josh's helper functions match those scripts line for line.",
+         "zh": "第一个：图谱脚本里的 TensorFlow 模型。它的代码是一份单独的克隆，放在项目里一个被 Git 忽略的文件夹中，在它专用的 TensorFlow 1 环境里运行。Josh 的辅助函数和这些脚本逐行一致。"},
+        {"en": "Two: the package that import scgen loads in Josh's environment. His comment says it pulls in scvi-tools, and that newer scgen has no VAEArith at all. If that's what loads, setup stops right at that name.",
+         "zh": "第二个：在 Josh 的环境里，import scgen 加载的那个包。他的注释说它会拉进 scvi-tools，而这个较新的 scgen 根本没有 VAEArith。如果加载的是它，setup 就会正好停在这个名字上。"},
+        {"en": "Three: the autoencoder in your cellot folder. CellOT's source is copied into your repository, with your own edits, and its model named scgen is a plain autoencoder with the same mean shift. That one produced your benchmark numbers.",
+         "zh": "第三个：cellot 文件夹里的自编码器。CellOT 的源码复制了一份放在你的仓库里，还带着你自己的修改；它里面叫 scgen 的模型是一个普通自编码器，加上同样的均值位移。你的基准数字就是它跑出来的。"},
+        {"en": "Now look at Josh's config: two layers of two hundred fifty-six, fifty latent dimensions, and a learning rate of point zero zero one. That's the cellot autoencoder's spec. The TensorFlow model fixes its own two layers at eight hundred units each, so those numbers would go nowhere.",
+         "zh": "再看 Josh 的配置：两层、每层 256，潜空间 50 维，学习率 0.001。这正是 cellot 自编码器的规格。而 TensorFlow 版的模型在内部把两层隐藏层固定为每层 800 个单元，所以这些数字根本没有去处。"}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "One adapter, one choice",
+      "title_zh": "一个适配器，一个选择",
+      "lines": [
+        {"en": "So here's the rule. Your scGenModel class is an adapter: the only place in your package that speaks scgen. Everything else speaks your contract: setup, train, predict.",
+         "zh": "所以规则是：你的 scGenModel 类是一个适配器，是包里唯一「说 scgen 语言」的地方。其余一切都只说你的契约：setup、train、predict。"},
+        {"en": "The adapter wraps exactly one of the three. If the goal is to reproduce your benchmark numbers, wrap the cellot autoencoder, because it made them. Settle that with Josh first.",
+         "zh": "适配器只包住三者之一。如果目标是复现你的基准数字，那就包住 cellot 的自编码器，因为那些数字就是它跑出来的。先和 Josh 把这件事定下来。"},
+        {"en": "Whichever you pick, the adapter needs only a handful of calls: build or load the network, train it, encode, decode, and compute the shift. Read the library's source at those points, and nowhere else.",
+         "zh": "不管选哪个，适配器都只需要几个调用：建立或加载网络、训练、编码、解码、计算位移。只在这几处读库的源码，别处都不用读。"},
+        {"en": "The payoff: in tests, a few-line fake can stand in for the library, so your tests never need it installed. That's exactly how we ran Josh's code for this series.",
+         "zh": "回报是：在测试中，一个只有几行的假库就能顶替它，你的测试永远不需要安装它。我们为这个系列运行 Josh 的代码时，用的正是这个办法。"},
+        {"en": "Pause and ponder: if you later switch to a different scGen implementation, how many files in your package should change?",
+         "zh": "停下来想一想：如果以后换成另一种 scGen 实现，你的包里应该有几个文件需要改动？"}
+      ]
+    },
+    {
+      "id": "s07",
+      "title_en": "Recap: one arrow, one doorway",
+      "title_zh": "回顾：一个箭头，一扇门",
+      "lines": [
+        {"en": "Recap. scGen encodes, shifts every cell along one learned arrow, and decodes. Setup builds, train learns the network and delta, and predict applies them.",
+         "zh": "回顾一下。scGen 先编码，把每个细胞都沿同一个学到的箭头平移，再解码。setup 负责搭建，train 学习网络和 delta，predict 应用它们。"},
+        {"en": "Three things are called scgen. Your adapter wraps exactly one, and it's the only doorway to it. The answer to the pause: one file changes, the adapter, plus its section of the config.",
+         "zh": "有三个东西都叫 scgen。你的适配器只包住其中一个，也是通往它的唯一一扇门。刚才那个问题的答案：只改一个文件——适配器，再加上它在配置里的那一段。"},
+        {"en": "Your exercise: in the cellot folder, find those few calls, with file and line. Then write train and predict as plain comments, step by step, before writing any code.",
+         "zh": "你的练习：在 cellot 文件夹里找到那几个调用，记下文件和行号。然后在写任何代码之前，先用注释把 train 和 predict 一步一步写出来。"}
+      ]
+    }
+  ]
+}

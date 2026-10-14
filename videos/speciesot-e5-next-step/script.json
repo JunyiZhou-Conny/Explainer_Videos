@@ -1,0 +1,119 @@
+{
+  "title_en": "speciesOT E5 · What next? Follow the errors",
+  "title_zh": "speciesOT 第五集 · 下一步做什么？跟着报错走",
+  "preset": "swiss",
+  "description_en": "A method for choosing the next step: the walking skeleton, the measured error trail as a to-do board, the data card behind it, the first experiment to replicate (M1 v08) with its golden numbers, SOLID as a compass, and the ordered list of next cards.",
+  "description_zh": "一套选择下一步的方法：会走路的骨架、把实测的报错足迹变成待办看板、看板背后的数据卡片、第一个要复现的实验（M1 v08）和它的黄金数字、把 SOLID 当作指南针，以及按顺序排好的下一批卡片。",
+  "tags_zh": ["Python", "软件设计", "SOLID", "科研代码", "教程"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "MEASURED (videos/speciesot-series/checks/error_trail.json), each stage run separately with the smallest patch needed to reach it and a stand-in scgen: identity_end_to_end ok with evaluate returning None; config_setup AttributeError line 253; scgen_train TypeError line 133; scgen_predict NameError line 288; r2_uneven_cells ValueError line 313 (identity run, 5 mouse vs 7 human cells).",
+    "READ IN NOTEBOOK (Josh's Tests/e24_replica.ipynb): mouse training x_dimensions 18024 (cell 3 output, older config); human training file 58931 x 61759 (cell 6 output). READ IN NOTEBOOK (speciesOT e22_batch_correction.ipynb recorded output): mouse BCG test file n_vars 1000.",
+    "READ IN CODE (speciesOT repo at 109bf12): 83 notebooks; frozen benchmark in AGENTS.md; specs/m1_modern.yaml (one data_file plus a toggle_ood split recipe); speciesOT/baseline/analysis/v08_scorecard_dual.csv row 'm1 v08 scGen': r2_identity 0.5542 (full clouds, no sampling: cellot/cellot_gpu/scripts/extended_metrics.py:154-166), R2 0.927 (mean over 80-cell subsamples), mmd_ceiling 0.1087, MMD 0.1737.",
+    "Josh's speciesot_core.py lines 162-186 are a pasted copy of the second half of specs/m1_modern.yaml (its model settings and notes).",
+    "SOLID mapping and the card order are OUR recommendations (INFERRED), anchored to real lines; tag them INFERRED on screen."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "Monday morning",
+      "title_zh": "周一早上",
+      "lines": [
+        {"en": "It's Monday morning. There's a three hundred and fifty line file, eighty-three notebooks, and results going back to February. Where does the next hour go?",
+         "zh": "周一早上。一个三百五十行的文件，八十三个 notebook，还有从二月一路积累下来的结果。接下来这一个小时，该花在哪里？"},
+        {"en": "Josh doesn't answer that by planning everything first. He runs the code, reads the first thing that breaks, and fixes only that. This episode turns that habit into a method.",
+         "zh": "Josh 不是靠先把一切都规划好来回答这个问题的。他运行代码，读第一个坏掉的地方，只修那一处。这一集把这个习惯变成一套方法。"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "The skeleton already walks",
+      "title_zh": "骨架已经能走了",
+      "lines": [
+        {"en": "Start with what works. With only the identity model, the whole pipeline already runs on toy data: setup, train, predict, evaluate. No errors.",
+         "zh": "先看能用的部分。只用 identity 模型的话，整条流水线在玩具数据上已经能跑通：setup、train、predict、evaluate，没有报错。"},
+        {"en": "That's a walking skeleton: every stage exists, end to end, even though most are thin. From here, you thicken one bone at a time, and the skeleton keeps walking.",
+         "zh": "这叫「会走路的骨架」：每个阶段都已经从头到尾存在，哪怕大多还很单薄。从这里开始，你一次加粗一根骨头，骨架始终能走。"},
+        {"en": "But look at what evaluate returned: nothing. The scores were computed and dropped. So the first task writes itself: return the scores as a table, models by metrics.",
+         "zh": "但看看 evaluate 返回了什么：什么也没有。分数算出来就被丢掉了。所以第一项任务自己冒了出来：把分数作为一张「模型 × 指标」的表返回。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "The error trail",
+      "title_zh": "报错的足迹",
+      "lines": [
+        {"en": "Now add scGen and keep running. Pause and predict: which stage breaks first?",
+         "zh": "现在加上 scGen 继续跑。停下来猜一猜：哪个阶段最先坏？"},
+        {"en": "We ran each stage on toy data, with a stand-in for scgen, patching only the smallest thing needed to reach it. Here's the trail, in the order the program reaches it.",
+         "zh": "我们用玩具数据和一个替身 scgen 把每个阶段都跑了一遍，每次只打刚好够走到那一步的最小补丁。下面就是这串足迹，按程序遇到它们的顺序排列。"},
+        {"en": "Setup: an attribute error, x_dimensions, line 253. That was episode two. Train: a type error. Train is missing its training data, because line 133 calls it with nothing.",
+         "zh": "setup：AttributeError，x_dimensions，第 253 行——第二集讲过。train：TypeError。train 缺少 training_data 参数，因为第 133 行调用它时什么也没传。"},
+        {"en": "Predict: a name error at line 288, a helper that lives inside train, where predict can't see it. Evaluate: once mouse and human have different cell counts, as real data do, R squared can't line them up, at line 313.",
+         "zh": "predict：第 288 行的 NameError，用到的辅助函数住在 train 里面，predict 看不见它。evaluate：一旦小鼠和人类的细胞数不同——真实数据就是这样——R² 就没法对齐，第 313 行。"},
+        {"en": "Each error is one card on your to-do board, already in order. You don't have to invent the order. The program hands it to you.",
+         "zh": "每个错误就是待办看板上的一张卡片，而且顺序已经排好了。你不用自己发明顺序，程序会把它交给你。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "The card behind the code",
+      "title_zh": "代码背后的卡片",
+      "lines": [
+        {"en": "Some cards aren't errors yet. Josh's notebook shows a mouse training file with about eighteen thousand genes, and a human one with almost sixty-two thousand. The test files hold one thousand.",
+         "zh": "有些卡片现在还不是报错。Josh 的 notebook 显示，小鼠训练文件有 18,024 个基因，人类文件有 61,759 个，而测试文件只有 1,000 个。"},
+        {"en": "One network can't read them all until they share one gene axis. Lining up genes is a data job, so it belongs next to the data classes.",
+         "zh": "在它们共享同一个基因轴之前，一个网络没法把它们都读进去。对齐基因是数据的工作，所以它应该放在数据类旁边。"},
+        {"en": "But for your first replication, it's already done. The M1 version eight file has one shared list of a thousand genes. It's one table plus a split recipe, while your data classes take four files. So the real card is: split that table into training and test, mouse and human.",
+         "zh": "不过第一次复现时，这一步已经做好了：M1 第 8 版的文件已有一份共享的一千个基因列表。它是一张表加一份切分规则，而你的数据类要的是四个文件。所以真正的卡片是：把这张表切成训练和测试、小鼠和人类四份。"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "Pick one golden number",
+      "title_zh": "选定一个黄金数字",
+      "lines": [
+        {"en": "Pause: out of eighty-three notebooks, which would you replicate first, and why?",
+         "zh": "停一下：八十三个 notebook 里，你会先复现哪一个？为什么？"},
+        {"en": "Pick the first cut of what your project already calls its frozen benchmark: M1, version eight, holding out non-classical monocytes. Its spec is m1_modern.yaml, and Josh already pasted its model settings into the core file, a little above scGenModel.",
+         "zh": "选你的项目早已称作「冻结基准」的第一个切分：M1 第 8 版，留出非经典单核细胞。它的规格文件是 m1_modern.yaml，而 Josh 已经把其中的模型设置粘贴进了核心文件，就在 scGenModel 上方不远处。"},
+        {"en": "Its scorecard records the numbers to hit. The identity model's R squared of means is zero point five five four. No training and no sampling are involved, so once your package reads the same file and split, and computes R squared of means, it should reproduce it almost exactly.",
+         "zh": "它的成绩表记录了要对上的数字。identity 模型的均值 R² 是 0.554。这里不涉及训练，也不涉及抽样，所以只要你的包读的是同一个文件、同一个切分，并且算的是均值 R²，就应该几乎能精确复现它。"},
+        {"en": "Then scGen: zero point nine two seven, from the cellot autoencoder, so that's the model your adapter must wrap to aim for it. It averages eighty-cell samples, so compute it the same way, and since training adds noise, aim within a tolerance.",
+         "zh": "然后是 scGen：0.927，来自 cellot 的自编码器，所以你的适配器得包住那个模型才能瞄准它。这个数是对 80 个细胞的抽样取平均，要用同样的方法算；训练也会带来随机波动，所以在容差范围内对上即可。"}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "SOLID as a compass",
+      "title_zh": "把 SOLID 当作指南针",
+      "lines": [
+        {"en": "Where does SOLID fit? Treat it as a compass for the moment something hurts, not a checklist for day one. Each letter already points at a spot in this file.",
+         "zh": "SOLID 放在哪里？把它当作「某处开始疼的时候」用的指南针，而不是第一天就要逐条打勾的清单。每个字母都已经指向这个文件里的某个位置。"},
+        {"en": "Single responsibility: the data classes only load data, so gene alignment and splitting belong beside them. Open-closed: adding CellOT should add a class, not edit the chain of ifs in setup. A dictionary from names to classes does that.",
+         "zh": "单一职责：数据类只负责加载数据，所以基因对齐和切分应该放在它们旁边。开闭原则：加入 CellOT 应该是新增一个类，而不是去改 setup 里那一串 if。一个「名字到类」的字典就能做到。"},
+        {"en": "Liskov substitution: every model must keep the contract's promise. The contract's train takes training data, but IdentityModel's takes none. Line 133 followed IdentityModel, so scGen, which keeps the contract, broke. Python checks names, not inputs, so only a test can catch this.",
+         "zh": "里氏替换：每个模型都必须信守契约的承诺。契约里的 train 接收训练数据，而 IdentityModel 的 train 什么都不接收。第 133 行照着 IdentityModel 来写，于是信守契约的 scGen 反而出错了。Python 只检查名字、不检查参数，所以只有测试能抓到它。"},
+        {"en": "Interface segregation: an evaluation needs one method, and its contract asks for only one. Dependency inversion: the Experiment talks to the contract, and never to scgen directly.",
+         "zh": "接口隔离：评估只需要一个方法，它的契约也只要求这一个。依赖倒置：Experiment 只和契约打交道，从不直接接触 scgen。"},
+        {"en": "And refactoring, meaning reshaping code without changing what it does, can wait until the third model arrives.",
+         "zh": "至于重构——也就是不改变功能、只调整代码结构——可以等到第三个模型出现时再做。"}
+      ]
+    },
+    {
+      "id": "s07",
+      "title_en": "The Monday loop",
+      "title_zh": "周一循环",
+      "lines": [
+        {"en": "So here's the loop for every session. Write the call you wish worked, as a small test. Run it. Read the last line of the traceback.",
+         "zh": "所以每次坐下来都走这个循环：把你希望能跑通的调用写成一个小测试；运行它；读 traceback 的最后一行。"},
+        {"en": "Make the smallest change that gets past that line. When the test passes, commit, and pick up the next card.",
+         "zh": "做最小的修改，让程序越过那一行。测试通过了就提交，然后拿起下一张卡片。"},
+        {"en": "Your cards, in order. Make evaluate return a table. Split the M1 file. Run identity until it gives zero point five five four. Then walk scGen's trail until it lands near zero point nine two seven.",
+         "zh": "你的卡片，按顺序是：让 evaluate 返回一张表；切分 M1 文件；跑 identity，直到得到 0.554；然后沿着 scGen 的报错足迹往前走，直到接近 0.927。"},
+        {"en": "Recap. The skeleton already walks, the errors give the order, the first golden number is identity's zero point five five four, and SOLID is for when something hurts. Momentum beats a perfect plan.",
+         "zh": "回顾一下：骨架已经能走，报错给出顺序，第一个黄金数字是 identity 的 0.554，SOLID 留到某处疼的时候再用。动起来，比完美的计划更重要。"}
+      ]
+    }
+  ]
+}
