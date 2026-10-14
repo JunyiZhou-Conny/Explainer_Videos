@@ -146,10 +146,11 @@ def path_folder(x0, y, w, h, dashed=False, color=INK):
     """A folder outline (tab + body), left edge at x0, centred on y."""
     body = Rectangle(width=w, height=h, stroke_color=color, stroke_width=2)\
         .move_to([x0 + w / 2, y, 0])
-    tab = Rectangle(width=min(1.2, w * .3), height=.14, stroke_color=color, stroke_width=2)
-    tab.move_to([x0 + tab.width / 2, y + h / 2 + .07, 0])
+    tw, top = min(1.2, w * .3), y + h / 2
+    tab = VMobject(stroke_color=color, stroke_width=2).set_points_as_corners(
+        [[x0, top, 0], [x0, top + .14, 0], [x0 + tw, top + .14, 0], [x0 + tw, top, 0]])
     if dashed:
-        return VGroup(DashedVMobject(tab, num_dashes=12), DashedVMobject(body, num_dashes=80))
+        return VGroup(DashedVMobject(tab, num_dashes=8), DashedVMobject(body, num_dashes=80))
     return VGroup(tab, body)
 
 
@@ -610,7 +611,10 @@ class S05(Ep):
         frame = Rectangle(width=fx1 - fx0, height=fy1 - fy0, stroke_color=INK, stroke_width=2)\
             .move_to([(fx0 + fx1) / 2, (fy0 + fy1) / 2, 0])
         flab = left("your speciesOT project", fx0, 1.85, 20, INK, bold=True)
-        flab = VGroup(flab, mono_left("repo @109bf12", flab.get_right()[0] + .25, 1.85, 16, GRAY))
+        repo = mono_left("repo @109bf12", flab.get_right()[0] + .25, 1.85, 16, GRAY)
+        ftag = source_tag("READ IN CODE")
+        ftag.move_to([repo.get_right()[0] + .3 + ftag.width / 2, 1.85, 0])
+        flab = VGroup(flab, repo, ftag)
         one = qchip(-2.4, .3)
         spots = [(-2.4, .75), (4.45, .3), (-2.4, -1.45)]
         with self.say(0) as vo:
@@ -634,7 +638,6 @@ class S05(Ep):
         helpers = left("Josh's helpers ≡ these lines:", -2.1, .17, 18, RED)
         hpath = mono_left("atlas-paper-vae/scripts/02_eval_metrics.py:151–171", -5.95, -.25,
                           16, INK)
-        t1 = tag_at("READ IN CODE", 1.6, -.25)
         with self.say(1) as vo:
             self.cue(vo, .02, ReplacementTransform(q3[0], h1), run_time=.6)
             vo.wait_until("separate clone")
@@ -648,7 +651,7 @@ class S05(Ep):
             env[1].set_color(RED)
             self.play(FadeIn(env, shift=RIGHT * .1), run_time=.45)
             vo.wait_until("Josh's helper")
-            self.play(*tint(env, INK), FadeIn(helpers), FadeIn(hpath, shift=UP * .08), FadeIn(t1),
+            self.play(*tint(env, INK), FadeIn(helpers), FadeIn(hpath, shift=UP * .08),
                       run_time=.5)
             vo.wait_until("line for line")
             self.play(Indicate(hpath, color=RED, scale_factor=1.03), run_time=.6)
@@ -689,7 +692,7 @@ class S05(Ep):
             m252 = core_p.mark(252)
             ey = core_p.row_y(252)
             stop = cross(core_p.row(252).get_right()[0] + .25, ey, RED, .11, 4).set_z_index(3)
-            stop_l = left("setup stops here", core_p.frame.get_right()[0] + .12, ey, 17, RED,
+            stop_l = left("stops here", core_p.frame.get_right()[0] + .14, ey, 19, RED,
                           bold=True)
             self.play(ReplacementTransform(m10, m252), Create(stop), run_time=.5)
             self.play(FadeIn(stop_l), run_time=.35)
@@ -702,7 +705,6 @@ class S05(Ep):
         ae = mono_left("AutoEncoder + compute_scgen_shift", -5.6, -1.75, 18, INK)
         aeloc = mono_left("models/ae.py:22, 175", -.5, -1.75, 16, GRAY)
         made = left("→ made your benchmark numbers", -5.6, -2.17, 20, RED, bold=True)
-        t3 = tag_at("READ IN CODE", 1.25, -2.17)
         with self.say(3) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in (core_p, m252, go, stop, stop_l)],
                      FadeIn(q3[2]), run_time=.4)
@@ -716,7 +718,7 @@ class S05(Ep):
             vo.wait_until("same mean shift")
             self.play(Indicate(ae, color=RED, scale_factor=1.04), run_time=.6)
             vo.wait_until("That one produced")
-            self.play(FadeIn(made, shift=RIGHT * .1), FadeIn(t3), f3.animate.set_color(RED),
+            self.play(FadeIn(made, shift=RIGHT * .1), f3.animate.set_color(RED),
                       run_time=.5)
         cfg = code_panel(rows(CONFIG, 32, 40), CONFIG_PATH, -3.6, -.25, width=5.3, size=20)
         m1 = code_panel(M1_ROWS, "specs/m1_modern.yaml", 3.75, .5, width=4.3, size=19)

@@ -111,16 +111,22 @@ def under(m, color=RED, buff=.06, stroke=3):
                 stroke_width=stroke).set_z_index(7)
 
 
-def lag(scene, *anims, lag_ratio=.2, run_time=1.0):
-    """LaggedStart without stray Groups. Manim 0.19 adds a plain Group of the non-introducer
-    targets as a top-level mobject (pulling them out of their parents); a plain Group is not a
-    VMobject, so EpisodeScene.content() would miss it and its members would survive later
-    fade-outs. Use a VGroup instead, and drop the empty Group left by introducer-only lists."""
-    mobs = [a.mobject for a in anims if not a.is_introducer()]
-    ls = LaggedStart(*anims, lag_ratio=lag_ratio, group=VGroup(*mobs) if mobs else None)
-    scene.play(ls, run_time=run_time)
-    if not mobs:
-        scene.remove(ls.group)
+def lag(scene, *anims, lag_ratio=.2, run_time=1.0, extra=()):
+    """LaggedStart that leaves the scene's mobject tree alone.
+
+    By default Scene.play adds a wrapper Group of the animated mobjects; Scene.add then
+    restructures the scene, splitting each parent card (e.g. a drawer) into loose parts, and
+    removing that wrapper afterwards takes the children off screen. Here the wrapper is an
+    empty holder (nothing to restructure), removed after the play; animated mobjects that are
+    not yet on screen are added as themselves. `extra` animations play alongside."""
+    fam = scene.get_mobject_family_members()
+    for a in anims:
+        if not a.is_introducer() and a.mobject not in fam:
+            scene.add(a.mobject)
+    holder = VGroup()
+    scene.play(*extra, LaggedStart(*anims, lag_ratio=lag_ratio, group=holder),
+               run_time=run_time)
+    scene.remove(holder)
 
 
 def tb_block(lines, x, y, width, size=19, color="#D9D5CB"):
@@ -550,9 +556,11 @@ class S04(Ep):
                       chip("AttributeError", cx[1], -1.65, GRAY, 24))
         whys = VGroup(at("missing drawer · 少了抽屉", cx[0], -2.28, 18, GRAY),
                       at("missing fact · 少了事实", cx[1], -2.28, 18, GRAY))
+        ex_tag = tag_at("EXAMPLE", 5.65, 1.85)
         with self.say(0) as vo:
             self.cue(vo, .02, Create(divider), FadeIn(heads[0], shift=DOWN * .08),
-                     FadeIn(heads[1], shift=DOWN * .08), FadeIn(kinds), run_time=.6)
+                     FadeIn(heads[1], shift=DOWN * .08), FadeIn(kinds), FadeIn(ex_tag),
+                     run_time=.6)
             self.play(FadeIn(dl), FadeIn(ob), run_time=.4)
             vo.wait_until("each one fails")
             lag(self, FadeIn(errs[0]), FadeIn(errs[1]), lag_ratio=.3, run_time=.6)
@@ -576,8 +584,9 @@ class S04(Ep):
             vo.wait_until("Will init")
             card = ponder("init 会抛出 KeyError，还是 AttributeError？",
                           "Will __init__ raise a KeyError or an AttributeError?", y=-1.2)
-            self.play(self.dim_rest(), run_time=.4)
+            self.play(self.veil(), run_time=.4)
             self.play(FadeIn(card, shift=UP * .1), run_time=.5)
+        self.hold(1)
 
         dspec = [("random_state", "0"), ("hidden_units", "[256, 256]"), ("lr", "0.001"),
                  ("use_all_genes", "True"), ("x_dimensions", "1000")]
@@ -593,8 +602,7 @@ class S04(Ep):
                           width=6.0, size=22)
         kerr[2].set_z_index(6)
         with self.say(2) as vo:
-            self.cue(vo, .01, FadeOut(card), *[m.animate.set_opacity(1) for m in (toy, m19)],
-                     run_time=.4)
+            self.cue(vo, .01, FadeOut(card), self.unveil(), run_time=.4)
             self.play(FadeIn(answer, scale=1.2), run_time=.4)
             vo.wait_until("Build scGenModel")
             self.play(FadeOut(m19), ReplacementTransform(toy, dstack), FadeIn(dhead),
@@ -608,10 +616,9 @@ class S04(Ep):
             self.play(FadeIn(pr), run_time=.25)
             self.play(pr.animate.move_to([dx + 2.0 + pr.width / 2 + .15, dstack[0].get_y(), 0]),
                       run_time=.5)
-            ls = LaggedStart(*[Indicate(d[2], color=INK, scale_factor=1.08) for d in dstack],
-                             lag_ratio=.15, group=VGroup(*[d[2] for d in dstack]))
-            self.play(pr.animate.move_to([dx + 2.0 + pr.width / 2 + .15, dstack[4].get_y(), 0]),
-                      ls, run_time=.8)
+            lag(self, *[Indicate(d[2], color=INK, scale_factor=1.08) for d in dstack],
+                lag_ratio=.15, run_time=.8,
+                extra=[pr.animate.move_to([dx + 2.0 + pr.width / 2 + .15, dstack[4].get_y(), 0])])
             self.play(Circumscribe(ds_s, color=RED, buff=.04), run_time=.4)
             self.play(ReplacementTransform(answer, kerr[2]), FadeIn(VGroup(*kerr[:2], *kerr[3:])),
                       run_time=.5)
@@ -800,6 +807,9 @@ class S05(Ep):
             key = glyphs(p104.row(104), CORE[104], '"x_dimensions"')
             self.play(ReplacementTransform(real, dplur), FadeIn(lab2, shift=RIGHT * .1),
                       Indicate(key, color=RED), run_time=.8)
+            snap = tag_text("MEASURED · stand-in scgen")
+            snap.move_to([-6.3 + snap.width / 2, -1.5, 0])
+            self.play(FadeIn(snap), run_time=.3)
 
         p220 = cpanel([(220, CORE[220])], CORE_PATH, -2.8, 1.55, width=7.0, size=16)
         m220 = rmark(p220, 220)
@@ -835,8 +845,9 @@ class S05(Ep):
         with self.say(3) as vo:
             card = ponder("基因数该手写进配置，还是永远从数据里来？",
                           "Typed into the config, or always read from the data?", y=-1.1)
-            self.cue(vo, .05, self.dim_rest(), run_time=.5)
+            self.cue(vo, .05, self.veil(), run_time=.5)
             self.play(FadeIn(card, shift=UP * .1), run_time=.5)
+        self.hold(3)
         self.finish()
 
 
@@ -937,7 +948,8 @@ class S06(Ep):
         files = ["src/speciesot/*.py", "Tests/*.yaml", "Tests/*.ipynb"]
         frows = VGroup(*[mono_left(f, L4 + .35, T4 - 1.28 - i * .29, 16, GRAY)
                          for i, f in enumerate(files)])
-        rerun = chip("↻ rerun the smallest example", L4 + 4.55, T4 - 1.57, INK, 17, font=LATIN)
+        rerun = chip("↻ rerun smallest example", 0, 0, INK, 16, font=LATIN)
+        rerun.move_to([L4 + 6.2 - .2 - rerun.width / 2, T4 - 1.72, 0])
         with self.say(3) as vo:
             vo.wait_until("Four:")
             self.play(FadeIn(c4), FadeOut(slots[3]), FadeIn(ex4), FadeIn(tag4),
@@ -1087,15 +1099,18 @@ class S07(Ep):
             lag(self, *[FadeIn(r, shift=RIGHT * .08) for r in rows_], lag_ratio=.15,
                 run_time=.9)
             vo.wait_until("Pick one")
-            pick = chip("x_dimension", 4.6, 1.75, RED, 20)
-            plab = left("pick one:", pick.get_left()[0] - 1.45, 1.75, 19, GRAY)
-            self.play(FadeIn(pick), FadeIn(plab), run_time=.4)
+            pick = VGroup(chip("x_dimension", 2.75, 1.75, INK, 20),
+                          chip("x_dimensions", 5.15, 1.75, INK, 20))
+            plural_s(pick[1][1], "x_dimensions")
+            orr = at("or", 3.95, 1.75, 19, GRAY)
+            plab = left("pick one:", .2, 1.75, 19, GRAY)
+            self.play(FadeIn(pick), FadeIn(orr), FadeIn(plab), run_time=.4)
             vo.wait_until("both YAML files")
             self.play(*[Indicate(rows_[i][1], color=RED, scale_factor=1.06) for i in (0, 1)],
                       run_time=.6)
-            vo.wait_until("lines 104, 220 and 253")
-            lag(self, *[Indicate(rows_[i][1], color=RED, scale_factor=1.06) for i in (2, 3, 4)],
-                lag_ratio=.25, run_time=.9)
+            for i, n in zip((2, 3, 4), ("104", "220", "253")):
+                vo.wait_until(n)
+                self.play(Indicate(rows_[i][1], color=RED, scale_factor=1.06), run_time=.4)
             vo.wait_until("Then rerun")
             self.play(FadeIn(rerun, shift=UP * .08), run_time=.4)
             vo.wait_until("episode five")

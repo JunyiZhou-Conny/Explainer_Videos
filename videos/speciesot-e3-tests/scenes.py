@@ -640,6 +640,7 @@ class S04(Ep):
                           "Push one cloud away from the other: what should MMD do?", y=-1.25)
             self.play(self.dim_rest(), run_time=.4)
             self.play(FadeIn(pcard, shift=UP * .1), run_time=.5)
+        self.hold(0)                 # thinking time after the ponder question (full build)
 
         bars = VGroup()
         vlabs = VGroup()
@@ -786,6 +787,7 @@ class S05(Ep):
                           y=-1.32)
             self.play(self.dim_rest(), run_time=.4)
             self.play(FadeIn(pcard, shift=UP * .1), run_time=.5)
+        self.hold(0)                 # thinking time after the ponder question (full build)
 
         code = code_panel(rows(CORE, 311, 313), CORE_PATH, 2.6, 1.15, width=7.3, size=20)
         err = error_card("ValueError", ["operands could not be broadcast together",

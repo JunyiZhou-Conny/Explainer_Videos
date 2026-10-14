@@ -424,6 +424,27 @@ class EpisodeScene(VoiceScene):
     def dim_rest(self, opacity=.15):
         return VGroup(*self.content()).animate.set_opacity(opacity)
 
+    def hold(self, after_line, seconds=3.0, reserve=1.0):
+        """Silence after a ponder line, so the viewer can think. Taken only from the scene's
+        slack: the remaining narration (plus `reserve` for its animations) always fits, so in a
+        sample render (little slack) this shrinks to nothing."""
+        audio = self.spec.get("audio", [])
+        rest = sum(a["duration"] + self.pad_after_clip for a in audio[after_line + 1:])
+        t = min(seconds, self.spec["duration"] - self.renderer.time - rest - reserve)
+        if t > .2:
+            self.wait(t)
+
+    def veil(self, opacity=.88):
+        """Dim the teaching area with a paper overlay (below ponder cards, above everything
+        else). Cleaner than changing every object's opacity; undo with unveil()."""
+        self._veil = Rectangle(width=14.4, height=TOP - BOTTOM + .2, stroke_width=0,
+                               fill_color=PAPER, fill_opacity=opacity)\
+            .move_to([0, (TOP + BOTTOM) / 2, 0]).set_z_index(5.5)
+        return FadeIn(self._veil)
+
+    def unveil(self):
+        return FadeOut(self._veil)
+
     def clear_content(self, run_time=.4):
         ms = self.content()
         if ms:

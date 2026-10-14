@@ -396,8 +396,9 @@ class S03(Ep):
             vo.wait_until("Pause")
             card = ponder("加上 scGen 继续跑：哪个阶段最先坏？",
                           "Add scGen and keep running: which stage breaks first?", y=-.95)
-            self.play(self.dim_rest(), run_time=.4)
+            self.play(self.veil(), run_time=.4)
             self.play(FadeIn(card, shift=UP * .1), run_time=.4)
+        self.hold(0)
         big = VGroup(source_tag("MEASURED"),
                      label("toy data · stand-in scgen · smallest patch per stage", 22, GRAY))
         big.arrange(RIGHT, buff=.25).move_to([0, -.55, 0])
@@ -410,8 +411,7 @@ class S03(Ep):
         numbered = VGroup(*[mono_line(f"{k + 1} · {s}", x - ADVANCE * 18 * (len(s) + 4) / 2, 1.6,
                                       18) for k, (x, s) in enumerate(zip(STAGE_X, STAGES))])
         with self.say(1) as vo:
-            self.cue(vo, .0, FadeOut(card), FadeOut(add),
-                     *[m.animate.set_opacity(1) for m in (track, stops, labels)], run_time=.4)
+            self.cue(vo, .0, FadeOut(card), FadeOut(add), self.unveil(), run_time=.4)
             vo.wait_until("toy data")
             self.play(FadeIn(big, shift=UP * .1), run_time=.5)
             vo.wait_until("patching only")
@@ -479,22 +479,22 @@ class S03(Ep):
             n2 = label("predict can't see it", 18, RED).move_to([2.7, -.8, 0], aligned_edge=LEFT)
             self.play(ReplacementTransform(m2, m3), FadeIn(n2), run_time=.4)
             vo.wait_until("Evaluate:")
-            msg4, panel4 = message_line(3), trail_panel(3)
+            msg4, panel4 = message_line(3, y=-.3), trail_panel(3, top=-.55)
             self.play(slide(3), numbered[2].animate.set_color(INK), numbered[3].animate.set_color(RED),
                       FadeOut(m3), FadeOut(n1), FadeOut(n2), ReplacementTransform(msg3, msg4),
                       FadeOut(panel3), FadeIn(panel4), run_time=.8)
             self.play(FadeIn(run4), run_time=.3)
-            mx, hx, top, dy = 3.7, 4.9, -.47, .14
-            mouse = VGroup(*[Dot([mx, top - k * dy, 0], radius=.05, color=INK) for k in range(5)])
-            human = VGroup(*[Dot([hx, top - k * dy, 0], radius=.05, color=INK) for k in range(7)])
-            uneq = at("real data are unequal", (mx + hx) / 2, -.2, 17, GRAY)
-            run4 = left("identity run · 5 vs 7 cells", STAGE_X[3] - 1.4, .33, 17, GRAY)
-            ml = label("5 mouse", 17, GRAY).next_to(mouse, LEFT, buff=.15)
-            hl = label("7 human", 17, GRAY).next_to(human, RIGHT, buff=.15)
+            x0d, my, hy, dx = 2.95, -.8, -1.2, .27
+            mouse = VGroup(*[Dot([x0d + k * dx, my, 0], radius=.055, color=INK) for k in range(5)])
+            human = VGroup(*[Dot([x0d + k * dx, hy, 0], radius=.055, color=INK) for k in range(7)])
+            run4 = VGroup(left("identity run ·", STAGE_X[3] - 1.4, .3, 17, GRAY),
+                          left("5 mouse vs 7 human cells", STAGE_X[3] - 1.4, .07, 17, GRAY))
+            ml = label("5 mouse", 17, GRAY).next_to(mouse, RIGHT, buff=.2)
+            hl = label("7 human", 17, GRAY).next_to(human, RIGHT, buff=.2)
             vo.wait_until("different cell counts")
-            self.play(FadeIn(mouse), FadeIn(human), FadeIn(ml), FadeIn(hl), FadeIn(uneq), run_time=.5)
+            self.play(FadeIn(mouse), FadeIn(human), FadeIn(ml), FadeIn(hl), run_time=.5)
             vo.wait_until("line them up")
-            pairs = VGroup(*[line(mx + .07, top - k * dy, hx - .07, top - k * dy, GRAY, 2)
+            pairs = VGroup(*[line(x0d + k * dx, my - .07, x0d + k * dx, hy + .07, GRAY, 2)
                              for k in range(5)])
             self.play(LaggedStart(*[Create(p) for p in pairs], lag_ratio=.15),
                       human[5:].animate.set_color(RED), run_time=.6)
@@ -510,7 +510,7 @@ class S03(Ep):
             num = mono(str(k + 1), 20, RED, bold=True).move_to([-5.3, rows_y[k], 0])
             txt = mono_left(f"{stage:<9}{etype:<15}line {ln}", -4.9, rows_y[k], 19)
             if k == 3:
-                txt = VGroup(txt, left("· identity run, 5 vs 7 cells", txt.get_right()[0] + .15,
+                txt = VGroup(txt, left("· identity run, 5 vs 7", txt.get_right()[0] + .15,
                                        rows_y[k], 17, GRAY))
             todo.append(VGroup(box, num, txt))
         given = VGroup(label("program order", 24, RED, bold=True),
@@ -518,7 +518,7 @@ class S03(Ep):
         given.move_to([2.7 + given.width / 2, -.62, 0])
         with self.say(4) as vo:
             self.cue(vo, .0, FadeOut(m), FadeOut(panel4), FadeOut(msg4), FadeOut(mouse),
-                     FadeOut(human), FadeOut(ml), FadeOut(hl), FadeOut(pairs), FadeOut(uneq),
+                     FadeOut(human), FadeOut(ml), FadeOut(hl), FadeOut(pairs),
                      FadeOut(run4),
                      numbered[3].animate.set_color(INK), run_time=.4)
             self.play(Create(board), FadeIn(head), run_time=.4)
@@ -676,9 +676,12 @@ class S05(Ep):
                      run_time=.7)
             card = ponder("八十三个 notebook，先复现哪一个？为什么？",
                           "83 notebooks: which would you replicate first, and why?", y=-1.35)
-            self.play(self.dim_rest(), run_time=.3)
+            self.play(self.veil(), run_time=.3)
             self.play(FadeIn(card, shift=UP * .1), run_time=.4)
-        pick = grid[20]
+        self.hold(0)
+        self.remove(*grid)
+        self.add(grid)                      # one mobject from here on (no stray wrapper groups)
+        pick = grid[20].copy()
         quote = VGroup(label("“model-version comparisons are made on the v08 OOD cuts”", 21, INK),
                        tagline("READ IN CODE", "speciesOT · AGENTS.md, line 41 (the frozen benchmark)",
                                0, 0, 17))
@@ -697,9 +700,10 @@ class S05(Ep):
                                                                               buff=.1)
         pasted.move_to([.95, 1.5, 0], aligned_edge=LEFT)
         with self.say(1) as vo:
-            self.cue(vo, .0, FadeOut(card), grid.animate.set_opacity(1), run_time=.4)
+            self.cue(vo, .0, FadeOut(card), self.unveil(), run_time=.4)
             vo.wait_until("frozen benchmark")
             pick[0].set_stroke(color=RED, width=3)
+            self.add(pick)
             self.play(pick.animate.set_fill(RED, opacity=1).scale(1.6), FadeIn(quote, shift=UP * .1),
                       run_time=.6)
             vo.wait_until("M1, version eight")
@@ -707,8 +711,7 @@ class S05(Ep):
             vo.wait_until("holding out")
             self.play(FadeIn(m1[1]), run_time=.4)
             vo.wait_until("Its spec")
-            rest = VGroup(*[t for t in grid if t is not pick])
-            self.play(FadeOut(rest), FadeOut(quote), FadeOut(m1), ReplacementTransform(pick, spec),
+            self.play(FadeOut(grid), FadeOut(quote), FadeOut(m1), ReplacementTransform(pick, spec),
                       run_time=.8)
             vo.wait_until("pasted its model")
             self.play(FadeIn(core, shift=LEFT * .1), FadeIn(pasted), run_time=.5)
@@ -938,7 +941,7 @@ class S06(Ep):
         l_panel = panel_at(l_rows, CORE_PATH, -2.5, 1.25, 7.4, 17)
         notes = {43: ("contract: needs training_data", INK), 133: ("Experiment calls train()", INK),
                  155: ("IdentityModel: takes none", INK),
-                 261: ("scGenModel keeps the contract → breaks", RED)}
+                 261: ("scGenModel keeps it → breaks", RED)}
         ann = {n: left(t, 1.55, l_panel.row_y(n), 18, c) for n, (t, c) in notes.items()}
         follow = Arrow([1.4, l_panel.row_y(155), 0], [1.4, l_panel.row_y(133), 0], buff=.05, color=RED,
                        stroke_width=3, max_tip_length_to_length_ratio=.25)
@@ -975,8 +978,10 @@ class S06(Ep):
         a1 = arrow(e_p.get_right(), a_p.get_left(), INK)
         a2 = arrow(s_p.get_left(), a_p.get_right(), INK)
         a3 = arrow(s_p.get_right(), g_p.get_left(), GRAY)
-        a1_l = at("model.train() …", (e_p.get_right()[0] + a_p.get_left()[0]) / 2, dy + .38, 17, GRAY)
-        a3_l = at("import · line 248", (s_p.get_right()[0] + g_p.get_left()[0]) / 2, dy + .38, 17, GRAY)
+        a1_l = at("model.train() …", (e_p.get_right()[0] + a_p.get_left()[0]) / 2 + .3, dy + .38, 17,
+                  GRAY)
+        a3_l = at("import · line 248", (s_p.get_right()[0] + g_p.get_left()[0]) / 2 - .45, dy + .38,
+                  17, GRAY)
         never = DashedVMobject(ArcBetweenPoints(e_p.get_top() + UP * .05, g_p.get_top() + UP * .05,
                                                 angle=-PI / 5, color=RED, stroke_width=2.5), num_dashes=40)
         no = cross(.0, never.get_top()[1], .12, RED)
@@ -1028,4 +1033,155 @@ class S06(Ep):
             vo.wait_until("third model")
             self.play(Create(third), FadeIn(third_t, shift=LEFT * .2), run_time=.4)
             self.play(FadeIn(here, shift=DOWN * .1), run_time=.3)
+        self.finish()
+
+
+# ---------------------------------------------------------------- s07
+
+LOOP = [("write the call as a test", (-3.4, 1.3)), ("run it", (3.4, 1.3)),
+        ("read the last line", (4.72, -.4)), ("smallest change", (3.4, -2.05)),
+        ("pass → commit", (-3.4, -2.05)), ("next card", (-4.95, -.4))]
+CARDS = [("evaluate → table", "models × metrics"), ("split M1 v08", "four files"),
+         ("identity = 0.554", "R² of means"), ("scGen ≈ 0.927", "walk its error trail")]
+
+
+class S07(Ep):
+    def construct(self):
+        self.header()
+        nodes = [pill(t, x, y, INK, 22, font=LATIN) for t, (x, y) in LOOP]
+        edges = [Arrow(nodes[k].get_center(), nodes[(k + 1) % 6].get_center(), buff=0, color=INK,
+                       stroke_width=2.5, max_tip_length_to_length_ratio=.06) for k in range(6)]
+        for k, e in enumerate(edges):      # trim each edge to the boxes it joins
+            a, b = nodes[k], nodes[(k + 1) % 6]
+            d = b.get_center() - a.get_center()
+            u = d / np.linalg.norm(d)
+            pa = a.get_center() + u * min(a.width / 2 / max(abs(u[0]), 1e-3), a.height / 2 / max(abs(u[1]), 1e-3))
+            pb = b.get_center() - u * min(b.width / 2 / max(abs(u[0]), 1e-3), b.height / 2 / max(abs(u[1]), 1e-3))
+            edges[k] = Arrow(pa + u * .08, pb - u * .08, buff=0, color=INK, stroke_width=2.5,
+                             max_tip_length_to_length_ratio=.12)
+        token = Dot(radius=.1, color=RED).set_z_index(5)
+        term = terminal(["$ pytest", "…", "NameError: name '_dense' is not defined"], 0, -.35, width=6.2,
+                        size=17)
+        term_tag = source_tag("EXAMPLE").move_to([2.45, .55, 0])
+        last_bar = Rectangle(width=6.0, height=.32, stroke_width=0, fill_color=RED, fill_opacity=.35)\
+            .move_to([0, term.lines[2].get_y(), 0]).set_z_index(1)
+        passed = mono("1 passed", 17, PAPER).move_to(term.lines[2], aligned_edge=LEFT).set_z_index(2)
+
+        def go(k, *extra, run_time=.5):
+            """Advance the loop from node k-1 to node k (k >= 1)."""
+            prev = k - 1
+            self.play(GrowArrow(edges[prev]), FadeIn(nodes[k], shift=UP * .05),
+                      Transform(nodes[prev], paint(nodes[prev].copy(), INK)),
+                      token.animate.move_to(nodes[k].get_top() + UP * .18), *extra, run_time=run_time)
+
+        with self.say(0) as vo:
+            vo.wait_until("Write the call")
+            paint(nodes[0], RED)
+            token.move_to(nodes[0].get_top() + UP * .18)
+            self.play(FadeIn(nodes[0], shift=UP * .05), FadeIn(token), run_time=.5)
+            vo.wait_until("Run it")
+            paint(nodes[1], RED)
+            go(1, FadeIn(term[0]), FadeIn(term.lines[0]), FadeIn(term_tag))
+            vo.wait_until("Read the last line")
+            paint(nodes[2], RED)
+            go(2, FadeIn(term.lines[1]), FadeIn(term.lines[2]))
+            self.play(FadeIn(last_bar), run_time=.3)
+        with self.say(1) as vo:
+            paint(nodes[3], RED)
+            self.cue(vo, .0)
+            go(3)
+            vo.wait_until("gets past")
+            self.play(FadeOut(last_bar), FadeOut(term.lines[2]), FadeIn(passed), run_time=.5)
+            vo.wait_until("When the test")
+            paint(nodes[4], RED)
+            go(4)
+            vo.wait_until("pick up")
+            paint(nodes[5], RED)
+            go(5, run_time=.4)
+            self.play(GrowArrow(edges[5]), Transform(nodes[5], paint(nodes[5].copy(), INK)),
+                      Transform(nodes[0], paint(nodes[0].copy(), RED)),
+                      token.animate.move_to(nodes[0].get_top() + UP * .18), run_time=.5)
+        loop = VGroup(*nodes, *edges, token, term[0], term.lines[0], term.lines[1], passed, term_tag)
+        # L2: the four cards, in order
+        cy, cw, ch = .95, 2.9, 1.55
+        cards = []
+        for k, (title, sub) in enumerate(CARDS):
+            x = STAGE_X[k]
+            fr = Rectangle(width=cw, height=ch, stroke_color=INK, stroke_width=2, fill_color=PAPER,
+                           fill_opacity=1).move_to([x, cy, 0])
+            cards.append(VGroup(fr, left(f"CARD {k + 1}", x - cw / 2 + .18, cy + .5, 18, RED, bold=True),
+                                left(title, x - cw / 2 + .18, cy + .02, 23, INK, cw - .36, bold=True),
+                                left(sub, x - cw / 2 + .18, cy - .45, 18, GRAY)))
+        order = tagline("INFERRED", "card order: our recommendation", -6.2, -.2, 17)
+        my = -1.35
+        # card 1: a 2×2 table fills; card 2: one block splits in four; card 3: a number counts up;
+        # card 4: the four trail stops turn from ✗ to ✓
+        t1 = VGroup(*[Square(.36, stroke_color=INK, stroke_width=2).move_to([STAGE_X[0] - .2 + i * .4,
+                                                                             my + .2 - j * .4, 0])
+                      for j in range(2) for i in range(2)])
+        t1f = VGroup(*[Square(.3, stroke_width=0, fill_color=INK, fill_opacity=1).move_to(q) for q in t1])
+        block = Rectangle(width=.9, height=.7, stroke_width=0, fill_color=INK, fill_opacity=1)\
+            .move_to([STAGE_X[1], my, 0])
+        quads = VGroup(*[Rectangle(width=.42, height=.32, stroke_width=0, fill_color=INK if j == 0 else RED,
+                                   fill_opacity=1).move_to([STAGE_X[1] - .3 + i * .6, my + .25 - j * .5, 0])
+                         for j in range(2) for i in range(2)])
+        val = ValueTracker(0)
+        num = always_redraw(lambda: mono(f"{val.get_value():.3f}", 30, INK, bold=True)
+                            .move_to([STAGE_X[2], my, 0]))
+        num_end = mono("0.554", 30, RED, bold=True).move_to([STAGE_X[2], my, 0])
+        stops4 = [cross(STAGE_X[3] - .75 + i * .5, my + .1, .1, RED) for i in range(4)]
+        oks4 = [tick(STAGE_X[3] - .75 + i * .5, my + .1, .11, INK) for i in range(4)]
+        near = mono("≈ 0.927", 20, RED).move_to([STAGE_X[3], my - .45, 0])
+        with self.say(2) as vo:
+            self.cue(vo, .0, FadeOut(loop, shift=UP * .2), run_time=.4)
+            self.play(LaggedStart(*[FadeIn(c, shift=UP * .1) for c in cards], lag_ratio=.15),
+                      FadeIn(order), run_time=.7)
+            vo.wait_until("Make evaluate")
+            self.play(cards[0][0].animate.set_stroke(RED, 4), Create(t1), run_time=.4)
+            self.play(LaggedStart(*[FadeIn(f) for f in t1f], lag_ratio=.2), run_time=.6)
+            vo.wait_until("Split the M1")
+            self.play(cards[0][0].animate.set_stroke(INK, 2), cards[1][0].animate.set_stroke(RED, 4),
+                      FadeIn(block), run_time=.4)
+            self.play(ReplacementTransform(block, quads), run_time=.6)
+            vo.wait_until("Run identity")
+            self.play(cards[1][0].animate.set_stroke(INK, 2), cards[2][0].animate.set_stroke(RED, 4),
+                      FadeIn(num), run_time=.4)
+            vo.wait_until("gives zero point")
+            self.play(val.animate.set_value(.554), run_time=1.0, rate_func=smooth)
+            self.remove(num)
+            self.add(num_end)
+            vo.wait_until("Then walk")
+            self.play(cards[2][0].animate.set_stroke(INK, 2), cards[3][0].animate.set_stroke(RED, 4),
+                      num_end.animate.set_color(INK), *[FadeIn(s_) for s_ in stops4], run_time=.4)
+            for s_, o in zip(stops4, oks4):
+                self.play(ReplacementTransform(s_, o), run_time=.3)
+            vo.wait_until("lands near")
+            self.play(FadeIn(near, shift=UP * .1), run_time=.4)
+        board = VGroup(*cards, order, t1, t1f, quads, num_end, *oks4, near)
+        # L3: recap
+        rows_y = [1.45, .75, .05, -.65]
+        icons = VGroup(
+            VGroup(*[VGroup(Square(.26, stroke_color=INK, stroke_width=2).move_to([-5.7 + i * .34, rows_y[0], 0]),
+                            tick(-5.7 + i * .34, rows_y[0], .07, INK, 3)) for i in range(4)]),
+            VGroup(*[mono(str(i + 1), 20, RED, bold=True).move_to([-5.7 + i * .34, rows_y[1], 0])
+                     for i in range(4)]),
+            mono("0.554", 22, RED, bold=True).move_to([-5.2, rows_y[2], 0]),
+            VGroup(Circle(radius=.22, color=INK, stroke_width=2).move_to([-5.2, rows_y[3], 0]),
+                   Polygon([-5.2, rows_y[3] + .18, 0], [-5.25, rows_y[3], 0], [-5.15, rows_y[3], 0],
+                           color=RED, fill_color=RED, fill_opacity=1, stroke_width=0)))
+        texts = VGroup(*[left(t, -4.3, y, 26, INK) for t, y in zip(
+            ["the skeleton already walks", "the errors give the order",
+             "first golden number: identity 0.554", "SOLID is for when something hurts"], rows_y)])
+        recap = left("RECAP · 回顾", -6.2, 2.0, 18, GRAY, bold=True)
+        motto = VGroup(label("Momentum beats a perfect plan.", 32, RED, bold=True),
+                       label("动起来，比完美的计划更重要", 20, GRAY)).arrange(DOWN, aligned_edge=LEFT, buff=.12)
+        motto.move_to([-6.2, -1.85, 0], aligned_edge=LEFT)
+        with self.say(3) as vo:
+            self.cue(vo, .0, FadeOut(board, shift=UP * .2), FadeIn(recap), run_time=.4)
+            for k, w in enumerate(["The skeleton", "the errors give", "the first golden", "and SOLID"]):
+                vo.wait_until(w)
+                self.play(FadeIn(icons[k], shift=RIGHT * .1), FadeIn(texts[k], shift=RIGHT * .1),
+                          run_time=.45)
+            vo.wait_until("Momentum")
+            self.play(FadeIn(motto, shift=UP * .1), run_time=.5)
         self.finish()
