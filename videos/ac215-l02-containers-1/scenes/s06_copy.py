@@ -96,7 +96,7 @@ REPO_FILES = ["Dockerfile", "Dockerfile.txt", "README.md", "cli.py", "docker-bui
 
 # ------------------------------------------------------------------ layout
 PANEL_X = -0.9                       # beat 0: README panel (4.6 wide) left of centre, the uv chip right of it
-STACK_X, FLOOR_Y = -3.0, -0.25       # the V2 stack where S05 left it (3.2 wide)
+STACK_X, FLOOR_Y = -1.2, -0.25       # the V2 stack (3.2 wide; S05's height, centred: no config card here)
 PARCEL_X = -3.95                     # beat 1: the folder / parcel (left)
 BUILDER_X, BUILDER_Y = 3.85, -0.55   # beat 1: the builder box (right)
 SHRINK = 0.3                         # the parcel's size while it travels (names hidden)
@@ -165,12 +165,14 @@ def folder_shape(frame, title: str):
 
 
 def copy_slab(stack: LayerStack) -> Slab:
-    """The GREY `COPY . ./` slab with a row of file glyphs (a folder for .git/ first) beside its text."""
+    """The GREY `COPY . ./` slab with a few file glyphs (a folder for .git/ first) beside its text."""
     s = stack.make("COPY . ./", LAPTOP)
-    glyphs = VGroup(folder_glyph(0.22, LAPTOP), *[file_glyph(0.26, LAPTOP) for _ in range(5)])
+    glyphs = VGroup(folder_glyph(0.2, LAPTOP), *[file_glyph(0.24, LAPTOP) for _ in range(3)])
     glyphs.arrange(RIGHT, buff=0.1)
-    s.text.shift(LEFT * 0.85)
-    glyphs.next_to(s.text, RIGHT, buff=0.3).set_y(s.box.get_center()[1])
+    row = VGroup(s.text, glyphs)
+    glyphs.next_to(s.text, RIGHT, buff=0.3)
+    row.move_to(s.box)
+    glyphs.set_y(s.box.get_center()[1])
     s.add(glyphs)
     s.glyphs = glyphs
     return s
@@ -295,16 +297,17 @@ class StepCopy(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(panel, bar_b, u_pip, uv_chip, lab_this, lab_top, lead_this, lead_top),
-                              shift=UP * 0.1), run_time=0.5)
-            self.play(ShowIncreasingSubsets(big.glyphs, rate_func=linear), run_time=0.8)
+                              shift=UP * 0.1),
+                      ShowIncreasingSubsets(big.glyphs, rate_func=linear), run_time=0.8)
             vo.wait_until("the final dot")
-            self.play(g_ctx.animate.set_color(ROUTE), Create(ring), run_time=0.5)
-            self.play(Indicate(ring, color=ROUTE, scale_factor=1.4), run_time=0.6)
-            vo.wait_until("Docker packs")
-            self.play(FadeOut(strip), track(tr, 9), run_time=0.4)
-            self.play(TransformFromCopy(ring, parcel.frame, path_arc=0.6), run_time=0.9)
+            self.play(g_ctx.animate.set_color(ROUTE), Create(ring), run_time=0.4)
+            # the dot is this folder: its ring flies down and becomes the folder (the cat output leaves)
+            self.play(FadeOut(strip), track(tr, 9), TransformFromCopy(ring, parcel.frame), run_time=0.7)
             self.play(FadeIn(folder, shift=DOWN * 0.1), LaggedStart(*[FadeIn(m) for m in glyphs], lag_ratio=0.1),
-                      FadeIn(names), run_time=0.7)
+                      FadeIn(names), run_time=0.6)
+            vo.wait_until("Docker packs")
+            self.play(Indicate(VGroup(parcel.frame, folder), color=LAPTOP, scale_factor=1.04),
+                      Indicate(ring, color=ROUTE, scale_factor=1.3), run_time=0.8)
             vo.wait_until("into one parcel")
             self.play(FadeOut(folder.tab, shift=DOWN * 0.2), ReplacementTransform(folder.title, parcel.title),
                       Create(parcel.tape), run_time=0.8)
@@ -525,5 +528,6 @@ class StepCopy(VoiceScene):
             w.set_prompt(P_LAPTOP)
             bare_prompt(self, w)
 
+        self.wait(0.5)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
