@@ -446,6 +446,11 @@ class S03(Ep):
         self.finish()
 
 
+def tint(ch, color):
+    """Recolour a chip's outline and text (not its paper fill)."""
+    return [ch[0].animate.set_stroke(color), ch[1].animate.set_color(color)]
+
+
 def mini_table(x, y, color, n=3, w=.8, rh=.13, gap=.05):
     """A tiny table: n rows of cells (flat fills)."""
     return VGroup(*[Rectangle(width=w, height=rh, stroke_width=0, fill_color=color,
@@ -459,7 +464,7 @@ class S04(Ep):
         ly = {"setup": 1.35, "train": .05, "predict": -1.4}
         names = {"setup": "setup()", "train": "train()", "predict": "predict()"}
         chips = {k: chip(names[k], -5.15, ly[k], INK, 22) for k in ly}
-        cls = mono_left("class scGenModel(AbstractModel)", -6.2, 1.98, 17, GRAY)
+        cls = mono_left("class scGenModel(AbstractModel)", -6.2, 1.88, 17, GRAY)
         xs = [-2.85, -.35, 1.85, 4.6]
 
         def under(t, x, k, color=GRAY):
@@ -473,10 +478,10 @@ class S04(Ep):
         ty = ly["train"]
         mouse_t = mini_table(-3.35, ty + .32, GRAY)
         human_t = mini_table(-2.35, ty + .32, INK)
-        merged_m = mini_table(-2.75, ty + .38, GRAY)
-        merged_h = mini_table(-2.75, ty + .38 - 3 * .18, INK)
-        species = VGroup(*[Square(side_length=.13, stroke_width=0, fill_color=c, fill_opacity=1)
-                           .move_to([-3.32, ty + .38 - i * .18, 0])
+        merged_m = mini_table(-2.75, ty + .4, GRAY, rh=.11, gap=.04)
+        merged_h = mini_table(-2.75, ty + .4 - 3 * .15, INK, rh=.11, gap=.04)
+        species = VGroup(*[Square(side_length=.11, stroke_width=0, fill_color=c, fill_opacity=1)
+                           .move_to([-3.32, ty + .4 - i * .15, 0])
                            for i, c in enumerate([GRAY] * 3 + [INK] * 3)])
         u_join = under("one table + species label", xs[0], "train", RED)
         u_join.shift(DOWN * .18)
@@ -493,11 +498,11 @@ class S04(Ep):
             self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * .1) for c in chips.values()],
                                   lag_ratio=.25), run_time=.8)
             vo.wait_until("Setup builds")
-            self.play(chips["setup"].animate.set_color(RED), GrowArrow(a_set), Create(ae0),
+            self.play(*tint(chips["setup"], RED), GrowArrow(a_set), Create(ae0),
                       FadeIn(u_set), run_time=.7)
             vo.wait_until("Train joins")
-            self.play(chips["setup"].animate.set_color(INK), u_set.animate.set_color(GRAY),
-                      chips["train"].animate.set_color(RED), GrowArrow(tr_arrows[0]),
+            self.play(*tint(chips["setup"], INK), u_set.animate.set_color(GRAY),
+                      *tint(chips["train"], RED), GrowArrow(tr_arrows[0]),
                       FadeIn(mouse_t), FadeIn(human_t), run_time=.5)
             self.play(ReplacementTransform(mouse_t, merged_m),
                       ReplacementTransform(human_t, merged_h), run_time=.8)
@@ -514,34 +519,37 @@ class S04(Ep):
             self.play(GrowArrow(tr_arrows[3]), FadeIn(store, shift=RIGHT * .1),
                       FadeIn(u_store), u_delta.animate.set_color(GRAY), run_time=.5)
         py = ly["predict"]
-        test = cloud(10, xs[0], py, .12, GRAY, seed=31, radius=.045)
-        enc = trapezoid(xs[0] + .35, xs[0] + .95, .62, .26, py, INK)
-        u_enc = under("encode test mouse", xs[0] + .3, "predict", RED)
-        add = chip("+ self.delta", xs[1], py, RED, 20)
-        u_add = under("add the stored δ", xs[1], "predict", RED)
-        dec = trapezoid(xs[2] - .3, xs[2] + .3, .26, .62, py, INK)
-        u_dec = under("decode", xs[2], "predict", RED)
-        ann = chip("AnnData", xs[3], py, INK, 22)
-        u_ann = under("every metric can read it", xs[3], "predict", RED)
+        px = [-3.1, 0.0, 2.3, 4.6]
+        test = cloud(10, px[0], py, .12, GRAY, seed=31, radius=.045)
+        enc = trapezoid(px[0] + .35, px[0] + .95, .62, .26, py, INK)
+        u_enc = under("encode test mouse", px[0] + .5, "predict", RED)
+        add = chip("+ self.delta", px[1], py, RED, 20)
+        u_add = under("add the stored δ", px[1], "predict", RED)
+        dec = trapezoid(px[2] - .3, px[2] + .3, .26, .62, py, INK)
+        u_dec = under("decode", px[2], "predict", RED)
+        ann = chip("AnnData", px[3], py, INK, 22)
+        u_ann = under("every metric can read it", px[3], "predict", RED)
         p_arrows = [arrow([a, py, 0], [b, py, 0], INK) for a, b in
-                    ((-4.0, -3.15), (-1.8, -1.35), (.65, 1.45), (2.25, 3.55))]
+                    ((-4.0, -3.45), (px[0] + 1.0, add.get_left()[0] - .02),
+                     (add.get_right()[0] + .02, px[2] - .32),
+                     (px[2] + .35, ann.get_left()[0] - .02))]
         with self.say(1) as vo:
-            self.cue(vo, .02, chips["train"].animate.set_color(INK),
-                     u_store.animate.set_color(GRAY), chips["predict"].animate.set_color(RED),
+            self.cue(vo, .02, *tint(chips["train"], INK),
+                     u_store.animate.set_color(GRAY), *tint(chips["predict"], RED),
                      GrowArrow(p_arrows[0]), FadeIn(test), run_time=.45)
             vo.wait_until("encodes")
             self.play(Create(enc), FadeIn(u_enc), run_time=.45)
-            token = Dot([xs[0] + .65, py, 0], radius=.1, color=GRAY)
+            token = Dot([px[0] + .65, py, 0], radius=.1, color=GRAY)
             self.play(FadeIn(token), run_time=.2)
             vo.wait_until("adds the stored")
             fly = store.copy()
             self.play(GrowArrow(p_arrows[1]), u_enc.animate.set_color(GRAY),
                       ReplacementTransform(fly, add), FadeIn(u_add),
-                      token.animate.move_to([xs[1], py + .45, 0]), run_time=.7)
+                      token.animate.move_to([px[1], py + .45, 0]), run_time=.7)
             self.play(token.animate.set_color(RED), run_time=.25)
             vo.wait_until("decodes")
             self.play(GrowArrow(p_arrows[2]), Create(dec), FadeIn(u_dec),
-                      u_add.animate.set_color(GRAY), token.animate.move_to([xs[2], py, 0]),
+                      u_add.animate.set_color(GRAY), token.animate.move_to([px[2], py, 0]),
                       run_time=.5)
             vo.wait_until("returns an AnnData")
             self.play(GrowArrow(p_arrows[3]), u_dec.animate.set_color(GRAY),
@@ -554,14 +562,14 @@ class S04(Ep):
         pp = code_panel(pr_rows, CORE_PATH, 3.2, .56, width=6.2, size=17)
         n1 = left("282 · δ is a local: gone when train returns", -6.25, -1.62, 19, INK)
         n2 = left("284–285 · the fit is commented out, then pass", -6.25, -2.05, 19, INK)
-        n3 = left("292 · hands back the mouse cells", .15, -1.62, 19, INK)
+        n3 = left("292 · hands back the mouse cells, untouched", .15, -1.62, 19, INK)
         with self.say(2) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.4)
             self.play(FadeIn(tp, shift=UP * .1), FadeIn(pp, shift=UP * .1), run_time=.5)
             vo.wait_until("Train computes delta")
             m282 = highlight(self, tp, 282, run_time=.3)
             dy = tp.row_y(282)
-            dd = delta_arrow([-1.05, dy - .08, 0], [-.35, dy + .08, 0], RED, 4)
+            dd = delta_arrow([-1.05, dy - .08, 0], [-.35, dy + .08, 0], RED, 4).set_z_index(3)
             self.play(GrowArrow(dd), run_time=.3)
             vo.wait_until("never fits")
             m284 = tp.mark(284, 285)
@@ -571,8 +579,9 @@ class S04(Ep):
             vo.wait_until("Predict ends")
             m292 = highlight(self, pp, 292, run_time=.3)
             gy = pp.row_y(292)
-            out = cloud(8, 5.75, gy, .07, GRAY, seed=32, radius=.035)
-            self.play(FadeIn(n3), FadeIn(out, shift=RIGHT * .3), run_time=.5)
+            out = cloud(8, 5.8, pp.row_y(288), .07, GRAY, seed=32, radius=.04).set_z_index(3)
+            self.play(FadeIn(out), run_time=.3)
+            self.play(FadeIn(n3), out.animate.move_to([5.8, gy, 0]), run_time=.6)
             vo.wait_until("your blanks")
             boxes = VGroup(*[SurroundingRectangle(VGroup(*[p.row(n) for n in ns]), color=RED,
                                                   buff=.06, stroke_width=2.5)

@@ -118,6 +118,8 @@ class CodePanel(VGroup):
         body_top = top - head_h
         self.body_top = body_top
         self.gutter_x = x0 + ((.22 + ADVANCE * (size - 4) * digits) if numbers else .02)
+        # geometry relative to the frame, so marks follow later shifts and scales
+        self._h0, self._head_h, self._gutter_off = height, head_h, self.gutter_x - x0
         self.rows, self.nums, self.texts = {}, VGroup(), VGroup()
         for i, (num, body) in enumerate(bodies):
             ry = body_top - .15 - gap / 2 - i * gap
@@ -148,24 +150,31 @@ class CodePanel(VGroup):
     def row_y(self, num):
         return self._row_centre(num)
 
+    def _scale(self):
+        return self.frame.height / self._h0
+
     def mark(self, *nums, color=RED):
-        """A flat tint behind the given lines plus a red bar in the gutter."""
+        """A flat tint behind the given lines plus a red bar in the gutter, placed from the
+        panel's current position and scale (so it is right after shift/scale/move_to)."""
+        k = self._scale()
+        gutter = self.frame.get_left()[0] + self._gutter_off * k
         marks = VGroup()
         for num in nums:
             y = self._row_centre(num)
-            w = self.frame.get_right()[0] - self.gutter_x - .04
-            band = Rectangle(width=w, height=self.gap * .98, stroke_width=0, fill_color=TINT,
-                             fill_opacity=1).move_to([self.gutter_x + .02 + w / 2, y, 0])
-            bar = Rectangle(width=.08, height=self.gap * .98, stroke_width=0, fill_color=color,
-                            fill_opacity=1).move_to([self.gutter_x + .04, y, 0])
+            w = self.frame.get_right()[0] - gutter - .04 * k
+            band = Rectangle(width=w, height=self.gap * .98 * k, stroke_width=0,
+                             fill_color=TINT, fill_opacity=1)\
+                .move_to([gutter + .02 * k + w / 2, y, 0])
+            bar = Rectangle(width=.08 * k, height=self.gap * .98 * k, stroke_width=0,
+                            fill_color=color, fill_opacity=1).move_to([gutter + .04 * k, y, 0])
             marks.add(VGroup(band, bar))
         marks.set_z_index(1)
         return marks
 
     def _row_centre(self, num):
-        keys = list(self.rows)
-        i = keys.index(num)
-        return self.body_top - .15 - self.gap / 2 - i * self.gap
+        i = list(self.rows).index(num)
+        k = self._scale()
+        return self.frame.get_top()[1] - (self._head_h + .15 + self.gap / 2 + i * self.gap) * k
 
 
 def code_panel(rows, title, x, y, width=6.4, size=20, **kw):
