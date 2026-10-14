@@ -372,10 +372,12 @@ class S02(Ep):
         snum = VGroup(*[mono(str(i + 1), 17, GRAY).move_to(sp.p(*x[i]) + np.array([.24, -.13, 0]))
                         for i in range(3)])
         kform = VGroup(mono_left("k = exp(−0.5 · d²)", -6.2, -.5, 18, INK),
-                       left("γ = 0.5, test line 19", -3.45, -.5, 17, GRAY))
+                       left("γ = 0.5, test line 19", -3.2, -.5, 17, GRAY))
         pairs = [(0, 1), (0, 2)]
-        plines = VGroup(*[Line(sp.p(*x[a]), sp.p(*x[b]), color=RED, stroke_width=4)
-                          for a, b in pairs])
+        # the points are collinear: draw the 1-3 pair as an arc so it doesn't hide the 1-2 pair
+        plines = VGroup(Line(sp.p(*x[0]), sp.p(*x[1]), color=RED, stroke_width=4),
+                        ArcBetweenPoints(sp.p(*x[0]), sp.p(*x[2]), angle=-PI / 2.2, color=RED,
+                                         stroke_width=4))
         sup = {1: "¹", 2: "²", 4: "⁴"}
         plabs = VGroup(*[mono_left(f"d² = {d2[a, b]:.0f} → e⁻{sup[int(.5 * d2[a, b])]} = "
                                    f"{K[a, b]:.3f}", -4.6, y, 18, INK)
@@ -440,7 +442,7 @@ class S02(Ep):
         y22 = tail.row_y(22)
         line_end = tail.row(22).get_right()[0]
         zero_at = np.array([4.95, y22, 0])
-        to_approx = arrow(zero_at + LEFT * .55, [line_end + .12, y22, 0], RED)
+        to_approx = arrow(zero_at + LEFT * .55, [line_end + .12, y22, 0], RED).set_z_index(3)
         fp = repr(0.1 + 0.2 - 0.3)
         approx = VGroup(at("approx: floating-point sums are rarely exactly 0", 0, -.62, 24, INK),
                         mono(f"0.1 + 0.2 − 0.3  =  {fp}", 20, GRAY).move_to([0, -1.22, 0]),
@@ -490,23 +492,27 @@ class S03(Ep):
         call = mono(fname + "()", 19, INK).move_to([0, -.95, 0])
         call_lab = at("you never call it yourself", 0, -.45, 19, GRAY)
         term = terminal(["$ pytest"], -5.0, 1.55, width=2.3, size=24)
-        files = ["config.yaml", "test_evaluation.py", "test_model.py", "toy_config.yaml"]
-        tx, ty = -2.0, [1.42, 1.02, .62, .22]
+        files = ["config.yaml", "e24_replica.ipynb", "test_evaluation.py", "test_model.py",
+                 "toy_config.yaml"]
+        tx, ty = -2.0, [1.47, 1.11, .75, .39, .03]
         root = mono_left("Tests/", tx - .3, 1.86, 20, INK, bold=True)
-        tree = VGroup(*[mono_left(f, tx, y, 19, INK) for f, y in zip(files, ty)])
-        twig = VGroup(*[Line([tx - .22, y + .2, 0], [tx - .22, y, 0], color=FAINT,
+        tree = VGroup(*[mono_left(f, tx, y, 19, GRAY if f.endswith("ipynb") else INK)
+                        for f, y in zip(files, ty)])
+        pip = VGroup(left("package installed with", -6.2, .88, 17, GRAY),
+                     mono_left("pip install -e .  (E2)", -6.2, .6, 17, GRAY))
+        twig = VGroup(*[Line([tx - .22, y + .18, 0], [tx - .22, y, 0], color=FAINT,
                              stroke_width=1.5) for y in ty],
                       *[Line([tx - .22, y, 0], [tx - .08, y, 0], color=FAINT, stroke_width=1.5)
                         for y in ty])
         rule_f = chip("files:  test_*.py", 4.3, 1.42, INK, 20)
-        rule_d = chip("functions:  test_*", 4.3, .62, INK, 20)
+        rule_d = chip("functions:  test*", 4.3, .62, INK, 20)
         arr0 = arrow(term.get_right() + RIGHT * .05, [tx - .5, 1.86, 0], INK)
         with self.say(0) as vo:
             self.cue(vo, .02, FadeIn(call), FadeIn(call_lab), run_time=.5)
             st = strike(call)
             self.play(Create(st), run_time=.4)
             vo.wait_until("You type")
-            self.play(FadeIn(term, shift=RIGHT * .1), run_time=.4)
+            self.play(FadeIn(term, shift=RIGHT * .1), FadeIn(pip), run_time=.4)
             vo.wait_until("It finds")
             self.play(Create(arr0), FadeIn(root), FadeIn(twig), FadeIn(tree), FadeIn(rule_f),
                       run_time=.6)
@@ -517,7 +523,7 @@ class S03(Ep):
                 hit = f.startswith("test_")
                 self.play(scan.animate.move_to([tx - .4, ty[i], 0]),
                           tree[i].animate.set_color(RED if hit else FAINT), run_time=.28)
-            self.play(FadeOut(scan), *[tree[i].animate.set_color(INK) for i in (1, 2)],
+            self.play(FadeOut(scan), *[tree[i].animate.set_color(INK) for i in (2, 3)],
                       run_time=.25)
             defl = mono(f"def {fname}():", 19, INK).move_to([0, -.95, 0])
             defl[3:7].set_color(RED)
@@ -525,7 +531,7 @@ class S03(Ep):
             src = mono_left("in test_evaluation.py:", -3.8, -.45, 18, GRAY)
             self.play(FadeOut(call_lab), FadeOut(st), ReplacementTransform(call, defl),
                       FadeIn(src), FadeIn(rule_d),
-                      tree[1].animate.set_color(RED), run_time=.6)
+                      tree[2].animate.set_color(RED), run_time=.6)
             vo.wait_until("reports")
             rep_arr = arrow([defl.get_right()[0] + .15, -.95, 0],
                             [defl.get_right()[0] + .85, -.95, 0], INK)
@@ -561,6 +567,12 @@ class S03(Ep):
             vo.wait_until("most of that")
             self.play(FadeIn(axis), FadeIn(ticks), GrowFromEdge(imp, LEFT), run_time=.9)
             self.play(FadeIn(imp_lab), FadeIn(body), FadeIn(body_lab), FadeIn(itag), run_time=.5)
+            vo.wait_until("Pause and predict")
+            pcard = ponder("对整个 Tests 文件夹运行 pytest，会发生什么？",
+                           "Run pytest on the whole Tests folder: what happens?", y=-1.25)
+            self.play(self.veil(), run_time=.35)
+            self.play(FadeIn(pcard, shift=UP * .1), run_time=.45)
+        self.hold(1)                 # thinking time after the ponder question
 
         run2 = terminal(["$ pytest -q src/speciesot/Tests",
                          "ERROR src/speciesot/Tests/test_model.py - FileNotFoundError: "
@@ -586,16 +598,15 @@ class S03(Ep):
         off_t = source_tag("MEASURED").move_to([5.65, 1.08, 0])
         on_h = left("on the cluster", rx, .02, 20, INK, bold=True)
         on_t = source_tag("INFERRED").move_to([5.65, .02, 0])
-        load_lab = left("loads the full atlas", rx, -.32, 18, INK)
-        lx0 = rx + 2.35
+        load_lab = left("loads the multi-GB atlas files", rx, -.3, 18, INK)
         load = Rectangle(width=.01, height=.14, stroke_width=0, fill_color=GRAY, fill_opacity=1)\
-            .move_to([lx0 + .005, -.32, 0])
-        crash = VGroup(mono("✗", 20, RED, bold=True).move_to([6.12, -.32, 0]),
-                       left("then crashes in setup()", rx, -.62, 18, RED))
+            .move_to([rx + .005, -.6, 0])
+        crash = left("✗ crashes in setup()", rx + 2.75, -.6, 18, RED)
         with self.say(2) as vo:
-            self.cue(vo, .01, *[FadeOut(m) for m in (mtag, axis, ticks, imp, body, imp_lab,
-                                                     body_lab, itag)],
-                     ReplacementTransform(run1, run2), run_time=.6)
+            self.cue(vo, .01, FadeOut(pcard), self.unveil(),
+                     *[FadeOut(m) for m in (mtag, axis, ticks, imp, body, imp_lab,
+                                            body_lab, itag)],
+                     ReplacementTransform(run1, run2), run_time=.5)
             vo.wait_until("stops early")
             stop = red_box(run2.lines[2], .05)
             self.play(Create(stop), run_time=.4)
@@ -620,11 +631,11 @@ class S03(Ep):
             vo.wait_until("On the cluster")
             self.play(FadeOut(err_box), FadeIn(on_h), FadeIn(on_t),
                       off_e.animate.set_color(INK), run_time=.4)
-            vo.wait_until("loads the full")
+            vo.wait_until("loads the multi")
             nm = tm.mark(8)
             self.play(ReplacementTransform(mk, nm), FadeIn(load_lab), run_time=.4)
             mk = nm
-            self.play(load.animate.stretch_to_fit_width(2.55).move_to([lx0 + 1.275, -.32, 0]),
+            self.play(load.animate.stretch_to_fit_width(2.55).move_to([rx + 1.275, -.6, 0]),
                       run_time=1.2)
             vo.wait_until("then crashes")
             self.play(FadeIn(crash), run_time=.4)
@@ -635,8 +646,9 @@ class S03(Ep):
         icons = VGroup(rack(-4.0, .45), bigfile(0, .45), gpu_icon(4.0, .45))
         names = VGroup(at("a cluster", -4.0, -.5, 21, INK), at("gigabyte files", 0, -.5, 21, INK),
                        at("a GPU", 4.0, -.5, 21, INK))
-        need = left("a good test needs nothing but", -6.1, 1.72, 28, INK, bold=True)
-        yours = left("your code", need.get_right()[0] + .25, 1.72, 28, RED, bold=True)
+        need = left("a good test runs on", -6.1, 1.72, 28, INK, bold=True)
+        yours = VGroup(left("your code", need.get_right()[0] + .25, 1.72, 28, RED, bold=True))
+        yours.add(left("alone", yours.get_right()[0] + .25, 1.72, 28, INK, bold=True))
         strikes = VGroup(*[Line(ic.get_corner(DL) + LEFT * .15 + DOWN * .1,
                                 ic.get_corner(UR) + RIGHT * .15 + UP * .1, color=RED,
                                 stroke_width=5) for ic in icons])
@@ -655,7 +667,7 @@ class S03(Ep):
             self.play(LaggedStart(*[FadeIn(i, shift=UP * .1) for i in icons], lag_ratio=.2),
                       FadeIn(names), run_time=.7)
             self.settle(icons)
-            for w, s in zip(["no cluster", "no gigabyte", "no GPU"], strikes):
+            for w, s in zip(["No cluster", "no gigabyte", "no GPU"], strikes):
                 vo.wait_until(w)
                 self.play(Create(s), run_time=.3)
             vo.wait_until("fast enough")
