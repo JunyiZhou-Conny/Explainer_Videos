@@ -1,0 +1,93 @@
+{
+  "title_en": "A folder named Tests is not a test",
+  "title_zh": "名叫 Tests 的文件夹并不是测试",
+  "preset": "swiss",
+  "description_en": "See which file pytest collects, and why a script that calls setup is not a test even when it lives in Tests.",
+  "description_zh": "看清 pytest 会收集哪个文件，以及为什么一个调用 setup 的脚本，即使放在 Tests 里，也不是测试。",
+  "tags_zh": ["python", "pytest", "教程"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "The two Python files and the replica notebook are the 2026-10-14 upload. They are not commits.",
+    "Do not claim the MMD test passed in this session. The command is shown as a command."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "Only one of them is a test",
+      "title_zh": "其中只有一个是测试",
+      "lines": [
+        {"en": "Here's a folder named Tests. Two Python files sit inside it. Only one of them is a test.",
+         "zh": "这里有一个名叫 Tests 的文件夹。里面有两个 Python 文件。其中只有一个是测试。"},
+        {"en": "The other file calls setup as soon as Python loads it. Pytest never collects a function from it.",
+         "zh": "另一个文件在 Python 加载它的时候就调用 setup。Pytest 从它里面收集不到任何函数。"},
+        {"en": "Pause and think. If setup crashed, would you see a failed test, or a crash before any test ran?",
+         "zh": "停一下想一想。如果 setup 崩了，你会看到一个失败的测试，还是测试还没开始就崩了？"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "Pytest keeps one kind of name",
+      "title_zh": "Pytest 只留下一种名字",
+      "lines": [
+        {"en": "Pytest walks the file and keeps a function whose name starts with test underscore.",
+         "zh": "Pytest 走过这个文件，只留下名字以 test 下划线开头的函数。"},
+        {"en": "The evaluation file yields one function. The model file yields an empty list.",
+         "zh": "评估文件交出一个函数。模型文件交出一张空列表。"},
+        {"en": "The folder name does not matter. The function name does.",
+         "zh": "文件夹的名字不重要。函数的名字才重要。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "Identical clouds, score zero",
+      "title_zh": "两朵相同的云，分数是零",
+      "lines": [
+        {"en": "The kept test builds two tiny tables. Three rows, two columns, and the numbers match exactly.",
+         "zh": "被留下的测试做了两张很小的表。三行，两列，数字完全一样。"},
+        {"en": "It asks the MMD evaluation for the distance between them. The score is compared with approximately zero.",
+         "zh": "它向 MMD 评估要这两张表之间的距离。分数要和大约零比较。"},
+        {"en": "That assert is the test. A print above it is not.",
+         "zh": "那个 assert 才是测试。它上面的 print 不是。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "The other file just runs",
+      "title_zh": "另一个文件只是在跑",
+      "lines": [
+        {"en": "Open test model. It constructs Experiment from a yaml path, then it calls setup.",
+         "zh": "打开 test model。它用一个 yaml 路径构造 Experiment，然后调用 setup。"},
+        {"en": "There is no function whose name starts with test underscore. Nothing for pytest to keep.",
+         "zh": "没有一个函数的名字以 test 下划线开头。Pytest 没有东西可以留下。"},
+        {"en": "The replica notebook does the same kind of work. It is a caller, not a test.",
+         "zh": "副本笔记本做的是同一类事。它是调用者，不是测试。"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "A crash is not a failed test",
+      "title_zh": "崩溃不是失败的测试",
+      "lines": [
+        {"en": "Collection happens first. Pytest has to find the test functions before it can fail one.",
+         "zh": "收集发生在最前面。Pytest 必须先找到测试函数，然后才能让其中一个失败。"},
+        {"en": "Setup in the model file runs while the file loads, before collection finishes.",
+         "zh": "模型文件里的 setup 在文件加载时就运行了，收集还没结束。"},
+        {"en": "Pause. If that line raised, did a test fail, or did the run die before any test?",
+         "zh": "停一下。如果那一行抛错了，是某个测试失败了，还是任何测试开始之前运行就死了？"}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "What to run",
+      "title_zh": "该运行哪一条",
+      "lines": [
+        {"en": "The command is pytest, then the path of the evaluation file. That is the file with the test function.",
+         "zh": "命令是 pytest，然后是评估文件的路径。那个文件里才有测试函数。"},
+        {"en": "This episode shows the command. It is not a result from this session. The files are not on main.",
+         "zh": "这一集展示的是命令。它不是这次会话的运行结果。这些文件不在 main 上。"},
+        {"en": "Try it when the upload is the installed package. Look for the function name before you trust the folder.",
+         "zh": "等上传的那份成为已安装的包，你再试。在相信文件夹之前，先去找函数名。"}
+      ]
+    }
+  ]
+}
