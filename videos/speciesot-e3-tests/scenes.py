@@ -747,7 +747,6 @@ class S05(Ep):
         h_mat = matrix(human7, hx, top, ch=.24)
         m_lab = at("mouse test · 5 cells", mx, 1.85, 19, GRAY)
         h_lab = at("human test · 7 cells", hx, 1.85, 19, GRAY)
-        genes = at("4 genes", 0, top - .3, 17, GRAY)
         r2c = chip("R2Evaluation", 0, .6, INK, 22)
         with self.say(0) as vo:
             self.cue(vo, .03, FadeIn(r2c, shift=UP * .1), run_time=.5)
@@ -798,12 +797,12 @@ class S05(Ep):
         # two R-squared formulas, side by side
         div = Line([0, 2.0, 0], [0, -2.4, 0], color=FAINT, stroke_width=1.5)
         L_head = left("per-gene R² · R2Evaluation", -6.2, 1.86, 22, INK, bold=True)
-        L_tag = source_tag("READ IN CODE").move_to([-1.0, 1.86, 0])
+        L_tag = source_tag("READ IN CODE").move_to([-1.0, 1.47, 0])
         L_ref = VGroup(mono_left("same formula as _pergene_r2 in", -6.2, 1.47, 16, GRAY),
                        mono_left("atlas-paper-vae/scripts/02_eval_metrics.py:47", -6.2, 1.18,
                                  16, GRAY))
         R_head = left("R² of means · your benchmark", .3, 1.86, 22, INK, bold=True)
-        R_tag = source_tag("READ IN CODE").move_to([5.45, 1.86, 0])
+        R_tag = source_tag("READ IN CODE").move_to([5.45, 1.47, 0])
         R_ref = VGroup(mono_left("_r2_means in", .3, 1.47, 16, GRAY),
                        mono_left("cellot/…/decoded_frame_metrics.py:68", .3, 1.18, 16, GRAY))
         rng = np.random.default_rng(7)
@@ -820,8 +819,8 @@ class S05(Ep):
         mean_y = [-1.55, -2.02]
         m_mean = matrix(mouse.mean(0)[None, :], 3.15, mean_y[0] + .125)
         h_mean = matrix(human7.mean(0)[None, :], 3.15, mean_y[1] + .125)
-        mean_lab = VGroup(left("mouse mean", 4.0, mean_y[0], 17, GRAY),
-                          left("human mean", 4.0, mean_y[1], 17, GRAY))
+        mean_lab = VGroup(left("mouse mean", 4.15, mean_y[0], 17, GRAY),
+                          left("human mean", 4.15, mean_y[1], 17, GRAY))
         gene_ticks = VGroup(*[Line([3.15 - .54 + j * .36, mean_y[0] - .125, 0],
                                    [3.15 - .54 + j * .36, mean_y[1] + .125, 0], color=RED,
                                    stroke_width=3) for j in range(4)])
@@ -885,7 +884,7 @@ class S05(Ep):
             vo.wait_until("hidden assumption")
             self.play(Create(hidden), FadeIn(hid_t), run_time=.5)
             vo.wait_until("a decision")
-            self.play(ReplacementTransform(hidden, dec), ReplacementTransform(hid_t, dec_t),
+            self.play(FadeOut(hidden), Create(dec), ReplacementTransform(hid_t, dec_t),
                       run_time=.7)
         self.finish()
 
