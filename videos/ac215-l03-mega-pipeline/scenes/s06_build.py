@@ -148,7 +148,7 @@ SLAB_W = 5.2
 SX, FLOOR_Y = -1.6, -0.85         # V2 above the 4-row strip (strip top -1.04)
 APT_H, THIN = 1.9, 0.08           # the apt slab after it swells; the WORKDIR / uv sync hairlines
 H0 = {"base": 0.5, "apt": 0.7, "workdir": THIN, "copy": 0.36, "sync": 0.42}   # as S05 left it
-DROP = 0.8                        # beat 8: V2 settles lower once the bottom band is free
+DROP = np.array([1.0, -0.8, 0])   # beat 8: V2 settles nearer the centre once the bottom is free
 
 
 # ------------------------------------------------------------------ small helpers
@@ -694,8 +694,7 @@ class BuildImage(VoiceScene):
         # ========================================================== 8 · the answer
         cp, sync = st.slabs["copy"], st.slabs["sync"]
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(card), st.animate.shift(DOWN * DROP), chip.animate.shift(DOWN * DROP),
-                      run_time=0.6)
+            self.play(FadeOut(card), st.animate.shift(DROP), chip.animate.shift(DROP), run_time=0.7)
             saved_cp = VGroup(cp.box.copy(), st.copy_files.copy())
             saved_sync = sync.box.copy()
             self.play(chip.animate.move_to(cp.box).scale(0.5).set_opacity(0),

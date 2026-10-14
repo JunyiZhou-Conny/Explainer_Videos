@@ -34,7 +34,8 @@ Beats (script.md "## S07", one voiceover block each):
     ORANGE `RUN pip install uv` with its PURPLE uv chip, GREY `COPY . ./` with file glyphs, the
     dashed slot "packages: none yet") slides in from the right; the strip's `RUN uv sync` (line 29)
     is copied up and the dot expands into the fat GREEN slab "RUN uv sync" in the slot; GREY note
-    "CPython 3.15.0 + /.venv" / "11 packages".
+    "CPython 3.15.0 + /.venv" / "11 packages". (This runs about 3 s past the sentence: the
+    finished stack holds 1.2 s.)
  5  TRACKER A10. The picture and the strip go; full wide terminal (13.2 wide, 20 pt, 13 rows):
     `docker run --rm -ti simple-translate` + ▶ your turn (on the next row: the command fills its
     row) -> TRACKER A10 · extra, `ls -a` (row tag `extra`) at the capture's prompt
@@ -454,6 +455,7 @@ class StepUvSync(VoiceScene):
             self.remove(sync.box, sync.text)
             stack.accept(self, sync)
             self.play(FadeIn(note, shift=LEFT * 0.1), run_time=0.5)
+            self.wait(1.2)                      # the finished stack holds before the run
 
         # ========================================================== 5 · run it: .venv, uv.lock, same error
         w = wide_term(13)
