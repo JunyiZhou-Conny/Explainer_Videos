@@ -1,0 +1,107 @@
+{
+  "title_en": "Why is a git branch almost free?",
+  "title_zh": "为什么 git 分支几乎零成本？",
+  "preset": "swiss",
+  "description_en": "A branch is a 41-byte pointer. Commits and their parents are the real graph. Made for someone who can commit but has never branched.",
+  "description_zh": "分支其实是一个 41 字节的指针；真正的结构在提交和它们的 parent 连成的图里。为会用 git add/commit、但从没用过分支的你制作。证据全部来自一个真实仓库的 .git 目录。",
+  "tags_zh": ["git", "程序员", "计算机", "教程", "科普"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "Spoken-form rules: say 'dot git' for .git; never read a 40-character SHA aloud; on-screen paths keep exact spelling (preset rule).",
+    "The ref-file bytes, the 41-byte size, and the two-parent merge commit shown on screen are real evidence from this repository (SOURCES.md); do not relabel them as illustrations.",
+    "Scene budget: 180 s total at 30 fps; narration minimum must stay under ~165 s so the diagrams keep reading time."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "One command, no copy",
+      "title_zh": "一条命令，没有复制",
+      "lines": [
+        {"en": "Here's a puzzle. This project's history holds hundreds of files and half a gigabyte of finished videos. Now, I create a branch.",
+         "zh": "先出一个谜题。这个项目的历史里存着上百个文件、半个 GB 的成品视频。现在，我来创建一个分支。"},
+        {"en": "One command — and it finishes faster than this sentence. If a branch really copied the project, that speed would be impossible.",
+         "zh": "一条命令——还没等这句话说完它就结束了。如果分支真的是复制整个项目，不可能这么快。"},
+        {"en": "So pause for a second. What is the smallest thing git could write down, to remember a branch?",
+         "zh": "停一秒想一想：git 最少需要记下什么，才能记住一个分支？"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "The whole branch is 41 bytes",
+      "title_zh": "整个分支只有 41 字节",
+      "lines": [
+        {"en": "The answer sits in one tiny file inside the dot git folder: refs, heads, idea.",
+         "zh": "答案就在 .git 文件夹里一个很小的文件中：refs、heads、idea。"},
+        {"en": "Forty-one bytes: forty characters naming one commit, plus a newline. That is the entire branch — these exact bytes are from a real repository.",
+         "zh": "四十一个字节：四十个字符写着某个提交的名字，外加一个换行符。这就是整个分支——屏幕上的字节来自一个真实仓库。"},
+        {"en": "Nothing was copied. Git wrote one line.",
+         "zh": "什么都没有被复制。git 只写了一行字。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "Commits are the real graph",
+      "title_zh": "提交才是真正的图",
+      "lines": [
+        {"en": "The real structure lives in the commits. Each commit stores a snapshot of your files, plus the name of its parent commit.",
+         "zh": "真正的结构在提交里。每个提交保存一份文件快照，再记下它父提交的名字。"},
+        {"en": "Follow the parents, and the commits chain into a graph. That graph already holds every version of the project.",
+         "zh": "顺着 parent 连起来，提交就串成一张图。项目的每一个版本，这张图里本来就都有。"},
+        {"en": "A branch owns none of this. It simply points at one node.",
+         "zh": "分支并不拥有这里的任何东西。它只是指向其中一个节点。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "Committing moves one pointer",
+      "title_zh": "提交只是移动一个指针",
+      "lines": [
+        {"en": "Watch the pointer do its job. You are on idea, and a second pointer, called HEAD, remembers that.",
+         "zh": "看指针怎么干活。你现在在 idea 上，另一个叫 HEAD 的指针记住了这件事。"},
+        {"en": "Commit. Git stores the new snapshot, records its parent — and then moves exactly one pointer. Idea now names the new commit.",
+         "zh": "提交。git 保存新的快照、记下它的 parent——然后只移动一个指针：idea 现在指向新的提交。"},
+        {"en": "Main never moved. The entire difference between your two branches is two small files.",
+         "zh": "main 一动没动。两个分支之间的全部差别，就是两个小文件。"},
+        {"en": "Think about it: if a branch is just a pointer, what does being on a branch actually mean?",
+         "zh": "想一想：如果分支只是一个指针，那「在某个分支上」到底是什么意思？"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "Switching is moving HEAD",
+      "title_zh": "切换就是移动 HEAD",
+      "lines": [
+        {"en": "Git switch main moves HEAD back, and rebuilds your working folder from main's snapshot.",
+         "zh": "git switch main 移动的是 HEAD，然后按 main 的快照重建你的工作目录。"},
+        {"en": "Nothing about idea is lost. Its forty-one bytes still name its commit, and the graph keeps every snapshot.",
+         "zh": "idea 没有丢失任何东西：它那四十一个字节仍然指着它的提交，图里也保留着每一份快照。"}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "A merge is one commit with two parents",
+      "title_zh": "合并是一个有两个父亲的提交",
+      "lines": [
+        {"en": "Back on main, git merge idea creates one new commit — with two parents. One line of ancestry comes from main, one from idea.",
+         "zh": "回到 main，git merge idea 会创建一个新的提交——它有两个父亲。一条血缘来自 main，一条来自 idea。"},
+        {"en": "This is real: the newest merge in this very repository lists exactly two parent lines.",
+         "zh": "这是真实的：就在这个仓库里，最新的一次合并提交恰好写着两行 parent。"},
+        {"en": "The graph grew by one node, and main moved by one line. That's all a merge is.",
+         "zh": "图里多了一个节点，main 往前挪了一行。合并就只是这么一回事。"}
+      ]
+    },
+    {
+      "id": "s07",
+      "title_en": "Recap: pointers all the way",
+      "title_zh": "回顾：处处皆指针",
+      "lines": [
+        {"en": "Recap. A branch is a forty-one byte pointer. Commits and their parents are the real graph.",
+         "zh": "回顾一下。分支是一个四十一字节的指针；提交和它们的 parent 才是真正的图。"},
+        {"en": "Committing moves the current branch's pointer. Merging adds one commit with two parents.",
+         "zh": "提交会移动当前分支的指针；合并则是加入一个有两个父亲的提交。"},
+        {"en": "That is why branches are free — so make one for everything. Then open dot git, refs, heads, and read your branch with your own eyes.",
+         "zh": "所以分支才几乎零成本——放心大胆地为每件事开分支。然后打开 .git/refs/heads，亲眼读一读你的分支。"}
+      ]
+    }
+  ]
+}
