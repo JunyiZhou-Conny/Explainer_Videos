@@ -95,3 +95,21 @@ ENV: {ipa: "ˌiːˌɛnvˈiː", say: "E-N-V"}
 ENTRYPOINT: {ipa: "ˈɛntɹi pˌɔɪnt", say: "entry point"}
 entrypoint: {ipa: "ˈɛntɹi pˌɔɪnt", say: "entry point"}
 buildx: {ipa: "bˈɪld ˈɛks", say: "build-ex"}
+# AC215 L04
+mega-pipeline.json: {ipa: "mˈɛɡə pˈaɪplaɪn dˈɑːt dʒˈeɪsˈɑːn", say: "mega pipeline dot JSON"}
+mega-pipeline-sa: {ipa: "mˈɛɡə pˈaɪplaɪn ˈɛs ˈeɪ", say: "mega pipeline S-A"}
+docker-compose.yml: {ipa: "dˈɑːkɚ kəmpˈoʊz dˈɑːt jˈæməl", say: "docker compose dot yaml"}
+toynet: {ipa: "tˈɔɪ nˈɛt", say: "toy net"}
+"toynet's": {ipa: "tˈɔɪ nˈɛts", say: "toy net's"}
+"3.8": {ipa: "θɹˈiː pɔɪnt ˈeɪt", say: "three point eight"}
+"3.8.17": {ipa: "θɹˈiː pɔɪnt ˈeɪt pɔɪnt sˈɛvəntˌiːn", say: "three point eight point seventeen"}
+"3.14.8": {ipa: "θɹˈiː pɔɪnt fˈɔːɹtiːn pɔɪnt ˈeɪt", say: "three point fourteen point eight"}
+"29.8.2": {ipa: "twˈɛnti nˈaɪn pɔɪnt ˈeɪt pɔɪnt tˈuː", say: "twenty-nine point eight point two"}
+"127.0.0.11": {ipa: "wˈʌn tˈuː sˈɛvən dˈɑːt zˈiəɹoʊ dˈɑːt zˈiəɹoʊ dˈɑːt ɪlˈɛvən", say: "one two seven dot zero dot zero dot eleven"}
+"0.0.0.0": {ipa: "zˈiəɹoʊ dˈɑːt zˈiəɹoʊ dˈɑːt zˈiəɹoʊ dˈɑːt zˈiəɹoʊ", say: "zero dot zero dot zero dot zero"}
+"8090": {ipa: "ˈeɪɾi nˈaɪnti", say: "eighty ninety"}
+"8091": {ipa: "ˈeɪɾi nˈaɪnti wˈʌn", say: "eighty ninety-one"}
+"8095": {ipa: "ˈeɪɾi nˈaɪnti fˈaɪv", say: "eighty ninety-five"}
+"9100": {ipa: "nˈaɪnti wˈʌn hˈʌndɹɪd", say: "ninety-one hundred"}
+"9200": {ipa: "nˈaɪnti tˈuː hˈʌndɹɪd", say: "ninety-two hundred"}
+"9300": {ipa: "nˈaɪnti θɹˈiː hˈʌndɹɪd", say: "ninety-three hundred"}

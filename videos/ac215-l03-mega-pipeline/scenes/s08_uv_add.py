@@ -5,10 +5,11 @@ transcribe_audio`, prompt `app@5b4d4981ec25:/app$`) throughout; it is a 3-row st
 picture needs the frame (beats 0, 3, 6–9) and 12 rows otherwise.
 
 Beats (script.md "## S08", one voiceover block each):
- 0  TRACKER A6. Part 1's last picture at full size (V3 mounted: the PINK route lit, the empty GREEN
-    venv box, a RED "?" on a dashed line from `cli.py` to a dashed BLUE `google` chip) above the
-    3-row strip, which holds the last two lines of part 1 (01-docker-run-tty.txt lines 10 and 14,
-    the second RED) and the waiting prompt. The title and then the RED line and the "?" pulse.
+ 0  TRACKER A6. Part 1's last picture exactly as S07 leaves it (s07_run.py beat 11: V3 mounted at
+    y 0.75, S07's page at row 4, `cli.py` RED on the sheet, a solid BLUE `google` chip above the
+    empty GREEN venv box, a dashed RED line from `cli.py` ending at a RED "?") above the 3-row
+    strip, which holds the last two lines of part 1 (01-docker-run-tty.txt lines 10 and 14, the
+    second RED) and the waiting prompt. The title, then the RED line, the "?" and the chip pulse.
  1  TRACKER A7. The picture shrinks away while the strip grows to 12 rows and the README chip
     `transcribe_audio/README.md · lines 104–110 · 3 packages` arrives under the tracker band. It
     types `uv add google-cloud-storage google-cloud-speech ffmpeg-python` (folds after
@@ -69,8 +70,8 @@ from explainer.scene import VoiceScene
 
 from common import (CLOUD, CTR, ERR, GROUP, INK, LOOKUP, NARRATION, P_CTR, TOOL, TURN, VENV, Window,
                     beside, caption_extra, capture, cut_comment, editor_inset, excerpt, extra_tag,
-                    page_token, pin, pkg_dots, readme_chip, recorded_tag, resize, sans, source_text, src_panel,
-                    term, tracker, type_cmd, unpin, your_turn)
+                    page_token, pin, pkg_dots, readme_chip, recorded_tag, resize, sans, source_text,
+                    src_panel, term, tracker, type_cmd, unpin, your_turn)
 
 SAY = NARRATION["S08"]
 
