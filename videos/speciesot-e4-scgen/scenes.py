@@ -61,6 +61,17 @@ def restripe(bar, values, color=None):
             for s, v in zip(bar.stripes, values)]
 
 
+def base(s, x, y, size=22, color=INK, bold=False):
+    """A centred label whose baseline (not its ink box) sits at a fixed height, so a row of
+    labels lines up whatever their ascenders and descenders."""
+    t = label("|" + s, size, color, bold=bold)
+    strut = t[0]
+    t.shift([0, y - strut.get_center()[1], 0])
+    t.remove(strut)
+    t.set_x(x)
+    return t
+
+
 def op(s, x, y, size=44, color=INK):
     return Text(s, font=LATIN, font_size=size, color=color).move_to([x, y, 0])
 
@@ -155,13 +166,12 @@ class S01(Ep):
         h_mean = gene_bar(xs[2], y0, HUMAN_MEAN, color=INK)
         slot = dashed_box(xs[3], y0, .46, 2.3, RED, 40)
         qmark = op("?", xs[3], y0, 40, RED)
-        top = y0 - 1.3
-        labs = [label("mouse cell", 22, GRAY), label("mouse mean", 22, GRAY),
-                label("human mean", 22, INK), label("predicted human", 22, RED)]
-        for lb, x in zip(labs, xs):
-            lb.move_to([x, 0, 0]).align_to([0, top, 0], UP)
+        ly = y0 - 1.48
+        labs = [base(t, x, ly, 22, c) for t, x, c in zip(
+            ("mouse cell", "mouse mean", "human mean", "predicted human"), xs,
+            (GRAY, GRAY, INK, RED))]
         minus, plus, eq = op("−", -2.4, y0, 54, RED), op("+", 0, y0, 54, RED), op("=", 2.4, y0)
-        genes = left("one stripe = one gene", xs[0] - .25, y0 + 1.42, 20, GRAY)
+        genes = left("one stripe = one gene", xs[0] - .25, y0 + 1.42, 22, GRAY)
         with self.say(0) as vo:
             self.cue(vo, .02, FadeIn(mouse, shift=RIGHT * .1), FadeIn(labs[0]), FadeIn(genes),
                      Create(slot), FadeIn(qmark), FadeIn(labs[3]), run_time=.7)
@@ -187,17 +197,17 @@ class S01(Ep):
             pkg = chip("scGenModel", 4.6, -2.2, INK, 20)
             self.play(FadeIn(pkg, shift=LEFT * .1), run_time=.4)
         eqn = VGroup(mouse, m_mean, h_mean, moving, minus, plus, eq, *labs, genes)
-        c1 = Rectangle(width=7.6, height=3.6, stroke_color=INK, stroke_width=2)\
-            .move_to([-2.5, .2, 0])
-        c2 = Rectangle(width=4.7, height=3.6, stroke_color=INK, stroke_width=2)\
-            .move_to([3.95, .2, 0])
+        c1 = Rectangle(width=7.9, height=3.6, stroke_color=INK, stroke_width=2)\
+            .move_to([-2.35, .2, 0])
+        c2 = Rectangle(width=4.45, height=3.6, stroke_color=INK, stroke_width=2)\
+            .move_to([4.075, .2, 0])
         t1 = left("the idea · one picture", -6.05, -1.22, 26, INK, bold=True)
-        t2 = left("which library code?", 1.85, -1.22, 26, INK, bold=True)
-        chips = VGroup(*[VGroup(chip("scgen", 3.55, y, INK, 22), op("?", 4.65, y, 34, RED))
+        t2 = left("which library code?", 2.1, -1.22, 26, INK, bold=True)
+        chips = VGroup(*[VGroup(chip("scgen", 3.65, y, INK, 22), op("?", 4.75, y, 34, RED))
                          for y in (1.4, .7, 0)])
         with self.say(1) as vo:
             self.cue(vo, .02, FadeOut(bet), FadeOut(note), FadeOut(pkg),
-                     eqn.animate.scale(.85).move_to([-2.5, .58, 0]), run_time=.8)
+                     eqn.animate.scale(.8).move_to([-2.35, .6, 0]), run_time=.8)
             vo.wait_until("two things")
             self.play(Create(c1), Create(c2), run_time=.6)
             vo.wait_until("the idea")
@@ -260,7 +270,7 @@ class S02(Ep):
         dots, homes = VGroup(), []
         for name, (mx, my), _ in TYPES:
             for sp, col in ((0, GRAY), (1, INK)):
-                cx, cy = np.array([mx, my, 0]) + OFFSET * sp
+                cx, cy, _z = np.array([mx, my, 0]) + OFFSET * sp
                 for _ in range(8):
                     homes.append([cx + rng.normal(0, .13), cy + rng.normal(0, .13), 0])
                     dots.add(Dot([rng.uniform(2.0, 5.8), rng.uniform(-1.5, 1.4), 0],
@@ -274,20 +284,26 @@ class S02(Ep):
             for col, vals, first in ((GRAY, MOUSE_20, 0), (INK, HUMAN_20, 1)):
                 pulse = Dot([-5.6, y, 0], radius=.11, color=RED)
                 sp_l = at("mouse" if first == 0 else "human", -5.6, 1.92, 20, col, bold=True)
-                self.play(*restripe(inp, vals, col), inp.frame.animate.set_color(col),
+                self.play(*restripe(inp, vals, col), *restripe(out, vals, col),
+                          inp.frame.animate.set_color(col), out.frame.animate.set_color(col),
                           FadeIn(sp_l), FadeIn(pulse), run_time=.35)
-                self.play(pulse.animate.move_to([-2.55, y, 0]), run_time=.45)
+                self.play(pulse.animate.move_to([-2.55, y, 0]), run_time=.35)
                 d0 = dots[first * 8]
                 self.play(pulse.animate.move_to(d0.get_center()).set_color(col)
-                          .scale(.5), run_time=.5)
+                          .scale(.5), run_time=.4)
                 self.remove(pulse)
                 self.add(d0)
-                self.play(FadeOut(sp_l), run_time=.2)
+                self.play(FadeOut(sp_l), run_time=.15)
             rest = [d for i, d in enumerate(dots) if i not in (0, 8)]
             self.play(LaggedStart(*[FadeIn(d, scale=.5) for d in rest], lag_ratio=.03),
                       run_time=.9)
             vo.wait_until("both species land")
-            self.play(FadeIn(box_t), FadeIn(sketch), box.animate.set_color(RED), run_time=.5)
+            legend = VGroup(Dot([2.0, -1.5, 0], radius=.06, color=GRAY),
+                            left("mouse", 2.15, -1.5, 18, GRAY),
+                            Dot([2.0, -1.5 - .34, 0], radius=.06, color=INK),
+                            left("human", 2.15, -1.5 - .34, 18, INK))
+            self.play(FadeIn(box_t), FadeIn(sketch), FadeIn(legend), box.animate.set_color(RED),
+                      run_time=.5)
         labs = VGroup(*[at(n, lx, ly, 18, GRAY) for n, _, (lx, ly) in TYPES])
         with self.say(2) as vo:
             self.cue(vo, .02, box.animate.set_color(INK),
@@ -300,4 +316,128 @@ class S02(Ep):
                                    max_tip_length_to_length_ratio=.3)
                              for _, (mx, my), _ in TYPES])
             self.play(LaggedStart(*[GrowArrow(h) for h in hints], lag_ratio=.2), run_time=.8)
+        self.finish()
+
+
+M_C = np.array([-4.6, -.1, 0])            # mouse training mean (2-D sketch)
+H_C = np.array([-1.8, .75, 0])            # human training mean
+DELTA = H_C - M_C
+A_C = np.array([-4.3, -1.45, 0])          # held-out mouse type A
+B_C = np.array([-5.1, .3, 0])             # a second mouse type B (s03 L3)
+B_TRUE = np.array([-3.3, -.35, 0])        # where B's human cells really are
+
+
+def plane(self_label=True):
+    frame = Rectangle(width=7.85, height=4.0, stroke_color=INK, stroke_width=2)\
+        .move_to([-2.275, -.4, 0])
+    lab = left(f"code space · {SKETCH}", -6.2, 1.85, 18, GRAY)
+    return frame, lab
+
+
+class S03(Ep):
+    def construct(self):
+        self.header()
+        frame, plab = plane()
+        mouse = cloud(34, *M_C[:2], .3, GRAY, seed=21, radius=.05)
+        human = cloud(34, *H_C[:2], .3, INK, seed=22, radius=.05)
+        ml = left("mouse · training", -6.05, .82, 18, GRAY)
+        hl = left("human · training", -.95, .75, 18, INK)
+        xm, xh = cross(*M_C[:2], INK), cross(*H_C[:2], INK)
+        x0 = 2.05
+        ta = left("train · average, subtract", x0, 1.75, 20, GRAY, bold=True)
+        r1 = VGroup(cross(x0 + .12, 1.3, INK, .09, 3), left("mouse mean", x0 + .4, 1.3, 20))
+        r2 = VGroup(cross(x0 + .12, .9, INK, .09, 3), left("human mean", x0 + .4, .9, 20))
+        r3 = left("δ = human mean − mouse mean", x0, .45, 19, RED, bold=True)
+        darrow = delta_arrow(M_C, H_C)
+        dlab = at("δ", -3.4, .62, 30, RED, bold=True)
+        with self.say(0) as vo:
+            self.cue(vo, .02, Create(frame), FadeIn(plab), FadeIn(mouse), FadeIn(ml),
+                     run_time=.6)
+            vo.wait_until("average their codes")
+            self.play(FadeIn(ta), FadeIn(r1), ReplacementTransform(mouse.copy(), xm),
+                      run_time=.8)
+            vo.wait_until("Do the same")
+            self.play(FadeIn(human), FadeIn(hl), run_time=.45)
+            self.play(FadeIn(r2), ReplacementTransform(human.copy(), xh), run_time=.8)
+            vo.wait_until("The difference")
+            self.play(GrowArrow(darrow), FadeIn(dlab), FadeIn(r3), run_time=.7)
+            vo.wait_until("the species shift")
+            shift_l = left("the species shift", x0, .08, 20, RED)
+            self.play(FadeIn(shift_l), Indicate(darrow, color=RED, scale_factor=1.06),
+                      run_time=.6)
+        heldout = hollow(14, *A_C[:2], .18, GRAY, seed=23)
+        start = heldout.copy().shift(LEFT * 2.4).set_opacity(0)
+        al = left("held-out mouse type (never trained on)", -6.0, -2.15, 18, GRAY)
+        tb = left("predict · held-out cells", x0, -.5, 20, GRAY, bold=True)
+        steps = [left(t, x0, y_, 20, INK) for t, y_ in
+                 (("1  encode", -.93), ("2  add δ", -1.33), ("3  decode", -1.73))]
+        out_bar = gene_bar(5.2, -1.33, PRED_CELL, w=.3, h=1.05, color=INK, outline=RED)
+        out_l = left("predicted human cells", x0, -2.2, 20, RED, bold=True)
+        with self.say(1) as vo:
+            self.cue(vo, .02, FadeIn(tb), shift_l.animate.set_color(GRAY),
+                     r3.animate.set_color(INK), run_time=.4)
+            vo.wait_until("held-out mouse")
+            self.play(FadeIn(al), run_time=.4)
+            vo.wait_until("Encode them")
+            self.play(FadeIn(steps[0]), steps[0].animate.set_color(RED),
+                      Transform(start, heldout), run_time=.6)
+            self.remove(start)
+            self.add(heldout)
+            vo.wait_until("add delta")
+            moved = heldout.copy()
+            d2 = darrow.copy()
+            self.play(FadeIn(steps[1]), steps[1].animate.set_color(RED),
+                      steps[0].animate.set_color(INK),
+                      d2.animate.shift(A_C - M_C), run_time=.5)
+            self.play(moved.animate.shift(DELTA).set_stroke(RED), run_time=.9)
+            vo.wait_until("decode.")
+            link = arrow([steps[2].get_right()[0] + .15, -1.73, 0],
+                         out_bar.get_left() + LEFT * .05 + DOWN * .25, RED)
+            self.play(FadeIn(steps[2]), steps[1].animate.set_color(INK), Create(link),
+                      FadeIn(out_bar), run_time=.6)
+            vo.wait_until("Out come")
+            self.play(FadeIn(out_l, shift=UP * .08), run_time=.45)
+        saved = self.content()   # dim_rest() regroups these, so keep the list
+        for m in saved:
+            m.save_state()
+        with self.say(2) as vo:
+            card = ponder("要让同一个箭头对每种细胞类型都管用，必须满足什么？",
+                          "What must be true for one arrow to work for every cell type?",
+                          y=-.6)
+            self.cue(vo, .08, self.dim_rest(), run_time=.5)
+            self.play(FadeIn(card, shift=UP * .1), run_time=.5)
+        typeb = squares(10, *B_C[:2], .15, GRAY, seed=24)
+        bl = at("mouse type B", B_C[0] + .05, B_C[1] + .55, 18, GRAY)
+        true_a = cloud(12, *(A_C + DELTA)[:2], .16, INK, seed=25, radius=.045)
+        true_b = cloud(12, *B_TRUE[:2], .16, INK, seed=26, radius=.045)
+        lc = left("assumption · 假设", x0, 1.75, 22, INK, bold=True)
+        l1 = left("one δ, the same for every type", x0, 1.3, 20, INK)
+        fits = left("type A:  fits", x0, .55, 20, INK)
+        miss = left("type B:  misses", x0, .15, 20, RED, bold=True)
+        cellot = left("CellOT: a map,", x0, -.85, 26, RED, bold=True)
+        cellot2 = left("not one arrow", x0, -1.3, 26, RED, bold=True)
+        with self.say(3) as vo:
+            self.cue(vo, .01, FadeOut(card), *[Restore(m) for m in saved], run_time=.45)
+            a_l = left("mouse type A (held-out)", -6.0, -2.15, 18, GRAY)
+            self.play(*[FadeOut(m) for m in (mouse, human, ml, hl, xm, xh, ta, r1, r2, r3,
+                                             shift_l, tb, *steps, out_bar, out_l, link, al)],
+                      darrow.animate.set_opacity(.25), dlab.animate.set_opacity(.25),
+                      d2.animate.set_color(GRAY), FadeIn(a_l),
+                      FadeIn(lc), FadeIn(l1), FadeIn(typeb), FadeIn(bl), run_time=.6)
+            d3 = darrow.copy().set_opacity(1).shift(B_C - M_C)
+            moved_b = typeb.copy()
+            self.play(FadeIn(d3), run_time=.35)
+            self.play(moved_b.animate.shift(DELTA).set_stroke(RED), run_time=.9)
+            vo.wait_until("If species")
+            self.play(FadeIn(true_a), FadeIn(fits), run_time=.5)
+            vo.wait_until("one arrow can't")
+            own = DashedLine(B_C + RIGHT * .2, B_TRUE + LEFT * .25, color=GRAY, stroke_width=3,
+                             dash_length=.1).add_tip(tip_length=.16)
+            gap = DashedLine(B_C + DELTA + DOWN * .2, B_TRUE + UP * .25, color=RED,
+                             stroke_width=3, dash_length=.08)
+            self.play(FadeIn(true_b), Create(own), run_time=.6)
+            self.play(Create(gap), FadeIn(miss), run_time=.5)
+            vo.wait_until("the gap CellOT")
+            self.play(FadeIn(cellot, shift=UP * .08), FadeIn(cellot2, shift=UP * .08),
+                      run_time=.5)
         self.finish()
