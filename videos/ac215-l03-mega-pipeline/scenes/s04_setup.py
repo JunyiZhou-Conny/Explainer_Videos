@@ -601,14 +601,14 @@ class KeyAndInit(VoiceScene):
                                  vl.band_label.get_center()[1] - edit.text.get_center()[1], 0]))
             self.play(FadeIn(edit, scale=1.1), run_time=0.5)
             band_to, _ = vl.move_lo(12)
-            self.play(band_to, edit.animate.shift(LEFT * dx), d2.animate.set_color(SYSTEM),
-                      Transform(ck, ck_back), FadeOut(dl), run_time=1.0)
-            vl.band_label.become(lo_label(vl, 12))      # ">=3.12", hidden under the opaque chip
+            # the label slides with the chip (same shift), so it stays under the opaque chip
+            self.play(band_to, edit.animate.shift(LEFT * dx), Transform(vl.band_label, lo_label(vl, 12)),
+                      d2.animate.set_color(SYSTEM), Transform(ck, ck_back), FadeOut(dl), run_time=1.0)
             vo.wait_until("That fix isn't")
             nr.next_to(edit, LEFT, buff=0.3)
             self.play(FadeIn(nr, shift=RIGHT * 0.1), run_time=0.4)
             vo.wait_until("generate text shows why")
-            self.play(Indicate(prev, color=INK, scale_factor=1.1), run_time=0.7)
+            self.play(Indicate(prev, color=INK, scale_factor=1.03), run_time=0.7)   # stays < 6.6
 
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
         self.wait(0.3)
