@@ -213,7 +213,7 @@ Set pieces: Piece = VGroup + named parts (as in lecture 3)
     MiniRelay()  glyph-only lecture 3 picture (5 TEAL boxes over 6 BLUE drawers), 6.0 x 2.0;
        .hop() -> [anims] a token hops box -> drawer -> next box (scene-owned token)
     VersionLine(first=10, last=16, lo=14, label_=True)   11 wide (rescale-able) axis with the
-       GREEN `>= 3.lo` band;  .dot(14.8, "3.14.8", SYSTEM) -> dot + label
+       GREEN `>= 3.lo` band;  .dot(14.3, "3.14.8", SYSTEM) -> dot + label (just right of 3.14)
 
 Capture folder names (assets/terminal): mega-laptop, mega-l03-laptop, mega-transcribe_audio,
 mega-generate_text, mega-synthesis_audio_en, mega-translate_text, mega-synthesis_audio,
@@ -477,8 +477,8 @@ def capture(name: str, folder: str | None = None) -> Capture:
     if folder == "capture-only":
         raise ValueError("capture-only/ is plumbing: never shown")
     p = _find_capture(name, folder)
-    raw = [ln.rstrip("\r").expandtabs(8)
-           for ln in p.read_text(encoding="utf-8").rstrip("\n").split("\n")]
+    text = p.read_bytes().decode("utf-8")              # no newline translation: lines as sed counts them
+    raw = [ln.rstrip("\r").split("\r")[-1].expandtabs(8) for ln in text.rstrip("\n").split("\n")]
     header = ""
     if raw and raw[0].startswith("# "):           # expected/*.txt: a provenance header first
         header, raw = raw[0], raw[1:]
@@ -738,13 +738,14 @@ def _first_break(text: str, start: int) -> int:
 
 def type_cmd(scene, t: Terminal, cmd: str, type_time: float | None = None):
     """Type `cmd` at the waiting prompt (replacing a bare prompt line if there is one). When
-    prompt + command don't fit a row and the command has no space early enough, the command
-    starts on the row under the prompt, indented 4 spaces (script rule); otherwise Terminal.type
-    folds it. Returns the line (or a VGroup with .rows)."""
+    prompt + command don't fit a row, the command starts on the row under the prompt, indented
+    4 spaces, if it has no space early enough (script rule) or fits that row whole; otherwise
+    Terminal.type folds it with " \\". Returns the line (or a VGroup with .rows)."""
     _drop_bare(scene, t)
     p = t.prompt + (" " if t.prompt and not t.prompt.endswith(" ") else "")
     full = p + cmd
-    if len(full) <= t.max_chars or _first_break(full, len(p)) <= t.max_chars - 2:
+    fits_under = len(cmd) + 4 <= t.max_chars
+    if len(full) <= t.max_chars or (not fits_under and _first_break(full, len(p)) <= t.max_chars - 2):
         return t.type(scene, cmd, type_time)
     # the prompt alone, then the command on the next row(s)
     texts = [p.rstrip()] + t.fold("    " + cmd, first_prefix=4)
@@ -1993,13 +1994,13 @@ class BuildOrPull(Piece):
         super().__init__(**kw)
         base_y = -0.75
         # left: Git shelf + card
-        gs = shelf("Git", 3.1, LAPTOP).move_to([-4.85, base_y, 0], aligned_edge=UP)
+        gs = shelf("Git", 3.0, LAPTOP).move_to([-4.95, base_y, 0], aligned_edge=UP)
         gs.shift(UP * (base_y - gs.board.get_center()[1]))
         card = recipe_card()
         card.next_to(gs.board, UP, buff=0.06)
         # laptop with the local image
         lp = laptop(1.75, LAPTOP)
-        lp.shift(np.array([-0.75 - lp.get_center()[0], base_y - lp.get_bottom()[1], 0]))
+        lp.shift(np.array([-0.4 - lp.get_center()[0], base_y - lp.get_bottom()[1], 0]))
         img = sealed_box(0.85, CTR)
         img.remove(img.tape)                      # a built image: no tape
         img.move_to(lp.screen)
@@ -2009,14 +2010,12 @@ class BuildOrPull(Piece):
         a1 = np.array([lp.get_left()[0] - 0.12, a0[1], 0])
         ar = Arrow(a0, a1, buff=0, color=TOOL, stroke_width=5, max_tip_length_to_length_ratio=0.18)
         al = mono("docker build", CAPTION, TOOL).next_to(ar, UP, buff=0.1)
-        if al.width > ar.get_length() + 0.6:
-            al.next_to(ar, DOWN, buff=0.1)
         build = VGroup(ar, al)
         # right: Docker Hub shelf, box, signpost
-        hs = shelf("Docker Hub", 5.3, HUB)
-        hs.shift(np.array([3.6 - hs.board.get_center()[0], base_y - hs.board.get_center()[1], 0]))
+        hs = shelf("Docker Hub", 4.7, HUB)
+        hs.shift(np.array([3.95 - hs.board.get_center()[0], base_y - hs.board.get_center()[1], 0]))
         bx = sealed_box(1.3, CTR)
-        bx.next_to(hs.board, UP, buff=0.04).align_to(hs.board, RIGHT).shift(LEFT * 0.35)
+        bx.next_to(hs.board, UP, buff=0.04).align_to(hs.board, RIGHT).shift(LEFT * 0.2)
         ht = illustration_tag().next_to(hs.caption, RIGHT, buff=0.25)
         i = tag_name.find("/") + 1
         j = tag_name.find("-", tag_name.find("-", i) + 1) + 1   # after "mega-pipeline-"
@@ -2024,10 +2023,10 @@ class BuildOrPull(Piece):
         post.remove(post.post, post.foot)
         post.board_only = True
         post.move_to([0, 0, 0])
-        post.shift(np.array([hs.board.get_left()[0] + 0.1 - post.board.get_left()[0],
-                             bx.get_top()[1] + 0.25 + post.board.height / 2 - post.board.get_center()[1], 0]))
-        stick = Line([post.board.get_left()[0] + 0.35, post.board.get_bottom()[1], 0],
-                     [post.board.get_left()[0] + 0.35, base_y, 0], color=LOOKUP, stroke_width=4)
+        post.shift(np.array([hs.board.get_right()[0] - 0.05 - post.board.get_right()[0],
+                             bx.get_top()[1] + 0.75 + post.board.height / 2 - post.board.get_center()[1], 0]))
+        stick = Line([post.board.get_left()[0] + 0.2, post.board.get_bottom()[1], 0],
+                     [post.board.get_left()[0] + 0.2, base_y, 0], color=LOOKUP, stroke_width=4)
         post.add(stick)
         pointer = self._pointer_to(post, bx)
         # parts
@@ -2097,8 +2096,8 @@ class BuildOrPull(Piece):
         col.next_to(bx, LEFT, buff=0.35).align_to(bx, DOWN).shift(UP * 0.05)
         if col.get_top()[1] > self.post.board.get_bottom()[1] - 0.08:
             col.shift(DOWN * (col.get_top()[1] - self.post.board.get_bottom()[1] + 0.08))
-        hinge = bx.lid.get_corner(UP + LEFT)
-        lid_anim = bx.lid.animate.rotate(PI * 0.55, about_point=bx.front.get_corner(UP + LEFT))
+        hinge = bx.lid.get_corner(UP + RIGHT)
+        lid_anim = bx.lid.animate.rotate(-PI * 0.55, about_point=bx.front.get_corner(UP + RIGHT))
         anims = [lid_anim, bx.tape.animate.set_opacity(0)]
         rise = []
         for m in col:
@@ -2138,10 +2137,12 @@ class BuildOrPull(Piece):
         b = tag(badge, ERR, size=CAPTION)
         b.next_to(f, RIGHT, buff=0.1)
         g = _keep(VGroup(f, b))
+        g.move_to(self.laptop.screen.get_center() + DOWN * 0.05)
+        g.save_state()
         g.move_to(self.box.get_center())
-        target = self.laptop.screen.get_center() + DOWN * 0.05
         g.set_opacity(0)
-        return g, g.animate(run_time=run_time).move_to(target).set_opacity(1)
+        from manim import Restore
+        return g, Restore(g, run_time=run_time)
 
 
 def _edge_points(a, b):
@@ -2237,7 +2238,11 @@ class ThreePiles(Piece):
         bl = mono("flexible-workflow", CAPTION, VENV)
         inc = VGroup(files, bl).arrange(RIGHT, buff=0.35)
         inc.move_to([(xs[0] + xs[1]) / 2, wy + 0.42, 0])
-        self.incoming_stop = inc.get_center().copy()
+        # invisible anchors (they move with the piece): where incoming stops, where it lands
+        self._stop = Dot(inc.get_center(), radius=0.01).set_opacity(0)
+        land_y = self.piles["tracked"].frame.get_center()[1]
+        self._land = Dot([inc.get_center()[0], land_y, 0], radius=0.01).set_opacity(0)
+        self.add(self._stop, self._land)
         self.incoming = inc
         self.part("incoming", inc, shown=False)
         inc.shift(UP * 1.6)
@@ -2262,7 +2267,7 @@ class ThreePiles(Piece):
     def slide_in(self, run_time: float = 1.0):
         """Animation: the branch's files slide down from above and stop at the walls (show the
         "incoming" part first)."""
-        return self.incoming.animate(run_time=run_time).move_to(self.incoming_stop)
+        return self.incoming.animate(run_time=run_time).move_to(self._stop.get_center())
 
     def stash(self, i: int, run_time: float = 1.0) -> list:
         """i=1: the edited cli.py lifts into stash box 1 and wall 1 falls; i=2: the untracked pair
@@ -2286,9 +2291,8 @@ class ThreePiles(Piece):
         return [AnimationGroup(*anims, run_time=run_time)]
 
     def land(self, run_time: float = 1.0) -> list:
-        """The branch's files land on the tracked and untracked piles (after both walls fell)."""
-        tgt = self.incoming_stop + DOWN * (self.wall_y - self.piles["tracked"].frame.get_top()[1] + 0.05)
-        return [self.incoming.animate(run_time=run_time).move_to(tgt),
+        """The branch's files land inside the (emptied) tracked and untracked frames."""
+        return [self.incoming.animate(run_time=run_time).move_to(self._land.get_center()),
                 Indicate(self.piles["tracked"].frame, color=VENV, scale_factor=1.0, run_time=run_time),
                 Indicate(self.piles["untracked"].frame, color=VENV, scale_factor=1.0, run_time=run_time)]
 
@@ -2365,7 +2369,8 @@ class ThreeGates(Piece):
         tok = token_tag("token")
         tok.next_to(stamp_, DOWN, buff=0.15)
         self.token = tok
-        self.token_home = tok.get_center().copy()
+        self._home = Dot(tok.get_center(), radius=0.01).set_opacity(0)
+        self.add(self._home)
         # doors
         doors = VGroup()
         self.doors = []
@@ -2384,7 +2389,9 @@ class ThreeGates(Piece):
             else:
                 nt = label("no role", CAPTION, S.GREY).move_to([1.3, y, 0])
                 row.add(nt)
-            row.frame, row.name, row.slot, row.toggle, row.knob = fr, nm, sl_, tg, knob
+            stop = Dot([0.45, y, 0], radius=0.01).set_opacity(0)      # where the token waits
+            row.add(stop)
+            row.frame, row.name, row.slot, row.toggle, row.knob, row.stop = fr, nm, sl_, tg, knob, stop
             self.doors.append(row)
             doors.add(row)
         # gate labels
@@ -2423,15 +2430,14 @@ class ThreeGates(Piece):
         return [AnimationGroup(*anims, lag_ratio=0.4, run_time=run_time)]
 
     def _door_point(self, i: int):
-        d = self.doors[i]
-        return np.array([0.55, d.frame.get_center()[1], 0])
+        return self.doors[i].stop.get_center()
 
     def fly(self, i: int, run_time: float = 1.0):
         """Animation: the token flies to the gates of door i (it stops left of the lock slot)."""
         return self.token.animate(run_time=run_time).move_to(self._door_point(i))
 
     def home(self, run_time: float = 0.6):
-        return self.token.animate(run_time=run_time).move_to(self.token_home)
+        return self.token.animate(run_time=run_time).move_to(self._home.get_center())
 
     def through(self, i: int, run_time: float = 0.8):
         """Animation: the token passes both gates and enters door i (when both show ticks)."""
@@ -2495,7 +2501,7 @@ class ThreeGates(Piece):
         kind, i = where
         d = self.doors[i]
         ref = d.slot if kind == "lock" else d.toggle
-        return t.next_to(ref, UP, buff=0.02).shift(RIGHT * 0.2)
+        return t.next_to(ref, RIGHT, buff=0.08)
 
 
 # ------------------------------------------------------------------ V4 · the switchboard
@@ -2522,12 +2528,13 @@ class Switchboard(Piece):
         jx, jy = -2.4, 0.0
         inp = Line([-2.95, jy, 0], [jx, jy, 0], color=TOOL, stroke_width=6)
         jd = Dot([jx, jy, 0], radius=0.09, color=TOOL)
-        il = sans("first word", CAPTION, TOOL).next_to(inp, UP, buff=0.12).align_to(inp, LEFT)
+        il = sans("first word", CAPTION, TOOL).next_to(inp, UP, buff=0.12)
+        il.shift(RIGHT * (jx + 0.15 - il.get_right()[0]))
         self.input, self.junction = inp, jd
         self.tracks, self.stations = {}, {}
         words, descs, chips_ = VGroup(), VGroup(), VGroup()
         ys = [1.2, 0.4, -0.4, -1.2]
-        sx = -1.3
+        sx = -1.35
         for (mode, (w, d, c)), y in zip(MODES.items(), ys):
             tr = VMobject(stroke_color=TOOL, stroke_width=5)
             tr.set_points_as_corners([[jx, jy, 0], [jx + 0.25, jy, 0], [sx - 0.4, y, 0], [sx - 0.1, y, 0]])
@@ -2771,14 +2778,14 @@ class TwoWindows(Piece):
                               Indicate(r, color=color, scale_factor=1.0), run_time=run_time)
 
     def pack(self, run_time: float = 1.6):
-        """S09 (l03=True): COPY . ./ — copies of the component folder, its secrets/ and the key
-        fly down into the image slab (here the key really is copied). Returns (copies, [anims]);
-        the copies are scene-owned and end inside the slab."""
-        src = [self.rows["comp"], self.rows["secrets"], self.key]
+        """S09 (l03=True): COPY . ./ — copies of the component folder's glyph, its secrets/ glyph
+        and the key fly down into the image slab, in a row after its label (here the key really is
+        copied). Returns (copies, [anims]); the copies are scene-owned."""
+        src = [self.rows["comp"].glyph, self.rows["secrets"].glyph, self.key]
         copies = VGroup(*[m.copy() for m in src])
         slab = self.image_slab
-        targets = [slab.get_center() + LEFT * 1.0, slab.get_center() + RIGHT * 0.6,
-                   slab.get_center() + RIGHT * 2.1]
+        x0 = slab.get_left()[0] + 1.6
+        targets = [np.array([x0 + k * 0.7, slab.get_center()[1], 0]) for k in range(3)]
         anims = [LaggedStart(*[c.animate.move_to(t) for c, t in zip(copies, targets)], lag_ratio=0.2,
                              run_time=run_time),
                  Indicate(self.key, color=ERR, scale_factor=1.3, run_time=run_time)]
@@ -2787,29 +2794,36 @@ class TwoWindows(Piece):
 
 # ------------------------------------------------------------------ V6 + V7 · little computers, doors and rooms
 class ToyNet(Piece):
-    """V6 + V7 (S10-S16). 12.6 x 2.9, centred. A GREY outline is the laptop (label "your laptop"
-    on its top edge). Its own zone at left: a browser glyph, the laptop's localhost loop and a
-    GREY wall at x≈-2.75 holding the street doors. The Docker side: TEAL boxes "gateway" (left)
-    and "processor" (right); each box has its name, a room door row, a port strip "1 … 65535"
-    (cells; .cell(box, port)), a row for lit port numbers and its own localhost loop. The TEAL
-    rail (toynet) runs under them; a PINK phone book sits between the boxes.
+    """V6 + V7 (S10-S16). 12.6 x 2.9 (outline -5.85..6.3; the "outside" machines sit left of it),
+    centred. A GREY outline is the laptop (label "your laptop" on its top edge). Its own zone at
+    left: a browser glyph, the laptop's localhost loop, and a dashed GREY wall holding the street
+    doors (labels left of the doors). The Docker side: TEAL boxes "gateway" and "processor", each
+    with its name, a room door on its LEFT wall (label right of it), a port strip "1 … 65535"
+    (cells), a row under the strip for lit port numbers, and its own localhost loop. The TEAL
+    rail (toynet) runs under them; a PINK phone book (a glyph on the rail, two entries above it)
+    sits between the boxes.
 
-        net = ToyNet(show=("outline", "boxes"))          # the rest hidden
-        self.play(FadeIn(net)); self.play(*net.light_port("gateway", 9100)[1],
-                                          *net.light_port("processor", 9100)[1])
+        net = ToyNet()                                   # shown: outline, laptop_label, zone, boxes
+        self.play(FadeIn(net))
+        n1, a1 = net.light_port("gateway", 9100); n2, a2 = net.light_port("processor", 9100)
+        self.play(*a1, *a2)                              # FadeOut(n1, n2) later
         self.play(*net.parts_in("rail", "rail_label", "book")); self.play(*net.parts_in("plug_processor"))
-        self.play(net.open_room("processor"))            # strip cell -> door ":9200" on the rail side
-        self.play(*net.parts_in("door")); self.play(net.open_room("gateway")); self.play(*net.parts_in("map"))
-        p = net.packet(); self.play(FadeIn(p)); self.play(net.travel(p))
-        mob, anims = net.bounce_from_laptop(); for a in anims: self.play(a)
+        self.play(net.open_room("processor"))            # strip cell -> door ":9200"
+        self.play(*net.parts_in("door")); self.play(net.open_room("gateway"))
+        self.play(*net.parts_in("map", anim=Create)); self.play(*net.parts_in("aim"))
+        p = net.packet(); self.play(FadeIn(p)); self.play(net.travel(p)); self.play(FadeOut(p))
+        mob, (a, b) = net.bounce_from_laptop(); self.play(a); self.play(b)
         self.play(net.set_door("127.0.0.1:8095")); self.play(net.set_room("processor", ":9300"))
-        self.play(net.set_aim("processor : 9200", ERR))
-    Parts: outline, laptop_label, zone (browser + loop + wall), boxes (both boxes), rail,
-    rail_label, plug_gateway, plug_processor, book, book0, book1, dns_gateway, dns_processor,
-    door, door2, outside, room_gateway, room_processor, map, aim.
+        self.play(net.set_aim(None, ERR)); self.play(net.set_aim("processor : 9300"))
+    Parts: outline, laptop_label, zone (browser + loop + wall), boxes (both), rail, rail_label,
+    plug_gateway, plug_processor, book (glyph), book0, book1 (entries), dns_gateway (line +
+    "127.0.0.11"), dns_processor, door (127.0.0.1:8090), door2 (0.0.0.0:8091), outside (two
+    machines + dashed route to door2), room_gateway (:9100), room_processor (:9200), map (PINK
+    arrow browser -> street door -> the gateway's room), aim (PINK dashed gateway -> chip
+    "processor : 9200" on the rail; the chip is the packet's destination tag).
     .boxes[name] (.frame .name .strip .cells .loop .loop_label) .doors["door"/"door2"] (.frame
-    .label) .rooms[name] (.frame .label) .browser .laptop_loop .wall .rail .book_lines[0/1]
-    .aim_chip .aim_arrow"""
+    .label) .rooms[name] (.frame .label) .browser .laptop_loop .wall .rail .plugs[name]
+    .book_lines[0/1] .aim_chip .aim_arrow"""
 
     ALL = ("outline", "laptop_label", "zone", "boxes", "rail", "rail_label", "plug_gateway",
            "plug_processor", "book", "book0", "book1", "dns_gateway", "dns_processor", "door", "door2",
@@ -2821,30 +2835,31 @@ class ToyNet(Piece):
                  door_label: str = "127.0.0.1:8090", door2_label: str = "0.0.0.0:8091",
                  rooms=(":9100", ":9200"), aim_label: str = "processor : 9200", **kw):
         super().__init__(**kw)
-        H_TOP, H_BOT = 1.4, -1.5
-        outline = box(12.6, H_TOP - H_BOT, LAPTOP, fill_opacity=0.02, radius=0.18)
-        outline.move_to([0, (H_TOP + H_BOT) / 2, 0])
+        H_TOP, H_BOT, X_L, X_R = 1.4, -1.5, -5.85, 6.3
+        room_y, rail_y = 0.5, -1.12
+        outline = box(X_R - X_L, H_TOP - H_BOT, LAPTOP, fill_opacity=0.02, radius=0.18)
+        outline.move_to([(X_L + X_R) / 2, (H_TOP + H_BOT) / 2, 0])
         ll = label("your laptop", CAPTION, LAPTOP)
         ll_bg = Rectangle(width=ll.width + 0.3, height=ll.height + 0.12, stroke_width=0).set_fill(S.BG, 1)
-        ll_g = VGroup(ll_bg, ll).move_to([-5.0, H_TOP, 0])
+        ll_g = VGroup(ll_bg, ll).move_to([X_L + 1.2, H_TOP, 0])
         # laptop zone: browser, loop, wall
         wall_x = -2.75
-        self.wall_x = wall_x
         brw = RoundedRectangle(width=0.55, height=0.42, corner_radius=0.05, stroke_color=LAPTOP,
                                stroke_width=2.5).set_fill(PANEL, 1)
         brw_bar = Line(brw.get_corner(UP + LEFT) + DOWN * 0.11, brw.get_corner(UP + RIGHT) + DOWN * 0.11,
                        color=LAPTOP, stroke_width=2)
-        browser = VGroup(brw, brw_bar).move_to([-5.85, 0.95, 0])
+        browser = VGroup(brw, brw_bar).move_to([X_L + 0.45, 0.95, 0])
         b_l = label("browser", CAPTION, LAPTOP).next_to(browser, RIGHT, buff=0.12)
-        lp_loop = loop_glyph(0.18, LAPTOP).move_to([-5.85, -0.95, 0])
+        lp_loop = loop_glyph(0.17, LAPTOP).move_to([X_L + 0.45, -1.0, 0])
         lp_ll = mono("localhost", CAPTION, LAPTOP).next_to(lp_loop, RIGHT, buff=0.12)
         wall = DashedLine([wall_x, H_TOP - 0.25, 0], [wall_x, H_BOT + 0.25, 0], color=LAPTOP,
                           stroke_width=3, dash_length=0.12)
         zone = VGroup(browser, b_l, lp_loop, lp_ll, wall)
-        self.browser, self.laptop_loop, self.wall = browser, VGroup(lp_loop, lp_ll), wall
+        self.browser, self.browser_label = browser, b_l
+        self.laptop_loop, self.wall = VGroup(lp_loop, lp_ll), wall
         # street doors on the wall, labels left of them
         self.doors = {}
-        for key, txt, y in (("door", door_label, 0.35), ("door2", door2_label, -0.4)):
+        for key, txt, y in (("door", door_label, room_y), ("door2", door2_label, -0.35)):
             d = door(0.34, 0.56, LAPTOP).move_to([wall_x, y, 0])
             dl = mono(txt, CAPTION, INK).next_to(d, LEFT, buff=0.12)
             g = VGroup(d, dl)
@@ -2852,14 +2867,12 @@ class ToyNet(Piece):
             self.doors[key] = g
         # boxes
         self.boxes, self.rooms = {}, {}
-        rail_y = -1.12
-        for name, x0, x1 in (("gateway", -2.45, -0.1), ("processor", 3.85, 6.2)):
-            w = x1 - x0
+        for name, x0, x1 in (("gateway", -2.45, -0.15), ("processor", 3.9, 6.2)):
             top, bot = 1.15, -0.8
-            fr = box(w, top - bot, CTR, fill_opacity=0.07).move_to([(x0 + x1) / 2, (top + bot) / 2, 0])
+            fr = box(x1 - x0, top - bot, CTR, fill_opacity=0.07).move_to([(x0 + x1) / 2, (top + bot) / 2, 0])
             nm = mono(name, CAPTION, CTR).move_to([x0 + 0.18, top - 0.24, 0], aligned_edge=LEFT)
             one = mono("1", CAPTION, S.GREY).move_to([x0 + 0.25, 0.05, 0])
-            hi = mono("65535", CAPTION, S.GREY).move_to([x1 - 0.18, 0.05, 0], aligned_edge=RIGHT)
+            hi = mono("65535", CAPTION, S.GREY).move_to([x1 - 0.15, 0.05, 0], aligned_edge=RIGHT)
             cx0, cx1 = one.get_right()[0] + 0.1, hi.get_left()[0] - 0.1
             cw = (cx1 - cx0) / self.PORT_CELLS
             cells = VGroup(*[Rectangle(width=cw * 0.82, height=0.2, stroke_color=CTR, stroke_width=1.5)
@@ -2870,106 +2883,97 @@ class ToyNet(Piece):
             lol = mono("localhost", CAPTION, CTR).next_to(lo, RIGHT, buff=0.1)
             b = VGroup(fr, nm, strip, lo, lol)
             b.frame, b.name, b.strip, b.cells, b.loop, b.loop_label = fr, nm, strip, cells, lo, lol
-            b.cells_x = (cx0, cx1)
             self.boxes[name] = b
+            rd = door(0.3, 0.46, CTR).move_to([x0, room_y, 0])
+            rl = mono(rooms[0] if name == "gateway" else rooms[1], CAPTION, CTR).next_to(rd, RIGHT, buff=0.08)
+            rg = VGroup(rd, rl)
+            rg.frame, rg.label = rd, rl
+            self.rooms[name] = rg
         boxes = VGroup(*self.boxes.values())
         g_box, p_box = self.boxes["gateway"], self.boxes["processor"]
-        # rooms: gateway's on its left wall (faces the street door), processor's on its bottom wall
-        rg = door(0.3, 0.5, CTR).move_to([g_box.frame.get_left()[0], 0.62, 0])
-        rgl = mono(rooms[0], CAPTION, CTR).next_to(rg, RIGHT, buff=0.08)
-        rp = door(0.5, 0.3, CTR).move_to([p_box.frame.get_center()[0] + 0.55, p_box.frame.get_bottom()[1], 0])
-        rpl = mono(rooms[1], CAPTION, CTR).next_to(rp, UP, buff=0.12)
-        for nm_, d, dl in (("gateway", rg, rgl), ("processor", rp, rpl)):
-            g = VGroup(d, dl)
-            g.frame, g.label = d, dl
-            self.rooms[nm_] = g
-        self.doors["door"].shift(UP * (0.62 - 0.35))          # the street door faces the gateway's room
         # rail, plugs, label
-        rail = Line([-2.55, rail_y, 0], [6.3, rail_y, 0], color=CTR, stroke_width=7)
-        rl = mono("toynet", CAPTION, CTR).next_to(rail, DOWN, buff=0.08).align_to(rail, LEFT)
-        plugs = {}
+        rail = Line([-2.55, rail_y, 0], [X_R - 0.05, rail_y, 0], color=CTR, stroke_width=7)
+        rl_ = mono("toynet", CAPTION, CTR).next_to(rail, DOWN, buff=0.08).align_to(rail, LEFT)
+        self.plugs = {}
         for name in ("gateway", "processor"):
             fb = self.boxes[name].frame
             px = fb.get_left()[0] + 0.5 if name == "processor" else fb.get_center()[0] + 0.6
-            plugs[name] = Line([px, fb.get_bottom()[1], 0], [px, rail_y, 0], color=CTR, stroke_width=5)
-        self.plug_x = {k: v.get_start()[0] for k, v in plugs.items()}
-        # phone book between the boxes
+            self.plugs[name] = Line([px, fb.get_bottom()[1], 0], [px, rail_y, 0], color=CTR, stroke_width=5)
+        # phone book between the boxes: a glyph on the rail, the entries above it
         mid = (g_box.frame.get_right()[0] + p_box.frame.get_left()[0]) / 2
         book = VGroup(Rectangle(width=0.42, height=0.32, stroke_color=LOOKUP, stroke_width=2.5).set_fill(LOOKUP, 0.2),
                       Line([0, 0.16, 0], [0, -0.16, 0], color=LOOKUP, stroke_width=2))
         book.move_to([mid, rail_y + 0.3, 0])
-        bl0 = mono(book_lines[0], CAPTION, LOOKUP).move_to([mid, 0.75, 0])
-        bl1 = mono(book_lines[1], CAPTION, LOOKUP).move_to([mid, 0.35, 0])
-        bl0.align_to(bl1, LEFT)
+        bl0 = mono(book_lines[0], CAPTION, LOOKUP).move_to([mid, 0.8, 0])
+        bl1 = mono(book_lines[1], CAPTION, LOOKUP).move_to([mid, 0.4, 0])
+        bl1.align_to(bl0, LEFT)
         self.book_lines = [bl0, bl1]
         dns = {}
         for name in ("gateway", "processor"):
             fb = self.boxes[name].frame
             sx = fb.get_right()[0] if name == "gateway" else fb.get_left()[0]
-            ln = DashedLine([sx, -0.35, 0], book.get_center() + (LEFT if name == "gateway" else RIGHT) * 0.25,
-                            color=LOOKUP, stroke_width=2.5, dash_length=0.08)
-            dns[name] = ln
-        dns_l = mono("127.0.0.11", CAPTION, LOOKUP).move_to([mid, -0.2, 0])
+            dns[name] = DashedLine([sx, -0.35, 0], book.get_center() + (LEFT if name == "gateway" else RIGHT) * 0.25,
+                                   color=LOOKUP, stroke_width=2.5, dash_length=0.08)
+        dns_l = mono("127.0.0.11", CAPTION, LOOKUP).move_to([mid, -0.12, 0])
         dns["gateway"] = VGroup(dns["gateway"], dns_l)
-        # outside machines (above the outline, left)
-        m1, m2 = machine_glyph(), machine_glyph()
-        outside = VGroup(m1, m2).arrange(RIGHT, buff=0.35).move_to([-5.3, H_TOP + 0.45, 0])
-        o_ar = DashedLine(outside.get_bottom() + DOWN * 0.05, self.doors["door2"].frame.get_left() + LEFT * 0.05,
-                          color=LAPTOP, stroke_width=2.5, dash_length=0.1)
-        outside.add(o_ar)
-        # the -p mapping arrow: browser -> street door -> the gateway's room
-        dd = self.doors["door"].frame
+        # other machines outside the laptop (left of the outline), a dashed route to door2
+        outside = VGroup(machine_glyph(), machine_glyph()).arrange(DOWN, buff=0.25).move_to([X_L - 0.42, -0.35, 0])
+        d2 = self.doors["door2"].frame
+        o_route = VMobject(stroke_color=LAPTOP, stroke_width=2.5)
+        o_route.set_points_as_corners([[X_L - 0.12, -0.72, 0], [wall_x - 0.32, -0.72, 0],
+                                       [wall_x - 0.32, d2.get_center()[1], 0],
+                                       [d2.get_left()[0] - 0.04, d2.get_center()[1], 0]])
+        outside.add(DashedVMobject(o_route, num_dashes=30))
+        # the -p mapping arrow: browser -> along the top -> down the wall -> through the door -> room
+        rg_d = self.rooms["gateway"].frame
+        y_b = browser.get_center()[1]
         mp = VMobject(stroke_color=LOOKUP, stroke_width=5)
-        mp.set_points_as_corners([browser.get_right() + RIGHT * 0.05 + RIGHT * b_l.width + RIGHT * 0.25,
-                                  [dd.get_center()[0] - 0.55, browser.get_center()[1], 0],
-                                  [dd.get_center()[0] - 0.55, dd.get_center()[1] + 0.0, 0],
-                                  rg.get_left() + RIGHT * 0.02])
-        tip = Arrow(rg.get_left() + LEFT * 0.4, rg.get_left() + RIGHT * 0.05, buff=0, color=LOOKUP,
-                    stroke_width=5, max_tip_length_to_length_ratio=0.5)
+        mp.set_points_as_corners([[b_l.get_right()[0] + 0.12, y_b, 0], [wall_x, y_b, 0],
+                                  [wall_x, room_y, 0], [rg_d.get_left()[0] - 0.3, room_y, 0]])
+        tip = Arrow([rg_d.get_left()[0] - 0.35, room_y, 0], [rg_d.get_left()[0] + 0.02, room_y, 0], buff=0,
+                    color=LOOKUP, stroke_width=5, max_tip_length_to_length_ratio=0.5)
         mp_g = VGroup(mp, tip)
-        self.map_arrow = mp_g
-        # aim: the gateway's dashed arrow to "processor : 9200" on the rail
+        # aim: the gateway's dashed arrow to the chip "processor : 9200" on the rail
         ac = mono(aim_label, CAPTION, LOOKUP)
         ac_b = box(ac.width + 0.3, ac.height + 0.18, LOOKUP, fill=S.BG, fill_opacity=0.95, radius=0.08)
-        ac_g = VGroup(ac_b, ac).move_to([mid + 0.2, rail_y - 0.0, 0])
-        aa = DashedLine([self.plug_x["gateway"] + 0.25, g_box.frame.get_bottom()[1] - 0.05, 0],
-                        ac_g.get_left() + LEFT * 0.05, color=LOOKUP, stroke_width=3, dash_length=0.1)
+        ac_g = VGroup(ac_b, ac.move_to(ac_b)).move_to([mid + 0.25, rail_y, 0])
+        gx = self.plugs["gateway"].get_start()[0] + 0.3
+        aa = DashedLine([gx, g_box.frame.get_bottom()[1] - 0.04, 0], ac_g.get_left() + LEFT * 0.05,
+                        color=LOOKUP, stroke_width=3, dash_length=0.1)
         aim = VGroup(aa, ac_g)
         self.aim_chip, self.aim_arrow = ac_g, aa
         self.rail = rail
         for name, mob in (("outline", outline), ("laptop_label", ll_g), ("zone", zone), ("boxes", boxes),
-                          ("rail", rail), ("rail_label", rl), ("plug_gateway", plugs["gateway"]),
-                          ("plug_processor", plugs["processor"]), ("book", book), ("book0", bl0),
+                          ("rail", rail), ("rail_label", rl_), ("plug_gateway", self.plugs["gateway"]),
+                          ("plug_processor", self.plugs["processor"]), ("book", book), ("book0", bl0),
                           ("book1", bl1), ("dns_gateway", dns["gateway"]), ("dns_processor", dns["processor"]),
                           ("door", self.doors["door"]), ("door2", self.doors["door2"]), ("outside", outside),
                           ("room_gateway", self.rooms["gateway"]), ("room_processor", self.rooms["processor"]),
                           ("map", mp_g), ("aim", aim)):
             self.part(name, mob, shown=name in show)
 
-    # -- geometry
+    # -- geometry (always read from members, so it follows the piece when it moves)
     def cell(self, box_name: str, port: int):
         """The strip cell that holds `port` (1..65535) in a box."""
-        b = self.boxes[box_name]
         k = min(self.PORT_CELLS - 1, int((port - 1) / 65535 * self.PORT_CELLS))
-        return b.cells[k]
+        return self.boxes[box_name].cells[k]
 
     def light_port(self, box_name: str, port: int, color: str = TURN):
         """The strip cell holding `port` glows and its number appears under it. Returns
         (number label, [anims]); the label is scene-owned."""
         c = self.cell(box_name, port)
-        n = mono(str(port), CAPTION, color).next_to(c, DOWN, buff=0.08)
+        n = mono(str(port), CAPTION, color).next_to(c, DOWN, buff=0.06)
         b = self.boxes[box_name]
         if n.get_left()[0] < b.frame.get_left()[0] + 0.1:
             n.align_to(b.frame, LEFT).shift(RIGHT * 0.12)
         return n, [c.animate.set_fill(color, 0.9).set_stroke(color), FadeIn(n, shift=DOWN * 0.1)]
 
     def unlight_port(self, box_name: str, port: int):
-        c = self.cell(box_name, port)
-        return c.animate.set_fill(CTR, 0.12).set_stroke(CTR)
+        return self.cell(box_name, port).animate.set_fill(CTR, 0.12).set_stroke(CTR)
 
     def open_room(self, box_name: str, port: int | None = None, run_time: float = 1.0):
         """Animation: the strip cell lifts out and becomes the box's room door + label
-        (TransformFromCopy; the room part is shown)."""
+        (TransformFromCopy; shows the room part)."""
         room = self.rooms[box_name]
         _set_op(room)
         self._flag(room, False)
@@ -2977,17 +2981,20 @@ class ToyNet(Piece):
         return TransformFromCopy(c, room, run_time=run_time)
 
     def _path(self, src: str, dst: str):
-        """Points from box src's plug down to the rail, along it, up into box dst's room (or its
-        plug when it has no room on the rail side)."""
+        """gateway -> processor: from the gateway's plug down to the rail, along it, up beside the
+        processor and into its room door. processor -> gateway: the reverse."""
         rail_y = self.rail.get_center()[1]
-        a = self.boxes[src].frame.get_bottom()
-        a = np.array([self.plug_x[src], a[1], 0])
-        bx = self.plug_x[dst] if dst == "gateway" else self.rooms["processor"].frame.get_center()[0]
-        b = np.array([bx, self.boxes[dst].frame.get_bottom()[1], 0])
-        return [a + UP * 0.1, [a[0], rail_y, 0], [b[0], rail_y, 0], b + UP * 0.1]
+        gp = self.plugs["gateway"].get_start()
+        rd = self.rooms["processor"].frame
+        up_x = rd.get_center()[0] - 0.3
+        pts = [gp + UP * 0.05, [gp[0], rail_y, 0], [up_x, rail_y, 0], [up_x, rd.get_center()[1], 0],
+               rd.get_center()]
+        pts = [np.array(p, dtype=float) for p in pts]
+        return pts if src == "gateway" else pts[::-1]
 
-    def packet(self, dest: str | None = "processor : 9200") -> VGroup:
-        """A PINK packet at the gateway (with a destination tag above it). Scene-owned."""
+    def packet(self, dest: str | None = None) -> VGroup:
+        """A PINK packet at the gateway's plug (optionally with a destination tag above it; the
+        aim chip on the rail usually says it). Scene-owned. .body .dest"""
         body = RoundedRectangle(width=0.36, height=0.24, corner_radius=0.05, stroke_color=LOOKUP,
                                 stroke_width=2.5).set_fill(LOOKUP, 0.5)
         g = VGroup(body)
@@ -2996,36 +3003,40 @@ class ToyNet(Piece):
             t = mono(dest, CAPTION, LOOKUP).next_to(body, UP, buff=0.08)
             g.add(t)
             g.dest = t
-        g.shift(np.array(self._path("gateway", "processor")[0]) - body.get_center())
+        g.shift(self._path("gateway", "processor")[0] - body.get_center())
         return _keep(g)
 
     def travel(self, packet, src: str = "gateway", dst: str = "processor", run_time: float = 2.0):
-        """Animation: the packet travels from src down to the rail, along it, up into dst."""
-        pts = self._path(src, dst)
-        path = VMobject().set_points_as_corners([np.array(p) for p in pts])
-        off = packet.get_center() - packet.body.get_center()
-        path.shift(off)
+        """Animation: the packet travels from src down to the rail, along it, and into dst."""
+        path = VMobject().set_points_as_corners(self._path(src, dst))
+        path.shift(packet.get_center() - packet.body.get_center())
         return MoveAlongPath(packet, path, run_time=run_time, rate_func=linear)
 
     def loopback(self, box_name: str = "gateway", color: str = TURN, run_time: float = 1.4):
-        """A packet loops back into the same box: its loop glows and a dot circles it. Returns
-        (dot, [anims]); the dot is scene-owned."""
+        """A packet loops back into the same box: a dot circles its localhost loop, which glows.
+        Returns (dot, [anims]); the dot is scene-owned."""
         b = self.boxes[box_name]
         d = Dot(radius=0.07, color=LOOKUP).move_to(b.loop[0].get_start())
         return d, [AnimationGroup(MoveAlongPath(d, b.loop[0]), b.loop.animate.set_color(color),
                                   b.loop_label.animate.set_color(color), run_time=run_time)]
 
+    def unloop(self, box_name: str = "gateway"):
+        b = self.boxes[box_name]
+        return AnimationGroup(b.loop.animate.set_color(CTR), b.loop_label.animate.set_color(CTR))
+
     def bounce_from_laptop(self, color: str = ERR, run_time: float = 0.8):
-        """A dashed PINK arrow from the browser toward the processor stops at the laptop's wall
-        (no street door leads there) and turns RED with a cross. Returns (group, [anim1, anim2]):
-        play them one after the other; the group is scene-owned."""
-        y = -0.4 if not self.is_shown("door2") else 0.0
-        a = np.array([self.browser.get_center()[0] + 0.2, y, 0])
-        b = np.array([self.wall_x - 0.08, y, 0])
+        """A dashed PINK arrow ":9200 ?" from the browser toward the processor stops at the
+        laptop's wall where no street door leads there, and turns RED with a cross. Returns
+        (group, [anim1, anim2]): play them one after the other; the group is scene-owned."""
+        d1, d2 = self.doors["door"].frame, self.doors["door2"].frame
+        y = (d1.get_bottom()[1] + d2.get_top()[1]) / 2
+        wx = self.wall.get_center()[0]
+        a = np.array([self.browser.get_center()[0], y, 0])
+        b = np.array([wx - 0.06, y, 0])
         ar = DashedLine(a, b, color=LOOKUP, stroke_width=4, dash_length=0.12)
         cr = VGroup(Line([-0.13, -0.13, 0], [0.13, 0.13, 0]), Line([-0.13, 0.13, 0], [0.13, -0.13, 0]))
-        cr.set_stroke(color, 5).move_to(b + RIGHT * 0.05)
-        lb = mono(":9200 ?", CAPTION, LOOKUP).next_to(ar, UP, buff=0.08)
+        cr.set_stroke(color, 5).move_to(b + RIGHT * 0.06)
+        lb = mono(":9200 ?", CAPTION, LOOKUP).next_to(ar, DOWN, buff=0.06).align_to(ar, LEFT).shift(RIGHT * 0.3)
         g = VGroup(ar, lb, cr)
         cr.set_opacity(0)
         return g, [AnimationGroup(Create(ar), FadeIn(lb), run_time=run_time),
@@ -3034,7 +3045,7 @@ class ToyNet(Piece):
 
     # -- edits
     def set_door(self, text: str, which: str = "door", color: str = INK, run_time: float = 0.8):
-        """Animation: a street door's label becomes `text` (the door slides a little and back)."""
+        """Animation: a street door's label becomes `text` (the door flashes): 8090 -> 8095."""
         d = self.doors[which]
         new = mono(text, CAPTION, color).move_to(d.label, aligned_edge=RIGHT)
         return AnimationGroup(Transform(d.label, new), Indicate(d.frame, color=TURN, scale_factor=1.2),
@@ -3043,7 +3054,7 @@ class ToyNet(Piece):
     def set_room(self, box_name: str, text: str, color: str = CTR, run_time: float = 0.8):
         """Animation: a room's label changes (":9200" -> ":9300")."""
         r = self.rooms[box_name]
-        new = mono(text, CAPTION, color).move_to(r.label)
+        new = mono(text, CAPTION, color).move_to(r.label, aligned_edge=LEFT)
         return AnimationGroup(Transform(r.label, new), Indicate(r.frame, color=TURN, scale_factor=1.2),
                               run_time=run_time)
 
@@ -3073,10 +3084,14 @@ class ToyNet(Piece):
 
     def reform(self, box_name: str, run_time: float = 1.0):
         """Animation: a box is recreated (it fades and re-forms with a flash); the others keep
-        glowing."""
+        glowing. (Its room, if shown, stays.)"""
         b = self.boxes[box_name]
-        return Succession(b.animate(run_time=run_time * 0.4).set_opacity(0.15),
-                          b.animate(run_time=run_time * 0.4).set_opacity(1),
+        back = b.copy()
+        _save_op(back, "_rop")
+        faded = back.copy()
+        _set_op(faded, 0.12, "_rop")
+        return Succession(Transform(b, faded, run_time=run_time * 0.4),
+                          Transform(b, back, run_time=run_time * 0.4),
                           Indicate(b.frame, color=CTR, scale_factor=1.04, run_time=run_time * 0.4))
 
 
@@ -3137,13 +3152,13 @@ class ComposeMap(Piece):
             pitch = line_pitch(CAPTION)
             for k, r in enumerate(rows):
                 r.shift(np.array([0, -k * pitch, 0]) - r.strut.get_corner(UP + LEFT))
-            fr = box(rows.width + 0.4, len(rows) * pitch + 0.22, S.GREY, fill_opacity=0.1, radius=0.1)
+            fr = box(rows.width + 0.4, len(rows) * pitch + 0.16, S.GREY, fill_opacity=0.1, radius=0.1)
             fr.move_to(rows).align_to(rows, LEFT).shift(LEFT * 0.2)
-            fr.shift(UP * (rows.get_top()[1] + 0.11 - fr.get_top()[1]))
+            fr.shift(UP * (rows.get_top()[1] + 0.08 - fr.get_top()[1]))
             g = VGroup(fr, rows)
             g.frame, g.rows, g.cmd = fr, rows, c
             chips_.add(g)
-        chips_.arrange(DOWN, aligned_edge=LEFT, buff=0.16)
+        chips_.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         chips_.move_to([-6.5, 2.75, 0], aligned_edge=UP + LEFT)
         self.chips = chips_
         self.add(chips_)
@@ -3210,11 +3225,12 @@ class ComposeMap(Piece):
         fr = RoundedRectangle(width=bg.width - 0.2, height=rows.height + 0.18, corner_radius=0.08,
                               stroke_color=color, stroke_width=3).set_fill(opacity=0)
         fr.move_to([bg.get_center()[0], rows.get_center()[1], 0])
-        tg = tag(text, color).next_to(fr, LEFT, buff=0.1)
-        if tg.get_left()[0] < 0.2:
-            tg.move_to(fr.get_corner(DOWN + RIGHT) + np.array([-tg.width / 2 - 0.1, -0.05, 0]))
-        g = VGroup(fr, tg)
-        g.frame, g.tag = fr, _keep(tg)
+        tg = _keep(tag(text, color))
+        tg.next_to(self.panel, DOWN, buff=0.25 + 0.55 * len(getattr(self, "_out_tags", []))).align_to(bg, RIGHT)
+        ln = Line(fr.get_corner(DOWN + RIGHT) + LEFT * 0.4, [fr.get_right()[0] - 0.4, tg.get_top()[1], 0],
+                  color=color, stroke_width=2)
+        g = VGroup(fr, ln, tg)
+        g.frame, g.tag, g.line = fr, tg, ln
         return g
 
     def collapse(self, run_time: float = 1.2):
@@ -3346,7 +3362,8 @@ class VersionLine(Piece):
         return a + f * (b - a) + np.array([0, dy, 0])
 
     def dot(self, minor: float, text: str, color: str, above: bool = True, size: float = 22) -> VGroup:
-        """A dot on the axis at `minor` (14.8 = 3.14.8) with a mono label (not added). .dot .text"""
+        """A dot on the axis at `minor` with a mono label (not added). Ticks sit at whole minors;
+        a patch release sits just right of its tick: dot(14.3, "3.14.8", SYSTEM). .dot .text"""
         d = Dot(self.point(minor), radius=0.11, color=color)
         t = mono(text, size, color)
         t.next_to(d, UP if above else DOWN, buff=0.3 if above else 0.75)
@@ -3394,7 +3411,7 @@ class PortPage(Piece):
             content.append(inp)
         # reply card
         rc_h = sans("PROCESSOR'S REPLY", CAPTION, S.GREY)
-        rv = mono(reply["upper"] if reply else "—", CAPTION, INK)
+        rv = mono_line(reply["upper"] if reply else "—", CAPTION, INK)
         rc_body = VGroup(rc_h, rv).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         rc_fr = box(inner, rc_body.height + 0.36, S.GREY, fill_opacity=0.05, radius=0.1)
         rc_body.move_to(rc_fr).align_to(rc_fr, LEFT).shift(RIGHT * 0.22)
@@ -3448,13 +3465,18 @@ class PortPage(Piece):
         """Animations: the reply card and port lines show `reply` (fade in the first time,
         transform the numbers after)."""
         anims = []
-        new_v = mono(reply["upper"], CAPTION, INK).move_to(self.reply_value, aligned_edge=LEFT)
+        rv = self.reply_value
+        new_v = mono_line(reply["upper"], CAPTION, INK)
+        new_v.shift(rv.strut.get_corner(UP + LEFT) - new_v.strut.get_corner(UP + LEFT))
         first = getattr(self.parts["reply"], "hidden", False)
         if first:
-            self.reply_value.become(new_v)
+            rv.become(new_v)
+            rv.text, rv.strut = new_v.text, rv.submobjects[0]
+            rv.glyphs = VGroup(*rv.submobjects[1:])
             anims += self.parts_in("reply")
         else:
-            anims.append(Transform(self.reply_value, new_v))
+            anims.append(Transform(rv, new_v))
+            rv.text = new_v.text
         for k, ln in enumerate(self.port_lines):
             new = mono_line(self._port_text(k, reply), CAPTION, INK)
             new.shift(ln.strut.get_corner(UP + LEFT) - new.strut.get_corner(UP + LEFT))

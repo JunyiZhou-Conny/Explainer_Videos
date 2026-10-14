@@ -23,17 +23,18 @@ Beats (script.md "## S12", one voiceover block each):
  3  TRACKER B2. The terminal goes. A GREY card `~/.bash_history` (tag `illustration`) with two earlier
     commands; the card's command flies down into it as its third line; "with dash p": `-p <ACCESS
     TOKEN>` turns RED, tag `erratum` beside it. "Instead": a GREEN chip `docker login -u <USER NAME>`;
-    "then paste": a GREY prompt row `Password:` with a clipboard glyph that drops into a field ("paste
-    your token · nothing shows"). "Pause and log in": ▶ your turn beside the chip, GREY note "or the
+    "then paste": a GREY prompt row `Password:` with a clipboard glyph that drops into the empty field
+    (its outline flashes; "paste your token · nothing shows"). "Pause and log in": ▶ your turn beside the chip, GREY note "or the
     README's form".
  4  TRACKER B3. The card becomes line 190 (top) with the YELLOW caption "<USER NAME> = your Docker Hub
     username (here: student)". A 7-row laptop terminal types `docker tag simple-translate
     student/simple-translate-ac215` (laptop/43; folds) -> no output; `student` lights YELLOW with the
     caption. "Pause": ▶ your turn. "An extra image ls": B3 · extra, `docker image ls` (row tag `extra`)
     -> laptop/44: 2, 4–5 with cols IMAGE, ID, DISK USAGE (squeezed it is 77 characters: too wide even
-    for the wide terminal; GREY caption on the frame names the columns; row 3 never printed). "two
-    names": both names underline TEAL; "one ID": both `b5c531a6b555` turn TEAL in TEAL boxes, joined by
-    a TEAL bracket "same image" on "a second name".
+    for the wide terminal; GREY caption "columns: IMAGE · ID · DISK USAGE" on the frame; row 3 never
+    printed). "two names": both names underline TEAL; "one ID": both `b5c531a6b555` turn TEAL in TEAL
+    boxes; "a second name": TEAL row tag "same ID · a second name, not a copy" on the returned prompt
+    row, under the IDs (no room for a bracket: DISK USAGE sits right of the IDs).
  5  TRACKER B3. V6: the two names fly up out of the terminal into two TEAL sticky notes, the ID into
     the TEAL label under a TEAL stack (7 unlabelled slabs, fills as V2) that fades in; the notes link to
     the stack; the terminal and the card go. "Read the long name": the long note's letters fly down
@@ -52,19 +53,22 @@ Beats (script.md "## S12", one voiceover block each):
     student/simple-translate-ac215` -> laptop-push/03: 2–8 (wrap), line 8 RED; "push access denied":
     line 8 pulses RED and the corner shelf's door shuts RED; row tags "real capture · 2026-10-13" and
     "what we got · no Docker Hub account" beside line 8. "If you see it": the terminal shrinks to the
-    strip (line 8's three rows), the picture returns (door shut), the queue slides back into the stack;
-    GREY chips "log in" · "a token that can write" · "the name must start with YOUR username" appear as
-    said.
+    strip (line 8's three rows) while the picture grows back (door shut, RED cross); "log in": GREY
+    "if you see this:" + YELLOW chip "log in", and the GREEN note returns under the shelf; "and check
+    your token": chip "a token that can write" while the queue slides back into the stack; "and the
+    name starts": chip "the name must start with YOUR username".
  7  TRACKER B4 · extra. The strip clears and grows to 5 rows with `stand_in_tag()` on its frame; the
     Docker Hub shelf gives way to a dashed BLUE shelf "stand-in registry" / `localhost:5000`. Types
     `docker tag simple-translate localhost:5000/student/simple-translate-ac215` (laptop-push/06; folds)
     -> no output, `docker push localhost:5000/student/simple-translate-ac215` (laptop-push/07; folds) ->
     laptop-push/07: 3–4, …, 15 (hash12; line 3 is cut at the terminal edge). The seven slabs travel the
     route through the open door onto the shelf; "a fingerprint": the digest underlines TEAL and a TEAL
-    fingerprint badge "digest" appears on the shelf. (The narration is 5.7 s; the typing runs ~2 s past.)
+    fingerprint badge "digest" appears on the shelf (it stays through beat 8: same digest). (The
+    narration is 5.7 s; the typing runs ~1.5 s past.)
  8  The same push again -> laptop-push/08: 4, …, 14–15 (hash12). "every layer already exists": each
-    slab rides to the door and bounces back; GREY "already exists" at the door, the two rows underline
-    TEAL; "only missing layers travel": GREY note. "On Docker Hub": the strip shrinks to 3 rows; the
+    slab rides to the door and bounces back; GREY "already exists" by the door, the two rows underline
+    TEAL, GREY note "only missing layers travel" (pulses as said). "On Docker Hub": the strip shrinks
+    to 3 rows; the
     stand-in shelf gives way to a BLUE "Docker Hub" shelf with an ORANGE `python` stack on its board
     (tag `illustration`); the four ORANGE base slabs get GREY links to it; GREY caption "already on
     Docker Hub · from the official python image" (the message itself is said, never printed);
@@ -83,16 +87,16 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import person_icon
-from explainer.devops import browser_window, folder_glyph
+from explainer.devops import MONO, browser_window, cross_mark, folder_glyph
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, ERR, IMAGE, IMAGE_LS, INK, LAPTOP, LAPTOP_DIR, LOGIN_README, NARRATION,
-                    OUTPUT, P_LAPTOP, PUSH_DIR, PUSH_README, ROUTE, STRIP_ROWS, SYSTEM, TAG_README, TURN,
-                    VENV, DOCKER_PUSH, DOCKER_TAG, LayerStack, RegistryShelf, attach, bare_prompt, beside,
-                    box, capture, chip, cols, erratum_tag, excerpt, fingerprint, hash12, illustration_tag,
-                    label, laptop_term, lock_glyph, mono, mono_line, name_parts, pin, readme_card,
-                    real_capture_tag, resize, route, row_tag, stand_in_tag, sticky, substring, tag, track,
-                    tracker_a, tracker_b, type_cmd, under, user_caption, your_turn)
+from common import (CLOUD, DOCKER_PUSH, DOCKER_TAG, ERR, IMAGE, IMAGE_LS, INK, LAPTOP, LAPTOP_DIR,
+                    LOGIN_README, NARRATION, PUSH_DIR, PUSH_README, STRIP_ROWS, SYSTEM, TAG_README, TURN, VENV,
+                    LayerStack, RegistryShelf, attach, bare_prompt, beside, box, capture, chip, cols,
+                    erratum_tag, excerpt, fingerprint, hash12, illustration_tag, label, laptop_term,
+                    lock_glyph, mono, mono_line, name_parts, pin, readme_card, resize, route, row_tag,
+                    stand_in_tag, sticky, substring, tag, track, tracker_a, tracker_b, type_cmd, under,
+                    user_caption, your_turn)
 
 SAY = NARRATION["S12"]
 
@@ -370,7 +374,7 @@ class TagAndPush(VoiceScene):
             self.play(track(tr, 1), FadeIn(c188, shift=DOWN * 0.15), run_time=0.6)
             self.play(FadeIn(frame_bits, shift=UP * 0.15), FadeIn(ill0), run_time=0.6)
             vo.wait_until("and create an access token")
-            self.play(FadeIn(page.row1, shift=RIGHT * 0.1), FadeIn(page.btn, scale=0.9), run_time=0.5)
+            self.play(FadeIn(page.row1, shift=RIGHT * 0.1), FadeIn(page.btn, scale=1.1), run_time=0.5)
             self.play(Indicate(page.btn, color=CLOUD, scale_factor=1.1), run_time=0.7)
             vo.wait_until("with read and write access")
             self.play(FadeIn(page.perm, shift=RIGHT * 0.1), FadeIn(page.val, scale=1.15), run_time=0.5)
@@ -412,10 +416,11 @@ class TagAndPush(VoiceScene):
             vo.wait_until("We have no account")
             self.play(FadeIn(not_run, shift=UP * 0.1), run_time=0.5)
         c189.add(bx_name, bx_tok)
+        self.add(c189)                                   # the boxes now move and fade with the card
 
         # ========================================================== 2 · B2 · extra: the stand-in login
         t = laptop_term(8)
-        sit = on_frame(t, stand_in_tag())
+        sit = on_frame(t, stand_in_tag(size=20))
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(yours1, yours2, not_run)), c189.animate.move_to([0, 1.95, 0]),
@@ -440,7 +445,7 @@ class TagAndPush(VoiceScene):
             p_part = substring(cmd2.rows[-1], "-p not-a-real-token")
             self.play(ok_row.glyphs.animate.set_color(VENV), Indicate(p_part, color=TURN, scale_factor=1.12),
                       run_time=0.7)
-            self.add(cmd2.rows[-1])
+            self.add(cmd2.rows[-1], ok_row)
             bare_prompt(self, t)
 
         # ========================================================== 3 · the slip: -p lands in the history
@@ -456,7 +461,7 @@ class TagAndPush(VoiceScene):
         new_row = hist_rows[-1]
         red_part = substring(new_row, "-p <ACCESS TOKEN>")
         err3 = erratum_tag().next_to(hist_fr, RIGHT, buff=0.3).match_y(new_row.strut)
-        safe = chip("docker login -u <USER NAME>", VENV, size=24, font="DejaVu Sans Mono")
+        safe = chip("docker login -u <USER NAME>", VENV, size=24, font=MONO)
         safe.move_to([-6.3 + safe.width / 2, hist_fr.get_bottom()[1] - 0.62, 0])
         pw_row = mono("Password:", 22, S.GREY)
         pw_row.move_to([safe.get_left()[0] + 0.3 + pw_row.width / 2, safe.get_y() - 0.78, 0])
@@ -487,7 +492,7 @@ class TagAndPush(VoiceScene):
             self.play(FadeIn(pw_row, shift=RIGHT * 0.1), FadeIn(pw_field), FadeIn(clip, shift=LEFT * 0.2),
                       run_time=0.5)
             self.play(clip.animate.move_to(pw_field).scale(0.8), run_time=0.6)
-            self.play(FadeOut(clip, scale=0.6), Indicate(pw_field, color=INK, scale_factor=1.06),
+            self.play(FadeOut(clip, scale=0.6), pw_field.animate(rate_func=there_and_back).set_stroke(INK, 4),
                       FadeIn(pw_note, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("Pause and log in")
             self.play(FadeIn(yt3, shift=LEFT * 0.15), run_time=0.4)
@@ -498,7 +503,7 @@ class TagAndPush(VoiceScene):
         c190.move_to([0, 2.0, 0])
         cap4 = user_caption().move_to([0, c190.get_bottom()[1] - 0.42, 0])
         t4 = laptop_term(7)
-        colcap = on_frame(t4, row_tag("columns shown: IMAGE, ID, DISK USAGE"))
+        colcap = on_frame(t4, row_tag("columns: IMAGE · ID · DISK USAGE"))
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(hist, ill3, err3, hl, safe, pw_row, pw_field, pw_note, yt3, alt3)),
@@ -523,7 +528,7 @@ class TagAndPush(VoiceScene):
             pin(self, c4b, beside(row_tag("extra"), c4b), run_time=0.3)
             out4 = t4.print(self, LS44, run_time=0.5)
             self.play(FadeIn(colcap, shift=DOWN * 0.1), run_time=0.3)
-            bare_prompt(self, t4)
+            pr4 = bare_prompt(self, t4)
             n1, n2 = substring(out4[1], SHORT), substring(out4[2], LONG)
             i1, i2 = substring(out4[1], ID), substring(out4[2], ID)
             vo.wait_until("shows two names")
@@ -534,11 +539,9 @@ class TagAndPush(VoiceScene):
             b2 = SurroundingRectangle(i2, color=IMAGE, buff=0.06, stroke_width=2.5)
             self.play(i1.animate.set_color(IMAGE), i2.animate.set_color(IMAGE), Create(b1), Create(b2), run_time=0.5)
             vo.wait_until("a second name")
-            x_br = b1.get_right()[0] + 0.12
-            ref = Line([x_br, b1.get_top()[1], 0], [x_br, b2.get_bottom()[1], 0])
-            br = Brace(ref, RIGHT, buff=0.02, color=IMAGE)
-            same = label("same image", 22, IMAGE).next_to(br, RIGHT, buff=0.12)
-            self.play(GrowFromCenter(br), FadeIn(same, shift=LEFT * 0.1), run_time=0.5)
+            same = row_tag("same ID · a second name, not a copy", IMAGE)
+            pin(self, pr4, beside(same, pr4, min_x=b1.get_left()[0]), run_time=0.4)
+            self.play(Indicate(VGroup(b1, b2), color=IMAGE, scale_factor=1.12), run_time=0.6)
             for row, ms in ((out4[1], (u1, b1)), (out4[2], (u2, b2))):
                 for m in ms:
                     attach(self, row, m)
@@ -555,10 +558,11 @@ class TagAndPush(VoiceScene):
         words = parts[0]
         tail = VGroup(*[g for w in words[2:] for g in w])                     # student/…:latest, glyph by glyph
         assert len(tail) == len(notes[1].text) == len(LONG)
-        lib_chip = chip(LIBRARY, S.GREY, size=22, font="DejaVu Sans Mono", fill_opacity=0.1)
-        lib_note = label("as in the build log · no account → library", 20, S.GREY)
-        VGroup(lib_chip, lib_note).arrange(RIGHT, buff=0.3).move_to([0, -3.0, 0])
-        lib_tail = VGroup(*substring(mono_line(LIBRARY, 22), "simple-translate:latest"))
+        lib_chip = chip(LIBRARY, S.GREY, size=22, font=MONO, fill_opacity=0.1)
+        assert len(lib_chip.text) == len(LIBRARY)
+        lib_note = VGroup(label("as in the build log:", 20, S.GREY), label("no account → library", 20, S.GREY))
+        lib_note.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
+        VGroup(lib_chip, lib_note).arrange(RIGHT, buff=0.3).move_to([0, -2.95, 0])
 
         with self.voiceover(SAY[5]) as vo:
             self.play(track(tr, 3, extra=False), FadeOut(VGroup(c190, cap4)), FadeIn(st, shift=UP * 0.15),
@@ -569,8 +573,7 @@ class TagAndPush(VoiceScene):
             self.remove(*t4.get_family())
             self.add(notes)
             vo.wait_until("in four parts")
-            self.play(TransformFromCopy(notes[1].text, tail, path_arc=0.3), FadeIn(VGroup(words[3], words[5])),
-                      run_time=1.0)
+            self.play(TransformFromCopy(notes[1].text, tail, path_arc=0.3), run_time=1.0)
             vo.wait_until("the registry")
             self.play(FadeIn(VGroup(words[0], words[1]), shift=RIGHT * 0.3), run_time=0.5)
             self.play(Create(parts.ticks[0]), FadeIn(parts.captions[0], shift=UP * 0.1),
@@ -580,12 +583,10 @@ class TagAndPush(VoiceScene):
                 w = words[2 * k]
                 self.play(Create(parts.ticks[k]), FadeIn(parts.captions[k], shift=(UP if k % 2 == 0 else DOWN) * 0.1),
                           Indicate(w, color=TURN, scale_factor=1.12), run_time=0.6)
-            self.add(parts)
+            self.add(parts)                              # (takes the wrapper `tail` off the list)
             vo.wait_until("Names without an account")
             self.play(Indicate(notes[0], color=IMAGE, scale_factor=1.06), run_time=0.5)
             # the chip grows out of the short note: its letters fly into the chip's tail
-            g_tail = substring(mono_line(LIBRARY, 22), "simple-translate:latest")
-            self.remove(g_tail)
             chip_txt = lib_chip.text
             k0 = len(LIBRARY) - len(SHORT)
             chip_tail = VGroup(*chip_txt[k0:])
@@ -596,35 +597,32 @@ class TagAndPush(VoiceScene):
             vo.wait_until("fall under library")
             lib_w = VGroup(*chip_txt[len("docker.io/"):len("docker.io/library")])
             self.play(lib_w.animate.set_color(TURN), Indicate(lib_w, color=TURN, scale_factor=1.15), run_time=0.7)
-        del lib_tail
 
         # ========================================================== 6 · B4: push to Docker Hub (denied)
         hub = shelf([label("Docker Hub", 22, CLOUD), mono(REPO, 20, CLOUD)])
         door = hub.door
-        path = route(np.array([st.slabs.get_right()[0] + 0.15, 1.25, 0]),
-                     np.array([door.get_left()[0] - 0.62, door.get_top()[1] + 0.05, 0]), arc=-0.45)
-        check_lbl = label("missing? → upload", 20, S.GREY)
-        check_lbl.next_to(door, UP, buff=0.12).shift(LEFT * 0.4)
-        check_lbl.move_to([check_lbl.get_x(), path.get_end()[1] + 0.36, 0])
         parcels = [parcel_of(s) for s in st.slabs]
-        q_x = door.get_left()[0] - 0.5
+        q_x = door.get_left()[0] - 0.5                                      # the queue at the door
         q_slots = pile(parcels, q_x, hub.frame.get_bottom()[1] + 0.06)
+        q_top = q_slots[-1][1] + parcels[-1].height / 2
+        path = route(np.array([st.slabs.get_right()[0] + 0.15, 1.25, 0]), np.array([q_x, q_top + 0.3, 0]),
+                     arc=-0.45)
+        check_lbl = label("missing? → upload", 20, S.GREY)
+        check_lbl.move_to([q_x - PARCEL_W / 2 - 0.3 - check_lbl.width / 2, 0.85, 0])
         c191 = card_line(191, PUSH_WORDS, PUSH_README)
         yt6 = your_turn()
         VGroup(c191, yt6).arrange(RIGHT, buff=0.4).move_to([0, -2.55, 0])
         ok_note = VGroup(label("logged in:", 22, VENV), mono("Pushed … latest: digest: …", 22, VENV),
                          label("(next)", 22, VENV)).arrange(RIGHT, buff=0.18)
-        ok_note.move_to([SHELF_C[0] - 0.4, -0.55, 0])
-        repo_glyphs = substring(mono_line(LONG, 20), REPO)                  # unused geometry; for counts
-        assert len(repo_glyphs) == len(hub.title[1])
+        ok_note.move_to([SHELF_C[0] - 0.4, 0.0, 0])
+        assert len(hub.title[1]) == len(REPO)
         note_repo = VGroup(*notes[1].text[:len(REPO)])
 
         with self.voiceover(SAY[6]) as vo:
             self.play(track(tr, 4), FadeOut(VGroup(parts, lib_chip, lib_note)), FadeOut(notes[0]),
                       FadeOut(links[0]), run_time=0.5)
             self.play(FadeIn(VGroup(hub.frame, hub.boards, hub.door, hub.title[0])), FadeOut(links[1]),
-                      FadeOut(notes[1].note), ReplacementTransform(note_repo, hub.title[1]),
-                      FadeOut(VGroup(*notes[1].text[len(REPO):])), run_time=0.9)
+                      TransformFromCopy(note_repo, hub.title[1]), FadeOut(notes[1]), run_time=0.9)
             self.add(hub)
             self.play(Create(path), FadeIn(c191, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("Pause and run it")
@@ -654,7 +652,7 @@ class TagAndPush(VoiceScene):
             deny = list(out6[-3:])
             vo.wait_until("push access denied")
             g_door = ghost[len(st.slabs) + 3]
-            x_small = cross_mark(0.18, ERR).move_to(g_door)
+            x_small = cross_mark(0.35 * k, ERR, stroke=3).move_to(g_door)
             self.play(*[Indicate(r.glyphs, color=ERR, scale_factor=1.04) for r in deny],
                       g_door.animate.set_stroke(ERR).set_fill(ERR, 0.45), FadeIn(x_small, scale=1.5), run_time=0.8)
             rc = row_tag("real capture · 2026-10-13")
@@ -664,37 +662,37 @@ class TagAndPush(VoiceScene):
             pin(self, deny[-1], VGroup(rc, wg), run_time=0.4)
 
             # ---- if you see this: the strip keeps line 8, the picture comes back with its door shut
+            fix = VGroup(row_tag("if you see this:"), row_tag("log in", TURN), row_tag("a token that can write", TURN),
+                         row_tag("the name must start with YOUR username", TURN))
+            fix.arrange(RIGHT, buff=0.18).move_to([0, -0.88, 0])
+            assert fix.width < 13.0, fix.width
             vo.wait_until("If you see it")
-            resize(self, t6, STRIP_ROWS, keep=deny, run_time=0.7)
-            self.play(ghost.animate.scale(1 / k).move_to(home), x_small.animate.scale(1 / k)
-                      .move_to(home + (x_small.get_center() - THUMB_C) / k), run_time=0.7)
+            resize(self, t6, STRIP_ROWS, keep=deny, run_time=0.7,
+                   extra=[ghost.animate.scale(1 / k).move_to(home),
+                          x_small.animate.scale(1 / k).move_to(home + (x_small.get_center() - THUMB_C) / k)])
             door.set_stroke(ERR).set_fill(ERR, 0.45)
             x_big = cross_mark(0.35, ERR).move_to(door)
             self.remove(ghost, x_small)
-            self.add(st, hub, x_big, *parcels)
-            self.play(FadeIn(texts), run_time=0.4)
+            self.add(st, path, hub, x_big, *parcels)
+            self.play(FadeIn(hub.title), FadeIn(id_lbl), FadeIn(fix[0]), FadeIn(fix[1], shift=UP * 0.1),
+                      FadeIn(ok_note, shift=UP * 0.1), run_time=0.4)
+            self.add(hub)
             back = [Succession(p.animate(run_time=0.5).move_to(path.get_start()),
                                p.animate(run_time=0.3).move_to(s.box).set_opacity(0)) for p, s in
                     zip(reversed(parcels), reversed(list(st.slabs)))]
-            self.play(LaggedStart(*back, lag_ratio=0.15), FadeOut(check_lbl), run_time=1.3)
-            self.remove(*parcels)
-            fix = VGroup(row_tag("if you see this:"), row_tag("log in", TURN), row_tag("a token that can write", TURN),
-                         row_tag([("the name must start with", "label"), ("YOUR", "label"), ("username", "label")], TURN))
-            fix.arrange(RIGHT, buff=0.18).move_to([0, -0.88, 0])
-            assert fix.width < 13.0, fix.width
-            self.play(FadeIn(fix[0]), FadeIn(fix[1], shift=UP * 0.1), run_time=0.4)
             vo.wait_until("and check your token can write")
-            self.play(FadeIn(fix[2], shift=UP * 0.1), run_time=0.4)
+            self.play(LaggedStart(*back, lag_ratio=0.15), FadeIn(fix[2], shift=UP * 0.1), run_time=1.2)
+            self.remove(*parcels)
             vo.wait_until("and the name starts")
             self.play(FadeIn(fix[3], shift=UP * 0.1), run_time=0.4)
 
         # ========================================================== 7 · B4 · extra: the stand-in push goes through
         sin = shelf([label("stand-in registry", 22, CLOUD), mono("localhost:5000", 20, CLOUD)], dashed=True)
         land = pile(parcels, sin.spot(0, 1, 3)[0], sin.boards[0].get_y() + 0.04)
-        sit7 = stand_in_tag()
+        sit7 = stand_in_tag(size=20)
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(track(tr, 4, extra=True), FadeOut(fix), FadeOut(VGroup(hub, x_big)),
+            self.play(track(tr, 4, extra=True), FadeOut(fix), FadeOut(ok_note), FadeOut(VGroup(hub, x_big)),
                       FadeIn(sin, shift=DOWN * 0.1), run_time=0.6)
             t6.clear(self, run_time=0.25)
             resize(self, t6, 5, run_time=0.5)
@@ -732,14 +730,13 @@ class TagAndPush(VoiceScene):
                         for s, p in zip(base, py)])
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(fp, fp_l)), run_time=0.3)
             bare_prompt(self, t6)
-            type_cmd(self, t6, PUSH_LOCAL, 0.7)
-            out8 = t6.print(self, OUT08, run_time=0.4, lag=0.1)
+            type_cmd(self, t6, PUSH_LOCAL, 0.6)
+            out8 = t6.print(self, OUT08, run_time=0.3, lag=0.1)
             vo.wait_until("every layer already exists")
             bouncers = [parcel_of(s) for s in st.slabs]
-            ex_l = label("already exists", 20, S.GREY).next_to(sin.door, UP, buff=0.12).shift(LEFT * 0.3)
-            ex_l.move_to([ex_l.get_x(), path.get_end()[1] + 0.36, 0])
+            ex_l = label("already exists", 20, S.GREY)
+            ex_l.move_to([q_x - PARCEL_W / 2 - 0.3 - ex_l.width / 2, 0.85, 0])
             hit = path.get_end()
             anims = []
             for p in bouncers:
@@ -750,17 +747,18 @@ class TagAndPush(VoiceScene):
                                         .set_opacity(0)))
             rows8 = [r for r in out8 if "already exists" in r.text]
             us8 = [under(substring(r, "Layer already exists"), IMAGE) for r in rows8]
-            self.play(LaggedStart(*anims, lag_ratio=0.18), FadeIn(ex_l, shift=DOWN * 0.1),
-                      *[Create(u) for u in us8], run_time=2.0)
+            only = label("only missing layers travel", 22, S.GREY)
+            only.move_to([(st.slabs.get_right()[0] + sin.frame.get_left()[0]) / 2, 0.05, 0])
+            self.play(LaggedStart(*anims, lag_ratio=0.16), FadeIn(ex_l, shift=DOWN * 0.1),
+                      *[Create(u) for u in us8], Succession(Wait(0.7), FadeIn(only, shift=UP * 0.1, run_time=0.5)),
+                      run_time=1.6)
             self.remove(*bouncers)
             for r, u in zip(rows8, us8):
                 attach(self, r, u)
             vo.wait_until("and only missing layers travel")
-            only = label("only missing layers travel", 22, S.GREY)
-            only.move_to([(st.slabs.get_right()[0] + sin.frame.get_left()[0]) / 2, 0.05, 0])
-            self.play(FadeIn(only, shift=UP * 0.1), Indicate(ex_l, color=INK, scale_factor=1.1), run_time=0.6)
+            self.play(Indicate(only, color=INK, scale_factor=1.1), run_time=0.6)
             vo.wait_until("On Docker Hub")
-            self.play(FadeOut(VGroup(only, ex_l, path)), FadeOut(sin), FadeOut(VGroup(*parcels)), run_time=0.4)
+            self.play(FadeOut(VGroup(only, ex_l, path, fp, fp_l)), FadeOut(sin), FadeOut(VGroup(*parcels)), run_time=0.4)
             resize(self, t6, STRIP_ROWS, run_time=0.5, extra=[sit7.animate.shift(DOWN * (5 - STRIP_ROWS) * t6.pitch)])
             self.play(FadeIn(VGroup(dh.frame, dh.boards, dh.door, dh.title)), FadeIn(ill8, shift=DOWN * 0.1),
                       FadeIn(py, shift=DOWN * 0.3), FadeIn(py_l), run_time=0.6)
@@ -800,8 +798,9 @@ class TagAndPush(VoiceScene):
             self.play(track(tr, 4, extra=False), FadeOut(t6), FadeOut(sit7),
                       FadeOut(VGroup(dh, ill8, py, py_l, cap8, ties)), run_time=0.5)
             self.remove(*t6.get_family())
-            self.play(FadeOut(id_lbl), ReplacementTransform(st, img9), FadeIn(repo_fr), FadeIn(r_title),
-                      FadeIn(ill9), run_time=0.8)
+            self.play(FadeOut(id_lbl), FadeIn(repo_fr), FadeIn(r_title), FadeIn(ill9), run_time=0.5)
+            self.bring_to_front(st)                      # drawn over the card's opaque fill
+            self.play(ReplacementTransform(st, img9), run_time=0.7)
             vo.wait_until("is public by default")
             self.play(FadeIn(pub, scale=1.3), run_time=0.4)
             self.play(Indicate(pub, color=CLOUD, scale_factor=1.15), Create(git_lead), FadeIn(git_g, shift=LEFT * 0.1),

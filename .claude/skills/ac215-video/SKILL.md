@@ -107,12 +107,18 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
    parts, subtitles, burned-in bilingual copy, chapters, transcript). Note: changing any `.py` in
    `scenes/` marks every scene stale — after a late fix, re-render only that scene with
    `--render-only --only <stem>`, then stitch with `--no-render`.
-10. **Publish**: every committed file < 100 MB (GitHub's limit). Git keeps the burned-in copy
-   `<id>.zh-en.mp4`, every subtitle file, chapters and transcript; `.gitignore` keeps the clean video
-   and the part cuts out (rebuild them with `--no-render`), so a video costs ~85 MB of repo, not ~260. Fill durations and chapters into the
-   README; add the row to the top-level README table; set `video_status` in
-   `MLOps_Learning/course/lectures.yaml`, run `uv run tools/course_map.py`, and refresh the lecture's
-   study guide from the captures (commands, real outputs).
+10. **Publish** ([`docs/PUBLISHING.md`](../../../docs/PUBLISHING.md), AGENTS.md "The episode
+   lifecycle"): rendered MP4s are release assets, never tracked files (`.gitignore` keeps
+   `videos/*/output/*.mp4` out and CI refuses tracked media; L01's MP4s now live in the
+   `media-2026-10-13` release). Git keeps every subtitle file, chapters and transcript. Decode each
+   final MP4 in full (`ffmpeg -v error -i X -f null -`) and ffprobe it. Write the video's
+   `REVIEW.md`: the AGENTS.md content gates, decode/metadata, visual sampling, the ASR round trip
+   and the owner's listening sign-off as separate lines; never claim a listen that did not happen.
+   Cloud sessions cannot create releases: a GitHub Actions job, whose token can, uploads the
+   deliverables after the episode merges and the catalog (`catalog/videos.json`,
+   `docs/VIDEOS.md`) points at the release. Fill durations and chapters into the README; set
+   `video_status` in `MLOps_Learning/course/lectures.yaml`, run `uv run tools/course_map.py`, and
+   refresh the lecture's study guide from the captures (commands, real outputs).
 
 ## Scene-code pitfalls (each cost time on L1)
 

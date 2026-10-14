@@ -13,7 +13,8 @@ Beats (script.md "## S11", one voiceover block each):
     terminal that types `docker build --progress=plain -t simple-translate -f Dockerfile .` (extra;
     row tag "extra · full log", `--progress=plain` underlined) -> laptop/38: 23 (cut after
     `apt-get update &&`), 24, 26–27, 29–30. "FROM reuses the base": box 1 gets a TEAL "reused"
-    stamp; "all say CACHED": the three CACHED words turn TEAL as boxes 2–4 get TEAL CACHED stamps.
+    stamp; "and the three steps … all say CACHED": the three CACHED words turn TEAL as boxes 2–4 get
+    TEAL CACHED stamps; the standing dominoes pulse on "nothing runs".
  2  The terminal shrinks to the 3-row strip. The parcel returns under COPY and enlarges (.git/,
     .git/index, cli.py, Dockerfile); cli.py lights YELLOW and CODE(cli.py: 49) docks beside it
     (YELLOW bar). The four boxes pulse on "Which of the four steps". PONDER (8 s): the card covers
@@ -26,7 +27,7 @@ Beats (script.md "## S11", one voiceover block each):
     falls, domino 3 topples RED), on "and uv sync after it" 29–30 wrapped (stamp 4 falls, domino 4
     topples), on "Python download and all" a PURPLE "35.9 MiB" download arrow fires into box 4
     (`35.9MiB` underlined PURPLE), then "…", 36.
- 5  The dominoes stand back up; the terminal shrinks to the strip as the parcel and panel return.
+ 5  The dominoes stand back up as the terminal shrinks to the strip; the parcel and panel return.
     `git checkout -q cli.py` (extra; run_steps.sh line 139) -> no output; `brie` morphs back to
     `cheese`, cli.py dims. "Same files": COPY's badge flickers TEAL but stays RED. The picture leaves,
     the terminal grows to 8 rows: `docker build --progress=plain …` (extra) -> laptop/41: 26–27, 29–30
@@ -37,9 +38,12 @@ Beats (script.md "## S11", one voiceover block each):
     `Dockerfile` glyph flips YELLOW; a RED fingerprint rises into COPY's badge; GREY caption
     "Dockerfile steps 4 and 5: every edit to the Dockerfile changed the parcel"; tag "erratum ·
     expected while learning".
- 7  Tag "a pattern for your own projects / not the course solution". The COPY box splits: a new
-    `[3/5] COPY pyproject.toml README.md ./` box moves left of `RUN uv sync`, `COPY . ./` becomes
-    [5/5], a fifth domino stands up. The `.dockerignore` card (tag "illustration · a file you'd
+ 7  The chain and the parcel settle lower (the parcel's title moves to its left); tag "a pattern for
+    your own projects / not the course solution" top right. "put the slow steps first": uv sync
+    pulses. "copy only the files uv sync needs": `COPY . ./` steps out of the row and a new
+    `[3/5] COPY pyproject.toml README.md ./` box splits off it, left of `RUN uv sync` (renumbered
+    [4/5]); "then copy the rest": the old box slides under uv sync to the end as [5/5] and a fifth
+    domino stands up. The `.dockerignore` card (tag "illustration · a file you'd
     add") returns with `.git`, `.venv`, `secrets/` (GREEN) and `Dockerfile` slides in YELLOW; a dashed
     sieve over the parcel turns solid GREEN and catches `.git/`, `.git/index` and `Dockerfile`.
     `cli.py` lights YELLOW, a RED fingerprint rises into the last badge, only the last domino
@@ -59,7 +63,7 @@ from common import (BUILD_PLAIN, ERR, IMAGE, INK, LAPTOP, LAPTOP_DIR, NARRATION,
                     TOOL, TURN, VENV, CacheChain, Parcel, Sieve, attach, bare_prompt, beside, box, capture,
                     code, cut, erratum_tag, excerpt, file_glyph, fingerprint, illustration_tag, label,
                     laptop_term, mono, pin, resize, row_tag, stand_in_tag, substring, type_cmd, tracker_a,
-                    under, unpin)
+                    under)
 
 SAY = NARRATION["S11"]
 PONDER_Q = "You change one word in cli.py and rebuild.\nWhich of the four steps run again?"
@@ -109,6 +113,7 @@ BOTTOM_C = 1.58       # compact chain: box bottoms (badge tops 2.77, domino bott
 BOTTOM_G = -0.7       # beat 0: box bottoms
 BOTTOM_5 = 1.28       # beat 7: the five-step chain (its 3-line box is 0.3 taller)
 PARCEL_TOP = 0.5      # the parcel (title included) under the chain, beats 2-6
+DIP = 1.35            # beat 7: how far COPY . ./ steps out of the row (under the new box, above the parcel)
 FRAME_TOP_7 = -1.0   # beat 7: the parcel's box top (lower, under the sieve; its title moves left)
 CARD = (12.7, 2.3, np.array([0.0, -2.35, 0.0]))   # the ponder card over the strip (w, h, centre)
 
@@ -152,8 +157,9 @@ def unlight(p: Parcel, name: str, run_time: float = 0.4):
 
 
 def dockerignore_card(lines=(".git", ".venv", "secrets/"), size: float = 22) -> VGroup:
-    """The .dockerignore file you'd add (S10's card): mono GREY header, GREEN lines. .frame .head .rows"""
-    head = mono(".dockerignore", 20, S.GREY)
+    """The .dockerignore file you'd add (S10's card, a little smaller to fit a fourth line): mono
+    white header, GREEN lines. .frame .head .rows"""
+    head = mono(".dockerignore", size, INK)
     rows = VGroup(*[mono(s, size, VENV) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
     inner = VGroup(head, rows).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
     fr = box(3.0, inner.height + 0.5 + 0.48, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
@@ -484,20 +490,24 @@ class LayerCache(VoiceScene):
             vo.wait_until("put the slow steps first")
             self.play(pulse(ch.boxes[3], TURN, 1.08, 0.8))
             vo.wait_until("copy only the files")
-            anims = []
-            for i, j in mapping.items():               # COPY . ./ dips under uv sync to the end of the row
-                arc = PI / 2 if i == 2 else 0
-                anims += [Transform(ch.boxes[i], five.boxes[j], path_arc=arc),
-                          Transform(ch.badges[i], five.badges[j], path_arc=arc),
-                          Transform(ch.dominoes[i], five.dominoes[j], path_arc=arc)]
-            self.play(*anims, FadeTransform(ch.boxes[2].copy(), five.boxes[2]), run_time=1.3)
-            self.play(GrowFromEdge(five.dominoes[2], DOWN), FadeIn(five.badges[2], scale=0.3), run_time=0.5)
-            self.remove(ch)
-            self.add(five)
+            # COPY . ./ steps out of the row; the others take their five-step places
+            cp = VGroup(ch.boxes[2], ch.badges[2], ch.dominoes[2])
+            self.play(*[Transform(part[i], fpart[mapping[i]]) for i in (0, 1, 3)
+                        for part, fpart in ((ch.boxes, five.boxes), (ch.badges, five.badges),
+                                            (ch.dominoes, five.dominoes))],
+                      cp.animate.shift(DOWN * DIP), run_time=0.8)
+            # the small COPY of the files uv sync needs splits off it, left of RUN uv sync
+            self.play(GrowFromPoint(five.boxes[2], ch.boxes[2].get_center()), FadeIn(five.badges[2], scale=0.3),
+                      run_time=0.6)
             vo.wait_until("run it,")
             self.play(pulse(five.boxes[3], TURN, 1.08))
             vo.wait_until("then copy the rest")
-            self.play(pulse(five.boxes[4], TURN, 1.08))
+            # the rest of the COPY goes to the end of the row, under uv sync; a fifth domino stands up
+            self.play(Transform(ch.boxes[2], five.boxes[4]), Transform(ch.badges[2], five.badges[4]),
+                      Transform(ch.dominoes[2], five.dominoes[4]), run_time=1.0)
+            self.play(GrowFromEdge(five.dominoes[2], DOWN), run_time=0.4)
+            self.remove(*ch.get_family())                # also splits the wrappers (cp, the dominoes) holding them
+            self.add(five)
             vo.wait_until("A dockerignore")
             self.play(FadeIn(di, shift=RIGHT * 0.2), FadeIn(di_tag, shift=RIGHT * 0.2), FadeIn(sieve, shift=DOWN * 0.2),
                       run_time=0.6)
