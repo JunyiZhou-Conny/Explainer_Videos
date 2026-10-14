@@ -11,13 +11,15 @@ Beats (script.md "## S11", one voiceover block each):
     dashed TEAL writable layer carries 26 GREEN chips on its shelf. Under it a 2-row strip (TEAL,
     container prompt). It types `exit`: the frame turns GREY, the title `laptop`, the prompt
     `student@laptop:~/mega-pipeline/transcribe_audio$`; the laptop sheet slides back along the PINK
-    route and the route fades (no container, no window). On "the container is removed" the
-    writable layer floats up and vanishes; on "the 26 packages" its chips scatter after it. The
-    laptop's survivors blink GREEN.
+    route and the route fades (no container, no window), and the image's own copied files
+    undim. On "the container is removed" the writable layer pulses; on "with its throwaway layer"
+    it floats up and vanishes; on "the 26 packages" its chips scatter after it. The laptop's
+    survivors blink GREEN.
  1  TRACKER A13 · extra. The window goes, the terminal grows to 13 rows. Typed in the order the
     SAY names them (extras, each with a GREY `extra` tag): `cat pyproject.toml` ->
     TERM(14-host-after-uv-add.txt: …, 17–21), the three dependencies GREEN with a bar;
-    `wc -c uv.lock` -> TERM(…: 35), GREEN bar; `ls -a` -> TERM(…: …, 8–12): input_audios and
+    `wc -c uv.lock` -> TERM(…: 35), GREEN bar (its `extra` tag at the right end of the output row:
+    the command row is full); `ls -a` -> TERM(…: …, 8–12): input_audios and
     text_prompts GREEN, then on "all survived" all four survivors GREEN; the four pulse on "in the
     window".
  2  `git status --short` (extra) -> TERM(…: 36); ` M cli.py` underlines YELLOW; GREY tag "the rest
@@ -28,13 +30,14 @@ Beats (script.md "## S11", one voiceover block each):
     folds after `run`): the frame turns TEAL and a new dashed writable layer settles on the image,
     its GREEN shelf empty. `python cli.py --help` (extra) -> TERM(11-g10-new-container.txt: 2–5),
     line 5 RED and underlined; a dashed RED line runs from cli.py to a RED "?" at the empty venv;
-    on "lived only in the old container" the empty shelf flashes RED with a GREY tag "empty".
+    on "lived only in the old container" the empty shelf flashes RED and a GREY tag "empty" sits
+    right of the layer.
  4  It types `exit` (frame GREY); the layer evaporates and the picture goes; TRACKER A13; the
     README chip `transcribe_audio/README.md · line 110` "re-build the image" above the terminal.
     It types `docker build -t transcribe_audio .` (folds after `build`) -> TERM(15-rebuild.txt: 3,
     14–17): live-view rows cut at 58 characters, each row's last field in a GREY tag at its right
     end. ▶ your turn.
- 5  The chip goes; V2 (old state: GREY COPY slab, empty uv sync slab) rises top right; GREY tag
+ 5  The chip goes, then V2 (old state: GREY COPY slab, empty uv sync slab) rises top right; GREY tag
     "ponder 2". On "build steps 2 and 3" `CACHED` turns GREEN and boxed on lines 14–15, and the apt
     and WORKDIR slabs get GREEN "CACHED" stamps (fanned, with leaders; the base slab stays as is).
     On "build step 4" line 16 gets a TEAL "build step 4" badge and the COPY slab dissolves and
@@ -42,7 +45,8 @@ Beats (script.md "## S11", one voiceover block each):
     badge, its `2.9s` tag pulses, the uv sync slab dissolves and re-forms. `Building 9.9s`
     underlines YELLOW on "The build took".
  6  The terminal gives way to PANEL(15-rebuild.plain.txt: 30–33, …, 38–39, "the same build, full
-    log · lines 30–39"). On "the copy brought in" the GREEN uv.lock in the COPY slab pulses and
+    log · lines 30–39"); its `[5/5] RUN uv sync` row and the uv sync slab pulse. On "the copy
+    brought in" the GREEN uv.lock in the COPY slab pulses and
     `Resolved 27 packages` turns GREEN; on "and uv installed" `Installed 26 packages` turns GREEN,
     the uv sync slab grows and 26 GREEN chips stream into it from uv.lock; the slab pulses on
     "into the image".
@@ -54,16 +58,17 @@ Beats (script.md "## S11", one voiceover block each):
     line[32:90], bottom left. The rows pulse in turn; on "card-only lines" the four 0B rows' "0B"
     turn TEAL and their instruction words flick onto a small TEAL config card (bottom right). On
     "The uv sync layer" the sizes lift out of rows 5, 6, 9 onto their slabs: `105MB` GREEN, then
-    `193kB` GREY and `842MB` ORANGE; on "the packages plus" the GREEN label is split: "= venv ≈ 50 MB
-    + uv cache ≈ 58 MB".
+    `193kB` GREY and `842MB` ORANGE; on "the packages plus" `105MB` slides left and its split fills
+    the gap: "105MB = venv ≈ 50 MB + uv cache ≈ 58 MB" (venv GREEN, uv cache PURPLE).
  8  The panel, card and labels go; a 7-row terminal: `docker run --rm -ti -v "$(pwd):/app"
     transcribe_audio` (extra): TEAL frame, and a dashed "new container" layer settles on V2;
     `python -c "import google.cloud.storage, google.cloud.speech, ffmpeg; print(\"imports ok\")"`
     (extra, 3 rows) -> TERM(12-after-rebuild.txt: 2) GREEN; the 26 chips in the uv sync slab pulse
     GREEN on "they're baked in". `exit`: the layer evaporates.
- 9  TRACKER A13. V2 alone, centred. The COPY and uv sync slabs pulse in build order; a GREY chip
-    "edit: group_name" drops into the COPY slab (YELLOW flash); the uv sync slab tips over and
-    falls off like a domino; it re-forms and its 26 chips rain in again. A GREY note: "later
+ 9  TRACKER A13. V2 alone, centred and enlarged 1.5x (text stays 20 pt). The COPY and uv sync
+    slabs pulse in build order; a GREY chip "edit: group_name" appears on "any edit", pulses on "even
+    the group name" and drops into the COPY slab (YELLOW flash); on "knocks over" the uv sync slab
+    tips and slides off like a domino; it re-forms and its 26 chips pour in again. A GREY note: "later
     tutorials: COPY pyproject.toml uv.lock first, / then uv sync, then the rest"; its first part
     underlines YELLOW. Fade out: empty frame.
 """
@@ -72,11 +77,11 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (MONO, box, chip, file_glyph, folder_glyph, label, mono, mono_line, step_badge,
-                              substring, tag)
+from explainer.devops import (box, file_glyph, folder_glyph, label, mono, mono_line, step_badge, substring,
+                              tag)
 from explainer.scene import VoiceScene
 
-from common import (CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, P_A, P_CTR, PANEL, SYSTEM, TOOL, TURN, VENV,
+from common import (CTR, ERR, INK, LAPTOP, NARRATION, P_A, P_CTR, PANEL, SYSTEM, TOOL, TURN, VENV,
                     ConfigCard, LayerStack, Window, bare_prompt, beside, cached_stamp, capture, caption_extra,
                     enter_container, extra_tag, history_row, key_glyph, leave_container, live_split, log_panel,
                     pin, pkg_dots, readme_chip, resize, sans, source_text, strip_top, term, time_tag, tracker,
@@ -153,7 +158,7 @@ WIN_DX = 0.25                      # the window sits 0.25 right: its writable la
 SLAB_W, SX, FLOOR_Y = 4.2, 4.15, 0.8         # V2 top right (beats 5-8), above the history panel
 H0 = {"base": 0.36, "apt": 0.5, "workdir": 0.07, "copy": 0.3, "sync": 0.36}
 SYNC_FULL = 0.66
-CENTRE = np.array([0.0, -1.25, 0])           # beat 9: V2's floor, centred
+CENTRE = np.array([0.0, -1.45, 0])           # beat 9: V2's floor, centred (V2 at 1.5x)
 
 
 # ------------------------------------------------------------------ small helpers
@@ -246,6 +251,24 @@ def note_tag(s: str) -> VGroup:
     return tag(s, S.GREY, size=20)
 
 
+def xtag(t, cmd, below):
+    """The GREY `extra` tag beside a typed command; when the command row is too full for it, at the
+    right end of the row below (`below`, its first output row)."""
+    x = beside(extra_tag(), t, cmd)
+    row = cmd.rows[-1] if hasattr(cmd, "rows") else cmd
+    if x.get_left()[0] < row.glyphs.get_right()[0] + 0.15:
+        x.move_to(below.strut).align_to(t.box, RIGHT).shift(LEFT * 0.15)
+    return x
+
+
+def pulse_tag(g, color=INK, k: float = 1.3):
+    """A tag grows and its outline and text turn `color`, then return (its dark fill stays)."""
+    tgt = g.copy().scale(k)
+    tgt[0].set_stroke(color)
+    tgt[1].set_color(color)
+    return Transform(g, tgt, rate_func=there_and_back)
+
+
 # ------------------------------------------------------------------ pictures
 WIN_FILES = ("cli.py", "Dockerfile", ("pyproject.toml", VENV), "secrets/", ("uv.lock", VENV), "input_audios/",
              "text_prompts/")
@@ -270,7 +293,7 @@ def make_window() -> Window:
     d.next_to(sh, UP, buff=0.03)
     sheet.add(d)
     sheet.chips = d
-    place(win, bottom=strip_top(STRIP0) + 0.1)
+    place(win, bottom=strip_top(STRIP0) + 0.06)
     win.shift(RIGHT * WIN_DX)
     return win
 
@@ -394,7 +417,7 @@ class BakeItIn(VoiceScene):
         t = term(P_CTR, STRIP0, component="transcribe_audio")
         seed(t, P_CTR + " ", prompt=True, bare=True)
         win = make_window()
-        assert win.get_bottom()[1] > strip_top(STRIP0) + 0.05 and win.get_top()[1] < 3.0
+        assert win.get_bottom()[1] > strip_top(STRIP0) + 0.05 and win.get_top()[1] < TRACK_BOTTOM - 0.02
         assert win.sheet.frame.get_left()[0] > tr.get_right()[0] + 0.05
         lap_survivors = VGroup(*[win.row(n, "laptop") for n in ("pyproject.toml", "uv.lock", "input_audios/",
                                                                  "text_prompts/")])
@@ -409,6 +432,9 @@ class BakeItIn(VoiceScene):
             win.hide(self, "cover", "route", "route_label", run_time=0.4)
             bare_prompt(self, t)
             vo.wait_until("and the container is removed")
+            self.play(Indicate(win.sheet.frame, color=CTR, scale_factor=1.03),
+                      Indicate(win.sheet.caption, color=CTR, scale_factor=1.15), run_time=0.7)
+            vo.wait_until("with its throwaway layer")
             chips = win.sheet.chips
             win.sheet.remove(chips)                  # the packages linger a moment after their layer
             win.add(chips)
@@ -434,10 +460,9 @@ class BakeItIn(VoiceScene):
             make_room(self, t, 1 + len(WC_OUT))
             c2 = type_cmd(self, t, WC_CMD, 0.5)
             out2 = t.print(self, WC_OUT, run_time=0.3)
-            x2, b2 = beside(extra_tag(), t, c2), rbar(out2[0], VENV, 0.2)
+            x2, b2 = xtag(t, c2, out2[0]), rbar(out2[0], VENV, 0.2)
             self.play(FadeIn(x2), FadeIn(b2), out2[0].glyphs.animate.set_color(VENV), run_time=0.4)
-            stick(self, c2, x2)
-            stick(self, out2[0], b2)
+            stick(self, out2[0], x2, b2)
 
             vo.wait_until("and the two new folders")
             make_room(self, t, 1 + len(LS_OUT))
@@ -511,8 +536,7 @@ class BakeItIn(VoiceScene):
             stick(self, out6[-1], u6)
             vo.wait_until("the packages lived only")
             empty = note_tag("empty")
-            place(empty, left=layer3.shelf.get_right()[0] - empty.width, cy=layer3.frame.get_center()[1])
-            empty.align_to(layer3.shelf, RIGHT)
+            place(empty, left=layer3.frame.get_right()[0] + 0.2, cy=layer3.shelf.get_center()[1])
             self.play(Indicate(layer3.shelf, color=ERR, scale_factor=1.0), FadeIn(empty, shift=DOWN * 0.1),
                       run_time=0.8)
             self.play(Indicate(q, color=ERR, scale_factor=1.3), run_time=0.7)
@@ -525,8 +549,8 @@ class BakeItIn(VoiceScene):
             type_cmd(self, t, "exit", 0.3)
             self.play(*leave_container(t, P_A), FadeOut(layer3, shift=UP * 0.4), FadeOut(empty),
                       FadeOut(q), FadeOut(link), run_time=0.6)
-            self.play(FadeOut(img, shift=UP * 0.1), FadeIn(rchip, shift=DOWN * 0.1), caption_extra(tr, False),
-                      run_time=0.6)
+            self.play(FadeOut(img, shift=UP * 0.1), caption_extra(tr, False), run_time=0.45)
+            self.play(FadeIn(rchip, shift=DOWN * 0.1), run_time=0.45)
             vo.wait_until("and rebuild the image")
             self.play(rchip.phrase.animate.set_color(TURN), Indicate(tr.dots, color=TURN, scale_factor=1.1),
                       run_time=0.5)
@@ -557,7 +581,8 @@ class BakeItIn(VoiceScene):
         ptag = note_tag("ponder 2")
         place(ptag, right=stamps.get_left()[0] - 0.35, cy=stamps[1].get_center()[1])
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(rchip), FadeIn(st, shift=UP * 0.2), run_time=0.7)
+            self.play(FadeOut(rchip, shift=UP * 0.1), run_time=0.35)
+            self.play(FadeIn(st, shift=UP * 0.2), run_time=0.6)
             self.play(FadeIn(ptag, shift=DOWN * 0.1), run_time=0.4)
 
             vo.wait_until("build steps 2 and 3")
@@ -595,7 +620,7 @@ class BakeItIn(VoiceScene):
                       sync.label.animate.set_opacity(0), run_time=0.5)
             stick(self, r17, bd5)
             self.play(Transform(sync.box, saved_sync[0]), Transform(sync.label, saved_sync[1]),
-                      Indicate(times[4], color=INK, scale_factor=1.35), run_time=0.8)
+                      pulse_tag(times[4]), run_time=0.8)
 
             vo.wait_until("The build took")
             u3 = uline(r3, "Building 9.9s", TURN, stroke=4)
@@ -610,6 +635,9 @@ class BakeItIn(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             st.detach(self, *leads, *stamps, run_time=0.4)
             self.play(FadeOut(t), FadeOut(ptag), FadeIn(plog, shift=UP * 0.15), run_time=0.7)
+            self.play(Indicate(plog.rows[0].glyphs, color=VENV, scale_factor=1.08),
+                      Indicate(VGroup(st.slabs["sync"].box, st.slabs["sync"].label), color=VENV, scale_factor=1.05),
+                      run_time=0.9)
             vo.wait_until("the copy brought in")
             rr = plog.rows[3]
             self.play(Indicate(lock, color=VENV, scale_factor=1.6),
@@ -656,7 +684,8 @@ class BakeItIn(VoiceScene):
             x9 = beside(extra_tag(), t7, c9)
             self.play(FadeIn(x9), run_time=0.3)
             stick(self, c9, x9)
-            self.play(FadeOut(t7), FadeOut(brace), FadeIn(hpan, shift=UP * 0.2), run_time=0.7)
+            self.play(FadeOut(t7), FadeOut(brace), run_time=0.45)
+            self.play(FadeIn(hpan, shift=UP * 0.2), run_time=0.5)
             hrows = hpan.rows
             self.play(LaggedStart(*[Indicate(hrows[i].glyphs, color=INK, scale_factor=1.04)
                                     for i in range(1, len(hrows)) if HIST_ROWS[i] != "…"], lag_ratio=0.15),
@@ -692,9 +721,11 @@ class BakeItIn(VoiceScene):
             vo.wait_until("the packages plus")
             split = sans("= venv ≈ 50 MB + uv cache ≈ 58 MB", 20, INK, t2c={"venv ≈ 50 MB": VENV,
                                                                            "uv cache ≈ 58 MB": TOOL})
-            place(split, right=lab.get_left()[0] - 0.25, cy=lab.get_center()[1])
-            assert split.get_left()[0] > -EDGE and split.get_top()[1] < TRACK_BOTTOM - 0.05, split.get_corner(UL)
-            st.attach(self, split, anims=[FadeIn(split, shift=RIGHT * 0.2)], run_time=0.6)
+            place(split, right=lab.get_right()[0], cy=lab.get_center()[1])     # "105MB = venv … + uv cache …"
+            dx = split.width + 0.2
+            assert lab.get_left()[0] - dx > -EDGE and split.get_top()[1] < TRACK_BOTTOM - 0.05, split.get_corner(UL)
+            st.attach(self, split, anims=[FadeIn(split, shift=RIGHT * 0.2)], run_time=0.7,
+                      extra=[lab.animate.shift(LEFT * dx)])
             self.play(Indicate(VGroup(sync.box, st.sync_chips), color=VENV, scale_factor=1.04), run_time=0.9)
 
         # ========================================================== 8 · a fresh container imports them
@@ -729,16 +760,20 @@ class BakeItIn(VoiceScene):
                       label("then uv sync, then the rest", 22, S.GREY)).arrange(DOWN, buff=0.12)
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(t8), caption_extra(tr, False), run_time=0.5)
-            self.play(st.animate.move_to(CENTRE, aligned_edge=DOWN), run_time=0.8)
+            self.play(st.animate.rescale(1.5).move_to(CENTRE, aligned_edge=DOWN), run_time=0.9)
+            assert st.get_top()[1] < TRACK_BOTTOM - 0.3 and st.width < 12, (st.get_top(), st.width)
             place(note, cx=0, top=st.floor.get_center()[1] - 0.35)
             cp, sync = st.slabs["copy"], st.slabs["sync"]
-            place(chip9, left=cp.box.get_right()[0] + 0.5, cy=cp.box.get_center()[1] + 0.9)
+            place(chip9, right=EDGE, cy=cp.box.get_center()[1] + 0.9)
+            assert chip9.get_left()[0] > cp.box.get_right()[0] + 0.15, chip9.get_left()
             vo.wait_until("because the copy comes")
             self.play(Indicate(VGroup(cp.box, st.copy_files), color=INK, scale_factor=1.06), run_time=0.7)
             self.play(Indicate(VGroup(sync.box, sync.label, st.sync_chips), color=VENV, scale_factor=1.06),
                       run_time=0.7)
             vo.wait_until("any edit")
-            self.play(FadeIn(chip9, shift=LEFT * 0.2), run_time=0.5)
+            self.play(FadeIn(chip9, shift=LEFT * 0.2), run_time=0.4)
+            vo.wait_until("even the group name")
+            self.play(Indicate(chip9.text, color=TURN, scale_factor=1.12), run_time=0.5)
             saved_cp = cp.box.copy()
             self.play(chip9.animate.move_to(cp.box).scale(0.4).set_opacity(0),
                       cp.box.animate.set_stroke(TURN, 3).set_fill(TURN, 0.35), run_time=0.7)

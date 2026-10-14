@@ -74,10 +74,12 @@ Beats (script.md "## S12", one voiceover block each):
     Docker Hub · from the official python image" (the message itself is said, never printed);
     "it already has them": the python stack pulses.
  9  TRACKER B4. Everything else goes. A schematic repository card (tag `illustration`) `student/
-    simple-translate-ac215` with a BLUE badge "public" and the image inside, a `.git/` glyph on its COPY
-    slab; "Anyone can pull it": three GREY figures pull it along PINK routes; "git folder and all":
-    `.git/` pulses RED and S10's `.dockerignore` card (`.git`, `.venv`, `secrets/`, tag "a file you'd
-    add") flashes beside it. Fade to an empty frame.
+    simple-translate-ac215`; the image moves down, then into it (never across its text); "is public
+    by default": a BLUE badge "public", and a `.git/` glyph appears on a lead from the COPY slab;
+    "Anyone can pull it": three GREY figures pull it along PINK routes; "git folder and all": `.git/`
+    and the COPY slab's outline turn RED and pulse, and S10's `.dockerignore` card (`.git`, `.venv`,
+    `secrets/`, tag "a file you'd add") fades in where the image stood, its `.git` line flashing GREEN.
+    Fade to an empty frame.
 """
 
 import re  # noqa: I001  (manim first, then common: common must win)
@@ -280,6 +282,29 @@ def shelf(lines, dashed: bool = False) -> RegistryShelf:
     sh.title = t
     sh.add(t)
     return sh
+
+
+def level_parts(name: str = "docker.io/" + LONG) -> VGroup:
+    """common.name_parts() with its letters on one baseline: it arranges the parts by their bottom edges,
+    so `simple-translate-ac215` (descender p) sits higher than `docker.io`. Every glyph is moved onto the
+    same glyph of one mono_line of the whole name; ticks and captions follow their parts."""
+    g = name_parts(name)
+    words = g[0]
+    full = mono_line(name, 24)
+    full.move_to(words)
+    glyphs = [gl for w in words for gl in w]
+    assert len(glyphs) == len(full.glyphs) == len(name)
+    for gl, ref in zip(glyphs, full.glyphs):
+        gl.move_to(ref)
+    top, bot = full.strut.get_top()[1], full.strut.get_bottom()[1]
+    for i, (part, cap, tick) in enumerate(zip(g.parts, g.captions, g.ticks)):
+        below = i % 2 == 0
+        edge = bot - 0.06 if below else top + 0.06
+        cy = edge - 0.39 - cap.height / 2 if below else edge + 0.39 + cap.height / 2
+        cap.move_to([part.get_x(), cy, 0])
+        end = cap.get_top()[1] + 0.06 if below else cap.get_bottom()[1] - 0.06
+        tick.put_start_and_end_on(np.array([part.get_x(), edge, 0]), np.array([part.get_x(), end, 0]))
+    return g
 
 
 def clipboard(h: float = 0.42, color=S.GREY) -> VGroup:
@@ -553,7 +578,7 @@ class TagAndPush(VoiceScene):
         notes.next_to(st.slabs, RIGHT, buff=0.9)
         links = VGroup(*[Line(n.get_left(), [st.slabs.get_right()[0], n.get_y(), 0], color=IMAGE, stroke_width=2.5)
                          for n in notes])
-        parts = name_parts()
+        parts = level_parts()
         parts.move_to([0, -1.4, 0])
         words = parts[0]
         tail = VGroup(*[g for w in words[2:] for g in w])                     # student/…:latest, glyph by glyph
@@ -771,27 +796,26 @@ class TagAndPush(VoiceScene):
             self.play(Indicate(VGroup(py, py_l), color=SYSTEM, scale_factor=1.12), run_time=0.7)
 
         # ========================================================== 9 · public by default
-        repo_fr = box(6.6, 3.9, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
-        repo_fr.move_to([-2.4, -0.45, 0])
+        repo_fr = box(7.0, 3.9, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
+        repo_fr.move_to([0.55, -0.45, 0])
         r_title = mono(REPO, 24, INK)
         r_title.move_to(repo_fr.get_corner(UL) + np.array([0.35 + r_title.width / 2, -0.45, 0]))
         pub = chip("public", CLOUD, size=22, fill_opacity=0.45)
         pub.next_to(r_title, DOWN, buff=0.25).align_to(r_title, LEFT)
         ill9 = illustration_tag().next_to(repo_fr, UP, buff=0.15).align_to(repo_fr, RIGHT)
-        img9 = st.copy()
-        img9.shift(np.array([repo_fr.get_left()[0] + 0.45 - img9.slabs.get_left()[0],
-                             repo_fr.get_bottom()[1] + 0.3 - img9.slabs.get_bottom()[1], 0]))
-        copy_slab = img9.slabs[5]
+        dx = repo_fr.get_left()[0] + 0.45 - st.slabs.get_left()[0]           # the image goes down, then in
+        dy = repo_fr.get_bottom()[1] + 0.3 - st.slabs.get_bottom()[1]
+        copy_slab = st.slabs[5]
         git_g = VGroup(folder_glyph(0.3, S.GREY), mono(".git/", 22, INK)).arrange(RIGHT, buff=0.12)
-        git_g.next_to(img9.slabs, RIGHT, buff=0.7).match_y(copy_slab.box)
-        git_lead = Line(copy_slab.box.get_right() + RIGHT * 0.05, git_g.get_left() + LEFT * 0.08, color=S.GREY,
-                        stroke_width=2)
+        git_g.move_to([st.slabs.get_right()[0] + dx + 0.7 + git_g.width / 2, copy_slab.box.get_y() + dy, 0])
+        git_lead = Line(copy_slab.box.get_right() + np.array([dx + 0.05, dy, 0]), git_g.get_left() + LEFT * 0.08,
+                        color=S.GREY, stroke_width=2)
         folks = VGroup(*[person_icon(S.GREY, 0.42) for _ in range(3)]).arrange(DOWN, buff=0.35)
-        folks.move_to([3.0, -0.45, 0])
+        folks.move_to([5.6, -0.45, 0])
         pulls = VGroup(*[route(repo_fr.get_right() + RIGHT * 0.1 + UP * dy, f.get_left() + LEFT * 0.1, arc=0)
                          for f, dy in zip(folks, (0.6, 0, -0.6))])
         dig9 = dockerignore_card()
-        dig9.move_to([5.1, -0.45, 0])
+        dig9.move_to([-4.9, -0.45, 0])                   # where the image stood
         dig_t = tag("a file you'd add", S.GREY).next_to(dig9, UP, buff=0.2)
 
         with self.voiceover(SAY[9]) as vo:
@@ -800,7 +824,8 @@ class TagAndPush(VoiceScene):
             self.remove(*t6.get_family())
             self.play(FadeOut(id_lbl), FadeIn(repo_fr), FadeIn(r_title), FadeIn(ill9), run_time=0.5)
             self.bring_to_front(st)                      # drawn over the card's opaque fill
-            self.play(ReplacementTransform(st, img9), run_time=0.7)
+            self.play(st.animate.shift(UP * dy), run_time=0.5)
+            self.play(st.animate.shift(RIGHT * dx), run_time=0.6)
             vo.wait_until("is public by default")
             self.play(FadeIn(pub, scale=1.3), run_time=0.4)
             self.play(Indicate(pub, color=CLOUD, scale_factor=1.15), Create(git_lead), FadeIn(git_g, shift=LEFT * 0.1),

@@ -54,16 +54,20 @@ Terminal helpers (Terminal from explainer.devops: .type .print .run .clear .find
         65 chars a row, bottom at BOTTOM (or its top edge at `top`); component="gateway" or a
         folder: title "container · …", TEAL frame, prompt CTR_PROMPT[...] unless given
     enter_container(t, component, prompt=None) / leave_container(t, prompt) -> list of animations
-    resize(scene, t, rows, keep=None)   bottom fixed; keeps the last lines (or the listed ones)
+    resize(scene, t, rows, keep=None, anchor="bottom")   grow/shrink with the bottom (or top)
+                             edge fixed; keeps the last lines (or exactly the listed ones)
     bare_prompt(scene, t)    a prompt line with nothing typed (the prompt returns)
-    type_cmd(scene, t, cmd)  type at the prompt; when the command doesn't fit after a long prompt
-                             it starts on the row under it, indented 4 (script rule); returns the
-                             line (or a VGroup with .rows)
+    type_cmd(scene, t, cmd)  type at the prompt (replaces a bare prompt line). When prompt +
+                             command exceed 65 chars, the command starts on the row under the
+                             prompt, indented 4, if it fits there whole or has no early space;
+                             otherwise it folds with " \\". Returns the line (or VGroup .rows)
     cd_prompt(scene, t, new_prompt, color=CLOUD)  prompt changes, the new path part flashes
     second_terminal(scene, prompt, rows=7, top=2.75, title=...)  opens on P_HOME, "~" flashes
                              YELLOW + caption "new terminal: cd here first", then shows `prompt`
-    session(scene, t, cap, *spec, wrap=False)  replay an interactive capture: prompt lines set
-                             the prompt and type their command; other lines print (spec as .at)
+    session(scene, t, cap, *spec, wrap=False, colors=None)  replay an interactive capture:
+                             prompt lines set the prompt and type their command; other lines
+                             print (spec as .at). Returns {file line: mobject} (printed lines
+                             only when wrap=False)
     print_build(scene, t, rows)  BuildKit rows printed cut at 65; each line gets .time_tag (a GREY
                              tag at the row's right end, part of the row) or None
     beside(mob, t, line) / pin(scene, line, mob) / unpin(scene, line, mob)   a tag that scrolls
@@ -91,11 +95,18 @@ Panels and cards
               all rows from the start; self.play(lf.write_item(i))
     card_rows(items, width=None, header=None)  a GREY card of rows: str (serif) or "`mono`" or
               (str, colour); .rows   table_card(headers, rows, col_w)  two/three-column card
-    ReplyStrip(text, color=OUTPUT, tag=True)  the captured reply strip, 12.6 wide, wraps; .rows
-    PortPage(port=8090, reply=None, compact=False)  the port_toy page (illustration): full
-              6.6 x 4.6 / compact 7.0 x 2.2; .fill(reply) .click() .clear_reply()
-              .value(key) -> the mobject of a JSON key; page_reply(cap, n) -> dict
-    page_diagram(host_port, out=None, dst=None)  the page's flow diagram, readable (10.4 x 1.9)
+    ReplyStrip(text, color=OUTPUT, width=12.6, tag_=True)  REPLY: the captured reply line in a
+              GREY strip (wraps at its width, 2 rows for a JSON reply), tag "captured reply ·
+              curl stood in for the Send button" above it; .rows .span(sub)
+    PortPage(port=8090, reply=None, compact=False, ports=None)  PAGE (illustration tag on its
+              top-right): full 6.6 x 4.9 (address bar, input + Send, reply card, port card,
+              glyph-only diagram); compact 7.0 x 2.3 (address bar + reply card), compact with
+              ports=True 7.0 x 3.6. .fill(reply) -> [anims] (fade in, or numbers transform on
+              the next send) .click() -> anim .clear_reply() -> [anims] .value(key) -> the
+              mobject of a JSON key (upper, gateway_out_port, listen_port, sender_port)
+              page_reply(cap) -> dict (cap.json())
+    page_diagram(host_port="8090", out=None, dst=None)  the page's diagram, readable, 10.6 x 2.0;
+              .host (the host-port glyphs, to colour YELLOW) .boxes .labels
 
 Tags (22 pt, keep their size in rescale): your_turn() extra_tag() illustration_tag(note=None)
     expected_tag() recorded_tag(s) nokey_tag() erratum_tag(note=None) standin_tag()
@@ -113,107 +124,142 @@ Glyphs (small, mostly no text; sizes w x h)
     loop_glyph(r) a localhost loop · door(w, h, color) · Stopwatch(caption) .sweep(secs)
 
 Set pieces: Piece = VGroup + named parts (as in lecture 3)
-    A part not shown yet is a member at opacity 0: it moves and scales with the piece, and the
-    piece's size never jumps. self.play(*piece.parts_in("a", "b")) fades parts in (anims; call it
-    inside the play), self.play(*piece.parts_out("a")) fades them back to 0 (they stay members);
-    piece.reveal(scene, *names) / piece.hide(scene, *names) do the same with their own play.
-    piece.attach(scene, *mobs, anims=None, into=None) / detach(scene, *mobs). self.play(
-    piece.dim_to(0.3)) / self.play(piece.undim()); never piece.set_opacity, never FadeOut a
-    member. rescale(k) via self.play(piece.animate.rescale(k).move_to(...)).
-    Methods below return ANIMATIONS (play them) or MOBJECTS (not added; play FadeIn etc.).
+    Every piece is built centred at ORIGIN (except ComposeMap, a full-frame layout); move it with
+    .move_to(...) before showing it. A part not shown yet is a member at opacity 0: it moves and
+    scales with the piece, and the piece's size never jumps. show=(...) in the constructor names
+    the parts visible at first. self.play(*piece.parts_in("a", "b")) fades parts in (it returns
+    animations; call it inside the play; parts_in("a", anim=Create) draws instead),
+    self.play(*piece.parts_out("a")) fades them back to 0 (they stay members); piece.reveal(scene,
+    *names) / piece.hide(scene, *names) do the same with their own play. piece.attach(scene, *mobs)
+    / detach(scene, *mobs) make scene mobjects members (or not). self.play(piece.dim_to(0.3)) /
+    self.play(piece.undim()). Never piece.set_opacity(...), never FadeOut a member (it would snap
+    back: FadeOut the whole piece). rescale(k) via self.play(piece.animate.rescale(k).move_to(...)):
+    shapes shrink, text keeps its size. piece.glyph_only() -> a text-free copy (thumbnails, icons;
+    scale it freely). Methods return ANIMATIONS (play them) or MOBJECTS (not added: FadeIn them;
+    "scene-owned" = FadeOut them yourself); geometry is read from members, so it follows moves.
 
-    V1 BuildOrPull(tag="dlops/mega-pipeline-transcribe-audio:latest")   12.6 x 3.3.
-       Left: GREY shelf "Git" + GREEN recipe card | PURPLE `docker build` arrow | GREY laptop
-       with the TEAL image `Python 3.14.8 · uv`. Right: BLUE shelf "Docker Hub" (illustration
-       tag) with a sealed TEAL box; PINK signpost (2 lines) whose pointer aims at the box.
-       Parts: "git", "card", "build", "local", "hub", "box", "post", "pointer", "hub_tag".
-       .teammates(n=3) -> VGroup of person glyphs under the piece (positioned, not added)
-       .build_arrow(target) / .pull_arrow(target) -> Arrow (PURPLE from the card / BLUE from the box)
-       .push_box() -> (box2, anim)  a second sealed box slides onto the shelf (box2 is scene-owned)
-       .aim(target) -> anim  the pointer swings to target (a box)
-       .open_box(labels) -> (VGroup of label mobs, [anims])  lid opens, labels rise: labels =
-            [("2025-02-18", INK), ("Python 3.8.17", TURN), ("pipenv shell", INK), ("user: root", ERR)]
-       .old_card(lines, caption) -> VGroup  an older GREY card on a second GREY shelf (positioned
-            under the Git shelf; not added)   .dashed_link(a, b, text=None) -> VGroup
-       .drop_file(name="Pipfile", badge="root") -> (file glyph, anim)  falls from box to laptop
-    V2 ThreePiles()   ≈ 12.4 x 2.9 (piles 3.2 wide + a stash column). Tracked (GREEN, cli.py
-       edited), untracked (GREY), ignored (GREY dashed, secrets/ with the GOLD key).
-       .row(pile, name) pile in "tracked" "untracked" "ignored"   .key  .pencil (on cli.py)
-       Parts: "wall1", "wall2" (RED bars + badges), "incoming" (the branch's files, above),
-       "stash1", "stash2" (stash boxes in the right column), "standin" (tag under the key).
-       .slide_in() -> anim  incoming slides down and stops at the walls
-       .stash(i) -> [anims]  i=1: cli.py lifts into stash box 1 and wall 1 falls; i=2: the
-            untracked pair lifts into box 2 and wall 2 falls (show the box part first)
-       .land() -> [anims]  incoming lands on the piles (after both walls fell)
-       .flip_card(pile, name, color=TURN) -> anim  a card flips (the file was replaced)
-       .relabel(i, text) -> anim  stash box i gets "stash@{0}"
-    V3 ThreeGates()   12.6 x 3.6. Laptop secrets/ + GOLD key | PINK route | container (TEAL) with
-       dashed /secrets slot and a `google.auth` stamp | five BLUE API doors (Storage,
-       Speech-to-Text, Vertex AI, Translation, Text-to-Speech) each with a lock slot (none on
-       Text-to-Speech) and an API switch. Gate labels "who?", "may?", "switched on?".
-       Parts: "laptop", "route", "ghost" (key outline in the slot), "auth", "gate1", "gate2",
-       "gate3", "locks" (padlocks in the slots), "token" (GOLD token tag at the container).
-       .pulse() -> anim  route pulses and the GOLD outline appears in /secrets at once
-       .mint() -> [anims]  the stamp presses the outline into the token (show "token" with it)
-       .fly(i) -> anim  the token flies to door i (0..4);  .home() -> anim back
-       .bounce(i, text) -> (chip, [anims])  RED bounce off door i's lock + RED chip
-       .fail_gate1(text="DefaultCredentialsError") -> (chip, [anims])  RED flash at the edge
-       .lock(i) -> padlock positioned in slot i (not added)   .fill_lock(i, src=None) -> anim
-       .switch(i, on=True) -> anim   .tick(where) -> tick mob ("gate1", door index)
+    V1 BuildOrPull(tag_name="dlops/mega-pipeline-transcribe-audio:latest", image_label=
+       "Python 3.14.8 · uv", show=ALL)   12.6 x 3.3. Left (.left): GREY shelf "Git" with the GREEN
+       recipe card (.card) | PURPLE arrow `docker build` (.build) | GREY laptop (.laptop) holding
+       the TEAL image (.image) and its label. Right (.right): BLUE shelf "Docker Hub" + the
+       illustration tag, a sealed TEAL box (.box) at its right end, the PINK two-line signpost
+       board (.post) above it and its pointer (.pointer) aiming at the box.
+       Parts: git, card, build, local, hub, hub_tag, box, post, pointer.
+       .teammates(n=3) -> VGroup of person+laptop glyphs under the piece (positioned, not added)
+       .build_arrow(target) -> PURPLE Arrow from the card; .pull_arrow(target, src=None) -> BLUE
+            Arrow from the box (not added; GrowArrow them)
+       .push_box() -> (box2, anim)  a second sealed box rises onto the shelf left of the first
+       .aim(target) -> anim  the pointer swings to target (box2, then back to .box)
+       .open_box(labels) -> (labels VGroup, [anims])  the lid swings open, the labels rise into a
+            column left of the box: [("2025-02-18", INK), ("Python 3.8.17", TURN),
+            ("pipenv shell", INK), ("user: root", ERR)] (scene-owned)
+       .old_card(files=("Pipfile", "Dockerfile"), caption="branch pipenv-flexible-workflow") ->
+            older GREY card on a GREY shelf (not positioned, not added)
+       BuildOrPull.dashed_link(a, b, text="?") -> dashed GREY line between two mobjects
+       .drop_file(name="Pipfile", badge="root") -> (file, anim)  falls from the box to the laptop
+    V2 ThreePiles()   12.6 x 3.6 incl. walls and the waiting files (frames 3.2 wide each).
+       Piles (.piles["tracked"|"untracked"|"ignored"]: .frame .kind .folder .rows): tracked GREEN
+       transcribe_audio/ cli.py + YELLOW pencil "edited" (.pencil); untracked GREY generate_text/
+       Dockerfile, uv.lock; ignored GREY dashed transcribe_audio/ Dockerfile, pyproject.toml,
+       uv.lock, secrets/ + GOLD key (.key). A stash column at the right (two boxes, hidden).
+       Parts: wall1, wall2 (RED bars + numbered badges above tracked / untracked), incoming (the
+       branch's files + "flexible-workflow", waiting above the frame), stash1, stash2, standin.
+       .row(pile, name) -> a file row (.glyph .text)
+       .slide_in() -> anim  (parts_in("incoming") first) the files slide down, stop at the walls
+       .stash(1) -> [anims]  cli.py lifts into stash box 1 (shown), wall 1 falls;
+       .stash(2) -> [anims]  the untracked pair lifts into stash box 2, wall 2 falls
+       .land() -> [anims]  the branch's files land inside the emptied tracked/untracked frames
+       .flip_card(pile, name, color=TURN) -> anim  a file card flips over (replaced silently)
+       .relabel(i, "stash@{0}") -> anim  a stash box's label
+    V3 ThreeGates(show=("container", "doors", "laptop", "route", "gate1", "gate2", "gate3"))
+       12.6 x 3.6. Laptop secrets/ + GOLD key (.key) | PINK route (.route) | container (TEAL) with
+       a dashed /secrets slot (.slot) and a `google.auth` stamp (.stamp) | five BLUE API doors
+       (API_DOORS: Storage, Speech-to-Text, Vertex AI, Translation, Text-to-Speech), each with a
+       dashed lock slot (gate 2; "no role" for Text-to-Speech) and an API switch (gate 3).
+       Parts: container, doors, laptop, route, ghost (GOLD key outline in the slot), token,
+       gate1 "who?", gate2 "may?", gate3 "switched on?", lock0..lock3 (padlocks: Storage,
+       Speech-to-Text, Vertex AI, Translation).
+       .pulse() -> anim  the route pulses and the outline appears in the slot at the same instant
+       .mint() -> [anims]  the stamp presses the outline into the GOLD token (token shown)
+       .fly(i) -> anim  token to the gates of door i;  .home() -> anim  back under the stamp
+       .open_door(i, color=VENV) -> anim  door i flashes (the call went through)
+       .bounce(i, text="permission error · from Google") -> (chip, [anims])  RED bounce off
+            door i's lock; chip under the doors (scene-owned)
+       .fail_gate1(text="DefaultCredentialsError", note_="inside the container") -> (chips,
+            [anims])  slot flashes RED, the outline vanishes, chips under the container
+       .fill_lock(i, src=None) -> anim  padlock i appears (flies from src) in its slot
+       .switch(i, on=True) -> anim  .tick("gate1" | ("lock", i) | ("switch", i)) -> white tick
+            (positioned, not added)   .lock(i) -> a fresh padlock in slot i (not added)
        .doors[i] (.frame .name .slot .toggle)
-    V4 Switchboard(labels=True)   6.3 x 3.6. PURPLE input "first word" + four tracks to
-       stations: (no argument) "build, then run" ":71–76 + :79–96" · dev "build only" ":71–76" ·
-       run "run only" ":79–96" · prod "build two architectures, push" ":51–68".
-       labels=False: glyph-only silhouette (parts "words", "descs", "chips" hidden; show later)
-       .light(mode, color=TURN) / .unlight(mode) -> anim (mode in "", "dev", "run", "prod")
-       .dim_modes(*modes) / .undim_modes(*modes) -> anim
-       .tracks[mode] .stations[mode] (.word .desc .chip)
-       RunDecision()  4.6 x 2.0: PINK diamond "local image?" -> yes: TEAL "local image" ·
-           no: BLUE "Docker Hub · $DOCKER_USERNAME/…";  .take("yes"|"no") -> anim
-    V5 TwoWindows()   12.6 x 3.9. Laptop (GREY) tree ~/AC215/ · mega-pipeline/ ·
-       transcribe_audio/ · secrets/ (+ GOLD key) | container (TEAL): /app, /secrets, GREEN
-       /home/app/.venv outside both. Parts: "route_app", "route_secrets", "post" (PINK
-       signpost /secrets/mega-pipeline.json), "ghost" (key outline in /secrets), "image" (TEAL
-       block "image" behind the container), "never" (bar "never in here"), "clock".
-       .walk() -> (walker group, [anims])  up two levels then into secrets/, writing
-            $(pwd)/../../secrets/ (scene-owned; FadeOut it after)
-       .pulse(which="secrets") -> anim  the route pulses (+ the outline appears for "secrets")
-       .blink(name) -> anim  the same file blinks on both sides ("cli.py", "pyproject.toml" …)
-       .pack() -> (copies, [anims])  S09: the folder (with the key) packs into the image block
-    V6+V7 ToyNet(laptop_zone=True)   12.6 x 2.7. A GREY laptop outline around everything: its
-       zone at left (own localhost loop, a browser glyph, street doors), and the Docker side:
-       TEAL boxes "gateway" and "processor" (each: name, port strip 1…65535, localhost loop),
-       the TEAL rail "toynet" under them, a PINK phone book between the boxes.
-       Parts: "rail", "rail_label", "plug_gateway", "plug_processor", "book", "book0",
-       "book1" (entries), "dns_gateway", "dns_processor" (lines to 127.0.0.11), "door"
-       (127.0.0.1:8090), "door2" (0.0.0.0:8091), "room_gateway" (:9100), "room_processor"
-       (:9200), "map" (PINK arrow browser -> door -> room), "aim" (PINK dashed gateway ->
-       "processor : 9200" chip), "laptop_label", "outside" (other machines, left of the frame).
-       .light_port(box, port) -> [anims] a strip cell glows + its number (scene-owned label)
-       .open_room(box) -> anim  the strip cell becomes the room door (TransformFromCopy)
-       .packet(dest="processor : 9200") -> packet mob at the gateway (scene-owned)
-       .travel(packet, src="gateway", dst="processor") -> anim along the rail
-       .loopback(box) -> (dot, [anims]) a packet loops back into the same box (its loop glows)
-       .bounce_from_laptop(target="processor") -> (mob, [anims]) dashed arrow stops RED at the wall
-       .set_door(text, which="door") .set_room(box, text) .set_aim(text, color) -> anims
-       .stop_box(box) -> anim (GREY, exited)   .reform(box) -> anim   .boxes[name] (.frame .name
-       .strip .loop .cells)   .zone (the laptop zone)  .browser
-    V8 ComposeMap(panel="gateway")   left: Step 1's commands as GREY chips (≤ 36 chars a row,
-       x -6.5..-0.1, ≈ 6 tall); right: docker-compose.yml lines 11–25 (comments cut, 20 pt,
-       x 0.2..6.5); panel="processor" shows lines 27–39.
-       .flag(i, sub) -> glyphs of `sub` in chip i  .yaml(line) -> code row of file line
-       .fly(i, sub, line, sub_yaml=None) -> (copy, [anims]) flag copy flies to its YAML line,
-            which gets a GREEN bar (bars stay: .bars)
-       .swap(which) -> [anims]  the panel becomes the other service's lines
-       .outline(first, last, tag) -> VGroup  GREEN outline + tag over YAML lines (not added)
-       .collapse() -> (chip, [anims])  every chip folds into the PURPLE `docker compose up`
-       .chips[i] (.rows) .panel   COMPOSE_CMDS (the five by-hand commands, README spelling)
-    Cabinet(prefixes=PREFIXES, sub="group-01/")  BLUE cabinet, 7 drawers (illustration), 4.9 x 3.3
-       .drawers[i] (.frame .label) .open_sub(i) -> anim (PINK sub-drawer label) .drawer(name)
-    MiniRelay()  glyph-only lecture 3 picture (5 TEAL boxes over 6 BLUE drawers), 6.0 x 2.0;
-       .hop() -> [anims] a token hops box -> drawer -> next box (scene-owned token)
-    VersionLine(first=10, last=16, lo=14, label_=True)   11 wide (rescale-able) axis with the
-       GREEN `>= 3.lo` band;  .dot(14.3, "3.14.8", SYSTEM) -> dot + label (just right of 3.14)
+    V4 Switchboard(labels=True)   6.6 x 3.1. PURPLE input "first word" and four PURPLE tracks to
+       stations (MODES): (no argument) "build, then run" :71–76 + :79–96 · dev "build only"
+       :71–76 · run "run only" :79–96 · prod "build two architectures, push" :51–68.
+       labels=False: silhouette (parts input_label, words, descs, chips hidden).
+       .light(mode, color=TURN) / .unlight(mode) -> anim  (mode: "", "dev", "run", "prod")
+       .dim_modes(*modes, k=0.3) / .undim_modes(*modes) -> anim
+       .tracks[mode] .stations[mode] (.word .desc .chip .dot)
+       RunDecision()  5.9 x 2.0: PINK diamond "local image?" (.diamond); yes (.yes) -> TEAL box
+           "local image"; no (.no) -> BLUE shelf "Docker Hub" $DOCKER_USERNAME/….
+           .take("yes"|"no", color=TURN) -> anim
+    V5 TwoWindows(show=ALL, l03=False)   12.6 x 3.6. Laptop panel (GREY): ~/AC215/ ·
+       mega-pipeline/ · transcribe_audio/ · secrets/ + GOLD key (.rows["home"|"repo"|"comp"|
+       "secrets"], .key). Container (TEAL): /app (.app) and /secrets (.secrets_area) windows, GREEN
+       /home/app/.venv box (.venv_box), PINK signpost /secrets/ mega-pipeline.json pointing into
+       /secrets; a TEAL "image" slab under it (.image_slab). l03=True: ~/AC215-l03/ with secrets/
+       INSIDE transcribe_audio/ (S09; don't show route_secrets then).
+       Parts: laptop, container, venv, route_app, route_secrets, post, ghost (key outline in
+       /secrets), image, never ("never in here" across the slab), clock ("docker run").
+       .walk() -> (group, [5 anims])  play them in turn: a YELLOW walker climbs ".." and
+            "../.." then enters secrets/, and $(pwd)/../../secrets/ writes itself (scene-owned)
+       .pulse("secrets"|"app") -> anim  a route pulses; "secrets" also shows the key outline
+       .blink("app"|"secrets") -> anim  the folder and its window blink at once (no travel)
+       .pack() -> (copies, [anims])  (l03=True) folder, secrets/ and key glyphs ride into the slab
+    V6+V7 ToyNet(show=("outline", "laptop_label", "zone", "boxes"), book_lines=(...),
+       door_label="127.0.0.1:8090", door2_label="0.0.0.0:8091", rooms=(":9100", ":9200"),
+       aim_label="processor : 9200")   12.6 x 2.9 (outline x -5.85..6.3, y -1.5..1.4 before
+       moving). Laptop zone at left: browser glyph, the laptop's own localhost loop, a dashed wall
+       with the street doors (labels left of them). Docker side: TEAL boxes gateway / processor
+       (.boxes[name]: .frame .name .strip .cells .loop .loop_label), each with a room door on
+       its LEFT wall (.rooms[name]: .frame .label), a port strip "1 … 65535" and its own
+       localhost loop; the TEAL rail toynet (.rail) with plugs (.plugs[name]); the PINK phone
+       book between the boxes (.book_lines[0/1]).
+       Parts: outline, laptop_label, zone, boxes, rail, rail_label, plug_gateway, plug_processor,
+       book, book0, book1, dns_gateway (+ "127.0.0.11"), dns_processor, door, door2, outside
+       (machines left of the outline + dashed route to door2), room_gateway, room_processor,
+       map (PINK: browser -> along the top -> down the wall -> street door -> the gateway's
+       room), aim (dashed gateway -> chip "processor : 9200" on the rail: the destination).
+       .cell(box, port) -> strip cell   .light_port(box, port) -> (number, [anims])  the cell
+            glows, its number shows under it (scene-owned)   .unlight_port(box, port) -> anim
+       .open_room(box, port=None) -> anim  the strip cell becomes the room (TransformFromCopy)
+       .packet(dest=None) -> PINK packet at the gateway's plug (scene-owned; .body)
+       .travel(packet, "gateway", "processor") -> anim  down to the rail, along, into the room
+       .loopback(box) -> (dot, [anims])  a dot circles the box's own loop, which glows YELLOW;
+            .unloop(box) -> anim
+       .bounce_from_laptop() -> (group, [anim1, anim2])  dashed ":9200 ?" arrow from the
+            browser stops at the wall, then turns RED with a cross (scene-owned)
+       .set_door(text, which="door") .set_room(box, text) .set_aim(text=None, color) -> anim
+       .stop_box(box) / .start_box(box) -> anim (GREY "exited" / TEAL)   .reform(box) -> anim
+    V8 ComposeMap(panel="gateway")   full frame, do not move: left (x -6.5..-0.3, top 2.75):
+       COMPOSE_CMDS (Step 1's five commands, README spelling) as GREY chips folded at <= 36
+       chars (fold_cmd), .chips[i].rows (mono_lines); right (top-right corner): src_panel of
+       docker-compose.yml lines 11–25 at 20 pt, comments cut (.panel; "processor": 27–39).
+       .flag(i, sub) -> glyphs in chip i   .yaml(line) -> code row of a file line
+       .fly(i, sub, line, sub_yaml=None) -> (copy, [anims])  the flag's copy flies to that YAML
+            line and fades as the line gets a GREEN bar (kept in .bars)
+       .dim_flag(i, sub) -> anim   .swap("processor"|"gateway") -> [anims] (bars leave too)
+       .outline(first, last, text) -> VGroup  GREEN outline over YAML lines + tag under the
+            panel (not added)   .collapse() -> (chip, [anims])  chips fold into `docker compose up`
+    Cabinet(prefixes=PREFIXES, sub="group-01/", title="your-team-bucket", show_subs=False)
+       BLUE cabinet 5.9 x 3.6 (add illustration_tag()): one drawer per prefix (.drawers[i]:
+       .frame .label .handle; the bonus dashed + "bonus"); parts sub1..sub5: PINK `group-01/`
+       beside each drawer but the first. .drawer(name) .light(name) -> anim
+       .receive(mob, name) -> anim (mob slides into the drawer)
+    MiniRelay()  glyph-only lecture 3 picture, 6.0 x 1.9: 5 TEAL boxes over 6 BLUE drawers
+       (.boxes .drawers); .hop() -> (token, [anim]) box -> drawer -> next box (scene-owned)
+    VersionLine(first=10, last=16, lo=14, label_=True)   11 wide axis, GREEN band from 3.lo
+       (label_ writes requires-python = ">=3.14" above it); .dot(14.3, "3.14.8", SYSTEM) ->
+       dot + label just right of 3.14 (not added); rescale it
+    PortPage / ReplyStrip / page_diagram: see "Panels and cards".
 
 Capture folder names (assets/terminal): mega-laptop, mega-l03-laptop, mega-transcribe_audio,
 mega-generate_text, mega-synthesis_audio_en, mega-translate_text, mega-synthesis_audio,
@@ -228,18 +274,79 @@ from pathlib import Path
 
 import numpy as np
 import yaml
-from manim import (DOWN, LEFT, ORIGIN, PI, RIGHT, TAU, UP, AnimationGroup, Arc, Arrow, Circle,
-                   Create, CurvedArrow, DashedLine, DashedVMobject, Dot, FadeIn, FadeOut,
-                   GrowArrow, Indicate, LaggedStart, Line, MoveAlongPath, Polygon, Rectangle,
-                   RoundedRectangle, Succession, Text, Transform, TransformFromCopy, ValueTracker,
-                   VGroup, VMobject, Write, always_redraw, linear, there_and_back)
+from manim import (
+    DOWN,
+    LEFT,
+    ORIGIN,
+    PI,
+    RIGHT,
+    TAU,
+    UP,
+    AnimationGroup,
+    Arc,
+    Arrow,
+    Circle,
+    Create,
+    DashedLine,
+    DashedVMobject,
+    Dot,
+    FadeIn,
+    FadeOut,
+    Indicate,
+    LaggedStart,
+    Line,
+    MoveAlongPath,
+    Polygon,
+    Rectangle,
+    RoundedRectangle,
+    Succession,
+    Text,
+    Transform,
+    TransformFromCopy,
+    ValueTracker,
+    VGroup,
+    VMobject,
+    Write,
+    always_redraw,
+    linear,
+)
 
 from explainer import style as S
-from explainer.devops import (CAPTION, LABEL, MONO, OUTPUT, PANEL, SANS, SMALL, TAG, TERM_BG,
-                              Terminal, box, browser_window, cell_width, chip, cloud, code_block,
-                              code_panel, code_span, file_glyph, folder_glyph, glyph_range, label,
-                              laptop, line_bar, line_pitch, mono, mono_line, step_badge, substring,
-                              tag)
+from explainer.devops import (  # noqa: F401  (LABEL, SMALL, cloud, code_block … are re-exported for the scenes)
+    CAPTION,
+    LABEL,
+    MONO,
+    OUTPUT,
+    PANEL,
+    SANS,
+    SMALL,
+    TAG,
+    TERM_BG,
+    Terminal,
+    box,
+    browser_window,
+    cell_width,
+    check_mark,
+    chip,
+    cloud,
+    code_block,
+    code_panel,
+    code_span,
+    cross_mark,
+    file_glyph,
+    folder_glyph,
+    glyph_range,
+    label,
+    laptop,
+    line_bar,
+    line_pitch,
+    mono,
+    mono_line,
+    step_badge,
+    substring,
+    tag,
+    warning_sign,
+)
 from explainer.script import load_narration
 
 # ------------------------------------------------------------------ paths and data
@@ -678,13 +785,16 @@ def retitle(t: Terminal, title: str, color: str = S.GREY) -> Transform:
     return Transform(t.title, mono(title, CAPTION, color).move_to(t.title))
 
 
-def resize(scene, t: Terminal, rows: int, keep=None, run_time: float = 0.8, extra=()) -> Terminal:
-    """Grow or shrink the terminal to `rows` (bottom edge fixed). It keeps its last lines (at
-    most `keep` of them), or, when `keep` is a list of line mobjects, exactly those lines.
-    The frame keeps its colour (TEAL inside a container)."""
+def resize(scene, t: Terminal, rows: int, keep=None, run_time: float = 0.8, extra=(),
+           anchor: str = "bottom") -> Terminal:
+    """Grow or shrink the terminal to `rows` (bottom edge fixed; anchor="top" keeps the top edge,
+    for a second terminal placed with term(top=...)). It keeps its last lines (at most `keep` of
+    them), or, when `keep` is a list of line mobjects, exactly those lines. The frame keeps its
+    colour (TEAL inside a container)."""
     ref = Terminal(prompt=t.prompt, width=t.box.width, rows=rows, size=t.size, title="x")
-    ref.shift(np.array([t.box.get_center()[0] - ref.box.get_center()[0],
-                        t.box.get_bottom()[1] - ref.box.get_bottom()[1], 0]))
+    dy = (t.box.get_top()[1] - ref.box.get_top()[1]) if anchor == "top" else \
+        (t.box.get_bottom()[1] - ref.box.get_bottom()[1])
+    ref.shift(np.array([t.box.get_center()[0] - ref.box.get_center()[0], dy, 0]))
     ref.box.set_stroke(t.box.get_stroke_color(), t.box.get_stroke_width())
     if isinstance(keep, (list, tuple)):
         assert len(keep) <= rows
@@ -1956,7 +2066,6 @@ class Piece(VGroup):
 
 
 def _tick(color: str = INK, h: float = 0.28) -> VMobject:
-    from explainer.devops import check_mark
     return check_mark(h, color)
 
 
@@ -2000,7 +2109,7 @@ class BuildOrPull(Piece):
         card.next_to(gs.board, UP, buff=0.06)
         # laptop with the local image
         lp = laptop(1.75, LAPTOP)
-        lp.shift(np.array([-0.4 - lp.get_center()[0], base_y - lp.get_bottom()[1], 0]))
+        lp.shift(np.array([-0.2 - lp.get_center()[0], base_y - lp.get_bottom()[1], 0]))
         img = sealed_box(0.85, CTR)
         img.remove(img.tape)                      # a built image: no tape
         img.move_to(lp.screen)
@@ -2218,7 +2327,7 @@ class ThreePiles(Piece):
         sec.add(k)
         self.key = k
         st = standin_tag()             # sits on the ignored frame's bottom edge (opaque tag)
-        st.move_to(self.piles["ignored"].frame.get_bottom())
+        st.move_to(self.piles["ignored"].frame.get_bottom() + DOWN * 0.08)
         self.part("standin", st, shown=False)
         # walls (above the tracked and untracked piles' headers)
         wy = self.piles["tracked"].kind.get_top()[1] + 0.22
@@ -2234,7 +2343,7 @@ class ThreePiles(Piece):
             setattr(self, f"wall{i}", w)
             self.part(f"wall{i}", w, shown=False)
         # incoming: the branch's files, waiting above the frame
-        files = VGroup(*[file_glyph(0.34, VENV) for _ in range(6)]).arrange(RIGHT, buff=0.32)
+        files = VGroup(*[file_glyph(0.34, VENV) for _ in range(6)]).arrange(RIGHT, buff=0.26)
         bl = mono("flexible-workflow", CAPTION, VENV)
         inc = VGroup(files, bl).arrange(RIGHT, buff=0.35)
         inc.move_to([(xs[0] + xs[1]) / 2, wy + 0.42, 0])
@@ -2247,11 +2356,11 @@ class ThreePiles(Piece):
         self.part("incoming", inc, shown=False)
         inc.shift(UP * 1.6)
         # stash column
-        sx = 4.95
+        sx = 5.05
         self.stash_boxes = {}
         for i, n_rows, y in ((1, 1, top + 0.35), (2, 2, top - 0.85)):
             h = n_rows * pitch + 0.3
-            fr = box(2.2, h, S.GREY, fill_opacity=0.08, radius=0.1).move_to([sx, y - h / 2, 0])
+            fr = box(2.4, h, S.GREY, fill_opacity=0.08, radius=0.1).move_to([sx, y - h / 2, 0])
             lb = sans("stash", CAPTION, S.GREY).next_to(fr, UP, buff=0.06).align_to(fr, LEFT)
             g = VGroup(fr, lb)
             g.frame, g.label = fr, lb
@@ -2279,8 +2388,7 @@ class ThreePiles(Piece):
         rows = [self.row("tracked", "cli.py")] if i == 1 else list(self.piles["untracked"].rows)
         for k, r in enumerate(rows):
             target = bx.frame.get_corner(UP + LEFT) + np.array([0.2, -0.15 - (k + 0.5) * 0.44, 0])
-            anims.append(r.animate.move_to(target, aligned_edge=LEFT).shift(
-                RIGHT * 0 if i == 2 or k else RIGHT * 0))
+            anims.append(r.animate.move_to(target, aligned_edge=LEFT))
         if i == 1:
             anims.append(self.pencil.animate.set_opacity(0))
         w = getattr(self, f"wall{i}")
@@ -2353,7 +2461,7 @@ class ThreeGates(Piece):
         sl = mono("/secrets", CAPTION, CTR).next_to(slot, DOWN, buff=0.1).align_to(slot, LEFT)
         st_t = mono("google.auth", CAPTION, INK)
         st_b = box(st_t.width + 0.4, 0.55, S.GREY, fill_opacity=0.15, radius=0.08)
-        st_b.move_to([cf.get_center()[0], -0.45, 0])
+        st_b.move_to([cf.get_center()[0], -0.6, 0])
         st_t.move_to(st_b)
         stamp_ = VGroup(st_b, st_t)
         container = VGroup(cf, ct, slot, sl, stamp_)
@@ -2439,17 +2547,16 @@ class ThreeGates(Piece):
     def home(self, run_time: float = 0.6):
         return self.token.animate(run_time=run_time).move_to(self._home.get_center())
 
-    def through(self, i: int, run_time: float = 0.8):
-        """Animation: the token passes both gates and enters door i (when both show ticks)."""
-        d = self.doors[i]
-        return self.token.animate(run_time=run_time).move_to(d.frame.get_center()).set_opacity(0.0)
+    def open_door(self, i: int, color: str = VENV, run_time: float = 0.8):
+        """Animation: the call goes through: door i's frame flashes `color`."""
+        return Indicate(self.doors[i].frame, color=color, scale_factor=1.06, run_time=run_time)
 
     def bounce(self, i: int, text: str = "permission error · from Google", run_time: float = 1.0):
         """The token hits door i's (empty) lock slot and bounces back, the slot flashes RED, and a
         RED chip appears under the doors. Returns (chip, [anims]); chip is scene-owned."""
         d = self.doors[i]
         hit = (d.slot or d.frame).get_left() + LEFT * 0.1
-        back = self._door_point(i) + LEFT * 0.6
+        back = self._door_point(i)
         chip_ = chip(text, ERR, size=CAPTION)
         chip_.next_to(VGroup(*self.doors), DOWN, buff=0.25).align_to(self.doors[0].frame, RIGHT)
         anims = [Succession(self.token.animate(run_time=run_time * 0.4).move_to(hit),
@@ -2904,8 +3011,8 @@ class ToyNet(Piece):
         book = VGroup(Rectangle(width=0.42, height=0.32, stroke_color=LOOKUP, stroke_width=2.5).set_fill(LOOKUP, 0.2),
                       Line([0, 0.16, 0], [0, -0.16, 0], color=LOOKUP, stroke_width=2))
         book.move_to([mid, rail_y + 0.3, 0])
-        bl0 = mono(book_lines[0], CAPTION, LOOKUP).move_to([mid, 0.8, 0])
-        bl1 = mono(book_lines[1], CAPTION, LOOKUP).move_to([mid, 0.4, 0])
+        bl0 = mono(book_lines[0], CAPTION, LOOKUP).move_to([mid - 0.1, 0.82, 0])
+        bl1 = mono(book_lines[1], CAPTION, LOOKUP).move_to([mid - 0.1, 0.42, 0])
         bl1.align_to(bl0, LEFT)
         self.book_lines = [bl0, bl1]
         dns = {}
@@ -3101,9 +3208,10 @@ COMPOSE_CMDS = [
     "docker build -t toy-processor ./processor",
     "docker build -t toy-gateway ./gateway",
     "docker run -d --name processor --network toynet -e PORT=9200 toy-processor",
-    "docker run -d --name gateway --network toynet -p 127.0.0.1:8090:9100 "
-    "-e PROCESSOR_HOST=processor -e PROCESSOR_PORT=9200 toy-gateway",
+    ("docker run -d --name gateway --network toynet -p 127.0.0.1:8090:9100 "
+     "-e PROCESSOR_HOST=processor -e PROCESSOR_PORT=9200 toy-gateway"),
 ]
+COMPOSE_PANELS = {"gateway": (11, 25), "processor": (27, 39)}     # docker-compose.yml lines
 
 
 def fold_cmd(cmd: str, limit: int = 36) -> list[str]:
@@ -3142,8 +3250,6 @@ class ComposeMap(Piece):
         chip, anims = cm.collapse(); self.play(*anims)
     .chips[i] (.rows: mono_lines) .panel (src_panel: .bar(n) .span(n, sub) .rows_of(n)) .bars"""
 
-    PANELS = {"gateway": (11, 25), "processor": (27, 39)}
-
     def __init__(self, panel: str = "gateway", **kw):
         super().__init__(**kw)
         chips_ = VGroup()
@@ -3162,7 +3268,7 @@ class ComposeMap(Piece):
         chips_.move_to([-6.5, 2.75, 0], aligned_edge=UP + LEFT)
         self.chips = chips_
         self.add(chips_)
-        self.panels = {k: self._panel(k) for k in self.PANELS}
+        self.panels = {k: self._panel(k) for k in COMPOSE_PANELS}
         self.which = panel
         self.panel = self.panels[panel]
         self.add(self.panel)
@@ -3170,7 +3276,7 @@ class ComposeMap(Piece):
         self.add(self.bars)
 
     def _panel(self, which: str) -> VGroup:
-        a, b = self.PANELS[which]
+        a, b = COMPOSE_PANELS[which]
         p = src_panel("port_toy/docker-compose.yml", a, b, cut_comments=True, size=20)
         p.move_to([6.5, 3.45, 0], aligned_edge=UP + RIGHT)
         return p
@@ -3492,6 +3598,11 @@ class PortPage(Piece):
             anims += self.parts_in("ports")
         self.reply = reply
         return [AnimationGroup(*anims, run_time=run_time)]
+
+    def clear_reply(self) -> list:
+        """Animations: the reply card (and port lines) fade back out."""
+        names = [n for n in ("reply", "ports") if n in self.parts]
+        return self.parts_out(*names)
 
     def click(self, run_time: float = 0.5):
         """Animation: the Send button is pressed (full page only)."""

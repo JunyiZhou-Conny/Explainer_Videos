@@ -1,0 +1,373 @@
+# zh narration for S10-S16 (part 2, group g2: port_toy), sentence-aligned to script.md v2: one zh sentence per
+# English sentence (explainer.voice.split_sentences; 66 SAY lines, 154 sentences). Terms and rules: ../GLOSSARY.md,
+# ../glossary.yaml (binding).
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
+# shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
+# Underscore names are written the way the SAY speaks them (rule A6: port toy 目录, port toy 加上 -gateway,
+# container name / depends on 这个键, gateway 的 processor port 变量). Symbols the checker refuses are written
+# another way (B3: Ctrl-C for Ctrl+C, Hello from Docker without its !). No brackets (B2). Sentences never open
+# with an artifact or a kept-English word (A5: 日志里，processor……; 代码里，gateway 的第 38 行……; 用 docker ps……;
+# 输入 docker compose down……; 原来的 --name……). Kept English per A13: port, host port, container port, localhost;
+# the metaphors of V6/V7: 小电脑, 局域网, 电话簿, 导轨, 临街的门 (host port), 房间 (container port).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4, blocks S11[0,3,4,5]
+# S12[0] S13[10] S14[3] S15[1,2,3,8,10,11] S16[0,1,2,4,6,9]: -u, -p, -e, localhost:8090, -it, --name, /app,
+# port_toy-gateway, Ctrl+C, -a, -d, -f, --build, -p 127.0.0.1:8095:9100); null = the SAY text. Mentions only
+# (port toy, container name, depends on, the gateway's processor port) keep the SAY form on both lines.
+S10:
+- en: "In part 1, containers only left files in a bucket. Port toy makes two containers talk directly, and needs only Docker: a gateway serves a web page and forwards your text to a processor, which turns it into capitals."
+  zh:
+  - "在第一部分，container 只是把文件留在 bucket 里。"
+  - "这个 port toy 让两个 container 直接通信，而且只需要 Docker：一个 gateway 提供网页，把你的文字转发给一个 processor，processor 再把它变成大写。"
+- en: "Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash."
+  zh:
+  - "把每个 container 想成一台独立的小电脑，有自己的 localhost，也有自己的一整套 port。"
+  - "两个 container 都可以用 port 9100，完全不会冲突。"
+- en: "A network you create joins them like a small home network, with a phone book that turns container names into addresses. Docker's default network has none."
+  zh:
+  - "你自己创建的网络把它们连起来，就像家里的小局域网，还带一本电话簿，把 container 名变成地址。"
+  - "Docker 的默认网络没有电话簿。"
+- en: "Prerequisites: docker run hello-world checks that Docker is running. It pulls a tiny image and prints hello from Docker."
+  zh:
+  - "先看 Prerequisites：用 docker run hello-world 检查 Docker 有没有在运行。"
+  - "它会 pull 一个很小的 image，打印出 Hello from Docker。"
+- en: "Step 1 sets the app up by hand. From your workspace folder, clone the code: the README says clone or download but prints no command. Then cd into port toy. Pause and run them."
+  zh:
+  - "第 1 步手动把应用搭起来。"
+  - "在你的工作区目录里，把代码 clone 下来：README 说 clone 或下载，却没给命令。"
+  - "然后 cd 进 port toy 目录。"
+  - "暂停一下，把它们跑一遍。"
+- en: "Two extra checks: the files match the README's tree, a gateway and a processor, and git log shows the commit this video pins."
+  zh:
+  - "两个额外检查：文件和 README 里的目录树一致，一个 gateway，一个 processor；git log 显示这个视频 pin 住的 commit。"
+- en: "Next, docker network create toynet. Docker prints the new network's ID: that's the rail both containers will plug into."
+  zh:
+  - "接下来：docker network create toynet。"
+  - "Docker 打印出新网络的 ID：这就是两个 container 都要接上去的那根导轨。"
+- en: "From the README's handy commands, docker network ls lists it, beside Docker's three built-in networks. Pause, and create yours."
+  zh:
+  - "从 README 的 Handy commands 里拿一条：docker network ls 把它列出来，旁边是 Docker 的三个内置网络。"
+  - "暂停一下，创建你自己的网络。"
+S11:
+- en: "Next, build two images. The two Dockerfiles are almost identical: a slim Python 3.14 image, plus curl from apt. Each copies its code and runs it with dash u, so prints reach the logs at once."
+  zh:
+  - "接下来，构建两个 image。"
+  - "两个 Dockerfile 几乎一模一样：一个精简版的 Python 3.14 image，再从 apt 装上 curl。"
+  - "每个都把自己的代码复制进去，用 -u 运行，这样打印的内容会马上进到日志里。"
+  en_display:
+  - null
+  - null
+  - "Each copies its code and runs it with -u, so prints reach the logs at once."
+- en: "The processor builds first, and its apt layer takes a few seconds. Your first build also pulls the Python base image."
+  zh:
+  - "先构建的是 processor，它的 apt 那一层要花几秒钟。"
+  - "你第一次构建时，还会 pull Python 的 base image。"
+- en: "Then the gateway: Docker reuses the processor's apt layer from the cache, because the two files match up to the copy line. It's done in under a second."
+  zh:
+  - "然后是 gateway：Docker 从缓存里复用了 processor 的 apt 那一层，因为两个文件在 COPY 那一行之前都一样。"
+  - "不到 1 秒就构建完了。"
+- en: "Then start the processor on toynet, with PORT set to 9200, and no dash p. It listens on 9200 inside its own box, but nothing on your laptop leads to it."
+  zh:
+  - "然后在 toynet 上启动 processor，PORT 设为 9200，不加 -p。"
+  - "它在自己的盒子里监听 9200，但你笔记本上没有任何东西通向它。"
+  en_display:
+  - "Then start the processor on toynet, with PORT set to 9200, and no -p."
+  - null
+- en: "Then start the gateway. Dash p publishes a port: it opens a street door on your laptop that leads to a room inside the container. The order is IP address, host port, container port: 127.0.0.1, meaning this laptop only, then door 8090, then room 9100."
+  zh:
+  - "然后启动 gateway。"
+  - "这里的 -p 会发布一个 port：它在你笔记本上开一扇临街的门，通向 container 里面的一个房间。"
+  - "顺序是 IP 地址、host port、container port：127.0.0.1，意思是只限这台笔记本，然后是 8090 号门，最后是 9100 号房间。"
+  en_display:
+  - null
+  - "-p publishes a port: it opens a street door on your laptop that leads to a room inside the container."
+  - null
+- en: "The two dash e flags tell the gateway where to call: the name processor, port 9200. Lines 13 and 14 of its code read them; the values in quotes there are only defaults."
+  zh:
+  - "两个 -e 参数告诉 gateway 该去调用哪里：名字是 processor，port 是 9200。"
+  - "它代码里的第 13 和第 14 行读取这两个值；那里引号里的值只是默认值。"
+  en_display:
+  - "The two -e flags tell the gateway where to call: the name processor, port 9200."
+  - null
+- en: "Now check docker logs for each. The processor listens on 9200, internal only; the gateway listens on 9100. Pause and start both."
+  zh:
+  - "现在对两个分别跑一下 docker logs。"
+  - "日志里，processor 监听 9200，只在内部；gateway 监听 9100。"
+  - "暂停一下，把两个都启动。"
+S12:
+- en: "To finish step 1, open localhost 8090 in your browser, type a message, and click Send. The reply comes back in capitals, with three port numbers: where the gateway sent from, where the processor listened, and where it saw the message arrive from."
+  zh:
+  - "第 1 步的最后，在浏览器里打开 localhost:8090，输入一条消息，点 Send。"
+  - "回复是大写的，还带着三个 port 数字：gateway 从哪里发出，processor 在哪里监听，以及它看到消息是从哪里来的。"
+  en_display:
+  - "To finish step 1, open localhost:8090 in your browser, type a message, and click Send."
+  - null
+- en: "We recorded without a browser, so curl sent the same request the page sends; this is the reply it got."
+  zh:
+  - "我们录制时没有浏览器，所以用 curl 发了和网页一模一样的请求；这是它拿到的回复。"
+- en: "The processor listened on 9200, the destination. But every connection has two ends, so the gateway's side needs a port too. Its operating system picked a temporary one, 55620, and stapled it to the packet."
+  zh:
+  - "这个 processor 监听的是 9200，也就是目的地。"
+  - "但每个连接都有两端，所以 gateway 这一端也需要一个 port。"
+  - "它的操作系统挑了一个临时的，55620，把它钉在数据包上。"
+- en: "The processor saw the same number arrive, because nothing rewrites it inside the network. Line 38 of the gateway reads its own port; line 32 of the processor reads the sender's."
+  zh:
+  - "在 processor 那边，看到的是同一个数字，因为在网络内部没有任何东西会改写它。"
+  - "代码里，gateway 的第 38 行读取自己的 port；processor 的第 32 行读取发送方的 port。"
+- en: "Send again, and the number changes: a new connection, a new temporary port. Yours will differ."
+  zh:
+  - "再发一次，这个数字就变了：新的连接，新的临时 port。"
+  - "你的会不一样。"
+- en: "One more detail: the page's diagram shows 8090 by reading its own address bar. The container can't know which door on your laptop you gave it. Pause, send a message, and leave both running."
+  zh:
+  - "还有一个细节：页面上的示意图显示 8090，靠的是读取它自己的地址栏。"
+  - "这个 container 没法知道，你在笔记本上给它开的是哪扇门。"
+  - "暂停一下，发一条消息，两个都别停。"
+S13:
+- en: "Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first: 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published."
+  zh:
+  - "第 2 步检查 port。"
+  - "用 docker ps 能看到 gateway 的映射，host 那一侧在前：127.0.0.1，port 8090，到 9100。"
+  - "而 processor 的 PORTS 那一列是空的：在监听，但没有发布。"
+- en: "An extra docker ps with three columns matches the README's sample."
+  zh:
+  - "额外跑一个只有三列的 docker ps，和 README 里的示例一致。"
+- en: "What does the 127.0.0.1 do? This extra run leaves it out, asking for door 8090 on every address. Docker refuses, port is already allocated: our gateway holds 8090. The container was still created, so remove it."
+  zh:
+  - "那个 127.0.0.1 有什么用？"
+  - "这次额外的运行把它去掉了，要在所有地址上开 8090 号门。"
+  - "Docker 拒绝了，报 port is already allocated：我们的 gateway 占着 8090。"
+  - "不过 container 还是创建出来了，所以要把它删掉。"
+- en: "With door 8091 it works, and the mapping shows 0.0.0.0: every address, so other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only."
+  zh:
+  - "用 8091 号门就成功了，映射显示 0.0.0.0：所有地址，所以你所在网络里的其他机器也能连进来。"
+  - "把它删掉。"
+  - "所以 README 写的是 127.0.0.1：只限这台笔记本。"
+- en: "From the laptop, curl on 8090 returns the gateway's page. Curl on 9200 can't connect: your laptop has no door to it, unless something else of yours uses 9200."
+  zh:
+  - "在笔记本上，用 curl 访问 8090，返回的是 gateway 的页面。"
+  - "用 curl 访问 9200 就连不上：你的笔记本上没有通向它的门，除非你自己有别的程序在用 9200。"
+- en: "From inside the gateway, docker exec runs curl, asking for the name processor, on port 9200. The answer: ok."
+  zh:
+  - "用 docker exec 在 gateway 里面运行 curl，按名字 processor 去问 port 9200。"
+  - "回答是：ok。"
+- en: "Ponder this. The same command with localhost instead of processor. What answers?"
+  zh:
+  - "来想一想。"
+  - "同一条命令，把 processor 换成 localhost。"
+  - "谁会回答？"
+- en: "Nothing. Inside the gateway, localhost is the gateway itself, and nothing there listens on 9200. That's the second puzzle: each container has its own localhost. An extra check: on 9100, its own port, localhost returns the page."
+  zh:
+  - "什么都没有。"
+  - "在 gateway 里面，localhost 就是 gateway 自己，而它那里没有任何东西在 9200 上监听。"
+  - "这就是第二个谜题的答案：每个 container 都有自己的 localhost。"
+  - "一个额外检查：换成 9100，也就是它自己的 port，localhost 就返回页面。"
+- en: "So how did the name work? From the handy commands, docker network inspect shows an address for each container, on toynet's own subnet."
+  zh:
+  - "那名字又是怎么起作用的？"
+  - "从 Handy commands 里拿一条：docker network inspect 显示每个 container 的地址，都在 toynet 自己的子网里。"
+- en: "Each container asks Docker's built-in phone book, at 127.0.0.11, which turns names into those addresses. Addresses can change when a container restarts; names stay."
+  zh:
+  - "每个 container 都去问 Docker 内置的电话簿，它在 127.0.0.11，把名字变成这些地址。"
+  - "一个 container 重启时，地址可能会变；名字不会变。"
+- en: "Another handy command, docker exec dash i t gateway sh, opens a shell inside; its hostname is the container ID. One aside: the processor image has curl too, though the README implies it doesn't. Pause, and test from both sides."
+  zh:
+  - "再来一条 Handy commands 里的命令：docker exec -it gateway sh，在里面打开一个 shell；它的主机名就是 container ID。"
+  - "补充一句：processor 的 image 里其实也有 curl，虽然 README 暗示它没有。"
+  - "暂停一下，从两边都试一试。"
+  en_display:
+  - "Another handy command, docker exec -it gateway sh, opens a shell inside; its hostname is the container ID."
+  - null
+  - null
+S14:
+- en: "Step 3 changes the ports. First the street door: remove the gateway, and start it again on 127.0.0.1, port 8095. The room inside stays 9100."
+  zh:
+  - "第 3 步修改 port。"
+  - "先改临街的门：删掉 gateway，再在 127.0.0.1 的 port 8095 上重新启动它。"
+  - "里面的房间还是 9100。"
+- en: "The page works on 8095. Two extra checks: 8090 no longer connects, and docker ps shows the new mapping. Pause and move your gateway's door."
+  zh:
+  - "页面在 8095 上能用。"
+  - "两个额外检查：8090 已经连不上了，docker ps 也显示出新的映射。"
+  - "暂停一下，把你的 gateway 的门也挪过去。"
+- en: "Why do this? Another app on your laptop might already hold 8090. Doors on the laptop must be unique; rooms inside containers never collide."
+  zh:
+  - "为什么要这么做？"
+  - "你笔记本上可能已经有别的应用占着 8090。"
+  - "笔记本上的门必须各不相同；container 里的房间永远不会撞车。"
+- en: "A small slip: the gateway's log still says open localhost 8090. That text is hard-coded in line 53. Trust docker ps and the page instead."
+  zh:
+  - "一个小疏漏：gateway 的日志里还是说打开 localhost:8090。"
+  - "那段文字是写死在第 53 行的。"
+  - "要以 docker ps 和页面为准。"
+  en_display:
+  - "A small slip: the gateway's log still says open localhost:8090."
+  - null
+  - null
+- en: "Next, the processor's port: remove it, and start it with PORT set to 9300. The README says: send a message, and it should fail."
+  zh:
+  - "接下来是 processor 的 port：删掉它，再把 PORT 设为 9300 启动它。"
+  - "README 里说：发一条消息，应该会失败。"
+- en: "It does, but quietly. The page has no error handling, so nothing on it changes; the captured request got only curl's error, empty reply from server."
+  zh:
+  - "确实失败了，只是悄无声息。"
+  - "页面没有错误处理，所以上面什么都不会变；我们录下的那次请求只拿到 curl 的报错：Empty reply from server。"
+- en: "An extra docker logs on the gateway shows why: it found the processor by name, but the connection was refused: nobody listens on 9200 anymore. A wrong name fails differently: see the exercises."
+  zh:
+  - "额外在 gateway 上跑一下 docker logs，就知道原因：它通过名字找到了 processor，但连接被拒绝了，已经没有人在 9200 上监听。"
+  - "名字写错的话，失败的方式不一样：见练习。"
+- en: "Ponder this. Which one setting fixes it, and does any image need rebuilding?"
+  zh:
+  - "来想一想。"
+  - "改哪一个设置能修好它，又有没有哪个 image 需要重新构建？"
+- en: "The gateway's processor port. Remove the gateway and start it with 9300, back on 8090, and the message goes through. No image was rebuilt: it's only configuration. Pause and fix yours."
+  zh:
+  - "改 gateway 的 processor port 变量。"
+  - "删掉 gateway，用 9300 重新启动它，门也换回 8090，消息就能发过去了。"
+  - "没有重新构建任何 image：这只是配置。"
+  - "暂停一下，把你的也修好。"
+- en: "The two settings must agree: the processor's PORT and the gateway's processor port."
+  zh:
+  - "两个设置必须一致：processor 的 PORT，和 gateway 的 processor port。"
+- en: "Finally, clean up before Compose: remove both containers, then the network. An extra check shows only hello-world's old container left. Skip this, and Compose hits a name conflict. Pause and clean up."
+  zh:
+  - "最后，用 Compose 之前先清理：删掉两个 container，再删网络。"
+  - "一个额外检查显示，只剩下 hello-world 那个旧 container。"
+  - "跳过这一步，Compose 就会遇到名字冲突。"
+  - "暂停一下，清理干净。"
+S15:
+- en: "Step 4: Docker Compose. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it."
+  zh:
+  - "第 4 步：Docker Compose。"
+  - "README 里只给了节选；把完整的 docker-compose.yml 打开。"
+  - "你手动敲过的参数，几乎每一个都能在里面找到位置。"
+- en: "Dash dash name becomes container name, and the build command becomes build. Dash p becomes ports, dash e becomes environment, and the network is named at the bottom of the file."
+  zh:
+  - "原来的 --name 变成了 container name，构建命令变成了 build。"
+  - "原来的 -p 变成了 ports，-e 变成了 environment，而网络在文件最下面命名。"
+  en_display:
+  - "--name becomes container name, and the build command becomes build."
+  - "-p becomes ports, -e becomes environment, and the network is named at the bottom of the file."
+- en: "Two keys are new: the volumes key mounts the gateway's folder into slash app, and the depends on key starts the processor first. All of step 1 collapses into one command: docker compose up."
+  zh:
+  - "有两个键是新的：volumes 这个键把 gateway 的目录挂载到 /app，depends on 这个键让 processor 先启动。"
+  - "整个第 1 步合成了一条命令：docker compose up。"
+  en_display:
+  - "Two keys are new: the volumes key mounts the gateway's folder into /app, and the depends on key starts the processor first."
+  - null
+- en: "Run it. Compose builds both images, all from the cache, and names them after the folder and the service: port toy, dash gateway."
+  zh:
+  - "运行它。"
+  - "Compose 构建了两个 image，全部用了缓存，并按目录名和服务名给它们命名：port toy 加上 -gateway。"
+  en_display:
+  - null
+  - "Compose builds both images, all from the cache, and names them after the folder and the service: port_toy-gateway."
+- en: "Then it creates the network and both containers, and prints both banners, each line prefixed with its service. Pause and run it."
+  zh:
+  - "然后它创建网络和两个 container，打印出两个横幅，每一行前面都标着它的服务名。"
+  - "暂停一下，自己跑一遍。"
+- en: "Open the page: it works. In a second terminal, cd into port toy first: Compose reads the file in the current folder. There, docker compose ps shows the same mapping."
+  zh:
+  - "打开页面：能用。"
+  - "在第二个终端里，先 cd 进 port toy：Compose 读的是当前目录里的文件。"
+  - "在那里，docker compose ps 显示同样的映射。"
+- en: "An extra network ls shows that Compose made toynet, and compose exec reaches the processor by name: ok."
+  zh:
+  - "额外的 network ls 显示，toynet 是 Compose 创建的，而 compose exec 按名字连到了 processor：ok。"
+- en: "The README's table pairs each by-hand command with its Compose version. In the first terminal, your requests now show in the log."
+  zh:
+  - "README 的那张表把每条手动敲的命令和它在 Compose 里的写法一一对应。"
+  - "在第一个终端里，你的请求现在会出现在日志里。"
+- en: "The README stops the app at the end of step 4; we stop it now, in the foreground: press Control C. Compose says it's stopping gracefully, but it takes about 20 seconds."
+  zh:
+  - "README 到第 4 步最后才停掉应用；我们现在就在前台停掉它：按 Ctrl-C。"
+  - "Compose 说它正在优雅地停止，但要花大约 20 秒。"
+  en_display:
+  - "The README stops the app at the end of step 4; we stop it now, in the foreground: press Ctrl+C."
+  - null
+- en: "Python, each container's first process, ignores the polite stop signal unless it's written to catch it. So Docker waits 10 seconds per container, then kills it."
+  zh:
+  - "作为每个 container 的第一个进程，Python 会忽略这个礼貌的停止信号，除非程序里专门写了捕获它的代码。"
+  - "所以 Docker 对每个 container 等 10 秒，然后强行杀掉它。"
+- en: "Exit code 137 means killed. Docker compose ps dash a: both containers exited, but they're still there."
+  zh:
+  - "退出码 137 表示被强行杀掉。"
+  - "用 docker compose ps -a 一看：两个 container 都退出了，但还在那里。"
+  en_display:
+  - null
+  - "docker compose ps -a: both containers exited, but they're still there."
+- en: "Docker compose down removes the containers and the network, and nothing is left in ps dash a. Control C stops; down removes. Pause, and run the whole cycle."
+  zh:
+  - "输入 docker compose down：它删掉 container 和网络，ps -a 里什么都不剩。"
+  - "按 Ctrl-C 是停止；down 才是删除。"
+  - "暂停一下，把整个流程跑一遍。"
+  en_display:
+  - "docker compose down removes the containers and the network, and nothing is left in ps -a."
+  - "Ctrl+C stops; down removes."
+  - null
+S16:
+- en: "Back to the README's order: up dash d starts the app in the background and returns your prompt."
+  zh:
+  - "回到 README 的顺序：up -d 在后台启动应用，把提示符还给你。"
+  en_display:
+  - "Back to the README's order: up -d starts the app in the background and returns your prompt."
+- en: "Two handy commands. Compose logs dash f follows the gateway's log; Control C stops only the following. Compose exec gateway sh opens a shell, where the environment shows processor and 9200."
+  zh:
+  - "两条 Handy commands 里的命令。"
+  - "用 compose logs -f 持续跟踪 gateway 的日志；按 Ctrl-C 只停止跟踪。"
+  - "用 compose exec gateway sh 打开一个 shell，在里面，环境变量显示的是 processor 和 9200。"
+  en_display:
+  - null
+  - "Compose logs -f follows the gateway's log; Ctrl+C stops only the following."
+  - null
+- en: "Step 3: repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway."
+  zh:
+  - "第 3 步：在文件里重做一遍 port 实验。"
+  - "把 8090 改成 8095，再运行 up -d：Compose 只重新创建 gateway。"
+  en_display:
+  - null
+  - "Change 8090 to 8095 and run up -d: Compose recreates only the gateway."
+- en: "The page answers on 8095; change it back and apply again."
+  zh:
+  - "页面在 8095 上有回应；把它改回去，再让它生效一次。"
+- en: "Changed code that's copied into an image needs dash dash build. We added a comment to the processor's code: only the copy layer is new, and only the processor is recreated."
+  zh:
+  - "复制进 image 的代码改了，就要加 --build。"
+  - "我们在 processor 的代码里加了一行注释：只有 COPY 那一层是新的，也只有 processor 被重新创建。"
+  en_display:
+  - "Changed code that's copied into an image needs --build."
+  - null
+- en: "The gateway's folder is mounted, and it rereads its page on each load: edits show on the next reload, without a rebuild."
+  zh:
+  - "那个 gateway 的目录是挂载进去的，而且它每次加载都会重新读页面：改动在下次刷新时就能看到，不用重新构建。"
+- en: "To finish, docker compose down; nothing is left in ps dash a. The images remain, sharing about 200 megabytes; remove them to free space. Port toy costs nothing. Pause and shut it down."
+  zh:
+  - "最后，docker compose down；ps -a 里什么都不剩。"
+  - "这些 image 还在，共用大约 200 MB；删掉它们可以腾出空间。"
+  - "这个 port toy 一分钱都不花。"
+  - "暂停一下，把它关掉。"
+  en_display:
+  - "To finish, docker compose down; nothing is left in ps -a."
+  - null
+  - null
+  - null
+- en: "To test yourself. One: which files define a mega-pipeline image, and what does run use when there's no local image?"
+  zh:
+  - "自测一下。"
+  - "第一题：哪些文件定义了一个 mega-pipeline 的 image，本地没有 image 时，run 用的又是什么？"
+- en: "Two: which three gates must a call to your bucket pass, and where does each one fail? Three: how does a git-ignored key end up in an image, and what's the fix?"
+  zh:
+  - "第二题：调用你的 bucket 时，必须通过哪三道关卡，每一道又在哪里失败？"
+  - "第三题：一个被 Git 忽略的密钥，怎么会跑进 image 里，又该怎么修？"
+- en: "Four: dash p 127.0.0.1, 8095, 9100. Which number does the browser use, which does the gateway bind, and what does 127.0.0.1 restrict? Five: inside the gateway, what is localhost, and which name reaches the processor?"
+  zh:
+  - "第四题：-p 127.0.0.1:8095:9100。"
+  - "浏览器用哪个数字，gateway 绑定哪个，127.0.0.1 又限制了什么？"
+  - "第五题：在 gateway 里面，localhost 是什么，哪个名字能连到 processor？"
+  en_display:
+  - "Four: -p 127.0.0.1:8095:9100."
+  - null
+  - null
+- en: "Next lecture, a command-line container calls a database container by name on a Compose network, with the same secrets mount: parts 1 and 2 together. Answers are in the exercises."
+  zh:
+  - "下节课，一个命令行 container 会在 Compose 网络上，按名字调用一个数据库 container，用的还是同样的 secrets 挂载：第一部分和第二部分合在一起。"
+  - "答案在练习里。"
