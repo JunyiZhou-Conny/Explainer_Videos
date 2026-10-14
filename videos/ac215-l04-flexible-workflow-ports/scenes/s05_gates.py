@@ -41,7 +41,8 @@ Beats (script.md "## S05", one voiceover block each):
     account"); GOLD tag "calls now bill your project" lands under the doors.
  8  The strip and chips go; V3 moves up: white ticks at gate 1 and on the five switches; the
     Vertex AI padlock lifts off (its slot dashed and empty); a generate_text chip waits under the
-    container. PONDER (8 s), card at the bottom right.
+    container; the container and the doors flash in turn as the two options are named.
+    PONDER (8 s), card at the bottom right.
  9  The card goes; the token leaves the container, flies to the Vertex AI door and bounces RED off
     its empty lock: chip "permission error · from Google" + GREY note "said, not shown: nothing
     here reached Google". Caption "the key says who · the role says may"; GREY note "new roles
@@ -63,10 +64,13 @@ Deviations from SHOW (and why):
 - Beat 7: line 7 is printed wrapped (it is 85 characters: cut at 65 it would lose "active account
   selected", the words the SAY points at), so the output is lines 7–10 and "…" (12 rows: the six
   typed rows + six output rows). The strip keeps the two ERROR rows and line 10.
-- Beat 8: V3 stays at 0.8 so the ponder card (22 pt) fits under it; the card sits at the bottom
-  right, the generate_text chip under the container.
-- Beat 9: the Vertex AI padlock returns as V3 shrinks (the your-turn picture shows the full
-  setup).
+- Beats 7-9: the whole V3 returns at 0.9 so the strip (beat 7) and the ponder card (22 pt,
+  beat 8) fit under it; the card sits at the bottom right, the generate_text chip under the
+  container. On "inside your container" / "or at Google" the container and the doors flash in
+  turn (same emphasis for both answers).
+- Beat 9: the "allow a few minutes" note sits at the bottom right (it stays with the card); V3
+  shrinks and the card arrives during that sentence, so the card is up when "Pause" is said; the
+  Vertex AI padlock returns as V3 shrinks (the your-turn picture shows the full setup).
 """
 
 from common import *
@@ -76,7 +80,6 @@ from manim import (
     RIGHT,
     TAU,
     UP,
-    AnimationGroup,
     Create,
     FadeIn,
     FadeOut,
@@ -654,7 +657,7 @@ class ThreeGates(VoiceScene):
             self.play(tr.goto(6), FadeOut(zsh), FadeOut(VGroup(rings, pbox, own)), run_time=0.4)
             t.clear(self, run_time=0.3)
             resize(self, t, 12, run_time=0.6)
-            rows7 = type_rows(self, t, ENABLE_ROWS, type_time=2.3)
+            type_rows(self, t, ENABLE_ROWS, type_time=2.3)
             vo.wait_until("Our laptop had no Google account")
             e7 = t.print(self, [(ERR7, ERR)], wrap=True, run_time=0.5)
             rest = t.print(self, REST7, run_time=0.5)
@@ -708,6 +711,11 @@ class ThreeGates(VoiceScene):
             vo.wait_until("Where does generate text fail")
             gt_chip.next_to(v3.container_frame, DOWN, buff=0.3)
             self.play(FadeIn(gt_chip, shift=UP * 0.15), run_time=0.5)
+            # the two options get the same emphasis (the picture must not answer)
+            vo.wait_until("inside your container")
+            self.play(flash(v3.container_frame, CTR, 1.03, 0.8))
+            vo.wait_until("or at Google")
+            self.play(flash(VGroup(*[d.frame for d in v3.doors]), CLOUD, 1.03, 0.8))
 
         q = ponder_card(PONDER_Q, width=X_R - (gt_chip.get_right()[0] + 0.3), size=22)
         q.move_to([X_R - q.width / 2, -3.45 + q.height / 2, 0])

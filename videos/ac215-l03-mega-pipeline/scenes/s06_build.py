@@ -7,15 +7,17 @@ Beats (script.md "## S06", one voiceover block each):
  0  TRACKER A4 -> A5 · extra. Terminal (13 rows, laptop, transcribe_audio prompt) types `ls -a`
     (extra; the capture's `; git status` half is not typed) -> 11-ls-before-build.txt lines 2-9;
     `Dockerfile` and then `pyproject.toml` turn GREEN with a GREEN bar, as named.
- 1  TRACKER A5. The terminal clears and shrinks to the 3-row strip. Under the tracker band the
-    README chip `transcribe_audio/README.md · line 95` "give your image the name transcribe_audio"
-    (11.5 wide: it can't sit right of the tracker), GREY tag "erratum · no command given" above
-    its right end. It types `docker build -t transcribe_audio .` (folds after `build`), no Enter.
+ 1  TRACKER A5. The terminal clears and shrinks to the 3-row strip. While the SAY is about the
+    README, its chip `transcribe_audio/README.md · line 95` "give your image the name
+    transcribe_audio" is the picture: 22 pt, centred above the strip, the GREY tag "erratum · no
+    command given" above its right end. On "Here it is" both move up to the top band (the chip is
+    11.5 wide: it can't sit right of the tracker, so it sits under the tracker band, the tag above
+    its right end). It types `docker build -t transcribe_audio .` (folds after `build`), no Enter.
     `-t transcribe_audio` underlines GREY with "the image's name" on the row below; the final `.`
-    underlines PINK with "this folder = the build context". As the PINK label lands the
-    transcribe_audio/ folder (GREY, its files and a tiny GOLD key) appears above the strip; copies
-    of its files pack into lecture 2's parcel "build context" (1.5 s), which slides to a PURPLE
-    "builder" box.
+    underlines PINK with "this folder = the build context"; with the PINK label the
+    transcribe_audio/ folder (GREY, its files and a tiny GOLD key) and a PURPLE "builder" box
+    appear above the strip. On "the build context" copies of its files pack into lecture 2's
+    parcel "build context", which slides to the builder (1.3 s).
  2  Enter: the picture, the chip and the labels go; ▶ your turn beside the command ("Pause and run
     it"); the terminal grows to 13 rows, its title becomes "laptop · the same build, full log";
     top right, the GREY caption "your terminal shows a compact live view; / this is the full log
@@ -37,10 +39,11 @@ Beats (script.md "## S06", one voiceover block each):
     4-row strip (the command folds onto 2 rows) while V2 fades in above it, as S05 left it. It
     types `docker images transcribe_audio` (extra) -> 13-images.txt lines 2-3 (cut at 65: "357…");
     `1.35GB` gets a YELLOW bar; a GREY brace "≈ 1 GB of layers" + note "+ 357 MB compressed copy /
-    = 1.35 GB disk usage · this machine". On "By far the biggest" the apt slab swells and reads
-    `842MB` (17-history.txt line 9) while the empty uv sync slab thins to a hairline (the brace
-    follows); the thin GREY COPY slab pulses on "the copied folder is tiny". The five slabs take
-    TEAL badges 1-5 (fanned, with leader lines: three slabs are thin).
+    = 1.35 GB disk usage · this machine". On "By far the biggest" the apt slab swells while the
+    empty uv sync slab thins to a hairline (the brace follows); `842MB` (17-history.txt line 9)
+    lands in it on "842 megabytes". While the SAY lists ffmpeg and the libraries, the five slabs
+    take TEAL badges 1-5 (fanned, with leader lines: three slabs are thin); the thin GREY COPY
+    slab pulses on "the copied folder is tiny".
  6  TRACKER A5. The strip and the brace go. Bottom: a RED-bordered panel, header "if you skipped uv
     init", GREY tag "illustration · what if", TERM(26-g21-no-pyproject.txt: 34, 51) in RED (folded
     at spaces to the panel's 66 characters). On "build step 5 fails" badge 5 and the sync slab
@@ -48,11 +51,14 @@ Beats (script.md "## S06", one voiceover block each):
  7  The panel fades. A GREY chip "edit: group_name in cli.py" hovers right of the stack; the five
     badges pulse on "which of the five". After the SAY: PONDER (8 s) at the bottom, "You change only group_name in cli.py / and build again. /
     Which of the five build steps run again?".
- 8  The card goes. The chip drops into the COPY slab, which flashes YELLOW; V2 settles nearer
-    the centre (the bottom band is free) and badges 4, 5 turn YELLOW; the COPY slab and then the
-    uv sync slab dissolve and re-form; badges 1-3 turn GREEN and the apt and WORKDIR slabs get
-    GREEN "CACHED" stamps (the base slab stays as is). GREY caption "part 2: for real" under the
-    floor. Fade out: empty frame.
+ 8  The card goes while V2 settles nearer the centre (the bottom band is free);
+    on "Build steps 4 and 5" badges 4, 5 turn YELLOW. On "The copied folder changed" the chip
+    drops into the COPY slab, which flashes YELLOW; on "so the copy runs again" it dissolves and
+    re-forms, on "and so does every step" the uv sync hairline flashes YELLOW and does the same;
+    badges 1-3 turn GREEN and the apt and WORKDIR slabs get GREEN "CACHED" stamps (the base slab
+    stays as is). GREY caption "part 2: for real" under the floor. Fade out: empty frame.
+
+Timing: `at()` = vo.wait_until plus a shift measured from the clip's pauses (see its docstring).
 """
 
 import numpy as np
@@ -153,6 +159,22 @@ DROP = np.array([1.0, -0.8, 0])   # beat 8: V2 settles nearer the centre once th
 
 
 # ------------------------------------------------------------------ small helpers
+def at(scene, vo, phrase: str, shift: float = 0.0):
+    """vo.wait_until(phrase), plus a measured `shift` in seconds. Inside a sentence an anchor is
+    interpolated by character count, and numbers ("237", "3.12", "842") are spoken much longer
+    than they are written. Each non-zero shift is the clause start heard in the cached Kokoro clip
+    (its pause before the clause, `ffmpeg -af silencedetect=noise=-40dB:d=0.1`) minus the
+    interpolated time; re-measure after any edit of that SAY line. An unknown phrase still warns
+    "voiceover anchor not found" (vo.time_until)."""
+    t = vo.clip.time_of(phrase)
+    if t is None:
+        vo.wait_until(phrase)                    # warns: the SAY line changed
+        return
+    dt = t + shift - vo.elapsed
+    if dt > 1 / 60:
+        scene.wait(dt)
+
+
 def uline(line, sub, color, stroke=3.5, occ=0, pad=0.02) -> Line:
     """A Line under substring `sub` of terminal row `line`, in the gap under the row."""
     g = substring(line, sub, occ)
@@ -422,20 +444,20 @@ class BuildImage(VoiceScene):
 
         # ========================================================== 0 · ls -a (extra)
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t), run_time=0.6)
-            self.play(tr.goto(5), run_time=0.5)
-            self.play(caption_extra(tr), run_time=0.3)
-            c0 = type_cmd(self, t, LS_CMD, 0.4)
-            pin(self, c0, beside(extra_tag(), t, c0), run_time=0.3)
-            out0 = t.print(self, LS_OUT, run_time=0.7)
+            self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t), run_time=0.45)
+            self.play(tr.goto(5), run_time=0.45)
+            self.play(caption_extra(tr), run_time=0.25)
+            c0 = type_cmd(self, t, LS_CMD, 0.35)
+            pin(self, c0, beside(extra_tag(), t, c0), run_time=0.25)
+            out0 = t.print(self, LS_OUT, run_time=0.5)
             dock, pyp = out0[3], out0[6]
-            vo.wait_until("your Dockerfile")
+            at(self, vo, "your Dockerfile", 0.25)
             b0 = rbar(dock, VENV, 0.22, right=dock.glyphs.get_right()[0] + 0.1)
             self.play(FadeIn(b0), dock.glyphs.animate.set_color(VENV), run_time=0.5)
             stick(self, dock, b0)
-            vo.wait_until("named exactly that")
+            at(self, vo, "named exactly that")
             self.play(Indicate(dock.glyphs, color=VENV, scale_factor=1.25), run_time=0.8)
-            vo.wait_until("sits next to")
+            at(self, vo, "sits next to")
             b1 = rbar(pyp, VENV, 0.22)
             self.play(FadeIn(b1), pyp.glyphs.animate.set_color(VENV), run_time=0.5)
             stick(self, pyp, b1)
@@ -450,6 +472,12 @@ class BuildImage(VoiceScene):
         place(err, right=6.45, bottom=chip_r.get_top()[1] + 0.1)
         if err.get_top()[1] > 3.55:
             err.shift(DOWN * (err.get_top()[1] - 3.55))
+        # while the SAY is about the README, the chip is the picture: larger, centred above the
+        # strip, the erratum tag above its right end (as in the top band, so nothing crosses when
+        # both move up there on "Here it is")
+        chip_big = chip_r.copy().scale(1.1).move_to([0, 0.8, 0])
+        err_big = err.copy().scale(1.1)
+        place(err_big, right=chip_big.get_right()[0], bottom=chip_big.get_top()[1] + 0.12)
         folder = context_folder()
         folder.move_to([-3.75, 0.4, 0])
         parcel = parcel_glyph(1.1, "build context")
@@ -465,42 +493,43 @@ class BuildImage(VoiceScene):
             resize(self, t, 3, run_time=0.7)
             bare_prompt(self, t)
             self.play(Indicate(tr.caption, color=TURN, scale_factor=1.12), run_time=0.7)
-            vo.wait_until("A small gap")
-            self.play(FadeIn(chip_r, shift=DOWN * 0.1), run_time=0.5)
-            self.play(Indicate(chip_r.phrase, color=INK, scale_factor=1.05), run_time=0.7)
-            vo.wait_until("but gives no command")
-            self.play(FadeIn(err, shift=DOWN * 0.1), run_time=0.4)
-            vo.wait_until("Here it is")
-            c1 = type_cmd(self, t, BUILD, 1.3)
+            at(self, vo, "A small gap")
+            self.play(FadeIn(chip_big, shift=DOWN * 0.15), run_time=0.6)
+            at(self, vo, "the README names it", 0.30)
+            self.play(Indicate(chip_big.phrase, color=INK, scale_factor=1.06), run_time=0.8)
+            at(self, vo, "but gives no command")
+            self.play(FadeIn(err_big, shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(err_big.text, color=INK, scale_factor=1.12), run_time=0.7)
+            at(self, vo, "Here it is")
+            self.play(ReplacementTransform(chip_big, chip_r), ReplacementTransform(err_big, err), run_time=0.45)
+            c1 = type_cmd(self, t, BUILD, 1.15)
             rb = c1.rows[1]
             assert rb.text == "    -t transcribe_audio .", rb.text
-            vo.wait_until("dash t and the name")
+            at(self, vo, "dash t and the name")
             u_name = uline(rb, "-t transcribe_audio", S.GREY)
             l_name = label("the image's name", 20, S.GREY)
             l_name.move_to([u_name.get_center()[0], row_y(t, 2), 0])
             self.play(Create(u_name), run_time=0.4)
             self.play(FadeIn(l_name, shift=UP * 0.1), run_time=0.4)
-            vo.wait_until("then a dot")
+            at(self, vo, "then a dot", 0.37)
             dot = substring(rb, ".")
             u_dot = Line([dot.get_left()[0] - 0.06, u_name.get_y(), 0],
                          [dot.get_right()[0] + 0.06, u_name.get_y(), 0], color=LOOKUP, stroke_width=4)
             l_dot = label("this folder = the build context", 20, LOOKUP)
             place(l_dot, left=dot.get_left()[0] - 0.08, cy=row_y(t, 2))
-            self.play(dot.animate.set_color(LOOKUP), Create(u_dot), run_time=0.4)
+            self.play(dot.animate.set_color(LOOKUP), Create(u_dot), run_time=0.35)
             self.play(FadeIn(l_dot, shift=UP * 0.1), FadeIn(folder, shift=UP * 0.15), FadeIn(builder),
                       run_time=0.5)
-            # as the PINK label lands, lecture 2's parcel (1.5 s): copies of the folder's files pack
+            # on "the build context", lecture 2's parcel (1.3 s): copies of the folder's files pack
             # into it and it slides to the builder
+            at(self, vo, "the build context")
             flying = VGroup(*[m.copy() for m in folder.files], folder.key.copy())
             self.add(flying)
             self.play(FadeIn(parcel, scale=0.8),
                       *[m.animate.move_to(parcel.frame).scale(0.3).set_opacity(0) for m in flying],
-                      run_time=0.7)
+                      run_time=0.6)
             self.remove(flying)
-            self.play(Transform(parcel, parcel_end), run_time=0.8)
-            vo.wait_until("the build context")
-            self.play(Indicate(parcel[-1], color=INK, scale_factor=1.15),
-                      Indicate(builder.frame, color=TOOL, scale_factor=1.06), run_time=0.8)
+            self.play(Transform(parcel, parcel_end), run_time=0.7)
 
         # ========================================================== 2 · Enter: the full log, build step 2
         live = VGroup(label("your terminal shows a compact live view;", 20, S.GREY),
@@ -512,20 +541,18 @@ class BuildImage(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             yt = beside(your_turn(), t, c1)
             self.play(FadeIn(yt, shift=LEFT * 0.1), FadeOut(VGroup(l_name, l_dot, u_name, u_dot)),
-                      run_time=0.4)
+                      FadeOut(VGroup(folder, parcel, builder, chip_r, err)), run_time=0.4)
             stick(self, c1, yt)
-            self.play(Wiggle(yt, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
-            self.play(FadeOut(VGroup(folder, parcel, builder, chip_r, err)), run_time=0.4)
-            resize(self, t, BIG, run_time=0.8)
+            self.play(Wiggle(yt, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.6)
+            at(self, vo, "Your terminal shows")
+            resize(self, t, BIG, run_time=0.8, extra=[FadeIn(live, shift=DOWN * 0.1)])
             new_title = mono("laptop · the same build, full log", 20, S.GREY).move_to(t.title)
-            self.play(Transform(t.title, new_title), run_time=0.5)
-            vo.wait_until("Your terminal shows")
-            self.play(FadeIn(live, shift=DOWN * 0.1), run_time=0.6)
-            vo.wait_until("here are the full")
+            self.play(Transform(t.title, new_title), run_time=0.45)
+            at(self, vo, "here are the full")
             outA = t.print(self, LOG_A, run_time=1.4, lag=0.12)
             r23, dots1, r148, r149, r1375, r1377 = outA[1], outA[2], outA[3], outA[4], outA[7], outA[8]
 
-            vo.wait_until("Build step 2")
+            at(self, vo, "Build step 2")
             k2 = substring(r23, "[2/5]")
             box2 = SurroundingRectangle(k2, color=CTR, buff=0.05, stroke_width=2.5, corner_radius=0.05)
             bd2 = row_badge(2)
@@ -533,18 +560,18 @@ class BuildImage(VoiceScene):
             self.play(Create(box2), k2.animate.set_color(CTR), run_time=0.4)
             stick(self, r23, box2)
             pin(self, dots1, bd2, run_time=0.4, anim=FadeIn(bd2, shift=UP * 0.1))
-            vo.wait_until("apt installs")
+            at(self, vo, "apt installs", -0.48)
             u148 = uline(r148, "237 newly installed", SYSTEM)
             pin(self, r148, u148, run_time=0.5, anim=Create(u148))
-            vo.wait_until("a 205 megabyte")
+            at(self, vo, "a 205 megabyte")
             u149 = uline(r149, "205 MB", SYSTEM)
             pin(self, r149, u149, run_time=0.4, anim=Create(u149))
-            vo.wait_until("then pip installs")
+            at(self, vo, "then pip installs")
             uvg = substring(r1375, "uv-0.13.0")
             u1375 = uline(r1375, "uv-0.13.0", TOOL)
             self.play(uvg.animate.set_color(TOOL), Create(u1375), run_time=0.5)
             stick(self, r1375, u1375)
-            vo.wait_until("all in 46.9")
+            at(self, vo, "all in 46.9")
             u1377 = uline(r1377, "DONE 46.9s", TURN)
             pin(self, r1377, u1377, run_time=0.5, anim=Create(u1377))
             note = VGroup(label("first build: Docker also pulls", 20, S.GREY),
@@ -561,17 +588,17 @@ class BuildImage(VoiceScene):
                 bd = beside(row_badge(k), t, ln, buff=0.35)
                 self.play(g.animate.set_color(CTR), run_time=0.25)
                 pin(self, ln, bd, run_time=0.4)
-            vo.wait_until("and copy our files")
+            at(self, vo, "and copy our files")
             self.play(Indicate(substring(outB1[1], "COPY --chown=app:app . ./"), color=INK,
                                scale_factor=1.08), run_time=0.7)
-            vo.wait_until("Build step 5")
+            at(self, vo, "Build step 5")
             scroll(self, t, LOG_B2, wrap=True)
             outB2 = t.print(self, LOG_B2, run_time=0.8, wrap=True)
             r1385, r1386a, r1386b, r1387, r1388 = outB2
             assert r1386b.text == "hon3", r1386b.text
             self.play(substring(r1385, "[5/5]").animate.set_color(CTR), run_time=0.25)
             pin(self, r1385, beside(row_badge(5), t, r1385, buff=0.35), run_time=0.4)
-            vo.wait_until("with the image's own")
+            at(self, vo, "with the image's own")
             ua = uline(r1386a, "Using CPython 3.12.15 interpreter at: /usr/local/bin/pyt", SYSTEM)
             ub = uline(r1386b, "hon3", SYSTEM)
             self.play(Create(ua), run_time=0.6)
@@ -579,15 +606,15 @@ class BuildImage(VoiceScene):
             stick(self, r1386a, ua)
             stick(self, r1386b, ub)
             self.play(Indicate(substring(r1386a, "3.12.15"), color=SYSTEM, scale_factor=1.2), run_time=0.7)
-            vo.wait_until("creates the venv")
+            at(self, vo, "creates the venv", 0.67)
             vg = substring(r1387, "/home/app/.venv")
             u1387 = uline(r1387, "/home/app/.venv", VENV)
             self.play(vg.animate.set_color(VENV), Create(u1387), run_time=0.5)
             stick(self, r1387, u1387)
-            vo.wait_until("and resolves 1 package")
+            at(self, vo, "and resolves 1 package", 0.59)
             self.play(Indicate(substring(r1388, "Resolved 1 package"), color=INK, scale_factor=1.1),
                       run_time=0.7)
-            vo.wait_until("the project itself")
+            at(self, vo, "the project itself", 0.73)
             pin(self, r1388, beside(row_tag("only the project itself"), t, r1388, buff=0.35), run_time=0.5)
 
         # ========================================================== 4 · naming, and the warning
@@ -604,75 +631,81 @@ class BuildImage(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             scroll(self, t, LOG_C, wrap=True)
-            outC = t.print(self, LOG_C, run_time=0.8, wrap=True)
+            outC = t.print(self, LOG_C, run_time=0.6, wrap=True)
             r1399, r1404, r1405a, r1405b = outC[1], outC[3], outC[4], outC[5]
             assert r1405b.text.endswith("(line 10)"), r1405b.text
             g1399 = rbar(r1399, VENV, 0.24)
-            self.play(FadeIn(g1399), run_time=0.4)
+            self.play(FadeIn(g1399), run_time=0.35)
             stick(self, r1399, g1399)
             self.play(Indicate(substring(r1399, "transcribe_audio:latest"), color=VENV, scale_factor=1.1),
-                      run_time=0.6)
-            vo.wait_until("with a warning")
+                      run_time=0.5)
+            at(self, vo, "with a warning")
             gw = rbar([r1404, r1405a, r1405b], S.GREY, 0.22, right=t.box.get_right()[0] - 0.12)
             l10 = substring(r1405b, "(line 10)")
             box10 = SurroundingRectangle(l10, color=S.GREY, buff=0.04, stroke_width=2.5, corner_radius=0.05)
             self.play(FadeIn(gw), Create(box10), run_time=0.5)
             stick(self, r1404, gw)
             stick(self, r1405b, box10)
-            resize(self, t, 6, run_time=0.7, extra=[FadeOut(live)])
+            resize(self, t, 6, run_time=0.6, extra=[FadeOut(live)])
             self.play(FadeIn(inset.code), FadeIn(inset.header[0]), FadeIn(src_cap),
-                      TransformFromCopy(l10, inset.header[1]), run_time=0.8)
-            vo.wait_until("Docker flags")
+                      TransformFromCopy(l10, inset.header[1]), run_time=0.7)
+            at(self, vo, "Docker flags", 0.28)
             u_cred = Line(cred.get_corner(DL) + DOWN * 0.07, cred.get_corner(DR) + DOWN * 0.07,
                           color=TURN, stroke_width=4)
             self.play(Create(u_cred), run_time=0.5)
-            vo.wait_until("whose name sounds secret")
+            at(self, vo, "whose name sounds secret", 0.30)
             self.play(Indicate(cred, color=TURN, scale_factor=1.15), run_time=0.8)
-            vo.wait_until("The value is just a path")
+            at(self, vo, "The value is just a path")
             u_val = Line(val.get_corner(DL) + DOWN * 0.07, val.get_corner(DR) + DOWN * 0.07,
                          color=LOOKUP, stroke_width=4)
             self.play(Create(u_val), run_time=0.5)
-            vo.wait_until("so it's harmless")
+            at(self, vo, "so it's harmless", 0.20)
             self.play(FadeIn(harmless, shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("and you'll see it")
+            at(self, vo, "and you'll see it", 0.37)
             self.play(Indicate(VGroup(r1404.glyphs, r1405a.glyphs, r1405b.glyphs), color=INK,
                                scale_factor=1.03), run_time=0.9)
 
         # ========================================================== 5 · docker images (extra), V2 sizes
         st = make_stack()
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(inset, src_cap, harmless, u_cred, u_val)), caption_extra(tr),
-                      Transform(t.title, mono("laptop", 20, S.GREY).move_to(t.title)), run_time=0.4)
-            t.clear(self, run_time=0.3)
-            resize(self, t, 4, run_time=0.7, extra=[FadeIn(st, shift=UP * 0.2)])
-            c5 = type_cmd(self, t, IMG.cmd, 0.9)
-            pin(self, c5, beside(extra_tag(), t, c5), run_time=0.3)
-            out5 = t.print(self, IMG_OUT, run_time=0.5)
+            self.play(FadeOut(VGroup(inset, src_cap, harmless, u_cred, u_val)), FadeOut(t.lines),
+                      caption_extra(tr), Transform(t.title, mono("laptop", 20, S.GREY).move_to(t.title)),
+                      run_time=0.45)
+            for m in list(t.lines):                    # t.clear(), folded into the fade above
+                t.lines.remove(m)
+                self.remove(m)
+            resize(self, t, 4, run_time=0.6, extra=[FadeIn(st, shift=UP * 0.2)])
+            c5 = type_cmd(self, t, IMG.cmd, 0.8)
+            pin(self, c5, beside(extra_tag(), t, c5), run_time=0.25)
+            out5 = t.print(self, IMG_OUT, run_time=0.4)
             assert out5[1].text.endswith("357…"), out5[1].text
-            vo.wait_until("says 1.35")
+            at(self, vo, "says 1.35")
             b135 = sbar(out5[1], "1.35GB", TURN, 0.3)
             pin(self, out5[1], b135, run_time=0.4)
             self.play(Indicate(substring(out5[1], "1.35GB"), color=TURN, scale_factor=1.2), run_time=0.6)
             brace = brace_group([st.slabs[n].box for n in st.order])
             self.play(GrowFromCenter(brace.brace), FadeIn(brace.text, shift=LEFT * 0.1), run_time=0.7)
 
-            vo.wait_until("By far the biggest")
+            at(self, vo, "By far the biggest")
             anims, targets = restack(st, {"apt": APT_H, "sync": THIN})
             brace2 = brace_group([targets[n] for n in st.order])
             self.play(*anims, Transform(brace, brace2), run_time=1.2)
             apt = st.slabs["apt"]
             size = mono(APT_SIZE, 22, SYSTEM).move_to(apt.box).shift(DOWN * 0.12)
-            st.attach(self, size, anims=[FadeIn(size, scale=1.3)], run_time=0.5)
-            vo.wait_until("842 megabytes")
-            self.play(Indicate(size, color=SYSTEM, scale_factor=1.25), run_time=0.8)
-            vo.wait_until("while the copied folder")
-            cp = st.slabs["copy"]
-            self.play(Indicate(VGroup(cp.box, st.copy_files), color=INK, scale_factor=1.12), run_time=0.8)
+            at(self, vo, "842 megabytes", -0.42)
+            st.attach(self, size, anims=[FadeIn(size, scale=1.4)], run_time=0.5)
+            self.play(Indicate(size, color=SYSTEM, scale_factor=1.25), run_time=0.7)
+            # the five build steps get their numbers (needed by the next two blocks) while the SAY
+            # lists the apt layer's contents, so "the copied folder" keeps the eye to itself
+            at(self, vo, "ffmpeg and their", 0.45)
             badges, leaders = stack_badges(st)
             st.attach(self, *leaders, *badges,
                       anims=[LaggedStart(*[AnimationGroup(Create(ln), FadeIn(b, scale=1.2))
                                            for ln, b in zip(leaders, badges)], lag_ratio=0.25)],
                       run_time=1.2)
+            at(self, vo, "while the copied folder", 0.75)
+            cp = st.slabs["copy"]
+            self.play(Indicate(VGroup(cp.box, st.copy_files), color=INK, scale_factor=1.12), run_time=0.9)
 
         # ========================================================== 6 · what if (no pyproject.toml)
         panel = what_if_panel()
@@ -682,11 +715,11 @@ class BuildImage(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(t), FadeOut(brace), caption_extra(tr, False), run_time=0.5)
             self.play(FadeIn(panel, shift=UP * 0.15), FadeIn(ill), run_time=0.6)
-            vo.wait_until("build step 5 fails")
+            at(self, vo, "build step 5 fails")
             sync = st.slabs["sync"]
             self.play(pulse(badges[4], ERR, 1.35), Indicate(sync.box, color=ERR, scale_factor=1.06),
                       Indicate(panel.rows[0], color=ERR, scale_factor=1.03), run_time=0.9)
-            vo.wait_until("because there's no")
+            at(self, vo, "because there's no", 0.31)
             self.play(Indicate(substring(panel.rows[0], "No `pyproject.toml` found"), color=INK,
                                scale_factor=1.12), run_time=0.8)
 
@@ -698,10 +731,10 @@ class BuildImage(VoiceScene):
         assert card.get_top()[1] < st.floor.get_center()[1] - 0.12, card.get_top()[1]
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(panel), FadeOut(ill), run_time=0.5)
-            vo.wait_until("You change only")
+            at(self, vo, "You change only")
             self.play(FadeIn(chip, shift=LEFT * 0.2), run_time=0.6)
             self.play(chip.animate(rate_func=there_and_back).shift(UP * 0.1), run_time=1.2)
-            vo.wait_until("which of the five")
+            at(self, vo, "which of the five", 0.75)
             self.play(LaggedStart(*[pulse(b, TURN) for b in badges], lag_ratio=0.15), run_time=1.1)
             self.play(chip.animate(rate_func=there_and_back).shift(UP * 0.1), run_time=1.2)
         self.play(FadeIn(card, scale=0.95), run_time=0.6)
@@ -712,25 +745,26 @@ class BuildImage(VoiceScene):
         # ========================================================== 8 · the answer
         cp, sync = st.slabs["copy"], st.slabs["sync"]
         with self.voiceover(SAY[8]) as vo:
+            # the bottom band is free: V2 settles nearer the centre while the card goes (the chip
+            # stays, now above the stack's right end); then the answer, badges 4 and 5, turns YELLOW
+            self.play(FadeOut(card), st.animate.shift(DROP), run_time=0.6)
+            self.play(recolor(badges[3], TURN), recolor(badges[4], TURN), run_time=0.4)
+            self.play(pulse(badges[3], TURN), pulse(badges[4], TURN), run_time=0.6)
             saved_cp = VGroup(cp.box.copy(), st.copy_files.copy())
             saved_sync = sync.box.copy()
-            self.play(FadeOut(card), run_time=0.3)
+            at(self, vo, "The copied folder changed")
             self.play(chip.animate.move_to(cp.box).scale(0.5).set_opacity(0),
                       cp.box.animate.set_stroke(TURN, 3).set_fill(TURN, 0.35), run_time=0.7)
             self.remove(chip)
-            # the bottom band is free: V2 settles nearer the centre (the saved looks ride along)
-            saved_cp.shift(DROP)
-            saved_sync.shift(DROP)
-            self.play(st.animate.shift(DROP), run_time=0.6)
-            self.play(recolor(badges[3], TURN), recolor(badges[4], TURN), run_time=0.4)
-            vo.wait_until("The copied folder changed")
+            at(self, vo, "so the copy runs again")
             self.play(cp.box.animate.set_opacity(0).scale(1.04), st.copy_files.animate.set_opacity(0),
-                      run_time=0.6)
+                      run_time=0.5)
             self.play(Transform(cp.box, saved_cp[0]), Transform(st.copy_files, saved_cp[1]),
-                      pulse(badges[3], TURN), run_time=0.8)
-            vo.wait_until("and so does every step")
-            self.play(sync.box.animate.set_opacity(0).scale(1.04), run_time=0.5)
-            self.play(Transform(sync.box, saved_sync), pulse(badges[4], TURN), run_time=0.8)
+                      pulse(badges[3], TURN), run_time=0.7)
+            at(self, vo, "and so does every step")
+            self.play(sync.box.animate.set_stroke(TURN, 4), run_time=0.3)
+            self.play(sync.box.animate.set_opacity(0).scale(1.04), run_time=0.4)
+            self.play(Transform(sync.box, saved_sync), pulse(badges[4], TURN), run_time=0.7)
 
             stamps, stamp_leads = VGroup(), VGroup()
             for n in ("apt", "workdir"):
@@ -743,11 +777,11 @@ class BuildImage(VoiceScene):
             part2 = label("part 2: for real", 22, S.GREY)
             place(part2, cx=st.floor.get_center()[0], top=st.floor.get_center()[1] - 0.4)
 
-            vo.wait_until("build steps 1 to 3")
+            at(self, vo, "build steps 1 to 3")
             self.play(*[recolor(b, VENV) for b in badges[:3]], run_time=0.6)
             self.play(LaggedStart(*[AnimationGroup(Create(ln), FadeIn(s_, scale=1.4))
                                     for ln, s_ in zip(stamp_leads, stamps)], lag_ratio=0.4), run_time=0.9)
-            vo.wait_until("We'll see it")
+            at(self, vo, "We'll see it")
             self.play(FadeIn(part2, shift=UP * 0.1), run_time=0.6)
         self.wait(0.6)
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)

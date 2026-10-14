@@ -348,9 +348,11 @@ class InsideTheImage(VoiceScene):
                    stroke_width=4, tip_length=0.18, max_tip_length_to_length_ratio=0.3)
         rider = bundle.parcels[6].copy()
 
+        card9_all = card9.everything()       # ONE wrapper: faded in and out as the same object
+
         with self.voiceover(SAY[0]) as vo:
             opening = VGroup(*slabs0, br0, base_name)
-            self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(opening), FadeIn(card9.everything(), shift=LEFT * 0.15),
+            self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(opening), FadeIn(card9_all, shift=LEFT * 0.15),
                       run_time=0.8)
             self.remove(opening)
             self.add(st0, br0, base_name)
@@ -358,7 +360,8 @@ class InsideTheImage(VoiceScene):
             vo.wait_until("this scene and")
             self.play(track(tr, 16, extra=True), Indicate(part2, color=INK, scale_factor=1.06), run_time=0.7)
             lead(vo, "First, docker", 1.1)
-            g = self.park(st0, slabs0, br0, base_name, card9.everything(), part2)
+            g = self.park(st0, slabs0, br0, base_name, card9_all, part2)
+            self.remove(*card9_all.get_family())
             self.play(FadeIn(t), run_time=0.4)
             vo.wait_until("First, docker")
             c_ls = type_cmd(self, t, IMAGE_LS, 0.7)
@@ -447,7 +450,7 @@ class InsideTheImage(VoiceScene):
                       FadeIn(co1, shift=LEFT * 0.1), FadeIn(co2, shift=LEFT * 0.1), run_time=1.0)
             attach(self, R[4], co1)
             attach(self, R[9], co2)
-            lead(vo, "config only", 1.0)
+            lead(vo, "config only", 2.5)     # the card's rows land on "zero bytes: config only"
             resize(self, t, STRIP_ROWS, keep=[R[5], R[6], R[7]], run_time=0.7)
             self.unpark(g, st2, slabs2, br2, also=[FadeIn(card.frame), FadeIn(card.title, shift=UP * 0.1)])
             sizes2 = [size_at(s, top2[4 + i], c) for i, (s, c) in
@@ -456,7 +459,7 @@ class InsideTheImage(VoiceScene):
             self.play(*st2.restack(H_TOP), *[TransformFromCopy(a, b) for a, b in zip(src, sizes2)],
                       LaggedStart(*[FadeIn(r, shift=RIGHT * 0.1) for r in card.rows], lag_ratio=0.2), run_time=1.1)
             self.play(Indicate(card.title, color=IMAGE, scale_factor=1.12), run_time=0.7)
-        self.wait(1.5)                       # the card: a moment to read it
+        self.wait(1.0)                       # the card: a moment to read it
 
         # ========================================================== 2 · the base image's own rows
         st3, slabs3, br3 = make_stack(SX, SFLOOR, H_TOP)
@@ -491,9 +494,9 @@ class InsideTheImage(VoiceScene):
                 moves = [m.animate.set_y(ref[4 + i].box.get_center()[1]) for i, m in enumerate(sizes3)]
                 moves += [m.animate.set_y(ref[i].box.get_center()[1]) for i, m in enumerate(base_lab)]
                 self.play(*st3.restack(hs), Transform(br3, new_br), FadeIn(lab, shift=LEFT * 0.1), *moves, *extra,
-                          run_time=0.55)
+                          run_time=0.5)
                 base_lab.append(lab)
-        self.wait(1.2)                       # the full stack, real sizes: a moment to look
+        self.wait(0.8)                       # the full stack, real sizes: a moment to look
 
         # ========================================================== 3 · inside: two Pythons
         cap = VGroup(label("our second run from part 1 · yours:", 20, S.GREY), mono(RUN, 20, S.GREY))
@@ -607,10 +610,10 @@ class InsideTheImage(VoiceScene):
             git_src = toks[".git"].copy()
             self.add(git_src)
             others = VGroup(*[it for n, it in parcel.items.items() if n != ".git/"])
-            self.play(FadeOut(VGroup(w, cap, *frames.values())),
+            self.play(FadeOut(w), FadeOut(cap),          # the frames are part of w's rows (attach)
                       FadeIn(VGroup(parcel.frame, parcel.tape, parcel.title, parcel.crowd, others)),
                       ReplacementTransform(git_src, git_item), run_time=1.0)
-            self.remove(*w.get_family())
+            self.remove(*w.get_family(), *cap.get_family())
             self.add(parcel)
             vo.wait_until("there's no")
             self.play(FadeIn(mesh, shift=DOWN * 0.2), FadeIn(sieve.title), run_time=0.6)

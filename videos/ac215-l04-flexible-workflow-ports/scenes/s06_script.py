@@ -2,10 +2,11 @@
 Quick Reference transcribe_audio step 1).
 
 Beats (script.md "## S06", one voiceover block each):
- 0  TRACKER R/1. CODE(transcribe_audio/docker-shell.sh: 6–14) full width under the tracker. Line 7
-    gets a YELLOW bar, IMAGE_NAME flashes, a two-row tag "image name = / container name" beside it;
+ 0  TRACKER R/1. CODE(transcribe_audio/docker-shell.sh: 6–14), full width, centred under the
+    tracker. Line 7 gets a YELLOW bar, IMAGE_NAME flashes, a two-row tag "image name = / container
+    name" beside it;
     lines 8–9 get bars, both $(pwd) are underlined PINK, tag "the folder you're in" beside line 8.
- 1  YELLOW caption "run it from inside the component folder" beside line 9. Line 10: PINK bar, tag
+ 1  YELLOW caption "run it from the component folder" beside line 9. Line 10: PINK bar, tag
     "the key's path inside the container" on the blank row 11 under it; line 13: BLUE bar, tag
     "Docker Hub account"; line 14: GREY tag "default".
  2  V4. The panel becomes CODE(docker-shell.sh: 28–39) at left (6.2 wide); "$1" flashes PURPLE and
@@ -13,29 +14,29 @@ Beats (script.md "## S06", one voiceover block each):
     chips). The tracks light one by one as named, each with a YELLOW bar on the branch of the code
     it takes (no argument: line 28 skips the case; prod 30–32; dev 33–35; run 36–38).
  3  The code panel becomes the README card README.md · lines 212–215 (the four commands, each row
-    beside its station); the default row and track glow YELLOW, the other three dim; GREY tag
-    "later in this part" under the dimmed stations.
+    beside its station); the default row and track glow YELLOW, the other three dim (tracks by
+    stroke only); GREY tag "later in this part" under the dimmed stations.
  4  V5. CODE(docker-shell.sh: 92–96) at the top, the two-windows picture under it (laptop,
     container, venv). Line 93: PINK bar + route transcribe_audio/ → /app. The walker climbs ".."
     and "../.." into secrets/ while $(pwd)/../../secrets/ writes itself (GREY "docker-shell.sh ·
     line 9" under the laptop); line 94: bar + route secrets/ → /secrets. Line 95: bar,
     GOOGLE_APPLICATION_CREDENTIALS underlined PINK, the signpost rises into /secrets.
  5  The 92–96 panel goes; CODE(Dockerfile: 17) above the container with a GREEN line to the venv
-    box, which glows; a GREY laptop sheet slides over /app and leaves the venv uncovered. The TEAL
-    image slab; the clock "docker run" ticks, the /secrets route pulses and a GOLD key outline
-    appears in /secrets (the laptop's key stays); the clock reads "exit", the outline vanishes,
-    "never in here" crosses the slab.
+    box, which glows; a GREY laptop sheet slides over /app and leaves the venv uncovered. "The key
+    is never copied": the TEAL image slab, "never in here" across it. "slash secrets shows it": the
+    clock "docker run" ticks, the /secrets route pulses and a GOLD key outline appears in /secrets
+    (the laptop's key stays and flashes with it); the clock reads "exit", the outline vanishes.
  6  13-row laptop terminal at ~/AC215/mega-pipeline: `cd transcribe_audio` (GREY two-row caption
     in the top band: transcribe_audio/README.md · line 15, "cd into the transcribe_audio folder"),
     the new path flashes; `./docker-shell.sh` (on the row under the long prompt) → mega-laptop/12
-    lines 2–4, 14–18, 24 (BuildKit rows, GREY time tags). "Build Mode: dev-run" boxed; "Building
-    99.5s" underlined; [2/5] boxed TEAL with a TEAL "2" badge, its 44.7s tag YELLOW; the 52.9s tag
+    lines 2–4, 14–18, 24 (BuildKit rows, GREY time tags one row high). "Build Mode: dev-run"
+    boxed; "Building 99.5s" underlined; [2/5] boxed TEAL with a TEAL "2" badge, its 44.7s tag YELLOW; the 52.9s tag
     YELLOW; GREY note "first build: Docker also pulls python:3.14-slim-bookworm"; ▶ your turn.
  7  The terminal shrinks to the strip (the command and the [5/5] uv sync row, its 1.6s tag YELLOW).
     Above: CODE(pyproject.toml: 6) over the GREEN band of a version line, and PANEL(12-a-docker-
     shell.plain: 1427) "the same build, full log · line 1427" with 3.14.8 boxed and tagged "at the
-    time of recording"; a copy of 3.14.8 lifts out and drops onto the line as an ORANGE dot inside
-    the band; the band flashes, then the 1.6s tag turns GREEN.
+    time of recording"; a copy of 3.14.8 lifts out and becomes the label of an ORANGE dot inside
+    the band (label above the dot); the band and ">=3.14" flash, then the 1.6s tag turns GREEN.
  8  The terminal grows back (13 rows): 12 lines 26–27; title "container · transcribe_audio", TEAL
     frame; the prompt app@0ceffb272288:/app$ with "user" under app, "container ID · your numbers
     will differ" under the ID, PINK "the window" under /app. TRACKER QA/1: `python cli.py --help`
@@ -57,19 +58,22 @@ Deviations from SHOW (and why):
 - Beat 0: line 7's tag has two rows ("image name =" / "container name"): one row is 4.5 wide and
   line 7 leaves 3.0 of the panel; rows 6 and 8 are empty at that height.
 - Beat 1: the YELLOW caption sits beside line 9 (there is no free row under lines 8–9: line 10
-  follows); line 10's tag sits on the blank row 11 right under it (line 10 fills the panel).
+  follows) and reads "run it from the component folder", the SAY's words ("from inside the
+  component folder" is 4.8 wide and ran past the panel); line 10's tag sits on the blank row 11
+  right under it (line 10 fills the panel).
 - Beat 3: the README card replaces the 28–39 code panel at left, its four rows level with the
   four stations, so "side by side" reads row by row; the code panel's job was done in beat 2.
 - Beat 4: the chip "docker-shell.sh · line 9" is a GREY header-style caption under the laptop box
   (there is no room for a framed chip inside it).
 - Beat 5: the Dockerfile line sits ABOVE the container with a GREEN line down to the venv box (under
-  the venv box is the signpost); the 92–96 panel leaves to make room.
+  the venv box is the signpost); the 92–96 panel leaves to make room. "never in here" comes first,
+  with "The key is never copied", and the clock / pulse / outline follow "slash secrets shows it
+  only while the container runs" (SHOW lists the bar last; the SAY says "never copied" first).
 - Beat 6: the README line-15 caption is two rows in the top band (one row is 10.5 wide; the band
   right of the tracker is 7.9); "build step 2" is a TEAL badge "2" at the row's left margin plus a
   TEAL box on [2/5] (the cut row has no room for the worded badge).
 - Beat 7: "at the time of recording" sits just above the log row, right of the panel header (the
-  68-character row has no room beside it); the dot's label goes under the axis (the pyproject
-  panel is above the band).
+  68-character row has no room beside it); the drop lands at "already satisfies".
 - Beat 9: the docker inspect is typed on the row under the prompt and folded by this scene at
   spaces (never inside a word: Terminal.type's fold would split `{{println}}`); the rows, joined,
   are the captured command. The kept strip rows are the last three (total 8 / . / ..).
@@ -86,12 +90,12 @@ from manim import (
     RIGHT,
     TAU,
     UP,
+    AnimationGroup,
     Create,
     FadeIn,
     FadeOut,
     FadeTransform,
     Indicate,
-    LaggedStart,
     Line,
     Rectangle,
     Rotate,
@@ -288,6 +292,26 @@ def glyph_box(line, sub: str, color: str = TURN, pad: float = 0.06, occurrence: 
     return r.move_to([g.get_center()[0], line.strut.get_center()[1], 0])
 
 
+def dim_modes(sw, *modes, k: float = 0.3, run_time: float = 0.5):
+    """Animation: Switchboard modes fade to k. The tracks are open polylines, so only their stroke
+    fades (Switchboard.dim_modes sets their fill opacity too, which fills them in GREY)."""
+    anims = []
+    for m in modes:
+        st = sw.stations[m]
+        anims.append(sw.tracks[m].animate.set_stroke(opacity=k))
+        anims += [x.animate.set_opacity(k) for x in (st.dot, st.word, st.desc, st.chip)]
+    return AnimationGroup(*anims, run_time=run_time)
+
+
+def slim_times(t, rows):
+    """Build rows' time tags one row high (the house tag is 0.47 tall, a row 0.40: stacked tags of
+    consecutive rows would overlap); the text keeps its size."""
+    for r in rows:
+        tg = getattr(r, "time_tag", None)
+        if tg is not None:
+            tg.box.stretch_to_fit_height(t.pitch - 0.05)
+
+
 def readme_modes(sw) -> VGroup:
     """README.md:212-215 (the four commands) as a GREY card whose rows sit level with the
     switchboard's stations. .rows .frame .header"""
@@ -309,9 +333,9 @@ def readme_modes(sw) -> VGroup:
 def windows_card() -> VGroup:
     """README.md:226 as a GREY card: the Windows rule and the study-guide pointer."""
     r1 = mixed(["Windows: Git BASH  ·  “the input device is not a TTY”  →  put", ("mono", "winpty", INK),
-                "in front"], TAG, INK)
-    r2 = mixed(["paths mangled", ("mono", "(C:/Program Files/Git/…)?", S.GREY), " →  study guide"],
-               TAG, S.GREY)
+                "in front"], TAG, INK, buff=0.16)
+    r2 = mixed(["paths mangled", ("mono", "(C:/Program Files/Git/…)?", S.GREY), "→  study guide"],
+               TAG, S.GREY, buff=0.2)
     rows = VGroup(r1, r2).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
     fr = box(rows.width + 0.6, rows.height + 0.5, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
     rows.move_to(fr)
@@ -348,7 +372,7 @@ class DockerShell(VoiceScene):
             self.play(FadeIn(t8, shift=LEFT * 0.1), run_time=0.5)
 
         # ========================================================== 1 · run it from the folder; key path; account
-        c9 = label("run it from inside the component folder", CAPTION, TURN)
+        c9 = label("run it from the component folder", CAPTION, TURN)
         c9.next_to(code_row(p0, 9), RIGHT, buff=0.25).set_y(row_y(p0, 9))
         bar10 = p0.bar(10, LOOKUP, 0.22)
         t10 = grey_tag("the key's path inside the container")
@@ -377,7 +401,7 @@ class DockerShell(VoiceScene):
         p2.move_to([-6.45 + p2.code.width / 2 + (p2.get_center()[0] - p2.code.get_center()[0]), 0, 0])
         p2.shift(UP * (TOP - p2.get_top()[1]))
         sw = Switchboard()
-        sw.move_to([6.45 - sw.width / 2, 0.55, 0])
+        sw.move_to([6.45 - sw.width / 2, -0.1, 0])
         quote = p2.span(29, '"$1"')
         bar28 = p2.bar(28, TURN)
         branch = {"prod": VGroup(*[p2.bar(n, TURN) for n in (30, 31, 32)]),
@@ -413,7 +437,7 @@ class DockerShell(VoiceScene):
             self.play(FadeTransform(p2, card), run_time=0.8)
             self.play(sw.light(""), card.rows[0].animate.set_color(TURN), run_time=0.6)
             vo.wait_until("then come back")
-            self.play(sw.dim_modes("dev", "run", "prod"), *[r.animate.set_opacity(0.3) for r in card.rows[1:]],
+            self.play(dim_modes(sw, "dev", "run", "prod"), *[r.animate.set_opacity(0.3) for r in card.rows[1:]],
                       FadeIn(later, shift=UP * 0.1), run_time=0.7)
 
         # ========================================================== 4 · two windows: -v, -v, -e
@@ -427,7 +451,8 @@ class DockerShell(VoiceScene):
         bar95 = p4.bar(95, LOOKUP, 0.22)
         gac = under(p4.span(95, "GOOGLE_APPLICATION_CREDENTIALS"), LOOKUP)
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(card, sw, later)), FadeIn(p4, shift=DOWN * 0.1), FadeIn(v5), run_time=0.9)
+            self.play(FadeOut(VGroup(card, sw, later)), run_time=0.35)
+            self.play(FadeIn(p4, shift=DOWN * 0.1), FadeIn(v5), run_time=0.6)
             vo.wait_until("two windows")
             self.play(flash(v5.app, TURN, 1.08), flash(v5.secrets_area, TURN, 1.08), run_time=0.8)
             vo.wait_until("Dash v puts")
@@ -472,14 +497,16 @@ class DockerShell(VoiceScene):
             self.play(sheet.animate.move_to(v5.app).set_fill(LAPTOP, 0.55).set_stroke(LAPTOP, 2, 1), run_time=0.8)
             self.play(flash(v5.venv_box, VENV, 1.1), run_time=0.7)
             vo.wait_until("The key is never copied")
-            self.play(FadeOut(sheet), FadeOut(link), *v5.parts_in("image", "clock"), run_time=0.6)
+            self.play(FadeOut(sheet), FadeOut(link), *v5.parts_in("image"), run_time=0.5)
+            self.play(*v5.parts_in("never"), run_time=0.6)
+            vo.wait_until("slash secrets shows it")
+            self.play(*v5.parts_in("clock"), run_time=0.4)
             self.play(Rotate(hand, -TAU, about_point=clock_c.get_center()), v5.pulse("secrets"),
                       run_time=1.2)
-            self.play(flash(v5.key, KEY, 1.25), flash(v5.parts["ghost"], KEY, 1.25), run_time=0.7)
-            vo.wait_until("only while the container runs")
+            self.play(Rotate(hand, -TAU, about_point=clock_c.get_center()), flash(v5.key, KEY, 1.25),
+                      flash(v5.parts["ghost"], KEY, 1.25), run_time=1.0)
             exit_l = mono("exit", CAPTION, S.GREY).move_to(clock_l, aligned_edge=LEFT)
             self.play(Transform(clock_l, exit_l), *v5.parts_out("ghost"), run_time=0.6)
-            self.play(*v5.parts_in("never"), run_time=0.6)
 
         # ========================================================== 6 · cd, then ./docker-shell.sh
         t = term(P_REPO, rows=13)
@@ -497,6 +524,7 @@ class DockerShell(VoiceScene):
             vo.wait_until("and run docker-shell.sh")
             ds = type_cmd(self, t, C12.cmd, type_time=0.6)
             rows = print_build(self, t, BUILD, run_time=0.9, lag=0.1)
+            slim_times(t, rows)
             mode_box = glyph_box(rows[0], "Build Mode: dev-run")
             self.play(Create(mode_box), run_time=0.5)
             vo.wait_until("Two steps take")
@@ -508,7 +536,8 @@ class DockerShell(VoiceScene):
             self.play(FadeIn(b2, scale=1.3), Create(box25), *hi_time(rows[3]), run_time=0.6)
             self.play(flash(rows[3].time_tag, TURN, 1.2), run_time=0.6)
             vo.wait_until("and writing out the image")
-            self.play(*hi_time(rows[7]), flash(rows[7].time_tag, TURN, 1.2), run_time=0.7)
+            self.play(*hi_time(rows[7]), run_time=0.4)
+            self.play(flash(rows[7].time_tag, TURN, 1.2), run_time=0.6)
             vo.wait_until("a first build also pulls")
             self.play(FadeOut(cap15), FadeIn(pull, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("Pause and run it")
@@ -545,7 +574,8 @@ class DockerShell(VoiceScene):
             self.add(dot)
             self.play(flash(vl.band, VENV, 1.04), flash(pp.span(6, '">=3.14"'), VENV, 1.15), run_time=0.8)
             vo.wait_until("so uv downloads none")
-            self.play(*hi_time(uv_row, VENV), flash(uv_row.time_tag, VENV, 1.25), run_time=0.7)
+            self.play(*hi_time(uv_row, VENV), run_time=0.4)
+            self.play(flash(uv_row.time_tag, VENV, 1.25), run_time=0.6)
 
         # ========================================================== 8 · inside: user app, /app, a new id each run
         with self.voiceover(SAY[8]) as vo:
@@ -557,7 +587,7 @@ class DockerShell(VoiceScene):
             p_app = glyph_range(pr, 0, 3)
             p_id = glyph_range(pr, 4, 16)
             p_win = glyph_range(pr, 17, 21)
-            y1 = pr.strut.get_center()[1] - t.pitch
+            y1 = pr.strut.get_center()[1] - t.pitch - 0.05
             u_app, u_id, u_win = under(p_app, S.GREY, 3), under(p_id, S.GREY, 3), under(p_win, LOOKUP, 3)
             tg_user = grey_tag("user").move_to([p_app.get_left()[0] - 0.05, y1, 0], aligned_edge=LEFT)
             tg_user.set_y(y1)
@@ -599,7 +629,7 @@ class DockerShell(VoiceScene):
             vo.wait_until("In a second terminal")
             resize(self, t, 3, run_time=0.6)
             t2 = second_terminal(self, p_comp("transcribe_audio"), rows=7, top=2.75)
-            insp = type_rows(self, t2, INSPECT_ROWS, type_time=1.6)
+            insp = type_rows(self, t2, INSPECT_ROWS, type_time=1.3)
             pin(self, insp, fit_tag(t2, insp), run_time=0.25)
             cap14 = note("one command · copy it from the study guide")
             cap14.move_to([t2.box.get_left()[0] + 0.15 + cap14.width / 2,
@@ -607,7 +637,7 @@ class DockerShell(VoiceScene):
             m_rows = t2.print(self, MOUNTS, run_time=0.5)
             self.play(FadeIn(cap14), run_time=0.4)
             self.play(flash(substring(m_rows[0], "-> /app"), LOOKUP, 1.1),
-                      flash(substring(m_rows[1], "-> /secrets"), LOOKUP, 1.1), run_time=0.8)
+                      flash(substring(m_rows[1], "-> /secrets"), LOOKUP, 1.1), run_time=0.7)
 
         # ========================================================== 10 · chmod +x (harmless); winpty on Windows
         card226 = windows_card()
@@ -630,7 +660,7 @@ class DockerShell(VoiceScene):
             self.play(tr.goto(6), FadeOut(t2), run_time=0.6)
             self.play(FadeIn(card226.frame), FadeIn(card226.header), FadeIn(card226.rows[0]), run_time=0.6)
             vo.wait_until("and put winpty in front")
-            self.play(flash(card226.rows[0][1], TURN, 1.2), run_time=0.7)
+            self.play(flash(card226.rows[0][1], TURN, 1.08), run_time=0.7)
             self.play(FadeIn(card226.rows[1], shift=UP * 0.1), run_time=0.5)
         self.play(FadeOut(*self.mobjects), run_time=0.8)
         self.wait(0.3)

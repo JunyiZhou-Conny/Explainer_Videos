@@ -9,9 +9,10 @@ Beats (script.md "## S07", one voiceover block each):
  0  TRACKER A5 -> A6. No terminal. V3 builds with the image block centred (the laptop is still
     hidden): the TEAL image block (caption "image · transcribe_audio"), then the /app cavity and
     its copied files (cli.py, Dockerfile, pyproject.toml, secrets/), then the GREEN
-    /home/app/.venv box outside the cavity. The dashed TEAL writable layer settles on top; GREY
-    caption "container = image + a thin writable layer", then "thrown away on exit: --rm" while
-    a ghost of the layer floats up and fades.
+    /home/app/.venv box outside the cavity. The dashed TEAL writable layer settles on top (its
+    GREEN package shelf stays invisible all scene: S08 introduces it); GREY caption "container =
+    image + a thin writable layer", then "thrown away on exit: --rm" while a ghost of the layer
+    floats up and fades.
  1  V3 slides right and the laptop (GREY, transcribe_audio/) fades in at left. The PINK route
     draws with its label -v "$(pwd):/app"; the folder name pulses ("the current folder, pwd").
     A GREY sheet carrying the laptop's files appears on the laptop folder and slides along the
@@ -22,12 +23,14 @@ Beats (script.md "## S07", one voiceover block each):
     (route pulse), and gets a GREEN check (it stays). A page lands on the dashed writable layer,
     with a GREY tag "/tmp · throwaway" above it.
  3  The beat-2 marks go. Tag "illustration · lecture 2's layout: .venv next to the code". The
+    route label rises into the band above the gap (the half-open sheet will hide the route), the
     laptop sheet slides halfway back along the route (the copied files undim); the GREEN venv
-    box slides into the cavity's fifth row as /app/.venv. PONDER (8 s, card under V3) while the
-    sheet waits half open.
+    box slides into the cavity's fifth row as /app/.venv; on "with this mount" the sheet's frame
+    and the route label pulse. PONDER (8 s, card under V3) while the sheet waits half open.
  4  The sheet slides back over the cavity and covers the .venv box completely (copied files dim
-    again). A TEAL label "start: bash, venv on" above the layer sends an "activate" arrow down;
-    it hits the sheet and turns RED with a cross and "no .venv on your laptop". The marks and
+    again) and the route label drops back onto the route. A TEAL label "start: bash, venv on"
+    above the layer sends an "activate" arrow down; it hits the sheet and turns RED with a
+    cross and "no .venv on your laptop". The marks and
     the illustration tag go; the box slides back out to /home/app/.venv and CODE(Dockerfile: 9)
     appears under the image (GREY "from transcribe_audio/README.md · lines 41–90"), GREEN bar;
     UV_PROJECT_ENVIRONMENT pulses; /home/app/.venv underlines GREEN as the venv label pulses.
@@ -52,7 +55,8 @@ Beats (script.md "## S07", one voiceover block each):
     underlines ORANGE (the image's Python).
  9  The note goes. `ls -a` (extra) -> line 7 (wrap); Dockerfile, pyproject.toml and secrets get
     GREY bars and a GREY tag "your laptop's files". `echo $GOOGLE_APPLICATION_CREDENTIALS`
-    (extra) -> line 9; above the terminal CODE(Dockerfile: 10); the value underlines PINK in
+    (extra) -> line 9; above the terminal CODE(Dockerfile: 10), its GREY "from
+    transcribe_audio/README.md · lines 41–90" on the header row; the value underlines PINK in
     both places at once.
 10  The inset goes. `python cli.py --help` (extra) -> lines 11-14, line 14 RED; "Module not
     found" underlines RED; line 13's `google` underlines on "no module named google".
@@ -301,6 +305,9 @@ class RunContainer(VoiceScene):
         hide_part(win, "cavity", VGroup(win.image.cavity, win.image.app))
         hide_part(win, "copied", win.copied)
         hide_part(win, "venv", win.venv)
+        # V4's GREEN package shelf on the writable layer is S08's (uv add fills it); nothing in
+        # S07 names it, so it stays invisible when the sheet is revealed (saved opacity 0).
+        _save_op(win.sheet.shelf)
         self.add(win)
 
         # ========================================================== 0 · the image, the venv, the layer
@@ -415,8 +422,12 @@ class RunContainer(VoiceScene):
                       run_time=0.6)
             ill, v_fr, v_lab = layout3()
             home_fr, home_lab = win.venv.frame.copy(), win.venv.label.copy()
+            # the half-open sheet fills the gap and hides the route: its label rises into the band
+            # between the two frames' tops and the sheet's top, so "this mount" stays on screen
+            lab_home = win.route_label.get_center().copy()
+            lab_up = np.array([lab_home[0], (win.laptop.frame.get_top()[1] + win.laptop.area.get_top()[1]) / 2, 0])
             vo.wait_until("In lecture 2")
-            self.play(FadeIn(ill, shift=DOWN * 0.1), run_time=0.4)
+            self.play(FadeIn(ill, shift=DOWN * 0.1), win.route_label.animate.move_to(lab_up), run_time=0.4)
             self.play(win.cover_to(0.5), Transform(win.copied, op_target(win.copied, 1.0)), run_time=1.0)
             vo.wait_until("the venv sat next to")
             v_lab.set_opacity(0)
@@ -426,7 +437,8 @@ class RunContainer(VoiceScene):
             vo.wait_until("If it sat in slash app")
             self.play(Indicate(win.venv, color=VENV, scale_factor=1.08), run_time=0.8)
             vo.wait_until("with this mount")
-            self.play(frame_pulse(win.cover.frame, INK), route_pulse(win), run_time=0.8)
+            self.play(frame_pulse(win.cover.frame, INK), Indicate(win.route_label, color=LOOKUP, scale_factor=1.15),
+                      run_time=0.8)
         self.play(FadeIn(card, scale=0.95), run_time=0.6)
         bar = card[3]
         self.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
@@ -456,6 +468,7 @@ class RunContainer(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(card), run_time=0.4)
             self.play(win.cover_to(1.0), Transform(win.copied, op_target(win.copied, 0.3)), run_time=1.1)
+            self.play(win.route_label.animate.move_to(lab_home), run_time=0.3)
             vo.wait_until("with no venv in it")
             self.play(FadeIn(start, shift=DOWN * 0.1), run_time=0.4)
             self.play(GrowArrow(arr), FadeIn(act), run_time=0.6)
@@ -617,6 +630,13 @@ class RunContainer(VoiceScene):
         p10 = file_panel(DF, 10, 10, "transcribe_audio/Dockerfile", size=SZ)
         place(p10, left=t.box.get_left()[0], bottom=t.box.get_top()[1] + 0.14)
         assert p10.get_top()[1] < TRACK_BOTTOM - 0.05, p10.get_top()[1]
+        # the student's Dockerfile: its source caption as two rows in the top-right corner, as in
+        # S05/S06 (no room under the panel, nor beside its header)
+        src10 = VGroup(VGroup(label("from", SZ, S.GREY), mono("transcribe_audio/README.md", SZ, S.GREY))
+                       .arrange(RIGHT, buff=0.12), label("lines 41–90", SZ, S.GREY))
+        src10.arrange(DOWN, aligned_edge=RIGHT, buff=0.08)
+        place(src10, right=6.45, top=3.47)
+        assert src10.get_left()[0] > tr.get_right()[0] + 0.2, (src10.get_left(), tr.get_right())
         val10 = code_span(p10.code, 0, "secrets/mega-pipeline.json")
         u10 = Line(val10.get_corner(DL) + DOWN * 0.07, val10.get_corner(DR) + DOWN * 0.07, color=LOOKUP,
                    stroke_width=4)
@@ -638,7 +658,7 @@ class RunContainer(VoiceScene):
             pin(self, c9b, beside(extra_tag(), t, c9b), run_time=0.3)
             o9b = t.print(self, [OUT_ECHO], run_time=0.3)[0]
             vo.wait_until("from line 10")
-            self.play(FadeIn(p10, shift=DOWN * 0.1), run_time=0.4)
+            self.play(FadeIn(p10, shift=DOWN * 0.1), FadeIn(src10, shift=DOWN * 0.1), run_time=0.4)
             u9b = uline(o9b, OUT_ECHO, LOOKUP)
             self.play(o9b.glyphs.animate.set_color(LOOKUP), Create(u9b), Create(u10),
                       val10.animate.set_color(LOOKUP), run_time=0.5)
@@ -648,7 +668,7 @@ class RunContainer(VoiceScene):
         with self.voiceover(SAY[10]) as vo:
             c10 = t.type(self, HELP, 0.8)
             pin(self, c10, beside(extra_tag(), t, c10), run_time=0.3)
-            self.play(FadeOut(VGroup(p10, u10), shift=UP * 0.1), run_time=0.3)
+            self.play(FadeOut(VGroup(p10, src10, u10), shift=UP * 0.1), run_time=0.3)
             o10 = t.print(self, [*OUT_HELP[:3], (OUT_HELP[3], ERR)], run_time=0.8)
             r13, r14 = o10[2], o10[3]
             vo.wait_until("Module not found")

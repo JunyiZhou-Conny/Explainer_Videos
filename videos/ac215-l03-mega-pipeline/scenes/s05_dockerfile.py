@@ -21,13 +21,15 @@ Beats (script.md "## S05", one voiceover block each):
     slabs); the card's title pulses on "no layers". Bar on lines 5–8; each card line ("no apt
     questions", "Unicode text", "print at once", "uv copies files") pulses with its value as named.
  4  Bar on line 9; its card line turns GREEN and grows: "the venv lives in /home/app/.venv · outside
-    /app"; `/home/app/.venv` underlines GREEN; YELLOW tag "remember this line" (wiggles on "Soon").
+    /app"; `/home/app/.venv` turns GREEN (no underline: it would sit on line 10's capitals);
+    YELLOW tag "remember this line" (wiggles on "Soon").
  5  Bar on line 10; its card line turns PINK, "where the key is · a relative path", with a small
     PINK signpost glyph; `secrets/` underlines PINK.
  6  The panel scrolls to PANEL(12–21). The nine `&& \` pulse; `RUN` drops one fat ORANGE slab. The
     slab zooms up (an ORANGE inset over the card, dashed zoom lines to the slab): "apt lists" pages
     appear (line 12), ORANGE packages fill in (13–14), the pages crumple and vanish inside the slab
-    (15–16), their label becomes "deleted".
+    (15–16); on "cost nothing" the "apt lists" label is struck through and the apt slab on the
+    stack pulses.
  7  Bar on 17–18: an ORANGE `pip` chip, then a PURPLE `uv` chip drops in beside it. GREY note (two
     rows): "this Python is the image's own (/usr/local), / not Debian's → pip may install".
  8  Bar on 19–21: a GREY user glyph "app · uid 1000", an arrow "owns" to a TEAL folder `/app`. The
@@ -38,11 +40,13 @@ Beats (script.md "## S05", one voiceover block each):
     commented on). The `.` underlines YELLOW with "= everything in this folder" beside line 26;
     "everything" underlines YELLOW on "hold on to that word".
 10  `RUN uv sync` drops the empty GREEN slab "venv · /home/app/.venv"; `ENTRYPOINT` and `CMD`
-    become the label "start: bash, venv on" on top of the stack. As the sentence ends (a ~3.5 s
-    recap, mostly silent): the panel fades; top left the GREY file row `transcribe_audio/
-    Dockerfile · 30 lines`; four GREY chips `lines 1–3`, `lines 5–10`, `lines 12–21`, `lines
-    23–30` appear one by one, each drawing thin lines to the slabs and card lines it made, which
-    flash YELLOW (lines to the card stop at its top edge).
+    become the label "start: bash, venv on" on top of the stack; on "from pyproject.toml" a
+    label "from pyproject.toml" (GREEN) sits beside line 27 and the uv sync slab pulses. As the
+    sentence ends (a ~4 s recap, mostly silent): the panel fades; top left the GREY file row
+    `transcribe_audio/Dockerfile · 30 lines`; under it four GREY chips `lines 1–3`, `lines 5–10`,
+    `lines 12–21`, `lines 23–30` appear one by one, each drawing thin lines to the slabs and card
+    lines it made, which flash YELLOW. Lines to the card stop at its top edge; wires to slabs run
+    along a bus above the card and down the gap between card and stack (nothing crosses text).
 11  The chips give way to a GREY card headed `README.md · lines 175–225 · Appendix · Sample
     Dockerfile`: line numbers + lines 179, …, 199 and 200 (200 as an excerpt: the man-page loop
     without its indent and `&& \`). Line 179 is barred; `curl` turns RED with a RED tag "no
@@ -67,7 +71,8 @@ from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, LOOKUP, NARRATION, SYSTEM, TOOL, TURN, VENV, ConfigCard,
                     LayerStack, _drop_groups, file_panel, ghost_file, page_token, pkg_dots,
-                    readme_card, sans, source_text, src_panel, stamp, tracker, under, your_turn)
+                    readme_card, sans, source_text, src_panel, stamp, strike, tracker, under,
+                    your_turn)
 
 SAY = NARRATION["S05"]
 
@@ -191,6 +196,12 @@ def thin(a, b, color: str = S.GREY, opacity: float = 0.8) -> Line:
     return Line(a, b, color=color, stroke_width=1.8).set_stroke(opacity=opacity)
 
 
+def wire(pts, color: str = S.GREY, opacity: float = 0.8) -> VMobject:
+    """A thin polyline through the corner points `pts` (a wire routed around text)."""
+    w = VMobject().set_points_as_corners([np.array(p, dtype=float) for p in pts])
+    return w.set_stroke(color, 1.8, opacity)
+
+
 class WriteDockerfile(VoiceScene):
     # ------------------------------------------------------------- helpers
     # The panel on screen is three scene-level parts that persist across swaps: the frame
@@ -205,13 +216,16 @@ class WriteDockerfile(VoiceScene):
         self.remove(chars)
         self.add(self.plines)
 
-    def swap(self, new, extra=(), run_time: float = 0.9):
-        """Scroll the file: the frame resizes, the header changes, the old lines leave upward and
-        the new lines come up from below."""
-        new_lines = [ln for ln in new.code.code_lines if len(ln)]
-        lag = LaggedStart(*[FadeIn(ln, shift=UP * 0.25) for ln in new_lines], lag_ratio=0.06)
+    def swap(self, new, extra=(), extra_in=(), run_time: float = 0.95):
+        """Scroll the file: the old lines leave upward while the frame resizes and the header
+        changes, then the new lines come up from below (two phases: old and new rows never
+        overlap). `extra` plays with the first phase, `extra_in` with the second."""
+        t_out = round(run_time * 0.4, 2)
         self.play(Transform(self.pbg, new.code.background), Transform(self.phead, new.header),
-                  FadeOut(self.plines, shift=UP * 0.25), lag, *extra, run_time=run_time)
+                  FadeOut(self.plines, shift=UP * 0.25), *extra, run_time=t_out)
+        new_lines = [ln for ln in new.code.code_lines if len(ln)]
+        lag = LaggedStart(*[FadeIn(ln, shift=UP * 0.2) for ln in new_lines], lag_ratio=0.06)
+        self.play(lag, *extra_in, run_time=run_time - t_out)
         _drop_groups(self, [lag])
         self.remove(*new_lines)
         self.plines = new.code.code_lines
@@ -282,8 +296,10 @@ class WriteDockerfile(VoiceScene):
         inset = VGroup(back, cli)
         icode = cli.code
         ib = line_bar(icode, 2, TURN)
-        itag = tag("runs the ffmpeg program", S.GREY)
-        itag.next_to(icode.code_lines[2], RIGHT, buff=0.25)
+        # the compact tag: the house tag (0.47 tall) would cover line 68's descenders
+        itag = row_tag("runs the ffmpeg program", S.GREY)
+        itag.next_to(icode.code_lines[2], RIGHT, buff=0.3).set_y(ib.get_y())
+        assert itag.get_right()[0] < icode.background.get_right()[0] - 0.05, itag.get_right()
         with self.voiceover(SAY[2]) as vo:
             self.play(Transform(b, bar(p1, 3)), FadeOut(note1), run_time=0.5)
             vo.wait_until("a variable that exists")
@@ -324,8 +340,8 @@ class WriteDockerfile(VoiceScene):
             for (t, k, n, val), phrase in zip(env[:4], ["apt never asks", "text is Unicode",
                                                          "Python prints at once", "and uv copies"]):
                 vo.wait_until(phrase)
-                self.play(Indicate(card.lines[k], color=INK, scale_factor=1.15),
-                          Indicate(span(p5, n, val), color=INK, scale_factor=1.06), run_time=0.8)
+                self.play(Indicate(card.lines[k], color=TURN, scale_factor=1.15),
+                          Indicate(span(p5, n, val), color=TURN, scale_factor=1.03), run_time=0.8)
 
         # ========================================================== 4 · line 9: the venv outside /app
         with self.voiceover(SAY[4]) as vo:
@@ -334,9 +350,10 @@ class WriteDockerfile(VoiceScene):
             self.play(card.restyle("uv", "the venv lives in /home/app/.venv · outside /app", VENV),
                       run_time=1.0)
             vo.wait_until("in slash home")
-            u_venv = under(span(p5, 9, "/home/app/.venv"), VENV)
-            self.play(Create(u_venv), span(p5, 9, "/home/app/.venv").animate.set_color(VENV),
-                      run_time=0.7)
+            # no underline here: under row 9 it would sit on row 10's capitals
+            v_path = span(p5, 9, "/home/app/.venv")
+            self.play(v_path.animate.set_color(VENV), run_time=0.5)
+            self.play(Indicate(v_path, color=VENV, scale_factor=1.12), run_time=0.7)
             vo.wait_until("outside slash app")
             self.play(Indicate(card.lines["uv"], color=VENV, scale_factor=1.08), run_time=0.8)
             vo.wait_until("Soon, this line")
@@ -373,11 +390,11 @@ class WriteDockerfile(VoiceScene):
         for i, pg in enumerate(pages):
             pg.move_to([zx0 + 0.63 + 0.22 * i, yg - 0.06 * i, 0]).rotate(0.12 - 0.12 * i)
         lab_lists = sans("apt lists", PT, S.GREY).move_to([zx0 + 0.85, yl, 0])
-        gone = sans("deleted", PT, S.GREY).move_to(lab_lists)
+        gone = strike(lab_lists, S.GREY, 3)        # the label is struck through: deleted
         dots = pkg_dots(18, cols=6, color=SYSTEM).move_to([zx0 + 2.95, yg, 0])
         lab_pk = sans("build-essential, ffmpeg", PT, S.GREY).move_to([zx0 + 2.95, yl, 0])
         with self.voiceover(SAY[6]) as vo:
-            self.swap(p12, extra=[FadeOut(b), FadeOut(u_venv), FadeOut(u_sec)])
+            self.swap(p12, extra=[FadeOut(b), FadeOut(u_sec)])
             vo.wait_until("chained with double")
             amps = [span(p12, n, "&& \\") for n in range(12, 21)]
             self.play(LaggedStart(*[Indicate(a, color=TURN, scale_factor=1.3) for a in amps],
@@ -408,7 +425,9 @@ class WriteDockerfile(VoiceScene):
                       run_time=0.9)
             self.remove(pages)
             vo.wait_until("so they cost nothing")
-            self.play(FadeOut(lab_lists, shift=UP * 0.12), FadeIn(gone, shift=UP * 0.12), run_time=0.6)
+            # struck through in the zoom; the slab on the stack (what the image keeps) pulses
+            self.play(Create(gone), lab_lists.animate.set_opacity(0.55),
+                      Indicate(apt.box, color=SYSTEM, scale_factor=1.06), run_time=0.8)
 
         # ========================================================== 7 · pip, uv
         pip_c = chip("pip", SYSTEM, size=PT, font=MONO)
@@ -444,8 +463,8 @@ class WriteDockerfile(VoiceScene):
                            "Running containers as root is a security risk.")
         r72.move_to([6.55, 3.5, 0], aligned_edge=UR)
         assert r72.get_left()[0] > tr.get_right()[0] + 0.15, (r72.get_left(), tr.get_right())
-        inside = VGroup(gone, dots, lab_pk, pip_c, uv_c, note7, who, lab_who, fold, lab_app,
-                        own, own_t)
+        inside = VGroup(lab_lists, gone, dots, lab_pk, pip_c, uv_c, note7, who, lab_who, fold,
+                        lab_app, own, own_t)
         with self.voiceover(SAY[8]) as vo:
             self.play(Transform(b, bar(p12, 19, 21)), run_time=0.4)
             vo.wait_until("it creates a user")
@@ -504,24 +523,35 @@ class WriteDockerfile(VoiceScene):
         frow.move_to([-6.25, 2.3, 0], aligned_edge=LEFT)
         chips = VGroup(*[chip(f"lines {a}–{b_}", S.GREY, size=PT) for a, b_ in
                          [(1, 3), (5, 10), (12, 21), (23, 30)]])
-        for c, x in zip(chips, [-4.6, -1.5, 2.9, 5.3]):
-            c.move_to([x, 0.9, 0])
+        chips.arrange(RIGHT, buff=0.35).move_to([-6.0, 1.2, 0], aligned_edge=LEFT)
+        pj = VGroup(label("from", PT, S.GREY), mono("pyproject.toml", PT, VENV))
+        pj.arrange(RIGHT, buff=0.12)
         with self.voiceover(SAY[10]) as vo:
-            self.play(Transform(b, bar(p23, 27)), FadeOut(u_dot), FadeOut(u_ev),
-                      ev.animate.set_opacity(0.35), run_time=0.4)
+            self.play(Transform(b, bar(p23, 27)), FadeOut(u_dot), FadeOut(u_ev), FadeOut(ev),
+                      run_time=0.4)
             vo.wait_until("runs uv sync")
             st.drop(self, "sync", src=span(p23, 27, "RUN uv sync").copy(), run_time=0.9)
+            vo.wait_until("from pyproject.toml")
+            pj.next_to(row(p23, 27), RIGHT, buff=0.45)
+            self.play(FadeIn(pj, shift=LEFT * 0.1),
+                      Indicate(st.slabs["sync"].box, color=VENV, scale_factor=1.06), run_time=0.7)
             vo.wait_until("and lines 29 and 30")
-            self.play(Transform(b, bar(p23, 29, 30)), run_time=0.4)
+            self.play(Transform(b, bar(p23, 29, 30)), FadeOut(pj), run_time=0.4)
             vo.wait_until("start bash")
             top = st.top_label()
             srcs = VGroup(span(p23, 29, "ENTRYPOINT").copy(), span(p23, 30, "CMD").copy())
             st.attach(self, top, anims=[ReplacementTransform(srcs, top)], run_time=0.9)
             vo.wait_until("as in lecture 2")
             self.play(Indicate(top, color=CTR, scale_factor=1.1), run_time=0.8)
-            # the recap starts as the sentence ends: four chunks of the file made these pieces
-            self.play(FadeOut(self.panel_parts()), FadeOut(b), FadeOut(ev), FadeOut(cap),
+            # the recap starts as the sentence ends: four chunks of the file made these pieces.
+            # Lines to card lines stop at the card's top edge; wires to slabs run along a bus
+            # above the card and down the gap between card and stack, so nothing crosses text.
+            self.play(FadeOut(self.panel_parts()), FadeOut(b), FadeOut(cap),
                       FadeIn(frow, shift=RIGHT * 0.2), run_time=0.6)
+            card_top = card.frame.get_top()[1]
+            gx = (card.frame.get_right()[0] + st.slabs["base"].box.get_left()[0]) / 2
+            bus = card_top + 0.45
+            assert bus < top.get_bottom()[1] or gx < top.get_left()[0] - 0.3
             targets = [
                 ([card.lines["arg"]], [st.slabs["base"].box]),
                 ([card.lines[k] for k in ("e1", "e2", "e3", "e4", "uv", "gac")], []),
@@ -534,13 +564,14 @@ class WriteDockerfile(VoiceScene):
                 for m in clines:
                     x = float(np.clip(m.get_x(), card.frame.get_left()[0] + 0.3,
                                       card.frame.get_right()[0] - 0.3))
-                    ls.append(thin(c.get_bottom(), [x, card.frame.get_top()[1], 0]))
+                    ls.append(thin(c.get_bottom(), [x, card_top, 0]))
                 for m in pieces:
-                    ls.append(thin(c.get_bottom(), m.get_left() + LEFT * 0.08))
+                    cb, end = c.get_bottom(), m.get_left() + LEFT * 0.06
+                    ls.append(wire([cb, [cb[0], bus, 0], [gx, bus, 0], [gx, end[1], 0], end]))
                 ls = VGroup(*ls)
                 flash = [Indicate(m, color=TURN, scale_factor=1.05) for m in clines + pieces]
                 fade = [prev.animate.set_stroke(opacity=0.0)] if prev is not None else []
-                self.play(FadeIn(c, shift=DOWN * 0.1), Create(ls), *flash, *fade, run_time=0.75)
+                self.play(FadeIn(c, shift=DOWN * 0.1), Create(ls), *flash, *fade, run_time=0.8)
                 if prev is not None:
                     self.remove(prev)
                 prev = ls

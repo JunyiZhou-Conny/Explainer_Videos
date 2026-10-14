@@ -30,14 +30,15 @@ Beats (script.md "## S09", one voiceover block each):
     "shows that bash" the `1` flies to the dot, whose label becomes "PID 1 · bash". A `…` row with
     the GREY row tag "more checks · part 2". "The container lives": the dot and glass pulse.
     Labels right of the stack: `-i` "your keyboard → bash", `-t` "a terminal: prompt, line
-    editing", each as it is said. "Then type exit": `exit` (line 29) -> line 30, the laptop prompt
-    returns; the dot goes out and the slab dissolves.
+    editing", each as it is said, while the strip's `-ti` glows TEAL. "Then type exit": `exit`
+    (line 29) -> line 30, the laptop prompt returns; the dot goes out and the slab dissolves.
  5  The picture and the strip clear. V3 card (TEAL): ENTRYPOINT `["/bin/bash"]`, CMD
     `["-c", "source … && exec bash"]`, S05's GREY labels with short arrows ("the program", then
     "its default arguments" on "the default arguments"). "What if you put words": the chip
-    `docker run --rm -ti simple-translate python cli.py` at the top; `python cli.py` boxed YELLOW as
-    it is said; a YELLOW "?" where the start-up line goes. PONDER (8 s): the card group slides down,
-    the ponder card covers the chip (the card stays visible).
+    `docker run --rm -ti simple-translate python cli.py` at the top; the image name glows TEAL on
+    "right after the image name" and as it is said; `python cli.py` boxed YELLOW as it is said;
+    a YELLOW "?" where the start-up line goes. PONDER (8 s): the card group slides down, the
+    ponder card covers the chip (the card stays visible).
  6  A WHITE tile `python cli.py` is copied from the chip's box and knocks the CMD tile off the card;
     ENTRYPOINT pulses on "and only CMD". "So the container runs": the start-up line
     `/bin/bash python cli.py` is assembled from the two tiles and turns RED. The card and chip fade;
@@ -170,6 +171,18 @@ def side_label(s: str, slot) -> VGroup:
     return g
 
 
+def sub_path(path, a: float, b: float) -> VMobject:
+    """The part of `path` between proportions a and b (so a rider stays clear of what the route's
+    ends touch: the laptop's border, the cloud's host label)."""
+    return VMobject().set_points_smoothly([path.point_from_proportion(a + (b - a) * k / 24)
+                                           for k in range(25)])
+
+
+def flash_stroke(mob, color=INK, width: float = 6) -> Animation:
+    """Emphasis on an outline only (Indicate would recolour the filled screen too)."""
+    return mob.animate(rate_func=there_and_back).set_stroke(color, width=width)
+
+
 def clear_with(scene, t, *anims, run_time: float = 0.4) -> None:
     """t.clear(scene), played together with other animations."""
     scene.play(FadeOut(t.lines), *anims, run_time=run_time)
@@ -267,7 +280,7 @@ class RunIt(VoiceScene):
         w_req = mono("Good morning", 20, ROUTE)
         w_ret = mono("Buen día", 20, ROUTE)
         oops = chip("a runtime error? → Google said no · not Docker", S.GREY, size=22)
-        oops.move_to([3.15, -0.95, 0])
+        oops.move_to([2.95, -0.9, 0])
 
         with self.voiceover(SAY[1]) as vo:
             unpin(self, [(c_run.rows[1], yt_run), (c_tr.rows[1], yt_tr)], 0.3)
@@ -277,17 +290,21 @@ class RunIt(VoiceScene):
             vo.wait_until("the request")
             self.play(FadeIn(lap), FadeIn(lap_l), FadeIn(VGroup(con, con_l), scale=0.9), run_time=0.6)
             vo.wait_until("through your laptop")
-            p_req = req.copy().shift(UP * 0.28)              # the words ride just beside the routes
-            p_ret = ret.copy().shift(DOWN * 0.28)
+            # the words ride just beside the routes, on the stretch clear of the laptop's border
+            # and of the host label under the cloud
+            p_req = sub_path(req.copy().shift(UP * 0.28), 0.36, 0.74)
+            p_ret = sub_path(ret.copy().shift(DOWN * 0.28), 0.4, 0.72)
             w_req.move_to(p_req.get_start())
             self.play(GrowArrow(req), FadeIn(w_req), run_time=0.6)
-            self.play(Indicate(lap, color=INK, scale_factor=1.04), travel(w_req, p_req, 1.0))
+            self.play(flash_stroke(lap.screen), travel(w_req, p_req, 1.0))
             vo.wait_until("to Google")
-            self.play(FadeIn(gcl, scale=0.85), FadeIn(host), FadeOut(w_req, scale=0.6), run_time=0.6)
+            self.play(FadeIn(gcl, scale=0.85), FadeIn(host), FadeOut(w_req, shift=RIGHT * 0.5, scale=0.6),
+                      run_time=0.6)
             w_ret.move_to(p_ret.get_start())
             self.play(GrowArrow(ret), FadeIn(w_ret), run_time=0.5)
             self.play(travel(w_ret, p_ret, 1.0))
-            self.play(FadeOut(w_ret, scale=0.6), Indicate(big.glyphs, color=VENV, scale_factor=1.06), run_time=0.6)
+            self.play(FadeOut(w_ret, shift=LEFT * 0.35, scale=0.6),
+                      Indicate(big.glyphs, color=VENV, scale_factor=1.06), run_time=0.6)
             vo.wait_until("If yours ends")
             self.play(FadeIn(oops, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Google refused")
@@ -321,10 +338,10 @@ class RunIt(VoiceScene):
         fly = mono("exit", 22, INK)
 
         with self.voiceover(SAY[3]) as vo:
-            resize(self, t, STRIP_ROWS, keep=3, extra=[FadeIn(VGroup(*slabs, brace), shift=UP * 0.15)],
-                   run_time=0.7)
+            resize(self, t, STRIP_ROWS, keep=3, run_time=0.5)     # shrink first: the stack never
+            self.play(FadeIn(VGroup(*slabs, brace), shift=UP * 0.15), run_time=0.5)   # slides behind it
             self.add(stack)
-            self.play(FadeIn(glass, shift=DOWN * 0.15), run_time=0.6)
+            self.play(FadeIn(glass, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("It ended")
             unpin(self, [(c_exit, yt_exit)], 0.25)
             fly.move_to(substring(c_exit, "exit"))
@@ -380,11 +397,14 @@ class RunIt(VoiceScene):
             self.play(Indicate(VGroup(glass2.dot, glass2.dot_label), color=IMAGE, scale_factor=1.25),
                       glass2.glow.animate.set_stroke(opacity=0.6), run_time=0.8)
             self.play(glass2.glow.animate.set_stroke(opacity=0.25), run_time=0.4)
+            ti = substring(c_run2.rows[1], "-ti")             # the flags on the strip, still in view
             vo.wait_until("Dash i")
             self.play(FadeIn(lab_i, shift=RIGHT * 0.15), Indicate(glass2.dot, color=IMAGE, scale_factor=1.6),
-                      run_time=0.6)
+                      Indicate(ti, color=IMAGE, scale_factor=1.25), run_time=0.6)
             vo.wait_until("and dash t")
-            self.play(FadeIn(lab_t, shift=RIGHT * 0.15), run_time=0.6)
+            self.play(FadeIn(lab_t, shift=RIGHT * 0.15), Indicate(ti, color=IMAGE, scale_factor=1.25),
+                      run_time=0.6)
+            self.add(c_run2.rows[1])
             vo.wait_until("Then type exit")
             istep(self, t, C33.line(29), 0.3)
             t.print(self, ECHO33, run_time=0.2)
@@ -404,7 +424,8 @@ class RunIt(VoiceScene):
         q_line.next_to(card.frame, DOWN, buff=0.22).align_to(card.frame, LEFT).shift(RIGHT * 0.1)
         cmd_chip = chip(RUN_ARGS, S.GREY, size=22, font=MONO).move_to([0, 2.2, 0])
         words = text_span(cmd_chip.text, RUN_ARGS, WORDS)
-        words_box = SurroundingRectangle(words, color=TURN, buff=0.08, stroke_width=3, corner_radius=0.05)
+        img_name = text_span(cmd_chip.text, RUN_ARGS, "simple-translate")
+        words_box = SurroundingRectangle(words, color=TURN, buff=0.05, stroke_width=3, corner_radius=0.05)
         group5 = VGroup(card, t_ent, t_cmd, lab_ent, lab_cmd, q_line)
 
         with self.voiceover(SAY[5]) as vo:
@@ -417,6 +438,10 @@ class RunIt(VoiceScene):
                       Indicate(t_cmd, color=IMAGE, scale_factor=1.08), run_time=0.7)
             vo.wait_until("What if you put")
             self.play(FadeIn(cmd_chip, shift=DOWN * 0.15), run_time=0.6)
+            vo.wait_until("right after the image name")
+            self.play(Indicate(img_name, color=IMAGE, scale_factor=1.08), run_time=0.8)
+            vo.wait_until("simple-translate")
+            self.play(Indicate(img_name, color=IMAGE, scale_factor=1.08), run_time=0.6)
             vo.wait_until("python cli.py")
             self.play(Create(words_box), Indicate(words, color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("What command line")

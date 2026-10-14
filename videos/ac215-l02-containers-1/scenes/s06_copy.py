@@ -338,15 +338,21 @@ class StepCopy(VoiceScene):
             vo.wait_until("but this repo has none")
             self.play(FadeIn(none_tag, shift=UP * 0.1), run_time=0.4)
             # the parcel closes (names hidden), shrinks and rides the route through the empty sieve
-            mover = VGroup(parcel.frame, parcel.tape, glyphs)
-            mover.set_z_index(1)                           # it rides on the route, not under it
+            # it rides on the route, not under it: an opaque backing (the background's colour, invisible
+            # until the route is behind it) under the translucent frame, all drawn above the route
+            backing = parcel.frame.copy().set_fill(S.BG, 1).set_stroke(width=0)
+            mover = VGroup(backing, parcel.frame, parcel.tape, glyphs)
+            mover.set_z_index(1)
             self.play(FadeOut(names), FadeOut(parcel.title), run_time=0.3)
+            self.add(backing)                              # after the names have gone (they are under it)
+            self.bring_to_back(backing)                    # first of the z=1 family: under frame and glyphs
             self.play(mover.animate.scale(SHRINK).move_to(r_a + RIGHT * 0.1), run_time=0.5)
             line = Line(mover.get_center(), r_b + LEFT * 0.05)
             self.play(MoveAlongPath(mover, line), run_time=1.1)
             vo.wait_until("The COPY line unpacks")
             names.shift(slot_c - home)
-            self.play(FadeOut(VGroup(parcel.frame, parcel.tape)),
+            glyphs.set_z_index(2)                          # above the fading box (it is re-added on top)
+            self.play(FadeOut(VGroup(backing, parcel.frame, parcel.tape)),
                       glyphs.animate.scale(1 / SHRINK).move_to(slot_c + g_off), run_time=0.9)
             self.play(FadeIn(names), Indicate(root_lab[0], color=IMAGE, scale_factor=1.5), run_time=0.6)
 

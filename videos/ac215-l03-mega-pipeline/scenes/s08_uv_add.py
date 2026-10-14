@@ -17,8 +17,9 @@ Beats (script.md "## S08", one voiceover block each):
     18–19, …, 34); the three asked-for names turn GREEN in the `+` lines; GREY tag "at the time of
     recording" beside the version list.
  2  A chip "asked for 3" beside line 8 (`Installed 26 packages`) transforms into GREEN "installed
-    26", with an arrow to the line. The `…` rows and `urllib3` (dependencies) pulse; "Resolved"
-    underlines PURPLE ("uv resolves the whole tree").
+    26", with an arrow to the line. On "each package brings" the `…` rows and `urllib3` get GREY
+    bars and a GREY label "dependencies"; "Resolved" underlines PURPLE ("uv resolves the whole
+    tree").
  3  The terminal shrinks to the strip (the command and line 8 with its counter chip). V3 + V4
     above it: on "pyproject.toml" its row turns GREEN on the laptop and on the sheet over /app at
     the same instant (three GREEN lines draw into both glyphs); `uv.lock` appears GREEN on both
@@ -51,13 +52,14 @@ Beats (script.md "## S08", one voiceover block each):
  9  TRACKER A8 · extra. In the strip `grep -n "^group_name" cli.py` (extra) → TERM(06: 2);
     `group-01` turns YELLOW with a box. A PINK arrow labelled `-v · the window` from the editor's
     `"group-01"` to the strip; both `group-01`s blink at the same instant and the arrow pulses
-    (nothing travels). The note pulses; the five boxes flash GREEN, then GREY arrows link them.
-10  TRACKER A9. The editor goes; the terminal grows back to 12 rows (cleared): `python cli.py
-    --help` → TERM(05-help.txt: 2–10). The README's block (transcribe_audio/README.md · lines
-    117–126, its first line on the typed command) fades in from the upper right as a translucent
-    GREY overlay and lands exactly on the printed rows; a GREEN check ticks beside each non-blank
-    row. On "Pause" the overlay lifts off (checks and header stay); ▶ your turn beside the command.
-    Everything fades: empty frame.
+    (two-headed: one folder, two sides; nothing travels). The note pulses; the five boxes flash
+    GREEN, then GREY arrows draw V1's real hand-offs: A→B, B→C, B→D (curving under C), D→E.
+10  TRACKER A9 (on "Step 9", as the editor goes); the terminal grows back to 12 rows (cleared):
+    `python cli.py --help` → TERM(05-help.txt: 2–10). The README's block (transcribe_audio/
+    README.md · lines 117–126, its first line on the typed command) fades in from the upper right
+    as a translucent GREY overlay and lands exactly on the printed rows; a GREEN check ticks beside
+    each non-blank row. On "Pause" the overlay lifts off (checks and header stay); ▶ your turn
+    beside the command. Everything fades: empty frame.
 """
 
 import numpy as np
@@ -68,7 +70,7 @@ from explainer.devops import (MONO, box, cell_width, check_mark, chip, code_pane
                               cross_mark, label, mono, mono_line, substring, tag)
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, CTR, ERR, GROUP, INK, LOOKUP, NARRATION, P_CTR, TOOL, TURN, VENV, Window,
+from common import (CLOUD, CTR, ERR, GROUP, INK, LOOKUP, NARRATION, P_CTR, STRIP_TOP, TOOL, TURN, VENV, Window,
                     beside, caption_extra, capture, cut_comment, editor_inset, excerpt, extra_tag,
                     page_token, pin, pkg_dots, readme_chip, recorded_tag, resize, sans, source_text,
                     src_panel, term, tracker, type_cmd, unpin, your_turn)
@@ -395,11 +397,12 @@ class UvAdd(VoiceScene):
         chip_a = readme_note_chip("transcribe_audio/README.md · lines 104–110", "3 packages")
         place(chip_a, right=EDGE, top=TRACK_BOTTOM - 0.1)
         with self.voiceover(SAY[1]) as vo:
-            self.play(tr.goto(7), run_time=0.5)
-            self.play(FadeOut(VGroup(win0, ex0), scale=0.4, shift=UP * 0.6), run_time=0.6)
-            resize(self, t, BIG, run_time=0.7)
+            # the tracker moves on "Step 7" while part 1's picture shrinks away; the README chip
+            # arrives as the terminal grows (it lands right after "the README lists")
+            self.play(tr.goto(7), FadeOut(win0, scale=0.4, shift=UP * 0.6),
+                      FadeOut(ex0, scale=0.4, shift=UP * 0.6), run_time=0.6)
+            resize(self, t, BIG, run_time=0.7, extra=[FadeIn(chip_a, shift=DOWN * 0.1)])
             vo.wait_until("the README lists")
-            self.play(FadeIn(chip_a, shift=DOWN * 0.1), run_time=0.5)
             self.play(Indicate(chip_a[1][2], color=INK, scale_factor=1.12), run_time=0.7)
             vo.wait_until("so type all three")
             c1 = type_cmd(self, t, ADD_CMD, 2.0)
@@ -435,10 +438,22 @@ class UvAdd(VoiceScene):
             stick(self, installed, c_ask, arr)
             self.play(Indicate(substring(installed, "Installed 26 packages"), color=VENV, scale_factor=1.1),
                       run_time=0.7)
-            vo.wait_until("As in lecture 1")
-            deps = VGroup(out1[3].glyphs, out1[6].glyphs, out1[7].glyphs)
             vo.wait_until("each package brings")
-            self.play(Indicate(deps, color=INK, scale_factor=1.08), run_time=0.9)
+            # the rows nobody asked for (the two `…` and urllib3) light up GREY: dependencies
+            dep_rows = [out1[3], out1[6], out1[7]]
+            x_r = out1[5].glyphs.get_right()[0] + 0.08          # as wide as the longest + row
+            x_l = min(ln.glyphs.get_left()[0] for ln in dep_rows) - 0.08   # one left edge for all
+            dep_bars = [rbar(ln, S.GREY, 0.2, right=x_r) for ln in dep_rows]
+            for b in dep_bars:
+                b.stretch_to_fit_width(x_r - x_l).align_to([x_l, 0, 0], LEFT)
+            dep_lab = label("dependencies", 22, S.GREY)
+            place(dep_lab, left=x_r + 0.3, cy=out1[7].strut.get_center()[1])
+            self.play(*[FadeIn(b) for b in dep_bars], FadeIn(dep_lab, shift=LEFT * 0.1), run_time=0.6)
+            for ln, b in zip(dep_rows, dep_bars):
+                stick(self, ln, b)
+            stick(self, out1[7], dep_lab)
+            self.play(Indicate(VGroup(*[ln.glyphs for ln in dep_rows]), color=INK, scale_factor=1.1),
+                      run_time=0.8)
             vo.wait_until("and uv resolves")
             u_res = uline(resolved, "Resolved", TOOL, stroke=4)
             pin(self, resolved, u_res, run_time=0.5, anim=Create(u_res))
@@ -547,14 +562,14 @@ class UvAdd(VoiceScene):
             out_tag = tag("outside the window", S.GREY)
             beside(out_tag, t, venv_ln, buff=0.4)
             pin(self, venv_ln, out_tag, run_time=0.5)
-            self.play(Indicate(out_tag, color=INK, scale_factor=1.1), run_time=0.7)
+            self.play(Indicate(out_tag.text, color=INK, scale_factor=1.15), run_time=0.7)
 
         # ========================================================== 6 · two asides
         fc = ffmpeg_card()
         rc = root_card()
         place(fc, cx=0, top=2.78)
-        place(rc, cx=0, bottom=-1.3)
-        assert rc.get_top()[1] < fc.get_bottom()[1] - 0.15, (rc.get_top()[1], fc.get_bottom()[1])
+        place(rc, cx=0, top=fc.get_bottom()[1] - 0.25)        # even gaps: card, card, strip
+        assert rc.get_bottom()[1] > STRIP_TOP + 0.2, (rc.get_bottom()[1], STRIP_TOP)
         with self.voiceover(SAY[6]) as vo:
             self.play(caption_extra(tr, False), run_time=0.3)
             resize(self, t, 3, run_time=0.7)
@@ -602,7 +617,8 @@ class UvAdd(VoiceScene):
             self.play(chip_r.phrase.animate.set_color(TURN), Create(u_reb), run_time=0.6)
             vo.wait_until("We'll do that")
             self.play(FadeIn(s13, shift=UP * 0.1), run_time=0.4)
-            self.play(Indicate(tr.dots[12], color=TURN, scale_factor=2.2), Indicate(s13, color=INK, scale_factor=1.1),
+            self.play(Indicate(tr.dots[12], color=TURN, scale_factor=2.2),
+                      Indicate(s13.text, color=INK, scale_factor=1.15),
                       run_time=0.9)
 
         # ========================================================== 8 · step 8: the group name (VS Code)
@@ -656,8 +672,9 @@ class UvAdd(VoiceScene):
             vo.wait_until("the window works")
             a_start = new_str.get_bottom() + DOWN * 0.08
             a_end = np.array([g_term.get_center()[0], t.box.get_top()[1] + 0.04, 0])
-            link = Arrow(a_start, a_end, buff=0, color=LOOKUP, stroke_width=4, tip_length=0.2,
-                         max_tip_length_to_length_ratio=0.15)
+            # one folder seen from two sides: a two-headed PINK link (nothing travels along it)
+            link = DoubleArrow(a_start, a_end, buff=0, color=LOOKUP, stroke_width=4, tip_length=0.2,
+                               max_tip_length_to_length_ratio=0.15)
             link_lab = VGroup(mono("-v", 22, LOOKUP), label("· the window", 22, LOOKUP)).arrange(RIGHT, buff=0.12)
             link_lab[1].align_to(link_lab[0], DOWN)
             place(link_lab, left=link.get_center()[0] + 0.3, cy=link.get_center()[1])
@@ -669,16 +686,19 @@ class UvAdd(VoiceScene):
             self.play(LaggedStart(*[b[0].animate(rate_func=there_and_back).set_fill(VENV, 0.5) for b in boxes],
                                   lag_ratio=0.2), run_time=1.0)
             vo.wait_until("or the stages")
-            hops = VGroup(*[Arrow(boxes[i].get_right(), boxes[i + 1].get_left(), buff=0.04, color=S.GREY,
-                                  stroke_width=3, tip_length=0.12, max_tip_length_to_length_ratio=0.5)
-                            for i in range(4)])
-            self.play(LaggedStart(*[GrowArrow(h) for h in hops], lag_ratio=0.25), run_time=0.9)
+            # who reads whose work (V1's DAG: A→B, B→C, B→D, D→E; C does not feed D)
+            def hop(i, j):
+                return Arrow(boxes[i].get_right(), boxes[j].get_left(), buff=0.04, color=S.GREY,
+                             stroke_width=3, tip_length=0.12, max_tip_length_to_length_ratio=0.5)
+            b_to_d = CurvedArrow(boxes[1][0].get_bottom() + DOWN * 0.04, boxes[3][0].get_bottom() + DOWN * 0.04,
+                                 angle=0.6 * PI, color=S.GREY, stroke_width=3, tip_length=0.12)
+            hops = VGroup(hop(0, 1), hop(1, 2), b_to_d, hop(3, 4))
+            self.play(LaggedStart(*[Create(h) for h in hops], lag_ratio=0.25), run_time=1.0)
 
         # ========================================================== 10 · step 9: --help matches the README
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(ed, new_str, note, boxes, hops, link, link_lab)), caption_extra(tr, False),
-                      run_time=0.5)
-            self.play(tr.goto(9), run_time=0.5)
+            # goto(9) rebuilds the caption, so it also drops " · extra"
+            self.play(FadeOut(VGroup(ed, new_str, note, boxes, hops, link, link_lab)), tr.goto(9), run_time=0.5)
             t.clear(self, run_time=0.3)
             resize(self, t, BIG, run_time=0.6)
             vo.wait_until("python cli.py dash dash help")
@@ -701,6 +721,7 @@ class UvAdd(VoiceScene):
             # the overlay has done its job: it lifts off (checks and header stay), so the paused
             # frame shows the real output and the tag beside the command overlaps nothing
             self.play(FadeOut(VGroup(ov.panel, ov.rows), shift=UP * 0.15), run_time=0.5)
+            self.remove(ov.panel, ov.rows)       # gone for good (FadeOut restores opacity on clean-up)
             yt10 = beside(your_turn(), t, c10)
             self.play(FadeIn(yt10, shift=LEFT * 0.1), run_time=0.4)
             self.play(Wiggle(yt10, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.6)

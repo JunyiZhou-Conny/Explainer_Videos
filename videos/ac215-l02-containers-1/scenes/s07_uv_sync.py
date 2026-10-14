@@ -32,16 +32,18 @@ Beats (script.md "## S07", one voiceover block each):
     arrow to the dot. After the sentence the number line fades except the GREEN dot; the V2 stack
     (S06's: four thin ORANGE base slabs, brace "base image", caption `python:3.12-slim-bookworm`,
     ORANGE `RUN pip install uv` with its PURPLE uv chip, GREY `COPY . ./` with file glyphs, the
-    dashed slot "packages: none yet") slides in from the right; the strip's `RUN uv sync` (line 29)
-    is copied up and the dot expands into the fat GREEN slab "RUN uv sync" in the slot; GREY note
-    "CPython 3.15.0 + /.venv" / "11 packages". (This runs about 3 s past the sentence: the
-    finished stack holds 1.2 s.)
+    dashed slot "packages: none yet") slides in from the right; a copy of the strip's `RUN uv sync`
+    (line 29) travels along its empty row and up the clear column right of the stack to meet the
+    GREEN dot beside the slot, and the two fly into the slot as the fat GREEN slab "RUN uv sync"
+    (a straight flight would cut through the base slabs); GREY note "CPython 3.15.0 + /.venv" /
+    "11 packages". (This runs about 3.4 s past the sentence: the finished stack holds 0.6 s.)
  5  TRACKER A10. The picture and the strip go; full wide terminal (13.2 wide, 20 pt, 13 rows):
     `docker run --rm -ti simple-translate` + ▶ your turn (on the next row: the command fills its
     row) -> TRACKER A10 · extra, `ls -a` (row tag `extra`) at the capture's prompt
     `root@01dca6d0f4d8:/#` -> laptop/22 lines 3–9; `.venv` and `uv.lock` GREEN as they are said.
     "But python cli.py" -> `python cli.py` (row tag `extra`) -> lines 11–14 RED, the prompt
-    returns; "Why?": the ModuleNotFoundError row pulses.
+    returns; "Why?": the ModuleNotFoundError row pulses. The `your turn` tag sits on the row under
+    `docker run` (the command fills its row) and belongs to that row: it scrolls away with it.
  6  V4's PATH half. The terminal shrinks to the strip (the `python cli.py` row, the RED line, the
     prompt). The base image's `ENV PATH=/usr/local/bin:/usr/local/sbin:/usr…` (laptop/34 line 22)
     as a GREY chip top right; its three parts are copied down into three doors: `/usr/local/bin`
@@ -86,7 +88,7 @@ from common import (BUILD, ERR, IMAGE, INK, LAPTOP, LAPTOP_DIR, MONO, NARRATION,
                     VersionLine, attach, bare_prompt, beside, box, capture, chip, code, cross_mark,
                     erratum_tag, figure, file_glyph, folder_glyph, glyph_range, hl_bar, istep, label,
                     laptop_term, mono, outline_box, pin, readme_card, resize, row_tag, steady,
-                    substring, tag, track, tracker_a, type_cmd, under, unpin, wide_term)
+                    substring, tag, track, tracker_a, type_cmd, under, wide_term)
 
 SAY = NARRATION["S07"]
 
@@ -142,6 +144,7 @@ V_BASE, V_UV, V_VM = BASE_PY.split()[1], VER_OUT[0].split()[1], VM_PY.split()[1]
 # ------------------------------------------------------------------ layout
 AX_Y = 0.45                           # beat 4: the number line (full width, 11 units)
 STACK_X, FLOOR_Y = -1.2, -0.25        # the V2 stack where S06 left it (3.2 wide)
+UP_X = 2.75                           # beat 4: the clear column right of the stack the slab text rises in
 DOOR_LEFT, DOOR_TOP, DOOR_H = -6.0, 1.75, 0.95  # beats 6-7: the PATH doors
 DEST_Y = -0.1                         # beats 6-7: the Pythons the doors lead to (clear of a 5-row strip)
 DEST_DX = 1.55                        # a destination dot sits this far right of its door's left edge
@@ -261,10 +264,11 @@ class StepUvSync(VoiceScene):
         a_inst = flow_arrow(uvc, venv, VENV)
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(tr, shift=DOWN * 0.1), run_time=0.4)
-            self.play(track(tr, 10), FadeIn(card, shift=DOWN * 0.1), FadeIn(panel, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeIn(tr, shift=DOWN * 0.1), run_time=0.3)
+            self.play(track(tr, 10), FadeIn(card, shift=DOWN * 0.1), FadeIn(panel, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("adds RUN uv sync")
-            self.add(p_bar, panel.code)
+            # the translucent bar goes on top of the panel (re-adding panel.code would put the code's
+            # opaque background over it, as line_bar's docstring warns)
             self.play(FadeIn(p_bar), p_line.animate.set_color(VENV), run_time=0.5)
             self.play(Indicate(p_line, color=VENV, scale_factor=1.12), run_time=0.6)
             vo.wait_until("add it at the end")
@@ -314,8 +318,7 @@ class StepUvSync(VoiceScene):
         t = laptop_term(12)
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(pcard, panels, u312, u313, uvc, qm, during, answers)), run_time=0.4)
-            self.play(FadeIn(t), run_time=0.3)
+            self.play(FadeOut(VGroup(pcard, panels, u312, u313, uvc, qm, during, answers)), FadeIn(t), run_time=0.45)
             bare_prompt(self, t)
             c2 = type_cmd(self, t, BUILD, 0.8)
             assert len(c2.rows) == 2, "BUILD folds onto two rows"
@@ -418,10 +421,17 @@ class StepUvSync(VoiceScene):
         note.next_to(sync.box, RIGHT, buff=0.3)
 
         with self.voiceover(SAY[4]) as vo:
-            unpin(self, [(r30b, arm)], 0.25)
+            # the note fades with the rows the strip drops (one step), then the terminal shrinks
+            r30b.remove(arm)
+            self.add(arm)
+            drop_rows = [ln for ln in t.lines.submobjects if ln not in (r29, r30a, r30b)]
+            self.play(FadeOut(arm), FadeOut(VGroup(*drop_rows)), run_time=0.25)
+            for ln in drop_rows:
+                t.lines.remove(ln)
+                self.remove(ln)
             resize(self, t, STRIP_ROWS, keep=[r29, r30a, r30b], run_time=0.6)
             self.play(Create(vl.axis), LaggedStart(*[FadeIn(tk, shift=UP * 0.1) for tk in vl.ticks], lag_ratio=0.1),
-                      run_time=1.0)
+                      run_time=0.9)
             vo.wait_until("the requirement covers")
             vl.band.stretch_to_fit_width(0.01).align_to(band_full, LEFT)
             self.add(vl.band)
@@ -435,8 +445,8 @@ class StepUvSync(VoiceScene):
             vo.wait_until("so uv downloads")
             self.play(FadeIn(uv_chip, scale=0.7), run_time=0.3)
             self.add(g_dot)
-            self.play(GrowArrow(drop), g_dot.animate.move_to(g_end), run_time=0.8)
-            self.play(FadeOut(drop), FadeIn(g_lab, shift=UP * 0.1), run_time=0.5)
+            self.play(GrowArrow(drop), g_dot.animate.move_to(g_end), run_time=0.7)
+            self.play(FadeOut(drop), FadeIn(g_lab, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("the newest stable")
             self.play(FadeIn(newest, shift=LEFT * 0.15), run_time=0.4)
             self.play(Indicate(g_dot, color=VENV, scale_factor=1.6), run_time=0.6)
@@ -447,15 +457,30 @@ class StepUvSync(VoiceScene):
             # the picture of the image: everything but the GREEN dot goes, the stack comes back
             line_parts = VGroup(vl.axis, vl.ticks, vl.band, vl.band_label, o_dot, o_lab, o_x, uv_chip,
                                 newest, g_lab, vpy, link)
-            self.play(FadeOut(line_parts), run_time=0.6)
-            self.play(FadeIn(picture, shift=LEFT * 1.5), run_time=0.8)
+            self.play(FadeOut(line_parts), run_time=0.5)
+            self.play(FadeIn(picture, shift=LEFT * 1.5), run_time=0.7)
             stack.accept(self, *base, uv_slab, cp_slab)
-            self.play(TransformFromCopy(substring(r29, "RUN uv sync"), sync.text),
-                      ReplacementTransform(g_dot, sync.box), FadeOut(VGroup(slot, slot_t)), run_time=1.0)
+            # the strip's `RUN uv sync` travels round the right of the stack (along its own empty row,
+            # then up a clear column) to meet the GREEN dot beside the slot; together they fly into
+            # the slot and become the slab (a straight flight would cut through the base slabs)
+            txt = substring(r29, "RUN uv sync").copy()
+            y_slab = sync.box.get_center()[1]
+            p0 = txt.get_center()
+            corner = np.array([UP_X, p0[1], 0])
+            route = VMobject()
+            route.start_new_path(p0)
+            route.add_line_to(corner + LEFT * 0.6)
+            route.add_quadratic_bezier_curve_to(corner, corner + UP * 0.6)
+            route.add_line_to(np.array([UP_X, y_slab, 0]))
+            assert UP_X - txt.width / 2 > uv_tag.get_right()[0] + 0.3, "the column clears the uv tag"
+            self.add(txt)
+            self.play(MoveAlongPath(txt, route), g_dot.animate.move_to([UP_X + txt.width / 2 + 0.4, y_slab, 0]),
+                      FadeOut(VGroup(slot, slot_t)), run_time=1.0)
+            self.play(ReplacementTransform(txt, sync.text), ReplacementTransform(g_dot, sync.box), run_time=0.8)
             self.remove(sync.box, sync.text)
             stack.accept(self, sync)
             self.play(FadeIn(note, shift=LEFT * 0.1), run_time=0.5)
-            self.wait(1.2)                      # the finished stack holds before the run
+            self.wait(0.6)                      # the finished stack holds before the run
 
         # ========================================================== 5 · run it: .venv, uv.lock, same error
         w = wide_term(13)
@@ -471,10 +496,10 @@ class StepUvSync(VoiceScene):
             yt5.move_to([c5.strut.get_right()[0] - yt5.width / 2, c5.strut.get_center()[1] - w.pitch, 0])
             self.play(FadeIn(yt5, shift=LEFT * 0.1), run_time=0.3)
             self.play(Wiggle(yt5, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.5)
+            attach(self, c5, yt5)           # it belongs to docker run: it scrolls away with that row
             vo.wait_until("then try the same")
             self.play(track(tr, 10, extra=True), run_time=0.3)
             r_ls = istep(self, w, LS_LINE, 0.3)
-            attach(self, r_ls, yt5)
             pin(self, r_ls, beside(row_tag("extra"), r_ls), run_time=0.25)
             vo.wait_until("Now the listing")
             o5 = w.print(self, LS_OUT, run_time=0.6, lag=0.12)
@@ -622,9 +647,12 @@ class StepUvSync(VoiceScene):
             self.play(ReplacementTransform(orange.dot, o_sum), ReplacementTransform(orange.text, o_top), run_time=0.6)
             self.play(ReplacementTransform(green.dot, g_sum), ReplacementTransform(green.text, g_top), run_time=0.8)
             vo.wait_until("3.12 from the base")
-            self.play(FadeIn(o_role, shift=DOWN * 0.1), Indicate(o_top, color=SYSTEM, scale_factor=1.2), run_time=0.6)
+            self.play(Indicate(o_top, color=SYSTEM, scale_factor=1.2), run_time=0.6)
+            vo.wait_until("which only installed uv")
+            self.play(FadeIn(o_role, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("and 3.15 for the app")
-            self.play(FadeIn(g_role, shift=DOWN * 0.1), Indicate(g_top, color=VENV, scale_factor=1.2), run_time=0.6)
+            self.play(Indicate(g_top, color=VENV, scale_factor=1.2), run_time=0.6)
+            self.play(FadeIn(g_role, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("That's half")
             self.play(FadeIn(p_old, shift=RIGHT * 0.2), FadeIn(p_new, shift=LEFT * 0.2), run_time=0.5)
             self.play(FadeIn(p_q, scale=1.6), run_time=0.4)

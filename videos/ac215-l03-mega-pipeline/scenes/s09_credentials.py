@@ -62,8 +62,8 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (box, check_mark, cross_mark, label, line_bar, mono, step_badge,
-                              substring, tag)
+from explainer.devops import (CAPTION, box, check_mark, cross_mark, label, line_bar, mono,
+                              step_badge, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, COST, CTR, ERR, GROUP, INK, LAPTOP, LOOKUP, NARRATION, P_CTR, TURN, VENV,
@@ -192,6 +192,45 @@ def show_part(piece, name: str):
     m = piece.parts[name]
     _set_op(m)
     piece._flag(m, False)
+
+
+def swap_words(old, new) -> Animation:
+    """old fades out, then new fades in on the same spot (never both half-visible at once)."""
+    return LaggedStart(old.animate.set_opacity(0), FadeIn(new, shift=UP * 0.1), lag_ratio=1.0)
+
+
+def _xfade_into(scene, old, new, shift=ORIGIN, anims=(), run_time: float = 0.8):
+    """old (a member of a piece) cross-fades into `new` (riding `shift` with it), then takes
+    new's shape, so the piece keeps its member; no letter-by-letter morph."""
+    scene.play(old.animate.shift(shift).set_opacity(0), FadeIn(new, shift=shift), *anims,
+               run_time=run_time)
+    old.become(new)
+    scene.remove(new)
+
+
+def reroot(scene, chain, text: str | None = "/tmp", dx: float = 1.9, run_time: float = 1.0):
+    """AdcChain.reroot, with the root label cross-fading instead of morphing its letters."""
+    top = chain.post.post.get_start()
+    dot = top + DOWN * 0.5 + (RIGHT * dx if text is not None else 0)
+    new_post = Line(top, dot, color=LOOKUP, stroke_width=4)
+    new_foot = chain.post.foot.copy().move_to(dot)
+    new_label = mono(text or "/app", CAPTION, LOOKUP).next_to(Dot(dot), RIGHT, buff=0.15)
+    new_label.shift(DOWN * 0.05)
+    shift = new_label.get_left() - chain.root_label.get_left()
+    _xfade_into(scene, chain.root_label, new_label, shift=shift,
+                anims=[chain.root_dot.animate.move_to(dot), Transform(chain.post.post, new_post),
+                       Transform(chain.post.foot, new_foot)], run_time=run_time)
+
+
+def reaim(scene, chain, folder: str, run_time: float = 0.8):
+    """AdcChain.reaim (run from the wrong laptop folder): the folder name cross-fades into
+    `folder` (RED) while secrets/ and the key vanish."""
+    new = mono(folder, CAPTION, ERR).move_to(chain.folder, aligned_edge=LEFT)
+    old = chain.folder
+    chain.hide(scene, "secrets", "key", run_time=run_time,
+               extra=[old.animate.set_opacity(0), FadeIn(new)])
+    old.become(new)
+    scene.remove(new)
 
 
 def glyph_dim(lines, k: float):
@@ -348,18 +387,30 @@ class WhoIsCalling(VoiceScene):
               cy=(chain.client.get_bottom()[1] + chain.ctr_frame.get_bottom()[1]) / 2)
         df = tag("Dockerfile · line 10", S.GREY, size=20)
         with self.voiceover(SAY[3]) as vo:
+            # the lifted words are copies; the originals go invisible under them (no double text)
             c10 = substring(L10, "storage.Client()").copy()
-            c23 = substring(L23, "google.auth.default()").copy()
-            self.add(c10, c23)
+            c23 = substring(L23, "google.auth").copy()
+            c23t = substring(L23, ".default()").copy()
+            substring(L10, "storage.Client()").set_opacity(0)
+            substring(L23, "google.auth.default()").set_opacity(0)
+            self.add(c10, c23, c23t)
             self.play(FadeOut(eye), FadeOut(lab_code), FadeOut(lab_asks), FadeOut(lab_file), FadeOut(chip1),
                       c10.animate.shift(UP * 0.12).set_color(CTR), c23.animate.shift(UP * 0.12).set_color(INK),
-                      run_time=0.5)
-            tgt_c, tgt_a = chain.client.copy(), chain.auth.copy()
+                      FadeOut(c23t, shift=UP * 0.12), run_time=0.45)
+            # word to word: each copy lands on the identical text of its V5 box (no shape morph)
+            tgt_c, tgt_a = chain.client[1].copy(), chain.auth[1].copy()
             _set_op(tgt_c)
             _set_op(tgt_a)
-            resize(self, t, 3, keep=[c0, L36a, L36b], run_time=1.1,
-                   extra=[FadeIn(chain), Transform(c10, tgt_c), Transform(c23, tgt_a)])
-            self.remove(c10, c23)
+            resize(self, t, 3, keep=[c0, L36a, L36b], run_time=0.85,
+                   extra=[Transform(c10, tgt_c), Transform(c23, tgt_a)])
+            # then the container and the two boxes draw in around the words
+            bx_c, bx_a = chain.client[0].copy(), chain.auth[0].copy()
+            _set_op(bx_c)
+            _set_op(bx_a)
+            self.add(chain, bx_c, bx_a)
+            self.bring_to_front(c10, c23)
+            self.play(FadeIn(chain), FadeIn(bx_c), FadeIn(bx_a), run_time=0.55)
+            self.remove(c10, c23, bx_c, bx_a)
             show_part(chain, "client")
             show_part(chain, "auth")
             vo.wait_until("Your code never passes")
@@ -394,6 +445,7 @@ class WhoIsCalling(VoiceScene):
             chain.unfollow(self, run_time=0.3)
             tok = chain.mint(self, run_time=0.8)
             short = label("short-lived", 20, COST).next_to(tok, UP, buff=0.12)
+            vo.wait_until("a short-lived")
             self.play(FadeIn(short, shift=DOWN * 0.1), Indicate(tok[1][0], color=COST, scale_factor=1.5),
                       run_time=0.6)
             vo.wait_until("and every request")
@@ -421,17 +473,17 @@ class WhoIsCalling(VoiceScene):
                       Indicate(tok, color=TURN, scale_factor=1.1), run_time=0.8)
             vo.wait_until("and the key says")
             ans1 = label("service account", 20, VENV).move_to(g1.question, aligned_edge=LEFT)
-            chain.attach(self, ans1, anims=[g1.question.animate.set_opacity(0), FadeIn(ans1, shift=UP * 0.1),
+            chain.attach(self, ans1, anims=[swap_words(g1.question, ans1),
                                             Indicate(chain.key, color=COST, scale_factor=1.4)],
-                         run_time=0.7, into=g1)
+                         run_time=0.8, into=g1)
             ck_1 = chain.check(self, 1, run_time=0.6)
             vo.wait_until("authorization asks")
             self.play(Indicate(VGroup(g2.word, g2.question), color=TURN, scale_factor=1.08), run_time=0.8)
             vo.wait_until("and IAM roles")
             ans2 = label("IAM roles allow it", 20, VENV).move_to(g2.question, aligned_edge=LEFT)
-            chain.attach(self, ans2, anims=[g2.question.animate.set_opacity(0), FadeIn(ans2, shift=UP * 0.1),
+            chain.attach(self, ans2, anims=[swap_words(g2.question, ans2),
                                             Indicate(chain.padlock, color=VENV, scale_factor=1.3)],
-                         run_time=0.7, into=g2)
+                         run_time=0.8, into=g2)
             ck_2 = chain.check(self, 2, run_time=0.8)
 
         # ========================================================== 7 · three ways to get the error
@@ -441,42 +493,42 @@ class WhoIsCalling(VoiceScene):
         for c in causes:
             place(c, cx=chain.google_frame.get_center()[0], top=chain.google_frame.get_top()[1] - 0.15)
         note = footnote_card()
-        place(note, right=EDGE, cy=CHAIN_Y + 0.3)
+        place(note, cx=0, cy=CHAIN_Y)              # alone above the strip, once V5 has gone
         with self.voiceover(SAY[7]) as vo:
             chain.detach(self, tok, arrow, ck_1, ck_2,
                          extra=[FadeOut(cost), FadeOut(pin_line), FadeOut(chip_auth), FadeOut(adc)],
-                         run_time=0.5)
-            chain.hide(self, "google", run_time=0.4)
-            chain.fail(self, run_time=0.6)
-            chain.follow(self, run_time=1.1, found=False)
-            self.play(Indicate(VGroup(L36a.glyphs, L36b.glyphs), color=ERR, scale_factor=1.04), run_time=0.7)
+                         run_time=0.4)
+            chain.hide(self, "google", run_time=0.35)
+            chain.fail(self, run_time=0.5)
+            chain.follow(self, run_time=1.0, found=False)
             vo.wait_until("The key isn't")
-            self.play(FadeIn(causes[0], shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeIn(causes[0], shift=DOWN * 0.1),
+                      Indicate(VGroup(L36a.glyphs, L36b.glyphs), color=ERR, scale_factor=1.04), run_time=0.6)
             self.play(Indicate(chain.secrets, color=ERR, scale_factor=1.2), run_time=0.7)
             vo.wait_until("you changed directory")
             chain.unfollow(self, run_time=0.3)
             self.play(ReplacementTransform(causes[0], causes[1]), run_time=0.4)
             chain.unfail(self, run_time=0.5)
-            chain.reroot(self, "/tmp", run_time=0.9)
+            reroot(self, chain, "/tmp", run_time=0.9)
             nothing = cross_mark(0.26, ERR).next_to(chain.root_label, RIGHT, buff=0.2)
             self.play(Create(nothing), run_time=0.4)
             vo.wait_until("or you ran docker run")
             self.play(FadeOut(nothing), ReplacementTransform(causes[1], causes[2]), run_time=0.4)
-            chain.reroot(self, None, run_time=0.6)
-            chain.reaim(self, "mega-pipeline/", run_time=0.8)
+            reroot(self, chain, None, run_time=0.6)
+            reaim(self, chain, "mega-pipeline/", run_time=0.8)
             self.play(Indicate(chain.window, color=LOOKUP, scale_factor=1.0),
                       Indicate(chain.folder, color=ERR, scale_factor=1.15), run_time=0.8)
-        self.wait(0.4)
-        chain.reaim(self, None, run_time=0.5)
-        self.play(FadeOut(causes[2]), chain.dim_to(0.3), FadeIn(note, shift=UP * 0.1), run_time=0.6)
-        self.wait(1.2)
+        # the footnote is a different error: V5 leaves, the card stands alone above the strip
+        self.wait(0.3)
+        self.play(FadeOut(causes[2]), FadeOut(chain), FadeIn(note, shift=UP * 0.1), run_time=0.7)
+        self.wait(1.0)
         self.play(Indicate(note[1][1], color=ERR, scale_factor=1.08), run_time=0.7)
-        self.wait(0.9)
+        self.wait(1.0)
 
         # ========================================================== 8 · extra: the folders it made
         ls_rows = 12
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(note), FadeOut(chain), caption_extra(tr), run_time=0.6)
+            self.play(FadeOut(note), caption_extra(tr), run_time=0.6)
             resize(self, t, ls_rows, run_time=0.7)
             c8 = type_cmd(self, t, LS_CMD, 1.2)
             assert hasattr(c8, "rows") and len(c8.rows) == 2, c8

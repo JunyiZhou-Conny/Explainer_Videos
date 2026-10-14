@@ -14,19 +14,21 @@ Beats (script.md "## S08", one voiceover block each):
     `/bin/bash -c "source .venv/bin/activate && exec bash"` (the brackets and commas stay behind);
     its three parts pulse as "bash, dash c, then that string" is said. On "On its own" the GREY
     note "bash -c: run this string, then exit" appears under it and pulses on "runs the string".
- 2  Card and panel fade; the start-up line rises to the top. A TEAL bubble "bash 1" appears (its
-    name copied from the line's `/bin/bash`); inside it "runs source .venv/bin/activate" (copied
-    from the line) and PATH as a door row: `/usr/local/bin` (ORANGE), `…`. "which puts the venv's
-    bin folder first": the doors move right and a GREEN `/.venv/bin` door forms at the front from
-    the `.venv/bin` of the running command. "Then exec bash": `exec bash` underlines in the line,
-    the bubble now runs `exec bash`, and "bash 1" morphs in place into "bash 2 · interactive" (the
+ 2  Card and panel fade, then the start-up line rises to the top (it no longer crosses the card).
+    A TEAL bubble "bash 1" appears (its name copied from the line's `/bin/bash`); inside it "runs
+    source .venv/bin/activate" (copied from the line) and PATH as a door row: `/usr/local/bin`
+    (ORANGE), `…`. "which puts the venv's bin folder first": the doors move right and a GREEN
+    `/.venv/bin` door forms at the front from the `.venv/bin` of the running command. "Then exec
+    bash": `exec bash` underlines in the line, the bubble now runs `exec bash`, and in place
+    "bash 1" becomes "bash 2 · interactive" (the 1 rolls over to 2, " · interactive" joins; the
     door row unchanged); "keeps the new PATH": the GREEN door pulses; "gives you a prompt": the
     capture's prompt `root@473b6edd3dab:/#` (laptop/26 line 2) appears with a blinking cursor.
  3  TRACKER A11. Full terminal (12 rows): `docker build -t simple-translate -f Dockerfile .`
     (two rows) + ▶ your turn -> laptop/24 lines 23-24, 26-27, 29, 30 (wrap). On "Again COPY" line
-    27 `#7 DONE 0.0s` gets a YELLOW bar; on "and Python downloads again" line 30's `Downloading
-    cpython-3.15.0-…` too; on "for one added line" the GREY row tag "one line added · part 2
-    explains" sits beside line 29, pulsing on "Part 2 explains why".
+    27 `#7 DONE 0.0s` gets a YELLOW bar, line 29's `RUN uv sync` pulses on "and uv sync"; on "and
+    Python downloads again" line 30's `Downloading cpython-3.15.0-…` gets a bar too; on "for one
+    added line" the GREY row tag "one line added · part 2 explains" sits beside line 29, pulsing on
+    "Part 2 explains why".
  4  The terminal clears; `docker run --rm -ti simple-translate` (two rows) + ▶ your turn -> the
     bare prompt `root@473b6edd3dab:/#`. "No app in parentheses": GREY tag "no (app)" beside the
     prompt, the prompt pulses. "These extra checks" (TRACKER A11 · extra): the tag slides right,
@@ -35,10 +37,11 @@ Beats (script.md "## S08", one voiceover block each):
     `Python 3.15.0`, `/.venv`). "The fresh bash set its own prompt": GREY tag "not an error" after
     "no (app)". "Then type exit": `exit` (line 8) -> line 9; the laptop prompt returns and pulses
     YELLOW on "back to your laptop".
- 5  TRACKER A12. The terminal clears to the laptop prompt and shrinks to the 3-row strip; the README
-    card (`README.md · lines 167-168`: "Solution Dockerfile:" / `Dockerfile.txt`, 26 pt) appears above it;
-    `Dockerfile.txt` pulses on "Dockerfile.txt". "An extra diff" (A12 · extra): the card moves to
-    the top-right corner (20 pt), the terminal grows to 12 rows and types `diff Dockerfile
+ 5  TRACKER A12. The terminal clears to the laptop prompt and shrinks to the 3-row strip; the
+    README card (`README.md · lines 167-168`: "Solution Dockerfile:" / `Dockerfile.txt`, 26 pt)
+    appears above it; `Dockerfile.txt` pulses on "Dockerfile.txt". "An extra diff" (A12 · extra):
+    the card fades (a full terminal and a picture never share the frame; parked top right it sat
+    on the 12-row terminal's top edge), the terminal grows to 12 rows and types `diff Dockerfile
     Dockerfile.txt` (a full row: its `extra` tag sits right-aligned on the next row) -> laptop/27
     lines 8-18, `+` lines GREEN, `-` lines dim RED. "if yours prints less-than…": the +/- column
     pulses and a two-line GREY note appears in the empty rows: "our diff prints + and −" / "on a
@@ -46,15 +49,18 @@ Beats (script.md "## S08", one voiceover block each):
     "First, three ENV lines": the note goes, the three `+ENV` rows pulse, and GREY row tags appear
     one by one as said: "no apt questions", "UTF-8 text", "logs appear at once".
  6  The tags go; the terminal continues -> laptop/27 "…", 20-26, "…", 33-34 (it scrolls: the rows
-    that leave fade in place rather than fly over the tracker; line 20 is cut by the terminal). "one bigger RUN": an ORANGE bracket right of lines 21-26 with "one
-    RUN: / update, upgrade, / clean, newer pip, uv"; the rows pulse as they are said. "And
-    ENTRYPOINT moved to the end": a YELLOW bracket at lines 33-34, "ENTRYPOINT moved to the end";
-    the ENTRYPOINT row pulses on "the order of ENTRYPOINT and CMD".
+    that leave fade in place, then the kept row moves up, so nothing flies over the tracker or
+    slides across fading rows; line 20 is cut by the terminal). "one bigger RUN": an ORANGE
+    bracket right of lines 21-26 with "one RUN: / update, upgrade, / clean, newer pip, uv"; the
+    rows pulse as they are said. "And ENTRYPOINT moved to the end": a YELLOW bracket at lines
+    33-34, "ENTRYPOINT moved to the end"; the ENTRYPOINT row pulses on "the order of ENTRYPOINT".
  7  TRACKER A12. The terminal clears and shrinks to the strip (the laptop prompt); the README card
-    returns to the centre (26 pt) with the GREY note "the README only names the file" under it. "an extra command"
-    (A12 · extra): `cp Dockerfile.txt Dockerfile` (laptop/28: no output; the prompt returns, row
-    tag `extra` on it); `Dockerfile.txt`, then `Dockerfile`, pulse on "copy it over yours";
-    ▶ your turn on "Pause and do that".
+    fades back in at the centre (26 pt) with the GREY note "the README only names the file" under
+    it. "an extra command" (A12 · extra): `cp Dockerfile.txt Dockerfile` (laptop/28: no output;
+    the prompt returns). The cp line nearly fills its row, so its `extra` tag and, later, its
+    `▶ your turn` hang right-aligned on the prompt row, under the end of the command (as the diff's
+    `extra`). `Dockerfile.txt`, then `Dockerfile`, pulse on "copy it over yours"; ▶ your turn on
+    "Pause and do that".
  8  TRACKER A13. The README card (`README.md · lines 172-174`: "In a terminal make sure you are the
     location of simple-translate") replaces the first one at the top; the terminal clears and grows
     to 10 rows with the laptop prompt; `simple-translate` pulses in the card and in the prompt.
@@ -233,13 +239,14 @@ def scroll_in_place(scene, t, n_new: int, run_time: float = 0.4) -> None:
         return
     gone = VGroup(*t.lines.submobjects[:overflow])
     stay = VGroup(*t.lines.submobjects[overflow:])
-    anims = [FadeOut(gone)]
-    if len(stay):
-        anims.append(stay.animate.shift(UP * t.pitch * overflow))
-    scene.play(*anims, run_time=run_time)
+    # first the rows that leave fade, then the rest move up through the empty rows (moving while
+    # the others fade, the kept rows would slide across them)
+    scene.play(FadeOut(gone), run_time=run_time / 2)
     for m in gone:
         t.lines.remove(m)
         scene.remove(m)
+    if len(stay):
+        scene.play(stay.animate.shift(UP * t.pitch * overflow), run_time=run_time / 2)
 
 
 def clear_with(scene, t, *anims, keep=None, run_time: float = 0.4) -> None:
@@ -375,8 +382,10 @@ class StepCmd(VoiceScene):
         u_exec = under(gl(top_line, STARTUP, "exec bash"), TURN)
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(card, ent, cmd_tile, note1, panel)), line.animate.move_to([0, LINE_Y, 0]),
-                      run_time=0.8)
+            # first the card and the panel go, then the line rises through the empty room (it would
+            # otherwise cross the fading card)
+            self.play(FadeOut(VGroup(card, ent, cmd_tile, note1, panel)), run_time=0.4)
+            self.play(line.animate.move_to([0, LINE_Y, 0]), run_time=0.5)
             self.play(Create(bubble), TransformFromCopy(VGroup(*l_bash[-4:]), name1), run_time=0.8)
             self.play(Create(u_src), FadeIn(runs_w), TransformFromCopy(l_src, runs_src), run_time=0.8)
             self.play(FadeIn(path_l), FadeIn(doors, shift=UP * 0.1), run_time=0.5)
@@ -390,7 +399,14 @@ class StepCmd(VoiceScene):
             vo.wait_until("Then exec bash")
             self.play(FadeOut(u_src), Create(u_exec), FadeOut(runs_src, shift=UP * 0.2),
                       TransformFromCopy(l_exec, runs_exec), Transform(runs_w, runs_w2), run_time=0.7)
-            self.play(Transform(name1, name2), Indicate(bubble, color=IMAGE, scale_factor=1.02), run_time=0.8)
+            # the same bubble, a new bash: "bash" stays, the 1 rolls over to 2, " · interactive" joins
+            # (a letter-by-letter Transform of the whole name scrambles it for most of a second)
+            self.play(FadeOut(name1[5], shift=UP * 0.25), FadeIn(name2[5], shift=UP * 0.25),
+                      Indicate(bubble, color=IMAGE, scale_factor=1.02), run_time=0.5)
+            self.play(FadeIn(VGroup(*name2[6:]), shift=LEFT * 0.15), run_time=0.4)
+            self.remove(name1, *name1)
+            self.add(name2)
+            name1 = name2
             vo.wait_until("that keeps the new PATH")
             self.play(Indicate(path_l, color=ROUTE, scale_factor=1.15),
                       Indicate(venv_door, color=VENV, scale_factor=1.1), run_time=0.8)
@@ -411,17 +427,19 @@ class StepCmd(VoiceScene):
             pin(self, c3.rows[-1], yt3, run_time=0.25)
             self.play(Wiggle(yt3, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.5)
             vo.wait_until("Again COPY")
-            t.print(self, BUILD_OUT, run_time=0.5, wrap=True, lag=0.1)
+            t.print(self, BUILD_OUT, run_time=0.4, wrap=True, lag=0.1)
             r27 = t.find("#7 DONE")
             bar27 = bar_on(self, r27, r27.glyphs, TURN, 0.28)
-            self.play(FadeIn(bar27), Indicate(r27.glyphs, color=TURN, scale_factor=1.12), run_time=0.7)
+            self.play(FadeIn(bar27), Indicate(r27.glyphs, color=TURN, scale_factor=1.12), run_time=0.55)
+            vo.wait_until("and uv sync")
+            r29 = t.find("#8 [4/4] RUN uv sync")
+            self.play(Indicate(substring(r29, "RUN uv sync"), color=TURN, scale_factor=1.1), run_time=0.5)
             vo.wait_until("and Python downloads")
             r30 = t.find("Downloading cpython")
             g30 = substring(r30, "Downloading cpython-3.15.0-linux-x86_64-gnu")
             bar30 = bar_on(self, r30, g30, TURN, 0.28)
             self.play(FadeIn(bar30), Indicate(g30, color=TURN, scale_factor=1.05), run_time=0.7)
             vo.wait_until("for one added line")
-            r29 = t.find("#8 [4/4] RUN uv sync")
             n3 = beside(row_tag("one line added · part 2 explains"), r29)
             pin(self, r29, n3, run_time=0.4)
             vo.wait_until("Part 2 explains")
@@ -473,8 +491,6 @@ class StepCmd(VoiceScene):
         # ========================================================== 5 · the solution file: diff (ENV)
         card_c = card_167(26)
         card_c.move_to([0, 0.75, 0])
-        card_k = card_167(20)
-        card_k.move_to([6.48 - card_k.width / 2, 3.57 - card_k.height / 2, 0])
         note5 = note_box([[("our diff prints + and −", "label")],
                           [("on a Mac, Linux or Git Bash:", "label"), ("diff -u", "mono"),
                            ("for this layout", "label")]])
@@ -488,7 +504,10 @@ class StepCmd(VoiceScene):
             vo.wait_until("Dockerfile.txt")
             self.play(Indicate(card_c.file, color=TURN, scale_factor=1.06), run_time=0.8)
             vo.wait_until("An extra diff")
-            resize(self, t, 12, extra=[Transform(card_c, card_k), track(tr, 12, extra=True)], run_time=0.7)
+            # a full terminal and a picture never share the frame: the card goes while the terminal grows
+            # (parked top right it sat on the 12-row terminal's top edge); it returns in beat 7
+            resize(self, t, 12, extra=[FadeOut(card_c, shift=UP * 0.15), track(tr, 12, extra=True)],
+                   run_time=0.7)
             type_cmd(self, t, DIFF, 0.6)
             out5 = t.print(self, diff_rows(DIFF_A), run_time=0.6, lag=0.06)
             x5 = at_right(xtag(), out5[0])
@@ -517,7 +536,7 @@ class StepCmd(VoiceScene):
         # ========================================================== 6 · one bigger RUN, ENTRYPOINT moved
         with self.voiceover(SAY[6]) as vo:
             unpin(self, [(out5[0], x5), *env_marks], 0.25)
-            scroll_in_place(self, t, len(DIFF_B))
+            scroll_in_place(self, t, len(DIFF_B), run_time=0.6)
             out6 = t.print(self, diff_rows(DIFF_B), run_time=0.5, lag=0.05)
             run_rows = list(out6[2:8])                       # lines 21-26
             ep_rows = list(out6[9:11])                       # lines 33-34
@@ -555,15 +574,17 @@ class StepCmd(VoiceScene):
 
         with self.voiceover(SAY[7]) as vo:
             clear_with(self, t, FadeOut(VGroup(br_run, lab_run, br_ep, lab_ep)), track(tr, 12), run_time=0.4)
-            resize(self, t, STRIP_ROWS, extra=[Transform(card_c, card_c2)], run_time=0.7)
+            resize(self, t, STRIP_ROWS, extra=[FadeIn(card_c2, shift=DOWN * 0.15)], run_time=0.7)
             bare_prompt(self, t)
             self.play(FadeIn(note7, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("So here's the quickest")
-            self.play(Indicate(card_c.file, color=TURN, scale_factor=1.06), run_time=0.8)
+            self.play(Indicate(card_c2.file, color=TURN, scale_factor=1.06), run_time=0.8)
             vo.wait_until("an extra command")
             c7 = type_cmd(self, t, CP, 0.55)
             p7 = bare_prompt(self, t)
-            x7 = beside(xtag(), p7)
+            # the cp line nearly fills its row: its tags hang right-aligned on the next row, under the
+            # end of the command (as the diff's `extra` in beat 5), not after the empty prompt
+            x7 = at_right(xtag(), p7, 6.1 - turn_tag().width - 0.2)
             pin(self, p7, x7, run_time=0.3, anim=AnimationGroup(FadeIn(x7, shift=LEFT * 0.1),
                                                                 track(tr, 12, extra=True)))
             vo.wait_until("copy it over yours")
@@ -580,7 +601,7 @@ class StepCmd(VoiceScene):
         card8 = readme_card((172, 174), body8).move_to([0, 2.22, 0])
 
         with self.voiceover(SAY[8]) as vo:
-            unpin(self, [(p7, x7), (p7, yt7)], 0.25, FadeOut(note7), FadeOut(card_c, shift=UP * 0.1))
+            unpin(self, [(p7, x7), (p7, yt7)], 0.25, FadeOut(note7), FadeOut(card_c2, shift=UP * 0.1))
             clear_with(self, t, track(tr, 13), FadeIn(card8, shift=DOWN * 0.1), run_time=0.5)
             resize(self, t, 10, run_time=0.6)
             p8 = bare_prompt(self, t)

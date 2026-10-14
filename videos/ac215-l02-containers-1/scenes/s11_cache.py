@@ -108,14 +108,16 @@ BRIE49 = LINE49.replace("I love cheese", "I love brie")
 # ------------------------------------------------------------------ layout
 LID = 0.12            # badge centre above its box's lid (compact chain: a seal on the lid)
 LIFT = 0.8            # beat 0: badge centre above the box (room for the feed arrows)
-GAP_C, GAP_G = 0.4, 0.55          # box bottom -> domino top (compact, beat 0)
-BOTTOM_C = 1.58       # compact chain: box bottoms (badge tops 2.77, domino bottoms 0.73: above an 8-row terminal)
+DOM_H = 0.36          # domino height: short enough that a 0.57-tall stamp fits in the compact gap
+GAP_C, GAP_G = 0.58, 0.55         # box bottom -> domino top (compact: the stamp's room, beat 0)
+BOTTOM_C = 1.6        # compact chain: box bottoms (badge tops 2.79, domino bottoms 0.66: above an 8-row terminal)
 BOTTOM_G = -0.7       # beat 0: box bottoms
-BOTTOM_5 = 1.28       # beat 7: the five-step chain (its 3-line box is 0.3 taller)
+BOTTOM_5 = 1.22       # beat 7: the five-step chain (its 3-line box is 0.3 taller; its badge top 2.72)
 PARCEL_TOP = 0.5      # the parcel (title included) under the chain, beats 2-6
 DIP = 1.35            # beat 7: how far COPY . ./ steps out of the row (under the new box, above the parcel)
-FRAME_TOP_7 = -1.0   # beat 7: the parcel's box top (lower, under the sieve; its title moves left)
-CARD = (12.7, 2.3, np.array([0.0, -2.35, 0.0]))   # the ponder card over the strip (w, h, centre)
+FRAME_TOP_7 = -1.2   # beat 7: the parcel's box top (lower, under the sieve; its title moves left)
+SIEVE_H = 1.0         # beat 7: the sieve (a caught item and its dark backing, 0.81, fit inside)
+CARD = (12.7, 2.4, np.array([0.0, -2.35, 0.0]))   # the ponder card over the strip (w, h, centre)
 
 
 def lay(ch: CacheChain, box_bottom: float, lift: float, gap: float) -> CacheChain:
@@ -180,9 +182,10 @@ class LayerCache(VoiceScene):
         fr, head, q, bar = card
         fr.become(RoundedRectangle(width=w, height=h, corner_radius=0.2, stroke_color=TURN, stroke_width=3)
                   .set_fill(S.BG, 1).move_to(c))
-        VGroup(head, q).move_to(fr).shift(UP * 0.12)
-        bar.put_start_and_end_on(fr.get_corner(DL) + np.array([0.3, 0.25, 0]),
-                                 fr.get_corner(DR) + np.array([-0.3, 0.25, 0]))
+        txt = VGroup(head, q).arrange(DOWN, buff=0.25)  # the timer bar runs well under the question
+        txt.move_to(fr).align_to(fr, DOWN).shift(UP * 0.42)
+        bar.put_start_and_end_on(fr.get_corner(DL) + np.array([0.3, 0.22, 0]),
+                                 fr.get_corner(DR) + np.array([-0.3, 0.22, 0]))
         self.play(FadeIn(card, scale=0.95), run_time=0.6)
         self.play(bar.animate(rate_func=linear).become(bar.copy().scale(0.001, about_point=bar.get_start())),
                   run_time=seconds)
@@ -215,7 +218,7 @@ class LayerCache(VoiceScene):
         assert len(SAY) == 8, f"S11 has {len(SAY)} SAY lines; this scene times 8"
 
         tr = tracker_a(16, extra=True)
-        ch = CacheChain(STEPS4, box_h=0.9, domino_h=0.45)
+        ch = CacheChain(STEPS4, box_h=0.9, domino_h=DOM_H)
         ch.set_x(0)
         lay(ch, BOTTOM_G, LIFT, GAP_G)
         feeds = [ch.feeds(i) for i in range(4)]
@@ -279,10 +282,11 @@ class LayerCache(VoiceScene):
         lay(ch.target, BOTTOM_C, LID, GAP_C)
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(mini, mini_t, feed_p), shift=UP * 0.2), MoveToTarget(ch), FadeIn(t),
-                      run_time=0.8)
+            # the chain is out of the terminal's way before the terminal comes in
+            self.play(FadeOut(VGroup(mini, mini_t, feed_p), shift=UP * 0.2), MoveToTarget(ch), run_time=0.6)
+            self.play(FadeIn(t, shift=UP * 0.15), run_time=0.35)
             bare_prompt(self, t)
-            c1 = type_cmd(self, t, BUILD_PLAIN, 1.5)
+            c1 = type_cmd(self, t, BUILD_PLAIN, 1.3)
             r1a, r1b = c1.rows
             pin(self, r1a, beside(row_tag("extra · full log"), r1a), run_time=0.3)
             vo.wait_until("the extra flag")
@@ -310,6 +314,7 @@ class LayerCache(VoiceScene):
         left = -(panel.width + gap + parcel.width) / 2
         parcel.shift(np.array([left + panel.width + gap - parcel.get_left()[0], PARCEL_TOP - parcel.get_top()[1], 0]))
         panel.shift(np.array([left - panel.get_left()[0], parcel.frame.get_center()[1] - src.get_center()[1], 0]))
+        parcel_r = parcel.frame.get_right()[0]           # beat 7 puts the parcel back at this right edge
         bar49 = line_bar(src, 0, TURN, 0.18)
         seed = mini_parcel().move_to([ch.boxes[2].get_center()[0], parcel.frame.get_center()[1], 0])
         names = VGroup(*[it.name_text for it in parcel.items.values()])
@@ -371,8 +376,9 @@ class LayerCache(VoiceScene):
         picture = VGroup(parcel, panel)
 
         with self.voiceover(SAY[4]) as vo:
-            resize(self, t, 8, extra=[FadeOut(picture)], run_time=0.6)
-            c4 = type_cmd(self, t, BUILD_PLAIN, 1.1)
+            self.play(FadeOut(picture, shift=UP * 0.15), run_time=0.3)     # the picture leaves, then the terminal grows
+            resize(self, t, 8, run_time=0.5)
+            c4 = type_cmd(self, t, BUILD_PLAIN, 0.9)
             pin(self, c4.rows[0], beside(row_tag("extra"), c4.rows[0]), run_time=0.25)
             vo.wait_until("FROM and the apt")
             o4a = t.print(self, OUT40_A, run_time=0.4, lag=0.2)
@@ -410,14 +416,16 @@ class LayerCache(VoiceScene):
                                                                 unlight(parcel, "cli.py")], extra_mobs=[g_tail], run_time=0.7)
             vo.wait_until("Same files")
             self.play(pulse(ch.badges[2], IMAGE, 1.5, 0.7))           # the hoped-for match flickers, stays RED
-            resize(self, t, 8, extra=[FadeOut(picture)], run_time=0.6)
-            c5b = type_cmd(self, t, BUILD_PLAIN, 1.0)
+            self.play(FadeOut(picture, shift=UP * 0.15), run_time=0.3)
+            resize(self, t, 8, run_time=0.5)
+            c5b = type_cmd(self, t, BUILD_PLAIN, 0.9)
             pin(self, c5b.rows[0], beside(row_tag("extra"), c5b.rows[0]), run_time=0.25)
             vo.wait_until("No: COPY")
             o5 = t.print(self, OUT41, run_time=0.5, lag=0.15, wrap=True)
             self.play(ch.topple(2, 3), Wiggle(ch.badges[2], scale_value=1.3), run_time=0.85)
             vo.wait_until("Git rewrote")
             resize(self, t, STRIP_ROWS, keep=[o5[0], o5[1], o5[2]], run_time=0.6)
+            parcel.set_x(0)                              # alone now (no code panel): centred under the chain
             self.play(FadeIn(parcel, shift=UP * 0.1), run_time=0.4)
             self.play(parcel.light(".git/index", TURN), run_time=0.4)
             self.play(Indicate(parcel.items[".git/index"], color=TURN, scale_factor=1.2), run_time=0.6)
@@ -430,7 +438,7 @@ class LayerCache(VoiceScene):
 
         # ========================================================== 6 · that was part 1's question
         caption = label("Dockerfile steps 4 and 5: every edit to the Dockerfile changed the parcel", 22, S.GREY)
-        caption.move_to([0, parcel.get_bottom()[1] - 0.55, 0]).align_to(parcel.frame, RIGHT)
+        caption.move_to([0, parcel.get_bottom()[1] - 0.55, 0])
         err = erratum_tag("erratum · expected while learning").next_to(caption, DOWN, buff=0.35)
 
         with self.voiceover(SAY[6]) as vo:
@@ -450,16 +458,16 @@ class LayerCache(VoiceScene):
 
         # ========================================================== 7 · the pattern for your own projects
         # the picture settles lower (room for the tag on top and the sieve under the chain)
-        dy7 = FRAME_TOP_7 - parcel.frame.get_top()[1]
-        pf = parcel.frame.copy().shift(UP * dy7)
+        d7 = np.array([parcel_r - parcel.frame.get_right()[0], FRAME_TOP_7 - parcel.frame.get_top()[1], 0])
+        pf = parcel.frame.copy().shift(d7)              # where the parcel's box goes (right; the card takes the left)
         pattern = stand_in_tag("a pattern for your own projects", "not the course solution")
         pattern.move_to([6.45 - pattern.width / 2, 3.45 - pattern.height / 2, 0])
-        five = CacheChain(STEPS5, box_h=0.9, domino_h=0.45, gap=0.3)
+        five = CacheChain(STEPS5, box_h=0.9, domino_h=DOM_H, gap=0.3)
         five.set_x(0)
         lay(five, BOTTOM_5, LID, GAP_C)
-        sieve = Sieve(pf.width, 0.8, color=S.GREY)
+        sieve = Sieve(pf.width, SIEVE_H, color=S.GREY)
         sieve.title.set_opacity(0)                       # the card names the file
-        sieve.move_to([pf.get_center()[0], pf.get_top()[1] + 0.25 + sieve.frame.height / 2, 0])
+        sieve.shift(np.array([pf.get_center()[0], pf.get_top()[1] + 0.24 + SIEVE_H / 2, 0]) - sieve.frame.get_center())
         sieve.title.next_to(sieve.frame, UP, buff=0.1).align_to(sieve.frame, LEFT)
         di = dockerignore_card()
         di.move_to([-6.35 + di.width / 2, sieve.frame.get_top()[1] - di.height / 2, 0])
@@ -471,10 +479,15 @@ class LayerCache(VoiceScene):
         mapping = {0: 0, 1: 1, 2: 4, 3: 3}
 
         def catch(name):
-            """Animation: parcel item `name` rises into the sieve and stays there, GREY."""
+            """Animation: parcel item `name` rises into the sieve and stays there, GREY, on a dark patch
+            of the mesh (the grid lines don't cross its name). Items keep their common baseline."""
             it = parcel.items[name]
+            dy = catch_y - parcel.items["cli.py"].get_center()[1]          # cli.py: a full-height item
+            patch = Rectangle(width=it.width + 0.12, height=0.81, stroke_width=0).set_fill(S.BG, 0)
+            patch.move_to([it.get_center()[0], catch_y, 0])
+            self.add(patch)
             self.bring_to_front(it)
-            return it.animate.shift(UP * (catch_y - it.get_center()[1])).set_color(S.GREY)
+            return AnimationGroup(patch.animate.set_fill(S.BG, 0.92), it.animate.shift(UP * dy).set_color(S.GREY))
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(caption, err)), FadeOut(VGroup(*ch.stamps.values())), ch.badge(2, IMAGE),
@@ -483,7 +496,7 @@ class LayerCache(VoiceScene):
             ch.generate_target()
             lay(ch.target, BOTTOM_5, LID, GAP_C)
             parcel.generate_target()
-            parcel.target.shift(UP * dy7)
+            parcel.target.shift(d7)
             parcel.target.title.next_to(parcel.target.frame, LEFT, buff=0.3)
             self.play(MoveToTarget(ch), MoveToTarget(parcel), run_time=0.6)
             self.play(FadeIn(pattern, shift=DOWN * 0.1), run_time=0.4)
@@ -530,6 +543,6 @@ class LayerCache(VoiceScene):
             self.play(pulse(st[3], IMAGE, 1.2))
             self.play(FadeIn(foot, shift=UP * 0.1), run_time=0.4)
 
-        self.wait(0.8)
+        self.wait(1.2)                                   # time to read the footnote
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)
