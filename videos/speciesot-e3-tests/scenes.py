@@ -296,15 +296,15 @@ class S02(Ep):
             .move_to([5.0, .82, 0])
         table = VGroup(head, rlab, vals, tframe)
         tname = left("x: 3 cells × 2 genes", 2.75, 1.92, 17, GRAY)
-        pl = Plot(4.45, -.95, 1.6, -.6, 2.6)
+        pl = Plot(4.45, -.82, 1.6, -.6, 2.6)
         pbox = pl.box()
         truth = dots(pl, x, INK, .07)
         pred = rings(pl, x, GRAY, .14, 2.5)
-        leg = VGroup(Circle(radius=.075, color=GRAY, stroke_width=2.2).move_to([2.95, -2.0, 0]),
-                     left("predicted", 3.12, -2.0, 17, GRAY),
-                     Dot([4.6, -2.0, 0], radius=.055, color=INK),
-                     left("truth", 4.75, -2.0, 17, INK))
-        same = at("the same cloud", 4.45, -2.32, 19, RED, bold=True)
+        leg = VGroup(Circle(radius=.075, color=GRAY, stroke_width=2.2).move_to([2.95, -1.85, 0]),
+                     left("predicted", 3.12, -1.85, 17, GRAY),
+                     Dot([4.6, -1.85, 0], radius=.055, color=INK),
+                     left("truth", 4.75, -1.85, 17, INK))
+        same = at("the same cloud", 4.45, -2.17, 19, RED, bold=True)
         with self.say(0) as vo:
             self.cue(vo, .02, FadeIn(test, shift=UP * .1), run_time=.6)
             vo.wait_until("Three cells")
@@ -393,7 +393,7 @@ class S02(Ep):
             self.play(FadeIn(bad, shift=UP * .1), FadeIn(bad_lab), FadeIn(bad_tag),
                       FadeIn(bad_note), run_time=.5)
             vo.wait_until("both numbers")
-            self.play(Create(red_box(VGroup(bad.lines[2], bad.lines[3]), .08)), run_time=.5)
+            self.play(Create(red_box(VGroup(bad.lines[2], bad.lines[3]), .08)), run_time=.35)
         self.finish()
 
 
@@ -915,8 +915,8 @@ class S06(Ep):
         rows_y = [-1.65, -.15, 1.33]
         texts = [("one class · toy arrays", "milliseconds"),
                  ("whole Experiment · tiny h5ad files", "seconds"),
-                 ("e24_replica.ipynb · the real atlas", "minutes to hours · on the cluster")]
-        widths = [.25, 1.2, 3.3]
+                 ("e24_replica.ipynb · real atlas · cluster", "minutes to hours")]
+        widths = [.2, .9, 2.3]
         counts = [("write many", 12), ("a handful", 3), ("once the rest is green", 1)]
         for (t1, t2), wbar, (cnt, n), y in zip(texts, widths, counts, rows_y):
             r1 = left(t1, ax, y + .42, 21, INK, bold=True)
@@ -938,10 +938,11 @@ class S06(Ep):
             self.play(LaggedStart(*[FadeIn(d, scale=1.5) for d in ann[0][3]], lag_ratio=.08),
                       FadeIn(ann[0][4]), run_time=.8)
 
-        toy = mono_left("Tests/toy_config.yaml", ax, -1.0 + .02, 18, INK)
-        seed = left("seed of this layer", ax + 3.15, -.98, 19, RED, bold=True)
-        upd = VGroup(mono_left("setup() → KeyError: 'experiment'", ax, -1.38, 16, GRAY),
-                     source_tag("MEASURED").scale(.9).move_to([ax + 4.55, -1.38, 0]))
+        toy = mono_left("Tests/toy_config.yaml", ax, -1.05, 19, INK)
+        seed = left("the seed of this layer", ax, -1.42, 20, RED, bold=True)
+        upd = VGroup(left("needs updating first:", ax, -1.82, 18, GRAY),
+                     mono_left("setup() → KeyError: 'experiment'", ax, -2.15, 17, INK))
+        upd.add(source_tag("MEASURED").scale(.9).next_to(upd[0], RIGHT, buff=.3))
         with self.say(1) as vo:
             self.cue(vo, .02, tiers[0].animate.set_stroke(INK), tiers[1].animate.set_stroke(RED),
                      FadeIn(names[1]), FadeIn(subs[1]), run_time=.5)
@@ -953,15 +954,16 @@ class S06(Ep):
             self.play(LaggedStart(*[FadeIn(d, scale=1.5) for d in ann[1][3]], lag_ratio=.2),
                       FadeIn(ann[1][4]), run_time=.6)
             vo.wait_until("toy_config")
-            self.play(ann[0].animate.set_opacity(.15), FadeIn(toy), FadeIn(seed), run_time=.5)
+            self.play(FadeOut(ann[0]), FadeIn(toy), FadeIn(seed), run_time=.5)
             vo.wait_until("brought up to date")
             self.play(FadeIn(upd, shift=UP * .08), run_time=.5)
 
-        oks = VGroup(tick(cx + 2.35, -1.45, 30, INK), tick(cx + 1.6, .0, 30, INK))
+        oks = VGroup(tick(0, 0, 30, INK).next_to(names[0], RIGHT, buff=.25),
+                     tick(0, 0, 30, INK).next_to(names[1], RIGHT, buff=.2))
         with self.say(2) as vo:
             self.cue(vo, .02, tiers[1].animate.set_stroke(INK), tiers[2].animate.set_stroke(RED),
                      FadeIn(names[2]), FadeIn(subs[2]), FadeOut(toy), FadeOut(seed), FadeOut(upd),
-                     ann[0].animate.set_opacity(1), run_time=.5)
+                     FadeIn(ann[0]), run_time=.5)
             self.play(FadeIn(ann[2][0]), run_time=.4)
             vo.wait_until("minutes to hours")
             self.play(GrowFromEdge(ann[2][1], LEFT), FadeIn(ann[2][2]), run_time=.8)
@@ -976,11 +978,13 @@ class S06(Ep):
 
         lx = 3.5
         steps = ["change one thing", "run pytest", "see green", "then: the notebook"]
-        ys = [1.55, .55, -.45, -1.75]
+        ys = [1.6, .45, -.7, -2.0]
         nodes = VGroup(*[chip(s, lx, y, INK if i < 3 else RED, 21, font=LATIN)
                          for i, (s, y) in enumerate(zip(steps, ys))])
-        links = VGroup(*[arrow(nodes[i].get_bottom(), nodes[i + 1].get_top(), INK)
-                         for i in range(3)])
+        links = VGroup(*[Arrow(nodes[i].get_bottom(), nodes[i + 1].get_top(), buff=.08,
+                               color=INK if i < 2 else RED, stroke_width=3,
+                               max_tip_length_to_length_ratio=.3) for i in range(3)])
+        tok = Dot([lx - 2.0, ys[0], 0], radius=.08, color=RED)
         back = CurvedArrow(nodes[2].get_right() + RIGHT * .05, nodes[0].get_right() + RIGHT * .05,
                            angle=PI / 1.6, color=GRAY, stroke_width=2.5, tip_length=.18)
         loop_lab = at("loop", lx + 2.45, .55, 19, GRAY)
@@ -989,15 +993,16 @@ class S06(Ep):
                      FadeOut(first),
                      tiers[2].animate.set_stroke(INK), run_time=.4)
             vo.wait_until("change one")
-            self.play(FadeIn(nodes[0]), run_time=.3)
+            self.play(FadeIn(nodes[0]), FadeIn(tok), run_time=.3)
             vo.wait_until("run pytest")
-            self.play(Create(links[0]), FadeIn(nodes[1]), run_time=.35)
+            self.play(GrowArrow(links[0]), FadeIn(nodes[1]), tok.animate.move_to([lx - 2.0, ys[1], 0]),
+                      run_time=.35)
             vo.wait_until("see green")
-            self.play(Create(links[1]), FadeIn(nodes[2]), Create(back), FadeIn(loop_lab),
-                      run_time=.45)
+            self.play(GrowArrow(links[1]), FadeIn(nodes[2]), Create(back), FadeIn(loop_lab),
+                      tok.animate.move_to([lx - 2.0, ys[2], 0]), run_time=.45)
             vo.wait_until("only then")
-            self.play(Create(links[2]), FadeIn(nodes[3]), Indicate(names[2], color=RED),
-                      run_time=.5)
+            self.play(GrowArrow(links[2]), FadeIn(nodes[3]), Indicate(names[2], color=RED),
+                      tok.animate.move_to([lx - 2.0, ys[3], 0]), run_time=.5)
         self.finish()
 
 
@@ -1006,67 +1011,73 @@ class S06(Ep):
 class S07(Ep):
     def construct(self):
         self.header()
-        c1 = card("a question with a known answer", "pytest runs every test_* function",
-                  -3.15, 1.15, 6.0, 1.55, accent=True)
-        mini = terminal(["$ pytest", "."], -3.15, -.2, width=2.6, size=20)
-        with self.say(0) as vo:
-            self.cue(vo, .03, FadeIn(c1, shift=UP * .1), run_time=.5)
-            vo.wait_until("pytest finds")
-            self.play(FadeIn(mini, shift=UP * .1), run_time=.5)
 
-        c2 = card("known answers come from meaning", "", 3.15, 1.15, 6.0, 1.55)
+        def frame(x, accent=False):
+            return Rectangle(width=6.0, height=2.0, stroke_color=RED if accent else INK,
+                             stroke_width=2, fill_color=PAPER, fill_opacity=1).move_to([x, 1.0, 0])
+        f1 = frame(-3.15, accent=True)
+        t1 = left("a question with a known answer", -5.95, 1.62, 26, RED, 5.6, True)
+        mini = terminal(["$ pytest", "."], -4.75, .6, width=2.0, size=20)
+        runs = VGroup(left("finds and runs every", -3.45, .8, 20, GRAY),
+                      left("test_* function", -3.45, .45, 20, GRAY))
+        with self.say(0) as vo:
+            self.cue(vo, .03, FadeIn(f1), FadeIn(t1, shift=UP * .08), run_time=.5)
+            vo.wait_until("pytest finds")
+            self.play(FadeIn(mini, shift=UP * .08), FadeIn(runs), run_time=.5)
+            self.play(Indicate(mini.lines[1], color=RED, scale_factor=1.6), run_time=.5)
+
+        f2 = frame(3.15, accent=True)
+        t2 = left("known answers come from meaning", .35, 1.62, 26, RED, 5.6, True)
+        dy = .78
+        ring_pts = [(.55, dy + .12), (.75, dy - .1), (.95, dy + .18), (.62, dy - .25),
+                    (1.0, dy - .05)]
+        a1 = VGroup(*[Circle(radius=.075, color=GRAY, stroke_width=2).move_to([px, py, 0])
+                      for px, py in ring_pts])
+        b1 = VGroup(*[Dot([px, py, 0], radius=.05, color=INK) for px, py in ring_pts])\
+            .shift(RIGHT * .55 + UP * .1)
+        r1 = mono("= 0", 24, INK, bold=True).move_to([2.0, dy, 0])
+        ys_ = [dy + .25, dy, dy - .25]
+        p_l = VGroup(*[Dot([2.75, y, 0], radius=.055, color=GRAY) for y in ys_])
+        p_r = VGroup(*[Dot([3.45, y, 0], radius=.055, color=INK) for y in ys_])
+        p_ln = VGroup(*[Line([2.8, y, 0], [3.4, y, 0], color=INK, stroke_width=2) for y in ys_])
+        r2 = mono("= 1", 24, INK, bold=True).move_to([4.05, dy, 0])
+        bar = Rectangle(width=.28, height=.02, stroke_width=0, fill_color=INK,
+                        fill_opacity=1).move_to([4.95, dy - .38, 0])
+        r3 = mono("↑", 26, INK, bold=True).move_to([5.45, dy, 0])
+        labs = VGroup(at("identical", 1.05, .23, 17, GRAY), at("perfect", 3.25, .23, 17, GRAY),
+                      at("more shift", 5.15, .23, 17, GRAY))
         with self.say(1) as vo:
-            self.cue(vo, .02, c1.animate.set_opacity(1), c1[0].animate.set_stroke(INK),
-                     c1[1].animate.set_color(INK), FadeIn(c2, shift=UP * .1), run_time=.5)
-            demo_y = -.45
-            # identical -> 0: two clouds merge
-            a1 = VGroup(*[Dot([1.0 + dx, demo_y + dy, 0], radius=.05, color=GRAY)
-                          for dx, dy in ((0, 0), (.18, .12), (-.12, .18), (.1, -.15))])
-            b1 = a1.copy().set_color(INK).shift(RIGHT * .7)
-            t1 = at("→ 0", 2.25, demo_y, 24, INK, bold=True)
-            # perfect -> 1: pairs line up
-            ys_ = [demo_y + .25, demo_y, demo_y - .25]
-            p_l = VGroup(*[Dot([3.0, y, 0], radius=.05, color=GRAY) for y in ys_])
-            p_r = VGroup(*[Dot([3.7, y, 0], radius=.05, color=INK) for y in ys_])
-            p_ln = VGroup(*[Line([3.05, y, 0], [3.65, y, 0], color=INK, stroke_width=2)
-                            for y in ys_])
-            t2 = at("→ 1", 4.3, demo_y, 24, INK, bold=True)
-            # more shift -> more distance: a bar grows
-            bar = Rectangle(width=.3, height=.02, stroke_width=0, fill_color=INK,
-                            fill_opacity=1).move_to([5.3, demo_y - .4, 0])
-            t3 = at("↑", 5.8, demo_y, 28, INK, bold=True)
-            labs = VGroup(at("identical", 1.35, demo_y - .7, 17, GRAY),
-                          at("perfect", 3.35, demo_y - .7, 17, GRAY),
-                          at("more shift", 5.4, demo_y - .7, 17, GRAY))
+            self.cue(vo, .02, f1.animate.set_stroke(INK), t1.animate.set_color(INK),
+                     mini.lines[1].animate.set_color("#D9D5CB"), FadeIn(f2),
+                     FadeIn(t2, shift=UP * .08), run_time=.5)
             vo.wait_until("identical clouds")
             self.play(FadeIn(a1), FadeIn(b1), FadeIn(labs[0]), run_time=.3)
-            self.play(b1.animate.move_to(a1.get_center()), FadeIn(t1), run_time=.6)
+            self.play(b1.animate.move_to(a1.get_center()), FadeIn(r1), run_time=.6)
             vo.wait_until("a perfect")
             self.play(FadeIn(p_l), FadeIn(p_r), FadeIn(labs[1]), run_time=.3)
-            self.play(Create(p_ln), FadeIn(t2), run_time=.5)
+            self.play(Create(p_ln), FadeIn(r2), run_time=.5)
             vo.wait_until("more shift")
             self.play(FadeIn(bar), FadeIn(labs[2]), run_time=.2)
-            self.play(bar.animate.stretch_to_fit_height(.8).move_to([5.3, demo_y, 0]),
-                      FadeIn(t3), run_time=.6)
+            self.play(bar.animate.stretch_to_fit_height(.78).move_to([4.95, dy, 0]),
+                      FadeIn(r3), run_time=.6)
 
-        ex_head = left("your exercises · 练习", -6.1, -1.3 + .08, 22, INK, bold=True)
+        ex_head = left("your exercises · 练习", -6.1, -.5, 24, INK, bold=True)
         tasks = ["turn each known answer into a test",
-                 "move test_model.py into a test function with tiny files",
+                 "move test_model.py's code into a test function that uses tiny files",
                  "decide which R² the experiment means"]
-        boxes = VGroup()
-        tlabs = VGroup()
-        ex_x = -2.6
-        ys = [-1.25, -1.72, -2.19]
-        for t, y in zip(tasks, ys):
-            boxes.add(Square(side_length=.28, stroke_color=INK, stroke_width=2).move_to([ex_x, y, 0]))
-            tlabs.add(left(t, ex_x + .3, y, 21, INK))
+        boxes, tlabs = VGroup(), VGroup()
+        for t, y in zip(tasks, [-1.05, -1.52, -1.99]):
+            boxes.add(Square(side_length=.28, stroke_color=INK, stroke_width=2)
+                      .move_to([-5.95, y, 0]))
+            tlabs.add(left(t, -5.6, y, 22, INK))
         with self.say(2) as vo:
-            self.cue(vo, .02, FadeIn(ex_head), run_time=.4)
+            self.cue(vo, .02, f2.animate.set_stroke(INK), t2.animate.set_color(INK),
+                     FadeIn(ex_head), run_time=.4)
             for i, w in enumerate(["turn each", "move test_model", "decide which"]):
                 vo.wait_until(w)
-                anims = [FadeIn(boxes[i]), FadeIn(tlabs[i], shift=RIGHT * .1),
-                         boxes[i].animate.set_stroke(RED)]
+                anims = [FadeIn(boxes[i]), FadeIn(tlabs[i], shift=RIGHT * .1)]
                 if i:
-                    anims.append(boxes[i - 1].animate.set_stroke(INK))
+                    anims += [boxes[i - 1].animate.set_stroke(INK)]
                 self.play(*anims, run_time=.45)
+                self.play(boxes[i].animate.set_stroke(RED, 3), run_time=.2)
         self.finish()

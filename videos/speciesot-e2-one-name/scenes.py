@@ -112,11 +112,15 @@ def under(m, color=RED, buff=.06, stroke=3):
 
 
 def lag(scene, *anims, lag_ratio=.2, run_time=1.0):
-    """LaggedStart, then drop the helper Group that Scene.play adds as a top-level mobject
-    (otherwise self.content() misses it and its members survive later fade-outs)."""
-    ls = LaggedStart(*anims, lag_ratio=lag_ratio)
+    """LaggedStart without stray Groups. Manim 0.19 adds a plain Group of the non-introducer
+    targets as a top-level mobject (pulling them out of their parents); a plain Group is not a
+    VMobject, so EpisodeScene.content() would miss it and its members would survive later
+    fade-outs. Use a VGroup instead, and drop the empty Group left by introducer-only lists."""
+    mobs = [a.mobject for a in anims if not a.is_introducer()]
+    ls = LaggedStart(*anims, lag_ratio=lag_ratio, group=VGroup(*mobs) if mobs else None)
     scene.play(ls, run_time=run_time)
-    scene.remove(ls.group)
+    if not mobs:
+        scene.remove(ls.group)
 
 
 def tb_block(lines, x, y, width, size=19, color="#D9D5CB"):
@@ -578,11 +582,11 @@ class S04(Ep):
         dspec = [("random_state", "0"), ("hidden_units", "[256, 256]"), ("lr", "0.001"),
                  ("use_all_genes", "True"), ("x_dimensions", "1000")]
         dx = -4.25
-        dstack = VGroup(*[drawer(k, v, dx, 1.5 - i * .6, width=4.0, size=17)
+        dstack = VGroup(*[drawer(k, v, dx, 1.35 - i * .6, width=4.0, size=17)
                           for i, (k, v) in enumerate(dspec)])
         ds_s = plural_s(dstack[4][2], "'x_dimensions'")
-        miss = empty_drawer("x_dimension", dx, 1.5 - 5 * .6 - .12, width=4.0, size=17)
-        dhead = mono("toy_config['models']['scGenModel']", 15, GRAY).move_to([dx, 2.0, 0])
+        miss = empty_drawer("x_dimension", dx, 1.35 - 5 * .6 - .12, width=4.0, size=17)
+        dhead = mono("toy_config['models']['scGenModel']", 15, GRAY).move_to([dx, 1.85, 0])
         p220 = cpanel([(220, CORE[220])], CORE_PATH, 2.8, 1.5, width=7.0, size=16)
         answer = mono("KeyError", 40, RED, bold=True).move_to([3.3, -.5, 0])
         kerr = error_card("KeyError", KEY_MSG, "speciesot_core.py:220 in __init__", 3.3, -.8,
@@ -595,7 +599,6 @@ class S04(Ep):
             vo.wait_until("Build scGenModel")
             self.play(FadeOut(m19), ReplacementTransform(toy, dstack), FadeIn(dhead),
                       run_time=.8)
-            self.add(ds_s)
             vo.wait_until("line 220")
             m220 = rmark(p220, 220)
             self.play(FadeIn(p220, shift=LEFT * .1), run_time=.4)
@@ -606,10 +609,9 @@ class S04(Ep):
             self.play(pr.animate.move_to([dx + 2.0 + pr.width / 2 + .15, dstack[0].get_y(), 0]),
                       run_time=.5)
             ls = LaggedStart(*[Indicate(d[2], color=INK, scale_factor=1.08) for d in dstack],
-                             lag_ratio=.15)
+                             lag_ratio=.15, group=VGroup(*[d[2] for d in dstack]))
             self.play(pr.animate.move_to([dx + 2.0 + pr.width / 2 + .15, dstack[4].get_y(), 0]),
                       ls, run_time=.8)
-            self.remove(ls.group)
             self.play(Circumscribe(ds_s, color=RED, buff=.04), run_time=.4)
             self.play(ReplacementTransform(answer, kerr[2]), FadeIn(VGroup(*kerr[:2], *kerr[3:])),
                       run_time=.5)
@@ -635,7 +637,15 @@ class S04(Ep):
             self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.4)
             self.play(FadeIn(obj, shift=RIGHT * .1), FadeIn(p253, shift=LEFT * .1), run_time=.5)
             vo.wait_until("never received")
+            noslot = VGroup(DashedVMobject(Rectangle(width=obj[0].width, height=.5, color=GRAY,
+                                                     stroke_width=2), num_dashes=40),
+                            mono("x_dimensions = ?", 18, GRAY))
+            noslot.move_to([obj.get_x(), obj.get_bottom()[1] - .4, 0])
+            noslot[1].move_to([obj[0].get_left()[0] + .22 + noslot[1].width / 2, noslot.get_y(), 0])
+            plural_s(noslot[1], "x_dimensions = ?")
+            self.play(Create(noslot[0]), FadeIn(noslot[1]), run_time=.5)
             pr = probe("x_dimensions", 17).move_to([1.2, -.2, 0])
+            pr[1].set_color(INK)
             plural_s(pr[1], "x_dimensions")
             vo.wait_until("line 253")
             m253 = rmark(p253, 253)
@@ -764,13 +774,15 @@ class S05(Ep):
             m2 = rmark(p, 104)
             self.play(ReplacementTransform(m, m2), run_time=.4)
 
-        p104 = cpanel([(104, CORE[104])], CORE_PATH, -1.05, 1.55, width=10.5, size=16)
+        p104 = cpanel([(104, CORE[104])], CORE_PATH, -1.0, 1.55, width=10.6, size=16)
         s104 = plural_s(p104.row(104), CORE[104])[0]
         m104 = rmark(p104, 104)
         dfr = dict_frame("model_config   (toy data, 4 genes)", -6.3, .55, 4.6, 1.75)
         dsing = drawer("x_dimension", "1000", -4.0, -.12, width=4.3, size=19)
         dplur = drawer("x_dimensions", "4", -4.0, -.74, width=4.3, size=19)
         plural_s(dplur[2], "'x_dimensions'")
+        dsing.set_z_index(1)
+        dplur.set_z_index(1)
         lab1 = left("singular · typed by hand", -1.3, -.12, 18, GRAY)
         lab2 = left("with an s · the real count", -1.3, -.74, 18, GRAY)
         with self.say(1) as vo:
@@ -795,13 +807,13 @@ class S05(Ep):
         nb = cpanel(out_rows, NB_PATH + " · Out", 4.05, -.53, width=4.5, size=17, numbers=False)
         plural_s(nb.row(5), out_rows[4][1])
         nb_tag = source_tag("READ IN NOTEBOOK").move_to([4.05, -1.92, 0])
+        nb_note = at("real mouse training file, older config", 4.05, -2.3, 16, GRAY)
         nobody = left("nobody reads this drawer", -1.3, -.74, 18, RED)
         with self.say(2) as vo:
             self.cue(vo, .01, FadeOut(m104), ReplacementTransform(p104, p220), run_time=.6)
             self.play(FadeIn(m220), run_time=.3)
             key = glyphs(p220.row(220), CORE[220], "'x_dimension'")
-            ask = arrow(key.get_bottom() + DOWN * .05, [dsing[2].get_right()[0] + .15,
-                                                        dsing.get_top()[1], 0], RED)
+            ask = arrow(key.get_bottom() + DOWN * .05, dsing.get_corner(UR) + RIGHT * .25, RED)
             self.play(GrowArrow(ask), run_time=.45)
             dsing.generate_target()
             dsing.target.shift(RIGHT * .3)
@@ -811,11 +823,11 @@ class S05(Ep):
             self.play(dplur.animate.set_opacity(.35), ReplacementTransform(lab2, nobody),
                       run_time=.6)
             vo.wait_until("Josh's notebook")
-            self.play(FadeIn(nb, shift=LEFT * .1), FadeIn(nb_tag), run_time=.5)
+            self.play(FadeIn(nb, shift=LEFT * .1), FadeIn(nb_tag), FadeIn(nb_note), run_time=.5)
             vo.wait_until("eighteen thousand")
             m5 = rmark(nb, 5)
             self.play(FadeIn(m5), run_time=.4)
-            link_ = DashedLine(nb.frame.get_left() + DOWN * .55, dplur.get_right() + RIGHT * .05,
+            link_ = DashedLine(nb.frame.get_left() + DOWN * .72, dplur.get_corner(DR) + RIGHT * .05,
                                color=GRAY, stroke_width=2)
             vo.wait_until("nothing reads it")
             self.play(Create(link_), run_time=.5)
@@ -825,4 +837,164 @@ class S05(Ep):
                           "Typed into the config, or always read from the data?", y=-1.1)
             self.cue(vo, .05, self.dim_rest(), run_time=.5)
             self.play(FadeIn(card, shift=UP * .1), run_time=.5)
+        self.finish()
+
+
+# ================================================================ s06
+
+def rule_card(n, title, x, y, w=6.2, h=2.05):
+    frame = Rectangle(width=w, height=h, stroke_color=INK, stroke_width=2, fill_color=PAPER,
+                      fill_opacity=1).move_to([x, y, 0])
+    L, T = frame.get_left()[0], frame.get_top()[1]
+    ring = Circle(radius=.2, color=RED, stroke_width=3).move_to([L + .4, T - .38, 0])
+    num = Text(str(n), font=LATIN, font_size=20, color=RED, weight=BOLD).move_to(ring)
+    t = left(title, L + .75, T - .38, 24, INK, bold=True)
+    g = VGroup(frame, ring, num, t)
+    g.L, g.T = L, T
+    return g
+
+
+class S06(Ep):
+    def construct(self):
+        self.header()
+        xs, ys = [-3.2, 3.2], [1.0, -1.35]
+        slots = VGroup(*[DashedVMobject(Rectangle(width=6.2, height=2.05, color=FAINT,
+                                                  stroke_width=2), num_dashes=60)
+                         .move_to([xs[i % 2], ys[i // 2], 0]) for i in range(4)])
+        with self.say(0) as vo:
+            self.cue(vo, .05, run_time=.1)
+            lag(self, *[Create(sl) for sl in slots], lag_ratio=.2, run_time=.9)
+
+        c1 = rule_card(1, "one spelling", xs[0], ys[0])
+        L, T = c1.L, c1.T
+        r1 = [("config.yaml", CONFIG[37].strip()), ("__init__", "self.config['x_dimension']"),
+              ("attribute", "self.x_dimension")]
+        rows1 = VGroup()
+        for i, (k, code) in enumerate(r1):
+            yy = T - .88 - i * .36
+            rows1.add(VGroup(left(k, L + .35, yy, 17, GRAY), mono_left(code, L + 1.95, yy, 17)))
+        unders1 = VGroup(*[under(glyphs(r[1], code, "x_dimension"), buff=.04, stroke=2.5)
+                           for r, (_, code) in zip(rows1, r1)])
+        c2 = rule_card(2, "derived values are derived", xs[1], ys[0])
+        L2, T2 = c2.L, c2.T
+        ex2 = mono_left("x_dimension = data.shape[1]", L2 + .35, T2 - .9, 17)
+        tag2 = source_tag("EXAMPLE").move_to([L2 + 6.2 - .55, T2 - .38, 0])
+        cells = VGroup(*[Square(.2, stroke_color=INK, stroke_width=1.5).move_to(
+            [L2 + .55 + c * .24, T2 - 1.45 - r * .24, 0]) for r in range(3) for c in range(4)])
+        top_line = line(L2 + .45, T2 - 1.22, L2 + 1.37, T2 - 1.22, INK, 2)
+        glab = left("data: 3 cells × 4 genes", L2 + 1.65, T2 - 1.69, 17, GRAY)
+        with self.say(1) as vo:
+            vo.wait_until("One:")
+            self.play(FadeIn(c1), FadeOut(slots[0]), run_time=.45)
+            lag(self, *[FadeIn(r, shift=RIGHT * .08) for r in rows1], lag_ratio=.25, run_time=.7)
+            vo.wait_until("exactly one name")
+            lag(self, *[Create(u) for u in unders1], lag_ratio=.25, run_time=.8)
+            vo.wait_until("Two:")
+            self.play(FadeIn(c2), FadeOut(slots[1]), FadeIn(ex2), FadeIn(tag2),
+                      *[u.animate.set_color(INK) for u in unders1], run_time=.45)
+            vo.wait_until("the data can tell you")
+            self.play(FadeIn(cells), Create(top_line), FadeIn(glab), run_time=.5)
+            four = mono("4", 20, RED, bold=True).move_to(top_line.get_center() + UP * .16)
+            self.play(FadeIn(four, scale=1.3), run_time=.3)
+            target = ex2.get_right() + RIGHT * .5
+            arrow4 = mono("→", 18, GRAY).move_to(ex2.get_right() + RIGHT * .22)
+            self.play(four.animate.move_to(target), FadeIn(arrow4), run_time=.6)
+
+        c3 = rule_card(3, "fail early", xs[0], ys[1])
+        L3, T3 = c3.L, c3.T
+        ex3 = mono_left("KeyError inside __init__", L3 + .35, T3 - .9, 17)
+        tl = line(L3 + .4, T3 - 1.5, L3 + 5.8, T3 - 1.5, INK, 2)
+        ta, tb_ = L3 + .9, L3 + 5.0
+        ticks = VGroup(line(ta, T3 - 1.4, ta, T3 - 1.6, INK, 2), line(tb_, T3 - 1.4, tb_, T3 - 1.6,
+                                                                    INK, 2))
+        tla = mono("__init__", 16, INK).move_to([ta, T3 - 1.82, 0])
+        tlb = left("1 h into training", tb_ - .9, T3 - 1.82, 17, GRAY)
+        xa = mono("✗", 30, RED, bold=True).move_to([ta, T3 - 1.18, 0])
+        xb = mono("✗", 30, FAINT, bold=True).move_to([tb_, T3 - 1.18, 0])
+        with self.say(2) as vo:
+            vo.wait_until("Three:")
+            self.play(FadeIn(c3), FadeOut(slots[2]), FadeIn(ex3), four.animate.set_color(INK),
+                      run_time=.45)
+            vo.wait_until("the moment the object")
+            self.play(Create(tl), FadeIn(ticks), FadeIn(tla), FadeIn(tlb), run_time=.6)
+            tok = token([L3 + .4, T3 - 1.5, 0], r=.08)
+            self.play(FadeIn(tok), run_time=.15)
+            self.play(tok.animate.move_to([ta, T3 - 1.5, 0]), run_time=.4)
+            vo.wait_until("explodes inside init")
+            self.play(FadeIn(xa, scale=1.6), FadeOut(tok), run_time=.4)
+            vo.wait_until("not an hour")
+            self.play(FadeIn(xb), run_time=.3)
+            self.play(Create(strike(xb, GRAY, 3)), run_time=.3)
+
+        c4 = rule_card(4, "search after a rename", xs[1], ys[1])
+        L4, T4 = c4.L, c4.T
+        cmd = 'grep -rn "x_dimensions" .'
+        ex4 = mono_left(cmd, L4 + .35, T4 - .9, 17)
+        plural_s(ex4, cmd)
+        tag4 = source_tag("EXAMPLE").move_to([L4 + 6.2 - .55, T4 - .38, 0])
+        files = [("speciesot_core.py", "103 104 253"), ("Tests/toy_config.yaml", "19"),
+                 ("Tests/config.yaml", "–")]
+        frows = VGroup()
+        for i, (f, hits) in enumerate(files):
+            yy = T4 - 1.28 - i * .29
+            frows.add(VGroup(mono_left(f, L4 + .35, yy, 16, GRAY), mono_left(hits, L4 + 3.4, yy,
+                                                                               16, GRAY)))
+        rerun = chip("↻ rerun", L4 + 5.35, T4 - 1.57, INK, 18, font=LATIN)
+        with self.say(3) as vo:
+            vo.wait_until("Four:")
+            self.play(FadeIn(c4), FadeOut(slots[3]), FadeIn(ex4), FadeIn(tag4),
+                      xa.animate.set_color(INK), run_time=.45)
+            vo.wait_until("search the whole")
+            scan = line(L4 + .3, T4 - 1.1, L4 + .3, T4 - 1.98, RED, 3)
+            self.play(FadeIn(frows), FadeIn(scan), run_time=.3)
+            self.play(scan.animate.shift(RIGHT * 4.0), run_time=.7)
+            vo.wait_until("YAML files included")
+            self.play(FadeOut(scan), frows[0][1].animate.set_color(INK),
+                      frows[1][1].animate.set_color(RED), frows[1][0].animate.set_color(INK),
+                      run_time=.4)
+            vo.wait_until("Then rerun")
+            self.play(FadeIn(rerun, shift=LEFT * .1), run_time=.4)
+
+        tp = cpanel([(n, TOY_CONFIG[n]) for n in (1, 7, 12, 21)], TOY_PATH, -4.5, .62,
+                    width=3.6, size=17)
+        gap_box = VGroup(DashedVMobject(Rectangle(width=2.15, height=.5, color=RED,
+                                                  stroke_width=2), num_dashes=26),
+                         mono("experiment:", 17, RED))
+        gap_box.move_to([-1.45, 1.15, 0])
+        gap_box[1].move_to(gap_box[0])
+        gap_note = at("missing", -1.45, .7, 17, RED)
+        kerr = error_card("KeyError", "'experiment'", "speciesot_core.py:86 in setup", -3.25,
+                          -1.48, width=5.9, size=20)
+        t1 = left("trap 1 · toy config drifted", -6.2, 1.82, 22, INK, bold=True)
+        t2 = left("trap 2 · YAML None", .3, 1.82, 22, INK, bold=True)
+        div = line(0, 1.95, 0, -2.4, FAINT, 1.5)
+        ra = mono_left(CONFIG[31].strip(), .4, 1.05, 19)
+        ra_src = left("config.yaml:31", .4, .68, 16, GRAY)
+        rb = mono_left("Other: null", .4, .05, 19)
+        a1 = arrow([3.55, 1.05, 0], [4.45, 1.05, 0], INK)
+        a2 = arrow([3.55, .05, 0], [4.45, .05, 0], INK)
+        va = chip("'None'", 5.35, 1.05, RED, 19)
+        vb = chip("None", 5.35, .05, INK, 19)
+        la = at("a str", 5.35, .55, 16, RED)
+        lb = at("empty", 5.35, -.45, 16, GRAY)
+        meas = mono_left("{'IdentityModel': 'None', 'Other': None}", .4, -1.15, 17)
+        msrc = left("yaml.safe_load of these two lines", .4, -1.62, 17, GRAY)
+        mtag = source_tag("MEASURED").move_to([5.55, -1.62, 0])
+        with self.say(4) as vo:
+            self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.35)
+            self.play(FadeIn(t1), FadeIn(t2), Create(div), run_time=.35)
+            vo.wait_until("toy config has drifted")
+            self.play(FadeIn(tp, shift=UP * .1), run_time=.4)
+            vo.wait_until("no experiment section")
+            self.play(Create(gap_box[0]), FadeIn(gap_box[1]), FadeIn(gap_note), run_time=.45)
+            vo.wait_until("line 86")
+            self.play(FadeIn(kerr, shift=UP * .1), run_time=.45)
+            vo.wait_until("None is just")
+            self.play(FadeIn(ra), FadeIn(ra_src), GrowArrow(a1), run_time=.4)
+            vo.wait_until("a string")
+            self.play(FadeIn(va, shift=RIGHT * .1), FadeIn(la), run_time=.35)
+            vo.wait_until("spells an empty value")
+            self.play(FadeIn(rb), GrowArrow(a2), FadeIn(vb, shift=RIGHT * .1), FadeIn(lb),
+                      run_time=.4)
+            self.play(FadeIn(meas), FadeIn(msrc), FadeIn(mtag), run_time=.4)
         self.finish()

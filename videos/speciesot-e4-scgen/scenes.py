@@ -589,3 +589,170 @@ class S04(Ep):
             self.play(Create(boxes), *[n.animate.set_color(RED) for n in (n1, n2, n3)],
                       run_time=.6)
         self.finish()
+
+
+# specs/m1_modern.yaml lines 33-37 in the speciesOT repo (109bf12), verbatim
+M1_ROWS = [(33, "scgen_hidden_units:"), (34, "- 256"), (35, "- 256"),
+           (36, "scgen_latent_dim: 50"), (37, "scgen_lr: 0.001")]
+
+
+def qchip(x, y, size=22):
+    """'scgen' with a red question mark."""
+    c = chip("scgen", x, y, INK, size)
+    q = op("?", c.get_right()[0] + .22, y + .12, 30, RED)
+    return VGroup(c, q)
+
+
+class S05(Ep):
+    def construct(self):
+        self.header()
+        fx0, fx1, fy0, fy1 = -6.3, 2.35, -2.42, 1.6
+        frame = Rectangle(width=fx1 - fx0, height=fy1 - fy0, stroke_color=INK, stroke_width=2)\
+            .move_to([(fx0 + fx1) / 2, (fy0 + fy1) / 2, 0])
+        flab = VGroup(left("your speciesOT project", fx0, 1.85, 20, INK, bold=True),
+                      mono_left("repo @109bf12", -3.35, 1.85, 16, GRAY))
+        one = qchip(-2.4, .3)
+        spots = [(-2.4, .75), (4.45, .3), (-2.4, -1.45)]
+        with self.say(0) as vo:
+            self.cue(vo, .02, Create(frame), FadeIn(flab), run_time=.6)
+            vo.wait_until("trace back")
+            self.play(FadeIn(one, scale=1.2), run_time=.5)
+            vo.wait_until("three different")
+            q3 = [one.copy() for _ in range(3)]
+            self.remove(one)
+            self.play(*[c.animate.move_to([x, y, 0]) for c, (x, y) in zip(q3, spots)],
+                      run_time=.9)
+        # (1) the TensorFlow scgen: a git-ignored nested clone, its own env
+        h1 = VGroup(badge(1, -5.95, 1.3),
+                    left("TensorFlow scgen (VAEArith) · atlas scripts", -5.6, 1.3, 20, INK,
+                         bold=True))
+        f1 = path_folder(-5.95, .72, 8.0, .5, dashed=True)
+        p1 = mono_left("scgen-cellot-ablation/scgen-reproducibility/code", -5.8, .72, 16, INK)
+        ign = chip("git-ignored", 1.33, .72, GRAY, 17, font=LATIN, pad=.14)
+        env = chip("scgen_tf1 · TF 1.15", -4.3, .2, INK, 18)
+        env.move_to([-5.95 + env.width / 2, .2, 0])
+        helpers = left("Josh's helpers ≡ these lines:", -2.45, .2, 18, RED)
+        hpath = mono_left("atlas-paper-vae/scripts/02_eval_metrics.py:151–171", -5.95, -.22,
+                          16, INK)
+        t1 = tag_at("READ IN CODE", 1.6, -.22)
+        with self.say(1) as vo:
+            self.cue(vo, .02, ReplacementTransform(q3[0], h1), run_time=.6)
+            vo.wait_until("separate clone")
+            self.play(Create(f1), FadeIn(p1), run_time=.7)
+            vo.wait_until("git-ignored")
+            self.play(FadeIn(ign, scale=1.1), run_time=.4)
+            vo.wait_until("its own TensorFlow")
+            env[0].set_stroke(RED)
+            env[1].set_color(RED)
+            self.play(FadeIn(env, shift=RIGHT * .1), run_time=.45)
+            vo.wait_until("Josh's helper")
+            self.play(*tint(env, INK), FadeIn(helpers), FadeIn(hpath, shift=UP * .08), FadeIn(t1),
+                      run_time=.5)
+            vo.wait_until("line for line")
+            self.play(Indicate(hpath, color=RED, scale_factor=1.03), run_time=.6)
+        # (2) the pip package: outside the project
+        bx, bw = 4.45, 3.7
+        box2 = Rectangle(width=bw, height=2.6, stroke_color=INK, stroke_width=2)\
+            .move_to([bx, .3, 0])
+        b2 = VGroup(badge(2, 2.85, 1.86),
+                    left("pip package", 3.15, 1.86, 20, INK, bold=True))
+        hdr = mono_left("scgen 2.x (scvi-tools)", 2.8, 1.3, 17, INK)
+        exp = left("exports:", 2.8, .9, 17, GRAY)
+        names = [mono_left(n, 2.8, y_, 20, INK) for n, y_ in
+                 (("SCGEN", .5), ("SCGENVAE", .1), ("VAEArith", -.32))]
+        strike_v = strike(names[2])
+        none_l = left("not in 2.x", 4.65, -.32, 17, RED)
+        t2 = tag_at("READ IN PACKAGE", 3.55, -1.32)
+        t2b = VGroup(tag_at("INFERRED", 5.45, -1.32), at("Josh's env?", 5.45, -1.7, 17, GRAY))
+        core_p = code_panel([(10, "# … (~20s, pulls in scvi-tools/torch) …"), (248, CORE[248]),
+                             (252, CORE[252])], CORE_PATH, -2.85, -1.45, width=6.6, size=16)
+        with self.say(2) as vo:
+            self.cue(vo, .02, q3[2].animate.move_to([1.35, -2.0, 0]),
+                     ReplacementTransform(q3[1], VGroup(box2, b2, hdr)), run_time=.6)
+            vo.wait_until("import scgen")
+            self.play(FadeIn(core_p, shift=UP * .1), run_time=.45)
+            m248 = highlight(self, core_p, 248, run_time=.3)
+            ry = core_p.row_y(248)
+            go = arrow([core_p.frame.get_right()[0] + .05, ry, 0], [2.65, -.6, 0], RED)
+            self.play(GrowArrow(go), FadeIn(exp), *[FadeIn(n) for n in names[:2]], run_time=.7)
+            vo.wait_until("His comment")
+            m10 = core_p.mark(10)
+            self.play(ReplacementTransform(m248, m10), go.animate.set_color(INK), run_time=.4)
+            vo.wait_until("no VAEArith")
+            self.play(FadeIn(names[2]), run_time=.35)
+            self.play(Create(strike_v), FadeIn(none_l), FadeIn(t2), run_time=.5)
+            vo.wait_until("If that's what loads")
+            self.play(FadeIn(t2b), run_time=.4)
+            vo.wait_until("setup stops")
+            m252 = core_p.mark(252)
+            ey = core_p.row_y(252)
+            stop = DashedLine([2.7, -.32, 0], [core_p.frame.get_right()[0] + .05, ey, 0],
+                              color=RED, stroke_width=3, dash_length=.1)
+            stop_l = left("setup stops here", -.3, ey - .02, 17, RED, bold=True)
+            stop_l.next_to(core_p.frame, RIGHT, buff=.1).shift(DOWN * .38)
+            self.play(ReplacementTransform(m10, m252), Create(stop), run_time=.5)
+            self.play(FadeIn(stop_l), run_time=.35)
+        # (3) the vendored CellOT autoencoder
+        h3 = VGroup(badge(3, -5.95, -.75),
+                    left("PyTorch AutoEncoder · cellot folder", -5.6, -.75, 20, INK, bold=True))
+        f3 = path_folder(-5.95, -1.27, 2.95, .46)
+        p3 = mono_left("cellot/cellot_gpu", -5.8, -1.27, 18, INK)
+        vend = left("vendored bunnech/cellot · BSD · your edits", -2.85, -1.27, 18, GRAY)
+        ae = mono_left("AutoEncoder + compute_scgen_shift", -5.95, -1.75, 18, INK)
+        aeloc = mono_left("models/ae.py:22, 175", -.85, -1.75, 16, GRAY)
+        made = left("→ made your benchmark numbers", -5.95, -2.17, 20, RED, bold=True)
+        t3 = tag_at("READ IN CODE", 1.6, -2.17)
+        with self.say(3) as vo:
+            self.cue(vo, .01, *[FadeOut(m) for m in (core_p, m252, go, stop, stop_l)],
+                     run_time=.4)
+            self.play(ReplacementTransform(q3[2], h3), run_time=.6)
+            vo.wait_until("CellOT's source")
+            self.play(Create(f3), FadeIn(p3), run_time=.5)
+            vo.wait_until("with your own edits")
+            self.play(FadeIn(vend), run_time=.4)
+            vo.wait_until("plain autoencoder")
+            self.play(FadeIn(ae, shift=UP * .08), FadeIn(aeloc), run_time=.5)
+            vo.wait_until("same mean shift")
+            self.play(Indicate(ae, color=RED, scale_factor=1.04), run_time=.6)
+            vo.wait_until("That one produced")
+            self.play(FadeIn(made, shift=RIGHT * .1), FadeIn(t3), f3.animate.set_color(RED),
+                      run_time=.5)
+        cfg = code_panel(rows(CONFIG, 32, 40), CONFIG_PATH, -3.6, -.25, width=5.3, size=20)
+        m1 = code_panel(M1_ROWS, "specs/m1_modern.yaml", 3.75, .88, width=4.3, size=19)
+        b3 = VGroup(badge(3, 1.85, 1.86), left("cellot AE spec", 2.15, 1.86, 20, RED, bold=True))
+        spec = left("= the cellot autoencoder's spec", 1.6, -.6, 19, RED, bold=True)
+        tf = chip("TF VAEArith: 2 × 800, fixed", 3.75, -1.45, INK, 19)
+        b1 = badge(1, tf.get_left()[0] - .32, -1.45)
+        tfloc = mono_left("atlas-paper-vae/configs/m2_v08.yaml:27", 1.2, -2.0, 16, GRAY)
+        with self.say(4) as vo:
+            self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.45)
+            self.play(FadeIn(cfg, shift=UP * .1), run_time=.45)
+            ties = VGroup()
+            marks = []
+            for word, a, bs in (("two layers", 34, (33, 34, 35)), ("fifty latent", 38, (36,)),
+                                ("learning rate", 35, (37,))):
+                vo.wait_until(word)
+                ma, mb = cfg.mark(a), m1.mark(*bs)
+                tie = Line([cfg.frame.get_right()[0], cfg.row_y(a), 0],
+                           [m1.frame.get_left()[0], m1.row_y(bs[len(bs) // 2]), 0],
+                           color=RED, stroke_width=2.5)
+                anims = [FadeIn(ma), FadeIn(mb), Create(tie)]
+                if not marks:
+                    anims += [FadeIn(m1, shift=LEFT * .1), FadeIn(b3)]
+                self.play(*anims, run_time=.5)
+                marks += [ma, mb]
+                ties.add(tie)
+            vo.wait_until("That's the cellot")
+            self.play(FadeIn(spec, shift=UP * .08), run_time=.45)
+            vo.wait_until("The TensorFlow model")
+            self.play(FadeIn(tf), FadeIn(b1), FadeIn(tfloc), ties.animate.set_color(GRAY),
+                      spec.animate.set_color(INK), run_time=.5)
+            vo.wait_until("would go nowhere")
+            na = np.array([cfg.frame.get_right()[0], cfg.row_y(34), 0])
+            nb = np.array([b1.get_left()[0] - .05, -1.45, 0])
+            nowhere = DashedLine(na, nb, color=RED, stroke_width=3, dash_length=.1)
+            self.play(Create(nowhere), run_time=.45)
+            mid = na + .5 * (nb - na)
+            self.play(Create(strike(tf[1])), Create(cross(mid[0], mid[1], RED, .14, 4)),
+                      run_time=.45)
+        self.finish()

@@ -33,6 +33,9 @@ STAGE_X = [-4.65, -1.55, 1.55, 4.65]
 # m1_modern.yaml (speciesOT repo at 109bf12), the lines shown on screen, verbatim
 SPEC = {
     1: "experiment_tag: hvg_pearson_residuals_m1_v08_ood",
+    22: "condition_column: condition",
+    23: "source: mouse",
+    24: "target: human",
     4: "data_file: datasets/speciesot-human-mouse-hvg/hvg_pearson_residuals_m1_v08.h5ad",
     25: "holdout_cell_types:",
     26: "- CL:0000875",
@@ -131,6 +134,19 @@ def panel_at(rows_, title, x, top, width, size):
     return code_panel(rows_, title, x, top - probe.frame.height / 2, width=width, size=size)
 
 
+def pill(text, x, y, color=INK, size=20, font=MONO, pad=.22):
+    """A chip whose text sits on a stable baseline, so neighbouring chips share one height."""
+    t = Text("|" + text, font=font, font_size=size, color=color)
+    strut = t[0]
+    t.shift([0, y - strut.get_center()[1], 0])
+    t.remove(strut)
+    t.shift([x - t.get_center()[0], 0, 0])
+    box = RoundedRectangle(corner_radius=.06, width=t.width + 2 * pad, height=strut.height + .22,
+                           stroke_color=color, stroke_width=2, fill_color=PAPER,
+                           fill_opacity=1).move_to([x, y, 0])
+    return VGroup(box, t)
+
+
 def paint(ch, color):
     """Recolour a chip's outline and text (not its paper fill)."""
     ch[0].set_stroke(color=color)
@@ -182,7 +198,7 @@ class S01(Ep):
                       FadeIn(t_path), FadeIn(t_lab, shift=UP * .1), run_time=.4)
             self.play(GrowFromEdge(bar, RIGHT), run_time=1.0)
             vo.wait_until("Where does")
-            hour = chip("next hour?", -4.8, .47, RED, 22, font=LATIN).set_z_index(4)
+            hour = pill("next hour?", -4.8, .47, RED, 22, font=LATIN).set_z_index(4)
             self.play(FadeIn(q, shift=UP * .1), today.animate.set_color(GRAY), run_time=.4)
             self.play(FadeIn(hour, scale=.8), run_time=.2)
             for x in (-.2, 4.35):
@@ -190,8 +206,8 @@ class S01(Ep):
         piles = VGroup(frame, shape, f_path, f_lab, grid, g_path, g_lab, axis, ticks, ends, bar,
                        today, t_path, t_lab)
 
-        plan = chip("plan everything first", 0, 1.45, GRAY, 24, font=LATIN)
-        nodes = [chip(t, x, .05, INK, 24, font=LATIN) for t, x in
+        plan = pill("plan everything first", 0, 1.45, GRAY, 24, font=LATIN)
+        nodes = [pill(t, x, .05, INK, 24, font=LATIN) for t, x in
                  (("run the code", -4.3), ("read the first break", 0), ("fix only that", 4.3))]
         a12 = arrow(nodes[0].get_right(), nodes[1].get_left(), INK)
         a23 = arrow(nodes[1].get_right(), nodes[2].get_left(), INK)
@@ -234,7 +250,7 @@ class S02(Ep):
         self.header()
         y0, ty = .55, .2
         boxes, names, arrows = stage_row(y0, h=1.1)
-        who = chip("IdentityModel", -4.95, 1.68, RED, 21)
+        who = pill("IdentityModel", -4.95, 1.68, RED, 21)
         who_note = left("only · on toy data", who.get_right()[0] + .2, 1.68, 20, GRAY)
         meas = tagline("MEASURED", "identity_end_to_end", 2.35, 1.68, 18)
         token = Dot([-6.1, ty, 0], radius=.11, color=RED).set_z_index(5)
@@ -372,7 +388,7 @@ class S03(Ep):
         stops = VGroup(*[line(x, ty - .1, x, ty + .1, INK, 2) for x in STAGE_X])
         labels = VGroup(*[mono_line(s, x - ADVANCE * 18 * len(s) / 2, 1.6, 18, GRAY)
                           for x, s in zip(STAGE_X, STAGES)])
-        add = VGroup(chip("IdentityModel", -1.6, .75, GRAY, 20), chip("+ scGenModel", 1.6, .75, RED, 20))
+        add = VGroup(pill("IdentityModel", -1.6, .75, GRAY, 20), pill("+ scGenModel", 1.6, .75, RED, 20))
         with self.say(0) as vo:
             self.cue(vo, .02, Create(track), FadeIn(stops), FadeIn(labels), run_time=.5)
             vo.wait_until("add scGen")
@@ -475,15 +491,15 @@ class S03(Ep):
             vo.wait_until("different cell counts")
             self.play(FadeIn(mouse), FadeIn(human), FadeIn(ml), FadeIn(hl), run_time=.5)
             vo.wait_until("line them up")
-            pairs = VGroup(*[line(mx + .07, top - k * .155, hx - .07, top - k * .155, FAINT, 1.5)
+            pairs = VGroup(*[line(mx + .07, top - k * .155, hx - .07, top - k * .155, GRAY, 2)
                              for k in range(5)])
             self.play(LaggedStart(*[Create(p) for p in pairs], lag_ratio=.15),
                       human[5:].animate.set_color(RED), run_time=.6)
             vo.wait_until("at line 313")
             m = highlight(self, panel4, 313, run_time=.35)
         rows_y = [-.62, -1.07, -1.52, -1.97]
-        board = Rectangle(width=8.5, height=2.65, stroke_color=INK, stroke_width=2).move_to(
-            [-1.95, -1.08, 0])
+        board = Rectangle(width=7.6, height=2.65, stroke_color=INK, stroke_width=2).move_to(
+            [-2.4, -1.08, 0])
         head = left("TO-DO · 待办", -5.95, -.1, 22, INK, bold=True)
         todo = []
         for k, (stage, etype, _, ln, *_r) in enumerate(TRAIL):
@@ -506,4 +522,283 @@ class S03(Ep):
                                   lag_ratio=.2), run_time=1.0)
             vo.wait_until("The program")
             self.play(FadeIn(given, shift=LEFT * .1), run_time=.5)
+        self.finish()
+
+
+
+# ---------------------------------------------------------------- s04
+
+GENES = [  # (row label, genes, evidence shown under the bar, READ IN NOTEBOOK)
+    ("mouse train", 18024, "Tests/e24_replica.ipynb   'x_dimensions': 18024"),
+    ("human train", 61759, "Tests/e24_replica.ipynb   n_obs × n_vars = 58931 × 61759"),
+    ("test files", 1000, "e22_batch_correction.ipynb   n_obs=251, n_vars=1000"),
+]
+SLOTS = [("train · mouse", "source_training_data_path"), ("train · human", "target_training_data_path"),
+         ("test · mouse", "source_test_data_path"), ("test · human", "target_test_data_path")]
+
+
+class S04(Ep):
+    def construct(self):
+        self.header()
+        x0, scale, rows_y = -3.6, 9.4 / 61759, [1.6, .72, -.16]
+        names, bars, vals, evid = VGroup(), VGroup(), VGroup(), VGroup()
+        for (name, n, ev), y in zip(GENES, rows_y):
+            names.add(left(name, -6.2, y, 22, INK))
+            bars.add(Rectangle(width=n * scale, height=.3, stroke_width=0, fill_color=INK,
+                               fill_opacity=1).move_to([x0 + n * scale / 2, y, 0]))
+            evid.add(mono_left(ev, x0, y - .33, 16, GRAY))
+        vals.add(mono(f"{GENES[0][1]:,} genes", 20).next_to(bars[0], RIGHT, buff=.15))
+        vals.add(mono(f"{GENES[1][1]:,} genes", 20, PAPER).move_to(bars[1]).align_to(bars[1], RIGHT)
+                 .shift(LEFT * .12).set_z_index(2))
+        vals.add(mono(f"{GENES[2][1]:,} genes", 20, RED).next_to(bars[2], RIGHT, buff=.15))
+        tag = tagline("READ IN NOTEBOOK", "recorded outputs", -6.2, -.95, 17)
+        with self.say(0) as vo:
+            vo.wait_until("Josh's notebook")
+            self.play(FadeIn(tag), run_time=.4)
+            for k, w in enumerate(["mouse training", "human one", "The test files"]):
+                vo.wait_until(w)
+                self.play(FadeIn(names[k]), GrowFromEdge(bars[k], LEFT), FadeIn(evid[k]),
+                          run_time=.8 if k == 1 else .5)
+                self.play(FadeIn(vals[k]), run_time=.3)
+        # L1: one network input (Josh's line 104 sets x_dimensions from the mouse file)
+        cut = x0 + GENES[0][1] * scale
+        gate = DashedLine([cut, 1.95, 0], [cut, -.45, 0], color=RED, dash_length=.08)
+        gate_lab = left("one network input", cut + .12, 1.95, 18, RED)
+        gate_why = left("sized by the mouse file (core line 104)", cut + .15, rows_y[0], 17, GRAY)
+        over = Rectangle(width=x0 + GENES[1][1] * scale - cut, height=.3, stroke_width=0,
+                         fill_color=RED, fill_opacity=1).move_to([(cut + x0 + 9.4) / 2, rows_y[1], 0])
+        t_end = x0 + GENES[2][1] * scale
+        short = DashedVMobject(Rectangle(width=cut - t_end, height=.3, color=RED, stroke_width=2.5),
+                               num_dashes=36).move_to([(cut + t_end) / 2, rows_y[2], 0])
+        same = 4.2
+        axis_lab = VGroup(label("one gene axis", 24, RED, bold=True), label("同一个基因轴", 18, GRAY))\
+            .arrange(DOWN, aligned_edge=LEFT, buff=.08).move_to([x0 + same + .3, .72, 0], aligned_edge=LEFT)
+        data_cls = VGroup(pill("TrainingData", -4.75, -1.75, INK, 20), pill("TestData", -2.0, -1.75, INK, 20))
+        cls_note = mono_left(f"{CORE_PATH}  20–33", -6.2, -2.3, 16, GRAY)
+        slot = DashedVMobject(Rectangle(width=3.9, height=.62, color=RED), num_dashes=48)\
+            .move_to([1.55, -1.75, 0])
+        slot_lab = at("gene alignment · 对齐基因", 1.55, -1.75, 18, RED)
+        inf = source_tag("INFERRED").move_to([3.8, -1.75, 0], aligned_edge=LEFT)
+        with self.say(1) as vo:
+            self.cue(vo, .0, FadeOut(evid), FadeOut(tag), FadeOut(vals), Create(gate), FadeIn(gate_lab),
+                     FadeIn(gate_why), run_time=.5)
+            self.add(over)
+            self.play(FadeIn(over), Create(short), run_time=.5)
+            vo.wait_until("share one gene axis")
+            self.play(*[b.animate.stretch_to_fit_width(same).align_to([x0, 0, 0], LEFT) for b in bars],
+                      FadeOut(over), FadeOut(short), FadeOut(gate), FadeOut(gate_lab), FadeOut(gate_why),
+                      run_time=.9)
+            self.play(FadeIn(axis_lab, shift=LEFT * .1), run_time=.4)
+            vo.wait_until("Lining up genes")
+            self.play(FadeIn(data_cls, shift=UP * .1), FadeIn(cls_note), run_time=.5)
+            vo.wait_until("next to the data")
+            self.play(Create(slot), FadeIn(slot_lab), FadeIn(inf), run_time=.6)
+        # L2: the M1 v08 file is one table + a split recipe; the data classes take four files
+        tx0, tx1, ty0, ty1 = -6.2, -4.0, -1.55, 1.45
+        table = Rectangle(width=tx1 - tx0, height=ty1 - ty0, stroke_color=INK, stroke_width=2,
+                          fill_color=PAPER, fill_opacity=1).move_to([(tx0 + tx1) / 2, (ty0 + ty1) / 2, 0])
+        hatch = VGroup(*[line(tx0, y, tx1, y, FAINT, 1) for y in np.linspace(ty0 + .2, ty1 - .2, 14)])
+        dims = VGroup(left("8,054 cells ×", tx0, -1.88, 20, INK))
+        dims.add(left("1,000 genes", dims[0].get_right()[0] + .12, -1.88, 20, INK))
+        fname = mono_left("hvg_pearson_residuals_m1_v08.h5ad", tx0, 1.85, 16, GRAY)
+        t_tag = source_tag("READ IN CODE").move_to([fname.get_right()[0] + .2, 1.85, 0],
+                                                   aligned_edge=LEFT)
+        recipe = panel_at([(n, SPEC[n]) for n in (22, 23, 24, 25, 26, 28, 31)], SPEC_PATH,
+                          -1.05, 1.5, 5.4, 17)
+        slots = VGroup()
+        for k, (a, b) in enumerate(SLOTS):
+            y = 1.3 - k * .86
+            box = Rectangle(width=4.2, height=.72, stroke_color=INK, stroke_width=2).move_to([4.15, y, 0])
+            slots.add(VGroup(box, left(a, 2.22, y + .14, 19, INK, bold=True),
+                             mono_left(b, 2.22, y - .17, 16, GRAY)))
+        s_head = left("TrainingData · TestData: four paths", 2.05, 1.95, 17, GRAY)
+        mid = (ty0 + ty1) / 2
+        bands = VGroup(*[Rectangle(width=tx1 - tx0, height=.32, stroke_width=0, fill_color=RED,
+                                   fill_opacity=.85).move_to([(tx0 + tx1) / 2, y, 0])
+                         for y in (mid + .45, ty0 + .45)])
+        divider = DashedLine([tx0, mid, 0], [tx1, mid, 0], color=INK, dash_length=.1)
+        sp_lab = VGroup(at("mouse", (tx0 + tx1) / 2, ty1 - .3, 18, GRAY), at("human", (tx0 + tx1) / 2, mid - .3, 18, GRAY))
+        card2 = VGroup(left("CARD 2", -6.2, -2.3, 20, RED, bold=True),
+                       left("split the table into four files", -5.1, -2.3, 20, INK, bold=True))
+        c_tag = source_tag("INFERRED").next_to(card2, RIGHT, buff=.25)
+        with self.say(2) as vo:
+            self.cue(vo, .0, FadeOut(data_cls), FadeOut(cls_note), FadeOut(slot), FadeOut(slot_lab),
+                     FadeOut(inf), FadeOut(names), FadeOut(axis_lab),
+                     ReplacementTransform(bars, VGroup(table, hatch)), run_time=.8)
+            vo.wait_until("already done")
+            done = tick(tx1 + .45, ty1 - .2, .18, RED)
+            self.play(Create(done), run_time=.4)
+            vo.wait_until("The M1")
+            self.play(FadeIn(dims), FadeIn(fname), FadeIn(t_tag), FadeOut(done), run_time=.5)
+            vo.wait_until("a thousand genes")
+            top_edge = line(tx0, ty1, tx1, ty1, RED, 5)
+            self.play(Create(top_edge), dims[1].animate.set_color(RED), run_time=.5)
+            vo.wait_until("split recipe")
+            self.play(FadeIn(recipe, shift=UP * .1), FadeOut(top_edge), dims[1].animate.set_color(INK),
+                      run_time=.5)
+            vo.wait_until("four files")
+            self.play(FadeIn(s_head), LaggedStart(*[FadeIn(sl, shift=LEFT * .1) for sl in slots],
+                                                  lag_ratio=.2), run_time=.9)
+            vo.wait_until("So the real card")
+            m = highlight(self, recipe, 22, 23, 24, run_time=.3)
+            self.play(Create(divider), FadeIn(sp_lab), run_time=.5)
+            m2 = recipe.mark(25, 26, 28)
+            self.play(ReplacementTransform(m, m2), FadeIn(bands), run_time=.5)
+            vo.wait_until("training and test")
+            parts = [Rectangle(width=tx1 - tx0, height=.5, stroke_width=0, fill_color=c,
+                               fill_opacity=1).set_z_index(4)
+                     .move_to([(tx0 + tx1) / 2, y, 0])
+                     for c, y in ((INK, ty1 - .7), (INK, mid - .7), (RED, mid + .45), (RED, ty0 + .45))]
+            self.add(*parts)
+            self.play(*[pc.animate.stretch_to_fit_width(.4).stretch_to_fit_height(.42)
+                        .move_to([5.97, slots[k][0].get_y(), 0]) for k, pc in enumerate(parts)],
+                      run_time=1.0)
+            vo.wait_until("mouse and human")
+            self.play(FadeOut(m2), FadeIn(card2), FadeIn(c_tag), run_time=.4)
+        self.finish()
+
+
+# ---------------------------------------------------------------- s05
+
+class S05(Ep):
+    def construct(self):
+        self.header()
+        grid = tiles(0, .82, h=.28)
+        with self.say(0) as vo:
+            self.cue(vo, .0, LaggedStart(*[FadeIn(t, scale=.6) for t in grid], lag_ratio=.01),
+                     run_time=.7)
+            card = ponder("八十三个 notebook，先复现哪一个？为什么？",
+                          "83 notebooks: which would you replicate first, and why?", y=-1.35)
+            self.play(self.dim_rest(), run_time=.3)
+            self.play(FadeIn(card, shift=UP * .1), run_time=.4)
+        pick = grid[20]
+        quote = VGroup(label("“model-version comparisons are made on the v08 OOD cuts”", 21, INK),
+                       tagline("READ IN CODE", "speciesOT · AGENTS.md, line 41 (the frozen benchmark)",
+                               0, 0, 17))
+        quote.arrange(DOWN, buff=.18).move_to([0, -.95, 0])
+        m1 = VGroup(label("M1 v08 · OOD", 30, RED, bold=True),
+                    label("holdout CL:0000875 · non-classical monocytes", 21, GRAY))
+        m1.arrange(RIGHT, buff=.35).move_to([0, -2.05, 0])
+        spec_rows = [(1, "experiment_tag: …_m1_v08_ood"),
+                     (4, "data_file: …/hvg_pearson_residuals_m1_v08.h5ad")] + \
+                    [(n, SPEC[n]) for n in (25, 26, 28, 31, 32, 33, 34, 35)]
+        spec = panel_at(spec_rows, SPEC_PATH, -2.8, 1.95, 6.9, 16)
+        core_rows = rows(CORE, 162, 166) + [(None, "…"), (212, CORE[212])]
+        core = panel_at(core_rows, CORE_PATH, 3.55, 1.95 - 5 * spec.gap, 5.4, 16)
+        pasted = VGroup(label("pasted · 粘贴", 22, RED, bold=True),
+                        label("same settings, as comments", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT,
+                                                                              buff=.1)
+        pasted.move_to([.95, 1.5, 0], aligned_edge=LEFT)
+        with self.say(1) as vo:
+            self.cue(vo, .0, FadeOut(card), grid.animate.set_opacity(1), run_time=.4)
+            vo.wait_until("frozen benchmark")
+            pick[0].set_stroke(color=RED, width=3)
+            self.play(pick.animate.set_fill(RED, opacity=1).scale(1.6), FadeIn(quote, shift=UP * .1),
+                      run_time=.6)
+            vo.wait_until("M1, version eight")
+            self.play(FadeIn(m1[0], shift=UP * .1), run_time=.4)
+            vo.wait_until("holding out")
+            self.play(FadeIn(m1[1]), run_time=.4)
+            vo.wait_until("Its spec")
+            rest = VGroup(*[t for t in grid if t is not pick])
+            self.play(FadeOut(rest), FadeOut(quote), FadeOut(m1), ReplacementTransform(pick, spec),
+                      run_time=.8)
+            vo.wait_until("pasted its model")
+            self.play(FadeIn(core, shift=LEFT * .1), FadeIn(pasted), run_time=.5)
+            ms = highlight(self, spec, 31, 32, 33, 34, 35, run_time=.3)
+            mc = highlight(self, core, 162, 163, 164, 165, 166, run_time=.3)
+            vo.wait_until("a little above")
+            mk = highlight(self, core, 212, run_time=.35)
+        # L2: the scorecard row and the first golden number
+        csv = panel_at([(1, "model,R2,MMD,…,r2_identity,…"),
+                        (5, "m1 v08 scGen,0.927,0.1737,…,0.5542,…")], CARD_PATH, -2.1, 2.0, 8.2, 18)
+        gold = mono("0.5542", 64, RED, bold=True).move_to([4.35, 1.5, 0])
+        gold_lab = VGroup(label("identity · R² of means", 20, INK),
+                          label("均值 R²", 18, GRAY)).arrange(DOWN, buff=.06).move_to([4.35, .78, 0])
+        metr = panel_at([(n, METRICS[n]) for n in (154, 155, 156, 157)] +
+                        [(None, "    …"), (166, "    r2_identity = _r2_means(control, treated) if …")],
+                        METRICS_PATH, -2.0, .35, 8.4, 16)
+        checks = ["same file", "same split", "R² of means"]
+        cl = VGroup()
+        for k, c in enumerate(checks):
+            y = .05 - k * .55
+            cl.add(VGroup(Square(.3, stroke_color=INK, stroke_width=2).move_to([2.85, y, 0]),
+                          left(c, 3.2, y, 21, INK)))
+        cticks = [tick(2.87, .05 - k * .55, .13, RED) for k in range(3)]
+        result = VGroup(label("→ reproduce 0.5542", 22, RED, bold=True),
+                        label("almost exactly · 几乎精确", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT,
+                                                                           buff=.08)
+        result.move_to([2.7, -1.75, 0], aligned_edge=LEFT)
+        with self.say(2) as vo:
+            self.cue(vo, .0, FadeOut(spec), FadeOut(core), FadeOut(pasted), FadeOut(ms), FadeOut(mc),
+                     FadeOut(mk), run_time=.4)
+            vo.wait_until("scorecard")
+            self.play(FadeIn(csv, shift=DOWN * .1), run_time=.5)
+            vo.wait_until("The identity")
+            m5 = highlight(self, csv, 5, run_time=.3)
+            self.play(TransformFromCopy(csv.row(5), gold), FadeIn(gold_lab), run_time=.8)
+            vo.wait_until("No training")
+            self.play(FadeIn(metr, shift=UP * .1), run_time=.5)
+            mm = highlight(self, metr, 155, run_time=.3)
+            vo.wait_until("no sampling")
+            mm2 = metr.mark(166)
+            self.play(ReplacementTransform(mm, mm2), run_time=.3)
+            vo.wait_until("so once")
+            self.play(FadeIn(cl), run_time=.4)
+            for k, w in enumerate(["same file", "split,", "computes R squared"]):
+                vo.wait_until(w)
+                self.play(Create(cticks[k]), run_time=.25)
+            vo.wait_until("reproduce it")
+            self.play(FadeIn(result, shift=RIGHT * .1), run_time=.4)
+        # L3: scGen's number, the ladder, and 80-cell sampling (cartoon)
+        steps = VGroup()
+        for k, (x0, h) in enumerate(((-6.2, .6), (-4.25, 1.2), (-2.3, 1.8))):
+            steps.add(Rectangle(width=1.85, height=h, stroke_width=0, fill_color=INK if k < 2 else RED,
+                                fill_opacity=1).move_to([x0 + .925, -2.35 + h / 2, 0]))
+        s_txt = VGroup(at("data", -5.275, -2.05, 20, PAPER, bold=True),
+                       at("identity", -3.325, -1.95, 20, PAPER, bold=True),
+                       mono("0.5542", 19, PAPER).move_to([-3.325, -1.55, 0]),
+                       at("scGen", -1.375, -1.8, 20, PAPER, bold=True),
+                       mono("0.927", 19, PAPER).move_to([-1.375, -1.4, 0]))
+        s_cap = VGroup(at("file + split", -5.275, -1.5, 17, GRAY), at("exact", -3.325, -.9, 17, GRAY),
+                       at("± tolerance", -1.375, -.3, 17, RED))
+        adapter = VGroup(label("from the cellot autoencoder", 20, INK, bold=True),
+                         label("your adapter wraps that model", 18, GRAY))\
+            .arrange(DOWN, aligned_edge=LEFT, buff=.08).move_to([-6.2, .2, 0], aligned_edge=LEFT)
+        rng = np.random.default_rng(5)
+        pts = np.clip(rng.normal(0, 1, size=(200, 2)), -2, 2) * [.55, .5] + [1.7, -1.3]
+        dots = VGroup(*[Dot([x, y, 0], radius=.03, color=GRAY) for x, y in pts])
+        cart = left("cartoon · 80-cell subsamples", .55, .25, 17, GRAY)
+        nl_y, nl0, nl1 = -.55, 3.4, 6.1
+        nline = VGroup(line(nl0, nl_y, nl1, nl_y, INK, 2),
+                       mono("0.927", 18, INK).move_to([(nl0 + nl1) / 2, nl_y - .35, 0]))
+        center = (nl0 + nl1) / 2
+        with self.say(3) as vo:
+            self.cue(vo, .0, FadeOut(metr), FadeOut(mm2), FadeOut(cl), *[FadeOut(t) for t in cticks],
+                     FadeOut(result), FadeOut(m5), run_time=.4)
+            self.play(GrowFromEdge(steps[0], DOWN), GrowFromEdge(steps[1], DOWN), FadeIn(s_txt[:3]),
+                      FadeIn(s_cap[:2]), run_time=.6)
+            vo.wait_until("zero point nine")
+            m5 = highlight(self, csv, 5, run_time=.25)
+            self.play(GrowFromEdge(steps[2], DOWN), TransformFromCopy(csv.row(5), s_txt[3:]),
+                      run_time=.8)
+            vo.wait_until("cellot autoencoder")
+            self.play(FadeIn(adapter, shift=RIGHT * .1), run_time=.5)
+            vo.wait_until("It averages")
+            self.play(FadeIn(dots), FadeIn(cart), Create(nline[0]), FadeIn(nline[1]), run_time=.5)
+            marks = VGroup()
+            for d, off in enumerate((-.32, .22, .05)):
+                pick = rng.choice(200, 80, replace=False)
+                sub = VGroup(*[dots[i] for i in pick])
+                mk = line(center + off, nl_y - .14, center + off, nl_y + .14, GRAY, 3)
+                self.play(sub.animate.set_color(RED), run_time=.35)
+                self.play(sub.animate.set_color(GRAY), Create(mk), run_time=.3)
+                marks.add(mk)
+            mean = Triangle(color=RED, fill_color=RED, fill_opacity=1).scale(.1).rotate(PI)\
+                .move_to([center, nl_y + .3, 0])
+            self.play(FadeIn(mean, shift=DOWN * .1), run_time=.3)
+            vo.wait_until("aim within")
+            band = Rectangle(width=1.3, height=.42, stroke_width=0, fill_color=RED, fill_opacity=.18)\
+                .move_to([center, nl_y, 0])
+            self.play(FadeIn(band), FadeIn(s_cap[2]), run_time=.5)
         self.finish()

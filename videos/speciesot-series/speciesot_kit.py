@@ -410,8 +410,16 @@ class EpisodeScene(VoiceScene):
             self.play(*anims, run_time=run_time)
 
     def content(self):
-        """Everything except the header (for dimming and clearing)."""
-        return [m for m in self.mobjects if isinstance(m, VMobject) and m.get_y() < 2.2]
+        """Everything except the header (for dimming and clearing). Scene.play wraps the members
+        of LaggedStart/AnimationGroup in a plain Group (not a VMobject); look inside those too."""
+        out, seen = [], set()
+        for m in self.mobjects:
+            parts = m.submobjects if not isinstance(m, VMobject) else [m]
+            for p in parts:
+                if isinstance(p, VMobject) and p.get_y() < 2.2 and id(p) not in seen:
+                    seen.add(id(p))
+                    out.append(p)
+        return out
 
     def dim_rest(self, opacity=.15):
         return VGroup(*self.content()).animate.set_opacity(opacity)
