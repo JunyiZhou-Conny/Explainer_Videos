@@ -379,24 +379,27 @@ class S03(Ep):
             vo.wait_until("held-out mouse")
             self.play(FadeIn(al), run_time=.4)
             vo.wait_until("Encode them")
-            self.play(FadeIn(steps[0]), steps[0].animate.set_color(RED),
+            steps[0].set_color(RED)
+            self.play(FadeIn(steps[0]),
                       Transform(start, heldout), run_time=.6)
             self.remove(start)
             self.add(heldout)
             vo.wait_until("add delta")
             moved = heldout.copy()
             d2 = darrow.copy()
-            self.play(FadeIn(steps[1]), steps[1].animate.set_color(RED),
-                      steps[0].animate.set_color(INK),
+            steps[1].set_color(RED)
+            self.play(FadeIn(steps[1]), steps[0].animate.set_color(INK),
                       d2.animate.shift(A_C - M_C), run_time=.5)
             self.play(moved.animate.shift(DELTA).set_stroke(RED), run_time=.9)
             vo.wait_until("decode.")
             link = arrow([steps[2].get_right()[0] + .15, -1.73, 0],
                          out_bar.get_left() + LEFT * .05 + DOWN * .25, RED)
+            steps[2].set_color(RED)
             self.play(FadeIn(steps[2]), steps[1].animate.set_color(INK), Create(link),
                       FadeIn(out_bar), run_time=.6)
             vo.wait_until("Out come")
-            self.play(FadeIn(out_l, shift=UP * .08), run_time=.45)
+            self.play(FadeIn(out_l, shift=UP * .08), steps[2].animate.set_color(INK),
+                      run_time=.45)
         saved = self.content()   # dim_rest() regroups these, so keep the list
         for m in saved:
             m.save_state()
@@ -440,4 +443,140 @@ class S03(Ep):
             vo.wait_until("the gap CellOT")
             self.play(FadeIn(cellot, shift=UP * .08), FadeIn(cellot2, shift=UP * .08),
                       run_time=.5)
+        self.finish()
+
+
+def mini_table(x, y, color, n=3, w=.8, rh=.13, gap=.05):
+    """A tiny table: n rows of cells (flat fills)."""
+    return VGroup(*[Rectangle(width=w, height=rh, stroke_width=0, fill_color=color,
+                              fill_opacity=.8).move_to([x, y - i * (rh + gap), 0])
+                    for i in range(n)])
+
+
+class S04(Ep):
+    def construct(self):
+        self.header()
+        ly = {"setup": 1.35, "train": .05, "predict": -1.4}
+        names = {"setup": "setup()", "train": "train()", "predict": "predict()"}
+        chips = {k: chip(names[k], -5.15, ly[k], INK, 22) for k in ly}
+        cls = mono_left("class scGenModel(AbstractModel)", -6.2, 1.98, 17, GRAY)
+        xs = [-2.85, -.35, 1.85, 4.6]
+
+        def under(t, x, k, color=GRAY):
+            return at(t, x, ly[k] - .56, 18, color)
+
+        # setup lane
+        ae0 = mini_ae(xs[1], ly["setup"], .75, GRAY, dashed=True)
+        a_set = arrow(chips["setup"].get_right(), [xs[1] - .8, ly["setup"], 0], INK)
+        u_set = under("untrained network", xs[1], "setup", RED)
+        # train lane
+        ty = ly["train"]
+        mouse_t = mini_table(-3.35, ty + .32, GRAY)
+        human_t = mini_table(-2.35, ty + .32, INK)
+        merged_m = mini_table(-2.75, ty + .38, GRAY)
+        merged_h = mini_table(-2.75, ty + .38 - 3 * .18, INK)
+        species = VGroup(*[Square(side_length=.13, stroke_width=0, fill_color=c, fill_opacity=1)
+                           .move_to([-3.32, ty + .38 - i * .18, 0])
+                           for i, c in enumerate([GRAY] * 3 + [INK] * 3)])
+        u_join = under("one table + species label", xs[0], "train", RED)
+        u_join.shift(DOWN * .18)
+        ae1 = mini_ae(xs[1], ty, .75, INK)
+        u_fit = under("fit the network", xs[1], "train", RED)
+        d_small = delta_arrow([xs[2] - .5, ty - .15, 0], [xs[2] + .5, ty + .2, 0], RED, 5)
+        u_delta = under("compute δ", xs[2], "train", RED)
+        store = chip("self.delta", xs[3], ty, RED, 22)
+        u_store = under("kept on the object", xs[3], "train", RED)
+        tr_arrows = [arrow([a, ty, 0], [b, ty, 0], INK) for a, b in
+                     ((-4.0, -3.5), (-2.05, -1.15), (.45, 1.25), (2.45, 3.55))]
+        with self.say(0) as vo:
+            self.cue(vo, .02, FadeIn(cls), run_time=.4)
+            self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * .1) for c in chips.values()],
+                                  lag_ratio=.25), run_time=.8)
+            vo.wait_until("Setup builds")
+            self.play(chips["setup"].animate.set_color(RED), GrowArrow(a_set), Create(ae0),
+                      FadeIn(u_set), run_time=.7)
+            vo.wait_until("Train joins")
+            self.play(chips["setup"].animate.set_color(INK), u_set.animate.set_color(GRAY),
+                      chips["train"].animate.set_color(RED), GrowArrow(tr_arrows[0]),
+                      FadeIn(mouse_t), FadeIn(human_t), run_time=.5)
+            self.play(ReplacementTransform(mouse_t, merged_m),
+                      ReplacementTransform(human_t, merged_h), run_time=.8)
+            self.play(FadeIn(species, shift=RIGHT * .1), FadeIn(u_join), run_time=.4)
+            vo.wait_until("fits the network")
+            fit = ae0.copy()
+            self.play(GrowArrow(tr_arrows[1]), u_join.animate.set_color(GRAY),
+                      fit.animate.move_to(ae1), run_time=.45)
+            self.play(ReplacementTransform(fit, ae1), FadeIn(u_fit), run_time=.5)
+            vo.wait_until("computes delta")
+            self.play(GrowArrow(tr_arrows[2]), GrowArrow(d_small), FadeIn(u_delta),
+                      u_fit.animate.set_color(GRAY), run_time=.5)
+            vo.wait_until("keeps it on")
+            self.play(GrowArrow(tr_arrows[3]), FadeIn(store, shift=RIGHT * .1),
+                      FadeIn(u_store), u_delta.animate.set_color(GRAY), run_time=.5)
+        py = ly["predict"]
+        test = cloud(10, xs[0], py, .12, GRAY, seed=31, radius=.045)
+        enc = trapezoid(xs[0] + .35, xs[0] + .95, .62, .26, py, INK)
+        u_enc = under("encode test mouse", xs[0] + .3, "predict", RED)
+        add = chip("+ self.delta", xs[1], py, RED, 20)
+        u_add = under("add the stored δ", xs[1], "predict", RED)
+        dec = trapezoid(xs[2] - .3, xs[2] + .3, .26, .62, py, INK)
+        u_dec = under("decode", xs[2], "predict", RED)
+        ann = chip("AnnData", xs[3], py, INK, 22)
+        u_ann = under("every metric can read it", xs[3], "predict", RED)
+        p_arrows = [arrow([a, py, 0], [b, py, 0], INK) for a, b in
+                    ((-4.0, -3.15), (-1.8, -1.35), (.65, 1.45), (2.25, 3.55))]
+        with self.say(1) as vo:
+            self.cue(vo, .02, chips["train"].animate.set_color(INK),
+                     u_store.animate.set_color(GRAY), chips["predict"].animate.set_color(RED),
+                     GrowArrow(p_arrows[0]), FadeIn(test), run_time=.45)
+            vo.wait_until("encodes")
+            self.play(Create(enc), FadeIn(u_enc), run_time=.45)
+            token = Dot([xs[0] + .65, py, 0], radius=.1, color=GRAY)
+            self.play(FadeIn(token), run_time=.2)
+            vo.wait_until("adds the stored")
+            fly = store.copy()
+            self.play(GrowArrow(p_arrows[1]), u_enc.animate.set_color(GRAY),
+                      ReplacementTransform(fly, add), FadeIn(u_add),
+                      token.animate.move_to([xs[1], py + .45, 0]), run_time=.7)
+            self.play(token.animate.set_color(RED), run_time=.25)
+            vo.wait_until("decodes")
+            self.play(GrowArrow(p_arrows[2]), Create(dec), FadeIn(u_dec),
+                      u_add.animate.set_color(GRAY), token.animate.move_to([xs[2], py, 0]),
+                      run_time=.5)
+            vo.wait_until("returns an AnnData")
+            self.play(GrowArrow(p_arrows[3]), u_dec.animate.set_color(GRAY),
+                      ReplacementTransform(token, ann), run_time=.5)
+            vo.wait_until("every metric")
+            self.play(FadeIn(u_ann), run_time=.4)
+        tr_rows = rows(CORE, 277, 285)
+        pr_rows = [(n, t.replace(".astype(np.float64)", "…")) for n, t in rows(CORE, 287, 294)]
+        tp = code_panel(tr_rows, CORE_PATH, -3.2, .42, width=6.2, size=17)
+        pp = code_panel(pr_rows, CORE_PATH, 3.2, .56, width=6.2, size=17)
+        n1 = left("282 · δ is a local: gone when train returns", -6.25, -1.62, 19, INK)
+        n2 = left("284–285 · the fit is commented out, then pass", -6.25, -2.05, 19, INK)
+        n3 = left("292 · hands back the mouse cells", .15, -1.62, 19, INK)
+        with self.say(2) as vo:
+            self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.4)
+            self.play(FadeIn(tp, shift=UP * .1), FadeIn(pp, shift=UP * .1), run_time=.5)
+            vo.wait_until("Train computes delta")
+            m282 = highlight(self, tp, 282, run_time=.3)
+            dy = tp.row_y(282)
+            dd = delta_arrow([-1.05, dy - .08, 0], [-.35, dy + .08, 0], RED, 4)
+            self.play(GrowArrow(dd), run_time=.3)
+            vo.wait_until("never fits")
+            m284 = tp.mark(284, 285)
+            self.play(FadeIn(m284), FadeIn(n2), run_time=.4)
+            vo.wait_until("vanishes")
+            self.play(FadeIn(n1), dd.animate.scale(.05).set_opacity(0), run_time=.7)
+            vo.wait_until("Predict ends")
+            m292 = highlight(self, pp, 292, run_time=.3)
+            gy = pp.row_y(292)
+            out = cloud(8, 5.75, gy, .07, GRAY, seed=32, radius=.035)
+            self.play(FadeIn(n3), FadeIn(out, shift=RIGHT * .3), run_time=.5)
+            vo.wait_until("your blanks")
+            boxes = VGroup(*[SurroundingRectangle(VGroup(*[p.row(n) for n in ns]), color=RED,
+                                                  buff=.06, stroke_width=2.5)
+                             for p, ns in ((tp, (282,)), (tp, (284, 285)), (pp, (292,)))])
+            self.play(Create(boxes), *[n.animate.set_color(RED) for n in (n1, n2, n3)],
+                      run_time=.6)
         self.finish()

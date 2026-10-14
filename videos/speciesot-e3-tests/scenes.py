@@ -164,7 +164,8 @@ def bigfile(x, y):
     w, h, f = .95, 1.15, .28
     body = Polygon([x - w / 2, y + h / 2, 0], [x + w / 2 - f, y + h / 2, 0],
                    [x + w / 2, y + h / 2 - f, 0], [x + w / 2, y - h / 2, 0],
-                   [x - w / 2, y - h / 2, 0], stroke_color=INK, stroke_width=2)
+                   [x - w / 2, y - h / 2, 0], stroke_color=INK, stroke_width=2,
+                   fill_color=PAPER, fill_opacity=1)
     fold = VMobject(stroke_color=INK, stroke_width=2).set_points_as_corners(
         [[x + w / 2 - f, y + h / 2, 0], [x + w / 2 - f, y + h / 2 - f, 0],
          [x + w / 2, y + h / 2 - f, 0]])
@@ -442,9 +443,12 @@ class S03(Ep):
                       FadeIn(src), FadeIn(rule_d),
                       tree[1].animate.set_color(RED), run_time=.6)
             vo.wait_until("reports")
-            dot_ = mono(".", 40, RED, bold=True).move_to([4.75, -.88, 0])
+            rep_arr = arrow([defl.get_right()[0] + .15, -.95, 0],
+                            [defl.get_right()[0] + .85, -.95, 0], INK)
+            dot_ = mono(".", 40, RED, bold=True).next_to(rep_arr, RIGHT, buff=.15)\
+                .align_to(defl, DOWN)
             key = mono(".  passed      F  failed      E  error", 18, GRAY).move_to([0, -1.95, 0])
-            self.play(FadeIn(dot_, scale=1.5), FadeIn(key), run_time=.5)
+            self.play(Create(rep_arr), FadeIn(dot_, scale=1.5), FadeIn(key), run_time=.5)
 
         run1 = terminal(["$ pytest -q src/speciesot/Tests/test_evaluation.py",
                          ".                       [100%]",
@@ -463,7 +467,7 @@ class S03(Ep):
                          fill_opacity=1).move_to([x1 - .01 * sc, y_bar, 0])
         imp_lab = left("start-up + importing numpy, anndata, sklearn …", x0 + .15, y_bar, 19, INK)
         body_lab = at("the test itself: a few ms", x1 - 1.1, y_bar + .52, 19, RED)
-        itag = tag_at("INFERRED", x1 - 1.1, -1.95)
+        itag = tag_at("INFERRED", x1 - .55, -1.72)
         with self.say(1) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in self.content() if m is not term],
                      ReplacementTransform(term, run1), run_time=.6)
@@ -488,20 +492,22 @@ class S03(Ep):
                           "1 error in 1.58s"], 0, -1.68, width=12.6, size=16)
         tm_rows = rows(TEST_MODEL, 1, 8)
         tm_rows[4] = (5, 'experiment_spec_path = "/n/…/Tests/config.yaml"')
-        tm = code_panel(tm_rows, TEST_MODEL_PATH, -2.8, .66, width=7.0, size=16, gap=.26)
-        rx = 1.05
+        tm = code_panel(tm_rows, TEST_MODEL_PATH, -2.75, .68, width=7.1, size=16, gap=.255)
+        rx = 1.1
         script_lab = left("no  def test_…  — a script", rx, 1.86, 21, RED, bold=True)
-        on_import = left("runs the moment pytest imports it", rx, 1.47, 19, INK)
-        off_h = left("off the cluster", rx, .98, 20, INK, bold=True)
-        off_e = mono_left("FileNotFoundError", rx, .62, 19, RED)
-        off_w = mono_left("line 6 → speciesot_core.py:81", rx, .3, 16, GRAY)
-        off_t = source_tag("MEASURED").move_to([5.65, .98, 0])
-        on_h = left("on the cluster", rx, -.13, 20, INK, bold=True)
-        on_t = source_tag("INFERRED").move_to([5.65, -.13, 0])
-        load = Rectangle(width=.01, height=.16, stroke_width=0, fill_color=GRAY, fill_opacity=1)\
-            .move_to([rx + .005, -.47, 0])
-        load_lab = left("loads the full atlas …", rx, -.47, 18, INK)
-        crash = left("✗ then crashes in setup()", rx, -.47, 18, RED)
+        on_import = left("runs the moment pytest imports it", rx, 1.5, 19, INK)
+        off_h = left("off the cluster", rx, 1.08, 20, INK, bold=True)
+        off_e = mono_left("FileNotFoundError", rx, .74, 19, RED)
+        off_w = mono_left("line 6 → speciesot_core.py:81", rx, .45, 16, GRAY)
+        off_t = source_tag("MEASURED").move_to([5.65, 1.08, 0])
+        on_h = left("on the cluster", rx, .02, 20, INK, bold=True)
+        on_t = source_tag("INFERRED").move_to([5.65, .02, 0])
+        load_lab = left("loads the full atlas", rx, -.32, 18, INK)
+        lx0 = rx + 2.35
+        load = Rectangle(width=.01, height=.14, stroke_width=0, fill_color=GRAY, fill_opacity=1)\
+            .move_to([lx0 + .005, -.32, 0])
+        crash = VGroup(mono("✗", 20, RED, bold=True).move_to([6.12, -.32, 0]),
+                       left("then crashes in setup()", rx, -.62, 18, RED))
         with self.say(2) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in (mtag, axis, ticks, imp, body, imp_lab,
                                                      body_lab, itag)],
@@ -522,7 +528,8 @@ class S03(Ep):
             vo.wait_until("Off the cluster")
             nm = tm.mark(6)
             err_box = red_box(run2b.lines[1], .04)
-            self.play(ReplacementTransform(mk, nm), FadeIn(off_h), FadeIn(off_t), run_time=.4)
+            self.play(ReplacementTransform(mk, nm), FadeIn(off_h), FadeIn(off_t),
+                      script_lab.animate.set_color(INK), run_time=.4)
             mk = nm
             self.play(FadeIn(off_e, shift=RIGHT * .1), FadeIn(off_w), Create(err_box),
                       run_time=.5)
@@ -533,29 +540,29 @@ class S03(Ep):
             nm = tm.mark(8)
             self.play(ReplacementTransform(mk, nm), FadeIn(load_lab), run_time=.4)
             mk = nm
-            self.play(load.animate.stretch_to_fit_width(4.6).move_to([rx + 2.3, -.75, 0]),
+            self.play(load.animate.stretch_to_fit_width(2.55).move_to([lx0 + 1.275, -.32, 0]),
                       run_time=1.2)
             vo.wait_until("then crashes")
-            self.play(FadeOut(load_lab), FadeIn(crash), run_time=.4)
+            self.play(FadeIn(crash), run_time=.4)
             vo.wait_until("before a single")
             int_box = red_box(run2b.lines[2], .04)
             self.play(Create(int_box), run_time=.5)
 
-        icons = VGroup(rack(-4.0, .15), bigfile(0, .15), gpu_icon(4.0, .15))
-        names = VGroup(at("a cluster", -4.0, -.85, 21, INK), at("gigabyte files", 0, -.85, 21, INK),
-                       at("a GPU", 4.0, -.85, 21, INK))
+        icons = VGroup(rack(-4.0, .45), bigfile(0, .45), gpu_icon(4.0, .45))
+        names = VGroup(at("a cluster", -4.0, -.5, 21, INK), at("gigabyte files", 0, -.5, 21, INK),
+                       at("a GPU", 4.0, -.5, 21, INK))
         need = left("a good test needs nothing but", -6.1, 1.72, 28, INK, bold=True)
         yours = left("your code", need.get_right()[0] + .25, 1.72, 28, RED, bold=True)
         strikes = VGroup(*[Line(ic.get_corner(DL) + LEFT * .15 + DOWN * .1,
                                 ic.get_corner(UR) + RIGHT * .15 + UP * .1, color=RED,
                                 stroke_width=5) for ic in icons])
-        ly = -1.85
+        ly = -1.95
         loop = VGroup(chip("edit", -2.4, ly, INK, 22), chip("pytest", 0, ly, INK, 22),
                       chip("✓ green", 2.4, ly, INK, 22))
         la = VGroup(arrow(loop[0].get_right(), loop[1].get_left(), INK),
                     arrow(loop[1].get_right(), loop[2].get_left(), INK),
                     CurvedArrow(loop[2].get_top() + UP * .05, loop[0].get_top() + UP * .05,
-                                angle=PI / 2.6, color=GRAY, stroke_width=2.5,
+                                angle=PI / 3.2, color=GRAY, stroke_width=2.5,
                                 tip_length=.18))
         every = left("≈ 1.5 s · after every edit", 3.5, ly - .02, 20, RED)
         with self.say(3) as vo:
@@ -568,7 +575,6 @@ class S03(Ep):
                 self.play(Create(s), run_time=.3)
             vo.wait_until("fast enough")
             self.play(*[n.animate.set_color(GRAY) for n in names],
-                      *[i.animate.set_opacity(.35) for i in icons],
                       FadeIn(loop), Create(la), run_time=.6)
             tok = Dot(loop[0].get_bottom() + DOWN * .14, radius=.08, color=RED)
             self.play(FadeIn(tok), FadeIn(every), run_time=.3)
@@ -584,37 +590,36 @@ class S04(Ep):
         self.header()
         base, perm = known_answer_cells()
         xy = base[:, :2]
-        pl = Plot(-3.55, -.2, 3.9, -2.95, 4.65)
+        pl = Plot(-3.55, -.15, 3.8, -2.95, 4.65)
         box = pl.box()
-        axl = pl.axes_labels()
         pred = rings(pl, xy, GRAY, .075, 2)
         truth = dots(pl, xy, INK, .05)
-        note = left("40 cells × 3 genes · genes 1–2 shown", -5.5, -2.38, 17, GRAY)
+        note = left("40 cells × 3 genes · genes 1–2 shown", -5.45, -2.3, 17, GRAY)
         leg = VGroup(Circle(radius=.07, color=GRAY, stroke_width=2).move_to([-5.32, 1.92, 0]),
                      left("predicted", -5.15, 1.92, 17, GRAY),
                      Dot([-3.7, 1.92, 0], radius=.05, color=INK),
                      left("truth = predicted + shift", -3.55, 1.92, 17, INK))
         # bar chart: MMD vs shift (MEASURED)
         shifts, mmd = ["0", "0.5", "1", "2"], [0.0, 0.0797, 0.2923, 0.8473]
-        bx, base_y, hs = [1.55, 2.75, 3.95, 5.15], -1.65, 3.2
+        bx, base_y, hs = [1.55, 2.75, 3.95, 5.15], -1.65, 2.9
         axis = Line([.95, base_y, 0], [5.8, base_y, 0], color=INK, stroke_width=2)
         xl = VGroup(*[mono(s, 18, GRAY).move_to([b, base_y - .25, 0]) for s, b in zip(shifts, bx)])
         xt = at("shift added to every gene", 3.35, base_y - .6, 17, GRAY)
         yt = left("MMD", .95, 1.92, 20, INK, bold=True)
         ctag = source_tag("MEASURED").move_to([5.3, 1.92, 0])
         chart = VGroup(axis, xl, xt, yt, ctag)
-        meaning = left("MMD = how far apart two clouds are", .95, 1.35, 19, GRAY)
+        meaning = left("MMD = how far apart two clouds are", .95, 1.45, 19, GRAY)
         with self.say(0) as vo:
-            self.cue(vo, .02, FadeIn(box), FadeIn(axl), FadeIn(pred), FadeIn(truth),
+            self.cue(vo, .02, FadeIn(box), FadeIn(pred), FadeIn(truth),
                      FadeIn(note), FadeIn(leg), run_time=.6)
             vo.wait_until("From what")
             self.play(FadeIn(chart), FadeIn(meaning), run_time=.6)
             vo.wait_until("Pause and predict")
             dimmed = save(self.content())
-            card = ponder("把一团点推离另一团，MMD 应该怎么变？",
+            pcard = ponder("把一团点推离另一团，MMD 应该怎么变？",
                           "Push one cloud away from the other: what should MMD do?", y=-1.25)
             self.play(self.dim_rest(), run_time=.4)
-            self.play(FadeIn(card, shift=UP * .1), run_time=.5)
+            self.play(FadeIn(pcard, shift=UP * .1), run_time=.5)
 
         bars = VGroup()
         vlabs = VGroup()
@@ -625,7 +630,7 @@ class S04(Ep):
             vlabs.add(mono("0" if v == 0 else f"{v:.3f}", 18, INK)
                       .move_to([b, base_y + h + .22, 0]))
         with self.say(1) as vo:
-            self.cue(vo, .01, FadeOut(card), *[Restore(m) for m in dimmed], run_time=.5)
+            self.cue(vo, .01, FadeOut(pcard), *[Restore(m) for m in dimmed], run_time=.5)
             for k, w in enumerate(["nothing", "half", "one, then", "two, and"]):
                 vo.wait_until(w)
                 s = float(shifts[k])
@@ -701,27 +706,28 @@ class S04(Ep):
                   (5, "    assert r2 < 0.1")]
         wl, wr = 5.55, 6.85
         xl_, xr_ = -6.3 + wl / 2, 6.3 - wr / 2
-        p_imp = code_panel(imports, "EXAMPLE · Tests/test_known_answers.py", xl_, 1.0,
-                           width=wl, size=16, numbers=False)
-        p_mmd = code_panel(t_mmd, "shift ↑  →  MMD ↑", xr_, 1.0, width=wr, size=16,
+        def ytop(n, top):          # panel centre so its frame top sits at `top`
+            return top - (n * 16 * .0172 + .7) / 2
+        p_imp = code_panel(imports, "EXAMPLE · Tests/test_known_answers.py", xl_,
+                           ytop(5, 2.04), width=wl, size=16, numbers=False)
+        p_mmd = code_panel(t_mmd, "shift ↑  →  MMD ↑", xr_, ytop(5, 2.04), width=wr, size=16,
                            numbers=False)
-        p_one = code_panel(t_one, "perfect  →  R² = 1", xl_, -1.28, width=wl, size=16,
+        p_one = code_panel(t_one, "perfect  →  R² = 1", xl_, ytop(4, -.18), width=wl, size=16,
                            numbers=False)
-        p_shuf = code_panel(t_shuf, "shuffled  →  R² ≈ 0", xr_, -1.15, width=wr, size=16,
-                            numbers=False)
+        p_shuf = code_panel(t_shuf, "shuffled  →  R² ≈ 0", xr_, ytop(5, -.18), width=wr,
+                            size=16, numbers=False)
         panels = [p_imp, p_mmd, p_one, p_shuf]
-        for p in panels:
-            p.shift(UP * (2.04 - p.frame.get_top()[1]) if p in (p_imp, p_mmd) else
-                    UP * (-.18 - p.frame.get_top()[1]))
-        etags = VGroup(*[source_tag("EXAMPLE").scale(.9).move_to(
-            [p.frame.get_right()[0] - .62, p.frame.get_top()[1] - .2, 0]) for p in panels[1:]])
+        etags = VGroup(*[source_tag("EXAMPLE").scale(.8).move_to(
+            [p.frame.get_right()[0] - .6, p.frame.get_top()[1] - .21, 0]) for p in panels[1:]])
         logic = VGroup(left("tiny arrays, built inside the test", -6.1, 1.6, 22, INK, bold=True),
                        left("no h5ad files · no cluster", -6.1, 1.1, 20, GRAY),
                        left("checks the logic, not the biology", -6.1, .55, 22, RED, bold=True))
         with self.say(3) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.45)
-            self.play(LaggedStart(*[FadeIn(p, shift=UP * .1) for p in panels], lag_ratio=.25),
-                      FadeIn(etags), run_time=1.2)
+            self.play(LaggedStart(FadeIn(p_imp, shift=UP * .1),
+                                  *[FadeIn(VGroup(p, t), shift=UP * .1)
+                                    for p, t in zip(panels[1:], etags)], lag_ratio=.25),
+                      run_time=1.2)
             vo.wait_until("notice the data")
             marks = VGroup(p_mmd.mark(2), p_one.mark(2), p_shuf.mark(2, 3))
             self.play(FadeIn(marks), run_time=.5)
@@ -754,11 +760,11 @@ class S05(Ep):
                       Create(m_mat.frame), Create(h_mat.frame), run_time=1.1)
             vo.wait_until("Pause and predict")
             dimmed = save(self.content())
-            card = ponder("5 个小鼠细胞对 7 个人类细胞，R2Evaluation 能接受吗？",
+            pcard = ponder("5 个小鼠细胞对 7 个人类细胞，R2Evaluation 能接受吗？",
                           "5 mouse cells against 7 human cells: does R2Evaluation accept that?",
                           y=-1.32)
             self.play(self.dim_rest(), run_time=.4)
-            self.play(FadeIn(card, shift=UP * .1), run_time=.5)
+            self.play(FadeIn(pcard, shift=UP * .1), run_time=.5)
 
         code = code_panel(rows(CORE, 311, 313), CORE_PATH, 2.6, 1.15, width=7.3, size=20)
         err = error_card("ValueError", ["operands could not be broadcast together",
@@ -766,7 +772,7 @@ class S05(Ep):
                          "speciesot_core.py:313 in evaluate", 2.6, -1.22, width=7.3, size=20)
         lm_x, lh_x = -5.3, -2.95
         with self.say(1) as vo:
-            self.cue(vo, .01, FadeOut(card), FadeOut(r2c),
+            self.cue(vo, .01, FadeOut(pcard), FadeOut(r2c),
                      *[Restore(m) for m in dimmed if m is not r2c], run_time=.4)
             vo.wait_until("We tried")
             self.play(m_mat.animate.move_to([lm_x, top - 5 * .24 / 2, 0]),

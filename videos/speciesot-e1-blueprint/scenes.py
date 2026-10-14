@@ -88,11 +88,13 @@ class S01(Ep):
         with self.say(2) as vo:
             self.cue(vo, .05, FadeOut(q), run_time=.3)
             words = ["Data,", "contract,", "conductor,", "model,", "metric."]
+            ys = [(line_y(m, a) + line_y(m, b)) / 2 for _, _, a, b, _ in JOBS]
+            for k in range(1, len(ys)):          # keep labels at least one line apart
+                ys[k] = min(ys[k], ys[k - 1] - .38)
             prev = None
-            for (job, zh, a, b, _), w in zip(JOBS, words):
+            for (job, zh, a, b, _), w, ly in zip(JOBS, words, ys):
                 br = bracket(3.3, line_y(m, a), line_y(m, b), "", RED, 22)
-                lab = left(f"{job} · {zh}", 3.55, (line_y(m, a) + line_y(m, b)) / 2, 22, RED,
-                           bold=True)
+                lab = left(f"{job} · {zh}", 3.55, ly, 22, RED, bold=True)
                 vo.wait_until(w)
                 anims = [Create(br), FadeIn(lab, shift=LEFT * .08)]
                 if prev is not None:
@@ -174,7 +176,8 @@ class S02(Ep):
 class S03(Ep):
     def construct(self):
         self.header()
-        abstract = code_panel(rows(CORE, 35, 48), CORE_PATH, -1.6, -.25, width=9.3, size=19)
+        abstract = code_panel(rows(CORE, 35, 48), CORE_PATH, -1.6, -.2, width=9.3, size=17,
+                              gap=.27)
         with self.say(0) as vo:
             self.cue(vo, .05, FadeIn(abstract, shift=UP * .1), run_time=.6)
             vo.wait_until("marked abstract")
@@ -189,10 +192,10 @@ class S03(Ep):
                                         num_dashes=14)
                          .move_to([contract.get_right()[0] - .85, t.get_y(), 0])
                          for t in contract.methods])
-        clab = left("contract · 契约", .85, 2.0, 22, RED, bold=True)
+        clab = left("contract · 契约", -1.55, 1.65, 22, RED, bold=True)
         blank = left("blank · 空白", contract.get_right()[0] - 1.45, -.35, 18, RED)
         with self.say(1) as vo:
-            self.cue(vo, .03, FadeOut(m2), abstract.animate.scale(.56).move_to([-3.6, -.25, 0]),
+            self.cue(vo, .03, FadeOut(m2), abstract.animate.scale(.56).move_to([-3.6, -.2, 0]),
                      run_time=.6)
             self.play(FadeIn(contract, shift=LEFT * .1), FadeIn(clab), run_time=.5)
             vo.wait_until("set up, train")
@@ -210,8 +213,8 @@ class S03(Ep):
                                        "'predict', 'setup', 'train'"],
                          ">>> AbstractModel()      (Python 3.12)", 0, -1.05, width=9.2, size=20)
         with self.say(3) as vo:
-            self.cue(vo, .02, FadeOut(card), *[mm.animate.set_opacity(1) for mm in
-                                               (abstract, contract, slots, clab, blank)],
+            self.cue(vo, .02, FadeOut(card), FadeOut(blank),
+                     *[mm.animate.set_opacity(1) for mm in (abstract, contract, slots, clab)],
                      run_time=.4)
             vo.wait_until("We ran it")
             self.play(FadeIn(err, shift=UP * .1), run_time=.6)
@@ -222,7 +225,7 @@ class S03(Ep):
                                         "predict():  shift mouse"],
                          3.3, -1.45, width=4.9, parent="AbstractModel")
         with self.say(4) as vo:
-            self.cue(vo, .02, FadeOut(err), FadeOut(abstract), FadeOut(blank),
+            self.cue(vo, .02, FadeOut(err), FadeOut(abstract),
                      VGroup(contract, slots).animate.move_to([0, 1.1, 0]),
                      clab.animate.move_to([-3.95, 1.5, 0]), run_time=.7)
             self.play(FadeIn(ident, shift=UP * .1), FadeIn(scg, shift=UP * .1), run_time=.6)
@@ -237,13 +240,13 @@ class S03(Ep):
             vo.wait_until("inheritance")
             inh = at("inheritance · 继承", 0, -.3, 24, RED, bold=True)
             self.play(GrowArrow(up1), GrowArrow(up2), FadeIn(inh), run_time=.7)
-        note = code_panel(rows(CORE, 19, 20), CORE_PATH, 0, -.35, width=8.0, size=20)
+        note = code_panel(rows(CORE, 19, 20), CORE_PATH, 0, -.9, width=8.0, size=20)
         with self.say(5) as vo:
-            self.cue(vo, .03, FadeOut(inh), FadeOut(up1), FadeOut(up2),
-                     VGroup(ident, scg).animate.set_opacity(.2), run_time=.4)
+            self.cue(vo, .03, FadeOut(inh), FadeOut(up1), FadeOut(up2), FadeOut(ident),
+                     FadeOut(scg), run_time=.4)
             self.play(FadeIn(note, shift=UP * .1), run_time=.5)
             vo.wait_until("nothing to sign")
-            nothing = at("abc.ABC + no abstract methods = nothing to sign", 0, -1.4, 22, GRAY)
+            nothing = at("abc.ABC + no abstract methods = nothing to sign", 0, -2.05, 22, GRAY)
             self.play(FadeIn(nothing), run_time=.4)
             vo.wait_until("line 19")
             highlight(self, note, 19, run_time=.4)
@@ -263,8 +266,8 @@ class S04(Ep):
             for p, w in zip(parts, ["reads the config", "builds the pieces", "tells each"]):
                 vo.wait_until(w)
                 self.play(FadeIn(p, shift=UP * .1), run_time=.35)
-        yml = code_panel(rows(CONFIG, 30, 45), "Tests/config.yaml", -3.6, -.35, width=5.4,
-                         size=18)
+        yml = code_panel(rows(CONFIG, 30, 40) + rows(CONFIG, 43, 45), "Tests/config.yaml",
+                         -3.6, -.2, width=5.4, size=16, gap=.27)
         models = VGroup(chip("IdentityModel", 1.0, .35, INK, 20),
                         chip("scGenModel", 3.75, .35, INK, 20))
         evals = VGroup(chip("R2Evaluation", 1.0, -1.05, INK, 20),
@@ -406,7 +409,7 @@ class S06(Ep):
         cards = VGroup(
             card("class → object", "init writes facts · self = this one", -4.2, 1.0, 3.95, 1.6,
                  accent=True),
-            card("abstract = contract", "names methods · fill every blank", 0, 1.0, 3.95, 1.6),
+            card("abstract = contract", "checks names, not inputs", 0, 1.0, 3.95, 1.6),
             card("Experiment", "conducts models + metrics", 4.2, 1.0, 3.95, 1.6),
         )
         for i in range(3):

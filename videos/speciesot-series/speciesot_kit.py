@@ -136,6 +136,11 @@ class CodePanel(VGroup):
         self.texts.set_z_index(2)
         self.nums.set_z_index(2)
         self.add(*parts, self.nums, self.texts)
+        top_y, bot_y = self.frame.get_top()[1], self.frame.get_bottom()[1]
+        if top_y > TOP + .02 or bot_y < BOTTOM - .02:
+            print(f"CODEPANEL LAYOUT: {title!r} spans y {bot_y:.2f}..{top_y:.2f}, outside the "
+                  f"teaching area [{BOTTOM}, {TOP}]; move it, or pass gap= / fewer rows.",
+                  flush=True)
 
     def row(self, num):
         return self.rows[num]

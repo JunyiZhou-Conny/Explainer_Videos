@@ -118,6 +118,19 @@ def stage_row(y, w=2.5, h=1.0, size=24, stroke=2.5):
     return boxes, names, arrows
 
 
+def mono_line(s, x, y, size=20, color=INK, bold=False):
+    """Monospace text whose first cell starts at x, on a stable baseline (strut glyph)."""
+    t = Text("|" + s, font=MONO, font_size=size, color=color, weight=BOLD if bold else "NORMAL")
+    t.strut = t[0]
+    return place_line(t, x, y, size)
+
+
+def panel_at(rows_, title, x, top, width, size):
+    """A code panel whose top edge sits at `top` (built in place, so its marks line up)."""
+    probe = code_panel(rows_, title, x, 0, width=width, size=size)
+    return code_panel(rows_, title, x, top - probe.frame.height / 2, width=width, size=size)
+
+
 def paint(ch, color):
     """Recolour a chip's outline and text (not its paper fill)."""
     ch[0].set_stroke(color=color)
@@ -270,13 +283,13 @@ class S02(Ep):
             sc.move_to([2.45, -.62 - k * .42, 0])
         toy = at("computed on toy data", 2.45, -1.5, 17, GRAY)
         # card 1: evaluate returns a table, models × metrics
-        cx0, cx1, cy0, cy1 = -6.2, 1.2, -2.42, -.55
+        cx0, cx1, cy0, cy1 = -6.2, 1.6, -2.42, -.55
         frame = Rectangle(width=cx1 - cx0, height=cy1 - cy0, stroke_color=INK, stroke_width=2,
                           fill_color=PAPER, fill_opacity=1).move_to([(cx0 + cx1) / 2,
                                                                      (cy0 + cy1) / 2, 0])
         c_head = left("CARD 1", cx0 + .22, cy1 - .3, 20, RED, bold=True)
         c_title = left("return a table: models × metrics", cx0 + 1.35, cy1 - .3, 22, INK, bold=True)
-        c_tag = source_tag("INFERRED").move_to([cx1 - .6, cy1 - .3, 0])
+        c_tag = source_tag("INFERRED").move_to([cx1 - .72, cy1 - .3, 0])
         cols_x, rows_y = [-2.75, -.55], [-1.62, -2.05]
         heads = VGroup(*[mono(t, 17, GRAY).move_to([x, -1.2, 0]) for t, x in
                          zip(("R2Evaluation", "MMDEvaluation"), cols_x)])
@@ -334,32 +347,31 @@ def trail_card(i, y=.93, w=2.9):
     bar = Rectangle(width=w, height=.07, stroke_width=0, fill_color=RED,
                     fill_opacity=1).move_to([x, frame.get_top()[1] - .035, 0])
     lx = x - w / 2 + .18
-    g = VGroup(frame, bar, mono_left(etype, lx, y + .22, 19, RED, bold=True),
-               mono_left(frag, lx, y - .06, 16), mono_left(f"line {ln}", lx, y - .32, 16, GRAY))
+    g = VGroup(frame, bar, mono_line(etype, lx, y + .2, 19, RED, bold=True),
+               mono_line(frag, lx, y - .07, 16), mono_line(f"line {ln}", lx, y - .32, 16, GRAY))
     g.set_z_index(3)
     return g
 
 
 def message_line(i, y=.12, x=-6.2):
     _, etype, msg, *_ = TRAIL[i]
-    a = mono_left(etype + ":", x, y, 17, RED, bold=True)
-    b = mono_left(msg, a.get_right()[0] + .14, y, 17)
+    a = mono_line(etype + ":", x, y, 17, RED, bold=True)
+    b = mono_line(msg, x + ADVANCE * 17 * (len(etype) + 2), y, 17)
     return VGroup(a, b)
 
 
 def trail_panel(i, top=-.12):
-    p = code_panel(TRAIL[i][5], CORE_PATH, -1.95, 0, width=8.6, size=17)
-    p.shift(UP * (top - p.frame.get_top()[1]))
-    return p
+    return panel_at(TRAIL[i][5], CORE_PATH, -1.95, top, 8.6, 17)
 
 
 class S03(Ep):
     def construct(self):
         self.header()
-        ty = 1.9
+        ty = 1.86
         track = line(-6.2, ty, 6.2, ty, INK, 2)
         stops = VGroup(*[line(x, ty - .1, x, ty + .1, INK, 2) for x in STAGE_X])
-        labels = VGroup(*[mono(s, 18, GRAY).move_to([x, 1.66, 0]) for x, s in zip(STAGE_X, STAGES)])
+        labels = VGroup(*[mono_line(s, x - ADVANCE * 18 * len(s) / 2, 1.6, 18, GRAY)
+                          for x, s in zip(STAGE_X, STAGES)])
         add = VGroup(chip("IdentityModel", -1.6, .75, GRAY, 20), chip("+ scGenModel", 1.6, .75, RED, 20))
         with self.say(0) as vo:
             self.cue(vo, .02, Create(track), FadeIn(stops), FadeIn(labels), run_time=.5)
@@ -374,13 +386,13 @@ class S03(Ep):
                      label("toy data · stand-in scgen · smallest patch per stage", 22, GRAY))
         big.arrange(RIGHT, buff=.25).move_to([0, -.55, 0])
         token = Dot([-6.2, ty, 0], radius=.1, color=RED).set_z_index(5)
-        xs = [cross(x, ty, .13).set_z_index(4) for x in STAGE_X]
+        xs = [cross(x, ty, .11).set_z_index(4) for x in STAGE_X]
         dock = VGroup(source_tag("MEASURED"), label("toy data · stand-in scgen", 17, GRAY),
                       label("smallest patch per stage", 17, GRAY))
         for m, y in zip(dock, (-1.62, -1.98, -2.3)):
             m.move_to([2.7 + m.width / 2, y, 0])
-        numbered = VGroup(*[mono(f"{k + 1} · {s}", 18, INK).move_to([x, 1.66, 0])
-                            for k, (x, s) in enumerate(zip(STAGE_X, STAGES))])
+        numbered = VGroup(*[mono_line(f"{k + 1} · {s}", x - ADVANCE * 18 * (len(s) + 4) / 2, 1.6,
+                                      18) for k, (x, s) in enumerate(zip(STAGE_X, STAGES))])
         with self.say(1) as vo:
             self.cue(vo, .0, FadeOut(card), FadeOut(add),
                      *[m.animate.set_opacity(1) for m in (track, stops, labels)], run_time=.4)
@@ -455,7 +467,7 @@ class S03(Ep):
             self.play(slide(3), numbered[2].animate.set_color(INK), numbered[3].animate.set_color(RED),
                       FadeOut(m3), FadeOut(n1), FadeOut(n2), ReplacementTransform(msg3, msg4),
                       FadeOut(panel3), FadeIn(panel4), run_time=.8)
-            mx, hx, top = 3.55, 4.85, -.35
+            mx, hx, top = 3.7, 4.9, -.35
             mouse = VGroup(*[Dot([mx, top - k * .155, 0], radius=.055, color=INK) for k in range(5)])
             human = VGroup(*[Dot([hx, top - k * .155, 0], radius=.055, color=INK) for k in range(7)])
             ml = label("5 mouse", 17, GRAY).next_to(mouse, LEFT, buff=.15)
@@ -479,7 +491,7 @@ class S03(Ep):
             num = mono(str(k + 1), 20, RED, bold=True).move_to([-5.3, rows_y[k], 0])
             txt = mono_left(f"{stage:<9}{etype:<15}line {ln}", -4.9, rows_y[k], 19)
             todo.append(VGroup(box, num, txt))
-        given = VGroup(label("order: given by the program", 20, RED, bold=True),
+        given = VGroup(label("program order", 24, RED, bold=True),
                        label("顺序由程序给出", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT, buff=.1)
         given.move_to([2.7 + given.width / 2, -.62, 0])
         with self.say(4) as vo:
