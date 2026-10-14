@@ -1,0 +1,93 @@
+{
+  "title_en": "Two programs are named scGen",
+  "title_zh": "有两个程序都叫 scGen",
+  "preset": "swiss",
+  "description_en": "One scGen imports the TensorFlow package and stops at pass. The other is a name inside CellOT that trains an autoencoder and adds a latent shift.",
+  "description_zh": "一个 scGen 导入 TensorFlow 包，然后停在 pass。另一个是 CellOT 里面的一个名字，它训练自编码器，再加上一个潜在空间的平移。",
+  "tags_zh": ["scGen", "CellOT", "科研"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "Do not draw an arrow from the hub into scgen.VAEArith.",
+    "Pipe B code is commits c342331, abf75d2, and 4244985. Pipe A's stub is the upload, not a commit."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "The search comes back empty",
+      "title_zh": "搜索的结果是空的",
+      "lines": [
+        {"en": "Here's a search with an empty result. No notebook in this repository contains the words import scgen.",
+         "zh": "这里有一次结果为空的搜索。这个仓库里没有一个笔记本包含 import scgen 这几个词。"},
+        {"en": "A class named scGen model does import it. That class is not the program the hub trains.",
+         "zh": "一个名叫 scGen model 的类确实导入了它。那个类并不是 hub 在训练的程序。"},
+        {"en": "Pause and think. If two programs share the name scGen, which one wrote the checkpoint you already have?",
+         "zh": "停一下想一想。如果两个程序都叫 scGen，你已经有的那个检查点是哪一个写的？"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "Pipe A stops at pass",
+      "title_zh": "管道 A 停在 pass",
+      "lines": [
+        {"en": "Pipe A is the upload. Setup imports scgen and builds VAE Arith.",
+         "zh": "管道 A 是那份上传。Setup 导入 scgen，并构造 VAE Arith。"},
+        {"en": "Train computes a delta between the two species, then it hits the word pass. The real train call is commented out.",
+         "zh": "Train 算出两个物种之间的一个 delta，然后碰到 pass 这个词。真正的 train 调用被注释掉了。"},
+        {"en": "Predict mentions names that are not defined, then it returns the source cells unchanged.",
+         "zh": "Predict 提到了几个没有定义的名字，然后原样返回源细胞。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "The same constructor, really training",
+      "title_zh": "同一个构造函数，这次真的在训练",
+      "lines": [
+        {"en": "The same constructor does exist in git. The atlas paper script builds VAE Arith and then calls network train.",
+         "zh": "同一个构造函数在 git 里确实存在。图谱论文的脚本构造 VAE Arith，然后调用 network train。"},
+        {"en": "That script is a third stack. It is fenced off from the hub's scgen folder.",
+         "zh": "那个脚本是第三条栈。它和 hub 的 scgen 文件夹隔开。"},
+        {"en": "So import scgen means this package. It does not mean the checkpoint the hub wrote.",
+         "zh": "所以 import scgen 指的是这个包。它不是 hub 写下的那个检查点。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "Pipe B never imports scgen",
+      "title_zh": "管道 B 从不导入 scgen",
+      "lines": [
+        {"en": "Pipe B starts in a spec. The generated config sets the model name to scgen.",
+         "zh": "管道 B 从一份 spec 开始。生成的配置把模型名字设为 scgen。"},
+        {"en": "Train dot py sees that name and calls train auto encoder. No import of the scgen package.",
+         "zh": "Train.py 看到这个名字，就调用 train auto encoder。它不导入 scgen 这个包。"},
+        {"en": "Later, transport scgen adds one shift. Decode of encode, plus the difference of the two means.",
+         "zh": "之后，transport scgen 加上一次平移。先编码再解码，再加上两个均值的差。"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "The pipes do not join",
+      "title_zh": "两条管道并不相连",
+      "lines": [
+        {"en": "Copying VAE Arith into the hub's scgen folder would not edit pipe B. The pipes do not share a function.",
+         "zh": "把 VAE Arith 拷进 hub 的 scgen 文件夹，并不会改到管道 B。两条管道没有共用的函数。"},
+        {"en": "The shift you want, if you want the working model, is compute scgen shift, inside CellOT.",
+         "zh": "如果你要的是已经能跑的模型，你要找的平移是 compute scgen shift，它在 CellOT 里面。"},
+        {"en": "Pause. Which file would you open to see the shift the checkpoint actually uses?",
+         "zh": "停一下。要看检查点真正使用的那次平移，你会打开哪个文件？"}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "Three doors",
+      "title_zh": "三扇门",
+      "lines": [
+        {"en": "Remember the rule. Import scgen, or VAE Arith, means the TensorFlow package and the atlas script.",
+         "zh": "记住这条规则。Import scgen，或者 VAE Arith，指的是 TensorFlow 包和图谱脚本。"},
+        {"en": "Model name scgen, train auto encoder, or transport scgen, means the CellOT tree.",
+         "zh": "模型名字 scgen、train auto encoder，或者 transport scgen，指的是 CellOT 这棵树。"},
+        {"en": "The word Experiment means src speciesot. That is the class you are still writing.",
+         "zh": "Experiment 这个词指的是 src 里的 speciesot。那是你还在写的类。"}
+      ]
+    }
+  ]
+}
