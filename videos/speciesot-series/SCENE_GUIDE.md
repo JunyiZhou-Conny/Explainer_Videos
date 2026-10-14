@@ -43,12 +43,18 @@ For whoever writes `videos/speciesot-eN-*/scenes.py`. The reference implementati
   character count, so anchor at clause starts. A missing anchor fails the full build.
 - In a sample render the scene budget is narration + ~1 s: if the log prints
   `BUDGET WARNING`, your animations overrun the narration; shorten run_times or waits.
+- `LaggedStart` over an object's parts leaves Manim's helper `Group` holding those parts.
+  `content()` handles a later fade, but a `ReplacementTransform`/`Restore` of the whole object
+  can leave the parts behind: re-add the whole object (`self.remove(group); self.add(whole)`)
+  right after the lagged play, as E3's `settle()` does. Never `self.remove(ls.group)` alone —
+  that takes the parts off screen.
 
 ## Render and inspect (from the repository root)
 
 ```bash
 python3 skill-library/conny-explainer-video/scripts/render.py videos/<slug> --sample s03
-grep -E "BUDGET|CODEPANEL|anchor not found|Error" outputs/<slug>/build/s03/render.log
+grep -E "BUDGET|CODEPANEL|anchor not found|Traceback|rror:" outputs/<slug>/build/s03/render.log
+# (plain "Error" also matches on-screen Text('…Error') in the progress bar)
 # frames: ffmpeg -ss <t> -i outputs/<slug>/sample-s03.mp4 -frames:v 1 frame.png
 ```
 

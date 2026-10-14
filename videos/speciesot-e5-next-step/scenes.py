@@ -869,7 +869,7 @@ class S06(Ep):
         boxes = VGroup(*[VGroup(Square(.32, stroke_color=GRAY, stroke_width=2).move_to([2.0, .3 - k * .45, 0]),
                                 left(c, 2.35, .3 - k * .45, 20, GRAY, bold=True))
                          for k, (c, *_r) in enumerate(PRINCIPLES)])
-        no_check = at("not a day-one checklist", 2.6, -1.85, 20, GRAY)
+        no_check = at("not a day-one checklist", 2.6, -2.05, 20, GRAY)
         code = barcode()
         bands, drops, srcs = VGroup(), VGroup(), []
         for k, (c, *_r) in enumerate(PRINCIPLES):

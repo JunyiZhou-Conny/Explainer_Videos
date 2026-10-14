@@ -18,3 +18,7 @@ produced in this session (Python 3.12.3, anndata 0.13.4, scikit-learn 1.9.1, pyt
 | `R2Evaluation` = the per-gene formula of `_pergene_r2` (reconstruction) | Josh's src 305–316; repo `atlas-paper-vae/scripts/02_eval_metrics.py` 47–53, used at 208/210 | READ IN CODE |
 | The benchmark uses R² of means | repo `cellot/cellot_gpu/scripts/decoded_frame_metrics.py` 68–71; `extended_metrics.py` 154–166; `docs/conceptual_framework.md` §5.2 | READ IN CODE |
 | Test sketches in s04 | written for this video | EXAMPLE |
+| s01 decomposition 0.540 + 0.514 − 2 × 0.364 = 0.326 (mean k(x,x) + mean k(y,y) − 2·mean k(x,y)) | recomputed from the `error_trail.py` toy seeds; sums to the measured 0.326 | MEASURED (recomputed) |
+| s03 "most of that is just importing libraries" timing bar | reasoning about a 1.45 s run whose test body is a few ms; not profiled | INFERRED (tagged on screen) |
+| s02 failing pytest output (the `2 *` removed) | real pytest output from a scratch copy of the test with the bug planted | EXAMPLE (tagged on screen) |
+| s05 reconstructions labelled "(sketch)" | drawn for the video | EXAMPLE |
