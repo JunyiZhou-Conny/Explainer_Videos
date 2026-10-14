@@ -192,7 +192,7 @@ class S03(Ep):
                                         num_dashes=14)
                          .move_to([contract.get_right()[0] - .85, t.get_y(), 0])
                          for t in contract.methods])
-        clab = left("contract · 契约", -1.55, 1.65, 22, RED, bold=True)
+        clab = left("contract · 契约", -1.85, 1.65, 22, RED, bold=True)
         blank = left("blank · 空白", contract.get_right()[0] - 1.45, -.35, 18, RED)
         with self.say(1) as vo:
             self.cue(vo, .03, FadeOut(m2), abstract.animate.scale(.56).move_to([-3.6, -.2, 0]),
@@ -294,7 +294,7 @@ class S04(Ep):
             self.cue(vo, .05, FadeOut(m2), FadeIn(tok), run_time=.3)
             for chp in models:
                 self.play(tok.animate.move_to(chp.get_bottom() + DOWN * .18), run_time=.4)
-                self.play(Indicate(chp, color=RED, scale_factor=1.06), run_time=.4)
+                self.play(Indicate(chp[1], color=RED, scale_factor=1.08), run_time=.4)
             vo.wait_until("Predict collects")
             self.play(FadeOut(tok), FadeIn(plab), *[FadeIn(p, shift=DOWN * .2) for p in preds],
                       run_time=.7)

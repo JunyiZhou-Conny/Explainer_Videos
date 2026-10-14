@@ -31,6 +31,23 @@ class Ep(EpisodeScene):
     episode = "E3"
     total = "07"
 
+    def settle(self, *whole):
+        """After a LaggedStart over the parts of an object, Scene.play leaves a plain Group
+        holding those parts. Unwrap it and put the whole objects back as single top-level
+        mobjects, so later fades, transforms and restores act on exactly what is on screen
+        (a ReplacementTransform of the whole would otherwise leave the old parts behind)."""
+        fam = {id(x) for w in whole for x in w.get_family()}
+
+        def covered(m):            # one of the wholes, or a wrapper made only of them
+            return id(m) in fam or (bool(m.submobjects) and all(covered(c) for c in m.submobjects))
+        keep = []
+        for m in self.mobjects:
+            for part in ([m] if isinstance(m, VMobject) else m.submobjects):
+                if not covered(part) and all(part is not k for k in keep):
+                    keep.append(part)
+        self.mobjects = keep
+        self.add(*whole)
+
 
 # ---------------------------------------------------------------- measured data
 
@@ -275,6 +292,7 @@ class S01(Ep):
                                 tick(-6.1 + k * 2.5 + 1.25, -1.95, 26, INK)))
             self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * .1) for r in runs], lag_ratio=.45),
                       run_time=1.1)
+            self.settle(runs)
         self.finish()
 
 
@@ -340,6 +358,7 @@ class S02(Ep):
                                   lag_ratio=.03),
                       *[Create(g_.frame) for g_ in grids], FadeIn(titles), FadeIn(ops),
                       FadeIn(mmdp), FadeIn(kform), FadeIn(kfrom), run_time=1.3)
+            self.settle(*grids)
             vo.wait_until("Add the average")
             hk = highlight(self, mmdp, 327, 329, run_time=.3)
             self.play(grids[0].frame.animate.set_color(RED), grids[1].frame.animate.set_color(RED),
@@ -557,19 +576,20 @@ class S03(Ep):
                                 ic.get_corner(UR) + RIGHT * .15 + UP * .1, color=RED,
                                 stroke_width=5) for ic in icons])
         ly = -1.95
-        loop = VGroup(chip("edit", -2.4, ly, INK, 22), chip("pytest", 0, ly, INK, 22),
-                      chip("✓ green", 2.4, ly, INK, 22))
+        loop = VGroup(chip("edit", -3.0, ly, INK, 22), chip("pytest", -.6, ly, INK, 22),
+                      chip("✓ green", 1.8, ly, INK, 22))
         la = VGroup(arrow(loop[0].get_right(), loop[1].get_left(), INK),
                     arrow(loop[1].get_right(), loop[2].get_left(), INK),
                     CurvedArrow(loop[2].get_top() + UP * .05, loop[0].get_top() + UP * .05,
                                 angle=PI / 3.2, color=GRAY, stroke_width=2.5,
                                 tip_length=.18))
-        every = left("≈ 1.5 s · after every edit", 3.5, ly - .02, 20, RED)
+        every = left("≈ 1.5 s · after every edit", 2.95, ly - .02, 20, RED)
         with self.say(3) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.4)
             self.play(FadeIn(need), FadeIn(yours), run_time=.4)
             self.play(LaggedStart(*[FadeIn(i, shift=UP * .1) for i in icons], lag_ratio=.2),
                       FadeIn(names), run_time=.7)
+            self.settle(icons)
             for w, s in zip(["no cluster", "no gigabyte", "no GPU"], strikes):
                 vo.wait_until(w)
                 self.play(Create(s), run_time=.3)
@@ -728,6 +748,7 @@ class S04(Ep):
                                   *[FadeIn(VGroup(p, t), shift=UP * .1)
                                     for p, t in zip(panels[1:], etags)], lag_ratio=.25),
                       run_time=1.2)
+            self.settle(*panels, etags)
             vo.wait_until("notice the data")
             marks = VGroup(p_mmd.mark(2), p_one.mark(2), p_shuf.mark(2, 3))
             self.play(FadeIn(marks), run_time=.5)
@@ -757,6 +778,7 @@ class S05(Ep):
                       LaggedStart(*[FadeIn(r, shift=DOWN * .1) for r in h_mat.cells],
                                   lag_ratio=.12),
                       Create(m_mat.frame), Create(h_mat.frame), run_time=1.1)
+            self.settle(m_mat, h_mat)
             vo.wait_until("Pause and predict")
             dimmed = save(self.content())
             pcard = ponder("5 个小鼠细胞对 7 个人类细胞，R2Evaluation 能接受吗？",
@@ -790,6 +812,7 @@ class S05(Ep):
             qs = VGroup(*[at("?", lh_x - 1.05, row_y(h_mat, i), 24, RED, bold=True)
                           for i in (5, 6)])
             self.play(LaggedStart(*[Create(p) for p in pairs], lag_ratio=.15), run_time=.8)
+            self.settle(pairs)
             self.play(Create(lost), FadeIn(qs), run_time=.5)
             no = left("5 rows can't line up with 7", -6.2, -.75, 21, RED, bold=True)
             self.play(FadeIn(no), run_time=.4)
@@ -836,6 +859,7 @@ class S05(Ep):
             vo.wait_until("where every cell")
             self.play(FadeIn(cells_m), FadeIn(recon_m), FadeIn(c_lab), FadeIn(r_lab), run_time=.5)
             self.play(LaggedStart(*[Create(o) for o in own], lag_ratio=.15), run_time=.7)
+            self.settle(own)
             vo.wait_until("Your benchmark")
             m_mat2 = matrix(mouse, rm_x, ltop, ch=.24)
             h_mat2 = matrix(human7, rh_x, ltop, ch=.24)
@@ -937,6 +961,7 @@ class S06(Ep):
             vo.wait_until("Write many")
             self.play(LaggedStart(*[FadeIn(d, scale=1.5) for d in ann[0][3]], lag_ratio=.08),
                       FadeIn(ann[0][4]), run_time=.8)
+            self.settle(ann[0])
 
         toy = mono_left("Tests/toy_config.yaml", ax, -1.05, 19, INK)
         seed = left("the seed of this layer", ax, -1.42, 20, RED, bold=True)
@@ -953,6 +978,7 @@ class S06(Ep):
             vo.wait_until("A handful")
             self.play(LaggedStart(*[FadeIn(d, scale=1.5) for d in ann[1][3]], lag_ratio=.2),
                       FadeIn(ann[1][4]), run_time=.6)
+            self.settle(ann[1])
             vo.wait_until("toy_config")
             self.play(FadeOut(ann[0]), FadeIn(toy), FadeIn(seed), run_time=.5)
             vo.wait_until("brought up to date")
@@ -970,6 +996,7 @@ class S06(Ep):
             vo.wait_until("Run it once")
             self.play(LaggedStart(FadeIn(oks[0], scale=1.4), FadeIn(oks[1], scale=1.4),
                                   lag_ratio=.5), run_time=.7)
+            self.settle(oks)
             self.play(FadeIn(ann[2][3]), FadeIn(ann[2][4]), run_time=.4)
             vo.wait_until("not instead")
             order = arrow([-5.85, -1.5, 0], [-5.85, 1.35, 0], RED)
