@@ -2,10 +2,12 @@
 
 Beats (script.md "## S05", one voiceover block each):
  0  TRACKER A7 -> A8. CODE(README.md: 142) `ENTRYPOINT ["/bin/bash"]` at the top (its keyword and
-    then its value pulse as they are said). A 5-row strip terminal types `cat Dockerfile` (row tag
-    `extra`) -> laptop/13 lines 2-5; on "Put it under the FROM line" the FROM row pulses and line 5
-    (the new ENTRYPOINT line) gets a YELLOW bar.
- 1  TRACKER A8. The terminal clears and grows to 8 rows (the README panel stays above it):
+    then its value pulse as they are said) and a 5-row strip terminal below it. The strip types
+    `cat Dockerfile` (row tag `extra`) -> laptop/13 lines 2-5 while "slash bin slash bash" is said
+    (the beat is 6.5 s: typed any later, the output would be gone a second after it appears); on
+    "Put it under the FROM line" the FROM row pulses and line 5 (the new line) gets a YELLOW bar.
+ 1  TRACKER A8. The terminal grows to 8 rows (the README panel stays above it; the cat output
+    scrolls away under the build, its YELLOW ENTRYPOINT row last to go):
     `docker build -t simple-translate -f Dockerfile .` (folds onto 2 rows) + ▶ your turn ->
     laptop/14 lines 15 (cut after `@sha256:34386ef0`, folded onto 2 rows: wider than a row), 17, …,
     25. `#4 CACHED` turns TEAL and pulses on "The FROM step says CACHED". On "and no layer is added"

@@ -111,11 +111,11 @@ assert "`uv init --bare`" in _A[33] and "restart your terminal" in _A[33]
 
 # ------------------------------------------------------------------ layout
 TRACK_BOTTOM = 2.917               # the tracker band's lower edge
-CARD_C = np.array([-4.25, 1.3, 0])  # the course-site card (beats 0-1)
-BIG_C = np.array([2.6, 1.5, 0])     # the enlarged key (beat 0)
+CARD_C = np.array([-4.25, 0.9, 0])  # the course-site card (beats 0-1)
+BIG_C = np.array([2.6, 1.1, 0])     # the enlarged key (beat 0)
 ROWS_X = -0.8                      # left edge of the five secrets/ folders (beat 1)
-ROW_Y = [2.2, 1.05, 0.45, -0.15, -0.75]
-AXIS_Y = 0.4                       # V7's axis (beats 9-10), above the 3-row strip
+ROW_Y = [1.8, 0.65, 0.05, -0.55, -1.15]
+AXIS_Y = 0.3                       # V7's axis (beats 9-10), above the 3-row strip
 
 
 # ------------------------------------------------------------------ small helpers
@@ -141,6 +141,19 @@ def stick(scene, line, *mobs):
         scene.remove(m)
         row.add(m)
     scene.add(row)
+
+
+def under_row(mob, t, line):
+    """Position a tag for a command row that is too long to have one beside it: at the right end
+    of the row below (whose output is short), as the pilot does. Returns mob (not added)."""
+    row = line.rows[-1] if hasattr(line, "rows") else line
+    mob.set_y(row.strut.get_center()[1] - t.pitch)
+    return mob.align_to(t.box, RIGHT).shift(LEFT * 0.12)
+
+
+def rows_of(line) -> list:
+    """The row mobjects of a typed line (one, or several when it folded)."""
+    return list(line.rows) if hasattr(line, "rows") else [line]
 
 
 def unstick(scene, line, mob):
@@ -240,6 +253,14 @@ def ps_chip() -> VGroup:
     return g
 
 
+def lo_label(vl, lo: int):
+    """V7's interval label `requires-python = ">=3.lo"`, always over the interval's start (the
+    shared VersionLine puts it left of the start when it fits; beat 10 needs the room there for
+    the edit chip's drag, so the label stays over the start like it is for 3.11 and 3.12)."""
+    return mono(f'requires-python = ">=3.{lo}"', vl.size, VENV).move_to(vl.point(lo, 1.05),
+                                                                         aligned_edge=LEFT)
+
+
 def down_arrow(top, tip, color=TOOL) -> VGroup:
     """A dashed arrow from `top` down to `tip`."""
     head = Triangle(stroke_width=0).set_fill(color, 1).rotate(PI).scale(0.11)
@@ -288,7 +309,7 @@ class KeyAndInit(VoiceScene):
         rows = secrets_rows()
         targets = [r.glyph.get_center() + DOWN * 0.03 for r in rows]
         rc = readme_card("README.md · lines 97–99", RC_LINES)
-        place(rc, left=-6.35, top=-1.4)
+        place(rc, left=-6.35, top=-1.8)
         rc_ul = under(rc.rows[1], TURN, stroke=3)
         cap = VGroup(sans("check:", CAPTION, LAPTOP), mono("ls secrets", CAPTION, INK),
                      sans("→", CAPTION, LAPTOP), mono("mega-pipeline.json", CAPTION, COST))
@@ -349,12 +370,12 @@ class KeyAndInit(VoiceScene):
         # ========================================================== 3 · two Canvas links (erratum)
         left = link_card("README.md", 99, "25687801")
         right = link_card("transcribe_audio/README.md", 17, "23163432")
-        pair = VGroup(left, right).arrange(RIGHT, buff=0.5).move_to([0, 0.55, 0])
+        pair = VGroup(left, right).arrange(RIGHT, buff=0.5).move_to([0, 0.35, 0])
         err3 = erratum_tag().next_to(right.head, UP, buff=0.25).align_to(right.frame, RIGHT)
         use = VGroup(check_mark(0.34, VENV), sans("use this one", 24, VENV)).arrange(RIGHT, buff=0.18)
         use.next_to(left.frame, DOWN, buff=0.35)
         older = stamp("older", LAPTOP, size=24).next_to(right.frame, DOWN, buff=0.35)
-        note3 = sans("how the code finds the key: part 2", 22, LAPTOP).move_to([0, -2.1, 0])
+        note3 = sans("how the code finds the key: part 2", 22, LAPTOP).move_to([0, -2.2, 0])
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(cap[3], bad, chk2, crs2, st2, exact, ren, ren_l)), run_time=0.4)
@@ -382,7 +403,7 @@ class KeyAndInit(VoiceScene):
             vo.wait_until("After Tutorial 0")
             self.play(caption_extra(tr), run_time=0.3)
             c0 = type_cmd(self, t, MISSING.cmd, 0.6)
-            x0 = beside(extra_tag(), t, c0)
+            x0 = under_row(extra_tag(), t, c0)
             self.play(FadeIn(x0, shift=LEFT * 0.1), run_time=0.3)
             stick(self, c0, x0)
             vo.wait_until("so skip ahead")
@@ -414,14 +435,14 @@ class KeyAndInit(VoiceScene):
             self.play(FadeIn(rt, shift=LEFT * 0.1), Indicate(substring(l2, "uv 0.13.0"), color=INK,
                                                             scale_factor=1.12), run_time=0.6)
             stick(self, l2, rt)
-            fg = folder_glyph(0.5, LAPTOP)
+            fg = folder_glyph(0.72, LAPTOP)
             fl = mono("~/.local/bin", CAPTION, INK).next_to(fg, RIGHT, buff=0.18)
             fold = VGroup(fg, fl)
             place(fold, right=t.box.get_right()[0] - 0.5,
                   cy=(l4.strut.get_center()[1] + out1[3].strut.get_center()[1]) / 2)
-            uvc = chip("uv", TOOL, size=22, font=MONO).move_to(substring(l4, "uv"))
+            uvc = chip("uv", TOOL, size=CAPTION, font=MONO).move_to(substring(l4, "uv"))
             self.play(FadeIn(fold, shift=LEFT * 0.1), FadeIn(uvc, scale=1.3), run_time=0.5)
-            self.play(uvc.animate.scale(0.8).move_to(fg.get_center() + DOWN * 0.03), run_time=0.9)
+            self.play(uvc.animate.move_to(fg[1].get_center()), run_time=0.9)
             stick(self, l4, fold, uvc)
 
             vo.wait_until("On Windows")
@@ -429,7 +450,7 @@ class KeyAndInit(VoiceScene):
             pip = cmd_chip(PIP, "any system")
             place(ps, left=-4.1, cy=1.25)
             place(pip, left=-4.1, top=ps.get_bottom()[1] - 0.45)
-            resize(self, t, 3, keep=[*c1.rows, l8], run_time=0.9)
+            resize(self, t, 3, keep=[*rows_of(c1), l8], run_time=0.9)
             self.play(FadeIn(ps, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("on any system")
             self.play(FadeIn(pip, shift=UP * 0.15), run_time=0.5)
@@ -479,7 +500,7 @@ class KeyAndInit(VoiceScene):
             self.play(Create(u3), substring(o3, "transcribe-audio").animate.set_color(VENV), run_time=0.5)
             stick(self, o3, u3)
             vo.wait_until("Pause and run it")
-            yt3 = beside(your_turn(), t, c3)
+            yt3 = under_row(your_turn(), t, c3)
             self.play(FadeIn(yt3, shift=LEFT * 0.1), run_time=0.4)
             stick(self, c3, yt3)
             self.play(Wiggle(yt3, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
@@ -521,7 +542,7 @@ class KeyAndInit(VoiceScene):
 
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(pyfile), run_time=0.3)
-            resize(self, t, 3, keep=[*c4.rows, l5], run_time=0.8)
+            resize(self, t, 3, keep=[*rows_of(c4), l5], run_time=0.8)
             self.play(FadeIn(vl.axis), FadeIn(vl.ticks), run_time=0.6)
             self.play(Indicate(substring(l5, "3.11"), color=TURN, scale_factor=1.3), run_time=0.6)
             vo.wait_until("this laptop's Python")
@@ -548,29 +569,36 @@ class KeyAndInit(VoiceScene):
         crs = cross_mark(0.3, ERR).move_to(ck)
         ck_back = check_mark(0.36, VENV).move_to(ck)
         tip = vl.point(15, 0.05)
-        dl = down_arrow(vl.point(15, 0.8), tip)
+        dl = down_arrow(vl.point(15, 0.7), tip)
         prev = VGroup(sans("preview:", CAPTION, LAPTOP), mono("generate_text", CAPTION, LAPTOP))
-        prev.arrange(DOWN, aligned_edge=LEFT, buff=0.1).next_to(dl, RIGHT, buff=0.2)
+        prev.arrange(RIGHT, buff=0.12)
+        place(prev, left=dl.get_right()[0] + 0.15, cy=vl.point(15, 0.55)[1])
         edit = chip('requires-python = ">=3.12"', VENV, size=22, font=MONO)
         edit.box.set_fill(interpolate_color(ManimColor(S.BG), ManimColor(VENV), 0.18), 1)
         dx = vl.point(13)[0] - vl.point(12)[0]
+        nr = tag("not in the README", LAPTOP)
 
         with self.voiceover(SAY[10]) as vo:
             self.play(FadeIn(top10, shift=DOWN * 0.1), run_time=0.5)
             self.play(d1.dot.animate.move_to(vl.point(13)), Transform(d1.text, lab13), run_time=1.0)
             vo.wait_until("If yours says")
-            self.play(*vl.move_lo(13), run_time=0.9)
+            band_to, _ = vl.move_lo(13)      # the label keeps sitting over the start (lo_label)
+            self.play(band_to, Transform(vl.band_label, lo_label(vl, 13)), run_time=0.9)
             vo.wait_until("the image's 3.12 falls outside")
             self.play(d2.animate.set_color(ERR), Transform(ck, crs), run_time=0.5)
             self.play(FadeIn(dl, shift=DOWN * 0.2), FadeIn(prev), run_time=0.6)
             vo.wait_until("so edit it to 3.12")
-            edit.shift(vl.band_label.get_center() - edit.text.get_center())
+            # the edit chip covers the label exactly (opaque), then drags the start with it
+            edit.shift(np.array([vl.point(13)[0] - edit.text.get_left()[0],
+                                 vl.band_label.get_center()[1] - edit.text.get_center()[1], 0]))
             self.play(FadeIn(edit, scale=1.1), run_time=0.5)
-            self.play(*vl.move_lo(12), edit.animate.shift(LEFT * dx), d2.animate.set_color(SYSTEM),
+            band_to, _ = vl.move_lo(12)
+            self.play(band_to, edit.animate.shift(LEFT * dx), d2.animate.set_color(SYSTEM),
                       Transform(ck, ck_back), FadeOut(dl), run_time=1.0)
+            vl.band_label.become(lo_label(vl, 12))      # ">=3.12", hidden under the opaque chip
             vo.wait_until("That fix isn't")
-            nr = tag("not in the README", LAPTOP).next_to(edit, RIGHT, buff=0.3)
-            self.play(FadeIn(nr, shift=LEFT * 0.1), run_time=0.4)
+            nr.next_to(edit, LEFT, buff=0.3)
+            self.play(FadeIn(nr, shift=RIGHT * 0.1), run_time=0.4)
             vo.wait_until("generate text shows why")
             self.play(Indicate(prev, color=INK, scale_factor=1.1), run_time=0.7)
 

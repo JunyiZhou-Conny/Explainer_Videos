@@ -223,7 +223,7 @@ class StepFrom(VoiceScene):
         rows = list(tree.rows)
         new_row = tree.row("Dockerfile")
         k_new = rows.index(new_row)
-        pitch = rows[k_new + 1].get_center()[1] - rows[k_new].get_center()[1]
+        pitch = rows[k_new].get_center()[1] - rows[k_new + 1].get_center()[1]     # > 0
         below = VGroup(*rows[k_new + 1:])
         below.shift(UP * pitch)                     # room is made when the file appears
 
@@ -398,6 +398,10 @@ class StepFrom(VoiceScene):
             pin(self, dots6, beside(note_c, dots6), run_time=0.5)
             vo.wait_until("add dash dash progress")
             self.play(Indicate(note_c.text[1], color=TURN, scale_factor=1.15), run_time=0.8)
+            note_r = row_tag([("stops with", "label"), ("toomanyrequests", "mono"),
+                              ("? → wait a while, or", "label"), ("docker login", "mono"), ("(part 2)", "label")])
+            self.wait(0.3)
+            pin(self, dots11, beside(note_r, dots11), run_time=0.5)
             vo.wait_until("On Docker Desktop")
             l2 = o2[0]
             ul_def = under(substring(l2, '"default"'), TURN, y=l2.strut.get_bottom()[1] - 0.01)
@@ -408,9 +412,6 @@ class StepFrom(VoiceScene):
             pin(self, o2[1], beside(note_d, o2[1]), run_time=0.5)
             vo.wait_until("not default")
             self.play(Indicate(substring(l2, '"default"'), color=TURN, scale_factor=1.2), run_time=0.6)
-            note_r = row_tag([("stops with", "label"), ("toomanyrequests", "mono"),
-                              ("? → wait a while, or", "label"), ("docker login", "mono"), ("(part 2)", "label")])
-            pin(self, dots11, beside(note_r, dots11), run_time=0.5)
 
         # ========================================================== 4 · four base layers, the stack
         stack = LayerStack(stack_w=3.2)
@@ -425,7 +426,7 @@ class StepFrom(VoiceScene):
         rule = Line(sz_targets.get_corner(DR) + np.array([0.05, -0.12, 0]),
                     sz_targets.get_corner(DR) + np.array([-1.3, -0.12, 0]), color=SYSTEM, stroke_width=2)
         total = label("≈ 47.6 MB compressed", 22, SYSTEM)
-        total.next_to(rule, DOWN, buff=0.14).align_to(sz_targets, RIGHT)
+        total.next_to(rule, DOWN, buff=0.14).align_to(rule, LEFT)
 
         with self.voiceover(SAY[4]) as vo:
             unpin(self, [(dots6, note_c), (o2[1], note_d), (dots11, note_r), (r1, yt3)], 0.3)
@@ -436,24 +437,24 @@ class StepFrom(VoiceScene):
             copies = [g.copy() for g in sz_glyphs]
             self.add(*copies)
             vo.wait_until("under 50")
-            resize(self, t, STRIP_ROWS, keep=[r0, r1, o38], run_time=0.7)
-            stack.drop(self, *base, run_time=0.7)
-            self.play(*[ReplacementTransform(c, s) for c, s in zip(copies, sz_targets)],
-                      GrowFromCenter(br.brace), FadeIn(br.text), FadeIn(cap, shift=UP * 0.1), run_time=0.8)
+            resize(self, t, STRIP_ROWS, keep=[r0, r1, o38], run_time=0.8,
+                   extra=[ReplacementTransform(c, s) for c, s in zip(copies, sz_targets)])
             self.play(Create(rule), FadeIn(total, shift=UP * 0.1), run_time=0.5)
+            stack.drop(self, *base, run_time=0.7)
+            self.play(GrowFromCenter(br.brace), FadeIn(br.text), FadeIn(cap, shift=UP * 0.1), run_time=0.6)
             lead(vo, "and saves the result", 0.2)
             name38 = substring(o38, "simple-translate:latest")
             self.play(name38.animate.set_color(IMAGE), run_time=0.5)
             self.play(Indicate(name38, color=IMAGE, scale_factor=1.12), run_time=0.7)
             vo.wait_until("tagged latest")
-            self.play(Indicate(substring(o38, ":latest"), color=IMAGE, scale_factor=1.3), run_time=0.7)
+            self.play(Indicate(substring(o38, ":latest"), color=IMAGE, scale_factor=1.12), run_time=0.7)
             vo.wait_until("Those four layers")
             self.play(LaggedStart(*[Indicate(s, color=SYSTEM, scale_factor=1.06) for s in base], lag_ratio=0.2),
                       Indicate(br.text, color=SYSTEM, scale_factor=1.15), run_time=1.1)
 
         # ========================================================== 5 · inspect: the config card (V3)
         card = ConfigCard(card_w=4.8, inline=True)
-        card.move_to([6.25 - card.width / 2, 2.82 - card.height / 2, 0])
+        card.move_to([6.25 - card.width / 2, 2.86 - card.height / 2, 0])
         n_entry = card.note("ENTRYPOINT", "null")
         n_wd = card.note("WorkingDir", '""')
         cmd_tile = card.place("CMD", card.tile('["python3"]'))
@@ -463,11 +464,11 @@ class StepFrom(VoiceScene):
         inh_arrow = Arrow(inh.get_right() + RIGHT * 0.06, [card.frame.get_left()[0] - 0.04, cmd_y, 0],
                           buff=0, color=S.GREY, stroke_width=3, tip_length=0.15,
                           max_tip_length_to_length_ratio=0.5)
-        start = card.startup("python3", buff=0.15)
+        start = card.startup("python3", buff=0.12)
         arr = label("→", 26, S.GREY)
         repl = chip(">>>", SYSTEM, size=20, font=MONO, pad_y=0.08)
         pred = VGroup(start, arr, repl).arrange(RIGHT, buff=0.25)
-        pred.next_to(card.frame, DOWN, buff=0.15)
+        pred.next_to(card.frame, DOWN, buff=0.12)
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(sz_targets, rule, total), shift=UP * 0.1), track(tr, 7, extra=True),
@@ -555,11 +556,11 @@ class StepFrom(VoiceScene):
         gi_bar = line_bar(gi.code, 2, TURN, 0.22)
         err7 = erratum_tag().next_to(gi.code, RIGHT, buff=0.25).set_y(gi.code.code_lines[2].get_center()[1])
         fchip = VGroup(file_glyph(0.36, TURN), mono("Dockerfile", 22, TURN)).arrange(RIGHT, buff=0.16)
-        fchip.move_to([3.9, 2.25, 0])
+        fchip.move_to([3.0, 2.25, 0])
         made = label("you just made it", 20, S.GREY).next_to(fchip, DOWN, buff=0.14)
         hidden = label("hidden from git", 20, S.GREY).move_to(made)
         add_f = chip(GIT_ADD_F, VENV, size=22, font=MONO)
-        add_f.move_to([3.9, 0.75, 0])
+        add_f.move_to([3.0, 0.75, 0])
         anyway = label("to commit it anyway", 20, S.GREY).next_to(add_f, DOWN, buff=0.14)
 
         with self.voiceover(SAY[7]) as vo:
