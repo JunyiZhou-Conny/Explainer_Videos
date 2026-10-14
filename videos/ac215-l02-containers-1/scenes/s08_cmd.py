@@ -231,9 +231,9 @@ def blink(scene, cursor, until: float) -> None:
     while scene.renderer.time + 0.5 <= until:
         scene.wait(0.45)
         on = not on
-        scene.play(cursor.animate.set_opacity(1 if on else 0), run_time=0.05)
+        scene.play(cursor.animate.set_opacity(1 if on else 0), run_time=0.1)
     if not on:
-        scene.play(cursor.animate.set_opacity(1), run_time=0.05)
+        scene.play(cursor.animate.set_opacity(1), run_time=0.1)
 
 
 # ------------------------------------------------------------------ the scene

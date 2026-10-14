@@ -402,7 +402,7 @@ def what_if_panel() -> VGroup:
 
 def edit_chip() -> VGroup:
     """GREY chip "edit: group_name in cli.py" (mono: the names are code). .frame .text"""
-    t = mono("edit: group_name in cli.py", 22, INK)
+    t = mono("edit: group_name in cli.py", 20, INK)
     fr = RoundedRectangle(width=t.width + 0.44, height=0.52, corner_radius=0.18, stroke_color=S.GREY,
                           stroke_width=2.5).set_fill(S.GREY_DARKER, 1)
     t.move_to(fr)
@@ -691,7 +691,7 @@ class BuildImage(VoiceScene):
 
         # ========================================================== 7 · ponder
         chip = edit_chip()
-        place(chip, left=st.slabs["copy"].box.get_right()[0] + 0.6, cy=st.slabs["copy"].box.get_center()[1])
+        place(chip, left=st.slabs["copy"].box.get_right()[0] + 0.45, cy=st.slabs["copy"].box.get_center()[1])
         card = compact_ponder(PONDER_Q)
         place(card, cx=0, bottom=-3.55)
         assert card.get_top()[1] < st.floor.get_center()[1] - 0.12, card.get_top()[1]
@@ -711,7 +711,7 @@ class BuildImage(VoiceScene):
         # ========================================================== 8 · the answer
         cp, sync = st.slabs["copy"], st.slabs["sync"]
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(card), st.animate.shift(DROP), chip.animate.shift(DROP), run_time=0.7)
+            self.play(FadeOut(card), st.animate.shift(DROP), chip.animate.shift(UP * DROP[1]), run_time=0.7)
             saved_cp = VGroup(cp.box.copy(), st.copy_files.copy())
             saved_sync = sync.box.copy()
             self.play(chip.animate.move_to(cp.box).scale(0.5).set_opacity(0),
