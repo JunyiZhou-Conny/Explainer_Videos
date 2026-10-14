@@ -10,7 +10,8 @@ Steps:
  1. Read videos/<slug>/episode.json + script.json and outputs/<slug>/ (or a directory
     given with --outputs) for the rendered deliverables and their validation sidecar.
  2. Refuse to release when validation.json is missing, its script_sha256 does not match
-    the committed script.json, or REVIEW.md lacks the human sign-off line.
+    the committed script.json, or REVIEW.md lacks the human sign-off line (recorded with
+    the phrase "human review" or "listening sign-off").
  3. Create release episode/<slug>-vN (N = 1 + existing releases of this slug), upload
     the MP4(s), subtitles, chapters and SHA256SUMS.txt plus PUBLISH.json / PUBLISH.md.
  4. Print the asset URLs; the catalog updater consumes them.
@@ -58,8 +59,13 @@ def main() -> int:
     if validation.get("script_sha256") != committed:
         raise SystemExit("validation.json was made from a different script.json than the one committed. Re-render.")
     review = (episode / "REVIEW.md").read_text() if (episode / "REVIEW.md").exists() else ""
-    if "human review" not in review.lower():
-        raise SystemExit("REVIEW.md lacks a human-review record; the lifecycle requires Conny's listening sign-off before release (AGENTS.md).")
+    signoff_phrases = ("human review", "listening sign-off")
+    if not any(phrase in review.lower() for phrase in signoff_phrases):
+        raise SystemExit(
+            "REVIEW.md lacks a human-review record; the lifecycle requires Conny's listening "
+            "sign-off before release (AGENTS.md). Record it with the phrase 'human review' "
+            "or 'listening sign-off'."
+        )
 
     deliverables = sorted(p for p in out.iterdir() if p.suffix in {".mp4", ".srt", ".ass"}
                           or p.name.endswith(".chapters.txt"))
