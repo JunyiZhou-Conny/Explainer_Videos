@@ -604,7 +604,7 @@ class StepUvSync(VoiceScene):
         p_old = mono("3.12", 32, SYSTEM)
         p_q = label("?", 52, TURN)
         p_new = mono(V_VM, 32, S.GREY)
-        puzzle = VGroup(p_old, p_q, p_new).arrange(RIGHT, buff=0.55).move_to([0, 0.35, 0])
+        VGroup(p_old, p_q, p_new).arrange(RIGHT, buff=0.55).move_to([0, 0.35, 0])     # the puzzle row
         half = label("half solved", 24, TURN).next_to(p_q, DOWN, buff=0.12)
         err = erratum_tag()
         refs = label("README.md · line 133,  Dockerfile.txt · line 2  vs  pyproject.toml · line 6", 22, S.GREY,
