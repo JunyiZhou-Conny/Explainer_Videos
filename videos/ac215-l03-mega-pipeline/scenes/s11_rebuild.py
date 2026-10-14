@@ -27,7 +27,7 @@ Beats (script.md "## S11", one voiceover block each):
  3  The trap. The terminal clears and shrinks to 7 rows. Above it, V4's image alone: the TEAL image
     `transcribe_audio` "built before uv add" (the /app cavity with the mounted cli.py, the GREEN
     /home/app/.venv box). It types `docker run --rm -ti -v "$(pwd):/app" transcribe_audio` (extra,
-    folds after `run`): the frame turns TEAL and a new dashed writable layer settles on the image,
+    folds after `run`): the frame turns TEAL and a "new writable layer" (dashed) settles on the image,
     its GREEN shelf empty. `python cli.py --help` (extra) -> TERM(11-g10-new-container.txt: 2–5),
     line 5 RED and underlined; a dashed RED line runs from cli.py to a RED "?" at the empty venv;
     on "lived only in the old container" the empty shelf flashes RED and a GREY tag "empty" sits
@@ -508,8 +508,9 @@ class BakeItIn(VoiceScene):
         # ========================================================== 3 · the trap (extra)
         img = trap_image()
         place(img, cx=0, bottom=strip_top(MID) + 0.12)
-        layer3 = new_layer(img.frame, "writable layer · new container", shelf_under=img.venv)
+        layer3 = new_layer(img.frame, "new writable layer", shelf_under=img.venv)
         assert layer3.get_top()[1] < TRACK_BOTTOM - 0.08, layer3.get_top()[1]
+        assert layer3.caption.get_right()[0] < layer3.shelf.get_left()[0] - 0.15, layer3.caption.get_right()
         with self.voiceover(SAY[3]) as vo:
             resize(self, t, MID, keep=0, run_time=0.7)
             self.play(FadeIn(img, shift=DOWN * 0.15), run_time=0.6)

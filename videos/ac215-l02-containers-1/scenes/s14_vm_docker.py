@@ -225,15 +225,17 @@ def book_lines(book: VGroup, n: int = 6, color=SYSTEM) -> VGroup:
     return out
 
 
-def door_glyph(door_w: float = 1.25, door_h: float = 1.85, color=TOOL) -> VGroup:
-    """A PURPLE door: frame, two panels, a knob. .frame .knob"""
+def door_glyph(door_w: float = 1.3, door_h: float = 1.9, color=TOOL) -> VGroup:
+    """A PURPLE door: frame, two panels with a gap at mid-height (where the lock goes), a knob.
+    .frame .knob .lock_spot (a point at mid-height, right of the panels)"""
     fr = Rectangle(width=door_w, height=door_h, stroke_color=color, stroke_width=3.5).set_fill(color, 0.12)
-    panels = VGroup(*[RoundedRectangle(width=door_w * 0.62, height=door_h * 0.32, corner_radius=0.05,
+    panels = VGroup(*[RoundedRectangle(width=door_w * 0.5, height=door_h * 0.3, corner_radius=0.05,
                                        stroke_color=color, stroke_width=2) for _ in range(2)])
-    panels.arrange(DOWN, buff=door_h * 0.1).move_to(fr).shift(LEFT * door_w * 0.06)
-    knob = Dot(radius=0.06, color=color).move_to(fr.get_right() + LEFT * door_w * 0.13 + DOWN * door_h * 0.04)
+    panels.arrange(DOWN, buff=door_h * 0.18).move_to(fr).shift(LEFT * door_w * 0.14)
+    spot = fr.get_center() + RIGHT * door_w * 0.3
+    knob = Dot(radius=0.06, color=color).move_to(spot + DOWN * door_h * 0.16)
     g = VGroup(fr, panels, knob)
-    g.frame, g.knob = fr, knob
+    g.frame, g.knob, g.lock_spot = fr, knob, spot
     return g
 
 
@@ -516,14 +518,14 @@ class DockerOnVM(VoiceScene):
             type_answer(self, t, r58, ASK58, "Y", asked_at)
             t.print(self, OUT03_B, run_time=0.5)
             vo.wait_until("Pause and run it")
-            yt4 = your_turn().next_to(r58.glyphs, RIGHT, buff=0.5)
+            yt4 = your_turn().next_to(r58, RIGHT, buff=0.4).match_y(r58.strut)
             pin(self, r58, yt4, run_time=0.4)
             self.play(pulse(yt4), run_time=0.6)
 
         # ========================================================== 5 · C4: docker --version
         chip5 = pkg_chip()
         chip5.move_to([NOTE_LEFT + chip5.width / 2, 2.3, 0])
-        lap5 = VGroup(label("laptop:", 22, S.GREY), mono("Docker 29.8.2", 22, S.GREY)).arrange(RIGHT, buff=0.14)
+        lap5 = label("the laptop's: Docker 29.8.2", 22, S.GREY)
         lap5.next_to(chip5, DOWN, buff=0.3).align_to(chip5, LEFT).shift(RIGHT * 0.1)
         card5 = deb13_card([V13])
         rec_card = row_tag("at the time of recording")
@@ -585,7 +587,7 @@ class DockerOnVM(VoiceScene):
         # ========================================================== 7 · why sudo: the socket's door
         door = door_glyph().move_to([0.6, 0.95, 0])
         sock = mono("/var/run/docker.sock", 22, TOOL).next_to(door, UP, buff=0.2)
-        lock = lock_glyph(0.36, S.GREY).move_to(door.knob.get_center() + UP * 0.32 + LEFT * 0.02)
+        lock = lock_glyph(0.36, S.GREY).move_to(door.lock_spot)
         dk = VGroup(box(2.0, 0.7, TOOL, fill_opacity=0.18), mono("dockerd", 22, TOOL))
         dk[1].move_to(dk[0])
         dk.move_to([4.0, 0.95, 0])
@@ -635,7 +637,8 @@ class DockerOnVM(VoiceScene):
             vo.wait_until("may open it")
             k0 = keys[0]
             self.play(k0.animate.shift(lock.get_left() + LEFT * 0.05 - k0.key.tip()), FadeOut(ps_chip), run_time=0.8)
-            self.play(Indicate(lock, color=S.WHITE, scale_factor=1.3), run_time=0.6)
+            self.play(lock[0].animate.shift(UP * 0.1), Indicate(lock[1], color=S.WHITE, scale_factor=1.25),
+                      run_time=0.6)
 
         # ========================================================== end · empty frame
         badge_dial.tracker.clear_updaters()

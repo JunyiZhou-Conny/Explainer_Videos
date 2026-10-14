@@ -378,9 +378,10 @@ class Platforms(VoiceScene):
             self.add(*plat_rows)
             ghosts = [s.copy() for s in subs]
             self.add(*ghosts)
-            resize(self, t2, STRIP_ROWS, keep=[*c2.rows, idx_row], run_time=1.0,
-                   extra=[*[ReplacementTransform(g, m) for g, m in zip(ghosts, menu.rows)],
-                          FadeIn(VGroup(menu.frame, menu.sep, menu.title)), FadeIn(atts)])
+            resize(self, t2, STRIP_ROWS, keep=[*c2.rows, idx_row], run_time=0.8,
+                   extra=[Transform(g, m.copy().set_color(TURN)) for g, m in zip(ghosts, menu.rows)])
+            self.play(FadeIn(VGroup(menu.frame, menu.sep, menu.title)), FadeIn(atts),
+                      *[ReplacementTransform(g, m) for g, m in zip(ghosts, menu.rows)], run_time=0.5)
             self.add(menu)
             idx = substring(idx_row, "index")
             u_idx = under(idx, IMAGE)
@@ -467,10 +468,11 @@ class Platforms(VoiceScene):
             ghosts4 = [s.copy() for s in p4]
             self.add(*ghosts4)
             vo.wait_until("is a small menu")
-            resize(self, t2, STRIP_ROWS, keep=[*c4.rows, out4[0]], run_time=0.9,
+            resize(self, t2, STRIP_ROWS, keep=[*c4.rows, out4[0]], run_time=0.7,
                    extra=[sit.animate.shift(DOWN * (8 - STRIP_ROWS) * t2.pitch),
-                          *[ReplacementTransform(g, m) for g, m in zip(ghosts4, menu4.rows)],
-                          FadeIn(VGroup(menu4.frame, menu4.sep, menu4.title))])
+                          *[Transform(g, m.copy()) for g, m in zip(ghosts4, menu4.rows)]])
+            self.play(FadeIn(VGroup(menu4.frame, menu4.sep, menu4.title)), run_time=0.4)
+            self.remove(*ghosts4)
             self.add(menu4)
             vo.wait_until("amd64, plus an attestation")
             self.play(Indicate(menu4.rows[0], color=AMD, scale_factor=1.2), run_time=0.5)
@@ -486,8 +488,8 @@ class Platforms(VoiceScene):
         # the image, so each station keeps one and the PINK routes always join two images.
         img5 = image_card("arm64", plat="arm64", names=None, n=4, glyph_h=0.17, pitch=0.27)
         st_mac = np.array([-2.75, 1.55, 0])                  # the image's three stations
-        lap5 = laptop(1.5, LAPTOP).move_to([-4.85, 0.95, 0])
-        chip5a = platform_chip("arm64", "arm64 · Mac", n=5).move_to([-4.85, 2.25, 0])
+        lap5 = laptop(1.5, LAPTOP).move_to([-4.85, 0.85, 0])
+        chip5a = platform_chip("arm64", "arm64 · Mac", n=5).move_to([-4.85, 2.12, 0])
         shelf5 = shelf_glyph(1.2).move_to([-0.1, 0.8, 0])
         hub5 = label("Docker Hub", 20, CLOUD).next_to(shelf5, DOWN, buff=0.1)
         st_hub = np.array([shelf5.get_x(), shelf5.get_top()[1] + 0.08 + img5.height / 2, 0])
@@ -676,31 +678,31 @@ class Platforms(VoiceScene):
         err8.move_to([6.4 - err8.width / 2, (hub8.get_bottom()[1] + p8.get_top()[1]) / 2, 0])
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(p7, bar12, co7)), FadeOut(VGroup(fx, u_flag, nr)), FadeOut(pic7), run_time=0.5)
-            self.play(FadeIn(bx, shift=DOWN * 0.1), FadeIn(chip8, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeOut(VGroup(p7, bar12, co7)), FadeOut(VGroup(fx, u_flag, nr)), FadeOut(pic7), run_time=0.4)
+            self.play(FadeIn(bx, shift=DOWN * 0.1), FadeIn(chip8, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("uses buildx")
-            self.play(Indicate(bx, color=TOOL, scale_factor=1.1), run_time=0.6)
+            self.play(Indicate(bx, color=TOOL, scale_factor=1.1), run_time=0.5)
             vo.wait_until("Docker's multi-platform builder")
-            self.play(GrowArrow(a_lo), GrowArrow(a_up), FadeIn(emu8), run_time=0.6)
-            self.play(GrowArrow(a_up2), run_time=0.3)
+            self.play(GrowArrow(a_lo), GrowArrow(a_up), FadeIn(emu8), run_time=0.5)
+            self.play(GrowArrow(a_up2), FadeIn(p8, shift=UP * 0.15), run_time=0.4)
+            self.play(FadeIn(bar23), Indicate(code_span(p8.code, 2, "--name multi-arch"), color=TURN, scale_factor=1.06),
+                      run_time=0.5)
             vo.wait_until("to build both")
             self.play(GrowFromCenter(mi_arm), GrowFromCenter(mi_amd), Indicate(emu8.frame, color=INK, scale_factor=1.06),
-                      run_time=0.7)
+                      FadeIn(bar27), run_time=0.6)
             vo.wait_until("and push one menu")
             self.play(FadeIn(VGroup(menu8.frame, menu8.sep, menu8.title)), Create(board8), FadeIn(hub8),
-                      GrowArrow(r_amd), GrowArrow(r_arm), run_time=0.5)
+                      GrowArrow(r_amd), GrowArrow(r_arm), run_time=0.4)
             riders = [mi_amd.copy(), mi_arm.copy()]
             paths = [ArcBetweenPoints(r.get_start(), r.get_end(), angle=a) for r, a in ((r_amd, -0.3), (r_arm, 0.3))]
-            self.play(*[MoveAlongPath(c, pth) for c, pth in zip(riders, paths)], run_time=0.6)
-            self.play(*[FadeOut(c, scale=0.4) for c in riders], FadeIn(menu8.rows[0], shift=RIGHT * 0.2),
-                      FadeIn(menu8.rows[1], shift=RIGHT * 0.2), run_time=0.5)
-            self.add(menu8)
-            self.play(FadeIn(p8, shift=UP * 0.15), run_time=0.5)
-            self.play(FadeIn(bar23), FadeIn(bar27), run_time=0.4)
-            self.play(Indicate(code_span(p8.code, 6, "--platform linux/amd64,linux/arm64 --push"), color=TURN,
+            self.play(*[MoveAlongPath(c, pth) for c, pth in zip(riders, paths)],
+                      Indicate(code_span(p8.code, 6, "--platform linux/amd64,linux/arm64 --push"), color=TURN,
                                scale_factor=1.06), run_time=0.6)
+            self.play(*[FadeOut(c, scale=0.4) for c in riders], FadeIn(menu8.rows[0], shift=RIGHT * 0.2),
+                      FadeIn(menu8.rows[1], shift=RIGHT * 0.2), run_time=0.4)
+            self.add(menu8)
             self.play(FadeIn(err8, shift=LEFT * 0.1), run_time=0.4)
-        self.wait(1.6)                    # time to read line 27 and the erratum before the panel changes
+        self.wait(1.2)                    # time to read line 27 and the erratum before the panel changes
 
         # ========================================================== 9 · DOCKER_USERNAME, IMAGE_NAME, bash, buildx use default
         pic8 = VGroup(bx, chip8, emu8, mi_amd, mi_arm, a_up, a_up2, a_lo, menu8, board8, hub8, r_amd, r_arm)
@@ -720,15 +722,15 @@ class Platforms(VoiceScene):
                     VGroup(mono("desktop-linux", 20, LAPTOP), label("on Docker Desktop", 20, LAPTOP)).arrange(RIGHT, buff=0.12))
         n3.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
         r3 = cmd_row("docker buildx use default", n3)
-        chip_x = -5.6
-        note_x = chip_x + max(r.chip.width for r in (r1, r2, r3)) + 0.35
         y = cap.get_bottom()[1] - 0.6
-        for r in (r1, r2, r3):
-            r.chip.move_to([chip_x + r.chip.width / 2, y, 0])
-            r.note.move_to([note_x + r.note.width / 2, y, 0])
+        for r in (r1, r2, r3):                           # each note right after its chip
+            r.chip.move_to([r.chip.width / 2, y, 0])
+            r.note.move_to([r.chip.get_right()[0] + 0.3 + r.note.width / 2, y, 0])
             if r is r3:
                 r.note.align_to(r.chip, UP).shift(UP * 0.02)
             y -= 0.78
+        rows9 = VGroup(r1, r2, r3)
+        rows9.shift(RIGHT * (-rows9.width / 2 - rows9.get_left()[0]))   # the block centred under the panel
 
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(pic8), FadeOut(VGroup(bar23, bar27, err8)), run_time=0.5)

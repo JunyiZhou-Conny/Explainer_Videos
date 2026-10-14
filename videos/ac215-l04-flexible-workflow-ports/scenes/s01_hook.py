@@ -12,7 +12,7 @@ Beats (script.md "## S01", one voiceover block each):
    GREEN recipe card holding generate_text/Dockerfile · line 2 (`3.14` pulses); at right the BLUE
    "Docker Hub" shelf (illustration) with the sealed TEAL box, the PINK signpost
    dlops/mega-pipeline-generate-text:latest aiming at it and a GREY chip "pushed 2025-02-18";
-   "3.8.17" pulses in the strip; a YELLOW "?" pulses between card and box.
+   "3.8.17" pulses in the strip with the box; a YELLOW "?" pulses between card and box.
 2. Cut. A 6-row laptop terminal (prompt student@laptop:~/AC215/port_toy$) along the bottom; above
    it a GREY laptop glyph at left and two TEAL boxes, gateway (low) and processor (high, a door
    ":9200" on its left wall). `curl --max-time 3 http://localhost:9200/health` -> port-laptop/23
@@ -20,8 +20,8 @@ Beats (script.md "## S01", one voiceover block each):
    RED dot bounces back. `docker exec gateway curl http://processor:9200/health` -> 24: "…", 5;
    a PINK arrow labelled "processor" grows from gateway to the door, and it and "ok" turn GREEN.
 3. Both pictures become glyph-only thumbnails (left: shelf, box, signpost; right: the two boxes
-   and the laptop); under them the YELLOW questions write in at 26 pt: "Part 1 · Where did that
-   image come from?" and "Part 2 · Whose localhost is it?".
+   and the laptop), each pulsing as its question writes in under it, 26 pt YELLOW, "Part 1" over
+   "Where did that image come from?" and "Part 2" over "Whose localhost is it?".
 4. The questions clear. Layout preview: the tracker ("README › Get the Code · starting fresh", 2
    dots) in a pulsing YELLOW ring; the code panel transcribe_audio/docker-shell.sh · lines 7–8
    slides in, its header ringed; a 5-row laptop strip (GREY tag "preview") types `git clone
@@ -180,6 +180,12 @@ def glyph_copy(m) -> VGroup:
     return c
 
 
+def pulse(m, color: str = TURN, k: float = 1.08):
+    """A there-and-back emphasis for shapes: strokes take `color` and the shape grows a little;
+    fills stay (Indicate would paint a filled frame solid)."""
+    return m.animate(rate_func=there_and_back).scale(k).set_stroke(color)
+
+
 def text_span(t: Text, s: str, sub: str) -> VGroup:
     """The glyphs of substring `sub` of a Text built from string `s` (spaces have no glyphs)."""
     i = s.index(sub)
@@ -303,9 +309,13 @@ class Hook(VoiceScene):
         v1 = BuildOrPull(tag_name=TAG_NAME, show=("hub", "hub_tag", "box", "post", "pointer"))
         v1.shift(np.array([6.42 - v1.parts["hub_tag"].get_right()[0], 0.8, 0]))
         stick_x = v1.post[-1].get_center()[0]
-        pushed = chip("pushed 2025-02-18", S.GREY, size=20)
-        pushed.move_to([(stick_x + v1.box.get_left()[0]) / 2 + 0.25,
-                        (v1.box.get_top()[1] + v1.post.board.get_bottom()[1]) / 2, 0])
+        # the date chip hangs between the signpost's stick and its pointer, above the box
+        pushed = chip("pushed 2025-02-18", S.GREY, size=20, pad_x=0.14)
+        y_c = (v1.box.get_top()[1] + v1.post.board.get_bottom()[1]) / 2
+        ps, pe = v1.pointer.get_start(), v1.pointer.get_end()
+        x_ptr = ps[0] + (pe[0] - ps[0]) * (ps[1] - y_c) / (ps[1] - pe[1])
+        pushed.move_to([(stick_x + x_ptr) / 2, y_c, 0])
+        assert pushed.get_left()[0] > stick_x + 0.05 and pushed.get_right()[0] < x_ptr - 0.05
         qm = label("?", 56, TURN).move_to([(cardg.get_right()[0] + stick_x) / 2, v1.box.get_center()[1], 0])
         v1_pic = VGroup(v1.hub_shelf, v1.box, v1.post, v1.pointer)     # for the thumbnail (beat 3)
 
@@ -322,7 +332,7 @@ class Hook(VoiceScene):
             self.play(FadeIn(pushed, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("with Python 3.8")
             self.play(Indicate(substring(l20, "3.8.17"), color=TURN, scale_factor=1.25),
-                      Indicate(v1.box, color=CTR, scale_factor=1.06), run_time=0.9)
+                      pulse(v1.box, TURN, 1.06), run_time=0.9)
             vo.wait_until("Where did it come from")
             self.play(Write(qm), run_time=0.5)
             self.play(qm.animate(rate_func=there_and_back).scale(1.3), run_time=0.7)
@@ -346,7 +356,7 @@ class Hook(VoiceScene):
             clear_stage(self, FadeIn(t2), run_time=0.6)
             self.play(FadeIn(net, lag_ratio=0.1), run_time=1.0)
             vo.wait_until("a server listening")
-            self.play(Indicate(VGroup(dr, P["door_label"]), color=TURN, scale_factor=1.25), run_time=0.8)
+            self.play(pulse(dr, TURN, 1.15), Indicate(P["door_label"], color=TURN, scale_factor=1.1), run_time=0.8)
             type_cmd(self, t2, CURL.cmd, type_time=1.4)
             vo.wait_until("The laptop can't reach it")
             self.play(Create(lap_arrow), run_time=0.6)
@@ -361,30 +371,30 @@ class Hook(VoiceScene):
             vo.wait_until("gets a reply")
             ok = t2.print(self, EXEC.at("…", 5), run_time=0.4)[1]
             self.play(ok.animate.set_color(VENV), g_arrow.animate.set_color(VENV),
-                      Indicate(dr, color=VENV, scale_factor=1.3), run_time=0.7)
+                      pulse(dr, VENV, 1.3), run_time=0.7)
 
         # ========================================================== 3. two puzzles
         thumb_l = glyph_copy(v1_pic)
         thumb_l.scale(min(4.6 / thumb_l.width, 2.3 / thumb_l.height)).move_to([-3.3, 1.35, 0])
         net_shapes = VGroup(shapes, lap_arrow, no_cross, g_arrow)
-        k_r = min(5.2 / net_shapes.width, 2.3 / net_shapes.height)
+        k_r = min(5.8 / net_shapes.width, 2.3 / net_shapes.height)
         q1 = question(Q1).move_to([-3.3, -0.85, 0])
-        q2 = question(Q2).move_to([3.3, -0.85, 0])
+        q2 = question(Q2).move_to([3.4, -0.85, 0])
 
         with self.voiceover(SAY[3]) as vo:
             self.add(net_shapes)
             drop = VGroup(texts, g_lab)
             self.play(FadeOut(t2), FadeOut(drop),
-                      net_shapes.animate.scale(k_r).move_to([3.3, 1.35, 0]),
+                      net_shapes.animate.scale(k_r).move_to([3.4, 1.35, 0]),
                       FadeIn(thumb_l, scale=1.8), run_time=1.0)
             self.remove(t2, drop, texts, g_lab)
             net.remove(texts)
             vo.wait_until("Part 1")
-            self.play(Write(q1), Indicate(thumb_l, color=TURN, scale_factor=1.05), run_time=1.0)
+            self.play(Write(q1), pulse(thumb_l), run_time=1.0)
             vo.wait_until("and should you build")
             self.play(thumb_l.animate(rate_func=there_and_back).shift(UP * 0.15), run_time=0.7)
             vo.wait_until("Part 2")
-            self.play(Write(q2), Indicate(net_shapes, color=TURN, scale_factor=1.05), run_time=1.0)
+            self.play(Write(q2), pulse(net_shapes), run_time=1.0)
 
         # ========================================================== 4. how to follow along
         tr = tracker("F")
@@ -419,7 +429,7 @@ class Hook(VoiceScene):
             br = type_cmd(self, t4, BRANCH.cmd, type_time=0.7)
             xt = pin(self, br, beside(extra_tag(), t4, br))
             vo.wait_until("the README doesn't have")
-            self.play(Indicate(xt, color=S.WHITE, scale_factor=1.15), run_time=0.8)
+            self.play(pulse(xt, S.WHITE, 1.15), run_time=0.8)
 
         # ========================================================== 5. what you need
         foot = VGroup(label("every command:", 22, S.GREY), mono(GUIDE, 20, S.GREY)) \
@@ -480,7 +490,7 @@ class Hook(VoiceScene):
             self.play(LaggedStart(FadeIn(c_mac, shift=UP * 0.2), FadeIn(c_win, shift=UP * 0.2),
                                   lag_ratio=0.45), run_time=0.9)
             vo.wait_until("the prompt and a few")
-            self.play(Indicate(VGroup(c_mac.icon, c_win.icon), color=TURN, scale_factor=1.3), run_time=0.8)
+            self.play(pulse(c_mac.icon, TURN, 1.3), pulse(c_win.icon, TURN, 1.3), run_time=0.8)
             vo.wait_until("the commands and ports")
             self.play(FadeIn(same, shift=UP * 0.15), run_time=0.6)
 
@@ -496,7 +506,8 @@ class Hook(VoiceScene):
                         for i in range(2)])
 
         with self.voiceover(SAY[7]) as vo:
-            clear_stage(self, Create(sky), run_time=1.0)
+            clear_stage(self, run_time=0.5)
+            self.play(Create(sky), run_time=0.9)
             vo.wait_until("we had no Google")
             self.play(Create(xx), FadeIn(cap7, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("Wherever the code")
