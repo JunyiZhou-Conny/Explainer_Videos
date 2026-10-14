@@ -127,6 +127,10 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   Time animations with `vo.wait_until("phrase")`.
 - Prefer transforms that show what became what over fade-out/fade-in.
 - Deterministic: seed randomness; avoid `always_redraw` on big groups; clear updaters.
+- Never message an agent that runs inside a workflow (SendMessage to its id): it does not reach that
+  agent, it starts a second copy from its transcript, and the two then edit the same file. Review
+  findings that arrive while scenes are being built go into the video's `build/qa_followups.md` for the
+  whole-video QA pass instead.
 - Agents working in parallel never edit shared files (`explainer/*.py`, `scenes/common.py` once
   scenes start); they put requests in their report.
 
