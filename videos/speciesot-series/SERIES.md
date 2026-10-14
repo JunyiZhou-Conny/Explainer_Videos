@@ -19,7 +19,7 @@ Conny to type.
 | # | Slug | Title | Teaches | Points at (Josh's `src/speciesot/`) |
 | --- | --- | --- | --- | --- |
 | E1 | `speciesot-e1-blueprint` | Four verbs and a contract | class vs object, `__init__`, `self`, abstract classes as contracts (names, not inputs), the Experiment as conductor, polymorphism | `speciesot_core.py` 35–57, 67–146, 151–159, 212–225 |
-| E2 | `speciesot-e2-one-name` | One name, four places | config.yaml → dict → `__init__` → attribute; KeyError vs AttributeError; reading a traceback; the silent `x_dimension`/`x_dimensions` twin | `speciesot_core.py` 97–104, 214–225, 247–258; `Tests/config.yaml`, `Tests/toy_config.yaml`, `Tests/e24_replica.ipynb` |
+| E2 | `speciesot-e2-one-name` | One name, five places | config.yaml → dict → `__init__` → attribute; KeyError vs AttributeError; reading a traceback; the silent `x_dimension`/`x_dimensions` twin | `speciesot_core.py` 97–104, 214–225, 247–258; `Tests/config.yaml`, `Tests/toy_config.yaml`, `Tests/e24_replica.ipynb` |
 | E3 | `speciesot-e3-tests` | A test is a question with a known answer | pytest discovery, known answers from meaning, toy data, test layers, the R² decision | `Tests/test_evaluation.py`, `Tests/test_model.py`, `speciesot_core.py` 305–335 |
 | E4 | `speciesot-e4-scgen` | scGen as arithmetic, behind one adapter | encode → +δ → decode; setup/train/predict; the three scgens; adapter with a few calls | `speciesot_core.py` 212–294; speciesOT repo `atlas-paper-vae/scripts/`, `cellot/cellot_gpu/cellot/` |
 | E5 | `speciesot-e5-next-step` | What next? Follow the errors | walking skeleton, the error trail as a board, the data card, M1 v08 and its golden numbers, SOLID as a compass | whole file; `specs/m1_modern.yaml`; `v08_scorecard_dual.csv` |

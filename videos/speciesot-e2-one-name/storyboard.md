@@ -1,4 +1,4 @@
-# E2 storyboard · One name, four places
+# E2 storyboard · One name, five places
 
 Narration: `script.json` (line indices L0, L1 … per scene). Evidence tags on screen:
 MEASURED (checks/error_trail.json, stand-in scgen), READ IN CODE, READ IN NOTEBOOK, INFERRED.

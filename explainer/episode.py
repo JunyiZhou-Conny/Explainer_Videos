@@ -299,7 +299,10 @@ def main(argv=None):
         for line in scene["lines"]:
             clip = voice.speak(line[key])
             audio.append({"duration": clip.duration, "path": str(clip.path)})
-        minimum = sum(a["duration"] for a in audio) + len(audio) * 0.18 + 1.10
+        # A line may ask for thinking time after it ("pause_after": seconds, e.g. a ponder question);
+        # it counts toward the scene's minimum, so the scene, not the whole episode, pays for it.
+        pauses = sum(float(line.get("pause_after") or 0) for line in scene["lines"])
+        minimum = sum(a["duration"] for a in audio) + len(audio) * 0.18 + 1.10 + pauses
         prepared.append({**scene, "audio": audio, "minimum": minimum})
         print(f"Speech {scene['id']}: {minimum:.2f}s minimum", flush=True)
     minimum = sum(s["minimum"] for s in prepared)

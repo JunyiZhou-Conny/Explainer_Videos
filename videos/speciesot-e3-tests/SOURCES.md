@@ -22,3 +22,4 @@ produced in this session (Python 3.12.3, anndata 0.13.4, scikit-learn 1.9.1, pyt
 | s03 "most of that is just importing libraries" timing bar | reasoning about a 1.45 s run whose test body is a few ms; not profiled | INFERRED (tagged on screen) |
 | s02 failing pytest output (the `2 *` removed) | real pytest output from a scratch copy of the test with the bug planted | EXAMPLE (tagged on screen) |
 | s05 reconstructions labelled "(sketch)" | drawn for the video | EXAMPLE |
+| s05 "with five against five it doesn't crash … R squared of point one zero three" | Checks `error_trail.json`, stage `identity_end_to_end` (5 mouse vs 5 human toy test cells): `R2Evaluation` 0.1030 | MEASURED |

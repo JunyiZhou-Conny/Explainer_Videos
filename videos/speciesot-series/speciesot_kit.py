@@ -424,12 +424,18 @@ class EpisodeScene(VoiceScene):
     def dim_rest(self, opacity=.15):
         return VGroup(*self.content()).animate.set_opacity(opacity)
 
-    def hold(self, after_line, seconds=3.0, reserve=1.0):
-        """Silence after a ponder line, so the viewer can think. Taken only from the scene's
-        slack: the remaining narration (plus `reserve` for its animations) always fits, so in a
-        sample render (little slack) this shrinks to nothing."""
+    def hold(self, after_line, seconds=None, reserve=1.0):
+        """Silence after a ponder line, so the viewer can think. The line's "pause_after" in
+        script.json (default 3 s) is budgeted into the scene's minimum by the engine; the hold is
+        still capped so the remaining narration (plus `reserve` for its animations, and any later
+        pauses) always fits."""
         audio = self.spec.get("audio", [])
+        lines = self.spec.get("lines", [])
+        pause = lambda i: float(lines[i].get("pause_after") or 0) if i < len(lines) else 0.0
+        if seconds is None:
+            seconds = pause(after_line) or 3.0
         rest = sum(a["duration"] + self.pad_after_clip for a in audio[after_line + 1:])
+        rest += sum(pause(i) for i in range(after_line + 1, len(lines)))
         t = min(seconds, self.spec["duration"] - self.renderer.time - rest - reserve)
         if t > .2:
             self.wait(t)

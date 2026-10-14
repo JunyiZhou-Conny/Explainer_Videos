@@ -43,6 +43,9 @@ For whoever writes `videos/speciesot-eN-*/scenes.py`. The reference implementati
   character count, so anchor at clause starts. A missing anchor fails the full build.
 - In a sample render the scene budget is narration + ~1 s: if the log prints
   `BUDGET WARNING`, your animations overrun the narration; shorten run_times or waits.
+- Ponder time: give the ponder line `"pause_after": 4.0` in script.json and call
+  `self.hold(i)` after its `say(i)` block. The engine adds the pause to that scene's minimum,
+  so the thinking time is paid by the scene (samples included), not spread as episode slack.
 - `LaggedStart` over an object's parts leaves Manim's helper `Group` holding those parts.
   `content()` handles a later fade, but a `ReplacementTransform`/`Restore` of the whole object
   can leave the parts behind: re-add the whole object (`self.remove(group); self.add(whole)`)

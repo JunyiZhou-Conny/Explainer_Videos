@@ -1,4 +1,4 @@
-# Brief: speciesOT E2 · One name, four places
+# Brief: speciesOT E2 · One name, five places
 
 - **Learning objective.** Conny can trace a config value from `Tests/config.yaml` to the attribute
   `setup()` reads, explain why the edits bounced between three files, tell KeyError from

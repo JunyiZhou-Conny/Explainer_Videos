@@ -76,6 +76,7 @@ pytest: {ipa: "pˈaɪ tˈɛst", say: "pie test"}
 CellOT: {ipa: "sˈɛl ˌoʊtˈiː", say: "cell O T"}
 cellot: {ipa: "sˈɛl ˌoʊtˈiː", say: "cell O T"}
 non-classical: {ipa: "nˌɑːn klˈæsɪkəl", say: "non classical"}
+h5ad: {ipa: "ˈeɪtʃ fˈaɪv ˌeɪ dˈiː", say: "H five A D"}
 speciesot_core.py: {ipa: "spˈiːsiːz ˌoʊtˈiː kˈɔːɹ dˈɑːt pˈaɪ", say: "species O T core dot pie"}
 config.yaml: {ipa: "kənfˈɪɡ dˈɑːt jˈæməl", say: "config dot yaml"}
 m1_modern.yaml: {ipa: "ˈɛm wˈʌn mˈɑːdɚn dˈɑːt jˈæməl", say: "M one modern dot yaml"}

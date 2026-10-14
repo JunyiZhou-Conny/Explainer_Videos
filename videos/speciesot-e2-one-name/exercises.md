@@ -1,4 +1,4 @@
-# Exercises · E2 One name, four places
+# Exercises · E2 One name, five places
 
 1. **Find every spelling.** From the folder above `speciesot/`:
    `grep -rn "x_dimension" .` — you should find both spellings in five places
