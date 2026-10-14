@@ -23,14 +23,16 @@ Beats (script.md "## S04", one voiceover block each):
  4  TRACKER A3. The house terminal (12 rows, laptop, transcribe_audio prompt). The README chip
     `transcribe_audio/README.md · lines 26–34` "Don't have uv installed?" sits right-aligned
     between the terminal and the top band (9.7 wide: it can't sit right of the tracker).
-    TRACKER A3 · extra. `uv --version` (extra) -> 06-uv-missing.txt line 2 in RED, "command not
-    found" underlined RED. On "so skip ahead to uv init" the tracker caption pulses.
+    TRACKER A3 · extra. `uv --version` (extra; its row is 62 characters, so the `extra` tag sits
+    at the right end of the row below, as the pilot does) -> 06-uv-missing.txt line 2 in RED,
+    "command not found" underlined RED. On "so skip ahead to uv init" the tracker caption pulses.
  5  TRACKER A3 (extra off). The chip flashes YELLOW ("the README's installer"). `curl -LsSf
     https://astral.sh/uv/install.sh | sh` (folds onto two rows; GREY tag "macOS / Linux") ->
     07-uv-install.txt lines 2-6, …, 8, 10 (no ▶: only for viewers without uv). Line 2 gets
-    "at the time of recording"; a PURPLE `uv` chip lifts off line 4 and drops into the GREY folder
-    `~/.local/bin` drawn right of lines 4-5. On "On Windows" the terminal shrinks to the strip (the
-    curl command and line 8); above it two GREY command chips (shown, not typed): the PowerShell
+    "at the time of recording" (the macOS tag gives way: tags on adjacent rows would touch); a
+    PURPLE `uv` chip lifts off line 4 and drops into the GREY folder `~/.local/bin` drawn right of
+    lines 4-5. On "On Windows" the terminal shrinks to the strip (the curl command and line 8; the
+    macOS / Linux tag returns); above it two GREY command chips (shown, not typed): the PowerShell
     line (two rows: 79 characters don't fit one row at 20 pt; note "Windows (PowerShell) · one
     line") and, on "on any system", `pip install uv` "any system".
  6  Line 8's "either restart your shell" gets a YELLOW bar. On "as the installer says" the chips
@@ -39,7 +41,8 @@ Beats (script.md "## S04", one voiceover block each):
     no output, the transcribe_audio prompt; `uv --version` -> 08-uv-version.txt line 2.
  7  TRACKER A3 (extra off; chip and "new terminal" go). `uv init --bare` -> 09-uv-init.txt
     line 2; on "pyproject.toml" a GREEN file glyph `pyproject.toml` appears above the terminal;
-    `transcribe-audio` underlined GREEN; ▶ your turn on "Pause and run it".
+    `transcribe-audio` underlined GREEN; ▶ your turn on "Pause and run it" (at the right end of
+    the output row: the command row is full).
  8  TRACKER A3 · extra. `cat pyproject.toml` (extra; folds after `cat`) -> 10-cat-pyproject.txt
     lines 2-6. "name" and "version" pulse as named; GREY tag "none yet" beside `dependencies = []`;
     YELLOW bar on `requires-python = ">=3.11"` and its 3.11 pulses.
@@ -67,7 +70,7 @@ from explainer.scene import VoiceScene
 from common import (CAPTION, COMPONENTS, COST, ERR, INK, LAPTOP, NARRATION, P_A, P_HOME, SYSTEM,
                     TOOL, TURN, VENV, VersionLine, beside, bare_prompt, capture, caption_extra,
                     cmd_chip, erratum_tag, extra_tag, illustration_tag, key_glyph, readme_card,
-                    readme_chip, recorded_tag, resize, sans, source_text, stamp, strike, term,
+                    readme_chip, resize, sans, source_text, stamp, strike, term,
                     tracker, type_cmd, under, your_turn)
 
 SAY = NARRATION["S04"]
@@ -112,7 +115,7 @@ assert "`uv init --bare`" in _A[33] and "restart your terminal" in _A[33]
 # ------------------------------------------------------------------ layout
 TRACK_BOTTOM = 2.917               # the tracker band's lower edge
 CARD_C = np.array([-4.25, 0.9, 0])  # the course-site card (beats 0-1)
-BIG_C = np.array([2.6, 1.1, 0])     # the enlarged key (beat 0)
+BIG_C = np.array([2.6, 0.7, 0])     # the enlarged key (beat 0)
 ROWS_X = -0.8                      # left edge of the five secrets/ folders (beat 1)
 ROW_Y = [1.8, 0.65, 0.05, -0.55, -1.15]
 AXIS_Y = 0.3                       # V7's axis (beats 9-10), above the 3-row strip
@@ -431,7 +434,10 @@ class KeyAndInit(VoiceScene):
             out1 = t.print(self, INSTALL_OUT, run_time=0.8)
             l2, l4, l8 = out1[0], out1[2], out1[-2]
             vo.wait_until("which installed")
-            rt = beside(recorded_tag(), t, l2)
+            # 20 pt (the house tag is 22): at 22 it would touch the row's text; the macOS tag on
+            # the row above gives way (tags on adjacent rows would touch), and returns in the strip
+            rt = beside(tag("at the time of recording", LAPTOP, size=CAPTION), t, l2)
+            self.play(FadeOut(unstick(self, c1, os1)), run_time=0.25)
             self.play(FadeIn(rt, shift=LEFT * 0.1), Indicate(substring(l2, "uv 0.13.0"), color=INK,
                                                             scale_factor=1.12), run_time=0.6)
             stick(self, l2, rt)
@@ -451,7 +457,9 @@ class KeyAndInit(VoiceScene):
             place(ps, left=-4.1, cy=1.25)
             place(pip, left=-4.1, top=ps.get_bottom()[1] - 0.45)
             resize(self, t, 3, keep=[*rows_of(c1), l8], run_time=0.9)
-            self.play(FadeIn(ps, shift=UP * 0.15), run_time=0.5)
+            os2 = beside(tag("macOS / Linux", LAPTOP), t, c1)
+            self.play(FadeIn(ps, shift=UP * 0.15), FadeIn(os2, shift=LEFT * 0.1), run_time=0.5)
+            stick(self, c1, os2)
             vo.wait_until("on any system")
             self.play(FadeIn(pip, shift=UP * 0.15), run_time=0.5)
 
@@ -572,7 +580,7 @@ class KeyAndInit(VoiceScene):
         dl = down_arrow(vl.point(15, 0.7), tip)
         prev = VGroup(sans("preview:", CAPTION, LAPTOP), mono("generate_text", CAPTION, LAPTOP))
         prev.arrange(RIGHT, buff=0.12)
-        place(prev, left=dl.get_right()[0] + 0.15, cy=vl.point(15, 0.55)[1])
+        place(prev, left=dl.get_right()[0] + 0.1, cy=vl.point(15, 0.55)[1])
         edit = chip('requires-python = ">=3.12"', VENV, size=22, font=MONO)
         edit.box.set_fill(interpolate_color(ManimColor(S.BG), ManimColor(VENV), 0.18), 1)
         dx = vl.point(13)[0] - vl.point(12)[0]

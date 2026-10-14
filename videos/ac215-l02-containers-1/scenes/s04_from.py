@@ -25,12 +25,13 @@ Beats (script.md "## S04", one voiceover block each):
     log (--progress=plain)" (its flag pulses on "add dash dash progress"), then "default" in line 2
     underlines YELLOW and 'Docker Desktop: builder "desktop-linux" · …' appears under it; last, on
     the bottom `…` row: "stops with toomanyrequests? → wait a while, or docker login (part 2)".
- 4  The notes leave. The four sizes turn ORANGE in turn ("four layers"); copies stay as the terminal
-    shrinks to the 3-row strip (keeping the command and line 38). V2: four thin equal ORANGE slabs
-    (TEAL outlines) drop as one group, brace "base image" on their right, `python:3.12-slim-bookworm`
-    (mono, TEAL) under the stack; the four sizes fly into a right-aligned list beside the brace,
-    summed "≈ 47.6 MB compressed". `simple-translate:latest` in line 38 turns TEAL on "saves the
-    result", ":latest" pulses on "tagged latest"; the four slabs pulse on "Those four layers".
+ 4  The notes leave. The four sizes turn ORANGE in turn ("four layers"); on "under 50" copies of
+    them fly up into a right-aligned list while the terminal shrinks to the 3-row strip (keeping
+    the command and line 38), summed "≈ 47.6 MB compressed". V2: four thin equal ORANGE slabs (TEAL
+    outlines) drop as one group left of the list, brace "base image" between them,
+    `python:3.12-slim-bookworm` (mono, TEAL) under the stack. `simple-translate:latest` in line 38
+    turns TEAL on "saves the result", ":latest" pulses on "tagged latest"; the four slabs pulse on
+    "Those four layers".
  5  TRACKER A7 · extra. The list leaves; the strip grows to 5 rows and types
     `docker image inspect simple-translate --format '…'` (row tag `extra`; the quoted format wraps at
     the terminal edge like a real terminal's soft wrap) -> laptop/10 line 2. V3: the TEAL config
@@ -40,9 +41,10 @@ Beats (script.md "## S04", one voiceover block each):
     the card the start-up line `python3` copies down from the tile, then "→ >>>" (prediction).
  6  TRACKER A7. The picture leaves except the prediction, which moves top right with "predicted:".
     The terminal clears and grows to 10 rows; `docker run --rm -ti simple-translate` (two rows);
-    `--rm` underlines with "clean up on exit" under it, `-ti` with "type into it" under it; on
-    "Pause and run it" the -ti label leaves for the output and ▶ your turn appears. laptop/11 lines
-    2-3 (cut at the 65-column edge) and the `>>>` prompt: GREEN check on the prediction.
+    `--rm` underlines with "clean up on exit" under it, `-ti` with "type into it" under it (in the
+    empty row 2); ▶ your turn on "Pause and run it". The -ti label leaves just before the output
+    takes its row: laptop/11 lines 2-3 (cut at the 65-column edge) and the `>>>` prompt; GREEN check
+    on the prediction.
     `Python 3.12.15` underlines ORANGE with the row tag "3.12.15 · at the time of recording";
     `exit()` is typed (line 4) and the laptop prompt returns.
  7  TRACKER A7 · extra. The strip (5 rows): `git status` (row tag `extra`) -> laptop/12 lines 2-5;
@@ -59,11 +61,11 @@ from explainer import style as S
 from explainer.devops import code_span, line_bar
 from explainer.scene import VoiceScene
 
-from common import (BUILD, CAT, ERR, IMAGE, INK, INSPECT_V1, LAPTOP, MONO, NARRATION, P_LAPTOP, ROUTE,
-                    RUN, STRIP_ROWS, SYSTEM, TOOL, TURN, VENV, ConfigCard, LayerStack, attach, bare_prompt,
+from common import (BUILD, CAT, IMAGE, INK, INSPECT_V1, LAPTOP, MONO, NARRATION, P_LAPTOP, ROUTE,
+                    RUN, STRIP_ROWS, SYSTEM, TURN, VENV, ConfigCard, LayerStack, attach, bare_prompt,
                     beside, box, builder_box, capture, check_mark, chip, code, cut, erratum_tag, file_glyph,
-                    folder_glyph, glyph_range, hash12, hl_bar, illustration_tag, label, laptop_term, mono,
-                    mono_line, pin, project_tree, readme_card, resize, route, row_tag, steady, substring,
+                    folder_glyph, glyph_range, hash12, hl_bar, label, laptop_term, mono,
+                    mono_line, pin, project_tree, readme_card, resize, route, row_tag, substring,
                     tag, track, tracker_a, travel, type_cmd, under, unpin, your_turn)
 
 SAY = NARRATION["S04"]
@@ -282,7 +284,7 @@ class StepFrom(VoiceScene):
                for sp, (_, _, col) in zip(spans, parts)]
         chips = [name_chip(w, m, col) for w, m, col in parts]
         for c, x in zip(chips, (-4.6, -1.55, 1.55, 4.6)):
-            c.move_to([x, 0.05, 0])
+            c.shift(np.array([x, 0.3, 0]) - c.chip.get_center())     # chips in one row, meanings under
         links = [Line([sp.get_center()[0], u.get_bottom()[1] - 0.08, 0], c.chip.get_top() + UP * 0.08,
                       color=col, stroke_width=2, stroke_opacity=0.8)
                  for sp, u, c, (_, _, col) in zip(spans, uls, chips, parts)]
@@ -527,10 +529,10 @@ class StepFrom(VoiceScene):
             self.play(FadeIn(l_ti, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Pause and run it")
             yt6 = beside(turn_tag(), r6a)
-            self.play(FadeOut(l_ti), run_time=0.3)
             pin(self, r6a, yt6, run_time=0.3)
             self.play(Wiggle(yt6, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.6)
             vo.wait_until("There's the Python prompt")
+            self.play(FadeOut(l_ti), run_time=0.25)          # its row is where the output goes
             o6 = t.print(self, REPL_OUT, run_time=0.4)
             t.set_prompt(REPL_PROMPT)
             p6 = bare_prompt(self, t)
