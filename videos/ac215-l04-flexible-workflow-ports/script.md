@@ -200,7 +200,14 @@ Conventions
   image), `#` (`sh` in the gateway). Values `your-project-id`, `your-team-bucket`, `group-01` (the
   captures' placeholders; the SAY says "type your own"). port_toy: gateway on host port 8090 (then
   8095), processor 9200 (then 9300); ephemeral ports 55620, 55634, … ("your numbers will differ").
-- Length and parts: see the end of this header block (filled from `python -m explainer.script`).
+- Length and parts: narration 4,268 words (`python -m explainer.script`; BRIEF.md: 3,900–4,300,
+  plan ~4,220). Part 1 = S01–S09 (mega-pipeline `flexible-workflow`) 2,546 words; part 2 = S10–S16
+  (port_toy) 1,722 words. Every scene is within ±15 % of its BRIEF.md budget; part 1 runs ~7 % over
+  the brief's split and part 2 ~7 % under, because part 2's many short commands carry their own
+  screen time. At ≈ 151–155 wpm (the measured af_heart rate at speed 0.9, L01/L03) that is ≈ 27.5 min
+  of voice (part 1 ≈ 16.5, part 2 ≈ 11.1); typing, outputs and five ponder timers bring the video to
+  ≈ 32–35 min. Part 1 ends on its clean-up card and "In part 2: containers that talk to each other
+  directly"; part 2 ends on the recap and the L05 teaser. Each part ends on an empty frame.
 - Notes for scene authors.
   - `Capture.pick()` indexes the output body: pick index = file line − 1.
   - `expected/mega-*.txt`: line 1 is a `#` source header (never printed), line 2 the `$` command,
@@ -732,7 +739,7 @@ SHOW: Two cards above the strip, tag `erratum` on each. Card 1: CODE(mega-pipeli
 48–49) (comment cut) with `fr-FR` BLUE; a GREEN fix chip `target_language="fr"`. Card 2: PANEL(mega-synthesis_audio/04-x-cli11-help.txt:
 6, "python cli_11.py --help · extra") (cut), caption "the optional ElevenLabs bonus reads
 secrets/ inside /app". `▶ your turn` with a GREY note "with your key". Fade out.
-SAY: Two small slips. Translate targets Spanish, but the final voice is French: change es to fr. And the optional ElevenLabs bonus looks for its key in slash app. Pause, and run all five with your key.
+SAY: Two small slips. Translate targets Spanish, but the final voice is French: set the target language to French. And the optional ElevenLabs bonus looks for its key in slash app. Pause, and run all five with your key.
 
 ---
 
@@ -742,8 +749,9 @@ SHOW: TRACKER R/2. A small V4 switchboard at the top with the `dev` track lit. T
 10 rows, title `laptop`, prompt `student@laptop:~/AC215/mega-pipeline/transcribe_audio$`; GREY caption
 "back in transcribe_audio"). It types `./docker-shell.sh dev` → TERM(mega-laptop/17-a-dev.txt: 2–4,
 14–17) (BuildKit rows); `Build Mode: dev` highlights; each `CACHED` turns GREEN; `Building 0.3s`
-underlines; the prompt returns (GREY tag "no container").
-SAY: Back in transcribe audio, step 2 of How to Run: docker-shell.sh dev. It only builds. Nothing changed, so every step comes from the cache, and no container starts.
+underlines; the prompt returns (GREY tag "no container"). A GREY note: "new files in the folder
+(e.g. input_audios/ from --download) → build steps 4–5 run again (mega-laptop/15)".
+SAY: Back in transcribe audio, step 2 of How to Run: docker-shell.sh dev. It only builds; no container starts. Ours came all from the cache. If your downloads added files since your last build, the copy and uv sync steps run again.
 
 SHOW: TRACKER Y/1. A one-line README chip `transcribe_audio/README.md · line 89`. The terminal
 shrinks to the strip; a TEAL strip above it (prompt `app@0ceffb272288:/app$`) types `uv add
@@ -1200,12 +1208,12 @@ SAY: Two keys are new: volumes mounts the gateway's folder into slash app, and d
 SHOW: Terminal (full width, 14 rows, title `laptop`, prompt `student@laptop:~/AC215/port_toy$`). It
 types `docker compose up` → TERM(port-laptop/47-compose-up.txt: 3, …, 21–24, …, 31, 39) (BuildKit
 rows); `CACHED` rows GREEN; `naming to docker.io/library/port_toy-processor…` and `…port_toy-gateway…`
-highlight, tag "folder name + service name". `▶ your turn`.
+highlight, tag "folder name + service name".
 SAY: Run it. Compose builds both images, all from the cache, and names them after the folder and the service: port toy, dash gateway.
 
 SHOW: The output continues: TERM(port-laptop/47-compose-up.txt: 43–51); `[+] up 5/5` highlights, each
 `✔` row ticks in V6 (two images, the `toynet` rail, two boxes); lines 50–51 (the banners, prefixed
-`processor  |` and `gateway    |`) highlight TEAL. The terminal keeps running (no prompt).
+`processor  |` and `gateway    |`) highlight TEAL. The terminal keeps running (no prompt). `▶ your turn`.
 SAY: Then it creates the network and both containers, attaches to them, and prints both banners, each line prefixed with its service. Pause and run it.
 
 SHOW: The first terminal shrinks to a strip at the bottom (still running). TRACKER P4/1:

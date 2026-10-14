@@ -373,7 +373,7 @@ class KeyAndInit(VoiceScene):
         # ========================================================== 3 · two Canvas links (erratum)
         left = link_card("README.md", 99, "25687801")
         right = link_card("transcribe_audio/README.md", 17, "23163432")
-        pair = VGroup(left, right).arrange(RIGHT, buff=0.5).move_to([0, 0.35, 0])
+        VGroup(left, right).arrange(RIGHT, buff=0.5).move_to([0, 0.35, 0])
         err3 = erratum_tag().next_to(right.head, UP, buff=0.25).align_to(right.frame, RIGHT)
         use = VGroup(check_mark(0.34, VENV), sans("use this one", 24, VENV)).arrange(RIGHT, buff=0.18)
         use.next_to(left.frame, DOWN, buff=0.35)
@@ -581,6 +581,7 @@ class KeyAndInit(VoiceScene):
         prev = VGroup(sans("preview:", CAPTION, LAPTOP), mono("generate_text", CAPTION, LAPTOP))
         prev.arrange(RIGHT, buff=0.12)
         place(prev, left=dl.get_right()[0] + 0.1, cy=vl.point(15, 0.55)[1])
+        assert prev.get_right()[0] + 0.03 * prev.width / 2 < 6.55, prev.get_right()  # its pulse fits
         edit = chip('requires-python = ">=3.12"', VENV, size=22, font=MONO)
         edit.box.set_fill(interpolate_color(ManimColor(S.BG), ManimColor(VENV), 0.18), 1)
         dx = vl.point(13)[0] - vl.point(12)[0]
