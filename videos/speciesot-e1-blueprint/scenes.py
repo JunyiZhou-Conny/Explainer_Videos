@@ -231,7 +231,7 @@ class S03(Ep):
                         max_tip_length_to_length_ratio=.15)
             up2 = Arrow(scg.get_top(), [1.2, bottom, 0], buff=.08, color=INK, stroke_width=2.5,
                         max_tip_length_to_length_ratio=.15)
-            vo.wait_until("name in brackets")
+            vo.wait_until("in parentheses")
             self.play(ident[2].animate.set_color(RED), scg[2].animate.set_color(RED),
                       FadeOut(slots), run_time=.5)
             vo.wait_until("inheritance")

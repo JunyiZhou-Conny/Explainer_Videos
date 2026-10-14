@@ -12,7 +12,7 @@ import json
 import sys
 from pathlib import Path
 
-RANGES = [(1, 16), (20, 159), (161, 186), (212, 294), (300, 335)]
+RANGES = [(1, 159), (161, 186), (212, 294), (300, 335)]
 TESTS = ["config.yaml", "toy_config.yaml", "test_evaluation.py", "test_model.py"]
 
 
