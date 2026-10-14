@@ -883,7 +883,7 @@ class S05(Ep):
                           [-4.85 + .72, row_y(cells_m, i), 0],
                           [-2.05 - .72, row_y(cells_m, order.index(i)), 0]) for i in range(5)],
                       run_time=1.1)
-            proof = left("shuffle-proof", .3, -2.32, 21, RED, bold=True)
+            proof = left("shuffle-proof", .3, -2.12, 21, RED, bold=True)
             self.play(Create(red_box(VGroup(m_mean, h_mean), .06)), FadeIn(proof), run_time=.6)
 
         qn = at("Which R² does the experiment need?", 0, 1.55, 36, INK, bold=True)
