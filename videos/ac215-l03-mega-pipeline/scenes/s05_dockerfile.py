@@ -47,8 +47,9 @@ Beats (script.md "## S05", one voiceover block each):
     with a RED tag "no ffmpeg"; a RED stamp "don't paste into transcribe_audio".
 12  The appendix card fades. Under the file row a GREY card: "Dockerfile = FROM python:3.12-slim-
     bookworm (README line 41) / + the README's six code blocks, in order: / lines 45 · 50–55 ·
-    60–69 · 76–77 · 82–83 · 88–89". ▶ your turn beside the file row; `Dockerfile` underlines,
-    the FROM row and then the six block numbers pulse as named. Everything fades: empty frame.
+    60–69 · 76–77 · 82–83 · 88–89", and ▶ your turn beside the file row (together, so a paused
+    frame shows the recipe); `Dockerfile` underlines, the FROM line and then the six block numbers
+    pulse as named. Everything fades: empty frame.
 """
 
 from pathlib import Path
@@ -556,7 +557,7 @@ class WriteDockerfile(VoiceScene):
         b179.set_fill(TURN, 0.16).move_to([afr.get_x(), r179.get_y(), 0])
         noff = tag("no ffmpeg", ERR).next_to(r179, RIGHT, buff=0.35)
         nopaste = stamp("don't paste into transcribe_audio", ERR, size=PT)
-        nopaste.next_to(afr, DOWN, buff=0.28).align_to(afr, RIGHT).shift(LEFT * 0.4)
+        nopaste.next_to(afr, DOWN, buff=0.22).align_to(afr, LEFT).shift(RIGHT * 0.35)
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(chips, shift=DOWN * 0.1), FadeIn(appx, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("but its build argument")
@@ -586,16 +587,15 @@ class WriteDockerfile(VoiceScene):
         yt = your_turn().next_to(frow, RIGHT, buff=0.4)
         u_name = under(fr_name[-10:], TURN)
         with self.voiceover(SAY[12]) as vo:
-            self.play(FadeOut(appx), FadeOut(b179), FadeOut(noff), FadeOut(nopaste),
-                      FadeIn(yt, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeOut(appx), FadeOut(b179), FadeOut(noff), FadeOut(nopaste), run_time=0.4)
+            self.play(FadeIn(final, shift=UP * 0.1), FadeIn(yt, shift=LEFT * 0.1), run_time=0.5)
             self.play(Wiggle(yt, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.7)
             vo.wait_until("a file named Dockerfile")
             self.play(Create(u_name), run_time=0.5)
             vo.wait_until("with no extension")
             self.play(Indicate(fr_name[-10:], color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("Type the FROM line")
-            self.play(FadeIn(final, shift=UP * 0.1), run_time=0.6)
-            self.play(Indicate(fl[1], color=TURN, scale_factor=1.06), run_time=0.7)
+            self.play(Indicate(fl[1], color=TURN, scale_factor=1.06), run_time=0.8)
             vo.wait_until("then copy the README's")
             self.play(LaggedStart(*[Indicate(n, color=TURN, scale_factor=1.25) for n in nums],
                                   lag_ratio=0.35), run_time=2.0)
