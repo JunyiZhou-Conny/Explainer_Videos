@@ -27,7 +27,7 @@ Beats (script.md "## S05", one voiceover block each):
  6  The panel scrolls to PANEL(12–21). The nine `&& \` pulse; `RUN` drops one fat ORANGE slab. The
     slab zooms up (an ORANGE inset over the card, dashed zoom lines to the slab): "apt lists" pages
     appear (line 12), ORANGE packages fill in (13–14), the pages crumple and vanish inside the slab
-    (15–16), their label becomes "deleted here".
+    (15–16), their label becomes "deleted".
  7  Bar on 17–18: an ORANGE `pip` chip, then a PURPLE `uv` chip drops in beside it. GREY note (two
     rows): "this Python is the image's own (/usr/local), / not Debian's → pip may install".
  8  Bar on 19–21: a GREY user glyph "app · uid 1000", an arrow "owns" to a TEAL folder `/app`. The
@@ -172,33 +172,50 @@ def small_signpost(h: float = 0.36, color: str = LOOKUP) -> VGroup:
     return g
 
 
+def row_tag(text: str, color: str) -> VGroup:
+    """A tag that fits inside one 20-pt code row (the house tag is taller than the row pitch)."""
+    t = label(text, PT, color)
+    h = 0.34
+    fr = RoundedRectangle(width=t.width + 0.36, height=h, corner_radius=h / 2, stroke_color=color,
+                          stroke_width=2).set_fill(S.BG, 0.95)
+    t.move_to(fr)
+    g = VGroup(fr, t)
+    g.box, g.text = fr, t
+    return g
+
+
 def thin(a, b, color: str = S.GREY, opacity: float = 0.8) -> Line:
     return Line(a, b, color=color, stroke_width=1.8).set_stroke(opacity=opacity)
 
 
 class WriteDockerfile(VoiceScene):
     # ------------------------------------------------------------- helpers
+    # The panel on screen is three scene-level parts that persist across swaps: the frame
+    # (self.pbg), the header (self.phead) and the code lines (self.plines, the Code's Paragraph,
+    # so code_span() on the current panel addresses the glyphs on screen).
     def type_in(self, p, run_time: float = 1.4, extra=()):
-        """The panel's frame and header appear, then its characters type in."""
+        """The panel's frame appears (its header comes from `extra`), then its characters type in."""
+        self.pbg, self.phead, self.plines = p.code.background, p.header, p.code.code_lines
         chars = VGroup(*[ch for ln in p.code.code_lines for ch in ln])
-        self.play(FadeIn(p.code.background), *extra, run_time=0.5)
+        self.play(FadeIn(self.pbg), *extra, run_time=0.5)
         self.play(ShowIncreasingSubsets(chars, rate_func=linear), run_time=run_time)
-        self.remove(p.code.background, chars)
-        self.add(p)
+        self.remove(chars)
+        self.add(self.plines)
 
-    def swap(self, old, new, extra=(), run_time: float = 0.9):
+    def swap(self, new, extra=(), run_time: float = 0.9):
         """Scroll the file: the frame resizes, the header changes, the old lines leave upward and
         the new lines come up from below."""
-        old_lines = VGroup(*old.code.code_lines)
         new_lines = [ln for ln in new.code.code_lines if len(ln)]
         lag = LaggedStart(*[FadeIn(ln, shift=UP * 0.25) for ln in new_lines], lag_ratio=0.06)
-        self.play(Transform(old.code.background, new.code.background.copy()),
-                  Transform(old.header, new.header.copy()),
-                  old_lines.animate.shift(UP * 0.25).set_opacity(0),
-                  lag, *extra, run_time=run_time)
+        self.play(Transform(self.pbg, new.code.background), Transform(self.phead, new.header),
+                  FadeOut(self.plines, shift=UP * 0.25), lag, *extra, run_time=run_time)
         _drop_groups(self, [lag])
-        self.remove(old, *new_lines)
-        self.add(new)
+        self.remove(*new_lines)
+        self.plines = new.code.code_lines
+        self.add(self.plines)
+
+    def panel_parts(self) -> VGroup:
+        return VGroup(self.pbg, self.phead, self.plines)
 
     def write_card_lines(self, card, items, run_time: float = 1.6, lag: float = 0.25):
         """Several keyword copies turn into card lines together: items (text, colour, key, src)."""
@@ -291,7 +308,7 @@ class WriteDockerfile(VoiceScene):
                ("key location", "gac", 10, None)]
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(inset, shift=LEFT * 0.6), FadeOut(ib), FadeOut(itag), run_time=0.5)
-            self.swap(p1, p5, extra=[FadeOut(b), FadeOut(u_ff)])
+            self.swap(p5, extra=[FadeOut(b), FadeOut(u_ff)])
             b = bar(p5, 5, 10)
             self.play(FadeIn(b), run_time=0.4)
             vo.wait_until("As in lecture 2")
@@ -320,8 +337,8 @@ class WriteDockerfile(VoiceScene):
             vo.wait_until("outside slash app")
             self.play(Indicate(card.lines["uv"], color=VENV, scale_factor=1.08), run_time=0.8)
             vo.wait_until("Soon, this line")
-            rem = tag("remember this line", TURN)
-            rem.next_to(row(p5, 9), RIGHT, buff=0.4)
+            rem = row_tag("remember this line", TURN)
+            rem.next_to(row(p5, 9), RIGHT, buff=0.4).set_y(row(p5, 9).get_y() + 0.06)
             self.play(FadeIn(rem, shift=LEFT * 0.1), run_time=0.4)
             self.play(Wiggle(rem, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.8)
 
@@ -350,13 +367,13 @@ class WriteDockerfile(VoiceScene):
         yg, yl = -1.95, -2.52                      # glyph row, label row
         pages = VGroup(*[page_token() for _ in range(3)])
         for i, pg in enumerate(pages):
-            pg.move_to([zx0 + 0.75 + 0.22 * i, yg - 0.06 * i, 0]).rotate(0.12 - 0.12 * i)
-        lab_lists = sans("apt lists", PT, S.GREY).move_to([zx0 + 0.95, yl, 0])
-        gone = sans("deleted here", PT, S.GREY).move_to(lab_lists)
+            pg.move_to([zx0 + 0.63 + 0.22 * i, yg - 0.06 * i, 0]).rotate(0.12 - 0.12 * i)
+        lab_lists = sans("apt lists", PT, S.GREY).move_to([zx0 + 0.85, yl, 0])
+        gone = sans("deleted", PT, S.GREY).move_to(lab_lists)
         dots = pkg_dots(18, cols=6, color=SYSTEM).move_to([zx0 + 2.95, yg, 0])
         lab_pk = sans("build-essential, ffmpeg", PT, S.GREY).move_to([zx0 + 2.95, yl, 0])
         with self.voiceover(SAY[6]) as vo:
-            self.swap(p5, p12, extra=[FadeOut(b), FadeOut(u_venv), FadeOut(u_sec)])
+            self.swap(p12, extra=[FadeOut(b), FadeOut(u_venv), FadeOut(u_sec)])
             vo.wait_until("chained with double")
             amps = [span(p12, n, "&& \\") for n in range(12, 21)]
             self.play(LaggedStart(*[Indicate(a, color=TURN, scale_factor=1.3) for a in amps],
@@ -392,7 +409,7 @@ class WriteDockerfile(VoiceScene):
         # ========================================================== 7 · pip, uv
         pip_c = chip("pip", SYSTEM, size=PT, font=MONO)
         uv_c = chip("uv", TOOL, size=PT, font=MONO, fill_opacity=0.3)
-        VGroup(pip_c, uv_c).arrange(RIGHT, buff=0.18).move_to([zx0 + 5.0, yg, 0])
+        VGroup(pip_c, uv_c).arrange(RIGHT, buff=0.18).move_to([zx0 + 5.15, yg, 0])
         note7 = VGroup(label("this Python is the image's own (/usr/local),", PT, S.GREY),
                        label("not Debian's → pip may install", PT, S.GREY))
         note7.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
@@ -411,10 +428,10 @@ class WriteDockerfile(VoiceScene):
             self.play(Indicate(pip_c, color=SYSTEM, scale_factor=1.2), run_time=0.8)
 
         # ========================================================== 8 · user app owns /app
-        who = person_icon(S.GREY, height=0.5).move_to([zx0 + 7.0 - 0.95, yg, 0])
+        who = person_icon(S.GREY, height=0.5).move_to([zx0 + 6.65, yg, 0])
         lab_who = sans("app · uid 1000", PT, S.GREY).move_to([who.get_x(), yl, 0])
         fold = folder_glyph(0.42, CTR)
-        fold.move_to([zx0 + 8.0, yg, 0])
+        fold.move_to([zx0 + 8.05, yg, 0])
         lab_app = mono("/app", PT, CTR).move_to([fold.get_x(), yl, 0])
         own = Arrow(who.get_right() + RIGHT * 0.05, fold.get_left() + LEFT * 0.05, buff=0.05,
                     color=S.GREY, stroke_width=3, max_tip_length_to_length_ratio=0.25)
@@ -446,7 +463,7 @@ class WriteDockerfile(VoiceScene):
         ev = VGroup(sans("=", PT, INK), sans("everything", PT, INK), sans("in this folder", PT, INK))
         ev.arrange(RIGHT, buff=0.12)
         with self.voiceover(SAY[9]) as vo:
-            self.swap(p12, p23, extra=[FadeOut(r72), FadeIn(cap)])
+            self.swap(p23, extra=[FadeOut(r72), FadeIn(cap)])
             b = bar(p23, 23, 24)
             self.play(FadeIn(b), run_time=0.3)
             vo.wait_until("switch to that user")
@@ -492,7 +509,7 @@ class WriteDockerfile(VoiceScene):
             self.play(Indicate(top, color=CTR, scale_factor=1.1), run_time=0.8)
             self.wait(max(0.05, vo.remaining(0.05)))
             # silent recap: four chunks of the file made these pieces
-            self.play(FadeOut(p23), FadeOut(b), FadeOut(ev), FadeOut(cap), run_time=0.5)
+            self.play(FadeOut(self.panel_parts()), FadeOut(b), FadeOut(ev), FadeOut(cap), run_time=0.5)
             self.play(FadeIn(frow, shift=RIGHT * 0.2), run_time=0.5)
             targets = [
                 ([card.lines["arg"]], [st.slabs["base"]]),
@@ -539,7 +556,7 @@ class WriteDockerfile(VoiceScene):
         b179.set_fill(TURN, 0.16).move_to([afr.get_x(), r179.get_y(), 0])
         noff = tag("no ffmpeg", ERR).next_to(r179, RIGHT, buff=0.35)
         nopaste = stamp("don't paste into transcribe_audio", ERR, size=PT)
-        nopaste.next_to(rws[2], RIGHT, buff=0.9).shift(UP * 0.05)
+        nopaste.next_to(afr, DOWN, buff=0.28).align_to(afr, RIGHT).shift(LEFT * 0.4)
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(chips, shift=DOWN * 0.1), FadeIn(appx, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("but its build argument")
