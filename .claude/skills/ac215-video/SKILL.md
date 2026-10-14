@@ -126,6 +126,10 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 - One `with self.voiceover(SAY[i]) as vo:` per SAY line, in order; `assert len(SAY) == n` at the top.
   Time animations with `vo.wait_until("phrase")`.
 - Prefer transforms that show what became what over fade-out/fade-in.
+- `FadeOut` restores the mobject's opacity after removing it, and it removes only the mobject you pass. So
+  `FadeOut(VGroup(a, b))` on a throwaway wrapper whose members are still on the scene through another parent
+  (e.g. `a` is a child of a panel that is on the scene) makes `a` and `b` snap back. Fade out the object
+  that is actually on the scene, or `self.remove(...)` the members after the fade.
 - Deterministic: seed randomness; avoid `always_redraw` on big groups; clear updaters.
 - Never message an agent that runs inside a workflow (SendMessage to its id): it does not reach that
   agent, it starts a second copy from its transcript, and the two then edit the same file. Review
