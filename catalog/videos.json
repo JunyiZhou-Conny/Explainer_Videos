@@ -399,6 +399,21 @@
       "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs_part2.mp4",
       "technical_review": "ffprobe-metadata-recorded-by-producer",
       "human_review": "not-established-by-this-publication"
+    },
+    {
+      "episode": "git-branch-pointer",
+      "title": "Why is a git branch almost free?",
+      "variant": "English narration / bilingual captions (burned) / composed score",
+      "source_commit": "8d4c325269e29706a19e4b2c05b1f35625f8f285",
+      "path": "outputs/git-branch-pointer/git-branch-pointer.mp4",
+      "bytes": 10829323,
+      "sha256": "1e4cfdd1b1a05beabe714f692e3df180ac41692009fe38f6b47c034a13b8fe9b",
+      "duration_seconds": 180.0,
+      "availability": "release-asset",
+      "release_tag": "episode/git-branch-pointer-v1",
+      "download_url": "https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/git-branch-pointer-v1/git-branch-pointer.mp4",
+      "technical_review": "full-decode-passed",
+      "human_review": "listening-sign-off-recorded-in-REVIEW.md"
     }
   ],
   "unfinished": [

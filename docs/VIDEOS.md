@@ -2,12 +2,13 @@
 
 [Incubator release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/incubator-2026-10-12) · [Machine-readable inventory](../catalog/videos.json) · [Release checksums](../catalog/release-sha256.txt)
 
-The catalog contains **27 current MP4 variants across nine episode projects**. Every variant is a release asset: seven masters in the incubator release, everything else (language versions, split parts, the short, AC215 L1) in the [media archive release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/media-2026-10-13). No download depends on a git branch staying alive. Editable-source links are pinned to exact commits.
+The catalog contains **28 current MP4 variants across ten episode projects**. Every variant is a release asset: seven masters in the incubator release, lifecycle episodes in their own `episode/<slug>-vN` releases, everything else (language versions, split parts, the short, AC215 L1) in the [media archive release](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/tag/media-2026-10-13). No download depends on a git branch staying alive. Editable-source links are pinned to exact commits or release tags.
 
 ## Start with these full videos
 
 | Episode | Duration | Download | Editable source |
 | --- | --- | --- | --- |
+| Why is a git branch almost free? | 3:00 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/git-branch-pointer-v1/git-branch-pointer.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/episode/git-branch-pointer-v1/videos/git-branch-pointer) |
 | One Skill Library, Three Coding Agents | 5:00 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/incubator-2026-10-12/skills-ecosystem.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/incubator-2026-10-12/videos/skills-ecosystem) |
 | Why 255,168 Tic-Tac-Toe games? | 12:36 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/incubator-2026-10-12/tictactoe-255168.zh-en.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/tictactoe-255168) |
 | Differential privacy: calibrating noise | 24:13 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/incubator-2026-10-12/dwork2006-calibrating-noise.mp4) | [Source](https://github.com/JunyiZhou-Conny/Explainer_Videos/tree/52c32347afe8f58810868b5fa7c08e36312773ae/videos/dwork2006-calibrating-noise) |
@@ -44,6 +45,7 @@ The catalog contains **27 current MP4 variants across nine episode projects**. E
 | CareOneX E6: measuring search | English narration / clean | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/careonex-e6-measuring-search.mp4) |
 | CareOneX E6: measuring search | English narration / bilingual captions | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/incubator-2026-10-12/careonex-e6-measuring-search.zh-en.mp4) |
 | One Skill Library, Three Coding Agents | English narration / bilingual captions | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/incubator-2026-10-12/skills-ecosystem.mp4) |
+| Why is a git branch almost free? | English narration / bilingual captions / composed score | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/episode/git-branch-pointer-v1/git-branch-pointer.mp4) |
 | AC215 L1: VMs, venvs and uv | English narration / clean | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs.mp4) |
 | AC215 L1: VMs, venvs and uv | English narration / bilingual captions | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs.zh-en.mp4) |
 | AC215 L1: VMs, venvs and uv | English narration / clean / part 1 | [MP4](https://github.com/JunyiZhou-Conny/Explainer_Videos/releases/download/media-2026-10-13/ac215-l01-vms-venvs_part1.mp4) |
