@@ -433,7 +433,7 @@ class S05(Ep):
             same = at("the same cells back", out_x, lane_y[0] + .75, 17, GRAY)
             self.play(FadeIn(same), FadeIn(human), FadeIn(hlabel), run_time=.4)
             vo.wait_until("baseline")
-            base = at("do-nothing baseline · 基线", out_x, lane_y[0] - .72, 18, INK, bold=True)
+            base = at("do-nothing baseline · 基线", out_x, lane_y[0] - .62, 18, INK, bold=True)
             self.play(FadeIn(base), run_time=.4)
         with self.say(2) as vo:
             sb = chip("scGenModel", box_x, lane_y[1], RED, 20)
@@ -441,11 +441,11 @@ class S05(Ep):
             b1 = arrow([mouse_x + .55, lane_y[1], 0], sb.get_left(), INK)
             self.cue(vo, .03, FadeIn(mouse[1]), Create(b1), FadeIn(sb), FadeIn(v1), run_time=.6)
             out2 = mouse[1].copy()
-            target = [out_x + 1.35, lane_y[1] + .15, 0]
+            target = [out_x + 1.35, lane_y[1] + .02, 0]
             b2 = arrow(sb.get_right(), [target[0] - .4, target[1], 0], RED)
             vo.wait_until("toward human")
             self.play(Create(b2), out2.animate.move_to(target).set_color(RED), run_time=1.0)
-            planned = source_tag("PLANNED · E4").move_to([target[0], target[1] - .62, 0])
+            planned = source_tag("PLANNED · E4").move_to([target[0] + 1.3, target[1] - .2, 0])
             self.play(FadeIn(planned), run_time=.3)
             vo.wait_until("polymorphism")
             poly = at("one call, different answers · 多态 polymorphism", 0, -2.25, 24, RED,
@@ -496,7 +496,7 @@ class S06(Ep):
         for i, (job, zh, a, b, classes) in enumerate(JOBS):
             y = -.45 - i * .42
             table.add(VGroup(left(f"{job} · {zh}", -6.1, y, 22, INK, bold=True),
-                             mono_left(classes, -3.55, y, 17, INK),
+                             mono_left(classes, -3.2, y, 17, INK),
                              mono_left(f"lines {a}–{b}", 3.85, y, 17, GRAY)))
         path = mono_left(CORE_PATH, -6.1, .02, 17, GRAY)
         with self.say(3) as vo:

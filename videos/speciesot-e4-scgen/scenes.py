@@ -299,10 +299,10 @@ class S02(Ep):
             self.play(LaggedStart(*[FadeIn(d, scale=.5) for d in rest], lag_ratio=.03),
                       run_time=.9)
             vo.wait_until("both species land")
-            legend = VGroup(Dot([2.0, -1.5, 0], radius=.06, color=GRAY),
-                            left("mouse", 2.15, -1.5, 18, GRAY),
-                            Dot([2.0, -1.5 - .34, 0], radius=.06, color=INK),
-                            left("human", 2.15, -1.5 - .34, 18, INK))
+            legend = VGroup(Dot([2.0, -1.1, 0], radius=.06, color=GRAY),
+                            left("mouse", 2.15, -1.1, 18, GRAY),
+                            Dot([2.0, -1.1 - .34, 0], radius=.06, color=INK),
+                            left("human", 2.15, -1.1 - .34, 18, INK))
             self.play(FadeIn(box_t), FadeIn(sketch), FadeIn(legend), box.animate.set_color(RED),
                       run_time=.5)
         labs = VGroup(*[at(n, lx, ly, 18, GRAY) for n, _, (lx, ly) in TYPES])
@@ -423,10 +423,10 @@ class S03(Ep):
             a_l = left("mouse type A (held-out)", -6.0, -2.15, 18, GRAY)
             self.play(*[FadeOut(m) for m in (mouse, human, ml, hl, xm, xh, ta, r1, r2, r3,
                                              shift_l, tb, *steps, out_bar, out_l, link, al)],
-                      darrow.animate.set_opacity(.25), dlab.animate.set_opacity(.25),
+                      FadeOut(darrow), FadeOut(dlab),
                       d2.animate.set_color(GRAY), FadeIn(a_l),
                       FadeIn(lc), FadeIn(l1), FadeIn(typeb), FadeIn(bl), run_time=.6)
-            d3 = darrow.copy().set_opacity(1).shift(B_C - M_C)
+            d3 = delta_arrow(B_C, B_C + DELTA)
             moved_b = typeb.copy()
             self.play(FadeIn(d3), run_time=.35)
             self.play(moved_b.animate.shift(DELTA).set_stroke(RED), run_time=.9)
@@ -437,7 +437,9 @@ class S03(Ep):
                              dash_length=.1).add_tip(tip_length=.16)
             gap = DashedLine(B_C + DELTA + DOWN * .2, B_TRUE + UP * .25, color=RED,
                              stroke_width=3, dash_length=.08)
-            self.play(FadeIn(true_b), Create(own), run_time=.6)
+            real_b = left("real human B", 0, -.6, 17, INK)
+            real_b.move_to([-3.75 - real_b.width / 2, -.6, 0])
+            self.play(FadeIn(true_b), FadeIn(real_b), Create(own), run_time=.6)
             self.play(Create(gap), FadeIn(miss), run_time=.5)
             vo.wait_until("the gap CellOT")
             self.play(FadeIn(cellot, shift=UP * .08), FadeIn(cellot2, shift=UP * .08),
@@ -451,6 +453,12 @@ def planned_tag(x, y):
     t[0].set_stroke(GRAY)
     t[1].set_color(GRAY)
     return t.move_to([x, y, 0])
+
+
+def lane_arrow(a, b, color=INK):
+    """A thin flow arrow with a fixed small tip (long and short arrows look alike)."""
+    return Arrow(a, b, buff=.08, color=color, stroke_width=3, tip_length=.16,
+                 max_tip_length_to_length_ratio=1, max_stroke_width_to_length_ratio=20)
 
 
 def tint(ch, color):
@@ -484,7 +492,7 @@ class S04(Ep):
 
         # setup lane
         ae0 = mini_ae(xs[1], ly["setup"], .75, GRAY, dashed=True)
-        a_set = arrow(chips["setup"].get_right(), [xs[1] - .8, ly["setup"], 0], INK)
+        a_set = lane_arrow(chips["setup"].get_right(), [xs[1] - .8, ly["setup"], 0])
         u_set = under("untrained network", xs[1], "setup", RED)
         # train lane
         ty = ly["train"]
@@ -503,7 +511,7 @@ class S04(Ep):
         u_delta = under("compute δ", xs[2], "train", RED)
         store = chip("self.delta", xs[3], ty, RED, 22)
         u_store = under("kept on the object", xs[3], "train", RED)
-        tr_arrows = [arrow([a, ty, 0], [b, ty, 0], INK) for a, b in
+        tr_arrows = [lane_arrow([a, ty, 0], [b, ty, 0]) for a, b in
                      ((-4.0, -3.5), (-2.05, -1.15), (.45, 1.25), (2.45, 3.55))]
         with self.say(0) as vo:
             self.cue(vo, .02, FadeIn(cls), run_time=.4)
@@ -541,7 +549,7 @@ class S04(Ep):
         u_dec = under("decode", px[2], "predict", RED)
         ann = chip("AnnData", px[3], py, INK, 22)
         u_ann = under("every metric can read it", px[3], "predict", RED)
-        p_arrows = [arrow([a, py, 0], [b, py, 0], INK) for a, b in
+        p_arrows = [lane_arrow([a, py, 0], [b, py, 0]) for a, b in
                     ((-4.0, -3.45), (px[0] + 1.0, add.get_left()[0] - .02),
                      (add.get_right()[0] + .02, px[2] - .32),
                      (px[2] + .35, ann.get_left()[0] - .02))]
