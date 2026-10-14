@@ -71,3 +71,7 @@
 69b-x-g11-compose-up-net	20:14:03 UTC	0.9s
 69c-x-g11-cleanup	20:14:24 UTC	21.0s
 70-x-ex3-no-network	20:14:24 UTC	0.6s
+71-x-ex3-resolve	20:14:26 UTC	0.2s
+72-x-ex3-send	20:14:27 UTC	0.2s
+73-x-ex3-logs	20:14:27 UTC	0.1s
+74-x-ex3-cleanup	20:14:27 UTC	0.6s

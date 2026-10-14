@@ -1,0 +1,6 @@
+$ docker rm -f gateway processor
+docker network rm toynet
+gateway
+processor
+toynet
+[exit 0]
