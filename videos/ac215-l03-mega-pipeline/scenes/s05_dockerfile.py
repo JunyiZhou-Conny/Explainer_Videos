@@ -38,10 +38,11 @@ Beats (script.md "## S05", one voiceover block each):
     commented on). The `.` underlines YELLOW with "= everything in this folder" beside line 26;
     "everything" underlines YELLOW on "hold on to that word".
 10  `RUN uv sync` drops the empty GREEN slab "venv · /home/app/.venv"; `ENTRYPOINT` and `CMD`
-    become the label "start: bash, venv on" on top of the stack. After the sentence (a silent
-    ~4 s recap): the panel fades; top left the GREY file row `transcribe_audio/Dockerfile · 30
-    lines`; four GREY chips `lines 1–3`, `lines 5–10`, `lines 12–21`, `lines 23–30` appear one by
-    one, each drawing thin lines to the slabs (and to the card, whose lines it made flash).
+    become the label "start: bash, venv on" on top of the stack. As the sentence ends (a ~3.5 s
+    recap, mostly silent): the panel fades; top left the GREY file row `transcribe_audio/
+    Dockerfile · 30 lines`; four GREY chips `lines 1–3`, `lines 5–10`, `lines 12–21`, `lines
+    23–30` appear one by one, each drawing thin lines to the slabs and card lines it made, which
+    flash YELLOW (lines to the card stop at its top edge).
 11  The chips give way to a GREY card `README.md · lines 175–225` "Appendix · Sample Dockerfile"
     with lines 179, 199 and 200 (excerpt: the man-page loop). Line 179 is barred; `curl` turns RED
     with a RED tag "no ffmpeg"; a RED stamp "don't paste into transcribe_audio".
@@ -517,30 +518,33 @@ class WriteDockerfile(VoiceScene):
             st.attach(self, top, anims=[ReplacementTransform(srcs, top)], run_time=0.9)
             vo.wait_until("as in lecture 2")
             self.play(Indicate(top, color=CTR, scale_factor=1.1), run_time=0.8)
-            self.wait(max(0.05, vo.remaining(0.05)))
-            # silent recap: four chunks of the file made these pieces
-            self.play(FadeOut(self.panel_parts()), FadeOut(b), FadeOut(ev), FadeOut(cap), run_time=0.5)
-            self.play(FadeIn(frow, shift=RIGHT * 0.2), run_time=0.5)
+            # the recap starts as the sentence ends: four chunks of the file made these pieces
+            self.play(FadeOut(self.panel_parts()), FadeOut(b), FadeOut(ev), FadeOut(cap),
+                      FadeIn(frow, shift=RIGHT * 0.2), run_time=0.6)
             targets = [
-                ([card.lines["arg"]], [st.slabs["base"]]),
+                ([card.lines["arg"]], [st.slabs["base"].box]),
                 ([card.lines[k] for k in ("e1", "e2", "e3", "e4", "uv", "gac")], []),
-                ([], [st.slabs["apt"]]),
-                ([card.lines["user"]], [st.slabs["workdir"], st.slabs["copy"], st.slabs["sync"]]),
+                ([], [st.slabs["apt"].box]),
+                ([card.lines["user"]], [st.slabs[k].box for k in ("workdir", "copy", "sync")] + [top]),
             ]
-            for c, (clines, slabs) in zip(chips, targets):
+            prev = None
+            for c, (clines, pieces) in zip(chips, targets):
                 ls = []
                 for m in clines:
                     x = float(np.clip(m.get_x(), card.frame.get_left()[0] + 0.3,
                                       card.frame.get_right()[0] - 0.3))
                     ls.append(thin(c.get_bottom(), [x, card.frame.get_top()[1], 0]))
-                for s in slabs:
-                    ls.append(thin(c.get_bottom(), s.box.get_left() + LEFT * 0.08))
+                for m in pieces:
+                    ls.append(thin(c.get_bottom(), m.get_left() + LEFT * 0.08))
                 ls = VGroup(*ls)
-                flash = [Indicate(m, color=TURN, scale_factor=1.06) for m in clines] + \
-                        [Indicate(s.box, color=TURN, scale_factor=1.03) for s in slabs]
-                self.play(FadeIn(c, shift=DOWN * 0.1), Create(ls), *flash, run_time=0.8)
-                self.play(ls.animate.set_stroke(opacity=0.0), run_time=0.3)
-                self.remove(ls)
+                flash = [Indicate(m, color=TURN, scale_factor=1.05) for m in clines + pieces]
+                fade = [prev.animate.set_stroke(opacity=0.0)] if prev is not None else []
+                self.play(FadeIn(c, shift=DOWN * 0.1), Create(ls), *flash, *fade, run_time=0.75)
+                if prev is not None:
+                    self.remove(prev)
+                prev = ls
+            self.play(prev.animate.set_stroke(opacity=0.0), run_time=0.3)
+            self.remove(prev)
 
         # ========================================================== 11 · the appendix sample
         gut = 0.75
