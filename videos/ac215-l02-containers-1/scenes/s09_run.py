@@ -130,7 +130,7 @@ QUESTION = "docker run --rm -ti simple-translate python cli.py\nWhat command lin
 # ------------------------------------------------------------------ layout
 STACK_X, FLOOR_Y = -2.4, -0.85        # beats 3-4: the V2 stack over the strip (4 rows: top -1.04)
 CARD_X, CARD_Y = 2.0, -0.3            # beat 5: the stacked V3 card (6.0 wide), labels at its left
-PONDER_Y, CARD_DROP = 1.55, 0.85      # the ponder card covers the chip; the card group drops under it
+PONDER_Y, CARD_DROP = 1.5, 1.05       # the ponder card covers the chip; the card group drops under it
 LINE_TOP = 2.3                        # beat 6: the start-up line, up top
 BIG = 34                              # beat 1: the enlarged output line
 
@@ -344,7 +344,7 @@ class RunIt(VoiceScene):
             vo.wait_until("lists every container")
             self.play(Indicate(ps.glyphs, color=INK, scale_factor=1.04), run_time=0.8)
             vo.wait_until("Nothing is left")
-            pin(self, ps, beside(row_tag("empty"), ps, buff=0.3), run_time=0.35)
+            pin(self, ps, beside(row_tag("empty"), ps, buff=0.12), run_time=0.35)
             vo.wait_until("the image is untouched")
             self.play(Indicate(VGroup(*slabs), color=IMAGE, scale_factor=1.04),
                       Indicate(unchanged, color=VENV, scale_factor=1.1), run_time=0.9)

@@ -63,7 +63,6 @@ Beats (script.md "## S07", one voiceover block each):
     appears. Fade out: empty frame (end of part 1).
 """
 
-import numpy as np
 from manim import *
 
 from explainer import style as S
@@ -71,7 +70,7 @@ from explainer.components import ponder_card
 from explainer.devops import MONO, box, check_mark, chip, code_span, cross_mark, label, line_bar, mono, substring, tag
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, P_A, P_CTR, SYSTEM, TURN, VENV,
+from common import (CLOUD, CTR, ERR, INK, LOOKUP, NARRATION, P_A, P_CTR, SYSTEM, TURN, VENV,
                     Window, _save_op, _set_op, asset_lines, bare_prompt, beside, capture, caption_extra,
                     cmd_chip, enter_container, extra_tag, file_panel, illustration_tag, page_token, pin,
                     readme_chip, resize, sans, source_text, term, tracker, type_cmd, unpin, your_turn)
@@ -371,8 +370,8 @@ class RunContainer(VoiceScene):
         tmp_tag = row_tag("/tmp · throwaway")
         place(tmp_tag, cx=tmp_pg.get_center()[0] + 0.55, bottom=win.sheet.frame.get_top()[1] + 0.1)
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(cap1, shift=UP * 0.1), FadeIn(cap2, shift=UP * 0.1), FadeIn(pen, shift=DOWN * 0.2),
-                      run_time=0.6)
+            self.play(FadeOut(cap1, shift=UP * 0.1), FadeIn(pen, shift=DOWN * 0.2), run_time=0.35)
+            self.play(FadeIn(cap2, shift=UP * 0.1), run_time=0.35)
             vo.wait_until("show up inside")
             self.play(pen.animate(rate_func=wiggle).shift(RIGHT * 0.12), win.blink("cli.py"),
                       route_pulse(win), run_time=1.1)
@@ -462,7 +461,8 @@ class RunContainer(VoiceScene):
             self.play(GrowArrow(arr), FadeIn(act), run_time=0.6)
             vo.wait_until("so activation would fail")
             self.play(arr.animate.set_color(ERR), act.animate.set_color(ERR), FadeIn(xm, scale=1.4), run_time=0.5)
-            self.play(FadeOut(act), FadeIn(nov), run_time=0.5)
+            self.play(FadeOut(act), run_time=0.25)
+            self.play(FadeIn(nov, shift=RIGHT * 0.1), run_time=0.35)
             vo.wait_until("That's what line 9")
             self.play(FadeOut(VGroup(start, arr, nov, xm, ill)), run_time=0.4)
             self.play(Transform(win.venv.frame, home_fr), Transform(win.venv.label, home_lab),

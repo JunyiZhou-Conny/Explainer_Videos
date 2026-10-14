@@ -22,9 +22,10 @@ Beats (script.md "## S08", one voiceover block each):
     above it: on "pyproject.toml" its row turns GREEN on the laptop and on the sheet over /app at
     the same instant (three GREEN lines draw into both glyphs); `uv.lock` appears GREEN on both
     sides at once; `/app` pulses; both files blink on both sides and the route pulses (nothing
-    travels). On "The 26 packages" the counter chip pulses and 26 GREEN chips drop onto the shelf
-    on the dashed writable layer above /home/app/.venv; the venv label pulses; the sheet's caption
-    becomes "writable layer · throwaway".
+    travels). On "The 26 packages" the counter chip pulses and 26 GREEN chips drop into the
+    /home/app/.venv box; the venv label pulses; on "on the container's throwaway layer" they rise
+    onto the GREEN shelf of the dashed writable layer right above the venv (where they are stored)
+    and the sheet's caption becomes "writable layer · throwaway".
  4  TRACKER A7 · extra. The picture goes; the terminal grows back to 12 rows (cleared). `cat
     pyproject.toml` (extra) → TERM(03: 2–10); lines 7–9 turn GREEN with a bar, their `>=…` lower
     bounds underline GREEN. The cat block scrolls off; `ls -la` (extra) → TERM(04: 2–11); line 11
@@ -33,11 +34,12 @@ Beats (script.md "## S08", one voiceover block each):
  5  `echo $VIRTUAL_ENV` (extra; the capture's `;`-joined line, only this command typed) →
     TERM(10-venv-where.txt: 3); `/home/app/.venv` turns GREEN and underlines GREEN; GREY tag
     "outside the window".
- 6  TRACKER A7. The terminal shrinks to the strip. Two GREY-framed cards above it. Top: GREEN
-    chip `ffmpeg-python` + GREEN check, GREY chip `ffmpeg` + RED cross, "different PyPI projects".
-    Bottom: tag `extra` + "Linux, folder not owned by uid 1000"; TERM(13-g7-root-owned.txt: 4)
-    in RED, folded at a space onto 2 rows; GREY "fix (not in the README): sudo chown -R
-    1000:1000 . in the component folder"; GREY "Docker Desktop (macOS, Windows) handles this".
+ 6  TRACKER A7. The terminal shrinks to the strip. Two GREY-framed cards above it, each frame
+    growing as its items arrive. Top: GREEN chip `ffmpeg-python` + GREEN check, GREY chip
+    `ffmpeg` + RED cross, "different PyPI projects". Bottom: tag `extra` + "Linux, folder not
+    owned by uid 1000"; TERM(13-g7-root-owned.txt: 4) in RED, folded at a space onto 2 rows; GREY
+    "fix (not in the README): sudo chown -R 1000:1000 . in the component folder"; GREY "Docker
+    Desktop (macOS, Windows) handles this".
  7  The cards go. The README chip `transcribe_audio/README.md · line 110` "After exiting the
     container, re-build the image" above the strip; the phrase turns YELLOW and underlines; GREY
     tag "step 13" under it, and the tracker's step-13 dot pulses.
@@ -53,7 +55,8 @@ Beats (script.md "## S08", one voiceover block each):
     --help` → TERM(05-help.txt: 2–10). The README's block (transcribe_audio/README.md · lines
     117–126, its first line on the typed command) fades in from the upper right as a translucent
     GREY overlay and lands exactly on the printed rows; a GREEN check ticks beside each non-blank
-    row; ▶ your turn. Everything fades: empty frame.
+    row. On "Pause" the overlay lifts off (checks and header stay); ▶ your turn beside the command.
+    Everything fades: empty frame.
 """
 
 import numpy as np
@@ -65,9 +68,9 @@ from explainer.devops import (MONO, box, cell_width, check_mark, chip, code_pane
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, CTR, ERR, GROUP, INK, LOOKUP, NARRATION, P_CTR, TOOL, TURN, VENV, Window,
-                    beside, capture, caption_extra, cut_comment, editor_inset, excerpt, extra_tag,
-                    pin, readme_chip, recorded_tag, resize, sans, source_text, src_panel, term,
-                    tracker, type_cmd, unpin, your_turn)
+                    beside, caption_extra, capture, cut_comment, editor_inset, excerpt, extra_tag,
+                    page_token, pin, pkg_dots, readme_chip, recorded_tag, resize, sans, source_text, src_panel,
+                    term, tracker, type_cmd, unpin, your_turn)
 
 SAY = NARRATION["S08"]
 
@@ -238,6 +241,18 @@ def card_frame(content, pad_x=0.3, pad_y=0.22) -> RoundedRectangle:
     return fr.move_to(content)
 
 
+def frame_to(full: RoundedRectangle, last, across: bool = False) -> RoundedRectangle:
+    """The card frame `full`, cut short below `last` (top and width kept) or, across=True, right
+    of `last` (left edge and height kept): a card that grows as its lines arrive."""
+    if across:
+        w, h, edge = last.get_right()[0] + 0.3 - full.get_left()[0], full.height, LEFT
+    else:
+        w, h, edge = full.width, full.get_top()[1] - (last.get_bottom()[1] - 0.22), UP
+    fr = RoundedRectangle(width=w, height=h, corner_radius=0.14, stroke_color=S.GREY,
+                          stroke_width=2).set_fill(S.BG, 0.95)
+    return fr.move_to(full.get_edge_center(edge), aligned_edge=edge)
+
+
 def fold_words(s: str, n: int) -> list[str]:
     """Fold a line at spaces into rows of at most n characters (the text itself unchanged)."""
     rows = []
@@ -250,18 +265,32 @@ def fold_words(s: str, n: int) -> list[str]:
 
 
 # ------------------------------------------------------------------ pictures
+def recap_window() -> Window:
+    """S07's closing V3, rebuilt exactly as s07_run.py leaves it: Window(rows=5) centred at
+    (0, 0.75), mounted, the writable sheet on, no key glyph, and the page S07 wrote under /app at
+    row 4 on both sides (s07_run.py page_glyph: page_token at 0.32 tall)."""
+    win = Window(rows=5, mounted=True).move_to([0, WIN_Y, 0])
+    for area, rows in ((win.laptop.area, win.laptop.rows), (win.cover.frame, win.cover.rows)):
+        pg = page_token().scale_to_fit_height(0.32)
+        pg.move_to(win._row_pos(area, 4), aligned_edge=LEFT).shift(RIGHT * 0.02)
+        rows.add(pg)
+    return win
+
+
 def recap_extras(win: Window) -> VGroup:
-    """Part 1's ending: a dashed BLUE `google` chip in the empty venv box, a RED dashed line from
-    cli.py (on the sheet over /app) with a RED '?' on it. .chip .link .q"""
-    g = chip("google", CLOUD, size=22, font=MONO)
-    g.box.become(DashedVMobject(g.box.copy(), num_dashes=24).set_stroke(CLOUD, 2.5))
-    g.move_to(win.venv.frame)
+    """S07's closing marks (s07_run.py beat 11), same geometry: cli.py on the laptop sheet RED; a
+    SOLID BLUE `google` chip (20 pt mono) centred over the venv box, between the image's top edge
+    and the venv label; a RED '?' (40 pt bold) between /app and the chip; a dashed RED line from
+    cli.py that ends at the '?'. .chip .link .q (cli.py's colour is set on the window itself)."""
     cli = win.row("cli.py", "cover")
-    a = cli.get_right() + RIGHT * 0.12
-    b = g.get_left() + LEFT * 0.08
-    link = DashedLine(a, b, color=ERR, stroke_width=3, dash_length=0.1)
-    q = label("?", 34, ERR, weight="BOLD")
-    q.move_to((a + b) / 2 + UP * 0.28 + RIGHT * 0.12)
+    cli.text.set_color(ERR)
+    g = chip("google", CLOUD, size=20, font=MONO)
+    place(g, cx=win.venv.frame.get_center()[0],
+          cy=(win.image.frame.get_top()[1] + win.venv.label.get_top()[1]) / 2 + 0.02)
+    q = sans("?", 40, ERR, weight="BOLD")
+    place(q, cx=(win.image.cavity.get_right()[0] + g.get_left()[0]) / 2 - 0.25, cy=g.get_center()[1])
+    link = DashedLine(cli.text.get_right() + RIGHT * 0.1, q.get_left() + LEFT * 0.06, color=ERR,
+                      stroke_width=2.5, dash_length=0.08)
     grp = VGroup(link, g, q)
     grp.chip, grp.link, grp.q = g, link, q
     return grp
@@ -349,7 +378,7 @@ class UvAdd(VoiceScene):
         seed(t, RECAP_CMD, prompt=True)
         err0 = seed(t, RECAP_ERR, ERR)
         seed(t, P_CTR + " ", prompt=True, bare=True)
-        win0 = Window(rows=5, key=True, mounted=True).move_to([0, WIN_Y, 0])
+        win0 = recap_window()                          # S07's last picture, unchanged
         ex0 = recap_extras(win0)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t), FadeIn(win0), FadeIn(ex0), run_time=0.9)
@@ -416,7 +445,7 @@ class UvAdd(VoiceScene):
                       run_time=0.8)
 
         # ========================================================== 3 · what lands where (V3 + V4)
-        win = Window(rows=5, key=True, mounted=True).move_to([0, WIN_Y, 0])
+        win = Window(rows=5, mounted=True).move_to([0, WIN_Y, 0])
         with self.voiceover(SAY[3]) as vo:
             unpin(self, c1, yt, run_time=0.25)
             resize(self, t, 3, keep=[c1.rows[0], c1.rows[1], installed], run_time=0.7,
@@ -442,15 +471,25 @@ class UvAdd(VoiceScene):
                       Indicate(win.laptop.caption, color=INK, scale_factor=1.15), run_time=1.0)
 
             vo.wait_until("The 26 packages")
+            pk = pkg_dots(26, cols=13)                    # as Window.fill_shelf sizes them
+            shelf = win.sheet.shelf
+            if pk.width > shelf.get_length() - 0.1:
+                pk.scale_to_fit_width(shelf.get_length() - 0.1)
+            on_shelf = pk.copy().next_to(shelf, UP, buff=0.03).get_center()
+            pk.move_to(win.venv.frame)
             self.play(Indicate(c_ask, color=VENV, scale_factor=1.12), run_time=0.6)
-            win.fill_shelf(self, 26, run_time=1.3)
+            win.attach(self, pk, anims=[LaggedStart(*[FadeIn(c, shift=DOWN * 0.3) for c in pk],
+                                                    lag_ratio=0.05)], run_time=1.3, into=win.sheet)
+            win.sheet.chips = pk
             vo.wait_until("in slash home")
             self.play(Indicate(win.venv.label, color=VENV, scale_factor=1.15), run_time=0.8)
             vo.wait_until("on the container's throwaway")
+            # where they are stored: the chips rise onto the shelf of the dashed writable layer
+            self.play(pk.animate.move_to(on_shelf), run_time=0.8)
             cap = win.sheet.caption
             new_cap = sans("writable layer · throwaway", 20, CTR).move_to(cap, aligned_edge=LEFT)
-            self.play(Transform(cap, new_cap), run_time=0.6)
-            self.play(Indicate(win.sheet.frame, color=CTR, scale_factor=1.03), run_time=0.8)
+            self.play(Transform(cap, new_cap), Indicate(win.sheet.frame, color=CTR, scale_factor=1.03),
+                      run_time=0.9)
 
         # ========================================================== 4 · cat pyproject.toml, ls -la (extras)
         with self.voiceover(SAY[4]) as vo:
@@ -522,24 +561,31 @@ class UvAdd(VoiceScene):
             row5 = venv_ln
             row5.remove(out_tag)
             self.add(out_tag)
+            full_f = fc.frame.copy()
+            fc.frame.become(frame_to(full_f, fc.good, across=True))
             self.play(FadeIn(fc.frame), FadeIn(fc.good[0], shift=UP * 0.1), FadeOut(out_tag), run_time=0.5)
             self.play(Create(fc.good[1]), run_time=0.4)
             vo.wait_until("plain ffmpeg")
-            self.play(FadeIn(fc.bad[0], shift=UP * 0.1), run_time=0.4)
+            self.play(Transform(fc.frame, frame_to(full_f, fc.bad, across=True)),
+                      FadeIn(fc.bad[0], shift=UP * 0.1), run_time=0.4)
             self.play(Create(fc.bad[1]), run_time=0.4)
-            self.play(FadeIn(fc.cap, shift=LEFT * 0.1), run_time=0.5)
+            self.play(Transform(fc.frame, full_f), FadeIn(fc.cap, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("And on a Linux laptop")
+            full = rc.frame.copy()
+            rc.frame.become(frame_to(full, rc.head))       # the card grows as its lines arrive
             self.play(FadeIn(rc.frame), FadeIn(rc.head, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("isn't owned by")
             self.play(Indicate(rc.head[1], color=INK, scale_factor=1.08), run_time=0.8)
             vo.wait_until("uv add fails")
-            self.play(LaggedStart(*[FadeIn(r) for r in rc.err], lag_ratio=0.3), run_time=0.7)
+            self.play(Transform(rc.frame, frame_to(full, rc.err)),
+                      LaggedStart(*[FadeIn(r) for r in rc.err], lag_ratio=0.3), run_time=0.7)
             self.play(Indicate(substring(rc.err[-1], "Permission denied"), color=ERR, scale_factor=1.15),
                       run_time=0.7)
             vo.wait_until("the chown command")
-            self.play(FadeIn(rc.fix, shift=UP * 0.1), run_time=0.5)
+            self.play(Transform(rc.frame, frame_to(full, rc.fix)), FadeIn(rc.fix, shift=UP * 0.1),
+                      run_time=0.5)
             self.play(Indicate(rc.fix[1], color=INK, scale_factor=1.12), run_time=0.7)
-            self.play(FadeIn(rc.desk, shift=UP * 0.1), run_time=0.5)
+            self.play(Transform(rc.frame, full), FadeIn(rc.desk, shift=UP * 0.1), run_time=0.5)
 
         # ========================================================== 7 · the README: rebuild after exit
         chip_r = readme_chip("transcribe_audio/README.md · line 110", REBUILD, max_w=12.4)
@@ -651,6 +697,9 @@ class UvAdd(VoiceScene):
                     marks.add(check_mark(0.26, VENV).move_to([x_m, row.strut.get_center()[1], 0]))
             self.play(LaggedStart(*[Create(m) for m in marks], lag_ratio=0.25), run_time=1.4)
             vo.wait_until("Pause, and get")
+            # the overlay has done its job: it lifts off (checks and header stay), so the paused
+            # frame shows the real output and the tag beside the command overlaps nothing
+            self.play(FadeOut(VGroup(ov.panel, ov.rows), shift=UP * 0.15), run_time=0.5)
             yt10 = beside(your_turn(), t, c10)
             self.play(FadeIn(yt10, shift=LEFT * 0.1), run_time=0.4)
             self.play(Wiggle(yt10, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.6)
