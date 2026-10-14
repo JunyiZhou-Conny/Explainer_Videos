@@ -194,7 +194,7 @@ def diff_rows(lines):
 def card_167(size: float) -> VGroup:
     """README card, lines 167-168: 'Solution Dockerfile:' / `Dockerfile.txt` (body at `size`). .file"""
     body = VGroup(label("Solution Dockerfile:", size, INK), mono("Dockerfile.txt", size, INK))
-    body.arrange(DOWN, aligned_edge=LEFT, buff=0.1 if size < 22 else 0.12)
+    body.arrange(DOWN, aligned_edge=LEFT, buff=0.1 if size < 22 else 0.14)
     c = readme_card((167, 168), body)
     c.file = body[1]
     return c
@@ -444,7 +444,7 @@ class StepCmd(VoiceScene):
             self.play(Indicate(p4b.glyphs, color=TURN, scale_factor=1.06), run_time=0.8)
 
         # ========================================================== 5 · the solution file: diff (ENV)
-        card_c = card_167(22)
+        card_c = card_167(26)
         card_c.move_to([0, 0.75, 0])
         card_k = card_167(20)
         card_k.move_to([6.48 - card_k.width / 2, 3.57 - card_k.height / 2, 0])
@@ -522,12 +522,13 @@ class StepCmd(VoiceScene):
             self.play(Indicate(ep_rows[1].glyphs, color=TURN, scale_factor=1.1), run_time=0.8)
 
         # ========================================================== 7 · cp the solution over yours (extra)
-        card_c2 = card_167(22).move_to([0, 1.25, 0])
+        card_c2 = card_167(26).move_to([0, 1.25, 0])
         note7 = label("the README only names the file", 24, S.GREY).next_to(card_c2, DOWN, buff=0.4)
 
         with self.voiceover(SAY[7]) as vo:
             clear_with(self, t, FadeOut(VGroup(br_run, lab_run, br_ep, lab_ep)), track(tr, 12), run_time=0.4)
             resize(self, t, STRIP_ROWS, extra=[Transform(card_c, card_c2)], run_time=0.7)
+            bare_prompt(self, t)
             self.play(FadeIn(note7, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("So here's the quickest")
             self.play(Indicate(card_c.file, color=TURN, scale_factor=1.12), run_time=0.8)
