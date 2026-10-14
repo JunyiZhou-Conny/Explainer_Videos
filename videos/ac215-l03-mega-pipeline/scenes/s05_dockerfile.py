@@ -43,9 +43,10 @@ Beats (script.md "## S05", one voiceover block each):
     Dockerfile · 30 lines`; four GREY chips `lines 1–3`, `lines 5–10`, `lines 12–21`, `lines
     23–30` appear one by one, each drawing thin lines to the slabs and card lines it made, which
     flash YELLOW (lines to the card stop at its top edge).
-11  The chips give way to a GREY card `README.md · lines 175–225` "Appendix · Sample Dockerfile"
-    with lines 179, 199 and 200 (excerpt: the man-page loop). Line 179 is barred; `curl` turns RED
-    with a RED tag "no ffmpeg"; a RED stamp "don't paste into transcribe_audio".
+11  The chips give way to a GREY card headed `README.md · lines 175–225 · Appendix · Sample
+    Dockerfile`: line numbers + lines 179, …, 199 and 200 (200 as an excerpt: the man-page loop
+    without its indent and `&& \`). Line 179 is barred; `curl` turns RED with a RED tag "no
+    ffmpeg"; a RED stamp "don't paste into transcribe_audio" under the card.
 12  The appendix card fades. Under the file row a GREY card: "Dockerfile = FROM python:3.12-slim-
     bookworm (README line 41) / + the README's six code blocks, in order: / lines 45 · 50–55 ·
     60–69 · 76–77 · 82–83 · 88–89", and ▶ your turn beside the file row (together, so a paused
