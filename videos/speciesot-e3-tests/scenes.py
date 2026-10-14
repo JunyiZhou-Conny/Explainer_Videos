@@ -243,8 +243,20 @@ class S01(Ep):
         g = .1
         terms = [rbf(mouse, mouse, g).mean(), rbf(human, human, g).mean(),
                  rbf(mouse, human, g).mean()]
-        dec = mono(f"= {terms[0]:.3f} + {terms[1]:.3f} − 2 × {terms[2]:.3f}", 20, GRAY)\
-            .move_to([2.75, ya - 1.25, 0])
+        dec, dec_lab = VGroup(), VGroup()
+        xx_ = 0.0
+        for s_, lab_ in [("=", None), (f"{terms[0]:.3f}", "inside mouse"), ("+", None),
+                         (f"{terms[1]:.3f}", "inside human"), ("− 2 ×", None),
+                         (f"{terms[2]:.3f}", "across")]:
+            t_ = mono(s_, 20, GRAY)
+            l_ = label(lab_, 17, GRAY) if lab_ else None
+            w_ = max(t_.width, l_.width if l_ else 0)
+            t_.move_to([xx_ + w_ / 2, ya - 1.2, 0])
+            dec.add(t_)
+            if l_:
+                dec_lab.add(l_.move_to([xx_ + w_ / 2, ya - 1.52, 0]))
+            xx_ += w_ + .24
+        VGroup(dec, dec_lab).shift(RIGHT * (2.75 - VGroup(dec, dec_lab).get_center()[0]))
         pb = Plot(-4.6, yb, 1.7, lo, hi)
         box_b = pb.box()
         m_b = rings(pb, mouse[:, :2])
@@ -258,7 +270,7 @@ class S01(Ep):
         same_lab = left("identical clouds", -3.65, yb - .62, 17, GRAY)
         with self.say(1) as vo:
             vo.wait_until("Nobody can check")
-            self.play(TransformFromCopy(num, dec), run_time=.7)
+            self.play(TransformFromCopy(num, dec), FadeIn(dec_lab, shift=UP * .05), run_time=.7)
             vo.wait_until("But you can check")
             self.play(q.animate.set_color(GRAY), TransformFromCopy(box_a, box_b),
                       TransformFromCopy(m_a, m_b), TransformFromCopy(h_a, h_b), run_time=.7)
@@ -267,7 +279,7 @@ class S01(Ep):
             self.play(Create(arr3), FadeIn(chip_b), Create(arr4), FadeIn(must, shift=RIGHT * .1),
                       FadeIn(known), run_time=.6)
 
-        row_a = VGroup(box_a, m_a, h_a, leg, note, chip_a, arr1, arr2, num, tag, q, dec)
+        row_a = VGroup(box_a, m_a, h_a, leg, note, chip_a, arr1, arr2, num, tag, q, dec, dec_lab)
         row_b = VGroup(box_b, m_b, h_b, same_lab, chip_b, arr3, arr4, must, known)
         defin = left("a test = a question with a known answer", -6.1, -.55, 36, INK, bold=True)
         defzh = left("测试 = 一个答案已知的问题，由代码自己作答", -6.1, -1.12, 24, GRAY)
@@ -339,6 +351,7 @@ class S02(Ep):
 
         # the kernel: similarity of every pair of points, exp(-gamma * d^2), gamma = 0.5 (line 19)
         K = rbf(x, x, .5)
+        d2 = ((x[:, None, :] - x[None, :, :]) ** 2).sum(-1)
         gx, gy = [-4.2, 0, 4.2], .95
         names = [("xx", "inside predicted"), ("yy", "inside truth"), ("xy", "across")]
         grids = VGroup(*[kgrid(K, gxx, gy) for gxx in gx])
@@ -348,22 +361,54 @@ class S02(Ep):
         ops = VGroup(at("+", -2.1, gy, 34, INK), at("− 2 ×", 2.1, gy, 30, INK))
         means = VGroup(*[mono(f"mean {K.mean():.3f}", 18, INK).move_to([gxx, .02, 0])
                          for gxx in gx])
-        mmdp = code_panel([(n, CORE[n]) for n in (327, 328, 329, 331)], CORE_PATH, -2.45, -1.5,
-                          width=7.6, size=18)
-        kform = mono("k = exp(−0.5 · d²)", 20, INK).move_to([3.9, -.9, 0])
-        kfrom = at("γ = 0.5 from line 19 of the test", 3.9, -1.32, 17, GRAY)
+        mmdp = code_panel([(n, CORE[n]) for n in (327, 328, 329, 331)], CORE_PATH, 2.6, -1.45,
+                          width=7.2, size=17)
+        # the same three points, small, at the left: where 0.368 and 0.018 come from
+        sp = Plot(-5.5, -1.55, 1.25, -.6, 2.6)
+        sbox = sp.box()
+        struth = dots(sp, x, INK, .06)
+        spred = rings(sp, x, GRAY, .11, 2.2)
+        snum = VGroup(*[mono(str(i + 1), 17, GRAY).move_to(sp.p(*x[i]) + np.array([.24, -.13, 0]))
+                        for i in range(3)])
+        kform = VGroup(mono_left("k = exp(−0.5 · d²)", -6.2, -.5, 18, INK),
+                       left("γ = 0.5, test line 19", -3.45, -.5, 17, GRAY))
+        pairs = [(0, 1), (0, 2)]
+        plines = VGroup(*[Line(sp.p(*x[a]), sp.p(*x[b]), color=RED, stroke_width=4)
+                          for a, b in pairs])
+        sup = {1: "¹", 2: "²", 4: "⁴"}
+        plabs = VGroup(*[mono_left(f"d² = {d2[a, b]:.0f} → e⁻{sup[int(.5 * d2[a, b])]} = "
+                                   f"{K[a, b]:.3f}", -4.6, y, 18, INK)
+                         for (a, b), y in zip(pairs, (-1.2, -1.8))])
+
+        def cells(g, a, b):            # the two entries (a, b) and (b, a) of a 3x3 grid
+            return [g.texts[3 * a + b], g.texts[3 * b + a]]
         with self.say(1) as vo:
-            self.cue(vo, .01, *[FadeOut(mm) for mm in self.content()], run_time=.4)
+            keep = (pbox, truth, pred)
+            self.cue(vo, .01, *[FadeOut(mm) for mm in self.content() if mm not in keep],
+                     ReplacementTransform(VGroup(pbox, truth, pred), VGroup(sbox, struth, spred)),
+                     run_time=.5)
             self.play(LaggedStart(*[FadeIn(c) for g_ in grids for c in g_.cells],
                                   lag_ratio=.03),
                       *[Create(g_.frame) for g_ in grids], FadeIn(titles), FadeIn(ops),
-                      FadeIn(mmdp), FadeIn(kform), FadeIn(kfrom), run_time=1.3)
+                      FadeIn(mmdp), FadeIn(kform), FadeIn(snum), run_time=1.0)
             self.settle(*grids)
+            lit = []
+            for k, (a, b) in enumerate(pairs):
+                now = [t for g_ in grids for t in cells(g_, a, b)]
+                anims = [Create(plines[k]), FadeIn(plabs[k], shift=RIGHT * .08),
+                         *[t.animate.set_color(RED) for t in now]]
+                if k:
+                    anims += [plines[k - 1].animate.set_color(INK),
+                              plabs[k - 1].animate.set_color(GRAY),
+                              *[t.animate.set_color(INK) for t in lit]]
+                self.play(*anims, run_time=.45)
+                lit = now
             vo.wait_until("Add the average")
             hk = highlight(self, mmdp, 327, 329, run_time=.3)
             self.play(grids[0].frame.animate.set_color(RED), grids[1].frame.animate.set_color(RED),
                       ops[0].animate.set_color(RED), FadeIn(means[0]), FadeIn(means[1]),
-                      run_time=.6)
+                      plines[1].animate.set_color(INK), plabs[1].animate.set_color(GRAY),
+                      *[t.animate.set_color(INK) for t in lit], run_time=.6)
             vo.wait_until("then subtract")
             hk2 = mmdp.mark(328, 331)
             self.play(ReplacementTransform(hk, hk2),
@@ -372,42 +417,60 @@ class S02(Ep):
                       grids[2].frame.animate.set_color(RED), FadeIn(means[2]), run_time=.6)
 
         eq = mono(f"{K.mean():.3f} + {K.mean():.3f} − 2 × {K.mean():.3f}", 20, INK)\
-            .move_to([3.9, -.85, 0])
-        zero = at("= 0", 3.9, -1.55, 44, RED, bold=True)
+            .move_to([3.75, -.85, 0])
+        zero = at("= 0", 3.75, -1.6, 44, RED, bold=True)
+        small = VGroup(sbox, struth, spred, snum, plines, plabs, kform)
         with self.say(2) as vo:
+            self.cue(vo, .01, FadeOut(small), FadeOut(hk2), FadeOut(ops), FadeOut(titles),
+                     grids[2].frame.animate.set_color(INK),
+                     mmdp.animate.move_to([-2.6, -1.45, 0]), run_time=.5)
             vo.wait_until("all three averages")
-            self.play(FadeOut(ops), FadeOut(titles), FadeOut(hk2),
-                      grids[2].frame.animate.set_color(INK), run_time=.3)
             self.play(*[FadeOut(grids[i].texts) for i in (0, 2)],
                       *[FadeOut(means[i]) for i in (0, 2)], run_time=.25)
-            self.play(*[grids[i].animate.move_to([0, gy, 0]) for i in (0, 2)], run_time=.9)
+            self.play(*[grids[i].animate.move_to([0, gy, 0]) for i in (0, 2)], run_time=.8)
             same3 = at("all three grids are the same", 0, 1.86, 20, GRAY)
-            self.play(FadeIn(same3), FadeOut(kform), FadeOut(kfrom),
-                      TransformFromCopy(means[1], eq), run_time=.6)
+            self.play(FadeIn(same3), TransformFromCopy(means[1], eq), run_time=.5)
             vo.wait_until("must be zero")
             self.play(FadeIn(zero, shift=UP * .1), run_time=.4)
 
-        tail = code_panel(rows(TEST_EVALUATION, 19, 22), TEST_EVAL_PATH, 0, 1.02, width=8.6,
-                          size=20)
+        tail = code_panel(rows(TEST_EVALUATION, 19, 22), TEST_EVAL_PATH, -.6, 1.07, width=7.8,
+                          size=18)
+        y22 = tail.row_y(22)
+        line_end = tail.row(22).get_right()[0]
+        zero_at = np.array([4.95, y22, 0])
+        to_approx = arrow(zero_at + LEFT * .55, [line_end + .12, y22, 0], RED)
+        fp = repr(0.1 + 0.2 - 0.3)
+        approx = VGroup(at("approx: floating-point sums are rarely exactly 0", 0, -.62, 24, INK),
+                        mono(f"0.1 + 0.2 − 0.3  =  {fp}", 20, GRAY).move_to([0, -1.22, 0]),
+                        at("pytest.approx(0.0) means 0 ± 1e-12", 0, -1.75, 20, GRAY))
         ok = terminal(["$ pytest -q …/Tests/test_evaluation.py",
                        ".                       [100%]",
-                       "1 passed in 1.45s"], -3.35, -1.15, width=5.7, size=17)
+                       "1 passed in 1.45s"], -3.35, -1.05, width=5.7, size=17)
         bad = terminal(["F                       [100%]",
                         "E  assert 0.500905449162582 == 0.0 ± 1.0e-12",
                         "E    Obtained: 0.500905449162582",
-                        "E    Expected: 0.0 ± 1.0e-12"], 3.05, -1.27, width=6.5, size=16)
-        ok_lab = left("✓ passes, silently", -6.2, -.25, 22, INK, bold=True)
+                        "E    Expected: 0.0 ± 1.0e-12"], 3.05, -1.15, width=6.5, size=16)
+        ok_lab = left("✓ passes, silently", -6.2, -.15, 22, INK, bold=True)
         ok_tag = source_tag("MEASURED").next_to(ok_lab, RIGHT, buff=.25)
-        bad_lab = left("✗ fails, loudly", -.2, -.25, 22, RED, bold=True)
+        bad_lab = left("✗ fails, loudly", -.2, -.15, 22, RED, bold=True)
         bad_tag = source_tag("EXAMPLE").next_to(bad_lab, RIGHT, buff=.25)
-        bad_note = left("real pytest output if line 331 lost its “2 *”", -.2, -2.3, 17, GRAY)
+        bad_note = VGroup(left("excerpt of real pytest output,", -.2, -2.09, 17, GRAY),
+                          left("if speciesot_core.py:331 lost its “2 *”", -.2, -2.34, 17, GRAY))
         with self.say(3) as vo:
-            self.cue(vo, .01, *[FadeOut(mm) for mm in self.content()], run_time=.4)
-            self.play(FadeIn(tail, shift=UP * .1), run_time=.5)
+            self.cue(vo, .01, *[FadeOut(mm) for mm in self.content() if mm is not zero],
+                     zero.animate.move_to(zero_at), FadeIn(tail, shift=UP * .1), run_time=.6)
             vo.wait_until("assert that")
-            highlight(self, tail, 22, run_time=.4)
+            hl = highlight(self, tail, 22, run_time=.35)
+            self.play(GrowArrow(to_approx), run_time=.5)
+            vo.wait_until("Approximately, because")
+            self.play(FadeIn(approx[0], shift=UP * .08), run_time=.45)
+            self.play(FadeIn(approx[1]), run_time=.4)
+            vo.wait_until("rarely exactly")
+            self.play(FadeIn(approx[2]), run_time=.4)
             vo.wait_until("If it is")
-            self.play(FadeIn(ok, shift=UP * .1), FadeIn(ok_lab), FadeIn(ok_tag), run_time=.5)
+            self.play(FadeOut(approx), FadeOut(to_approx), zero.animate.set_color(INK),
+                      run_time=.3)
+            self.play(FadeIn(ok, shift=UP * .1), FadeIn(ok_lab), FadeIn(ok_tag), run_time=.45)
             vo.wait_until("If not")
             self.play(FadeIn(bad, shift=UP * .1), FadeIn(bad_lab), FadeIn(bad_tag),
                       FadeIn(bad_note), run_time=.5)
