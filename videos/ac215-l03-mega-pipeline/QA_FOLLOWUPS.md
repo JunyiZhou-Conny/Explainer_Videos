@@ -22,3 +22,11 @@ The build agent ended with "The preview is still rendering; I'll wait for the mo
 reading the sheets." The file is structurally complete (10/10 voiceover blocks, `explainer.check` OK at
 11:16 UTC, 124.5 s, empty last frame), but nobody looked at its frames during the build. The critique stage
 reviews them; at whole-video QA, give S14's contact sheets a full read regardless of the critique's verdict.
+
+## How to judge the FadeOut "snap-back" findings above (tested 2026-10-15, Manim 0.22)
+`FadeOut(wrapper)` takes every member off the scene, even members that are children of a panel on the scene,
+then restores their opacity. A member snaps back only if it is still a child of a parent that is later added
+or animated again (`self.add(panel)`, `panel.animate…`, a Transform of the panel). So for each finding: check
+whether the faded members stay in a parent that comes back later. If they do, fix it (remove them from the
+parent, or fade the parent); if not, the finding does not reproduce. Bugbot's PR #29 finding on L02 S12
+`scroll()` did not reproduce: the rows leave `t.lines` right after the fade.

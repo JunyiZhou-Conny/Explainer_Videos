@@ -132,10 +132,11 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 - One `with self.voiceover(SAY[i]) as vo:` per SAY line, in order; `assert len(SAY) == n` at the top.
   Time animations with `vo.wait_until("phrase")`.
 - Prefer transforms that show what became what over fade-out/fade-in.
-- `FadeOut` restores the mobject's opacity after removing it, and it removes only the mobject you pass. So
-  `FadeOut(VGroup(a, b))` on a throwaway wrapper whose members are still on the scene through another parent
-  (e.g. `a` is a child of a panel that is on the scene) makes `a` and `b` snap back. Fade out the object
-  that is actually on the scene, or `self.remove(...)` the members after the fade.
+- `FadeOut(g)` takes `g` and its whole family off the scene (Manim splits any parent on the scene that held
+  them), then restores their opacity. A member that is still a child of a parent is therefore invisible
+  only until that parent is added or animated again: then it snaps back at full opacity. After fading a
+  throwaway wrapper of a panel's parts, take the parts out of the panel too (`panel.remove(...)`, as
+  `scroll()` in L02 S12 does with `t.lines.remove`), or fade the panel itself. Tested on Manim 0.22.
 - Deterministic: seed randomness; avoid `always_redraw` on big groups; clear updaters.
 - Never message an agent that runs inside a workflow (SendMessage to its id): it does not reach that
   agent, it starts a second copy from its transcript, and the two then edit the same file. Review
