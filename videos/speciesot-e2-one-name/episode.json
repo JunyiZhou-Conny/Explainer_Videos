@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "preset": "swiss",
-  "duration_seconds": 335.0,
+  "duration_seconds": 399.0,
   "video": {
     "width": 1920,
     "height": 1080,
@@ -40,5 +40,5 @@
   "sources": [],
   "style_snapshot": "style.md",
   "style_sha256": "76c5f8f3be7981d6670c94e286fa8c392159bd6b68ddd632bc26fc1444bdcce8",
-  "duration_note": "Fitted to the narration minimum (314.7 s) plus ~6.5% for ponder holds and reading time, as E1 (default 300 s); this episode's override. Was 355 s (12% slack), which left 6-8 s silent scene tails."
+  "duration_note": "Fitted to the narration minimum (375.0 s, including 4 s ponder pauses) plus ~6.5% for reading time, as E1 (default 300 s); this episode's override. Grew after the viewer-QA revision added explanations."
 }
