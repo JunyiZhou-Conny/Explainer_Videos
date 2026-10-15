@@ -37,11 +37,16 @@ async function fetchJSON(url, tries = 3){
   for(let i = 1; ; i++){
     try{
       const r = await fetch(url);
-      if(r.status === 403 || r.status === 429) throw new Error(`GitHub API ${r.status}（未登录限每小时 60 次）`);
+      if(r.status === 403 || r.status === 429){
+        // Rate limiting: retrying only burns more of the quota, so fail at once.
+        const e = new Error(`GitHub API ${r.status}（未登录限每小时 60 次）`);
+        e.noRetry = true;
+        throw e;
+      }
       if(!r.ok) throw new Error(`HTTP ${r.status}`);
       return await r.json();
     }catch(e){
-      if(i >= tries) throw e;
+      if(e.noRetry || i >= tries) throw e;
       await new Promise(res => setTimeout(res, 800 * i));
     }
   }
@@ -94,6 +99,7 @@ function protocolHtml(s, open){
   return `<div class="meta">${parts.join(' · ')}</div>` + (stale ? '<span class="chip q">可能停滞</span>' : '');
 }
 async function load(){
+  clearTimeout(window.__retryTimer); // a manual 立即重试 must not leave the auto-retry armed
   const board = document.getElementById('board');
   try{
     const [rawIssues, protocol, pulls] = await Promise.all([
