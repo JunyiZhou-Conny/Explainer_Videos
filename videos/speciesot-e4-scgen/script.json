@@ -7,7 +7,7 @@
   "tags_zh": ["scGen", "单细胞", "自编码器", "Python", "教程"],
   "bilibili_tid": 201,
   "production_notes": [
-    "READ IN CODE (speciesOT repo at 109bf12): the TF scgen is a nested, git-ignored clone inside the project (atlas-paper-vae/configs/m2_v08.yaml:44 scgen_code_path; .gitignore:44-47 'Nested clones / local sandboxes'), put on sys.path at runtime (atlas-paper-vae/scripts/01_train_vae.py:86, 107-108), env scgen_tf1, TF 1.15 (m2_v08.yaml:46-48). Josh's encode_mean/decode/delta lines match atlas-paper-vae/scripts/02_eval_metrics.py:151-171.",
+    "READ IN CODE (speciesOT repo at 109bf12): the TF scgen is a nested, git-ignored clone inside the project (atlas-paper-vae/configs/m2_v08.yaml:44 scgen_code_path; .gitignore:44-47 'Nested clones / local sandboxes'), put on sys.path at runtime (atlas-paper-vae/scripts/01_train_vae.py:86, 107-108), env scgen_tf1, TF 1.15 (m2_v08.yaml:46-48). Josh's encode_mean/decode/delta lines (265-282) and predict's first two lines (288-289) match atlas-paper-vae/scripts/02_eval_metrics.py:151-167; 169-171 (the predict step itself) is not copied.",
     "READ IN PACKAGE: scgen 2.1.0 on PyPI (scvi-tools based) exports only SCGEN and SCGENVAE; no VAEArith (videos/speciesot-series/checks/scgen_package.txt). That Josh's environment loads this package is INFERRED from his comment at speciesot_core.py lines 10-11 ('pulls in scvi-tools/torch'); say 'if' and tag INFERRED.",
     "READ IN CODE: cellot/cellot_gpu is a vendored copy of bunnech/cellot (setup.py url, BSD LICENSE). Its 'scgen' is AutoEncoder (cellot/models/ae.py:21-22, beta 0 in the hub template) with compute_scgen_shift (ae.py:175-187) and transport_scgen (transport.py:61-69); training via train_auto_encoder (train/train.py:173). The v08 scorecard scGen numbers come from this hub AE (logs/research_logs/agent_plans_2026-07-21/DELIVERABLE_A_atlas_memory.md:20).",
     "READ IN CODE: Josh's config hidden_units [256, 256], z_dimension 50, lr 0.001 equal specs/m1_modern.yaml scgen_hidden_units / scgen_latent_dim / scgen_lr (the cellot AE spec); TF VAEArith hard-codes two hidden layers of 800 (atlas-paper-vae/configs/m2_v08.yaml:27) and Josh's setup (lines 252-258) passes no hidden_units.",
@@ -75,8 +75,8 @@
       "lines": [
         {"en": "Now your question: do you need to trace back into the original scgen code? First, notice that three different things in your project are called scgen.",
          "zh": "现在回答你的问题：需要追溯到 scgen 的原始代码吗？先注意一件事：你的项目里有三个不同的东西都叫 scgen。"},
-        {"en": "One: the TensorFlow model in your atlas scripts. Its code is a separate clone, in a git-ignored folder inside your project, and it runs in its own TensorFlow one environment. Josh's helper functions match those scripts line for line.",
-         "zh": "第一个：图谱脚本里的 TensorFlow 模型。它的代码是一份单独的克隆，放在项目里一个被 Git 忽略的文件夹中，在它专用的 TensorFlow 1 环境里运行。Josh 的辅助函数和这些脚本逐行一致。"},
+        {"en": "One: the TensorFlow model in your atlas scripts. Its code is a separate clone, in a git-ignored folder inside your project, and it runs in its own TensorFlow one environment. Josh's helper functions are copied from those scripts, line for line.",
+         "zh": "第一个：图谱脚本里的 TensorFlow 模型。它的代码是一份单独的克隆，放在项目里一个被 Git 忽略的文件夹中，在它专用的 TensorFlow 1 环境里运行。Josh 的辅助函数是从这些脚本里逐行抄过来的。"},
         {"en": "Two: the package that import scgen loads in Josh's environment. His comment says it pulls in scvi-tools. And we checked that package: it has no VAEArith at all. If that's what loads, setup stops right at that name.",
          "zh": "第二个：在 Josh 的环境里，import scgen 加载的那个包。他的注释说它会拉进 scvi-tools。我们也检查过这个包：它根本没有 VAEArith。如果加载的是它，setup 会在 scgen.VAEArith 这一行直接报错。"},
         {"en": "Three: the autoencoder in your cellot folder. CellOT's source is copied into your repository, with your own edits, and its model named scgen is a plain autoencoder with the same mean shift. That one produced your benchmark numbers.",
@@ -111,8 +111,8 @@
          "zh": "回顾一下。scGen 先编码，把每个细胞都沿同一个学到的箭头平移，再解码。setup 负责搭建，train 学习网络和 delta，predict 应用它们。"},
         {"en": "Three things are called scgen. Your adapter wraps exactly one, and it's the only doorway to it. The answer to the pause: one code file changes, the adapter, plus its section of the config and the dependency it needs.",
          "zh": "有三个东西都叫 scgen。你的适配器只包住其中一个，也是通往它的唯一一扇门。刚才那个问题的答案：只改一个代码文件，也就是适配器，再加上它在配置里的那一段和它需要的依赖。"},
-        {"en": "Your exercise: open those calls in cellot, plus transport scgen, and write down each one's inputs and outputs. Then write train and predict as plain comments, step by step, before writing any code.",
-         "zh": "你的练习：在 cellot 里打开这几个调用，再加上 transport_scgen，写下每个调用的输入和输出。然后在写任何代码之前，先用注释把 train 和 predict 一步一步写出来。"}
+        {"en": "Your exercise: open each of those four calls in cellot, and write down its inputs and outputs. Then write train and predict as plain comments, step by step, before writing any code.",
+         "zh": "你的练习：在 cellot 里打开这四个调用，逐个写下它的输入和输出。然后在写任何代码之前，先用注释把 train 和 predict 一步一步写出来。"}
       ]
     }
   ]

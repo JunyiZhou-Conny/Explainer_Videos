@@ -555,7 +555,7 @@ class S04(Ep):
             self.play(GrowArrow(tr_arrows[3]), FadeIn(store, shift=RIGHT * .1),
                       FadeIn(u_store), u_delta.animate.set_color(GRAY), run_time=.5)
         py = ly["predict"]
-        px = [-3.3, -.55, 1.6]
+        px = [-3.45, -.75, 1.35]
         test = cloud(10, px[0], py, .12, GRAY, seed=31, radius=.045)
         enc = trapezoid(px[0] + .35, px[0] + .95, .62, .26, py, INK)
         u_enc = under("encode test mouse", px[0] + .5, "predict", RED)
@@ -563,15 +563,15 @@ class S04(Ep):
         u_add = under("add the stored δ", px[1], "predict", RED)
         dec = trapezoid(px[2] - .3, px[2] + .3, .26, .62, py, INK)
         u_dec = under("decode", px[2], "predict", RED)
-        bx0, bx1, by0, by1 = 2.45, 6.3, -2.4, -.8
+        bx0, bx1, by0, by1 = 2.0, 6.3, -2.4, -.8
         obox = Rectangle(width=bx1 - bx0, height=by1 - by0, stroke_color=INK, stroke_width=2)\
             .move_to([(bx0 + bx1) / 2, (by0 + by1) / 2, 0])
-        o1 = mono_left("AnnData", bx0 + .2, -1.05, 20, INK)
-        o2 = left("human-test var_names, same order", bx0 + .2, -1.38, 17, GRAY)
-        o3 = left("→ evaluate (core 145)", bx0 + .2, -1.78, 18, INK)
-        o4 = left("R² · MMD vs human test cells", bx0 + .2, -2.12, 18, RED)
+        o1 = mono_left("AnnData", bx0 + .15, -1.05, 20, INK)
+        o2 = left("human-test var_names, same order", bx0 + .15, -1.38, 17, GRAY)
+        o3 = left("→ evaluate (core 145)", bx0 + .15, -1.78, 18, INK)
+        o4 = left("R² · MMD vs human test cells", bx0 + .15, -2.12, 18, RED)
         p_arrows = [lane_arrow([a, py, 0], [b, py, 0]) for a, b in
-                    ((-4.0, -3.65), (px[0] + 1.0, add.get_left()[0] - .02),
+                    ((-4.05, -3.75), (px[0] + 1.0, add.get_left()[0] - .02),
                      (add.get_right()[0] + .02, px[2] - .32), (px[2] + .35, bx0 - .02))]
         with self.say(1) as vo:
             self.cue(vo, .02, *tint(chips["train"], INK),
@@ -611,8 +611,7 @@ class S04(Ep):
         err = mono_left("NameError: name '_dense' is not defined", .15, -1.62, 17, RED)
         mt = source_tag("MEASURED")
         mt.move_to([.15 + mt.width / 2, -2.05, 0])
-        mt_l = left("288–289 use names from the atlas script", mt.get_right()[0] + .2, -2.05, 18,
-                    INK)
+        mt_l = left("288–289 use atlas-script names", mt.get_right()[0] + .2, -2.05, 18, INK)
         never = left("↑ never reached", pp.row(292).get_left()[0], pp.row_y(293), 17, GRAY)
         with self.say(2) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.4)
@@ -726,8 +725,8 @@ class S05(Ep):
         bx = 4.45
         box2 = Rectangle(width=3.7, height=2.05, stroke_color=INK, stroke_width=2)\
             .move_to([bx, .575, 0])
-        b2 = VGroup(badge(2, 2.85, 1.88), left("pip package", 3.15, 1.88, 20, INK, bold=True))
-        b2.add(left("· in Josh's env?", b2.get_right()[0] + .12, 1.88, 17, GRAY))
+        b2 = VGroup(badge(2, 2.85, 1.88), left("pip scgen", 3.15, 1.88, 20, INK, bold=True))
+        b2.add(left("· Josh's env?", b2.get_right()[0] + .12, 1.88, 17, GRAY))
         hdr = mono_left("scgen 2.1.0 (latest)", 2.8, 1.35, 18, INK)
         needs = left("needs scvi-tools", 2.8, 1.0, 17, GRAY)
         exp = VGroup(left("exports:", 2.8, .62, 17, GRAY), mono_left("SCGEN, SCGENVAE", 3.7, .62,
@@ -798,9 +797,8 @@ class S05(Ep):
         b3 = VGroup(badge(3, 1.85, 1.88), left("cellot autoencoder", 2.15, 1.88, 20, INK,
                                                bold=True),
                     tag_right("READ IN CODE", 6.3, 1.88))
-        spec = left("those three = the cellot autoencoder's spec", 1.6, -.98, 19, RED,
-                    bold=True)
-        tf = chip("TF VAEArith: 2 × 800, fixed", 4.05, -1.6, INK, 19)
+        spec = left("= the cellot autoencoder's spec", 1.6, -.98, 19, RED, bold=True)
+        tf = chip("TF VAEArith: 2 × 800, fixed", 3.9, -1.6, INK, 19)
         b1 = badge(1, tf.get_left()[0] - .32, -1.6)
         tfloc = mono_left("atlas-paper-vae/configs/m2_v08.yaml:27", 1.2, -2.12, 16, GRAY)
         with self.say(4) as vo:
@@ -954,11 +952,11 @@ class S06(Ep):
                                fill_color=PAPER, fill_opacity=1)
                      .move_to([(bx0 + bx1) / 2, 1.74, 0]),
                      at("No — you don't need the original scgen code.", (bx0 + bx1) / 2, 1.74,
-                        22, RED, bold=True))
+                        20, RED, bold=True))
         box = Rectangle(width=bx1 - bx0, height=by1 - by0, stroke_color=INK, stroke_width=2)\
             .move_to([(bx0 + bx1) / 2, (by0 + by1) / 2, 0])
         bhead = VGroup(left("cellot AutoEncoder", bx0 + .2, 1.0, 20, INK, bold=True),
-                       mono_left(CELLOT, bx0 + 2.75, 1.0, 16, GRAY))
+                       mono_left(CELLOT, 2.6, 1.0, 16, GRAY))
         ys = [.55, .12, -.66, -1.06]
         rows_ = [VGroup(mono_left(call, bx0 + .2, yy, 19, INK),
                         mono_left(loc, bx0 + 3.9, yy, 16, GRAY))
@@ -966,9 +964,10 @@ class S06(Ep):
         sub = left("↳ also computes the shift  (train.py:250–252)", bx0 + .45, -.24, 17, GRAY)
         rule = Line([bx0 + .15, -1.36, 0], [bx1 - .15, -1.36, 0], color=FAINT, stroke_width=1.5)
         already = left("already called in your repo", bx0 + .2, -1.64, 17, GRAY)
-        rtag = tag_right("READ IN CODE", bx1 - .15, -1.64)
+        rtag = source_tag("READ IN CODE")
+        rtag.move_to([already.get_right()[0] + .2 + rtag.width / 2, -1.64, 0])
         script = mono_left("scripts/predict_new_input.sh:623–663", bx0 + .2, -2.03, 16, INK)
-        start = left("← start here", script.get_right()[0] + .2, -2.03, 20, RED, bold=True)
+        start = left("← start here", script.get_right()[0] + .17, -2.03, 17, RED, bold=True)
         with self.say(2) as vo:
             self.cue(vo, .02, *[FadeOut(m) for m in (*lib_g[:2], *wires[:2], made, josh, dlab)],
                      FadeOut(lib_g[2]),
@@ -1008,7 +1007,7 @@ class S06(Ep):
         p2 = code_panel(FAKE_AE, "", 3.0, -1.65, width=6.3, size=18, numbers=False)
         l2t = source_tag("EXAMPLE")
         l2t.move_to([-.15 + l2t.width / 2, -.8, 0])
-        l2 = VGroup(l2t, left("for the cellot adapter: encode, decode do nothing",
+        l2 = VGroup(l2t, left("cellot adapter · encode/decode return input",
                               l2t.get_right()[0] + .2, -.8, 17, INK))
         tests = DashedVMobject(Rectangle(width=6.62, height=4.4, stroke_color=GRAY,
                                          stroke_width=2).move_to([2.97, -.19, 0]), num_dashes=70)

@@ -3,16 +3,16 @@
 1. **Draw it with shapes.** On paper: mouse train (cells × genes) → encode → (cells × 50) →
    column mean → δ (50,) ← human train likewise. Then held-out mouse (cells × genes) → encode →
    + δ → decode → predicted (cells × genes). Which arrays must share a gene axis?
-2. **Read only the doorway.** In the speciesOT repo, read just these and write one line each
-   (inputs → outputs): `cellot/cellot_gpu/cellot/models/ae.py` 33 (`load_autoencoder_model`),
-   149 (`encode`), 152 (`decode`), 175 (`compute_scgen_shift`);
-   `cellot/cellot_gpu/cellot/transport.py` 61 (`transport_scgen`);
-   `cellot/cellot_gpu/cellot/train/train.py` 173 (`train_auto_encoder`; note it already calls
-   `compute_scgen_shift` at 250–252, and takes a cellot config plus an `.h5ad` path, not an
-   AnnData; template `cellot/cellot_gpu/configs/models/scgen.yaml`).
-   Then read `scripts/predict_new_input.sh` 623–663: your repo already does load → `model.eval()`
-   → shift → encode → decode there. Why must `model.eval()` come before encoding
-   (hint: `scripts/bake_model_artifacts.py` 119–120)?
+2. **Read only the doorway.** In the speciesOT repo, open the four calls your adapter makes and
+   write one line each (inputs → outputs), all under `cellot/cellot_gpu/cellot/`:
+   - `models/ae.py` 33 · `load_autoencoder_model`
+   - `train/train.py` 173 · `train_auto_encoder` (it takes a cellot config plus an `.h5ad` path,
+     not an AnnData, and already calls `compute_scgen_shift`, `models/ae.py` 175, at 250–252;
+     config template `cellot/cellot_gpu/configs/models/scgen.yaml`)
+   - `model.eval()` (why it must come before encoding: `scripts/bake_model_artifacts.py` 119–120)
+   - `transport.py` 61–69 · `transport_scgen` (uses `encode` / `decode`, `models/ae.py` 149 / 152)
+
+   Then read `scripts/predict_new_input.sh` 623–663: your repo already makes these calls there.
 3. **Comments before code.** In `scGenModel`, write `train` and `predict` as numbered comments
    only. Where does δ live after `train` returns? What exactly does `predict` return (an AnnData
    with which `var_names`)?
