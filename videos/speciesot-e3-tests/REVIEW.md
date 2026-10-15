@@ -100,7 +100,10 @@ verified in a frame.
 - **Render log**: no BUDGET, CODEPANEL or missing-anchor lines. Grep hits on "Error" are Manim
   progress bars naming on-screen text such as `FileNotFoundError`.
 - **Silences**: at most 5.6 s, at a scene cut; the ponders hold 4.3–4.4 s.
-- **ASR round trip**: see below.
+- **ASR round trip** (faster-whisper small.en on the clean narration vs `script.json`; 807
+  script words, 792 heard, similarity 0.969): all 12 differences are tokenization (digits
+  for spoken decimals, "r2 evaluation", "h5 ad", file names run together). Two earlier
+  mishearings ("package's" as "packaged", "No." as "now") were fixed by rewording.
 - **Evidence** (`../speciesot-series/checks/`):
   - Measured:
     - 0.326 and 0.103 (`identity_end_to_end`);
