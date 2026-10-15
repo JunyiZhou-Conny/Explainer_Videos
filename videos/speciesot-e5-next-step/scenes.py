@@ -131,10 +131,10 @@ def mono_line(s, x, y, size=20, color=INK, bold=False):
     return place_line(t, x, y, size)
 
 
-def panel_at(rows_, title, x, top, width, size):
+def panel_at(rows_, title, x, top, width, size, **kw):
     """A code panel whose top edge sits at `top` (built in place, so its marks line up)."""
-    probe = code_panel(rows_, title, x, 0, width=width, size=size)
-    return code_panel(rows_, title, x, top - probe.frame.height / 2, width=width, size=size)
+    probe = code_panel(rows_, title, x, 0, width=width, size=size, **kw)
+    return code_panel(rows_, title, x, top - probe.frame.height / 2, width=width, size=size, **kw)
 
 
 def pill(text, x, y, color=INK, size=20, font=MONO, pad=.22):
@@ -1163,10 +1163,12 @@ class S06(Ep):
 # ---------------------------------------------------------------- s07
 
 LOOP = [("write the call as a test", (-3.4, 1.3)), ("run it", (3.4, 1.3)),
-        ("read the last line", (4.72, -.4)), ("smallest change", (3.4, -2.05)),
+        ("read the first error", (4.72, -.4)), ("smallest change", (3.4, -2.05)),
         ("pass → commit", (-3.4, -2.05)), ("next card", (-4.95, -.4))]
 CARDS = [("evaluate → table", "models × metrics"), ("split M1 v08", "four files"),
-         ("identity = 0.554", "R² of means"), ("scGen ≈ 0.927", "walk its error trail")]
+         ("identity = 0.5542", "R² of means"), ("scGen ≈ 0.927", "253 → 133 → 288")]
+TEST_SKETCH = ["def test_identity_m1_v08():", "    r2 = r2_of_means(run_identity(...))",
+               "    assert round(r2, 4) == 0.5542"]
 
 
 class S07(Ep):
@@ -1190,6 +1192,7 @@ class S07(Ep):
         last_bar = Rectangle(width=6.0, height=.32, stroke_width=0, fill_color=RED, fill_opacity=.35)\
             .move_to([0, term.lines[2].get_y(), 0]).set_z_index(1)
         passed = mono("1 passed", 17, PAPER).move_to(term.lines[2], aligned_edge=LEFT).set_z_index(2)
+        first = left("first error = last line of the traceback", -3.05, .66, 19, RED, bold=True)
 
         def go(k, *extra, run_time=.5):
             """Advance the loop from node k-1 to node k (k >= 1)."""
@@ -1206,10 +1209,11 @@ class S07(Ep):
             vo.wait_until("Run it")
             paint(nodes[1], RED)
             go(1, FadeIn(term[0]), FadeIn(term.lines[0]), FadeIn(term_tag))
-            vo.wait_until("Read the last line")
+            vo.wait_until("Read the first error")
             paint(nodes[2], RED)
             go(2, FadeIn(term.lines[1]), FadeIn(term.lines[2]))
-            self.play(FadeIn(last_bar), run_time=.3)
+            vo.wait_until("last line of the traceback")
+            self.play(FadeIn(last_bar), FadeIn(first, shift=DOWN * .05), run_time=.4)
         with self.say(1) as vo:
             paint(nodes[3], RED)
             self.cue(vo, .0)
@@ -1225,9 +1229,9 @@ class S07(Ep):
             self.play(GrowArrow(edges[5]), Transform(nodes[5], paint(nodes[5].copy(), INK)),
                       Transform(nodes[0], paint(nodes[0].copy(), RED)),
                       token.animate.move_to(nodes[0].get_top() + UP * .18), run_time=.5)
-        loop = VGroup(*nodes, *edges, token, term[0], term.lines[0], term.lines[1], passed, term_tag)
-        # L2: the four cards, in order
-        cy, cw, ch = .95, 2.9, 1.55
+        loop = VGroup(*nodes, *edges, token, term[0], term.lines[0], term.lines[1], passed, term_tag, first)
+        # L2: the four cards, in order: identity's path first (exact answer), then scGen's trail
+        cy, cw, ch = 1.05, 2.9, 1.55
         cards = []
         for k, (title, sub) in enumerate(CARDS):
             x = STAGE_X[k]
@@ -1236,10 +1240,13 @@ class S07(Ep):
             cards.append(VGroup(fr, left(f"CARD {k + 1}", x - cw / 2 + .18, cy + .5, 18, RED, bold=True),
                                 left(title, x - cw / 2 + .18, cy + .02, 23, INK, cw - .36, bold=True),
                                 left(sub, x - cw / 2 + .18, cy - .45, 18, GRAY)))
-        order = tagline("INFERRED", "card order: our recommendation", -6.2, -.2, 17)
-        my = -1.35
-        # card 1: a 2×2 table fills; card 2: one block splits in four; card 3: a number counts up;
-        # card 4: the four trail stops turn from ✗ to ✓
+        py = .12
+        id_path = VGroup(line(-6.1, py, 3.0, py, INK, 3),
+                         left("1 · identity's path: an exact answer", -6.1, py - .26, 18, INK, bold=True))
+        sg_path = VGroup(line(3.2, py, 6.1, py, RED, 3),
+                         left("2 · scGen's path", 3.2, py - .26, 18, RED, bold=True))
+        order = tagline("INFERRED", "card order: our recommendation", -6.2, -.56, 17)
+        my = -1.4
         t1 = VGroup(*[Square(.36, stroke_color=INK, stroke_width=2).move_to([STAGE_X[0] - .2 + i * .4,
                                                                              my + .2 - j * .4, 0])
                       for j in range(2) for i in range(2)])
@@ -1249,39 +1256,53 @@ class S07(Ep):
         quads = VGroup(*[Rectangle(width=.42, height=.32, stroke_width=0, fill_color=INK if j == 0 else RED,
                                    fill_opacity=1).move_to([STAGE_X[1] - .3 + i * .6, my + .25 - j * .5, 0])
                          for j in range(2) for i in range(2)])
-        val = ValueTracker(0)
-        num = always_redraw(lambda: mono(f"{val.get_value():.3f}", 30, INK, bold=True)
-                            .move_to([STAGE_X[2], my, 0]))
-        num_end = mono("0.554", 30, RED, bold=True).move_to([STAGE_X[2], my, 0])
-        stops4 = [cross(STAGE_X[3] - .75 + i * .5, my + .1, .1, RED) for i in range(4)]
-        oks4 = [tick(STAGE_X[3] - .75 + i * .5, my + .1, .11, INK) for i in range(4)]
-        near = mono("≈ 0.927", 20, RED).move_to([STAGE_X[3], my - .45, 0])
+        sketch = panel_at([(None, l) for l in TEST_SKETCH], "our sketch · not in the repo", -3.35, -.82,
+                          5.65, 16, numbers=False)
+        sk_tag = source_tag("EXAMPLE").move_to([sketch.frame.get_right()[0] - .72,
+                                                 sketch.frame.get_top()[1] - .2, 0])
+        to_e3 = left("→ tests: E3", sketch.frame.get_right()[0] + .15, -2.12, 18, GRAY)
+        keys = list(sketch.rows)
+        ne = VGroup(mono("r2 ≠ 0.5542", 24, RED, bold=True),
+                    label("until data, split and metric match", 17, GRAY)).arrange(DOWN, buff=.14)
+        ne.move_to([STAGE_X[2] + .1, -1.35, 0])
+        eq = VGroup(mono("r2 = 0.5542", 24, INK, bold=True), tick(0, 0, .14, RED)).arrange(RIGHT, buff=.2)
+        eq.move_to([STAGE_X[2] + .1, -1.2, 0])
+        sx = [STAGE_X[3] - .7, STAGE_X[3], STAGE_X[3] + .7]
+        stops4 = [cross(x, -1.15, .11, RED) for x in sx]
+        oks4 = [tick(x, -1.15, .12, INK) for x in sx]
+        lns = VGroup(*[mono(t, 17, GRAY).move_to([x, -1.5, 0]) for t, x in zip(("253", "133", "288"), sx)])
+        near = mono("≈ 0.927", 22, RED, bold=True).move_to([STAGE_X[3], -1.98, 0])
         with self.say(2) as vo:
             self.cue(vo, .0, FadeOut(loop, shift=UP * .2), run_time=.4)
             self.play(LaggedStart(*[FadeIn(c, shift=UP * .1) for c in cards], lag_ratio=.15),
                       FadeIn(order), run_time=.7)
-            vo.wait_until("Make evaluate")
+            vo.wait_until("Walk identity's path")
+            self.play(Create(id_path[0]), FadeIn(id_path[1]), run_time=.5)
+            vo.wait_until("make evaluate")
             self.play(cards[0][0].animate.set_stroke(RED, 4), Create(t1), run_time=.4)
             self.play(LaggedStart(*[FadeIn(f) for f in t1f], lag_ratio=.2), run_time=.6)
-            vo.wait_until("Split the M1")
+            vo.wait_until("split the M1")
             self.play(cards[0][0].animate.set_stroke(INK, 2), cards[1][0].animate.set_stroke(RED, 4),
                       FadeIn(block), run_time=.4)
             self.play(ReplacementTransform(block, quads), run_time=.6)
-            vo.wait_until("Run identity")
+            vo.wait_until("compute R squared")
             self.play(cards[1][0].animate.set_stroke(INK, 2), cards[2][0].animate.set_stroke(RED, 4),
-                      FadeIn(num), run_time=.4)
+                      FadeOut(t1), FadeOut(t1f), FadeOut(quads), FadeIn(sketch, shift=UP * .1),
+                      FadeIn(sk_tag), FadeIn(to_e3), FadeIn(ne), run_time=.6)
             vo.wait_until("gives zero point")
-            self.play(val.animate.set_value(.554), run_time=1.0, rate_func=smooth)
-            self.remove(num)
-            self.add(num_end)
+            mk = highlight(self, sketch, keys[2], run_time=.25)
+            self.play(ReplacementTransform(ne[0], eq), FadeOut(ne[1]), run_time=.35)
             vo.wait_until("Then walk")
             self.play(cards[2][0].animate.set_stroke(INK, 2), cards[3][0].animate.set_stroke(RED, 4),
-                      num_end.animate.set_color(INK), *[FadeIn(s_) for s_ in stops4], run_time=.4)
-            for s_, o in zip(stops4, oks4):
-                self.play(ReplacementTransform(s_, o), run_time=.3)
+                      Create(sg_path[0]), FadeIn(sg_path[1]), *[FadeIn(s_) for s_ in stops4], FadeIn(lns),
+                      run_time=.5)
+            for k, w in enumerate(["253", "133", "288"]):
+                vo.wait_until(w)
+                self.play(ReplacementTransform(stops4[k], oks4[k]), lns[k].animate.set_color(INK),
+                          run_time=.3)
             vo.wait_until("lands near")
             self.play(FadeIn(near, shift=UP * .1), run_time=.4)
-        board = VGroup(*cards, order, t1, t1f, quads, num_end, *oks4, near)
+        board = VGroup(*cards, id_path, sg_path, order, sketch, sk_tag, to_e3, mk, eq, *oks4, lns, near)
         # L3: recap
         rows_y = [1.15, .45, -.25, -.95]
         icons = VGroup(

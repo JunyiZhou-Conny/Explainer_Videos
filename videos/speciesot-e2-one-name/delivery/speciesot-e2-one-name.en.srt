@@ -1,0 +1,464 @@
+1
+00:00:00,400 --> 00:00:02,235
+Here's a puzzle from this week's code.
+
+2
+00:00:02,555 --> 00:00:05,365
+Setup crashes with an attribute error:
+
+3
+00:00:05,365 --> 00:00:09,211
+scGenModel has no attribute x_dimensions,
+with an s.
+
+4
+00:00:09,367 --> 00:00:14,299
+The fix looks like one letter.
+Delete the s, and the crash disappears.
+
+5
+00:00:14,299 --> 00:00:17,117
+We tried it on toy data with four genes,
+
+6
+00:00:17,117 --> 00:00:20,780
+and a stand-in for scgen:
+setup runs, no complaints.
+
+7
+00:00:20,933 --> 00:00:24,432
+But the network would be built
+for one thousand genes, not four.
+
+8
+00:00:24,752 --> 00:00:27,034
+The error is gone, and the bug is not.
+
+9
+00:00:27,354 --> 00:00:30,341
+To see why, follow one name through five places.
+
+10
+00:00:33,667 --> 00:00:37,038
+First, the setup you watched Josh work in:
+three windows.
+
+11
+00:00:37,358 --> 00:00:42,648
+The package file, the config file,
+and the e24_replica notebook that runs them.
+
+12
+00:00:42,800 --> 00:00:44,499
+Two wires connect them.
+
+13
+00:00:44,549 --> 00:00:47,841
+The editable install, the dash e in pip install,
+
+14
+00:00:47,841 --> 00:00:51,888
+means Python imports your folder itself,
+not a frozen copy.
+
+15
+00:00:52,208 --> 00:00:57,136
+And autoreload, at the top of the notebook,
+re-reads the file whenever it changes.
+
+16
+00:00:57,300 --> 00:00:59,661
+The config wire is even simpler.
+
+17
+00:00:59,661 --> 00:01:05,492
+Every new Experiment opens config.yaml
+and reads it fresh, with yaml.safe_load.
+
+18
+00:01:05,734 --> 00:01:09,553
+So the loop is: edit a file,
+rerun the cell, read what breaks.
+
+19
+00:01:09,873 --> 00:01:11,963
+That loop is what you watched Josh do.
+
+20
+00:01:15,767 --> 00:01:19,692
+Now follow one value:
+the latent size, z_dimension, fifty.
+
+21
+00:01:20,012 --> 00:01:25,580
+Hop one: it's a line in config.yaml,
+under models, under scGenModel.
+
+22
+00:01:25,734 --> 00:01:30,603
+Hop two: safe load turns the whole file
+into nested Python dictionaries.
+
+23
+00:01:30,603 --> 00:01:35,675
+A dictionary is a row of labelled drawers.
+You open one by its exact label.
+
+24
+00:01:35,834 --> 00:01:39,328
+Hop three: the experiment's setup, at line 115,
+
+25
+00:01:39,328 --> 00:01:45,946
+hands the scGenModel drawer to the class,
+and init opens the drawer labelled z_dimension.
+
+26
+00:01:46,266 --> 00:01:51,108
+Hop four: init writes the value onto the object,
+as self.z_dimension.
+
+27
+00:01:51,267 --> 00:01:53,814
+Fifth, the model's own setup method,
+
+28
+00:01:53,814 --> 00:01:57,705
+at line 254,
+reads that attribute to build the network.
+
+29
+00:01:57,705 --> 00:02:02,814
+Careful there: the name left of the equals sign
+is scgen's own parameter.
+
+30
+00:02:02,814 --> 00:02:08,972
+Ours is the one after self dot. Five places,
+and the spelling has to match at every one.
+
+31
+00:02:08,972 --> 00:02:11,982
+That's why Josh kept jumping between files.
+
+32
+00:02:17,000 --> 00:02:21,597
+That path has two kinds of lookup,
+and each one fails with its own error.
+
+33
+00:02:21,597 --> 00:02:25,060
+Opening a drawer
+that doesn't exist raises a key error.
+
+34
+00:02:25,060 --> 00:02:29,971
+Asking an object for an attribute it never
+received raises an attribute error.
+
+35
+00:02:30,133 --> 00:02:31,400
+Pause and predict:
+
+36
+00:02:31,400 --> 00:02:35,061
+Josh's toy config spells it x_dimensions,
+with an s.
+
+37
+00:02:35,381 --> 00:02:38,261
+Will init raise a key error,
+or an attribute error?
+
+38
+00:02:42,433 --> 00:02:46,705
+A key error.
+Build scGenModel from the toy config,
+
+39
+00:02:46,705 --> 00:02:49,012
+and init stops at line 220:
+
+40
+00:02:49,012 --> 00:02:51,692
+key error, x_dimension, singular.
+
+41
+00:02:52,012 --> 00:02:53,812
+The drawer it asked for isn't there.
+
+42
+00:02:53,933 --> 00:02:57,533
+And the attribute error
+is our crash at line 253:
+
+43
+00:02:57,533 --> 00:03:03,704
+the model's setup asks for self.x_dimensions,
+but init only ever wrote the singular.
+
+44
+00:03:03,867 --> 00:03:06,171
+To read a traceback, start at the bottom.
+
+45
+00:03:06,491 --> 00:03:10,368
+The last line says what went wrong,
+and here Python even asks:
+
+46
+00:03:10,368 --> 00:03:12,168
+did you mean x_dimension?
+
+47
+00:03:12,251 --> 00:03:15,003
+Just above it,
+the last file and line says where.
+
+48
+00:03:15,323 --> 00:03:20,075
+Read further up and you see the path:
+the experiment's setup,
+
+49
+00:03:20,075 --> 00:03:24,048
+at line 119,
+called the model's setup, at line 253.
+
+50
+00:03:24,200 --> 00:03:27,974
+One caution:
+we measured this with a stand-in for scgen.
+
+51
+00:03:27,974 --> 00:03:31,727
+On the cluster,
+a different scgen error can come first.
+
+52
+00:03:31,727 --> 00:03:33,527
+Episode four explains why.
+
+53
+00:03:39,867 --> 00:03:41,545
+Now the silent part.
+
+54
+00:03:41,595 --> 00:03:43,260
+When use_all_genes is true,
+
+55
+00:03:43,260 --> 00:03:48,316
+the experiment's setup is meant to replace
+the typed gene count with the real one,
+
+56
+00:03:48,316 --> 00:03:49,758
+read from the data.
+
+57
+00:03:49,808 --> 00:03:51,664
+Line 104 does that.
+
+58
+00:03:51,834 --> 00:03:55,269
+But line 104 writes x_dimensions, with an s.
+
+59
+00:03:55,589 --> 00:03:58,907
+Writing to a label
+that doesn't exist never complains:
+
+60
+00:03:58,907 --> 00:04:00,751
+Python just adds a new drawer.
+
+61
+00:04:01,071 --> 00:04:06,473
+So the dictionary ends up with two drawers:
+x_dimension, singular, one thousand,
+
+62
+00:04:06,473 --> 00:04:10,458
+typed by hand, and x_dimensions,
+with an s, the real count.
+
+63
+00:04:10,634 --> 00:04:12,965
+Init only opens the singular drawer,
+
+64
+00:04:12,965 --> 00:04:16,138
+so the real count lands
+in a drawer nobody reads.
+
+65
+00:04:16,458 --> 00:04:20,206
+On Josh's real data,
+his notebook once printed that drawer:
+
+66
+00:04:20,206 --> 00:04:22,367
+eighteen thousand and twenty-four.
+
+67
+00:04:22,687 --> 00:04:24,799
+With today's init, nothing reads it.
+
+68
+00:04:24,967 --> 00:04:28,810
+Pause on this: should the gene count
+be typed into the config at all,
+
+69
+00:04:28,810 --> 00:04:30,983
+or should it always come from the data?
+
+70
+00:04:39,900 --> 00:04:42,801
+Four rules turn this back-and-forth
+into a routine.
+
+71
+00:04:42,967 --> 00:04:46,126
+One: one spelling.
+The config key, the init line,
+
+72
+00:04:46,126 --> 00:04:48,769
+and the attribute share exactly one name.
+
+73
+00:04:48,769 --> 00:04:50,810
+Two: derived values are derived.
+
+74
+00:04:50,810 --> 00:04:54,508
+A number the data can tell
+you shouldn't be typed by hand.
+
+75
+00:04:54,667 --> 00:04:56,324
+Three: fail early.
+
+76
+00:04:56,374 --> 00:05:00,022
+Init already reads every key
+the moment the object is built.
+
+77
+00:05:00,342 --> 00:05:04,779
+That's good: a missing key explodes inside init,
+not an hour into training.
+
+78
+00:05:04,933 --> 00:05:06,449
+Four: after any rename,
+
+79
+00:05:06,449 --> 00:05:10,603
+search the whole project for the old name,
+YAML files included.
+
+80
+00:05:10,603 --> 00:05:13,275
+Then rerun the smallest example you have.
+
+81
+00:05:13,433 --> 00:05:17,359
+Two traps to check today.
+Josh's toy config has drifted:
+
+82
+00:05:17,359 --> 00:05:19,391
+it has no experiment section,
+
+83
+00:05:19,391 --> 00:05:21,215
+so setup stops at line 86,
+
+84
+00:05:21,215 --> 00:05:25,004
+and it also lacks z_dimension,
+alpha and dropout rate.
+
+85
+00:05:25,004 --> 00:05:30,754
+And in YAML, None is just the word None,
+a string. YAML spells an empty value null.
+
+86
+00:05:30,754 --> 00:05:32,300
+That's harmless today,
+
+87
+00:05:32,300 --> 00:05:35,812
+but any check for None
+would quietly get it wrong.
+
+88
+00:05:40,833 --> 00:05:44,732
+Recap.
+A config value passes through five places:
+
+89
+00:05:44,732 --> 00:05:50,220
+a YAML line, a dictionary drawer, init,
+an attribute, and the setup that reads it.
+
+90
+00:05:50,540 --> 00:05:52,502
+Every place needs the same spelling.
+
+91
+00:05:52,666 --> 00:05:55,126
+A key error means a drawer is missing.
+
+92
+00:05:55,126 --> 00:05:59,075
+An attribute error means the object never got
+that attribute.
+
+93
+00:05:59,075 --> 00:06:02,053
+And a quiet bug can hide behind a fixed crash.
+
+94
+00:06:02,200 --> 00:06:05,554
+Your exercise:
+search the project for both spellings,
+
+95
+00:06:05,554 --> 00:06:07,768
+and keep the singular, x_dimension.
+
+96
+00:06:08,088 --> 00:06:13,805
+It already matches config.yaml and init,
+and it's the name of scgen's own parameter.
+
+97
+00:06:14,125 --> 00:06:18,483
+Change line 104,
+the right-hand side of line 253,
+
+98
+00:06:18,483 --> 00:06:20,973
+and the toy config to match.
+
+99
+00:06:21,293 --> 00:06:23,241
+Then rerun e24_replica,
+
+100
+00:06:23,241 --> 00:06:28,828
+and check that the model's
+x_dimension is now the real gene count,
+
+101
+00:06:28,828 --> 00:06:32,045
+even if setup still stops at line 252.
+
+102
+00:06:32,365 --> 00:06:34,541
+Episode four explains that stop.
