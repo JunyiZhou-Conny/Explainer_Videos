@@ -28,7 +28,33 @@
 6. 三块都打勾、黄条消失（显示 *account information is complete*）后，
    在对话里告诉我一声"**KDP 账号好了**"。
 
-## 第二部分：上传这本书
+## 第二部分：上传这本书（账号开好后做，约 30 分钟）
 
-**（占位——等我把 `interior.pdf`、`cover.pdf`、`metadata.md` 交付到这个文件夹后，
-我会把这一部分补成同样细的点击步骤。你不用提前做任何事。）**
+1. 把两个文件下载到电脑（GitHub 仓库页 → `experiments/kdp-coloring-book/` →
+   点 `interior.pdf` → 右上 **Download raw file**；`cover.pdf` 同样）。
+2. 打开 **https://kdp.amazon.com** → 点黄色 **+ Create** → 选 **Paperback**。
+3. **Paperback Details 页**：对照 [metadata.md](metadata.md) 逐项粘贴——
+   Language、Book Title、Subtitle、Author、Description、Keywords（7 个框）、
+   Categories（点 **Choose categories** 按 metadata.md 的路径选两个）。
+   - **Series / Edition Number / Contributors**：留空。
+   - **Sexually Explicit Content**：选 **No**；**Adult Content**：No。
+   - **AI-Generated Content**：会弹三个问题，按 metadata.md 的"AI 内容申报"如实选。
+   - 点 **Save and Continue**。
+4. **Paperback Content 页**：
+   - **Print ISBN**：点 **Get a free KDP ISBN** → Assign。
+   - **Print Options**：Black & white interior with white paper ·
+     Trim size **8.5 x 11 in** · **No Bleed** · Cover finish **Matte**。
+   - **Manuscript**：点 **Upload paperback manuscript** → 选 `interior.pdf`。
+   - **Book Cover**：选 **Upload a cover you already have** →（不勾 barcode 选项，
+     封面右下已留白，KDP 自动加条码）→ 选 `cover.pdf`。
+   - 等两个文件都显示处理完成 → 点 **Launch Previewer**（要等一两分钟）。
+   - 在预览器里翻几页：图案没有被裁掉、没压到页边 → 点 **Approve**。
+   - 页面底部显示印刷成本（应约 $2.84）→ **Save and Continue**。
+5. **Paperback Rights & Pricing 页**：
+   - Territories: **All territories**。
+   - Primary marketplace: **Amazon.com**；List Price 填 **9.99** USD，
+     其他市场保持 "Base on Amazon.com price"。表格里 Royalty 一栏应显示约 **$3.15**。
+   - 点 **Publish Your Paperback Book**。
+6. 之后是等待：KDP 审核最长 72 小时，通过后书页上线、邮件通知你。
+   上线后把商品链接发到对话里，我把它记进 `EXPERIMENTS.md` 台账。
+7. 看销量：kdp.amazon.com 顶部 **Reports** → Dashboard，按天显示订购数和版税。
