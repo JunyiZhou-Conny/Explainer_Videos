@@ -18,10 +18,11 @@ Beats (script.md "## S09", one voiceover block each):
     pulses) with the label "our code" → line 10 `client = storage.Client()` turns YELLOW → line 23
     `google.auth.default()` turns PINK, label "the client asks" → line 36, label "google.auth looks
     for the file".
- 3  The eye and labels go; `storage.Client()` (line 10) and `google.auth.default()` (line 23) lift
-    out of the terminal, which shrinks to the strip (the command + both rows of line 36, RED); V5
-    fades in (container outline only) and the two lifted pieces become the `storage.Client()`
-    machine and the GREY `google.auth` box. The client pulses ("never passes the key"), then asks
+ 3  The eye and labels go; `storage.Client()` (line 10) and `google.auth` (line 23; its
+    `.default()` fades) lift out of the terminal, which shrinks to the strip (the command + both
+    rows of line 36, RED) while the two words fly to their places in V5; then the container
+    outline and the boxes draw in around them: the `storage.Client()` machine and the GREY
+    `google.auth` box. The client pulses ("never passes the key"), then asks
     "who am I?"; GREY tag "ADC · Application Default Credentials" under them; on "its first stop"
     the PINK signpost is planted at /app with a small tag "Dockerfile · line 10".
  4  The signpost's board, then its path line, then the /app root pulse; on "Through the window"
@@ -36,12 +37,14 @@ Beats (script.md "## S09", one voiceover block each):
     gate 2 pulses; its question becomes "IAM roles allow it", the padlock opens and the bucket
     door opens.
  7  Error branch: the cloud, gates, token, arrow and tags go; container, signpost and laptop stay.
-    The key vanishes (RED cross), google.auth follows the signpost again into the empty secrets/,
-    and line 36 pulses RED in the strip. Three causes, one at a time, each undone before the next, with a RED numbered
-    badge and two-line caption top right: (1) no key in this component's secrets/; (2) the root
-    slides from /app to /tmp (RED cross: nothing there); (3) the window re-aims at mega-pipeline/.
-    Last, the picture dims under a GREY footnote card "a different error: 403 …
-    storage.buckets.get → the key lacks rights: ask the staff".
+    The key vanishes (RED cross), google.auth follows the signpost again into the empty secrets/.
+    Three causes, one at a time, each undone before the next, with a RED numbered badge and
+    two-line caption top right: (1) no key in this component's secrets/ (line 36 pulses RED in
+    the strip); (2) the root slides from /app to /tmp (RED cross: nothing there); (3) the window
+    re-aims at mega-pipeline/. The root label and the folder name cross-fade (local reroot()/
+    reaim(), not the shared letter morph). After the voice, V5 leaves and a GREY footnote card
+    stands alone above the strip: "a different error: 403 … storage.buckets.get → the key lacks
+    rights: ask the staff".
  8  TRACKER A10 · extra. The picture goes, the terminal grows to 12 rows: `ls -la input_audios
     text_prompts text_prompts/*` (extra; folds) → TERM(08-ls-after-download.txt: 2, …, 7, …, 11,
     13); input_audios: and text_prompts: get GREY bars, `group-01` a GREY box. Then the terminal
@@ -200,10 +203,14 @@ def swap_words(old, new) -> Animation:
 
 
 def _xfade_into(scene, old, new, shift=ORIGIN, anims=(), run_time: float = 0.8):
-    """old (a member of a piece) cross-fades into `new` (riding `shift` with it), then takes
-    new's shape, so the piece keeps its member; no letter-by-letter morph."""
-    scene.play(old.animate.shift(shift).set_opacity(0), FadeIn(new, shift=shift), *anims,
-               run_time=run_time)
+    """old (a member of a piece) fades out over the first half of `shift`, `new` fades in over
+    the second half; then old takes new's shape, so the piece keeps its member. No
+    letter-by-letter morph, and the two words are never on screen together."""
+    swap = LaggedStart(old.animate.shift(shift * 0.5).set_opacity(0), FadeIn(new, shift=shift * 0.5),
+                       lag_ratio=1.0)
+    scene.play(swap, *anims, run_time=run_time)
+    if swap.group in scene.mobjects:
+        scene.remove(swap.group)
     old.become(new)
     scene.remove(new)
 
@@ -227,8 +234,10 @@ def reaim(scene, chain, folder: str, run_time: float = 0.8):
     `folder` (RED) while secrets/ and the key vanish."""
     new = mono(folder, CAPTION, ERR).move_to(chain.folder, aligned_edge=LEFT)
     old = chain.folder
-    chain.hide(scene, "secrets", "key", run_time=run_time,
-               extra=[old.animate.set_opacity(0), FadeIn(new)])
+    swap = swap_words(old, new)
+    chain.hide(scene, "secrets", "key", run_time=run_time, extra=[swap])
+    if swap.group in scene.mobjects:
+        scene.remove(swap.group)
     old.become(new)
     scene.remove(new)
 
@@ -553,9 +562,11 @@ class WhoIsCalling(VoiceScene):
             panel = src_panel("transcribe_audio/cli.py", 33, 36)
             place(panel, left=-6.3, top=2.7)
             code = panel.code
-            bar_mk = VGroup(line_bar(code, 0, S.GREY, 0.2), line_bar(code, 1, S.GREY, 0.2))
+            b0, b1 = line_bar(code, 0, S.GREY), line_bar(code, 1, S.GREY)
+            bar_mk = Rectangle(width=b0.width, height=b0.get_top()[1] - b1.get_bottom()[1], stroke_width=0)
+            bar_mk.set_fill(S.GREY, 0.2).move_to([b0.get_center()[0], (b0.get_top()[1] + b1.get_bottom()[1]) / 2, 0])
             bar_cl = line_bar(code, 3, LOOKUP, 0.2)
-            note_mk = label("clear, then make the folders", 20, S.GREY)
+            note_mk = label("clear, then make the folders", 20, INK)     # INK: legible on the bar
             place(note_mk, left=code.code_lines[1].get_right()[0] + 0.5, cy=code.code_lines[1].get_center()[1])
             note_cl = label("the client", 20, LOOKUP)
             place(note_cl, left=code.code_lines[3].get_right()[0] + 0.5, cy=code.code_lines[3].get_center()[1])

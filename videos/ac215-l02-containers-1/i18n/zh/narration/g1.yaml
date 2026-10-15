@@ -46,7 +46,7 @@ S02:
   zh:
   - "先来看贯穿整节课的四个词。"
   - "在第 1 讲里，每台新 VM 都要做一遍同样的配置，还得操作系统配合。"
-  - "一个 Docker image 把这些全都打包成一个可以复制的东西：系统文件、Python、各种包和代码。"
+  - "一个 Docker image 把这些全打包成一个能复制的东西：系统文件、Python、各种包和代码。"
 - en: "An image is a stack of read-only layers. Each layer holds the files that one build step added or changed. Beside it sits a small config card: settings like environment variables, and which program to start."
   zh:
   - "一个 image 就是一叠只读层。"
@@ -82,7 +82,7 @@ S02:
   - "而 container 是一些相互隔离的进程，共用同一个 Linux 内核。"
 - en: "On a Mac or Windows laptop, Docker Desktop provides that kernel with a small, hidden Linux VM. On a cloud VM, Docker runs right on the VM's own Linux."
   zh:
-  - "在 Mac 或 Windows 笔记本上，Docker Desktop 用一台隐藏的小 Linux VM 来提供这个内核。"
+  - "在 Mac 或 Windows 笔记本上，Docker Desktop 靠一台隐藏的小 Linux VM 提供这个内核。"
   - "在云上的 VM 里，Docker 直接跑在 VM 自己的 Linux 上。"
 - en: "What a venv couldn't isolate in lecture 1, the system's files and libraries, is now inside the box."
   zh:
@@ -90,7 +90,7 @@ S02:
 S03:
 - en: "Now the README section Developing App using Containers. Open a terminal on your laptop. On a Mac your prompt looks different; on Windows, use Git Bash."
   zh:
-  - "现在进入 README 的 Developing App using Containers 这一节。"
+  - "现在进入 README 的这一节：Developing App using Containers。"
   - "在你的笔记本上打开一个终端。"
   - "在 Mac 上，你的提示符会不一样；在 Windows 上，用 Git Bash。"
 - en: "First, docker container ls lists running containers. Here it shows only the header, so nothing is running. If yours can't connect to the Docker daemon, start Docker Desktop and try again. Pause and run it."
@@ -107,7 +107,7 @@ S03:
   zh:
   - "然后是 docker system prune。"
   - "它会列出要删掉的东西，再问你；输入 y。"
-  - "这里没有空间可回收；你的可能会删掉 Tutorial 0 留下的那个停了的 hello-world container。"
+  - "这里没有空间可回收；你的可能会删掉停了的 hello-world container，就是 Tutorial 0 留下的那个。"
   - "暂停一下，自己跑一遍。"
 - en: "Look at the third item: dangling images, the ones without a name. Despite the README's heading, named images survive. With dash a, prune would remove every unused image."
   zh:
@@ -143,7 +143,7 @@ S03:
 S04:
 - en: "Next, inside the simple-translate folder, create a file called Dockerfile: capital D, no extension. The README fills it in five steps, with a build and a run after each. Pause and create the file."
   zh:
-  - "接下来，在 simple-translate 目录里建一个叫 Dockerfile 的文件：大写 D，没有扩展名。"
+  - "接下来，在 simple-translate 目录里，建一个叫 Dockerfile 的文件：大写 D，没有扩展名。"
   - "README 分五步把它填满，每一步之后都构建一次、运行一次。"
   - "暂停一下，把文件建好。"
 - en: "Dockerfile step 1 is one instruction: FROM python, 3.12, slim bookworm. That's the official Python image, on a slim Debian 12 called bookworm. Paste it in, save, and check with cat, an extra."
@@ -192,7 +192,7 @@ S04:
   - "其中 --rm 负责事后清理；-ti 让你能往里面输入。"
   - "暂停一下，自己跑一遍。"
   - "Python 提示符出来了，录制时是 3.12.15。"
-  - "输入带括号的 exit 就能离开。"
+  - "输入带括号的 exit 退出。"
   en_display:
   - "Now the run command: docker run --rm -ti simple-translate."
   - "--rm cleans up afterwards; -ti lets you type into it."
@@ -340,7 +340,7 @@ S07:
 - en: "Remember lecture 1: activation is just PATH. Nothing has activated the venv, so the word python first finds the Python in user local bin, from the base image. That's 3.12, and it has none of our packages."
   zh:
   - "回想一下第 1 讲：激活其实只是改 PATH。"
-  - "没有任何东西激活这个 venv，所以 python 这个词先找到的是 /usr/local/bin 里的 Python，来自 base image。"
+  - "没有任何东西激活这个 venv，所以 python 这个词先找到的，是 /usr/local/bin 里的 Python，来自 base image。"
   - "那是 3.12，我们的包它一个都没有。"
   en_display:
   - null

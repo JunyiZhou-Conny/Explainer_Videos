@@ -660,9 +660,9 @@ class RunComponents(VoiceScene):
             attach(self, rows[0], u52, anims=[Create(u52)], run_time=0.5)
             self.play(flash(rows[1].time_tag, TURN, 1.2), run_time=0.6)
             t.print(self, C31.at(26, 27), run_time=0.4)
-            vo.wait_until("Help matches")
             self.play(*enter_container(t, B), run_time=0.5)
             session(self, t, C31, (28, 37), type_time=0.5, out_time=0.6)
+            vo.wait_until("Help matches")
             chip114 = readme_chip("generate_text/README.md · lines 114–123")
             tick = check_mark(0.3, VENV)
             same = label("identical", CAPTION, VENV)
@@ -915,7 +915,7 @@ class RunComponents(VoiceScene):
             self.add(t)
             self.play(FadeOut(t), FadeIn(card12), run_time=0.7)
             self.play(flash(card12.tag, TURN, 1.15), run_time=0.7)
-        self.wait(1.5)                    # the your-turn card stays up
+        self.wait(2.5)                    # the your-turn card stays up
 
         # ========================================================== 13 · two small slips
         p64 = src_panel(TT, 64, 64)

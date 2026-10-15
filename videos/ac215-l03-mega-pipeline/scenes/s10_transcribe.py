@@ -323,8 +323,10 @@ class TranscribeUpload(VoiceScene):
         mp3_g = VGroup(mp3, mp3_lab.next_to(mp3, DOWN, buff=0.12))
         place(mp3_g, left=CTR_L + 0.15, cy=cy - 0.05)
         fun = funnel()
-        fun.move_to([CTR_L + 2.65, cy - 0.12, 0])
-        fun_lab = mono("ffmpeg", 20, SYSTEM).next_to(fun, UP, buff=0.12)
+        fun.move_to([CTR_L + 2.65, cy + 0.05, 0])
+        # the label sits under the funnel (like the MP3's), so the page dropping into the mouth
+        # never crosses it
+        fun_lab = mono("ffmpeg", 20, SYSTEM).next_to(fun, DOWN, buff=0.1)
         flac = flac_block()
         flac_home = np.array([CTR_L + CTR_W - 0.2 - flac.width / 2, cy - 0.12, 0])
 
@@ -381,6 +383,7 @@ class TranscribeUpload(VoiceScene):
                       run_time=0.5)
             vo.wait_until("The long-running recognize call")
             self.play(Transform(bar, line_bar(c2, 2, TURN)), FadeOut(u_content), run_time=0.35)
+            vo.wait_until("hands back")
             stub = api.stub(self)
             vo.wait_until("like a ticket stub")
             self.play(Indicate(stub, color=CTR, scale_factor=1.15), run_time=0.7)
@@ -412,7 +415,7 @@ class TranscribeUpload(VoiceScene):
             bar = lines_bar(c3, 2, 4, TURN)
             self.play(FadeIn(bar), run_time=0.3)
             self.play(LaggedStart(*[Indicate(s, color=TURN, scale_factor=1.15) for s in slips], lag_ratio=0.5),
-                      run_time=1.4)
+                      run_time=1.1)
             self.play(Transform(bar, line_bar(c3, 6, TURN)), run_time=0.3)
             page = page_token().scale(1.25).move_to(ic)
             self.play(ReplacementTransform(slips, page), run_time=0.8)

@@ -465,6 +465,7 @@ class DevAndRun(VoiceScene):
             for r, b in badges:
                 self.remove(b)
                 r.add(b)
+                self.add(r)
 
         # ========================================================== 1 · uv add inside, dev bakes it in
         pic = package_picture()
@@ -494,18 +495,20 @@ class DevAndRun(VoiceScene):
             vo.wait_until("inside the container")
             self.play(flash(pic.app, CTR, 1.04), run_time=0.6)
             vo.wait_until("updates pyproject.toml")
-            for i in range(2):
-                self.play(flash(pic.lfiles[i], TURN, 1.12), flash(pic.rfiles[i], TURN, 1.12),
-                          Indicate(pic.route, color=TURN, scale_factor=1.0), run_time=0.7)
+            self.play(flash(pic.lfiles, TURN, 1.1), flash(pic.rfiles, TURN, 1.1),
+                      Indicate(pic.route, color=TURN, scale_factor=1.0), run_time=0.9)
+            vo.wait_until("through the window")
+            self.play(flash(pic.lfiles, TURN, 1.1), flash(pic.rfiles, TURN, 1.1),
+                      Indicate(pic.route, color=TURN, scale_factor=1.0), run_time=0.8)
             vo.wait_until("then dev bakes it")
-            self.play(*leave_container(t, P_A), Transform(chip89, chip89b), run_time=0.5)
-            type_cmd(self, t, C17.cmd, type_time=0.5)
-            self.play(FadeIn(pic.slab, shift=UP * 0.15), FadeIn(pic.slab_label, shift=UP * 0.15),
-                      FadeIn(pkg, scale=0.8), run_time=0.5)
+            self.play(*leave_container(t, P_A), Transform(chip89, chip89b), FadeIn(pic.slab, shift=UP * 0.15),
+                      FadeIn(pic.slab_label, shift=UP * 0.15), FadeIn(pkg, scale=0.8), run_time=0.5)
+            type_cmd(self, t, C17.cmd, type_time=0.4)
             target = pic.slab.get_center() + RIGHT * 0.6
             baked.next_to(pic.slab, LEFT, buff=0.3)
-            self.play(pkg.animate.move_to(target), run_time=0.7)
-            self.play(FadeIn(baked, shift=LEFT * 0.1), flash(pic.slab, CTR, 1.04), run_time=0.5)
+            self.play(pkg.animate.move_to(target), FadeIn(baked, shift=LEFT * 0.1), run_time=0.7)
+            self.play(flash(pic.slab, CTR, 1.04), run_time=0.5)
+        self.wait(0.6)
 
         # ========================================================== 2 · run uses the local image; your turn
         r_tr = tracker("R", 3)
@@ -666,9 +669,10 @@ class DevAndRun(VoiceScene):
             self.play(nf.animate.set_color(TURN), run_time=0.4)
             self.play(flash(dia4, TURN, 1.15), no_a.animate.set_color(TURN), no_l.animate.set_color(TURN),
                       run_time=0.7)
-            t.print(self, C72.at(5, 6, "…", 18, 19), run_time=0.6)
-            vo.wait_until("it pulls the dlops image")
+            vo.wait_until("so it pulls")
+            t.print(self, C72.at(5, 6), run_time=0.4)
             self.play(GrowArrow(pull), FadeOut(gone), run_time=0.6)
+            t.print(self, C72.at("…", 18, 19), run_time=0.5)
             self.add(copy)
             self.play(Transform(copy, copy_t), run_time=0.8)
             self.play(FadeOut(pull), run_time=0.3)
@@ -683,24 +687,25 @@ class DevAndRun(VoiceScene):
 
         # ========================================================== 7 · inside: root, Python 3.8.17, pipenv
         comp = VGroup(dia4, wiring, copy)
+        out6, done6 = wipe(t)                      # between the blocks: the picture makes way
+        self.play(out6, FadeOut(v1), FadeOut(comp), run_time=0.5)
+        done6()
+        self.play(*enter_container(t, "transcribe_audio", P_STALE), run_time=0.4)
+        resize(self, t, 10, run_time=0.5)
+        t._prompt_colors = stale_colors
+        pr = bare_prompt(self, t)
+        rt = _keep(tag("root", ERR))
+        beside(rt, t, pr)
         with self.voiceover(SAY[7]) as vo:
-            out6, done6 = wipe(t)
-            self.play(out6, FadeOut(v1), FadeOut(comp), run_time=0.5)
-            done6()
-            self.play(*enter_container(t, "transcribe_audio", P_STALE), run_time=0.4)
-            resize(self, t, 10, run_time=0.5)
-            t._prompt_colors = stale_colors
-            pr = bare_prompt(self, t)
-            rt = _keep(tag("root", ERR))
-            beside(rt, t, pr)
             pin(self, pr, rt, run_time=0.4)
+            self.play(flash(substring(pr, "root"), ERR, 1.25), run_time=0.7)
             vo.wait_until("Python is 3.8.17")
             o7 = session(self, t, C72, 24, 25, type_time=0.5, out_time=0.3)
             pyb = glyph_box(o7[25], "Python 3.8.17")
             pin(self, o7[25], pyb, run_time=0.4, anim=Create(pyb))
             vo.wait_until("in an environment")
             o7 = session(self, t, C72, 26, 27, type_time=0.4, out_time=0.3)
-            uvenv = under(substring(o7[27], "/root/.local/share/virtualenvs/app-4PlAip0Q"), S.GREY)
+            uvenv = under(substring(o7[27], "/root/.local/share/virtualenvs/app-4PlAip0Q"), TURN)
             pin(self, o7[27], uvenv, run_time=0.4, anim=Create(uvenv))
             vo.wait_until("Help still works")
             o7 = session(self, t, C72, 28, 29, "…", 33, type_time=0.5, out_time=0.5)
