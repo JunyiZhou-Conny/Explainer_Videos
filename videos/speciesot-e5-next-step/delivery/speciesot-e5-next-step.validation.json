@@ -1,0 +1,77 @@
+{
+  "probe": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "392.000000"
+    }
+  },
+  "target_seconds": 392.0,
+  "audio_mean_db": -19.5,
+  "caption_cues": 97,
+  "script_sha256": "5a983164f287b2ac34a09a1df311179816bb9b3ed4aebf2de662e5e7e5ea9642",
+  "source_matches_plan": true,
+  "chapters": [
+    {
+      "start": 0.0,
+      "id": "s01",
+      "title": "Monday morning"
+    },
+    {
+      "start": 22.833333333333332,
+      "id": "s02",
+      "title": "The skeleton already walks"
+    },
+    {
+      "start": 56.5,
+      "id": "s03",
+      "title": "The error trail"
+    },
+    {
+      "start": 119.2,
+      "id": "s04",
+      "title": "The card behind the code"
+    },
+    {
+      "start": 160.8,
+      "id": "s05",
+      "title": "Pick one golden number"
+    },
+    {
+      "start": 258.4666666666667,
+      "id": "s06",
+      "title": "SOLID as a compass"
+    },
+    {
+      "start": 332.1333333333334,
+      "id": "s07",
+      "title": "The Monday loop"
+    }
+  ],
+  "music": {
+    "score_coverage": 0.37,
+    "notes": 659,
+    "fx": 53,
+    "chords": 57,
+    "dropped_in_silences": 0,
+    "duration": 392.0,
+    "voice_lufs": -16.07,
+    "music_in_gaps_lufs": -22.07,
+    "music_under_speech_lufs": -31.91,
+    "mix_lufs": -16.26,
+    "mix_true_peak_dbtp": -0.99
+  }
+}

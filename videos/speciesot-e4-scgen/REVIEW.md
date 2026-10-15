@@ -114,7 +114,10 @@ confirmed in the code before fixing:
 - **Render log**: no BUDGET, CODEPANEL, missing-anchor or traceback lines in any scene.
 - **Silences**: at most 5.4 s, at the s05→s06 cut. The s03 ponder holds 4.3 s (1:17), and so
   does the s06 ponder (4:57).
-- **ASR round trip**: see below.
+- **ASR round trip** (faster-whisper small.en on the clean narration vs `script.json`; 841
+  script words, 841 heard, similarity 0.962): differences are tokenization ("set up",
+  "cell ot", "vae arith", digits). Two places to listen for: "AnnData" at 1:54 was heard as
+  "and data", and "git-ignored" at 2:38 as "get-ignored". Both have the word on screen.
 - **Evidence**:
   - The scgen 2.1.0 wheel contents are in `checks/scgen_package.txt`.
   - The predict `NameError` is in `checks/error_trail.json` (`scgen_predict`).

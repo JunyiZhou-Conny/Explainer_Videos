@@ -1,0 +1,111 @@
+[Script Info]
+Title: 
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,43,&H00F3F0E7,&H00F3F0E7,&H00171717,&H00171717,0,0,0,0,100,100,0,0,1,0,0,2,90,90,27,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.40,0:00:01.86,Bilingual,,0,0,0,,周一早上\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It's Monday morning.
+Dialogue: 0,0:00:01.92,0:00:06.39,Bilingual,,0,0,0,,一个将近三百五十行的文件，八十三个 notebook\N{\fs30\fnInter\c&H00C9C9C9&\bord0}There's a file of almost three hundred and fifty lines, eighty-three notebooks,
+Dialogue: 0,0:00:06.39,0:00:08.38,Bilingual,,0,0,0,,还有从二月一路积累下来的结果\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and results going back to February.
+Dialogue: 0,0:00:08.70,0:00:10.37,Bilingual,,0,0,0,,接下来这一个小时，该花在哪里？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Where does the next hour go?
+Dialogue: 0,0:00:10.42,0:00:13.47,Bilingual,,0,0,0,,Josh 不是靠先把一切都规划好来回答这个问题的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Josh doesn't answer that by planning everything first.
+Dialogue: 0,0:00:13.79,0:00:18.14,Bilingual,,0,0,0,,他运行代码，读第一个坏掉的地方，只修那一处\N{\fs30\fnInter\c&H00C9C9C9&\bord0}He runs the code, reads the first thing that breaks, and fixes only that.
+Dialogue: 0,0:00:18.46,0:00:20.96,Bilingual,,0,0,0,,这一集把这个习惯变成一套方法\N{\fs30\fnInter\c&H00C9C9C9&\bord0}This episode turns that habit into a method.
+Dialogue: 0,0:00:23.23,0:00:24.87,Bilingual,,0,0,0,,先看能用的部分\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Start with what works.
+Dialogue: 0,0:00:24.87,0:00:27.02,Bilingual,,0,0,0,,只用 identity 模型的话\N{\fs30\fnInter\c&H00C9C9C9&\bord0}With only the identity model,
+Dialogue: 0,0:00:27.02,0:00:30.29,Bilingual,,0,0,0,,整条流水线在玩具数据上已经能跑通\N{\fs30\fnInter\c&H00C9C9C9&\bord0}the whole pipeline already runs on toy data:
+Dialogue: 0,0:00:30.29,0:00:33.41,Bilingual,,0,0,0,,setup、train、predict、evaluate，没有报错\N{\fs30\fnInter\c&H00C9C9C9&\bord0}setup, train, predict, evaluate. No errors.
+Dialogue: 0,0:00:33.57,0:00:38.94,Bilingual,,0,0,0,,这叫「会走路的骨架」：每个阶段都已经从头到尾存在，哪怕大多还很单薄\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's a walking skeleton: every stage exists, end to end, even though most are thin.
+Dialogue: 0,0:00:39.26,0:00:43.49,Bilingual,,0,0,0,,从这里开始，你一次加粗一根骨头，骨架始终能走\N{\fs30\fnInter\c&H00C9C9C9&\bord0}From here, you thicken one bone at a time, and the skeleton keeps walking.
+Dialogue: 0,0:00:44.07,0:00:46.78,Bilingual,,0,0,0,,但看看 evaluate 返回了什么：什么也没有\N{\fs30\fnInter\c&H00C9C9C9&\bord0}But look at what evaluate returned: nothing.
+Dialogue: 0,0:00:47.10,0:00:49.06,Bilingual,,0,0,0,,分数算出来就被丢掉了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The scores were computed and dropped.
+Dialogue: 0,0:00:49.38,0:00:54.56,Bilingual,,0,0,0,,所以第一项任务自己冒了出来：把分数作为一张「模型 × 指标」的表返回\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So the first task writes itself: return the scores as a table, models by metrics.
+Dialogue: 0,0:00:56.90,0:00:59.25,Bilingual,,0,0,0,,现在加上 scGen 继续跑\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now add scGen and keep running.
+Dialogue: 0,0:00:59.57,0:01:02.28,Bilingual,,0,0,0,,停下来猜一猜：哪个阶段最先坏？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause and predict: which stage breaks first?
+Dialogue: 0,0:01:06.43,0:01:10.17,Bilingual,,0,0,0,,我们用玩具数据和一个替身 scgen 把每个阶段都跑了一遍\N{\fs30\fnInter\c&H00C9C9C9&\bord0}We ran each stage on toy data, with a stand-in for scgen,
+Dialogue: 0,0:01:10.17,0:01:13.58,Bilingual,,0,0,0,,每次只打刚好够走到那一步的最小补丁\N{\fs30\fnInter\c&H00C9C9C9&\bord0}patching only the smallest thing needed to reach it.
+Dialogue: 0,0:01:13.90,0:01:16.89,Bilingual,,0,0,0,,下面就是这串足迹，按程序遇到它们的顺序排列\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Here's the trail, in the order the program reaches it.
+Dialogue: 0,0:01:17.03,0:01:22.93,Bilingual,,0,0,0,,setup：AttributeError，x_dimensions，第 253 行——第二集讲过\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Setup: an attribute error, x_dimensions, line 253. That was episode two.
+Dialogue: 0,0:01:22.93,0:01:24.57,Bilingual,,0,0,0,,train：TypeError\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Train: a type error.
+Dialogue: 0,0:01:24.57,0:01:30.71,Bilingual,,0,0,0,,train 缺少 training_data 参数，因为第 133 行调用它时什么也没传\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Train is missing its training data, because line 133 calls it with nothing.
+Dialogue: 0,0:01:30.87,0:01:33.31,Bilingual,,0,0,0,,predict：第 288 行的 NameError\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Predict: a name error at line 288,
+Dialogue: 0,0:01:33.31,0:01:37.69,Bilingual,,0,0,0,,用到的辅助函数定义在 train 内部，predict 看不见它\N{\fs30\fnInter\c&H00C9C9C9&\bord0}a helper that lives inside train, where predict can't see it.
+Dialogue: 0,0:01:38.01,0:01:42.30,Bilingual,,0,0,0,,evaluate：真实数据里小鼠和人类细胞数不同\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Evaluate: once mouse and human have different cell counts,
+Dialogue: 0,0:01:42.30,0:01:46.65,Bilingual,,0,0,0,,R² 就没法把两边的细胞一一配对，第 313 行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}as real data do, R squared can't line them up, at line 313.
+Dialogue: 0,0:01:46.83,0:01:49.61,Bilingual,,0,0,0,,每个错误就是待办看板上的一张卡片\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Each error is one card on your to-do board.
+Dialogue: 0,0:01:49.61,0:01:52.96,Bilingual,,0,0,0,,沿着 scGen 这条路，顺序由程序交给你\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Along scGen's path, the program hands you the order.
+Dialogue: 0,0:01:52.96,0:01:55.60,Bilingual,,0,0,0,,你只需要决定先走哪一条路\N{\fs30\fnInter\c&H00C9C9C9&\bord0}You only choose which path to walk first.
+Dialogue: 0,0:01:59.60,0:02:01.41,Bilingual,,0,0,0,,有些卡片现在还不是报错\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Some cards aren't errors yet.
+Dialogue: 0,0:02:01.41,0:02:06.33,Bilingual,,0,0,0,,Josh 的 notebook 显示，小鼠训练文件有 18,024 个基因\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Josh's notebook shows a mouse training file with about eighteen thousand genes,
+Dialogue: 0,0:02:06.33,0:02:09.26,Bilingual,,0,0,0,,人类训练文件有 61,759 个\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and a human one with almost sixty-two thousand.
+Dialogue: 0,0:02:09.26,0:02:11.31,Bilingual,,0,0,0,,而测试文件只有 1,000 个\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The test files hold one thousand.
+Dialogue: 0,0:02:11.47,0:02:15.22,Bilingual,,0,0,0,,在它们共享同一个基因轴之前，一个网络没法把它们都读进去\N{\fs30\fnInter\c&H00C9C9C9&\bord0}One network can't read them all until they share one gene axis.
+Dialogue: 0,0:02:15.54,0:02:20.26,Bilingual,,0,0,0,,对齐基因是数据的工作，所以它应该放在数据类旁边\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Lining up genes is a data job, so it belongs next to the data classes.
+Dialogue: 0,0:02:20.43,0:02:23.71,Bilingual,,0,0,0,,不过第一次复现时，这一步已经做好了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}But for your first replication, it's already done.
+Dialogue: 0,0:02:23.71,0:02:28.03,Bilingual,,0,0,0,,M1 第 8 版的文件已有一份共享的一千个基因列表\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The M1 version eight file has one shared list of a thousand genes.
+Dialogue: 0,0:02:28.03,0:02:33.01,Bilingual,,0,0,0,,它是一张表加一份切分规则，而你的数据类要的是四个文件\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It's one table plus a split recipe, while your data classes take four files.
+Dialogue: 0,0:02:33.01,0:02:38.12,Bilingual,,0,0,0,,所以真正的卡片是：把这张表切成训练和测试、小鼠和人类四份\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So the real card is: split that table into training and test, mouse and human.
+Dialogue: 0,0:02:41.20,0:02:45.42,Bilingual,,0,0,0,,停一下：八十三个 notebook 里，你会先复现哪一个？ 为什么？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause: out of eighty-three notebooks, which would you replicate first, and why?
+Dialogue: 0,0:02:49.60,0:02:50.96,Bilingual,,0,0,0,,答案不是某个 notebook\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Not a notebook.
+Dialogue: 0,0:02:51.01,0:02:56.12,Bilingual,,0,0,0,,选你的项目早已称作「冻结基准」的第一个切分\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pick the first cut of what your project already calls its frozen benchmark:
+Dialogue: 0,0:02:56.12,0:02:59.86,Bilingual,,0,0,0,,M1 第 8 版，留出非经典单核细胞\N{\fs30\fnInter\c&H00C9C9C9&\bord0}M1, version eight, holding out non-classical monocytes.
+Dialogue: 0,0:03:00.18,0:03:02.22,Bilingual,,0,0,0,,它的规格文件是 m1_modern.yaml\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Its spec is m1_modern.yaml,
+Dialogue: 0,0:03:02.22,0:03:06.90,Bilingual,,0,0,0,,而 Josh 已经把其中的模型设置粘贴进了核心文件\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and Josh already pasted its model settings into the core file,
+Dialogue: 0,0:03:06.90,0:03:08.86,Bilingual,,0,0,0,,就在 scGenModel 上方不远处\N{\fs30\fnInter\c&H00C9C9C9&\bord0}a little above scGenModel.
+Dialogue: 0,0:03:09.03,0:03:13.27,Bilingual,,0,0,0,,它的成绩表由 22_v08_results 这个 notebook 写出\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Its scorecard, written by the notebook twenty-two v08 results,
+Dialogue: 0,0:03:13.27,0:03:15.11,Bilingual,,0,0,0,,记录了要对上的数字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}records the numbers to hit.
+Dialogue: 0,0:03:15.43,0:03:19.42,Bilingual,,0,0,0,,identity 的均值 R² 是 0.554\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The identity R squared of means is zero point five five four.
+Dialogue: 0,0:03:19.74,0:03:24.82,Bilingual,,0,0,0,,它在 M1 第 8 版的每一行都一样，因为它描述的是数据本身\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It's the same on every M1 version eight row, because it describes the data:
+Dialogue: 0,0:03:24.82,0:03:28.06,Bilingual,,0,0,0,,原封不动的小鼠测试细胞，对比人类测试细胞\N{\fs30\fnInter\c&H00C9C9C9&\bord0}mouse test cells, unchanged, against human ones.
+Dialogue: 0,0:03:28.38,0:03:31.01,Bilingual,,0,0,0,,这里不涉及训练，也不涉及抽样\N{\fs30\fnInter\c&H00C9C9C9&\bord0}No training and no sampling are involved,
+Dialogue: 0,0:03:31.01,0:03:34.27,Bilingual,,0,0,0,,所以只要你的包读的是同一个文件、同一个切分\N{\fs30\fnInter\c&H00C9C9C9&\bord0}so once your package reads the same file and split,
+Dialogue: 0,0:03:34.27,0:03:38.81,Bilingual,,0,0,0,,并且算的是均值 R²，就应该几乎能精确复现它\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and computes R squared of means, it should reproduce it almost exactly.
+Dialogue: 0,0:03:39.13,0:03:44.40,Bilingual,,0,0,0,,比较均值而不是逐个细胞，也顺带消除了第 313 行的崩溃\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Comparing means, not cells, also removes the crash at line 313.
+Dialogue: 0,0:03:44.57,0:03:49.88,Bilingual,,0,0,0,,然后是 scGen：0.927，来自 cellot 的自编码器\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then scGen: zero point nine two seven, from the cellot autoencoder,
+Dialogue: 0,0:03:49.88,0:03:54.64,Bilingual,,0,0,0,,它的运行结果在集群上 cellot 的 results 文件夹里\N{\fs30\fnInter\c&H00C9C9C9&\bord0}whose run sits on the cluster under cellot's results folder.
+Dialogue: 0,0:03:54.96,0:03:57.39,Bilingual,,0,0,0,,要对上这个数，适配器就得封装这个模型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}To aim for it, your adapter wraps that model.
+Dialogue: 0,0:03:57.71,0:04:01.40,Bilingual,,0,0,0,,这个数是对 80 个细胞的抽样取平均，要用同样的方法算\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It averages eighty-cell samples, so compute it the same way,
+Dialogue: 0,0:04:01.40,0:04:04.73,Bilingual,,0,0,0,,训练也会带来随机波动，所以在容差范围内对上即可\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and since training adds noise, aim within a tolerance.
+Dialogue: 0,0:04:05.05,0:04:07.58,Bilingual,,0,0,0,,另外，你不需要把 cellot 从头追一遍\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And you don't need to trace all of cellot:
+Dialogue: 0,0:04:07.58,0:04:11.32,Bilingual,,0,0,0,,只需打开适配器会调用的那几个函数，第四集讲过\N{\fs30\fnInter\c&H00C9C9C9&\bord0}open only the few calls your adapter makes, from episode four.
+Dialogue: 0,0:04:11.64,0:04:13.44,Bilingual,,0,0,0,,你自己的成绩表就是检验\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your own scorecard is the check.
+Dialogue: 0,0:04:18.87,0:04:20.48,Bilingual,,0,0,0,,SOLID 放在哪里？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Where does SOLID fit?
+Dialogue: 0,0:04:20.53,0:04:23.43,Bilingual,,0,0,0,,把它当作代码开始难改、难测的时候用的指南针\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Treat it as a compass for the moment something hurts,
+Dialogue: 0,0:04:23.43,0:04:25.23,Bilingual,,0,0,0,,而不是第一天就要逐条打勾的清单\N{\fs30\fnInter\c&H00C9C9C9&\bord0}not a checklist for day one.
+Dialogue: 0,0:04:25.42,0:04:27.95,Bilingual,,0,0,0,,每个字母都已经指向这个文件里的某个位置\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Each letter already points at a spot in this file.
+Dialogue: 0,0:04:28.13,0:04:31.92,Bilingual,,0,0,0,,单一职责：数据类只负责加载数据\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Single responsibility: the data classes only load data,
+Dialogue: 0,0:04:31.92,0:04:35.43,Bilingual,,0,0,0,,所以基因对齐和切分应该放在它们旁边\N{\fs30\fnInter\c&H00C9C9C9&\bord0}so gene alignment and splitting belong beside them.
+Dialogue: 0,0:04:35.75,0:04:38.88,Bilingual,,0,0,0,,开闭原则：加入 CellOT 应该是新增一个类\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Open-closed: adding CellOT should add a class,
+Dialogue: 0,0:04:38.88,0:04:41.25,Bilingual,,0,0,0,,而不是去改 setup 里那一串 if\N{\fs30\fnInter\c&H00C9C9C9&\bord0}not edit the chain of ifs in setup.
+Dialogue: 0,0:04:41.57,0:04:44.18,Bilingual,,0,0,0,,一个「名字到类」的字典就能做到\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A dictionary from names to classes does that.
+Dialogue: 0,0:04:44.33,0:04:48.41,Bilingual,,0,0,0,,里氏替换：每个模型都必须信守契约的承诺\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Liskov substitution: every model must keep the contract's promise.
+Dialogue: 0,0:04:48.73,0:04:50.57,Bilingual,,0,0,0,,契约里的 train 接收训练数据\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The contract's train takes training data,
+Dialogue: 0,0:04:50.57,0:04:52.80,Bilingual,,0,0,0,,而 IdentityModel 的 train 什么都不接收\N{\fs30\fnInter\c&H00C9C9C9&\bord0}but IdentityModel's takes none.
+Dialogue: 0,0:04:53.12,0:04:59.39,Bilingual,,0,0,0,,第 133 行照着 IdentityModel 来写，于是信守契约的 scGen 反而出错了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Line 133 followed IdentityModel, so scGen, which keeps the contract, broke.
+Dialogue: 0,0:04:59.71,0:05:03.81,Bilingual,,0,0,0,,Python 只检查名字、不检查参数，所以只有测试能抓到它\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Python checks names, not inputs, so only a test can catch this.
+Dialogue: 0,0:05:03.97,0:05:11.05,Bilingual,,0,0,0,,接口隔离：评估只需要一个方法，它的契约也只要求这一个\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Interface segregation: an evaluation needs one method, and its contract asks for only one.
+Dialogue: 0,0:05:11.05,0:05:18.53,Bilingual,,0,0,0,,依赖倒置：Experiment 只和契约打交道，从不导入 scgen 这个库\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Dependency inversion: the Experiment talks to the contract. It never imports the scgen library;
+Dialogue: 0,0:05:18.53,0:05:21.20,Bilingual,,0,0,0,,只有 scGenModel 在第 248 行导入它\N{\fs30\fnInter\c&H00C9C9C9&\bord0}only scGenModel does, at line 248.
+Dialogue: 0,0:05:21.37,0:05:23.35,Bilingual,,0,0,0,,至于重构（不改变功能、只调整代码结构）\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And refactoring,
+Dialogue: 0,0:05:23.35,0:05:28.07,Bilingual,,0,0,0,,可以等到第三个模型出现时再做\N{\fs30\fnInter\c&H00C9C9C9&\bord0}meaning reshaping code without changing what it does, can wait until the third model arrives.
+Dialogue: 0,0:05:32.53,0:05:37.95,Bilingual,,0,0,0,,所以每次坐下来都走这个循环：把你希望能跑通的调用写成一个小测试\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So here's the loop for every session. Write the call you wish worked, as a small test.
+Dialogue: 0,0:05:37.95,0:05:43.24,Bilingual,,0,0,0,,运行它；读它遇到的第一个错误，错误信息就在 traceback 的最后一行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Run it. Read the first error it hits: its message is the last line of the traceback.
+Dialogue: 0,0:05:43.40,0:05:46.22,Bilingual,,0,0,0,,做最小的修改，让程序越过那一行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Make the smallest change that gets past that line.
+Dialogue: 0,0:05:46.54,0:05:49.59,Bilingual,,0,0,0,,测试通过了就提交，然后拿起下一张卡片\N{\fs30\fnInter\c&H00C9C9C9&\bord0}When the test passes, commit, and pick up the next card.
+Dialogue: 0,0:05:49.73,0:05:53.85,Bilingual,,0,0,0,,你的卡片，按顺序是：先走 identity 这条路\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your cards, in order. Walk identity's path first,
+Dialogue: 0,0:05:53.85,0:05:58.98,Bilingual,,0,0,0,,因为它有精确答案：让 evaluate 返回一张表\N{\fs30\fnInter\c&H00C9C9C9&\bord0}because it has an exact answer: make evaluate return a table,
+Dialogue: 0,0:05:58.98,0:06:07.13,Bilingual,,0,0,0,,切分 M1 文件；算均值 R²，直到 identity 得到 0.554\N{\fs30\fnInter\c&H00C9C9C9&\bord0}split the M1 file, and compute R squared of means until identity gives zero point five five four.
+Dialogue: 0,0:06:07.13,0:06:09.15,Bilingual,,0,0,0,,然后沿着 scGen 的报错足迹\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then walk scGen's trail,
+Dialogue: 0,0:06:09.15,0:06:15.03,Bilingual,,0,0,0,,第 253、133、288 行，一路走到接近 0.927\N{\fs30\fnInter\c&H00C9C9C9&\bord0}lines 253, 133 and 288, until it lands near zero point nine two seven.
+Dialogue: 0,0:06:15.20,0:06:19.41,Bilingual,,0,0,0,,回顾一下：骨架已经能走，报错给出顺序\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Recap. The skeleton already walks, the errors give the order,
+Dialogue: 0,0:06:19.41,0:06:23.82,Bilingual,,0,0,0,,第一个黄金数字是 identity 的 0.554\N{\fs30\fnInter\c&H00C9C9C9&\bord0}the first golden number is identity's zero point five five four,
+Dialogue: 0,0:06:23.82,0:06:26.44,Bilingual,,0,0,0,,SOLID 留到代码开始难改、难测的时候再用\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and SOLID is for when something hurts.
+Dialogue: 0,0:06:26.44,0:06:28.51,Bilingual,,0,0,0,,动起来，比完美的计划更重要\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Momentum beats a perfect plan.

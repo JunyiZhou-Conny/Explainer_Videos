@@ -86,7 +86,29 @@ dash splits removed.
 
 ## Verified (final render)
 
-FILLED AFTER THE FINAL BUILD.
+- **Encode**: 392.000 s, 1920×1080 @ 30 fps, H.264 + AAC; seven scenes. The narration minimum
+  is 375.4 s, including two 4 s ponder pauses; nothing was clipped. The length is fitted with
+  4.5% slack because s05 and s06 run 94 s and 71 s.
+- **Captions**: 97 bilingual cues, ordered, non-overlapping and inside the runtime. The widest
+  lines are 1419 px (zh) and 1333 px (en), within the 1740 px caption area.
+- **Mix**: voice −16.07 LUFS; music −22.07 LUFS in gaps and −31.91 under speech; mix −16.26
+  LUFS; true peak −0.99 dBTP. The Swiss style check passed.
+- **Render log**: no BUDGET, CODEPANEL, missing-anchor or traceback lines in any scene.
+- **Silences**: at most 5.6 s, at the s05→s06 cut. The ponders hold 4.3 s each (1:02, 2:45).
+- **ASR round trip** (faster-whisper small.en on the narration vs `script.json`; 915 script
+  words, 902 heard, similarity 0.937): differences are tokenization (digits for spoken
+  numbers, "cell ot", "22v08"). One place to listen for: "gene axis" at about 2:15 was heard
+  as "gene access"; the word is on screen.
+- **Evidence**, all read in the speciesOT repo at `109bf12`:
+  - `specs/m1_modern.yaml` lines 1, 4, 22–35;
+  - `v08_scorecard_dual.csv` rows 4–5;
+  - `22_v08_results.ipynb` cells 1 and 3;
+  - `extended_metrics.py` 154–166;
+  - `AGENTS.md` 41;
+  - `docs/hub_usage.md` 239.
+
+  The four errors and the identity run's scores are measured (`checks/error_trail.json`). The
+  83 notebooks are counted with `find`, excluding checkpoints.
 
 ## Not claimed
 
