@@ -1011,7 +1011,9 @@ class S06(Ep):
                               l2t.get_right()[0] + .2, -.8, 17, INK))
         tests = DashedVMobject(Rectangle(width=6.62, height=4.4, stroke_color=GRAY,
                                          stroke_width=2).move_to([2.97, -.19, 0]), num_dashes=70)
-        tlab = left("in tests: no scgen installed", 1.5, 1.87, 18, GRAY, bold=True)
+        tlab = left("in tests: no scgen installed", 1.5, 2.01, 18, GRAY, bold=True)
+        tlab = VGroup(Rectangle(width=tlab.width + .24, height=tlab.height + .12, stroke_width=0,
+                                fill_color=PAPER, fill_opacity=1).move_to(tlab), tlab)
         with self.say(3) as vo:
             lib = VGroup(box, bhead, *rows_, sub, rule, already, rtag, script, start, ans)
             self.cue(vo, .02, lib.animate.shift(RIGHT * 7).set_opacity(0), run_time=.7)
