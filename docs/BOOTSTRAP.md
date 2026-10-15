@@ -18,17 +18,18 @@ issue/PR thread.
    through the current pipeline. Copy its file structure (`BRIEF.md`, `SOURCES.md`,
    `REVIEW.md`, `script.json`, `episode.json`, `scenes.py`, `delivery/`) and its use of the
    shared style components. When unsure what "done" looks like, diff yourself against it.
-5. **The episode's own issue thread** — claims, handoff notes (DONE / NEXT / WARN), and
-   Conny's answers live there. If you are resuming someone else's work, the latest handoff
-   note is your starting point, not this list alone.
+5. **The episode's own issue thread** — claims, `CHECKPOINT` and `HANDOFF` comments
+   (DONE / NEXT / WARN), and Conny's answers live there. If you are resuming work, the latest
+   checkpoint or handoff is your starting point, not this list alone.
 
 ## The kickoff prompt (for Conny: paste this to any agent)
 
 > Read `docs/BOOTSTRAP.md` in JunyiZhou-Conny/Explainer_Videos and follow its reading order.
 > Then claim issue #<N> with a comment (model + surface + branch), and produce the episode on
-> branch `episode/<slug>`, touching only `videos/<slug>/`. Post a 20–30 s narrated sample on
-> the draft PR and stop for my review before the full render. Before your session ends for
-> any reason, push the branch and leave a DONE / NEXT / WARN handoff comment on the issue.
+> branch `episode/<slug>`, touching only `videos/<slug>/`. At every stage boundary (brief,
+> script, sample, scenes, full-cut) push the branch and post a `CHECKPOINT <stage>` comment
+> with DONE / NEXT / WARN on the issue. Post a 20–30 s narrated sample on the draft PR and
+> stop for my review before the full render.
 
 This one paragraph plus this repository **is** the full context. If an agent needs more than
 this to proceed, that gap is a bug: say so on the issue so the missing knowledge gets written

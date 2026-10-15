@@ -31,11 +31,55 @@ const LANES = [
   ['state:publishing', '发布中'],
   ['state:published', '已上 B 站'],
 ];
+const STALE_MS = 24 * 3600 * 1000;
 function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
+function ago(t){
+  const m = Math.round((Date.now() - t) / 60000);
+  if(m < 60) return `${Math.max(m, 1)} 分钟前`;
+  if(m < 1440) return `${Math.round(m / 60)} 小时前`;
+  return `${Math.round(m / 1440)} 天前`;
+}
+function firstLine(body){
+  return (body || '').split('\n').map(s => s.replace(/^[\s#>*_`]+/, '').trim()).find(Boolean) || '';
+}
+// Reads the AGENTS.md handoff protocol out of issue comments: claims, CHECKPOINT and HANDOFF.
+async function loadProtocol(){
+  const status = new Map();
+  try{
+    const r = await fetch(`https://api.github.com/repos/${REPO}/issues/comments?sort=created&direction=desc&per_page=100`);
+    if(!r.ok) return status;
+    for(const c of await r.json()){
+      const n = Number(c.issue_url.split('/').pop());
+      const s = status.get(n) || {};
+      const line = firstLine(c.body);
+      const at = Date.parse(c.created_at);
+      const claim = line.match(/^Claiming\.?\s*Model:\s*([^,]+)/i);
+      const mark = line.match(/^(CHECKPOINT|HANDOFF)\b\s*([\w-]*)/i);
+      if(claim && !s.claim) s.claim = {model: claim[1].trim(), at};
+      if(mark && !s.mark) s.mark = {kind: mark[1].toUpperCase(), stage: mark[2], at};
+      status.set(n, s);
+    }
+  }catch(e){ /* the board still renders without protocol details */ }
+  return status;
+}
+function protocolHtml(s, open){
+  if(!s || (!s.claim && !s.mark)) return '';
+  const parts = [];
+  const released = s.mark && s.mark.kind === 'HANDOFF' && (!s.claim || s.mark.at >= s.claim.at);
+  if(released) parts.push('已交接，待认领');
+  else if(s.claim) parts.push(`认领：${esc(s.claim.model)}`);
+  if(s.mark && s.mark.kind === 'CHECKPOINT') parts.push(`检查点 ${esc(s.mark.stage || '')} · ${ago(s.mark.at)}`);
+  const last = Math.max(s.claim?.at || 0, s.mark?.at || 0);
+  const stale = open && !released && Date.now() - last > STALE_MS;
+  return `<div class="meta">${parts.join(' · ')}</div>` + (stale ? '<span class="chip q">可能停滞</span>' : '');
+}
 async function load(){
   const board = document.getElementById('board');
   try{
-    const r = await fetch(`https://api.github.com/repos/${REPO}/issues?labels=episode&state=all&per_page=100`);
+    const [r, protocol] = await Promise.all([
+      fetch(`https://api.github.com/repos/${REPO}/issues?labels=episode&state=all&per_page=100`),
+      loadProtocol(),
+    ]);
     if(!r.ok) throw new Error(`GitHub API ${r.status}`);
     const issues = (await r.json()).filter(i => !i.pull_request);
     board.innerHTML = '';
@@ -52,6 +96,7 @@ async function load(){
           <div class="card">
             <a class="title" href="${i.html_url}" target="_blank" rel="noopener">${esc(i.title)}</a>
             <div class="meta">#${i.number} · ${new Date(i.updated_at).toLocaleDateString('zh-CN')} 更新</div>
+            ${protocolHtml(protocol.get(i.number), i.state === 'open' && label !== 'state:published')}
             ${q}${extra}
           </div>`);
       }

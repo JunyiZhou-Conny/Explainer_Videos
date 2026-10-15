@@ -114,7 +114,7 @@ function openIssue(){
 function showPrompt(){
   const box = document.getElementById('promptBox');
   document.getElementById('promptText').textContent =
-`Read docs/BOOTSTRAP.md in ${REPO} and follow its reading order. Then claim issue #N with a comment (model + surface + branch), and produce the episode on branch episode/<slug>, touching only videos/<slug>/. Post a 20-30s narrated sample on the draft PR and stop for my review before the full render. Before your session ends for any reason, push the branch and leave a DONE / NEXT / WARN handoff comment on the issue.`;
+`Read docs/BOOTSTRAP.md in ${REPO} and follow its reading order. Then claim issue #N with a comment (model + surface + branch), and produce the episode on branch episode/<slug>, touching only videos/<slug>/. At every stage boundary (brief, script, sample, scenes, full-cut) push the branch and post a CHECKPOINT <stage> comment with DONE / NEXT / WARN on the issue. Post a 20-30s narrated sample on the draft PR and stop for my review before the full render.`;
   box.style.display = 'block';
   box.scrollIntoView({behavior: 'smooth'});
 }
