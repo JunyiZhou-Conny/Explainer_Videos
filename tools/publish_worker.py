@@ -24,6 +24,7 @@ Dry run (default is to do nothing destructive without --upload):
 """
 from __future__ import annotations
 import argparse
+import base64
 import hashlib
 import json
 import re
@@ -32,6 +33,8 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+
+import bilibili_registry
 
 STATE_DIR = Path.home() / ".config" / "explainer-publish"
 STATE = STATE_DIR / "state.json"
@@ -73,6 +76,20 @@ def load_state() -> dict:
 def save_state(state: dict) -> None:
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False))
+
+
+def record_on_github(repo: str, slug: str, bvid: str, title: str) -> None:
+    """Add the upload to catalog/bilibili.json on the default branch, so the library shows it."""
+    path = f"repos/{repo}/contents/catalog/bilibili.json"
+    current = json.loads(subprocess.check_output(["gh", "api", path], text=True))
+    reg = json.loads(base64.b64decode(current["content"]).decode("utf-8"))
+    if not bilibili_registry.record(reg, slug, bvid, title, int(time.time())):
+        return
+    print(f"+ recording {slug} -> {bvid} in catalog/bilibili.json", flush=True)
+    subprocess.run(["gh", "api", "-X", "PUT", path,
+                    "-f", f"message=catalog: {slug} is live on Bilibili ({bvid})",
+                    "-f", "content=" + base64.b64encode(bilibili_registry.dumps(reg).encode("utf-8")).decode("ascii"),
+                    "-f", f"sha={current['sha']}"], check=True, capture_output=True, text=True)
 
 
 def main() -> int:
@@ -145,6 +162,11 @@ def main() -> int:
             state["failed"].pop(tag, None)
             save_state(state)
             uploads += 1
+            if bv:
+                try:
+                    record_on_github(args.repo, manifest["slug"], bv.group(0), meta["title_zh"][:80])
+                except Exception as e:  # the upload stands; the daily registry sync matches it by title
+                    print(f"could not record {bv.group(0)} in catalog/bilibili.json: {e}", file=sys.stderr)
             issue = manifest.get("issue")
             if issue:
                 sh(["gh", "issue", "comment", str(issue), "--repo", args.repo, "--body",

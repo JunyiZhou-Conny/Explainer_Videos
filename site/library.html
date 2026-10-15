@@ -22,14 +22,16 @@
   <div id="list"><p>加载中…</p></div>
 </main>
 <script>
-const RAW = 'https://raw.githubusercontent.com/JunyiZhou-Conny/Explainer_Videos/main/catalog/videos.json';
+const RAW = 'https://raw.githubusercontent.com/JunyiZhou-Conny/Explainer_Videos/main/catalog/';
 function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
 function dur(s){ if(!s) return ''; s=Math.round(s); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; }
 function mb(b){ return b ? (b/1048576).toFixed(1) + ' MB' : ''; }
 async function load(){
   const el = document.getElementById('list');
   try{
-    const cat = await (await fetch(RAW)).json();
+    const cat = await (await fetch(RAW + 'videos.json')).json();
+    // The registry is optional: without it, badges say the status is unknown rather than "not on Bilibili".
+    const reg = await fetch(RAW + 'bilibili.json').then(r => r.ok ? r.json() : null).catch(() => null);
     const byEp = new Map();
     for(const a of cat.artifacts){
       if(!byEp.has(a.episode)) byEp.set(a.episode, []);
@@ -38,9 +40,9 @@ async function load(){
     let html = '';
     for(const [ep, arts] of [...byEp.entries()].reverse()){
       const title = arts.find(a => a.title)?.title || ep;
-      const bili = arts.find(a => a.bilibili);
-      const badge = bili
-        ? `<a class="badge bili" href="https://www.bilibili.com/video/${esc(bili.bilibili.bvid || bili.bilibili)}/" target="_blank" rel="noopener">B 站 ↗</a>`
+      const bili = reg?.episodes?.[ep];
+      const badge = !reg ? '<span class="badge none">B 站状态未知</span>'
+        : bili ? `<a class="badge bili" href="https://www.bilibili.com/video/${esc(bili.bvid)}/" target="_blank" rel="noopener">B 站 ↗</a>`
         : '<span class="badge none">未上 B 站</span>';
       html += `<h2 style="margin:26px 0 8px;font-size:1.15rem">${esc(title)} ${badge}</h2>
         <table><tr><th>版本</th><th>时长</th><th>大小</th><th>下载</th></tr>`;
@@ -51,6 +53,16 @@ async function load(){
           <td>${mb(a.bytes)}</td>
           <td><a href="${a.download_url}">MP4</a></td>
         </tr>`;
+      }
+      html += '</table>';
+    }
+    const stray = reg?.unmatched || [];
+    if(stray.length){
+      html += `<h2 style="margin:34px 0 8px;font-size:1.15rem">B 站上有、还没对应到目录的视频</h2>
+        <p class="sub">登记表 <code>catalog/bilibili.json</code> 里还没归到某一集。告诉代理它对应哪一集即可。</p><table>`;
+      for(const a of stray){
+        html += `<tr><td><a href="https://www.bilibili.com/video/${esc(a.bvid)}/" target="_blank" rel="noopener">${esc(a.title)}</a></td>
+          <td>${new Date(a.pubdate * 1000).toLocaleDateString('zh-CN')}</td></tr>`;
       }
       html += '</table>';
     }
