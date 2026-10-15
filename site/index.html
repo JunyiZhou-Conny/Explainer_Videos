@@ -20,6 +20,7 @@
   <h1>剧集看板</h1>
   <p class="sub">实时读取 GitHub issues 的 <code>state:</code> 标签 —— 这里只是镜子，真相永远在 issue 里。</p>
   <div id="board" class="lanes"><p>加载中…</p></div>
+  <div id="prs" style="margin-top:34px;max-width:680px"></div>
 </main>
 <script>
 const REPO = 'JunyiZhou-Conny/Explainer_Videos';
@@ -31,6 +32,25 @@ const LANES = [
   ['state:publishing', '发布中'],
   ['state:published', '已上 B 站'],
 ];
+// fetch with retries: raw.githubusercontent / api.github.com drop connections now and then.
+async function fetchJSON(url, tries = 3){
+  for(let i = 1; ; i++){
+    try{
+      const r = await fetch(url);
+      if(r.status === 403 || r.status === 429) throw new Error(`GitHub API ${r.status}（未登录限每小时 60 次）`);
+      if(!r.ok) throw new Error(`HTTP ${r.status}`);
+      return await r.json();
+    }catch(e){
+      if(i >= tries) throw e;
+      await new Promise(res => setTimeout(res, 800 * i));
+    }
+  }
+}
+function scheduleRetry(el, msg, fn, secs = 10){
+  el.innerHTML = `<p class="error">${msg}；${secs} 秒后自动重试。 <button class="ghost" onclick="load()">立即重试</button></p>`;
+  clearTimeout(window.__retryTimer);
+  window.__retryTimer = setTimeout(fn, secs * 1000);
+}
 const STALE_MS = 24 * 3600 * 1000;
 function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
 function ago(t){
@@ -47,9 +67,8 @@ function firstLine(body){
 async function loadProtocol(){
   const status = new Map();
   try{
-    const r = await fetch(`https://api.github.com/repos/${REPO}/issues/comments?sort=created&direction=desc&per_page=100`);
-    if(!r.ok) return status;
-    for(const c of await r.json()){
+    const comments = await fetchJSON(`https://api.github.com/repos/${REPO}/issues/comments?sort=created&direction=desc&per_page=100`);
+    for(const c of comments){
       const n = Number(c.issue_url.split('/').pop());
       const s = status.get(n) || {};
       const line = firstLine(c.body);
@@ -77,12 +96,12 @@ function protocolHtml(s, open){
 async function load(){
   const board = document.getElementById('board');
   try{
-    const [r, protocol] = await Promise.all([
-      fetch(`https://api.github.com/repos/${REPO}/issues?labels=episode&state=all&per_page=100`),
+    const [rawIssues, protocol, pulls] = await Promise.all([
+      fetchJSON(`https://api.github.com/repos/${REPO}/issues?labels=episode&state=all&per_page=100`),
       loadProtocol(),
+      fetchJSON(`https://api.github.com/repos/${REPO}/pulls?state=open&per_page=30`).catch(() => null),
     ]);
-    if(!r.ok) throw new Error(`GitHub API ${r.status}`);
-    const issues = (await r.json()).filter(i => !i.pull_request);
+    const issues = rawIssues.filter(i => !i.pull_request);
     board.innerHTML = '';
     for(const [label, name, attention] of LANES){
       const items = issues.filter(i => i.labels.some(l => l.name === label));
@@ -104,8 +123,19 @@ async function load(){
       if(!items.length) lane.insertAdjacentHTML('beforeend', '<div class="card meta" style="color:var(--gray)">空</div>');
       board.appendChild(lane);
     }
+    const prs = document.getElementById('prs');
+    if(pulls){
+      prs.innerHTML = `<h2 class="strip-h">进行中的 PR <span style="color:var(--red)">${pulls.length}</span></h2>` +
+        (pulls.map(p => `
+          <div class="card">
+            <a class="title" href="${p.html_url}" target="_blank" rel="noopener">#${p.number} ${esc(p.title)}</a>
+            <div class="meta">${esc(p.head.ref)} · ${new Date(p.updated_at).toLocaleDateString('zh-CN')} 更新${p.draft ? ' · 草稿' : ''}</div>
+          </div>`).join('') || '<div class="card meta" style="color:var(--gray)">没有开放的 PR</div>');
+    } else {
+      prs.innerHTML = '<p class="sub">PR 列表这次没加载出来，看板其余部分不受影响。</p>';
+    }
   }catch(e){
-    board.innerHTML = `<p class="error">看板加载失败：${esc(e.message)}。未登录的 GitHub API 每小时限 60 次，稍后刷新即可。</p>`;
+    scheduleRetry(board, `看板加载失败：${esc(e.message)}`, load);
   }
 }
 load();
