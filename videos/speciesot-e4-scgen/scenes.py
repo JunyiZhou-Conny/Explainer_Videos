@@ -865,8 +865,7 @@ CALLS = [  # (narration phrase, call, where; repo @109bf12, under cellot/cellot_
     ("eval mode", "model.eval()", "transport.py:62"),
     ("transport the cells", "transport_scgen", "transport.py:61–69"),
 ]
-EX_CALLS = ["load_autoencoder_model", "train_auto_encoder", "model.encode / decode",
-            "compute_scgen_shift", "transport_scgen"]
+EX_CALLS = [call for _, call, _ in CALLS]          # the exercise uses the four calls of s06
 # videos/speciesot-series/checks/error_trail.py, verbatim
 FAKE_ROWS = [(32, "class FakeVAEArith:"), (33, "    def __init__(self, **kwargs):"),
              (34, "        self.kwargs = kwargs"), (38, 'sys.modules["scgen"] = fake')]
@@ -1112,11 +1111,11 @@ class S07(Ep):
             vo.wait_until("the dependency")
             self.play(FadeIn(ans3), FadeIn(itag), run_time=.4)
         ex = left("EXERCISE · 练习", -6.2, 1.85, 22, RED, bold=True)
-        s1 = left("1 · open each call · inputs → outputs", -6.2, 1.3, 20, INK, bold=True)
+        s1 = left("1 · open each of the four calls", -6.2, 1.3, 20, INK, bold=True)
         s1p = mono_left("in " + CELLOT, -6.2, .88, 16, GRAY)
         slots = []
         for i, call in enumerate(EX_CALLS):
-            yy = .38 - i * .5
+            yy = .3 - i * .55
             slot = DashedVMobject(Rectangle(width=1.5, height=.34, stroke_color=GRAY,
                                             stroke_width=2), num_dashes=18)\
                 .move_to([-1.3, yy, 0])
@@ -1136,16 +1135,13 @@ class S07(Ep):
         with self.say(2) as vo:
             self.cue(vo, .01, *[FadeOut(mm) for mm in self.content()], run_time=.4)
             self.play(FadeIn(ex), run_time=.3)
-            vo.wait_until("open those calls")
+            vo.wait_until("open each of those")
             self.play(FadeIn(s1), FadeIn(s1p), run_time=.4)
             self.play(LaggedStart(*[FadeIn(sl[0], shift=RIGHT * .1) for sl in slots],
                                   lag_ratio=.15), run_time=.8)
-            vo.wait_until("plus transport scgen")
-            self.play(slots[-1][0].animate.set_color(RED), run_time=.3)
             vo.wait_until("inputs and outputs")
             self.play(LaggedStart(*[FadeIn(VGroup(sl[1], sl[2])) for sl in slots],
-                                  lag_ratio=.1), slots[-1][0].animate.set_color(INK),
-                      run_time=.7)
+                                  lag_ratio=.1), run_time=.7)
             vo.wait_until("Then write")
             self.play(FadeIn(s2), FadeIn(etag), FadeIn(panel.frame), run_time=.4)
             self.play(LaggedStart(*[FadeIn(t, shift=RIGHT * .08) for t in panel.texts],
