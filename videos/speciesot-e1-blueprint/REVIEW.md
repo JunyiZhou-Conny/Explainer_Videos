@@ -1,4 +1,4 @@
-# Review record: E1 · Reading the blueprint
+# Review record: E1 · Four verbs and a contract
 
 Produced 2026-10-14 by a Claude Code cloud session (PR #17, branch
 `claude/clever-wozniak-3ocis0`) for Conny, who asked to learn enough Python design to keep
