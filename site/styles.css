@@ -1,0 +1,92 @@
+/* Swiss tokens, borrowed from presets/swiss.tokens.json */
+:root {
+  --paper: #f3f0e7;
+  --ink: #171717;
+  --red: #d92b2b;
+  --gray: #6f6b61;
+  --faint: #e4e0d4;
+  --card: #fbf9f3;
+  --mono: ui-monospace, "DejaVu Sans Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.55 "Inter", "Noto Sans CJK SC", system-ui, sans-serif;
+}
+header {
+  border-bottom: 2px solid var(--ink);
+  padding: 14px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  align-items: baseline;
+}
+header .brand { font-weight: 700; letter-spacing: .04em; }
+header .brand .dot { color: var(--red); }
+header nav { display: flex; gap: 14px; flex-wrap: wrap; }
+header nav a { color: var(--gray); text-decoration: none; border-bottom: 2px solid transparent; padding-bottom: 2px; }
+header nav a.active, header nav a:hover { color: var(--ink); border-color: var(--red); }
+main { max-width: 1080px; margin: 0 auto; padding: 22px 16px 60px; }
+h1 { font-size: 1.7rem; margin: 10px 0 2px; }
+.sub { color: var(--gray); margin: 0 0 24px; }
+a { color: inherit; }
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+.lane { background: transparent; }
+.lane h2 {
+  font-size: .8rem; text-transform: uppercase; letter-spacing: .09em;
+  border-bottom: 2px solid var(--ink); padding-bottom: 6px; margin: 0 0 10px;
+  display: flex; justify-content: space-between;
+}
+.lane h2 .count { color: var(--red); }
+.lane.attention h2 { color: var(--red); border-color: var(--red); }
+.card {
+  background: var(--card); border: 1px solid var(--faint); border-radius: 6px;
+  padding: 10px 12px; margin-bottom: 10px; font-size: .92rem;
+}
+.card a.title { text-decoration: none; font-weight: 600; display: block; }
+.card a.title:hover { color: var(--red); }
+.card .meta { color: var(--gray); font-size: .8rem; margin-top: 4px; }
+.card .chip {
+  display: inline-block; font-size: .72rem; border: 1px solid var(--gray);
+  border-radius: 10px; padding: 0 8px; margin: 4px 4px 0 0; color: var(--gray);
+}
+.card .chip.q { border-color: var(--red); color: var(--red); }
+form .field { margin-bottom: 18px; }
+form label { display: block; font-weight: 600; margin-bottom: 5px; }
+form .hint { color: var(--gray); font-size: .82rem; margin: 2px 0 6px; }
+input[type=text], textarea, select {
+  width: 100%; padding: 9px 10px; font: inherit; color: var(--ink);
+  background: var(--card); border: 1px solid var(--gray); border-radius: 5px;
+}
+textarea { min-height: 86px; resize: vertical; }
+.radio-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.radio-row label {
+  font-weight: 500; border: 1px solid var(--gray); border-radius: 6px;
+  padding: 8px 12px; cursor: pointer; background: var(--card);
+}
+.radio-row input { margin-right: 6px; }
+.radio-row label:has(input:checked) { border-color: var(--red); box-shadow: inset 0 0 0 1px var(--red); }
+button, .btn {
+  font: inherit; font-weight: 600; cursor: pointer; text-decoration: none;
+  background: var(--ink); color: var(--paper); border: none; border-radius: 6px;
+  padding: 11px 18px; display: inline-block;
+}
+button.primary, .btn.primary { background: var(--red); }
+button.ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+pre.prompt {
+  background: var(--ink); color: var(--paper); padding: 14px; border-radius: 6px;
+  white-space: pre-wrap; font-family: var(--mono); font-size: .8rem;
+}
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th { text-align: left; border-bottom: 2px solid var(--ink); padding: 8px 8px; font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; }
+td { border-bottom: 1px solid var(--faint); padding: 9px 8px; vertical-align: top; }
+td .variant { color: var(--gray); font-size: .8rem; }
+.badge { font-size: .72rem; border-radius: 10px; padding: 1px 9px; white-space: nowrap; }
+.badge.bili { background: var(--red); color: var(--paper); }
+.badge.none { border: 1px solid var(--gray); color: var(--gray); }
+.note { background: var(--card); border-left: 3px solid var(--red); padding: 10px 14px; font-size: .88rem; }
+.error { color: var(--red); }
+@media (max-width: 480px) { .lanes { grid-template-columns: 1fr; } }

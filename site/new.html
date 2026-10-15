@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explainer Studio · 新视频</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <span class="brand">CONNY<span class="dot">/</span>EXPLAINER STUDIO</span>
+  <nav>
+    <a href="./">看板</a>
+    <a class="active" href="new.html">新视频</a>
+    <a href="library.html">视频库</a>
+    <a href="https://github.com/JunyiZhou-Conny/Explainer_Videos" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main>
+  <h1>开一集新视频</h1>
+  <p class="sub">填好 → 生成 issue（唯一真相源）→ 代理接单。规格留空就用存档默认。</p>
+
+  <form id="f" onsubmit="return false;">
+    <div class="field">
+      <label for="question">想搞懂的问题 *</label>
+      <p class="hint">一个明确的问题，不是一个领域。看完视频观众应该带走什么？</p>
+      <textarea id="question" required placeholder="例：为什么 git 分支几乎零成本？讲清指针模型和一次普通 merge。"></textarea>
+    </div>
+
+    <div class="field">
+      <label for="audience">观众画像 *</label>
+      <p class="hint">已经会什么、还不会什么、带着什么误解。决定难度和钩子。</p>
+      <input type="text" id="audience" required placeholder="例：会 git add/commit；从没开过分支；以为分支是复制文件夹。">
+    </div>
+
+    <div class="field">
+      <label for="sources">素材与上下文 *</label>
+      <p class="hint">证据从哪来——仓库/分支、重点文件（带行号更好）、notebook、论文。代理只教素材撑得住的内容。需要外部仓库就写明，让代理自己去挂。</p>
+      <textarea id="sources" required placeholder="例：
+- 仓库: JunyiZhou-Conny/speciesOT, 分支 baseline
+- 重点文件: src/speciesot/speciesot_core.py (214–225 行)
+- notebook: src/speciesot/Tests/e24_replica.ipynb"></textarea>
+    </div>
+
+    <div class="field">
+      <label>风格 / 时长</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <select id="style" style="max-width:260px">
+          <option>swiss (ready)</option>
+          <option>3b1b (ready)</option>
+          <option>cassette-futurism (experimental)</option>
+          <option>de-stijl (experimental)</option>
+          <option>bauhaus (experimental)</option>
+          <option>nasa-punk (experimental)</option>
+        </select>
+        <input type="text" id="length" placeholder="时长（默认 5 minutes）" style="max-width:220px">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="scope">必须包含 / 跳过（可选）</label>
+      <input type="text" id="scope" placeholder="例：必须演示真实命令；跳过 rebase。">
+    </div>
+
+    <div class="field">
+      <label>谁来做</label>
+      <p class="hint">issue 负责"做什么"；"谁来做"由你启动的界面决定。选后两项时，建完 issue 回到本页复制 kickoff prompt。</p>
+      <div class="radio-row">
+        <label><input type="radio" name="agent" value="claude" checked>@claude 自动接单（Anthropic 默认模型）</label>
+        <label><input type="radio" name="agent" value="manual-claude">指定 Claude 模型（claude.ai 自己开会话）</label>
+        <label><input type="radio" name="agent" value="manual-other">GPT / Cursor / 其他</label>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="primary" onclick="openIssue()">生成 issue →</button>
+      <button class="ghost" onclick="showPrompt()">复制 kickoff prompt</button>
+    </div>
+  </form>
+
+  <div id="promptBox" style="display:none; margin-top:22px">
+    <p class="note">建完 issue 后，把下面整段（替换 <code>#N</code> 为真实 issue 号）粘给你选的代理——任何模型拿到的都是同一份地图。</p>
+    <pre class="prompt" id="promptText"></pre>
+    <div class="actions"><button onclick="copyPrompt()">复制</button><span id="copied" style="display:none;color:var(--red);font-weight:600">已复制 ✓</span></div>
+  </div>
+</main>
+<script>
+const REPO = 'JunyiZhou-Conny/Explainer_Videos';
+const v = id => document.getElementById(id).value.trim();
+const agent = () => document.querySelector('input[name=agent]:checked').value;
+
+function openIssue(){
+  if(!v('question') || !v('audience') || !v('sources')){ alert('问题、观众、素材三项必填。'); return; }
+  const p = new URLSearchParams();
+  p.set('template', 'episode-request.yml');
+  p.set('title', '[episode] ' + v('question').split('\n')[0].slice(0, 80));
+  p.set('question', v('question'));
+  p.set('audience', v('audience'));
+  let sources = v('sources');
+  if(agent() !== 'claude'){
+    sources += '\n\nDispatch: this episode will be claimed manually (' +
+      (agent() === 'manual-claude' ? 'a chosen Claude model' : 'a non-Claude agent') +
+      '); @claude should NOT pick it up.';
+  }
+  p.set('sources', sources);
+  p.set('style', v('style') || 'swiss (ready)');
+  if(v('length')) p.set('length', v('length'));
+  if(v('scope')) p.set('scope', v('scope'));
+  window.open(`https://github.com/${REPO}/issues/new?${p.toString()}`, '_blank');
+  if(agent() !== 'claude') showPrompt();
+}
+
+function showPrompt(){
+  const box = document.getElementById('promptBox');
+  document.getElementById('promptText').textContent =
+`Read docs/BOOTSTRAP.md in ${REPO} and follow its reading order. Then claim issue #N with a comment (model + surface + branch), and produce the episode on branch episode/<slug>, touching only videos/<slug>/. Post a 20-30s narrated sample on the draft PR and stop for my review before the full render. Before your session ends for any reason, push the branch and leave a DONE / NEXT / WARN handoff comment on the issue.`;
+  box.style.display = 'block';
+  box.scrollIntoView({behavior: 'smooth'});
+}
+
+async function copyPrompt(){
+  try{
+    await navigator.clipboard.writeText(document.getElementById('promptText').textContent);
+    document.getElementById('copied').style.display = 'inline';
+  }catch(e){ alert('复制失败，请手动选中文本。'); }
+}
+</script>
+</body>
+</html>

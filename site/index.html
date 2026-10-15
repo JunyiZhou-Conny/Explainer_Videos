@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Explainer Studio · 看板</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <span class="brand">CONNY<span class="dot">/</span>EXPLAINER STUDIO</span>
+  <nav>
+    <a class="active" href="./">看板</a>
+    <a href="new.html">新视频</a>
+    <a href="library.html">视频库</a>
+    <a href="https://github.com/JunyiZhou-Conny/Explainer_Videos" target="_blank" rel="noopener">GitHub ↗</a>
+  </nav>
+</header>
+<main>
+  <h1>剧集看板</h1>
+  <p class="sub">实时读取 GitHub issues 的 <code>state:</code> 标签 —— 这里只是镜子，真相永远在 issue 里。</p>
+  <div id="board" class="lanes"><p>加载中…</p></div>
+</main>
+<script>
+const REPO = 'JunyiZhou-Conny/Explainer_Videos';
+const LANES = [
+  ['state:scripting', '制作中'],
+  ['state:sample-review', '等你审样片', true],
+  ['state:full-review', '等你听全片', true],
+  ['blocked:question', '等你答复', true],
+  ['state:publishing', '发布中'],
+  ['state:published', '已上 B 站'],
+];
+function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML;}
+async function load(){
+  const board = document.getElementById('board');
+  try{
+    const r = await fetch(`https://api.github.com/repos/${REPO}/issues?labels=episode&state=all&per_page=100`);
+    if(!r.ok) throw new Error(`GitHub API ${r.status}`);
+    const issues = (await r.json()).filter(i => !i.pull_request);
+    board.innerHTML = '';
+    for(const [label, name, attention] of LANES){
+      const items = issues.filter(i => i.labels.some(l => l.name === label));
+      const lane = document.createElement('div');
+      lane.className = 'lane' + (attention && items.length ? ' attention' : '');
+      lane.innerHTML = `<h2><span>${name}</span><span class="count">${items.length}</span></h2>`;
+      for(const i of items){
+        const extra = i.labels.filter(l => !['episode', label].includes(l.name)).map(l => `<span class="chip">${esc(l.name)}</span>`).join('');
+        const q = i.labels.some(l => l.name === 'blocked:question') && label !== 'blocked:question'
+          ? '<span class="chip q">blocked:question</span>' : '';
+        lane.insertAdjacentHTML('beforeend', `
+          <div class="card">
+            <a class="title" href="${i.html_url}" target="_blank" rel="noopener">${esc(i.title)}</a>
+            <div class="meta">#${i.number} · ${new Date(i.updated_at).toLocaleDateString('zh-CN')} 更新</div>
+            ${q}${extra}
+          </div>`);
+      }
+      if(!items.length) lane.insertAdjacentHTML('beforeend', '<div class="card meta" style="color:var(--gray)">空</div>');
+      board.appendChild(lane);
+    }
+  }catch(e){
+    board.innerHTML = `<p class="error">看板加载失败：${esc(e.message)}。未登录的 GitHub API 每小时限 60 次，稍后刷新即可。</p>`;
+  }
+}
+load();
+</script>
+</body>
+</html>
