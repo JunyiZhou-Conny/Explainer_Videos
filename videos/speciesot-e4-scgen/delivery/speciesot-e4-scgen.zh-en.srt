@@ -1,0 +1,429 @@
+1
+00:00:00,400 --> 00:00:05,349
+能不能只靠一次减法和一次加法，就从小鼠细胞预测出人类细胞？
+Can you predict a human cell from a mouse cell with one subtraction and one addition?
+
+2
+00:00:05,669 --> 00:00:10,683
+scGen 赌的就是这一点，它也是你的包现在正在接入的模型
+That's the bet scGen makes, and it's the model your package is wiring up right now.
+
+3
+00:00:10,833 --> 00:00:14,911
+要写好它的类，你需要两样东西：一张图讲清楚的思路
+To write its class, you need two things: the idea, in one picture,
+
+4
+00:00:14,911 --> 00:00:18,001
+以及一个明确的答案——它到底调用哪一份库代码
+and a clear answer to which library code it calls.
+
+5
+00:00:20,133 --> 00:00:21,933
+先从自编码器说起
+Start with the autoencoder.
+
+6
+00:00:22,096 --> 00:00:24,912
+编码器把每个细胞压缩成一段很短的编码
+An encoder squeezes each cell into a short code.
+
+7
+00:00:25,232 --> 00:00:29,167
+在你的基准里，一个细胞约有一千个基因值
+In your benchmark, a cell has about a thousand gene values;
+
+8
+00:00:29,167 --> 00:00:32,101
+在 Josh 的配置里，编码只有 50 个数
+in Josh's config, the code is fifty numbers.
+
+9
+00:00:32,421 --> 00:00:34,853
+解码器再从编码把细胞重建出来
+A decoder rebuilds the cell from the code.
+
+10
+00:00:35,033 --> 00:00:37,166
+训练就是学会把细胞重建好
+Training means learning to rebuild well.
+
+11
+00:00:37,486 --> 00:00:40,931
+小鼠和人类细胞一起训练同一个网络
+Mouse and human cells train the same network together,
+
+12
+00:00:40,931 --> 00:00:43,865
+于是两个物种都落进同一个共享的编码空间
+so both species land in one shared code space.
+
+13
+00:00:44,033 --> 00:00:46,828
+在这个空间里，相似的细胞挨得很近
+In that space, similar cells sit close together.
+
+14
+00:00:47,148 --> 00:00:49,217
+正是这一点让下一步成为可能
+That's what makes the next step possible.
+
+15
+00:00:51,867 --> 00:00:57,087
+把小鼠训练细胞的编码取平均，人类细胞也一样
+Take the mouse training cells and average their codes. Do the same for the human cells.
+
+16
+00:00:57,087 --> 00:01:01,168
+这两个平均值之差就是 delta，也就是物种位移
+The difference between the two averages is delta: the species shift.
+
+17
+00:01:01,334 --> 00:01:06,261
+现在拿一些模型训练时从没见过的细胞，比如一个被留出的小鼠细胞类型
+Now take cells the model never trained on, like a held-out mouse cell type.
+
+18
+00:01:06,261 --> 00:01:10,400
+编码、加上 delta、解码，出来的就是预测的人类细胞
+Encode them, add delta, decode. Out come predicted human cells.
+
+19
+00:01:10,567 --> 00:01:13,955
+停下来想一想：小鼠和人类细胞之间必须满足什么
+Pause and ponder: what must be true of mouse and human
+
+20
+00:01:13,955 --> 00:01:16,967
+才能让同一个箭头对每种细胞类型都管用？
+cells for one arrow to work for every cell type?
+
+21
+00:01:21,134 --> 00:01:24,867
+这就是它的假设：只有一个箭头，对每种细胞类型都一样
+That's the assumption: one arrow, the same for every cell type.
+
+22
+00:01:25,187 --> 00:01:29,646
+如果物种差异依赖于细胞类型，一个箭头就抓不住
+If species differences depend on the cell type, one arrow can't capture them.
+
+23
+00:01:29,966 --> 00:01:32,291
+这正是 CellOT 想要弥补的缺口
+That's the gap CellOT tries to close.
+
+24
+00:01:35,467 --> 00:01:37,430
+现在把这张图对应到类上
+Now map the picture onto the class.
+
+25
+00:01:37,750 --> 00:01:39,712
+setup 搭好一个还没训练的网络
+Setup builds the untrained network.
+
+26
+00:01:40,032 --> 00:01:44,191
+train 把小鼠和人类细胞合成一张带物种标签的表
+Train joins mouse and human into one table with a species label,
+
+27
+00:01:44,191 --> 00:01:48,416
+训练网络，然后算出 delta，存成对象属性 self.delta
+fits the network, then computes delta and keeps it on the object.
+
+28
+00:01:48,567 --> 00:01:53,114
+predict 对测试集的小鼠细胞编码、加上保存好的 delta、再解码
+Predict encodes the test mouse cells, adds the stored delta, decodes,
+
+29
+00:01:53,114 --> 00:01:57,595
+最后返回一个 AnnData，基因和人类测试集一致、顺序相同
+and returns an AnnData with the human test genes, in the same order,
+
+30
+00:01:57,595 --> 00:02:01,154
+这样 evaluate 才能拿它和人类测试细胞比较打分
+so evaluate can score it against the human test cells.
+
+31
+00:02:01,300 --> 00:02:03,100
+再对照一下现在的占位代码（stub）
+Now compare the stubs.
+
+32
+00:02:03,100 --> 00:02:06,124
+train 算了 delta，却从没训练网络
+Train computes delta but never fits the network,
+
+33
+00:02:06,124 --> 00:02:08,743
+而且 train 一返回，delta 就没了
+and delta vanishes when train returns.
+
+34
+00:02:08,743 --> 00:02:13,017
+predict 的最后一行本会原封不动地交回小鼠细胞
+Predict's last line would hand back the mouse cells untouched,
+
+35
+00:02:13,017 --> 00:02:18,599
+但它根本走不到那里：第 288 行用到的名字只存在于图谱脚本里
+but it never gets there: line 288 uses names that only exist in the atlas script.
+
+36
+00:02:18,599 --> 00:02:20,399
+这些就是你要填的空
+Those are your blanks.
+
+37
+00:02:23,500 --> 00:02:27,980
+现在回答你的问题：需要追溯到 scgen 的原始代码吗？
+Now your question: do you need to trace back into the original scgen code?
+
+38
+00:02:28,300 --> 00:02:32,780
+先注意一件事：你的项目里有三个不同的东西都叫 scgen
+First, notice that three different things in your project are called scgen.
+
+39
+00:02:32,933 --> 00:02:35,664
+第一个：图谱脚本里的 TensorFlow 模型
+One: the TensorFlow model in your atlas scripts.
+
+40
+00:02:35,984 --> 00:02:40,809
+它的代码是一份单独的克隆，放在项目里一个被 Git 忽略的文件夹中
+Its code is a separate clone, in a git-ignored folder inside your project,
+
+41
+00:02:40,809 --> 00:02:44,069
+在它专用的 TensorFlow 1 环境里运行
+and it runs in its own TensorFlow one environment.
+
+42
+00:02:44,389 --> 00:02:48,379
+Josh 的辅助函数是从这些脚本里逐行抄过来的
+Josh's helper functions are copied from those scripts, line for line.
+
+43
+00:02:48,533 --> 00:02:53,205
+第二个：在 Josh 的环境里，import scgen 加载的那个包
+Two: the package that import scgen loads in Josh's environment.
+
+44
+00:02:53,525 --> 00:02:56,192
+他的注释说它会拉进 scvi-tools
+His comment says it pulls in scvi-tools.
+
+45
+00:02:56,512 --> 00:02:59,925
+我们也检查过这个包：它根本没有 VAEArith
+And we checked that package: it has no VAEArith at all.
+
+46
+00:03:00,245 --> 00:03:03,589
+如果加载的是它，setup 会在 scgen.VAEArith 这一行直接报错
+If that's what loads, setup stops right at that name.
+
+47
+00:03:03,639 --> 00:03:06,518
+第三个：cellot 文件夹里的自编码器
+Three: the autoencoder in your cellot folder.
+
+48
+00:03:06,838 --> 00:03:11,762
+CellOT 的源码复制了一份放在你的仓库里，还带着你自己的修改
+CellOT's source is copied into your repository, with your own edits,
+
+49
+00:03:11,762 --> 00:03:17,120
+它里面叫 scgen 的模型是一个普通自编码器，加上同样的均值位移
+and its model named scgen is a plain autoencoder with the same mean shift.
+
+50
+00:03:17,440 --> 00:03:19,573
+你的基准数字就是它跑出来的
+That one produced your benchmark numbers.
+
+51
+00:03:19,733 --> 00:03:24,104
+再看 Josh 的配置：两层、每层 256
+Now look at Josh's config: two layers of two hundred fifty-six,
+
+52
+00:03:24,104 --> 00:03:28,821
+潜空间 50 维，学习率 0.001
+fifty latent dimensions, and a learning rate of point zero zero one.
+
+53
+00:03:29,141 --> 00:03:32,170
+这三项正是 cellot 自编码器的规格
+Those three match the cellot autoencoder's spec.
+
+54
+00:03:32,490 --> 00:03:37,097
+而 TensorFlow 版的模型在内部把两层隐藏层固定为每层 800 个单元
+The TensorFlow model fixes its own two layers at eight hundred units each,
+
+55
+00:03:37,097 --> 00:03:39,338
+所以这里的层大小根本用不上
+so the layer sizes would go nowhere.
+
+56
+00:03:39,658 --> 00:03:42,111
+所以现在，Josh 的类把三者混在了一起
+So today, Josh's class mixes all three:
+
+57
+00:03:42,111 --> 00:03:46,890
+辅助函数来自第一个，import 来自第二个，参数来自第三个
+helpers from the first, the import from the second, settings from the third.
+
+58
+00:03:47,210 --> 00:03:49,493
+这就是为什么它必须只选一个
+That's why it has to pick exactly one.
+
+59
+00:03:54,700 --> 00:03:58,566
+所以规则是：你的 scGenModel 类是一个适配器
+So here's the rule. Your scGenModel class is an adapter:
+
+60
+00:03:58,566 --> 00:04:01,949
+是包里唯一直接和 scgen 打交道的地方
+the only place in your package that speaks scgen.
+
+61
+00:04:01,949 --> 00:04:06,092
+其余部分都只通过你定义的接口打交道：setup、train、predict
+Everything else speaks your contract: setup, train, predict.
+
+62
+00:04:06,267 --> 00:04:08,592
+适配器只包住三者之一
+The adapter wraps exactly one of the three.
+
+63
+00:04:08,912 --> 00:04:11,520
+如果目标是复现你的基准数字
+If the goal is to reproduce your benchmark
+
+64
+00:04:11,520 --> 00:04:15,184
+那就包住 cellot 的自编码器，因为那些数字就是它跑出来的
+numbers, wrap the cellot autoencoder, because it made them.
+
+65
+00:04:15,504 --> 00:04:17,283
+先和 Josh 把这件事定下来
+Settle that with Josh first.
+
+66
+00:04:17,333 --> 00:04:21,811
+所以回答你的问题：不需要，你不用去读原始的 scgen 代码
+So, to your question: no, you don't need the original scgen code.
+
+67
+00:04:21,811 --> 00:04:27,735
+对 cellot 自编码器来说，适配器只需要几个调用：加载模型
+For the cellot autoencoder, the adapter needs only a handful of calls: load the model,
+
+68
+00:04:27,735 --> 00:04:30,491
+训练它，训练时会顺带算出位移
+train it, which also computes the shift,
+
+69
+00:04:30,491 --> 00:04:32,075
+切换到 eval 模式
+switch it to eval mode,
+
+70
+00:04:32,075 --> 00:04:33,728
+再把细胞平移过去
+and transport the cells.
+
+71
+00:04:33,728 --> 00:04:39,584
+你的仓库里 predict_new_input.sh 已经调用过这些函数，从那里开始读
+Your repo already makes these calls in predict new input dot sh. Start reading there.
+
+72
+00:04:39,733 --> 00:04:44,116
+回报是：在测试中，一个只有几行的假库就能顶替它
+The payoff: in tests, a few-line fake can stand in for the library,
+
+73
+00:04:44,116 --> 00:04:46,602
+测试时根本不用安装它
+so your tests never need it installed.
+
+74
+00:04:46,922 --> 00:04:50,144
+我们为这个系列运行 Josh 的代码时，用的正是这个办法
+That's exactly how we ran Josh's code for this series.
+
+75
+00:04:50,300 --> 00:04:54,744
+停下来想一想：如果以后换成另一种 scGen 实现
+Pause and ponder: if you later switch to a different scGen implementation,
+
+76
+00:04:54,744 --> 00:04:57,447
+你的包里应该有几个文件需要改动？
+how many files in your package should change?
+
+77
+00:05:01,633 --> 00:05:06,822
+回顾一下。scGen 先编码，把每个细胞都沿同一个学到的箭头平移，再解码
+Recap. scGen encodes, shifts every cell along one learned arrow, and decodes.
+
+78
+00:05:06,822 --> 00:05:08,125
+setup 负责搭建
+Setup builds, train
+
+79
+00:05:08,125 --> 00:05:11,873
+train 学习网络和 delta，predict 应用它们
+learns the network and delta, and predict applies them.
+
+80
+00:05:12,033 --> 00:05:13,996
+有三个东西都叫 scgen
+Three things are called scgen.
+
+81
+00:05:14,316 --> 00:05:18,092
+你的适配器只包住其中一个，也是通往它的唯一一扇门
+Your adapter wraps exactly one, and it's the only doorway to it.
+
+82
+00:05:18,412 --> 00:05:22,252
+刚才那个问题的答案：只改一个代码文件，也就是适配器
+The answer to the pause: one code file changes, the adapter,
+
+83
+00:05:22,252 --> 00:05:26,028
+再加上它在配置里的那一段和它需要的依赖
+plus its section of the config and the dependency it needs.
+
+84
+00:05:26,200 --> 00:05:30,061
+你的练习：在 cellot 里打开这四个调用
+Your exercise: open each of those four calls in cellot,
+
+85
+00:05:30,061 --> 00:05:32,728
+逐个写下它的输入和输出
+and write down its inputs and outputs.
+
+86
+00:05:33,048 --> 00:05:38,424
+然后在写任何代码之前，先用注释把 train 和 predict 一步一步写出来
+Then write train and predict as plain comments, step by step, before writing any code.

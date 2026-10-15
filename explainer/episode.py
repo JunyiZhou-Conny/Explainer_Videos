@@ -197,7 +197,9 @@ def add_score(clean: Path, final: Path, rendered: list[tuple], music: dict, proj
     work = build_dir / "music"
     work.mkdir(parents=True, exist_ok=True)
     voice_wav = work / "voice.wav"
-    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(clean), "-vn",
+    # Trimmed to the target: each scene's AAC track ends on a frame boundary, so the concatenated
+    # narration can run ~15 ms per scene long, and the score follows the voice's length.
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(clean), "-vn", "-t", f"{target:.3f}",
                     "-ar", "48000", "-ac", "2", "-c:a", "pcm_f32le", str(voice_wav)], check=True)
     result = fin.compose_music(project, {"music": music}, scenes, target, work, voice_wav=voice_wav)
     fin.mux(clean, result["mix"], final)
@@ -297,7 +299,10 @@ def main(argv=None):
         for line in scene["lines"]:
             clip = voice.speak(line[key])
             audio.append({"duration": clip.duration, "path": str(clip.path)})
-        minimum = sum(a["duration"] for a in audio) + len(audio) * 0.18 + 1.10
+        # A line may ask for thinking time after it ("pause_after": seconds, e.g. a ponder question);
+        # it counts toward the scene's minimum, so the scene, not the whole episode, pays for it.
+        pauses = sum(float(line.get("pause_after") or 0) for line in scene["lines"])
+        minimum = sum(a["duration"] for a in audio) + len(audio) * 0.18 + 1.10 + pauses
         prepared.append({**scene, "audio": audio, "minimum": minimum})
         print(f"Speech {scene['id']}: {minimum:.2f}s minimum", flush=True)
     minimum = sum(s["minimum"] for s in prepared)

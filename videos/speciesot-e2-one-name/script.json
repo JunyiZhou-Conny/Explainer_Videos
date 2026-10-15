@@ -1,0 +1,126 @@
+{
+  "title_en": "speciesOT E2 · One name, five places",
+  "title_zh": "speciesOT 第二集 · 一个名字，五个地方",
+  "preset": "swiss",
+  "description_en": "Why editing scGenModel's init means bouncing between files: a config value passes through five places, each needs the same spelling, and one fixed crash can hide a quiet bug. KeyError vs AttributeError, reading a traceback, and four rules for names.",
+  "description_zh": "为什么改 scGenModel 的 init 就得在几个文件之间来回跳：一个配置值要经过五个地方，每个地方拼写都必须一致，而一个被修好的崩溃背后可能藏着一个不报错的 bug。KeyError 与 AttributeError、怎么读 traceback，以及给名字定的四条规则。",
+  "tags_zh": ["Python", "配置文件", "YAML", "调试", "教程"],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "Every error message, line number and dictionary snapshot is MEASURED by videos/speciesot-series/checks/error_trail.py on toy data with a STAND-IN scgen (FakeVAEArith records its arguments; no network is built). Stages: config_setup, config_snapshot, scgen_setup_patched, toy_model_section, toy_config_setup, yaml_none. Say 'stand-in' wherever the stub matters.",
+    "On the cluster, `import scgen` in Josh's environment loads the scvi-tools scgen (Josh's comment, speciesot_core.py lines 10-11), whose 2.1.0 release has no VAEArith (checks/scgen_package.txt), so a different error can come first at line 252. s04 says so; E4 explains it.",
+    "18,024 is READ IN NOTEBOOK: the x_dimensions value printed by Tests/e24_replica.ipynb cell 3 from an older config (that dict has no x_dimension key). On toy data the same drawer holds 4.",
+    "Python 3.10+ appends \"Did you mean: 'x_dimension'?\" to the AttributeError line (checks/scgen_package.txt, measured with python3.12).",
+    "Spoken forms: x_dimension is heard as 'x dimension' (underscores dropped); always add 'singular' or 'with an s' aloud; show exact spelling on screen with the s in red.",
+    "Line numbers refer to Josh's speciesot_core.py attached 2026-10-14 and Tests/config.yaml, Tests/toy_config.yaml (sha256 in videos/speciesot-series/excerpts.py)."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "The error is gone. The bug is not.",
+      "title_zh": "报错消失了，bug 还在",
+      "lines": [
+        {"en": "Here's a puzzle from this week's code. Setup crashes with an attribute error: scGenModel has no attribute x_dimensions, with an s.",
+         "zh": "先看一个来自本周代码的谜题。setup 崩溃了，报的是 AttributeError：scGenModel 没有叫 x_dimensions 的属性——结尾带 s 的那个。"},
+        {"en": "The fix looks like one letter. Delete the s, and the crash disappears. We tried it on toy data with four genes, and a stand-in for scgen: setup runs, no complaints.",
+         "zh": "看起来改一个字母就能修好：删掉 s，崩溃就消失了。我们在只有四个基因的玩具数据上、用一个模拟的 scgen（stub）试过：setup 顺利跑完，没有任何报错。"},
+        {"en": "But the network would be built for one thousand genes, not four. The error is gone, and the bug is not. To see why, follow one name through five places.",
+         "zh": "可网络会按一千个基因来建，而不是四个。报错没了，bug 还在。要弄明白原因，我们得跟着一个名字走过五个地方。"}
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "Three windows, two wires",
+      "title_zh": "三个窗口，两根线",
+      "lines": [
+        {"en": "First, the setup you watched Josh work in: three windows. The package file, the config file, and the e24_replica notebook that runs them.",
+         "zh": "先看看你旁观 Josh 工作时的那套环境：三个窗口。包的代码文件、配置文件，还有运行它们的 e24_replica notebook。"},
+        {"en": "Two wires connect them. The editable install, the dash e in pip install, means Python imports your folder itself, not a frozen copy. And autoreload, at the top of the notebook, re-reads the file whenever it changes.",
+         "zh": "两根线把它们连起来。可编辑安装，也就是 pip install 里的 -e，意味着 Python 导入的是你的文件夹本身，而不是一份冻结的副本。notebook 顶部的 autoreload 会在文件改动后重新读取它。"},
+        {"en": "The config wire is even simpler. Every new Experiment opens config.yaml and reads it fresh, with yaml.safe_load.",
+         "zh": "配置这根线更简单：每新建一个 Experiment，它都会用 yaml.safe_load 重新打开并读取 config.yaml。"},
+        {"en": "So the loop is: edit a file, rerun the cell, read what breaks. That loop is what you watched Josh do.",
+         "zh": "所以循环就是：改文件、重跑那个单元格、看哪里坏了。你看到 Josh 来回切换，做的就是这个循环。"}
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "One value, five places",
+      "title_zh": "一个值，五个地方",
+      "lines": [
+        {"en": "Now follow one value: the latent size, z_dimension, fifty. Hop one: it's a line in config.yaml, under models, under scGenModel.",
+         "zh": "现在跟踪一个值：潜空间大小 z_dimension，等于 50。第一跳：它是 config.yaml 里的一行，位于 models 下面的 scGenModel 里。"},
+        {"en": "Hop two: safe load turns the whole file into nested Python dictionaries. A dictionary is a row of labelled drawers. You open one by its exact label.",
+         "zh": "第二跳：safe_load 把整个文件变成层层嵌套的 Python 字典。字典就像一排贴着标签的抽屉：必须用一模一样的标签才能打开。"},
+        {"en": "Hop three: the experiment's setup, at line 115, hands the scGenModel drawer to the class, and init opens the drawer labelled z_dimension. Hop four: init writes the value onto the object, as self.z_dimension.",
+         "zh": "第三跳：Experiment 的 setup 在第 115 行把 scGenModel 这一格（一个小字典）交给 scGenModel 类，init 打开标着 z_dimension 的抽屉。第四跳：init 把值写到对象身上，成为 self.z_dimension。"},
+        {"en": "Fifth, the model's own setup method, at line 254, reads that attribute to build the network. Careful there: the name left of the equals sign is scgen's own parameter. Ours is the one after self dot. Five places, and the spelling has to match at every one. That's why Josh kept jumping between files.",
+         "zh": "第五个地方：模型自己的 setup 方法在第 254 行读取这个属性来搭建网络。注意，等号左边的名字是 scgen 自己的参数名；我们的名字是 self. 后面那个。五个地方，每一处的拼写都必须一致。这就是 Josh 不停在文件之间跳来跳去的原因。"}
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "Two lookups, two errors",
+      "title_zh": "两种查找，两种错误",
+      "lines": [
+        {"en": "That path has two kinds of lookup, and each one fails with its own error. Opening a drawer that doesn't exist raises a key error. Asking an object for an attribute it never received raises an attribute error.",
+         "zh": "这条路上有两种查找，失败时各报各的错。打开一个不存在的抽屉，会抛出 KeyError；向对象要一个它从没得到过的属性，会抛出 AttributeError。"},
+        {"en": "Pause and predict: Josh's toy config spells it x_dimensions, with an s. Will init raise a key error, or an attribute error?",
+         "zh": "停下来猜一猜：Josh 的 toy config 里写的是带 s 的 x_dimensions。init 会抛出 KeyError，还是 AttributeError？", "pause_after": 4.0},
+        {"en": "A key error. Build scGenModel from the toy config, and init stops at line 220: key error, x_dimension, singular. The drawer it asked for isn't there.",
+         "zh": "是 KeyError。用 toy config 构建 scGenModel，init 会停在第 220 行：KeyError: 'x_dimension'，单数。它要找的那个抽屉不存在。"},
+        {"en": "And the attribute error is our crash at line 253: the model's setup asks for self.x_dimensions, but init only ever wrote the singular.",
+         "zh": "第 253 行的崩溃就是 AttributeError：模型的 setup 要的是 self.x_dimensions，而 init 只写过单数形式。"},
+        {"en": "To read a traceback, start at the bottom. The last line says what went wrong, and here Python even asks: did you mean x_dimension? Just above it, the last file and line says where. Read further up and you see the path: the experiment's setup, at line 119, called the model's setup, at line 253.",
+         "zh": "读 traceback 要从最底下开始。最后一行告诉你出了什么错，这里 Python 甚至会问：你是不是想写 x_dimension？再往上，最后一个文件和行号告诉你错在哪里。继续往上读，就能看到调用路径：Experiment 的 setup 在第 119 行，调用了模型的 setup，在第 253 行。"},
+        {"en": "One caution: we measured this with a stand-in for scgen. On the cluster, a different scgen error can come first. Episode four explains why.",
+         "zh": "提醒一句：这是用替身 scgen 测到的。在集群上，可能会先出现另一个和 scgen 有关的报错，第四集会解释原因。"}
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "The silent twin",
+      "title_zh": "沉默的双胞胎",
+      "lines": [
+        {"en": "Now the silent part. When use_all_genes is true, the experiment's setup is meant to replace the typed gene count with the real one, read from the data. Line 104 does that.",
+         "zh": "现在是不报错的那一半。当 use_all_genes 为真时，Experiment 的 setup 本该用从数据里读到的真实基因数，替换手写的基因数。第 104 行做的就是这件事。"},
+        {"en": "But line 104 writes x_dimensions, with an s. Writing to a label that doesn't exist never complains: Python just adds a new drawer. So the dictionary ends up with two drawers: x_dimension, singular, one thousand, typed by hand, and x_dimensions, with an s, the real count.",
+         "zh": "可第 104 行写入的是带 s 的 x_dimensions。往一个不存在的标签里写值，从来不会报错：Python 只会新加一个抽屉。于是字典里出现了两个抽屉：单数的 x_dimension，手写的 1000；还有带 s 的 x_dimensions，真实的基因数。"},
+        {"en": "Init only opens the singular drawer, so the real count lands in a drawer nobody reads. On Josh's real data, his notebook once printed that drawer: eighteen thousand and twenty-four. With today's init, nothing reads it.",
+         "zh": "init 只打开单数的那个抽屉，于是真实的基因数落进了一个没人读的抽屉。在 Josh 的真实数据上，他的 notebook 曾经打印过这个抽屉：18,024。按现在的 init，没有人读它。"},
+        {"en": "Pause on this: should the gene count be typed into the config at all, or should it always come from the data?",
+         "zh": "在这里停一下：基因数真的应该手写进配置里吗？还是应该永远从数据里来？", "pause_after": 4.0}
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "Four rules for names",
+      "title_zh": "给名字定的四条规则",
+      "lines": [
+        {"en": "Four rules turn this back-and-forth into a routine.",
+         "zh": "下面四条规则，能把这种来回折腾变成一套固定流程。"},
+        {"en": "One: one spelling. The config key, the init line, and the attribute share exactly one name. Two: derived values are derived. A number the data can tell you shouldn't be typed by hand.",
+         "zh": "第一，只用一种拼写：配置里的键、init 里的那一行、对象的属性，用同一个名字。第二，能推导出来的值就推导：数据能告诉你的数字，不要手写。"},
+        {"en": "Three: fail early. Init already reads every key the moment the object is built. That's good: a missing key explodes inside init, not an hour into training.",
+         "zh": "第三，尽早失败。init 在对象建好的那一刻就读取了所有键。这很好：缺一个键，会在 init 里就爆出来，而不是训练一小时之后。"},
+        {"en": "Four: after any rename, search the whole project for the old name, YAML files included. Then rerun the smallest example you have.",
+         "zh": "第四，任何改名之后，都在整个项目里搜索旧名字，包括 YAML 文件；然后重跑手头最小的例子。"},
+        {"en": "Two traps to check today. Josh's toy config has drifted: it has no experiment section, so setup stops at line 86, and it also lacks z_dimension, alpha and dropout rate. And in YAML, None is just the word None, a string. YAML spells an empty value null. That's harmless today, but any check for None would quietly get it wrong.",
+         "zh": "今天就该检查的两个坑：Josh 的 toy config 已经和代码对不上了：它没有 experiment 段，setup 会停在第 86 行；它也缺少 z_dimension、alpha 和 dropout_rate。另外，在 YAML 里 None 只是一个普通单词、一个字符串，YAML 的空值写作 null。今天这还没有害处，但任何判断是否为 None 的检查都会悄悄出错。"}
+      ]
+    },
+    {
+      "id": "s07",
+      "title_en": "Recap: follow the name",
+      "title_zh": "回顾：跟着名字走",
+      "lines": [
+        {"en": "Recap. A config value passes through five places: a YAML line, a dictionary drawer, init, an attribute, and the setup that reads it. Every place needs the same spelling.",
+         "zh": "回顾一下。一个配置值要经过五个地方：YAML 的一行、字典的抽屉、init、对象属性，以及读取它的 setup。每个地方拼写都必须相同。"},
+        {"en": "A key error means a drawer is missing. An attribute error means the object never got that attribute. And a quiet bug can hide behind a fixed crash.",
+         "zh": "KeyError 说明少了一个抽屉；AttributeError 说明对象身上从没写过这个属性。而且，一个不报错的 bug 可能就藏在一个被修好的崩溃后面。"},
+        {"en": "Your exercise: search the project for both spellings, and keep the singular, x_dimension. It already matches config.yaml and init, and it's the name of scgen's own parameter. Change line 104, the right-hand side of line 253, and the toy config to match. Then rerun e24_replica, and check that the model's x_dimension is now the real gene count, even if setup still stops at line 252. Episode four explains that stop.",
+         "zh": "你的练习：在整个项目里搜索两种拼写，保留单数的 x_dimension。它已经和 config.yaml、init 一致，也正是 scgen 自己的参数名。把第 104 行、第 253 行等号右边，以及 toy config 改成一致。然后重跑 e24_replica，检查模型的 x_dimension 现在是不是真实的基因数，即使 setup 仍然停在第 252 行。那一处会在第四集解释。"}
+      ]
+    }
+  ]
+}

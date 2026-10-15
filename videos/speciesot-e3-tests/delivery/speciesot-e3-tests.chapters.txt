@@ -1,0 +1,7 @@
+00:00 Is 0.326 right?
+00:25 Anatomy of Josh's test
+01:09 How pytest runs it
+02:07 Known answers come from meaning
+02:59 A test that asks a real question
+04:07 Three layers of checks
+04:49 Recap: questions with answers

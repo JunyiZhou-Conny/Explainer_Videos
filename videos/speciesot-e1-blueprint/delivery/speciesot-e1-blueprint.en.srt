@@ -1,0 +1,321 @@
+1
+00:00:00,400 --> 00:00:05,179
+Here is a whole research experiment,
+as Josh's example notebook writes it.
+
+2
+00:00:05,499 --> 00:00:08,592
+Four calls: set up, train, predict, evaluate.
+
+3
+00:00:08,767 --> 00:00:14,620
+Behind them sits one file, speciesot_core.py,
+about three hundred and fifty lines long.
+
+4
+00:00:14,620 --> 00:00:18,388
+Which lines matter,
+and where do you even start reading?
+
+5
+00:00:18,567 --> 00:00:22,758
+Here's the trick:
+every class in that file does one of five jobs.
+
+6
+00:00:22,758 --> 00:00:27,271
+Data, contract, conductor, model, and metric.
+Let's learn to see them.
+
+7
+00:00:30,367 --> 00:00:33,683
+Start with the word the whole file
+is built from: class.
+
+8
+00:00:33,683 --> 00:00:35,045
+A class is a blueprint.
+
+9
+00:00:35,045 --> 00:00:37,115
+It describes what a thing will know
+
+10
+00:00:37,115 --> 00:00:40,074
+and what it can do,
+but it isn't the thing itself.
+
+11
+00:00:40,234 --> 00:00:43,477
+Calling a class like a function
+builds an object from it.
+
+12
+00:00:43,797 --> 00:00:49,727
+Line 115 does exactly that:
+scGenModel, given its slice of the config.
+
+13
+00:00:49,900 --> 00:00:53,527
+The moment the object is built,
+Python runs its init method.
+
+14
+00:00:53,847 --> 00:00:57,100
+Each line of init writes one fact
+onto the new object:
+
+15
+00:00:57,100 --> 00:01:00,716
+the learning rate, the latent size,
+where to save the model.
+
+16
+00:01:00,867 --> 00:01:06,583
+And self just means this particular object.
+self.lr is this model's learning rate.
+
+17
+00:01:06,583 --> 00:01:09,720
+Build two models, and each one keeps its own.
+
+18
+00:01:13,667 --> 00:01:17,678
+Near the top of the file
+is a different kind of class: AbstractModel.
+
+19
+00:01:17,998 --> 00:01:22,115
+Every method is marked abstract,
+and its body only raises an error.
+
+20
+00:01:22,267 --> 00:01:23,330
+It's a contract.
+
+21
+00:01:23,330 --> 00:01:27,718
+Anything that calls itself a model
+must know how to set up, train,
+
+22
+00:01:27,718 --> 00:01:32,251
+and predict. The contract names the methods.
+It doesn't fill them in.
+
+23
+00:01:32,400 --> 00:01:37,136
+Pause and predict: what happens
+if you try to build an AbstractModel directly?
+
+24
+00:01:40,300 --> 00:01:41,829
+Python refuses.
+
+25
+00:01:41,879 --> 00:01:45,646
+We ran it:
+can't instantiate abstract class AbstractModel
+
+26
+00:01:45,646 --> 00:01:49,282
+without an implementation for predict,
+setup and train.
+
+27
+00:01:49,434 --> 00:01:52,805
+IdentityModel and scGenModel fill in the blanks.
+
+28
+00:01:53,125 --> 00:01:56,619
+Writing AbstractModel
+in parentheses after the class name
+
+29
+00:01:56,619 --> 00:01:58,458
+is how they sign the contract.
+
+30
+00:01:58,778 --> 00:02:00,350
+That's called inheritance.
+
+31
+00:02:00,400 --> 00:02:03,969
+Look at train.
+The contract's train takes training data,
+
+32
+00:02:03,969 --> 00:02:07,920
+but IdentityModel's takes nothing,
+and Python still builds it.
+
+33
+00:02:07,920 --> 00:02:10,342
+The contract checks names, not inputs.
+
+34
+00:02:10,500 --> 00:02:15,193
+You'll also see abc.ABC on Experiment
+and the data classes.
+
+35
+00:02:15,513 --> 00:02:18,351
+With no abstract methods,
+there's nothing to sign.
+
+36
+00:02:18,671 --> 00:02:22,494
+Josh's note on line 19 says
+the data classes can drop it,
+
+37
+00:02:22,494 --> 00:02:24,708
+and the same goes for Experiment.
+
+38
+00:02:27,600 --> 00:02:32,112
+The Experiment class is the conductor.
+It never does the science itself.
+
+39
+00:02:32,112 --> 00:02:36,624
+It reads the config, builds the pieces,
+and tells each one when to play.
+
+40
+00:02:36,800 --> 00:02:41,795
+Setup fills two lists:
+models, from the models section of config.yaml,
+
+41
+00:02:41,795 --> 00:02:45,077
+and evaluations, from the evaluations section.
+
+42
+00:02:45,233 --> 00:02:47,686
+Train and predict walk down the models list.
+
+43
+00:02:48,006 --> 00:02:52,657
+Predict collects one answer from each model:
+a set of predicted human cells.
+
+44
+00:02:52,833 --> 00:02:57,889
+Evaluate crosses the two lists.
+Two models times two metrics: four numbers.
+
+45
+00:02:58,067 --> 00:02:59,422
+One honest detail:
+
+46
+00:02:59,422 --> 00:03:04,239
+as written, evaluate computes those numbers
+and then drops them.
+
+47
+00:03:04,239 --> 00:03:08,627
+Line 145 never stores them.
+Remember that for episode five.
+
+48
+00:03:12,633 --> 00:03:16,537
+Here's the payoff. Line 137 calls model.predict,
+
+49
+00:03:16,537 --> 00:03:20,441
+without ever asking which model it's talking to.
+
+50
+00:03:20,600 --> 00:03:24,525
+IdentityModel answers
+by handing back the mouse cells unchanged.
+
+51
+00:03:24,845 --> 00:03:26,647
+It's the do-nothing baseline:
+
+52
+00:03:26,647 --> 00:03:29,752
+a real model
+has to beat simply copying the mouse.
+
+53
+00:03:29,900 --> 00:03:34,390
+scGenModel will answer
+by shifting the mouse cells toward human.
+
+54
+00:03:34,390 --> 00:03:38,177
+Same question, different answers.
+That's polymorphism.
+
+55
+00:03:38,333 --> 00:03:41,762
+So think about it:
+when you add CellOT as a third model,
+
+56
+00:03:41,762 --> 00:03:44,946
+which lines of the Experiment
+should have to change?
+
+57
+00:03:47,566 --> 00:03:48,945
+Ideally, none.
+
+58
+00:03:48,995 --> 00:03:53,433
+Today, setup still names each model by hand,
+in a chain of if statements.
+
+59
+00:03:53,753 --> 00:03:55,758
+Episode five pulls on that thread.
+
+60
+00:03:57,367 --> 00:04:01,570
+Recap. A class is a blueprint,
+and an object is built from it.
+
+61
+00:04:01,890 --> 00:04:05,047
+Init writes the object's facts,
+and self means this one.
+
+62
+00:04:05,200 --> 00:04:07,262
+An abstract class is a contract.
+
+63
+00:04:07,262 --> 00:04:10,651
+It names the methods,
+and Python won't build a model
+
+64
+00:04:10,651 --> 00:04:13,127
+until every named method is filled in.
+
+65
+00:04:13,127 --> 00:04:17,446
+It checks names, not inputs.
+Episode five shows what slips through.
+
+66
+00:04:17,600 --> 00:04:18,929
+The Experiment conducts,
+
+67
+00:04:18,929 --> 00:04:22,251
+and models and metrics plug
+into it through their contracts.
+
+68
+00:04:22,400 --> 00:04:29,632
+Your turn: pause here, open speciesot_core.py,
+and label every class with one of the five jobs.
+
+69
+00:04:29,952 --> 00:04:31,766
+This table is your answer key.

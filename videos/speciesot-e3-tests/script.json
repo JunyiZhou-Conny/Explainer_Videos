@@ -1,0 +1,177 @@
+{
+  "title_en": "speciesOT E3 · A test is a question with a known answer",
+  "title_zh": "speciesOT 第三集 · 测试是一个答案已知的问题",
+  "preset": "swiss",
+  "description_en": "What a test is, how pytest finds and runs one, where known answers come from, why test_model.py is a script and not a test, and a test that exposes which R-squared the experiment means.",
+  "description_zh": "测试是什么、pytest 怎么找到并运行它、已知答案从哪里来、为什么 test_model.py 是脚本而不是测试，以及一个揭示实验到底指哪一种 R² 的测试。",
+  "tags_zh": [
+    "Python",
+    "pytest",
+    "单元测试",
+    "科研代码",
+    "教程"
+  ],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "MEASURED (videos/speciesot-series/checks/): toy MMD 0.326 (stage identity_end_to_end); MMD vs shift 0 / 0.080 / 0.292 / 0.847 and R2 perfect 1.0 / shuffled 0.020 (stage known_answers); R2 5-vs-7 cells ValueError at line 313 (stage r2_uneven_cells); pytest on Josh's Tests folder: test_model.py collection error FileNotFoundError (pytest_run.txt).",
+    "READ IN CODE: R2Evaluation (speciesot_core.py 305-316) is the same formula as _pergene_r2 in atlas-paper-vae/scripts/02_eval_metrics.py:47-53, used there for reconstruction (lines 208, 210); the benchmark R-squared is _r2_means in cellot/cellot_gpu/scripts/decoded_frame_metrics.py:68-71 and extended_metrics.py:154-157. Say 'same formula', never 'copied from' (provenance is inferred).",
+    "Do not claim pytest ran the MMD test to a pass on Josh's folder as-is: collection was interrupted by test_model.py. The pass is measured with test_model.py excluded (pytest_run.txt). Narration says the MMD test passes on its own.",
+    "Spoken forms: pytest via lexicon ('pie test'); R squared spoken, R² on screen.",
+    "On the cluster the config path in test_model.py exists, so importing it loads the full training files and then fails in setup during collection (INFERRED from the code path; not run here). Off the cluster: FileNotFoundError (MEASURED)."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "Is 0.326 right?",
+      "title_zh": "0.326 对吗？",
+      "lines": [
+        {
+          "en": "We ran the MMD metric from Josh's package on some toy cells, and it said zero point three two six. Is that right?",
+          "zh": "我们在一些模拟的玩具数据上跑了包里的 MMD 指标，它给出 0.326。这个数对吗？"
+        },
+        {
+          "en": "You can't tell by looking. Nobody can check a number like that by eye. But you can check a metric on data where you already know the answer.",
+          "zh": "光看是看不出来的，没有人能用肉眼检查这种数字。但你可以在答案已知的数据上检查一个指标。"
+        },
+        {
+          "en": "That's all a test is: a question with a known answer, which your code answers by itself, every time you ask.",
+          "zh": "测试就是这么回事：一个答案已知的问题，由你的代码自己作答，你每问一次它就答一次。"
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "Anatomy of Josh's test",
+      "title_zh": "拆解 Josh 的测试",
+      "lines": [
+        {
+          "en": "Josh already wrote one, in test_evaluation.py. Three cells, two genes. The prediction and the truth are the same cloud.",
+          "zh": "Josh 已经写了一个，在 test_evaluation.py 里。三个细胞，两个基因。预测和真实值是同一团点。"
+        },
+        {
+          "en": "MMD compares two clouds with a kernel. Add the average similarity inside each cloud, then subtract twice the average similarity across them.",
+          "zh": "MMD 用核函数比较两团点：把两团各自内部的平均相似度相加，再减去两团之间平均相似度的两倍。"
+        },
+        {
+          "en": "When the clouds are identical, all three averages are equal, so the answer must be zero.",
+          "zh": "当两团点完全相同时，这三个平均值都相等，所以答案一定是零。"
+        },
+        {
+          "en": "The last line says exactly that: assert that the score is approximately zero. Approximately, because sums of floating-point numbers are rarely exactly zero. If it is, the test passes, silently. If not, it fails, loudly, showing both numbers.",
+          "zh": "最后一行写的正是这一点：断言（assert）分数约等于零。之所以是「约等于」，是因为浮点数加加减减，很少恰好等于零。如果是，测试就悄悄通过；如果不是，它会醒目地报错失败，并给出两个数。"
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "How pytest runs it",
+      "title_zh": "pytest 怎么运行它",
+      "lines": [
+        {
+          "en": "You never call a test yourself. You type pytest. It finds files named test underscore something, runs every function whose name starts with test, and reports on each one.",
+          "zh": "你从不需要自己调用测试，只要输入 pytest。它会找到名字以 test_ 开头的文件，运行其中名字以 test 开头的每个函数，并逐一报告结果。"
+        },
+        {
+          "en": "On its own, Josh's MMD test passes in under two seconds, and most of that is just importing libraries. Pause and predict: what happens when you run the whole folder?",
+          "zh": "单独运行时，Josh 的 MMD 测试不到两秒就通过了，而且大部分时间只是在导入库。停下来猜一猜：对整个文件夹运行，会发生什么？", "pause_after": 4.0
+        },
+        {
+          "en": "It stops early. test_model.py isn't a test function, it's a script. Its code runs the moment pytest imports it. Off the cluster it can't find its config. On the cluster it's worse: it loads the multi-gigabyte atlas files, then crashes in setup, before a single test has run.",
+          "zh": "它会提前停下。test_model.py 不是测试函数，而是一个脚本：pytest 一导入它，里面的代码就开始执行。在集群外，它找不到配置文件；在集群上更糟：它先加载好几个 GB 的图谱文件，再在 setup 里崩溃，一个测试都还没跑。"
+        },
+        {
+          "en": "A good test runs on your code alone. No cluster, no gigabyte files, no GPU. That's what makes it fast enough to run after every edit.",
+          "zh": "好的测试只靠你的代码就能跑：不需要集群、不需要几个 GB 的文件、不需要 GPU。正因为如此，它才快到可以在每次修改后都跑一遍。"
+        }
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "Known answers come from meaning",
+      "title_zh": "已知答案来自指标的含义",
+      "lines": [
+        {
+          "en": "Where do known answers come from? From what the metric means. Pause and predict: push one cloud away from the other. What should MMD do?",
+          "zh": "已知答案从哪里来？从指标的含义来。停下来猜一猜：把一团点推离另一团，MMD 应该怎么变？", "pause_after": 4.0
+        },
+        {
+          "en": "It should grow, and it does. We measured it: shift by nothing, half, one, then two, and MMD climbs from zero, to point zero eight, to point two nine, to point eight five.",
+          "zh": "它应该变大，结果也确实如此。我们测了一下：平移 0、0.5、1、2，MMD 从 0 升到 0.08，再到 0.29，再到 0.85。"
+        },
+        {
+          "en": "A perfect prediction should score an R squared of one, and it does. Shuffle the predicted cells, and it drops to almost zero, because this R squared pairs cell one with cell one. Remember that.",
+          "zh": "完美的预测，R² 应该等于 1，结果确实如此。把预测的细胞顺序打乱，它就掉到几乎为零，因为这种 R² 是把预测的第 i 个细胞和真实的第 i 个细胞配对比较的。记住这一点。"
+        },
+        {
+          "en": "Each of those sentences becomes a test of about five lines. And notice the data: tiny arrays built inside the test. The test checks the logic, not the biology.",
+          "zh": "这每一句话都能变成一个五行左右的测试。再注意一下数据：都是在测试内部造出来的小数组。测试检查的是逻辑，不是生物学。"
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "A test that asks a real question",
+      "title_zh": "一个提出真问题的测试",
+      "lines": [
+        {
+          "en": "Now a test that does more than check arithmetic. In a real experiment, the mouse and human test sets have different numbers of cells. Pause and predict: does R2Evaluation accept that?",
+          "zh": "现在来一个不只是检查算术的测试。在真实实验里，小鼠和人类的测试集细胞数不一样。停下来猜一猜：R2Evaluation 能接受这种情况吗？", "pause_after": 4.0
+        },
+        {
+          "en": "It doesn't. We tried five mouse cells against seven human cells, and it crashed at line 313. Five rows can't be lined up against seven. And with five against five, it doesn't crash at all: it pairs unrelated cells and reports an R squared of point one zero three.",
+          "zh": "不能。我们试了 5 个小鼠细胞对 7 个人类细胞，它在第 313 行崩溃了：5 行没法和 7 行对齐。而如果是 5 对 5，它根本不会崩溃：它会把毫不相关的细胞配成对，然后报出 R² 0.103。"
+        },
+        {
+          "en": "The reason is in its formula. It's the same per-gene R squared as in your reconstruction script, where every cell has a true partner: its own reconstruction. Your benchmark uses a different R squared: it compares the average expression of each gene. An R squared of means wouldn't even notice a shuffle.",
+          "zh": "原因在它的公式里。它和你重建脚本里的逐基因 R² 是同一个公式，在那里每个细胞都有一个真正的搭档：它自己的重建结果。而你的基准用的是另一种 R²：比较每个基因的平均表达。均值 R² 根本察觉不到打乱。"
+        },
+        {
+          "en": "So, which one does the experiment need? The test can't answer that. It turned a hidden assumption into a decision you can now make on purpose.",
+          "zh": "那么，实验需要的是哪一种？测试回答不了这个问题。它把一个隐藏的假设，变成了一个你现在可以有意识地做出的决定。"
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "Three layers of checks",
+      "title_zh": "三层检查",
+      "lines": [
+        {
+          "en": "Tests come in layers. At the bottom are unit tests: one class, toy arrays, milliseconds. Write many of these.",
+          "zh": "测试是分层的。最底层是单元测试：一个类、玩具数组、几毫秒。这种要多写。"
+        },
+        {
+          "en": "In the middle, the whole Experiment runs on a few tiny h5ad files, from a toy config. Seconds. A handful is enough. Josh's toy_config.yaml is the seed of this layer, once it's brought up to date.",
+          "zh": "中间一层：用一份 toy config 和几个很小的 h5ad 文件跑完整个 Experiment。几秒钟，写几个就够。Josh 的 toy_config.yaml 更新之后，就是这一层的雏形。"
+        },
+        {
+          "en": "At the top is the e24_replica notebook on the real atlas: minutes to hours, on the cluster. Run it once the layers below are green, not instead of them.",
+          "zh": "最上层是在真实图谱上运行的 e24_replica notebook：要几分钟到几小时，在集群上跑。等下面几层都通过了再跑它，而不是用它来代替下面几层。"
+        },
+        {
+          "en": "The working loop: change one thing, run pytest, see green, and only then go back to the notebook.",
+          "zh": "工作循环是：改一处，跑 pytest，看到全绿，然后才回到 notebook。"
+        }
+      ]
+    },
+    {
+      "id": "s07",
+      "title_en": "Recap: questions with answers",
+      "title_zh": "回顾：有答案的问题",
+      "lines": [
+        {
+          "en": "Recap. Nobody can check zero point three two six by eye, but you can check that the code gives zero, one, and more, exactly where it must. A test is a question with a known answer, and pytest runs every function whose name starts with test.",
+          "zh": "回顾一下。0.326 这个数没人能用肉眼检查，但你可以检查代码在该给 0、该给 1、该变大的地方，是否恰好如此。测试是一个答案已知的问题；pytest 会运行每个名字以 test 开头的函数。"
+        },
+        {
+          "en": "Known answers come from meaning: identical clouds give zero, a perfect prediction gives one, and more shift gives more distance. A test can also expose an assumption: R2Evaluation pairs rows. And test in layers: unit tests first, the notebook last.",
+          "zh": "已知答案来自指标的含义：相同的两团点给出 0，完美预测给出 1，平移越大距离越大。测试还能暴露一个假设：R2Evaluation 是按行配对的。另外，测试要分层：先跑单元测试，最后才跑 notebook。"
+        },
+        {
+          "en": "Your exercises: turn each known answer into a test, move test_model's code into a test function that uses tiny files, and decide which R squared the experiment means.",
+          "zh": "你的练习：把每个已知答案都写成一个测试，把 test_model 的代码挪进一个使用小文件的测试函数里，并决定实验指的是哪一种 R²。"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+$ pytest -q src/speciesot/Tests
+
+==================================== ERRORS ====================================
+______________ ERROR collecting src/speciesot/Tests/test_model.py ______________
+src/speciesot/Tests/test_model.py:6: in <module>
+    experiment = Experiment(experiment_spec_path)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/speciesot/speciesot_core.py:70: in __init__
+    self.experiment_spec = self.load_experiment_spec()
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/speciesot/speciesot_core.py:81: in load_experiment_spec
+    with open(self.experiment_spec_path, 'r') as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/n/holylabs/mooney_lab/Lab/junyizhou/speciesOT/src/speciesot/Tests/config.yaml'
+=========================== short test summary info ============================
+ERROR src/speciesot/Tests/test_model.py - FileNotFoundError: [Errno 2] No suc...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 1.58s
+
+$ pytest -q src/speciesot/Tests/test_evaluation.py
+.                                                                        [100%]
+1 passed in 1.45s

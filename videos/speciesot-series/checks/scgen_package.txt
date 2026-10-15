@@ -1,0 +1,12 @@
+$ pip download scgen --no-deps   # latest on PyPI, 2026-10-14
+scgen-2.1.0-py3-none-any.whl
+
+$ scgen/__init__.py exports:
+from ._scgenvae import SCGENVAE
+from ._scgen import SCGEN
+
+files mentioning VAEArith: []
+requires: ['Requires-Dist: scvi-tools (>=0.15.0)']
+
+$ python3.12: an attribute that is missing, with a near-miss name
+AttributeError: 'A' object has no attribute 'x_dimensions'. Did you mean: 'x_dimension'?

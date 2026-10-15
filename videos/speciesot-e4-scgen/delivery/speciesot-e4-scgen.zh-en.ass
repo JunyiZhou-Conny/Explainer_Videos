@@ -1,0 +1,100 @@
+[Script Info]
+Title: 
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,43,&H00F3F0E7,&H00F3F0E7,&H00171717,&H00171717,0,0,0,0,100,100,0,0,1,0,0,2,90,90,27,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.40,0:00:05.35,Bilingual,,0,0,0,,能不能只靠一次减法和一次加法，就从小鼠细胞预测出人类细胞？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Can you predict a human cell from a mouse cell with one subtraction and one addition?
+Dialogue: 0,0:00:05.67,0:00:10.68,Bilingual,,0,0,0,,scGen 赌的就是这一点，它也是你的包现在正在接入的模型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's the bet scGen makes, and it's the model your package is wiring up right now.
+Dialogue: 0,0:00:10.83,0:00:14.91,Bilingual,,0,0,0,,要写好它的类，你需要两样东西：一张图讲清楚的思路\N{\fs30\fnInter\c&H00C9C9C9&\bord0}To write its class, you need two things: the idea, in one picture,
+Dialogue: 0,0:00:14.91,0:00:18.00,Bilingual,,0,0,0,,以及一个明确的答案——它到底调用哪一份库代码\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and a clear answer to which library code it calls.
+Dialogue: 0,0:00:20.13,0:00:21.93,Bilingual,,0,0,0,,先从自编码器说起\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Start with the autoencoder.
+Dialogue: 0,0:00:22.10,0:00:24.91,Bilingual,,0,0,0,,编码器把每个细胞压缩成一段很短的编码\N{\fs30\fnInter\c&H00C9C9C9&\bord0}An encoder squeezes each cell into a short code.
+Dialogue: 0,0:00:25.23,0:00:29.17,Bilingual,,0,0,0,,在你的基准里，一个细胞约有一千个基因值\N{\fs30\fnInter\c&H00C9C9C9&\bord0}In your benchmark, a cell has about a thousand gene values;
+Dialogue: 0,0:00:29.17,0:00:32.10,Bilingual,,0,0,0,,在 Josh 的配置里，编码只有 50 个数\N{\fs30\fnInter\c&H00C9C9C9&\bord0}in Josh's config, the code is fifty numbers.
+Dialogue: 0,0:00:32.42,0:00:34.85,Bilingual,,0,0,0,,解码器再从编码把细胞重建出来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A decoder rebuilds the cell from the code.
+Dialogue: 0,0:00:35.03,0:00:37.17,Bilingual,,0,0,0,,训练就是学会把细胞重建好\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Training means learning to rebuild well.
+Dialogue: 0,0:00:37.49,0:00:40.93,Bilingual,,0,0,0,,小鼠和人类细胞一起训练同一个网络\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Mouse and human cells train the same network together,
+Dialogue: 0,0:00:40.93,0:00:43.87,Bilingual,,0,0,0,,于是两个物种都落进同一个共享的编码空间\N{\fs30\fnInter\c&H00C9C9C9&\bord0}so both species land in one shared code space.
+Dialogue: 0,0:00:44.03,0:00:46.83,Bilingual,,0,0,0,,在这个空间里，相似的细胞挨得很近\N{\fs30\fnInter\c&H00C9C9C9&\bord0}In that space, similar cells sit close together.
+Dialogue: 0,0:00:47.15,0:00:49.22,Bilingual,,0,0,0,,正是这一点让下一步成为可能\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's what makes the next step possible.
+Dialogue: 0,0:00:51.87,0:00:57.09,Bilingual,,0,0,0,,把小鼠训练细胞的编码取平均，人类细胞也一样\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Take the mouse training cells and average their codes. Do the same for the human cells.
+Dialogue: 0,0:00:57.09,0:01:01.17,Bilingual,,0,0,0,,这两个平均值之差就是 delta，也就是物种位移\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The difference between the two averages is delta: the species shift.
+Dialogue: 0,0:01:01.33,0:01:06.26,Bilingual,,0,0,0,,现在拿一些模型训练时从没见过的细胞，比如一个被留出的小鼠细胞类型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now take cells the model never trained on, like a held-out mouse cell type.
+Dialogue: 0,0:01:06.26,0:01:10.40,Bilingual,,0,0,0,,编码、加上 delta、解码，出来的就是预测的人类细胞\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Encode them, add delta, decode. Out come predicted human cells.
+Dialogue: 0,0:01:10.57,0:01:13.95,Bilingual,,0,0,0,,停下来想一想：小鼠和人类细胞之间必须满足什么\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause and ponder: what must be true of mouse and human
+Dialogue: 0,0:01:13.95,0:01:16.97,Bilingual,,0,0,0,,才能让同一个箭头对每种细胞类型都管用？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}cells for one arrow to work for every cell type?
+Dialogue: 0,0:01:21.13,0:01:24.87,Bilingual,,0,0,0,,这就是它的假设：只有一个箭头，对每种细胞类型都一样\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's the assumption: one arrow, the same for every cell type.
+Dialogue: 0,0:01:25.19,0:01:29.65,Bilingual,,0,0,0,,如果物种差异依赖于细胞类型，一个箭头就抓不住\N{\fs30\fnInter\c&H00C9C9C9&\bord0}If species differences depend on the cell type, one arrow can't capture them.
+Dialogue: 0,0:01:29.97,0:01:32.29,Bilingual,,0,0,0,,这正是 CellOT 想要弥补的缺口\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's the gap CellOT tries to close.
+Dialogue: 0,0:01:35.47,0:01:37.43,Bilingual,,0,0,0,,现在把这张图对应到类上\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now map the picture onto the class.
+Dialogue: 0,0:01:37.75,0:01:39.71,Bilingual,,0,0,0,,setup 搭好一个还没训练的网络\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Setup builds the untrained network.
+Dialogue: 0,0:01:40.03,0:01:44.19,Bilingual,,0,0,0,,train 把小鼠和人类细胞合成一张带物种标签的表\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Train joins mouse and human into one table with a species label,
+Dialogue: 0,0:01:44.19,0:01:48.42,Bilingual,,0,0,0,,训练网络，然后算出 delta，存成对象属性 self.delta\N{\fs30\fnInter\c&H00C9C9C9&\bord0}fits the network, then computes delta and keeps it on the object.
+Dialogue: 0,0:01:48.57,0:01:53.11,Bilingual,,0,0,0,,predict 对测试集的小鼠细胞编码、加上保存好的 delta、再解码\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Predict encodes the test mouse cells, adds the stored delta, decodes,
+Dialogue: 0,0:01:53.11,0:01:57.60,Bilingual,,0,0,0,,最后返回一个 AnnData，基因和人类测试集一致、顺序相同\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and returns an AnnData with the human test genes, in the same order,
+Dialogue: 0,0:01:57.60,0:02:01.15,Bilingual,,0,0,0,,这样 evaluate 才能拿它和人类测试细胞比较打分\N{\fs30\fnInter\c&H00C9C9C9&\bord0}so evaluate can score it against the human test cells.
+Dialogue: 0,0:02:01.30,0:02:03.10,Bilingual,,0,0,0,,再对照一下现在的占位代码（stub）\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now compare the stubs.
+Dialogue: 0,0:02:03.10,0:02:06.12,Bilingual,,0,0,0,,train 算了 delta，却从没训练网络\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Train computes delta but never fits the network,
+Dialogue: 0,0:02:06.12,0:02:08.74,Bilingual,,0,0,0,,而且 train 一返回，delta 就没了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and delta vanishes when train returns.
+Dialogue: 0,0:02:08.74,0:02:13.02,Bilingual,,0,0,0,,predict 的最后一行本会原封不动地交回小鼠细胞\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Predict's last line would hand back the mouse cells untouched,
+Dialogue: 0,0:02:13.02,0:02:18.60,Bilingual,,0,0,0,,但它根本走不到那里：第 288 行用到的名字只存在于图谱脚本里\N{\fs30\fnInter\c&H00C9C9C9&\bord0}but it never gets there: line 288 uses names that only exist in the atlas script.
+Dialogue: 0,0:02:18.60,0:02:20.40,Bilingual,,0,0,0,,这些就是你要填的空\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Those are your blanks.
+Dialogue: 0,0:02:23.50,0:02:27.98,Bilingual,,0,0,0,,现在回答你的问题：需要追溯到 scgen 的原始代码吗？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now your question: do you need to trace back into the original scgen code?
+Dialogue: 0,0:02:28.30,0:02:32.78,Bilingual,,0,0,0,,先注意一件事：你的项目里有三个不同的东西都叫 scgen\N{\fs30\fnInter\c&H00C9C9C9&\bord0}First, notice that three different things in your project are called scgen.
+Dialogue: 0,0:02:32.93,0:02:35.66,Bilingual,,0,0,0,,第一个：图谱脚本里的 TensorFlow 模型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}One: the TensorFlow model in your atlas scripts.
+Dialogue: 0,0:02:35.98,0:02:40.81,Bilingual,,0,0,0,,它的代码是一份单独的克隆，放在项目里一个被 Git 忽略的文件夹中\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Its code is a separate clone, in a git-ignored folder inside your project,
+Dialogue: 0,0:02:40.81,0:02:44.07,Bilingual,,0,0,0,,在它专用的 TensorFlow 1 环境里运行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and it runs in its own TensorFlow one environment.
+Dialogue: 0,0:02:44.39,0:02:48.38,Bilingual,,0,0,0,,Josh 的辅助函数是从这些脚本里逐行抄过来的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Josh's helper functions are copied from those scripts, line for line.
+Dialogue: 0,0:02:48.53,0:02:53.20,Bilingual,,0,0,0,,第二个：在 Josh 的环境里，import scgen 加载的那个包\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Two: the package that import scgen loads in Josh's environment.
+Dialogue: 0,0:02:53.52,0:02:56.19,Bilingual,,0,0,0,,他的注释说它会拉进 scvi-tools\N{\fs30\fnInter\c&H00C9C9C9&\bord0}His comment says it pulls in scvi-tools.
+Dialogue: 0,0:02:56.51,0:02:59.92,Bilingual,,0,0,0,,我们也检查过这个包：它根本没有 VAEArith\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And we checked that package: it has no VAEArith at all.
+Dialogue: 0,0:03:00.24,0:03:03.59,Bilingual,,0,0,0,,如果加载的是它，setup 会在 scgen.VAEArith 这一行直接报错\N{\fs30\fnInter\c&H00C9C9C9&\bord0}If that's what loads, setup stops right at that name.
+Dialogue: 0,0:03:03.64,0:03:06.52,Bilingual,,0,0,0,,第三个：cellot 文件夹里的自编码器\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Three: the autoencoder in your cellot folder.
+Dialogue: 0,0:03:06.84,0:03:11.76,Bilingual,,0,0,0,,CellOT 的源码复制了一份放在你的仓库里，还带着你自己的修改\N{\fs30\fnInter\c&H00C9C9C9&\bord0}CellOT's source is copied into your repository, with your own edits,
+Dialogue: 0,0:03:11.76,0:03:17.12,Bilingual,,0,0,0,,它里面叫 scgen 的模型是一个普通自编码器，加上同样的均值位移\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and its model named scgen is a plain autoencoder with the same mean shift.
+Dialogue: 0,0:03:17.44,0:03:19.57,Bilingual,,0,0,0,,你的基准数字就是它跑出来的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That one produced your benchmark numbers.
+Dialogue: 0,0:03:19.73,0:03:24.10,Bilingual,,0,0,0,,再看 Josh 的配置：两层、每层 256\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now look at Josh's config: two layers of two hundred fifty-six,
+Dialogue: 0,0:03:24.10,0:03:28.82,Bilingual,,0,0,0,,潜空间 50 维，学习率 0.001\N{\fs30\fnInter\c&H00C9C9C9&\bord0}fifty latent dimensions, and a learning rate of point zero zero one.
+Dialogue: 0,0:03:29.14,0:03:32.17,Bilingual,,0,0,0,,这三项正是 cellot 自编码器的规格\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Those three match the cellot autoencoder's spec.
+Dialogue: 0,0:03:32.49,0:03:37.10,Bilingual,,0,0,0,,而 TensorFlow 版的模型在内部把两层隐藏层固定为每层 800 个单元\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The TensorFlow model fixes its own two layers at eight hundred units each,
+Dialogue: 0,0:03:37.10,0:03:39.34,Bilingual,,0,0,0,,所以这里的层大小根本用不上\N{\fs30\fnInter\c&H00C9C9C9&\bord0}so the layer sizes would go nowhere.
+Dialogue: 0,0:03:39.66,0:03:42.11,Bilingual,,0,0,0,,所以现在，Josh 的类把三者混在了一起\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So today, Josh's class mixes all three:
+Dialogue: 0,0:03:42.11,0:03:46.89,Bilingual,,0,0,0,,辅助函数来自第一个，import 来自第二个，参数来自第三个\N{\fs30\fnInter\c&H00C9C9C9&\bord0}helpers from the first, the import from the second, settings from the third.
+Dialogue: 0,0:03:47.21,0:03:49.49,Bilingual,,0,0,0,,这就是为什么它必须只选一个\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's why it has to pick exactly one.
+Dialogue: 0,0:03:54.70,0:03:58.57,Bilingual,,0,0,0,,所以规则是：你的 scGenModel 类是一个适配器\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So here's the rule. Your scGenModel class is an adapter:
+Dialogue: 0,0:03:58.57,0:04:01.95,Bilingual,,0,0,0,,是包里唯一直接和 scgen 打交道的地方\N{\fs30\fnInter\c&H00C9C9C9&\bord0}the only place in your package that speaks scgen.
+Dialogue: 0,0:04:01.95,0:04:06.09,Bilingual,,0,0,0,,其余部分都只通过你定义的接口打交道：setup、train、predict\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Everything else speaks your contract: setup, train, predict.
+Dialogue: 0,0:04:06.27,0:04:08.59,Bilingual,,0,0,0,,适配器只包住三者之一\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The adapter wraps exactly one of the three.
+Dialogue: 0,0:04:08.91,0:04:11.52,Bilingual,,0,0,0,,如果目标是复现你的基准数字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}If the goal is to reproduce your benchmark
+Dialogue: 0,0:04:11.52,0:04:15.18,Bilingual,,0,0,0,,那就包住 cellot 的自编码器，因为那些数字就是它跑出来的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}numbers, wrap the cellot autoencoder, because it made them.
+Dialogue: 0,0:04:15.50,0:04:17.28,Bilingual,,0,0,0,,先和 Josh 把这件事定下来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Settle that with Josh first.
+Dialogue: 0,0:04:17.33,0:04:21.81,Bilingual,,0,0,0,,所以回答你的问题：不需要，你不用去读原始的 scgen 代码\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So, to your question: no, you don't need the original scgen code.
+Dialogue: 0,0:04:21.81,0:04:27.74,Bilingual,,0,0,0,,对 cellot 自编码器来说，适配器只需要几个调用：加载模型\N{\fs30\fnInter\c&H00C9C9C9&\bord0}For the cellot autoencoder, the adapter needs only a handful of calls: load the model,
+Dialogue: 0,0:04:27.74,0:04:30.49,Bilingual,,0,0,0,,训练它，训练时会顺带算出位移\N{\fs30\fnInter\c&H00C9C9C9&\bord0}train it, which also computes the shift,
+Dialogue: 0,0:04:30.49,0:04:32.08,Bilingual,,0,0,0,,切换到 eval 模式\N{\fs30\fnInter\c&H00C9C9C9&\bord0}switch it to eval mode,
+Dialogue: 0,0:04:32.08,0:04:33.73,Bilingual,,0,0,0,,再把细胞平移过去\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and transport the cells.
+Dialogue: 0,0:04:33.73,0:04:39.58,Bilingual,,0,0,0,,你的仓库里 predict_new_input.sh 已经调用过这些函数，从那里开始读\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your repo already makes these calls in predict new input dot sh. Start reading there.
+Dialogue: 0,0:04:39.73,0:04:44.12,Bilingual,,0,0,0,,回报是：在测试中，一个只有几行的假库就能顶替它\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The payoff: in tests, a few-line fake can stand in for the library,
+Dialogue: 0,0:04:44.12,0:04:46.60,Bilingual,,0,0,0,,测试时根本不用安装它\N{\fs30\fnInter\c&H00C9C9C9&\bord0}so your tests never need it installed.
+Dialogue: 0,0:04:46.92,0:04:50.14,Bilingual,,0,0,0,,我们为这个系列运行 Josh 的代码时，用的正是这个办法\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's exactly how we ran Josh's code for this series.
+Dialogue: 0,0:04:50.30,0:04:54.74,Bilingual,,0,0,0,,停下来想一想：如果以后换成另一种 scGen 实现\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause and ponder: if you later switch to a different scGen implementation,
+Dialogue: 0,0:04:54.74,0:04:57.45,Bilingual,,0,0,0,,你的包里应该有几个文件需要改动？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}how many files in your package should change?
+Dialogue: 0,0:05:01.63,0:05:06.82,Bilingual,,0,0,0,,回顾一下。scGen 先编码，把每个细胞都沿同一个学到的箭头平移，再解码\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Recap. scGen encodes, shifts every cell along one learned arrow, and decodes.
+Dialogue: 0,0:05:06.82,0:05:08.12,Bilingual,,0,0,0,,setup 负责搭建\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Setup builds, train
+Dialogue: 0,0:05:08.12,0:05:11.87,Bilingual,,0,0,0,,train 学习网络和 delta，predict 应用它们\N{\fs30\fnInter\c&H00C9C9C9&\bord0}learns the network and delta, and predict applies them.
+Dialogue: 0,0:05:12.03,0:05:14.00,Bilingual,,0,0,0,,有三个东西都叫 scgen\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Three things are called scgen.
+Dialogue: 0,0:05:14.32,0:05:18.09,Bilingual,,0,0,0,,你的适配器只包住其中一个，也是通往它的唯一一扇门\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your adapter wraps exactly one, and it's the only doorway to it.
+Dialogue: 0,0:05:18.41,0:05:22.25,Bilingual,,0,0,0,,刚才那个问题的答案：只改一个代码文件，也就是适配器\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The answer to the pause: one code file changes, the adapter,
+Dialogue: 0,0:05:22.25,0:05:26.03,Bilingual,,0,0,0,,再加上它在配置里的那一段和它需要的依赖\N{\fs30\fnInter\c&H00C9C9C9&\bord0}plus its section of the config and the dependency it needs.
+Dialogue: 0,0:05:26.20,0:05:30.06,Bilingual,,0,0,0,,你的练习：在 cellot 里打开这四个调用\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your exercise: open each of those four calls in cellot,
+Dialogue: 0,0:05:30.06,0:05:32.73,Bilingual,,0,0,0,,逐个写下它的输入和输出\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and write down its inputs and outputs.
+Dialogue: 0,0:05:33.05,0:05:38.42,Bilingual,,0,0,0,,然后在写任何代码之前，先用注释把 train 和 predict 一步一步写出来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Then write train and predict as plain comments, step by step, before writing any code.

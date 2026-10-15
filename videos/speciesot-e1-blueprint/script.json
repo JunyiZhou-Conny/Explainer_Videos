@@ -1,0 +1,180 @@
+{
+  "title_en": "speciesOT E1 · Four verbs and a contract",
+  "title_zh": "speciesOT 第一集 · 四个动词和一份契约",
+  "preset": "swiss",
+  "description_en": "How to read speciesot_core.py: every class does one of five jobs. Classes, objects, init and self; abstract classes as contracts that check names, not inputs; the Experiment that conducts models and metrics. For a researcher who has never designed a Python package.",
+  "description_zh": "怎样读懂 speciesot_core.py：每个类都属于五种分工之一。类、对象、init 与 self；抽象类是只检查名字、不检查参数的契约；由 Experiment 指挥模型和指标。献给从没设计过 Python 包的研究者。",
+  "tags_zh": [
+    "Python",
+    "面向对象",
+    "单细胞",
+    "科研代码",
+    "教程"
+  ],
+  "bilibili_tid": 201,
+  "production_notes": [
+    "Code shown on screen is Josh's speciesot_core.py as attached on 2026-10-14 (sha256 in SOURCES.md); line numbers refer to that file. Never invent lines that are not in it.",
+    "The TypeError text in s03 is MEASURED with Python 3.12 (videos/speciesot-series/checks/error_trail.json, stage 'abstract'); show it verbatim and tag it 'Python 3.12' (3.9-3.11 word it 'with abstract methods ...').",
+    "Spoken forms: init (never 'underscore underscore'); 'self.lr' and 'model.predict' are voiced through the lexicon; line numbers are spoken as numbers.",
+    "Keep the five-jobs vocabulary identical across scenes: data, contract, conductor, model, metric.",
+    "Python's ABC check is by method NAME at construction time, never by signature: say so in s06 (IdentityModel.train(self) vs the contract's train(self, training_data) is the E5 Liskov example).",
+    "s01 shows e24_src_example.ipynb (repo root of the speciesOT repo, cell 1): the four calls are written there but that cell has no recorded execution; say 'writes', not 'runs'.",
+    "Viewer QA (2026-10-14) fixes: s03 now demonstrates 'names, not inputs' on the two train signatures (IdentityModel() is built: MEASURED, stage identity_end_to_end); scGenModel method bodies are shown as planned (E4); placeholders are tagged; ponders hold ~3 s via EpisodeScene.hold()."
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "title_en": "Four calls, one experiment",
+      "title_zh": "四个调用，一个实验",
+      "lines": [
+        {
+          "en": "Here is a whole research experiment, as Josh's example notebook writes it. Four calls: set up, train, predict, evaluate.",
+          "zh": "这是 Josh 在示例 notebook 里写下的一整个科研实验。只有四个调用：setup、train、predict、evaluate。"
+        },
+        {
+          "en": "Behind them sits one file, speciesot_core.py, about three hundred and fifty lines long. Which lines matter, and where do you even start reading?",
+          "zh": "它们背后是一个文件：speciesot_core.py，大约三百五十行。哪些行重要？到底该从哪里读起？"
+        },
+        {
+          "en": "Here's the trick: every class in that file does one of five jobs. Data, contract, conductor, model, and metric. Let's learn to see them.",
+          "zh": "诀窍是：这个文件里的每一个类，都属于五种分工之一——数据、契约、指挥、模型、指标。我们来学会看出它们。"
+        }
+      ]
+    },
+    {
+      "id": "s02",
+      "title_en": "A class is a blueprint",
+      "title_zh": "类是一张蓝图",
+      "lines": [
+        {
+          "en": "Start with the word the whole file is built from: class. A class is a blueprint. It describes what a thing will know and what it can do, but it isn't the thing itself.",
+          "zh": "先从撑起整个文件的那个词开始：class，类。类是一张蓝图：它描述一个东西会知道什么、能做什么，但它本身还不是那个东西。"
+        },
+        {
+          "en": "Calling a class like a function builds an object from it. Line 115 does exactly that: scGenModel, given its slice of the config.",
+          "zh": "像调用函数一样调用一个类，就会按蓝图造出一个对象。第 115 行正是这么做的：scGenModel，传入属于它的那一段配置。"
+        },
+        {
+          "en": "The moment the object is built, Python runs its init method. Each line of init writes one fact onto the new object: the learning rate, the latent size, where to save the model.",
+          "zh": "对象一造好，Python 就会运行它的 init 方法。init 的每一行都往新对象身上写一个事实：学习率、潜空间大小、模型保存在哪里。"
+        },
+        {
+          "en": "And self just means this particular object. self.lr is this model's learning rate. Build two models, and each one keeps its own.",
+          "zh": "self 的意思就是「这个对象自己」。self.lr 就是这个模型自己的学习率。造两个模型，它们各自保存各自的。"
+        }
+      ]
+    },
+    {
+      "id": "s03",
+      "title_en": "A contract with blanks",
+      "title_zh": "一份留空的契约",
+      "lines": [
+        {
+          "en": "Near the top of the file is a different kind of class: AbstractModel. Every method is marked abstract, and its body only raises an error.",
+          "zh": "文件开头附近有一种不一样的类：AbstractModel。它的每个方法都标着 abstract（抽象），方法体里只会抛出错误。"
+        },
+        {
+          "en": "It's a contract. Anything that calls itself a model must know how to set up, train, and predict. The contract names the methods. It doesn't fill them in.",
+          "zh": "这是一份契约：任何自称「模型」的东西，都必须会 setup、train 和 predict。契约只写下方法的名字，不负责填写内容。"
+        },
+        {
+          "en": "Pause and predict: what happens if you try to build an AbstractModel directly?",
+          "zh": "停下来猜一猜：如果直接去造一个 AbstractModel，会发生什么？"
+        },
+        {
+          "en": "Python refuses. We ran it: can't instantiate abstract class AbstractModel without an implementation for predict, setup and train.",
+          "zh": "Python 会拒绝。我们实际跑过：无法实例化抽象类 AbstractModel，因为 predict、setup、train 都还没有实现。"
+        },
+        {
+          "en": "IdentityModel and scGenModel fill in the blanks. Writing AbstractModel in parentheses after the class name is how they sign the contract. That's called inheritance.",
+          "zh": "IdentityModel 和 scGenModel 把空白填上了。在类名后面的圆括号里写上 AbstractModel，就是它们签下契约的方式。这叫继承。"
+        },
+        {
+          "en": "Look at train. The contract's train takes training data, but IdentityModel's takes nothing, and Python still builds it. The contract checks names, not inputs.",
+          "zh": "看 train：契约里的 train 接收训练数据，IdentityModel 的 train 什么都不接收，可 Python 照样把它造了出来。契约只检查名字，不检查参数。"
+        },
+        {
+          "en": "You'll also see abc.ABC on Experiment and the data classes. With no abstract methods, there's nothing to sign. Josh's note on line 19 says the data classes can drop it, and the same goes for Experiment.",
+          "zh": "你还会在 Experiment 和数据类上看到 abc.ABC。它们没有抽象方法，也就没有要签的条款。Josh 第 19 行的注释说数据类可以去掉它，Experiment 也一样。"
+        }
+      ]
+    },
+    {
+      "id": "s04",
+      "title_en": "The Experiment conducts",
+      "title_zh": "Experiment 负责指挥",
+      "lines": [
+        {
+          "en": "The Experiment class is the conductor. It never does the science itself. It reads the config, builds the pieces, and tells each one when to play.",
+          "zh": "Experiment 类是指挥。它自己从不做科学计算：它读配置、造出各个部件，再告诉每个部件何时上场。"
+        },
+        {
+          "en": "Setup fills two lists: models, from the models section of config.yaml, and evaluations, from the evaluations section.",
+          "zh": "setup 会填好两个列表：models 来自 config.yaml 的 models 部分，evaluations 来自 evaluations 部分。"
+        },
+        {
+          "en": "Train and predict walk down the models list. Predict collects one answer from each model: a set of predicted human cells.",
+          "zh": "train 和 predict 沿着 models 列表逐个执行。predict 从每个模型收集一个答案：一组预测出的人类细胞。"
+        },
+        {
+          "en": "Evaluate crosses the two lists. Two models times two metrics: four numbers.",
+          "zh": "evaluate 把两个列表交叉起来：两个模型乘以两个指标，得到四个数字。"
+        },
+        {
+          "en": "One honest detail: as written, evaluate computes those numbers and then drops them. Line 145 never stores them. Remember that for episode five.",
+          "zh": "说一个实情：按现在的写法，evaluate 算出这些数字后就把它们丢掉了，第 145 行没有存下来。第五集会回到这一点。"
+        }
+      ]
+    },
+    {
+      "id": "s05",
+      "title_en": "Why the contract pays",
+      "title_zh": "契约的回报",
+      "lines": [
+        {
+          "en": "Here's the payoff. Line 137 calls model.predict, without ever asking which model it's talking to.",
+          "zh": "回报在这里：第 137 行调用 model.predict，却从不过问自己在和哪个模型说话。"
+        },
+        {
+          "en": "IdentityModel answers by handing back the mouse cells unchanged. It's the do-nothing baseline: a real model has to beat simply copying the mouse.",
+          "zh": "IdentityModel 的回答是原封不动地交回小鼠细胞。它是「什么都不做」的基线：真正的模型至少要胜过直接照抄小鼠。"
+        },
+        {
+          "en": "scGenModel will answer by shifting the mouse cells toward human. Same question, different answers. That's polymorphism.",
+          "zh": "scGenModel 则会把小鼠细胞往人类方向平移。同一个问题，不同的回答——这就是多态。"
+        },
+        {
+          "en": "So think about it: when you add CellOT as a third model, which lines of the Experiment should have to change?",
+          "zh": "那么想一想：当你把 CellOT 加进来作为第三个模型时，Experiment 里有哪些行应该改动？"
+        },
+        {
+          "en": "Ideally, none. Today, setup still names each model by hand, in a chain of if statements. Episode five pulls on that thread.",
+          "zh": "理想情况是一行都不用改。但目前 setup 里还用一串 if 语句逐个点名模型。第五集会接着解决这个问题。"
+        }
+      ]
+    },
+    {
+      "id": "s06",
+      "title_en": "Recap: five jobs",
+      "title_zh": "回顾：五种分工",
+      "lines": [
+        {
+          "en": "Recap. A class is a blueprint, and an object is built from it. Init writes the object's facts, and self means this one.",
+          "zh": "回顾一下。类是蓝图，对象按蓝图造出来。init 写下对象的事实，self 指的就是这个对象本身。"
+        },
+        {
+          "en": "An abstract class is a contract. It names the methods, and Python won't build a model until every named method is filled in. It checks names, not inputs. Episode five shows what slips through.",
+          "zh": "抽象类是一份契约：它写下方法名，在每个方法都填好之前，Python 不会造出这个模型。但它只检查名字，不检查参数。第五集会看到什么会漏过去。"
+        },
+        {
+          "en": "The Experiment conducts, and models and metrics plug into it through their contracts.",
+          "zh": "Experiment 负责指挥，模型和指标通过各自的契约接进来。"
+        },
+        {
+          "en": "Your turn: pause here, open speciesot_core.py, and label every class with one of the five jobs. This table is your answer key.",
+          "zh": "轮到你了：在这里暂停，打开 speciesot_core.py，给每个类标上五种分工之一。这张表就是你的答案。"
+        }
+      ]
+    }
+  ]
+}

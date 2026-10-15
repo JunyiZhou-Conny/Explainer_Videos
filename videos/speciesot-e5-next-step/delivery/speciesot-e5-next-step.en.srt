@@ -1,0 +1,435 @@
+1
+00:00:00,400 --> 00:00:01,865
+It's Monday morning.
+
+2
+00:00:01,915 --> 00:00:05,074
+There's a file
+of almost three hundred and fifty lines,
+
+3
+00:00:05,074 --> 00:00:06,394
+eighty-three notebooks,
+
+4
+00:00:06,394 --> 00:00:08,379
+and results going back to February.
+
+5
+00:00:08,699 --> 00:00:10,350
+Where does the next hour go?
+
+6
+00:00:10,400 --> 00:00:13,472
+Josh doesn't answer
+that by planning everything first.
+
+7
+00:00:13,792 --> 00:00:16,935
+He runs the code,
+reads the first thing that breaks,
+
+8
+00:00:16,935 --> 00:00:18,414
+and fixes only that.
+
+9
+00:00:18,464 --> 00:00:20,960
+This episode turns that habit into a method.
+
+10
+00:00:23,233 --> 00:00:27,013
+Start with what works.
+With only the identity model,
+
+11
+00:00:27,013 --> 00:00:33,409
+the whole pipeline already runs on toy data:
+setup, train, predict, evaluate. No errors.
+
+12
+00:00:33,566 --> 00:00:38,942
+That's a walking skeleton: every stage exists,
+end to end, even though most are thin.
+
+13
+00:00:39,262 --> 00:00:43,486
+From here, you thicken one bone at a time,
+and the skeleton keeps walking.
+
+14
+00:00:44,066 --> 00:00:46,775
+But look at what evaluate returned: nothing.
+
+15
+00:00:47,095 --> 00:00:49,058
+The scores were computed and dropped.
+
+16
+00:00:49,378 --> 00:00:54,562
+So the first task writes itself:
+return the scores as a table, models by metrics.
+
+17
+00:00:56,900 --> 00:00:59,247
+Now add scGen and keep running.
+
+18
+00:00:59,567 --> 00:01:02,276
+Pause and predict: which stage breaks first?
+
+19
+00:01:06,433 --> 00:01:10,170
+We ran each stage on toy data,
+with a stand-in for scgen,
+
+20
+00:01:10,170 --> 00:01:13,580
+patching only the smallest thing
+needed to reach it.
+
+21
+00:01:13,900 --> 00:01:16,887
+Here's the trail,
+in the order the program reaches it.
+
+22
+00:01:17,033 --> 00:01:21,147
+Setup: an attribute error,
+x_dimensions, line 253.
+
+23
+00:01:21,147 --> 00:01:24,603
+That was episode two. Train: a type error.
+
+24
+00:01:24,603 --> 00:01:30,708
+Train is missing its training data,
+because line 133 calls it with nothing.
+
+25
+00:01:30,867 --> 00:01:33,310
+Predict: a name error at line 288,
+
+26
+00:01:33,310 --> 00:01:37,694
+a helper that lives inside train,
+where predict can't see it.
+
+27
+00:01:38,014 --> 00:01:42,297
+Evaluate:
+once mouse and human have different cell counts,
+
+28
+00:01:42,297 --> 00:01:46,653
+as real data do,
+R squared can't line them up, at line 313.
+
+29
+00:01:46,833 --> 00:01:50,865
+Each error is one card on your to-do board.
+Along scGen's path,
+
+30
+00:01:50,865 --> 00:01:55,601
+the program hands you the order.
+You only choose which path to walk first.
+
+31
+00:01:59,600 --> 00:02:01,397
+Some cards aren't errors yet.
+
+32
+00:02:01,397 --> 00:02:06,293
+Josh's notebook shows a mouse training file
+with about eighteen thousand genes,
+
+33
+00:02:06,293 --> 00:02:11,312
+and a human one with almost sixty-two thousand.
+The test files hold one thousand.
+
+34
+00:02:11,467 --> 00:02:15,222
+One network can't read them all
+until they share one gene axis.
+
+35
+00:02:15,542 --> 00:02:20,256
+Lining up genes is a data job,
+so it belongs next to the data classes.
+
+36
+00:02:20,433 --> 00:02:23,708
+But for your first replication,
+it's already done.
+
+37
+00:02:23,708 --> 00:02:28,031
+The M1 version eight file
+has one shared list of a thousand genes.
+
+38
+00:02:28,031 --> 00:02:33,010
+It's one table plus a split recipe,
+while your data classes take four files.
+
+39
+00:02:33,010 --> 00:02:34,337
+So the real card is:
+
+40
+00:02:34,337 --> 00:02:38,119
+split that table
+into training and test, mouse and human.
+
+41
+00:02:41,200 --> 00:02:45,424
+Pause: out of eighty-three notebooks,
+which would you replicate first, and why?
+
+42
+00:02:49,600 --> 00:02:50,958
+Not a notebook.
+
+43
+00:02:51,008 --> 00:02:56,116
+Pick the first cut of what your project
+already calls its frozen benchmark:
+
+44
+00:02:56,116 --> 00:02:59,861
+M1, version eight, holding out
+non-classical monocytes.
+
+45
+00:03:00,181 --> 00:03:02,202
+Its spec is m1_modern.yaml,
+
+46
+00:03:02,202 --> 00:03:08,864
+and Josh already pasted its model settings
+into the core file, a little above scGenModel.
+
+47
+00:03:09,033 --> 00:03:13,269
+Its scorecard,
+written by the notebook twenty-two v08 results,
+
+48
+00:03:13,269 --> 00:03:15,113
+records the numbers to hit.
+
+49
+00:03:15,433 --> 00:03:19,422
+The identity R squared of means
+is zero point five five four.
+
+50
+00:03:19,742 --> 00:03:24,815
+It's the same on every M1 version eight row,
+because it describes the data:
+
+51
+00:03:24,815 --> 00:03:28,062
+mouse test cells, unchanged, against human ones.
+
+52
+00:03:28,382 --> 00:03:31,006
+No training and no sampling are involved,
+
+53
+00:03:31,006 --> 00:03:34,270
+so once your package reads
+the same file and split,
+
+54
+00:03:34,270 --> 00:03:38,814
+and computes R squared of means,
+it should reproduce it almost exactly.
+
+55
+00:03:39,134 --> 00:03:44,404
+Comparing means,
+not cells, also removes the crash at line 313.
+
+56
+00:03:44,567 --> 00:03:49,879
+Then scGen: zero point nine two seven,
+from the cellot autoencoder,
+
+57
+00:03:49,879 --> 00:03:54,636
+whose run sits on the cluster
+under cellot's results folder.
+
+58
+00:03:54,956 --> 00:03:57,388
+To aim for it, your adapter wraps that model.
+
+59
+00:03:57,708 --> 00:04:01,402
+It averages eighty-cell samples,
+so compute it the same way,
+
+60
+00:04:01,402 --> 00:04:04,727
+and since training adds noise,
+aim within a tolerance.
+
+61
+00:04:05,047 --> 00:04:07,580
+And you don't need to trace all of cellot:
+
+62
+00:04:07,580 --> 00:04:11,319
+open only the few calls your adapter makes,
+from episode four.
+
+63
+00:04:11,639 --> 00:04:13,439
+Your own scorecard is the check.
+
+64
+00:04:18,867 --> 00:04:20,481
+Where does SOLID fit?
+
+65
+00:04:20,531 --> 00:04:23,518
+Treat it as a compass
+for the moment something hurts,
+
+66
+00:04:23,518 --> 00:04:25,318
+not a checklist for day one.
+
+67
+00:04:25,416 --> 00:04:27,955
+Each letter already points
+at a spot in this file.
+
+68
+00:04:28,134 --> 00:04:31,919
+Single responsibility:
+the data classes only load data,
+
+69
+00:04:31,919 --> 00:04:35,430
+so gene alignment
+and splitting belong beside them.
+
+70
+00:04:35,750 --> 00:04:41,254
+Open-closed: adding CellOT should add a class,
+not edit the chain of ifs in setup.
+
+71
+00:04:41,574 --> 00:04:44,176
+A dictionary from names to classes does that.
+
+72
+00:04:44,334 --> 00:04:48,409
+Liskov substitution:
+every model must keep the contract's promise.
+
+73
+00:04:48,729 --> 00:04:52,803
+The contract's train takes training data,
+but IdentityModel's takes none.
+
+74
+00:04:53,123 --> 00:04:59,395
+Line 133 followed IdentityModel,
+so scGen, which keeps the contract, broke.
+
+75
+00:04:59,715 --> 00:05:03,811
+Python checks names, not inputs,
+so only a test can catch this.
+
+76
+00:05:03,967 --> 00:05:08,217
+Interface segregation:
+an evaluation needs one method,
+
+77
+00:05:08,217 --> 00:05:12,751
+and its contract asks for only one.
+Dependency inversion:
+
+78
+00:05:12,751 --> 00:05:15,694
+the Experiment talks to the contract.
+
+79
+00:05:15,694 --> 00:05:21,204
+It never imports the scgen library;
+only scGenModel does, at line 248.
+
+80
+00:05:21,367 --> 00:05:25,669
+And refactoring, meaning reshaping code
+without changing what it does,
+
+81
+00:05:25,669 --> 00:05:28,066
+can wait until the third model arrives.
+
+82
+00:05:32,533 --> 00:05:37,951
+So here's the loop for every session.
+Write the call you wish worked, as a small test.
+
+83
+00:05:37,951 --> 00:05:43,242
+Run it. Read the first error it hits:
+its message is the last line of the traceback.
+
+84
+00:05:43,400 --> 00:05:46,216
+Make the smallest change
+that gets past that line.
+
+85
+00:05:46,536 --> 00:05:49,586
+When the test passes, commit,
+and pick up the next card.
+
+86
+00:05:49,733 --> 00:05:51,515
+Your cards, in order.
+
+87
+00:05:51,515 --> 00:05:56,519
+Walk identity's path first,
+because it has an exact answer:
+
+88
+00:05:56,519 --> 00:06:00,541
+make evaluate return a table, split the M1 file,
+
+89
+00:06:00,541 --> 00:06:07,075
+and compute R squared of means
+until identity gives zero point five five four.
+
+90
+00:06:07,075 --> 00:06:15,034
+Then walk scGen's trail, lines 253, 133 and 288,
+until it lands near zero point nine two seven.
+
+91
+00:06:15,200 --> 00:06:19,386
+Recap. The skeleton already walks,
+the errors give the order,
+
+92
+00:06:19,386 --> 00:06:23,778
+the first golden number
+is identity's zero point five five four,
+
+93
+00:06:23,778 --> 00:06:28,512
+and SOLID is for when something hurts.
+Momentum beats a perfect plan.

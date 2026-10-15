@@ -70,3 +70,20 @@ asynchronous: {ipa: "eɪsˈɪŋkɹənəs", say: "ay-synchronous"}
 pipx: {ipa: "pˈɪp ˈɛks", say: "pip-ex"}
 sys: {ipa: "sˈɪs", say: "sis"}
 "0.27.2": {ipa: "zˈiəɹoʊ pɔɪnt twˈɛnti sˈɛvən pɔɪnt tˈuː", say: "zero point twenty-seven point two"}
+
+# speciesOT series (videos/speciesot-*): package, file and attribute names read aloud
+pytest: {ipa: "pˈaɪ tˈɛst", say: "pie test"}
+CellOT: {ipa: "sˈɛl ˌoʊtˈiː", say: "cell O T"}
+cellot: {ipa: "sˈɛl ˌoʊtˈiː", say: "cell O T"}
+non-classical: {ipa: "nˌɑːn klˈæsɪkəl", say: "non classical"}
+h5ad: {ipa: "ˈeɪtʃ fˈaɪv ˌeɪ dˈiː", say: "H five A D"}
+speciesot_core.py: {ipa: "spˈiːsiːz ˌoʊtˈiː kˈɔːɹ dˈɑːt pˈaɪ", say: "species O T core dot pie"}
+config.yaml: {ipa: "kənfˈɪɡ dˈɑːt jˈæməl", say: "config dot yaml"}
+m1_modern.yaml: {ipa: "ˈɛm wˈʌn mˈɑːdɚn dˈɑːt jˈæməl", say: "M one modern dot yaml"}
+test_evaluation.py: {ipa: "tˈɛst ɪvˌæljuːˈeɪʃən dˈɑːt pˈaɪ", say: "test evaluation dot pie"}
+test_model.py: {ipa: "tˈɛst mˈɑːdəl dˈɑːt pˈaɪ", say: "test model dot pie"}
+yaml.safe_load: {ipa: "jˈæməl dˈɑːt sˈeɪf lˈoʊd", say: "yaml dot safe load"}
+self.lr: {ipa: "sˈɛlf dˈɑːt ˌɛlˈɑːɹ", say: "self dot L R"}
+self.z_dimension: {ipa: "sˈɛlf dˈɑːt zˈiː dᵻmˈɛnʃən", say: "self dot z dimension"}
+self.x_dimensions: {ipa: "sˈɛlf dˈɑːt ˈɛks dᵻmˈɛnʃənz", say: "self dot x dimensions"}
+model.predict: {ipa: "mˈɑːdəl dˈɑːt pɹɪdˈɪkt", say: "model dot predict"}

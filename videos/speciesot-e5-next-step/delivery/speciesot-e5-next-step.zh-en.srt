@@ -1,0 +1,484 @@
+1
+00:00:00,400 --> 00:00:01,865
+周一早上
+It's Monday morning.
+
+2
+00:00:01,915 --> 00:00:06,394
+一个将近三百五十行的文件，八十三个 notebook
+There's a file of almost three hundred and fifty lines, eighty-three notebooks,
+
+3
+00:00:06,394 --> 00:00:08,379
+还有从二月一路积累下来的结果
+and results going back to February.
+
+4
+00:00:08,699 --> 00:00:10,366
+接下来这一个小时，该花在哪里？
+Where does the next hour go?
+
+5
+00:00:10,416 --> 00:00:13,472
+Josh 不是靠先把一切都规划好来回答这个问题的
+Josh doesn't answer that by planning everything first.
+
+6
+00:00:13,792 --> 00:00:18,144
+他运行代码，读第一个坏掉的地方，只修那一处
+He runs the code, reads the first thing that breaks, and fixes only that.
+
+7
+00:00:18,464 --> 00:00:20,960
+这一集把这个习惯变成一套方法
+This episode turns that habit into a method.
+
+8
+00:00:23,233 --> 00:00:24,867
+先看能用的部分
+Start with what works.
+
+9
+00:00:24,867 --> 00:00:27,021
+只用 identity 模型的话
+With only the identity model,
+
+10
+00:00:27,021 --> 00:00:30,290
+整条流水线在玩具数据上已经能跑通
+the whole pipeline already runs on toy data:
+
+11
+00:00:30,290 --> 00:00:33,409
+setup、train、predict、evaluate，没有报错
+setup, train, predict, evaluate. No errors.
+
+12
+00:00:33,566 --> 00:00:38,942
+这叫「会走路的骨架」：每个阶段都已经从头到尾存在，哪怕大多还很单薄
+That's a walking skeleton: every stage exists, end to end, even though most are thin.
+
+13
+00:00:39,262 --> 00:00:43,486
+从这里开始，你一次加粗一根骨头，骨架始终能走
+From here, you thicken one bone at a time, and the skeleton keeps walking.
+
+14
+00:00:44,066 --> 00:00:46,775
+但看看 evaluate 返回了什么：什么也没有
+But look at what evaluate returned: nothing.
+
+15
+00:00:47,095 --> 00:00:49,058
+分数算出来就被丢掉了
+The scores were computed and dropped.
+
+16
+00:00:49,378 --> 00:00:54,562
+所以第一项任务自己冒了出来：把分数作为一张「模型 × 指标」的表返回
+So the first task writes itself: return the scores as a table, models by metrics.
+
+17
+00:00:56,900 --> 00:00:59,247
+现在加上 scGen 继续跑
+Now add scGen and keep running.
+
+18
+00:00:59,567 --> 00:01:02,276
+停下来猜一猜：哪个阶段最先坏？
+Pause and predict: which stage breaks first?
+
+19
+00:01:06,433 --> 00:01:10,170
+我们用玩具数据和一个替身 scgen 把每个阶段都跑了一遍
+We ran each stage on toy data, with a stand-in for scgen,
+
+20
+00:01:10,170 --> 00:01:13,580
+每次只打刚好够走到那一步的最小补丁
+patching only the smallest thing needed to reach it.
+
+21
+00:01:13,900 --> 00:01:16,887
+下面就是这串足迹，按程序遇到它们的顺序排列
+Here's the trail, in the order the program reaches it.
+
+22
+00:01:17,033 --> 00:01:22,929
+setup：AttributeError，x_dimensions，第 253 行——第二集讲过
+Setup: an attribute error, x_dimensions, line 253. That was episode two.
+
+23
+00:01:22,929 --> 00:01:24,567
+train：TypeError
+Train: a type error.
+
+24
+00:01:24,567 --> 00:01:30,708
+train 缺少 training_data 参数，因为第 133 行调用它时什么也没传
+Train is missing its training data, because line 133 calls it with nothing.
+
+25
+00:01:30,867 --> 00:01:33,310
+predict：第 288 行的 NameError
+Predict: a name error at line 288,
+
+26
+00:01:33,310 --> 00:01:37,694
+用到的辅助函数定义在 train 内部，predict 看不见它
+a helper that lives inside train, where predict can't see it.
+
+27
+00:01:38,014 --> 00:01:42,297
+evaluate：真实数据里小鼠和人类细胞数不同
+Evaluate: once mouse and human have different cell counts,
+
+28
+00:01:42,297 --> 00:01:46,653
+R² 就没法把两边的细胞一一配对，第 313 行
+as real data do, R squared can't line them up, at line 313.
+
+29
+00:01:46,833 --> 00:01:49,605
+每个错误就是待办看板上的一张卡片
+Each error is one card on your to-do board.
+
+30
+00:01:49,605 --> 00:01:52,958
+沿着 scGen 这条路，顺序由程序交给你
+Along scGen's path, the program hands you the order.
+
+31
+00:01:52,958 --> 00:01:55,601
+你只需要决定先走哪一条路
+You only choose which path to walk first.
+
+32
+00:01:59,600 --> 00:02:01,407
+有些卡片现在还不是报错
+Some cards aren't errors yet.
+
+33
+00:02:01,407 --> 00:02:06,328
+Josh 的 notebook 显示，小鼠训练文件有 18,024 个基因
+Josh's notebook shows a mouse training file with about eighteen thousand genes,
+
+34
+00:02:06,328 --> 00:02:09,256
+人类训练文件有 61,759 个
+and a human one with almost sixty-two thousand.
+
+35
+00:02:09,256 --> 00:02:11,312
+而测试文件只有 1,000 个
+The test files hold one thousand.
+
+36
+00:02:11,467 --> 00:02:15,222
+在它们共享同一个基因轴之前，一个网络没法把它们都读进去
+One network can't read them all until they share one gene axis.
+
+37
+00:02:15,542 --> 00:02:20,256
+对齐基因是数据的工作，所以它应该放在数据类旁边
+Lining up genes is a data job, so it belongs next to the data classes.
+
+38
+00:02:20,433 --> 00:02:23,708
+不过第一次复现时，这一步已经做好了
+But for your first replication, it's already done.
+
+39
+00:02:23,708 --> 00:02:28,031
+M1 第 8 版的文件已有一份共享的一千个基因列表
+The M1 version eight file has one shared list of a thousand genes.
+
+40
+00:02:28,031 --> 00:02:33,010
+它是一张表加一份切分规则，而你的数据类要的是四个文件
+It's one table plus a split recipe, while your data classes take four files.
+
+41
+00:02:33,010 --> 00:02:38,119
+所以真正的卡片是：把这张表切成训练和测试、小鼠和人类四份
+So the real card is: split that table into training and test, mouse and human.
+
+42
+00:02:41,200 --> 00:02:45,424
+停一下：八十三个 notebook 里，你会先复现哪一个？ 为什么？
+Pause: out of eighty-three notebooks, which would you replicate first, and why?
+
+43
+00:02:49,600 --> 00:02:50,958
+答案不是某个 notebook
+Not a notebook.
+
+44
+00:02:51,008 --> 00:02:56,116
+选你的项目早已称作「冻结基准」的第一个切分
+Pick the first cut of what your project already calls its frozen benchmark:
+
+45
+00:02:56,116 --> 00:02:59,861
+M1 第 8 版，留出非经典单核细胞
+M1, version eight, holding out non-classical monocytes.
+
+46
+00:03:00,181 --> 00:03:02,220
+它的规格文件是 m1_modern.yaml
+Its spec is m1_modern.yaml,
+
+47
+00:03:02,220 --> 00:03:06,901
+而 Josh 已经把其中的模型设置粘贴进了核心文件
+and Josh already pasted its model settings into the core file,
+
+48
+00:03:06,901 --> 00:03:08,864
+就在 scGenModel 上方不远处
+a little above scGenModel.
+
+49
+00:03:09,033 --> 00:03:13,269
+它的成绩表由 22_v08_results 这个 notebook 写出
+Its scorecard, written by the notebook twenty-two v08 results,
+
+50
+00:03:13,269 --> 00:03:15,113
+记录了要对上的数字
+records the numbers to hit.
+
+51
+00:03:15,433 --> 00:03:19,422
+identity 的均值 R² 是 0.554
+The identity R squared of means is zero point five five four.
+
+52
+00:03:19,742 --> 00:03:24,815
+它在 M1 第 8 版的每一行都一样，因为它描述的是数据本身
+It's the same on every M1 version eight row, because it describes the data:
+
+53
+00:03:24,815 --> 00:03:28,062
+原封不动的小鼠测试细胞，对比人类测试细胞
+mouse test cells, unchanged, against human ones.
+
+54
+00:03:28,382 --> 00:03:31,006
+这里不涉及训练，也不涉及抽样
+No training and no sampling are involved,
+
+55
+00:03:31,006 --> 00:03:34,270
+所以只要你的包读的是同一个文件、同一个切分
+so once your package reads the same file and split,
+
+56
+00:03:34,270 --> 00:03:38,814
+并且算的是均值 R²，就应该几乎能精确复现它
+and computes R squared of means, it should reproduce it almost exactly.
+
+57
+00:03:39,134 --> 00:03:44,404
+比较均值而不是逐个细胞，也顺带消除了第 313 行的崩溃
+Comparing means, not cells, also removes the crash at line 313.
+
+58
+00:03:44,567 --> 00:03:49,879
+然后是 scGen：0.927，来自 cellot 的自编码器
+Then scGen: zero point nine two seven, from the cellot autoencoder,
+
+59
+00:03:49,879 --> 00:03:54,636
+它的运行结果在集群上 cellot 的 results 文件夹里
+whose run sits on the cluster under cellot's results folder.
+
+60
+00:03:54,956 --> 00:03:57,388
+要对上这个数，适配器就得封装这个模型
+To aim for it, your adapter wraps that model.
+
+61
+00:03:57,708 --> 00:04:01,402
+这个数是对 80 个细胞的抽样取平均，要用同样的方法算
+It averages eighty-cell samples, so compute it the same way,
+
+62
+00:04:01,402 --> 00:04:04,727
+训练也会带来随机波动，所以在容差范围内对上即可
+and since training adds noise, aim within a tolerance.
+
+63
+00:04:05,047 --> 00:04:07,580
+另外，你不需要把 cellot 从头追一遍
+And you don't need to trace all of cellot:
+
+64
+00:04:07,580 --> 00:04:11,319
+只需打开适配器会调用的那几个函数，第四集讲过
+open only the few calls your adapter makes, from episode four.
+
+65
+00:04:11,639 --> 00:04:13,439
+你自己的成绩表就是检验
+Your own scorecard is the check.
+
+66
+00:04:18,867 --> 00:04:20,481
+SOLID 放在哪里？
+Where does SOLID fit?
+
+67
+00:04:20,531 --> 00:04:23,429
+把它当作代码开始难改、难测的时候用的指南针
+Treat it as a compass for the moment something hurts,
+
+68
+00:04:23,429 --> 00:04:25,229
+而不是第一天就要逐条打勾的清单
+not a checklist for day one.
+
+69
+00:04:25,416 --> 00:04:27,955
+每个字母都已经指向这个文件里的某个位置
+Each letter already points at a spot in this file.
+
+70
+00:04:28,134 --> 00:04:31,919
+单一职责：数据类只负责加载数据
+Single responsibility: the data classes only load data,
+
+71
+00:04:31,919 --> 00:04:35,430
+所以基因对齐和切分应该放在它们旁边
+so gene alignment and splitting belong beside them.
+
+72
+00:04:35,750 --> 00:04:38,875
+开闭原则：加入 CellOT 应该是新增一个类
+Open-closed: adding CellOT should add a class,
+
+73
+00:04:38,875 --> 00:04:41,254
+而不是去改 setup 里那一串 if
+not edit the chain of ifs in setup.
+
+74
+00:04:41,574 --> 00:04:44,176
+一个「名字到类」的字典就能做到
+A dictionary from names to classes does that.
+
+75
+00:04:44,334 --> 00:04:48,409
+里氏替换：每个模型都必须信守契约的承诺
+Liskov substitution: every model must keep the contract's promise.
+
+76
+00:04:48,729 --> 00:04:50,569
+契约里的 train 接收训练数据
+The contract's train takes training data,
+
+77
+00:04:50,569 --> 00:04:52,803
+而 IdentityModel 的 train 什么都不接收
+but IdentityModel's takes none.
+
+78
+00:04:53,123 --> 00:04:59,395
+第 133 行照着 IdentityModel 来写，于是信守契约的 scGen 反而出错了
+Line 133 followed IdentityModel, so scGen, which keeps the contract, broke.
+
+79
+00:04:59,715 --> 00:05:03,811
+Python 只检查名字、不检查参数，所以只有测试能抓到它
+Python checks names, not inputs, so only a test can catch this.
+
+80
+00:05:03,967 --> 00:05:11,050
+接口隔离：评估只需要一个方法，它的契约也只要求这一个
+Interface segregation: an evaluation needs one method, and its contract asks for only one.
+
+81
+00:05:11,050 --> 00:05:18,528
+依赖倒置：Experiment 只和契约打交道，从不导入 scgen 这个库
+Dependency inversion: the Experiment talks to the contract. It never imports the scgen library;
+
+82
+00:05:18,528 --> 00:05:21,204
+只有 scGenModel 在第 248 行导入它
+only scGenModel does, at line 248.
+
+83
+00:05:21,367 --> 00:05:23,350
+至于重构（不改变功能、只调整代码结构）
+And refactoring,
+
+84
+00:05:23,350 --> 00:05:28,066
+可以等到第三个模型出现时再做
+meaning reshaping code without changing what it does, can wait until the third model arrives.
+
+85
+00:05:32,533 --> 00:05:37,951
+所以每次坐下来都走这个循环：把你希望能跑通的调用写成一个小测试
+So here's the loop for every session. Write the call you wish worked, as a small test.
+
+86
+00:05:37,951 --> 00:05:43,242
+运行它；读它遇到的第一个错误，错误信息就在 traceback 的最后一行
+Run it. Read the first error it hits: its message is the last line of the traceback.
+
+87
+00:05:43,400 --> 00:05:46,216
+做最小的修改，让程序越过那一行
+Make the smallest change that gets past that line.
+
+88
+00:05:46,536 --> 00:05:49,586
+测试通过了就提交，然后拿起下一张卡片
+When the test passes, commit, and pick up the next card.
+
+89
+00:05:49,733 --> 00:05:53,852
+你的卡片，按顺序是：先走 identity 这条路
+Your cards, in order. Walk identity's path first,
+
+90
+00:05:53,852 --> 00:05:58,980
+因为它有精确答案：让 evaluate 返回一张表
+because it has an exact answer: make evaluate return a table,
+
+91
+00:05:58,980 --> 00:06:07,133
+切分 M1 文件；算均值 R²，直到 identity 得到 0.554
+split the M1 file, and compute R squared of means until identity gives zero point five five four.
+
+92
+00:06:07,133 --> 00:06:09,150
+然后沿着 scGen 的报错足迹
+Then walk scGen's trail,
+
+93
+00:06:09,150 --> 00:06:15,034
+第 253、133、288 行，一路走到接近 0.927
+lines 253, 133 and 288, until it lands near zero point nine two seven.
+
+94
+00:06:15,200 --> 00:06:19,408
+回顾一下：骨架已经能走，报错给出顺序
+Recap. The skeleton already walks, the errors give the order,
+
+95
+00:06:19,408 --> 00:06:23,822
+第一个黄金数字是 identity 的 0.554
+the first golden number is identity's zero point five five four,
+
+96
+00:06:23,822 --> 00:06:26,443
+SOLID 留到代码开始难改、难测的时候再用
+and SOLID is for when something hurts.
+
+97
+00:06:26,443 --> 00:06:28,512
+动起来，比完美的计划更重要
+Momentum beats a perfect plan.

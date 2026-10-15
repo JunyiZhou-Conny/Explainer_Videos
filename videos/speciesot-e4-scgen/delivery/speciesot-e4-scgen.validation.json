@@ -1,0 +1,77 @@
+{
+  "probe": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "341.000000"
+    }
+  },
+  "target_seconds": 341.0,
+  "audio_mean_db": -19.4,
+  "caption_cues": 86,
+  "script_sha256": "d63cc124696e9f639967170bff799e485acc0896430973385126fdfaa249d021",
+  "source_matches_plan": true,
+  "chapters": [
+    {
+      "start": 0.0,
+      "id": "s01",
+      "title": "Prediction by arithmetic"
+    },
+    {
+      "start": 19.733333333333334,
+      "id": "s02",
+      "title": "Squeeze, then rebuild"
+    },
+    {
+      "start": 51.46666666666667,
+      "id": "s03",
+      "title": "The arithmetic"
+    },
+    {
+      "start": 95.06666666666666,
+      "id": "s04",
+      "title": "Three methods, three jobs"
+    },
+    {
+      "start": 143.1,
+      "id": "s05",
+      "title": "Three things called scgen"
+    },
+    {
+      "start": 234.3,
+      "id": "s06",
+      "title": "One adapter, one choice"
+    },
+    {
+      "start": 301.23333333333335,
+      "id": "s07",
+      "title": "Recap: one arrow, one doorway"
+    }
+  ],
+  "music": {
+    "score_coverage": 0.723,
+    "notes": 578,
+    "fx": 35,
+    "chords": 51,
+    "dropped_in_silences": 0,
+    "duration": 341.0,
+    "voice_lufs": -16.0,
+    "music_in_gaps_lufs": -22.0,
+    "music_under_speech_lufs": -32.11,
+    "mix_lufs": -16.18,
+    "mix_true_peak_dbtp": -1.21
+  }
+}

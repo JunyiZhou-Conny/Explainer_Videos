@@ -1,0 +1,77 @@
+{
+  "probe": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "399.033333"
+    }
+  },
+  "target_seconds": 399.0,
+  "audio_mean_db": -19.5,
+  "caption_cues": 95,
+  "script_sha256": "f3f77ba44e621e3d2f13db1826e8f054817ae33fefe3cf1ea57b6bc262ac7d94",
+  "source_matches_plan": true,
+  "chapters": [
+    {
+      "start": 0.0,
+      "id": "s01",
+      "title": "The error is gone. The bug is not."
+    },
+    {
+      "start": 33.266666666666666,
+      "id": "s02",
+      "title": "Three windows, two wires"
+    },
+    {
+      "start": 75.36666666666667,
+      "id": "s03",
+      "title": "One value, five places"
+    },
+    {
+      "start": 136.60000000000002,
+      "id": "s04",
+      "title": "Two lookups, two errors"
+    },
+    {
+      "start": 219.4666666666667,
+      "id": "s05",
+      "title": "The silent twin"
+    },
+    {
+      "start": 279.5,
+      "id": "s06",
+      "title": "Four rules for names"
+    },
+    {
+      "start": 340.43333333333334,
+      "id": "s07",
+      "title": "Recap: follow the name"
+    }
+  ],
+  "music": {
+    "score_coverage": 0.814,
+    "notes": 671,
+    "fx": 46,
+    "chords": 57,
+    "dropped_in_silences": 0,
+    "duration": 399.0,
+    "voice_lufs": -16.06,
+    "music_in_gaps_lufs": -22.06,
+    "music_under_speech_lufs": -31.56,
+    "mix_lufs": -16.32,
+    "mix_true_peak_dbtp": -1.0
+  }
+}
