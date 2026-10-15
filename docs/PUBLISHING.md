@@ -54,6 +54,17 @@ are commented on the issue and retried next run; a computer-use agent or a human
 rest. Setup, once: `npm i -g @biliup/cli && biliup login && gh auth login`, then schedule
 `python3 tools/publish_worker.py --repo JunyiZhou-Conny/Explainer_Videos --upload`.
 
+### What is live on Bilibili: `catalog/bilibili.json`
+
+The registry maps each episode slug to its Bilibili video; the site's library page reads it.
+The publish worker records every upload it makes. `.github/workflows/bilibili-sync.yml` runs
+`tools/bilibili_registry.py sync` daily: it reads the channel's public video list and
+records videos whose title equals an episode's `title_zh`, which catches uploads made by
+hand. Channel videos it cannot place stay under `unmatched` and are listed on the library
+page; to place one, run `python3 tools/bilibili_registry.py record --slug <slug> --bvid <BV…>
+--title "<title>"` and commit. Bilibili's risk control sometimes refuses datacenter IPs
+(HTTP 412); a refused sync leaves the registry unchanged and retries the next day.
+
 ## Current collection
 
 The initial incubator release collects seven full videos. The catalog links all 23 current

@@ -1,0 +1,37 @@
+name: Bilibili registry sync
+
+# Matches the channel's public video list against the episodes and records new matches in
+# catalog/bilibili.json, which the library page reads. Catches uploads made outside the
+# publish worker. Bilibili sometimes refuses datacenter IPs; the script then exits 0 with
+# the registry unchanged, and the next day's run retries.
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bilibili-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sync with the channel
+        run: python3 tools/bilibili_registry.py sync
+      - name: Commit the registry if it changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- catalog/bilibili.json; then
+            echo "registry unchanged"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalog/bilibili.json
+          git commit -m "catalog: sync Bilibili registry"
+          git push
