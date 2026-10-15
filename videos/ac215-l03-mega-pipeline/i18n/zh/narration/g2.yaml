@@ -19,7 +19,7 @@ S08:
   - "我们在 transcribe audio 这个 container 里，Python 还找不到 Google 的包。"
 - en: "Step 7: the README lists three packages to add, so type all three in one uv add command. Pause and run it."
   zh:
-  - "第 7 步：README 列出了三个要加的包，所以用一条 uv add 命令把三个包都加上。"
+  - "第 7 步：README 列出了三个要加的包，所以用一条 uv add 命令把三个一起加上。"
   - "暂停一下，自己跑一遍。"
 - en: "Three packages asked for, and 26 installed. As in lecture 1, each package brings its own dependencies, and uv resolves the whole tree."
   zh:
@@ -121,7 +121,7 @@ S09:
   - "The key isn't in this component's secrets folder, you changed directory away from /app, or you ran docker run from the wrong laptop folder."
 - en: "One extra check: even this failed run created two folders on your laptop, input audios, and text prompts with your group inside. The code makes them before it builds the client."
   zh:
-  - "一个额外检查：就连这次失败的运行，也在你笔记本上建了两个目录，input audios，还有带着你们组目录的 text prompts。"
+  - "一个额外检查：就连这次失败的运行，也在你笔记本上建了两个目录：input audios，还有 text prompts，里面有你们组的目录。"
   - "代码是在创建客户端之前建好它们的。"
 - en: "With your key, look for the word download, one object name per recording, and the audio files appearing in input audios on your laptop. Pause, check your key is in secrets, and run it."
   zh:
@@ -152,7 +152,7 @@ S10:
 - en: "Then open the new text file under text prompts, group-01, on your laptop. If it says None, Speech-to-Text returned nothing: delete it and transcribe again, because finished files are skipped."
   zh:
   - "然后在你的笔记本上，打开 text prompts 下 group-01 里那个新的文本文件。"
-  - "如果里面是 None，就是 Speech-to-Text 什么也没返回：删掉它，重新转写，因为转写过的文件会被跳过。"
+  - "如果里面是 None，说明 Speech-to-Text 什么也没返回：删掉它，重新转写，因为转写过的文件会被跳过。"
 - en: "Step 12: python cli.py dash dash upload, or dash u. It uploads only files starting with input, under the same name in the bucket: look for uploading, then text prompts, your group, and the file."
   zh:
   - "第 12 步：python cli.py --upload，或者 -u。"
@@ -317,7 +317,7 @@ S13:
   - "所以在 C 里，暂停一下，跑下载和合成，然后退出、重新构建。"
 - en: "D, translate text, races through the same setup: cd, key, uv init, the same Dockerfile, a build."
   zh:
-  - "接着是 D，也就是 translate text，飞快地走完同样的准备：cd、密钥、uv init、同样的 Dockerfile，再构建一次。"
+  - "接着是 D，也就是 translate text，飞快地走完同样的准备：cd、密钥、uv init、同样的 Dockerfile，再构建。"
 - en: "Then run it, add storage and translate, and set the group name on line 18. Like C, even help needs the key. Pause and catch up."
   zh:
   - "然后运行它，加上 storage 和 translate，再在第 18 行设置组名。"

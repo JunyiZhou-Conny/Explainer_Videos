@@ -12,8 +12,9 @@ Beats (script.md "## S15", one voiceover block each):
     becomes .../mega-pipeline$. The five-filter `docker image ls` (extra; Terminal.type folds it
     onto six rows, one filter a row) -> laptop/70-images-all.txt lines 2-7. On "transcribe audio
     at" 1.48GB gets a YELLOW bar and box A pulses; on "the other four" the four 84xMB sizes get
-    bars and boxes B-E pulse.
- 2  V1 fades; the terminal shrinks to 10 rows; `git status` (extra) -> 71-git-status.txt lines
+    bars one after another while boxes B-E pulse.
+ 2  V1 and the old screen fade together (a fresh screen, as `clear`); the terminal shrinks to 10
+    rows with the bare prompt at the top; on "An extra git status" it types `git status` (extra) -> 71-git-status.txt lines
     5-9, 11-14 (tabs shown as a terminal shows them, 8 columns). Line 9 gets a YELLOW bar on "your
     edited cli.py files" and the GREY caption "we set group_name only in transcribe_audio: yours
     also lists the other four cli.py and, / with your key, generate_text's text_prompts/ and
@@ -35,21 +36,22 @@ Beats (script.md "## S15", one voiceover block each):
     lines 2-11, printed pair by pair while V1's boxes A-E dissolve one by one (the cabinet stays).
     "Older builds stay behind untagged": the terminal shrinks to the strip (the last pair) and
     four dashed TEAL boxes, each with a GOLD key, appear above it over the GREY label "older builds
-    · untagged" (the keys pulse on "each holding your key"). `docker image prune -f` (extra; no
+    · untagged" (the keys pulse RED on "each holding your key": a key inside an image). `docker image prune -f` (extra; no
     output: not captured), the GREY caption "removes the untagged older builds · each held your
     key" above them, and the boxes and their label dissolve. In their place the GREY caption "still
     on disk: the base image (L4 uses it again) and the build cache / docker builder prune frees it"
     and a GREEN check "no containers left: every run used --rm"; a 2.4 s hold (silent) to read them.
  5  Everything goes. "Test yourself" (YELLOW underline). Q1 (26 pt, YELLOW badge) with a text-free
     thumbnail of V1 (box D pulses on "translate text", the cabinet on "who wrote it"); Q1 shrinks to
-    22 pt GREY and Q2 comes in below (thumbnail: V3's window, the image block with its /app cavity,
+    22 pt GREY, keeping its line breaks (each glyph only shrinks and slides), and Q2 comes in below (thumbnail: V3's window, the image block with its /app cavity,
     the GREEN venv box outside it and the PINK route from the laptop folder; the cavity pulses on
     "the mount", the venv box on "uv project environment").
  6  Q3 (thumbnail: V4's dashed writable sheet with a GREEN shelf of package chips; it pulses on "what
     survives"), Q4 (a text-free PINK signpost, a GOLD key at its tip; `/app` YELLOW on "why only
     from slash app"), Q5 (a sieve with the GOLD key on it over a TEAL box; the key pulses on "a
-    git-ignored key", the sieve on "and the fix").
- 7  The thumbnail goes; the five questions reflow to full width at the top; footer cards "Answers:
+    git-ignored key" (RED: a key inside an image), the sieve on "and the fix").
+ 7  The thumbnail goes; the five questions (Q5 straight from its big form) reflow to full width at
+    the top, top to bottom; footer cards "Answers:
     exercises.md" and, under it, "Study guide + every command:" with the MLOps_Learning link and the
     guide's path (it pulses on "study guide"); on "Next lecture" a dashed GREY card at the right,
     "next: L4" / "branch flexible-workflow", whose three lines appear as they are said ("your own
@@ -68,7 +70,7 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (MONO, box, check_mark, chip, cross_mark, folder_glyph, label, mono,
+from explainer.devops import (MONO, OUTPUT, box, check_mark, chip, cross_mark, folder_glyph, label, mono,
                               mono_line, step_badge, substring)
 from explainer.scene import VoiceScene
 
@@ -220,6 +222,20 @@ def print_in(scene, t, lines, run_time: float = 0.4):
     return t.print(scene, lines, run_time=run_time, lag=0.12)
 
 
+def print_with(scene, t, lines, extra=(), run_time: float = 0.35):
+    """Print output lines the way Terminal.print does (cut at the row, OUTPUT colour), in ONE play
+    together with `extra` animations (Terminal.print plays alone). The room must be made first."""
+    assert len(t.lines) + len(lines) <= t.rows, (len(t.lines), len(lines), t.rows)
+    new = []
+    for s in lines:
+        ln = mono_line(t._cut(s), t.size, OUTPUT)
+        t._place(ln, len(t.lines))
+        t.lines.add(ln)
+        new.append(ln)
+    scene.play(LaggedStart(*[FadeIn(m) for m in new], lag_ratio=0.12), *extra, run_time=run_time)
+    return new
+
+
 def bare(scene, t):
     """The prompt returns (no output)."""
     make_room(scene, t, 1)
@@ -248,10 +264,15 @@ def sbar(line, sub: str | None, color=TURN, opacity: float = 0.3) -> Rectangle:
         .set_fill(color, opacity).move_to([g.get_center()[0], line.strut.get_center()[1], 0])
 
 
-def bars_on(scene, pairs, run_time: float = 0.4, extra=()):
-    """Bars over (row, sub) pairs, faded in together, each made part of its row (it scrolls with it)."""
+def bars_on(scene, pairs, run_time: float = 0.4, extra=(), lag: float = 0.0):
+    """Bars over (row, sub) pairs, faded in together (one after another with lag > 0, the `extra`
+    animations staggered alike), each made part of its row (it scrolls with it)."""
     bars = [sbar(r, s) for r, s in pairs]
-    scene.play(*[FadeIn(b) for b in bars], *extra, run_time=run_time)
+    if lag:
+        scene.play(LaggedStart(*[FadeIn(b) for b in bars], lag_ratio=lag),
+                   LaggedStart(*extra, lag_ratio=lag), run_time=run_time)
+    else:
+        scene.play(*[FadeIn(b) for b in bars], *extra, run_time=run_time)
     for (r, _), b in zip(pairs, bars):
         scene.remove(b)
         r.add(b)
@@ -461,8 +482,11 @@ def wrap_lines(s: str, size: float, width: float, code=()) -> list:
     return [ln.replace(NBSP, " ") for ln in whole]
 
 
-def wrapped(s: str, size: float, color: str, width: float, code=()) -> VGroup:
-    strs = wrap_lines(s, size, width, code)
+def wrapped(s: str, size: float, color: str, width: float, code=(), strs=None) -> VGroup:
+    """s wrapped to `width`, or broken exactly as the given line strings `strs`."""
+    if strs is None:
+        strs = wrap_lines(s, size, width, code)
+    assert " ".join(strs) == s, (strs, s)
     rows = [text_line(ln, size, color, code) for ln in strs]
     pitch = rows[0].strut.height * 1.22
     for k, r in enumerate(rows):
@@ -473,11 +497,11 @@ def wrapped(s: str, size: float, color: str, width: float, code=()) -> VGroup:
     return g
 
 
-def question(i: int, size: float, color: str, badge_color: str, width: float) -> VGroup:
-    """Question i (1-based): a numbered badge and the wrapped text, the text's top-left at the
-    origin. .badge .text .flat (badge + glyphs, for glyph-to-glyph transforms)"""
+def question(i: int, size: float, color: str, badge_color: str, width: float, strs=None) -> VGroup:
+    """Question i (1-based): a numbered badge and the wrapped text (or the line breaks `strs`), the
+    text's top-left at the origin. .badge .text .flat (badge + glyphs, for glyph-to-glyph transforms)"""
     s, code = QUESTIONS[i - 1]
-    txt = wrapped(s, size, color, width, code)
+    txt = wrapped(s, size, color, width, code, strs)
     r = 0.24 if size >= Q_BIG else 0.19
     b = step_badge(i, badge_color, size=22 if size >= Q_BIG else 20, radius=r)
     first = txt.lines[0].strut
@@ -623,7 +647,10 @@ class Recap(VoiceScene):
         return th
 
     def demote(self, q: VGroup, i: int, top: float, width: float = Q_W, size: float = Q_SMALL):
-        small = self.place_q(question(i, size, S.GREY, S.GREY, width), top)
+        """q made small and GREY with the SAME line breaks, so every glyph only shrinks and slides
+        (no word jumps to another line); the one reflow is the final layout (beat 7)."""
+        small = self.place_q(question(i, size, S.GREY, S.GREY, width, strs=q.text.strs), top)
+        assert len(small.flat) == len(q.flat), (i, len(small.flat), len(q.flat))
         return Transform(q.flat, small.flat), small
 
     def swap_in(self, q_old, new):
@@ -681,7 +708,7 @@ class Recap(VoiceScene):
                     extra=[Indicate(relay.boxes[0], color=TURN, scale_factor=1.15)])
             vo.wait_until("the other four")
             others = ["generate_text", "synthesis_audio_en", "translate_text", "synthesis_audio"]
-            bars_on(self, [(rows[n], IMG_SIZES[n]) for n in others], run_time=0.5,
+            bars_on(self, [(rows[n], IMG_SIZES[n]) for n in others], run_time=1.6, lag=0.3,
                     extra=[Indicate(relay.boxes[j], color=TURN, scale_factor=1.15) for j in (1, 2, 3, 4)])
 
         # ========================================================== 2 · git status
@@ -709,8 +736,14 @@ class Recap(VoiceScene):
                   .move_to([code.background.get_center()[0], (_l5.get_top()[1] + _l7.get_bottom()[1]) / 2, 0])]
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(relay), run_time=0.4)
+            old = list(t.lines.submobjects)               # a fresh screen for the new topic (as `clear`)
+            self.play(FadeOut(relay), FadeOut(VGroup(*old)), run_time=0.45)
+            for ln in old:
+                t.lines.remove(ln)
+                self.remove(ln)
             resize(self, t, ROWS_GIT, run_time=0.5)
+            bare(self, t)                                 # the prompt waits at the top of the fresh screen
+            vo.wait_until("An extra git status")
             c_gs = type_in(self, t, GST.cmd, 0.45)
             pin_tags(self, t, c_gs, extra_tag())
             g_out = print_in(self, t, GST_OUT, run_time=0.5)
@@ -794,16 +827,17 @@ class Recap(VoiceScene):
             resize(self, t, ROWS_FULL, run_time=0.6, extra=[FadeIn(relay)])
             c_rm = type_in(self, t, RM.cmd, 1.8)
             pin_tags(self, t, c_rm, extra_tag(), your_turn())
-            for j in range(5):                               # one pair a box: A..E dissolve
-                print_in(self, t, RM_OUT[2 * j:2 * j + 2], run_time=0.3)
-                self.play(relay.boxes[j].animate.scale(0.3).set_opacity(0),
-                          relay.letters[j].animate.scale(0.3).set_opacity(0), run_time=0.3)
+            make_room(self, t, len(RM_OUT))                  # one scroll for the whole output
+            for j in range(5):                               # one pair a box: A..E dissolve as it prints
+                print_with(self, t, RM_OUT[2 * j:2 * j + 2], run_time=0.38,
+                           extra=[relay.boxes[j].animate.scale(0.3).set_opacity(0),
+                                  relay.letters[j].animate.scale(0.3).set_opacity(0)])
             vo.wait_until("Older builds stay behind untagged")
-            resize(self, t, 3, keep=list(t.lines.submobjects[-2:]), run_time=0.6)
+            resize(self, t, 3, keep=list(t.lines.submobjects[-2:]), run_time=0.45)
             self.play(LaggedStart(*[FadeIn(b, shift=DOWN * 0.15) for b in olds.boxes], lag_ratio=0.15),
-                      FadeIn(olds.label), run_time=0.7)
-            vo.wait_until("each holding your key")
-            self.play(*[Indicate(b.key, color=KEY, scale_factor=1.4) for b in olds.boxes], run_time=0.7)
+                      FadeIn(olds.label), run_time=0.6)
+            vo.wait_until("each holding your key")            # a key inside an image: RED (semantic table, S14)
+            self.play(*[Indicate(b.key, color=ERR, scale_factor=1.4) for b in olds.boxes], run_time=0.6)
             vo.wait_until("so docker image prune")
             c_pr = type_in(self, t, PRUNE, 0.8)
             pin_tags(self, t, c_pr, extra_tag())
@@ -872,10 +906,10 @@ class Recap(VoiceScene):
             self.play(q_span(q4, "/app").animate.set_color(TURN), Indicate(th4.key, color=KEY, scale_factor=1.3),
                       run_time=0.7)
             vo.wait_until("Five")
-            s4, q5, th5, top5 = step(q4, 4, top4, th4, thumb_sieve)
+            s4, q5, th5, _ = step(q4, 4, top4, th4, thumb_sieve)
             smalls.append(s4)
             vo.wait_until("git-ignored key")
-            self.play(Indicate(th5.key, color=KEY, scale_factor=1.35), run_time=0.7)
+            self.play(Indicate(th5.key, color=ERR, scale_factor=1.35), run_time=0.7)   # the key inside an image: RED
             vo.wait_until("and the fix")
             self.play(Indicate(th5.sieve, color=INK, scale_factor=1.1), run_time=0.7)
 
@@ -923,12 +957,10 @@ class Recap(VoiceScene):
         assert finals[-1].get_bottom()[1] > card1.get_top()[1] + 0.15
 
         with self.voiceover(SAY[7]) as vo:
-            anim5, s5 = self.demote(q5, 5, top5)
-            self.play(anim5, FadeOut(th5), run_time=0.5)
-            self.swap_in(q5, s5)
-            smalls.append(s5)
-            self.play(Transform(title, title2), Transform(t_ul, t_ul2),
-                      *[Transform(s.flat, f.flat) for s, f in zip(smalls, finals)], run_time=1.0)
+            smalls.append(q5)                   # Q5 goes straight from its big form to the final layout
+            self.play(FadeOut(th5, shift=RIGHT * 0.2), Transform(title, title2), Transform(t_ul, t_ul2),
+                      LaggedStart(*[Transform(s.flat, f.flat) for s, f in zip(smalls, finals)], lag_ratio=0.12),
+                      run_time=1.1)
             for s, f in zip(smalls, finals):
                 self.swap_in(s, f)
             vo.wait_until("in the exercises")

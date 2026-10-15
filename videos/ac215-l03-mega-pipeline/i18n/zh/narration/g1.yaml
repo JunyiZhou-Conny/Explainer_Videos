@@ -270,7 +270,7 @@ S06:
 - en: "An extra check, docker images, says 1.35 gigabytes on this machine. By far the biggest layer is that one RUN, 842 megabytes of compilers, ffmpeg and their libraries, while the copied folder is tiny."
   zh:
   - "额外跑一下 docker images：在这台机器上是 1.35 GB。"
-  - "最大的一层远远超过其他，就是那个 RUN：842 MB 的编译器、ffmpeg 和它们的库；复制进来的目录则非常小。"
+  - "最大的一层遥遥领先，就是那个 RUN，842 MB，装的是编译器、ffmpeg 和它们的库；复制进来的目录则小得很。"
 - en: "And if you skipped uv init, build step 5 fails, because there's no pyproject.toml to sync."
   zh:
   - "如果你跳过了 uv init，构建步骤 5 就会失败，因为没有 pyproject.toml 可以同步。"
@@ -317,7 +317,7 @@ S07:
 - en: "It would find your laptop's folder, with no venv in it, so activation would fail. That's what line 9, uv project environment, prevents."
   zh:
   - "它会看到你笔记本上的目录，里面没有 venv，所以激活会失败。"
-  - "第 9 行的 uv project environment 变量，防的就是这个。"
+  - "第 9 行，也就是 uv project environment 这个变量，防的就是这个。"
 - en: "Type docker run, dash dash r m, dash t i, dash v with the mount, and the image name. Copy it from the README, quotes included, and pause to run it."
   zh:
   - "输入 docker run，加上 --rm、-ti、带挂载的 -v，再加上 image 名。"
