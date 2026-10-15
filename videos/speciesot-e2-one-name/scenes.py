@@ -1150,21 +1150,21 @@ class S07(Ep):
         self.header()
         bw, step = 2.3, 2.575
         hx = [-6.3 + bw / 2 + i * step for i in range(5)]
-        hy = 1.45
+        hy = 1.3
         names = ["a YAML line", "dictionary drawer", "init", "an attribute", "setup reads it"]
         codes = ["z_dimension: 50", "['z_dimension']", "self.config[…]", "self.z_dimension",
                  "self.z_dimension"]
         boxes = VGroup(*[RoundedRectangle(corner_radius=.06, width=bw, height=.95,
                                           stroke_color=INK, stroke_width=2, fill_color=PAPER,
                                           fill_opacity=1).move_to([x, hy, 0]) for x in hx])
-        caps = VGroup(*[at(n, x, hy + .2, 17, GRAY) for n, x in zip(names, hx)])
+        caps = VGroup(*[at(n, x, hy + .17, 17, GRAY) for n, x in zip(names, hx)])
         cods = VGroup(*[mono(c, 16, INK).move_to([x, hy - .2, 0]) for c, x in zip(codes, hx)])
-        badges = VGroup(*[hop_badge(i + 1, x - bw / 2, hy + .475, r=.16)
+        badges = VGroup(*[hop_badge(i + 1, x - bw / 2 + .2, hy + .475, r=.16)
                           for i, x in enumerate(hx)])
         links = VGroup(*[Arrow([hx[i] + bw / 2, hy, 0], [hx[i + 1] - bw / 2, hy, 0], buff=.02,
                                color=GRAY, stroke_width=2, tip_length=.1,
                                max_tip_length_to_length_ratio=1) for i in range(4)])
-        same = at("same spelling at every place", 0, .62, 22, RED, bold=True)
+        same = at("same spelling at every place", 0, .45, 22, RED, bold=True)
         with self.say(0) as vo:
             vo.wait_until("five places")
             self.play(FadeIn(boxes), FadeIn(badges), Create(links), run_time=.5)
@@ -1223,7 +1223,7 @@ class S07(Ep):
                  ("toy_config.yaml:19", TOY_CONFIG[19].strip(), "x_dimension: 1000")]
         erows = VGroup()
         for i, (where, now, after) in enumerate(edits):
-            yy = .7 - i * .55
+            yy = .72 - i * .62
             b = Square(.24, stroke_color=INK, stroke_width=2).move_to([-6.05, yy, 0])
             w = mono_left(where, -5.75, yy, 16, GRAY)
             n = mono_left(now, -2.75, yy, 16, INK)
@@ -1234,7 +1234,7 @@ class S07(Ep):
         kw = glyphs(erows[1][2], edits[1][1], "x_dimension=")
         kw_l = label("scgen's · leave it", 17, GRAY)
         etag = tag_text("EXAMPLE · your edits", GRAY)
-        etag.move_to([6.3 - etag.width / 2, -.72, 0])
+        etag.move_to([-1.95 + etag.width / 2, 1.8, 0])
         rr = VGroup(label("rerun e24_replica, then print", 17, INK),
                     mono("experiment.models[1].x_dimension", 17, INK),
                     label("→ the real gene count", 17, RED))
@@ -1261,17 +1261,18 @@ class S07(Ep):
                 self.play(FadeIn(erows[i][:3], shift=RIGHT * .06), run_time=.35)
                 anims = [FadeIn(erows[i][3:], shift=RIGHT * .06)]
                 if i == 1:
-                    kw_l.move_to([kw.get_x(), kw.get_y() - .28, 0])
+                    kw_l.move_to([kw.get_x(), kw.get_y() - .31, 0])
                     anims.append(FadeIn(kw_l))
                 if i == 0:
                     anims.append(FadeIn(etag))
                 self.play(*anims, run_time=.35)
             vo.wait_until("Then rerun")
-            self.play(FadeIn(rr[:2], shift=UP * .06), run_time=.4)
+            self.play(FadeIn(rr[:2], shift=UP * .06), keep[0].animate.set_stroke(INK),
+                      keep[1].animate.set_color(INK), run_time=.4)
             vo.wait_until("real gene count")
             self.play(FadeIn(rr[2]), FadeIn(why), run_time=.4)
             vo.wait_until("still stops at line 252")
-            self.play(FadeIn(stop), run_time=.35)
+            self.play(FadeIn(stop), rr[2].animate.set_color(INK), run_time=.35)
             vo.wait_until("Episode four")
             self.play(FadeIn(e4, shift=LEFT * .08), run_time=.35)
         self.finish()

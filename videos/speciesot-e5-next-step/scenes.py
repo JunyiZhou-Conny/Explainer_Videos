@@ -705,6 +705,15 @@ class S04(Ep):
 
 # ---------------------------------------------------------------- s05
 
+CSV4 = "m1 v08 IMPACT,0.9188,0.1035,…,0.5542,…"  # v08_scorecard_dual.csv line 4, columns elided
+CLUSTER_RUN = "cluster: cellot_gpu/results/hvg_pearson_residuals_m1_v08_ood/scgen/"
+
+
+def scorecard(rows_):
+    """The scorecard panel (header line 1 plus the given rows), top at y = 2.0."""
+    return panel_at([(1, "model,R2,MMD,…,r2_identity,…")] + rows_, CARD_PATH, -2.1, 2.0, 8.2, 17)
+
+
 class S05(Ep):
     def construct(self):
         self.header()
@@ -719,14 +728,19 @@ class S05(Ep):
         self.hold(0)
         self.remove(*grid)
         self.add(grid)                      # one mobject from here on (no stray wrapper groups)
-        pick = grid[20].copy()
+        # L1: not a notebook: a spec and a scorecard row
+        g_strike = Line(grid.get_corner(DL) + LEFT * .1, grid.get_corner(UR) + RIGHT * .1, color=RED,
+                        stroke_width=5)
+        answer = VGroup(label("not a notebook", 28, GRAY), label("→  a spec + a scorecard row", 28, RED,
+                                                                 bold=True)).arrange(RIGHT, buff=.3)
+        answer.move_to([0, -.55, 0])
         quote = VGroup(label("“model-version comparisons are made on the v08 OOD cuts”", 21, INK),
                        tagline("READ IN CODE", "speciesOT · AGENTS.md, line 41 (the frozen benchmark)",
                                0, 0, 17))
-        quote.arrange(DOWN, buff=.18).move_to([0, -.95, 0])
+        quote.arrange(DOWN, buff=.15).move_to([0, -1.35, 0])
         m1 = VGroup(label("M1 v08 · OOD", 30, RED, bold=True),
                     label("holdout CL:0000875 · non-classical monocytes", 21, GRAY))
-        m1.arrange(RIGHT, buff=.35).move_to([0, -2.05, 0])
+        m1.arrange(RIGHT, buff=.35).move_to([0, -2.17, 0])
         spec_rows = [(1, "experiment_tag: …_m1_v08_ood"),
                      (4, "data_file: …/hvg_pearson_residuals_m1_v08.h5ad")] + \
                     [(n, SPEC[n]) for n in (25, 26, 28, 31, 32, 33, 34, 35)]
@@ -738,108 +752,163 @@ class S05(Ep):
                                                                               buff=.1)
         pasted.move_to([.95, 1.5, 0], aligned_edge=LEFT)
         with self.say(1) as vo:
-            self.cue(vo, .0, FadeOut(card), self.unveil(), run_time=.4)
+            self.cue(vo, .0, FadeOut(card), self.unveil(), run_time=.35)
+            self.play(Create(g_strike), grid.animate.set_opacity(.3), FadeIn(answer[0]), run_time=.5)
+            self.play(FadeIn(answer[1], shift=LEFT * .1), run_time=.4)
             vo.wait_until("frozen benchmark")
-            pick[0].set_stroke(color=RED, width=3)
-            self.add(pick)
-            self.play(pick.animate.set_fill(RED, opacity=1).scale(1.6), FadeIn(quote, shift=UP * .1),
-                      run_time=.6)
+            self.play(FadeIn(quote, shift=UP * .1), run_time=.5)
             vo.wait_until("M1, version eight")
             self.play(FadeIn(m1[0], shift=UP * .1), run_time=.4)
             vo.wait_until("holding out")
             self.play(FadeIn(m1[1]), run_time=.4)
             vo.wait_until("Its spec")
-            box = spec.frame.copy()
-            self.play(FadeOut(grid), FadeOut(quote), FadeOut(m1), ReplacementTransform(pick, box),
-                      run_time=.6)
-            self.play(FadeIn(spec), run_time=.3)
-            self.remove(box)
+            self.play(FadeOut(grid), FadeOut(g_strike), FadeOut(quote), FadeOut(m1), FadeOut(answer),
+                      FadeIn(spec, shift=UP * .1), run_time=.7)
             vo.wait_until("pasted its model")
             self.play(FadeIn(core, shift=LEFT * .1), FadeIn(pasted), run_time=.5)
             ms = highlight(self, spec, 31, 32, 33, 34, 35, run_time=.3)
             mc = highlight(self, core, 162, 163, 164, 165, 166, run_time=.3)
             vo.wait_until("a little above")
             mk = highlight(self, core, 212, run_time=.35)
-        # L2: the scorecard row and the first golden number
-        csv = panel_at([(1, "model,R2,MMD,…,r2_identity,…"),
-                        (5, CSV5)], CARD_PATH, -2.1, 2.0, 8.2, 18)
+        # L2 phase A: the scorecard row, its notebook, the first golden number, same on every row
+        csv2 = scorecard([(5, CSV5)])
+        csv3 = scorecard([(4, CSV4), (5, CSV5)])
+        written = VGroup(label("written by", 17, GRAY),
+                         mono("speciesOT/baseline/analysis/22_v08_results.ipynb", 16, GRAY),
+                         label("(cell 3)", 17, GRAY)).arrange(RIGHT, buff=.14)
+        written.move_to([-6.2 + written.width / 2, .17, 0])
+        nb_path = source_tag("READ IN NOTEBOOK")
+        nb_path.move_to([-6.2 + nb_path.width / 2, -.2, 0])
         gold = mono("0.5542", 64, RED, bold=True).move_to([4.35, 1.5, 0])
         gold_lab = VGroup(label("identity · R² of means", 20, INK),
                           label("均值 R²", 18, GRAY)).arrange(DOWN, buff=.06).move_to([4.35, .68, 0])
+        ident = VGroup(label("r2_identity identical", 20, RED, bold=True),
+                       label("→ it describes the data", 20, INK)).arrange(DOWN, aligned_edge=LEFT, buff=.1)
+        ident.move_to([2.6 + ident.width / 2, -.05, 0])
+        # phase B: how it is computed; what control and treated are
         metr = panel_at([(n, METRICS[n]) for n in (154, 155, 156, 157)] +
                         [(None, "    …"), (166, "    r2_identity = _r2_means(control, treated) if …")],
-                        METRICS_PATH, -2.0, .35, 8.4, 16)
+                        METRICS_PATH, -2.0, 2.0, 8.4, 16)
+        ctl = left("control = mouse test cells: what IdentityModel returns (line 159)", -6.2, -.62, 18,
+                   INK)
+        trt = left("treated = human test cells", -6.2, -.95, 18, INK)
         checks = ["same file", "same split", "R² of means"]
         cl = VGroup()
         for k, c in enumerate(checks):
-            y = .05 - k * .55
+            y = .05 - k * .5
             cl.add(VGroup(Square(.3, stroke_color=INK, stroke_width=2).move_to([2.85, y, 0]),
                           left(c, 3.2, y, 21, INK)))
-        cticks = [tick(2.87, .05 - k * .55, .13, RED) for k in range(3)]
+        cticks = [tick(2.87, .05 - k * .5, .13, RED) for k in range(3)]
         result = VGroup(label("→ reproduce 0.5542", 22, RED, bold=True),
                         label("almost exactly · 几乎精确", 18, GRAY)).arrange(DOWN, aligned_edge=LEFT,
                                                                            buff=.08)
-        result.move_to([2.7, -1.75, 0], aligned_edge=LEFT)
+        result.move_to([2.7, -1.6, 0], aligned_edge=LEFT)
+        # phase C: means, not cells, also removes the line-313 crash
+        c313 = trail_card(3, y=-1.85, w=2.8).move_to([-4.75, -1.85, 0])
+        no313 = VGroup(label("means, not cells", 22, RED, bold=True),
+                       label("→ no line-313 crash", 22, RED, bold=True)).arrange(DOWN, aligned_edge=LEFT,
+                                                                                 buff=.08)
+        no313.move_to([-2.65, -1.85, 0], aligned_edge=LEFT)
         with self.say(2) as vo:
             self.cue(vo, .0, FadeOut(spec), FadeOut(core), FadeOut(pasted), FadeOut(ms), FadeOut(mc),
                      FadeOut(mk), run_time=.4)
-            vo.wait_until("scorecard")
-            self.play(FadeIn(csv, shift=DOWN * .1), run_time=.5)
+            self.play(FadeIn(csv2, shift=DOWN * .1), run_time=.5)
+            vo.wait_until("written by")
+            self.play(FadeIn(written), FadeIn(nb_path), run_time=.4)
             vo.wait_until("The identity")
-            m5 = highlight(self, csv, 5, run_time=.3)
-            self.play(TransformFromCopy(glyphs(csv.row(5), CSV5, "0.5542"), gold), FadeIn(gold_lab),
+            m5 = highlight(self, csv2, 5, run_time=.3)
+            self.play(TransformFromCopy(glyphs(csv2.row(5), CSV5, "0.5542"), gold), FadeIn(gold_lab),
                       run_time=.8)
+            vo.wait_until("same on every")
+            self.play(FadeOut(m5), ReplacementTransform(csv2, csv3), run_time=.6)
+            boxes = VGroup(*[SurroundingRectangle(glyphs(csv3.row(n), t, "0.5542"), color=RED, buff=.05,
+                                                  stroke_width=2.5) for n, t in ((4, CSV4), (5, CSV5))])
+            self.play(Create(boxes), FadeIn(ident[0], shift=LEFT * .1), run_time=.5)
+            vo.wait_until("describes the data")
+            self.play(FadeIn(ident[1], shift=LEFT * .1), run_time=.4)
+            vo.wait_until("mouse test cells")
+            self.play(FadeOut(csv3), FadeOut(boxes), FadeOut(written), FadeOut(nb_path),
+                      FadeIn(metr, shift=UP * .1), run_time=.5)
+            mm = highlight(self, metr, 166, run_time=.25)
+            self.play(FadeIn(ctl, shift=UP * .05), run_time=.35)
+            vo.wait_until("against human")
+            self.play(FadeIn(trt, shift=UP * .05), run_time=.35)
             vo.wait_until("No training")
-            self.play(FadeIn(metr, shift=UP * .1), run_time=.5)
-            mm = highlight(self, metr, 155, run_time=.3)
+            self.play(Indicate(metr.row(166), color=RED, scale_factor=1.03), run_time=.5)
             vo.wait_until("no sampling")
-            mm2 = metr.mark(166)
+            mm2 = metr.mark(155)
             self.play(ReplacementTransform(mm, mm2), run_time=.3)
             vo.wait_until("so once")
-            self.play(FadeIn(cl), run_time=.4)
+            self.play(FadeOut(ident), FadeIn(cl), run_time=.4)
             for k, w in enumerate(["same file", "split,", "computes R squared"]):
                 vo.wait_until(w)
                 self.play(Create(cticks[k]), run_time=.25)
             vo.wait_until("reproduce it")
             self.play(FadeIn(result, shift=RIGHT * .1), run_time=.4)
-        # L3: scGen's number, the ladder, and 80-cell sampling (cartoon)
+            vo.wait_until("Comparing means")
+            self.play(FadeIn(c313, shift=UP * .1), Indicate(metr.row(155), color=RED, scale_factor=1.03),
+                      run_time=.6)
+            vo.wait_until("removes the crash")
+            st313 = strike(c313, RED, 5)
+            link = Arrow(c313.get_right(), no313.get_left(), buff=.1, color=RED, stroke_width=3,
+                         max_tip_length_to_length_ratio=.3)
+            self.play(Create(st313), GrowArrow(link), FadeIn(no313, shift=LEFT * .1), run_time=.6)
+        # L3: scGen's number, where its run lives, 80-cell sampling, and what not to trace
+        csv3b = scorecard([(4, CSV4), (5, CSV5)])
         steps = VGroup()
-        for k, (x0, h) in enumerate(((-6.2, .6), (-4.25, 1.2), (-2.3, 1.8))):
+        for k, (x0, h) in enumerate(((-6.2, .5), (-4.25, 1.0), (-2.3, 1.5))):
             steps.add(Rectangle(width=1.85, height=h, stroke_width=0, fill_color=INK if k < 2 else RED,
                                 fill_opacity=1).move_to([x0 + .925, -2.35 + h / 2, 0]))
-        s_txt = VGroup(at("data", -5.275, -2.05, 20, PAPER, bold=True),
-                       at("identity", -3.325, -1.95, 20, PAPER, bold=True),
-                       mono("0.5542", 19, PAPER).move_to([-3.325, -1.55, 0]),
-                       at("scGen", -1.375, -1.8, 20, PAPER, bold=True),
-                       mono("0.927", 19, PAPER).move_to([-1.375, -1.4, 0])).set_z_index(3)
-        s_cap = VGroup(at("file + split", -5.275, -1.5, 17, GRAY), at("exact", -3.325, -.9, 17, GRAY),
-                       at("± tolerance", -1.375, -.3, 17, RED))
-        adapter = VGroup(label("from the cellot autoencoder", 20, INK, bold=True),
-                         label("your adapter wraps that model", 18, GRAY))\
-            .arrange(DOWN, aligned_edge=LEFT, buff=.08).move_to([-6.2, .2, 0], aligned_edge=LEFT)
+        s_txt = VGroup(at("data", -5.275, -2.1, 20, PAPER, bold=True),
+                       at("identity", -3.325, -2.05, 20, PAPER, bold=True),
+                       mono("0.5542", 19, PAPER).move_to([-3.325, -1.62, 0]),
+                       at("scGen", -1.375, -1.75, 20, PAPER, bold=True),
+                       mono("0.927", 19, PAPER).move_to([-1.375, -1.3, 0])).set_z_index(3)
+        s_cap = VGroup(at("file + split", -5.275, -1.62, 17, GRAY),
+                       VGroup(at("≈ exact", -3.325, -.9, 17, GRAY),
+                              at("(no training)", -3.325, -1.14, 17, GRAY)),
+                       at("± tolerance", -1.375, -.62, 17, RED))
+        run_chip = pill(CLUSTER_RUN, 0, .08, INK, 16)
+        run_tag = source_tag("READ IN NOTEBOOK")
+        VGroup(run_chip, run_tag).arrange(RIGHT, buff=.2).move_to([0, .08, 0]).align_to([-6.2, 0, 0], LEFT)
+        run_src = left("22_v08_results.ipynb · cell 1 (MODELS)", -6.2, -.3, 17, GRAY)
+        adapter = VGroup(label("your adapter wraps that model", 20, INK, bold=True), source_tag("INFERRED"))\
+            .arrange(RIGHT, buff=.2)
+        adapter.move_to([.25 + adapter.width / 2, -.55, 0])
         rng = np.random.default_rng(5)
-        pts = np.clip(rng.normal(0, 1, size=(200, 2)), -2, 2) * [.55, .5] + [1.7, -1.3]
+        pts = np.clip(rng.normal(0, 1, size=(200, 2)), -2, 2) * [.45, .32] + [1.5, -1.62]
         dots = VGroup(*[Dot([x, y, 0], radius=.03, color=GRAY) for x, y in pts])
-        cart = left("cartoon · 80-cell subsamples", .55, .02, 17, GRAY)
-        nl_y, nl0, nl1 = -.55, 3.4, 6.1
-        nline = VGroup(line(nl0, nl_y, nl1, nl_y, INK, 2),
-                       mono("0.927", 18, INK).move_to([(nl0 + nl1) / 2, nl_y - .35, 0]))
+        nl_y, nl0, nl1 = -1.3, 3.3, 6.1
         center = (nl0 + nl1) / 2
+        nline = VGroup(line(nl0, nl_y, nl1, nl_y, INK, 2),
+                       mono("0.927", 18, INK).move_to([center, nl_y - .35, 0]),
+                       at("mean of 80-cell samples", center, -1.98, 17, GRAY))
+        ex_tag = source_tag("EXAMPLE").move_to([center, -2.3, 0])
+        trace = VGroup(label("only your adapter's calls (E4)", 21, INK, bold=True),
+                       label("your scorecard is the check", 21, INK)).arrange(DOWN, aligned_edge=LEFT, buff=.14)
+        t_frame = Rectangle(width=5.75, height=1.25, stroke_color=INK, stroke_width=2, fill_color=PAPER,
+                            fill_opacity=1).move_to([3.3, -1.7, 0])
+        trace.move_to([t_frame.get_left()[0] + .25 + trace.width / 2, -1.7, 0])
+        t_tag = source_tag("INFERRED").move_to([t_frame.get_right()[0] - .72, -1.32, 0])
+        t_head = left("don't trace all of cellot", t_frame.get_left()[0], -.98 - .02, 18, GRAY)
         with self.say(3) as vo:
-            self.cue(vo, .0, FadeOut(metr), FadeOut(mm2), FadeOut(cl), *[FadeOut(t) for t in cticks],
-                     FadeOut(result), FadeOut(m5), run_time=.4)
+            self.cue(vo, .0, FadeOut(metr), FadeOut(mm2), FadeOut(ctl), FadeOut(trt), FadeOut(cl),
+                     *[FadeOut(t) for t in cticks], FadeOut(result), FadeOut(c313), FadeOut(st313),
+                     FadeOut(link), FadeOut(no313), FadeIn(csv3b), run_time=.45)
             self.play(GrowFromEdge(steps[0], DOWN), GrowFromEdge(steps[1], DOWN), FadeIn(s_txt[:3]),
-                      FadeIn(s_cap[:2]), run_time=.6)
+                      FadeIn(s_cap[:2]), run_time=.5)
             vo.wait_until("zero point nine")
-            m5 = highlight(self, csv, 5, run_time=.25)
+            m5 = highlight(self, csv3b, 5, run_time=.25)
             self.play(GrowFromEdge(steps[2], DOWN), FadeIn(s_txt[3]),
-                      TransformFromCopy(glyphs(csv.row(5), CSV5, "0.927"), s_txt[4]), run_time=.8)
-            vo.wait_until("cellot autoencoder")
+                      TransformFromCopy(glyphs(csv3b.row(5), CSV5, "0.927"), s_txt[4]), run_time=.8)
+            vo.wait_until("on the cluster")
+            self.play(FadeIn(run_chip, shift=UP * .05), FadeIn(run_tag), FadeIn(run_src), run_time=.5)
+            vo.wait_until("To aim for it")
             self.play(FadeIn(adapter, shift=RIGHT * .1), run_time=.5)
             vo.wait_until("It averages")
-            self.play(FadeIn(dots), FadeIn(cart), Create(nline[0]), FadeIn(nline[1]), run_time=.5)
+            self.play(FadeIn(dots), Create(nline[0]), FadeIn(nline[1:]), FadeIn(ex_tag), run_time=.5)
             marks = VGroup()
-            for d, off in enumerate((-.32, .22, .05)):
+            for off in (-.32, .22, .05):
                 pick = rng.choice(200, 80, replace=False)
                 sub = VGroup(*[dots[i] for i in pick])
                 mk = line(center + off, nl_y - .14, center + off, nl_y + .14, GRAY, 3)
@@ -853,8 +922,13 @@ class S05(Ep):
             band = Rectangle(width=1.3, height=.42, stroke_width=0, fill_color=RED, fill_opacity=.18)\
                 .move_to([center, nl_y, 0])
             self.play(FadeIn(band), FadeIn(s_cap[2]), run_time=.5)
+            vo.wait_until("And you don't need")
+            self.play(*[FadeOut(x) for x in (dots, nline, ex_tag, marks, mean, band)], run_time=.4)
+            self.play(FadeIn(t_frame), FadeIn(trace[0]), FadeIn(t_tag), FadeIn(t_head), run_time=.5)
+            vo.wait_until("Your own scorecard")
+            self.play(FadeIn(trace[1].set_color(RED)), Indicate(csv3b.row(5), color=RED, scale_factor=1.02),
+                      run_time=.6)
         self.finish()
-
 
 
 # ---------------------------------------------------------------- s06
@@ -1009,10 +1083,10 @@ class S06(Ep):
             self.play(ReplacementTransform(m3, m4), FadeIn(ann[261]), run_time=.4)
             vo.wait_until("Python checks")
             self.play(FadeIn(lesson, shift=UP * .1), run_time=.5)
-        # L3: I — one method; D — Experiment talks to the contract, never to scgen
+        # L3: I — one method; D — Experiment talks to the contract; only scGenModel imports scgen
         i_panel = panel_at(rows(CORE, 54, 57), CORE_PATH, -1.0, 1.25, 10.4, 17)
         one = at("one method", 5.25, .35, 22, RED, bold=True)
-        dy = -1.95
+        dy = .35
         e_p = pill("Experiment", -4.85, dy, INK, 20)
         a_p = pill("AbstractModel", -1.15, dy, INK, 20)
         s_p = pill("scGenModel", 2.2, dy, INK, 20)
@@ -1020,14 +1094,17 @@ class S06(Ep):
         a1 = arrow(e_p.get_right(), a_p.get_left(), INK)
         a2 = arrow(s_p.get_left(), a_p.get_right(), INK)
         a3 = arrow(s_p.get_right(), g_p.get_left(), GRAY)
-        a1_l = at("model.train() …", (e_p.get_right()[0] + a_p.get_left()[0]) / 2 + .3, dy + .38, 17,
-                  GRAY)
-        a3_l = at("import · line 248", (s_p.get_right()[0] + g_p.get_left()[0]) / 2 - .45, dy + .38,
-                  17, GRAY)
+        a1_l = at("model.train() …", (e_p.get_right()[0] + a_p.get_left()[0]) / 2, dy - .42, 17, GRAY)
+        a3_l = at("import · line 248", (s_p.get_right()[0] + g_p.get_left()[0]) / 2, dy - .42, 17, GRAY)
         never = DashedVMobject(ArcBetweenPoints(e_p.get_top() + UP * .05, g_p.get_top() + UP * .05,
-                                                angle=-PI / 5, color=RED, stroke_width=2.5), num_dashes=40)
-        no = cross(.0, never.get_top()[1], .12, RED)
-        no_l = at("never directly", .5, -1.22, 18, RED)
+                                                angle=-PI / 6, color=RED, stroke_width=3), num_dashes=40)
+        no = cross(.07, never.get_top()[1], .13, RED, 5)
+        no_l = at("never imports scgen", .07, never.get_top()[1] - .3, 19, RED, bold=True)
+        imp = panel_at([(247, CORE[247]), (248, CORE[248])], CORE_PATH, 2.1, -.4, 6.6, 18)
+        only = VGroup(label("the only import scgen that runs", 20, RED, bold=True),
+                      label("(lines 14 and 233 are comments)", 17, GRAY)).arrange(DOWN, aligned_edge=LEFT,
+                                                                                buff=.08)
+        only.move_to([imp.frame.get_left()[0] + only.width / 2, -2.07, 0])
         with self.say(3) as vo:
             self.cue(vo, .0, FadeOut(l_panel), FadeOut(m4), *[FadeOut(a) for a in ann.values()],
                      FadeOut(follow), FadeOut(lesson), ReplacementTransform(names[2], names[3]), run_time=.4)
@@ -1036,15 +1113,20 @@ class S06(Ep):
             m = highlight(self, i_panel, 56, run_time=.3)
             self.play(FadeIn(one), run_time=.3)
             vo.wait_until("Dependency inversion")
-            self.play(ReplacementTransform(names[3], names[4]), FadeOut(one), FadeOut(m),
-                      i_panel.animate.set_opacity(.25), run_time=.4)
+            self.play(ReplacementTransform(names[3], names[4]), FadeOut(one), FadeOut(m), FadeOut(i_panel),
+                      run_time=.4)
             focus(4, FadeIn(e_p), FadeIn(a_p), FadeIn(s_p), FadeIn(g_p), run_time=.4)
             vo.wait_until("talks to the contract")
             self.play(GrowArrow(a1), FadeIn(a1_l), GrowArrow(a2), run_time=.5)
             self.play(GrowArrow(a3), FadeIn(a3_l), run_time=.3)
-            vo.wait_until("never to scgen")
-            self.play(Create(never), run_time=.5)
+            vo.wait_until("never imports")
+            self.play(Create(never), run_time=.4)
             self.play(Create(no), FadeIn(no_l), run_time=.3)
+            vo.wait_until("only scGenModel")
+            self.play(FadeIn(imp, shift=UP * .1), run_time=.4)
+            highlight(self, imp, 248, run_time=.3)
+            vo.wait_until("line 248")
+            self.play(FadeIn(only, shift=UP * .05), run_time=.35)
         # L4: refactor when the third model arrives
         rng = np.random.default_rng(3)
         messy = VGroup(*[line(-6.0 + rng.uniform(0, .6), .95 - k * .2, -6.0 + rng.uniform(1.2, 3.0),
@@ -1063,8 +1145,8 @@ class S06(Ep):
         third_t = at("3rd model", 2.6, m_y, 19, RED)
         here = at("refactor here", 2.6, m_y + .62, 20, RED, bold=True)
         with self.say(4) as vo:
-            self.cue(vo, .0, *[FadeOut(x) for x in (i_panel, e_p, a_p, s_p, g_p, a1, a2, a3, a1_l, a3_l,
-                                                   never, no, no_l, names[4])],
+            self.cue(vo, .0, *[FadeOut(x) for x in (e_p, a_p, s_p, g_p, a1, a2, a3, a1_l, a3_l,
+                                                   never, no, no_l, names[4], imp, only)],
                      *[l.animate.set_color(GRAY) for l in letters], run_time=.4)
             self.play(FadeIn(messy), FadeIn(same[1]), FadeIn(same[0]), FadeIn(r_lab), run_time=.4)
             vo.wait_until("reshaping")

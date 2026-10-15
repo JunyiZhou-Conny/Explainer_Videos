@@ -252,15 +252,16 @@ class S02(Ep):
             self.cue(vo, .02, FadeIn(inp, shift=RIGHT * .1), run_time=.5)
             vo.wait_until("An encoder")
             self.play(Create(enc), FadeIn(enc_l), run_time=.6)
-            vo.wait_until("about a thousand")
-            self.play(FadeIn(g_l), FadeIn(g_m), run_time=.45)
             vo.wait_until("into a short code")
             self.play(ReplacementTransform(inp.stripes.copy(), code), run_time=1.0)
+            vo.wait_until("about a thousand")
+            self.play(FadeIn(g_l), FadeIn(g_m), run_time=.45)
             vo.wait_until("fifty numbers")
             self.play(FadeIn(c_l, shift=UP * .08), FadeIn(c_m), enc_l.animate.set_color(INK),
                       run_time=.45)
             vo.wait_until("A decoder")
             self.play(Create(dec), FadeIn(dec_l), c_l.animate.set_color(INK), run_time=.6)
+            vo.wait_until("rebuilds")
             self.play(ReplacementTransform(code.copy(), out.stripes), FadeIn(out.frame),
                       FadeIn(o_l), run_time=1.0)
         box = Rectangle(width=4.4, height=3.7, stroke_color=INK, stroke_width=2)\
@@ -329,8 +330,8 @@ B_TRUE = np.array([-3.3, -.35, 0])        # where B's human cells really are
 
 
 def plane(self_label=True):
-    frame = Rectangle(width=7.85, height=4.0, stroke_color=INK, stroke_width=2)\
-        .move_to([-2.275, -.4, 0])
+    frame = Rectangle(width=7.5, height=4.0, stroke_color=INK, stroke_width=2)\
+        .move_to([-2.45, -.4, 0])
     lab = left(f"code space · {SKETCH}", -6.2, 1.85, 18, GRAY)
     return frame, lab
 
@@ -344,7 +345,7 @@ class S03(Ep):
         ml = left("mouse · training", -6.05, .82, 18, GRAY)
         hl = left("human · training", -.95, .75, 18, INK)
         xm, xh = cross(*M_C[:2], INK), cross(*H_C[:2], INK)
-        x0 = 2.05
+        x0 = 2.25
         ta = left("train · average, subtract", x0, 1.75, 20, GRAY, bold=True)
         r1 = VGroup(cross(x0 + .12, 1.3, INK, .09, 3), left("mouse mean", x0 + .4, 1.3, 20))
         r2 = VGroup(cross(x0 + .12, .9, INK, .09, 3), left("human mean", x0 + .4, .9, 20))
@@ -372,7 +373,7 @@ class S03(Ep):
         tb = left("predict · held-out cells", x0, -.5, 20, GRAY, bold=True)
         steps = [left(t, x0, y_, 20, INK) for t, y_ in
                  (("1  encode", -.93), ("2  add δ", -1.33), ("3  decode", -1.73))]
-        out_bar = gene_bar(5.2, -1.33, PRED_CELL, w=.3, h=1.05, color=INK, outline=RED)
+        out_bar = gene_bar(1.75, -1.33, PRED_CELL, w=.3, h=1.05, color=INK, outline=RED)
         out_l = left("predicted human cells", x0, -2.2, 20, RED, bold=True)
         with self.say(1) as vo:
             self.cue(vo, .02, FadeIn(tb), shift_l.animate.set_color(GRAY),
@@ -393,8 +394,7 @@ class S03(Ep):
                       d2.animate.shift(A_C - M_C), run_time=.5)
             self.play(moved.animate.shift(DELTA).set_stroke(RED), run_time=.9)
             vo.wait_until("decode.")
-            link = arrow([steps[2].get_right()[0] + .15, -1.73, 0],
-                         out_bar.get_left() + LEFT * .05 + DOWN * .25, RED)
+            link = arrow(A_C + DELTA + RIGHT * .38, out_bar.get_left() + LEFT * .04, RED)
             steps[2].set_color(RED)
             self.play(FadeIn(steps[2]), steps[1].animate.set_color(INK), Create(link),
                       FadeIn(out_bar), run_time=.6)
@@ -437,9 +437,10 @@ class S03(Ep):
                              dash_length=.1).add_tip(tip_length=.16)
             gap = DashedLine(B_C + DELTA + DOWN * .2, B_TRUE + UP * .25, color=RED,
                              stroke_width=3, dash_length=.08)
-            real_b = left("real human B", 0, -.6, 17, INK)
-            real_b.move_to([-3.75 - real_b.width / 2, -.6, 0])
-            self.play(FadeIn(true_b), FadeIn(real_b), Create(own), run_time=.6)
+            real_b = left("real human B", -2.75, -.2, 17, INK)
+            own_l = VGroup(left("a map: each type", -6.05, -.3, 17, GRAY),
+                           left("gets its own arrow", -6.05, -.6, 17, GRAY))
+            self.play(FadeIn(true_b), FadeIn(real_b), Create(own), FadeIn(own_l), run_time=.6)
             self.play(Create(gap), FadeIn(miss), run_time=.5)
             vo.wait_until("the gap CellOT")
             self.play(FadeIn(cellot, shift=UP * .08), FadeIn(cellot2, shift=UP * .08),
