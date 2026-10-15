@@ -115,6 +115,7 @@ def d_mandala(seed):
             kind = rng.choice(["petal", "arc", "dots", "zig", "ring"])
             band = rng.uniform(0.10, 0.22)
             r1 = min(r0 + band, 0.98)
+            w = r1 - r0  # effective width: band may have been clamped at the rim
             if kind == "ring":
                 ax.add_patch(Circle((0, 0), r1, fill=False, ec=INK, lw=1.3))
             else:
@@ -128,12 +129,12 @@ def d_mandala(seed):
                         plot(ax, rr * np.cos(aa), rr * np.sin(aa), lw=1.3)
                     elif kind == "arc":
                         a0 = math.degrees(th) - 160 / n
-                        ax.add_patch(Arc((0, 0), 2 * (r0 + band / 2), 2 * (r0 + band / 2),
+                        ax.add_patch(Arc((0, 0), 2 * (r0 + w / 2), 2 * (r0 + w / 2),
                                          theta1=a0, theta2=a0 + 320 / n, ec=INK, lw=1.3))
                     elif kind == "dots":
-                        rr = r0 + band / 2
+                        rr = r0 + w / 2
                         ax.add_patch(Circle((rr * math.cos(th), rr * math.sin(th)),
-                                            band / 3.2, fill=False, ec=INK, lw=1.2))
+                                            w / 3.2, fill=False, ec=INK, lw=1.2))
                     elif kind == "zig":
                         th2 = 2 * math.pi * (i + 0.5) / n
                         plot(ax, [r0 * math.cos(th), r1 * math.cos(th2)],
