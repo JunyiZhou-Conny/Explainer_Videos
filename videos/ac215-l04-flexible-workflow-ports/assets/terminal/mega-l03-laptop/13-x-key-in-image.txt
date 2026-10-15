@@ -1,0 +1,20 @@
+$ docker run --rm --entrypoint ls mega-pipeline-transcribe-audio -la /app /app/secrets
+/app:
+total 124
+drwxr-xr-x 1 app  app   4096 Oct 14 00:40 .
+drwxr-xr-x 1 root root  4096 Oct 14 00:40 ..
+-rw-r--r-- 1 app  app     54 Oct 14 00:40 .gitignore
+-rw-r--r-- 1 app  app   1274 Oct 14 00:40 Dockerfile
+-rw-r--r-- 1 app  app   4929 Oct 14 00:40 README.md
+-rw-r--r-- 1 app  app   4096 Oct 14 00:40 cli.py
+-rwxr-xr-x 1 app  app   2891 Oct 14 00:40 docker-shell.sh
+-rw-r--r-- 1 app  app    249 Oct 14 00:40 pyproject.toml
+drwxr-sr-x 2 app  app   4096 Oct 14 00:40 secrets
+-rw-r--r-- 1 app  app  85761 Oct 14 00:40 uv.lock
+
+/app/secrets:
+total 12
+drwxr-sr-x 2 app app 4096 Oct 14 00:40 .
+drwxr-xr-x 1 app app 4096 Oct 14 00:40 ..
+-rw-rw-rw- 1 app app   79 Oct 14 00:40 mega-pipeline.json
+[exit 0]

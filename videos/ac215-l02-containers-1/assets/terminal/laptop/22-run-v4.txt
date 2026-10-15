@@ -1,0 +1,34 @@
+$ docker run --rm -ti simple-translate
+root@01dca6d0f4d8:/# ls -a
+.           Dockerfile      docker-build-push.sh  mnt             srv
+..          Dockerfile.txt  docker-shell.sh       opt             sys
+.dockerenv  README.md       etc                   proc            tmp
+.git        bin             home                  pyproject.toml  usr
+.gitignore  boot            lib                   root            uv.lock
+.venv       cli.py          lib64                 run             var
+.vscode     dev             media                 sbin
+root@01dca6d0f4d8:/# python cli.py
+Traceback (most recent call last):
+  File "//cli.py", line 8, in <module>
+    from art import text2art
+ModuleNotFoundError: No module named 'art'
+root@01dca6d0f4d8:/# .venv/bin/python --version
+Python 3.15.0
+root@01dca6d0f4d8:/# source .venv/bin/activate && python cli.py
+
+
+    _      ____  ____   _  ____
+   / \    / ___||___ \ / || ___|
+  / _ \  | |      __) || ||___ \
+ / ___ \ | |___  / __/ | | ___) |
+/_/   \_\ \____||_____||_||____/
+
+
+
+Arguments: Namespace(text='I love cheese', file='', src='en', dest='it')
+
+Input: I love cheese
+Output: Adoro il formaggio
+(app) root@01dca6d0f4d8:/# exit
+exit
+[exit 0]

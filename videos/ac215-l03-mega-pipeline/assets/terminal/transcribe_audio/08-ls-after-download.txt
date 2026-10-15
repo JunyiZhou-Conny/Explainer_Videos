@@ -1,0 +1,17 @@
+$ ls -la input_audios text_prompts text_prompts/*
+input_audios:
+total 8
+drwxr-xr-x 2 app app 4096 Oct 13 01:47 .
+drwxr-xr-x 5 app app 4096 Oct 13 01:47 ..
+
+text_prompts:
+total 12
+drwxr-xr-x 3 app app 4096 Oct 13 01:47 .
+drwxr-xr-x 5 app app 4096 Oct 13 01:47 ..
+drwxr-xr-x 2 app app 4096 Oct 13 01:47 group-01
+
+text_prompts/group-01:
+total 8
+drwxr-xr-x 2 app app 4096 Oct 13 01:47 .
+drwxr-xr-x 3 app app 4096 Oct 13 01:47 ..
+[exit 0]

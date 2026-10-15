@@ -1,0 +1,3 @@
+$ gcloud config set project your-project-id
+Updated property [core/project].
+[exit 0]

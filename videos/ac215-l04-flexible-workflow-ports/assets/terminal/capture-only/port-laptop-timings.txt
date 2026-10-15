@@ -1,0 +1,81 @@
+00-env	00:32:04 UTC	0.4s
+01-hello-world.txt	exit=+3.1s
+02-clone	00:32:07 UTC	0.7s
+03-cd	00:32:08 UTC	0.1s
+04-ls	00:32:08 UTC	0.1s
+05-network-create	00:32:08 UTC	0.2s
+06-network-ls	00:32:08 UTC	0.1s
+07-build-processor.txt	exit=+7.8s
+08-build-gateway.txt	exit=+0.5s
+09-images	00:32:18 UTC	0.2s
+10-run-processor	00:32:18 UTC	0.4s
+11-run-gateway	00:32:18 UTC	0.4s
+12-logs-processor	00:32:19 UTC	0.1s
+13-logs-gateway	00:32:19 UTC	0.1s
+14-send	00:32:19 UTC	0.1s
+15-send-again	00:32:19 UTC	0.1s
+16-ps	00:32:20 UTC	0.1s
+17-ps-short	00:32:20 UTC	0.2s
+18-x-all-addresses-taken	00:32:20 UTC	0.5s
+19-x-rm-created	00:32:20 UTC	0.1s
+20-x-all-addresses	00:32:21 UTC	0.4s
+21-x-ps-all-addresses	00:32:21 UTC	0.4s
+22-curl-8090.txt	exit=+0.1s
+23-curl-9200	00:32:21 UTC	0.1s
+24-exec-processor.txt	exit=+0.2s
+25-exec-localhost.txt	exit=+0.2s
+26-x-exec-localhost-9100	00:32:22 UTC	0.2s
+27-x-processor-has-curl	00:32:22 UTC	0.2s
+28-network-inspect	00:32:22 UTC	0.1s
+29-x-dns	00:32:23 UTC	0.3s
+29b-exec-it-sh.txt	exit=+2.3s
+30-rm-gateway	00:32:25 UTC	0.4s
+31-run-gateway-8095	00:32:26 UTC	0.4s
+32-send-8095	00:32:26 UTC	0.1s
+33-curl-8090-gone	00:32:26 UTC	0.1s
+34-logs-gateway-8095	00:32:26 UTC	0.1s
+35-ps-8095	00:32:27 UTC	0.1s
+36-rm-processor	00:32:27 UTC	0.3s
+37-run-processor-9300	00:32:27 UTC	0.3s
+38-send-fails	00:32:28 UTC	0.2s
+39-logs-gateway-refused	00:32:28 UTC	0.1s
+40-logs-processor-9300	00:32:28 UTC	0.1s
+41-rm-gateway	00:32:28 UTC	0.4s
+42-run-gateway-9300	00:32:29 UTC	0.3s
+43-send-9300	00:32:29 UTC	0.1s
+44-rm-both	00:32:30 UTC	0.4s
+45-network-rm	00:32:30 UTC	0.3s
+46-x-after-cleanup	00:32:30 UTC	0.2s
+48-compose-ps	00:32:33 UTC	0.2s
+49-send-compose	00:32:33 UTC	0.1s
+50-network-ls-compose	00:32:34 UTC	0.1s
+51-compose-exec.txt	exit=+0.3s
+47-compose-up.txt	ctrl-c=+3.9s exit=+24.3s
+52-compose-ps-a-stopped	00:32:55 UTC	0.2s
+53-compose-down.txt	exit=+0.5s
+54-compose-ps-a-after	00:32:56 UTC	0.2s
+55-compose-up-d.txt	exit=+0.7s
+56-compose-ps-d	00:32:57 UTC	0.2s
+56c-x-send-while-logs	00:32:58 UTC	0.1s
+56b-compose-logs-f.txt	ctrl-c=+2.3s exit=+2.3s
+56d-compose-exec-sh.txt	exit=+2.4s
+57-x-edit-port	00:33:02 UTC	0.1s
+58-compose-up-d-changed.txt	exit=+10.8s
+59-x-send-8095-compose	00:33:13 UTC	0.1s
+60-compose-up-d-restored.txt	exit=+10.7s
+61-x-edit-processor	00:33:25 UTC	0.1s
+62-compose-up-d-build.txt	exit=+11.2s
+63-x-compose-logs	00:33:37 UTC	0.2s
+64-compose-down-running.txt	exit=+20.8s
+65-compose-ps-a-empty	00:33:58 UTC	0.2s
+66-x-images-remain	00:33:58 UTC	0.2s
+67-x-g11-by-hand	00:33:59 UTC	0.4s
+68-x-g11-compose-up.txt	exit=+0.3s
+69-x-g11-cleanup	00:34:00 UTC	0.5s
+69b-x-g11-compose-up-net.txt	exit=+0.7s
+69c-x-g11-cleanup.txt	exit=+20.8s
+70-x-ex3-no-network	00:34:22 UTC	0.7s
+71-x-ex3-resolve.txt	exit=+0.2s
+72-x-ex3-send	00:34:23 UTC	0.2s
+73-x-ex3-logs	00:34:23 UTC	0.1s
+74-x-ex3-cleanup	00:34:24 UTC	0.5s

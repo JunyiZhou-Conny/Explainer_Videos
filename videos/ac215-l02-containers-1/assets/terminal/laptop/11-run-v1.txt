@@ -1,0 +1,5 @@
+$ docker run --rm -ti simple-translate
+Python 3.12.15 (main, Oct  6 2026, 02:02:31) [GCC 12.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> exit()
+[exit 0]

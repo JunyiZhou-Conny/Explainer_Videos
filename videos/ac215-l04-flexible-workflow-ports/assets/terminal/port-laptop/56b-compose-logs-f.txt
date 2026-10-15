@@ -1,0 +1,5 @@
+$ docker compose logs -f gateway
+gateway  | gateway listening on port 9100  →  open http://localhost:8090
+gateway  | 172.19.0.1 - - [14/Oct/2026 00:32:58] "POST / HTTP/1.1" 200 -
+^C
+[exit 130]

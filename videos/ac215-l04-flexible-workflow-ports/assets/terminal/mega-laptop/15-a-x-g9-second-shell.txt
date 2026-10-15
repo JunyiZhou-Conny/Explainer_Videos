@@ -1,0 +1,34 @@
+$ ./docker-shell.sh
+Docker Username: dlops, Build Mode: dev-run
+Building development image locally...
+[+] Building 9.4s (10/10) FINISHED                               docker:default
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 1.31kB                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.14-slim-bookw  0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/5] FROM docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f2  0.0s
+ => => resolve docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f2  0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 318B                                          0.0s
+ => CACHED [2/5] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/  0.0s
+ => CACHED [3/5] WORKDIR /app                                              0.0s
+ => [4/5] COPY --chown=app:app . ./                                        0.1s
+ => [5/5] RUN uv sync                                                      2.0s
+ => exporting to image                                                     7.2s
+ => => exporting layers                                                    5.1s
+ => => exporting manifest sha256:c478063eabdf2d4e7fc50f170ad06c357184ccb3  0.0s
+ => => exporting config sha256:9dfb89a101986b2c9f2e9be876b77b30dbdae6c8ac  0.0s
+ => => exporting attestation manifest sha256:4b73f60e7c25bb3dfd684f2f4385  0.0s
+ => => exporting manifest list sha256:cb84b9b68566c097e5a7b2bfdb0f13042f1  0.0s
+ => => naming to docker.io/library/mega-pipeline-transcribe-audio:latest   0.0s
+ => => unpacking to docker.io/library/mega-pipeline-transcribe-audio:late  2.0s
+Run Docker container...
+Using local image...
+docker: Error response from daemon: Conflict. The container name "/mega-pipeline
+-transcribe-audio" is already in use by container "0ceffb27228834c45973fd60c69fb
+2d35d70019784ef77db45cbc62403144eb7". You have to remove (or rename) that contai
+ner to be able to reuse that name.
+
+Run 'docker run --help' for more information
+[exit 125]

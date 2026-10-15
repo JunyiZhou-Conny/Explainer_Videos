@@ -1,0 +1,10 @@
+$ cat pyproject.toml
+[project]
+name = "synthesis-audio"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "google-cloud-storage>=3.17.0",
+    "google-cloud-texttospeech>=2.38.0",
+]
+[exit 0]

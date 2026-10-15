@@ -1,0 +1,12 @@
+$ docker compose up -d
+WARN[0000] a network with name toynet exists but was not created by compose.
+Set `external: true` to use an existing network
+[+] up 1/3
+ ⠋ Container processor Creating                                             0.0s
+ ✘ service:processor:1 Error response from daemon: Conflict. The contain... 0.0s
+ ⠋ Container gateway   Creating                                             0.0s
+Error response from daemon: Conflict. The container name "/processor" is already
+ in use by container "ee89e5b189254cbffb0af0315637440fb50a0fd52e855ff9453b108c8c
+8e8ff6". You have to remove (or rename) that container to be able to reuse that
+name.
+[exit 1]

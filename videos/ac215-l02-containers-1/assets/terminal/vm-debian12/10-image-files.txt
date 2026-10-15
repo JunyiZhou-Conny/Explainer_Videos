@@ -1,0 +1,12 @@
+$ sudo docker run --rm dlops/simple-translate -c 'wc -c cli.py; grep -n Translator cli.py; ls -l .venv/bin/python; cat .venv/pyvenv.cfg'
+1266 cli.py
+9:from googletrans import Translator
+25:    async with Translator() as translator:
+lrwxrwxrwx 1 root root 73 Sep 17 01:28 .venv/bin/python -> /root/.local/share/uv/python/cpython-3.14-linux-x86_64-gnu/bin/python3.14
+home = /root/.local/share/uv/python/cpython-3.14-linux-x86_64-gnu/bin
+implementation = CPython
+uv = 0.12.15
+version_info = 3.14
+include-system-site-packages = false
+prompt = app
+[exit 0]

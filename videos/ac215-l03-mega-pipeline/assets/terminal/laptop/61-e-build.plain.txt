@@ -1,0 +1,46 @@
+$ docker buildx history logs navkm8lgcg4d186b54hlh40fd
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 833B done
+#1 WARN: SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/l03-capture/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80
+#4 resolve docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 17.34kB done
+#5 DONE 0.0s
+
+#6 [2/5] RUN apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#6 CACHED
+
+#7 [3/5] WORKDIR /app
+#7 CACHED
+
+#8 [4/5] COPY --chown=app:app . ./
+#8 DONE 0.1s
+
+#9 [5/5] RUN uv sync
+#9 0.177 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+#9 0.177 Creating virtual environment at: /home/app/.venv
+#9 0.182 Resolved 1 package in 2ms
+#9 0.183 Checked in 0.00ms
+#9 DONE 0.2s
+
+#10 exporting to image
+#10 exporting layers 0.1s done
+#10 exporting manifest sha256:f36309048f1b0da0eda9a2d8a43238153ca43d01161964193b1f9a39ae4d5141 done
+#10 exporting config sha256:e014f6178009a8b078777f3433e4b8621be993aff2fa9aa73c559553fbf191e9 done
+#10 exporting attestation manifest sha256:7502408df5ec35a71794c093faa5cb9025ca7bae6faa2b54687594f42d9306b5 done
+#10 exporting manifest list sha256:1e66bd1e81312d4283468bee8c69d83597e4bca8f09efdd8c9919747c2a67ea1 done
+#10 naming to docker.io/library/synthesis_audio:latest done
+#10 unpacking to docker.io/library/synthesis_audio:latest 0.0s done
+#10 DONE 0.2s
+[exit 0]

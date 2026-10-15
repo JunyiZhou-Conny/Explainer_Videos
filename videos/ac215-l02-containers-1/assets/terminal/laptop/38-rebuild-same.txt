@@ -1,0 +1,41 @@
+$ docker build --progress=plain -t simple-translate -f Dockerfile .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 728B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809a5d4b6e51b264d5b5c4549626c27110ca664c
+#4 resolve docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809a5d4b6e51b264d5b5c4549626c27110ca664c 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 2.22kB done
+#5 DONE 0.0s
+
+#6 [2/4] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get clean &&     pip install --no-cache-dir --upgrade pip &&     pip install uv
+#6 CACHED
+
+#7 [3/4] COPY . ./
+#7 CACHED
+
+#8 [4/4] RUN uv sync
+#8 CACHED
+
+#9 exporting to image
+#9 exporting layers done
+#9 exporting manifest sha256:fa192839a4233d3810f482f6c8f009fe86923d32ca0b9a799ceb61ba78ccde3e done
+#9 exporting config sha256:d2dbd9dd250f12610b4576bfff45dd07e405a5f1dda0770c6f38c2fd157b32cb done
+#9 exporting attestation manifest sha256:5e30667e067f5b3200732424100a4768b4a0643fa6458b57381dd3d91c2062c3 done
+#9 exporting manifest list sha256:f463a193b2efc52caf539515defce88ea095fc69914ffbc873d7634fd69bf275 done
+#9 naming to docker.io/library/simple-translate:latest done
+#9 unpacking to docker.io/library/simple-translate:latest done
+#9 DONE 0.1s
+[exit 0]

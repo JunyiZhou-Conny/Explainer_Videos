@@ -1,0 +1,5 @@
+$ docker compose up -d
+[+] up 2/2
+ ✔ Container processor Running                                              0.0s
+ ✔ Container gateway   Started                                             10.5s
+[exit 0]

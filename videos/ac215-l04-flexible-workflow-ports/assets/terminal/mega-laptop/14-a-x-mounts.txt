@@ -1,0 +1,5 @@
+$ docker inspect --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{println}}{{end}}' mega-pipeline-transcribe-audio
+/home/student/AC215/mega-pipeline/transcribe_audio -> /app
+/home/student/AC215/secrets -> /secrets
+
+[exit 0]

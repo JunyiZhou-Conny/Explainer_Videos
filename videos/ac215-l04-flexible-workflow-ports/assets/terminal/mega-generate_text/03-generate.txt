@@ -1,0 +1,4 @@
+$ python cli.py --generate
+Args: Namespace(download=False, generate=True, upload=False)
+generate
+[exit 0]

@@ -1,0 +1,7 @@
+$ docker exec -it gateway sh
+# hostname
+3bf0f65d0cf0
+# ls
+Dockerfile  gateway.py  index.html
+# exit
+[exit 0]

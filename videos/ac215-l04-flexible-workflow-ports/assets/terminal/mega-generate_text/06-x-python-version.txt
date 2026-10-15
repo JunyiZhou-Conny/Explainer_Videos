@@ -1,0 +1,12 @@
+$ python --version; ls -la text_prompts/group-01 text_paragraphs/group-01
+Python 3.14.8
+text_paragraphs/group-01:
+total 8
+drwxrwsrwx 2 app app 4096 Oct 14 00:37 .
+drwxrwsrwx 3 app app 4096 Oct 14 00:37 ..
+
+text_prompts/group-01:
+total 8
+drwxrwsrwx 2 app app 4096 Oct 14 00:37 .
+drwxrwsrwx 3 app app 4096 Oct 14 00:37 ..
+[exit 0]

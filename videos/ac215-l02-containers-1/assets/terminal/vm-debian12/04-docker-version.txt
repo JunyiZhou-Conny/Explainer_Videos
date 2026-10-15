@@ -1,0 +1,3 @@
+$ sudo docker --version
+Docker version 20.10.24+dfsg1, build 297e128
+[exit 0]

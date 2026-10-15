@@ -1,0 +1,6 @@
+$ docker exec gateway curl -s http://localhost:9100 | head -4
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+[exit 0]

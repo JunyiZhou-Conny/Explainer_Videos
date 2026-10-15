@@ -28,7 +28,10 @@ tutorials (repo, branch, README section, Colab), pinned commits, guide path and 
 - Docker: if `docker info` fails, start the daemon with
   `(setsid dockerd > <scratchpad>/dockerd.log 2>&1 &)` from a shell where `$HTTPS_PROXY` is set.
   Docker Hub pulls work. `docker run --network host -e https_proxy=$HTTPS_PROXY -e HTTPS_PROXY=$HTTPS_PROXY ...`
-  gives a container network access. `docker build --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY
+  gives a container network access. Never start a nested `dockerd` inside a container that shares
+  the host network namespace (`--network host`, `--privileged`): with `--bridge=none` it deletes the
+  host's `docker0` and breaks every default-bridge `docker run` for the other agents. Docker-in-Docker
+  checks run in their own network namespace (no `--network host`), or are skipped and noted. `docker build --network host --build-arg HTTPS_PROXY=$HTTPS_PROXY
   --build-arg https_proxy=$HTTPS_PROXY ...` lets build steps download, but the CA is still missing
   inside the build: build a capture-only copy of the Dockerfile that adds the CA first (say so in
   ASSETS.md) rather than editing the tutorial's file.
@@ -104,12 +107,18 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
    parts, subtitles, burned-in bilingual copy, chapters, transcript). Note: changing any `.py` in
    `scenes/` marks every scene stale — after a late fix, re-render only that scene with
    `--render-only --only <stem>`, then stitch with `--no-render`.
-10. **Publish**: every committed file < 100 MB (GitHub's limit). Git keeps the burned-in copy
-   `<id>.zh-en.mp4`, every subtitle file, chapters and transcript; `.gitignore` keeps the clean video
-   and the part cuts out (rebuild them with `--no-render`), so a video costs ~85 MB of repo, not ~260. Fill durations and chapters into the
-   README; add the row to the top-level README table; set `video_status` in
-   `MLOps_Learning/course/lectures.yaml`, run `uv run tools/course_map.py`, and refresh the lecture's
-   study guide from the captures (commands, real outputs).
+10. **Publish** ([`docs/PUBLISHING.md`](../../../docs/PUBLISHING.md), AGENTS.md "The episode
+   lifecycle"): rendered MP4s are release assets, never tracked files (`.gitignore` keeps
+   `videos/*/output/*.mp4` out and CI refuses tracked media; L01's MP4s now live in the
+   `media-2026-10-13` release). Git keeps every subtitle file, chapters and transcript. Decode each
+   final MP4 in full (`ffmpeg -v error -i X -f null -`) and ffprobe it. Write the video's
+   `REVIEW.md`: the AGENTS.md content gates, decode/metadata, visual sampling, the ASR round trip
+   and the owner's listening sign-off as separate lines; never claim a listen that did not happen.
+   Cloud sessions cannot create releases: a GitHub Actions job, whose token can, uploads the
+   deliverables after the episode merges and the catalog (`catalog/videos.json`,
+   `docs/VIDEOS.md`) points at the release. Fill durations and chapters into the README; set
+   `video_status` in `MLOps_Learning/course/lectures.yaml`, run `uv run tools/course_map.py`, and
+   refresh the lecture's study guide from the captures (commands, real outputs).
 
 ## Scene-code pitfalls (each cost time on L1)
 
@@ -123,7 +132,18 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 - One `with self.voiceover(SAY[i]) as vo:` per SAY line, in order; `assert len(SAY) == n` at the top.
   Time animations with `vo.wait_until("phrase")`.
 - Prefer transforms that show what became what over fade-out/fade-in.
+- `FadeOut` restores the mobject's opacity after removing it, and it removes only the mobject you pass. So
+  `FadeOut(VGroup(a, b))` on a throwaway wrapper whose members are still on the scene through another parent
+  (e.g. `a` is a child of a panel that is on the scene) makes `a` and `b` snap back. Fade out the object
+  that is actually on the scene, or `self.remove(...)` the members after the fade.
 - Deterministic: seed randomness; avoid `always_redraw` on big groups; clear updaters.
+- Never message an agent that runs inside a workflow (SendMessage to its id): it does not reach that
+  agent, it starts a second copy from its transcript, and the two then edit the same file. Review
+  findings that arrive while scenes are being built go into the video's `build/qa_followups.md` for the
+  whole-video QA pass instead.
+- An agent inside a workflow returns its final message when its turn ends. Run `explainer.check` and
+  `explainer.preview` in the foreground (long timeout, or `--at`/`-q l` for long scenes); never end the turn
+  "waiting for the monitor's notice" on a background render, or the scene comes back unreviewed.
 - Agents working in parallel never edit shared files (`explainer/*.py`, `scenes/common.py` once
   scenes start); they put requests in their report.
 

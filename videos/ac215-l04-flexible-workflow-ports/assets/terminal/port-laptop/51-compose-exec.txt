@@ -1,0 +1,3 @@
+$ docker compose exec gateway curl http://processor:9200/health
+ok
+[exit 0]

@@ -1,0 +1,4 @@
+$ python --version; readlink -f $(which python)
+Python 3.12.15
+/usr/local/bin/python3.12
+[exit 0]

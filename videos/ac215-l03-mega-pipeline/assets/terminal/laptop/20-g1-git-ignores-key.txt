@@ -1,0 +1,5 @@
+$ ls secrets; git status --short; git check-ignore -v secrets/mega-pipeline.json
+mega-pipeline.json
+ M cli.py
+transcribe_audio/.gitignore:3:/secrets	secrets/mega-pipeline.json
+[exit 0]

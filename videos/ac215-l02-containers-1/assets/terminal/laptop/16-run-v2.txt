@@ -1,0 +1,4 @@
+$ docker run --rm -ti simple-translate
+root@f72851da4a58:/# exit
+exit
+[exit 0]

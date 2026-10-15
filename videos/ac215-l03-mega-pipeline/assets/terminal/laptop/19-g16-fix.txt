@@ -1,0 +1,11 @@
+$ docker run --rm -v "$(pwd):/app" transcribe_audio -c "source /home/app/.venv/bin/activate && python cli.py --help"
+usage: cli.py [-h] [-d] [-t] [-u]
+
+Transcribe audio file to text
+
+options:
+  -h, --help        show this help message and exit
+  -d, --download    Download audio files from GCS bucket
+  -t, --transcribe  Transcribe audio files to text
+  -u, --upload      Upload transcribed text to GCS bucket
+[exit 0]

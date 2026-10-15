@@ -1,0 +1,4 @@
+$ uname -m; docker image inspect simple-translate --format '{{.Os}}/{{.Architecture}}'
+x86_64
+linux/amd64
+[exit 0]

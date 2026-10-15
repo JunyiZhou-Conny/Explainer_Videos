@@ -1,0 +1,31 @@
+$ docker run --rm -ti simple-translate
+root@1d1fecf6ff8f:/# pwd
+/
+root@1d1fecf6ff8f:/# echo $$
+1
+root@1d1fecf6ff8f:/# which python
+/.venv/bin/python
+root@1d1fecf6ff8f:/# python --version
+Python 3.15.0
+root@1d1fecf6ff8f:/# /usr/local/bin/python --version
+Python 3.12.15
+root@1d1fecf6ff8f:/# ls /root/.local/share/uv/python
+cpython-3.15-linux-x86_64-gnu  cpython-3.15.0-linux-x86_64-gnu
+root@1d1fecf6ff8f:/# cat .venv/pyvenv.cfg
+home = /root/.local/share/uv/python/cpython-3.15-linux-x86_64-gnu/bin
+implementation = CPython
+uv = 0.13.0
+version_info = 3.15
+include-system-site-packages = false
+prompt = app
+root@1d1fecf6ff8f:/# ls -a /
+.           Dockerfile      docker-build-push.sh  mnt             srv
+..          Dockerfile.txt  docker-shell.sh       opt             sys
+.dockerenv  README.md       etc                   proc            tmp
+.git        bin             home                  pyproject.toml  usr
+.gitignore  boot            lib                   root            uv.lock
+.venv       cli.py          lib64                 run             var
+.vscode     dev             media                 sbin
+root@1d1fecf6ff8f:/# exit
+exit
+[exit 0]

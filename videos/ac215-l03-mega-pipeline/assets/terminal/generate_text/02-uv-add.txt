@@ -1,0 +1,4 @@
+$ uv add google-cloud-storage google-genai
+Resolved 35 packages in 14ms
+Checked 34 packages in 0.61ms
+[exit 0]

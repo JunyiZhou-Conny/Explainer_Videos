@@ -1,0 +1,4 @@
+$ uname -m; sudo docker image inspect dlops/simple-translate --format '{{.Os}}/{{.Architecture}} created {{.Created}}'
+x86_64
+linux/amd64 created 2026-09-16T21:28:58.17041481-04:00
+[exit 0]

@@ -1,0 +1,57 @@
+id: ac215-l04-flexible-workflow-ports
+title: "AC215 · Lecture 4 — Containers II-b: build or pull, ports and Compose (follow-along: mega-pipeline flexible-workflow, port_toy)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 4
+  lecture_title: "Containers II-b"
+  ed: https://edstem.org/us/courses/97373/lessons/166029/
+  repos:
+    - {repo: dlops-io/mega-pipeline, branch: flexible-workflow, commit: cc67f3b8fc471f4fe1afe73d03e89466bae7d485,
+       sections: ["Prerequisites", "Get the Code", "Where We Are, Where We're Going", "The Five Components",
+                  "Configure each cli.py before you run it", "Connecting the Pipeline Components",
+                  "GCS Bucket Details", "Service Account & Secrets", "How to Run a Component",
+                  "Quick Reference — Running Each Component", "Appendix",
+                  "transcribe_audio/README.md", "generate_text/README.md", "synthesis_audio_en/README.md",
+                  "translate_text/README.md", "synthesis_audio/README.md"]}
+    - {repo: dlops-io/port_toy, branch: main, commit: d190c7122fc35cc1f7e15e467d2babdfc24b5c0c,
+       sections: ["Prerequisites", "How the app works", "Step 1: Set up the network by hand",
+                  "Step 2: Check the ports", "Step 3: Change the ports", "Step 4: Run with Compose",
+                  "Port and networking cheat sheet", "Handy commands"]}
+    # quoted for comparison only, not followed:
+    #   main = the L03 tutorial (S02: where the key lived; S03: the .gitignore that makes the switch
+    #   replace L03 files silently); pipenv-flexible-workflow = the source of the dlops/* images that
+    #   `./docker-shell.sh run` falls back to (S08).
+    - {repo: dlops-io/mega-pipeline, branch: main, commit: c6bbc9ba88984e1234b68ccf5cdf7c00f7e9accc,
+       sections: ["README.md", "transcribe_audio/.gitignore", "transcribe_audio/cli.py"]}
+    - {repo: dlops-io/mega-pipeline, branch: pipenv-flexible-workflow, commit: 32fcdb7aa3ffb3eaf3d09bdde123a02a42f2be12,
+       sections: ["transcribe_audio/Dockerfile"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L04-containers-2b-flexible-workflow-ports.md
+audience: "AC215 student who has done L1–L3 (VMs and uv, a given Dockerfile and Docker Hub, the five-container mega-pipeline with a course key); new to owning a service account, wrapper scripts, build-or-pull workflows, container networks, ports and Compose; watching with their own clones of mega-pipeline (flexible-workflow) and port_toy open, pausing to run each command"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,           title: "Build or pull? Whose localhost?"}
+  - {file: scenes/s02_team.py,       cls: TeamWorkflow,   title: "Same pipeline, built like a team"}
+  - {file: scenes/s03_code.py,       cls: GetTheCode,     title: "Get the code: clone, or switch branches"}
+  - {file: scenes/s04_values.py,     cls: YourValues,     title: "Your bucket and your three values"}
+  - {file: scenes/s05_gates.py,      cls: ThreeGates,     title: "Three gates: account, role, API"}
+  - {file: scenes/s06_script.py,     cls: DockerShell,    title: "docker-shell.sh: one script, two windows"}
+  - {file: scenes/s07_components.py, cls: RunComponents,  title: "Five components, five honest errors"}
+  - {file: scenes/s08_run.py,        cls: DevAndRun,      title: "dev, run, and a stale image"}
+  - {file: scenes/s09_prod.py,       cls: ProdAndCleanup, title: "prod, a stowaway key, and clean-up"}
+  - {file: scenes/s10_network.py,    cls: TwoComputers,   title: "Two little computers, one network"}
+  - {file: scenes/s11_start.py,      cls: BuildAndStart,  title: "Build, start, read the logs"}
+  - {file: scenes/s12_send.py,       cls: SendMessage,    title: "Send a message: ports on the wire"}
+  - {file: scenes/s13_reach.py,      cls: WhoCanReach,    title: "Who can reach whom"}
+  - {file: scenes/s14_ports.py,      cls: ChangePorts,    title: "Change the ports"}
+  - {file: scenes/s15_compose.py,    cls: ComposeUp,      title: "Compose: the same app, declared"}
+  - {file: scenes/s16_recap.py,      cls: Recap,          title: "Edit, apply, tear down, recap"}
+parts:
+  - id: part1
+    title: "AC215 · L4, part 1: the flexible workflow — your own cloud, one script, build or pull"
+    scenes: [s01_hook, s02_team, s03_code, s04_values, s05_gates, s06_script, s07_components, s08_run, s09_prod]
+  - id: part2
+    title: "AC215 · L4, part 2: port_toy — networks, ports and Compose"
+    scenes: [s10_network, s11_start, s12_send, s13_reach, s14_ports, s15_compose, s16_recap]

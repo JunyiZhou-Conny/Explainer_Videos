@@ -1,0 +1,6 @@
+$ python cli.py --help
+Traceback (most recent call last):
+  File "/app/cli.py", line 9, in <module>
+    from google.cloud import storage
+ModuleNotFoundError: No module named 'google'
+[exit 1]

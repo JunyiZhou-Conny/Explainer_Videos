@@ -1,0 +1,14 @@
+$ ls -a; git status
+.
+..
+.gitignore
+Dockerfile
+README.md
+cli.py
+pyproject.toml
+secrets
+On branch main
+Your branch is up to date with 'origin/main'.
+
+nothing to commit, working tree clean
+[exit 0]

@@ -1,0 +1,2 @@
+$ chmod +x docker-shell.sh
+[exit 0]

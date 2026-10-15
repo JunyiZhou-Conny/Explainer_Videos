@@ -1,0 +1,3 @@
+$ uv init --bare
+error: Project is already initialized in `/home/student/mega-pipeline/generate_text` (`pyproject.toml` file exists)
+[exit 2]

@@ -1,0 +1,10 @@
+$ docker run --rm -ti simple-translate
+root@473b6edd3dab:/# which python
+/.venv/bin/python
+root@473b6edd3dab:/# python --version
+Python 3.15.0
+root@473b6edd3dab:/# echo $VIRTUAL_ENV
+/.venv
+root@473b6edd3dab:/# exit
+exit
+[exit 0]

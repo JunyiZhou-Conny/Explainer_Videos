@@ -1,0 +1,11 @@
+# expected, not a capture: the README's own block, generate_text/README.md:114-123 (dlops-io/mega-pipeline flexible-workflow @ cc67f3b), command line marked with $
+$ python cli.py --help
+usage: cli.py [-h] [-d] [-g] [-u]
+
+Generate text from prompt
+
+options:
+  -h, --help      show this help message and exit
+  -d, --download  Download text prompts from GCS bucket
+  -g, --generate  Generate a text paragraph
+  -u, --upload    Upload paragraph text to GCS bucket

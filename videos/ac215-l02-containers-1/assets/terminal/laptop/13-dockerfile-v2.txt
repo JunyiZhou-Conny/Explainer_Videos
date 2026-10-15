@@ -1,0 +1,6 @@
+$ cat Dockerfile
+# Use the official Debian-hosted Python image
+FROM python:3.12-slim-bookworm
+
+ENTRYPOINT ["/bin/bash"]
+[exit 0]

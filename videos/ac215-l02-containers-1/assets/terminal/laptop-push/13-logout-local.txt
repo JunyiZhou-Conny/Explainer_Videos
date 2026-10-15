@@ -1,0 +1,3 @@
+$ docker logout localhost:5000
+Removing login credentials for localhost:5000
+[exit 0]

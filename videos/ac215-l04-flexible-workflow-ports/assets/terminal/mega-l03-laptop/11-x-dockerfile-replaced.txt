@@ -1,0 +1,5 @@
+$ head -2 transcribe_audio/Dockerfile; ls transcribe_audio/secrets
+# Use the official Debian-hosted Python image
+FROM python:3.14-slim-bookworm
+mega-pipeline.json
+[exit 0]

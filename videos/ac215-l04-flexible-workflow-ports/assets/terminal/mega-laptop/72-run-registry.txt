@@ -1,0 +1,40 @@
+$ ./docker-shell.sh run
+Docker Username: dlops, Build Mode: run
+Run Docker container...
+Local image not found, using image from registry...
+Unable to find image 'dlops/mega-pipeline-transcribe-audio:latest' locally
+latest: Pulling from dlops/mega-pipeline-transcribe-audio
+3db44566b15f: Pull complete
+cbfea27109a8: Pull complete
+8b91b88d5577: Pull complete
+824416e23423: Pull complete
+8f777578c172: Pull complete
+4f4fb700ef54: Pull complete
+276dfcf5deff: Pull complete
+15c5ea57be8b: Pull complete
+fa1f197a0e0b: Pull complete
+3f9a3ba37514: Pull complete
+e93299398846: Download complete
+Digest: sha256:30e5dbdda6c9e0fd43e9e1a13c77e6cced48a413db937b09d0ee552052ae6bdd
+Status: Downloaded newer image for dlops/mega-pipeline-transcribe-audio:latest
+Creating a Pipfile for this project...
+Launching subshell in virtual environment...
+root@36615ab6e34b:/app#  source /root/.local/share/virtualenvs/app-4PlAip0Q/bin/
+activate
+(app) root@36615ab6e34b:/app# python --version
+Python 3.8.17
+(app) root@36615ab6e34b:/app# which python
+/root/.local/share/virtualenvs/app-4PlAip0Q/bin/python
+(app) root@36615ab6e34b:/app# python cli.py --help
+usage: cli.py [-h] [-d] [-t] [-u]
+
+Transcribe audio file to text
+
+optional arguments:
+  -h, --help        show this help message and exit
+  -d, --download    Download audio files from GCS bucket
+  -t, --transcribe  Transcribe audio files to text
+  -u, --upload      Upload transcribed text to GCS bucket
+(app) root@36615ab6e34b:/app# exit
+exit
+[exit 0]

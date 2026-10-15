@@ -1,0 +1,111 @@
+$ docker buildx imagetools inspect python:3.12-slim-bookworm
+Name:      docker.io/library/python:3.12-slim-bookworm
+MediaType: application/vnd.oci.image.index.v1+json
+Digest:    sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+           
+Manifests: 
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:2ed6491b93cd49272ee6de2b5a38440c3448360322c089fc23e370722d74179d
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    linux/amd64
+  Annotations: 
+    org.opencontainers.image.version:         3.12.15-slim-bookworm
+    com.docker.official-images.bashbrew.arch: amd64
+    org.opencontainers.image.base.digest:     sha256:a4672c0cb26fbdde88e38fa2dfb6c681942306680e41e4378b28770b6e79ee91
+    org.opencontainers.image.base.name:       debian:bookworm-slim
+    org.opencontainers.image.created:         2026-10-06T01:55:57Z
+    org.opencontainers.image.revision:        2a3b794c223ab067d122719541cdd54a068732a5
+    org.opencontainers.image.source:          https://github.com/docker-library/python.git#2a3b794c223ab067d122719541cdd54a068732a5:3.12/slim-bookworm
+    org.opencontainers.image.url:             https://hub.docker.com/_/python
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:0d6161e7e39f626798ddc8cebfaf677f5659082cc5c66999430d27021fb4a76e
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    unknown/unknown
+  Annotations: 
+    com.docker.official-images.bashbrew.arch: amd64
+    vnd.docker.reference.digest:              sha256:2ed6491b93cd49272ee6de2b5a38440c3448360322c089fc23e370722d74179d
+    vnd.docker.reference.type:                attestation-manifest
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:5666bfaac33ca2d1d8465908c2f6c03d5d23746b68a980472b9304b91c87a82f
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    linux/arm/v7
+  Annotations: 
+    org.opencontainers.image.version:         3.12.15-slim-bookworm
+    com.docker.official-images.bashbrew.arch: arm32v7
+    org.opencontainers.image.base.digest:     sha256:be90e120e527cbcc03b57353d003f8bbb9cb746eeb8ac0648029254b608c1447
+    org.opencontainers.image.base.name:       debian:bookworm-slim
+    org.opencontainers.image.created:         2026-10-06T02:40:54Z
+    org.opencontainers.image.revision:        2a3b794c223ab067d122719541cdd54a068732a5
+    org.opencontainers.image.source:          https://github.com/docker-library/python.git#2a3b794c223ab067d122719541cdd54a068732a5:3.12/slim-bookworm
+    org.opencontainers.image.url:             https://hub.docker.com/_/python
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:45a79fb3e8ed163257ea65e259d93146797524720e79b567139e539ad395bd4b
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    unknown/unknown
+  Annotations: 
+    vnd.docker.reference.type:                attestation-manifest
+    com.docker.official-images.bashbrew.arch: arm32v7
+    vnd.docker.reference.digest:              sha256:5666bfaac33ca2d1d8465908c2f6c03d5d23746b68a980472b9304b91c87a82f
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:739ba32ae445e8d58f3d90feb85f83bebc8346f8dd280fa1eb5848f4ff1ed163
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    linux/arm64/v8
+  Annotations: 
+    org.opencontainers.image.version:         3.12.15-slim-bookworm
+    com.docker.official-images.bashbrew.arch: arm64v8
+    org.opencontainers.image.base.digest:     sha256:a1b86db52ce3daef089e45aabe36dfec4091f82464c25c1fdcf03de197cbe82a
+    org.opencontainers.image.base.name:       debian:bookworm-slim
+    org.opencontainers.image.created:         2026-10-06T01:59:28Z
+    org.opencontainers.image.revision:        2a3b794c223ab067d122719541cdd54a068732a5
+    org.opencontainers.image.source:          https://github.com/docker-library/python.git#2a3b794c223ab067d122719541cdd54a068732a5:3.12/slim-bookworm
+    org.opencontainers.image.url:             https://hub.docker.com/_/python
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:13b53c43d3230b7bfad14fb93539bf656b6c363d9b0e78d6f4169aa681b81678
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    unknown/unknown
+  Annotations: 
+    com.docker.official-images.bashbrew.arch: arm64v8
+    vnd.docker.reference.digest:              sha256:739ba32ae445e8d58f3d90feb85f83bebc8346f8dd280fa1eb5848f4ff1ed163
+    vnd.docker.reference.type:                attestation-manifest
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:8c3d57cd8f9e863ea56ef77f36c1cb38ae922a9172b8c36018900485f8b75ee7
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    linux/386
+  Annotations: 
+    org.opencontainers.image.created:         2026-10-06T01:56:26Z
+    org.opencontainers.image.revision:        2a3b794c223ab067d122719541cdd54a068732a5
+    org.opencontainers.image.source:          https://github.com/docker-library/python.git#2a3b794c223ab067d122719541cdd54a068732a5:3.12/slim-bookworm
+    org.opencontainers.image.url:             https://hub.docker.com/_/python
+    org.opencontainers.image.version:         3.12.15-slim-bookworm
+    com.docker.official-images.bashbrew.arch: i386
+    org.opencontainers.image.base.digest:     sha256:227236678b453cb31ec4d1386dce87c9f76b9682288f365b0139f0d47522d3f3
+    org.opencontainers.image.base.name:       debian:bookworm-slim
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:3a9a707da5173a1cf829f4b0f22bf7c8e14579b64467e86c9ee09290fb0b89ae
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    unknown/unknown
+  Annotations: 
+    com.docker.official-images.bashbrew.arch: i386
+    vnd.docker.reference.digest:              sha256:8c3d57cd8f9e863ea56ef77f36c1cb38ae922a9172b8c36018900485f8b75ee7
+    vnd.docker.reference.type:                attestation-manifest
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:6656101542c1a2502a49433f314349a6e26c95b977d24f6c784e3817391d5644
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    linux/ppc64le
+  Annotations: 
+    org.opencontainers.image.created:         2026-10-06T08:10:30Z
+    org.opencontainers.image.revision:        2a3b794c223ab067d122719541cdd54a068732a5
+    org.opencontainers.image.source:          https://github.com/docker-library/python.git#2a3b794c223ab067d122719541cdd54a068732a5:3.12/slim-bookworm
+    org.opencontainers.image.url:             https://hub.docker.com/_/python
+    org.opencontainers.image.version:         3.12.15-slim-bookworm
+    com.docker.official-images.bashbrew.arch: ppc64le
+    org.opencontainers.image.base.digest:     sha256:653232568eb256bba43ecb106f1410fdedd5070507d83bb546f09e1a1b617e09
+    org.opencontainers.image.base.name:       debian:bookworm-slim
+               
+  Name:        docker.io/library/python:3.12-slim-bookworm@sha256:94e2a021b9a0976e284fe53c4d28d2fae59f4793217f355cd6764ab46f56a992
+  MediaType:   application/vnd.oci.image.manifest.v1+json
+  Platform:    unknown/unknown
+  Annotations: 
+    com.docker.official-images.bashbrew.arch: ppc64le
+    vnd.docker.reference.digest:              sha256:6656101542c1a2502a49433f314349a6e26c95b977d24f6c784e3817391d5644
+    vnd.docker.reference.type:                attestation-manifest
+[exit 0]

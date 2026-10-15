@@ -1,0 +1,24 @@
+#0 building with "l02ex-multi" instance using docker-container driver
+
+#1 [internal] booting buildkit
+#1 pulling image moby/buildkit:buildx-stable-1
+#1 pulling image moby/buildkit:buildx-stable-1 1.1s done
+#1 creating container buildx_buildkit_l02ex-multi0
+#1 creating container buildx_buildkit_l02ex-multi0 5.4s done
+#1 DONE 6.6s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 76B done
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 39B done
+#4 DONE 0.0s
+
+#5 [1/1] COPY hello.txt /hello.txt
+#5 DONE 0.0s
+WARNING: No output specified with docker-container driver. Build result will only remain in the build cache. To push result image into registry use --push or to load image into docker use --load

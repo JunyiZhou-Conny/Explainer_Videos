@@ -1,0 +1,31 @@
+$ docker history transcribe_audio
+IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT
+55af020104ea   8 seconds ago    CMD ["-c" "source /home/app/.venv/bin/activa…   0B        buildkit.dockerfile.v0
+<missing>      8 seconds ago    ENTRYPOINT ["/bin/bash"]                        0B        buildkit.dockerfile.v0
+<missing>      8 seconds ago    RUN |1 DEBIAN_PACKAGES=build-essential ffmpe…   105MB     buildkit.dockerfile.v0
+<missing>      11 seconds ago   COPY --chown=app:app . ./ # buildkit            193kB     buildkit.dockerfile.v0
+<missing>      4 minutes ago    WORKDIR /app                                    4.1kB     buildkit.dockerfile.v0
+<missing>      4 minutes ago    USER app                                        0B        buildkit.dockerfile.v0
+<missing>      4 minutes ago    RUN |1 DEBIAN_PACKAGES=build-essential ffmpe…   842MB     buildkit.dockerfile.v0
+<missing>      4 minutes ago    ENV GOOGLE_APPLICATION_CREDENTIALS=secrets/m…   0B        buildkit.dockerfile.v0
+<missing>      4 minutes ago    ENV UV_PROJECT_ENVIRONMENT=/home/app/.venv      0B        buildkit.dockerfile.v0
+<missing>      4 minutes ago    ENV UV_LINK_MODE=copy                           0B        buildkit.dockerfile.v0
+<missing>      4 minutes ago    ENV PYTHONUNBUFFERED=1                          0B        buildkit.dockerfile.v0
+<missing>      4 minutes ago    ENV LANG=C.UTF-8                                0B        buildkit.dockerfile.v0
+<missing>      4 minutes ago    ENV DEBIAN_FRONTEND=noninteractive              0B        buildkit.dockerfile.v0
+<missing>      4 minutes ago    ARG DEBIAN_PACKAGES=build-essential ffmpeg      0B        buildkit.dockerfile.v0
+<missing>      7 minutes ago    ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certific…   0B        buildkit.dockerfile.v0
+<missing>      7 minutes ago    RUN /bin/sh -c sed -i 's|http://deb.debian.o…   20.5kB    buildkit.dockerfile.v0
+<missing>      7 minutes ago    COPY ca-bundle.crt /etc/ssl/certs/ca-certifi…   217kB     buildkit.dockerfile.v0
+<missing>      7 minutes ago    COPY ca-bundle.crt /usr/local/share/ca-certi…   221kB     buildkit.dockerfile.v0
+<missing>      7 days ago       CMD ["python3"]                                 0B        buildkit.dockerfile.v0
+<missing>      7 days ago       RUN /bin/sh -c set -eux;  for src in idle3 p…   16.4kB    buildkit.dockerfile.v0
+<missing>      7 days ago       RUN /bin/sh -c set -eux;   savedAptMark="$(a…   54.5MB    buildkit.dockerfile.v0
+<missing>      7 days ago       ENV PYTHON_SHA256=c2c4321961fab0fb999d66e0ce…   0B        buildkit.dockerfile.v0
+<missing>      7 days ago       ENV PYTHON_VERSION=3.12.15                      0B        buildkit.dockerfile.v0
+<missing>      7 days ago       ENV GPG_KEY=7169605F62C751356D054A26A821E680…   0B        buildkit.dockerfile.v0
+<missing>      7 days ago       RUN /bin/sh -c set -eux;  apt-get update;  a…   9.7MB     buildkit.dockerfile.v0
+<missing>      7 days ago       ENV LANG=C.UTF-8                                0B        buildkit.dockerfile.v0
+<missing>      7 days ago       ENV PATH=/usr/local/bin:/usr/local/sbin:/usr…   0B        buildkit.dockerfile.v0
+<missing>      8 days ago       # debian.sh --arch 'amd64' out/ 'bookworm' '…   85.3MB    debuerreotype 0.17
+[exit 0]

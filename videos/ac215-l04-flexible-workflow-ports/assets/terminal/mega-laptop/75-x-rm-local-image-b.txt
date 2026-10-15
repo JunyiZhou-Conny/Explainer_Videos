@@ -1,0 +1,4 @@
+$ docker image rm mega-pipeline-generate-text
+Untagged: mega-pipeline-generate-text:latest
+Deleted: sha256:350f22a52299e66d3a747b0d2f2b3daf41f150addd37f5a681b9f0fe7bf33a6d
+[exit 0]

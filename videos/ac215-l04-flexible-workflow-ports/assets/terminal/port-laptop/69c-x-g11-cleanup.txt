@@ -1,0 +1,10 @@
+$ docker compose down; docker network rm toynet; docker network ls
+[+] down 2/2
+ ✔ Container gateway   Removed                                             10.2s
+ ✔ Container processor Removed                                             10.2s
+toynet
+NETWORK ID     NAME      DRIVER    SCOPE
+6dc501e6db46   bridge    bridge    local
+2423b89bf480   host      host      local
+8ed9d78f7e8c   none      null      local
+[exit 0]

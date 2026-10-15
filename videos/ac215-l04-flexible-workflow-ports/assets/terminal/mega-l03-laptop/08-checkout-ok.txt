@@ -1,0 +1,4 @@
+$ git checkout flexible-workflow
+branch 'flexible-workflow' set up to track 'origin/flexible-workflow'.
+Switched to a new branch 'flexible-workflow'
+[exit 0]

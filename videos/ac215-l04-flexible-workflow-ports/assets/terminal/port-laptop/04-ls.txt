@@ -1,0 +1,20 @@
+$ ls -a; ls gateway processor; git log --oneline -1
+.
+..
+.git
+.gitignore
+README.md
+browser-gateway-processor.png
+docker-compose.yml
+gateway
+processor
+gateway:
+Dockerfile
+gateway.py
+index.html
+
+processor:
+Dockerfile
+processor.py
+d190c71 gateway: show the real host port in the diagram
+[exit 0]

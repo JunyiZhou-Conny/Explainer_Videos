@@ -1,0 +1,4 @@
+$ docker run -d --name processor --network toynet \
+  -e PORT=9300 toy-processor
+dfcfe29a69d31e9484e4eacc1724ec98ed5bfa99ef33cfa908cb18189aa95273
+[exit 0]

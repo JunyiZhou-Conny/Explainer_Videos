@@ -1,0 +1,9 @@
+$ which python; echo $VIRTUAL_ENV; ls /home/app/.venv/lib/python3.12/site-packages | head -5
+/home/app/.venv/bin/python
+/home/app/.venv
+__pycache__
+_cffi_backend.cpython-312-x86_64-linux-gnu.so
+certifi
+certifi-2026.7.22.dist-info
+cffi
+[exit 0]

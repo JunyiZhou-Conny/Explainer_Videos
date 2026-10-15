@@ -1,0 +1,7 @@
+$ cat pyproject.toml
+[project]
+name = "transcribe-audio"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = []
+[exit 0]

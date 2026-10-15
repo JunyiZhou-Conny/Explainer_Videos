@@ -1,0 +1,4 @@
+$ git branch
+* flexible-workflow
+  main
+[exit 0]

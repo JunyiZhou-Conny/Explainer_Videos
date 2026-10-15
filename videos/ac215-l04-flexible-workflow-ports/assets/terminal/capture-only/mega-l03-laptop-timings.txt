@@ -1,0 +1,14 @@
+00-x-l03-clone	00:40:11 UTC	1.1s
+01-x-l03-state	00:40:12 UTC	0.1s
+02-cd	00:40:12 UTC	0.1s
+03-fetch	00:40:12 UTC	0.4s
+04-checkout	00:40:13 UTC	0.1s
+05-stash	00:40:13 UTC	0.1s
+06-checkout-after-stash	00:40:13 UTC	0.1s
+07-x-stash-u	00:40:13 UTC	0.1s
+08-checkout-ok	00:40:13 UTC	0.1s
+09-branch	00:40:13 UTC	0.1s
+10-x-after	00:40:13 UTC	0.1s
+11-x-dockerfile-replaced	00:40:13 UTC	0.1s
+12-x-dev-old-key.txt	exit=+21.2s
+13-x-key-in-image	00:40:38 UTC	1.6s

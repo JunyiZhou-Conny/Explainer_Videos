@@ -1,0 +1,9 @@
+$ cat /etc/os-release | head -4; uname -m; date -u '+%Y-%m-%d %H:%M UTC'; which docker; echo which-docker-exit:$?
+PRETTY_NAME="Debian GNU/Linux 12 (bookworm)"
+NAME="Debian GNU/Linux"
+VERSION_ID="12"
+VERSION="12 (bookworm)"
+x86_64
+2026-10-13 01:53 UTC
+which-docker-exit:1
+[exit 0]

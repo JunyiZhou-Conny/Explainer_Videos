@@ -1,0 +1,6 @@
+$ docker image ls
+IMAGE                                   ID             DISK USAGE   CONTENT SIZE   EXTRA
+python:3.12-slim-bookworm               64974af00f36        198MB         47.9MB        
+simple-translate:latest                 2c302ec4c536        518MB          144MB        
+student/simple-translate-ac215:latest   2c302ec4c536        518MB          144MB        
+[exit 0]

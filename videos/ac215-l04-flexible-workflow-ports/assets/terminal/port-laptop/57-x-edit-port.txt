@@ -1,0 +1,15 @@
+$ git diff
+diff --git a/docker-compose.yml b/docker-compose.yml
+index dde8a6a..9a4cf11 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -13,7 +13,7 @@ services:
+     container_name: gateway
+     build: ./gateway         # build the image from gateway/Dockerfile
+     ports:
+-      - "127.0.0.1:8090:9100"  # ip:host:container — 127.0.0.1 = this laptop only
++      - "127.0.0.1:8095:9100"  # ip:host:container — 127.0.0.1 = this laptop only
+     volumes:
+       - ./gateway:/app       # live-mount the source (edit without rebuilding)
+     environment:
+[exit 0]

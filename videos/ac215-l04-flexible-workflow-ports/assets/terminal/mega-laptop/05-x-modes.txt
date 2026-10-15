@@ -1,0 +1,12 @@
+$ ls -l */docker-shell.sh; git ls-files -s '*/docker-shell.sh'
+-rwxr-xr-x 1 student student 2889 Oct 14 00:34 generate_text/docker-shell.sh
+-rwxr-xr-x 1 student student 2891 Oct 14 00:34 synthesis_audio/docker-shell.sh
+-rwxr-xr-x 1 student student 2895 Oct 14 00:34 synthesis_audio_en/docker-shell.sh
+-rwxr-xr-x 1 student student 2891 Oct 14 00:34 transcribe_audio/docker-shell.sh
+-rwxr-xr-x 1 student student 2891 Oct 14 00:34 translate_text/docker-shell.sh
+100755 d94641ab1e588bcd5e956d4d3af4901bda785ece 0	generate_text/docker-shell.sh
+100755 85d7c7f58fd31018c351e74c5a4269a8363d9b46 0	synthesis_audio/docker-shell.sh
+100755 a1bad2c3199a212ca11726a2798e135ce658c6a7 0	synthesis_audio_en/docker-shell.sh
+100755 727808be49d21960fca1f504589964af50b2ab80 0	transcribe_audio/docker-shell.sh
+100755 1c818fd62b735b298f781db11a4db772fe26bc4f 0	translate_text/docker-shell.sh
+[exit 0]

@@ -1,0 +1,460 @@
+# zh narration for S08-S15 (part 2, group g2), sentence-aligned to script.md: one zh sentence per
+# English sentence (explainer.voice.split_sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml.
+# Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh
+# line is shown on the English timing, so each sentence keeps the English order of ideas (D8).
+# Underscore names are written the way the SAY speaks them, followed by a Chinese noun where it helps
+# (rule A6: transcribe audio, generate text, synthesis audio en, translate text, synthesis audio,
+# input audios, text prompts, text translated, uv project environment 这个变量, Gemini 模型变量, 组名).
+# Long commands are described, not copied, in the zh line (G3: 用一条 uv add 命令把三个包都加上).
+# No brackets, no maths symbols (B2, B3).
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4:
+# /app, /home, /home/app/.venv, ffmpeg-python, python cli.py --help / --download / --transcribe /
+# --upload, -d, -t, -u, DefaultCredentialsError, secrets/mega-pipeline.json, ModuleNotFoundError,
+# main.py, .gitignore, synthesis_audio_en, mega-pipeline.json, .dockerignore, secrets/, -p, /secrets,
+# cd .., git add -f); null = the SAY text.
+S08:
+- en: "Welcome back. We're inside the transcribe audio container, and Python can't find Google's packages yet."
+  zh:
+  - "欢迎回来。"
+  - "我们在 transcribe audio 这个 container 里，Python 还找不到 Google 的包。"
+- en: "Step 7: the README lists three packages to add, so type all three in one uv add command. Pause and run it."
+  zh:
+  - "第 7 步：README 列出了三个要加的包，所以用一条 uv add 命令把三个包都加上。"
+  - "暂停一下，自己跑一遍。"
+- en: "Three packages asked for, and 26 installed. As in lecture 1, each package brings its own dependencies, and uv resolves the whole tree."
+  zh:
+  - "要了 3 个包，装了 26 个。"
+  - "和第 1 讲一样，每个包都会带来自己的依赖，uv 会解析整棵依赖树。"
+- en: "But where did everything land? The list, pyproject.toml, and the receipt, uv.lock, sit in slash app, so they're written to your laptop. The 26 packages went into the venv in slash home, on the container's throwaway layer."
+  zh:
+  - "那这些东西都去了哪儿？"
+  - "清单 pyproject.toml 和小票 uv.lock 都在 /app 里，所以它们直接写进了你的笔记本。"
+  - "而那 26 个包进了 /home 下的 venv，落在 container 那层用完就扔的可写层上。"
+  en_display:
+  - null
+  - "The list, pyproject.toml, and the receipt, uv.lock, sit in /app, so they're written to your laptop."
+  - "The 26 packages went into the venv in /home, on the container's throwaway layer."
+- en: "Two extra checks. The pyproject.toml now lists the three packages, each with a lower bound, and a new uv.lock of about 138 kilobytes sits next to cli.py, owned by user app."
+  zh:
+  - "两个额外检查。"
+  - "这个 pyproject.toml 现在列出了这三个包，每个都带版本下限；cli.py 旁边多了一个约 138 KB 的新 uv.lock，所有者是用户 app。"
+- en: "Another extra: the venv variable says slash home, slash app, slash dot venv, outside the window."
+  zh:
+  - "再加一个额外检查：venv 变量是 /home/app/.venv，在窗外。"
+  en_display:
+  - "Another extra: the venv variable says /home/app/.venv, outside the window."
+- en: "Two asides. The package is ffmpeg dash python; plain ffmpeg is another project. And on a Linux laptop whose folder isn't owned by user ID 1000, uv add fails with permission denied: the chown command on screen fixes it."
+  zh:
+  - "补充两句。"
+  - "这个包叫 ffmpeg-python；单单一个 ffmpeg 是另一个项目。"
+  - "还有，如果你用的是 Linux 笔记本，目录又不属于用户 ID 1000，uv add 会报 permission denied：屏幕上的 chown 命令能修好它。"
+  en_display:
+  - null
+  - "The package is ffmpeg-python; plain ffmpeg is another project."
+  - null
+- en: "The README adds: when you exit, rebuild the image. We'll do that at the end, and see why."
+  zh:
+  - "README 里还说：退出以后，要重新构建 image。"
+  - "我们最后再做这一步，到时候就知道为什么了。"
+- en: "Step 8: set your group name. On your laptop, in VS Code, open cli.py and change line 21 to your team's name; ours is group-01. Pause and make the change."
+  zh:
+  - "第 8 步：设置你的组名。"
+  - "在你的笔记本上，用 VS Code 打开 cli.py，把第 21 行改成你们组的名字；我们的是 group-01。"
+  - "暂停一下，把它改好。"
+- en: "Inside, an extra grep already shows the new line: the window works both ways. Use the same name in all five cli.py files, or the stages won't find each other's work."
+  zh:
+  - "在 container 里，额外用 grep 查一下，已经能看到新的那一行：这扇窗两边都通。"
+  - "五个 cli.py 文件里都要用同一个名字，不然各个阶段就找不到彼此的成果。"
+- en: "Step 9: python cli.py dash dash help. This time it works, and it matches the README's block line for line. Pause, and get to this point."
+  zh:
+  - "第 9 步：python cli.py --help。"
+  - "这次成功了，而且和 README 里那段逐行一致。"
+  - "暂停一下，跟到这一步。"
+  en_display:
+  - "Step 9: python cli.py --help."
+  - null
+  - null
+S09:
+- en: "Step 10 downloads the recordings: python cli.py dash dash download, or dash d for short. Our machine had no key, so here's what a missing key looks like."
+  zh:
+  - "第 10 步下载录音：python cli.py --download，简写是 -d。"
+  - "我们录制的机器上没有密钥，所以这里看到的是缺密钥时的样子。"
+  en_display:
+  - "Step 10 downloads the recordings: python cli.py --download, or -d for short."
+  - null
+- en: "It printed the arguments and the word download, then a traceback. The last line says default credentials error: the file secrets, slash, mega-pipeline dot json was not found."
+  zh:
+  - "它先打印出参数和 download 这个词，然后是一段 traceback。"
+  - "最后一行是 DefaultCredentialsError：找不到 secrets/mega-pipeline.json 这个文件。"
+  en_display:
+  - null
+  - "The last line says DefaultCredentialsError: the file secrets/mega-pipeline.json was not found."
+- en: "Read it as in lecture 1. Our code, line 36, built a storage client; the client asked Google's auth library for credentials, and that library looked for a missing file."
+  zh:
+  - "按第 1 讲的方法来读。"
+  - "我们的代码在第 36 行创建了一个 storage 客户端；客户端向 Google 的认证库要凭据，认证库就去找一个不存在的文件。"
+- en: "Here's the chain when it works. Your code never passes the key: the client asks Google's auth library who it is. That search is called application default credentials, or ADC, and its first stop is the variable from line 10."
+  zh:
+  - "正常情况下，链条是这样的。"
+  - "你的代码从来不传密钥：客户端会去问 Google 的认证库，它是谁。"
+  - "这个查找过程叫应用默认凭据，简称 ADC，它的第一站就是第 10 行的那个变量。"
+- en: "That variable is a signpost: secrets, slash, mega-pipeline dot json, starting from the current folder, slash app. Through the window, it leads to the key on your laptop."
+  zh:
+  - "这个变量就是一个路标：secrets/mega-pipeline.json，从当前目录 /app 算起。"
+  - "透过这扇窗，它指向你笔记本上的密钥。"
+  en_display:
+  - "That variable is a signpost: secrets/mega-pipeline.json, starting from the current folder, /app."
+  - null
+- en: "From the key, the library makes a short-lived access token, and every request to Google carries it."
+  zh:
+  - "认证库用密钥生成一个短期有效的访问令牌，每个发给 Google 的请求都带着它。"
+- en: "Google then checks twice, as the README says. Authentication asks who is calling, and the key says it's the course's service account; authorization asks whether it may do this, and IAM roles open the bucket."
+  zh:
+  - "接着 Google 会检查两次，README 里也这么说。"
+  - "身份验证问的是谁在调用，密钥说是课程的服务账号；授权问的是它有没有权限做这件事，IAM 角色为它打开了 bucket。"
+- en: "This error has three usual causes. The key isn't in this component's secrets folder, you changed directory away from slash app, or you ran docker run from the wrong laptop folder."
+  zh:
+  - "这个报错通常有三个原因。"
+  - "要么密钥不在这个组件的 secrets 目录里，要么你 cd 离开了 /app，要么你在笔记本上错误的目录里跑了 docker run。"
+  en_display:
+  - null
+  - "The key isn't in this component's secrets folder, you changed directory away from /app, or you ran docker run from the wrong laptop folder."
+- en: "One extra check: even this failed run created two folders on your laptop, input audios, and text prompts with your group inside. The code makes them before it builds the client."
+  zh:
+  - "一个额外检查：就连这次失败的运行，也在你笔记本上建了两个目录，input audios，还有带着你们组目录的 text prompts。"
+  - "代码是在创建客户端之前建好它们的。"
+- en: "With your key, look for the word download, one object name per recording, and the audio files appearing in input audios on your laptop. Pause, check your key is in secrets, and run it."
+  zh:
+  - "有密钥的话，要找的是 download 这个词、每段录音一个对象名，还有出现在你笔记本上 input audios 里的音频文件。"
+  - "暂停一下，确认密钥在 secrets 目录里，然后跑一遍。"
+S10:
+- en: "Step 11 transcribes. For each recording, ffmpeg first converts the MP3 into FLAC, and that's why ffmpeg is in the build argument."
+  zh:
+  - "第 11 步是转写。"
+  - "每段录音，ffmpeg 先把 MP3 转成 FLAC，所以构建参数里要有 ffmpeg。"
+- en: "The audio bytes travel inside the request. The long-running recognize call hands back an operation at once, like a ticket stub. Its result call then waits up to 90 seconds for the transcript."
+  zh:
+  - "音频的字节就放在请求里一起发过去。"
+  - "长时间运行的 recognize 调用会马上交回一个操作对象，就像一张取件单。"
+  - "然后它的 result 调用最多等 90 秒，等转写文本回来。"
+- en: "Long audio comes back in pieces, so lines 84 to 91 join every piece; that was the latest commit's fix."
+  zh:
+  - "长音频是分段返回的，所以第 84 到 91 行把每一段拼起来；这正是最新那个 commit 修好的。"
+- en: "Type python cli.py dash dash transcribe, or dash t. Look for transcribing and a file name, ffmpeg's log, the response, and the transcript. If it says no such file, ffmpeg, add ffmpeg to line 3, exit and rebuild."
+  zh:
+  - "输入 python cli.py --transcribe，或者 -t。"
+  - "要找的是 Transcribing 加一个文件名、ffmpeg 的日志、响应，还有转写文本。"
+  - "如果报 No such file，后面是 ffmpeg，就把 ffmpeg 加到第 3 行，然后退出、重新构建。"
+  en_display:
+  - "Type python cli.py --transcribe, or -t."
+  - null
+  - null
+- en: "Then open the new text file under text prompts, group-01, on your laptop. If it says None, Speech-to-Text returned nothing: delete it and transcribe again, because finished files are skipped."
+  zh:
+  - "然后在你的笔记本上，打开 text prompts 下 group-01 里那个新的文本文件。"
+  - "如果里面是 None，就是 Speech-to-Text 什么也没返回：删掉它，重新转写，因为转写过的文件会被跳过。"
+- en: "Step 12: python cli.py dash dash upload, or dash u. It uploads only files starting with input, under the same name in the bucket: look for uploading, then text prompts, your group, and the file."
+  zh:
+  - "第 12 步：python cli.py --upload，或者 -u。"
+  - "它只上传 input 开头的文件，在 bucket 里也用同样的名字：要找的是 Uploading，后面是 text prompts、你们组和文件名。"
+  en_display:
+  - "Step 12: python cli.py --upload, or -u."
+  - null
+- en: "Your transcript drops into your group's drawer, and the transcribe cell lights up on the leaderboard, which is how the README says to check. Pause and run all three steps, with your key."
+  zh:
+  - "你的转写文本会落进你们组的抽屉，排行榜上转写那一格也会亮起来，README 里说的检查方法就是这个。"
+  - "暂停一下，用你的密钥把三步都跑一遍。"
+- en: "An extra tip: the flags combine, so dash d, dash t, dash u runs all three, in order. Each call is billed to the course project."
+  zh:
+  - "额外提示一句：这些参数可以合在一起用，-d、-t、-u 会按顺序把三步都跑完。"
+  - "每次调用都记在课程项目的账上。"
+  en_display:
+  - "An extra tip: the flags combine, so -d, -t, -u runs all three, in order."
+  - null
+S11:
+- en: "Step 13: exit, and rebuild. Type exit, and the container is removed with its throwaway layer, and the 26 packages go with it."
+  zh:
+  - "第 13 步：退出，然后重新构建。"
+  - "输入 exit，container 连同那层用完就扔的可写层一起被删掉，26 个包也跟着没了。"
+- en: "Back on the laptop, an extra check: the pyproject.toml with three dependencies, the lock file, and the two new folders all survived, because they were in the window."
+  zh:
+  - "回到笔记本上，做一个额外检查：带三个依赖的 pyproject.toml、lock 文件，还有那两个新目录，全都留了下来，因为它们在这扇窗里。"
+- en: "Git status shows only cli.py as changed; we'll see why the rest is invisible at the end."
+  zh:
+  - "而 git status 只显示 cli.py 改过了；其余的为什么看不见，我们最后再说。"
+- en: "Now the trap, as an extra. Start a new container from the image you built earlier, and ask for help again. It's module not found again: the packages lived only in the old container."
+  zh:
+  - "现在来看那个坑，这也是额外步骤。"
+  - "用你之前构建的 image 起一个新的 container，再让它打印一次帮助。"
+  - "又是 ModuleNotFoundError：那些包只存在于旧的 container 里。"
+  en_display:
+  - null
+  - null
+  - "It's ModuleNotFoundError again: the packages lived only in the old container."
+- en: "The README's fix: exit, and rebuild the image with the same docker build command. Pause and run it."
+  zh:
+  - "README 给的办法是：退出，然后用同一条 docker build 命令重新构建 image。"
+  - "暂停一下，自己跑一遍。"
+- en: "The ponder's answer, for real: build steps 2 and 3 are cached, while build step 4 copies the changed folder and build step 5, uv sync, runs again. The build took under ten seconds."
+  zh:
+  - "刚才那道题的答案，这次是真的：构建步骤 2 和 3 用了缓存，构建步骤 4 复制改过的目录，构建步骤 5，也就是 uv sync，重新运行。"
+  - "这次构建不到 10 秒。"
+- en: "The full log shows what uv sync did this time: the copy brought in the lock file, and uv installed the same 26 packages, into the image."
+  zh:
+  - "完整日志显示了 uv sync 这次做了什么：复制那一步带进了 lock 文件，uv 装上了同样的 26 个包，装进了 image 里。"
+- en: "Two more extras. The image grew to 1.48 gigabytes, and docker history lists one row per instruction: card-only lines show zero bytes. The uv sync layer now holds 105 megabytes, the packages plus uv's download cache."
+  zh:
+  - "再做两个额外检查。"
+  - "这个 image 涨到了 1.48 GB，docker history 每条指令列一行：只写配置卡片的那几行显示 0 字节。"
+  - "现在 uv sync 那一层有 105 MB，是这些包加上 uv 的下载缓存。"
+- en: "And a fresh container now imports all three packages with no uv add at all: they're baked in."
+  zh:
+  - "现在新起的 container 不用 uv add 就能导入这三个包：它们已经打包进 image 了。"
+- en: "One more thing: because the copy comes before uv sync, any edit, even the group name, knocks over uv sync, like lecture 2's dominoes. Later tutorials copy pyproject.toml and uv.lock first."
+  zh:
+  - "还有一点：因为复制那一步在 uv sync 前面，任何修改，哪怕只是组名，都会像第 2 讲的多米诺骨牌一样，把 uv sync 也推倒。"
+  - "后面的教程会先复制 pyproject.toml 和 uv.lock。"
+S12:
+- en: "Component B, generate text, follows the same recipe; we'll go faster. Steps 1 and 2: cd into its folder, and copy the key into its secrets folder."
+  zh:
+  - "组件 B，也就是 generate text，走的是同一套流程；我们会快一点。"
+  - "第 1 和第 2 步：cd 进它的目录，再把密钥复制到它的 secrets 目录里。"
+- en: "An extra look: this folder already has its own pyproject.toml, listing both packages and requiring Python 3.14 or newer. Leave that until step 13."
+  zh:
+  - "额外看一眼：这个目录已经有自己的 pyproject.toml，两个包都列上了，还要求 Python 3.14 或更新。"
+  - "这个先放着，到第 13 步再说。"
+- en: "Surprise one: uv init fails: the project is already initialized. The README still says to run it, a small mistake: skip step 3, and ignore the leftover main dot py."
+  zh:
+  - "第一个意外：uv init 失败了，因为项目已经初始化过了。"
+  - "README 里还是让你跑它，这是一个小错误：跳过第 3 步，也别管那个遗留的 main.py。"
+  en_display:
+  - null
+  - "The README still says to run it, a small mistake: skip step 3, and ignore the leftover main.py."
+- en: "Step 4: the same Dockerfile, except line 3 drops ffmpeg, since this component never touches audio. Copy yours and change that line."
+  zh:
+  - "第 4 步：还是同样的 Dockerfile，只是第 3 行去掉了 ffmpeg，因为这个组件根本不碰音频。"
+  - "把你的复制过来，改掉那一行。"
+- en: "Step 5 builds it, and the big RUN step runs again, because the package list it installs changed. Pause and run it."
+  zh:
+  - "第 5 步构建它，那个大 RUN 会重新运行，因为它要装的软件包变了。"
+  - "暂停一下，自己跑一遍。"
+- en: "Ponder this. The image has Python 3.12; this pyproject.toml asks for 3.14 or newer. Which Python will the venv use?"
+  zh:
+  - "来想一想。"
+  - "这个 image 里是 Python 3.12；这个 pyproject.toml 却要求 3.14 或更新。"
+  - "那 venv 会用哪个 Python？"
+- en: "The live view hides it; the full log shows it: uv downloaded its own Python, 3.15.0 at the time of recording, and built the venv on it."
+  zh:
+  - "实时视图里看不到；完整日志里能看到：uv 下载了它自己的 Python，录制时是 3.15.0，并用它建了 venv。"
+- en: "The image's 3.12 falls outside the interval, so uv fetched the newest Python in range, as in lecture 2."
+  zh:
+  - "这个 image 里的 3.12 落在范围之外，所以 uv 去取了范围内最新的 Python，和第 2 讲一样。"
+- en: "Step 6 runs it, and an extra check confirms Python 3.15.0, from uv's folder, not the image's."
+  zh:
+  - "第 6 步运行它，一个额外检查确认是 Python 3.15.0，来自 uv 的目录，而不是 image 自带的。"
+- en: "Step 7's uv add finds nothing new, since both packages are listed; it only writes the lock file."
+  zh:
+  - "第 7 步的 uv add 没找到新东西，因为两个包都已经列上了；它只写了 lock 文件。"
+- en: "Steps 8 and 9: set the group name, here on line 19, and check the help, which matches the README. Pause and catch up."
+  zh:
+  - "第 8 和第 9 步：设置组名，这里是第 19 行，再检查一下帮助，和 README 一致。"
+  - "暂停一下，跟上进度。"
+- en: "Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026; after that, start the container with a current model in the Gemini model variable."
+  zh:
+  - "第 10 到 12 步：下载、生成、上传。"
+  - "生成这一步把每份转写文本发给 Gemini 2.5 Flash Lite，它跑在 Vertex AI 上。"
+  - "Google 会在 2026 年 10 月 20 日下线这个模型；之后启动 container 时，要在 Gemini 模型变量里填一个现行的模型。"
+- en: "Look for your prompt, generated text and a long podcast script, then the upload. Pause and run all three."
+  zh:
+  - "要找的是你的 prompt、Generated text 和一份很长的播客稿，然后是上传。"
+  - "暂停一下，三步都跑一遍。"
+- en: "Step 13, exit and rebuild, brings the fix: lower the minimum Python version to 3.12. Git status lists the Dockerfile too: this folder has no dot gitignore."
+  zh:
+  - "第 13 步是退出并重新构建，修复也在这一步：把最低 Python 版本降到 3.12。"
+  - "而 git status 把 Dockerfile 也列出来了：这个目录没有 .gitignore。"
+  en_display:
+  - null
+  - "Git status lists the Dockerfile too: this folder has no .gitignore."
+- en: "Pause and rebuild: uv sync now uses the image's Python 3.12, as does the next container. Exit it. Better still, fix this before your first build."
+  zh:
+  - "暂停一下，重新构建：现在 uv sync 用的是 image 自带的 Python 3.12，下一个 container 也一样。"
+  - "然后退出。"
+  - "更好的办法是：在第一次构建之前就把它改好。"
+S13:
+- en: "Speed round: C, D and E. For C, synthesis audio E-N, cd in, copy the key, and run uv init. If it stamps 3.13 or newer, change it to 3.12, here and in D and E."
+  zh:
+  - "快速过一遍：C、D 和 E。"
+  - "先是 C，也就是 synthesis audio en：cd 进去，复制密钥，再跑 uv init。"
+  - "如果它写进去的是 3.13 及以上，就改成 3.12，这里和 D、E 都要改。"
+  en_display:
+  - null
+  - "For C, synthesis_audio_en, cd in, copy the key, and run uv init."
+  - null
+- en: "Write the same Dockerfile as B's. A small slip, here and in E: the README's text says to keep ffmpeg, but its code block, which is right, leaves it out."
+  zh:
+  - "写一个和 B 一样的 Dockerfile。"
+  - "一个小疏漏，这里和 E 都有：README 的正文说要保留 ffmpeg，但它的代码块是对的，里面没有 ffmpeg。"
+- en: "Build it: build step 2 is cached and the build takes 0.6 seconds: C's Dockerfile matches B's up to there, so Docker reuses B's big layer."
+  zh:
+  - "构建它：构建步骤 2 用了缓存，只花了 0.6 秒；C 的 Dockerfile 到这里为止和 B 的一样，所以 Docker 直接复用了 B 的那个大层。"
+- en: "Run it, and add storage and text to speech: 24 packages."
+  zh:
+  - "运行它，加上 storage 和 text to speech：一共 24 个包。"
+- en: "Set the group name on line 18, then check the help. Without a key, even help fails: line 22 builds the Text-to-Speech client as soon as the script starts, before reading any flags. Pause and catch up."
+  zh:
+  - "在第 18 行设置组名，然后检查一下帮助。"
+  - "没有密钥的话，连帮助都会失败：脚本一启动，第 22 行就创建 Text-to-Speech 客户端，比读取任何参数都早。"
+  - "暂停一下，跟上进度。"
+- en: "The request carries the text and an address in the bucket, line 78. Google's long audio service writes the speech straight there, never through your container."
+  zh:
+  - "请求里带着文本，还有 bucket 里的一个地址，就在第 78 行。"
+  - "Google 的长音频服务把语音直接写到那里，从不经过你的 container。"
+- en: "C just holds a ticket stub for up to 300 seconds, then prints that the audio will be saved: so C has no upload step."
+  zh:
+  - "C 只是拿着一张取件单，最多等 300 秒，然后打印出音频会被保存：所以 C 没有上传这一步。"
+- en: "So in C, pause to run download and synthesis, then exit and rebuild."
+  zh:
+  - "所以在 C 里，暂停一下，跑下载和合成，然后退出、重新构建。"
+- en: "D, translate text, races through the same setup: cd, key, uv init, the same Dockerfile, a build."
+  zh:
+  - "接着是 D，也就是 translate text，飞快地走完同样的准备：cd、密钥、uv init、同样的 Dockerfile，再构建一次。"
+- en: "Then run it, add storage and translate, and set the group name on line 18. Like C, even help needs the key. Pause and catch up."
+  zh:
+  - "然后运行它，加上 storage 和 translate，再在第 18 行设置组名。"
+  - "和 C 一样，连帮助都需要密钥。"
+  - "暂停一下，跟上进度。"
+- en: "Translation has no ticket stub: the French comes straight back, is printed and saved under text translated, so D needs an upload."
+  zh:
+  - "翻译服务没有取件单：法语直接返回，打印出来，再存到 text translated 下面，所以 D 需要上传这一步。"
+- en: "Pause to run download, translate and upload, then exit and rebuild."
+  zh:
+  - "暂停一下，跑下载、翻译和上传，然后退出、重新构建。"
+- en: "E, synthesis audio, is C again, group name on line 18 too. One harmless slip: its help text says transcribe audio file to text, pasted from A's code. Pause and catch up."
+  zh:
+  - "至于 E，也就是 synthesis audio，就是再来一遍 C，组名也在第 18 行。"
+  - "一个无害的小疏漏：它的帮助文本写着 Transcribe audio file to text，是从 A 的代码粘过来的。"
+  - "暂停一下，跟上进度。"
+- en: "Pause, and run download and synthesis with your key."
+  zh:
+  - "暂停一下，用你的密钥跑下载和合成。"
+- en: "An optional bonus in E speaks the French with ElevenLabs, in the instructor's voice. It uses your own ElevenLabs key and quota: a key file in secrets, your group name in the bonus script too, and uv add requests."
+  zh:
+  - "E 里有一个可选的附加任务，用 ElevenLabs 以授课老师的声音念出法语。"
+  - "它用的是你自己的 ElevenLabs 密钥和配额：secrets 里放一个密钥文件，附加脚本里也要填上你的组名，还要 uv add requests。"
+- en: "Then run its three commands. Without the key file, even download fails: the script reads that file as soon as it starts."
+  zh:
+  - "然后跑它的三条命令。"
+  - "没有密钥文件的话，连下载都会失败：脚本一启动就会读那个文件。"
+- en: "Pause to exit and rebuild E. With all five done, your group's drawers fill, and your leaderboard row lights up."
+  zh:
+  - "暂停一下，退出，然后重新构建 E。"
+  - "五个都做完以后，你们组的抽屉一个个填满，排行榜上你那一行也会亮起来。"
+S14:
+- en: "One last question about the key. It's git-ignored, so it never reaches GitHub. But you build the image and push it to Docker Hub: is the key inside?"
+  zh:
+  - "关于密钥，最后一个问题。"
+  - "它被 Git 忽略了，所以永远不会传到 GitHub。"
+  - "可是你构建了 image，还把它 push 到了 Docker Hub：密钥在不在里面？"
+- en: "Let's test it, with an 82 byte stand-in for the real key. These extra Git commands show it's ignored, by line 3 of dot gitignore."
+  zh:
+  - "我们来验证一下，用一个 82 字节的替身文件代替真正的密钥。"
+  - "这几条额外的 Git 命令显示，它被 .gitignore 的第 3 行忽略了。"
+  en_display:
+  - null
+  - "These extra Git commands show it's ignored, by line 3 of .gitignore."
+- en: "Now rebuild, and list the secrets folder inside the image itself, with no mount. There it is: mega-pipeline dot json, inside the image. Your real key is in every image you built today, because step 2 came before step 5."
+  zh:
+  - "现在重新构建，再列出 image 本身里面的 secrets 目录，不挂载。"
+  - "就在这儿：mega-pipeline.json，在 image 里面。"
+  - "你真正的密钥就在你今天构建的每个 image 里，因为第 2 步在第 5 步之前。"
+  en_display:
+  - null
+  - "There it is: mega-pipeline.json, inside the image."
+  - null
+- en: "Docker doesn't read dot gitignore. Remember lecture 2's parcel: the build context is the whole folder, key included, and the copy line unpacks all of it. The README's secrets note covers Git only."
+  zh:
+  - "Docker 不读 .gitignore。"
+  - "还记得第 2 讲的包裹吗：构建上下文就是整个目录，密钥也在里面，COPY 那一行会把它全部拆开放进去。"
+  - "README 里关于 secrets 的提示只管 Git。"
+  en_display:
+  - "Docker doesn't read .gitignore."
+  - null
+  - null
+- en: "The fix, which lecture 2 recommended, is an extra here: a file named dot dockerignore, with one line, secrets slash. All five images copied the key, so pause and add it in all five folders."
+  zh:
+  - "解决办法第 2 讲也推荐过，在这里算额外步骤：一个叫 .dockerignore 的文件，只有一行：secrets/。"
+  - "五个 image 都复制了密钥，所以暂停一下，在五个目录里都加上它。"
+  en_display:
+  - "The fix, which lecture 2 recommended, is an extra here: a file named .dockerignore, with one line, secrets/."
+  - null
+- en: "Rebuild, and list again: cannot access, no such file or directory. The key stayed out of the image."
+  zh:
+  - "重新构建，再列一次：报 cannot access，No such file or directory。"
+  - "密钥没有进 image。"
+- en: "And the run still works, because the mount brings your secrets folder in when the container starts."
+  zh:
+  - "而运行照样没问题，因为 container 启动时，挂载会把你的 secrets 目录带进来。"
+- en: "The README's optional last section pushes the image to Docker Hub: create an access token there, then log in, tag and push. Only push an image built with that dot dockerignore."
+  zh:
+  - "README 最后那个可选部分，是把 image push 到 Docker Hub：先在那里创建一个访问令牌，然后登录、打 tag、push。"
+  - "只 push 用那个 .dockerignore 构建出来的 image。"
+  en_display:
+  - null
+  - "Only push an image built with that .dockerignore."
+- en: "Log in with just your user name and paste the token at the prompt; after dash p it stays in your shell history. If you ever pushed an image with the key, delete it and tell the staff."
+  zh:
+  - "登录时只给用户名，然后在提示符那里粘贴访问令牌；写在 -p 后面的话，它会留在你的 shell 历史记录里。"
+  - "如果你曾经 push 过带密钥的 image，把它删掉，并告诉课程团队。"
+  en_display:
+  - "Log in with just your user name and paste the token at the prompt; after -p it stays in your shell history."
+  - null
+- en: "Where the course is heading: last year's solution kept the secrets folder outside the repo and mounted it at slash secrets at run time. No key ever enters the image."
+  zh:
+  - "课程接下来的方向：去年的参考答案把 secrets 目录放在 repo 外面，运行时挂载到 /secrets。"
+  - "密钥从来不会进入 image。"
+  en_display:
+  - "Where the course is heading: last year's solution kept the secrets folder outside the repo and mounted it at /secrets at run time."
+  - null
+S15:
+- en: "Time to clean up. In the cloud there's nothing to delete: you created no machine, bucket or account."
+  zh:
+  - "该清理了。"
+  - "云上没有要删的东西：你没有创建任何机器、bucket 或账号。"
+- en: "Locally, cd dot dot back up to the repo. An extra command lists the five images: transcribe audio at 1.48 gigabytes, the other four at about 845 megabytes each."
+  zh:
+  - "在本地，用 cd .. 回到 repo 的根目录。"
+  - "一条额外的命令列出这五个 image：transcribe audio 是 1.48 GB，其他四个各约 845 MB。"
+  en_display:
+  - "Locally, cd .. back up to the repo."
+  - null
+- en: "To keep your work, check Git. An extra git status shows your edited cli.py files and the files in generate text, but the other four folders hide their Dockerfiles and project files."
+  zh:
+  - "想保住你的成果，就检查一下 Git。"
+  - "额外跑一下 git status：它显示你改过的 cli.py 和 generate text 里的文件，但另外四个目录藏起了它们的 Dockerfile 和项目文件。"
+- en: "In your own repo, add those Dockerfiles and project files with git add dash f, but not the data folders, and never stop ignoring secrets."
+  zh:
+  - "在你自己的 repo 里，用 git add -f 把这些 Dockerfile 和项目文件加进去，但别加数据目录，secrets 则要一直忽略下去。"
+  en_display:
+  - "In your own repo, add those Dockerfiles and project files with git add -f, but not the data folders, and never stop ignoring secrets."
+- en: "Then pause and remove the five images with docker image rm, another extra. Older builds stay behind untagged, each holding your key, so docker image prune removes those too."
+  zh:
+  - "然后暂停，用 docker image rm 删掉这五个 image，这也是额外步骤。"
+  - "旧的构建会留下来，没有 tag，每个都带着你的密钥，所以再用 docker image prune 把它们也删掉。"
+- en: "Five questions to test yourself. One: which drawer does D, translate text, read, and who wrote it? Two: why doesn't the mount hide the packages, and what breaks without uv project environment?"
+  zh:
+  - "五道自测题。"
+  - "第一题：D，也就是 translate text，读的是哪个抽屉，又是谁写的？"
+  - "第二题：为什么挂载没有盖住那些包，没有 uv project environment 这个变量，又会出什么问题？"
+- en: "Three: after uv add in a throwaway container, what survives, and what makes it permanent? Four: which variable points to the key, and why only from slash app? Five: how can an image hold a git-ignored key, and the fix?"
+  zh:
+  - "第三题：在用完就扔的 container 里 uv add 之后，什么会留下来，又是什么让它永久保留？"
+  - "第四题：哪个变量指向密钥，为什么只能从 /app 出发？"
+  - "第五题：一个被 Git 忽略的密钥怎么会进到 image 里，又该怎么修？"
+  en_display:
+  - null
+  - "Four: which variable points to the key, and why only from /app?"
+  - null
+- en: "Answers are in the exercises; every command is in the study guide. Next lecture: your own bucket and service account, the key outside the repo, and a script that builds and runs each container."
+  zh:
+  - "答案在练习里；每条命令都在学习指南里。"
+  - "下节课：你自己的 bucket 和服务账号，放在 repo 外面的密钥，还有一个帮你构建并运行每个 container 的脚本。"

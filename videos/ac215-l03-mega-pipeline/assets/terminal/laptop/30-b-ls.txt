@@ -1,0 +1,17 @@
+$ ls -a; cat pyproject.toml
+.
+..
+README.md
+cli.py
+main.py
+pyproject.toml
+secrets
+[project]
+name = "generate-text"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "google-cloud-storage>=3.12.0",
+    "google-genai>=2.8.0",
+]
+[exit 0]

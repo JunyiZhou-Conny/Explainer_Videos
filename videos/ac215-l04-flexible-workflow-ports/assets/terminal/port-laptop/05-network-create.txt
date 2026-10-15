@@ -1,0 +1,3 @@
+$ docker network create toynet
+cedc0ad9fdee6085c99985b742770e8a50375164098dff4f6b2b231a836ae395
+[exit 0]

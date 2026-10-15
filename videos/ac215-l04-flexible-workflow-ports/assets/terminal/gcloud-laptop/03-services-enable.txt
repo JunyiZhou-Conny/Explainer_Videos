@@ -1,0 +1,19 @@
+$ gcloud services enable \
+  storage.googleapis.com \
+  aiplatform.googleapis.com \
+  speech.googleapis.com \
+  texttospeech.googleapis.com \
+  translate.googleapis.com
+ERROR: (gcloud.services.enable) You do not currently have an active account selected.
+Please run:
+
+  $ gcloud auth login
+
+to obtain new credentials.
+
+If you have already logged in with a different account, run:
+
+  $ gcloud config set account ACCOUNT
+
+to select an already authenticated account to use.
+[exit 1]

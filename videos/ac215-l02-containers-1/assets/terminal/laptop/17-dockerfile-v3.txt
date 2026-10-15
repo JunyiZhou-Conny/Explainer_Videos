@@ -1,0 +1,11 @@
+$ cat Dockerfile
+# Use the official Debian-hosted Python image
+FROM python:3.12-slim-bookworm
+
+ENTRYPOINT ["/bin/bash"]
+
+# Install uv
+RUN pip install uv
+# Copy the source code
+COPY . ./
+[exit 0]

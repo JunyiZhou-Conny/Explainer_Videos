@@ -1,0 +1,5 @@
+$ docker compose ps
+NAME        IMAGE                COMMAND                  SERVICE     CREATED        STATUS                  PORTS
+gateway     port_toy-gateway     "python -u gateway.py"   gateway     1 second ago   Up Less than a second   127.0.0.1:8090->9100/tcp
+processor   port_toy-processor   "python -u processor…"   processor   1 second ago   Up Less than a second   
+[exit 0]

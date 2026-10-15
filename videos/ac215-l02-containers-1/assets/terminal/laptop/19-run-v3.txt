@@ -1,0 +1,15 @@
+$ docker run --rm -ti simple-translate
+root@1f2c7df8735d:/# ls
+Dockerfile      cli.py                home   opt             sbin  var
+Dockerfile.txt  dev                   lib    proc            srv
+README.md       docker-build-push.sh  lib64  pyproject.toml  sys
+bin             docker-shell.sh       media  root            tmp
+boot            etc                   mnt    run             usr
+root@1f2c7df8735d:/# python cli.py
+Traceback (most recent call last):
+  File "//cli.py", line 8, in <module>
+    from art import text2art
+ModuleNotFoundError: No module named 'art'
+root@1f2c7df8735d:/# exit
+exit
+[exit 1]

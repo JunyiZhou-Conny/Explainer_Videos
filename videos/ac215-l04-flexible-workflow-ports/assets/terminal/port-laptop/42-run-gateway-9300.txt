@@ -1,0 +1,7 @@
+$ docker run -d --name gateway --network toynet \
+  -p 127.0.0.1:8090:9100 \
+  -e PROCESSOR_HOST=processor \
+  -e PROCESSOR_PORT=9300 \
+  toy-gateway
+76519ae2f7617e9aa19c083355fb941cf7e0a94e571aab88fc0e73a49d647568
+[exit 0]

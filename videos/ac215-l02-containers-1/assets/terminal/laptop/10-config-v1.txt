@@ -1,0 +1,3 @@
+$ docker image inspect simple-translate --format 'Entrypoint={{json .Config.Entrypoint}} Cmd={{json .Config.Cmd}} WorkingDir={{json .Config.WorkingDir}}'
+Entrypoint=null Cmd=["python3"] WorkingDir=""
+[exit 0]

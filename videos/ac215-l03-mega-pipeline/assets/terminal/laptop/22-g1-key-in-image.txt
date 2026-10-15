@@ -1,0 +1,7 @@
+$ docker run --rm --entrypoint ls transcribe_audio -la /app/secrets
+total 12
+drwxr-xr-x 2 app app 4096 Oct 13 01:48 .
+drwxr-xr-x 1 app app 4096 Oct 13 01:47 ..
+-rw-r--r-- 1 app app    0 Oct 13 01:42 .gitkeep
+-rw-r--r-- 1 app app   82 Oct 13 01:47 mega-pipeline.json
+[exit 0]

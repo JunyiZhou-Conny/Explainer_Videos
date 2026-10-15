@@ -1,0 +1,17 @@
+$ docker run --rm -ti -v "$(pwd):/app" transcribe_audio
+app@5b4d4981ec25:/app$ which python
+/home/app/.venv/bin/python
+app@5b4d4981ec25:/app$ python --version
+Python 3.12.15
+app@5b4d4981ec25:/app$ ls -a
+.  ..  .gitignore  Dockerfile  README.md  cli.py  pyproject.toml  secrets
+app@5b4d4981ec25:/app$ echo $GOOGLE_APPLICATION_CREDENTIALS
+secrets/mega-pipeline.json
+app@5b4d4981ec25:/app$ python cli.py --help
+Traceback (most recent call last):
+  File "/app/cli.py", line 9, in <module>
+    from google.cloud import storage
+ModuleNotFoundError: No module named 'google'
+app@5b4d4981ec25:/app$ exit
+exit
+[exit 1]

@@ -1,0 +1,16 @@
+$ docker push localhost:5000/student/simple-translate-ac215
+Using default tag: latest
+The push refers to repository [localhost:5000/student/simple-translate-ac215]
+24eb33f95cdd: Layer already exists
+ea71b959f680: Layer already exists
+7c5bc77b992b: Layer already exists
+cef1a1b4c9a2: Already exists
+f9d2fb07d6f0: Layer already exists
+98d05057aa0b: Layer already exists
+e89227199569: Layer already exists
+6e0ba8ba0487: Layer already exists
+44136fa355b3: Already exists
+7fd1ebe418b5: Layer already exists
+86a9e13e035d: Layer already exists
+latest: digest: sha256:2c302ec4c53645e102eaf2fcbd80f8838737a5b7325971c58eb28bff279a0b85 size: 856
+[exit 0]

@@ -1,0 +1,7 @@
+$ uv tree --depth 1
+Resolved 27 packages in 1ms
+transcribe-audio v0.1.0
+├── ffmpeg-python v0.2.0
+├── google-cloud-speech v2.41.0
+└── google-cloud-storage v3.17.0
+[exit 0]

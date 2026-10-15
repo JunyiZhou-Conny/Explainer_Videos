@@ -1,0 +1,61 @@
+$ docker build --progress=plain -t simple-translate -f Dockerfile .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 728B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809a5d4b6e51b264d5b5c4549626c27110ca664c
+#4 resolve docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809a5d4b6e51b264d5b5c4549626c27110ca664c 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 3.85kB done
+#5 DONE 0.0s
+
+#6 [2/4] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get clean &&     pip install --no-cache-dir --upgrade pip &&     pip install uv
+#6 CACHED
+
+#7 [3/4] COPY . ./
+#7 DONE 0.0s
+
+#8 [4/4] RUN uv sync
+#8 0.874 Downloading cpython-3.15.0-linux-x86_64-gnu (download) (35.9MiB)
+#8 2.699  Downloaded cpython-3.15.0-linux-x86_64-gnu (download)
+#8 2.955 Using CPython 3.15.0
+#8 2.955 Creating virtual environment at: /.venv
+#8 3.848 Resolved 13 packages in 890ms
+#8 4.175 Prepared 11 packages in 325ms
+#8 4.181 Installed 11 packages in 5ms
+#8 4.181  + anyio==4.15.1
+#8 4.181  + art==6.5
+#8 4.181  + certifi==2026.7.22
+#8 4.181  + googletrans==4.0.2
+#8 4.181  + h11==0.16.0
+#8 4.181  + h2==4.4.1
+#8 4.181  + hpack==4.2.0
+#8 4.181  + httpcore==1.0.9
+#8 4.181  + httpx==0.28.1
+#8 4.181  + hyperframe==6.1.0
+#8 4.181  + idna==3.20
+#8 DONE 4.3s
+
+#9 exporting to image
+#9 exporting layers
+#9 exporting layers 6.2s done
+#9 exporting manifest sha256:4c9aad3ce5d7bc446e2a0c8cfc4d292ff0adee8d74e3c6a4adb522358a88ce7d done
+#9 exporting config sha256:f7e61424798c204fe8b857e42cbb2a825352ce1448a8496e8701abb29832a863 0.0s done
+#9 exporting attestation manifest sha256:637a9a2937212b2990180efbd187091a16197b897da42c85bba35d0c4986d949 0.0s done
+#9 exporting manifest list sha256:d5a9f3597ade48c926734a24f0ee3c7b591bd547d319b6cdf3fb64712b12b84f done
+#9 naming to docker.io/library/simple-translate:latest done
+#9 unpacking to docker.io/library/simple-translate:latest
+#9 unpacking to docker.io/library/simple-translate:latest 1.7s done
+#9 DONE 7.9s
+[exit 0]

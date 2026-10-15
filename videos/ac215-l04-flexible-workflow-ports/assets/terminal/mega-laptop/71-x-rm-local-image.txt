@@ -1,0 +1,4 @@
+$ docker image rm mega-pipeline-transcribe-audio
+Untagged: mega-pipeline-transcribe-audio:latest
+Deleted: sha256:3beaf90dd0a894dedb90e26dad298721791a5729ebfd628a93152ff39babb4d7
+[exit 0]

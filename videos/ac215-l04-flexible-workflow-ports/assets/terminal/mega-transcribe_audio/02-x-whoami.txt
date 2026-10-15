@@ -1,0 +1,4 @@
+$ whoami; id
+app
+uid=1000(app) gid=1000(app) groups=1000(app)
+[exit 0]

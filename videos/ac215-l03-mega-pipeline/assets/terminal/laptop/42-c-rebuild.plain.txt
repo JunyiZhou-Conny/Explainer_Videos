@@ -1,0 +1,75 @@
+$ docker buildx history logs 7e2bqpeki1k8umef9ovyo67ub
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 833B done
+#1 WARN: SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/l03-capture/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80
+#4 resolve docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 137.42kB done
+#5 DONE 0.0s
+
+#6 [2/5] RUN apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#6 CACHED
+
+#7 [3/5] WORKDIR /app
+#7 CACHED
+
+#8 [4/5] COPY --chown=app:app . ./
+#8 DONE 0.2s
+
+#9 [5/5] RUN uv sync
+#9 0.214 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+#9 0.214 Creating virtual environment at: /home/app/.venv
+#9 0.226 Resolved 25 packages in 5ms
+#9 0.659 Downloading cryptography (4.5MiB)
+#9 0.665 Downloading grpcio (6.8MiB)
+#9 1.171  Downloaded cryptography
+#9 1.235  Downloaded grpcio
+#9 1.236 Prepared 24 packages in 999ms
+#9 1.600 Installed 24 packages in 363ms
+#9 1.600  + certifi==2026.7.22
+#9 1.600  + cffi==2.1.1
+#9 1.600  + charset-normalizer==3.5.2
+#9 1.600  + cryptography==50.0.2
+#9 1.600  + google-api-core==2.42.0
+#9 1.600  + google-auth==2.62.0
+#9 1.601  + google-cloud-core==2.8.0
+#9 1.601  + google-cloud-storage==3.17.0
+#9 1.601  + google-cloud-texttospeech==2.38.0
+#9 1.602  + google-crc32c==1.9.0
+#9 1.602  + google-resumable-media==2.11.0
+#9 1.602  + googleapis-common-protos==1.75.5
+#9 1.602  + grpcio==1.84.0
+#9 1.602  + grpcio-status==1.84.0
+#9 1.602  + idna==3.20
+#9 1.602  + opentelemetry-api==1.45.1
+#9 1.602  + proto-plus==1.29.0
+#9 1.602  + protobuf==7.36.2
+#9 1.602  + pyasn1==0.6.4
+#9 1.602  + pyasn1-modules==0.4.2
+#9 1.602  + pycparser==3.11
+#9 1.602  + requests==2.34.2
+#9 1.602  + typing-extensions==4.16.0
+#9 1.602  + urllib3==2.8.0
+#9 DONE 1.8s
+
+#10 exporting to image
+#10 exporting layers 5.7s done
+#10 exporting manifest sha256:06c3482e72e0cc69dffd842e8b29b051219861ba0e89aa67d6963afb4b9ca445 0.0s done
+#10 exporting config sha256:cf6df4259921dc77e06f910213dfa0179bbdf78cf264e094dfc6e108deed6a7c 0.0s done
+#10 exporting attestation manifest sha256:036b8ed1219dcf3ffebf99ee21e4156befa7b90a1a3000cc3a24b7bb6867dc5a 0.0s done
+#10 exporting manifest list sha256:67635b572cbb9e40191472ffd663779e6479b8d08575274f7b3571dac7723a4c 0.0s done
+#10 naming to docker.io/library/synthesis_audio_en:latest 0.0s done
+#10 unpacking to docker.io/library/synthesis_audio_en:latest 1.9s done
+#10 DONE 7.8s
+[exit 0]

@@ -1,0 +1,48 @@
+$ docker compose up -d --build
+
+[+] Building 0.4s (17/17) FINISHED
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.41kB                                           0.0s
+ => [processor internal] load build definition from Dockerfile             0.0s
+ => => transferring dockerfile: 221B                                       0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 219B                                       0.0s
+ => [processor internal] load metadata for docker.io/library/python:3.14-  0.0s
+ => [processor internal] load .dockerignore                                0.0s
+ => => transferring context: 2B                                            0.0s
+ => [gateway internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                            0.0s
+ => [processor 1/4] FROM docker.io/library/python:3.14-slim@sha256:dcc61f  0.0s
+ => => resolve docker.io/library/python:3.14-slim@sha256:dcc61fa5aee73610  0.0s
+ => [gateway internal] load build context                                  0.0s
+ => => transferring context: 92B                                           0.0s
+ => [processor internal] load build context                                0.0s
+ => => transferring context: 1.71kB                                        0.0s
+ => CACHED [processor 2/4] RUN apt-get update && apt-get install -y --no-  0.0s
+ => CACHED [processor 3/4] WORKDIR /app                                    0.0s
+ => CACHED [gateway 4/4] COPY . .                                          0.0s
+ => [processor 4/4] COPY . .                                               0.0s
+ => [gateway] exporting to image                                           0.1s
+ => => exporting layers                                                    0.0s
+ => => exporting manifest sha256:f978513e52fc06a17fe0178467ff404744a7fb78  0.0s
+ => => exporting config sha256:5a3c8219292545c421c506586f465f945276fc1f61  0.0s
+ => => exporting attestation manifest sha256:762a8737b9372705ae36745228ef  0.0s
+ => => exporting manifest list sha256:13dee7c7934147521a7e7e538a4da126621  0.0s
+ => => naming to docker.io/library/port_toy-gateway:latest                 0.0s
+ => => unpacking to docker.io/library/port_toy-gateway:latest              0.0s
+ => [processor] exporting to image                                         0.2s
+ => => exporting layers                                                    0.1s
+ => => exporting manifest sha256:e7b9db5a41ab4bcde9fbb256827c0aa8e3766e47  0.0s
+ => => exporting config sha256:7d1594194b6e44ce78ae15e19c605cfc3c84c2425e  0.0s
+ => => exporting attestation manifest sha256:31cbc010292e105900315504548e  0.0s
+ => => exporting manifest list sha256:78522b0fbda8f6ea4f8e412e5efd970efa6  0.0s
+ => => naming to docker.io/library/port_toy-processor:latest               0.0s
+ => => unpacking to docker.io/library/port_toy-processor:latest            0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+ => [processor] resolving provenance for metadata file                     0.0s
+[+] up 4/4
+ ✔ Image port_toy-processor Built                                           0.5s
+ ✔ Image port_toy-gateway   Built                                           0.6s
+ ✔ Container gateway        Running                                         0.0s
+ ✔ Container processor      Started                                        10.4s
+[exit 0]

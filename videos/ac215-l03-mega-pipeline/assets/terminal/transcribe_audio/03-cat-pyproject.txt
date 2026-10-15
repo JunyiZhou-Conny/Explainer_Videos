@@ -1,0 +1,11 @@
+$ cat pyproject.toml
+[project]
+name = "transcribe-audio"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "ffmpeg-python>=0.2.0",
+    "google-cloud-speech>=2.41.0",
+    "google-cloud-storage>=3.17.0",
+]
+[exit 0]

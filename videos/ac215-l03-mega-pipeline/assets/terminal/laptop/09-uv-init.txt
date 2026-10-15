@@ -1,0 +1,3 @@
+$ uv init --bare
+Initialized project `transcribe-audio`
+[exit 0]

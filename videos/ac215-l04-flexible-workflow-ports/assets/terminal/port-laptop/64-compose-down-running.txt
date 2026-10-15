@@ -1,0 +1,6 @@
+$ docker compose down
+[+] down 3/3
+ ✔ Container gateway   Removed                                             10.2s
+ ✔ Container processor Removed                                             10.2s
+ ✔ Network toynet      Removed                                              0.2s
+[exit 0]

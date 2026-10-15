@@ -1,0 +1,62 @@
+$ docker compose up
+
+[+] Building 0.3s (17/17) FINISHED
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 1.41kB                                           0.0s
+ => [processor internal] load build definition from Dockerfile             0.0s
+ => => transferring dockerfile: 221B                                       0.0s
+ => [gateway internal] load build definition from Dockerfile               0.0s
+ => => transferring dockerfile: 219B                                       0.0s
+ => [processor internal] load metadata for docker.io/library/python:3.14-  0.0s
+ => [processor internal] load .dockerignore                                0.0s
+ => => transferring context: 2B                                            0.0s
+ => [gateway internal] load .dockerignore                                  0.0s
+ => => transferring context: 2B                                            0.0s
+ => [gateway 1/4] FROM docker.io/library/python:3.14-slim@sha256:dcc61fa5  0.0s
+ => => resolve docker.io/library/python:3.14-slim@sha256:dcc61fa5aee73610  0.0s
+ => [processor internal] load build context                                0.0s
+ => => transferring context: 64B                                           0.0s
+ => [gateway internal] load build context                                  0.0s
+ => => transferring context: 92B                                           0.0s
+ => CACHED [processor 2/4] RUN apt-get update && apt-get install -y --no-  0.0s
+ => CACHED [processor 3/4] WORKDIR /app                                    0.0s
+ => CACHED [gateway 4/4] COPY . .                                          0.0s
+ => CACHED [processor 4/4] COPY . .                                        0.0s
+ => [processor] exporting to image                                         0.1s
+ => => exporting layers                                                    0.0s
+ => => exporting manifest sha256:a4d4c0d143facd83bd587d75905e92fbbb5c77da  0.0s
+ => => exporting config sha256:a83f7a39314138280d4b48f9f5777c99a5c47a5e18  0.0s
+ => => exporting attestation manifest sha256:35fcb20419e617997933fd310694  0.0s
+ => => exporting manifest list sha256:2b248c7e192b2b2d5792adc6111f61efc38  0.0s
+ => => naming to docker.io/library/port_toy-processor:latest               0.0s
+ => => unpacking to docker.io/library/port_toy-processor:latest            0.0s
+ => [gateway] exporting to image                                           0.1s
+ => => exporting layers                                                    0.0s
+ => => exporting manifest sha256:f978513e52fc06a17fe0178467ff404744a7fb78  0.0s
+ => => exporting config sha256:5a3c8219292545c421c506586f465f945276fc1f61  0.0s
+ => => exporting attestation manifest sha256:31dcb362929b31284036116afb0c  0.0s
+ => => exporting manifest list sha256:aff59ba60fd0b4d087fee61e3ce976c053c  0.0s
+ => => naming to docker.io/library/port_toy-gateway:latest                 0.0s
+ => => unpacking to docker.io/library/port_toy-gateway:latest              0.0s
+ => [gateway] resolving provenance for metadata file                       0.0s
+ => [processor] resolving provenance for metadata file                     0.0s
+[+] up 5/5
+ ✔ Image port_toy-gateway   Built                                           0.5s
+ ✔ Image port_toy-processor Built                                           0.5s
+ ✔ Network toynet           Created                                         0.0s
+ ✔ Container processor      Created                                         0.1s
+ ✔ Container gateway        Created                                         0.0s
+Attaching to gateway, processor
+processor  | processor listening on port 9200 (internal only)
+gateway    | gateway listening on port 9100  →  open http://localhost:8090
+processor  | 172.19.0.3 - - [14/Oct/2026 00:32:33] "POST / HTTP/1.1" 200 -
+gateway    | 172.19.0.1 - - [14/Oct/2026 00:32:33] "POST / HTTP/1.1" 200 -
+processor  | 172.19.0.3 - - [14/Oct/2026 00:32:34] "GET /health HTTP/1.1" 200 -
+Gracefully Stopping... press Ctrl+C again to force
+Container gateway Stopping
+Container gateway Stopped
+Container processor Stopping
+gateway exited with code 137
+Container processor Stopped
+processor exited with code 137
+[exit 0]

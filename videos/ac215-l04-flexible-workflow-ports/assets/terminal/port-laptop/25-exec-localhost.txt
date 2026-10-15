@@ -1,0 +1,7 @@
+$ docker exec gateway curl --max-time 3 http://localhost:9200/health
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (7) Failed to connect to localhost port 9200 after 0 ms: Could not connect
+ to server
+[exit 7]

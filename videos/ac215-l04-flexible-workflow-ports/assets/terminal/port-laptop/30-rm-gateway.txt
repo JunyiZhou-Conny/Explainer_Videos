@@ -1,0 +1,3 @@
+$ docker rm -f gateway
+gateway
+[exit 0]

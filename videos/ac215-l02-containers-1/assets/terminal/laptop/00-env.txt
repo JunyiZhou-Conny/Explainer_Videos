@@ -1,0 +1,7 @@
+$ date -u '+%Y-%m-%d %H:%M UTC'; uname -sm; docker version --format 'Docker client {{.Client.Version}}, engine {{.Server.Version}}'; docker buildx version; git --version
+2026-10-13 01:43 UTC
+Linux x86_64
+Docker client 29.8.2, engine 29.8.2
+github.com/docker/buildx v0.37.2 2d379c0c3f22da0d2759d132a0ec81ca949098f0
+git version 2.54.0
+[exit 0]

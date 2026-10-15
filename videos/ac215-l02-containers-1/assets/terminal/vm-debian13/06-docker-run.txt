@@ -1,0 +1,32 @@
+$ sudo docker run --rm -ti dlops/simple-translate
+Unable to find image 'dlops/simple-translate:latest' locally
+latest: Pulling from dlops/simple-translate
+a8ac7f6c67ab: Pull complete
+268fd66f673d: Pull complete
+ec613f6df892: Pull complete
+35ef2f664a5c: Pull complete
+8c764ec0233f: Pull complete
+d884b290597f: Pull complete
+c09a3265feca: Pull complete
+Digest: sha256:2454010bcf64b211d81805c38ae3dfc7842bff6fed558bb3bb6dc7659a63f916
+Status: Downloaded newer image for dlops/simple-translate:latest
+root@8d79f239e7f9:/# python cli.py
+
+
+    _      ____  ____   _  ____
+   / \    / ___||___ \ / || ___|
+  / _ \  | |      __) || ||___ \
+ / ___ \ | |___  / __/ | | ___) |
+/_/   \_\ \____||_____||_||____/
+
+
+
+Arguments: Namespace(text='I love cheese', file='', src='en', dest='it')
+
+Input: I love cheese
+Output: Adoro il formaggio
+root@8d79f239e7f9:/# python --version
+Python 3.14.7
+root@8d79f239e7f9:/# exit
+exit
+[exit 0]

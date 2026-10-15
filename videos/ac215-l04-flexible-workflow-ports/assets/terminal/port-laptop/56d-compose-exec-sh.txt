@@ -1,0 +1,7 @@
+$ docker compose exec gateway sh
+# hostname
+27b8d17b0ee0
+# echo $PROCESSOR_HOST $PROCESSOR_PORT
+processor 9200
+# exit
+[exit 0]

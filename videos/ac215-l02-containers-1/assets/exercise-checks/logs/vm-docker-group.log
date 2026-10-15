@@ -1,0 +1,14 @@
+--- groups after install:
+docker:x:103:
+Docker version 20.10.24+dfsg1, build 297e128
+srw-rw---- 1 root docker 0 Oct 13 19:48 /var/run/docker.sock
+--- as student, before:
+permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json": dial unix /var/run/docker.sock: connect: permission denied
+[exit 1]
+--- with sudo:
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[exit 0]
+--- as student, after usermod, new login:
+student docker
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+[exit 0]

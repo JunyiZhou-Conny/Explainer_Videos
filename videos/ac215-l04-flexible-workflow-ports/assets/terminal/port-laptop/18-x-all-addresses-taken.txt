@@ -1,0 +1,6 @@
+$ docker run -d --name gateway-all --network toynet -p 8090:9100 toy-gateway
+ef2a04bcf5166a6af8c998e9d189fdab2b7ca785d087d9a880a29d3adb38acdb
+docker: Error response from daemon: failed to set up container networking: driver failed programming external connectivity on endpoint gateway-all (984df1c3434f45fdd9438521ce64542f869f21ba12f6deb54ffcb7987fce45d8): Bind for 127.0.0.1:8090 failed: port is already allocated
+
+Run 'docker run --help' for more information
+[exit 125]

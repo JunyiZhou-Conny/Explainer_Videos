@@ -1,0 +1,5 @@
+# expected · source: README.md lines 188-191 of dlops-io/simple-translate @ 62f821b (assets/source/README.md); needs a Docker Hub account and access token, so not run against Docker Hub here. The README documents the commands only, no output. Real CLI messages for the same commands: laptop-push/03-push-no-login.txt (push without login, to Docker Hub) and laptop-push/04-09 (login, tag, push to a throwaway local registry).
+* Sign up in Docker Hub and create an [Access Token](https://hub.docker.com/settings/security)
+* Login to the Hub: `docker login -u <USER NAME> -p <ACCESS TOKEN>`
+* Tag the Docker Image: `docker tag simple-translate <USER NAME>/simple-translate-ac215`
+* Push to Docker Hub: `docker push <USER NAME>/simple-translate-ac215`

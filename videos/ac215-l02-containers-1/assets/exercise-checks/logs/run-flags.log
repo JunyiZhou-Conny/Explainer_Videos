@@ -1,0 +1,17 @@
+--- (a) no flags
+
+real	0m0.401s
+user	0m0.014s
+sys	0m0.024s
+[exit 0]
+--- (c) -i only
+/.venv/bin/python
+/.venv
+[exit 0]
+--- (b) -t only
+root@5425c275b288:/# echo typed-but-lost
+[ptyrun exit 137]
+Error response from daemon: No such container: l02ex-tonly
+gone-check-done
+
+[exited with code 0]

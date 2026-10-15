@@ -1,0 +1,40 @@
+id: ac215-l02-containers-1
+title: "AC215 · Lecture 2 — Containers I: one image, from laptop to VM (follow-along: simple-translate)"
+papers: []                     # not a paper: a course tutorial walkthrough
+course:
+  name: "AC215 · MLOps & LLMOps (Harvard, Fall 2026)"
+  lecture: 2
+  lecture_title: "Containers I"
+  ed: https://edstem.org/us/courses/97373/lessons/166028/
+  repos:
+    - {repo: dlops-io/simple-translate, branch: main, commit: 62f821bfe09fc1c2ecb0f14354b1f205777c0efa,
+       sections: ["Developing App using Containers", "Running App on VM using Docker"]}
+  guide: https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L02-containers-1.md
+audience: "AC215 student who has done L1 (a cloud VM, venvs, uv) and Tutorial 0 (Docker Desktop, a GCP project), new to Dockerfiles, images and containers; watching with their own clone of simple-translate open on the laptop, pausing to run each command"
+voice: {backend: kokoro, voice: af_heart, speed: 0.9}
+# Chinese: subtitles only (i18n/zh/narration/*.yaml on the English timing), no Chinese voice;
+# build with --burn for the copy with bilingual subtitles burned in (output/<id>.zh-en.mp4).
+scenes:
+  - {file: scenes/s01_hook.py,       cls: Hook,           title: "One command on a fresh VM"}
+  - {file: scenes/s02_nouns.py,      cls: FourNouns,      title: "Image, layer, container, registry"}
+  - {file: scenes/s03_cleanup.py,    cls: CleanSlate,     title: "A clean slate, and the clone"}
+  - {file: scenes/s04_from.py,       cls: StepFrom,       title: "Dockerfile step 1: FROM"}
+  - {file: scenes/s05_entrypoint.py, cls: StepEntrypoint, title: "Step 2: ENTRYPOINT"}
+  - {file: scenes/s06_copy.py,       cls: StepCopy,       title: "Step 3: install uv, copy the code"}
+  - {file: scenes/s07_uv_sync.py,    cls: StepUvSync,     title: "Step 4: uv sync, and two Pythons"}
+  - {file: scenes/s08_cmd.py,        cls: StepCmd,        title: "Step 5: CMD, the solution, the build"}
+  - {file: scenes/s09_run.py,        cls: RunIt,          title: "Run it, translate, exit"}
+  - {file: scenes/s10_inside.py,     cls: InsideTheImage, title: "What's inside the image"}
+  - {file: scenes/s11_cache.py,      cls: LayerCache,     title: "The layer cache"}
+  - {file: scenes/s12_push.py,       cls: TagAndPush,     title: "Tag and push"}
+  - {file: scenes/s13_platforms.py,  cls: Platforms,      title: "Platforms: arm64 vs amd64"}
+  - {file: scenes/s14_vm_docker.py,  cls: DockerOnVM,     title: "A VM with only Docker"}
+  - {file: scenes/s15_deploy.py,     cls: Deploy,         title: "One-command deploy"}
+  - {file: scenes/s16_recap.py,      cls: Recap,          title: "Tear down, recap, and what's next"}
+parts:
+  - id: part1
+    title: "AC215 · L2, part 1: write a Dockerfile, build and run the image"
+    scenes: [s01_hook, s02_nouns, s03_cleanup, s04_from, s05_entrypoint, s06_copy, s07_uv_sync, s08_cmd, s09_run]
+  - id: part2
+    title: "AC215 · L2, part 2: layers, cache, Docker Hub and a VM"
+    scenes: [s10_inside, s11_cache, s12_push, s13_platforms, s14_vm_docker, s15_deploy, s16_recap]

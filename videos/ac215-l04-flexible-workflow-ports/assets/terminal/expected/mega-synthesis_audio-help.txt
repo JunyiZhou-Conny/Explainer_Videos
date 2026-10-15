@@ -1,0 +1,10 @@
+# expected, not a capture: the README's own block, synthesis_audio/README.md:99-107 (dlops-io/mega-pipeline flexible-workflow @ cc67f3b), command line marked with $
+$ python cli.py --help
+usage: cli.py [-h] [-d] [-s]
+
+Synthesis audio from translated text
+
+options:
+  -h, --help       show this help message and exit
+  -d, --download   Download translated text from GCS bucket
+  -s, --synthesis  Synthesis audio

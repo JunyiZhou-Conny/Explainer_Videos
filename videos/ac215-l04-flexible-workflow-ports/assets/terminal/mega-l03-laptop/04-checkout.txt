@@ -1,0 +1,10 @@
+$ git checkout flexible-workflow
+error: Your local changes to the following files would be overwritten by checkout:
+	transcribe_audio/cli.py
+Please commit your changes or stash them before you switch branches.
+error: The following untracked working tree files would be overwritten by checkout:
+	generate_text/Dockerfile
+	generate_text/uv.lock
+Please move or remove them before you switch branches.
+Aborting
+[exit 1]

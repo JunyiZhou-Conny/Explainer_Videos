@@ -1,0 +1,41 @@
+$ docker buildx history logs 2pbudaos8eclmt1h26zyiw3uw
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.31kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f29b2bed401b72d72551257c0cd0ee36a41edc23ff60bec98fba7fed3e7
+#4 resolve docker.io/library/python:3.14-slim-bookworm@sha256:d86a6f29b2bed401b72d72551257c0cd0ee36a41edc23ff60bec98fba7fed3e7 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 318B done
+#5 DONE 0.0s
+
+#6 [2/5] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&     apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential ffmpeg &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#6 CACHED
+
+#7 [4/5] COPY --chown=app:app . ./
+#7 CACHED
+
+#8 [3/5] WORKDIR /app
+#8 CACHED
+
+#9 [5/5] RUN uv sync
+#9 CACHED
+
+#10 exporting to image
+#10 exporting layers done
+#10 exporting manifest sha256:c478063eabdf2d4e7fc50f170ad06c357184ccb314eb901ecbe9866c2d5057ce done
+#10 exporting config sha256:9dfb89a101986b2c9f2e9be876b77b30dbdae6c8acee54a5df8405f082a22023 done
+#10 exporting attestation manifest sha256:82747163f3b16b45a9d466a83fd8fc2dca375f1a8ed184510f1fdbc405a1583a done
+#10 exporting manifest list sha256:3beaf90dd0a894dedb90e26dad298721791a5729ebfd628a93152ff39babb4d7 done
+#10 naming to docker.io/library/mega-pipeline-transcribe-audio:latest done
+#10 unpacking to docker.io/library/mega-pipeline-transcribe-audio:latest 0.0s done
+#10 DONE 0.1s
+[exit 0]

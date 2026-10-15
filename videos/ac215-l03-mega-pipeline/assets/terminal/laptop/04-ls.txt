@@ -1,0 +1,12 @@
+$ ls; git log --oneline -1; git branch
+README.md
+generate_text
+mega-pipeline-bucket.png
+mega-pipeline-flow.png
+synthesis_audio
+synthesis_audio_en
+transcribe_audio
+translate_text
+c6bbc9b fix for Google Speech-to-Text automatically breaks longer audio files into chunks separated by natural pauses.
+* main
+[exit 0]

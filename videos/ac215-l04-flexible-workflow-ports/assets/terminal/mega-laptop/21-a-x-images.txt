@@ -1,0 +1,5 @@
+$ docker images
+IMAGE                                   ID             DISK USAGE   CONTENT SIZE   EXTRA
+mega-pipeline-transcribe-audio:latest   3beaf90dd0a8       1.48GB          386MB        
+python:3.14-slim-bookworm               d86a6f29b2be        195MB         47.2MB        
+[exit 0]

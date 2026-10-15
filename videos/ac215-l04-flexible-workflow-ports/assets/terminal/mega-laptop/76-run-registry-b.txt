@@ -1,0 +1,27 @@
+$ ./docker-shell.sh run
+Docker Username: dlops, Build Mode: run
+Run Docker container...
+Local image not found, using image from registry...
+Unable to find image 'dlops/mega-pipeline-generate-text:latest' locally
+latest: Pulling from dlops/mega-pipeline-generate-text
+c54660bace62: Pull complete
+f2f192972e4b: Pull complete
+4f4fb700ef54: Pull complete
+4dccd46ece62: Pull complete
+7105bd82fc7f: Pull complete
+ccb9cc3794cd: Download complete
+Digest: sha256:c1f1ccbe43b3af91133b8e407863d37793d0d4f992087cdffc37bd59b4044c62
+Status: Downloaded newer image for dlops/mega-pipeline-generate-text:latest
+Creating a Pipfile for this project...
+Launching subshell in virtual environment...
+root@b7bf0236578c:/app#  source /root/.local/share/virtualenvs/app-4PlAip0Q/bin/
+activate
+(app) root@b7bf0236578c:/app# python --version
+Python 3.8.17
+(app) root@b7bf0236578c:/app# python cli.py --help
+Traceback (most recent call last):
+  File "cli.py", line 11, in <module>
+    from google import genai
+ImportError: cannot import name 'genai' from 'google' (unknown location)
+(app) root@b7bf0236578c:/app#
+[exit 1]

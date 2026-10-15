@@ -1,0 +1,4 @@
+$ docker ps
+CONTAINER ID   IMAGE                            COMMAND                  CREATED          STATUS         PORTS     NAMES
+0ceffb272288   mega-pipeline-transcribe-audio   "/bin/bash -c 'sourc…"   10 seconds ago   Up 8 seconds             mega-pipeline-transcribe-audio
+[exit 0]

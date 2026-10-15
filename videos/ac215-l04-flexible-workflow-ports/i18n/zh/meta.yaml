@@ -1,0 +1,41 @@
+# Chinese (zh-CN) metadata for ac215-l04-flexible-workflow-ports (read by explainer/i18n.py meta(), used by
+# explainer/build.py for the subtitles' chapters and the zh descriptions): video title, part titles, chapter
+# titles keyed by scene file stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 克隆, 拉取, 推送, 存储桶, 端口; A4),
+# questions keep their question mark, the English colon structure is kept (docker-shell.sh：……, Compose：……),
+# commands, mode names, branch, folder and file names stay as they are (underscores included: meta.yaml is not
+# read by `explainer.i18n check`, so brackets are fine here too). Containers II-b → 容器 II-b (L2 容器 I,
+# L3 容器 II). The chapters render the English sense (build/review_spoken.md item 29): S07's "honest errors" →
+# 真实的报错 (one of the five is a silent exit 0, still the real outcome), S09's "stowaway key" → 偷渡的密钥,
+# S12's "ports on the wire" → 线路上的端口, S15's "declared" → 声明式写法. 跟练 = follow-along.
+title: "AC215 · 第 4 讲：容器 II-b——构建还是拉取、端口与 Compose（跟练：mega-pipeline flexible-workflow、port_toy）"
+
+parts:
+  part1: "AC215 · 第 4 讲（上）：flexible-workflow——你自己的云资源、一个脚本、构建还是拉取"
+  part2: "AC215 · 第 4 讲（下）：port_toy——网络、端口与 Compose"
+
+chapters:
+  s01_hook: "构建还是拉取？谁的 localhost？"
+  s02_team: "同一条 pipeline，像团队一样搭建"
+  s03_code: "获取代码：克隆，或切换分支"
+  s04_values: "你的存储桶和三个值"
+  s05_gates: "三道关卡：账号、角色、API"
+  s06_script: "docker-shell.sh：一个脚本，两扇窗"
+  s07_components: "五个组件，五个真实的报错"
+  s08_run: "dev、run 和一个过期的镜像"
+  s09_prod: "prod、偷渡的密钥与清理"
+  s10_network: "两台小电脑，一个网络"
+  s11_start: "构建、启动、看日志"
+  s12_send: "发一条消息：线路上的端口"
+  s13_reach: "谁能连到谁"
+  s14_ports: "修改端口"
+  s15_compose: "Compose：同一个应用的声明式写法"
+  s16_recap: "修改、生效、拆除与回顾"
+
+# Two or three sentences (rule H2), written register. Facts: README sections of mega-pipeline (branch
+# flexible-workflow, commit cc67f3b8) and port_toy (commit d190c712) as in video.yaml; the stale image from
+# Docker Hub was built on 2025-02-18 with Python 3.8.17 (mega-laptop/74); captures dated 2026-10-14
+# (ASSETS.md), recorded without a Google account. Paste the chapter timestamps from output/chapters.txt
+# and the study guide, tutorial repo and Ed links (video.yaml course:) under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 4 讲“容器 II-b”的跟练视频，分两部分：第一部分照着 dlops-io/mega-pipeline 的 flexible-workflow 分支，建立自己的服务账号、密钥和存储桶，弄清一次调用要过的三道关卡（密钥、角色、API），读懂每个组件的 docker-shell.sh 和它的四种模式，再分清在本地构建镜像和从 Docker Hub 拉取镜像，看懂 run 为什么可能交给你一个 2025 年 2 月的 Python 3.8 镜像，以及怎样不让旧密钥混进镜像。第二部分用 dlops-io/port_toy 讲清容器网络和端口：每个容器都有自己的 localhost，在自建网络上靠名字互相找到，发布的端口、监听的端口和临时端口各是什么，-p 127.0.0.1:8090:9100 的三段怎么读，最后用 Docker Compose 把同一个应用写成一个 docker-compose.yml，并分清 Ctrl+C、down、up -d 和 up -d --build。英文旁白，配中文和中英双语字幕；README 的每条命令都按原样、按顺序出现，终端输出录于 2026-10-14，录制时没有 Google 账号，所以调用 Google 的步骤展示命令、缺少密钥时的真实报错和该看什么。

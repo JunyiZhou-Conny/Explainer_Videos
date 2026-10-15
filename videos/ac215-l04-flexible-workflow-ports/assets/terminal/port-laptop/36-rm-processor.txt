@@ -1,0 +1,3 @@
+$ docker rm -f processor
+processor
+[exit 0]

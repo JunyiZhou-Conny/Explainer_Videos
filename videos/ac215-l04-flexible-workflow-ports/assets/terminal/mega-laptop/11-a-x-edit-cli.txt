@@ -1,0 +1,21 @@
+$ git diff cli.py
+diff --git a/transcribe_audio/cli.py b/transcribe_audio/cli.py
+index cf119d1..acae49a 100644
+--- a/transcribe_audio/cli.py
++++ b/transcribe_audio/cli.py
+@@ -14,11 +14,11 @@ from tempfile import TemporaryDirectory
+ # Generate the inputs arguments parser
+ parser = argparse.ArgumentParser(description="Command description.")
+ 
+-gcp_project = "" #"ac215-project"
+-bucket_name = ""  #"mega-pipeline-bucket"
++gcp_project = "your-project-id" #"ac215-project"
++bucket_name = "your-team-bucket"  #"mega-pipeline-bucket"
+ input_audios = "input_audios"
+ text_prompts = "text_prompts"
+-group_name = "" #"pavlos-advanced"
++group_name = "group-01" #"pavlos-advanced"
+ 
+  
+ assert group_name!="", "Update group name"
+[exit 0]

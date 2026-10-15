@@ -1,0 +1,12 @@
+$ ls -la
+total 120
+drwxr-sr-x 2 student student  4096 Oct 14 00:34 .
+drwxr-sr-x 8 student student  4096 Oct 14 00:34 ..
+-rw-r--r-- 1 student student    54 Oct 14 00:34 .gitignore
+-rw-r--r-- 1 student student  1274 Oct 14 00:34 Dockerfile
+-rw-r--r-- 1 student student  4929 Oct 14 00:34 README.md
+-rw-r--r-- 1 student student  4096 Oct 14 00:34 cli.py
+-rwxr-xr-x 1 student student  2891 Oct 14 00:34 docker-shell.sh
+-rw-r--r-- 1 student student   249 Oct 14 00:34 pyproject.toml
+-rw-r--r-- 1 student student 85761 Oct 14 00:34 uv.lock
+[exit 0]

@@ -1,0 +1,4 @@
+$ sudo docker images
+REPOSITORY               TAG       IMAGE ID       CREATED       SIZE
+dlops/simple-translate   latest    8a968f7e6f7a   3 weeks ago   347MB
+[exit 0]

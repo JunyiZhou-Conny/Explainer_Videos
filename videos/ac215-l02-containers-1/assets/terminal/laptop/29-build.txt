@@ -1,0 +1,24 @@
+$ docker build -t simple-translate -f Dockerfile .
+
+[+] Building 28.1s (9/9) FINISHED                                                    docker:default
+ => [internal] load build definition from Dockerfile                                           0.0s
+ => => transferring dockerfile: 728B                                                           0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookworm                   0.0s
+ => [internal] load .dockerignore                                                              0.0s
+ => => transferring context: 2B                                                                0.0s
+ => CACHED [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c67  0.0s
+ => => resolve docker.io/library/python:3.12-slim-bookworm@sha256:4fb3e77def9f1ad08c674bb0809  0.0s
+ => [internal] load build context                                                              0.0s
+ => => transferring context: 2.92kB                                                            0.0s
+ => [2/4] RUN set -ex;     apt-get update &&     apt-get upgrade -y &&     apt-get clean &&   13.3s
+ => [3/4] COPY . ./                                                                            0.0s
+ => [4/4] RUN uv sync                                                                          4.9s
+ => exporting to image                                                                         9.7s
+ => => exporting layers                                                                        6.9s
+ => => exporting manifest sha256:fa192839a4233d3810f482f6c8f009fe86923d32ca0b9a799ceb61ba78cc  0.0s
+ => => exporting config sha256:d2dbd9dd250f12610b4576bfff45dd07e405a5f1dda0770c6f38c2fd157b32  0.0s
+ => => exporting attestation manifest sha256:203d78702f21ca9ad2f4a59f7a96bda671778215b26723b9  0.0s
+ => => exporting manifest list sha256:73e9ab822b0bd49dd07b4f219a41e24e106860ad8e69cb5c2679938  0.0s
+ => => naming to docker.io/library/simple-translate:latest                                     0.0s
+ => => unpacking to docker.io/library/simple-translate:latest                                  2.8s
+[exit 0]

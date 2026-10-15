@@ -1,0 +1,85 @@
+$ docker build --network host -t transcribe_audio .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 840B done
+#1 WARN: SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/l03-capture/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 49B done
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80
+#4 resolve docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 330B done
+#5 DONE 0.0s
+
+#6 [2/5] RUN apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential ffmpeg &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#6 CACHED
+
+#7 [3/5] WORKDIR /app
+#7 CACHED
+
+#8 [4/5] COPY --chown=app:app . ./
+#8 DONE 0.0s
+
+#9 [5/5] RUN uv sync
+#9 0.176 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+#9 0.176 Creating virtual environment at: /home/app/.venv
+#9 0.180 Resolved 27 packages in 1ms
+#9 0.512 Downloading grpcio (6.8MiB)
+#9 0.513 Downloading cryptography (4.5MiB)
+#9 0.941  Downloaded cryptography
+#9 1.007  Downloaded grpcio
+#9 1.008 Prepared 26 packages in 825ms
+#9 1.174 Installed 26 packages in 166ms
+#9 1.174  + certifi==2026.7.22
+#9 1.174  + cffi==2.1.1
+#9 1.174  + charset-normalizer==3.5.2
+#9 1.174  + cryptography==50.0.2
+#9 1.174  + ffmpeg-python==0.2.0
+#9 1.175  + future==1.0.0
+#9 1.175  + google-api-core==2.42.0
+#9 1.175  + google-auth==2.62.0
+#9 1.175  + google-cloud-core==2.8.0
+#9 1.175  + google-cloud-speech==2.41.0
+#9 1.175  + google-cloud-storage==3.17.0
+#9 1.175  + google-crc32c==1.9.0
+#9 1.175  + google-resumable-media==2.11.0
+#9 1.175  + googleapis-common-protos==1.75.5
+#9 1.175  + grpcio==1.84.0
+#9 1.175  + grpcio-status==1.84.0
+#9 1.175  + idna==3.20
+#9 1.175  + opentelemetry-api==1.45.1
+#9 1.175  + proto-plus==1.29.0
+#9 1.175  + protobuf==7.36.2
+#9 1.175  + pyasn1==0.6.4
+#9 1.175  + pyasn1-modules==0.4.2
+#9 1.175  + pycparser==3.11
+#9 1.175  + requests==2.34.2
+#9 1.175  + typing-extensions==4.16.0
+#9 1.175  + urllib3==2.8.0
+#9 DONE 1.3s
+
+#10 exporting to image
+#10 exporting layers
+#10 exporting layers 4.6s done
+#10 exporting manifest sha256:d352993ebebb45d33e764927170210ccc23f62a1fe2c944d0c46d5558b3e4216 done
+#10 exporting config sha256:6136c37750d9ab834b768e7657fcd90b4e783b0ee3f1ca7a810eeeb07da73aa0 done
+#10 exporting attestation manifest sha256:65bfba0b6d99334cfb3520928da57cff43b381b786e8e151fcd253c7ba96fea5 done
+#10 exporting manifest list sha256:42dc79356e2bb7a36092573b2883b11eae823ee2f215158736ee97d96978de97 done
+#10 naming to docker.io/library/transcribe_audio:latest done
+#10 unpacking to docker.io/library/transcribe_audio:latest
+#10 unpacking to docker.io/library/transcribe_audio:latest 1.8s done
+#10 DONE 6.5s
+
+ 1 warning found (use docker --debug to expand):
+ - SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+[exit 0]

@@ -1,0 +1,77 @@
+$ docker buildx history logs qknqtaqwqoyig4l9sti19fddg
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 840B done
+#1 WARN: SecretsUsedInArgOrEnv: Do not use ARG or ENV instructions for sensitive data (ENV "GOOGLE_APPLICATION_CREDENTIALS") (line 10)
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/l03-capture/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 DONE 0.0s
+
+#4 [1/5] FROM docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80
+#4 resolve docker.io/l03-capture/python:3.12-slim-bookworm@sha256:87d2f3783689854bd346d4d4008dc8a3a4e73d3d2231b17d1f77bc9f4c4aea80 0.0s done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 143.47kB done
+#5 DONE 0.0s
+
+#6 [2/5] RUN apt-get update &&     apt-get upgrade -y &&     apt-get install -y --no-install-recommends build-essential ffmpeg &&     apt-get clean &&     rm -rf /var/lib/apt/lists/* &&     pip install --no-cache-dir --upgrade pip &&     pip install uv &&     useradd -ms /bin/bash app -d /home/app -u 1000 &&     mkdir -p /app &&     chown app:app /app
+#6 CACHED
+
+#7 [3/5] WORKDIR /app
+#7 CACHED
+
+#8 [4/5] COPY --chown=app:app . ./
+#8 DONE 0.0s
+
+#9 [5/5] RUN uv sync
+#9 0.152 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
+#9 0.152 Creating virtual environment at: /home/app/.venv
+#9 0.158 Resolved 27 packages in 1ms
+#9 0.520 Downloading cryptography (4.5MiB)
+#9 0.536 Downloading grpcio (6.8MiB)
+#9 2.259  Downloaded cryptography
+#9 2.633  Downloaded grpcio
+#9 2.633 Prepared 26 packages in 2.47s
+#9 2.808 Installed 26 packages in 174ms
+#9 2.808  + certifi==2026.7.22
+#9 2.808  + cffi==2.1.1
+#9 2.808  + charset-normalizer==3.5.2
+#9 2.808  + cryptography==50.0.2
+#9 2.808  + ffmpeg-python==0.2.0
+#9 2.808  + future==1.0.0
+#9 2.808  + google-api-core==2.42.0
+#9 2.808  + google-auth==2.62.0
+#9 2.808  + google-cloud-core==2.8.0
+#9 2.808  + google-cloud-speech==2.41.0
+#9 2.808  + google-cloud-storage==3.17.0
+#9 2.808  + google-crc32c==1.9.0
+#9 2.809  + google-resumable-media==2.11.0
+#9 2.809  + googleapis-common-protos==1.75.5
+#9 2.809  + grpcio==1.84.0
+#9 2.809  + grpcio-status==1.84.0
+#9 2.809  + idna==3.20
+#9 2.809  + opentelemetry-api==1.45.1
+#9 2.809  + proto-plus==1.29.0
+#9 2.809  + protobuf==7.36.2
+#9 2.809  + pyasn1==0.6.4
+#9 2.809  + pyasn1-modules==0.4.2
+#9 2.809  + pycparser==3.11
+#9 2.809  + requests==2.34.2
+#9 2.809  + typing-extensions==4.16.0
+#9 2.809  + urllib3==2.8.0
+#9 DONE 2.9s
+
+#10 exporting to image
+#10 exporting layers 5.0s done
+#10 exporting manifest sha256:020181ccffb77cb8ffaef922ff68c6b410d8dde8b9992a8532c9f46d44c42e59 done
+#10 exporting config sha256:ef834a10cd6a546b7a874688205e3861ae1c9169d36feff24a0965882e0f7bf9 done
+#10 exporting attestation manifest sha256:f3eced93c254ecb42d8f8f171d3ad6d4c2806e6e4bea80e3a2eb4842b9a75d68 done
+#10 exporting manifest list sha256:55af020104ea3dec8ee3862882411dae5a96eb9b37200bda79986ef1022a233e done
+#10 naming to docker.io/library/transcribe_audio:latest done
+#10 unpacking to docker.io/library/transcribe_audio:latest 1.8s done
+#10 DONE 6.8s
+[exit 0]

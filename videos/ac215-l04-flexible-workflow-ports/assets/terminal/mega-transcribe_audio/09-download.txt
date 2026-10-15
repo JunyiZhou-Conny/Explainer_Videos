@@ -1,0 +1,53 @@
+$ python cli.py --download
+Args: Namespace(download=True, transcribe=False, upload=False)
+download
+Traceback (most recent call last):
+  File "/app/cli.py", line 148, in <module>
+    main(args)
+    ~~~~^^^^^^
+  File "/app/cli.py", line 116, in main
+    download()
+    ~~~~~~~~^^
+  File "/app/cli.py", line 39, in download
+    client = storage.Client()
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/storage/client.py", line 267, in __init__
+    super(Client, self).__init__(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        project=project,
+        ^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        _http=_http,
+        ^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/client/__init__.py", line 360, in __init__
+    _ClientProjectMixin.__init__(self, project=project, credentials=credentials)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/client/__init__.py", line 308, in __init__
+    project = self._determine_default(project)
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/client/__init__.py", line 327, in _determine_default
+    return _determine_default_project(project)
+  File "/home/app/.venv/lib/python3.14/site-packages/google/cloud/_helpers/__init__.py", line 170, in _determine_default_project
+    _, project = google.auth.default()
+                 ~~~~~~~~~~~~~~~~~~~^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", line 714, in default
+    credentials, project_id = checker()
+                              ~~~~~~~^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", line 707, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", line 352, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        os.environ[environment_vars.CREDENTIALS],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quota_project_id=quota_project_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/app/.venv/lib/python3.14/site-packages/google/auth/_default.py", line 178, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+        "File {} was not found.".format(filename)
+    )
+google.auth.exceptions.DefaultCredentialsError: File /secrets/mega-pipeline.json was not found.
+[exit 1]
