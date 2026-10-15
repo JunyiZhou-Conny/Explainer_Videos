@@ -437,7 +437,7 @@ class S03(Ep):
                              dash_length=.1).add_tip(tip_length=.16)
             gap = DashedLine(B_C + DELTA + DOWN * .2, B_TRUE + UP * .25, color=RED,
                              stroke_width=3, dash_length=.08)
-            real_b = left("real human B", -2.75, -.2, 17, INK)
+            real_b = at("real human B", -3.45, -.88, 17, INK)
             own_l = VGroup(left("a map: each type", -6.05, -.3, 17, GRAY),
                            left("gets its own arrow", -6.05, -.6, 17, GRAY))
             self.play(FadeIn(true_b), FadeIn(real_b), Create(own), FadeIn(own_l), run_time=.6)
