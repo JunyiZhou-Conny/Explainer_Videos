@@ -98,9 +98,10 @@ function openIssue(){
   p.set('audience', v('audience'));
   let sources = v('sources');
   if(agent() !== 'claude'){
+    // No "@" mention here: the literal mention would summon the app this note asks to stand down.
     sources += '\n\nDispatch: this episode will be claimed manually (' +
       (agent() === 'manual-claude' ? 'a chosen Claude model' : 'a non-Claude agent') +
-      '); @claude should NOT pick it up.';
+      '); automatic agents must not claim it.';
   }
   p.set('sources', sources);
   p.set('style', v('style') || 'swiss (ready)');

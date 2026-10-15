@@ -45,7 +45,7 @@ async function load(){
       lane.className = 'lane' + (attention && items.length ? ' attention' : '');
       lane.innerHTML = `<h2><span>${name}</span><span class="count">${items.length}</span></h2>`;
       for(const i of items){
-        const extra = i.labels.filter(l => !['episode', label].includes(l.name)).map(l => `<span class="chip">${esc(l.name)}</span>`).join('');
+        const extra = i.labels.filter(l => !['episode', 'blocked:question', label].includes(l.name)).map(l => `<span class="chip">${esc(l.name)}</span>`).join('');
         const q = i.labels.some(l => l.name === 'blocked:question') && label !== 'blocked:question'
           ? '<span class="chip q">blocked:question</span>' : '';
         lane.insertAdjacentHTML('beforeend', `
