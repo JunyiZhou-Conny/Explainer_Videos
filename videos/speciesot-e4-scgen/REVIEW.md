@@ -22,7 +22,7 @@ separate.
    - One adapter: the package as a circle with one door. The four cellot calls, and a
      `FakeAutoEncoder` in tests. ✔
 3. **Ponder moments and recap**:
-   - s03 ≈ 1:15 asks "what must be true for one arrow to work for every type?" (`pause_after`
+   - s03 ≈ 1:17 asks "what must be true for one arrow to work for every type?" (`pause_after`
      4 s).
    - s06's closing ponder asks how many files change on a switch; its thinking time is the
      scene tail.
@@ -105,7 +105,23 @@ confirmed in the code before fixing:
 
 ## Verified (final render)
 
-FILLED AFTER THE FINAL BUILD.
+- **Encode**: 341.000 s, 1920×1080 @ 30 fps, H.264 + AAC; seven scenes. The narration minimum
+  is 326.6 s; nothing was clipped.
+- **Captions**: 86 bilingual cues, ordered, non-overlapping and inside the runtime. The widest
+  lines are 1421 px (zh) and 1247 px (en), within the 1740 px caption area.
+- **Mix**: voice −16.0 LUFS; music −22.0 LUFS in gaps and −32.11 under speech; mix −16.18
+  LUFS; true peak −1.21 dBTP. The Swiss style check passed.
+- **Render log**: no BUDGET, CODEPANEL, missing-anchor or traceback lines in any scene.
+- **Silences**: at most 5.4 s, at the s05→s06 cut. The s03 ponder holds 4.3 s (1:17), and so
+  does the s06 ponder (4:57).
+- **ASR round trip**: see below.
+- **Evidence**:
+  - The scgen 2.1.0 wheel contents are in `checks/scgen_package.txt`.
+  - The predict `NameError` is in `checks/error_trail.json` (`scgen_predict`).
+  - Every repo path and line number on screen was checked at `109bf12`: `.gitignore` 44–47,
+    `m2_v08.yaml` 27/44/46–48, `02_eval_metrics.py` 152–168, `ae.py` 22/33/175,
+    `train.py` 173/250–252, `transport.py` 61–69, `predict_new_input.sh` 623–663, and
+    `specs/m1_modern.yaml` 33–37.
 
 ## Not claimed
 
