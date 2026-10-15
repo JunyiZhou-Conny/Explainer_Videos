@@ -849,7 +849,7 @@ class S05(Ep):
             self.play(FadeIn(c313, shift=UP * .1), Indicate(metr.row(155), color=RED, scale_factor=1.03),
                       run_time=.6)
             vo.wait_until("removes the crash")
-            st313 = strike(c313, RED, 5)
+            st313 = strike(c313, RED, 5).set_z_index(6)
             link = Arrow(c313.get_right(), no313.get_left(), buff=.1, color=RED, stroke_width=3,
                          max_tip_length_to_length_ratio=.3)
             self.play(Create(st313), GrowArrow(link), FadeIn(no313, shift=LEFT * .1), run_time=.6)
@@ -886,11 +886,11 @@ class S05(Ep):
         ex_tag = source_tag("EXAMPLE").move_to([center, -2.3, 0])
         trace = VGroup(label("only your adapter's calls (E4)", 21, INK, bold=True),
                        label("your scorecard is the check", 21, INK)).arrange(DOWN, aligned_edge=LEFT, buff=.14)
-        t_frame = Rectangle(width=5.75, height=1.25, stroke_color=INK, stroke_width=2, fill_color=PAPER,
-                            fill_opacity=1).move_to([3.3, -1.7, 0])
-        trace.move_to([t_frame.get_left()[0] + .25 + trace.width / 2, -1.7, 0])
-        t_tag = source_tag("INFERRED").move_to([t_frame.get_right()[0] - .72, -1.32, 0])
-        t_head = left("don't trace all of cellot", t_frame.get_left()[0], -.98 - .02, 18, GRAY)
+        t_frame = Rectangle(width=5.75, height=1.15, stroke_color=INK, stroke_width=2, fill_color=PAPER,
+                            fill_opacity=1).move_to([3.3, -1.8, 0])
+        trace.move_to([t_frame.get_left()[0] + .25 + trace.width / 2, -1.8, 0])
+        t_head = left("don't trace all of cellot", t_frame.get_left()[0], -.97, 18, GRAY)
+        t_tag = source_tag("INFERRED").move_to([t_head.get_right()[0] + .2, -.97, 0], aligned_edge=LEFT)
         with self.say(3) as vo:
             self.cue(vo, .0, FadeOut(metr), FadeOut(mm2), FadeOut(ctl), FadeOut(trt), FadeOut(cl),
                      *[FadeOut(t) for t in cticks], FadeOut(result), FadeOut(c313), FadeOut(st313),

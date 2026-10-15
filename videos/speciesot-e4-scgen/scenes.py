@@ -803,7 +803,7 @@ class S05(Ep):
         with self.say(4) as vo:
             self.cue(vo, .01, *[FadeOut(m) for m in self.content()], run_time=.45)
             self.play(FadeIn(cfg, shift=UP * .1), FadeIn(ctag), run_time=.45)
-            tie = None
+            tie, m1_marks = None, []
             for word, a, bs in (("two layers", 34, (33, 34, 35)), ("fifty latent", 38, (36,)),
                                 ("learning rate", 35, (37,))):
                 vo.wait_until(word)
@@ -818,6 +818,7 @@ class S05(Ep):
                     anims.append(FadeOut(tie))      # one tie at a time: no crossings
                 self.play(*anims, run_time=.5)
                 tie = new
+                m1_marks.append(mb)
             vo.wait_until("Those three match")
             self.play(FadeOut(tie), FadeIn(spec, shift=UP * .08), run_time=.45)
             vo.wait_until("The TensorFlow model")
@@ -846,7 +847,8 @@ class S05(Ep):
                                  bd, left(name, 5.3, yy, 18, INK)))
             pick = left("→ the adapter picks exactly one", .3, -.85, 22, RED, bold=True)
             vo.wait_until("Josh's class mixes")
-            self.play(*[FadeOut(m) for m in (m1, b3, spec, tf, b1, tfloc, nowhere, xmark)],
+            self.play(*[FadeOut(m) for m in (m1, *m1_marks, b3, spec, tf, b1, tfloc, nowhere,
+                                             xmark)],
                       FadeIn(card, shift=LEFT * .1), run_time=.6)
             for i, phrase in enumerate(("helpers from", "the import from", "settings from")):
                 vo.wait_until(phrase)
