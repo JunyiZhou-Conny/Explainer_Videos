@@ -99,7 +99,7 @@
         {"en": "The payoff: in tests, a few-line fake can stand in for the library, so your tests never need it installed. That's exactly how we ran Josh's code for this series.",
          "zh": "回报是：在测试中，一个只有几行的假库就能顶替它，测试时根本不用安装它。我们为这个系列运行 Josh 的代码时，用的正是这个办法。"},
         {"en": "Pause and ponder: if you later switch to a different scGen implementation, how many files in your package should change?",
-         "zh": "停下来想一想：如果以后换成另一种 scGen 实现，你的包里应该有几个文件需要改动？", "pause_after": 4.0}
+         "zh": "停下来想一想：如果以后换成另一种 scGen 实现，你的包里应该有几个文件需要改动？"}
       ]
     },
     {
