@@ -16,11 +16,11 @@ Beats (script.md "## S14", one voiceover block each):
     `student@ac215-l02:~$`) while the dial moves into a badge top right (a BLUE `ac215-l02` box and
     the dial, which keeps sweeping to the end of the scene). "Pause now": ▶ your turn beside the
     prompt; "until its SSH terminal is open": the title pulses.
- 2  TRACKER C3. It types `sudo apt install docker.io` (README.md line 210); "Pause and run it": ▶ your
-    turn. "In our stand-in": vm-debian12/01: 4-8 (+Done), lines 7-8 RED, row tag `stand-in · empty
-    package lists` on line 7; "it fails": the RED rows pulse. "unable to locate package": a small GREY
-    "Debian 13" card above the terminal shows vm-debian13/01: 7 (RED). "If yours installed": GREY
-    note "installed? / → skip to the version check" left of the card.
+ 2  TRACKER C3. It types `sudo apt install docker.io` (README.md line 210) as it is said; "Pause and
+    run it": ▶ your turn. "In our stand-in": vm-debian12/01: 4-8 (+Done), lines 7-8 RED, row tag
+    `stand-in · empty package lists` on line 7; "it fails": the RED rows pulse. "unable to locate
+    package": a small GREY "Debian 13" card above the terminal shows vm-debian13/01: 7 (RED). "If yours
+    installed": GREY note "installed? / → skip to the version check" left of the card.
  3  The card and note go; the terminal shrinks to the strip (the RED rows stay, with their tag).
     Above it: README card `README.md · line 210` (`sudo apt install docker.io`) with tag `erratum`;
     "skips sudo apt-get update": README card `README.md · line 44` ("Update OS packages: `sudo apt-get
@@ -33,29 +33,33 @@ Beats (script.md "## S14", one voiceover block each):
  4  TRACKER C3. The picture goes; the strip grows to 9 rows and types `sudo apt install docker.io`
     -> vm-debian12/03: 4-6 (+Done), 55-57 (57 wraps), 58 cut after `[Y/n]`. "92 new packages":
     YELLOW bars behind lines 55-56; "a 107 megabyte download": `107 MB` underlined, GREY row tag
-    "download"; "on Debian 12": GREY row tag "package list varies by VM" in the title bar; "on Debian
-    13": the GREY "Debian 13" card shows vm-debian13/03: 77-78, `91` and `118 MB` underlined. "Answer
-    Y": the `Y` is typed and flashes YELLOW; then `…`, 560, 581. "Pause and run it": ▶ your turn on
-    the answer row (the command row has scrolled away by then).
- 5  TRACKER C4. It types `sudo docker --version` -> vm-debian12/04: 2. "Debian's own Docker
-    package": PURPLE chip `docker.io` · "Debian's package" above the terminal, left. "20.10.24":
-    underlined; "26.1.5 on Debian 13": the GREY "Debian 13" card shows vm-debian13/04: 2, `26.1.5`
-    underlined; "at the time of recording": that tag on the version row and on the card's top edge.
-    "Older than the laptop's": GREY note "laptop: Docker 29.8.2" (laptop/00 line 4) under the chip.
- 6  The chip, card and note go; the terminal shrinks to the strip. V8 (S14 half) above it: the BLUE
-    VM `ac215-l02` with its own bar "Debian · Linux kernel"; the PURPLE `dockerd` block drops onto
-    the bar; an empty dashed TEAL "container" slot above it. "there's no hidden VM": S02's dashed
-    GREY "Linux VM" box appears small at the right and is crossed out (GREY); "unlike Docker
-    Desktop": caption "Docker Desktop only".
- 7  V8 fades. TRACKER C4 · extra. The strip grows to 5 rows (the error is 4 rows wrapped); above it a
-    PURPLE door `/var/run/docker.sock` with a GREY lock and the PURPLE `dockerd` box behind it. "Without
-    it": the strip types `docker ps` (row tag `extra`). "is refused": a PURPLE `docker ps` chip rides a
-    PINK route to the door and bounces back, the door flashes RED, a RED cross; the strip prints
-    vm-debian12/05: 2 (wrap) in RED. "permission denied on the Docker socket": `permission denied` and
-    `/var/run/docker.sock` underline RED, the door label pulses; "the door to Docker's background
-    service": GREY caption "background service" under `dockerd`. "Only root and the docker group":
-    two GREY keys "root" and "docker group" fade in at the left; root's key glyph slides into the
-    padlock (in the gap between the door's panels; its label stays and pulses) and the shackle lifts.
+    "download"; "on Debian 12": GREY row tag "package list varies by VM" in the title bar; "91
+    packages and 118 megabytes": the GREY "Debian 13" card shows vm-debian13/03: 77-78, `91` and
+    `118 MB` underlined as said; "on Debian 13": its header pulses. "Answer Y": the `Y` is typed and
+    flashes YELLOW; then `…`, 560, 581. "Pause and run it": ▶ your turn on the answer row (the command
+    row has scrolled away by then).
+ 5  TRACKER C4. Beat 4's marks on rows 55-58 fade with the card. It types `sudo docker --version` ->
+    vm-debian12/04: 2. "Debian's own Docker package": PURPLE chip `docker.io` · "Debian's package"
+    above the terminal, left. "20.10.24": underlined; "26.1.5 on Debian 13": the GREY "Debian 13" card
+    shows vm-debian13/04: 2, `26.1.5` underlined; "at the time of recording": that tag on the version
+    row and on the card's top edge. "Older than the laptop's": GREY note "the laptop's: Docker 29.8.2"
+    (laptop/00 line 4) under the chip.
+ 6  The chip, card, note and the version's underline go; the terminal shrinks to the strip. V8 (S14
+    half) above it: the BLUE VM `ac215-l02` with its own bar "Debian · Linux kernel"; the PURPLE
+    `dockerd` block drops onto the bar; an empty dashed TEAL "container" slot above it. "there's no
+    hidden VM": S02's dashed GREY "Linux VM" box appears small at the right and is crossed out (GREY);
+    "unlike Docker Desktop": caption "Docker Desktop only".
+ 7  V8 fades. "why sudo?": the strip's `sudo` (of `sudo docker --version`) pulses YELLOW. The strip
+    grows to 5 rows (the error is 4 rows wrapped) while, above it, a PURPLE door
+    `/var/run/docker.sock` with a GREY lock and the PURPLE `dockerd` box behind it fade in. "Without
+    it": the strip types `docker ps` (row tag `extra`; TRACKER C4 · extra). "is refused": a PURPLE
+    `docker ps` chip (opaque) rides the PINK route to the door and back along it, the door flashes RED,
+    a RED cross; the strip prints vm-debian12/05: 2 (wrap) in RED. "permission denied on the Docker
+    socket": `permission denied` and `/var/run/docker.sock` underline RED, the door label pulses; "the
+    door to Docker's background service": GREY caption "background service" under `dockerd`. "Only
+    root": the chip, route and cross go, a GREY key "root" fades in at the left; "the docker group": a
+    second key "docker group"; "may open it": root's key glyph slides into the padlock (in the gap
+    between the door's panels; its label stays and pulses) and the shackle lifts.
     Fade out to an empty frame.
 """
 
@@ -409,6 +413,7 @@ class DockerOnVM(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             unpin(self, [(p0, yt1)], 0.3, track(tr, 3))
+            vo.wait_until("sudo apt install docker dot I-O")     # typed as it is said
             c_apt = type_cmd(self, t, APT_DOCKER, 1.0)
             vo.wait_until("Pause and run it")
             yt2 = your_turn().next_to(c_apt.strut, RIGHT, buff=0.4)
@@ -513,7 +518,10 @@ class DockerOnVM(VoiceScene):
             u91 = under(substring(card4.rows[0], "91"), TURN)
             u118 = under(substring(card4.rows[1], "118 MB"), TURN)
             self.play(Create(u91), run_time=0.4)
+            vo.wait_until("118 megabytes")
             self.play(Create(u118), run_time=0.4)
+            vo.wait_until("on Debian 13")
+            self.play(Indicate(card4.head, color=INK, scale_factor=1.2), run_time=0.7)
             vo.wait_until("Answer Y")
             type_answer(self, t, r58, ASK58, "Y", asked_at)
             t.print(self, OUT03_B, run_time=0.5)
@@ -533,16 +541,21 @@ class DockerOnVM(VoiceScene):
         assert chip5.get_right()[0] < card5.frame.get_left()[0] - 0.2, "chip runs into the card"
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(card4, u91, u118, varies)), track(tr, 4), run_time=0.4)
-            unpin(self, [(r58, yt4)], 0.2)
+            # last beat's marks go with the card (YELLOW bars, underline, tags on rows 55-58), so
+            # nothing YELLOW competes with the new command
+            unpin(self, [(r58, yt4), (r55, bars[0]), (r56, bars[1]), (r56, u107), (r56, dl)], 0.4,
+                  FadeOut(VGroup(card4, u91, u118, varies)), track(tr, 4))
             bare_prompt(self, t)
-            type_cmd(self, t, DOCKER_VERSION, 0.8)
+            c_ver = type_cmd(self, t, DOCKER_VERSION, 0.8)
             r_ver = t.print(self, [V12], run_time=0.4)[0]
             bare_prompt(self, t)
             vo.wait_until("This is Debian's own Docker package")
             self.play(FadeIn(chip5, shift=RIGHT * 0.15), run_time=0.5)
             self.play(Indicate(chip5, color=TOOL, scale_factor=1.06), run_time=0.7)
-            vo.wait_until("20.10.24 on Debian 12")
+            # the numbers are spoken slowly, so a character-count anchor on "20.10.24" lands ~1 s late
+            # and one on "at the time of recording" ~1 s early (measured on the clip's pauses):
+            # these anchors land on the words
+            vo.wait_until("package: 20.10.24")
             v12 = substring(r_ver, "20.10.24")
             u12 = under(v12, TURN)
             self.play(Create(u12), Indicate(v12, color=TURN, scale_factor=1.15), run_time=0.7)
@@ -552,7 +565,7 @@ class DockerOnVM(VoiceScene):
             v13 = substring(card5.rows[0], "26.1.5")
             u13 = under(v13, TURN)
             self.play(Create(u13), Indicate(v13, color=TURN, scale_factor=1.15), run_time=0.7)
-            vo.wait_until("at the time of recording")
+            vo.wait_until("of recording")
             rec_row = beside(row_tag("at the time of recording"), r_ver, buff=0.4)
             pin(self, r_ver, rec_row, run_time=0.4, anim=AnimationGroup(FadeIn(rec_row, shift=LEFT * 0.1),
                                                                          FadeIn(rec_card, shift=DOWN * 0.1)))
@@ -573,7 +586,7 @@ class DockerOnVM(VoiceScene):
         dvm_cap = label("Docker Desktop only", 22, S.GREY).next_to(dvm, DOWN, buff=0.3)
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(chip5, lap5, card5, u13, rec_card)), run_time=0.4)
+            unpin(self, [(r_ver, u12)], 0.4, FadeOut(VGroup(chip5, lap5, card5, u13, rec_card)))
             resize(self, t, 3, run_time=0.6)
             self.play(FadeIn(VGroup(vm.frame, vm.title, vm.kernel), shift=UP * 0.15), run_time=0.6)
             self.play(FadeIn(vm.dockerd, shift=DOWN * 1.0), run_time=0.6, rate_func=rate_functions.ease_out_cubic)
@@ -595,7 +608,14 @@ class DockerOnVM(VoiceScene):
         link = DashedLine(door.get_right() + RIGHT * 0.1, dk.get_left() + LEFT * 0.1, color=TOOL, stroke_width=3,
                           dash_length=0.1)
         ps_chip = chip(PS, TOOL, size=22, font=MONO).move_to([-4.3, 1.45, 0])
+        # an opaque backing, so the PINK route never shows through the chip's text while it rides it
+        rider = VGroup(ps_chip.box.copy().set_fill(S.BG, 1).set_stroke(width=0), ps_chip)
         path = route(ps_chip.get_right() + RIGHT * 0.1, door.get_left() + LEFT * 0.12 + UP * 0.5, arc=-0.35)
+        # the chip's centre follows the route shifted left, so its right edge rides the route and
+        # stops beside the door (not on it)
+        reach = RIGHT * (ps_chip.width / 2 + 0.1)
+        ride = ArcBetweenPoints(ps_chip.get_center(), path.get_end() - reach, angle=-0.35)
+        ride_back = ArcBetweenPoints(path.get_end() - reach, ps_chip.get_center(), angle=0.35)
         x7 = cross_mark(0.36, ERR).next_to(door, LEFT, buff=0.25).shift(DOWN * 0.15)
         keys = VGroup()
         for word in ("root", "docker group"):
@@ -604,22 +624,31 @@ class DockerOnVM(VoiceScene):
             g = VGroup(w, k)
             g.key = k
             keys.add(g)
-        keys.arrange(DOWN, aligned_edge=RIGHT, buff=0.3).move_to([-3.2, 0.0, 0])
+        keys.arrange(DOWN, aligned_edge=RIGHT, buff=0.3).move_to([-3.2, 0.2, 0])
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(vm, dvm, dvm_x, dvm_cap)), track(tr, 4, extra=True), run_time=0.5)
-            resize(self, t, 5, run_time=0.5)
-            self.play(FadeIn(VGroup(door, sock, lock), shift=UP * 0.15), FadeIn(dk), Create(link), run_time=0.6)
+            self.play(FadeOut(VGroup(vm, dvm, dvm_x, dvm_cap)), run_time=0.5)
+            # "And why sudo?": the sudo of the last command, still in the strip. A copy flashes over the
+            # hidden glyphs, so the row is never split on the scene (its later scroll fades it whole)
+            sudo = substring(c_ver, "sudo")
+            flash = sudo.copy()
+            sudo.set_fill(opacity=0)
+            self.add(flash)
+            self.play(Indicate(flash, color=TURN, scale_factor=1.3), run_time=0.7)
+            self.remove(flash)
+            sudo.set_fill(opacity=1)
+            resize(self, t, 5, run_time=0.6, extra=(FadeIn(VGroup(door, sock, lock), shift=UP * 0.15),
+                                                    FadeIn(dk), Create(link)))
             vo.wait_until("Without it")
             c_ps = type_cmd(self, t, PS, 0.5)
             x7t = beside(row_tag("extra"), c_ps, buff=0.4)
-            pin(self, c_ps, x7t, run_time=0.3)
-            self.play(FadeIn(ps_chip, shift=RIGHT * 0.2), Create(path), run_time=0.5)
+            pin(self, c_ps, x7t, run_time=0.3, anim=AnimationGroup(FadeIn(x7t, shift=LEFT * 0.1),
+                                                                    track(tr, 4, extra=True)))
+            self.play(FadeIn(rider, shift=RIGHT * 0.2), Create(path), run_time=0.5)
+            self.bring_to_front(rider)                          # it rides over the route, not under it
             vo.wait_until("is refused")
-            back = ps_chip.get_center().copy()
-            self.play(ps_chip.animate.move_to(path.get_end() + LEFT * ps_chip.width / 2), run_time=0.4,
-                      rate_func=rate_functions.ease_in_quad)
-            self.play(ps_chip.animate.move_to(back), door.frame.animate(rate_func=there_and_back).set_stroke(ERR),
+            self.play(MoveAlongPath(rider, ride), run_time=0.45, rate_func=rate_functions.ease_in_quad)
+            self.play(MoveAlongPath(rider, ride_back), door.frame.animate(rate_func=there_and_back).set_stroke(ERR),
                       FadeIn(x7, scale=1.4), run_time=0.5)
             err_rows = t.print(self, [(ERR05, ERR)], run_time=0.5, wrap=True)
             vo.wait_until("permission denied on the Docker socket")
@@ -631,16 +660,18 @@ class DockerOnVM(VoiceScene):
             vo.wait_until("the door to Docker's background service")
             self.play(Indicate(door, color=TOOL, scale_factor=1.06), run_time=0.6)
             self.play(FadeIn(bg, shift=UP * 0.1), Indicate(dk, color=TOOL, scale_factor=1.08), run_time=0.7)
-            vo.wait_until("Only root and the docker group")
-            self.play(FadeOut(VGroup(x7, path)), LaggedStart(*[FadeIn(k, shift=RIGHT * 0.15) for k in keys],
-                                                              lag_ratio=0.3), run_time=0.8)
+            vo.wait_until("Only root")
+            self.play(FadeOut(VGroup(x7, path, rider)), FadeIn(keys[0], shift=RIGHT * 0.15), run_time=0.6)
+            vo.wait_until("docker group")
+            self.play(FadeIn(keys[1], shift=RIGHT * 0.15), run_time=0.5)
+            vo.wait_until("may open it")
             # root's key (only the glyph: its label stays put) goes into the padlock, which opens
             k0 = keys[0]
             slot = np.array([lock[1].get_left()[0] - 0.02, lock[1].get_center()[1], 0])
             self.play(k0.key.animate.shift(slot - k0.key.tip()), Indicate(k0[0], color=INK, scale_factor=1.15),
-                      FadeOut(ps_chip), run_time=0.8)
-            self.play(lock[0].animate.shift(UP * 0.07), Indicate(lock[1], color=S.WHITE, scale_factor=1.25),
-                      run_time=0.6)
+                      run_time=0.7)
+            self.play(lock[0].animate.shift(UP * 0.1), Indicate(lock[1], color=S.WHITE, scale_factor=1.25),
+                      run_time=0.5)
 
         # ========================================================== end · empty frame
         badge_dial.tracker.clear_updaters()

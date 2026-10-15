@@ -47,25 +47,28 @@ Beats (script.md "## S13", one voiceover block each):
     --rm --platform linux/arm64 debian:12 uname -m` (folds) -> laptop-push/12: 2, …, 10, line 10 RED;
     "exec format error": underlined RED. "Docker Desktop would just run it": GREY tag "no emulator here
     · Docker Desktop would run it" on the frame. "A Mac-built image on a default VM": the terminal
-    shrinks to the strip (command + line 10), the image's cross pulses; "or with no matching manifest":
-    the VM's `amd64?` bounces off the image, GREY note "no matching manifest".
+    shrinks to the strip (command + line 10); "fails like this": the image's cross pulses with line 10;
+    "or with no matching manifest": the VM's `amd64?` bounces off the image and GREY "no matching
+    manifest" lands where it hit.
  7  Everything goes; "Two fixes, neither in the README" as a GREY heading. "One: build for the VM's
-    platform": the heading gives way to a GREEN chip mid-frame (tags "fix 1", "not run here") that
-    writes `docker build -t simple-translate --platform=linux/amd64 -f Dockerfile .`; "with the flag":
-    `--platform=linux/amd64` BLUE, underlined. "It's the commented-out line 12": CODE(docker-shell.sh:
-    11–12) at the top, line 12 YELLOW bar, GREY tag "commented out · not in the README", its
-    `--platform=linux/amd64` pulses with the chip's. "On a Mac, it runs emulated": the chip moves down
+    platform": the heading gives way to a one-line GREEN chip mid-frame (tags "fix 1", "not run here")
+    that writes `docker build -t simple-translate --platform=linux/amd64 -f Dockerfile .`; "with the
+    flag": `--platform=linux/amd64` BLUE, underlined; "equals linux slash amd64": a YELLOW circumscribe
+    around `linux/amd64`. "It's the commented-out line 12": CODE(docker-shell.sh: 11–12) at the top,
+    line 12 YELLOW bar, GREY tag "commented out · not in the README", and the chip's underline is copied
+    up onto line 12's `--platform=linux/amd64` (the same flag). "On a Mac, it runs emulated": the chip moves down
     to make room for V7 between them: the GREY arm64 chip builds an image (`linux/arm64`, arm64 glyphs)
     that goes through a GREY "emulation" box and comes out `linux/amd64` with amd64 glyphs; "slower":
-    GREY "slower, but it works" and a GREEN check. "Then tag and push again": the chip's lines 2–3
-    (README's tag and push, `<USER NAME>` YELLOW).
+    GREY "slower, but it works" and a GREEN check. "Then tag and push again": the chip grows to three
+    lines, its lines 2–3 the README's tag and push (`<USER NAME>` YELLOW).
  8  The panel, chip and picture go. Picture first: a PURPLE `buildx` box (tag "fix 2") over the GREY
     arm64 chip; "multi-platform builder": two lanes, the upper one through a GREY "emulation" box; "to
     build both": an amd64 image (through emulation: on a Mac the amd64 build is the emulated one) and an
-    arm64 image; "and push one menu": both ride PINK routes into one menu `dlops/simple-translate`
-    (linux/amd64 BLUE, linux/arm64 GREY) on a BLUE "Docker Hub" board. Then CODE(docker-build-push.sh:
-    21–27) (line 27 cut after `--push`: 109 characters), lines 23 and 27 YELLOW; tag `erratum · would
-    push both · the published image has only amd64`.
+    arm64 image; "and push one menu": a menu `dlops/simple-translate` on a BLUE "Docker Hub" board, and
+    each image rides its PINK route and becomes its row (linux/amd64 BLUE, linux/arm64 GREY). The
+    narration is ~7 s, so CODE(docker-build-push.sh: 21–27) (line 27 cut after `--push`: 109 characters)
+    comes in at "multi-platform builder", lines 23 and 27 YELLOW; tag `erratum · would push both · the
+    published image has only amd64`.
  9  The picture goes; the panel becomes CODE(docker-build-push.sh: 7–11): line 11 (`"dlops"` boxed)
     and line 7 (`"simple-translate"` boxed) YELLOW as said, YELLOW caption "your username (11) ·
     simple-translate-ac215 (7)". A list of GREEN chips (no room for one row at >= 20 pt): `docker
@@ -231,13 +234,17 @@ def on_frame(t, mob, right: float = 0.3, left: float | None = None):
     return mob.move_to([t.box.get_right()[0] - right - mob.width / 2, t.box.get_top()[1], 0])
 
 
-def fix_chip(lines, size: float = 20) -> VGroup:
-    """A GREEN text chip of commands (not run): mono_lines in a GREEN box. .frame .lines"""
+def fix_chip(lines, size: float = 20, pad_y: float = 0.32) -> VGroup:
+    """A GREEN text chip of commands (not run): mono_lines in a GREEN box (pad_y above and below, so tags
+    on its top edge clear the first line). .frame .lines .first (a frame around the first line only, its
+    top edge on .frame's: the chip can start with one line and grow)"""
     ls = VGroup(*[mono_line(s, size, INK) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
-    f = box(ls.width + 0.6, ls.height + 0.42, VENV, fill_opacity=0.1)
+    f = box(ls.width + 0.6, ls.height + 2 * pad_y, VENV, fill_opacity=0.1)
     ls.move_to(f)
+    first = box(f.width, ls[0].height + 2 * pad_y, VENV, fill_opacity=0.1)
+    first.move_to([f.get_x(), f.get_top()[1] - first.height / 2, 0])   # not in the group: re-place it after moving g
     g = VGroup(f, ls)
-    g.frame, g.lines = f, ls
+    g.frame, g.lines, g.first = f, ls, first
     return g
 
 
@@ -573,17 +580,17 @@ class Platforms(VoiceScene):
             vo.wait_until("A Mac-built image on a default VM")
             resize(self, t6, STRIP_ROWS, keep=[*c6.rows, err_row], run_time=0.6,
                    extra=[VGroup(tg6, de6).animate.shift(DOWN * (5 - STRIP_ROWS) * t6.pitch)])
+            vo.wait_until("fails like this")
             self.play(Indicate(x_img, color=ERR, scale_factor=1.3), Indicate(err_row.glyphs, color=ERR, scale_factor=1.05),
                       Indicate(nothing, color=ERR, scale_factor=1.1), run_time=0.8)
             self.add(err_row)
             vo.wait_until("or with no matching manifest")
+            # the VM's order bounces off the image, and the refusal's words land where it hit
             ask.move_to(ask_home)
-            self.play(FadeOut(nothing), run_time=0.15)
-            self.play(FadeIn(ask, shift=LEFT * 0.1), run_time=0.25)
-            self.play(ask.animate.move_to(ask_at), run_time=0.5)
-            self.play(ask.animate.move_to(ask_home), run_time=0.4)
-            self.play(FadeOut(ask), run_time=0.15)
-            self.play(FadeIn(nm6, shift=UP * 0.1), run_time=0.3)
+            self.play(FadeOut(nothing), FadeIn(ask, shift=LEFT * 0.1), run_time=0.25)
+            self.play(ask.animate.move_to(ask_at), run_time=0.35)
+            self.play(ask.animate.move_to(ask_home).set_opacity(0), FadeIn(nm6, shift=UP * 0.1), run_time=0.45)
+            self.remove(ask)
         self.wait(0.6)
 
         # ========================================================== 7 · fix 1: --platform=linux/amd64
@@ -591,6 +598,7 @@ class Platforms(VoiceScene):
                       nm6)
         fx = fix_chip([FIX1, TAG_README, PUSH_README])
         fx.move_to([0, -3.45 + fx.height / 2, 0])
+        fx.first.align_to(fx.frame, UP).set_x(fx.frame.get_x())     # .first is not in the group: place it too
         nr = row_tag("not run here")
         nr.move_to([fx.frame.get_right()[0] - 0.3 - nr.width / 2, fx.frame.get_top()[1], 0])
         fix1 = row_tag("fix 1")
@@ -598,11 +606,12 @@ class Platforms(VoiceScene):
         two = label("two fixes · neither in the README", 30, LAPTOP).move_to([0, 0.9, 0])
         users = [substring(fx.lines[k], "<USER NAME>") for k in (1, 2)]
         p7 = code("docker-shell.sh", 11, 12)
-        p7.move_to([0, 2.82 - p7.height / 2, 0])
+        p7.move_to([0, 2.62 - p7.height / 2, 0])        # clear of the tracker's caption (its bottom is 2.9)
         bar12 = line_bar(p7.code, 1, TURN, 0.2)
         co7 = tag("commented out · not in the README", LAPTOP, size=20)
         co7.move_to([p7.code.get_right()[0] - 0.2 - co7.width / 2, p7.header.get_y(), 0])
         flag12 = code_span(p7.code, 1, PLAT_FLAG)
+        u12 = under(flag12, AMD)
         pipe_y = (p7.get_bottom()[1] + fx.get_top()[1]) / 2 - 0.1
         chip7 = platform_chip("arm64").move_to([-4.85, pipe_y, 0])
         img7 = image_card("arm64", plat="linux/arm64", names=None, n=5, glyph_h=0.17, pitch=0.27)
@@ -612,11 +621,13 @@ class Platforms(VoiceScene):
         end7 = np.array([3.9, pipe_y, 0])
         slow7 = label("slower, but it works", 20, LAPTOP).next_to(emu7.frame, UP, buff=0.12)
         ok7 = check_mark(0.45, VENV).move_to(end7 + RIGHT * (img7.width / 2 + 0.45))
-        # the chip starts mid-frame (its first line is the whole story until "On a Mac") and moves down to the
-        # positions above when the picture needs the room; its lines 2-3 wait at the bottom, off-screen
-        lift = -0.35 - fx.get_y()
-        fx_up = VGroup(fx.frame, fx.lines[0], nr, fix1).shift(UP * lift)
+        # the chip starts mid-frame as a one-line chip (its first line is the whole story until "On a Mac"), moves
+        # down to the positions above when the picture needs the room, and grows to three lines at "Then tag and
+        # push again" (its lines 2-3 wait at the bottom, off-screen)
+        lift = -0.1 - fx.first.get_y()
+        fx_up = VGroup(fx.first, fx.lines[0], nr, fix1).shift(UP * lift)
         flag = substring(fx.lines[0], PLAT_FLAG)
+        lin = substring(fx.lines[0], "linux/amd64")
         u_flag = under(flag, AMD)
         fx_up.add(u_flag)
 
@@ -625,20 +636,20 @@ class Platforms(VoiceScene):
             self.remove(*t6.get_family())
             self.play(FadeIn(two, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("One: build for the VM's platform")
-            self.play(FadeOut(two, shift=UP * 0.3), FadeIn(fx.frame), FadeIn(fix1, shift=DOWN * 0.1),
+            self.play(FadeOut(two, shift=UP * 0.3), FadeIn(fx.first), FadeIn(fix1, shift=DOWN * 0.1),
                       FadeIn(nr, shift=DOWN * 0.1), run_time=0.5)
             self.play(ShowIncreasingSubsets(fx.lines[0].glyphs, rate_func=linear), run_time=1.2)
             self.add(fx.lines[0])
             vo.wait_until("with the flag dash dash platform")
             self.play(flag.animate.set_color(AMD), Create(u_flag), run_time=0.5)
-            self.play(Indicate(flag, color=AMD, scale_factor=1.1), run_time=0.6)
             self.add(fx.lines[0])
+            vo.wait_until("equals linux slash amd64")
+            self.play(Circumscribe(lin, color=TURN, buff=0.06, stroke_width=3), run_time=0.9)
             vo.wait_until("It's the commented-out line 12")
             self.play(FadeIn(p7, shift=DOWN * 0.15), run_time=0.5)
             self.play(FadeIn(bar12), FadeIn(co7, shift=LEFT * 0.1), run_time=0.4)
-            self.play(Indicate(flag12, color=TURN, scale_factor=1.1), Indicate(flag, color=AMD, scale_factor=1.1),
-                      run_time=0.7)
-            self.add(fx.lines[0])
+            # the same flag: the chip's underline is copied up onto line 12
+            self.play(TransformFromCopy(u_flag, u12), run_time=0.7)
             vo.wait_until("On a Mac, it runs emulated")
             self.play(fx_up.animate.shift(DOWN * lift), run_time=0.6)
             self.play(FadeIn(chip7, shift=UP * 0.1), FadeIn(emu7), run_time=0.4)
@@ -655,8 +666,10 @@ class Platforms(VoiceScene):
             vo.wait_until("slower, but it works")
             self.play(FadeIn(slow7, shift=DOWN * 0.1), Create(ok7), run_time=0.5)
             vo.wait_until("Then tag and push again")
-            self.play(LaggedStart(FadeIn(fx.lines[1], shift=UP * 0.1), FadeIn(fx.lines[2], shift=UP * 0.1), lag_ratio=0.4),
-                      run_time=0.7)
+            self.play(ReplacementTransform(fx.first, fx.frame),
+                      LaggedStart(FadeIn(fx.lines[1], shift=UP * 0.1), FadeIn(fx.lines[2], shift=UP * 0.1), lag_ratio=0.4),
+                      run_time=0.8)
+            self.add(fx.lines, u_flag, nr, fix1)         # the grown frame was added on top: text and edge tags over it
             self.play(*[u.animate.set_color(TURN) for u in users], run_time=0.4)
             self.add(fx.lines[1], fx.lines[2])
 
@@ -669,16 +682,16 @@ class Platforms(VoiceScene):
         fix2.move_to([bx.frame.get_left()[0] + fix2.width / 2, bx.frame.get_top()[1] + 0.12 + fix2.height / 2, 0])
         chip8 = platform_chip("arm64").move_to([-4.75, 0.52, 0])
         lane_up, lane_lo = 2.35, 1.0
-        emu8 = emulation_box(1.85, 0.6, inside=True).move_to([-1.35, lane_up, 0])
-        mi_amd = mini_image("amd64").move_to([0.95, lane_up, 0])
-        mi_arm = mini_image("arm64").move_to([0.95, lane_lo, 0])
+        emu8 = emulation_box(1.6, 0.6, inside=True).move_to([-2.2, lane_up, 0])
+        mi_amd = mini_image("amd64").move_to([0.2, lane_up, 0])     # room for PINK routes of ~1 unit to the menu
+        mi_arm = mini_image("arm64").move_to([0.2, lane_lo, 0])
         a_up = Arrow(bx.frame.get_right() + UP * 0.15, emu8.frame.get_left(), buff=0.08, color=LAPTOP, stroke_width=3,
                      tip_length=0.18)
         a_up2 = Arrow(emu8.frame.get_right(), mi_amd.get_left(), buff=0.08, color=LAPTOP, stroke_width=3, tip_length=0.18)
         a_lo = Arrow(bx.frame.get_right() + DOWN * 0.15, mi_arm.get_left(), buff=0.08, color=LAPTOP, stroke_width=3,
                      tip_length=0.18)
         menu8 = PlatformMenu("dlops/simple-translate", [("linux/amd64", AMD), ("linux/arm64", ARM)])
-        menu8.move_to([4.3, 1.72, 0])
+        menu8.move_to([6.3 - menu8.frame.width / 2, 1.72, 0])
         board8 = Line(menu8.frame.get_corner(DL) + np.array([-0.15, -0.1, 0]),
                       menu8.frame.get_corner(DR) + np.array([0.12, -0.1, 0]), color=CLOUD, stroke_width=4)
         hub8 = label("Docker Hub", 20, CLOUD).next_to(board8, DOWN, buff=0.1).align_to(board8, RIGHT)
@@ -695,7 +708,7 @@ class Platforms(VoiceScene):
         err8.move_to([6.4 - err8.width / 2, (hub8.get_bottom()[1] + p8.get_top()[1]) / 2, 0])
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(p7, bar12, co7)), FadeOut(VGroup(fx, u_flag, nr, fix1)), FadeOut(pic7), run_time=0.4)
+            self.play(FadeOut(VGroup(p7, bar12, co7, u12)), FadeOut(VGroup(fx, u_flag, nr, fix1)), FadeOut(pic7), run_time=0.4)
             self.play(FadeIn(bx, shift=DOWN * 0.1), FadeIn(fix2, shift=DOWN * 0.1), FadeIn(chip8, shift=UP * 0.1),
                       run_time=0.4)
             vo.wait_until("uses buildx")
@@ -711,13 +724,12 @@ class Platforms(VoiceScene):
             vo.wait_until("and push one menu")
             self.play(FadeIn(VGroup(menu8.frame, menu8.sep, menu8.title)), Create(board8), FadeIn(hub8),
                       GrowArrow(r_amd), GrowArrow(r_arm), run_time=0.4)
+            # each image rides its route and becomes its row of the menu
             riders = [mi_amd.copy(), mi_arm.copy()]
-            paths = [ArcBetweenPoints(r.get_start(), r.get_end(), angle=a) for r, a in ((r_amd, -0.3), (r_arm, 0.3))]
-            self.play(*[MoveAlongPath(c, pth) for c, pth in zip(riders, paths)],
+            self.play(FadeTransform(riders[0], menu8.rows[0], path_arc=-0.3),
+                      FadeTransform(riders[1], menu8.rows[1], path_arc=0.3),
                       Indicate(code_span(p8.code, 6, "--platform linux/amd64,linux/arm64 --push"), color=TURN,
-                               scale_factor=1.06), run_time=0.6)
-            self.play(*[FadeOut(c, scale=0.4) for c in riders], FadeIn(menu8.rows[0], shift=RIGHT * 0.2),
-                      FadeIn(menu8.rows[1], shift=RIGHT * 0.2), run_time=0.4)
+                               scale_factor=1.06), run_time=0.9)
             self.add(menu8)
             self.play(FadeIn(err8, shift=LEFT * 0.1), run_time=0.4)
         self.wait(1.6)                    # time to read line 27 and the erratum before the panel changes
@@ -725,7 +737,7 @@ class Platforms(VoiceScene):
         # ========================================================== 9 · DOCKER_USERNAME, IMAGE_NAME, bash, buildx use default
         pic8 = VGroup(bx, fix2, chip8, emu8, mi_amd, mi_arm, a_up, a_up2, a_lo, menu8, board8, hub8, r_amd, r_arm)
         p9 = code("docker-build-push.sh", 7, 11, focus=[0, 4])
-        p9.move_to([0, 2.8 - p9.height / 2, 0])
+        p9.move_to([0, 2.62 - p9.height / 2, 0])         # clear of the tracker caption
         bar7 = line_bar(p9.code, 0, TURN, 0.2)
         bar11 = line_bar(p9.code, 4, TURN, 0.2)
         b7 = SurroundingRectangle(code_span(p9.code, 0, '"simple-translate"'), color=TURN, buff=0.06, stroke_width=3)
@@ -758,7 +770,7 @@ class Platforms(VoiceScene):
             vo.wait_until("and simple-translate-ac215 on line 7")
             self.play(FadeIn(bar7), Create(b7), FadeIn(cap[1]), FadeIn(cap_n, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("the README's name")
-            self.play(Indicate(cap_n[0], color=TURN, scale_factor=1.1), run_time=0.6)
+            self.play(Circumscribe(cap_n[0], color=TURN, buff=0.06, stroke_width=3), run_time=0.8)
             vo.wait_until("Log in first")
             self.play(FadeIn(r1, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("then run it with bash")

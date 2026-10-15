@@ -34,7 +34,8 @@ Beats (script.md "## S10", one voiceover block each):
     key`: a page lands on the `text_prompts/` folder on the laptop and on the sheet over /app at
     the same instant, the route pulses; the laptop's page opens into a page headed
     `text_prompts/group-01/input-….txt`, its text gray bars only, while V3 leaves. "If it says
-    None": that page dims; a RED-bordered page reading `None` appears; "Speech-to-Text returned
+    None": that page dims and a copy of it becomes a RED-bordered page reading `None` (the same
+    file's other outcome); "Speech-to-Text returned
     nothing": CODE(cli.py: 80) above it with a GREY pointer from `None` up to `"None"`; "delete
     it…": the None page is struck, GREY note "delete it, transcribe again"; "because finished
     files are skipped": GREY note "files already done are skipped (cli.py lines 61–62): delete
@@ -45,15 +46,15 @@ Beats (script.md "## S10", one voiceover block each):
     turns PINK and underlines; "under the same name": CODE(111–115) at 20 pt, line 112 PINK bar.
     "look for": the chip goes, the panel rises, and a "with your key, look for" card: "Uploading:
     text_prompts/group-01/input-….txt …" (line 114); the prefix, the group and the file turn
-    PINK on their words.
+    PINK on their words; a thin GREY line joins the item's "line 114" to that line of the panel.
  6  The strip and the panels go; the GOLD tag moves to the right. V1 small (letters only)
     top-left: a transcript page appears in A and drops into the second drawer, labelled PINK
     `text_prompts/group-01/`. The schematic leaderboard (tag illustration) lights the
     group-01 × Transcribe cell; caption "check: transcribe_audio/README.md · line 134". On
     "Pause": a static GREY card `README.md · lines 134–136` listing the three commands, ▶ your
     turn under it (the GOLD tag beside).
- 7  TRACKER A12 · extra. The picture goes. A chip `python cli.py -d -t -u` (extra; shown, not
-    typed); three elbow arrows from -d, -t, -u to download(), transcribe(), upload() in
+ 7  TRACKER A12 · extra. The picture goes; on "the flags combine" the three-command card
+    collapses into a chip `python cli.py -d -t -u` (extra; shown, not typed); three elbow arrows from -d, -t, -u to download(), transcribe(), upload() in
     CODE(121–126) as each flag is said; on "in order" the three call lines bar in sequence. The
     GOLD tag moves under the chip and pulses on "Each call is billed". Everything fades: empty
     frame.
@@ -503,12 +504,13 @@ class TranscribeUpload(VoiceScene):
             self.play(*[FadeIn(b, scale=1.6) for b in badges],
                       Indicate(win.route, color=LOOKUP, scale_factor=1.0), run_time=0.7)
             vo.wait_until("on your laptop")
-            self.play(Indicate(win.row("text_prompts/", "laptop"), color=TURN, scale_factor=1.15), run_time=0.5)
+            self.play(Indicate(win.row("text_prompts/", "laptop"), color=TURN, scale_factor=1.15), run_time=0.45)
             grow = badges[0].copy()
             self.remove(badges[0])
-            self.play(ReplacementTransform(grow, op), FadeOut(win), FadeOut(badges[1]), run_time=1.0)
+            self.play(ReplacementTransform(grow, op), FadeOut(win), FadeOut(badges[1]), run_time=0.75)
             vo.wait_until("If it says None")
-            self.play(*dim_page(op, 0.35), FadeIn(np_, shift=UP * 0.15), run_time=0.6)
+            # the None page is the same file in its other outcome: a copy of the page becomes it
+            self.play(*dim_page(op, 0.5), FadeTransform(op.frame.copy(), np_), run_time=0.7)
             vo.wait_until("Speech-to-Text returned nothing")
             self.play(FadeIn(code80, shift=DOWN * 0.1), run_time=0.5)
             self.play(GrowArrow(ptr), Create(u_none), run_time=0.6)
@@ -552,8 +554,15 @@ class TranscribeUpload(VoiceScene):
             dy = TOP - p111.get_top()[1]
             place(lfu, left=-EDGE, top=p111.get_bottom()[1] + dy - 0.2)
             self.play(FadeOut(VGroup(xc, u_inp), shift=UP * 0.2), run_time=0.3)
-            self.play(VGroup(p111, bar).animate.shift(UP * dy), FadeIn(lfu, shift=UP * dy), run_time=0.5)
-            lfu.write_item(self, 0, run_time=0.4)
+            self.play(VGroup(p111, bar).animate.shift(UP * dy), FadeIn(lfu, shift=UP * 0.15), run_time=0.5)
+            # the item's thin GREY line to the cli.py line it cites (114; line 115 is shorter, so
+            # the line crosses no code)
+            cite = lfu.rows[0].cite
+            hook = Line(cite.get_top() + UP * 0.06,
+                        [cite.get_center()[0], c111.code_lines[3].get_bottom()[1] - 0.05, 0],
+                        color=S.GREY, stroke_width=2)
+            assert c111.code_lines[4].get_right()[0] < cite.get_left()[0] - 0.2
+            lfu.reveal(self, "item0", run_time=0.4, extra=[Create(hook)])
             vo.wait_until("then text prompts")
             self.play(parts[0].animate.set_color(LOOKUP), run_time=0.3)
             vo.wait_until("your group")
@@ -586,7 +595,7 @@ class TranscribeUpload(VoiceScene):
         cost6 = np.array([yt.get_left()[0] - 0.25 - cost.width / 2, yt.get_center()[1], 0])
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(t, p111, bar, lfu)), cost.animate.move_to(cost6), run_time=0.6)
+            self.play(FadeOut(VGroup(t, p111, bar, lfu, hook)), cost.animate.move_to(cost6), run_time=0.6)
             relay.reveal(self, "letters", run_time=0.6,
                          extra=[FadeIn(VGroup(relay.cabinet, relay.drawers, relay.boxes))])
             self.play(FadeIn(tok, scale=0.5), Indicate(relay.boxes[0], color=CTR, scale_factor=1.08), run_time=0.4)
@@ -625,10 +634,13 @@ class TranscribeUpload(VoiceScene):
         cost7 = np.array([chip_c.get_left()[0] + cost.width / 2, chip_c.get_bottom()[1] - 0.3 - cost.height / 2, 0])
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(tok, dlab, tick, lb, lb_cap, lb_ill, cards, yt)), FadeOut(relay),
+            self.play(FadeOut(VGroup(tok, dlab, tick, lb, lb_cap, lb_ill, yt)), FadeOut(relay),
                       caption_extra(tr, True), cost.animate.move_to(cost7), run_time=0.7)
-            self.play(FadeIn(chip_c, shift=UP * 0.1), FadeIn(xtag, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("the flags combine")
+            # the three README commands collapse into the one extra command
+            self.play(ReplacementTransform(cards.frame, cfr),
+                      FadeTransform(cards.rows, combo, stretch=False, dim_to_match=0),
+                      FadeOut(cards.header), FadeIn(xtag, shift=LEFT * 0.1), run_time=0.8)
             self.play(FadeIn(p121, shift=LEFT * 0.15), run_time=0.5)
             for k, phrase in enumerate(("so dash d", "dash t", "dash u")):
                 vo.wait_until(phrase)

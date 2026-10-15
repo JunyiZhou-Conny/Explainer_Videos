@@ -65,9 +65,10 @@ Beats (script.md "## S12", one voiceover block each):
     localhost:5000/student/simple-translate-ac215` (laptop-push/07; folds) -> laptop-push/07: 3–4, …, 15
     (hash12; line 3 is cut at the terminal edge); the tag's rows scroll off fading in place (local
     scroll(): no drift over the picture). The seven slabs travel the route through the open door onto
-    the shelf while the digest underlines TEAL; "a fingerprint": a TEAL fingerprint badge "digest"
-    appears on the shelf (it stays through beat 8: same digest). (The narration is 5.7 s; the typing is
-    quick so that the digest line is printed as "digest" is said.)
+    the shelf while the output prints and the digest underlines TEAL (one play: the push goes through as
+    it is said); "a fingerprint": a TEAL fingerprint badge "digest" appears on the shelf (it stays through
+    beat 8: same digest). (The narration is 5.7 s; the typing is quick so that the digest line is printed
+    as "digest" is said.)
  8  The strip clears ("Push again"); the same push -> laptop-push/08: 4, …, 14–15 (hash12). "every layer
     already exists": each
     slab rides to the door and bounces back; GREY "already exists" by the door, the two rows underline
@@ -93,7 +94,7 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import person_icon
-from explainer.devops import MONO, browser_window, cross_mark, folder_glyph
+from explainer.devops import MONO, OUTPUT, browser_window, cross_mark, folder_glyph
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, DOCKER_PUSH, DOCKER_TAG, ERR, IMAGE, IMAGE_LS, INK, LAPTOP, LAPTOP_DIR,
@@ -380,6 +381,30 @@ def lead(vo, phrase: str, early: float) -> None:
         vo.scene.wait(dt)
 
 
+def go(p, point, run_time: float, fade: bool = False, rate_func=smooth) -> ApplyFunction:
+    """Animation: `p` moves to `point` (and fades out). Its target is made when it starts, so several of these
+    can follow each other in one Succession: `p.animate` builders all share p.target (the last one made), so in
+    a Succession every `.animate` step would head for the final step's target."""
+    point = np.array(point, dtype=float)
+
+    def f(m):
+        m.move_to(point)
+        return m.set_opacity(0) if fade else m
+    return ApplyFunction(f, p, run_time=run_time, rate_func=rate_func)
+
+
+def rows_of(t, lines) -> VGroup:
+    """Terminal.print's rows (no wrap), placed under t's last row and put in t.lines, for a FadeIn played with
+    other animations (Terminal.print plays its own). Play their FadeIn before anything is rendered."""
+    new = VGroup()
+    for s in lines:
+        ln = mono_line(t._cut(s), t.size, OUTPUT)
+        t._place(ln, len(t.lines))
+        t.lines.add(ln)
+        new.add(ln)
+    return new
+
+
 # ------------------------------------------------------------------ the scene
 class TagAndPush(VoiceScene):
     def stamp_parcels(self, parcels, slots, path, through=None, lag: float = 0.22, run_time: float = 2.4,
@@ -387,12 +412,11 @@ class TagAndPush(VoiceScene):
         """The slabs' parcels lift off one by one, ride `path` and settle at `slots` (via `through`)."""
         anims = []
         for p, s in zip(parcels, slots):
-            steps = [FadeIn(p, scale=0.6, run_time=0.2),
-                     p.animate(run_time=0.2).move_to(path.get_start()),
+            steps = [FadeIn(p, scale=0.6, run_time=0.2), go(p, path.get_start(), 0.2),
                      MoveAlongPath(p, path, run_time=0.55)]
             if through is not None:
-                steps.append(p.animate(run_time=0.15).move_to(through))
-            steps.append(p.animate(run_time=0.2).move_to(s))
+                steps.append(go(p, through, 0.15))
+            steps.append(go(p, s, 0.2))
             anims.append(Succession(*steps))
         self.play(LaggedStart(*anims, lag_ratio=lag), *extra, run_time=run_time)
 
@@ -422,7 +446,8 @@ class TagAndPush(VoiceScene):
             self.play(FadeIn(frame_bits, shift=UP * 0.15), FadeIn(ill0), run_time=0.6)
             vo.wait_until("and create an access token")
             self.play(FadeIn(page.row1, shift=RIGHT * 0.1), FadeIn(page.btn, scale=1.1), run_time=0.5)
-            self.play(Indicate(page.btn, color=CLOUD, scale_factor=1.1), run_time=0.7)
+            self.play(Indicate(page.btn[0], color=CLOUD, scale_factor=1.1),     # the label stays INK on the fill
+                      Indicate(page.btn[1], color=INK, scale_factor=1.1), run_time=0.7)
             vo.wait_until("with read and write access")
             self.play(FadeIn(page.perm, shift=RIGHT * 0.1), FadeIn(page.val, scale=1.15), run_time=0.5)
             vo.wait_until("not the default")
@@ -728,9 +753,8 @@ class TagAndPush(VoiceScene):
             self.play(FadeIn(hub.title), FadeIn(id_lbl), FadeIn(fix[0]), FadeIn(fix[1], shift=UP * 0.1),
                       FadeIn(ok_note, shift=UP * 0.1), run_time=0.4)
             self.add(hub)
-            back = [Succession(p.animate(run_time=0.5).move_to(path.get_start()),
-                               p.animate(run_time=0.3).move_to(s.box).set_opacity(0)) for p, s in
-                    zip(reversed(parcels), reversed(list(st.slabs)))]
+            back = [Succession(go(p, path.get_start(), 0.5), go(p, s.box.get_center(), 0.3, fade=True))
+                    for p, s in zip(reversed(parcels), reversed(list(st.slabs)))]
             vo.wait_until("and check your token can write")
             self.play(LaggedStart(*back, lag_ratio=0.15), FadeIn(fix[2], shift=UP * 0.1), run_time=1.2)
             self.remove(*parcels)
@@ -743,34 +767,36 @@ class TagAndPush(VoiceScene):
         sit7 = stand_in_tag(size=20)
 
         with self.voiceover(SAY[7]) as vo:
-            # the narration is 5.7 s: the strip clears while the shelves swap, grows (its tag comes with it),
-            # and the two commands type quickly so the digest line is on screen as "digest" is said
+            # the narration is 5.7 s: "On the stand-in", the shelves swap while the strip clears and grows (its
+            # tag comes with it); the two commands type quickly; "the push goes through": the slabs travel while
+            # the output prints, and the digest underlines as it is said
             self.play(track(tr, 4, extra=True), FadeOut(fix), FadeOut(ok_note), FadeOut(VGroup(hub, x_big)),
-                      FadeIn(sin, shift=DOWN * 0.1), FadeOut(t6.lines), run_time=0.6)
+                      FadeIn(sin, shift=DOWN * 0.1), FadeOut(t6.lines), run_time=0.5)
             for m in list(t6.lines):
                 t6.lines.remove(m)
             on_frame(t6, sit7, rows=STAND_ROWS)
-            resize(self, t6, STAND_ROWS, run_time=0.5, extra=[FadeIn(sit7, shift=DOWN * 0.1)])
+            resize(self, t6, STAND_ROWS, run_time=0.4, extra=[FadeIn(sit7, shift=DOWN * 0.1)])
             bare_prompt(self, t6)
-            type_cmd(self, t6, TAG_LOCAL, 0.7)
+            type_cmd(self, t6, TAG_LOCAL, 0.5)
             bare_prompt(self, t6)
-            type_cmd(self, t6, PUSH_LOCAL, 0.7)
-            scroll(self, t6, len(OUT07))                 # the tag's two rows fade in place
-            out7 = t6.print(self, OUT07, run_time=0.4, lag=0.1)
+            type_cmd(self, t6, PUSH_LOCAL, 0.5)
+            scroll(self, t6, len(OUT07), run_time=0.3)   # the tag's two rows fade in place
+            out7 = rows_of(t6, OUT07)                     # laptop-push/07: 3-4, …, 15 (shown below)
             parcels = [parcel_of(s) for s in st.slabs]
             door_in = np.array([sin.door.get_right()[0] + 0.25, sin.door.get_y(), 0])
             dig = substring(out7[-1], "sha256:2c302ec4c536…")
             u7 = under(dig, IMAGE)
-            self.stamp_parcels(parcels, land, path, through=door_in, lag=0.16, run_time=1.7,
-                               extra=[Succession(AnimationGroup(Create(u7), dig.animate.set_color(IMAGE), run_time=0.5),
-                                                 Wait(1.2))])
+            printed = Succession(LaggedStart(*[FadeIn(r) for r in out7], lag_ratio=0.3, run_time=0.9),
+                                 AnimationGroup(Create(u7), dig.animate.set_color(IMAGE), run_time=0.45),
+                                 Wait(0.25))
+            self.stamp_parcels(parcels, land, path, through=door_in, lag=0.14, run_time=1.6, extra=[printed])
             attach(self, out7[-1], u7)
             fp = fingerprint(0.24, IMAGE)
             fp.move_to([sin.frame.get_right()[0] - 0.55, sin.frame.get_y() + 0.15, 0])
             fp_l = label("digest", 20, IMAGE).next_to(fp, DOWN, buff=0.1)
             vo.wait_until("a fingerprint")
             self.play(FadeIn(fp, scale=0.4), FadeIn(fp_l), run_time=0.4)
-            self.play(Indicate(fp, color=IMAGE, scale_factor=1.3), run_time=0.5)
+            self.play(fp.animate(rate_func=there_and_back).scale(1.3), run_time=0.5)   # (Indicate would fill the disc)
 
         # ========================================================== 8 · again: already exists; Docker Hub has python
         dh = shelf([label("Docker Hub", 22, CLOUD)])
@@ -797,15 +823,13 @@ class TagAndPush(VoiceScene):
             hit = path.get_end()
             anims = []
             for p in bouncers:
-                anims.append(Succession(FadeIn(p, scale=0.6, run_time=0.15),
-                                        p.animate(run_time=0.2).move_to(path.get_start()),
+                anims.append(Succession(FadeIn(p, scale=0.6, run_time=0.15), go(p, path.get_start(), 0.2),
                                         MoveAlongPath(p, path, run_time=0.45),
-                                        p.animate(run_time=0.3, rate_func=rush_from).move_to(hit + LEFT * 0.7 + DOWN * 0.25)
-                                        .set_opacity(0)))
+                                        go(p, hit + LEFT * 0.7 + DOWN * 0.25, 0.3, fade=True, rate_func=rush_from)))
             rows8 = [r for r in out8 if "already exists" in r.text]
             us8 = [under(substring(r, "Layer already exists"), IMAGE) for r in rows8]
             only = label("only missing layers travel", 22, S.GREY)
-            only.move_to([(st.slabs.get_right()[0] + sin.frame.get_left()[0]) / 2, 0.05, 0])
+            only.move_to([(st.slabs.get_right()[0] + sin.frame.get_left()[0]) / 2, 0.3, 0])   # clear of the strip's top
             self.play(LaggedStart(*anims, lag_ratio=0.16), FadeIn(ex_l, shift=DOWN * 0.1),
                       *[Create(u) for u in us8], Succession(Wait(0.7), FadeIn(only, shift=UP * 0.1, run_time=0.5)),
                       run_time=1.6)
@@ -860,7 +884,8 @@ class TagAndPush(VoiceScene):
             self.play(st.animate.shift(RIGHT * dx), run_time=0.6)
             vo.wait_until("is public by default")
             self.play(FadeIn(pub, scale=1.3), run_time=0.4)
-            self.play(Indicate(pub, color=CLOUD, scale_factor=1.15), Create(git_lead), FadeIn(git_g, shift=LEFT * 0.1),
+            self.play(Indicate(pub.box, color=CLOUD, scale_factor=1.15), Indicate(pub.text, color=INK, scale_factor=1.15),
+                      Create(git_lead), FadeIn(git_g, shift=LEFT * 0.1),
                       run_time=0.6)
             vo.wait_until("Anyone can pull it")
             self.play(LaggedStart(*[AnimationGroup(GrowArrow(a), FadeIn(f, shift=LEFT * 0.2)) for a, f in zip(pulls, folks)],
@@ -871,5 +896,6 @@ class TagAndPush(VoiceScene):
             self.play(FadeIn(dig9, shift=LEFT * 0.2), FadeIn(dig_t), run_time=0.5)
             self.play(Indicate(dig9.rows[0], color=VENV, scale_factor=1.3), run_time=0.6)
 
+        self.wait(0.6)                                   # time to read the card's three lines
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.remove(*self.mobjects)

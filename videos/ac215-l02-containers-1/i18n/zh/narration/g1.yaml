@@ -478,12 +478,12 @@ S09:
   - "那是一个二进制文件，所以 bash 拒绝了：cannot execute binary file，退出码 126。"
   en_display:
   - null
-  - null
+  - "So the container runs bash python cli.py."
   - "Bash takes python as a script name, and finds the Python program in /usr/local/bin."
   - null
 - en: "To run it in one go, replace CMD with your own dash c string, as in this extra: activate, then translate to French."
   zh:
-  - "想一次就跑完，就像这个额外命令一样，用你自己的 -c 字符串替换 CMD：先激活，再翻译成法语。"
+  - "想一次就跑完，就用你自己的 -c 字符串替换 CMD，像这个额外命令一样：先激活，再翻译成法语。"
   en_display:
   - "To run it in one go, replace CMD with your own -c string, as in this extra: activate, then translate to French."
 - en: "A repo helper, docker-shell.sh, builds and runs in one go."

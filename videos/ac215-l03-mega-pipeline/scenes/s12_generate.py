@@ -416,13 +416,20 @@ def compact_ponder(question: str, width: float = 12.9, size: float = 24) -> VGro
     return card
 
 
+def _baseline(txt) -> float:
+    """The baseline of a Text: the median bottom of its glyphs (descenders are the minority)."""
+    return float(np.median([g.get_bottom()[1] for g in txt.submobjects]))
+
+
 def recipe_rows(tr) -> VGroup:
-    """The section's 13 step titles as a numbered list under the tracker (20 pt)."""
+    """The section's 13 step titles as a numbered list under the tracker (20 pt), every row on
+    the same baseline pitch (centring each title on its number let descenders shift rows)."""
     rows = VGroup()
     for k, s in enumerate(tr.steps, start=1):
         n = sans(f"{k}", 20, TURN)
         n.move_to([-6.1, 2.62 - (k - 1) * 0.33, 0], aligned_edge=RIGHT)
         txt = sans(s, 20, INK).move_to([-5.9, n.get_center()[1], 0], aligned_edge=LEFT)
+        txt.shift(UP * (_baseline(n) - _baseline(txt)))
         rows.add(VGroup(n, txt))
     return rows
 
@@ -501,16 +508,19 @@ class GenerateText(VoiceScene):
         tr_a = tracker("A", 13)
         t = term(P_A, 12)
         seed_prompt(t)
+        # The illustration tag leads the row, so the folder sits right of the tracker caption and
+        # the key's drop from the band above never crosses the caption's text.
         fold = folder_glyph(0.42, LAPTOP)
         sname = mono("secrets/", 20, INK).next_to(fold, RIGHT, buff=0.14)
         kname = mono("mega-pipeline.json", 20, KEY).next_to(sname, RIGHT, buff=0.3)
-        ill0 = illustration_tag().next_to(kname, RIGHT, buff=0.35)
-        srow = VGroup(fold, sname, kname, ill0)
+        ill0 = illustration_tag().next_to(fold, LEFT, buff=0.35)
+        srow = VGroup(ill0, fold, sname, kname)
         place(srow, right=EDGE, cy=2.56)
         kname.align_to(sname, DOWN)
         key = key_glyph(0.3)
-        key.move_to([fold.get_center()[0], 3.35, 0])
+        key.move_to([fold.get_center()[0], 3.3, 0])
         key_in = fold[1].get_center() + DOWN * 0.02
+        assert key.get_left()[0] > tracker("B", 2).get_right()[0] + 0.15, key.get_left()
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr_a, shift=DOWN * 0.1), run_time=0.4)
@@ -530,7 +540,7 @@ class GenerateText(VoiceScene):
             ln0 = bare_prompt(self, t)
             self.play(Indicate(substring(ln0, B), color=TURN, scale_factor=1.12), run_time=0.6)
             vo.wait_until("and copy the key")
-            self.play(tr.goto(2), FadeIn(VGroup(fold, sname, ill0)), FadeIn(key, shift=DOWN * 0.2),
+            self.play(tr.goto(2), FadeIn(VGroup(fold, sname, ill0)), FadeIn(key, shift=DOWN * 0.1),
                       run_time=0.5)
             self.play(key.animate.scale(0.62).move_to(key_in), run_time=0.6)
             self.play(FadeIn(kname, shift=LEFT * 0.15), Indicate(fold, color=KEY, scale_factor=1.15),
@@ -582,8 +592,8 @@ class GenerateText(VoiceScene):
         place(note, left=rchip.where.get_left()[0], top=rchip.get_bottom()[1] - 0.16)
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(tr.goto(3), run_time=0.4)
-            resize(self, t, 10, run_time=0.6)
+            # keep 7 rows: the command and its 2-row error then fit without a scroll (was 1 s late)
+            resize(self, t, 10, keep=7, run_time=0.6, extra=[tr.goto(3)])
             tcmd(self, t, UVI.cmd, 0.6)
             o3 = tprint(self, t, UVI_OUT, wrap=True, color=ERR, run_time=0.5)
             vo.wait_until("the project is already")
@@ -642,13 +652,13 @@ class GenerateText(VoiceScene):
         apt = st.slabs["apt"]
 
         with self.voiceover(SAY[4]) as vo:
-            reset(self, t, 7, run_time=0.6,
+            reset(self, t, 7, run_time=0.5,
                   extra=[FadeOut(VGroup(df_a, df_b, cap_a, cap_b, s_ff, bar_b)), tr.goto(5),
                          FadeIn(st, shift=UP * 0.15), FadeIn(card, shift=UP * 0.15)])
-            c4 = tcmd(self, t, BUILD_CMD, 0.6)
-            o4 = tprint(self, t, B_ROWS, run_time=0.4, lag=0.1)
+            c4 = tcmd(self, t, BUILD_CMD, 0.5)
+            o4 = tprint(self, t, B_ROWS, run_time=0.35, lag=0.1)
             tags4 = [None] + [at_right(ttag(tm), t, o4[i]) for i, tm in enumerate(B_TIMES[1:], start=1)]
-            self.play(*[FadeIn(g) for g in tags4[1:]], run_time=0.25)
+            self.play(*[FadeIn(g) for g in tags4[1:]], run_time=0.2)
             for i in range(1, 5):
                 stick(self, o4[i], tags4[i])
             vo.wait_until("and the big RUN step")
@@ -688,9 +698,8 @@ class GenerateText(VoiceScene):
         place(pcard, cx=0, bottom=-3.55)
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(st, card, thread)), run_time=0.5)
-            resize(self, t, 3, run_time=0.7)
-            self.play(FadeIn(vl.axis), FadeIn(vl.ticks), run_time=0.5)
+            resize(self, t, 3, run_time=0.7, extra=[FadeOut(VGroup(st, card, thread))])
+            self.play(FadeIn(vl.axis), FadeIn(vl.ticks), run_time=0.4)
             vo.wait_until("The image has Python 3.12")
             self.play(FadeIn(d12, shift=DOWN * 0.3), run_time=0.6)
             vo.wait_until("this pyproject.toml asks")
@@ -759,10 +768,10 @@ class GenerateText(VoiceScene):
         # ========================================================== 8 · step 6: run; Python 3.15.0 (extra)
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(panel, u_dl, u_mb, atr, u_v)), FadeOut(VGroup(vl, d12, arrow, ud, newest)),
-                      FadeIn(t), tr.goto(6), run_time=0.5)
-            resize(self, t, 10, run_time=0.5)
-            tcmd(self, t, RUN, 0.9)
-            self.play(*enter_container(t, B), caption_extra(tr, True), run_time=0.4)
+                      FadeIn(t), tr.goto(6), run_time=0.4)
+            resize(self, t, 10, run_time=0.45)
+            tcmd(self, t, RUN, 0.6)
+            self.play(*enter_container(t, B), caption_extra(tr, True), run_time=0.3)
             vo.wait_until("and an extra check")
             c9 = tcmd(self, t, PYV_CMD, 0.4)
             pin(self, c9, beside(extra_tag(), t, c9), run_time=0.25)
@@ -803,7 +812,9 @@ class GenerateText(VoiceScene):
         place(here, right=ins.get_left()[0] - 0.3, cy=gn.get_center()[1])
 
         with self.voiceover(SAY[10]) as vo:
-            resize(self, t, 8, run_time=0.6, extra=[tr.goto(8), FadeIn(ins, shift=DOWN * 0.15)])
+            # the terminal shrinks first, so the inset never fades in over its old top rows
+            resize(self, t, 8, run_time=0.5, extra=[tr.goto(8)])
+            self.play(FadeIn(ins, shift=DOWN * 0.15), run_time=0.4)
             self.play(gn.animate.set_color(TURN), Create(u_gn), run_time=0.5)
             vo.wait_until("here on line 19")
             self.play(FadeIn(here, shift=RIGHT * 0.1), run_time=0.4)
@@ -848,30 +859,40 @@ class GenerateText(VoiceScene):
         ncard = VGroup(ncard_fr, body)
         gap73 = (c73.code_lines[0].get_bottom()[1] + c73.code_lines[1].get_top()[1]) / 2
         place(ncard, left=c73.get_left()[0] + 0.25, top=gap73)
-        nfr0 = box(note11.width + 0.5, note11.height + 0.4, S.GREY, fill=S.BG, fill_opacity=1, radius=0.12)
+        # the note's first frame already reaches below line 76, so no half-covered code row peeks out
+        h0 = max(note11.height + 0.4, ncard_fr.get_top()[1] - c73.code_lines[3].get_bottom()[1] + 0.12)
+        nfr0 = box(note11.width + 0.5, h0, S.GREY, fill=S.BG, fill_opacity=1, radius=0.12)
         place(nfr0, left=ncard_fr.get_left()[0], top=ncard_fr.get_top()[1])
+        assert h0 <= ncard_fr.height, (h0, ncard_fr.height)
         u_env1 = under(code_span(c73, 0, '"GEMINI_MODEL"'), TURN)
         cost_home = np.array([EDGE - cost.width / 2, -1.44 + 0.12 + cost.height / 2, 0])
         u_env2 = under(substring(gchip.rows[0], "GEMINI_MODEL"), TURN)
 
         with self.voiceover(SAY[11]) as vo:
-            reset(self, t, 3, run_time=0.6, extra=[FadeIn(rcard, shift=UP * 0.1), FadeIn(same)])
+            # the card arrives after the terminal has shrunk (not over its fading rows)
+            reset(self, t, 3, run_time=0.5)
+            self.play(FadeIn(rcard, shift=UP * 0.1), FadeIn(same), run_time=0.35)
             for k, cmd in enumerate(README_CMDS):
-                self.play(tr.goto(10 + k), Indicate(rcard.rows[k], color=TURN, scale_factor=1.05), run_time=0.35)
-                type_cmd(self, t, cmd, 0.6)
+                self.play(tr.goto(10 + k), Indicate(rcard.rows[k], color=TURN, scale_factor=1.05), run_time=0.3)
+                type_cmd(self, t, cmd, 0.55)
+            # in the order the sentence says it: the call sends the transcript (line 75), to the
+            # default model (line 73), on Vertex AI (the cloud, billed)
             vo.wait_until("The generate step")
-            self.play(FadeOut(VGroup(rcard, same)), FadeIn(p73, shift=DOWN * 0.1), run_time=0.5)
-            bar = line_bar(c73, 0, TURN)
-            self.play(FadeIn(bar), Create(u_def), FadeIn(gem), run_time=0.5)
-            self.play(Transform(bar, line_bar(c73, 2, TURN)), run_time=0.4)
-            pg = page_token().move_to(c73.code_lines[2].get_right() + RIGHT * 0.5)
+            self.play(FadeOut(VGroup(rcard, same)), FadeIn(p73, shift=DOWN * 0.1), FadeIn(gem), run_time=0.5)
+            bar = line_bar(c73, 2, TURN)
+            self.play(FadeIn(bar), run_time=0.3)
+            pg = page_token().move_to(c73.code_lines[3].get_right() + RIGHT * 0.5)
             self.play(FadeIn(pg, scale=0.6), run_time=0.3)
             self.play(pg.animate.move_to(gem.shape.get_center()), run_time=0.9)
-            self.play(FadeOut(pg, scale=0.4), Indicate(gem.title, color=CLOUD, scale_factor=1.1),
-                      FadeIn(cost, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeOut(pg, scale=0.4), run_time=0.3)
+            vo.wait_until("to Gemini 2.5")
+            self.play(Transform(bar, line_bar(c73, 0, TURN)), run_time=0.4)
+            self.play(Create(u_def), run_time=0.5)
+            vo.wait_until("on Vertex AI")
+            self.play(Indicate(gem.title, color=CLOUD, scale_factor=1.1), FadeIn(cost, shift=UP * 0.1),
+                      run_time=0.6)
             vo.wait_until("Google retires")
-            self.play(Transform(bar, line_bar(c73, 0, TURN)), FadeOut(gem), cost.animate.move_to(cost_home),
-                      run_time=0.5)
+            self.play(FadeOut(gem), cost.animate.move_to(cost_home), run_time=0.5)
             full_fr = ncard_fr.copy()
             ncard_fr.become(nfr0)
             self.play(FadeIn(ncard_fr), FadeIn(note11, shift=DOWN * 0.1), run_time=0.5)
@@ -955,21 +976,27 @@ class GenerateText(VoiceScene):
         assert strip_top(6) < d12b.text.get_bottom()[1] - 0.1, d12b.text.get_bottom()
         u31 = uline(p31.rows[0], "Using CPython 3.12.15 interpreter at: /usr/local/bin/python3", SYSTEM)
 
+        # The rebuild types and prints before the narration starts (typing time): inside the block
+        # its output was readable for under a second before "uv sync now uses" shrank it away.
+        reset(self, t, 7, run_time=0.45, extra=[FadeOut(VGroup(ins13, fixtag)), caption_extra(tr, False)])
+        c15 = tcmd(self, t, BUILD_CMD, 0.6)
+        o15 = tprint(self, t, R_ROWS, run_time=0.4, lag=0.08)
+        tags15 = [at_right(ttag(tm), t, o15[i]) for i, tm in enumerate(R_TIMES[1:], start=1)]
+        self.play(*[FadeIn(g) for g in tags15], run_time=0.25)
+        for i, g in enumerate(tags15, start=1):
+            stick(self, o15[i], g)
+
         with self.voiceover(SAY[14]) as vo:
-            reset(self, t, 7, run_time=0.45, extra=[FadeOut(VGroup(ins13, fixtag)), caption_extra(tr, False)])
-            c15 = tcmd(self, t, BUILD_CMD, 0.6)
-            o15 = tprint(self, t, R_ROWS, run_time=0.4, lag=0.08)
-            tags15 = [at_right(ttag(tm), t, o15[i]) for i, tm in enumerate(R_TIMES[1:], start=1)]
             yt14 = beside(your_turn(), t, c15)
-            self.play(*[FadeIn(g) for g in tags15], FadeIn(yt14, shift=LEFT * 0.1), run_time=0.3)
-            for i, g in enumerate(tags15, start=1):
-                stick(self, o15[i], g)
-            stick(self, c15, yt14)
+            pin(self, c15, yt14, run_time=0.4)
+            self.play(Wiggle(yt14, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.7)
             vo.wait_until("uv sync now uses")
-            resize(self, t, 3, run_time=0.5,
-                   extra=[FadeIn(VGroup(vl2, d12b, ud2), shift=DOWN * 0.1)])
             r17b = t.lines[-1]
+            assert r17b.text == R_ROWS[4], r17b.text
             b17b = rbar(r17b, TURN, 0.3, right=t.box.get_right()[0] - 0.1)
+            self.play(FadeIn(b17b), run_time=0.3)
+            assert len(t.lines) == 7       # full: row 17 is the bottom row at 7 rows and at 3, the bar stays
+            resize(self, t, 3, run_time=0.5, extra=[FadeIn(VGroup(vl2, d12b, ud2), shift=DOWN * 0.1)])
             self.play(ReplacementTransform(b17b, p31.frame), FadeIn(p31.header), FadeIn(p31.rows), run_time=0.5)
             self.remove(p31.frame, p31.header, p31.rows)
             self.add(p31)
@@ -978,9 +1005,12 @@ class GenerateText(VoiceScene):
             self.play(*vl2.move_lo(12), d12b.dot.animate.set_color(SYSTEM), FadeOut(ud2), run_time=0.8)
             vo.wait_until("as does the next container")
             reset(self, t, 6, run_time=0.4, extra=[FadeOut(p31), FadeOut(u31), caption_extra(tr, True)])
-            tcmd(self, t, RUN, 0.7)
-            self.play(*enter_container(t, B), run_time=0.3)
-            tcmd(self, t, PY312.cmd, 0.6)
+            c16 = tcmd(self, t, RUN, 0.65)
+            x16 = beside(extra_tag(), t, c16)
+            self.play(*enter_container(t, B), FadeIn(x16, shift=LEFT * 0.1), run_time=0.3)
+            stick(self, c16, x16)
+            c17 = tcmd(self, t, PY312.cmd, 0.55)
+            pin(self, c17, beside(extra_tag(), t, c17), run_time=0.2)
             tprint(self, t, PY312_OUT, run_time=0.3, color=SYSTEM)
             vo.wait_until("Exit it")
             tcmd(self, t, "exit", 0.3)
