@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "preset": "swiss",
-  "duration_seconds": 400.0,
+  "duration_seconds": 392.0,
   "video": {
     "width": 1920,
     "height": 1080,
@@ -40,5 +40,5 @@
   "sources": [],
   "style_snapshot": "style.md",
   "style_sha256": "76c5f8f3be7981d6670c94e286fa8c392159bd6b68ddd632bc26fc1444bdcce8",
-  "duration_note": "Fitted to the narration minimum (375.4 s, including 4 s ponder pauses) plus ~6.5% for reading time, as E1 (default 300 s); this episode's override. Grew after the viewer-QA revision added explanations."
+  "duration_note": "Fitted to the narration minimum (375.4 s, including two 4 s ponder pauses) plus ~4.5% (less than the series' 6.5%, because s05 runs 94 s and s06 71 s, and proportional slack left 6-8 s static tails). Default 300 s; this episode's override."
 }
