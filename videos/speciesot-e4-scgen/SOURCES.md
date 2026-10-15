@@ -12,7 +12,7 @@ produced in this session (Python 3.12.3, anndata 0.13.4, scikit-learn 1.9.1, pyt
 | Both species train one network | repo `atlas-paper-vae/scripts/01_train_vae.py` 121–122; `cellot/cellot_gpu/cellot/train/train.py` 250–252 | READ IN CODE |
 | Stubs: δ local (282), training commented (284), `pass` (285), predict returns mouse cells (292) | Josh's src | READ IN CODE |
 | TF scgen = git-ignored nested clone on `sys.path`, env `scgen_tf1` (TF 1.15) | repo `atlas-paper-vae/configs/m2_v08.yaml` 44, 46–48; `.gitignore` 44–47; `01_train_vae.py` 86, 107–108 | READ IN CODE |
-| Josh's helpers match the atlas scripts | Josh's src 265–282 and 288–289 vs repo `02_eval_metrics.py` 151–167 (169–171, the predict step, is not copied) | READ IN CODE |
+| Josh's helpers match the atlas scripts | Josh's src 265–273 and 280–282 vs repo `02_eval_metrics.py` 152–160 and 166–168; his 288–289 match 162–163 (shown as 152–168; 169–171, the predict step, is not copied) | READ IN CODE |
 | scgen 2.x (scvi-tools) exports `SCGEN`, `SCGENVAE`; no `VAEArith` | `checks/scgen_package.txt` (scgen 2.1.0 wheel) | READ IN PACKAGE |
 | Josh's environment loads that package | Josh's comment lines 10–11 ("pulls in scvi-tools/torch") | INFERRED |
 | cellot is a vendored copy of bunnech/cellot; its `scgen` is `AutoEncoder` + `compute_scgen_shift` | repo `cellot/cellot_gpu/setup.py`, `LICENSE`, `cellot/models/ae.py` 21–22, 175–187 | READ IN CODE |
@@ -29,3 +29,4 @@ produced in this session (Python 3.12.3, anndata 0.13.4, scikit-learn 1.9.1, pyt
 | `model.eval()` is required before encoding (dropout) | repo `scripts/bake_model_artifacts.py` 119–120 | READ IN CODE |
 | Your repo already makes these calls | repo `scripts/predict_new_input.sh` 623–663 (load, eval, shift, encode, decode) | READ IN CODE |
 | On-screen `src/speciesot/speciesot_core.py` panels are Josh's attached copy (346 lines), not the 128-line file at that path in the repo at 109bf12 | `wc -l` of both | READ IN CODE |
+| "CellOT's source is copied into your repository, with your own edits" | repo `cellot/cellot_gpu/cellot/models/ae.py` 180 and `train/train.py` 174, 220 (GPU edits, commented in place) | READ IN CODE |
