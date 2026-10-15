@@ -1291,7 +1291,7 @@ class S07(Ep):
                       FadeIn(sk_tag), FadeIn(to_e3), FadeIn(ne), run_time=.6)
             vo.wait_until("gives zero point")
             mk = highlight(self, sketch, keys[2], run_time=.25)
-            self.play(ReplacementTransform(ne[0], eq), FadeOut(ne[1]), run_time=.35)
+            self.play(ReplacementTransform(ne, eq), run_time=.35)    # the whole line group, not a child
             vo.wait_until("Then walk")
             self.play(cards[2][0].animate.set_stroke(INK, 2), cards[3][0].animate.set_stroke(RED, 4),
                       Create(sg_path[0]), FadeIn(sg_path[1]), *[FadeIn(s_) for s_ in stops4], FadeIn(lns),
