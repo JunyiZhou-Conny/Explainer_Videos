@@ -96,7 +96,7 @@ S09:
 - en: "Here's the chain when it works. Your code never passes the key: the client asks Google's auth library who it is. That search is called application default credentials, or ADC, and its first stop is the variable from line 10."
   zh:
   - "正常情况下，链条是这样的。"
-  - "你的代码从来不传密钥：客户端会去问 Google 的认证库，它是谁。"
+  - "你的代码从来不传密钥：客户端会去问 Google 的认证库“我是谁”。"
   - "这个查找过程叫应用默认凭据，简称 ADC，它的第一站就是第 10 行的那个变量。"
 - en: "That variable is a signpost: secrets, slash, mega-pipeline dot json, starting from the current folder, slash app. Through the window, it leads to the key on your laptop."
   zh:
@@ -121,7 +121,7 @@ S09:
   - "The key isn't in this component's secrets folder, you changed directory away from /app, or you ran docker run from the wrong laptop folder."
 - en: "One extra check: even this failed run created two folders on your laptop, input audios, and text prompts with your group inside. The code makes them before it builds the client."
   zh:
-  - "一个额外检查：就连这次失败的运行，也在你笔记本上建了两个目录：input audios，还有 text prompts，里面有你们组的目录。"
+  - "一个额外检查：就连这次失败的运行，也在你笔记本上建了两个目录，input audios，还有里面带着你们组目录的 text prompts。"
   - "代码是在创建客户端之前建好它们的。"
 - en: "With your key, look for the word download, one object name per recording, and the audio files appearing in input audios on your laptop. Pause, check your key is in secrets, and run it."
   zh:
@@ -131,7 +131,7 @@ S10:
 - en: "Step 11 transcribes. For each recording, ffmpeg first converts the MP3 into FLAC, and that's why ffmpeg is in the build argument."
   zh:
   - "第 11 步是转写。"
-  - "每段录音，ffmpeg 先把 MP3 转成 FLAC，所以构建参数里要有 ffmpeg。"
+  - "对每段录音，ffmpeg 都先把 MP3 转成 FLAC，所以构建参数里要有 ffmpeg。"
 - en: "The audio bytes travel inside the request. The long-running recognize call hands back an operation at once, like a ticket stub. Its result call then waits up to 90 seconds for the transcript."
   zh:
   - "音频的字节就放在请求里一起发过去。"
@@ -248,7 +248,7 @@ S12:
   - "实时视图里看不到；完整日志里能看到：uv 下载了它自己的 Python，录制时是 3.15.0，并用它建了 venv。"
 - en: "The image's 3.12 falls outside the interval, so uv fetched the newest Python in range, as in lecture 2."
   zh:
-  - "这个 image 里的 3.12 落在范围之外，所以 uv 去取了范围内最新的 Python，和第 2 讲一样。"
+  - "这个 image 里的 3.12 落在范围之外，所以 uv 去下载了范围内最新的 Python，和第 2 讲一样。"
 - en: "Step 6 runs it, and an extra check confirms Python 3.15.0, from uv's folder, not the image's."
   zh:
   - "第 6 步运行它，一个额外检查确认是 Python 3.15.0，来自 uv 的目录，而不是 image 自带的。"
@@ -278,7 +278,7 @@ S12:
 - en: "Pause and rebuild: uv sync now uses the image's Python 3.12, as does the next container. Exit it. Better still, fix this before your first build."
   zh:
   - "暂停一下，重新构建：现在 uv sync 用的是 image 自带的 Python 3.12，下一个 container 也一样。"
-  - "然后退出。"
+  - "然后退出这个 container。"
   - "更好的办法是：在第一次构建之前就把它改好。"
 S13:
 - en: "Speed round: C, D and E. For C, synthesis audio E-N, cd in, copy the key, and run uv init. If it stamps 3.13 or newer, change it to 3.12, here and in D and E."
@@ -293,7 +293,7 @@ S13:
 - en: "Write the same Dockerfile as B's. A small slip, here and in E: the README's text says to keep ffmpeg, but its code block, which is right, leaves it out."
   zh:
   - "写一个和 B 一样的 Dockerfile。"
-  - "一个小疏漏，这里和 E 都有：README 的正文说要保留 ffmpeg，但它的代码块是对的，里面没有 ffmpeg。"
+  - "一个小疏漏，这里和 E 都有：README 的正文说要保留 ffmpeg，但它的代码块里没有 ffmpeg，这才是对的。"
 - en: "Build it: build step 2 is cached and the build takes 0.6 seconds: C's Dockerfile matches B's up to there, so Docker reuses B's big layer."
   zh:
   - "构建它：构建步骤 2 用了缓存，只花了 0.6 秒；C 的 Dockerfile 到这里为止和 B 的一样，所以 Docker 直接复用了 B 的那个大层。"
@@ -317,7 +317,7 @@ S13:
   - "所以在 C 里，暂停一下，跑下载和合成，然后退出、重新构建。"
 - en: "D, translate text, races through the same setup: cd, key, uv init, the same Dockerfile, a build."
   zh:
-  - "接着是 D，也就是 translate text，飞快地走完同样的准备：cd、密钥、uv init、同样的 Dockerfile，再构建。"
+  - "D，也就是 translate text，飞快地走完同样的准备：cd、密钥、uv init、同样的 Dockerfile、构建。"
 - en: "Then run it, add storage and translate, and set the group name on line 18. Like C, even help needs the key. Pause and catch up."
   zh:
   - "然后运行它，加上 storage 和 translate，再在第 18 行设置组名。"
@@ -393,7 +393,7 @@ S14:
   - "密钥没有进 image。"
 - en: "And the run still works, because the mount brings your secrets folder in when the container starts."
   zh:
-  - "而运行照样没问题，因为 container 启动时，挂载会把你的 secrets 目录带进来。"
+  - "而运行照样没问题，因为 container 启动时，挂载会让你的 secrets 目录出现在里面。"
 - en: "The README's optional last section pushes the image to Docker Hub: create an access token there, then log in, tag and push. Only push an image built with that dot dockerignore."
   zh:
   - "README 最后那个可选部分，是把 image push 到 Docker Hub：先在那里创建一个访问令牌，然后登录、打 tag、push。"
@@ -403,7 +403,7 @@ S14:
   - "Only push an image built with that .dockerignore."
 - en: "Log in with just your user name and paste the token at the prompt; after dash p it stays in your shell history. If you ever pushed an image with the key, delete it and tell the staff."
   zh:
-  - "登录时只给用户名，然后在提示符那里粘贴访问令牌；写在 -p 后面的话，它会留在你的 shell 历史记录里。"
+  - "登录时只给用户名，等它提示输入时再粘贴访问令牌；写在 -p 后面的话，它会留在你的 shell 历史记录里。"
   - "如果你曾经 push 过带密钥的 image，把它删掉，并告诉课程团队。"
   en_display:
   - "Log in with just your user name and paste the token at the prompt; after -p it stays in your shell history."
@@ -448,7 +448,7 @@ S15:
 - en: "Three: after uv add in a throwaway container, what survives, and what makes it permanent? Four: which variable points to the key, and why only from slash app? Five: how can an image hold a git-ignored key, and the fix?"
   zh:
   - "第三题：在用完就扔的 container 里 uv add 之后，什么会留下来，又是什么让它永久保留？"
-  - "第四题：哪个变量指向密钥，为什么只能从 /app 出发？"
+  - "第四题：哪个变量指向密钥，为什么只有在 /app 里才管用？"
   - "第五题：一个被 Git 忽略的密钥怎么会进到 image 里，又该怎么修？"
   en_display:
   - null
