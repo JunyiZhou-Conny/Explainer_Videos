@@ -42,14 +42,15 @@
 流水线对模型是中立的：闸门（CI、像素检查、样片评审、签字）托住下限，谁来跑规则都一样。
 
 - **换代理接单**：开 issue 时删掉模板尾部的 `@claude` 段（或无视它），把 issue 链接发给你想用的
-  代理（Cursor、Grok、本地 Claude……），并附一句硬性指令：
-
-  > Read `skill-library/conny-explainer-video/SKILL.md` and `AGENTS.md` first. Produce this
-  > episode on branch `episode/<slug>`, touching only `videos/<slug>/`. Post a 20–30s narrated
-  > sample on the PR and stop for my review before the full render.
-
-- **认领要落痕**：让代理先在 issue 里评论一句"我来做，用的是 XX 模型"，避免两个代理撞车。
+  代理（Cursor、本地 Claude、GPT……），指令直接用 **`docs/BOOTSTRAP.md` 里的 kickoff prompt**
+  （复制即可）——它保证任何模型拿到的上下文完全一致：同样的阅读顺序、同一个参考剧集、
+  同一套交接规则。
+- **认领要落痕**：代理的第一个动作是在 issue 里评论认领（模型 + 平台 + 分支），避免撞车。
   一集只允许一条分支、一个 PR。
+- **撞上 usage limit / 中途换模型**：这是设计内场景。代理在会话可能结束前必须推送分支并在
+  issue 留 DONE / NEXT / WARN 交接注（AGENTS.md 交接协议）。你只需把同一个 issue 链接 +
+  kickoff prompt 发给下一个代理（哪家模型都行），它会从交接注的 NEXT 继续，而不是重做。
+  Claude 和 GPT 之间就是这样"通信"的——信箱是 issue 线程，不是聊天框。
 - **弱模型的现实预期**：管道部分（渲染、字幕、配乐、校验）它们能跑通；短板在脚本创意、
   manim 排版和看帧 QA。所以**样片关卡对弱模型尤其重要**——20 秒就能看出能不能用，
   不行就换强模型接手制作，brief 和素材照用。

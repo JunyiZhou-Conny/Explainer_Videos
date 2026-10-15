@@ -57,3 +57,30 @@ rights) tags `episode/<slug>-vN`, uploads the deliverables with checksums, regen
 catalog and emits `PUBLISH.md`; the Mac publish worker (`tools/publish_worker.py`) uploads
 to Bilibili and closes the issue with the BV link. Work that only a logged-in local machine
 can do travels as `local-task` issues.
+
+## Handoffs between agents
+
+Different models and surfaces (Claude, GPT/Astra, Cursor, …) work these episodes, and none
+of them can talk to another directly. The issue/PR thread is the only mailbox, and a session
+can end without warning (usage limits, closed laptops). Therefore:
+
+- **Same context for everyone.** Every agent starts from `docs/BOOTSTRAP.md` — the canonical
+  reading order. A session that skipped it is working from a different map; don't.
+- **Claim before working.** First action on an episode: comment on its issue —
+  `Claiming. Model: <model>, surface: <claude.ai / Cursor / …>, branch episode/<slug>.`
+  An episode with an active claim is not yours to touch. A claim stays active until its
+  agent posts a handoff note (which releases it) or falls silent for 24 h (which expires it).
+- **Handoff note before stopping.** Whenever a session may end (limit approaching, work
+  pausing, question blocking), comment on the issue/PR before anything else:
+  **DONE** (what is finished and where), **NEXT** (the single next step, concrete enough to
+  execute without this session's memory), **WARN** (traps discovered: flaky anchors, layout
+  constraints, decisions already rejected). Push the branch first — unpushed work does not
+  exist to the next agent. Posting the note releases your claim: any agent may take over
+  from NEXT by claiming anew. Still working and not handing off? Say so instead
+  (`Still mine, continuing`) — that keeps the claim without releasing it.
+- **Resuming is reading.** A resuming agent (any model) reads, in order: the issue thread,
+  the PR thread, the episode folder, the latest handoff note — then continues from NEXT. It
+  does not restart work a handoff marks DONE, and does not re-litigate decisions recorded in
+  the brief or review threads; disagreements go to the issue as a question for Conny.
+- Abandoned claims: a claim with no push and no comment for 24 h is expired even without a
+  handoff note; note the takeover in a comment and continue from the last pushed state.
