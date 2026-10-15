@@ -116,7 +116,12 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
    and the owner's listening sign-off as separate lines; never claim a listen that did not happen.
    Cloud sessions cannot create releases: a GitHub Actions job, whose token can, uploads the
    deliverables after the episode merges and the catalog (`catalog/videos.json`,
-   `docs/VIDEOS.md`) points at the release. Fill durations and chapters into the README; set
+   `docs/VIDEOS.md`) points at the release. Series decisions (Conny, 2026-10-15, recorded on
+   Explainer_Videos#29): each finished lecture gets its own issue, `episode/ac215-lNN-<topic>`
+   branch and draft PR touching only its folder (shared changes go in a separate toolkit PR); the
+   lectures are published to Bilibili through the Mac publish worker; the per-lecture full listen is
+   waived ("不需要，我现在对视频质量很满意的") — quote that waiver as the human-review line of
+   `REVIEW.md`, never as a listen. Fill durations and chapters into the README; set
    `video_status` in `MLOps_Learning/course/lectures.yaml`, run `uv run tools/course_map.py`, and
    refresh the lecture's study guide from the captures (commands, real outputs).
 
