@@ -994,12 +994,13 @@ class S06(Ep):
         rows1 = VGroup()
         for i, (k, code) in enumerate(r1):
             yy = T - .8 - i * .29
-            c = mono_left(code, L + 2.0, yy, 16)
+            c = mono_left(code, L + 2.2, yy, 16)
             if i >= 3:
                 plural_s(c, code)
             rows1.add(VGroup(left(k, L + .35, yy, 17, GRAY), c))
-        unders1 = VGroup(*[under(glyphs(r[1], code, "x_dimension"), buff=.04, stroke=2.5)
-                           for r, (_, code) in zip(rows1[:3], r1[:3])])
+        names1 = VGroup(*[glyphs(r[1], code, "x_dimension") for r, (_, code) in
+                          zip(rows1[:3], r1[:3])])
+        unders1 = names1  # recoloured back to ink on "Two:"
         c2 = rule_card(2, "derived values are derived", xs[1], ys[0])
         L2, T2 = c2.L, c2.T
         ex2 = mono_left("x_dimension = data.shape[1]", L2 + .35, T2 - .9, 17)
@@ -1016,7 +1017,7 @@ class S06(Ep):
             lag(self, *[FadeIn(r, shift=RIGHT * .08) for r in rows1[:3]], lag_ratio=.25,
                 run_time=.7)
             vo.wait_until("exactly one name")
-            lag(self, *[Create(u) for u in unders1], lag_ratio=.25, run_time=.6)
+            self.play(names1.animate.set_color(RED), run_time=.5)
             lag(self, *[FadeIn(r, shift=RIGHT * .08) for r in rows1[3:]], lag_ratio=.3,
                 run_time=.5)
             vo.wait_until("Two:")
@@ -1092,9 +1093,9 @@ class S06(Ep):
         gap_note = at("missing", -1.45, 1.62, 17, RED)
         also = VGroup(*[mono_left(k, -2.32, .38 - i * .27, 16, RED)
                         for i, k in enumerate(("z_dimension:", "alpha:", "dropout_rate:"))])
-        also_box = DashedVMobject(Rectangle(width=2.15, height=.95, color=RED, stroke_width=2),
-                                  num_dashes=34).move_to([-1.45, also.get_y(), 0])
-        also_l = at("also missing", -1.45, .7, 17, RED)
+        also_box = DashedVMobject(Rectangle(width=2.15, height=.9, color=RED, stroke_width=2),
+                                  num_dashes=34).move_to([-1.45, also.get_y() - .02, 0])
+        also_l = at("also missing", -1.45, .74, 17, RED)
         kerr = error_card("KeyError", "'experiment'", "speciesot_core.py:86 in setup", -4.0,
                           -1.48, width=4.6, size=19)
         t1 = left("trap 1 · toy config drifted", -6.3, 1.82, 22, INK, bold=True)

@@ -38,10 +38,12 @@ SPEC = {
     23: "source: mouse",
     24: "target: human",
     4: "data_file: datasets/speciesot-human-mouse-hvg/hvg_pearson_residuals_m1_v08.h5ad",
+    27: "holdout_species: null",
     25: "holdout_cell_types:",
     26: "- CL:0000875",
     28: "datasplit_strategy: toggle_ood",
     29: "mode: ood",
+    30: "test_size: 0.2",
     31: "random_state: 0",
     32: "datasplit_stratify: condition",
     33: "scgen_hidden_units:",
@@ -606,9 +608,14 @@ class S04(Ep):
         t_end = x0 + GENES[2][1] * scale
         short = DashedVMobject(Rectangle(width=cut - t_end, height=.3, color=RED, stroke_width=2.5),
                                num_dashes=36).move_to([(cut + t_end) / 2, rows_y[2], 0])
-        same = 4.2
-        axis_lab = VGroup(label("one gene axis", 24, RED, bold=True), label("同一个基因轴", 18, GRAY))\
-            .arrange(DOWN, aligned_edge=LEFT, buff=.08).move_to([x0 + same + .3, .72, 0], aligned_edge=LEFT)
+        shared_w = GENES[2][1] * scale          # the shared 1,000 genes, at the same scale
+        shared = VGroup(*[Rectangle(width=shared_w, height=.3, stroke_width=0, fill_color=RED,
+                                    fill_opacity=1).move_to([x0 + shared_w / 2, y, 0])
+                          for y in rows_y]).set_z_index(2)
+        axis_lab = VGroup(label("one gene axis: the shared 1,000", 24, RED, bold=True),
+                          label("orthologous HVGs · 同一个基因轴", 18, GRAY))\
+            .arrange(DOWN, aligned_edge=LEFT, buff=.08).move_to([x0 + shared_w + .35, .72, 0],
+                                                                aligned_edge=LEFT)
         data_cls = VGroup(pill("TrainingData", -4.75, -1.75, INK, 20), pill("TestData", -2.0, -1.75, INK, 20))
         cls_note = mono_left(f"{CORE_PATH}  20–33", -6.2, -2.3, 16, GRAY)
         slot = DashedVMobject(Rectangle(width=3.9, height=.62, color=RED), num_dashes=48)\
@@ -621,9 +628,10 @@ class S04(Ep):
             self.add(over)
             self.play(FadeIn(over), Create(short), run_time=.5)
             vo.wait_until("share one gene axis")
-            self.play(*[b.animate.stretch_to_fit_width(same).align_to([x0, 0, 0], LEFT) for b in bars],
-                      FadeOut(over), FadeOut(short), FadeOut(gate), FadeOut(gate_lab), FadeOut(gate_why),
-                      run_time=.9)
+            self.play(FadeIn(shared), FadeOut(over), FadeOut(short), FadeOut(gate), FadeOut(gate_lab),
+                      FadeOut(gate_why), run_time=.5)
+            self.play(*[b.animate.stretch_to_fit_width(shared_w).align_to([x0, 0, 0], LEFT) for b in bars],
+                      run_time=.8)
             self.play(FadeIn(axis_lab, shift=LEFT * .1), run_time=.4)
             vo.wait_until("Lining up genes")
             self.play(FadeIn(data_cls, shift=UP * .1), FadeIn(cls_note), run_time=.5)
@@ -634,13 +642,13 @@ class S04(Ep):
         table = Rectangle(width=tx1 - tx0, height=ty1 - ty0, stroke_color=INK, stroke_width=2,
                           fill_color=PAPER, fill_opacity=1).move_to([(tx0 + tx1) / 2, (ty0 + ty1) / 2, 0])
         hatch = VGroup(*[line(tx0, y, tx1, y, FAINT, 1) for y in np.linspace(ty0 + .2, ty1 - .2, 14)])
-        dims = VGroup(left("8,054 cells ×", tx0, -1.88, 20, INK))
+        dims = VGroup(left("~8,054 cells ×", tx0, -1.88, 20, INK))
         dims.add(left("1,000 genes", dims[0].get_right()[0] + .12, -1.88, 20, INK))
         fname = mono_left("hvg_pearson_residuals_m1_v08.h5ad", tx0, 1.85, 16, GRAY)
         t_tag = source_tag("READ IN CODE").move_to([fname.get_right()[0] + .2, 1.85, 0],
                                                    aligned_edge=LEFT)
-        recipe = panel_at([(n, SPEC[n]) for n in (22, 23, 24, 25, 26, 28, 31)], SPEC_PATH,
-                          -1.05, 1.5, 5.4, 17)
+        recipe = panel_at([(n, SPEC[n]) for n in (23, 24, 25, 26)] + [(None, "…")] +
+                          [(n, SPEC[n]) for n in (28, 29, 30, 31)], SPEC_PATH, -.95, 1.6, 5.4, 16)
         slots = VGroup()
         for k, (a, b) in enumerate(SLOTS):
             y = 1.3 - k * .86
@@ -657,15 +665,16 @@ class S04(Ep):
         card2 = VGroup(left("CARD 2", -6.2, -2.3, 20, RED, bold=True),
                        left("split the table into four files", -5.1, -2.3, 20, INK, bold=True))
         c_tag = source_tag("INFERRED").next_to(card2, RIGHT, buff=.25)
+        done = tick(-.17, -1.75, .15, RED)
+        done_lab = at("done in M1 v08", 1.55, -2.27, 18, RED, bold=True)
         with self.say(2) as vo:
-            self.cue(vo, .0, FadeOut(data_cls), FadeOut(cls_note), FadeOut(slot), FadeOut(slot_lab),
-                     FadeOut(inf), FadeOut(names), FadeOut(axis_lab),
-                     ReplacementTransform(bars, VGroup(table, hatch)), run_time=.8)
             vo.wait_until("already done")
-            done = tick(tx1 + .45, ty1 - .2, .18, RED)
-            self.play(Create(done), run_time=.4)
+            self.play(Create(done), FadeIn(done_lab, shift=UP * .05), run_time=.4)
             vo.wait_until("The M1")
-            self.play(FadeIn(dims), FadeIn(fname), FadeIn(t_tag), FadeOut(done), run_time=.5)
+            self.play(FadeOut(data_cls), FadeOut(cls_note), FadeOut(slot), FadeOut(slot_lab),
+                      FadeOut(inf), FadeOut(done), FadeOut(done_lab), FadeOut(names), FadeOut(axis_lab),
+                      FadeOut(shared), ReplacementTransform(bars, VGroup(table, hatch)), run_time=.7)
+            self.play(FadeIn(dims), FadeIn(fname), FadeIn(t_tag), run_time=.4)
             vo.wait_until("a thousand genes")
             top_edge = line(tx0, ty1, tx1, ty1, RED, 5)
             self.play(Create(top_edge), dims[1].animate.set_color(RED), run_time=.5)
@@ -676,9 +685,9 @@ class S04(Ep):
             self.play(FadeIn(s_head), LaggedStart(*[FadeIn(sl, shift=LEFT * .1) for sl in slots],
                                                   lag_ratio=.2), run_time=.9)
             vo.wait_until("So the real card")
-            m = highlight(self, recipe, 22, 23, 24, run_time=.3)
+            m = highlight(self, recipe, 23, 24, run_time=.3)
             self.play(Create(divider), FadeIn(sp_lab), run_time=.5)
-            m2 = recipe.mark(25, 26, 28)
+            m2 = recipe.mark(25, 26, 28, 30)
             self.play(ReplacementTransform(m, m2), FadeIn(bands), run_time=.5)
             vo.wait_until("training and test")
             parts = [Rectangle(width=tx1 - tx0, height=.5, stroke_width=0, fill_color=c,

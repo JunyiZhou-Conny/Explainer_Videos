@@ -712,12 +712,11 @@ class S04(Ep):
             vo.wait_until("From what")
             self.play(FadeIn(chart), FadeIn(meaning), run_time=.6)
             vo.wait_until("Pause and predict")
-            dimmed = save(self.content())
             pcard = ponder("把一团点推离另一团，MMD 应该怎么变？",
                           "Push one cloud away from the other: what should MMD do?", y=-1.25)
-            self.play(self.dim_rest(), run_time=.4)
+            self.play(self.veil(), run_time=.4)
             self.play(FadeIn(pcard, shift=UP * .1), run_time=.5)
-        self.hold(0)                 # thinking time after the ponder question (full build)
+        self.hold(0)                 # thinking time after the ponder question
 
         bars = VGroup()
         vlabs = VGroup()
@@ -728,7 +727,7 @@ class S04(Ep):
             vlabs.add(mono("0" if v == 0 else f"{v:.3f}", 18, INK)
                       .move_to([b, base_y + h + .22, 0]))
         with self.say(1) as vo:
-            self.cue(vo, .01, FadeOut(pcard), *[Restore(m) for m in dimmed], run_time=.5)
+            self.cue(vo, .01, FadeOut(pcard), self.unveil(), run_time=.5)
             for k, w in enumerate(["nothing", "half", "one, then", "two, and"]):
                 vo.wait_until(w)
                 s = float(shifts[k])
@@ -773,7 +772,13 @@ class S04(Ep):
             self.play(*[pred[i].animate.move_to(pl.p(*xy[perm[i]])) for i in range(40)],
                       Transform(lines, lines_to), run_time=1.4)
             vo.wait_until("it drops")
-            self.play(FadeIn(r2b), run_time=.5)
+            sh = base[perm]          # MMD of shuffled vs original cells (default gamma 0.1)
+            mmd_same = rbf(sh, sh, .1).mean() + rbf(base, base, .1).mean() \
+                - 2 * rbf(sh, base, .1).mean()
+            assert abs(mmd_same) < 1e-9
+            same_lab = left(f"same cloud · MMD still {abs(mmd_same):.0f} · R² 1.0 → 0.020", .95,
+                            -1.75, 20, GRAY)
+            self.play(FadeIn(r2b), FadeIn(same_lab, shift=UP * .05), run_time=.5)
             vo.wait_until("pairs cell one")
             pair = VGroup(Line(pl.p(*xy[k]), pl.p(*xy[perm[k]]), color=RED, stroke_width=4),
                           Dot(pl.p(*xy[k]), radius=.08, color=RED),
