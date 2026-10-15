@@ -701,10 +701,10 @@ class S05(Ep):
         ign = chip("git-ignored", 1.5, .86, GRAY, 17, font=LATIN, pad=.12)
         env = chip("scgen_tf1 · TF 1.15", 0, .38, INK, 18)
         env.move_to([-6.0 + env.width / 2, .38, 0])
-        helpers = left("Josh's helpers ≡ these lines:", -6.0, -.0, 18, RED)
+        helpers = left("Josh's helpers ≡ these lines:", -6.0, -.05, 18, RED)
         notcopied = left("(169–171, the predict step, not copied)", helpers.get_right()[0] + .2,
-                         -.0, 17, GRAY)
-        hpath = mono_left(HELPERS, -6.0, -.32, 16, INK)
+                         -.05, 17, GRAY)
+        hpath = mono_left(HELPERS, -6.0, -.36, 16, INK)
         with self.say(1) as vo:
             self.cue(vo, .02, ReplacementTransform(q3[0], h1), run_time=.6)
             vo.wait_until("separate clone")
@@ -729,18 +729,18 @@ class S05(Ep):
         b2.add(left("· Josh's env?", b2.get_right()[0] + .12, 1.88, 17, GRAY))
         hdr = mono_left("scgen 2.1.0 (latest)", 2.8, 1.35, 18, INK)
         needs = left("needs scvi-tools", 2.8, 1.0, 17, GRAY)
-        exp = VGroup(left("exports:", 2.8, .62, 17, GRAY), mono_left("SCGEN, SCGENVAE", 3.7, .62,
+        exp = VGroup(left("exports:", 2.8, .62, 17, GRAY), mono_left("SCGEN, SCGENVAE", 3.8, .62,
                                                                      18, INK))
         vae = mono_left("VAEArith", 2.8, .22, 20, INK)
         strike_v = strike(vae)
         none_l = left("absent in 2.1.0", 4.3, .22, 17, RED)
         t2 = source_tag("READ IN PACKAGE")
-        t2.move_to([2.8 + t2.width / 2, -.2, 0])
+        t2.move_to([2.72 + t2.width / 2, -.2, 0])
         t2b = source_tag("INFERRED")
-        t2b.move_to([t2.get_right()[0] + .15 + t2b.width / 2, -.2, 0])
-        pa = code_panel(CORE_A, JOSH, -3.275, -1.42, width=6.05, size=16)
-        pb = code_panel(CORE_B, "Josh's src · his scgen 2.x attempt, commented", 3.2, -1.52,
-                        width=6.2, size=16)
+        t2b.move_to([t2.get_right()[0] + .1 + t2b.width / 2, -.2, 0])
+        pa = code_panel(CORE_A, JOSH, -3.2, -1.42, width=6.2, size=16)
+        pb = code_panel(CORE_B, "Josh's src · his scgen 2.x attempt, commented", 3.25, -1.52,
+                        width=6.1, size=16)
         short = frame_to(-.5)
         with self.say(2) as vo:
             self.cue(vo, .02, FadeOut(q3[2]), Transform(frame, short),
@@ -794,8 +794,7 @@ class S05(Ep):
         ctag = tag_right("READ IN CODE", cfg.frame.get_right()[0], 1.88)
         m1 = code_panel(M1_ROWS, "specs/m1_modern.yaml · repo @109bf12", 3.95, .45, width=4.7,
                         size=19)
-        b3 = VGroup(badge(3, 1.85, 1.88), left("cellot autoencoder", 2.15, 1.88, 20, INK,
-                                               bold=True),
+        b3 = VGroup(badge(3, 1.85, 1.88), left("cellot AE", 2.15, 1.88, 20, INK, bold=True),
                     tag_right("READ IN CODE", 6.3, 1.88))
         spec = left("= the cellot autoencoder's spec", 1.6, -.98, 19, RED, bold=True)
         tf = chip("TF VAEArith: 2 × 800, fixed", 3.9, -1.6, INK, 19)
