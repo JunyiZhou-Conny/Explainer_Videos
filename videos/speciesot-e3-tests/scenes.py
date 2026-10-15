@@ -70,6 +70,14 @@ def known_answer_cells():
     return base, r.permutation(40)
 
 
+def r2_score(p, t):
+    """R2Evaluation.evaluate (speciesot_core.py 311-316) on plain arrays."""
+    a, b = p - p.mean(0), t - t.mean(0)
+    num, den = (a * b).sum(0), np.sqrt((a ** 2).sum(0) * (b ** 2).sum(0))
+    ok = den > 1e-12
+    return float(np.mean((num[ok] / den[ok]) ** 2))
+
+
 def rbf(a, b, gamma):
     d2 = ((a[:, None, :] - b[None, :, :]) ** 2).sum(-1)
     return np.exp(-gamma * d2)
@@ -845,47 +853,58 @@ class S04(Ep):
 class S05(Ep):
     def construct(self):
         self.header()
-        mouse, _, human7 = toy_cells()
-        mx, hx, top = -2.1, 2.1, 1.5
-        m_mat = matrix(mouse, mx, top, ch=.24)
-        h_mat = matrix(human7, hx, top, ch=.24)
-        m_lab = at("mouse test · 5 cells", mx, 1.85, 19, GRAY)
-        h_lab = at("human test · 7 cells", hx, 1.85, 19, GRAY)
-        r2c = chip("R2Evaluation", 0, .6, INK, 22)
+        mouse, human, human7 = toy_cells()
+        mx, hx, top, ch = -2.1, 2.1, 1.68, .22
+        m_mat = matrix(mouse, mx, top, ch=ch)
+        h_mat = matrix(human7, hx, top, ch=ch)
+        m_lab = at("mouse test · 5 cells", mx, 1.92, 18, GRAY)
+        h_lab = at("human test · 7 cells", hx, 1.92, 18, GRAY)
+        r2c = chip("R2Evaluation", 0, -.25, INK, 22)
+        into = VGroup(arrow(m_mat.frame.get_bottom() + DOWN * .02, r2c.get_top() + LEFT * .75, INK),
+                      arrow(h_mat.frame.get_bottom() + DOWN * .02, r2c.get_top() + RIGHT * .75,
+                            INK))
         with self.say(0) as vo:
             self.cue(vo, .03, FadeIn(r2c, shift=UP * .1), run_time=.5)
             vo.wait_until("In a real")
-            self.play(r2c.animate.move_to([0, .1, 0]), FadeIn(m_lab), FadeIn(h_lab),
+            self.play(FadeIn(m_lab), FadeIn(h_lab),
                       LaggedStart(*[FadeIn(r, shift=DOWN * .1) for r in m_mat.cells],
                                   lag_ratio=.15),
                       LaggedStart(*[FadeIn(r, shift=DOWN * .1) for r in h_mat.cells],
                                   lag_ratio=.12),
                       Create(m_mat.frame), Create(h_mat.frame), run_time=1.1)
             self.settle(m_mat, h_mat)
+            self.play(GrowArrow(into[0]), GrowArrow(into[1]), run_time=.5)
             vo.wait_until("Pause and predict")
-            dimmed = save(self.content())
             pcard = ponder("5 个小鼠细胞对 7 个人类细胞，R2Evaluation 能接受吗？",
-                          "5 mouse cells against 7 human cells: does R2Evaluation accept that?",
-                          y=-1.32)
-            self.play(self.dim_rest(), run_time=.4)
+                           "5 mouse cells against 7 human cells: does R2Evaluation accept that?",
+                           y=-1.47)
+            self.play(self.veil(), run_time=.4)
             self.play(FadeIn(pcard, shift=UP * .1), run_time=.5)
-        self.hold(0)                 # thinking time after the ponder question (full build)
+        self.hold(0)                 # thinking time after the ponder question
 
         code = code_panel(rows(CORE, 311, 313), CORE_PATH, 2.6, 1.15, width=7.3, size=20)
         err = error_card("ValueError", ["operands could not be broadcast together",
                                         "with shapes (5,4) (7,4)"],
                          "speciesot_core.py:313 in evaluate", 2.6, -1.22, width=7.3, size=20)
-        lm_x, lh_x = -5.3, -2.95
+        lm_x, lh_x, ltop = -5.3, -2.95, 1.5
+        h5 = matrix(human, lh_x, ltop, ch=ch)            # the 5-cell human test set
+        r2_55 = r2_score(mouse, human)                   # identity_end_to_end: 0.1030 (MEASURED)
+        assert abs(r2_55 - 0.1030) < 5e-4
+        res = VGroup(mono(f"R² = {r2_55:.3f}", 40, RED, bold=True).move_to([2.6, -.55, 0]),
+                     at("no error · it pairs unrelated cells", 2.6, -1.25, 22, INK),
+                     tag_at("MEASURED", 2.6, -1.8),
+                     at("5 mouse vs 5 human toy cells", 2.6, -2.25, 17, GRAY))
         with self.say(1) as vo:
-            self.cue(vo, .01, FadeOut(pcard), FadeOut(r2c),
-                     *[Restore(m) for m in dimmed if m is not r2c], run_time=.4)
+            self.cue(vo, .01, FadeOut(pcard), self.unveil(), FadeOut(r2c), FadeOut(into),
+                     run_time=.4)
             vo.wait_until("We tried")
-            self.play(m_mat.animate.move_to([lm_x, top - 5 * .24 / 2, 0]),
-                      h_mat.animate.move_to([lh_x, top - 7 * .24 / 2, 0]),
-                      Transform(m_lab, at("mouse · 5", lm_x, 1.85, 19, GRAY)),
-                      Transform(h_lab, at("human · 7", lh_x, 1.85, 19, GRAY)),
-                      FadeIn(code), run_time=.8)
             m_mat.x, h_mat.x = lm_x, lh_x
+            m_mat.top = h_mat.top = ltop
+            self.play(m_mat.animate.move_to([lm_x, ltop - 5 * ch / 2, 0]),
+                      h_mat.animate.move_to([lh_x, ltop - 7 * ch / 2, 0]),
+                      Transform(m_lab, at("mouse · 5", lm_x, 1.75, 19, GRAY)),
+                      Transform(h_lab, at("human · 7", lh_x, 1.75, 19, GRAY)),
+                      FadeIn(code), run_time=.8)
             vo.wait_until("crashed")
             hl = highlight(self, code, 313, run_time=.3)
             self.play(FadeIn(err, shift=UP * .1), run_time=.5)
@@ -895,11 +914,23 @@ class S05(Ep):
             lost = VGroup(*[red_box(h_mat.cells[i], .0) for i in (5, 6)])
             qs = VGroup(*[at("?", lh_x - 1.05, row_y(h_mat, i), 24, RED, bold=True)
                           for i in (5, 6)])
-            self.play(LaggedStart(*[Create(p) for p in pairs], lag_ratio=.15), run_time=.8)
+            self.play(LaggedStart(*[Create(p_) for p_ in pairs], lag_ratio=.15), run_time=.8)
             self.settle(pairs)
             self.play(Create(lost), FadeIn(qs), run_time=.5)
-            no = left("5 rows can't line up with 7", -6.2, -.75, 21, RED, bold=True)
+            no = left("5 rows can't line up with 7", -6.2, -.45, 21, RED, bold=True)
             self.play(FadeIn(no), run_time=.4)
+            vo.wait_until("five against five")
+            self.play(FadeOut(lost), FadeOut(qs), FadeOut(no), FadeOut(err),
+                      ReplacementTransform(h_mat, h5),
+                      Transform(h_lab, at("human · 5", lh_x, 1.75, 19, GRAY)), run_time=.7)
+            vo.wait_until("pairs unrelated")
+            unrel = VGroup(left("row i ↔ row i:", -6.2, -.4, 21, RED, bold=True),
+                           left("unrelated cells", -6.2, -.78, 21, RED, bold=True))
+            self.play(pairs.animate.set_color(RED).set_stroke(width=3), FadeIn(unrel), run_time=.5)
+            vo.wait_until("reports an R")
+            self.play(FadeIn(res[0], shift=UP * .1), run_time=.5)
+            self.play(FadeIn(res[1:]), pairs.animate.set_color(INK).set_stroke(width=2),
+                      unrel.animate.set_color(INK), run_time=.5)
 
         # two R-squared formulas, side by side
         div = Line([0, 2.0, 0], [0, -2.4, 0], color=FAINT, stroke_width=1.5)
@@ -932,10 +963,8 @@ class S05(Ep):
                                    [3.15 - .54 + j * .36, mean_y[1] + .125, 0], color=RED,
                                    stroke_width=3) for j in range(4)])
         with self.say(2) as vo:
-            self.cue(vo, .01, FadeOut(err), FadeOut(pairs), FadeOut(lost), FadeOut(qs),
-                     FadeOut(no), FadeOut(hl), FadeOut(m_lab), FadeOut(h_lab),
-                     m_mat.animate.move_to([rm_x, ltop - 5 * .24 / 2, 0]).set_opacity(.25),
-                     h_mat.animate.move_to([rh_x, ltop - 7 * .24 / 2, 0]).set_opacity(.25),
+            self.cue(vo, .01, FadeOut(res), FadeOut(pairs), FadeOut(unrel), FadeOut(hl),
+                     FadeOut(m_lab), FadeOut(h_lab), FadeOut(m_mat), FadeOut(h5),
                      FadeIn(div), ReplacementTransform(code, code_l), run_time=.8)
             hl2 = highlight(self, code_l, 313, run_time=.3)
             vo.wait_until("It's the same")
@@ -947,11 +976,10 @@ class S05(Ep):
             vo.wait_until("Your benchmark")
             m_mat2 = matrix(mouse, rm_x, ltop, ch=.24)
             h_mat2 = matrix(human7, rh_x, ltop, ch=.24)
-            rm_lab = at("mouse · 5", rm_x, ltop + .22, 17, GRAY)
-            rh_lab = at("human · 7", rh_x, ltop + .22, 17, GRAY)
-            self.play(FadeIn(R_head), FadeIn(R_tag), FadeIn(R_ref),
-                      ReplacementTransform(m_mat, m_mat2), ReplacementTransform(h_mat, h_mat2),
-                      FadeIn(rm_lab), FadeIn(rh_lab), run_time=.7)
+            rm_lab = at("predicted (mouse) · 5", rm_x, ltop + .22, 17, GRAY)
+            rh_lab = at("truth (human) · 7", rh_x, ltop + .22, 17, GRAY)
+            self.play(FadeIn(R_head), FadeIn(R_tag), FadeIn(R_ref), FadeIn(m_mat2),
+                      FadeIn(h_mat2), FadeIn(rm_lab), FadeIn(rh_lab), run_time=.7)
             vo.wait_until("average expression")
             self.play(ReplacementTransform(m_mat2.cells.copy(), m_mean),
                       ReplacementTransform(h_mat2.cells.copy(), h_mean), FadeIn(mean_lab),
@@ -972,7 +1000,8 @@ class S05(Ep):
 
         qn = at("Which R² does the experiment need?", 0, 1.55, 36, INK, bold=True)
         qzh = at("实验需要哪一种 R²？", 0, 1.0, 24, GRAY)
-        optA = card("per-gene R²", "each cell vs its own partner", -3.15, -.2, 5.6, 1.35)
+        optA = card("per-gene R²", "needs a true partner for every cell", -3.15, -.2, 5.6,
+                    1.35)
         optB = card("R² of means", "gene averages · any cell counts", 3.15, -.2, 5.6, 1.35)
         cant = at("a test can't choose for you", 0, -1.25, 21, GRAY)
         hidden = DashedVMobject(Rectangle(width=5.4, height=.6, color=GRAY), num_dashes=40)\
