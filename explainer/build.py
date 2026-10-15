@@ -472,6 +472,38 @@ def _scene_title(s: dict, meta: dict) -> str:
     return titles.get(Path(s["file"]).stem) or titles.get(s["cls"]) or s.get("title", s["cls"])
 
 
+def _english_display(cue: dict, translations: dict) -> tuple[str, list | None]:
+    """The English subtitle text of one narration clip, and its sentence marks.
+
+    A sentence with an `en_display` override (the clip's own, or a translation's: the form an
+    artifact takes on screen, "--rm" for a SAY line that spells "dash dash rm") is shown in that
+    form, as the bilingual track already does (subtitles.sentence_pairs). Each mark keeps its time
+    and moves to its sentence's offset in the displayed text."""
+    from .voice import split_sentences
+
+    text, marks = cue["text"], cue.get("marks")
+    display = list(cue.get("en_display") or [])
+    if not any(display):
+        for table in translations.values():
+            line = table.get(" ".join(text.split()))
+            if line is not None and any(line.en_display):
+                display = list(line.en_display)
+                break
+    sentences = split_sentences(text)
+    if not any(display) or not sentences:
+        return text, marks
+    pieces = [d or s for (_, s), d in zip(sentences, display + [None] * len(sentences))]
+    shown, offsets = "", []
+    for k, piece in enumerate(pieces):
+        if k:
+            shown += " "
+        offsets.append(len(shown))
+        shown += piece.strip()
+    if marks and [int(o) for o, _ in marks] == [o for o, _ in sentences]:
+        marks = [(o, t) for o, (_, t) in zip(offsets, marks)]
+    return shown, marks
+
+
 def _clips_with_marks(subs_file: Path, env: dict | None) -> list[dict]:
     """Narration clips of one scene; English clips rendered before sentence marks were recorded get
     their marks from the (cached) voice, so subtitles still land on each sentence."""
@@ -561,8 +593,9 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
                 own_pairs += subs.sentence_pairs(cue, offset, own_table.get(" ".join(cue["text"].split())))
             else:
                 transcript.append(cue["text"] + "\n")
-                srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"],
-                                      marks=cue.get("marks")))
+                shown, shown_marks = _english_display(cue, translations)
+                srt.extend(split_cues(offset + cue["start"], offset + cue["end"], shown,
+                                      marks=shown_marks))
                 for code, table in translations.items():
                     line = table.get(" ".join(cue["text"].split()))
                     pairs[code] += subs.sentence_pairs(cue, offset, line)
