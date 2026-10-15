@@ -1272,10 +1272,9 @@ class S07(Ep):
         layers = VGroup(lay_t, lay, lay_a)
         with self.say(2) as vo:
             self.cue(vo, .02, FadeOut(VGroup(hook_n, hook_q, hook_a, hook_t)), FadeOut(lay_l),
-                     recap.animate.shift(UP * .8), layers.animate.shift(UP * .82),
-                     lay[2][0].animate.set_stroke(INK), lay[2][1].animate.set_color(INK),
-                     run_time=.6)
-            self.play(FadeIn(ex_head), run_time=.35)
+                     recap.animate.shift(UP * .8), layers.animate.shift(UP * .82), run_time=.6)
+            self.play(FadeIn(ex_head), lay[2][0].animate.set_stroke(INK),
+                      lay[2][1].animate.set_color(INK), run_time=.35)
             for i, w in enumerate(["turn each", "move test_model", "decide which"]):
                 vo.wait_until(w)
                 anims = [FadeIn(boxes[i]), FadeIn(tlabs[i], shift=RIGHT * .1)]
