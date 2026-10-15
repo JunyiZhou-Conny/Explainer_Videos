@@ -1,0 +1,374 @@
+1
+00:00:00,400 --> 00:00:04,411
+We ran the MMD metric
+from Josh's package on some toy cells,
+
+2
+00:00:04,411 --> 00:00:06,885
+and it said zero point three two six.
+
+3
+00:00:07,205 --> 00:00:08,317
+Is that right?
+
+4
+00:00:08,367 --> 00:00:12,428
+You can't tell by looking.
+Nobody can check a number like that by eye.
+
+5
+00:00:12,428 --> 00:00:16,431
+But you can check a metric on data
+where you already know the answer.
+
+6
+00:00:16,600 --> 00:00:19,971
+That's all a test is:
+a question with a known answer,
+
+7
+00:00:19,971 --> 00:00:23,405
+which your code answers by itself,
+every time you ask.
+
+8
+00:00:26,300 --> 00:00:29,927
+Josh already wrote one, in test_evaluation.py.
+
+9
+00:00:30,247 --> 00:00:32,047
+Three cells, two genes.
+
+10
+00:00:32,167 --> 00:00:34,791
+The prediction and the truth are the same cloud.
+
+11
+00:00:34,967 --> 00:00:40,317
+MMD compares two clouds with a kernel.
+Add the average similarity inside each cloud,
+
+12
+00:00:40,317 --> 00:00:43,820
+then subtract twice the average
+similarity across them.
+
+13
+00:00:44,000 --> 00:00:45,898
+When the clouds are identical,
+
+14
+00:00:45,898 --> 00:00:49,504
+all three averages are equal,
+so the answer must be zero.
+
+15
+00:00:49,667 --> 00:00:54,835
+The last line says exactly that:
+assert that the score is approximately zero.
+
+16
+00:00:54,835 --> 00:01:00,071
+Approximately, because sums of floating-point
+numbers are rarely exactly zero.
+
+17
+00:01:00,071 --> 00:01:05,709
+If it is, the test passes, silently.
+If not, it fails, loudly, showing both numbers.
+
+18
+00:01:09,633 --> 00:01:15,959
+You never call a test yourself. You type pytest.
+It finds files named test underscore something,
+
+19
+00:01:15,959 --> 00:01:20,769
+runs every function whose name starts with test,
+and reports on each one.
+
+20
+00:01:20,933 --> 00:01:24,919
+On its own,
+Josh's MMD test passes in under two seconds,
+
+21
+00:01:24,919 --> 00:01:28,122
+and most of that is just importing libraries.
+
+22
+00:01:28,442 --> 00:01:31,898
+Pause and predict:
+what happens when you run the whole folder?
+
+23
+00:01:36,066 --> 00:01:40,623
+It stops early. test_model.py
+isn't a test function, it's a script.
+
+24
+00:01:40,623 --> 00:01:46,405
+Its code runs the moment pytest imports it.
+Off the cluster it can't find its config.
+
+25
+00:01:46,405 --> 00:01:48,173
+On the cluster it's worse:
+
+26
+00:01:48,173 --> 00:01:50,923
+it loads the multi-gigabyte atlas files,
+
+27
+00:01:50,923 --> 00:01:54,498
+then crashes in setup,
+before a single test has run.
+
+28
+00:01:54,666 --> 00:01:59,661
+A good test runs on your code alone.
+No cluster, no gigabyte files, no GPU.
+
+29
+00:01:59,661 --> 00:02:03,456
+That's what makes it fast enough
+to run after every edit.
+
+30
+00:02:08,333 --> 00:02:12,305
+Where do known answers come from?
+From what the metric means.
+
+31
+00:02:12,305 --> 00:02:15,868
+Pause and predict:
+push one cloud away from the other.
+
+32
+00:02:15,868 --> 00:02:17,668
+What should MMD do?
+
+33
+00:02:21,300 --> 00:02:23,100
+It should grow, and it does.
+
+34
+00:02:23,156 --> 00:02:28,593
+We measured it: shift by nothing, half, one,
+then two, and MMD climbs from zero,
+
+35
+00:02:28,593 --> 00:02:32,670
+to point zero eight,
+to point two nine, to point eight five.
+
+36
+00:02:32,833 --> 00:02:36,502
+A perfect prediction should score
+an R squared of one, and it does.
+
+37
+00:02:36,822 --> 00:02:40,292
+Shuffle the predicted cells,
+and it drops to almost zero,
+
+38
+00:02:40,292 --> 00:02:43,457
+because this R squared pairs
+cell one with cell one.
+
+39
+00:02:43,777 --> 00:02:48,569
+Remember that. Each of those sentences
+becomes a test of about five lines.
+
+40
+00:02:48,889 --> 00:02:52,367
+And notice the data:
+tiny arrays built inside the test.
+
+41
+00:02:52,687 --> 00:02:55,609
+The test checks the logic, not the biology.
+
+42
+00:03:00,067 --> 00:03:02,755
+Now a test that does more than check arithmetic.
+
+43
+00:03:03,075 --> 00:03:04,257
+In a real experiment,
+
+44
+00:03:04,257 --> 00:03:07,747
+the mouse and human test sets
+have different numbers of cells.
+
+45
+00:03:08,067 --> 00:03:11,736
+Pause and predict:
+does R2Evaluation accept that?
+
+46
+00:03:15,900 --> 00:03:20,447
+It doesn't. We tried five mouse
+cells against seven human cells,
+
+47
+00:03:20,447 --> 00:03:25,421
+and it crashed at line 313.
+Five rows can't be lined up against seven.
+
+48
+00:03:25,421 --> 00:03:29,116
+And with five against five,
+it doesn't crash at all:
+
+49
+00:03:29,116 --> 00:03:34,375
+it pairs unrelated cells and reports
+an R squared of point one zero three.
+
+50
+00:03:34,534 --> 00:03:36,390
+The reason is in its formula.
+
+51
+00:03:36,710 --> 00:03:40,822
+It's the same per-gene R squared
+as in your reconstruction script,
+
+52
+00:03:40,822 --> 00:03:44,561
+where every cell has a true partner:
+its own reconstruction.
+
+53
+00:03:44,881 --> 00:03:50,470
+Your benchmark uses a different R squared:
+it compares the average expression of each gene.
+
+54
+00:03:50,790 --> 00:03:53,840
+An R squared of means
+wouldn't even notice a shuffle.
+
+55
+00:03:54,000 --> 00:03:56,325
+So, which one does the experiment need?
+
+56
+00:03:56,645 --> 00:03:58,409
+The test can't answer that.
+
+57
+00:03:58,459 --> 00:04:02,875
+It turned a hidden assumption
+into a decision you can now make on purpose.
+
+58
+00:04:08,333 --> 00:04:09,883
+Tests come in layers.
+
+59
+00:04:09,933 --> 00:04:14,264
+At the bottom are unit tests:
+one class, toy arrays, milliseconds.
+
+60
+00:04:14,584 --> 00:04:15,916
+Write many of these.
+
+61
+00:04:15,966 --> 00:04:22,130
+In the middle, the whole Experiment runs
+on a few tiny h5ad files, from a toy config.
+
+62
+00:04:22,130 --> 00:04:24,233
+Seconds. A handful is enough.
+
+63
+00:04:24,233 --> 00:04:27,831
+Josh's toy_config.yaml
+is the seed of this layer,
+
+64
+00:04:27,831 --> 00:04:29,961
+once it's brought up to date.
+
+65
+00:04:30,133 --> 00:04:34,146
+At the top is the e24_replica
+notebook on the real atlas:
+
+66
+00:04:34,146 --> 00:04:36,469
+minutes to hours, on the cluster.
+
+67
+00:04:36,789 --> 00:04:40,138
+Run it once the layers below are green,
+not instead of them.
+
+68
+00:04:40,300 --> 00:04:43,999
+The working loop:
+change one thing, run pytest, see green,
+
+69
+00:04:43,999 --> 00:04:46,422
+and only then go back to the notebook.
+
+70
+00:04:50,267 --> 00:04:54,579
+Recap. Nobody can check zero
+point three two six by eye,
+
+71
+00:04:54,579 --> 00:04:59,910
+but you can check that the code gives zero,
+one, and more, exactly where it must.
+
+72
+00:05:00,230 --> 00:05:02,827
+A test is a question with a known answer,
+
+73
+00:05:02,827 --> 00:05:06,566
+and pytest runs every function
+whose name starts with test.
+
+74
+00:05:06,734 --> 00:05:10,604
+Known answers come from meaning:
+identical clouds give zero,
+
+75
+00:05:10,604 --> 00:05:14,926
+a perfect prediction gives one,
+and more shift gives more distance.
+
+76
+00:05:15,246 --> 00:05:19,961
+A test can also expose an assumption:
+R2Evaluation pairs rows.
+
+77
+00:05:20,281 --> 00:05:23,672
+And test in layers:
+unit tests first, the notebook last.
+
+78
+00:05:23,834 --> 00:05:27,343
+Your exercises:
+turn each known answer into a test,
+
+79
+00:05:27,343 --> 00:05:31,816
+move test_model's code
+into a test function that uses tiny files,
+
+80
+00:05:31,816 --> 00:05:35,119
+and decide which R squared the experiment means.

@@ -1,0 +1,77 @@
+{
+  "probe": {
+    "programs": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1"
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "339.026000"
+    }
+  },
+  "target_seconds": 339.0,
+  "audio_mean_db": -19.6,
+  "caption_cues": 79,
+  "script_sha256": "d1973917bda89af05ebdac9a90d9576df34d220b2df94b8e8eb2171bc156859c",
+  "source_matches_plan": true,
+  "chapters": [
+    {
+      "start": 0.0,
+      "id": "s01",
+      "title": "Is 0.326 right?"
+    },
+    {
+      "start": 25.9,
+      "id": "s02",
+      "title": "Anatomy of Josh's test"
+    },
+    {
+      "start": 69.23333333333333,
+      "id": "s03",
+      "title": "How pytest runs it"
+    },
+    {
+      "start": 127.93333333333334,
+      "id": "s04",
+      "title": "Known answers come from meaning"
+    },
+    {
+      "start": 179.66666666666669,
+      "id": "s05",
+      "title": "A test that asks a real question"
+    },
+    {
+      "start": 247.93333333333334,
+      "id": "s06",
+      "title": "Three layers of checks"
+    },
+    {
+      "start": 289.8666666666667,
+      "id": "s07",
+      "title": "Recap: questions with answers"
+    }
+  ],
+  "music": {
+    "score_coverage": 0.712,
+    "notes": 556,
+    "fx": 49,
+    "chords": 49,
+    "dropped_in_silences": 0,
+    "duration": 339.0,
+    "voice_lufs": -16.05,
+    "music_in_gaps_lufs": -22.05,
+    "music_under_speech_lufs": -31.71,
+    "mix_lufs": -16.38,
+    "mix_true_peak_dbtp": -0.99
+  }
+}

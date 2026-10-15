@@ -90,7 +90,12 @@ passes, and it now also checks spoken order.
 - **Render log**: no BUDGET, CODEPANEL, missing-anchor or traceback lines in any scene.
 - **Silences**: 3.4–6.5 s at scene cuts, 4.3 s at the s04 ponder, and 9.1 s at the s05
   ponder, which is the scene's last beat.
-- **ASR round trip**: see below.
+- **ASR round trip** (faster-whisper small.en on the clean narration vs `script.json`; 946
+  script words, 954 heard, similarity 0.947): almost all differences are tokenization
+  ("set up", "scgen model", "in it" for `init`, digits for spoken numbers). Two places to
+  listen for: at 2:04, "Ours is the one after self dot" was heard as "hours…" with "dot"
+  dropped, and "experiment's" was heard as "experiment" three times. Neither changes the
+  meaning against the on-screen labels; Conny's listen decides.
 - **Evidence**: error texts, frames 119/253 and the dict `{x_dimension: 1000, x_dimensions:
   4}` are measured in `../speciesot-series/checks/error_trail.json`. 18,024 is read from
   `Tests/e24_replica.ipynb` cell 3.

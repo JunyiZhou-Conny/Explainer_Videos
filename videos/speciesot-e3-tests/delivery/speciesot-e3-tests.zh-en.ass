@@ -1,0 +1,93 @@
+[Script Info]
+Title: 
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,43,&H00F3F0E7,&H00F3F0E7,&H00171717,&H00171717,0,0,0,0,100,100,0,0,1,0,0,2,90,90,27,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.40,0:00:04.41,Bilingual,,0,0,0,,我们在一些模拟的玩具数据上跑了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}We ran the MMD metric from Josh's package on some toy cells,
+Dialogue: 0,0:00:04.41,0:00:06.88,Bilingual,,0,0,0,,包里的 MMD 指标，它给出 0.326\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and it said zero point three two six.
+Dialogue: 0,0:00:07.20,0:00:08.32,Bilingual,,0,0,0,,这个数对吗？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Is that right?
+Dialogue: 0,0:00:08.37,0:00:12.43,Bilingual,,0,0,0,,光看是看不出来的，没有人能用肉眼检查这种数字\N{\fs30\fnInter\c&H00C9C9C9&\bord0}You can't tell by looking. Nobody can check a number like that by eye.
+Dialogue: 0,0:00:12.43,0:00:16.43,Bilingual,,0,0,0,,但你可以在答案已知的数据上检查一个指标\N{\fs30\fnInter\c&H00C9C9C9&\bord0}But you can check a metric on data where you already know the answer.
+Dialogue: 0,0:00:16.60,0:00:19.97,Bilingual,,0,0,0,,测试就是这么回事：一个答案已知的问题\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's all a test is: a question with a known answer,
+Dialogue: 0,0:00:19.97,0:00:23.40,Bilingual,,0,0,0,,由你的代码自己作答，你每问一次它就答一次\N{\fs30\fnInter\c&H00C9C9C9&\bord0}which your code answers by itself, every time you ask.
+Dialogue: 0,0:00:26.30,0:00:29.93,Bilingual,,0,0,0,,Josh 已经写了一个，在 test_evaluation.py 里\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Josh already wrote one, in test_evaluation.py.
+Dialogue: 0,0:00:30.25,0:00:32.05,Bilingual,,0,0,0,,三个细胞，两个基因\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Three cells, two genes.
+Dialogue: 0,0:00:32.17,0:00:34.79,Bilingual,,0,0,0,,预测和真实值是同一团点\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The prediction and the truth are the same cloud.
+Dialogue: 0,0:00:34.97,0:00:40.32,Bilingual,,0,0,0,,MMD 用核函数比较两团点：把两团各自内部的平均相似度相加\N{\fs30\fnInter\c&H00C9C9C9&\bord0}MMD compares two clouds with a kernel. Add the average similarity inside each cloud,
+Dialogue: 0,0:00:40.32,0:00:43.82,Bilingual,,0,0,0,,再减去两团之间平均相似度的两倍\N{\fs30\fnInter\c&H00C9C9C9&\bord0}then subtract twice the average similarity across them.
+Dialogue: 0,0:00:44.00,0:00:49.50,Bilingual,,0,0,0,,当两团点完全相同时，这三个平均值都相等，所以答案一定是零\N{\fs30\fnInter\c&H00C9C9C9&\bord0}When the clouds are identical, all three averages are equal, so the answer must be zero.
+Dialogue: 0,0:00:49.67,0:00:54.86,Bilingual,,0,0,0,,最后一行写的正是这一点：断言（assert）分数约等于零\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The last line says exactly that: assert that the score is approximately zero.
+Dialogue: 0,0:00:54.86,0:01:00.11,Bilingual,,0,0,0,,之所以是「约等于」，是因为浮点数加加减减，很少恰好等于零\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Approximately, because sums of floating-point numbers are rarely exactly zero.
+Dialogue: 0,0:01:00.11,0:01:01.87,Bilingual,,0,0,0,,如果是，测试就悄悄通过\N{\fs30\fnInter\c&H00C9C9C9&\bord0}If it is, the test passes,
+Dialogue: 0,0:01:01.87,0:01:05.71,Bilingual,,0,0,0,,如果不是，它会醒目地报错失败，并给出两个数\N{\fs30\fnInter\c&H00C9C9C9&\bord0}silently. If not, it fails, loudly, showing both numbers.
+Dialogue: 0,0:01:09.63,0:01:12.82,Bilingual,,0,0,0,,你从不需要自己调用测试，只要输入 pytest\N{\fs30\fnInter\c&H00C9C9C9&\bord0}You never call a test yourself. You type pytest.
+Dialogue: 0,0:01:12.82,0:01:15.93,Bilingual,,0,0,0,,它会找到名字以 test_ 开头的文件\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It finds files named test underscore something,
+Dialogue: 0,0:01:15.93,0:01:20.77,Bilingual,,0,0,0,,运行其中名字以 test 开头的每个函数，并逐一报告结果\N{\fs30\fnInter\c&H00C9C9C9&\bord0}runs every function whose name starts with test, and reports on each one.
+Dialogue: 0,0:01:20.93,0:01:24.92,Bilingual,,0,0,0,,单独运行时，Josh 的 MMD 测试不到两秒就通过了\N{\fs30\fnInter\c&H00C9C9C9&\bord0}On its own, Josh's MMD test passes in under two seconds,
+Dialogue: 0,0:01:24.92,0:01:28.12,Bilingual,,0,0,0,,而且大部分时间只是在导入库\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and most of that is just importing libraries.
+Dialogue: 0,0:01:28.44,0:01:31.90,Bilingual,,0,0,0,,停下来猜一猜：对整个文件夹运行，会发生什么？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause and predict: what happens when you run the whole folder?
+Dialogue: 0,0:01:36.07,0:01:40.62,Bilingual,,0,0,0,,它会提前停下。 test_model.py 不是测试函数，而是一个脚本\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It stops early. test_model.py isn't a test function, it's a script.
+Dialogue: 0,0:01:40.62,0:01:43.55,Bilingual,,0,0,0,,pytest 一导入它，里面的代码就开始执行\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Its code runs the moment pytest imports it.
+Dialogue: 0,0:01:43.55,0:01:48.17,Bilingual,,0,0,0,,在集群外，它找不到配置文件；在集群上更糟\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Off the cluster it can't find its config. On the cluster it's worse:
+Dialogue: 0,0:01:48.17,0:01:54.50,Bilingual,,0,0,0,,它先加载好几个 GB 的图谱文件，再在 setup 里崩溃，一个测试都还没跑\N{\fs30\fnInter\c&H00C9C9C9&\bord0}it loads the multi-gigabyte atlas files, then crashes in setup, before a single test has run.
+Dialogue: 0,0:01:54.67,0:01:57.08,Bilingual,,0,0,0,,好的测试只靠你的代码就能跑\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A good test runs on your code alone.
+Dialogue: 0,0:01:57.08,0:01:59.63,Bilingual,,0,0,0,,不需要集群、不需要几个 GB 的文件、不需要 GPU\N{\fs30\fnInter\c&H00C9C9C9&\bord0}No cluster, no gigabyte files, no GPU.
+Dialogue: 0,0:01:59.63,0:02:03.46,Bilingual,,0,0,0,,正因为如此，它才快到可以在每次修改后都跑一遍\N{\fs30\fnInter\c&H00C9C9C9&\bord0}That's what makes it fast enough to run after every edit.
+Dialogue: 0,0:02:08.33,0:02:12.30,Bilingual,,0,0,0,,已知答案从哪里来？ 从指标的含义来\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Where do known answers come from? From what the metric means.
+Dialogue: 0,0:02:12.30,0:02:17.12,Bilingual,,0,0,0,,停下来猜一猜：把一团点推离另一团，MMD 应该怎么变？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause and predict: push one cloud away from the other. What should MMD do?
+Dialogue: 0,0:02:21.30,0:02:23.10,Bilingual,,0,0,0,,它应该变大，结果也确实如此\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It should grow, and it does.
+Dialogue: 0,0:02:23.16,0:02:26.83,Bilingual,,0,0,0,,我们测了一下：平移 0、0.5、1、2\N{\fs30\fnInter\c&H00C9C9C9&\bord0}We measured it: shift by nothing, half, one, then two,
+Dialogue: 0,0:02:26.83,0:02:32.67,Bilingual,,0,0,0,,MMD 从 0 升到 0.08，再到 0.29，再到 0.85\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and MMD climbs from zero, to point zero eight, to point two nine, to point eight five.
+Dialogue: 0,0:02:32.83,0:02:36.50,Bilingual,,0,0,0,,完美的预测，R² 应该等于 1，结果确实如此\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A perfect prediction should score an R squared of one, and it does.
+Dialogue: 0,0:02:36.82,0:02:39.96,Bilingual,,0,0,0,,把预测的细胞顺序打乱，它就掉到几乎为零\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Shuffle the predicted cells, and it drops to almost zero,
+Dialogue: 0,0:02:39.96,0:02:43.46,Bilingual,,0,0,0,,因为这种 R² 是把预测的第 i 个细胞和真实的第 i 个细胞配对比较的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}because this R squared pairs cell one with cell one.
+Dialogue: 0,0:02:43.78,0:02:48.57,Bilingual,,0,0,0,,记住这一点。这每一句话都能变成一个五行左右的测试\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Remember that. Each of those sentences becomes a test of about five lines.
+Dialogue: 0,0:02:48.89,0:02:52.37,Bilingual,,0,0,0,,再注意一下数据：都是在测试内部造出来的小数组\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And notice the data: tiny arrays built inside the test.
+Dialogue: 0,0:02:52.69,0:02:55.61,Bilingual,,0,0,0,,测试检查的是逻辑，不是生物学\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The test checks the logic, not the biology.
+Dialogue: 0,0:03:00.07,0:03:02.75,Bilingual,,0,0,0,,现在来一个不只是检查算术的测试\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Now a test that does more than check arithmetic.
+Dialogue: 0,0:03:03.07,0:03:07.75,Bilingual,,0,0,0,,在真实实验里，小鼠和人类的测试集细胞数不一样\N{\fs30\fnInter\c&H00C9C9C9&\bord0}In a real experiment, the mouse and human test sets have different numbers of cells.
+Dialogue: 0,0:03:08.07,0:03:11.74,Bilingual,,0,0,0,,停下来猜一猜：R2Evaluation 能接受这种情况吗？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Pause and predict: does R2Evaluation accept that?
+Dialogue: 0,0:03:15.90,0:03:20.45,Bilingual,,0,0,0,,不能。 我们试了 5 个小鼠细胞对 7 个人类细胞\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It doesn't. We tried five mouse cells against seven human cells,
+Dialogue: 0,0:03:20.45,0:03:25.42,Bilingual,,0,0,0,,它在第 313 行崩溃了：5 行没法和 7 行对齐\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and it crashed at line 313. Five rows can't be lined up against seven.
+Dialogue: 0,0:03:25.42,0:03:29.12,Bilingual,,0,0,0,,而如果是 5 对 5，它根本不会崩溃\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And with five against five, it doesn't crash at all:
+Dialogue: 0,0:03:29.12,0:03:34.37,Bilingual,,0,0,0,,它会把毫不相关的细胞配成对，然后报出 R² 0.103\N{\fs30\fnInter\c&H00C9C9C9&\bord0}it pairs unrelated cells and reports an R squared of point one zero three.
+Dialogue: 0,0:03:34.53,0:03:36.39,Bilingual,,0,0,0,,原因在它的公式里\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The reason is in its formula.
+Dialogue: 0,0:03:36.71,0:03:40.82,Bilingual,,0,0,0,,它和你重建脚本里的逐基因 R² 是同一个公式\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It's the same per-gene R squared as in your reconstruction script,
+Dialogue: 0,0:03:40.82,0:03:44.56,Bilingual,,0,0,0,,在那里每个细胞都有一个真正的搭档：它自己的重建结果\N{\fs30\fnInter\c&H00C9C9C9&\bord0}where every cell has a true partner: its own reconstruction.
+Dialogue: 0,0:03:44.88,0:03:50.47,Bilingual,,0,0,0,,而你的基准用的是另一种 R²：比较每个基因的平均表达\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your benchmark uses a different R squared: it compares the average expression of each gene.
+Dialogue: 0,0:03:50.79,0:03:53.84,Bilingual,,0,0,0,,均值 R² 根本察觉不到打乱\N{\fs30\fnInter\c&H00C9C9C9&\bord0}An R squared of means wouldn't even notice a shuffle.
+Dialogue: 0,0:03:54.00,0:03:56.32,Bilingual,,0,0,0,,那么，实验需要的是哪一种？\N{\fs30\fnInter\c&H00C9C9C9&\bord0}So, which one does the experiment need?
+Dialogue: 0,0:03:56.64,0:03:58.41,Bilingual,,0,0,0,,测试回答不了这个问题\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The test can't answer that.
+Dialogue: 0,0:03:58.46,0:04:02.87,Bilingual,,0,0,0,,它把一个隐藏的假设，变成了一个你现在可以有意识地做出的决定\N{\fs30\fnInter\c&H00C9C9C9&\bord0}It turned a hidden assumption into a decision you can now make on purpose.
+Dialogue: 0,0:04:08.33,0:04:09.88,Bilingual,,0,0,0,,测试是分层的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Tests come in layers.
+Dialogue: 0,0:04:09.93,0:04:14.26,Bilingual,,0,0,0,,最底层是单元测试：一个类、玩具数组、几毫秒\N{\fs30\fnInter\c&H00C9C9C9&\bord0}At the bottom are unit tests: one class, toy arrays, milliseconds.
+Dialogue: 0,0:04:14.58,0:04:15.92,Bilingual,,0,0,0,,这种要多写\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Write many of these.
+Dialogue: 0,0:04:15.97,0:04:16.99,Bilingual,,0,0,0,,中间一层\N{\fs30\fnInter\c&H00C9C9C9&\bord0}In the middle,
+Dialogue: 0,0:04:16.99,0:04:22.70,Bilingual,,0,0,0,,用一份 toy config 和几个很小的 h5ad 文件跑完整个 Experiment\N{\fs30\fnInter\c&H00C9C9C9&\bord0}the whole Experiment runs on a few tiny h5ad files, from a toy config. Seconds.
+Dialogue: 0,0:04:22.70,0:04:24.20,Bilingual,,0,0,0,,几秒钟，写几个就够\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A handful is enough.
+Dialogue: 0,0:04:24.20,0:04:29.96,Bilingual,,0,0,0,,Josh 的 toy_config.yaml 更新之后，就是这一层的雏形\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Josh's toy_config.yaml is the seed of this layer, once it's brought up to date.
+Dialogue: 0,0:04:30.13,0:04:34.15,Bilingual,,0,0,0,,最上层是在真实图谱上运行的 e24_replica notebook\N{\fs30\fnInter\c&H00C9C9C9&\bord0}At the top is the e24_replica notebook on the real atlas:
+Dialogue: 0,0:04:34.15,0:04:36.47,Bilingual,,0,0,0,,要几分钟到几小时，在集群上跑\N{\fs30\fnInter\c&H00C9C9C9&\bord0}minutes to hours, on the cluster.
+Dialogue: 0,0:04:36.79,0:04:40.14,Bilingual,,0,0,0,,等下面几层都通过了再跑它，而不是用它来代替下面几层\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Run it once the layers below are green, not instead of them.
+Dialogue: 0,0:04:40.30,0:04:44.00,Bilingual,,0,0,0,,工作循环是：改一处，跑 pytest\N{\fs30\fnInter\c&H00C9C9C9&\bord0}The working loop: change one thing, run pytest, see green,
+Dialogue: 0,0:04:44.00,0:04:46.42,Bilingual,,0,0,0,,看到全绿，然后才回到 notebook\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and only then go back to the notebook.
+Dialogue: 0,0:04:50.27,0:04:54.58,Bilingual,,0,0,0,,回顾一下。0.326 这个数没人能用肉眼检查\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Recap. Nobody can check zero point three two six by eye,
+Dialogue: 0,0:04:54.58,0:04:59.91,Bilingual,,0,0,0,,但你可以检查代码在该给 0、该给 1、该变大的地方，是否恰好如此\N{\fs30\fnInter\c&H00C9C9C9&\bord0}but you can check that the code gives zero, one, and more, exactly where it must.
+Dialogue: 0,0:05:00.23,0:05:02.83,Bilingual,,0,0,0,,测试是一个答案已知的问题\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A test is a question with a known answer,
+Dialogue: 0,0:05:02.83,0:05:06.57,Bilingual,,0,0,0,,pytest 会运行每个名字以 test 开头的函数\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and pytest runs every function whose name starts with test.
+Dialogue: 0,0:05:06.73,0:05:10.60,Bilingual,,0,0,0,,已知答案来自指标的含义：相同的两团点给出 0\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Known answers come from meaning: identical clouds give zero,
+Dialogue: 0,0:05:10.60,0:05:14.93,Bilingual,,0,0,0,,完美预测给出 1，平移越大距离越大\N{\fs30\fnInter\c&H00C9C9C9&\bord0}a perfect prediction gives one, and more shift gives more distance.
+Dialogue: 0,0:05:15.25,0:05:19.96,Bilingual,,0,0,0,,测试还能暴露一个假设：R2Evaluation 是按行配对的\N{\fs30\fnInter\c&H00C9C9C9&\bord0}A test can also expose an assumption: R2Evaluation pairs rows.
+Dialogue: 0,0:05:20.28,0:05:23.67,Bilingual,,0,0,0,,另外，测试要分层：先跑单元测试，最后才跑 notebook\N{\fs30\fnInter\c&H00C9C9C9&\bord0}And test in layers: unit tests first, the notebook last.
+Dialogue: 0,0:05:23.83,0:05:27.34,Bilingual,,0,0,0,,你的练习：把每个已知答案都写成一个测试\N{\fs30\fnInter\c&H00C9C9C9&\bord0}Your exercises: turn each known answer into a test,
+Dialogue: 0,0:05:27.34,0:05:31.82,Bilingual,,0,0,0,,把 test_model 的代码挪进一个使用小文件的测试函数里\N{\fs30\fnInter\c&H00C9C9C9&\bord0}move test_model's code into a test function that uses tiny files,
+Dialogue: 0,0:05:31.82,0:05:35.12,Bilingual,,0,0,0,,并决定实验指的是哪一种 R²\N{\fs30\fnInter\c&H00C9C9C9&\bord0}and decide which R squared the experiment means.
