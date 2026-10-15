@@ -40,7 +40,8 @@ function ago(t){
   return `${Math.round(m / 1440)} 天前`;
 }
 function firstLine(body){
-  return (body || '').split('\n').map(s => s.replace(/^[\s#>*_`]+/, '').trim()).find(Boolean) || '';
+  // ">" is kept on purpose: a quote-reply to a protocol comment must not count as a new event.
+  return (body || '').split('\n').map(s => s.replace(/^[\s#*_`]+/, '').trim()).find(Boolean) || '';
 }
 // Reads the AGENTS.md handoff protocol out of issue comments: claims, CHECKPOINT and HANDOFF.
 async function loadProtocol(){
