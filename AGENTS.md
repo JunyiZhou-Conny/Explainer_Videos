@@ -57,3 +57,40 @@ rights) tags `episode/<slug>-vN`, uploads the deliverables with checksums, regen
 catalog and emits `PUBLISH.md`; the Mac publish worker (`tools/publish_worker.py`) uploads
 to Bilibili and closes the issue with the BV link. Work that only a logged-in local machine
 can do travels as `local-task` issues.
+
+## Handoffs between agents
+
+Different models and surfaces (Claude, GPT/Astra, Cursor, …) work these episodes, and none
+of them can talk to another directly. The issue/PR thread is the only mailbox, and a session
+can end without warning (usage limits, closed laptops). Therefore:
+
+- **Same context for everyone.** Every agent starts from `docs/BOOTSTRAP.md` — the canonical
+  reading order. A session that skipped it is working from a different map; don't.
+- **One session per episode.** A session's working memory (what it tried, why, Conny's
+  in-chat taste notes) does not survive a switch; files do. A session that hits a usage
+  limit waits for the reset and continues in the same session. Passing an episode to another
+  model or session is a last resort, not a routine.
+- **Claim before working.** First action on an episode: comment on its issue —
+  `Claiming. Model: <model>, surface: <claude.ai / Cursor / …>, branch episode/<slug>.`
+  An episode with an active claim is not yours to touch. A claim stays active until its
+  agent posts a `HANDOFF` (which releases it) or falls silent for 24 h (which expires it).
+  Checkpoints keep it active.
+- **Checkpoint at every stage boundary.** Limits cut a session off without warning, so there
+  is no last moment to write a note. Instead, at each stage boundary — `brief`, `script`,
+  `sample`, `scenes`, `full-cut` — push the branch, then comment on the issue with a first
+  line `CHECKPOINT <stage>` followed by **DONE** (what is finished and where), **NEXT** (the
+  single next step, concrete enough to execute without this session's memory) and **WARN**
+  (traps discovered: flaky anchors, layout constraints, decisions already rejected). An
+  interruption then costs at most the stage in progress. Unpushed work does not exist to the
+  next agent.
+- **Handoff only on purpose.** An agent that deliberately gives the episode away posts a
+  comment whose first line is `HANDOFF`, with DONE / NEXT / WARN. That releases the claim:
+  any agent may take over from NEXT by claiming anew.
+- **Resuming is reading.** A resuming agent (any model) reads, in order: the issue thread,
+  the PR thread, the episode folder, the latest `CHECKPOINT` or `HANDOFF` — then continues
+  from NEXT. It does not restart work marked DONE, and does not re-litigate decisions
+  recorded in the brief or review threads; disagreements go to the issue as a question for
+  Conny. Rendered outputs and TTS caches are not in git: a successor re-renders before
+  relying on them.
+- Abandoned claims: a claim with no push and no comment for 24 h is expired even without a
+  `HANDOFF`; note the takeover in a comment and continue from the last checkpoint.
