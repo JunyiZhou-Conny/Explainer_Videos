@@ -397,10 +397,14 @@ class WriteDockerfile(VoiceScene):
         lab_pk = sans("build-essential, ffmpeg", PT, S.GREY).move_to([zx0 + 2.95, yl, 0])
         with self.voiceover(SAY[6]) as vo:
             self.swap(p12, extra=[FadeOut(b), FadeOut(u_sec)])
-            vo.wait_until("chained with double")
-            amps = [span(p12, n, "&& \\") for n in range(12, 21)]
+            vo.wait_until("ends in a backslash")
+            slashes = [span(p12, n, "\\") for n in range(12, 21)]
+            self.play(LaggedStart(*[Indicate(a, color=TURN, scale_factor=1.3) for a in slashes],
+                                  lag_ratio=0.12), run_time=1.1)
+            vo.wait_until("and double ampersands")
+            amps = [span(p12, n, "&&") for n in range(12, 21)]
             self.play(LaggedStart(*[Indicate(a, color=TURN, scale_factor=1.3) for a in amps],
-                                  lag_ratio=0.12), run_time=1.4)
+                                  lag_ratio=0.12), run_time=1.1)
             vo.wait_until("so they make one layer")
             b = bar(p12, 12, 21)
             self.play(FadeIn(b), run_time=0.3)
@@ -421,7 +425,7 @@ class WriteDockerfile(VoiceScene):
             self.play(Transform(b, bar(p12, 13, 14)), run_time=0.3)
             self.play(LaggedStart(*[FadeIn(d, scale=0.4) for d in dots], lag_ratio=0.08),
                       FadeIn(lab_pk), run_time=1.0)
-            vo.wait_until("and deletes apt's")
+            vo.wait_until("and deletes the apt")
             self.play(Transform(b, bar(p12, 15, 16)), run_time=0.3)
             self.play(*[pg.animate.scale(0.12).rotate(1.2).set_opacity(0) for pg in pages],
                       run_time=0.9)

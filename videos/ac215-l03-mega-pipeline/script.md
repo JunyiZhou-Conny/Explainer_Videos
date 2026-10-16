@@ -208,7 +208,7 @@ SAY: Open the mega-pipeline README beside this video. The tracker, top left, sho
 SHOW: The preview clears. A checklist card ticks GREEN line by line: "Tutorial 0: Docker Desktop +
 uv" · "the course key, from Canvas" (GOLD key glyph) · "your team's group name". Footer caption:
 "every command: MLOps_Learning · guides/L03-containers-2-mega-pipeline.md".
-SAY: You'll need Tutorial 0, for Docker Desktop and uv, the course key from Canvas, and your group name. Every command is also in the study guide, in the MLOps Learning repo.
+SAY: You'll need Tutorial 0, for Docker Desktop and uv, the course key from Canvas, and your group name. Every command is also in the study guide, linked in the description.
 
 SHOW: A TEAL-framed terminal strip (GREY tag "preview", prompt `app@5b4d4981ec25:/app$`) types
 `python cli.py --download`. Where its output would print, a dashed empty box draws itself, and a
@@ -327,7 +327,7 @@ SAY: Two differences to remember. The generate text folder already has its own p
 SHOW: The tree and rows fade. The terminal grows back. The tracker switches section: "README ›
 transcribe_audio", 13 dots. TRACKER A1. It types `cd transcribe_audio` → (no output); the prompt
 becomes `student@laptop:~/mega-pipeline/transcribe_audio$`. `▶ your turn`.
-SAY: Now the first component. The tracker switches to the transcribe audio README, whose step 1 is cd transcribe audio. Pause, and catch up to here.
+SAY: Now the first component. Open the README in the transcribe audio folder: the tracker switches to it, and its step 1 is cd transcribe audio. Pause, and catch up to here.
 
 SHOW: The terminal shrinks to the bottom strip. CODE(transcribe_audio/cli.py: 4–12) at the top,
 full width. Lines 4–8 get a GREY side tag "comes with Python"; lines 9–11 a PINK side tag "where
@@ -457,7 +457,7 @@ lines 12–21"). The `&& \` at each line end pulses. `RUN` drops one fat ORANGE 
 the slab zooms up to show its inside, in order: small "apt lists" pages appear (line 12), packages
 fill in (lines 13–14), then the pages crumple and vanish (lines 15–16), all inside the slab, never
 reaching the stack.
-SAY: Lines 12 to 21 are one RUN instruction, chained with double ampersands, so they make one layer. It updates Debian, installs our packages, and deletes apt's package lists in that same layer, so they cost nothing.
+SAY: Lines 12 to 21 are one RUN instruction. Every line but the last ends in a backslash, which continues it, and double ampersands chain the commands, so they make one layer. It updates Debian, installs our packages, and deletes the apt package lists in that same layer, so they cost nothing.
 
 SHOW: Lines 17–18 highlight; a PURPLE `uv` chip drops into the zoomed slab beside a small ORANGE
 `pip` chip. A GREY note: "this Python is the image's own (/usr/local), not Debian's → pip may
@@ -492,7 +492,7 @@ SAY: The main README's appendix has a sample Dockerfile, but its build argument 
 SHOW: The appendix card fades. Beside the file glyph, a GREY card: "Dockerfile = FROM
 python:3.12-slim-bookworm (README line 41) + the README's six code blocks, in order: lines 45 ·
 50–55 · 60–69 · 76–77 · 82–83 · 88–89". `▶ your turn` beside the file glyph. Fade out.
-SAY: Pause now and write it: a file named Dockerfile, with no extension. Type the FROM line, then copy the README's six code blocks below it, in order.
+SAY: Pause now and write it: a file named Dockerfile, with no extension. Type the FROM line, then copy the README's six code blocks below it, in order, with one blank line between blocks, so your line numbers match ours.
 
 ---
 
@@ -518,7 +518,7 @@ TERM(laptop/12-build.txt: 9, 23, …, 148–149, …, 1368, 1375, 1377). `▶ yo
 gets a TEAL badge "build step 2"; `237 newly installed` and `205 MB` (lines 148–149) underline
 ORANGE; `uv-0.13.0` (line 1375) PURPLE; `DONE 46.9s` underlines. A GREY note: "first build: Docker
 also pulls python:3.12-slim-bookworm".
-SAY: Pause and run it. Your terminal shows a compact live view; here are the full log's landmarks. Build step 2 is our big RUN: apt installs 237 packages, a 205 megabyte download, then pip installs uv, all in 46.9 seconds.
+SAY: Pause and run it. Your terminal shows a compact live view that folds each build step into one line when it's done. Here are the full log's landmarks; to see them yourself, add dash dash progress equals plain. Build step 2 is our big RUN: apt installs 237 packages, a 205 megabyte download, then pip installs uv, all in 46.9 seconds.
 
 SHOW: TERM(laptop/12-build.txt: 1379, 1382, 1385–1388, …, 1399, …, 1404–1405; wrap) (same header).
 `[3/5]`, `[4/5]`, `[5/5]` get TEAL badges in turn; line 1386 `Using CPython 3.12.15 interpreter at:
@@ -630,7 +630,7 @@ SAY: Last extra: ask cli.py for its help. Module not found, no module named goog
 SHOW: V3 returns: the window works (PINK route lit), the GREEN venv box is empty, and a RED "?"
 hovers between `cli.py` and a BLUE "google" chip. Caption: "Part 2: packages, and why they
 vanish". Everything fades to an empty frame (end of part 1).
-SAY: The container runs and sees your folder, but Python can't find Google. In part 2, we add the packages, and find out why they vanish.
+SAY: The container runs and sees your folder, but Python can't find Google. If you stop here, rerun the same docker run from the transcribe audio folder before part 2. In part 2, we add the packages, and find out why they vanish.
 
 ---
 
@@ -962,7 +962,7 @@ gemini-2.5-flash-lite on 2026-10-20 · then:" and the chip `docker run --rm -ti 
 GEMINI_MODEL=<current model> -v "$(pwd):/app" generate_text` (extra, shown, not typed). Between
 the panel and the strip, a BLUE cloud "Gemini · Vertex AI" with a GOLD tag "billed to the course
 project".
-SAY: Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026; after that, start the container with a current model in the Gemini model variable.
+SAY: Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026. After that, start the container with a current model in the Gemini model variable.
 
 SHOW: A caption card "with your key, look for" builds item by item: "your prompt, printed" (line
 74) · "Generated text:" (line 80) · "a long podcast script" (line 81) ·
@@ -1165,7 +1165,7 @@ SHOW: The fix, tag `extra` "recommended". The terminal grows back. It types `cat
 (extra) → TERM(laptop/23-g1-dockerignore.txt: 2), with a GREY note "create it in VS Code: a file
 named .dockerignore, one line secrets/ · in all five component folders". `▶ your turn`. In V6 a
 second sieve, `.dockerignore`, lowers over the box.
-SAY: The fix, which lecture 2 recommended, is an extra here: a file named dot dockerignore, with one line, secrets slash. All five images copied the key, so pause and add it in all five folders.
+SAY: The fix, which lecture 2 recommended, is an extra here: a file named dot dockerignore, with one line, secrets, slash. All five images copied the key, so pause and add it in all five folders.
 
 SHOW: It types `docker build -t transcribe_audio .` → TERM(laptop/24-g1-rebuild-dockerignore.txt:
 12–13, …, 30–31); `49B` (line 13) highlights GREEN, with a GREY tag "was 2B: now there's a file";

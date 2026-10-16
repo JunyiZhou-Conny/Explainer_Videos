@@ -20,7 +20,9 @@ Beats (script.md "## S14", one voiceover block each):
     run it": ▶ your turn. "In our stand-in": vm-debian12/01: 4-8 (+Done), lines 7-8 RED, row tag
     `stand-in · empty package lists` on line 7; "it fails": the RED rows pulse. "unable to locate
     package": a small GREY "Debian 13" card above the terminal shows vm-debian13/01: 7 (RED). "If yours
-    installed": GREY note "installed? / → skip to the version check" left of the card.
+    installed": GREY note "it asks [Y/n]? answer Y / → skip to step 4: Docker version" left of the
+    card (the tracker's step-4 caption, so the viewer knows how far to skip); "skip ahead": line 2
+    pulses.
  3  The card and note go; the terminal shrinks to the strip (the RED rows stay, with their tag).
     Above it: README card `README.md · line 210` (`sudo apt install docker.io`) with tag `erratum`;
     "skips sudo apt-get update": README card `README.md · line 44` ("Update OS packages: `sudo apt-get
@@ -71,7 +73,7 @@ from explainer.devops import MONO, OUTPUT, TERM_BG, browser_window, form_rows
 from explainer.scene import VoiceScene
 
 from common import (APT_DOCKER, APT_UPDATE, CLOUD, COST, DOCKER_VERSION, ERR, INK, LAPTOP_DIR,
-                    NARRATION, SECTION_C, SYSTEM, TOOL, TURN, VM12, VM13, VM_HOST, CostDial,
+                    NARRATION, SECTION_C, STEPS_C, SYSTEM, TOOL, TURN, VM12, VM13, VM_HOST, CostDial,
                     ask, attach, bare_prompt, beside, box, capture, check_mark, chip, cross_mark,
                     erratum_tag, illustration_tag, label, lock_glyph, mono, mono_line, pin,
                     plus_done, readme_card, resize, route, row_tag, substring, track, tracker_b,
@@ -406,7 +408,10 @@ class DockerOnVM(VoiceScene):
 
         # ========================================================== 2 · C3: apt install fails
         card2 = deb13_card([(D01, ERR)])
-        note2 = VGroup(label("installed?", 22, S.GREY), label("→ skip to the version check", 22, S.GREY))
+        # a working install first asks [Y/n] (beat 4), and "the version check" is where the tracker
+        # turns to step 4: say both, so the viewer knows what to answer and where to skip to
+        note2 = VGroup(label("it asks [Y/n]? answer Y", 22, S.GREY),
+                       label(f"→ skip to step 4: {STEPS_C[3]}", 22, S.GREY))
         note2.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         note2.move_to([NOTE_LEFT + note2.width / 2, card2.frame.get_y(), 0])
         assert note2.get_right()[0] < card2.frame.get_left()[0] - 0.2, "note runs into the card"

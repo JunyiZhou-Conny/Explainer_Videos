@@ -8,10 +8,10 @@ Beats (script.md "## S01", one voiceover block each):
 1. The chat box shrinks to the upper left (the LLM box moves to the upper right). A shelf of eleven
    GREEN spines slides in along the bottom; ten carry a GREY "Project Gutenberg" label, the
    eleventh (thin: a short story) glows YELLOW and opens into CODE(Tolminc Cheese.txt: 3–4),
-   line 4 underlined YELLOW. A GREY chip "11 books · input-datasets/books". The panel folds back into
-   its book; the LLM box gets a GREY calendar glyph and "trained before this story"; its gray answer
-   bars turn RED-edged. On the last sentence a large YELLOW "?" hangs in the gap between the
-   glowing book and the LLM box.
+   line 4 underlined YELLOW. A GREY chip "11 books · input-datasets/books". The LLM box gets a GREY
+   calendar glyph and "trained before this story"; the gray answer bars turn RED-edged. On the last
+   sentence the panel folds back into its book and a large YELLOW "?" hangs in the gap between the
+   glowing book and the LLM box (it stays, small, top left, until the map of beat 4).
 2. LECTURE A6–A7. The shelf slides away (the chat box and the LLM box go with it); the "?" shrinks
    to the top-left corner. Four chips write in a row as named: "stale training data", "no
    specialized knowledge", "hallucination", "no sources". A YELLOW bracket closes over the first
@@ -26,8 +26,9 @@ Beats (script.md "## S01", one voiceover block each):
    (our redrawing of the lecture's map of RAG techniques, no labels; tag "illustration · our
    redrawing"); it dims, and four YELLOW questions write in over it, each with a short arrow into
    the blur: "What is an embedding?", "a vector database?", "a query?", "the context?".
-5. Layout preview in three steps, each clearing the last: the ReadmeTracker ("README › Run
-   Container", 3 dots) in a pulsing YELLOW ring; the GREY tag "Lecture 5 · slides A16–A19" with the
+5. A GREY file row `llm-rag/README.md` "beside this video" turns into the ReadmeTracker. Layout
+   preview in three steps, each clearing the last: the tracker ("README › Run Container", 3 dots)
+   in a pulsing YELLOW ring; the GREY tag "Lecture 5 · slides A16–A19" with the
    caption "A = main deck · B = supplement"; a 3-row terminal strip (GREY tag "preview"):
    `sh docker-shell.sh` + ▶ your turn, then `docker ps` + extra. Then the caption "every command:
    MLOps_Learning · guides/L05-rag.md".

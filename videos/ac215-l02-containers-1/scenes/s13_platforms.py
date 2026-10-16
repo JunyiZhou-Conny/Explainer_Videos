@@ -36,7 +36,7 @@ Beats (script.md "## S13", one voiceover block each):
     "attestation · how it was built"; "a record of how": a GREY dashed overlay right of the first row
     "built on a Mac: linux/arm64" and a GREY note under the menu "containerd image store · the older
     store pushes one image, no menu". Neither note is narrated: the picture holds 3 s after the
-    narration so they can be read.
+    narration so they can be read (the dashed row and its `linux/arm64` pulse once at its start).
  5  The strip and the menu go. Top band: "You built on an M-series Mac": the GREY arm64 chip over a
     laptop builds an image card `linux/arm64` (arm64 glyphs); "and pushed": a PINK route carries it to a
     BLUE shelf "Docker Hub"; "Your VM is an ordinary": a BLUE VM with an `amd64 · default VM` chip and
@@ -71,7 +71,7 @@ Beats (script.md "## S13", one voiceover block each):
     (linux/amd64 BLUE, linux/arm64 GREY). The
     narration is ~7 s, so CODE(docker-build-push.sh: 21–27) (line 27 cut after `--push`: 109 characters)
     comes in at "multi-platform builder", lines 23 and 27 YELLOW; tag `erratum · would push both · the
-    published image has only amd64`, held 3 s after the narration.
+    published dlops image has only amd64`, held 3 s after the narration.
  9  The picture goes; the panel becomes CODE(docker-build-push.sh: 7–11): line 11 (`"dlops"` boxed)
     and line 7 (`"simple-translate"` boxed) YELLOW as said, YELLOW caption "your username (11) ·
     simple-translate-ac215 (7)". A list of GREEN chips (no room for one row at >= 20 pt): `docker
@@ -212,7 +212,7 @@ def mini_image(kind: str, n: int = 4, glyph_h: float = 0.18) -> VGroup:
 def emulation_box(box_w: float, box_h: float, text: str = "emulation", inside: bool = False) -> VGroup:
     """The GREY emulation box (opaque: an image passing through it is hidden while it changes).
     .frame .text (above the box, or inside it with inside=True)"""
-    f = box(box_w, box_h, LAPTOP, fill=S.GREY_DARKER, fill_opacity=0.96)
+    f = box(box_w, box_h, LAPTOP, fill=S.GREY_DARKER, fill_opacity=1.0)   # 0.96 let the changing image show through
     t = label(text, 20, LAPTOP)
     if inside:
         t.move_to(f)
@@ -503,7 +503,11 @@ class Platforms(VoiceScene):
             vo.wait_until("a record of how")
             self.play(Create(mac4_b), FadeIn(mac4_t, shift=LEFT * 0.1), run_time=0.6)
             self.play(FadeIn(cd4, shift=UP * 0.1), run_time=0.5)
-        self.wait(3.0)                    # neither note is narrated: time to read them before the picture goes
+        # neither note is narrated: time to read them before the picture goes. The dashed row and the arm64 it
+        # would read pulse once (the eye pairs them, and nothing sits still for more than ~3 s)
+        self.play(Indicate(mac4_b, color=INK, scale_factor=1.04), Indicate(mac4_t[1], color=INK, scale_factor=1.12),
+                  run_time=0.6)
+        self.wait(2.4)
 
         # ========================================================== 5 · built on a Mac, pushed, pulled on a VM
         # top band (the ponder card takes the bottom half): Mac | Docker Hub | VM. Pushing and pulling copy
@@ -528,7 +532,9 @@ class Platforms(VoiceScene):
         img_hub, img_vm = img5.copy(), img5.copy()
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(t2), FadeOut(sit), FadeOut(VGroup(menu4, att4, mac4_t, mac4_b, cd4)), run_time=0.5)
+            # one wrapper for the terminal and its tag: t2 was split out of the scene's list (resize, attach), so a
+            # FadeOut(t2) of its own re-adds it on top of the tag and hides the tag's lower line while it fades
+            self.play(FadeOut(VGroup(t2, sit)), FadeOut(VGroup(menu4, att4, mac4_t, mac4_b, cd4)), run_time=0.5)
             self.remove(*t2.get_family())
             vo.wait_until("You built on an M-series Mac")
             self.play(FadeIn(VGroup(chip5a, lap5), shift=UP * 0.15), run_time=0.5)
@@ -590,7 +596,8 @@ class Platforms(VoiceScene):
             attach(self, err_row, u6)
             vo.wait_until("Docker Desktop would just run it")
             self.play(FadeIn(de6, shift=DOWN * 0.1), run_time=0.4)
-            self.play(Indicate(de6.text, color=INK, scale_factor=1.06), run_time=0.6)   # not the filled box
+            # the text only, colour only: the filled box would turn white, and a larger text overruns the pill
+            self.play(Indicate(de6.text, color=INK, scale_factor=1.0), run_time=0.6)
             vo.wait_until("A Mac-built image on a default VM")
             resize(self, t6, STRIP_ROWS, keep=[*c6.rows, err_row], run_time=0.6,
                    extra=[VGroup(tg6, de6).animate.shift(DOWN * (5 - STRIP_ROWS) * t6.pitch)])
@@ -675,7 +682,8 @@ class Platforms(VoiceScene):
             for r in img7.codes:                         # inside the (opaque) box: arm64 -> amd64
                 r.become(glyph_row("amd64", len(r), 0.17).move_to(r))
             img7.head.become(steady("linux/amd64", 20, AMD, mono_font=True).move_to(img7.head, aligned_edge=LEFT))
-            self.play(Indicate(emu7.frame, color=INK, scale_factor=1.04), run_time=0.4)
+            # the text only: an Indicate on the opaque frame turns it light grey and shows the image behind it
+            self.play(Indicate(emu7.text, color=INK, scale_factor=1.15), run_time=0.4)
             self.play(img7.animate.move_to(end7), run_time=0.7)
             vo.wait_until("slower, but it works")
             self.play(FadeIn(slow7, shift=DOWN * 0.1), Create(ok7), run_time=0.5)
@@ -728,9 +736,11 @@ class Platforms(VoiceScene):
         p8.move_to([0, -3.45 + p8.height / 2, 0])
         bar23 = line_bar(p8.code, 2, TURN, 0.2)
         bar27 = line_bar(p8.code, 6, TURN, 0.2)
-        err8 = VGroup(erratum_tag(), label("would push both · the published image has only amd64", 20, LAPTOP))
+        # "dlops": the menu above is the viewer's image, so "the published image" alone would read as that one
+        err8 = VGroup(erratum_tag(), label("would push both · the published dlops image has only amd64", 20, LAPTOP))
         err8.arrange(RIGHT, buff=0.2)
         err8.move_to([6.4 - err8.width / 2, (hub8.get_bottom()[1] + p8.get_top()[1]) / 2, 0])
+        assert err8.get_left()[0] > chip8.get_right()[0] + 0.3, "the erratum runs into the arm64 chip"
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(p7, bar12, co7, u12)), FadeOut(VGroup(fx, u_flag, nr, fix1)), FadeOut(pic7), run_time=0.4)
@@ -744,7 +754,7 @@ class Platforms(VoiceScene):
             self.play(FadeIn(bar23), Indicate(code_span(p8.code, 2, "--name multi-arch"), color=TURN, scale_factor=1.06),
                       run_time=0.5)
             vo.wait_until("to build both")
-            self.play(GrowFromCenter(mi_arm), GrowFromCenter(mi_amd), Indicate(emu8.frame, color=INK, scale_factor=1.06),
+            self.play(GrowFromCenter(mi_arm), GrowFromCenter(mi_amd), Indicate(emu8.text, color=INK, scale_factor=1.1),
                       FadeIn(bar27), run_time=0.6)
             vo.wait_until("and push one menu")
             self.play(FadeIn(VGroup(menu8.frame, menu8.sep, menu8.title)), Create(board8), FadeIn(hub8),

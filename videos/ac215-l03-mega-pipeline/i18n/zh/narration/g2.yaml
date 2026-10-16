@@ -147,11 +147,11 @@ S10:
   - "如果报 No such file，后面是 ffmpeg，就把 ffmpeg 加到第 3 行，然后退出、重新构建。"
   en_display:
   - "Type python cli.py --transcribe, or -t."
-  - null
+  - "Look for Transcribing and a file name, ffmpeg's log, the response, and the transcript."
   - null
 - en: "Then open the new text file under text prompts, group-01, on your laptop. If it says None, Speech-to-Text returned nothing: delete it and transcribe again, because finished files are skipped."
   zh:
-  - "然后在你的笔记本上，打开 text prompts 下 group-01 里那个新的文本文件。"
+  - "然后打开 text prompts 下 group-01 里那个新的文本文件，就在你的笔记本上。"
   - "如果里面是 None，说明 Speech-to-Text 什么也没返回：删掉它，重新转写，因为转写过的文件会被跳过。"
 - en: "Step 12: python cli.py dash dash upload, or dash u. It uploads only files starting with input, under the same name in the bucket: look for uploading, then text prompts, your group, and the file."
   zh:
@@ -159,23 +159,23 @@ S10:
   - "它只上传 input 开头的文件，在 bucket 里也用同样的名字：要找的是 Uploading，后面是 text prompts、你们组和文件名。"
   en_display:
   - "Step 12: python cli.py --upload, or -u."
-  - null
+  - "It uploads only files starting with input, under the same name in the bucket: look for Uploading, then text prompts, your group, and the file."
 - en: "Your transcript drops into your group's drawer, and the transcribe cell lights up on the leaderboard, which is how the README says to check. Pause and run all three steps, with your key."
   zh:
   - "你的转写文本会落进你们组的抽屉，排行榜上转写那一格也会亮起来，README 里说的检查方法就是这个。"
   - "暂停一下，用你的密钥把三步都跑一遍。"
 - en: "An extra tip: the flags combine, so dash d, dash t, dash u runs all three, in order. Each call is billed to the course project."
   zh:
-  - "额外提示一句：这些参数可以合在一起用，-d、-t、-u 会按顺序把三步都跑完。"
+  - "额外提示一句：这些参数可以合在一起用，-d -t -u 会按顺序把三步都跑完。"
   - "每次调用都记在课程项目的账上。"
   en_display:
-  - "An extra tip: the flags combine, so -d, -t, -u runs all three, in order."
+  - "An extra tip: the flags combine, so -d -t -u runs all three, in order."
   - null
 S11:
 - en: "Step 13: exit, and rebuild. Type exit, and the container is removed with its throwaway layer, and the 26 packages go with it."
   zh:
   - "第 13 步：退出，然后重新构建。"
-  - "输入 exit，container 连同那层用完就扔的可写层一起被删掉，26 个包也跟着没了。"
+  - "输入 exit，container 就被删掉，连同用完就扔的可写层；26 个包也跟着没了。"
 - en: "Back on the laptop, an extra check: the pyproject.toml with three dependencies, the lock file, and the two new folders all survived, because they were in the window."
   zh:
   - "回到笔记本上，做一个额外检查：带三个依赖的 pyproject.toml、lock 文件，还有那两个新目录，全都留了下来，因为它们在这扇窗里。"
@@ -217,7 +217,7 @@ S11:
 S12:
 - en: "Component B, generate text, follows the same recipe; we'll go faster. Steps 1 and 2: cd into its folder, and copy the key into its secrets folder."
   zh:
-  - "组件 B，也就是 generate text，走的是同一套流程；我们会快一点。"
+  - "组件 B，也就是 generate text，流程一样；我们会快一点。"
   - "第 1 和第 2 步：cd 进它的目录，再把密钥复制到它的 secrets 目录里。"
 - en: "An extra look: this folder already has its own pyproject.toml, listing both packages and requiring Python 3.14 or newer. Leave that until step 13."
   zh:
@@ -259,15 +259,19 @@ S12:
   zh:
   - "第 8 和第 9 步：设置组名，这里是第 19 行，再检查一下帮助，和 README 一致。"
   - "暂停一下，跟上进度。"
-- en: "Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026; after that, start the container with a current model in the Gemini model variable."
+- en: "Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026. After that, start the container with a current model in the Gemini model variable."
   zh:
   - "第 10 到 12 步：下载、生成、上传。"
   - "生成这一步把每份转写文本发给 Gemini 2.5 Flash Lite，它跑在 Vertex AI 上。"
-  - "Google 会在 2026 年 10 月 20 日下线这个模型；之后启动 container 时，要在 Gemini 模型变量里填一个现行的模型。"
+  - "Google 在 2026 年 10 月 20 日下线该模型。"
+  - "之后启动 container 时，要在 Gemini 模型变量里填一个现行的模型。"
 - en: "Look for your prompt, generated text and a long podcast script, then the upload. Pause and run all three."
   zh:
   - "要找的是你的 prompt、Generated text 和一份很长的播客稿，然后是上传。"
   - "暂停一下，三步都跑一遍。"
+  en_display:
+  - "Look for your prompt, Generated text and a long podcast script, then the upload."
+  - null
 - en: "Step 13, exit and rebuild, brings the fix: lower the minimum Python version to 3.12. Git status lists the Dockerfile too: this folder has no dot gitignore."
   zh:
   - "第 13 步是退出并重新构建，修复也在这一步：把最低 Python 版本降到 3.12。"
@@ -296,7 +300,7 @@ S13:
   - "一个小疏漏，这里和 E 都有：README 的正文说要保留 ffmpeg，但它的代码块里没有 ffmpeg，这才是对的。"
 - en: "Build it: build step 2 is cached and the build takes 0.6 seconds: C's Dockerfile matches B's up to there, so Docker reuses B's big layer."
   zh:
-  - "构建它：构建步骤 2 用了缓存，只花了 0.6 秒；C 的 Dockerfile 到这里为止和 B 的一样，所以 Docker 直接复用了 B 的那个大层。"
+  - "构建它：构建步骤 2 用了缓存，整个构建只花了 0.6 秒；C 的 Dockerfile 到这里为止和 B 的一样，所以 Docker 直接复用了 B 的那个大层。"
 - en: "Run it, and add storage and text to speech: 24 packages."
   zh:
   - "运行它，加上 storage 和 text to speech：一共 24 个包。"
@@ -332,8 +336,12 @@ S13:
 - en: "E, synthesis audio, is C again, group name on line 18 too. One harmless slip: its help text says transcribe audio file to text, pasted from A's code. Pause and catch up."
   zh:
   - "至于 E，也就是 synthesis audio，就是再来一遍 C，组名也在第 18 行。"
-  - "一个无害的小疏漏：它的帮助文本写着 Transcribe audio file to text，是从 A 的代码粘过来的。"
+  - "一个无害的小疏漏：它的帮助文本写着：Transcribe audio file to text，是从 A 的代码粘过来的。"
   - "暂停一下，跟上进度。"
+  en_display:
+  - null
+  - "One harmless slip: its help text says Transcribe audio file to text, pasted from A's code."
+  - null
 - en: "Pause, and run download and synthesis with your key."
   zh:
   - "暂停一下，用你的密钥跑下载和合成。"
@@ -380,7 +388,7 @@ S14:
   - "Docker doesn't read .gitignore."
   - null
   - null
-- en: "The fix, which lecture 2 recommended, is an extra here: a file named dot dockerignore, with one line, secrets slash. All five images copied the key, so pause and add it in all five folders."
+- en: "The fix, which lecture 2 recommended, is an extra here: a file named dot dockerignore, with one line, secrets, slash. All five images copied the key, so pause and add it in all five folders."
   zh:
   - "解决办法第 2 讲也推荐过，在这里算额外步骤：一个叫 .dockerignore 的文件，只有一行：secrets/。"
   - "五个 image 都复制了密钥，所以暂停一下，在五个目录里都加上它。"
@@ -391,6 +399,9 @@ S14:
   zh:
   - "重新构建，再列一次：报 cannot access，No such file or directory。"
   - "密钥没有进 image。"
+  en_display:
+  - "Rebuild, and list again: cannot access, No such file or directory."
+  - null
 - en: "And the run still works, because the mount brings your secrets folder in when the container starts."
   zh:
   - "而运行照样没问题，因为 container 启动时，挂载会让你的 secrets 目录出现在里面。"
@@ -410,7 +421,7 @@ S14:
   - null
 - en: "Where the course is heading: last year's solution kept the secrets folder outside the repo and mounted it at slash secrets at run time. No key ever enters the image."
   zh:
-  - "课程接下来的方向：去年的参考答案把 secrets 目录放在 repo 外面，运行时挂载到 /secrets。"
+  - "课程接下来的方向：去年的参考答案把 secrets 目录放在 repo 外面，运行时再把它挂载到 /secrets。"
   - "密钥从来不会进入 image。"
   en_display:
   - "Where the course is heading: last year's solution kept the secrets folder outside the repo and mounted it at /secrets at run time."
@@ -449,7 +460,7 @@ S15:
   zh:
   - "第三题：在用完就扔的 container 里 uv add 之后，什么会留下来，又是什么让它永久保留？"
   - "第四题：哪个变量指向密钥，为什么只有在 /app 里才管用？"
-  - "第五题：一个被 Git 忽略的密钥怎么会进到 image 里，又该怎么修？"
+  - "第五题：被 Git 忽略的密钥怎么会进 image，怎么修？"
   en_display:
   - null
   - "Four: which variable points to the key, and why only from /app?"

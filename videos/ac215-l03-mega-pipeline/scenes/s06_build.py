@@ -560,7 +560,7 @@ class BuildImage(VoiceScene):
             resize(self, t, BIG, run_time=0.8, extra=[FadeIn(live, shift=DOWN * 0.1)])
             new_title = mono("laptop · the same build, full log", 20, S.GREY).move_to(t.title)
             self.play(Transform(t.title, new_title), run_time=0.45)
-            at(self, vo, "here are the full")
+            at(self, vo, "Here are the full")
             outA = t.print(self, LOG_A, run_time=1.4, lag=0.12)
             r23, dots1, r148, r149, r1375, r1377 = outA[1], outA[2], outA[3], outA[4], outA[7], outA[8]
 

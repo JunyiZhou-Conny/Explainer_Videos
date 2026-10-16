@@ -472,10 +472,10 @@ class CloneRepo(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(listing_mobs), run_time=0.5)
             resize(self, t, 12, run_time=0.8)
-            vo.wait_until("The tracker switches")
+            vo.wait_until("the tracker switches")
             tr = switch_section(self, tr, "A", 1)
             self.play(Indicate(tr.head[-1], color=TURN, scale_factor=1.1), run_time=0.8)
-            vo.wait_until("whose step 1")
+            vo.wait_until("and its step 1")
             self.play(Indicate(VGroup(tr.dots[0], tr.caption), color=TURN, scale_factor=1.15),
                       run_time=0.6)
             c4 = type_cmd(self, t, CD_A, 0.9)

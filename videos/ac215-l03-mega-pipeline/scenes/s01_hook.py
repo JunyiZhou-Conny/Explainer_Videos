@@ -363,7 +363,7 @@ class Hook(VoiceScene):
             vo.wait_until("in the study guide")
             # colour pulses only: scaling a 7-unit path pushes it into the " · " beside it
             self.play(Indicate(guide_path, color=TURN, scale_factor=1.0), run_time=0.8)
-            vo.wait_until("in the MLOps Learning repo")
+            vo.wait_until("linked in the description")
             self.play(Indicate(repo_name, color=TURN, scale_factor=1.04), run_time=0.8)
 
         # ========================================================== 4. the honest limit

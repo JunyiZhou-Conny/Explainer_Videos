@@ -79,9 +79,9 @@ from manim import (
     GrowFromPoint,
     LaggedStart,
     Line,
-    Rectangle,
     RoundedRectangle,
     Rotate,
+    ShowPassingFlash,
     Text,
     Transform,
     VGroup,
@@ -219,8 +219,9 @@ class TwoLanes(VoiceScene):
         em_l, em_r = em.get_left()[0], em.get_right()[0]
         db = m.parts["database"]
         straight = arrow(m.parts["a_question"].get_start(), [db.get_left()[0] - 0.08, YB, 0], LOOKUP)
-        hl = Rectangle(width=em.width - 0.1, height=1.45, stroke_width=0).set_fill(LOOKUP, 0.35)
-        hl.move_to([em.get_x(), YB, 0])
+        hl = RoundedRectangle(width=em.width - 0.12, height=em.height / 2 - 0.1, corner_radius=0.1,
+                              stroke_width=0).set_fill(LOOKUP, 0.35)
+        hl.move_to(em.get_bottom() + UP * em.height / 4)          # the box's lower half
         flash = Line([em_l, YB, 0], [em_r, YB, 0], color=LOOKUP, stroke_width=8)
         nums = card([sans("the database gets", 20, INK), sans("numbers, not words", 20, LOOKUP)], LOOKUP)
         nums.move_to([X["database"] + 0.25, -2.45, 0])
@@ -251,16 +252,15 @@ class TwoLanes(VoiceScene):
             self.play(*m.parts_in("a_vectors", anim=GrowArrow), run_time=0.5)
             self.play(pulse(db, DATA, 1.05), run_time=0.6)
             vo.wait_until("Below, the question")
-            self.play(GrowArrow(straight), *m.parts_in("lab_question"), run_time=0.8)
-            vo.wait_until("the question goes through")
+            self.play(GrowArrow(straight), *m.parts_in("lab_question"), run_time=0.6)
+            self.wait(0.45)                         # the A12 arrow, straight at the cylinder
             full_em = shown_copy(em)
             q_short = shown_copy(m.parts["a_question"])
-            self.play(Transform(half, full_em), Transform(straight, q_short), run_time=0.9)
+            self.play(Transform(half, full_em), Transform(straight, q_short), run_time=0.8)
             self.remove(half, straight)
             m.parts_in("embedding", "a_question")
             self.play(FadeIn(hl), run_time=0.3)
-            self.play(Create(flash), FadeOut(hl), run_time=0.6)
-            self.remove(flash)
+            self.play(ShowPassingFlash(flash, time_width=0.6), FadeOut(hl), run_time=0.6)
             vo.wait_until("and only its vector")
             self.play(*m.parts_in("a_query", anim=GrowArrow), run_time=0.4)
             self.play(*m.parts_in("query", anim=lambda q: GrowFromPoint(q, np.array([em_r, YB, 0]))),
@@ -319,22 +319,22 @@ class TwoLanes(VoiceScene):
         rule.move_to([-1.75, 2.62, 0])
         # the "what if" inset, right of the top lane's end: another model puts the question where
         # no chunk is
-        wf = box(3.6, 2.45, ERR, dashed=True, stroke=3).move_to([4.75, 1.72, 0])
+        wf = box(3.45, 2.45, ERR, dashed=True, stroke=3).move_to([4.825, 1.72, 0])
         wt = tag("what if", ERR).move_to(wf.get_corner(UP + LEFT) + RIGHT * 0.75)
         wi = illustration_tag().move_to(wf.get_corner(DOWN + LEFT) + RIGHT * 1.0)
-        other = model_box("another\nmodel", 1.0, 0.7).move_to([3.78, 1.72, 0])
-        ring_ = Circle(radius=0.68)
+        other = model_box("another\nmodel", 1.0, 0.7).move_to([3.86, 1.72, 0])
+        ring_ = Circle(radius=0.74)
         space = DashedVMobject(ring_, num_dashes=30, dashed_ratio=0.5).set_stroke(S.GREY, 2)
-        space.move_to([5.65, 1.72, 0])
+        space.move_to([5.72, 1.72, 0])
         o = space.get_center()
         feed = arrow(other.get_right() + RIGHT * 0.06, space.get_left() + LEFT * 0.06, LOOKUP)
-        chunks = vec_glyph(3, DATA, 0.52, spread=34, base=128, stroke=3.5)
+        chunks = vec_glyph(3, DATA, 0.6, spread=34, base=128, stroke=4)
         chunks.shift(o - chunks[1].get_start())
-        c_lab = sans("chunks", 20, DATA).move_to(o + np.array([-0.62, 0.86, 0]))
+        c_lab = sans("chunks", 20, DATA).move_to(o + np.array([-0.66, 0.98, 0]))
         d = np.array([np.cos(np.radians(-38)), np.sin(np.radians(-38)), 0])
-        q_off = arrow(o, o + 0.52 * d, LOOKUP, stroke=3.5, tip=0.14)
-        x_off = cross_mark(0.2, ERR).move_to(o + 0.75 * d)
-        q_lab = sans("question", 20, LOOKUP).move_to(o + np.array([0.35, -0.95, 0]))
+        q_off = arrow(o, o + 0.6 * d, LOOKUP, stroke=4, tip=0.16)
+        x_off = cross_mark(0.22, ERR).move_to(o + 0.84 * d)
+        q_lab = sans("question", 20, LOOKUP).move_to(o + np.array([0.08, -0.98, 0]))
         o_dot = Dot(o, radius=0.04, color=S.GREY)
         inset = VGroup(wf, wt, wi, other, feed, space, o_dot, chunks, c_lab, q_off, q_lab, x_off)
 
@@ -383,15 +383,16 @@ class TwoLanes(VoiceScene):
         cf = m.parts["loc_cli"].copy()
         big = box(7.0, 3.7, CTR, dashed=True, stroke=3).move_to([0, -0.2, 0])
         big_t = tag("CLI container", CTR).move_to(big.get_top())
-        lines = VGroup(*[VGroup(mono("python cli.py", 24, S.GREY), mono(f + " …", 24, INK)).arrange(RIGHT, buff=0.18)
+        lines = VGroup(*[mono(f"python cli.py {f} …", 24, S.GREY, t2c={f"{f} …": INK})
                          for f in FLAGS]).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
         lines.move_to(big).shift(DOWN * 0.1)
 
         with self.voiceover(SAY[6]) as vo:
             self.add(cf)
             self.play(FadeOut(m), FadeOut(VGroup(no_net, pay, no_vm)), run_time=0.6)
-            self.play(Transform(cf, VGroup(big, big_t)), run_time=1.0)
+            self.play(Transform(cf, VGroup(big, big_t)), run_time=0.9)
+            self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.15) for r in lines], lag_ratio=0.35), run_time=1.5)
             vo.wait_until("inside that first container")
-            self.play(LaggedStart(*[FadeIn(r, shift=RIGHT * 0.15) for r in lines], lag_ratio=0.35), run_time=1.6)
+            self.play(cf[0].animate(rate_func=there_and_back).set_stroke(TURN, 5), run_time=0.9)
             vo.wait_until("let's get it running")
             self.play(FadeOut(cf), FadeOut(lines), run_time=0.8)

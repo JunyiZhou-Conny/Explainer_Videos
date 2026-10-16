@@ -40,15 +40,17 @@ Beats (script.md "## S09", one voiceover block each):
  5  GREY tag erratum. README card README.md · line 203 (the canonical way … impossible, underlined)
     and GREY "for Git: yes ✓ · for images: no ✗". Fix card (rows write in as said): delete the
     secrets/ folder inside each component · add a .dockerignore listing secrets/ (lecture 3) · RED
-    "a key was ever pushed? delete that key in IAM"; ▶ your turn on the card.
+    "a key was ever pushed? delete that key in IAM"; ▶ your turn on the card's header row, right.
  6  TRACKER R/4 · extra. Clean-up card for part 1, top right (rows write in as said). 7-row terminal
     (laptop, ~/AC215/mega-pipeline): `docker images` (extra) -> mega-laptop/70 lines 2-7, column
-    view (IMAGE and DISK USAGE): 1.48GB boxed YELLOW, the four ~830MB underlined.
- 7  The terminal goes; the card moves left and grows: three GOLD rows (bucket, key + a tiny
-    illustration of the console's key list whose RED trash can flashes, a pushed Docker Hub repo on
-    two lines); the card is centred under the tracker. Closing card "Part 2: containers that talk to
-    each other directly" with two small TEAL boxes and a PINK arrow between them. Everything fades:
-    an empty frame (end of part 1).
+    view (IMAGE and DISK USAGE) with S16's GREY tag "2 of 5 columns" in the header row's gap (its
+    end has no room): the transcribe row flashes, then 1.48GB is boxed YELLOW, the four ~830MB
+    underlined.
+ 7  The terminal goes as the card moves down and grows: three GOLD rows (bucket in two cues, key +
+    a tiny illustration of the console's key list beside that row, whose RED trash can flashes at
+    "in the console", a pushed Docker Hub repo on two lines); card and console are centred
+    together. Closing card "Part 2: containers that talk to each other directly" with two small
+    TEAL boxes and a PINK arrow between them. Everything fades: an empty frame (end of part 1).
 
 Deviations from SHOW (and why):
 - Beats 0-1: V4 is the compact switchboard of S08 (mode word + what it does, half size) in the band
@@ -69,7 +71,11 @@ Deviations from SHOW (and why):
   above it (under it the .gitignore header needs the room).
 - Beat 6: the terminal has 7 rows (the column view is 7 rows), so the clean-up card fits above it
   in the band's right half (never beside the terminal); the card's header is its first row.
-- Beat 7: the third GOLD row is two lines (one would be 10.8 units at 22 pt).
+- Beat 7: the third GOLD row is two lines (one would be 10.8 units at 22 pt); its "·" becomes the
+  line break.
+- Timing: a few in-sentence anchors are shifted by hand with at() (PLAYBOOK §2.6), from a Kokoro
+  synthesis of each sentence up to the phrase: beat 1's clauses after "amd64 and arm64" come
+  0.35-0.8 s later than the character count says; elsewhere 0.3-0.6 s earlier.
 """
 
 from common import *
@@ -162,6 +168,31 @@ P_L3A = p_l03("transcribe_audio")
 
 def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
+
+
+def at(scene, vo, phrase: str, dt: float = 0.0):
+    """vo.wait_until(phrase), shifted by dt seconds. Inside a sentence an anchor is interpolated
+    by character count; dt is a hand-set correction (PLAYBOOK §2.6) where a Kokoro synthesis of the
+    sentence up to the phrase put it measurably earlier (dt < 0) or later ("amd64" is long)."""
+    t = vo.clip.time_of(phrase)
+    if t is None:
+        vo.wait_until(phrase)                 # logs "voiceover anchor not found"
+        return
+    left = t + dt - vo.elapsed
+    if left > 0.07:                           # (shorter waits round up to a frame anyway)
+        scene.wait(left)
+
+
+def stack(rows, pitch: float, head_gap: float = 0.0):
+    """Arrange one-line mixed() rows top-down, left-aligned, on equal baselines (bounding boxes
+    differ between serif-only and mono rows, so arrange() spaces them unevenly)."""
+    def base(r):
+        return r[0].get_center()[1] + r[0].ref_dy
+    x0, y0 = rows[0].get_left()[0], base(rows[0])
+    for k, r in enumerate(rows):
+        y = y0 - k * pitch - (head_gap if k else 0.0)
+        r.shift(np.array([x0 - r.get_left()[0], y - base(r), 0]))
+    return rows
 
 
 def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None, ref=None):
@@ -473,14 +504,14 @@ class ProdAndCleanup(VoiceScene):
             vo.wait_until("a builder named multi-arch")
             self.play(bars_rm.animate.set_opacity(0.0), FadeIn(bar_cr), run_time=0.5)
             self.play(flash(p0.span(62, "docker buildx create"), TURN, 1.06), run_time=0.6)
-            vo.wait_until("a build engine")
+            at(self, vo, "a build engine", -0.3)
             self.play(FadeIn(cap_b, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("Dash dash use")
             self.play(use.animate.set_color(TOOL), Create(ring(use, TOOL, buff=0.05)), run_time=0.5)
             self.play(Create(link_use), FadeIn(tg_use, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("and the script never switches back")
             self.play(FadeIn(cap_ls, shift=RIGHT * 0.1), run_time=0.5)
-            vo.wait_until("docker buildx use default")
+            at(self, vo, "docker buildx use default", -0.45)
             self.play(FadeIn(fix_use, scale=0.9), FadeIn(fix_note, shift=RIGHT * 0.1), run_time=0.6)
 
         # ========================================================== 1 · one build, two architectures, one tag
@@ -496,19 +527,21 @@ class ProdAndCleanup(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             stage_out(self, tr, run_time=0.5)
             self.play(FadeIn(p1, shift=UP * 0.15), run_time=0.5)
-            vo.wait_until("makes amd64 and arm64")
+            # one 13 s sentence: "amd64" / "arm64" are long when spoken, so the clauses after
+            # them come later than the character count says (shifts measured on Kokoro)
+            at(self, vo, "makes amd64 and arm64", -0.35)
             self.play(plat.animate.set_color(TOOL), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(b, scale=0.8) for b in pic.boxes.values()], lag_ratio=0.3),
                       run_time=0.8)
-            vo.wait_until("and pushes both")
+            at(self, vo, "and pushes both", 0.8)
             self.play(push.animate.set_color(HUB), FadeIn(pic.hub), FadeIn(pic.hub_tag), run_time=0.5)
-            self.play(*[b.animate.restore() for b in pic.boxes.values()], run_time=0.6)
-            vo.wait_until("under one tag")
+            self.play(*[b.animate.restore() for b in pic.boxes.values()], run_time=0.5)
+            at(self, vo, "under one tag", 0.45)
             self.play(FadeIn(pic.post, shift=DOWN * 0.1), run_time=0.4)
             self.play(LaggedStart(*[GrowArrow(a) for a in pic.arrows], lag_ratio=0.3), run_time=0.7)
-            vo.wait_until("as in lecture 2")
+            at(self, vo, "as in lecture 2", 0.35)
             self.play(FadeIn(pic.l2, shift=UP * 0.1), run_time=0.4)
-            vo.wait_until("an Apple-silicon Mac")
+            at(self, vo, "an Apple-silicon Mac", 0.45)
             self.play(FadeIn(pic.mac), FadeIn(pic.mac_l), run_time=0.4)
             self.play(GrowArrow(pic.pull_mac), flash(pic.boxes["arm64"].label, TURN, 1.2), run_time=0.7)
             vo.wait_until("a cloud VM the other")
@@ -566,17 +599,20 @@ class ProdAndCleanup(VoiceScene):
         skip = note("if you skipped the deletion in Get the Code")
         with self.voiceover(SAY[3]) as vo:
             out2, done2 = wipe(t)
-            stage_out(self, tr, t, run_time=0.5, extra=[out2])
+            r_tr = tracker("R", 2)            # switch_section's lift/drop, in the same play
+            r_tr.caption.become(caption_extra(r_tr, True).target_mobject)
+            stage_out(self, tr, t, run_time=0.5,
+                      extra=[out2, FadeOut(tr, shift=UP * 0.25), FadeIn(r_tr, shift=DOWN * 0.25),
+                             retitle(t, "laptop · lecture 3 clone")])
             done2()
-            tr = switch_section(self, tr, "R", 2, run_time=0.5)
-            self.play(caption_extra(tr, True), retitle(t, "laptop · lecture 3 clone"), run_time=0.4)
+            tr = r_tr
             t.set_prompt(P_L3A)
-            resize(self, t, 12, run_time=0.6)
+            resize(self, t, 12, run_time=0.5)
             bare_prompt(self, t)
             vo.wait_until("In the switched lecture 3 clone")
             place(skip, left=-6.3, top=tr.get_bottom()[1] - 0.12)
             self.play(FadeIn(mini, shift=LEFT * 0.15), FadeIn(skip, shift=DOWN * 0.1), run_time=0.7)
-            vo.wait_until("the old key still sits")
+            at(self, vo, "the old key still sits", -0.3)
             self.play(Create(ring(mini.key, TURN, buff=0.06)), flash(mini.key, TURN, 1.4), run_time=0.8)
             vo.wait_until("Build there with dev")
             type_tagged(self, t, C12.cmd, "extra", type_time=0.5)
@@ -589,7 +625,7 @@ class ProdAndCleanup(VoiceScene):
             vo.wait_until("and an extra command lists")
             run_ln = type_tagged(self, t, C13.cmd, "extra", type_time=1.2)
             ls = t.print(self, LS_ROWS, run_time=0.6)
-            vo.wait_until("the key is inside")
+            at(self, vo, "the key is inside", -0.4)
             kname = substring(ls[5], "mega-pipeline.json")
             st = standin_tag()
             place(st, cx=kname.get_center()[0], cy=ls[4].strut.get_center()[1])
@@ -622,7 +658,7 @@ class ProdAndCleanup(VoiceScene):
         git_try = DashedLine(g_from, g_to, color=S.GREY, stroke_width=3, dash_length=0.12)
         git_try.add_tip(tip_length=0.18, tip_width=0.18)
         dock = dashed_chip([("mono", ".dockerignore", S.GREY), ": none, on every branch"])
-        place(dock, left=-1.75, top=slab.get_bottom()[1] - 0.15)
+        place(dock, left=-1.5, top=slab.get_bottom()[1] - 0.15)     # clear of the laptop frame
         hub = shelf("Docker Hub", 1.9, HUB)
         place(hub, right=6.35, cy=slab.get_bottom()[1] + 0.02, ref=hub.board)
         hub_tag = illustration_tag()
@@ -631,20 +667,26 @@ class ProdAndCleanup(VoiceScene):
                      [hub.board.get_left()[0] - 0.1, slab.get_center()[1], 0], color=TOOL, stroke_width=5)
         prod_l = mono("prod", CAPTION, TOOL).next_to(track, UP, buff=0.1)
         with self.voiceover(SAY[4]) as vo:
-            stage_out(self, tr, t, run_time=0.4)
-            resize(self, t, 3, keep=[run_ln.rows[-1], ls[4], ls[5]], run_time=0.5)
-            self.play(FadeIn(v5), FadeIn(p39, shift=DOWN * 0.1), run_time=0.5)
-            copies, anims = v5.pack(run_time=1.2)
+            # the packing has to be done before "The gitignore …" (2.5 s in): the strip's old
+            # lines fade with the miniature, then the shrink, then the picture, then COPY
+            keep4 = [run_ln.rows[-1], ls[4], ls[5]]
+            gone4 = [ln for ln in t.lines.submobjects if ln not in keep4]
+            stage_out(self, tr, t, run_time=0.35, extra=[FadeOut(VGroup(*gone4))])
+            for ln in gone4:
+                t.lines.remove(ln)
+            resize(self, t, 3, keep=keep4, run_time=0.45)
+            self.play(FadeIn(v5), FadeIn(p39, shift=DOWN * 0.1), run_time=0.4)
+            copies, anims = v5.pack(run_time=1.0)
             self.add(copies)
             self.play(flash(p39.span(39, "COPY --chown=app:app . ./"), TURN, 1.06), *anims)
             vo.wait_until("The gitignore keeps secrets out of Git")
             self.play(FadeIn(git), FadeIn(tracked), FadeIn(shd), FadeIn(gi_head), run_time=0.5)
             self.play(Create(git_try), run_time=0.8)
             self.play(flash(shd.body, VENV, 1.15), run_time=0.5)
-            vo.wait_until("not out of images")
+            at(self, vo, "not out of images", -0.5)
             kc = copies[2]
             self.play(Create(ring(kc, ERR, buff=0.06)), flash(kc, ERR, 1.4), run_time=0.7)
-            vo.wait_until("and no branch has a dockerignore")
+            at(self, vo, "and no branch has a dockerignore", -0.4)
             self.play(FadeIn(dock, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("Prod would push your key")
             self.play(Create(track), FadeIn(prod_l), FadeIn(hub), FadeIn(hub_tag), run_time=0.5)
@@ -681,19 +723,20 @@ class ProdAndCleanup(VoiceScene):
         fix = card_frame(fix_rows, None, pad_x=0.4, pad_y=0.3)
         fix_h = note("the fix").next_to(fix.frame, UP, buff=0.08).align_to(fix.frame, LEFT).shift(RIGHT * 0.12)
         place(VGroup(fix, fix_h), left=-6.3, top=vrow.get_bottom()[1] - 0.6)
-        yt = your_turn().move_to(fix.frame.get_corner(UP + RIGHT)).shift(LEFT * 1.0)
+        yt = your_turn()                   # on the card's header row, right (not on its border)
+        place(yt, right=fix.frame.get_right()[0], bottom=fix.frame.get_top()[1] + 0.08)
         with self.voiceover(SAY[5]) as vo:
-            stage_out(self, tr, run_time=0.6, extra=[caption_extra(tr, False)])
+            stage_out(self, tr, run_time=0.5, extra=[caption_extra(tr, False)])
             t.lines.submobjects.clear()
-            self.play(FadeIn(card203, shift=DOWN * 0.1), FadeIn(err, shift=LEFT * 0.1), run_time=0.6)
-            self.play(Create(under(phrase, TURN)), run_time=0.6)
-            vo.wait_until("holds for Git")
+            self.play(FadeIn(card203, shift=DOWN * 0.1), FadeIn(err, shift=LEFT * 0.1), run_time=0.5)
+            self.play(Create(under(phrase, TURN)), run_time=0.5)
+            at(self, vo, "holds for Git", -0.3)
             self.play(FadeIn(verdict), FadeIn(ck, scale=1.3), run_time=0.5)
-            vo.wait_until("not for images")
+            at(self, vo, "not for images", -0.6)
             self.play(FadeIn(v2_), FadeIn(cx_, scale=1.3), run_time=0.5)
             vo.wait_until("Delete any secrets folder")
             self.play(FadeIn(fix.frame), FadeIn(fix_h), FadeIn(fix_rows[0], shift=RIGHT * 0.1), run_time=0.6)
-            vo.wait_until("add a dockerignore")
+            at(self, vo, "add a dockerignore", -0.35)
             self.play(FadeIn(fix_rows[1], shift=RIGHT * 0.1), run_time=0.5)
             vo.wait_until("and if a key was ever pushed")
             self.play(FadeIn(fix_rows[2], shift=RIGHT * 0.1), run_time=0.5)
@@ -703,24 +746,23 @@ class ProdAndCleanup(VoiceScene):
 
         # ========================================================== 6 · clean-up for part 1: docker images
         t6 = term(P_REPO, rows=7, title="laptop")
-        pushed = VGroup(mixed(["pushed with prod? that Docker Hub repo is public"], color=COST, size=TAG),
-                        mixed(["· delete it if you don't need it"], color=COST, size=TAG))
-        pushed.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-        pushed[1].shift(RIGHT * 0.3)
-        clean = [
+        pushed = [mixed(["pushed with prod? that Docker Hub repo is public"], color=COST, size=TAG),
+                  mixed(["delete it if you don't need it"], color=COST, size=TAG)]
+        lines = [
             mixed(["clean-up · part 1"], color=INK, size=SMALL),
             mixed(["exit each container ·", ("mono", "--rm", INK), "removes it"], color=INK, size=TAG),
             mixed([("mono", "docker image rm <name>", INK), "· your five images"], color=INK, size=TAG),
             mixed(["any", ("mono", "dlops/*", INK), "images you pulled"], color=INK, size=TAG),
             mixed(["the root-owned", ("mono", "Pipfile", INK)], color=INK, size=TAG),
             mixed(["ran prod?", ("mono", "docker buildx rm multi-arch", S.GREY)], color=S.GREY, size=TAG),
-            mixed(["bucket: storage bills until you delete it · when the course is over"], color=COST, size=TAG),
+            mixed(["bucket: storage bills until you delete it", "· when the course is over"],   # 2 parts:
+                  color=COST, size=TAG),                                                     # 2 cues
             mixed(["key: valid until you delete it · IAM › Service accounts › Keys"], color=COST, size=TAG),
-            pushed,
+            *pushed,
         ]
-        crows = VGroup(*clean).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
-        for r in crows[1:]:
-            r.shift(DOWN * 0.06)
+        stack(lines, 0.43, head_gap=0.06)          # equal baselines (serif and mono rows)
+        pushed[1].shift(np.array([0.3, 0.07, 0]))   # its continuation: indented, a little closer
+        crows = VGroup(*lines[:8], VGroup(*pushed))
         first6 = VGroup(*crows[:6])
         frA = box(first6.width + 0.6, first6.height + 0.4, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
         frA.move_to(first6).align_to(first6, LEFT).shift(LEFT * 0.3)
@@ -731,12 +773,19 @@ class ProdAndCleanup(VoiceScene):
             self.play(caption_extra(tr, True), run_time=0.3)
             vo.wait_until("Exit each container")
             self.play(FadeIn(crows[1], shift=RIGHT * 0.1), run_time=0.5)
+            at(self, vo, "The transcribe image alone", -1.75)   # its output is up as that sentence starts
             type_tagged(self, t6, C70.cmd, "extra", type_time=0.4)
             imgs = t6.print(self, IMG_ROWS, run_time=0.6)
+            # S16's honesty tag; the header row has no room at its end, so it sits in the gap
+            cols = grey_tag("2 of 5 columns").next_to(substring(imgs[0], "IMAGE"), RIGHT, buff=0.45)
+            cols.set_y(imgs[0].strut.get_center()[1])
+            assert cols.get_right()[0] < substring(imgs[0], "DISK USAGE").get_left()[0] - 0.3
+            pin(self, imgs[0], cols, run_time=0.3)
             vo.wait_until("The transcribe image alone")
+            self.play(flash(substring(imgs[4], "mega-pipeline-transcribe-audio"), TURN, 1.04), run_time=0.7)
+            at(self, vo, "is 1.48 gigabytes", -0.55)
             big = glyph_box(imgs[4], "1.48GB")
-            self.play(Create(big), flash(substring(imgs[4], "mega-pipeline-transcribe-audio"), TURN, 1.04),
-                      run_time=0.7)
+            self.play(Create(big), flash(substring(imgs[4], "1.48GB"), TURN, 1.1), run_time=0.6)
             vo.wait_until("remove all five")
             unders = [under(substring(imgs[k], v), TURN, stroke=3) for k, v in SMALL_IMGS.items()]
             self.play(LaggedStart(*[Create(u) for u in unders], lag_ratio=0.2), run_time=0.7)
@@ -749,22 +798,27 @@ class ProdAndCleanup(VoiceScene):
         # ========================================================== 7 · the cloud; part 2 teaser; empty frame
         frB = box(crows.width + 0.6, crows.height + 0.4, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
         frB.move_to(crows)
-        dxy = np.array([-6.3 - frB.get_left()[0], -0.25 - frB.get_center()[1], 0])
-        frB.shift(dxy)
         con = console_mini()
-        place(con, right=6.35, cy=crows[7].get_center()[1] + dxy[1] - 0.15)
+        gap = 0.45                                 # the console sits beside the key row; both centred
+        span = frB.width + gap + con.width
+        dxy = np.array([-span / 2 - frB.get_left()[0], -0.25 - frB.get_center()[1], 0])
+        frB.shift(dxy)
+        place(con, left=frB.get_right()[0] + gap, cy=crows[7].get_center()[1] + dxy[1], ref=con[0])
         close = part2_card()
         with self.voiceover(SAY[7]) as vo:
-            stage_out(self, tr, frA, *crows[:6], run_time=0.5)
-            self.play(*[r.animate.shift(dxy) for r in crows[:6]], Transform(frA, frB), run_time=0.8)
+            stage_out(self, tr, frA, *crows[:6], run_time=0.8,
+                      extra=[*[r.animate.shift(dxy) for r in crows[:6]], Transform(frA, frB)])
             for r in crows[6:]:
                 r.shift(dxy)
             vo.wait_until("the bucket bills")
-            self.play(FadeIn(crows[6], shift=RIGHT * 0.1), run_time=0.5)
-            vo.wait_until("the key works")
+            self.play(FadeIn(crows[6][0], shift=RIGHT * 0.1), run_time=0.5)
+            at(self, vo, "when the course is over", -0.2)
+            self.play(FadeIn(crows[6][1], shift=RIGHT * 0.1), run_time=0.5)
+            at(self, vo, "the key works", -0.45)
             self.play(FadeIn(crows[7], shift=RIGHT * 0.1), FadeIn(con, shift=LEFT * 0.1), run_time=0.6)
-            self.play(flash(con.trash, ERR, 1.3), run_time=0.6)
             self.play(FadeIn(crows[8], shift=RIGHT * 0.1), run_time=0.5)
+            at(self, vo, "in the console", -0.2)
+            self.play(flash(con.trash, ERR, 1.3), run_time=0.6)
             vo.wait_until("In part 2")
             stage_out(self, run_time=0.6)
             self.play(FadeIn(close.title, shift=UP * 0.1), FadeIn(close.boxes), run_time=0.7)

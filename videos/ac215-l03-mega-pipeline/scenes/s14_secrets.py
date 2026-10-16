@@ -701,7 +701,7 @@ class KeepTheKeyOut(VoiceScene):
             vo.wait_until("a file named dot dockerignore")
             v6.lower(self, "image", run_time=0.6)
             self.play(FadeIn(note[0], shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("with one line, secrets slash")
+            vo.wait_until("with one line, secrets, slash")
             self.play(FadeIn(note[1], shift=UP * 0.1), run_time=0.5)
             self.play(Indicate(o_cat[0].glyphs, color=INK, scale_factor=1.2),
                       Indicate(note[1][1], color=INK, scale_factor=1.2), run_time=0.7)

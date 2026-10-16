@@ -18,9 +18,9 @@ Beats (script.md "## S10", one voiceover block each):
     1 … 65535 in each box. Both strips light 9100 at once (YELLOW cell + number), GREY caption
     "each box: its own ports".
  2  The 9100 lights go out. A TEAL rail draws itself under the boxes, labelled "user-defined
-    network"; a PINK phone-book glyph sits on it and its two blank lines (_____ → _______) draw
-    themselves between the boxes; GREY note "Docker's default network: no phone book
-    (exercises)".
+    network"; a PINK phone-book glyph sits on it and its two blank lines (_____ → _______)
+    rise out of the book glyph to their place between the boxes; GREY note "Docker's default
+    network: no phone book (exercises)".
  3  TRACKER P0/1 (port_toy README › Prerequisites). V6 leaves; the 12-row terminal `laptop` at
     student@laptop:~/AC215$ with the GREY caption "your workspace" at the row's right end (the
     path flashes YELLOW). `docker run hello-world` -> port-laptop/01 lines 2-3, …, 7 (on "It pulls
@@ -36,11 +36,11 @@ Beats (script.md "## S10", one voiceover block each):
     time; a GREEN check lands in the tree beside each folder and file as it prints.
     `git log --oneline -1` (extra) -> 04 line 19; `d190c71` is boxed GREY and lifts into a GREY
     chip in the top band, right of the tracker, with the GREY tag "the pinned commit".
- 6  TRACKER P1/2. The tree, the box and the chip leave; V6 returns above the strip (the ToyNet
-    moves up 0.55 while hidden). `docker network create toynet` ->
-    05 line 2; the word toynet flies from the command onto the rail and replaces "user-defined
-    network"; the first 12 characters of the ID fly onto the rail as a TEAL chip
-    `cedc0ad9fdee…`, GREY tag "your numbers will differ" under the picture; a YELLOW flash runs
+ 6  TRACKER P1/2. The tree and the hash's box leave; V6 returns above the strip (the ToyNet
+    moves up 0.55 while hidden). `docker network create toynet`; the word toynet flies from the
+    command onto the rail and replaces "user-defined network" (the commit chip leaves now) ->
+    05 line 2 on "Docker prints the new network's ID"; the first 12 characters of the ID fly
+    onto the rail as a TEAL chip `cedc0ad9fdee…`, GREY tag "your numbers will differ" under the picture; a YELLOW flash runs
     along the rail and both boxes pulse ("the rail both containers will plug into").
  7  TRACKER PH/4 (Handy commands). V6 leaves; the terminal grows to 8 rows (the last command and
     its ID stay). `docker network ls` -> 06 lines 2-6: `toynet` turns TEAL in a TEAL box; a GREY
@@ -121,6 +121,7 @@ from manim import (
     FadeIn,
     FadeOut,
     GrowArrow,
+    GrowFromPoint,
     Indicate,
     LaggedStart,
     Line,
@@ -250,16 +251,15 @@ def solid_chip(text: str, color: str, size: float = CAPTION) -> VGroup:
 
 
 def card52() -> VGroup:
-    """README.md:52 as a GREY card; .row is a mono_line (to underline its two halves)."""
-    c = readme_card("port_toy · README.md · line 52", ["`x`"])
+    """README.md:52 as a GREY card in readme_card's look; .row is a mono_line (to underline its two
+    halves). The frame is drawn at its final width (stretching a rounded box distorts its corners)."""
     row = mono_line(R52, CAPTION, INK)
-    fr = c.frame
-    fr.stretch_to_fit_width(row.width + 0.6)
+    fr = box(row.width + 0.6, row.strut.height + 0.32, S.GREY, fill=S.BG, fill_opacity=0.92, radius=0.12)
     row.move_to(fr)
-    c.header.align_to(fr, LEFT).shift(RIGHT * 0.1)
-    c.remove(c.rows)
-    c.add(row)
-    c.row = row
+    head = _header_text("port_toy · README.md · line 52").next_to(fr, UP, buff=0.08)
+    head.align_to(fr, LEFT).shift(RIGHT * 0.1)
+    c = VGroup(fr, row, head)
+    c.frame, c.row, c.header = fr, row, head
     return c
 
 
@@ -427,8 +427,10 @@ class TwoComputers(VoiceScene):
             self.play(*net.parts_in("book"), run_time=0.5)
             self.play(Indicate(net.parts["book"], color=LOOKUP, scale_factor=1.3), run_time=0.6)
             vo.wait_until("that turns container names into addresses")
-            net.attach(self, blanks, anims=[Create(blanks, lag_ratio=0.5)],
-                       run_time=1.2)
+            # the two blank lines rise out of the book glyph to where S13 writes the entries
+            bc = net.parts["book"].get_center()
+            net.attach(self, blanks, anims=[LaggedStart(*[GrowFromPoint(b, bc) for b in blanks], lag_ratio=0.4)],
+                       extra=[Indicate(net.parts["book"], color=LOOKUP, scale_factor=1.15)], run_time=1.2)
             vo.wait_until("Docker's default network has none")
             self.play(FadeIn(no_book, shift=UP * 0.1), run_time=0.6)
 
@@ -437,12 +439,12 @@ class TwoComputers(VoiceScene):
         t = term(P_WS, rows=12, title="laptop")
         cap_ws = note("your workspace")
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(net), FadeOut(no_book), run_time=0.5)
-            self.play(FadeIn(tr), FadeIn(t), run_time=0.5)
+            self.play(FadeOut(net), FadeOut(no_book), run_time=0.4)
+            self.play(FadeIn(tr), FadeIn(t), run_time=0.4)
             ln0 = bare_prompt(self, t)
             cap_ws.set_y(ln0.strut.get_center()[1]).align_to(t.box, RIGHT).shift(LEFT * 0.35)
             self.play(FadeIn(cap_ws), Indicate(glyph_range(ln0, P_WS.index("~"), len(P_WS) - 1),
-                                               color=TURN, scale_factor=1.1), run_time=0.7)
+                                               color=TURN, scale_factor=1.1), run_time=0.5)
             vo.wait_until("docker run hello-world checks")
             ln = type_cmd(self, t, HELLO.cmd)
             self.remove(cap_ws)                          # it now scrolls / fades with its row
@@ -514,20 +516,22 @@ class TwoComputers(VoiceScene):
         idchip = solid_chip(ID_SHORT + "…", CTR).move_to([0.2, net.rail.get_center()[1], 0])
         dtag = differ_tag().move_to([0.2, net.parts["outline"].get_bottom()[1] - 0.36, 0])
         with self.voiceover(SAY[6]) as vo:
+            # the hash's box goes now (its row scrolls); the commit chip stays until the rail is named
             self.play(FadeOut(card), *[FadeOut(c) for c in checks.values()], FadeOut(hbox), tr.goto(2),
-                      run_time=0.5)
-            self.play(FadeIn(net), FadeOut(hchip), FadeOut(htag), run_time=0.6)
+                      run_time=0.35)
+            self.play(FadeIn(net), run_time=0.35)
             ln_net = type_cmd(self, t, NET.cmd)
             fly = substring(ln_net, "toynet").copy()
             rl = net.parts["rail_label"]
             net.detach(self, udn, anims=[FadeOut(udn)],
-                       extra=[Transform(fly, mono("toynet", CAPTION, CTR).move_to(rl))], run_time=0.8)
-            self.play(FadeOut(fly), *net.parts_in("rail_label"), run_time=0.2)
+                       extra=[Transform(fly, mono("toynet", CAPTION, CTR).move_to(rl)), FadeOut(hchip),
+                              FadeOut(htag)], run_time=0.5)
+            self.play(FadeOut(fly), *net.parts_in("rail_label"), run_time=0.15)
             vo.wait_until("Docker prints the new network's ID")
             idl = t.print(self, [NET_ID], run_time=0.4)[0]
             self.add(idchip.box)                         # under the text that lands in it
-            self.play(TransformFromCopy(glyph_range(idl, 0, 12), idchip.text), FadeIn(idchip.box), run_time=0.9)
-            self.play(FadeIn(dtag, shift=UP * 0.1), run_time=0.4)
+            self.play(TransformFromCopy(glyph_range(idl, 0, 12), idchip.text), FadeIn(idchip.box), run_time=0.7)
+            self.play(FadeIn(dtag, shift=UP * 0.1), run_time=0.3)
             vo.wait_until("that's the rail both containers will plug into")
             flash = net.rail.copy().set_stroke(TURN, 10, opacity=1)
             self.play(ShowPassingFlash(flash, time_width=0.5),

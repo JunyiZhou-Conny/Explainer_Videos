@@ -967,7 +967,7 @@ class GenerateText(VoiceScene):
             self.play(FadeIn(ncard_fr), FadeIn(note11, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("on October 20")
             self.play(Indicate(note11[2], color=INK, scale_factor=1.1), run_time=0.7)
-            vo.wait_until("after that, start the container")
+            vo.wait_until("After that, start the container")
             self.play(Transform(ncard_fr, nfr1), run_time=0.4)
             self.play(FadeIn(gchip, shift=DOWN * 0.1), FadeIn(xt), run_time=0.5)
             vo.wait_until("with a current model")
