@@ -1,0 +1,65 @@
+$ python cli.py --query --chunk_type char-split
+CLI Arguments: Namespace(chunk=False, embed=False, load=False, query=True, chat=False, get=False, agent=False, chunk_type='char-split')
+load()
+Traceback (most recent call last):
+  File "/app/cli.py", line 551, in <module>
+    main(args)
+  File "/app/cli.py", line 494, in main
+    query(method=args.chunk_type)
+  File "/app/cli.py", line 319, in query
+    query_embedding = generate_query_embedding(query)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/cli.py", line 79, in generate_query_embedding
+    response = llm_client.models.embed_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/models.py", line 5460, in embed_content
+    response = self._api_client.request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1291, in request
+    response = self._request(http_request, http_options, stream=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1127, in _request
+    return self._retry(self._request_once, http_request, stream)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 477, in __call__
+    do = self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 378, in iter
+    result = action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 420, in exc_check
+    raise retry_exc.reraise()
+          ^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 187, in reraise
+    raise self.last_attempt.result()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/.venv/lib/python3.12/site-packages/tenacity/__init__.py", line 480, in __call__
+    result = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1070, in _request_once
+    http_request.headers['Authorization'] = f'Bearer {self._access_token()}'
+                                                      ^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 906, in _access_token
+    self._credentials, project = load_auth(project=self.project)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 184, in load_auth
+    credentials, loaded_project_id = google.auth.default(  # type: ignore[no-untyped-call]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 705, in default
+    credentials, project_id = checker()
+                              ^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 698, in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id),
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 346, in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 173, in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+google.auth.exceptions.DefaultCredentialsError: File /secrets/llm-service-account.json was not found.
+[exit 1]

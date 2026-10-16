@@ -83,9 +83,11 @@ Deviations from SHOW (and why):
   band and the 6-row terminal, with no gap.
 - Beat 2: "a second PINK arrow aims at the laptop's door 8090" is drawn from a dashed `gateway-all`
   box (the container docker created anyway, between the two boxes, with its own room :9100, so
-  "rooms never do" collide is visible) along the lane above the gateway box, and stops before
-  the door with a RED cross while the door flashes RED: a route to the door itself would cross
-  the gateway's room and the existing -p route. The ID line and the command scroll out of the
+  "rooms never do" collide is visible) along the lane above the gateway box to the laptop's
+  wall, and stops right above the door's column with a RED cross while the door flashes RED: a
+  route into the door itself would cross the gateway's room and the existing -p route. Terminal
+  scrolls of two or more rows fade the leaving rows in place before the rest slide up
+  (soft_scroll), so nothing slides over the picture. The ID line and the command scroll out of the
   6-row terminal when the 5-row error prints (the error and its RED tail stay).
 - Beats 2-4: long outputs (the error, the HTML page) scroll their command out of the 6-row
   strip; the final your-turn card lists the README commands as typed.
@@ -101,6 +103,9 @@ Deviations from SHOW (and why):
 - Beat 7: "the packet loops back" is a PINK dot circling the gateway's loop (ToyNet.loopback);
   "where no :9200 door exists" is the dot turning RED with a cross; it then hops to room :9100.
 - Beat 8: the terminal grows to 13 rows, not 12: the command plus the 12 listed lines.
+- Beats 8 and 10: the picture leaves before the terminal grows (or the panel arrives) and returns
+  after the terminal has shrunk, and the terminal leaves before the your-turn card takes its
+  place, so no two of them cross mid-move.
 - Beat 10: V6 leaves when the panel arrives (it fills the upper half); the panel's header is the
   command in mono plus an `extra` tag (a header string would set the command in serif).
 """
@@ -122,8 +127,8 @@ from common import (
     _save_op,
     _set_op,
     beside,
-    capture,
     caption_extra,
+    capture,
     col_box,
     door,
     enter_container,
@@ -153,7 +158,6 @@ from manim import (
     UP,
     AnimationGroup,
     Create,
-    DashedLine,
     DashedVMobject,
     Dot,
     FadeIn,
@@ -174,7 +178,16 @@ from manim import (
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import CAPTION, box, cell_width, check_mark, cross_mark, mono, mono_line, substring
+from explainer.devops import (
+    CAPTION,
+    box,
+    cell_width,
+    check_mark,
+    cross_mark,
+    mono,
+    mono_line,
+    substring,
+)
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S13"]
@@ -370,12 +383,12 @@ def ghost_box(net: ToyNet, dashed: bool = True) -> VGroup:
 
 def request_arrow(net: ToyNet, ghost: VGroup) -> VGroup:
     """gateway-all asks for street door 8090: a dashed PINK arrow from its box, up to the lane
-    above the gateway box and left toward the laptop's door, stopping above the gateway's left
-    part. .line .tip .end"""
+    above the gateway box and left to the laptop's wall, ending right above the door's column
+    (the door itself sits under the -p route). .line .tip .end"""
     g_fr = net.boxes["gateway"].frame
     lane = (g_fr.get_top()[1] + net.parts["outline"].get_top()[1]) / 2
     x0 = ghost.frame.get_left()[0] + 0.3
-    x_end = g_fr.get_left()[0] + 0.45
+    x_end = net.wall.get_center()[0] + 0.1
     path = VMobject(stroke_color=LOOKUP, stroke_width=4)
     path.set_points_as_corners([[x0, ghost.frame.get_top()[1] + 0.02, 0], [x0, lane, 0], [x_end + 0.16, lane, 0]])
     dashed = DashedVMobject(path, num_dashes=26, dashed_ratio=0.6)
@@ -493,8 +506,8 @@ class WhoCanReach(VoiceScene):
         d1_ip = VGroup(*d1.label.submobjects[:9])           # "127.0.0.1" of "127.0.0.1:8090"
         ghost = ghost_box(net, dashed=True)
         req = request_arrow(net, ghost)
-        xcross = cross_mark(0.26, ERR).move_to(req.end + LEFT * 0.12)
-        g_fr, p_fr = net.boxes["gateway"].frame, net.boxes["processor"].frame
+        xcross = cross_mark(0.16, ERR).move_to(req.end + LEFT * 0.04)     # fits the lane under the outline
+        g_fr = net.boxes["gateway"].frame
         cap = note("host doors collide\nrooms never do")
         mid_x = (g_fr.get_right()[0] + net.rooms["processor"].frame.get_left()[0]) / 2
         cap.move_to([mid_x, (ghost.frame.get_bottom()[1] + net.parts["book"].get_top()[1]) / 2, 0])
@@ -675,7 +688,8 @@ class WhoCanReach(VoiceScene):
                       net.unloop("gateway"), run_time=0.8)
             vo.wait_until("From the handy commands")
             tr = switch_section(self, tr, "PH", 5, run_time=0.6)
-            resize(self, t, 13, keep=[], run_time=0.6, extra=[FadeOut(net)])
+            self.play(FadeOut(net), run_time=0.4)        # first the picture goes, then the terminal grows
+            resize(self, t, 13, keep=[], run_time=0.6)
             type_cmd(self, t, C28.cmd, type_time=1.0)
             ins = t.print(self, C28.at(4, "…", 16, "…", 32, "…", 35, "…", 39, "…", 42, "…"), run_time=0.6)
             l16, l32, l35, l39, l42 = ins[2], ins[4], ins[6], ins[8], ins[10]
@@ -685,7 +699,8 @@ class WhoCanReach(VoiceScene):
             self.play(*[m.animate.set_color(LOOKUP) for m in (n_gw, a_gw, n_pr, a_pr)], run_time=0.6)
             vo.wait_until("on toynet's own subnet")
             self.play(substring(l16, "172.19.0.0/16").animate.set_color(LOOKUP), run_time=0.5)
-            resize(self, t, 6, keep=[l16, l32, l35, l39, l42], run_time=0.7, extra=[FadeIn(net)])
+            resize(self, t, 6, keep=[l16, l32, l35, l39, l42], run_time=0.7)
+            self.play(FadeIn(net), run_time=0.5)
             show_part(net, "book0")
             show_part(net, "book1")
             self.play(TransformFromCopy(VGroup(n_pr, substring(l42, "172.19.0.2")), book0),
@@ -742,13 +757,15 @@ class WhoCanReach(VoiceScene):
             session(self, t, C29B, 4, 5, 6)
             self.play(*leave_container(t, P_TOY), run_time=0.5)
             vo.wait_until("One aside")
-            self.play(FadeOut(net), FadeIn(panel, shift=DOWN * 0.1), FadeIn(head, shift=DOWN * 0.1), run_time=0.7)
+            self.play(FadeOut(net), run_time=0.4)
+            self.play(FadeIn(panel, shift=DOWN * 0.1), FadeIn(head, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("has curl too")
             self.play(flash(substring(panel.rows[0], "curl 8.14.1"), TURN, 1.12), run_time=0.7)
             vo.wait_until("though the README implies")
             self.play(FadeIn(err_tag, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Pause, and test from both sides")
-            self.play(FadeOut(t), FadeIn(card, shift=UP * 0.15), run_time=0.7)
+            self.play(FadeOut(t), run_time=0.35)          # the card takes the terminal's place
+            self.play(FadeIn(card, shift=UP * 0.15), run_time=0.5)
         self.wait(0.6)
         self.play(*[FadeOut(m) for m in list(self.mobjects)], run_time=0.6)
         self.wait(0.2)

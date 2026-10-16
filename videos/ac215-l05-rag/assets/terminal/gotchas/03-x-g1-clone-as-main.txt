@@ -1,0 +1,5 @@
+$ git clone https://github.com/dlops-io/llm-rag.git llm-rag-main; mkdir secrets; ls
+Cloning into 'llm-rag-main'...
+llm-rag-main
+secrets
+[exit 0]

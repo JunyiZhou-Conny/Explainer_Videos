@@ -1,0 +1,7 @@
+$ echo GCP_PROJECT=$GCP_PROJECT; echo GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS; ls -la /secrets
+GCP_PROJECT=your-project-id
+GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account.json
+total 8
+drwxr-sr-x 2 app  app  4096 Oct 16 00:52 .
+drwxr-xr-x 1 root root 4096 Oct 16 00:53 ..
+[exit 0]

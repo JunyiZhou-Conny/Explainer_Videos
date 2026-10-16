@@ -1,0 +1,68 @@
+$ docker compose run --rm llm-rag-cli
+WARN[0000] The "GOOGLE_APPLICATION_CREDENTIALS" variable is not set. Defaulting
+to a blank string.
+WARN[0000] The "GCP_PROJECT" variable is not set. Defaulting to a blank string.
+[+] run 2/2
+ ✔ Network llm-rag-network    Created                                       0.0s
+ ✔ Container llm-rag-chromadb Created                                       0.0s
+Container llm-rag-llm-rag-cli-run-65e5958fc609 Creating
+Container llm-rag-llm-rag-cli-run-65e5958fc609 Created
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.1 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@2af936bbf5b9:/app$ python cli.py --chunk --chunk_type char-split
+Traceback (most recent call last):
+  File "/app/cli.py", line 35, in <module>
+    llm_client = genai.Client(
+                 ^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/client.py", line 265, i
+n __init__
+    self._api_client = self._get_api_client(
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/client.py", line 311, i
+n _get_api_client
+    return BaseApiClient(
+           ^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 6
+36, in __init__
+    credentials, self.project = load_auth(project=None)
+                                ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/genai/_api_client.py", line 1
+84, in load_auth
+    credentials, loaded_project_id = google.auth.default(  # type: ignore[no-unt
+yped-call]
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 705,
+in default
+    credentials, project_id = checker()
+                              ^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 698,
+in <lambda>
+    lambda: _get_explicit_environ_credentials(quota_project_id=quota_project_id)
+,
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 346,
+in _get_explicit_environ_credentials
+    credentials, project_id = load_credentials_from_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/.venv/lib/python3.12/site-packages/google/auth/_default.py", line 173,
+in load_credentials_from_file
+    raise exceptions.DefaultCredentialsError(
+google.auth.exceptions.DefaultCredentialsError: File  was not found.
+Exception ignored in: <function Client.__del__ at 0x7f4bd3835440>
+Traceback (most recent call last):
+  File "/.venv/lib/python3.12/site-packages/google/genai/client.py", line 400, i
+n __del__
+    self.close()
+  File "/.venv/lib/python3.12/site-packages/google/genai/client.py", line 386, i
+n close
+    self._api_client.close()
+    ^^^^^^^^^^^^^^^^
+AttributeError: 'Client' object has no attribute '_api_client'
+app@2af936bbf5b9:/app$ exit
+exit
+[exit 1]

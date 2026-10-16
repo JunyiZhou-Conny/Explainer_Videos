@@ -1,0 +1,7 @@
+$ ls -la outputs | head -5
+total 8372
+drwxrwsrwx 2 student student    4096 Oct 16 00:54 .
+drwxr-sr-x 8 student student    4096 Oct 16 00:54 ..
+-rw-rw-rw- 1 student student  171164 Oct 16 00:54 chunks-char-split-Cheese and its economical uses in the diet.jsonl
+-rw-rw-rw- 1 student student   74261 Oct 16 00:54 chunks-char-split-Cottage Cheese Recipe Book.jsonl
+[exit 0]

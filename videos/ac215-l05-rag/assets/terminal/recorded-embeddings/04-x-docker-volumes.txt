@@ -1,0 +1,9 @@
+$ ls -la docker-volumes/chromadb; du -sh docker-volumes/chromadb
+total 58184
+drwxr-sr-x 4 root root     4096 Oct 16 00:55 .
+drwxr-sr-x 3 root root     4096 Oct 16 00:52 ..
+drwxr-sr-x 2 root root     4096 Oct 16 00:54 ab125f80-4e2e-4751-8eb4-8d7d06c87e93
+-rw-r--r-- 1 root root 59781120 Oct 16 00:55 chroma.sqlite3
+drwxr-sr-x 2 root root     4096 Oct 16 00:54 f460d2ab-cd69-4809-a914-a9e03d4e9ec4
+82M	docker-volumes/chromadb
+[exit 0]

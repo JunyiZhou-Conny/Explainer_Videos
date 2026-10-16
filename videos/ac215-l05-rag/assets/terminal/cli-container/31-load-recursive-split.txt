@@ -1,0 +1,9 @@
+$ python cli.py --load --chunk_type recursive-split
+CLI Arguments: Namespace(chunk=False, embed=False, load=True, query=False, chat=False, get=False, agent=False, chunk_type='recursive-split')
+load()
+Creating collection: recursive-split-collection
+Collection 'recursive-split-collection' did not exist. Creating new.
+Created new empty collection 'recursive-split-collection'
+Collection: Collection(name=recursive-split-collection)
+Number of files to process: 0
+[exit 0]

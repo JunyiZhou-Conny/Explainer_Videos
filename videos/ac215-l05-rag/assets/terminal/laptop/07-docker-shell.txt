@@ -1,0 +1,47 @@
+$ sh docker-shell.sh
+[+] run 9/9
+ ✔ Image chromadb/chroma:latest Pulled                                     12.1s
+ ✔ Network llm-rag-network      Created                                     0.0s
+ ✔ Container llm-rag-chromadb   Created                                     1.4s
+Image llm-rag-cli Pulling
+Image llm-rag-cli failed to resolve reference "docker.io/library/llm-rag-cli:lat
+est": docker.io/library/llm-rag-cli:latest: not found
+Image llm-rag-cli Building
+[+] Building 81.5s (13/13) FINISHED
+ => [internal] load local bake definitions                                 0.0s
+ => => reading from stdin 728B                                             0.0s
+ => [internal] load build definition from Dockerfile                       0.0s
+ => => transferring dockerfile: 1.48kB                                     0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim-bookw  0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [1/6] FROM docker.io/library/python:3.12-slim-bookworm@sha256:60c8fd1  0.0s
+ => => resolve docker.io/library/python:3.12-slim-bookworm@sha256:60c8fd1  0.0s
+ => [internal] load build context                                          0.6s
+ => => transferring context: 112.26MB                                      0.6s
+ => [2/6] RUN set -ex;     for i in $(seq 1 8); do mkdir -p "/usr/share/  20.2s
+ => [3/6] WORKDIR /app                                                     0.1s
+ => [4/6] COPY --chown=app:app pyproject.toml uv.lock* ./                  0.0s
+ => [5/6] RUN uv sync --frozen                                             6.7s
+ => [6/6] COPY --chown=app:app . ./                                        0.4s
+ => exporting to image                                                    53.9s
+ => => exporting layers                                                   36.4s
+ => => exporting manifest sha256:830cff7d24f85aa9d0382f35fb25b30733173dc9  0.0s
+ => => exporting config sha256:631b55cf0b0f4e2d3207fced10c93fb4598b886c34  0.0s
+ => => exporting attestation manifest sha256:c9b50ceb4780789e93a1e35125ce  0.0s
+ => => exporting manifest list sha256:3b31b15cf50b7d0c3cb74c0b8c1d4b536ae  0.0s
+ => => naming to docker.io/library/llm-rag-cli:latest                      0.0s
+ => => unpacking to docker.io/library/llm-rag-cli:latest                  17.4s
+ => resolving provenance for metadata file                                 0.0s
+Image llm-rag-cli Built
+Container llm-rag-llm-rag-cli-run-90678535ddef Creating
+Container llm-rag-llm-rag-cli-run-90678535ddef Created
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.1 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+app@92c5bfd26089:/app$ exit
+exit
+[exit 0]

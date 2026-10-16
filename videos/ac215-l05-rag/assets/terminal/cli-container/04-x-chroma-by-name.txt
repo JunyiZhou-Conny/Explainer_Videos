@@ -1,0 +1,4 @@
+$ getent hosts llm-rag-chromadb; curl -s http://llm-rag-chromadb:8000/api/v2/heartbeat; echo
+172.19.0.2      llm-rag-chromadb
+{"nanosecond heartbeat":1792112035919998087}
+[exit 0]

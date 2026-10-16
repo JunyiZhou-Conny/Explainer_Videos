@@ -1,0 +1,7 @@
+$ docker inspect llm-rag-llm-rag-cli-run-90678535ddef --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{println}}{{end}}'; docker inspect llm-rag-chromadb --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{println}}{{end}}'
+/home/student/AC215/llm-rag -> /app
+/home/student/AC215/secrets -> /secrets
+
+/home/student/AC215/llm-rag/docker-volumes/chromadb -> /data
+
+[exit 0]

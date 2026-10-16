@@ -14,13 +14,15 @@ Beats (script.md "## S14", one voiceover block each):
  1  The terminal shrinks to the strip (the -p row and the two -e rows stay) while V7 leaves;
     a compact PAGE(32) with its port card (address `localhost:8095`, 47520 · 9200 · 47520) at the
     right, REPLY(32: 2) in the left column (the line broken at its fields, tag "captured reply ·
-    curl stood in for the Send button"); the address flashes. TRACKER P3/1 · extra: the strip types
-    `curl --max-time 3 http://localhost:8090` (extra) -> 33 line 2, RED; then `docker ps --format
-    'table {{.Image}}\t{{.Ports}}\t{{.Names}}'` (extra) -> 35 lines 2–4, `127.0.0.1:8095->9100/tcp`
-    YELLOW. On "Pause and move your gateway's door": the page and the reply give way to the static
-    GREY your-turn card (`docker rm -f gateway` · the run's five rows · open localhost:8095), ▶ your
-    turn on it.
- 2  The card leaves. A GREY README card `README.md · lines 357–363` (the heading and lines 359, 361,
+    curl stood in for the Send button"); the address flashes. TRACKER P3/1 · extra: the reply
+    leaves and the page folds its port card (address bar + reply card stay) while the terminal
+    grows to 7 rows; it types `curl --max-time 3 http://localhost:8090` (extra, GREY tag) -> 33
+    line 2, RED; then `docker ps --format 'table {{.Image}}\t{{.Ports}}\t{{.Names}}'` (extra) -> 35
+    lines 2–4, `127.0.0.1:8095->9100/tcp` YELLOW. On "Pause and move your gateway's door": the page
+    leaves, the terminal shrinks to 4 rows (the docker ps command and its output) and the static
+    GREY your-turn card (`docker rm -f gateway` · the run's five rows · open localhost:8095) appears
+    above it, ▶ your turn on it.
+ 2  The card leaves and the terminal shrinks to the strip (docker ps's output). A GREY README card `README.md · lines 357–363` (the heading and lines 359, 361,
     363 as rendered) at the left; at the right, a small V7-style picture: the laptop's dashed wall
     with door `127.0.0.1:8090` held by a GREY box "another app" (its room `:9100`), then door
     `127.0.0.1:8095` leading to the TEAL gateway (room `:9100`). README rows light YELLOW as the
@@ -89,6 +91,11 @@ Deviations from SHOW (and why):
   typed (it is on the your-turn cards).
 - The README's multi-row runs are typed on the rows under the long prompt, indented 4 (as S11):
   the prompt plus their first row is longer than a terminal row.
+- Beat 1: the two extras are typed in a 7-row terminal under the page folded to its reply card,
+  not in the strip: in a 3-row strip docker ps's command would scroll away the moment its three
+  output lines print. Under the your-turn card the terminal keeps 4 rows (the command + output).
+- Every extra command has the GREY `extra` tag beside it (script conventions); docker ps's command
+  row is a full 65 characters, so its tag sits after the prompt on the row above (as S13).
 - `docker rm -f` of a container is drawn: its box (and what it owns: the door, the route, the
   aim) fades to a ghost and comes back with the new `docker run`; the slider moves when the door
   returns. SHOW only names the slider; the ghost makes "remove, start again" visible.
@@ -140,8 +147,8 @@ from common import (
     door,
     erratum_tag,
     excerpt,
-    extra_tag,
     excerpt_chip,
+    extra_tag,
     fix_chip,
     grey_tag,
     note,

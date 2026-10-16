@@ -1,0 +1,104 @@
+$ python cli.py --chunk --chunk_type recursive-split
+CLI Arguments: Namespace(chunk=True, embed=False, load=False, query=False, chat=False, get=False, agent=False, chunk_type='recursive-split')
+chunk()
+Number of files to process: 11
+Processing file: input-datasets/books/The Complete Book of Cheese.txt
+Number of chunks: 2147
+Shape: (2147, 2)
+                                               chunk                         book
+0  ﻿The Project Gutenberg eBook of The Complete B...  The Complete Book of Cheese
+1  whatsoever. You may copy it, give it away or r...  The Complete Book of Cheese
+2  Title: The Complete Book of Cheese\n\nAuthor: ...  The Complete Book of Cheese
+3  Language: English\n\nCredits: Produced by Davi...  The Complete Book of Cheese
+4  Produced by David Starner, Ronald Holder and t...  The Complete Book of Cheese
+Processing file: input-datasets/books/Theres Pippins and Cheese to Come.txt
+Number of chunks: 1198
+Shape: (1198, 2)
+                                               chunk                               book
+0  ﻿The Project Gutenberg eBook of There's Pippin...  Theres Pippins and Cheese to Come
+1  most other parts of the world at no cost and w...  Theres Pippins and Cheese to Come
+2  at www.gutenberg.org. If you are not located i...  Theres Pippins and Cheese to Come
+3  Title: There's Pippins and Cheese to Come\n\nA...  Theres Pippins and Cheese to Come
+4  Language: English\n\nCredits: Produced by Ted ...  Theres Pippins and Cheese to Come
+Processing file: input-datasets/books/Womans Institute Library of Cookery. Volume 2_ Milk, Butter and Cheese Eggs Vegetables.txt
+Number of chunks: 2623
+Shape: (2623, 2)
+                                               chunk                                 book
+0  ﻿The Project Gutenberg eBook of Woman's Instit...  Womans Institute Library of Cookery
+1  most other parts of the world at no cost and w...  Womans Institute Library of Cookery
+2  at www.gutenberg.org. If you are not located i...  Womans Institute Library of Cookery
+3  Title: Woman's Institute Library of Cookery. V...  Womans Institute Library of Cookery
+4  Author: Woman's Institute of Domestic Arts and...  Womans Institute Library of Cookery
+Processing file: input-datasets/books/Tolminc Cheese.txt
+Number of chunks: 35
+Shape: (35, 2)
+                                               chunk            book
+0  Author: Pavlos Protopapas\n\n# Tolminc: A Chee...  Tolminc Cheese
+1  ## Chapter One: The First Slice\n\nThe first t...  Tolminc Cheese
+2  On it sat bread, two apples, and a wedge of ch...  Tolminc Cheese
+3  “Tolminc,” he said.\n\n“I know what it is.”\n\...  Tolminc Cheese
+4  Mara tasted a piece. It was firm at first, the...  Tolminc Cheese
+Processing file: input-datasets/books/Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.txt
+Number of chunks: 1146
+Shape: (1146, 2)
+                                               chunk                                               book
+0  ﻿The Project Gutenberg eBook of Hints on chees...  Hints on cheese-making, for the dairyman, the ...
+1  most other parts of the world at no cost and w...  Hints on cheese-making, for the dairyman, the ...
+2  at www.gutenberg.org. If you are not located i...  Hints on cheese-making, for the dairyman, the ...
+3  Title: Hints on cheese-making, for the dairyma...  Hints on cheese-making, for the dairyman, the ...
+4  Author: T. D. Curtis\n\nRelease date: July 27,...  Hints on cheese-making, for the dairyman, the ...
+Processing file: input-datasets/books/Hand-book on cheese making.txt
+Number of chunks: 714
+Shape: (714, 2)
+                                               chunk                        book
+0  ﻿The Project Gutenberg eBook of Hand-book on c...  Hand-book on cheese making
+1  whatsoever. You may copy it, give it away or r...  Hand-book on cheese making
+2  Title: Hand-book on cheese making\n\nAuthor: G...  Hand-book on cheese making
+3  Release date: May 20, 2023 [eBook #70813]\n\nL...  Hand-book on cheese making
+4  *** START OF THE PROJECT GUTENBERG EBOOK HAND-...  Hand-book on cheese making
+Processing file: input-datasets/books/Cheese and its economical uses in the diet.txt
+Number of chunks: 678
+Shape: (678, 2)
+                                               chunk                                        book
+0  ﻿The Project Gutenberg eBook of Cheese and its...  Cheese and its economical uses in the diet
+1  most other parts of the world at no cost and w...  Cheese and its economical uses in the diet
+2  at www.gutenberg.org. If you are not located i...  Cheese and its economical uses in the diet
+3  Title: Cheese and its economical uses in the d...  Cheese and its economical uses in the diet
+4  Language: English\n\nOriginal publication: Uni...  Cheese and its economical uses in the diet
+Processing file: input-datasets/books/The Book of Cheese.txt
+Number of chunks: 3569
+Shape: (3569, 2)
+                                               chunk                book
+0  ﻿The Project Gutenberg eBook of The Book of Ch...  The Book of Cheese
+1  whatsoever. You may copy it, give it away or r...  The Book of Cheese
+2  Title: The Book of Cheese\n\nAuthor: Charles T...  The Book of Cheese
+3  Author: Charles Thom\n        W. W. Fisk\n\nRe...  The Book of Cheese
+4  *** START OF THE PROJECT GUTENBERG EBOOK THE B...  The Book of Cheese
+Processing file: input-datasets/books/The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.txt
+Number of chunks: 923
+Shape: (923, 2)
+                                               chunk                                               book
+0  The Project Gutenberg eBook of The book of The...  The book of The Cheese Being traits and storie...
+1  whatsoever. You may copy it, give it away or r...  The book of The Cheese Being traits and storie...
+2  Title: The book of The Cheese Being traits and...  The book of The Cheese Being traits and storie...
+3  Illustrator: active 1859-1891 Walter James All...  The book of The Cheese Being traits and storie...
+4  Release date: June 16, 2023 [eBook #70991]\n\n...  The book of The Cheese Being traits and storie...
+Processing file: input-datasets/books/Cottage Cheese Recipe Book.txt
+Number of chunks: 269
+Shape: (269, 2)
+                                               chunk                        book
+0  ﻿The Project Gutenberg eBook of Cottage Cheese...  Cottage Cheese Recipe Book
+1  whatsoever. You may copy it, give it away or r...  Cottage Cheese Recipe Book
+2  Title: Cottage Cheese Recipe Book\n\nCreator: ...  Cottage Cheese Recipe Book
+3  Language: English\n\nCredits: Stephen Hutcheso...  Cottage Cheese Recipe Book
+4  _Cottage Cheese Recipe Book_\n\n\n            ...  Cottage Cheese Recipe Book
+Processing file: input-datasets/books/Dairying exemplified, or, The business of cheese-making.txt
+Number of chunks: 926
+Shape: (926, 2)
+                                               chunk                                               book
+0  ﻿The Project Gutenberg eBook of Dairying exemp...  Dairying exemplified, or, The business of chee...
+1  most other parts of the world at no cost and w...  Dairying exemplified, or, The business of chee...
+2  at www.gutenberg.org. If you are not located i...  Dairying exemplified, or, The business of chee...
+3  Title: Dairying exemplified, or, The business ...  Dairying exemplified, or, The business of chee...
+4  Release date: February 1, 2023 [eBook #69922]\...  Dairying exemplified, or, The business of chee...
+[exit 0]

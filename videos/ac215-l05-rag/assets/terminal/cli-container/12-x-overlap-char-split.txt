@@ -1,0 +1,5 @@
+$ python -c "import json; c = [json.loads(l)['chunk'] for l in open('outputs/chunks-char-split-Tolminc Cheese.jsonl')]; print(len(c)); print(repr(c[0][-40:])); print(repr(c[1][:40]))"
+24
+'anized list of things she intended to ac'
+'s she intended to accomplish during her '
+[exit 0]

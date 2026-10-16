@@ -1,0 +1,23 @@
+$ python - <<'EOF'
+import chromadb
+c = chromadb.HttpClient(host="llm-rag-chromadb", port=8000).get_collection("char-split-collection")
+print("count:", c.count())
+first = {}
+for m in c.get(include=["metadatas"])["metadatas"]:
+    first.setdefault(m["book"], m)
+for book in sorted(first):
+    print(first[book])
+EOF
+count: 8248
+{'author': 'C. F. Langworthy and Caroline Louisa Hunt', 'book': 'Cheese and its economical uses in the diet', 'year': 2023}
+{'book': 'Cottage Cheese Recipe Book', 'author': 'Milk Industry Foundation', 'year': 2021}
+{'year': 2023, 'book': 'Dairying exemplified, or, The business of cheese-making', 'author': 'J. Twamley'}
+{'author': 'George E. Newell', 'book': 'Hand-book on cheese making', 'year': 2023}
+{'year': 2013, 'book': 'Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer', 'author': 'T. D. Curtis'}
+{'year': 2012, 'author': 'Charles Thom and W. W. Fisk', 'book': 'The Book of Cheese'}
+{'year': 2024, 'book': 'The Complete Book of Cheese', 'author': 'Bob Brown'}
+{'author': 'Thomas Wilson Reid', 'book': 'The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese', 'year': 2023}
+{'author': 'Charles S. Brooks', 'book': 'Theres Pippins and Cheese to Come', 'year': 2003}
+{'book': 'Tolminc Cheese', 'year': 2024, 'author': 'Pavlos Protopapas'}
+{'book': 'Womans Institute Library of Cookery'}
+[exit 0]

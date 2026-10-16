@@ -1,0 +1,14 @@
+$ wc -l outputs/chunks-recursive-split-*.jsonl
+    678 outputs/chunks-recursive-split-Cheese and its economical uses in the diet.jsonl
+    269 outputs/chunks-recursive-split-Cottage Cheese Recipe Book.jsonl
+    926 outputs/chunks-recursive-split-Dairying exemplified, or, The business of cheese-making.jsonl
+    714 outputs/chunks-recursive-split-Hand-book on cheese making.jsonl
+   1146 outputs/chunks-recursive-split-Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.jsonl
+   3569 outputs/chunks-recursive-split-The Book of Cheese.jsonl
+   2147 outputs/chunks-recursive-split-The Complete Book of Cheese.jsonl
+    923 outputs/chunks-recursive-split-The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.jsonl
+   1198 outputs/chunks-recursive-split-Theres Pippins and Cheese to Come.jsonl
+     35 outputs/chunks-recursive-split-Tolminc Cheese.jsonl
+   2623 outputs/chunks-recursive-split-Womans Institute Library of Cookery.jsonl
+  14228 total
+[exit 0]

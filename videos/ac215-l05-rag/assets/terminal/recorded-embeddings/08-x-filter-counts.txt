@@ -1,0 +1,16 @@
+$ python - <<'EOF'
+import chromadb
+c = chromadb.HttpClient(host="llm-rag-chromadb", port=8000).get_collection("char-split-collection")
+bob = {"book": "The Complete Book of Cheese"}
+print("all chunks:                      ", c.count())
+print("where book = Bob Brown's book:   ", len(c.get(where=bob)["ids"]))
+print("  ... and $contains 'Italian':   ", len(c.get(where=bob, where_document={"$contains": "Italian"})["ids"]))
+print("  ... and $contains 'Tolminc':   ", len(c.get(where=bob, where_document={"$contains": "Tolminc"})["ids"]))
+print("any book, $contains 'Tolminc':   ", len(c.get(where_document={"$contains": "Tolminc"})["ids"]))
+EOF
+all chunks:                       8248
+where book = Bob Brown's book:    1355
+  ... and $contains 'Italian':    64
+  ... and $contains 'Tolminc':    0
+any book, $contains 'Tolminc':    3
+[exit 0]

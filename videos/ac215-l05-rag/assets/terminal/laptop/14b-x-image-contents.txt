@@ -1,0 +1,8 @@
+$ docker run --rm --entrypoint bash llm-rag-cli -c 'du -sh /app/.git; du -sh /.venv; ls -la /app/docker-volumes/chromadb'
+103M	/app/.git
+439M	/.venv
+total 192
+drwxr-sr-x 2 app app   4096 Oct 16 00:52 .
+drwxr-sr-x 3 app app   4096 Oct 16 00:52 ..
+-rw-r--r-- 1 app app 188416 Oct 16 00:52 chroma.sqlite3
+[exit 0]

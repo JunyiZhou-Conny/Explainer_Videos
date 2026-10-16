@@ -52,7 +52,8 @@ Beats (script.md "## S02", one voiceover block each):
     outlined chip level with its slot: "the operating system's files" slides into the bottom slot at
     "the system's files", "system libraries" into the next at "and libraries", both becoming ORANGE
     slabs (GREEN check); the third, "GPU drivers", stays outside below them, GREY, "still the
-    host's". Fade out to an empty frame.
+    host's" (with the libraries; on its own sentence once SAY says "GPU drivers still come from the
+    host."). Fade out to an empty frame.
 """
 
 import numpy as np  # noqa: I001  (manim first, then common: common must win)
@@ -511,6 +512,13 @@ class FourNouns(VoiceScene):
         ok2 = check_mark(0.45).next_to(VGroup(hole1, hole2), LEFT, buff=0.3)
         gpu_grey = chip("GPU drivers", S.GREY, size=26, fill_opacity=0.06).move_to(gpu_c, aligned_edge=LEFT)
         hosts = label("still the host's", 26, S.GREY).next_to(gpu_grey, RIGHT, buff=0.3)
+        # QA 03:06: the GPU chip (review P36, exercise D1c) is not narrated yet. Once script.md's SAY
+        # gets "GPU drivers still come from the host.", it greys on that sentence; until then, with
+        # the libraries.
+        gpu_said = "GPU drivers still" in SAY[8]
+
+        def gpu_out():
+            return ReplacementTransform(gpu_c, gpu_grey), FadeIn(hosts, shift=LEFT * 0.1)
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(kp, vm_out, vm_lab, own)), run_time=0.6)
@@ -521,10 +529,14 @@ class FourNouns(VoiceScene):
             self.play(FadeTransform(os_c, new_os), FadeOut(hole1), run_time=0.8)
             vo.wait_until("and libraries")
             self.play(FadeTransform(lib_c, new_lib), FadeOut(hole2), Create(ok2),
-                      ReplacementTransform(gpu_c, gpu_grey), FadeIn(hosts, shift=LEFT * 0.1), run_time=0.8)
+                      *(() if gpu_said else gpu_out()), run_time=0.8)
             vo.wait_until("is now inside")
             self.play(Indicate(VGroup(new_os.box, new_lib.box), color=SYSTEM, scale_factor=1.04),
                       Indicate(img_lab, color=IMAGE), run_time=0.9)
+            if gpu_said:
+                vo.wait_until("GPU drivers still")
+                self.play(*gpu_out(), run_time=0.8)
+                self.play(Indicate(hosts, color=INK, scale_factor=1.08), run_time=0.7)
 
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.8)
         self.wait(0.2)
