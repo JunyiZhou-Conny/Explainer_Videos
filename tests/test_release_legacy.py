@@ -96,6 +96,16 @@ def test_refuses_without_a_chinese_title(episode):
         rel.legacy_inputs(ep, ep / "output")
 
 
+@pytest.mark.parametrize("key", ["tid", "tags_zh", "description_zh"])
+def test_refuses_a_publish_block_without_partition_tags_or_description(episode, key):
+    """No silent defaults: without tid the manifest would fall back to partition 201 (Bugbot, PR #29)."""
+    ep, _ = episode
+    kept = "\n".join(line for line in PUBLISH.splitlines() if not line.strip().startswith(key + ":"))
+    (ep / "video.yaml").write_text(YAML + kept + "\n")
+    with pytest.raises(SystemExit, match=f"publish.{key}"):
+        rel.legacy_preflight(ep)
+
+
 def test_refuses_without_the_sign_off_line(episode):
     ep, _ = episode
     (ep / "REVIEW.md").write_text("Technical checks pass.\n")

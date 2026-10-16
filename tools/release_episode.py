@@ -82,13 +82,21 @@ def srt_cues(path: Path) -> list[list[str]]:
     return [b.splitlines()[2:] for b in blocks if len(b.splitlines()) >= 3 and "-->" in b.splitlines()[1]]
 
 
+PUBLISH_KEYS = ("title_zh", "description_zh", "tags_zh", "tid")
+
+
 def legacy_spec(episode: Path) -> dict:
-    """video.yaml, refused without the `publish:` block that a Bilibili upload needs."""
+    """video.yaml, refused unless its `publish:` block holds everything a Bilibili upload needs.
+    No defaults: a missing tid would file the video under the episode.json route's partition."""
     import yaml
     spec = yaml.safe_load((episode / "video.yaml").read_text())
-    if not (spec.get("publish") or {}).get("title_zh"):
-        raise SystemExit("video.yaml has no publish.title_zh: write the Bilibili title, description_zh "
-                         "and tags_zh (and tid) in a `publish:` block before releasing.")
+    publish = spec.get("publish") or {}
+    missing = [k for k in PUBLISH_KEYS if not publish.get(k)]
+    if missing:
+        raise SystemExit(f"video.yaml's publish block lacks {', '.join('publish.' + k for k in missing)}: "
+                         "write the Bilibili title_zh, description_zh, tags_zh and tid before releasing.")
+    if not isinstance(publish["tags_zh"], list) or not str(publish["tid"]).isdigit():
+        raise SystemExit("publish.tags_zh must be a list and publish.tid a Bilibili partition number.")
     return spec
 
 
@@ -141,11 +149,8 @@ def legacy_inputs(episode: Path, out: Path) -> tuple[str, dict, dict, list[Path]
         p.suffix in keep or re.fullmatch(r"chapters(_\w+)?\.txt", p.name) or p.name == f"{vid}.validation.json"))
     main_mp4 = out / (publish.get("asset") or burned.name)
     meta = {"title_zh": publish["title_zh"], "title_en": publish.get("title_en") or spec.get("title", vid),
-            "description_zh": publish.get("description_zh", "")}
-    if publish.get("tags_zh"):
-        meta["tags_zh"] = list(publish["tags_zh"])
-    if publish.get("tid"):
-        meta["bilibili_tid"] = int(publish["tid"])
+            "description_zh": publish["description_zh"], "tags_zh": [str(t) for t in publish["tags_zh"]],
+            "bilibili_tid": int(publish["tid"])}
     return meta["title_en"], meta, validation, deliverables, main_mp4
 
 
