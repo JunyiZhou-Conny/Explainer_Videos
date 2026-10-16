@@ -599,8 +599,13 @@ class RunContainer(VoiceScene):
         note1 = VGroup(label("no", SZ, S.GREY), nm, label("in the prompt", SZ, S.GREY)).arrange(RIGHT, buff=0.12)
         note2 = label("· the venv is active anyway", SZ, S.GREY)
         note = VGroup(note1, note2).arrange(RIGHT, buff=0.15)
-        for m in (*note1[::2], note2):
-            m.align_to(note1[0], DOWN)
+        # one baseline for serif and mono: align the bottoms of flat-bottomed glyphs (n, r, i, h),
+        # not the boxes (the parentheses and the p/y descenders reach below the baseline)
+        def base_y(m, ch):
+            return m[m.text.index(ch)].get_bottom()[1]
+        y0 = base_y(note1[0], "n")
+        for m, ch in ((nm, "r"), (note1[2], "i"), (note2, "h")):
+            m.shift(UP * (y0 - base_y(m, ch)))
         place(note, left=t.box.get_left()[0] + 0.1, cy=(t.box.get_top()[1] + TRACK_BOTTOM) / 2)
         nm_x = Line(nm.get_left() + LEFT * 0.05, nm.get_right() + RIGHT * 0.05, color=S.GREY, stroke_width=3)
         with self.voiceover(SAY[8]) as vo:

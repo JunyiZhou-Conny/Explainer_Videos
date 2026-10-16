@@ -23,8 +23,9 @@ Beats (script.md "## S06", one voiceover block each):
     top right, the GREY caption "your terminal shows a compact live view; / this is the full log
     (--progress=plain)". TERM(12-build.txt: 9, 23, …, 148-149, …, 1368, 1375, 1377): `[2/5]` gets a
     TEAL box and the TEAL badge "build step 2" on the `…` row under it; `237 newly installed` and
-    `205 MB` underline ORANGE, `uv-0.13.0` turns PURPLE, `DONE 46.9s` underlines YELLOW; GREY note
-    beside it: "first build: Docker also pulls python:3.12-slim-bookworm".
+    `205 MB` underline ORANGE, `uv-0.13.0` turns PURPLE, `DONE 46.9s` underlines YELLOW; the framed
+    GREY row tag "first build: Docker also pulls python:3.12-slim-bookworm" beside it (all in the
+    tag's font: an annotation, never a log line).
  3  TERM(12-build.txt: 1379, 1382) with badges "build step 3", "build step 4" (and `[k/5]` TEAL);
     then 1385-1388 (wrap: 1386 folds): badge "build step 5"; line 1386 underlines ORANGE, line
     1387's `/home/app/.venv` turns GREEN, a GREY tag "only the project itself" beside line 1388.
@@ -37,15 +38,19 @@ Beats (script.md "## S06", one voiceover block each):
     PINK; GREY tag "a name check · harmless here"; the warning rows pulse on "every build".
  5  TRACKER A5 · extra. The inset goes, the terminal clears (title "laptop") and shrinks to a
     4-row strip (the command folds onto 2 rows) while V2 fades in above it, as S05 left it. It
-    types `docker images transcribe_audio` (extra) -> 13-images.txt lines 2-3 (cut at 65: "357…");
-    `1.35GB` gets a YELLOW bar; a GREY brace "≈ 1 GB of layers" + note "+ 357 MB compressed copy /
-    = 1.35 GB disk usage · this machine". On "By far the biggest" the apt slab swells while the
-    empty uv sync slab thins to a hairline (the brace follows); `842MB` (17-history.txt line 9)
-    lands in it on "842 megabytes". While the SAY lists ffmpeg and the libraries, the five slabs
+    types `docker images transcribe_audio` (extra) -> 13-images.txt lines 2-3 (cut at 65: "357…";
+    a hard wrap would split "357M|B" and need 6 rows); `1.35GB` gets a YELLOW bar; a GREY brace
+    "≈ 1 GB of layers" + note "+ 357 MB compressed copy / = 1.35 GB disk usage · this machine";
+    the cut "357…" cell underlines GREY and a thin GREY leader runs from it (right, up the gap at
+    the terminal's right edge, left) to "+ 357 MB". On "By far the biggest" the apt slab swells
+    while the empty uv sync slab thins to a hairline (the brace and leader follow); `842MB`
+    (17-history.txt line 9) lands in it on "842 megabytes", with the GREY row tag "docker history ·
+    part 2" under it (its source). While the SAY lists ffmpeg and the libraries, the five slabs
     take TEAL badges 1-5 (fanned, with leader lines: three slabs are thin); the thin GREY COPY
     slab pulses on "the copied folder is tiny".
  6  TRACKER A5. The strip and the brace go. Bottom: a RED-bordered panel, header "if you skipped uv
-    init", GREY tag "illustration · what if", TERM(26-g21-no-pyproject.txt: 34, 51) in RED (folded
+    init", GREY tag "what if · a real run" (26-g21 is a recorded extra run, ASSETS.md, so not
+    `illustration`), TERM(26-g21-no-pyproject.txt: 34, 51) in RED (folded
     at spaces to the panel's 66 characters). On "build step 5 fails" badge 5 and the sync slab
     flash RED.
  7  The panel fades. A GREY chip "edit: group_name in cli.py" hovers right of the stack; the five
@@ -72,7 +77,7 @@ from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, P_A, SYSTEM, TERMINAL, TOOL, TURN, VENV,
                     LayerStack, asset_lines, bare_prompt, beside, builder_box, cached_stamp, capture,
-                    caption_extra, extra_tag, file_panel, history_row, illustration_tag, key_glyph,
+                    caption_extra, extra_tag, file_panel, history_row, key_glyph,
                     log_panel, parcel_glyph, pin, readme_chip, resize, sans, source_text, term, tracker,
                     type_cmd, your_turn)
 
@@ -382,15 +387,22 @@ def restack(st: LayerStack, heights: dict, label_top=("apt",), hide_labels=("syn
     return anims, targets
 
 
-def brace_group(boxes) -> VGroup:
-    """GREY brace along the slabs with "≈ 1 GB of layers" and the disk-usage note."""
+def brace_group(boxes, cell) -> VGroup:
+    """GREY brace along the slabs with "≈ 1 GB of layers" and the disk-usage note, and a thin GREY
+    leader from the docker images row's CONTENT SIZE cell `cell` (cut "357…") to "+ 357 MB": it
+    runs right of the row, up the free gap at the terminal's right edge, then left to the note."""
     br = Brace(VGroup(*boxes), RIGHT, color=S.GREY, buff=0.12)
     txt = VGroup(sans("≈ 1 GB of layers", 20, INK),
                  label("+ 357 MB compressed copy", 20, S.GREY),
                  label("= 1.35 GB disk usage · this machine", 20, S.GREY))
     txt.arrange(DOWN, aligned_edge=LEFT, buff=0.1).next_to(br, RIGHT, buff=0.15)
-    g = VGroup(br, txt)
-    g.brace, g.text = br, txt
+    x0, y0 = cell.get_right()[0] + 0.06, cell.get_center()[1]
+    xv = cell.get_right()[0] + 0.2
+    yn = txt[1].get_center()[1]
+    lead = VMobject(stroke_color=S.GREY, stroke_width=2).set_points_as_corners(
+        [[x0, y0, 0], [xv, y0, 0], [xv, yn, 0], [txt[1].get_right()[0] + 0.12, yn, 0]])
+    g = VGroup(br, txt, lead)
+    g.brace, g.text, g.lead = br, txt, lead
     return g
 
 
@@ -574,10 +586,10 @@ class BuildImage(VoiceScene):
             at(self, vo, "all in 46.9")
             u1377 = uline(r1377, "DONE 46.9s", TURN)
             pin(self, r1377, u1377, run_time=0.5, anim=Create(u1377))
-            note = VGroup(label("first build: Docker also pulls", 20, S.GREY),
-                          mono("python:3.12-slim-bookworm", 20, S.GREY)).arrange(RIGHT, buff=0.14)
-            note[1].align_to(note[0], DOWN)
-            place(note, left=r1377.glyphs.get_right()[0] + 0.45, cy=r1377.strut.get_center()[1])
+            # an annotation, not log text: the framed GREY row tag (as "only the project itself"),
+            # all in the tag's font, so nothing in the terminal reads as a line the capture lacks
+            note = beside(row_tag("first build: Docker also pulls python:3.12-slim-bookworm"), t, r1377,
+                          buff=0.45)
             pin(self, r1377, note, run_time=0.5)
 
         # ========================================================== 3 · build steps 3, 4, 5
@@ -683,18 +695,28 @@ class BuildImage(VoiceScene):
             b135 = sbar(out5[1], "1.35GB", TURN, 0.3)
             pin(self, out5[1], b135, run_time=0.4)
             self.play(Indicate(substring(out5[1], "1.35GB"), color=TURN, scale_factor=1.2), run_time=0.6)
-            brace = brace_group([st.slabs[n].box for n in st.order])
-            self.play(GrowFromCenter(brace.brace), FadeIn(brace.text, shift=LEFT * 0.1), run_time=0.7)
+            # the note's 357 MB comes from the cut CONTENT SIZE cell: GREY underline + leader
+            c357 = substring(out5[1], "357…")
+            u357 = uline(out5[1], "357…", S.GREY, stroke=2.5)
+            brace = brace_group([st.slabs[n].box for n in st.order], c357)
+            self.play(GrowFromCenter(brace.brace), FadeIn(brace.text, shift=LEFT * 0.1), Create(u357),
+                      run_time=0.7)
+            stick(self, out5[1], u357)
+            self.play(Create(brace.lead), run_time=0.6)
 
             at(self, vo, "By far the biggest")
             anims, targets = restack(st, {"apt": APT_H, "sync": THIN})
-            brace2 = brace_group([targets[n] for n in st.order])
+            brace2 = brace_group([targets[n] for n in st.order], c357)
             self.play(*anims, Transform(brace, brace2), run_time=1.2)
             apt = st.slabs["apt"]
             size = mono(APT_SIZE, 22, SYSTEM).move_to(apt.box).shift(DOWN * 0.12)
+            # the 842MB is not on screen yet: docker history shows it in part 2 (17-history.txt:9)
+            src842 = row_tag("docker history · part 2")
+            place(src842, cx=size.get_center()[0], top=size.get_bottom()[1] - 0.16)
             at(self, vo, "842 megabytes", -0.42)
             st.attach(self, size, anims=[FadeIn(size, scale=1.4)], run_time=0.5)
-            self.play(Indicate(size, color=SYSTEM, scale_factor=1.25), run_time=0.7)
+            st.attach(self, src842, anims=[Indicate(size, color=SYSTEM, scale_factor=1.25),
+                                           FadeIn(src842, shift=UP * 0.1)], run_time=0.7)
             # the five build steps get their numbers (needed by the next two blocks) while the SAY
             # lists the apt layer's contents, so "the copied folder" keeps the eye to itself
             at(self, vo, "ffmpeg and their", 0.45)
@@ -710,7 +732,7 @@ class BuildImage(VoiceScene):
         # ========================================================== 6 · what if (no pyproject.toml)
         panel = what_if_panel()
         place(panel, cx=0, bottom=-3.5)
-        ill = illustration_tag("what if")
+        ill = tag("what if · a real run", S.GREY)    # 26-g21-no-pyproject.txt: a recorded extra run
         place(ill, right=panel.frame.get_right()[0], cy=panel.header.get_center()[1])
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(t), FadeOut(brace), caption_extra(tr, False), run_time=0.5)

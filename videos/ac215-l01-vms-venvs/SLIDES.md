@@ -79,7 +79,7 @@ The main deck's agenda is a slide titled "Outline" with three items: Motivation,
 
 1. **In enterprise AI, ambition outpaces execution.**
    - The opening figures (credited to McKinsey 2023, IDC and VentureBeat) set rising AI use against slow deployment: over two-thirds of companies need between 8 and 90+ days to ship a single model.
-   - Few companies have an enterprise-wide AI strategy, and more than 80% of generative-AI initiatives show no tangible effect on EBIT, because pilots rarely scale.
+   - Only about one in four organisations using AI has an enterprise-wide AI strategy, and more than 80% of generative-AI initiatives show no tangible effect on EBIT, because pilots rarely scale.
 
    *Slide 4.*
 2. **Course projects are one-person prototypes; real ML is a team on clusters.**
@@ -157,10 +157,10 @@ The main deck's agenda is a slide titled "Outline" with three items: Motivation,
 23. **Learn the steps, even with AI.**
     - The course expects you to be able to build the whole system without generative AI: slower, but knowing every step and how the pieces fit.
     - Fully autonomous agents still go wrong expensively, while a human guiding them step by step gets the gains. AI multiplies your expertise; it doesn't replace it.
-    - The analogy: you can't coach a sport you've never played, like a cycling coach who knows the numbers but has never felt a long climb.
+    - The analogy: you can't coach a sport you've never played, like a cycling coach who knows every metric but has never ridden up a mountain.
 
     *Intro 10–11, 13–14.*
-24. **The goal is to design, build and deploy a complete AI system, end to end.** A model is only half the journey; the other half is a reliable, scalable, usable system, across the full ML lifecycle, with a strong emphasis on LLMs. Assessment covers understanding (quizzes), engineering, working systems, and communication. *Intro 12, 15, 17.*
+24. **The aim is a whole AI system that you design, build and deploy yourself.** Training a model is only the first half; the second is turning it into a dependable, scalable system that people can use, over the whole ML lifecycle and with LLMs at the centre. Assessment covers understanding (quizzes), engineering, working systems, and communication. *Intro 12, 15, 17.*
 
 ## Diagrams
 
@@ -214,7 +214,7 @@ The main deck's agenda is a slide titled "Outline" with three items: Motivation,
     - API: Python via uv, OS Mac;
     - deployment: Python via uv, OS Linux.
   - Blue braces below group the development stages under one person icon ("One developer, Using a Macbook") and the deployment stage under "Server".
-  - Slide 29 replaces the single person with pairs of blue and green person icons under each stage (a crowd under the API) and the caption "Multiple developers, Using Mac and Windows OS".
+  - Slide 29 replaces the single person with pairs of blue and green person icons under each development stage (a crowd under the API; none under the server) and the caption "Multiple developers, Using Mac and Windows OS".
   - Slide 30 keeps only the Deployment column, bracketed as "Server" (Python via uv, OS Linux):
     - the Cheese App at the top, Model Training in the middle, the photo grid and Python Script at the bottom;
     - curved arrows form a loop: grey arrows run down from the app to training and to the data, a purple arrow goes from the data up to training, and a red arrow joins training and the app.
@@ -252,7 +252,7 @@ The main deck's agenda is a slide titled "Outline" with three items: Motivation,
   - 53: Maggie's green stack gets a dashed outline, and a dashed arrow carries it to John's OS bar, where an identical green env_AC215 (lib1, lib2) appears. Maggie's blue base install is not copied.
   - 54: John has a second, red stack, env_ai4 (lib3b, lib2, lib3).
     - A dashed arrow moves its lib3b into his env_AC215, which becomes lib1, lib2, lib3b.
-    - A dashed arrow then carries John's env_AC215 back to Maggie, whose env_AC215 gains a third tile in a dashed box. That tile is labelled "lib3" on Maggie's side and "lib3b" on John's; it is the same library.
+    - A dashed arrow then carries John's env_AC215 back to Maggie, whose env_AC215 gains a third tile in a dashed box. That tile is labelled "lib3" on Maggie's side and "lib3b" on John's; presumably it is the same library.
   - For: an environment is a named, portable set of libraries that can be sent between machines through a configuration file.
   - Re-draw as stacks of library blocks that copy across between two machines.
 - **Slides 63 and 65 · manifest vs lock** (speech-bubble annotations, no drawing).
@@ -290,7 +290,7 @@ The main deck's agenda is a slide titled "Outline" with three items: Motivation,
 - **"Formaggio"** / **"Formaggio.me"**, the reference project, and **"Cheese App"** (20–30).
   - The example cheeses pictured are Parmigiano, Ricotta, Feta and Brie (20–21).
   - The data slide's four labels are brie, parmigiano, gouda and gruyere (23).
-  - None of this appears in the L01 README, whose app is the **"Simple Translate App"**. The lecture writes it **"Simple-Translate App"** and "simple-translate" (39–40, 72).
+  - Neither name appears in the L01 README, whose app is the **"Simple Translate App"** (its cheese is only in the sample sentences). The lecture writes it **"Simple-Translate App"** and "simple-translate" (40, 72), and "Simple Translate" on slide 69.
 - **"Rest API"**, "Python Script", "Colab", "IDE / Code Editor" (27–29); "Development" vs **"Deployment"**, "Server" (28–30).
 - **"Virtual Machine"**, **"Hypervisor"**, **"host"** and **"guest"** OS, **"Virtualization"**, "Infrastructure", "Bins/lib" (36, 73).
   - The README never says hypervisor, host or guest. Our `digest.md` uses "hypervisor" too (§3.1).
@@ -313,7 +313,7 @@ The main deck's agenda is a slide titled "Outline" with three items: Motivation,
   - The repo's `pipenv` branch uses these files (`digest.md` §3.7, Part C). The `main` README doesn't.
 - **"Drop-in replacement for pip and pip-tools"**, "Built-in virtual environment management", **"[dependency-groups.dev]"** (65).
   - Our digest describes uv as one tool replacing five (venv, pip, pip-tools, pyenv, pipx).
-  - It also notes that a uv venv contains no `pip`, which matters if "drop-in" is read literally (`digest.md` §3.7, E3).
+  - It also notes that a uv venv contains no `pip`, which matters if "drop-in" is read literally (`digest.md` §3.7 and §10 erratum 3).
 - **"project environment"**, "clean project workflow" (66); **"The Two Key Files and a Key Directory"** (68).
   - The lecture says `uv.lock` is "not human readable" (65). It is plain TOML text: readable, but generated and not meant to be edited by hand. The same goes for `Pipfile.lock`, which is JSON (63).
   - The README calls the lock a "lock file" that "pins exact versions". The lecture says "exact versions selected" (68), which is the same idea.
@@ -421,7 +421,7 @@ Configuration keys named on the slides: `[dev-packages]` in the Pipfile (63) and
   - `python3 cli.py -t … -s … -d …`.
 - The README's Part B is slide 70's path, with activation as on slide 67: `uv sync`, then `source .venv/bin/activate`, then `python cli.py`.
 - Slide 69's `uv init --bare` is for starting a project from scratch. Run inside the cloned repo, it stops with "Project is already initialized" because `pyproject.toml` already exists (checked with uv 0.11.32).
-- `uv init --bare` writes no `description` or `readme` lines (checked with uv 0.11.32). The repo's `pyproject.toml` has both, so it came from a plain `uv init` (`digest.md` E12). Its dependency lines, `googletrans==4.0.2` and `art>=6.5`, are what slide 69's `uv add` produces.
+- `uv init --bare` writes no `description` or `readme` lines (checked with uv 0.11.32). The repo's `pyproject.toml` has both, so it most likely came from `uv init` without `--bare` (`digest.md` §10 erratum 12). Its dependency lines, `googletrans==4.0.2` and `art>=6.5`, are what slide 69's `uv add` produces.
 - The intro deck has no commands.
 
 ## What the lecture stresses
@@ -430,25 +430,25 @@ Configuration keys named on the slides: `[dev-packages]` in the Pipfile (63) and
   - The question after "Best Model" is "Now What ?" (19, 25–26).
   - Intro 15 makes the same point: the other half is a reliable, scalable, usable system.
 - **Production problems are coordination problems, not six separate bugs** (8). Standardising infrastructure through automation, containers and Ops is called "absolutely essential" against environmental drift (7).
-- **"It works on my machine" is the headline failure** (7, 31). Slides 28–30 show where it comes from: each stage and each person runs a different OS and Python setup.
-- **The three requirements:** shareable isolated environments, a common OS whatever the host OS, and tracked installs (32). Every tool in L01–L02 is measured against them.
+- **"It works on my machine" is the headline failure** (7, 31). Slides 28–30 show where it comes from: the stages and the people use different OSs and Python setups.
+- **The three requirements:** shareable isolated environments, a common OS whatever the host OS, and tracked installs (32). The next slide's three tools (33) are the lecture's answer to them.
 - **Choose a model on several criteria, not accuracy alone:** memory, execution time and other metrics (25).
 - **Use a personal cloud account.** Register with any email you control, and don't tie it to a university or employer domain (42).
 - **In the VM tutorial, select all defaults** (46).
-  - The README gives no VM settings either (`digest.md` E9).
+  - The README gives no VM settings either (`digest.md` §10 erratum 9).
   - Our digest suggests e2-small and warns that the image decides whether uv downloads a Python.
 - **VMs are not free lunch.** The lecture lists hardware dependence, large size, overhead, slower performance, slow start-up and weaker graphics (38). These become the motivation for containers in L02 (slides 5–7 there).
 - **Virtual environments don't isolate completely, and may not carry across operating systems** (56). Our digest says the same: a venv isolates Python packages only, not system libraries or the OS (`digest.md` §3.3).
 - **Share the environment as a file, not as instructions.** Maggie and John exchange a configuration file, and the receiver rebuilds from it (53–54). The same lesson recurs in `pip freeze` / `-r` (60), `conda env export` / `create -f` (62), `pipenv sync` (64) and `uv sync` (70).
 - **Keep the human-edited manifest separate from the generated lock,** and keep dev dependencies separate from production ones (63, 65, 68).
-- **This course uses uv** as its primary environment and package manager, to standardise development (58).
+- **The course standardises on uv** for both environments and packages (58).
 - **Once a project is set up, don't re-add libraries; run `uv sync`,** which installs the exact versions from `uv.lock` (70).
-  - This conflicts with the repo: at `62f821b` it commits no `uv.lock` (`digest.md` E1). A fresh clone's first `uv sync` therefore resolves anew and writes a new lock, instead of installing a locked set.
-  - In the same spirit, `requires-python = ">=3.13"` is a constraint, not a pin, so uv may download a Python (`digest.md` E6).
+  - This conflicts with the repo: at `62f821b` it commits no `uv.lock` (`digest.md` §10 erratum 1). A fresh clone's first `uv sync` therefore resolves anew and writes a new lock, instead of installing a locked set.
+  - In the same spirit, `requires-python = ">=3.13"` is a constraint, not a pin, so uv may download a Python (`digest.md` §10 erratum 6).
 - **You don't need to activate.** `uv run` runs code inside the project environment (67, 69).
 - **Removing a venv is just deleting its folder** (60).
 - **Intro deck:**
-  - You must be able to build the system without generative AI, slower but knowing every step; AI helps you build faster, and the course makes sure you understand what you build (intro 11).
+  - You must be able to build the system without generative AI, slower but knowing every step; AI can speed you up, and the course is there so that you understand what you have built (intro 11).
   - Autonomous agents are not ready, guided agents are, and AI multiplies existing expertise (intro 13).
   - You can't coach a sport you never played (intro 14).
   - Quizzes are in person only for on-campus students, with no online option and no make-ups; DCE students take them online (intro 17).
@@ -468,7 +468,7 @@ Configuration keys named on the slides: `[dev-packages]` in the Pipfile (63) and
 - **Google Cloud (slide 41):** `https://cloud.google.com`.
 - **Virtual-environment tutorial (slide 72, with a QR code):** `https://github.com/dlops-io/simple-translate?tab=readme-ov-file#installing-app-on-vm-using-uv-t2`.
   - The `-t2` anchor matches no heading of the README at `62f821b`.
-  - Slide 40's anchor lacks the emoji-derived prefix of the real heading anchor (`#%EF%B8%8F-installing-app-on-vm-manually`, as the course site encodes it; `digest.md` header and E8).
+  - Slide 40's anchor lacks the emoji-derived prefix of the real heading anchor (`#%EF%B8%8F-installing-app-on-vm-manually`, as the course site encodes it; `digest.md` header and §10 erratum 8).
   - Both links probably open the README at the top.
 - **Further readings on uv (slide 71):**
   - official docs, `https://docs.astral.sh/uv/`;
@@ -506,7 +506,7 @@ Configuration keys named on the slides: `[dev-packages]` in the Pipfile (63) and
 | S04 · apt, git and the repo (05:57) | 40, 48, 72 | The tutorial applies it: slide 40's "Install Required Dependencies: git, Python" and slide 48's clone line, which is the README's. `apt-get update`, apt vs apt-get and `ls` are tutorial-only. The step lists differ (Conflict 5). |
 | S05 · The system Python and PEP 668 (07:39) | 51–52 | The ponder is the story of slides 51–52: one base install serves everything until a second project needs different libraries. PEP 668, `sys.path` and shadowing are tutorial-only. |
 | S06 · Run it, and read the traceback (10:53) | 40 ("Download and Execute") | Tutorial-only: the runs, the 429 and the chained traceback. |
-| S07 · Delete, don't stop (12:58) | 35 ("instantiate and terminate") | Tutorial-only: the slides never mention deleting the VM or what it costs. |
+| S07 · Delete, don't stop (12:58) | 35 ("instantiate and terminate") | Tutorial-only: slide 35 names easy termination as a need, but the tutorial slides never say to delete the VM, and no slide mentions billing. |
 | S08 · What a virtual environment is (14:01) | 50, 52, 55–56, 59–60, 73 | Same concept, with a different list of three parts (Conflict 1, gap 2). "What a venv doesn't isolate" is slide 56's "Lack of Isolation", made concrete. |
 | S09 · Installing uv (15:48) | 57–58, 65, 72 | Same concept for what uv is (57, 65); the video adds pyenv and pipx. Installing uv, `PATH` and `source` are tutorial-only: no slide shows the install. Slide 72's step list never names uv (Conflict 5). |
 | S10 · uv sync: which Python? (18:03) | 65–66, 68–69 | Same concept for reading `pyproject.toml` ("what the project needs", 68; constraints vs exact versions, 65). Which Python uv picks or downloads is tutorial-only: the lecture never says uv installs Pythons. Slide 69 shows how such a file is made, not what the clone needs (Conflict 3, gap 1). |
@@ -542,16 +542,16 @@ Configuration keys named on the slides: `[dev-packages]` in the Pipfile (63) and
 ### 3. Gaps (ranked by value to a student doing the tutorial)
 
 1. **Starting a project vs joining one (slides 67, 69 vs 70).** The lecture builds simple-translate from nothing with `uv init --bare`, `uv add googletrans==4.0.2 art` and `uv run python cli.py` (69). Its "After the First Time" slide (70) is the path the README takes: `uv sync`. The video never says why the README starts at `uv sync`, or where `pyproject.toml` came from, and a student who types slide 69 into the clone is stopped at once (Conflict 3). **Carry it in** S10, on the `pyproject.toml` panel (a note and one bridge). S12's `uv add` beat already covers adding a package later.
-2. **The lecture's third part of a venv: the scripts (slide 50).** The slide's list is site-packages, links to an interpreter, and the scripts (`activate` and friends) that make your code use this environment. The video's list ends with `pyvenv.cfg` instead, and its end-of-video question 2 asks for "the three parts". A student answering a quiz from the lecture needs the slide's list. The video shows the scripts (S12, `ls -la .venv/bin`, b/11 lines 5–12) without counting them. **Carry it in** S08's three-part card (a GREY fourth row) and S12's listing (a bracket). No narration needed.
-3. **Why isolate at all (slides 7, 28–32).** Every stage of the Cheese App runs on a different OS and Python setup (28), more developers multiply that (29), and automated retraining adds a server (30): "it works on my machine". The lecture's answer is three needs: isolated environments that can be shared, a common OS whatever the host, and tracked installs (32). The video's motive is the README's "fragility" ladder and the PEP 668 refusal, which is a narrower why. This is quiz material and Milestone 2's "Virtual Environment Setup". **Carry it in** S15's V7 recap (a tag, one bridge, three chips) and S01's ladder (a tag).
-4. **What a VM costs you besides money (slides 37–38).** Pros: a computer within a computer, safe for the host, many OSs on one machine, and the way every cloud rents servers. Cons: dependence on the host's hardware, large size, overhead, slower than the host, slow start. The cons are why containers come next. The video says "a whole machine you can wreck" but never gives the cons. **Carry it in** S15's container beat and S03's V1 (tags).
-5. **The other environment tools and their files (slides 57, 59–62).** venv with `pip freeze > requirements.txt` and `pip install -r` (60); conda with `environment.yml` (62); mamba (57); "removing an environment: delete its folder" (60). S08 names `python3 -m venv` and S14 pipenv, but conda, the tool of the Anaconda story on slide 51, never appears. For the VM: the captured PEP 668 hint says the classic `python3 -m venv` needs `python3-full` there (a/07 lines 10–12; not run here). **Carry it in** S14 (a tag, optionally one bridge).
+2. **The lecture's third part of a venv: the scripts (slide 50).** The slide's list is site-packages, links to an interpreter, and the scripts (`activate` and friends) that make your code use this environment. The video's list ends with `pyvenv.cfg` instead, and its end-of-video question 2 asks for "the three parts". A student answering a quiz from the lecture needs the slide's list. The video shows the scripts without counting them: S12's `ls -la .venv/bin` prints `activate` (b/11 line 5) and folds its variants (lines 6–12) into a `…` row. **Carry it in** S08's three-part card (a GREY fourth row) and S12's listing (a bracket). No narration needed.
+3. **Why isolate at all (slides 7, 28–32).** The Cheese App's stages run on different OSs and Python setups (28), more developers multiply that (29), and automated retraining adds a server (30): "it works on my machine". The lecture's answer is three needs: isolated environments that can be shared, a common OS whatever the host, and tracked installs (32). The video's motive is the README's "fragility" ladder and the PEP 668 refusal, which is a narrower why. This is quiz material and Milestone 2's "Virtual Environment Setup". **Carry it in** S15's V7 recap (a tag, one bridge, three chips) and S01's ladder (a tag).
+4. **What a VM costs you besides money (slides 37–38).** Pros: a computer within a computer, safe for the host, many OSs on one machine, and the way every cloud rents servers. Cons: dependence on the host's hardware, large size, overhead, slower than the host, slow start. The cons are why containers come next. The video says "a whole machine that we can wreck and delete" but never gives the cons. **Carry it in** S15's container beat and S03's V1 (tags).
+5. **The other environment tools and their files (slides 57, 59–62).** venv with `pip freeze > requirements.txt` and `pip install -r` (60); conda with `environment.yml` (62); mamba (57); and removing an environment by deleting its folder (60). S08 names `python3 -m venv` and S14 pipenv, but conda, the tool of the Anaconda story on slide 51, never appears. For the VM: the captured PEP 668 hint says the classic `python3 -m venv` needs `python3-full` there (a/07 lines 10–12; not run here). **Carry it in** S14 (a tag, optionally one bridge).
 6. **Why a translation app (slides 20–22, 39).** The cheese app must serve cheese lovers in many countries, and simple-translate is its first building block, which is why the README's sample sentences are about cheese. **Carry it in** S02's opening (a tag, optionally one bridge).
 7. **Development-only dependencies (slides 63, 65).** pipenv keeps them under `[dev-packages]`, uv under `[dependency-groups.dev]` in `pyproject.toml`. This repo has none (`pyproject.toml` lines 7–10), so skipping it costs little. **Carry it in** S10's panel note only if there is room. Low priority.
 8. **Use a personal cloud account (slide 42).** Register with an email you control, not tied to a university or employer domain. Tutorial 0 says the same, and S01's checklist points to it. **Carry it in** S01's checklist card, as a tag only. Low priority.
 9. **The course frame: the model is half the journey, and you learn the steps (slides 19, 25–26; intro 11, 13–15).** "Now What ?" after the best model, and "You can build the entire system without generative AI". The video's pause-and-type method is this idea applied, but it never says so. **Carry it in** S01's follow-along beat (an intro tag, optionally one bridge). Low priority for the tutorial itself.
 
-Not carried: the enterprise statistics, the MLOps and DevOps definitions, the tech stack and "Our Stack" (4, 8–17), and the Cheese App's data and model slides (23–25, 27). No step of this tutorial depends on them; the study guide's §7 is the place for them.
+Not carried: the enterprise statistics, the MLOps and DevOps definitions, the tech stack and "Our Stack" (4, 8–17), and the Cheese App's data, model and app-assembly slides (23–24, 27). No step of this tutorial depends on them; the study guide's §7 is the place for them.
 
 ### 4. Conflicts
 
@@ -559,17 +559,17 @@ Not carried: the enterprise statistics, the MLOps and DevOps definitions, the te
 |---|---|---|---|---|
 | 1 | **What a venv holds** (slide 50): `site_packages/` (with an underscore); "Symlinks: Links to system executables"; "Scripts". No word on `pyvenv.cfg`. | The folder is `.venv/lib/python3.15/site-packages` (b/22 line 6). On Debian 12, `bin/python` links to uv's own downloaded Python, `/home/student/.local/share/uv/python/cpython-3.15-…` (b/11 line 18), not a system one; only on Debian 13 does it link to `/usr/bin/python3` (b13/11 line 18). `pyvenv.cfg` holds `include-system-site-packages = false`, the switch that keeps the system's packages out (b/10 line 6). The scripts are `activate` and its variants in `bin/` (b/11 lines 5–12). | The captures. The slide's list is a fair summary. | S08 already spells `site-packages` and says "a link to a real interpreter somewhere else", which is right on both Debians. Add the scripts as a fourth GREY row on the card (gap 2). No narration needed. |
 | 2 | **"uv.lock is not human readable"** (slide 65; the same for `Pipfile.lock`, 63). | `uv.lock` is plain TOML text: names, versions, sources, URLs and hashes (b/18). uv writes it, and nobody edits it by hand. | Readable, but machine-written | S11 already shows it in a panel. Optionally, a GREY caption on that panel: "written by uv · read it, don't edit it". |
-| 3 | **Slide 69's commands for this very app:** `uv init --bare`, `uv add googletrans==4.0.2 art`, `uv run python cli.py`. | The clone already has `pyproject.toml` (a/04 line 7). In a folder with that file, `uv init --bare` stops: ``error: Project is already initialized in `…` (`pyproject.toml` file exists)`` (uv 0.11.32, offline, re-run for this cross-check; the captures, made with uv 0.13.0, don't cover it). The README's path is `uv sync`, slide 70's "After the First Time". The repo's file came from a plain `uv init` plus `uv add`: `--bare` writes no `description` or `readme` line (same check), and the repo's file has both. | The README, for this tutorial. Slide 69 is right for a new project. | S10, at the panel: a GREY note, "lecture slide 69: how a file like this is made · in the clone, run uv sync", and optionally the bridge (Proposals, S10). |
-| 4 | **"uv sync … installs exact libraries from uv.lock"** (slide 70). Once a project is set up, "we should have" `pyproject.toml` and `uv.lock`. | The repo has no `uv.lock` (a/04). The first `uv sync` resolves (b/08 line 6, "Resolved 13 packages") and writes one, which `git status` lists as untracked (b/19). This is also README erratum 1. | The captures | S11 already says it about the README ("the repo never committed one"). A tag on that beat, "Lecture 1 · slides 53–54, 68–70", is enough: its fix chips (commit `uv.lock`, `--locked`) are what slide 70 takes for granted. |
+| 3 | **Slide 69's commands for this very app:** `uv init --bare`, `uv add googletrans==4.0.2 art`, `uv run python cli.py`. | The clone already has `pyproject.toml` (a/04 line 7). In a folder with that file, `uv init --bare` stops: ``error: Project is already initialized in `…` (`pyproject.toml` file exists)`` (uv 0.11.32, offline, re-run for this cross-check; the captures, made with uv 0.13.0, don't cover it). The README's path is `uv sync`, slide 70's "After the First Time". The repo's file most likely came from `uv init` without `--bare`, plus `uv add`: `--bare` writes no `description` or `readme` line (same check), and the repo's file has both. | The README, for this tutorial. Slide 69 is right for a new project. | S10, at the panel: a GREY note, "lecture slide 69: how a file like this is made · in the clone, run uv sync", and optionally the bridge (Proposals, S10). |
+| 4 | **"uv sync … installs exact libraries from uv.lock"** (slide 70). Once a project is set up, "we should have" `pyproject.toml` and `uv.lock`. | The repo has no `uv.lock` (a/04). The first `uv sync` resolves (b/08 line 6, "Resolved 13 packages") and writes one, which `git status` lists as untracked (b/19). This is also README erratum 1 (study guide §9). | The captures | S11 already says it about the README ("the repo never committed one"). A tag on that beat, "Lecture 1 · slides 53–54, 68–70", is enough: its fix chips (commit `uv.lock`, `--locked`) are what slide 70 takes for granted. |
 | 5 | **The step lists** (slides 40, 72): "Install Required Dependencies: git, Python", then "Download and Execute the Simple-Translate Python Script". Slide 72, for the uv walkthrough, repeats the list and never names uv. | Python is already on the image (a/00 line 6: Python 3.11.2). Walkthrough 1 installs pip (`python3-pip`), then the packages with `--break-system-packages`. Walkthrough 2 installs no Python with apt: it installs uv, and `uv sync` brings a Python (on Debian 12 a downloaded CPython 3.15.0, b/08 lines 2–4) and the venv; then you activate. | The README | The tracker already lists the README's steps. Tags at S04 and S09; optionally one bridge in S09. |
 | 6 | **Machine settings** (slide 46): "Select all defaults". | The README gives none (README line 42). The video chooses e2-small, us-central1-a and Debian 12. The image decides what uv does later: on Debian 12 uv downloads CPython 3.15.0 and installs 11 packages, on Debian 13 it uses the system's 3.13.5 and installs 12 (b/08, b13/08). Today's console defaults (image, machine type) were not checked. | Both work, and the captures show both outcomes | S03's footnote already says "the README gives no settings: these are sensible choices · Debian 13 works too". Add "the lecture keeps the defaults: also fine". Optionally one bridge. |
 | 7 | **The SSH screenshot** (slide 48): its login banner reads, at 40 dpi, as kernel 4.19 "Debian 4.19.194-3 (2021-07-18)", a Debian 10-era image (uncertain). | Today's images are Debian 12 or 13 (a/00). On them, pip refuses without the flag (a/07). On an image as old as the screenshot's, pip predates 23.0.1 and has no `--break-system-packages` at all (study guide §6 #2; not captured). | The captures | S03's `cat /etc/os-release` beat already prints Debian 12. A tag there; no narration. Never show or read the slide's prompt: it carries the instructor's username. |
 | 8 | **Links** (slides 40, 72): `…#installing-app-on-vm-manually` and `…?tab=readme-ov-file#installing-app-on-vm-using-uv-t2`. | The README's headings start with an emoji, so their anchors do too (`#%EF%B8%8F-installing-app-on-vm-manually`, as the course site encodes it), and no heading ends in `-t2`. The README's own Contents links (lines 31–32) share the first problem (study guide §9, erratum 8). Both slide links most likely open the README at the top (not checked online). | The README's headings | Not on screen. S01 already says "open the README", and the tracker names each section. |
-| 9 | **pip in an environment** (slides 60, 65): with a venv active, install with `pip install package_name==version` (60); uv is a "Drop-in replacement for pip" (65). | Right for `python3 -m venv`, which puts pip in the venv. A uv venv has no pip (b/11 has no `pip` row), and after activation `which pip` finds nothing (b/13 line 4). "Drop-in" means uv's own `uv pip …` commands, and in a uv project `uv add` records the package. | The captures | S12 already says it (README erratum 3). Add a tag, "Lecture 1 · slides 60, 65", and a GREY note "drop-in = uv pip …". No new narration. |
-| 10 | **Installing pipenv** (slide 64): `pip install pipenv`. | On the part-1 VM the system pip refuses every install (a/07, PEP 668). The part-2 VM has no pip at all: `which pip` finds nothing with `/usr/bin` on `PATH` (b/13 lines 4–7). The pipenv branch's README installs it with `sudo apt install pipenv` (study guide §4 Step 22). Not run here. | On a VM, the branch README's apt line. The slide's line suits a laptop with its own pip. | S14 already says "just read: no pipenv on this VM". A tag only. |
+| 9 | **pip in an environment** (slides 60, 65): with a venv active, install with `pip install package_name==version` (60); uv is a "Drop-in replacement for pip" (65). | Right for `python3 -m venv`, which puts pip in the venv. A uv venv has no pip (b/11 has no `pip` row), and after activation `which pip` finds nothing (b/13 line 4). "Drop-in" means uv's own `uv pip …` commands, and in a uv project `uv add` records the package. | The captures | S12 already says it (README erratum 3, study guide §9). Add a tag, "Lecture 1 · slides 60, 65", and a GREY note "drop-in = uv pip …". No new narration. |
+| 10 | **Installing pipenv** (slide 64): `pip install pipenv`. | On the part-1 VM the system pip refuses every install (a/07, PEP 668). The part-2 VM has no pip at all: `which pip` finds nothing (b/13 line 4), although `/usr/bin` is on `PATH` (b/12 line 5). The pipenv branch's README installs it with `sudo apt install pipenv` (study guide §4 Step 22). Not run here. | On a VM, the branch README's apt line. The slide's line suits a laptop with its own pip. | S14 already says "just read: no pipenv on this VM". A tag only. |
 | 11 | **The two stacks** (slides 36, 73): VMs on a hypervisor on the host's "Operating System"; on slide 73, every venv (an App over "Libs") on one shared "Python" bar. | V1 (S03) draws a server, a hypervisor and OS slices, with no host OS layer: on Compute Engine the student never sees the host, while slide 36's stack is also the laptop arrangement (VirtualBox, VMware, Parallels, 37). And a uv venv need not sit on the system's Python: on Debian 12 it runs uv's downloaded 3.15.0 while the system keeps 3.11.2 (b/08, b/11 line 18); only on Debian 13 is it the same Python. | Both pictures are right in general. For this tutorial on Debian 12, the venv's Python is uv's. | No narration. S03: keep V1's structure and add the slide's words, "host" and "guest OS" (Proposals, S03). S13 and S15: never draw one shared Python bar under the venv; S10 already shows both cases. |
 
-Not counted: the environment name changing case between slides 52 and 53–54 (`env_ac215`, `env_AC215`), and slide 62 exporting to `my_environment.yml` but recreating from `environment.yml` (both inside the lecture, not in the tutorial); the Windows Anaconda paths of slides 51–52, a different machine with the same lesson; the spelling "Simple-Translate" (39–40, 72) vs the README's "Simple Translate".
+Not counted: the environment name changing case between slides 52 and 53–54 (`env_ac215`, `env_AC215`), and slide 62 exporting to `my_environment.yml` but recreating from `environment.yml` (both inside the lecture, not in the tutorial); the Windows Anaconda paths of slides 51–52, a different machine with the same lesson; the spelling "Simple-Translate" (40, 72) vs the README's "Simple Translate".
 
 ### 5. Proposals
 
@@ -609,7 +609,7 @@ Not counted: the environment name changing case between slides 52 and 53–54 (`
   - (ii) none.
   - (iii) none: the scene is tutorial-only.
 - **S07**
-  - (i) none: the slides never mention deleting or billing.
+  - (i) none: the tutorial slides never say to delete the VM, and no slide mentions billing.
   - (ii) none.
   - (iii) none.
 - **S08**
@@ -637,7 +637,7 @@ Not counted: the environment name changing case between slides 52 and 53–54 (`
 - **S12**
   - (i) *do:* "Lecture 1 · slides 50–52, 60" from "Step 10: source dot venv slash bin slash activate." to "…And which pip finds nothing." Check that it clears the three-part card if the card is still up.
     *do:* "Lecture 1 · slides 60, 65" at "Another small mistake in the README", with a GREY note "lecture slide 65's drop-in = uv pip …" (Conflict 9).
-    *do:* "Lecture 1 · slides 67, 69–70" at "Two extras, not in the README, that skip activation.": both extras are on the slides.
+    *do:* "Lecture 1 · slides 67, 69–70" at "Two extras, not in the README, that skip activation.": the first extra, `uv run python cli.py`, is on those slides; the second, the venv's python by its path, is not.
   - (ii) *nice:* at the end of the block "Extra checks: which python points into dot venv…": "The lecture uses the same which python test to show an environment switching on." (14 words)
   - (iii) *do:* at the `ls -la .venv/bin` beat, a GREY bracket on `activate` (b/11 line 5) and the `…` row after it, labelled "scripts (lecture slide 50)"; the card's fourth row ticks (S08 iii). V3's before-and-after replay already mirrors the `which python` pair of slides 51–52, so it needs nothing more.
 - **S13**

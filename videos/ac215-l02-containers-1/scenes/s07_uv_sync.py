@@ -529,7 +529,7 @@ class StepUvSync(VoiceScene):
             yt5 = beside(turn_tag(), c5.rows[1])            # beside the command's own row: it scrolls with it
             pin(self, c5.rows[1], yt5, run_time=0.3)
             self.play(Wiggle(yt5, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.5)
-            vo.wait_until("then try the same")
+            vo.wait_until("then two extras")
             self.play(track(tr, 10, extra=True), run_time=0.3)
             r_ls = istep(self, w, LS_LINE, 0.3)
             pin(self, r_ls, beside(row_tag("extra"), r_ls), run_time=0.25)

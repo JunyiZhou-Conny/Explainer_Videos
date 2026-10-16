@@ -618,6 +618,7 @@ class InsideTheImage(VoiceScene):
             vo.wait_until("your git")
             self.play(Indicate(VGroup(lit[".git"], frames[".git"]), color=ROUTE, scale_factor=1.3), run_time=0.8)
             self.play(FadeOut(ctx), run_time=0.25)
+            vo.wait_until("Type exit")
             istep(self, w, C33.line(29), 0.3)
             w.print(self, C33.at(30), run_time=0.2)
             w.set_prompt(P_LAPTOP)

@@ -471,7 +471,10 @@ class Deploy(VoiceScene):
         chip_b.next_to(body_a, DOWN, buff=0.18).align_to(body_a, LEFT)
         bl = vl.band_label
         assert cmd_a.get_bottom()[1] > bl.get_top()[1] + 0.2, (cmd_a.get_bottom(), bl.get_top())
-        assert max(body_a.get_right()[0], chip_b.get_right()[0]) < bl.get_left()[0] - 0.2, chip_b.get_corner(DR)
+        assert body_a.get_right()[0] < bl.get_left()[0] - 0.2, body_a.get_corner(DR)
+        # chip B sits under the band label's row, left of our dot's label
+        assert chip_b.get_top()[1] < bl.get_bottom()[1] - 0.15 and chip_b.get_right()[0] < ours.text.get_left()[0] - 0.4, \
+            chip_b.get_corner(UR)
         assert chip_b.get_bottom()[1] > vl.ticks.get_top()[1] + 0.2, (chip_b.get_bottom(), vl.ticks.get_top())
         assert max(cmd_a.get_right()[0], x_a.get_right()[0]) < 6.5, (cmd_a.get_right(), x_a.get_right())
         assert chip_a.get_top()[1] < tr.get_bottom()[1] - 0.25, "the chips crowd the tracker"
@@ -501,8 +504,9 @@ class Deploy(VoiceScene):
                       Transform(vl.band, band_full), FadeIn(vl.band_label, shift=RIGHT * 0.2), run_time=0.9)
             self.play(FadeIn(ours.dot, shift=DOWN * 0.6), FadeIn(ours.text, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("This image was built on September 16")
-            self.play(FadeIn(chip_a, shift=RIGHT * 0.15), run_time=0.5)
-            d_g = substring(chip_a.body.line, "2026-09-16")
+            self.play(LaggedStart(FadeIn(chip_a.caption, shift=RIGHT * 0.15), FadeIn(body_a, shift=RIGHT * 0.15),
+                                  lag_ratio=0.45), run_time=0.8)
+            d_g = substring(body_a.line, "2026-09-16")
             ua = under(d_g, TURN)
             self.play(Create(ua), Indicate(d_g, color=TURN, scale_factor=1.12), run_time=0.6)
             vo.wait_until("with uv 0.12.15")
@@ -598,11 +602,12 @@ class Deploy(VoiceScene):
         mine_cap = label("your image · not run here", 20, S.GREY)
         mine.next_to(c215, DOWN, buff=0.75).align_to(c215, LEFT)
         mine_cap.next_to(mine, UP, buff=0.1).align_to(mine, LEFT).shift(RIGHT * 0.1)
-        amd = tag("needs an amd64 build: see Platforms", S.GREY)
+        amd = tag("Intel/AMD laptop: already amd64 · Apple Silicon Mac: rebuild first (see Platforms)", S.GREY)
         amd.next_to(mine, DOWN, buff=0.25).align_to(mine, RIGHT)
         pic4 = VGroup(cards, err4, mine, mine_cap, amd)
         pic4.shift(UP * ((2.7 + -3.35) / 2 - pic4.get_center()[1]))
         assert pic4.get_top()[1] < 2.75 and pic4.get_bottom()[1] > -3.4 and mine.get_right()[0] < 6.5, pic4.get_corner(DR)
+        assert amd.get_left()[0] > -6.5, amd.get_left()
         assert c205.get_bottom()[1] > STRIP_TOP + 0.4, "the first card shares the frame with the strip"
         pre = len("sudo docker run --rm -ti ")
         assert MINE[:pre] == DEPLOY[:pre]
@@ -651,22 +656,27 @@ class Deploy(VoiceScene):
         img_box.set_z_index(-1)
         img_cap = grey_words(("in the image ·", "label"), ("dlops/simple-translate", "mono"))
         err5 = erratum_tag("erratum · the published image lags the repo")
-        repo25.move_to([RIGHT_X - repo25.width / 2, 0.62, 0])      # right-aligned: the image line starts 7 cells left of `async`
+        # bottom-up above the 5-row strip: the note row, the repo's line, the image's line, its caption
+        NOTE5 = "if Google refuses a request: this version prints your input back"
+        note5 = label(NOTE5, 22, S.GREY)
+        nodock = tag("not a Docker problem", S.GREY)
+        row5 = VGroup(note5, nodock).arrange(RIGHT, buff=0.35)
+        row5.move_to([0, STRIP5_TOP + 0.22 + row5.height / 2, 0])
+        # right-aligned: the image line starts 7 cells left of `async`
+        repo25.move_to([RIGHT_X - repo25.width / 2, row5.get_top()[1] + 0.27 + repo25.height / 2, 0])
         # the image's line sits above the repo's, `async` over `async`
-        img_line.move_to([0, 1.8, 0])
+        img_line.shift(UP * (repo25.get_top()[1] + 0.06 + img_box.height / 2 - img_line.strut.get_center()[1]))
         img_line.shift(RIGHT * (code_span(repo25.code, 0, "async")[0].get_left()[0]
                                 - substring(img_line, "async")[0].get_left()[0]))
         img_box.move_to(img_line.strut).align_to(img_line.strut, LEFT).shift(LEFT * 0.25)
         img_cap.next_to(img_box, UP, buff=0.1).align_to(img_box, LEFT).shift(RIGHT * 0.08)
         err5.move_to([RIGHT_X - err5.width / 2, img_cap.get_y(), 0])
-        NOTE5 = "if Google refuses a request: this version prints your input back"
-        note5 = label(NOTE5, 22, S.GREY)
-        nodock = tag("not a Docker problem", S.GREY)
-        row5 = VGroup(note5, nodock).arrange(RIGHT, buff=0.35).move_to([0, -0.62, 0])
-        assert row5.get_bottom()[1] > STRIP_TOP + 0.25 and row5.width < 12.8, (row5.get_bottom(), row5.width)
-        assert repo25.get_bottom()[1] > row5.get_top()[1] + 0.3, (repo25.get_bottom(), row5.get_top())
+        src5 = row_tag([("where", "label"), ("uv 0.12.15", "mono"), ("came from", "label")])
+        assert row5.get_bottom()[1] > STRIP5_TOP + 0.2 and row5.width < 12.8, (row5.get_bottom(), row5.width)
+        assert repo25.get_bottom()[1] > row5.get_top()[1] + 0.25, (repo25.get_bottom(), row5.get_top())
         assert img_box.get_bottom()[1] > repo25.get_top()[1] + 0.05, (img_box.get_bottom(), repo25.get_top())
-        assert err5.get_left()[0] > img_cap.get_right()[0] + 0.3 and img_cap.get_top()[1] < 2.6
+        assert err5.get_left()[0] > img_cap.get_right()[0] + 0.3 and img_cap.get_top()[1] < 2.6, img_cap.get_top()
+        assert err5.get_top()[1] < tr.get_bottom()[1] - 0.1 or err5.get_left()[0] > tr.get_right()[0] + 0.3
         assert img_box.get_left()[0] > -6.55 and repo25.get_left()[0] > -6.55
 
         with self.voiceover(SAY[5]) as vo:
@@ -678,12 +688,18 @@ class Deploy(VoiceScene):
             del t.fold
             x5 = beside(row_tag("extra"), c5.rows[0], buff=0.4)
             pin(self, c5.rows[0], x5, run_time=0.3)
-            out5 = t.print(self, OUT_IMG, run_time=0.5, lag=0.12)
-            r25 = out5[2]
+            out5 = t.print(self, OUT_IMG, run_time=0.6, lag=0.1)
+            r25, r_uv = out5[2], out5[4]
+            # line 8 is where beat 2's `uv = 0.12.15` chip came from
+            u_uv = under(substring(r_uv, UV_CFG), TURN)
+            beside(src5, r_uv, buff=0.4)
+            self.play(Create(u_uv), FadeIn(src5, shift=LEFT * 0.1), run_time=0.5)
+            attach(self, r_uv, u_uv)
+            attach(self, r_uv, src5)
             vo.wait_until("its cli.py is the older one")
-            # the strip keeps the three output lines (rows do not move: same bottom, same pitch) while
+            # the strip keeps the five output lines (rows do not move: same bottom, same pitch) while
             # line 4 is copied up into the image's line
-            resize(self, t, STRIP_ROWS, run_time=0.7,
+            resize(self, t, IMG_KEEP, run_time=0.7,
                    extra=[FadeIn(img_box), FadeIn(img_cap), TransformFromCopy(r25, img_line)])
             self.play(FadeIn(repo25, shift=UP * 0.15), FadeIn(err5, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("without raise exception equals True")

@@ -34,11 +34,12 @@ S10:
   - "想自己看的话，就再起一个 container；这里显示的是我们第一部分第二次运行时的结果。"
   - "在那里，python 是 3.15.0，而 base image 自带的 Python 还是 3.12.15。"
   - "那个 125 MB 的层，大部分就是这第二个 Python，放在 uv 自己的目录里。"
-- en: "Now list the top folder. Beside the system folders sit the hidden git folder, the editor's VS Code folder, the README and your Dockerfile. The COPY line copied the whole build context, your git history included."
+- en: "Now list the top folder. Beside the system folders sit the hidden git folder, the editor's VS Code folder, the README and your Dockerfile. The COPY line copied the whole build context, your git history included. Type exit to get back to your laptop."
   zh:
   - "现在列一下根目录。"
   - "系统目录旁边有：隐藏的 .git 目录、编辑器的 .vscode 目录，还有 README 和你的 Dockerfile。"
   - "COPY 那一行复制了整个构建上下文，连你的 Git 历史也在里面。"
+  - "输入 exit，回到你的笔记本。"
 - en: "That's a gap in the tutorial: there's no dockerignore file. In your own projects, add one listing dot git, dot venv and your secrets folder. It matters most once the image is public, and that's soon."
   zh:
   - "这是教程里的一个缺口：没有 .dockerignore 文件。"
@@ -88,7 +89,7 @@ S11:
 - en: "In your own projects, put the slow steps first: copy only the files uv sync needs, run it, then copy the rest. A dockerignore keeps the git folder, any local venv and the Dockerfile out. Now an edit to cli.py reruns only the last COPY."
   zh:
   - "在你自己的项目里，把慢的步骤放前面：先只复制 uv sync 需要的文件，运行它，再复制其余的。"
-  - "一个 .dockerignore 文件，可以把 .git 目录、本地的 venv 和 Dockerfile 都排除在外。"
+  - "一个 .dockerignore 文件，可以把 .git 目录、本地的 venv，还有 Dockerfile 都排除在外。"
   - "这样一来，改 cli.py 只会让最后那个 COPY 重新运行。"
   en_display:
   - null
@@ -129,7 +130,7 @@ S12:
   en_display:
   - "Then tag the image: docker tag simple-translate <USER NAME>/simple-translate-ac215."
   - null
-  - null
+  - "An extra docker image ls shows two names, one ID: a second name, not a copy."
 - en: "Read the long name in four parts: the registry, docker dot I-O, the default; your account; the repository; and the tag, latest. Names without an account, like our first, fall under library."
   zh:
   - "把这个长名字分成四段来读：registry，也就是默认的 docker.io；你的账号；仓库；还有 tag，latest。"
@@ -143,7 +144,7 @@ S12:
   - "暂停一下，自己跑一遍。"
   - "你那边应该会上传每一层，最后一行是 digest。"
   - "我们没有账号，被 Docker Hub 拒绝了：push access denied。"
-  - "如果你也碰到了，就先登录，再检查令牌有没有写权限、名字是不是以你的用户名开头。"
+  - "如果你也碰到了，就先登录，再检查令牌有没有写权限，名字是不是以你的用户名开头。"
 - en: "On the stand-in, the push goes through, ending with a digest: a fingerprint of the whole image."
   zh:
   - "在替身上，push 成功了，最后是一行 digest：整个 image 的指纹。"
@@ -331,10 +332,10 @@ S16:
 - en: "Before you go, clean up. An extra check, docker ps dash a, shows no containers left behind, thanks to dash dash rm."
   zh:
   - "走之前，先清理一下。"
-  - "额外检查 docker ps -a，没有留下任何 container，多亏了 --rm。"
+  - "额外检查 sudo docker ps -a，没有留下任何 container，多亏了 --rm。"
   en_display:
   - null
-  - "An extra check, docker ps -a, shows no containers left behind, thanks to --rm."
+  - "An extra check, sudo docker ps -a, shows no containers left behind, thanks to --rm."
 - en: "Last README step: delete the VM, with its boot disk, then check that VM instances and Disks are both empty. Pause and do it now."
   zh:
   - "README 的最后一步：删除 VM，连同它的启动磁盘，然后确认 VM instances 和 Disks 两个页面都是空的。"

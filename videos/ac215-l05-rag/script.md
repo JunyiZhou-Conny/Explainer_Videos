@@ -215,14 +215,14 @@ Conventions
   The question `How is tolminc cheese made?` (`cli.py:318`); chat's copy has two question marks
   (`cli.py:372`). The knowledge base: 11 books, ten from Project Gutenberg and the instructor's short
   story `Tolminc Cheese.txt` (7,808 characters). The stand-in query chunk `8440accaceb0ce96-6`.
-- Length and parts: narration 4,297 words (`python -m explainer.script`, v2; v1 4,262; BRIEF.md:
-  3,900–4,300, plan ~4,240). Part 1 = S01–S09 (build the index) 2,509 words; part 2 = S10–S16 (ask
-  the index) 1,788 words. Per scene (BRIEF.md budget ±15 %):
+- Length and parts: narration 4,296 words (`python -m explainer.script`, v2; v1 4,262; BRIEF.md:
+  3,900–4,300, plan ~4,240). Part 1 = S01–S09 (build the index) 2,510 words; part 2 = S10–S16 (ask
+  the index) 1,786 words. Per scene (BRIEF.md budget ±15 %):
 
   | scene | S01 | S02 | S03 | S04 | S05 | S06 | S07 | S08 | S09 | S10 | S11 | S12 | S13 | S14 | S15 | S16 |
   | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
   | budget | 220 | 260 | 270 | 290 | 240 | 280 | 220 | 330 | 300 | 190 | 290 | 290 | 280 | 270 | 210 | 300 |
-  | words | 248 | 251 | 283 | 295 | 270 | 272 | 191 | 377 | 322 | 197 | 262 | 265 | 285 | 266 | 190 | 323 |
+  | words | 248 | 251 | 283 | 295 | 270 | 272 | 191 | 378 | 322 | 195 | 262 | 265 | 285 | 266 | 190 | 323 |
 
   S08 sits at the top of its band: it carries the first paid call's recovery card (follow-along
   must-fix). `explainer.script` assumes 155 wpm; the series docs assume ~174, but a sample of this
@@ -552,7 +552,7 @@ SHOW: It types the two commands of `laptop/15-x-mounts.txt`'s `$` line one after
 each folds onto two rows); the container name inside them underlines YELLOW with a GREY tag "yours
 differs · copy it from docker ps" → TERM(laptop/15-x-mounts.txt: 2–3, 5). Above the terminal, V2's
 three PINK routes pulse as their lines print.
-SAY: And docker inspect, with the name from docker ps, lists the mounts: your repo onto slash app, secrets onto slash secrets, and the docker volumes folder onto Chroma's slash data.
+SAY: And docker inspect, with the name from docker ps, lists the mounts. The repo is on slash app, secrets on slash secrets, and the docker volumes folder on Chroma's slash data.
 
 SHOW: Back in the container terminal (TEAL frame, prompt `app@92c5bfd26089:/app$`, 9 rows). It types
 `echo GCP_PROJECT=$GCP_PROJECT; echo GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS; ls -la /secrets`
@@ -619,7 +619,7 @@ Transform into one averaged arrow; three PINK questions, one per topic, all land
 the whole book: the prompt card overflows, RED. Then the book splits into GREEN cards, each with its
 own arrow; one question lands next to one card, and only that card slides into the prompt card. A
 GREY chip "a chunk = what you retrieve = what you paste".
-SAY: Indexing starts with chunking. One vector for a whole book averages its topics, so every question fetches the whole book. Sending eleven books each time is slow, costly, and gives garbage. A chunk is small enough to find, and to paste.
+SAY: Indexing starts with chunking. One vector for a whole book averages its topics, so every question fetches the whole book. Sending 11 books each time is slow, costly, and gives garbage. A chunk is small enough to find, and to paste.
 
 SHOW: A GREY browser frame (tag `illustration`), address `ac215-llm-rag.dlops.io/chunkviz`, a
 schematic page: a paragraph of word blocks with colored bands and two sliders "chunk size",
@@ -758,7 +758,7 @@ SHOW: CODE(cli.py: 22–27) (header `cli.py · lines 22–27`); lines 24–26 hi
 3,072 cells (GREY labels "the model's full output" and "length 1") is cut after its first 256
 cells, which turn GREEN: "output_dimensionality = 256"; the 256-cell arrow shrinks to ≈ 0.4 of a
 dashed unit circle.
-SAY: The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers; the code keeps the first 256, a prefix the model is trained to make useful alone.
+SAY: The tutorial's model, Gemini embedding 001, natively returns 3,072 numbers; the code asks for the first 256, a prefix the model is trained to make useful alone.
 
 SHOW: CODE(cli.py: 96–106) (the mini-map hides). A stack of GREEN chunk cards goes to the BLUE box in
 batches of 100 (chip `cli.py · lines 252–253`, `batch_size=100`), a GOLD tick per batch. A GREY chip
@@ -920,7 +920,7 @@ types `exit` (extra) → TERM(laptop/07-docker-shell.txt: 46). The CLI box disso
 terminal's frame turns GREY, title `laptop`, prompt `student@laptop:~/AC215/llm-rag$`, and it grows
 to 6 rows. It types `docker ps -a` (extra) → TERM(laptop/20-x-ps-after-exit.txt: 2–3) as the column
 view; the Chroma row highlights YELLOW, "Up 2 minutes", and the PINK `8000` door stays lit.
-SAY: None of this is in the README. Type exit, and on the laptop, list every container with docker ps dash a. The CLI container is gone, removed on exit, but Chroma is still up, and port 8000 is still taken.
+SAY: Leaving isn't in the README. Type exit, and on the laptop, list every container with docker ps dash a. The CLI container is gone, removed on exit, but Chroma is still up, and port 8000 is still taken.
 
 SHOW: It types `docker compose down` (extra) → TERM(laptop/21-x-compose-down.txt: 2–7) (2–3 joined).
 Lines 2–4 print RED, then fade to GREY "harmless: the values live only in docker-shell.sh"; lines

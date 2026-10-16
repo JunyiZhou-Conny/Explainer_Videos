@@ -18,17 +18,18 @@ Read this first:
 - **The deck is the babykev walk, not the cheese tutorial.** It covers Track B of the digest.
   The tutorial repo `cheese-app-ci-cd` (Track A) appears once, as a QR code on slide 9. Slide 8
   says that second example "will be released later today". Nothing on the slides covers FastAPI's
-  `TestClient`, black, flake8, the cheese Dockerfile or GitHub Actions.
+  `TestClient`, flake8, the cheese Dockerfile or GitHub Actions; Black is only named, as the style
+  ruff copies (29).
 - **The deck has no lecture number.** The title slide names no lecture number or course. The
-  series' L09 label comes from the course site (digest §7), which calls the lecture "Automating
-  Software Development: CI, unit testing".
+  series' L09 label comes from the course site (digest title and §7), which calls the lecture
+  "Automating Software Development: CI, unit testing".
 - **The same deck is public.** Apart from the footers, the extracted text matches, line for
   line, `babykev.pdf` in `rahuldave/babykev-walk` at commit `82adb14` (the commit the digest
   pins). The walk's copy has no step titles in its footers. Its Markdown sources are
   `babykev-walk/slides/*.md`, which the digest already cites (for example `slides/03-check.md`).
   Their image alt texts say that slide 2's cartoon is Pavlos and slide 3's photo is the speaker.
 - **CI is named but never shown.** "Continuous integration" appears in a list (6). Slide 20
-  says people, agents, the git hook and CI all run the same recipes, and slide 89 lists CI as one
+  says the same recipes serve people, agents, the git hook and CI, and slide 89 lists CI as one
   use of the dev image. No workflow file is on the slides. Slide 13 defers `serve.py` to the
   "class on ci/cd with github actions" (L21 in this series).
 - **One count drifts between slides.** Slide 31 leaves 37 lint findings for a person; slide 33
@@ -53,7 +54,8 @@ There is no agenda slide per part and no closing slide.
     are model and data
   - 5 · "The ML code is a small box": the Sculley et al. figure
   - 6 · "What goes into writing software?": nine areas
-  - 7 · "Today": the plan, one bullet per step, each with the tools it brings
+  - 7 · "Today": the plan, one bullet per step (04 and 04b share one), each with the tools it
+    brings
   - 8 · babykev: a small model that makes decisions, rebuilt step by step from kev's first
     commit (about 830 lines, no tests, types or docs)
   - 9 · the second example, the cheese app: QR code for `github.com/dlops-io/cheese-app-ci-cd`
@@ -203,18 +205,18 @@ There is no agenda slide per part and no closing slide.
     checker should catch it first. (36–40, 93)
 11. **The hook makes the gate automatic.** `pre-commit install` writes a small,
     machine-specific script into `.git/hooks/`. That script only hands over to pre-commit. The
-    hook runs `just check`, so the hook and your terminal run the same thing. Two more hooks
-    refuse files over 1 MB and any `.env` file. A commit that fails the check never happens.
-    `.git/hooks/` is not part of the repository, so every clone installs its own hook through
-    `just setup`. (34, 41, 43–44)
+    hook runs `just check`, the same command you type in the terminal. Two more hooks block
+    files over 1 MB and any `.env` file. A commit that fails the check never happens. git does
+    not track `.git/hooks/`, so each clone gets its own hook from `just setup`. (34, 41, 43–44)
 12. **Documentation comes from the code.** The type goes in the signature. The meaning goes in a
     comment beside each parameter (a "docment"). The purpose goes in the docstring. Each is written
     once, so they can't disagree. `babykev docs check` counts the gaps and becomes part of the
     gate. Quarto builds a site from the same text. (46–52, 100)
-13. **The model in four ideas.** Pack the state and every question into one sequence. Mask it so
-    each question sees only the state and itself. Restart the positions so that every question
-    sits right after the state. Score each option against its question's `<decide>` token. One
-    forward pass then answers every question as if each had been asked alone. (53–56)
+13. **The model in four ideas.** Packing puts the state and all the questions in one sequence.
+    The mask lets each question see only the state and itself. The positions restart, so each
+    question starts right where the state ends. Each option is scored against its question's
+    `<decide>` token. A single forward pass then answers every question as if it stood alone.
+    (53–56)
 14. **A tiny model makes the model tests hermetic.** The tests use a tokenizer with one token per
     character (106 tokens) and a 2-layer Qwen2 backbone with 24,224 random but seeded weights, both
     built in memory. That means no download, no GPU, and a few seconds per run. It is enough
@@ -225,7 +227,7 @@ There is no agenda slide per part and no closing slide.
     parts, with stand-ins for whatever comes from outside. End-to-end or system: the whole program
     with its real parts. Smoke: a quick end-to-end run that asks only whether the program starts
     and answers. Acceptance: whether a promise to users is kept (babykev has none yet). A test's
-    name says what it calls, not what kind of test it is. A test is hermetic when only our code
+    name tells you what it calls, not which kind it is. A test is hermetic when only our code
     can make it fail. (65–67, 95)
 16. **A type checker reads code; it doesn't run it.** ty compares every call and return with the
     declared types. It believes the library when the library says a call may return one number,
@@ -249,13 +251,14 @@ There is no agenda slide per part and no closing slide.
     Python and the program; it is built in stages and only the last stage ships. Packages go in
     before code, so a code change doesn't reinstall torch. In a container on the CPU it gives the
     same 15 answers as the Mac's GPU, eight times slower. (87–92)
-22. **Only hermetic checks belong in the hook.** A check that needs the network, a download, a
-    GPU or a lot of time can fail for reasons outside our code. A hook that fails like that is
-    not trusted, and people learn to skip it. Such tests get a marker (`system`) and stay out of
-    `just test`. You prove a check is hermetic by running it with the network off. (94–97)
+22. **Only hermetic checks belong in the hook.** Anything that depends on the network, a
+    download, a GPU or a long run can break for reasons that have nothing to do with our code.
+    A hook that breaks that way loses people's trust, and they start bypassing it. Tests like
+    that get a marker (`system`) and stay out of `just test`. You prove a check is hermetic by
+    running it with the network off. (94–97)
 23. **A test is anything that can fail and stop a commit, so call it a gate.** Most of babykev's
     gates are not pytest (ty, ruff, docs check, the config linters), but all are just recipes. The
-    closing meme suggests that a gate is what keeps a coding agent's attention. (98–99)
+    slide-99 meme suggests that a gate is what keeps a coding agent's attention. (98–99)
 
 ## Diagrams
 
@@ -336,8 +339,8 @@ code panel with call-outs that appear one at a time.
   third. The answer's spread is the expected distance from the most likely level, which here is
   ⅓×0 + ⅓×1 + ⅓×2 = 1 step. Confidence is 1 minus spread divided by a yardstick.
   - **Old yardstick:** the whole scale, 2 steps, so confidence is 1 − 1/2 = 0.5, which is wrong.
-  - **New yardstick:** how spread out a guess is around the middle level, ⅓×1 + ⅓×0 + ⅓×1 ≈ 0.67
-    steps. Then 1 − 1/0.67 = −0.5, which is clipped to 0.
+  - **New yardstick:** the spread of a pure guess around the middle level, ⅓×1 + ⅓×0 + ⅓×1 ≈
+    0.67 steps. Then 1 − 1/0.67 = −0.5, which is clipped to 0.
 
   The second fix: 77 options rounded to two decimals give 0.01 each, which sums to 0.77.
   Rounding to four decimals fixes it. A re-draw: three bars on a number line with distance
@@ -377,9 +380,9 @@ code panel with call-outs that appear one at a time.
     update the environment;
   - prepare-commit-msg, pre-rebase and post-commit, around a commit: templates, guards, notices.
 
-  Text: a hook is like a callback in a training loop, code that runs at a set moment. Servers such
-  as GitHub have server-side hooks of their own. A re-draw: a git timeline (edit → commit → push →
-  checkout) with a flag at each hook moment, and only the pre-commit flag lit.
+  Text: a hook works like a training-loop callback, code that git calls at a fixed point. Servers
+  such as GitHub have server-side hooks of their own. A re-draw: a git timeline (edit → commit →
+  push → checkout) with a flag at each hook moment, and only the pre-commit flag lit.
 - **48 · the gaps.** A table of typed-and-documented counts per file: `babykev.docs` 26 of 26,
   `babykev.cli` 1 of 1, `babykev.api` 0 of 12, `test_api.py` 23 of 29, `test_cli.py` 0 of 4,
   `test_docs.py` 0 of 16. That makes 50 of 88, with 84 gaps in all. A re-draw can use one progress
@@ -402,8 +405,8 @@ code panel with call-outs that appear one at a time.
   - Grey "no: it comes later": the three cells above the diagonal.
   - **Red, thick border: "NO, hidden by the mask"** in the q2→question-1 cell.
 
-  Notes on the right: question 2 gets the same answer whether or not question 1 was asked; an
-  ordinary causal mask would say yes in the red cell; "That one cell is the whole difference", with
+  Notes on the right: question 2's answer does not depend on whether question 1 was asked; a
+  plain causal mask would allow the red cell; "That one cell is the whole difference", with
   a red line from the cell. The rule underneath: `attend(i, j) if j <= i and (seg[j] == 0 or
   seg[j] == seg[i])`. A re-draw: start from a plain causal triangle, then flip the one block to
   red.
@@ -416,8 +419,7 @@ code panel with call-outs that appear one at a time.
     probabilities" → cow 0.12, sheep 0.81, goat 0.07.
 
   Caption: the options are compared with the question, so there is no fixed list of classes: any
-  number of options, any text. It works like a single attention query: one query against several
-  keys.
+  number of options, any text.
 - **57 · what is trained.** Table: Qwen2.5-0.5B about 494 million, frozen; the LoRA adapter
   (rank 16) about 8.8 million, trained; the pointer head about 0.5 million, trained. The smoke run
   prints 503 M parameters, 9.3 M trainable. A re-draw needs a log scale, or a 494-block square
@@ -513,11 +515,12 @@ code panel with call-outs that appear one at a time.
   shipped", `COPY --from` arrows between them, and a separate dev box branching off uv.
 - **92 · who runs what.** `just` runs on the host and calls `docker`. The run image has no just,
   so `just image run smoke` becomes `babykev smoke` inside the container. In the dev image every
-  recipe works as on the Mac. An image is a file on disk; a container is a running copy of it. A
-  re-draw: a host box (just) → docker → a container box (babykev).
+  recipe works as on the Mac. The slide also separates the two words: the image is the stored
+  file, a container one running instance of it. A re-draw: a host box (just) → docker → a
+  container box (babykev).
 - **97 · hermetic, by experiment.** Under `--network none`: `just check` passes; `just test -m
   system` with the model already cached passes; the same with an empty cache fails (it can't
-  reach the Hub). Whatever still passes with the network pulled can run on every commit.
+  reach the Hub). A check that still passes with no network is safe to run on every commit.
 - **98 · every gate in one table.** Columns: what is checked / how / recipe / on every commit?
   - functions, the mask and the model: pytest, hypothesis and the tiny model; `just test`; yes;
   - types: ty; `just types`; yes;
@@ -536,7 +539,7 @@ code panel with call-outs that appear one at a time.
 | Lecture term | Slides | Note on the tutorial README / digest |
 |---|---|---|
 | "Software Development for Machine Learning" | 1 | The course site's name for L09 is "Automating Software Development: CI, unit testing" (digest title). |
-| "babykev", "kev", "jev", "a decider model", "a special head" | 8 | babykev is the walk's repo. kev and jev are the speaker's other projects; neither is in the course repos. |
+| "babykev", "kev", "jev", "a decider model", "a special head" | 8 | babykev is the project the walk rebuilds. kev is an outside project: babykev's README credits the first commit of `jaredpalmer/kev`. The slides do not explain jev. Neither is in the course repos. |
 | "step" (`step-00` … `step-05b`) | footers, 12–13 | git tags in `babykev`; the digest's Track B follows them. |
 | "state", "questions", "options", "`noul`", "`choice`", "`score`", "confidence" | 10, 22, 27–28 | "noul" is babykev's name for a yes-or-no question, not a typo. |
 | "the contract" (`api.py`), `SystemOneRequest` | 21 | No counterpart in the cheese README, whose "API" is a FastAPI service (`api/service.py`). |
@@ -562,7 +565,7 @@ code panel with call-outs that appear one at a time.
 | "smoke", "smoke test" | 67–68, 84 | Not in the README. |
 | "dev image", "run image", "stage", "only the last one ships" | 89–91 | The cheese repo has one image, `cheese-app-api:local`. Its Dockerfile is commented "Multi-stage" but has a single `FROM` (digest E14). |
 | "image" vs "container" | 92 | Same words as L02–L04. |
-| "gate" | 99 | The digest uses "gate" throughout (§1, §3.5). Slide 99 is where the lecture names it. |
+| "gate" | 7, 99 | The digest uses "gate" throughout (§1, §3.5). Slide 7 uses the word in passing ("ty in the gate"); slide 99 makes it the name for anything that can stop a commit. |
 | "agent(s)" | 7, 20, 33, 46, 99 | The lecture counts AI coding agents among those who run recipes, fix findings and read the docs. |
 | "CI", "continuous integration" | 6, 20, 89 | README Part 5, "GitHub Actions (Remote CI)", which this series covers in L21. |
 
@@ -752,7 +755,7 @@ Single lines only; multi-line files are described under Diagrams. Grouped by ste
 - **Compare, don't classify**: no fixed class list. (56)
 - **Build fixtures fresh** so no test can spoil the next; share only what is safe to share
   (`scope="session"`). (58)
-- **A fixture's data is known in advance**, so a test can expect exact numbers. (61)
+- **Fixture data is fixed ahead of time**, so a test may assert exact values. (61)
 - **Test what holds for any weights**: then a random tiny model is enough, and the tests run on
   every commit. (62, 65, 78)
 - **Say what runs in a test.** Teams draw the lines between kinds differently. (66)
@@ -778,10 +781,10 @@ Single lines only; multi-line files are described under Diagrams. Grouped by ste
   stage. (89–90)
 - **A linter's rule is a default, not a law.** Decline it with the reason written beside the
   line. (93)
-- **Ask of every check: can anything but our code make it fail?** Only checks where the answer is
-  no belong in the hook. Otherwise people learn to skip the hook. (94)
-- **An end-to-end test is never hermetic.** An integration test is hermetic only when what comes
-  from outside is replaced. (66, 95)
+- **Ask of every check: can anything but our code make it fail?** A check goes in the hook only
+  if the answer is no; otherwise people start bypassing the hook. (94)
+- **An end-to-end test is never hermetic.** An integration test is hermetic only if everything
+  from outside has a stand-in. (66, 95)
 - **Prove a test is hermetic by pulling the network.** (97)
 - **A test is anything that can fail and stop a commit, and you may call it a gate.** (98–99)
 - **The built site never enters `main`**; it lives on `gh-pages`. (100)
@@ -797,8 +800,8 @@ Single lines only; multi-line files are described under Diagrams. Grouped by ste
 - **babykev's own artefacts.** The step tags `step-00` … `step-05b` (footers). The sample data
   `data/cheese/sample.jsonl` (23), whose 15 questions the smoke runs (67–68). The docs site at
   `rahuldave.github.io/babykev`, built from the `gh-pages` branch, with reference pages and a Guide
-  (the model in four ideas, and the mask as a grid in a notebook) (100). Port 8765 is the "step
-  browser" of the dev image (91), the walk's replay page (digest B0).
+  (the four-idea summary of the model, and a notebook that draws the mask as a grid) (100).
+  Port 8765 is the "step browser" of the dev image (91), the walk's replay page (digest B0).
 - **Readings and credits.** Google Cloud, *MLOps: continuous delivery and automation pipelines in
   machine learning*; Sculley et al., *Hidden technical debt in machine learning systems*,
   NeurIPS 2015 (5).
@@ -808,7 +811,8 @@ Single lines only; multi-line files are described under Diagrams. Grouped by ste
 - **Comics and memes** (credits on the slides): xkcd 1319 *Automation* (17) and 327 *Exploits of a
   Mom* (24), both CC BY-NC 2.5; CommitStrip *The Indentation Question*, 14 February 2013 (42), and
   *Documentation just before vacation*, 27 July 2016 (45); `imgflip.com/i/24ac74` (88); the "2 unit
-  tests, 0 integration tests" GIF on giphy, credited to Randal Olson, January 2016 (96);
+  tests, 0 integration tests" GIF on giphy, made popular by Randal Olson in January 2016, its
+  author unknown (96);
   `imgflip.com/memetemplate/118429510`, with the labels added by the speaker (99).
 - **No homework, milestone, Ed lesson or reading list** is on the slides. The pairing with the
   course's L09 comes from the course site (digest §7). For scenes, the nearest tutorial anchors
@@ -858,7 +862,7 @@ and most conflicts are two honest designs side by side, not mistakes.
 | 1 | The bug that almost shipped (≈2 min) | 25 (what to test: normal inputs, edge cases, invalid inputs); 27–28 (two failing tests that were right; the code changed, not the tests) | Same concept; the tutorial applies it to another bug (`math.sqrt(2 * z)`, commit `c3b227f`). The plan does not use the lecture's "what to test" list (gap 2). |
 | 2 | Three sizes of test (≈3.5 min) | 25, 62 (a test labelled "Kind: unit", one labelled "Kind: integration"); 65 (hermetic); 66, 95 (kinds of tests); 67–68 (smoke); 96 (meme) | Same concept; the tutorial applies it with other examples (`TestClient` instead of the tiny model, a live server instead of the real model). The lecture draws a table, not a pyramid (Conflict 5). |
 | 3 | pytest, under the hood (≈3 min) | 25 (a test is a function that asserts; `-k`); 26 (built-in fixtures, `parametrize`); 27 (pytest's failure lines, `pytest.approx`); 58–61 (writing fixtures, `conftest.py`, scope); 95 (markers, `-m`) | Same concept. Discovery rules, `raises`, `addopts`, `--strict-markers` and `-ra` are tutorial-only; fixtures and `parametrize` are lecture-only so far (gap 3). |
-| 4 | Tests inside the shipping container (≈2.5 min) | 14–15 (one lockfile); 32 (dependency groups); 87–92 (not everyone has a Mac; "it works on my machine"; dev and run images; stages; packages before code) | Same goal, different design (Conflict 7). Baked-in code, the entrypoint's dispatcher and the rebuild rule (G1) are tutorial-only. |
+| 4 | Tests inside the shipping container (≈2.5 min) | 14–15 (one lockfile); 32 (dependency groups); 87–92 (not everyone has a Mac; "it works on my machine"; dev and run images; stages; packages before code) | Same goal, different design (Conflict 7). The entrypoint's dispatcher and the stale-image trap (G1) are tutorial-only; babykev's run image also copies the code in (90), but its dev image mounts your folder (89). |
 | 5 | The system test and the silent skip (≈3 min) | 65 (hermetic); 94 (what should not go in the hook?); 95 (markers); 97 (hermetic, by experiment: `--network none`); 67 (smoke) | Same concept. The tutorial shows the practice the lecture replaces (`skipif`); the lecture gives the remedy (a marker) (Conflict 6). CI's `curl -f` wait is tutorial-only (L21). |
 | 6 | Formatter vs linter (≈3 min) | 29 (`ruff format`: style without arguments); 30 (a linter reports; rule families); 31 (79 → 70 → 69 → 37); 33 (a person or agent fixes the rest); 50 (one line length); 93 (a rule is a default, not a law); 42 (comic) | Same concept, other tools and widths (Conflicts 1, 8). The 88/120 flip-flop and the `8eb63fc` survivors are tutorial-only. |
 | 7 | The gate: git hooks and pre-commit (≈3.5 min) | 34 (what `pre-commit install` writes); 35–40 (`just check`; `lint-config`: yamllint, validate-pyproject, `uv lock --check`, `just --fmt --check`); 41 (the checks run themselves); 43 (the config, line by line); 44 (other hook moments, other hook managers) | Same concept; the tutorial applies it with a different hook (Conflicts 2–4). Stashing unstaged changes and the modify-and-restage loop are tutorial-only. |
@@ -872,12 +876,12 @@ and most conflicts are two honest designs side by side, not mistakes.
 |---|---|---|---|
 | 1 | A gate: a check that can refuse a commit | hook, ch7 ↔ 41, 98–99 | Yes. "Who gets to say no" is slide 98's "anything that can fail and stop you". The digest already says "gate" throughout. |
 | 2 | A failing test can be the right test; a test written now finds what a user would find later | ch1 ↔ 25, 27–28 | Yes. The lecture adds the rule the plan leaves implicit: fix the code, not the test. |
-| 3 | Name a test's kind by what runs in it | ch2 ↔ 25, 62, 66, 95 | Mostly. Same definitions, and digest §3.1 already quotes the lecture's rule that a test's name says what it calls. The plan's pyramid (width = how many, height = cost per test) is the README's picture; the lecture uses a table and never stacks or counts (Conflict 5). |
+| 3 | Name a test's kind by what runs in it | ch2 ↔ 25, 62, 66, 95 | Mostly. Same definitions, and digest §3.1 already quotes the lecture's rule that a test's name says what it calls. The plan's pyramid (width = how many, height = cost per test) is digest §3.1's drawing of the README's "Testing Pyramid" heading; the lecture uses a table and never stacks or counts (Conflict 5). |
 | 4 | A test is a function that asserts; pick tests by name with `-k`; on failure pytest prints both values; `pytest.approx` for floats | ch3 ↔ 25, 27 | Yes. |
 | 5 | Markers, selected with `-m` | ch3, ch8 ↔ 95, 97 | Yes. The plan's ch8 shows babykev's `system` marker. |
 | 6 | Hermetic tests: only our code can make them fail; "skipped" is not "passed" | ch5 ↔ 65, 94–97 | Yes. Digest §3.3 adopts the lecture's word and its rule for the hook. The plan's ch5 states neither the rule nor the experiment yet (gap 1). |
 | 7 | A formatter rewrites and never changes behaviour; a linter reports; tools fix most findings, a person the rest | ch6 ↔ 29–31, 33 | Yes. The two `8eb63fc` survivors (F401, E501) are slide 31's funnel at cheese size. |
-| 8 | `pre-commit install` writes `.git/hooks/pre-commit`, which only hands over to pre-commit; the folder is not part of the repository, so every clone installs its own | ch7 ↔ 34, 41, 44 | Yes. Digest §3.5 cites the walk's copy of slide 34. |
+| 8 | `pre-commit install` writes `.git/hooks/pre-commit`, which only hands over to pre-commit; git does not track that folder, so each clone installs its own | ch7 ↔ 34, 41, 44 | Yes. Digest §3.5 cites the walk's copy of slide 34. |
 | 9 | Refuse files that must never be committed: large files (both at `--maxkb=1000`), leftover merge markers, secrets | ch7 ↔ 43 | Yes. The secret guard differs: `detect-private-key` here, a `.env` refusal (`no-env-file`) there. |
 | 10 | One command defines an acceptable commit, and the hook runs exactly that | ch8 ↔ 16, 20, 35, 41, 86 | Yes. The plan shows the `step-05b` recipe (six lines); the slides show it grow from four (35 → 51 → 86). |
 | 11 | All green can still be wrong: coverage counts the lines that ran, not what was checked | ch8 ↔ 72–74 | Yes. Same grid, same rows 5–6. |
@@ -908,8 +912,8 @@ and most conflicts are two honest designs side by side, not mistakes.
    `client = TestClient(app)` (`test_api.py:11`) and eleven separate `power()` test functions.
    The lecture shows what a fixture is (a named argument pytest builds and passes in), where
    shared ones live (`conftest.py`), what scope means (built once, or fresh for each test) and how
-   `parametrize` turns one function into several tests. That is digest exercise 9.7, and the tool a
-   student needs for Milestone 5's tests. **Carry it in** ch3.
+   `parametrize` turns one function into several tests. That is digest exercise 9.7, and useful
+   for the student's own Milestone 5 tests. **Carry it in** ch3.
 4. **One command for people, the hook and CI (slides 16, 20, 41).** The plan shows the idea only
    in babykev (ch8). In the cheese repo it explains three of the student's surprises: README
    commands at 88 or 79 that disagree with the hook at 120 (E5, G9), a hook Black pinned at
@@ -929,7 +933,8 @@ and most conflicts are two honest designs side by side, not mistakes.
    and server-side hooks round out the picture, and `core.hooksPath` is how a team shares hooks
    without a framework. **Carry it in** ch7 (last 30 s: the git timeline with flags) or ch9.
 8. **Configuration files are checked too (slides 36–40).** A broken hook config would break every
-   commit, so yamllint runs with `--strict`. The cheese `check-yaml` only checks that YAML parses.
+   commit, so yamllint checks every YAML file first, and `--strict` fails on warnings too. The
+   cheese `check-yaml` only checks that YAML parses.
    **Carry it in** ch7 (one sentence).
 9. **Developer tools stay out of what ships, from one lockfile (slides 14–15, 32, 89–90).** The
    cheese image installs Black, Flake8, pre-commit and pytest as runtime dependencies from `>=`
@@ -952,8 +957,8 @@ and most conflicts are two honest designs side by side, not mistakes.
 | 2 | **What the hook runs** (35, 41, 43): two file guards, a `.env` refusal, then `just check`: format check, lint, every hermetic test over a 90% coverage floor, the config files (later also types and docs). | Seven hygiene hooks, Black and Flake8; no tests (`.pre-commit-config.yaml:12-44`). Tests run by hand or in CI. README:268-273 lists five of the nine hooks (E3). The course site's "linters, formatters and tests" matches only babykev (E4). | The cheese repo for this tutorial | Ch7: "Both are gates; they draw the line in different places. babykev puts every hermetic test in the hook; this repo leaves tests to CI." Ch5 has already shown that the 21 unit and integration tests would qualify, though here they run in an image that must be rebuilt first. |
 | 3 | **Who fixes the format** (29, 35): the gate only checks (`just fmt --check`, `just lint` without `--fix`), so the hook never edits your files; you run `just fmt` yourself. | The Black, trailing-whitespace and end-of-file-fixer hooks rewrite the staged file, report Failed ("files were modified by this hook") and abort the commit; you `git add` and commit again (G11). | Both; capture the cheese run | Ch7, beside Pause 3: "Two styles of gate. babykev's points at the problem and leaves the fix to you; this one fixes it and makes you look before you re-stage." |
 | 4 | **Which files, which versions** (43): `pre-commit-hooks` at `v6.0.0`; the `check` hook has `always_run: true` and `pass_filenames: false`, so the whole project is checked on every commit. | `rev: v4.5.0` (`.pre-commit-config.yaml:10`). Black and Flake8 see only the staged files that match `^src/.*\.py$` (`:35`, `:44`), so `tests/` is never linted (G15). | The cheese repo for this tutorial | Ch7: show the two `rev` lines side by side, no narration. One sentence: "This hook looks only at staged files under `src/`; babykev's checks the whole project every time." |
-| 5 | **Kinds of tests and their labels** (66, 95; also 62, 97): the kind is named by what runs. Integration: several of our parts, with stand-ins for what comes from outside, hermetic. System: the whole program with its real parts, never hermetic. A test's file or name does not decide: babykev keeps integration-kind tests in `tests/unit/`. Five kinds in a table; no pyramid. | README.md:134-153 sorts the tests by folder into a three-layer "Testing Pyramid" whose definitions match the slides. But `tests/system/test_system_api.py:2`, `:26` call the system tests "Integration tests", and `pytest.ini:22` defines `integration` as needing running services (E11). | README.md:134-153 and the slides; the in-file labels are stale | Ch2: keep the README's pyramid and label each layer by what runs in it. "Here the folders match the kinds; in the lecture's project they don't have to." Show the stale docstring once, as a spot-the-mislabel aside. |
-| 6 | **Tests that need the outside world** (95, 97): marked `system`, left out of `just test` by `-m 'not system'`, run on request with `just test -m system`, where they must pass. Pulling the network proves which tests are hermetic. | `@pytest.mark.skipif(not is_api_running(), …)`, decided at collection (`test_system_api.py:24`): with no server, 4 tests skip and the run stays green (G3). The markers `unit`, `integration` and `slow` (`pytest.ini:20-23`) are never used. | Each repo for itself | Ch5: "This skip is the trap the lecture warns about: a test that cannot run should say so loudly. The lecture's marker turns 'skipped' into 'not selected', and 'selected' into 'must pass'." |
+| 5 | **Kinds of tests and their labels** (66, 95; also 62, 97): the kind is named by what runs. Integration: several of our parts, with stand-ins for what comes from outside, hermetic. System: the whole program with its real parts, never hermetic. A test's file or name does not decide: babykev keeps integration-kind tests in `tests/unit/`. Five kinds in a table; no pyramid. | README.md:134-157 sorts the tests by folder into a three-layer "Testing Pyramid" whose definitions match the slides. But `tests/system/test_system_api.py:2`, `:26` call the system tests "Integration tests", and `pytest.ini:22` defines `integration` as needing running services (E11). | README.md:134-157 and the slides; the in-file labels are stale | Ch2: keep the README's pyramid and label each layer by what runs in it. "Here the folders match the kinds; in the lecture's project they don't have to." Show the stale docstring once, as a spot-the-mislabel aside. |
+| 6 | **Tests that need the outside world** (95, 97): marked `system` and left out of `just test` (the repo does it with `-m 'not system'` in `addopts`), run on request with `just test -m system`, where they must pass. Pulling the network proves which tests are hermetic. | `@pytest.mark.skipif(not is_api_running(), …)`, decided at collection (`test_system_api.py:24`): with no server, 4 tests skip and the run stays green (G3). The markers `unit`, `integration` and `slow` (`pytest.ini:20-23`) are never used. | Each repo for itself | Ch5: "This skip is the trap the lecture warns about: a test that cannot run should say so loudly. The lecture's marker turns 'skipped' into 'not selected', and 'selected' into 'must pass'." |
 | 7 | **Environment and what ships** (14–15, 32, 87–91): one `uv.lock` pins everything; `uv sync --locked`; developer tools in dependency groups and `--no-dev` for the run image; dev and run images from one Dockerfile, built in stages, and only the last ships; Python 3.13 on `python:3.13-slim-trixie`. | No lockfile: `pip install --user .` from `>=` pins (`Dockerfile:32-35`). Black, Flake8, pre-commit and pytest are runtime dependencies (`pyproject.toml:7-19`) and ship in the one image used for development, tests and serving (E20). `Dockerfile:1` says "Multi-stage" over a single `FROM` (E14). Python 3.11 on `python:3.11-slim-bookworm`; README:5-9 asks for 3.9+. | Each repo for itself | Ch4: a two-column card, "this repo / the lecture's project", and one sentence: "One image for everything is simpler to learn; the lecture shows the next step, a lockfile and an image that ships without the test tools." Don't call this Dockerfile multi-stage. |
 | 8 | **One command for everyone** (16, 20, 41, 89): people, agents, the hook and CI call the same recipe, so they check the same thing. | Three spellings of one check. The hook runs pre-commit's pinned Black 24.1.1; the image, used by CI and the README, installs the newest `black>=24.1.1` (`pyproject.toml:8`; G14). CI passes 120; several README commands don't (E5). CI runs none of the seven hygiene hooks. | The cheese repo; capture `black --version` in the image | Ch6/ch9: "The lecture's rule is one command for everyone. Here the hook, CI and the README each spell the check their own way, and that is where the 88-versus-120 flip-flop comes from." |
 | 9 | **Coverage** (25, 35): every run measures coverage, and below 90% `just check` fails. | Coverage is measured only for the unit tests, in two README commands (`--cov=api`, README.md:181, `:225`) and in CI's unit job (`ci.yml:94`), so `service.py` reads 0%; no floor anywhere. Milestone 5 asks for at least 70% (`milestone5.md:48`). | For the student's project, Milestone 5's 70% | Ch8 or ch9, one line: "90% is babykev's choice; your milestone asks for 70%. And slide 73 is the warning: the number counts lines that ran." |
@@ -965,9 +970,9 @@ Not counted as conflicts:
   slides 4, 69 and 75 have small typos. All of these are inside the deck.
 - The course site promises acceptance tests and hooks that run tests (E4). The slides agree with
   the repos: acceptance tests "none yet" (95), and only babykev's hook runs tests (Conflict 2).
-- Slide 9 says the cheese repo "will be released later today", while its last commit is from
-  2025-11-13. The repo comes from a previous offering; nothing on the slides contradicts its
-  content.
+- Slide 8 says the second example (the cheese repo of slide 9) "will be released later today",
+  while its last commit is from 2025-11-13. The repo comes from a previous offering; nothing on
+  the slides contradicts its content.
 - How pre-commit gets installed: `just setup` runs it from the project's `.venv` (34, 41); the
   cheese README installs it on the host with `pip` (README:238-240; G10 for PEP 668). Both put the
   same kind of hand-over file in `.git/hooks/`; only the Python path inside it differs.
@@ -1041,9 +1046,10 @@ Not counted as conflicts:
   30 s with babykev's two lines: `addopts` with `-m 'not system'`, and `just test -m system`
   (Conflict 6). Name `is_api_running()` and CI's `curl -f` as smoke probes (gap 5).
 - **Ch6 · `lecture_ref(9, "29–31")`.** Re-draw slide 31 as a bar shrinking in steps (79 → 70 → 69
-  → 37), then the cheese-size version: the `8eb63fc` file's 10 Flake8 findings at 120 drop to 2
-  after Black (F401, E501). Show `--extend-ignore=E203,W503` with its reason (gap 6). Bridge
-  Conflicts 1 and 8 at the 88/120 flip-flop (gap 4).
+  → 37), then the cheese-size version: the `8eb63fc` code's 10 Flake8 findings at 120 (8 in
+  `service.py`, 2 in `utils.py`) drop to 2 after Black (F401, E501). Show
+  `--extend-ignore=E203,W503` with its reason (gap 6). Bridge Conflicts 1 and 8 at the 88/120
+  flip-flop (gap 4).
 - **Ch7 · `lecture_ref(9, "34, 41–44")`.** Re-draw slide 34's hand-over chain (git →
   `.git/hooks/pre-commit` → pre-commit → `.pre-commit-config.yaml` → the hooks) before the airport
   arches. Show the two configs side by side: nine arches here, four there, sharing the large-file
@@ -1064,8 +1070,8 @@ Not counted as conflicts:
     lecture's project show the truth?" (No: they skip. A `system` marker, selected on purpose,
     fails without the network.)
   - "babykev's hook only checks the format; this repo's hook rewrites it. What do you do after
-    each one stops your commit?" (Run `just fmt` and commit; look at `git diff`, `git add`, commit
-    again.)
+    each one stops your commit?" (Run `just fmt`, `git add`, commit again; look at `git diff`,
+    `git add`, commit again.)
 
 **Terms**
 - Use the lecture's words: *gate*, *hook*, *hermetic*, *stand-in* (or *fake*), *kind* of test

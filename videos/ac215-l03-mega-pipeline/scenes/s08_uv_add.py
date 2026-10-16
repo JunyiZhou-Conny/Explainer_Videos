@@ -7,27 +7,31 @@ picture needs the frame (beats 0, 3, 6–9) and 12 rows otherwise.
 Beats (script.md "## S08", one voiceover block each):
  0  TRACKER A6. Part 1's last picture exactly as S07 leaves it (s07_run.py beat 11: V3 mounted at
     y 0.75, S07's page at row 4, `cli.py` RED on the sheet, a solid BLUE `google` chip above the
-    empty GREEN venv box, a dashed RED line from `cli.py` ending at a RED "?") above the 3-row
-    strip, which holds the last two lines of part 1 (01-docker-run-tty.txt lines 10 and 14, the
+    empty GREEN venv box, a dashed RED line from `cli.py` ending at a RED "?"; V4's shelf hidden,
+    as S07 keeps it) above the 3-row strip, which holds the last two lines of part 1 (01-docker-run-tty.txt lines 10 and 14, the
     second RED) and the waiting prompt. The title, then the RED line, the "?" and the chip pulse.
  1  TRACKER A7. The picture shrinks away while the strip grows to 12 rows and the README chip
-    `transcribe_audio/README.md · lines 104–110 · 3 packages` arrives under the tracker band. It
-    types `uv add google-cloud-storage google-cloud-speech ffmpeg-python` (folds after
-    `google-cloud-storage`); ▶ your turn on "Pause and run it". TERM(02-uv-add.txt: 2, 8, 13, …,
-    18–19, …, 34); the three asked-for names turn GREEN in the `+` lines; GREY tag "at the time of
-    recording" beside the version list.
+    `transcribe_audio/README.md · lines 104–110 · 3 packages` arrives under the tracker band. Part
+    2 is its own upload, so the rows move down and part 1's `docker run --rm -ti -v "$(pwd):/app"
+    transcribe_audio` (01-docker-run-tty.txt line 1 on the laptop prompt, folded after `run`)
+    fades in on top with a GREY tag "new terminal? run this". It types `uv add
+    google-cloud-storage google-cloud-speech ffmpeg-python` (folds after `google-cloud-storage`);
+    ▶ your turn on "Pause and run it". The docker run, --help and error rows scroll off;
+    TERM(02-uv-add.txt: 2, …, 8, …, 13, …, 18–19, …, 34: every skip marked); the three asked-for
+    names turn GREEN in the `+` lines; GREY tag "at the time of recording" beside the version list.
  2  A chip "asked for 3" beside line 8 (`Installed 26 packages`) transforms into GREEN "installed
-    26", with an arrow to the line. On "each package brings" the `…` rows and `urllib3` get GREY
-    bars and a GREY label "dependencies"; "Resolved" underlines PURPLE ("uv resolves the whole
+    26", with an arrow to the line. On "each package brings" the three `…` rows among the `+` rows
+    and `urllib3` get GREY bars and a GREY label "dependencies"; "Resolved" underlines PURPLE ("uv resolves the whole
     tree").
  3  The terminal shrinks to the strip (the command and line 8 with its counter chip). V3 + V4
     above it: on "pyproject.toml" its row turns GREEN on the laptop and on the sheet over /app at
     the same instant (three GREEN lines draw into both glyphs); `uv.lock` appears GREEN on both
     sides at once; `/app` pulses; both files blink on both sides and the route pulses (nothing
     travels). On "The 26 packages" the counter chip pulses and 26 GREEN chips drop into the
-    /home/app/.venv box; the venv label pulses; on "on the container's throwaway layer" they rise
-    onto the GREEN shelf of the dashed writable layer right above the venv (where they are stored)
-    and the sheet's caption becomes "writable layer · throwaway".
+    /home/app/.venv box; the venv label pulses; on "on the container's throwaway layer" the GREEN
+    shelf of the dashed writable layer (hidden until now, as in S07) draws right above the venv and
+    the chips rise onto it (where they are stored); the sheet's caption becomes "writable layer ·
+    throwaway".
  4  TRACKER A7 · extra. The picture goes; the terminal grows back to 12 rows (cleared). `cat
     pyproject.toml` (extra) → TERM(03: 2–10); lines 7–9 turn GREEN with a bar, their `>=…` lower
     bounds underline GREEN. The cat block scrolls off; `ls -la` (extra) → TERM(04: 2–11); line 11
@@ -36,13 +40,16 @@ Beats (script.md "## S08", one voiceover block each):
  5  `echo $VIRTUAL_ENV` (extra; the capture's `;`-joined line, only this command typed) →
     TERM(10-venv-where.txt: 3); `/home/app/.venv` turns GREEN and underlines GREEN; GREY tag
     "outside the window".
- 6  TRACKER A7. The terminal shrinks to the strip. Two GREY-framed cards above it, each frame
-    growing as its items arrive. Top: GREEN chip `ffmpeg-python` + GREEN check, GREY chip
-    `ffmpeg` + RED cross, "different PyPI projects". Bottom: tag `extra` + "Linux, folder not
-    owned by uid 1000"; TERM(13-g7-root-owned.txt: 4) in RED, folded at a space onto 2 rows; GREY
-    "fix (not in the README): sudo chown -R 1000:1000 . in the component folder"; GREY "Docker
-    Desktop (macOS, Windows) handles this".
- 7  The cards go. The README chip `transcribe_audio/README.md · line 110` "After exiting the
+ 6  TRACKER A7. The terminal shrinks to the strip. Two GREY-framed cards above it, one after the
+    other, each frame growing as its items arrive. First: GREEN chip `ffmpeg-python` + GREEN
+    check, GREY chip `ffmpeg` + RED cross, "different PyPI projects". On "And on a Linux laptop"
+    it lifts away and the second takes its place: tag `extra` + "Linux, folder not owned by uid
+    1000" with GREY "Docker Desktop (macOS, Windows) handles this" right under it (up for the whole
+    aside); TERM(13-g7-root-owned.txt: 4) in RED, folded at a space onto 2 rows; GREY "fix (not in
+    the README): exit, then on your laptop, in the component folder:" over `sudo chown -R
+    1000:1000 .` + GREY "· then docker run again" (the container's user app can't chown /app).
+    The card holds about 4 s after the fix arrives (2 s past the line).
+ 7  The card goes. The README chip `transcribe_audio/README.md · line 110` "After exiting the
     container, re-build the image" above the strip; the phrase turns YELLOW and underlines; GREY
     tag "step 13" under it, and the tracker's step-13 dot pulses.
  8  TRACKER A8. A GREY editor window "VS Code · on your laptop" with CODE(transcribe_audio/
@@ -70,7 +77,8 @@ from explainer.devops import (MONO, box, cell_width, check_mark, chip, code_pane
                               cross_mark, label, mono, mono_line, substring, tag)
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, CTR, ERR, GROUP, INK, LOOKUP, NARRATION, P_CTR, STRIP_TOP, TOOL, TURN, VENV, Window,
+from common import (CLOUD, CTR, ERR, GROUP, INK, LOOKUP, NARRATION, P_A, P_CTR, STRIP_TOP, TOOL, TURN, VENV,
+                    Window,
                     beside, caption_extra, capture, cut_comment, editor_inset, excerpt, extra_tag,
                     page_token, pin, pkg_dots, readme_chip, recorded_tag, resize, sans, source_text,
                     src_panel, term, tracker, type_cmd, unpin, your_turn)
@@ -79,6 +87,8 @@ SAY = NARRATION["S08"]
 
 # ------------------------------------------------------------------ commands and real outputs
 _RUN = capture("01-docker-run-tty", "transcribe_audio")
+RUN_CMD = _RUN.cmd                                # line 1: how part 1 got inside (README :99)
+assert RUN_CMD == 'docker run --rm -ti -v "$(pwd):/app" transcribe_audio', RUN_CMD
 RECAP_CMD = _RUN.line(10)                         # the prompt line as captured
 RECAP_ERR = _RUN.line(14)
 assert RECAP_CMD == f"{P_CTR} python cli.py --help", RECAP_CMD
@@ -87,10 +97,12 @@ assert RECAP_ERR == "ModuleNotFoundError: No module named 'google'", RECAP_ERR
 ADD = capture("02-uv-add", "transcribe_audio")
 ADD_CMD = "uv add google-cloud-storage google-cloud-speech ffmpeg-python"   # README :104-108
 assert ADD.cmd == ADD_CMD, ADD.cmd
-ADD_OUT = ADD.at(2, 8, 13, "…", (18, 19), "…", 34)
-assert ADD_OUT[0].startswith("Resolved 27 packages") and ADD_OUT[1].startswith("Installed 26 packages")
-assert ADD_OUT[2] == " + ffmpeg-python==0.2.0" and ADD_OUT[4].startswith(" + google-cloud-speech==")
-assert ADD_OUT[5].startswith(" + google-cloud-storage==") and ADD_OUT[7].startswith(" + urllib3==")
+# every skipped run of lines gets its `…` row (lines 3-7 are the downloads, the others packages)
+ADD_OUT = ADD.at(2, "…", 8, "…", 13, "…", (18, 19), "…", 34)
+assert ADD_OUT[0].startswith("Resolved 27 packages") and ADD_OUT[2].startswith("Installed 26 packages")
+assert ADD_OUT[4] == " + ffmpeg-python==0.2.0" and ADD_OUT[6].startswith(" + google-cloud-speech==")
+assert ADD_OUT[7].startswith(" + google-cloud-storage==") and ADD_OUT[9].startswith(" + urllib3==")
+assert [ADD_OUT[i] for i in (1, 3, 5, 8)] == ["…"] * 4, ADD_OUT
 ASKED = ["ffmpeg-python", "google-cloud-speech", "google-cloud-storage"]
 
 CAT = capture("03-cat-pyproject", "transcribe_audio")
@@ -133,6 +145,7 @@ assert _RA[103] == "## Python packages required" and all(p in _RA[104 + i] for i
                                                                     "ffmpeg-python"], start=1))
 REBUILD = "After exiting the container, re-build the image"
 assert REBUILD in _RA[109], _RA[109]             # line 110
+assert _RA[98] == RUN_CMD, _RA[98]               # line 99
 
 # ------------------------------------------------------------------ layout
 BIG = 12                           # terminal rows when it is up (top at y 2.19)
@@ -273,6 +286,7 @@ def recap_window() -> Window:
     (0, 0.75), mounted, the writable sheet on, no key glyph, and the page S07 wrote under /app at
     row 4 on both sides (s07_run.py page_glyph: page_token at 0.32 tall)."""
     win = Window(rows=5, mounted=True).move_to([0, WIN_Y, 0])
+    win.sheet.shelf.set_stroke(opacity=0)        # S07 keeps V4's shelf hidden (s07_run.py:308-310)
     for area, rows in ((win.laptop.area, win.laptop.rows), (win.cover.frame, win.cover.rows)):
         pg = page_token().scale_to_fit_height(0.32)
         pg.move_to(win._row_pos(area, 4), aligned_edge=LEFT).shift(RIGHT * 0.02)
@@ -313,21 +327,28 @@ def ffmpeg_card() -> VGroup:
 
 
 def root_card() -> VGroup:
+    """Who the aside is for (head, and right under it who it is not for: desk), the error, and the
+    fix with where to run it (the container's user app can't chown the folder). .head .desk .err
+    .fix (.where .cmd)"""
     head = VGroup(extra_tag(), label("Linux, folder not owned by uid 1000", 22, INK)).arrange(RIGHT, buff=0.2)
+    desk = label("Docker Desktop (macOS, Windows) handles this", 20, S.GREY)
+    top = VGroup(head, desk).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
     folded = fold_words(G7_ERR, 52)               # at the space after `.../pyproject.toml`:
     assert folded == ["error: failed to create file `/app/pyproject.toml`:",
                       "Permission denied (os error 13)"], folded
     err_rows = VGroup(*[mono_line(s, 20, ERR) for s in folded])
     for i, r in enumerate(err_rows):
         r.shift(DOWN * i * 0.36 - r.strut.get_corner(UL))
-    fix = VGroup(label("fix (not in the README):", 20, S.GREY), mono("sudo chown -R 1000:1000 .", 20, INK),
-                 label("in the component folder", 20, S.GREY)).arrange(RIGHT, buff=0.14)
-    fix[1].align_to(fix[0], DOWN).shift(DOWN * 0.02)
-    desk = label("Docker Desktop (macOS, Windows) handles this", 20, S.GREY)
-    body = VGroup(head, err_rows, fix, desk).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+    where = label("fix (not in the README): exit, then on your laptop, in the component folder:", 20, S.GREY)
+    cmd = VGroup(mono("sudo chown -R 1000:1000 .", 20, INK), label("· then docker run again", 20, S.GREY))
+    cmd.arrange(RIGHT, buff=0.18)
+    cmd[0].align_to(cmd[1], DOWN).shift(DOWN * 0.02)
+    fix = VGroup(where, cmd).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
+    body = VGroup(top, err_rows, fix).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
     fr = card_frame(body, pad_x=0.3, pad_y=0.22)
     g = VGroup(fr, body)
-    g.frame, g.head, g.err, g.fix, g.desk = fr, head, err_rows, fix, desk
+    g.frame, g.head, g.desk, g.err, g.fix = fr, head, desk, err_rows, fix
+    g.where, g.cmd = where, cmd
     return g
 
 
@@ -402,6 +423,23 @@ class UvAdd(VoiceScene):
             self.play(tr.goto(7), FadeOut(win0, scale=0.4, shift=UP * 0.6),
                       FadeOut(ex0, scale=0.4, shift=UP * 0.6), run_time=0.6)
             resize(self, t, BIG, run_time=0.7, extra=[FadeIn(chip_a, shift=DOWN * 0.1)])
+            # part 2 is its own upload: the docker run that got us inside (part 1) moves in on top,
+            # on the laptop's prompt as S07 typed it, for a viewer starting in a new terminal
+            run_rows = t.fold(f"{P_A} {RUN_CMD}", first_prefix=len(P_A) + 1)
+            assert run_rows[0].endswith("docker run \\") and len(run_rows) == 2, run_rows
+            run_lns = [mono_line(s, t.size, INK, t2c=t._prompt_colors(P_A) if k == 0 else None)
+                       for k, s in enumerate(run_rows)]
+            for k, ln in enumerate(run_lns):
+                t._place(ln, k)
+            old = list(t.lines.submobjects)
+            nt = beside(tag("new terminal? run this", S.GREY), t, run_lns[-1])
+            run_g = VGroup(*run_lns)
+            self.play(*[ln.animate.shift(DOWN * t.pitch * len(run_lns)) for ln in old],
+                      FadeIn(run_g, shift=DOWN * 0.1), run_time=0.5)
+            self.remove(run_g)
+            t.lines.remove(*old)
+            t.lines.add(*run_lns, *old)
+            pin(self, run_lns[-1], nt, run_time=0.4)
             vo.wait_until("the README lists")
             self.play(Indicate(chip_a[1][2], color=INK, scale_factor=1.12), run_time=0.7)
             vo.wait_until("so type all three")
@@ -411,15 +449,17 @@ class UvAdd(VoiceScene):
             yt = beside(your_turn(), t, c1)
             pin(self, c1, yt, run_time=0.4)
             self.play(Wiggle(yt, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.6)
+            make_room(self, t, len(ADD_OUT))            # docker run, --help and its error go
+            assert len(t.lines) == 2, len(t.lines)
             out1 = t.print(self, ADD_OUT, run_time=0.8, lag=0.1)
-            resolved, installed = out1[0], out1[1]
-            plus = [out1[2], out1[4], out1[5]]
+            resolved, installed = out1[0], out1[2]
+            plus = [out1[4], out1[6], out1[7]]
             self.play(*[substring(ln, name).animate.set_color(VENV) for ln, name in zip(plus, ASKED)],
                       run_time=0.5)
             rec = recorded_tag()
-            place(rec, right=t.box.get_right()[0] - 0.15, cy=(out1[4].strut.get_center()[1]
-                                                               + out1[5].strut.get_center()[1]) / 2)
-            pin(self, out1[4], rec, run_time=0.4)
+            place(rec, right=t.box.get_right()[0] - 0.15, cy=(out1[6].strut.get_center()[1]
+                                                               + out1[7].strut.get_center()[1]) / 2)
+            pin(self, out1[6], rec, run_time=0.4)
 
         # ========================================================== 2 · asked for 3, installed 26
         c_ask = counter_chip("asked for 3", S.GREY)
@@ -439,19 +479,20 @@ class UvAdd(VoiceScene):
             self.play(Indicate(substring(installed, "Installed 26 packages"), color=VENV, scale_factor=1.1),
                       run_time=0.7)
             vo.wait_until("each package brings")
-            # the rows nobody asked for (the two `…` and urllib3) light up GREY: dependencies
-            dep_rows = [out1[3], out1[6], out1[7]]
-            x_r = out1[5].glyphs.get_right()[0] + 0.08          # as wide as the longest + row
+            # the rows nobody asked for (the `…` among the + rows, and urllib3) light up GREY:
+            # dependencies (the `…` under Resolved stands for the downloads, not packages)
+            dep_rows = [out1[3], out1[5], out1[8], out1[9]]
+            x_r = out1[7].glyphs.get_right()[0] + 0.08          # as wide as the longest + row
             x_l = min(ln.glyphs.get_left()[0] for ln in dep_rows) - 0.08   # one left edge for all
             dep_bars = [rbar(ln, S.GREY, 0.2, right=x_r) for ln in dep_rows]
             for b in dep_bars:
                 b.stretch_to_fit_width(x_r - x_l).align_to([x_l, 0, 0], LEFT)
             dep_lab = label("dependencies", 22, S.GREY)
-            place(dep_lab, left=x_r + 0.3, cy=out1[7].strut.get_center()[1])
+            place(dep_lab, left=x_r + 0.3, cy=out1[9].strut.get_center()[1])
             self.play(*[FadeIn(b) for b in dep_bars], FadeIn(dep_lab, shift=LEFT * 0.1), run_time=0.6)
             for ln, b in zip(dep_rows, dep_bars):
                 stick(self, ln, b)
-            stick(self, out1[7], dep_lab)
+            stick(self, out1[9], dep_lab)
             self.play(Indicate(VGroup(*[ln.glyphs for ln in dep_rows]), color=INK, scale_factor=1.1),
                       run_time=0.8)
             vo.wait_until("and uv resolves")
@@ -462,6 +503,7 @@ class UvAdd(VoiceScene):
 
         # ========================================================== 3 · what lands where (V3 + V4)
         win = Window(rows=5, mounted=True).move_to([0, WIN_Y, 0])
+        win.sheet.shelf.set_stroke(opacity=0)          # as in beat 0; it draws when it is named
         with self.voiceover(SAY[3]) as vo:
             unpin(self, c1, yt, run_time=0.25)
             resize(self, t, 3, keep=[c1.rows[0], c1.rows[1], installed], run_time=0.7,
@@ -500,7 +542,9 @@ class UvAdd(VoiceScene):
             vo.wait_until("in slash home")
             self.play(Indicate(win.venv.label, color=VENV, scale_factor=1.15), run_time=0.8)
             vo.wait_until("on the container's throwaway")
-            # where they are stored: the chips rise onto the shelf of the dashed writable layer
+            # where they are stored: the shelf of the dashed writable layer draws, the chips rise
+            shelf.set_stroke(opacity=1)
+            self.play(Create(shelf), run_time=0.35)
             self.play(pk.animate.move_to(on_shelf), run_time=0.8)
             cap = win.sheet.caption
             new_cap = sans("writable layer · throwaway", 20, CTR).move_to(cap, aligned_edge=LEFT)
@@ -568,8 +612,9 @@ class UvAdd(VoiceScene):
         fc = ffmpeg_card()
         rc = root_card()
         place(fc, cx=0, top=2.78)
-        place(rc, cx=0, top=fc.get_bottom()[1] - 0.25)        # even gaps: card, card, strip
-        assert rc.get_bottom()[1] > STRIP_TOP + 0.2, (rc.get_bottom()[1], STRIP_TOP)
+        place(rc, cx=0, top=2.78)              # one card at a time: the root card takes fc's place
+        assert rc.get_bottom()[1] > STRIP_TOP + 0.3, (rc.get_bottom()[1], STRIP_TOP)
+        assert rc.get_left()[0] > -6.6 and rc.get_right()[0] < 6.6, rc.width
         with self.voiceover(SAY[6]) as vo:
             self.play(caption_extra(tr, False), run_time=0.3)
             resize(self, t, 3, run_time=0.7)
@@ -587,9 +632,13 @@ class UvAdd(VoiceScene):
             self.play(Create(fc.bad[1]), run_time=0.4)
             self.play(Transform(fc.frame, full_f), FadeIn(fc.cap, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("And on a Linux laptop")
+            # who it's for and, right under it, who it isn't (Mac and Windows: Docker Desktop),
+            # so the scope stays up for the whole aside
             full = rc.frame.copy()
-            rc.frame.become(frame_to(full, rc.head))       # the card grows as its lines arrive
-            self.play(FadeIn(rc.frame), FadeIn(rc.head, shift=UP * 0.1), run_time=0.6)
+            rc.frame.become(frame_to(full, rc.desk))       # the card grows as its lines arrive
+            self.play(FadeOut(fc, shift=UP * 0.3), run_time=0.4)
+            self.play(FadeIn(rc.frame), FadeIn(rc.head, shift=UP * 0.1), FadeIn(rc.desk, shift=UP * 0.1),
+                      run_time=0.6)
             vo.wait_until("isn't owned by")
             self.play(Indicate(rc.head[1], color=INK, scale_factor=1.08), run_time=0.8)
             vo.wait_until("uv add fails")
@@ -598,10 +647,12 @@ class UvAdd(VoiceScene):
             self.play(Indicate(substring(rc.err[-1], "Permission denied"), color=ERR, scale_factor=1.15),
                       run_time=0.7)
             vo.wait_until("the chown command")
-            self.play(Transform(rc.frame, frame_to(full, rc.fix)), FadeIn(rc.fix, shift=UP * 0.1),
-                      run_time=0.5)
-            self.play(Indicate(rc.fix[1], color=INK, scale_factor=1.12), run_time=0.7)
-            self.play(Transform(rc.frame, full), FadeIn(rc.desk, shift=UP * 0.1), run_time=0.5)
+            self.play(Transform(rc.frame, full), FadeIn(rc.fix, shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(rc.cmd[0], color=INK, scale_factor=1.12), run_time=0.7)
+            # a Linux viewer has to read this: it holds after the line ends (~4 s up in all)
+            self.wait(1.0)
+            self.play(Indicate(rc.where, color=INK, scale_factor=1.04), run_time=0.8)
+            self.wait(1.2)
 
         # ========================================================== 7 · the README: rebuild after exit
         chip_r = readme_chip("transcribe_audio/README.md · line 110", REBUILD, max_w=12.4)
@@ -611,7 +662,7 @@ class UvAdd(VoiceScene):
         u_reb = Line(chip_r.phrase.get_corner(DL) + DOWN * 0.07, chip_r.phrase.get_corner(DR) + DOWN * 0.07,
                      color=TURN, stroke_width=4)
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(fc), FadeOut(rc), run_time=0.5)
+            self.play(FadeOut(rc), run_time=0.5)        # (fc went when rc came)
             self.play(FadeIn(chip_r, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("when you exit")
             self.play(chip_r.phrase.animate.set_color(TURN), Create(u_reb), run_time=0.6)

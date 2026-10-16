@@ -49,15 +49,15 @@
 | 类别 | 词 |
 |---|---|
 | 实验课口语（封闭清单） | VM、venv、shell、root、repo、clone、commit、pin（第 1 讲）；container、image、Dockerfile、base image、registry、tag（打 tag）、push、pull、digest、socket、Docker daemon、attestation、locale、ID（容器这几讲新增，和第 3 讲同一份） |
-| 命令和子命令 | docker container ls、docker stop、docker system prune（-a）、docker image ls、docker image inspect、docker build、docker run、docker ps -a、docker history、docker login、docker tag、docker push、docker buildx use default、git clone、git status、git add -f、git diff、git checkout、ls、ls -a、cd、cat、cp、diff（-u）、echo $$、which python、python --version、python cli.py、source、exec bash、bash -c、exit、pip install uv、uv sync、sudo apt install docker.io、sudo apt-get update、sudo docker --version、sudo docker run --rm -ti dlops/simple-translate、sudo docker login |
+| 命令和子命令 | docker container ls、docker stop、docker system prune（-a）、docker image ls、docker image inspect、docker build、docker run、docker ps -a、docker history、docker login、docker tag、docker push、docker buildx use default、git clone、git status、git add -f、git diff、git checkout、ls、ls -a、cd、cat、cp、diff（-u）、echo $$、which python、python --version、python cli.py、source、exec bash、bash -c、exit、pip install uv、uv sync、sudo apt install docker.io、sudo apt-get update、sudo docker --version、sudo docker run --rm -ti dlops/simple-translate、sudo docker login、winpty |
 | 参数 | --rm、-t、-i、-ti、-f、-a、-u、-p、-c、--progress、--platform、--version |
 | 文件、目录、路径 | Dockerfile、Dockerfile.txt、.dockerignore、.gitignore、.git、.vscode、.venv、/.venv、.venv/bin/activate、cli.py、pyproject.toml、uv.lock、docker-shell.sh、docker-build-push.sh、README、/usr/local/bin、/bin/bash、index 文件、secrets 目录 |
 | image、tag、包和构建器的名字 | python:3.12-slim-bookworm、simple-translate、simple-translate-ac215、dlops/simple-translate、hello-world、latest、library、docker.io、uv、pip、art、default、desktop-linux、linux/amd64、amd64、arm64 |
 | Dockerfile 指令和配置字段 | FROM、RUN、COPY、ENV、ENTRYPOINT、CMD、null、requires-python |
-| 终端原文和报错 | CACHED、DONE、failed to read dockerfile、nothing to commit、ModuleNotFoundError、No module named art、cannot execute binary file、push access denied、Mounted from library/python、exec format error、no matching manifest、Unable to locate package、Not Found、permission denied、toomanyrequests、dangling images |
+| 终端原文和报错 | CACHED、DONE、failed to read dockerfile、nothing to commit、ModuleNotFoundError、No module named art、cannot execute binary file、push access denied、Mounted from library/python、exec format error、no matching manifest、Unable to locate package、Not Found、permission denied、toomanyrequests、dangling images、stdin is not a terminal |
 | README 章节标题 | Developing App using Containers、Build Docker Image、Run Docker Container、Pushing Docker Image to Docker Hub、Running App on VM using Docker |
 | 画面标签（旁白提到时） | your turn、extra |
-| 产品、组织、课程、名字 | Docker、Docker Desktop、Docker Hub、Google、Google Cloud、Debian、bookworm、Python、CPython、Git、Git Bash、VS Code、Mac、Windows、Linux、Intel、AMD、Apple Silicon、CPU、E2、SSH、UTF-8、AC215、Tutorial 0、MLOps Learning、student、app、VM instances、Disks |
+| 产品、组织、课程、名字 | Docker、Docker Desktop、Docker Hub、Google、Google Cloud、Debian、bookworm、Python、CPython、Git、Git Bash、WSL、Ubuntu、VS Code、Mac、Windows、Linux、Intel、AMD、Apple Silicon、CPU、E2、SSH、UTF-8、AC215、Tutorial 0、MLOps Learning、student、app、VM instances、Disks |
 
 系列里常被问到、但这一讲没有出现的词：port、volume、endpoint、pipeline、embedding、prompt（LLM）、agent、LoRA、CI。第 1 讲把 endpoint 定为“接口”；pipeline、prompt（只指 LLM 的 prompt；shell 的 prompt 是“提示符”）、bind mount 由第 3 讲定为保留英文；其余留给用到它们的那一讲决定。
 

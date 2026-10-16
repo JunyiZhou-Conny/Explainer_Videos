@@ -246,7 +246,7 @@ SHOW: V2 on a generic stack, center-left: the TEAL box opens into three transluc
 outlines that drop bottom-up, labelled "OS files" (ORANGE fill), "packages" (GREEN), "your code"
 (GREY); a small lock glyph on the stack's side, "read-only". At right, a TEAL config card with four
 empty rows `ENV`, `ENTRYPOINT`, `CMD`, `WorkingDir`.
-SAY: An image is a stack of read-only layers. Each layer holds the files that one build step added or changed. Beside it sits a small config card: settings like environment variables, and which program to start.
+SAY: An image is a stack of read-only layers. Each layer holds the files added or changed by one build step. Beside it sits a small config card: settings like environment variables, and which program to start.
 
 SHOW: A GREY page glyph "Dockerfile" at far left with four lines `FROM …`, `RUN …`, `COPY …`,
 `CMD …`. As each highlights: FROM points at the base slab; RUN and COPY each send a slab arrow onto
@@ -298,7 +298,7 @@ YELLOW pulse). A full-width laptop terminal fades in (title `laptop`, 10 rows, p
 `student@laptop:~$`); a GREY note under it: "on a Mac: zsh, a % prompt · on Windows: Git Bash ·
 same commands". A small GREY chip "Docker Desktop: running" with a GREEN dot at the terminal's top
 right.
-SAY: Now the README section Developing App using Containers. Open a terminal on your laptop. On a Mac your prompt looks different; on Windows, use Git Bash.
+SAY: Now the README section Developing App using Containers. Open a terminal on your laptop. On a Mac your prompt looks different; on Windows, use an Ubuntu terminal in WSL, or Git Bash. In Git Bash, put winpty in front of docker run if it says stdin is not a terminal.
 
 SHOW: TRACKER A1. It types `docker container ls` → TERM(laptop/01: 2). The header row gets a GREY
 label "the columns · no rows: nothing running". `▶ your turn`. A GREY chip under the terminal:
@@ -530,7 +530,7 @@ SHOW: TRACKER A10. Full terminal (13.2 wide, 20 pt); it types `docker run --rm -
 with `▶ your turn` beside it → at the prompt `root@01dca6d0f4d8:/#`, TRACKER A10 · extra, `ls -a`
 (extra) → TERM(laptop/22: 3–9): `.venv` and `uv.lock` highlight GREEN. Then `python cli.py` (extra)
 → TERM(laptop/22: 11–14), RED.
-SAY: Pause and run it, then try the same two extras. Now the listing shows dot venv, and a new uv.lock. But python cli.py fails exactly as before. Why?
+SAY: Pause and run it, then two extras: ls dash a, which also lists hidden files, and python cli.py. Now the listing shows dot venv, and a new uv.lock. But python cli.py fails exactly as before. Why?
 
 SHOW: The terminal shrinks to the strip. V4's PATH half: L1's doors, from the base image's
 `ENV PATH=/usr/local/bin:/usr/local/sbin:/usr…` (laptop/34 line 22, as a GREY chip): `/usr/local/bin`
@@ -719,7 +719,7 @@ SAY: To look yourself, start a container again; these are from our second run in
 SHOW: Terminal (13.2 wide, 20 pt) continues the same run: `ls -a /` (line 21) → TERM(laptop/33: 22–28) (columns kept);
 `.git`, `.gitignore`, `.vscode`, `Dockerfile`, `README.md` brighten with a PINK bracket "from the
 build context"; then `exit` → TERM(laptop/33: 30).
-SAY: Now list the top folder. Beside the system folders sit the hidden git folder, the editor's VS Code folder, the README and your Dockerfile. The COPY line copied the whole build context, your git history included.
+SAY: Now list the top folder. Beside the system folders sit the hidden git folder, the editor's VS Code folder, the README and your Dockerfile. The COPY line copied the whole build context, your git history included. Type exit to get back to your laptop.
 
 SHOW: The terminal fades. S06's parcel returns, its `.git/` glyph lit. Tag `erratum` "no
 .dockerignore". A small GREY card, tag `illustration` ("a file you'd add"): `.dockerignore` with

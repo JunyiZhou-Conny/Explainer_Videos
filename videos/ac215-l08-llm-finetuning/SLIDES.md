@@ -31,7 +31,7 @@ Read this first:
   `dataset-creator` builds. The deck never mentions Gemini, Vertex AI, Docker, Hugging Face, Qwen,
   TRL, bitsandbytes, Colab or any command.
 - **Where the slides and the tutorial disagree** (details under Terms and Diagrams):
-  1. **Compute and adapter precision.** The slides run QLoRA in BF16, with BF16 adapters (66–72).
+  1. **Compute and adapter precision.** The slides run QLoRA in BF16, with BF16 adapters (66–70, 72).
      The notebook computes in `float16` (`bnb_4bit_compute_dtype="float16"`, `fp16=True`) so that
      T4 GPUs work. It also casts the adapters back to fp32 after TRL had cast them to bf16
      (digest §3.7).
@@ -49,8 +49,9 @@ Read this first:
      whole array and Int8 with `round`. bitsandbytes NF4 keeps one absmax constant per small block
      of weights and maps each weight to one of 16 NF4 levels (digest §3.5). Double quantization
      then compresses those per-block constants.
-  6. **Backward pass wording.** Slides 29 and 70 say the pretrained weights are not used in the
-     backward pass. More precisely, W₀ gets no gradient and no update. The gradient for earlier
+  6. **Backward pass wording.** Slide 29 says the pretrained weights are not used in the
+     backward pass; 29 and 70 say gradients flow only through the adapters. More precisely, W₀
+     gets no gradient and no update. The gradient for earlier
      layers still passes *through* W₀ (in QLoRA, through its dequantized copy). The digest says it
      that way (§3.7).
   7. **Merging.** Slide 30 says you can merge the update into the weights at inference. The
@@ -59,7 +60,8 @@ Read this first:
 
 ## Outline
 
-The deck has three sections (outline on slide 2), with QLoRA added as a fourth part on 42. The
+The deck has three sections (outline on slide 2: Instruction-tuning, LoRA, QLoRA). The outline on
+42 adds a fourth item at the top, "Training Cycle – LLM", which this deck does not cover. The
 outline slide repeats with the current part in bold (3, 17, 21, 42).
 
 - Slide 1 · title "Lecture 8: LLM Finetuning", AC215, Pavlos Protopapas, SEAS/Harvard
@@ -122,8 +124,8 @@ outline slide repeats with the current part in bold (3, 17, 21, 42).
     bfloat16 and TF32
   - 68–72 · "QLoRA – Putting it all together": W stored in NF4 (68), forward pass (69), backward
     pass (70), the memory comparison repeated (71) and QLoRA's memory (72, 10B ⇒ ~12GB)
-- Slide 73 · "After completing Finetuning:" a cat-and-mouse cartoon meme ("Students",
-  "Prof. Pavlos", "Wisdom"), "Thank you!"
+- Slide 73 · "After completing Finetuning:" a Tom and Jerry meme with two cartoon cats
+  ("Students", "Prof. Pavlos", "Wisdom"), "Thank you!"
 
 ## Key ideas
 
@@ -132,8 +134,8 @@ outline slide repeats with the current part in bold (3, 17, 21, 42).
 2. **Task-specific fine-tuning teaches a narrow job.** A smaller dataset for one task (summarize,
    translate) teaches the model that task's nuances and specialised vocabulary. (6)
 3. **Instruction tuning changes how the model behaves.** A chat model answers "write a haiku" by
-   starting "Sure, here's a haiku…". A plain next-word predictor would just continue the text,
-   so it would produce the haiku with no preamble. The preamble is a learned habit. (7–8)
+   starting "Sure, here's a haiku…". Plain next-word prediction, the slide argues, would make
+   the answer just the haiku, with no preamble. The preamble is a learned habit. (7–8)
 4. **Catastrophic forgetting.** Fine-tuning on a new task can overwrite what the model learned
    before, so earlier tasks get worse. Training on many tasks at once (multi-task fine-tuning)
    helps, but it needs a lot of data and compute. (9–10)
@@ -208,7 +210,7 @@ outline slide repeats with the current part in bold (3, 17, 21, 42).
 Memes and decoration, not mechanisms: 10 (shredded-paper "Data" meme), 12 (penguin GIF), 16
 (Winnie-the-Pooh meme: plain Pooh "OPEN AI · Pre-training using thousands of GPUS", tuxedo Pooh
 "NORMAL FOLKS · Use Parameter Efficient Finetuning"), 27 ("I'm lost" dog with "What? How? Why?"),
-52 (pizza and a cartoon mouse), 53/56 (dough and cheese icons) and 73 (cat-and-mouse meme). The
+52 (pizza and a cartoon mouse), 53/56 (dough and cheese icons) and 73 (Tom and Jerry meme). The
 dough icon sits in the corner of 54–55, the cheese on 57–65 and the pizza on 66–67. Those icons
 tell you which "ingredient" a slide belongs to.
 
@@ -223,7 +225,7 @@ tell you which "ingredient" a slide belongs to.
   re-draw can show a three-part card, then the tutorial's two-part version (question, answer).
   That version becomes a Gemini JSONL line with `user` and `model` turns, and in the notebook a
   Qwen chat-template string.
-- **7–8 · the "Sure…" fingerprint.** A dark mobile ChatGPT 4o screen. The user bubble asks for a
+- **7–8 · the "Sure…" fingerprint.** A dark, narrow ChatGPT 4o window. The user bubble asks for a
   haiku about making pizza. The reply's first line, "Sure, here's a haiku about making pizza:",
   has a red box around it on 7, and three short haiku lines follow. Slide 8 removes the box and
   adds the contrast with next-word prediction. Purpose: instruction tuning leaves a visible
@@ -308,8 +310,9 @@ tell you which "ingredient" a slide belongs to.
   warning triangle on 35 says this generalizes from a one-layer LLM. **How the numbers were
   made:** each entry equals 2·r·√N for a model of N parameters. The whole model is treated as
   one square d×d matrix with d = √N, and LoRA adds 2·r·d. For example, √7×10⁹ ≈ 83,666, and
-  2 × 83,666 = 167K. Every cell checks out to the rounding shown. Purpose: the scale of the
-  saving. Real counts depend on the layer shapes and on which matrices get adapters. The
+  2 × 83,666 = 167K. Every cell matches to the precision shown, though three are truncated
+  rather than rounded (270.9M shown as 270M, 233.5M as 233M, 1.87B as 1.8B). Purpose: the
+  scale of the saving. Real counts depend on the layer shapes and on which matrices get adapters. The
   notebook's r = 8 on `q_proj`/`v_proj` across 28 layers gives 1,146,880 (digest §3.6), a good
   real-world foil.
 - **37–39, 71 · memory columns: full fine-tuning vs LoRA.**
@@ -318,8 +321,9 @@ tell you which "ingredient" a slide belongs to.
   - 38 fills the boxes with "100GB" and "20GB". It adds a right column "LoRA" with three rows:
     "Optimizer State (FP32)" with two small dark boxes A and B; "LoRA Adapter (FP16)" with two
     smaller A and B; and "Base Model (FP16)", a wide dark box "20GB". Footer "10B → ~40GB".
-  - 39 adds a red callout over the LoRA base model: it is frozen, so it is not optimized, but it
-    must still be stored in memory for the forward pass.
+  - 39 drops the GB labels inside the boxes and adds a red callout. It sits over the left
+    column's base-model box and points at LoRA's base model: it is frozen, so it is not
+    optimized, but it must still be stored in memory for the forward pass.
   - 71 repeats 38 without the GB labels, with "FP16" under each base model and the footers
     "10B => 120GB" and "10B => ~40GB".
 
@@ -369,10 +373,10 @@ tell you which "ingredient" a slide belongs to.
   and 19 / 12.4509 = 1.526 instead of 1.5. A re-draw can show the round trip with the small gaps
   highlighted.
 - **54–55 · NF4's buckets.** At right, a tall narrow bell curve centred on a dashed line at 0.
-  Under it are two bars of 16 cells each:
-  - red "Equally spaced buckets": all cells the same width;
-  - blue "Equally sized buckets": thin cells crowded around the centre and wide ones in the
-    tails.
+  Under it are two bars:
+  - red "Equally spaced buckets": 16 cells, all the same width;
+  - blue "Equally sized buckets": only 8 cells as drawn, thin ones crowded around the centre
+    and wide ones in the tails.
 
   A pointer labels the blue bar "an enhanced version of quantile quantization". Slide 54's text
   gives 2⁴ = 16; slide 55's says pretrained weights are normally distributed and precision near
@@ -399,8 +403,8 @@ tell you which "ingredient" a slide belongs to.
 - **65 · paging between GPU and CPU.** Title "Paged Optimizer - Looping in your CPU". Two
   dashed rounded boxes, "GPU" with six page icons and "CPU" with two. A light-bulb callout
   defines paging: RAM split into fixed-size blocks called pages. The slide is a build: a yellow
-  "⚠ GPU Memory is full" note (visible only in the extracted text) is overlaid by a green
-  "✅ GPU Memory has space now." Pages have moved to the CPU. A blue callout says that a page is
+  "⚠ GPU Memory is full" note (only a corner shows; its text is in the extraction) is
+  overlaid by a green "✅ GPU Memory has space now." Pages have moved to the CPU. A blue callout says that a page is
   moved back to the GPU for computation when it is needed and there is room. Body text: automatic
   page-to-page transfers between CPU and GPU; it avoids the memory spikes that gradient
   checkpointing leaves with long-sequence mini-batches.
@@ -415,7 +419,7 @@ tell you which "ingredient" a slide belongs to.
   training. A re-draw can line up FP32, FP16 and BF16 bit strips, with the exponent width
   (range) and fraction width (precision) highlighted.
 - **68–70 · QLoRA's block diagram.** Slide 66's diagram plus a dark "NF4" tag beside W₀, under
-  its "BF16" tag. A dough icon marks "Ingredient 1: 4-Bit NormalFloat".
+  its "BF16" tag. On 68 only, a dough icon marks "Ingredient 1: 4-Bit NormalFloat".
   - 68: W is stored as NF4.
   - 69, "Forward Pass": dequantize W from NF4 to BF16, compute with the BF16 W, A and B, then
     delete the BF16 copy of W.
@@ -459,7 +463,7 @@ tell you which "ingredient" a slide belongs to.
 | "reparameterization (LoRA) runs parallel to the original model" | 28–30 | Same structure as PEFT's LoRA layer: base output + scaled adapter output. |
 | "merged" (update matrix merged with original weights) | 30 | Notebook: `merge_and_unload()` on an FP16 reload, saved as `…_merged` (~1.2 GB). |
 | "Number of trainable parameters" | 32–35 | Notebook: "trainable params: 1146880 \|\| all params: 376995840 \|\| trainable%: 0.30…". |
-| "Base Model" | 37–39, 71–72 | Notebook: `base_model`; digest's evaluation table "Base (4-bit)". |
+| "Base Model" | 37–39, 71–72 | Notebook: `base_model`; the evaluation table's "Base (4-bit)" (nb cell 80 output). |
 | "quantization", "splitting range into buckets", "buckets" | 43–44, 54–55 | Notebook: 4-bit loading, `Linear4bit` layers, the "Deeper Dive" note on FP4 vs NF4 (digest Step 19). |
 | "absmax", "dequantize", "dequantization error" | 46–51 | bitsandbytes uses an absmax constant **per block of weights**, not per array (digest §3.5). The slides never name c; the QLoRA paper calls it the quantization constant. |
 | "4-Bit NormalFloat" / "NF4" / "4bit NormalFloat" | 53–55, 68–72 | `bnb_4bit_quant_type="nf4"`; bitsandbytes' default would be `"fp4"`. |
@@ -479,10 +483,12 @@ Slips on the slides, so a scene does not copy them:
 - Slide 23 says *any* matrix factors as BA; that is exact only when r is at least W's rank.
 - Slide 25 says a higher rank gives better performance; it gives more capacity, at more cost
   (digest Poll 3).
-- Slides 29 and 70 say the backward pass doesn't use the pretrained weights. W₀ gets no update,
-  but gradients still pass through it.
+- Slide 29 says the backward pass doesn't use the pretrained weights, and 29 and 70 say the
+  gradients flow only through the adapters. W₀ gets no update, but gradients still pass
+  through it.
 - Slide 66 says "FP16 in LoRA" as if it were part of LoRA; it is only the deck's LoRA set-up.
-- Slides 38 and 71 call 100 GB "Optimizer State" though it includes the 20 GB of gradients.
+- Slide 38 labels the 100 GB box "Optimizer State" though it includes the 20 GB of gradients
+  (37, 39 and 71 show the same box without the number).
 - Slide 11's GPT-4 figures are uncited estimates, not official numbers.
 - Typos: "relavant" (6), "update matix" (26), "Reparamertization" (19–20), "a minima" (70).
 
@@ -511,7 +517,8 @@ formulas and numbers are:
   | 8192 | 1.4B | 1.8B | 4.3B | 7B |
   | Full | 7B | 13B | 70B | 180B |
 
-  (Slide 32 writes "334k" in lower case.)
+  (32, 33 and 34 show only the first one, two and three rows; the rest are hidden but still in
+  their text layer, where slide 32's reads "334k" in lower case.)
 - 37–39, 71–72 · `10B → 120GB` (full), `10B → ~40GB` (LoRA), `10B => ~12GB` (QLoRA);
   `Optimizer State (FP32) 100GB`, `Base Model (FP16) 20GB`.
 - 40 · GPT-2 M: FT 354.92M params, BLEU 68.2; LoRA 0.35M, BLEU 70.4. GPT-2 L: FT 774.03M, 68.5;
@@ -584,7 +591,7 @@ formulas and numbers are:
 ## This video and the slides
 
 **Basis.** The video is not scripted yet. This folder holds only `digest.md` and this file: no `BRIEF.md`, `script.md`, `ASSETS.md` or `assets/terminal/`. The map below therefore uses the hook and the nine chapters planned in [`digest.md`](digest.md) §8, the study guide (`MLOps_Learning/guides/L08-llm-finetuning.md`) and every slide (the extracted text and all nine contact sheets, re-read for this section). With no captures yet, "what the tutorial does today" means the repo at `44ef6f0` and the Colab notebook with its saved outputs (an A100 run), as verified in `digest.md`. For this section I re-checked these points:
-- in the downloaded notebook (`colab/L08_llm_finetuning.ipynb`), every markdown cell and the code cells 18, 31, 34, 36, 40, 67, 70, 72, 80, 86 and 89, with their saved outputs. Its "Deeper Dive" (nb cell 28) sends readers to the "lecture notes" for NF4;
+- in the downloaded notebook (`colab/L08_llm_finetuning.ipynb`), every markdown cell and the code cells 18, 31, 34, 36, 40, 67, 70, 72, 80, 86 and 89, with their saved outputs. Its "Deeper Dive" (nb cell 28) sends readers to the "lecture notes" for NF4, and to "extra slides in lecture notes" for double quantization, which this deck does not contain;
 - PEFT 0.20.0's LoRA initialization (`peft/tuners/lora/layer.py:331-339`: A Kaiming-uniform by default, `"gaussian"` opt-in, B zeros), its Qwen3 default targets (`peft/utils/constants.py:102`: `q_proj`, `v_proj`) and what `prepare_model_for_kbit_training` casts (`peft/utils/other.py:186-202`: every fp16/bf16 parameter that is not 4-bit goes to fp32);
 - the memory arithmetic in gap 1 (slide 14's rule applied to Qwen3-0.6B). It is mine, not the slides' or the notebook's.
 
@@ -621,7 +628,7 @@ When captures exist (a Colab run on a T4 is the case that matters), re-check Con
 | 4 | Catastrophic forgetting, and why LoRA forgets less | ch8 ↔ 9–10, 36 | Yes. Poll 4 (nb cell 74) lists "catastrophic forgetting" as a wrong answer and "the style, even on unrelated questions, with most general knowledge kept" as the right one. Slide 36 gives the reason: the original weights stay the same. |
 | 5 | Quantization sorts values into buckets; 4 bits give 16 | ch5 ↔ 43–44, 54 | Yes. The notebook's Part B notes say it in the same terms (16 possible buckets, nb cell 17). |
 | 6 | NF4 spends its 16 levels where the weights are | ch5 ↔ 54–55 | Yes. The digest's histogram animation (§3.5: 16 lines sliding to crowd near zero) is slide 55's "equally spaced" vs "equally sized" bars, animated. |
-| 7 | Quantization always loses a little | ch5, ch8 ↔ 51 | Yes. The tutorial's two baselines (E7: a 4-bit base vs an FP16 base) are this error turning up in an experiment. |
+| 7 | Quantization always loses a little | ch5, ch8 ↔ 51 | Yes. The digest's exercise E7 (a 4-bit base vs an FP16 base) is where this error would show up in an experiment; the digest predicts a slightly lower perplexity for the FP16 base, but nothing has measured it. |
 | 8 | Stored in 4 bits, computed in 16 bits | ch5, ch7 ↔ 68–69 | Yes. The digest's misconception "a 4-bit model does 4-bit arithmetic" is slide 69's point. The 16-bit format differs (Conflict 1). |
 | 9 | LoRA learns ΔW = (α/r)·B·A beside a frozen W₀, and B = 0 makes the update start at zero | ch6 ↔ 22, 26–28 | Yes, exactly. nb cell 67's comments use the slide's words ("scaling parameter", "Rank"), and α/r = 16/8 = 2. A's initialization differs (Conflict 3). |
 | 10 | Low rank means few numbers | ch6 ↔ 23–25, 31–35 | Yes. The plan's 2,097,152 vs 24,576 for one `q_proj` is slide 24's 25-vs-10 count at real size. The slides' table is a one-layer estimate (the warning on 35); the tutorial's 1,146,880 is an exact count. |
@@ -638,14 +645,14 @@ When captures exist (a Colab run on a T4 is the case that matters), re-check Con
    - full fine-tuning of Qwen3-0.6B (596 M parameters): ≈ 1.2 GB weights + 1.2 GB gradients + 4.8 GB Adam states ≈ 7 GB;
    - the notebook's QLoRA: ≈ 0.22 GB of 4-bit linear weights + 0.62 GB of embeddings (cast to fp32 by `prepare_model_for_kbit_training`) + 4.6 MB adapters + 4.6 MB gradients + 9.2 MB Adam states ≈ 0.9 GB.
 
-   Two honest consequences. At 0.6 B, even full fine-tuning would nearly fit a 16 GB T4 by this rule; the recipe is what lets the same notebook scale (nb cell 29 mentions a 20 B model). And 9 MB of optimizer state never needs paging; the paged optimizer matters at 7 B and up. **Carry it:** ch5 opening (the base-model bar and slide 39's callout: "so shrink the base"), ch7 (the full ladder, then the 0.6 B numbers).
-2. **The learned opener (7–8).** The lecture's own example of what instruction tuning does is a habit in the first words of a reply. That is exactly what the student sees in nb cell 82, made on purpose. The tutorial even has slide 8's raw next-word predictor: OPT-350m just continues "Hello my cheese name is…" (nb cell 27). **Carry it:** hook (one clause) and ch1 (side by side).
-3. **Absmax scaling, worked (45–51).** The plan's ch5 drops 16 lines onto a histogram but never shows how a weight becomes an index or why a scale constant is needed. The worked example does: scale so the largest magnitude hits the edge, round, divide to get back, and see the small error. It is the mechanism under §3.5's "absmax constant" and sets up per-block scaling (Conflict 5) and double quantization (Conflict 2). **Carry it:** ch5, with corrected values (19 and 70, not 18 and 69).
+   Two honest consequences. At 0.6 B, even full fine-tuning would fit a 16 GB T4 by this rule (about 7 GB before activations); the recipe is what lets the same notebook scale (nb cell 29 mentions a 20 B model). And 9 MB of optimizer state never needs paging; the paged optimizer matters only for much larger models. **Carry it:** ch5 opening (the base-model bar and slide 39's callout: "so shrink the base"), ch7 (the full ladder, then the 0.6 B numbers).
+2. **The learned opener (7–8).** The lecture's own example of what instruction tuning does is a habit in the first words of a reply. That is exactly what the student sees in nb cell 82, made on purpose. The tutorial even has a raw next-word predictor to set beside slide 8's contrast: OPT-350m just continues "Hello my cheese name is…" (nb cell 27). **Carry it:** hook (one clause) and ch1 (side by side).
+3. **Absmax scaling, worked (45–51).** The plan's ch5 snaps weights onto 16 lines and gives each block an "absmax" knob (§3.5), but never shows what the scale constant does or why it is needed. The worked example does: scale so the largest magnitude hits the edge, round, divide to get back, and see the small error. It is the mechanism under §3.5's "absmax constant" and sets up per-block scaling (Conflict 5) and double quantization (Conflict 2). **Carry it:** ch5, with corrected values (19 and 70, not 18 and 69).
 4. **Gradient checkpointing and the paged optimizer, as mechanisms (57–65).** The plan names them; the lecture draws them. The chain of four activations, checkpoints every √n layers and the recompute sweep explain nb cell 36's comment and `use_cache=False` (nb cell 40). The lecture's memory spikes from long sequences (63, 65) explain two settings the plan doesn't mention: `max_length=512` and `train_sampling_strategy="group_by_length"` (nb cell 70). **Carry it:** ch7.
 5. **The LoRA block diagram: forward, backward, merge (28–30).** The plan's ch6 shows matrices (W and two thin strips), not dataflow: x goes through W₀ and, in parallel, through A then B, and the two outputs add. One picture carries three chapters: ch6 (the forward pass), ch7 (W₀ greys out and a gradient pulse runs down the adapter branch, worded as in Conflict 6) and ch9 (BA folds into W₀). **Carry it:** ch6, reused in ch7 and ch9.
-6. **"Peel off the adapter" as the plainest form of "forgets less" (9–10, 36).** `with trainer.model.disable_adapter():` (nb cell 80) gives back the original model exactly, because W₀ never changed. That is slide 36's fourth advantage as a switch. **Carry it:** ch8, as the toggle in the plan's probability-bars animation.
+6. **"Peel off the adapter" as the plainest form of "forgets less" (9–10, 36).** `with trainer.model.disable_adapter():` (nb cell 80) gives back the original (4-bit) model exactly, because W₀ never changed. That is slide 36's fourth advantage as a switch. **Carry it:** ch8, as the toggle in the plan's probability-bars animation.
 7. **The parameter table vs the real count (31–35).** Slide 34's rank-8 row says about 1 M for a 7 B model treated as one square layer; the notebook's r = 8 on a 0.6 B model trains 1,146,880. A smaller model with more trainable numbers is a good ponder: the table's one big square gets one pair of matrices, while Qwen3 gets 56 pairs (q and v in each of 28 layers), each sized to a real matrix. **Carry it:** ch6, before the plan's ponder #3.
-8. **BF16 vs FP16 bit layouts (66–67).** Exponent bits give range, fraction bits give precision. This explains nb cell 31's bf16 check, why the notebook stays in fp16 for T4s, and why fp16 training needs a gradient scaler, which is what the fp32 cast in nb cell 72 is for. **Carry it:** ch7, one beat with Conflict 1.
+8. **BF16 vs FP16 bit layouts (66–67).** Exponent bits give range, fraction bits give precision. This explains nb cell 31's bf16 check, why the notebook stays in fp16 for T4s, and why fp16 training needs a gradient scaler. That scaler cannot unscale bf16 gradients, hence the fp32 cast in nb cell 72. **Carry it:** ch7, one beat with Conflict 1.
 9. **Where LoRA sits among PEFT methods (18–20).** Additive, selective, reparameterization; LoRA is a reparameterization. **Carry it:** ch6 opening, about ten seconds.
 10. **LoRA's quality on a benchmark (40).** LoRA equals or beats full fine-tuning on the E2E NLG task while training a tiny fraction of the parameters. One line in ch8 contrasts it with what the tutorial measures: style fit by perplexity, not answer quality. **Carry it:** ch8.
 11. **The dataset's third field and its source (5).** Slide 5's Context column is the slot the tutorial leaves out. Outside the slides: the Alpaca-GPT4 answers the slide credits were themselves written by GPT-4 (Peng et al., 2023), the same teacher-student pattern as `dataset-creator`. **Carry it:** ch2, one sentence, checked before it goes on screen.
@@ -657,17 +664,17 @@ Lecture-only and of low value here: multi-task fine-tuning (10), the uncited GPT
 | # | Slides say | Tutorial today (repo `44ef6f0`, the notebook and its saved outputs; no captures yet) | Current | How the video should put it |
 |---|---|---|---|---|
 | 1 | **The 16-bit format is BF16.** QLoRA uses BF16 where the deck's LoRA used FP16 (66); W is dequantized to BF16, and A and B are BF16 (68–70, 72). | FP16 compute: `bnb_4bit_compute_dtype="float16"` (nb cell 34), `fp16=True`, `bf16=False` (nb cell 70). nb cell 31 says the notebook trains in float16 even on a GPU with bf16, so the same settings work on T4s. TRL casts the adapters to bf16, and the notebook casts them back to **fp32** (nb cell 72). | The notebook (a deliberate choice for T4s) | "The lecture computes in BF16, the usual choice on newer GPUs. Colab's free T4 has no fast BF16, so this notebook computes in FP16 and keeps the small adapters in FP32. Same recipe, a different 16-bit format." Tag dtypes on screen as the notebook sets them. Wording trap: nb cell 28 calls bf16 compute a gain in precision (over 4-bit storage), while slide 67 calls BF16 lower precision (than FP32). Both are true; say what each is compared with. |
-| 2 | **Double quantization is skipped** (53: a sticky note names it as a third ingredient between quantization and the paged optimizer). | Switched on: `bnb_4bit_use_double_quant=True` (nb cells 18, 34), explained in nb cell 28 as "nested quantisation". | The notebook | "The lecture names a third ingredient and skips it for time. The notebook turns it on: the per-block scale numbers get quantized too." One beat in ch5, after the absmax example. |
+| 2 | **Double quantization is skipped** (53: a sticky note names it as a third ingredient between quantization and the paged optimizer). | Switched on: `bnb_4bit_use_double_quant=True` (nb cells 18, 34), explained in nb cell 28 ("Sometimes called nested quantisation"), which also points to "extra slides in lecture notes" that this deck does not have. | The notebook | "The lecture names a third ingredient and skips it for time. The notebook turns it on: the per-block scale numbers get quantized too." One beat in ch5, after the absmax example. |
 | 3 | **A starts Gaussian**, A = N(0, σ²), and B = 0 (27–30, 66–70), as in the LoRA paper. | PEFT 0.20.0's default (`init_lora_weights=True`, which nb cell 67 leaves alone) draws A from a Kaiming-uniform distribution; `"gaussian"` is opt-in (`peft/tuners/lora/layer.py:331-339`). B = 0 in both. | PEFT, for the code the student runs. Both start with ΔW = 0. | "A starts random and B starts at zero, so the update starts at exactly zero. That's the part that matters; the library's random is a uniform one." Label A "random" in the re-drawn diagram, not N(0, σ²). |
 | 4 | **Adapters on "each layer"** (22, 41); the table treats a model as one square layer (32–35). | PEFT's Qwen3 default adapts only `q_proj` and `v_proj` in each of the 28 decoder layers (`peft/utils/constants.py:102`; nb cell 67 sets no `target_modules`): two of the seven linear maps per layer. | The notebook (PEFT's default) | "Each layer here means each of the 28 blocks, and inside each block two of its seven matrices: the query and value projections. `target_modules="all-linear"` would adapt all seven." That gives 5,046,272 (E1). |
 | 5 | **One absmax constant for the whole array**, Int8, rounded to integers (45–51). | bitsandbytes NF4 keeps one absmax constant per small block of weights and maps each scaled weight to the nearest of 16 NF4 levels (digest §3.5). | The library | "The worked example is the idea at its simplest. The library does it per small block, so one large weight can't squash everyone else's precision, and it rounds to 16 NF4 levels instead of integers." |
-| 6 | **The backward pass doesn't use the pretrained weights**; gradients flow only through the adapters (29, 70). | The plan's material says gradients flow *through* the frozen, dequantized base into the adapters (digest §3.7, guide §3.7); the notebook says only that A and B train (nb cell 49). | The precise version: W₀ gets no gradient and no update, but the signal passes through it to earlier layers. | "W₀ gets no gradient and never changes; that's the slide's point. The signal still flows through it on the way down, so earlier layers' adapters can learn." In the animation, grey out W₀ but let the backward pulse pass through it. |
-| 7 | **Merge the update into the original weights at inference** (30). | The notebook saves the adapters (6.1, marked "Recommended", nb cell 83) and, optionally, merges them into a freshly loaded **FP16** base, not the 4-bit model it trained with (nb cells 85–86, `merge_and_unload()`). | The notebook | "Merging is the lecture's last LoRA step. The notebook merges into a 16-bit copy of the original weights, because 4-bit buckets are too coarse to take a small update without rounding it away. If you only need the persona, the 4.6 MB adapter is the thing to keep." |
+| 6 | **The backward pass doesn't use the pretrained weights** (29); gradients flow only through the adapters (29, 70). | The plan's material says gradients flow *through* the frozen, dequantized base into the adapters (digest §3.7, guide §3.7); the notebook says only that A and B train (nb cell 49). | The precise version: W₀ gets no gradient and no update, but the signal passes through it to earlier layers. | "W₀ gets no gradient and never changes; that's the slide's point. The signal still flows through it on the way down, so earlier layers' adapters can learn." In the animation, grey out W₀ but let the backward pulse pass through it. |
+| 7 | **Merge the update into the original weights at inference** (30). | The notebook saves the adapters (6.1, marked "Recommended", nb cell 83) and, optionally, merges them into a freshly loaded **FP16** base, not the 4-bit model it trained with (nb cells 85–86, `merge_and_unload()`). Merging into 4-bit weights is possible, but PEFT warns it "may get different generations due to rounding errors" (`peft/tuners/lora/bnb.py:378`). | The notebook | "Merging is the lecture's last LoRA step. The notebook merges into a 16-bit copy of the original weights, because adding the update to 4-bit weights means rounding the result back to 16 levels, and that can change the answers. If you only need the persona, the 4.6 MB adapter is the thing to keep." |
 | 8 | **A higher rank gives better performance** (25). | Poll 3 (nb cell 68): raising r to 64 adds trainable parameters, potentially improving performance but slowing training. The plan lists "higher r is always better" as a misconception (digest §3.6). | The tutorial's hedged version | "More rank buys more capacity, at more memory and time. For a persona this simple, r = 8 on two projections is plenty." Keep the plan's ponder #3 (r = 16, all-linear). |
 
 Not counted as conflicts:
 - The square W₀ ∈ ℝ^{d×d} on 28–30. Real projections are rectangular (Qwen3's `q_proj` is 2048×1024, d_out × d_in), so the count per matrix is r·(d_in + d_out), not 2·r·d. A simplification; draw the real shape in ch6.
-- Slips inside the deck: 50 gives 18 and 69 where rounding gives 19 and 70; 44 floors while 46 rounds (the notebook's Part B notes also pick the closest bucket); 38 and 71 label 100 GB "Optimizer State" though it includes the 20 GB of gradients; 23's "any matrix" is exact only at full rank.
+- Slips inside the deck: 50 gives 18 and 69 where rounding gives 19 and 70; 44 floors while 46 rounds (the notebook's Part B notes also pick the closest bucket); 38 labels 100 GB "Optimizer State" though it includes the 20 GB of gradients; 23's "any matrix" is exact only at full rank.
 - Gradient checkpointing sits under "Ingredient 2" (57–64), though the ingredient is the paged optimizer (65). In the notebook it comes from `prepare_model_for_kbit_training`, not from a QLoRA-specific setting. Present it as the problem that the second ingredient finishes.
 - Track A is absent from the slides: no Gemini, Vertex AI, endpoints or Docker. That is absence, not disagreement. Don't present `ADAPTER_SIZE_FOUR` as a LoRA rank as fact (digest §3.4 hedges it).
 - Lecture numbering: the title slide's "Lecture 8" vs the course schedule's "Lecture 7" (digest header). The slides support the tag.
@@ -720,7 +727,7 @@ Not counted as conflicts:
   - 70: the backward pass on the block diagram, worded as in Conflict 6.
   - 66–67: FP16 and BF16 bit strips, then the fp32 cast in nb cell 72 (gap 8, Conflict 1).
 - **Ch8 · Lecture 8 · slides 9–10, 36, 40.**
-  - `disable_adapter()` as the toggle: peel off the adapter and the original model is back, exactly (gap 6). Poll 4 fits here.
+  - `disable_adapter()` as the toggle: peel off the adapter and the original (4-bit) model is back, exactly (gap 6). Poll 4 fits here.
   - One line on slide 40 (gap 10): quality on a benchmark vs this tutorial's style-fit perplexity.
 - **Ch9 · Lecture 8 · slide 30.** BA folds into W₀, but into an FP16 copy (Conflict 7). The plan's three boxes (adapter, merged model, endpoint) stay.
 - **Recap · Lecture 8 · slides 41, 71–72.** Keep the six questions and add two:

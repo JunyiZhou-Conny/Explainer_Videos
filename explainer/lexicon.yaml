@@ -113,3 +113,17 @@ toynet: {ipa: "tˈɔɪ nˈɛt", say: "toy net"}
 "9100": {ipa: "nˈaɪnti wˈʌn hˈʌndɹɪd", say: "ninety-one hundred"}
 "9200": {ipa: "nˈaɪnti tˈuː hˈʌndɹɪd", say: "ninety-two hundred"}
 "9300": {ipa: "nˈaɪnti θɹˈiː hˈʌndɹɪd", say: "ninety-three hundred"}
+# AC215 L05
+RAG: {ipa: "ɹˈæɡ", say: "rag"}
+Self-RAG: {ipa: "sˈɛlf ɹˈæɡ", say: "self rag"}
+Tolminc: {ipa: "tˈoʊlmɪnts", say: "tole-mints"}
+transhumance: {ipa: "tɹænzhjˈuːməns", say: "tranz-hyoo-mence"}
+"0.13.1": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːtiːn pɔɪnt wˈʌn", say: "zero point thirteen point one"}
+"3.1": {ipa: "θɹˈiː pɔɪnt wˈʌn", say: "three point one"}
+"0.16": {ipa: "zˈiəɹoʊ pɔɪnt sˈɪkstiːn", say: "zero point sixteen"}
+"0.31": {ipa: "zˈiəɹoʊ pɔɪnt θˈɜːɾi wˈʌn", say: "zero point thirty-one"}
+"0.8": {ipa: "zˈiəɹoʊ pɔɪnt ˈeɪt", say: "zero point eight"}
+"0.42": {ipa: "zˈiəɹoʊ pɔɪnt fˈɔːɹ tˈuː", say: "zero point four two"}
+"0.67": {ipa: "zˈiəɹoʊ pɔɪnt sˈɪks sˈɛvən", say: "zero point six seven"}
+"0.75": {ipa: "zˈiəɹoʊ pɔɪnt sˈɛvən fˈaɪv", say: "zero point seven five"}
+"0.57, 0.77, 0.43, 0.93": {ipa: "zˈiəɹoʊ pɔɪnt fˈaɪv sˈɛvən, zˈiəɹoʊ pɔɪnt sˈɛvən sˈɛvən, zˈiəɹoʊ pɔɪnt fˈɔːɹ θɹˈiː, zˈiəɹoʊ pɔɪnt nˈaɪn θɹˈiː", say: "zero point five seven, zero point seven seven, zero point four three, zero point nine three"}

@@ -39,12 +39,12 @@ Beats (script.md "## S09", one voiceover block each):
  7  Error branch: the cloud, gates, token, arrow and tags go; container, signpost and laptop stay.
     The key vanishes (RED cross), google.auth follows the signpost again into the empty secrets/.
     Three causes, one at a time, each undone before the next, with a RED numbered badge and
-    two-line caption top right: (1) no key in this component's secrets/ (line 36's RED bar
-    pulses in the strip); (2) the root slides from /app to /tmp (RED cross: nothing there);
-    (3) the window re-aims at mega-pipeline/. The root label and the folder name cross-fade (local reroot()/
-    reaim(), not the shared letter morph). After the voice, V5 leaves and a GREY footnote card
-    stands alone above the strip: "a different error: 403 … storage.buckets.get → the key lacks
-    rights: ask the staff".
+    caption top right (two lines; four for cause 1): (1) no key in this component's secrets/, or
+    renamed, e.g. mega-pipeline (1).json (line 36's RED bar pulses in the strip); (2) the root
+    slides from /app to /tmp (RED cross: nothing there); (3) the window re-aims at mega-pipeline/.
+    The root label and the folder name cross-fade (local reroot()/reaim(), not the shared letter
+    morph). After the voice, V5 leaves and a GREY footnote card stands alone above the strip:
+    "a different error: 403 … storage.buckets.get → the key lacks rights: ask the staff".
  8  TRACKER A10 · extra. The picture goes, the terminal grows to 12 rows: `ls -la input_audios
     text_prompts text_prompts/*` (extra; folds) → TERM(08-ls-after-download.txt: 2, …, 7, …, 11,
     13); input_audios: and text_prompts: get GREY bars, `group-01` a GREY box. Then the terminal
@@ -262,7 +262,7 @@ def glyph_dim(lines, k: float):
 
 
 def cause_badge(k: int, lines: list[str]) -> VGroup:
-    """A RED numbered badge with a two-line caption under it (the error causes of beat 7)."""
+    """A RED numbered badge with a short caption under it (the error causes of beat 7)."""
     b = step_badge(k, ERR, size=22, radius=0.26)
     txt = VGroup(*[label(s, 20, INK) for s in lines]).arrange(DOWN, buff=0.08)
     g = VGroup(b, txt).arrange(DOWN, buff=0.18)
@@ -551,7 +551,10 @@ class WhoIsCalling(VoiceScene):
             ck_2 = chain.check(self, 2, run_time=0.8)
 
         # ========================================================== 7 · three ways to get the error
-        causes = [cause_badge(1, ["key not in this", "component's secrets/"]),
+        # cause 1 also names the renamed key: one Canvas download per component folder makes a
+        # browser save "mega-pipeline (1).json", which fails the same way (QA 16:42)
+        causes = [cause_badge(1, ["key not in this", "component's secrets/,", "or renamed, e.g.",
+                                  "mega-pipeline (1).json"]),
                   cause_badge(2, ["changed directory", "away from /app"]),
                   cause_badge(3, ["docker run from the", "wrong laptop folder"])]
         for c in causes:

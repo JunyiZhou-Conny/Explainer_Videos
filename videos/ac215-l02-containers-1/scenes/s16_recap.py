@@ -4,8 +4,9 @@ Beats (script.md "## S16", one voiceover block each):
  0  S15 ended on an empty frame. TRACKER C6 · extra, the VM strip (3 rows, `ssh · ac215-l02`) and, above
     it, the BLUE VM `ac215-l02` as S15 left it: the dlops image's seven slabs (TEAL caption
     `dlops/simple-translate`) and its BLUE boot disk; the GOLD dial at the right keeps sweeping (no
-    digits) from where S14/S15's badge dial left it (S15_END: it never rewinds). "An extra check": the strip types `sudo docker ps -a` (row tag `extra`) -> vm-debian12/11: 2
-    (squeeze): the header only, and the prompt returns. "shows no containers left behind": a YELLOW bar
+    digits) from where S14/S15's badge dial left it (S15_END: it never rewinds). "An extra check":
+    the strip types `sudo docker ps -a` (row tag `extra`) -> vm-debian12/11: 2 (squeeze): the header
+    only, and the prompt returns. "shows no containers left behind": a YELLOW bar
     on the header row; in the VM, a GREY dashed slot on top of the stack, "no containers". "thanks to
     dash dash rm": a TEAL `--rm` chip beside the slot, GREY "removed at exit"; the chip pulses.
  1  TRACKER C7. The strip goes (the SSH session is over); the VM compacts into the right column (its
@@ -13,11 +14,11 @@ Beats (script.md "## S16", one voiceover block each):
     schematic console (tag `illustration`, S14's "Compute Engine › VM instances" with the instance row:
     GREEN check, `ac215-l02`, `e2-small`, SSH): the row's box is ticked; "delete the VM": Delete lights,
     the confirm dialog "Delete ac215-l02? / Its boot disk is deleted with it" (as in L1; the console's
-    one `illustration` tag covers it); "with its boot disk": a YELLOW bar on that line, the VM's disk pulses. Delete: the dialog
-    closes, the row leaves the list, the BLUE VM and its disk dissolve into dust and the needle stops
-    where it is. "then check": the console makes way for the checklist "VM instances: empty" / "Disks:
-    empty" (GREEN ticks as each is named, "empty" GREEN), the frozen dial beside it; "Pause": ▶ your
-    turn.
+    one `illustration` tag covers it); "with its boot disk": a YELLOW bar on that line, the VM's disk
+    pulses. Delete: the dialog closes, the row leaves the list, the BLUE VM and its disk dissolve into
+    dust and the needle stops where it is. "then check": the console makes way for the checklist
+    "VM instances: empty" / "Disks: empty" (GREEN ticks as each is named, "empty" GREEN), the frozen
+    dial beside it; "Pause": ▶ your turn.
  2  TRACKER C7 · extra (the commands on screen are not README ones). GREY heading "optional". "Your Docker
     Hub repository": a BLUE shelf glyph and the GREY chip "Docker Hub repository: public until you
     delete it or make it private"; "stays public": "public" underlined YELLOW; "or make it private": a
