@@ -86,7 +86,8 @@ Panels and cards
     turn_card(rows, header="your turn")  rows: "cmd" (mono), (cmd, "extra"), (cmd, note), Prose("…")
     card_rows(items, header=None)  LookFor(items, title="with your key, look for") .write_item(i)
     table_card(headers, rows)   check_card(purpose) GREY "an extra Python check · …" card
-    what_if_frame(width=12.9, height=6.9) RED dashed frame "what if · just watch" (.frame .title)
+    what_if_frame(width=12.9, top=2.6, bottom=-3.58) RED dashed frame "what if · just watch", built
+        in place (holds a full-width terminal of <= 12 rows; tracker band stays free) (.frame .title .note)
     ponder_at(scene, question, seconds=8, y=-2.2) the ponder card in the lower third (returns it;
         FadeOut it at the start of the next block)
     Counter(text="chunks", value=0) .count_to(n, run_time) -> anim  .freeze()
@@ -1638,12 +1639,14 @@ class LookFor(VGroup):
         return FadeIn(r, shift=RIGHT * 0.15, run_time=run_time)
 
 
-def what_if_frame(width: float = 12.9, height: float = 6.9, title: str = "what if · just watch",
-                  note_: str | None = None) -> VGroup:
+def what_if_frame(width: float = 12.9, top: float = 2.6, bottom: float = -3.58,
+                  title: str = "what if · just watch", note_: str | None = None) -> VGroup:
     """S05's RED dashed frame around a "what if" demo, so it never looks like the viewer's own
-    terminal: the title tag straddles the top border at the left, an optional GREY note at the
-    right. .frame .title .note"""
-    fr = box(width, height, ERR, dashed=True, stroke=3)
+    terminal. Built in place (frame coordinates, centred on x = 0): y from `bottom` to `top`, so
+    the tracker band above stays free and a full-width terminal of up to 12 rows (top at
+    strip_top(12) = 2.19) fits inside. The title tag straddles the top border at the left, an
+    optional GREY note at the right. .frame .title .note"""
+    fr = box(width, top - bottom, ERR, dashed=True, stroke=3).move_to([0, (top + bottom) / 2, 0])
     t = _keep(tag(title, ERR))
     t.move_to(fr.get_corner(UP + LEFT) + np.array([0.3 + t.width / 2, 0, 0]))
     g = VGroup(fr, t)
@@ -3297,7 +3300,7 @@ class PromptStack(Piece):
         super().__init__(**kw)
         vis = set(show) if show is not None else {"system", "query", "context", "brace", "llm", "model",
                                                   "feed", "ghost", "cable_loose", "cable_in", "lock"}
-        bw, bh = 4.6, 0.72
+        bw, bh, bx = 4.3, 0.72, -2.75
         spec = (("system", "system prompt · how to behave", S.GREY),
                 ("query", "query · the user's input", LOOKUP),
                 ("context", "context · retrieved text", DATA))
@@ -3305,7 +3308,7 @@ class PromptStack(Piece):
         for k, (name, text, col) in enumerate(spec):
             fr = box(bw, bh, col, fill_opacity=0.12, radius=0.1, stroke=3)
             t = sans(text, CAPTION + 2, INK).move_to(fr)
-            g = VGroup(fr, t).move_to([-3.4, 0.95 - k * (bh + 0.22), 0])
+            g = VGroup(fr, t).move_to([bx, 0.95 - k * (bh + 0.22), 0])
             g.frame, g.text = fr, t
             blocks[name] = g
             self.part(name, g, name in vis)

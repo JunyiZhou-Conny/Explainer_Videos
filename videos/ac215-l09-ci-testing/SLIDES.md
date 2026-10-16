@@ -428,7 +428,7 @@ code panel with call-outs that appear one at a time.
   - Three fixtures live in `tests/conftest.py`: `tok` (scope `session`: built once per run),
     `model` (which itself asks for `tok`; rebuilt for each test) and `record` (one request with
     three questions; rebuilt for each test).
-  - They are built by two ordinary functions in `tests/tiny.py`, `tiny_tokenizer` and
+  - `tok` and `model` are built by two ordinary functions in `tests/tiny.py`, `tiny_tokenizer` and
     `tiny_backbone`. These are deliberately not fixtures: the adapter test needs a tiny model
     *with* an adapter (`lora=4`), so it calls the builder itself.
   - Usage: 8 test functions use the fixtures (all 8 use `tok`, 4 use `record`, 2 use `model`).
@@ -741,8 +741,8 @@ Single lines only; multi-line files are described under Diagrams. Grouped by ste
 - **Coverage below 90% fails the check.** (35)
 - **Use `--strict`**: a YAML warning counts as a failure. A broken hook config would break every
   commit. (37)
-- **The hook and your terminal run the same command**, so a commit that fails the check does not
-  happen. Refuse large files and `.env` secrets. (41, 43)
+- **The hook runs exactly what you run by hand**, so a commit that fails the check is never made.
+  Refuse large files and `.env` secrets. (41, 43)
 - **Add a hook only when something needs it.** babykev uses only pre-commit and leaves the other
   hooks until they are needed. (44)
 - **Nothing written twice, so nothing can disagree.** A docment says what the type can't. (47,
@@ -771,7 +771,7 @@ Single lines only; multi-line files are described under Diagrams. Grouped by ste
 - **State the rule once and let the computer try the shapes.** hypothesis looks for the case you
   didn't think of. (79–81)
 - **Turn off hypothesis's 200 ms deadline, and say why in a comment.** The first torch call can be
-  slow, and the test would then fail by chance. (80)
+  slow enough to make the test fail at random. (80)
 - **The gate refuses only what its tests can see.** (83)
 - **Right for the wrong reason.** With the wrong mask the untrained model scored above chance by
   luck. (84)
@@ -953,7 +953,7 @@ and most conflicts are two honest designs side by side, not mistakes.
 
 | # | Slides say | Tutorial today (the repos at the pinned commits) | Current | How the video should put it |
 |---|---|---|---|---|
-| 1 | **Tools and width** (29–31, 50): `ruff format` and `ruff check`, one `line-length = 100` set once in `pyproject.toml` and shared by both. | Black 24.1.1 and Flake8 7.0.0, width 120 passed as arguments in the hook (`.pre-commit-config.yaml:34`, `:43`) and in CI; nothing in `pyproject.toml`. README commands that pass no width get Black's 88 and Flake8's 79 (E5, G9). | Each repo for itself; the cheese repo for this tutorial | Ch6: "Same two jobs, different tools. The lecture's project uses ruff, with its width written once; this repo uses Black and Flake8 at 120, written on each command, which is why a README command without the width disagrees." |
+| 1 | **Tools and width** (29–31, 50): `ruff format` and `ruff check`, with lines kept at 100 characters (50). In the repo that width is one `line-length = 100` in `pyproject.toml`, shared by both (digest §3.4). | Black 24.1.1 and Flake8 7.0.0, width 120 passed as arguments in the hook (`.pre-commit-config.yaml:34`, `:43`) and in CI; nothing in `pyproject.toml`. README commands that pass no width get Black's 88 and Flake8's 79 (E5, G9). | Each repo for itself; the cheese repo for this tutorial | Ch6: "Same two jobs, different tools. The lecture's project uses ruff, with its width written once; this repo uses Black and Flake8 at 120, written on each command, which is why a README command without the width disagrees." |
 | 2 | **What the hook runs** (35, 41, 43): two file guards, a `.env` refusal, then `just check`: format check, lint, every hermetic test over a 90% coverage floor, the config files (later also types and docs). | Seven hygiene hooks, Black and Flake8; no tests (`.pre-commit-config.yaml:12-44`). Tests run by hand or in CI. README:268-273 lists five of the nine hooks (E3). The course site's "linters, formatters and tests" matches only babykev (E4). | The cheese repo for this tutorial | Ch7: "Both are gates; they draw the line in different places. babykev puts every hermetic test in the hook; this repo leaves tests to CI." Ch5 has already shown that the 21 unit and integration tests would qualify, though here they run in an image that must be rebuilt first. |
 | 3 | **Who fixes the format** (29, 35): the gate only checks (`just fmt --check`, `just lint` without `--fix`), so the hook never edits your files; you run `just fmt` yourself. | The Black, trailing-whitespace and end-of-file-fixer hooks rewrite the staged file, report Failed ("files were modified by this hook") and abort the commit; you `git add` and commit again (G11). | Both; capture the cheese run | Ch7, beside Pause 3: "Two styles of gate. babykev's points at the problem and leaves the fix to you; this one fixes it and makes you look before you re-stage." |
 | 4 | **Which files, which versions** (43): `pre-commit-hooks` at `v6.0.0`; the `check` hook has `always_run: true` and `pass_filenames: false`, so the whole project is checked on every commit. | `rev: v4.5.0` (`.pre-commit-config.yaml:10`). Black and Flake8 see only the staged files that match `^src/.*\.py$` (`:35`, `:44`), so `tests/` is never linted (G15). | The cheese repo for this tutorial | Ch7: show the two `rev` lines side by side, no narration. One sentence: "This hook looks only at staged files under `src/`; babykev's checks the whole project every time." |

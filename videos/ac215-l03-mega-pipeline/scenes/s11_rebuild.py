@@ -543,7 +543,7 @@ class BakeItIn(VoiceScene):
             x5 = beside(extra_tag(), t, c5)
             self.play(*enter_container(t), FadeIn(x5), FadeIn(layer3, shift=DOWN * 0.3), run_time=0.7)
             stick(self, c5, x5)
-            self.play(Indicate(layer3.shelf, color=VENV, scale_factor=1.0), run_time=0.6)
+            self.play(layer3.shelf.animate(rate_func=there_and_back).set_stroke(width=9), run_time=0.6)
             vo.wait_until("and ask for help")
             c6 = type_cmd(self, t, TRAP.cmd, 0.6)
             x6 = beside(extra_tag(), t, c6)

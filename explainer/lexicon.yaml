@@ -95,6 +95,10 @@ ENV: {ipa: "ˌiːˌɛnvˈiː", say: "E-N-V"}
 ENTRYPOINT: {ipa: "ˈɛntɹi pˌɔɪnt", say: "entry point"}
 entrypoint: {ipa: "ˈɛntɹi pˌɔɪnt", say: "entry point"}
 buildx: {ipa: "bˈɪld ˈɛks", say: "build-ex"}
+rerun: {ipa: "ɹˌiːɹˈʌn", say: "re-run"}
+reruns: {ipa: "ɹˌiːɹˈʌnz", say: "re-runs"}
+"image's": {ipa: "ˈɪmɪdʒᵻz", say: "image's"}
+dlops: {ipa: "dˌiːˈɛl ˈɑːps", say: "D-L ops"}
 # AC215 L04
 mega-pipeline.json: {ipa: "mˈɛɡə pˈaɪplaɪn dˈɑːt dʒˈeɪsˈɑːn", say: "mega pipeline dot JSON"}
 mega-pipeline-sa: {ipa: "mˈɛɡə pˈaɪplaɪn ˈɛs ˈeɪ", say: "mega pipeline S-A"}
