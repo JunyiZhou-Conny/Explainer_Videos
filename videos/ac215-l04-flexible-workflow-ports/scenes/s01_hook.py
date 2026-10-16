@@ -99,8 +99,8 @@ from manim import (
     MoveAlongPath,
     Polygon,
     RoundedRectangle,
-    SurroundingRectangle,
     Text,
+    Transform,
     VGroup,
     VMobject,
     Write,
@@ -349,10 +349,14 @@ class Hook(VoiceScene):
         a0 = np.array([P["laptop"].get_right()[0] + 0.12, y_d, 0])
         a1 = np.array([dr.get_left()[0] - 0.08, y_d, 0])
         lap_arrow = DashedLine(a0, a1, color=LOOKUP, stroke_width=4, dash_length=0.14)
-        no_cross = cross_mark(0.3, ERR).move_to(a1 + LEFT * 0.22)
+        # the cross sits on the dashed route well before the door, clear of the gateway's arrowhead,
+        # which lands on the door's lower-left corner
+        no_cross = cross_mark(0.3, ERR).move_to(a1 + LEFT * 0.45)
         back = Dot(a1, radius=0.08, color=ERR)
         gw = P["gateway"]
-        g_arrow = route_arrow(gw.get_right() + np.array([0.08, 0.25, 0]), dr.get_left() + np.array([-0.06, -0.12, 0]))
+        g_arrow = route_arrow(gw.get_right() + np.array([0.08, 0.2, 0]), dr.get_corner(DOWN + LEFT) + np.array([-0.04, 0.04, 0]))
+        assert g_arrow.get_top()[1] < no_cross.get_bottom()[1] - 0.04 or \
+            g_arrow.get_right()[0] > no_cross.get_right()[0] + 0.1, "arrowhead touches the cross"
         g_lab = mono("processor", 22, LOOKUP).next_to(g_arrow.point_from_proportion(0.4), UP + LEFT, buff=0.1)
 
         with self.voiceover(SAY[2]) as vo:
@@ -379,19 +383,26 @@ class Hook(VoiceScene):
 
         # ========================================================== 3. two puzzles
         thumb_l = glyph_copy(v1_pic)
-        thumb_l.scale(min(4.6 / thumb_l.width, 2.3 / thumb_l.height)).move_to([-3.3, 1.35, 0])
+        y_th = 0.85                                   # thumbnails over questions, centred in the frame
+        thumb_l.scale(min(4.6 / thumb_l.width, 2.3 / thumb_l.height)).move_to([-3.3, y_th, 0])
         net_shapes = VGroup(shapes, lap_arrow, no_cross, g_arrow)
         k_r = min(5.8 / net_shapes.width, 2.3 / net_shapes.height)
-        q1 = question(Q1).move_to([-3.3, -0.85, 0])
-        q2 = question(Q2).move_to([3.4, -0.85, 0])
+        q1 = question(Q1).move_to([-3.3, -1.35, 0])
+        q2 = question(Q2).move_to([3.4, -1.35, 0]).align_to(q1, UP)
 
         with self.voiceover(SAY[3]) as vo:
             self.add(net_shapes)
             drop = VGroup(texts, g_lab)
-            self.play(FadeOut(t2), FadeOut(drop),
-                      net_shapes.animate.scale(k_r).move_to([3.4, 1.35, 0]), run_time=0.8)
-            self.remove(t2, drop, texts, g_lab)
+            # the labels shrink with their shapes while they fade (no label left floating mid-move)
+            c_net = net_shapes.get_center()
+            pic = VGroup(net_shapes, drop)
+            pic_end = pic.copy().scale(k_r, about_point=c_net).shift(np.array([3.4, y_th, 0]) - c_net)
+            pic_end[1].set_opacity(0)
+            self.play(FadeOut(t2), Transform(pic, pic_end), run_time=0.8)
+            pic.remove(drop)
+            self.remove(t2, pic, drop, texts, g_lab)
             net.remove(texts)
+            self.add(net_shapes)
             self.play(FadeIn(thumb_l, scale=1.4), run_time=0.5)
             vo.wait_until("Part 1")
             self.play(Write(q1), pulse(thumb_l), run_time=1.0)
@@ -408,8 +419,12 @@ class Hook(VoiceScene):
                                  stroke_width=3).move_to([(x0 + x1) / 2, (y0 + y1) / 2, 0])
         code = src_panel("mega-pipeline/transcribe_audio/docker-shell.sh", 7, 8)
         code.shift(np.array([-6.3 - code.get_left()[0], 2.15 - code.get_top()[1], 0]))
-        head_ring = SurroundingRectangle(code.header, color=TURN, buff=0.08, corner_radius=0.08,
-                                         stroke_width=3)
+        # ring the header without touching the panel below it (the gap is only 0.1)
+        hx0, hx1 = code.header.get_left()[0] - 0.1, code.header.get_right()[0] + 0.1
+        hy0, hy1 = code.header.get_bottom()[1] - 0.035, code.header.get_top()[1] + 0.08
+        head_ring = RoundedRectangle(width=hx1 - hx0, height=hy1 - hy0, corner_radius=0.08, stroke_color=TURN,
+                                     stroke_width=3).move_to([(hx0 + hx1) / 2, (hy0 + hy1) / 2, 0])
+        assert head_ring.get_bottom()[1] > code.code.get_top()[1] + 0.05
         t4 = term(P_WS, rows=5)
         prev = above_right(preview_tag(), t4)
 
@@ -482,6 +497,7 @@ class Hook(VoiceScene):
         card6 = VGroup(frame6, inner6).move_to([0, 1.55, 0])
         engine = substring(env.rows[0], "engine 29.8.2")
         rec = recorded_tag().move_to(env.header).align_to(env.frame, RIGHT)
+        rec.shift(UP * (env.frame.get_top()[1] + 0.05 - rec.get_bottom()[1]))     # clear of the panel's edge
         c_mac = icon_chip(prompt_glyph(), "macOS: zsh, % · some messages worded differently")
         c_win = icon_chip(prompt_glyph(), "Windows: Git BASH")
         VGroup(c_mac, c_win).arrange(RIGHT, buff=0.4).move_to([0, -0.85, 0])

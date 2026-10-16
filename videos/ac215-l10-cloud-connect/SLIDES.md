@@ -586,3 +586,284 @@ command on the next line. Lines separated by "·" are separate lines on the slid
 - **Tutorial:** the outline lists it as section 5 (slides 2, 52), but no tutorial slide, repo name
   or link follows. The course site pairs L10 with `cheese-app-v0` (`digest.md`).
 - No readings, homework or milestone notes appear in this deck.
+
+## This video and the slides
+
+**Basis.** The video is not scripted yet. This folder holds only `digest.md` and this file: no
+`BRIEF.md`, `script.md`, `ASSETS.md` or `assets/terminal/`. The map below therefore uses the hook
+and the ten chapters planned in [`digest.md`](digest.md) §8, the study guide
+(`MLOps_Learning/guides/L10-cloud-connect-cheese-app-v0.md`) and every slide (the extracted text
+and all seven contact sheets, re-read for this section). With no L10 captures, "what the tutorial
+does today" means the repo at `cb6fb94` as verified in `digest.md`. Three neighbouring episodes
+have captures or verified digests on the ground the slides' examples come from, and I used them:
+- **L04** (`../ac215-l04-flexible-workflow-ports/assets/terminal/port-laptop/`), the Containers II
+  commands the networking section retells: `11-run-gateway.txt` (`-p 127.0.0.1:8090:9100` …
+  `toy-gateway`), `16-ps.txt` and `21-x-ps-all-addresses.txt` (`127.0.0.1:8090->9100/tcp`, and
+  `0.0.0.0:8091->9100/tcp` without the prefix), `28-network-inspect.txt` (`toynet`
+  172.19.0.0/16, processor .2, gateway .3), `29-x-dns.txt` (`nameserver 127.0.0.11`, Docker's
+  embedded DNS) and `14-send.txt` (outbound ports 55620, then 55634).
+- **L05** (`../ac215-l05-rag/assets/terminal/`): the same Chroma Compose service as here, shown by
+  `docker ps` as `0.0.0.0:8000->8000/tcp` (`laptop/08-x-docker-ps.txt`) and resolved by name to
+  172.19.0.2 (`cli-container/04-x-chroma-by-name.txt`); the missing-key failure
+  `DefaultCredentialsError: File /secrets/llm-service-account.json was not found.`
+  (`cli-container/20-embed-char-split.txt`).
+- **L03** (`../ac215-l03-mega-pipeline/digest.md` §2, `ASSETS.md`): the Mega Pipeline the GCS
+  section retells, with its real bucket, key and image names.
+
+When L10 captures exist, re-check Conflicts 2 and 4 first (the 403 with only a storage role; the
+PORTS column for the three services). If a capture and this section disagree, the capture wins.
+
+**Tag form.** `lecture_ref(10, "a–b")` (`explainer/devops.py`) prints "Lecture 10 · slides a–b".
+The title slide says "Lecture 10"; the deck never names the repo (slide 52 is an empty "Tutorial"
+divider), and the course site maps L10 to `cheese-app-v0`.
+
+**Who covers what.** The deck is the theory behind the tutorial's plumbing: networking (3–11)
+behind ch6, authentication (12–38) behind ch2–ch5, GCS (39–45) behind ch8. Its Drive section
+(46–51) has no counterpart. The other way round, the slides never mention CORS, ADC by name,
+`0.0.0.0`, Vertex AI, the browser as the integrator, or RAG, so ch7 and most of ch4 stand on
+tutorial ground.
+
+### 1. Map: planned chapters ↔ slides
+
+| # | Planned chapter (`digest.md` §8) | Slides on the same ground | Relation |
+|---|---|---|---|
+| Hook | Three phone calls from the browser; who checks that it's you, and how does a page find a database inside a container? (0:45) | 4 (three puzzles pinned on commands you already typed), 11 (the question flips to "who's allowed in?"), 13 | Same concept: both open on questions about a setup that already works and end on who is allowed in. The cheese questions are tutorial-only. |
+| 1 | The map: one laptop, three containers, one cloud (2 min) | 5–6 (anything with an address is a "house"; one machine, several addresses), 11 (laptop vs cloud), 53 | The tutorial applies it: three containers on two Docker networks, a browser on the host, Google's API in the cloud. The three-box topology is tutorial-only. |
+| 2 | Who are you? Service accounts and keys (3 min) | 12–13 (why authentication), 24–25 (an identity for code), 31 (choosing the tool), 32–38 (console steps), 37 (the key warnings) | Same concept; the tutorial applies it with `llm-service-account`. Conflicts 1, 2, 5. Slides 14–23 (factors, API keys, OAuth) are not used yet (gaps 4, 5). |
+| 3 | Two filesystems, one folder: the `secrets/` portal (2.5 min) | 38 (the key goes into `secrets/`), 42 (`-v` mount plus the env var) | Same concept; the tutorial applies it at a different depth (Conflict 3). |
+| 4 | ADC: from key file to Bearer token (3 min) | 42 (the env var points the library at the key; `storage.Client()` reads it), 19–23 (access tokens), 27–28 (the default account on a VM), 29–30 (short-lived tokens) | Mostly tutorial-only: the slides never say ADC and never show the key-to-token exchange. The lecture's identities fill ADC's three places (gaps 1, 2). |
+| 5 | IAM: may this identity do this, here? (2.5 min) | 26 (authentication vs authorization, roles, least privilege), 35 (granting a role), 42 (authentication, then IAM checks the role), 45 | Same concept; the tutorial applies it (`roles/aiplatform.user` on `GCP_PROJECT`). Conflict 2. |
+| 6 | Ports, `0.0.0.0` and names: one server, two addresses (3.5 min) | 4–10 (IP, ports, ranges, the tunnel, Docker DNS) | Same concept; the tutorial applies it with three published ports and two networks. `0.0.0.0` and "the browser is on no Docker network" are tutorial-only. Conflict 4. |
+| 7 | The browser is the integrator: following one chat question (3.5 min) | 11, 13 (who's allowed in; the unprotected AI endpoint), as framing only | Tutorial-only: origins, CORS and preflights are not on the slides. Gap 3 links them. |
+| 8 | What survives? Volumes now, buckets next (2 min) | 39–45 (object storage, flat key space, `storage.Client()`, `gcloud storage`, permissions) | Same concept for the bucket half. v0 never calls GCS, so the tutorial applies it only in E7; bind-mounted volumes are tutorial-only. Conflict 6. |
+| 9 | Run it end to end (with the two fixes) (3 min) | 32–38 (the console walkthrough), 52 (the empty "Tutorial" divider) | Tutorial-only apart from the console steps. |
+| 10 | Recap and debugging flowchart (1.5 min) | 53 (summary), 26, 31, 42 | Could stand on lecture ground. The plan's flowchart sorts errors into layers; 26 and 42 give the authentication / authorization split it rests on. |
+| — | not in the plan | 14–16 (factors, MFA, passwordless), 17–18 (API keys), 19–23 (OAuth user consent), 27–30 (default service accounts, Workload Identity Federation), 46–51 (Google Drive); 1–3, 12, 39, 46, 52 (title and dividers); 54–55 (film still, thank-you) | Lecture-only. 14–31 are worth one-beat bridges (gaps 1, 2, 4, 5); Drive and the images add little here. |
+
+### 2. Already in common
+
+| # | Concept | Chapter ↔ slides | Does the video's framing agree with the lecture's? |
+|---|---|---|---|
+| 1 | Start from commands that already work and ask what they hide | hook, ch6 ↔ 4 | Yes. The lecture pins three questions on `8090:9100`, `localhost` and `processor`. This app has the same three: `3200:3000`, `localhost:9000` and `llm-rag-chromadb:8000` (Proposals, ch6). |
+| 2 | Anything with an address is a "house", a container included; `localhost` always means "this machine, itself" | ch1, ch6 ↔ 5–6, 9 | Yes. The plan's misconception that `localhost` inside a container is the laptop (§3.5, E5c, recap Q3) is slide 5's rule seen from inside the container. |
+| 3 | The IP picks the machine, the port picks the service, and the server listens on a fixed port | ch6 ↔ 7 | Yes. Each of the three services listens on one fixed port (3000, 9000, 8000). |
+| 4 | `-p HOST:CONTAINER` is a tunnel: the host number is yours, the container number is where the app listens | ch6 ↔ 9 | Yes, closely. The plan's door animation, where the outside number morphs into the inside number (§3.5), is slide 9's bridge with `3200 → 3000` in place of `8090 → 9100`. The `next dev` misconception (opening 3000) is this split. |
+| 5 | On a shared network, containers dial each other by name; Docker DNS returns the current IP; Compose sets the network up | ch6 ↔ 10 | Yes. `CHROMADB_HOST = "llm-rag-chromadb"` (`cli.py:30`) and Compose's `llm-rag-network` are this. The tutorial adds two limits the slide doesn't draw: a name resolves only inside its own network (E5, ponder #3), and the browser is on none (gotcha 9). |
+| 6 | A service account is an identity for code, with no human and no login screen | ch2 ↔ 24–25 | Yes. The plan's "hotel key card cut for a robot" (§3.1) matches the lecture's own robot wording (47, 49). |
+| 7 | IAM & Admin → Service accounts → create → grant a role → KEYS → Add key → JSON → move the file into `secrets/` | ch2, ch9 ↔ 32–38 | Yes: the README's seven steps (`README.md:48-56`) follow the slides' step text almost line for line. Only the account name and the roles differ (Conflicts 1, 2). |
+| 8 | Mount the key folder with `-v` and point `GOOGLE_APPLICATION_CREDENTIALS` at the in-container path; no password in code | ch3, ch4 ↔ 42–43 | Yes. Slide 42's two callouts (the key mounted in with `-v`; the env var pointing the library at it) are the plan's portal and its label. The depth differs (Conflict 3). |
+| 9 | Authentication first, then authorization: prove who you are, then IAM checks the role | ch4, ch5 ↔ 26, 42 | Yes, in the same order. The tutorial turns it into a diagnostic the slides don't give: `DefaultCredentialsError` is an authentication failure, a 403 an authorization failure (§3.3, E3). |
+| 10 | Least privilege | ch5 ↔ 26, 45, 53 | Yes. The digest applies it to the README's Storage Admin grant (§3.3, E6); slide 45 goes one step finer (Storage Object Admin rather than Storage Admin). |
+| 11 | Long-lived keys are the thing to protect | ch2, ch3 ↔ 29, 37–38 | Yes. The tutorial's key hygiene (outside every repo, gotcha 14; list and delete keys at teardown) answers the console's own warnings on slide 37: keys are a risk if leaked, and Google disables keys it finds in public repositories. |
+| 12 | GCS is object storage: buckets of objects in a flat key space, where "folders" are prefixes | ch8 ↔ 40–41, 43 | Yes. The digest's misconception "a bucket is a filesystem" (§3.7) is slide 41. The plan's "a folder on Google's disks that any authorised machine can see" is slide 40's one durable store every container can reach. |
+| 13 | `storage.Client()` with no key path; upload, download, list by prefix | ch8 ↔ 42–43 | Yes. E7's code makes slide 43's calls against your own bucket; Excerpt 12 (L08) is the upload half. |
+| 14 | `gcloud storage` is the current CLI | ch8, E7 ↔ 44 | Yes. Every suggested command in the digest uses `gcloud storage`, none uses `gsutil`. |
+| 15 | Storage costs money; delete what you don't need | ch9 teardown ↔ 45 | Yes. The teardown's `gcloud storage rm -r gs://YOUR_BUCKET` and the key deletion follow the same rule. |
+| 16 | A reachable address with an open port invites strangers; AI endpoints need protecting | hook, ch7 ↔ 11, 13 | Partly. The hook's "who checks that it's you?" is about the call to Google, which is protected (key, IAM). The lecture's open endpoint is the other side: the app's own API on `:9000`, which checks nobody (gap 3). |
+
+### 3. Gaps (ranked by value to a student doing the tutorial)
+
+1. **ADC's three places are the lecture's identities (19–31).** The plan's ch4 animates ADC as a
+   lookup order. The lecture supplies who sits in each place:
+   - the file named by `GOOGLE_APPLICATION_CREDENTIALS` → a service-account key (24–25, 32–38):
+     this tutorial;
+   - the gcloud user file from `gcloud auth application-default login` → you, signed in through
+     an OAuth 2.0 consent screen (19–23): gotcha 13's fallback when an organization blocks key
+     creation;
+   - the metadata server → the service account attached to the VM, Cloud Run service or pod; the
+     default account of 27–28 is the quick-start version (L13–L15, and GKE's Workload Identity in
+     L22–L23).
+
+   Slide 31's four-way rule then reads as "which place gets filled, wherever this code runs".
+   Outside the slides and the course repos: a federation credential (29–30) also enters through
+   `GOOGLE_APPLICATION_CREDENTIALS`, as a config file of type `external_account` instead of a key.
+   **Carry it:** ch4, as labels on the three slots; one line in ch10.
+2. **What travels is a short-lived OAuth 2.0 access token (19–23, 29–30).** The lecture shows
+   tokens only for users (a one-time code traded for an access token, 22–23) and for outside
+   workloads (a short-lived token, 30). The tutorial's service account makes the same trade without
+   a person: google-auth signs a JWT with the private key, posts it to the OAuth token endpoint
+   `https://oauth2.googleapis.com/token` and gets an access token for about an hour (digest §3.2).
+   The consent screen and the code drop out because nobody is there to consent; the token at the
+   end is the same kind, and the private key never leaves the laptop. **Carry it:** ch4, in the
+   plan's passport-and-visa animation, as one added line: "the same token desk the lecture's OAuth
+   diagram ends at, minus the person".
+3. **Slide 13's unprotected AI endpoint is running on your laptop (11, 13).** `api-service` on port
+   9000 has no login, accepts every origin (`allow_origins=["*"]`, `service.py:17`), and every call
+   spends your project's Vertex AI budget through your key. It is published as `-p 9000:9000`,
+   which binds all of the laptop's addresses: the L04 capture shows `-p 8091:9100` as
+   `0.0.0.0:8091->9100/tcp`, and the L05 capture shows this very Chroma line as
+   `0.0.0.0:8000->8000/tcp`. Slide 11's laptop column says the router keeps the world out; it
+   keeps out the internet, not other devices on the same Wi-Fi, which can reach
+   `<your laptop's IP>:9000` unless the laptop's firewall stops them (not yet captured with a
+   second device). port_toy guarded against this with `-p 127.0.0.1:8090:9100` (Conflict 4).
+   *(extra)* `-p 127.0.0.1:9000:9000` and `127.0.0.1:8000:8000` keep the app working from your own
+   browser. CORS is not this protection: browsers enforce it, and a neighbour's `curl` ignores it
+   (§3.6). **Carry it:** ch6 (the publish form and the PORTS column) and the last beat of ch7:
+   "CORS decides which page may read the answer; nothing here decides who may call."
+4. **Why a service account, by slide 31's rule (17–18, 19–23, 31).** The plan's ch2 says software
+   needs its own identity, not why it isn't an API key or OAuth. Walk the rule for this app: it
+   isn't a metered public call (an API key; outside the repo, Gemini can also be called with an
+   API key through Google AI Studio); it doesn't act for a consenting user (OAuth); it is code
+   calling Vertex AI in your project, so a service account, whose roles and bill live in
+   `GCP_PROJECT`. The rule's last line (outside GCP → federation) is where a laptop doesn't fit
+   cleanly (Conflict 5). **Carry it:** ch2, right after the ID card is minted.
+5. **A key file is one factor that works from anywhere (14–16, 37).** Console sign-in asks for
+   two different factors (15–16). The JSON key is a single "something you have": whoever holds a
+   copy is the account, from any machine, with no second step, until someone deletes the key.
+   That is the reason for `secrets/` outside the repo (gotcha 14), for slide 37's warnings and for
+   federation (29). **Carry it:** ch2, one sentence while the `private_key` field glows red.
+6. **The port number line (7–8).** The plan never says why the course picks 3200, 8000 and 9000:
+   they sit in the registered range, the one slide 8 marks "pick yours here". The browser's end of
+   each call is a random outbound port the OS picks (7); the L04 page displayed it (55620, then
+   55634). See the note on the dynamic range under Conflicts. **Carry it:** ch6, ten seconds on a
+   0–65535 line.
+7. **GCS ground rules for E7 (45).** Bucket names share one worldwide namespace, so
+   `gs://YOUR_BUCKET` needs a prefix (`ac215-…`); keep the bucket private and reach it through the
+   service account; Storage Object Admin covers E7's reads and writes; delete the bucket
+   afterwards. **Carry it:** ch8, as a four-item card before E7 is suggested.
+8. **Slide 11's cloud column is where this app was, and where it goes.** The `deployment/` folder
+   deleted in `2bc29dd` served this frontend publicly at `ac215-llm-rag.dlops.io`: a public DNS
+   name with TLS, and nginx in front routing traffic to the containers, the role slide 11 gives
+   the load balancer. The app's home page still draws that hosted picture (`ArchitectureDiagram.jsx`,
+   erratum 8). **Carry it:** ch10, one closing line toward L14 and L20–L23; or ch1, to explain why
+   the home page's diagram isn't what you run.
+9. **One identity, many Google services (47–51).** The Drive section is lecture-only, but its
+   closing idea transfers: the same JSON key reaches another service once that service grants the
+   account access (on Drive, by sharing a folder with the account's email). Here the same
+   `llm-service-account` reaches Vertex AI now and GCS once it holds a storage role (E6, E7); L08
+   used one key for both. **Carry it:** ch5, one optional line.
+
+Lecture-only and of low value here: MFA beyond gap 5 (15–16), the drawn OAuth flows and their
+numbering (20–22), the Drive API details (48, 51), the film still (54) and the curtain (55).
+
+### 4. Conflicts
+
+| # | Slides say | Tutorial today (repo `cb6fb94`; neighbouring captures where named) | Current | How the video should put it |
+|---|---|---|---|---|
+| 1 | **The account is `data-service-account`, its key `data-service-account.json`** (33–34, 38, 42, 51; the screenshots show yet another name, `2025_ac215_Tutorial58`). | `llm-service-account` and `llm-service-account.json` (`README.md:46-67`). Both scripts hard-code `GOOGLE_APPLICATION_CREDENTIALS="/secrets/llm-service-account.json"` (`api-service/docker-shell.sh:10`, `llm-rag/docker-shell.sh:8`). With any other file name the first Gemini call fails with `DefaultCredentialsError: File /secrets/llm-service-account.json was not found.` (captured in L05, `cli-container/20`). | The README, for this tutorial. `data-service-account` is next week's name (L11, `data-labeling`). | "The lecture's demo account is named for next week's data work. The clicks are identical; for this app, call it `llm-service-account`, because that's the file the scripts look for." Use that name in the mock console. |
+| 2 | **One storage role.** The step text says Storage Admin (35–36); the screenshot's dropdown and slides 42 and 45 say Storage Object Admin, and 45 recommends it. No other role appears. | Two roles: Storage Admin and Gemini Enterprise Agent Platform User (formerly Vertex AI User, `roles/aiplatform.user`) (`README.md:51-52`). v0 needs only the second: every call goes to Vertex AI, and no file imports `google.cloud.storage` (erratum 2). An account set up from the slides alone would get a 403 `PERMISSION_DENIED` on the first embedding (gotcha 3b). | The README for the Vertex AI role; slide 45 for storage, which v0 doesn't use at all. | "The lecture's account only reads and writes a bucket, so it gets one storage role. This app calls Gemini, so it needs the Agent Platform User role; that's the one that matters. The Storage Admin grant is there for reuse with L08's bucket, and by the lecture's own rule Storage Object Admin would do." In ch5's grid, show both role tokens and grey out the storage one. |
+| 3 | **Mount `"$PWD/../secrets"`**, one level up (42). | Two levels up: `SECRETS_DIR=$(pwd)/../../secrets/` (`api-service/docker-shell.sh:8`) and `../../secrets:/secrets` (`llm-rag/docker-compose.yml:11`), both landing on `AC215/secrets`. The slide's line run from `api-service/` would mount `cheese-app-v0/secrets`, which Docker silently creates empty (gotcha 2). | The tutorial's scripts. Each is right for where its script sits. | "Same portal, different stairs: the number of `../` is how far the script sits below your course folder. Here it's two." The plan's path-walk (§3.4) shows it; one line can note the one-level form of flatter repos such as L11's `../secrets`. |
+| 4 | **The Containers II command is `docker run -p 8090:9100 gateway-img`** (4; 9 and 11 also write `-p 8090:9100`), and on a laptop "your router keeps the world out" (11). | port_toy published on loopback only: `-p 127.0.0.1:8090:9100` … `toy-gateway`, which `docker ps` shows as `127.0.0.1:8090->9100/tcp`; without the prefix the same image showed `0.0.0.0:8091->9100/tcp` (L04 `port-laptop/11`, `16`, `21`). cheese-app-v0 publishes with no prefix (`-p 9000:9000`, `-p 3200:3000`, Compose `8000:8000`); the same Chroma line appears as `0.0.0.0:8000->8000/tcp` in L05 `laptop/08`. | The captures. The slide shortens the command and renames the image. | "The slide shortens what you typed in Containers II: it was `-p 127.0.0.1:8090:9100`, and that first part decides which of the laptop's addresses get the door. Without it, as in this app, the door faces your Wi-Fi too." Then gap 3. |
+| 5 | **Code running outside GCP should use Workload Identity Federation** (31); the console's banner prefers federation to keys (37); federation leaves no key to copy, store or leak (29–30). | A container on your laptop, which is outside GCP, authenticates with a downloaded, long-lived JSON key (`README.md:54-56`). Later the course keeps doing so in CI: L23's GitHub Actions pass a JSON key from a repository secret (`ac215-l23-final-cicd/digest.md` C6). Only GKE pods (L22–L23) get keyless identities, through GKE's Workload Identity. | Both, each in its own scope. Federation needs an outside identity provider Google can verify, such as GitHub's OIDC token on slide 30; a laptop has none. For local work a key file, or your own login (ADC's second place, gotcha 13), is what works. | "By the lecture's rule a laptop is 'outside GCP', and Google would rather you used federation. Federation needs another system to vouch for your code, the way GitHub vouches for its Actions; your laptop has nobody to vouch for it. So for local work the course hands you a key, and you treat it like a password." |
+| 6 | **The Mega Pipeline example:** bucket `gs://ac215-mega-pipeline`, image `transcribe-audio`, key `data-service-account.json` mounted at `/secrets` with `-v` and named with `-e` (40–44). | L03 as students ran it: bucket `mega-pipeline-bucket`, image `transcribe_audio`, one shared key from Canvas (`mega-pipeline.json`) copied into each component's `secrets/` and named by a relative `ENV GOOGLE_APPLICATION_CREDENTIALS=secrets/mega-pipeline.json` in the Dockerfile; the run command mounts only the code (`docker run --rm -ti -v "$(pwd):/app" transcribe_audio`; L03 `digest.md` §2, captures `transcribe_audio/01`, `22-g1-key-in-image`). | L03's repo for what you ran in L03. The slide's `/secrets` mount is the course's later convention, the one cheese-app-v0 follows. | "The lecture retells the Mega Pipeline in this week's conventions: the key outside the code, mounted in at `/secrets`. In L03 the key sat inside each folder, which is how it could end up baked into the image." If ch8 shows a bucket, label it `gs://YOUR_BUCKET`, not either course bucket. |
+
+Not counted as conflicts:
+- **Addresses on the diagrams** (5, 7, 10): `app-net` 172.18.0.x with the gateway at .2 and the
+  processor at .3. In the L04 capture `toynet` was 172.19.0.0/16, with the processor at .2 (started
+  first) and the gateway at .3; in L05 `llm-rag-chromadb` resolved to 172.19.0.2. These are
+  examples, and the difference makes slide 10's point (addresses change, names don't). Say so when
+  the video shows real addresses.
+- **The dynamic range** (8: 49152–65535, picked by the OS). That is the registry's range; a Linux
+  kernel defaults to 32768–60999 (`net.ipv4.ip_local_port_range`), and containers run Linux. The
+  L04 capture's 55620 and 55634 fit both. Say "a high, throw-away port the OS picks".
+- **"Viewer / Editor / Admin"** (26). Google Cloud's basic roles are Viewer, Editor and Owner;
+  "Admin" belongs to predefined roles such as Storage Admin, and the tutorial uses predefined roles.
+  Show the ladder as the idea, then the real role names.
+- **Where the bridge sits** (9). The slide draws the Docker bridge inside the laptop's own
+  namespace. On Docker Desktop (Mac, Windows) containers and the bridge live in a Linux VM, and
+  Docker Desktop forwards the laptop's port into it. The tunnel picture holds; `-p` hides the
+  extra hop.
+- **No ADC and no token exchange on the slides.** Slide 42 says the library reads the key, not how
+  it finds it or what it sends. Absence, not disagreement (gaps 1, 2).
+- **Slide 51's explicit `from_service_account_file(…, scopes=[SCOPE])`** for Drive, vs the
+  tutorial's ADC: two services, one key, both valid.
+- **Slide-internal slips** (the OAuth step numbers on 20 and 22, the API-key titles on 21–22,
+  `out-01` vs `output-01` on 41 and 43, the account name in the screenshots): see *What the
+  lecture stresses*.
+
+### 5. Proposals for the BRIEF and script authors
+
+**General**
+- Tag ch1–ch6, ch8 and ch10 with a GREY `lecture_ref(10, "a–b")`, using the ranges below; ch7 and
+  ch9 stand on tutorial ground (ch9 tags only its console beat). Re-draw lecture diagrams in the
+  series style. Never show the console screenshots (32–38), the hand-drawn images (18, 20–22) or
+  the film still (54).
+- **The running picture** is slide 5's houses, scaled to this app: the laptop as a GREY house with
+  its own loopback; three TEAL houses inside it on two network streets (`llm-rag-network`,
+  `cheese-app-network`); Google as a BLUE building across a public street. Each chapter adds to it:
+  doors with two numbers (ch6), the badge and the key (ch2–ch4), the IAM gate at Google's door
+  (ch5), the browser walking between doors (ch7), a bucket beside the building (ch8).
+- **Colours.** Keep the series': laptop GREY, containers TEAL, Google BLUE, the Vertex AI bill
+  GOLD, failures RED. The key is project-owned, so GREEN, turning RED when it lands inside a repo
+  or a neighbour reaches the open door. Draw Docker networks as TEAL streets, not the slides' green
+  panels; the slides' blue public panel happens to match the series' BLUE cloud.
+- **Length.** The plan is about 26 minutes, inside the series' 25–35. Gaps 1–5 add 3–4 minutes,
+  mostly in ch2 and ch4; ch6 can take slide 4's hook structure without growing.
+- **Captures to make first** (none exist): the 403 with only a storage role (Conflict 2); `docker
+  ps` with the three services' PORTS (Conflict 4); `docker network inspect` of both networks for
+  real addresses; `getent hosts llm-rag-chromadb` from the CLI container, and its failure from the
+  API container (E5); the `google.auth.default()` one-liner (E4) for ch4; *(extra)* the stack with
+  `127.0.0.1:` prefixes and a request from a second device with and without them (gap 3).
+
+**Per chapter**
+- **Hook · `lecture_ref(10, "11–13")` on the last line.** Keep the three phone calls. End on slide
+  11's flip in one sentence: once anything can knock, the question becomes who's allowed in. The
+  video then gives two answers: Google checks your key (ch2–ch5); nobody checks callers of your own
+  API (gap 3).
+- **Ch1 · Lecture 10 · slides 5–6, 11.** Build the house picture. Show slide 6's rule on this app:
+  the API container has one address on `cheese-app-network`, Chroma one on `llm-rag-network`, the
+  laptop its loopback plus its Wi-Fi address. Use slide 11's right column only for Google's side:
+  a public building with a guarded door.
+- **Ch2 · Lecture 10 · slides 24–25, 31–38.**
+  - Slide 31's rule walked for this app (gap 4), ending on Conflict 5's honest line.
+  - The ID card with the account's email: slide 25's server-to-server arrow with a badge clipped
+    on.
+  - A simplified mock console for 32–38 with `llm-service-account` and both roles (Conflicts 1, 2),
+    and slide 37's two warnings as console banners in our own words.
+  - Gap 5's sentence while `private_key` glows red.
+- **Ch3 · Lecture 10 · slides 38, 42.** The plan's path-walk, then one line on the one-level form
+  (Conflict 3). Slide 42's two callouts become two labels on the plan's tube: "the key, mounted in"
+  on the `-v` line, "the env var that points the library at it" on `GOOGLE_APPLICATION_CREDENTIALS`.
+- **Ch4 · Lecture 10 · slides 19–30, 42.** Open on slide 42's bottom chain (client → reads the key
+  → authentication → IAM → allowed) with `genai.Client(vertexai=True, …)` in place of
+  `storage.Client()`, then open the "reads the key" box into the plan's ADC animation. Label the
+  three slots with the lecture's identities (gap 1), then the token trade (gap 2). The JWT and
+  `token_uri` are tutorial-only; tag only the slot labels and the token beat.
+- **Ch5 · Lecture 10 · slides 26, 35, 42, 45.** Slide 26's split becomes the plan's two-layer
+  error map; least privilege becomes the grid's rule; Conflict 2's two role tokens; slide 45's
+  Object Admin vs Admin as one line pointing to E6 and E7. Gap 9 optional.
+- **Ch6 · Lecture 10 · slides 4–10.** Open with slide 4's device on this app's own commands:
+  - `-p 3200:3000` → "two numbers, why?" (9: the host number is yours, the container number is
+    where `next dev` listens);
+  - `NEXT_PUBLIC_BASE_API_URL=http://localhost:9000` → "which machine is that?" (5: the browser's,
+    because the JavaScript runs there; E8);
+  - `CHROMADB_HOST = "llm-rag-chromadb"` → "a name, where's the address?" (10: Docker DNS, inside
+    `llm-rag-network` only).
+
+  Then the plan's two arrows into Chroma, the number line (gap 6), and the PORTS column with
+  `0.0.0.0` vs `127.0.0.1` (Conflict 4, gap 3). `0.0.0.0` shows up twice, which is worth one
+  sentence: uvicorn listens on all of the container's interfaces so the tunnel can reach it, and
+  Docker publishes on all of the laptop's interfaces unless you write `127.0.0.1:`.
+- **Ch7 · no tag, or `lecture_ref(10, "13")` on the last beat.** CORS is tutorial-only. Close on
+  gap 3: CORS answers "which page may read this?", not "who's allowed in?".
+- **Ch8 · Lecture 10 · slides 40–45.** The plan's bucket icon becomes slide 41's melt (folder tree
+  → flat keys), then slide 43's loop (download → transform → upload) as one beat, then slide 45's
+  rules as the E7 card (gap 7). Labels as in Conflict 6.
+- **Ch9 · `lecture_ref(10, "32–38")` on the console step only.**
+- **Ch10 · Lecture 10 · slides 26, 31, 53.** Keep the flowchart. Add slide 31's rule read as ADC's
+  places (gap 1) and the cloud column (gap 8). Add two recap questions:
+  - "A classmate reads slide 31 and says your laptop should use federation. What would federation
+    need that a laptop doesn't have?" (An outside identity provider Google trusts, such as
+    GitHub's OIDC token for its Actions.)
+  - "`docker ps` shows `0.0.0.0:9000->9000/tcp`. Who besides you can call your API, what does each
+    call cost, and what one change narrows it?" (Anyone who can reach your laptop's address on port
+    9000; each call bills your Vertex AI project; `-p 127.0.0.1:9000:9000`.)
+
+**Terms**
+- Use the lecture's words: *house* and *street address* for an IP, *door* for a port, *inbound
+  (listening) port*, *outbound port*, *registered* and *dynamic* ranges, *port publishing* / *the
+  tunnel*, *HOST : CONTAINER*, *network namespace*, *Docker bridge*, *Docker DNS* ("the phone
+  book"), *service account* ("an identity for code"), *server-to-server*, *authentication* vs
+  *authorization (IAM)*, *roles*, *least privilege*, *default service account*, *Workload
+  Identity Federation*, *short-lived token*, *access token*, *scopes*, *object storage*, *bucket*,
+  *object*, *key prefix*, *flat key space*.
+- Add the tutorial's where the lecture stops: *Application Default Credentials (ADC)*, *JWT*,
+  *token endpoint*, *Bearer token*, *principal*, `GCP_PROJECT`, *bind mount*, `0.0.0.0` ("all
+  interfaces"), *user-defined network*, *published port*, *origin*, *CORS*, *preflight*.
+- Qualify, don't repeat:
+  - "`-p 8090:9100`": add `127.0.0.1:` when you mean "this machine only";
+  - "`data-service-account`": `llm-service-account` in this tutorial;
+  - "Storage Admin": the Agent Platform User role is the one this app needs;
+  - "outside GCP → federation": when something can vouch for the code;
+  - "Viewer / Editor / Admin": the basic roles are Viewer, Editor and Owner;
+  - "49152–65535": a high port the OS picks.

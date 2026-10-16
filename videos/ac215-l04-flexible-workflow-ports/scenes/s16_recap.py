@@ -61,7 +61,7 @@ Beats (script.md "## S16", one voiceover block each):
     if you want the space" and the GREY command-only chip "hello-world's exited container: docker ps
     -a, then docker rm <its ID>" (tag `extra`); on "Port toy costs nothing" the GREEN chip "port_toy
     costs nothing". On "Pause and shut it down" the terminal goes and the static GREY your-turn card
-    (`docker compose down`, `docker compose ps -a`, `docker image ls` extra) takes its place.
+    (`docker compose down`, `docker compose ps -a`, `docker image ls` extra) takes its place (held 1 s).
  7  Everything goes (the tracker too). "Test yourself" (40 pt, YELLOW underline) at the top. Q1 writes
     in at 26 pt in the centre with a YELLOW number badge and, at its left, a glyph-only icon of V1 (the
     BLUE shelf, the sealed TEAL box, the PINK signpost whose pointer aims at it). On "which files

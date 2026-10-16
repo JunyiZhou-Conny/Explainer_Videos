@@ -4,8 +4,9 @@ Source: one deck, `L23_final_deployment_and_review` (38 slides), titled "Lecture
 Deployment and Review" (AC215/E115, Pavlos Protopapas, SEAS/Harvard). These are the instructor's
 lecture slides (PDF), provided by the student for study; the PDFs are not in this repository;
 slide numbers are PDF page numbers. Several slides were pasted in from other decks and print a
-different footer number (slide 10 prints "6", slide 12 prints "7", slide 29 prints "67", and the
-image on slide 24 carries its old "14"); this file always uses the PDF page. It was written from
+different footer number (slide 10 prints "6", slide 12 prints "7", slide 29 prints "67", the
+image on slide 24 carries its old "14", and the image on slide 23 shows the cut-off top of an old
+one); this file always uses the PDF page. It was written from
 the deck's extracted text and from every contact sheet, with enlarged renders of slides 4, 6, 7,
 10, 12, 19, 20, 22–37. Everything below is paraphrased; only short titles, terms, URLs and single
 code lines are quoted. The tutorial side of the lecture (`dlops-io/cheese-app-v4`) is in
@@ -73,9 +74,9 @@ with one recap slide per earlier lecture. The lecture numbers printed on the rev
    deploying the frontend, deploying the backend, and building and pushing Docker containers.
    (Slides 5, 6)
 3. **CI/CD is one loop with feedback.** Developers commit to the codebase; the codebase is built
-   and tested (the CI half), then deployed and monitored (the CD half). Every stage reports back
-   to the developers as notifications. The review version inserts "Release" between Test and
-   Deploy. (Slides 7, 36)
+   and tested (the CI half), then deployed and monitored (the CD half). Every stage after Codebase
+   reports back to the developers as notifications. The review version inserts "Release" between
+   Test and Deploy. (Slides 7, 36)
 4. **CI runs a set of scripts automatically on every push.** It keeps integrating changes into
    the production branch, runs automated tests, enforces coding standards and performs static
    analysis, so that many developers can share one repository and the code stays working.
@@ -134,8 +135,8 @@ with one recap slide per earlier lecture. The lecture numbers printed on the rev
     uploads it to GCS and the Model Registry, and deploys an endpoint (slide 33); a pipeline
     chains collector, processor, training and deploy (slide 34).
 17. **Review, part 5 — serving and shipping.** In development the API and frontend containers
-    mount source code, secrets and a persistent folder, and the browser talks REST/JSON to one and
-    gets HTML from the other (slide 35); CI/testing is the commit → build → test → release →
+    each mount their source code, the API container also mounts secrets and a persistent folder,
+    and the browser talks REST/JSON to one and gets HTML from the other (slide 35); CI/testing is the commit → build → test → release →
     deploy → monitor loop (slide 36); on Kubernetes an ingress controller routes `/` to the
     frontend and `/api/` to the API, which talks to the vector DB (slide 37).
 
@@ -410,7 +411,8 @@ The slides show no workflow YAML, no Pulumi code and no Docker commands.
 
 - **Automate everything that ships:** data jobs, training and model deployment, frontend,
   backend, and image builds (slides 5, 6).
-- **Close the loop:** every stage notifies the developers, not just the tests (slides 7, 36).
+- **Close the loop:** every stage after Codebase notifies the developers, not just the tests
+  (slides 7, 36).
 - **Know the two kinds of check:** coding standards (style, consistency) vs static analysis
   (defects and vulnerabilities, found without running the code); the distinction is repeated on
   three slides and highlighted on slide 10 (slides 8–10).
@@ -449,7 +451,7 @@ The slides show no workflow YAML, no Pulumi code and no Docker commands.
 
 | Slide | Label on the slide | 2025 deck (where it appears) | Series episode |
 |---|---|---|---|
-| 22 | Lecture 2-4 | L02 slide 10 ("Environments vs Virtualization vs Containerization"); L01's VM/venv summary | `ac215-l01-vms-venvs`, `ac215-l02-containers-1` |
+| 22 | Lecture 2-4 | L03 slide 4 (the "Recap" with the same "Docker" band); L02 slide 10 (the original, whose band reads "Container Program"); L01 slide 73 (the venv/VM summary) | `ac215-l01-vms-venvs`, `ac215-l02-containers-1` |
 | 23 | Lecture 2-4 (title reused) | L03 slide 25 (the audio pipeline) | `ac215-l03-mega-pipeline` |
 | 24 | Lecture 5 | L03 slides 67–68 and L04 slides 39–40 ("Scenario 2") | `ac215-l03-mega-pipeline`, `ac215-l04-flexible-workflow-ports` |
 | 25 | Lecture 6: App Design | L12 ("Solution Architecture"); also L18a | no tutorial episode for L12 |
@@ -458,7 +460,7 @@ The slides show no workflow YAML, no Pulumi code and no Docker commands.
 | 28 | Lecture 8-9: RAGs | L05 (RAG I and RAG II) | `ac215-l05-rag` |
 | 29 | Lecture 10: Agents | L07a slide 36 ("Autonomous Orchestrators") | `ac215-l06-agents-1`, `ac215-l07-agent-harness` |
 | 30 | Lecture 11: LoRA | L08 (fine-tuning; LoRA, QLoRA) | `ac215-l08-llm-finetuning` |
-| 31 | Lecture 11: Distillation | only named, in L13 slide 5 (one of the "levers") | — |
+| 31 | Lecture 11: Distillation | only named, as a bullet: L01 slide 10 ("Distillation & compression") and L13 slide 5 (under "Better/Faster Models") | — |
 | 32 | Lecture 12 | L13 slide 24 onward ("Package & Upload to GCP", "Model Trainer CLI") | `ac215-l13-training-workflows` |
 | 33 | Lecture 13 | L15 slide 12 onward ("Update Model Signature", "Model Endpoints") | `ac215-l15-vertex-ml-workflows` |
 | 34 | Lecture 14: ML Pipelines | L15 | `ac215-l15-vertex-ml-workflows` |
@@ -533,7 +535,7 @@ they disagree, the captures win.
 | 9 | One URL, path-based routing to the services | ch7 ↔ 37 | Partly: the same shape, a different front door and path (Conflict 8). |
 | 10 | Every earlier lecture built a part of the final app | ch2 (the recap map with lecture badges), guide §7 ↔ 21–37 | Yes. The plan badges the boxes with this year's lecture numbers; the review slides print another year's numbers (see Pointers). |
 | 11 | Cost is a challenge of CD for ML | ch8 (the endpoint meter), ch9 (the bill meter) ↔ 15 | Yes. The plan makes it concrete: another endpoint billed 24/7 on every `/run-ml-pipeline`, new image tags on every deploy. |
-| 12 | In development, containers mount the source code; on the runner, the code is inside the image | ch5 (the laptop/runner split), guide §8 E6 ↔ 35 | Yes. Slide 35's mounted source code is the laptop half of ch5's split screen; `ADD . /app` is the runner half. |
+| 12 | In development, the code is mounted into the containers | ch5 (the laptop/runner split), guide §8 E6 ↔ 35 | Yes, for the laptop half. Slide 35 mounts the API's and the frontend's source; ch5's laptop half mounts the deployment code the same way (`docker-shell.sh:37`). On the runner the deployment container's own code is baked in (`ADD --chown=app:app . /app`, `Dockerfile:72`), while the app folders are still mounted (`app-ci-cd-gcp.yml:43-47`). |
 
 ### 3. Gaps (ranked by value to a student doing the tutorial)
 
@@ -548,10 +550,11 @@ they disagree, the captures win.
    plan's red button RELEASE) and ch9's outro (30 s, with a new pause-and-ponder; see the proposals).
 2. **The CI half of the loop, and notifications that tell the truth (slides 7–10, 36).** The
    lecture's loop has a red CI half (Codebase → Build → Test) and a blue CD half (Release → Deploy →
-   Monitor), and every stage reports back to the developers. CI is defined by what it runs:
-   automated tests, coding standards (style and consistency) and static analysis (defects and
-   vulnerabilities, found without running the code). v4 wires only the blue half (Conflict 4), and
-   its one notification, the run's colour, can be wrong: with no `set -e` in
+   Monitor), and every stage after Codebase reports back to the developers. CI is defined by what
+   it runs: automated tests, coding standards (style and consistency) and static analysis (defects
+   and vulnerabilities, found without running the code). v4 builds, releases and deploys, but its
+   Test box is empty and nothing monitors automatically (Conflict 4), and its one notification, the
+   run's colour, can be wrong: with no `set -e` in
    `deploy-k8s-update.sh`, a failed image build followed by an unchanged K8s update reports green
    (guide §6 #4). The digest sketches the gates track (C1), but no chapter uses it. **Carry it in**
    ch1 (last 20 s: draw the loop and grey out Test) and ch9 (the green run that deployed nothing is
@@ -581,8 +584,8 @@ they disagree, the captures win.
    the laptop. **Carry it in** ch3 or ch5 (one sentence; a small figure hands its key to the runner).
 6. **Thin YAML, thick container (slide 16).** The slide names six CI/CD services. Because v4's
    workflow only builds a container and runs it with one argument, nearly all the deploy logic lives
-   in `src/deployment`; moving to another service would mean rewriting a 56-line workflow, not the
-   deployment (our reasoning, not on the slide). **Carry it in** ch5 (one sentence over the crate).
+   in `src/deployment` (and `src/workflow`); moving to another service would mean rewriting two
+   short workflow files (56 and 96 lines), not the deployment (our reasoning, not on the slide). **Carry it in** ch5 (one sentence over the crate).
 7. **Why deploy at all (slide 4).** The deck opens on a joke web app that predicts when the
    Thanksgiving turkey will be done, with a forecast band that widens past "NOW". The slide says
    nothing about CI/CD; our reading is that a prediction is only useful if it is served and kept
@@ -596,7 +599,7 @@ they disagree, the captures win.
 | 1 | **One deployment container does everything, through a CLI** (slides 17–18): it builds images, runs the Vertex AI pipeline jobs and deploys to the K8s cluster; GitHub Actions builds it and invokes its CLI to build and push release images, run Vertex jobs with the newly built images, and deploy. | Two workflows, two containers. `app-ci-cd-gcp.yml` builds `src/deployment` and passes the script name `deploy-k8s-update.sh` (`:35`, `:56`): two `pulumi up`s, no CLI. `ml-ci-cd-gcp.yml` builds `src/workflow` (`:32-35`) and runs `python cli.py --pipeline` (or `--data_collector`, `--data_processor`) there. `src/deployment` holds no Vertex AI code. CI never rebuilds the data-collector and data-processor images: the pipeline uses whatever `deploy-ml-images.sh` last pushed by hand (digest §6 #3). The slides describe the older `origin/pipenv` design, where the ML workflow ran `cheese-app-deployment sh run-ml-pipeline.sh` (and even there the image rebuild line was commented out). | The repo | Ch5: "The lecture keeps everything in one toolbox. v4 splits it: the deployment crate for the app, a smaller workflow crate for Vertex." Ch8, before pause-and-ponder #3: "and the step images are whatever you last built by hand." |
 | 2 | **One chain from data to users** (slide 19, and the README's `images/ci-cd.png`): Data Collector → Data Processor → Model Training → Model Deploy → Backend API → Frontend, all driven by commits. | Two lanes that don't touch. The API loads a fixed CNN from a GitHub release (`llm_cnn_utils.py:124`); `/run-ml-pipeline` deploys to a new Vertex endpoint that nothing calls; the trainer downloads a fixed dataset instead of the processor's output (digest C7, errata 8). | The code | Ch2, as planned: draw the slide's chain first, then pull it apart. "This is the course's map, and the goal. In v4 the arrow from Model Deploy to the API is still to be built: that is MS5." |
 | 3 | **What happens inside GitHub Actions** (slide 19 vs the README image and slide 36): slide 19's box holds Build → Deploy; the README's copy of the same picture holds Build → Release → Deploy; slide 36's loop has a Release stage, slide 7's doesn't. | One job with two container steps. Inside "Run Deploy App", `deploy_images` builds the three images and pushes them with a timestamp tag (the release, in effect), and `deploy_k8s` deploys them (`deploy-k8s-update.sh:1-9`). There is no separate release step or gate. | The code; both pictures are fair summaries of it | Ch6: two boxes for the two `pulumi up`s, with the push between them tagged "release = `:<timestamp>`". "The lecture's pictures differ by one box. In this repo, the release is the moment the tagged image lands in the registry." |
-| 4 | **CI/CD** (slide 20's title "Tutorial: Continuous Integration, Continuous Deployment" and its "Steps to apply CI / CD"; slides 7 and 36 draw Test and Monitor stages). | No test, lint, static-analysis or monitoring step runs in either workflow, though both are named "Continuous Integration and Continuous Deployment" (`:1`). `README.md:3` promises to test, execute, monitor, deploy and scale; `:157` says the CI part is not implemented. Slide 18's own heading, "How to Implement CD", agrees with `:157`. | The repo and `README.md:157` | Ch1 and ch9: "The lecture draws the whole loop. This tutorial wires its blue half; the red half is the pipeline you built in L21, and MS5 asks you to join them." |
+| 4 | **CI/CD** (slide 20's title "Tutorial: Continuous Integration, Continuous Deployment" and its "Steps to apply CI / CD"; slides 7 and 36 draw Test and Monitor stages). | No test, lint, static-analysis or monitoring step runs in either workflow, though both are named "Continuous Integration and Continuous Deployment" (`:1`). `README.md:3` promises to test, execute, monitor, deploy and scale; `:157` says the CI part is not implemented. Slide 18's own heading, "How to Implement CD", agrees with `:157`. | The repo and `README.md:157` | Ch1 and ch9: "The lecture draws the whole loop. This tutorial wires every box except Test; the tests are the pipeline you built in L21, and MS5 asks you to join them." |
 | 5 | **Delivery vs deployment** (slides 11–12): delivery keeps a person in the loop who decides to release; deployment passes integrated changes into production automatically. | The README defines delivery as automated delivery to staging or testing environments, ready but not necessarily released (`README.md:153`), and deployment as automatic deployment once all automated tests pass (`:155`); it says the tutorial does deployment (`:157`). In the code, a person decides every release by typing `/deploy-app`, and no tests run. | Both definitions are common; the code settles what v4 is: an automated deploy that a person triggers, with nothing tested first | Don't argue it, ask it (the new pause-and-ponder in ch9): "By the lecture's definitions, the keyword is delivery's release button. Deploy on every merge, behind tests, and it becomes continuous deployment." |
 | 6 | **The keyword** (slide 20): `/deploy-app`. | `app-ci-cd-gcp.yml:9` tests `'/deploy-app'`, and `README.md:188`, `:192` agree. `README.md:162` says `/run-deploy-app`, which wakes the ML job and deploys nothing (guide §6 #1). | The slide and the workflow | Ch4, in pause-and-ponder #1's answer: "The lecture slide has it right; one sentence in the README doesn't." |
 | 7 | **The basic commands** (slide 20): `git add`, then `git commit -m "your message /deploy-app"`, then `git push`. | A bare `git add` stages nothing (git 2.43.0: "Nothing specified, nothing added.", exit code 0); the commit then has nothing to commit, and the push sends nothing new. `README.md:191` has `git add .`. | The README | No narration. Type `git add .` on screen; if a caption is wanted: "the slide's shorthand, written out". |
@@ -605,7 +608,7 @@ they disagree, the captures win.
 
 Not counted as conflicts:
 - The review slides print lecture numbers from another year's schedule (see Pointers); slides 10,
-  12, 24 and 29 print footer numbers from their source decks. Both are inside the deck.
+  12, 23, 24 and 29 print footer numbers from their source decks. Both are inside the deck.
 - Slide 24's image registry is Docker Hub (spelled "DockertHub"); v4 pushes to Artifact Registry.
   The slide is accurate for the L03/L04 workflow it reviews.
 - Slide 18 says GitHub Actions monitors code commits. v4 watches pushes to `main` and reads only
@@ -677,8 +680,9 @@ Not counted as conflicts:
 - **Ch4 · `lecture_ref(23, "18, 20")`.** Make slide 18's "monitoring code commits" exact: pushes to
   `main`, the last commit's message, a substring in any case. Conflict 6 in pause-and-ponder #1.
 - **Ch5 · `lecture_ref(23, "17–18, 35")`.** The crate's button reads `deploy-k8s-update.sh`, not
-  "CLI" (Conflict 1). The laptop half of the split screen is slide 35's mounted source code; the
-  runner half is the baked code. One sentence on slide 16 (gap 6).
+  "CLI" (Conflict 1). The laptop half of the split screen mounts the code, as slide 35's
+  containers do; the runner half has the deployment code baked in. One sentence on slide 16
+  (gap 6).
 - **Ch6 · `lecture_ref(23, "18–19, 36")`.** The strip lights Build → Release → Deploy; the release
   is the push of the timestamp-tagged image (Conflict 3). Pause-and-ponder #2 as planned.
 - **Ch7 · `lecture_ref(23, "37")`.** Slide 37's routing re-drawn, then the swap: NGINX doorman out,

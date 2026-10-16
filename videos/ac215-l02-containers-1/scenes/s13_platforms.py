@@ -4,7 +4,7 @@ Beats (script.md "## S13", one voiceover block each):
  0  S12 ended on an empty frame: TRACKER B4 fades in with a 6-row laptop terminal; "this scene is all
     extras": the caption gets " · extra" and the row tag `extra` sits beside the typed command.
     `uname -m; docker image inspect simple-translate --format '{{.Os}}/{{.Architecture}}'` (laptop/35's
-    own command; folds onto 3 rows) -> laptop/35: 2–3. "Our machine is Intel or AMD": `x86_64` turns BLUE,
+    own command; folded by hand onto 3 rows, one command per row, see UNAME_ROWS) -> laptop/35: 2–3. "Our machine is Intel or AMD": `x86_64` turns BLUE,
     row tag "this machine · Intel/AMD"; "the image says": `linux/amd64` BLUE, row tag "the image";
     "On an Apple Silicon Mac": a GREY brace over both and the GREY note "Apple Silicon Mac: arm64".
  1  V7 (the terminal goes). Two chips with their glyph rows ("machine instructions"): `arm64 · Apple
@@ -35,7 +35,8 @@ Beats (script.md "## S13", one voiceover block each):
     BLUE `linux/amd64` row and a dimmed `unknown/unknown` row; "plus an attestation": GREY note
     "attestation · how it was built"; "a record of how": a GREY dashed overlay right of the first row
     "built on a Mac: linux/arm64" and a GREY note under the menu "containerd image store · the older
-    store pushes one image, no menu".
+    store pushes one image, no menu". Neither note is narrated: the picture holds 3 s after the
+    narration so they can be read.
  5  The strip and the menu go. Top band: "You built on an M-series Mac": the GREY arm64 chip over a
     laptop builds an image card `linux/arm64` (arm64 glyphs); "and pushed": a PINK route carries it to a
     BLUE shelf "Docker Hub"; "Your VM is an ordinary": a BLUE VM with an `amd64 · default VM` chip and
@@ -64,11 +65,13 @@ Beats (script.md "## S13", one voiceover block each):
  8  The panel, chip and picture go. Picture first: a PURPLE `buildx` box (tag "fix 2") over the GREY
     arm64 chip; "multi-platform builder": two lanes, the upper one through a GREY "emulation" box; "to
     build both": an amd64 image (through emulation: on a Mac the amd64 build is the emulated one) and an
-    arm64 image; "and push one menu": a menu `dlops/simple-translate` on a BLUE "Docker Hub" board, and
-    each image rides its PINK route and becomes its row (linux/amd64 BLUE, linux/arm64 GREY). The
+    arm64 image; "and push one menu": a menu `<USER NAME>/simple-translate-ac215` (`<USER NAME>` YELLOW:
+    what the viewer's run pushes after beat 9's edit of lines 7 and 11, not dlops's amd64-only image of
+    beat 3) on a BLUE "Docker Hub" board, and each image rides its PINK route and becomes its row
+    (linux/amd64 BLUE, linux/arm64 GREY). The
     narration is ~7 s, so CODE(docker-build-push.sh: 21–27) (line 27 cut after `--push`: 109 characters)
     comes in at "multi-platform builder", lines 23 and 27 YELLOW; tag `erratum · would push both · the
-    published image has only amd64`.
+    published image has only amd64`, held 3 s after the narration.
  9  The picture goes; the panel becomes CODE(docker-build-push.sh: 7–11): line 11 (`"dlops"` boxed)
     and line 7 (`"simple-translate"` boxed) YELLOW as said, YELLOW caption "your username (11) ·
     simple-translate-ac215 (7)". A list of GREEN chips (no room for one row at >= 20 pt): `docker
@@ -86,7 +89,7 @@ from explainer.devops import MONO, cell_width, code_panel, code_span, cross_mark
 from explainer.scene import VoiceScene
 
 from common import (AMD, ARM, CLOUD, ERR, IMAGE, INK, LAPTOP, LAPTOP_DIR, NARRATION, PUSH_DIR,
-                    PUSH_README, STRIP_ROWS, TAG_README, TOOL, TURN, VENV, VM12, PlatformMenu,
+                    P_LAPTOP, PUSH_README, STRIP_ROWS, TAG_README, TOOL, TURN, VENV, VM12, PlatformMenu,
                     attach, bare_prompt, beside, box, builder_box, capture, check_mark, chip, code, cut,
                     erratum_tag, excerpt, glyph_row, hash12, label, laptop_term, mono, mono_line, outline_box,
                     platform_chip, resize, route, row_tag, shelf_glyph, stand_in_tag, steady, substring, tag,
@@ -98,6 +101,13 @@ SAY = NARRATION["S13"]
 C35 = capture("35", LAPTOP_DIR)                       # laptop/35-platform.txt
 UNAME = C35.cmd
 assert UNAME == "uname -m; docker image inspect simple-translate --format '{{.Os}}/{{.Architecture}}'", UNAME
+# Terminal.fold breaks before an option, which would split `uname \` from its `-m`; folded by hand instead,
+# one command per row (house style: " \" + 4-space indent), so the rows still paste back as the command.
+UNAME_ROWS = [f"{P_LAPTOP} uname -m; \\",
+              "    docker image inspect simple-translate \\",
+              "    --format '{{.Os}}/{{.Architecture}}'"]
+assert " ".join([UNAME_ROWS[0][:-2], UNAME_ROWS[1][4:-2], UNAME_ROWS[2][4:]]) == f"{P_LAPTOP} {UNAME}"
+assert max(len(r) for r in UNAME_ROWS) <= 65
 OUT35 = C35.at((2, 3))
 assert OUT35 == ["x86_64", "linux/amd64"], OUT35
 
@@ -269,8 +279,10 @@ class Platforms(VoiceScene):
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t), run_time=0.6)
             bare_prompt(self, t)
+            t.fold = lambda text, first_prefix=0: list(UNAME_ROWS)
             c0 = type_cmd(self, t, UNAME, 1.5)
-            assert len(c0.rows) == 3, [r.text for r in c0.rows]
+            del t.fold
+            assert [r.text for r in c0.rows] == UNAME_ROWS, [r.text for r in c0.rows]
             vo.wait_until("this scene is all extras")
             x0 = beside(row_tag("extra"), c0.rows[-1])
             self.play(track(tr, 4, extra=True), FadeIn(x0, shift=LEFT * 0.1), run_time=0.5)
@@ -490,6 +502,7 @@ class Platforms(VoiceScene):
             vo.wait_until("a record of how")
             self.play(Create(mac4_b), FadeIn(mac4_t, shift=LEFT * 0.1), run_time=0.6)
             self.play(FadeIn(cd4, shift=UP * 0.1), run_time=0.5)
+        self.wait(3.0)                    # neither note is narrated: time to read them before the picture goes
 
         # ========================================================== 5 · built on a Mac, pushed, pulled on a VM
         # top band (the ponder card takes the bottom half): Mac | Docker Hub | VM. Pushing and pulling copy
@@ -675,23 +688,34 @@ class Platforms(VoiceScene):
 
         # ========================================================== 8 · fix 2: buildx builds both, pushes one menu
         pic7 = VGroup(chip7, img7, emu7, slow7, ok7)
-        bx = builder_box("buildx", 2.0, 0.85, 22)
+        # left to right: buildx | emulation | the two images | PINK routes | the menu (6.25 wide: its title is
+        # the README's long name)
+        bx = builder_box("buildx", 1.7, 0.85, 22)
         bx.text.become(mono("buildx", 22, TOOL).move_to(bx.frame))
-        bx.move_to([-4.75, 1.85, 0])
+        bx.move_to([-5.6, 1.85, 0])
         fix2 = row_tag("fix 2")
         fix2.move_to([bx.frame.get_left()[0] + fix2.width / 2, bx.frame.get_top()[1] + 0.12 + fix2.height / 2, 0])
-        chip8 = platform_chip("arm64").move_to([-4.75, 0.52, 0])
+        chip8 = platform_chip("arm64")
+        chip8.move_to([bx.frame.get_left()[0] + chip8.width / 2, 0.52, 0])
         lane_up, lane_lo = 2.35, 1.0
-        emu8 = emulation_box(1.6, 0.6, inside=True).move_to([-2.2, lane_up, 0])
-        mi_amd = mini_image("amd64").move_to([0.2, lane_up, 0])     # room for PINK routes of ~1 unit to the menu
-        mi_arm = mini_image("arm64").move_to([0.2, lane_lo, 0])
+        emu8 = emulation_box(1.5, 0.6, inside=True).move_to([-3.4, lane_up, 0])
+        mi_amd = mini_image("amd64", 3).move_to([-1.45, lane_up, 0])     # room for PINK routes of ~0.8 to the menu
+        mi_arm = mini_image("arm64", 3).move_to([-1.45, lane_lo, 0])
         a_up = Arrow(bx.frame.get_right() + UP * 0.15, emu8.frame.get_left(), buff=0.08, color=LAPTOP, stroke_width=3,
                      tip_length=0.18)
         a_up2 = Arrow(emu8.frame.get_right(), mi_amd.get_left(), buff=0.08, color=LAPTOP, stroke_width=3, tip_length=0.18)
         a_lo = Arrow(bx.frame.get_right() + DOWN * 0.15, mi_arm.get_left(), buff=0.08, color=LAPTOP, stroke_width=3,
                      tip_length=0.18)
-        menu8 = PlatformMenu("dlops/simple-translate", [("linux/amd64", AMD), ("linux/arm64", ARM)])
-        menu8.move_to([6.3 - menu8.frame.width / 2, 1.72, 0])
+        # the viewer's own image after beat 9's edit (lines 7 and 11), not dlops/simple-translate: beat 3 showed
+        # that one is a single amd64 image
+        name8 = PUSH_README.removeprefix("docker push ")
+        assert name8 == "<USER NAME>/simple-translate-ac215", name8
+        menu8 = PlatformMenu(name8, [("linux/amd64", AMD), ("linux/arm64", ARM)])
+        n_user = len("<USER NAME>".replace(" ", ""))   # Text glyphs skip spaces
+        assert len(menu8.title) == len(name8.replace(" ", "")), len(menu8.title)
+        menu8.title[:n_user].set_color(TURN)
+        menu8.move_to([6.4 - menu8.frame.width / 2, 1.72, 0])
+        assert menu8.frame.get_left()[0] - mi_amd.get_right()[0] > 0.7, "no room for the PINK routes"
         board8 = Line(menu8.frame.get_corner(DL) + np.array([-0.15, -0.1, 0]),
                       menu8.frame.get_corner(DR) + np.array([0.12, -0.1, 0]), color=CLOUD, stroke_width=4)
         hub8 = label("Docker Hub", 20, CLOUD).next_to(board8, DOWN, buff=0.1).align_to(board8, RIGHT)
@@ -732,7 +756,7 @@ class Platforms(VoiceScene):
                                scale_factor=1.06), run_time=0.9)
             self.add(menu8)
             self.play(FadeIn(err8, shift=LEFT * 0.1), run_time=0.4)
-        self.wait(1.6)                    # time to read line 27 and the erratum before the panel changes
+        self.wait(3.0)                    # time to read line 27 and the erratum before the panel changes
 
         # ========================================================== 9 · DOCKER_USERNAME, IMAGE_NAME, bash, buildx use default
         pic8 = VGroup(bx, fix2, chip8, emu8, mi_amd, mi_arm, a_up, a_up2, a_lo, menu8, board8, hub8, r_amd, r_arm)

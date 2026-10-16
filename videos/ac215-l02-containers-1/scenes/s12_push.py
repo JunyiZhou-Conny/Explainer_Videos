@@ -1,8 +1,9 @@
 """S12 · Tag and push (README B1-B4; V6 names and the registry; the local-registry stand-in).
 
 Beats (script.md "## S12", one voiceover block each):
- 0  S11 ended on an empty frame: TRACKER A16 fades in and switches to "README › Pushing Docker Image to
-    Docker Hub" (4 dots); "First, sign up": B1 and the README card (`README.md · line 188`, "Sign up in
+ 0  S11 ended on an empty frame: TRACKER A16 fades in, then the README card `README.md · line 186` with the
+    section heading (34 pt, as S14's line 203); "Pushing Docker Image to Docker Hub": the heading becomes the
+    new tracker's section name (4 dots) and pulses; "First, sign up": B1 and the README card (`README.md · line 188`, "Sign up in
     Docker Hub and create an Access Token", the link underlined). A schematic browser window (tag
     `illustration`, address = the README's link): "Docker Hub · account settings", "Personal access
     tokens" with a BLUE button "Generate new token" (pulses); "with read and write": the row "Access
@@ -83,7 +84,9 @@ Beats (script.md "## S12", one voiceover block each):
     by default": a BLUE badge "public", and a `.git/` glyph appears on a lead from the COPY slab;
     "Anyone can pull it": three GREY figures pull it along PINK routes; "git folder and all": `.git/`
     and the COPY slab's outline turn RED and pulse, and S10's `.dockerignore` card (`.git`, `.venv`,
-    `secrets/`, tag "a file you'd add") fades in where the image stood, its `.git` line flashing GREEN.
+    `secrets/`, tag "illustration · a file you'd add" above it, as in S10 and S11) fades in where the image
+    stood (raised: the tag runs over the repository card's x-range, so it sits clear above that card's
+    top), its `.git` line flashing GREEN.
     Fade to an empty frame.
 """
 
@@ -98,11 +101,11 @@ from explainer.devops import MONO, OUTPUT, browser_window, cross_mark, folder_gl
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, DOCKER_PUSH, DOCKER_TAG, ERR, IMAGE, IMAGE_LS, INK, LAPTOP, LAPTOP_DIR,
-                    LOGIN_README, NARRATION, PUSH_DIR, PUSH_README, STRIP_ROWS, SYSTEM, TAG_README, TURN, VENV,
-                    LayerStack, RegistryShelf, attach, bare_prompt, beside, box, capture, chip, cols,
+                    LOGIN_README, NARRATION, PUSH_DIR, PUSH_README, SECTION_B, STRIP_ROWS, SYSTEM, TAG_README, TURN,
+                    VENV, LayerStack, RegistryShelf, attach, bare_prompt, beside, box, capture, chip, cols,
                     erratum_tag, excerpt, fingerprint, hash12, illustration_tag, label, laptop_term,
                     lock_glyph, mono, mono_line, name_parts, pin, readme_card, resize, route, row_tag,
-                    stand_in_tag, sticky, substring, tag, track, tracker_a, tracker_b, type_cmd, under,
+                    stand_in_tag, sticky, substring, track, tracker_a, tracker_b, type_cmd, under,
                     user_caption, your_turn)
 
 SAY = NARRATION["S12"]
@@ -117,6 +120,7 @@ def _bullet(n: int) -> tuple[str, str]:
     return m.group(1), m.group(2)
 
 
+assert excerpt("README.md", 186, 186).endswith(SECTION_B), excerpt("README.md", 186, 186)   # the section heading
 L188 = excerpt("README.md", 188, 188)
 assert L188.startswith("* Sign up in Docker Hub and create an [Access Token](https://"), L188
 TOKEN_URL = re.search(r"\]\(https://([^)]+)\)", L188).group(1)          # hub.docker.com/settings/security
@@ -374,6 +378,11 @@ def scroll(scene, t, n_new: int, run_time: float = 0.35) -> None:
         scene.play(stay.animate.shift(UP * t.pitch * over), run_time=run_time * 0.55)
 
 
+def quick(t: float) -> float:
+    """Rate function: a fade that is done in the first third of a longer move (S14's own)."""
+    return min(1.0, 3.0 * t)
+
+
 def lead(vo, phrase: str, early: float) -> None:
     """Wait until `early` seconds before `phrase` is spoken."""
     dt = vo.time_until(phrase) - early
@@ -435,11 +444,19 @@ class TagAndPush(VoiceScene):
         pw.move_to([c188.get_right()[0] + 0.45 + pw.width / 2, c188.get_y(), 0])
         yt0 = your_turn().next_to(page.field, RIGHT, buff=0.75)
         frame_bits = VGroup(page.win, page.title)
+        sec = readme_card(186, label(SECTION_B, 34, INK)).move_to([0, 0.5, 0])    # as S14's line 203
+        tr_rest = VGroup(tr.head[0], tr.head[1], tr.dots, tr.caption)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr_a, shift=DOWN * 0.1), run_time=0.5)
-            self.wait(0.4)
-            self.play(FadeOut(tr_a, shift=UP * 0.25), FadeIn(tr, shift=UP * 0.25), run_time=0.7)
+            self.play(FadeIn(sec, shift=UP * 0.2), run_time=0.6)
+            vo.wait_until("Pushing Docker Image to Docker Hub")
+            # the README's heading becomes the new tracker's section name (what became what)
+            self.play(FadeOut(tr_a, shift=UP * 0.25), FadeIn(tr_rest, shift=UP * 0.25),
+                      ReplacementTransform(sec.body, tr.head[2]), FadeOut(VGroup(sec.frame, sec.head), rate_func=quick),
+                      run_time=1.0)
+            self.remove(tr_rest, tr.head[2])
+            self.add(tr)
             self.play(Indicate(tr.head[2], color=TURN, scale_factor=1.08), run_time=0.8)
             vo.wait_until("First, sign up")
             self.play(track(tr, 1), FadeIn(c188, shift=DOWN * 0.15), run_time=0.6)
@@ -871,8 +888,11 @@ class TagAndPush(VoiceScene):
         pulls = VGroup(*[route(repo_fr.get_right() + RIGHT * 0.1 + UP * dy, f.get_left() + LEFT * 0.1, arc=0)
                          for f, dy in zip(folks, (0.6, 0, -0.6))])
         dig9 = dockerignore_card()
-        dig9.move_to([-4.9, -0.45, 0])                   # where the image stood
-        dig_t = tag("a file you'd add", S.GREY).next_to(dig9, UP, buff=0.2)
+        dig_t = illustration_tag("illustration · a file you'd add")      # S10's and S11's tag for this card
+        # where the image stood; the tag (wider than the card, left-aligned) runs over repo_fr's x-range, so
+        # card and tag sit high enough for the tag to clear repo_fr's top by more than ill9 does
+        dig_t.move_to([-6.3 + dig_t.width / 2, repo_fr.get_top()[1] + 0.8, 0])
+        dig9.next_to(dig_t, DOWN, buff=0.2).align_to(dig_t, LEFT)
 
         with self.voiceover(SAY[9]) as vo:
             self.play(track(tr, 4, extra=False), FadeOut(t6), FadeOut(sit7),
