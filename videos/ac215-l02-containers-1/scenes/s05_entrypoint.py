@@ -113,10 +113,14 @@ def turn_tag() -> VGroup:
 
 
 def type_rows(scene, t, rows_text: list[str], type_time: float, extra=()) -> VGroup:
-    """Terminal.type with rows folded by the caller (rows_text[0] starts with the prompt);
-    `extra` animations play during the typing."""
+    """type_cmd with rows folded by the caller (rows_text[0] starts with the prompt; a bare prompt
+    line is replaced, as type_cmd does); `extra` animations play during the typing."""
     p = t.prompt + " "
     assert rows_text[0].startswith(p) and all(len(s) <= t.max_chars for s in rows_text)
+    if len(t.lines) and getattr(t.lines[-1], "bare", False):
+        last = t.lines[-1]
+        scene.remove(last, *last.submobjects)
+        t.lines.remove(last)
     t2c = t._prompt_colors(t.prompt)
     t._make_room(scene, len(rows_text))
     rows = []
@@ -213,7 +217,8 @@ class StepEntrypoint(VoiceScene):
             self.play(Indicate(p_kw, color=TURN, scale_factor=1.12), run_time=0.6)
             vo.wait_until("slash bin")
             self.play(Indicate(p_val, color=TURN, scale_factor=1.12), run_time=0.6)
-            c0 = type_cmd(self, t, CAT, 0.45)
+            # an extra check: the tracker says so (" · extra") while it is typed, as in S04/S06/S08
+            c0 = type_rows(self, t, [f"{t.prompt} {CAT}"], 0.45, extra=[extra_caption(self, tr, True)]).rows[0]
             pin(self, c0, beside(row_tag("extra"), c0), run_time=0.25)
             out0 = t.print(self, CAT_OUT, run_time=0.45, lag=0.12)
             from_row, ent_row = out0[1], out0[3]
@@ -247,7 +252,9 @@ class StepEntrypoint(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             resize(self, t, 8, run_time=0.5)
-            c1 = type_cmd(self, t, BUILD, 0.8)
+            # back to the README: " · extra" fades while its build is typed (folded as Terminal.type does)
+            c1 = type_rows(self, t, t.fold(f"{t.prompt} {BUILD}", first_prefix=len(t.prompt) + 1), 0.8,
+                           extra=[extra_caption(self, tr, False)])
             yt1 = beside(turn_tag(), c1.rows[0])
             pin(self, c1.rows[0], yt1, run_time=0.35)
             self.play(Wiggle(yt1, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.6)
