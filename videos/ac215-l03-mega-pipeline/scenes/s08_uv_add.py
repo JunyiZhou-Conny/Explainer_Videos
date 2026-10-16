@@ -652,7 +652,7 @@ class UvAdd(VoiceScene):
             # a Linux viewer has to read this: it holds after the line ends (~4 s up in all)
             self.wait(1.0)
             self.play(Indicate(rc.where, color=INK, scale_factor=1.04), run_time=0.8)
-            self.wait(1.2)
+            self.wait(1.8)
 
         # ========================================================== 7 · the README: rebuild after exit
         chip_r = readme_chip("transcribe_audio/README.md · line 110", REBUILD, max_w=12.4)

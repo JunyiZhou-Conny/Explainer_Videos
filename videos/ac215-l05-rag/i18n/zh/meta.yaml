@@ -1,0 +1,47 @@
+# Chinese (zh-CN) metadata for ac215-l05-rag (read by explainer/i18n.py meta(), used by explainer/build.py for
+# the subtitles' chapters and the zh descriptions): video title, part titles, chapter titles keyed by scene file
+# stem (as video.yaml's scenes), and the Bilibili / YouTube description.
+# Titles follow GLOSSARY.md rule H1: written register (容器, 镜像, 仓库, 端口, 提示词, 文本块, 嵌入向量; A4),
+# questions keep their question mark, the English colon structure is kept (切书：……, 加载：……, 对话：……,
+# 语义分块：……), commands, flags, chunk types, folder and file names stay as they are (meta.yaml is not read by
+# `explainer.i18n check`, so brackets and underscores are fine here), and the core-concept chapters carry their
+# English short name for search (嵌入向量（embedding）, 提示词（prompt）), as L1 and L3 do.
+# Introduction to RAG → RAG 入门; build the index → 建索引; ask the index → 查询索引; chunk, embed, load →
+# 分块、向量化、加载; naïve → 朴素; the lane of V1 → 通道 (review_spoken item 16). 跟练 = follow-along.
+title: "AC215 · 第 5 讲：RAG 入门（跟练：llm-rag）"
+
+parts:
+  part1: "AC215 · 第 5 讲（上）：建索引——分块、向量化、加载"
+  part2: "AC215 · 第 5 讲（下）：查询索引——查询、过滤、对话与语义分块"
+
+chapters:
+  s01_hook: "一个没读过这本书的模型"
+  s02_map: "两条通道，一个数据库"
+  s03_setup: "你的密钥、你的目录、你的项目"
+  s04_compose: "一个脚本，两个容器"
+  s05_lookaround: "名字、挂载和两个陷阱"
+  s06_charsplit: "切书：一把尺子"
+  s07_recursive: "递归切分和藏起来的重叠"
+  s08_embed: "意思即方向：嵌入向量（embedding）"
+  s09_load: "加载：记录、索引和你磁盘上的一个目录"
+  s10_persist: "退出之后，索引还在"
+  s11_query: "向数据库提问：排序与截断"
+  s12_filters: "过滤在前"
+  s13_chat: "对话：诀窍全在提示词（prompt）"
+  s14_semantic: "语义分块：在意思转折处切开"
+  s15_advanced: "朴素 RAG 之外：课上补充的内容"
+  s16_recap: "清理、过期的索引与回顾"
+
+# Two or three sentences (rule H2), written register. Facts: README sections of dlops-io/llm-rag (branch main,
+# commit e17a39f) as in video.yaml; 11 books (ten from Project Gutenberg and the instructor's short story, never
+# named by its author); two containers started by sh docker-shell.sh (llm-rag-cli and chromadb/chroma);
+# char-split 350/20 (8248 chunks) and recursive-split 350 with the library's hidden overlap of up to 200
+# (14228 chunks); gemini-embedding-001 asked for 256 numbers, cosine distance in Chroma, an HNSW index in
+# docker-volumes/; Chroma applies the where filter before ranking; SYSTEM_INSTRUCTION is defined but never sent;
+# semantic-split needs the API at --chunk; S15 is the lecture's query rewriting, hybrid search (RRF) and
+# re-ranking, ideas only. Captures dated 2026-10-16 (ASSETS.md), recorded without a Google key: the vectors
+# loaded are the staff's committed embeddings (68e0bde), and the Google calls show the command, the real
+# no-key error and what to look for. Paste the chapter timestamps from output/chapters.txt and the study
+# guide, tutorial repo and Ed links (video.yaml course:) under it when uploading.
+description: |
+  AC215（哈佛 MLOps & LLMOps）第 5 讲“RAG 入门”的跟练视频：照着 dlops-io/llm-rag 的 README，用一个脚本启动两个容器（命令行容器和 ChromaDB 向量数据库），把 11 本讲奶酪的书分块、向量化并加载进 Chroma，再用同一个嵌入模型把问题变成查询向量，取回最近邻，拼进提示词交给 Gemini 回答。你会弄清检索增强生成（RAG）的两条通道，按字符切分和递归切分（以及默认藏着的重叠），嵌入向量、余弦相似度和 Chroma 的余弦距离，集合（collection）、记录和存在你磁盘上的 HNSW 索引，为什么过滤先于排序，提示词里那个从没发出去的系统提示词，以及语义分块和课上讲的查询改写、混合检索与重排序。英文旁白，配中文和中英双语字幕；终端输出录于 2026-10-16，录制时没有 Google 密钥，所以加载的是课程团队提交过的向量，调用 Google 的步骤展示命令、缺少密钥时的真实报错和该看什么。
