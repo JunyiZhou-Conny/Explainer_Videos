@@ -98,3 +98,7 @@ repos with branch and commit, guide link), `script.md`, `scenes/`, `exercises.md
    narration, `python -m explainer.i18n check`), then render English with `--burn`; write
    `exercises.md` and `README.md`.
 6. Update the course map in MLOps_Learning (`video_status` in `course/lectures.yaml`).
+7. Release: each lecture merges from its own `episode/ac215-lNN-<topic>` PR; then
+   `.github/workflows/legacy-release.yml` renders it in Actions, tags `episode/<id>-vN` with the
+   deliverables and the PUBLISH manifest, and the Mac publish worker uploads `<id>.zh-en.mp4` to
+   Bilibili with the `publish:` block of `video.yaml` ([PUBLISHING.md](PUBLISHING.md)).

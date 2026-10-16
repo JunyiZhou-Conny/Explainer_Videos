@@ -121,14 +121,21 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
    final MP4 in full (`ffmpeg -v error -i X -f null -`) and ffprobe it. Write the video's
    `REVIEW.md`: the AGENTS.md content gates, decode/metadata, visual sampling, the ASR round trip
    and the owner's listening sign-off as separate lines; never claim a listen that did not happen.
-   Cloud sessions cannot create releases: a GitHub Actions job, whose token can, uploads the
-   deliverables after the episode merges and the catalog (`catalog/videos.json`,
-   `docs/VIDEOS.md`) points at the release. Series decisions (Conny, 2026-10-15, recorded on
+   Cloud sessions cannot create releases: after the episode PR merges, run **Release a video.yaml
+   episode** (`.github/workflows/legacy-release.yml`; inputs `videos/<id>` and the issue number).
+   It renders each scene in its own job with the pinned engine
+   (`setup/requirements-legacy.lock.txt`), stitches `--crf 27 --burn`, and
+   `tools/release_episode.py` tags `episode/<id>-vN`, uploads the cuts, parts, subtitles, chapters
+   and its measured `<id>.validation.json`, and writes the PUBLISH manifest for the Mac worker.
+   The asset sent to Bilibili is `<id>.zh-en.mp4`. The workflow refuses to start without the sign-off line in
+   `REVIEW.md` and a `publish:` block in `video.yaml` (`title_zh`, `description_zh` with the
+   course attribution, `tags_zh`, `tid: 231`, 科技 › 计算机技术). The catalog (`catalog/videos.json`,
+   `docs/VIDEOS.md`) then points at the release. Series decisions (Conny, 2026-10-15, recorded on
    Explainer_Videos#29): each finished lecture gets its own issue, `episode/ac215-lNN-<topic>`
    branch and draft PR touching only its folder (shared changes go in a separate toolkit PR); the
    lectures are published to Bilibili through the Mac publish worker; the per-lecture full listen is
    waived ("不需要，我现在对视频质量很满意的") — quote that waiver as the human-review line of
-   `REVIEW.md`, never as a listen. Fill durations and chapters into the README; set
+   `REVIEW.md` ("Listening sign-off: waived by Conny for the AC215 series …"), never as a listen. Fill durations and chapters into the README; set
    `video_status` in `MLOps_Learning/course/lectures.yaml`, run `uv run tools/course_map.py`, and
    refresh the lecture's study guide from the captures (commands, real outputs).
 

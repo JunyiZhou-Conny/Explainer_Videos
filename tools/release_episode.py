@@ -16,6 +16,15 @@ Steps:
     the MP4(s), subtitles, chapters and SHA256SUMS.txt plus PUBLISH.json / PUBLISH.md.
  4. Print the asset URLs; the catalog updater consumes them.
 
+A legacy-route episode (videos/<slug>/video.yaml, no script.json; built by explainer.build
+into videos/<slug>/output/) has no render-time sidecar. For it the validation is measured
+here, from the stitched files: both cuts present and the same length, every part present,
+loudness, bilingual cue count, and whether the regenerated subtitle files equal the
+committed ones (they do when the release render reproduces the reviewed one). Its Bilibili
+title, description and tags come from the `publish:` block of video.yaml; the uploaded
+asset is the copy with the bilingual subtitles burned in (<slug>.zh-en.mp4).
+.github/workflows/legacy-release.yml renders such an episode scene by scene and calls this.
+
 The PUBLISH manifest makes uploading mechanical for any executor (the Mac worker, a
 computer-use agent, or a human): asset name + sha256 + bilingual title/description/tags.
 """
@@ -40,50 +49,167 @@ def sha256(path: Path) -> str:
     return h.hexdigest()
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("episode", type=Path, help="videos/<slug>")
-    ap.add_argument("--outputs", type=Path, help="rendered deliverables (default outputs/<slug>)")
-    ap.add_argument("--issue", type=int, help="the episode's issue number, for the publish worker")
-    ap.add_argument("--dry-run", action="store_true")
-    args = ap.parse_args()
-    episode = args.episode.resolve()
-    slug = episode.name
-    out = (args.outputs or ROOT / "outputs" / slug).resolve()
-    script = json.loads((episode / "script.json").read_text())
-    validation_path = out / f"{slug}.validation.json"
-    if not validation_path.exists():
-        raise SystemExit(f"No {validation_path}; render the full episode first.")
-    validation = json.loads(validation_path.read_text())
-    committed = hashlib.sha256((episode / "script.json").read_bytes()).hexdigest()
-    if validation.get("script_sha256") != committed:
-        raise SystemExit("validation.json was made from a different script.json than the one committed. Re-render.")
+SIGNOFF_PHRASES = ("human review", "listening sign-off")
+
+
+def require_signoff(episode: Path) -> None:
     review = (episode / "REVIEW.md").read_text() if (episode / "REVIEW.md").exists() else ""
-    signoff_phrases = ("human review", "listening sign-off")
-    if not any(phrase in review.lower() for phrase in signoff_phrases):
+    if not any(phrase in review.lower() for phrase in SIGNOFF_PHRASES):
         raise SystemExit(
             "REVIEW.md lacks a human-review record; the lifecycle requires Conny's listening "
             "sign-off before release (AGENTS.md). Record it with the phrase 'human review' "
             "or 'listening sign-off'."
         )
 
-    deliverables = sorted(p for p in out.iterdir() if p.suffix in {".mp4", ".srt", ".ass"}
-                          or p.name.endswith(".chapters.txt"))
-    deliverables = [p for p in deliverables if not p.name.startswith("sample-")
-                    and ".clean." not in p.name and ".scored." not in p.name]
+
+def probe_seconds(path: Path) -> float:
+    out = subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+                                   "-of", "csv=p=0", str(path)], text=True)
+    return round(float(out.strip()), 3)
+
+
+def integrated_loudness(path: Path) -> float | None:
+    """EBU R128 integrated loudness of the first audio stream, in LUFS."""
+    res = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-map", "0:a:0",
+                          "-af", "ebur128", "-f", "null", "-"], capture_output=True, text=True)
+    found = re.findall(r"I:\s+(-?[\d.]+) LUFS", res.stderr)
+    return float(found[-1]) if found else None
+
+
+def srt_cues(path: Path) -> list[list[str]]:
+    """The text lines of each cue of an .srt file."""
+    blocks = re.split(r"\n\s*\n", path.read_text(encoding="utf-8").strip())
+    return [b.splitlines()[2:] for b in blocks if len(b.splitlines()) >= 3 and "-->" in b.splitlines()[1]]
+
+
+def legacy_spec(episode: Path) -> dict:
+    """video.yaml, refused without the `publish:` block that a Bilibili upload needs."""
+    import yaml
+    spec = yaml.safe_load((episode / "video.yaml").read_text())
+    if not (spec.get("publish") or {}).get("title_zh"):
+        raise SystemExit("video.yaml has no publish.title_zh: write the Bilibili title, description_zh "
+                         "and tags_zh (and tid) in a `publish:` block before releasing.")
+    return spec
+
+
+def legacy_preflight(episode: Path) -> dict:
+    """What .github/workflows/legacy-release.yml checks before it spends an hour of runners:
+    the sign-off and the publish block; then the scenes to render, one job each, and whether
+    any of them typesets with LaTeX (the runners skip the TeX packages otherwise)."""
+    require_signoff(episode)
+    spec = legacy_spec(episode)
+    tex = re.compile(r"\b(MathTex|Tex|SingleStringMathTex)\(|\bS\.(math|tex)\(")
+    latex = any(tex.search(p.read_text()) for p in (episode / "scenes").glob("*.py"))
+    return {"scenes": [Path(s["file"]).stem for s in spec["scenes"]], "latex": latex}
+
+
+def legacy_inputs(episode: Path, out: Path) -> tuple[str, dict, dict, list[Path], Path]:
+    """Title, Bilibili metadata, measured validation, deliverables and the uploaded MP4 of a
+    video.yaml episode stitched by explainer.build (see the module docstring)."""
+    spec = legacy_spec(episode)
+    vid = spec["id"]
+    publish = spec["publish"]
+    full, burned = out / f"{vid}.mp4", out / f"{vid}.zh-en.mp4"
+    for need in (full, burned, out / f"{vid}.zh-en.srt"):
+        if not need.exists():
+            raise SystemExit(f"No {need}; stitch with `python -m explainer.build {episode} --no-render --burn` first.")
+    seconds = {p.name: probe_seconds(p) for p in (full, burned)}
+    if abs(seconds[full.name] - seconds[burned.name]) > 0.5:
+        raise SystemExit(f"The clean and the burned cut differ in length: {seconds}")
+    parts = []
+    for part in spec.get("parts") or []:
+        movie = out / f"{vid}_{part['id']}.mp4"
+        if not movie.exists():
+            raise SystemExit(f"No {movie}: every part in video.yaml is released with the full cut.")
+        seconds[movie.name] = probe_seconds(movie)
+        parts.append(movie)
+    cues = srt_cues(out / f"{vid}.zh-en.srt")
+    one_language = sum(1 for lines in cues if len(lines) < 2)
+    if not cues or one_language:
+        raise SystemExit(f"{vid}.zh-en.srt: {len(cues)} cues, {one_language} without both languages.")
+    committed = subprocess.run(["git", "diff", "--quiet", "--", str(out)], cwd=ROOT,
+                               capture_output=True).returncode == 0
+    validation = {
+        "route": "video.yaml", "source_commit": os.environ.get("GITHUB_SHA") or subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        "seconds": seconds, "loudness_lufs": integrated_loudness(full), "caption_cues": len(cues),
+        "subtitles_match_committed": committed,
+    }
+    (out / f"{vid}.validation.json").write_text(json.dumps(validation, ensure_ascii=False, indent=2))
+    keep = {".mp4", ".srt", ".ass"}
+    deliverables = sorted(p for p in out.iterdir() if p.is_file() and (
+        p.suffix in keep or re.fullmatch(r"chapters(_\w+)?\.txt", p.name) or p.name == f"{vid}.validation.json"))
+    main_mp4 = out / (publish.get("asset") or burned.name)
+    meta = {"title_zh": publish["title_zh"], "title_en": publish.get("title_en") or spec.get("title", vid),
+            "description_zh": publish.get("description_zh", "")}
+    if publish.get("tags_zh"):
+        meta["tags_zh"] = list(publish["tags_zh"])
+    if publish.get("tid"):
+        meta["bilibili_tid"] = int(publish["tid"])
+    return meta["title_en"], meta, validation, deliverables, main_mp4
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("episode", type=Path, help="videos/<slug>")
+    ap.add_argument("--outputs", type=Path, help="rendered deliverables (default outputs/<slug>, or "
+                                                  "videos/<slug>/output for a video.yaml episode)")
+    ap.add_argument("--issue", type=int, help="the episode's issue number, for the publish worker")
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--preflight", action="store_true", help="video.yaml episode: check the sign-off and the "
+                    "publish block, print scenes=[...] and latex=true|false for $GITHUB_OUTPUT, and stop")
+    args = ap.parse_args()
+    episode = args.episode.resolve()
+    slug = episode.name
+    legacy = not (episode / "script.json").exists() and (episode / "video.yaml").exists()
+    if args.preflight:
+        if not legacy:
+            raise SystemExit(f"--preflight is for video.yaml episodes; {episode} has none (or has script.json)")
+        plan = legacy_preflight(episode)
+        print("scenes=" + json.dumps(plan["scenes"]))
+        print("latex=" + str(plan["latex"]).lower())
+        return 0
+    if legacy:
+        out = (args.outputs or episode / "output").resolve()
+        require_signoff(episode)
+        title_en, script, validation, deliverables, main_mp4 = legacy_inputs(episode, out)
+        manifest_validation = validation
+    else:
+        out = (args.outputs or ROOT / "outputs" / slug).resolve()
+        script = json.loads((episode / "script.json").read_text())
+        validation_path = out / f"{slug}.validation.json"
+        if not validation_path.exists():
+            raise SystemExit(f"No {validation_path}; render the full episode first.")
+        validation = json.loads(validation_path.read_text())
+        committed = hashlib.sha256((episode / "script.json").read_bytes()).hexdigest()
+        if validation.get("script_sha256") != committed:
+            raise SystemExit("validation.json was made from a different script.json than the one committed. Re-render.")
+        require_signoff(episode)
+        deliverables = sorted(p for p in out.iterdir() if p.suffix in {".mp4", ".srt", ".ass"}
+                              or p.name.endswith(".chapters.txt"))
+        deliverables = [p for p in deliverables if not p.name.startswith("sample-")
+                        and ".clean." not in p.name and ".scored." not in p.name]
+        main_mp4 = out / f"{slug}.mp4"
+        title_en = script.get("title_en", slug)
+        manifest_validation = {k: validation.get(k) for k in
+                               ("target_seconds", "audio_mean_db", "caption_cues", "script_sha256")}
     if not any(p.suffix == ".mp4" for p in deliverables):
         raise SystemExit(f"No final MP4 under {out}")
+    if not main_mp4.exists():
+        raise SystemExit(f"No {main_mp4} to publish")
 
     token_env = {k: v for k, v in os.environ.items()}
-    existing = subprocess.check_output(["gh", "api", f"repos/{os.environ['GITHUB_REPOSITORY']}/releases",
-                                        "--paginate", "--jq", ".[].tag_name"], text=True, env=token_env).split()
+    if args.dry_run and not os.environ.get("GITHUB_REPOSITORY"):
+        existing = []                     # a local dry run: no repository to ask, call it v1
+    else:
+        existing = subprocess.check_output(["gh", "api", f"repos/{os.environ['GITHUB_REPOSITORY']}/releases",
+                                            "--paginate", "--jq", ".[].tag_name"], text=True, env=token_env).split()
     n = 1 + sum(1 for t in existing if re.fullmatch(rf"episode/{re.escape(slug)}-v\d+", t))
     tag = f"episode/{slug}-v{n}"
 
-    main_mp4 = out / f"{slug}.mp4"
     manifest = {
         "schema": 1, "slug": slug, "tag": tag, "issue": args.issue,
-        "validation": {k: validation.get(k) for k in ("target_seconds", "audio_mean_db", "caption_cues", "script_sha256")},
+        "validation": manifest_validation,
         "bilibili": {
             "asset": main_mp4.name, "sha256": sha256(main_mp4),
             "title_zh": script.get("title_zh") or script.get("title_en"),
@@ -110,7 +236,7 @@ def main() -> int:
     if args.dry_run:
         print(tag); [print("  would upload", p.name) for p in uploads]
         return 0
-    create = ["gh", "release", "create", tag, "--title", script.get("title_en", slug),
+    create = ["gh", "release", "create", tag, "--title", title_en,
               "--notes", f"Episode {slug}, release v{n}. See PUBLISH.md for the publish manifest; "
                          f"REVIEW.md in videos/{slug}/ records what was verified."]
     if os.environ.get("GITHUB_SHA"):

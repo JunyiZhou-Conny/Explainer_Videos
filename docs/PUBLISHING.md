@@ -54,6 +54,20 @@ are commented on the issue and retried next run; a computer-use agent or a human
 rest. Setup, once: `npm i -g @biliup/cli && biliup login && gh auth login`, then schedule
 `python3 tools/publish_worker.py --repo JunyiZhou-Conny/Explainer_Videos --upload`.
 
+### Legacy-route episodes (`video.yaml`)
+
+The long follow-along videos (the AC215 series) are built by `explainer.build`, not by
+`render.py`, and have no render-time sidecar. **Release a video.yaml episode**
+(`.github/workflows/legacy-release.yml`, dispatched with the episode directory and issue)
+renders each scene in its own job on the engine pinned in `setup/requirements-legacy.lock.txt`
+(the set the series was reviewed with), stitches the full cut with bilingual subtitles burned
+in, and calls `tools/release_episode.py`, which measures the stitch instead of reading a sidecar:
+both cuts present and the same length, every part present, loudness, every bilingual cue
+carrying both languages, and whether the regenerated subtitle files equal the committed ones.
+That `<slug>.validation.json` ships with the release. The Bilibili title, description and tags
+come from the `publish:` block of `video.yaml`; the asset is `<slug>.zh-en.mp4`. The workflow
+checks the sign-off line and the publish block before it spends any runner time.
+
 ## Current collection
 
 The initial incubator release collects seven full videos. The catalog links all 23 current
