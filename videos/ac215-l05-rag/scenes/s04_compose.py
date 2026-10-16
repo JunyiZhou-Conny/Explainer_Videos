@@ -127,6 +127,7 @@ from explainer.devops import (
     label,
     mono,
     substring,
+    tag,
 )
 from explainer.scene import VoiceScene
 
@@ -178,7 +179,7 @@ _img = capture("14b", "laptop")
 assert _img.line(7).endswith("chroma.sqlite3"), _img.line(7)  # the image keeps a chroma.sqlite3
 
 # ------------------------------------------------------------------ layout
-TOP_Y = 2.88                  # nothing above this left of x = -2.8 (the tracker band)
+TOP_Y = 2.82                  # nothing above this left of x = -2.8 (the tracker band)
 CV_BOTTOM = -1.1              # V2 fitted with its bottom here: room for the 4-row strip (lines 13–15)
 TERM_ROWS = 9                 # beats 6–10 (SHOW: 12; 9 leaves the picture legible above it)
 PARK_X = 6.4                  # right edge of the waiting value chips (beat 2)
@@ -417,11 +418,15 @@ class TwoContainers(VoiceScene):
             vo.wait_until("for that one service")
             slot_img = p8.span(12, "$IMAGE_NAME")
             self.play(ch_img.animate.move_to(slot_img), run_time=0.7)
-            self.play(Indicate(ch_img, color=TURN, scale_factor=1.1), run_time=0.6)
+            self.play(Indicate(ch_img.text, color=TURN, scale_factor=1.15), run_time=0.6)
 
         # ========================================================== 2 · the compose file: network, CLI service
         cv = ComposeView(show=("zone", "row_repo", "row_secrets"))
         cv.fit_top(bottom=CV_BOTTOM)
+        # fit_top keeps the box titles at full size while the boxes shrink: keep them inside
+        cli_t, chr_t = cv.parts["cli"][1], cv.parts["chroma"][1]
+        cli_t.align_to(cv.parts["cli"].frame, LEFT).shift(RIGHT * 0.12)
+        chr_t.set_x(cv.parts["chroma"].frame.get_center()[0])
         zone, r_repo, r_sec = cv.parts["zone"], cv.parts["row_repo"], cv.parts["row_secrets"]
         s1 = strip(1, 3)
         bar3 = s1.bar(3, TURN, 0.2)
@@ -524,7 +529,7 @@ class TwoContainers(VoiceScene):
         pair = VGroup(d18, d45).arrange(RIGHT, buff=0.4, aligned_edge=DOWN)
         at_bottom(pair)
         w_app = cv.window("app")
-        sheet = VGroup(RoundedRectangle(width=w_app.width + 0.08, height=w_app.height + 0.08,
+        sheet = VGroup(RoundedRectangle(width=w_app.frame.width, height=w_app.frame.height + 0.06,
                                         corner_radius=0.08, stroke_color=S.GREY, stroke_width=2)
                        .set_fill(S.GREY_DARK, 1),
                        label("your repo", CAPTION, INK))
@@ -576,7 +581,7 @@ class TwoContainers(VoiceScene):
         hubg_target.shift(np.array([6.42 - hubg_target.get_right()[0],
                                     3.42 - 0.47 - hubg_target.get_top()[1], 0]))
         slot = hub_slot().next_to(hubg_target[0].board, UP, buff=0.05)
-        pull = grey_tag("first build also pulls python:3.12-slim-bookworm (~48 MB)")
+        pull = grey_tag("first build also pulls python:3.12-slim-bookworm (about 48 MB)")
 
         with self.voiceover(SAY[6]) as vo:
             cv.remove(hub, img)
@@ -645,10 +650,9 @@ class TwoContainers(VoiceScene):
             mbox = col_box(l21, i_mb, i_mb + 8, TURN)
             self.play(Create(mbox), substring(l21, "112.26MB").animate.set_color(TURN), run_time=0.5)
             attach(self, l21, mbox)
-            resize(self, t, 3, keep=[l10, l21, l36])
             # the parcel: the build context, mostly .git
-            par = box(9.0, 0.95, DATA, fill_opacity=0.06, radius=0.12, stroke=3).move_to([0, 0.1, 0])
-            phead = VGroup(sans("build context", CAPTION, DATA), mono("· 112 MB", CAPTION, DATA))
+            par = box(9.0, 0.95, DATA, fill_opacity=0.06, radius=0.12, stroke=3).move_to([0, 0.27, 0])
+            phead = VGroup(sans("build context · 112 MB", CAPTION, DATA))
             phead.arrange(RIGHT, buff=0.12)
             at_left(phead, par.get_left()[0] + 0.1, par.get_top()[1] + 0.22)
             inner_l, inner_r = par.get_left()[0] + 0.12, par.get_right()[0] - 0.12
@@ -675,18 +679,19 @@ class TwoContainers(VoiceScene):
             err_t = erratum_tag("no .dockerignore → exercises")
             at_left(err_t, par.get_left()[0], sq_lab.get_center()[1])
             hide = note("the mounts hide both at run time")
-            at_left(hide, par.get_left()[0] + 0.1, err_t.get_bottom()[1] - 0.26)
-            self.play(Create(par), FadeIn(phead, shift=DOWN * 0.1), run_time=0.6)
+            at_left(hide, par.get_left()[0] + 0.1, err_t.get_bottom()[1] - 0.24)
             vo.wait_until("mostly git history")
-            self.play(FadeIn(git, scale=0.9), FadeIn(git_lab), run_time=0.6)
+            resize(self, t, 3, keep=[l10, l21, l36])
+            self.play(Create(par), FadeIn(phead, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeIn(git, scale=0.9), FadeIn(git_lab), run_time=0.5)
             vo.wait_until("that still holds")
             self.play(FadeIn(old_db, shift=DOWN * 0.15), FadeIn(old_lab), run_time=0.6)
             self.play(FadeIn(rest), FadeIn(rest_lab), FadeIn(sq), Create(sq_lead), FadeIn(sq_lab), run_time=0.6)
             vo.wait_until("With no docker ignore")
             self.play(FadeIn(err_t, shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("the image keeps it")
-            self.play(Indicate(git, color=TURN, scale_factor=1.02), Indicate(sq, color=TURN), run_time=0.6)
             self.play(FadeIn(hide, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("the image keeps it")
+            self.play(Indicate(git, color=TURN, scale_factor=1.02), Indicate(sq, color=TURN), run_time=0.7)
         parcel = VGroup(par, phead, git, git_lab, old_db, old_lab, rest, rest_lab, sq, sq_lead, sq_lab,
                         err_t, hide)
 
@@ -719,7 +724,7 @@ class TwoContainers(VoiceScene):
             brk.set_points_as_corners([[xb + 0.09, yt, 0], [xb, yt, 0], [xb, yb, 0], [xb + 0.09, yb, 0]])
             ua = under(substring(l41, "activated."), S.GREY, stroke=3)
             ub = under(substring(l44, "Activating"), S.GREY, stroke=3)
-            err9 = erratum_tag("says it before it does · cosmetic")
+            err9 = tag("erratum · says it before it does · cosmetic", S.GREY, size=CAPTION)
             beside(err9, t, l44, buff=0.35)
             self.play(Create(ua), Create(ub), Create(brk), run_time=0.6)
             attach(self, l41, ua, brk)

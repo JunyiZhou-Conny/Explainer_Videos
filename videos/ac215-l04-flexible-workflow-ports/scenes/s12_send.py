@@ -162,19 +162,24 @@ HOSTPORT = "const hostPort = location.port"
 assert HOSTPORT in L87
 
 # ------------------------------------------------------------------ layout
-PAGE_RIGHT, PAGE_TOP = 6.5, 2.95       # the page's window (its illustration tag sits above it)
+PAGE_RIGHT, PAGE_TOP = 6.5, 3.1        # the page's window (its illustration tag sits under it)
 STRIP_COLS = 56                        # the strip wraps after `"listen_port": 9200, `
 STRIP_W = 0.5 + (STRIP_COLS + 0.5) * cell_width(CAPTION)
+STRIP_BOTTOM = -3.56
 assert LINE14[STRIP_COLS:].startswith('"sender_port"')
 LOW_TOP = -0.98                        # beat 3: the top of the boxes in the lower half
 LAPTOP_SIDE = ("outline", "laptop_label", "zone", "door", "map")   # faded for the lower half
+PAIR_TOP, PAIR_RIGHT = 2.55, 6.3       # beat 2: the two port lines kept from the page
 DIAG_Y = -0.05                         # beat 5: the centre line of the diagram's boxes
 
 
 def place_page(pg: PortPage) -> PortPage:
-    """Right half, window top at PAGE_TOP; port lines 0.1 left (the 5-digit values otherwise
-    touch the port card's right border)."""
+    """Right half, window top at PAGE_TOP (just under the tracker's first row); the illustration
+    tag under the window's right end, so the strip's tag (which runs under the window's left
+    edge) clears the window; port lines 0.1 left (the 5-digit values otherwise touch the port
+    card's right border)."""
     pg.port_box.shift(LEFT * 0.1)
+    pg.tag.next_to(pg.frame, DOWN, buff=0.08).align_to(pg.frame, RIGHT)
     pg.shift([PAGE_RIGHT - pg.frame.get_right()[0], PAGE_TOP - pg.frame.get_top()[1], 0])
     return pg
 
@@ -183,8 +188,8 @@ def place_strip(text: str) -> ReplyStrip:
     """REPLY at the bottom left (left of and under the page), its tag above its left end."""
     st = ReplyStrip(text, width=STRIP_W)
     assert [r.text for r in st.rows] == [text[:STRIP_COLS], text[STRIP_COLS:]], [r.text for r in st.rows]
-    st.tag.next_to(st.frame, UP, buff=0.08).align_to(st.frame, LEFT)
-    st.shift([-6.5 - st.frame.get_left()[0], -3.5 - st.frame.get_bottom()[1], 0])
+    st.tag.next_to(st.frame, UP, buff=0.05).align_to(st.frame, LEFT)
+    st.shift([-6.5 - st.frame.get_left()[0], STRIP_BOTTOM - st.frame.get_bottom()[1], 0])
     return st
 
 

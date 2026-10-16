@@ -25,8 +25,8 @@ Beats (script.md "## S05", one voiceover block each):
     YELLOW tag "remember this line" (wiggles on "Soon").
  5  Bar on line 10; its card line turns PINK, "where the key is · a relative path", with a small
     PINK signpost glyph; `secrets/` underlines PINK.
- 6  The panel scrolls to PANEL(12–21). The nine `\` pulse on "backslash", then the nine `&&` on
-    "double ampersands"; `RUN` drops one fat ORANGE slab. The
+ 6  The panel scrolls to PANEL(12–21); `RUN` pulses on "one RUN instruction". The nine `\` pulse
+    on "backslash", then the nine `&&` on "double ampersands"; `RUN` drops one fat ORANGE slab. The
     slab zooms up (an ORANGE inset over the card, dashed zoom lines to the slab): "apt lists" pages
     appear (line 12), ORANGE packages fill in (13–14), the pages crumple and vanish inside the slab
     (15–16); on "cost nothing" the "apt lists" label is struck through and the apt slab on the
@@ -399,6 +399,8 @@ class WriteDockerfile(VoiceScene):
         lab_pk = sans("build-essential, ffmpeg", PT, S.GREY).move_to([zx0 + 2.95, yl, 0])
         with self.voiceover(SAY[6]) as vo:
             self.swap(p12, extra=[FadeOut(b), FadeOut(u_sec)])
+            vo.wait_until("one RUN instruction")        # (else ~4 s without motion after the swap)
+            self.play(Indicate(span(p12, 12, "RUN"), color=TURN, scale_factor=1.2), run_time=0.8)
             vo.wait_until("ends in a backslash")
             slashes = [span(p12, n, "\\") for n in range(12, 21)]
             self.play(LaggedStart(*[Indicate(a, color=TURN, scale_factor=1.3) for a in slashes],

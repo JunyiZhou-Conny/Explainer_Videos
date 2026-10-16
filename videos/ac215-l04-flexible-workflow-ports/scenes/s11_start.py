@@ -136,6 +136,7 @@ from manim import (
     FadeTransform,
     Indicate,
     LaggedStart,
+    Line,
     Rectangle,
     RoundedRectangle,
     ShowIncreasingSubsets,
@@ -232,8 +233,31 @@ P20 = line_pitch(CAPTION)
 
 
 # ------------------------------------------------------------------ helpers
+def cue(scene, vo, phrase: str, shift: float = 0.0) -> None:
+    """vo.wait_until(phrase), moved by `shift` seconds. Inside a sentence an anchor is interpolated
+    by character count (PLAYBOOK §2.6); the shifts below were measured on the cached Kokoro clips
+    (af_heart, 0.9): the clause pauses in the scene's audio, cross-checked by synthesizing each
+    sentence up to the clause. "127.0.0.1" alone takes 3 s. Re-measure after a SAY edit."""
+    t = vo.clip.time_of(phrase)
+    if t is None:                     # logs "voiceover anchor not found" (an error, PLAYBOOK 2.6)
+        vo.wait_until(phrase)
+        return
+    left = t + shift - vo.elapsed
+    if left > 1 / 60:
+        scene.wait(left)
+
+
 def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
+
+
+def base_under(span, color: str = S.GREY, stroke: float = 3, buff: float = 0.04):
+    """An underline at the baseline of a code span (through any descender), so that a mark under
+    one row does not run into the capitals of the row below (`under` goes below the descender of
+    "processor", which is where line 14 starts)."""
+    bots = sorted(g.get_bottom()[1] for g in span)
+    y = bots[len(bots) // 2] - buff                   # the median glyph bottom: the baseline
+    return Line([span.get_left()[0], y, 0], [span.get_right()[0], y, 0], color=color, stroke_width=stroke)
 
 
 def glyph_box(line, sub: str, color: str = TURN, pad: float = 0.06, occurrence: int = 0):
@@ -272,14 +296,15 @@ def slim_times(t, rows):
             tg.box.stretch_to_fit_height(t.pitch - 0.05)
 
 
-def type_rows(scene, t, rows: list[str], type_time: float = 2.0):
+def type_rows(scene, t, rows: list[str], type_time: float = 2.0, room_after: int = 0):
     """The README's rows of a multi-line command typed under the long prompt: the prompt alone on
     its row, then each README row indented 4 (continuations keep their own 2 spaces). Returns
-    a VGroup with .rows (rows[0] is the prompt row)."""
+    a VGroup with .rows (rows[0] is the prompt row). `room_after`: rows of output to make room
+    for in the same scroll (one scroll instead of two before a one-line output)."""
     _drop_bare(scene, t)
     texts = [t.prompt] + ["    " + r for r in rows]
     assert all(len(s) <= t.max_chars for s in texts), texts
-    t._make_room(scene, len(texts))
+    t._make_room(scene, len(texts) + room_after)
     out = []
     for k, s in enumerate(texts):
         ln = mono_line(s, t.size, INK, t2c=t._prompt_colors(t.prompt) if k == 0 else None)
@@ -416,8 +441,8 @@ class BuildAndStart(VoiceScene):
         c_pr.shift(RIGHT * (-0.35 - c_pr.frame.get_right()[0]))
         c_gw.shift(RIGHT * (0.35 - c_gw.frame.get_left()[0]))
         t = term(P_TOY, rows=7, title="laptop")
-        cards.shift(UP * ((TOP - 0.02) - c_pr.header.get_top()[1]))
-        assert c_pr.frame.get_bottom()[1] > t.box.get_top()[1] + 0.05
+        cards.shift(UP * ((TOP - 0.09) - c_pr.header.get_top()[1]))   # clear of the tracker's caption
+        assert c_pr.frame.get_bottom()[1] > t.box.get_top()[1] + 0.12
         t6 = time_tag("6.4s")
         t6.next_to(c_pr.frame, LEFT, buff=0.1).set_y(c_pr.rows[1].strut.get_center()[1])
         pull = note("first build: Docker also pulls python:3.14-slim")
@@ -480,7 +505,10 @@ class BuildAndStart(VoiceScene):
         net.part("gw_box", net.boxes["gateway"], shown=False, into=net.parts["boxes"])
         squash(net, K_NET)
         outline = net.parts["outline"]
-        net.shift(UP * (STRIP_TOP + 0.08 - outline.get_bottom()[1]))
+        # the rail label's "y" would sit on the outline's bottom edge: lower that edge a little
+        outline.stretch_to_fit_height(outline.height + 0.06, about_edge=UP)
+        net.shift(UP * (STRIP_TOP + 0.06 - outline.get_bottom()[1]))
+        assert net.parts["rail_label"].get_bottom()[1] - outline.get_bottom()[1] > 0.06
         pp = src_panel(PROC_PY, 42, 43, size=20)
         pp.shift([6.5 - pp.get_right()[0], TOP - pp.get_top()[1], 0])
         assert pp.get_bottom()[1] > net.parts["laptop_label"].get_top()[1] + 0.03
@@ -495,20 +523,23 @@ class BuildAndStart(VoiceScene):
         no_door = note("no street door").next_to(ghost, LEFT, buff=0.15)
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(cards, t6, cached, eqs, u03)), tr.goto(4), run_time=0.5)
-            run_p = type_rows(self, t, PR_RUN, type_time=1.6)
+            run_p = type_rows(self, t, PR_RUN, type_time=1.5, room_after=1)
             t.print(self, [PR_ID], run_time=0.35)
-            resize(self, t, 3, run_time=0.6, extra=[FadeIn(pp, shift=DOWN * 0.1), FadeIn(net)])
-            self.play(*net.parts_in("plug_processor", anim=Create), run_time=0.5)
-            vo.wait_until("with PORT set to 9200")
+            # "with PORT set to 9200" is spoken while the rows are typed: light it at once
+            cue(self, vo, "with PORT set to 9200", -0.48)
             p92 = substring(run_p.rows[2], "PORT=9200")
-            self.play(p92.animate.set_color(LOOKUP), port_span.animate.set_color(LOOKUP), run_time=0.5)
-            vo.wait_until("and no dash p")
+            self.play(p92.animate.set_color(LOOKUP), run_time=0.4)
+            resize(self, t, 3, run_time=0.6, extra=[FadeIn(pp, shift=DOWN * 0.1), FadeIn(net)])
+            self.play(port_span.animate.set_color(LOOKUP), *net.parts_in("plug_processor", anim=Create),
+                      run_time=0.5)
+            cue(self, vo, "and no dash p", -0.25)
             self.play(FadeIn(ch113, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("It listens on 9200 inside its own box")
             self.play(net.open_room("processor", 9200, run_time=0.9))
             room_p = net.rooms["processor"]
+            cue(self, vo, "inside its own box", 0.62)
             self.play(flash(room_p, CTR, 1.25), Create(e_ring), FadeIn(e_tag, shift=RIGHT * 0.1), run_time=0.7)
-            vo.wait_until("but nothing on your laptop leads to it")
+            cue(self, vo, "but nothing on your laptop leads to it", 0.90)
             net.attach(self, ghost, no_door, anims=[Create(ghost), FadeIn(no_door)],
                        extra=[flash(net.wall, S.GREY, 1.0)], run_time=0.7)
 
@@ -527,38 +558,39 @@ class BuildAndStart(VoiceScene):
             assert net.get_top()[1] + up_dy <= TOP + 0.01
             resize(self, t, 7, run_time=0.7, extra=[net.animate.shift(UP * up_dy)])
             assert outline.get_bottom()[1] > t.box.get_top()[1] + 0.04, (outline.get_bottom()[1], t.box.get_top()[1])
-            run_g = type_rows(self, t, GW_RUN, type_time=2.2)
+            run_g = type_rows(self, t, GW_RUN, type_time=1.9, room_after=1)
             t.print(self, [GW_ID], run_time=0.35)
-            self.play(*net.parts_in("gw_box"), run_time=0.4)
-            self.play(*net.parts_in("plug_gateway", anim=Create), run_time=0.4)
+            # the container exists: its box plugs in, and the -p flag is boxed ("Dash p publishes a
+            # port" was spoken while it was typed). The door and the room then open on their words,
+            # above the 7-row terminal; the strip comes after, for the legend's band.
             p_row = run_g.rows[2]
             p_box = glyph_box(p_row, "-p " + FLAG, LOOKUP)
-            pin(self, p_row, p_box, anim=Create(p_box), run_time=0.4)
-            keep = [run_g.rows[2], run_g.rows[3], run_g.rows[4]]
-            resize(self, t, 3, keep=keep, run_time=0.8, extra=[net.animate.shift(DOWN * up_dy)])
-            vo.wait_until("it opens a street door on your laptop")
+            pin(self, p_row, p_box, run_time=0.5,
+                anim=AnimationGroup(Create(p_box), *net.parts_in("gw_box"),
+                                    *net.parts_in("plug_gateway", anim=Create)))
+            cue(self, vo, "it opens a street door on your laptop", 0.57)
             net.detach(self, ghost, no_door, anims=[FadeOut(ghost), FadeOut(no_door)],
                        extra=[*net.parts_in("door_frame"),
                               *net.parts_in("door_label", anim=lambda m: TransformFromCopy(substring(p_row, "127.0.0.1:8090"), m))],
                        run_time=0.9)
             self.play(flash(d1.frame, TURN, 1.2), run_time=0.5)
-            vo.wait_until("that leads to a room inside the container")
+            cue(self, vo, "that leads to a room inside the container", 0.30)
             self.play(net.open_room("gateway", 9100, run_time=0.9))
             self.play(*net.parts_in("map", anim=Create), run_time=0.9)
+            keep = [run_g.rows[2], run_g.rows[3], run_g.rows[4]]
+            resize(self, t, 3, keep=keep, run_time=0.8, extra=[net.animate.shift(DOWN * up_dy)])
             vo.wait_until("The order is")
             self.play(FadeIn(ch227, shift=DOWN * 0.15), run_time=0.5)
-            for w in terms:
+            for w, (phrase, dt) in zip(terms, (("IP address", -0.60), ("host port", -0.85), ("container port", -1.05))):
+                cue(self, vo, phrase, dt)
                 self.play(flash(w, TURN, 1.1, 0.55))
-                self.wait(0.15)
             # the three numbers, in the spoken order: boxed in the flag, lifted into the legend
             targets = [text_glyphs(d1.label, "127.0.0.1:8090", "127.0.0.1"), d1.frame, net.rooms["gateway"]]
             subs = ["127.0.0.1", "8090", "9100"]
+            spoken = [("127.0.0.1", -1.24), ("then door 8090", 0.06), ("then room 9100", 0.0)]
             boxes = VGroup()
             for k, (sub, item, tgt) in enumerate(zip(subs, legend, targets)):
-                if k == 1:
-                    vo.wait_until("then door 8090")
-                elif k == 2:
-                    vo.wait_until("then room 9100")
+                cue(self, vo, *spoken[k])
                 assert p_row.text.count(sub) == 1
                 src = substring(p_row, sub)
                 bx = glyph_box(p_row, sub, TURN, pad=0.02)
@@ -567,7 +599,7 @@ class BuildAndStart(VoiceScene):
                 self.play(TransformFromCopy(src, item.number), FadeIn(item.label, shift=DOWN * 0.1),
                           flash(tgt, TURN, 1.15, 0.8), run_time=0.8)
                 if k == 0:
-                    vo.wait_until("meaning this laptop only")
+                    cue(self, vo, "meaning this laptop only", 1.03)
                     only = text_glyphs(item.label, "IP address · this laptop only", "this laptop only")
                     self.play(flash(only, TURN, 1.1), run_time=0.7)
 

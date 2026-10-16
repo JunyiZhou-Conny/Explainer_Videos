@@ -21,11 +21,13 @@ Beats (script.md "## S06", one voiceover block each):
  2  Enter: the picture, the chip and the labels go; ▶ your turn beside the command ("Pause and run
     it"); the terminal grows to 13 rows, its title becomes "laptop · the same build, full log";
     top right, the GREY caption "your terminal shows a compact live view; / this is the full log
-    (--progress=plain)". TERM(12-build.txt: 9, 23, …, 148-149, …, 1368, 1375, 1377): `[2/5]` gets a
-    TEAL box and the TEAL badge "build step 2" on the `…` row under it; `237 newly installed` and
-    `205 MB` underline ORANGE, `uv-0.13.0` turns PURPLE, `DONE 46.9s` underlines YELLOW; the framed
-    GREY row tag "first build: Docker also pulls python:3.12-slim-bookworm" beside it (all in the
-    tag's font: an annotation, never a log line).
+    (--progress=plain)" (its first line flashes on "that folds each", the flag on "add dash dash",
+    the clause that tells the viewer how to get this log).
+    TERM(12-build.txt: 9, 23, …, 148-149, …, 1368, 1375, 1377): `[2/5]` gets a TEAL box and the
+    TEAL badge "build step 2" on the `…` row under it; `237 newly installed` and `205 MB` underline
+    ORANGE, `uv-0.13.0` turns PURPLE, `DONE 46.9s` underlines YELLOW; the framed GREY row tag
+    "first build: Docker also pulls python:3.12-slim-bookworm" beside it (all in the tag's font: an
+    annotation, never a log line).
  3  TERM(12-build.txt: 1379, 1382) with badges "build step 3", "build step 4" (and `[k/5]` TEAL);
     then 1385-1388 (wrap: 1386 folds): badge "build step 5"; line 1386 underlines ORANGE, line
     1387's `/home/app/.venv` turns GREEN, a GREY tag "only the project itself" beside line 1388.
@@ -41,13 +43,13 @@ Beats (script.md "## S06", one voiceover block each):
     types `docker images transcribe_audio` (extra) -> 13-images.txt lines 2-3 (cut at 65: "357…";
     a hard wrap would split "357M|B" and need 6 rows); `1.35GB` gets a YELLOW bar; a GREY brace
     "≈ 1 GB of layers" + note "+ 357 MB compressed copy / = 1.35 GB disk usage · this machine";
-    the cut "357…" cell underlines GREY and a thin GREY leader runs from it (right, up the gap at
-    the terminal's right edge, left) to "+ 357 MB". On "By far the biggest" the apt slab swells
-    while the empty uv sync slab thins to a hairline (the brace and leader follow); `842MB`
-    (17-history.txt line 9) lands in it on "842 megabytes", with the GREY row tag "docker history ·
-    part 2" under it (its source). While the SAY lists ffmpeg and the libraries, the five slabs
-    take TEAL badges 1-5 (fanned, with leader lines: three slabs are thin); the thin GREY COPY
-    slab pulses on "the copied folder is tiny".
+    the cut "357…" cell underlines GREY and a thin GREY leader runs from it (right, out of the
+    terminal, up just outside its right border, left) to "+ 357 MB". On "By far the biggest" the
+    apt slab swells while the empty uv sync slab thins to a hairline (the brace and leader follow);
+    `842MB` (17-history.txt line 9) lands in it on "842 megabytes", with the GREY row tag "docker
+    history · part 2" under it (its source). While the SAY lists ffmpeg and the libraries, the five
+    slabs take TEAL badges 1-5 (fanned, with leader lines: three slabs are thin); the thin GREY
+    COPY slab pulses on "the copied folder is tiny".
  6  TRACKER A5. The strip and the brace go. Bottom: a RED-bordered panel, header "if you skipped uv
     init", GREY tag "what if · a real run" (26-g21 is a recorded extra run, ASSETS.md, so not
     `illustration`), TERM(26-g21-no-pyproject.txt: 34, 51) in RED (folded
@@ -387,17 +389,17 @@ def restack(st: LayerStack, heights: dict, label_top=("apt",), hide_labels=("syn
     return anims, targets
 
 
-def brace_group(boxes, cell) -> VGroup:
+def brace_group(boxes, cell, xv: float) -> VGroup:
     """GREY brace along the slabs with "≈ 1 GB of layers" and the disk-usage note, and a thin GREY
     leader from the docker images row's CONTENT SIZE cell `cell` (cut "357…") to "+ 357 MB": it
-    runs right of the row, up the free gap at the terminal's right edge, then left to the note."""
+    runs right of the row, out of the terminal, up at x = `xv` (just outside the terminal's right
+    border, so it never runs along the frame or through its title bar), then left to the note."""
     br = Brace(VGroup(*boxes), RIGHT, color=S.GREY, buff=0.12)
     txt = VGroup(sans("≈ 1 GB of layers", 20, INK),
                  label("+ 357 MB compressed copy", 20, S.GREY),
                  label("= 1.35 GB disk usage · this machine", 20, S.GREY))
     txt.arrange(DOWN, aligned_edge=LEFT, buff=0.1).next_to(br, RIGHT, buff=0.15)
     x0, y0 = cell.get_right()[0] + 0.06, cell.get_center()[1]
-    xv = cell.get_right()[0] + 0.2
     yn = txt[1].get_center()[1]
     lead = VMobject(stroke_color=S.GREY, stroke_width=2).set_points_as_corners(
         [[x0, y0, 0], [xv, y0, 0], [xv, yn, 0], [txt[1].get_right()[0] + 0.12, yn, 0]])
@@ -560,8 +562,12 @@ class BuildImage(VoiceScene):
             resize(self, t, BIG, run_time=0.8, extra=[FadeIn(live, shift=DOWN * 0.1)])
             new_title = mono("laptop · the same build, full log", 20, S.GREY).move_to(t.title)
             self.play(Transform(t.title, new_title), run_time=0.45)
+            at(self, vo, "that folds each", 0.17)
+            self.play(Indicate(live[0], color=INK, scale_factor=1.06), run_time=0.9)
             at(self, vo, "Here are the full")
             outA = t.print(self, LOG_A, run_time=1.4, lag=0.12)
+            at(self, vo, "add dash dash", -0.31)
+            self.play(Indicate(live[1][1], color=INK, scale_factor=1.15), run_time=0.9)
             r23, dots1, r148, r149, r1375, r1377 = outA[1], outA[2], outA[3], outA[4], outA[7], outA[8]
 
             at(self, vo, "Build step 2")
@@ -698,7 +704,8 @@ class BuildImage(VoiceScene):
             # the note's 357 MB comes from the cut CONTENT SIZE cell: GREY underline + leader
             c357 = substring(out5[1], "357…")
             u357 = uline(out5[1], "357…", S.GREY, stroke=2.5)
-            brace = brace_group([st.slabs[n].box for n in st.order], c357)
+            x_lead = t.box.get_right()[0] + 0.16          # the leader's rise, outside the terminal
+            brace = brace_group([st.slabs[n].box for n in st.order], c357, x_lead)
             self.play(GrowFromCenter(brace.brace), FadeIn(brace.text, shift=LEFT * 0.1), Create(u357),
                       run_time=0.7)
             stick(self, out5[1], u357)
@@ -706,7 +713,7 @@ class BuildImage(VoiceScene):
 
             at(self, vo, "By far the biggest")
             anims, targets = restack(st, {"apt": APT_H, "sync": THIN})
-            brace2 = brace_group([targets[n] for n in st.order], c357)
+            brace2 = brace_group([targets[n] for n in st.order], c357, x_lead)
             self.play(*anims, Transform(brace, brace2), run_time=1.2)
             apt = st.slabs["apt"]
             size = mono(APT_SIZE, 22, SYSTEM).move_to(apt.box).shift(DOWN * 0.12)
