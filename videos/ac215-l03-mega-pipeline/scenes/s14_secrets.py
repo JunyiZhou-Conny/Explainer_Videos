@@ -28,12 +28,13 @@ Beats (script.md "## S14", one voiceover block each):
     size" above the terminal ("82" underlined GREY). RED tag "every image you built today" beside
     the box; on "step 2 came before step 5" the tracker's dots 2 and 5 flash and its caption reads
     "step 2: Key in secrets · before step 5: Build image", then returns.
- 3  The terminal shrinks to the strip (line 6 + the prompt), the box glides home, the folder and the
-    book return. PANEL transcribe_audio/Dockerfile line 26 (`COPY --chown=app:app . ./`, "from
-    transcribe_audio/README.md · lines 41–90") bottom right, a RED arrow to `mega-pipeline.json`;
-    caption "Docker doesn't read .gitignore" (the .gitignore sieve pulses GREY). Lecture 2's parcel
-    replays small: the folder's files and the key pack into a "build context" parcel, it moves into
-    the box and unpacks into the COPY slab (RED flash). Then the panel goes: a GREY README card
+ 3  The terminal shrinks to the strip (line 6 + the prompt) as the box glides home; the folder and
+    the book return. Caption "Docker doesn't read .gitignore" (the .gitignore sieve pulses GREY).
+    Lecture 2's parcel replays small: the folder's files, then the key ("key included"), pack into a
+    "build context" parcel. On "the copy line unpacks": PANEL transcribe_audio/Dockerfile line 26
+    (`COPY --chown=app:app . ./`, TEAL bar; "from transcribe_audio/README.md · lines 41–90") top
+    right, the parcel moves into the box and unpacks into the COPY slab, and a RED arrow runs from
+    the panel to `mega-pipeline.json` (RED flash). Then the panel goes: a GREY README card
     `README.md · lines 103–106` + `erratum`: "we’ve already added a .gitignore entry / so the file
     won’t be pushed accidentally" -> caption "about Git only · says nothing about the image" (the
     book pulses, the box flashes RED).
@@ -43,10 +44,11 @@ Beats (script.md "## S14", one voiceover block each):
     five component folders" underlines YELLOW. At the end the box parks and the terminal grows to 7
     rows (cleared) for the rebuild.
  5  The COPY slab clears (the rebuild). `docker build -t transcribe_audio .` (full log) ->
-    24-g1 lines 12-13, …, 30-31; `docker run --rm --entrypoint ls transcribe_audio -la /app/secrets`
-    (extra) -> 25-g1 line 2, GREEN. `49B` gets a GREEN bar and the GREY tag "was 2B: now there's a
-    file". The terminal shrinks to the strip, the box glides home, the folder pours in again: the
-    key stays on the .dockerignore sieve; GREEN check beside the clean COPY slab.
+    24-g1 lines 12-13, …, 30-31; `49B` gets a GREEN bar and the GREY tag "was 2B: now there's a
+    file"; `docker run --rm --entrypoint ls transcribe_audio -la /app/secrets` (extra) -> 25-g1
+    line 2, GREEN. The terminal shrinks to the strip as the box glides home; on "The key stayed out"
+    the folder pours in again: the key stays on the .dockerignore sieve; GREEN check beside the clean
+    COPY slab.
  6  V3 (common.Window, key=True; the image's /app holds cli.py, Dockerfile, pyproject.toml, no
     secrets/): the command shown in a chip, `docker run --rm -ti -v "$(pwd):/app" transcribe_audio`;
     the mount brings the laptop sheet (secrets/ with its GOLD key) over /app; the PINK signpost
@@ -370,10 +372,10 @@ def home_shift(v6):
     return np.array([CRATE_FX - v6.crate.front.get_center()[0], CRATE_B - v6.crate.get_bottom()[1], 0])
 
 
-def pour_image(scene, v6, caught: bool, run_time: float = 1.3):
+def pour_image(scene, v6, caught: bool, run_time: float = 1.3, extra=()):
     """The build context pours into the box: copies of the folder's files fly into the COPY slab and
     vanish into it; the key lands in the slab (it stays: returns it) or, with the .dockerignore sieve
-    lowered, on the sieve (it becomes part of the sieve)."""
+    lowered, on the sieve (it becomes part of the sieve). `extra`: animations played with it."""
     files = VGroup(*[r.glyph.copy() for r in v6.folder.rows])
     k = v6.key.copy()
     dest = v6.slab.get_center()
@@ -381,10 +383,10 @@ def pour_image(scene, v6, caught: bool, run_time: float = 1.3):
     lag = LaggedStart(*[f.animate.move_to(dest).scale(0.5).set_opacity(0) for f in files], lag_ratio=0.12)
     if caught:
         k_dest = v6.sieves["image"].bowl.get_center() + UP * 0.12
-        scene.play(lag, k.animate.move_to(k_dest), run_time=run_time)
+        scene.play(lag, k.animate.move_to(k_dest), *extra, run_time=run_time)
     else:
         k_tgt = k.copy().scale_to_fit_height(0.2).move_to(v6.key_spot)
-        scene.play(lag, Transform(k, k_tgt), run_time=run_time)
+        scene.play(lag, Transform(k, k_tgt), *extra, run_time=run_time)
     scene.remove(files)
     for a in (lag,):
         if a.group in scene.mobjects:
@@ -452,7 +454,7 @@ class KeepTheKeyOut(VoiceScene):
         card = compact_ponder(PONDER_Q)
         place(card, cx=0, bottom=-3.5)
         assert card.get_top()[1] < CRATE_B + PONDER_UP - 0.1, card.get_top()
-        qm = sans("?", 40, TURN, weight="BOLD").move_to(v6.key_spot).shift(UP * 0.1)
+        qm = sans("?", 34, TURN, weight="BOLD").move_to(v6.key_spot + UP * PONDER_UP)   # key_spot is HOME
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(v6, shift=UP * 0.1), run_time=0.8)
             self.play(Indicate(v6.key, color=KEY, scale_factor=1.5), run_time=0.9)
@@ -473,8 +475,8 @@ class KeepTheKeyOut(VoiceScene):
         tr = tracker("A", 13)
         t = term(P_SYN, STRIP)
         seed(t, P_SYN + " ")
-        st = standin_tag()
-        place(st, left=FOLDER_L, top=v6.folder.get_bottom()[1] - 0.08)
+        st = standin_tag()             # under "your laptop" at HOME (V6 is still raised for the ponder here)
+        place(st, left=FOLDER_L, top=v6.folder.get_bottom()[1] - PONDER_UP - 0.08)
         assert st.get_bottom()[1] > ST4 + 0.08, st.get_bottom()
         gi = src_panel("transcribe_audio/.gitignore", 3, 3)
         place(gi, right=EDGE, top=PANEL_TOP - 0.15)
@@ -484,13 +486,13 @@ class KeepTheKeyOut(VoiceScene):
             self.play(v6.animate.shift(DOWN * PONDER_UP), FadeIn(tr, shift=DOWN * 0.1), FadeIn(t, shift=UP * 0.1),
                       run_time=0.7)
             self.play(caption_extra(tr), run_time=0.3)
+            vo.wait_until("with an 82 byte stand-in")
+            v6.attach(self, st, anims=[FadeIn(st, shift=DOWN * 0.1)], run_time=0.4, into=v6.folder,
+                      extra=[Indicate(v6.key, color=KEY, scale_factor=1.4)])
             c_cd = type_in(self, t, CD, 0.7)
             pin(self, c_cd, xtag(t, c_cd), run_time=0.25)
             t.set_prompt(P_A)
             bare(self, t)
-            vo.wait_until("with an 82 byte stand-in")
-            v6.attach(self, st, anims=[FadeIn(st, shift=DOWN * 0.1)], run_time=0.4, into=v6.folder,
-                      extra=[Indicate(v6.key, color=KEY, scale_factor=1.4)])
             c_ls = type_in(self, t, LS_S, 0.35)
             print_in(self, t, LS_OUT, 0.2)
             pin(self, c_ls, xtag(t, c_ls), run_time=0.2)
@@ -503,33 +505,33 @@ class KeepTheKeyOut(VoiceScene):
             pin(self, c_ci, xtag(t, c_ci), run_time=0.2)
             vo.wait_until("by line 3 of dot gitignore")
             u_ci = uline(o_ci[0], ".gitignore:3:/secrets", TURN)
-            self.play(Create(u_ci), run_time=0.3)
+            self.play(Create(u_ci), FadeIn(gi, shift=UP * 0.1), run_time=0.4)
             stick(self, o_ci[0], u_ci)
             v6.lower(self, "git", run_time=0.5)
-            self.play(FadeIn(gi, shift=UP * 0.1), run_time=0.4)
             v6.pour(self, "git", run_time=1.3)
-            self.play(Indicate(v6.sieves["git"], color=INK, scale_factor=1.06), run_time=0.6)
+            # the panel goes with the payoff, so beat 2 starts on the build
+            self.play(Indicate(v6.sieves["git"], color=INK, scale_factor=1.06), FadeOut(gi), run_time=0.6)
 
         # ========================================================== 2 · the key is in the image
         cap82 = gray_line("stand-in: 82 bytes · yours shows your key's real size")
         place(cap82, left=-6.3, bottom=ST7 + 0.12)
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(gi), run_time=0.3)
-            c_b = type_in(self, t, BUILD, 0.7)
-            pin(self, c_b, xtag(t, c_b, "extra here"), run_time=0.2)
-            self.play(retitle(t, "laptop · the same build, full log"), run_time=0.3)
+            c_b = type_in(self, t, BUILD, 0.6)
+            x_b = xtag(t, c_b, "extra here")
+            pin(self, c_b, x_b, run_time=0.3,
+                anim=AnimationGroup(FadeIn(x_b, shift=LEFT * 0.1), retitle(t, "laptop · the same build, full log")))
             o_b = print_in(self, t, B1_OUT, 0.3)
+            # COPY underlines TEAL as the build context pours into the box (no sieve: the key lands)
             u_cp = uline(o_b[0], "COPY --chown=app:app . ./", CTR)
-            self.play(Create(u_cp), run_time=0.3)
+            k_in = pour_image(self, v6, caught=False, run_time=1.1,
+                              extra=[Create(u_cp, rate_func=lambda a: smooth(min(1.0, 3 * a)))])
             stick(self, o_b[0], u_cp)
-            k_in = pour_image(self, v6, caught=False, run_time=1.2)
             self.play(v6.slab.animate.set_stroke(ERR, 3), Indicate(k_in, color=ERR, scale_factor=1.6), run_time=0.5)
             # the box parks top right; the terminal grows to 7 rows
             v6.hide(self, "folder", "book", "sieve_git", run_time=0.5,
-                    extra=[m.animate.shift(park_shift(v6)) for m in crate_group(v6)])
+                    extra=[*[m.animate.shift(park_shift(v6)) for m in crate_group(v6)], retitle(t, "laptop")])
             resize(self, t, PARKED, run_time=0.5)
-            self.play(retitle(t, "laptop"), run_time=0.2)
-            c_r = type_in(self, t, RUN_LS, 0.9)
+            c_r = type_in(self, t, RUN_LS, 0.7)
             pin(self, c_r, xtag(t, c_r), run_time=0.2)
             vo.wait_until("There it is")
             o_r = print_in(self, t, KIN_OUT, 0.4)
@@ -568,40 +570,53 @@ class KeepTheKeyOut(VoiceScene):
         hs = home_shift(v6)                # the box is parked now: check against its home place
         assert parcel.get_bottom()[1] > ST4 + 0.1 and parcel.get_right()[0] < v6.crate.get_left()[0] + hs[0] - 0.3
         rc = self._note_card()
-        place(rc, right=EDGE, top=PANEL_TOP)
+        place(rc, right=EDGE, top=PANEL_TOP + 0.06)    # its erratum pill sits right of the tracker band
+        assert rc.get_left()[0] > tr.get_right()[0] + 0.3 or rc.get_top()[1] < TRACK_BOTTOM, rc.get_left()
         git_only = label("about Git only · says nothing about the image", 20, S.GREY)
         place(git_only, right=EDGE, top=rc.get_bottom()[1] - 0.12)
         assert git_only.get_bottom()[1] > v6.crate.get_top()[1] + hs[1] + 0.1, git_only.get_bottom()   # its sieve is hidden here
+        bar26 = line_bar(p26.code, 0, CTR, 0.22)
         with self.voiceover(SAY[3]) as vo:
+            # one move back to HOME: the strip (line 6 + the prompt), the box glides home, V6 returns
             self.play(FadeOut(VGroup(cap82, every)), run_time=0.3)
-            resize(self, t, STRIP, keep=[l6], run_time=0.5, extra=[caption_extra(tr)])
+            resize(self, t, STRIP, keep=[l6], run_time=0.5,
+                   extra=[caption_extra(tr), *[m.animate.shift(home_shift(v6)) for m in crate_group(v6)]])
             bare(self, t)
-            self.play(*[m.animate.shift(home_shift(v6)) for m in crate_group(v6)], run_time=0.6)
             v6.reveal(self, "folder", "book", "sieve_git", run_time=0.5)
             assert nogit.get_top()[1] < v6.book.get_bottom()[1] - 0.05, (nogit.get_top(), v6.book.get_bottom())
+            # "Docker doesn't read dot gitignore": the caption, the .gitignore sieve pulses GREY
+            self.play(Write(nogit), Indicate(v6.sieves["git"], color=S.GREY, scale_factor=1.08), run_time=0.7)
+            vo.wait_until("Remember lecture 2's parcel")
+            self.play(FadeIn(parcel, scale=0.8), run_time=0.5)
+            vo.wait_until("the build context is the whole folder")
+            files = VGroup(*[r.glyph.copy() for r in v6.folder.rows])
+            self.add(files)
+            self.play(LaggedStart(*[f.animate.move_to(parcel.frame).scale(0.4).set_opacity(0) for f in files],
+                                  lag_ratio=0.15), run_time=1.2)
+            self.remove(files)
+            vo.wait_until("key included")
+            kc = v6.key.copy()
+            self.add(kc)
+            self.play(kc.animate.scale(0.6).move_to(parcel.frame), Indicate(v6.key, color=KEY, scale_factor=1.4),
+                      run_time=0.7)
+            self.remove(kc)
+            parcel.add(kc)                 # the key rides in the parcel
+            vo.wait_until("and the copy line unpacks")
             nm6 = substring(l6, "mega-pipeline.json")
             ax = nm6.get_left()[0] + 0.3
             assert p26.get_left()[0] < ax - 0.2 and ax < v6.crate.get_left()[0] - 0.3, (ax, p26.get_left())
             arr = Arrow([ax, src26.get_bottom()[1] - 0.04, 0], [ax, l6.strut.get_top()[1] + 0.02, 0], buff=0,
                         color=ERR, stroke_width=5, max_tip_length_to_length_ratio=0.12)
-            self.play(FadeIn(p26, shift=UP * 0.1), FadeIn(src26), run_time=0.5)
-            self.play(GrowArrow(arr), Indicate(nm6, color=ERR, scale_factor=1.15), run_time=0.5)
-            self.play(Write(nogit), Indicate(v6.sieves["git"], color=S.GREY, scale_factor=1.08), run_time=0.7)
-            vo.wait_until("Remember lecture 2's parcel")
-            files = VGroup(*[r.glyph.copy() for r in v6.folder.rows], v6.key.copy())
-            self.add(files)
-            self.play(FadeIn(parcel, scale=0.8), run_time=0.4)
-            self.play(LaggedStart(*[f.animate.move_to(parcel.frame).scale(0.4).set_opacity(0) for f in files],
-                                  lag_ratio=0.12), run_time=1.1)
-            self.remove(files)
-            vo.wait_until("and the copy line unpacks")
-            self.play(Indicate(p26.code, color=CTR, scale_factor=1.05), run_time=0.5)
+            self.play(FadeIn(p26, shift=UP * 0.1), FadeIn(src26), run_time=0.4)
+            self.play(FadeIn(bar26), run_time=0.25)
             self.play(parcel.animate.move_to(v6.slab).scale(0.35).set_opacity(0), run_time=0.8)
             self.remove(parcel)
-            self.play(Indicate(v6.slab, color=ERR, scale_factor=1.15), Indicate(k_in, color=ERR, scale_factor=1.6),
+            # the COPY line put mega-pipeline.json into the image
+            self.play(GrowArrow(arr), Indicate(nm6, color=ERR, scale_factor=1.15),
+                      Indicate(v6.slab, color=ERR, scale_factor=1.15), Indicate(k_in, color=ERR, scale_factor=1.6),
                       run_time=0.7)
             vo.wait_until("The README's secrets note")
-            self.play(FadeOut(VGroup(p26, src26, nogit, arr)), run_time=0.4)
+            self.play(FadeOut(VGroup(p26, bar26, src26, nogit, arr)), run_time=0.4)
             self.play(FadeIn(rc, shift=UP * 0.1), run_time=0.5)
             self.play(FadeIn(git_only, shift=UP * 0.1), Indicate(v6.book, color=INK, scale_factor=1.08), run_time=0.6)
             self.play(Indicate(v6.slab, color=ERR, scale_factor=1.15), run_time=0.6)
@@ -646,27 +661,32 @@ class KeepTheKeyOut(VoiceScene):
         tag49 = tag("was 2B: now there's a file", S.GREY, size=20)
         chk = check_mark(0.26, VENV)
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(k_in), v6.slab.animate.set_stroke(LAPTOP, 2).set_fill(LAPTOP, 0.18), run_time=0.3)
+            # the rebuild: the COPY slab clears; a G1 build's plain log, so the title says so
+            self.play(FadeOut(k_in), v6.slab.animate.set_stroke(LAPTOP, 2).set_fill(LAPTOP, 0.18),
+                      retitle(t, "laptop · the same build, full log"), run_time=0.3)
             v6.crate.remove(k_in)
-            type_in(self, t, BUILD, 0.55)
-            self.play(retitle(t, "laptop · the same build, full log"), run_time=0.2)
-            o_b2 = print_in(self, t, B2_OUT, 0.35)
+            type_in(self, t, BUILD, 0.45)
+            o_b2 = print_in(self, t, B2_OUT, 0.3)
             l13 = o_b2[1]
-            self.play(retitle(t, "laptop"), run_time=0.2)
-            c_r2 = type_in(self, t, RUN_LS, 0.7)
-            o_n = print_in(self, t, NOK_OUT, 0.25, color=VENV)
-            pin(self, c_r2, xtag(t, c_r2), run_time=0.2)
             b49 = sbar(l13, "49B", VENV, 0.35)
             place(tag49, left=substring(l13, "done").get_right()[0] + 0.4, cy=l13.strut.get_center()[1])
-            self.play(FadeIn(b49), substring(l13, "49B").animate.set_color(VENV), run_time=0.4)
-            stick(self, l13, b49)
-            pin(self, l13, tag49, run_time=0.3)
-            self.play(Indicate(o_n[0].glyphs, color=VENV, scale_factor=1.05), run_time=0.7)
-            vo.wait_until("The key stayed out of the image")
-            resize(self, t, STRIP, keep=[*c_r2.rows, o_n[0]], run_time=0.5)
-            self.play(*[m.animate.shift(home_shift(v6)) for m in crate_group(v6)], run_time=0.6)
+            self.play(FadeIn(b49), substring(l13, "49B").animate.set_color(VENV), FadeIn(tag49, shift=LEFT * 0.1),
+                      retitle(t, "laptop"), run_time=0.45)
+            stick(self, l13, b49, tag49)
+            # "and list again": the run, and its GREEN answer on "cannot access" (one scroll for both)
+            make_room(self, t, n_rows(t, RUN_LS) + len(NOK_OUT))
+            c_r2 = type_in(self, t, RUN_LS, 0.5)
+            o_n = print_in(self, t, NOK_OUT, 0.25, color=VENV)
+            x_r2 = xtag(t, c_r2)
+            pin(self, c_r2, x_r2, run_time=0.6,
+                anim=AnimationGroup(FadeIn(x_r2, shift=LEFT * 0.1),
+                                    Indicate(o_n[0].glyphs, color=VENV, scale_factor=1.05)))
+            # back to HOME in one move, then the folder pours in: the key stays on the .dockerignore sieve
+            resize(self, t, STRIP, keep=[*c_r2.rows, o_n[0]], run_time=0.5,
+                   extra=[m.animate.shift(home_shift(v6)) for m in crate_group(v6)])
             v6.reveal(self, "folder", "book", "sieve_git", run_time=0.4)
-            k_out = pour_image(self, v6, caught=True, run_time=1.2)
+            vo.wait_until("The key stayed out of the image")
+            k_out = pour_image(self, v6, caught=True, run_time=1.0)
             chk.next_to(v6.crate.get_right(), RIGHT, buff=0.15).set_y(v6.slab.get_center()[1])
             self.play(Create(chk), v6.slab.animate.set_stroke(VENV, 3), Indicate(k_out, color=KEY, scale_factor=1.4),
                       run_time=0.6)
@@ -787,8 +807,8 @@ class KeepTheKeyOut(VoiceScene):
             self.play(pic.sec_row.animate.shift(dest), run_time=0.9)
             self.play(Indicate(pic.out_cap, color=INK, scale_factor=1.1), run_time=0.5)
             vo.wait_until("and mounted it at slash secrets")
-            self.play(FadeOut(bar9), ReplacementTransform(p8, p95), sol_cap.animate.set_y(cap_y95),
-                      run_time=0.6)
+            # different lines of the same file: a cross-fade (a glyph morph would scramble the code)
+            self.play(FadeOut(VGroup(p8, bar9)), FadeIn(p95), sol_cap.animate.set_y(cap_y95), run_time=0.6)
             self.play(FadeIn(bar98), run_time=0.3)
             self.play(Create(pic.r2), Indicate(pic.secs, color=LOOKUP, scale_factor=1.08), run_time=0.8)
             vo.wait_until("No key ever enters the image")
@@ -816,6 +836,7 @@ class KeepTheKeyOut(VoiceScene):
         er = erratum_tag()
         er.next_to(head, RIGHT, buff=0.25)
         er.align_to(fr, RIGHT) if er.get_right()[0] > fr.get_right()[0] else None
+        er.shift(UP * max(0.0, fr.get_top()[1] + 0.03 - er.get_bottom()[1]))   # the pill clears the frame
         return VGroup(fr, rows, head, er)
 
     def _hub_card(self) -> VGroup:

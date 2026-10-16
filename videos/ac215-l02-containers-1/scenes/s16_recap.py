@@ -107,7 +107,7 @@ QUESTIONS = [
 ROWS = ["image vs container", "start-up command line", "two Pythons", "cache order", "platforms"]
 
 # ------------------------------------------------------------------ layout
-VM_C, VM_W, VM_H = np.array([-0.15, 0.82, 0]), 6.0, 3.7      # beat 0: the VM above the strip
+VM_C, VM_W, VM_H = np.array([-0.4, 0.82, 0]), 6.5, 3.7       # beat 0: the VM above the strip
 STACK_X, FLOOR_Y = -1.25, -0.36                             # its image stack (bottom edge)
 DIAL_C, DIAL_R = np.array([4.55, 1.7, 0]), 0.55             # beats 0-1: the dial (it never moves while it runs)
 RATE = 1 / 30                                               # dial turns per second while the VM exists
@@ -118,9 +118,23 @@ LIST_RIGHT = BR_LEFT + BR_W - 0.3
 D_LEFT, D_RIGHT = C_LEFT + 0.45, LIST_RIGHT - 0.25
 
 Q_X, Q_TOP, Q_W, Q_SIZE = -5.8, 2.52, 12.15, 26             # the current question (full width)
-LIST_X, LIST_TOP, LIST_PITCH, LIST_SIZE = -5.85, 0.72, 0.62, 22
+LIST_X, LIST_TOP, LIST_PITCH, LIST_SIZE = -5.2, 0.72, 0.62, 22   # badges clear of the drop column
 ICON_C, ICON_W, ICON_H = np.array([1.75, -0.78, 0]), 5.6, 3.3
-RIGHT_L, RIGHT_R = -2.35, 6.4                                # beat 6: the right column
+RIGHT_L, RIGHT_R = -1.85, 6.4                                # beat 6: the right column
+
+
+# ------------------------------------------------------------------ timing
+def cue(scene, vo, phrase: str, shift: float = 0.0) -> None:
+    """vo.wait_until(phrase), moved by `shift` seconds. Inside a sentence an anchor is interpolated by
+    character count; the shifts used below were measured on the cached Kokoro clips (af_heart, 0.9):
+    each phrase starts right after the pause at its clause's comma. Re-measure after a SAY edit."""
+    t = vo.clip.time_of(phrase)
+    if t is None:                     # logs "voiceover anchor not found" (an error, PLAYBOOK 2.6)
+        vo.wait_until(phrase)
+        return
+    left = t + shift - vo.elapsed
+    if left > 1 / 60:
+        scene.wait(left)
 
 
 # ------------------------------------------------------------------ small glyphs (L1's)
@@ -535,22 +549,22 @@ def teaser(card_w: float) -> VGroup:
     chips `WORKDIR /app` and "non-root user", and a GREY folder with a dashed arrow into a dashed TEAL
     container, "mounted". .head .five .links .workdir .user .folder .arrow .ctr .mounted .frame"""
     head = VGroup(label("Next:", 26, S.GREY), label("L3 · Containers II", 26, INK)).arrange(RIGHT, buff=0.15)
-    five = VGroup(*[box(0.66, 0.5, IMAGE, dashed=True) for _ in range(5)]).arrange(RIGHT, buff=0.3)
+    five = VGroup(*[box(0.66, 0.5, IMAGE, dashed=True) for _ in range(5)]).arrange(RIGHT, buff=0.25)
     links = VGroup(*[Line(five[k].get_right(), five[k + 1].get_left(), color=S.GREY, stroke_width=2.5)
                      for k in range(4)])
     workdir = chip("WORKDIR /app", S.GREY, size=20, font=MONO)
     user = chip("non-root user", S.GREY, size=20)
-    chips = VGroup(workdir, user).arrange(RIGHT, buff=0.25)
+    chips = VGroup(workdir, user).arrange(RIGHT, buff=0.2)
     left = VGroup(VGroup(five, links), chips).arrange(DOWN, buff=0.4, aligned_edge=LEFT)
     folder = folder_glyph(0.5, LAPTOP)
     ctr = box(1.0, 0.85, IMAGE, dashed=True)
     ctr_f = folder_glyph(0.36, LAPTOP).move_to(ctr).set_opacity(0.6)
-    VGroup(folder, ctr).arrange(RIGHT, buff=1.15)
+    VGroup(folder, ctr).arrange(RIGHT, buff=0.95)
     arrow = dashed_arrow(folder.get_right() + RIGHT * 0.12, ctr.get_left() + LEFT * 0.1, 0, S.GREY, n=8)
     ctr_f.move_to(ctr)
-    mounted = label("mounted", 22, S.GREY).next_to(arrow, DOWN, buff=0.3)
+    mounted = label("mounted", 22, S.GREY).next_to(VGroup(folder, arrow, ctr), DOWN, buff=0.16)
     rgrp = VGroup(folder, ctr, ctr_f, arrow, mounted)
-    content = VGroup(left, rgrp).arrange(RIGHT, buff=0.45, aligned_edge=UP)
+    content = VGroup(left, rgrp).arrange(RIGHT, buff=0.3, aligned_edge=UP)
     body = VGroup(head, content).arrange(DOWN, buff=0.32, aligned_edge=LEFT)
     g = card(body, card_w, dashed=True)
     g.head, g.five, g.links, g.workdir, g.user = head, five, links, workdir, user
@@ -674,21 +688,21 @@ class Recap(VoiceScene):
             v_out = VGroup(V.slot, V.slot_text, V.rm, V.rm_cap, V.name)
             self.play(track(tr, 7), FadeOut(t), FadeOut(v_out),
                       Transform(V.frame, sm.frame), Transform(V.title, sm.title), Transform(V.slabs, sm.slabs),
-                      Transform(V.disk, sm.disk), Transform(V.disk_lab, sm.disk_lab), run_time=0.8)
+                      Transform(V.disk, sm.disk), Transform(V.disk_lab, sm.disk_lab), run_time=0.7)
             V.remove(V.name)
             self.remove(*v_out)
-            self.play(FadeIn(br, shift=RIGHT * 0.2), FadeIn(ill), FadeIn(page), run_time=0.5)
+            self.play(FadeIn(br, shift=RIGHT * 0.2), FadeIn(ill), FadeIn(page), run_time=0.45)
             cb.tick.move_to(cb.sq).shift(DOWN * 0.005)
             self.play(cb.sq.animate.set_fill(CLOUD, 1).set_stroke(CLOUD), Create(cb.tick),
                       row_frame.animate.set_stroke(CLOUD).set_fill(CLOUD, 0.1), run_time=0.35)
             self.remove(cb.tick)
             cb.add(cb.tick)
-            vo.wait_until("delete the VM")
+            cue(self, vo, "delete the VM", 0.3)             # measured: 1.71 s (interpolated 1.40)
             self.play(Indicate(del_b, color=S.WHITE, scale_factor=1.15), run_time=0.4)
             self.play(FadeIn(dim), FadeIn(dialog, scale=0.94), run_time=0.4)
-            vo.wait_until("with its boot disk")
-            self.play(FadeIn(body_bar), Indicate(V.disk, color=CLOUD, scale_factor=1.3), run_time=0.6)
-            self.play(Indicate(confirm, color=S.WHITE, scale_factor=1.2), run_time=0.35)
+            cue(self, vo, "with its boot disk", 0.35)       # measured: 2.98 s (2.55)
+            self.play(FadeIn(body_bar), Indicate(V.disk, color=CLOUD, scale_factor=1.3), run_time=0.55)
+            self.play(Indicate(confirm, color=S.WHITE, scale_factor=1.2), run_time=0.3)
             # Delete: the dialog closes, the row leaves the list, the VM and its disk dissolve and the
             # needle stops where it is (it never rewinds)
             gone = VGroup(V.frame, V.title, V.slabs, V.disk, V.disk_lab)
@@ -699,7 +713,7 @@ class Recap(VoiceScene):
             self.remove(V, *gone)
             drift = [d.animate.shift(UP * rng.uniform(0.25, 0.7) + RIGHT * rng.uniform(-0.25, 0.25)).set_opacity(0)
                      for d in dust_v.family_members_with_points()]
-            self.play(*drift, rate.animate.set_value(0), run_time=0.7)
+            self.play(*drift, rate.animate.set_value(0), run_time=0.6)
             self.remove(dust_v)
             dial.tracker.clear_updaters()
             self.remove(dial.tracker, rate)
@@ -707,17 +721,16 @@ class Recap(VoiceScene):
             dial_g = VGroup(dial, cost)
             vo.wait_until("then check")
             self.play(FadeOut(VGroup(br, ill, page)), dial_g.animate.move_to(dial_to + RIGHT * 0.35),
-                      run_time=0.5)
-            self.play(FadeIn(check, shift=UP * 0.15), run_time=0.4)
-            for it, phrase in zip(items, ("VM instances", "and Disks")):
-                vo.wait_until(phrase)
+                      run_time=0.4)
+            self.play(FadeIn(check, shift=UP * 0.15), run_time=0.35)
+            for it, phrase, shift in zip(items, ("VM instances", "and Disks"), (-0.2, -0.35)):
+                cue(self, vo, phrase, shift)                # measured: 5.37, 6.22 s (5.60, 6.60)
                 it.tick.move_to(it.sq).shift(UP * 0.03 + RIGHT * 0.03)
                 self.play(Create(it.tick), it.sq.animate.set_stroke(S.GREEN), run_time=0.4)
                 self.remove(it.tick)
                 it.add(it.tick)
-            vo.wait_until("are both empty")
-            self.play(*[it.empty.animate.set_color(S.GREEN) for it in items],
-                      Circumscribe(dial.face, Circle, color=COST, buff=0.06), run_time=0.7)
+            cue(self, vo, "are both empty", -0.4)           # measured: 6.87 s (7.30)
+            self.play(*[it.empty.animate.set_color(S.GREEN) for it in items], run_time=0.6)
             vo.wait_until("Pause and do it now")
             self.play(FadeIn(yt, shift=UP * 0.1), run_time=0.4)
             self.play(pulse(yt), run_time=0.6)
@@ -780,12 +793,20 @@ class Recap(VoiceScene):
         solid = nest.solid()
         vlab = nest.venv_label()
 
-        # the end of the route: the same nest, shapes smaller, labels the same size
+        # the end of the route: the same nest, shapes smaller, labels the same size; the container is
+        # centred in the smaller VM (L1's layout keeps the left half free for the venv, now moved in)
         NEST_TO = np.array([4.2, 0.25, 0])
-        ns = Nest(vm_w=4.4, vm_h=2.9, size=24).move_to(NEST_TO)
+        ns = Nest(vm_w=4.0, vm_h=2.9, size=24).move_to(NEST_TO)
         ns_solid = ns.solid()
-        ns.venv.move_to(ns.venv_spot())
-        ns_vlab = ns.venv_label()
+        centre = np.array([ns.vm.frame.get_x() - ns_solid[0].get_x(), 0, 0])
+        ns_solid.shift(centre)
+        ns.venv.move_to(ns.venv_spot() + centre)
+        ns_vlab = ns.venv_label().shift(centre)
+        # the container's outline keeps its dashes (a fresh outline_box has fewer, and the Transform
+        # would open gaps on the way): the same outline, stretched to the new size
+        ctr_to = solid[0].copy()
+        ctr_to.stretch_to_fit_width(ns_solid[0].width).stretch_to_fit_height(ns_solid[0].height)
+        ctr_to.move_to(ns_solid[0])
         base_y = ns.vm.frame.get_bottom()[1]          # laptop, shelf and VM stand on one line
         lap2 = laptop(2.0, LAPTOP)
         lap2.move_to([-4.95, base_y + lap2.height / 2, 0])
@@ -814,28 +835,28 @@ class Recap(VoiceScene):
             self.play(ReplacementTransform(slot, solid), run_time=0.7)
             vo.wait_until("the venv now lives")
             self.play(nest.venv.animate.move_to(nest.venv_spot()), run_time=0.9)
-            vo.wait_until("at slash dot venv")
+            cue(self, vo, "at slash dot venv", -0.35)       # measured: 8.05 s (8.41)
             self.play(FadeIn(vlab, shift=UP * 0.1), run_time=0.5)
             self.play(Indicate(vlab, color=VENV, scale_factor=1.2), run_time=0.6)
             vo.wait_until("You built it")
             self.play(Transform(nest.vm.frame, ns.vm.frame), Transform(nest.vm.title, ns.vm.title),
-                      Transform(solid[0], ns_solid[0]), Transform(solid[1], ns_solid[1]),
+                      Transform(solid[0], ctr_to), Transform(solid[1], ns_solid[1]),
                       Transform(nest.venv, ns.venv), Transform(vlab, ns_vlab), FadeOut(tag_l1), run_time=0.9)
             self.play(FadeIn(lap2, shift=RIGHT * 0.2), FadeIn(img, scale=0.6), FadeIn(l_build, shift=UP * 0.1),
                       run_time=0.6)
             vo.wait_until("pushed it to a registry")
             self.play(FadeIn(hub2), FadeIn(hub_t), Create(r1), run_time=0.6)
             rider = img.copy()
-            self.play(travel(rider, r1, run_time=0.8), FadeIn(l_push, shift=UP * 0.1))
+            self.play(travel(rider, r1, run_time=0.7), FadeIn(l_push, shift=UP * 0.1))
             self.play(rider.animate.move_to(hub2.get_center() + UP * 0.05).scale(0.8).set_opacity(0),
-                      Indicate(hub2, color=CLOUD, scale_factor=1.08), run_time=0.4)
+                      Indicate(hub2, color=CLOUD, scale_factor=1.08), run_time=0.35)
             self.remove(rider)
             vo.wait_until("and ran it on a VM")
-            self.play(Create(r2), run_time=0.5)
+            self.play(Create(r2), run_time=0.4)
             rider2 = img.copy()
-            self.play(travel(rider2, r2, run_time=0.8), FadeIn(l_run, shift=UP * 0.1))
+            self.play(travel(rider2, r2, run_time=0.7), FadeIn(l_run, shift=UP * 0.1))
             self.play(rider2.animate.move_to(solid[0].get_center()).scale(0.8).set_opacity(0),
-                      run_time=0.35)
+                      run_time=0.3)
             self.remove(rider2)
             vo.wait_until("with one command")
             self.play(Indicate(solid[0], color=IMAGE, scale_factor=1.06), pulse(l_run, 1.25), run_time=0.8)
@@ -848,24 +869,26 @@ class Recap(VoiceScene):
         route_pic = VGroup(nest.vm.frame, nest.vm.title, solid, nest.venv, vlab, lap2, img, hub2, hub_t,
                            l_build, l_push, l_run, r1, r2)
 
-        def demote(q_old, i_old, ic_old):
-            """Question i_old shrinks into list row i_old (its badge travels, its words fade into the
-            row's label); its icon leaves. Returns the row (on the scene)."""
+        def demote(q_old, i_old, ic_old, *extra):
+            """Question i_old files itself into list row i_old: its words fold into its badge (its icon
+            leaves), the badge drops down the left margin, clear of the rows above, and steps into its
+            slot, and the row's label unfolds from it. `extra` animations join that last step.
+            Returns the row (on the scene)."""
             row = list_row(i_old)
-            self.play(Transform(q_old.badge, row.badge),
-                      q_old.text.glyphs.animate(rate_func=rate_functions.ease_in_out_sine)
-                      .scale(0.3).move_to(row.text.glyphs).set_opacity(0),
-                      FadeIn(row.text.glyphs, scale=1.4, rate_func=rate_functions.ease_in_quad),
-                      FadeOut(ic_old, shift=RIGHT * 0.25), run_time=0.7)
-            self.remove(q_old, q_old.badge, q_old.text.glyphs, row.text.glyphs, *ic_old.family_members_with_points())
+            b = q_old.badge
+            self.play(q_old.text.animate.scale(0.04, about_point=b.get_center()).set_opacity(0),
+                      FadeOut(ic_old, shift=RIGHT * 0.25), run_time=0.35)
+            self.remove(q_old.text, *ic_old.family_members_with_points())
+            self.play(b.animate.move_to([b.get_x(), row.badge.get_y(), 0]), run_time=0.35)
+            self.play(Transform(b, row.badge), GrowFromPoint(row.text, b.get_center()), *extra, run_time=0.5)
+            self.remove(b, row.text)
             self.add(row)
             return row
 
         def step(q_old, i_old, ic_old, q_new, ic_new):
-            """Question i_old becomes list row i_old; question i_old + 1 and its icon come in."""
-            row = demote(q_old, i_old, ic_old)
-            self.play(FadeIn(q_new, shift=UP * 0.15), FadeIn(ic_new, shift=LEFT * 0.2), run_time=0.6)
-            return row
+            """Question i_old becomes list row i_old while question i_old + 1 and its icon come in."""
+            return demote(q_old, i_old, ic_old, FadeIn(q_new, shift=UP * 0.15), FadeIn(ic_new, shift=LEFT * 0.2))
+
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(route_pic), run_time=0.6)
@@ -875,12 +898,12 @@ class Recap(VoiceScene):
             vo.wait_until("One:")
             self.play(FadeIn(q1, shift=UP * 0.15), run_time=0.6)
             self.play(FadeIn(ic1, shift=LEFT * 0.2), run_time=0.5)
-            vo.wait_until("an image")
-            self.play(Indicate(ic1.slabs, color=IMAGE, scale_factor=1.06), run_time=0.6)
-            vo.wait_until("and a container")
+            cue(self, vo, "an image", -0.4)                 # measured: about 4.3 s (4.69)
+            self.play(Indicate(ic1.slabs, color=IMAGE, scale_factor=1.06), run_time=0.45)
+            cue(self, vo, "and a container", -0.6)          # measured: about 4.7 s (5.28)
             self.play(FadeIn(ic1.glass, shift=DOWN * 0.5), run_time=0.5)
             ic1.add(ic1.glass)
-            vo.wait_until("and what does dash dash rm")
+            cue(self, vo, "and what does dash dash rm", -0.55)   # measured: 5.84 s (6.39)
             rm_span = q_span(q1, "--rm")
             self.play(rm_span.animate.set_color(TURN), run_time=0.4)
             self.play(FadeOut(ic1.glass, shift=UP * 0.4), run_time=0.8)
@@ -888,7 +911,7 @@ class Recap(VoiceScene):
             self.play(Indicate(ic1.slabs, color=IMAGE, scale_factor=1.04), run_time=0.6)
 
             q2, ic2 = question(2), icon_card()
-            vo.wait_until("Two:")
+            cue(self, vo, "Two:", -0.4)                       # the fold starts in the pause before it
             rows = [step(q1, 1, ic1, q2, ic2)]
             vo.wait_until("what does our container run")
             self.play(*[TransformFromCopy(ic2.tiles[k], ic2.words[k]) for k in range(2)], run_time=0.9)
@@ -911,32 +934,32 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             q3, ic3 = question(3), icon_versions()
             rows.append(step(q2, 2, ic2, q3, ic3))
-            vo.wait_until("Python 3.12")
+            cue(self, vo, "Python 3.12", -0.4)              # measured: about 2.3 s (2.70)
             ic3.orange.shift(UP * 0.9).set_opacity(0)
             self.play(ic3.orange.animate.shift(DOWN * 0.9).set_opacity(1), run_time=0.6,
                       rate_func=rate_functions.ease_in_quad)
             self.play(q_span(q3, "python:3.12").animate.set_color(SYSTEM), run_time=0.4)
-            vo.wait_until("so why does python report")
+            cue(self, vo, "so why does python report", -0.4)     # measured: 3.65 s (4.05)
             self.play(GrowFromEdge(ic3.band, LEFT), run_time=0.7)
             self.play(FadeIn(ic3.green, shift=DOWN * 0.6), run_time=0.5)
-            vo.wait_until("or 3.14")
+            cue(self, vo, "or 3.14", -0.95)                 # measured: 6.65 s (7.60)
             self.play(FadeIn(ic3.green2, shift=DOWN * 0.6), run_time=0.5)
             ic3.add(ic3.band, ic3.orange, ic3.green, ic3.green2)
 
             q4, ic4 = question(4), icon_dominoes()
-            vo.wait_until("Four:")
+            cue(self, vo, "Four:", -0.4)                       # the fold starts in the pause before it
             rows.append(step(q3, 3, ic3, q4, ic4))
             self.play(FadeIn(ic4.file, shift=DOWN * 0.3), run_time=0.5)
-            vo.wait_until("which steps rerun")
+            cue(self, vo, "which steps rerun", 0.85)        # measured: 11.79 s (10.93)
             fallen = [ic4.dominoes[k] for k in (2, 3)]
             self.play(*[ic4.boxes[k].animate.set_stroke(ERR) for k in (2, 3)], run_time=0.3)
             self.play(LaggedStart(*[Topple(d, -1.2, ERR) for d in fallen], lag_ratio=0.4), run_time=0.9)
-            vo.wait_until("and how would you reorder")
+            cue(self, vo, "and how would you reorder", 0.8)  # measured: 13.15 s (12.36)
             self.play(Create(ic4.swap[0]), Create(ic4.swap[1]), run_time=0.7)
             ic4.add(ic4.file, ic4.swap)
 
             q5, ic5 = question(5), icon_platforms()
-            vo.wait_until("Five:")
+            cue(self, vo, "Five:", -0.4)                       # the fold starts in the pause before it
             rows.append(step(q4, 4, ic4, q5, ic5))
             vo.wait_until("two ways")
             self.play(LaggedStart(Create(ic5.routes[0]), Create(ic5.routes[1]), lag_ratio=0.5), run_time=1.0)
@@ -961,21 +984,20 @@ class Recap(VoiceScene):
         ul_g = uline(VGroup(g_body[1], g_body[2]), TURN, stroke=3, dy=0.06)
 
         with self.voiceover(SAY[6]) as vo:
-            rows.append(demote(q5, 5, ic5))
-            self.play(FadeIn(c1, shift=UP * 0.15), run_time=0.5)
+            rows.append(demote(q5, 5, ic5, FadeIn(c1, shift=UP * 0.15)))
             vo.wait_until("every command")
             self.play(FadeIn(c2, shift=UP * 0.15), run_time=0.5)
             self.play(Create(ul_g), run_time=0.6)
             vo.wait_until("Next time")
             self.play(Create(nx.frame), FadeIn(nx.head, shift=RIGHT * 0.15), run_time=0.6)
-            vo.wait_until("five containers")
+            cue(self, vo, "five containers", 0.65)          # measured: 7.37 s (6.70)
             self.play(LaggedStart(*[FadeIn(b, scale=0.6) for b in nx.five], lag_ratio=0.18), run_time=0.8)
             self.play(Create(nx.links), run_time=0.4)
-            vo.wait_until("a working directory")
+            cue(self, vo, "a working directory", 0.4)       # measured: 9.38 s (8.95)
             self.play(FadeIn(nx.workdir, shift=UP * 0.1), run_time=0.45)
-            vo.wait_until("a non-root user")
+            cue(self, vo, "a non-root user", 0.4)           # measured: 10.80 s (10.38)
             self.play(FadeIn(nx.user, shift=UP * 0.1), run_time=0.45)
-            vo.wait_until("and your laptop's folder")
+            cue(self, vo, "and your laptop's folder", 0.75)  # measured: 12.32 s (11.53)
             self.play(FadeIn(nx.folder, shift=RIGHT * 0.1), FadeIn(nx.ctr), run_time=0.5)
             self.play(Create(nx.arrow), FadeIn(nx.mounted, shift=UP * 0.1), run_time=0.6)
             self.play(FadeIn(nx.ctr_f, shift=RIGHT * 0.3), run_time=0.5)

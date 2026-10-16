@@ -260,12 +260,15 @@ def _split_sentence(sent: str, width: int, lines: int, min_units: float = 0.0) -
 
 
 def split_cues(start: float, end: float, text: str, width: int = 44, lines: int = 2,
-               marks: list | None = None, min_dur: float = 1.0):
+               marks: list | None = None, min_dur: float = 1.0, sentences: list | None = None):
     """Break one narration clip into readable cues (<= 2 lines each), never across sentences.
 
     With `marks` ((char offset, seconds) of each sentence start, from the voice clip), every
     sentence's cues sit exactly where that sentence is spoken; without them, the whole clip is
-    timed proportionally to characters. Inside a sentence, cues are timed by characters. Cues
+    timed proportionally to characters. `sentences` ((offset, sentence) pairs) replaces the split
+    of `text` when the caller already knows the sentence boundaries (_english_display: a displayed
+    sentence starting with "--rm" is not a boundary split_sentences would find). Inside a sentence,
+    cues are timed by characters. Cues
     shorter than `min_dur` are merged with a neighbour when the result still fits: one of the same
     sentence first, and across a sentence end only when the merged cue ends at a sentence end
     ("…fit its time limit. It didn't.") or a whole short sentence starts it ("Why? On a log scale,"),
@@ -277,7 +280,7 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
     one at a time," + "and counts the leaves it reaches."). Lines: _lines."""
     from .voice import SENTENCE_GAP, split_sentences
 
-    sentences = split_sentences(text) or [(0, text)]
+    sentences = sentences or split_sentences(text) or [(0, text)]   # given: displayed sentences
     if marks and [int(o) for o, _ in marks] == [o for o, _ in sentences]:
         starts = [start + float(t) for _, t in marks]
         spans = [(a, (starts[i + 1] - SENTENCE_GAP) if i + 1 < len(starts) else end)
@@ -472,6 +475,39 @@ def _scene_title(s: dict, meta: dict) -> str:
     return titles.get(Path(s["file"]).stem) or titles.get(s["cls"]) or s.get("title", s["cls"])
 
 
+def _english_display(cue: dict, translations: dict) -> tuple[str, list | None, list | None]:
+    """The English subtitle text of one narration clip, its sentence marks, and its sentences.
+
+    A sentence with an `en_display` override (the clip's own, or a translation's: the form an
+    artifact takes on screen, "--rm" for a SAY line that spells "dash dash rm") is shown in that
+    form, as the bilingual track already does (subtitles.sentence_pairs). Each mark keeps its time
+    and moves to its sentence's offset in the displayed text. The sentences are returned too (None
+    when nothing changed): a displayed sentence may not start the way split_sentences expects."""
+    from .voice import split_sentences
+
+    text, marks = cue["text"], cue.get("marks")
+    display = list(cue.get("en_display") or [])
+    if not any(display):
+        for table in translations.values():
+            line = table.get(" ".join(text.split()))
+            if line is not None and any(line.en_display):
+                display = list(line.en_display)
+                break
+    sentences = split_sentences(text)
+    if not any(display) or not sentences:
+        return text, marks, None
+    pieces = [d or s for (_, s), d in zip(sentences, display + [None] * len(sentences))]
+    shown, offsets = "", []
+    for k, piece in enumerate(pieces):
+        if k:
+            shown += " "
+        offsets.append(len(shown))
+        shown += piece.strip()
+    if marks and [int(o) for o, _ in marks] == [o for o, _ in sentences]:
+        marks = [(o, t) for o, (_, t) in zip(offsets, marks)]
+    return shown, marks, [(o, piece.strip()) for o, piece in zip(offsets, pieces)]
+
+
 def _clips_with_marks(subs_file: Path, env: dict | None) -> list[dict]:
     """Narration clips of one scene; English clips rendered before sentence marks were recorded get
     their marks from the (cached) voice, so subtitles still land on each sentence."""
@@ -561,8 +597,9 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
                 own_pairs += subs.sentence_pairs(cue, offset, own_table.get(" ".join(cue["text"].split())))
             else:
                 transcript.append(cue["text"] + "\n")
-                srt.extend(split_cues(offset + cue["start"], offset + cue["end"], cue["text"],
-                                      marks=cue.get("marks")))
+                shown, shown_marks, shown_sents = _english_display(cue, translations)
+                srt.extend(split_cues(offset + cue["start"], offset + cue["end"], shown,
+                                      marks=shown_marks, sentences=shown_sents))
                 for code, table in translations.items():
                     line = table.get(" ".join(cue["text"].split()))
                     pairs[code] += subs.sentence_pairs(cue, offset, line)

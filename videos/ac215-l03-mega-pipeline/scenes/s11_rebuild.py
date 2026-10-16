@@ -13,15 +13,16 @@ Beats (script.md "## S11", one voiceover block each):
     `student@laptop:~/mega-pipeline/transcribe_audio$`; the laptop sheet slides back along the PINK
     route and the route fades (no container, no window), and the image's own copied files
     undim. On "the container is removed" the writable layer pulses; on "with its throwaway layer"
-    it floats up and vanishes; on "the 26 packages" its chips scatter after it. The laptop's
-    survivors blink GREEN.
+    it lifts and fades to a ghost that still carries its chips; on "the 26 packages" the chips
+    flash and the whole layer evaporates with them. The laptop's survivors blink GREEN.
  1  TRACKER A13 · extra. The window goes, the terminal grows to 13 rows. Typed in the order the
     SAY names them (extras, each with a GREY `extra` tag): `cat pyproject.toml` ->
     TERM(14-host-after-uv-add.txt: …, 17–21), the three dependencies GREEN with a bar;
-    `wc -c uv.lock` -> TERM(…: 35), GREEN bar (its `extra` tag at the right end of the output row:
-    the command row is full); `ls -a` -> TERM(…: …, 8–12): input_audios and
+    `wc -c uv.lock` -> TERM(…: 35), GREEN bar (its `extra` tag right after the output: the
+    command row is full); `ls -a` -> TERM(…: …, 8–12): input_audios and
     text_prompts GREEN, then on "all survived" all four survivors GREEN; the four pulse on "in the
-    window".
+    window". The three commands are typed ahead of the clauses that name them (cat, then wc and ls
+    right after the dependencies light up), so every highlight lands on its words.
  2  `git status --short` (extra) -> TERM(…: 36); ` M cli.py` underlines YELLOW; GREY tag "the rest
     is hidden from Git · S15" beside it; the survivor rows pulse GREY.
  3  The trap. The terminal clears and shrinks to 7 rows. Above it, V4's image alone: the TEAL image
@@ -35,8 +36,8 @@ Beats (script.md "## S11", one voiceover block each):
  4  It types `exit` (frame GREY); the layer evaporates and the picture goes; TRACKER A13; the
     README chip `transcribe_audio/README.md · line 110` "re-build the image" above the terminal.
     It types `docker build -t transcribe_audio .` (folds after `build`) -> TERM(15-rebuild.txt: 3,
-    14–17): live-view rows cut at 58 characters, each row's last field in a GREY tag at its right
-    end. ▶ your turn.
+    14–17): line 3 cut at 65 with its spaces dropped ("FINISHED …"), rows 14–17 cut at 58, each
+    row's time in a compact GREY tag (0.34 tall) at its right end, as S12/S13 do. ▶ your turn.
  5  The chip goes, then V2 (old state: GREY COPY slab, empty uv sync slab) rises top right; GREY tag
     "ponder 2". On "build steps 2 and 3" `CACHED` turns GREEN and boxed on lines 14–15, and the apt
     and WORKDIR slabs get GREEN "CACHED" stamps (fanned, with leaders; the base slab stays as is).
@@ -84,7 +85,7 @@ from explainer.scene import VoiceScene
 from common import (CTR, ERR, INK, LAPTOP, NARRATION, P_A, P_CTR, PANEL, SYSTEM, TOOL, TURN, VENV,
                     ConfigCard, LayerStack, Window, bare_prompt, beside, cached_stamp, capture, caption_extra,
                     enter_container, extra_tag, history_row, key_glyph, leave_container, live_split, log_panel,
-                    pin, pkg_dots, readme_chip, resize, sans, source_text, strip_top, term, time_tag, tracker,
+                    pin, pkg_dots, readme_chip, resize, sans, source_text, strip_top, term, tracker,
                     type_cmd, your_turn)
 
 SAY = NARRATION["S11"]
@@ -119,8 +120,9 @@ assert TRAP_OUT[-1] == "ModuleNotFoundError: No module named 'google'", TRAP_OUT
 BUILD = "docker build -t transcribe_audio ."           # README :95 names the image; never --network host
 _RB = capture("15-rebuild")
 assert _RB.cmd == "docker build --network host -t transcribe_audio .", _RB.cmd
-LIVE = [live_split(_RB.line(n), 58) for n in (3, 14, 15, 16, 17)]
-assert LIVE[0] == ("[+] Building 9.9s (10/10) FINISHED", "docker:default"), LIVE[0]
+_L3 = _RB.line(3)            # 79 chars: as in S12/S13, cut at 65 with its run of spaces dropped
+LIVE = [(_L3[:64].rstrip() + " …", None)] + [live_split(_RB.line(n), 58) for n in (14, 15, 16, 17)]
+assert LIVE[0][0] == "[+] Building 9.9s (10/10) FINISHED …" and len(_L3) > 65, LIVE[0]
 assert LIVE[1][0].startswith(" => CACHED [2/5] RUN apt-get update") and LIVE[2][0] == " => CACHED [3/5] WORKDIR /app"
 assert LIVE[3] == (" => [4/5] COPY --chown=app:app . ./", "0.0s") and LIVE[4] == (" => [5/5] RUN uv sync", "2.9s")
 
@@ -252,13 +254,26 @@ def note_tag(s: str) -> VGroup:
 
 
 def xtag(t, cmd, below):
-    """The GREY `extra` tag beside a typed command; when the command row is too full for it, at the
-    right end of the row below (`below`, its first output row)."""
+    """The GREY `extra` tag beside a typed command; when the command row is too full for it, right
+    after the text of the row below (`below`, its first output row). Not at that row's right end:
+    a tag is taller than a row, so it would touch the tag of the next command's row."""
     x = beside(extra_tag(), t, cmd)
     row = cmd.rows[-1] if hasattr(cmd, "rows") else cmd
     if x.get_left()[0] < row.glyphs.get_right()[0] + 0.15:
-        x.move_to(below.strut).align_to(t.box, RIGHT).shift(LEFT * 0.15)
+        beside(x, t, below)
     return x
+
+
+def ttag(time: str, color=S.GREY) -> VGroup:
+    """A live-view row's time as a compact GREY tag, as in S12/S13 (20 pt, 0.34 tall: rows are
+    0.40 apart, so the column of tags doesn't overlap)."""
+    t = label(time, 20, color)
+    fr = RoundedRectangle(width=t.width + 0.3, height=0.34, corner_radius=0.17, stroke_color=color,
+                          stroke_width=2).set_fill(S.BG, 0.92)
+    t.move_to(fr)
+    g = VGroup(fr, t)
+    g.box, g.text = fr, t
+    return g
 
 
 def pulse_tag(g, color=INK, k: float = 1.3):
@@ -435,40 +450,46 @@ class BakeItIn(VoiceScene):
             self.play(Indicate(win.sheet.frame, color=CTR, scale_factor=1.03),
                       Indicate(win.sheet.caption, color=CTR, scale_factor=1.15), run_time=0.7)
             vo.wait_until("with its throwaway layer")
-            chips = win.sheet.chips
-            win.sheet.remove(chips)                  # the packages linger a moment after their layer
-            win.add(chips)
-            win.evaporate(self, run_time=0.9)
+            sheet = win.sheet                        # the layer starts to go: it lifts and fades to a
+            ghost = sheet.copy().shift(UP * 0.15)    # ghost, still carrying its packages
+            ghost.frame.set_stroke(opacity=0.25)
+            ghost.shelf.set_stroke(opacity=0.25)
+            ghost.caption.set_opacity(0.25)
+            self.play(Transform(sheet, ghost), run_time=0.9)
             vo.wait_until("and the 26 packages")
-            win.detach(self, chips, anims=[FadeOut(chips, shift=UP * 0.6, lag_ratio=0.05)], run_time=1.3)
+            self.play(Indicate(sheet.chips, color=VENV, scale_factor=1.2), run_time=0.5)
+            win.evaporate(self, run_time=0.9)        # ... and the packages go with it
             self.play(Indicate(lap_survivors, color=VENV, scale_factor=1.1), run_time=0.8)
 
         # ========================================================== 1 · back on the laptop (extras)
         with self.voiceover(SAY[1]) as vo:
             resize(self, t, BIG, run_time=0.7, extra=[FadeOut(win), caption_extra(tr)])
-            vo.wait_until("the pyproject.toml with")
-            make_room(self, t, 1 + len(CAT_OUT))
+            # the three checks are typed ahead of the words, so each output is already up when the
+            # SAY names it; the highlights land on the words
             c1 = type_cmd(self, t, CAT_CMD, 0.6)
             out1 = t.print(self, CAT_OUT, run_time=0.4, lag=0.08)
+            pin(self, c1, beside(extra_tag(), t, c1), run_time=0.3)
+            vo.wait_until("the pyproject.toml with")
             deps = list(out1[2:5])
-            x1, b1 = beside(extra_tag(), t, c1), rbar(deps, VENV, 0.2)
-            self.play(FadeIn(x1), FadeIn(b1), *[ln.glyphs.animate.set_color(VENV) for ln in deps], run_time=0.4)
-            stick(self, c1, x1)
+            b1 = rbar(deps, VENV, 0.2)
+            self.play(FadeIn(b1), *[ln.glyphs.animate.set_color(VENV) for ln in deps], run_time=0.5)
             stick(self, deps[0], b1)
 
-            vo.wait_until("the lock file")
             make_room(self, t, 1 + len(WC_OUT))
-            c2 = type_cmd(self, t, WC_CMD, 0.5)
+            c2 = type_cmd(self, t, WC_CMD, 0.45)
             out2 = t.print(self, WC_OUT, run_time=0.3)
-            x2, b2 = xtag(t, c2, out2[0]), rbar(out2[0], VENV, 0.2)
-            self.play(FadeIn(x2), FadeIn(b2), out2[0].glyphs.animate.set_color(VENV), run_time=0.4)
-            stick(self, out2[0], x2, b2)
-
-            vo.wait_until("and the two new folders")
+            pin(self, out2[0], xtag(t, c2, out2[0]), run_time=0.3)
             make_room(self, t, 1 + len(LS_OUT))
             c3 = type_cmd(self, t, LS_CMD, 0.3)
-            out3 = t.print(self, LS_OUT, run_time=0.5, lag=0.08)
+            out3 = t.print(self, LS_OUT, run_time=0.4, lag=0.08)
             rows3 = {ln.text: ln for ln in out3}
+
+            vo.wait_until("the lock file")
+            b2 = rbar(out2[0], VENV, 0.2)
+            self.play(FadeIn(b2), out2[0].glyphs.animate.set_color(VENV), run_time=0.4)
+            stick(self, out2[0], b2)
+
+            vo.wait_until("and the two new folders")
             x3 = beside(extra_tag(), t, c3)
             folders = [rows3["input_audios"], rows3["text_prompts"]]
             self.play(FadeIn(x3), *[ln.glyphs.animate.set_color(VENV) for ln in folders], run_time=0.4)
@@ -513,6 +534,7 @@ class BakeItIn(VoiceScene):
         assert layer3.caption.get_right()[0] < layer3.shelf.get_left()[0] - 0.15, layer3.caption.get_right()
         with self.voiceover(SAY[3]) as vo:
             resize(self, t, MID, keep=0, run_time=0.7)
+            bare_prompt(self, t)
             self.play(FadeIn(img, shift=DOWN * 0.15), run_time=0.6)
             self.play(Indicate(img.caption, color=CTR, scale_factor=1.1), run_time=0.7)
             vo.wait_until("Start a new container")
@@ -525,6 +547,8 @@ class BakeItIn(VoiceScene):
             vo.wait_until("and ask for help")
             c6 = type_cmd(self, t, TRAP.cmd, 0.6)
             x6 = beside(extra_tag(), t, c6)
+            if x6.get_left()[0] < x5.get_right()[0] + 0.12:      # tags are taller than a row: the
+                x6.shift(RIGHT * (x5.get_right()[0] + 0.12 - x6.get_left()[0]))   # two must not touch
             self.play(FadeIn(x6), Indicate(img.cli, color=TURN, scale_factor=1.15), run_time=0.5)
             stick(self, c6, x6)
             vo.wait_until("It's module not found")
@@ -549,9 +573,9 @@ class BakeItIn(VoiceScene):
             make_room(self, t, 1)
             type_cmd(self, t, "exit", 0.3)
             self.play(*leave_container(t, P_A), FadeOut(layer3, shift=UP * 0.4), FadeOut(empty),
-                      FadeOut(q), FadeOut(link), run_time=0.6)
-            self.play(FadeOut(img, shift=UP * 0.1), caption_extra(tr, False), run_time=0.45)
-            self.play(FadeIn(rchip, shift=DOWN * 0.1), run_time=0.45)
+                      FadeOut(q), FadeOut(link), run_time=0.5)
+            self.play(LaggedStart(FadeOut(img, shift=UP * 0.1), FadeIn(rchip, shift=DOWN * 0.1), lag_ratio=0.5),
+                      caption_extra(tr, False), run_time=0.7)
             vo.wait_until("and rebuild the image")
             self.play(rchip.phrase.animate.set_color(TURN), Indicate(tr.dots, color=TURN, scale_factor=1.1),
                       run_time=0.5)
@@ -559,9 +583,9 @@ class BakeItIn(VoiceScene):
             c7 = type_cmd(self, t, BUILD, 1.1)
             assert c7.rows[0].text.endswith("docker build \\"), c7.rows[0].text
             out7 = t.print(self, [s for s, _ in LIVE], run_time=0.6, lag=0.1)
-            times = [place_tag(time_tag(tm), t, ln) for (_, tm), ln in zip(LIVE, out7)]
-            self.play(*[FadeIn(g) for g in times], run_time=0.4)
-            for ln, g in zip(out7, times):
+            times = [None] + [place_tag(ttag(tm), t, ln) for (_, tm), ln in zip(LIVE[1:], out7[1:])]
+            self.play(*[FadeIn(g) for g in times[1:]], run_time=0.4)
+            for ln, g in zip(out7[1:], times[1:]):
                 stick(self, ln, g)
             vo.wait_until("Pause and run it")
             yt = beside(your_turn(), t, c7)
@@ -758,7 +782,7 @@ class BakeItIn(VoiceScene):
         # ========================================================== 9 · dominoes: any edit re-runs uv sync
         chip9 = edit_chip()
         note = VGroup(label("later tutorials: COPY pyproject.toml uv.lock first,", 22, S.GREY),
-                      label("then uv sync, then the rest", 22, S.GREY)).arrange(DOWN, buff=0.12)
+                      label("then uv sync, then the rest", 22, S.GREY)).arrange(DOWN, buff=0.22)
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(t8), caption_extra(tr, False), run_time=0.5)
             self.play(st.animate.rescale(1.5).move_to(CENTRE, aligned_edge=DOWN), run_time=0.9)

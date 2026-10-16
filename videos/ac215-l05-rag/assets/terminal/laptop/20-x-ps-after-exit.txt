@@ -1,0 +1,4 @@
+$ docker ps -a
+CONTAINER ID   IMAGE                    COMMAND                  CREATED         STATUS         PORTS                    NAMES
+38d414943c8a   chromadb/chroma:latest   "dumb-init -- chroma…"   2 minutes ago   Up 2 minutes   0.0.0.0:8000->8000/tcp   llm-rag-chromadb
+[exit 0]

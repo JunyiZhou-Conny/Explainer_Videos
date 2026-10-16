@@ -1,0 +1,12 @@
+$ uv pip list 2>/dev/null | grep -E '^(chromadb|google-genai|google-auth|langchain|langchain-community|langchain-text-splitters|numpy|pandas|openai|openai-agents) '
+chromadb                                 1.1.0
+google-auth                              2.41.1
+google-genai                             1.39.1
+langchain                                0.3.27
+langchain-community                      0.3.30
+langchain-text-splitters                 0.3.11
+numpy                                    2.3.3
+openai                                   1.109.1
+openai-agents                            0.3.2
+pandas                                   2.3.3
+[exit 0]

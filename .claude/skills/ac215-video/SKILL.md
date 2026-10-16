@@ -44,13 +44,20 @@ tutorials (repo, branch, README section, Colab), pinned commits, guide path and 
 ## Folder layout (per video)
 
 `videos/ac215-lNN-<topic>/`: `video.yaml` (with a `course:` block), `digest.md`, `BRIEF.md`,
-`ASSETS.md`, `assets/source/` (tutorial files at the pinned commit, unchanged), `assets/terminal/`
+`SLIDES.md` (the lecture slides: digest + scene map), `ASSETS.md`, `assets/source/` (tutorial files at
+the pinned commit, unchanged), `assets/terminal/`
 (real captures + `capture.sh`/`run_steps.sh`), `script.md`, `scenes/` (`common.py` + one file per
 scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `README.md`, `output/`,
 `build/` (gitignored: reviews, renders, contact sheets).
 
 ## Pipeline and gates
 
+0. **Lecture slides** (`SLIDES.md`): the student provides the instructor's slides (PDFs; text and
+   page images in the session scratchpad under `slides/LNN/`, never in git). An agent writes the
+   digest in our own words with slide numbers, a second maps it against the video (or its plan) and
+   the study guide, a third checks every slide citation (`ac215-slides.js`). The brief, script,
+   scenes and guide treat it as a binding source next to the tutorial digest (docs/AC215_SERIES.md
+   rule 9: `lecture_ref` tags, diagrams that echo the lecture, captures win on conflicts).
 1. **Digest** (`digest.md`): research agent + adversarial verifier against the repo (every `path:line`
    checked with `sed -n`, every command verbatim, README order). Gate: verifier's corrections applied.
 2. **Captures** (`assets/terminal/`, `assets/source/`, `ASSETS.md`). Run every README command of the
@@ -116,7 +123,12 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
    and the owner's listening sign-off as separate lines; never claim a listen that did not happen.
    Cloud sessions cannot create releases: a GitHub Actions job, whose token can, uploads the
    deliverables after the episode merges and the catalog (`catalog/videos.json`,
-   `docs/VIDEOS.md`) points at the release. Fill durations and chapters into the README; set
+   `docs/VIDEOS.md`) points at the release. Series decisions (Conny, 2026-10-15, recorded on
+   Explainer_Videos#29): each finished lecture gets its own issue, `episode/ac215-lNN-<topic>`
+   branch and draft PR touching only its folder (shared changes go in a separate toolkit PR); the
+   lectures are published to Bilibili through the Mac publish worker; the per-lecture full listen is
+   waived ("不需要，我现在对视频质量很满意的") — quote that waiver as the human-review line of
+   `REVIEW.md`, never as a listen. Fill durations and chapters into the README; set
    `video_status` in `MLOps_Learning/course/lectures.yaml`, run `uv run tools/course_map.py`, and
    refresh the lecture's study guide from the captures (commands, real outputs).
 
@@ -132,14 +144,15 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 - One `with self.voiceover(SAY[i]) as vo:` per SAY line, in order; `assert len(SAY) == n` at the top.
   Time animations with `vo.wait_until("phrase")`.
 - Prefer transforms that show what became what over fade-out/fade-in.
-- `FadeOut` restores the mobject's opacity after removing it, and it removes only the mobject you pass. So
-  `FadeOut(VGroup(a, b))` on a throwaway wrapper whose members are still on the scene through another parent
-  (e.g. `a` is a child of a panel that is on the scene) makes `a` and `b` snap back. Fade out the object
-  that is actually on the scene, or `self.remove(...)` the members after the fade.
+- `FadeOut(g)` takes `g` and its whole family off the scene (Manim splits any parent on the scene that held
+  them), then restores their opacity. A member that is still a child of a parent is therefore invisible
+  only until that parent is added or animated again: then it snaps back at full opacity. After fading a
+  throwaway wrapper of a panel's parts, take the parts out of the panel too (`panel.remove(...)`, as
+  `scroll()` in L02 S12 does with `t.lines.remove`), or fade the panel itself. Tested on Manim 0.22.
 - Deterministic: seed randomness; avoid `always_redraw` on big groups; clear updaters.
 - Never message an agent that runs inside a workflow (SendMessage to its id): it does not reach that
   agent, it starts a second copy from its transcript, and the two then edit the same file. Review
-  findings that arrive while scenes are being built go into the video's `build/qa_followups.md` for the
+  findings that arrive while scenes are being built go into the video's `QA_FOLLOWUPS.md` (tracked, so a successor sees them) for the
   whole-video QA pass instead.
 - An agent inside a workflow returns its final message when its turn ends. Run `explainer.check` and
   `explainer.preview` in the foreground (long timeout, or `--at`/`-q l` for long scenes); never end the turn
@@ -149,6 +162,7 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 
 ## Never
 
-No GCP/Google logos or console screenshots (schematic drawings tagged `illustration`); no real
+No slide images or PDF pages in a frame or a repository (re-draw the idea, cite the slide number);
+no GCP/Google logos or console screenshots (schematic drawings tagged `illustration`); no real
 person's name on screen (the prompt user is `student`); no hand-typed "output"; no command spelled
 differently from the README; no credentials, keys or project ids that look real.

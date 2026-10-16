@@ -33,6 +33,8 @@ chapters:
 # Two or three sentences (rule H2), written register. Facts: README sections "Developing App using
 # Containers", "Pushing Docker Image to Docker Hub", "Running App on VM using Docker" at commit 62f821bf;
 # the README's five Dockerfile steps; Python 3.15.0 in our build (3.14.7 in the instructor's image); captures
-# dated 2026-10-13 (ASSETS.md). Paste the chapter timestamps from output/chapters.txt under it when uploading.
+# dated 2026-10-13 (ASSETS.md); the push steps ran against a local stand-in registry (no Docker Hub
+# account) and the VM steps in fresh debian:12 / debian:13 containers standing in for the VM. Paste the
+# chapter timestamps from output/chapters.txt under it when uploading.
 description: |
-  AC215（哈佛 MLOps & LLMOps）第 2 讲的跟练视频：照着 dlops-io/simple-translate 的 README，在笔记本上分五步写出 Dockerfile，构建并运行镜像，再给它打标签、推送到 Docker Hub，最后在一台只装了 Docker 的 VM 上用一条命令部署。片中用动画讲清镜像、层、容器和镜像仓库，ENTRYPOINT 和 CMD 怎样拼成启动命令，为什么写着 Python 3.12 的镜像里跑的是 3.15，层缓存为什么让构建一再重跑，以及 arm64 和 amd64 的平台问题。英文旁白，配中文和中英双语字幕；README 的每条命令都按原样、按顺序出现，终端输出录于 2026-10-13。
+  AC215（哈佛 MLOps & LLMOps）第 2 讲的跟练视频：照着 dlops-io/simple-translate 的 README，在笔记本上分五步写出 Dockerfile，构建并运行镜像，再给它打标签、推送到 Docker Hub，最后在一台只装了 Docker 的 VM 上用一条命令部署。片中用动画讲清镜像、层、容器和镜像仓库，ENTRYPOINT 和 CMD 怎样拼成启动命令，为什么写着 Python 3.12 的镜像里跑的是 3.15，为什么只加了一行，COPY 和 uv sync 就要重跑（层缓存），以及 arm64 和 amd64 的平台问题。英文旁白，配中文和中英双语字幕；README 的每条命令都按原样、按顺序出现，终端输出录于 2026-10-13；录制时没有 Docker Hub 账号，也没有开云上的 VM：推送那几步用本机的一个替身镜像仓库，VM 那几步用全新的 Debian 12 和 13 容器代替。

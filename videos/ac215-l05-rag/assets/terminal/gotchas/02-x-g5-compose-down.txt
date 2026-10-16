@@ -1,0 +1,8 @@
+$ docker compose down
+WARN[0000] The "GCP_PROJECT" variable is not set. Defaulting to a blank string.
+WARN[0000] The "GOOGLE_APPLICATION_CREDENTIALS" variable is not set. Defaulting
+to a blank string.
+[+] down 2/2
+ ✔ Container llm-rag-chromadb Removed                                       0.2s
+ ✔ Network llm-rag-network    Removed                                       0.1s
+[exit 0]

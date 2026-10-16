@@ -1,0 +1,16 @@
+00:00 One command on a fresh VM
+01:22 Image, layer, container, registry
+03:13 A clean slate, and the clone
+04:56 Dockerfile step 1: FROM
+06:52 Step 2: ENTRYPOINT
+07:58 Step 3: install uv, copy the code
+09:40 Step 4: uv sync, and two Pythons
+12:09 Step 5: CMD, the solution, the build
+14:06 Run it, translate, exit
+16:19 What's inside the image
+18:05 The layer cache
+20:00 Tag and push
+22:04 Platforms: arm64 vs amd64
+24:39 A VM with only Docker
+26:35 One-command deploy
+28:36 Tear down, recap, and what's next

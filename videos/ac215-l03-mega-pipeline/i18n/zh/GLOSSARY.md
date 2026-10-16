@@ -114,7 +114,7 @@
 
 | English | 字幕 | 首次出现 | 说明 |
 |---|---|---|---|
-| uv / uv init dash dash bare / uv add / uv sync / uv dash dash version / the installer / restart your terminal | uv / uv init --bare / uv add / uv sync / uv --version / 安装脚本 / 重启终端 | S04：现在是这一步本身：uv init --bare。 | uv 照写（L1）。command not found 照写。installed uv 0.13.0 at the time of recording → 录制时装的是 uv 0.13.0。 |
+| uv / uv init dash dash bare / uv add / uv sync / uv dash dash version / the installer / restart your terminal | uv / uv init --bare / uv add / uv sync / uv --version / 安装脚本 / 重启终端 | S04：现在是这一步本身：uv init --bare。 | uv 照写（L1）。command not found 照写。installed uv 0.13.0 at the time of recording → 录制时装的是 uv 0.13.0。uv init 写下的项目名是 transcribe-audio（uv 把目录名的下划线换成了连字符），照写：项目名叫 transcribe-audio（没有下划线，检查器接受；已收进 allowed_spoken_latin）。 |
 | pyproject.toml / uv.lock / the list / the receipt / lock file | pyproject.toml / uv.lock / 清单 / 小票 / lock 文件 | S08：清单 pyproject.toml 和小票 uv.lock 都在 /app 里，所以它们直接写进了你的笔记本。 | 沿用 L1 的比喻：愿望清单 / 购物小票（简称小票）。lock 文件同 L1（不说“锁文件”）。 |
 | package / packages / Debian packages / apt's package lists | 包 / Debian 软件包 / 软件包列表 | S05：它更新 Debian，装上我们要的软件包，再在同一层里删掉 apt 的软件包列表，所以它们不占空间。 | A7：Python 的叫“包”，apt 的叫“软件包”。 |
 | dependencies / lower bound / resolves the whole tree / its own dependencies | 依赖 / 下限 / 解析整棵依赖树 | S08：和第 1 讲一样，每个包都会带来自己的依赖，uv 会解析整棵依赖树。 | resolve 译“解析”（L1）。 |
@@ -123,9 +123,9 @@
 | system Python / Debian's system Python / the image's own Python / uv's own Python / uv's folder | 系统 Python / Debian 的系统 Python / image 自带的 Python / uv 下载的 Python / uv 的目录 | S05：和第 1 讲里 Debian 的系统 Python 不同，这个 Python 属于 image，所以 pip 可以往里装。 | 沿用 L1 的“系统 Python”。 |
 | pip / upgrades pip / pip install uv | pip / 升级 pip / pip install uv | S05：然后它升级 pip，再用 pip 装上 uv。 |  |
 | ffmpeg / ffmpeg dash python / build essential / curl / the ffmpeg program | ffmpeg / ffmpeg-python / build-essential / curl / ffmpeg 程序 | S08：这个包叫 ffmpeg-python；单单一个 ffmpeg 是另一个项目。 | en_display：ffmpeg dash python 写回 ffmpeg-python。 |
-| package names: google-cloud-storage / google-cloud-speech / ffmpeg-python / google-genai / google-cloud-texttospeech / google-cloud-translate / requests | google-cloud-storage / google-cloud-speech / google-genai / google-cloud-texttospeech / google-cloud-translate / requests | S13：运行它，加上 storage 和 text to speech：一共 26 个包。 | 旁白常只说最后一个词（add storage and translate）：跟着旁白说；完整包名在画面上。 |
+| package names: google-cloud-storage / google-cloud-speech / ffmpeg-python / google-genai / google-cloud-texttospeech / google-cloud-translate / requests | google-cloud-storage / google-cloud-speech / google-genai / google-cloud-texttospeech / google-cloud-translate / requests | S13：运行它，加上 storage 和 text to speech：一共 24 个包。 | 旁白常只说最后一个词（add storage and translate）：跟着旁白说；完整包名在画面上。 |
 | import / imports / module / modules / comes with Python | import / 导入 / 模块 / Python 自带 | S03：前几个 import 是 Python 自带的，但两个 Google Cloud 模块和 ffmpeg 不是。 | 作关键字时 import 照说（L1）；imports all three packages → 能导入这三个包。 |
-| compilers / libraries / Google's libraries | 编译器 / 库 / Google 的库 | S06：最大的一层就是那个 RUN，842 MB，装的是编译器、ffmpeg 和它们的库。 |  |
+| compilers / libraries / Google's libraries | 编译器 / 库 / Google 的库 | S06：最大的一层就是那个 RUN，比其他层大得多：842 MB 的编译器、ffmpeg 和它们的库。 |  |
 | help / dash dash help / the help text / the README's block / line for line | 帮助 / --help / 帮助文本 / README 里那段 / 逐行一致 | S08：第 9 步：python cli.py --help。 | ask cli.py for its help → 让 cli.py 打印帮助。 |
 | flags / arguments / the flags combine / for short | 参数 / 可以合在一起用 / 简写 | S10：额外提示一句：这些参数可以合在一起用，-d、-t、-u 会按顺序把三步都跑完。 | 不说 flag（L1）。or dash d for short → 简写是 -d。 |
 
@@ -138,7 +138,7 @@
 | service account / a robot Google account / the course's service account | 服务账号 / 机器人 Google 账号 / 课程的服务账号 | S04：有了它，你的代码就能以课程的服务账号的身份行事，那是一个机器人 Google 账号，所以要像保管信用卡一样保管它。 | 沿用 L1 的“服务账号”（Google Cloud 中文控制台）。不写“服务帐号”。 |
 | key / the course key / key file / mega-pipeline dot json / stand-in / an 82 byte stand-in | 密钥 / 课程密钥 / 密钥文件 / mega-pipeline.json / 替身文件 | S04：第 2 步是密钥：从 Canvas 下载的一个文件，叫 mega-pipeline.json。S14：我们来验证一下，用一个 82 字节的替身文件代替真正的密钥。 | 沿用 L1 的“密钥”。en_display：mega-pipeline.json。 |
 | credentials / application default credentials / ADC / default credentials error | 凭据 / 应用默认凭据 / ADC / DefaultCredentialsError | S09：这个查找过程叫应用默认凭据，简称 ADC，它的第一站就是第 10 行的那个变量。 | Google Cloud 中文文档的译名：应用默认凭据。报错名照屏幕原文写（en_display 把 default credentials error 写回 DefaultCredentialsError）。 |
-| auth library / Google's auth library / client / storage client / asks who it is | 认证库 / Google 的认证库 / 客户端 / storage 客户端 | S09：你的代码从来不传密钥：客户端会去问 Google 的认证库，它是谁。 | storage client → storage 客户端（代码里是 storage.Client）。 |
+| auth library / Google's auth library / client / storage client / asks who it is | 认证库 / Google 的认证库 / 客户端 / storage 客户端 | S09：你的代码从来不传密钥：客户端会去问 Google 的认证库“我是谁”。 | storage client → storage 客户端（代码里是 storage.Client）。 |
 | access token / a short-lived access token / every request carries it | 访问令牌 / 短期有效的访问令牌 | S09：认证库用密钥生成一个短期有效的访问令牌，每个发给 Google 的请求都带着它。 | 字幕里不说 token。 |
 | authentication / authorization / IAM roles / who is calling / may it do this | 身份验证 / 授权 / IAM 角色 / 谁在调用 / 有没有权限做这件事 | S09：身份验证问的是谁在调用，密钥说是课程的服务账号；授权问的是它有没有权限做这件事，IAM 角色为它打开了 bucket。 | Google Cloud 中文文档的译名。 |
 | request / response / call / the audio bytes travel inside the request | 请求 / 响应 / 调用 | S10：音频的字节就放在请求里一起发过去。 |  |
@@ -178,7 +178,7 @@
 
 | English | 字幕 | 首次出现 | 说明 |
 |---|---|---|---|
-| terminal / prompt / the at sign / your laptop's folder | 终端 / 提示符 / @ 符号 / 你笔记本上的目录 | S07：提示符变了：你是用户 app，在 /app 里，@ 符号后面是 container 的 ID，每次运行都不一样。 | shell 的 prompt 叫“提示符”（L1）；LLM 的 prompt 照说 prompt（A7）。 |
+| terminal / prompt / the at sign / your laptop's folder | 终端 / 提示符 / @ 符号 / 你笔记本上的目录 | S07：提示符变了：你是用户 app，在 /app 里，@ 符号后面是 container 的 ID，每次运行都不一样。 | shell 的 prompt 叫“提示符”（L1）；LLM 的 prompt 照说 prompt（A7）。docker login 等你输入密码时的 prompt 说“等它提示输入时”（S14），不说提示符。 |
 | folder / directory / component folders / the secrets folder / data folders / five folders | 目录 / 组件目录 / secrets 目录 / 数据目录 / 五个目录 | S03：每个目录里都有一个 README、它自己的 cli.py 和一个 secrets 目录，但没有一个有 Dockerfile。 | 终端语境一律说“目录”，不说“文件夹”（L1）。 |
 | laptop / on your laptop / the recording laptop | 笔记本 / 你的笔记本上 | S04：我们录制用的这台笔记本没装 uv：报 command not found。 | L1：笔记本电脑，口语说“笔记本”。 |
 | ls / cat / grep / echo / which / readlink / cd / cd dot dot | ls / cat / grep / echo / which / readlink / cd / cd .. | S15：在本地，用 cd .. 回到 repo 的根目录。 | en_display：cd dot dot 写回 cd ..。 |
@@ -270,7 +270,7 @@
 
 除了上表“字幕”和“首次出现”两栏里的拉丁词，检查器还允许下面这些（按它的切词方式列出，见 D3）：
 
-AC、access、ADC、add、AI、API、app、Appendix、apt、ARG、audio、audios、bare、BASH、bash、bin、bind、branch、bucket、build、build-essential、BuildKit、CACHED、cannot、Canvas、cat、cd、check-ignore、chown、cli、cli.py、clone、Cloud、CMD、Code、command、commit、container、COPY、CPython、curl、Debian、DefaultCredentialsError、denied、Desktop、device、directory、dlops-io、Docker、docker、Dockerfile、dockerignore、download、echo、ElevenLabs、en、Engine、ENTRYPOINT、entrypoint、ENV、environment、exit、extra、ffmpeg、ffmpeg-python、file、FLAC、Flash、found、FROM、GB、Gemini、generate、Generated、Git、git、GitHub、gitignore、Google、google、google-cloud-speech、google-cloud-storage、google-cloud-texttospeech、google-cloud-translate、google-genai、grep、group-、help、history、home、Hub、IAM、ID、image、images、import、init、input、install、is、KB、Learning、Linux、Lite、LLMOps、local、lock、log、login、ls、Mac、macOS、main、main.py、MB、mega-pipeline、mega-pipeline.json、MiB、MLOps、module、ModuleNotFoundError、mount、MP、named、False、None、not、or、output、paragraphs、permission、pip、pipeline、PowerShell、project、prompt、prompts、prune、push、pwd、py、PyPI、pyproject.toml、Python、python、readlink、README、README.md、repo、requests、requires-python、result、recognize、rm、root、RUN、run、secrets、sh、shell、Speech-to-Text、status、storage、Storage、student、such、sudo、sync、synthesis、tag、text、Text-to-Speech、the、ti、traceback、transcribe、Transcribing、translate、translated、Translation、TTY、turn、Tutorial、Unicode、upload、Uploading、USER、uv、uv.lock、venv、version、Vertex、VS、wc、which、Windows、winpty、WORKDIR、your。
+AC、access、ADC、add、AI、API、app、Appendix、apt、ARG、audio、audios、bare、BASH、bash、bin、bind、branch、bucket、build、build-essential、BuildKit、CACHED、cannot、Canvas、cat、cd、check-ignore、chown、cli、cli.py、clone、Cloud、CMD、Code、command、commit、container、COPY、CPython、curl、Debian、DefaultCredentialsError、denied、Desktop、device、directory、dlops-io、Docker、docker、Dockerfile、dockerignore、download、echo、ElevenLabs、en、Engine、ENTRYPOINT、entrypoint、ENV、environment、exit、extra、ffmpeg、ffmpeg-python、file、FLAC、Flash、found、FROM、GB、Gemini、generate、Generated、Git、git、GitHub、gitignore、Google、google、google-cloud-speech、google-cloud-storage、google-cloud-texttospeech、google-cloud-translate、google-genai、grep、group-、help、history、home、Hub、IAM、ID、image、images、import、init、input、install、is、KB、Learning、Linux、Lite、LLMOps、local、lock、log、login、ls、Mac、macOS、main、main.py、MB、mega-pipeline、mega-pipeline.json、MiB、MLOps、module、ModuleNotFoundError、mount、MP、named、False、None、not、or、output、paragraphs、permission、pip、pipeline、PowerShell、project、prompt、prompts、prune、push、pwd、py、PyPI、pyproject.toml、Python、python、readlink、README、README.md、repo、requests、requires-python、result、recognize、rm、root、RUN、run、secrets、sh、shell、Speech-to-Text、status、storage、Storage、student、such、sudo、sync、synthesis、tag、text、Text-to-Speech、the、ti、traceback、transcribe、transcribe-audio、Transcribing、translate、translated、Translation、TTY、turn、Tutorial、Unicode、upload、Uploading、USER、uv、uv.lock、venv、version、Vertex、VS、wc、which、Windows、winpty、WORKDIR、your。
 
 ## 规则
 

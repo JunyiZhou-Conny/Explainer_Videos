@@ -1,0 +1,12 @@
+$ python - <<'EOF'
+import json, math
+rows = [json.loads(l) for l in open("outputs/embeddings-char-split-Tolminc Cheese.jsonl")]
+norms = [math.sqrt(sum(x * x for x in r["embedding"])) for r in rows]
+print(len(rows), "rows,", len(rows[0]["embedding"]), "numbers each")
+print("first 5:", [round(x, 4) for x in rows[0]["embedding"][:5]])
+print(f"vector lengths: min {min(norms):.3f}, max {max(norms):.3f}")
+EOF
+24 rows, 256 numbers each
+first 5: [0.0139, 0.0075, 0.0099, -0.0664, -0.0192]
+vector lengths: min 0.369, max 0.402
+[exit 0]

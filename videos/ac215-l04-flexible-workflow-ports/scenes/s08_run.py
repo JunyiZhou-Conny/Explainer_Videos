@@ -53,10 +53,12 @@ Beats (script.md "## S08", one voiceover block each):
     A GREY sheet (your folder) slides from your laptop over the box's front: "your code, their
     environment". Excerpt chip ImportError … (generate_text · ./docker-shell.sh run (excerpt)) RED
     under it, YELLOW tick "puzzle 1".
-10  TRACKER R/3 · extra. Second terminal strip (opens on ~, "new terminal: cd here first"): `ls -la`
-    (extra) -> 73 …, 7, … (root RED); `git status --short` (extra) -> …, 20. A GREY Pipfile glyph
-    with a RED root badge drops from the box to your laptop; two GREY command chips: `rm Pipfile`
-    (extra), `./docker-shell.sh dev` "your own image back".
+10  TRACKER R/3 · extra. Second terminal strip (opens on ~, "new terminal: cd here first", just
+    before the block): `ls -la` (extra) -> 73 …, 7, …; a GREY Pipfile glyph with a RED root badge
+    drops out under the box and slides to your laptop; at "owned by root" the ls row's root turns
+    RED and the badge flashes; `git status
+    --short` (extra) -> …, 20; two GREY command chips: `rm Pipfile` (extra), `./docker-shell.sh dev`
+    "your own image back".
 11  The extras go; the box closes; the fix card under V1: GREEN "build locally · no argument, or
     dev" (the build arrow grows, your image returns), BLUE "run · only images your team pushed from
     this branch · your own DOCKER_USERNAME" (box and signpost flash), GREY "their newer push?
@@ -77,8 +79,15 @@ Deviations from SHOW (and why):
   fix (beat 11), so the diamond has room.
 - Beats 5-6: the terminal has 5 rows, not 12, so V1 stays above it (the image that dissolves, the
   diamond's "no", the pull); the output scrolls, each highlight is on screen when it is said.
+- Beat 3: the code panel's background is 0.45 wider than its text, so the line-88 tag sits inside.
 - Beat 8: the strip leaves (the panel and the chip need the room under V1).
-- Beat 10: the Pipfile lands under your laptop (the screen holds the pulled copy).
+- Beat 10: the Pipfile lands under your laptop (the screen holds the pulled copy); it travels
+  under the shelf's caption, clear of the box's four labels. The second
+  terminal opens between beats 9 and 10 (its ~ / "cd here first" opening takes 2.6 s, which the
+  7.7 s SAY can't also hold); in the 3-row strip the prompt scrolls off when `git status --short`
+  and its two output rows print.
+- Beats 2, 3, 8, 10: a short hold after the block keeps the your-turn card / README chip / the
+  panel's "= root" / the command chips readable before the next beat clears them.
 """
 
 from common import *
@@ -91,15 +100,14 @@ from manim import (
     UP,
     Arrow,
     Create,
-    DashedLine,
     FadeIn,
     FadeOut,
     GrowArrow,
     Indicate,
     LaggedStart,
     Line,
+    MoveAlongPath,
     Rectangle,
-    ReplacementTransform,
     ShowIncreasingSubsets,
     Transform,
     VGroup,
@@ -436,7 +444,7 @@ class DevAndRun(VoiceScene):
             self.play(flash(tr.caption, TURN, 1.08), run_time=0.6)
             vo.wait_until("docker-shell.sh dev")
             self.play(sw.light("dev"), run_time=0.5)
-            ds = type_cmd(self, t, C17.cmd, type_time=0.6)
+            type_cmd(self, t, C17.cmd, type_time=0.6)
             rows = print_build(self, t, DEV_ROWS, run_time=0.9, lag=0.1)
             slim_times(t, rows)
             mode_box = glyph_box(rows[0], "Build Mode: dev")
@@ -465,6 +473,7 @@ class DevAndRun(VoiceScene):
             for r, b in badges:
                 self.remove(b)
                 r.add(b)
+                self.add(r)
 
         # ========================================================== 1 · uv add inside, dev bakes it in
         pic = package_picture()
@@ -494,18 +503,20 @@ class DevAndRun(VoiceScene):
             vo.wait_until("inside the container")
             self.play(flash(pic.app, CTR, 1.04), run_time=0.6)
             vo.wait_until("updates pyproject.toml")
-            for i in range(2):
-                self.play(flash(pic.lfiles[i], TURN, 1.12), flash(pic.rfiles[i], TURN, 1.12),
-                          Indicate(pic.route, color=TURN, scale_factor=1.0), run_time=0.7)
+            self.play(flash(pic.lfiles, TURN, 1.1), flash(pic.rfiles, TURN, 1.1),
+                      Indicate(pic.route, color=TURN, scale_factor=1.0), run_time=0.9)
+            vo.wait_until("through the window")
+            self.play(flash(pic.lfiles, TURN, 1.1), flash(pic.rfiles, TURN, 1.1),
+                      Indicate(pic.route, color=TURN, scale_factor=1.0), run_time=0.8)
             vo.wait_until("then dev bakes it")
-            self.play(*leave_container(t, P_A), Transform(chip89, chip89b), run_time=0.5)
-            type_cmd(self, t, C17.cmd, type_time=0.5)
-            self.play(FadeIn(pic.slab, shift=UP * 0.15), FadeIn(pic.slab_label, shift=UP * 0.15),
-                      FadeIn(pkg, scale=0.8), run_time=0.5)
+            self.play(*leave_container(t, P_A), Transform(chip89, chip89b), FadeIn(pic.slab, shift=UP * 0.15),
+                      FadeIn(pic.slab_label, shift=UP * 0.15), FadeIn(pkg, scale=0.8), run_time=0.5)
+            type_cmd(self, t, C17.cmd, type_time=0.4)
             target = pic.slab.get_center() + RIGHT * 0.6
             baked.next_to(pic.slab, LEFT, buff=0.3)
-            self.play(pkg.animate.move_to(target), run_time=0.7)
-            self.play(FadeIn(baked, shift=LEFT * 0.1), flash(pic.slab, CTR, 1.04), run_time=0.5)
+            self.play(pkg.animate.move_to(target), FadeIn(baked, shift=LEFT * 0.1), run_time=0.7)
+            self.play(flash(pic.slab, CTR, 1.04), run_time=0.5)
+        self.wait(0.6)
 
         # ========================================================== 2 · run uses the local image; your turn
         r_tr = tracker("R", 3)
@@ -523,9 +534,10 @@ class DevAndRun(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             out1, done1 = wipe(t)
             self.play(out1, FadeOut(VGroup(pic, pic.slab, pic.slab_label, pkg, baked, chip89)),
-                      FadeOut(tr, shift=UP * 0.25), FadeIn(r_tr, shift=DOWN * 0.25), FadeIn(sw), run_time=0.6)
+                      FadeOut(tr, shift=UP * 0.25), FadeIn(r_tr, shift=DOWN * 0.25), run_time=0.5)
             done1()
             tr = r_tr
+            self.play(FadeIn(sw), run_time=0.4)
             resize(self, t, 8, run_time=0.5, extra=[sw.unlight("dev"), sw.light("run")])
             self.play(Create(link), FadeIn(rd, shift=LEFT * 0.2), run_time=0.6)
             rcmd = type_cmd(self, t, C18.cmd, type_time=0.5)
@@ -543,6 +555,7 @@ class DevAndRun(VoiceScene):
             resize(self, t, 3, keep=[*rcmd.rows, outs[4]], run_time=0.5)
             place(card2, left=-6.3, bottom=STRIP_TOP + 0.2)
             self.play(FadeIn(card2, shift=UP * 0.15), run_time=0.5)
+        self.wait(2.0)                             # the your-turn card stays up to be read / paused on
 
         # ========================================================== 3 · erratum: run prefers ANY local image
         rows74 = mixed(["“", ("mono", "run", INK), ("to pull and run from the registry”", INK)], CAPTION, INK)
@@ -551,6 +564,9 @@ class DevAndRun(VoiceScene):
         err = erratum_tag().next_to(card74.frame, RIGHT, buff=0.3)
         u74 = under(VGroup(*rows74[2][:-1]), TURN)
         p3 = src_panel(SH, 82, 89, size=20)
+        # the panel's background reaches 0.45 further right, so the "no: Docker Hub" tag on line 88
+        # sits inside it (the bars follow the background's width)
+        p3.code.background.stretch_to_fit_width(p3.code.background.width + 0.45, about_edge=LEFT)
         place(p3, left=-6.3, top=card74.frame.get_bottom()[1] - 0.25)
         bar83, bar85, bar88 = p3.bar(83, LOOKUP, 0.22), p3.bar(85, TURN, 0.2), p3.bar(88, CLOUD, 0.22)
         dia = rd.diamond[0]
@@ -559,7 +575,8 @@ class DevAndRun(VoiceScene):
         t85 = grey_tag("yes: local, however old")
         t85.next_to(code_row(p3, 85), RIGHT, buff=0.35).set_y(row_y(p3, 85))
         t88 = _keep(tag("no: Docker Hub", CLOUD))
-        t88.next_to(code_row(p3, 88), RIGHT, buff=0.35).set_y(row_y(p3, 88))
+        t88.next_to(code_row(p3, 88), RIGHT, buff=0.3).set_y(row_y(p3, 88))
+        assert t88.get_right()[0] <= p3.code.get_right()[0] - 0.08, (t88.get_right(), p3.code.get_right())
         n89 = note("pulled only if missing · after that, the copy you have")
         place(n89, left=-6.1, top=p3.get_bottom()[1] - 0.2)
         c214 = readme_chip("README.md · line 214", "falls back to DockerHub")
@@ -584,10 +601,11 @@ class DevAndRun(VoiceScene):
             self.play(flash(t85, TURN, 1.08), run_time=0.6)
             vo.wait_until("otherwise it runs")
             self.play(FadeIn(bar88), FadeIn(t88, shift=LEFT * 0.1), run_time=0.5)
+            self.play(FadeIn(c214, shift=UP * 0.1), run_time=0.4)      # the README's step list is right
+            self.play(Create(tick214), run_time=0.4)
             vo.wait_until("pulled only the first time")
             self.play(FadeIn(n89, shift=UP * 0.1), run_time=0.5)
-            self.play(FadeIn(c214, shift=UP * 0.1), run_time=0.4)
-            self.play(Create(tick214), run_time=0.4)
+        self.wait(1.0)
 
         # ========================================================== 4 · V1 + the diamond; ponder
         v1 = BuildOrPull(show=("git", "card", "local", "hub", "hub_tag", "box", "post", "pointer"))
@@ -666,9 +684,10 @@ class DevAndRun(VoiceScene):
             self.play(nf.animate.set_color(TURN), run_time=0.4)
             self.play(flash(dia4, TURN, 1.15), no_a.animate.set_color(TURN), no_l.animate.set_color(TURN),
                       run_time=0.7)
-            t.print(self, C72.at(5, 6, "…", 18, 19), run_time=0.6)
-            vo.wait_until("it pulls the dlops image")
+            vo.wait_until("so it pulls")
+            t.print(self, C72.at(5, 6), run_time=0.4)
             self.play(GrowArrow(pull), FadeOut(gone), run_time=0.6)
+            t.print(self, C72.at("…", 18, 19), run_time=0.5)
             self.add(copy)
             self.play(Transform(copy, copy_t), run_time=0.8)
             self.play(FadeOut(pull), run_time=0.3)
@@ -683,24 +702,33 @@ class DevAndRun(VoiceScene):
 
         # ========================================================== 7 · inside: root, Python 3.8.17, pipenv
         comp = VGroup(dia4, wiring, copy)
+        out6, done6 = wipe(t)                      # between the blocks: the picture makes way
+        self.play(out6, FadeOut(v1), FadeOut(comp), run_time=0.5)
+        done6()
+        self.play(*enter_container(t, "transcribe_audio", P_STALE), run_time=0.4)
+        resize(self, t, 10, run_time=0.5)
+        t._prompt_colors = stale_colors
+        pr = bare_prompt(self, t)
+        rt = _keep(tag("root", ERR))
+        # at column 48, clear of the first command (line 24 is 46 characters), so the tag can stay
+        # on that row when the typed line replaces the bare prompt
+        rt.move_to([pr.strut.get_left()[0] + 48 * cell_width(t.size), pr.strut.get_center()[1], 0],
+                   aligned_edge=LEFT)
         with self.voiceover(SAY[7]) as vo:
-            out6, done6 = wipe(t)
-            self.play(out6, FadeOut(v1), FadeOut(comp), run_time=0.5)
-            done6()
-            self.play(*enter_container(t, "transcribe_audio", P_STALE), run_time=0.4)
-            resize(self, t, 10, run_time=0.5)
-            t._prompt_colors = stale_colors
-            pr = bare_prompt(self, t)
-            rt = _keep(tag("root", ERR))
-            beside(rt, t, pr)
             pin(self, pr, rt, run_time=0.4)
+            self.play(flash(substring(pr, "root"), ERR, 1.25), run_time=0.7)
             vo.wait_until("Python is 3.8.17")
+            pr.remove(rt)
+            self.add(rt)
             o7 = session(self, t, C72, 24, 25, type_time=0.5, out_time=0.3)
+            self.remove(rt)
+            o7[24].add(rt)
+            self.add(o7[24])
             pyb = glyph_box(o7[25], "Python 3.8.17")
             pin(self, o7[25], pyb, run_time=0.4, anim=Create(pyb))
             vo.wait_until("in an environment")
             o7 = session(self, t, C72, 26, 27, type_time=0.4, out_time=0.3)
-            uvenv = under(substring(o7[27], "/root/.local/share/virtualenvs/app-4PlAip0Q"), S.GREY)
+            uvenv = under(substring(o7[27], "/root/.local/share/virtualenvs/app-4PlAip0Q"), TURN)
             pin(self, o7[27], uvenv, run_time=0.4, anim=Create(uvenv))
             vo.wait_until("Help still works")
             o7 = session(self, t, C72, 28, 29, "…", 33, type_time=0.5, out_time=0.5)
@@ -716,7 +744,7 @@ class DevAndRun(VoiceScene):
         place(lp, left=-6.3, top=-0.62)
         env = excerpt_chip("PYTHON_VERSION=3.8.17", "docker image inspect · env (excerpt)", line=C74.line(5))
         place(env, right=6.3, cy=lp.frame.get_center()[1] + 0.1)
-        root8 = _keep(tag("= root", ERR)).next_to(lp.rows[2].glyphs, RIGHT, buff=0.3)
+        root8 = note("= root", ERR).next_to(lp.rows[2].glyphs, RIGHT, buff=0.25)   # plain text: no pill to touch the underline above
         labels, oanims = v1.open_box([("2025-02-18", INK), ("Python 3.8.17", TURN), ("pipenv shell", INK),
                                       ("user: root", ERR)])
         lid, tape, rise = oanims[0], oanims[1], oanims[2].animations
@@ -736,6 +764,7 @@ class DevAndRun(VoiceScene):
             self.play(Create(p8), rise[2], run_time=0.8)
             vo.wait_until("as root")
             self.play(FadeIn(root8, shift=LEFT * 0.1), rise[3], run_time=0.8)
+        self.wait(0.8)                             # the panel's "= root" stays readable a moment
 
         # ========================================================== 9 · an older branch's recipe; puzzle 1
         p9 = src_panel(OLD_DF, 2, 2)
@@ -769,6 +798,7 @@ class DevAndRun(VoiceScene):
             self.play(flash(old.card, TURN, 1.06), run_time=0.6)
             vo.wait_until("Your folder slides")
             self.play(FadeOut(p9), run_time=0.3)
+            labels.set_z_index(5)                  # the sheet slides behind the box's labels
             self.add(sheet)
             self.play(sheet.animate.move_to(v1.box.front), run_time=1.2)
             vo.wait_until("your code, their environment")
@@ -782,25 +812,41 @@ class DevAndRun(VoiceScene):
         pip = VGroup(file_row("Pipfile", INK, S.GREY), _keep(tag("root", ERR, size=CAPTION)))
         pip.arrange(RIGHT, buff=0.12)
         pip_end = pip.copy().move_to([scr.get_center()[0], v1.image_label.get_center()[1] - 0.05, 0])
+        # the Pipfile appears under the box, below the shelf's caption (clear of the labels left of
+        # the box and of the caption), slides left and rises into your laptop's folder
+        y_low = v1.hub_shelf.caption.get_bottom()[1] - 0.24 - pip.height / 2
+        pip_low = pip.copy().move_to([v1.box.get_center()[0], y_low, 0])
+        pip_low.shift(LEFT * max(0.0, pip_low.get_right()[0] - 6.35))     # inside the safe frame
+        pip_path = VMobject().set_points_as_corners([pip_low.get_center(), [pip_end.get_center()[0], y_low, 0],
+                                                     pip_end.get_center()])
         pip.move_to(v1.box.front)
+        pip.set_z_index(4)                         # above the GREY sheet it starts on
         rm_chip = VGroup(cmd_chip("rm Pipfile"), extra_tag()).arrange(RIGHT, buff=0.2)
         dev_chip = VGroup(cmd_chip(C17.cmd), note("your own image back")).arrange(RIGHT, buff=0.2)
         chips10 = VGroup(rm_chip, dev_chip).arrange(RIGHT, buff=0.8)
         place(chips10, cx=0, cy=(v1.get_bottom()[1] + STRIP_TOP) / 2 - 0.02)
+        # between the blocks: beat 9's extras leave and the second terminal opens (in ~ first)
+        self.play(FadeOut(VGroup(old, link9, ie, puzzle, yours)), Transform(v1.card, card_full),
+                  caption_extra(tr, True), run_time=0.5)
+        t2 = second_terminal(self, P_A, rows=3, top=STRIP_TOP)
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(VGroup(old, link9, ie, puzzle, yours)), Transform(v1.card, card_full),
-                      caption_extra(tr, True), run_time=0.5)
-            t2 = second_terminal(self, P_A, rows=3, top=STRIP_TOP)
             type_extra(self, t2, LS, type_time=0.3, under_prompt=True)
             ls_rows = t2.print(self, ["…", C73.line(7), "…"], run_time=0.4)
-            self.play(substring(ls_rows[1], "root").animate.set_color(ERR), run_time=0.3)
-            self.play(pip.animate.move_to(pip_end), run_time=1.0)
+            vo.wait_until("in your folder")
+            pip.move_to(pip_low)
+            self.play(FadeIn(pip, shift=DOWN * 0.3), run_time=0.5)
+            self.play(MoveAlongPath(pip, pip_path), run_time=1.0)
+            vo.wait_until("owned by root")
+            self.play(substring(ls_rows[1], "root").animate.set_color(ERR), flash(pip[1][1], ERR, 1.3),
+                      run_time=0.6)
             vo.wait_until("If you tried this")
             type_extra(self, t2, GS, type_time=0.4)
             t2.print(self, ["…", C73.line(20)], run_time=0.3)
+            vo.wait_until("delete it")
             self.play(FadeIn(rm_chip, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("and run dev")
             self.play(FadeIn(dev_chip, shift=UP * 0.1), run_time=0.4)
+        self.wait(1.2)
 
         # ========================================================== 11 · the fix
         r1 = mixed([("build locally · no argument, or", VENV), ("mono", "dev", VENV)], CAPTION)
@@ -826,6 +872,6 @@ class DevAndRun(VoiceScene):
             vo.wait_until("under your own")
             self.play(flash(r2[2], TURN, 1.1), run_time=0.7)
         self.play(FadeIn(r3, shift=UP * 0.1), run_time=0.5)
-        self.wait(1.2)
+        self.wait(1.6)
         self.play(FadeOut(*self.mobjects), run_time=0.8)
         self.wait(0.3)

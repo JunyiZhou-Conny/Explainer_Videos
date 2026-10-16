@@ -1,0 +1,40 @@
+$ python - <<'EOF'
+import chromadb
+c = chromadb.HttpClient(host="llm-rag-chromadb", port=8000).get_collection("char-split-collection")
+t = c.get(where={"book": "Tolminc Cheese"}, include=["embeddings", "documents"])
+i = next(k for k, d in enumerate(t["documents"]) if "curd" in d)
+v = t["embeddings"][i]
+print("stand-in query vector: the stored embedding of chunk", t["ids"][i], "(Tolminc Cheese)")
+print(repr(t["documents"][i][:72]))
+bob_italian = {"where": {"book": "The Complete Book of Cheese"}, "where_document": {"$contains": "Italian"}}
+for label, kw in [("no filter", {}), ("where book + $contains 'Italian' (as cli.py:354-359)", bob_italian)]:
+    r = c.query(query_embeddings=[v], n_results=10, **kw)
+    print("--", label)
+    for d, m in zip(r["distances"][0], r["metadatas"][0]):
+        print(f"{d:.4f}  {m['book']}")
+EOF
+stand-in query vector: the stored embedding of chunk 8440accaceb0ce96-6 (Tolminc Cheese)
+'is ready?” Mara asked.\n\n“For what?”\n\n“For the next step.”\n\nAnja smiled. '
+-- no filter
+0.0000  Tolminc Cheese
+0.0804  Tolminc Cheese
+0.0914  Tolminc Cheese
+0.0931  Tolminc Cheese
+0.1033  Tolminc Cheese
+0.1265  Tolminc Cheese
+0.1287  Tolminc Cheese
+0.1471  Tolminc Cheese
+0.1585  Tolminc Cheese
+0.1627  Tolminc Cheese
+-- where book + $contains 'Italian' (as cli.py:354-359)
+0.2833  The Complete Book of Cheese
+0.2875  The Complete Book of Cheese
+0.2928  The Complete Book of Cheese
+0.2950  The Complete Book of Cheese
+0.2999  The Complete Book of Cheese
+0.3019  The Complete Book of Cheese
+0.3027  The Complete Book of Cheese
+0.3048  The Complete Book of Cheese
+0.3072  The Complete Book of Cheese
+0.3123  The Complete Book of Cheese
+[exit 0]

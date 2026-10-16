@@ -18,10 +18,11 @@ Beats (script.md "## S09", one voiceover block each):
     pulses) with the label "our code" → line 10 `client = storage.Client()` turns YELLOW → line 23
     `google.auth.default()` turns PINK, label "the client asks" → line 36, label "google.auth looks
     for the file".
- 3  The eye and labels go; `storage.Client()` (line 10) and `google.auth.default()` (line 23) lift
-    out of the terminal, which shrinks to the strip (the command + both rows of line 36, RED); V5
-    fades in (container outline only) and the two lifted pieces become the `storage.Client()`
-    machine and the GREY `google.auth` box. The client pulses ("never passes the key"), then asks
+ 3  The eye and labels go; `storage.Client()` (line 10) and `google.auth` (line 23; its
+    `.default()` fades) lift out of the terminal, which shrinks to the strip (the command + both
+    rows of line 36, RED) while the two words fly to their places in V5; then the container
+    outline and the boxes draw in around them: the `storage.Client()` machine and the GREY
+    `google.auth` box. The client pulses ("never passes the key"), then asks
     "who am I?"; GREY tag "ADC · Application Default Credentials" under them; on "its first stop"
     the PINK signpost is planted at /app with a small tag "Dockerfile · line 10".
  4  The signpost's board, then its path line, then the /app root pulse; on "Through the window"
@@ -36,20 +37,22 @@ Beats (script.md "## S09", one voiceover block each):
     gate 2 pulses; its question becomes "IAM roles allow it", the padlock opens and the bucket
     door opens.
  7  Error branch: the cloud, gates, token, arrow and tags go; container, signpost and laptop stay.
-    The key vanishes (RED cross), google.auth follows the signpost again into the empty secrets/,
-    and line 36 pulses RED in the strip. Three causes, one at a time, each undone before the next, with a RED numbered
-    badge and two-line caption top right: (1) no key in this component's secrets/; (2) the root
-    slides from /app to /tmp (RED cross: nothing there); (3) the window re-aims at mega-pipeline/.
-    Last, the picture dims under a GREY footnote card "a different error: 403 …
-    storage.buckets.get → the key lacks rights: ask the staff".
+    The key vanishes (RED cross), google.auth follows the signpost again into the empty secrets/.
+    Three causes, one at a time, each undone before the next, with a RED numbered badge and
+    two-line caption top right: (1) no key in this component's secrets/ (line 36's RED bar
+    pulses in the strip); (2) the root slides from /app to /tmp (RED cross: nothing there);
+    (3) the window re-aims at mega-pipeline/. The root label and the folder name cross-fade (local reroot()/
+    reaim(), not the shared letter morph). After the voice, V5 leaves and a GREY footnote card
+    stands alone above the strip: "a different error: 403 … storage.buckets.get → the key lacks
+    rights: ask the staff".
  8  TRACKER A10 · extra. The picture goes, the terminal grows to 12 rows: `ls -la input_audios
     text_prompts text_prompts/*` (extra; folds) → TERM(08-ls-after-download.txt: 2, …, 7, …, 11,
     13); input_audios: and text_prompts: get GREY bars, `group-01` a GREY box. Then the terminal
     shrinks to the strip (the command + the group-01 row); above it CODE(transcribe_audio/cli.py:
     33–36) and a GREY laptop folder with the two empty folders input_audios/ and
-    text_prompts/group-01/ (they pulse); on "The code makes them" lines 33–34 get a GREY bar +
-    "clear, then make the folders", on "before it builds the client" line 36 a PINK bar + "the
-    client".
+    text_prompts/group-01/; on "The code makes them" the folders pulse and lines 33–34 get a
+    GREY bar + "clear, then make the folders", on "before it builds the client" line 36 a PINK
+    bar + "the client" (INK, legible on the bar).
  9  TRACKER A10. The strip and the folder go; the panel swaps to CODE(cli.py: 39–43); the caption
     card "with your key, look for" (no terminal frame) and the GOLD tag "billed to the course
     project" appear; items write in on their words: "download" (line 30), "one object name per
@@ -62,12 +65,12 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (CAPTION, box, check_mark, cross_mark, label, line_bar, mono,
-                              step_badge, substring, tag)
+from explainer.devops import (CAPTION, TERM_BG, box, check_mark, cross_mark, label, line_bar,
+                              mono, step_badge, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, COST, CTR, ERR, GROUP, INK, LAPTOP, LOOKUP, NARRATION, P_CTR, TURN, VENV,
-                    AdcChain, LookFor, _set_op, asset_lines, bare_prompt, caption_extra, capture,
+                    AdcChain, LookFor, _set_op, asset_lines, bare_prompt, capture,
                     cost_tag, extra_tag, file_row, nokey_tag, pin, readme_chip, resize, source_text,
                     src_panel, term, tracker, type_cmd, your_turn)
 
@@ -178,6 +181,12 @@ def uline(line, sub, color, stroke=3.5, occ=0, pad=0.02) -> Line:
                 stroke_width=stroke)
 
 
+def backing(m, color: str = TERM_BG, buff: float = 0.07) -> Rectangle:
+    """An opaque card the size of m (+buff), in the terminal's background colour (or `color`)."""
+    return Rectangle(width=m.width + 2 * buff, height=m.height + 2 * buff, stroke_width=0) \
+        .set_fill(color, 1).move_to(m)
+
+
 def eye_glyph(w: float = 0.5, color: str = TURN) -> VGroup:
     """A YELLOW eye (an almond outline, an iris and a pupil): the reader's eye on a traceback."""
     top = ArcBetweenPoints(LEFT * w / 2, RIGHT * w / 2, angle=-0.62 * PI, color=color, stroke_width=3)
@@ -194,16 +203,29 @@ def show_part(piece, name: str):
     piece._flag(m, False)
 
 
-def swap_words(old, new) -> Animation:
-    """old fades out, then new fades in on the same spot (never both half-visible at once)."""
-    return LaggedStart(old.animate.set_opacity(0), FadeIn(new, shift=UP * 0.1), lag_ratio=1.0)
+def _first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def _second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
+def swap_words(old, new, shift=None) -> list:
+    """Animations: old fades out over the first half of the play, new fades in over the second
+    (never both half-visible at once). Two plain animations with half-play rate functions, not a
+    LaggedStart: its wrapper group would be added to the scene, pull `old` out of its piece, and
+    take it along when the wrapper is removed (the root label vanished that way)."""
+    move = ORIGIN if shift is None else shift * 0.5
+    return [old.animate(rate_func=_first_half).shift(move).set_opacity(0),
+            FadeIn(new, shift=UP * 0.1 if shift is None else move, rate_func=_second_half)]
 
 
 def _xfade_into(scene, old, new, shift=ORIGIN, anims=(), run_time: float = 0.8):
-    """old (a member of a piece) cross-fades into `new` (riding `shift` with it), then takes
-    new's shape, so the piece keeps its member; no letter-by-letter morph."""
-    scene.play(old.animate.shift(shift).set_opacity(0), FadeIn(new, shift=shift), *anims,
-               run_time=run_time)
+    """old (a member of a piece) fades out over the first half of `shift`, `new` fades in over
+    the second half; then old takes new's shape, so the piece keeps its member. No
+    letter-by-letter morph, and the two words are never on screen together."""
+    scene.play(*swap_words(old, new, shift), *anims, run_time=run_time)
     old.become(new)
     scene.remove(new)
 
@@ -227,8 +249,7 @@ def reaim(scene, chain, folder: str, run_time: float = 0.8):
     `folder` (RED) while secrets/ and the key vanish."""
     new = mono(folder, CAPTION, ERR).move_to(chain.folder, aligned_edge=LEFT)
     old = chain.folder
-    chain.hide(scene, "secrets", "key", run_time=run_time,
-               extra=[old.animate.set_opacity(0), FadeIn(new)])
+    chain.hide(scene, "secrets", "key", run_time=run_time, extra=swap_words(old, new))
     old.become(new)
     scene.remove(new)
 
@@ -247,6 +268,41 @@ def cause_badge(k: int, lines: list[str]) -> VGroup:
     g = VGroup(b, txt).arrange(DOWN, buff=0.18)
     g.badge, g.text = b, txt
     return g
+
+
+def next_cause(old, new) -> list:
+    """Animations: badge k becomes badge k+1 (the digit morphs inside the same circle) while the
+    caption cross-fades (a letter morph between two different sentences reads as noise)."""
+    return [ReplacementTransform(old.badge, new.badge),
+            FadeOut(old.text, rate_func=_first_half),
+            FadeIn(new.text, rate_func=_second_half)]
+
+
+def extra_caption(scene, tr, on: bool, *anims, run_time: float = 0.5):
+    """The tracker caption gains (on) or loses ' · extra', played with `anims`. Only the suffix
+    fades; "step k of N: ..." stays still (common.caption_extra's Transform re-pairs every glyph
+    of two different-length texts, so the whole caption garbles for the length of the play).
+    The suffix is its own mobject beside the caption (tr.goto's wrapper group holds the caption
+    on screen, so the caption object itself is never swapped); nothing moves the tracker while
+    it is up."""
+    if on:
+        s = f"step {tr.k} of {len(tr.steps)}: {tr.steps[tr.k - 1]}"
+        full = label(s + " · extra", tr.size, tr.hi_color, t2c={"· extra": S.GREY})
+        full.next_to(tr.dots, RIGHT, buff=0.25)
+        tr.extra_suffix = VGroup(*full[len(label(s, tr.size)):]).copy()
+        assert len(tr.extra_suffix) == 6, len(tr.extra_suffix)      # the glyphs of "· extra"
+        scene.play(*anims, FadeIn(tr.extra_suffix, shift=LEFT * 0.1), run_time=run_time)
+    else:
+        scene.play(*anims, FadeOut(tr.extra_suffix, shift=RIGHT * 0.1), run_time=run_time)
+        tr.extra_suffix = None
+
+
+def chip_swap(old, new) -> list:
+    """Animations: a note chip becomes another: the frame stretches to its new size while the
+    words cross-fade (no letter morph between two different texts)."""
+    return [ReplacementTransform(old.frame, new.frame),
+            FadeOut(old.row, rate_func=_first_half),
+            FadeIn(new.row, rate_func=_second_half)]
 
 
 def footnote_card() -> VGroup:
@@ -299,7 +355,7 @@ class WhoIsCalling(VoiceScene):
             vo.wait_until("python cli.py dash dash")
             c0 = type_cmd(self, t, DL_CMD, 1.2)
             vo.wait_until("or dash d for short")
-            self.play(ReplacementTransform(chip0, chip1), run_time=0.6)
+            self.play(*chip_swap(chip0, chip1), run_time=0.6)
             self.play(Indicate(chip1.row[-1], color=TURN, scale_factor=1.4), run_time=0.6)
             vo.wait_until("Our machine had no key")
             items = [s if i != 9 else (s, ERR) for i, s in enumerate(DL_OUT)]
@@ -393,23 +449,28 @@ class WhoIsCalling(VoiceScene):
             c23t = substring(L23, ".default()").copy()
             substring(L10, "storage.Client()").set_opacity(0)
             substring(L23, "google.auth.default()").set_opacity(0)
-            self.add(c10, c23, c23t)
+            # each word rides on an opaque card: on its way up it crosses the shrinking
+            # terminal's title bar and command row, and covers them instead of mixing letters
+            k10, k23 = backing(c10), backing(c23)
+            self.add(k10, k23, c10, c23, c23t)
             self.play(FadeOut(eye), FadeOut(lab_code), FadeOut(lab_asks), FadeOut(lab_file), FadeOut(chip1),
                       c10.animate.shift(UP * 0.12).set_color(CTR), c23.animate.shift(UP * 0.12).set_color(INK),
+                      k10.animate.shift(UP * 0.12), k23.animate.shift(UP * 0.12),
                       FadeOut(c23t, shift=UP * 0.12), run_time=0.45)
             # word to word: each copy lands on the identical text of its V5 box (no shape morph)
             tgt_c, tgt_a = chain.client[1].copy(), chain.auth[1].copy()
             _set_op(tgt_c)
             _set_op(tgt_a)
             resize(self, t, 3, keep=[c0, L36a, L36b], run_time=0.85,
-                   extra=[Transform(c10, tgt_c), Transform(c23, tgt_a)])
-            # then the container and the two boxes draw in around the words
+                   extra=[Transform(c10, tgt_c), Transform(c23, tgt_a),
+                          Transform(k10, backing(tgt_c, S.BG)), Transform(k23, backing(tgt_a, S.BG))])
+            # then the container and the two boxes draw in around the words; the cards go
             bx_c, bx_a = chain.client[0].copy(), chain.auth[0].copy()
             _set_op(bx_c)
             _set_op(bx_a)
             self.add(chain, bx_c, bx_a)
             self.bring_to_front(c10, c23)
-            self.play(FadeIn(chain), FadeIn(bx_c), FadeIn(bx_a), run_time=0.55)
+            self.play(FadeIn(chain), FadeIn(bx_c), FadeIn(bx_a), FadeOut(k10), FadeOut(k23), run_time=0.55)
             self.remove(c10, c23, bx_c, bx_a)
             show_part(chain, "client")
             show_part(chain, "auth")
@@ -444,7 +505,10 @@ class WhoIsCalling(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             chain.unfollow(self, run_time=0.3)
             tok = chain.mint(self, run_time=0.8)
-            short = label("short-lived", 20, COST).next_to(tok, UP, buff=0.12)
+            # opaque fill (same look): riding the arrow it sits on the container's wall and the
+            # cloud's edge, which would otherwise show through it
+            tok[0].set_fill(ManimColor(S.BG).interpolate(ManimColor(COST), 0.12), 1)
+            short =label("short-lived", 20, COST).next_to(tok, UP, buff=0.12)
             vo.wait_until("a short-lived")
             self.play(FadeIn(short, shift=DOWN * 0.1), Indicate(tok[1][0], color=COST, scale_factor=1.5),
                       run_time=0.6)
@@ -473,7 +537,7 @@ class WhoIsCalling(VoiceScene):
                       Indicate(tok, color=TURN, scale_factor=1.1), run_time=0.8)
             vo.wait_until("and the key says")
             ans1 = label("service account", 20, VENV).move_to(g1.question, aligned_edge=LEFT)
-            chain.attach(self, ans1, anims=[swap_words(g1.question, ans1),
+            chain.attach(self, ans1, anims=[*swap_words(g1.question, ans1),
                                             Indicate(chain.key, color=COST, scale_factor=1.4)],
                          run_time=0.8, into=g1)
             ck_1 = chain.check(self, 1, run_time=0.6)
@@ -481,7 +545,7 @@ class WhoIsCalling(VoiceScene):
             self.play(Indicate(VGroup(g2.word, g2.question), color=TURN, scale_factor=1.08), run_time=0.8)
             vo.wait_until("and IAM roles")
             ans2 = label("IAM roles allow it", 20, VENV).move_to(g2.question, aligned_edge=LEFT)
-            chain.attach(self, ans2, anims=[swap_words(g2.question, ans2),
+            chain.attach(self, ans2, anims=[*swap_words(g2.question, ans2),
                                             Indicate(chain.padlock, color=VENV, scale_factor=1.3)],
                          run_time=0.8, into=g2)
             ck_2 = chain.check(self, 2, run_time=0.8)
@@ -502,22 +566,27 @@ class WhoIsCalling(VoiceScene):
             chain.fail(self, run_time=0.5)
             chain.follow(self, run_time=1.0, found=False)
             vo.wait_until("The key isn't")
+            # line 36 pulses through its RED bar (scaling the 12.6-wide row would cross the frame)
             self.play(FadeIn(causes[0], shift=DOWN * 0.1),
-                      Indicate(VGroup(L36a.glyphs, L36b.glyphs), color=ERR, scale_factor=1.04), run_time=0.6)
+                      bar36.animate(rate_func=there_and_back).set_fill(ERR, 0.5), run_time=0.6)
             self.play(Indicate(chain.secrets, color=ERR, scale_factor=1.2), run_time=0.7)
             vo.wait_until("you changed directory")
-            chain.unfollow(self, run_time=0.3)
-            self.play(ReplacementTransform(causes[0], causes[1]), run_time=0.4)
-            chain.unfail(self, run_time=0.5)
-            reroot(self, chain, "/tmp", run_time=0.9)
+            # undo cause 1 in one move (= unfollow + unfail), so the /tmp root and its RED cross
+            # get time on screen before cause 3
+            chain.detach(self, chain.path, chain.cross, run_time=0.4,
+                         extra=next_cause(causes[0], causes[1]))
+            chain.path = None
+            chain.reveal(self, "key", run_time=0.3)
+            reroot(self, chain, "/tmp", run_time=0.8)
             nothing = cross_mark(0.26, ERR).next_to(chain.root_label, RIGHT, buff=0.2)
-            self.play(Create(nothing), run_time=0.4)
+            self.play(Create(nothing), run_time=0.3)
             vo.wait_until("or you ran docker run")
-            self.play(FadeOut(nothing), ReplacementTransform(causes[1], causes[2]), run_time=0.4)
+            self.play(FadeOut(nothing), *next_cause(causes[1], causes[2]), run_time=0.5)
             reroot(self, chain, None, run_time=0.6)
             reaim(self, chain, "mega-pipeline/", run_time=0.8)
-            self.play(Indicate(chain.window, color=LOOKUP, scale_factor=1.0),
-                      Indicate(chain.folder, color=ERR, scale_factor=1.15), run_time=0.8)
+            # (a small scale: the folder name sits close to the laptop frame's left edge)
+            self.play(Indicate(chain.window, color=TURN, scale_factor=1.0),
+                      Indicate(chain.folder, color=TURN, scale_factor=1.05), run_time=0.8)
         # the footnote is a different error: V5 leaves, the card stands alone above the strip
         self.wait(0.3)
         self.play(FadeOut(causes[2]), FadeOut(chain), FadeIn(note, shift=UP * 0.1), run_time=0.7)
@@ -528,9 +597,9 @@ class WhoIsCalling(VoiceScene):
         # ========================================================== 8 · extra: the folders it made
         ls_rows = 12
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(note), caption_extra(tr), run_time=0.6)
-            resize(self, t, ls_rows, run_time=0.7)
-            c8 = type_cmd(self, t, LS_CMD, 1.2)
+            extra_caption(self, tr, True, FadeOut(note), run_time=0.5)
+            resize(self, t, ls_rows, run_time=0.6)
+            c8 = type_cmd(self, t, LS_CMD, 1.1)
             assert hasattr(c8, "rows") and len(c8.rows) == 2, c8
             pin(self, c8, place(extra_tag(), left=c8.rows[-1].glyphs.get_right()[0] + 0.3,
                                 cy=c8.rows[-1].strut.get_center()[1]), run_time=0.3)
@@ -546,30 +615,32 @@ class WhoIsCalling(VoiceScene):
             self.play(FadeIn(b_tp), run_time=0.3)
             stick(self, tp, b_tp, under=True)
             vo.wait_until("with your group inside")
-            sq = SurroundingRectangle(substring(g01, GROUP), color=S.GREY, buff=0.06, stroke_width=3)
-            pin(self, g01, sq, run_time=0.5, anim=Create(sq))
-            self.play(Indicate(substring(g01, GROUP), color=INK, scale_factor=1.2), run_time=0.6)
+            sq = SurroundingRectangle(substring(g01, GROUP), color=S.GREY, buff=0.05, stroke_width=3)
+            pin(self, g01, sq, run_time=0.4, anim=Create(sq))
 
             panel = src_panel("transcribe_audio/cli.py", 33, 36)
             place(panel, left=-6.3, top=2.7)
             code = panel.code
-            bar_mk = VGroup(line_bar(code, 0, S.GREY, 0.2), line_bar(code, 1, S.GREY, 0.2))
+            b0, b1 = line_bar(code, 0, S.GREY), line_bar(code, 1, S.GREY)
+            bar_mk = Rectangle(width=b0.width, height=b0.get_top()[1] - b1.get_bottom()[1], stroke_width=0)
+            bar_mk.set_fill(S.GREY, 0.2).move_to([b0.get_center()[0], (b0.get_top()[1] + b1.get_bottom()[1]) / 2, 0])
             bar_cl = line_bar(code, 3, LOOKUP, 0.2)
-            note_mk = label("clear, then make the folders", 20, S.GREY)
+            note_mk = label("clear, then make the folders", 20, INK)     # INK: legible on the bar
             place(note_mk, left=code.code_lines[1].get_right()[0] + 0.5, cy=code.code_lines[1].get_center()[1])
-            note_cl = label("the client", 20, LOOKUP)
+            note_cl = label("the client", 20, INK)          # INK: PINK text vanished into the bar
             place(note_cl, left=code.code_lines[3].get_right()[0] + 0.5, cy=code.code_lines[3].get_center()[1])
             folders = laptop_folders()
             place(folders, left=-6.3, top=panel.get_bottom()[1] - 0.2)
-            resize(self, t, 3, keep=[c8.rows[0], c8.rows[1], g01], run_time=0.7)
+            resize(self, t, 3, keep=[c8.rows[0], c8.rows[1], g01], run_time=0.55)
             assert folders.get_bottom()[1] > t.box.get_top()[1] + 0.1, folders.get_bottom()[1]
-            self.play(FadeIn(folders, shift=UP * 0.1), FadeIn(panel, shift=DOWN * 0.1), run_time=0.6)
-            self.play(Indicate(folders.rows, color=INK, scale_factor=1.08), run_time=0.6)
+            self.play(FadeIn(folders, shift=UP * 0.1), FadeIn(panel, shift=DOWN * 0.1), run_time=0.5)
+            # "them" = the two folders: they pulse as the code lines that make them light up
             vo.wait_until("The code makes them")
-            self.play(FadeIn(bar_mk), FadeIn(note_mk, shift=LEFT * 0.1), run_time=0.5)
-            self.play(Indicate(code.code_lines[1], color=INK, scale_factor=1.1), run_time=0.6)
+            self.play(FadeIn(bar_mk), FadeIn(note_mk, shift=LEFT * 0.1),
+                      Indicate(folders.rows, color=INK, scale_factor=1.08), run_time=0.6)
             vo.wait_until("before it builds the client")
-            self.play(FadeIn(bar_cl), FadeIn(note_cl, shift=LEFT * 0.1), run_time=0.5)
+            self.play(FadeIn(bar_cl), FadeIn(note_cl, shift=LEFT * 0.1),
+                      Indicate(code.code_lines[3], color=LOOKUP, scale_factor=1.06), run_time=0.6)
         self.wait(0.8)
 
         # ========================================================== 9 · with your key, look for
@@ -592,8 +663,9 @@ class WhoIsCalling(VoiceScene):
         place(yt, right=chip_go.get_left()[0] - 0.25, cy=BAND_Y)
         assert yt.get_left()[0] > tr10_right + 0.15, (yt.get_left()[0], tr10_right)
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(panel, bar_mk, bar_cl, note_mk, note_cl), shift=UP * 0.1),
-                      FadeOut(folders), FadeOut(t), caption_extra(tr, False), run_time=0.6)
+            extra_caption(self, tr, False,
+                          FadeOut(VGroup(panel, bar_mk, bar_cl, note_mk, note_cl), shift=UP * 0.1),
+                          FadeOut(folders), FadeOut(t), run_time=0.6)
             self.play(FadeIn(panel2, shift=DOWN * 0.1), FadeIn(look), run_time=0.6)
             self.play(FadeIn(cost2, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("look for the word download")

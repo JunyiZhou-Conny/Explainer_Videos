@@ -1,0 +1,7 @@
+$ docker network ls
+NETWORK ID     NAME              DRIVER    SCOPE
+cd5f6cc0ba21   bridge            bridge    local
+7919486b2391   host              host      local
+7bdcdbad6ad5   llm-rag-network   bridge    local
+9e7ff530c1c6   none              null      local
+[exit 0]

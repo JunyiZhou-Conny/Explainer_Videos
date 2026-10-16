@@ -1,0 +1,60 @@
+$ docker build -t python:3.12-slim-bookworm -f base-python-3.12-slim-bookworm.Dockerfile .
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from base.Dockerfile
+#1 transferring dockerfile: 754B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim-bookworm
+#2 DONE 0.0s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 195.32kB done
+#4 DONE 0.0s
+
+#5 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#5 resolve docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258 0.0s done
+#5 DONE 0.1s
+
+#5 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#5 extracting sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39
+#5 extracting sha256:7fd1ebe418b5079d4aa36f416af9b143d127bc75b0155d71cb5fd559b5e04d39 1.1s done
+#5 DONE 1.1s
+
+#5 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#5 extracting sha256:6e0ba8ba048777f5354b5a7cb497ae5261116fac8246160c06fc045c8300c582 0.1s done
+#5 DONE 1.3s
+
+#5 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#5 extracting sha256:86a9e13e035d8e44ae37bfebc52c7fc68898fde19b4b26dd0585f2231fcfaf2c
+#5 extracting sha256:86a9e13e035d8e44ae37bfebc52c7fc68898fde19b4b26dd0585f2231fcfaf2c 0.7s done
+#5 DONE 2.0s
+
+#5 [1/4] FROM docker.io/library/python:3.12-slim-bookworm@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258
+#5 extracting sha256:f9d2fb07d6f062d06ddc7aa58191cc5359c728f54af6cebe69a37d2c89e72a0d done
+#5 DONE 2.0s
+
+#6 [2/4] COPY capture-ca.crt /usr/local/share/ca-certificates/capture-proxy-ca.crt
+#6 DONE 0.5s
+
+#7 [3/4] COPY capture-ca.crt /etc/ssl/certs/ca-certificates.crt
+#7 DONE 0.0s
+
+#8 [4/4] RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources
+#8 DONE 0.2s
+
+#9 exporting to image
+#9 exporting layers 0.1s done
+#9 exporting manifest sha256:99f6069e3dd0f61125d388020be78b73d84e148aca14ac31afd3279348f71ff9 done
+#9 exporting config sha256:11cac42dd8a70c4490196ac1f0c0526b5881b76406c9c120b1491db368670dda
+#9 exporting config sha256:11cac42dd8a70c4490196ac1f0c0526b5881b76406c9c120b1491db368670dda done
+#9 exporting attestation manifest sha256:87346d382c08d32b13bcc932c2e5a44596d6e738dbfd6997372fe72b5c43dd54 0.0s done
+#9 exporting manifest list sha256:60c8fd1dbf1fff6c405c7335dfdd4aaa92cf62960ad7844aab415d25994d3f62 done
+#9 naming to docker.io/library/python:3.12-slim-bookworm done
+#9 unpacking to docker.io/library/python:3.12-slim-bookworm 0.0s done
+#9 DONE 0.2s
+[exit 0]

@@ -1,0 +1,3 @@
+$ curl http://localhost:8000/api/v2/heartbeat
+{"nanosecond heartbeat":1792112033392283593}
+[exit 0]

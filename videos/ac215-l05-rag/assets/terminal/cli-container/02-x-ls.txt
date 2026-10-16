@@ -1,0 +1,6 @@
+$ ls
+Dockerfile      docker-compose.yml    images          semantic_splitter.py
+README.md       docker-entrypoint.sh  input-datasets  uv.lock
+agent_tools.py  docker-shell.sh       out.txt
+cli.py          docker-volumes        pyproject.toml
+[exit 0]

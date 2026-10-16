@@ -1,0 +1,4 @@
+$ du -sh .git; git count-objects -vH | grep size-pack
+103M	.git
+size-pack: 102.45 MiB
+[exit 0]

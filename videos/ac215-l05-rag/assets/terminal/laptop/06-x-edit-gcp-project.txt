@@ -1,0 +1,15 @@
+$ git diff docker-shell.sh
+diff --git a/docker-shell.sh b/docker-shell.sh
+index 1a4d163..bfd4a77 100755
+--- a/docker-shell.sh
++++ b/docker-shell.sh
+@@ -4,7 +4,7 @@
+ set -e
+ 
+ # Set variables
+-export GCP_PROJECT="ac215-project" # CHANGE TO YOUR PROJECT ID
++export GCP_PROJECT="your-project-id" # CHANGE TO YOUR PROJECT ID
+ export GOOGLE_APPLICATION_CREDENTIALS="/secrets/llm-service-account.json"
+ export IMAGE_NAME="llm-rag-cli"
+ 
+[exit 0]

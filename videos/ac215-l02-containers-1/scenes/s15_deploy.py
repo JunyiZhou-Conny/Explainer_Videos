@@ -1,17 +1,17 @@
 """S15 · One-command deploy (README C5-C6, two extras, the errata about the deployed image; V6 pull, V4 coda).
 
 Beats (script.md "## S15", one voiceover block each):
- 0  S14 ended on an empty frame: TRACKER C4 fades in with the VM terminal (12 rows, `ssh · ac215-l02`)
-    and moves to C5. "sudo docker run": it types `sudo docker run --rm -ti dlops/simple-translate`
-    (README.md line 215; folds); "dlops slash simple-translate": the name turns TEAL and pulses.
-    "Pause and run it": ▶ your turn. "The image isn't on this VM yet": vm-debian12/06: 2-4, …, 10-12
-    (hash12), `Unable to find image` underlined YELLOW. "so Docker pulls it": the terminal shrinks to
-    the strip; V6 above it: the BLUE Docker Hub shelf (top right, `dlops/simple-translate` on its
-    board, seven small slabs) and the BLUE VM `ac215-l02` (left: its Debian kernel bar, PURPLE
-    `dockerd`); a PINK route curves down from the shelf to the VM. "seven layers": seven copies of the
-    shelf's slabs ride the route and stack up on `dockerd`, bottom-up (the shelf keeps its copy).
-    "then starts a container": the TEAL glass slab (writable layer, main process) lands on top and the
-    strip shows the container's own prompt `root@c7c280390994:/#` (line 13).
+ 0  S14 ended on an empty frame: TRACKER C4 fades in with the VM terminal (12 rows, `ssh · ac215-l02`) and
+    moves to C5. "sudo docker run": it types `sudo docker run --rm -ti dlops/simple-translate` (README.md
+    line 215; folds); "dlops slash simple-translate": the name turns TEAL and pulses. "Pause and run it": ▶
+    your turn. "The image isn't on this VM yet": vm-debian12/06: 2-4, …, 10-12 (hash12), `Unable to find
+    image` underlined YELLOW. "so Docker pulls it": the terminal shrinks to the strip; V6 above it: the
+    BLUE Docker Hub shelf (top right, `dlops/simple-translate` on its board, seven small slabs) and the
+    BLUE VM `ac215-l02` (left: its Debian kernel bar, PURPLE `dockerd`); a PINK route curves down from the
+    shelf to the VM. "from Docker Hub" (through "seven layers"): seven copies of the shelf's slabs ride the
+    route and stack up on `dockerd`, bottom-up (the shelf keeps its copy). "then starts a container": the
+    TEAL glass slab (writable layer, main process) lands on top and the strip shows the container's own
+    prompt `root@c7c280390994:/#` (line 13).
  1  TRACKER C6. The picture goes; the strip grows back to 12 rows; at line 13's prompt it types
     `python cli.py` (README.md line 218) -> vm-debian12/06: 16-20, 24 (wrap), 26-27. "and its
     defaults": `text='I love cheese'` underlined YELLOW; "comes back in Italian": `Output: Adoro il
@@ -28,20 +28,21 @@ Beats (script.md "## S15", one voiceover block each):
     underlined. "the newest stable Python that uv knew in the range": the band and its label pulse;
     "was 3.14.7": a second GREEN dot lands in the band below the line (`3.14.7` / "dlops image · uv
     0.12.15"). "Our build today got 3.15.0": our dot pulses.
- 3  The source chips go; "two Pythons": both dots pulse. "Nothing in the recipe is pinned": the line
-    goes; three GREY chips at the left, each with where it comes from: `pip install uv`
-    (Dockerfile.txt · line 19), `requires-python = ">=3.13"` (pyproject.toml · line 6), a dashed `uv.lock`
-    (the repo's top level). They light YELLOW in turn as named, with "unpinned", "open-ended", "not in
-    the repo ·" ("each build writes its own" on those words). "An image freezes all that": the TEAL
-    image stack fades in at the right (`dlops/simple-translate`), copies of the three chips shrink into
-    its uv and uv sync slabs, an ice glaze and a TEAL snowflake "frozen at build time" settle on it;
-    "ship the image": the caption "ship the image, not the recipe".
- 4  TRACKER C6 (the extra command scrolls away). The picture goes; in the strip (script.md: "Full
-    terminal"; growing it for one line and shrinking it 1.4 s later would only churn), at line 30's
-    prompt, it types `exit` -> line 31, and the VM prompt returns; the strip fades (the cards need
-    the frame; the group is centred under the tracker). "One more small mismatch": README card
-    `README.md · line 205` ("… pull the image you pushed in step 3, and run it."); "the README
-    promises": "pull the image you pushed in step 3" underlined YELLOW, tag `erratum`;
+ 3  The source chips go; "two Pythons": both dots pulse. "Nothing in the recipe is pinned": the line and
+    the strip go (TRACKER C6: the extra command is off screen); three GREY chips at the left, each with
+    where it comes from: `pip install uv` (Dockerfile.txt · line 19), `requires-python = ">=3.13"`
+    (pyproject.toml · line 6), a dashed `uv.lock` (the repo's top level). They light YELLOW in turn as
+    named, with "unpinned", "open-ended", "not in the repo ·" ("each build writes its own" on those words).
+    "An image freezes all that": the TEAL image stack fades in at the right (`dlops/simple-translate`),
+    copies of the three chips shrink into its uv and uv sync slabs, an ice glaze and a TEAL snowflake
+    "frozen at build time" settle on it; "ship the image": the caption "ship the image, not the recipe"
+    (centred, below the column).
+ 4  TRACKER C6. The picture goes as the strip comes back, without its marks (script.md: "Full
+    terminal"; growing it for one line and shrinking it 1.4 s later would only churn); at line 30's
+    prompt it types `exit` -> line 31, and the VM prompt returns. "One more small mismatch": README
+    card `README.md · line 205` ("… pull the image you pushed in step 3, and run it.") above the
+    strip; "the README promises": the strip fades (the cards need the frame; the group is centred
+    under the tracker), "pull the image you pushed in step 3" underlined YELLOW, tag `erratum`;
     "this command runs the instructor's": README card line 215 (the command), `dlops/simple-translate`
     underlined YELLOW. "Your image is": its prefix is copied down into a GREEN chip (text, not run)
     `sudo docker run --rm -ti <USER NAME>/simple-translate-ac215` with `<USER NAME>` YELLOW (GREY
@@ -156,7 +157,9 @@ STACK_X, STACK_W = -3.0, 2.6               # the image stack inside the VM
 SHELF_C, SHELF_W, SHELF_H = np.array([4.4, 1.45, 0]), 3.6, 1.5
 H_STACK = [0.1] * 4 + [0.3, 0.3, 0.5]      # V6's seven slabs (as S12): four base, apt/pip, COPY, uv sync
 FILLS = [SYSTEM] * 5 + [LAPTOP, VENV]
-AX_Y = 0.3                                 # beat 2: the number line (S07: 0.45; room for the chips)
+AX_Y = 0.25                                # beat 2: the number line (S07: 0.45; room for the chips)
+CHIPS_TOP = 2.55                           # beat 2: the source chips' top (the tracker ends at 2.9)
+COL_TOP = 2.45                             # beat 3: the recipe column's top
 IMG_STRIP = 6                              # beat 5: the strip while the folded extra is typed
 RIGHT_X, LEFT_X = 6.4, -6.3
 
@@ -352,10 +355,11 @@ class Deploy(VoiceScene):
             self.play(Create(u0), run_time=0.4)
             attach(self, out0[0], u0)
             vo.wait_until("so Docker pulls it")
-            resize(self, t, STRIP_ROWS, run_time=0.7)
-            self.play(FadeIn(VGroup(vm, hub), shift=UP * 0.15), run_time=0.6)
-            self.play(Create(path), run_time=0.5)
-            vo.wait_until("seven layers")
+            resize(self, t, STRIP_ROWS, run_time=0.6)
+            self.play(FadeIn(VGroup(vm, hub), shift=UP * 0.15), Create(path), run_time=0.7)
+            # the ride starts on "from Docker Hub" and spans "seven layers", so the glass slab lands
+            # on "then starts a container" (0.9 s after "seven layers": too short for the ride alone)
+            vo.wait_until("from Docker Hub")
             parcels = [s.copy() for s in hub.slabs]
             self.add(*parcels)
             rides = []
@@ -363,7 +367,7 @@ class Deploy(VoiceScene):
                 rides.append(Succession(p.animate(run_time=0.2).move_to(path.get_start()),
                                         MoveAlongPath(p, path, run_time=0.55),
                                         Transform(p, sl.box.copy(), run_time=0.35)))
-            self.play(LaggedStart(*rides, lag_ratio=0.2), run_time=2.4)
+            self.play(LaggedStart(*rides, lag_ratio=0.2), run_time=1.9)
             self.remove(*parcels)
             st.accept(self, *slabs)
             vo.wait_until("then starts a container")
@@ -424,10 +428,12 @@ class Deploy(VoiceScene):
         chip_a = captioned(grey_words(("from", "label"), ("sudo docker image inspect", "mono"), ("· extra", "label")),
                            out_chip(CREATED))
         chip_b = captioned(grey_words(("the image's", "label"), (".venv/pyvenv.cfg", "mono")), out_chip(UV_CFG))
-        chips = VGroup(chip_a, chip_b).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
-        chips.move_to([LEFT_X + chips.width / 2, 0, 0]).align_to(np.array([0, 2.7, 0]), UP)
+        chips = VGroup(chip_a, chip_b).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
+        chips.move_to([LEFT_X + chips.width / 2, 0, 0]).align_to(np.array([0, CHIPS_TOP, 0]), UP)
         assert chips.get_bottom()[1] > AX_Y + 0.3 and chips.get_right()[0] < vl.band_label.get_left()[0] - 0.2, \
             chips.get_corner(DR)
+        assert chips.get_top()[1] < tr.get_bottom()[1] - 0.3, "the chips crowd the tracker"
+        assert theirs.text.get_bottom()[1] > STRIP_TOP + 0.2, "the dlops label runs into the strip"
 
         with self.voiceover(SAY[2]) as vo:
             unpin(self, [(c1, yt1), (r_arg, u1)], 0.3, track(tr, 6, extra=True))
@@ -486,11 +492,12 @@ class Deploy(VoiceScene):
             it.note = nt
             items.append(it)
         col = VGroup(*items).arrange(DOWN, aligned_edge=LEFT, buff=0.32)
-        col.move_to([LEFT_X + col.width / 2, 0, 0]).align_to(np.array([0, 2.72, 0]), UP)
+        col.move_to([LEFT_X + col.width / 2, 0, 0]).align_to(np.array([0, COL_TOP, 0]), UP)
         for it in items:
             it.note.next_to(it.body, RIGHT, buff=0.3)
+        col_low = min(col.get_bottom()[1], items[2].note.get_bottom()[1])
         img = LayerStack(stack_w=2.4)
-        img.floor.move_to([4.4, -0.15, 0])
+        img.floor.move_to([4.4, -0.35, 0])
         for f, h in zip(FILLS, H_STACK):
             img.slabs.add(img.make(None, f, h))
         img._pending.clear()
@@ -500,8 +507,12 @@ class Deploy(VoiceScene):
         frost = VGroup(snowflake(0.28), label("frozen at build time", 22, IMAGE)).arrange(RIGHT, buff=0.2)
         frost.next_to(glaze, UP, buff=0.22)
         moral = label("ship the image, not the recipe", 28, INK, t2c={"the image": IMAGE})
-        moral.move_to([0, -0.98, 0])
-        assert col.get_bottom()[1] > moral.get_top()[1] + 0.1, (col.get_bottom(), moral.get_top())
+        # the strip leaves with the number line (the recipe needs the room; nothing in the terminal is
+        # read in this beat), so the caption sits well below the column instead of on its last note
+        moral.move_to([0, col_low - 0.5 - moral.height / 2, 0])
+        assert col_low > moral.get_top()[1] + 0.4, (col_low, moral.get_top())
+        assert moral.get_top()[1] < img_name.get_bottom()[1] - 0.3 and moral.get_bottom()[1] > -2.6
+        assert col.get_top()[1] < tr.get_bottom()[1] - 0.35, "the column crowds the tracker"
         assert max(it.note.get_right()[0] for it in items) < img_name.get_left()[0] - 0.3
         assert frost.get_top()[1] < 3.0 and frost.get_right()[0] < 6.5, frost.get_corner(UR)
 
@@ -512,7 +523,8 @@ class Deploy(VoiceScene):
                       Indicate(ours.top, color=VENV, scale_factor=1.15), Indicate(theirs.top, color=VENV, scale_factor=1.15),
                       run_time=0.9)
             vo.wait_until("Nothing in the recipe is pinned")
-            self.play(FadeOut(VGroup(vl, ours, theirs)), run_time=0.5)
+            # the extra command leaves the frame with the strip, so the tracker drops " · extra"
+            self.play(FadeOut(VGroup(vl, ours, theirs)), FadeOut(t), track(tr, 6), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(it, shift=RIGHT * 0.15) for it in items], lag_ratio=0.2), run_time=0.8)
             for it, phrase in zip(items, ("pip installs the latest uv", "the Python range is open",
                                           "and the repo has no uv.lock")):
@@ -549,24 +561,26 @@ class Deploy(VoiceScene):
         pic4 = VGroup(cards, err4, mine, mine_cap, amd)
         pic4.shift(UP * ((2.7 + -3.35) / 2 - pic4.get_center()[1]))
         assert pic4.get_top()[1] < 2.75 and pic4.get_bottom()[1] > -3.4 and mine.get_right()[0] < 6.5, pic4.get_corner(DR)
+        assert c205.get_bottom()[1] > STRIP_TOP + 0.4, "the first card shares the frame with the strip"
         pre = len("sudo docker run --rm -ti ")
         assert MINE[:pre] == DEPLOY[:pre]
 
         with self.voiceover(SAY[4]) as vo:
+            for line, m in [(c2, x2), (r_v, u2), (r_v, rec)]:      # the strip comes back without its marks
+                line.remove(m)
             self.play(FadeOut(VGroup(col, *[it.note for it in items], img, img_name, glaze, frost, moral)),
-                      run_time=0.4)
-            unpin(self, [(c2, x2), (r_v, u2), (r_v, rec)], 0.2, track(tr, 6))
+                      FadeIn(t), run_time=0.5)
             istep(self, t, L30, 0.3)
             t.print(self, [EXIT_ECHO], run_time=0.2)
             t.set_prompt(P_VM)
             bare_prompt(self, t)
+            # the VM prompt stays readable until "the README promises": the first card fits above the strip
             vo.wait_until("One more small mismatch")
-            self.play(FadeOut(t), run_time=0.3)
             self.play(FadeIn(c205, shift=DOWN * 0.15), run_time=0.5)
             vo.wait_until("the README promises")
             promise = text_span(c205.body, Q205, "pull the image you pushed in step 3")
             u205 = under(promise, TURN)
-            self.play(Create(u205), FadeIn(err4, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeOut(t), Create(u205), FadeIn(err4, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("but this command runs the instructor's")
             self.play(FadeIn(c215, shift=DOWN * 0.15), run_time=0.5)
             dl = substring(c215.body, "dlops/simple-translate")
@@ -591,6 +605,8 @@ class Deploy(VoiceScene):
         img_line = mono_line(OUT_IMG[2], 22, OUTPUT)
         img_box = RoundedRectangle(width=img_line.strut.width + 0.5, height=img_line.strut.height + 0.24,
                                    corner_radius=0.1, stroke_color=S.GREY, stroke_width=2).set_fill(TERM_BG, 1)
+        # FadeIn (an introducer) adds the opaque box after the TransformFromCopy's line: keep it underneath
+        img_box.set_z_index(-1)
         img_cap = grey_words(("in the image ·", "label"), ("dlops/simple-translate", "mono"))
         err5 = erratum_tag("erratum · the published image lags the repo")
         repo25.move_to([RIGHT_X - repo25.width / 2, 0.62, 0])      # right-aligned: the image line starts 7 cells left of `async`
@@ -654,6 +670,7 @@ class Deploy(VoiceScene):
         row6 = VGroup(note6, rc6)
         note6.next_to(card6.frame, DOWN, buff=0.3).align_to(card6.frame, LEFT).shift(RIGHT * 0.1)
         rc6.next_to(card6.frame, DOWN, buff=0.3).align_to(card6.frame, RIGHT)
+        note6.match_y(rc6)                       # one row: the note centred on the tag
         assert note6.get_right()[0] < rc6.get_left()[0] - 0.3, "the note runs into the tag"
         wait6 = green_chip("wait a while", 22)
         or6 = label("or", 22, S.GREY)

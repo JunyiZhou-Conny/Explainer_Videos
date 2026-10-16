@@ -1,0 +1,11 @@
+$ ls -la ..; ls -la ../llm-rag
+total 20
+drwxr-sr-x 5 student student 4096 Oct 16 00:56 .
+drwxr-sr-x 5 student student 4096 Oct 16 00:55 ..
+drwxr-sr-x 2 root    root    4096 Oct 16 00:56 llm-rag
+drwxr-sr-x 6 student student 4096 Oct 16 00:56 llm-rag-main
+drwxr-sr-x 2 student student 4096 Oct 16 00:56 secrets
+total 8
+drwxr-sr-x 2 root    root    4096 Oct 16 00:56 .
+drwxr-sr-x 5 student student 4096 Oct 16 00:56 ..
+[exit 0]

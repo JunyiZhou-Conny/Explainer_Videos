@@ -1,0 +1,6 @@
+$ curl -s http://localhost:8000/api/v2/tenants/default_tenant/databases/default_database/collections | grep -oE '"name":"[a-z-]+-collection"|"dimension":[a-z0-9]+'
+"name":"recursive-split-collection"
+"dimension":null
+"name":"char-split-collection"
+"dimension":null
+[exit 0]

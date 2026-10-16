@@ -1,0 +1,32 @@
+00-x-env	00:52:06 UTC	0.3s
+01-x-docker-check	00:52:06 UTC	0.2s
+02-clone	00:52:12 UTC	5.8s
+03-x-mkdir-secrets.txt	exit=+0.1s
+04-cd	00:52:12 UTC	0.1s
+05-x-ls.txt	exit=+0.1s
+05b-x-git-size	00:52:12 UTC	0.1s
+06-x-edit-gcp-project	00:52:12 UTC	0.1s
+08-x-docker-ps	00:53:53 UTC	0.2s
+09-x-network-ls	00:53:53 UTC	0.1s
+10-x-heartbeat.txt	exit=+0.1s
+11-x-version.txt	exit=+0.1s
+11b-x-chroma-version	00:53:53 UTC	0.3s
+12-x-cors-allowed	00:53:53 UTC	0.1s
+12b-x-cors-other	00:53:54 UTC	0.1s
+13-x-docker-volumes	00:53:54 UTC	0.1s
+14-x-images	00:53:54 UTC	0.2s
+14b-x-image-contents	00:53:54 UTC	0.5s
+15-x-mounts	00:53:54 UTC	0.1s
+16-x-outputs-on-laptop	00:54:06 UTC	0.1s
+17-x-collections.txt	exit=+0.1s
+17b-x-collection-names	00:54:18 UTC	0.1s
+18-x-docker-volumes-after-load	00:54:18 UTC	0.1s
+07-docker-shell.txt	exit=+188.7s
+20-x-ps-after-exit	00:55:24 UTC	0.1s
+21-x-compose-down.txt	exit=+0.5s
+22-x-after-down	00:55:24 UTC	0.1s
+24-x-collection-names-after-restart	00:55:27 UTC	0.1s
+23-x-docker-shell-again.txt	exit=+21.6s
+25-x-compose-down-final.txt	exit=+0.6s
+26-x-images	00:55:47 UTC	0.2s
+27-x-git-status	00:55:47 UTC	0.1s
