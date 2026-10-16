@@ -40,20 +40,23 @@ Beats (script.md "## S16", one voiceover block each):
     and its time turn YELLOW, GREY tag "not CACHED"; on "and only the processor is recreated" line 46
     `gateway Running` GREEN, line 47 `processor Started` and `10.4s` YELLOW.
  5  The terminal shrinks to the 3-row strip. Tag `illustration · what if` (top band, right). Left
-    column: CODE(port_toy/docker-compose.yml: 17–18, comment cut) and, under it, the excerpt chip
-    `with open("index.html", "rb") as f:` (gateway/gateway.py · line 20 (excerpt)). Right column: the
-    laptop (GREY: `gateway/` · `index.html`, a browser glyph) above the gateway (TEAL: `/app` window
-    with `index.html` and `gateway.py`), a PINK mount route between `gateway/` and `/app` (it pulses;
-    nothing travels). On "and it rereads its page on each load" the chip's `"index.html"` turns
-    YELLOW. On "edits show on the next reload": a pencil edits the laptop's `index.html`, and both
-    `index.html` rows blink YELLOW at once while the route pulses; the browser's reload arrow turns, a
-    PINK request runs to the gateway and the page's first line turns YELLOW. On "without a rebuild" the
-    GREY caption "no rebuild" beside the route.
+    column: CODE(port_toy/docker-compose.yml: 17–18, comment cut; line 18 barred PINK) and, under it,
+    the excerpt chip `with open("index.html", "rb") as f:` (gateway/gateway.py · line 20 (excerpt)).
+    Right column: the laptop (GREY frame "your laptop": `gateway/` · `index.html`, a browser glyph
+    labelled "browser") above the gateway (TEAL frame "gateway": an `/app` window with `index.html` and
+    `gateway.py`); the frames' names sit on their top edges. A PINK mount route runs from `gateway/`
+    straight down to the `/app` window (it pulses; nothing travels). On "and it rereads its page on
+    each load" the chip's `"index.html"` turns YELLOW. On "edits show on the next reload": a pencil
+    edits the laptop's `index.html`, and both `index.html` rows blink YELLOW at once while the route
+    pulses; the browser's reload arrow turns and a PINK request runs down to the gateway's `/app`. On
+    "without a rebuild" the page's first line turns YELLOW and the GREY caption "no rebuild" appears
+    beside the route (held 1.6 s).
  6  TRACKER P4/5. The picture goes; the terminal grows to 9 rows. `docker compose down` -> 64 lines
-    2–5 (the two `10.2s` tags flash), `docker compose ps -a` -> 65 line 2 (GREY tag "empty"). TRACKER
-    P4/5 · extra: README chip `README.md · line 515` "The built images remain." in the top band;
-    `docker image ls` (extra) -> 66 lines 2–8 as the column view (GREY tag "IMAGE and DISK USAGE
-    columns"); `port_toy-*` and `toy-*` turn YELLOW and their `198MB` too, a GREY bracket "shared
+    2–5 (the two containers' `Removed` rows and `10.2s` tags turn YELLOW), `docker compose ps -a` -> 65
+    line 2 (GREY tag "empty" beside the command). TRACKER P4/5 · extra: README chip `README.md · line
+    515` "The built images remain." in the top band; `docker image ls` (extra) -> 66 lines 2–8 as the
+    column view (GREY tag "2 of 5 columns" on its header row); `port_toy-*` and `toy-*` turn YELLOW and
+    their `198MB` too, a GREY bracket "shared
     layers · ≈ 200 MB in all". On "remove them to free space" the GREY note "docker image rm <name> ·
     if you want the space" and the GREY command-only chip "hello-world's exited container: docker ps
     -a, then docker rm <its ID>" (tag `extra`); on "Port toy costs nothing" the GREEN chip "port_toy
@@ -69,8 +72,9 @@ Beats (script.md "## S16", one voiceover block each):
     from a GREY folder into a TEAL image slab): the key rides the arrow into the slab and turns RED;
     on "and what's the fix" the folder and the key flash.
  9  Q4 (icon: V7's street door in the dashed wall, a PINK arrow through it into a TEAL box's room
-    door): `-p 127.0.0.1:8095:9100`'s three numbers flash as they are read; then the flag, `gateway.py`
-    and the second `127.0.0.1` flash as each question part is asked. Q5 (icon: V6's two boxes with
+    door): `-p 127.0.0.1:8095:9100`'s three numbers flash as they are read; then the flag (with the
+    icon's street door), `gateway.py` (with the room door) and the second `127.0.0.1` flash as each
+    question part is asked. Q5 (icon: V6's two boxes with
     their localhost loops and the PINK phone book on the rail): the loops glow YELLOW on "what is
     localhost", the phone book pulses on "which name reaches the processor".
 10  The last question and the title fade. A GREY dashed teaser (tag "L05 · llm-rag"): a TEAL box "CLI"
@@ -98,9 +102,12 @@ Deviations from SHOW (and why):
   gateway) in the right column.
 - Beat 6: the `▶ your turn` sits on a static your-turn card (script conventions: the down command has
   scrolled away under `docker image ls` by the time the SAY says "pause"). The image list's slicing is
-  named by a GREY tag ("IMAGE and DISK USAGE columns").
+  named by a GREY tag "2 of 5 columns" on its header row (a longer tag does not fit beside it). The
+  `docker compose ps -a` header fills all 65 columns, so its "empty" tag sits beside the command.
 - Beats 7–9: each question has a YELLOW number badge (the narration counts "One", "Two", …), and each
   icon sits in a small dark card. Highlights follow the words being said and never mark an answer.
+  The old question slides up and has mostly left before the next one writes in (lagged, so the two
+  never overlap).
 - Beat 10: the TEAL boxes and the rail are dashed (a future thing: GREY dashed in the colour table).
 """
 
@@ -1090,7 +1097,7 @@ class Recap(VoiceScene):
             self.play(i3.key.animate.move_to(i3.slab.get_center() + LEFT * 0.4), run_time=1.0)
             self.play(i3.key.animate.set_color(ERR), run_time=0.4)
             vo.wait_until("and what's the fix")
-            self.play(flash(i3.folder, TURN, 1.2, 0.7))
+            self.play(flash(i3.folder, TURN, 1.2, 0.7), flash(i3.key, TURN, 1.3, 0.7))
 
         # ============================================================ 9 · Q4, Q5
         i4 = icon_door_room()
