@@ -128,8 +128,8 @@ from common import (
     bare_prompt,
     beside,
     build_row,
-    capture,
     caption_extra,
+    capture,
     check_mark,
     col_box,
     envelope,
@@ -169,7 +169,17 @@ from manim import (
 )
 
 from explainer import style as S
-from explainer.devops import MONO, OUTPUT, box, cell_width, chip, glyph_range, mono, mono_line, substring
+from explainer.devops import (
+    MONO,
+    OUTPUT,
+    box,
+    cell_width,
+    chip,
+    glyph_range,
+    mono,
+    mono_line,
+    substring,
+)
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S15"]

@@ -30,8 +30,8 @@ Beats (script.md "## S04", one voiceover block each):
     them fly up into a right-aligned list while the terminal shrinks to the 3-row strip (keeping
     the log's tail: `…` and line 38's two rows), summed "≈ 47.6 MB compressed".
     `simple-translate:latest` in line 38 turns TEAL on "saves the result", ":latest" pulses on
-    "tagged latest". On "Those four layers" V2 starts, drawn as S05-S09 draw it (S05's layout
-    constants): four thin equal ORANGE slabs (TEAL outlines) drop as one group left of the list,
+    "tagged latest". On "Those four layers" V2 starts, drawn as S05-S09 draw it (S05's layout,
+    the stack 0.35 higher): four thin equal ORANGE slabs (TEAL outlines) drop as one group left of the list,
     brace "base image" on their left, `python:3.12-slim-bookworm` (mono, GREY) under the stack.
  5  TRACKER A7 · extra. The list leaves; the strip grows to 5 rows and types
     `docker image inspect simple-translate --format '…'` (row tag `extra`; the quoted format starts
@@ -39,9 +39,10 @@ Beats (script.md "## S04", one voiceover block each):
     -> laptop/10 line 2. V3: the TEAL config card (stacked: key above slot, S05's size and place,
     top right) appears right of the stack; `null` and `""` copy down from the
     output into the ENTRYPOINT and WorkingDir slots, `["python3"]` into the CMD slot as a tile;
-    GREY "inherited from / the base image" points at the CMD row while the base slabs pulse. Under
-    the card (left-aligned, as in S05) the start-up line `python3` copies down from the tile, then
-    "→ >>>" (prediction).
+    GREY "inherited from / the base image" points at the CMD row while the base slabs pulse. Just
+    before "So we predict" the strip shrinks to its last 3 rows (the 5-row strip leaves no room
+    under the stacked card); then, under the card (left-aligned, as in S05), the start-up line
+    `python3` copies down from the tile, then "→ >>>" (prediction).
  6  TRACKER A7. The picture leaves except the prediction, which moves top right with "predicted:".
     The terminal clears and grows to 10 rows; `docker run --rm -ti simple-translate` (two rows),
     typed at the pace it is spoken;
