@@ -269,6 +269,31 @@ def type_extra(scene, t, cmd: str, type_time: float | None = None):
     return ln
 
 
+def soft_scroll(t):
+    """Scroll this terminal as resize() drops lines: when two or more rows must leave, they fade
+    where they are first, then the rest slide up. (Terminal's own scroll slides the leaving rows
+    up by the whole overflow while they fade: above the 6-row strip they would cross the picture.)
+    One row still scrolls the house way (it only rises into the title bar)."""
+    house = t._make_room
+
+    def make_room(scene, n_new: int, run_time: float = 0.35) -> None:
+        overflow = len(t.lines) + n_new - t.rows
+        if overflow <= 1:
+            house(scene, n_new, run_time)
+            return
+        gone = VGroup(*t.lines.submobjects[:overflow])
+        stay = VGroup(*t.lines.submobjects[overflow:])
+        scene.play(FadeOut(gone), run_time=0.15)
+        for m in gone:
+            t.lines.remove(m)
+            scene.remove(m)
+        if len(stay):
+            scene.play(stay.animate.shift(UP * t.pitch * overflow), run_time=0.25)
+
+    t._make_room = make_room
+    return t
+
+
 def unit(m):
     """Mark a mobject to keep its shape when the ToyNet is squashed (as S11)."""
     m.squash_unit = True
@@ -415,7 +440,7 @@ class WhoCanReach(VoiceScene):
     def construct(self):
         # ============================================================ 0 · docker ps: mapping vs empty
         tr = tracker("P2", 1)
-        t = term(P_TOY, rows=12)
+        t = soft_scroll(term(P_TOY, rows=12))
         ch230 = band(readme_chip("README.md · line 230", PH230))
         assert ch230.get_left()[0] > tr.get_right()[0] + 0.12
 

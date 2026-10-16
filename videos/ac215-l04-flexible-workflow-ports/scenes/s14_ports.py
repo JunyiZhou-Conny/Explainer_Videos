@@ -140,6 +140,7 @@ from common import (
     door,
     erratum_tag,
     excerpt,
+    extra_tag,
     excerpt_chip,
     fix_chip,
     grey_tag,
@@ -307,6 +308,22 @@ def type_rows(scene, t, rows: list[str], type_time: float = 2.0):
     g = VGroup(*out)
     g.rows = out
     return g
+
+
+def type_extra(scene, t, cmd: str, type_time: float | None = None):
+    """Type an extra command (not in the README) and pin a GREY `extra` tag beside it: after the
+    command's last row when there is room, else after the prompt on the row above (as S13)."""
+    ln = type_cmd(scene, t, cmd, type_time=type_time)
+    tg = extra_tag()
+    rows = ln.rows if hasattr(ln, "rows") else [ln]
+    for row in reversed(rows):
+        end = row.glyphs.get_right()[0] if len(row.glyphs) else row.strut.get_left()[0]
+        if end + 0.3 + tg.width < t.box.get_right()[0] - 0.12:
+            tg.next_to(row.glyphs if len(row.glyphs) else row.strut, RIGHT, buff=0.3)
+            tg.set_y(row.strut.get_center()[1])
+            pin(scene, row, tg, run_time=0.25)
+            return ln
+    raise AssertionError(cmd)
 
 
 def unit(m):
@@ -587,6 +604,8 @@ class ChangePorts(VoiceScene):
 
         # ============================================================ 1 · the page on 8095; two extra checks
         pg1 = place_page(PortPage(8095, reply=R32, compact=True, ports=True))
+        pg1s = place_page(PortPage(8095, reply=R32, compact=True, ports=False))   # the same page, port card folded
+        assert pg1s.frame.get_bottom()[1] > strip_top(7) + 0.25
         rp1 = reply_strip(C32.line(2))
         assert rp1.frame.get_bottom()[1] > STRIP_TOP + 0.1 and pg1.frame.get_bottom()[1] > STRIP_TOP + 0.1
         assert rp1.frame.get_right()[0] < pg1.frame.get_left()[0] - 0.15
@@ -594,23 +613,27 @@ class ChangePorts(VoiceScene):
         for row in card1.rows[1][1:]:                    # the README's continuation rows keep their 2 spaces
             row.shift(RIGHT * 2 * cell_width(CAPTION))
         card1.shift([0 - card1.frame.get_center()[0], TOP - 0.05 - card1.get_top()[1], 0])
-        assert card1.frame.get_bottom()[1] > STRIP_TOP + 0.1
+        assert card1.frame.get_bottom()[1] > strip_top(4) + 0.15, card1.frame.get_bottom()[1]
         with self.voiceover(SAY[1], pad=1.2) as vo:
             keep = [run1.rows[2], run1.rows[3], run1.rows[4]]
             resize(self, t, 3, keep=keep, run_time=0.7, extra=[FadeOut(net)])
             self.play(FadeIn(pg1, shift=LEFT * 0.15), FadeIn(rp1, shift=RIGHT * 0.15), run_time=0.6)
             self.play(flash(pg1.address, TURN, 1.1), flash(pg1.reply_value.glyphs, TURN, 1.06), run_time=0.8)
             vo.wait_until("Two extra checks")
-            self.play(caption_extra(tr, True), run_time=0.4)
-            type_cmd(self, t, CURL_8090, type_time=1.0)
+            # the reply leaves, the page folds its port card: room for a 7-row terminal
+            resize(self, t, 7, run_time=0.6,
+                   extra=[FadeOut(rp1), Transform(pg1.frame, pg1s.frame), *pg1.parts_out("ports"),
+                          caption_extra(tr, True)])
+            type_extra(self, t, CURL_8090, type_time=1.0)
             t.print(self, [(C33.line(2), ERR)], run_time=0.35)
             vo.wait_until("and docker ps shows")
-            type_cmd(self, t, PS_SHORT, type_time=1.3)
+            type_extra(self, t, PS_SHORT, type_time=1.3)
             ps = t.print(self, C35.at((2, 4)), run_time=0.4)
             m95 = substring(ps[1], "127.0.0.1:8095->9100/tcp")
             self.play(m95.animate.set_color(TURN), run_time=0.4)
             vo.wait_until("Pause and move")
-            self.play(FadeOut(pg1), FadeOut(rp1), caption_extra(tr, False), run_time=0.4)
+            # 4 rows: the docker ps command and its output stay under the card
+            resize(self, t, 4, run_time=0.5, extra=[FadeOut(pg1), caption_extra(tr, False)])
             self.play(FadeIn(card1, shift=UP * 0.15), run_time=0.5)
 
         # ============================================================ 2 · why: another app holds 8090
@@ -624,7 +647,7 @@ class ChangePorts(VoiceScene):
         assert cap2.get_bottom()[1] > STRIP_TOP + 0.08 and rc.frame.get_bottom()[1] > STRIP_TOP + 0.08
         rows = rc.rows
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(card1), FadeIn(rc, shift=DOWN * 0.1), run_time=0.6)
+            resize(self, t, 3, run_time=0.6, extra=[FadeOut(card1), FadeIn(rc, shift=DOWN * 0.1)])
             self.play(rows[0].animate.set_color(TURN), run_time=0.3)
             vo.wait_until("Another app on your laptop")
             self.play(rows[0].animate.set_color(INK), rows[1].animate.set_color(TURN),
@@ -654,7 +677,7 @@ class ChangePorts(VoiceScene):
         trust.move_to([-0.6, -0.25, 0])
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(rc, pic, cap2)), caption_extra(tr, True), run_time=0.5)
-            type_cmd(self, t, LOGS_GW, type_time=0.8)
+            type_extra(self, t, LOGS_GW, type_time=0.8)
             lg = t.print(self, [C34.line(2)], run_time=0.35)[0]
             vo.wait_until("still says open localhost 8090")
             src = substring(lg, OPEN_8090)
@@ -728,7 +751,7 @@ class ChangePorts(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(pg5, er5, nc5, rp5)), caption_extra(tr, True), run_time=0.5)
             resize(self, t, 11, keep=[], run_time=0.6)
-            type_cmd(self, t, LOGS_GW, type_time=0.7)
+            type_extra(self, t, LOGS_GW, type_time=0.7)
             body = [C39.line(2), C39.line(3), C39.line(4), C39.line(5), "…", C39.line(25), C39.line(26), "…",
                     C39.line(55)]
             out = t.print(self, body, wrap=True, run_time=0.8)
@@ -760,8 +783,7 @@ class ChangePorts(VoiceScene):
         ch_pr.move_to([pr_box.frame.get_center()[0], 0, 0]).shift(UP * (y_ch - ch_pr.chip.get_center()[1]))
         ch_pr.shift(LEFT * max(0, ch_pr.get_right()[0] - 6.45))
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(t, cc, tick_g)), caption_extra(tr, False), run_time=0.5)
-            self.play(FadeIn(net), run_time=0.6)
+            self.play(FadeOut(VGroup(t, cc, tick_g)), caption_extra(tr, False), FadeIn(net), run_time=0.7)
             vo.wait_until("Which one setting")
             self.play(FadeIn(ch_gw, shift=UP * 0.1), FadeIn(ch_pr, shift=UP * 0.1), run_time=0.6)
             self.play(flash(pr_room, CTR, 1.2), flash(net.aim_chip, ERR, 1.1), run_time=0.8)
@@ -848,9 +870,9 @@ class ChangePorts(VoiceScene):
             vo.wait_until("An extra check")
             self.play(caption_extra(tr, True), run_time=0.3)
             resize(self, t8, 10, keep=[], run_time=0.6, extra=[FadeOut(net)])
-            type_cmd(self, t8, PS_A, type_time=0.5)
+            type_extra(self, t8, PS_A, type_time=0.5)
             ps_a = t8.print(self, C46.at(2, 3), wrap=True, run_time=0.4)
-            type_cmd(self, t8, NET_LS, type_time=0.6)
+            type_extra(self, t8, NET_LS, type_time=0.6)
             nls = t8.print(self, C46.at((4, 7)), run_time=0.4)
             hw = next(r for r in ps_a if "hello-world" in r.text)
             b_hw = glyph_box(hw, "hello-world", TURN)
