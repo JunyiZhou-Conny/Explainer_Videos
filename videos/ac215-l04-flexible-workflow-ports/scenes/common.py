@@ -1033,11 +1033,28 @@ def print_build(scene, t: Terminal, rows: list, run_time: float = 0.6, color: st
     return new
 
 
+def grid_x0(line) -> float:
+    """The x of column 0's left edge in a mono_line, measured from its glyphs: the median over
+    non-space characters of (glyph centre − (k + 0.5) · cell width). Falls back to the strut."""
+    cw = cell_width(line.pt)
+    offs, gi = [], 0
+    for k, ch in enumerate(line.text):
+        if ch.isspace():
+            continue
+        if gi >= len(line.glyphs):
+            break
+        offs.append(line.glyphs[gi].get_center()[0] - (k + 0.5) * cw)
+        gi += 1
+    return float(np.median(offs)) if offs else line.strut.get_left()[0]
+
+
 def col_box(line, a: int, b: int, color: str = TURN, dashed: bool = False, pad: float = 0.04):
     """A box over character columns a..b (exclusive) of a mono_line, blank cells included (the
-    processor's empty PORTS cell). Not added."""
+    processor's empty PORTS cell). Not added.
+    The columns are measured from the glyphs (grid_x0): the strut's left edge sits about 0.6 of a
+    cell left of column 0, which put every box short of its text (Bugbot, PR #29)."""
     cw = cell_width(line.pt)
-    x0 = line.strut.get_left()[0] + a * cw
+    x0 = grid_x0(line) + a * cw
     r = box((b - a) * cw + 2 * pad, line.strut.height + 2 * pad, color, fill_opacity=0.0,
             radius=0.06, dashed=dashed, stroke=3)
     r.move_to([x0 + (b - a) * cw / 2, line.strut.get_center()[1], 0])
