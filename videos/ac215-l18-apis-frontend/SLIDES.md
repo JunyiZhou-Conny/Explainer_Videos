@@ -112,8 +112,9 @@ is called "Frontend (Simple)" on B2–B3 and "App Frontend (Simple)" from B15 on
    is drawn, every arrow gets a protocol and port, and a GCS bucket for "Data & Models" appears.
    The app becomes "Single Compute Instance/ Kubernetes Cluster". Google Artifact Registry
    holds one image per component, and Vertex AI runs the pipeline containers from it. A GCE
-   persistent volume is attached over NFS. Finally the cluster is filled with an NGINX container
-   in front of the frontend ("Cheese App"), API service and vector DB containers. (A11–A19)
+   persistent volume is attached over NFS. Finally the cluster is filled: an NGINX container in
+   front of the frontend ("Cheese App") and API service containers, and a vector DB container
+   behind the API service. (A11–A19)
 5. **Drawing the architecture is not building it.** The finished diagram earns an "App is
    ready!" smiley, immediately followed by "Well not really, we need to build it". The
    right-hand side (the cluster) is what the coming lectures build. (A20, A21)
@@ -166,7 +167,7 @@ is called "Frontend (Simple)" on B2–B3 and "App Frontend (Simple)" from B15 on
     CNN Chat, RAG Chat and Agent Chat. Building them takes two steps: make sure the vector
     database is running, then expose the data through the API. (A44, A45)
 17. **A web page is three languages.** HTML gives structure and content, CSS gives style, and
-    JavaScript, the one programming language the browser runs, gives behavior. B17 maps each
+    JavaScript, the programming language the browser understands, gives behavior. B17 maps each
     part of a small page to what you see: the title in the tab, the background style, the body
     text and a script. (B16, B17)
 18. **A simple frontend is two separate round trips from the browser.** First the browser gets
@@ -195,7 +196,7 @@ is called "Frontend (Simple)" on B2–B3 and "App Frontend (Simple)" from B15 on
 - **A4 (= B4) · project roadmap (Gantt-style).** A wide light-blue arrow runs left to right with
   three phase labels, "POC", "Prototype" and "MVP". Dashed vertical lines mark the phase
   boundaries. Below it are staggered horizontal bars:
-  - "Design Cheese App": from the start to the end of Prototype.
+  - "Design Cheese App": from the start to just past the Prototype/MVP line.
   - "Data Collection" and "Setup Experiment Tracking": early POC.
   - "Build Baseline Models": late POC.
   - "Build Better Models" and "ML Workflow": stacked in Prototype.
@@ -299,8 +300,7 @@ is called "Frontend (Simple)" on B2–B3 and "App Frontend (Simple)" from B15 on
   Purpose: the API routes needed follow from these screens.
 - **A30–A32 · API design patterns.** Grey line drawings. On the right, the same four rounded
   boxes are joined by one vertical bus: "Newsletters", "Podcasts", "Image Model" and "Cheese KB".
-  "API Service" and "MCP Service" are drawn as dotted boxes, meaning a role rather than a
-  concrete server.
+  "API Service" and "MCP Service" are drawn as dotted boxes.
   - A30: "Users" (people icon) → "Browser" → "API Service" → bus. A line drops from the API
     service to "Agents" (robot icon), and the agents → "MCP Service" → bus.
   - A31: the same, but the MCP service is gone. The agents' line runs straight into the bus.
@@ -324,8 +324,8 @@ is called "Frontend (Simple)" on B2–B3 and "App Frontend (Simple)" from B15 on
     "FastAPI is running on port 9000 serving /newsletters".
   - A39: a dotted code panel opens next to the container with the route function (see *Commands
     and code*).
-  - A40: a red arrow back to the left: "/newsletters was requested so the results of the
-    /newsletters will be sent back to browser. In this case is a list of objects".
+  - A40: a red arrow back to the left. Its note says the result of `/newsletters`, here "a list
+    of objects", goes back to the browser.
   - A41: the browser fills with a JSON array of two newsletter objects (fields `id`, `dts`,
     `title`, `excerpt`, `detail`, `readTime`, `category`, `image`, e.g. "Spanish Cheese Journey",
     "The Art of Blue Cheese").
@@ -361,16 +361,15 @@ is called "Frontend (Simple)" on B2–B3 and "App Frontend (Simple)" from B15 on
     `-newsletters.html` appears with "http-server is running on port 8080 serving
     /newsletters.html".
   - B21: a dotted panel shows the file's skeleton, `<!DOCTYPE html> <html> … </html>`.
-  - B22: a return arrow, "the content of the /newsletters.html will be sent back to browser. The
-    HTML is sent back to the browser".
+  - B22: a return arrow. Its note says the file's HTML goes back to the browser.
   - B23: the browser shows the rendered page (a dark header bar with navigation and an empty
     body), noted "Browser renders the HTML content received from the server".
 - **B24–B26 · the page's JavaScript calls the API.**
   - B24: inside the browser, "Javascript in the Browser is executed", with a dotted code panel
     (an axios base URL and a GET, see below) hanging off the browser. A red arrow labelled "HTTP
-    request made to http://localhost:9000/newsletters" goes to a laptop whose container is
-    blank. The frontend container is no longer drawn: the call starts in the browser, not in
-    the 8080 container.
+    request made to http://localhost:9000/newsletters" goes to the laptop. The laptop and its
+    container box are now unlabelled: the frontend container's name and port 8080 are gone, and
+    the call starts in the browser.
   - B25: the right side fills in with the full A40 API chain (9000 forwarding, port mapping,
     FastAPI, route code) and the return arrow "a list of objects".
   - B26: the code panel is gone. The browser shows newsletter cards with cheese photos, noted
@@ -382,8 +381,8 @@ is called "Frontend (Simple)" on B2–B3 and "App Frontend (Simple)" from B15 on
   - 3: "Port 9000 is mapped to 9000 inside the container".
   - 4: "FastAPI is running on port 9000 serving /chat", with a code panel showing a POST handler
     whose comments say it chats with an LLM, RAG or agent and uses Gemini to generate text.
-  - 5: the return arrow, "/chat was requested so the results of the /chat will be sent back to
-    browser. In this case it is the chat details".
+  - 5: the return arrow. Its note says the result of `/chat`, the chat details, goes back to the
+    browser.
   - 6: "Javascript displays the chat details in the html page."
 
   Purpose: the chat feature is the same mechanism as newsletters, only with a POST and an LLM
@@ -508,9 +507,10 @@ The code consists of short illustrative snippets.
 - **Draw the architecture before you build, and keep it current.** It is the blueprint that lets
   a team see the big picture and onboard people (A7). The deck spends 14 slides building one
   (A8–A21).
-- **Label every connection with protocol and port.** From A13 on, every arrow carries one
-  ("HTTPS 443", "HTTP/HTTPS 80", "HTTP 9000", "HTTP 3000", "HTTP 8000", "NFS"). Port numbers are
-  how traffic is told apart (A26). One loose label: A13–A21 put the users' traffic on
+- **Label every connection with protocol and port.** From A13 on, the arrows carry one
+  ("HTTPS 443", "HTTP/HTTPS 80", "HTTP 9000", "HTTP 3000", "HTTP 8000", "NFS"). The exceptions
+  are the two developer arrows down into GitHub and Artifact Registry, which stay unlabelled.
+  Port numbers are how traffic is told apart (A26). One loose label: A13–A21 put the users' traffic on
   "HTTP/HTTPS 80", while A26 assigns HTTPS to 443 and A42 shows HTTPS arriving on 443.
 - **All development is containerized,** for developers and for data scientists' ML tasks alike
   (A10). Every component becomes an image in Artifact Registry (A16).
@@ -527,8 +527,8 @@ The code consists of short illustrative snippets.
 - **Secrets stay outside the Git folder** (A43, highlighted in red).
 - **The vector database must be running before the API** (A45, first step).
 - **The browser, not the frontend container, calls the API.** The simple frontend's container
-  only serves HTML. The JavaScript that calls port 9000 runs in the browser (B23–B26). B24 drops
-  the frontend container from the picture to make that point.
+  only serves HTML. The JavaScript that calls port 9000 runs in the browser (B23–B26). B24 makes
+  that point by stripping the frontend container's name and port 8080 from the right-hand side.
 - **Separate pages do not scale.** No reuse across pages, and every page reloads, which is "Slow"
   (B31, B32). The answer is a single-page app built from components with a framework (B32, B33).
 - **Define shared UI once.** The header is written once, and only the content block changes per
@@ -591,7 +591,7 @@ disagree, the captures win. A*n* / B*n* are this file's notation for the APIs an
 
 | # | Planned chapter (`digest.md` §8) | Slides on the same ground | Relation |
 |---|---|---|---|
-| 1 | Cold open: one message, many hops (2 min) | B27 (the chat round trip, numbered 1–6); A34–A41 (= B7–B14); B24 (the frontend container drops out of the picture); A19 (ports 3000, 9000, 8000) | Same concept. B27 is the lecture's version of the hook's journey. The plan adds the two hops the lecture keeps inside "FastAPI": Chroma and Vertex AI. |
+| 1 | Cold open: one message, many hops (2 min) | B27 (the chat round trip, numbered 1–6); A34–A41 (= B7–B14); B24 (the container on the right loses its frontend name and port 8080 as the JavaScript runs); A19 (ports 3000, 9000, 8000) | Same concept. B27 is the lecture's version of the hook's journey. The plan adds the two hops the lecture keeps inside "FastAPI": Chroma (on a RAG chat) and Vertex AI. |
 | 2 | v1: a Python function becomes a URL (4 min) | A25 (HTTP request and response); A27–A28 (API → Web API → REST API, built with FastAPI); A39 (a route function); A43 (folder layout, secrets outside Git; v1's README is titled "Setup & Code Organization") | Same concept, and the tutorial applies it. `/square_root/`, the 422 and `/docs` are tutorial-only. The plan does not use A43 yet (gap 1). |
 | 3 | Inside the container: server vs app, 0.0.0.0, reload (3 min) | A26 (ports); A35–A38 (the host forwards to the container; port 9000 mapped to 9000; "FastAPI is running on port 9000") | The tutorial applies it. uvicorn, `--host 0.0.0.0` and `--reload` are tutorial-only. A37's label needs a qualifier (Conflict 8). |
 | 4 | Static frontend: files vs code that runs in your browser (3 min) | B16–B17 (HTML, CSS, JavaScript); B18–B23 (`newsletters.html` fetched from the 8080 container and rendered); B24 (the JavaScript runs in the browser); B28 (tutorial link) | Same concept, and the tutorial applies it. v1's page has no API arrow at all (hard-coded cards). The lecture's example is v2's newsletters page. |
@@ -609,13 +609,13 @@ disagree, the captures win. A*n* / B*n* are this file's notation for the APIs an
 | 1 | "API" means a REST API: a client sends an HTTP request, the server sends a response, and FastAPI builds it | ch2 ↔ A25, A27–A28 | Yes. The plan's "a function call over HTTP" (`digest.md` §3.1) is the mechanism under A27's definition. The lecture names four methods (GET, POST, PUT, DELETE). The tutorial's API uses only GET and POST. |
 | 2 | One request, hop by hop: browser → host port → container port → the FastAPI function → JSON back | ch1, ch3 ↔ A34–A41 (= B7–B14) | Yes, step for step. The lecture's "host machine forwards … port 9000 is mapped to 9000" is the tutorial's `-p 9000:9000`. The plan adds what "FastAPI is running on port 9000" leaves out: uvicorn is the server, FastAPI the app, and the server must listen on `0.0.0.0` (Conflict 8). |
 | 3 | The simple frontend's container only serves files: `http-server` on 8080 returns `newsletters.html`, and the browser renders it | ch4 ↔ B18–B23 | Yes, exactly. The container name `cheese-app-frontend-simple`, port 8080 and `http-server` match the repo. |
-| 4 | The page's JavaScript runs in the browser and calls the API on 9000 itself; the frontend container takes no part | ch1 (hook), ch4, ch6 ↔ B24–B26 | Yes. This is the plan's key fact, and B24 makes the same point by dropping the frontend container from the picture. The plan adds why it matters: CORS, published ports versus container names, and exercise E2's failing `http://cheese-app-api-service:9000`. |
+| 4 | The page's JavaScript runs in the browser and calls the API on 9000 itself; the frontend container takes no part | ch1 (hook), ch4, ch6 ↔ B24–B26 | Yes. This is the plan's key fact, and B24 makes the same point by blanking the container on the right: its frontend name and port 8080 are gone. The plan adds why it matters: CORS, published ports versus container names, and exercise E2's failing `http://cheese-app-api-service:9000`. |
 | 5 | A chat message is the same round trip, with a POST and Gemini inside the handler | ch1, ch5 ↔ B27 | Yes. The plan adds the preflight `OPTIONS`, the `X-Session-ID` header, the 307 for the trailing slash, the chat JSON on disk, and the Chroma and Vertex hops. The route names differ (Conflict 2). |
 | 6 | One API service, with one group of routes per feature | ch5 ↔ A44 | Yes in shape: A44's six boxes are the six `include_router` lines at `service.py:37-42`. Not in status: v2 switches on only four (Conflict 3). |
 | 7 | The vector database must be running before the API | ch6, ch9 (checklist "Chroma up") ↔ A45 | Yes, and the tutorial is stricter than the slide. The v2 API does not even start without Chroma, even with RAG switched off (`digest.md` §6 #1). |
-| 8 | Every service has its own port, and the numbers are the same in both pictures: frontend 3000, API 9000, vector DB 8000 | ch1 (the §1 diagram) ↔ A19 | Yes. A19's "HTTP 3000", "HTTP 9000" and "HTTP 8000" are the tutorial's published ports. The lecture draws them inside a cluster behind NGINX; the plan draws them on a laptop. |
+| 8 | Every service has its own port, and the numbers are the same in both pictures: frontend 3000, API 9000, vector DB 8000 | ch1 (the §1 diagram) ↔ A19 | Yes. A19's "HTTP 3000", "HTTP 9000" and "HTTP 8000" are the tutorial's published ports. The lecture draws them inside a cluster, with NGINX in front of the app and the API and the vector DB behind the API; the plan draws them on a laptop. |
 | 9 | Components: the header is written once, and only the page content changes | ch8 ↔ B35–B37 | Yes. B37's "Header defined only once" is `layout.jsx:30-32`, which wraps every `page.jsx` in `<Header />` and `<Footer />`. The plan's "folders become URLs" is the tutorial's half. The lecture calls the framework React (Conflict 7). |
-| 10 | Going to production changes only the outside: the address, not the FastAPI code or its port | ch8 (`.env.development` vs `.env.production`), ch9 (the v3 preview) ↔ A42 | Yes on the principle. The React app switches `NEXT_PUBLIC_BASE_API_URL` from `http://localhost:9000` to `/api-service` with no code change, and the API keeps port 9000. The details on A42 differ (Conflict 9). |
+| 10 | Going to production changes only the outside: the address, not the FastAPI code or its port | ch9 (the v3 preview) and recap question 6 (`.env.development`) ↔ A42 | Yes on the principle. The React app switches `NEXT_PUBLIC_BASE_API_URL` from `http://localhost:9000` to `/api-service` with no code change, and the API keeps port 9000. The details on A42 differ (Conflict 9). |
 
 ### 3. Gaps (ranked by value to a student doing the tutorial)
 
@@ -627,18 +627,19 @@ disagree, the captures win. A*n* / B*n* are this file's notation for the APIs an
    **Carry it in** ch2 (the first 30 s, before `sh docker-shell.sh`), and recall it in ch5 for
    v2's two key files (Conflict 4).
 2. **The technical architecture as the destination (A7, A15–A21).** The lecture's blueprint shows
-   where today's laptop containers end up: an NGINX container in front of the Cheese App (:3000),
-   the API service (:9000) and the vector DB (:8000) on one compute instance or cluster, with the
-   images in Artifact Registry, Gemini on Vertex AI and data in a GCS bucket. A20–A21's "App is
-   ready!" → "Well not really, we need to build it" is the honest frame for L18: the code exists,
-   the cluster does not. The plan's ch9 previews only "v3's NGINX box". **Carry it in** ch1's last
+   where today's laptop containers end up: an NGINX container in front of the Cheese App (:3000)
+   and the API service (:9000), with the vector DB (:8000) behind the API, all on one compute
+   instance or cluster, with the images in Artifact Registry, Gemini on Vertex AI and data in a
+   GCS bucket. A20–A21's "App is ready!" → "Well not really, we need to build it" is the honest
+   frame for L18: the code exists, the cluster does not. The plan's ch9 previews only "v3's NGINX box". **Carry it in** ch1's last
    20 s (zoom out from the laptop to the A19 layout; the port numbers carry over) and ch9 (light
    the cluster as the job of L20–L22).
 3. **Why a frontend framework (B30–B33), and what reuse looks like (B36–B37).** With one HTML page
    per feature, each page carries its own HTML, JavaScript and CSS, nothing is shared, and every
-   click loads a whole page. The viewer has just seen this in ch4: `newsletters.html` and
-   `chat.html` each have their own `-main.js` and their own copy of the nav bar. The plan's ch8
-   jumps into the App Router without the problem it solves. **Carry it in** ch8 (the first
+   click loads a whole page. v2's simple frontend shows it: each page loads its own script
+   (`main.js`, `newsletters-main.js`, `chat-main.js`), and `index.html` and `newsletters.html`
+   each carry their own copy of the same nav bar. The plan's ch8 jumps into the App Router
+   without the problem it solves. **Carry it in** ch8 (the first
    minute), with the simple frontend as the "before".
 4. **The screens decide the routes (A29, A44).** Three wireframes (newsletters, podcasts, a chat
    that takes a photo) lead to the API's route groups. This gives ch5's route tree a reason: each
@@ -657,9 +658,10 @@ disagree, the captures win. A*n* / B*n* are this file's notation for the APIs an
    stub, and `fastmcp` is a declared but unused dependency (Conflict 3). Without the lecture's
    picture a student cannot tell what that option is meant to become. **Carry it in** ch5 (20 s,
    when the commented-out `llm-agent` line appears) or ch9 ("where this goes").
-7. **What HTML, CSS and JavaScript each do (B16–B17).** Structure, style and behaviour, and only
-   JavaScript can call an API. It is short, but it sets up ch4's "files vs code" split. **Carry it
-   in** ch4's opening, on v1's `index.html`, which has the same parts as B17's page.
+7. **What HTML, CSS and JavaScript each do (B16–B17).** Structure, style and behaviour. Of the
+   three, only JavaScript is a programming language, and it is the part that calls the API. It
+   is short, but it sets up ch4's "files vs code" split. **Carry it in** ch4's opening, on v1's
+   `index.html`, which has the same parts as B17's page.
 8. **Well-known ports vs the tutorial's ports (A25–A26).** Ports 80 and 443 are why public URLs carry
    no port number; 9000, 8080, 3000 and 8000 are why every tutorial URL does. A26's definition (the
    endpoint where a connection starts or ends) is what `-p HOST:CONTAINER` joins. The plan assumes
@@ -676,7 +678,7 @@ disagree, the captures win. A*n* / B*n* are this file's notation for the APIs an
 |---|---|---|---|---|
 | 1 | **The newsletters route** (A38–A41, B12–B14, B25): `@app.get("/newsletters")`, served from `api-service/api/service.py`. The browser asks for `http://localhost:9000/newsletters`, and B24's JavaScript sets `axios.defaults.baseURL` and calls `axios.get('/newsletters')`. | The handler is `@router.get("/")` in `api/routers/newsletter.py:16`, mounted by `app.include_router(newsletter.router, prefix="/newsletters")` (`service.py:37`), so its URL is `/newsletters/`. The simple frontend keeps its base URL in a `DataService` object and calls `/newsletters?limit=100` (`newsletters-main.js:7`). The API answers 307, then 200 at `/newsletters/?limit=100` (`digest.md` §4 B6). | The repo | "The lecture shows the one-file version. In the repo the same function sits in a router, mounted under /newsletters. Watch the log: the missing slash costs one 307 redirect." |
 | 2 | **The chat route** (B27): the arrows and notes say `/chat`, and the code says `@app.post("/chats")`, with one handler for LLM, RAG and agent. | Each model has its own router under its own prefix. `POST /llm/chats` starts a chat and `POST /llm/chats/{chat_id}` continues one (`llm_chat.py:47`, `:93`), and the same holds for `/llm-cnn` and `/llm-rag`. The simple frontend posts to `/llm/chats/` (`chat-main.js:30-32`) and gets a 307 to `/llm/chats`. | The repo | "The slide's /chat is shorthand. The real path names the model, /llm/chats, and adds the chat id when you continue." Show the real path in the terminal. |
-| 3 | **Six route groups and an MCP service.** A44 shows Newsletters, Podcasts, LLM Chat, LLM + CNN Chat, RAG Chat and Agent Chat. A24 and A30–A33 put an MCP service, built with FastMCP, beside the API. | v2 switches on four (`service.py:37-40`). RAG is commented out (`:41`), and once switched on its second message fails (`llm_rag_chat.py:99`). Agent is commented out (`:42`) and has GET routes only (`llm_agent_chat.py:26`, `:35`), so a chat sent with the Agent option returns 404 (router off) or 405 (router on). v3 and v4 switch it on, but it is still GET-only. `fastmcp` is declared (`pyproject.toml:10`), but no code imports it: no cheese-app repo up to v4 has an MCP service. | The repo | "The lecture's diagram is the full menu. In this tutorial four are ready, RAG is one uncommented line away, and the agent is still a placeholder. Pick it and you get a 405: the route exists, but not for POST." |
+| 3 | **Six route groups and an MCP service.** A44 shows Newsletters, Podcasts, LLM Chat, LLM + CNN Chat, RAG Chat and Agent Chat. A24, A30, A32 and A33 put an MCP service, built with FastMCP (A33), beside the API. | v2 switches on four (`service.py:37-40`). RAG is commented out (`:41`), and once switched on its second message fails (`llm_rag_chat.py:99`). Agent is commented out (`:42`) and has GET routes only (`llm_agent_chat.py:26`, `:35`), so a chat sent with the Agent option returns 404 (router off) or 405 (router on). v3 and v4 switch it on, but it is still GET-only. `fastmcp` is declared (`pyproject.toml:10`), but no code imports it: no cheese-app repo up to v4 has an MCP service. | The repo | "The lecture's diagram is the full menu. In this tutorial four are ready, RAG is one uncommented line away, and the agent is still a placeholder. Pick it and you get a 405: the route exists, but not for POST." |
 | 4 | **The key file** (A43): `/secrets` holds `data-service.json`. | v2's API reads `/secrets/ml-workflow.json` (`api-service/docker-shell.sh:29`), and the vector-db CLI reads `/secrets/llm-service-account.json` (`vector-db/docker-shell.sh:10`). v1 reads none. | The repo | "The lecture's tree shows the rule: secrets sit beside the repo. The file names change from tutorial to tutorial; v2 needs these two." |
 | 5 | **The folder tree** (A43): ten services under `src/`, including `ml-workflow`, `frontend-react` and `postgres-db`. | v1's `src/` has `api-service`, `frontend-simple` and seven placeholder folders (`data-collector`, `data-processor`, `model-training`, `model-deploy`, `newsletter`, `podcast`, `vector-db`). v2's has only `api-service`, `frontend-simple`, `frontend-react` and `vector-db`. No repo has a Postgres DB. | The repo | "The lecture's tree is the whole project you are building toward. Each tutorial repo holds only the services it needs." |
 | 6 | **The tutorial links**: A45 → `cheese-app-v2#setup-environments`, B28 → `#frontend-app-simple`, B38 → `#frontend-app-react`. | None of these anchors exists in v2's README at `14f2a14`. Its headings are "Tutorial (23): Environment Setup", "… Vector DB for RAG Setup" and "… Backend APIs", then "Tutorial (24): Simple Frontend App" and "Tutorial (25): React Frontend Setup" (`README.md:12`, `:40`, `:67`, `:147`, `:185`). The links open the top of the README. "Setup Environments" is a v1 heading. | The README headings | No narration needed. On screen, the README tracker names the section each chapter follows, never the anchor. |
@@ -722,7 +724,7 @@ Not counted as conflicts:
 - **Captures.** When they are made, record:
   - the uvicorn log of `GET /newsletters?limit=100` → 307 → 200;
   - the chat's `OPTIONS` + `POST /llm/chats/` → 307 → 200;
-  - `/docs` with the four router groups;
+  - `/docs` listing the four routers' operations (all in one "default" section);
   - the 405 from the Agent option;
   - an `ls` of the folder that holds the clones, with `secrets/` and `persistent-folder/`.
 
@@ -731,8 +733,9 @@ Not counted as conflicts:
 **Per chapter**
 - **Ch1 · `lecture_ref(18, "24–27 (Frontend)")`.**
   - The hook's journey is B27's round trip: draw its six numbered steps, then insert 4a and 4b for
-    the two hops the lecture keeps inside "FastAPI" (Chroma and Vertex AI).
-  - Use B24's move to answer the hook: the frontend container fades out as the JavaScript fires.
+    the two hops the lecture keeps inside "FastAPI" (Chroma on a RAG chat, and Vertex AI).
+  - Use B24's move to answer the hook: the frontend container's labels fade as the JavaScript
+    fires.
   - In the last 20 s, zoom out to A19's layout (gap 2). The three port numbers carry over: 3000,
     9000, 8000. "This is the lecture's blueprint. Today, all of it runs on your laptop."
 - **Ch2 · `lecture_ref(18, "25–28, 43 (APIs)")`.**
@@ -781,12 +784,12 @@ Not counted as conflicts:
 - **Recap card.** Keep the plan's six questions, and add two:
   - "Trace one newsletters request through the lecture's steps. At which step does the frontend
     container take part?" (At none: it served the page earlier.)
-  - "The lecture says one page per feature doesn't scale. Name its two problems, and the file in
-    the React app that solves the first."
+  - "The lecture says one page per feature doesn't scale. Name the problems it lists, and the
+    file in the React app that fixes the reuse problem." (`layout.jsx`)
 
 **Terms**
 - Use the lecture's words:
-  - API: *REST API*, *Web API*, *API service*, *route groups*;
+  - API: *REST API*, *Web API*, *API service*;
   - design: *Screenflow & Wireframes*, *Technical Architecture* (the system's blueprint), *Vector
     DB*, *Image Model*, *Cheese KB*, *MCP service*, *Agents*;
   - the request trace: *host machine forwards the request*, *port mapping*;

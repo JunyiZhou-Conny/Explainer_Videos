@@ -44,17 +44,17 @@ Beats (script.md "## S08", one voiceover block each):
     on the 12-row terminal's top edge), the terminal grows to 12 rows and types `diff Dockerfile
     Dockerfile.txt` (a full row: its `extra` tag stands just above the terminal's top edge, its right
     edge at the command's end, a short GREY leader down to the command; on the next row it read as a
-    tag of the first output row) -> laptop/27 lines 8-18, `+` lines GREEN, `-` lines dim RED. "if yours prints less-than…": the +/- column
-    pulses and a two-line GREY note appears in the empty rows: "our diff prints + and −" / "on a
-    Mac, Linux or Git Bash: diff -u for this layout" (`diff -u` pulses YELLOW on "add dash u").
+    tag of the first output row) -> laptop/27 lines 8-18, `+` lines GREEN, `-` lines dim RED.
+    "if yours prints less-than…": the +/- column pulses and a two-line GREY note appears in the
+    empty rows: "our diff prints + and −" / "on a Mac, Linux or Git Bash: diff -u for this layout"
+    (`diff -u` pulses YELLOW on "add dash u").
     "First, three ENV lines": the note goes, the three `+ENV` rows pulse, and GREY row tags appear
     one by one as said: "no apt questions", "UTF-8 text", "logs appear at once".
  6  The tags go; the terminal continues -> laptop/27 "…", 20-26, "…", 33-34 (it scrolls: the rows
     that leave fade in place, so nothing flies over the tracker; line 20 is 66 characters, one more
     than a row, so it wraps like a real terminal, its last letter on the next row: the excerpt then
-    fills all 12 rows). "one bigger RUN": an ORANGE
-    bracket right of lines 21-26 with "one RUN: / update, upgrade, / clean, newer pip, uv"; the
-    rows pulse as they are said. "And ENTRYPOINT moved to the end": a YELLOW bracket at lines
+    fills all 12 rows). "one bigger RUN": an ORANGE bracket right of lines 21-26 with "one RUN: /
+    update, upgrade, / clean, newer pip, uv"; the rows pulse as they are said. "And ENTRYPOINT moved to the end": a YELLOW bracket at lines
     33-34, "ENTRYPOINT moved to the end"; the ENTRYPOINT row pulses on "the order of ENTRYPOINT".
  7  TRACKER A12. The terminal clears and shrinks to the strip (the laptop prompt); the README card
     fades back in at the centre (26 pt) with the GREY note "the README only names the file" under

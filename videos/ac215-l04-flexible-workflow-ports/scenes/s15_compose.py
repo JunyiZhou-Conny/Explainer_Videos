@@ -396,9 +396,7 @@ def fly(scene, cm: ComposeMap, flights, bars, run_time: float = 1.1, extra=()) -
         moves.append(cp.animate.move_to(cm.panel.span(line, sub_yaml)).set_color(VENV))
     scene.play(*moves, *extra, run_time=run_time * 0.7)
     new_bars = VGroup(*[cm.panel.bar(n, VENV, 0.22) for n in bars])
-    print("DBG0", [b_.get_fill_opacity() for b_ in new_bars])
     scene.play(*[FadeOut(c) for c in copies], FadeIn(new_bars), run_time=run_time * 0.35)
-    print("DBG1", [b_.get_fill_opacity() for b_ in new_bars], cm.which)
     return new_bars
 
 
@@ -468,16 +466,15 @@ class ComposeUp(VoiceScene):
                                      (3, "--network toynet", 33, "- toynet")], [28, 29, 30, 31, 32, 33]))
             self.play(*[cm.dim_flag(i, s, 0.3) for i, s in NO_HOME], FadeIn(nohome, shift=UP * 0.1),
                       run_time=0.6)
-            print("DBG", [type(m).__name__ + ("*" if m is cm.panel else "") + ("B" if any(m is x for x in pb) else "") for m in self.mobjects])
-            print("DBG op", [b_.get_fill_opacity() for x in pb for b_ in x], [x in self.get_mobject_family_members() for x in pb])
 
         # ============================================================ 2 · two new keys; one command
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(nohome), FadeOut(VGroup(*pb), run_time=0.3), *cm.swap("gateway", run_time=0.8))
+            self.play(FadeOut(VGroup(*pb), run_time=0.3), *cm.swap("gateway", run_time=0.8), run_time=0.8)
             gbars = VGroup(*[cm.panel.bar(n, VENV, 0.22) for n in GW_BARS])
             self.play(FadeIn(gbars), run_time=0.4)
             vo.wait_until("the volumes key mounts")
             o1 = cm.outline(17, 18, "live-mount the gateway's folder")
+            self.play(FadeOut(nohome, run_time=0.3), run_time=0.3)
             self.play(Create(o1.frame), Create(o1.line), FadeIn(o1.tag, shift=UP * 0.1), run_time=0.7)
             vo.wait_until("and the depends on key")
             o2 = cm.outline(22, 23, "start the processor first")

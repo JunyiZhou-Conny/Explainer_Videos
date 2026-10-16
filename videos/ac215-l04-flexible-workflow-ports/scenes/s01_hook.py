@@ -13,9 +13,9 @@ Beats (script.md "## S01", one voiceover block each):
    "Docker Hub" shelf (illustration) with the sealed TEAL box, the PINK signpost
    dlops/mega-pipeline-generate-text:latest aiming at it and a GREY chip "pushed 2025-02-18";
    "3.8.17" pulses in the strip with the box; a YELLOW "?" pulses between card and box.
-2. Cut. A 6-row laptop terminal (prompt student@laptop:~/AC215/port_toy$) along the bottom; above
-   it a GREY laptop glyph at left and two TEAL boxes, gateway (low) and processor (high, a door
-   ":9200" on its left wall). `curl --max-time 3 http://localhost:9200/health` -> port-laptop/23
+2. Cut. A 6-row laptop terminal (its prompt student@laptop:~/AC215/port_toy$ waiting) along the
+   bottom; above it a GREY laptop glyph at left and two TEAL boxes, gateway (low) and processor
+   (high, a door ":9200" on its left wall). `curl --max-time 3 http://localhost:9200/health` -> port-laptop/23
    line 2 RED, while a dashed PINK arrow from the laptop to the door turns RED, gets a cross and a
    RED dot bounces back. `docker exec gateway curl http://processor:9200/health` -> 24: "…", 5;
    a PINK arrow labelled "processor" grows from gateway to the door, and it and "ok" turn GREEN.
@@ -28,9 +28,9 @@ Beats (script.md "## S01", one voiceover block each):
    --branch flexible-workflow https://github.com/dlops-io/mega-pipeline.git` (folds) + ▶ your
    turn, then, at the repo prompt, `git branch; git log --oneline -1` + extra (5 rows: the README
    clone folds onto 3).
-5. The preview clears. Checklist card: "every command:" + the guide path (GREY), then "part 1:
-   Tutorial 0 + a Google Cloud project with billing · gcloud logged in" (GREEN tick, GOLD coin),
-   "part 2: only Docker" (GREEN tick).
+5. The preview clears. Checklist card (28 pt rows): "every command:" + the guide path (GREY), then
+   "part 1: Tutorial 0 + a Google Cloud project with billing" over "+ gcloud logged in" (GREEN
+   tick, GOLD coin), "part 2: only Docker" (GREEN tick).
 6. GREY card "recorded 14 October 2026 · Linux" over the panel port-laptop/00-env.txt lines 4–5
    ("docker version · docker compose version"), "engine 29.8.2" pulses and the GREY tag "at the
    time of recording" appears; two GREY chips (a tiny prompt glyph each): "macOS: zsh, % · some
@@ -57,6 +57,7 @@ from common import (
     TURN,
     VENV,
     BuildOrPull,
+    bare_prompt,
     beside,
     capture,
     door,
@@ -355,8 +356,9 @@ class Hook(VoiceScene):
         g_lab = mono("processor", 22, LOOKUP).next_to(g_arrow.point_from_proportion(0.4), UP + LEFT, buff=0.1)
 
         with self.voiceover(SAY[2]) as vo:
-            clear_stage(self, FadeIn(t2), run_time=0.6)
-            self.play(FadeIn(net, lag_ratio=0.1), run_time=1.0)
+            clear_stage(self, run_time=0.4)
+            self.play(FadeIn(t2), FadeIn(net, lag_ratio=0.1), run_time=1.0)
+            bare_prompt(self, t2)                    # the prompt waits while the picture is named
             vo.wait_until("a server listening")
             self.play(pulse(dr, TURN, 1.15), Indicate(P["door_label"], color=TURN, scale_factor=1.1), run_time=0.8)
             type_cmd(self, t2, CURL.cmd, type_time=1.4)
@@ -387,10 +389,10 @@ class Hook(VoiceScene):
             self.add(net_shapes)
             drop = VGroup(texts, g_lab)
             self.play(FadeOut(t2), FadeOut(drop),
-                      net_shapes.animate.scale(k_r).move_to([3.4, 1.35, 0]),
-                      FadeIn(thumb_l, scale=1.8), run_time=1.0)
+                      net_shapes.animate.scale(k_r).move_to([3.4, 1.35, 0]), run_time=0.8)
             self.remove(t2, drop, texts, g_lab)
             net.remove(texts)
+            self.play(FadeIn(thumb_l, scale=1.4), run_time=0.5)
             vo.wait_until("Part 1")
             self.play(Write(q1), pulse(thumb_l), run_time=1.0)
             vo.wait_until("and should you build")
@@ -434,33 +436,37 @@ class Hook(VoiceScene):
             self.play(pulse(xt, S.WHITE, 1.15), run_time=0.8)
 
         # ========================================================== 5. what you need
-        foot = VGroup(label("every command:", 22, S.GREY), mono(GUIDE, 20, S.GREY)) \
-            .arrange(DOWN, buff=0.14, aligned_edge=LEFT)
+        foot = VGroup(label("every command:", 26, S.GREY), mono(GUIDE, 21, S.GREY)) \
+            .arrange(DOWN, buff=0.16, aligned_edge=LEFT)
         rows = VGroup()
-        texts5 = [("part 1: Tutorial 0 + a Google Cloud project with billing · gcloud logged in",
-                   {"Tutorial 0": INK}),
-                  ("part 2: only Docker", {})]
-        for s, _ in texts5:
-            slot = box(0.36, 0.36, S.GREY, fill_opacity=0.0, radius=0.06, stroke=2)
-            mark = check_mark(0.34, VENV).move_to(slot)
-            txt = label(s, 24, INK).next_to(slot, RIGHT, buff=0.3)
-            r = VGroup(slot, mark, txt)
-            r.slot, r.mark, r.text = slot, mark, txt
+        texts5 = [("part 1: Tutorial 0 + a Google Cloud project with billing", "+ gcloud logged in"),
+                  ("part 2: only Docker", None)]
+        for s, s2 in texts5:
+            slot = box(0.42, 0.42, S.GREY, fill_opacity=0.0, radius=0.07, stroke=2)
+            mark = check_mark(0.4, VENV).move_to(slot)
+            line1 = label(s, 28, INK).next_to(slot, RIGHT, buff=0.32)
+            words = VGroup(line1)
+            if s2:
+                words.add(label(s2, 28, INK).next_to(line1, DOWN, buff=0.18, aligned_edge=LEFT))
+            r = VGroup(slot, mark, words)
+            r.slot, r.mark, r.text, r.line1 = slot, mark, words, line1
             rows.add(r)
-        rows.arrange(DOWN, buff=0.42, aligned_edge=LEFT)
-        coin = coin_glyph().next_to(rows[0].text, RIGHT, buff=0.25)
-        body = VGroup(foot, VGroup(rows, coin)).arrange(DOWN, buff=0.6, aligned_edge=LEFT)
+        rows.arrange(DOWN, buff=0.5, aligned_edge=LEFT)
+        coin = coin_glyph(0.19).next_to(rows[0].line1, RIGHT, buff=0.25)
+        body = VGroup(foot, VGroup(rows, coin)).arrange(DOWN, buff=0.65, aligned_edge=LEFT)
         frame5 = box(body.width + 0.9, body.height + 0.8, S.GREY, fill_opacity=0.04).move_to(body)
-        VGroup(frame5, body).move_to([0, 0.3, 0])
-        billing = text_span(rows[0].text, texts5[0][0], "with billing")
+        VGroup(frame5, body).move_to([0, 0.2, 0])
+        assert frame5.get_left()[0] > -6.6 and frame5.get_right()[0] < 6.6, frame5.width
+        billing = text_span(rows[0].line1, texts5[0][0], "with billing")
 
         def tick(r):
             return AnimationGroup(Create(r.mark), FadeIn(r.text, shift=RIGHT * 0.15))
 
         with self.voiceover(SAY[5]) as vo:
-            clear_stage(self, FadeIn(frame5), *[Create(r.slot) for r in rows], run_time=0.7)
-            self.play(FadeIn(foot, shift=UP * 0.15), run_time=0.7)
-            self.play(Indicate(foot[1], color=S.WHITE, scale_factor=1.04), run_time=0.8)
+            clear_stage(self, run_time=0.4)
+            self.play(FadeIn(frame5), *[Create(r.slot) for r in rows], FadeIn(foot, shift=UP * 0.15),
+                      run_time=0.8)
+            self.play(Indicate(foot[1], color=TURN, scale_factor=1.04), run_time=0.8)
             vo.wait_until("Part 1 needs")
             self.play(tick(rows[0]), run_time=0.8)
             vo.wait_until("with billing")
@@ -483,7 +489,8 @@ class Hook(VoiceScene):
             .arrange(RIGHT, buff=0.2).move_to([0, -1.85, 0])
 
         with self.voiceover(SAY[6]) as vo:
-            clear_stage(self, FadeIn(card6, shift=UP * 0.15), run_time=0.8)
+            clear_stage(self, run_time=0.4)
+            self.play(FadeIn(card6, shift=UP * 0.15), run_time=0.7)
             vo.wait_until("with Docker Engine")
             self.play(Indicate(engine, color=TURN, scale_factor=1.1), run_time=0.8)
             vo.wait_until("at the time of recording")
