@@ -492,7 +492,7 @@ docker inspect <name>   → Mounts, Config.Env, NetworkSettings.Ports   (76)
    - `docker ps -a` lists exited containers with their exit codes, but only without `--rm`, which is why S09's capture is empty.
    - `docker logs <name>` shows a container's output, and `docker exec -it <name> /bin/bash` opens a second shell in a running one.
    - `docker run -it --entrypoint /bin/bash <image>` lets you inspect an image whose container exits at once. Slide 57's draft would be one (Conflict 2).
-   
+
    Every failure in this tutorial (exit 126, `ModuleNotFoundError`) is a case for these tools. **Carry it in** S09, as a tag at the `docker ps -a` beat. The commands themselves belong in the guide.
 2. **What "isolated processes" means: namespaces and cgroups (slides 11–18, 22).** This is the lecture's biggest block, and the video never names it. It is visible in S09: bash is PID 1 because the container has its own PID namespace (slide 14). **Carry it in** S02 (two chips on the kernel bar) and S09 (one bridge at `echo $$`).
 3. **Ephemeral containers, and mounts as the answer (slides 42–51).** S11 shows the pain: every edit to `cli.py` means a rebuild. Slide 42 names both needs, a live development loop and outputs that persist. Slides 43–51 cover bind mounts vs named volumes vs tmpfs, how `-v` decides by the slash, `--mount` as the safer form, and `:ro`. This image keeps its code in `/` with no `WORKDIR`, so don't mount the repo here; L03 adds `WORKDIR /app` and `-v "$(pwd)":/app`. **Carry it in** S16 (a tag and a bridge on the L3 teaser), and in S11 as a tag only if wanted.
