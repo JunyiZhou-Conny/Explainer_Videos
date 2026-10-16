@@ -134,10 +134,9 @@ from common import (
     ToyNet,
     _header_text,
     _keep,
-    capture,
+    bare_prompt,
     caption_extra,
-    card_rows,
-    cmd_chip,
+    capture,
     door,
     erratum_tag,
     excerpt,
@@ -181,8 +180,23 @@ from manim import (
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import CAPTION, TAG, TERM_BG, box, cell_width, label, line_pitch, mono, mono_line, substring
-from explainer.devops import OUTPUT, check_mark, glyph_range
+from explainer.devops import (
+    CAPTION,
+    MONO,
+    OUTPUT,
+    TAG,
+    TERM_BG,
+    box,
+    cell_width,
+    check_mark,
+    chip,
+    glyph_range,
+    label,
+    line_pitch,
+    mono,
+    mono_line,
+    substring,
+)
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S14"]
@@ -253,6 +267,7 @@ T7_TOP = strip_top(7)             # 0.17: a 7-row terminal under V7
 P20 = line_pitch(CAPTION)
 PAGE_TOP = 2.85                   # the page's window top (its illustration tag sits above, right)
 COL_L, COL_R = -6.45, -0.75       # the left column beside the page
+COL_TOP = 2.74                    # its top (0.17 under the tracker's caption)
 CAP_GREY = S.GREY
 
 
@@ -407,7 +422,7 @@ def reply_strip(text: str, width: float = COL_R - COL_L, color: str = OUTPUT) ->
     tg.next_to(fr, UP, buff=0.1).align_to(fr, LEFT)
     g = VGroup(fr, rows, tg)
     g.frame, g.rows, g.tag = fr, rows, tg
-    g.shift([COL_L - fr.get_left()[0], TOP - tg.get_top()[1], 0])
+    g.shift([COL_L - fr.get_left()[0], COL_TOP - tg.get_top()[1], 0])
     return g
 
 
@@ -436,7 +451,7 @@ def doors_picture() -> VGroup:
     door 127.0.0.1:8090 held by a GREY "another app", door 127.0.0.1:8095 the TEAL gateway's.
     .doors[i] (.frame .label) .rooms[i] (.frame .label) .boxes[i] .arrows[i] .wall"""
     wall_x, ys = 3.85, (1.75, 0.1)
-    bx0, bx1 = 4.42, 6.45
+    bx0, bx1 = 4.65, 6.45
     wall = DashedLine([wall_x, 2.55, 0], [wall_x, -0.7, 0], color=LAPTOP, stroke_width=3, dash_length=0.12)
     lap = note("your laptop").next_to(wall, UP, buff=0.08).align_to(wall, RIGHT).shift(LEFT * 0.1)
     doors, rooms, boxes, arrows = [], [], [], []
@@ -465,8 +480,23 @@ def doors_picture() -> VGroup:
 
 
 def setting_chip(text: str, owner: str) -> VGroup:
-    """A setting shown as a chip (mono) with a GREY note naming its container under it."""
-    return cmd_chip(text, owner)
+    """A setting shown as a GREY mono chip, a GREY note naming its container left of it.
+    .chip (.box .text) .note"""
+    c = chip(text, S.GREY, size=CAPTION, font=MONO)
+    n = note(owner)
+    g = VGroup(n, c).arrange(RIGHT, buff=0.2)
+    g.chip, g.note = c, n
+    return _keep(g)
+
+
+def no_rebuild_chip() -> VGroup:
+    """Beat 8: a GREY chip "no rebuild · configuration only", headed by its source
+    README.md · lines 404–409. .chip .header"""
+    c = chip("no rebuild · configuration only", S.GREY, size=CAPTION)
+    hd = _header_text("README.md · lines 404–409").next_to(c, UP, buff=0.08).align_to(c, LEFT).shift(RIGHT * 0.08)
+    g = VGroup(c, hd)
+    g.chip, g.header = c, hd
+    return _keep(g)
 
 
 def cheat_card() -> VGroup:
@@ -532,6 +562,7 @@ class ChangePorts(VoiceScene):
         t = term(P_TOY, rows=7, title="laptop")
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(net), FadeIn(t), run_time=0.7)
+            bare_prompt(self, t)
             vo.wait_until("First the street door")
             self.play(flash(d1.frame, TURN, 1.3), flash(d1.label, TURN, 1.08), run_time=0.8)
             vo.wait_until("remove the gateway")
@@ -572,7 +603,7 @@ class ChangePorts(VoiceScene):
             vo.wait_until("Two extra checks")
             self.play(caption_extra(tr, True), run_time=0.4)
             type_cmd(self, t, CURL_8090, type_time=1.0)
-            e33 = t.print(self, [(C33.line(2), ERR)], run_time=0.35)[0]
+            t.print(self, [(C33.line(2), ERR)], run_time=0.35)
             vo.wait_until("and docker ps shows")
             type_cmd(self, t, PS_SHORT, type_time=1.3)
             ps = t.print(self, C35.at((2, 4)), run_time=0.4)
@@ -581,7 +612,6 @@ class ChangePorts(VoiceScene):
             vo.wait_until("Pause and move")
             self.play(FadeOut(pg1), FadeOut(rp1), caption_extra(tr, False), run_time=0.4)
             self.play(FadeIn(card1, shift=UP * 0.15), run_time=0.5)
-        del e33
 
         # ============================================================ 2 · why: another app holds 8090
         rc = readme_rows_card("README.md · lines 357–363", README_357)
@@ -590,6 +620,7 @@ class ChangePorts(VoiceScene):
         assert rc.frame.get_right()[0] < pic.doors[0].label.get_left()[0] - 0.15, \
             (rc.frame.get_right()[0], pic.doors[0].label.get_left()[0])
         cap2 = note("rooms never collide").next_to(VGroup(*pic.boxes), DOWN, buff=0.18)
+        cap2.align_to(VGroup(*pic.boxes), RIGHT)
         assert cap2.get_bottom()[1] > STRIP_TOP + 0.08 and rc.frame.get_bottom()[1] > STRIP_TOP + 0.08
         rows = rc.rows
         with self.voiceover(SAY[2]) as vo:
@@ -615,12 +646,12 @@ class ChangePorts(VoiceScene):
 
         # ============================================================ 3 · erratum: the log's hard-coded 8090
         ec = excerpt_chip(OPEN_8090, "gateway/gateway.py · line 53 (excerpt)", line=L53)
-        ec.move_to([-0.6, 1.75, 0])
+        ec.move_to([-0.6, 1.45, 0])
         et = erratum_tag().next_to(ec.chip, RIGHT, buff=0.3)
         u_ec = under(VGroup(*ec.text.submobjects[-4:]), ERR, 4)
         hc = note("a hard-coded string").next_to(ec.chip, DOWN, buff=0.22).align_to(ec.chip, RIGHT)
         trust = VGroup(fix_chip("trust docker ps"), fix_chip("trust the page's diagram")).arrange(RIGHT, buff=0.6)
-        trust.move_to([-0.6, 0.0, 0])
+        trust.move_to([-0.6, -0.25, 0])
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(rc, pic, cap2)), caption_extra(tr, True), run_time=0.5)
             type_cmd(self, t, LOGS_GW, type_time=0.8)
@@ -631,7 +662,7 @@ class ChangePorts(VoiceScene):
             pin(self, lg, u_lg, anim=Create(u_lg), run_time=0.4)
             self.play(src.animate.set_color(ERR), run_time=0.3)
             self.play(FadeIn(ec.chip[0]), FadeIn(ec.header), TransformFromCopy(src, ec.text), run_time=0.9)
-            self.remove(ec.text)
+            self.remove(ec.chip[0], ec.header, ec.text)
             self.add(ec)
             self.play(FadeIn(et, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("That text is hard-coded")
@@ -658,7 +689,8 @@ class ChangePorts(VoiceScene):
             b93 = glyph_box(pr_row, "PORT=9300", CTR)
             pin(self, pr_row, b93, anim=Create(b93), run_time=0.4)
             self.play(net.set_room("processor", ":9300"), run_time=0.8)
-            self.play(net.set_aim(None, ERR), flash(net.aim_chip, ERR, 1.1), run_time=0.8)
+            self.play(net.set_aim(None, ERR), run_time=0.6)
+            self.play(flash(net.aim_chip, ERR, 1.1), run_time=0.6)
             vo.wait_until("The README says")
             resize(self, t, 3, keep=[run2.rows[1], run2.rows[2], t.lines[-1]], run_time=0.7,
                    extra=[net.animate.shift(UP * up_low)])
@@ -668,10 +700,10 @@ class ChangePorts(VoiceScene):
         # ============================================================ 5 · it fails quietly
         pg5 = place_page(PortPage(8095, reply=R32, compact=True, ports=True))
         er5 = tag2(["erratum · no error handling", "index.html lines 95–100"])
-        er5.move_to([0, 0, 0]).shift([COL_L - er5.get_left()[0], TOP - er5.get_top()[1], 0])
+        er5.move_to([0, 0, 0]).shift([COL_L - er5.get_left()[0], COL_TOP - er5.get_top()[1], 0])
         nc5 = grey_tag("the page doesn't change").move_to([pg5.frame.get_center()[0], pg5.frame.get_bottom()[1], 0])
         rp5 = reply_strip(C38.line(3), color=ERR)
-        rp5.shift(DOWN * (TOP - (er5.get_bottom()[1] - 0.35)))
+        rp5.shift(DOWN * (COL_TOP - (er5.get_bottom()[1] - 0.35)))
         assert rp5.frame.get_bottom()[1] > STRIP_TOP + 0.1
         assert nc5.get_bottom()[1] > STRIP_TOP + 0.08
         with self.voiceover(SAY[5]) as vo:
@@ -710,7 +742,8 @@ class ChangePorts(VoiceScene):
             self.play(flash(substring(l55, "Connection refused"), ERR, 1.08), run_time=0.6)
             vo.wait_until("nobody listens on 9200 anymore")
             resize(self, t, 4, keep=[l25, l26, ell2, l55], run_time=0.6)
-            cc.move_to([0, 0, 0]).shift([-0.9 - cc.frame.get_center()[0], (TOP - 0.1) - cc.get_top()[1], 0])
+            mid = (TOP + strip_top(4)) / 2
+            cc.shift([COL_L - cc.frame.get_left()[0], mid - (cc.get_top()[1] + cc.get_bottom()[1]) / 2, 0])
             tick_g.next_to(cc.frame, RIGHT, buff=0.25).set_y(cc.row_a.get_center()[1])
             assert tick_g.get_right()[0] < 6.55 and cc.frame.get_bottom()[1] > t.box.get_top()[1] + 0.2
             self.play(FadeIn(cc.frame), FadeIn(cc.header), FadeIn(cc.row_a), run_time=0.5)
@@ -725,6 +758,7 @@ class ChangePorts(VoiceScene):
         y_ch = net.parts["outline"].get_bottom()[1] - 0.2 - ch_gw.chip.height / 2
         ch_gw.move_to([gw_box.frame.get_center()[0], 0, 0]).shift(UP * (y_ch - ch_gw.chip.get_center()[1]))
         ch_pr.move_to([pr_box.frame.get_center()[0], 0, 0]).shift(UP * (y_ch - ch_pr.chip.get_center()[1]))
+        ch_pr.shift(LEFT * max(0, ch_pr.get_right()[0] - 6.45))
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(t, cc, tick_g)), caption_extra(tr, False), run_time=0.5)
             self.play(FadeIn(net), run_time=0.6)
@@ -764,8 +798,8 @@ class ChangePorts(VoiceScene):
             self.play(pg8.port_lines[1].glyphs.animate.set_color(TURN),
                       substring(rp8.rows[2], '"listen_port": 9300,').animate.set_color(TURN), run_time=0.5)
             vo.wait_until("No image was rebuilt")
-            nr = card_rows(["no rebuild · configuration only", ("README.md · lines 404–409", S.GREY)])
-            nr.shift([COL_L - nr.frame.get_left()[0], rp8.frame.get_bottom()[1] - 0.25 - nr.get_top()[1], 0])
+            nr = no_rebuild_chip()
+            nr.shift([COL_L - nr.chip.get_left()[0], rp8.frame.get_bottom()[1] - 0.14 - nr.get_top()[1], 0])
             assert nr.get_bottom()[1] > STRIP_TOP + 0.08 and nr.get_right()[0] < pg8.frame.get_left()[0] - 0.1
             self.play(FadeIn(nr, shift=UP * 0.1), flash(lis, TURN, 1.2), run_time=0.6)
             vo.wait_until("Pause and fix yours")
@@ -785,8 +819,8 @@ class ChangePorts(VoiceScene):
             self.play(FadeOut(VGroup(pg8, rp8, nr)), run_time=0.4)
             self.play(FadeIn(g9.chip[0]), TransformFromCopy(src9, g9.chip.text), FadeIn(g9.note),
                       FadeIn(p9, shift=UP * 0.1), run_time=0.8)
-            self.remove(g9.chip.text)
-            self.add(g9)
+            self.remove(g9.chip[0], g9.chip.text, g9.note, p9)
+            self.add(g9, p9)
             self.play(FadeIn(eq, scale=0.6), FadeIn(cap9, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("the processor's PORT")
             self.play(flash(p9.chip, VENV, 1.1), run_time=0.6)
@@ -798,7 +832,7 @@ class ChangePorts(VoiceScene):
                             frame=ERR, line=L68)
         cap10 = note("if you skip this: Compose wants these names")
         card10 = turn_card([RM_BOTH, NET_RM, (PS_A, "extra"), (NET_LS, "extra")])
-        card10.shift([0 - card10.frame.get_center()[0], (TOP - 0.3) - card10.get_top()[1], 0])
+        card10.shift([0 - card10.frame.get_center()[0], 0.3 - card10.frame.get_center()[1], 0])
         with self.voiceover(SAY[10], pad=1.2) as vo:
             self.play(FadeOut(VGroup(g9, p9, eq, cap9)), tr.goto(4), run_time=0.5)
             resize(self, t8, 7, keep=[], run_time=0.6, extra=[FadeIn(net)])
@@ -827,8 +861,8 @@ class ChangePorts(VoiceScene):
             vo.wait_until("Skip this")
             ec10.shift([0 - ec10.chip.get_center()[0], (t8.box.get_top()[1] + 0.2) - ec10.chip.get_bottom()[1], 0])
             assert ec10.header.get_top()[1] < TOP, ec10.header.get_top()[1]
-            cap10.move_to([0, 3.2, 0]).align_to([6.45, 0, 0], RIGHT)
-            assert cap10.get_left()[0] > tr.get_right()[0] + 0.2
+            cap10.move_to([0, 3.2, 0]).align_to([6.45, 0, 0], RIGHT)       # the top band, over the chip
+            assert cap10.get_left()[0] > tr.get_right()[0] + 0.3
             self.play(FadeIn(ec10, shift=DOWN * 0.15), run_time=0.5)
             self.play(FadeIn(cap10), flash(ec10.text, ERR, 1.04), run_time=0.6)
             vo.wait_until("Pause and clean up")

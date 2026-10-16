@@ -119,6 +119,7 @@ from common import (
     VENV,
     ToyNet,
     _keep,
+    _save_op,
     _set_op,
     beside,
     capture,
@@ -160,9 +161,11 @@ from manim import (
     Indicate,
     LaggedStart,
     Line,
+    MoveAlongPath,
     Polygon,
     ShowPassingFlash,
     Text,
+    Transform,
     TransformFromCopy,
     VGroup,
     VMobject,
@@ -380,6 +383,25 @@ def frame_ring(mob, color: str = TURN, pad: float = 0.05):
     return ring(mob, color, buff=pad, stroke=3)
 
 
+def fade_to(m, k: float | None, attr: str = "_lop"):
+    """Transform: every member of m to k of its full opacity (k=None: back to full). Unlike
+    set_opacity it leaves an arc's empty fill empty."""
+    if k is not None and getattr(m, "_lop_saved", False) is False:
+        _save_op(m, attr)
+        m._lop_saved = True
+    target = m.copy()
+    _set_op(target, k, attr)
+    return Transform(m, target)
+
+
+def other_machine_dot(route) -> tuple:
+    """A GREY dot that travels the outside machines' dashed route to the second door."""
+    dashes = list(route.submobjects)
+    path = VMobject().set_points_as_corners([d.get_start() for d in dashes] + [dashes[-1].get_end()])
+    d = Dot(path.get_start(), radius=0.07, color=S.GREY)
+    return d, MoveAlongPath(d, path, rate_func=linear)
+
+
 def show_part(net: ToyNet, name: str):
     """Mark a hidden ToyNet part shown (its opacities restored) before it is drawn by a transform
     (as ToyNet.open_room does)."""
@@ -425,7 +447,7 @@ class WhoCanReach(VoiceScene):
             self.play(FadeIn(ltag, shift=UP * 0.1), run_time=0.5)
 
         # ============================================================ 1 · the README's three columns
-        with self.voiceover(SAY[1]) as vo:
+        with self.voiceover(SAY[1], pad=1.4) as vo:     # the matched rows stay a moment
             self.play(FadeOut(ch230), FadeOut(ltag), caption_extra(tr, True), run_time=0.35)
             resize(self, t, 6, keep=[], run_time=0.5)
             type_extra(self, t, C17.cmd, type_time=1.3)
@@ -507,7 +529,10 @@ class WhoCanReach(VoiceScene):
             self.play(flash(d2.frame, TURN, 1.3), flash(substring(o21[1], "0.0.0.0"), TURN, 1.2), run_time=0.7)
             vo.wait_until("so other machines")
             self.play(*net.parts_in("outside"), run_time=0.6)
-            self.play(flash_path(outside[2], TURN, 6), run_time=0.9)
+            visitor, walk = other_machine_dot(outside[2])
+            self.add(visitor)
+            self.play(walk, run_time=1.0)
+            self.play(flash(d2.frame, TURN, 1.3), FadeOut(visitor), run_time=0.5)
             vo.wait_until("Remove it.")
             type_extra(self, t, RM_F, type_time=0.8)
             t.print(self, [C21.line(6)], run_time=0.3)
@@ -526,7 +551,8 @@ class WhoCanReach(VoiceScene):
             t.clear(self)
             type_cmd(self, t, C22.cmd)
             self.play(flash_path(map_line, LOOKUP), flash(net.rooms["gateway"], CTR, 1.2), run_time=0.8)
-            t.print(self, C22.at((2, 7), "…", 154, 155), run_time=0.7)
+            t.print(self, C22.at((2, 6)), run_time=0.5)             # a chunk at most as tall as the strip
+            t.print(self, C22.at(7, "…", 154, 155), run_time=0.5)
             vo.wait_until("Curl on 9200")
             type_cmd(self, t, C23.cmd, type_time=1.4)
             t.print(self, [(C23.line(2), ERR)], run_time=0.3)
@@ -564,17 +590,16 @@ class WhoCanReach(VoiceScene):
         for q, b in zip(qs, (gw, pr)):
             assert q.get_right()[0] < b.frame.get_right()[0] - 0.03
         chip = fold_chip(PONDER_ROWS)
-        chip.move_to([-6.5 + chip.width / 2, 0, 0])
-        lh = substring(chip.rows[1], "localhost")
-        lh_ring = frame_ring(lh, TURN)
         q = ponder_card(PONDER_Q, width=5.55, size=22)
         q.move_to([6.5 - q.width / 2, -3.42 + q.height / 2, 0])
+        chip.move_to([-6.5 + chip.width / 2, q.get_center()[1] + 0.3, 0])
         assert q.get_top()[1] < net.get_bottom()[1] - 0.15 and q.get_left()[0] > chip.get_right()[0] + 0.12
-        chip.set_y(q.get_center()[1] + 0.3)
+        lh = substring(chip.rows[1], "localhost")
+        lh_ring = frame_ring(lh, TURN)
         dims = [gw.loop, gw.loop_label, pr.loop, pr.loop_label]
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(t), *[m.animate.set_opacity(0.35) for m in dims], FadeIn(qs), run_time=0.7)
+            self.play(FadeOut(t), *[fade_to(m, 0.35) for m in dims], FadeIn(qs), run_time=0.7)
             vo.wait_until("The same command")
             self.play(FadeIn(chip, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("with localhost instead of processor")
@@ -598,8 +623,7 @@ class WhoCanReach(VoiceScene):
             type_cmd(self, t, C25.cmd, type_time=1.4)
             t.print(self, ["…", (ERR25, ERR)], wrap=True, run_time=0.4)
             vo.wait_until("Inside the gateway, localhost is")
-            self.play(gw.loop.animate.set_opacity(1), gw.loop_label.animate.set_opacity(1), FadeOut(qs[0]),
-                      run_time=0.4)
+            self.play(fade_to(gw.loop, None), fade_to(gw.loop_label, None), FadeOut(qs[0]), run_time=0.4)
             dot, loop_anims = net.loopback("gateway")
             self.add(dot)
             self.play(*loop_anims)
@@ -609,8 +633,7 @@ class WhoCanReach(VoiceScene):
             vo.wait_until("That's the second puzzle")
             self.play(FadeIn(ch290, shift=DOWN * 0.1), FadeIn(tick2, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("each container has its own localhost")
-            self.play(pr.loop.animate.set_opacity(1), pr.loop_label.animate.set_opacity(1), FadeOut(qs[1]),
-                      run_time=0.4)
+            self.play(fade_to(pr.loop, None), fade_to(pr.loop_label, None), FadeOut(qs[1]), run_time=0.4)
             self.play(*[flash(m, TURN, 1.15) for m in loops3], run_time=0.9)
             vo.wait_until("An extra check")
             self.play(caption_extra(tr, True), FadeOut(xg), dot.animate.set_color(LOOKUP), run_time=0.4)
@@ -673,7 +696,7 @@ class WhoCanReach(VoiceScene):
         panel = log_panel([C27.line(2)], "x", width=12.6)
         panel.remove(panel.header)
         head = VGroup(mono(C27.cmd, CAPTION, S.GREY), extra_tag()).arrange(RIGHT, buff=0.3)
-        panel.shift([0 - panel.frame.get_center()[0], 2.3 - panel.frame.get_top()[1], 0])
+        panel.shift([0 - panel.frame.get_center()[0], 2.25 - panel.frame.get_top()[1], 0])
         head.next_to(panel.frame, UP, buff=0.1).align_to(panel.frame, LEFT).shift(RIGHT * 0.12)
         assert head.get_top()[1] <= TOP, head.get_top()[1]
         err_tag = erratum_tag("README.md line 294: the processor doesn't need curl · it has it anyway")
@@ -695,6 +718,9 @@ class WhoCanReach(VoiceScene):
             self.play(*leave_container(t, P_TOY), run_time=0.5)
             vo.wait_until("One aside")
             self.play(FadeOut(net), FadeIn(panel, shift=DOWN * 0.1), FadeIn(head, shift=DOWN * 0.1), run_time=0.7)
+            vo.wait_until("has curl too")
+            self.play(flash(substring(panel.rows[0], "curl 8.14.1"), TURN, 1.12), run_time=0.7)
+            vo.wait_until("though the README implies")
             self.play(FadeIn(err_tag, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Pause, and test from both sides")
             self.play(FadeOut(t), FadeIn(card, shift=UP * 0.15), run_time=0.7)
