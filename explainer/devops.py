@@ -173,6 +173,14 @@ def tag(s: str, color: str = S.GREY, size: float = TAG, text_color: str | None =
     return g
 
 
+def lecture_ref(lecture: int | str, slides: str, color: str = S.GREY) -> VGroup:
+    """'Lecture 2 · slides 10–18': where the idea on screen is in the instructor's lecture slides
+    (docs/AC215_SERIES.md, rule 9). A tag pinned top right inside the safe frame, opposite the
+    README tracker; the slides themselves are never shown. .box .text"""
+    g = tag(f"Lecture {int(lecture)} · slides {slides}", color)
+    return g.move_to([6.6 - g.width / 2, 3.6 - g.height / 2, 0])
+
+
 def check_mark(height: float = 0.3, color: str = S.GREEN, stroke: float = 5) -> VMobject:
     h = height
     m = VMobject(stroke_color=color, stroke_width=stroke)

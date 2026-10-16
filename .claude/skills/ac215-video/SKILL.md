@@ -44,13 +44,20 @@ tutorials (repo, branch, README section, Colab), pinned commits, guide path and 
 ## Folder layout (per video)
 
 `videos/ac215-lNN-<topic>/`: `video.yaml` (with a `course:` block), `digest.md`, `BRIEF.md`,
-`ASSETS.md`, `assets/source/` (tutorial files at the pinned commit, unchanged), `assets/terminal/`
+`SLIDES.md` (the lecture slides: digest + scene map), `ASSETS.md`, `assets/source/` (tutorial files at
+the pinned commit, unchanged), `assets/terminal/`
 (real captures + `capture.sh`/`run_steps.sh`), `script.md`, `scenes/` (`common.py` + one file per
 scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `README.md`, `output/`,
 `build/` (gitignored: reviews, renders, contact sheets).
 
 ## Pipeline and gates
 
+0. **Lecture slides** (`SLIDES.md`): the student provides the instructor's slides (PDFs; text and
+   page images in the session scratchpad under `slides/LNN/`, never in git). An agent writes the
+   digest in our own words with slide numbers, a second maps it against the video (or its plan) and
+   the study guide, a third checks every slide citation (`ac215-slides.js`). The brief, script,
+   scenes and guide treat it as a binding source next to the tutorial digest (docs/AC215_SERIES.md
+   rule 9: `lecture_ref` tags, diagrams that echo the lecture, captures win on conflicts).
 1. **Digest** (`digest.md`): research agent + adversarial verifier against the repo (every `path:line`
    checked with `sed -n`, every command verbatim, README order). Gate: verifier's corrections applied.
 2. **Captures** (`assets/terminal/`, `assets/source/`, `ASSETS.md`). Run every README command of the
@@ -155,6 +162,7 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 
 ## Never
 
-No GCP/Google logos or console screenshots (schematic drawings tagged `illustration`); no real
+No slide images or PDF pages in a frame or a repository (re-draw the idea, cite the slide number);
+no GCP/Google logos or console screenshots (schematic drawings tagged `illustration`); no real
 person's name on screen (the prompt user is `student`); no hand-typed "output"; no command spelled
 differently from the README; no credentials, keys or project ids that look real.
