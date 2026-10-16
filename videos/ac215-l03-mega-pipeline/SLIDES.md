@@ -638,3 +638,295 @@ Notes for scene authors (my observations, not on the slides):
   `mega-pipeline@flexible-workflow` branch (team workflows, multi-arch builds), both in the L04
   episode.
 - **Not on the slides:** no readings, homework or milestone notes.
+
+## This video and the slides
+
+**Basis.** The video is built: `script.md` v2 (15 scenes, S01–S15, in two parts), `BRIEF.md`,
+`video.yaml`, `ASSETS.md` and the captures in `assets/terminal/` (2026-10-13). The study guide is
+`MLOps_Learning/guides/L03-containers-2-mega-pipeline.md`. For this section I re-read all eight
+contact sheets and the deck's text. I also re-checked these at the source:
+
+- the README's wording for the mount (`transcribe_audio/README.md:102`), its team rule
+  (`README.md:52`) and its Dockerfile order (`transcribe_audio/README.md:82-83`);
+- the `docker images` and `docker history` captures (`laptop/13`, `16`, `17`, `70`);
+- the `uv add` and `uv sync` logs. They say `Prepared 26 packages`, and no capture has a `Built …`
+  line;
+- the apt sizes (`12-build.txt:150`, `32-b-build.plain.txt:66`);
+- the solution branch's secrets mount (`solution-branch/transcribe_audio/docker-shell.sh:98`, no
+  `:ro`).
+
+Where the slides and the captures disagree, the captures decide what the video shows.
+
+### 1. Map: scenes ↔ slides
+
+| Scene | Slides on the same ground | Relation |
+|---|---|---|
+| S01 · Five containers, one bucket | 24–28 (goals, flow, team challenge, app, tasks); 70 ("who pays": a handed-out class key) | Same concept: the lecture's Tutorial section. The L2 → L3 card and the how-to-follow beats are tutorial-only. Conflict 7. |
+| S02 · The bucket is the message bus | 25 (the flow over one bucket), 28 (Tasks A–E), 26–27 (teams, the class app), 7 and 15 (monolith vs microservices) | Same concept. The first sentence ("in production, services call each other's APIs") stands on slides 7 and 15, but none of their argument comes with it (Gap 1). Conflicts 4, 5. |
+| S03 · Clone: five folders, no Dockerfile | 28 (the instructions link; the task names are the folder names) | The tutorial applies it. The folder listing and the `cli.py` tour are tutorial-only. |
+| S04 · The key, and uv init | 23 (service account, "part of IAM"), 70 (the handed-out key) | Same concept for the key. `uv init --bare` and `requires-python` are tutorial-only. |
+| S05 · Write the Dockerfile, line by line | 36–37 (slim base), 40 (one `RUN` chain that cleans up in the same layer), 54 (`ARG` vs `ENV` lifetime), 31–32 (ship only what runs) | The tutorial applies it. Conflict 1. |
+| S06 · Build: five steps, one fat layer | 34 (the build context), 33 (cache order: ponder 2), 38 (`docker images`), 43 (no secret values in `ENV`: the build warning) | The tutorial applies it. Conflicts 2, 3. |
+| S07 · Run: a window into your laptop | 51–52 (bind mount: a host folder on the left, a container path on the right) | The tutorial applies it. Conflict 8 covers the term. The writable layer and `UV_PROJECT_ENVIRONMENT` are tutorial-only (L2 ground). |
+| S08 · uv add: what lands where | 65 (Scenario 1: develop inside containers, install packages, the uv files change, rebuild) | The tutorial applies it. Dependency resolution and the uid aside are tutorial-only. |
+| S09 · Who is calling? The key and ADC | 23 (a service account, part of IAM) | Same concept for the identity. ADC, the relative path and the traceback are tutorial-only. |
+| S10 · Transcribe and upload | 25 (tile 2), 27 (results per team) | Tutorial-only in substance (ffmpeg, Speech-to-Text, long-running operations). The leaderboard beat touches slide 27. |
+| S11 · Exit, and bake it in | 33 (cache order), 38 (`docker history`), 65–66 (rebuild after the uv files change); 35–37, 39 (what makes the 842 MB layer, lecture-only) | The tutorial applies it. Conflict 2; Gaps 4, 7. |
+| S12 · generate_text: same recipe, two surprises | 25 (tile 3), 28 (Task B), 54 (a run-time `-e` value) | Tutorial-only: `requires-python`, the uv-managed Python, Gemini. |
+| S13 · Synthesize, translate, synthesize | 25 (tiles 4–6), 28 (Tasks C–E), 24 (optional ElevenLabs), 23 (API keys: the bonus key), 16–17 (each service its own dependencies) | The tutorial applies it. The per-component packages are slides 16–17 in practice, though the video never says so. |
+| S14 · Keep the key out of the image | 31–32, 34, 43 (secrets never in the image); 19, 67–68 (push to a registry); 41 (target platform, Gap 5); 51–52 (the `/secrets` mount in the coda) | Same concept: the lecture's rule, proved on the tutorial's own image. |
+| S15 · Clean up, recap, and what's next | 70 (next: real identities); 20–21, 65–69 (who keeps the Dockerfile and uv files) | Same concept for "next". The clean-up commands are tutorial-only. Conflicts 6, 7. |
+| — not in the video | 1–3, 5, 22, 30, 44, 60, 64 (title, outline, dividers); 29, 71 (pictures); 4 (recap of L1–L2); 9–14, 18 (monolith details, the chain without Docker); 39 (multi-stage), 41 (platform); 42–43 (build-time secret mounts); 45–63 (Compose, networking: the L04 episode's `port_toy`); 69 (no perfect workflow) | Lecture-only. Slides 30–69 recur in the Lecture 4 deck. |
+
+### 2. Already in common
+
+| # | Concept | Scenes ↔ slides | Does the video's framing agree with the lecture's? |
+|---|---|---|---|
+| 1 | The bucket is the hand-off: five stages that never call each other, each reading one prefix and writing the next | S01, S02 ↔ 24–25 | Yes. V1 is slide 25's flow redrawn as drawers. It settles the slide's one ambiguity the way the code does: C reads B's output, beside D (Conflict 4). The slide's tile 1, the instructor's recording, is V1's `input_audios/` drawer. |
+| 2 | Five tasks with fixed folder names, done in teams, with results shown per team in a class web app | S02, S03, S10, S13 ↔ 26–28 | Yes. The video's letters A–E and its folder names are slide 28's. On teams it follows slide 26 and the README: one group name, all five stages (Conflict 5). Its leaderboard is a schematic grid tagged `illustration`; slide 27 shows the real app. |
+| 3 | The tutorial stands in for a microservice architecture | S02 ↔ 7, 15 | Partly. The video says in one line that production services call each other's APIs and that this tutorial uses storage instead (`README.md:60-67`). The lecture's case for splitting an app (slides 9–17) is not in the video (Gap 1). |
+| 4 | A service-account key is how a program proves who it is to Google | S04, S09 ↔ 23, 70 | Yes. S04's "a robot Google account" is slide 23's identity for programs, and S09's IAM gate is its "part of IAM". "Guard it like a credit card" and S14's coda agree with slide 70: a handed-out key is a class shortcut. |
+| 5 | Use a slim base image | S05 ↔ 36–37 | Yes on the choice. The version differs (Conflict 1). |
+| 6 | `ARG` exists only during the build; `ENV` stays in the image and the container | S05 (and S12's `-e GEMINI_MODEL`) ↔ 54 | Yes. S05's "a variable that exists only during the build" is slide 54's `ARG` row, and the config card holds the `ENV` lines. S12's `-e` chip falls in the table's run-time column, though the video doesn't say so. |
+| 7 | One `RUN` chain that cleans up in the same layer | S05 ↔ 40 | Yes: `--no-install-recommends`, `rm -rf /var/lib/apt/lists/*` in the same `RUN`, "so they cost nothing". One small difference that nobody mentions: the README's `pip install uv` has no `--no-cache-dir`, which slide 40 recommends. Only the pip upgrade has it. |
+| 8 | The build context is the folder Docker sends to the builder | S06, S14 ↔ 34 | Yes. S06's PINK "this folder = the build context" and lecture 2's parcel are slide 34's first bullet. |
+| 9 | The cache: a change rebuilds its own layer and every layer after it | S06 (ponder 2), S11 ↔ 33 | Yes. The video does not present the README's order as best practice. S11's last beat says any edit knocks over `uv sync`, and that later tutorials copy the lock file first. The lecture is blunter: "classic mistake" (Conflict 2). |
+| 10 | Measure the image, then find the fat layer | S06, S11 ↔ 38 | Yes. `docker images` (1.35 GB, then 1.48 GB) and `docker history` (the 842 MB apt layer) are slide 38's two commands. S11's panel shows the same two columns as the slide's right-hand panel, CREATED BY and SIZE. The `docker images` columns differ (Conflict 3). |
+| 11 | Secrets must never enter the image | S14 ↔ 31–32, 34, 43 | Yes. S14 proves the rule on the tutorial's own image. `COPY` puts the key in a layer, which is slide 43's `COPY` row, and `.dockerignore` with `secrets/` is slide 34's red entry. |
+| 12 | A host folder mounted into the container | S07, S08, S14 coda ↔ 51–52 | Yes. The video says "bind mount", the slides' term (Conflict 8). S14's coda is slide 51's `./secrets:/secrets:ro`: the solution branch mounts `secrets/` at `/secrets`, but without `:ro`. |
+| 13 | Develop inside a container, change the uv files, then rebuild | S08, S11 ↔ 65–66 | Yes. Slide 65's Scenario 1 is the tutorial's loop: work inside a container built from the Dockerfile, install packages (the uv files change), rebuild. The video never names the scenario (Gap 3). |
+| 14 | A pushed image goes to a registry | S14 ↔ 19, 67–68 | Yes. The lecture adds the reason to push: teammates and servers pull a prebuilt image instead of building it (Gap 3). |
+| 15 | Next: identities you create yourself | S14 coda, S15 ↔ 70 | Yes in substance: your own service account, the key outside the repo. The slide and the video name different "next" lectures (Conflict 6). |
+
+### 3. Gaps (ranked by value to a student doing the tutorial)
+
+1. **Why five containers, not one program (slides 6–17).** This is the lecture's whole first half.
+   A monolith runs every module in one process on one stack, so one failure can stop everything,
+   and every change touches everything. Microservices give each part its own process, store and
+   technology. The price is more dependencies to manage (slide 17). The tutorial shows both sides
+   without naming them:
+   - A alone needs ffmpeg;
+   - each stage has its own packages and its own image;
+   - a failed stage stops no other stage;
+   - five Dockerfiles are five things to maintain.
+
+   The video's only line on this is S02's first sentence. **Carry it in** S02 (the opening README
+   card, with the slides 7, 15 tag) and S13 (the per-component packages).
+2. **Data and junk ride along too (slides 31–32, 34).** Slide 34's patterns include bulky local
+   data files, and slide 31 says build tools and secrets shouldn't ride along. In this tutorial,
+   `--download`, `--transcribe` and `--generate` write `input_audios/`, `text_prompts/<group>/` and
+   the other data folders into the component folder, on your laptop through the mount. The next
+   rebuild's `COPY --chown=app:app . ./` copies them into the image with everything else. This was
+   not captured with real data: without a key the folders stayed empty, and the `COPY` layer was
+   193 kB (`laptop/17-history.txt`). A `.dockerignore` that also lists the data folders keeps the
+   course's recordings and texts out of the image. **Carry it in** S14's `.dockerignore` beat, as
+   a GREY note with no narration.
+3. **Who owns the Dockerfile and the uv files, and where images come from (slides 18–21, 65–69).**
+   Slide 20 asks the questions, and slides 65–68 answer them with two scenarios:
+   - early on (65–66), everyone builds locally and develops inside containers, and sends
+     Dockerfile and uv-file changes back by pull request;
+   - later (67–68), a senior developer pushes prebuilt images to Docker Hub, and the others pull
+     them.
+
+   In this tutorial every student plays both roles. You write all five Dockerfiles and build
+   locally (Scenario 1), and the optional push in S14 is the first half of Scenario 2. This also
+   makes S15's git-ignored Dockerfiles matter: they are the files a team shares. **Carry it in**
+   S11 (the rebuild), S14 (the push) and S15 (`git add -f`), as tags.
+4. **Wheels, source builds and the fat apt layer (slides 35–37).** A prebuilt wheel only unpacks;
+   a source package needs compilers such as `build-essential`. Every capture lists
+   `Prepared … packages` and no `Built …` line, so all the tutorial's packages arrived as wheels and
+   none of them needed `build-essential`. A still needs `ffmpeg`, because `cli.py` runs the
+   program. By apt's own estimate, `build-essential` alone adds 314 MB in B
+   (`32-b-build.plain.txt:66`); with `ffmpeg`, A's apt step adds 786 MB (`12-build.txt:150`). The
+   README asks for `build-essential`, so the video should not tell students to drop it. It can say
+   what it is for. **Carry it in** S11's `docker history` beat, as a GREY note on the apt slab.
+5. **Build for the platform that will run the image (slide 41).** On Apple Silicon,
+   `docker build` makes an arm64 image, which an amd64 VM can't run. This matters only for the
+   optional push, and in L04. The guide covers it (§6 G6); the video leaves it to the exercises.
+   **Carry it in** S14's push beat, as a GREY chip beside the three commands.
+6. **The other ways to authenticate (slide 23).** OAuth 2.0 is for people. API keys are lightweight
+   and to be used with caution. Default service accounts come with Google's compute products, and
+   Workload Identity Federation lets outside identities in. Two of these meet this tutorial: the
+   ElevenLabs bonus key is an API key, and slide 70 says the next step replaces the handed-out key
+   with real identities. **Carry it in** S04 (the tag) and S13's bonus beat.
+7. **Multi-stage builds (slide 39).** Build in a full image, copy only the `.venv` into a slim
+   one, and leave the compilers behind. You don't need it to finish the tutorial. It is the
+   lecture's answer to the fat layer of Gap 4. **Carry it in** S11, after the history beat, as an
+   on-screen pointer only.
+
+### 4. Conflicts
+
+| # | The slides say | The tutorial and the captures | Current | How the video should put it |
+|---|---|---|---|---|
+| 1 | **Base image.** Slides 36–41 build on `python:3.14`, with a size table for `python:3.14` (~1.63 GB), `-slim` (~217 MB, the recommended default) and `-alpine` (~86 MB). | `FROM python:3.12-slim-bookworm` (`transcribe_audio/README.md:41`). The captures run Python 3.12.15, and the base image's rows in `laptop/17-history.txt` add up to about 150 MB. L04's branch moves to `python:3.14-slim-bookworm`. | The README's 3.12 slim, for this tutorial | "The lecture's table uses Python 3.14. This tutorial pins 3.12, but makes the same choice: slim." Say it on screen at S05's line 1, with no narration. |
+| 2 | **Cache order.** Slide 33 calls `COPY . .` before installing dependencies the "classic mistake", and shows `COPY pyproject.toml uv.lock ./` → `RUN uv sync` → `COPY . .`. | The README's Dockerfile copies everything first: `COPY --chown=app:app . ./`, then `RUN uv sync` (`transcribe_audio/README.md:82-83`). Captured effect: after an edit, the rebuild re-runs build steps 4 and 5 (`laptop/15-rebuild.txt`). The slide's order, as printed, also needs a `uv.lock`, which doesn't exist before step 7. Checked for the exercises (`exercises.md` B3): `failed to compute cache key: … "/uv.lock": not found`. Later tutorials write `uv.lock*`, with `--chown=app:app`. | The README's order is what students type today. The slide's order is the better practice once a lock file exists. | S11 already says it. Add the slide 33 tag and, at most, the one bridge in §5. "The README keeps the simple order for a first Dockerfile. The lecture's order needs a lock file, so it fits after step 7." |
+| 3 | **`docker images` output.** Slide 38 shows `REPOSITORY  TAG … SIZE`, one size per image. | Docker Engine 29.8.2 with the containerd image store prints `IMAGE  ID  DISK USAGE  CONTENT SIZE  EXTRA`, two sizes per image (1.35GB / 357MB, `laptop/13-images.txt`). | Both. The columns depend on Docker's image store, and the classic store prints the slide's single SIZE. | S06 already says "disk usage · this machine". Optionally add a GREY note: "your columns may look like the lecture's slide 38". |
+| 4 | **The flow picture.** Slide 25 is the repo's `mega-pipeline-flow.png` (same six numbered tiles; guide erratum E18). Tile 1 is the instructor's recording, and tiles 2–6 are Tasks A–E. Tile 4 (English synthesis) sits above tile 5 (Translate), and its link to the bucket is drawn behind tile 5, so it can read as Translate → English synthesis. | C reads `text_paragraphs/`, B's output (`synthesis_audio_en/cli.py:39`), as D does. V1 and ponder 1 show exactly that. | The code | Leave V1 as it is. If the slide comes up: "On the lecture's flow, English synthesis sits above Translate, but it reads Generate's output, from the same drawer Translate reads." |
+| 5 | **Teams.** Slide 24 says separate teams for each component. Slide 26 says each team of 5 completes all 5 tasks. | `README.md:52`: each team builds the entire pipeline, "not just one piece". The video uses one group name in all five `cli.py`. | Slide 26 and the README | Nothing to change. If asked: "Your team runs all five stages, as slide 26 and the README say." |
+| 6 | **What comes next.** Slide 70: the next lecture, "Connecting to the Cloud", covers API keys, OAuth 2.0, service accounts and IAM, the networking behind `-p` and `localhost`, and GCS and Drive. | S15 says "Next lecture: your own bucket and service account…". That is the L04 episode (`flexible-workflow`), from the course site's tutorial list. The L04 deck repeats this deck's slides 30–69. "Connecting to the Cloud" comes later in the course (the course map lists it as Lecture 10). | Both, about different things. The substance agrees: your own service account. | Keep the narration. Add the slide 70 tag to S15's "Next: L4" card, and optionally a GREY line: "lecture: 'Connecting to the Cloud' comes later". |
+| 7 | **The tutorial's name.** Slide 27 calls it "Tutorial (T5)", and slide 70 "Tutorial 5". | The README has no number. The series, the guide and the video call it L3 / Lecture 3. | Both: T5 is the course's tutorial number. | Put "Tutorial 5" in S01's lecture tag once, so students can match the slides to the video. |
+| 8 | **Bind mount vs volume.** Slides 51–52: a host path on the left of `source:container` is a *bind mount*, and a bare name is a *named volume*. | The README says the `-v "$(pwd):/app"` option mounts the folder "as a volume" (`transcribe_audio/README.md:102`). The video says "bind mount" (S01, S07). | The slides' term, which is Docker's | Nothing to change. The S07 tag (slides 51–52) shows where the word comes from. |
+
+Not counted as conflicts:
+- The box label "DockertHub" on slides 67–68 is a typo.
+- The slides spell "Synthesise"; the folders spell `synthesis_audio`.
+- Slide 34's `.dockerignore` has six patterns, while S14's fix has one line, `secrets/`. That is a
+  subset, not a contradiction (Gap 2).
+- Slide 43 lists `ENV` as a way to leak a token. The tutorial's `ENV` holds only a path, so S06's
+  "harmless" stands.
+- `pip install uv` without `--no-cache-dir` is listed under Common 7.
+
+### 5. Proposals
+
+Each item is marked **do** (clear value, low risk) or **nice**.
+
+**General**
+- **Tags.** Use `lecture_ref(3, "a–b")` from `explainer.devops`: a GREY tag at the top right,
+  opposite the tracker. It prints "Lecture 3 · slides a–b", with no leading zero and "slides" even
+  for one slide. The proposals below use the form "Lecture 03 · slides a–b" that this task asked
+  for. Pick one form for the whole series.
+  - Show each tag from the quoted words (`vo.wait_until`) for at least 3 s, and let it leave with
+    its beat.
+  - Never show the slides or their QR codes.
+- **Top band collisions.** One-line README chips sit in the top band, right of the tracker (≤ 9
+  wide), in S03, S06–S09 and S11–S13, and S01 carries "preview" tags. Where a chip is up, start the
+  tag after it fades, or check the frame for overlap.
+- **Narration budget.** The script has 4,294 words against BRIEF's 3,900–4,300, so a bridge pushes
+  past the cap unless something else is trimmed.
+  - Keep at most one bridge, S11's. Even its 11 words take the script to 4,305, so trim a few
+    words in the same scene.
+  - Each bridge also needs its line in `i18n/zh/narration/<scene>.yaml`, a re-voice of that scene
+    and new subtitle cues.
+  - Tags and diagram changes need no narration and no Chinese, since there is no Chinese
+    on-screen text.
+- **Recap card** (nice). The five "Test yourself" questions could each carry a tiny slide number:
+  Q1 25, Q2 51–52, Q3 65, Q4 23, Q5 34.
+
+**Per scene**
+- **S01.**
+  - (i) **do** · "Lecture 03 · slides 24–28 · Tutorial 5", at "Open the mega-pipeline README
+    beside this video." (Conflict 7).
+  - (ii) **nice** · Before that line: "In the lecture slides, this is Tutorial 5, the Mega Pipeline
+    team challenge." (13 words)
+  - (iii) None. The teaser V1 stays unlabelled.
+- **S02.**
+  - (i) **do** · "Lecture 03 · slides 7, 15", at "In production, services call each other's APIs."
+    Then **do** · "Lecture 03 · slide 25", at "That storage is one Google Cloud Storage bucket, drawn
+    as a cabinet of drawers." Optionally **nice** · "Lecture 03 · slide 27", at "Each stage that
+    succeeds lights up your row on a live leaderboard."
+  - (ii) **nice** · "The lecture draws an API service between the parts; this tutorial puts a
+    bucket there instead." (16)
+  - (iii) **nice** · On V1, small numbered badges as on slide 25: "1" on the recording going into
+    `input_audios/`, "2"–"6" on boxes A–E. The lecture's step numbers then map onto the task
+    letters. Keep C beside D, both reading `text_paragraphs/`; don't copy the slide's stacked
+    4-over-5 placement (Conflict 4).
+  - (iii) **nice** · On the schematic leaderboard, follow slide 27's column order: a first column
+    for the shared recordings, then the five stages, then a dashed column for the bonus voice.
+- **S03.**
+  - (i) **nice** · "Lecture 03 · slide 28", at "The README's first command: clone the repo." Start
+    it after the README chip's YELLOW flash.
+  - (ii) None.
+  - (iii) **nice** · In the four-row folder summary, put the task letter before each folder, as
+    slide 28 does. S02 already uses the letters.
+- **S04.**
+  - (i) **do** · "Lecture 03 · slides 23, 70", at "It lets your code act as the course's service
+    account, a robot Google account, so guard it like a credit card."
+  - (ii) **nice** · "The lecture lists five ways to authenticate; a service account is the one
+    meant for programs." (16)
+  - (iii) None.
+- **S05.**
+  - (i) **do** · "Lecture 03 · slide 40", at "Lines 12 to 21 are one RUN instruction, chained with
+    double ampersands, so they make one layer."
+  - (i) **nice** · "Lecture 03 · slide 54", at "Line 3 declares a build argument, a variable that
+    exists only during the build".
+  - (i) **nice** · "Lecture 03 · slides 36–37", at "Line 1 starts from the official Python 3.12
+    image on Debian 12.", with a GREY note "the lecture's table: 3.14 · the same slim choice"
+    (Conflict 1).
+  - (ii) **nice** · "This is the lecture's leaner-layers slide: clean up in the same RUN, or the
+    files stay." (16)
+  - (iii) **nice** · On the config card, give the `ARG` line and the `ENV` lines a three-dot
+    lifetime strip, build · image · run. `ARG` lights only the first dot; `ENV` lights all three.
+    This echoes slide 54's columns.
+- **S06.**
+  - (i) **do** · "Lecture 03 · slide 33", at "Build steps 4 and 5." (the ponder 2 answer).
+  - (i) **nice** · "Lecture 03 · slide 34", when the PINK build-context label lands, at "then a
+    dot for this folder, the build context."
+  - (i) **nice** · "Lecture 03 · slide 38", at "An extra check, docker images, says 1.35 gigabytes
+    on this machine."
+  - (ii) **nice** · "The lecture's layer-caching rule: change one layer, and every layer after it
+    rebuilds." (13)
+  - (iii) Already aligned. The answer colours the slabs as slide 33 annotates them: CACHED below
+    the change, re-formed from the change up.
+- **S07.**
+  - (i) **do** · "Lecture 03 · slides 51–52", at "Dash v mounts the current folder, pwd, onto slash
+    app".
+  - (ii) **nice** · "The lecture calls this a bind mount: a laptop folder, written to the left of
+    the colon." (17)
+  - (iii) **do** · Under the PINK route's label `-v "$(pwd):/app"`, add two small GREY labels:
+    "host folder" under `$(pwd)`, "container path" under `/app`. This is slide 52's two-sided
+    reading of `source:container`, with no narration.
+- **S08.**
+  - (i) **nice** · "Lecture 03 · slide 65", at "The README adds: when you exit, rebuild the image."
+  - (ii) None.
+  - (iii) None.
+- **S09.**
+  - (i) **nice** · "Lecture 03 · slide 23", at "Google then checks twice, as the README says."
+  - (ii) None.
+  - (iii) **nice** · Label gate 2's IAM padlock "service account · part of IAM", the phrase the
+    README and slide 23 share.
+- **S10.**
+  - (i) **nice** · "Lecture 03 · slides 25, 27", at "Your transcript drops into your group's
+    drawer, and the transcribe cell lights up on the leaderboard".
+  - (ii) None.
+  - (iii) See S02's leaderboard columns.
+- **S11.**
+  - (i) **do** · "Lecture 03 · slide 33", at "Later tutorials copy pyproject.toml and uv.lock
+    first."
+  - (i) **do** · "Lecture 03 · slide 38", at "Two more extras. The image grew to 1.48 gigabytes,
+    and docker history lists one row per instruction".
+  - (i) **nice** · "Lecture 03 · slides 65–66", at "The README's fix: exit, and rebuild the image
+    with the same docker build command."
+  - (ii) **nice**, and the one bridge to keep if any · Before "Later tutorials copy…": "The lecture
+    calls copying everything before installing dependencies the classic mistake." (11)
+  - (iii) **nice** · Turn the GREY note "later tutorials: COPY pyproject.toml uv.lock first…" into
+    a small three-slab ghost stack in slide 33's order. The edit chip knocks over only its top
+    slab. Caption: "needs a uv.lock: after step 7" (Conflict 2).
+  - (iii) **nice** · On the apt slab, a GREY note: "compilers: only for packages without wheels ·
+    slides 35–37" (Gap 4).
+  - The `docker history` panel already shows CREATED BY and SIZE, like slide 38's right-hand
+    panel.
+- **S12.**
+  - (i) **nice** · "Lecture 03 · slide 54", at "after that, start the container with a current
+    model in the Gemini model variable."
+  - (ii) None.
+  - (iii) None.
+- **S13.**
+  - (i) **do** · "Lecture 03 · slides 23–24", at "An optional bonus in E speaks the French with
+    ElevenLabs, in the instructor's voice." Slide 24 lists the bonus, and slide 23 the kind of key
+    it uses.
+  - (ii) **nice** · "The ElevenLabs key is an API key, the lighter kind the lecture says to use
+    with care." (17)
+  - (iii) **nice** · When V1 fills at the end, light S02's badges 4, 5 and 6 in turn.
+- **S14.**
+  - (i) **do** · "Lecture 03 · slides 34, 43", at "The fix, which lecture 2 recommended, is an
+    extra here: a file named dot dockerignore".
+  - (i) **nice** · "Lecture 03 · slides 19, 67–68", at "The README's optional last section pushes
+    the image to Docker Hub".
+  - (i) **nice** · "Lecture 03 · slides 51–52", at the coda's "Where the course is heading".
+  - (ii) **nice** · "This lecture's dot dockerignore slide marks the secrets folder in red: it
+    must never enter the image." (17)
+  - (iii) **nice** · Under the "create it in VS Code" note, a second GREY line: "slide 34 also
+    keeps data out: add input_audios/ and the text_… folders". Tag it "not captured" (Gap 2).
+  - (iii) **nice** · Beside the push commands, a GREY chip: "Apple Silicon builds arm64 · slide
+    41" (Gap 5).
+  - (iii) **nice** · In the coda, a GREY note beside the `/secrets` route: ":ro would make it
+    read-only (slide 51)". The solution branch's line 98 stays quoted unchanged.
+- **S15.**
+  - (i) **do** · "Lecture 03 · slide 70", at "Next lecture: your own bucket and service account".
+  - (i) **nice** · "Lecture 03 · slides 65–68", at "In your own repo, add those Dockerfiles and
+    project files with git add dash f" (Gap 3).
+  - (ii) **nice** · "The lecture ends on this point: a handed-out class key is for demos, not
+    real projects." (16)
+  - (iii) **nice** · On the "Next: L4" card, an arrow from a GOLD "handed-out key" chip to a BLUE
+    "your own service account" chip. This is slide 70's trade, in series colours. Add a GREY line:
+    "lecture: 'Connecting to the Cloud' comes later" (Conflict 6).
