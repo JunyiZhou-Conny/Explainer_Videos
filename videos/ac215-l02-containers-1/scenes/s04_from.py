@@ -112,8 +112,9 @@ GIT_ADD_F = "git add -f Dockerfile"                      # said, not run
 P = P_LAPTOP + " "
 
 # ------------------------------------------------------------------ layout (S05's, so V2/V3 look the same)
-STACK_X, FLOOR_Y = -3.0, -0.25        # the V2 stack (3.2 wide); its left brace label stays in frame
-CARD_W, CARD_RIGHT, CARD_TOP = 3.4, 6.5, 3.4   # the stacked config card, clear of the tracker caption
+STACK_X, FLOOR_Y = -3.0, 0.1         # the V2 stack (3.2 wide; its left brace label stays in frame),
+                                      # 0.35 above S05's floor: its caption clears beat 5's 5-row strip
+CARD_W, CARD_RIGHT, CARD_TOP = 3.4, 6.5, 3.4   # S05's stacked config card, clear of the tracker caption
 
 # `docker image inspect …` folded for a 65-column row: house folds (" \") at the two spaces outside
 # the quotes, then the quoted format starts a row at column 0 (as in S05) and soft-wraps at the
@@ -514,6 +515,9 @@ class StepFrom(VoiceScene):
             self.play(FadeIn(inh, shift=RIGHT * 0.15), GrowArrow(inh_arrow),
                       LaggedStart(*[Indicate(s, color=SYSTEM, scale_factor=1.06) for s in base], lag_ratio=0.15),
                       run_time=0.9)
+            # the strip shrinks to its last 3 rows, so the start-up line has S05's place under the card
+            lead(vo, "So we predict", 0.8)
+            resize(self, t, STRIP_ROWS, run_time=0.5)
             vo.wait_until("So we predict")
             self.play(TransformFromCopy(cmd_tile.text, start), run_time=0.6)
             self.play(FadeIn(arr, shift=RIGHT * 0.1), FadeIn(repl, scale=0.8), run_time=0.5)
