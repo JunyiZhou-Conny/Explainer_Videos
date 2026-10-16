@@ -56,7 +56,7 @@ Beats (script.md "## S03", one voiceover block each):
     simple-translate -f Dockerfile .` (two rows, row tag `extra`); then `uv.lock` and the caption
     go -> laptop/07 line 7, wrapped, RED; "failed to read dockerfil|e" is underlined YELLOW and the
     `Dockerfile` ghost slides beside "no such file or directory". On "The README wants you to write
-    it" a YELLOW brace grows under tracker dots 7-11 (FROM … CMD); the ghost fades up out of the
+    it" a YELLOW brace grows under tracker dots 7-11 (FROM … CMD); the ghost shrinks away in the
     terminal and fades up in under the brace with "5 steps" (a flight would cross the RED rows);
     the five dots pulse on "in five steps". Fade out to an empty frame.
 """
@@ -523,8 +523,8 @@ class CleanSlate(VoiceScene):
             # a flight to the tracker would cross the RED error row, which fills the terminal's width
             g_up = g_df.copy().move_to(row5[0])
             self.play(Create(br), run_time=0.4)
-            # (a short drift for the one that leaves: 0.3 reached row 2's YELLOW underline)
-            self.play(FadeOut(g_df, shift=UP * 0.1), FadeIn(g_up, shift=UP * 0.3),
+            # (the one that leaves shrinks in place: any drift up touches row 2's YELLOW underline)
+            self.play(FadeOut(g_df, scale=0.85), FadeIn(g_up, shift=UP * 0.3),
                       FadeIn(steps5.move_to(row5[1]), shift=LEFT * 0.1), run_time=0.7)
             vo.wait_until("in five steps")
             self.play(LaggedStart(*[Indicate(d, color=TURN, scale_factor=2.0) for d in five], lag_ratio=0.25),

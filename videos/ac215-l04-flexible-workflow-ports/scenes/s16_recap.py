@@ -173,6 +173,7 @@ from manim import (
     RIGHT,
     UL,
     UP,
+    AnimationGroup,
     Arc,
     Arrow,
     Create,
@@ -943,30 +944,30 @@ class Recap(VoiceScene):
         no_rb = note("no rebuild")
         no_rb.move_to([pic.route.get_center()[0] + 0.25 + no_rb.width / 2, pic.gap_y, 0])
         with self.voiceover(SAY[5]) as vo:
-            resize(self, t, 3, run_time=0.6)
+            resize(self, t, 3, run_time=0.5)
             self.play(FadeIn(vol, shift=DOWN * 0.1), FadeIn(pic.lap), FadeIn(pic.ctr), FadeIn(ill), run_time=0.6)
             vbar = vol.bar(18, LOOKUP, 0.22)
-            self.play(Create(pic.route), FadeIn(vbar), run_time=0.6)
-            self.play(flash(pic.route, TURN, 1.0, 0.6), run_time=0.6)
+            self.play(Create(pic.route), FadeIn(vbar), run_time=0.5)
+            self.play(flash(pic.route, TURN, 1.0, 0.5), run_time=0.5)
             vo.wait_until("and it rereads its page on each load")
-            self.play(FadeIn(och, shift=DOWN * 0.1), run_time=0.5)
-            self.play(text_span(och.text, OPEN20, '"index.html"').animate.set_color(TURN), run_time=0.4)
+            self.play(FadeIn(och, shift=DOWN * 0.1), run_time=0.4)
+            self.play(text_span(och.text, OPEN20, '"index.html"').animate.set_color(TURN), run_time=0.3)
             vo.wait_until("edits show on the next reload")
             pen = pencil(0.45, TURN).move_to(pic.lap_html.get_right() + RIGHT * 0.7 + UP * 0.3)
-            self.play(FadeIn(pen), pen_to(pen, pic.lap_html.text), run_time=0.4)
-            self.play(flash(pic.lap_html, TURN, 1.12, 0.8), flash(pic.ctr_html, TURN, 1.12, 0.8),
-                      flash(pic.route, TURN, 1.0, 0.8), run_time=0.8)
-            self.play(pen.animate.shift(RIGHT * 0.3 + UP * 0.3).set_opacity(0), run_time=0.3)
-            self.remove(pen)
+            self.play(FadeIn(pen), pen_to(pen, pic.lap_html.text), run_time=0.3)
+            self.play(flash(pic.lap_html, TURN, 1.12, 0.6), flash(pic.ctr_html, TURN, 1.12, 0.6),
+                      flash(pic.route, TURN, 1.0, 0.6), run_time=0.6)
             brw = pic.browser
             req = Arrow([brw.get_center()[0], pic.browser_label.get_bottom()[1] - 0.04, 0],
                         [brw.get_center()[0], pic.app.get_top()[1] + 0.02, 0], buff=0, color=LOOKUP, stroke_width=4,
                         max_tip_length_to_length_ratio=0.15)
-            self.play(brw.reload.animate.rotate(-PI), run_time=0.4)
-            self.play(Create(req), run_time=0.4)
-            self.play(brw.lines[0].animate.set_color(TURN), run_time=0.4)
+            self.play(pen.animate.shift(RIGHT * 0.3 + UP * 0.3).set_opacity(0), brw.reload.animate.rotate(-PI),
+                      run_time=0.35)
+            self.remove(pen)
+            self.play(Create(req), run_time=0.3)
             vo.wait_until("without a rebuild")
-            self.play(FadeIn(no_rb, shift=LEFT * 0.1), run_time=0.4)
+            self.play(brw.lines[0].animate.set_color(TURN), FadeIn(no_rb, shift=LEFT * 0.1), run_time=0.4)
+            self.wait(1.0)
 
         # ============================================================ 6 · down; images remain; costs nothing
         rc515 = readme_chip("README.md · line 515", "The built images remain.")
@@ -1046,10 +1047,19 @@ class Recap(VoiceScene):
             return g
 
         def q_in(g):
-            return [FadeIn(g.th, shift=RIGHT * 0.2), FadeIn(g.q.badge, scale=0.8), Write(g.q.text)]
+            """The icon card slides in, the badge pops, the words write in (glyphs only: Write would
+            draw the rows' invisible struts as outlines)."""
+            words = VGroup(*[r.glyphs for r in g.q.lines])
+            return AnimationGroup(FadeIn(g.th, shift=RIGHT * 0.2), FadeIn(g.q.badge, scale=0.8), Write(words))
 
-        def q_swap(old, new, run_time: float = 1.1):
-            self.play(FadeOut(old, shift=UP * 1.2), *q_in(new), run_time=run_time)
+        def q_show(g, run_time: float = 1.1):
+            self.play(q_in(g), run_time=run_time)
+            self.add(g)
+
+        def q_swap(old, new, run_time: float = 1.4):
+            """The old question slides up and fades; the next writes in once it has mostly left."""
+            self.play(LaggedStart(FadeOut(old, shift=UP * 1.0), q_in(new), lag_ratio=0.4), run_time=run_time)
+            self.add(new)
 
         i1 = icon_build_pull()
         g1 = q_with_icon(1, i1)
@@ -1057,7 +1067,7 @@ class Recap(VoiceScene):
             self.play(FadeOut(Group(*self.mobjects)), run_time=0.6)
             self.play(FadeIn(title, shift=DOWN * 0.15), Create(t_ul), run_time=0.7)
             vo.wait_until("One")
-            self.play(*q_in(g1), run_time=1.1)
+            q_show(g1)
             vo.wait_until("which files define")
             self.play(flash(i1.box, CTR, 1.15, 0.8))
             vo.wait_until("and what does run use")
