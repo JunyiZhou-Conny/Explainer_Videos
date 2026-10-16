@@ -26,11 +26,15 @@ Beats (script.md "## S03", one voiceover block each):
  3  The two "same" rows dim. In the generate_text/ row, pyproject.toml and main.py get YELLOW
     bars as named and "no .gitignore" a YELLOW tag "keep in mind"; in the synthesis_audio/ row,
     cli_11.py gets a GREY tag "bonus".
- 4  The listing fades and the terminal grows back to 12 rows. The tracker switches to
-    "README › transcribe_audio" (13 dots, step 1); its dot and caption pulse on "whose step 1";
-    `cd transcribe_audio` -> (no output), the prompt becomes
-    student@laptop:~/mega-pipeline/transcribe_audio$. ▶ your turn on "Pause".
- 5  The terminal shrinks to the strip (the cd line and the new prompt). CODE(transcribe_audio/
+ 4  The listing fades and the terminal grows back to 12 rows. On "Open the README" a one-line
+    README chip "transcribe_audio/README.md · open it now" drops into the top band (right-aligned,
+    clear of both trackers) with a YELLOW frame: the viewer opens that file now. On "the tracker
+    switches" the tracker switches to "README › transcribe_audio" (13 dots, step 1) and the chip's
+    frame turns GREY; its dot and caption pulse on "and its step 1"; `cd transcribe_audio` -> (no
+    output), the prompt becomes student@laptop:~/mega-pipeline/transcribe_audio$. ▶ your turn on
+    "Pause".
+ 5  The chip leaves with the your-turn tag. The terminal shrinks to the strip (the cd line and the
+    new prompt). CODE(transcribe_audio/
     cli.py: 4-12) top-left: GREY bracket + tag "comes with Python" on lines 4-8 (and a bare GREY
     bracket on line 12, tempfile, also standard library); the two `google.cloud` and `ffmpeg`
     turn PINK and get PINK underlines (Monokai's keywords are pink too) under a PINK bracket on
@@ -469,12 +473,22 @@ class CloneRepo(VoiceScene):
         # ========================================================== 4 · cd transcribe_audio
         listing_mobs = VGroup(tree, ghost, rows, none_cap, you_write, where114, b_pp, b_mp, keep_tag,
                               bonus)
+        # the component README the viewer opens now (the tracker follows it from here on)
+        chip_a = readme_chip("transcribe_audio/README.md · open it now")
+        chip_a.shift(np.array([6.45 - chip_a.get_right()[0],
+                               tr.get_center()[1] - chip_a.get_center()[1], 0]))
+        assert chip_a.get_left()[0] > max(tr.get_right()[0], tracker("A", 1).get_right()[0]) + 0.3
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(listing_mobs), run_time=0.5)
             resize(self, t, 12, run_time=0.8)
+            vo.wait_until("Open the README")
+            self.play(FadeIn(chip_a, shift=DOWN * 0.1), run_time=0.5)
+            self.play(chip_a.frame.animate.set_stroke(TURN, 3),
+                      Indicate(chip_a.where, color=TURN, scale_factor=1.04), run_time=0.7)
             vo.wait_until("the tracker switches")
             tr = switch_section(self, tr, "A", 1)
-            self.play(Indicate(tr.head[-1], color=TURN, scale_factor=1.1), run_time=0.8)
+            self.play(Indicate(tr.head[-1], color=TURN, scale_factor=1.1),
+                      chip_a.frame.animate.set_stroke(S.GREY, 2.5), run_time=0.8)
             vo.wait_until("and its step 1")
             self.play(Indicate(VGroup(tr.dots[0], tr.caption), color=TURN, scale_factor=1.15),
                       run_time=0.6)
@@ -499,7 +513,7 @@ class CloneRepo(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             self.wait(0.4)
-            self.play(FadeOut(unstick(self, c4, yt4)), run_time=0.3)
+            self.play(FadeOut(unstick(self, c4, yt4)), FadeOut(chip_a, shift=UP * 0.1), run_time=0.3)
             resize(self, t, 3, keep=2, run_time=0.8)
             self.play(FadeIn(p5, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("The first imports")

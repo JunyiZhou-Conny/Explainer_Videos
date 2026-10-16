@@ -392,16 +392,17 @@ class TwoComputers(VoiceScene):
             self.play(*net.parts_in("outline", "laptop_label"), run_time=0.6)
             vo.wait_until("with its own localhost")
             self.play(*net.parts_in("gateway_loop", "gateway_ll", "processor_loop", "processor_ll",
-                                    "lp_loop", "lp_ll"), run_time=0.4)
-            d1, l1 = net.loopback("gateway")
-            d2, l2 = net.loopback("processor")
+                                    "lp_loop", "lp_ll"), run_time=0.35)
+            d1, l1 = net.loopback("gateway", run_time=1.0)
+            d2, l2 = net.loopback("processor", run_time=1.0)
             d3 = Dot(radius=0.07, color=LOOKUP).move_to(lp_loop[0].get_start())
-            self.play(*l1, *l2, MoveAlongPath(d3, lp_loop[0], run_time=1.2),
-                      lp_loop.animate(run_time=1.2).set_color(TURN), lp_ll.animate(run_time=1.2).set_color(TURN))
-            self.play(FadeOut(d1), FadeOut(d2), FadeOut(d3), net.unloop("gateway"), net.unloop("processor"),
-                      lp_loop.animate.set_color(LAPTOP), lp_ll.animate.set_color(LAPTOP), run_time=0.4)
+            self.play(*l1, *l2, MoveAlongPath(d3, lp_loop[0], run_time=1.0),
+                      lp_loop.animate(run_time=1.0).set_color(TURN), lp_ll.animate(run_time=1.0).set_color(TURN))
             vo.wait_until("and its own full set of ports")
-            self.play(*net.parts_in("gateway_strip", "processor_strip",
+            # the loops calm down as the strips arrive (both on "full set of ports", not after it)
+            self.play(FadeOut(d1), FadeOut(d2), FadeOut(d3), net.unloop("gateway"), net.unloop("processor"),
+                      lp_loop.animate.set_color(LAPTOP), lp_ll.animate.set_color(LAPTOP),
+                      *net.parts_in("gateway_strip", "processor_strip",
                                     anim=lambda m: FadeIn(m, shift=UP * 0.1)), run_time=0.7)
             vo.wait_until("Two containers can both use port 9100")
             n1, a1 = net.light_port("gateway", 9100)
@@ -431,6 +432,9 @@ class TwoComputers(VoiceScene):
             bc = net.parts["book"].get_center()
             net.attach(self, blanks, anims=[LaggedStart(*[GrowFromPoint(b, bc) for b in blanks], lag_ratio=0.4)],
                        extra=[Indicate(net.parts["book"], color=LOOKUP, scale_factor=1.15)], run_time=1.2)
+            # GrowFromPoint put each line on the scene by itself; re-adding the piece takes those
+            # top-level copies off (else they outlive FadeOut(net) and show through in beats 3-6)
+            self.add(net)
             vo.wait_until("Docker's default network has none")
             self.play(FadeIn(no_book, shift=UP * 0.1), run_time=0.6)
 
@@ -439,12 +443,12 @@ class TwoComputers(VoiceScene):
         t = term(P_WS, rows=12, title="laptop")
         cap_ws = note("your workspace")
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(net), FadeOut(no_book), run_time=0.4)
-            self.play(FadeIn(tr), FadeIn(t), run_time=0.4)
+            self.play(FadeOut(net), FadeOut(no_book), run_time=0.3)
+            self.play(FadeIn(tr), FadeIn(t), run_time=0.3)
             ln0 = bare_prompt(self, t)
             cap_ws.set_y(ln0.strut.get_center()[1]).align_to(t.box, RIGHT).shift(LEFT * 0.35)
             self.play(FadeIn(cap_ws), Indicate(glyph_range(ln0, P_WS.index("~"), len(P_WS) - 1),
-                                               color=TURN, scale_factor=1.1), run_time=0.5)
+                                               color=TURN, scale_factor=1.1), run_time=0.4)
             vo.wait_until("docker run hello-world checks")
             ln = type_cmd(self, t, HELLO.cmd)
             self.remove(cap_ws)                          # it now scrolls / fades with its row
@@ -466,8 +470,8 @@ class TwoComputers(VoiceScene):
             lb = bare_prompt(self, t)
             self.play(FadeIn(ch81, shift=DOWN * 0.15),
                       Indicate(glyph_range(lb, P_WS.index("~"), len(P_WS) - 1), color=TURN, scale_factor=1.1),
-                      run_time=0.8)
-            g = type_cmd(self, t, CLONE.cmd)
+                      run_time=0.6)
+            g = type_cmd(self, t, CLONE.cmd, type_time=1.85)     # done before "the README says …"
             t.print(self, CLONE.lines, run_time=0.4)
             vo.wait_until("the README says clone or download")
             p_row = g.rows[0]
@@ -518,9 +522,9 @@ class TwoComputers(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             # the hash's box goes now (its row scrolls); the commit chip stays until the rail is named
             self.play(FadeOut(card), *[FadeOut(c) for c in checks.values()], FadeOut(hbox), tr.goto(2),
-                      run_time=0.35)
-            self.play(FadeIn(net), run_time=0.35)
-            ln_net = type_cmd(self, t, NET.cmd)
+                      run_time=0.3)
+            self.play(FadeIn(net), run_time=0.3)        # one after the other: a cross-fade muddles both
+            ln_net = type_cmd(self, t, NET.cmd, type_time=1.0)
             fly = substring(ln_net, "toynet").copy()
             rl = net.parts["rail_label"]
             net.detach(self, udn, anims=[FadeOut(udn)],

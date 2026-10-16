@@ -471,7 +471,8 @@ class Hook(VoiceScene):
             c = chunk_card(0.42, 0.28).move_to(pile.get_top() + DOWN * 0.1).set_opacity(0)
             cards.add(c)
             fan.append(fan_at + np.array([0.035 * i, 0.025 * i, 0]))
-            dest.append(llm3.get_bottom() + np.array([-0.6 + 0.135 * i, -0.42, 0]))
+            # under the LLM box: two neat rows of five, so the ten pages can be counted
+            dest.append(llm3.get_bottom() + np.array([(i % 5 - 2) * 0.41, -0.27 - (i // 5) * 0.29, 0]))
         exam = tag("open-book exam · our image", TURN).move_to([2.3, -3.12, 0])
 
         with self.voiceover(SAY[3]) as vo:
@@ -506,8 +507,8 @@ class Hook(VoiceScene):
             self.play(LaggedStart(*[c.animate(path_arc=0.8).move_to(f).set_opacity(1)
                                     for c, f in zip(cards, fan)], lag_ratio=0.1), run_time=0.9)
             self.wait(0.3)
-            self.play(LaggedStart(*[c.animate(path_arc=0.5).move_to(d) for c, d in zip(cards, dest)],
-                                  lag_ratio=0.06), run_time=0.9)
+            self.play(LaggedStart(*[c.animate(path_arc=0.5).scale(0.85).move_to(d)
+                                    for c, d in zip(cards, dest)], lag_ratio=0.06), run_time=0.9)
             vo.wait_until("an open-book exam")
             self.play(FadeIn(exam, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("That's RAG")

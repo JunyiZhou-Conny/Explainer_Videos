@@ -8,7 +8,8 @@ Beats (script.md "## S04", one voiceover block each):
     the card, enlarges centre-right and gets a GOLD glow; GREY label under it: "the course's service account", then (on "so guard it") "spends the course's money".
  1  The glow and labels go; the key shrinks back into the card as the card rises. Right: the
     five GREY folders `<component>/secrets/` of the clone, with ▶ your turn beside
-    `transcribe_audio/secrets/` (it arrives on "Pause", the first word); bottom-left: the GREY README
+    `transcribe_audio/secrets/` (that row and the tag arrive with the card's rise, on "Pause", the
+    first word; the other four rows follow); bottom-left: the GREY README
     card "README.md · lines 97–99" (the README's own words). On "download it" an arrow carries a
     copy of the key onto `transcribe_audio/secrets/`; once it lands, the GREY caption "check: ls
     secrets → mega-pipeline.json" under it. On "with a copy in each" the card's "each component
@@ -132,6 +133,10 @@ AXIS_Y = 0.3                       # V7's axis (beats 9-10), above the 3-row str
 # Beat 4's "have uv? skip to …" chip: where beat 7 ("Now the step itself: uv init …") starts in the
 # full video and in part 1 (part 1 starts at 0:00). It is S04's start plus beat 7's start in this
 # scene (the SRT cue "Now the step itself"), rounded down: re-check it whenever S01-S04 change length.
+# It must never land after that cue; landing up to ~3 s early (in beat 6's `uv --version`) is fine.
+# 2026-10-16 draft: 275.6 + 68.3 = 343.9 (5:43.9). After the S01/S03 narration fixes (explainer.check
+# ends: S01 78.6, S02 112.9, S03 85.3) S04 starts at 276.8 and the cue at 345.1 (5:45.1): 5:43 lands
+# 2.1 s early, which leaves margin for the 30 fps render's frame rounding.
 SKIP_TO = "5:43"
 
 
@@ -354,12 +359,16 @@ class KeyAndInit(VoiceScene):
         yt1 = your_turn().next_to(rows[0].text, RIGHT, buff=0.3)
 
         with self.voiceover(SAY[1]) as vo:
+            # ▶ your turn and its folder row come with the first play, on "Pause" (the first
+            # word): a viewer who pauses there already has the tag. Row 0 (y 1.8) sits above the
+            # shrinking key's path (y -0.1 -> 0.46), so it can arrive while the key goes home; the
+            # other four rows (on that path) and the README card follow. The check caption comes
+            # once the first key has landed.
             self.play(FadeOut(glow), FadeOut(labs), keyrow.animate.scale(1 / 1.8).move_to(slot),
-                      card.animate.shift(UP * LIFT), ill0.animate.shift(UP * LIFT), run_time=0.7)
-            # ▶ your turn comes with the folders, on "Pause" (the first word): a viewer who pauses
-            # there already has the tag; the check caption follows once the first key has landed
-            self.play(FadeIn(rows, shift=LEFT * 0.15), FadeIn(rc, shift=UP * 0.15),
-                      FadeIn(yt1, shift=LEFT * 0.15), run_time=0.6)
+                      card.animate.shift(UP * LIFT), ill0.animate.shift(UP * LIFT),
+                      FadeIn(rows[0], shift=LEFT * 0.15), FadeIn(yt1, shift=LEFT * 0.15), run_time=0.7)
+            self.play(FadeIn(VGroup(*rows[1:]), shift=LEFT * 0.15), FadeIn(rc, shift=UP * 0.15),
+                      run_time=0.6)
             vo.wait_until("download it")
             k0 = keyrow.key.copy()
             arr = Arrow(card[0].get_right() + np.array([0.05, -0.1, 0]),

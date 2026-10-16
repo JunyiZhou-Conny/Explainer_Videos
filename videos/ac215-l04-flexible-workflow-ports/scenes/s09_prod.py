@@ -37,20 +37,22 @@ Beats (script.md "## S09", one voiceover block each):
     in the layer flashes RED ("not out of images");
     dashed GREY chip ".dockerignore: none, on every branch". The PURPLE prod track carries the
     layer to the BLUE Docker Hub shelf, which flashes RED.
- 5  GREY tag erratum. README card README.md · line 203 (the canonical way … impossible, underlined)
-    and GREY "for Git: yes ✓ · for images: no ✗". Fix card (rows write in as said): delete the
-    secrets/ folder inside each component · add a .dockerignore listing secrets/ (lecture 3) · RED
-    "a key was ever pushed? delete that key in IAM"; ▶ your turn on the card's header row, right.
+ 5  TRACKER R/4 (the extra dev build has gone). GREY tag erratum. README card README.md · line 203
+    (the canonical way … impossible, underlined) and GREY "for Git: yes ✓ · for images: no ✗". Fix
+    card (rows write in as said): delete the secrets/ folder inside each component · add a
+    .dockerignore listing secrets/ (lecture 3) · RED "a key was ever pushed? delete that key in
+    IAM"; ▶ your turn on the card's header row, right.
  6  TRACKER R/4 · extra. Clean-up card for part 1, top right (rows write in as said). 7-row terminal
     (laptop, ~/AC215/mega-pipeline): `docker images` (extra) -> mega-laptop/70 lines 2-7, column
     view (IMAGE and DISK USAGE) with S16's GREY tag "2 of 5 columns" in the header row's gap (its
-    end has no room): the transcribe row flashes, then 1.48GB is boxed YELLOW, the four ~830MB
-    underlined.
- 7  The terminal goes as the card moves down and grows: three GOLD rows (bucket in two cues, key +
-    a tiny illustration of the console's key list beside that row, whose RED trash can flashes at
-    "in the console", a pushed Docker Hub repo on two lines); card and console are centred
-    together. Closing card "Part 2: containers that talk to each other directly" with two small
-    TEAL boxes and a PINK arrow between them. Everything fades: an empty frame (end of part 1).
+    end has no room); the card's `--rm` flashes YELLOW as it is said, then `docker images` is typed:
+    the transcribe row flashes, then 1.48GB is boxed YELLOW, the four ~830MB underlined.
+ 7  The terminal goes (the tracker drops " · extra"), then the card moves down and grows: three GOLD
+    rows (bucket in two cues, key + a tiny illustration of the console's key list beside that row,
+    whose RED trash can flashes at "in the console", a pushed Docker Hub repo on two lines); card
+    and console are centred together. Closing card "Part 2: containers that talk to each other
+    directly" with two small TEAL boxes and a PINK arrow between them. Everything fades: an empty
+    frame (end of part 1).
 
 Deviations from SHOW (and why):
 - Beats 0-1: V4 is the compact switchboard of S08 (mode word + what it does, half size) in the band
@@ -69,13 +71,17 @@ Deviations from SHOW (and why):
 - Beat 4: V5 is its laptop side (lecture 3's tree) and its image layer only: no container runs in
   a build. The image layer is shortened to 3.6 units. The Docker Hub shelf's illustration tag sits
   above it (under it the .gitignore header needs the room).
+- Beat 5: the SHOW names no tracker step; it returns from R/2 · extra (the dev build, gone) to R/4,
+  prod: the fix is what to do before running prod. Beat 6 then only adds " · extra".
 - Beat 6: the terminal has 7 rows (the column view is 7 rows), so the clean-up card fits above it
   in the band's right half (never beside the terminal); the card's header is its first row.
 - Beat 7: the third GOLD row is two lines (one would be 10.8 units at 22 pt); its "·" becomes the
   line break.
 - Timing: a few in-sentence anchors are shifted by hand with at() (PLAYBOOK §2.6), from a Kokoro
   synthesis of each sentence up to the phrase: beat 1's clauses after "amd64 and arm64" come
-  0.35-0.8 s later than the character count says; elsewhere 0.3-0.6 s earlier.
+  0.35-0.8 s later than the character count says; elsewhere 0.3-0.6 s earlier. Beats 2 and 3
+  start "Don't run prod yet" / "Build there with dev" in the 0.3 s gap before the sentence, so
+  the caption and the build are up before the clause that follows.
 """
 
 from common import *
@@ -364,13 +370,17 @@ def arch_picture() -> VGroup:
         boxes[name] = g
     post = signpost(["$DOCKER_USERNAME/", "$IMAGE_NAME"], post_h=0.0)
     post.remove(post.post, post.foot)
-    place(post, cx=-0.15, bottom=boxes["amd64"].get_top()[1] + 0.55)
+    # the board's rectangle (without its point, 0.3 wide) centred over the two boxes, so the two
+    # arrows mirror each other and get the same tip
+    rect_cx = (boxes["amd64"].box.lid.get_center()[0] + boxes["arm64"].box.lid.get_center()[0]) / 2
+    place(post, cx=rect_cx + 0.15, bottom=boxes["amd64"].get_top()[1] + 0.55, ref=post.board)
     arrows = VGroup()
     for name, dx in (("amd64", -0.75), ("arm64", 0.75)):
-        a = post.board.get_bottom() + RIGHT * dx
+        a = np.array([rect_cx + dx, post.board.get_bottom()[1], 0])
         b_ = boxes[name].box.lid.get_top() + UP * 0.03
+        n = np.linalg.norm(b_ - a) - 0.08
         arrows.add(Arrow(a, b_, buff=0.04, color=LOOKUP, stroke_width=4,
-                         max_tip_length_to_length_ratio=0.3, max_stroke_width_to_length_ratio=10))
+                         max_tip_length_to_length_ratio=0.24 / n, max_stroke_width_to_length_ratio=10))
     vm = server(1.05, 3, LAPTOP)
     place(vm, cx=-5.2, cy=-0.45)
     vm_l = sans("cloud VM", CAPTION, LAPTOP).next_to(vm, DOWN, buff=0.12)
@@ -584,11 +594,11 @@ class ProdAndCleanup(VoiceScene):
             self.play(FadeIn(p13, shift=DOWN * 0.1), run_time=0.5)
             self.play(Create(under(dl, TURN)), FadeIn(own, shift=RIGHT * 0.1), run_time=0.6)
             self.play(FadeIn(chip76, shift=DOWN * 0.1), run_time=0.5)
-            vo.wait_until("Don't run prod yet")
+            at(self, vo, "Don't run prod yet", -0.3)     # in the gap before the sentence
             self.play(tr.goto(2), FadeOut(chip129), FadeOut(VGroup(pr, gold, stem, sg)), run_time=0.5)
             place(u4, left=tr.caption.get_right()[0] + 0.3, cy=tr.caption.get_center()[1])
             self.play(FadeIn(u4, shift=LEFT * 0.1), run_time=0.3)
-            type_tagged(self, t, PROD, "not run here: needs a login · publishes an image", type_time=0.5)
+            type_tagged(self, t, PROD, "not run here: needs a login · publishes an image", type_time=0.4)
             vo.wait_until("first, check what")
             place(warn, right=6.3, bottom=STRIP_TOP + 0.3)
             self.play(FadeIn(warn, shift=UP * 0.1), run_time=0.5)
@@ -614,21 +624,27 @@ class ProdAndCleanup(VoiceScene):
             self.play(FadeIn(mini, shift=LEFT * 0.15), FadeIn(skip, shift=DOWN * 0.1), run_time=0.7)
             at(self, vo, "the old key still sits", -0.3)
             self.play(Create(ring(mini.key, TURN, buff=0.06)), flash(mini.key, TURN, 1.4), run_time=0.8)
-            vo.wait_until("Build there with dev")
-            type_tagged(self, t, C12.cmd, "extra", type_time=0.5)
-            rows = print_build(self, t, DEV_ROWS, run_time=0.6, lag=0.1)
+            # the build has to be up before "and an extra command lists" (1.4 s later): start in
+            # the gap before the sentence, and keep each step short
+            at(self, vo, "Build there with dev", -0.25)
+            type_tagged(self, t, C12.cmd, "extra", type_time=0.4)
+            rows = print_build(self, t, DEV_ROWS, run_time=0.5, lag=0.1)
             slim_times(t, rows)
             cp = glyph_box(rows[2], "[4/5] COPY --chown=app:app . ./")
-            pin(self, rows[2], cp, run_time=0.4, anim=Create(cp))
+            pin(self, rows[2], cp, run_time=0.3, anim=Create(cp))
             nc = fit_tag(t, rows[2], "not CACHED")
-            pin(self, rows[2], nc, run_time=0.3)
+            pin(self, rows[2], nc, run_time=0.25)
             vo.wait_until("and an extra command lists")
-            run_ln = type_tagged(self, t, C13.cmd, "extra", type_time=1.2)
+            run_ln = type_tagged(self, t, C13.cmd, "extra", type_time=1.0)
             ls = t.print(self, LS_ROWS, run_time=0.6)
             at(self, vo, "the key is inside", -0.4)
             kname = substring(ls[5], "mega-pipeline.json")
             st = standin_tag()
             place(st, cx=kname.get_center()[0], cy=ls[4].strut.get_center()[1])
+            # in beat 4's strip the command's row sits right above this one: stay left of its tag
+            x_extra = run_ln.rows[-1].glyphs.get_right()[0] + 0.3
+            if st.get_right()[0] > x_extra - 0.15:
+                st.shift(LEFT * (st.get_right()[0] - x_extra + 0.15))
             self.play(kname.animate.set_color(ERR), run_time=0.3)
             self.play(flash(kname, ERR, 1.1), run_time=0.5)
             pin(self, ls[4], st, run_time=0.4)
@@ -726,7 +742,8 @@ class ProdAndCleanup(VoiceScene):
         yt = your_turn()                   # on the card's header row, right (not on its border)
         place(yt, right=fix.frame.get_right()[0], bottom=fix.frame.get_top()[1] + 0.08)
         with self.voiceover(SAY[5]) as vo:
-            stage_out(self, tr, run_time=0.5, extra=[caption_extra(tr, False)])
+            # the dev build was the extra demonstration: back to step 4, prod, which the fix guards
+            stage_out(self, tr, run_time=0.5, extra=[tr.goto(4)])
             t.lines.submobjects.clear()
             self.play(FadeIn(card203, shift=DOWN * 0.1), FadeIn(err, shift=LEFT * 0.1), run_time=0.5)
             self.play(Create(under(phrase, TURN)), run_time=0.5)
@@ -769,13 +786,16 @@ class ProdAndCleanup(VoiceScene):
         place(VGroup(frA, crows), right=6.4, top=3.42, ref=frA)
         with self.voiceover(SAY[6]) as vo:
             stage_out(self, tr, run_time=0.5)
-            self.play(tr.goto(4), FadeIn(t6, shift=UP * 0.2), FadeIn(frA), FadeIn(crows[0]), run_time=0.6)
-            self.play(caption_extra(tr, True), run_time=0.3)
+            self.play(FadeIn(t6, shift=UP * 0.2), FadeIn(frA), FadeIn(crows[0]), run_time=0.6)
+            bare_prompt(self, t6)                  # a waiting prompt, not an empty window
             vo.wait_until("Exit each container")
             self.play(FadeIn(crows[1], shift=RIGHT * 0.1), run_time=0.5)
-            at(self, vo, "The transcribe image alone", -1.75)   # its output is up as that sentence starts
-            type_tagged(self, t6, C70.cmd, "extra", type_time=0.4)
-            imgs = t6.print(self, IMG_ROWS, run_time=0.6)
+            at(self, vo, "dash dash r m", -0.1)
+            # " · extra" joins the caption as the extra command comes, right after this flash: its
+            # output is up as "The transcribe image alone" starts
+            self.play(flash(crows[1][1], TURN, 1.15), caption_extra(tr, True), run_time=0.5)
+            type_tagged(self, t6, C70.cmd, "extra", type_time=0.35)
+            imgs = t6.print(self, IMG_ROWS, run_time=0.5)
             # S16's honesty tag; the header row has no room at its end, so it sits in the gap
             cols = grey_tag("2 of 5 columns").next_to(substring(imgs[0], "IMAGE"), RIGHT, buff=0.45)
             cols.set_y(imgs[0].strut.get_center()[1])
@@ -806,8 +826,10 @@ class ProdAndCleanup(VoiceScene):
         place(con, left=frB.get_right()[0] + gap, cy=crows[7].get_center()[1] + dxy[1], ref=con[0])
         close = part2_card()
         with self.voiceover(SAY[7]) as vo:
-            stage_out(self, tr, frA, *crows[:6], run_time=0.8,
-                      extra=[*[r.animate.shift(dxy) for r in crows[:6]], Transform(frA, frB)])
+            # the terminal goes first (the extra command with it), then the card moves and grows:
+            # the card never slides over half-faded terminal text
+            stage_out(self, tr, frA, *crows[:6], run_time=0.35, extra=[caption_extra(tr, False)])
+            self.play(*[r.animate.shift(dxy) for r in crows[:6]], Transform(frA, frB), run_time=0.5)
             for r in crows[6:]:
                 r.shift(dxy)
             vo.wait_until("the bucket bills")

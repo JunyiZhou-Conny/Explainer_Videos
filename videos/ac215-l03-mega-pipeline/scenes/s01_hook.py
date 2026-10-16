@@ -28,9 +28,10 @@ Beats (script.md "## S01", one voiceover block each):
    `ls` + extra (no output: a preview).
 3. The preview clears. Checklist card; each row writes in with a GREEN tick as it is said:
    "Tutorial 0: Docker Desktop + uv" (the tools turn PURPLE as they are named) · "the course
-   key, from Canvas" (GOLD key glyph) · "your team's group name". Footer, two lines: "every
-   command:" over "MLOps_Learning · guides/L03-containers-2-mega-pipeline.md" (guide path, then
-   repo name pulse YELLOW).
+   key, from Canvas" (GOLD key glyph) · "your team's group name". Footer: "every command:"
+   over "MLOps_Learning · guides/L03-containers-2-mega-pipeline.md" (the guide path
+   pulses YELLOW on "in the study guide"; on "linked in the description" the repo name pulses and
+   a GREY third line "link in the description" fades in under it).
 4. A TEAL container strip (container · transcribe_audio, prompt app@5b4d4981ec25:/app$, GREY tag
    "preview") types `python cli.py --download`. GREY caption "recorded without the course key";
    a dashed BLUE cloud draws itself; the typed command pulses on "you'll see the command"; the
@@ -339,6 +340,8 @@ class Hook(VoiceScene):
         VGroup(card, body).move_to([0, 0.9, 0])
         foot = VGroup(label("every command:", 22, S.GREY), mono(GUIDE, 22, INK)).arrange(DOWN, buff=0.16)
         foot.move_to([0, -1.25, 0])
+        # where the guide lives (the URL itself is in the upload description, not on screen)
+        link = label("link in the description", 22, S.GREY).next_to(foot, DOWN, buff=0.22)
         guide_path = VGroup(*foot[1][len("MLOps_Learning·"):])        # glyphs: no spaces
         repo_name = VGroup(*foot[1][:len("MLOps_Learning")])
 
@@ -364,7 +367,8 @@ class Hook(VoiceScene):
             # colour pulses only: scaling a 7-unit path pushes it into the " · " beside it
             self.play(Indicate(guide_path, color=TURN, scale_factor=1.0), run_time=0.8)
             vo.wait_until("linked in the description")
-            self.play(Indicate(repo_name, color=TURN, scale_factor=1.04), run_time=0.8)
+            self.play(FadeIn(link, shift=UP * 0.15), Indicate(repo_name, color=TURN, scale_factor=1.04),
+                      run_time=0.8)
 
         # ========================================================== 4. the honest limit
         t4 = term(component="transcribe_audio", rows=3)

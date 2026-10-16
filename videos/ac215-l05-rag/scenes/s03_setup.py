@@ -3,8 +3,10 @@
 
 Beats (script.md "## S03", one voiceover block each):
  0  TRACKER Prereq 1 · extra. The house terminal (10 rows, `laptop`, prompt ~/AC215) types
-    `docker --version; docker compose version` (extra) -> laptop/01 lines 2-3. 29.8.2 and v5.6.0
-    underline GREY under one bracket + tag "at the time of recording"; the space in
+    `docker --version; docker compose version` (extra) -> laptop/01 lines 2-3; the command row is
+    62 characters, so its extra tag sits at the right end of the row below (the pilot's
+    under_row). 29.8.2 and v5.6.0 underline GREY under one bracket + tag "at the time of
+    recording"; the space in
     `docker compose` flashes YELLOW. GREY note under the terminal, in two halves as named:
     "Mac: zsh, prompt ends in %" · "Windows: WSL or Git Bash".
  1  TRACKER Prereq 2. The terminal settles on the bottom edge; README chip (top band)
@@ -39,14 +41,16 @@ Beats (script.md "## S03", one voiceover block each):
     ~/AC215/llm-rag, the new path part flashing GREY. TRACKER Run 1 · extra: `ls -a; git log
     --oneline -1` (extra) -> laptop/05 lines 2-5 (wrapped), line 6 cut after "origin/HEAD)".
     docker-shell.sh, docker-compose.yml and cli.py box GREEN one by one as named; e17a39f gets a
-    GREY tag "the commit this video was recorded on".
+    GREY box and the GREY tag "the commit this video was recorded on" on the nearly empty row
+    above it (the commit row is full).
  6  TRACKER Run 2. Above the terminal: a GREY pencil edits a GREY file card docker-shell.sh
     ("in your editor"). The terminal clears; `git diff docker-shell.sh` (extra) -> laptop/06 lines
     6-13: line 10 RED, line 11 GREEN; a YELLOW box on your-project-id and, two rows up (the only
-    free row space near it), a YELLOW tag "your Project ID · not the name" with a short arrow
-    down through a blank column of line 10; line 12's path underlined GREY + tag on line 13's row
-    "↑ leave this: a path inside the container". GREY note "skip it → calls go to the course's
-    project → permission error". ▶ your turn on the file card; hold 2 s; fade to an empty frame.
+    free row space near it), a YELLOW tag "your Project ID · not the name" starting at the blank
+    column after line 10's closing quote, with a short arrow down through it (so nothing frames
+    the old value); line 12's path underlined GREY + tag on line 13's row "↑ leave this: a path
+    inside the container". GREY note "skip it → calls go to the course's project → permission
+    error". The pencil rests beside the card; ▶ your turn on the card; hold 2 s; fade to empty.
 """
 
 import numpy as np
@@ -69,7 +73,6 @@ from common import (
     capture,
     card_rows,
     cd_prompt,
-    col_box,
     erratum_tag,
     extra_tag,
     grey_tag,
@@ -125,7 +128,7 @@ from explainer.devops import (
     chip,
     file_glyph,
     folder_glyph,
-    form_rows,
+    TERM_BG,
     glyph_range,
     label,
     mono,
@@ -211,20 +214,35 @@ def attach(scene, row, *mobs):
     scene.add(row)
 
 
+def under_row(mob, t, line):
+    """A tag for a command row too long to have one beside it: at the right end of the row
+    below (whose output is short), as the pilot does. Returns mob (not added)."""
+    row = line.rows[-1] if hasattr(line, "rows") else line
+    mob.set_y(row.strut.get_center()[1] - t.pitch)
+    return mob.align_to(t.box, RIGHT).shift(LEFT * 0.12)
+
+
 def col_x(line, j: float) -> float:
-    """x of the left edge of character column j of a mono_line (col_box's geometry)."""
-    return line.strut.get_left()[0] + j * cell_width(line.pt)
+    """x of the left edge of character cell j of a mono_line, measured from its glyphs (the
+    strut's left edge sits about 2/3 of a cell left of cell 0, so common.col_box drifts)."""
+    cw = cell_width(line.pt)
+    offs, gi = [], 0
+    for k, ch in enumerate(line.text):
+        if ch.isspace():
+            continue
+        offs.append(line.glyphs[gi].get_center()[0] - (k + 0.5) * cw)
+        gi += 1
+    x0 = float(np.median(offs)) if offs else line.strut.get_left()[0]
+    return x0 + j * cw
 
 
-def tag2(lines, color: str = S.GREY, size: float = TAG) -> VGroup:
-    """A two-row tag (house look: text in its colour, opaque dark fill, round ends)."""
-    t = VGroup(*[label(s, size, color) for s in lines]).arrange(DOWN, buff=0.06)
-    b = RoundedRectangle(width=t.width + 0.4, height=t.height + 0.2, corner_radius=0.2,
-                         stroke_color=color, stroke_width=2).set_fill(S.BG, 0.92)
-    t.move_to(b)
-    g = VGroup(b, t)
-    g.box, g.text = b, t
-    return g
+def cbox(line, a: int, b: int, color: str = TURN, pad: float = 0.04) -> VMobject:
+    """common.col_box on the glyph-measured grid: a box over character cells a..b (exclusive)."""
+    cw = cell_width(line.pt)
+    r = box((b - a) * cw + 2 * pad, line.strut.height + 2 * pad, color, fill_opacity=0.0,
+            radius=0.06, stroke=3)
+    r.move_to([col_x(line, a) + (b - a) * cw / 2, line.strut.get_center()[1], 0])
+    return r
 
 
 def crumb(*parts, size: float = TAG, colors=None) -> VGroup:
@@ -335,22 +353,24 @@ def screens(con) -> list:
     # 2 · Create service account (name typed)
     c2 = at_left(crumb("IAM & Admin", "Service accounts", "Create service account",
                        colors=[S.GREY, S.GREY, INK]), x0, y0)
-    form = form_rows([("Service account name", "x")], width=7.0, size=TAG)
-    at_left(form, x0, y0 - 0.85)
-    fld = form.rows[0].field
-    form.rows[0].remove(form.rows[0].value)
+    lab = label("Service account name", TAG, S.GREY)
+    fld = RoundedRectangle(width=4.0, height=0.48, corner_radius=0.06, stroke_color=S.GREY_DARK,
+                           stroke_width=1.5).set_fill(TERM_BG, 1)
+    fld.next_to(lab, RIGHT, buff=0.3)
+    form = at_left(VGroup(lab, fld), x0, y0 - 0.85)
     value = mono(SA_NAME, CAPTION, INK).move_to(fld).align_to(fld, LEFT).shift(RIGHT * 0.15)
     btn = at_left(chip("Create and continue", CLOUD, size=CAPTION), x0, y0 - 1.65)
     s2 = VGroup(c2, form, btn)
     s2.value, s2.button = value, btn
     out.append(s2)
     # 3 · Grant this service account access to project (README.md line 56)
-    c3 = at_left(crumb("Create service account", GRANT_HEAD, colors=[S.GREY, INK]), x0, y0)
-    ch_s = at_left(chip(ROLE_STORAGE, CLOUD, size=TAG), x0, y0 - 0.85)
-    ch_v = at_left(chip(ROLE_VERTEX, CLOUD, size=TAG), x0, y0 - 1.55)
+    c3 = at_left(crumb("Service accounts", "Create service account", colors=[S.GREY, INK]), x0, y0)
+    hd = at_left(label(GRANT_HEAD, TAG, INK), x0, y0 - 0.62)
+    ch_s = at_left(chip(ROLE_STORAGE, CLOUD, size=TAG), x0, y0 - 1.3)
+    ch_v = at_left(chip(ROLE_VERTEX, CLOUD, size=TAG), x0, y0 - 1.95)
     nt = note("Vertex AI User in older projects").next_to(ch_v, DOWN, buff=0.16).align_to(ch_v, LEFT).shift(RIGHT * 0.1)
     s3 = VGroup(c3)
-    s3.chips, s3.note = VGroup(ch_s, ch_v), nt
+    s3.head, s3.chips, s3.note = hd, VGroup(ch_s, ch_v), nt
     out.append(s3)
     # 4 · the account's tabs: KEYS
     c4 = at_left(crumb("Service accounts", mono(SA_NAME, CAPTION, INK), colors=[S.GREY, INK]), x0, y0)
@@ -409,17 +429,19 @@ class KeyAndProject(VoiceScene):
             vo.wait_until("This extra check")
             self.play(caption_extra(tr, True), run_time=0.4)
             cmd0 = type_cmd(self, t, DOCKER_CHECK, 1.3)
-            pin(self, cmd0, beside(extra_tag(), t, cmd0), run_time=0.3)
             out0 = t.print(self, VER_OUT, run_time=0.5)
+            # a 62-character row: the extra tag sits at the right end of the row below
+            xt0 = under_row(extra_tag(), t, cmd0)
+            pin(self, out0[0], xt0, run_time=0.3)
             # the two versions: GREY underlines, one bracket, one tag (attached to the first row)
             u1 = under(substring(out0[0], "29.8.2"), S.GREY, stroke=3)
             u2 = under(substring(out0[1], "v5.6.0"), S.GREY, stroke=3)
-            xb = out0[0].glyphs.get_right()[0] + 0.35
+            xb = out0[0].glyphs.get_right()[0] + 0.25
             yt, yb = out0[0].strut.get_top()[1], out0[1].strut.get_bottom()[1]
             brk = VMobject(stroke_color=S.GREY, stroke_width=3)
             brk.set_points_as_corners([[xb - 0.12, yt, 0], [xb, yt, 0], [xb, yb, 0], [xb - 0.12, yb, 0]])
             rec = recording_tag()
-            rec.move_to([xb + 0.25 + rec.width / 2, (yt + yb) / 2, 0])
+            rec.move_to([xb + 0.2 + rec.width / 2, (yt + yb) / 2, 0])
             self.play(Create(u1), Create(u2), run_time=0.5)
             self.play(Create(brk), FadeIn(rec, shift=LEFT * 0.1), run_time=0.5)
             attach(self, out0[0], u1, brk, rec)
@@ -428,7 +450,7 @@ class KeyAndProject(VoiceScene):
             vo.wait_until("the script needs docker compose")
             line = cmd0
             sp = len(P_WS) + 1 + DOCKER_CHECK.index("docker compose") + len("docker")
-            gap = col_box(line, sp, sp + 1, TURN, pad=0.02)
+            gap = cbox(line, sp, sp + 1, TURN, pad=0.02)
             gap.set_fill(TURN, 0.75)
             words = glyph_range(line, sp - len("docker"), sp + len(" compose"))
             self.play(FadeIn(gap, scale=1.6), words.animate.set_color(TURN), run_time=0.4)
@@ -518,7 +540,7 @@ class KeyAndProject(VoiceScene):
             self.play(ShowIncreasingSubsets(pages[1].value, rate_func=linear), run_time=1.0)
 
             vo.wait_until("and grant it two roles")
-            page_to(3, [pages[1][1], pages[1][2], pages[1].value], [])
+            page_to(3, [pages[1][1], pages[1][2], pages[1].value], [pages[2].head])
             vo.wait_until("Storage Admin")
             self.play(FadeIn(pages[2].chips[0], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("and Gemini Enterprise")
@@ -526,7 +548,7 @@ class KeyAndProject(VoiceScene):
             self.play(FadeIn(pages[2].note), run_time=0.5)
 
             vo.wait_until("Open its keys tab")
-            page_to(4, [pages[2].chips, pages[2].note], [pages[3][1], pages[3][2]])
+            page_to(4, [pages[2].head, pages[2].chips, pages[2].note], [pages[3][1], pages[3][2]])
             ukeys = under(pages[3].keys, TURN, stroke=5)
             self.play(Create(ukeys), Indicate(pages[3].keys, color=TURN), run_time=0.6)
 
@@ -568,7 +590,8 @@ class KeyAndProject(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(con, cr, pages[3][1], pages[3][2], ukeys,
                                      pages[4][0], org)), run_time=0.5)
-            self.play(drop.animate.shift(np.array([-6.35 - key_lbl.get_left()[0], 0.45, 0])), run_time=0.8)
+            self.play(drop.animate.shift(np.array([-6.35 - key_lbl.get_left()[0],
+                                                   2.62 - fo.ws.get_top()[1], 0])), run_time=0.8)
             money = tag("this file spends your project's money", COST)
             money.next_to(key_lbl, DOWN, buff=0.2).align_to(key_lbl, LEFT)
             if money.get_left()[0] < -6.45:
@@ -643,7 +666,8 @@ class KeyAndProject(VoiceScene):
             vo.wait_until("without it")
             self.play(FadeIn(red, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("fails with service disabled")
-            self.play(Indicate(red.row[1], color=ERR, scale_factor=1.12), run_time=0.8)
+            self.play(red.animate.set_opacity(1.0), run_time=0.4)        # brightens, then dims again
+            self.play(red.animate.set_opacity(0.5), run_time=0.6)
 
             vo.wait_until("Pause and do it all now")
             self.play(FadeOut(VGroup(vx, red, *gates, g_key, roles, sw, tick, err_tag, no_store)),
@@ -673,18 +697,17 @@ class KeyAndProject(VoiceScene):
                 vo.wait_until(anchor)
                 ln = t5.find(name)
                 i = ln.text.index(name)
-                b = col_box(ln, i, i + len(name), DATA)
+                b = cbox(ln, i, i + len(name), DATA)
                 self.play(Create(b), substring(ln, name).animate.set_color(DATA), run_time=0.45)
                 attach(self, ln, b)
                 hl.append(b)
             vo.wait_until("and the commit")
-            ring_ = col_box(log, 0, 7, S.GREY)
-            # one row is too short for the tag after the commit line; the row above it (line 5's
-            # wrap, "er.py") is nearly empty, so the tag takes two rows at the right end
-            cm = tag2(["the commit this video", "was recorded on"])
+            ring_ = cbox(log, 0, 7, S.GREY)
+            # the commit row has no room left for the tag; the row above it (line 5's wrap,
+            # "er.py") is nearly empty, so the tag sits there, just up-right of the hash's box
+            cm = grey_tag("the commit this video was recorded on")
             above = t5.lines[len(t5.lines) - 2]
-            cm.move_to([t5.box.get_right()[0] - 0.15 - cm.width / 2,
-                        (log.strut.get_center()[1] + above.strut.get_center()[1]) / 2, 0])
+            at_left(cm, ring_.get_right()[0] + 0.12, above.strut.get_center()[1])
             self.play(Create(ring_), run_time=0.4)
             attach(self, log, ring_)
             pin(self, log, cm, run_time=0.4)
@@ -705,6 +728,9 @@ class KeyAndProject(VoiceScene):
             a = r0.get_left() + RIGHT * 0.3
             self.play(pen.animate.shift(a - tip), run_time=0.4)
             self.play(pen.animate.shift(RIGHT * 2.0), r0.animate.set_color(TURN), run_time=0.7)
+            self.play(pen.animate.shift(fc.frame.get_right() + RIGHT * 0.25 - pen.get_left()
+                                        + DOWN * (pen.get_center()[1] - fc.frame.get_center()[1])),
+                      run_time=0.4)
             t5.clear(self, run_time=0.3)
             self.play(caption_extra(tr, True), run_time=0.3)
             cmd6 = type_cmd(self, t5, DIFF, 0.9)
@@ -715,12 +741,12 @@ class KeyAndProject(VoiceScene):
             vo.wait_until("to your own Project ID")
             l11 = out6[5]
             i = l11.text.index("your-project-id")
-            pid = col_box(l11, i, i + len("your-project-id"), TURN)
-            yt = tag("your Project ID · not the name", TURN)
-            at_left(yt, pid.get_left()[0], out6[3].strut.get_center()[1])
+            pid = cbox(l11, i, i + len("your-project-id"), TURN)
             l10 = out6[4]
-            j = l10.text.index('" #') + 1                 # the blank column after "ac215-project"
+            j = l10.text.index('" #') + 1                 # the blank column after the old value
             xg = col_x(l10, j + 0.5)
+            yt = tag("your Project ID · not the name", TURN)
+            at_left(yt, xg - 0.18, out6[3].strut.get_center()[1])
             arr = Line([xg, yt.get_bottom()[1] - 0.02, 0], [xg, pid.get_top()[1] + 0.01, 0],
                        color=TURN, stroke_width=3)
             self.play(Create(pid), run_time=0.4)

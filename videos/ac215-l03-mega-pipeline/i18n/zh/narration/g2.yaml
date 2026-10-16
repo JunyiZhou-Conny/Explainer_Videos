@@ -265,6 +265,11 @@ S12:
   - "生成这一步把每份转写文本发给 Gemini 2.5 Flash Lite，它跑在 Vertex AI 上。"
   - "Google 在 2026 年 10 月 20 日下线该模型。"
   - "之后启动 container 时，要在 Gemini 模型变量里填一个现行的模型。"
+  en_display:
+  - null
+  - null
+  - null
+  - "After that, start the container with a current model in the GEMINI_MODEL variable."
 - en: "Look for your prompt, generated text and a long podcast script, then the upload. Pause and run all three."
   zh:
   - "要找的是你的 prompt、Generated text 和一份很长的播客稿，然后是上传。"
@@ -456,6 +461,10 @@ S15:
   - "五道自测题。"
   - "第一题：D，也就是 translate text，读的是哪个抽屉，又是谁写的？"
   - "第二题：为什么挂载没有盖住那些包，没有 uv project environment 这个变量，又会出什么问题？"
+  en_display:
+  - null
+  - null
+  - "Two: why doesn't the mount hide the packages, and what breaks without UV_PROJECT_ENVIRONMENT?"
 - en: "Three: after uv add in a throwaway container, what survives, and what makes it permanent? Four: which variable points to the key, and why only from slash app? Five: how can an image hold a git-ignored key, and the fix?"
   zh:
   - "第三题：在用完就扔的 container 里 uv add 之后，什么会留下来，又是什么让它永久保留？"

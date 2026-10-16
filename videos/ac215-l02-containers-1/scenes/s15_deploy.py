@@ -67,7 +67,7 @@ Beats (script.md "## S15", one voiceover block each):
     "That's not a Docker problem": GREY tag "not a Docker problem".
  6  TRACKER C5. Everything else goes. A GREY card "if the pull itself fails:" with
     vm-debian13/06-docker-run-rate-limited: 3 (wrap, RED), `toomanyrequests` underlined RED; tag
-    "real capture · Debian 13 · 2026-10-13". "Docker Hub limits anonymous pulls": "pull rate limit"
+    "real capture · Debian 13 · 2026-10-13". "Docker Hub limits": "pull rate limit"
     underlined YELLOW, GREY note "anonymous pulls: a limit per network address";
     "a classroom can hit": note pulses. "Wait a while": GREEN chip; "or log in first": GREEN chip
     `sudo docker login -u <USER NAME>` (`<USER NAME>` YELLOW). Fade out to an empty frame.
@@ -612,7 +612,8 @@ class Deploy(VoiceScene):
         pre = len("sudo docker run --rm -ti ")
         assert MINE[:pre] == DEPLOY[:pre]
 
-        with self.voiceover(SAY[4]) as vo:
+        # pad: the amd64 tag (12 words) comes on the last clause; hold it a moment before the cards go
+        with self.voiceover(SAY[4], pad=1.2) as vo:
             for line, m in [(c2, x2), (r_v, u2), (r_v, rec)]:      # the strip comes back without its marks
                 line.remove(m)
             self.play(FadeOut(VGroup(col, *[it.note for it in items], img, img_name, glaze, frost, moral)),
@@ -661,20 +662,20 @@ class Deploy(VoiceScene):
         note5 = label(NOTE5, 22, S.GREY)
         nodock = tag("not a Docker problem", S.GREY)
         row5 = VGroup(note5, nodock).arrange(RIGHT, buff=0.35)
-        row5.move_to([0, STRIP5_TOP + 0.22 + row5.height / 2, 0])
+        row5.move_to([0, STRIP5_TOP + 0.16 + row5.height / 2, 0])
         # right-aligned: the image line starts 7 cells left of `async`
-        repo25.move_to([RIGHT_X - repo25.width / 2, row5.get_top()[1] + 0.27 + repo25.height / 2, 0])
-        # the image's line sits above the repo's, `async` over `async`
-        img_line.shift(UP * (repo25.get_top()[1] + 0.06 + img_box.height / 2 - img_line.strut.get_center()[1]))
+        repo25.move_to([RIGHT_X - repo25.width / 2, row5.get_top()[1] + 0.22 + repo25.height / 2, 0])
+        # the image's line sits above the repo's, `async` over `async`, clear of the panel's `cli.py` header
+        img_line.shift(UP * (repo25.get_top()[1] + 0.16 + img_box.height / 2 - img_line.strut.get_center()[1]))
         img_line.shift(RIGHT * (code_span(repo25.code, 0, "async")[0].get_left()[0]
                                 - substring(img_line, "async")[0].get_left()[0]))
         img_box.move_to(img_line.strut).align_to(img_line.strut, LEFT).shift(LEFT * 0.25)
         img_cap.next_to(img_box, UP, buff=0.1).align_to(img_box, LEFT).shift(RIGHT * 0.08)
         err5.move_to([RIGHT_X - err5.width / 2, img_cap.get_y(), 0])
         src5 = row_tag([("where", "label"), ("uv 0.12.15", "mono"), ("came from", "label")])
-        assert row5.get_bottom()[1] > STRIP5_TOP + 0.2 and row5.width < 12.8, (row5.get_bottom(), row5.width)
-        assert repo25.get_bottom()[1] > row5.get_top()[1] + 0.25, (repo25.get_bottom(), row5.get_top())
-        assert img_box.get_bottom()[1] > repo25.get_top()[1] + 0.05, (img_box.get_bottom(), repo25.get_top())
+        assert row5.get_bottom()[1] > STRIP5_TOP + 0.15 and row5.width < 12.8, (row5.get_bottom(), row5.width)
+        assert repo25.get_bottom()[1] > row5.get_top()[1] + 0.2, (repo25.get_bottom(), row5.get_top())
+        assert img_box.get_bottom()[1] > repo25.get_top()[1] + 0.12, (img_box.get_bottom(), repo25.get_top())
         assert err5.get_left()[0] > img_cap.get_right()[0] + 0.3 and img_cap.get_top()[1] < 2.6, img_cap.get_top()
         assert err5.get_top()[1] < tr.get_bottom()[1] - 0.1 or err5.get_left()[0] > tr.get_right()[0] + 0.3
         assert img_box.get_left()[0] > -6.55 and repo25.get_left()[0] > -6.55
@@ -708,7 +709,8 @@ class Deploy(VoiceScene):
             u_old, u_new = under(old, TURN), under(new, VENV)
             self.play(Create(u_old), Indicate(old, color=TURN, scale_factor=1.1), run_time=0.6)
             self.play(Create(u_new), Indicate(new, color=VENV, scale_factor=1.08), run_time=0.7)
-            self.add(img_line, repo25)
+            # re-add the split rows, then the underlines: the code panel's opaque box would hide u_new
+            self.add(img_line, repo25, u_old, u_new)
             vo.wait_until("If Google refuses a request")
             self.play(FadeIn(note5, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("quietly prints your input back")
@@ -744,7 +746,7 @@ class Deploy(VoiceScene):
             tm = substring(card6.rows[0], "toomanyrequests")
             u6 = under(tm, ERR, y=card6.rows[0].strut.get_bottom()[1] - 0.02)
             self.play(Create(u6), Indicate(tm, color=ERR, scale_factor=1.12), run_time=0.7)
-            vo.wait_until("Docker Hub limits anonymous pulls")
+            vo.wait_until("Docker Hub limits")      # also matches the reworded line proposed by the ASR review
             lim_row = next(r for r in card6.rows if "pull rate limit" in r.text)
             lim = substring(lim_row, "pull rate limit")
             ul = under(lim, TURN, y=lim_row.strut.get_bottom()[1] - 0.02)

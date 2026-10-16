@@ -326,6 +326,9 @@ S07:
   zh:
   - "它会看到你笔记本上的目录，里面没有 venv，所以激活会失败。"
   - "第 9 行的 uv project environment 这个变量，防的就是这个。"
+  en_display:
+  - null
+  - "That's what line 9, UV_PROJECT_ENVIRONMENT, prevents."
 - en: "Type docker run, dash dash r m, dash t i, dash v with the mount, and the image name. Copy it from the README, quotes included, and pause to run it."
   zh:
   - "输入 docker run，加上 --rm 和 -ti，带挂载的 -v，再加上 image 名。"

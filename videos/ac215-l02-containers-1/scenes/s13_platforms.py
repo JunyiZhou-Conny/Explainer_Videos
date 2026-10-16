@@ -504,8 +504,9 @@ class Platforms(VoiceScene):
             self.play(Create(mac4_b), FadeIn(mac4_t, shift=LEFT * 0.1), run_time=0.6)
             self.play(FadeIn(cd4, shift=UP * 0.1), run_time=0.5)
         # neither note is narrated: time to read them before the picture goes. The dashed row and the arm64 it
-        # would read pulse once (the eye pairs them, and nothing sits still for more than ~3 s)
-        self.play(Indicate(mac4_b, color=INK, scale_factor=1.04), Indicate(mac4_t[1], color=INK, scale_factor=1.12),
+        # would read pulse once (the eye pairs them, and nothing sits still for more than ~3 s). 1.05 at most: the
+        # `linux/arm64` sits 0.15 right of "built on a Mac:", and 1.12 closed that gap at the pulse's peak
+        self.play(Indicate(mac4_b, color=INK, scale_factor=1.04), Indicate(mac4_t[1], color=INK, scale_factor=1.05),
                   run_time=0.6)
         self.wait(2.4)
 
@@ -763,8 +764,9 @@ class Platforms(VoiceScene):
             riders = [mi_amd.copy(), mi_arm.copy()]
             self.play(FadeTransform(riders[0], menu8.rows[0], path_arc=-0.3),
                       FadeTransform(riders[1], menu8.rows[1], path_arc=0.3),
+                      # colour only: the span is 6.8 wide, so even 1.06 ran it into "build" and "…" at the peak
                       Indicate(code_span(p8.code, 6, "--platform linux/amd64,linux/arm64 --push"), color=TURN,
-                               scale_factor=1.06), run_time=0.9)
+                               scale_factor=1.0), run_time=0.9)
             self.add(menu8)
             self.play(FadeIn(err8, shift=LEFT * 0.1), run_time=0.4)
         self.wait(3.0)                    # time to read line 27 and the erratum before the panel changes

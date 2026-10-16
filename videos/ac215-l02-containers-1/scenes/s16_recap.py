@@ -116,6 +116,9 @@ RATE = 1 / 60                                               # dial turns per sec
 # S14's dial starts at "The meter starts" (24:56.3 in the 2026-10-15 draft) and sweeps at 1/60 turn/s
 # until S14 freezes it before its last fade (26:34.0); S15 (26:35-28:36, 121 s) carries it on at the
 # same rate. Re-measure if S14 or S15 changes length by more than a few seconds (1 s = 6 degrees).
+# These are clock values. A rendered updater loses one frame of dt per play()/wait(), so S14's needle
+# really stops near 1.55 turns at 30 fps (1.48 in the 15 fps draft). Starting S16 from the clock value
+# therefore errs forward, never back.
 S14_END = (1594.0 - 1496.3) / 60                            # 1.63 turns
 S15_END = S14_END + 121 / 60                                # 3.65 turns: S16's dial starts here
 SM_C, SM_W, SM_H = np.array([4.45, -0.88, 0]), 3.8, 2.55    # beat 1: the VM in the right column

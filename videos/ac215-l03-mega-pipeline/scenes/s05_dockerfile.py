@@ -25,7 +25,8 @@ Beats (script.md "## S05", one voiceover block each):
     YELLOW tag "remember this line" (wiggles on "Soon").
  5  Bar on line 10; its card line turns PINK, "where the key is · a relative path", with a small
     PINK signpost glyph; `secrets/` underlines PINK.
- 6  The panel scrolls to PANEL(12–21). The nine `&& \` pulse; `RUN` drops one fat ORANGE slab. The
+ 6  The panel scrolls to PANEL(12–21). The nine `\` pulse on "backslash", then the nine `&&` on
+    "double ampersands"; `RUN` drops one fat ORANGE slab. The
     slab zooms up (an ORANGE inset over the card, dashed zoom lines to the slab): "apt lists" pages
     appear (line 12), ORANGE packages fill in (13–14), the pages crumple and vanish inside the slab
     (15–16); on "cost nothing" the "apt lists" label is struck through and the apt slab on the
@@ -54,9 +55,10 @@ Beats (script.md "## S05", one voiceover block each):
     paste into transcribe_audio" under the card.
 12  The appendix card fades. Under the file row a GREY card: "Dockerfile = FROM python:3.12-slim-
     bookworm (README line 41) / + the README's six code blocks, in order: / lines 45 · 50–55 ·
-    60–69 · 76–77 · 82–83 · 88–89", and ▶ your turn beside the file row (together, so a paused
-    frame shows the recipe); `Dockerfile` underlines, the FROM line and then the six block numbers
-    pulse as named. Everything fades: empty frame.
+    60–69 · 76–77 · 82–83 · 88–89 / one blank line between blocks → 30 lines, numbered as in this
+    video", and ▶ your turn beside the file row (together, so a paused frame shows the recipe);
+    `Dockerfile` underlines, the FROM line, the six block numbers, then the blank-line row pulse
+    as named ("30 lines" with the file row's "· 30 lines"). Everything fades: empty frame.
 """
 
 from pathlib import Path
@@ -611,8 +613,10 @@ class WriteDockerfile(VoiceScene):
         b179.set_fill(TURN, 0.16).move_to([afr.get_x(), r179.get_y(), 0])
         noff = tag("no ffmpeg", ERR).next_to(r179, RIGHT, buff=0.35)
         # rows 199-200 are the appendix's extras (BRIEF: "it adds set -ex and the man-page loop")
-        xtra = tag("199–200: extra lines you can leave out", S.GREY).next_to(rws[2], RIGHT, buff=0.35)
-        xtra.shift(UP * 0.04)                    # clear of row 200's glyphs below
+        # a row-high tag (the house tag is taller than the row pitch and grazed row 200's glyphs),
+        # centred on row 199's strut
+        xtra = row_tag("199–200: extra lines you can leave out", S.GREY)
+        xtra.next_to(rws[2], RIGHT, buff=0.35).set_y(rws[2][1].strut.get_y())
         nopaste = stamp("don't paste into transcribe_audio", ERR, size=PT, angle=0.04)
         nopaste.next_to(afr, DOWN, buff=0.1).align_to(afr, LEFT).shift(RIGHT * 0.35)
         assert nopaste.get_bottom()[1] > card.get_top()[1] + 0.05, nopaste.get_bottom()
@@ -639,7 +643,14 @@ class WriteDockerfile(VoiceScene):
                 bl.add(seps[i - 1])
             bl.add(n)
         bl.arrange(RIGHT, buff=0.16)
-        rows3 = VGroup(fl, sl, bl).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+        # the layout rule that keeps the student's line numbers equal to the video's (S06's
+        # Docker warning names "line 10", S07 names lines 9 and 10)
+        GAP_A, GAP_B = "one blank line between blocks →", "30 lines, numbered as in this video"
+        gap = label(f"{GAP_A} {GAP_B}", PT, INK)           # one Text: one baseline, real spacing
+        _na = len("".join(GAP_A.split()))                   # Text has no glyphs for spaces
+        assert len(gap) == _na + len("".join(GAP_B.split())), len(gap)
+        gap_a, gap_b = gap[:_na], gap[_na:]
+        rows3 = VGroup(fl, sl, bl, gap).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
         ffr = box(rows3.width + 0.6, rows3.height + 0.45, S.GREY, fill=S.BG, fill_opacity=0.95,
                   radius=0.12).move_to(rows3)
         final = VGroup(ffr, rows3).next_to(frow, DOWN, buff=0.45).align_to(frow, LEFT)
@@ -659,5 +670,10 @@ class WriteDockerfile(VoiceScene):
             vo.wait_until("then copy the README's")
             self.play(LaggedStart(*[Indicate(n, color=TURN, scale_factor=1.25) for n in nums],
                                   lag_ratio=0.35), run_time=2.0)
+            vo.wait_until("with one blank line")
+            self.play(Indicate(gap_a, color=TURN, scale_factor=1.06), run_time=0.8)
+            vo.wait_until("so your line numbers")
+            self.play(Indicate(gap_b, color=TURN, scale_factor=1.06),
+                      Indicate(fr_n, color=TURN, scale_factor=1.12), run_time=0.8)
             self.wait(max(0.05, vo.remaining(0.05)))
             self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
