@@ -169,6 +169,16 @@ def make_stack(x: float, floor_y: float, heights, texts=TEXTS):
     return st, slabs, st.brace(slabs[:4], "base image")
 
 
+def first_half(a: float) -> float:
+    """Rate function done by halfway: what leaves before the rest arrives."""
+    return smooth(min(1.0, a / 0.5))
+
+
+def last_part(a: float) -> float:
+    """Rate function that starts at 60 %: what arrives once a moving object has passed its spot."""
+    return smooth(max(0.0, (a - 0.6) / 0.4))
+
+
 def words(slabs) -> VGroup:
     return VGroup(*[s.text for s in slabs if s.text is not None])
 
@@ -491,6 +501,7 @@ class InsideTheImage(VoiceScene):
         lst.move_to([4.6 - lst.width / 2, -0.3, 0])
         unz = VGroup(label("≈ 47.6 MB compressed download", 20, S.GREY), label("→ unpacked on disk", 20, S.GREY))
         unz.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
+        assert len(unz[0]) == len(lst[2]) + len("download"), (len(unz[0]), len(lst[2]))   # glyphs, no spaces
 
         with self.voiceover(SAY[2]) as vo:
             g = self.park(st2, slabs2, br2, card, *sizes2)
@@ -518,13 +529,20 @@ class InsideTheImage(VoiceScene):
                 hs = H_ALL[:k + 1] + H_TOP[k + 1:]
                 _, ref, new_br = make_stack(SX, SFLOOR, hs)
                 lab = size_at(BASE_SIZES[k], ref[k], SYSTEM)
-                # S04's compressed list becomes the note: these are the same layers, unpacked
-                extra = [FadeOut(VGroup(lst[0], lst[1])), ReplacementTransform(lst[2], unz[0]),
-                         FadeIn(unz[1], shift=RIGHT * 0.1)] if k == 0 else []
+                extra = []
+                if k == 0:      # S04's compressed list becomes the note: these are the same layers, unpacked
+                    n_tot = len(lst[2])     # its total is the note's first words: each glyph moves, none morphs
+                    kept, more = VGroup(*unz[0][:n_tot]), VGroup(*unz[0][n_tot:])
+                    extra = [FadeOut(VGroup(lst[0], lst[1]), rate_func=first_half), ReplacementTransform(lst[2], kept),
+                             FadeIn(more, shift=RIGHT * 0.1, rate_func=last_part),
+                             FadeIn(unz[1], shift=RIGHT * 0.1, rate_func=last_part)]
                 moves = [m.animate.set_y(ref[4 + i].box.get_center()[1]) for i, m in enumerate(sizes3)]
                 moves += [m.animate.set_y(ref[i].box.get_center()[1]) for i, m in enumerate(base_lab)]
                 self.play(*st3.restack(hs), Transform(br3, new_br), FadeIn(lab, shift=LEFT * 0.1), *moves, *extra,
-                          run_time=0.5)
+                          run_time=0.8 if k == 0 else 0.5)
+                if k == 0:
+                    self.remove(kept, more, unz[1])
+                    self.add(unz)
                 base_lab.append(lab)
         self.wait(1.6)                       # the full stack, real sizes, the note: a moment to read
 

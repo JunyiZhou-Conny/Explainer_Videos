@@ -58,11 +58,11 @@ from common import (
     clock_glyph,
     excerpt,
     extra_tag,
+    file_row,
     grey_tag,
     illustration_tag,
     key_glyph,
     lref,
-    lref_swap,
     model_box,
     note,
     person,
@@ -90,6 +90,7 @@ from manim import (
     DashedLine,
     FadeIn,
     FadeOut,
+    FadeTransform,
     Group,
     GrowArrow,
     GrowFromEdge,
@@ -245,9 +246,11 @@ def blur_map() -> VGroup:
 
     def soft(m, fill: float = 0.05):
         m.set_fill(S.GREY, fill)
-        h = m.copy().set_fill(opacity=0).set_stroke(S.GREY, 12, opacity=0.08)
-        c = m.set_stroke(S.GREY, 1.8, opacity=0.55)
-        halo.add(h)
+        for w, o in ((18, 0.05), (9, 0.08)):                     # the blur: wide faint strokes
+            halo.add(m.copy().set_fill(opacity=0).set_stroke(S.GREY, w, opacity=o))
+        ghost = m.copy().set_fill(opacity=0).set_stroke(S.GREY, 1.6, opacity=0.22)
+        halo.add(ghost.shift(np.array([0.04, -0.03, 0])))          # a double image
+        c = m.set_stroke(S.GREY, 1.6, opacity=0.42)
         core.add(c)
         return c
 
@@ -387,18 +390,18 @@ class Hook(VoiceScene):
             vo.wait_until("a fictional tale")
             self.play(Create(ul), run_time=0.5)
             vo.wait_until("A model trained before")
-            self.play(FadeOut(VGroup(panel, ul), target_position=story.get_top(), scale=0.1),
-                      FadeIn(cal, shift=RIGHT * 0.2), run_time=0.7)
-            self.remove(panel, ul)
+            self.play(FadeIn(cal, shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("has never read it")
             self.play(FadeIn(before, shift=UP * 0.1), Indicate(cal, color=S.GREY, scale_factor=1.2),
                       run_time=0.7)
             vo.wait_until("so it answers from")
-            self.play(bars.animate.set_stroke(ERR, 2.5, opacity=1), run_time=0.7)
+            self.play(bars.animate.set_stroke(ERR, 1.6, opacity=1), run_time=0.7)
             gap_a = story.get_top() + UP * 0.2
             gap_b = before.get_bottom() + DOWN * 0.15
             qmark.move_to((gap_a + gap_b) / 2)
             vo.wait_until("How do we make it")
+            self.play(FadeOut(VGroup(panel, ul), target_position=story.get_top(), scale=0.1), run_time=0.5)
+            self.remove(panel, ul)
             self.play(Write(qmark), run_time=0.6)
             self.play(qmark.animate(rate_func=there_and_back).scale(1.25), run_time=0.7)
 
@@ -439,16 +442,21 @@ class Hook(VoiceScene):
         road2 = DashedLine(a_pt, b_pt, color=S.GREY, stroke_width=4, dash_length=0.16)
         road3 = arc_road(a_pt, b_pt, -2.0)
         apex1, apex3 = road1.point_from_proportion(0.5), road3.point_from_proportion(0.5)
-        prompt = box(1.9, 0.8, DATA, fill=mix(DATA, 0.08), fill_opacity=1, radius=0.12).move_to(apex1)
+        prompt = box(2.3, 0.8, DATA, fill=mix(DATA, 0.08), fill_opacity=1, radius=0.12).move_to(apex1)
         prompt_l = note("prompt", INK).next_to(prompt, DOWN, buff=0.12)
         rng = np.random.default_rng(3)
         pages, spots = VGroup(), []
-        for i in range(18):
-            p = Rectangle(width=0.3, height=0.38, stroke_color=DATA, stroke_width=2) \
+        pc = prompt.get_center()
+        for i in range(14):                      # first the prompt fills up, two neat rows of pages
+            spots.append((pc + np.array([(i % 7 - 3) * 0.3, 0.17 - (i // 7) * 0.34, 0]), 0.0))
+        for i in range(12):                      # then it overflows: pages pile over the top edge
+            x = rng.uniform(-1.05, 1.05)
+            spots.append((pc + np.array([x, rng.uniform(0.42, 0.6), 0]), rng.uniform(-0.45, 0.45)))
+        spots += [(pc + np.array([-1.32, -0.12, 0]), 0.6), (pc + np.array([1.34, -0.2, 0]), -0.5)]
+        for _ in spots:
+            p = Rectangle(width=0.24, height=0.3, stroke_color=DATA, stroke_width=2) \
                 .set_fill(mix(DATA, 0.4), 1).move_to(pile.get_top() + DOWN * 0.1).set_opacity(0)
             pages.add(p)
-            spots.append((np.array([rng.uniform(-1.15, 1.15), rng.uniform(1.15, 1.95), 0]),
-                          rng.uniform(-0.5, 0.5)))
         cross = cross_mark(0.42, ERR, stroke=6).move_to(road1.point_from_proportion(0.75))
         garbage = label("garbage", 26, ERR).next_to(cross, RIGHT, buff=0.2).shift(UP * 0.12)
         clock_bg = Circle(radius=0.36, stroke_width=0).set_fill(S.BG, 1)
@@ -462,19 +470,21 @@ class Hook(VoiceScene):
             c = chunk_card(0.42, 0.28).move_to(pile.get_top() + DOWN * 0.1).set_opacity(0)
             cards.add(c)
             fan.append(fan_at + np.array([0.035 * i, 0.025 * i, 0]))
-            dest.append(llm3.get_left() + np.array([-0.55 + 0.03 * i, -0.75 + 0.025 * i, 0]))
+            dest.append(llm3.get_bottom() + np.array([-0.6 + 0.135 * i, -0.42, 0]))
         exam = tag("open-book exam · our image", TURN).move_to([2.3, -3.12, 0])
 
         with self.voiceover(SAY[3]) as vo:
             tgt = top_grp.copy().scale(ks)
-            tgt.move_to([-0.6, 3.48 - tgt.height / 2, 0])
-            lr = lref_swap(self, lr, "A8–A10")
-            self.play(top_grp.animate.scale(ks).move_to(tgt), run_time=0.7)
-            self.play(FadeIn(pile), FadeIn(pile_l), FadeIn(llm3), run_time=0.5)
-            self.play(Create(road1), FadeIn(prompt), FadeIn(prompt_l), run_time=0.6)
+            tgt.move_to([-0.25, 3.48 - tgt.height / 2, 0])
+            lr_new = lref("A8–A10")
+            self.play(FadeOut(lr), FadeIn(lr_new), top_grp.animate.scale(ks).move_to(tgt),
+                      FadeIn(pile), FadeIn(pile_l), FadeIn(llm3), run_time=0.8)
+            self.remove(lr)
+            lr = lr_new
+            self.play(Create(road1), FadeIn(prompt), FadeIn(prompt_l), run_time=0.5)
             self.add(pages)
             self.play(LaggedStart(*[p.animate(path_arc=-1.0).move_to(s).rotate(r).set_opacity(1)
-                                    for p, (s, r) in zip(pages, spots)], lag_ratio=0.12), run_time=1.3)
+                                    for p, (s, r) in zip(pages, spots)], lag_ratio=0.1), run_time=1.3)
             vo.wait_until("and you get garbage")
             self.play(prompt.animate.set_stroke(ERR), road1.animate.set_stroke(ERR, opacity=0.6),
                       Create(cross), FadeIn(garbage, shift=LEFT * 0.15), run_time=0.6)
@@ -494,6 +504,7 @@ class Hook(VoiceScene):
             self.add(cards)
             self.play(LaggedStart(*[c.animate(path_arc=0.8).move_to(f).set_opacity(1)
                                     for c, f in zip(cards, fan)], lag_ratio=0.1), run_time=0.9)
+            self.wait(0.3)
             self.play(LaggedStart(*[c.animate(path_arc=0.5).move_to(d) for c, d in zip(cards, dest)],
                                   lag_ratio=0.06), run_time=0.9)
             vo.wait_until("an open-book exam")
@@ -511,7 +522,7 @@ class Hook(VoiceScene):
         nd = mp.nodes
         targets = [nd[1].get_top() + UP * 0.08, nd[3].get_top() + UP * 0.08,
                    nd[0].get_bottom() + DOWN * 0.08, nd[4].get_bottom() + DOWN * 0.08]
-        spots4 = [(-3.9, 1.95), (-0.3, 1.95), (-4.7, -1.95), (0.6, -1.95)]
+        spots4 = [(-4.3, 1.98), (0.0, 1.98), (-4.9, -1.98), (0.45, -1.98)]
         qs, arrows = VGroup(), VGroup()
         for s, (x, y), t_pt in zip(QUESTIONS, spots4, targets):
             c = chip(s, TURN, size=26, text_color=TURN, fill_opacity=0.0)
@@ -538,6 +549,8 @@ class Hook(VoiceScene):
 
         # ========================================================== 5. how to follow along
         tr = tracker("Run", 3)
+        readme = VGroup(file_row("llm-rag/README.md", size=26), note("beside this video", size=24))
+        readme.arrange(DOWN, buff=0.25).move_to([0, 0.4, 0])
         rx0, ry0 = -6.58, 3.58                                 # the ring stays inside the safe frame
         rx1, ry1 = tr.get_right()[0] + 0.18, tr.get_bottom()[1] - 0.14
         ring_ = RoundedRectangle(width=rx1 - rx0, height=ry0 - ry1, corner_radius=0.12, stroke_color=TURN,
@@ -551,8 +564,10 @@ class Hook(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             clear_stage(self, run_time=0.7)
+            self.play(FadeIn(readme, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("Top left, the tracker")
-            self.play(FadeIn(tr, shift=DOWN * 0.2), run_time=0.5)
+            self.play(FadeTransform(readme, tr), run_time=0.7)
+            self.remove(readme)
             self.play(Create(ring_), run_time=0.4)
             for _ in range(2):
                 self.play(ring_.animate(rate_func=there_and_back).set_stroke(width=7), run_time=0.5)
@@ -578,19 +593,23 @@ class Hook(VoiceScene):
         head = label("Recorded October 16, 2026", 28, INK)
         rows = VGroup(*[label(s, 24, INK) for s in ROWS6]).arrange(DOWN, buff=0.42, aligned_edge=LEFT)
         body = VGroup(head, rows).arrange(DOWN, buff=0.5, aligned_edge=LEFT)
-        rows.shift(RIGHT * 0.75)
+        rows.shift(RIGHT * 1.05)                               # a column for the icons
         card = box(body.width + 0.9, body.height + 0.8, S.GREY, fill_opacity=0.04).move_to(body)
         VGroup(card, body).move_to([0, 0.75, 0])
         assert card.get_left()[0] > -6.6 and card.get_right()[0] < 6.6, card.width
-        tick = check_mark(0.36, DATA).move_to([rows[0].get_left()[0] - 0.45, rows[0].get_center()[1], 0])
+        icon_x = rows.get_left()[0] - 0.6
+        tick = check_mark(0.36, DATA).move_to([icon_x, rows[0].get_center()[1], 0])
         rec = recorded_tag().next_to(rows[1], RIGHT, buff=0.3)
         assert rec.get_right()[0] < card.get_right()[0] - 0.1, rec.get_right()
         kg = key_glyph(0.36, S.GREY)
-        kg.move_to([rows[2].get_left()[0] - 0.45, rows[2].get_center()[1], 0])
-        kx = cross_mark(0.42, S.GREY, stroke=5).move_to(kg)
+        kg.move_to([icon_x, rows[2].get_center()[1], 0])
+        assert kg.get_right()[0] < rows[2].get_left()[0] - 0.15, kg.get_right()
+        kx = cross_mark(0.46, S.GREY, stroke=5).move_to(kg)
         env = chip("Linux laptop · Docker Engine 29.8.2 · Compose v5.6.0", S.GREY, size=22)
         at_rec = recording_tag()
-        VGroup(env, at_rec).arrange(RIGHT, buff=0.3).next_to(card, DOWN, buff=0.45)
+        envg = VGroup(env, at_rec).arrange(RIGHT, buff=0.3).next_to(card, DOWN, buff=0.45)
+        whole = VGroup(card, body, tick, rec, kg, kx, envg)
+        whole.shift(UP * (0.15 - whole.get_center()[1]))           # card and chip centred together
         look = rows[2][-len("whattolookfor"):]                 # "what to look for" (glyphs: no spaces)
 
         with self.voiceover(SAY[6]) as vo:

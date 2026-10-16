@@ -960,6 +960,7 @@ class Recap(VoiceScene):
         nxt = VGroup(n_box, n_body)
         place(nxt, right=EDGE, top=card1.get_top()[1])
         assert card2.get_right()[0] < nxt.get_left()[0] - 0.2 and card2.get_bottom()[1] > -3.5, card2.get_right()
+        assert card1.get_right()[0] < nxt.get_left()[0] - 0.2, (card1.get_right(), nxt.get_left())
         assert nxt.get_bottom()[1] > -3.5, nxt.get_bottom()
         assert n_body.get_right()[0] < n_box.get_right()[0] - 0.15, n_body.get_right()
         assert finals[-1].get_bottom()[1] > card1.get_top()[1] + 0.15

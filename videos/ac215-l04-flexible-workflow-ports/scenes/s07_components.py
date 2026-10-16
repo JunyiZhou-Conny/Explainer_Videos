@@ -863,8 +863,16 @@ class RunComponents(VoiceScene):
             pen = pencil(0.45).next_to(ic_lap, LEFT, buff=0.15)
             ed = note("in your editor").next_to(pen, LEFT, buff=0.15)
             assert ed.get_left()[0] > t2.title.get_right()[0] + 0.2
-            self.play(FadeOut(cap, rate_func=lambda a: min(1.0, 2.5 * a)), ReplacementTransform(ln, ln2),
+            # "student@laptop:~" stays, the folder path grows out of "~" and "$" slides to its end
+            k = P_HOME.index("~") + 1
+            n2 = len(p_comp(C))
+            old_pre, old_end = glyph_range(ln, 0, k), glyph_range(ln, k, k + 1)
+            new_pre, new_path, new_end = glyph_range(ln2, 0, k), glyph_range(ln2, k, n2 - 1), glyph_range(ln2, n2 - 1, n2)
+            self.play(FadeOut(cap, rate_func=lambda a: min(1.0, 2.5 * a)), ReplacementTransform(old_pre, new_pre),
+                      ReplacementTransform(old_end, new_end), FadeIn(new_path, shift=RIGHT * 0.3),
                       FadeIn(ic_lap), FadeIn(ic_ctr), FadeIn(pen, shift=DOWN * 0.15), FadeIn(ed), run_time=0.5)
+            self.remove(ln, new_pre, new_path, new_end)
+            self.add(ln2)
             vo.wait_until("the window shows it at once")
             # the edit: the same file blinks on both sides at the same instant
             self.play(Wiggle(pen, scale_value=1.15, rotation_angle=0.08), flash(ic_lap, TURN, 1.3),

@@ -750,14 +750,15 @@ class KeepTheKeyOut(VoiceScene):
             pin(self, c_r2, x_r2, run_time=0.6,
                 anim=AnimationGroup(FadeIn(x_r2, shift=LEFT * 0.1),
                                     Indicate(o_n[0].glyphs, color=VENV, scale_factor=1.05)))
-            # back to HOME: the log leaves (and the title says "laptop" again), the strip keeps the run,
-            # and V6 returns (the box at home); then the folder pours in: the key stays on the sieve
+            # the 10 rows hold until "The key stayed out": then back to HOME, the log leaves (the title
+            # says "laptop" again), the strip keeps the run, V6 returns with the box at home, and the
+            # folder pours in: the key stays on the .dockerignore sieve
+            vo.wait_until("The key stayed out of the image")
             hs = home_shift(v6)
             for m in crate_group(v6):
                 m.shift(hs)
             shrink_home(self, t, v6, [*c_r2.rows, o_n[0]], ("folder", "book", "sieve_git", "crate", "sieve_image"),
                         pre=[retitle(t, "laptop")])
-            vo.wait_until("The key stayed out of the image")
             k_out = pour_image(self, v6, caught=True, run_time=1.0)
             chk.next_to(v6.crate.get_right(), RIGHT, buff=0.15).set_y(v6.slab.get_center()[1])
             self.play(Create(chk), v6.slab.animate.set_stroke(VENV, 3), Indicate(k_out, color=KEY, scale_factor=1.4),
