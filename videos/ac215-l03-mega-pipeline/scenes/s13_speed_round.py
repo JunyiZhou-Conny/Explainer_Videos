@@ -72,7 +72,8 @@ Beats (script.md "## S13", one voiceover block each):
     `README.md · lines 148–149` + GREY tag "same as -d · -s" under the tracker. It types
     `python cli.py --download`, `python cli.py --synthesis` (a compact GOLD "billed" tag beside
     it), `exit` (GREY frame, laptop), `docker build -t synthesis_audio_en .` → 42-c-rebuild.txt
-    lines 3, 14–17; CACHED GREEN; ▶ your turn by the build (held 1 s).
+    lines 3, 14–17; CACHED GREEN. "pause to run": ▶ your turn beside `--download` as soon as it is
+    typed (wiggles; it stays until the section switch), a second ▶ by the rebuild once it is typed.
  8  The terminal clears; the tracker switches: "README › translate_text", 13 dots, and the section
     name pulses. "races through the same setup": dots 1–5 ripple. The montage starts at "cd, key"
     (fast typing): TRACKER D1 `cd ../translate_text`; D2 the GOLD key drops into secrets/; D3
@@ -100,7 +101,8 @@ Beats (script.md "## S13", one voiceover block each):
 11  TRACKER D10 → D13. V8 goes; the terminal returns (11 rows, container). README chip
     `README.md · lines 155–157` + "same as -d · -t · -u". It types the three commands (compact
     GOLD "billed" by --translate), `exit`, `docker build -t translate_text .` → 52-d-rebuild.txt
-    lines 3, 14–17; ▶ your turn (held 1 s).
+    lines 3, 14–17. "Pause to run": ▶ your turn beside `--download` as soon as it is typed (wiggles;
+    it stays until the section switch), a second ▶ by the rebuild once it is typed.
 12  The terminal clears to 8 rows while the tracker switches: "README › synthesis_audio", 12 dots.
     A quicker montage: E1 `cd ../synthesis_audio`; E2 key; E3 `uv init --bare` → 60 line 2; E4
     the Dockerfile line 3 flashes; E5 `docker build -t synthesis_audio .` → 61 lines 3, 14; E6
@@ -583,6 +585,34 @@ def leave(scene, t, prompt: str, run_time: float = 0.3, extra=()):
     _retitle(scene, t, "laptop", S.GREY, (S.GREY_DARK, 2), prompt, run_time, extra)
 
 
+def _out_early(a: float) -> float:
+    """rate_func: an outgoing picture is gone by 60 % of the run."""
+    return smooth(min(1.0, a / 0.6))
+
+
+def _in_late(a: float) -> float:
+    """rate_func: the incoming terminal and chip start at 40 % of the run (they barely overlap the
+    outgoing picture, whose code panel sits where the chip lands)."""
+    return smooth(max(0.0, (a - 0.4) / 0.6))
+
+
+def back_to_terminal(scene, old, t, chip, note, tr_anim, run_time: float = 0.6):
+    """One move from a V8 picture to the pause terminal: the picture goes, the terminal, the README
+    chip and its 'same as' note come in, and the tracker steps on."""
+    scene.play(FadeOut(old, rate_func=_out_early), FadeIn(t, rate_func=_in_late),
+               FadeIn(chip, shift=DOWN * 0.1, rate_func=_in_late), FadeIn(note, shift=DOWN * 0.1, rate_func=_in_late),
+               tr_anim, run_time=run_time)
+
+
+def turn_on(scene, t, line, run_time: float = 0.3):
+    """▶ your turn beside the first command of a pause, pinned to its row so it stays until the
+    terminal clears. Returns the tag (the caller wiggles it)."""
+    yt = beside(your_turn(), t, line)
+    assert yt.get_left()[0] > line.glyphs.get_right()[0] + 0.1, (yt.get_left(), line.glyphs.get_right())
+    pin(scene, line, yt, run_time=run_time)
+    return yt
+
+
 # ------------------------------------------------------------------ the scene
 class SpeedRound(VoiceScene):
     def construct(self):
@@ -927,11 +957,13 @@ class SpeedRound(VoiceScene):
         assert rc7.get_bottom()[1] > strip_top(10) + 0.1
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(api, p88, bar, stub, arc, base, rlab, crate, cost5, route, r151)),
-                      FadeIn(t2), run_time=0.6)
-            self.play(FadeIn(rc7, shift=DOWN * 0.1), FadeIn(sm7, shift=DOWN * 0.1), tr.goto(10), run_time=0.4)
-            tcmd(self, t2, CMDS[C][0], 0.45)
-            self.play(tr.goto(11), run_time=0.25)
+            back_to_terminal(self, VGroup(api, p88, bar, stub, arc, base, rlab, crate, cost5, route, r151), t2,
+                             rc7, sm7, tr.goto(10))
+            l7a = tcmd(self, t2, CMDS[C][0], 0.4)
+            vo.wait_until("pause to run")
+            # ▶ on "pause", beside the first command to run (as in E10): it stays until the section switch
+            yt7 = turn_on(self, t2, l7a)
+            self.play(Wiggle(yt7, scale_value=1.12, rotation_angle=0.02 * TAU), tr.goto(11), run_time=0.6)
             l7 = tcmd(self, t2, CMDS[C][1], 0.45)
             ct7 = beside(ttag("billed", COST), t2, l7)
             pin(self, l7, ct7, run_time=0.3)
@@ -939,11 +971,11 @@ class SpeedRound(VoiceScene):
             tcmd(self, t2, "exit", 0.25)
             leave(self, t2, P_C)
             c7 = tcmd(self, t2, BUILD[C], 0.5)
+            yt7b = beside(your_turn(), t2, c7)
+            pin(self, c7, yt7b, run_time=0.25)                # and on the rebuild as soon as it is typed (as in E12)
             o7, _ = live_build(self, t2, RBLD[C])
             cached_green(self, o7[1])
-            yt7 = beside(your_turn(), t2, c7)
-            pin(self, c7, yt7, run_time=0.35)
-            self.wait(1.0)                                    # hold the pause point
+            self.wait(0.6)                                    # the CACHED rows, before the section switch
 
         # ========================================================== 8 · D1-D5: the montage, first half
         dfD = file_panel(f"files/{D}.Dockerfile", 3, 3, f"{D}/Dockerfile")
@@ -1082,24 +1114,26 @@ class SpeedRound(VoiceScene):
         assert rc11.get_bottom()[1] > strip_top(11) + 0.08, (rc11.get_bottom(), strip_top(11))
 
         with self.voiceover(SAY[11]) as vo:
-            self.play(FadeOut(VGroup(api2, folder, p58, bar10, cost10, nostub, fr_pg, saved, bucket, bcap, up_note)),
-                      FadeIn(t3), run_time=0.55)
-            self.play(FadeIn(rc11, shift=DOWN * 0.1), FadeIn(sm11, shift=DOWN * 0.1), tr.goto(10), run_time=0.35)
-            for k, cmd in enumerate(CMDS[D]):
-                if k:
-                    self.play(tr.goto(10 + k), run_time=0.2)
-                ln = tcmd(self, t3, cmd, 0.4)
-                if k == 1:
-                    pin(self, ln, beside(ttag("billed", COST), t3, ln), run_time=0.25)
+            back_to_terminal(self, VGroup(api2, folder, p58, bar10, cost10, nostub, fr_pg, saved, bucket, bcap,
+                                          up_note), t3, rc11, sm11, tr.goto(10))
+            l11a = tcmd(self, t3, CMDS[D][0], 0.4)
+            vo.wait_until("Pause to run")
+            # ▶ beside the first command to run, as soon as it is typed: it stays until the section switch
+            yt11 = turn_on(self, t3, l11a)
+            self.play(Wiggle(yt11, scale_value=1.12, rotation_angle=0.02 * TAU), tr.goto(11), run_time=0.6)
+            l11 = tcmd(self, t3, CMDS[D][1], 0.4)
+            pin(self, l11, beside(ttag("billed", COST), t3, l11), run_time=0.25)
+            self.play(tr.goto(12), run_time=0.2)
+            tcmd(self, t3, CMDS[D][2], 0.4)
             self.play(tr.goto(13), run_time=0.2)
             tcmd(self, t3, "exit", 0.25)
             leave(self, t3, P_D)
             c11 = tcmd(self, t3, BUILD[D], 0.45)
+            yt11b = beside(your_turn(), t3, c11)
+            pin(self, c11, yt11b, run_time=0.25)              # and on the rebuild as soon as it is typed (as in E12)
             o11, _ = live_build(self, t3, RBLD[D])
             cached_green(self, o11[1], run_time=0.3)
-            yt11 = beside(your_turn(), t3, c11)
-            pin(self, c11, yt11, run_time=0.35)
-            self.wait(1.0)                                    # hold the pause point
+            self.wait(0.6)                                    # the CACHED rows, before the section switch
 
         # ========================================================== 12 · E1-E9: the montage again; the help slip
         dfE = file_panel(f"files/{E}.Dockerfile", 3, 3, f"{E}/Dockerfile")

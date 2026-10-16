@@ -48,8 +48,9 @@ Beats (script.md "## S03", one voiceover block each):
     lines 50–51 · same as L1" beside the first `git clone` row and ▶ your turn beside the cd row
     (wiggles on "Pause and run both").
  7  TRACKER A5 · extra. The picture leaves; the strip grows back to 10 rows WITHOUT clearing (the
-    clone and cd rows, with their tags, stay until the listing scrolls them off). `ls -a` (row tag
-    `extra`) at the waiting prompt -> laptop/05 lines 4-12 (the clone's own listing; lines 2-3 are
+    clone and cd rows, with their tags, stay until `ls -a` is typed under them; then they fade in
+    place and `ls -a` slides up to row 0). `ls -a` (row tag `extra`, which comes in as those rows
+    fade) at the waiting prompt -> laptop/05 lines 4-12 (the clone's own listing; lines 2-3 are
     . and ..). Dockerfile.txt gets a YELLOW bar and the GREY row tag "the solution"; dashed GREY
     ghost chips `Dockerfile` and `uv.lock` appear side by side on that row, right of the listing, as
     they are named; "not in the repo" comes under the first and slides to the pair's middle.
@@ -83,6 +84,7 @@ SAY = NARRATION["S03"]
 LS_A = "ls -a"                                           # extra (not in the README)
 STOP = "docker stop <CONTAINER ID>"                      # README.md:116, said, not run
 PRUNE_A = "docker system prune -a"                       # said, not run
+WINPTY = "in Git Bash: winpty docker run …"              # a hint for the README's later run command
 
 C01 = capture("01")                                      # laptop/01-container-ls.txt
 assert C01.cmd == CONTAINER_LS, C01.cmd
@@ -217,7 +219,7 @@ class CleanSlate(VoiceScene):
         # ========================================================== 0 · open a terminal
         note = VGroup(label("on a Mac: zsh, a % prompt", 22, S.GREY),
                       label("on Windows: Ubuntu (WSL) or Git Bash", 22, S.GREY),
-                      label("in Git Bash: winpty docker run …", 22, S.GREY))
+                      label(WINPTY, 22, S.GREY))
         note.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         note.move_to([t_left + note.width / 2, band_y, 0])
         dd = status_chip("Docker Desktop: running")
@@ -240,8 +242,11 @@ class CleanSlate(VoiceScene):
             vo.wait_until("In Git Bash")
             self.play(FadeIn(note[2], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("put winpty")
-            self.play(Indicate(substring_text(note[2], "in Git Bash: winpty docker run …", "winpty"),
-                               color=INK, scale_factor=1.15), run_time=0.7)
+            self.play(Indicate(substring_text(note[2], WINPTY, "winpty"), color=INK, scale_factor=1.15),
+                      run_time=0.7)
+            vo.wait_until("in front of docker run")
+            self.play(Indicate(substring_text(note[2], WINPTY, "docker run …"), color=INK, scale_factor=1.1),
+                      run_time=0.7)
 
         # ========================================================== 1 · docker container ls
         cc = chip("cannot connect? → start Docker Desktop", S.GREY, size=22)
@@ -454,13 +459,23 @@ class CleanSlate(VoiceScene):
                       track(tr, 5, extra=True), run_time=0.6)
             # no clear: the clone and cd rows (with their tags) stay while the strip grows back to
             # 10 rows and `ls -a` is typed at the waiting prompt under them, so a viewer who pauses a
-            # moment after "Pause and run both" still has the clone URL; the listing scrolls them off
+            # moment after "Pause and run both" still has the clone URL
             resize(self, t, 10)
             lead(vo, "ls dash a", 0.5)
             c7 = type_cmd(self, t, LS_A, 0.4)
-            pin(self, c7, beside(row_tag("extra"), c7), run_time=0.3)
+            # room for the listing: those four rows fade where they are (with the `extra` tag coming
+            # in), then `ls -a` slides up to the first row. Terminal.print's own scroll would carry
+            # them four rows up, over the title bar and out of the terminal, as they fade.
+            old = [ln for ln in t.lines if ln is not c7]
+            x7 = beside(row_tag("extra"), c7)
+            pin(self, c7, x7, run_time=0.3,
+                anim=AnimationGroup(FadeIn(x7, shift=LEFT * 0.1), FadeOut(VGroup(*old))))
+            for ln in old:
+                t.lines.remove(ln)
+                self.remove(ln)
+            self.play(c7.animate.shift(t._slot(0) - c7.strut.get_corner(UL)), run_time=0.3)
             out7 = t.print(self, LISTING, run_time=0.9, lag=0.1)
-            assert list(t.lines).index(c7) == 0, "the listing scrolls `ls -a` up to the first row"
+            assert list(t.lines).index(c7) == 0, "`ls -a` is on the first row, the listing under it"
             df = out7[LISTING.index("Dockerfile.txt")]
             vo.wait_until("There's the solution")
             bar7 = hl_bar(df.glyphs, TURN, 0.25)

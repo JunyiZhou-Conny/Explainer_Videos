@@ -216,7 +216,7 @@ def glow(m, color: str = CLOUD, k: float = 1.3, run_time: float = 0.6):
                           Succession(FadeIn(h, scale=0.7), FadeOut(h, scale=1.2)), run_time=run_time)
 
 
-def pill(g, color: str = ERR, w: float = 0.17, h: float = 0.36, stroke: float = 2.5):
+def pill(g, color: str = ERR, w: float = 0.15, h: float = 0.36, stroke: float = 2.5):
     """A narrow upright ring around one mono glyph (a circled `<`), inside its own character cell
     so it does not touch the neighbouring letters."""
     return RoundedRectangle(width=w, height=h, corner_radius=w / 2 - 0.005, stroke_color=color,
@@ -675,7 +675,7 @@ class ThreeGates(VoiceScene):
             err6 = t.print(self, [(BAD_OUT, ERR)], run_time=0.4)[0]
             vo.wait_until("the shell reads")
             lt, gt = substring(bad, "<"), substring(bad, ">")
-            rings = VGroup(pill(lt), pill(gt))
+            rings = VGroup(pill(lt).shift(LEFT * 0.015), pill(gt).shift(RIGHT * 0.015))  # toward the blank side
             redir = grey_tag("the shell: redirection")
             redir.move_to([VGroup(lt, gt).get_center()[0], err6.strut.get_center()[1] - t.pitch, 0])
             self.play(Create(rings), lt.animate.set_color(ERR), gt.animate.set_color(ERR), run_time=0.6)

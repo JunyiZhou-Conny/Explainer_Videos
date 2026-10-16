@@ -904,32 +904,75 @@ def _drop_bare(scene, t: Terminal):
         t.lines.remove(last)
 
 
-def _first_break(text: str, start: int) -> int:
-    """Index of the first space outside quotes at or after `start` (len(text) if none)."""
-    quote = None
-    for i in range(start, len(text)):
-        ch = text[i]
-        if quote:
-            quote = None if ch == quote else quote
-        elif ch in "\"'":
-            quote = ch
+def _space_levels(text: str) -> dict[int, int]:
+    """For every space of a shell line: 0 outside quotes, 1 inside a "double-quoted" string but
+    outside any inner '...' literal, 2 anywhere else (a '...' string)."""
+    out, outer, inner = {}, None, None
+    for i, ch in enumerate(text):
+        if outer is None:
+            if ch in "\"'":
+                outer = ch
+            elif ch == " ":
+                out[i] = 0
+        elif outer == "'":
+            if ch == "'":
+                outer = None
+            elif ch == " ":
+                out[i] = 2
+        elif inner:
+            if ch == inner:
+                inner = None
+            elif ch == " ":
+                out[i] = 2
+        elif ch == "'":
+            inner = ch
+        elif ch == '"' and text[i - 1] != "\\":
+            outer = None
         elif ch == " ":
-            return i
-    return len(text)
+            out[i] = 1
+    return out
 
 
-def type_cmd(scene, t: Terminal, cmd: str, type_time: float | None = None):
-    """Type `cmd` at the waiting prompt (replacing a bare prompt line if there is one). When
-    prompt + command don't fit a row, the command starts on the row under the prompt, indented
-    4 spaces, if it has no space early enough or fits that row whole; otherwise Terminal.type
-    folds it with " \\". Returns the line (or a VGroup with .rows)."""
-    _drop_bare(scene, t)
-    p = t.prompt + (" " if t.prompt and not t.prompt.endswith(" ") else "")
-    full = p + cmd
-    fits_under = len(cmd) + 4 <= t.max_chars
-    if len(full) <= t.max_chars or (not fits_under and _first_break(full, len(p)) <= t.max_chars - 2):
-        return t.type(scene, cmd, type_time)
-    texts = [p.rstrip()] + t.fold("    " + cmd, first_prefix=4)
+def fold_cmd(text: str, limit: int = 65, first_prefix: int = 0) -> tuple[list[str], bool]:
+    """Fold a typed line (prompt included) into rows of at most `limit` characters, as
+    Terminal.fold does (" \" at the end of a row, the next row indented 4), but quote-aware:
+    it breaks at the last space outside quotes that fits (before an option when one is in the
+    row's last quarter), else at a space inside a "double-quoted" shell string outside any
+    inner '...' literal (bash drops the backslash-newline there, so a python -c one-liner stays
+    valid), else at a space inside a '...' string, and only with no space at all in reach
+    mid-token (hard = True). Returns (rows, hard)."""
+    if len(text) <= limit:
+        return [text], False
+    levels = _space_levels(text)
+    rows, pos, prefix, hard = [], 0, "", False
+    while len(prefix) + len(text) - pos > limit:
+        room = limit - 2 - len(prefix)               # characters of text on this row
+        lo_start = first_prefix if not rows else pos
+        cand = [j for j in levels if lo_start < j <= pos + room]
+        ok = [j for j in cand if levels[j] == 0]
+        opt = [j for j in ok if j + 1 < len(text) and text[j + 1] == "-"]
+        if opt and opt[-1] >= pos + room * 0.75:
+            ok = opt
+        for lv in (1, 2):
+            if not ok:
+                ok = [j for j in cand if levels[j] == lv]
+        if ok:
+            j = ok[-1]
+            rows.append(prefix + text[pos:j] + " \\")
+            pos = j + 1
+        else:
+            hard = True
+            rows.append(prefix + text[pos:pos + room] + " \\")
+            pos += room
+        prefix = "    "
+    rows.append(prefix + text[pos:])
+    return rows, hard
+
+
+def _type_rows(scene, t: Terminal, texts: list[str], n_prompt: int, type_time: float | None,
+               n_typed: int):
+    """Add the rows `texts` (row 0 starts with the prompt: its first n_prompt characters are not
+    typed) and type the rest, as Terminal.type does. Returns the line or a VGroup with .rows."""
     t._make_room(scene, len(texts))
     rows = []
     for k, s in enumerate(texts):
@@ -937,16 +980,39 @@ def type_cmd(scene, t: Terminal, cmd: str, type_time: float | None = None):
         t._place(ln, len(t.lines))
         t.lines.add(ln)
         rows.append(ln)
-    scene.add(rows[0])
-    typed = VGroup(*[g for r in rows[1:] for g in glyph_range(r, 0)])
-    from manim import ShowIncreasingSubsets
-    rt = type_time if type_time is not None else min(2.4, max(0.4, 0.045 * len(cmd)))
-    scene.play(ShowIncreasingSubsets(typed, rate_func=linear), run_time=rt)
+    scene.add(glyph_range(rows[0], 0, n_prompt))
+    typed = VGroup(*[g for g in glyph_range(rows[0], n_prompt)] +
+                   [g for r in rows[1:] for g in glyph_range(r, 0)])
+    if len(typed):
+        from manim import ShowIncreasingSubsets
+        rt = type_time if type_time is not None else min(2.4, max(0.4, 0.045 * n_typed))
+        scene.play(ShowIncreasingSubsets(typed, rate_func=linear), run_time=rt)
     for r in rows:
         scene.add(r)
+    if len(rows) == 1:
+        return rows[0]
     g = VGroup(*rows)
     g.rows, g.text = rows, " ".join(r.text.strip() for r in rows)
     return g
+
+
+def type_cmd(scene, t: Terminal, cmd: str, type_time: float | None = None):
+    """Type `cmd` at the waiting prompt (replacing a bare prompt line if there is one). A line
+    that doesn't fit folds with fold_cmd (at spaces, quote-aware, " \\" + 4-space indent): after
+    the prompt when that needs no hard break, else the command starts on the row under the
+    prompt (indented 4) and folds there. Returns the line (or a VGroup with .rows)."""
+    _drop_bare(scene, t)
+    p = t.prompt + (" " if t.prompt and not t.prompt.endswith(" ") else "")
+    full = p + cmd
+    if len(full) <= t.max_chars:
+        return t.type(scene, cmd, type_time)
+    fits_under = len(cmd) + 4 <= t.max_chars
+    rows_a, hard_a = fold_cmd(full, t.max_chars, len(p))
+    rows_b, hard_b = fold_cmd("    " + cmd, t.max_chars, 4)
+    first_ok = len(rows_a) > 1 and len(rows_a[0]) - 2 > len(p) + 8   # a real start on row 0
+    if not fits_under and first_ok and (not hard_a or hard_b):
+        return _type_rows(scene, t, rows_a, len(p), type_time, len(cmd))
+    return _type_rows(scene, t, [p.rstrip()] + rows_b, len(p.rstrip()), type_time, len(cmd))
 
 
 def cd_prompt(scene, t: Terminal, new_prompt: str, color: str = LAPTOP, run_time: float = 0.8):

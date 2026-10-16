@@ -3,8 +3,9 @@ Quick Reference transcribe_audio step 1).
 
 Beats (script.md "## S06", one voiceover block each):
  0  TRACKER R/1. CODE(transcribe_audio/docker-shell.sh: 6–14), full width, centred under the
-    tracker. Line 7 gets a YELLOW bar, IMAGE_NAME flashes, a two-row tag "image name = / container
-    name" beside it;
+    tracker; its header flashes PURPLE ("its docker-shell.sh"). Line 7 gets a YELLOW bar,
+    IMAGE_NAME flashes, a two-row tag "image name = / container name" beside it (hanging upward
+    from the bar into the empty end of row 6, so line 8's bar stays clear);
     lines 8–9 get bars, both $(pwd) are underlined PINK, tag "the folder you're in" beside line 8.
  1  YELLOW caption "run it from the component folder" beside line 9. Line 10: PINK bar, tag
     "the key's path inside the container" on the blank row 11 under it; line 13: BLUE bar, tag
@@ -51,8 +52,9 @@ Beats (script.md "## S06", one voiceover block each):
 10  TRACKER R/5 · extra: `ls -l docker-shell.sh` → mega-laptop/19 line 2, -rwxr-xr-x boxed; TRACKER
     R/5: `chmod +x docker-shell.sh` → the prompt returns; GREY tag "already executable · needed
     only if the bit got lost". TRACKER R/6: the second terminal gives way to a GREY card (README.md ·
-    line 226): Windows: Git BASH, "the input device is not a TTY" → winpty in front; GREY row "paths
-    mangled (C:/Program Files/Git/…)? → study guide". Fade out to an empty frame.
+    line 226): Windows: Git BASH, "the input device is not a TTY" → winpty in front; "Git BASH" and
+    winpty flash as named, the quoted error turns RED, underlined, at "if Docker says"; then the GREY
+    row "paths mangled (C:/Program Files/Git/…)? → study guide". Fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - Beat 0: line 7's tag has two rows ("image name =" / "container name"): one row is 4.5 wide and
@@ -63,6 +65,7 @@ Deviations from SHOW (and why):
   right under it (line 10 fills the panel).
 - Beat 3: the README card replaces the 28–39 code panel at left, its four rows level with the
   four stations, so "side by side" reads row by row; the code panel's job was done in beat 2.
+  The card and the switchboard cross-fade into beat 4's panel and picture (no empty frame).
 - Beat 4: the chip "docker-shell.sh · line 9" is a GREY header-style caption under the laptop box
   (there is no room for a framed chip inside it).
 - Beat 5: the Dockerfile line sits ABOVE the container with a GREEN line down to the venv box (under
@@ -73,7 +76,8 @@ Deviations from SHOW (and why):
   right of the tracker is 7.9); "build step 2" is a TEAL badge "2" at the row's left margin plus a
   TEAL box on [2/5] (the cut row has no room for the worded badge).
 - Beat 7: "at the time of recording" sits just above the log row, right of the panel header (the
-  68-character row has no room beside it); the drop lands at "already satisfies".
+  68-character row has no room beside it); the drop lands at "already satisfies" and flies straight
+  to the line (a first hop up would park the copy on that tag).
 - Beat 9: the docker inspect is typed on the row under the prompt and folded by this scene at
   spaces (never inside a word: Terminal.type's fold would split `{{println}}`); the rows, joined,
   are the captured command. The kept strip rows are the last three (total 8 / . / ..).
@@ -372,7 +376,8 @@ class DockerShell(VoiceScene):
         pwd = VGroup(under(p0.span(8, "$(pwd)"), LOOKUP, 3, 0.01), under(p0.span(9, "$(pwd)"), LOOKUP, 3, 0.01))
         t7 = tag2(["image name =", "container name"])
         # hangs from line 7's bar upward (row 6 is empty there): line 8's bar stays uncovered
-        t7.next_to(code_row(p0, 7), RIGHT, buff=0.3).set_y(bar7.get_bottom()[1] + 0.01 + t7.height / 2)
+        t7.next_to(code_row(p0, 7), RIGHT, buff=0.3).set_y(bar7.get_bottom()[1] + 0.1 + t7.height / 2)
+        assert t7.get_top()[1] < p0.code.background.get_top()[1] - 0.05      # inside the panel
         t8 = grey_tag("the folder you're in")
         t8.next_to(code_row(p0, 8), RIGHT, buff=0.3).set_y(row_y(p0, 8))
         with self.voiceover(SAY[0]) as vo:
