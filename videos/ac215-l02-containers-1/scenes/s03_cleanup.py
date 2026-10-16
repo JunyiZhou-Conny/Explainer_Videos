@@ -6,8 +6,9 @@ Beats (script.md "## S03", one voiceover block each):
     pulses on "Open a terminal on your laptop" and a GREY chip "Docker Desktop: running" with a
     GREEN dot appears above its top-right corner. On "On a Mac" the prompt pulses and a GREY note
     appears above the terminal's left end, one line per clause: "on a Mac: zsh, a % prompt" /
-    "on Windows: Git Bash · same commands" (the terminal fills the frame down to the bottom edge, so
-    the note sits above it rather than under it).
+    "on Windows: Ubuntu (WSL) or Git Bash" / on "In Git Bash" "in Git Bash: winpty docker run …"
+    (the terminal fills the frame down to the bottom edge, so the note sits above it rather than
+    under it; three lines fit the band between tracker and terminal with 0.2 to spare each side).
  1  TRACKER A1. `docker container ls` -> laptop/01 line 2 (squeezed: the 70-character header does
     not fit a 65-column row). The header pulses; GREY row tag under it "the columns · no rows:
     nothing running". On "If yours can't connect" a GREY chip "cannot connect? → start Docker
@@ -215,7 +216,8 @@ class CleanSlate(VoiceScene):
 
         # ========================================================== 0 · open a terminal
         note = VGroup(label("on a Mac: zsh, a % prompt", 22, S.GREY),
-                      label("on Windows: Git Bash · same commands", 22, S.GREY))
+                      label("on Windows: Ubuntu (WSL) or Git Bash", 22, S.GREY),
+                      label("in Git Bash: winpty docker run …", 22, S.GREY))
         note.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         note.move_to([t_left + note.width / 2, band_y, 0])
         dd = status_chip("Docker Desktop: running")
@@ -235,6 +237,11 @@ class CleanSlate(VoiceScene):
             self.play(FadeIn(note[0], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("on Windows")
             self.play(FadeIn(note[1], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("In Git Bash")
+            self.play(FadeIn(note[2], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("put winpty")
+            self.play(Indicate(substring_text(note[2], "in Git Bash: winpty docker run …", "winpty"),
+                               color=INK, scale_factor=1.15), run_time=0.7)
 
         # ========================================================== 1 · docker container ls
         cc = chip("cannot connect? → start Docker Desktop", S.GREY, size=22)

@@ -103,6 +103,7 @@ from manim import (
     Transform,
     VGroup,
     linear,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -187,6 +188,17 @@ def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
 
 
+def flash_framed(g, color: str = TURN, k: float = 1.2, run_time: float = 0.6):
+    """Indicate for a framed tag or signpost (.box or .board, and .text): it grows, its frame's
+    stroke and its text take `color`, its dark fill stays (Indicate would fill it solid in
+    `color` and hide the text)."""
+    frame = getattr(g, "box", None) or g.board
+    tgt = g.copy().scale(k)
+    tgt[g.submobjects.index(frame)].set_stroke(color)
+    tgt[g.submobjects.index(g.text)].set_color(color)
+    return Transform(g, tgt, rate_func=there_and_back, run_time=run_time)
+
+
 def code_row(panel, n: int):
     """The glyphs of file line n of a src_panel (first row when wrapped)."""
     return panel.code.code_lines[panel.rows_of(n)[0]]
@@ -198,8 +210,8 @@ def row_y(panel, n: int) -> float:
 
 def tag2(lines, color: str = S.GREY, size: float = TAG) -> VGroup:
     """A two-row tag (the house tag's look: text in its colour, dark fill, rounded frame)."""
-    rows = VGroup(*[label(s, size, color) for s in lines]).arrange(DOWN, buff=0.07)
-    fr = box(rows.width + 0.4, rows.height + 0.2, color, fill=S.BG, fill_opacity=0.92, stroke=2,
+    rows = VGroup(*[label(s, size, color) for s in lines]).arrange(DOWN, buff=0.05)
+    fr = box(rows.width + 0.4, rows.height + 0.16, color, fill=S.BG, fill_opacity=0.92, stroke=2,
              radius=0.2)
     rows.move_to(fr)
     g = VGroup(fr, rows)
@@ -331,9 +343,10 @@ def readme_modes(sw) -> VGroup:
 
 
 def windows_card() -> VGroup:
-    """README.md:226 as a GREY card: the Windows rule and the study-guide pointer."""
-    r1 = mixed(["Windows: Git BASH  ·  “the input device is not a TTY”  →  put", ("mono", "winpty", INK),
-                "in front"], TAG, INK, buff=0.16)
+    """README.md:226 as a GREY card: the Windows rule and the study-guide pointer. Row 1's parts:
+    [0] "Windows: Git BASH", [2] the quoted error, [4] winpty."""
+    r1 = mixed(["Windows: Git BASH", "·", "“the input device is not a TTY”", "→  put", ("mono", "winpty", INK),
+                "in front"], TAG, INK, buff=0.2)
     r2 = mixed(["paths mangled", ("mono", "(C:/Program Files/Git/…)?", S.GREY), "→  study guide"],
                TAG, S.GREY, buff=0.2)
     rows = VGroup(r1, r2).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
@@ -355,13 +368,16 @@ class DockerShell(VoiceScene):
         p0.shift(UP * ((TOP + BOTTOM) / 2 + 0.2 - p0.get_center()[1]))
         bar7 = p0.bar(7, TURN)
         bars89 = VGroup(p0.bar(8, TURN), p0.bar(9, TURN))
-        pwd = VGroup(under(p0.span(8, "$(pwd)"), LOOKUP), under(p0.span(9, "$(pwd)"), LOOKUP))
+        # underlines hug the glyphs: the rows are tight, a lower line touches the next row's caps
+        pwd = VGroup(under(p0.span(8, "$(pwd)"), LOOKUP, 3, 0.01), under(p0.span(9, "$(pwd)"), LOOKUP, 3, 0.01))
         t7 = tag2(["image name =", "container name"])
-        t7.next_to(code_row(p0, 7), RIGHT, buff=0.3).set_y(row_y(p0, 7))
+        # hangs from line 7's bar upward (row 6 is empty there): line 8's bar stays uncovered
+        t7.next_to(code_row(p0, 7), RIGHT, buff=0.3).set_y(bar7.get_bottom()[1] + 0.01 + t7.height / 2)
         t8 = grey_tag("the folder you're in")
         t8.next_to(code_row(p0, 8), RIGHT, buff=0.3).set_y(row_y(p0, 8))
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr), FadeIn(p0, shift=UP * 0.15), run_time=0.8)
+            self.play(flash(p0.header, TOOL, 1.06), run_time=0.8)
             vo.wait_until("Line 7 names")
             self.play(FadeIn(bar7), flash(p0.span(7, "IMAGE_NAME")), run_time=0.7)
             self.play(FadeIn(t7, shift=LEFT * 0.1), run_time=0.5)
@@ -376,14 +392,18 @@ class DockerShell(VoiceScene):
         c9.next_to(code_row(p0, 9), RIGHT, buff=0.25).set_y(row_y(p0, 9))
         bar10 = p0.bar(10, LOOKUP, 0.22)
         t10 = grey_tag("the key's path inside the container")
+        # under line 10's bar (its descenders reach the bar's edge), on the blank row 11
         t10.move_to([code_row(p0, 10).get_right()[0] - t10.width / 2,
-                     (row_y(p0, 10) + row_y(p0, 12)) / 2, 0])
+                     bar10.get_bottom()[1] - 0.02 - t10.height / 2, 0])
         bar13 = p0.bar(13, CLOUD, 0.25)
         t13 = grey_tag("Docker Hub account")
         t13.next_to(code_row(p0, 13), RIGHT, buff=0.3).set_y(row_y(p0, 13))
+        assert t10.get_bottom()[1] > t13.get_top()[1] + 0.02
         t14 = grey_tag("default")
         t14.next_to(code_row(p0, 14), RIGHT, buff=0.3).set_y(row_y(p0, 14))
         t14.set_x(max(t14.get_center()[0], t13.get_right()[0] + 0.25 + t14.width / 2))
+        t14.set_y(min(row_y(p0, 14), bar13.get_bottom()[1] - 0.02 - t14.height / 2))   # clear of line 13's bar
+        assert t14.get_bottom()[1] > p0.get_bottom()[1] + 0.05
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(c9, shift=LEFT * 0.15), flash(pwd, TURN, 1.05), run_time=0.7)
             vo.wait_until("Line 10 is")
@@ -449,10 +469,9 @@ class DockerShell(VoiceScene):
         line9.next_to(v5.laptop_frame, DOWN, buff=0.12).align_to(v5.laptop_frame, LEFT).shift(RIGHT * 0.1)
         bar93, bar94 = p4.bar(93, LOOKUP, 0.22), p4.bar(94, LOOKUP, 0.22)
         bar95 = p4.bar(95, LOOKUP, 0.22)
-        gac = under(p4.span(95, "GOOGLE_APPLICATION_CREDENTIALS"), LOOKUP)
+        gac = under(p4.span(95, "GOOGLE_APPLICATION_CREDENTIALS"), LOOKUP, 3, 0.0)   # 20 pt rows: hug the glyphs
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(card, sw, later)), run_time=0.35)
-            self.play(FadeIn(p4, shift=DOWN * 0.1), FadeIn(v5), run_time=0.6)
+            self.play(FadeOut(VGroup(card, sw, later)), FadeIn(p4, shift=DOWN * 0.1), FadeIn(v5), run_time=0.7)
             vo.wait_until("two windows")
             self.play(flash(v5.app, TURN, 1.08), flash(v5.secrets_area, TURN, 1.08), run_time=0.8)
             vo.wait_until("Dash v puts")
@@ -469,7 +488,7 @@ class DockerShell(VoiceScene):
             self.play(FadeOut(walker), FadeOut(line9), FadeIn(bar95), Create(gac), run_time=0.6)
             self.play(*v5.parts_in("post", anim=lambda m: FadeIn(m, shift=UP * 0.35)), run_time=0.8)
             vo.wait_until("a signpost to the key")
-            self.play(flash(v5.post, LOOKUP, 1.06), flash(v5.key, KEY, 1.3), run_time=0.8)
+            self.play(flash_framed(v5.post, LOOKUP, 1.06), flash(v5.key, KEY, 1.3), run_time=0.8)
 
         # ========================================================== 5 · the venv stays visible; the key never copied
         p5 = src_panel(DOCKERFILE, 17, 17, size=20)
@@ -510,8 +529,9 @@ class DockerShell(VoiceScene):
 
         # ========================================================== 6 · cd, then ./docker-shell.sh
         t = term(P_REPO, rows=13)
-        cap15 = VGroup(_header_text("transcribe_audio/README.md · line 15"),
-                       mixed(["“", ("mono", "cd"), "into the", ("mono", "transcribe_audio"), "folder”"]))
+        q15 = mixed(["“", ("mono", "cd"), "into the", ("mono", "transcribe_audio"), "folder”"])
+        q15[0].shift(RIGHT * 0.09)                     # the opening quote hugs `cd`, as the closing one does
+        cap15 = VGroup(_header_text("transcribe_audio/README.md · line 15"), q15)
         cap15.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         cap15.move_to([BAND_X + cap15.width / 2, 3.1, 0])
         pull = mixed(["first build: Docker also pulls", ("mono", "python:3.14-slim-bookworm")])
@@ -534,10 +554,10 @@ class DockerShell(VoiceScene):
             b2 = build_badge(2, words=False).move_to([t.box.get_left()[0] + 0.24, rows[3].strut.get_center()[1], 0])
             box25 = glyph_box(rows[3], "[2/5]", CTR)
             self.play(FadeIn(b2, scale=1.3), Create(box25), *hi_time(rows[3]), run_time=0.6)
-            self.play(flash(rows[3].time_tag, TURN, 1.2), run_time=0.6)
+            self.play(flash_framed(rows[3].time_tag, TURN, 1.2), run_time=0.6)
             vo.wait_until("and writing out the image")
             self.play(*hi_time(rows[7]), run_time=0.4)
-            self.play(flash(rows[7].time_tag, TURN, 1.2), run_time=0.6)
+            self.play(flash_framed(rows[7].time_tag, TURN, 1.2), run_time=0.6)
             vo.wait_until("a first build also pulls")
             self.play(FadeOut(cap15), FadeIn(pull, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("Pause and run it")
@@ -564,18 +584,19 @@ class DockerShell(VoiceScene):
             self.play(FadeIn(pp), FadeIn(vl), run_time=0.6)
             vo.wait_until("the image's Python")
             self.play(Create(box148), run_time=0.4)
+            vo.wait_until("at the time of recording")
             self.play(FadeIn(rec, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("already satisfies")
+            # straight up to its place on the line (a first hop up would park it on the tag)
             lift = v148.copy()
             self.add(lift)
-            self.play(lift.animate.shift(UP * 0.5), run_time=0.4)
-            self.play(Transform(lift, dot.text), FadeIn(dot.dot, scale=2.0), run_time=0.9)
+            self.play(Transform(lift, dot.text), FadeIn(dot.dot, scale=2.0), run_time=1.0)
             self.remove(lift, dot.dot)
             self.add(dot)
             self.play(flash(vl.band, VENV, 1.04), flash(pp.span(6, '">=3.14"'), VENV, 1.15), run_time=0.8)
             vo.wait_until("so uv downloads none")
             self.play(*hi_time(uv_row, VENV), run_time=0.4)
-            self.play(flash(uv_row.time_tag, VENV, 1.25), run_time=0.6)
+            self.play(flash_framed(uv_row.time_tag, VENV, 1.25), run_time=0.6)
 
         # ========================================================== 8 · inside: user app, /app, a new id each run
         with self.voiceover(SAY[8]) as vo:
@@ -591,7 +612,8 @@ class DockerShell(VoiceScene):
             u_app, u_id, u_win = under(p_app, S.GREY, 3), under(p_id, S.GREY, 3), under(p_win, LOOKUP, 3)
             tg_user = grey_tag("user").move_to([p_app.get_left()[0] - 0.05, y1, 0], aligned_edge=LEFT)
             tg_user.set_y(y1)
-            tg_win = tag("the window", LOOKUP).move_to([p_win.get_center()[0] + 0.3, y1, 0])
+            tg_win = tag("the window", LOOKUP).move_to([p_win.get_center()[0], y1, 0])
+            assert tg_win.get_left()[0] > tg_user.get_right()[0] + 0.1
             tg_id = grey_tag("container ID · your numbers will differ")
             tg_id.move_to([p_id.get_left()[0] + 0.15 + tg_id.width / 2, y1 - t.pitch - 0.1, 0])
             vo.wait_until("as user app")
@@ -601,24 +623,29 @@ class DockerShell(VoiceScene):
             vo.wait_until("after the at sign")
             self.play(Create(u_id), FadeIn(tg_id, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("The first check")
-            self.play(FadeOut(VGroup(u_app, u_id, u_win, tg_user, tg_win, tg_id)), run_time=0.3)
-            tr = switch_section(self, tr, "QA", 1, run_time=0.6)
-            session(self, t, C12, (28, 37), type_time=0.6, out_time=0.6)
+            # tags out and tracker switch in one move, so the chip and tick land on "matches the README"
+            # (done one after the other they ran ~1 s past the sentence and delayed SAY[9])
+            qa = tracker("QA", 1)
+            self.play(FadeOut(VGroup(u_app, u_id, u_win, tg_user, tg_win, tg_id)),
+                      FadeOut(tr, shift=UP * 0.25), FadeIn(qa, shift=DOWN * 0.25), run_time=0.6)
+            tr = qa
+            session(self, t, C12, (28, 37), type_time=0.45, out_time=0.45)
             chip98 = readme_chip("transcribe_audio/README.md · lines 98–107")
             tick = check_mark(0.3, VENV)
             same = label("identical", CAPTION, VENV)
             band8 = VGroup(chip98, tick, same).arrange(RIGHT, buff=0.2)
             band8.move_to([tr.get_right()[0] + 0.35 + band8.width / 2, BAND_Y, 0])
-            self.play(FadeIn(chip98, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("matches the README")
-            self.play(Create(tick), FadeIn(same), run_time=0.5)
+            self.play(FadeIn(chip98, shift=DOWN * 0.1), run_time=0.35)
+            self.play(Create(tick), FadeIn(same), run_time=0.4)
 
         # ========================================================== 9 · three extra checks; the mounts from outside
         with self.voiceover(SAY[9]) as vo:
-            self.wait(0.7)
+            self.wait(1.1)                      # the "identical" tick stays a moment (tracker caption needs its room)
             self.play(FadeOut(band8), caption_extra(tr, True), run_time=0.4)
             type_extra(self, t, C03.cmd)
             t.print(self, [(C03.line(2), VENV)], run_time=0.3)
+            vo.wait_until("the signpost points")
             type_extra(self, t, C05.cmd)
             t.print(self, [(C05.line(2), LOOKUP)], run_time=0.3)
             vo.wait_until("and slash secrets is empty")
@@ -635,8 +662,7 @@ class DockerShell(VoiceScene):
             cap14.move_to([t2.box.get_left()[0] + 0.15 + cap14.width / 2,
                            (t2.box.get_bottom()[1] + t.box.get_top()[1]) / 2, 0])
             m_rows = t2.print(self, MOUNTS, run_time=0.5)
-            self.play(FadeIn(cap14), run_time=0.4)
-            self.play(flash(substring(m_rows[0], "-> /app"), LOOKUP, 1.1),
+            self.play(FadeIn(cap14), flash(substring(m_rows[0], "-> /app"), LOOKUP, 1.1),
                       flash(substring(m_rows[1], "-> /secrets"), LOOKUP, 1.1), run_time=0.7)
 
         # ========================================================== 10 · chmod +x (harmless); winpty on Windows
@@ -659,8 +685,15 @@ class DockerShell(VoiceScene):
             vo.wait_until("Step 6")
             self.play(tr.goto(6), FadeOut(t2), run_time=0.6)
             self.play(FadeIn(card226.frame), FadeIn(card226.header), FadeIn(card226.rows[0]), run_time=0.6)
+            r226 = card226.rows[0]
+            vo.wait_until("use Git BASH")
+            self.play(flash(r226[0], TURN, 1.06), run_time=0.6)
             vo.wait_until("and put winpty in front")
-            self.play(flash(card226.rows[0][1], TURN, 1.08), run_time=0.7)
+            self.play(flash(r226[4], TURN, 1.12), run_time=0.7)
+            vo.wait_until("if Docker says")
+            err = under(r226[2], ERR, 3, 0.06)
+            self.play(r226[2].animate.set_color(ERR), Create(err), run_time=0.6)
+            self.wait(0.6)
             self.play(FadeIn(card226.rows[1], shift=UP * 0.1), run_time=0.5)
         self.play(FadeOut(*self.mobjects), run_time=0.8)
         self.wait(0.3)

@@ -54,7 +54,7 @@ in bold.
     - 9 bolds the first one;
     - 10, 11 and 12 reveal one definition each.
   - 13: "Tutorial: Data Labeling: Label Studio + CLI", the two-container architecture diagram
-    with five numbered callouts.
+    with four numbered callouts (1, 2, 3 and 5).
   - 14: the tutorial's steps (create a bucket, run the labeling container, follow the repo). It
     has the link and QR code, beside a cartoon character hauling huge wedges of cheese.
   - 15–18: "Data Labeling (Continued)", other labeling tools:
@@ -82,8 +82,8 @@ in bold.
       → Connecting the Application → Using the Data;
     - 33: why mount at all;
     - 34: the `gcsfuse` command, taken apart token by token.
-  - 35: "Takeaway". There is no single industry standard for data versioning tools. It sits
-    beside a meme captioned "You're not that guy, pal, trust me".
+  - 35: "Takeaway": no one versioning tool is the industry standard. Below it is a meme
+    captioned "You're not that guy, pal, trust me".
   - 36: "DVC vs lakeFS vs Delta Lake/Iceberg", the comparison table again with an "Example"
     question per tool.
 - **Slide 37 · agenda** ("Data Monitoring" in bold).
@@ -95,8 +95,8 @@ in bold.
 
 ## Key ideas
 
-1. **Labels are the ground truth a supervised model learns from and is graded against.** Their
-   accuracy and consistency limit the model. A wrong label teaches a wrong pattern. Human
+1. **Labels are the ground truth a supervised model learns from and is graded against.**
+   Accurate, consistent labels make a better model. A wrong label teaches a wrong pattern. Human
    annotators add context that automation misses. Labeling the model's own mistakes and the hard
    edge cases is how the next, better dataset version is made. (Slide 4)
 2. **The tutorial's job is to turn unlabeled cheese photos into labeled ones.** The class set has
@@ -157,7 +157,7 @@ in bold.
 10. **Three concepts, each with its tools.**
     - The *data lake* is the overall architecture.
     - A *table format* is a set of rules that organizes data files and metadata into tables, with
-      schemas and versions. Delta Lake and Apache Iceberg are two competing open table formats.
+      schemas and versions. Delta Lake and Apache Iceberg are two alternative open table formats.
     - *Time travel* means querying an earlier table version. It only works while that version's
       metadata and files are still kept.
     - The *data version-control tools* are DVC, which versions dataset files and models
@@ -258,7 +258,7 @@ in bold.
     bucket, container, Label Studio and annotators underneath as the answer. Light 1 → 2 → 3 → 4
     in turn.
   - *Compared with the tutorial:* "Labeled" is drawn as photos sorted by cheese. In the tutorial,
-    Label Studio writes one JSON annotation per labeled image into `cheeses_labeled/` and does not
+    Label Studio writes one JSON object per submitted annotation into `cheeses_labeled/` and does not
     sort the photos (`digest.md` §3.1). The slide shows only the labeling half. Unlike the repo's
     unreferenced `pipeline-flow.png` (`digest.md` §10, item 14), it has no versioning container
     and no `dvc_store`.
@@ -331,11 +331,11 @@ in bold.
     - "Using the Data" (32, darkest, white text).
   - *Captions:* an outline down-arrow under the newest box points to its caption. Only the newest
     caption is shown on each slide:
-    - 29: service-account credentials give gcsfuse permission to access GCS;
+    - 29: the service-account key is what lets gcsfuse into GCS;
     - 30: gcsfuse makes the bucket's files appear as a regular folder `/mnt/gcs_data`;
     - 31: a bind mount makes `/mnt/gcs_data/images` also appear at `/app/cheese_dataset`;
-    - 32: the app and DVC use `/app/cheese_dataset` like a local folder, while reads and writes
-      go to the bucket.
+    - 32: the app and DVC treat `/app/cheese_dataset` as an ordinary folder, but every read and
+      write actually lands in the bucket.
   - Slide 28 introduces `gcsfuse` (highlighted in magenta), and the paths are highlighted in
     green.
   - *Purpose:* the chain of three hops: key → bucket mounted as a folder → that folder re-exposed
@@ -390,7 +390,7 @@ in bold.
 | "Data Versioning Container" | 26 | The README calls it "the DVC container" (section "Start the DVC container"). The container is named `data-version-cli`. |
 | "Test Data Version Notebook" | 26 | The notebook's own title is "Tutorial - Data Pipelines, Labeling, Versioning, Cloud Storage" (`digest.md`, header). |
 | "Mounting disks from GCS to a container"; `gcsfuse` | 27–34 | The README covers this in "About docker-entrypoint.sh". The disks are really a bucket, not disks. |
-| "Authenticate", "Bucket Mounting", "Connecting the Application", "Using the Data" | 29–32 | Not named in the README. They match `docker-entrypoint.sh`: `gcloud auth activate-service-account`, then `gcsfuse`, then `mount --bind`. |
+| "Authenticate", "Bucket Mounting", "Connecting the Application", "Using the Data" | 29–32 | Not named in the README. The first three match `docker-entrypoint.sh`: the key file (gcsfuse's own `--key-file`; the separate `gcloud auth activate-service-account` line serves `gcloud`), then `gcsfuse`, then `mount --bind`. "Using the Data" is the `dvc` work that follows. |
 | "service-account credentials" | 29 | The README's key is `data-service-account.json`. |
 | "bind mount" | 31 | Here this means the Linux `mount --bind` run *inside* the container. The README's Docker `-v` folder mounts are also bind mounts, at the host-to-container layer. Same word, two layers. |
 | `$GOOGLE_APP_CREDS` | 34 | A shortened label in the colour-coded line. The real variable, which the slide's own top line uses, is `GOOGLE_APPLICATION_CREDENTIALS`. |
@@ -404,8 +404,8 @@ The deck has very little code. There are no `dvc`, `git`, `docker` or `cli.py` c
 
 - Slide 34, the mount command (shown on two lines):
   - `gcsfuse --key-file=$GOOGLE_APPLICATION_CREDENTIALS $GCS_BUCKET_NAME /mnt/gcs_data`
-- Slide 34, the colour-coded version. The extracted text renders the flag's double dash as a
-  long dash.
+- Slide 34, the colour-coded version. On the slide itself the flag starts with a single long
+  dash (an em dash), not two hyphens (Conflict 10).
   - `gcsfuse —key-file=$GOOGLE_APP_CREDS $GCS_BUCKET_NAME /mnt/gcs_data`
 - Slide 24, the terminal screenshot: `ls`, listing files such as
   `ICML-subm-final-final-v3-final.tex`.
@@ -422,7 +422,7 @@ The deck has very little code. There are no `dvc`, `git`, `docker` or `cli.py` c
 - **Label quality is model quality.**
   - Wrong labels teach wrong patterns.
   - Labels must be consistent as well as accurate.
-  - Model errors and edge cases are where new labels pay off most.
+  - Labeling the model's errors and hard edge cases is how the next dataset version gets better.
 
   (Slide 4)
 - **Manual labeling at scale is slow and inconsistent**, so use a tool. Run that tool locally in
@@ -449,12 +449,12 @@ The deck has very little code. There are no `dvc`, `git`, `docker` or `cli.py` c
 - **No single standard.** The choice depends on data type, scale and platform. The deck
   highlights "no single" in yellow, and a meme warns the viewer against thinking they are the
   exception. (Slide 35)
-- **Mount, don't copy.** Mounting keeps one central dataset in the cloud and avoids stale local
-  copies. (Slide 33)
+- **Mount, don't copy.** Mounting keeps one central dataset in the cloud, so nobody needs a
+  separate local copy. (Slide 33)
 - **Bucket names are unique across GCP**, so every student needs their own name. (Slide 34)
-- **Monitoring is about finding the broken step**, not only about raising alerts. Freshness and
-  drift are examples. Use lineage and metadata for root causes in complex pipelines. (Slides
-  38–39)
+- **Monitoring includes finding the broken step.** Next to quality, freshness, drift and cost,
+  slide 38 lists locating the step that failed between source and model, and slide 39 uses
+  lineage and metadata for root causes in complex pipelines. (Slides 38–39)
 - **Three monitoring approaches.** Rules when the expectations are predefined, ML anomaly
   detection on baseline metrics, and lineage plus metadata for all other cases. (Slide 39)
 
@@ -473,7 +473,7 @@ The deck has very little code. There are no `dvc`, `git`, `docker` or `cli.py` c
   - the "Expose port" idea on slide 13 also comes from L04 and L10.
 - **Tools named without links:**
   - SuperAnnotate (slide 15, home-page screenshot);
-  - Delta Lake, Apache Iceberg, DVC and lakeFS (slides 22–25, 36);
+  - Delta Lake, Apache Iceberg, DVC and lakeFS (slides 22–23, 25, 36);
   - `gcsfuse`, described as an open-source tool by Google (slide 28);
   - Monte Carlo, Datadog and Soda (slide 40).
 - **No homework, milestone or reading is mentioned** anywhere in the deck. The monitoring section
@@ -489,7 +489,7 @@ The deck has very little code. There are no `dvc`, `git`, `docker` or `cli.py` c
 
 | # | Planned section (`digest.md` §8) | Slides on the same ground | Relation |
 |---|---|---|---|
-| 1 | The map (2 min) | 4, 6, 36 (the DVC example question) | Same concept for the labeling half: slide 6 is the README's flow figure. The versioning half of the plan's picture (from `pipeline-flow.png`) is not in this deck, and the plan's honest overlay contradicts slide 6's ending (Conflict 1). |
+| 1 | The map (2 min) | 4, 6, 36 (the DVC example question) | Same concept for the labeling half: slide 6 is the README's flow figure. The versioning half of the plan's picture (from `pipeline-flow.png`) is not in this deck, and the code contradicts slide 6's ending, labeled photos flowing into Colab training (Conflict 1). |
 | 2 | Label Studio in a box (3.5 min) | 5, 7, 8–12, 13, 14 | The tutorial applies it. `docker-shell.sh` is the left half of slide 13: mounted data folder, secrets, the key variable and port 8080. Slides 8–12's three recap concepts are the background for §2–§4. |
 | 3 | Who touches the bytes (3.5 min) | 6 (the two bucket folders), 7, 11 | Mostly tutorial-only. Source and target storage, signed URLs and the direct browser download never appear on the slides; they refine slide 7's privacy claim (Conflict 3). |
 | 4 | CORS, the browser's bouncer (3 min) | 10, 13 (the CLI container, "Shell into container") | CORS is tutorial-only. The two-address aside is slide 10's Docker network, and the CLI container is slide 13's right half. Slide 13 draws no direct line between the containers (Conflict 4). |
@@ -508,10 +508,10 @@ The deck has very little code. There are no `dvc`, `git`, `docker` or `cli.py` c
 | 1 | The dataset: four cheeses from unlabeled web images, annotated with Label Studio | §2, §5 ↔ 5 | Yes. The labels are `brie`, `gouda`, `gruyere`, `parmigiano` in both. |
 | 2 | One bucket with `cheeses_unlabeled` and `cheeses_labeled` as the hub; a labeling container serving Label Studio to annotators | §1, §3, §5 ↔ 6 | Yes on the hub, the folder names and the numbered steps 1–3. They differ on what "labeled" looks like and where it goes next (Conflicts 1–2). |
 | 3 | Run the labeling tool yourself, in Docker | §2 ↔ 7 | Yes. The plan's §3 makes "private" precise: no outside labeling service, but the photos live in your own bucket and the browser fetches them directly (Conflict 3). |
-| 4 | The labeling station's setup: two containers; a mounted data folder, the secrets and the source code; the key in `GOOGLE_APPLICATION_CREDENTIALS`; port 8080; a shell into the CLI container to run `cli.py` | §2, §4 ↔ 13–14 | Yes, flag for flag: the plan's peel-off of `docker-shell.sh` is callouts 1–3, and `docker-shell-CLI.sh` is callout 5. The plan also shows the traffic between the parts, which slide 13 leaves out (Conflict 4), and the names differ (Conflict 5). |
+| 4 | The labeling station's setup: two containers; a mounted data folder, the secrets and the source code; the key in `GOOGLE_APPLICATION_CREDENTIALS`; port 8080; a shell into the CLI container to run `cli.py` | §2, §4 ↔ 13–14 | Yes. The plan's peel-off of `docker-shell.sh` matches callouts 1–3 on the Label Studio side, flag for flag; `docker-shell-CLI.sh` is callout 5, plus the CLI's source-code mount from callout 1. The plan also shows the traffic between the parts, which slide 13 leaves out (Conflict 4), and the names differ (Conflict 5). |
 | 5 | A Docker network lets containers talk to each other | §4 ↔ 10 | Yes. The plan is more concrete: the same server is `localhost:8080` for the browser and `data-label-studio:8080` for the CLI. |
 | 6 | Credentials control access to cloud storage | §2, §3 ↔ 11, 13 | Yes. The plan adds what the slides leave out: the browser never holds the key, and Label Studio hands it a signed URL instead. |
-| 7 | Versioning saves space by storing content once | §7, §8 ↔ 20 ("content-based storage") | Yes. The plan's pause and ponder ("two objects pushed, not six") is the lecture's Efficiency bullet with numbers. |
+| 7 | Versioning saves space by storing content once | §7, §8 ↔ 20 ("content-based storage") | Yes. The plan's third pause and ponder (one new photo, so `dvc push` uploads two objects) and the "2 objects pushed, not 6" counter of digest §3.5 are the lecture's Efficiency bullet with numbers. |
 | 8 | File-based versioning: fingerprint the files, let Git keep the history (DVC) | §7, §8 ↔ 23, 25, 36 | Yes. The plan goes one level deeper than slide 25: Git keeps the fingerprint of a list of fingerprints (Conflict 7). |
 | 9 | The question DVC answers: which data went into this model? | §1 (hook) ↔ 25, 36 | Yes, the plan's hook is slide 36's DVC example question. In L11 no model is trained, so the video can only ask it of a tag (Conflict 1). |
 | 10 | The versioning tutorial: a versioning container, then a check of the versions from Colab | §6–§9 ↔ 26 | Yes. Slide 26 links the same notebook the digest downloaded. |
@@ -522,11 +522,11 @@ The deck has very little code. There are no `dvc`, `git`, `docker` or `cli.py` c
 
 ### 3. Gaps (ranked by value to a student doing the tutorial)
 
-1. **Why version data at all, and why not by renaming files (slides 20, 23–24).** The plan's hook gives one reason (reproduce last week's model). The lecture gives five: track changes, back up and roll back, pass audits, work together, and save space. Its one outright prohibition, the folder of `…final-final-v3-final` copies under "Friends don't let friends do this", is the version-control habit every student already has. It makes the case for Part B in ten seconds, before any hash appears. **Carry it in** §7, as the opening picture and a pause and ponder ("Which of these files is the real final? What changed between v2 and v3?"), with the five reasons as a quick card that lights "Efficiency" for the hash machine.
+1. **Why version data at all, and why not by renaming files (slides 20, 23–24).** The plan's hook gives one reason (reproduce last week's model). The lecture gives five: track changes, back up and roll back, pass audits, work together, and save space. Its one outright prohibition, the folder of `…final-final-v3-final` copies under "Friends don't let friends do this", is the do-it-yourself versioning habit every student already has. It makes the case for Part B in ten seconds, before any hash appears. **Carry it in** §7, as the opening picture and a pause and ponder ("Which of these files is the real final? What changed between v2 and v3?"), with the five reasons as a quick card that lights "Efficiency" for the hash machine.
 2. **Where DVC sits among the tools, and how to choose (slides 22–23, 25, 35–36).** The lecture names four approaches: file-based (DVC), object-store (lakeFS), table-based (Delta Lake, Iceberg) and full snapshots. It draws the dividing line at "Git or no Git" and concludes that there is no single standard; the choice depends on data type, scale and platform. This explains the design the student is building (a bucket *and* a GitHub repo) and directly serves Milestone 2, due 2026-10-20, which asks for basic data or version tracking and accepts snapshot IDs or a light tool such as DVC (`digest.md` §7). **Carry it in** §8, as a closing three-column card with slide 36's example question under each tool, and in §10 as one line of advice for the project.
-3. **Labels are ground truth, and errors feed the next version (slide 4).** Accurate, consistent labels set the model's ceiling, and wrong labels teach wrong patterns. Labeling the model's own mistakes and hard edge cases is how the next, better dataset version is made. This loop is what makes labeling and versioning one lecture, while the code keeps the two halves apart. It also gives the student a reason to label carefully in A11. **Carry it in** §1 (one line under the two jobs, "attach meaning, freeze history") and §5 (before the JSON envelope).
+3. **Labels are ground truth, and errors feed the next version (slide 4).** Accurate, consistent labels make a better model, and wrong labels teach wrong patterns. Labeling the model's own mistakes and hard edge cases is how the next, better dataset version is made. This loop is what makes labeling and versioning one lecture, while the code keeps the two halves apart. It also gives the student a reason to label carefully in A11. **Carry it in** §1 (one line under the two jobs, "attach meaning, freeze history") and §5 (before the JSON envelope).
 4. **The recap quiz: network, credentials, Compose (slides 8–12).** The deck asks students to recall three concepts before labeling and reveals one answer per slide. That is a ready-made pause and ponder, and each answer has a place in the tutorial: the network in §4's two addresses, the credentials in §2's `-v ../secrets` plus the key variable, and Compose in the A14 "Extra", which the plan never shows. **Carry it in** §2, as its opening beat.
-5. **Why mount instead of download (slide 33).** The dataset stays in the cloud, nobody keeps a stale local copy, programs use ordinary file paths, and everyone works on one central dataset. The plan shows how the mount works but never says why the course chose it. **Carry it in** §6, right after the two pipes, together with the correction in Conflict 9 (DVC still keeps a cache on your disk).
+5. **Why mount instead of download (slide 33).** The dataset stays in the cloud, nobody needs a separate local copy, programs use ordinary file paths, and everyone works on one central dataset. The plan shows how the mount works but never says why the course chose it. **Carry it in** §6, right after the two pipes, together with the correction in Conflict 9 (DVC still keeps a cache on your disk).
 6. **A bucket stores named objects; a data lake is the bucket plus tools (slide 21).** A bucket keeps objects identified by name, with metadata, and nothing else. A data lake leaves the data where it is and adds tools to ingest, find, control access to, prepare and version it; DVC is one of those tools. The first half also explains the tutorial's worst trap: folders in a bucket are only name prefixes, so gcsfuse started without `--implicit-dirs` may not show a folder that has no placeholder object (`digest.md` §6 item 2, with the open question on gcsfuse 3.x defaults in §10; the link to slide 21 is ours, not the slide's). **Carry it in** §6, as a two-card beat before gcsfuse.
 7. **Why Label Studio, and why run it locally (slide 7).** Manual labeling at scale is slow and inconsistent; a tool gives annotators one simple interface; running it in your own container keeps outside services out. **Carry it in** §2, as the one-sentence "why" before `sh docker-shell.sh`.
 8. **Data monitoring (slides 38–40; no tutorial).** The lecture title includes monitoring, and this section answers the open question in `digest.md` §10: monitoring checks quality, freshness, drift (its example: suddenly many more images of one cheese), cost, and which step failed. It names three approaches: rules when expectations are predefined, ML anomaly detection on baseline metrics, and lineage and metadata for all other cases. Slide 38's drift example fits the plan's hook (a 91% model that drops to 84% with no code change). **Carry it in** §10, as a 20-second beat: versioning tells you *what* changed, monitoring tells you *that* something changed. Say plainly that the course has no monitoring tutorial here.
@@ -546,7 +546,7 @@ No captures exist yet, so "today" is the repos at the digest's commits; the capt
 | 6 | **The bucket URI** (slides 16–18): `gcs://production-ml-data-lake/raw_unstructured_ingest/`. | GCS URIs start with `gs://`, as in `dvc remote add -d cheese_dataset gs://YOUR_BUCKET_NAME/dvc_store` (`data-versioning/README.md:279`). | `gs://` | If the curation path appears, write it with `gs://`, and add once: "when you type a bucket address, it starts with gs://". |
 | 7 | **What Git records** (slide 25): DVC gives each file a fingerprint, and Git records which fingerprints belong to each version. | Git holds the six-line pointer `cheese_dataset.dvc`, whose one `md5` is the fingerprint of a `.dir` manifest. The manifest, which lists every file's md5, lives in `.dvc/cache` and `dvc_store/`, not in Git (`digest.md` §3.5–3.6). | Both, at different zoom levels | "One more level: Git keeps the fingerprint of the *list* of fingerprints." This is the plan's §8 rope (tag → commit → pointer → manifest → blobs). |
 | 8 | **"Mounting disks from GCS to a container"** (slides 27–28, 34). | What is mounted is a bucket (object storage) through FUSE. On GCP, "disks" are a different product (Persistent Disk) that this tutorial never touches. | The code | Say "mount a bucket" throughout and add once: "the lecture says disks; it means the bucket, made to look like a folder". |
-| 9 | **No local copy; reads and writes go to the bucket** (slides 32–33). The application and DVC use `/app/cheese_dataset` like a local folder while reads and writes go to GCS, and nobody needs a separate local copy. | Reading works that way: `dvc add` reads each image through the mount. But it then copies every image into `.dvc/cache/files/md5/…` on your laptop's disk, through the `/app` bind mount, and `dvc push` uploads those cache objects to `dvc_store/` through the Storage API (gcsfs), not through the mount. The host's `cheese_dataset/` stays empty (`digest.md` B9–B10, §3.7, E6). New uploads can take about a minute to appear in the mounted folder (`digest.md` §6 item 18). | The code | "Mounting spares you a download of the working folder. DVC still keeps its own cache on your disk: that is where the fingerprints are made, and what `dvc push` uploads." Show the three homes of the bytes (`images/`, `.dvc/cache`, `dvc_store/`), which is the plan's recap question 3. |
+| 9 | **No local copy; reads and writes go to the bucket** (slides 32–33). The app and DVC treat `/app/cheese_dataset` as an ordinary folder whose reads and writes really hit GCS, so no one has to download the dataset. | Reading works that way: `dvc add` reads each image through the mount. But it then copies every image into `.dvc/cache/files/md5/…` on your laptop's disk, through the `/app` bind mount, and `dvc push` uploads those cache objects to `dvc_store/` through the Storage API (gcsfs), not through the mount. The host's `cheese_dataset/` stays empty (`digest.md` B9–B10, §3.7, E6). New uploads can take about a minute to appear in the mounted folder (`digest.md` §6 item 18). | The code | "Mounting spares you a download of the working folder. DVC still keeps its own cache on your disk: that is where the fingerprints are made, and what `dvc push` uploads." Show the three homes of the bytes (`images/`, `.dvc/cache`, `dvc_store/`), which is the plan's recap question 3. |
 | 10 | **The colour-coded command** (slide 34): `gcsfuse —key-file=$GOOGLE_APP_CREDS $GCS_BUCKET_NAME /mnt/gcs_data`, with an em dash in front of `key-file` and a shortened variable name; the first token is captioned "Command to mount containers". | `gcsfuse --key-file=$GOOGLE_APPLICATION_CREDENTIALS $GCS_BUCKET_NAME /mnt/gcs_data` (`data-versioning/docker-entrypoint.sh:11`; line 10 on the starter), which is also the slide's own first line. Typed with an em dash, the flag is not recognised. The command mounts a bucket into the container. | The slide's first line, as in the entrypoint | Split the entrypoint's real line into four chips, using the slide's captions with "mounts the bucket" for the first one. Keep two hyphens and the full variable name. |
 
 Not counted as conflicts:
@@ -560,7 +560,7 @@ Not counted as conflicts:
 
 **General**
 - Tag every section that stands on lecture ground with one grey `lecture_ref(11, "a–b")`, using the ranges below. Re-draw the lecture's diagrams in the series style (laptop GREY, cloud BLUE, containers TEAL) rather than showing slide images or the README PNGs. Re-drawn, they can show today's facts: the two buckets, the JSON envelopes, the missing traffic lines and the local cache.
-- **No slide pictures.** Slides 5, 14, 24, 35 and 41 carry cartoons, memes or a photo of the instructor's terminal. For slide 24, type a fresh `ls` of invented names in the same spirit (`report-final.tex`, `report-final-v2.tex`, `report-final-final-v3.tex`) instead of the screenshot, which shows the instructor's machine prompt and paper files.
+- **No slide pictures.** Slides 5, 14, 24, 35 and 41 carry cartoons, an illustration, a meme or a screenshot of the instructor's terminal, and slide 15 a screenshot of SuperAnnotate's home page. For slide 24, type a fresh `ls` of invented names in the same spirit (`report-final.tex`, `report-final-v2.tex`, `report-final-final-v3.tex`) instead of the screenshot, which shows the instructor's machine prompt and paper files.
 - **Pause and ponder.** The plan has three pauses in about 30 minutes, and the content gate asks for roughly one per two minutes. The lecture supplies five ready-made ones: slide 8's recall quiz (§2), "what's wrong with this folder?" from slide 24 (§7), slide 33's shared central dataset (§6: "a teammate uploads to `images/` while you run `dvc add`; what gets versioned?"), slide 36's example questions as "which tool answers this?" (§8), and slide 38's drift example as the answer to the hook (§10).
 - **Length.** The plan is about 30.5 minutes. Keep each lecture beat to 10–25 seconds and the total addition under about 2.5 minutes. If time is short, shorten §9's failure gallery to one card and let the study guide (§6, item 13) carry the rest.
 - **Two buckets, said once and drawn always.** Slide 6, the README figure and `pipeline-flow.png` all imply one bucket and one flow. Every re-draw should keep `cheese-app-data-demo` and the versioning bucket as two BLUE shapes, so that Conflict 1 never has to be explained twice.

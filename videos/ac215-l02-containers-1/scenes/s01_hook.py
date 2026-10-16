@@ -435,6 +435,9 @@ class Hook(VoiceScene):
             # the strip first (C stays readable a moment longer), then back to the start (A, step 1)
             # for the strip's first command, README step A1
             self.play(FadeIn(t2), FadeIn(prev2), run_time=0.35)
+            slack = vo.time_until("tag appears") - (0.5 + 0.55 + 0.05)   # swap + typing below
+            if slack > 0.05:                          # spend it on C (it is up only ~0.7 s otherwise)
+                self.wait(slack)
             tr_a = tracker_a(1)
             r_new = tracker_ring(tr_a, stroke=2, opacity=0.5)
             swap_tracker(self, old, tr_a, Transform(ring, r_new), FadeTransform(icon, by_ring(where[0], r_new)),

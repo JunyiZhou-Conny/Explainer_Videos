@@ -348,7 +348,8 @@ COUNTS = {"books": 11, "story_chars": 7808, "char-split": 8248, "recursive-split
 BOTTOM = -3.5                    # terminal bottom edge (fixed when it grows or shrinks)
 TRACK_LEFT, TRACK_TOP = -6.5, 3.5
 TERM_W, TERM_PT = 12.6, 22
-MINI_CENTER = np.array([4.88, -2.8, 0])
+MINI_CENTER = np.array([4.88, -2.8, 0])          # bottom right, nothing else down there
+MINI_ABOVE_STRIP = np.array([4.88, -0.6, 0])     # bottom right, above a 3-row strip (bottom -1.33)
 
 # ------------------------------------------------------------------ README trackers
 SECTIONS = {
@@ -979,11 +980,12 @@ def second_terminal(scene, prompt: str = P_REPO, rows: int = 7, top: float = 2.7
     beside(cap, t, ln, buff=0.5)
     scene.play(Indicate(tilde, color=TURN, scale_factor=1.4), FadeIn(cap), run_time=0.8)
     scene.wait(0.6)
+    scene.play(FadeOut(cap), run_time=0.3)
     _drop_bare(scene, t)
     t.set_prompt(prompt)
     ln2 = bare_prompt(scene, t)
-    scene.play(FadeOut(cap), Indicate(glyph_range(ln2, prompt.index(":") + 1, len(prompt) - 1),
-                                      color=TURN, scale_factor=1.05), run_time=0.6)
+    scene.play(Indicate(glyph_range(ln2, prompt.index(":") + 1, len(prompt) - 1),
+                        color=TURN, scale_factor=1.05), run_time=0.6)
     return t
 
 
@@ -1997,14 +1999,15 @@ def model_box(name: str = "LLM", w: float = 1.3, h: float = 0.9, color: str = CL
               sub: str | None = None, size: float = CAPTION) -> VGroup:
     """A model box (the embedding model, the LLM): BLUE rounded box, sans name ("\\n" splits
     rows), optional mono sub-label inside under it. .frame .name .sub"""
-    fr = box(w, h, color, fill_opacity=0.14, radius=0.12, stroke=3)
     nm = VGroup(*[sans(s, size, INK) for s in name.split("\n")]).arrange(DOWN, buff=0.06)
-    nm.move_to(fr)
+    sb = mono(sub, size, color).next_to(nm, DOWN, buff=0.1) if sub else None
+    content = VGroup(nm, sb) if sb is not None else nm
+    fr = box(max(w, content.width + 0.3), max(h, content.height + 0.24), color, fill_opacity=0.14,
+             radius=0.12, stroke=3)
+    content.move_to(fr)
     g = VGroup(fr, nm)
     g.sub = None
-    if sub:
-        sb = mono(sub, size, color).next_to(nm, DOWN, buff=0.1)
-        VGroup(nm, sb).move_to(fr)
+    if sb is not None:
         g.add(sb)
         g.sub = sb
     g.frame, g.name = fr, nm
@@ -2270,6 +2273,17 @@ def _tab(text: str, color: str = S.GREY, dashed: bool = False) -> VGroup:
     return concept_tag(text) if dashed else _keep(tag(text, color))
 
 
+def _tab2(lines, color: str = S.GREY, size: float = TAG) -> VGroup:
+    """A tag of two (or more) centred rows (a long phase name). .box .text"""
+    t = VGroup(*[label(s, size, color) for s in lines]).arrange(DOWN, buff=0.06)
+    b = RoundedRectangle(width=t.width + 0.4, height=t.height + 0.2, corner_radius=0.16,
+                         stroke_color=color, stroke_width=2).set_fill(S.BG, 0.92)
+    t.move_to(b)
+    g = VGroup(b, t)
+    g.box, g.text = b, t
+    return _keep(g)
+
+
 # ------------------------------------------------------------------ V1 · two lanes, one database
 class RagMap(Piece):
     """V1: the lecture's naïve-RAG pipeline (A16, B5) redrawn with the README's steps.
@@ -2294,7 +2308,7 @@ class RagMap(Piece):
 
     YT, YB = 1.15, -1.15
     X = {"books": -5.55, "chunking": -3.75, "embedding": -1.75, "vectors": 0.2, "query": 0.2,
-         "database": 2.15, "user": -5.55, "prompt": 3.95, "llm": 5.65, "answer": 5.65}
+         "database": 2.0, "user": -5.55, "prompt": 3.85, "llm": 5.65, "answer": 5.65}
 
     def __init__(self, show=None, **kw):
         super().__init__(**kw)
@@ -2327,7 +2341,7 @@ class RagMap(Piece):
         add("user", user, [user], LAPTOP)
         q = vec_glyph(1, LOOKUP, 0.6, base=15).move_to([X["query"], yb, 0])
         add("query", q, [q], LOOKUP)
-        pr_box = box(1.55, 1.0, DATA, fill_opacity=0.12, radius=0.1, stroke=3)
+        pr_box = box(1.25, 1.0, DATA, fill_opacity=0.12, radius=0.1, stroke=3)
         pr_txt = VGroup(*[sans(s, CAPTION, INK) for s in ("prompt +", "query +", "context")]) \
             .arrange(DOWN, buff=0.04)
         prompt = VGroup(pr_box, pr_txt.move_to(pr_box)).move_to([X["prompt"], yb, 0])
@@ -2372,22 +2386,24 @@ class RagMap(Piece):
         qlab = sans("question", CAPTION, LOOKUP).move_to([(user.get_right()[0] + em_l) / 2, yb + 0.3, 0])
         self.part("lab_question", qlab, "lab_question" in vis)
 
-        # -- regions (B5's three phases) and their tabs
-        def region(name, x0, x1, y0, y1, tab_text, tab_at):
+        # -- regions (B5's three phases) and their tabs, which sit in the gap between the lanes
+        #    (just under / over their region's border, never on a box)
+        def region(name, x0, x1, y0, y1, tab, tab_at):
             r = box(x1 - x0, y1 - y0, S.GREY, dashed=True, stroke=2.5, radius=0.18)
             r.move_to([(x0 + x1) / 2, (y0 + y1) / 2, 0])
             self.part(name, r, name in vis)
-            t = _tab(tab_text)
-            t.move_to(tab_at(r, t))
-            self.part("tab_" + name[4:], t, "tab_" + name[4:] in vis)
+            tab.move_to(tab_at(r, tab))
+            self.part("tab_" + name[4:], tab, "tab_" + name[4:] in vis)
 
-        region("reg_indexing", -6.2, 2.95, yt - 0.6, yt + 1.0, "Indexing",
-               lambda r, t: r.get_corner(DOWN + LEFT) + RIGHT * (0.2 + t.width / 2))
-        region("reg_retrieval", em_l - 0.15, db_r + 0.25, yb - 0.85, yb + 0.6, "Retrieval",
-               lambda r, t: r.get_corner(UP + LEFT) + RIGHT * (0.2 + t.width / 2))
+        region("reg_indexing", -6.2, db_r + 0.33, yt - 0.6, yt + 1.0, _tab("Indexing"),
+               lambda r, t: np.array([r.get_left()[0] + 0.2 + t.width / 2,
+                                      r.get_bottom()[1] - 0.03 - t.height / 2, 0]))
+        region("reg_retrieval", em_l - 0.15, db_r + 0.25, yb - 0.85, yb + 0.6, _tab("Retrieval"),
+               lambda r, t: np.array([(em_r + db_l) / 2, r.get_top()[1] + 0.03 + t.height / 2, 0]))
+        gtab = _tab2(("Augmentation &", "Generation"))
         region("reg_generation", llm.get_left()[0] - 0.2, llm.get_right()[0] + 0.2, yb - 0.6, yb + 0.6,
-               "Augmentation & Generation",
-               lambda r, t: np.array([min(r.get_center()[0], 6.5 - t.width / 2), r.get_top()[1], 0]))
+               gtab, lambda r, t: np.array([min(r.get_center()[0], 6.45 - t.width / 2),
+                                            r.get_top()[1] + 0.03 + t.height / 2, 0]))
 
         # -- the README's two step titles (lane labels)
         l1 = readme_card("README.md · line 5", ["`Step 1: Chunk -> Embed -> Load`"])
@@ -2406,8 +2422,8 @@ class RagMap(Piece):
             self.part(name, g, name in vis)
 
         gy_t, gy_b = yt - 0.83, yb + 0.83
-        flag("flag_chunk", "Chunk", "--chunk", X["chunking"], gy_t)
-        flag("flag_embed", "Embed", "--embed", X["embedding"], gy_t)
+        flag("flag_chunk", "Chunk", "--chunk", X["chunking"] - 0.45, gy_t)
+        flag("flag_embed", "Embed", "--embed", X["embedding"] + 0.15, gy_t)
         flag("flag_load", "Load", "--load", X["database"] - 0.1, gy_t)
         flag("flag_query", "Query", "--query", X["query"] + 0.1, gy_b)
         flag("flag_chat", "Chat", "--chat", (X["prompt"] + X["llm"]) / 2, gy_b)
@@ -2579,25 +2595,25 @@ class ComposeView(Piece):
         self.door_glyph = dr
 
         # -- the CLI container
-        cb = box(3.1, 2.35, CTR, fill_opacity=0.08, radius=0.16, stroke=3).move_to([-1.1, 1.025, 0])
+        cb = box(2.9, 2.35, CTR, fill_opacity=0.08, radius=0.16, stroke=3).move_to([-1.2, 1.025, 0])
         ct = sans("CLI container", CAPTION, CTR).move_to(cb.get_corner(UP + LEFT) + np.array([0.15, -0.25, 0]),
                                                          aligned_edge=LEFT)
-        w_app = self._window("/app").move_to([-1.75, 1.3, 0])
-        w_sec = self._window("/secrets").move_to([-1.75, 0.5, 0])
+        w_app = self._window("/app").move_to([-1.85, 1.3, 0])
+        w_sec = self._window("/secrets").move_to([-1.85, 0.5, 0])
         cli = VGroup(cb, ct, w_app, w_sec)
         cli.frame = cb
         add("cli", cli)
-        venv = VGroup(box(1.1, 0.5, VENV, fill_opacity=0.15, radius=0.08), mono("/.venv", CAPTION, VENV))
+        venv = VGroup(box(1.0, 0.5, VENV, fill_opacity=0.15, radius=0.08), mono("/.venv", CAPTION, VENV))
         venv[1].move_to(venv[0])
-        add("venv", venv.move_to([-0.15, 1.3, 0]))
+        add("venv", _keep(venv).move_to([-0.42, 1.3, 0]))
         slots = VGroup()
-        for x in (-0.4, 0.15):
+        for x in (-0.65, -0.1):
             sq = Square(0.42).set_fill(LOOKUP, 0).set_stroke(width=0)
             dsh = DashedVMobject(Square(0.42), num_dashes=12).set_stroke(LOOKUP, 2)
             d = mono("$", CAPTION, LOOKUP)
             s = VGroup(sq, dsh, d).move_to([x, 0.5, 0])
             s.fill_sq = sq
-            slots.add(s)
+            slots.add(_keep(s))
         add("slots", slots)
         self.slot_list = slots
         bld = _keep(chip("build: .", VENV, size=CAPTION, font=MONO, fill_opacity=0.9))
@@ -2614,7 +2630,7 @@ class ComposeView(Piece):
         chroma.frame = hb
         add("chroma", chroma)
         self.cyl = cyl
-        nm = mono("llm-rag-chromadb", CAPTION, CTR).move_to([2.7, hb.get_top()[1] + 0.2, 0])
+        nm = mono("llm-rag-chromadb", CAPTION, CTR).move_to([2.7, hb.get_top()[1] + 0.19, 0])
         add("name", nm)
         pc = _keep(chip(":8000", CTR, size=CAPTION, font=MONO, fill_opacity=0.9))
         pc.box.set_fill(_mix(CTR, 0.15), 1)
@@ -2623,7 +2639,7 @@ class ComposeView(Piece):
 
         # -- the network
         rail_y = -0.7
-        rail = Line([-2.65, rail_y, 0], [3.95, rail_y, 0], color=CTR, stroke_width=7)
+        rail = Line([-2.65, rail_y, 0], [3.8, rail_y, 0], color=CTR, stroke_width=7)
         rl = mono("llm-rag-network", CAPTION, CTR).move_to([-1.35, rail_y - 0.28, 0])
         add("rail", VGroup(rail, rl))
         self.rail_line = rail
@@ -2651,6 +2667,9 @@ class ComposeView(Piece):
         add("route_secrets", rs)
         add("route_data", rd)
         add("route_port", VGroup(rp, rp_tip, rp_lab))
+        for r in (ra, rs, rd):          # behind the windows: a route ends under its window
+            self.remove(r)
+            self.add_to_back(r)
         self.routes = {"app": ra, "secrets": rs, "data": rd, "port": rp}
         self._ends = {"app": (r1, w_app), "secrets": (r2, w_sec), "data": (r3b, w_data),
                       "port": (dr, pc)}
@@ -2667,19 +2686,20 @@ class ComposeView(Piece):
         clt = sans("Vertex AI", CAPTION, INK).move_to(cl)
         add("cloud", VGroup(cl, clt))
         vx = 4.85
-        vline = VGroup(DashedLine([-1.1, cb.get_top()[1], 0], [-1.1, 2.55, 0], color=CLOUD, stroke_width=3),
-                       DashedLine([-1.1, 2.55, 0], [vx, 2.55, 0], color=CLOUD, stroke_width=3),
-                       DashedLine([vx, 2.55, 0], [vx, cl.get_top()[1] - 0.15, 0], color=CLOUD, stroke_width=3))
+        vy = 2.68
+        vline = VGroup(DashedLine([-1.1, cb.get_top()[1], 0], [-1.1, vy, 0], color=CLOUD, stroke_width=3),
+                       DashedLine([-1.1, vy, 0], [vx, vy, 0], color=CLOUD, stroke_width=3),
+                       DashedLine([vx, vy, 0], [vx, cl.get_top()[1] - 0.15, 0], color=CLOUD, stroke_width=3))
         add("vertex", vline)
-        add("key_ride", key_glyph(0.26).move_to([0.35, 2.55, 0]))
+        add("key_ride", key_glyph(0.26).move_to([0.35, vy, 0]))
 
         # -- Docker Hub
-        hub = shelf("Docker Hub", w=2.4, color=HUB).move_to([5.15, -0.95, 0])
+        hub = shelf("Docker Hub", w=2.3, color=HUB).move_to([5.3, -1.1, 0])
         add("hub", hub)
         st = mono("llm-rag-cli", CAPTION, S.GREY)
         sf = DashedVMobject(RoundedRectangle(width=st.width + 0.3, height=0.42, corner_radius=0.06),
                             num_dashes=24).set_stroke(S.GREY, 2)
-        slot = VGroup(sf, st.move_to(sf)).next_to(hub.board, UP, buff=0.05)
+        slot = _keep(VGroup(sf, st.move_to(sf))).next_to(hub.board, UP, buff=0.05)
         add("hub_slot", slot)
         it = VGroup(mono("chromadb/chroma", CAPTION, CTR), mono(":latest", CAPTION, CTR)) \
             .arrange(DOWN, aligned_edge=LEFT, buff=0.06)
@@ -2688,12 +2708,21 @@ class ComposeView(Piece):
         add("image", img)
 
     @staticmethod
-    def _window(name: str, w: float = 1.65, h: float = 0.5) -> VGroup:
-        fr = box(w, h, CTR, fill=S.BG, fill_opacity=0.9, radius=0.08, stroke=2)
+    def _window(name: str, w: float = 1.45, h: float = 0.5) -> VGroup:
+        fr = box(w, h, CTR, fill=S.BG, fill_opacity=0.95, radius=0.08, stroke=2)
         t = mono(name, CAPTION, INK).move_to(fr)
         g = VGroup(fr, t)
         g.frame, g.text = fr, t
-        return g
+        return _keep(g)
+
+    def fit_top(self, k: float = 0.84, bottom: float | None = None):
+        """Shrink by k (text keeps its size) and sit with the bottom edge at `bottom` (default just
+        above the 3-row strip / a 3-line code strip): about y -1.38..2.9, x -5.4..5.5. Returns self:
+        self.play(cv.animate.fit_top()) or cv.fit_top() before showing it."""
+        bottom = STRIP_TOP + 0.06 if bottom is None else bottom
+        self.rescale(k)
+        self.shift(np.array([0.05 - self.get_center()[0], bottom - self.get_bottom()[1], 0]))
+        return self
 
     def row(self, name: str):
         return self.rows[name]
@@ -3337,10 +3366,10 @@ class PromptStack(Piece):
         start = sb.get_right() + RIGHT * 0.05
         plug_at = llm.frame.get_corner(UP + LEFT) + np.array([0.3, 0, 0])
         loose = VMobject(stroke_color=ERR, stroke_width=5)
-        mid = start + np.array([1.6, -0.15, 0])
-        end = start + np.array([2.6, -0.85, 0])
+        mid = start + np.array([1.0, 0.05, 0])
+        end = start + np.array([1.7, -0.42, 0])
         loose.set_points_smoothly([start, mid, end])
-        plug = Rectangle(width=0.2, height=0.3, stroke_color=ERR, stroke_width=3).set_fill(ERR, 0.5).move_to(end + DOWN * 0.1)
+        plug = Rectangle(width=0.2, height=0.3, stroke_color=ERR, stroke_width=3).set_fill(ERR, 0.5).move_to(end + DOWN * 0.12)
         self.part("cable_loose", VGroup(loose, plug), "cable_loose" in vis)
         cin = VMobject(stroke_color=DATA, stroke_width=5)
         cin.set_points_smoothly([start, start + np.array([2.4, 0.35, 0]), plug_at + UP * 0.35, plug_at])
@@ -3440,7 +3469,10 @@ class Seismograph(Piece):
         self.part("curve", curve, "curve" in vis)
         ty = base + GAP_THRESHOLD * spike_h
         th = DashedLine([-width / 2, ty, 0], [width / 2, ty, 0], color=TURN, stroke_width=4)
-        tl = mono("95th percentile", CAPTION, TURN).next_to(th, UP, buff=0.08).align_to(th, RIGHT)
+        tl = mono("95th percentile", CAPTION, TURN).next_to(th, UP, buff=0.08)
+        left_free = not vals or vals[0] <= GAP_THRESHOLD
+        right_free = not vals or vals[-1] <= GAP_THRESHOLD
+        tl.align_to(th, LEFT if left_free or not right_free else RIGHT)
         self.part("threshold", VGroup(th, tl), "threshold" in vis)
         self.baseline = _ref([0, base, 0])
         self.add(self.baseline)
