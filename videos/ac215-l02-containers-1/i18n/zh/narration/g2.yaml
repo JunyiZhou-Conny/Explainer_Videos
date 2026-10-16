@@ -185,9 +185,10 @@ S13:
   - "授课老师的 image，dlops/simple-translate，不是菜单：只有一个 image，只有 amd64。"
   en_display:
   - "The instructor's image, dlops/simple-translate, is no menu: one image, amd64 only."
-- en: "Our stand-in push is a small menu: amd64, plus an attestation, a record of how the image was built."
+- en: "Our stand-in push is a small menu: amd64, plus an attestation, a record of how the image was built. Built on an M-series Mac, the amd64 row would say arm64."
   zh:
   - "我们在替身上 push 的是一份小菜单：amd64，外加一个 attestation，也就是这个 image 是怎么构建出来的记录。"
+  - "如果是在 M 系列 Mac 上构建的，amd64 那一行就会变成 arm64。"
 - en: "Now ponder. You built on an M-series Mac and pushed. Your VM is an ordinary Intel or AMD machine. Will your image run there?"
   zh:
   - "来想一想。"
@@ -321,15 +322,15 @@ S15:
   - "Also, an extra check shows the published image lags the repo: its cli.py is the older one, without raise_exception=True."
   - null
   - null
-- en: "And if the pull itself fails with too many requests: Docker Hub limits anonymous pulls per network address, which a classroom can hit. Wait a while, or log in first, with sudo docker login."
+- en: "And if pulling the image fails with too many requests: Docker Hub limits how often anonymous users can pull, per network address, which a classroom can hit. Wait a while, or log in first, with sudo docker login."
   zh:
-  - "还有，如果连 pull 本身都失败了，报 toomanyrequests：Docker Hub 按网络地址限制匿名 pull 的次数，一整个教室的人可能会碰到。"
+  - "还有，如果 pull 这个 image 时失败了，报 toomanyrequests：Docker Hub 按网络地址限制匿名用户 pull 的次数，一整个教室的人可能会碰到。"
   - "等一会儿，或者先登录：sudo docker login。"
   en_display:
-  - "And if the pull itself fails with toomanyrequests: Docker Hub limits anonymous pulls per network address, which a classroom can hit."
+  - "And if pulling the image fails with toomanyrequests: Docker Hub limits how often anonymous users can pull, per network address, which a classroom can hit."
   - null
 S16:
-- en: "Before you go, clean up. An extra check, docker ps dash a, shows no containers left behind, thanks to dash dash rm."
+- en: "Before you go, clean up. An extra check, sudo docker ps dash a, shows no containers left behind, thanks to dash dash rm."
   zh:
   - "走之前，先清理一下。"
   - "额外检查 sudo docker ps -a，没有留下任何 container，多亏了 --rm。"

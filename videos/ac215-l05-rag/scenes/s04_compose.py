@@ -29,14 +29,15 @@ Beats (script.md "## S04", one voiceover block each):
     "your repo" covers /app only (/.venv stays visible). A pencil edits a cli.py row on the laptop,
     the file blinks on both sides, GREY tag "no rebuild".
  6  The picture shrinks to the top: a glyph-only thumbnail of V2 (everything the run creates is
-    a faint plan) and, beside it, the Docker Hub shelf at full size. Terminal (10 rows, `laptop`,
+    a faint plan) and, beside it, the Docker Hub shelf at full size. Terminal (9 rows, `laptop`,
     ~/AC215/llm-rag) types `sh docker-shell.sh` -> laptop/07 lines 2–5; as lines 3–5 print, the
     image flies from the shelf into the thumbnail, the rail fills in, the Chroma box fills in.
-    GREY tag on the next row: "first build also pulls python:3.12-slim-bookworm (~48 MB)".
- 7  laptop/07 line 6 and lines 7–8 joined (wrap), RED; on the shelf an empty dashed slot
-    llm-rag-cli with a RED cross; the RED rows fade to GREY with a "harmless" tag.
+    GREY tag on the row under line 5: "first build also pulls python:3.12-slim-bookworm (about
+    48 MB)".
+ 7  laptop/07 line 6 and lines 7–8 joined (folded at spaces), RED; on the shelf an empty dashed
+    slot llm-rag-cli flashes RED; the RED rows fade to GREY with a "harmless" tag.
  8  laptop/07 lines 9–10, 21, 22, 25, 26, …, 36 (BuildKit rows cut, times as GREY tags): 81.5s
-    boxed YELLOW; TEAL badges "build step 2", "5", "6"; 112.26MB YELLOW. The terminal shrinks to
+    underlined YELLOW; TEAL badges "build step 2", "5", "6"; 112.26MB YELLOW. The terminal shrinks to
     the 3-row strip; above it a GREEN parcel "build context · 112 MB" opens: a big GREY block
     ".git · 103 MB" (laptop/05b) holding a small GREEN cylinder (the old database copy), a sliver
     "the rest" with a tiny GREEN chroma.sqlite3 (laptop/14b); an erratum tag "no .dockerignore →
@@ -529,12 +530,14 @@ class TwoContainers(VoiceScene):
         pair = VGroup(d18, d45).arrange(RIGHT, buff=0.4, aligned_edge=DOWN)
         at_bottom(pair)
         w_app = cv.window("app")
-        sheet = VGroup(RoundedRectangle(width=w_app.frame.width, height=w_app.frame.height + 0.06,
+        venv_l = cv.parts["venv"].get_left()[0]
+        sheet_w = min(w_app.frame.width, venv_l - w_app.frame.get_left()[0] - 0.04)  # /.venv stays whole
+        sheet = VGroup(RoundedRectangle(width=sheet_w, height=w_app.frame.height + 0.06,
                                         corner_radius=0.08, stroke_color=S.GREY, stroke_width=2)
                        .set_fill(S.GREY_DARK, 1),
                        label("your repo", CAPTION, INK))
         sheet[1].move_to(sheet[0])
-        sheet.move_to(w_app)
+        at_left(sheet, w_app.frame.get_left()[0], w_app.get_center()[1])
         cli_row = file_row("cli.py")
         at_left(cli_row, r_repo.get_left()[0] + 0.42,
                 (r_repo.get_bottom()[1] + r_sec.get_top()[1]) / 2)

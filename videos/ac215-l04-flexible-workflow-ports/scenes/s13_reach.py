@@ -15,25 +15,25 @@ Beats (script.md "## S13", one voiceover block each):
     matching terminal row flashes.
  2  V6+V7 (ToyNet: laptop zone, street door 127.0.0.1:8090 with the PINK -p route into room
     :9100, both boxes on the toynet rail, room :9200, the blank phone book) fills the upper half.
-    "What does the 127.0.0.1 do?": the door's `127.0.0.1` turns YELLOW. README chip
-    `README.md · line 239` "-p 8090:9100"; the extra `docker run … -p 8090:9100 …` is typed (its
-    -p flag PINK), the ID prints and a dashed TEAL box `gateway-all` (with its own room :9100)
-    appears between the boxes. A dashed PINK request arrow runs from it toward the laptop's door.
+    "What does the 127.0.0.1 do?": the door's `127.0.0.1` turns YELLOW and the extra `docker run
+    … -p 8090:9100 …` is typed; "leaves it out": README chip `README.md · line 239` "-p
+    8090:9100" and the command's -p flag PINK; the ID prints and a dashed TEAL box `gateway-all`
+    (with its own room :9100) appears between the boxes. A dashed PINK request arrow runs from it toward the laptop's door.
     "Docker refuses": 18 line 3 prints wrapped; `Bind for 127.0.0.1:8090 failed: port is already
     allocated` turns RED, the arrow turns RED and stops on a cross, the door flashes RED. "our
     gateway holds 8090": the PINK route flashes; caption "host doors collide / rooms never do"
     under the ghost box (the three rooms unchanged). `docker rm gateway-all` (extra) -> 19 line
     2 with the GREY tag "created anyway · remove it"; the ghost box fades.
- 3  `docker run … -p 8091:9100 …` (extra) -> 20 line 2; `gateway-all` returns as a solid box
-    plugged into the rail, and the second street door `0.0.0.0:8091` opens on the wall. The
-    three-column ps (extra) -> 21 lines 2-5: `0.0.0.0:8091->9100/tcp` YELLOW, the door's label
+ 3  The terminal clears. `docker run … -p 8091:9100 …` (extra) -> 20 line 2; `gateway-all`
+    returns as a solid box plugged into the rail, and the second street door `0.0.0.0:8091` opens
+    on the wall. The three-column ps (extra) -> 21 lines 2-5: `0.0.0.0:8091->9100/tcp` YELLOW, the door's label
     flashes; GREY tag "yours may also list [::]:8091 (IPv6)" in the top band. "other machines":
     the outside machines and their dashed route to that door. "Remove it": `docker rm -f
-    gateway-all` (extra) -> 21 line 6; the box, the door and the machines leave. "That's why the
-    README writes 127.0.0.1": the first door's `127.0.0.1` flashes and the route from the
+    gateway-all` (extra) -> 21 line 6. "That's why the README writes 127.0.0.1": the box, the door
+    and the machines leave as the first door's `127.0.0.1` flashes and the route from the
     laptop's own browser lights up (only the laptop reaches that door).
  4  TRACKER P2/2. The terminal clears. `curl http://localhost:8090` (the route from the browser
-    lights up) -> 22 lines 2-7, …, 154-155 (cut). `curl --max-time 3 http://localhost:9200/health`
+    lights up) -> 22 lines 2-6, 0.7 s later 7, …, 154-155 (cut). `curl --max-time 3 http://localhost:9200/health`
     -> 23 line 2 RED; V7's dashed ":9200 ?" arrow from the laptop stops at the wall and turns RED
     with a cross. README chip `README.md · line 262` "nothing else is using port 9200".
  5  TRACKER P2/3. The terminal clears. `docker exec gateway curl http://processor:9200/health`;
@@ -44,8 +44,9 @@ Beats (script.md "## S13", one voiceover block each):
  6  The terminal leaves. Both boxes' localhost loops dim, a GREY "?" beside each. The command
     chip (two rows, folded as a shell command) appears under the picture with `localhost` boxed
     YELLOW. After the block: PONDER(6 s) card at the bottom right (the picture shows no answer).
- 7  The card and the chip leave, the terminal returns. `docker exec gateway curl --max-time 3
-    http://localhost:9200/health` -> 25: `…` (the progress meter), lines 5-6 joined and wrapped,
+ 7  The card leaves, the terminal returns empty and the chip's command drops into it as the
+    typed `docker exec gateway curl --max-time 3 http://localhost:9200/health` (glyph for glyph,
+    `localhost` still YELLOW) -> 25: `…` (the progress meter), lines 5-6 joined and wrapped,
     RED. "Inside the gateway, localhost is the gateway itself": only now the gateway's loop
     glows YELLOW as a packet dot circles it; "nothing there listens on 9200": the dot turns RED
     with a cross. "the second puzzle": README chip `README.md · line 290` "localhost means the
@@ -57,8 +58,8 @@ Beats (script.md "## S13", one voiceover block each):
     terminal (cleared) grows to 13 rows; `docker network inspect toynet` -> 28 lines 4, …, 16, …,
     32, …, 35, …, 39, …, 42, …; `gateway` / `172.19.0.3/16` and `processor` / `172.19.0.2/16`
     turn PINK, then `172.19.0.0/16`. The terminal shrinks to 6 rows keeping those five lines, V6
-    returns, and the names and addresses fly into the phone book (TransformFromCopy):
-    `processor → 172.19.0.2`, `gateway → 172.19.0.3`.
+    returns, and the names and addresses fly into the phone book (TransformFromCopy, glyph for
+    glyph; the arrow grows from the name): `processor → 172.19.0.2`, `gateway → 172.19.0.3`.
  9  TRACKER PH/5 · extra. The terminal clears. `docker exec gateway cat /etc/resolv.conf`
     (extra) -> 29: …, 6, … with `127.0.0.11` PINK; each box gets its dashed PINK line to the phone
     book, labelled `127.0.0.11`. `docker exec gateway getent hosts processor gateway` (extra) ->
@@ -100,6 +101,11 @@ Deviations from SHOW (and why):
 - Beat 6: the command chip sits under the picture, folded on two rows as a shell command, left of
   the ponder card: above the picture there is only the tracker band, and one 11.5-unit row plus
   the card do not fit under it. The terminal leaves for the ponder and returns in beat 7.
+- Beat 7: the command is not typed a second time: the ponder chip's command drops into the
+  terminal as the typed line (a transform shows it is the same command, and the answer lands on
+  "Inside the gateway" instead of 2 s after it).
+- Beat 4: the README chip for line 262 has trimmed padding (7.0 instead of 7.2 wide, right edge
+  at 6.56) so it keeps 0.4 from the tracker.
 - Beat 7: "the packet loops back" is a PINK dot circling the gateway's loop (ToyNet.loopback);
   "where no :9200 door exists" is the dot turning RED with a cross; it then hops to room :9100.
 - Beat 8: the terminal grows to 13 rows, not 12: the command plus the 12 listed lines.
@@ -184,6 +190,7 @@ from explainer.devops import (
     cell_width,
     check_mark,
     cross_mark,
+    glyph_range,
     mono,
     mono_line,
     substring,
@@ -257,6 +264,46 @@ def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
 def band(m, right: float = BAND_R):
     """Right-aligned in the top band (beside the tracker)."""
     return m.move_to([0, BAND_Y, 0]).align_to([right, 0, 0], RIGHT)
+
+
+def tight_chip(where: str, phrase: str) -> VGroup:
+    """readme_chip with its padding trimmed (0.13 a side, 0.2 between header and phrase): the house
+    chip for line 262 is 7.2 wide and left 0.18 to the tracker in a 7.4 band. .frame"""
+    g = readme_chip(where, phrase)
+    row = g[1]
+    row.arrange(RIGHT, buff=0.2)
+    fr = box(row.width + 0.26, row.height + 0.24, S.GREY, fill=S.BG, fill_opacity=0.92, radius=0.1).move_to(row)
+    g.remove(g.frame)
+    g.add_to_back(fr)
+    g.frame = fr
+    return g
+
+
+def clear_with(scene, t, *anims, run_time: float = 0.5):
+    """Terminal.clear() played together with other animations (one beat instead of two)."""
+    if len(t.lines):
+        scene.play(FadeOut(t.lines), *anims, run_time=run_time)
+        for m in list(t.lines):
+            t.lines.remove(m)
+    elif anims:
+        scene.play(*anims, run_time=run_time)
+
+
+def char_glyphs(row, start: int = 0) -> list:
+    """(character, glyph) pairs of a mono_line from column `start` (spaces have no glyph)."""
+    chars = [c for c in row.text[start:] if not c.isspace()]
+    glyphs = list(glyph_range(row, start))
+    assert len(chars) == len(glyphs), (row.text, len(chars), len(glyphs))
+    return list(zip(chars, glyphs))
+
+
+def into_book(name_g, addr_g, line, n: int) -> TransformFromCopy:
+    """TransformFromCopy of a terminal name and address into a phone-book line "name → address":
+    glyph for glyph (the arrow grows from the end of the name), so each part lands on its own part."""
+    stub = line[n].copy().scale(0.05).move_to(name_g.get_right()).set_opacity(0)
+    src = VGroup(*name_g, stub, *addr_g)
+    assert len(src) == len(line), (len(src), len(line))
+    return TransformFromCopy(src, line)
 
 
 def row_tag(t, line, mob, buff: float = 0.3):
@@ -517,10 +564,10 @@ class WhoCanReach(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(exp), FadeOut(etag), FadeOut(eqs), FadeIn(net), run_time=0.8)
             self.play(d1_ip.animate.set_color(TURN), flash(d1.frame, TURN, 1.2), run_time=0.7)
+            run18 = type_extra(self, t, C18.cmd, type_time=1.5)     # typed as the question is asked
             vo.wait_until("This extra run leaves it out")
-            self.play(FadeIn(ch239, shift=DOWN * 0.1), run_time=0.4)
-            run18 = type_extra(self, t, C18.cmd, type_time=1.6)
-            self.play(substring(run18.rows[1], "-p 8090:9100").animate.set_color(LOOKUP), run_time=0.3)
+            self.play(FadeIn(ch239, shift=DOWN * 0.1),
+                      substring(run18.rows[1], "-p 8090:9100").animate.set_color(LOOKUP), run_time=0.5)
             t.print(self, [C18.line(2)], run_time=0.3)
             self.play(Create(ghost.frame), FadeIn(VGroup(ghost.room, ghost.name)), run_time=0.6)
             vo.wait_until("asking for door 8090 on every address")
@@ -551,14 +598,14 @@ class WhoCanReach(VoiceScene):
         outside = net.parts["outside"]
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(ch239), FadeOut(cap), d1_ip.animate.set_color(INK), run_time=0.4)
-            run20 = type_extra(self, t, C20.cmd, type_time=1.4)
-            self.play(substring(run20.rows[1], "-p 8091:9100").animate.set_color(LOOKUP), run_time=0.3)
+            clear_with(self, t, FadeOut(ch239), FadeOut(cap), d1_ip.animate.set_color(INK), run_time=0.4)
+            run20 = type_extra(self, t, C20.cmd, type_time=0.8)
             t.print(self, [C20.line(2)], run_time=0.3)
-            self.play(Create(ghost2.frame), Create(ghost2.plug), FadeIn(VGroup(ghost2.room, ghost2.name)),
-                      *net.parts_in("door2"), run_time=0.7)
+            self.play(substring(run20.rows[1], "-p 8091:9100").animate.set_color(LOOKUP),
+                      Create(ghost2.frame), Create(ghost2.plug), FadeIn(VGroup(ghost2.room, ghost2.name)),
+                      *net.parts_in("door2"), run_time=0.55)
             vo.wait_until("and the mapping shows 0.0.0.0")
-            type_extra(self, t, PS_FMT, type_time=1.1)
+            type_extra(self, t, PS_FMT, type_time=0.9)
             o21 = t.print(self, C21.at((2, 5)), run_time=0.4)
             zero = substring(o21[1], ZERO_MAP)
             self.play(zero.animate.set_color(TURN), flash(d2.label, TURN, 1.15), FadeIn(ipv6, shift=DOWN * 0.1),
@@ -572,27 +619,27 @@ class WhoCanReach(VoiceScene):
             self.play(walk, run_time=1.0)
             self.play(flash(d2.frame, TURN, 1.3), FadeOut(visitor), run_time=0.5)
             vo.wait_until("Remove it.")
-            type_extra(self, t, RM_F, type_time=0.8)
+            type_extra(self, t, RM_F, type_time=0.6)
             t.print(self, [C21.line(6)], run_time=0.3)
-            self.play(FadeOut(ghost2), *net.parts_out("door2", "outside"), FadeOut(ipv6), run_time=0.6)
             vo.wait_until("That's why the README writes")
-            self.play(d1_ip.animate.set_color(TURN), flash(d1.frame, TURN, 1.25), run_time=0.7)
+            self.play(FadeOut(ghost2), *net.parts_out("door2", "outside"), FadeOut(ipv6),
+                      d1_ip.animate.set_color(TURN), flash(d1.frame, TURN, 1.25), run_time=0.8)
             vo.wait_until("this laptop only")
             self.play(flash_path(map_line, TURN), flash(net.browser, TURN, 1.2), run_time=0.9)
 
         # ============================================================ 4 · from the laptop
-        ch262 = band(readme_chip("README.md · line 262", PH262))
-        assert ch262.get_left()[0] > tr.get_right()[0] + 0.12, ch262.get_left()[0]
+        ch262 = band(tight_chip("README.md · line 262", PH262), right=6.56)
+        assert ch262.get_left()[0] > tracker("P2", 2).get_right()[0] + 0.35, ch262.get_left()[0]
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(tr.goto(2), d1_ip.animate.set_color(INK), run_time=0.5)
-            t.clear(self)
-            type_cmd(self, t, C22.cmd)
-            self.play(flash_path(map_line, LOOKUP), flash(net.rooms["gateway"], CTR, 1.2), run_time=0.8)
+            clear_with(self, t, tr.goto(2), d1_ip.animate.set_color(INK), run_time=0.5)
+            type_cmd(self, t, C22.cmd, type_time=1.0)
+            self.play(flash_path(map_line, LOOKUP), flash(net.rooms["gateway"], CTR, 1.2), run_time=0.7)
             t.print(self, C22.at((2, 6)), run_time=0.5)             # a chunk at most as tall as the strip
+            self.wait(0.7)                                           # readable before the rest scrolls it
             t.print(self, C22.at(7, "…", 154, 155), run_time=0.5)
             vo.wait_until("Curl on 9200")
-            type_cmd(self, t, C23.cmd, type_time=1.4)
+            type_cmd(self, t, C23.cmd, type_time=1.0)
             t.print(self, [(C23.line(2), ERR)], run_time=0.3)
             bounce, (b1, b2) = net.bounce_from_laptop()
             self.play(b1)
@@ -655,10 +702,33 @@ class WhoCanReach(VoiceScene):
         room_g = net.rooms["gateway"]
         gtick = check_mark(0.3, VENV).next_to(room_g, RIGHT, buff=0.2)
         loops3 = [net.laptop_loop, VGroup(gw.loop, gw.loop_label), VGroup(pr.loop, pr.loop_label)]
+        # The terminal returns empty and the ponder chip's command drops into it as the typed line,
+        # glyph for glyph (the two fold it at different spaces; the backslashes swap).
+        for m in list(t.lines):                          # stale lines of beat 5 (off screen since beat 6)
+            t.lines.remove(m)
+        p25 = t.prompt + " "
+        typed = []
+        for k, s in enumerate(t.fold(p25 + C25.cmd, first_prefix=len(p25))):
+            ln = mono_line(s, t.size, INK, t2c=t._prompt_colors(t.prompt) if k == 0 else None)
+            t._place(ln, k)
+            typed.append(ln)
+        assert len(typed) == 2 and typed[0].text.endswith(" \\"), [r.text for r in typed]
+        substring(typed[1], "localhost").set_color(TURN)
+        src = [(c, g) for row in chip.rows for c, g in char_glyphs(row) if c != "\\"]
+        dst = [(c, g) for c, g in char_glyphs(typed[0], len(p25)) + char_glyphs(typed[1]) if c != "\\"]
+        assert [c for c, _ in src] == [c for c, _ in dst]
+        flying = [g.copy().set_z_index(3) for _, g in src]      # above the terminal fading in under them
+        drop_in = [FadeIn(VGroup(*glyph_range(typed[0], 0, len(p25)))), FadeIn(typed[0].glyphs[-1])] + \
+                  [Transform(f, g.copy().set_z_index(3)) for f, (_, g) in zip(flying, dst)]
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(q), FadeOut(chip), FadeOut(lh_ring), FadeIn(t), run_time=0.5)
-            type_cmd(self, t, C25.cmd, type_time=1.4)
+            for _, g in src:                             # the copies fly; the chip's own glyphs stay hidden
+                g.set_opacity(0)
+            self.play(FadeOut(q), FadeOut(chip), FadeOut(lh_ring), FadeIn(t), *drop_in, run_time=0.9)
+            for ln in typed:
+                t.lines.add(ln)
+            self.add(*typed)
+            self.remove(*flying)
             t.print(self, ["…", (ERR25, ERR)], wrap=True, run_time=0.4)
             vo.wait_until("Inside the gateway, localhost is")
             self.play(fade_to(gw.loop, None), fade_to(gw.loop_label, None), FadeOut(qs[0]), run_time=0.4)
@@ -690,7 +760,7 @@ class WhoCanReach(VoiceScene):
             tr = switch_section(self, tr, "PH", 5, run_time=0.6)
             self.play(FadeOut(net), run_time=0.4)        # first the picture goes, then the terminal grows
             resize(self, t, 13, keep=[], run_time=0.6)
-            type_cmd(self, t, C28.cmd, type_time=1.0)
+            type_cmd(self, t, C28.cmd, type_time=0.8)
             ins = t.print(self, C28.at(4, "…", 16, "…", 32, "…", 35, "…", 39, "…", 42, "…"), run_time=0.6)
             l16, l32, l35, l39, l42 = ins[2], ins[4], ins[6], ins[8], ins[10]
             vo.wait_until("shows an address for each container")
@@ -699,21 +769,22 @@ class WhoCanReach(VoiceScene):
             self.play(*[m.animate.set_color(LOOKUP) for m in (n_gw, a_gw, n_pr, a_pr)], run_time=0.6)
             vo.wait_until("on toynet's own subnet")
             self.play(substring(l16, "172.19.0.0/16").animate.set_color(LOOKUP), run_time=0.5)
-            resize(self, t, 6, keep=[l16, l32, l35, l39, l42], run_time=0.7)
-            self.play(FadeIn(net), run_time=0.5)
+            resize(self, t, 6, keep=[l16, l32, l35, l39, l42], run_time=0.6)
+            self.play(FadeIn(net), run_time=0.4)
             show_part(net, "book0")
             show_part(net, "book1")
-            self.play(TransformFromCopy(VGroup(n_pr, substring(l42, "172.19.0.2")), book0),
-                      TransformFromCopy(VGroup(n_gw, substring(l35, "172.19.0.3")), book1), run_time=1.1)
+            # staggered: the two paths cross (gateway is above processor in the terminal, below it in the book)
+            self.play(LaggedStart(into_book(n_pr, substring(l42, "172.19.0.2"), book0, len("processor")),
+                                  into_book(n_gw, substring(l35, "172.19.0.3"), book1, len("gateway")),
+                                  lag_ratio=0.6), run_time=1.5)
 
         # ============================================================ 9 · Docker's phone book at 127.0.0.11
         dns_g = net.parts["dns_gateway"]
         addr = band(note("addresses may change on restart · names stay"))
         assert addr.get_left()[0] > tr.get_right()[0] + 0.12
         with self.voiceover(SAY[9]) as vo:
-            self.play(caption_extra(tr, True), run_time=0.3)
-            t.clear(self)
-            type_extra(self, t, RESOLV, type_time=1.4)
+            clear_with(self, t, caption_extra(tr, True), run_time=0.35)
+            type_extra(self, t, RESOLV, type_time=1.1)
             o29 = t.print(self, C29.at("…", 6, "…"), run_time=0.4)
             vo.wait_until("Docker's built-in phone book")
             self.play(*net.parts_in("dns_processor", "dns_gateway", anim=Create), flash(net.parts["book"], LOOKUP, 1.3),

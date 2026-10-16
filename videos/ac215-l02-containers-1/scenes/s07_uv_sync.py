@@ -487,7 +487,7 @@ class StepUvSync(VoiceScene):
             vo.wait_until("the newest stable")
             self.play(FadeIn(newest, shift=LEFT * 0.15), run_time=0.4)
             self.play(Indicate(g_dot, color=VENV, scale_factor=1.6), run_time=0.6)
-            vo.wait_until("and the venv's python")
+            vo.wait_until("and the python in the venv")
             self.play(FadeIn(vpy, shift=UP * 0.1), run_time=0.4)
             self.play(GrowArrow(link), run_time=0.5)
             self.wait(0.5)                      # chip -> link -> dot, read before the line goes

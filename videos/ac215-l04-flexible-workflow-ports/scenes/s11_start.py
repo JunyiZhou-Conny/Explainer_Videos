@@ -24,35 +24,38 @@ Beats (script.md "## S11", one voiceover block each):
     "It's done in under a second".
  3  TRACKER P1/4. The cards go. The README's two rows are typed under the prompt
     (`docker run -d --name processor --network toynet \` / `  -e PORT=9200 toy-processor`) ->
-    10 line 3 (the ID, 64 characters: it fits). The terminal shrinks to the 3-row strip;
+    10 line 3 (the ID, 64 characters: it fits). On "with PORT set to 9200" (spoken while the rows
+    are typed) `PORT=9200` turns PINK; the terminal shrinks to the 3-row strip;
     CODE(port_toy/processor/processor.py: 42–43) top right and V6/V7 (ToyNet: the laptop outline,
-    its zone and dashed wall, the processor box, the toynet rail) above the strip; the processor
-    box plugs into the rail. On "with PORT set to 9200" `PORT=9200` in the strip and `"PORT"` in
-    line 42 turn PINK. On "and no dash p" the README chip `README.md · line 113` "There is no -p
-    flag" (top band). On "It listens on 9200": the 9200 cell of the processor's port strip lifts
-    out (TransformFromCopy) and becomes the room door `:9200`, which glows TEAL; `""` in line 43
-    is circled YELLOW with the GREY tag "every address of its own box". On "but nothing on your
-    laptop": a dashed GREY ghost door on the laptop's wall, GREY note "no street door".
+    its zone and dashed wall, the processor box, the toynet rail) above the strip; `"PORT"` in
+    line 42 turns PINK as the processor box plugs into the rail. On "and no dash p" the README
+    chip `README.md · line 113` "There is no -p flag" (top band). On "It listens on 9200": the
+    9200 cell of the processor's port strip lifts out (TransformFromCopy) and becomes the room
+    door `:9200`, which glows TEAL; `""` in line 43 is circled YELLOW with the GREY tag "every
+    address of its own box" (on "inside its own box"). On "but nothing on your laptop": a dashed
+    GREY ghost door on the laptop's wall, GREY note "no street door".
  4  TRACKER P1/5. Panel and chip go; the terminal grows to 7 rows while V7 rises above it; the
     README's five rows of the gateway's `docker run` are typed -> 11 line 6 (the ID). The gateway
-    box appears and plugs into the rail; `-p 127.0.0.1:8090:9100` is boxed PINK. The terminal
-    shrinks to the strip (the -p row and the two -e rows stay) and V7 settles above it. On "it
-    opens a street door": the ghost door turns into the GREY door and `127.0.0.1:8090` lifts off
-    the flag onto it (TransformFromCopy). On "leads to a room": the gateway's cell 9100 lifts out
-    and becomes the room `:9100`; the PINK map arrow runs from the browser through the street door
-    into the room. On "The order is": the README chip `README.md · lines 224–228` "IP address :
-    host port : container port" over the picture, its three terms flashing in turn; then, in the
-    spoken order, `127.0.0.1`, `8090` and `9100` are boxed YELLOW in the flag and lift off into a
-    legend row under the chip, each landing with its label ("IP address · this laptop only",
-    "host port · street door", "container port · room") while its place in V7 flashes (the
-    door's address, the door, the room); "this laptop only" flashes on "meaning this laptop
-    only". The block ends with 1.5 s of silence (pad) so the finished legend can be read.
+    box appears and plugs into the rail while `-p 127.0.0.1:8090:9100` is boxed PINK. Still above
+    the 7-row terminal: on "it opens a street door" the ghost door turns into the GREY door and
+    `127.0.0.1:8090` lifts off the flag onto it (TransformFromCopy); on "that leads to a room"
+    the gateway's cell 9100 lifts out and becomes the room `:9100`, and the PINK map arrow runs
+    from the browser through the street door into the room. The terminal then shrinks to the
+    strip (the -p row and the two -e rows stay) and V7 settles above it. On "The order is": the
+    README chip `README.md · lines 224–228` "IP address : host port : container port" over the
+    picture, each term flashing as it is said; then, in the spoken order, `127.0.0.1`, `8090`
+    and `9100` are boxed YELLOW in the flag and lift off into a legend row under the chip, each
+    landing with its label ("IP address · this laptop only", "host port · street door",
+    "container port · room") while its place in V7 flashes (the door's address, the door, the
+    room); "this laptop only" flashes on "meaning this laptop only". The block ends with 1.5 s
+    of silence (pad) so the finished legend can be read.
  5  The legend and chip go. The two -e rows of the strip turn PINK; on "the name processor, port
     9200" V7's aim (a PINK dashed arrow from the gateway to the chip `processor : 9200` on the
-    rail, not sent yet) draws itself while `processor` and `9200` flash in the strip. On "Lines 13
-    and 14": CODE(port_toy/gateway/gateway.py: 13–14) top right, `"PROCESSOR_HOST"` and
-    `"PROCESSOR_PORT"` PINK; on "the values in quotes": `"processor"` and `"9200"` underlined
-    GREY and the GREY tag "defaults" left of the panel.
+    rail, not sent yet) draws itself while `processor` flashes in the strip, then `9200` and the
+    chip flash on "port 9200". On "Lines 13 and 14": CODE(port_toy/gateway/gateway.py: 13–14) top
+    right, `"PROCESSOR_HOST"` and `"PROCESSOR_PORT"` PINK; on "the values in quotes": `"processor"`
+    and `"9200"` underlined GREY (at their baseline: an underline under the descender of
+    "processor" would run into line 14) and the GREY tag "defaults" on the header row above them.
  6  TRACKER P1/6. The panel goes; the terminal is cleared into 5 rows while V7 rises above it.
     `docker logs processor` -> 12 line 2 and `docker logs gateway` -> 13 line 2; on "The
     processor listens on 9200" `9200` is boxed TEAL and the processor's room flashes; "(internal
@@ -87,6 +90,11 @@ Deviations from SHOW (and why):
   room are 2 units apart at the far left, too close for three labels of 2.6–3.5 units.
 - Beat 4's narration names the last number ("then room 9100") at the clip's very end, so the
   block has pad=1.5: the complete legend stays 2 s before beat 5 clears it.
+- Timing: anchors inside a sentence go through cue(), with shifts measured on the cached Kokoro
+  clips (PLAYBOOK §2.6): the character estimate puts "127.0.0.1" 1.2 s late and "meaning this
+  laptop only" 1 s early (the address alone takes 3 s to say).
+- Beats 3-6: the laptop outline's bottom edge is 0.05 lower than ToyNet draws it, so the rail
+  label "toynet" no longer sits on it.
 - Beat 6: instead of a 10-row terminal, a 5-row terminal (cleared: the -p/-e rows have done their
   job) under V7, so the logs' 9200 and 9100 light up the rooms they name.
 """
@@ -438,11 +446,12 @@ class BuildAndStart(VoiceScene):
         c_pr = dockerfile_card("processor", CARD_W)
         c_gw = dockerfile_card("gateway", CARD_W)
         cards = VGroup(c_pr, c_gw)
-        c_pr.shift(RIGHT * (-0.35 - c_pr.frame.get_right()[0]))
-        c_gw.shift(RIGHT * (0.35 - c_gw.frame.get_left()[0]))
+        CX = -0.12                     # the pair's centre: the CACHED tags (right) are wider than 6.4s (left)
+        c_pr.shift(RIGHT * (CX - 0.35 - c_pr.frame.get_right()[0]))
+        c_gw.shift(RIGHT * (CX + 0.35 - c_gw.frame.get_left()[0]))
         t = term(P_TOY, rows=7, title="laptop")
         cards.shift(UP * ((TOP - 0.09) - c_pr.header.get_top()[1]))   # clear of the tracker's caption
-        assert c_pr.frame.get_bottom()[1] > t.box.get_top()[1] + 0.12
+        assert c_pr.frame.get_bottom()[1] > t.box.get_top()[1] + 0.08
         t6 = time_tag("6.4s")
         t6.next_to(c_pr.frame, LEFT, buff=0.1).set_y(c_pr.rows[1].strut.get_center()[1])
         pull = note("first build: Docker also pulls python:3.14-slim")
@@ -469,13 +478,14 @@ class BuildAndStart(VoiceScene):
         eqs = VGroup()
         for i in range(5):
             y = c_pr.rows[i].strut.get_center()[1]
-            eqs.add(mono("=" if i < 4 else "≠", CAPTION, S.GREY).move_to([0, y, 0]))
+            eqs.add(mono("=" if i < 4 else "≠", CAPTION, S.GREY).move_to([CX, y, 0]))
         cached = VGroup()
         for i in (1, 2):
             cg = tag("CACHED", VENV)
             cg.box.stretch_to_fit_height(P20 - 0.04)
             cg.next_to(c_gw.frame, RIGHT, buff=0.1).set_y(c_gw.rows[i].strut.get_center()[1])
             cached.add(cg)
+        assert cached.get_right()[0] < 6.5 and t6.get_left()[0] > -6.5
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(b2, box24, u75)), *[a for a in hi_time(rows[1], S.GREY)], run_time=0.3)
             type_cmd(self, t, B_GW.cmd, type_time=1.0)
@@ -506,7 +516,7 @@ class BuildAndStart(VoiceScene):
         squash(net, K_NET)
         outline = net.parts["outline"]
         # the rail label's "y" would sit on the outline's bottom edge: lower that edge a little
-        outline.stretch_to_fit_height(outline.height + 0.06, about_edge=UP)
+        outline.stretch_to_fit_height(outline.height + 0.05, about_edge=UP)
         net.shift(UP * (STRIP_TOP + 0.06 - outline.get_bottom()[1]))
         assert net.parts["rail_label"].get_bottom()[1] - outline.get_bottom()[1] > 0.06
         pp = src_panel(PROC_PY, 42, 43, size=20)
@@ -544,7 +554,7 @@ class BuildAndStart(VoiceScene):
                        extra=[flash(net.wall, S.GREY, 1.0)], run_time=0.7)
 
         # ============================================================ 4 · start the gateway: -p, a street door to a room
-        up_dy = (TOP - 0.02) - net.parts["laptop_label"].get_top()[1]
+        up_dy = TOP - net.parts["laptop_label"].get_top()[1]       # (its top is its BG patch)
         ch227 = readme_chip("README.md · lines 224–228", R227, max_w=9.0)
         ch227.move_to([0.25, 0, 0]).set_y(TOP - 0.05 - ch227.height / 2)
         terms = [text_glyphs(ch227.phrase, f"“{R227}”", w) for w in ("IP address", "host port", "container port")]
@@ -555,7 +565,7 @@ class BuildAndStart(VoiceScene):
         legend.move_to([0.25, 0, 0]).shift(UP * (ch227.get_bottom()[1] - 0.12 - legend.get_top()[1]))
         with self.voiceover(SAY[4], pad=1.5) as vo:      # the legend's last item lands at the very end
             self.play(FadeOut(VGroup(pp, e_ring, e_tag, ch113)), tr.goto(5), run_time=0.5)
-            assert net.get_top()[1] + up_dy <= TOP + 0.01
+            assert net.get_top()[1] + up_dy <= TOP + 0.01 < tr.get_bottom()[1]
             resize(self, t, 7, run_time=0.7, extra=[net.animate.shift(UP * up_dy)])
             assert outline.get_bottom()[1] > t.box.get_top()[1] + 0.04, (outline.get_bottom()[1], t.box.get_top()[1])
             run_g = type_rows(self, t, GW_RUN, type_time=1.9, room_after=1)
@@ -609,28 +619,32 @@ class BuildAndStart(VoiceScene):
         assert gp.get_bottom()[1] > net.parts["laptop_label"].get_top()[1] + 0.03
         names = [gp.span(13, '"PROCESSOR_HOST"'), gp.span(14, '"PROCESSOR_PORT"')]
         dflt = [gp.span(13, '"processor"'), gp.span(14, '"9200"')]
-        d_lines = VGroup(*[under(m, S.GREY, 3) for m in dflt])
+        d_lines = VGroup(*[base_under(m) for m in dflt])
+        assert d_lines[0].get_center()[1] > gp.code.code_lines[1].get_top()[1] + 0.04   # clear of line 14
+        # the tag on the panel's header row, right above the two values it names
         d_tag = grey_tag("defaults")
-        d_tag.next_to(gp, LEFT, buff=0.2).set_y((dflt[0].get_center()[1] + dflt[1].get_center()[1]) / 2)
+        d_tag.move_to([dflt[0].get_center()[0], gp.header.get_center()[1] + 0.05, 0])
+        assert d_tag.get_left()[0] > gp.header.get_right()[0] + 0.3 and d_tag.get_right()[0] < 6.55
+        assert d_tag.get_bottom()[1] > gp.code.background.get_top()[1] + 0.03
         e_rows = keep[1:]
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(ch227, legend)), FadeOut(boxes), run_time=0.5)
             self.play(*[r.glyphs.animate.set_color(LOOKUP) for r in e_rows], run_time=0.6)
-            vo.wait_until("the name processor, port 9200")
+            cue(self, vo, "the name processor, port 9200", -0.63)
             self.play(*net.parts_in("aim", anim=lambda m: AnimationGroup(Create(m[0]), FadeIn(m[1]))),
-                      run_time=0.8)
-            self.play(flash(substring(e_rows[0], "processor"), TURN, 1.15),
-                      flash(substring(e_rows[1], "9200"), TURN, 1.15), flash(net.aim_chip, TURN, 1.1),
+                      flash(substring(e_rows[0], "processor"), TURN, 1.15), run_time=0.8)
+            cue(self, vo, "port 9200", -0.86)
+            self.play(flash(substring(e_rows[1], "9200"), TURN, 1.15), flash(net.aim_chip, TURN, 1.1),
                       run_time=0.7)
             vo.wait_until("Lines 13 and 14 of its code read them")
             self.play(FadeIn(gp, shift=DOWN * 0.1), run_time=0.6)
             self.play(*[m.animate.set_color(LOOKUP) for m in names], run_time=0.5)
-            vo.wait_until("the values in quotes there are only defaults")
-            self.play(Create(d_lines), FadeIn(d_tag, shift=RIGHT * 0.1), run_time=0.6)
+            cue(self, vo, "the values in quotes there are only defaults", 0.79)
+            self.play(Create(d_lines), FadeIn(d_tag, shift=DOWN * 0.1), run_time=0.6)
 
         # ============================================================ 6 · docker logs: who listens where
         t5_top = strip_top(5)
-        up6 = (t5_top + 0.08) - outline.get_bottom()[1]
+        up6 = (t5_top + 0.06) - outline.get_bottom()[1]
         assert net.parts["laptop_label"].get_top()[1] + up6 < TOP
         card = turn_card([B_PR.cmd, B_GW.cmd, "\n".join(PR_RUN), "\n".join(GW_RUN), L_PR.cmd, L_GW.cmd])
         for item in (card.rows[2], card.rows[3]):         # the README's continuation rows keep their 2 spaces

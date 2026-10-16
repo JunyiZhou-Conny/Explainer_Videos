@@ -411,7 +411,7 @@ class StepCmd(VoiceScene):
             self.play(Create(bubble), TransformFromCopy(VGroup(*l_bash[-4:]), name1), run_time=0.8)
             self.play(Create(u_src), FadeIn(runs_w), TransformFromCopy(l_src, runs_src), run_time=0.8)
             self.play(FadeIn(path_l), FadeIn(doors, shift=UP * 0.1), run_time=0.5)
-            vo.wait_until("which puts the venv")
+            vo.wait_until("which puts the bin folder")
             self.play(doors.doors.animate.shift(slide), run_time=0.45)
             self.play(FadeIn(VGroup(venv_door.frame, venv_door[1])),
                       TransformFromCopy(venv_src, venv_door.label), run_time=0.8)

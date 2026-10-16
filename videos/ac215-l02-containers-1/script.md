@@ -214,12 +214,16 @@ TEAL box inside a GREY laptop), "4 Run the Docker image on a VM" (a TEAL box ins
 Rungs 1–2 are lit softly with a GREY "L1" tag; rungs 3–4 light up with a YELLOW "today" bracket.
 SAY: That's where today's tutorial, simple-translate, ends. Last lecture we climbed its first two rungs: a manual install on a VM, then uv. Today, the other two: package the app as a Docker image on your laptop, push it to Docker Hub, and run it on a VM.
 
-SHOW: A layout preview, built piece by piece as named: three tracker chips stack at top-left, each
-with an icon, "A · Developing App using Containers · 16" (GREY laptop), "B · Pushing Docker Image to
-Docker Hub · 4" (BLUE shelf), "C · Running App on VM using Docker · 7" (BLUE VM), with a YELLOW
-circle pulsing around them; a 2-row strip terminal at the bottom (GREY tag "preview") shows
-`docker image ls` with a YELLOW `▶ your turn` tag, then `ls -a` with the GREY `extra` tag; a footer
-caption: "every command: MLOps_Learning · guides/L02-containers-1.md".
+SHOW: A layout preview, built piece by piece as named: a README page glyph appears; at "Three
+trackers" its outline flies to the top-left corner and becomes a YELLOW ring around the real tracker
+A (`tracker_a(1)`: "README › Developing App using Containers", 16 dots, "step 1 of 16: container
+ls"), with a GREY laptop icon beside the ring at "on the laptop"; at "on Docker Hub" the tracker
+changes in place to `tracker_b(1)` (icon: a BLUE shelf), at "on the VM" to `tracker_c(1)` (a BLUE
+VM); the ring follows each tracker's width. At "When the yellow" a 2-row strip terminal at the
+bottom (GREY tag "preview", prompt `student@laptop:~$`) fades in, the tracker goes back to A, step 1,
+and the strip types `docker container ls` (README A1) with a YELLOW `▶ your turn` row tag; then
+`ls -a` with the GREY `extra` row tag, and the tracker caption gains " · extra"; a footer caption:
+"every command: MLOps_Learning · guides/L02-containers-1.md · link in the description".
 SAY: To follow along, open the README beside this video. Three trackers, top left, show where we are: on the laptop, on Docker Hub, on the VM. When the yellow your-turn tag appears, pause and run the command; a gray extra tag marks a check that isn't in the README.
 
 SHOW: The preview clears. A checklist card: "✓ Docker Desktop running (Tutorial 0)", "✓ a free
@@ -245,7 +249,8 @@ SAY: First, four words for the whole lecture. In lecture 1, every new VM needed 
 SHOW: V2 on a generic stack, center-left: the TEAL box opens into three translucent slabs with TEAL
 outlines that drop bottom-up, labelled "OS files" (ORANGE fill), "packages" (GREEN), "your code"
 (GREY); a small lock glyph on the stack's side, "read-only". At right, a TEAL config card with four
-empty rows `ENV`, `ENTRYPOINT`, `CMD`, `WorkingDir`.
+empty rows `ENV`, `ENTRYPOINT`, `CMD`, `WorkingDir`. GREY tag `Lecture 2 · slides 30–31, 35` (top
+right, from "An image is a stack of read-only layers" through "Think of the image as a class").
 SAY: An image is a stack of read-only layers. Each layer holds the files added or changed by one build step. Beside it sits a small config card: settings like environment variables, and which program to start.
 
 SHOW: A GREY page glyph "Dockerfile" at far left with four lines `FROM …`, `RUN …`, `COPY …`,
@@ -276,7 +281,10 @@ SAY: A registry, like Docker Hub, stores images by name, on shelves. A tag is a 
 SHOW: V8, first half. Three BLUE VM boxes side by side, each with its own "kernel" bar and an "OS"
 band (L1's server slices). At "share one Linux kernel", the three kernel bars slide down and merge
 into one GREY bar "Linux kernel · shared", and the VM outlines shrink into three TEAL "container"
-boxes standing on it; caption "isolated processes, not machines".
+boxes standing on it; caption "isolated processes, not machines". Two small GREY chips sit on the
+shared kernel bar, "namespaces" and "cgroups", and a GREY caption "user space" beside the containers.
+GREY tag `Lecture 2 · slides 9–12, 22–24` (top right, from "And a container is not a small VM" to
+the end of the scene).
 SAY: And a container is not a small VM. A VM boots its own kernel, the core of the operating system. Containers are isolated processes that share one Linux kernel.
 
 SHOW: V8, second half. A GREY laptop outline wraps the picture; a dashed GREY box "Linux VM · Docker
@@ -286,8 +294,9 @@ SAY: On a Mac or Windows laptop, Docker Desktop provides that kernel with a smal
 
 SHOW: L1's three chips return: two RED-outlined, "the operating system's files" and "system
 libraries", fly into the TEAL stack, turning ORANGE fills (GREEN check); the third, "GPU drivers",
-stays outside, GREY, "still the host's". Fade out.
-SAY: What a venv couldn't isolate in lecture 1, the system's files and libraries, is now inside the box.
+stays outside and, at "GPU drivers still come from the host", turns GREY, "still the host's". Fade
+out.
+SAY: What a venv couldn't isolate in lecture 1, the system's files and libraries, is now inside the box. GPU drivers still come from the host.
 
 ---
 
@@ -302,7 +311,9 @@ SAY: Now the README section Developing App using Containers. Open a terminal on 
 
 SHOW: TRACKER A1. It types `docker container ls` → TERM(laptop/01: 2). The header row gets a GREY
 label "the columns · no rows: nothing running". `▶ your turn`. A GREY chip under the terminal:
-"cannot connect? → start Docker Desktop" (the error is said, not printed: no capture).
+"cannot connect? → start Docker Desktop" (the error is said, not printed: no capture). GREY tag
+`Lecture 2 · slides 54, 61–62, 73` (top right, from "First, docker container ls lists running
+containers" to the end of the scene).
 SAY: First, docker container ls lists running containers. Here it shows only the header, so nothing is running. If yours can't connect to the Docker daemon, start Docker Desktop and try again. Pause and run it.
 
 SHOW: TRACKER A2. A README card (`README.md · line 116`): "Stop any container that is running".
@@ -368,9 +379,11 @@ SHOW: The panel fades. The build command writes large in the center,
 labels in turn: `-t simple-translate` "the image's name" (TEAL), `-f Dockerfile` "the recipe", `.`
 "build context: this folder" (PINK, pulsing). At "sends to the builder", a small GREY folder glyph
 slides from the `.` along a PINK arrow into a PURPLE chip "builder" (S06's parcel reuses this chip).
+GREY tag `Lecture 2 · slides 32, 56` (top right, from "Now the build command. Dash t names the image
+simple-translate", through the build).
 SAY: Now the build command. Dash t names the image simple-translate; dash f picks the recipe. And the final dot is the build context: this folder, which Docker sends to the builder. Step 3 shows why that matters.
 
-SHOW: The command slides into a full-width terminal (12 rows, prompt
+SHOW: The command slides into a full-width terminal (13 rows, prompt
 `student@laptop:~/simple-translate$`) and is typed → TERM(laptop/09: 2, …, 15; cut after
 `@sha256:34386ef0`, …, 31–34; hash12, …, 38). `▶ your turn`. Two GREY notes appear as said: across
 the top, "your terminal: a compact view · this is the full log (--progress=plain)"; next to line 2's
@@ -425,7 +438,8 @@ SAY: Pause and build again. The FROM step says CACHED: nothing is downloaded, an
 SHOW: V3 close-up of the card: the tile `["/bin/bash"]` sits in the ENTRYPOINT slot; the CMD slot
 still shows the inherited `["python3"]` tile, now dashed; the start-up line reads
 `/bin/bash python3` with a YELLOW "?". Two GREY labels under the slots: ENTRYPOINT "the program",
-CMD "its default arguments".
+CMD "its default arguments". GREY tag `Lecture 2 · slides 32–33` (top right, from "Think of ENTRYPOINT
+as the program to start").
 SAY: Think of ENTRYPOINT as the program to start, and CMD as its default arguments. The entrypoint is now bash, and the command slot still says python3. So will the container start bash, running python3?
 
 SHOW: TRACKER A8 · extra. Strip types
@@ -524,7 +538,7 @@ PURPLE arrow from a uv chip drops a GREEN dot into the glow, label `3.15.0` / "u
 link arrow to it. Then the number line fades except the GREEN dot; the stack slides in from the
 right, and the README panel's `RUN uv sync` line and the dot fly into it together and expand into a
 fat GREEN slab "RUN uv sync"; a 2-line GREY note beside it, "CPython 3.15.0 + /.venv · 11 packages".
-SAY: On the number line, the requirement covers 3.13 and newer. The base image's 3.12 falls outside, so uv downloads the newest stable Python it knows in the range, and the venv's python links to it.
+SAY: On the number line, the requirement covers 3.13 and newer. The base image's 3.12 falls outside, so uv downloads the newest stable Python it knows in the range, and the python in the venv links to it.
 
 SHOW: TRACKER A10. Full terminal (13.2 wide, 20 pt); it types `docker run --rm -ti simple-translate`
 with `▶ your turn` beside it → at the prompt `root@01dca6d0f4d8:/#`, TRACKER A10 · extra, `ls -a`
@@ -572,7 +586,7 @@ SHOW: The card fades; the start-up line moves up. A bubble "bash 1" runs `source
 (`/usr/local/bin` ORANGE, `…`) gets a GREEN `/.venv/bin` door at the front; at "exec bash", bubble 1
 morphs in place (Transform) into "bash 2 · interactive", the door row unchanged, a prompt cursor
 blinking in it.
-SAY: Here the string first sources the activate script, which puts the venv's bin folder first in PATH. Then exec bash swaps this bash for an interactive one that keeps the new PATH and gives you a prompt.
+SAY: Here the string first sources the activate script, which puts the bin folder of the venv first in PATH. Then exec bash swaps this bash for an interactive one that keeps the new PATH and gives you a prompt.
 
 SHOW: Full terminal (12 rows); it types `docker build -t simple-translate -f Dockerfile .` → TERM(laptop/24: 23–24, 26–27, 29, 30; wrap).
 `▶ your turn`. Lines 27 and 30 highlight YELLOW, GREY note "one line added · part 2 explains".
@@ -582,20 +596,23 @@ SHOW: It types `docker run --rm -ti simple-translate` → at the prompt `root@47
 (TRACKER A11 · extra): `which python`, `python --version`, `echo $VIRTUAL_ENV` (extras) →
 TERM(laptop/26: 3, 5, 7), then `exit` → TERM(laptop/26: 9). `▶ your turn` beside the run. The prompt
 gets a GREY tag "no (app)"; `/.venv/bin/python`, `Python 3.15.0` and `/.venv` highlight GREEN; a GREY
-tag "not an error". After `exit`, the returned prompt `student@laptop:~/simple-translate$` holds for
-a beat with a YELLOW pulse.
-SAY: Pause and run it. No app in parentheses this time; is the venv active? These extra checks say yes: which python points into dot venv, it's 3.15.0, and the virtual env variable is set. The fresh bash set its own prompt. Then type exit, back to your laptop.
+tag "not an error". GREY tag `Lecture 2 · slides 64, 75` (top right, during the bridge, from "The
+lecture's run command"). After `exit`, the returned prompt `student@laptop:~/simple-translate$` holds
+for a beat with a YELLOW pulse.
+SAY: Pause and run it. No app in parentheses this time; is the venv active? These extra checks say yes: which python points into dot venv, it's 3.15.0, and the virtual env variable is set. The fresh bash set its own prompt. The lecture's run command adds dash dash entrypoint, which drops this CMD, and the venv with it. Then type exit, back to your laptop.
 
 SHOW: TRACKER A12 · extra. A README card (`README.md · lines 167–168`): "Solution Dockerfile:
 Dockerfile.txt". The terminal clears (the laptop prompt stays); it types
 `diff Dockerfile Dockerfile.txt` (extra) → TERM(laptop/27: 8–18) (11 rows; `+` lines GREEN, `-` lines
 dim RED); a GREY note on the frame "our diff prints + and − · on a Mac, Linux or Git Bash: diff -u
 for this layout". The three `+ENV` lines (10, 15, 18) get GREY labels: "no apt questions", "UTF-8
-text", "logs appear at once".
+text", "logs appear at once". A GREY note under the diff: "lecture slide 57: a different version ·
+build this file"; GREY tag `Lecture 2 · slides 57` (top right, from "The README then points to a
+solution, Dockerfile.txt.").
 SAY: The README then points to a solution, Dockerfile.txt. An extra diff shows what it adds; if yours prints less-than and greater-than signs, add dash u. First, three ENV lines: no questions from apt, a UTF-8 locale, and unbuffered logs.
 
-SHOW: The terminal continues → TERM(laptop/27: …, 20–26, …, 33–34) (it scrolls). Lines 21–26 get an
-ORANGE bracket "one RUN: update, upgrade, clean, newer pip, uv"; lines 33–34 a YELLOW bracket
+SHOW: The terminal continues → TERM(laptop/27: …, 20–26, …, 33–34; wrap) (it scrolls). Lines 21–26
+get an ORANGE bracket "one RUN: update, upgrade, clean, newer pip, uv"; lines 33–34 a YELLOW bracket
 "ENTRYPOINT moved to the end".
 SAY: Second, one bigger RUN: update and upgrade the Debian packages, clean up, upgrade pip, and install uv. And ENTRYPOINT moved to the end: the order of ENTRYPOINT and CMD doesn't matter.
 
@@ -619,7 +636,8 @@ SHOW: TRACKER A14. Full terminal (13 rows). It types `docker run --rm -ti simple
 prompt `root@93d61f44d3d7:/#` (laptop/31 line 2). TRACKER A15. It types
 `python cli.py -t "Good morning" -s "en" -d "es"` (README.md line 182; folds) →
 TERM(laptop/31: 5–9, 13; wrap, 15–16): banner, arguments, `Input: Good morning`, `Output: Buen día`
-GREEN. `▶ your turn`.
+GREEN. `▶ your turn`. GREY tag `Lecture 2 · slides 63–65, 74` (top right, from "Now the README's Run
+Docker Container step" to the docker ps dash a beat).
 SAY: Now the README's Run Docker Container step: docker run, dash dash rm, dash t i, simple-translate. At the prompt, type the README's translation: Good morning, from English to Spanish. Pause and run both.
 
 SHOW: The terminal shrinks to the strip, keeping `Output: Buen día`, which enlarges. Small picture
@@ -645,12 +663,14 @@ SHOW: TRACKER A16 · extra. Strip (4 rows), a second run (extra): it types
 2"), then it types `exit` (line 29) → TERM(laptop/33: 30). A new glass slab and dot appear on the
 picture; the `1` flies to the dot's label "PID 1 · bash". Labels: `-i` "your keyboard → bash",
 `-t` "a terminal: prompt, line editing". At "Type exit", the dot goes out and the slab dissolves.
-SAY: In a second run, an extra check, echo dollar dollar, shows that bash is process number 1. The container lives as long as that process. Dash i connects your keyboard, and dash t gives it a terminal. Then type exit.
+GREY tag `Lecture 2 · slides 13–14` (top right, from "In a second run", through the PID namespace
+bridge).
+SAY: In a second run, an extra check, echo dollar dollar, shows that bash is process number 1. That's the PID namespace from today's lecture: each container counts its own processes from 1. The container lives as long as that process. Dash i connects your keyboard, and dash t gives it a terminal. Then type exit.
 
 SHOW: The picture clears. V3 card: ENTRYPOINT `["/bin/bash"]`, CMD `["-c", "source … && exec bash"]`;
 S05's two GREY labels return under the slots, ENTRYPOINT "the program", CMD "its default
 arguments". Above it a chip `docker run --rm -ti simple-translate python cli.py` with `python cli.py`
-boxed YELLOW.
+boxed YELLOW. GREY tag `Lecture 2 · slides 40–41` (top right, from "Now a puzzle").
 PONDER(8 s, "docker run --rm -ti simple-translate python cli.py\nWhat command line does the container actually run?")
 SAY: Now a puzzle. Remember, CMD only holds the default arguments. What if you put words right after the image name: docker run, simple-translate, python cli.py? What command line does the container run?
 
@@ -671,10 +691,11 @@ folds; the missing `-ti` gets a GREY label "nothing to type") → TERM(laptop/37
 SAY: To run it in one go, replace CMD with your own dash c string, as in this extra: activate, then translate to French.
 
 SHOW: CODE(docker-shell.sh: 10–15), lines 11 and 15 highlighted, GREY tag "not in the README · builds
-and runs in one go".
-SAY: A repo helper, docker-shell.sh, builds and runs in one go.
+and runs in one go". Under the panel a 1-row strip types `sh docker-shell.sh` (laptop/42 line 1, row
+tag `extra`); the command glows when it is said.
+SAY: A repo helper, docker-shell.sh, builds and runs in one go: run it with sh docker-shell.sh.
 
-SHOW: Part-1 recap: the full V2 stack (the base brace, the ORANGE "RUN pip install uv" slab, the GREY
+SHOW: Part-1 recap: the full V2 stack (the base brace, the ORANGE "RUN apt…uv" slab, the GREY
 "COPY . ./" slab, the GREEN "RUN uv sync" slab) with the config card; a TEAL check "your image:
 built and run". Closing card: "Part 2: what's inside, why it rebuilt, and shipping it to a VM". Fade
 to an empty frame (end of part 1).
@@ -695,30 +716,40 @@ stack and one brace over both reads `518MB`.
 SAY: Part 2 opens the image we built; this scene and the next are extras. First, docker image ls: 518 megabytes on disk, and 144 megabytes of content, at the time of recording. Content is the compressed layers that travel to a registry; disk adds the unpacked copy.
 
 SHOW: The terminal grows back; it types `docker history simple-translate` (extra) →
-TERM(laptop/34: 2–10; cols CREATED BY, SIZE). Rows 5 (`125MB`), 6 (`250kB`) and 7 (`97.5MB`)
+TERM(laptop/34: 2–10; cols CREATED BY, SIZE), with the GREY tag "columns: CREATED BY · SIZE" above
+the SIZE column. Rows 5 (`125MB`), 6 (`250kB`) and 7 (`97.5MB`)
 highlight in their slab colours; rows 3–4 and 8–10 (`0B`) GREY, "config only". The terminal shrinks
 to the strip; V2's slabs rescale to these sizes: a fat GREEN `RUN uv sync` slab, a GREY sliver for
-`COPY . ./`, an ORANGE apt/pip slab; the card lists the 0B rows.
+`COPY . ./`, an ORANGE apt/pip slab; the card lists the 0B rows. The ORANGE slab's name changes to
+`RUN apt…uv` (S11's name). GREY tag `Lecture 2 · slides 34–37, 59` (top right, from "Then docker
+history lists the layers, newest first").
 SAY: Then docker history lists the layers, newest first. Read it bottom-up, and it's the Dockerfile top-down: the apt and pip step at 97.5 megabytes, our code at 250 kilobytes, and uv sync at 125 megabytes. The ENV, ENTRYPOINT and CMD rows are zero bytes: config only.
 
 SHOW: The terminal grows back and continues → TERM(laptop/34: …, 14–23; cols CREATED BY, SIZE) (it
 scrolls). Line 18 `ENV PYTHON_VERSION=3.12.15` highlights ORANGE, line 22 `ENV PATH=/usr/local/bin:…`
 PINK, line 23 (`debian.sh … 'bookworm'`, `85.3MB`) ORANGE. Then the terminal shrinks to the strip;
-S04's list of download sizes fades, and the four base slabs rescale bottom-up to rows 23, 20, 16
-and 15 (`85.3MB`, `9.7MB`, `54.5MB`, `16.4kB`), each size written on its slab as it grows.
+the four base slabs rescale bottom-up to rows 23, 20, 16
+and 15 (`85.3MB`, `9.7MB`, `54.5MB`, `16.4kB`), each size written on its slab as it grows, while
+S04's list of download sizes turns into the GREY note "≈ 47.6 MB compressed download / → unpacked
+on disk" beside the base.
 SAY: Below them sit the base image's own rows: Debian bookworm at the bottom, the PATH that puts user local bin first, and Python 3.12.15.
 
-SHOW: The picture clears; the full terminal shows the second run from S09, GREY caption "our second
-run from part 1 · yours: docker run --rm -ti simple-translate": `docker run --rm -ti simple-translate`,
-the prompt `root@1d1fecf6ff8f:/#`, then the `…` of S09 opens up: it types `python --version` (line 8)
+SHOW: The picture clears; the wide terminal (13.2 wide, 20 pt) shows the second run from S09, GREY
+caption "our second run from part 1 · yours: docker run --rm -ti simple-translate":
+`docker run --rm -ti simple-translate`, the prompt `root@1d1fecf6ff8f:/#`, then the `…` of S09
+opens up: it types `which python` (line 6) → TERM(laptop/33: 7) (`/.venv/bin/python` GREEN),
+`python --version` (line 8)
 → TERM(laptop/33: 9) (`Python 3.15.0` GREEN), `/usr/local/bin/python --version` (line 10) →
 TERM(laptop/33: 11) (`Python 3.12.15` ORANGE), `ls /root/.local/share/uv/python` (line 12) →
-TERM(laptop/33: 13) (GREEN).
+TERM(laptop/33: 13) (GREEN), with the GREY platform tag "▲ on an Intel/AMD machine · Apple Silicon:
+…linux-aarch64-gnu" under it.
 SAY: To look yourself, start a container again; these are from our second run in part 1. There, python is 3.15.0, while the base Python is still 3.12.15. Most of that 125 megabyte layer is this second Python, in uv's own folder.
 
 SHOW: Terminal (13.2 wide, 20 pt) continues the same run: `ls -a /` (line 21) → TERM(laptop/33: 22–28) (columns kept);
 `.git`, `.gitignore`, `.vscode`, `Dockerfile`, `README.md` brighten with a PINK bracket "from the
-build context"; then `exit` → TERM(laptop/33: 30).
+build context", and the other build-context entries (`Dockerfile.txt`, `cli.py`,
+`docker-build-push.sh`, `docker-shell.sh`, `pyproject.toml`) turn PINK too; then `exit` →
+TERM(laptop/33: 30).
 SAY: Now list the top folder. Beside the system folders sit the hidden git folder, the editor's VS Code folder, the README and your Dockerfile. The COPY line copied the whole build context, your git history included. Type exit to get back to your laptop.
 
 SHOW: The terminal fades. S06's parcel returns, its `.git/` glyph lit. Tag `erratum` "no
@@ -739,7 +770,9 @@ into a TEAL fingerprint badge. (c) At "For COPY, the checksum", a small GREY par
 context) docks under COPY's badge and feeds it a third arrow. (d) At "The first step that changes",
 a generic example: box 2's instruction text flickers YELLOW (an edit to that RUN line), its badge
 turns RED, and dominoes 2, 3, 4 topple in sequence; domino 1 stays. (e) The dominoes stand back up;
-the badges return to TEAL.
+the badges return to TEAL. A GREY caption under the four boxes: "one numbered step per
+instruction". GREY tag `Lecture 2 · slides 36, 58–60` (top right, from "Docker caches every build
+step").
 SAY: So why did COPY and uv sync rerun when we only added a line? Docker caches every build step. A step is reused when its parent step and its instruction are unchanged. For COPY, the checksum of the copied files must match too. The first step that changes runs again, and so does every step after it.
 
 SHOW: A bottom terminal of 8 rows (the boxes stay above it) types
@@ -798,7 +831,8 @@ a file, never in a repo".
 SAY: Now the README section Pushing Docker Image to Docker Hub. First, sign up and create an access token, with read and write access, not the default. Copy it right away: it's shown only once, and it works like a password. Pause and make yours.
 
 SHOW: TRACKER B2. CODE(README.md: 189), `<USER NAME>` and `<ACCESS TOKEN>` boxed YELLOW, "yours". A
-GREY note: "no Docker Hub account in our recording · not run here".
+GREY note: "no Docker Hub account in our recording · not run here". GREY tag
+`Lecture 2 · slides 67–69` (top right, from "Next, log in", through the push).
 SAY: Next, log in: docker login, dash u with your user name, dash p with your token. We have no account, so we couldn't run it.
 
 SHOW: TRACKER B2 · extra. A terminal (8 rows) with `stand_in_tag()` on its frame ("stand-in · local
@@ -889,10 +923,10 @@ SAY: The instructor's image, dlops slash simple-translate, is no menu: one image
 SHOW: Stand-in terminal (`stand_in_tag()`, "watch only") types
 `docker buildx imagetools inspect localhost:5000/student/simple-translate-ac215` (extra; folds) →
 TERM(laptop-push/09: 3, 9, 13). The terminal shrinks to the strip; V7: a small menu "our push": a
-BLUE `linux/amd64` row and a dimmed `unknown/unknown` row, "attestation · how it was built"; a GREY
-dashed overlay on the first row: "built on a Mac: linux/arm64"; a GREY note on the menu "containerd
-image store · the older store pushes one image, no menu".
-SAY: Our stand-in push is a small menu: amd64, plus an attestation, a record of how the image was built.
+BLUE `linux/amd64` row and a dimmed `unknown/unknown` row, "attestation · how it was built"; at
+"Built on an M-series Mac", a GREY dashed overlay on the first row: "built on a Mac: linux/arm64";
+a GREY note on the menu "containerd image store · the older store pushes one image, no menu".
+SAY: Our stand-in push is a small menu: amd64, plus an attestation, a record of how the image was built. Built on an M-series Mac, the amd64 row would say arm64.
 
 SHOW: V7: the GREY arm64 chip builds an image in arm64 glyphs; a PINK route carries it past a BLUE
 shelf to a BLUE VM with an amd64 chip and its empty "no emulator" slot.
@@ -937,7 +971,7 @@ schematic console (browser, tag `illustration`, as in L1): VM instances → Crea
 fill: Name `ac215-l02` · Machine type `e2-small` · Boot disk `Debian GNU/Linux 12 (bookworm)`; GREY
 footnote "the README gives no settings: sensible choices · Debian 13 works too · E2 = amd64". The
 GOLD dial starts sweeping, with tags "billed per second while running" and "disk: billed while it
-exists".
+exists". GREY tag `Lecture 2 · slides 77` (top right, from "The last README section").
 SAY: The last README section: Running App on VM using Docker. First, create a VM, as in lecture 1. The README gives no settings. An ordinary E2 machine with Debian 12 or 13 will do; E2 machines are amd64. The meter starts: the VM bills by the second while it runs, its disk while it exists.
 
 SHOW: TRACKER C2. "SSH" is clicked: the browser window transforms into a terminal (title
@@ -947,7 +981,8 @@ SAY: Next, SSH in. Pause now: create your VM, and wait until its SSH terminal is
 SHOW: TRACKER C3. It types `sudo apt install docker.io` (README.md line 210) →
 TERM(vm-debian12/01: 4–8; +Done); lines 7–8 RED; GREY tag `stand-in · empty package lists`.
 `▶ your turn`. A small GREY card "Debian 13" shows TERM(vm-debian13/01: 7) (`Error: Unable to locate
-package docker.io`). A GREY note: "installed? → skip to the version check".
+package docker.io`). A GREY note on two lines: "it asks [Y/n]? answer Y" / "→ skip to step 4:
+Docker version".
 SAY: Then install Docker: sudo apt install docker dot I-O. Pause and run it. In our stand-in, a fresh Debian with empty package lists, it fails: unable to locate package. If yours installed, skip ahead to the version check.
 
 SHOW: Two README cards side by side: `README.md · line 210` (`sudo apt install docker.io`) and
@@ -966,13 +1001,16 @@ SAY: Now the install works: 92 new packages, a 107 megabyte download, on Debian 
 
 SHOW: TRACKER C4. It types `sudo docker --version` → TERM(vm-debian12/04: 2); the GREY "Debian 13"
 card shows TERM(vm-debian13/04: 2). Both get the tag `at the time of recording`; a PURPLE chip
-`docker.io · Debian's package`.
+`docker.io · Debian's package`. At "Older than the laptop's", a GREY note "our laptop: Docker 29.8.2"
+(laptop/00 line 4) under the chip, with its own GREY tag `at the time of recording` under it.
 SAY: Then sudo docker dash dash version. This is Debian's own Docker package: 20.10.24 on Debian 12, 26.1.5 on Debian 13, at the time of recording. Older than the laptop's, but plenty.
 
-SHOW: The terminal shrinks to the strip. V8, S14 half, above it: a BLUE VM box; inside it, a PURPLE
-`dockerd` block sits directly on the VM's own bar "Debian · Linux kernel"; an empty TEAL container
+SHOW: The terminal shrinks to the strip. V8, S14 half, above it: a BLUE VM box; inside it, the VM's
+own bar is split into "Linux kernel" with "user space · Debian" above it, and a PURPLE `dockerd`
+block sits on user space; an empty TEAL container
 slot above it; no dashed Linux VM (S02's dashed box flashes small beside it, crossed: "Docker
-Desktop only").
+Desktop only"). GREY tag `Lecture 2 · slides 12, 24` (top right, from "Here Docker runs right on the
+VM's Linux kernel").
 SAY: Here Docker runs right on the VM's Linux kernel; there's no hidden VM, unlike Docker Desktop on a Mac.
 
 SHOW: V8 fades. TRACKER C4 · extra. Strip types `docker ps` (extra) → TERM(vm-debian12/05: 2; wrap),
@@ -987,7 +1025,8 @@ SAY: And why sudo? Without it, this extra docker ps is refused: permission denie
 SHOW: TRACKER C5. VM terminal (12 rows) types `sudo docker run --rm -ti dlops/simple-translate`
 (README.md line 215) → TERM(vm-debian12/06: 2–4, …, 10–12; hash12). `▶ your turn`. The terminal
 shrinks to the strip; V6 above: seven slabs come down a PINK route from the BLUE Docker Hub shelf
-into the BLUE VM and stack up; a TEAL glass slab appears on top.
+into the BLUE VM and stack up; a TEAL glass slab appears on top. GREY tag `Lecture 2 · slides 70–71`
+(top right, from "Then the deploy").
 SAY: Then the deploy: sudo docker run, dash dash rm, dash t i, dlops slash simple-translate. Pause and run it. The image isn't on this VM yet, so Docker pulls it from Docker Hub, seven layers, then starts a container.
 
 SHOW: TRACKER C6. Full terminal; the prompt `root@c7c280390994:/#` (line 13); it types `python cli.py`
@@ -999,8 +1038,10 @@ SHOW: TRACKER C6 · extra. It types `python --version` (extra) → TERM(vm-debia
 shrinks to the strip. V4 coda: the number line returns; our GREEN dot sits above the line, label
 `3.15.0` / "our build · uv 0.13.0"; a second GREEN dot lands in the same glow below the line, label
 `3.14.7` / "dlops image · uv 0.12.15". Two GREY source chips carry the dates:
-TERM(vm-debian12/08: 3) ("created 2026-09-16…", from an extra `sudo docker image inspect`) and
-TERM(vm-debian12/10: 8) (`uv = 0.12.15`, the image's `pyvenv.cfg`).
+TERM(vm-debian12/08: 3) ("created 2026-09-16…"; its caption is the inspect command itself, GREY mono
+on two rows, `sudo docker image inspect dlops/simple-translate \` /
+`--format '{{.Os}}/{{.Architecture}} created {{.Created}}'`, with the row tag "extra · on the VM")
+and TERM(vm-debian12/10: 8) (`uv = 0.12.15`, the image's `pyvenv.cfg`).
 SAY: And the opening question: why 3.14.7, when the recipe says 3.12? The same reason as in our build. This image was built on September 16 with uv 0.12.15, and the newest stable Python that uv knew in the range was 3.14.7. Our build today got 3.15.0.
 
 SHOW: Three GREY chips light in turn: `pip install uv` "unpinned" (Dockerfile.txt line 19),
@@ -1013,12 +1054,13 @@ SHOW: Full terminal; it types `exit` (line 30) → TERM(vm-debian12/06: 31). Two
 `README.md · line 205` "pull the image you pushed in step 3" and `README.md · line 215`
 `sudo docker run --rm -ti dlops/simple-translate`; tag `erratum`. Below them a GREEN chip (text, not
 run) `sudo docker run --rm -ti <USER NAME>/simple-translate-ac215`, `<USER NAME>` YELLOW, with a GREY
-tag "needs an amd64 build: see Platforms".
+tag "Intel/AMD laptop: already amd64 · Apple Silicon Mac: rebuild first (see Platforms)".
 SAY: Type exit. One more small mismatch: the README promises to pull the image you pushed, but this command runs the instructor's. Your image is your user name, slash simple-translate-ac215. Run it with the same command, once it's built for amd64.
 
 SHOW: TRACKER C6 · extra. Strip (5 rows) types
 `sudo docker run --rm dlops/simple-translate -c 'wc -c cli.py; grep -n Translator cli.py; ls -l .venv/bin/python; cat .venv/pyvenv.cfg'`
-(extra; folds) → TERM(vm-debian12/10: 2–4). Line 4 `25:    async with Translator() as translator:`
+(extra; folds) → TERM(vm-debian12/10: 2–4, …, 8), with a YELLOW underline on `uv = 0.12.15` and the
+GREY tag "where uv 0.12.15 came from". Line 4 `25:    async with Translator() as translator:`
 sits above CODE(cli.py: 25) (the repo's `Translator(raise_exception=True)`); tag `erratum` "the
 published image lags the repo".
 SAY: Also, an extra check shows the published image lags the repo: its cli.py is the older one, without raise exception equals True. If Google refuses a request, that version quietly prints your input back. That's not a Docker problem.
@@ -1026,7 +1068,7 @@ SAY: Also, an extra check shows the published image lags the repo: its cli.py is
 SHOW: A GREY card "if the pull itself fails:" with TERM(vm-debian13/06-docker-run-rate-limited: 3;
 wrap) in RED, tag `real capture · Debian 13 · 2026-10-13`; two GREEN chips "wait a while" and
 `sudo docker login -u <USER NAME>`. Fade out.
-SAY: And if the pull itself fails with too many requests: Docker Hub limits anonymous pulls per network address, which a classroom can hit. Wait a while, or log in first, with sudo docker login.
+SAY: And if pulling the image fails with too many requests: Docker Hub limits how often anonymous users can pull, per network address, which a classroom can hit. Wait a while, or log in first, with sudo docker login.
 
 ---
 
@@ -1034,7 +1076,7 @@ SAY: And if the pull itself fails with too many requests: Docker Hub limits anon
 
 SHOW: TRACKER C6 · extra. Strip terminal types `sudo docker ps -a` (extra) →
 TERM(vm-debian12/11: 2; squeeze): the header only.
-SAY: Before you go, clean up. An extra check, docker ps dash a, shows no containers left behind, thanks to dash dash rm.
+SAY: Before you go, clean up. An extra check, sudo docker ps dash a, shows no containers left behind, thanks to dash dash rm.
 
 SHOW: TRACKER C7. The schematic console (tag `illustration`): `ac215-l02` ticked → Delete → the
 confirm dialog "Delete ac215-l02? Its boot disk is deleted with it" (as in L1). The BLUE VM dissolves;
@@ -1044,7 +1086,8 @@ SAY: Last README step: delete the VM, with its boot disk, then check that VM ins
 
 SHOW: GREY optional chips: "Docker Hub repository: public until you delete it or make it private",
 `docker system prune -a` "frees the laptop's disk · said, not typed here", and, smaller,
-`docker buildx rm multi-arch` "if you ran the push script" · `docker logout` "optional".
+`docker buildx rm multi-arch` "if you ran the push script" · `docker logout` "optional". GREY tag
+`Lecture 2 · slides 73` (top right, from "And to reclaim the space").
 SAY: Two optional chores. Your Docker Hub repository stays public until you delete it or make it private. And to reclaim the space your images take on the laptop, run docker system prune dash a.
 
 SHOW: V1 closing picture: a BLUE VM box containing a GREEN venv box; between them a dashed GREY box
@@ -1074,5 +1117,6 @@ SHOW: The label list stays at left. Two footer cards: "Answers: exercises.md" an
 every command: github.com/JunyiZhou-Conny/MLOps_Learning · guides/L02-containers-1.md". A "Next: L3 ·
 Containers II" card with a GREY dashed teaser: five small TEAL boxes linked in a row, a chip
 `WORKDIR /app`, a chip "non-root user", and a GREY laptop folder with a dashed arrow into a container,
-"mounted". Everything fades to an empty frame (end of part 2).
+"mounted". GREY tag `Lecture 2 · slides 42–51, 78–79` (top right, on the Next card). Everything
+fades to an empty frame (end of part 2).
 SAY: The answers are in the exercises, and every command is in the study guide. Next time, Containers 2: five containers working together, a working directory, a non-root user, and your laptop's folder mounted inside a container.

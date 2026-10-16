@@ -8,21 +8,22 @@ Beats (script.md "## S14", one voiceover block each):
     "First the street door" the door flashes. `docker rm -f gateway` -> port-laptop/30 line 2: the
     gateway's box, room, plug, door, slider, route and aim fade to a ghost. The README's five rows
     with `-p 127.0.0.1:8095:9100` are typed under the prompt -> 31 line 6 (the ID): the box, room,
-    plug and aim come back. On "port 8095" `8095` is boxed YELLOW, the door comes back and the
-    slider's knob slides right while its label turns 8090 -> 8095, the route redraws. On "The room
-    inside stays 9100" `9100` is boxed TEAL and the room flashes.
- 1  The terminal shrinks to the strip (the -p row and the two -e rows stay) while V7 leaves;
-    a compact PAGE(32) with its port card (address `localhost:8095`, 47520 · 9200 · 47520) at the
+    plug, aim, door and slider come back (the door still reads 8090). On "port 8095" `8095` is
+    boxed YELLOW while the slider's knob slides right, the door's label turns 8090 -> 8095 and the
+    route redraws. On "The room inside stays 9100" `9100` is boxed TEAL and the room flashes.
+ 1  The terminal shrinks to the strip (the -p row and the two -e rows stay) while V7 leaves and
+    (overlapping) a compact PAGE(32) with its port card (address `localhost:8095`, 47520 · 9200 · 47520) at the
     right, REPLY(32: 2) in the left column (the line broken at its fields, tag "captured reply ·
     curl stood in for the Send button"); the address flashes. TRACKER P3/1 · extra: the reply
     leaves and the page folds its port card (address bar + reply card stay) while the terminal
     grows to 7 rows; it types `curl --max-time 3 http://localhost:8090` (extra, GREY tag) -> 33
     line 2, RED; then `docker ps --format 'table {{.Image}}\t{{.Ports}}\t{{.Names}}'` (extra) -> 35
     lines 2–4, `127.0.0.1:8095->9100/tcp` YELLOW. On "Pause and move your gateway's door": the page
-    leaves, the terminal shrinks to 4 rows (the docker ps command and its output) and the static
-    GREY your-turn card (`docker rm -f gateway` · the run's five rows · open localhost:8095) appears
-    above it, ▶ your turn on it.
- 2  The card leaves and the terminal shrinks to the strip (docker ps's output). A GREY README card `README.md · lines 357–363` (the heading and lines 359, 361,
+    leaves, the terminal shrinks to 5 rows (docker ps's prompt row with its extra tag, the command,
+    its output) and the static GREY your-turn card (`docker rm -f gateway` · the run's five rows ·
+    open localhost:8095) appears above it, ▶ your turn on it.
+ 2  The card leaves and the terminal shrinks to the strip (docker ps's output). A GREY README card
+    `README.md · lines 357–363` (the heading and lines 359, 361,
     363 as rendered) at the left; at the right, a small V7-style picture: the laptop's dashed wall
     with door `127.0.0.1:8090` held by a GREY box "another app" (its room `:9100`), then door
     `127.0.0.1:8095` leading to the TEAL gateway (room `:9100`). README rows light YELLOW as the
@@ -37,10 +38,11 @@ Beats (script.md "## S14", one voiceover block each):
  4  TRACKER P3/2. The chips leave; the terminal is cleared into 7 rows while V7 (door now 8095)
     returns above it. `docker rm -f processor` -> 36 line 2: the processor's box, room and plug fade
     to a ghost. The README's two rows with `-e PORT=9300` -> 37 line 3: the processor comes back,
-    `PORT=9300` is boxed TEAL and its room turns `:9200` -> `:9300`; the gateway's aim, still
-    `processor : 9200`, turns RED. On "The README says" the terminal shrinks to the strip (the two
-    rows and the ID stay), V7 settles above it, and the README chip `README.md · line 380` "Send a
-    message from the browser. It should fail." drops in above V7.
+    `PORT=9300` is boxed TEAL as its room turns `:9200` -> `:9300`. On "The README says" the
+    terminal shrinks to the strip (the two rows and the ID stay), V7 settles above it, and the
+    README chip `README.md · line 380` "Send a message from the browser. It should fail." drops in
+    above V7; on "it should fail" the gateway's aim, still `processor : 9200`, turns RED and pulses
+    (border and text only: the chip's fill stays dark).
  5  V7 and the chip leave; the compact PAGE(32) returns exactly as it was (old reply, port card).
     On "It does": the address bar is clicked (Send), nothing on the page moves. On "The page has
     no error handling": the tag `erratum · no error handling` / `index.html lines 95–100` in the
@@ -62,17 +64,20 @@ Beats (script.md "## S14", one voiceover block each):
  8  TRACKER P3/3. The card leaves while the gateway's chip flashes YELLOW; the chips leave and a
     7-row terminal rises under V7. `docker rm -f gateway` -> 41 line 2 (the gateway fades to a
     ghost); the README's five rows with `-p 127.0.0.1:8090:9100` and `-e PROCESSOR_PORT=9300` -> 42
-    line 6; the gateway comes back, `PROCESSOR_PORT=9300` is boxed GREEN and the aim re-aims at
-    `processor : 9300` in PINK; the door comes back and the slider slides back to 8090. On "and the
+    line 6; the gateway (with its door and slider) comes back, `PROCESSOR_PORT=9300` is boxed GREEN
+    as the aim re-aims at `processor : 9300` in PINK; the slider slides back to 8090 and the route
+    redraws. On "and the
     message goes through" the terminal shrinks to the strip (the -p row and the two -e rows stay),
     V7 leaves, PAGE(43) (compact, port card) at the right with `processor listening on port 9300`
     YELLOW, REPLY(43: 2) in the left column with `"listen_port": 9300,` YELLOW. On "No image was
     rebuilt" a GREY card "no rebuild · configuration only" / "README.md · lines 404–409" under the
-    reply. On "Pause and fix yours" ▶ your turn is pinned on the strip's PROCESSOR_PORT row.
- 9  The page, the reply and the card leave; the strip's `PROCESSOR_PORT=9300` lifts into a chip
+    reply. On "Pause and fix yours" the page, the reply and that card give way to the static GREY
+    your-turn card (`docker rm -f gateway` · the run's five rows · open localhost:8090 and send a
+    message), ▶ your turn on it.
+ 9  The your-turn card leaves; the strip's `PROCESSOR_PORT=9300` lifts into a chip
     (the gateway's, left) and `PORT=9300` (the processor's, right) appears; a GREEN "=" links them
     and the caption "the two settings must agree" sits under it; the two chips flash as named.
-10  TRACKER P3/4. The chips leave; the terminal is cleared into 7 rows under V7. `docker rm -f
+10  TRACKER P3/4. The chips and the strip's rows leave; the terminal grows to 7 rows under V7. `docker rm -f
     gateway processor` -> 44 lines 2–3: both boxes (and the door, route, aim and slider) dissolve;
     `docker network rm toynet` -> 45 line 2: the rail dissolves. TRACKER P3/4 · extra: the rest of
     V7 leaves and the terminal grows to 10 rows; `docker ps -a` (extra) -> 46 lines 2–3 (wrap),
@@ -81,7 +86,8 @@ Beats (script.md "## S14", one voiceover block each):
     use` (header `docker compose up · if the old containers remain (excerpt)`, from 68 lines 8–9
     joined) drops in above the terminal, the GREY caption "if you skip this: Compose wants these
     names" right of the tracker. On "Pause and clean up" the static GREY your-turn card (the two
-    README commands, the two extras tagged) replaces the terminal. Fade out to an empty frame.
+    README commands, the two extras tagged) replaces the terminal and the tracker caption drops
+    " · extra". Fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - The terminal under V7 has 7 rows (top y 0.17), not 8 (top 0.58), and V7 is S11's 0.83 vertical
@@ -93,7 +99,9 @@ Deviations from SHOW (and why):
   the prompt plus their first row is longer than a terminal row.
 - Beat 1: the two extras are typed in a 7-row terminal under the page folded to its reply card,
   not in the strip: in a 3-row strip docker ps's command would scroll away the moment its three
-  output lines print. Under the your-turn card the terminal keeps 4 rows (the command + output).
+  output lines print. Under the your-turn card the terminal keeps 5 rows (docker ps's prompt row
+  with the extra tag, the command, its output); for that the card has no GREY "your turn" header
+  note (the ▶ your turn tag on its corner says it) and sits 0.2 higher.
 - Every extra command has the GREY `extra` tag beside it (script conventions); docker ps's command
   row is a full 65 characters, so its tag sits after the prompt on the row above (as S13).
 - `docker rm -f` of a container is drawn: its box (and what it owns: the door, the route, the
@@ -109,13 +117,18 @@ Deviations from SHOW (and why):
   (the ToyNet has no place for a second app at a laptop door). "another app" is GREY with a GREY
   room (not ours); the gateway's is TEAL.
 - Beat 4: the README chip (9.3 wide) cannot sit beside the tracker or over a 7-row terminal, so
-  the terminal shrinks to the strip and V7 moves down under the chip (as S11 beat 4).
+  the terminal shrinks to the strip and V7 moves down under the chip (as S11 beat 4). The aim
+  turns RED after the chip, on "it should fail" (SHOW lists it before the chip): typing the two
+  commands fills the first sentence, and the RED aim is what "it should fail" predicts.
 - Beat 5: the compact page has no Send button; the click is the address bar's flash.
 - Beat 6: the cheat-sheet card (9.4 wide) does not fit above an 11-row terminal (1.1 units), so the
   terminal shrinks to the four lines it explains once both are highlighted. Row 1 quotes the
   README's "nothing is listening at that address and port"; row 2 is SHOW's "a wrong name ·
   see the exercises" in a dashed box.
 - Beat 7: V7 stays at S11's squash (not full size), so the chips and the ponder card fit under it.
+- Beat 8: the ▶ sits on a static your-turn card, not on the strip's run line: the strip holds only
+  three of the run's five rows and not the docker rm (script conventions: a ▶ never sits on a
+  frame that cannot be read when paused).
 - Beat 10: after the clean-up the rest of V7 leaves and the terminal grows to 10 rows, so `docker
   ps -a` (wrapped) and `docker network ls` are both on screen with their commands; the RED chip
   sits above the 10 rows and its caption in the top band right of the tracker. The closing ▶ sits
@@ -170,12 +183,14 @@ from manim import (
     RIGHT,
     UL,
     UP,
+    AnimationGroup,
     Arrow,
     Create,
     DashedLine,
     FadeIn,
     FadeOut,
     Indicate,
+    LaggedStart,
     Line,
     RoundedRectangle,
     ShowIncreasingSubsets,
@@ -184,6 +199,7 @@ from manim import (
     TransformFromCopy,
     VGroup,
     linear,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -282,6 +298,15 @@ CAP_GREY = S.GREY
 # ------------------------------------------------------------------ helpers
 def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
+
+
+def flash_chip(c, color: str, k: float = 1.1, run_time: float = 0.7):
+    """Flash a chip with an opaque fill (the ToyNet's aim chip: [0] frame, [1] text): its border
+    and text pulse in `color` while the fill stays dark (Indicate would paint the fill over the
+    text)."""
+    fr, tx = c[0], c[1]
+    return AnimationGroup(fr.animate(rate_func=there_and_back).set_stroke(color, width=5).scale(k),
+                          Indicate(tx, color=color, scale_factor=k), run_time=run_time)
 
 
 def glyph_box(line, sub: str, color: str = TURN, pad: float = 0.04, occurrence: int = 0):
@@ -596,14 +621,13 @@ class ChangePorts(VoiceScene):
             vo.wait_until("and start it again")
             run1 = type_rows(self, t, RUN_8095, type_time=2.0)
             t.print(self, [C31.line(6)], run_time=0.35)
-            self.play(*[Transform(m, b) for m, b in zip(gw_owned, backs_gw[:4])], run_time=0.6)
+            self.play(*[Transform(m, b) for m, b in zip(gw_owned + [d1, sl], backs_gw[:6])], run_time=0.6)
             vo.wait_until("port 8095")
             p_row = run1.rows[2]
             b95 = glyph_box(p_row, "8095", TURN)
-            pin(self, p_row, b95, anim=Create(b95), run_time=0.4)
-            self.play(Transform(d1, backs_gw[4]), Transform(sl, backs_gw[5]), run_time=0.4)
-            self.play(net.set_door("127.0.0.1:8095"), sl.knob.animate.set_x(sl.x1), run_time=0.9)
-            self.play(Transform(net.parts["map"], backs_gw[6]), run_time=0.5)
+            pin(self, p_row, b95, run_time=1.0,
+                anim=AnimationGroup(Create(b95), net.set_door("127.0.0.1:8095"), sl.knob.animate.set_x(sl.x1),
+                                    Transform(net.parts["map"], backs_gw[6])))
             vo.wait_until("The room inside stays 9100")
             b91 = glyph_box(p_row, "9100", CTR)
             pin(self, p_row, b91, anim=Create(b91), run_time=0.4)
@@ -616,15 +640,21 @@ class ChangePorts(VoiceScene):
         rp1 = reply_strip(C32.line(2))
         assert rp1.frame.get_bottom()[1] > STRIP_TOP + 0.1 and pg1.frame.get_bottom()[1] > STRIP_TOP + 0.1
         assert rp1.frame.get_right()[0] < pg1.frame.get_left()[0] - 0.15
-        card1 = turn_card([RM_GW, "\n".join(RUN_8095), Prose("in your browser: open localhost:8095")])
+        # no "your turn" header (the ▶ tag says it): the card sits high enough that 5 rows fit under
+        # it, so docker ps keeps its prompt row with the extra tag
+        card1 = turn_card([RM_GW, "\n".join(RUN_8095), Prose("in your browser: open localhost:8095")],
+                          header=None)
         for row in card1.rows[1][1:]:                    # the README's continuation rows keep their 2 spaces
             row.shift(RIGHT * 2 * cell_width(CAPTION))
-        card1.shift([0 - card1.frame.get_center()[0], TOP - 0.05 - card1.get_top()[1], 0])
-        assert card1.frame.get_bottom()[1] > strip_top(4) + 0.15, card1.frame.get_bottom()[1]
+        card1.shift([0 - card1.frame.get_center()[0], strip_top(5) + 0.17 - card1.frame.get_bottom()[1], 0])
+        assert card1.frame.get_top()[1] < TOP - 0.1 and card1.tag.get_top()[1] < 3.1, card1.get_top()[1]
         with self.voiceover(SAY[1], pad=1.2) as vo:
             keep = [run1.rows[2], run1.rows[3], run1.rows[4]]
-            resize(self, t, 3, keep=keep, run_time=0.7, extra=[FadeOut(net)])
-            self.play(FadeIn(pg1, shift=LEFT * 0.15), FadeIn(rp1, shift=RIGHT * 0.15), run_time=0.6)
+            # V7 leaves while the page and the reply arrive (no empty frame between them)
+            resize(self, t, 3, keep=keep, run_time=1.0,
+                   extra=[LaggedStart(FadeOut(net), AnimationGroup(FadeIn(pg1, shift=LEFT * 0.15),
+                                                                   FadeIn(rp1, shift=RIGHT * 0.15)),
+                                      lag_ratio=0.45)])
             self.play(flash(pg1.address, TURN, 1.1), flash(pg1.reply_value.glyphs, TURN, 1.06), run_time=0.8)
             vo.wait_until("Two extra checks")
             # the reply leaves, the page folds its port card: room for a 7-row terminal
@@ -639,13 +669,13 @@ class ChangePorts(VoiceScene):
             m95 = substring(ps[1], "127.0.0.1:8095->9100/tcp")
             self.play(m95.animate.set_color(TURN), run_time=0.4)
             vo.wait_until("Pause and move")
-            # 4 rows: the docker ps command and its output stay under the card
-            resize(self, t, 4, run_time=0.5, extra=[FadeOut(pg1), caption_extra(tr, False)])
+            # 5 rows: docker ps (its prompt row with the extra tag, the command) and its output stay
+            resize(self, t, 5, run_time=0.5, extra=[FadeOut(pg1), caption_extra(tr, False)])
             self.play(FadeIn(card1, shift=UP * 0.15), run_time=0.5)
 
         # ============================================================ 2 · why: another app holds 8090
         rc = readme_rows_card("README.md · lines 357–363", README_357)
-        rc.shift([-6.45 - rc.frame.get_left()[0], TOP - rc.get_top()[1], 0])
+        rc.shift([-6.45 - rc.frame.get_left()[0], TOP - 0.2 - rc.get_top()[1], 0])   # header clear of the tracker
         pic = doors_picture()
         assert rc.frame.get_right()[0] < pic.doors[0].label.get_left()[0] - 0.15, \
             (rc.frame.get_right()[0], pic.doors[0].label.get_left()[0])
@@ -672,7 +702,7 @@ class ChangePorts(VoiceScene):
             vo.wait_until("rooms inside containers never collide")
             self.play(rows[2].animate.set_color(INK), rows[3].animate.set_color(INK),
                       rows[4].animate.set_color(TURN), rows[5].animate.set_color(TURN), run_time=0.4)
-            self.play(*[flash(r, CTR, 1.25) for r in pic.rooms], FadeIn(cap2, shift=UP * 0.1), run_time=0.9)
+            self.play(*[flash(r, TURN, 1.25) for r in pic.rooms], FadeIn(cap2, shift=UP * 0.1), run_time=0.9)
 
         # ============================================================ 3 · erratum: the log's hard-coded 8090
         ec = excerpt_chip(OPEN_8090, "gateway/gateway.py · line 53 (excerpt)", line=L53)
@@ -706,26 +736,28 @@ class ChangePorts(VoiceScene):
         ch380 = readme_chip("README.md · line 380", "Send a message from the browser. It should fail.", max_w=9.6)
         ch380.move_to([0, TOP - 0.25 - ch380.height / 2, 0])
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(ec, et, u_ec, hc, trust)), tr.goto(2), run_time=0.5)
-            resize(self, t, 7, keep=[], run_time=0.6, extra=[FadeIn(net)])
+            resize(self, t, 7, keep=[], run_time=0.6,
+                   extra=[FadeIn(net), FadeOut(VGroup(ec, et, u_ec, hc, trust)), tr.goto(2)])
             vo.wait_until("remove it")
-            type_cmd(self, t, RM_PR, type_time=0.8)
+            type_cmd(self, t, RM_PR, type_time=0.7)
             t.print(self, [C36.line(2)], run_time=0.3)
-            backs_pr = self.fade_to_ghost(pr_owned)
-            run2 = type_rows(self, t, RUN_9300P, type_time=1.2)
-            t.print(self, [C37.line(3)], run_time=0.35)
-            self.play(*[Transform(m, b) for m, b in zip(pr_owned, backs_pr)], run_time=0.5)
+            backs_pr = self.fade_to_ghost(pr_owned, run_time=0.35)
+            run2 = type_rows(self, t, RUN_9300P, type_time=1.0)
+            t.print(self, [C37.line(3)], run_time=0.3)
+            self.play(*[Transform(m, b) for m, b in zip(pr_owned, backs_pr)], run_time=0.35)
             pr_row = run2.rows[2]
             b93 = glyph_box(pr_row, "PORT=9300", CTR)
-            pin(self, pr_row, b93, anim=Create(b93), run_time=0.4)
-            self.play(net.set_room("processor", ":9300"), run_time=0.8)
-            self.play(net.set_aim(None, ERR), run_time=0.6)
-            self.play(flash(net.aim_chip, ERR, 1.1), run_time=0.6)
+            pin(self, pr_row, b93, anim=AnimationGroup(Create(b93), net.set_room("processor", ":9300")),
+                run_time=0.8)
             vo.wait_until("The README says")
             resize(self, t, 3, keep=[run2.rows[1], run2.rows[2], t.lines[-1]], run_time=0.7,
                    extra=[net.animate.shift(UP * up_low)])
             assert net.parts["laptop_label"].get_top()[1] < ch380.get_bottom()[1] - 0.1
             self.play(FadeIn(ch380, shift=DOWN * 0.15), run_time=0.5)
+            vo.wait_until("it should fail")
+            # the gateway still aims at 9200: it turns RED as the README predicts the failure
+            self.play(net.set_aim(None, ERR), run_time=0.6)
+            self.play(flash_chip(net.aim_chip, ERR), run_time=0.7)
 
         # ============================================================ 5 · it fails quietly
         pg5 = place_page(PortPage(8095, reply=R32, compact=True, ports=True))
@@ -737,8 +769,8 @@ class ChangePorts(VoiceScene):
         assert rp5.frame.get_bottom()[1] > STRIP_TOP + 0.1
         assert nc5.get_bottom()[1] > STRIP_TOP + 0.08
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(net), FadeOut(ch380), run_time=0.5)
-            self.play(FadeIn(pg5, shift=LEFT * 0.15), run_time=0.5)
+            self.play(LaggedStart(FadeOut(VGroup(net, ch380)), FadeIn(pg5, shift=LEFT * 0.15), lag_ratio=0.4),
+                      run_time=0.8)
             vo.wait_until("It does, but quietly")
             self.play(pg5.click(), run_time=0.6)
             self.wait(0.4)
@@ -793,36 +825,47 @@ class ChangePorts(VoiceScene):
             self.play(FadeOut(VGroup(t, cc, tick_g)), caption_extra(tr, False), FadeIn(net), run_time=0.7)
             vo.wait_until("Which one setting")
             self.play(FadeIn(ch_gw, shift=UP * 0.1), FadeIn(ch_pr, shift=UP * 0.1), run_time=0.6)
-            self.play(flash(pr_room, CTR, 1.2), flash(net.aim_chip, ERR, 1.1), run_time=0.8)
+            self.play(flash(pr_room, CTR, 1.2), flash_chip(net.aim_chip, ERR), run_time=0.8)
         pc = self.ponder_at("Which one setting fixes it?\nAnd does any image need rebuilding?", 6,
                             bottom=-3.45)
         assert pc.get_top()[1] < ch_gw.get_bottom()[1] - 0.05, (pc.get_top()[1], ch_gw.get_bottom()[1])
 
         # ============================================================ 8 · the fix: the gateway's PROCESSOR_PORT
         t8 = term(P_TOY, rows=7, title="laptop")
+        # the checkpoint's commands (rm + the five rows) are not all in the strip: the ▶ sits on a card
+        card8 = turn_card([RM_GW, "\n".join(RUN_9300G),
+                           Prose("in your browser: open localhost:8090 and send a message")])
+        for row in card8.rows[1][1:]:                    # the README's continuation rows keep their 2 spaces
+            row.shift(RIGHT * 2 * cell_width(CAPTION))
+        card8.shift([0 - card8.frame.get_center()[0], TOP - 0.05 - card8.get_top()[1], 0])
+        assert card8.frame.get_bottom()[1] > STRIP_TOP + 0.15, card8.frame.get_bottom()[1]
         with self.voiceover(SAY[8], pad=1.0) as vo:
             self.play(FadeOut(pc), flash(ch_gw.chip, TURN, 1.12), tr.goto(3), run_time=0.7)
             self.play(FadeOut(VGroup(ch_gw, ch_pr)), FadeIn(t8, shift=UP * 0.2), run_time=0.6)
             vo.wait_until("Remove the gateway")
-            type_cmd(self, t8, RM_GW, type_time=0.7)
-            t8.print(self, [C41.line(2)], run_time=0.3)
-            backs_gw = self.fade_to_ghost(gw_owned + door_owned)
-            run3 = type_rows(self, t8, RUN_9300G, type_time=1.8)
-            t8.print(self, [C42.line(6)], run_time=0.35)
-            self.play(*[Transform(m, b) for m, b in zip(gw_owned, backs_gw[:4])], run_time=0.5)
+            type_cmd(self, t8, RM_GW, type_time=0.6)
+            t8.print(self, [C41.line(2)], run_time=0.25)
+            backs_gw = self.fade_to_ghost(gw_owned + door_owned, run_time=0.35)
+            run3 = type_rows(self, t8, RUN_9300G, type_time=1.1)
+            t8.print(self, [C42.line(6)], run_time=0.3)
+            self.play(*[Transform(m, b) for m, b in zip(gw_owned + [d1, sl], backs_gw[:6])], run_time=0.4)
             pp_row = run3.rows[4]
             b_pp = glyph_box(pp_row, "PROCESSOR_PORT=9300", VENV)
-            pin(self, pp_row, b_pp, anim=Create(b_pp), run_time=0.4)
-            self.play(net.set_aim("processor : 9300", LOOKUP), flash(pr_room, CTR, 1.2), run_time=0.8)
-            self.play(Transform(d1, backs_gw[4]), Transform(sl, backs_gw[5]), run_time=0.4)
-            self.play(net.set_door("127.0.0.1:8090"), sl.knob.animate.set_x(sl.x0), run_time=0.8)
-            self.play(Transform(net.parts["map"], backs_gw[6]), run_time=0.4)
+            # "with 9300": the aim re-aims; "back on 8090": the slider slides back (lagged, one move)
+            pin(self, pp_row, b_pp, run_time=1.2,
+                anim=LaggedStart(AnimationGroup(Create(b_pp), net.set_aim("processor : 9300", LOOKUP),
+                                                flash(pr_room, CTR, 1.2)),
+                                 AnimationGroup(net.set_door("127.0.0.1:8090"), sl.knob.animate.set_x(sl.x0),
+                                                Transform(net.parts["map"], backs_gw[6])),
+                                 lag_ratio=0.5))
             vo.wait_until("and the message goes through")
             pg8 = place_page(PortPage(8090, reply=R43, compact=True, ports=True))
             rp8 = reply_strip(C43.line(2))
             keep = [run3.rows[2], run3.rows[3], run3.rows[4]]
-            resize(self, t8, 3, keep=keep, run_time=0.7, extra=[FadeOut(net)])
-            self.play(FadeIn(pg8, shift=LEFT * 0.15), FadeIn(rp8, shift=RIGHT * 0.15), run_time=0.6)
+            resize(self, t8, 3, keep=keep, run_time=1.0,
+                   extra=[LaggedStart(FadeOut(net), AnimationGroup(FadeIn(pg8, shift=LEFT * 0.15),
+                                                                   FadeIn(rp8, shift=RIGHT * 0.15)),
+                                      lag_ratio=0.45)])
             lis = pg8.value("listen_port")
             self.play(pg8.port_lines[1].glyphs.animate.set_color(TURN),
                       substring(rp8.rows[2], '"listen_port": 9300,').animate.set_color(TURN), run_time=0.5)
@@ -832,8 +875,7 @@ class ChangePorts(VoiceScene):
             assert nr.get_bottom()[1] > STRIP_TOP + 0.08 and nr.get_right()[0] < pg8.frame.get_left()[0] - 0.1
             self.play(FadeIn(nr, shift=UP * 0.1), flash(lis, TURN, 1.2), run_time=0.6)
             vo.wait_until("Pause and fix yours")
-            yt = your_turn_tag(t8, pp_row)
-            pin(self, pp_row, yt, run_time=0.5)
+            self.play(FadeOut(VGroup(pg8, rp8, nr)), FadeIn(card8, shift=UP * 0.15), run_time=0.6)
 
         # ============================================================ 9 · the two settings must agree
         g9 = setting_chip("PROCESSOR_PORT=9300", "gateway")
@@ -845,7 +887,7 @@ class ChangePorts(VoiceScene):
         cap9 = note("the two settings must agree").next_to(row9, DOWN, buff=0.35)
         src9 = substring(pp_row, "PROCESSOR_PORT=9300")
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(pg8, rp8, nr)), run_time=0.4)
+            self.play(FadeOut(card8), run_time=0.4)
             self.play(FadeIn(g9.chip[0]), TransformFromCopy(src9, g9.chip.text), FadeIn(g9.note),
                       FadeIn(p9, shift=UP * 0.1), run_time=0.8)
             self.remove(g9.chip[0], g9.chip.text, g9.note, p9)
@@ -863,20 +905,23 @@ class ChangePorts(VoiceScene):
         card10 = turn_card([RM_BOTH, NET_RM, (PS_A, "extra"), (NET_LS, "extra")])
         card10.shift([0 - card10.frame.get_center()[0], 0.3 - card10.frame.get_center()[1], 0])
         with self.voiceover(SAY[10], pad=1.2) as vo:
-            self.play(FadeOut(VGroup(g9, p9, eq, cap9)), tr.goto(4), run_time=0.5)
+            strip = list(t8.lines.submobjects)          # the strip's rows leave with the chips
+            self.play(FadeOut(VGroup(g9, p9, eq, cap9)), FadeOut(VGroup(*strip)), tr.goto(4), run_time=0.5)
+            for ln in strip:
+                t8.lines.remove(ln)
+                self.remove(ln)
             resize(self, t8, 7, keep=[], run_time=0.6, extra=[FadeIn(net)])
             vo.wait_until("remove both containers")
-            type_cmd(self, t8, RM_BOTH, type_time=0.9)
-            t8.print(self, C44.at((2, 3)), run_time=0.35)
+            type_cmd(self, t8, RM_BOTH, type_time=0.7)
+            t8.print(self, C44.at((2, 3)), run_time=0.3)
             self.play(*net.parts_out("boxes", "room_gateway", "room_processor", "plug_gateway", "plug_processor",
-                                     "door", "slider", "map", "aim"), run_time=0.8)
+                                     "door", "slider", "map", "aim"), run_time=0.6)
             vo.wait_until("then the network")
-            type_cmd(self, t8, NET_RM, type_time=0.7)
-            t8.print(self, [C45.line(2)], run_time=0.3)
-            self.play(*net.parts_out("rail", "rail_label"), run_time=0.6)
+            type_cmd(self, t8, NET_RM, type_time=0.6)
+            t8.print(self, [C45.line(2)], run_time=0.25)
+            self.play(*net.parts_out("rail", "rail_label"), run_time=0.5)
             vo.wait_until("An extra check")
-            self.play(caption_extra(tr, True), run_time=0.3)
-            resize(self, t8, 10, keep=[], run_time=0.6, extra=[FadeOut(net)])
+            resize(self, t8, 10, keep=[], run_time=0.6, extra=[FadeOut(net), caption_extra(tr, True)])
             type_extra(self, t8, PS_A, type_time=0.5)
             ps_a = t8.print(self, C46.at(2, 3), wrap=True, run_time=0.4)
             type_extra(self, t8, NET_LS, type_time=0.6)
@@ -885,8 +930,7 @@ class ChangePorts(VoiceScene):
             b_hw = glyph_box(hw, "hello-world", TURN)
             no_tn = grey_tag("no toynet").next_to(nls[2], RIGHT, buff=0.5).set_y((nls[1].get_y() + nls[2].get_y()) / 2)
             no_tn.set_x(3.6)
-            self.play(Create(b_hw), run_time=0.4)
-            self.play(FadeIn(no_tn, shift=LEFT * 0.1), run_time=0.4)
+            self.play(Create(b_hw), FadeIn(no_tn, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("Skip this")
             ec10.shift([0 - ec10.chip.get_center()[0], (t8.box.get_top()[1] + 0.2) - ec10.chip.get_bottom()[1], 0])
             assert ec10.header.get_top()[1] < TOP, ec10.header.get_top()[1]
@@ -895,13 +939,8 @@ class ChangePorts(VoiceScene):
             self.play(FadeIn(ec10, shift=DOWN * 0.15), run_time=0.5)
             self.play(FadeIn(cap10), flash(ec10.text, ERR, 1.04), run_time=0.6)
             vo.wait_until("Pause and clean up")
-            self.play(FadeOut(VGroup(t8, b_hw, no_tn, ec10, cap10)), run_time=0.4)
+            self.play(FadeOut(VGroup(t8, b_hw, no_tn, ec10, cap10)), caption_extra(tr, False), run_time=0.4)
             self.play(FadeIn(card10, shift=UP * 0.15), run_time=0.5)
         self.play(*[FadeOut(m) for m in list(self.mobjects)], run_time=0.6)
         self.wait(0.2)
 
-
-def your_turn_tag(t, line):
-    """The YELLOW ▶ your turn tag beside a terminal row (pinned by the caller)."""
-    from common import beside, your_turn
-    return beside(your_turn(), t, line, buff=0.4)

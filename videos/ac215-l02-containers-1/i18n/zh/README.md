@@ -43,7 +43,7 @@ python -m explainer.build videos/ac215-l02-containers-1 --subs-only             
 ```
 
 `script.md` 里的每一行 SAY 在 `narration/*.yaml` 里对应一个条目（129 段），`en` 和 SAY 逐字相同；`zh` 按
-`explainer.voice.split_sentences` 切出的英文句子一句对一句（共 371 句），不合并、不拆分。字幕按英文旁白录下的时间显示：
+`explainer.voice.split_sentences` 切出的英文句子一句对一句（共 377 句），不合并、不拆分。字幕按英文旁白录下的时间显示：
 双语字幕带在中文句子切开的地方，把英文句子也切在对应的位置；纯中文字幕每行最多 22 个单位、每条最多两行。
 SAY 为了让语音读对，把实物念成了单词（dash dash rm、slash dot venv、docker dot I-O）；这些句子在 `en_display:` 里
 给出屏幕上的写法（`--rm`、`/.venv`、`docker.io`），双语字幕的英文行显示的就是它。

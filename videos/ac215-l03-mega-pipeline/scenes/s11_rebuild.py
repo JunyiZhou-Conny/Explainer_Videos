@@ -39,7 +39,8 @@ Beats (script.md "## S11", one voiceover block each):
     14–17): line 3 cut at 65 with its spaces dropped ("FINISHED …"), rows 14–17 cut at 58, each
     row's time in a compact GREY tag (0.34 tall) at its right end, as S12/S13 do. ▶ your turn.
  5  The chip goes, then V2 (old state: GREY COPY slab, empty uv sync slab) rises top right; GREY tag
-    "ponder 2". On "build steps 2 and 3" `CACHED` turns GREEN and boxed on lines 14–15, and the apt
+    "part 1's ponder: which steps run again?" (part 2 is its own upload, so it restates the
+    question). On "build steps 2 and 3" `CACHED` turns GREEN and boxed on lines 14–15, and the apt
     and WORKDIR slabs get GREEN "CACHED" stamps (fanned, with leaders; the base slab stays as is).
     On "build step 4" line 16 gets a TEAL "build step 4" badge and the COPY slab dissolves and
     re-forms, now holding a GREEN pyproject.toml and a GREEN uv.lock; on "build step 5" line 17's
@@ -603,8 +604,9 @@ class BakeItIn(VoiceScene):
             s_.move_to([x_edge - 0.45 - s_.width / 2, b.get_center()[1] + dy, 0])
             leads.add(Line(s_.get_right(), [x_edge - 0.03, b.get_center()[1], 0], color=VENV, stroke_width=2.5))
             stamps.add(s_)
-        ptag = note_tag("ponder 2")
-        place(ptag, right=stamps.get_left()[0] - 0.35, cy=stamps[1].get_center()[1])
+        ptag = note_tag("part 1's ponder: which steps run again?")   # part 2 is its own upload:
+        place(ptag, right=stamps.get_left()[0] - 0.35, cy=stamps[1].get_center()[1])   # restate the question
+        assert ptag.get_left()[0] > -6.6, ptag.get_left()
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(rchip, shift=UP * 0.1), run_time=0.35)
             self.play(FadeIn(st, shift=UP * 0.2), run_time=0.6)

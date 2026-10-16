@@ -84,9 +84,10 @@ S02:
   zh:
   - "在 Mac 或 Windows 笔记本上，Docker Desktop 靠一台隐藏的小 Linux VM，来提供这个内核。"
   - "在云上的 VM 里，Docker 直接跑在 VM 自己的 Linux 上。"
-- en: "What a venv couldn't isolate in lecture 1, the system's files and libraries, is now inside the box."
+- en: "What a venv couldn't isolate in lecture 1, the system's files and libraries, is now inside the box. GPU drivers still come from the host."
   zh:
   - "第 1 讲里 venv 隔离不了的东西，也就是系统文件和库，现在都装进了盒子里。"
+  - "GPU 驱动还是来自宿主机。"
 S03:
 - en: "Now the README section Developing App using Containers. Open a terminal on your laptop. On a Mac your prompt looks different; on Windows, use an Ubuntu terminal in WSL, or Git Bash. In Git Bash, put winpty in front of docker run if it says stdin is not a terminal."
   zh:
@@ -323,7 +324,7 @@ S07:
   - null
   - null
   - "Then it creates a venv at /.venv, and installs 11 packages."
-- en: "On the number line, the requirement covers 3.13 and newer. The base image's 3.12 falls outside, so uv downloads the newest stable Python it knows in the range, and the venv's python links to it."
+- en: "On the number line, the requirement covers 3.13 and newer. The base image's 3.12 falls outside, so uv downloads the newest stable Python it knows in the range, and the python in the venv links to it."
   zh:
   - "在数轴上，这个要求覆盖 3.13 及以上。"
   - "而 base image 的 3.12 落在范围外，所以 uv 从它知道的版本里，下载了范围内最新的稳定版 Python，venv 里的 python 就软链接到它。"
@@ -380,7 +381,7 @@ S08:
   en_display:
   - "On the card, the entrypoint and the command join into one command line: bash, -c, then that string."
   - "On its own, bash -c runs the string and exits."
-- en: "Here the string first sources the activate script, which puts the venv's bin folder first in PATH. Then exec bash swaps this bash for an interactive one that keeps the new PATH and gives you a prompt."
+- en: "Here the string first sources the activate script, which puts the bin folder of the venv first in PATH. Then exec bash swaps this bash for an interactive one that keeps the new PATH and gives you a prompt."
   zh:
   - "这里的字符串先 source activate 脚本，它会把 venv 的 bin 目录放到 PATH 的最前面。"
   - "接着 exec bash 把这个 bash 换成一个交互式的 bash，它保留新的 PATH，还给你一个提示符。"
@@ -389,18 +390,20 @@ S08:
   - "暂停一下，构建一次。"
   - "COPY 和 uv sync 又跑了一遍，Python 也重新下载了，只因为加了一行。"
   - "原因第二部分再讲。"
-- en: "Pause and run it. No app in parentheses this time; is the venv active? These extra checks say yes: which python points into dot venv, it's 3.15.0, and the virtual env variable is set. The fresh bash set its own prompt. Then type exit, back to your laptop."
+- en: "Pause and run it. No app in parentheses this time; is the venv active? These extra checks say yes: which python points into dot venv, it's 3.15.0, and the virtual env variable is set. The fresh bash set its own prompt. The lecture's run command adds dash dash entrypoint, which drops this CMD, and the venv with it. Then type exit, back to your laptop."
   zh:
   - "暂停一下，自己跑一遍。"
   - "这次提示符前面没有带括号的 app；venv 激活了吗？"
   - "这几个额外检查说是：which python 指向 .venv 里面，版本是 3.15.0，virtual env 这个变量也设置好了。"
   - "新起的 bash 设置了自己的提示符。"
+  - "今天课件里的 run 命令多加了 --entrypoint，它会把这个 CMD 连同 venv 一起去掉。"
   - "然后输入 exit，回到你的笔记本。"
   en_display:
   - null
   - "No (app) this time; is the venv active?"
   - "These extra checks say yes: which python points into .venv, it's 3.15.0, and the VIRTUAL_ENV variable is set."
   - null
+  - "The lecture's run command adds --entrypoint, which drops this CMD, and the venv with it."
   - null
 - en: "The README then points to a solution, Dockerfile.txt. An extra diff shows what it adds; if yours prints less-than and greater-than signs, add dash u. First, three ENV lines: no questions from apt, a UTF-8 locale, and unbuffered logs."
   zh:
@@ -454,14 +457,16 @@ S09:
   - "It ended the container's process, so the container stopped, and --rm deleted it."
   - "An extra check, docker ps -a, lists every container, even stopped ones."
   - null
-- en: "In a second run, an extra check, echo dollar dollar, shows that bash is process number 1. The container lives as long as that process. Dash i connects your keyboard, and dash t gives it a terminal. Then type exit."
+- en: "In a second run, an extra check, echo dollar dollar, shows that bash is process number 1. That's the PID namespace from today's lecture: each container counts its own processes from 1. The container lives as long as that process. Dash i connects your keyboard, and dash t gives it a terminal. Then type exit."
   zh:
   - "第二次运行时，额外检查 echo $$ 显示 bash 是 1 号进程。"
+  - "这就是今天这节课讲的 PID 命名空间：每个 container 都从 1 开始给自己的进程编号。"
   - "只要这个进程还在，container 就还在。"
   - "参数 -i 接上你的键盘，-t 给它一个终端。"
   - "然后输入 exit。"
   en_display:
   - "In a second run, an extra check, echo $$, shows that bash is process number 1."
+  - null
   - null
   - "-i connects your keyboard, and -t gives it a terminal."
   - null
@@ -492,9 +497,9 @@ S09:
   - "想一次就跑完，就用你自己的 -c 字符串替换 CMD，像这个额外命令一样：先激活，再翻译成法语。"
   en_display:
   - "To run it in one go, replace CMD with your own -c string, as in this extra: activate, then translate to French."
-- en: "A repo helper, docker-shell.sh, builds and runs in one go."
+- en: "A repo helper, docker-shell.sh, builds and runs in one go: run it with sh docker-shell.sh."
   zh:
-  - "这个 repo 的辅助脚本 docker-shell.sh 一次就能构建并运行。"
+  - "这个 repo 的辅助脚本 docker-shell.sh 一次就能构建并运行，跑它的命令是：sh docker-shell.sh。"
 - en: "You've built and run your own image. In part 2: what's inside it, why it keeps rebuilding, and how to ship it to a VM."
   zh:
   - "你已经构建并运行了自己的 image。"

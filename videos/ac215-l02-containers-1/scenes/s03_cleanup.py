@@ -14,6 +14,9 @@ Beats (script.md "## S03", one voiceover block each):
     nothing running". On "If yours can't connect" a GREY chip "cannot connect? → start Docker
     Desktop" appears left of the Docker Desktop chip (above the terminal, for the same reason), and
     that chip is circled on "start Docker Desktop". ▶ your turn (wiggles on "Pause and run it").
+    GREY lecture tag "Lecture 2 · slides 54, 61–62, 73" (SLIDES.md, S03 (i)) top right, from
+    "First, docker container ls" until "If yours can't connect" (bottom 3.13, the Docker Desktop
+    chip under it at y ≈ 2.2).
  2  TRACKER A2. Above the terminal: README card (README.md · line 116) "Stop any container that is
     running"; the row tag "no rows: nothing running" pulses on "There's nothing to stop"; beside the
     card a GREY mono chip `docker stop <CONTAINER ID>` with the tag "only if you have one · not run
@@ -67,7 +70,7 @@ import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
-from explainer.devops import line_pitch
+from explainer.devops import lecture_ref, line_pitch
 from explainer.scene import VoiceScene
 
 from common import (BOTTOM, BUILD, CD, CLONE, CLOUD, CONTAINER_LS, ERR, IMAGE_LS, INK, LAPTOP, MONO,
@@ -251,9 +254,11 @@ class CleanSlate(VoiceScene):
         # ========================================================== 1 · docker container ls
         cc = chip("cannot connect? → start Docker Desktop", S.GREY, size=22)
         cc.move_to([dd.get_left()[0] - 0.35 - cc.width / 2, band_y, 0])
+        lref = lecture_ref(2, "54, 61–62, 73")              # top right, bottom at 3.13
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(note, shift=UP * 0.1), run_time=0.3)
+            vo.wait_until("First, docker container ls")
+            self.play(FadeOut(note, shift=UP * 0.1), FadeIn(lref), run_time=0.4)
             c1 = type_cmd(self, t, CONTAINER_LS, 0.8)
             h1 = t.print(self, PS_HEAD, run_time=0.4)[0]
             vo.wait_until("Here it shows")
@@ -261,7 +266,7 @@ class CleanSlate(VoiceScene):
             cols = at_row(row_tag("the columns · no rows: nothing running"), t, 2)
             pin(self, h1, cols, run_time=0.5)
             vo.wait_until("If yours can't connect")
-            self.play(FadeIn(cc, shift=RIGHT * 0.2), run_time=0.5)
+            self.play(FadeIn(cc, shift=RIGHT * 0.2), FadeOut(lref), run_time=0.5)
             vo.wait_until("start Docker Desktop")
             self.play(Circumscribe(dd, color=TURN, buff=0.06), run_time=1.0)
             yt1 = beside(turn_tag(), c1)

@@ -17,7 +17,8 @@ Beats (script.md "## S09", one voiceover block each):
  2  The rows off the reading path dim. A YELLOW eye reads downward: line 9 (white, "line 36"
     pulses) with the label "our code" → line 10 `client = storage.Client()` turns YELLOW → line 23
     `google.auth.default()` turns PINK, label "the client asks" → line 36, label "google.auth looks
-    for the file".
+    for the file". The anchors inside the second sentence use wait_said() (spoken length: "36"
+    is read thirty-six), so the eye moves on the words, not a second before them.
  3  The eye and labels go; `storage.Client()` (line 10) and `google.auth` (line 23; its
     `.default()` fades) lift out of the terminal, which shrinks to the strip (the command + both
     rows of line 36, RED) while the two words fly to their places in V5; then the container
@@ -35,7 +36,8 @@ Beats (script.md "## S09", one voiceover block each):
  6  README chip `README.md · lines 92–95` in the top band. Gate 1 pulses; its question "who is
     calling?" turns into "service account" (GREEN) and gets a GREEN check while the key pulses;
     gate 2 pulses; its question becomes "IAM roles allow it", the padlock opens and the bucket
-    door opens.
+    door opens, while the chip turns into `README.md · line 95 · IAM = Cloud permissions` (the
+    one time IAM is spoken; it leaves with the cloud in beat 7).
  7  Error branch: the cloud, gates, token, arrow and tags go; container, signpost and laptop stay.
     The key vanishes (RED cross), google.auth follows the signpost again into the empty secrets/.
     Three causes, one at a time, each undone before the next, with a RED numbered badge and
@@ -61,13 +63,16 @@ Beats (script.md "## S09", one voiceover block each):
     line 134` and ▶ your turn arrive in the top band. Everything fades: empty frame.
 """
 
+import re
+
 import numpy as np
 from manim import *
 
 from explainer import style as S
 from explainer.devops import (CAPTION, TERM_BG, box, check_mark, cross_mark, label, line_bar,
                               mono, step_badge, substring, tag)
-from explainer.scene import VoiceScene
+from explainer.scene import MIN_WAIT, VoiceScene
+from explainer.voice import Clip
 
 from common import (CLOUD, COST, CTR, ERR, GROUP, INK, LAPTOP, LOOKUP, NARRATION, P_CTR, TURN, VENV,
                     AdcChain, LookFor, _set_op, asset_lines, bare_prompt, capture,
@@ -201,6 +206,42 @@ def show_part(piece, name: str):
     m = piece.parts[name]
     _set_op(m)
     piece._flag(m, False)
+
+
+_ONES = ("zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen "
+         "fifteen sixteen seventeen eighteen nineteen").split()
+_TENS = "twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def _said_len(s: str, pause: int = 6) -> int:
+    """How long `s` takes to say, in characters: numbers as words ("36" is read thirty-six), and
+    each , ; : worth `pause` characters (Kokoro pauses there)."""
+    def words(m):
+        n = int(m.group())
+        if n < 20:
+            return _ONES[n]
+        if n < 100:
+            return _TENS[n // 10 - 2] + ("" if n % 10 == 0 else "-" + _ONES[n % 10])
+        return " ".join(_ONES[int(d)] for d in m.group())
+    return len(re.sub(r"\d+", words, s)) + pause * len(re.findall(r"[,;:]", s))
+
+
+def wait_said(scene, vo, phrase: str):
+    """vo.wait_until(phrase) for a phrase inside a sentence: the sentence's real start and end
+    (Kokoro marks) shared out by spoken length instead of characters. After "line 36," a phrase
+    otherwise fires about a second early (QA 15:45: "the client asked" moved the eye while
+    "client" was still being said). A sentence start, a translated voice (its own anchor map) or
+    a lost phrase (the usual warning) goes to vo.wait_until."""
+    clip, idx = vo.clip, vo.clip.text.lower().find(phrase.lower())
+    marks = list(clip.marks) or [(0, 0.0)]
+    bounds = marks + [(len(clip.text), clip.duration)]
+    if type(clip) is not Clip or idx < 0 or any(c == idx for c, _ in marks):
+        vo.wait_until(phrase)
+        return
+    (c0, t0), (c1, t1) = next(b for b in zip(bounds, bounds[1:]) if b[0][0] <= idx < b[1][0])
+    t = t0 + (t1 - t0) * _said_len(clip.text[c0:idx]) / max(1, _said_len(clip.text[c0:c1]))
+    if t - vo.elapsed > MIN_WAIT:
+        scene.wait(t - vo.elapsed)
 
 
 def _first_half(t: float) -> float:
@@ -424,15 +465,15 @@ class WhoIsCalling(VoiceScene):
             vo.wait_until("Our code, line 36")
             self.play(FadeIn(lab_code, shift=LEFT * 0.1), run_time=0.4)
             self.play(Indicate(substring(L9, "line 36"), color=TURN, scale_factor=1.2), run_time=0.7)
-            vo.wait_until("built a storage client")
+            wait_said(self, vo, "built a storage client")
             self.play(eye.animate.move_to(eye_at(L10)),
                       substring(L10, "client = storage.Client()").animate.set_color(TURN), run_time=0.6)
-            vo.wait_until("the client asked")
+            wait_said(self, vo, "the client asked")
             self.play(eye.animate.move_to(eye_at(L23)),
                       substring(L23, "_, project = google.auth.default()").animate.set_color(LOOKUP),
                       run_time=0.7)
             self.play(FadeIn(lab_asks, shift=LEFT * 0.1), run_time=0.4)
-            vo.wait_until("and that library looked")
+            wait_said(self, vo, "and that library looked")
             self.play(eye.animate.move_to(eye_at(L36b)), run_time=0.7)
             self.play(FadeIn(lab_file, shift=LEFT * 0.1), run_time=0.4)
 
@@ -525,8 +566,13 @@ class WhoIsCalling(VoiceScene):
             self.play(FadeIn(cost, shift=UP * 0.1), Create(pin_line), run_time=0.5)
 
         # ========================================================== 6 · two checks (README.md 92-95)
-        chip_auth = readme_chip("README.md · lines 92–95")
-        place(chip_auth, right=EDGE, cy=BAND_Y)
+        chip_auth = note_chip("README.md · lines 92–95")     # = readme_chip(...), swappable
+        # IAM is spoken once ("and IAM roles open the bucket"): the chip glosses it as it is said
+        # (QA 16:35); README line 95 is where the README names IAM
+        chip_iam = note_chip("README.md · line 95", "IAM = Cloud permissions")
+        for c in (chip_auth, chip_iam):
+            place(c, right=EDGE, cy=BAND_Y)
+        assert chip_iam.get_left()[0] > tr10_right + 0.15, (chip_iam.get_left()[0], tr10_right)
         g1, g2 = chain.gates
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeIn(chip_auth, shift=DOWN * 0.1), run_time=0.5)
@@ -547,7 +593,7 @@ class WhoIsCalling(VoiceScene):
             ans2 = label("IAM roles allow it", 20, VENV).move_to(g2.question, aligned_edge=LEFT)
             chain.attach(self, ans2, anims=[*swap_words(g2.question, ans2),
                                             Indicate(chain.padlock, color=VENV, scale_factor=1.3)],
-                         run_time=0.8, into=g2)
+                         extra=chip_swap(chip_auth, chip_iam), run_time=0.8, into=g2)
             ck_2 = chain.check(self, 2, run_time=0.8)
 
         # ========================================================== 7 · three ways to get the error
@@ -563,9 +609,9 @@ class WhoIsCalling(VoiceScene):
         place(note, cx=0, cy=CHAIN_Y)              # alone above the strip, once V5 has gone
         with self.voiceover(SAY[7]) as vo:
             chain.detach(self, tok, arrow, ck_1, ck_2,
-                         extra=[FadeOut(cost), FadeOut(pin_line), FadeOut(chip_auth), FadeOut(adc)],
-                         run_time=0.4)
-            chain.hide(self, "google", run_time=0.35)
+                         extra=[FadeOut(cost), FadeOut(pin_line), FadeOut(adc)], run_time=0.4)
+            # the IAM chip leaves with the cloud (a little more time to read it)
+            chain.hide(self, "google", run_time=0.35, extra=[FadeOut(chip_iam)])
             chain.fail(self, run_time=0.5)
             chain.follow(self, run_time=1.0, found=False)
             vo.wait_until("The key isn't")

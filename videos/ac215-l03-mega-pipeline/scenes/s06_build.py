@@ -562,12 +562,15 @@ class BuildImage(VoiceScene):
             resize(self, t, BIG, run_time=0.8, extra=[FadeIn(live, shift=DOWN * 0.1)])
             new_title = mono("laptop · the same build, full log", 20, S.GREY).move_to(t.title)
             self.play(Transform(t.title, new_title), run_time=0.45)
+            # the caption is right-aligned at the safe edge: it brightens and grows leftwards only
+            # (the flag below only brightens: growing, it would touch "log")
             at(self, vo, "that folds each", 0.17)
-            self.play(Indicate(live[0], color=INK, scale_factor=1.06), run_time=0.9)
+            self.play(live[0].animate(rate_func=there_and_back).scale(1.05, about_edge=RIGHT).set_color(INK),
+                      run_time=0.9)
             at(self, vo, "Here are the full")
             outA = t.print(self, LOG_A, run_time=1.4, lag=0.12)
             at(self, vo, "add dash dash", -0.31)
-            self.play(Indicate(live[1][1], color=INK, scale_factor=1.15), run_time=0.9)
+            self.play(live[1][1].animate(rate_func=there_and_back).set_color(INK), run_time=0.9)
             r23, dots1, r148, r149, r1375, r1377 = outA[1], outA[2], outA[3], outA[4], outA[7], outA[8]
 
             at(self, vo, "Build step 2")

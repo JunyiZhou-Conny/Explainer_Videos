@@ -14,7 +14,9 @@ Beats (script.md "## S02", one voiceover block each):
     items' boxes merge and their letters regroup into the label), "packages" (GREEN), "your code"
     (GREY); a lock glyph "read-only" on the stack's top corner. Each slab pulses on "Each layer".
     At "Beside it" a TEAL config card with four empty rows ENV, ENTRYPOINT, CMD, WorkingDir slides
-    in at right; ENV lights on "settings like", ENTRYPOINT + CMD on "which program".
+    in at right; ENV lights on "settings like", ENTRYPOINT + CMD on "which program". The GREY tag
+    "Lecture 2 · slides 30–31, 35" (right-aligned under the header) shows from the block's start
+    until "Beside it", just before the card.
  2. A GREY page "Dockerfile" at far left, lines `FROM …`, `RUN …`, `COPY …`, `CMD …`. A YELLOW bar
     reads them one at a time and each keyword flies (TransformFromCopy) to what it makes, landing as
     a TEAL tile just left of its slab: FROM by the base slab, RUN and COPY by theirs (a brace on
@@ -42,24 +44,28 @@ Beats (script.md "## S02", one voiceover block each):
  6. V8, first half: three BLUE VMs, each with its own "kernel" bar and "OS" band; the kernels pulse
     YELLOW on "A VM boots", a GREY caption "kernel: the core of the operating system" on "the core
     of". At "Containers are" the VMs shrink into TEAL "container" boxes and the caption becomes
-    "isolated processes, not machines"; at "that share one" the kernel bars slide together into
-    one GREY "Linux kernel · shared", which pulses.
+    "isolated processes, not machines", and GREY "user space" appears beside the leftmost container
+    (slide 22); at "that share one" the kernel bars slide together into one GREY "Linux kernel ·
+    shared", which pulses; then GREY tags "namespaces" and "cgroups" sit on the bar under the outer
+    containers (slide 22).
+    Tag "Lecture 2 · slides 9–12, 22–24" (under the header) from "A VM boots" to the end of the block.
  7. V8, second half: a GREY laptop outline wraps the picture ("Mac · Windows"); a dashed GREY box
     "Linux VM · Docker Desktop" slides in under the kernel bar. Then the laptop outline morphs into
     a BLUE VM outline ("cloud VM", ending under the kernel bar), the dashed box fades: caption "on a
-    cloud VM: its own Linux".
+    cloud VM: its own Linux". "user space" and the slide tag leave with the caption at the start;
+    the two chips stay on the bar (no arrow through a daemon: SLIDES.md Conflict 9).
  8. L1's three chips return beside a stack whose two bottom slots are empty (dashed), each RED-
     outlined chip level with its slot: "the operating system's files" slides into the bottom slot at
     "the system's files", "system libraries" into the next at "and libraries", both becoming ORANGE
-    slabs (GREEN check); the third, "GPU drivers", stays outside below them, GREY, "still the
-    host's" (with the libraries; on its own sentence once SAY says "GPU drivers still come from the
-    host."). Fade out to an empty frame.
+    slabs (GREEN check); the third, "GPU drivers", stays outside below them and turns GREY, "still
+    the host's", at "GPU drivers still". Fade out to an empty frame.
 """
 
 import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
+from explainer.devops import lecture_ref
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, ERR, IMAGE, INK, LAPTOP, MONO, NARRATION, SYSTEM, TOOL, TURN, VENV, ConfigCard,
@@ -94,6 +100,13 @@ def header() -> VGroup:
     row.move_to([0, HEAD_Y, 0])
     row.words, row.dots = words, dots
     return row
+
+
+def slide_ref(head: VGroup, slides: str) -> VGroup:
+    """lecture_ref(2, slides), right-aligned at x 6.6 just under the header row (the header reaches
+    x 3.58, so the default top-right spot would cover "registry")."""
+    r = lecture_ref(2, slides)
+    return r.move_to([6.6 - r.width / 2, head.get_bottom()[1] - 0.1 - r.height / 2, 0])
 
 
 def item(s: str, color, item_w: float = 2.6) -> VGroup:
@@ -214,9 +227,10 @@ class FourNouns(VoiceScene):
         lock_g.next_to(s_code.box, UP, buff=0.14).align_to(s_code.box, RIGHT)
         card = ConfigCard(rows=("ENV", "ENTRYPOINT", "CMD", "WorkingDir"), card_w=3.2)
         card.move_to([4.9, 0, 0]).align_to(s_os.box, DOWN)
+        ref1 = slide_ref(head, "30–31, 35")
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(head.words[0].animate.set_color(IMAGE), FadeOut(VGroup(nest, right_os)),
+            self.play(head.words[0].animate.set_color(IMAGE), FadeOut(VGroup(nest, right_os)), FadeIn(ref1),
                       VGroup(ibox_solid, items, an_image).animate.shift(
                           np.array([STACK_X, FLOOR_Y + 1.6, 0]) - ibox_solid.get_center()), run_time=0.9)
             # the box opens: what it held becomes three slabs, bottom-up. "OS files" and "Python"
@@ -235,6 +249,7 @@ class FourNouns(VoiceScene):
             self.play(LaggedStart(*[Indicate(s.box, color=IMAGE, scale_factor=1.04) for s in slabs],
                                   lag_ratio=0.45), run_time=2.2)
             vo.wait_until("Beside it")
+            self.play(FadeOut(ref1), run_time=0.3)
             self.play(FadeIn(card, shift=LEFT * 0.4), run_time=0.8)
             vo.wait_until("settings like")
             self.play(Indicate(card.keys["ENV"], color=TURN, scale_factor=1.15), run_time=0.9)
@@ -437,6 +452,11 @@ class FourNouns(VoiceScene):
         core = label("kernel: the core of the operating system", 28, S.GREY)
         core.next_to(kp.vms, DOWN, buff=0.4)
         iso = label("isolated processes, not machines", 28, IMAGE).move_to(core)
+        ref2 = slide_ref(head, "9–12, 22–24")
+        # slide 22's two kernel features on the shared bar (under the outer containers; the bar's own
+        # text stays in the middle), and its "Container = User Space" beside the containers
+        ns_chips = VGroup(tag("namespaces", S.GREY), tag("cgroups", S.GREY))
+        uspace = label("user space", 22, S.GREY)
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(hub, py_stack, old, new, n_py, n_dl, k_py, k_dl_new, tag_cap)),
@@ -444,7 +464,7 @@ class FourNouns(VoiceScene):
             self.play(LaggedStart(*[FadeIn(v, shift=UP * 0.2) for v in kp.vms], lag_ratio=0.25), run_time=1.2)
             vo.wait_until("A VM boots")
             self.play(LaggedStart(*[Indicate(v.kernel, color=TURN, scale_factor=1.08) for v in kp.vms],
-                                  lag_ratio=0.25), run_time=1.4)
+                                  lag_ratio=0.25), FadeIn(ref2), run_time=1.4)
             vo.wait_until("the core of")
             self.play(FadeIn(core, shift=UP * 0.1), run_time=0.6)
             anims = kp.to_containers()
@@ -456,9 +476,16 @@ class FourNouns(VoiceScene):
             drop = kp.vms[0].kernel.get_center()[1] - (kp.vms.get_bottom()[1] + 0.23)
             self.play(*shrink, *[v.kernel.animate.shift(DOWN * drop) for v in kp.vms],
                       FadeTransform(core, iso), run_time=1.1)
+            # "user space" comes in with "isolated processes" (after the merge it would only flash:
+            # it leaves with iso at block 7's start, before the laptop outline it would cross)
+            uspace.next_to(kp.vms[0].frame, LEFT, buff=0.25)
+            self.play(FadeIn(uspace, shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("that share one")
             self.play(*merge, run_time=1.0)
             self.play(Indicate(kp.bar, color=TURN, scale_factor=1.03), run_time=0.7)
+            for c, v in zip(ns_chips, (kp.vms[0], kp.vms[2])):
+                c.move_to([v.frame.get_center()[0], kp.bar.get_center()[1], 0])
+            self.play(LaggedStart(*[FadeIn(c, scale=0.9) for c in ns_chips], lag_ratio=0.25), run_time=0.6)
 
         # ================================================================ 7 · Docker Desktop's VM
         dvm = kp.desktop_vm()
@@ -476,7 +503,8 @@ class FourNouns(VoiceScene):
         own = label("on a cloud VM: its own Linux", 28, CLOUD)
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(iso), Create(lap.screen), FadeIn(lap.base, shift=UP * 0.1), FadeIn(mac),
+            self.play(FadeOut(VGroup(iso, uspace, ref2)), Create(lap.screen), FadeIn(lap.base, shift=UP * 0.1),
+                      FadeIn(mac),
                       run_time=1.0)
             vo.wait_until("Docker Desktop provides")
             self.play(FadeIn(dvm, shift=UP * 0.4), run_time=0.9)
@@ -512,16 +540,15 @@ class FourNouns(VoiceScene):
         ok2 = check_mark(0.45).next_to(VGroup(hole1, hole2), LEFT, buff=0.3)
         gpu_grey = chip("GPU drivers", S.GREY, size=26, fill_opacity=0.06).move_to(gpu_c, aligned_edge=LEFT)
         hosts = label("still the host's", 26, S.GREY).next_to(gpu_grey, RIGHT, buff=0.3)
-        # QA 03:06: the GPU chip (review P36, exercise D1c) is not narrated yet. Once script.md's SAY
-        # gets "GPU drivers still come from the host.", it greys on that sentence; until then, with
-        # the libraries.
+        # QA 03:06: the GPU chip (review P36, exercise D1c) greys on its own sentence, "GPU drivers
+        # still come from the host." (if a SAY revision drops that sentence, it greys with the libraries)
         gpu_said = "GPU drivers still" in SAY[8]
 
         def gpu_out():
             return ReplacementTransform(gpu_c, gpu_grey), FadeIn(hosts, shift=LEFT * 0.1)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(kp, vm_out, vm_lab, own)), run_time=0.6)
+            self.play(FadeOut(VGroup(kp, ns_chips, vm_out, vm_lab, own)), run_time=0.6)
             self.play(FadeIn(VGroup(hole1, hole2, p2, y2, img_lab), shift=UP * 0.2),
                       LaggedStart(*[FadeIn(c, shift=LEFT * 0.3) for c in (os_c, lib_c, gpu_c)], lag_ratio=0.2),
                       run_time=1.0)

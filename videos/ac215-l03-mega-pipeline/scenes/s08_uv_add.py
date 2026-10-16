@@ -342,7 +342,9 @@ def root_card() -> VGroup:
     where = label("fix (not in the README): exit, then on your laptop, in the component folder:", 20, S.GREY)
     cmd = VGroup(mono("sudo chown -R 1000:1000 .", 20, INK), label("· then docker run again", 20, S.GREY))
     cmd.arrange(RIGHT, buff=0.18)
-    cmd[0].align_to(cmd[1], DOWN).shift(DOWN * 0.02)
+    # one baseline: the "R" of the command on the "h" of "then" (bottom-aligning would lift the
+    # GREY words by the descender of "again")
+    cmd[0].shift(UP * (cmd[1][2].get_bottom()[1] - cmd[0][10].get_bottom()[1]))
     fix = VGroup(where, cmd).arrange(DOWN, aligned_edge=LEFT, buff=0.14)
     body = VGroup(top, err_rows, fix).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
     fr = card_frame(body, pad_x=0.3, pad_y=0.22)

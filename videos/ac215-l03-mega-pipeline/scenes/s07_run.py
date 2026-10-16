@@ -63,8 +63,11 @@ Beats (script.md "## S07", one voiceover block each):
 11  TRACKER A6. The terminal shrinks to the strip (the import and the RED error stay); V3
     returns above it, mounted: the route pulses, the sheet over /app pulses; cli.py turns RED,
     a RED "?" hovers between it and a BLUE "google" chip above the empty venv box, which pulses.
-    On "In part 2" the strip goes and the caption "Part 2: packages, and why they vanish"
-    appears. Fade out: empty frame (end of part 1).
+    On "If you stop here" the strip gives way to a 3-row laptop strip; on "rerun" it types
+    the README's docker run again; on "from the transcribe audio folder" the prompt's
+    transcribe_audio underlines and the laptop folder in V3 pulses. On "In part 2" the strip
+    goes and the caption "Part 2: packages, and why they vanish" appears. Fade out: empty
+    frame (end of part 1).
 """
 
 from manim import *
@@ -695,6 +698,7 @@ class RunContainer(VoiceScene):
         cli_c = win.row("cli.py", "cover")
         part2 = caption("Part 2: packages, and why they vanish", color=S.GREY)
         part2.scale(22 / 20).move_to([0, -2.45, 0])
+        t11 = term(P_A, 3)            # the laptop again, in the strip's place
         with self.voiceover(SAY[11]) as vo:
             self.play(caption_extra(tr, False), run_time=0.3)
             resize(self, t, 3, run_time=0.7)
@@ -711,8 +715,20 @@ class RunContainer(VoiceScene):
             self.play(Create(link), FadeIn(q, scale=1.5), Indicate(win.venv.frame, color=VENV, scale_factor=1.06),
                       run_time=0.6)
             self.play(Wiggle(q, scale_value=1.2), run_time=0.8)
+            # part 1 is its own upload: how to get back in after a break. The container strip
+            # gives way to a laptop strip in the same place, and the README's command is typed
+            # again; its prompt shows the folder to run it from.
+            vo.wait_until("If you stop here")
+            self.play(FadeOut(t), FadeIn(t11), run_time=0.5)
+            vo.wait_until("rerun the same docker run")
+            c11 = type_cmd(self, t11, RUN, 1.0)
+            r11 = c11.rows[0]
+            assert r11.text.startswith(P_A), r11.text
+            vo.wait_until("from the transcribe audio folder")
+            u11 = uline(r11, "transcribe_audio", INK)
+            self.play(Create(u11), Indicate(win.laptop.folder, color=INK, scale_factor=1.12), run_time=0.6)
             vo.wait_until("In part 2")
-            self.play(FadeOut(t), FadeIn(part2, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeOut(VGroup(t11, u11)), FadeIn(part2, shift=UP * 0.1), run_time=0.6)
         self.wait(0.6)
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
 
