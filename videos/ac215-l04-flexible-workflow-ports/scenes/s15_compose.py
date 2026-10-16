@@ -537,7 +537,8 @@ class ComposeUp(VoiceScene):
         place(img_p, left=X_L + 0.05, cy=TOP - 0.92)
         assert img_p.get_right()[0] < zone_r, (img_p.get_right()[0], zone_r)
         card4 = turn_card([UP_CMD], header=None)
-        place(card4, left=X_L + 0.05, top=img_p.get_bottom()[1] - 0.45)
+        place(card4, left=X_L + 0.05)
+        card4.shift(UP * (img_p.get_bottom()[1] - 0.42 - card4.frame.get_top()[1]))
         assert card4.frame.get_bottom()[1] > T7 + 0.1 and card4.get_right()[0] < zone_r
         rail = net.rail
         ticks = {"img_gateway": tick(img_g.box.get_center()), "img_processor": tick(img_p.box.get_center()),

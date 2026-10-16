@@ -432,3 +432,174 @@ docker inspect <name>   → Mounts, Config.Env, NetworkSettings.Ports   (76)
   - Slides 78–79 (the Cheese App split into containers) preview the multi-container lectures that follow, "Containers II".
   - Slide 29 names Kubernetes as part of Docker's ecosystem (covered in L22).
 - **Demo app on the closing slides:** the Cheese App. Its screenshots show a cheese-classifier web page, a Colab notebook and the data-collection script (slide 78).
+
+## This video and the slides
+
+**Basis.** The video is built: script v2 with 16 scenes in two parts (`script.md`, `BRIEF.md`, `video.yaml`), real captures from 2026-10-13 (`ASSETS.md`, `assets/terminal/`), and a full cut whose scene start times are in `output/chapters.txt`. The times below come from that cut. No scene uses `lecture_ref` yet. For this cross-check, all nine contact sheets were read again, and slides 57–60 and 64 were re-rendered at 150 dpi in the session scratchpad (not in this repo) to check their code, logs and labels. Every "today" below cites a capture where one exists. Where a slide and a capture disagree, the capture shows what the commands do today.
+
+**Tag form.** `lecture_ref(2, "a–b")` (`explainer/devops.py`) prints "Lecture 2 · slides a–b", top right, across from the README tracker. The helper prints the lecture number without a leading zero, which also matches the deck's own title, "Lecture 2".
+
+### 1. Map: scenes ↔ slides
+
+| Scene (start) | Slides on the same ground | Relation |
+|---|---|---|
+| S01 · One command on a fresh VM (00:00) | 5–7, 77 | Same concept: one command on a bare VM meets slide 7's wish list (automated setup, quick start-up). The run previews slide 77, which S14–S15 apply. The README ladder and the 3.12-vs-3.14.7 puzzle are tutorial-only. |
+| S02 · Image, layer, container, registry (01:22) | 9–12, 22–24, 30–31, 35, 38 | Same concept: the lecture's "What is a Container" and its Docker vocabulary in four minutes. Namespaces and cgroups (11, 13–18) are only implied, by "isolated processes". |
+| S03 · A clean slate, and the clone (03:13) | 52, 54, 61–62, 65, 73 | The tutorial applies it. The README prunes at the start without `-a`. The lecture prunes at the end with `-a` (Conflict 6). |
+| S04 · Dockerfile step 1: FROM (04:56) | 30, 32, 56–58 | The tutorial applies it. The build-command anatomy is slide 56's. The config card (`Cmd=["python3"]`) and the plain log are tutorial-only. |
+| S05 · Step 2: ENTRYPOINT (06:52) | 32–33; 17, 19 (the `root@` prompt) | The tutorial applies it. That a Dockerfile ENTRYPOINT clears the inherited CMD is tutorial-only. It is the Dockerfile twin of Conflict 1. |
+| S06 · Step 3: install uv, copy the code (07:58) | 33, 56–58 | The tutorial applies it. The lecture explains "." as "the current working directory". The video's build-context parcel goes further. Slide 58's own log has the same `load .dockerignore` → `2B` line. |
+| S07 · Step 4: uv sync, and two Pythons (09:40) | 37 (the "UV Sync" bar), 57–58 | Mostly tutorial-only. The deck never mentions a second Python. Slide 37 draws one Python layer (Conflict 8). |
+| S08 · Step 5: CMD, the solution, the build (12:09) | 32–33, 57–58 | The tutorial applies it. Slide 57 is the lecture's copy of the solution, an earlier draft (Conflict 2). The final compact build is the view slide 58 shows. |
+| S09 · Run it, translate, exit (14:06) | 13–14, 31, 39–42, 63–65, 74 | Same concept, and the tutorial applies it: the run (63–64), `ps -a` (74), PID 1 (14, shown but not named), many containers from one image and the CMD override (39–41, here the exit-126 puzzle), and `--rm` as "ephemeral" (42). |
+| S10 · What's inside the image (16:19) | 22, 34–37, 59 | Same concept, measured: slide 59's two commands, with today's numbers (Conflict 3). The finding that `.git` ends up inside the image is tutorial-only. |
+| S11 · The layer cache (18:05) | 36, 58, 60 | Same concept, and the video goes further. Slide 60 shows an all-cached rebuild. The video adds what breaks the cache: the context checksum, `.git/index`, and a fix by reordering the Dockerfile. |
+| S12 · Tag and push (20:00) | 36 (only changed layers travel), 38, 66–69 | The tutorial applies it. The stand-in registry, the real push denial and "public by default" are tutorial-only. |
+| S13 · Platforms: arm64 vs amd64 (22:04) | none | Tutorial-only. The deck never mentions CPU architecture. |
+| S14 · A VM with only Docker (24:39) | 11–12, 23–24, 77 | The tutorial applies slide 77. The V8 half (no hidden VM on a Linux host) is the contrast to slide 24. `apt-get update`, Debian's `docker.io`, `sudo` and the socket are tutorial-only. |
+| S15 · One-command deploy (26:35) | 26, 70–72, 77 | The tutorial applies it, with Conflict 4 (whose image runs). "Ship the image, not the recipe" is slide 26's portability point in the tutorial's terms. |
+| S16 · Tear down, recap, and what's next (28:36) | 26, 73; 42–51, 78–79 (the L3 teaser) | Recap of the same concepts. The teaser previews the lecture's mounts and slide 79's "Isolate work into containers". Deleting the VM is tutorial-only. |
+| no scene | 1–4, 8, 25, 27 (title, logistics, agenda, dividers); 13, 15–21 (the other namespaces, cgroups, security); 28–29 (other container tools); 43–51 (mounts in detail); 74–76 beyond `ps -a` (debugging); 78–81 | Lecture-only. Gaps 1–3 and 5–8 below say which of these are worth carrying. |
+
+### 2. Already in common
+
+| # | Concept | Scene ↔ slides | Does the video's framing agree with the lecture's? |
+|---|---|---|---|
+| 1 | A container is not a VM. It shares the host's Linux kernel and carries only user-space files. | S02 (V8), S14 ↔ 9–10, 12, 22 | Yes. The video's "not a small VM" is firmer than slide 9's "like a mini computer". The video's "isolated processes" leaves out the lecture's two mechanisms (gap 2). |
+| 2 | On a Mac or Windows laptop, a hidden Linux VM supplies the kernel. A Linux host needs none. | S02, S14 ↔ 23–24 | Yes. The video names no VM technology (Conflict 10) and draws no system calls through the daemon (Conflict 9). Both choices are correct. |
+| 3 | What a venv, a VM and a container each isolate | S02 (last beat), S16 (V1) ↔ 5–7, 10 | Yes. "What a venv couldn't isolate … is now inside the box" answers slide 6's "No Isolation from Host". GPU drivers that stay "the host's" match slide 22, which puts the GPU inside the kernel box. |
+| 4 | An image is read-only layers plus a config. A container is that image plus one writable layer. | S02, S09 ↔ 31, 35 | Yes, closely. The glass slab is slide 35's writable layer "added on top", and the locked stack is its read-only "static snapshot". |
+| 5 | Image as class, container as instance; many containers from one image | S02, S09 ↔ 31, 39–40 | Yes, it is the same analogy. The lecture's second analogy (recipe, meal kit, cooked dish, slide 31) and slide 38's "store vs run" are not used. |
+| 6 | Dockerfile → build → image → run → container | S02, S04 ↔ 30, 38, 56 | Yes. "Building makes an image" matches slides 30 and 56. The checklist slides say "Build a container" (Conflict 7). |
+| 7 | RUN and COPY add layers; other instructions only change settings | S02, S05, S10 ↔ 32, 34, 37 | Partly. Slide 32 agrees ("each RUN creates a new layer"). Slide 34 says every command makes a layer (Conflict 8). The captured `CACHED` step (`laptop/14`) and the `0B` rows (`laptop/34`) settle it. |
+| 8 | ENTRYPOINT is the program, CMD its default arguments, and `docker run` arguments replace CMD | S05, S09 ↔ 32–33, 40–41 | Yes. The video adds two things the deck doesn't say: a Dockerfile ENTRYPOINT clears an inherited CMD (`laptop/15`), and replacing CMD can backfire (exit 126, `laptop/36`). |
+| 9 | `docker build -t simple-translate -f Dockerfile .` and the final dot | S04, S06 ↔ 56 | Yes. The video turns "the current working directory" into "the build context, sent to the builder", which slide 58's log line `transferring context` already shows. |
+| 10 | Each numbered build step is one instruction | S04, S08, S11 ↔ 58, 60 | Yes. The steps are the same four, `[1/4]`–`[4/4]`, in the same order: base, the apt/pip RUN, the copy, `uv sync`. Slide 60's header reads `docker:desktop-linux`, which matches S04's Docker Desktop note. |
+| 11 | An unchanged step is reused from the cache | S07, S08, S11 ↔ 36, 60 | Yes. The video adds what invalidates a step, which the lecture leaves out. |
+| 12 | Listing an image's layers and their sizes | S10 ↔ 59 | Yes. `docker image history` (slide) and `docker history` (video) are the same command. The numbers differ (Conflict 3). |
+| 13 | Layers are shared, and only missing ones travel | S02, S12 ↔ 36 | Yes: "shared, not copied" and `Layer already exists` (`laptop-push/08`). |
+| 14 | `--rm`, `-t`, `-i`, and containers as ephemeral | S04, S09 ↔ 42, 64 | Yes. Slide 64's "t gives a terminal, i is interactive" matches S09's labels. Slide 42's "discarded once the container exits" is the dissolving glass slab. |
+| 15 | Registry, tag, the default `latest`, and your username in front | S02, S12 ↔ 38, 68–69 | Yes. |
+| 16 | Log in with an access token, not your password | S12 ↔ 67 | Yes on the token, no on `-p`. The video already corrects that kindly (Conflict 5). |
+| 17 | `docker image ls`, `docker container ls` and `prune` | S03, S16 ↔ 61–62, 65, 73 | Yes. |
+| 18 | On the VM: create it, SSH in, install Docker, run | S14–S15 ↔ 77 | Yes. The video adds `apt-get update`, `sudo`, and the question of whose image runs (Conflict 4). |
+| 19 | One image, from laptop to production | S15, S16 ↔ 26 | Yes. The video adds the CPU caveat (S13), which the lecture never makes. |
+| 20 | bash is PID 1 in its container | S09 ↔ 14 | It is shown (`echo $$` → `1`, `laptop/33` line 5) but not named as the PID namespace (gap 2). |
+
+### 3. Gaps (ranked by value to a student doing the tutorial)
+
+1. **The debugging kit (slides 74–76).** Three facts the video never states:
+   - `docker ps -a` lists exited containers with their exit codes, but only without `--rm`, which is why S09's capture is empty.
+   - `docker logs <name>` shows a container's output, and `docker exec -it <name> /bin/bash` opens a second shell in a running one.
+   - `docker run -it --entrypoint /bin/bash <image>` lets you inspect an image whose container exits at once. Slide 57's draft would be one (Conflict 2).
+   
+   Every failure in this tutorial (exit 126, `ModuleNotFoundError`) is a case for these tools. **Carry it in** S09, as a tag at the `docker ps -a` beat. The commands themselves belong in the guide.
+2. **What "isolated processes" means: namespaces and cgroups (slides 11–18, 22).** This is the lecture's biggest block, and the video never names it. It is visible in S09: bash is PID 1 because the container has its own PID namespace (slide 14). **Carry it in** S02 (two chips on the kernel bar) and S09 (one bridge at `echo $$`).
+3. **Ephemeral containers, and mounts as the answer (slides 42–51).** S11 shows the pain: every edit to `cli.py` means a rebuild. Slide 42 names both needs, a live development loop and outputs that persist. Slides 43–51 cover bind mounts vs named volumes vs tmpfs, how `-v` decides by the slash, `--mount` as the safer form, and `:ro`. This image keeps its code in `/` with no `WORKDIR`, so don't mount the repo here; L03 adds `WORKDIR /app` and `-v "$(pwd)":/app`. **Carry it in** S16 (a tag and a bridge on the L3 teaser), and in S11 as a tag only if wanted.
+4. **Watching a running container from a second terminal (slide 65).** While the container runs, `docker container ls` lists it. The video only lists before (`laptop/01`) and after (`laptop/32`), and no capture shows a running row. **Carry it in** S09's run beat, as narration only. It is low priority.
+5. **Least privilege (slides 17, 19–21).** Containers rarely need root. Docker removes about 44 system calls. AppArmor/SELinux are security, not resource limits like cgroups (slide 21's warning). In the video, S05 reads `root@` and S06 waves off pip's root warning ("the image itself is the isolation"), which is looser than the lecture. The VM install pulls in `apparmor` and `cgroupfs-mount` (`vm-debian12/03` line 8). **Carry it in** S05 (one bridge) and S14 (that install line).
+6. **Why an image is small: there is no kernel in it (slide 22).** The bottom row of `docker history` is Debian's files (`debian.sh … bookworm`, 85.3MB, `laptop/34`). Nothing below it is a kernel. **Carry it in** S10.
+7. **Why the course cares (slides 78–79).** The Cheese App's pieces are built on Macs, Windows, Colab and a Linux server, and the lecture splits them into containers. That is the "five containers" of the next lecture. **Carry it in** S16's Next card.
+8. **Dockerfile instructions the tutorial doesn't use: ADD and WORKDIR (slide 33).** ADD appears in slide 57's draft, and S05 shows the missing working directory (`WorkingDir=""`). **Carry it in** S08's diff note (ADD) and S16's teaser (`WORKDIR /app`, already there). It is low priority.
+
+### 4. Conflicts
+
+| # | Slides say | Tutorial and captures today | Current | How the video should put it kindly |
+|---|---|---|---|---|
+| 1 | **The run command** (slide 64): `docker run --rm --name simple-translate -ti --entrypoint /bin/bash simple-translate`. The call-out says `--entrypoint` overrides the Dockerfile's ENTRYPOINT. | The README runs `docker run --rm -ti simple-translate` (`laptop/31`: translates). Overriding the entrypoint at run time also drops the image's CMD, the part that activates the venv (`laptop/26`: `which python` → `/.venv/bin/python` only through CMD). The result is a bare bash where `python cli.py` fails, as in `laptop/22` lines 10–14. `--name` also collides with a second run (exercise check C7, exit 125). The slide's exact command was not captured; the mechanism was. | The README's command | S08, after the run checks, one bridge: the lecture's command adds `--entrypoint`, which drops this CMD and the venv with it. Tag "Lecture 2 · slides 64, 75": slide 75 lists `--entrypoint /bin/bash` as a debugging move, which is what it is. |
+| 2 | **The Dockerfile** (slide 57): `ADD . /`; `apt-get install … build-essential git`; two commented-out uv `ENV` lines; CMD sources `/home/app/.venv/bin/activate`. | `Dockerfile.txt`: three active `ENV` lines, `apt-get clean`, `COPY . ./`, and CMD sources the relative `.venv/bin/activate` (`laptop/27`). `uv sync` creates `/.venv` (`laptop/21` line 33). With the `UV_PROJECT_ENVIRONMENT` line commented out, the slide's `source` would fail and its `&&` would end the container at once (not run here). | The repo's `Dockerfile.txt` | S08, at the diff, a GREY on-screen note: "lecture slide 57: an earlier draft · build this file". No narration needed. |
+| 3 | **Screenshots** (slides 58–60): a `python:3.11-slim-buster` base; `docker images` 483MB, with two images sharing one ID; a `docker image history` with `USER app`, `WORKDIR /app`, `ENTRYPOINT ["uv" "run"]` and Python 3.12.11 (our reading: an L03-style Dockerfile); slide 60's command builds `hello_world_cmd`, but its log names `simple-translate`. | `python:3.12-slim-bookworm@sha256:34386ef0…` (`laptop/09`); `518MB` disk / `144MB` content in Docker 29's columns (`laptop/30`); history 97.5MB / 250kB / 125MB, `ENTRYPOINT ["/bin/bash"]`, `PYTHON_VERSION=3.12.15` (`laptop/34`); all `CACHED` on an unchanged rebuild (`laptop/38`). | The captures | Tags only, at S10 and S11. Never redraw the slides' numbers. S03 already says "your columns may differ". The viewer compares with the terminal panels. |
+| 4 | **Whose image runs on the VM** (slides 70–72): "Pull the new container and run it", with a generic `docker pull <USER NAME>/<TARGET_IMAGE[:TAG]>`. There is no word on CPU platforms. | The README runs the instructor's `dlops/simple-translate` (`vm-debian12/06`), a single amd64 manifest (`laptop-push/10`). An arm64 image on an amd64 host fails with `exec format error` (`laptop-push/12`). | The README's command for what runs; the slides' intent for what should | S15 already says it ("the README promises to pull the image you pushed…"), and S13 covers platforms. A tag at S15 is enough. |
+| 5 | **Login** (slide 67): `docker login -u <USER NAME> -p <ACCESS TOKEN>`, called secure because it uses a token. | Same command in the README. Docker itself warns `Using --password via the CLI is insecure` (`laptop-push/05` line 2). | Type `docker login -u <USER NAME>` and paste the token | S12 already does this ("a small slip in the README"). Optionally, one bridge noting that the slide has the same form. |
+| 6 | **Clean-up** (slide 73): `docker system prune -a`, "remove all images not used by any container". | The README's `docker system prune` removes only dangling images (`laptop/02`: "all dangling images"). | Both are right; they do different jobs | S03 and S16 already say both. Add a tag at S16's `prune -a`. |
+| 7 | **"Build a container"** (checklist slides 55, 63, 66, 70, 72; also "Push container", "Pull the new container"). | The build names an image: `naming to docker.io/library/simple-translate:latest` (`laptop/09`). The lecture's own slides 30 and 56 say "image". | Image | S02 already says it about the README. Nothing to add: the deck agrees with itself on slides 30 and 56. |
+| 8 | **What an image is made of**: an "iso file and other files" (30); "a layer for every command" (34); slide 37 stacks Kernel, Debian, Python & Pip, Upgrade Pip, Install UV, UV Sync, with no code layer and one Python. | Layers plus a config. `ENV`/`ENTRYPOINT`/`CMD` rows are `0B`. The apt/pip/uv work is one RUN of 97.5MB, `COPY . ./` is a 250kB layer, the bottom is Debian (85.3MB) and no row is a kernel (`laptop/34`). There are two Pythons (`laptop/33` lines 9, 11). | The captures | S02, S05 and S10 already show it. Optionally, in S10, a dashed GREY "kernel: the host's" bar under the stack (Proposals). |
+| 9 | **System calls** (slides 22, 24): a "Syscalls" line runs from the Daemon to the Linux kernel, and on a Mac or PC the VM "translate[s] syscalls from the Daemon". | A container's own processes call the kernel directly. Here bash is the container's own PID 1 (`laptop/33` line 5). The daemon only sets up namespaces and cgroups. This is a conceptual point, not something a capture decides. | The video's picture | V8 (S02, S14) already stands the containers on the kernel bar. Keep it that way, with no syscall arrow through `dockerd`. Nothing to say aloud. |
+| 10 | **VM technology names** (slides 24, 52): HyperKit on a Mac, and Hyper-V "required" on Windows (slide 24 says WSL2). | Current Docker Desktop uses Apple's Virtualization framework on a Mac and the WSL 2 backend by default on Windows. This was not verified in this repo (no Mac or Windows capture). | Current Docker Desktop (unverified here) | S02 already says "a small, hidden Linux VM" without a product name. Keep it. |
+| 11 | **Root** (slide 17): a process running as root inside a container "will have non-root privileges in the host". | That is true only with user-namespace remapping or rootless Docker, which a default install (the captures' engine, Debian's `docker.io`) doesn't turn on. The socket being root-only (`vm-debian12/05`) is the same story. Not captured as such. | Docker's default: root inside is root, limited by capabilities, seccomp and AppArmor | S05's "You're root, the administrator, inside the container" is accurate. Don't add "but harmless outside". Optionally, one bridge to L03's non-root user. |
+| 12 | **Links** (slides 72, 77): README anchors ending in `-t3` and `-t4`. | No README heading at `62f821b` has those anchors, so the links open the README at the top (`digest.md` E6). | The README's headings | Not on screen. S03 and S14 name the README sections aloud, which is enough. |
+
+Not counted: slide 54 clones without `.git` (both URLs work); slide 53's `docker --version` on the laptop (the video shows the VM's `sudo docker --version` and says "Docker 29" for the laptop); slide 41's demo prints the instructor's name, which the series never shows or says (BRIEF, "Things never to do on screen").
+
+### 5. Proposals
+
+**General**
+- **Tags** cost no narration, only a re-render of the scene. Pin one tag per beat and fade it with that beat's picture. Check that it doesn't overlap S01's top-right Docker Hub glyph or a full-height terminal.
+- **Bridges** cost a lexicon entry for new words (`PID` read as letters, `cgroups` as "see groups", `apparmor`), a matching Chinese line in `i18n/zh/narration/g1.yaml` (S01–S09) or `g2.yaml` (S10–S16), and new TTS and timing for that scene only. Two bridges are marked "do" (S08, S09, about 32 words, about 13 s). The rest are "nice".
+- **"Namespace"** keeps one meaning in this video, the kernel's. In S12, don't adopt slide 68's "repository namespace".
+- **Never on screen:** slide images, memes, or the instructor's name (slide 41's output, slide 55's labels).
+
+**Per scene**
+- **S01**
+  - (i) *nice:* "Lecture 2 · slides 5–7" with the V1 ladder, from the SAY "Last lecture we climbed its first two rungs", after the Docker Hub glyph has gone.
+  - (ii) none: the hook stays a puzzle.
+  - (iii) none: the crossed chips (code, venv, uv) already read as slide 7's "Automated Setup".
+- **S02**
+  - (i) *do:* "Lecture 2 · slides 30–31, 35" from "An image is a stack of read-only layers" through "Think of the image as a class". Then "Lecture 2 · slides 9–12, 22–24" from "And a container is not a small VM" to the end of the scene.
+  - (ii) *nice:* after "Containers are isolated processes that share one Linux kernel.": "The lecture names the two kernel features behind this: namespaces and cgroups." (12 words)
+  - (iii) *do:* in V8's first half, two small chips on the shared kernel bar, "namespaces" and "cgroups" (slide 22's two tiles inside the kernel box), and the caption "user space" under the TEAL boxes (slide 22's headline). They appear during the same SAY, with no new narration. In the Mac half, keep the dashed VM under the kernel bar, with no arrow through the daemon (Conflict 9).
+- **S03**
+  - (i) *do:* "Lecture 2 · slides 54, 61–62, 73" from "First, docker container ls lists running containers" to the end of the scene.
+  - (ii) none: the SAY already covers `-a`.
+  - (iii) none.
+- **S04**
+  - (i) *do:* "Lecture 2 · slides 32, 56" at "Now the build command. Dash t names the image simple-translate", through the build.
+  - (ii) none.
+  - (iii) *nice:* two more anatomy labels, `docker` "the CLI" and `build` "build the image", so the line reads token by token as on slide 56. Keep the existing three labels.
+- **S05**
+  - (i) *do:* "Lecture 2 · slides 32–33" at "Think of ENTRYPOINT as the program to start, and CMD as its default arguments."
+  - (ii) *nice:* after "You're root, the administrator, inside the container.": "Today's lecture adds a caution: containers rarely need root, and lecture 3 switches to a normal user." (17 words; gap 5, Conflict 11)
+  - (iii) none: V3's "the program" and "its default arguments" already say what slides 32–33 say.
+- **S06**
+  - (i) *nice:* "Lecture 2 · slides 56–58" at "Here's why the final dot matters."
+  - (ii) *nice:* after "…travels to the builder.": "The lecture's build log shows the same two lines: no dockerignore, and the whole folder sent." (16 words)
+  - (iii) *nice:* label the PINK parcel route "transferring context", the log's own words, which slide 58 shows too.
+- **S07**
+  - (i) *nice:* "Lecture 2 · slide 37" as the fat GREEN "RUN uv sync" slab lands ("…and the venv's python links to it.").
+  - (ii) none: two Pythons is tutorial-only.
+  - (iii) none.
+- **S08**
+  - (i) *do:* "Lecture 2 · slide 57" at "The README then points to a solution, Dockerfile.txt.", with a GREY note under the diff: "lecture slide 57: an earlier draft · build this file" (Conflict 2). With the bridge below, show "Lecture 2 · slides 64, 75" during it.
+  - (ii) *do:* in the run block, after "The fresh bash set its own prompt.": "The lecture's run command adds dash dash entrypoint, which drops this CMD, and the venv with it." (17 words; Conflict 1)
+  - (iii) none.
+- **S09**
+  - (i) *do:* three tags:
+    - "Lecture 2 · slides 63–65, 74" from "Now the README's Run Docker Container step" to the `docker ps -a` beat;
+    - "Lecture 2 · slides 13–14" at "In a second run, an extra check, echo dollar dollar, shows that bash is process number 1.";
+    - "Lecture 2 · slides 40–41" at "Now a puzzle."
+  - (ii) *do:* right after that PID sentence: "That's the PID namespace from today's lecture: each container counts its own processes from 1." (15 words; gap 2)
+  - (iii) *nice:* a thin GREY dashed outline around the new container, "PID namespace", with a small note "the host numbers it differently" (slide 14; not captured, so no number).
+- **S10**
+  - (i) *do:* "Lecture 2 · slides 34–37, 59" at "Then docker history lists the layers, newest first."
+  - (ii) *nice:* after "…and Python 3.12.15.": "Notice what's missing at the bottom: a kernel. As the lecture puts it, a container is user space." (18 words; gap 6)
+  - (iii) *nice:* beside the rescaled stack, slide 37's upward arrow labelled "build order". Under the base slabs, a thin dashed GREY bar "kernel · the host's, not in the image": slide 37's bottom bar, corrected kindly (Conflict 8).
+- **S11**
+  - (i) *do:* "Lecture 2 · slides 36, 58–60" at "Docker caches every build step."
+  - (ii) *nice:* after "…all say CACHED: nothing runs.": "The lecture showed this all-cached rebuild; next, what breaks the cache." (11 words)
+  - (iii) *do:* a GREY caption under the four boxes, "one numbered step per instruction" (slide 58's four arrows). Keep the TEAL `CACHED` stamps, the word slide 60 points at.
+- **S12**
+  - (i) *do:* "Lecture 2 · slides 67–69" at "Next, log in: docker login, dash u with your user name, dash p with your token.", through the push.
+  - (ii) *nice:* after "…paste the token when it asks.": "The lecture slide shows the same dash p form, so the same advice applies." (14 words; Conflict 5)
+  - (iii) *do:* keep "account" in V6's name breakdown, and don't add slide 68's "repository namespace".
+- **S13**
+  - (i) none: the scene is tutorial-only. No tag.
+  - (ii) none.
+  - (iii) none.
+- **S14**
+  - (i) *do:* "Lecture 2 · slide 77" at "The last README section: Running App on VM using Docker." Then "Lecture 2 · slides 12, 24" at "Here Docker runs right on the VM's Linux kernel".
+  - (ii) *nice:* after "…118 megabytes on Debian 13.", with `vm-debian12/03` lines 7–8 added to that panel: "Among them are apparmor and cgroupfs, the lecture's security and resource tools, arriving with Docker." (15 words; gap 5)
+  - (iii) *do:* split the VM's bar "Debian · Linux kernel" into "kernel" with "user space · Debian" above it, and put `dockerd` on user space (slide 12's stack). The crossed dashed "Docker Desktop only" box is then exactly slide 24's extra VM layer.
+- **S15**
+  - (i) *do:* "Lecture 2 · slides 70–71" at "Then the deploy: sudo docker run, dash dash rm, dash t i, dlops slash simple-translate."
+    *nice:* "Lecture 2 · slide 26" at "An image freezes all that: ship the image, not the recipe."
+  - (ii) *nice:* after "…then starts a container.": "The lecture pulls first with docker pull; docker run does that pull for you." (14 words)
+  - (iii) *nice:* label the PINK route from the shelf "pull" (slide 71's verb), as S16's route labels "push" and "run".
+- **S16**
+  - (i) *do:* "Lecture 2 · slide 73" at "And to reclaim the space your images take on the laptop, run docker system prune dash a." Then "Lecture 2 · slides 42–51, 78–79" on the Next card.
+  - (ii) *nice:* at the end of the last SAY: "Mounts are already in today's lecture slides; lecture 3 puts them to work." (13 words; gap 3)
+  - (iii) *nice:* on the GREY dashed teaser, rename "mounted" to "bind mount" (slide 43's term). The five TEAL boxes already echo slide 79's "Isolate work into containers".
+
+**The three most valuable**
+1. **S09 · the PID namespace at your terminal** (tag "Lecture 2 · slides 13–14" plus a 15-word bridge at `echo $$`). It turns the lecture's longest abstract block into a line the student just typed.
+2. **S08 · the lecture's run command and Dockerfile, kindly** (the slide-57 note under the diff, plus the 17-word bridge on slide 64's `--entrypoint`). It protects the student who follows the slides from a container whose venv is not active.
+3. **S02 · "namespaces" and "cgroups" on the kernel bar, and "user space" on the containers** (with the two S02 tags). These are the lecture's core terms, placed in the video's existing picture with no new narration.
