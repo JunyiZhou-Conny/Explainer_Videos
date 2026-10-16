@@ -108,7 +108,6 @@ import re
 
 import numpy as np
 from common import (
-    COST,
     CTR,
     ERR,
     HUB,
@@ -118,12 +117,12 @@ from common import (
     NARRATION,
     P_TOY,
     STRIP_TOP,
-    TOOL,
     TURN,
     VENV,
     PortPage,
     ToyNet,
     _header_text,
+    _hidden,
     _keep,
     bare_prompt,
     beside,
@@ -159,6 +158,7 @@ from common import (
     src_panel,
     strip_top,
     switch_section,
+    term,
     time_tag,
     toggle,
     tracker,
@@ -186,13 +186,10 @@ from manim import (
     Polygon,
     Rectangle,
     RoundedRectangle,
-    ShowIncreasingSubsets,
-    Text,
     Transform,
     VGroup,
     VMobject,
     Write,
-    linear,
 )
 
 from explainer import style as S
@@ -267,10 +264,10 @@ assert OPEN20 == L20.strip()
 # docker image ls, column view
 IMG_ROWS = column_view(C66.at((2, 8)))
 assert IMG_ROWS[0].startswith("IMAGE") and IMG_ROWS[0].endswith("DISK USAGE")
-SHARED = {1: "port_toy-gateway", 2: "port_toy-processor", 4: "toy-gateway", 5: "toy-processor"}
+SHARED = {2: "port_toy-gateway", 3: "port_toy-processor", 5: "toy-gateway", 6: "toy-processor"}
 for _k, _n in SHARED.items():
     assert IMG_ROWS[_k].startswith(_n + ":latest") and IMG_ROWS[_k].endswith("198MB"), IMG_ROWS[_k]
-assert IMG_ROWS[3].startswith("python:3.14-slim")
+assert IMG_ROWS[4].startswith("python:3.14-slim") and IMG_ROWS[1].startswith("hello-world")
 
 GUIDE_REPO = "github.com/JunyiZhou-Conny/MLOps_Learning"
 GUIDE_PATH = "guides/L04-containers-2b-flexible-workflow-ports.md"
@@ -280,8 +277,8 @@ QUESTIONS = [
     ("Which files define a mega-pipeline image? What does run use when there's no local image?", ["run"]),
     ("Which three gates must a call to your bucket pass, and where does each one fail?", []),
     ("How does a git-ignored key end up in an image? The fix?", []),
-    ("In -p 127.0.0.1:8095:9100: which number does the browser use, which does gateway.py bind, "
-     "and what does 127.0.0.1 restrict?", ["-p 127.0.0.1:8095:9100", "gateway.py", "127.0.0.1"]),
+    (("In -p 127.0.0.1:8095:9100: which number does the browser use, which does gateway.py bind, "
+      "and what does 127.0.0.1 restrict?"), ["-p 127.0.0.1:8095:9100", "gateway.py", "127.0.0.1"]),
     ("Inside the gateway, what is localhost, and which name reaches the processor?", ["localhost"]),
 ]
 
@@ -307,6 +304,13 @@ def glyph_box(line, sub: str, color: str = TURN, pad: float = 0.04, occurrence: 
     r = box(g.width + 2 * pad + 0.04, line.strut.height + 0.04, color, fill_opacity=0.0, radius=0.06,
             stroke=3)
     return r.move_to([g.get_center()[0], line.strut.get_center()[1], 0])
+
+
+def text_span(txt, s: str, sub: str) -> VGroup:
+    """The glyphs of `sub` in a one-line Text `txt` built from string `s` (spaces have no glyphs)."""
+    i = s.index(sub)
+    a = len("".join(s[:i].split()))
+    return VGroup(*txt.submobjects[a:a + len("".join(sub.split()))])
 
 
 def type_extra(scene, t, cmd: str, type_time: float | None = None):
@@ -381,17 +385,14 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
     return m
 
 
-def mixed(parts, size: float = 20, color: str = S.GREY, buff: float = 0.12) -> VGroup:
-    """A one-line caption of serif and mono pieces: parts = [(text, "mono"|"serif"), …]."""
-    ms = [mono(s, size, color) if kind == "mono" else label(s, size, color) for s, kind in parts]
-    g = VGroup(*ms).arrange(RIGHT, buff=buff)
-    for m in ms:                                  # common baseline: align bottoms of the x-height
-        m.align_to(ms[0], DOWN) if kind_is_serif(m) else None
-    return _keep(g)
-
-
-def kind_is_serif(m) -> bool:
-    return getattr(m, "font", "") != MONO
+def mixed(parts, size: float = 20, color: str = S.GREY):
+    """A one-line caption of serif and mono pieces on one baseline: parts = [(text, "mono"|"serif"),
+    …], joined by spaces (no space before a piece starting with "," or ".")."""
+    s = ""
+    for txt, _ in parts:
+        s += txt if (not s or txt[0] in ",.") else " " + txt
+    t2f = {txt: MONO for txt, kind in parts if kind == "mono"}
+    return _keep(S.text(s, size, color, t2f=t2f))
 
 
 def mixed_chip(parts, color: str = S.GREY, size: float = 20) -> VGroup:
@@ -429,7 +430,14 @@ def pen_to(pen, target, run_time: float = 0.45):
 def text_line(s: str, size: float, color: str, code=()) -> VGroup:
     """One line of house-font text whose code spans use the code font, with a FIXED vertical
     extent (built with a leading '|' that is dropped, as mono_line does). .glyphs .strut"""
-    t2f = {c: MONO for c in code if c in s}
+    spans: list[tuple[int, int]] = []                  # every occurrence, longest first, no overlaps
+    for c in sorted(code, key=len, reverse=True):
+        i = s.find(c)
+        while i >= 0:
+            if all(i + len(c) <= a or i >= b for a, b in spans):
+                spans.append((i, i + len(c)))
+            i = s.find(c, i + 1)
+    t2f = {f"[{a + 1}:{b + 1}]": MONO for a, b in spans}   # +1: the leading '|'
     t = S.text("|" + s, size, color, t2f=t2f)
     pipe = t.submobjects[0]
     strut = Rectangle(width=max(0.01, t.width), height=pipe.height, stroke_width=0, fill_opacity=0)
@@ -638,36 +646,45 @@ def file_mark(name: str, color: str = INK, glyph_color: str = S.GREY, folder: bo
     return g
 
 
+def edge_label(txt, frame, x: float) -> VGroup:
+    """A frame's name sitting on its top edge (on a background patch), left end at x."""
+    bg = Rectangle(width=txt.width + 0.3, height=txt.height + 0.12, stroke_width=0).set_fill(S.BG, 1)
+    g = VGroup(bg, txt.move_to(bg))
+    return g.move_to([x + g.width / 2, frame.get_top()[1], 0])
+
+
 def mount_picture(x0: float, x1: float, top: float) -> VGroup:
-    """Beat 5 (illustration): the laptop (GREY: gateway/ and its index.html, a browser) above the
-    gateway container (TEAL: the /app window with index.html and gateway.py), a PINK mount route
-    from gateway/ down to /app. .lap .ctr .lap_html .ctr_html .route .browser .req_from .req_to"""
-    w = x1 - x0
-    lf = box(w, 1.6, LAPTOP, fill_opacity=0.04).move_to([(x0 + x1) / 2, top - 0.8, 0])
-    lt = sans("your laptop", 20, LAPTOP).move_to(lf.get_corner(UL) + np.array([0.2, -0.24, 0]), aligned_edge=LEFT)
-    fg = file_mark("gateway/", INK, LAPTOP, folder=True)
-    fg.move_to(lf.get_corner(UL) + np.array([0.3, -0.72, 0]), aligned_edge=LEFT)
-    fh = file_mark("index.html", INK, LAPTOP)
-    fh.move_to(fg.get_left() + np.array([0.42, -0.46, 0]), aligned_edge=LEFT)
-    brw = browser_glyph(1.5, 1.0).move_to(lf.get_right() + np.array([-1.05, -0.05, 0]))
-    bl = sans("browser", 20, LAPTOP).next_to(brw, LEFT, buff=0.15).align_to(brw, DOWN)
-    lap = VGroup(lf, lt, fg, fh, brw, bl)
-    cf = box(w, 1.75, CTR, fill_opacity=0.05).move_to([(x0 + x1) / 2, top - 1.6 - 0.75 - 0.875, 0])
-    ct = mono("gateway", 20, CTR).move_to(cf.get_corner(UL) + np.array([0.2, -0.24, 0]), aligned_edge=LEFT)
-    app = box(3.1, 1.05, CTR, fill_opacity=0.08, radius=0.08)
-    app.move_to([fg.get_left()[0] + 1.25, cf.get_center()[1] - 0.2, 0])
-    at = mono("/app", 20, CTR).next_to(app, LEFT, buff=0.1).align_to(app, UP)
-    ch = file_mark("index.html", INK, CTR)
-    ch.move_to(app.get_corner(UL) + np.array([0.2, -0.3, 0]), aligned_edge=LEFT)
-    cg = file_mark("gateway.py", INK, CTR)
-    cg.move_to(app.get_corner(UL) + np.array([0.2, -0.75, 0]), aligned_edge=LEFT)
-    ctr = VGroup(cf, ct, app, at, ch, cg)
+    """Beat 5 (illustration), drawn inside x0..x1 from `top` down (3.8 tall): the laptop (GREY frame
+    "your laptop": gateway/ with its index.html, a browser glyph labelled under it) above the
+    gateway container (TEAL frame "gateway": an /app window holding index.html and gateway.py), a
+    PINK mount route from gateway/ straight down to /app. Frame names sit on the top edges.
+    .lap .ctr .lap_html .ctr_html .route .browser .browser_label .app .gap_y"""
+    w, cx = x1 - x0, (x0 + x1) / 2
+    lap_h, gap, ctr_h = 1.6, 0.6, 1.6
+    lf = box(w, lap_h, LAPTOP, fill_opacity=0.04).move_to([cx, top - lap_h / 2, 0])
+    lt = edge_label(sans("your laptop", 20, LAPTOP), lf, x0 + 0.3)
+    fx = x0 + 1.0
+    fg = file_mark("gateway/", INK, LAPTOP, folder=True).move_to([fx, top - 0.5, 0], aligned_edge=LEFT)
+    fh = file_mark("index.html", INK, LAPTOP).move_to([fx + 0.42, top - 1.0, 0], aligned_edge=LEFT)
+    brw = browser_glyph(1.3, 0.85).move_to([x1 - 0.95, top - 0.6, 0])
+    bl = sans("browser", 20, LAPTOP).next_to(brw, DOWN, buff=0.08)
+    lap = VGroup(lf, fg, fh, brw, bl, lt)
+    c_top = top - lap_h - gap
+    cf = box(w, ctr_h, CTR, fill_opacity=0.05).move_to([cx, c_top - ctr_h / 2, 0])
+    ct = edge_label(mono("gateway", 20, CTR), cf, x0 + 3.2)
+    app = box(w - 0.4, ctr_h - 0.45, CTR, fill_opacity=0.08, radius=0.08)
+    app.move_to([cx, c_top - 0.25 - app.height / 2, 0])
+    at = mono("/app", 20, CTR).move_to(app.get_corner(UL) + np.array([0.18, -0.24, 0]), aligned_edge=LEFT)
+    ch = file_mark("index.html", INK, CTR).move_to([fx, app.get_center()[1] - 0.15, 0], aligned_edge=LEFT)
+    cg = file_mark("gateway.py", INK, CTR).move_to([x0 + 3.3, ch.get_center()[1], 0], aligned_edge=LEFT)
+    ctr = VGroup(cf, app, at, ch, cg, ct)
     rx = fg.glyph.get_center()[0]
-    route = Line([rx, fh.get_bottom()[1] - 0.08, 0], [rx, app.get_top()[1] + 0.02, 0], color=LOOKUP,
+    route = Line([rx, fg.glyph.get_bottom()[1] - 0.04, 0], [rx, app.get_top()[1], 0], color=LOOKUP,
                  stroke_width=5)
     g = VGroup(lap, ctr, route)
     g.lap, g.ctr, g.lap_html, g.ctr_html, g.route, g.browser = lap, ctr, fh, ch, route, brw
-    g.lap_frame, g.ctr_frame, g.app = lf, cf, app
+    g.browser_label, g.lap_frame, g.ctr_frame, g.app = bl, lf, cf, app
+    g.gap_y = top - lap_h - gap / 2
     return g
 
 
@@ -754,10 +771,9 @@ class Recap(VoiceScene):
             self.play(flash(bp.glyphs, TURN, 1.06), run_time=0.7)
 
         # ============================================================ 1 · handy: logs -f, exec sh
-        pg1 = PortPage(8090, reply=None, compact=True, ports=False)
-        place(pg1.frame, right=X_R, top=TOP)
-        pg1.shift(pg1.frame.get_center() - pg1.frame.get_center())          # (placed via its frame)
-        pg1.shift([X_R - pg1.frame.get_right()[0], TOP - pg1.frame.get_top()[1], 0])
+        pg1 = PortPage(8090, reply=R56, compact=True, ports=False)    # built filled, the reply hidden:
+        _hidden(pg1.parts["reply"])                                   # PortPage.fill()'s first call drops glyphs
+        pg1.shift([X_R - pg1.frame.get_right()[0], TOP - pg1.frame.get_top()[1], 0])   # placed by its frame
         assert pg1.frame.get_bottom()[1] > T6 + 0.15, pg1.frame.get_bottom()[1]
         c19 = src_panel(COMPOSE, 19, 21, size=20)
         place(c19, right=X_R, top=TOP - 0.05)
@@ -772,7 +788,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(pg1, shift=LEFT * 0.15), run_time=0.5)
             self.play(pg1.click(), run_time=0.5)
             post = t.print(self, [C56B.line(3)], run_time=0.35)[0]
-            self.play(*pg1.fill(R56, run_time=0.5), substring(post, "POST").animate.set_color(TURN), run_time=0.5)
+            self.play(*pg1.parts_in("reply"), substring(post, "POST").animate.set_color(TURN), run_time=0.5)
             vo.wait_until("Control C stops only the following")
             cc = t.print(self, [C56B.line(4)], run_time=0.3)[0]
             ct = beside(grey_tag("stops following · the app keeps running"), t, cc, buff=0.4)
@@ -858,20 +874,20 @@ class Recap(VoiceScene):
             self.play(pen.animate.shift(RIGHT * 0.4 + UP * 0.3).set_opacity(0), run_time=0.3)
             self.remove(pen)
             vo.wait_until("and apply again")
-            type_cmd(self, t, UP_D, type_time=0.7)
-            r60 = print_rows(self, t, C60.at((2, 4)), run_time=0.5)
-            self.play(*paint(r60[1], VENV), *paint(r60[2], TURN), run_time=0.4)
-            self.play(FadeOut(ed), FadeIn(net), FadeIn(halo), run_time=0.5)
-            self.play(net.reform("gateway", run_time=1.2), net.set_door("127.0.0.1:8090", run_time=1.2),
-                      flash(halo, CTR, 1.0, 1.2))
+            type_cmd(self, t, UP_D, type_time=0.5)
+            r60 = print_rows(self, t, C60.at((2, 4)), run_time=0.4)
+            self.play(*paint(r60[1], VENV), *paint(r60[2], TURN), FadeOut(ed), FadeIn(net), FadeIn(halo),
+                      run_time=0.5)
+            self.play(net.reform("gateway", run_time=1.0), net.set_door("127.0.0.1:8090", run_time=1.0),
+                      flash(halo, CTR, 1.0, 1.0))
 
         # ============================================================ 4 · --build: only the processor
         edp = editor(P_AFTER, "processor/processor.py", 45, "processor/processor.py · line 45", "python")
-        hd_after = _header_text("processor/processor.py · lines 45–47").move_to(edp.panel.header, aligned_edge=LEFT)
         added = VGroup(*edp.panel.code.code_lines[2])                 # "# edited"
         cap_p = mixed([("edit: add", "serif"), ("# edited", "mono"),
                        ("at the end · remove it when you're done", "serif")])
         place(edp, cx=0, top=TOP - 0.1)
+        hd_after = _header_text("processor/processor.py · lines 45–47").move_to(edp.panel.header, aligned_edge=LEFT)
         place(cap_p, cx=0, top=edp.get_bottom()[1] - 0.18)
         assert cap_p.get_bottom()[1] > STRIP4 + 0.15, cap_p.get_bottom()[1]
         with self.voiceover(SAY[4]) as vo:
@@ -925,17 +941,16 @@ class Recap(VoiceScene):
         assert pic.get_bottom()[1] > STRIP_TOP + 0.08, pic.get_bottom()[1]
         assert vol.get_right()[0] < pic.get_left()[0] - 0.1, (vol.get_right()[0], pic.get_left()[0])
         no_rb = note("no rebuild")
-        no_rb.next_to(pic.route, RIGHT, buff=0.25)
+        no_rb.move_to([pic.route.get_center()[0] + 0.25 + no_rb.width / 2, pic.gap_y, 0])
         with self.voiceover(SAY[5]) as vo:
             resize(self, t, 3, run_time=0.6)
             self.play(FadeIn(vol, shift=DOWN * 0.1), FadeIn(pic.lap), FadeIn(pic.ctr), FadeIn(ill), run_time=0.6)
-            self.play(Create(pic.route), vol.bar(18, LOOKUP, 0.22).animate.set_opacity(1)
-                      if False else FadeIn(vol.bar(18, LOOKUP, 0.22)), run_time=0.6)
+            vbar = vol.bar(18, LOOKUP, 0.22)
+            self.play(Create(pic.route), FadeIn(vbar), run_time=0.6)
             self.play(flash(pic.route, TURN, 1.0, 0.6), run_time=0.6)
             vo.wait_until("and it rereads its page on each load")
             self.play(FadeIn(och, shift=DOWN * 0.1), run_time=0.5)
-            self.play(substring(och.text, '"index.html"').animate.set_color(TURN) if hasattr(och.text, "text")
-                      else och.text[9:21].animate.set_color(TURN), run_time=0.4)
+            self.play(text_span(och.text, OPEN20, '"index.html"').animate.set_color(TURN), run_time=0.4)
             vo.wait_until("edits show on the next reload")
             pen = pencil(0.45, TURN).move_to(pic.lap_html.get_right() + RIGHT * 0.7 + UP * 0.3)
             self.play(FadeIn(pen), pen_to(pen, pic.lap_html.text), run_time=0.4)
@@ -944,8 +959,8 @@ class Recap(VoiceScene):
             self.play(pen.animate.shift(RIGHT * 0.3 + UP * 0.3).set_opacity(0), run_time=0.3)
             self.remove(pen)
             brw = pic.browser
-            req = Arrow([brw.get_center()[0], brw.get_bottom()[1] - 0.04, 0],
-                        [brw.get_center()[0], pic.app.get_top()[1] + 0.3, 0], buff=0, color=LOOKUP, stroke_width=4,
+            req = Arrow([brw.get_center()[0], pic.browser_label.get_bottom()[1] - 0.04, 0],
+                        [brw.get_center()[0], pic.app.get_top()[1] + 0.02, 0], buff=0, color=LOOKUP, stroke_width=4,
                         max_tip_length_to_length_ratio=0.15)
             self.play(brw.reload.animate.rotate(-PI), run_time=0.4)
             self.play(Create(req), run_time=0.4)
@@ -971,36 +986,29 @@ class Recap(VoiceScene):
         card = turn_card([DOWN_CMD, PS_A, (IMG_LS, "extra")])
         place(card, cx=0, cy=(T9 + (-3.5)) / 2)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(vol, och, pic, ill, no_rb, req)), *[FadeOut(m) for m in self.mobjects
-                                                                          if m.__class__.__name__ == "Rectangle"
-                                                                          and m not in t.get_family()],
-                      tr.goto(5), run_time=0.6)
+            self.play(FadeOut(VGroup(vol, vbar, och, pic, ill, no_rb, req)), tr.goto(5), run_time=0.6)
             resize(self, t, 9, run_time=0.6)
             type_cmd(self, t, DOWN_CMD, type_time=0.6)
             r64 = print_rows(self, t, C64.at((2, 5)), run_time=0.5)
             self.play(*paint(r64[1], TURN), *paint(r64[2], TURN), run_time=0.5)
             vo.wait_until("nothing is left in ps dash a")
-            type_cmd(self, t, PS_A, type_time=0.6)
-            hdr = t.print(self, [C65.line(2)], run_time=0.3)[0]
-            et = grey_tag("empty: just the header")
-            et.move_to(hdr.strut).align_to(t.box, RIGHT).shift(LEFT * 0.15)
+            ps_ln = type_cmd(self, t, PS_A, type_time=0.6)
+            t.print(self, [C65.line(2)], run_time=0.3)
+            pin(self, ps_ln, beside(grey_tag("empty"), t, ps_ln, buff=0.4), run_time=0.4)
             vo.wait_until("The images remain")
-            self.play(FadeIn(rc515, shift=DOWN * 0.1), caption_extra(tr, True), FadeIn(et), run_time=0.5)
-            self.remove(et)
-            hdr.add(et)
+            self.play(FadeIn(rc515, shift=DOWN * 0.1), caption_extra(tr, True), run_time=0.5)
             type_extra(self, t, IMG_LS, type_time=0.5)
             imgs = t.print(self, IMG_ROWS, run_time=0.6)
-            ct = grey_tag("IMAGE and DISK USAGE columns")
-            ct.move_to(imgs[0].strut).align_to(t.box, RIGHT).shift(LEFT * 0.15)
+            ct = beside(grey_tag("2 of 5 columns"), t, imgs[0], buff=0.45)
+            assert ct.get_left()[0] > imgs[0].glyphs.get_right()[0] + 0.2, ct.get_left()[0]
             pin(self, imgs[0], ct, run_time=0.3)
             hl = []
             for k, n in SHARED.items():
                 hl += [substring(imgs[k], n).animate.set_color(TURN), substring(imgs[k], "198MB").animate.set_color(TURN)]
             self.play(*hl, run_time=0.6)
             vo.wait_until("sharing about 200 megabytes")
-            rows = [imgs[k] for k in (1, 2, 3, 4, 5)]
-            x = imgs[1].strut.get_left()[0] + (len(IMG_ROWS[1]) + 1.5) * t.pitch * 0 + \
-                max(r.glyphs.get_right()[0] for r in rows) + 0.25
+            rows = [imgs[k] for k in (2, 3, 4, 5, 6)]
+            x = max(r.glyphs.get_right()[0] for r in rows) + 0.25
             top_y, bot_y = rows[0].strut.get_top()[1], rows[-1].strut.get_bottom()[1]
             br_ = VMobject(stroke_color=S.GREY, stroke_width=3)
             br_.set_points_as_corners([[x, top_y, 0], [x + 0.12, top_y, 0], [x + 0.12, bot_y, 0], [x, bot_y, 0]])

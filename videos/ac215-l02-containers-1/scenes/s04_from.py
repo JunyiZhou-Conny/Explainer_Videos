@@ -20,32 +20,37 @@ Beats (script.md "## S04", one voiceover block each):
     tracker's step-9 dot pulses.
  3  The labels leave and the 13-row laptop terminal fades in while the big command's glyphs fly
     into its two folded rows (the slide is the typing). ▶ your turn. laptop/09 lines 2, …, 15 (cut
-    after `@sha256:34386ef0`, folds onto 2 rows), …, 31-34 (hash12), …, 38, printed in chunks like a
-    progress log. GREY row tags on the `…` rows: "your terminal: a compact view · this is the full
+    after `@sha256:34386ef0`, folds onto 2 rows), …, 31-34 (hash12), …, 38 (67 columns: soft-wraps
+    onto a 14th row, so the log scrolls by one and the first command row goes), printed in chunks
+    like a progress log. GREY row tags on the `…` rows: "your terminal: a compact view · this is the full
     log (--progress=plain)" (its flag pulses on "add dash dash progress"), then "default" in line 2
     underlines YELLOW and 'Docker Desktop: builder "desktop-linux" · …' appears under it; last, on
     the bottom `…` row: "stops with toomanyrequests? → wait a while, or docker login (part 2)".
  4  The notes leave. The four sizes turn ORANGE in turn ("four layers"); on "under 50" copies of
     them fly up into a right-aligned list while the terminal shrinks to the 3-row strip (keeping
-    the command and line 38), summed "≈ 47.6 MB compressed". `simple-translate:latest` in line 38
-    turns TEAL on "saves the result", ":latest" pulses on "tagged latest". On "Those four layers"
-    V2 starts: four thin equal ORANGE slabs (TEAL outlines) drop as one group left of the list,
-    brace "base image" between them, `python:3.12-slim-bookworm` (mono, TEAL) under the stack.
+    the log's tail: `…` and line 38's two rows), summed "≈ 47.6 MB compressed".
+    `simple-translate:latest` in line 38 turns TEAL on "saves the result", ":latest" pulses on
+    "tagged latest". On "Those four layers" V2 starts, drawn as S05-S09 draw it (S05's layout
+    constants): four thin equal ORANGE slabs (TEAL outlines) drop as one group left of the list,
+    brace "base image" on their left, `python:3.12-slim-bookworm` (mono, GREY) under the stack.
  5  TRACKER A7 · extra. The list leaves; the strip grows to 5 rows and types
-    `docker image inspect simple-translate --format '…'` (row tag `extra`; the quoted format wraps at
-    the terminal edge like a real terminal's soft wrap) -> laptop/10 line 2. V3: the TEAL config
-    card (ENTRYPOINT, CMD, WorkingDir) appears right of the stack; `null` and `""` copy down from the
+    `docker image inspect simple-translate --format '…'` (row tag `extra`; the quoted format starts
+    at column 0, as in S05, and soft-wraps at the terminal edge on the space before WorkingDir=)
+    -> laptop/10 line 2. V3: the TEAL config card (stacked: key above slot, S05's size and place,
+    top right) appears right of the stack; `null` and `""` copy down from the
     output into the ENTRYPOINT and WorkingDir slots, `["python3"]` into the CMD slot as a tile;
     GREY "inherited from / the base image" points at the CMD row while the base slabs pulse. Under
-    the card the start-up line `python3` copies down from the tile, then "→ >>>" (prediction).
+    the card (left-aligned, as in S05) the start-up line `python3` copies down from the tile, then
+    "→ >>>" (prediction).
  6  TRACKER A7. The picture leaves except the prediction, which moves top right with "predicted:".
     The terminal clears and grows to 10 rows; `docker run --rm -ti simple-translate` (two rows),
     typed at the pace it is spoken;
     `--rm` underlines with "clean up on exit" under it, `-ti` with "type into it" under it (in the
     empty row 2); ▶ your turn on "Pause and run it". The -ti label leaves just before the output
-    takes its row: laptop/11 lines 2-3 (cut at the 65-column edge) and the `>>>` prompt; GREEN check
-    on the prediction.
-    `Python 3.12.15` underlines ORANGE with the row tag "3.12.15 · at the time of recording";
+    takes its row: laptop/11 lines 2-3 (66 and 70 columns: each soft-wraps onto a second row) and
+    the `>>>` prompt; GREEN check on the prediction.
+    `Python 3.12.15` underlines ORANGE with the row tag "3.12.15 · at the time of recording" under
+    it (in the row of the wrapped "x");
     `exit()` is typed (line 4) and the laptop prompt returns.
  7  TRACKER A7 · extra. The strip (5 rows): `git status` (row tag `extra`) -> laptop/12 lines 2-5;
     line 5 YELLOW bar. Top right a YELLOW `Dockerfile` file chip ("you just made it");
@@ -106,14 +111,18 @@ assert GIT_OUT[-1] == "nothing to commit, working tree clean"
 GIT_ADD_F = "git add -f Dockerfile"                      # said, not run
 P = P_LAPTOP + " "
 
-# `docker image inspect …` folded for a 65-column row: house folds (" \") outside the quotes, then
-# the quoted format soft-wraps at the terminal edge (a real terminal's wrap: no "\", next row at
-# column 0). Terminal.fold would put " \" inside the quotes and drop a character there.
+# ------------------------------------------------------------------ layout (S05's, so V2/V3 look the same)
+STACK_X, FLOOR_Y = -3.0, -0.25        # the V2 stack (3.2 wide); its left brace label stays in frame
+CARD_W, CARD_RIGHT, CARD_TOP = 3.4, 6.5, 3.4   # the stacked config card, clear of the tracker caption
+
+# `docker image inspect …` folded for a 65-column row: house folds (" \") at the two spaces outside
+# the quotes, then the quoted format starts a row at column 0 (as in S05) and soft-wraps at the
+# terminal edge like a real terminal (no "\"). Column 65 is the space before WorkingDir=, so the
+# wrap splits no token. Terminal.fold would put " \" inside the quotes and drop a character there.
 _FMT = INSPECT_V1[INSPECT_V1.index("'"):]
-_ROOM = 65 - 4
-INSPECT_ROWS = [P + "docker image inspect \\", "    simple-translate --format \\",
-                "    " + _FMT[:_ROOM], _FMT[_ROOM:]]
-assert "docker image inspect simple-translate --format " + _FMT == INSPECT_V1
+assert _FMT[64] == " ", _FMT[:65]
+INSPECT_ROWS = [P + "docker image inspect \\", "    simple-translate --format \\", _FMT[:64], _FMT[65:]]
+assert "docker image inspect simple-translate --format " + " ".join(INSPECT_ROWS[2:]) == INSPECT_V1
 assert all(len(r) <= 65 for r in INSPECT_ROWS)
 
 
@@ -400,8 +409,11 @@ class StepFrom(VoiceScene):
             o15 = t.print(self, [B_L15], wrap=True, run_time=0.3)
             dots6 = t.print(self, ["…"], run_time=0.2)[0]
             o_sz = t.print(self, B_SIZES, run_time=1.0, lag=0.3)
-            dots11, o38 = t.print(self, ["…", B_L38], run_time=0.4)
+            # line 38 (67 columns) soft-wraps onto a 14th row: the log scrolls by one (the first
+            # command row goes, as in a real terminal); nothing of the line is cut
+            dots11, o38, o38b = t.print(self, ["…", B_L38], wrap=True, run_time=0.4)
             assert o15[0].text.endswith("@sha256:") and o15[1].text == "34386ef0…"
+            assert o38.text + o38b.text == B_L38 and r0 not in t.lines
             vo.wait_until("Here you see")
             note_c = row_tag([("your terminal: a compact view · this is the full log", "label"),
                               ("(--progress=plain)", "mono")])
@@ -424,12 +436,13 @@ class StepFrom(VoiceScene):
             self.play(Indicate(substring(l2, '"default"'), color=TURN, scale_factor=1.2), run_time=0.6)
 
         # ========================================================== 4 · four base layers, the stack
+        # the V2 stack as S05-S09 draw it: brace on the left, GREY caption, S05's place
         stack = LayerStack(stack_w=3.2)
-        stack.move_to([-4.3, 0.15, 0])
+        stack.floor.move_to([STACK_X, FLOOR_Y, 0])
         base = [stack.make(None, SYSTEM, 0.15) for _ in range(4)]
-        br = stack.brace(base, "base image", direction=RIGHT)
-        cap = mono("python:3.12-slim-bookworm", 20, IMAGE)
-        cap.next_to(stack.floor, DOWN, buff=0.16).set_x(stack.floor.get_center()[0])
+        br = stack.brace(base, "base image")
+        cap = mono("python:3.12-slim-bookworm", 20, S.GREY)
+        cap.next_to(stack.floor, DOWN, buff=0.12)
 
         sz_targets = VGroup(*[mono(s, 20, SYSTEM) for s in SIZES]).arrange(DOWN, buff=0.14, aligned_edge=RIGHT)
         sz_targets.move_to([0.75 - sz_targets.width / 2, 0.95, 0]).align_to([0.75, 0, 0], RIGHT)
@@ -447,7 +460,7 @@ class StepFrom(VoiceScene):
             copies = [g.copy() for g in sz_glyphs]
             self.add(*copies)
             vo.wait_until("under 50")
-            resize(self, t, STRIP_ROWS, keep=[r0, r1, o38], run_time=0.8,
+            resize(self, t, STRIP_ROWS, keep=[dots11, o38, o38b], run_time=0.8,
                    extra=[ReplacementTransform(c, s) for c, s in zip(copies, sz_targets)])
             self.play(Create(rule), FadeIn(total, shift=UP * 0.1), run_time=0.5)
             lead(vo, "and saves the result", 0.2)
@@ -461,8 +474,8 @@ class StepFrom(VoiceScene):
             self.play(GrowFromCenter(br.brace), FadeIn(br.text), FadeIn(cap, shift=UP * 0.1), run_time=0.6)
 
         # ========================================================== 5 · inspect: the config card (V3)
-        card = ConfigCard(card_w=4.65, inline=True)     # left edge clear of the tracker's "· extra"
-        card.move_to([6.45 - card.width / 2, 2.86 - card.height / 2, 0])
+        card = ConfigCard(card_w=CARD_W)                 # the stacked card, where S05 shows it
+        card.shift(np.array([CARD_RIGHT - card.frame.get_right()[0], CARD_TOP - card.frame.get_top()[1], 0]))
         n_entry = card.note("ENTRYPOINT", "null")
         n_wd = card.note("WorkingDir", '""')
         cmd_tile = card.place("CMD", card.tile('["python3"]'))
@@ -472,11 +485,12 @@ class StepFrom(VoiceScene):
         inh_arrow = Arrow(inh.get_right() + RIGHT * 0.06, [card.frame.get_left()[0] - 0.04, cmd_y, 0],
                           buff=0, color=S.GREY, stroke_width=3, tip_length=0.15,
                           max_tip_length_to_length_ratio=0.5)
-        start = card.startup("python3", buff=0.12)
+        start = card.startup("python3", buff=0.22).align_to(card.frame, LEFT)   # where S05 has it
+        spot = np.array([start.get_left()[0], start.get_center()[1], 0])
         arr = label("→", 26, S.GREY)
         repl = chip(">>>", SYSTEM, size=20, font=MONO, pad_y=0.08)
         pred = VGroup(start, arr, repl).arrange(RIGHT, buff=0.25)
-        pred.next_to(card.frame, DOWN, buff=0.12)
+        pred.shift(spot - np.array([start.get_left()[0], start.get_center()[1], 0]))
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(sz_targets, rule, total), shift=UP * 0.1), track(tr, 7, extra=True),
@@ -539,7 +553,8 @@ class StepFrom(VoiceScene):
             self.play(Wiggle(yt6, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.6)
             vo.wait_until("There's the Python prompt")
             self.play(FadeOut(l_ti), run_time=0.25)          # its row is where the output goes
-            o6 = t.print(self, REPL_OUT, run_time=0.4)
+            o6 = t.print(self, REPL_OUT, wrap=True, run_time=0.4)    # 66 and 70 columns: 4 rows
+            assert [o6[0].text + o6[1].text, o6[2].text + o6[3].text] == REPL_OUT
             t.set_prompt(REPL_PROMPT)
             p6 = bare_prompt(self, t)
             self.play(Indicate(substring(p6, ">>>"), color=SYSTEM, scale_factor=1.5),
@@ -551,8 +566,8 @@ class StepFrom(VoiceScene):
             self.play(Create(u_ver), run_time=0.4)
             attach(self, o6[0], u_ver)
             rec = row_tag([("3.12.15", "mono"), ("· at the time of recording", "label")])
-            at_row(rec, t, 4, x=t._slot(0)[0] + 2.6)
-            self.play(FadeIn(rec, shift=LEFT * 0.1), run_time=0.4)   # not pinned: the >>> row is retyped
+            at_row(rec, t, 3, x=substring(o6[0], "3.12.15").get_left()[0] - 0.1)   # under the version,
+            self.play(FadeIn(rec, shift=LEFT * 0.1), run_time=0.4)   # in the row of the wrapped "x"
             vo.wait_until("Type exit with")
             type_cmd(self, t, REPL_TYPED, 0.5)
             t.set_prompt(P_LAPTOP)

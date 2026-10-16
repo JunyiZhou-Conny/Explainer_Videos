@@ -31,13 +31,13 @@ Beats (script.md, ## S01; one voiceover block each):
    Containers", 16 dots, "step 1 of 16: container ls") appears in it and the ring pulses. Beside
    the ring a small icon names where: on "on the laptop" a GREY laptop (A's section name pulses),
    on "on Docker Hub" A becomes tracker_b(1) and the icon a BLUE shelf, on "on the VM" tracker_c(1)
-   and a BLUE VM; the ring follows each tracker's width. On "When the yellow" it goes back to
-   tracker A, step 1 (the ring dims), and a 2-row strip at the home prompt (GREY tag "preview")
-   types README step A1, `docker container ls`, with a YELLOW `▶ your turn` row tag (pulses on
-   "pause and run"); the footer "every command: MLOps_Learning · guides/L02-containers-1.md · link
-   in the description" fades in. On "a gray extra tag" it types `ls -a` with the GREY `extra` row
-   tag while the tracker caption gains " · extra" (common.track(..., extra=True)); both pulse on
-   "marks a check".
+   and a BLUE VM; the ring follows each tracker's width. On "When the yellow" a 2-row strip at
+   the home prompt (GREY tag "preview") fades in, the tracker goes back to A, step 1 (the ring
+   dims), and the strip types README step A1, `docker container ls`, with a YELLOW `▶ your turn`
+   row tag (pulses on "pause and run"); the footer "every command: MLOps_Learning ·
+   guides/L02-containers-1.md · link in the description" fades in. On "a gray extra tag" it types
+   `ls -a` with the GREY `extra` row tag while the tracker caption gains " · extra"
+   (common.track(..., extra=True)); both pulse on "marks a check".
 5. Checklist card, rows as named: ✓ Docker Desktop running (Tutorial 0), ✓ a free Docker Hub
    account, ✓ your GCP project, for the VM at the end (+ GOLD tag "a VM costs money while it
    exists" beside it), GREY ✗ no service account, no keys (README.md · line 23). Fade out to an
@@ -428,16 +428,19 @@ class Hook(VoiceScene):
             for new, ic, anchor in ((tr_b, where[1], "on Docker Hub"), (tr_c, where[2], "on the VM")):
                 vo.wait_until(anchor)
                 r_new = tracker_ring(new)
-                swap_tracker(self, old, new, Transform(ring, r_new), FadeTransform(icon, by_ring(ic, r_new)))
+                swap_tracker(self, old, new, Transform(ring, r_new), FadeTransform(icon, by_ring(ic, r_new)),
+                             run_time=0.45)
                 icon, old = ic, new
             vo.wait_until("When the yellow")
-            # back to the start (A, step 1) for the strip's first command, README step A1
+            # the strip first (C stays readable a moment longer), then back to the start (A, step 1)
+            # for the strip's first command, README step A1
+            self.play(FadeIn(t2), FadeIn(prev2), run_time=0.35)
             tr_a = tracker_a(1)
             r_new = tracker_ring(tr_a, stroke=2, opacity=0.5)
             swap_tracker(self, old, tr_a, Transform(ring, r_new), FadeTransform(icon, by_ring(where[0], r_new)),
-                         FadeIn(t2), FadeIn(prev2))
+                         run_time=0.5)
             icon = where[0]
-            l1_ = t2.type(self, CONTAINER_LS, type_time=0.7)
+            l1_ = t2.type(self, CONTAINER_LS, type_time=0.55)
             yt = row_tag("▶ your turn", TURN).next_to(l1_.strut, RIGHT, buff=0.45)
             vo.wait_until("tag appears")
             self.play(FadeIn(yt, scale=0.8), run_time=0.45)
