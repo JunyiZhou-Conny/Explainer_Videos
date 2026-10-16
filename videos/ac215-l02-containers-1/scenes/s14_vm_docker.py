@@ -532,21 +532,20 @@ class DockerOnVM(VoiceScene):
 
         # ========================================================== 5 · C4: docker --version
         chip5 = pkg_chip()
-        chip5.move_to([NOTE_LEFT + chip5.width / 2, 2.3, 0])
+        chip5.move_to([NOTE_LEFT + chip5.width / 2, 2.38, 0])
         # "our laptop": the captures' stand-in engine (laptop/00 line 4), not the viewer's Docker
         # Desktop; first time this version is shown, so it carries its own tag (the card leaves no
         # room beside it: the tag sits under the note)
         lap5 = label("our laptop: Docker 29.8.2", 22, S.GREY)
-        lap5.next_to(chip5, DOWN, buff=0.25).align_to(chip5, LEFT).shift(RIGHT * 0.1)
+        lap5.next_to(chip5, DOWN, buff=0.2).align_to(chip5, LEFT).shift(RIGHT * 0.1)
         lap5_rec = row_tag("at the time of recording")
-        lap5_rec.next_to(lap5, DOWN, buff=0.14).align_to(lap5, LEFT)
+        lap5_rec.next_to(lap5, DOWN, buff=0.1).align_to(lap5, LEFT)
         card5 = deb13_card([V13])
         rec_card = row_tag("at the time of recording")
         rec_card.move_to([card5.frame.get_right()[0] - 0.25 - rec_card.width / 2, card5.frame.get_top()[1], 0])
         assert chip5.get_right()[0] < card5.frame.get_left()[0] - 0.2, "chip runs into the card"
         assert max(lap5.get_right()[0], lap5_rec.get_right()[0]) < card5.frame.get_left()[0] - 0.2, "note runs into the card"
-        print("DBG", lap5.get_bottom()[1], lap5_rec.get_top()[1], lap5_rec.get_bottom()[1], t.box.get_top()[1], chip5.get_bottom()[1])
-        assert lap5_rec.get_bottom()[1] > t.box.get_top()[1] + 0.1, "laptop note's tag runs into the terminal"
+        assert lap5_rec.get_bottom()[1] > t.box.get_top()[1] + 0.15, "laptop note's tag runs into the terminal"
 
         with self.voiceover(SAY[5]) as vo:
             # last beat's marks go with the card (YELLOW bars, underline, tags on rows 55-58), so

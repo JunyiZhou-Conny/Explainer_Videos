@@ -6,7 +6,8 @@ Beats (script.md "## S01", one voiceover block each):
    rises into box 1 and comes out as a short page into drawer 2; box 2 makes it a long page in
    drawer 3; there it splits: one copy through box 3 into drawer 4 as a wave, the other through
    box 4 into drawer 5 as an FR page, then through box 5 into drawer 6 as a wave. No arrow ever
-   joins two boxes. The picture dims; YELLOW "How do they cooperate?" and "Who pays?" write in
+   joins two boxes. GREY tag "illustration" under the cabinet's left end (as in S02), in with the
+   relay. The picture and its tag dim; YELLOW "How do they cooperate?" and "Who pays?" write in
    above it, one after the other.
 1. The questions and the relay fade. A two-column card, headers "L2" (GREY) and "L3" (YELLOW);
    the four GREY L2 cells write in; on each phrase a copy of the left cell becomes its right
@@ -15,9 +16,10 @@ Beats (script.md "## S01", one voiceover block each):
    laptop" (GREY folder, PINK route, TEAL box); "no key" -> "a shared bucket + a
    service-account key" (on each phrase its glyph fades in and the words take its colour: a BLUE
    drawer and BLUE "shared bucket", a GOLD key and GOLD "service-account key").
-2. Layout preview. A README.md page glyph and a GREY "this video" frame side by side; on "The
-   tracker" the page flies to the top-left corner and turns into the ReadmeTracker (FadeTransform;
-   "README › Clone this Repository", 2 dots) in a YELLOW ring that pulses as step 1 ("step 1 of
+2. Layout preview. A README.md page glyph (mono caption under it: the repo's address,
+   "github.com/dlops-io/mega-pipeline", from the clone command) and a GREY "this video" frame side
+   by side; on "The tracker" the page and its address fly to the top-left corner and turn into
+   the ReadmeTracker (FadeTransform; "README › Clone this Repository", 2 dots) in a YELLOW ring that pulses as step 1 ("step 1 of
    2: Clone") lights on "shows the README step"; the code panel
    transcribe_audio/cli.py · lines 18–20 slides in, its header ringed YELLOW on "file and line
    numbers"; the 3-row laptop strip (GREY tag "preview") types `git clone
@@ -51,13 +53,15 @@ from explainer.devops import box, check_mark, chip, cloud, folder_glyph, glyph_r
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, COST, CTR, INK, LAPTOP, LOOKUP, NARRATION, P_HOME, TOOL, TURN, VENV, Relay,
-                    beside, capture, extra_tag, key_glyph, leave_container, pin, preview_tag, recorded_tag,
-                    src_panel, term, tracker, your_turn)
+                    beside, capture, extra_tag, illustration_tag, key_glyph, leave_container, pin,
+                    preview_tag, recorded_tag, src_panel, term, tracker, your_turn)
 
 SAY = NARRATION["S01"]
 
 CLONE = capture("03-clone")
 assert CLONE.cmd == "git clone https://github.com/dlops-io/mega-pipeline.git", CLONE.cmd
+REPO_URL = CLONE.cmd.split()[-1].removeprefix("https://").removesuffix(".git")
+assert REPO_URL == "github.com/dlops-io/mega-pipeline", REPO_URL
 DV = capture("01-docker-version")
 assert DV.cmd == "docker version", DV.cmd
 assert DV.line(3).split()[-1] == "29.8.2", DV.line(3)
@@ -190,12 +194,14 @@ class Hook(VoiceScene):
         # ========================================================== 0. the relay teaser
         relay = Relay(labels=False).move_to(DOWN * 0.3)
         relay.bonus.text.set_opacity(0)         # the dashed seventh drawer: no name yet
+        # a schematic bucket is always tagged (BRIEF.md); placed as in S02
+        ill = illustration_tag().next_to(relay.cabinet, DOWN, buff=0.17).align_to(relay.drawers[0].frame, LEFT)
         tok = relay.token_at(0, "wave")
         qs = VGroup(label("How do they cooperate?", 40, TURN), label("Who pays?", 40, TURN))
         qs.arrange(RIGHT, buff=1.3).move_to([0, 2.95, 0])
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(relay, lag_ratio=0.08), run_time=1.3)
+            self.play(FadeIn(relay, lag_ratio=0.08), FadeIn(ill), run_time=1.3)
             self.play(FadeIn(tok, shift=DOWN * 0.5),
                       Indicate(relay.drawers[0].frame, color=CLOUD, scale_factor=1.05), run_time=0.7)
             vo.wait_until("Five programs")
@@ -206,7 +212,7 @@ class Hook(VoiceScene):
             [te] = relay.run(self, [(td, 4)], run_time=1.9)
             vo.wait_until("So how do they")
             self.play(relay.dim_to(0.3), tc.animate.set_opacity(0.3), te.animate.set_opacity(0.3),
-                      Write(qs[0]), run_time=0.9)
+                      ill.animate.set_opacity(0.3), Write(qs[0]), run_time=0.9)
             vo.wait_until("and who pays")
             self.play(Write(qs[1]), run_time=0.7)
 
@@ -259,8 +265,10 @@ class Hook(VoiceScene):
                       run_time=0.8)
 
         # ========================================================== 2. how to follow along
-        page = readme_page().move_to([2.6, 0.25, 0])
-        video = this_video().move_to([-2.5, 0.25, 0])
+        page = readme_page().move_to([2.9, 0.35, 0])     # right of centre: its address is wide
+        url = mono(REPO_URL, 22, INK).next_to(page, DOWN, buff=0.25)    # where the README lives
+        readme = VGroup(page, url)
+        video = this_video().move_to([-3.0, 0.35, 0])
         tr = tracker("R")                        # where S03 pins it: left -6.5, top 3.5
         at1 = tracker("R", 1)                    # its bounds once "step 1 of 2: Clone" shows
         # the ring: as close to the frame's edge as the safe area allows on the left and top,
@@ -278,13 +286,13 @@ class Hook(VoiceScene):
         prev = above_right(preview_tag(), t)
 
         with self.voiceover(SAY[2]) as vo:
-            clear_stage(self, FadeIn(page, shift=LEFT * 0.6), run_time=0.8)
+            clear_stage(self, FadeIn(readme, shift=LEFT * 0.6), run_time=0.8)
             vo.wait_until("beside this video")
             self.play(FadeIn(video, shift=RIGHT * 0.3), run_time=0.6)
             vo.wait_until("The tracker")
             # the README page flies up to the corner and becomes the tracker
-            self.play(FadeTransform(page, tr), FadeOut(video), run_time=1.0)
-            self.remove(video)
+            self.play(FadeTransform(readme, tr), FadeOut(video), run_time=1.0)
+            self.remove(video, readme)
             self.play(Create(ring), run_time=0.5)
             vo.wait_until("shows the README step")
             # the blank caption takes its final shape, invisible, so goto() fades it in in place
