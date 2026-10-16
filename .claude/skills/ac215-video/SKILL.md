@@ -141,6 +141,10 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 
 ## Scene-code pitfalls (each cost time on L1)
 
+- Debug with `print()` while you work, but remove every call before you return: a leftover
+  lands in every render log, including the release job's. `explainer.check` reports each one as
+  `PRINT file:line` (the scene file and its helpers; `t.print(...)` is scene code and is fine),
+  so a scene with one does not pass. Bugbot caught two in L02 S14 and L04 S15.
 - Never assign Mobject property names on a VGroup subclass (`width`, `height`, `color`, `depth`):
   Manim treats them as properties. Use `level`, `hi_color`, `shelf_w`, `line_w` etc.
 - `capture(...).pick(i)` uses 0-based indices = file line − 1; `capture()` already strips `\r`.

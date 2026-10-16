@@ -6,7 +6,9 @@ Runs the scene as a Manim dry run (narration audio comes from the TTS cache, so 
 real) and, after every play()/wait(), reports:
   OUT    a visible mobject outside the safe area x in [-6.6, 6.6], y in [-3.6, 3.6]
   SMALL  a Text / MathTex rendered below 20 pt
-and at the end lists mobjects still visible (scenes should end on an empty frame). For a short-format
+and at the end lists mobjects still visible (scenes should end on an empty frame). Before running it
+reports PRINT for every call to the built-in print() in the scene file and the helpers next to it:
+leftover debugging that would spill into every render log. For a short-format
 BeatScene the HUD (fixed in the frame) may be tiny and a scene may end with objects on screen (they
 carry over into the next shot); its length in bars is printed instead.
 """
@@ -22,6 +24,21 @@ from pathlib import Path
 import numpy as np
 
 XL, YL, MIN_PT = 6.6, 3.6, 19.5
+
+
+def debug_prints(scene_file: Path) -> list[tuple[Path, int]]:
+    """Calls to the built-in print() in a scene file and the .py files next to it (its helpers).
+    Method calls such as Terminal.print() are scene code and are not reported."""
+    import ast
+    found = []
+    for path in [scene_file, *sorted(p for p in scene_file.parent.glob("*.py") if p != scene_file)]:
+        try:
+            tree = ast.parse(path.read_text(), filename=str(path))
+        except SyntaxError:
+            continue
+        found += [(path, n.lineno) for n in ast.walk(tree)
+                  if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "print"]
+    return found
 
 
 def main(argv=None) -> int:
@@ -56,6 +73,9 @@ def main(argv=None) -> int:
 
     seen: set = set()
     problems = 0
+    for path, line in debug_prints(scene_file):
+        problems += 1
+        print(f"PRINT {path.name}:{line} calls print(): remove leftover debugging before the render")
 
     def visible(m) -> bool:
         if not isinstance(m, VMobject) or len(m.points) == 0:
