@@ -15,7 +15,7 @@ current section in bold.
 
 - Slide 1 · title slide
 - Slide 2 · announcements: midterm presentations
-- Slide 3 · outline (Recap; Serverless: Cloud Functions; Serverless: Cloud Run)
+- Slide 3 · outline (Recap; Serverless: Cloud Functions; Serverless: Cloud Run, spelled "Cloud Runs" on slides 3–4)
 - Slides 4–6 · **1. Recap**
   - 4 · section divider ("Recap" in bold)
   - 5 · "Review: Cheese App Status": the project roadmap from POC to Prototype to MVP
@@ -38,7 +38,7 @@ current section in bold.
 
 1. **The project has reached deployment.** On the Cheese App roadmap, data collection,
    experiment tracking and baseline models lie behind the class. The current focus is better models, the ML
-   workflow and the start of "Deployment, Scaling & Automation", at the end of the Prototype
+   workflow and the start of "Deployment, Scaling & Automation", all inside the Prototype
    phase. Of the four pipeline components, collector, processor and training are finished;
    "Model Deploy" is the one left. (Slides 5, 6)
 2. **Serverless means code runs only when it is needed.** You do not set up servers. Expensive
@@ -80,14 +80,16 @@ take it from `digest.md`.
   the top, with three phase labels: "POC", "Prototype", "MVP". Dashed vertical lines mark the
   phase boundaries. Under it are horizontal bars, staggered in time:
   - "Design Cheese App": a long bar from the start of POC to the end of Prototype.
-  - "Data Collection" and "Setup Experiment Tracking": short bars early in POC.
-  - "Build Baseline Models": late POC into early Prototype.
+  - "Data Collection": the first part of POC.
+  - "Setup Experiment Tracking": most of POC, ending just past the Prototype boundary.
+  - "Build Baseline Models": mid-POC into early Prototype.
   - "Build Better Models" and "ML Workflow": stacked bars inside Prototype.
   - "Build Cheese App": in MVP.
   - "Deployment, Scaling & Automation": a long bar from mid-Prototype to the end of MVP.
 
-  A red dashed rectangle surrounds the late-Prototype block: Build Better Models, ML Workflow,
-  and the first part of Deployment, Scaling & Automation. That rectangle is the "you are here"
+  A red dashed rectangle surrounds the Prototype-phase block, from just after the POC boundary
+  to the end of Prototype: Build Better Models, ML Workflow, and the first part of Deployment,
+  Scaling & Automation (that bar starts mid-Prototype). That rectangle is the "you are here"
   marker. Purpose: place this lecture on the project timeline.
 - **Slide 6 · Cheese App components on GCP.** Four colored tiles in a row, each with a number
   badge above and an icon:
@@ -148,7 +150,7 @@ take it from `digest.md`.
 | "Triggered by events" (file upload, HTTP request, database update) | 11 | The tutorial uses only the HTTP trigger (`@functions_framework.http`). |
 | "Scales automatically", "Scale out easily" | 11, 14 | The digest speaks of autoscaling, scale-out and scale to zero, with min/max instances. |
 | "Enable GCP APIs" | 12, 15 | The README's "Click ENABLE" step (Build, Functions, Logging and Pub/Sub APIs for the function). |
-| "Create a python code file" | 12 | In the README you paste `main.py` and `requirements.txt` into the console's inline editor and set the **entry point**. |
+| "Create a python code file" | 12 | In the README you paste `main.py` and `requirements.txt` into the console's inline editor. The README never mentions the console's **entry point** field; it already says `hello_http`, which matches the README's handler (`digest.md` Step 4). |
 | "Deploy Docker Image in Cloud Run" | 15 | The README deploys the prebuilt `dlops/simple-translate-http:latest` from Docker Hub. |
 | "Vendor lock-in", "Cold starts", "Limited control and debugging" | 16 | The tutorial does not discuss lock-in. Cold starts show up in the console's "Set to 1 to reduce cold starts" hint (digest §3.2). |
 | "Training Job (Vertex AI)", "Model Deployment (Vertex AI)", "Pipeline (Vertex AI)" | 9 | L13 `model-training` and L15 `model-deployment` / `ml-workflow`. |
@@ -183,8 +185,8 @@ the only addresses are the console and tutorial links on slides 12 and 15.
   Cloud Run scales out easily (slide 14).
 - **Use expensive hardware only where needed.** GPUs only for the training step (slide 8).
 - **The design trade-off: what you hand over.** A code file (Cloud Function) or a container
-  (Cloud Run). This mirrors the VM options of earlier lectures, so the step from L1–L2 is
-  "same code, new host" (slide 10).
+  (Cloud Run). This mirrors the VM options of earlier lectures, so the step from L1–L2 is the
+  same code on a new host (slide 10).
 - **Serverless has downsides** (slide 16), introduced with "While serverless computing offers
   numerous benefits…":
   - **Vendor lock-in.** Implementations and APIs differ between clouds, so migrating is hard.
@@ -252,19 +254,19 @@ the only addresses are the console and tutorial links on slides 12 and 15.
    - a job's execution logs: a *Succeeded* badge on a failed Gemini call.
 
    The lecture names the cost, and the tutorial shows where to look. **Carry it in** ch4 (build log), ch5 (a revision that never becomes ready) and ch8 (job logs, not the badge), as a recurring "where do you look?" beat.
-3. **Where L14 sits in the project (slides 5–6).** On the roadmap, deployment starts at the end of the Prototype phase. Of the four Cheese App components, only "Model Deploy" is unticked, and Milestone 3 asks students to "Deploy your model or API using Cloud Functions or Cloud Run" (`digest.md` §7). This tells the student why the tutorial matters to their own project. **Carry it in** ch1, ten seconds after the hook, or in ch9.
+3. **Where L14 sits in the project (slides 5–6).** On the roadmap, deployment starts in the middle of the Prototype phase, inside the "you are here" box. Of the four Cheese App components, only "Model Deploy" is unticked, and Milestone 3 asks students to "Deploy your model or API using Cloud Functions or Cloud Run" (`digest.md` §7). This tells the student why the tutorial matters to their own project. **Carry it in** ch1, ten seconds after the hook, or in ch9.
 4. **One idea across three weeks (slides 8–9).** Serverless is a family: the Vertex AI training job last week (L13, a GPU only for the training step), Cloud Functions and Cloud Run today, Vertex AI model deployment and pipelines next (L15). None of the planned chapters bridges to L13 or L15. **Carry it in** ch1 (a callback to L13) and ch9 (the road to L15).
 5. **Event triggers (slide 11).** A function can start on a file upload, an HTTP request or a database change. The tutorial uses only HTTP (`@functions_framework.http`). That may also be why the function's API dialog asks for the Pub/Sub API (`digest.md` §2): Pub/Sub likely carries the event triggers (an inference, not checked). **Carry it in** ch4, in one sentence.
-6. **Vendor lock-in (slide 16).** Moving serverless code between clouds is hard, but the tutorial can give a more precise answer. functions-framework is open source, and the repo runs it in a plain Docker container on your laptop (Step 1). Path B's image runs anywhere that runs amd64 containers. The Google-specific parts are the console set-up, IAM and the build pipeline. **Carry it in** ch9 (recap) or ch3.
+6. **Vendor lock-in (slide 16).** Moving serverless code between clouds is hard, but the tutorial can give a more precise answer. functions-framework is open source, and the repo's own image runs it in a plain Docker container you can start on your laptop (`docker-entrypoint.sh:18`; `digest.md` Step 1). Path B's image runs anywhere that runs amd64 containers. The Google-specific parts are the console set-up, IAM and the build pipeline. **Carry it in** ch9 (recap) or ch3.
 
 ### 4. Conflicts
 
 | # | Slides say | Tutorial today (repo `4eaf343`, Docker Hub images, README screenshots) | Current | How the video should put it |
 |---|---|---|---|---|
-| 1 | **The product name** (slides 1, 3, 7, 9–13): "Cloud Function(s)", reached at `https://console.cloud.google.com/functions` (slide 12), a product separate from Cloud Run (slides 9, 10). | README.md:8 says "Cloud Run -> Functions". Since 2024 the product has been called *Cloud Run functions* (formerly Cloud Functions 2nd gen), and it runs on Cloud Run. The slide's link still works, but it redirects to Cloud Run's create-service page with the Function card (`digest.md` Step 2). The deployed function gets a `…run.app` URL, not README.md:76's `cloudfunctions.net` one. | The README and console naming | "The lecture uses the product's long-time name, Cloud Functions. Google has since moved it under Cloud Run as *Cloud Run functions*, and the slide's link still takes you there." Show the new name on screen once, with the old one in brackets. |
+| 1 | **The product name** (slides 1, 3, 4, 7, 9–13): "Cloud Function(s)", reached at `https://console.cloud.google.com/functions` (slide 12), a product separate from Cloud Run (slides 9, 10). | README.md:8 says "Cloud Run -> Functions". Since 2024 the product has been called *Cloud Run functions* (formerly Cloud Functions 2nd gen), and it runs on Cloud Run. The slide's link still works, but it redirects to Cloud Run's create-service page with the Function card (`digest.md` Step 2). The deployed function gets a `…run.app` URL, not README.md:76's `cloudfunctions.net` one. | The README and console naming | "The lecture uses the product's long-time name, Cloud Functions. Google has since moved it under Cloud Run as *Cloud Run functions*, and the slide's link still takes you there." Show the new name on screen once, with the old one in brackets. |
 | 2 | **A function has no container.** Slide 10 draws cell 3 as a bare `main.py` next to cell 4's "Container"; slide 11 says "without managing servers or containers". | Cloud Build packs `main.py` + `requirements.txt` into an image whose process is `functions-framework --target <entry point>`. The image is stored in Artifact Registry and runs as a Cloud Run revision (`digest.md` §3.4). The repo's `docker-entrypoint.sh:18` hand-builds the same container. | Both, at different levels: the slide shows what you hand over, the tutorial shows what runs | "The lecture's grid sorts by what *you* hand over. Under the hood Google turns your file into a container too. That's why there's an image to clean up at the end." |
-| 3 | **The translate code** (slide 10): a top-level script ending in `return = results.text` that calls `translator.translate(text,src,dest)` positionally, with the default text "…the moon's made of cheese". | The deployed code is an HTTP handler (`hello_http` at README.md:29, `translate_http` at `main.py:6`). It reads `text`, `src` and `dest` from `request.args` and calls `translator.translate(text, src=src, dest=dest)` (README.md:57, `main.py:25`). In googletrans 4.0.0rc1 the signature is `translate(self, text, dest='en', src='auto')` (`googletrans/client.py:173` in the sdist that `uv.lock` pins), and 4.0.2 keeps that order. The slide's positional call would therefore ask for Spanish → English, the reverse of what its variables intend. The default text is "…the moon is made out of cheese" (README.md:47), or just "Welcome to AC215" (`main.py:15`). | The README and repo code | Treat the slide as a sketch: "Here's the lecture's sketch of the app; here's the handler you actually deploy." Show the keyword call and add one sentence: "Pass `src=` and `dest=` by name. In this library the second position is the destination." |
-| 4 | **You pay only while code runs** (slide 11: "Pay only for the time your code runs"; slide 14: "Only pay when your code is running"; slide 8: lower cost). | This holds for compute with the console defaults, request-based billing and minimum instances 0 (`images/cloud-run-create.png`). Instance-based billing or min instances ≥ 1 bills idle time. Some costs accrue without any running request: Cloud Build minutes, the Artifact Registry image and source bucket a function deploy leaves behind, and a job's Gemini tokens. The README has no clean-up section (`digest.md` §2, erratum 9). | The console's billing settings and the digest's cost table | "That's true for the compute, with the defaults you'll see. Change either setting and the meter runs while idle. What the build leaves behind is billed as storage until you delete it, which is what the clean-up chapter is for." |
+| 3 | **The translate code** (slide 10): a top-level script ending in `return = results.text` that calls `translator.translate(text,src,dest)` positionally, with the default text "…the moon's made of cheese". | The deployed code is an HTTP handler (`hello_http` at README.md:29, `translate_http` at `main.py:6`). It reads `text`, `src` and `dest` from `request.args` and calls `translator.translate(text, src=src, dest=dest)` (README.md:57, `main.py:25`). In googletrans 4.0.0rc1 the signature is `translate(self, text: str, dest='en', src='auto')` (`googletrans/client.py:173` in the sdist that `uv.lock` pins), and 4.0.2 keeps that order. The slide's positional call would therefore ask for Spanish → English, the reverse of what its variables intend. The default text is "…the moon is made out of cheese" (README.md:47), or just "Welcome to AC215" (`main.py:15`). | The README and repo code | Treat the slide as a sketch: "Here's the lecture's sketch of the app; here's the handler you actually deploy." Show the keyword call and add one sentence: "Pass `src=` and `dest=` by name. In this library the second position is the destination." |
+| 4 | **You pay only while code runs** (slide 11: "Pay only for the time your code runs"; slide 14: "Only pay when your code is running"; slide 8: lower cost). | This holds for compute with the console defaults, request-based billing and minimum instances 0 (`images/cloud-run-create.png`). Instance-based billing or min instances ≥ 1 bills idle time. Some costs are not for your code running at all: Cloud Build minutes on every deploy, and the Artifact Registry image and source bucket a function deploy leaves behind. A job's Gemini tokens are billed on top of its compute. The README has no clean-up section (`digest.md` §2, erratum 9). | The console's billing settings and the digest's cost table | "That's true for the compute, with the defaults you'll see. Change either setting and the meter runs while idle. What the build leaves behind is billed as storage until you delete it, which is what the clean-up chapter is for." |
 | 5 | **What you hand over for a function** (slide 12): "Create a python code file", then "Deploy code as Cloud Function". | The console asks for three things: `main.py`; `requirements.txt` (`functions-framework==3.*`, `googletrans==4.0.0rc1`); and a *Function entry point*, which must equal the `def` name (`hello_http`). The README also has you pick a runtime ("Python 3.10", README.md:19) and "Allow public access". Clicking "Create" deploys the template first; then you paste the code and click "Save and Deploy" (README.md:16-71). | The README (the slide is an outline) | "The lecture's 'a Python file' is the short version. The console wants the file, its dependency list, and the name of the function to call." The entry-point mismatch (`digest.md` §6 #5) belongs here. |
 
 Not counted as conflicts:
@@ -286,7 +288,7 @@ Not counted as conflicts:
 
 **Per chapter**
 - **Ch1 · Lecture 14 · slides 5–8.**
-  - After the hook, spend ten seconds on a re-drawn slide-5 roadmap with the dashed "you are here" box at late Prototype.
+  - After the hook, spend ten seconds on a re-drawn slide-5 roadmap with the dashed "you are here" box over the Prototype phase.
   - Then show slide 6's four component tiles: "Model Deploy" is the only one unticked. Say that Milestone 3 asks for exactly this (gap 3).
   - Give slide 8's four bullets as the answer to the hook. Name L13's Vertex AI training job as last week's serverless (gap 4).
 - **Ch2 · Lecture 14 · slides 9–10, 14.**

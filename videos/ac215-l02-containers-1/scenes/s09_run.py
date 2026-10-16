@@ -55,9 +55,11 @@ Beats (script.md "## S09", one voiceover block each):
     tiles). "as in this extra": the strip (5 rows) types `docker run --rm simple-translate -c
     "source .venv/bin/activate && python cli.py -d fr"` (folds; row tags `extra` and "no -ti ·
     nothing to type") -> laptop/37 lines 12 (wrapped), 14-15; `Output: j'adore le fromage` GREEN.
- 8  CODE(docker-shell.sh: 10-15) (line 12, the commented platform build, dimmed); YELLOW bars on
-    line 11 on "builds" and line 15 on "and runs"; GREY tag "not in the README · builds and runs in
-    one go".
+ 8  The terminal clears and shrinks to a 1-row strip. CODE(docker-shell.sh: 10-15) above it (line
+    12, the commented platform build, dimmed). On "docker-shell.sh" the strip types
+    `sh docker-shell.sh` (laptop/42 line 1, row tag `extra`: how to run the helper); GREY tag "not in
+    the README · builds and runs in one go". YELLOW bars on line 11 on "builds" and line 15 on "and
+    runs"; the strip's command glows YELLOW on "in one go".
  9  TRACKER A16. Part-1 recap: the full V2 stack (brace "base image", caption
     `python:3.12-slim-bookworm`, ORANGE `RUN pip install uv`, GREY `COPY . ./`, GREEN `RUN uv sync`)
     beside the config card; a TEAL check "your image: built and run"; on "In part 2" the closing
@@ -117,6 +119,10 @@ RUN_C = C37.cmd
 assert RUN_C == 'docker run --rm simple-translate -c "source .venv/bin/activate && python cli.py -d fr"'
 OUT37 = C37.at(12, 14, 15)
 assert OUT37[-1] == "Output: j'adore le fromage", OUT37
+
+C42 = capture("42", LAPTOP_DIR)                          # laptop/42-docker-shell.txt
+SHELL_CMD = C42.cmd                                      # line 1: how to run the repo helper
+assert SHELL_CMD == "sh docker-shell.sh", SHELL_CMD
 
 # ------------------------------------------------------------------ the V3 values
 ENT = '["/bin/bash"]'
@@ -566,14 +572,24 @@ class RunIt(VoiceScene):
         helper.next_to(panel, DOWN, buff=0.35)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(good), FadeOut(t2), run_time=0.5)
-            self.remove(t2, *t2.lines)
+            # the terminal stays: it clears and shrinks to a 1-row strip (under the helper tag), so
+            # the helper's own run command can be typed in it
+            clear_with(self, t2, FadeOut(good), run_time=0.35)
+            resize(self, t2, 1, run_time=0.45)
+            bare_prompt(self, t2)
             self.play(FadeIn(panel, shift=UP * 0.15), run_time=0.5)
-            self.play(FadeIn(helper, shift=UP * 0.1), run_time=0.4)
+            vo.wait_until("docker-shell.sh")
+            c42 = type_cmd(self, t2, SHELL_CMD, 0.6)
+            x42 = beside(row_tag("extra"), c42)
+            self.play(FadeIn(x42, shift=LEFT * 0.1), FadeIn(helper, shift=UP * 0.1), run_time=0.4)
+            attach(self, c42, x42)
             vo.wait_until("builds")
             self.play(FadeIn(bar11), Indicate(panel.code.code_lines[1], color=TURN, scale_factor=1.04), run_time=0.5)
             vo.wait_until("and runs")
             self.play(FadeIn(bar15), Indicate(panel.code.code_lines[5], color=TURN, scale_factor=1.04), run_time=0.5)
+            vo.wait_until("in one go")
+            self.play(Indicate(substring(c42, SHELL_CMD), color=TURN, scale_factor=1.1), run_time=0.6)
+            self.add(c42)                 # animating a substring splits the row out of the scene's list
 
         # ========================================================== 9 · part-1 recap
         stack9, slabs9, brace9 = build_stack(-3.0, -0.45, 0.8)
@@ -590,7 +606,8 @@ class RunIt(VoiceScene):
         closing = VGroup(nxt_box, nxt).move_to([0, -2.75, 0])
 
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(panel, bar11, bar15, helper)), track(tr, 16), run_time=0.5)
+            self.play(FadeOut(VGroup(panel, bar11, bar15, helper)), FadeOut(t2), track(tr, 16), run_time=0.5)
+            self.remove(t2, *t2.lines)
             self.play(LaggedStart(*[FadeIn(s, shift=DOWN * 0.4) for s in slabs9], lag_ratio=0.12),
                       FadeIn(VGroup(brace9, base_name)), FadeIn(VGroup(card9, t_ent9, t_cmd9), shift=LEFT * 0.2),
                       run_time=1.1)

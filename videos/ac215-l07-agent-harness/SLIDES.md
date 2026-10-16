@@ -572,3 +572,181 @@ There are no shell commands, Docker, or tutorial code on the deck. The literal c
   links. The deck does not mention the README's Docker/CLI path, the Formaggio shop or its six
   acts. The pairing of each section with an act comes from the README's own table (see Read this
   first).
+
+## This video and the slides
+
+**Basis.** The video is not scripted yet. This folder holds only `digest.md` and this file: no `BRIEF.md`, `script.md`, `ASSETS.md` or `assets/terminal/`. The map below therefore uses the hook and the nine chapters planned in [`digest.md`](digest.md) §8, the study guide (`MLOps_Learning/guides/L07-agents-2-harness.md`) and every slide (the extracted text and all six contact sheets, re-read for this section). With no captures yet, "what the tutorial does today" means the repo at `e25dfe9` as verified in `digest.md`, plus the saved Colab outputs (cells 8–24). For this section I re-checked these points in a read-only copy of the repo at `e25dfe9`:
+- the README's "Lecture concept" table (README.md:11-21) and its section headings;
+- the two README sentences on hidden reasoning (README.md:198, 684) and the one on host-only memory (README.md:488);
+- `context_evidence.py:1` ("no model judge") and the `run_skill_script` filter (`skill_support.py:55-62`);
+- the two skill folders: `SKILL.md`, `references/`, `assets/`, and no `scripts/`;
+- that Act 3's `CartProposer` has no tools and answers only in the `CartProposal` schema (`workflow_runtime.py:44-47`);
+- the evaluation check names, all `outcome.*` or `process.*`.
+
+When captures exist, re-check Conflicts 6 and 7 against them first. If a capture and this section disagree, the capture wins.
+
+**Tag form.** `lecture_ref(7, "a–b")` (`explainer/devops.py`) prints "Lecture 7 · slides a–b". The deck's own title is "Lecture 7A"; no 7B deck was provided, so the bare "7" is unambiguous.
+
+### 1. Map: planned chapters ↔ slides
+
+| # | Planned chapter (`digest.md` §8) | Slides on the same ground | Relation |
+|---|---|---|---|
+| Hook | Two saved answers to one request; one says "1,5000¢" | 21 (Verify: check the work before trusting it) | Tutorial-only evidence. The lecture states the rule; the Colab run (cells 21, 23) supplies the broken thing. |
+| 1 | The bare agent (2.5 min) | 5–10 (recap: definition, building blocks, LLM call vs agent, the loop), 20 (the runtime executes tools) | Same concept, and the tutorial applies it: Act 1's bare agent (Colab cell 21). The plan's token counter is slide 10's growing input, measured. |
+| 2 | Wrapping the agent (3 min) | 20–24 (harness, one turn, action boundary, harness engineering) | Same concept, and the tutorial applies it: Budget, `@tool` schemas, ToolControl/ToolTrace and CartCheck fill harness cells of slide 22's rows "Control flow", "Tools" and "Verification". Immutable `.add`/`.without` and sticky admission are tutorial-only. "Layer" means something else on 37 and 39 (Conflict 1). |
+| 3 | What the model sees (3 min) | 12–18 (context engineering), 22 (row "Context & memory": "instruction vs evidence lanes") | Same concept, and the tutorial applies it: basic vs enriched changes only the injected blocks. The three sieves and the PA/NY toggle are tutorial-only. "RAG" here is a Python filter (Conflict 8). |
+| 4 | Rails, not suggestions (3 min) | 22 (rows "Control flow", "Verification"; "Move RIGHT"), 23, 36 (autonomy spectrum) | The tutorial applies the lecture's rule: control flow moves from the model into a fixed graph with one model node. The revise loop capped at 2 is tutorial-only. The README files this workflow elsewhere (Conflict 4). |
+| 5 | Approve *this exact* cart (2.5 min) | 22 ("Move RIGHT": stakes high, irreversible, audit required), 23 (permissions · budgets · checks; authority) | The tutorial applies it. Pause/resume, the SHA-256 fingerprint, re-validation at checkout and the active-time clock are tutorial-only; the deck names no human-approval step. |
+| 6 | Long tasks without amnesia (3 min) | 8, 13–14, 16 (long- and short-term memory), 22 (row "Context & memory": compaction trigger, what persists and where) | Same concept, refined: the five kinds of state and the re-attached capsule are tutorial-only. Who decides what to remember differs (Conflict 6). |
+| 7 | Skills (2 min) | 25–29 (skills, anatomy, progressive disclosure, tools vs MCP vs skills) | Same concept, and the tutorial applies it. The SHA-256 snapshot and path checks are tutorial-only; MCP is lecture-only; skill scripts differ (Conflict 2). |
+| 8 | Agent systems (2.5 min) | 30–36 (single vs multi agent, two patterns, autonomy spectrum), 22 (row "Sub agents") | Same concept, different shape: an agent calls a workflow, not another agent (Conflict 3). The two-orders race ("approval ≠ placement") is tutorial-only. |
+| 9 | Evidence, not vibes (2.5 min) | 39–42 (model to product, what to measure, who decides pass/fail, the evaluation loop) | Same concept, and the tutorial applies it: golden cases, `--repeats`, immutable labels, `--compare` with confounding changes. No LLM judge (Conflict 5). |
+| Recap | The plan's six recap questions | 22 (as a checklist), 40 | Could stand on lecture ground; the plan does not use it yet. |
+| — | not in the plan | 1–4, 11, 19, 25, 30, 38, 43 (title, logistics, outline dividers); 34 (repeat of 7); 35 (traditional component → agent); 37 (five-layer stack and owners); 45–48 (GenAI building blocks per cloud, frameworks); 49 | Lecture-only. 37 is worth one beat in ch9 (gap 11). |
+
+### 2. Already in common
+
+| # | Concept | Chapter ↔ slides | Does the video's framing agree with the lecture's? |
+|---|---|---|---|
+| 1 | An agent is a model with instructions and tools that runs until the task is done | ch1 ↔ 6–8 | Yes. README §1's "instructions + model + tools" is slide 8's building blocks minus memory, which arrives in ch6. |
+| 2 | The model proposes; the runtime executes | ch1, ch2 ↔ 20 | Yes, exactly. Slide 20's "does not and cannot execute the tool function" is the lecture's form of the notebook's rule, "the model proposes; the harness decides". `preview_order` is that sentence in code. |
+| 3 | Tool definitions go in, tool outputs come back, the input grows | ch1 ↔ 9–10 | Yes. The plan measures what slide 10 draws: 1 → 11 conversation messages and 1,942 → 4,540 input tokens over six model calls (Colab cell 23). |
+| 4 | The harness is the loop, tools, context management and guardrails around the model | ch2 ↔ 20, 24 | Yes. The SDK's tool loop is slide 24's `while True: model(); dispatch()`, and the tutorial's `Harness` wraps it. The word "layer" clashes (Conflict 1). |
+| 5 | Loop limits | ch2 ↔ 22 (row "Control flow": max turns, timeouts, stop conditions) | Yes. `Budget(model_calls=8, tool_calls=20, seconds=120)`, and the SDK's 40-iteration fallback without it. The tutorial is stricter than "max turns": it counts model calls and tool calls separately, and a breach is sticky. |
+| 6 | A tool registry with schemas and validated arguments | ch1, ch2 ↔ 22 (row "Tools") | Yes. `@tool` builds the schema from the signature and docstring; `ToolControl` admits each call; `ToolTrace` audits it, fail-closed. |
+| 7 | Verify before trusting | hook, ch2, ch4 ↔ 21 (Verify), 22 (row "Verification": deterministic gates) | Yes, sharpened: `CartCheck` reports and "never repairs", and the `validate` node sends feedback instead of fixing the cart. The lecture's Verify also allows judges; the tutorial uses code (Conflict 5). |
+| 8 | Context engineering: your code chooses every block | ch3 ↔ 12, 18 | Yes. Act 2 runs slide 18's last bullet as an experiment: prompt, model, tools and message stay fixed, and only the injected blocks change. |
+| 9 | Remembered preferences shape the answer | ch3, ch6 ↔ 14, 17 (past-conversation memory) | Yes. The lecture's "shops at Kroger, budget under $6" plays the role of the tutorial's saved "mild cheeses, nonalcoholic pairings" for `shivas`. The tutorial adds the test case `preference-override`, where today's request beats the saved preference. |
+| 10 | Instructions and evidence travel in separate lanes | ch3, ch6 ↔ 22 ("instruction vs evidence lanes") | Yes, and the tutorial makes the phrase concrete three times: the context packet as a user-role message labelled "data, not instructions"; the capsule labelled "data, not new instructions"; and quarantined vendor text. Slide 16's single stack does not show the lanes; slide 22 names them. |
+| 11 | High-stakes, irreversible actions move into code; the harness keeps authority | ch4, ch5 ↔ 22 ("Move RIGHT"), 23 | Yes. Act 3 is a "Move RIGHT" of control flow, and the approval gate is the "permissions" and "checks" of slide 23's banner. The tutorial goes further: an approval is bound to one exact cart, and checkout re-validates. |
+| 12 | Long-term and short-term memory; compaction | ch6 ↔ 13, 16, 22 (compaction trigger; what persists and where) | Yes, refined. The customer memory DB is long-term and the history short-term; tasks, approvals and audit are kept apart from both. Compaction fires at the SDK's 50 % / 80 % thresholds, and the capsule is re-attached. Who chooses what to remember differs (Conflict 6). |
+| 13 | Skills load progressively | ch7 ↔ 26–28 | Yes. Discover / Activate / Use resources = metadata at start → `load_skill` → `read_skill_resource`. Slide 28's "the harness executes it" is the `Skills(...)` layer. Scripts differ (Conflict 2). |
+| 14 | A skill is know-how, not an action | ch7 ↔ 29 | Yes, exactly. Slide 29's "the hands" vs "the training manual" is the tutorial's misconception box: a tool acts, a skill advises, and reading `SKILL.md` cannot add an email recipient. |
+| 15 | A manager agent calls others as tools, each within its own limits | ch8 ↔ 22 (row "Sub agents"), 33 | Partly. Separate call counters, three narrow tools (`start_order(request_id)` …) and one shared time budget are the slide's "spawn limits · per-agent tool scopes". But the callee is a workflow (Conflict 3). |
+| 16 | Measure the outcome and the path | ch9 ↔ 40 | Yes. The tutorial's checks are named `outcome.*` and `process.*` (e.g. `process.check_before_action`, `process.manager_authority`). Cost shows up as model calls, tool calls and tokens in the Act 2 comparison table. The plan does not name the triad (gap 4). |
+| 17 | Change one thing, run k times, compare with a baseline, keep the traces | ch9 ↔ 42 | Yes, strongly. `--repeats`, `--compare A B`, immutable labels and the SQLite traces are the six steps as commands. `--compare` even flags confounding changes, which enforces "change one layer" in code. |
+| 18 | Prefer deterministic checks; humans are the gold standard | ch9 ↔ 41 | Yes. Property checks over traces, plus README §6's five-point human review of the prose. No LLM judge (Conflict 5). |
+
+### 3. Gaps (ranked by value to a student doing the tutorial)
+
+1. **The action boundary as the video's spine (22–23).** The plan walks act by act and never shows the one picture that ties the acts together. Slide 22 is that picture: five concerns, the model's part on the left, the harness's part on the right, and stated reasons to move the line. Every act fills harness cells:
+   - control flow: Budget and admission (Act 1), the workflow graph (Act 3);
+   - tools: `@tool` schemas, ToolControl, ToolTrace;
+   - context & memory: the context packet, the capsule, compaction, host-written memory;
+   - verification: CartCheck, the `validate` node, re-validation at checkout;
+   - sub agents: Act 6's per-agent counters and narrow tools.
+
+   README reflection question 2 already asks which "action boundaries" the runtime managed. **Carry it:** build the table in ch2, light one row per chapter in ch3–ch8, and fill it in as the recap.
+2. **The autonomy spectrum (36).** It explains why Act 3 exists. Act 3 is a fixed graph whose one model node has no tools and returns only a `CartProposal`: near "LLM-Enhanced Tasks / Structured Output" on the slide's axis. Acts 1–2 and 4–5 are bounded tool selection. Act 6 mixes both, inside out: the agent is outside and the fixed graph is its tool. **Carry it:** ch4 (place Act 3) and ch8 (place Act 6).
+3. **The whole context, built from the tutorial's real blocks (13, 16, 18).** The plan shows the enriched packet but not the whole call. Slide 16's stack can be rebuilt from what Acts 1–2 actually send:
+   - system prompt: `prompts/shop_assistant.md` plus the policy JSON;
+   - user prompt: the request as JSON;
+   - structured output: `AgentReply`;
+   - tool definitions: the five tools;
+   - retrieved data: the enriched packet;
+   - memory: saved preferences.
+
+   Basic is the same stack without the last two. **Carry it:** ch3 opening, with slide 18's definitions as the chapter's last line.
+4. **What to measure, and the improvement loop (40, 42).** Outcome, trajectory and cost; the table of what a change in each layer typically breaks; and the six-step cycle that ends with "the eval set is the most valuable artifact". The plan has the commands but not this frame. Slide 40's Context row ("prompt edit fixes one case, breaks three others") is exactly why README §6's live A/B compares per case. **Carry it:** ch9.
+5. **One turn, split at the seam (21).** The model thinks, reasons and plans; the harness executes, verifies and assembles the response. In the Act 1 trace, "📤 Requested tools: get_catalog" is where Plan ends and "🔧 Tool call 1" is Execute. "The harness decides what to show the user" is Act 6's app-rendered `TastingReply` and every act's authoritative result block. **Carry it:** ch1 (the seam), ch2 (Verify = CartCheck), ch8 (Response). Mind Conflict 7.
+6. **A skill's description is a hint, not a trigger; token costs (27–28).** This explains what the student will see. In `stock-question` no skill loads, and the `tasting-planning` description itself says it is "not simple stock lookups". Because a description is only a hint, the harness adds a code backstop: drafting is refused until `vendor-outreach/assets/email-template.html` has been read (`require_template`). That is a "Move RIGHT" inside the skills chapter. The token figures are about 100 per skill at discovery and under 5k for a `SKILL.md`. **Carry it:** ch7.
+7. **Who decides pass or fail (41).** Code, an LLM judge or a human, with the rule "move as far left as the task allows — same rule as the harness". The tutorial picks code plus a human; saying why it skips the LLM judge closes the loop with ch2. **Carry it:** ch9, after gap 4.
+8. **"How do we manage what goes into the LLM?" (9–10).** The plan's token counter motivates the answer, but the plan never asks the question. **Carry it:** the last line of ch1, as the bridge to ch3.
+9. **Single vs multi agent, and the two patterns (31–33).** A single agent's complexity is managed by its number of tools (32): Act 6's outer assistant gets three narrow tools, not the shop's catalog tools. Manager (agents as tools; edges are tool calls) vs decentralized (peers; edges are handoffs). **Carry it:** ch8 opening.
+10. **You are a harness engineer (24).** `while True: model(); dispatch()` never stops. The first thing every harness adds is a stop: Budget, or the SDK's 40-iteration fallback. **Carry it:** ch2 opening.
+11. **Tools vs MCP vs skills (29), and the stack with its owners (37, 39).** MCP is not in the tutorial; one sentence saves a student from looking for it. Slide 39's banner (every layer is something we change, so how do we test it?) is the natural opening of ch9, and slide 37's "you will wear all hats" fits the same beat. **Carry it:** ch7 (29, one line) and ch9 (37, 39).
+
+Lecture-only and of low value for this tutorial: slide 35 (traditional component → agent) and slides 45–48 (cloud GenAI stacks). The tutorial uses no cloud service. Slide 47 does list "Agent Framework" among the orchestrators, the SDK family the tutorial uses; one line at most.
+
+### 4. Conflicts
+
+| # | Slides say | Tutorial today (repo `e25dfe9`, saved Colab outputs; no captures yet) | Current | How the video should put it |
+|---|---|---|---|---|
+| 1 | **"Layers"** (37, 39) are the five parts of an agent stack: LLM, Tool, Context, Agent Harness, Skills. On 39 the Harness is one tile beside Context, Tools and Skills. | A layer is a named, removable harness feature: `Trace()`, `Budget(...)`, `Context(...)`, `CartCheck()`, `Planning()`, `Memory()`, `Compaction()`, `Skills(...)` (`harness.py:62-68`; `acts/act4_harness.py:39-43`; `acts/act5_skills.py:27`). Context and skills sit *inside* the harness here. | Both, with different meanings | "The lecture's layers are the parts of the stack and who owns each. In the code, a layer is a feature you `.add()` to the harness. On screen, 'layer' means the code's sense; the lecture's we'll call the stack." Do not draw slide 39's 2×2 in a code chapter. |
+| 2 | **Skill scripts** (26–28). A skill holds instructions, references, templates and scripts; 27's `scripts/lookup.py` is code "the agent RUNS"; level 3 loads "script results". | Both skills have `SKILL.md`, `references/` and `assets/` only. The harness strips the SDK's `run_skill_script` tool, which SDK 1.19 advertises even when no scripts exist (`skill_support.py:55-62`), and refuses reads outside the run's SHA-256 snapshot. | The repo (a deliberate choice) | "Skills can carry scripts, as the lecture shows. This harness takes that tool away on purpose: here a skill advises and never executes." Draw the lecture's tree beside `vendor-outreach/`, with `scripts/` greyed out. |
+| 3 | **Multi-agent pattern** (33). A manager agent coordinates specialised agents through tool calls, or peers hand tasks to each other. | Act 6's outer assistant calls a governed *workflow* through `start_order(request_id)`; the workflow's one model node is the `CartProposer`. There is no peer handoff (README §5: "a harness invokes an ordering workflow"). | The repo | "This is the lecture's manager pattern with one change: the tool it calls is a whole workflow, with a model inside one of its nodes." Then place it on slide 36 (gap 2). |
+| 4 | **Where workflow graphs are taught** (36). Fixed graphs and orchestrators belong to Agent Systems, on the autonomy spectrum. | The README's lecture table files Act 3 (the workflow) and Act 4 under "3. Agent Harness" (README.md:11-21), and "5. Agent Systems" is the harness calling that workflow. | Both: two filings of one graph | "The README files the workflow under the harness, because Python owns its edges. The lecture files it under agent systems, because it is a way to orchestrate. Same graph." One clause in ch4. |
+| 5 | **Judges** (21: Verify uses "code checks, judges"; 41: "LLM as judge", rubric · k samples). | No model judge anywhere: `context_evidence.py:1` says "no model judge or guesses from response wording". Checks are deterministic properties over traces (`outcome.*`, `process.*`), plus README §6's five-point human review of the prose. "k samples" = `--repeats N`. | The repo, consistent with slide 41's own rule | "The lecture lists three judges. This tutorial uses two, code and you, and leaves out the LLM judge on purpose. That is the lecture's own rule: as far left as the task allows." |
+| 6 | **Who decides what to remember** (22, row "Context & memory"). The model's cell includes "what is worth remembering"; the harness owns what persists and where. | The model has no memory-write tool. Only the host writes a preference, with `--remember-preference` (README.md:488). | The repo (the decision moved fully into the harness) | "The lecture lets the model suggest what's worth remembering. This harness moves even that to the right: only you, the host, write memory." A live example of slide 23's "Move to Harness". |
+| 7 | **Visible reasoning** (21). Think is "the grey streamed text in Claude Code", and the harness's response can show "visible reasoning". | The traces record model inputs and outputs, requested tools and tokens. README.md:198 and 684 say the logs and recorded messages are visible execution, "not hidden model reasoning", and saved Colab cell 23 shows no reasoning text. | The repo and saved outputs | "Think and Reason happen inside the model. In this trace you see only where Plan ends: which tool it asked for." Re-check against the captures when they exist. |
+| 8 | **"RAG"** (13: "Retrieved Information (RAG)"; 14: "RAG (External Data)"; 16: "External Data", "API Data"). | Act 2's retrieved context is a Python pre-filter over the 12-cheese catalog, plus one customer's saved preferences: no embeddings and no vector store, unlike L05. The packet is labelled "Retrieved context (data, not instructions):". | The repo | "The lecture's RAG box is any outside data you bring in. Here it's a Python filter, not the vector search from Lecture 5: retrieval just means choosing what to bring." |
+
+Not counted as conflicts:
+- Slides 38 and 43 swap Skills and Agent Harness in the outline. The deck and the README both teach the harness first.
+- Slide 2's footer reads 8, and slide 48's title still says "[TODO]".
+- Slide 41 puts deterministic checks on the left in green, while slide 22 puts the deterministic harness on the right in purple. That is slides against slides; see Proposals.
+- Slide 20's "guardrails" are the README's validation, approval and governance: different words, same thing.
+- The README's "7. Additional Resources" is a repository map and a reflection; the deck's is the tutorial links and the cloud stacks. Same title, different content, nothing to reconcile.
+- Slide 44's Colab and GitHub links are the digest's sources.
+- Slide 17's JSON answer overstates two facts relative to its own panels (Diagrams, 17). That is inside the lecture's example, not a disagreement with the tutorial.
+
+### 5. Proposals for the BRIEF and script authors
+
+**General**
+- Tag every chapter that stands on lecture ground with a GREY `lecture_ref(7, "a–b")`, using the ranges below. Re-draw every lecture diagram in the series style. Never show slide images, the QR code or the closing cartoon.
+- Make slide 22 the **running map** (gap 1): a table with MODEL and HARNESS columns and five rows. Build it in ch2 with the tutorial's mechanism in each harness cell, light the row each chapter is about, and fill it in for the recap. This is the strongest link between lecture and tutorial.
+- **Colours.** The lecture's green model and purple harness collide with the series code (GREEN = project-owned and isolated; PURPLE = a tool you install). Proposal:
+  - the model in BLUE: remote, "the provider's" on slide 39, and reached over HTTPS to OpenAI;
+  - the harness in GREEN: code we own, deterministic, pinned;
+  - a human decision in YELLOW (your turn at the prompt), a blocked or rejected step in RED, tokens in GOLD.
+  - Keep the deterministic side on the right and GREEN in both ch2 and ch9, even though slide 41 mirrors it, so that "same rule as the harness" reads as the same place on screen.
+- **Length.** The plan is about 24 minutes plus the hook, under the series' 25–35. Gaps 1–5 add roughly 4–6 minutes of lecture-backed content without padding.
+- **The hook.** Keep the Colab "1,5000¢" as the broken thing, and land slide 21's Verify as the rule it breaks. Do not put slide 17's two over-reaching phrases on screen: pointing at them would read as correcting the instructor, and the tutorial's own saved output makes the same point.
+- **Captures.** When they are made, record the Act 1 trace, `--act 5 --fixture --scenario stock-question`, a live `--act 5` (to see whether skills load) and one `--inspect-run`. Then re-check Conflicts 6 and 7 and gap 6.
+
+**Per chapter**
+- **Hook · no tag.** The evidence is the tutorial's own. As the Verify rule lands, the tag may show `lecture_ref(7, "21")`.
+- **Ch1 · Lecture 7 · slides 6–10.**
+  - One line of recap (6), and slide 7's agent block re-drawn small, with Memory dimmed: "memory comes back in chapter 6".
+  - Slide 9 as one row morphing into the other: the "tool defs" chip slides in, showing Act 1's five tool names.
+  - Slide 10's loop with the measured numbers (messages 1 → 11, input tokens 1,942 → 4,540). End on the lecture's own question, "How do we manage what goes into the LLM?" (gap 8), as the bridge to ch3.
+  - Slide 20's sentence over `preview_order`: the model can ask, but it cannot act.
+  - Mark slide 21's seam on the ping-pong: the model's "Requested tools" vs the harness's "Tool call" (gap 5; Conflict 7 for what the trace cannot show).
+- **Ch2 · Lecture 7 · slides 20–24.**
+  - Open with slide 24's one-liner: if you've written this loop, you're a harness engineer. Then ask what it lacks: a stop. Show Budget's 8 / 20 / 120 s and the 40-iteration fallback (gap 10).
+  - Build slide 22's table (gap 1). Fill the rows "Control flow" (Budget, admission), "Tools" (`@tool` schema, ToolControl, ToolTrace) and "Verification" (CartCheck); leave the other rows dim.
+  - Slide 21's Verify lands on CartCheck's ✅ next to the garbled prose, a callback to the hook.
+  - Say "harness layer" for Trace, Budget, Context and CartCheck (Conflict 1).
+- **Ch3 · Lecture 7 · slides 12–18.**
+  - Rebuild slide 16's stack from the real blocks (gap 3); basic vs enriched is the last two chips toggling.
+  - Then split the stack into slide 22's two lanes, the system lane and the user-role DATA lane, and light the row "Context & memory".
+  - One clause on "RAG" (Conflict 8).
+  - Close on slide 18's last bullet, in our words: every block your code adds is a decision. The plan's ponder question 1 follows.
+- **Ch4 · Lecture 7 · slides 22–23, 36.**
+  - Slide 22's "Move RIGHT" arrow with its reasons (stakes high, irreversible, predictable, audit required): the cart's route becomes a graph that Python owns.
+  - Place Act 3 on slide 36's spectrum: a fixed graph with one model node that returns structured output (gap 2).
+  - Row "Verification": the `validate` node gives feedback and never repairs.
+  - One clause on where the README files it (Conflict 4).
+- **Ch5 · Lecture 7 · slides 22–23.**
+  - Slide 23's frame: the "set boundaries carefully" banner and "the harness keeps authority at every point of the conversation". The approval ticket is "permissions" and "checks" made concrete; the active-time stopwatch is "budgets".
+  - Say that the fingerprint is the tutorial's own step beyond the slides. The lecture says to put approval in code; the tutorial says exactly what is approved.
+- **Ch6 · Lecture 7 · slides 13–16, 22.**
+  - Slide 13's two memory chips split into the tutorial's five drawers: tasks, history, memory, approval, audit.
+  - Row "Context & memory": the compaction trigger is the 50 % / 80 % thresholds; "what persists and where" is `customer_memory.sqlite` vs history; the evidence lane is the capsule and the quarantined vendor text.
+  - Conflict 6, told as a "Move to Harness" example (23).
+- **Ch7 · Lecture 7 · slides 26–29.**
+  - The lecture's `cheese-pairing/` tree beside `vendor-outreach/` (Conflict 2).
+  - Slide 28 as a staircase of token cost, mapped to metadata → `load_skill` → `read_skill_resource`.
+  - Gap 6: `stock-question` loads nothing, and `require_template` is the code backstop for a description that is only a hint.
+  - Slide 29 in one beat: hands, socket, manual. MCP is not in this tutorial (gap 11).
+- **Ch8 · Lecture 7 · slides 31–36.**
+  - Slide 33's two patterns as two small graphs (gap 9). Act 6 is the manager with a workflow for a tool (Conflict 3). Place it on slide 36 with the agent outside and the fixed graph inside (gap 2).
+  - Row "Sub agents": separate counters (16 outer model calls, 8 per proposer), three narrow tools, one shared 180 s clock.
+  - Slide 21's Response: the app renders the `TastingReply` (gap 5).
+- **Ch9 · Lecture 7 · slides 39–42.**
+  - Open on slide 39's banner (every layer is something we change, so how do we test it?) and slide 37's "you will wear all hats" (gap 11).
+  - Map slide 40's three pills: outcome → `outcome.*`; trajectory → `process.*` (e.g. `process.check_before_action`); cost → model calls, tool calls and tokens. Then slide 40's table: the README's live A/B is its Context row ("prompt edit fixes one case, breaks three others"), which is why `--compare` reports per case (gap 4).
+  - Slide 41: three judges, two used (Conflict 5). Keep the deterministic side where ch2 put it (gap 7).
+  - Slide 42 as a closed cycle, with a command on each step: a golden case → a one-file change (`prompts/shop_assistant_v2.md`) → `--repeats 2` → `--compare A B` (whose confounding flag enforces "change one layer") → an immutable label and the traces. End on "the eval set is the most valuable artifact".
+- **Recap.** Keep the plan's six questions, and add two:
+  - "For each act, which row of the lecture's action-boundary table did the harness take over, and what did it leave to the model?"
+  - "Name the lecture's three things to measure, and one tutorial check for each."
+
+**Terms**
+- Use the lecture's words: *agent harness*, *runtime*, *action boundary*, *harness engineering*, *Move LEFT / Move RIGHT*, *authority*, *context engineering*, *instruction vs evidence lanes*, *compaction trigger*, *progressive disclosure* (*Discover / Activate / Use resources*), *expertise gap*, *context budget*, *MCP*, *manager pattern*, *handoff*, *autonomy spectrum*, *hybrid orchestrator*, *outcome / trajectory / cost*, *deterministic checks*, *LLM as judge*, *baseline*, *eval set*.
+- Add the tutorial's words where the lecture stops: *harness layer*, *admission*, *sticky failure*, *context packet*, *capsule*, *quarantined*, *approval ticket*, *fingerprint*, *fixture*, *golden case*, *label*, *confounding change*, *authoritative result*.
+- Qualify, don't repeat:
+  - "layer": the code's sense on screen; the lecture's sense is "the stack";
+  - "RAG": here a Python filter;
+  - "judges": here code and you;
+  - "the model decides what to remember": not in this harness.

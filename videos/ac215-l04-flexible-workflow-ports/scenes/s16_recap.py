@@ -51,7 +51,7 @@ Beats (script.md "## S16", one voiceover block each):
     pulses; the browser's reload arrow turns and a PINK request runs down to the gateway's `/app`. On
     "without a rebuild" the page's first line turns YELLOW and the GREY caption "no rebuild" appears
     beside the route (held 1.6 s).
- 6  TRACKER P4/5. The picture goes; the terminal grows to 9 rows. `docker compose down` -> 64 lines
+ 6  TRACKER P4/5. The picture goes; the terminal grows to 10 rows. `docker compose down` -> 64 lines
     2–5 (the two containers' `Removed` rows and `10.2s` tags turn YELLOW), `docker compose ps -a` -> 65
     line 2 (GREY tag "empty" beside the command). TRACKER P4/5 · extra: README chip `README.md · line
     515` "The built images remain." in the top band; `docker image ls` (extra) -> 66 lines 2–8 as the
@@ -292,7 +292,7 @@ QUESTIONS = [
 
 # ------------------------------------------------------------------ layout
 TOP = 2.84                        # top of anything under the tracker (its bottom is 2.905)
-T6, T9 = strip_top(6), strip_top(9)
+T6, T10 = strip_top(6), strip_top(10)
 STRIP4 = strip_top(4)             # -1.04: V6 sits on it
 BAND_Y = 3.2                      # the top band, right of the tracker (its right edge is -0.48)
 X_L, X_R = -6.45, 6.45
@@ -708,9 +708,9 @@ def teaser() -> VGroup:
     sec_t = mono("secrets/", 20, LAPTOP).next_to(sec_g, RIGHT, buff=0.12)
     k = key_glyph(0.26).next_to(VGroup(sec_g, sec_t), DOWN, buff=0.22).align_to(sec_g, LEFT)
     secrets = VGroup(sec_g, sec_t, k).move_to([fr.get_left()[0] + 1.25, 0.25, 0])
-    cli = box(2.5, 1.5, CTR, fill_opacity=0, dashed=True, stroke=3).move_to([-0.6, 0.35, 0])
+    cli = box(2.5, 1.5, CTR, fill_opacity=0, dashed=True, stroke=3).move_to([-0.25, 0.35, 0])
     cli_t = sans("CLI", 22, CTR).move_to(cli.get_corner(UL) + np.array([0.3, -0.28, 0]), aligned_edge=LEFT)
-    db = box(2.8, 1.5, CTR, fill_opacity=0, dashed=True, stroke=3).move_to([3.95, 0.35, 0])
+    db = box(2.8, 1.5, CTR, fill_opacity=0, dashed=True, stroke=3).move_to([4.05, 0.35, 0])
     db_t = sans("ChromaDB", 22, CTR).move_to(db.get_corner(UL) + np.array([0.3, -0.28, 0]), aligned_edge=LEFT)
     rail_y = -0.85
     rail = DashedLine([cli.get_left()[0] - 0.2, rail_y, 0], [db.get_right()[0] + 0.2, rail_y, 0], color=CTR,
@@ -989,13 +989,13 @@ class Recap(VoiceScene):
         place(note_rm, left=X_L, cy=TOP - 0.35)
         place(free, right=X_R, cy=TOP - 0.35)
         place(hw_row, left=X_L, cy=TOP - 0.95)
-        assert hw_row.get_bottom()[1] > T9 + 0.1 and hw_row.get_right()[0] < X_R, hw_row.get_right()
+        assert hw_row.get_bottom()[1] > T10 + 0.1 and hw_row.get_right()[0] < X_R, hw_row.get_right()
         assert note_rm.get_right()[0] < free.get_left()[0] - 0.3
         card = turn_card([DOWN_CMD, PS_A, (IMG_LS, "extra")])
-        place(card, cx=0, cy=(T9 + (-3.5)) / 2)
+        place(card, cx=0, cy=(T10 + (-3.5)) / 2)
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(vol, vbar, och, pic, ill, no_rb, req)), tr.goto(5), run_time=0.6)
-            resize(self, t, 9, run_time=0.6)
+            resize(self, t, 10, run_time=0.6)
             type_cmd(self, t, DOWN_CMD, type_time=0.6)
             r64 = print_rows(self, t, C64.at((2, 5)), run_time=0.5)
             self.play(*paint(r64[1], TURN), *paint(r64[2], TURN), run_time=0.5)

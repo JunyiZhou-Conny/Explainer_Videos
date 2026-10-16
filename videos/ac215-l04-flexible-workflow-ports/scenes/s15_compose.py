@@ -384,27 +384,22 @@ def tick(at) -> VGroup:
     return check_mark(0.28, INK, 5).move_to(at)
 
 
-def fly(cm: ComposeMap, flights, bars, run_time: float = 1.1):
-    """Copies of flags fly to their YAML spans (GREEN), fading as they land; the lines in `bars`
-    get one GREEN bar each (kept in cm.bars). flights: [(chip, flag, file line, YAML sub)].
-    Returns [anims] (the copies are gone at the end)."""
-    anims = []
+def fly(scene, cm: ComposeMap, flights, bars, run_time: float = 1.1, extra=()) -> VGroup:
+    """Copies of flags lift off their chips and fly to their YAML spans (turning GREEN), then fade
+    as the lines in `bars` get a GREEN bar each. flights: [(chip, flag, file line, YAML sub)].
+    Plays two plain plays (no wrapper groups left in the scene); returns the bars, scene-owned and
+    drawn above the panel (cm.bars would sit under a panel that swap() re-added)."""
+    copies, moves = [], []
     for i, sub, line, sub_yaml in flights:
-        src = cm.flag(i, sub)
-        cp = src.copy()
-        tgt = cm.panel.span(line, sub_yaml)
-        anims.append(LaggedStart(cp.animate(run_time=run_time * 0.75).move_to(tgt).set_color(VENV),
-                                 FadeOut(cp, run_time=run_time * 0.25), lag_ratio=1.0))
+        cp = cm.flag(i, sub).copy()
+        copies.append(cp)
+        moves.append(cp.animate.move_to(cm.panel.span(line, sub_yaml)).set_color(VENV))
+    scene.play(*moves, *extra, run_time=run_time * 0.7)
     new_bars = VGroup(*[cm.panel.bar(n, VENV, 0.22) for n in bars])
-    cm.bars.add(*new_bars)
-    anims.append(LaggedStart(*[FadeIn(b) for b in new_bars], lag_ratio=0.1, run_time=run_time * 0.4))
-    return [LaggedStart(LaggedStart(*anims[:-1], lag_ratio=0.0), anims[-1], lag_ratio=0.62)]
-
-
-def bars_on_top(cm: ComposeMap):
-    """swap() adds the new panel after the bars: move the bars back above the code."""
-    cm.remove(cm.bars)
-    cm.add(cm.bars)
+    print("DBG0", [b_.get_fill_opacity() for b_ in new_bars])
+    scene.play(*[FadeOut(c) for c in copies], FadeIn(new_bars), run_time=run_time * 0.35)
+    print("DBG1", [b_.get_fill_opacity() for b_ in new_bars], cm.which)
+    return new_bars
 
 
 def mixed_cell(s: str, mono_parts) -> VGroup:
@@ -454,33 +449,32 @@ class ComposeUp(VoiceScene):
         # ============================================================ 1 · each flag finds its key
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(rc432), run_time=0.3)
-            self.play(*fly(cm, [(4, "--name gateway", 13, "container_name: gateway")], [13]))
+            gb = [fly(self, cm, [(4, "--name gateway", 13, "container_name: gateway")], [13])]
             vo.wait_until("and the build command becomes build")
-            self.play(*fly(cm, [(2, "docker build", 14, "build:"), (2, "./gateway", 14, "./gateway")], [14]))
+            gb.append(fly(self, cm, [(2, "docker build", 14, "build:"), (2, "./gateway", 14, "./gateway")], [14]))
             vo.wait_until("Dash p becomes ports")
-            self.play(*fly(cm, [(4, "-p 127.0.0.1:8090:9100", 16, '"127.0.0.1:8090:9100"')], [15, 16]))
+            gb.append(fly(self, cm, [(4, "-p 127.0.0.1:8090:9100", 16, '"127.0.0.1:8090:9100"')], [15, 16]))
             vo.wait_until("dash e becomes environment")
-            self.play(*fly(cm, [(4, "-e PROCESSOR_HOST=processor", 20, "PROCESSOR_HOST: processor"),
-                                (4, "-e PROCESSOR_PORT=9200", 21, 'PROCESSOR_PORT: "9200"')], [19, 20, 21]))
+            gb.append(fly(self, cm, [(4, "-e PROCESSOR_HOST=processor", 20, "PROCESSOR_HOST: processor"),
+                                     (4, "-e PROCESSOR_PORT=9200", 21, 'PROCESSOR_PORT: "9200"')], [19, 20, 21]))
             vo.wait_until("and the network is named")
-            self.play(*fly(cm, [(4, "--network toynet", 25, "- toynet")], [24, 25], run_time=0.9))
-            self.play(*cm.swap("processor", run_time=0.6))
-            bars_on_top(cm)
-            self.play(*fly(cm, [(0, "toynet", 39, "toynet")], [37, 38, 39]),
-                      flash(cm.flag(0, "docker network create"), VENV, 1.06, 0.8))
-            self.play(*fly(cm, [(3, "--name processor", 28, "container_name: processor"),
-                                (1, "docker build", 29, "build:"), (1, "./processor", 29, "./processor"),
-                                (3, "-e PORT=9200", 31, 'PORT: "9200"'), (3, "--network toynet", 33, "- toynet")],
-                           [28, 29, 30, 31, 32, 33]))
+            gb.append(fly(self, cm, [(4, "--network toynet", 25, "- toynet")], [24, 25], run_time=0.9))
+            self.play(*cm.swap("processor", run_time=0.6), FadeOut(VGroup(*gb), run_time=0.3))
+            pb = [fly(self, cm, [(0, "toynet", 39, "toynet")], [37, 38, 39],
+                      extra=[flash(cm.flag(0, "docker network create"), VENV, 1.06)])]
+            pb.append(fly(self, cm, [(3, "--name processor", 28, "container_name: processor"),
+                                     (1, "docker build", 29, "build:"), (1, "./processor", 29, "./processor"),
+                                     (3, "-e PORT=9200", 31, 'PORT: "9200"'),
+                                     (3, "--network toynet", 33, "- toynet")], [28, 29, 30, 31, 32, 33]))
             self.play(*[cm.dim_flag(i, s, 0.3) for i, s in NO_HOME], FadeIn(nohome, shift=UP * 0.1),
                       run_time=0.6)
+            print("DBG", [type(m).__name__ + ("*" if m is cm.panel else "") + ("B" if any(m is x for x in pb) else "") for m in self.mobjects])
+            print("DBG op", [b_.get_fill_opacity() for x in pb for b_ in x], [x in self.get_mobject_family_members() for x in pb])
 
         # ============================================================ 2 · two new keys; one command
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(nohome), *cm.swap("gateway", run_time=0.8))
-            bars_on_top(cm)
+            self.play(FadeOut(nohome), FadeOut(VGroup(*pb), run_time=0.3), *cm.swap("gateway", run_time=0.8))
             gbars = VGroup(*[cm.panel.bar(n, VENV, 0.22) for n in GW_BARS])
-            cm.bars.add(*gbars)
             self.play(FadeIn(gbars), run_time=0.4)
             vo.wait_until("the volumes key mounts")
             o1 = cm.outline(17, 18, "live-mount the gateway's folder")
@@ -503,8 +497,9 @@ class ComposeUp(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             cm.remove(up_chip)
             self.add(up_chip)
-            self.play(FadeOut(cm), FadeOut(VGroup(o1.frame, o2.frame, o2.tag, o2.line)), FadeIn(t),
+            self.play(FadeOut(VGroup(cm.panel, gbars, o1.frame, o2.frame, o2.tag, o2.line)), FadeIn(t),
                       run_time=0.6)
+            assert not len(cm.chips) and not len(cm.bars)
             self.bring_to_front(up_chip)
             self.play(up_chip.animate.shift([x_txt - up_chip.text.get_left()[0],
                                              row0_y - up_chip.text.get_center()[1], 0]), run_time=0.5)
@@ -660,14 +655,20 @@ class ComposeUp(VoiceScene):
                       substring(req[2], "GET /health").animate.set_color(TURN), run_time=0.5)
 
         # ============================================================ 8 · Ctrl+C: about 20 seconds
-        cap8 = note("the README does this at the end of Step 4 · here: the foreground app")
+        cap8a = note("the README does this at the end of Step 4")
+        cap8b = note("· here: the foreground app")
+        cap8 = VGroup(cap8a, cap8b).arrange(RIGHT, buff=0.12)
         place(cap8, left=X_L + 0.05, cy=TOP - 0.25)
         kc = keycaps("Ctrl", "C")
         place(kc, cx=-1.2, cy=(T7 + TOP - 0.5) / 2)
         sw = Stopwatch("≈ 20 s")
         place(sw, cx=3.2, cy=(T7 + TOP - 0.5) / 2)
         with self.voiceover(SAY[8]) as vo:
-            self.play(tr.goto(5), FadeIn(cap8, shift=DOWN * 0.1), run_time=0.6)
+            self.play(tr.goto(5), FadeIn(cap8a, shift=DOWN * 0.1), run_time=0.6)
+            vo.wait_until("we stop it now")
+            self.play(FadeIn(cap8b, shift=LEFT * 0.1), t.box.animate.set_stroke(TURN, 3), run_time=0.5)
+            self.play(flash(VGroup(*[ln.glyphs for ln in t.lines]), TURN, 1.02, 0.8))
+            self.play(t.box.animate.set_stroke(S.GREY_DARK, 2), run_time=0.4)
             vo.wait_until("press Control C")
             self.play(FadeIn(kc, shift=DOWN * 0.25), run_time=0.4)
             self.play(kc.animate.shift(DOWN * 0.12).scale(0.95), run_time=0.15)

@@ -589,3 +589,347 @@ commits in `digest.md`; not on the slides)
   the top of the repo page.
 - No readings, homework or milestone notes appear in this deck. Slides 42–43 are its only
   tutorial pointers, and the QR codes encode the links printed next to them (not decoded here).
+
+## This video and the slides
+
+**Basis.** The video is built: `script.md` v2 (16 scenes; part 1 = S01–S09 on
+`mega-pipeline@flexible-workflow`, part 2 = S10–S16 on `port_toy`), `BRIEF.md`, `video.yaml`,
+`ASSETS.md` and the captures in `assets/terminal/` (2026-10-14). The study guide is
+`MLOps_Learning/guides/L04-containers-2b-flexible-workflow-ports.md`. For this section I re-read all
+five contact sheets and the deck's text. I also re-checked these at the source:
+
+- `port_toy`'s `docker-compose.yml`, both Dockerfiles, and the processor's default port
+  (`processor/processor.py:42`: 9200). Slide 17 starts the processor without `-e PORT`, so its
+  command behaves the same with `port_toy`'s processor;
+- `transcribe_audio/Dockerfile:4`, `:17`, `:21-41` (the one apt `RUN` chain, then
+  `COPY --chown=app:app . ./` before `RUN uv sync`) and `docker-shell.sh:62-66`, `:92-95` (its own
+  `multi-arch` builder; the two mounts, neither with `:ro`);
+- the captures `port-laptop/18`, `20`, `21` (`-p 8090:9100` vs `127.0.0.1`), `port-laptop/66` and
+  `mega-laptop/70` (image sizes), `mega-laptop/15` and `17` (what a changed folder costs a
+  rebuild), `mega-laptop/72`, `74`, `76` (the Docker Hub images) and `mega-l03-laptop/13` (the key
+  inside the image);
+- Docker Hub's API for the slides' example image `ac215/processor`. It answered 404, "object not
+  found", on 2026-10-16. The control, `dlops/mega-pipeline-transcribe-audio`, answered 200.
+
+Where the slides and the captures disagree, the captures decide what the video shows.
+
+### 1. Map: scenes ↔ slides
+
+| Scene | Slides on the same ground | Relation |
+|---|---|---|
+| S01 · Build or pull? Whose localhost? | 42–43 (the two tutorials); 37–40 (who builds, who pulls); 33 (the two questions that decide whether anything works) | Same concept, asked as puzzles: the hook poses what sections 3–4 answer. The stale Docker Hub image is tutorial-only (Conflict 11). |
+| S02 · Same pipeline, built like a team | 37–41 (Scenarios 1 and 2, no perfect workflow); 42 (your own resources; the provided Dockerfile, uv files and script); 21 (build or pull) | Same concept: V1 is the lecture's section 4. Gap 5. |
+| S03 · Get the code: clone, or switch branches | 42 (the branch link) | Tutorial-only (clone, the branch switch, `git stash -u`). |
+| S04 · Your bucket and your three values | 42 ("your own Cloud Storage bucket") | Tutorial-only in substance. The slide only names the task. |
+| S05 · Three gates: account, role, API | 42 ("your secrets and authentication", "the required Google Cloud APIs") | Tutorial-only in substance (service account, roles, APIs). |
+| S06 · docker-shell.sh: one script, two windows | 42 (a script that builds and runs, for development or production); 23–24 (bind mount: host path left, container path right); 25–26 (`-e` lives at run time, `ENV` in the image); 11 (where the venv lives); 12 (build step 2 is one chained `RUN`) | The tutorial applies it. Conflicts 8, 10; Gap 1. |
+| S07 · Five components, five honest errors | 7 (`CACHED [2/5]`: one layer reused by several images) | Tutorial-only (the Google calls and their errors). The cache is applied, not named. |
+| S08 · dev, run, and a stale image | 37–38 (Scenario 1: develop inside containers, the uv files change, rebuild, send it back); 39–40 (Scenario 2: pull, rarely rebuild); 7 (a changed folder re-runs the copy and `uv sync`) | The tutorial applies it. Conflicts 5, 11; Gaps 3, 5. |
+| S09 · prod, a stowaway key, and clean-up | 13 (target platform, multi-platform push); 39–40 (the lead pushes images); 8 (`.dockerignore`, the red `secrets/` entry); 15 (`COPY` leaves a secret in a layer); 5–6, 10–11 (what a 1.48 GB image costs; build tools in the final image) | The tutorial applies it. Conflicts 6, 7, 9; Gaps 2, 7, 8. |
+| S10 · Two little computers, one network | 33 (isolated by default: a network namespace each); 34 (one shared network, names); 17 (the gateway/processor app); 43 (the `port_toy` tutorial) | Same concept. |
+| S11 · Build, start, read the logs | 12 (the chained apt `RUN`); 7 (the gateway reuses the processor's layer); 17 (the by-hand commands); 34 (attach and name); 35 (publish, HOST : CONTAINER) | Same concept for the network and the port. The tutorial applies 7 and 12. Conflicts 1, 2. |
+| S12 · Send a message: ports on the wire | 33 (footnote: replies come back over the same connections); 34 (`POST http://processor:9200/`) | Tutorial-only in substance (source ports, the page). |
+| S13 · Who can reach whom | 33–35 (two paths; Docker DNS; only the gateway gets a door); 28 (a healthcheck runs curl inside the processor) | Same concept. Conflict 1; Gap 4. |
+| S14 · Change the ports | 35 (HOST : CONTAINER); 26 (`-e` values exist only in the container) | The tutorial applies it. Gap 1. |
+| S15 · Compose: the same app, declared | 17–22 (by hand is a chore; one file, one tool; flags → keys; build or pull; the free network); 27 (start order only); 29–30 (everyday commands; the whole app) | Same concept: V8 is slide 20 in motion. Conflicts 2, 3, 4; Gaps 4, 6. |
+| S16 · Edit, apply, tear down, recap | 29 (`up -d`, `--build`, `logs -f`, `down`); 17, 23–24 (the gateway's mounted folder); 31 (Compose stops at one machine) | Same concept. Gaps 9, 10. |
+| — not in the video | 1–4, 16, 32, 36, 44 (title, logistics, outline, dividers, closing); 9 (wheels); 10–11 as teaching (base-image table, multi-stage); 14 (the build-secret mount); 23–24's named volume; 25's `env_file:`; 26's `.env`, `build.args` and shell rows; 28 (healthcheck); 31 (Kubernetes) | Lecture-only. Slides 4–41 are a revised copy of the L03 deck's 30–69 (see the top of this file). |
+
+### 2. Already in common
+
+| # | Concept | Scenes ↔ slides | Does the video's framing agree with the lecture's? |
+|---|---|---|---|
+| 1 | Build or pull: early on everyone builds from the files in Git; later one person publishes to Docker Hub and the others pull | S02, S08 ↔ 37–40 | Yes. V1's two phases are Scenarios 1 and 2. The video adds what the slides leave out: a tag is only a signpost, and the image behind `dlops/…:latest` is old (Conflict 11). It never says "senior developer" or "pull request" (Gap 5). |
+| 2 | The course hands you the Dockerfile, `pyproject.toml`, `uv.lock` and a build-and-run script | S02, S03, S06 ↔ 37, 42 | Yes. The course plays the slides' senior developer, who writes these files and pushes them to GitHub (slide 37). V1's GREEN recipe card is slide 42's "We provide" list. |
+| 3 | Your own bucket, credentials and APIs | S04, S05 ↔ 42 | Yes. The slide names the three set-up tasks; the video does them. |
+| 4 | A host folder seen inside the container: the bind mount | S06, S16 ↔ 17, 23–24 | Yes. V5's two PINK routes are slide 24's `source:target` reading, and S16's live `index.html` edit is slide 17's `-v "$PWD/gateway:/app"`. The video never labels the two sides (proposal S06 iii). The lecture's secrets example adds `:ro` (Conflict 10). |
+| 5 | Variables set at run time | S06, S11, S14, S16 ↔ 20, 25–26 | Partly. The video uses `-e` and `environment:` correctly, and S14 says "only configuration, no rebuild". It never gives the lecture's rule that where you set a variable decides when it exists (Gap 1). |
+| 6 | A changed layer rebuilds itself and every layer below it | S07, S08, S11 ↔ 7 | Yes on the mechanism: the `CACHED` steps, "the copy and uv sync steps run again", "the two files match up to the copy line". The lecture's ordering rule is not stated, and the mega-pipeline Dockerfile breaks it (Conflict 5, Gap 3). |
+| 7 | One chained `RUN` with `--no-install-recommends` and the apt lists removed in the same step | S06, S11 ↔ 12 | Yes. S11's panel wraps `port_toy`'s line 2 at its `&&`, which is slide 12's shape, line for line. S06's build step 2 is the same pattern with `build-essential ffmpeg`. |
+| 8 | Two CPU types, one tag, pushed | S09 ↔ 13 | Yes on the idea. The command differs (Conflict 9). The video credits lecture 2. |
+| 9 | Secrets never in the image; `.dockerignore` | S09 ↔ 8, 15 | Yes. S09 proves slide 8's red rule on a real image (`mega-l03-laptop/13`), and slide 15's `COPY` row is what happened there. The video's fix lists only `secrets/` (Gap 2). |
+| 10 | Images are big, and size costs | S09 ↔ 5–6, 10 | Partly. S09 shows 1.48 GB and four images of about 830 MB as a clean-up chore. The lecture's reason, that every deploy is a download, is not said (Gap 8). |
+| 11 | Each container is isolated: its own namespace, its own `localhost` | S01, S10, S13 ↔ 33 | Yes. "Its own little computer" is slide 33's "own network namespace", but the video never says "namespace" (proposal S10 ii). Puzzle 2 is slide 33's question (a), asked from the wrong side. |
+| 12 | One shared network; reach a service by name through Docker DNS, never by IP | S10, S13 ↔ 34 | Yes. The PINK phone book is slide 34's step 3. The video goes further: `nameserver 127.0.0.11`, the real addresses, and names that survive a restart. |
+| 13 | Two paths: browser → gateway and gateway → processor | S10, S13 ↔ 33 | Yes. S10's opening picture is slide 33's row of three boxes. The slide letters the paths (a) and (b); the video doesn't name them. |
+| 14 | Publish a port, HOST : CONTAINER; only the gateway gets a door | S11, S13, S14 ↔ 35 | Yes. V7's street door and room are slide 35's port forwarding, and the processor's door "facing only the rail" is the slide's grayed-out processor. The video adds the IP part and `0.0.0.0` (Conflict 1). |
+| 15 | By hand is a chore: one app, one file, one command | S15 ↔ 17–19, 30 | Yes. V8's collapse into `docker compose up` is slide 18's banner, animated. |
+| 16 | Each `docker run` flag becomes a YAML key; a service's name is its hostname | S15 ↔ 20 | Yes. V8 is slide 20's connectors in motion (`-p` → `ports:`, `-e` → `environment:`). `port_toy` also pins `container_name:`. The framing of `volumes:` differs (Conflict 4). |
+| 17 | Compose creates the network | S15 ↔ 22 | Partly. `port_toy` names its network in the file, so the video maps `docker network create toynet` onto `name: toynet`. The lecture's point is that you need neither: without the key, Compose would create `port_toy_default` itself. |
+| 18 | `depends_on` orders start-up | S15 ↔ 27 | Yes: "starts the processor first". The slide's warning that started is not ready is missing (Gap 4). |
+| 19 | The everyday Compose commands | S15, S16 ↔ 29 | Yes. `up`, `up -d`, `up -d --build`, `ps -a`, `logs -f` and `down` all run on screen. The video adds what the slide doesn't: `Ctrl+C` only stops, and takes about 20 s. `down -v` has no use here, because there is no named volume. |
+| 20 | Run Compose from the folder that holds the file | S15 ↔ 29 | Yes. S15's "cd into port toy first: Compose reads the file in the current folder" is slide 29's subtitle. |
+
+### 3. Gaps (ranked by value to a student doing the tutorial)
+
+1. **Build time vs run time (slides 25–26).** Where you write a variable decides when it exists.
+   - Dockerfile `ENV` lives in the build, the image and the container.
+   - `ARG` and Compose `build.args` live only during the build.
+   - `-e`, `environment:` and `env_file:` live only in the running container.
+   - The auto-loaded `.env` file and shell variables only fill `${…}` in the Compose file.
+
+   This is the rule behind every "rebuild or not?" in both tutorials: `PORT` and
+   `PROCESSOR_PORT` (S14: configuration, no rebuild), `GOOGLE_APPLICATION_CREDENTIALS` set with
+   `-e` (`docker-shell.sh:95`), `UV_PROJECT_ENVIRONMENT` as `ENV` (`Dockerfile:17`), and
+   `ARG DEBIAN_PACKAGES` (`Dockerfile:4`: changing it rebuilds build step 2, the slow one). The
+   guide's exercise D2 is this table in practice. **Carry it in** S14 (the ponder answer) and S06
+   (the `-e` signpost).
+2. **What else `.dockerignore` keeps out (slide 8).** The video's fix lists only `secrets/`. Slide
+   8 also filters caches, local virtual environments and bulky data. In this tutorial,
+   `--download` and the other steps write `input_audios/`, `text_prompts/<group>/` and the other
+   data folders into the component folder. Git ignores them (`.gitignore:5-6`); Docker copies
+   them. Captured: after one container's `--download`, the next `./docker-shell.sh` re-ran the copy
+   and `uv sync` (`mega-laptop/15`: `Building 9.4s`, against `0.3s` when nothing changed,
+   `mega-laptop/17`). With a key, the recordings and texts would also ride into the image. **Carry
+   it in** S09's fix card (text only).
+3. **Cache order: dependency files first, code last (slide 7).** S08 says what happens ("after any
+   change in the folder, the copy and uv sync steps run again") but not the lecture's rule, nor
+   that this Dockerfile does it the other way (Conflict 5). **Carry it in** S08, as a tag and a
+   GREY note.
+4. **Started is not ready (slides 27–28).** `depends_on` only orders start-up. To wait, the
+   dependency needs a `healthcheck` and the gateway `condition: service_healthy`. `port_toy`'s
+   processor already serves `GET /health` and has curl (guide E14), so slide 28's check would fit
+   as written. Not tried here. It matters as soon as a dependency is slow to come up, such as a
+   database. **Carry it in** S15's `depends_on` beat (a GREY note, or the bridge in §5) and S13's
+   curl aside.
+5. **The team loop: a lead and pull requests (slides 37–41).** In Scenario 1, developers send
+   their code and any Dockerfile or uv-file changes back as pull requests, and the lead merges and
+   consolidates them. In Scenario 2, the lead also builds and pushes the images, so the others
+   rarely rebuild. Slide 41: no workflow is perfect; agree on the rules. V1 has the two phases but
+   no lead and no pull request. For a student, it means: after `uv add`, commit both files and send
+   them as a pull request. **Carry it in** S02 (V1 labels) and S08 (the `uv add` beat).
+6. **Build or pull, per service (slide 21).** In Compose, each service either builds (`build:`) or
+   pulls (`image:`). That is part 1's choice inside part 2's file. `port_toy` builds both.
+   **Carry it in** S15, as a tag at "the build command becomes build".
+7. **Layers only add (slides 12, 15).** A file deleted in a later layer still sits in the earlier
+   one. Slide 15: a `COPY`-ed token stays in its layer after a later deletion. So after S09's fix,
+   images built before it must go, and a `RUN rm -rf secrets` added to the Dockerfile would not
+   help. The video's fix card omits "remove images built before the fix" (the guide's G6 has it).
+   **Carry it in** S09's fix card, as one GREY row.
+8. **Ship only what runs (slides 5–6, 9–11).** These images keep `build-essential` (and `ffmpeg`
+   in transcribe) in the final image: 821 MB to 1.48 GB on a base of 195 MB (`mega-laptop/70`,
+   disk usage). The lecture's chain:
+   - a compiler is needed only for packages without a matching wheel (9);
+   - slim is the default base when wheels exist (10);
+   - a builder stage keeps the compilers out of the final image (11).
+
+   The guide's G17 notes that the lock files carry wheels for the compiled packages. Whether these
+   images still need `build-essential` was not tested. You don't need any of this to finish the
+   tutorial, but it explains S09's sizes and S06's 44.7 s build step 2. **Carry it in** S09's
+   `docker images` beat, as a tag and a GREY note.
+9. **Read-only mounts and named volumes (slides 23–24, 29).** The lecture mounts its secrets
+   `:ro`. A bare name on the left of a volume line is a named volume, which Docker keeps, and
+   `down -v` deletes it. Neither tutorial uses a named volume. **Carry it in** S06 (a GREY note on
+   the `/secrets` route) and S16 (the `down` beat).
+10. **Compose stops at one machine (slide 31).** Kubernetes, later in the course, keeps the idea of
+    declared services found by name. **Carry it in** S16's teaser, as a tag only.
+11. **Build-time secrets (slides 14–15).** A token that a `RUN` step needs (to install from a
+    private repository) goes in through a secret mount, never `ENV`, `ARG` or `COPY`. The tutorial's
+    key is the other kind, a run-time secret: mounted at `/secrets` and named with `-e`. Low value
+    for doing the tutorial, but it keeps the two apart. **Carry it in** S06's key beat, as a
+    "compare" tag.
+
+### 4. Conflicts
+
+| # | The slides say | The tutorial and the captures | Current | How the video should put it |
+|---|---|---|---|---|
+| 1 | **Publish address.** Slides 17, 20–21, 23, 25, 27–28, 30 and slide 35's diagram publish `8090:9100`. Only slide 35's two code lines write `127.0.0.1:8090:9100`, without saying why. | `port_toy` writes `127.0.0.1:8090:9100` everywhere (`README.md:120-124`, `docker-compose.yml:16`) and explains it (`:232-244`). Captured: the short form asks for 8090 on every address, so it collides with a running `127.0.0.1:8090` (`port-laptop/18`: `port is already allocated`); on 8091 it shows `0.0.0.0:8091->9100/tcp` (`21`). | Both work. The README's form is the one to type, and the safer. | S13 already shows it. Add the slide 35 tag there with a GREY note: "lecture's short form = every address · its code line adds 127.0.0.1". If spoken: "The lecture's short form opens the door on every address; port toy adds 127.0.0.1, this laptop only." |
+| 2 | **Names, and where the processor's image comes from.** Network `app-net`, images `processor-img` and `gateway-img`; in Compose the processor is pulled, `image: ac215/processor:1.0` (slides 20–21, 26, 28, 30). | `port_toy`: `toynet`, `toy-processor`, `toy-gateway`; Compose builds both (`build: ./processor`, `docker-compose.yml:29`) and names them `port_toy-processor` and `port_toy-gateway` (`port-laptop/47`, `66`). `ac215/processor` is not on Docker Hub (API 404, 2026-10-16), so a compose file copied from slide 20 would fail at the pull. The ports (8090, 9100, 9200) and the variables (`PROCESSOR_HOST`, `PROCESSOR_PORT`) are the same. | `port_toy`'s names | Nothing spoken. In S15, a GREY note under the processor panel: "the lecture's example pulls an image here · port_toy builds it". Kindly: same app, same ports, other names. |
+| 3 | **Compose file name.** Slides 19–20: `compose.yaml` (legacy `docker-compose.yaml`). Slides 26 and 29 write `docker-compose.yml`. | `port_toy`'s file is `docker-compose.yml`, and Compose v5.6.0 read it (`port-laptop/47`). | Both. `compose.yaml` is Compose's preferred name; it still accepts the older ones. | Nothing to change. Optional GREY note on S15's panel header: "Compose also reads compose.yaml". |
+| 4 | **What the by-hand run already had.** Slide 17's by-hand gateway run has `-v "$PWD/gateway:/app"`, and you start the services "in the right order" yourself (slides 17, 19). Slide 20 labels `volumes:` as the home of `-v`. | `port_toy`'s Step 1 has no `-v` (`README.md:120-124`). So S15 calls `volumes:` and `depends_on` new keys, with "no by-hand ancestor". | Both, each measured against its own by-hand version | Keep the SAY: "Two keys are new" is true of `port_toy`'s Step 1. In V8, GREY notes: on `volumes:` "the lecture's by-hand run had -v · slide 17"; on `depends_on` "= the order you typed them". |
+| 5 | **Cache order.** Slide 7: copy `pyproject.toml uv.lock`, run `uv sync`, then `COPY . .`. The other order is the "classic mistake". | All five Dockerfiles copy the whole folder first (`COPY --chown=app:app . ./`), then `RUN uv sync` (`transcribe_audio/Dockerfile:39-41`). Captured: once a folder had changed, the rebuild re-ran both steps, `Building 9.4s` with `uv sync` 2.0 s (`mega-laptop/15`), against `Building 0.3s` (`17`). | The committed Dockerfile is what students run; the slide's order is the better practice. With uv and the bind mount, the cost here is seconds. | S08 already says what happens. Add the slide 7 tag and a GREY note: "lecture's order: lock files first, code last". If spoken: "This Dockerfile copies the folder before uv sync; with uv, the re-run costs seconds." |
+| 6 | **`.dockerignore`.** Slide 8: filter the build context; `secrets/` "must never enter the image". | No branch of mega-pipeline has a `.dockerignore`, and neither has `port_toy`. Captured: an L03 key left in `transcribe_audio/secrets/` was inside the image after `./docker-shell.sh dev` (`mega-l03-laptop/13`, a stand-in file). | The slide's rule: add the file. | S09 says it already. Add the slides 8, 15 tag. |
+| 7 | **Build tools in the final image.** Slides 10–11: compilers belong in a builder stage; the runtime starts from slim and receives only the `.venv`. | One stage on `python:3.14-slim-bookworm` that keeps `build-essential` (and `ffmpeg` in transcribe): 821–836 MB, and 1.48 GB for transcribe, on a 195 MB base (`mega-laptop/70`). | The tutorial's Dockerfile. The slide's pattern is an optional improvement, not tried here. | Nothing spoken. On S09's `docker images` beat, a GREY note: "compilers ride along · lecture: builder stage". |
+| 8 | **Where the venv lives.** Slide 11 builds it at `/app/.venv` and runs `/app/.venv/bin/python`. Slides 17 and 20 mount a folder over `/app` for development. | `Dockerfile:17` puts the venv at `/home/app/.venv`, because `docker-shell.sh:93` mounts the component folder over `/app`. S06: "the window can't hide it". | Both, each in its own setting. Slide 11's layout is fine without a mount; with a development mount over `/app`, the venv would be hidden (guide C3). | On S06's venv line, the slide 11 tag with a GREY note: "slide 11 keeps .venv in /app · fine without a mount". |
+| 9 | **The multi-platform command.** Slide 13: one plain `docker build --push --platform linux/amd64,linux/arm64 -t myapp .`, and `docker build` "already uses Buildx and BuildKit". | `docker-shell.sh:62` creates its own builder (`--name multi-arch`, driver `docker-container`), then runs `docker buildx build --platform linux/amd64,linux/arm64 --push` (`:66`). Not captured: `prod` never ran, and nobody tried the slide's line. The `multi-arch` builder stays selected afterwards (guide G8). | Both are current Docker. Whether the plain form can output two platforms depends on the active builder: Docker's docs say the default builder needs the containerd image store for it, while a `docker-container` builder always can. The script brings its own builder to be sure. | S09 already explains the builder. Add the slide 13 tag and a GREY note: "lecture: one docker build line · the script brings its own builder". |
+| 10 | **Secrets mount mode.** Slide 23's example mounts `./secrets:/secrets:ro`, read-only. | `docker-shell.sh:94`: `-v "$SECRETS_DIR":/secrets`, read-write. The code only reads the key, through `GOOGLE_APPLICATION_CREDENTIALS`. | The script is what runs. `:ro` would match how the key is used (not tested). | Nothing spoken. Optional GREY note on V5's `/secrets` route: "the lecture's example adds :ro". |
+| 11 | **Scenario 2's images.** Slides 39–40: the lead builds the images and pushes them to Docker Hub; developers pull them and rebuild "on rare occasions". | The script's registry account is `dlops` (`docker-shell.sh:13`). Its `latest` images date from 2025-02-18 and were built from `pipenv-flexible-workflow`: Python 3.8.17, `pipenv shell`, root (`mega-laptop/72`, `74`). In `generate_text`, `ImportError: cannot import name 'genai'` (`76`). | The captures. Scenario 2 works only once your team's lead pushes from this branch. | S08 already says it. Add the slides 39–40 tag at the fix line; the optional bridge is in §5. |
+| 12 | **Base-image tags and sizes.** Slide 10: `python:3.14` about 1.63 GB, `-slim` about 217 MB, `-alpine` about 86 MB. | mega-pipeline uses `python:3.14-slim-bookworm` (Debian 12, pinned), `port_toy` `python:3.14-slim` (Debian 13 at capture time). Docker Engine 29.8.2 lists two numbers per image: `python:3.14-slim` 179 MB disk usage and 43.8 MB content, `-slim-bookworm` 195 MB and 47.2 MB (`port-laptop/66`, `mega-laptop/70`; these are the capture's rebuilt copies of the bases). | Both. The slide's sizes are approximate and depend on how and where they are measured. | Nothing spoken. If needed, a GREY note on S09's column view: "sizes vary by tool and platform · the same slim choice". |
+
+Not counted as conflicts:
+- The box label "DockertHub" on slides 39–40 is a typo.
+- Slide 17 starts the processor without `-e PORT`; `port_toy`'s default is 9200 (`processor.py:42`),
+  so the two behave the same.
+- Slide 34 calls `--name gateway` optional because nothing calls the gateway. `port_toy` uses the
+  name for `docker exec gateway …`, and pins `container_name:` for the same reason.
+- Slide 26 says shell variables only fill the Compose file. S07's `export GEMINI_MODEL` is typed in
+  the container's own shell, so the Python process started there sees it at run time. No
+  contradiction.
+- Slide 22's automatic network would be called `port_toy_default`; `port_toy` names it `toynet`
+  (Common 17).
+- Slide 42 describes the script as building and running "for development or production". It also
+  has `run`, which pulls.
+- Slide 43 says Docker Desktop forwards `localhost`. The captures ran Docker Engine on Linux, where
+  `-p` behaves the same (`ASSETS.md`). The slide's link anchor `#-runnin-the-app` matches no
+  heading, so it opens the top of the repo page.
+- Slide 33 letters the paths in teaching order: (a) is the right-hand arrow.
+
+### 5. Proposals
+
+Each item is marked **do** (clear value, low risk) or **nice**.
+
+**General**
+- **Tags.** Use `lecture_ref(4, "a–b")` from `explainer.devops`: a GREY tag at the top right,
+  opposite the tracker. It prints "Lecture 4 · slides a–b", with no leading zero and "slides" even
+  for one slide. The proposals below use the form "Lecture 04 · slides a–b" that this task asked
+  for (as in the L03 file). Pick one form for the whole series.
+  - Show each tag from the quoted words (`vo.wait_until`) for at least 3 s, and let it leave with
+    its beat.
+  - Never show the slides or their QR codes.
+- **Collisions.** Check each tagged frame. One-line README chips sit in the top band, right of the
+  tracker, in most walkthrough scenes. S08 puts a small V4 switchboard at the top. S09's first code
+  panel is 13.2 wide. S15's YAML panels run from the top edge in the right column (x > 0.2): there,
+  pin the tag at the bottom right of the panel, or start it after the panel swap.
+- **Narration budget.** The script has 4,297 words against BRIEF's 3,900–4,300, so any bridge
+  pushes past the cap unless something is trimmed.
+  - Keep at most one bridge: S10's (15 words). S10 has 209 words against its budget of about 230,
+    so trim at least 12 words elsewhere, for example in S07 (355 words against about 320).
+  - A bridge also needs its line in `i18n/zh/narration/g2.yaml` (`g1.yaml` for S01–S09), a re-voice
+    of the scene and new subtitle cues.
+  - Tags and diagram labels need no narration and no Chinese, since there is no Chinese on-screen
+    text.
+- **Recap card** (nice). The five "Test yourself" questions could each carry a tiny slide number:
+  Q1 37–40, Q2 42, Q3 8, 15, Q4 35, Q5 33–34.
+
+**Per scene**
+- **S01.**
+  - (i) **do** · "Lecture 04 · slides 42–43", at "Two puzzles." The two thumbnails are the two
+    tutorials of slides 42 and 43.
+  - (ii) **nice** · "These are the two tutorials on the lecture's last slides." (10 words)
+  - (iii) None. The teaser thumbnails stay glyph-only.
+- **S02.**
+  - (i) **do** · "Lecture 04 · slides 37–40", at "A team can get an image two ways." **nice** ·
+    "Lecture 04 · slide 42", at "This branch is the same pipeline, built the way a real team would
+    build it."
+  - (ii) **nice** · "The lecture calls these Scenario 1 and Scenario 2; here, the course plays the
+    senior developer." (16)
+  - (iii) **do** · In V1, title the two shelves as slides 39–40 title their boxes: "Source Control"
+    over the Git shelf, "Images" over the Docker Hub shelf. In phase 2, label the teammate who
+    pushes "lead ('senior') developer". **nice** · A thin GREY return arrow from the teammates to
+    the Git shelf, labelled "pull request", as slides 38 and 40 draw it (Gap 5). Don't copy the
+    slides' colour per operating system, since series colours carry meaning. An optional tiny GREY
+    "Win · Linux · Mac" under the three teammates sets up S09's two architectures.
+- **S03.**
+  - (i) None. Slide 42 only links the branch; S02 carries the tag.
+  - (ii) None.
+  - (iii) None.
+- **S04.**
+  - (i) None (S05 carries slide 42).
+  - (ii) None.
+  - (iii) None.
+- **S05.**
+  - (i) **nice** · "Lecture 04 · slide 42", at "For code, that identity is a service account, with
+    one JSON key."
+  - (ii) None.
+  - (iii) None.
+- **S06.**
+  - (i) **do** · "Lecture 04 · slides 23–24", at "Dash v puts the component folder at slash app".
+    Then **do** · "Lecture 04 · slide 26", at "Dash e sets an environment variable" (Gap 1).
+  - (i) **nice** · "Lecture 04 · slide 11", at "As in lecture 3, the venv lives outside slash app",
+    with the GREY note of Conflict 8.
+  - (i) **nice** · "Lecture 04 · slide 12", at "build step 2, the system packages".
+  - (ii) **nice** · "This is the lecture's bind mount: a host folder on the left, a container path
+    on the right." (18)
+  - (iii) **do** · On V5's two PINK routes, small GREY end labels: "host folder" at the laptop end,
+    "container path" at the container end. This is slide 24's two-sided reading of
+    `source:target`. **nice** · On the `/secrets` route, a GREY "the lecture's example adds :ro"
+    (Conflict 10).
+- **S07.**
+  - (i) **nice** · "Lecture 04 · slide 7", at "Next, synthesis audio E-N builds in 8 seconds, its
+    system layer cached."
+  - (ii) None.
+  - (iii) None.
+- **S08.**
+  - (i) **do** · "Lecture 04 · slide 7", at "after any change in the folder, the copy and uv sync
+    steps run again.", with the GREY note "lecture's order: lock files first, code last"
+    (Conflict 5, Gap 3).
+  - (i) **do** · "Lecture 04 · slides 37–38", at "What is dev for? Adding a package".
+  - (i) **nice** · "Lecture 04 · slides 39–40", at "So build locally, with no argument or dev"
+    (Conflict 11).
+  - (ii) **nice** · "In the lecture's Scenario 2, a lead pushes fresh images; until yours does,
+    build locally." (15)
+  - (iii) **nice** · After the GREEN package chip drops into the image, the two GREEN file glyphs
+    slide toward a small Git shelf labelled "pull request" (slide 38). On the fix card, a small
+    GREY "Scenario 2" on the BLUE row.
+- **S09.**
+  - (i) **do** · "Lecture 04 · slide 13", at "Then one buildx build makes amd64 and arm64 images",
+    with the GREY note of Conflict 9.
+  - (i) **do** · "Lecture 04 · slides 8, 15", at "The gitignore keeps secrets out of Git, not out of
+    images, and no branch has a dockerignore."
+  - (i) **nice** · "Lecture 04 · slides 5–6, 10–11", at "The transcribe image alone is 1.48
+    gigabytes", with the GREY note of Conflict 7 (Gap 8).
+  - (ii) **nice** · "The lecture's dockerignore slide lists secrets for exactly this reason, beside
+    caches and data files." (15)
+  - (iii) **do** · On the fix card, the `.dockerignore` row lists what this repo needs, in slide 8's
+    spirit: `secrets/`, the data folders (`input_audios/`, `text_*/`, `output_audios*/`) and
+    `__pycache__/`. Text only; the guide's G6 has the same list (Gap 2).
+  - (iii) **do** · A GREY row on the same card: "remove images built before the fix · a deleted file
+    stays in its layer" (slides 12, 15; Gap 7).
+  - (iii) **nice** · In the V5 contrast, draw the missing `.dockerignore` as a dashed sieve outline
+    in front of the folder that `COPY . ./` packs. Slide 8's idea is a filter in front of the build
+    context. This replaces the dashed chip.
+- **S10.**
+  - (i) **do** · "Lecture 04 · slide 33", at "Think of each container as its own little computer".
+    Then **do** · "Lecture 04 · slide 34", at "A network you create joins them like a small home
+    network".
+  - (ii) **do**, and the one bridge to keep if any · After "Two containers can both use port 9100
+    without any clash.": "The lecture calls this a network namespace: each container is isolated
+    until you wire it." (15) It gives the video's metaphor the lecture's term.
+  - (iii) **do** · Label V6's PINK phone book "Docker DNS", slide 34's term, where it first
+    appears. **nice** · In the opening picture, small GREY labels on the two PINK arrows: "outside:
+    laptop → container" and "inside: container → container". These are slide 33's two questions,
+    without its (a)/(b) lettering.
+- **S11.**
+  - (i) **do** · "Lecture 04 · slide 12", at "The two Dockerfiles are almost identical: a slim
+    Python 3.14 image, plus curl from apt."
+  - (i) **nice** · "Lecture 04 · slide 7", at "Docker reuses the processor's apt layer from the
+    cache".
+  - (i) **do** · "Lecture 04 · slide 35", at "Dash p publishes a port".
+  - (ii) None. The SAY already gives the order: IP address, host port, container port.
+  - (iii) Already aligned: the panel's rows wrapped at `&&` are slide 12's shape, and V7 names the
+    host port and the container port. **nice** · A thin GREY strip "HOST : CONTAINER" under the
+    last two numbers of `127.0.0.1:8090:9100`, slide 35's banner in the series style.
+- **S12.**
+  - (i) **nice** · "Lecture 04 · slide 33", at "But every connection has two ends". Slide 33's
+    footnote: replies come back over the same connections.
+  - (ii) None.
+  - (iii) None.
+- **S13.**
+  - (i) **do** · "Lecture 04 · slide 35", from "What does the 127.0.0.1 do?" to "That's why the
+    README writes 127.0.0.1: this laptop only.", with the GREY note of Conflict 1.
+  - (i) **do** · "Lecture 04 · slides 33–34", at "That's the second puzzle: each container has its
+    own localhost."
+  - (i) **nice** · "Lecture 04 · slide 28", at "One aside: the processor image has curl too", with a
+    GREY note "a Compose healthcheck would use it" (Gap 4).
+  - (ii) None. S10 carries the namespace bridge.
+  - (iii) Already aligned: the laptop's RED bounce off `:9200` is slide 35's grayed processor. The
+    phone book keeps S10's "Docker DNS" label.
+- **S14.**
+  - (i) **do** · "Lecture 04 · slide 26", at "No image was rebuilt: it's only configuration." (Gap 1)
+  - (i) **nice** · "Lecture 04 · slide 35", at "First the street door".
+  - (ii) **nice** · "In the lecture's table, dash e values exist only at run time, so a new
+    container is enough." (18)
+  - (iii) **nice** · Under the two chips `PORT=9300` and `PROCESSOR_PORT=9300`, a four-dot lifetime
+    strip "compose file · build · image · container" with only "container" lit: slide 26's columns,
+    in the series style.
+- **S15.**
+  - (i) **do** · "Lecture 04 · slides 17–20", at "Almost every flag you typed by hand has a home in
+    it."
+  - (i) **do** · "Lecture 04 · slide 27", at "the depends on key starts the processor first".
+  - (i) **nice** · "Lecture 04 · slide 21", at "the build command becomes build" (Gap 6).
+  - (i) **nice** · "Lecture 04 · slide 22", at "An extra network ls shows that Compose made toynet".
+  - (ii) **nice** · "The lecture adds a warning: started is not ready, and a health check makes
+    Compose wait." (16)
+  - (iii) **do** · In V8, the GREY notes of Conflict 4: on `volumes:` "the lecture's by-hand run had
+    -v · slide 17"; on `depends_on` "= the order you typed them · started, not ready".
+  - (iii) **nice** · As each flag lands, a small GREY "(-p)", "(-e)" or "(-v)" beside its key, as
+    slide 20 labels them. Under the processor panel, the GREY note of Conflict 2. On the panel
+    header, the note of Conflict 3.
+- **S16.**
+  - (i) **do** · "Lecture 04 · slide 29", at "Back to the README's order: up dash d starts the app in
+    the background".
+  - (i) **nice** · "Lecture 04 · slides 23–24", at "The gateway's folder is mounted".
+  - (i) **nice** · "Lecture 04 · slide 31", at "Next lecture, a command-line container calls a
+    database container by name on a Compose network" (Gap 10).
+  - (ii) None.
+  - (iii) **nice** · The recap card's slide numbers (see General).

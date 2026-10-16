@@ -468,3 +468,261 @@ The slides show no workflow YAML, no Pulumi code and no Docker commands.
 
   On screen, cite this year's numbers (or the episode titles), not the slide labels, so viewers
   can find the matching video.
+
+## This video and the slides
+
+**Basis.** The video is not scripted yet. This folder holds only [`digest.md`](digest.md) and this
+file: there is no `BRIEF.md`, `script.md`, `ASSETS.md` or `assets/terminal/`. So the map below uses
+the nine planned chapters in `digest.md` §8, the study guide
+(`MLOps_Learning/guides/L23-final-cicd-deployment.md`) and every slide: the extracted text, all five
+contact sheets, and enlarged renders of slides 19 and 20. With no captures yet, "the tutorial today"
+means `dlops-io/cheese-app-v4` at the digest's pinned commit `033f187`, which is still the head of
+`main` in a fresh clone on 2026-10-16. For this section I re-checked these at the source, in that
+clone:
+- README.md: the promise to "test, execute, monitor, deploy, and scale" (`:3`); the Model Deploy
+  bullet (`:8`); the three definitions and "The CI part is not implemented" (`:151-157`);
+  `/run-deploy-app` (`:162`); `/deploy-app` and `git add .` (`:188-192`);
+- `images/ci-cd.png`: its GitHub Actions box reads Build → Release → Deploy, where slide 19's reads
+  Build → Deploy;
+- `app-ci-cd-gcp.yml:1-9`, `:32-56` (builds `src/deployment` and runs it with the single argument
+  `deploy-k8s-update.sh`) and `ml-ci-cd-gcp.yml:1-9`, `:32-35`, `:55`, `:75`, `:95` (builds
+  `src/workflow` and runs `python cli.py --data_collector`, `--data_processor` or `--pipeline`);
+- `src/deployment/`: `deploy-k8s-update.sh` (two `pulumi up`s), `deploy-ml-images.sh` (nothing calls
+  it), and no Vertex AI code anywhere in the folder (grep for `aiplatform` and `vertex`);
+- the `origin/pipenv` branch, whose deployment folder did carry `cli.py` with `aip.PipelineJob` and
+  `run-ml-pipeline.sh`, and whose ML workflow ran `cheese-app-deployment sh run-ml-pipeline.sh`;
+- `deploy_k8s`: `setupSSL: "true"` (`Pulumi.dev.yaml:7`), the Ingress paths `/api-service` and `/`
+  (`setup_loadbalancer_ssl.py:70`, `:83`), ClusterIP Services (`setup_containers.py:98`, `:183`,
+  `:359`) and the NEG and BackendConfig annotations on the API Service (`:354-355`); the same path
+  and Service types in the digest's copy of `cheese-app-v3` (L22);
+- `src/workflow/model.py:67-104`: the `model_deploy` component uploads `gs://<bkt>/model` to the
+  Model Registry and deploys it; it changes no signature;
+- a bare `git add`, run with git 2.43.0 in a throwaway repo: it prints "Nothing specified, nothing
+  added.", exits 0 and stages nothing.
+
+When `assets/terminal/` and `ASSETS.md` exist, re-check Conflicts 1, 3, 4 and 6–9 against them. If
+they disagree, the captures win.
+
+### 1. Map: planned chapters ↔ slides
+
+| # | Planned chapter (`digest.md` §8) | Slides on the same ground | Relation |
+|---|---|---|---|
+| 1 | The deploy button is a sentence (1.5 min) | 20 (commit with `/deploy-app` in the message); 12 (the red RELEASE button a person presses); 7 (commits enter the loop) | The tutorial applies it. The plan's self-pressing red button is slide 12's release button, but the plan doesn't say so (gap 1). |
+| 2 | The whole course on one map (3 min) | 19 (the Cheese App CI/CD map); 21–37 (the review: one picture per earlier lecture); 25 (the three-layer architecture); 5–6 (the five operations to automate) | Same concept. The plan's recap map is the review section made concrete. Its "pull the loop apart" is exactly where the code leaves slide 19 (Conflicts 2–3). The five operations are not used (gap 4). |
+| 3 | Bootstrap once, by hand (3 min) | 17 (we already have a deployment container); 24 (a senior developer builds and pushes the images by hand) | Mostly tutorial-only: stacks, registry, keys, the secret. Slide 17's premise is what this checklist makes true; slide 24 is the job CD takes over (gap 5). |
+| 4 | Two sieves for one string (2.5 min) | 18 (GitHub Actions monitors code commits); 20 (the keyword) | The tutorial applies it. `on: push`, `contains()`, `head_commit` and the case-insensitive substring match are tutorial-only. Slide 20 has the keyword right where one README sentence doesn't (Conflict 6). |
+| 5 | One crate, two operators (3 min) | 17–18 (build and run the deployment container; "Invoke CLI" in it); 35 (in development, the source code is mounted into the containers); 16 (other CI/CD services) | Same concept; the tutorial applies it with a script, not a CLI, and with a second container for the ML lane (Conflict 1). Baked code, the Docker socket and the identity hops are tutorial-only. |
+| 6 | Follow the timestamp (3.5 min) | 18 (build and push images "for release", deploy them to the K8s cluster); 19 (Build → Deploy); 36 (Release before Deploy) | The tutorial applies it. Timestamp tags, the state bucket, `StackReference` and the rolling update are tutorial-only; "release" is drawn three ways (Conflict 3). |
+| 7 | The front door changed (2 min) | 37 (L22's routing: one URL, `/` and `/api/` behind an ingress controller) | Same concept, different implementation: v4 replaces the NGINX controller with a Google HTTPS load balancer, and the API path is `/api-service` (Conflict 8). Health checks and managed certificates are tutorial-only. |
+| 8 | The ML lane (3 min) | 5–6 (data pipeline jobs; model training and deployment); 13–15 (CI and CD for ML); 17–18 (Vertex jobs from the deployment container, with newly built images); 34 (the four-step pipeline graph); 32–33 (training jobs; model deployment); 19 (the arc) | Same concept; the tutorial applies it with its own container and with step images CI never rebuilds (Conflict 1). Validation and drift are lecture-only (gap 3). Slide 33's steps are split differently in the pipeline (Conflict 9). |
+| 9 | Do it, break it, clean it up (3.5 min) | 20 (the basic commands); 7, 36 (Monitor and Notifications); 15 (cost as a challenge of CD) | The tutorial applies it. The README's mismatches, the green run that deployed nothing and the shutdown list are tutorial-only. Slide 20's bare `git add` is Conflict 7. |
+| — | not in the plan | 1–3, 21, 38 (title, outline, dividers, close); 4 (the turkey predictor); 8–10 (CI defined: tests, coding standards, static analysis); 11 (delivery and deployment in words); 13–14 (CI for ML); 16 (providers); 22–23, 26–31 (the review of environments and containers, the audio pipeline, labeling, ChatGPT's training, RAG, agents, LoRA, distillation) | Lecture-only. 8–11 are gaps 1–2, 13–14 gap 3, 16 gap 6, 4 gap 7. The LLM review slides (27–31) fall on boxes ch2 already badges (the API's chat, RAG and agent routes). |
+
+### 2. Already in common
+
+| # | Concept | Chapter ↔ slides | Does the video's framing agree with the lecture's? |
+|---|---|---|---|
+| 1 | A commit message starts the deployment: a workflow file in `.github/workflows` holds the steps, `/deploy-app` in the message triggers them | ch1, ch4 ↔ 20 | Yes, word for word. The plan adds what the slide leaves out: every push to `main` runs both workflows, and only the job is skipped. |
+| 2 | Don't build new machinery: GitHub Actions builds the deployment container and runs it on each commit | ch3, ch5 ↔ 17–18 | Yes for the app lane; ch5's "one crate, two operators" is slide 17's premise. It differs on the ML lane and on "CLI" (Conflict 1). |
+| 3 | Build and push images for release, then deploy them to the K8s cluster | ch6 ↔ 18, 19 | Yes. The slide states the two steps; the plan follows one tag from the build to the pod. |
+| 4 | One map of the system: Dev Team → GitHub → GitHub Actions → Google Cloud (Storage, Vertex AI, Kubernetes) → Users, over the chain of six components | ch2 ↔ 19 | Partly. The plan redraws the map, then splits it into two loops, because the Model Deploy → Backend API link is not in the code (Conflict 2). |
+| 5 | The CI/CD loop: commits, build, test, (release,) deploy, monitor, with notifications back to the developers | digest C1 (the gates track with the CI gates greyed out) ↔ 7, 36 | Yes. The digest's track is slides 7/36 with the red half switched off. No chapter uses it yet (gap 2). |
+| 6 | CI, delivery and deployment are three different promises | digest C1 (the restaurant analogy), guide §3.1 ↔ 8–12 | Partly. Both say CI integrates and tests, and both say deployment needs no human. They define delivery differently (Conflict 5). |
+| 7 | This tutorial implements the CD half only | digest C1's misconception, §7 (MS5) ↔ 18 ("How to Implement CD") | Yes. Slide 18's heading drops "CI", as `README.md:157` does; slide 20's title and the workflow names keep it (Conflict 4). |
+| 8 | Data pipeline jobs, training and model deployment run automatically on Vertex AI | ch8 ↔ 5–6, 15, 17–18, 34 | Yes on what runs: the same four steps with the same names. It differs on which container submits them and which images they use (Conflict 1). |
+| 9 | One URL, path-based routing to the services | ch7 ↔ 37 | Partly: the same shape, a different front door and path (Conflict 8). |
+| 10 | Every earlier lecture built a part of the final app | ch2 (the recap map with lecture badges), guide §7 ↔ 21–37 | Yes. The plan badges the boxes with this year's lecture numbers; the review slides print another year's numbers (see Pointers). |
+| 11 | Cost is a challenge of CD for ML | ch8 (the endpoint meter), ch9 (the bill meter) ↔ 15 | Yes. The plan makes it concrete: another endpoint billed 24/7 on every `/run-ml-pipeline`, new image tags on every deploy. |
+| 12 | In development, containers mount the source code; on the runner, the code is inside the image | ch5 (the laptop/runner split), guide §8 E6 ↔ 35 | Yes. Slide 35's mounted source code is the laptop half of ch5's split screen; `ADD . /app` is the runner half. |
+
+### 3. Gaps (ranked by value to a student doing the tutorial)
+
+1. **Delivery vs deployment is a question of who presses release, and in v4 a person presses it
+   (slides 11–12).** In the lecture's terms, continuous delivery keeps a person in the loop who
+   decides to release, and continuous deployment passes every integrated change into production by
+   itself. In v4 a push to `main` deploys nothing unless someone types `/deploy-app`: that keyword is
+   slide 12's red RELEASE button, with no tests in front of it. The README calls the tutorial
+   continuous deployment (`README.md:157`), but its own definition (`:155`) requires the automated
+   tests to pass first (Conflict 5). This is what MS5 changes: drop the keyword, deploy on every
+   merge to `main`, and put L21's tests in front (guide §8 E7). **Carry it in** ch1 (20 s: label the
+   plan's red button RELEASE) and ch9's outro (30 s, with a new pause-and-ponder; see the proposals).
+2. **The CI half of the loop, and notifications that tell the truth (slides 7–10, 36).** The
+   lecture's loop has a red CI half (Codebase → Build → Test) and a blue CD half (Release → Deploy →
+   Monitor), and every stage reports back to the developers. CI is defined by what it runs:
+   automated tests, coding standards (style and consistency) and static analysis (defects and
+   vulnerabilities, found without running the code). v4 wires only the blue half (Conflict 4), and
+   its one notification, the run's colour, can be wrong: with no `set -e` in
+   `deploy-k8s-update.sh`, a failed image build followed by an unchanged K8s update reports green
+   (guide §6 #4). The digest sketches the gates track (C1), but no chapter uses it. **Carry it in**
+   ch1 (last 20 s: draw the loop and grey out Test) and ch9 (the green run that deployed nothing is
+   the notification line telling a lie; the Monitor box is the footer check and
+   `kubectl rollout status`).
+3. **CD for ML releases a model only after it passes validation (slides 13–15).** The lecture
+   wants CI for ML to catch data-quality, code and model-performance problems early; it warns that
+   training cost and long tests on large data pull against frequent integration; and it asks CD to
+   release a model only when its metrics stay within tolerance, while watching for data drift. v4's
+   `/run-ml-pipeline` deploys whatever the training step produced, to a new endpoint each run, with
+   no metric check, and the trainer does not even read the freshly processed data (digest C7). MS5
+   asks for validation thresholds and for retraining when new data arrives (guide §7). **Carry it
+   in** ch8 (30 s: a dashed "metrics within tolerance?" gate between Model Training and Model
+   Deploy) and the recap card.
+4. **The five operations as a scorecard (slides 5–6).** The lecture lists what it wants automated:
+   data pipeline jobs, model training and deployment, frontend deployment, backend deployment, and
+   building and pushing images. Scoring v4 shows the student what is still manual. Data jobs
+   (`/run-data-collector`, `/run-data-processor`) and training plus deployment (`/run-ml-pipeline`)
+   are automated. Frontend and backend are automated, but only together: one keyword rebuilds and
+   rolls all three images. Building and pushing is automated for the three app images and **not**
+   for the two ML step images (`deploy-ml-images.sh`, by hand; guide §6 #3). **Carry it in** ch2
+   (20 s after the map splits: slide 6's five cards get a tick, a shared bracket or a half tick) or
+   as the recap's first card.
+5. **The job CD takes over: the senior developer (slide 24).** In the team Docker workflow of
+   L03/L04, one senior developer merges the pull requests, rebuilds the images and pushes them. In
+   v4 the runner does that job on every keyword, with the same toolbox container a person uses on
+   the laptop. **Carry it in** ch3 or ch5 (one sentence; a small figure hands its key to the runner).
+6. **Thin YAML, thick container (slide 16).** The slide names six CI/CD services. Because v4's
+   workflow only builds a container and runs it with one argument, nearly all the deploy logic lives
+   in `src/deployment`; moving to another service would mean rewriting a 56-line workflow, not the
+   deployment (our reasoning, not on the slide). **Carry it in** ch5 (one sentence over the crate).
+7. **Why deploy at all (slide 4).** The deck opens on a joke web app that predicts when the
+   Thanksgiving turkey will be done, with a forecast band that widens past "NOW". The slide says
+   nothing about CI/CD; our reading is that a prediction is only useful if it is served and kept
+   current as new readings arrive. Low value for doing the tutorial, but a friendly way into the ML
+   lane. **Carry it in** ch8's first 10 s if time allows; never show the slide.
+
+### 4. Conflicts
+
+| # | Slides say | Tutorial today (the repo at `033f187`) | Current | How the video should put it |
+|---|---|---|---|---|
+| 1 | **One deployment container does everything, through a CLI** (slides 17–18): it builds images, runs the Vertex AI pipeline jobs and deploys to the K8s cluster; GitHub Actions builds it and invokes its CLI to build and push release images, run Vertex jobs with the newly built images, and deploy. | Two workflows, two containers. `app-ci-cd-gcp.yml` builds `src/deployment` and passes the script name `deploy-k8s-update.sh` (`:35`, `:56`): two `pulumi up`s, no CLI. `ml-ci-cd-gcp.yml` builds `src/workflow` (`:32-35`) and runs `python cli.py --pipeline` (or `--data_collector`, `--data_processor`) there. `src/deployment` holds no Vertex AI code. CI never rebuilds the data-collector and data-processor images: the pipeline uses whatever `deploy-ml-images.sh` last pushed by hand (digest §6 #3). The slides describe the older `origin/pipenv` design, where the ML workflow ran `cheese-app-deployment sh run-ml-pipeline.sh` (and even there the image rebuild line was commented out). | The repo | Ch5: "The lecture keeps everything in one toolbox. v4 splits it: the deployment crate for the app, a smaller workflow crate for Vertex." Ch8, before pause-and-ponder #3: "and the step images are whatever you last built by hand." |
+| 2 | **One chain from data to users** (slide 19, and the README's `images/ci-cd.png`): Data Collector → Data Processor → Model Training → Model Deploy → Backend API → Frontend, all driven by commits. | Two lanes that don't touch. The API loads a fixed CNN from a GitHub release (`llm_cnn_utils.py:124`); `/run-ml-pipeline` deploys to a new Vertex endpoint that nothing calls; the trainer downloads a fixed dataset instead of the processor's output (digest C7, errata 8). | The code | Ch2, as planned: draw the slide's chain first, then pull it apart. "This is the course's map, and the goal. In v4 the arrow from Model Deploy to the API is still to be built: that is MS5." |
+| 3 | **What happens inside GitHub Actions** (slide 19 vs the README image and slide 36): slide 19's box holds Build → Deploy; the README's copy of the same picture holds Build → Release → Deploy; slide 36's loop has a Release stage, slide 7's doesn't. | One job with two container steps. Inside "Run Deploy App", `deploy_images` builds the three images and pushes them with a timestamp tag (the release, in effect), and `deploy_k8s` deploys them (`deploy-k8s-update.sh:1-9`). There is no separate release step or gate. | The code; both pictures are fair summaries of it | Ch6: two boxes for the two `pulumi up`s, with the push between them tagged "release = `:<timestamp>`". "The lecture's pictures differ by one box. In this repo, the release is the moment the tagged image lands in the registry." |
+| 4 | **CI/CD** (slide 20's title "Tutorial: Continuous Integration, Continuous Deployment" and its "Steps to apply CI / CD"; slides 7 and 36 draw Test and Monitor stages). | No test, lint, static-analysis or monitoring step runs in either workflow, though both are named "Continuous Integration and Continuous Deployment" (`:1`). `README.md:3` promises to test, execute, monitor, deploy and scale; `:157` says the CI part is not implemented. Slide 18's own heading, "How to Implement CD", agrees with `:157`. | The repo and `README.md:157` | Ch1 and ch9: "The lecture draws the whole loop. This tutorial wires its blue half; the red half is the pipeline you built in L21, and MS5 asks you to join them." |
+| 5 | **Delivery vs deployment** (slides 11–12): delivery keeps a person in the loop who decides to release; deployment passes integrated changes into production automatically. | The README defines delivery as automated delivery to staging or testing environments, ready but not necessarily released (`README.md:153`), and deployment as automatic deployment once all automated tests pass (`:155`); it says the tutorial does deployment (`:157`). In the code, a person decides every release by typing `/deploy-app`, and no tests run. | Both definitions are common; the code settles what v4 is: an automated deploy that a person triggers, with nothing tested first | Don't argue it, ask it (the new pause-and-ponder in ch9): "By the lecture's definitions, the keyword is delivery's release button. Deploy on every merge, behind tests, and it becomes continuous deployment." |
+| 6 | **The keyword** (slide 20): `/deploy-app`. | `app-ci-cd-gcp.yml:9` tests `'/deploy-app'`, and `README.md:188`, `:192` agree. `README.md:162` says `/run-deploy-app`, which wakes the ML job and deploys nothing (guide §6 #1). | The slide and the workflow | Ch4, in pause-and-ponder #1's answer: "The lecture slide has it right; one sentence in the README doesn't." |
+| 7 | **The basic commands** (slide 20): `git add`, then `git commit -m "your message /deploy-app"`, then `git push`. | A bare `git add` stages nothing (git 2.43.0: "Nothing specified, nothing added.", exit code 0); the commit then has nothing to commit, and the push sends nothing new. `README.md:191` has `git add .`. | The README | No narration. Type `git add .` on screen; if a caption is wanted: "the slide's shorthand, written out". |
+| 8 | **Routing** (slide 37, the L22 review): an ingress controller at `nginx-ip.sslip.io/` sends `/` to a Frontend Service on NodePort 3000 and `/api/` to an API Service on NodePort 9000, which calls `vector-db:8000`. | `setupSSL: "true"` gives a GCE Ingress, i.e. a Google HTTPS load balancer with a global static IP and a managed certificate, at `https://<static-ip>.sslip.io`. The paths are `/api-service` and `/` (`setup_loadbalancer_ssl.py:70`, `:83`); the Services are ClusterIP (`setup_containers.py:98`, `:183`, `:359`), the API's with NEG and BackendConfig annotations (`:354-355`). L22's NGINX version also used `/api-service` and ClusterIP (`cheese-app-v3`: `setup_loadbalancer.py:84`, `setup_containers.py:98`, `:183`, `:332`). | The code | Ch7: start from slide 37's shape, then swap the doorman. "Same routing, new front door. The API lives under `/api-service`, and Google now checks that it answers before sending anyone in." |
+| 9 | **Model deployment in five steps** (slide 33, the L15 review): get the saved model, update its signature, upload it to GCS, upload it to the Model Registry, deploy an endpoint, all from a Model Deployment CLI container. `README.md:8` also says the Model Deploy step updates the signature. | In v4's pipeline the trainer saves the model with its serving signature (`ml-workflow`'s `trainer/task.py`, per the L15 digest). The Model Deploy component only uploads `gs://<bkt>/model` to the Registry and deploys it, to a new endpoint on every run (`src/workflow/model.py:67-104`; guide §6 #15). | The code | Ch8, one sentence: "In the pipeline the trainer already adds the signature, so Model Deploy does the lecture's last two steps, and makes a new endpoint each time." |
+
+Not counted as conflicts:
+- The review slides print lecture numbers from another year's schedule (see Pointers); slides 10,
+  12, 24 and 29 print footer numbers from their source decks. Both are inside the deck.
+- Slide 24's image registry is Docker Hub (spelled "DockertHub"); v4 pushes to Artifact Registry.
+  The slide is accurate for the L03/L04 workflow it reviews.
+- Slide 18 says GitHub Actions monitors code commits. v4 watches pushes to `main` and reads only
+  the last commit's message; that is a narrowing, which ch4 makes exact, not a contradiction.
+- Slide 32's Model Trainer CLI container launches training jobs; in v4 the pipeline's training
+  component launches them. Both designs exist in the course (L13, L15).
+- Slides 13–14 integrate code, data and models "into a shared repository"; v4 keeps its data in
+  GCS and its model in a GitHub release and on Vertex. That is an omission (gap 3).
+- Slide 6's arrows between the five cards only order the list.
+- Slide 35's mounted source code and v4's baked code are each right in their place (in common, 12).
+- Slide 20's QR code was not decoded (40 dpi page, no decoder installed). Its three printed URLs
+  point at things that exist in the clone: `.github/workflows`, the README heading "Cheese App -
+  Automation" (anchor `#cheese-app---automation`) and the repository's Actions tab.
+
+### 5. Proposals for the BRIEF and script authors
+
+**General**
+- Tag each chapter that stands on lecture ground with one GREY `lecture_ref`. L23 has one deck,
+  so plain ranges are enough: `lecture_ref(23, "17–18")` reads "Lecture 23 · slides 17–18". Use
+  the PDF page numbers listed here, never the footers. Re-draw every lecture diagram in the series
+  style; never show the slide images, the turkey page, the distillation photo or the QR code.
+- **Spine: slide 36's loop as the video's progress strip.** Six boxes, Codebase → Build → Test →
+  Release → Deploy → Monitor, with a Notifications line back to a Developers bar (slide 7's
+  layout). Test stays a dashed GREY outline for the whole video, labelled "L21" (Conflict 4).
+  Ch1 lights Codebase, ch4 the arrow out of it, ch5 Build, ch6 Release and Deploy, ch7 the front of
+  Deploy, ch9 Monitor and the Notifications line, which turns RED when the `set -e` lie shows
+  (gap 2). Ch8 adds a second, thinner strip for the ML lane with its Build box half lit (only the
+  workflow container is built). Colours: runners BLUE, containers and images TEAL, the current box
+  YELLOW, failures RED, cost GOLD, routes PINK.
+- **Second frame: slide 19's map in ch2**, redrawn with slide 19's two Actions boxes, then pulled
+  apart into the app gear and the ML gear (Conflicts 2–3), then slide 6's five cards scored
+  (gap 4). Badge the boxes with this year's lecture numbers, not the review slides' labels.
+  Optionally lay the badges on slide 25's three bands (Process, Execution, State). Don't build one
+  card per review slide; seventeen cards would eat the chapter.
+- **Hook.** Keep the plan's hook (eleven characters, and the README's `/run-deploy-app`). Pause-and-
+  ponder #1's answer gains one line: the lecture slide has the right keyword (Conflict 6).
+- **One new pause-and-ponder (ch9), from slides 11–12 and Conflict 5.** "By the lecture's
+  definitions, is v4 continuous delivery or continuous deployment? What would you change to make
+  it the other?" *Answer:* a person decides each release by typing the keyword, which is
+  delivery's release button; and nothing is tested first, so it isn't the README's continuous
+  deployment either. Deploying on every merge to `main`, behind L21's tests, makes it continuous
+  deployment, which is what MS5 asks for (guide §8 E7).
+- **Time.** The plan is about 25 minutes. Gaps 1–6 add about 3–3.5 minutes and gap 7 another 10 s,
+  which brings the video to about 28–29 minutes, inside the 25–35 range; nothing needs to be cut.
+- **Captures.** When they are made, record:
+  - the Actions tab after one push: two runs, one with its job skipped;
+  - the "Run Deploy App" log with `deploy-k8s-update.sh` echoed and the two Pulumi updates, images
+    first (Conflicts 1, 3);
+  - a `/run-data-collector` run whose log ends in a pipeline submitted from `cheese-app-workflow`
+    (Conflict 1);
+  - `kubectl describe ingress -n cheese-app-namespace` showing the `gce` class annotation and the
+    `/api-service` rule, and `kubectl get svc` showing ClusterIP (Conflict 8);
+  - the Vertex pipeline graph with four green nodes, the new model and the new endpoint
+    (Conflict 9).
+
+  Then re-check Conflicts 1, 3, 4 and 6–9 against them.
+
+**Per chapter**
+- **Ch1 · `lecture_ref(23, "11–12, 20")`.** Label the plan's self-pressing button RELEASE and say
+  once whose finger it is: "you press it, by typing the keyword" (gap 1). Last 20 s: the strip
+  appears with Test greyed out (gap 2, Conflict 4).
+- **Ch2 · `lecture_ref(23, "5–6, 19, 21–37")`.** Slide 19's map, the split into two gears with the
+  dashed "TODO (MS5)" arrow (Conflict 2), then the five-operations scorecard (gap 4). Name the
+  review once: "the lecture closes by walking back through every earlier lecture; here are its
+  boxes in the app."
+- **Ch3 · `lecture_ref(23, "17, 24")`.** Open on slide 17's premise as the checklist's first line:
+  the toolbox must work by hand before a robot can run it. One sentence on slide 24's senior
+  developer, whose job the runner is about to take (gap 5).
+- **Ch4 · `lecture_ref(23, "18, 20")`.** Make slide 18's "monitoring code commits" exact: pushes to
+  `main`, the last commit's message, a substring in any case. Conflict 6 in pause-and-ponder #1.
+- **Ch5 · `lecture_ref(23, "17–18, 35")`.** The crate's button reads `deploy-k8s-update.sh`, not
+  "CLI" (Conflict 1). The laptop half of the split screen is slide 35's mounted source code; the
+  runner half is the baked code. One sentence on slide 16 (gap 6).
+- **Ch6 · `lecture_ref(23, "18–19, 36")`.** The strip lights Build → Release → Deploy; the release
+  is the push of the timestamp-tagged image (Conflict 3). Pause-and-ponder #2 as planned.
+- **Ch7 · `lecture_ref(23, "37")`.** Slide 37's routing re-drawn, then the swap: NGINX doorman out,
+  Google front desk in; `/api/` becomes `/api-service`, NodePort becomes ClusterIP behind the load
+  balancer (Conflict 8).
+- **Ch8 · `lecture_ref(23, "13–15, 17–18, 34")`.**
+  - Optional first 10 s: the turkey idea in one sentence (gap 7).
+  - Slide 34's four nodes are the Vertex graph; the second, smaller crate submits them
+    (Conflict 1), and pause-and-ponder #3 lands on the stale step images.
+  - The dashed "metrics within tolerance?" gate and a "new data → retrain" arrow, both labelled
+    MS5 (gap 3). One sentence for Conflict 9.
+- **Ch9 · `lecture_ref(23, "7, 11–12, 20")`.**
+  - `git add .` on screen (Conflict 7).
+  - The green run that deployed nothing is the Notifications line lying (gap 2); verifying the
+    footer and `kubectl rollout status` is the Monitor box.
+  - The new pause-and-ponder (gap 1, Conflict 5).
+  - Outro: the strip with Test lit "from L21" and the keyword gone, as MS5's goal.
+- **Recap card.** Keep the plan's six questions, and add two:
+  - "Which of the lecture's five automated operations does v4 still leave to a person?" (Building
+    and pushing the two ML step images, `deploy-ml-images.sh`; and frontend and backend can only be
+    deployed together.)
+  - "In the lecture's terms, is typing `/deploy-app` continuous delivery or continuous deployment,
+    and what does MS5 change?" (Delivery's release button; MS5 deploys every merge to `main`,
+    behind tests.)
+
+**Terms**
+- Use the lecture's words: *automation*, *CI/CD*, *continuous integration*, *continuous delivery*,
+  *continuous deployment*, *release*, *production*, *deployment container*, *workflow file*,
+  *notifications*, *monitor*, *coding standards*, *static code analysis*, *performance validation*
+  ("within tolerance"), *data drift*, *Vertex AI pipeline jobs*, *K8s cluster*, *ingress
+  controller*.
+- Add the tutorial's words where the lecture stops: *workflow*, *job*, *step*, *runner*, `if:`,
+  `contains()`, `head_commit`, *repository secret*, *toolbox container*, *Docker socket*,
+  *timestamp tag*, *Pulumi state bucket*, `StackReference`, *rolling update*, *GCE Ingress*,
+  *BackendConfig*, *managed certificate*, *Vertex endpoint*.
+- Bridge each pair once:
+  - the lecture's "invoke CLI in the deployment container" is `deploy-k8s-update.sh` in the app
+    lane and `python cli.py --pipeline` in the separate `workflow` container;
+  - the lecture's "release" is pushing the images with a fresh timestamp tag;
+  - the lecture's "Backend API" is `api-service`;
+  - the lecture's "Monitor" is, here, the run's colour, the footer versions and
+    `kubectl rollout status`;
+  - the lecture's ingress controller is, in v4, Google's load balancer, set up from the Ingress.
+- Avoid "the deployment container runs the Vertex pipelines" (Conflict 1), "the new model goes
+  into the app" (Conflict 2), "CI/CD" for v4 without "the CD half" (Conflict 4),
+  `/run-deploy-app` (Conflict 6), a bare `git add` (Conflict 7), and "NGINX" or `/api/` for v4
+  (Conflict 8).

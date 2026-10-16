@@ -714,3 +714,323 @@ code-like items are:
 - **No tutorial pointer.** Neither deck links the `llm-rag` repo, the Ed lesson, the web tools
   (`/chunkviz`, `/chromaui`, `/chat`) or any homework beyond Milestone 1. The pairing of these
   slides with the tutorial comes from the course site (see `digest.md`).
+
+## This video and the slides
+
+**Basis.** The video is planned but not scripted. This folder has:
+- `BRIEF.md`: 16 scenes, S01–S16, in two parts. Each scene names a `Lecture:` slide range, and the
+  BRIEF asks this pass to check them.
+- `video.yaml`, with the same scene ids and titles;
+- `ASSETS.md` and the captures in `assets/terminal/` (2026-10-16).
+
+There is no `script.md` and no scene file yet. The nine-chapter plan in `digest.md` §8 is older,
+and the BRIEF replaces it. So the map below uses the BRIEF's scenes. The study guide is
+`MLOps_Learning/guides/L05-rag.md`. For this section I re-read all eighteen contact sheets and both
+decks' text. I also re-checked these at the source:
+- **The README's promises.** "small, overlapping" chunks (`README.md:17`, `:93`). Answers
+  "grounded in your documents, not its own training data" (`:21`, again at `:194`). The two step
+  titles (`:5`, `:9`).
+- **`cli.py`.**
+  - The cheese-specialist `SYSTEM_INSTRUCTION` (`:40-58`).
+  - `chat()`: it pastes only `results["documents"][0]` into the prompt (`:390`) and sends no
+    `config` (`:394-396`).
+  - The four query variants (`:325-361`). The active one is commented "lexical search filter"
+    (`:352`).
+  - The agent's forced tool call, `mode="any"` (`:449`).
+- **`semantic_splitter.py`.** `buffer_size: int = 1` (`:113`). The sentence regex (`:118`) and its
+  comment "by default on '.', '?', and '!'" (`:216`). `distance = 1 - similarity` (`:74`). The
+  95th-percentile default (`:92`).
+- **The captures.**
+  - `cli-container/12`, `15`, `40` and `60`;
+  - `recorded-embeddings/04`, `06`, `08` and `09`;
+  - `laptop/17`, the collection listing. It shows the HNSW settings (`"space":"cosine"`,
+    `max_neighbors` 16, `ef_search` 100). It also shows that each collection carries Chroma's own
+    `"embedding_function"` named `"default"`, which the tutorial never uses.
+
+Where the slides and the captures disagree, the captures decide what the video shows.
+
+### 1. Map: planned scenes ↔ slides
+
+| Scene (BRIEF) | Slides on the same ground | Relation |
+|---|---|---|
+| S01 · A model that never read the book | A6–A11 (BRIEF); A17 (where a knowledge base comes from) | Same concept: the lecture's motivation. That is A6's four weaknesses, A8–A10's three roads and A11's four questions. The cold open on the Tolminc story and the how-to-follow beats are tutorial-only. The BRIEF also cites B69 for "an open-book exam", which deck B uses for another point (Common 18). |
+| S02 · Two lanes, one database | A12–A16, B5–B6 (BRIEF); B59–B60 would add the shared-encoder rule (Gap 1) | Same concept, and the tutorial applies it. V1 is A16 redrawn with B5's numbers and phases, with the README's steps pinned under it. Conflicts 6, 7. |
+| S03 · Your key, your folders, your project | none | Tutorial-only (service account, key, `GCP_PROJECT`). Neither deck mentions Google Cloud. |
+| S04 · One script, two containers | none | Tutorial-only (Compose, the image build). The slides draw the vector database as one cylinder and never say where it runs. |
+| S05 · Names, mounts, and two traps | none | Tutorial-only. |
+| S06 · Cutting the books: a ruler | A19–A22, B14–B15 (BRIEF); B13 (the two pre-retrieval levers) | The tutorial applies it. `cli-container/12` captures B15's mid-word cut on the real book. Conflict 5. |
+| S07 · Recursive split and its hidden overlap | B16–B19 (BRIEF) | The tutorial applies part of it. Cutting at blank lines moves toward B19's chunks, one per section. The 200-character default overlap is tutorial-only (Conflict 5). |
+| S08 · Meaning as direction: embeddings | A24–A28, A40–A47 (BRIEF); B59–B60 | Same concept. The 256 numbers, `output_dimensionality` and the measured vector lengths are tutorial-only. |
+| S09 · Load: records, an index, a folder on your disk | A30–A38 (BRIEF); A26 (three ways to index data) | Same concept for why a vector database and why an index. A38's HNSW is the index Chroma builds. Records, collections, `load`'s full rebuild and the files on disk are tutorial-only. Conflict 6. |
+| S10 · Exit, and the index survives | none | Tutorial-only (persistence across a restart). |
+| S11 · Asking the database: rank and cut | A39, A48–A53 (BRIEF); A44–A45 | Same concept, with the numbers running the other way (Conflict 1). Conflict 7 shows up in the no-key failure. |
+| S12 · Filters come first | A54–A55 (BRIEF); A32 (the four-stage strip that V6 reuses) | Same concept, opposite order (Conflict 2). The `$contains` filter is not B42's keyword matching (Conflict 9). |
+| S13 · Chat: the prompt is the whole trick | A57–A62 (BRIEF); A6–A7, B68, B78 | Same concept. The tutorial applies it with one block missing (Conflict 3). The README promises more than the lecture does (Conflict 8). |
+| S14 · Semantic chunking: cut where meaning shifts | B13–B34 (BRIEF; the walk itself is B19–B33); A22 (the forward reference "discussed later") | Same concept, same ingredients, a different rule (Conflict 4). The API calls at `--chunk` are tutorial-only. |
+| S15 · Beyond naïve RAG: what the lecture adds | B6–B10, B35–B65 (BRIEF) | Lecture-only: the tutorial has no code for it. The tutorial's semantic chunking is the one lever it implements (B13). |
+| S16 · Tear down, a stale index, recap | B68–B76, A63 (BRIEF); B69–B72, B78 | Teardown and the stale index are tutorial-only. Self-RAG is lecture-only. The link to L06's agent is the series' own, and it needs a correction (Common 17). The recap answers the four questions of A11/A63. |
+| S06–S14 · the mini-map | A18, A19, A23, A24, A29, A30, A56, A57, A60, A61 (the pipeline, one box lit each time) | The tutorial applies it. The BRIEF's corner copy of V1 lights the active box, as the deck does. |
+| — not in the video | A1–A5, A15, A64; B1–B4, B11–B12, B35, B40–B41, B49–B50, B66–B67, B89 (title, logistics, outlines, dividers, closing pictures); B17, B20, B54, B56, B65, B71 (memes); B77, B79–B88 (Self-RAG's critique tokens at work and the worked example) | Lecture-only. B78's IsSUP is worth one tag in S13 (Gap 2). |
+
+### 2. Already in common
+
+| # | Concept | Scenes ↔ slides | Does the video's framing agree with the lecture's? |
+|---|---|---|---|
+| 1 | LLMs have four weaknesses, and RAG targets two | S01 ↔ A6–A7 | Yes: four chips, two lit. The lecture claims less than the README (Conflict 8). S13 and S16 should come back to the two chips left dim (Gap 2). |
+| 2 | Three roads: paste everything, fine-tune, use RAG | S01 ↔ A8–A10 | Yes. "Garbage" for the overfull prompt is A8's own word. "That's lecture 8" fills in A9's "upcoming lectures". |
+| 3 | RAG sits between the user and the LLM, and the model does not change | S02, S13 ↔ A12–A14, A61–A62 | Yes. S13's "no weights move; delete the collection and the knowledge is gone" goes one step past A62's "nothing new to be added". A12's arrow takes the question itself to the database, which the code does not do (Conflict 7). |
+| 4 | Two lanes share one embedding model and one database, in six numbered steps | S02 and the mini-map ↔ A16, B5 | Yes. V1 is A16 with B5's numbers 1–6, and like the deck it lights one box at a time. The BRIEF's rule "same model, same 256 numbers, both lanes" is A16's single tall box; B60 says it in words (Gap 1). |
+| 5 | Three phases, and the video's two parts | Parts 1–2, S02 ↔ B5–B6 | Yes. Part 1 is B5's red Indexing box; part 2 is its Retrieval and Augmentation & Generation boxes. "Indexing" must say which sense it means (Conflict 6). |
+| 6 | Why chunk at all | S06 ↔ A20–A21 | Yes. "So the model can focus" is A21's reason. The BRIEF adds the tutorial's second reason: a chunk is also what gets pasted into the prompt. |
+| 7 | Character splitting is the default, and it cuts words | S06 ↔ B14–B15 | Yes. B14 calls character splitting the default, and it is the README's first chunk command. The captured `…intended to ac` / `s she intended to accomplish…` is B15's `intelli` / `gence` on the real book. What happens at the cut differs (Conflict 5). |
+| 8 | Chunks should follow the document's own structure | S07, S14 ↔ B16–B19, B34 | Yes. The BRIEF's ladder (a ruler, then paragraph-aware scissors, then meaning) climbs toward B19's "optimal way". |
+| 9 | One vector per chunk; a sentence embedding is not a word embedding; close means similar | S08 ↔ A25, A27–A28 | Yes. The slides' bars of six to ten cells become the tutorial's 256 numbers. A25 describes a "BERT-like" encoder. Here the model is Google's `gemini-embedding-001` behind an API, and the video need not name an architecture. |
+| 10 | Cosine similarity, the personality game, and choosing a measure | S08 ↔ A40–A47 | Yes, and the tutorial makes the lecture's advice concrete. A45 recommends cosine for text embeddings, and `load()` asks for `hnsw:space: cosine` where Chroma's default would be L2. The captured vectors have lengths 0.369–0.402, not 1 (`recorded-embeddings/06`). That is exactly when A44–A47's choice matters: cosine ignores length, while L2 and the dot product do not (ponder 3). |
+| 11 | Relational databases can't search by meaning | S09 ↔ A31 | Yes. The BRIEF uses A31's own SQL line. |
+| 12 | Scanning every vector is slow, so build an index (HNSW) | S09 ↔ A33–A38 | Yes. V5's pointer walking 8,248 rows is A33–A36. The layered graph is our illustration of HNSW, the third of A38's three algorithms, which Chroma builds. The captured listing gives the real index's settings (`laptop/17`), and each loaded collection gets one index folder (`recorded-embeddings/04`). A37 shows no mechanism, so the BRIEF's "our illustration" label is right. |
+| 13 | Nearest neighbours, a ranking, a fixed K | S11 ↔ A39, A48–A53 | Yes on the mechanism: A53's "K is a predefined number" is `n_results=10`. The numbers run the other way (Conflict 1). The BRIEF's "every query returns exactly K results, relevant or not" goes past A53. B68's first limit, no guarantee of relevance, backs it. |
+| 14 | What metadata is | S09, S12 ↔ A54–A55 | Yes on what it is: A55's author, publication date and category match `book`, `author` and `year`. No on when filtering happens (Conflict 2). |
+| 15 | The final prompt has three parts, with a cheese expert behind it | S13 ↔ A57–A59 | Yes on the design. The tutorial's `SYSTEM_INSTRUCTION` (`cli.py:40-58`) is the same idea as A59's system prompt: a cheese specialist who answers from the text it is given. The tutorial puts the question first and the chunks after it. That is A59's order without the first block. The BRIEF's ghost card is A58's "Prompt" block, unplugged (Conflict 3). |
+| 16 | Semantic chunking's ingredients | S14 ↔ B21–B33 | Yes on the ingredients, no on the rule (Conflict 4). The ingredients match: sentences split at `.`, `?` and `!` (B21 ↔ `semantic_splitter.py:216`), a window of one sentence on each side (B23 ↔ `buffer_size=1`, `:113`), and cosine on embeddings (B21 ↔ `:56-85`). |
+| 17 | Deciding whether to retrieve | S16 ↔ B68, B72–B76 | Partly. The BRIEF shows L06's agent choosing a retrieval tool and calls Self-RAG "the same idea taken further". But the agent is forced to call a tool (`mode="any"`, `cli.py:449`). It always retrieves and only chooses *how*. Self-RAG's Retrieve token decides *whether* to retrieve, and whether to fetch more (B75–B76). Its critique tokens then check what came back (B78). The link is the series' own, since the slides never mention agents. Keep it, but say which one decides what. |
+| 18 | The open-book exam | S01 (the BRIEF cites B69), S16 ↔ B69–B72 | Partly. The series uses the open-book exam for RAG itself: a librarian hands over ten pages (digest C1). Deck B uses the same exam for another point. Student A looks things up only for unfamiliar topics. Student B looks up every topic, which is slower and invites confusion (B70, B72). This tutorial's `chat()` is student B. It retrieves ten chunks for every question, even an off-topic one (guide Ex 4). The image is fine for the opening, but don't tag it B69 in S01. Pay it off in S16 instead (Proposals). |
+| 19 | Advanced RAG's map and levers | S15 ↔ B6–B10, B13, B35–B65 | Yes. The BRIEF tags them "concept · not in the tutorial's code". Its re-ranking beat ties B59's bi-encoder vectors to the tutorial's 8,248 stored vectors. |
+| 20 | The four questions | S01, S16 ↔ A11, A63 | Yes. The BRIEF opens and closes on A11/A63's map, blurred, as the deck does. |
+
+### 3. Gaps (ranked by value to a student doing the tutorial)
+
+1. **One encoder, used at two different times (B59–B61).** B60's red box says outright what A16
+   only draws: the same encoder embeds the documents ahead of time and the query when it arrives.
+   B61 says why retrieval is fast: the heavy work is done up front, and a question costs one
+   embedding plus a comparison with the stored vectors. B61 also names the price: "information
+   loss", because the stored vectors never saw the question. That motivates re-ranking in S15.
+   For a student, this one idea explains three tutorial facts:
+   - the query and the chunks must use the same model and the same 256 numbers (guide Ex 6);
+   - `--embed` is the slow, paid step, while `--query` makes one call;
+   - the index can be reused after a restart.
+
+   The BRIEF uses B59–B60 only in S15. **Carry it in** S02 (the shared box's label) and S08 (the
+   moment `generate_query_embedding` lights the shared box from the query lane).
+2. **What RAG fixes and what it doesn't (A6–A7, B68, B78).**
+   - A7 claims two of A6's four problems for RAG: stale training data and missing domain knowledge.
+   - B68 lists what even advanced RAG does not guarantee: relevant chunks, an answer supported by
+     them, and retrieval only when it is needed.
+   - B78 names the check for the second one: IsSUP, "a hallucination check".
+
+   All of these show up in this tutorial:
+   - The README's `--query` returns ten chunks without the word "Tolminc" (S12).
+   - The system instruction that would keep the answer inside the chunks is never sent (S13).
+   - A6's fourth problem stays open. `chat()` pastes only the chunk texts (`cli.py:390`), not their
+     `metadatas`, so the model cannot say which book a fact came from.
+
+   The BRIEF shows A6–A7 as chips in S01 and B68–B76 in S16, but it never ties them to the
+   tutorial's own output. **Carry it in** S13 and S16. In S13, the grounding test is an IsSUP check
+   done by eye, and the prompt has no sources. S16 closes the recap with B68's three limits.
+3. **Rare words carry the most weight (B42–B43).** B43 gives the TF-IDF intuition: a word frequent
+   everywhere ("the") says little, and a rare one ("GPT-3") says a lot. BM25 builds on it. The
+   tutorial's own question has such a word. Only 3 of the 8,248 char-split chunks contain "Tolminc"
+   (`recorded-embeddings/08`). A keyword retriever would very likely rank those three near the top
+   (our expectation, not run). The vector side instead finds cheese-making passages that share no
+   word with the question. The BRIEF's S15 uses only the lecture's Chester example and never names
+   TF-IDF. **Carry it in** S15's hybrid-search beat.
+4. **Three ways to index data (A26): lexical, graph, semantic.** The tutorial is semantic, plus a
+   lexical *filter* (`where_document`, S12). Naming the routes gives S12's `$contains` a place,
+   and keeps it apart from hybrid search (Conflict 9). **Carry it in** S09 (a GREY chip beside the
+   index) or S12.
+5. **What a knowledge base can be (A17): websites, PDFs, Word files.** The tutorial's knowledge base
+   is eleven `.txt` books. Ten of them are still wrapped in Project Gutenberg's licence text (guide
+   E18). A team's Milestone 2 corpus will look like A17, and every format needs extracting and
+   cleaning before chunking. **Carry it in** S01 (a GREY strip beside the eleven books) or S06,
+   where the licence text first appears.
+6. **A vector column in an ordinary database (A38's callout).** PostgreSQL and others now offer a
+   vector type. That helps later, when a team picks a store for its project; the tutorial does not
+   need it. **Carry it in** S09 as a GREY note on the index beat, with no narration.
+
+### 4. Conflicts
+
+| # | The slides say | The tutorial and the captures | Current | How the video should put it |
+|---|---|---|---|---|
+| 1 | **Scores vs distances.** A48–A53 give each stored vector a similarity score (0.57, 0.77, 0.43, 0.93); higher is better, and the list sorts from high to low. A45 gives cosine a range of −1 to 1. | With `hnsw:space: cosine`, Chroma returns `distances`: 1 − cosine similarity, from 0 to 2, where smaller is closer. A chunk's own vector comes back at 0.0000 and its neighbours at 0.0804–0.1627 (`recorded-embeddings/09`). `semantic_splitter.py:74` does the same conversion. | Both. They give the same ranking, read in opposite directions. | S11, as the BRIEF plans: after A53's sort, each score flips to 1 − score and the "better" arrow turns upside down. "The lecture ranks by similarity: higher is closer. Chroma reports distance, one minus the similarity: lower is closer. Same order, read the other way." |
+| 2 | **When filtering happens.** A54–A55 put metadata filtering in Post Processing, after Querying. A32's strip shows that order. | `where` and `where_document` apply before the nearest-neighbour search. Top-k then fills its 10 slots from whatever survives: 8,248 → 1,355 → 64 candidates, none containing "Tolminc" (`recorded-embeddings/08`). With a stand-in query vector, the filtered top 10 sit at 0.2833–0.3123, against 0.0000–0.1627 unfiltered (`09`). | Chroma's order, for this tutorial | S12, as the BRIEF plans: on V6's strip, the filter box slides from Post Processing to before Querying. "In the lecture, filtering tidies up the results. In Chroma it comes first, and top-k picks among what's left, however far away." |
+| 3 | **The system prompt.** A58–A59: the final prompt is a system prompt, the query and the context. A59's system prompt makes the model a cheese expert. | The tutorial defines a cheese-specialist `SYSTEM_INSTRUCTION` (`cli.py:40-58`). But `generate_content(model=…, contents=INPUT_PROMPT)` sends no `config` (`:394-396`), so the model gets only the question and ten chunks. Last year's branch sent it (`pipenv-branch/cli.py:62-64`). No capture shows a chat: without a key, `--chat` stops at the question's embedding (`cli.py:373`). | The code, as it runs today. The slides show the intended design, and the fix is one argument. | S13, as planned (V7's unplugged cable). "The lecture's final prompt has three parts. This code writes the first one, and then never sends it." Then the fix, tagged "not in the repo". |
+| 4 | **The semantic-chunking rule.** B21–B33: an anchor sentence with a window of size 1. Cosine similarity between the anchor and each neighbour. Neighbours above a fixed 0.8 join the chunk (0.89 and 0.85 join; 0.68 does not), then the anchor jumps ahead. | `SemanticChunker` (`cli.py:209-210`) gives *every* sentence a window of ±1 (`buffer_size=1`) and embeds each three-sentence window. It measures the cosine *distance* between consecutive windows (`semantic_splitter.py:56-85`). It cuts wherever that distance is above the 95th percentile of all of them (`:92`, `:137-141`, `:239-243`). So about 5 % of the gaps become cuts, whatever their size. It needs the embedding API already during `--chunk` (`cli-container/60`). | The code. The slides teach the intuition. | S14, as planned (V8): the anchor walk plays small, then the code's rule replaces it. "The slides join sentences while their similarity stays above 0.8. This code measures every gap and cuts the widest five percent." In the code's units, B25's similarity of 0.89 is a distance of 0.11. |
+| 5 | **Overlap.** On B14–B18 the character-split pieces sit end to end: `"…artificial intelli"`, then `"gence…"`. The 200-character paper chunks do the same. Neither deck mentions overlap. | `char-split` repeats 20 characters at each cut. Chunk 0 ends `…intended to ac`, and chunk 1 starts `s she intended to accomplish…`, so the cut word is whole in the next chunk (`cli-container/12`). `recursive-split` inherits a hidden overlap of up to 200 characters: chunk 1 starts again at the chapter heading (`15`). The README says "small, overlapping" (`README.md:17`, `:93`) and gives no numbers. | The captures | S06 (the 20-character band) and S07 (the 200). "The lecture's pieces sit end to end. This splitter repeats twenty characters at each cut, so a word cut off at the end of one chunk is whole in the next." |
+| 6 | **"Indexing" means three things.** On A32–A38 it is building a search structure over the vectors. On B5–B10 it is the whole offline phase. On B13–B34 it is better chunking. | The README calls the offline phase "Chunk -> Embed -> Load" (`README.md:5`) and never says "indexing". Chroma's index is HNSW (`hnsw:space`, `laptop/17`). | All three senses; the README doesn't use the word | Name the sense each time, as the BRIEF does in S02 and S09. S02: "indexing = the whole top lane (B5)". S09: "the index = HNSW, A37's search structure". S14: "the lecture files semantic chunking under indexing (B13)". |
+| 7 | **Who embeds the question.** On A12, the RAG box sends the *question* to the vector database and gets texts back. | The code embeds the question at Google first (`generate_query_embedding`, `cli.py:318-319`) and passes Chroma only numbers (`query_embeddings=`). Without a key, `--query` stops at that step, before it ever reaches Chroma (`cli-container/40`). Chroma could embed text itself: each collection carries its own default embedding function (`laptop/17`). That is a different model, so passing `query_texts` would put the question in the wrong space (guide Ex 6). | A16 and the code. A12 is a first sketch, and A16 refines it. | S02: as V1 grows out of A12, the BLUE embedding box slides in between the question and the cylinder, labelled "Chroma gets numbers, not words". S11 repeats it at the no-key stop. |
+| 8 | **How much RAG guarantees.** A7 claims two of the four problems: stale data and missing domain knowledge. B68 says even advanced RAG guarantees neither relevant chunks nor a supported answer. | The README promises answers "grounded in your documents, not its own training data" (`README.md:21`; also `:194`). The code sends no instruction to stay inside the chunks (Conflict 3) and sets no distance threshold. It also leaves the sources out of the prompt (`cli.py:390`). | The lecture's modest claim describes what this code does | S13: "Retrieval hands the model your text. Whether it sticks to it is a separate question; the lecture calls that check IsSUP." (Gap 2) |
+| 9 | **Keywords: ranking vs filtering.** On B42–B48, hybrid search *ranks* with a keyword retriever (BM25) and a vector retriever, then fuses the two rankings (RRF). | The active variant is commented "embedding value + lexical search filter" (`cli.py:352`). `where_document={"$contains": "Italian"}` is a case-sensitive substring *mask*, applied before the vector ranking. It never ranks by keywords. | Both exist. They are different tools with similar names. | S12 says it in one clause; the BRIEF already has "a keyword filter, not keyword ranking". S15's hybrid beat starts from it: "The tutorial uses a word to filter. Hybrid search uses words to rank." |
+
+Not counted as conflicts:
+- **Lecture number.** The slides say "Lecture 5"; the course schedule says "Lecture 4" (digest E17).
+  The series follows the slides.
+- **B59 vs B60.** B59's callout says one encoder for the query and another for the documents. B60
+  says the two are the same encoder, used at different times. The tutorial follows B60: one model,
+  with no `task_type` (digest E16). Draw B60's version.
+- **The logo on A12.** A12's LLM box carries an OpenAI-style logo, but the tutorial's LLM is
+  `gemini-3.1-flash-lite`. Draw a plain BLUE box.
+- **"BERT-like" (A25).** This is a general picture of an embedding model, not a claim about
+  `gemini-embedding-001`.
+- **A45's "normalised embeddings" row.** The tutorial's vectors are not normalised (0.369–0.402).
+  The row still recommends cosine, which is what the tutorial uses (Common 10).
+- **B21's separators "(.,?,!)".** They read as period, question mark and exclamation mark, the same
+  three as the code's regex and its comment (`semantic_splitter.py:118`, `:216`).
+- **B53's `top_K = 25` vs `n_results=10`.** The 25 is an example size, not a default.
+- **Slips listed under Terms.** A62's title, "Euclidian", A54's "pre-processing step", B33's
+  "token" and B79's missing summary are not copied.
+
+### 5. Proposals
+
+Each item is marked **do** (clear value, low risk) or **nice**.
+
+**General**
+- **Tags.** `lecture_ref(5, "A16–A19")` prints "Lecture 5 · slides A16–A19"
+  (`explainer/devops.py:176`). S01 says once that A is the main deck and B the supplement.
+  - Below I use the form this task asked for, "Lecture 05 · slides …". The series should pick one
+    form for all lectures, as L03's SLIDES.md also noted.
+  - Use one tag per scene. Show it from the beat's first words for at least 3 s.
+  - Never show a slide, a meme, or A11's chart itself; redraw them.
+- **Corrections to the BRIEF (do), for its mapping pass.**
+  1. S01: drop "B69" from the open-book line, or move it to S16's payoff (Common 18).
+  2. S16: keep the agent → Self-RAG link, but sharpen it. The agent picks *which* retrieval to
+     make: it must call a tool (`mode="any"`, `cli.py:449`). Self-RAG also decides *whether* to
+     retrieve, and then checks the result (B75–B78) (Common 17).
+  3. Widen these ranges:
+     - S02 + B59–B60;
+     - S08 + B60;
+     - S12 + A32;
+     - S13 + A6, B68, B78;
+     - S15 + B43, for the Tolminc beat.
+  4. The BRIEF's own list of differences between the slides and the tutorial has five entries.
+     Add Conflict 5 (overlap; S06–S07), Conflict 7 (A12's arrow; S02, S11), Conflict 8 (the README's
+     promise; S13) and Conflict 9 (filter vs ranking; S12, S15).
+- **Narration budget.** The BRIEF plans ~4,240 words against a cap of 4,300, which leaves about 60
+  words for bridges.
+  - Keep at most three: S06 (overlap, ~20 words), S13 (sources and grounding, ~18) and S16 (whether
+    vs which, ~17).
+  - Each bridge needs its line in `i18n/zh/narration/`.
+  - Tags and diagram labels need no narration.
+- **Terms (do).** Use the lecture's names where the tutorial has none, and the tutorial's where
+  they are more exact.
+  - **Knowledge base:** the 11 books.
+  - **Chunking.**
+    - Chunk, chunking.
+    - Character splitting (`char-split`), semantic chunking (`semantic-split`).
+    - "Overlap" is the tutorial's word; the slides have no word for it.
+  - **Embedding.**
+    - Embedding model.
+    - Sentence embedding (not a word embedding).
+    - Query vector. Deck A says "embedded query", B5 "query embedding".
+  - **Database.**
+    - Vector database (Chroma).
+    - Collection and record are tutorial-only words; say so once.
+    - Index (HNSW). Say "indexing" only with its sense (Conflict 6).
+  - **Retrieval.**
+    - Nearest neighbour.
+    - Top-K = `n_results=10`.
+    - Similarity (the lecture) vs distance (Chroma) (Conflict 1).
+    - Metadata, metadata filtering. Post-processing is optional, and this tutorial has none.
+  - **Prompt.** Final prompt = system prompt + query + context.
+  - **The bigger picture.**
+    - Naïve RAG = the README's five steps. Advanced RAG, pre-retrieval, post-retrieval.
+    - Bi-encoder, cross-encoder, re-ranker ("another model", not B58's "just another LLM").
+    - Hybrid search, BM25, TF-IDF, RRF.
+    - Self-RAG, Retrieve token, critique tokens (IsREL, IsSUP, IsUSE).
+  - Spell it "Euclidean", not A44's "Euclidian".
+- **Recap card (nice).** The five recap questions can each carry a slide number: Q1 A16, B5; Q2
+  none; Q3 B14–B18; Q4 A54–A55; Q5 A58–A59.
+
+**Per scene.** S03–S05 and S10 have no lecture ground and get no tag.
+- **S01.**
+  - do · "Lecture 05 · slides A6–A10", at the four chips and the three roads.
+  - Diagram:
+    - light only A7's two chips (stale data, domain knowledge);
+    - leave "hallucination" and "no sources" dim: S13 and S16 come back to them (Gap 2);
+    - keep the open-book exam as the series' image, untagged (Common 18).
+  - nice · A17's three source icons as a GREY strip beside the eleven `.txt` books, captioned "a
+    project's knowledge base: websites, PDFs, Word files" (Gap 5).
+- **S02.**
+  - do · "Lecture 05 · slides A12–A16, B5", as V1 grows out of A12.
+  - Diagram do · A12's arrow takes the question straight to the database. As V1 replaces it, the
+    BLUE embedding box slides in between, labelled "Chroma gets numbers, not words" (Conflict 7).
+  - do · Label the shared box with B60's point in our words: "one model · chunks before,
+    questions later" (Gap 1).
+  - Say "indexing = the whole top lane", in B5's sense.
+- **S06.**
+  - do · "Lecture 05 · slides B14–B15", at the mid-word cut.
+  - Diagram do · B15's five 50-character pieces, small and end to end, beside the captured cut
+    with its 20-character band (Conflict 5).
+  - nice, a bridge (~20 words): "The lecture's pieces sit end to end. This splitter repeats twenty
+    characters, so the cut word is whole in the next chunk."
+- **S07.**
+  - do · "Lecture 05 · slides B16–B19", at "follow the document's own structure".
+  - Diagram nice, in three steps:
+    - B18's two red marks: a word cut in half, and one section running into the next section's
+      heading;
+    - then recursive's cuts landing on blank lines;
+    - B19's section-shaped chunks as a GREY ghost target.
+- **S08.**
+  - do · "Lecture 05 · slides A40–A47", at the personality game.
+  - nice · A second tag, "Lecture 05 · slide B60", when `generate_query_embedding` lights the
+    shared box from the query lane (Gap 1).
+  - Ponder 3's answer can point back to A45–A47's "magnitude" column: the vectors' lengths,
+    0.369–0.402, are where that column matters (Common 10).
+  - Keep A28's NOTE: a sentence embedding, not a word embedding.
+- **S09.**
+  - do · "Lecture 05 · slides A33–A38", from the slow scan to the index.
+  - Diagram nice · After "our illustration of HNSW", a small GREY card tagged `recorded` with the
+    real index's settings from `laptop/17`: `space cosine · max_neighbors 16 · ef_search 100`. It is
+    the one place where a viewer sees A38's HNSW as Chroma actually configures it.
+  - nice · A26's three routes as a chip, "lexical · graph · semantic", with "this tutorial:
+    semantic, plus a lexical filter in S12" (Gap 4).
+  - nice · A38's PostgreSQL note as a GREY line (Gap 6).
+- **S11.**
+  - do · "Lecture 05 · slides A48–A53", at the rank and cut.
+  - Diagram do · The planned flip, with both scales: similarity from −1 to 1 (A45), and distance
+    from 0 to 2, where 0 means the same direction (the captured 0.0000) (Conflict 1).
+  - At the no-key stop, say "it fails before it reaches Chroma: Chroma only takes vectors"
+    (Conflict 7).
+- **S12.**
+  - do · "Lecture 05 · slides A54–A55", at the filter beat.
+  - Diagram: V6's A32 strip, as planned (Conflict 2).
+  - Say A54's definition once: metadata is data about the data.
+  - One clause, already planned: `$contains` filters by a word; ranking by words comes in S15
+    (Conflict 9).
+- **S13.**
+  - do · "Lecture 05 · slides A57–A59", at the three blocks.
+  - Diagram do · On the ghost card, write the tutorial's own persona in a few words ("specialized
+    in cheese knowledge", `cli.py:41`), beside A59's "Cheese Expert": the same idea, unplugged
+    (Conflict 3).
+  - do · At the grounding test, a GREY tag "IsSUP · slide B78", captioned "a hallucination check,
+    done by eye" (Gap 2).
+  - nice · Draw each chunk card with its `book` label, greyed out as the card enters the prompt:
+    "the prompt drops the source" (`cli.py:390`). S01's "no sources" chip stays dim (Gap 2).
+  - nice, a bridge (~18 words): "Retrieval hands the model your books. Nothing here makes it stick
+    to them, or say which book it used."
+- **S14.**
+  - do · "Lecture 05 · slides B21–B33", at the anchor walk.
+  - Diagram do · Three GREEN ticks for what the slides and the code share: the split at `.`, `?`
+    and `!`; window size 1 = `buffer_size=1`; cosine on embeddings. Then two swaps for what
+    differs: a fixed 0.8 becomes the 95th percentile, and a jumping anchor becomes every gap
+    (Common 16, Conflict 4).
+  - nice · Convert B25's similarity of 0.89 to the code's distance of 0.11 on screen.
+- **S15.**
+  - do · "Lecture 05 · slides B6–B10", at the frame. The three beats can carry small inline
+    numbers (B36–B39, B42–B48, B51–B65) instead of more tags.
+  - Hybrid beat, do · Open with the tutorial's own rare word: "Tolminc" is in 3 of 8,248 chunks
+    (`recorded-embeddings/08`). B43's IDF says that rarity is what makes it a strong keyword. The
+    vectors, meanwhile, find cheese-making text that never uses the word (Gap 3). Then the Chester
+    example and RRF, as planned.
+  - nice, verify first · The captured collection schema contains a `sparse_vector_index` with
+    `"bm25": false` (`laptop/17`). That suggests newer Chroma servers can index keywords; the
+    tutorial's client, 1.1.0, does not use this. Check Chroma's documentation before saying more
+    than "there's a switch, and it's off".
+  - Re-ranking beat: B53's 25 candidates against the tutorial's 10 is a choice of K, not a rule.
+- **S16.**
+  - do · "Lecture 05 · slides B68–B76", at Self-RAG. The recap's map carries "slide A63".
+  - Framing do (Common 17, 18): "Our chat looks things up for every question, like student B in
+    the lecture's open-book exam (B69–B72)." Then a bridge (~17 words): "The L06 agent picks which
+    lookup to make; Self-RAG also decides whether to look, and checks the result."
+  - do · B68's three limits as three ticks on the recap, each pointing to a scene:
+    - relevance: S12's ten Italian-cheese chunks;
+    - support: S13's IsSUP check;
+    - needless retrieval: every question retrieves.
