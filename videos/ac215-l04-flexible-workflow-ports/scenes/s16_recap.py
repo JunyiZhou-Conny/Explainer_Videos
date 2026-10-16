@@ -967,7 +967,7 @@ class Recap(VoiceScene):
             self.play(Create(req), run_time=0.3)
             vo.wait_until("without a rebuild")
             self.play(brw.lines[0].animate.set_color(TURN), FadeIn(no_rb, shift=LEFT * 0.1), run_time=0.4)
-            self.wait(1.0)
+            self.wait(1.6)
 
         # ============================================================ 6 · down; images remain; costs nothing
         rc515 = readme_chip("README.md · line 515", "The built images remain.")
@@ -1127,8 +1127,8 @@ class Recap(VoiceScene):
         assert fc.get_left()[0] > X_L - 0.05 and fc.get_right()[0] < X_R + 0.05, (fc.get_left(), fc.get_right())
         assert tz.get_bottom()[1] > fc.get_top()[1] + 0.2, (tz.get_bottom()[1], fc.get_top()[1])
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(g5, shift=UP * 1.2), FadeOut(VGroup(title, t_ul)), run_time=0.7)
-            self.play(Create(tz.frame), FadeIn(tz.tag), run_time=0.6)
+            self.play(LaggedStart(AnimationGroup(FadeOut(g5, shift=UP * 1.0), FadeOut(VGroup(title, t_ul))),
+                                  AnimationGroup(Create(tz.frame), FadeIn(tz.tag)), lag_ratio=0.5), run_time=1.1)
             vo.wait_until("a command-line container")
             self.play(FadeIn(VGroup(tz.cli, tz.cli_label)), FadeIn(VGroup(tz.db, tz.db_label)),
                       Create(tz.rail), FadeIn(tz.rail_label), FadeIn(tz.plugs), run_time=0.8)

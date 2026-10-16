@@ -447,7 +447,8 @@ class StepFrom(VoiceScene):
         cap.next_to(stack.floor, DOWN, buff=0.12)
 
         sz_targets = VGroup(*[mono(s, 20, SYSTEM) for s in SIZES]).arrange(DOWN, buff=0.14, aligned_edge=RIGHT)
-        sz_targets.move_to([0.75 - sz_targets.width / 2, 0.95, 0]).align_to([0.75, 0, 0], RIGHT)
+        # right edge at 1.4: the total under the list stays well apart from the stack's caption
+        sz_targets.move_to([1.4 - sz_targets.width / 2, 0.95, 0]).align_to([1.4, 0, 0], RIGHT)
         rule = Line(sz_targets.get_corner(DR) + np.array([0.05, -0.12, 0]),
                     sz_targets.get_corner(DR) + np.array([-1.3, -0.12, 0]), color=SYSTEM, stroke_width=2)
         total = label("≈ 47.6 MB compressed", 22, SYSTEM)
