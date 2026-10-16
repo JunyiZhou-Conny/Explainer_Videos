@@ -140,6 +140,7 @@ from manim import (
     Transform,
     VGroup,
     Wiggle,
+    smooth,
     there_and_back,
 )
 
@@ -869,7 +870,8 @@ class RunComponents(VoiceScene):
             old_pre, old_end = glyph_range(ln, 0, k), glyph_range(ln, k, k + 1)
             new_pre, new_path, new_end = glyph_range(ln2, 0, k), glyph_range(ln2, k, n2 - 1), glyph_range(ln2, n2 - 1, n2)
             self.play(FadeOut(cap, rate_func=lambda a: min(1.0, 2.5 * a)), ReplacementTransform(old_pre, new_pre),
-                      ReplacementTransform(old_end, new_end), FadeIn(new_path, shift=RIGHT * 0.3),
+                      ReplacementTransform(old_end, new_end, rate_func=lambda a: smooth(min(1.0, a / 0.6))),
+                      FadeIn(new_path, shift=RIGHT * 0.3, rate_func=lambda a: max(0.0, (a - 0.45) / 0.55)),
                       FadeIn(ic_lap), FadeIn(ic_ctr), FadeIn(pen, shift=DOWN * 0.15), FadeIn(ed), run_time=0.5)
             self.remove(ln, new_pre, new_path, new_end)
             self.add(ln2)

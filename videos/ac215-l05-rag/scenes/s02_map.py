@@ -21,11 +21,12 @@ Beats (script.md "## S02", one voiceover block each):
 3. The regions dim to outlines (tabs and lecture tag leave). The README's two step titles
    (README.md lines 5 and 9) label the lanes; five YELLOW flag chips (README.md lines 17–21 as
    text, no emoji) drop under their boxes as named, each box pulsing as its chip lands.
-4. The top lane pulses once, slowly ("once · offline · slow"); the bottom lane pulses quickly
-   three times ("every question"). The shared BLUE box gets a YELLOW edge and a rule card writes
-   above it: "same model · same 256 numbers · both lanes" / "chunks before, questions later". A
-   small RED "what if" inset (tag illustration): a different BLUE box in a bottom lane sends the
-   query vector off, away from the chunks' vectors, into an empty region; RED cross.
+4. The top lane pulses once, slowly ("once · offline · slow" under it); the bottom lane pulses
+   quickly three times ("every question"). The shared BLUE box gets a YELLOW edge and a rule card
+   writes above it: "same model · same 256 numbers · both lanes" / "chunks before, questions
+   later". A small RED "what if" inset right of the top lane's end (tag illustration): a
+   different BLUE box, "another model", feeds a sketch of the space in which its question vector
+   points away from the GREEN chunk vectors, into an empty region; RED cross.
 5. V1's second layer: TEAL "CLI container" around the ruler ("no network needed"); BLUE dashed
    "Google" outlines around the embedding model and the LLM, a GOLD tag "pay per use · your key"
    and a GREY note "no VM, no bucket: nothing keeps running"; TEAL "Chroma container" around the
@@ -67,8 +68,10 @@ from manim import (
     UP,
     AnimationGroup,
     Arrow,
+    Circle,
     Create,
     DashedLine,
+    DashedVMobject,
     Dot,
     FadeIn,
     FadeOut,
@@ -149,10 +152,10 @@ class TwoLanes(VoiceScene):
 
         # ========================================================== 0. A12 in five boxes
         lr = lref("A12–A14")
-        u_pos = np.array([X["user"], YB, 0])
-        g_pos = np.array([-1.2, YB, 0])
-        c_pos = np.array([-1.2, 1.55, 0])
-        l_pos = np.array([3.6, 1.55, 0])
+        u_pos = np.array([-5.0, YB, 0])
+        g_pos = np.array([-0.8, YB, 0])
+        c_pos = np.array([-0.8, 1.55, 0])
+        l_pos = np.array([4.2, 1.55, 0])
 
         user = person(LAPTOP, 0.7).move_to(u_pos)
         u_lab = sans("user", 20, S.GREY).move_to(u_pos + DOWN * 0.74)
@@ -221,7 +224,8 @@ class TwoLanes(VoiceScene):
         flash = Line([em_l, YB, 0], [em_r, YB, 0], color=LOOKUP, stroke_width=8)
         nums = card([sans("the database gets", 20, INK), sans("numbers, not words", 20, LOOKUP)], LOOKUP)
         nums.move_to([X["database"] + 0.25, -2.45, 0])
-        nums_link = Line(nums.get_top(), [X["database"], db.get_bottom()[1] - 0.08, 0], color=LOOKUP,
+        nums_link = Line([X["database"], nums.get_top()[1], 0], [X["database"], db.get_bottom()[1] - 0.08, 0],
+                         color=LOOKUP,
                          stroke_width=2.5)
 
         with self.voiceover(SAY[1]) as vo:
@@ -308,30 +312,36 @@ class TwoLanes(VoiceScene):
                           pulse(m.parts[bx]), run_time=0.55)
 
         # ========================================================== 4. two rules
-        once = grey_tag("once · offline · slow").move_to([4.55, YT, 0])
+        once = grey_tag("once · offline · slow").move_to([-4.6, YT - 0.88, 0])
         every = grey_tag("every question").move_to([-3.75, YB - 0.52, 0])
         rule = card([sans("same model · same 256 numbers · both lanes", 22, INK),
                      sans("chunks before, questions later", 20, S.GREY)], TURN)
         rule.move_to([-1.75, 2.62, 0])
-        # the "what if" inset: a different model sends the query off, away from the chunks
-        wf = box(4.3, 1.2, ERR, dashed=True, stroke=3).move_to([2.95, -2.97, 0])
+        # the "what if" inset, right of the top lane's end: another model puts the question where
+        # no chunk is
+        wf = box(3.6, 2.45, ERR, dashed=True, stroke=3).move_to([4.75, 1.72, 0])
         wt = tag("what if", ERR).move_to(wf.get_corner(UP + LEFT) + RIGHT * 0.75)
-        wi = illustration_tag().move_to(wf.get_corner(UP + RIGHT) + LEFT * 1.05)
-        q_in = arrow(wf.get_left() + RIGHT * 0.2 + DOWN * 0.05, wf.get_left() + RIGHT * 0.65 + DOWN * 0.05, LOOKUP)
-        other = model_box("another model", 1.0, 0.55).next_to(q_in, RIGHT, buff=0.08)
-        org = np.array([other.get_right()[0] + 0.5, wf.get_y() - 0.05, 0])
-        o_dot = Dot(org, radius=0.04, color=S.GREY)
-        chunks = vec_glyph(3, DATA, 0.5, spread=26, base=38, stroke=3.5)
-        chunks.shift(org - chunks[1].get_start())
-        q_off = arrow(org, org + 0.5 * np.array([np.cos(np.radians(-40)), np.sin(np.radians(-40)), 0]), LOOKUP,
-                      stroke=3.5, tip=0.14)
-        x_off = cross_mark(0.22, ERR).move_to(q_off.get_end() + RIGHT * 0.28 + UP * 0.05)
-        inset = VGroup(wf, wt, wi, q_in, other, o_dot, chunks, q_off, x_off)
+        wi = illustration_tag().move_to(wf.get_corner(DOWN + LEFT) + RIGHT * 1.0)
+        other = model_box("another\nmodel", 1.0, 0.7).move_to([3.78, 1.72, 0])
+        ring_ = Circle(radius=0.68)
+        space = DashedVMobject(ring_, num_dashes=30, dashed_ratio=0.5).set_stroke(S.GREY, 2)
+        space.move_to([5.65, 1.72, 0])
+        o = space.get_center()
+        feed = arrow(other.get_right() + RIGHT * 0.06, space.get_left() + LEFT * 0.06, LOOKUP)
+        chunks = vec_glyph(3, DATA, 0.52, spread=34, base=128, stroke=3.5)
+        chunks.shift(o - chunks[1].get_start())
+        c_lab = sans("chunks", 20, DATA).move_to(o + np.array([-0.62, 0.86, 0]))
+        d = np.array([np.cos(np.radians(-38)), np.sin(np.radians(-38)), 0])
+        q_off = arrow(o, o + 0.52 * d, LOOKUP, stroke=3.5, tip=0.14)
+        x_off = cross_mark(0.2, ERR).move_to(o + 0.75 * d)
+        q_lab = sans("question", 20, LOOKUP).move_to(o + np.array([0.35, -0.95, 0]))
+        o_dot = Dot(o, radius=0.04, color=S.GREY)
+        inset = VGroup(wf, wt, wi, other, feed, space, o_dot, chunks, c_lab, q_off, q_lab, x_off)
 
         with self.voiceover(SAY[4]) as vo:
             self.play(*m.parts_out("lane1", "lane2", *RagMap.FLAGS, *RagMap.REGIONS), FadeOut(src), run_time=0.7)
             vo.wait_until("The top lane runs once")
-            self.play(FadeIn(once, shift=LEFT * 0.15), run_time=0.4)
+            self.play(FadeIn(once, shift=RIGHT * 0.15), run_time=0.4)
             self.play(m.pulse_lane("top", TURN, run_time=2.4))
             vo.wait_until("The bottom lane runs")
             self.play(FadeIn(every, shift=RIGHT * 0.15), run_time=0.4)
@@ -341,9 +351,10 @@ class TwoLanes(VoiceScene):
             self.play(m.light("embedding"), FadeIn(rule.frame), Write(rule.rows[0]), run_time=1.1)
             self.play(FadeIn(rule.rows[1], shift=UP * 0.08), run_time=0.6)
             vo.wait_until("or the question and the chunks")
-            self.play(Create(wf), FadeIn(wt), FadeIn(wi), run_time=0.6)
-            self.play(GrowArrow(q_in), FadeIn(other), FadeIn(o_dot), FadeIn(chunks), run_time=0.6)
-            self.play(GrowArrow(q_off), run_time=0.5)
+            self.play(Create(wf), FadeIn(wt), FadeIn(wi), FadeIn(other), run_time=0.6)
+            self.play(Create(space), FadeIn(o_dot), FadeIn(chunks), FadeIn(c_lab), run_time=0.6)
+            self.play(GrowArrow(feed), run_time=0.35)
+            self.play(GrowArrow(q_off), FadeIn(q_lab), run_time=0.5)
             self.play(Create(x_off), run_time=0.4)
 
         # ========================================================== 5. where each box runs
