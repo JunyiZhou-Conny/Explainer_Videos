@@ -26,7 +26,8 @@ Beats (script.md "## S07", one voiceover block each):
     TEAL badge + box, its 24.8s tag YELLOW; generate_text/Dockerfile · line 4 as a one-line chip in
     the band, GREY note "build-essential only · no ffmpeg" beside the command; "Building 52.6s"
     underlined. TEAL frame, app@45263bb6ca36:/app$, `python cli.py --help` -> 31 lines 28–37;
-    README chip generate_text/README.md · lines 114–123 with a GREEN tick "identical".
+    README chip generate_text/README.md · lines 114–123 with a GREEN tick "identical"; the block
+    holds 1.3 s after the narration so help and the chip can be compared.
  5  TRACKER QB/2: the terminal clears; `python cli.py --download` -> mega-generate_text/02 lines
     2–3, …, 11–12, …, 52 (RED, tag "recorded without a key"). TRACKER QB/3: `python cli.py
     --generate` -> 03 lines 2–3; GREY chip "exit status 0 · from the capture" beside it. On the
@@ -44,9 +45,10 @@ Beats (script.md "## S07", one voiceover block each):
     ../synthesis_audio_en`; `./docker-shell.sh` -> 40 lines 4, 14–17, 24, 26–27; "Building 8.2s"
     underlined; "CACHED [2/5]" boxed GREEN, tag "same as generate_text"; TEAL frame,
     app@ba0b1df0eadc:/app$, `python cli.py --help` -> 40 lines 28–33: line 33 RED with the GREY
-    tag "cli.py left unedited on purpose"; the assert line flashes.
- 9  TRACKER QC/1 · extra. The TEAL terminal shrinks to 7 rows; a second terminal (4 rows) opens
-    on ~ (flashing YELLOW, "new terminal: cd here first"), then …/synthesis_audio_en$. Title-bar
+    tag "cli.py left unedited on purpose"; the assert line flashes; then the TEAL terminal
+    shrinks to 7 rows (room for beat 9's second terminal; nothing new appears).
+ 9  TRACKER QC/1 · extra. A second terminal (4 rows) opens on ~ (flashing YELLOW, "new terminal:
+    cd here first", ~1.2 s), and that prompt becomes …/synthesis_audio_en$ (a transform). Title-bar
     icons: cli.py (laptop) and /app/cli.py (container). A pencil edits cli.py ("in your editor"):
     both icons blink at the same instant; `git diff cli.py` (extra) -> 41 lines 16–17. The TEAL
     terminal: `python cli.py --help` -> mega-synthesis_audio_en/02 lines 2–4, …, 55 (wrapped):
@@ -69,12 +71,15 @@ Beats (script.md "## S07", one voiceover block each):
     `--download`, `--synthesis` (no notes: the card replaces the terminal at once). The terminal
     gives way to the static GREY card: per folder the
     flags typed after `python cli.py`, and "with your key, look for" (message, cli.py line, bucket
-    folder), footer "bucket looks empty? …"; ▶ your turn + GREY note "with your key".
+    folder), footer "bucket looks empty? …"; ▶ your turn + GREY note "with your key"; on
+    "checking the bucket" the five bucket folders flash YELLOW one after the other.
 13  Card 1 (erratum): CODE(translate_text/cli.py: 64) with "es" RED, over CODE(synthesis_audio/
     cli.py: 48–49) (comment cut) with fr-FR BLUE; GREEN fix chip target_language="fr" + GREY tag
-    "you set it in Before you run, step 2". Card 2 (erratum): GREY caption "optional ElevenLabs
-    bonus: cli_11.py looks for its key file inside /app" and the GREEN fix chip (header
-    synthesis_audio/cli_11.py · line 30). No ▶. A 1.2 s hold, then fade out to an empty frame.
+    "you set it in Before you run, step 2" (pulses on "that's why you switched it"). Card 2
+    (erratum): GREY caption "optional ElevenLabs bonus: cli_11.py looks for its key file inside
+    /app" (/app flashes RED on "reads its key from inside") and the GREEN fix chip (header
+    synthesis_audio/cli_11.py · line 30). Each card's frame grows as its parts arrive. No ▶. A
+    1.2 s hold, then fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - Beat 0: the tag "recorded without a key" is pinned beside the error's second row (the only row
@@ -94,7 +99,7 @@ Deviations from SHOW (and why):
 - Beat 9: the "folder icons" are two small title-bar icons (laptop: cli.py, container:
   /app/cli.py) that blink together. The second terminal is 4 rows (prompt, the command under
   it, the two diff lines) so the TEAL terminal keeps 7 rows for the help command and its whole
-  output; the second terminal stays until "which builds the Google client" and the line-23 chip
+  output; the second terminal stays until "the Google client" and the line-23 chip
   takes its place (the diff stays readable while help is typed).
 - Beat 10: the expected panel shows while download and synthesis are typed; the Text-to-Speech
   picture replaces it on "There's no upload step". The picture adds a PINK request arrow from
@@ -107,8 +112,9 @@ Deviations from SHOW (and why):
 - Beat 12: E's two commands get no "needs the key" note: the terminal fades into the card as
   soon as `--synthesis` is typed (the card is up ~0.9 s after "Pause").
 - Beat 13: no strip (the terminal left in beat 12); both cards stand centred below the tracker.
-  Card 1 clears on "reads its key from inside" (not at the sentence start), so its fix chip and
-  tag stay readable for ~4 s.
+  Card 1's fix chip comes right after the French lines (not on "that's why you switched it",
+  where it pulses), so it is readable ~2.3 s before card 2 takes over at the bonus sentence's
+  start.
 """
 
 from common import *
@@ -127,7 +133,9 @@ from manim import (
     FadeOut,
     GrowArrow,
     Indicate,
+    LaggedStart,
     Line,
+    ReplacementTransform,
     RoundedRectangle,
     Transform,
     VGroup,
@@ -494,12 +502,14 @@ def run_all_card() -> VGroup:
          "output_audios/group-01/"),
     ]
     cells = []
+    buckets = []
     for folder, flags, msg, ln, bucket in entries:
         a = VGroup(mono(folder, CAPTION, CTR), mono(flags, CAPTION, INK)).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-        b = VGroup(mixed(msg, CAPTION, S.GREY),
-                   mixed([f"cli.py line {ln} ·", ("mono", bucket, S.GREY)], CAPTION, S.GREY))
+        where = mixed([f"cli.py line {ln} ·", ("mono", bucket, S.GREY)], CAPTION, S.GREY)
+        b = VGroup(mixed(msg, CAPTION, S.GREY), where)
         b.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         cells.append((a, b))
+        buckets.append(where[1])
     ha = mixed(["in each folder:", ("mono", "python cli.py …")], CAPTION, S.GREY)
     hb = label("with your key, look for", CAPTION, S.GREY)
     wa = max(ha.width, *[a.width for a, _ in cells])
@@ -532,7 +542,7 @@ def run_all_card() -> VGroup:
     wk = note("with your key").next_to(tg, LEFT, buff=0.2)
     wk.shift(UP * (card.frame.get_top()[1] + 0.08 - wk.get_bottom()[1]))
     card.add(tg, wk)
-    card.rows, card.tag = rows, tg
+    card.rows, card.tag, card.buckets = rows, tg, buckets
     return card
 
 
@@ -664,13 +674,14 @@ class RunComponents(VoiceScene):
             vo.wait_until("use a short clip")
             self.play(pulse(cost3, 1.08), run_time=0.6)
             vo.wait_until("Pause and run it")
-            self.play(FadeOut(VGroup(p3, u3, row3, cost3)), FadeIn(tc3.frame), FadeIn(tc3.rows),
-                      FadeIn(tc3[2]), run_time=0.6)
+            # one after the other: a cross-fade in the same place muddles both texts
+            self.play(FadeOut(VGroup(p3, u3, row3, cost3)), run_time=0.3)
+            self.play(FadeIn(tc3.frame), FadeIn(tc3.rows), FadeIn(tc3[2]), run_time=0.45)
             self.play(FadeIn(VGroup(*tc3[3:]), shift=LEFT * 0.1), run_time=0.4)
 
         # ========================================================== 4 · exit, cd ../generate_text, build, help
         chip52 = in_band(readme_chip("README.md · line 52", "cd into each one"), "QB")
-        with self.voiceover(SAY[4]) as vo:
+        with self.voiceover(SAY[4], pad=1.3) as vo:      # help and its "identical" chip stay a moment
             quick_scroll(t, 0.25)
             resize(self, t, 12, run_time=0.6, extra=[FadeOut(tc3)])
             session(self, t, C12, (38, 39), type_time=0.35, out_time=0.3)
@@ -685,7 +696,7 @@ class RunComponents(VoiceScene):
             dock = excerpt_chip(DOCK4, "generate_text/Dockerfile · line 4", line=excerpt(GB_DOCKER, 4, 4))
             in_band(dock, "QB", y=(t.box.get_top()[1] + 3.45) / 2)
             assert dock.get_bottom()[1] > t.box.get_top()[1] + 0.15
-            b2 = build_badge(2, words=False).move_to([t.box.get_left()[0] + 0.2, rows[1].strut.get_center()[1], 0])
+            b2 = build_badge(2, words=False).move_to([t.box.get_left()[0] + 0.24, rows[1].strut.get_center()[1], 0])
             box25 = glyph_box(rows[1], "[2/5]", CTR)
             self.play(FadeOut(chip52), FadeIn(dock, shift=DOWN * 0.1), run_time=0.5)
             attach(self, rows[1], b2, box25, anims=[FadeIn(b2, scale=1.3), Create(box25), *hi_time(rows[1])],
@@ -723,8 +734,10 @@ class RunComponents(VoiceScene):
             vo.wait_until("the word generate")
             self.play(flash(out5[1], TURN, 1.2), run_time=0.6)
             vo.wait_until("then exits with status 0")
-            ex0 = tag_beside(self, t, out5[1], chip("exit status 0 · from the capture", S.GREY, size=CAPTION),
-                             run_time=0.4)
+            # pad_y 0.05: one row high, so its border stays off the Args row above
+            ex0 = chip("exit status 0 · from the capture", S.GREY, size=CAPTION, pad_y=0.05)
+            assert ex0.height < t.pitch - 0.02
+            tag_beside(self, t, out5[1], ex0, run_time=0.4)
             vo.wait_until("Did it call Gemini?")
             resize(self, t, 3, keep=[gl, out5[0], out5[1]], run_time=0.7)
         q = ponder_card("It exited with status 0.\nDid it call Gemini?")
@@ -825,52 +838,58 @@ class RunComponents(VoiceScene):
             tag_beside(self, t, out8[33], grey_tag("cli.py left unedited on purpose"), run_time=0.4)
             vo.wait_until("here, the guard works")
             self.play(flash(out8[31], VENV, 1.06), run_time=0.8)
+            # make room for beat 9's second terminal now (nothing new appears), so the second
+            # terminal's home prompt gets readable time in beat 9
+            resize(self, t, 7, run_time=0.45)
 
         # ========================================================== 9 · edit on the laptop; help needs the key
         t2 = term(P_HOME, rows=4, title="laptop · second terminal", top=2.75)
         with self.voiceover(SAY[9]) as vo:
-            resize(self, t, 7, run_time=0.45, extra=[FadeIn(t2, shift=DOWN * 0.3), caption_extra(tr, True)])
+            self.play(FadeIn(t2, shift=DOWN * 0.3), caption_extra(tr, True), run_time=0.45)
             assert t2.box.get_bottom()[1] > t.box.get_top()[1] + 0.05
             ln = bare_prompt(self, t2)
             tilde = glyph_range(ln, P_HOME.index("~"), P_HOME.index("~") + 1)
             cap = beside(note("new terminal: cd here first"), t2, ln, buff=0.5)
-            self.play(Indicate(tilde, color=TURN, scale_factor=1.4), FadeIn(cap), run_time=0.5)
-            self.wait(0.25)
+            self.play(Indicate(tilde, color=TURN, scale_factor=1.4), FadeIn(cap), run_time=0.6)
+            self.wait(0.6)
+            # the home prompt becomes the component folder's prompt (what became what)
             _drop_bare(self, t2)
+            self.add(ln)
             t2.set_prompt(p_comp(C))
             ln2 = bare_prompt(self, t2)
+            self.remove(ln2)
             ic_lap = title_icon(t2, "cli.py", LAPTOP)
             ic_ctr = title_icon(t, "/app/cli.py", CTR, folder=True)
             pen = pencil(0.45).next_to(ic_lap, LEFT, buff=0.15)
             ed = note("in your editor").next_to(pen, LEFT, buff=0.15)
             assert ed.get_left()[0] > t2.title.get_right()[0] + 0.2
-            self.play(FadeOut(cap), Indicate(glyph_range(ln2, p_comp(C).index(":") + 1, len(p_comp(C)) - 1),
-                                             color=TURN, scale_factor=1.05),
+            self.play(FadeOut(cap, rate_func=lambda a: min(1.0, 2.5 * a)), ReplacementTransform(ln, ln2),
                       FadeIn(ic_lap), FadeIn(ic_ctr), FadeIn(pen, shift=DOWN * 0.15), FadeIn(ed), run_time=0.5)
             vo.wait_until("the window shows it at once")
             # the edit: the same file blinks on both sides at the same instant
             self.play(Wiggle(pen, scale_value=1.15, rotation_angle=0.08), flash(ic_lap, TURN, 1.3),
-                      flash(ic_ctr, TURN, 1.3), run_time=0.7)
+                      flash(ic_ctr, TURN, 1.3), run_time=0.6)
             gd = type_cmd(self, t2, C41.cmd, type_time=0.35)
             note_with(self, t2, gd, extra_tag(), FadeOut(VGroup(pen, ed)), run_time=0.25)
             t2.print(self, [(C41.line(16), S.GREY), (C41.line(17), INK)], run_time=0.3)
             assert len(t2.lines) == 4
             vo.wait_until("Now help fails")
-            self.play(caption_extra(tr, False), run_time=0.25)
             hl = type_cmd(self, t, CC2.cmd, type_time=0.4)
             o9 = t.print(self, CC2.at((2, 4), "") + [(ERR_LINE, ERR)], wrap=True, run_time=0.5)
             assert hl in t.lines and len(t.lines) == 7          # the command stays on screen
             l3 = o9[1]
             assert "line 23" in l3.text
             self.play(l3.animate.set_color(TURN), run_time=0.3)
-            vo.wait_until("which builds the Google client")
+            vo.wait_until("the Google client")
             p23 = src_panel(SE, 23, 23, size=20)
             p23.move_to([-6.35 + p23.width / 2, 0, 0]).shift(UP * (TOP - p23.get_top()[1]))
             assert p23.get_bottom()[1] > t.box.get_top()[1] + 0.05
             bar23 = p23.bar(23, TURN)
             imp = grey_tag("runs on import").next_to(p23.header, RIGHT, buff=0.4)
             imp.set_y(p23.header.get_center()[1])
-            self.play(FadeOut(VGroup(t2, ic_lap, ic_ctr)), FadeIn(p23, shift=DOWN * 0.1), run_time=0.5)
+            # the extra command leaves the screen: the tracker caption loses " · extra" with it
+            self.play(FadeOut(VGroup(t2, ic_lap, ic_ctr)), FadeIn(p23, shift=DOWN * 0.1), caption_extra(tr, False),
+                      run_time=0.5)
             self.play(FadeIn(imp, shift=LEFT * 0.1), FadeIn(bar23), run_time=0.5)
             vo.wait_until("even help needs the key")
             self.play(flash(VGroup(*o9[-2:]), ERR, 1.03), run_time=0.7)
@@ -901,7 +920,8 @@ class RunComponents(VoiceScene):
         assert cap10.get_left()[0] > req.get_right()[0] + 0.5 and cap10.get_bottom()[1] > STRIP_TOP + 0.2
         with self.voiceover(SAY[10], pad=1.6) as vo:
             quick_scroll(t, 0.2)
-            self.play(FadeOut(VGroup(p23, imp, bar23)), FadeIn(exp, shift=DOWN * 0.1), FadeIn(etag), run_time=0.5)
+            self.play(FadeOut(VGroup(p23, imp, bar23)), run_time=0.25)
+            self.play(FadeIn(exp, shift=DOWN * 0.1), FadeIn(etag), run_time=0.4)
             self.play(tr.goto(2), run_time=0.2)
             ln = type_cmd(self, t, QC_CMDS[0], type_time=0.35)
             note_with(self, t, ln, "needs the key", tr.goto(3), run_time=0.3)
@@ -957,9 +977,13 @@ class RunComponents(VoiceScene):
             type_cmd(self, t, QE_CMDS[1], type_time=0.22)
             vo.wait_until("Pause, and run all five")
             self.add(t)
-            self.play(FadeOut(t), FadeIn(card12), run_time=0.7)
+            self.play(FadeOut(t), run_time=0.35)
+            self.play(FadeIn(card12), run_time=0.45)
             self.play(pulse(card12.tag, 1.15), run_time=0.7)
-        self.wait(2.5)                    # the your-turn card stays up
+            vo.wait_until("checking the bucket")
+            self.play(LaggedStart(*[Indicate(b, color=TURN, scale_factor=1.06) for b in card12.buckets],
+                                  lag_ratio=0.25), run_time=1.4)
+        self.wait(2.2)                    # the your-turn card stays up
 
         # ========================================================== 13 · two small slips
         p64 = src_panel(TT, 64, 64)
@@ -984,22 +1008,31 @@ class RunComponents(VoiceScene):
         card2b = framed(body2, pad_x=0.35, pad_y=0.3)
         card2b.move_to([0, (TOP + BOTTOM) / 2 + 0.2, 0])
         et2 = erratum_tag().move_to(card2b.frame.get_corner(UP + RIGHT)).shift(LEFT * 0.9)
+        # each card's frame first holds only what is in it, and grows as the rest arrives
+        f1 = box(card1.frame.width, p64.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14, stroke=2)
+        f1.align_to(card1.frame, UP).align_to(card1.frame, LEFT)
+        f2 = box(card2b.frame.width, cap2.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14, stroke=2)
+        f2.align_to(card2b.frame, UP).align_to(card2b.frame, LEFT)
+        app2 = cap2[3]                                    # "/app"
         with self.voiceover(SAY[13]) as vo:
             self.play(FadeOut(card12), run_time=0.5)
-            self.play(FadeIn(card1.frame), FadeIn(et1), FadeIn(p64, shift=DOWN * 0.1), run_time=0.6)
+            self.play(FadeIn(f1), FadeIn(et1), FadeIn(p64, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("The translation targeted Spanish")
             self.play(es.animate.set_color(ERR), Create(u_es), run_time=0.5)
             vo.wait_until("but the final voice is French")
-            self.play(FadeIn(p48, shift=DOWN * 0.1), run_time=0.5)
+            self.play(Transform(f1, card1.frame.copy()), FadeIn(p48, shift=DOWN * 0.1), run_time=0.5)
             self.play(*[m.animate.set_color(CLOUD) for m in fr], Create(u_fr), run_time=0.5)
-            vo.wait_until("that's why you switched it")
+            # the fix follows "French" at once, so it can be read before the bonus's sentence
             self.play(FadeIn(fix1, shift=UP * 0.1), FadeIn(why1, shift=LEFT * 0.1), run_time=0.5)
-            # card 1 stays until the bonus's own clause, so its fix can be read
+            vo.wait_until("that's why you switched it")
+            self.play(pulse(fix1, 1.1), run_time=0.6)
+            vo.wait_until("And the optional ElevenLabs bonus")
+            self.play(FadeOut(VGroup(f1, p64, p48, fx1, et1, u_es, u_fr)), run_time=0.4)
+            self.play(FadeIn(f2), FadeIn(et2), FadeIn(cap2, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("reads its key from inside")
-            self.play(FadeOut(VGroup(card1, et1, u_es, u_fr)), run_time=0.4)
-            self.play(FadeIn(card2b.frame), FadeIn(et2), FadeIn(cap2, shift=DOWN * 0.1), run_time=0.5)
+            self.play(Indicate(app2, color=ERR, scale_factor=1.25), run_time=0.8)
             vo.wait_until("point it at slash secrets")
-            self.play(FadeIn(fx2, shift=UP * 0.1), run_time=0.5)
+            self.play(Transform(f2, card2b.frame.copy()), FadeIn(fx2, shift=UP * 0.1), run_time=0.5)
             self.play(flash(substring_text(fix2.text, FIX11, "/secrets/"), VENV, 1.15), run_time=0.7)
         self.wait(1.2)                    # the fix stays readable a moment
         self.play(FadeOut(*self.mobjects), run_time=0.8)

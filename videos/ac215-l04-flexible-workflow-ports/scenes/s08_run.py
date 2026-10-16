@@ -103,7 +103,6 @@ from manim import (
     PI,
     RIGHT,
     UP,
-    AnimationGroup,
     Arrow,
     Create,
     FadeIn,
@@ -198,12 +197,13 @@ def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
 
 
-def flash_framed(frame, text, color: str = TURN, k: float = 1.1, run_time: float = 0.7):
-    """Flash a tag or a board with an opaque dark fill: its text indicates and its outline turns
-    `color` and back (Indicate on the whole group would fill the frame with the colour)."""
-    return AnimationGroup(Indicate(text, color=color, scale_factor=k),
-                          frame.animate(rate_func=there_and_back).set_stroke(color),
-                          run_time=run_time)
+def flash_framed(frame, text, color: str = TURN, k: float = 1.1) -> list:
+    """Flash a tag or a board with an opaque dark fill: its outline turns `color` and back, its
+    text indicates (Indicate on the whole group would fill the frame with the colour). A list to
+    splat into play(): an AnimationGroup would add Group(frame, text) to the scene on top of the
+    tag, a second copy of the frame over its own text."""
+    return [frame.animate(rate_func=there_and_back).set_stroke(color),
+            Indicate(text, color=color, scale_factor=k)]
 
 
 def code_row(panel, n: int):
@@ -616,7 +616,7 @@ class DevAndRun(VoiceScene):
             vo.wait_until("any local image")
             self.play(FadeIn(bar85), FadeIn(t85, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("however old")
-            self.play(flash_framed(t85.box, t85.text, TURN, 1.08), run_time=0.6)
+            self.play(*flash_framed(t85.box, t85.text, TURN, 1.08), run_time=0.6)
             vo.wait_until("otherwise it runs")
             self.play(FadeIn(bar88), FadeIn(t88, shift=LEFT * 0.1), run_time=0.5)
             self.play(FadeIn(c214, shift=UP * 0.1), run_time=0.4)      # the README's step list is right
@@ -888,7 +888,7 @@ class DevAndRun(VoiceScene):
                       v1.image.animate.become(img_full), v1.image_label.animate.become(lbl_full), run_time=0.9)
             vo.wait_until("and use run only")
             self.play(FadeIn(r2, shift=UP * 0.1), run_time=0.5)
-            self.play(flash(v1.box, TURN, 1.08), flash_framed(v1.post.board, v1.post.text, TURN, 1.04),
+            self.play(flash(v1.box, TURN, 1.08), *flash_framed(v1.post.board, v1.post.text, TURN, 1.04),
                       run_time=0.7)
             vo.wait_until("under your own")
             self.play(flash(r2[2], TURN, 1.1), run_time=0.7)

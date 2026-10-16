@@ -648,9 +648,10 @@ class StepUvSync(VoiceScene):
             w.set_prompt(APP_PROMPT)
             p7 = bare_prompt(self, w)
             g_app = substring(p7, "(app)")
-            self.play(Indicate(g_app, color=VENV, scale_factor=1.4), run_time=0.8)
+            # why "app" (not simple-translate): the project's name, shown with the pulse so it can be read
             app_src = beside(row_tag([("pyproject.toml", "mono"), ("· line 2:", "label"), (APP_NAME, "mono")]), p7)
-            pin(self, p7, app_src, run_time=0.3)        # why "app": the project's name, not the folder's
+            self.play(Indicate(g_app, color=VENV, scale_factor=1.4), FadeIn(app_src, shift=LEFT * 0.1), run_time=0.8)
+            attach(self, p7, app_src)
             vo.wait_until("Type exit")
             unpin(self, [(p7, app_src)], 0.25)          # typing at the prompt replaces its bare row
             istep(self, w, EXIT_LINE, 0.3)

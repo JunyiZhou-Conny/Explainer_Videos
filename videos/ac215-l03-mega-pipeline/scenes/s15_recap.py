@@ -3,10 +3,11 @@
 Beats (script.md "## S15", one voiceover block each):
  0  No tracker: a GREY caption top-left "after the README · clean up". V1 (common.Relay: five TEAL
     boxes with their letters over the BLUE cabinet, every drawer holding its token) appears at full
-    width and zooms out to the top of the frame; a checklist card below: "cloud: nothing to delete",
-    GREY sub-items "no VM", "no bucket", "no service account" (a GREEN tick as each is named; the
-    cabinet pulses BLUE on "In the cloud"), then "your outputs stay in the bucket, under group-01"
-    (the drawers' tokens pulse).
+    width and zooms out to the top of the frame; a checklist card below: "cloud: nothing to delete"
+    (the cabinet pulses BLUE on "In the cloud"); on "nothing to delete" its last row "your outputs
+    stay in the bucket, under group-01" (the drawers' tokens pulse), so it is up through the ticks;
+    then the GREY sub-items "no VM", "no bucket", "no service account" fill the middle row (a GREEN
+    tick as each is named).
  1  V1 shrinks into the top-right corner (letters only); the card goes; a 13-row terminal (title
     laptop, prompt .../mega-pipeline/transcribe_audio$). `cd ..` (extra) -> (no output), the prompt
     becomes .../mega-pipeline$. The five-filter `docker image ls` (extra; Terminal.type folds it
@@ -16,11 +17,13 @@ Beats (script.md "## S15", one voiceover block each):
  2  V1 and the old screen fade together (a fresh screen, as `clear`); the terminal shrinks to 10
     rows with the bare prompt at the top; on "An extra git status" it types `git status` (extra) -> 71-git-status.txt lines
     5-9, 11-14 (tabs shown as a terminal shows them, 8 columns). Line 9 gets a YELLOW bar on "your
-    edited cli.py files" and the GREY caption "we set group_name only in transcribe_audio: yours
-    also lists the other four cli.py and, / with your key, generate_text's text_prompts/ and
-    text_paragraphs/" appears above the terminal; lines 8, 13, 14 get bars on "the files in
-    generate text". On "but the other four folders hide" the caption goes, the terminal shrinks to
-    a 3-row strip (`git status`, lines 13-14), CODE(transcribe_audio/.gitignore: 3-9, 24 pt, lines
+    edited cli.py files" as the GREY caption "we set group_name only in transcribe_audio: yours
+    also lists the other four cli.py / and, with your key, generate_text's text_prompts/ and
+    text_paragraphs/ / and the five .dockerignore files you added: commit those (no -f needed)"
+    appears above the terminal (the capture removed its .dockerignore; a viewer has five, untracked);
+    lines 8, 13, 14 get bars on "the files in generate text". On "but the other four folders hide"
+    the terminal shrinks to a 3-row strip (`git status`, lines 13-14), then the caption goes;
+    CODE(transcribe_audio/.gitignore: 3-9, 24 pt, lines
     5-7 in focus) slides in top right and four GREY dashed ghost chips, the other four Dockerfiles
     (`transcribe_audio/Dockerfile` ...), appear top left under "missing from git status:" and are
     struck through; on "and project files" lines 5-7 get one YELLOW bar and the note "and their
@@ -51,8 +54,8 @@ Beats (script.md "## S15", one voiceover block each):
     from slash app"), Q5 (a sieve with the GOLD key on it over a TEAL box; the key pulses on "a
     git-ignored key" (RED: a key inside an image), the sieve on "and the fix").
  7  The thumbnail goes; the five questions (Q5 straight from its big form) reflow to full width at
-    the top, top to bottom; footer cards "Answers:
-    exercises.md" and, under it, "Study guide + every command:" with the MLOps_Learning link and the
+    the top, top to bottom; footer cards "Answers: study guide §8 (exercises.md)" (the file is in this
+    video's folder, which the guide's §8 links) and, under it, "Study guide + every command:" with the MLOps_Learning link and the
     guide's path (it pulses on "study guide"); on "Next lecture" a dashed GREY card at the right,
     "next: L4" / "branch flexible-workflow", whose three lines appear as they are said ("your own
     bucket + service account", "the key outside the repo", "docker-shell.sh / builds and runs for
@@ -163,13 +166,14 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 def words(*parts, size: float = 20, color=S.GREY, code_color=None, t2c=None) -> Text:
     """A caption line as ONE Text (one baseline): plain strings in serif, 1-tuples in the code font
-    (and code_color). A part that starts with punctuation hugs the part before it. .src"""
+    (and code_color). A plain part that starts with punctuation hugs the part before it (a code
+    part such as `.dockerignore` never does). .src"""
     s, code = "", []
     for p in parts:
         txt = p[0] if isinstance(p, tuple) else p
         if isinstance(p, tuple):
             code.append(txt)
-        if s and txt[:1] not in ",.:;'’":
+        if s and (isinstance(p, tuple) or txt[:1] not in ",.:;'’"):
             s += " "
         s += txt
     cmap = {c: code_color for c in code} if code_color else {}
@@ -675,13 +679,14 @@ class Recap(VoiceScene):
             vo.wait_until("In the cloud")
             self.play(FadeIn(card.frame), FadeIn(card.title, shift=UP * 0.1),
                       Indicate(relay.cabinet, color=CLOUD, scale_factor=1.03), run_time=0.6)
-            for it, anchor in zip(card.items, ("machine", "bucket", "or account")):
-                vo.wait_until(anchor)
-                self.play(FadeIn(it.text, shift=UP * 0.1), Create(it.tick), run_time=0.4)
+            vo.wait_until("nothing to delete")   # what stays comes first: it is up through the three ticks
             self.play(FadeIn(card.outputs, shift=UP * 0.1), run_time=0.5)
             self.play(LaggedStart(*[Indicate(ic, color=INK, scale_factor=1.25) for ic in relay.icons],
                                   lag_ratio=0.12),
                       Indicate(card.group, color=LOOKUP, scale_factor=1.1), run_time=1.0)
+            for it, anchor in zip(card.items, ("machine", "bucket", "or account")):
+                vo.wait_until(anchor)
+                self.play(FadeIn(it.text, shift=UP * 0.1), Create(it.tick), run_time=0.4)
 
         # ========================================================== 1 · cd .., the five images
         t = term(P_A, rows=ROWS_FULL)
@@ -717,6 +722,9 @@ class Recap(VoiceScene):
                   ("cli.py",), size=22),
             words("and, with your key,", ("generate_text",), "'s", ("text_prompts/",), "and", ("text_paragraphs/",),
                   size=22),
+            # the S14 "your turn": no .gitignore lists .dockerignore, so yours shows five untracked ones
+            words("and the five", (".dockerignore",), "files you added: commit those (no", ("-f",), "needed)",
+                  size=22),
         ).arrange(DOWN, buff=0.16, aligned_edge=LEFT)
         place(gcap, left=-6.3, cy=(cap.get_bottom()[1] + TOP_GIT) / 2)
         assert gcap.get_top()[1] < cap.get_bottom()[1] - 0.15 and gcap.get_right()[0] < EDGE, (gcap.get_top(), gcap.get_right())
@@ -749,14 +757,13 @@ class Recap(VoiceScene):
             g_out = print_in(self, t, GST_OUT, run_time=0.5)
             l8, l9, l13, l14 = g_out[3], g_out[4], g_out[7], g_out[8]
             vo.wait_until("your edited cli.py files")
-            bars_on(self, [(l9, "transcribe_audio/cli.py")])
-            self.play(FadeIn(gcap, shift=DOWN * 0.1), run_time=0.5)
+            bars_on(self, [(l9, "transcribe_audio/cli.py")], run_time=0.5, extra=[FadeIn(gcap, shift=DOWN * 0.1)])
             vo.wait_until("and the files in generate text")
             bars_on(self, [(l8, "generate_text/pyproject.toml"), (l13, "generate_text/Dockerfile"),
                            (l14, "generate_text/uv.lock")])
             vo.wait_until("but the other four folders hide")
+            resize(self, t, 3, keep=[c_gs, l13, l14], run_time=0.6)    # the caption stays while the terminal shrinks
             self.play(FadeOut(gcap), run_time=0.3)
-            resize(self, t, 3, keep=[c_gs, l13, l14], run_time=0.6)
             self.play(FadeIn(panel, shift=DOWN * 0.3), FadeIn(ghosts.head), FadeIn(ghosts.chips, shift=RIGHT * 0.2),
                       run_time=0.6)
             self.play(*[Create(c.strike) for c in ghosts.chips], run_time=0.5)
@@ -923,7 +930,8 @@ class Recap(VoiceScene):
             f = self.place_q(question(i, Q_FINAL, S.GREY, S.GREY, 12.15), top)
             finals.append(f)
             top = self.q_bottom(f) - 0.2
-        ans = VGroup(label("Answers:", 26, INK), mono("exercises.md", 24, INK)).arrange(RIGHT, buff=0.2)
+        # exercises.md is in this video's folder, not in the tutorial repo: the study guide's §8 links it
+        ans = S.text("Answers: study guide §8 (exercises.md)", 26, INK, t2f={"exercises.md": MONO})
         ans_box = box(ans.width + 0.7, ans.height + 0.45, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
         ans.move_to(ans_box)
         card1 = VGroup(ans_box, ans)
