@@ -71,7 +71,7 @@ Read this first:
   - A24 · pipeline (Embedding Model outlined)
   - A25 · the embedding model turns each chunk into a vector (BERT-like callout)
   - A26 · "Index data": Lexical, Graphical, Semantic
-  - A27 · picture slide, "Semantic Embeddings" (three stacked vectors)
+  - A27 · picture slide, "Semantic Embeddings" (three vertical vectors side by side)
   - A28 · "Sentence Embeddings": two sentences as two vectors
   - A29 · pipeline (Embedding Model outlined)
   - A30 · pipeline (Vector Database outlined)
@@ -100,7 +100,7 @@ Read this first:
   - A62 · the LLM step: "Nothing new to be added" (sleeping-Pikachu picture; title still reads
     "Naïve RAG – Vector Database")
 - A63 · the landscape map of A11 again, closing the four questions
-- A64 · closing "THANK YOU!" picture (Tom the cat bowing)
+- A64 · closing "THANK YOU!" picture (Tom the cat in a tuxedo at a conductor's stand)
 
 **Deck B — "Lecture 5 suppl: Advanced RAG"** (five sections, listed on B2; each section opens
 with the outline repeated and the current item in bold, then a divider).
@@ -292,9 +292,10 @@ with the outline repeated and the current item in bold, then a divider).
     (B74–B79, B85)
 33. **Self-RAG in action.** An essay prompt needs no retrieval (Retrieve = No). For "How did US
     states get their names?" it retrieves three chunks and drafts an answer from each. It checks
-    each draft with IsREL and IsSUP, discards the irrelevant one, rates the rest with IsUSE and
-    keeps the best. Then the Retrieve token decides whether to continue and fetch more, and the
-    loop repeats until it says No. (B80–B88)
+    each draft with IsREL and IsSUP and discards the irrelevant one. IsUSE then rates the drafts
+    (B85 rates all three, the discarded one included) and the best is kept. Then the Retrieve
+    token decides whether to continue and fetch more, and the loop repeats until it says No.
+    (B80–B88)
 
 What the slides leave to the tutorial: they never show any code, Docker Compose, the two
 containers, ChromaDB, collections, `gemini-embedding-001`, the 256-number vectors, the chunk
@@ -336,7 +337,8 @@ filter, or the service account. A scene that needs any of these must take them f
   - an arrow "Question" to a cluster of three gears labelled "RAG";
   - from RAG, an arrow "Question" to a sparkling stack of books labelled "Vector Database", and an
     arrow "Retrieved Texts" back to RAG;
-  - from RAG, an elbow arrow "Full Prompt" down into a box "LLM" (with an OpenAI-style logo);
+  - from RAG, an elbow arrow "Full Prompt" down and left to the LLM (a small "LLM" label over an
+    OpenAI-style logo);
   - from the LLM, an arrow "Response" back to the User.
 
   A thought cloud says the vector database comes later in the slides. Purpose: the RAG component
@@ -367,7 +369,7 @@ filter, or the service account. A scene that needs any of these must take them f
   LLM Response. Three dashed regions:
   - red "Indexing" around the top lane (knowledge base to the top of the cylinder);
   - green "Retrieval" around the query lane (embedding model's lower half, query embedding,
-    cylinder);
+    cylinder, and the prompt arrow 5); the User Query arrow 3 stays outside it;
   - light-blue "Augmentation & Generation" around the LLM.
 
   Purpose: names the three phases that deck B then optimises.
@@ -385,16 +387,17 @@ filter, or the service account. A scene that needs any of these must take them f
   icon above three options: "Lexical" (magnifier over a word), "Graphical" (a small tree or graph
   under a magnifier), "Semantic" (three vertical vector columns). A27 enlarges the semantic
   option. Purpose: the lecture picks the semantic option.
-- **A28 · sentence embeddings.** Two tall vertical vectors of about ten coloured cells, labelled
-  "Pavlos is from Cyprus" and "Harvard is in Massachusetts". The cells are shaded pink, red and
-  lavender, and the two columns share a similar pattern. Purpose: a whole sentence becomes one
-  vector, and similar sentences get similar vectors.
+- **A28 · sentence embeddings** (title "Word Sentence Embeddings" with "Word" struck through). Two
+  tall vertical vectors of eight coloured cells, labelled "Pavlos is from Cyprus" and "Harvard is in
+  Massachusetts". The cells are shaded pink, red and lavender, and the two columns show the same
+  pattern. Purpose: a whole sentence becomes one vector, and similar sentences get similar vectors.
 - **A32 · vector database strip.** A 4 × 3 grid of dots labelled "Vectors", in green, pink and
   orange rows, with a callout "Embeddings". Arrows lead through four blue boxes: "Indexing" →
   cylinder "Vector Database" → "Querying" → "Post Processing". The same strip sits, greyed, at the
-  top of A33–A55, and the current stage is lit:
+  top of A33–A39, A44 and A48–A55 (not on the personality game A40–A43 or the table A45–A47), and
+  the current stage is lit:
   - Indexing on A33–A38;
-  - Querying on A39 and A44–A53;
+  - Querying on A39, A44 and A48–A53;
   - Post Processing on A54–A55.
 - **A33–A36 · the slow scan.** A column of stored vectors (blue, red, green, dots, purple) and a
   purple "Query" vector that moves down the column one row per slide (A34 beside red, A35 beside
@@ -423,8 +426,8 @@ filter, or the service account. A scene that needs any of these must take them f
   A42: two arrows A (red) and B (blue) from the origin of an x1–x2 plot with the angle θ between
   them, and the cosine formula. A43: three lines "COSINE SIMILARITY(Pavlos, X) =" 0.986 (A, green
   tick), 0.976 (B), 0.886 (C). I recomputed them from the table: 0.987, 0.976 and 0.886. The
-  ranking holds. Not on the slides: by dot product B wins (81.2 vs 80.2), because B's scores are
-  larger overall. That makes a good scene for A44's question "How do these measures differ from
+  ranking holds. Not on the slides: by dot product B wins (81.24 vs 80.15), because B's scores
+  are larger overall. That makes a good scene for A44's question "How do these measures differ from
   each other?".
 - **A45–A47 · similarity-measure table.** Columns: Measure, Formula, What it Measures, Range,
   Strengths, When to Use. Rows:
@@ -541,8 +544,8 @@ filter, or the service account. A scene that needs any of these must take them f
     "Vector database" cylinder.
   - B52: "❓User Query: What is cheese?" on the left.
   - B53: an arrow "top_K = 25" into the database, and a vertical list of 25 rows hanging below it.
-    Four or five rows are yellow ("True relevant records", with a bracket): two at the top, the
-    rest at positions spread down the list.
+    Five rows are yellow ("True relevant records", with a bracket): rows 1 and 2, then rows 11, 17
+    and 22.
   - B55: a red callout: a simple score like cosine similarity can miss key details, so the ranking
     is off.
   - B57: a blue diamond "Re-ranker" takes the list and outputs a second list on the right, whose
@@ -558,8 +561,9 @@ filter, or the service account. A scene that needs any of these must take them f
 - **B63 · cross-encoder.** "Document" (blue) and "Query" (green) boxes at the top, both feeding
   one "BERT-like model" (pink, dashed), which outputs "Similarity Score". Question: why is this
   slower? Answer, implied by B61–B64: it must run once per query–document pair at query time, with
-  nothing precomputed. A scene can put B60 and B63 side by side and count model runs: N + 1 ahead
-  of time vs N at query time.
+  nothing precomputed. A scene can put B60 and B63 side by side and count model runs: the
+  bi-encoder makes N runs ahead of time and 1 at query time; the cross-encoder makes N at query
+  time, one per pair.
 - **B76 · Retrieve-token decision tree.**
   - "Query" splits two ways: "Retrieve = No" → "Answer₁" (green), and "Retrieve = Yes" → "Query +
     Context₁".
@@ -599,7 +603,7 @@ filter, or the service account. A scene that needs any of these must take them f
 |---|---|---|
 | "Retrieval-Augmented-Generation (RAG)" (hyphenated) | A7, A12 | README: "Retrieval-Augmented Generation (RAG)". |
 | "Naïve RAG" | A15–A62, B3–B10 | The README never says "naive". Its five steps (Chunk, Embed, Load, Query, Chat) are naïve RAG. |
-| "Advanced RAG" | B1, B68 | The README uses "Advanced RAG" only for semantic chunking (`README.md:220`). The deck's advanced RAG is much wider. |
+| "Advanced RAG" | B1, B68 | The README's only "Advanced RAG" heading is semantic chunking (`README.md:220`); it also tags the agent section "Advanced" (`:244`, and `:23` calls both "advanced stages"). The deck's advanced RAG is much wider. |
 | "Knowledge Base" | A16–A18, B6 | The tutorial's knowledge base is `input-datasets/books/` (11 cheese books). |
 | "Documents" (the arrow after Chunking) | A16 | Means the chunks. The README and code say "chunks". |
 | "Chunking"; "character splitting"; "chunk size" (50, 200) | A20–A22, B14–B18 | README: "Character splitting", `--chunk_type char-split`, chunk size 350 with overlap 20 (digest C2). **The slides never mention overlap or recursive splitting** (`recursive-split`, default overlap 200). |
@@ -627,7 +631,7 @@ filter, or the service account. A scene that needs any of these must take them f
 | "re-ranker", "bi-encoders", "cross-encoder", "BERT-like encoder/model", "topK" (25), "True relevant records", "information loss", "frontload" | B51–B65 | Not in the tutorial. B58 calls a re-ranker "just another LLM"; B62–B63 make it a BERT-like cross-encoder. Say "another model" rather than "an LLM". |
 | "Self-RAG", "reflection tokens", "Retrieve token", "Critique token", "IsREL"/"ISREL" (also "ISSREL" on B81), "IsSUP"/"ISSUP", "IsUSE"/"ISUSE", "Continue" | B67–B88 | Not in the tutorial. The closest tutorial idea is the README's L06 **agent** (`--agent`), where the LLM decides which retrieval tool to call. That link is mine, not the slides'. |
 | "open book exam" | B69–B71 | The digest's own analogy for RAG (C1) is also an open-book exam, so the series can reuse one image for both decks. |
-| "Asai et al." | B80–B88 | Citation link for Self-RAG. |
+| "Asai et al." | B80–B87 | Citation link for Self-RAG. |
 
 Slips on the slides, so a scene does not copy them: A62's title says "Vector Database" but the
 slide is about the LLM. "Euclidian" appears on A44. A54 calls re-ranking a "pre-processing step"
@@ -708,7 +712,7 @@ code-like items are:
   A31–A55). Chunking methods "discussed later" (A22 → B14–B34).
 - **BM25.** "To learn more about BM25: Click here" (B43). The link target is not in the extracted
   text.
-- **Self-RAG source.** "Asai et al." links on B80–B88: the Self-RAG paper by Asai and colleagues
+- **Self-RAG source.** "Asai et al." links on B80–B87: the Self-RAG paper by Asai and colleagues
   (2023). The URL is not in the extracted text.
 - **Uncredited figure.** The landscape map on A11/A63 carries no source on the slide.
 - **No tutorial pointer.** Neither deck links the `llm-rag` repo, the Ed lesson, the web tools
@@ -717,19 +721,20 @@ code-like items are:
 
 ## This video and the slides
 
-**Basis.** The video is planned but not scripted. This folder has:
+**Basis.** The video has a v1 script but no scene files yet. This folder has:
 - `BRIEF.md`: 16 scenes, S01–S16, in two parts. Each scene names a `Lecture:` slide range, and the
   BRIEF asks this pass to check them.
+- `script.md` v1, written from the BRIEF: the same sixteen scenes with the same `Lecture:` ranges.
 - `video.yaml`, with the same scene ids and titles;
 - `ASSETS.md` and the captures in `assets/terminal/` (2026-10-16).
 
-There is no `script.md` and no scene file yet. The nine-chapter plan in `digest.md` §8 is older,
-and the BRIEF replaces it. So the map below uses the BRIEF's scenes. The study guide is
-`MLOps_Learning/guides/L05-rag.md`. For this section I re-read all eighteen contact sheets and both
+The nine-chapter plan in `digest.md` §8 is older, and the BRIEF replaces it. The map below was
+drawn from the BRIEF's scenes, so it holds for script v1 too; where v1 already settles a point, the
+text says so. The study guide is `MLOps_Learning/guides/L05-rag.md`. For this section I re-read all eighteen contact sheets and both
 decks' text. I also re-checked these at the source:
 - **The README's promises.** "small, overlapping" chunks (`README.md:17`, `:93`). Answers
-  "grounded in your documents, not its own training data" (`:21`, again at `:194`). The two step
-  titles (`:5`, `:9`).
+  "grounded in your documents, not its own training data" (`:21`; `:194` repeats "grounded in
+  your documents"). The two step titles (`:5`, `:9`).
 - **`cli.py`.**
   - The cheese-specialist `SYSTEM_INSTRUCTION` (`:40-58`).
   - `chat()`: it pastes only `results["documents"][0]` into the prompt (`:390`) and sends no
@@ -753,7 +758,7 @@ Where the slides and the captures disagree, the captures decide what the video s
 
 | Scene (BRIEF) | Slides on the same ground | Relation |
 |---|---|---|
-| S01 · A model that never read the book | A6–A11 (BRIEF); A17 (where a knowledge base comes from) | Same concept: the lecture's motivation. That is A6's four weaknesses, A8–A10's three roads and A11's four questions. The cold open on the Tolminc story and the how-to-follow beats are tutorial-only. The BRIEF also cites B69 for "an open-book exam", which deck B uses for another point (Common 18). |
+| S01 · A model that never read the book | A6–A11 (BRIEF); A17 (where a knowledge base comes from) | Same concept: the lecture's motivation. That is A6's four weaknesses, A8–A10's three roads and A11's four questions. The cold open on the Tolminc story and the how-to-follow beats are tutorial-only. The BRIEF also cites B69 for "an open-book exam", which deck B uses for another point (Common 18); script v1 no longer tags it. |
 | S02 · Two lanes, one database | A12–A16, B5–B6 (BRIEF); B59–B60 would add the shared-encoder rule (Gap 1) | Same concept, and the tutorial applies it. V1 is A16 redrawn with B5's numbers and phases, with the README's steps pinned under it. Conflicts 6, 7. |
 | S03 · Your key, your folders, your project | none | Tutorial-only (service account, key, `GCP_PROJECT`). Neither deck mentions Google Cloud. |
 | S04 · One script, two containers | none | Tutorial-only (Compose, the image build). The slides draw the vector database as one cylinder and never say where it runs. |
@@ -784,7 +789,7 @@ Where the slides and the captures disagree, the captures decide what the video s
 | 6 | Why chunk at all | S06 ↔ A20–A21 | Yes. "So the model can focus" is A21's reason. The BRIEF adds the tutorial's second reason: a chunk is also what gets pasted into the prompt. |
 | 7 | Character splitting is the default, and it cuts words | S06 ↔ B14–B15 | Yes. B14 calls character splitting the default, and it is the README's first chunk command. The captured `…intended to ac` / `s she intended to accomplish…` is B15's `intelli` / `gence` on the real book. What happens at the cut differs (Conflict 5). |
 | 8 | Chunks should follow the document's own structure | S07, S14 ↔ B16–B19, B34 | Yes. The BRIEF's ladder (a ruler, then paragraph-aware scissors, then meaning) climbs toward B19's "optimal way". |
-| 9 | One vector per chunk; a sentence embedding is not a word embedding; close means similar | S08 ↔ A25, A27–A28 | Yes. The slides' bars of six to ten cells become the tutorial's 256 numbers. A25 describes a "BERT-like" encoder. Here the model is Google's `gemini-embedding-001` behind an API, and the video need not name an architecture. |
+| 9 | One vector per chunk; a sentence embedding is not a word embedding; close means similar | S08 ↔ A25, A27–A28 | Yes. The slides' bars of six to eight cells become the tutorial's 256 numbers. A25 describes a "BERT-like" encoder. Here the model is Google's `gemini-embedding-001` behind an API, and the video need not name an architecture. |
 | 10 | Cosine similarity, the personality game, and choosing a measure | S08 ↔ A40–A47 | Yes, and the tutorial makes the lecture's advice concrete. A45 recommends cosine for text embeddings, and `load()` asks for `hnsw:space: cosine` where Chroma's default would be L2. The captured vectors have lengths 0.369–0.402, not 1 (`recorded-embeddings/06`). That is exactly when A44–A47's choice matters: cosine ignores length, while L2 and the dot product do not (ponder 3). |
 | 11 | Relational databases can't search by meaning | S09 ↔ A31 | Yes. The BRIEF uses A31's own SQL line. |
 | 12 | Scanning every vector is slow, so build an index (HNSW) | S09 ↔ A33–A38 | Yes. V5's pointer walking 8,248 rows is A33–A36. The layered graph is our illustration of HNSW, the third of A38's three algorithms, which Chroma builds. The captured listing gives the real index's settings (`laptop/17`), and each loaded collection gets one index folder (`recorded-embeddings/04`). A37 shows no mechanism, so the BRIEF's "our illustration" label is right. |
@@ -795,7 +800,7 @@ Where the slides and the captures disagree, the captures decide what the video s
 | 17 | Deciding whether to retrieve | S16 ↔ B68, B72–B76 | Partly. The BRIEF shows L06's agent choosing a retrieval tool and calls Self-RAG "the same idea taken further". But the agent is forced to call a tool (`mode="any"`, `cli.py:449`). It always retrieves and only chooses *how*. Self-RAG's Retrieve token decides *whether* to retrieve, and whether to fetch more (B75–B76). Its critique tokens then check what came back (B78). The link is the series' own, since the slides never mention agents. Keep it, but say which one decides what. |
 | 18 | The open-book exam | S01 (the BRIEF cites B69), S16 ↔ B69–B72 | Partly. The series uses the open-book exam for RAG itself: a librarian hands over ten pages (digest C1). Deck B uses the same exam for another point. Student A looks things up only for unfamiliar topics. Student B looks up every topic, which is slower and invites confusion (B70, B72). This tutorial's `chat()` is student B. It retrieves ten chunks for every question, even an off-topic one (guide Ex 4). The image is fine for the opening, but don't tag it B69 in S01. Pay it off in S16 instead (Proposals). |
 | 19 | Advanced RAG's map and levers | S15 ↔ B6–B10, B13, B35–B65 | Yes. The BRIEF tags them "concept · not in the tutorial's code". Its re-ranking beat ties B59's bi-encoder vectors to the tutorial's 8,248 stored vectors. |
-| 20 | The four questions | S01, S16 ↔ A11, A63 | Yes. The BRIEF opens and closes on A11/A63's map, blurred, as the deck does. |
+| 20 | The four questions | S01, S16 ↔ A11, A63 | Yes. Like the deck, the BRIEF opens and closes on A11/A63's map (blurred in our redrawing). |
 
 ### 3. Gaps (ranked by value to a student doing the tutorial)
 
@@ -830,9 +835,10 @@ Where the slides and the captures disagree, the captures decide what the video s
    everywhere ("the") says little, and a rare one ("GPT-3") says a lot. BM25 builds on it. The
    tutorial's own question has such a word. Only 3 of the 8,248 char-split chunks contain "Tolminc"
    (`recorded-embeddings/08`). A keyword retriever would very likely rank those three near the top
-   (our expectation, not run). The vector side instead finds cheese-making passages that share no
-   word with the question. The BRIEF's S15 uses only the lecture's Chester example and never names
-   TF-IDF. **Carry it in** S15's hybrid-search beat.
+   (our expectation, not run). The vector side works by meaning: with a story chunk's vector as a
+   stand-in query, all ten nearest are story chunks (`recorded-embeddings/09`), though at most
+   three of them contain the word. The BRIEF's S15 uses only the lecture's Chester example and
+   never names TF-IDF. **Carry it in** S15's hybrid-search beat.
 4. **Three ways to index data (A26): lexical, graph, semantic.** The tutorial is semantic, plus a
    lexical *filter* (`where_document`, S12). Naming the routes gives S12's `$contains` a place,
    and keeps it apart from hybrid search (Conflict 9). **Carry it in** S09 (a GREY chip beside the
@@ -853,10 +859,10 @@ Where the slides and the captures disagree, the captures decide what the video s
 | 1 | **Scores vs distances.** A48–A53 give each stored vector a similarity score (0.57, 0.77, 0.43, 0.93); higher is better, and the list sorts from high to low. A45 gives cosine a range of −1 to 1. | With `hnsw:space: cosine`, Chroma returns `distances`: 1 − cosine similarity, from 0 to 2, where smaller is closer. A chunk's own vector comes back at 0.0000 and its neighbours at 0.0804–0.1627 (`recorded-embeddings/09`). `semantic_splitter.py:74` does the same conversion. | Both. They give the same ranking, read in opposite directions. | S11, as the BRIEF plans: after A53's sort, each score flips to 1 − score and the "better" arrow turns upside down. "The lecture ranks by similarity: higher is closer. Chroma reports distance, one minus the similarity: lower is closer. Same order, read the other way." |
 | 2 | **When filtering happens.** A54–A55 put metadata filtering in Post Processing, after Querying. A32's strip shows that order. | `where` and `where_document` apply before the nearest-neighbour search. Top-k then fills its 10 slots from whatever survives: 8,248 → 1,355 → 64 candidates, none containing "Tolminc" (`recorded-embeddings/08`). With a stand-in query vector, the filtered top 10 sit at 0.2833–0.3123, against 0.0000–0.1627 unfiltered (`09`). | Chroma's order, for this tutorial | S12, as the BRIEF plans: on V6's strip, the filter box slides from Post Processing to before Querying. "In the lecture, filtering tidies up the results. In Chroma it comes first, and top-k picks among what's left, however far away." |
 | 3 | **The system prompt.** A58–A59: the final prompt is a system prompt, the query and the context. A59's system prompt makes the model a cheese expert. | The tutorial defines a cheese-specialist `SYSTEM_INSTRUCTION` (`cli.py:40-58`). But `generate_content(model=…, contents=INPUT_PROMPT)` sends no `config` (`:394-396`), so the model gets only the question and ten chunks. Last year's branch sent it (`pipenv-branch/cli.py:62-64`). No capture shows a chat: without a key, `--chat` stops at the question's embedding (`cli.py:373`). | The code, as it runs today. The slides show the intended design, and the fix is one argument. | S13, as planned (V7's unplugged cable). "The lecture's final prompt has three parts. This code writes the first one, and then never sends it." Then the fix, tagged "not in the repo". |
-| 4 | **The semantic-chunking rule.** B21–B33: an anchor sentence with a window of size 1. Cosine similarity between the anchor and each neighbour. Neighbours above a fixed 0.8 join the chunk (0.89 and 0.85 join; 0.68 does not), then the anchor jumps ahead. | `SemanticChunker` (`cli.py:209-210`) gives *every* sentence a window of ±1 (`buffer_size=1`) and embeds each three-sentence window. It measures the cosine *distance* between consecutive windows (`semantic_splitter.py:56-85`). It cuts wherever that distance is above the 95th percentile of all of them (`:92`, `:137-141`, `:239-243`). So about 5 % of the gaps become cuts, whatever their size. It needs the embedding API already during `--chunk` (`cli-container/60`). | The code. The slides teach the intuition. | S14, as planned (V8): the anchor walk plays small, then the code's rule replaces it. "The slides join sentences while their similarity stays above 0.8. This code measures every gap and cuts the widest five percent." In the code's units, B25's similarity of 0.89 is a distance of 0.11. |
+| 4 | **The semantic-chunking rule.** B21–B33: an anchor sentence with a window of size 1. Cosine similarity between the anchor and each neighbour. A pair above a fixed 0.8 is joined (0.89 joins Sentences 1–2; 0.85 pulls Sentence 3 into Chunk 1; 0.68 keeps Sentence 4 out), then the anchor jumps ahead. | `SemanticChunker` (`cli.py:209-210`) gives *every* sentence a window of ±1 (`buffer_size=1`) and embeds each three-sentence window. It measures the cosine *distance* between consecutive windows (`semantic_splitter.py:56-85`). It cuts wherever that distance is above the 95th percentile of all of them (`:92`, `:137-141`, `:239-243`). So about 5 % of the gaps become cuts, whatever their size. It needs the embedding API already during `--chunk` (`cli-container/60`). | The code. The slides teach the intuition. | S14, as planned (V8): the anchor walk plays small, then the code's rule replaces it. "The slides join sentences while their similarity stays above 0.8. This code measures every gap and cuts the widest five percent." In the code's units, B25's similarity of 0.89 is a distance of 0.11. |
 | 5 | **Overlap.** On B14–B18 the character-split pieces sit end to end: `"…artificial intelli"`, then `"gence…"`. The 200-character paper chunks do the same. Neither deck mentions overlap. | `char-split` repeats 20 characters at each cut. Chunk 0 ends `…intended to ac`, and chunk 1 starts `s she intended to accomplish…`, so the cut word is whole in the next chunk (`cli-container/12`). `recursive-split` inherits a hidden overlap of up to 200 characters: chunk 1 starts again at the chapter heading (`15`). The README says "small, overlapping" (`README.md:17`, `:93`) and gives no numbers. | The captures | S06 (the 20-character band) and S07 (the 200). "The lecture's pieces sit end to end. This splitter repeats twenty characters at each cut, so a word cut off at the end of one chunk is whole in the next." |
 | 6 | **"Indexing" means three things.** On A32–A38 it is building a search structure over the vectors. On B5–B10 it is the whole offline phase. On B13–B34 it is better chunking. | The README calls the offline phase "Chunk -> Embed -> Load" (`README.md:5`) and never says "indexing". Chroma's index is HNSW (`hnsw:space`, `laptop/17`). | All three senses; the README doesn't use the word | Name the sense each time, as the BRIEF does in S02 and S09. S02: "indexing = the whole top lane (B5)". S09: "the index = HNSW, A37's search structure". S14: "the lecture files semantic chunking under indexing (B13)". |
-| 7 | **Who embeds the question.** On A12, the RAG box sends the *question* to the vector database and gets texts back. | The code embeds the question at Google first (`generate_query_embedding`, `cli.py:318-319`) and passes Chroma only numbers (`query_embeddings=`). Without a key, `--query` stops at that step, before it ever reaches Chroma (`cli-container/40`). Chroma could embed text itself: each collection carries its own default embedding function (`laptop/17`). That is a different model, so passing `query_texts` would put the question in the wrong space (guide Ex 6). | A16 and the code. A12 is a first sketch, and A16 refines it. | S02: as V1 grows out of A12, the BLUE embedding box slides in between the question and the cylinder, labelled "Chroma gets numbers, not words". S11 repeats it at the no-key stop. |
+| 7 | **Who embeds the question.** On A12, the RAG box sends the *question* to the vector database and gets texts back. | The code embeds the question at Google first (`generate_query_embedding`, `cli.py:318-319`) and passes Chroma only numbers (`query_embeddings=`). Without a key, `--query` stops at that step, before the question ever reaches Chroma (`cli-container/40`). Chroma could embed text itself: each collection carries its own default embedding function (`laptop/17`). That is a different model, so passing `query_texts` would put the question in the wrong space (guide Ex 6). | A16 and the code. A12 is a first sketch, and A16 refines it. | S02: as V1 grows out of A12, the BLUE embedding box slides in between the question and the cylinder, labelled "Chroma gets numbers, not words". S11 repeats it at the no-key stop. |
 | 8 | **How much RAG guarantees.** A7 claims two of the four problems: stale data and missing domain knowledge. B68 says even advanced RAG guarantees neither relevant chunks nor a supported answer. | The README promises answers "grounded in your documents, not its own training data" (`README.md:21`; also `:194`). The code sends no instruction to stay inside the chunks (Conflict 3) and sets no distance threshold. It also leaves the sources out of the prompt (`cli.py:390`). | The lecture's modest claim describes what this code does | S13: "Retrieval hands the model your text. Whether it sticks to it is a separate question; the lecture calls that check IsSUP." (Gap 2) |
 | 9 | **Keywords: ranking vs filtering.** On B42–B48, hybrid search *ranks* with a keyword retriever (BM25) and a vector retriever, then fuses the two rankings (RRF). | The active variant is commented "embedding value + lexical search filter" (`cli.py:352`). `where_document={"$contains": "Italian"}` is a case-sensitive substring *mask*, applied before the vector ranking. It never ranks by keywords. | Both exist. They are different tools with similar names. | S12 says it in one clause; the BRIEF already has "a keyword filter, not keyword ranking". S15's hybrid beat starts from it: "The tutorial uses a word to filter. Hybrid search uses words to rank." |
 
@@ -890,10 +896,12 @@ Each item is marked **do** (clear value, low risk) or **nice**.
   - Use one tag per scene. Show it from the beat's first words for at least 3 s.
   - Never show a slide, a meme, or A11's chart itself; redraw them.
 - **Corrections to the BRIEF (do), for its mapping pass.**
-  1. S01: drop "B69" from the open-book line, or move it to S16's payoff (Common 18).
+  1. S01: drop "B69" from the open-book line, or move it to S16's payoff (Common 18). Script v1
+     already leaves it untagged.
   2. S16: keep the agent → Self-RAG link, but sharpen it. The agent picks *which* retrieval to
      make: it must call a tool (`mode="any"`, `cli.py:449`). Self-RAG also decides *whether* to
-     retrieve, and then checks the result (B75–B78) (Common 17).
+     retrieve, and then checks the result (B75–B78) (Common 17). Script v1 says "whether" and
+     "checks what it found", but not that the agent is forced to call a tool.
   3. Widen these ranges:
      - S02 + B59–B60;
      - S08 + B60;
@@ -903,10 +911,10 @@ Each item is marked **do** (clear value, low risk) or **nice**.
   4. The BRIEF's own list of differences between the slides and the tutorial has five entries.
      Add Conflict 5 (overlap; S06–S07), Conflict 7 (A12's arrow; S02, S11), Conflict 8 (the README's
      promise; S13) and Conflict 9 (filter vs ranking; S12, S15).
-- **Narration budget.** The BRIEF plans ~4,240 words against a cap of 4,300, which leaves about 60
-  words for bridges.
+- **Narration budget.** The BRIEF plans ~4,240 words against a cap of 4,300. Script v1 counts
+  4,262, which leaves under 40 words for bridges.
   - Keep at most three: S06 (overlap, ~20 words), S13 (sources and grounding, ~18) and S16 (whether
-    vs which, ~17).
+    vs which, ~17). That is ~55 words, so trim elsewhere first; v1's S16 already says "whether".
   - Each bridge needs its line in `i18n/zh/narration/`.
   - Tags and diagram labels need no narration.
 - **Terms (do).** Use the lecture's names where the tutorial has none, and the tutorial's where
@@ -987,8 +995,8 @@ Each item is marked **do** (clear value, low risk) or **nice**.
   - do · "Lecture 05 · slides A48–A53", at the rank and cut.
   - Diagram do · The planned flip, with both scales: similarity from −1 to 1 (A45), and distance
     from 0 to 2, where 0 means the same direction (the captured 0.0000) (Conflict 1).
-  - At the no-key stop, say "it fails before it reaches Chroma: Chroma only takes vectors"
-    (Conflict 7).
+  - At the no-key stop, say "it fails before the question reaches Chroma: this code hands Chroma
+    only vectors" (Conflict 7).
 - **S12.**
   - do · "Lecture 05 · slides A54–A55", at the filter beat.
   - Diagram: V6's A32 strip, as planned (Conflict 2).
@@ -1018,7 +1026,8 @@ Each item is marked **do** (clear value, low risk) or **nice**.
     numbers (B36–B39, B42–B48, B51–B65) instead of more tags.
   - Hybrid beat, do · Open with the tutorial's own rare word: "Tolminc" is in 3 of 8,248 chunks
     (`recorded-embeddings/08`). B43's IDF says that rarity is what makes it a strong keyword. The
-    vectors, meanwhile, find cheese-making text that never uses the word (Gap 3). Then the Chester
+    vectors, meanwhile, rank by meaning: the stand-in search's ten nearest are all story chunks,
+    most of which never use the word (`recorded-embeddings/09`; Gap 3). Then the Chester
     example and RRF, as planned.
   - nice, verify first · The captured collection schema contains a `sparse_vector_index` with
     `"bm25": false` (`laptop/17`). That suggests newer Chroma servers can index keywords; the

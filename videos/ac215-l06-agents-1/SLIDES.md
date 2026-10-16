@@ -28,7 +28,7 @@ Read this first:
   as part of a notebook title (slide 55).
 - **How the deck maps onto the tutorials** (the links are on slide 55):
   - Slides 4–5 (plain LLM) and 16–18 (Reasoning LLM) → the Cheese Quiz's "Base LLM" and
-    "Reasoning LLM" sections (cells 18–25).
+    "Reasoning LLM" sections (cells 18–26).
   - Slide 13 (Agentic RAG: an LLM chooses the retrieval technique) → `llm-rag --agent`, where
     Gemini chooses between "search one author's book" and "search all books" (digest C2).
   - Slides 20–22 (travel planner motivation) → the Travel Planner notebook and ADK's
@@ -256,8 +256,8 @@ Diagram by diagram:
   criteria in brackets ("Relevant | Supported | Useful") sends up-arrows into both. Purpose: the
   model's own judgement steers retrieval.
 - **11 · Self RAG, flowchart.** Grey solid boxes are LLM calls, dashed boxes are outputs and
-  diamonds are decisions. Only the "Yes" branches are labelled; the "No" outcomes of Relevant,
-  Supported and Useful are not drawn.
+  diamonds are decisions. Retrieve has a labelled "No" and "Yes"; the other three diamonds have
+  only a "Yes" branch, so the "No" outcomes of Relevant, Supported and Useful are not drawn.
   - Start: the question pill (top left) → LLM → the diamond "Retrieve".
   - "No" path (right): LLM → "Response" → up to an LLM call → diamond "Useful" → "Yes" → LLM →
     "Final Response" (top right).
@@ -353,8 +353,8 @@ Diagram by diagram:
   (Planner, Tools, Memory), fed from above by LLM Core + Prompt. Purpose: dynamic control is the
   LLM, steered by the prompt, cycling through planning, tool calls and memory. This is the
   slide-side picture of the agent loop that the tutorial frameworks run (digest C3).
-- **41 · Building blocks.** On the left a bullet list (four blocks, each with two or three
-  sub-items). On the right the slide-27 box without Task/Goal and Task Completion, with
+- **41 · Building blocks.** On the left a bullet list (four blocks: LLM Core with no sub-items,
+  the other three with two or three each). On the right the slide-27 box without Task/Goal and Task Completion, with
   **"Dynamic Control" greyed out**. Purpose: the four parts you configure, against the one that
   emerges.
 - **42–49 · Claude Research, second example (annotated screenshots).**
@@ -427,7 +427,7 @@ question), 25–26 (quoted definitions), 55 (links), 56 (closing picture).
 | "Memory" (session history, user preferences, learned strategies; continuity across sessions) | 40–41 | **Conflicts with the ADK README**, which defines "Memory" as per-session state and says separate sessions do not share it (`llm-agent-google-adk/README.md:140`; digest E12). In ADK, per-session data is *state*. The Cheese Quiz's short-term vs long-term memory (cells 35, 41–42) matches the slides. The Travel Planner's `SQLiteSession` is in-memory and lasts one runtime. |
 | "System & User Prompts", "Contexts", "Output Schema" | 41 | The Cheese Quiz's "Managing LLM Inputs" (cells 33–44) builds exactly these layers. Output schema is its step 7 (`json_schema`, strict), and `output_type=` in the Travel Planner and the Guild. "Context Engineering" appears in the deck only on the slide-19 outline. |
 | "Orchestrations (flows)" | 41 | ADK workflow agents (`SequentialAgent` in `1-baseline`), and custom routing in `5-custom-agent` (digest C7). |
-| "Reasoning LLM"; "Multi-LLM Orchestration System"; "Frameworks", "Inference Strategies", "Feedback & Iteration Loops", "Response Generator" | 16–18 | The Cheese Quiz's "Reasoning LLM" (cells 22–25) is one hand-coded instance: analyse → decompose → answer each → verify → synthesise, 11 `gpt-4o` calls. Its notebook map calls it "a manually orchestrated reasoning workflow". |
+| "Reasoning LLM"; "Multi-LLM Orchestration System"; "Frameworks", "Inference Strategies", "Feedback & Iteration Loops", "Response Generator" | 16–18 | The Cheese Quiz's "Reasoning LLM" (cells 22–26) is one hand-coded instance: analyse → decompose → answer each → verify → synthesise, 11 `gpt-4o` calls. Its notebook map calls it "a manually orchestrated reasoning workflow". |
 | "Reasoning" / "Reasoning Process" | 31–33, 42–44 | Here it means the model's own thinking: Claude's "Effort" setting and its "Thought process" panel. That is not a multi-call system like 16–18. The tutorial's only trace of it is Gemini's `thought_signature` in `llm-rag/out.txt` (digest C2). |
 | "Naive RAG", "Advanced RAG", "Self RAG", "Corrective RAG", "Agentic RAG" | 6–14 | The L05 slides wrote "Naïve RAG" and "Self-RAG"; this deck writes "Naive" and "Self RAG". The `llm-rag` README calls its L05 part "RAG" and its L06 part "Agents", and never says "agentic RAG". ADK has a `6-rag` module. |
 | "Retrieval Decision", "Pre-Retrieval", "Post-Retrieval", "Optimizations", "Self-Reflection & Critique", "Relevant / Supported / Useful", "Document Eval", "Query Rewrite", "Web Search" | 9–14 | The L05 slides used the reflection-token names IsREL / IsSUP / IsUSE. This deck uses plain words. None of these steps exists as code in the tutorials. |
@@ -553,16 +553,16 @@ win.
 | # | Planned chapter (`digest.md` §8) | Slides on the same ground | Relation |
 |---|---|---|---|
 | 1 | Who holds the steering wheel? (2.5 min) | 4–5 (plain LLM), 16–18 (Reasoning LLM), 26 (definition), 27 (anatomy, "Dynamic Control") | Same concept, and the tutorial applies it. The Cheese Quiz's three runs (base LLM, reasoning workflow, agent) follow the deck's own order: Recap → Reasoning Models → Agents. The hook (Gemini never touched `localhost`) is tutorial-only. Slides 20–22 would fit right after it (gap 3). |
-| 2 | Everything the model knows is in the envelope (2.5 min) | 41 (Instructions: system & user prompts, contexts, output schema; Memory: user sessions, preferences), 36 (output formats), 40 (memory) | Partly the same concept. Slide 41 names four of the Cheese Quiz's seven layers. Slide 19 promises a "Context Engineering" section that this deck does not have; it is L07's slides 11–18. The swapped roles in Step 2 (E1) are tutorial-only. |
-| 3 | Function calling, frame by frame (4 min) | 13–14 (Agentic RAG), 39 (tools work through function calling), 51 (functions with defined schemas) | Same concept, and the tutorial applies it. Slide 13 is llm-rag's agent in outline: one LLM picks from a menu, a second LLM answers. Who runs the function, the schema, the `enum` and `mode="any"` are tutorial-only. Conflict 2. |
+| 2 | Everything the model knows is in the envelope (2.5 min) | 41 (Instructions: system & user prompts, contexts, output schema; Memory: user sessions, preferences), 36 (output formats), 40 (memory) | Partly the same concept. Slide 41's words name five of the Cheese Quiz's seven steps (user and system prompt, short- and long-term memory as sessions and preferences, the output schema); RAG documents and tool outputs can only hide under its vague "Contexts". Slide 19 promises a "Context Engineering" section that this deck does not have; it is L07's slides 11–18. The swapped roles in Step 2 (E1) are tutorial-only. |
+| 3 | Function calling, frame by frame (4 min) | 13–14 (Agentic RAG), 39 (tools work through function calling), 51 (functions with defined schemas) | Same concept, and the tutorial applies it. Slide 13 is llm-rag's agent in outline: one LLM picks from a menu, a second LLM answers. Who runs the function, the hand-written JSON schema with its `enum`, and `mode="any"` are tutorial-only. Conflict 2. |
 | 4 | Run it on your laptop (3.5 min) | 13 (two LLMs around the menu), 7 (the retrieval the tool performs) | The tutorial applies it. Docker, reading the trace, the `thought_signature` and the stale `out.txt` are tutorial-only. |
 | 5 | From two calls to a loop (3 min) | 26 ("until a task is done"), 37–40 (the decision maker's two-way spokes), 41 (dynamic control greyed out) | Same concept. The slides draw the cycle but give no stop rule and no turn cap. `is_final_response()`, `max_turns` and `max_iterations` are tutorial-only. Conflict 1. |
 | 6 | ADK: a framework that owns the loop (4.5 min) | 35–36, 40–41 (the blocks you configure); 20–22 (the travel theme of `1-baseline`) | Mixed. `LlmAgent(model=…, instruction=…, tools=…)` is slide 41 in code. Runner, Session, State, Event, `output_key`, `{key}`, `adk web` and the version pin are tutorial-only. Conflicts 3 and 5. |
 | 7 | Tools you didn't write: MCP (2.5 min) | 51–53 | Same concept, and the tutorial applies it. Transports, `mcp_servers=` and `tool_filter` are tutorial-only. Conflict 4. |
 | 8 | Many agents (2.5 min) | 44–49 (Claude Research: a lead agent, a planner, web-search sub-agents), 51 (orchestration tools: handoffs, delegation), 41 ("Orchestrations (flows)"), 38 (planner) | Same concept, and the tutorial applies it. The deck shows a product; the tutorial builds three composition patterns. Handoffs are lecture-only. |
-| 9 | The harness: code decides what "done" means (3 min) | 36 ("Goals & success criteria"), 37 ("Constraints & guardrails"), 27 ("Task Completion"), 20–22 (the travel planner), 55 (the notebook title "Cheese Newsletter - Harness") | Mostly tutorial-only. The deck never defines a harness; L07 does (its slides 20–23). It names what the notebooks enforce, but places it in the prompt (Conflict 7). Conflict 5. |
+| 9 | The harness: code decides what "done" means (3 min) | 36 ("Goals & success criteria"), 37 ("Constraints & guardrails"), 27 ("Task Completion"), 20–22 (the travel planner), 55 (the notebook title "Cheese Newsletter - Harness") | Mostly tutorial-only. The deck never defines a harness; L07 does (its slides 20–23). It names what the notebooks enforce, but leaves it to the agent: the instructions state it, the decision maker weighs it (Conflict 7). Conflict 5. |
 | 10 | Recap + cleanup (1 min) | 41 (building blocks), 32–33 and 49 (the formula) | The recap could stand on lecture ground, but the plan does not use it yet. Cleanup is tutorial-only. |
-| — | not in the plan | 1–3, 15, 19, 23–24, 50, 54–56 (title, outlines, dividers, links, close); 6, 8–12 (the RAG ladder); 20–22 (motivation); 25 (three industry definitions); 28–34, 42–43 (the first Claude demo, the anatomy repeat, the research toggle and its thought panel) | Lecture-only, unless gaps 2, 3, 7 and 8 bring them in. |
+| — | content not used by the plan | 1–3, 15, 19, 23–24, 50, 54–56 (title, outlines, dividers, links, close); 6, 8–12 (the RAG ladder); 20–22 (motivation); 25 (three industry definitions); 28–34, 42–43 (the first Claude demo, the anatomy repeat, the research toggle and its thought panel) | Lecture-only, unless gaps 2, 3, 7 and 8 bring them in. 20–22, 32–33 and 55 also appear in rows 6, 9 and 10 above: those chapters share their ground (the travel theme, the formula, the notebook title), but the plan does not use what these slides say. |
 
 ### 2. Already in common
 
@@ -572,7 +572,7 @@ win.
 | 2 | A reasoning system built from several LLM calls | ch1 ↔ 16–18 | Yes, and the plan sharpens it. The notebook's docstring calls `ReasoningLLM` a reasoning framework of orchestrated calls, which is slides 16–17's "Multi-LLM Orchestration System". Slide 16's stack has no arrows, so it does not say who orders the calls. The plan answers: your Python, which makes it a workflow, not an agent. The word "reasoning" needs care (Conflict 6). |
 | 3 | What an agent is: an LLM with instructions and tools that runs on its own | ch1 ↔ 26 | Yes. The Travel Planner (cell 6) uses slide 26's sentence word for word. The Cheese Quiz (cell 8) says "a component" for "a system" and drops "until a task is done". The plan's point (same model; a different loop and different tools) is slide 26 read closely. |
 | 4 | Agentic RAG: an LLM chooses how to retrieve | ch3, ch4 ↔ 13–14 | Yes. The README introduces the section the same way (`README.md:244`), and its flow diagram, like slide 13, has one LLM before the retrieval and one after. llm-rag's menu has two entries, slide 13's has seven. Its first entry, "Retrieval Decision", is the one llm-rag takes away (Conflict 2). |
-| 5 | Tools are functions with schemas; the agent picks the right one, formats its inputs, interprets its outputs | ch3, ch7 ↔ 39, 51 | Yes, read with slide 26's "system". The slides say agents invoke tools and never say who executes them. The plan's split (the model writes the call, your code makes it) is more precise and does not contradict them, as long as "agent" means the whole system and not the model. The three duties map onto llm-rag: the function name, the arguments (`search_content` expanded as its description asks), and call 2. |
+| 5 | Tools are functions with schemas; the agent picks the right one, formats its inputs, interprets its outputs | ch3, ch7 ↔ 39, 51 | Yes, read with slide 26's "system". The slides say agents invoke tools and never say who executes them. The plan's split (the model writes the call, your code makes it) is more precise and does not contradict them, as long as "agent" means the whole system and not the model. The three duties map onto llm-rag: the function name, the arguments (`search_content`, which its description asks the model to expand into a sentence or two; the recorded run sent four words, `out.txt:23`), and call 2. |
 | 6 | The agent loop | ch5 ↔ 37–40 | Yes. Slide 40's final picture, a decision maker with two-way spokes to planner, tools and memory, is the loop drawn as a hub. ADK's `while True` is the same loop in code. The plan adds what the slides leave out: the model ends the loop by answering in plain text, and you cap it. |
 | 7 | Dynamic control is not a part you write | ch5, ch6 ↔ 37, 41 | Yes. Slide 41 greys it out among the building blocks. In the tutorial it is the framework's loop: ADK's `Runner`, the Agents SDK's `Runner.run`, Microsoft Agent Framework's run with `max_iterations`. |
 | 8 | Instructions turn the core into a specialist: role, constraints, output format | ch2, ch6 ↔ 36, 41 | Yes. ADK's `instruction=`, the Agents SDK's `instructions=`, the Cheese Quiz's system prompt. The output schema is Step 7's strict JSON schema and `output_type=`. |
@@ -594,8 +594,8 @@ win.
    With this map, three frameworks stop looking like three things to learn. **Carry it in** ch1
    (introduce it), ch5 (dynamic control becomes the loop), ch6 (label ADK's constructor) and ch10
    (the recap card).
-2. **Agentic RAG, and the choice not to retrieve (8, 10, 13–14, 33, 43).** The tutorial's first
-   hands-on step is slide 13 with a two-item menu, and the plan never says so. The lecture also
+2. **Agentic RAG, and the choice not to retrieve (8, 10, 13–14, 33, 43).** llm-rag's
+   `--agent` is slide 13 with a two-item menu, and the plan never says so. The lecture also
    shows the choice llm-rag takes away. Self RAG's first box decides *whether* to retrieve (10).
    Claude skips web search for a stable topic (33), while in Research mode its instructions push it
    to search for almost everything (43). Exercise 2 (remove `tool_config`) is the tutorial's version
@@ -609,8 +609,9 @@ win.
 4. **Three families of tools (51).** Data tools fetch: llm-rag's two searches, `web_search`, the
    filesystem server's `read_file`. Action tools change something: `finalize_itinerary`,
    `send_email`. Orchestration tools hand work to other agents: `.as_tool`, the Newsletter's
-   researcher and editor. The sorting explains the harness: the gates in the last two notebooks sit
-   on the action tools. **Carry it in** ch7 (sort the tools before MCP) and ch9 (the gates).
+   researcher and editor. The sorting explains the harness: the decisive gates in the last two notebooks
+   sit on the action tools (approval on `finalize_itinerary`; validation and the receipt on
+   `send_email`, though the editor's draft is validated too). **Carry it in** ch7 (sort the tools before MCP) and ch9 (the gates).
 5. **The LLM core is a design decision (35).** The lecture names three choices: the model, the
    sampling parameters, the response format. The tutorial makes each one concrete:
    `temperature=0` on llm-rag's first call for a repeatable tool choice (the second call keeps the
@@ -666,10 +667,12 @@ Not counted as conflicts:
   - Do not copy the slide's colours. Its red "Dynamic Control" and green "Memory" would read as
     "error" and "project-owned" in the series palette.
   - Colour each block by **where it runs**, which is also the video's thesis. The model is BLUE: it
-    runs in Google's or OpenAI's cloud. Your code is GREY on the laptop or in Colab, and TEAL inside
-    the llm-rag container: the tools you wrote, the loop, the session. The hosted `web_search` and
-    the remote MCP server are BLUE. The dashed trust boundary of the C2 animation separates BLUE
-    from GREY/TEAL. YELLOW marks the block in focus; RED stays for errors.
+    runs in Google's or OpenAI's cloud. Your code is GREY on the laptop and TEAL inside the llm-rag
+    container: the tools you wrote, the loop, the session. The hosted `web_search` and the remote
+    MCP server are BLUE. The dashed trust boundary of the C2 animation separates BLUE from
+    GREY/TEAL. Colab code runs on a Google VM, which the series table (`docs/AC215_SERIES.md`)
+    colours BLUE, not GREY; in the notebook chapters, let the dashed boundary, not the colour,
+    separate your code from the model. YELLOW marks the block in focus; RED stays for errors.
 - The plan runs about 29 minutes. Gaps 1–4 add about 2.5 minutes and keep it inside 25–35.
 - When captures are made, record a `--agent` run on today's book, the `adk web` event view for
   `1-baseline` and `3-mcp-tools`, and Travel Planner turns 3–4. Then re-check Conflicts 1, 2, 4

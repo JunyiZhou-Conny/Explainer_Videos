@@ -15,12 +15,15 @@ Three notes for anyone citing the deck:
   Always cite the PDF page numbers used here.
 - **Relation to the L03 deck.** Slides 4–41 are a revised copy of slides 30–69 of the L03 deck
   (see [`../ac215-l03-mega-pipeline/SLIDES.md`](../ac215-l03-mega-pipeline/SLIDES.md)). I matched
-  them by text. Changes in this copy: the L03 deck's first "Pick a Smaller Base Image" slide and
-  its "Measure It" slide (`docker images` / `docker history`, footer 43) are gone, which is why the
-  footers jump from 42 to 44 between slides 12 and 13. Slide 9's bullets were reworded and gained a
-  pure-Python footnote. Slide 13 dropped `--load` from its single-platform command. Slide 17 added
-  `--name gateway` to the last `docker run`. Slides 11, 19 and 20 have reworded captions. Where the
-  two decks differ, this deck is the newer wording.
+  them by text. Changes in this copy: the L03 deck's first "Pick a Smaller Base Image" slide (L03
+  slide 36) and its "Measure It" slide (`docker images` / `docker history`, L03 slide 38, footer 43)
+  are gone, so no slide carries footer 43 (the footers jump from 42 to 44 between slides 12 and 13).
+  The four dividers list four sections instead of L03's seven. Slide 9's bullets were reworded and
+  gained a pure-Python footnote. Slide 10's bullets were rewritten, with a new one on Alpine wheels.
+  Slide 12's "trim the extras" callout dropped pip's `--no-cache-dir`. Slide 13 dropped `--load`
+  (and its callout) from its single-platform command. Slide 15's table header "Anti-pattern" became
+  "Avoid these". Slide 17 added `--name gateway` to the last `docker run`. Slides 11, 19 and 20 have
+  reworded captions. Where the two decks differ, this deck is the newer wording.
 - **How the deck maps onto this episode.** Sections 2–3 (Compose, networking; slides 16–35) teach
   with the same gateway → processor app and the same ports (8090 / 9100 / 9200) as `port_toy`, but
   with different names (see *Terms*). Section 4 (team workflows; slides 36–41) is the idea behind
@@ -220,13 +223,13 @@ outline with the current section in bold. Slides 14, 15 and 26 have a peach back
   the left tree to the right and the `dist-info` folder appearing.
 - **Slide 10 · base-image table.** A navy-headed table with three rows: `python:3.14` (~1.63 GB, in
   red; build tools gcc, g++, make included), `python:3.14-slim` (~217 MB, in green; bold "good
-  default with compatible wheels"), `python:3.14-alpine` (~86 MB; smaller, check that your
-  dependencies support Alpine). A blue callout from the table says to use build tools in a build
+  default with compatible wheels"), `python:3.14-alpine` (~86 MB, also in green; smaller, check that
+  your dependencies support Alpine). A blue callout from the table says to use build tools in a build
   stage and leave them out of the final image. Purpose: the size gap and why it exists. A re-draw:
   three bars at true scale (the full image is about 7.5× slim), each labelled with what it
   contains.
 - **Slide 11 · two stages.** One Dockerfile in two blocks. The top block, `FROM python:3.14 AS
-  builder`, installs `uv`, copies the lock files and runs `uv sync`. The bottom block, `FROM
+  builder`, installs `uv`, copies `pyproject.toml` and `uv.lock`, and runs `uv sync`. The bottom block, `FROM
   python:3.14-slim AS runtime`, copies `/app/.venv` from the builder, copies the code and runs the
   app with the venv's Python. Callouts:
   - Yellow, on the builder: it has the common build tools and uses uv to install the dependencies
@@ -268,8 +271,8 @@ outline with the current section in bold. Slides 14, 15 and 26 have a peach back
     - Purple, on `/run/secrets/gh_token`: a path inside the container, mounted only for this step.
     - Green, on `$(…)`: runs `cat` to read the file into the variable.
   - Slide 15 shows the terminal side: `docker build --secret id=gh_token,src=$HOME/.gh_token .`.
-    Callouts: green "same id as the `RUN --mount`, that is the link"; blue "a local path, the token
-    file on your machine".
+    Callouts: green, the id is the same as in the `RUN --mount`, and that shared id is the link;
+    blue, the `src=` path is the token file on your machine.
   - Below it, a navy-headed table "Avoid these / Risk for secrets": `ENV` → kept in the image
     configuration; `ARG` → may show up in history or build metadata; `COPY` → stays in an earlier
     layer even after a later deletion.
@@ -281,7 +284,7 @@ outline with the current section in bold. Slides 14, 15 and 26 have a peach back
   history list (`ARG`), in a lower layer (`COPY`).
 - **Slide 17 · the running example.** Two rounded boxes: "gateway" (subtitle: serves the page) on
   the left and "processor" (subtitle: UPPER-cases the text) on the right. A top arrow to the right
-  carries `hello`; a bottom arrow back carries `HELLO`. Below them are the six by-hand commands:
+  carries `hello`; a bottom arrow back carries `HELLO`. Below them are the five by-hand commands:
   create the network, build and run the processor, build and run the gateway with `-p`, two `-e`
   flags, a bind mount and a name. Purpose: introduce the app and show how much typing it takes. It
   is `port_toy`'s architecture with different names.
@@ -354,7 +357,7 @@ outline with the current section in bold. Slides 14, 15 and 26 have a peach back
   starts every service. `-d` runs in the background. `--build` rebuilds first. `ps -a` shows which
   services are up or stopped. `logs -f` follows every service's output in one stream. `down` stops
   and removes all containers and the network. `-v` also deletes named volumes (your data), and the
-  slide ends that callout with a red "Delete!".
+  slide ends that orange callout with "Delete!".
 - **Slide 30 · the whole app.** The complete compose file next to a blue box: gateway and
   processor in one file, run by one `docker compose up`.
 - **Slide 31 · Compose vs Kubernetes.** A two-row table. Scope: one machine vs a cluster of many
@@ -411,7 +414,7 @@ outline with the current section in bold. Slides 14, 15 and 26 have a peach back
 | "cached layer", "bust the cache" | 7 | Neither README talks about layer caching. |
 | "build context", "daemon" | 8 | Not in either README; `digest.md` uses "build context". |
 | "`.dockerignore`" | 8 | Not in either README, and neither repo has one (digest G6). |
-| "Ready-to-install package (wheel)", "Source package", "Source distribution", "Built wheel", "native extensions" | 9 | Not in the READMEs. The mega-pipeline Dockerfile only mentions wheels in a comment on `UV_LINK_MODE`. |
+| "Ready-to-install package (wheel)", "Source package", "Source distribution", "Built wheel", "native extensions" | 9 | Not in the READMEs' prose. The mega-pipeline Dockerfile only mentions wheels in a comment on `UV_LINK_MODE`, which the root README's sample Dockerfile repeats (`README.md:338`). |
 | "base image"; `python:3.14`, `-slim`, `-alpine`; "compatible wheels"; "build tools" | 10 | All five mega-pipeline Dockerfiles use `python:3.14-slim-bookworm` plus `build-essential` (and `ffmpeg` in `transcribe_audio`); `port_toy` uses `python:3.14-slim`. |
 | "Multi-stage builds", "Builder stage", "Runtime stage" | 10–11 | Not in either tutorial: every Dockerfile there has one stage. |
 | "Layers are additive", "build-essential", `--no-install-recommends` | 12 | The mega-pipeline Dockerfile uses both flags and cleans the apt lists in the same `RUN`, as the slide advises. |
@@ -425,7 +428,7 @@ outline with the current section in bold. Slides 14, 15 and 26 have a peach back
 | "Environment"; `environment:`, `env_file:`, `.env`; "build time vs run time"; `build.args`; "Shell variable" | 25–26 | `port_toy` uses only `environment:`. mega-pipeline passes run-time values with `-e` in `docker-shell.sh`; its Dockerfiles use `ENV` (e.g. `UV_PROJECT_ENVIRONMENT`) and one build-only `ARG DEBIAN_PACKAGES`, which are live examples for the slide-26 rows. Neither tutorial uses `env_file:`, a `.env` file or Compose `build.args`. |
 | "Startup Order"; `depends_on`; "up = container started, not app ready" | 27 | `port_toy`'s compose file uses the short form of `depends_on` (no readiness wait). |
 | "healthcheck", "probe"; `service_healthy`, `service_started`, `service_completed_successfully` | 28 | Not in `port_toy`'s compose file, although its processor already serves `GET /health` and has `curl` installed. |
-| "detached" | 29 | `port_toy` README runs Compose in the foreground and stops it with Ctrl+C. |
+| "detached" | 29 | `port_toy` README never says "detached". It first runs `docker compose up` in the foreground (stopped with Ctrl+C), then `docker compose up -d`, which "runs the app in the background" (`README.md:492-495`). |
 | "Kubernetes", "cluster", "self-healing", "rolling updates", "cross-node load balancing" | 31 | Not in L04's tutorials (later lecture). |
 | "network namespace", "Isolated by default", "Containers I" | 33 | `port_toy` README never says "namespace"; it says each container's `localhost` is itself. |
 | "one shared network"; "Docker DNS" | 34 | `port_toy` README: "user-defined network `toynet`"; containers "find each other by name". It never says "DNS". |
@@ -523,12 +526,12 @@ command on the next line. Lines separated by "·" are separate lines on the slid
 - One multi-container app deserves one file and one command. (18)
 - Each service name is also its hostname. (20)
 - `.env` files stay out of Git, and inline `environment:` is for a few non-secret values only. (25)
-- Where you write a variable decides when it exists: the `.env` file and shell variables only fill
-  the Compose file, not the container, and `ARG` / `build.args` disappear after the build. (26)
+- The place a variable is written decides when it exists: the `.env` file and shell variables only
+  fill the Compose file, not the container, and `ARG` / `build.args` disappear after the build. (26)
 - "Up" is not "ready": `depends_on` alone only orders start-up. Waiting needs a healthcheck and
   `condition: service_healthy`, and the condition names are fixed keywords. (27–28)
-- `docker compose down -v` deletes your named volumes, i.e. your data; the slide marks it with a
-  red "Delete!". (29)
+- `docker compose down -v` deletes your named volumes, i.e. your data; the slide's callout ends
+  with "Delete!". (29)
 - Compose is for one machine; production on many hosts needs Kubernetes. (31)
 
 **Networking**
@@ -560,7 +563,8 @@ commits in `digest.md`; not on the slides)
 - Slide 11 puts the venv at `/app/.venv`. A development bind mount over `/app` (slides 17, 20)
   would hide it. mega-pipeline avoids this with `UV_PROJECT_ENVIRONMENT=/home/app/.venv`. A scene
   that combines the two slides should say so.
-- Slides 17–30 and slide 35's diagram publish `8090:9100`, i.e. on all host addresses. Only slide
+- Slides 17, 20–21, 23, 25, 27–28 and 30, and slide 35's diagram, publish `8090:9100`, i.e. on all
+  host addresses. Only slide
   35's code uses `127.0.0.1:8090:9100`, and the slide does not explain the difference. `port_toy`
   uses the `127.0.0.1` form everywhere and explains it.
 - Slide 25 loads `.env` through `env_file:` (into the container), while slide 26 says the
@@ -640,10 +644,10 @@ Where the slides and the captures disagree, the captures decide what the video s
 | # | Concept | Scenes ↔ slides | Does the video's framing agree with the lecture's? |
 |---|---|---|---|
 | 1 | Build or pull: early on everyone builds from the files in Git; later one person publishes to Docker Hub and the others pull | S02, S08 ↔ 37–40 | Yes. V1's two phases are Scenarios 1 and 2. The video adds what the slides leave out: a tag is only a signpost, and the image behind `dlops/…:latest` is old (Conflict 11). It never says "senior developer" or "pull request" (Gap 5). |
-| 2 | The course hands you the Dockerfile, `pyproject.toml`, `uv.lock` and a build-and-run script | S02, S03, S06 ↔ 37, 42 | Yes. The course plays the slides' senior developer, who writes these files and pushes them to GitHub (slide 37). V1's GREEN recipe card is slide 42's "We provide" list. |
+| 2 | The course hands you the Dockerfile, `pyproject.toml`, `uv.lock` and a build-and-run script | S02, S03, S06 ↔ 37, 42 | Yes. The course plays the slides' senior developer, who writes these files and pushes them to GitHub (slide 37). S02's GREEN recipe card (the three files) and PURPLE `docker-shell.sh` chip are slide 42's "We provide" list. |
 | 3 | Your own bucket, credentials and APIs | S04, S05 ↔ 42 | Yes. The slide names the three set-up tasks; the video does them. |
-| 4 | A host folder seen inside the container: the bind mount | S06, S16 ↔ 17, 23–24 | Yes. V5's two PINK routes are slide 24's `source:target` reading, and S16's live `index.html` edit is slide 17's `-v "$PWD/gateway:/app"`. The video never labels the two sides (proposal S06 iii). The lecture's secrets example adds `:ro` (Conflict 10). |
-| 5 | Variables set at run time | S06, S11, S14, S16 ↔ 20, 25–26 | Partly. The video uses `-e` and `environment:` correctly, and S14 says "only configuration, no rebuild". It never gives the lecture's rule that where you set a variable decides when it exists (Gap 1). |
+| 4 | A host folder seen inside the container: the bind mount | S06, S16 ↔ 17, 23–24 | Yes. V5's two PINK routes are slide 24's `source:target` reading, and S16's "what if" `index.html` edit (an illustration, not a capture) is slide 17's `-v "$PWD/gateway:/app"`. The video never labels the two sides (proposal S06 iii). The lecture's secrets example adds `:ro` (Conflict 10). |
+| 5 | Variables set at run time | S06, S11, S14, S16 ↔ 20, 25–26 | Partly. The video uses `-e` and `environment:` correctly, and S14 says "No image was rebuilt: it's only configuration." It never gives the lecture's rule that where you set a variable decides when it exists (Gap 1). |
 | 6 | A changed layer rebuilds itself and every layer below it | S07, S08, S11 ↔ 7 | Yes on the mechanism: the `CACHED` steps, "the copy and uv sync steps run again", "the two files match up to the copy line". The lecture's ordering rule is not stated, and the mega-pipeline Dockerfile breaks it (Conflict 5, Gap 3). |
 | 7 | One chained `RUN` with `--no-install-recommends` and the apt lists removed in the same step | S06, S11 ↔ 12 | Yes. S11's panel wraps `port_toy`'s line 2 at its `&&`, which is slide 12's shape, line for line. S06's build step 2 is the same pattern with `build-essential ffmpeg`. |
 | 8 | Two CPU types, one tag, pushed | S09 ↔ 13 | Yes on the idea. The command differs (Conflict 9). The video credits lecture 2. |
@@ -662,7 +666,7 @@ Where the slides and the captures disagree, the captures decide what the video s
 
 ### 3. Gaps (ranked by value to a student doing the tutorial)
 
-1. **Build time vs run time (slides 25–26).** Where you write a variable decides when it exists.
+1. **Build time vs run time (slides 25–26).** The place a variable is written decides when it exists.
    - Dockerfile `ENV` lives in the build, the image and the container.
    - `ARG` and Compose `build.args` live only during the build.
    - `-e`, `environment:` and `env_file:` live only in the running container.
@@ -677,7 +681,8 @@ Where the slides and the captures disagree, the captures decide what the video s
 2. **What else `.dockerignore` keeps out (slide 8).** The video's fix lists only `secrets/`. Slide
    8 also filters caches, local virtual environments and bulky data. In this tutorial,
    `--download` and the other steps write `input_audios/`, `text_prompts/<group>/` and the other
-   data folders into the component folder. Git ignores them (`.gitignore:5-6`); Docker copies
+   data folders into the component folder. Git ignores them (each component's own `.gitignore`,
+   e.g. `transcribe_audio/.gitignore:5-6`); Docker copies
    them. Captured: after one container's `--download`, the next `./docker-shell.sh` re-ran the copy
    and `uv sync` (`mega-laptop/15`: `Building 9.4s`, against `0.3s` when nothing changed,
    `mega-laptop/17`). With a key, the recordings and texts would also ride into the image. **Carry
@@ -734,7 +739,7 @@ Where the slides and the captures disagree, the captures decide what the video s
 | # | The slides say | The tutorial and the captures | Current | How the video should put it |
 |---|---|---|---|---|
 | 1 | **Publish address.** Slides 17, 20–21, 23, 25, 27–28, 30 and slide 35's diagram publish `8090:9100`. Only slide 35's two code lines write `127.0.0.1:8090:9100`, without saying why. | `port_toy` writes `127.0.0.1:8090:9100` everywhere (`README.md:120-124`, `docker-compose.yml:16`) and explains it (`:232-244`). Captured: the short form asks for 8090 on every address, so it collides with a running `127.0.0.1:8090` (`port-laptop/18`: `port is already allocated`); on 8091 it shows `0.0.0.0:8091->9100/tcp` (`21`). | Both work. The README's form is the one to type, and the safer. | S13 already shows it. Add the slide 35 tag there with a GREY note: "lecture's short form = every address · its code line adds 127.0.0.1". If spoken: "The lecture's short form opens the door on every address; port toy adds 127.0.0.1, this laptop only." |
-| 2 | **Names, and where the processor's image comes from.** Network `app-net`, images `processor-img` and `gateway-img`; in Compose the processor is pulled, `image: ac215/processor:1.0` (slides 20–21, 26, 28, 30). | `port_toy`: `toynet`, `toy-processor`, `toy-gateway`; Compose builds both (`build: ./processor`, `docker-compose.yml:29`) and names them `port_toy-processor` and `port_toy-gateway` (`port-laptop/47`, `66`). `ac215/processor` is not on Docker Hub (API 404, 2026-10-16), so a compose file copied from slide 20 would fail at the pull. The ports (8090, 9100, 9200) and the variables (`PROCESSOR_HOST`, `PROCESSOR_PORT`) are the same. | `port_toy`'s names | Nothing spoken. In S15, a GREY note under the processor panel: "the lecture's example pulls an image here · port_toy builds it". Kindly: same app, same ports, other names. |
+| 2 | **Names, and where the processor's image comes from.** Network `app-net`, images `processor-img` and `gateway-img`; in Compose the processor is pulled, `image: ac215/processor:1.0` (slides 20–21, 27–28, 30; slide 26 writes the tag as `${TAG}`). | `port_toy`: `toynet`, `toy-processor`, `toy-gateway`; Compose builds both (`build: ./processor`, `docker-compose.yml:29`) and names them `port_toy-processor` and `port_toy-gateway` (`port-laptop/47`, `66`). `ac215/processor` is not on Docker Hub (API 404, 2026-10-16), so a compose file copied from slide 20 would fail at the pull. The ports (8090, 9100, 9200) and the variables (`PROCESSOR_HOST`, `PROCESSOR_PORT`) are the same. | `port_toy`'s names | Nothing spoken. In S15, a GREY note under the processor panel: "the lecture's example pulls an image here · port_toy builds it". Kindly: same app, same ports, other names. |
 | 3 | **Compose file name.** Slides 19–20: `compose.yaml` (legacy `docker-compose.yaml`). Slides 26 and 29 write `docker-compose.yml`. | `port_toy`'s file is `docker-compose.yml`, and Compose v5.6.0 read it (`port-laptop/47`). | Both. `compose.yaml` is Compose's preferred name; it still accepts the older ones. | Nothing to change. Optional GREY note on S15's panel header: "Compose also reads compose.yaml". |
 | 4 | **What the by-hand run already had.** Slide 17's by-hand gateway run has `-v "$PWD/gateway:/app"`, and you start the services "in the right order" yourself (slides 17, 19). Slide 20 labels `volumes:` as the home of `-v`. | `port_toy`'s Step 1 has no `-v` (`README.md:120-124`). So S15 calls `volumes:` and `depends_on` new keys, with "no by-hand ancestor". | Both, each measured against its own by-hand version | Keep the SAY: "Two keys are new" is true of `port_toy`'s Step 1. In V8, GREY notes: on `volumes:` "the lecture's by-hand run had -v · slide 17"; on `depends_on` "= the order you typed them". |
 | 5 | **Cache order.** Slide 7: copy `pyproject.toml uv.lock`, run `uv sync`, then `COPY . .`. The other order is the "classic mistake". | All five Dockerfiles copy the whole folder first (`COPY --chown=app:app . ./`), then `RUN uv sync` (`transcribe_audio/Dockerfile:39-41`). Captured: once a folder had changed, the rebuild re-ran both steps, `Building 9.4s` with `uv sync` 2.0 s (`mega-laptop/15`), against `Building 0.3s` (`17`). | The committed Dockerfile is what students run; the slide's order is the better practice. With uv and the bind mount, the cost here is seconds. | S08 already says what happens. Add the slide 7 tag and a GREY note: "lecture's order: lock files first, code last". If spoken: "This Dockerfile copies the folder before uv sync; with uv, the re-run costs seconds." |
@@ -862,7 +867,7 @@ Each item is marked **do** (clear value, low risk) or **nice**.
     caches and data files." (15)
   - (iii) **do** · On the fix card, the `.dockerignore` row lists what this repo needs, in slide 8's
     spirit: `secrets/`, the data folders (`input_audios/`, `text_*/`, `output_audios*/`) and
-    `__pycache__/`. Text only; the guide's G6 has the same list (Gap 2).
+    `__pycache__/`. Text only; the guide's G6 lists the same folders except `__pycache__/` (Gap 2).
   - (iii) **do** · A GREY row on the same card: "remove images built before the fix · a deleted file
     stays in its layer" (slides 12, 15; Gap 7).
   - (iii) **nice** · In the V5 contrast, draw the missing `.dockerignore` as a dashed sieve outline

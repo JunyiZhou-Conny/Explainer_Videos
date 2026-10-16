@@ -23,9 +23,12 @@ Beats (script.md "## S15", one voiceover block each):
     recipe: python:3.12". "The same reason as in our build": the strip shrinks (3 rows); V4 coda above
     it: the number line with the GREEN `>=3.13` band; our GREEN dot drops in above the line (`3.15.0` /
     "our build · uv 0.13.0"). "built on September 16": GREY source chip vm-debian12/08: 3 (cut after
-    the date; caption "from `sudo docker image inspect` · extra"), the date underlined YELLOW; "with uv
-    0.12.15": source chip vm-debian12/10: 8 (caption "the image's `.venv/pyvenv.cfg`"), `0.12.15`
-    underlined. "the newest stable Python that uv knew in the range": the band and its label pulse;
+    the date) under its own command as GREY mono caption: vm-debian12/08 line 1 without `uname -m; `
+    (folded by hand onto 2 rows, see INSPECT_ROWS; row tag "extra · on the VM"), the date underlined
+    YELLOW; "with uv 0.12.15": source chip vm-debian12/10: 8 (caption at its right "the image's
+    `.venv/pyvenv.cfg`": the command comes in beat 5), `0.12.15` underlined. The command's two rows
+    span the frame above the band label, so both chips stay left of it.
+    "the newest stable Python that uv knew in the range": the band and its label pulse;
     "was 3.14.7": a second GREEN dot lands in the band below the line (`3.14.7` / "dlops image · uv
     0.12.15"). "Our build today got 3.15.0": our dot pulses.
  3  The source chips go; "two Pythons": both dots pulse. "Nothing in the recipe is pinned": the line and
@@ -46,13 +49,16 @@ Beats (script.md "## S15", one voiceover block each):
     "this command runs the instructor's": README card line 215 (the command), `dlops/simple-translate`
     underlined YELLOW. "Your image is": its prefix is copied down into a GREEN chip (text, not run)
     `sudo docker run --rm -ti <USER NAME>/simple-translate-ac215` with `<USER NAME>` YELLOW (GREY
-    caption "your image · not run here"); "once it's built for amd64": GREY tag "needs an amd64 build:
-    see Platforms".
- 5  TRACKER C6 · extra. The cards go; the strip comes back and grows to 6 rows (5 in script.md: the
-    three command rows and three output rows all stay on screen until the output is read); it types
+    caption "your image · not run here"); "once it's built for amd64": GREY tag "Intel/AMD laptop:
+    already amd64 · Apple Silicon Mac: rebuild first (see Platforms)" (S13: an Intel/AMD build is
+    already linux/amd64; only an arm64 build needs the rebuild).
+ 5  TRACKER C6 · extra. The cards go; the strip comes back and grows to 8 rows (5 in script.md: the
+    three command rows and five output rows all stay on screen until the output is read); it types
     `sudo docker run --rm dlops/simple-translate -c 'wc -c cli.py; grep -n Translator cli.py; ls -l
     .venv/bin/python; cat .venv/pyvenv.cfg'` (row tag `extra`; folded by hand at spaces, see IMG_ROWS)
-    -> vm-debian12/10: 2-4. "its cli.py is the older one": the strip shrinks to its three output rows
+    -> vm-debian12/10: 2-4, …, 8; `uv = 0.12.15` underlined YELLOW with the GREY row tag "where
+    `uv 0.12.15` came from" (the source of beat 2's chip). "its cli.py is the older one": the strip
+    shrinks to its five output rows (2 more than the house strip; the picture above sits higher)
     while line 4 is copied up above CODE(cli.py: 25) (caption "in the image · dlops/simple-translate",
     `async` over `async`; the panel is right-aligned so the line's `25:` fits), tag "erratum · the
     published image lags the repo"; "without raise exception equals True": `Translator()` underlined
@@ -71,7 +77,7 @@ import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
-from explainer.devops import MONO, OUTPUT, TERM_BG, code_span
+from explainer.devops import MONO, OUTPUT, TERM_BG, code_span, line_pitch
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, DEPLOY, ERR, EXIT, IMAGE, INK, LAPTOP, LAPTOP_DIR, NARRATION, P_VM, REPO_ENTRIES,
@@ -107,15 +113,22 @@ C08 = capture("08", VM12)                         # vm-debian12/08-platform.txt 
 assert "sudo docker image inspect dlops/simple-translate" in C08.cmd, C08.cmd
 CREATED = cut(C08.line(3), "2026-09-16")
 assert CREATED == "linux/amd64 created 2026-09-16…", CREATED
+# the chip's own command: line 1 without `uname -m; ` (its x86_64 is line 2, not on the chip), folded by
+# hand outside the quotes (house style " \" + 4-space indent), so the rows paste back as one command
+assert C08.cmd.startswith("uname -m; "), C08.cmd
+INSPECT = C08.cmd[len("uname -m; "):]
+INSPECT_ROWS = ["sudo docker image inspect dlops/simple-translate \\",
+                "    --format '{{.Os}}/{{.Architecture}} created {{.Created}}'"]
+assert " ".join([INSPECT_ROWS[0][:-2], INSPECT_ROWS[1][4:]]) == INSPECT, INSPECT
 
 C10 = capture("10", VM12)                         # vm-debian12/10-image-files.txt (extra)
 IMG_CMD = C10.cmd
 assert IMG_CMD == ("sudo docker run --rm dlops/simple-translate -c 'wc -c cli.py; grep -n Translator cli.py; "
                    "ls -l .venv/bin/python; cat .venv/pyvenv.cfg'"), IMG_CMD
-OUT_IMG = C10.at((2, 4))
-assert OUT_IMG[2] == "25:    async with Translator() as translator:", OUT_IMG
 UV_CFG = C10.line(8)
 assert UV_CFG == "uv = 0.12.15", UV_CFG
+OUT_IMG = C10.at((2, 4), "…", 8)                  # line 8: the source of beat 2's uv chip
+assert OUT_IMG[2] == "25:    async with Translator() as translator:" and OUT_IMG[4] == UV_CFG, OUT_IMG
 # The quoted script is 83 characters: longer than a row, so Terminal.fold (which never breaks inside
 # quotes) would cut it mid-word. Folded by hand at spaces, house style (" \" + 4-space indent): inside
 # the quotes the " \" + newline reaches the image's bash, which reads it as a line continuation, so the
@@ -158,9 +171,11 @@ SHELF_C, SHELF_W, SHELF_H = np.array([4.4, 1.45, 0]), 3.6, 1.5
 H_STACK = [0.1] * 4 + [0.3, 0.3, 0.5]      # V6's seven slabs (as S12): four base, apt/pip, COPY, uv sync
 FILLS = [SYSTEM] * 5 + [LAPTOP, VENV]
 AX_Y = 0.25                                # beat 2: the number line (S07: 0.45; room for the chips)
-CHIPS_TOP = 2.55                           # beat 2: the source chips' top (the tracker ends at 2.9)
+CHIPS_TOP = 2.58                           # beat 2: the source chips' top (the tracker ends at 2.9)
 COL_TOP = 2.45                             # beat 3: the recipe column's top
-IMG_STRIP = 6                              # beat 5: the strip while the folded extra is typed
+IMG_STRIP = 3 + len(OUT_IMG)               # beat 5: the strip while the folded extra is typed and read
+IMG_KEEP = len(OUT_IMG)                    # beat 5: then it keeps the five output rows
+STRIP5_TOP = STRIP_TOP + (IMG_KEEP - STRIP_ROWS) * line_pitch(22)   # that strip's top edge
 RIGHT_X, LEFT_X = 6.4, -6.3
 
 
@@ -245,6 +260,22 @@ def captioned(caption: VGroup, body: VGroup, buff: float = 0.1) -> VGroup:
     """A caption (GREY, small) above `body`, left-aligned. .caption .body"""
     caption.next_to(body, UP, buff=buff).align_to(body, LEFT).shift(RIGHT * 0.08)
     g = VGroup(caption, body)
+    g.caption, g.body = caption, body
+    return g
+
+
+def cmd_rows(rows, size: float = 20, color=S.GREY) -> VGroup:
+    """A folded command as GREY mono rows at a terminal's pitch (a source chip's caption)."""
+    out = VGroup(*[mono_line(s, size, color) for s in rows])
+    for a, b in zip(out, out[1:]):
+        b.shift(a.strut.get_corner(UL) + DOWN * line_pitch(size) - b.strut.get_corner(UL))
+    return out
+
+
+def side_captioned(body: VGroup, caption: VGroup, buff: float = 0.25) -> VGroup:
+    """A caption (GREY, small) right of `body`, centred on it. .caption .body"""
+    caption.next_to(body, RIGHT, buff=buff)
+    g = VGroup(body, caption)
     g.caption, g.body = caption, body
     return g
 
@@ -425,14 +456,25 @@ class Deploy(VoiceScene):
         theirs = vl.dot2(14, "3.14.7", "dlops image · uv 0.12.15", VENV, above=False)
         assert ours.text.get_top()[1] < vl.band_label.get_bottom()[1] - 0.05, "our label runs into the band label"
         assert theirs.text.get_bottom()[1] > -1.3, "the dlops label runs into the strip"
-        chip_a = captioned(grey_words(("from", "label"), ("sudo docker image inspect", "mono"), ("· extra", "label")),
-                           out_chip(CREATED))
-        chip_b = captioned(grey_words(("the image's", "label"), (".venv/pyvenv.cfg", "mono")), out_chip(UV_CFG))
-        chips = VGroup(chip_a, chip_b).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
-        chips.move_to([LEFT_X + chips.width / 2, 0, 0]).align_to(np.array([0, CHIPS_TOP, 0]), UP)
-        assert chips.get_bottom()[1] > AX_Y + 0.3 and chips.get_right()[0] < vl.band_label.get_left()[0] - 0.2, \
-            chips.get_corner(DR)
-        assert chips.get_top()[1] < tr.get_bottom()[1] - 0.3, "the chips crowd the tracker"
+        # chip A: the date under its own command (GREY mono rows, the output in the command's first column);
+        # the command's long row spans the frame above the band label. Chip B: its caption at its right
+        # (the ticks leave no room for one above it)
+        cmd_a = cmd_rows(INSPECT_ROWS)
+        body_a = out_chip(CREATED).next_to(cmd_a, DOWN, buff=0.1)
+        body_a.shift(RIGHT * (cmd_a[0].strut.get_left()[0] - body_a.line.strut.get_left()[0]))
+        chip_a = VGroup(cmd_a, body_a)
+        chip_a.shift(np.array([LEFT_X - body_a.frame.get_left()[0], CHIPS_TOP - cmd_a.get_top()[1], 0]))
+        x_a = beside(row_tag("extra · on the VM"), cmd_a[0], buff=0.35)
+        chip_a.add(x_a)
+        chip_a.caption, chip_a.body = VGroup(cmd_a, x_a), body_a
+        chip_b = side_captioned(out_chip(UV_CFG), grey_words(("the image's", "label"), (".venv/pyvenv.cfg", "mono")))
+        chip_b.next_to(body_a, DOWN, buff=0.18).align_to(body_a, LEFT)
+        bl = vl.band_label
+        assert cmd_a.get_bottom()[1] > bl.get_top()[1] + 0.2, (cmd_a.get_bottom(), bl.get_top())
+        assert max(body_a.get_right()[0], chip_b.get_right()[0]) < bl.get_left()[0] - 0.2, chip_b.get_corner(DR)
+        assert chip_b.get_bottom()[1] > vl.ticks.get_top()[1] + 0.2, (chip_b.get_bottom(), vl.ticks.get_top())
+        assert max(cmd_a.get_right()[0], x_a.get_right()[0]) < 6.5, (cmd_a.get_right(), x_a.get_right())
+        assert chip_a.get_top()[1] < tr.get_bottom()[1] - 0.25, "the chips crowd the tracker"
         assert theirs.text.get_bottom()[1] > STRIP_TOP + 0.2, "the dlops label runs into the strip"
 
         with self.voiceover(SAY[2]) as vo:

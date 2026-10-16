@@ -48,9 +48,10 @@ Beats (script.md "## S05", one voiceover block each):
     lines it made, which flash YELLOW. Lines to the card stop at its top edge; wires to slabs run
     along a bus above the card and down the gap between card and stack (nothing crosses text).
 11  The chips give way to a GREY card headed `README.md · lines 175–225 · Appendix · Sample
-    Dockerfile`: line numbers + lines 179, …, 199 and 200 (200 as an excerpt: the man-page loop
-    without its indent and `&& \`). Line 179 is barred; `curl` turns RED with a RED tag "no
-    ffmpeg"; a RED stamp "don't paste into transcribe_audio" under the card.
+    Dockerfile`: line numbers + lines 179, …, 199 and 200 (200 with its indent, cut before its
+    `&& \` and ending in a GREY "…"). A GREY tag beside 199: "199–200: extra lines you can leave
+    out". Line 179 is barred; `curl` turns RED with a RED tag "no ffmpeg"; a RED stamp "don't
+    paste into transcribe_audio" under the card.
 12  The appendix card fades. Under the file row a GREY card: "Dockerfile = FROM python:3.12-slim-
     bookworm (README line 41) / + the README's six code blocks, in order: / lines 45 · 50–55 ·
     60–69 · 76–77 · 82–83 · 88–89", and ▶ your turn beside the file row (together, so a paused
@@ -106,8 +107,9 @@ _rm = source_text("README.md").split("\n")
 APPX = {179: _rm[178], 199: _rm[198], 200: _rm[199]}
 assert APPX[179] == 'ARG DEBIAN_PACKAGES="build-essential curl"', APPX[179]
 assert APPX[199] == "RUN set -ex; \\", APPX[199]
-LOOP = 'for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done'   # line 200 (excerpt)
-assert APPX[200].strip().startswith(LOOP), APPX[200]
+LOOP = 'for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done'
+assert APPX[200] == "    " + LOOP + " && \\", APPX[200]
+ROW200 = "    " + LOOP + " …"        # line 200 with its indent; the GREY "…" marks the cut `&& \`
 assert _rm[174] == "```dockerfile" and _rm[224] == "```"
 
 # ------------------------------------------------------------------ layout
@@ -581,9 +583,11 @@ class WriteDockerfile(VoiceScene):
         # ========================================================== 11 · the appendix sample
         gut = 0.75
         rws = VGroup()
-        for n, s_ in [("179", APPX[179]), ("…", ""), ("199", APPX[199]), ("200", LOOP)]:
+        for n, s_ in [("179", APPX[179]), ("…", ""), ("199", APPX[199]), ("200", ROW200)]:
             num = mono_line(n, PT, S.GREY)
             txt = mono_line(s_, PT, INK)
+            if s_ == ROW200:
+                substring(txt, "…").set_color(S.GREY)
             txt.shift(num.strut.get_corner(UL) + RIGHT * gut - txt.strut.get_corner(UL))
             rws.add(VGroup(num, txt))
         rws.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
@@ -595,17 +599,22 @@ class WriteDockerfile(VoiceScene):
                                                               PT, S.GREY))
         ahead.arrange(RIGHT, buff=0.12).next_to(afr, UP, buff=0.08).align_to(afr, LEFT).shift(RIGHT * 0.1)
         appx = VGroup(afr, inner, ahead)
-        appx.move_to([-0.3, 0.0, 0]).align_to(frow, DOWN).shift(DOWN * (0.24 + appx.height))
+        appx.move_to([0.0, 0.0, 0]).align_to(frow, DOWN).shift(DOWN * (0.24 + appx.height))
+        assert afr.get_left()[0] > -6.55 and afr.get_right()[0] < 6.55, afr.width
         r179 = rws[0]
         curl = substring(r179[1], "curl")
         b179 = Rectangle(width=afr.width - 0.2, height=r179.height + 0.14, stroke_width=0)
         b179.set_fill(TURN, 0.16).move_to([afr.get_x(), r179.get_y(), 0])
         noff = tag("no ffmpeg", ERR).next_to(r179, RIGHT, buff=0.35)
+        # rows 199-200 are the appendix's extras (BRIEF: "it adds set -ex and the man-page loop")
+        xtra = tag("199–200: extra lines you can leave out", S.GREY).next_to(rws[2], RIGHT, buff=0.35)
+        xtra.shift(UP * 0.04)                    # clear of row 200's glyphs below
         nopaste = stamp("don't paste into transcribe_audio", ERR, size=PT, angle=0.04)
         nopaste.next_to(afr, DOWN, buff=0.1).align_to(afr, LEFT).shift(RIGHT * 0.35)
         assert nopaste.get_bottom()[1] > card.get_top()[1] + 0.05, nopaste.get_bottom()
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(chips, shift=DOWN * 0.1), FadeIn(appx, shift=UP * 0.1), run_time=0.8)
+            self.play(FadeIn(xtra, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("but its build argument")
             self.play(FadeIn(b179), run_time=0.4)
             vo.wait_until("has curl instead")
@@ -633,7 +642,8 @@ class WriteDockerfile(VoiceScene):
         yt = your_turn().next_to(frow, RIGHT, buff=0.4)
         u_name = under(fr_name[-10:], TURN)
         with self.voiceover(SAY[12]) as vo:
-            self.play(FadeOut(appx), FadeOut(b179), FadeOut(noff), FadeOut(nopaste), run_time=0.4)
+            self.play(FadeOut(appx), FadeOut(b179), FadeOut(noff), FadeOut(xtra), FadeOut(nopaste),
+                      run_time=0.4)
             self.play(FadeIn(final, shift=UP * 0.1), FadeIn(yt, shift=LEFT * 0.1), run_time=0.5)
             self.play(Wiggle(yt, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.7)
             vo.wait_until("a file named Dockerfile")

@@ -4,7 +4,7 @@ Beats (script.md "## S16", one voiceover block each):
  0  S15 ended on an empty frame. TRACKER C6 · extra, the VM strip (3 rows, `ssh · ac215-l02`) and, above
     it, the BLUE VM `ac215-l02` as S15 left it: the dlops image's seven slabs (TEAL caption
     `dlops/simple-translate`) and its BLUE boot disk; the GOLD dial at the right keeps sweeping (no
-    digits). "An extra check": the strip types `sudo docker ps -a` (row tag `extra`) -> vm-debian12/11: 2
+    digits) from where S14/S15's badge dial left it (S15_END: it never rewinds). "An extra check": the strip types `sudo docker ps -a` (row tag `extra`) -> vm-debian12/11: 2
     (squeeze): the header only, and the prompt returns. "shows no containers left behind": a YELLOW bar
     on the header row; in the VM, a GREY dashed slot on top of the stack, "no containers". "thanks to
     dash dash rm": a TEAL `--rm` chip beside the slot, GREY "removed at exit"; the chip pulses.
@@ -12,8 +12,8 @@ Beats (script.md "## S16", one voiceover block each):
     shapes shrink, its 20+ pt labels keep their size) while the dial keeps sweeping above it. The
     schematic console (tag `illustration`, S14's "Compute Engine › VM instances" with the instance row:
     GREEN check, `ac215-l02`, `e2-small`, SSH): the row's box is ticked; "delete the VM": Delete lights,
-    the confirm dialog "Delete ac215-l02? / Its boot disk is deleted with it" (tag illustration, as in
-    L1); "with its boot disk": a YELLOW bar on that line, the VM's disk pulses. Delete: the dialog
+    the confirm dialog "Delete ac215-l02? / Its boot disk is deleted with it" (as in L1; the console's
+    one `illustration` tag covers it); "with its boot disk": a YELLOW bar on that line, the VM's disk pulses. Delete: the dialog
     closes, the row leaves the list, the BLUE VM and its disk dissolve into dust and the needle stops
     where it is. "then check": the console makes way for the checklist "VM instances: empty" / "Disks:
     empty" (GREEN ticks as each is named, "empty" GREEN), the frozen dial beside it; "Pause": ▶ your
@@ -25,7 +25,7 @@ Beats (script.md "## S16", one voiceover block each):
     whose screen holds a TEAL bar (the images); "run docker system prune dash a": the GREY mono chip
     `docker system prune -a` with "frees the laptop's disk · said, not typed here"; the TEAL bar
     shrinks to a sliver. Then, smaller and unspoken: `docker buildx rm multi-arch` "if you ran the push
-    script" and `docker logout` "optional".
+    script" and `docker logout` "optional", held 3 s on a pause so they can be read.
  3  V1 closing picture. The tracker goes. "Lecture 1": L1's nest (BLUE VM "VM" holding a GREEN "venv"),
     tag "L1". "Today a container slid in between": the dashed GREY "container · L2" fades in between
     them and its dashes close into a solid TEAL "container"; "the venv now lives in an image": the venv
@@ -110,7 +110,13 @@ ROWS = ["image vs container", "start-up command line", "two Pythons", "cache ord
 VM_C, VM_W, VM_H = np.array([-0.4, 0.82, 0]), 6.5, 3.7       # beat 0: the VM above the strip
 STACK_X, FLOOR_Y = -1.25, -0.36                             # its image stack (bottom edge)
 DIAL_C, DIAL_R = np.array([4.55, 1.7, 0]), 0.55             # beats 0-1: the dial (it never moves while it runs)
-RATE = 1 / 30                                               # dial turns per second while the VM exists
+RATE = 1 / 60                                               # dial turns per second while the VM exists (S14's)
+# The meter never rewinds (script.md conventions): the needle starts where the VM's meter has got to.
+# S14's dial starts at "The meter starts" (24:56.3 in the 2026-10-15 draft) and sweeps at 1/60 turn/s
+# until S14 freezes it before its last fade (26:34.0); S15 (26:35-28:36, 121 s) carries it on at the
+# same rate. Re-measure if S14 or S15 changes length by more than a few seconds (1 s = 6 degrees).
+S14_END = (1594.0 - 1496.3) / 60                            # 1.63 turns
+S15_END = S14_END + 121 / 60                                # 3.65 turns: S16's dial starts here
 SM_C, SM_W, SM_H = np.array([4.45, -0.88, 0]), 3.8, 2.55    # beat 1: the VM in the right column
 BR_LEFT, BR_TOP, BR_W, BR_H = -6.55, 2.72, 8.6, 5.2         # beat 1: the console
 C_LEFT = BR_LEFT + 0.35
@@ -583,6 +589,8 @@ class Recap(VoiceScene):
         t = vm_term(STRIP_ROWS)
         V = vm_picture()
         dial = CostDial(radius=DIAL_R, caption=None).move_to(DIAL_C)
+        dial.tracker.set_value(S15_END)               # it goes on from where S15 left it
+        dial.needle.update()                          # (FadeIn suspends the redraw: draw it there now)
         cost = label("cost", 22, COST).next_to(dial, RIGHT, buff=0.2)
         rate = ValueTracker(RATE)
         dial.tracker.add_updater(lambda m, dt: m.increment_value(dt * rate.get_value()))
@@ -661,9 +669,7 @@ class Recap(VoiceScene):
         d_frame.move_to([(D_LEFT + D_RIGHT) / 2, -0.75, 0])
         d_text.move_to(d_frame).align_to(d_frame, UP).align_to(d_frame, LEFT).shift(RIGHT * 0.4 + DOWN * 0.32)
         buttons.align_to(d_frame, RIGHT).align_to(d_frame, DOWN).shift(LEFT * 0.35 + UP * 0.26)
-        d_ill = illustration_tag()
-        d_ill.move_to(d_frame.get_corner(UR) + np.array([-d_ill.width / 2 - 0.3, 0, 0]))
-        dialog = VGroup(d_frame, d_text, buttons, d_ill)
+        dialog = VGroup(d_frame, d_text, buttons)     # the console's `illustration` tag covers it
         body_bar = Rectangle(width=d_body.width + 0.16, height=d_body.height + 0.14, stroke_width=0) \
             .set_fill(TURN, 0.2).move_to(d_body)
 
@@ -783,7 +789,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(prune, shift=RIGHT * 0.2), run_time=0.5)
             self.play(Transform(used, freed), FadeIn(prune_cap, shift=UP * 0.1), run_time=0.8)
             self.play(LaggedStart(*[FadeIn(r, shift=UP * 0.1) for r in small], lag_ratio=0.3), run_time=0.7)
-        self.wait(1.0)                                # (the small print is read on a pause)
+        self.wait(3.0)                                # (the small print, ~12 words, is read on a pause)
 
         # ========================================================== 3 · V1: the closing picture
         nest = Nest(vm_w=6.6, vm_h=3.8, size=24).move_to([0, 0.15, 0])

@@ -18,8 +18,9 @@ Beats (script.md "## S01", one voiceover block each):
    drawer and BLUE "shared bucket", a GOLD key and GOLD "service-account key").
 2. Layout preview. A README.md page glyph (mono caption under it: the repo's address,
    "github.com/dlops-io/mega-pipeline", from the clone command) and a GREY "this video" frame side
-   by side; on "The tracker" the page and its address fly to the top-left corner and turn into
-   the ReadmeTracker (FadeTransform; "README › Clone this Repository", 2 dots) in a YELLOW ring that pulses as step 1 ("step 1 of
+   by side; on "The tracker" the page flies to the top-left corner and turns into the
+   ReadmeTracker (FadeTransform; "README › Clone this Repository", 2 dots; the address and the
+   frame fade) in a YELLOW ring that pulses as step 1 ("step 1 of
    2: Clone") lights on "shows the README step"; the code panel
    transcribe_audio/cli.py · lines 18–20 slides in, its header ringed YELLOW on "file and line
    numbers"; the 3-row laptop strip (GREY tag "preview") types `git clone
@@ -291,7 +292,9 @@ class Hook(VoiceScene):
             self.play(FadeIn(video, shift=RIGHT * 0.3), run_time=0.6)
             vo.wait_until("The tracker")
             # the README page flies up to the corner and becomes the tracker
-            self.play(FadeTransform(readme, tr), FadeOut(video), run_time=1.0)
+            # only the page morphs (a wider source would stretch the tracker's ghost across the
+            # frame); its address fades with the video
+            self.play(FadeTransform(page, tr), FadeOut(url), FadeOut(video), run_time=1.0)
             self.remove(video, readme)
             self.play(Create(ring), run_time=0.5)
             vo.wait_until("shows the README step")

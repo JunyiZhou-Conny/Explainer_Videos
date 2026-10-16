@@ -107,6 +107,7 @@ from manim import (
     PI,
     RIGHT,
     UP,
+    AnimationGroup,
     ArcBetweenPoints,
     Arrow,
     Create,
@@ -362,8 +363,9 @@ class TeamWorkflow(VoiceScene):
             ph_sa = chars(r58b, R58B, "a shared service account")
             kept = set(ph_b.submobjects) | set(ph_sa.submobjects)
             rest_b = VGroup(*[m for m in r58b.submobjects if m.has_points() and m not in kept])
-            self.play(FadeOut(card.header), FadeOut(r58a), FadeOut(rest_b),
-                      FadeTransform(r60, chip60), run_time=0.5)
+            # the lines line 60 flies past fade quickly, so they are gone when it reaches them
+            self.play(AnimationGroup(FadeOut(card.header, run_time=0.25), FadeOut(r58a, run_time=0.2),
+                                     FadeOut(rest_b, run_time=0.25), FadeTransform(r60, chip60, run_time=0.55)))
             self.play(ReplacementTransform(card.frame, frame), FadeOut(u_bucket), FadeOut(u_sa),
                       ReplacementTransform(ph_b, t1_03), FadeTransform(ph_sa, t2_03),
                       FadeIn(head03), FadeIn(head04), Create(sep), Create(div), FadeIn(d1_03),
@@ -487,11 +489,12 @@ class TeamWorkflow(VoiceScene):
             box = sealed_box(1.3, CTR).move_to(v1.box)          # the pushed image (the box)
             self.play(TransformFromCopy(mini[2], box, path_arc=PI / 2), run_time=1.2)
             vo.wait_until("and everyone else pulls")
-            # arcs that bow up over the shelf's left end instead of cutting through its plank
-            p_arrows = [Arrow(box.front.get_left() + LEFT * 0.04, mates[i].laptop.get_top() + UP * 0.1,
+            # arcs that bow up over the shelf's left end instead of cutting through its plank; the
+            # arc to the far teammate leaves higher and bows more, so the two never cross
+            p_arrows = [Arrow(box.front.get_left() + LEFT * 0.04 + UP * dy, mates[i].laptop.get_top() + UP * 0.1,
                               buff=0.08, color=HUB, stroke_width=4, max_tip_length_to_length_ratio=0.12,
                               path_arc=arc_)
-                        for i, arc_ in ((0, 0.6), (1, 1.2))]
+                        for i, dy, arc_ in ((0, 0.12, 1.1), (1, -0.12, 1.3))]
             pulled = [small_image(sealed=True).move_to(mates[i].laptop[0]) for i in (0, 1)]
             self.play(LaggedStart(*[GrowArrow(a) for a in p_arrows], lag_ratio=0.3), run_time=0.9)
             self.play(*[FadeIn(p, shift=DOWN * 0.1) for p in pulled], run_time=0.5)

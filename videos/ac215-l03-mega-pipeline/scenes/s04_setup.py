@@ -7,11 +7,13 @@ Beats (script.md "## S04", one voiceover block each):
     lower than in beat 1 so the picture sits centred. On "It lets your code act" the key leaves
     the card, enlarges centre-right and gets a GOLD glow; GREY label under it: "the course's service account", then (on "so guard it") "spends the course's money".
  1  The glow and labels go; the key shrinks back into the card as the card rises. Right: the
-    five GREY folders `<component>/secrets/` of the clone; bottom-left: the GREY README card "README.md · lines
-    97–99" (the README's own words). On "download it" an arrow carries a copy of the key onto
-    `transcribe_audio/secrets/`; on "with a copy in each" the card's "each component folder" line
-    gets a YELLOW underline and four copies drop onto the other four folders. Then ▶ your turn
-    beside `transcribe_audio/secrets/` and the GREY caption "check: ls secrets → mega-pipeline.json".
+    five GREY folders `<component>/secrets/` of the clone, with ▶ your turn beside
+    `transcribe_audio/secrets/` (it arrives on "Pause", the first word); bottom-left: the GREY README
+    card "README.md · lines 97–99" (the README's own words). On "download it" an arrow carries a
+    copy of the key onto `transcribe_audio/secrets/`; once it lands, the GREY caption "check: ls
+    secrets → mega-pipeline.json" under it. On "with a copy in each" the card's "each component
+    folder" line gets a YELLOW underline and four copies drop onto the other four folders; the tag
+    wiggles and everything holds a second after the sentence.
  2  The rest fades; the caption's `mega-pipeline.json` enlarges to the centre (GREEN check), caption
     "exact name"; on "If your browser" `mega-pipeline (1).json` appears under it (RED cross, struck
     through RED); on "rename it" a GREY "rename" arc points from the bad name to the good one.
@@ -26,16 +28,20 @@ Beats (script.md "## S04", one voiceover block each):
     between the terminal and the top band (9.7 wide: it can't sit right of the tracker).
     TRACKER A3 · extra. `uv --version` (extra; its row is 62 characters, so the `extra` tag sits
     at the right end of the row below, as the pilot does) -> 06-uv-missing.txt line 2 in RED,
-    "command not found" underlined RED. On "so skip ahead to uv init" the tracker caption pulses.
+    "command not found" underlined RED. On "so skip ahead to uv init" the tracker caption pulses
+    and a GREY chip "have uv? skip to 5:43" (SKIP_TO: where beat 7 starts in the video) appears
+    left of the README chip; it goes on "Otherwise".
  5  TRACKER A3 (extra off). The chip flashes YELLOW ("the README's installer"). `curl -LsSf
     https://astral.sh/uv/install.sh | sh` (folds onto two rows; GREY tag "macOS / Linux") ->
-    07-uv-install.txt lines 2-6, …, 8, 10 (no ▶: only for viewers without uv). Line 2 gets
-    "at the time of recording" (the macOS tag gives way: tags on adjacent rows would touch); a
-    PURPLE `uv` chip lifts off line 4 and drops into the GREY folder `~/.local/bin` drawn right of
-    lines 4-5. On "On Windows" the terminal shrinks to the strip (the curl command and line 8; the
-    macOS / Linux tag returns); above it two GREY command chips (shown, not typed): the PowerShell
-    line (two rows: 79 characters don't fit one row at 20 pt; note "Windows (PowerShell) · one
-    line") and, on "on any system", `pip install uv` "any system".
+    07-uv-install.txt lines 2-6, …, 8, 10 (no ▶: only for viewers without uv); line 8 folds at
+    the edge like the real terminal (it keeps "or run:"), and the 13th row scrolls `uv --version`
+    off first. Line 2 gets "at the time of recording" (the macOS tag gives way: tags on adjacent
+    rows would touch); a PURPLE `uv` chip lifts off line 4 and drops into the GREY folder
+    `~/.local/bin` drawn right of lines 4-5. On "On Windows" the terminal shrinks to a 4-row strip
+    (the curl command and both rows of line 8; the macOS / Linux tag returns); above it two GREY
+    command chips (shown, not typed): the PowerShell line (two rows: 79 characters don't fit one
+    row at 20 pt; note "Windows (PowerShell) · one line") and, on "on any system",
+    `pip install uv` "any system".
  6  Line 8's "either restart your shell" gets a YELLOW bar. On "as the installer says" the chips
     go, the terminal clears and grows back to 12 rows (GREY "new terminal" in its title bar,
     prompt student@laptop:~$). TRACKER A3 · extra: `cd mega-pipeline/transcribe_audio` (extra) ->
@@ -44,7 +50,8 @@ Beats (script.md "## S04", one voiceover block each):
  7  TRACKER A3 (extra off; chip and "new terminal" go). `uv init --bare` -> 09-uv-init.txt
     line 2; on "pyproject.toml" a GREEN file glyph `pyproject.toml` appears above the terminal;
     `transcribe-audio` underlined GREEN; ▶ your turn on "Pause and run it" (at the right end of
-    the output row: the command row is full).
+    the output row: the command row is full). It stays through beat 8 and leaves with its row
+    when the terminal shrinks to the strip in beat 9.
  8  TRACKER A3 · extra. `cat pyproject.toml` (extra; folds after `cat`) -> 10-cat-pyproject.txt
     lines 2-6. "name" and "version" pulse as named; GREY tag "none yet" beside `dependencies = []`;
     YELLOW bar on `requires-python = ">=3.11"` and its 3.11 pulses.
@@ -122,6 +129,10 @@ BIG_C = np.array([2.6, -0.1, 0])    # the enlarged key (beat 0)
 ROWS_X = -0.8                      # left edge of the five secrets/ folders (beat 1)
 ROW_Y = [1.8, 0.65, 0.05, -0.55, -1.15]
 AXIS_Y = 0.3                       # V7's axis (beats 9-10), above the 3-row strip
+# Beat 4's "have uv? skip to …" chip: where beat 7 ("Now the step itself: uv init …") starts in the
+# full video and in part 1 (part 1 starts at 0:00). It is S04's start plus beat 7's start in this
+# scene (the SRT cue "Now the step itself"), rounded down: re-check it whenever S01-S04 change length.
+SKIP_TO = "5:43"
 
 
 # ------------------------------------------------------------------ small helpers
@@ -155,6 +166,23 @@ def under_row(mob, t, line):
     row = line.rows[-1] if hasattr(line, "rows") else line
     mob.set_y(row.strut.get_center()[1] - t.pitch)
     return mob.align_to(t.box, RIGHT).shift(LEFT * 0.12)
+
+
+def scroll(scene, t, lines, wrap: bool = False):
+    """Make room for `lines` before t.print, as S06 does: the oldest rows fade where they are,
+    then the rest move up (Terminal's own scroll would slide them over the title bar)."""
+    n = sum(max(1, -(-len(s if isinstance(s, str) else s[0]) // t.max_chars)) if wrap else 1
+            for s in lines)
+    over = len(t.lines) + n - t.rows
+    if over <= 0:
+        return
+    gone = t.lines.submobjects[:over]
+    stay = VGroup(*t.lines.submobjects[over:])
+    scene.play(FadeOut(VGroup(*gone)), run_time=0.25)
+    for m in gone:
+        t.lines.remove(m)
+        scene.remove(m)
+    scene.play(stay.animate.shift(UP * t.pitch * over), run_time=0.35)
 
 
 def rows_of(line) -> list:
@@ -328,7 +356,10 @@ class KeyAndInit(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(glow), FadeOut(labs), keyrow.animate.scale(1 / 1.8).move_to(slot),
                       card.animate.shift(UP * LIFT), ill0.animate.shift(UP * LIFT), run_time=0.7)
-            self.play(FadeIn(rows, shift=LEFT * 0.15), FadeIn(rc, shift=UP * 0.15), run_time=0.6)
+            # ▶ your turn comes with the folders, on "Pause" (the first word): a viewer who pauses
+            # there already has the tag; the check caption follows once the first key has landed
+            self.play(FadeIn(rows, shift=LEFT * 0.15), FadeIn(rc, shift=UP * 0.15),
+                      FadeIn(yt1, shift=LEFT * 0.15), run_time=0.6)
             vo.wait_until("download it")
             k0 = keyrow.key.copy()
             arr = Arrow(card[0].get_right() + np.array([0.05, -0.1, 0]),
@@ -338,13 +369,14 @@ class KeyAndInit(VoiceScene):
             self.play(k0.animate.scale(0.75).move_to(targets[0]), run_time=0.7)
             vo.wait_until("and put it")
             self.play(FadeOut(arr), Indicate(rows[0].text, color=INK, scale_factor=1.08), run_time=0.6)
+            self.play(FadeIn(cap, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("with a copy")
             copies = [k0.copy() for _ in range(4)]
             self.play(Create(rc_ul), run_time=0.4)
             self.play(LaggedStart(*[c.animate.move_to(p) for c, p in zip(copies, targets[1:])],
                                   lag_ratio=0.25), run_time=1.3)
-            self.play(FadeIn(yt1, shift=LEFT * 0.1), FadeIn(cap, shift=UP * 0.1), run_time=0.5)
             self.play(Wiggle(yt1, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
+            self.wait(1.0)                   # the tag and the check stay up once the sentence ends
 
         # ========================================================== 2 · the exact name
         good = mono("mega-pipeline.json", 40, COST)
@@ -406,6 +438,10 @@ class KeyAndInit(VoiceScene):
         chip_r = readme_chip("transcribe_audio/README.md · lines 26–34", "Don't have uv installed?",
                              max_w=9.8)
         place(chip_r, right=6.45, cy=(t.box.get_top()[1] + TRACK_BOTTOM) / 2)
+        # left of the README chip, above the `uv --version` row: the two branches side by side
+        skip = chip(f"have uv? skip to {SKIP_TO}", LAPTOP, size=CAPTION, pad_x=0.18)
+        place(skip, left=-6.5, cy=chip_r.get_center()[1])        # the tracker's left edge
+        assert skip.get_right()[0] < chip_r.get_left()[0] - 0.25, (skip.get_right(), chip_r.get_left())
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(left, right, err3, use, older, note3)), run_time=0.4)
@@ -418,7 +454,8 @@ class KeyAndInit(VoiceScene):
             self.play(FadeIn(x0, shift=LEFT * 0.1), run_time=0.3)
             stick(self, c0, x0)
             vo.wait_until("so skip ahead")
-            self.play(Indicate(tr.caption, color=TURN, scale_factor=1.12), run_time=0.8)
+            self.play(Indicate(tr.caption, color=TURN, scale_factor=1.12),
+                      FadeIn(skip, shift=DOWN * 0.1), run_time=0.8)
             vo.wait_until("This recording laptop")
             o0 = t.print(self, [(MISSING_OUT[0], ERR)], run_time=0.4)[0]
             vo.wait_until("command not found")
@@ -428,7 +465,7 @@ class KeyAndInit(VoiceScene):
 
         # ========================================================== 5 · the README's installer
         with self.voiceover(SAY[5]) as vo:
-            self.play(caption_extra(tr, False), run_time=0.3)
+            self.play(caption_extra(tr, False), FadeOut(skip, shift=UP * 0.1), run_time=0.3)
             vo.wait_until("use the README's installer")
             self.play(chip_r.frame.animate.set_stroke(TURN, 3),
                       Indicate(chip_r.phrase, color=TURN, scale_factor=1.08), run_time=0.7)
@@ -439,8 +476,13 @@ class KeyAndInit(VoiceScene):
             self.play(FadeIn(os1, shift=LEFT * 0.1), chip_r.frame.animate.set_stroke(LAPTOP, 2.5),
                       run_time=0.4)
             stick(self, c1, os1)
-            out1 = t.print(self, INSTALL_OUT, run_time=0.8)
-            l2, l4, l8 = out1[0], out1[2], out1[-2]
+            # line 8 folds at the edge like the real terminal, so "or run:" stays (the source
+            # line below is the alternative to restarting); the 13th row scrolls `uv --version` off
+            scroll(self, t, INSTALL_OUT, wrap=True)
+            out1 = t.print(self, INSTALL_OUT, run_time=0.8, wrap=True)
+            l2, l4, l8, l8b = out1[0], out1[2], out1[-3], out1[-2]
+            assert "either restart your shell" in l8.text and l8b.text.endswith("run:"), \
+                (l8.text, l8b.text)
             vo.wait_until("which installed")
             # 20 pt (the house tag is 22): at 22 it would touch the row's text; the macOS tag on
             # the row above gives way (tags on adjacent rows would touch), and returns in the strip
@@ -462,9 +504,10 @@ class KeyAndInit(VoiceScene):
             vo.wait_until("On Windows")
             ps = ps_chip()
             pip = cmd_chip(PIP, "any system")
-            place(ps, left=-4.1, cy=1.25)
+            place(ps, left=-4.1, cy=1.35)    # 0.1 higher than for a 3-row strip: clears the 4-row one
             place(pip, left=-4.1, top=ps.get_bottom()[1] - 0.45)
-            resize(self, t, 3, keep=[*rows_of(c1), l8], run_time=0.9)
+            # a 4-row strip: the folded curl command and the folded line 8 (both rows)
+            resize(self, t, 4, keep=[*rows_of(c1), l8, l8b], run_time=0.9)
             os2 = beside(tag("macOS / Linux", LAPTOP), t, c1)
             self.play(FadeIn(ps, shift=UP * 0.15), FadeIn(os2, shift=LEFT * 0.1), run_time=0.5)
             stick(self, c1, os2)
@@ -526,7 +569,9 @@ class KeyAndInit(VoiceScene):
 
         # ========================================================== 8 · cat pyproject.toml
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(unstick(self, c3, yt3)), caption_extra(tr), run_time=0.3)
+            # ▶ your turn stays beside the uv init output through this extra; it leaves with that
+            # row when the terminal shrinks to the strip (beat 9)
+            self.play(caption_extra(tr), run_time=0.3)
             c4 = type_cmd(self, t, CAT.cmd, 0.7)
             out4 = t.print(self, CAT_OUT, run_time=0.5)
             l_name, l_ver, l5, l6 = out4[1], out4[2], out4[3], out4[4]

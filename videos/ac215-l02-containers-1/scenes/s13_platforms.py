@@ -359,7 +359,8 @@ class Platforms(VoiceScene):
                       run_time=0.8)
             vo.wait_until("Docker Desktop has one built in")
             self.play(FadeIn(dd), FadeIn(emu_a, scale=0.7), run_time=0.6)
-            self.play(Indicate(emu_a, color=INK, scale_factor=1.12), run_time=0.6)
+            # the text only: Indicate recolours fills too, and the box's opaque fill would turn into a white blob
+            self.play(Indicate(emu_a.text, color=INK, scale_factor=1.2), run_time=0.6)
             vo.wait_until("a plain Linux VM doesn't")
             self.play(Create(noemu_b.slot), FadeIn(noemu_b.text, shift=UP * 0.1), run_time=0.6)
         pic1 = VGroup(chip_a, chip_b, lap_a, vm_b, instr, img, ok1, note1, dd, emu_a, noemu_b)
@@ -589,7 +590,7 @@ class Platforms(VoiceScene):
             attach(self, err_row, u6)
             vo.wait_until("Docker Desktop would just run it")
             self.play(FadeIn(de6, shift=DOWN * 0.1), run_time=0.4)
-            self.play(Indicate(de6, color=INK, scale_factor=1.06), run_time=0.6)
+            self.play(Indicate(de6.text, color=INK, scale_factor=1.06), run_time=0.6)   # not the filled box
             vo.wait_until("A Mac-built image on a default VM")
             resize(self, t6, STRIP_ROWS, keep=[*c6.rows, err_row], run_time=0.6,
                    extra=[VGroup(tg6, de6).animate.shift(DOWN * (5 - STRIP_ROWS) * t6.pitch)])
