@@ -18,7 +18,7 @@ in bold. Two recap slides come before the first outline.
 
 - Slide 1 · title slide
 - Slides 2–3 · **Recap: local Git hooks** (no section number)
-  - 2 · "Git Hooks": last lecture's local hooks, with `pre-commit` and `pre-push` as examples
+  - 2 · "Local Git Hooks": last lecture's local hooks, with `pre-commit` and `pre-push` as examples
   - 3 · their limitation: they run only on one developer's machine; "That's where remote hooks
     come in."
 - Slides 4–7 · **Remote Git Hooks**
@@ -87,11 +87,11 @@ in bold. Two recap slides come before the first outline.
 7. **MLOps adds non-determinism.** Uncertainty enters at every stage: how models train and
    behave, data that keeps changing, tests whose results vary, and models that drift after
    deployment. (Slides 17, 18)
-8. **Four answers to that uncertainty.** (1) Version code, data and models so results can be
-   reproduced (DVC, MLflow, Git-based tracking). (2) Automate retraining and testing so models are
-   retrained and validated when data or code changes. (3) Monitor production: model performance,
-   input data quality and drift. (4) Roll out with a controlled, safe deployment strategy before
-   a full release (deferred to later). (Slides 19, 20)
+8. **Four answers to that uncertainty.** (1) Keep versions of code, data and models, so any result
+   can be rebuilt later (DVC, MLflow, Git-based tracking). (2) Automate retraining and testing so
+   models are retrained and validated when data or code changes. (3) Monitor production: model
+   performance, input data quality and drift. (4) Roll out with a controlled, safe deployment
+   strategy before a full release (deferred to later). (Slides 19, 20)
 9. **CI in ML integrates code, data and models.** Each merge into the shared repository triggers
    tests that check nothing broke. Catching a problem in code, data or a model quickly matters,
    because late detection costs time and money. (Slide 23)
@@ -117,11 +117,11 @@ in bold. Two recap slides come before the first outline.
   first two are pale blue; "Tests" is a stronger blue. Below: all of this is local and fires
   automatically on each commit attempt. Purpose: the "before" picture, checks that live on one
   laptop.
-- **Slide 16 · the same idea moved to the server.** Same layout and styling as slide 14, but the
-  container is now labelled "Shared Repository" and the three boxes read "Build Container" →
-  "Check Code" → "Test Summary". Purpose: CI is the slide-14 chain relocated to the shared
-  repository, with a build step in front and a report at the end. A re-draw can morph slide 14
-  into slide 16 (the frame slides from laptop to server, the labels change).
+- **Slide 16 · the same idea moved to the server.** Same layout as slide 14 (here all three boxes
+  are pale blue), but the container is now labelled "Shared Repository" and the three boxes read
+  "Build Container" → "Check Code" → "Test Summary". Purpose: CI is the slide-14 chain relocated to
+  the shared repository, with a build step in front and a report at the end. A re-draw can morph
+  slide 14 into slide 16 (the frame slides from laptop to server, the labels change).
 - **Slide 21 · the CI loop.** Top row: a red dashed rectangle encloses three solid red boxes
   joined by arrows, "Codebase" → "Build" → "Test". Above "Codebase" sit the GitHub (Octocat) and
   GitLab (fox) logos, i.e. where the code lives; above "Test" sits a pair of red-and-green theatre
@@ -187,8 +187,8 @@ in bold. Two recap slides come before the first outline.
 | "Codebase", "Build", "Test", "Commits", "Notifications", "Developers" | 21 | The tutorial's "Notifications" are the green/red checks and the optional Slack message. |
 | "Static code analysis", "coding standards" | 22 | The tutorial does this with Black and Flake8. |
 | "CI Pipeline" | 26, 27 | Matches the workflow's `name: CI Pipeline` and the README's "CI Pipeline (`.github/workflows/ci.yml`)". |
-| "Build Container" / "Check Code" | 16, 26, 27 | `ci.yml` job `build`, named "Build Docker Image"; the README says "Build Job". |
-| "Lint and Format" | 26, 27 | Job `lint-and-format`, named "Lint and Format Check". In the tutorial Black is blocking and Flake8 is advisory (`continue-on-error`). |
+| "Build Container" | 16, 26, 27 | `ci.yml` job `build`, named "Build Docker Image"; the README says "Build Job". |
+| "Lint and Format"; slide 16's "Check Code" | 16, 26, 27 | Job `lint-and-format`, named "Lint and Format Check" (slide 16's middle box stands for the checks in general). In the tutorial Black is blocking and Flake8 is advisory (`continue-on-error`). |
 | "Test" (unit, integration and system tests) | 26, 27 | Three separate parallel jobs in `ci.yml`: "Unit Tests", "Integration Tests", "System Tests" (11, 10 and 5 tests). |
 | "Summary" / "Test Summary" | 16, 26, 27 | Job `test-summary`, named "Test Summary". It checks the three test jobs only, not lint. |
 | "Linters", "Formatters", "Tests" (inside local hooks) | 14 | The tutorial's `.pre-commit-config.yaml` runs generic checks, Black and Flake8, but no tests. |
@@ -220,7 +220,7 @@ only in the tutorial.
 - **Remote hooks are enforcers for the whole organization** (slide 5), but they stay inside Git.
   Use webhooks to act outside it (slide 7).
 - **Real-time feedback, with a social edge.** Webhooks alert people, trigger builds, deploy code
-  and can publicly "shame" whoever broke the build (slide 12); the mock message hands out a
+  and can even "shame" the team when something breaks (slide 12); the mock message hands out a
   "Works on my machine" achievement (slide 11).
 - **Never trust the local checks alone.** `--no-verify` skips every local pre-commit check,
   on purpose or by accident, and only the remote CI run will catch what slips through
@@ -246,8 +246,8 @@ only in the tutorial.
   `https://github.com/dlops-io/cheese-app-ci-cd/blob/main/README.md#part-5-github-actions-remote-cicd`,
   with a QR code. The anchor matches an older README heading ("…Remote CI/CD"). Since commit
   `91eb786` the heading is "Part 5: GitHub Actions (Remote CI)", whose anchor is
-  `#part-5-github-actions-remote-ci`, so the slide link now opens at the top of the README. Use
-  the current anchor on screen.
+  `#part-5-github-actions-remote-ci`, so the slide link now opens at the top of the README. Use the
+  current anchor on screen.
 - **Slide 2: "the previous lecture" on local Git hooks.** In this course's sequence that is L9
   (cross-reference, not on the slide: the L9 deck's slides 34, 41, 43 and 44, and README
   Part 4, "Automating with Pre-commit Hooks").
@@ -274,9 +274,11 @@ contact sheets. With no captures yet, "the tutorial today" means `dlops-io/chees
 digest's pinned commit `b8458ff` (still the head of `main` in a fresh clone on 2026-10-16), plus the
 Black and Flake8 output that the digest reproduced on a copy of the code. For this section I
 re-checked these at the source, in that clone:
-- README.md: Part 4's wording, "before each commit" (`:234`, `:249`, `:253`); the Part 5 heading
-  (`:277`); Part 6 (`:369-397`); no mention of `--no-verify`, webhooks or Slack anywhere;
-- the anchor history: the "Remote CI/CD" heading was added in `d03607d` and renamed in `91eb786`;
+- README.md: Part 4's wording, "before each commit" (`:234`, `:249`) and "every time you commit"
+  (`:253`); the Part 5 heading (`:277`); Part 6 (`:369-397`); no mention of `--no-verify`, webhooks
+  or Slack anywhere;
+- the anchor history: the heading "Part 5: GitHub Actions (Remote CI/CD)" first appears in `8f33f84`
+  (in `d03607d` the same section was "Part 4: …(Remote CI/CD)") and was renamed in `91eb786`;
 - `ci.yml`: triggers (`:7-11`), job names, `needs` and `if:` lines (`:16`, `:42-44`, `:71-73`,
   `:106-108`, `:129-131`, `:173-176`, `:194-204`) and the Slack payload (`:207-257`);
 - `.pre-commit-config.yaml`: seven hygiene hooks (`:12-25`), Black `24.1.1` (`:30-34`) and Flake8
@@ -322,39 +324,43 @@ disagree, the captures win.
 1. **Why run the checks twice: local hooks don't travel, and `--no-verify` skips them (slides 2–3,
    14–16, 29–31).** The student installed this repo's pre-commit hooks in L9 (Part 4), so the first
    question is "why again?" The lecture answers it with one command, `git commit --no-verify`, and
-   with the plain fact that hooks run only where someone ran `pre-commit install`. It also tells
-   the student, without blame, how a repo that has hooks can still contain the messy `utils.py` that
-   makes their first run red. The twist that makes it worth the time: this CI re-runs only two of the
-   local checks (Conflict 8), so a key file committed with `--no-verify` still goes through (guide
-   §8 E8). **Carry it in** ch1 (first 45 s: slide 14's chain inside a laptop frame slides into slide
-   16's "Shared Repository" frame) and ch6 (a new pause-and-ponder; see the proposals).
+   with the plain fact that local hooks run only on the machine where they were installed (slide 3;
+   in this repo, wherever someone ran `pre-commit install`). It also gives one blameless way a repo
+   that ships hooks can still hold unformatted code like the `utils.py` that makes the first run red
+   (here the messy code was put back on purpose, in commit `91eb786` "readd messy code"). The twist
+   that makes it worth the time: this CI re-runs only two of the local checks (Conflict 8), so a key
+   file committed with `--no-verify` still goes through (guide §8 E8). **Carry it in** ch1 (first 45
+   s: slide 14's chain inside a laptop frame slides into slide 16's "Shared Repository" frame) and
+   ch6 (a new pause-and-ponder; see the proposals).
 2. **Enforcement on the server, and where GitHub.com puts it (slides 5–7).** `pre-receive` can
    refuse a push; `post-receive` runs after the code is in. A push-triggered Actions run is the
    second kind: when it turns red, the commit is already on `main`. GitHub.com does not run your own
-   `pre-receive` scripts (GitHub Enterprise Server does); the gate that refuses is branch protection,
-   with a required pull request and required status checks (README Part 6). Students often believe a
-   red run blocked their push. **Carry it in** ch10 (40 s, at the protect step) and one sentence in
-   ch2 ("the robot wakes up after the push is accepted").
+   `pre-receive` scripts (GitHub Enterprise Server does); the gate that refuses is branch
+   protection, with a required pull request and required status checks (README Part 6). A student
+   can easily take a red run to mean the push was refused. **Carry it in** ch10 (40 s, at the
+   protect step) and one sentence in ch2 ("the robot wakes up after the push is accepted").
 3. **Webhooks: who calls whom (slides 7, 9–12).** A GitHub webhook is GitHub calling an outside URL
    when an event happens. The tutorial's `SLACK_WEBHOOK_URL` works the other way round: Slack gives
-   you a URL (an *incoming webhook*), and the last step of your workflow calls it. A student who goes
-   to the repo's Settings → Webhooks to "add the Slack webhook" is in the wrong place; the URL goes
-   under Settings → Secrets and variables → Actions. **Carry it in** ch9 (30 s, before the vault).
+   you a URL (an *incoming webhook*), and the last step of your workflow calls it. A student who
+   goes to the repo's Settings → Webhooks to "add the Slack webhook" is in the wrong place; the URL
+   goes under Settings → Secrets and variables → Actions. **Carry it in** ch9 (30 s, before the
+   vault).
 4. **The CI loop (slide 21).** Commit → build → test → notifications → fix → commit. It is the shape
-   of ch10 and a clean frame for the end card, but the plan never draws it. **Carry it in** ch1 (last
-   15 s, as the promise) and close it in ch10.
+   of ch10 and a clean frame for the end card, but the plan never draws it. **Carry it in** ch1
+   (last 15 s, as the promise) and close it in ch10.
 5. **How often, at what cost (slides 23–24).** The lecture treats frequency against compute cost as
    a design choice. This workflow's answers are concrete: the branch filter (a feature-branch push
-   runs nothing), parallel jobs (about 2 minutes of wall-clock time), every job billed separately and
-   rounded up (about 6 billed minutes per run on a private repo) and a 1-day artifact (`digest.md`
-   §2). **Carry it in** ch2 (the branch filter as a cost decision) or ch5 (a second ruler under the
-   Gantt chart: wall-clock vs billed minutes).
+   runs nothing), parallel jobs (about 2 minutes of wall-clock time), every job billed separately
+   and rounded up (about 6 billed minutes per run on a private repo) and a 1-day artifact
+   (`digest.md` §2). **Carry it in** ch2 (the branch filter as a cost decision) or ch5 (a second
+   ruler under the Gantt chart: wall-clock vs billed minutes).
 6. **What changes when the code trains a model (slides 17–20, 23).** Non-determinism in training,
    data, tests and deployment, and four remedies: version everything, automate retraining and
    testing, monitor in production, roll out in a controlled way. You don't need it to finish the
-   tutorial (the app is a deterministic toy), but it is what Milestones 4–5 ask the student to put
-   under CI, and it links back to L11 (DVC) and L13/L15 (pipelines). **Carry it in** ch10's outro
-   (20–30 s) or the recap card.
+   tutorial (the app is a deterministic toy), but it is what Milestone 5 asks for (retraining
+   triggered by new data or code, and threshold checks before a model ships; Milestone 4 asks only
+   for build, lint and tests), and it links back to L11 (DVC), L13 (training workflows) and L15
+   (pipelines). **Carry it in** ch10's outro (20–30 s) or the recap card.
 7. **CD comes next (slides 33–34).** One line: CD automates the release once everything is tested
    and approved. In this course that is L23 (`cheese-app-v4`, a workflow started by `/deploy-app` in
    the commit message), using the same secrets mechanism as ch9. The repo is named "ci-cd" but holds
@@ -372,11 +378,12 @@ disagree, the captures win.
 | 6 | **The webhook** (slides 9–12): GitHub messages the team's Slack channel whenever someone pushes. | No repository webhook is configured. The message comes from the last steps of `test-summary` (`ci.yml:194-257`): the workflow calls a Slack incoming-webhook URL stored as the secret `SLACK_WEBHOOK_URL`. It runs only on the filtered pushes and PRs, after the three test jobs, and only if the secret exists. Because `slack-check` has no `if: always()`, it never runs when tests fail (guide §6 G8). The README never mentions it. | The repo | Ch9: "The lecture imagines a webhook that shames whoever broke the build. The repo has the bell, but GitHub doesn't ring it: your workflow calls Slack, through the URL you stored as a secret. And as written, it only rings for good news." Then pause-and-ponder #3. |
 | 7 | **The message** (slide 11, labelled imaginary on slide 10): a failed run, the failed step `Run python3 -m pre-commit run --all-files`, failing and passing test counts, lint errors and warnings, the duration, and action buttons. | The real payload (`ci.yml:207-254`): a ✅ or ❌ header, repository, branch, commit, author, ✅ or ❌ for each of the three test jobs, and two links. No failed step, counts, lint or duration. This CI never runs pre-commit, and the ❌ version cannot be sent (Conflict 6). | The repo | Ch9: re-draw slide 11's card as the lecture's wish list beside the real message. "This is what the lecture wishes for; this is what this workflow sends today." Keep the joke friendly. Slide 11's failed step is the fix for Conflict 8. |
 | 8 | **The safety net** (slides 29–31): what `--no-verify` let through is caught by running the checks again on the remote CI server. | CI re-runs two of the local checks, Black and Flake8, only on `api/` (`ci.yml:61`, `:66`), with the same flags as the hooks (`.pre-commit-config.yaml:34`, `:43`). The seven hygiene hooks (trailing whitespace, end of file, YAML, large files, JSON, merge-conflict markers, private keys; `:12-25`) never run in CI. Pre-commit pins Black `24.1.1`, while the image installs the newest `black>=24.1.1` (`pyproject.toml:8`). A private key committed with `--no-verify` passes CI (guide §8 E8 (b)). | The repo | Ch6 pause-and-ponder: "A teammate commits a key file with --no-verify. Does this pipeline catch it?" No. "The lecture's principle holds; this pipeline just doesn't re-run every check yet." The fix is one step, `pre-commit run --all-files`, the step slide 11 shows. |
-| 9 | **The tutorial link** (slide 28): `README.md#part-5-github-actions-remote-cicd`. | The heading is "Part 5: GitHub Actions (Remote CI)" (README.md:277), so the anchor is `#part-5-github-actions-remote-ci`. The "Remote CI/CD" heading was added in `d03607d` and renamed in `91eb786`, so the slide's link opens at the top of the README. | The README heading | No narration. On screen, the README tracker shows "Part 5: GitHub Actions (Remote CI)"; the guide's Links use the current anchor. |
+| 9 | **The tutorial link** (slide 28): `README.md#part-5-github-actions-remote-cicd`. | The heading is "Part 5: GitHub Actions (Remote CI)" (README.md:277), so the anchor is `#part-5-github-actions-remote-ci`. The heading "Part 5: GitHub Actions (Remote CI/CD)" existed only from `8f33f84` (it was Part 4 in `d03607d`) until `91eb786` renamed it, so the slide's link opens at the top of the README. | The README heading | No narration. On screen, the README tracker shows "Part 5: GitHub Actions (Remote CI)"; the guide's Links use the current anchor. |
 
 Not counted as conflicts:
 - The page numbers printed in the footers run ahead of the PDF pages from slide 16 on. The outline's
-  label "Continuous Deployment (Lec21)" sits in a deck that then defers CD. Both are inside the deck.
+  label "Continuous Deployment (Lec21)" sits in a deck that then defers CD. Both are inside the
+  deck.
 - Slide 21 draws notifications coming from both Build and Test. GitHub reports every job, the build
   included, as its own check on the commit, so the two agree.
 - Slide 21's GitLab and Playwright logos and slide 9's Jenkins are examples of other tools, not
@@ -405,8 +412,8 @@ Not counted as conflicts:
   slide it into slide 16's "Shared Repository" frame (BLUE), and close slide 21's loop in ch10.
 - **Hook.** Keep the plan's hook: the demo commit `c3b227f` with `math.sqrt(2 * z)`, six machines,
   one already red for another reason. Answer the "why a second set of checks?" question in ch1 with
-  slide 29's question and slide 30's command. Don't claim the instructor used `--no-verify`; the git
-  history doesn't show how the messy `utils.py` got in.
+  slide 29's question and slide 30's command. Don't claim anyone used `--no-verify`: the git history
+  shows the messy `utils.py` was re-added on purpose (`91eb786`), not whether hooks were skipped.
 - **One new pause-and-ponder (ch6), from slides 29–31 and Conflict 8.** "A teammate commits a
   private key with `git commit --no-verify` and pushes to `main`. Which job catches it?" *Answer:*
   none. CI runs only Black and Flake8 on `api/`; `detect-private-key` lives only in the local hooks.
@@ -459,7 +466,7 @@ Not counted as conflicts:
   - Red → green as one turn of slide 21's loop; the loop closes.
   - Protect `main` (gap 2, Conflict 2): "This is the lecture's `pre-receive` idea, the way
     GitHub.com offers it." Show the refused direct push if it was captured.
-  - Outro: 20–30 s on slides 17–20 (gap 6), then 10 s on slide 34 and L23 (gap 7).
+  - Outro: 20–30 s on slides 17–20 (gap 6), then 15 s on slide 34 and L23 (gap 7).
 - **Recap card.** Keep the plan's six questions, and add two:
   - "Name two ways code reaches the shared repository without passing your local hooks."
     (`--no-verify`; a clone where nobody ran `pre-commit install`.)

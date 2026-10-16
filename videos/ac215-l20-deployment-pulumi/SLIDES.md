@@ -50,7 +50,7 @@ section in bold.
       credential needs
     - 27 · "Test the App": the finished diagram again
   - 28 · "Tutorial: Deployment to GCP (Pulumi)": the tutorial link, four steps and a QR code
-- Slide 29 · "DON'T FORGET TO DELETE" (above a glitch-art picture)
+- Slide 29 · "DON'T FORGET TO DELETE" (below a glitch-art picture)
 - Slide 30 · "THANK YOU!!!" (a cartoon-dog image on a blue square)
 
 ## Key ideas
@@ -90,7 +90,7 @@ section in bold.
 10. **Six concepts organise the tool, but only three get slides of their own.** The six are CLI
     commands, programs, stacks, resources, state and providers. The commands (15–16), programs (17)
     and stacks (18) get their own slides. Providers appear only in the diagram on 14. State is
-    mentioned in passing (12, 14, 16, 18), and resources only as what gets created, updated or
+    mentioned in passing (12, 14, 15, 16, 18), and resources only as what gets created, updated or
     deleted. (13–18)
 11. **`pulumi up` is preview, confirm, apply.** It runs the program to work out the desired state,
     shows which resources would be created, updated or deleted, and asks before changing anything.
@@ -229,13 +229,13 @@ section in bold.
 | "Deployment: Goal" | 7 | — |
 | "Local Computer" (7) → "Developers - Deployment Containers" (21–27), "IDE/ CLI", "Containers" | 7, 21–27 | The tutorial's deployment container `cheese-app-deployment`, started with `sh docker-shell.sh` from `src/deployment` (digest §4 B3). |
 | "Compute Instance (Virtual Machine)", "Compute Engine VM", "VM Instance" | 7, 19, 22–28 | An `n2d-standard-2` Ubuntu 22.04 VM created by `create_instance.py`, plus a VPC and three firewall rules (80/443/22) that the slides do not draw (digest §4 B10). |
-| "NGINX Container", "web server", "reverse proxy" | 7, 8, 19, 24, 28 | The container `nginx` (`nginx:stable`) on ports 80/443 with `nginx.conf` routing `/api-service/` → `api-service:9000` and `/` → `frontend:3000` (digest §3.8). |
+| "NGINX Container", "web server", "reverse proxy" | 7, 8, 19, 24, 26–28 | The container `nginx` (`nginx:stable`) on ports 80/443 with `nginx.conf` routing `/api-service/` → `api-service:9000` and `/` → `frontend:3000` (digest §3.8). |
 | "API Service Container" / "API Service Image" | 7, 21–27 | Container `api-service`, image `cheese-app-api-service:<timestamp>`. |
 | "Cheese Front-End App Container" (7), "Cheese App Container" / "Cheese App Image" (21–27), "Frontend" (8, 28) | 7, 8, 21–28 | Container `frontend`, image `cheese-app-frontend-react`. The slides never call it React or Next.js. |
 | "Vector DB Container", "Vector DB CLI" | 7, 21–27 | Container `vector-db` (`chromadb/chroma:latest`), plus the one-shot loader container `vector-db-loader` built from `cheese-app-vector-db-cli`. The slides draw no loader container. |
 | "GCS Bucket" / "Models", "class bucket" | 7, 22–27, 26 | In v3 the API's CNN is downloaded from a GitHub release, not from a bucket (`api/utils/llm_cnn_utils.py:122-124`; the code comment says it should come from a GCS bucket). The only bucket the tutorial uses is the Pulumi **state** bucket `<proj>-pulumi-state-bucket`, which the slides never show. |
 | "GCE Persistent Volume", "Local Models, Experiments" (7) / "Local Models, Leaderboard" (22–27), "NFS" | 7, 22–27 | The tutorial attaches a 50 GB `pd-standard` disk as a block device, mounted at `/mnt/disk-1` (digest §4 B10). It is not NFS. |
-| "Google Container Registry (GCR)" vs "GAR" | 19, 20 vs 21, 25, 26, 28 | The code pushes to **Artifact Registry** (`us-docker.pkg.dev/<proj>/cheese-app-repository`), and the README heading says "Google Artifact Registry". GCR is the retired product name that the slides and parts of the README still use (digest §10 erratum 3). |
+| "Google Container Registry (GCR)" vs "GAR" | 21–28 vs 19, 20 | The code pushes to **Artifact Registry** (`us-docker.pkg.dev/<proj>/cheese-app-repository`), and the README heading says "Google Artifact Registry". GCR is the retired product name that the slides and parts of the README still use (digest §10 erratum 3). |
 | "Docker Hub", "dedicated network" | 8 | Manual route only. The network is `cheese-app-network` (manual) and `appnetwork` (Pulumi). |
 | "Deployment Automation", "infrastructure automation", "infrastructure as code", "Everything is code" | 9, 10, 17 | Same idea as the digest's IaC (digest §3.1). |
 | "real programming languages", "familiar constructs", "not YAML or DSL (Domain Specific Language)" | 10, 11, 17 | The tutorial's programs are Python (`runtime: python`, `toolchain: uv`). |
@@ -258,26 +258,20 @@ A video that follows the slides has to introduce them itself, from the digest.
 The slides contain no shell commands apart from the Pulumi CLI list. There are no `docker`,
 `gcloud` or `ssh` commands.
 
-- 15 (each with a one-line description on the slide):
-  - `pulumi new <template>`: create a project from a template
-  - `pulumi up`: preview and deploy changes
-  - `pulumi preview`: preview without deploying
-  - `pulumi destroy`: tear down every resource in the stack
-  - `pulumi stack`: manage stacks (environments)
-  - `pulumi config`: manage configuration values
-  - `pulumi refresh`: refresh the state to match the actual infrastructure
+- 15 (each with a one-line description on the slide; paraphrased here):
+  - `pulumi new <template>`: start a project from a template
+  - `pulumi up`: show the plan, then apply it
+  - `pulumi preview`: show the plan only
+  - `pulumi destroy`: delete everything the stack manages
+  - `pulumi stack`: work with stacks, one per environment
+  - `pulumi config`: read and set configuration values
+  - `pulumi refresh`: update the state from what really exists
 - 16: `pulumi up [options]`, with the flags `--yes`, `--stack <name>` and `--refresh`. The tutorial
   combines all three as `pulumi up --stack dev --refresh -y`.
-- 17 (Python, in a dotted panel):
-  - `# Example: Create a GCS bucket in Google Cloud`
-  - `import pulumi`
-  - `import pulumi_gcp as gcp`
-  - `# Create a GCS bucket`
-  - `bucket = gcp.storage.Bucket("my-bucket",`
-  - `location="US",`
-  - `website=gcp.storage.BucketWebsiteArgs(`
-  - `main_page_suffix="index.html",`
-  - `)` and `)` to close
+- 17 (Python, about ten lines in a dotted panel): a comment saying it creates a GCS bucket, the
+  imports `pulumi` and `pulumi_gcp` (as `gcp`), and one resource that opens with
+  `bucket = gcp.storage.Bucket("my-bucket",`. Its arguments are a `location` of `"US"` and a website
+  setting (`gcp.storage.BucketWebsiteArgs`) whose `main_page_suffix` is `"index.html"`.
 
   The snippet exports nothing (`pulumi.export`), and the tutorial never creates a bucket this way.
   Its programs build images (`docker_build.Image`) and create a VM (`gcp.compute.Instance`). The
@@ -297,11 +291,12 @@ The slides contain no shell commands apart from the Pulumi CLI list. There are n
   with functions, classes, loops and conditionals, rather than YAML or a DSL (10, 11, 12, 17).
 - **Declarative: say what, not how.** You describe the desired infrastructure, and Pulumi works out
   the steps by comparing it with the current state (12, 14, 17).
-- **Everything goes through cloud APIs.** The one all-caps line in the deck: Pulumi manages
-  infrastructure through cloud APIs (14).
+- **Everything goes through cloud APIs.** The all-caps banner under the diagram on 14: Pulumi
+  manages infrastructure through cloud APIs. It is the only all-caps line on a content slide.
 - **Preview before you apply.** `pulumi up` shows the plan and asks for confirmation. `--yes` skips
   that safety step, and `pulumi preview` shows the plan without applying it (12, 15, 16). The
-  tutorial always runs `preview` first and then `up … -y`.
+  README offers `preview` as an optional check for an existing stack, and always deploys with
+  `up … -y`.
 - **Keep environments apart with stacks,** each with its own state and config (18).
 - **Least privilege with two service accounts.** An admin account builds the infrastructure, and a
   read-only account serves the running app. "your" is highlighted in red on 25: each group uses its
@@ -314,8 +309,8 @@ The slides contain no shell commands apart from the Pulumi CLI list. There are n
 - **Clean up.** A slide of its own: "DON'T FORGET TO DELETE" (29). The VM and disks cost money
   until `pulumi destroy`, and the registry images survive even that (digest §2, §4 B13).
 - **Inconsistencies to watch for when re-drawing:**
-  - Registry name: "GAR" on 19 and 20, "GCR" on 21, 25, 26 and 28. The code uses Artifact
-    Registry.
+  - Registry name: "GAR" on 19 and 20, "GCR" on 21–28 (the registry panel on 21–24, 26 and 27, the
+    text of 25 and 28). The code uses Artifact Registry.
   - Frontend port: "HTTP 80" on 23, "HTTP 3000" on 7, 24, 26 and 27. The tutorial's frontend
     listens on 3000. Use 3000 and keep 80 for NGINX.
   - Persistent-volume label: "Local Models, Experiments" on 7, "Local Models, Leaderboard" on 22–27.
@@ -323,8 +318,9 @@ The slides contain no shell commands apart from the Pulumi CLI list. There are n
   - The bucket of models (22–27) and the "class bucket" callout (26) do not match v3's code, which
     downloads its model from GitHub. The bucket that actually matters, the Pulumi state bucket, is
     missing from the slides.
-  - The manual steps (8) mention only the API service and the frontend. The README also runs the
-    vector DB, its loader and NGINX (digest §10 erratum 14).
+  - The manual steps (8) push and run only the API service and the frontend, with Nginx added in
+    stage 4. The README also pushes the vector-DB loader image and runs it, together with the
+    vector DB (digest §10 erratum 14).
   - 11 has a doubled word ("Programs programs run …").
   - 26 carries a hidden "TCP/IP 5432" label in its text layer, which the slide does not show.
   - Step 4 of 19 (provisioning) has no diagram, and the slides skip SSH / OS Login setup (README
@@ -364,7 +360,7 @@ The slides contain no shell commands apart from the Pulumi CLI list. There are n
 
 | # | Planned chapter (`digest.md` §8) | Slides on the same ground | Relation |
 |---|---|---|---|
-| 1 | The 20-command problem (≈3 min) | 4–5, 7–11 | Same concept, and the tutorial applies it. Part A is slide 8's four manual stages, and the chapter's thesis is slide 9's "too many steps to keep track of". Slides 10–11 (infrastructure as code, real languages, kept in GitHub) are the answer the chapter ends on. Slide 7's goal picture is not in the plan (Gap 4). Conflict 7 (the container count). |
+| 1 | The 20-command problem (≈3 min) | 4–5, 7–11 | Same concept, and the tutorial applies it. Part A is slide 8's four manual stages, and the chapter's thesis is slide 9's point that the manual route has many steps to keep track of. Slides 10–11 (infrastructure as code, real languages, kept in GitHub) are the answer the chapter ends on. Slide 7's goal picture is not in the plan (Gap 4). Conflict 7 (the container count). |
 | 2 | The control room (≈3 min) | 14 (the "Your Machine / CICD" box), 19 (step 1), 20, 21–27 (the "Developers - Deployment Containers" box), 25 | The tutorial applies slide 20: enable the APIs, create two service accounts, give the container their keys, set the project. The mounts, Docker-out-of-Docker and the state-bucket login are tutorial-only. What the two keys are for (25–26) has no beat in the plan (Gap 1). |
 | 3 | Desired state vs reality (≈4 min) | 12, 14, 16, 17 | Same concept. Slide 14's four bullets (run the program → desired state → compare with current → API calls to providers) are the plan's engine loop, and the plan's three trees draw the "current" state that slide 14 names but does not show. Conflict 9 qualifies the slide's "through cloud APIs". |
 | 4 | Projects, stacks, config, state, secrets (≈3 min) | 13, 15 (`pulumi stack`, `pulumi config`), 18 | Same concept for stacks and config. Projects (`Pulumi.yaml`), the self-managed GCS backend, Outputs and the empty passphrase are tutorial-only. Conflict 8 (stack names). |
@@ -384,7 +380,7 @@ The slides contain no shell commands apart from the Pulumi CLI list. There are n
 | 2 | Infrastructure as code, in a real language, kept in git | §1, §3 ↔ 10, 11, 17 | Yes. The programs are Python (`runtime: python`, `toolchain: uv`). The course's own Ansible playbooks (digest §3.1, §7) make slide 11's "not YAML or DSL" concrete. |
 | 3 | Declarative: describe what should exist; Pulumi works out how | §3 ↔ 12, 17 | Yes. The plan goes further: constructors only register resources, and the engine decides the order. It holds for steps 2–3 and 5–6; step 4 is shell scripts (Conflict 9). |
 | 4 | The engine loop: run the program, diff desired against current, call the providers | §3 ↔ 14 | Yes, closely. Slide 14's "compares desired vs. current" is the plan's diff, and "makes API calls to providers" is its provider calls. The plan adds state as the third tree. |
-| 5 | `pulumi up` previews, asks, then applies; `preview` only plans; `--refresh` re-reads reality; `--stack` picks the stack | §3, §5, §9 ↔ 15, 16 | Yes. The README always runs `preview` and then `up … -y`, so the confirmation that slide 16 describes never appears on screen (Gap 3). |
+| 5 | `pulumi up` previews, asks, then applies; `preview` only plans; `--refresh` re-reads reality; `--stack` picks the stack | §3, §5, §9 ↔ 15, 16 | Yes. The README offers `preview` as an optional check and always deploys with `up … -y`, so the confirmation that slide 16 describes never appears on screen (Gap 3). |
 | 6 | A stack is one isolated copy with its own state and config | §4 ↔ 18 | Partly. The plan's class-and-instance analogy fits, but the plan never says why you would want a second stack, and that is the lecture's whole point: the same program for dev, staging and production (Gap 6). The names differ (Conflict 8). |
 | 7 | Pulumi runs on one machine and talks out to the cloud | §2 ↔ 11, 14, 21–27 | Yes. The plan's control room is slide 14's "Your Machine / CICD" box and the slides' "Developers - Deployment Containers". The CI/CD runner arrives in L23. |
 | 8 | The automated deployment is a fixed sequence: images, VM, provisioning, containers, web server | §5–§8 ↔ 19, 21–24, 28 | Yes, one to one. Acts I–IV follow steps 2–6 in the order of the code's phases (`deploy_single_vm/__main__.py:14-26`). The plan just never names the steps (Gap 2). |
@@ -402,7 +398,7 @@ The slides contain no shell commands apart from the Pulumi CLI list. There are n
 2. **The six steps as the spine, and the picture that grows (slides 19, 21–24, 27–28).** Slide 19's list maps one to one onto the files: step 1 is `docker-shell.sh`, step 2 is `deploy_images/`, and steps 3–6 are `create_instance.py`, `provision_instance.py`, `setup_containers.py` and `setup_webserver.py`. Slides 21–24 grow one picture a step at a time. With this map a student can tell from the `pulumi up` output which step is running and which file to open when it fails. **Carry it in** §2 (introduce the six-step tracker and tick step 1), §5–§8 (each Act opens on its slide's state of the picture and ticks its step), and §10 (replay as the content recap).
 3. **Preview, confirm, apply, and what `-y` skips (slides 15–16).** Students copy `pulumi up --stack dev --refresh -y` without knowing that plain `pulumi up` would show the plan and ask first. Reading the plan matters here, because a new Ubuntu image can turn the next `up` into a VM replacement (digest §6 gotcha 20, §4 B12). **Carry it in** §3: decode the README's command flag by flag over slide 16's three flags. Repeat one line in §9 before the redeploy. Slide 15's seven-command card goes in §4.
 4. **The goal picture (slides 5, 7).** Slide 5's two lines state the problem (everything runs on your computer; users need a server), and slide 7 is the destination: the laptop's containers on one VM in GCP, reached on port 80. The digest's §1 diagram is too dense for a first view. **Carry it in** §1, right after the hook, as the target the twenty commands build by hand.
-5. **A minimal program before the real ones (slide 17).** Slide 17's six-line program shows the shape of every resource (a constructor, a logical name, arguments) without the repo's noise. **Carry it in** §3 as the first code panel, then cut to the repo's `gcp.compute.Firewall` (digest §5 excerpt 6), which has the same shape. Say once that the bucket example is not part of the tutorial.
+5. **A minimal program before the real ones (slide 17).** Slide 17's short bucket program shows the shape of every resource (a constructor, a logical name, arguments) without the repo's noise. **Carry it in** §3 as the first code panel, then cut to the repo's `gcp.compute.Firewall` (digest §5 excerpt 6), which has the same shape. Say once that the bucket example is not part of the tutorial.
 6. **Stacks are for environments (slide 18).** The same program can run as dev, staging and production, each with its own state and config values. The tutorial only ever has `dev`, so the reason for stacks never shows. **Carry it in** §4, as one sentence and a card of three stacks under one program.
 7. **Pulumi in one breath, and the six principles as a scorecard (slides 10–12).** Founded in 2017, programs in Python, TypeScript, Go, C# or Java, run from a workstation or a CI runner. Of the six principles, this tutorial uses real languages, declarative resources, and state with previews. It does not use components, multiple clouds or tests. **Carry it in** §1 (one sentence) and §10 (the scorecard, with ticks).
 8. **Where L20 sits (slide 4).** The red box has moved to "Deployment, Scaling & Automation", the bar that the remaining lectures fill. **Carry it in** §1 (ten seconds) and §10 (the bridge to L21–L23).
@@ -413,13 +409,13 @@ No captures exist yet, so "today" is the repo at `3ecef56`, re-read as listed un
 
 | # | Slides say | Tutorial today | Current | How the video should put it |
 |---|---|---|---|---|
-| 1 | **The registry is "Google Container Registry (GCR)"** (slides 21, 25, 26, 28); slides 19–20 say "GAR". The registry is simply there. | The code pushes to **Artifact Registry**, `us-docker.pkg.dev/<proj>/cheese-app-repository/...` (`deploy_images/__main__.py:14-15`), and the README's heading says "Google Artifact Registry". Container Registry is retired. Nothing creates the repository: neither the slides, the README nor the code (digest §10 errata 1 and 3). | Artifact Registry | "Slide 19 already says GAR; the diagram still carries the older name, GCR. Same box, today's name: Artifact Registry. One thing the picture assumes: the repository must exist, so you create it once." Label the re-drawn panel "Artifact Registry" and add the `gcloud artifacts repositories create` beat. |
+| 1 | **The registry is "Google Container Registry (GCR)"** (slides 21–28: the registry panel on 21–24, 26 and 27, the text of 25 and 28); slides 19–20 say "GAR". The registry is simply there. | The code pushes to **Artifact Registry**, `us-docker.pkg.dev/<proj>/cheese-app-repository/...` (`deploy_images/__main__.py:14-15`), and the README's heading says "Google Artifact Registry". Container Registry is retired. Nothing creates the repository: neither the slides, the README nor the code (digest §10 errata 1 and 3). | Artifact Registry | "Slide 19 already says GAR; the diagram still carries the older name, GCR. Same box, today's name: Artifact Registry. One thing the picture assumes: the repository must exist, so you create it once." Label the re-drawn panel "Artifact Registry" and add the `gcloud artifacts repositories create` beat. |
 | 2 | **`gcp-service` reads the images on the VM** (slide 20: "To read containers from GAR in VM"; slide 25; slide 26, callout 2, with `gcp-service.json` on the registry → VM arrow). | Pulumi's Docker provider pulls on the VM's daemon, but with registry credentials resolved from the deployment container's Docker config (credHelpers → gcloud), that is, as `deployment` (`setup_containers.py:92-96`, `docker_config.json`, `docker-shell.sh:39`; digest §3.7). The `gcp-service` login that `setup_containers.py:59-60` performs on the VM only serves a manual `docker pull` by the SSH user without `sudo`. | The code | "The lecture's rule is the right one: the machine that runs the app should only be able to read images. In this repo, Pulumi's own pulls borrow your deployment key from the laptop. The `gcp-service` login on the VM is there for a pull you type by hand." Draw callout 2 with a small amendment arrow from the laptop's key. |
-| 3 | **The VM side holds only the narrow key** (slides 25–26). Slide 25 says `gcp-service` is for Vertex AI inference, but slide 26 draws no Vertex AI link. | The VM's attached account is whatever `security:gcp_service_account_email` says, and the README sets it to `deployment@…` (README line 355, `Pulumi.dev.yaml:5`, `create_instance.py:135-145`). Its scopes limit the VM's own token to read-only storage plus logging, monitoring and tracing. The `gcp-service` key is uploaded to `/srv/secrets` and mounted into `api-service` and the loader for Gemini and the embeddings (`setup_containers.py:44-63`, `:220`). The README gives `gcp-service` "Vertex AI Administrator", more than the slide's "to perform inference". | The code | "The config key is named for `gcp-service`, but the README fills in the deployment account, so the VM itself carries the powerful identity, held back only by its scopes. The containers use the narrow key for Vertex AI: that is the arrow slide 26 leaves out." Add a PINK api-service → Vertex AI arrow labelled `gcp-service.json`. A candidate exercise is to try the narrower account in that config key; it is untested here. |
+| 3 | **The VM side holds only the narrow key** (slides 25–26). Slide 25 says `gcp-service` is for Vertex AI inference, but slide 26 draws no Vertex AI link. | The VM's attached account is whatever `security:gcp_service_account_email` says, and the README sets it to `deployment@…` (README line 355, `Pulumi.dev.yaml:5`, `create_instance.py:135-145`). Its scopes limit the VM's own token to read-only storage plus logging, monitoring, tracing and service control. The `gcp-service` key is uploaded to `/srv/secrets` and mounted into the loader and into `api-service`, which uses it for Gemini and query embeddings on Vertex AI (`setup_containers.py:44-63`, `:180`, `:220`). The README gives `gcp-service` "Vertex AI Administrator", more than the slide's "to perform inference". | The code | "The config key is named for `gcp-service`, but the README fills in the deployment account, so the VM itself carries the powerful identity, held back only by its scopes. The containers use the narrow key for Vertex AI: that is the arrow slide 26 leaves out." Add a PINK api-service → Vertex AI arrow labelled `gcp-service.json`. A candidate exercise is to try the narrower account in that config key; it is untested here. |
 | 4 | **The VM reads models from a GCS bucket** over HTTPS 443 (slides 7, 22–27). Slide 26's callout 3 calls it the "class bucket". | Nothing on the VM reads a bucket. The API downloads its CNN from a GitHub release into `/persistent/experiments` (`llm_cnn_utils.py:34`, `:122-124`; the code's own comment says it should come from your bucket). The loader downloads pre-computed embeddings from a GitHub release (`src/vector-db/cli.py:487`). `GCS_BUCKET_NAME=cheese-app-models` is passed but never read (`setup_containers.py:222`). The one bucket the tutorial uses is the Pulumi state bucket, which the laptop uses and no slide draws. | The code | "The bucket is where models belong once training feeds deployment, and the code's comment agrees. In v3 the model comes from a GitHub release, so our picture greys the box out and adds the bucket the tutorial really uses: Pulumi's memory, next to your laptop." |
 | 5 | **A "GCE Persistent Volume" over NFS**, labelled "Local Models, Experiments" (slide 7) or "Local Models, Leaderboard" (slides 22–27). | A 50 GB `pd-standard` block disk attached to the VM, formatted ext4 and mounted at `/mnt/disk-1` (`create_instance.py:92-97`, `provision_instance.py:24-57`). `api-service` sees `/mnt/disk-1/persistent` as `/persistent` (the downloaded model in `/persistent/experiments`, plus chat history), and ChromaDB gets `/mnt/disk-1/chromadb` (`setup_containers.py:65-76`, `:149-153`, `:228-229`). There is no NFS and no leaderboard. | The code; slide 7's label is accurate | "It is a second disk plugged into the VM, not a network share. Slide 7's 'Local Models, Experiments' is literally the folder `/persistent/experiments`." Draw a disk with a cable, not a network link. Keep the ChromaDB path caveat to the guide (digest §6 gotcha 23). |
 | 6 | **The frontend is on HTTP 80** (slide 23). Slides 7, 24, 26 and 27 say HTTP 3000. | The frontend publishes 3000 (`setup_containers.py:114-119`). nginx publishes 80 and 443 (`setup_webserver.py:78-83`) and listens on 80 (`nginx.conf:26`), and the firewall opens 80, 443 and 22. | 3000 for the frontend; 80 belongs to nginx | Label the frontend 3000 throughout. To keep slide 23 → 24's story, tell it this way: "Without nginx, a visitor would need `:3000` for the page and `:9000` for the API, and the firewall lets neither in." |
-| 7 | **The containers** are the API and the frontend (slide 8, manual), or the API, frontend and NGINX (slide 28). Slides 7 and 23–24 draw four long-running containers. The registry holds a "Vector DB CLI" image, but no loader container is drawn. | Both routes run five containers: `frontend`, `vector-db` (`chromadb/chroma:latest`), a one-shot `vector-db-loader` (`rm=True`), `api-service` and `nginx` (`setup_containers.py:110-247`, `setup_webserver.py:71-102`; README Part A runs the same five by hand, digest §10 erratum 14). | Five | "The lecture lists the containers you will talk to. Two more do quiet work: the vector DB, which the API needs at start-up, and a loader that fills it and leaves." Animate the loader as a dashed TEAL box that appears, fills the vector DB and vanishes. |
+| 7 | **The containers** are the API, the frontend and Nginx (slide 8, manual, where Nginx comes in stage 4; slide 28, Pulumi). Slides 7, 24, 26 and 27 draw four long-running containers (23 draws three, before NGINX arrives). The registry holds a "Vector DB CLI" image, but no loader container is drawn. | Both routes run five containers: `frontend`, `vector-db` (`chromadb/chroma:latest`), a one-shot `vector-db-loader` (`rm=True`), `api-service` and `nginx` (`setup_containers.py:110-247`, `setup_webserver.py:71-102`; README Part A runs the same five by hand, digest §10 erratum 14). | Five | "The lecture lists the containers you will talk to. Two more do quiet work: the vector DB, which the API needs at start-up, and a loader that fills it and leaves." Animate the loader as a dashed TEAL box that appears, fills the vector DB and vanishes. |
 | 8 | **Stack names** follow `<project>-<environment>`, such as `cheese-app-dev` (slide 18). | Two Pulumi projects, `deploy-images` and `deploy-single-vm`, each with a stack called `dev`. Their full names are `organization/<project>/dev`, and the VM program reads the images stack as `organization/deploy-images/dev` (`setup_containers.py:27`). | The tutorial's names, which the code depends on | "Pulumi already files each stack under its project, so `dev` inside `deploy-images` is unambiguous. Its full name is what StackReference uses. The slide's pattern is a naming habit; don't rename these stacks, or the reference breaks." |
 | 9 | **Pulumi manages infrastructure through cloud APIs.** Providers are AWS, Azure, GCP, K8s, and they create, update or delete resources; programs are declarative (slides 12, 14, 17). | That holds for steps 2–3 (the docker-build and gcp providers). Step 4 runs shell scripts over SSH (`remote.Command`), which have only a `create` script and no update or delete. Pulumi records that a script ran, not what it changed. Steps 5–6 drive the VM's Docker daemon over SSH (the docker provider), so the containers stay declarative (digest §3.6). | Both: the banner is true for cloud resources; the inside of the VM is reached through SSH | "Pulumi talks to anything with an API. For the inside of the VM, the API is SSH and the Docker daemon. Containers can still be diffed; shell scripts are an escape hatch Pulumi cannot look into, which is why they must be safe to re-run." Use this as the bridge into §7. |
 
@@ -439,8 +435,8 @@ Not counted as conflicts:
 - **One master diagram.** Re-draw slides 7 and 21–27 in the series style (laptop GREY, cloud and VM BLUE, containers TEAL, request routes PINK, cost GOLD) and grow it exactly as the deck does: 21 (registry) → 22 (empty VM and disk) → 23 (containers) → 24 (nginx and the browser) → 27 (test). Use today's labels: Artifact Registry (Conflict 1), frontend `:3000` (Conflict 6), a disk at `/mnt/disk-1` (Conflict 5), the models bucket greyed and the Pulumi state bucket beside the laptop (Conflict 4), the loader as a dashed box (Conflict 7), and an api-service → Vertex AI arrow (Conflict 3). Draw arrows in the request direction. Then add the tutorial-only layers the slides lack: the VPC outline with three firewall gates (80, 443, 22) in §6, and the SSH tunnel in §7–§8.
 - **Tag each chapter with one GREY `lecture_ref(20, "a–b")`**, using the ranges below. The slides themselves never appear on screen.
 - **A six-step tracker** (Gap 2) sits in a corner from §2 to §8, beside the README tracker. Each step shows its file name and ticks as its Act ends.
-- **Two parts, cut where the deck cuts.** Part 1 is §1–§4 (manual deployment and Pulumi the tool, slides 4–18, about 13 min). Part 2 is §5–§10 (the six steps, slides 19–29, about 17.5 min).
-- **Length.** The plan is about 30.5 minutes, inside the 25–35 target. Bring lecture material in by replacing, not adding. Slide 7 replaces part of §1's scrolling terminal. The identity card in §2 replaces the plugin-cache mount, which can go. Slide 26 in §8 fits if the Kubernetes side panel there shrinks to one line, since §10 already bridges to L22.
+- **Two parts, cut where the deck cuts.** Part 1 is §1–§4 (manual deployment and Pulumi the tool, slides 4–18, with §2 borrowing 19–20 and 25 for the setup, about 13 min). Part 2 is §5–§10 (the six steps, slides 19–29, about 17.5 min).
+- **Length.** The plan is about 30.5 minutes, inside the 25–35 target. Bring lecture material in by replacing, not adding. Slide 7 replaces part of §1's scrolling terminal. The identity card in §2 replaces part of the mount-by-mount wiring; the plan's wires are socket, `/app`, `/secrets` and build contexts, and anything beyond those (such as the plugin cache, `docker-shell.sh:40`) can go. Slide 26 in §8 fits if the Kubernetes side panel there shrinks to one line, since §10 already bridges to L22.
 - **Pause-and-ponder candidates from the lecture**, alongside the plan's three: at slide 26 in §8, "which key would you hand to the VM, and why not the other?"; at slide 16 in §3, "what does `-y` skip, and when would you not want to skip it?"; at slide 18 in §4, "what would you change to deploy a second, production copy of this app?"
 
 **Per chapter**

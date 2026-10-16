@@ -534,7 +534,7 @@ class ComposeUp(VoiceScene):
         assert card4.frame.get_bottom()[1] > T7 + 0.1 and card4.get_right()[0] < zone_r
         rail = net.rail
         ticks = {"img_gateway": tick(img_g.box.get_center()), "img_processor": tick(img_p.box.get_center()),
-                 "rail": tick(rail.get_start() + np.array([0.35, 0.22, 0])),
+                 "rail": tick([(gf.get_right()[0] + pf.get_left()[0]) / 2, rail.get_start()[1] + 0.26, 0]),
                  "processor": tick(pf.get_corner(UP + RIGHT) + np.array([-0.3, -0.28, 0])),
                  "gateway": tick(gf.get_corner(UP + RIGHT) + np.array([-0.3, -0.28, 0]))}
         reveal = {"img_gateway": lambda: [FadeIn(img_g)], "img_processor": lambda: [FadeIn(img_p)],

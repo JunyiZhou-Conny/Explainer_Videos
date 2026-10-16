@@ -90,9 +90,10 @@ in bold (slides 3, 16, 31, 42).
 1. **One VM is a single point of failure that needs a human.** Support runs the three
    containers on one VM behind an NGINX container. When a container crashes, the app owner has
    to call Support, who logs in over SSH and restarts or relaunches it by hand. (Slides 4–7)
-2. **More servers add redundancy, not automation.** Spreading the app over three VMs with a
-   backup copy of each API means a failure no longer takes everything down, but switching to the
-   backup is still manual and crashed containers still wait for someone to SSH in. (Slides 8–11)
+2. **More servers add redundancy, not automation.** Spreading the app over three VMs and giving
+   each API a backup copy (on the same VM as the original) means a crashed API container has a
+   standby, but switching to the backup is still manual and crashed containers still wait for
+   someone to SSH in. (Slides 8–11)
 3. **What we actually want automated: failover, load balancing and scaling.** The lecture frames
    Kubernetes as the answer to exactly these three requests, and ticks all three off once the
    app runs on K8s clusters. (Slides 12–15)
@@ -141,7 +142,7 @@ in bold (slides 3, 16, 31, 42).
 16. **The payoff: self-service, cheaper, elastic and smoother.** Teams deploy on their own,
     infrastructure is used more fully (lower cost), capacity adjusts to load, apps keep running
     smoothly, and development gets simpler. (Slide 43)
-17. **Clusters cost money until you delete them.** The deck ends its tutorial part with the
+17. **Clusters cost money until you delete them.** The deck ends its hand-run warm-up with the
     delete command and closes with "DON'T FORGET TO DELETE". (Slides 40, 44)
 
 ## Diagrams
@@ -221,7 +222,7 @@ in bold (slides 3, 16, 31, 42).
     ↔ API server, Controllers ↔ API server and API server ↔ etcd. From the top of the
     Controllers stack a thick arrow leaves the cluster upward and turns right into an orange box
     "Cloud Provider API" outside the cluster.
-  - Worker Plane (light-green panel): "Worker Node 1" holds a dark-grey "Kube Proxy", a white
+  - Worker Plane (light-green panel): "Worker Node 1" holds a grey "Kube Proxy", a white
     "Kubelet", and a blue area "Container Runtime" containing two purple-outlined boxes "Pod 1"
     and "Pod 2", each with three dotted "container" boxes. Below: dotted outlines "Worker Node
     2", dots, "Worker Node N".
@@ -270,10 +271,10 @@ in bold (slides 3, 16, 31, 42).
 | "Pavlos", "*Support*" | 4–15 | Story roles: the app owner and the operations team. Not in the tutorial. |
 | "Frontend", "API 1", "API 2"; "API Service 1/2" | 4–13 | The lecture's demo app (a "Deployment Demo" page plus two APIs), not the cheese app. Its source is not in any tutorial repository we have. |
 | "Virtual Machine", "Compute Instance (Virtual Machine)" | 5, 9, 21 | L20's `deploy_single_vm`. |
-| "NGINX Container" | 5, 9, 21 | L20's nginx container with a hand-written `nginx.conf`. In L22 the tutorial replaces it with the F5 NGINX Ingress Controller (installed by Helm) plus an Ingress object (§3.4). The slides never say "Ingress". |
+| "NGINX Container" | 5, 9, 21 | L20's nginx container with a hand-written `nginx.conf`. In L22 the tutorial replaces it with the F5 NGINX Ingress Controller (installed by Helm) plus an Ingress object (§3.4). The slides never mention Ingress, apart from the console menu label "Services & Ingress" in slide 37's screenshot. |
 | "Failovers", "Load balancing", "Scaling" | 12, 15 | In the tutorial: failover = the ReplicaSet recreating Pods and GKE repairing nodes; load balancing = GCP load balancer → NGINX → Service; scaling = only the node-pool autoscaler (1–2 nodes); no `replicas` or HPA in the cheese-app code (§3.6, erratum 3). |
 | "Kubernetes Cluster", "K8s cluster", "K8s" | 13, 17–26 | README says "K8s cluster"; the code's cluster is `cheese-app-cluster`, one regional GKE cluster. |
-| "Node (VM)", "Node" | 13, 19 | A GKE node. The tutorial groups nodes in a node pool (`n2d-standard-2`); "node pool" never appears on the slides. |
+| "Node (VM)", "Node" | 13, 19 | A GKE node. The tutorial groups nodes in a node pool (`n2d-standard-2`); the term "node pool" never appears on the slides (only `default-pool`, inside slide 36's node name). |
 | "Pods", "Pod 1", "Pod 2" | 13, 18, 24, 26 | Same meaning. |
 | "orchestration tool", "managing distributed containers" | 17 | Not in the README. |
 | "kubernḗtēs", "helmsman" | 17 | Etymology only. The ship's-wheel logo, and the name of Helm (the chart tool the tutorial uses), follow from it. |
@@ -284,7 +285,7 @@ in bold (slides 3, 16, 31, 42).
 | "Bins/lib" | 19 | A container's libraries and binaries layer. |
 | "Microservices", "Dev + Ops" | 20 | Framing only. |
 | "Local Computer", "IDE/ CLI", "Containers" | 21–26 | In the course the tools live in the deployment container started by `sh docker-shell.sh`, not on the laptop itself (§4, Step 3). |
-| "CLI: gcloud, docker, kubectl, pulumi" | 21–26 | The toolbox also holds `helm` and `gke-gcloud-auth-plugin`, which the slides do not show. `kubectl` is pinned to 1.34 there. |
+| "CLI: gcloud, docker, kubectl, pulumi" | 22–26 (slide 21 lists only `gcloud`, `docker`, `pulumi`) | The toolbox also holds `helm` and `gke-gcloud-auth-plugin`, which the slides do not show. `kubectl` is pinned to 1.34 there. |
 | "Control Plane" / "Worker Plane" | 22–26 | "Worker Plane" is the lecture's coinage; Kubernetes docs say "worker nodes" (or "data plane"). |
 | "Worker Node 1 … N" | 22–26 | Nodes of the node pool. |
 | "Master Node 1–3" | 23 | Older Kubernetes wording; current docs say "control plane nodes". Invisible on GKE. |
@@ -304,11 +305,13 @@ in bold (slides 3, 16, 31, 42).
 | "Abstracting Infrastructure", "Standardize", "Declaratively", "Daily Management" | 30 | Summary keywords. |
 | "Self-Service", "Reduce Cost", "Automatically Adjusting", "Smoothly", "Development" | 43 | Advantage keywords. |
 
-**Tutorial vocabulary the slides never use:** namespace, ReplicaSet, labels and selectors (the
-slide-39 YAML even drops them), Ingress and Ingress controller, Helm, PersistentVolumeClaim, Job,
-node pool, cluster autoscaler, HorizontalPodAutoscaler, Workload Identity, Kubernetes service
-account, kubeconfig, Cloud NAT, private nodes, `sslip.io`. The video has to introduce these from
-the tutorial (§3).
+**Tutorial vocabulary the slides never use:** ReplicaSet, labels and selectors (the slide-39 YAML
+even drops them), Ingress controller, Helm, PersistentVolumeClaim, Job, node pool, cluster
+autoscaler, HorizontalPodAutoscaler, Workload Identity, Kubernetes service account, Cloud NAT,
+private nodes, `sslip.io`. Three more appear only in passing and are never explained: namespace
+(slide 29's comment on the default namespace), kubeconfig (slide 33's create output) and Ingress
+(a console menu label on slide 37). The video has to introduce all of these from the tutorial
+(§3).
 
 ### Slips and dated details on the slides (do not repeat in narration)
 
@@ -323,14 +326,15 @@ the tutorial (§3).
   the forwarded port is only reachable inside the container (§3.4). Use the Service's external
   IP, or `curl` from inside the container.
 - Slides 32–33: the example creates a 1-node cluster (`--num-nodes 1`); the README's warm-up uses
-  2 nodes, and the console screenshot on slide 37 shows 2. The outputs are old (GKE
-  `1.20.9-gke.701`, kubectl `v1.22.1`); today's toolbox ships kubectl 1.34.
+  2 nodes, and the console screenshot on slide 37 shows 2. The outputs on slides 33–36 are old
+  (GKE `1.20.9-gke.701` on 33 and 36, kubectl `v1.22.1` on 34); today's toolbox ships kubectl
+  1.34.
 - Slide 33: `--project ac215-project` is the instructor's project ID; students use their own.
 - Slide 34: says kubectl is needed "To create a Kubernetes cluster"; `gcloud` (or Pulumi) creates
   clusters, `kubectl` only manages what is inside. In the course, kubectl is preinstalled in the
   deployment container.
 - Slide 35: `kubectl get componentstatuses` has been deprecated since Kubernetes 1.19 and prints
-  a warning (§6, item 19).
+  a warning (§4 Part 0, step 0.3; §6 item 19).
 - Slide 39: abridged YAML (see Diagrams); "Decares" should read "Declares" (twice).
 - Slide 41: "Run an pulumi code" (typo). The link opens the README's "Deployment with Scaling
   using Kubernetes" section; the cluster steps are under the next H2, "Create & Deploy Cluster"
@@ -385,7 +389,7 @@ to the tutorial.
 - **Scale on metrics.** K8s can scale applications on CPU, memory or custom metrics (slide 18).
   The slides show no scaling command; the only replica count anywhere is `replicas: 2` in the
   tic-tac-toe YAML (slide 39). The tutorial has the same gap (erratum 3), and Milestone 5 asks
-  for a scaling demonstration (§7, Step 12).
+  for a scaling demonstration (§4 Step 12; erratum 3).
 - **The control plane is the single entry point.** All components meet at the API server, and
   `kubectl` talks only to it (slides 24, 27).
 - **Deployment and Service have different jobs.** The Deployment keeps Pods running; the
@@ -394,7 +398,7 @@ to the tutorial.
   `kubectl` to deploy (slides 32–34). Until you connect, `kubectl version` fails on the server
   half (slide 34).
 - **Check the cluster in the console too** (slide 37).
-- **Delete clusters when you are done.** The tutorial section ends with the delete command
+- **Delete clusters when you are done.** The hand-run warm-up ends with the delete command
   (slide 40), and the deck's last content slide is "DON'T FORGET TO DELETE" (slide 44).
 - **Why it is worth it:** automating microservices, bridging Dev and Ops, standardizing cloud
   deployments and daily management (slide 20); abstracted infrastructure (slide 30);
@@ -427,13 +431,14 @@ to the tutorial.
 - **Slide 21: "Remember the Cheese App Architecture"** points back to L20's single-VM deployment
   (cross-reference, not on the slide: `deploy_single_vm` in the same repository).
 - **Slide 37: the GCP console**, Kubernetes Engine → Clusters.
-- No readings, homework or milestone notes appear on the slides. (The tutorial digest, §7 and
-  Step 12, ties scaling to Milestone 5, and L23 automates this deployment with GitHub Actions.)
+- No readings, homework or milestone notes appear on the slides. (The tutorial digest ties
+  scaling to Milestone 5 in Step 12 and erratum 3, and its §7 notes that L23 automates this
+  deployment with GitHub Actions.)
 
 ## This video and the slides
 
 **Basis.** The video is not scripted yet. This folder holds only `SLIDES.md` and `digest.md`: there is no `BRIEF.md`, `script.md`, `ASSETS.md` or `assets/terminal/`. The map below therefore uses the hook and the ten planned chapters in [`digest.md`](digest.md) §8, the study guide (`MLOps_Learning/guides/L22-kubernetes-cloud.md`) and every slide: the extracted text and all five contact sheets, re-read for this section. With no captures yet, "what the tutorial does today" means `cheese-app-v3` `main` @ `3ecef56`. For the conflicts I re-read these in that clone on 2026-10-16:
-- the warm-up in the README (lines 517–581: `--num-nodes 2` at 541, `componentstatuses` at 484 and 559) and its Mermaid diagram (457–474);
+- the warm-up in the README (lines 517–581: `--num-nodes 2` at 541, `componentstatuses` at 559, and at 484 in the main section) and its Mermaid diagram (457–474);
 - the two demo manifests, `src/deployment/deploy-k8s-tic-tac-toe.yml` and `src/deployment/emoji.yaml`;
 - the cluster and its node pool (`deploy_k8s/create_cluster.py:14`, `:24`, `:52`, `:63-71`), and the one-time `get-credentials` command (`:192-199`, `--zone {region}` at `:197`);
 - the Service types (`setup_containers.py:98`, `:183`, `:332`) and the Helm release with its `LoadBalancer` Service (`setup_loadbalancer.py:11-46`, `:23`);
@@ -441,7 +446,7 @@ to the tutorial.
 
 When `assets/terminal/` and `ASSETS.md` exist, re-check Conflicts 4, 6, 7, 8 and 14 against them: the `gcloud … create` table, the `get-credentials` line, `kubectl version`, `componentstatuses`, and a port-forward. If they disagree, the captures win.
 
-**Pictures.** The README has no images, only one Mermaid diagram of the request path (README 457–474). The slides add the motivation story (5, 9, 13), container vs Kubernetes deployment (19) and the parts of a cluster (22–26). No slide draws the cheese app running on the cluster: slide 22 aims it at an empty cluster, and slide 41 hands over to the README. The digest's §1 diagram is the only picture of the finished system.
+**Pictures.** The README has no images, only one Mermaid diagram of the request path (README 457–474). The slides add the motivation story (5, 9, 13), container vs Kubernetes deployment (19) and the parts of a cluster (22–26). No slide draws the cheese app running on the cluster: slide 22 aims it at an empty cluster, and slide 41 hands over to the README. Apart from the README's Mermaid request path, the digest's §1 diagram is the only picture of the finished system.
 
 ### 1. Map: planned chapters ↔ slides
 
@@ -451,9 +456,9 @@ When `assets/terminal/` and `ASSETS.md` exist, re-check Conflicts 4, 6, 7, 8 and
 | 1 | From one box to a fleet (≈3 min) | 12–15, 17, 19, 21–22; 32–40 (the warm-up) | Same concept, and the tutorial applies it. Slide 12's three asks and slide 19's two pictures are the chapter's idea. Slides 21–22 are its visual: the L20 VM, then the same app aimed at a cluster. The chapter's on-screen warm-up is slides 32–40 almost command for command (README 517–581). Conflicts 4, 7, 8, 12. |
 | 2 | Anatomy of a GKE cluster (≈4 min) | 18, 22–26, 36–37 | Same concept for the control plane and the worker nodes. Slides 24–26 name the components that the plan lists only in one line (Gap 1). Node pools, regional vs zonal, private nodes and Cloud NAT are tutorial-only. Conflicts 9, 10. |
 | 3 | Desired state, not commands (≈4 min) | 7 and 11 (the manual restart), 15 ("Failovers"), 18, 25 (controller manager), 29 (`delete pods --all`), 30, 36 (Pod names), 39 (Deployment) | Same concept. Slide 18's "K8s handles the rest" and slide 30's "Declaratively" are the chapter's thesis; slide 39 says the Deployment keeps its Pods running. ReplicaSets, the controller loop and Jobs are tutorial-only. Conflict 2. |
-| 4 | Names that survive: labels, Services, DNS, namespaces (≈3 min) | 18, 27–29, 35, 39 (Service) | Same concept for the Service ("allows pods to die", slide 39). Labels and selectors, cluster DNS and namespaces are tutorial-only; the slide-39 YAML even drops the selector (Conflict 12). Slides 29 and 35 show the default namespace without naming the idea. |
+| 4 | Names that survive: labels, Services, DNS, namespaces (≈3 min) | 18, 27–29, 35, 39 (Service) | Same concept for the Service ("allows pods to die", slide 39). Labels and selectors and cluster DNS are tutorial-only; the slide-39 YAML even drops the selector (Conflict 12). Namespaces are tutorial-only in substance: slide 29's comment names the default namespace and slide 35 shows its near-empty contents, but neither explains the idea. |
 | 5 | The journey of one click (≈5 min) | 5 and 21 (NGINX in front, on a VM), 24–26 (Cloud Provider API, kube-proxy), 38–39 (`LoadBalancer`, 80 → 8080), 12 and 15 (load balancing) | The tutorial applies it with a different pattern: one load balancer in front of an Ingress controller, not one per Service (Conflict 11). Ingress, Helm, the Host header, `sslip.io` and `ROOT_PATH` are tutorial-only. Conflict 13 (slide 21's ports). |
-| 6 | Identity without key files (≈4 min) | 27 (kubectl talks to the Kubernetes API), 33 (`get-credentials`) | Mostly tutorial-only. The lecture's one identity step is "connect to the cluster" (Conflict 6). Kubeconfig, the exec plugin and Workload Identity are not on the slides. |
+| 6 | Identity without key files (≈4 min) | 27 (kubectl talks to the Kubernetes API), 33 (`get-credentials`) | Mostly tutorial-only. The lecture's one identity step is "connect to the cluster" (Conflict 6). Apart from slide 33's output line saying a kubeconfig entry was generated, the kubeconfig, the exec plugin and Workload Identity are not on the slides. |
 | 7 | Disks that follow Pods (≈3 min) | none (21 draws the vector DB container; 13 duplicates every part) | Tutorial-only. The chapter explains why slide 13's duplication cannot simply be applied to the API and the vector DB (Conflict 2). |
 | 8 | Run it: `pulumi up` end to end (≈5 min) | 21–22 (`pulumi` in the toolbox), 41 (the handover), 28, 34–37 (checks) | The tutorial applies what slide 41 only announces: running the Pulumi code for the cheese app. Everything inside `pulumi up` is tutorial-only. Conflicts 5, 6, 7, 8. |
 | 9 | Scaling at two levels (≈4 min) | 12, 15, 18 (CPU, memory, custom metrics), 39 (`replicas: 2`), 43 ("Automatically Adjusting", "Reduce Cost") | Same concept, but the lecture states it and the repo applies only half of it (Conflict 1). Requests, bin-packing and the two levels are tutorial-only; slide 43's "better infrastructure utilization" is the bin-packing in three words. |
@@ -475,7 +480,7 @@ When `assets/terminal/` and `ASSETS.md` exist, re-check Conflicts 4, 6, 7, 8 and
 | 8 | `kubectl` is the client, and it talks only to the API server | §1, §8 ↔ 22, 24, 27 | Yes. Slide 27's grammar, `kubectl [command] [TYPE] [NAME] [flags]`, is not in the plan (Gap 3). |
 | 9 | `gcloud` creates and deletes the cluster; `kubectl` works inside it | §1 (warm-up) ↔ 32–36, 40 | Yes for the warm-up. For the cheese app, Pulumi takes `gcloud`'s place (Conflict 5). |
 | 10 | The warm-up: apply the tic-tac-toe manifest, read the external IP, open the game | §1 ↔ 38 | Yes, command for command (README 563–575). |
-| 11 | In the default namespace, `kubectl get all` shows only `service/kubernetes` | §4, §8 ↔ 35 | Yes. Slide 35's almost empty output is exactly what students see after the cheese app is deployed (digest Step 8). The slide shows it for a new cluster; the plan uses it to introduce namespaces. |
+| 11 | In the default namespace, `kubectl get all` shows only `service/kubernetes` | §4, §8 ↔ 35 | Yes. Slide 35's almost empty output is exactly what students see after the cheese app is deployed (digest Step 8). The slide shows it for a new cluster; the digest uses the same surprise to introduce namespaces (§3.3, §6 item 3). |
 | 12 | A Service of type `LoadBalancer` asks the cloud for an external IP | §5 ↔ 24–25 (Cloud Provider API, "IP addresses"), 38–39 | Partly. Same mechanism, but in the cheese app only the NGINX controller's Service has that type (Conflict 11). |
 | 13 | Kubernetes can scale apps by CPU and memory | §9 ↔ 18, 43 | Yes on the idea. The plan is more precise: the HPA measures usage against requests, and this repo has no HPA (Conflict 1). |
 | 14 | The platform handles node failures | §2, §3 ↔ 25 | Yes. The plan's node auto-repair (`create_cluster.py:68`) is GKE's form of it. |
@@ -512,12 +517,12 @@ No captures exist yet, so "today" is the repo at `3ecef56`, re-read as listed un
 | 4 | **Warm-up cluster**: `gcloud container clusters create test-cluster --num-nodes 1 --zone us-east1-c` (32–33); the output table shows `e2-medium`, 1 node, GKE `1.20.9-gke.701`. Slide 37's console shows the same cluster with 2 nodes. | README line 541 uses `--num-nodes 2`, same name and zone, and leaves the machine type at GKE's default. The cheese app's own nodes are `n2d-standard-2` (`create_cluster.py:14`). | The README (`--num-nodes 2`); the slide's versions are years old | Show the README's command. "The slide makes one node; the README makes two, so the two tic-tac-toe Pods can land on different machines. Either works." Don't show the slide's output table; capture today's. |
 | 5 | **`gcloud` creates and deletes clusters** (32, 40). Slide 34 says you need `kubectl` to create a cluster and deploy an app to it. | For the cheese app, Pulumi creates the regional cluster, its node pool and its network (`pulumi up`, digest Step 7) and removes them (`pulumi destroy`, Step 14). `gcloud` creates only the warm-up `test-cluster`. `kubectl` never creates a cluster; it manages objects inside one. | The code | "Slides 32–40 are the warm-up done by hand, and the README does it the same way. The cheese app's cluster is code: the `gcloud` line becomes `gcp.container.Cluster`, the delete becomes `pulumi destroy`." Say once that `kubectl` does not create clusters. |
 | 6 | **Connecting kubectl**: `gcloud container clusters get-credentials test-cluster --zone us-east1-c --project ac215-project` (33), right after a create whose output already says a kubeconfig entry was generated. | For the warm-up, `create` writes the kubeconfig, so no extra step is needed in that session. For the cheese app, Pulumi runs `get-credentials` once, at create time, in a container started with `--rm` (`create_cluster.py:192-199`, `docker-shell.sh:34`), and passes the region to `--zone` (`:197`). In a later session `kubectl` has no kubeconfig and reports `connection refused` (digest §6 item 2). The fix is `gcloud container clusters get-credentials cheese-app-cluster --region us-central1 --project <PROJECT>`. `ac215-project` is the instructor's project. | The code; `--region` is the unambiguous form for a regional cluster | "Slide 33's command tells kubectl where the cluster is and how to log in. Pulumi runs it for you once, and your next container session forgets it, so keep this line handy: `--region us-central1`, your own project." |
-| 7 | **Install `gcloud` and `kubectl` first** (32, 34). The "Local Computer" CLI list is `gcloud`, `docker`, `kubectl`, `pulumi` (21–26). The outputs show kubectl `v1.22.1` and a `1.20.9-gke.701` cluster (33–36). | Only Docker is installed on the laptop. The deployment container ships gcloud with `gke-gcloud-auth-plugin` (`Dockerfile:30`), kubectl from the 1.34 channel (`:33`), Helm (`:44`) and Pulumi, and sets `USE_GKE_GCLOUD_AUTH_PLUGIN=True` (`docker-shell.sh:45`). GKE upgrades the cluster itself (`auto_upgrade`, `create_cluster.py:69`). | The toolbox (kubectl 1.34) | "The slides' 'local computer' is, for us, the deployment container on your laptop. The tools are already in it, plus two the slides don't list: Helm and the GKE auth plugin." Show today's `kubectl version --client`, not the slide's. |
-| 8 | **`kubectl get componentstatuses`** lists the scheduler, the controller manager and two etcd members, all `Healthy` (35). | The README still runs it (lines 484, 559), but the command has been deprecated since Kubernetes 1.19 and prints a warning; on GKE it may show little (digest §6 item 19). | Deprecated | Use slide 35's list as a picture of the control plane's parts, not as a check. If the README's line appears on screen, say the warning is expected; check health with `kubectl get nodes`. |
+| 7 | **Install `gcloud` and `kubectl` first** (32, 34). The "Local Computer" CLI list is `gcloud`, `docker`, `kubectl`, `pulumi` (22–26; slide 21 lacks `kubectl`). The outputs show kubectl `v1.22.1` and a `1.20.9-gke.701` cluster (33–36). | Only Docker is installed on the laptop. The deployment container ships gcloud with `gke-gcloud-auth-plugin` (`Dockerfile:30`), kubectl from the 1.34 channel (`:33`), Helm (`:44`) and Pulumi, and sets `USE_GKE_GCLOUD_AUTH_PLUGIN=True` (`docker-shell.sh:45`). GKE upgrades the cluster itself (for the nodes: `auto_upgrade`, `create_cluster.py:69`). | The toolbox (kubectl 1.34) | "The slides' 'local computer' is, for us, the deployment container on your laptop. The tools are already in it, plus two the slides don't list: Helm and the GKE auth plugin." Show today's `kubectl version --client`, not the slide's. |
+| 8 | **`kubectl get componentstatuses`** lists the scheduler, the controller manager and two etcd members, all `Healthy` (35). | The README still runs it (lines 484, 559), but the command has been deprecated since Kubernetes 1.19 and prints a warning; on GKE it may show little (digest §4 Part 0, step 0.3; §6 item 19). | Deprecated | Use slide 35's list as a picture of the control plane's parts, not as a check. If the README's line appears on screen, say the warning is expected; check health with `kubectl get nodes`. |
 | 9 | **Master nodes**: the control plane is "Master Node 1–3" (23), with its components drawn inside the cluster (24–26) and reported by `componentstatuses` (35). | On GKE, Google runs the control plane. For `cheese-app-cluster` it is regional (`location=region`, `create_cluster.py:24`) and reached at a public endpoint. Its machines never appear: `kubectl get nodes` lists only workers, as slide 36 itself shows (one node, ROLES `<none>`). Kubernetes docs now say "control plane", not "master". | GKE's managed control plane | Draw the control plane as a greyed box labelled "run by Google", with the four components inside, outside the node pool. "On GKE you rent the brain: you talk to it, but you never see its machines." |
 | 10 | **Docker on every node** (19, 22); slide 26 says the container runtime will be Docker. | The node pool uses `image_type="cos_containerd"` (`create_cluster.py:52`), so the runtime is containerd. Kubernetes removed its built-in Docker Engine support in v1.24. Images built with Docker run unchanged. | containerd | Label the runtime box "containerd". "You still build with Docker; the node runs the same image with containerd." |
 | 11 | **One `LoadBalancer` Service per app**, each with its own external IP (38–39; `emoji.yaml` on 28–29 does the same). Kube-proxy balances traffic between the app's parts and the outside world (26). Slides 5 and 21 put an NGINX container in front. | The cheese app's three Services are `ClusterIP`, reachable only inside the cluster (`setup_containers.py:98`, `:183`, `:332`). The one `LoadBalancer` Service belongs to the F5 NGINX Ingress Controller, installed by Helm (`setup_loadbalancer.py:11-46`, `:23`), and an Ingress routes by host and path. The README's Mermaid diagram (457–474) draws this path. NGINX sends requests straight to Pod IPs; kube-proxy carries in-cluster Service traffic such as API → vector DB (digest §3.3). | The code | "Tic-tac-toe opens one door per app. The cheese app opens one door and puts a receptionist behind it: the NGINX controller reads host and path and picks the Service. That's L20's nginx container again, now configured from an Ingress object." In `kubectl get svc -n cheese-app-namespace`, point out that only the controller's row has an EXTERNAL-IP. |
-| 12 | **Slide 39's YAML**: the Deployment has `replicas`, `containers`, `image` and `ports` directly under `spec`; the Service has `ports` and `type`. Neither has a name, a selector or a Pod template. | `deploy-k8s-tic-tac-toe.yml` has `metadata.name: web`, `selector.matchLabels` with `run: web`, a `template` carrying the same label, and a Service `selector` of `run: web` (lines 1–35). Kubernetes rejects a Deployment without a selector and a template, and a Service without a selector routes to nothing. | The file | Show the real file, not the slide's. "The slide trims the YAML down to its two jobs. The lines it trims are the glue: the label `run: web`, which the Deployment puts on its Pods and the Service looks for." |
+| 12 | **Slide 39's YAML**: the Deployment has `replicas`, `containers`, `image` and `ports` directly under `spec`; the Service has `ports` and `type`. Neither object has a `metadata.name` or a selector, and the Deployment has no Pod template (`name: web` there is the container's name). | `deploy-k8s-tic-tac-toe.yml` has `metadata.name: web`, `selector.matchLabels` with `run: web`, a `template` carrying the same label, and a Service `selector` of `run: web` (lines 1–35). Kubernetes rejects a Deployment without a selector and a template, and a Service without a selector routes to nothing. | The file | Show the real file, not the slide's. "The slide trims the YAML down to its two jobs. The lines it trims are the glue: the label `run: web`, which the Deployment puts on its Pods and the Service looks for." |
 | 13 | **Slide 21's cheese app**: the API reaches the vector DB on "TCP/IP 5432"; four containers (NGINX, API, frontend, vector DB) on one VM. | ChromaDB listens on 8000 (`CHROMADB_PORT=8000` in both L20's `deploy_single_vm` and L22's `setup_containers.py`); 5432 is PostgreSQL's port. A fifth, one-shot loader fills the vector DB; in L22 it becomes a Job. | 8000; five containers | Label the link "8000". "One more container does quiet work: the loader, which on Kubernetes becomes a Job that runs once." Draw the loader dashed. |
 | 14 | **Port-forward to your browser**: `kubectl port-forward svc/emojirain 8080:80`, "so you can open it in your browser" (29). | In the course, `kubectl` runs inside the deployment container, which publishes no ports (`docker run` without `-p`, `docker-shell.sh:34-50`). The forwarded port opens on the container's localhost, where the laptop's browser cannot reach it. The guide's alternative: `kubectl port-forward svc/api 9000:9000 -n cheese-app-namespace &`, then `curl localhost:9000/api-service/status` in the same container (digest §3.4). | The code | "Port-forward works; it forwards into the container you typed it in. Test it with `curl` right there, or use the app's public address." |
 
@@ -527,7 +532,7 @@ Not counted as conflicts:
 - Slide 41's link lands on "Deployment with Scaling using Kubernetes". The cluster steps are under the next H2, "Create & Deploy Cluster" (digest erratum 14). The video should name both headings.
 - Slide 25 gives the controller manager the job of talking to the cloud about nodes and IP addresses. Upstream Kubernetes puts that in a separate cloud controller manager, and on GKE the node autoscaler is a Google-run component. This is a simplification, not a contradiction.
 - "Worker Plane" (slides 23–26) is the lecture's own term; the Kubernetes docs say worker nodes (or data plane).
-- Slide 29's `kubectl delete pods --all` is right for the default namespace. For the cheese app it needs `-n cheese-app-namespace`, and the Pods come back: a pause-and-ponder (see Proposals), not a conflict.
+- Slide 29's `kubectl delete pods --all` is right for the default namespace. For the cheese app it needs `-n cheese-app-namespace`, and the Deployments' Pods come back: a pause-and-ponder (see Proposals), not a conflict.
 - The live demos (slides 6, 10, 14) ran the instructor's deployments of a demo app whose source is not in the tutorial repositories.
 - Slide 17's history (announced by Google in June 2014; its three creators) has no tutorial counterpart.
 
@@ -545,7 +550,7 @@ Not counted as conflicts:
 - **Slide 15's checklist as a tracker** (Gap 2): three items in a corner, ticked in §3, §5 and §9, with the caveats of Conflicts 1 and 2.
 - **Retell the motivation story; don't show it.** The roles are the app owner and the operator ("Support"); the app is a frontend with two APIs (slides 4–11). Re-draw slides 5, 9 and 13 in the series style. Do not show or link the live demos.
 - **Tag each chapter with one GREY `lecture_ref(22, "a–b")`**, using the ranges below. The slides themselves never appear on screen.
-- **Length.** The plan runs about 37 minutes, over the 25–35 target, and the digest already suggests folding §4 into §3 and §5, and §7 into §9, for about 32 minutes. The lecture supports that cut: it spends nothing on disks or identity and most of its time on motivation and architecture. Bring lecture material in by replacing, not adding:
+- **Length.** The plan runs about 37 minutes, over the 25–35 target, and the digest already suggests merging chapters 4 and 7 into 3 and 5, for about 32 minutes. The lecture supports that cut: it spends nothing on disks or identity and most of its time on motivation and architecture. Bring lecture material in by replacing, not adding:
   - slide 24's diagram replaces part of §2's zone-tile animation;
   - slide 9's pause replaces one of the plan's three pauses, or joins them if the total stays near one per two minutes;
   - slide 39's YAML replaces scrolling terminal in §1.
@@ -562,7 +567,7 @@ Not counted as conflicts:
 - **§4 · Lecture 22 · slides 27, 29, 35, 39.** Slide 39's Service bullet (Pods may die) and the `run: web` link, then the cheese app's `run: frontend`. Slide 35's almost empty `kubectl get all` is the cue for namespaces; then `-n` goes into slide 27's flags slot.
 - **§5 · Lecture 22 · slides 5, 21, 24, 26, 38–39.** Start from what students know: one NGINX in front (slides 5, 21). Then slide 38's one door per app, and Conflict 11's one door with a receptionist. On the master diagram, light the Cloud Provider API arrow as the load balancer gets its IP. Slide 17's helmsman when Helm appears (Gap 8). Tick "Load balancing".
 - **§6 · Lecture 22 · slides 27, 33.** One line: slide 33's `get-credentials` is the login step, and the rest of identity is tutorial-only. Then Conflict 6's `--region` line as a card.
-- **§7 (or inside §9) · no slides.** Say that the lecture duplicates everything (slide 13) and that this chapter shows why two parts of the cheese app can't be duplicated that way (Conflict 2).
+- **§7 (or wherever it is merged) · no slides.** Say that the lecture duplicates everything (slide 13) and that this chapter shows why two parts of the cheese app can't be duplicated that way (Conflict 2).
 - **§8 · Lecture 22 · slides 21–22, 34–37, 41.** Open on slide 41's handover, in our words ("now the cheese app, as Pulumi code"), and name both README headings. During the waits, light the master-diagram component behind each Pulumi status line. Show `kubectl get nodes` and `kubectl get pods -n cheese-app-namespace` with today's output (Conflicts 7, 8), and slide 37's console as a re-drawn panel (Gap 7).
 - **§9 · Lecture 22 · slides 12, 15, 18, 39, 43.** Start from slide 18's promise, then Conflict 1's honest picture: the node layer is on, the Pod layer is yours. Set slide 39's `replicas: 2` against the cheese app's missing field. Slide 43's "better infrastructure utilization" captions the bin-packing animation. Tick "Scaling".
 - **§10 · Lecture 22 · slides 40, 44.** Slide 40's delete becomes `pulumi destroy` (Conflict 5). Show slide 44's message as a GOLD "Don't forget to delete" card without the meme, then the leftover checks.
@@ -574,7 +579,7 @@ Not counted as conflicts:
 
 **Terms**
 - Use the lecture's words: *orchestration*, *cluster*, *node (VM)*, *Pod*, *Deployment*, *Service*, *control plane*, *worker node*, *API server*, *etcd*, *scheduler*, *controller manager* / *controllers*, *kubelet*, *kube-proxy*, *container runtime*, *cloud provider API*, `kubectl`, *failover*, *load balancing*, *scaling*, *declarative*, *replicas*, `LoadBalancer`.
-- Add the tutorial's words where the lecture stops (the slides use none of these): *namespace*, *ReplicaSet*, *label* / *selector*, *Job*, *PersistentVolumeClaim*, *node pool*, *cluster autoscaler*, *HorizontalPodAutoscaler*, *resource requests*, *Ingress* / *Ingress controller*, *Helm*, *kubeconfig*, *Workload Identity*, *Kubernetes service account*, *private nodes*, *Cloud NAT*, `sslip.io`.
+- Add the tutorial's words where the lecture stops (the slides explain none of these, and only *namespace*, *kubeconfig* and *Ingress* appear on them at all, in passing): *namespace*, *ReplicaSet*, *label* / *selector*, *Job*, *PersistentVolumeClaim*, *node pool*, *cluster autoscaler*, *HorizontalPodAutoscaler*, *resource requests*, *Ingress* / *Ingress controller*, *Helm*, *kubeconfig*, *Workload Identity*, *Kubernetes service account*, *private nodes*, *Cloud NAT*, `sslip.io`.
 - Qualify, don't repeat:
   - "Master node": control plane, run by Google on GKE.
   - "Worker Plane": worker nodes, here one node pool.

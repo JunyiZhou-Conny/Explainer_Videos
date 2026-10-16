@@ -749,6 +749,7 @@ def footer_cards() -> VGroup:
     ans, guide = VGroup(a_box, a_body), VGroup(g_box, g_body)
     row = VGroup(ans, guide).arrange(RIGHT, buff=0.3)
     row.answers, row.guide, row.url = ans, guide, VGroup(*g_body[1:])
+    row.answers_text = a_body
     return row
 
 
@@ -1033,6 +1034,7 @@ class Recap(VoiceScene):
             vo.wait_until("Pause and shut it down")
             self.play(FadeOut(VGroup(t, br_, br_l)), caption_extra(tr, False), run_time=0.4)
             self.play(FadeIn(card, shift=UP * 0.15), run_time=0.5)
+            self.wait(1.0)                                              # the card, held to be read
 
         # ============================================================ 7 · Test yourself: Q1
         title = label("Test yourself", 40, INK)
@@ -1065,7 +1067,7 @@ class Recap(VoiceScene):
 
         def q_swap(old, new, run_time: float = 1.4):
             """The old question slides up and fades; the next writes in once it has mostly left."""
-            self.play(LaggedStart(FadeOut(old, shift=UP * 1.0), q_in(new), lag_ratio=0.4), run_time=run_time)
+            self.play(LaggedStart(FadeOut(old, shift=UP * 1.0), q_in(new), lag_ratio=0.7), run_time=run_time)
             self.add(new)
 
         i1 = icon_build_pull()
@@ -1150,7 +1152,7 @@ class Recap(VoiceScene):
             self.play(flash(tz.frame, INK, 1.02, 0.8))
             vo.wait_until("Answers are in the exercises")
             self.play(FadeIn(fc.answers, shift=UP * 0.15), FadeIn(fc.guide, shift=UP * 0.15), run_time=0.6)
-            self.play(flash(fc.answers, TURN, 1.06, 0.7))
+            self.play(flash(fc.answers_text, TURN, 1.08, 0.7))          # the words: Indicate on the card fills it
         self.wait(0.8)
         self.play(FadeOut(Group(*self.mobjects)), run_time=0.9)
         self.wait(0.3)
