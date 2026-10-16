@@ -9,11 +9,12 @@ Notes for scene authors
     from common import *      # every scene: SAY = NARRATION["S07"]; assert len(SAY) == n;
                               # one `with self.voiceover(SAY[i]) as vo:` per SAY line, in order
 Everything below draws text at 20-26 pt. Never .scale() a group that holds text below 1.0: use
-piece.rescale(k) (shapes shrink, text keeps its size). Frame budget: the tracker band is y 2.92..3.5
+piece.rescale(k) (shapes shrink, text keeps its size). Frame budget: the tracker band is y 2.90..3.5
 (x -6.5..-0.1 at most), lecture_ref top right; a 3-row strip's top is STRIP_TOP (-1.44), so a
 picture above a strip has y -1.3..2.8 (4.1 tall); a 6-row terminal's top is strip_top(6); keep
-x in [-6.6, 6.6]. The V1 mini-map sits at MINI_CENTER (bottom right, 3.3 x 1.45): hide it while a
-terminal taller than the strip or a code panel of more than 5 lines is up.
+x in [-6.6, 6.6]. The V1 mini-map (3.3 x 1.45) sits at MINI_CENTER (bottom right, y -3.52..-2.07)
+when nothing else is down there, at MINI_ABOVE_STRIP (y -1.33..0.13) while the 3-row strip is up;
+hide it while a terminal taller than the strip or a code panel of more than 5 lines is up.
 
 Data and sources
     NARRATION["S01"] ... ["S16"]   SAY lines from script.md      TITLES[cls], SPEC (video.yaml)
@@ -65,7 +66,11 @@ Terminal helpers (Terminal from explainer.devops: .type .print .run .clear .find
         "container · llm-rag-cli", prompt P_CTR unless given
     enter_container(t, prompt=P_CTR) / leave_container(t, prompt=P_REPO) -> list of animations
     resize(scene, t, rows, keep=None, anchor="bottom")   grow/shrink, bottom (or top) edge fixed
-    bare_prompt(scene, t)   type_cmd(scene, t, cmd) (folds with " \\" or starts under the prompt)
+    bare_prompt(scene, t)   type_cmd(scene, t, cmd): use it for every typed command. A long line
+        folds with fold_cmd(text, 65, first_prefix) -> (rows, hard): " \\" + 4-space indent, at
+        the last space outside quotes, else inside a "..." string (python -c one-liners stay
+        valid), never mid-word unless a token is longer than a row (URLs); the command starts
+        under the prompt when that folds better
     cd_prompt(scene, t, new_prompt, color=LAPTOP)  second_terminal(scene, prompt, rows=7, top=2.75)
     session(scene, t, cap, *spec, wrap=False, colors=None) -> {file line: mobject}
     print_build(scene, t, rows)  BuildKit / Compose rows, times as GREY tags (.time_tag)
@@ -108,12 +113,16 @@ Glyphs (small; sizes w x h)
     coin_glyph(r) GOLD coin · calendar_glyph() · cylinder(w, h, color=CTR) database (.top .body) ·
     page_stack(w, h) GREEN pages · chunk_card(w, h) GREEN card · vec_glyph(n, color) fan of
     arrows · ruler_glyph(w) · scissors_glyph(h) · seismo_glyph(w) (the three chunkers, PURPLE) ·
-    gears_glyph() "RAG code" · model_box(name, w, h, color=CLOUD, sub=None) · answer_bars(n, w) ·
+    gears_glyph() "RAG code" · model_box(name, w, h, color=CLOUD, sub=None) (grows to fit name +
+    mono sub-label; "\n" splits the name) · answer_bars(n, w) ·
     question_card(text=QUESTION) PINK · table_glyph() SQL table · chat_window(url, w, h)
     (.field .answer) · prompt_card(n=10) PINK question + GREEN chunk rows (.question .cards)
 
 Set pieces: Piece = VGroup + named parts (as in L03/L04)
-    Every piece is built centred near ORIGIN; move it with .move_to(...) before showing it. A part
+    Sizes below are W x H at scale 1. RagMap, ComposeView, what_if_frame and PromptStack are built
+    in place (frame coordinates, laid out for the full frame): show them where they are (their
+    bounding box includes hidden parts, so .move_to() would shift them off-centre; use .shift() or
+    ComposeView.fit_top()). The others are built centred near ORIGIN: .move_to(...) them. A part
     not shown yet is a member at opacity 0: it moves and scales with the piece. show=(...) names
     the parts visible at first (default: all). self.play(*piece.parts_in("a", "b")) fades parts
     in; self.play(*piece.parts_out("a")) fades them back to 0 (they stay members);
@@ -121,28 +130,34 @@ Set pieces: Piece = VGroup + named parts (as in L03/L04)
     self.play(piece.dim_to(0.3)) / self.play(piece.undim()). Never piece.set_opacity(...), never
     FadeOut a member: FadeOut the whole piece. rescale(k): self.play(piece.animate.rescale(k)).
     Methods return ANIMATIONS (play them) or MOBJECTS (not added: FadeIn them yourself).
-    Geometry is read from members, so it follows moves.
+    Geometry is read from members, so it follows moves. piece.attach(scene, *mobs) fades mobs in
+    and makes them members (they move with the piece); piece.detach(scene, *mobs) fades them out;
+    piece.glyph_only() -> a text-free copy (a thumbnail you may .scale() freely).
 
-    V1 RagMap(show=ALL)  the two lanes, 12.6 x 5.4 (x -6.3..6.2, y -3.0..2.5 before moving).
+    V1 RagMap(show=ALL)  the two lanes, in place: boxes, arrows and labels x -6.33..6.29,
+       y -2.41..2.05; lane cards reach y 3.23 (lane1, x -4.6..0.8) and -3.55 (lane2, x -4.4..1.8).
        Boxes (.item(name), names in RagMap.BOXES): books (knowledge base), chunking (PURPLE ruler
        box), embedding (tall BLUE box across both lanes), vectors (GREEN arrows), database (TEAL
        cylinder across both lanes), user, query (PINK arrow), prompt (GREEN "prompt + query +
        context"), llm (BLUE), answer (BLUE chip). Arrows: a_books a_chunks a_embed a_vectors (top),
        a_question a_query a_qdb a_context a_prompt a_answer (bottom); label parts lab_<box>.
        Groups: RagMap.TOP RagMap.BOTTOM RagMap.LABELS. Regions: reg_indexing reg_retrieval
-       reg_generation (dashed outlines) + tab_indexing tab_retrieval tab_generation (tags on
-       their borders; hide the tabs before the flags: they share the gap between the lanes).
+       reg_generation (dashed outlines) + tab_indexing tab_retrieval tab_generation (tags in the
+       gap between the lanes, at their region's edge; hide the tabs before the flags appear: they
+       share that gap; tab_generation is two rows "Augmentation & / Generation").
        lane1 / lane2 (README.md line 5 / line 9 cards). Flags: flag_chunk flag_embed flag_load
        (in the gap under the top lane) flag_query flag_chat (above the bottom lane).
-       Locations: loc_cli (TEAL frame "CLI container"), loc_google (two BLUE dashed outlines
-       "Google · Vertex AI"), loc_chroma (TEAL frame "Chroma container"), loc_disk (GREY folder
-       "on your laptop" + PINK route under the cylinder).
+       Locations: loc_cli (TEAL frame "CLI container"), loc_google (two BLUE dashed outlines,
+       tags "Google · Vertex AI" under the embedding box and "Google" over the LLM), loc_chroma
+       (TEAL frame "Chroma container"), loc_disk (GREY folder "on your laptop" + PINK route under
+       the cylinder). Show the locations without the labels/lanes (they share space).
        .light(name, color=TURN) / .unlight(name) -> anim   .tick(name) -> GREEN tick (not added)
        .pulse_lane("top"|"bottom", color) -> anim (a flash along the lane)
-    MiniMap()  glyph-only copy, 3.3 x 1.45, placed at MINI_CENTER. .light(name) -> anim (unlights
-       the previous; names as RagMap.BOXES) .unlight() -> anim .tick(name) -> GREEN tick (not
-       added; attach it with mm.attach(scene, t))
-    V2 ComposeView(show=ALL)   12.8 x 4.9 (x -6.35..6.45, y -2.35..2.55): laptop zone (GREY,
+    MiniMap(center=MINI_CENTER)  glyph-only copy, 3.3 x 1.45 (a plain VGroup: FadeIn/FadeOut it,
+       mm.animate.move_to(MINI_ABOVE_STRIP)). .light(name) -> anim (unlights the previous; names
+       as RagMap.BOXES) .unlight() -> anim .tick(name) -> GREEN tick (not added: FadeIn it, then
+       mm.add(tick) so it moves with the map) .items[name] .frame
+    V2 ComposeView(show=ALL)   in place, 12.9 x 5.1 (x -6.35..6.51, y -2.33..2.79): laptop zone (GREY,
        rows llm-rag/ secrets/ docker-volumes/ chromadb/, the GOLD key under secrets/, the street
        door :8000), CLI box (TEAL: /app and /secrets windows, GREEN /.venv, two `$` slots, GREEN
        `build: .` chip), Chroma box (TEAL: cylinder, /data window, :8000 port chip, name tag
@@ -157,40 +172,55 @@ Set pieces: Piece = VGroup + named parts (as in L03/L04)
        .blink(route) -> anim (folder and window blink at once)
        .fill_slots() / .empty_slots() -> [anims]   .light(box) / .unlight(box) -> anim
        .remove_cli() / .remove_chroma() / .new_boxes() -> [anims]   .row(name) .window(name)
-    V3 Ribbon(view=(27, 1027), width=12.4, breaks=False, blocks=True)  the story as GREEN word
-       blocks (no text), 0.24 tall; ~1,000 chars span 12.4 (350 chars ≈ 4.34, 20 ≈ 0.25).
+       .fit_top(k=0.84) -> self: shrinks (text keeps its size) to x -5.5..5.6, y -1.38..2.95,
+       just above the 3-row strip or a 3-line code strip (S04's "V2 owns the top"):
+       cv.fit_top() before showing it, or self.play(cv.animate.fit_top()).
+    V3 Ribbon(view=(STORY_START, STORY_START + 1000), width=12.4, breaks=False, blocks=True)
+       the story as GREEN word blocks (no text), 12.4 x 0.24 at ORIGIN; ~1,000 chars span 12.4
+       (350 chars ≈ 4.34, 20 ≈ 0.25). STORY_START = 27 (line 3; lines 1-2 never shown).
        blocks=False: one solid bar (the whole story: Ribbon(view=(0, 7808), blocks=False)).
        breaks=True: GREY ticks at paragraph gaps (tall) and line breaks (short).
        .x_of(i) .ruler(a, b) PURPLE window with ticks .band(a, b, color=TURN) .cut(i) cut line
        .callout(a, b) mono text of the story (<= 60 chars; never before char 27) in a card
        .span_card(a, b, color=DATA) a chunk card spanning a..b (recursive chunks)
-    V4 VectorSketch(r=1.6, sphere=True)  a 2-D drawing of a sphere (circle + dashed equator) with
+    V4 VectorSketch(r=1.6, sphere=True)  2r x 2r: a 2-D drawing of a sphere (circle + dashed equator) with
        an origin dot. .point(deg, length) .arrow(deg, length=0.85, color=DATA) .cluster(deg, n,
        spread=10, length=0.8) .arc(a, b, radius=0.45) .unit_circle(frac=1.0) dashed .sector(a, b)
        PINK beam — all return mobjects (not added). sphere=False: only the origin (2-D sketches).
-       CellBar(width=11)  3,072 cells (48 groups of 64) with the first 256 GREEN (part keep);
+       CellBar(width=11)  11 x 1.3: 3,072 cells (48 groups of 64) with the first 256 GREEN (part keep);
        labels part "labels"; .cut() -> [anims] the other 2,816 fall away
-    V5 RecordTable(n=3, ids=None)  header + rows of four cells id / document / metadata /
-       embedding, 11.6 wide; parts header, row0..; .cell(i, col) .column(col) .col_box(col)
-       collection_glyph(name, count=None)   ScanColumn(n=28) .walk(to=8248, run_time) -> [anims]
-       HnswGraph(layers=(3, 7, 15), width=6.4)  layered graph (our illustration of HNSW);
-       .hop(target=None) -> (pointer, [anims to play one by one])
-    V6 RankColumn(scores=(0.57, 0.77, 0.43, 0.93))  GREEN cards + scores, header, "better" arrow;
-       .scores_in() -> [anims] .sort() -> anim .k_line(k=2) -> line + "top K" (not added)
-       .flip() -> [anims] (1 − s, header "cosine distance (Chroma)", the arrow turns over)
-       DotCloud(n=1000)  .mask("all"|"book"|"italian") -> [anims] .nearest(k, level) -> dots
-       .beam(dots) -> PINK lines (not added); parts dots, standin, tolminc_label
-       StageStrip(stages=STAGES_A32, dashed=False)  boxes in a row; part filter;
-       .slide_filter(before=2) -> anim   .boxes[i]
-    V7 PromptStack()  system / query / context blocks + brace "final prompt", BLUE LLM box with
-       its model chip, cables. Parts: system query context brace llm model feed ghost cable_loose
-       cable_in lock. .ghost() -> [anims] (system block -> dashed SYSTEM_INSTRUCTION ghost)
-       .unplug() / .plug() -> [anims]   .block(name)
-    V8 Seismograph(start=8, n=9)  sentence tiles (number + first words), gaps' distances (our
-       illustration; chapter headings spike); parts tiles spikes curve threshold.
+    V5 RecordTable(n=3, ids=None)  12 x 2.24 (n=3; +0.62 per row): header + rows of four cells
+       id / document / metadata / embedding; parts header, row0..; .cell(i, col) .column(col)
+       .col_box(col) (not added)
+       collection_glyph(name, count=None)  3.5 x 1.6 GREEN slabs + mono name (+ count) (.stack
+       .name .count)   ScanColumn(n=28)  3.9 x 3.8 (rows, PINK pointer, "rows read" Counter):
+       .walk(to=8248, run_time) -> [anims]; .counter.freeze() before it leaves
+       HnswGraph(layers=(3, 7, 15), width=6.4)  6.4 x 2.35, layered graph (our illustration of
+       HNSW: tag it); parts layer0.. links; .hop(target=None) -> (pointer, [anims]): FadeIn the
+       pointer, play the anims one by one, FadeOut the pointer (scene-owned)
+    V6 RankColumn(scores=(0.57, 0.77, 0.43, 0.93))  5.2 x 2.7: GREEN cards + scores (mono 24),
+       header "similarity (lecture)", "bigger = closer" arrow; .scores_in() -> [anims, one per
+       row] .sort() -> anim .k_line(k=2) -> YELLOW line + "top K" (not added; reaches 1.1 left of
+       the cards) .flip() -> [anims] (1 − s, header "cosine distance (Chroma)", arrow turns over)
+       DotCloud(n=1000)  9.9 x 3.4 (our illustration: tag it): .mask("all"|"book"|"italian") ->
+       [anims] .nearest(k, level=None) -> dots .beam(dots) -> PINK lines (not added); parts dots,
+       standin, tolminc_label
+       StageStrip(stages=STAGES_A32, dashed=False)  11.9 x 1.7: boxes in a row; part filter;
+       .slide_filter(before=2) -> anim   .boxes[i] .arrows
+    V7 PromptStack()  in place, x -6.3..6.07, y -1.36..1.31: system / query / context blocks
+       (4.3 wide, 22 pt) + brace "final prompt", BLUE LLM box with its model chip, a feed arrow,
+       cables. Parts: system query context brace llm model feed ghost cable_loose cable_in lock
+       (the last four hidden unless named in show=). .ghost() -> [anims] (system block -> dashed
+       SYSTEM_INSTRUCTION ghost) .unplug() / .plug() -> [anims]   .block(name) .llm_box
+    V8 Seismograph(start=8, n=9)  12.4 x 2.5 (tiles 0.95 tall at y 0, spikes above): sentence
+       tiles (number + first words), gaps' distances (our illustration: GAP_VALUES, chapter
+       headings spike; tag it); parts tiles spikes curve threshold (YELLOW dashed line at the
+       95th percentile GAP_THRESHOLD of the whole story, label at the free end).
        .bracket(i) -> ±1 window bracket (not added) .spikes_in() -> anim .rise(scene)
-       .cuts() -> [anims] (tiles part at spikes above the line) .sentence_card(i) (not added)
-    CostDial (from L01; GOLD dial without digits) .run(scene, turns, seconds) .freeze()
+       .above() -> gap indices .cuts() -> [anims] (tiles part at spikes above the line; spikes
+       and curve follow; .cut_marks scene-owned) .sentence_card(i) -> GREY card (not added)
+    CostDial(radius=0.55, caption="cost") 1.1 x 1.4 (from L01; GOLD dial without digits)
+       .run(scene, turns, seconds) .freeze() before it leaves
 
 Capture folder names (assets/terminal): laptop, cli-container, recorded-embeddings, gotchas,
 expected (never: capture-only).
@@ -198,7 +228,6 @@ expected (never: capture-only).
 
 from __future__ import annotations
 
-import json
 import re
 from pathlib import Path
 
@@ -835,7 +864,21 @@ def strip_top(rows: int = 3) -> float:
     return BOTTOM + Terminal(rows=rows, width=TERM_W, size=TERM_PT, title="x").box.height
 
 
-STRIP_TOP = strip_top(3)
+def _strip_top_at_import(rows: int = 3, tries: int = 4) -> float:
+    """strip_top() at import time, retried: Manim's text cache can race when several scenes
+    import this module at once (FileNotFoundError on a shared .svg)."""
+    import time
+    for k in range(tries):
+        try:
+            return strip_top(rows)
+        except FileNotFoundError:
+            if k == tries - 1:
+                raise
+            time.sleep(0.3 * (k + 1))
+    raise RuntimeError("unreachable")
+
+
+STRIP_TOP = _strip_top_at_import(3)
 
 
 def enter_container(t: Terminal, prompt: str = P_CTR, title: str = CTR_TITLE) -> list:
@@ -956,8 +999,11 @@ def fold_cmd(text: str, limit: int = 65, first_prefix: int = 0) -> tuple[list[st
         for lv in (1, 2):
             if not ok:
                 ok = [j for j in cand if levels[j] == lv]
-        if ok:
-            j = ok[-1]
+        j = ok[-1] if ok else None
+        if j is not None and j - pos < room * 0.4 and len(text) - j + 3 > limit and \
+                not [k for k in levels if j + 1 < k <= j + 1 + limit - 6]:
+            j = None          # a near-empty row before a token that must break anyway: fill it
+        if j is not None:
             rows.append(prefix + text[pos:j] + " \\")
             pos = j + 1
         else:
@@ -2373,8 +2419,8 @@ class RagMap(Piece):
     LOCATIONS = ("loc_cli", "loc_google", "loc_chroma", "loc_disk")
 
     YT, YB = 1.15, -1.15
-    X = {"books": -5.55, "chunking": -3.75, "embedding": -1.75, "vectors": 0.2, "query": 0.2,
-         "database": 2.0, "user": -5.55, "prompt": 3.85, "llm": 5.65, "answer": 5.65}
+    X = {"books": -5.45, "chunking": -3.75, "embedding": -1.75, "vectors": 0.2, "query": 0.2,
+         "database": 2.0, "user": -5.45, "prompt": 3.85, "llm": 5.65, "answer": 5.65}
 
     def __init__(self, show=None, **kw):
         super().__init__(**kw)
@@ -2461,7 +2507,7 @@ class RagMap(Piece):
             tab.move_to(tab_at(r, tab))
             self.part("tab_" + name[4:], tab, "tab_" + name[4:] in vis)
 
-        region("reg_indexing", -6.2, db_r + 0.33, yt - 0.6, yt + 1.0, _tab("Indexing"),
+        region("reg_indexing", -6.45, db_r + 0.45, yt - 0.6, yt + 1.0, _tab("Indexing"),
                lambda r, t: np.array([r.get_left()[0] + 0.2 + t.width / 2,
                                       r.get_bottom()[1] - 0.03 - t.height / 2, 0]))
         region("reg_retrieval", em_l - 0.15, db_r + 0.25, yb - 0.85, yb + 0.6, _tab("Retrieval"),
@@ -2501,7 +2547,7 @@ class RagMap(Piece):
         g1 = box(em.width + 0.4, em.height + 0.35, CLOUD, dashed=True, stroke=3).move_to(em)
         g2 = box(llm.width + 0.35, llm.height + 0.35, CLOUD, dashed=True, stroke=3).move_to(llm.frame)
         g1t = _keep(tag("Google · Vertex AI", CLOUD)).move_to(g1.get_bottom())
-        g2t = _keep(tag("Google", CLOUD)).move_to(g2.get_bottom())
+        g2t = _keep(tag("Google", CLOUD)).move_to(g2.get_top())
         self.part("loc_google", VGroup(g1, g2, g1t, g2t), "loc_google" in vis)
         chf = box(db.width + 0.4, db.height + 0.4, CTR, dashed=True, stroke=3).move_to(db)
         cht = _keep(tag("Chroma container", CTR)).move_to(chf.get_top())
@@ -3576,18 +3622,28 @@ class Seismograph(Piece):
 
     def cuts(self, color: str = TURN, shift: float = 0.3) -> list:
         """Tiles part at every gap above the threshold: the groups after each cut move right by
-        `shift` per cut, the row re-centres; a cut mark appears in each gap (returned in .cut_marks,
-        scene-owned)."""
+        `shift` per cut, the row re-centres, spikes and curve move with their gaps; a YELLOW dashed
+        cut mark appears in each cut gap (.cut_marks: scene-owned, FadeOut it yourself)."""
         ks = self.above()
         anims, marks = [], VGroup()
         total = shift * len(ks)
+
+        def dx_tile(j):
+            return sum(1 for k in ks if k < j) * shift - total / 2
+
+        def dx_gap(k):                       # gap k sits between tile k and tile k + 1
+            return (dx_tile(k) + dx_tile(k + 1)) / 2
+
         for j, t in enumerate(self.tiles):
-            n_before = sum(1 for k in ks if k < j)
-            anims.append(t.animate.shift(RIGHT * (n_before * shift - total / 2)))
+            anims.append(t.animate.shift(RIGHT * dx_tile(j)))
+        tops = []
+        for k, sp in enumerate(self.spikes):
+            anims.append(sp.animate.shift(RIGHT * dx_gap(k)))
+            tops.append(sp.get_end() + RIGHT * dx_gap(k))
+        if len(tops) > 1 and not self.parts["curve"].hidden:
+            anims.append(self.parts["curve"].animate.set_points_as_corners(tops))
         for k in ks:
-            x = (self.tiles[k].get_right()[0] + self.tiles[k + 1].get_left()[0]) / 2
-            n_before = sum(1 for kk in ks if kk < k)
-            x += (n_before * shift - total / 2) + shift / 2
+            x = (self.tiles[k].get_right()[0] + self.tiles[k + 1].get_left()[0]) / 2 + dx_gap(k)
             marks.add(DashedLine([x, self.tiles[0].get_bottom()[1] - 0.15, 0],
                                  [x, self.tiles[0].get_top()[1] + 0.15, 0], color=color, stroke_width=4))
         self.cut_marks = marks

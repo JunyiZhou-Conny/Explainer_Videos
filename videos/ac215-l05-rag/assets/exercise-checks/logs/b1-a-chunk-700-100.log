@@ -1,0 +1,37 @@
+$ python cli.py --chunk --chunk_type char-split > /tmp/out.txt; grep -E '^(Processing file|Number of)' /tmp/out.txt; wc -l outputs/chunks-char-split-*.jsonl
+Number of files to process: 11
+Processing file: input-datasets/books/The Complete Book of Cheese.txt
+Number of chunks: 745
+Processing file: input-datasets/books/Theres Pippins and Cheese to Come.txt
+Number of chunks: 350
+Processing file: input-datasets/books/Womans Institute Library of Cookery. Volume 2_ Milk, Butter and Cheese Eggs Vegetables.txt
+Number of chunks: 828
+Processing file: input-datasets/books/Tolminc Cheese.txt
+Number of chunks: 13
+Processing file: input-datasets/books/Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.txt
+Number of chunks: 352
+Processing file: input-datasets/books/Hand-book on cheese making.txt
+Number of chunks: 217
+Processing file: input-datasets/books/Cheese and its economical uses in the diet.txt
+Number of chunks: 221
+Processing file: input-datasets/books/The Book of Cheese.txt
+Number of chunks: 1126
+Processing file: input-datasets/books/The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.txt
+Number of chunks: 287
+Processing file: input-datasets/books/Cottage Cheese Recipe Book.txt
+Number of chunks: 98
+Processing file: input-datasets/books/Dairying exemplified, or, The business of cheese-making.txt
+Number of chunks: 300
+    221 outputs/chunks-char-split-Cheese and its economical uses in the diet.jsonl
+     98 outputs/chunks-char-split-Cottage Cheese Recipe Book.jsonl
+    300 outputs/chunks-char-split-Dairying exemplified, or, The business of cheese-making.jsonl
+    217 outputs/chunks-char-split-Hand-book on cheese making.jsonl
+    352 outputs/chunks-char-split-Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.jsonl
+   1126 outputs/chunks-char-split-The Book of Cheese.jsonl
+    745 outputs/chunks-char-split-The Complete Book of Cheese.jsonl
+    287 outputs/chunks-char-split-The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.jsonl
+    350 outputs/chunks-char-split-Theres Pippins and Cheese to Come.jsonl
+     13 outputs/chunks-char-split-Tolminc Cheese.jsonl
+    828 outputs/chunks-char-split-Womans Institute Library of Cookery.jsonl
+   4537 total
+[exit 0]

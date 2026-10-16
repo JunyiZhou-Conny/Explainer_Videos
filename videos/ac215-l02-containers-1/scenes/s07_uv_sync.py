@@ -41,8 +41,8 @@ Beats (script.md "## S07", one voiceover block each):
  5  TRACKER A10. The picture and the strip go; full wide terminal (13.2 wide, 20 pt, 13 rows):
     `docker run --rm \\` / `    -ti simple-translate` (folded as in S04/S05/S06/S08/S09: it would
     fill its row) + ▶ your turn beside its second row -> TRACKER A10 · extra, `ls -a` (row tag
-    `extra`) at the capture's prompt
-    `root@01dca6d0f4d8:/#` -> laptop/22 lines 3–9; `.venv` and `uv.lock` GREEN as they are said.
+    `extra`) at the capture's prompt `root@01dca6d0f4d8:/#`, its `-a` pulses YELLOW on "which also
+    lists hidden files" -> laptop/22 lines 3–9; `.venv` and `uv.lock` GREEN as they are said.
     "But python cli.py" -> `python cli.py` (row tag `extra`) -> lines 11–14 RED, the prompt
     returns; "Why?": the ModuleNotFoundError row pulses. The `your turn` tag belongs to the
     command's second row: it scrolls away with it (2 + 1 + 7 + 1 + 4 + 1 rows in 13).
@@ -62,8 +62,9 @@ Beats (script.md "## S07", one voiceover block each):
     `.venv/bin/python --version` (row tag `extra`) -> laptop/22 line 16, `3.15.0` GREEN with the
     dot; `source .venv/bin/activate && python cli.py` (row tag `extra`) -> lines 28, 30–31 (it
     scrolls; `Output: Adoro il formaggio` GREEN stays); "The prompt now shows app": the prompt
-    `(app) root@01dca6d0f4d8:/#` (line 32), `(app)` GREEN pulses; "Type exit" -> `exit`, line 33,
-    the laptop prompt returns.
+    `(app) root@01dca6d0f4d8:/#` (line 32), `(app)` GREEN pulses, GREY row tag `pyproject.toml ·
+    line 2: name = "app"` beside it (why "app", not "simple-translate"; it fades before typing);
+    "Type exit" -> `exit`, line 33, the laptop prompt returns.
  8  TRACKER A10. The strip and the doors go; the two dots move up side by side with two-line labels:
     ORANGE `3.12.15` / "base · only ran pip install uv", GREEN `3.15.0` / "uv download · runs the
     app" (each as it is said). "half of the opening puzzle": S01's `3.12` YELLOW "?" GREY `3.14.7`
@@ -88,9 +89,9 @@ from explainer.scene import VoiceScene
 from common import (BUILD, ERR, IMAGE, INK, LAPTOP, LAPTOP_DIR, MONO, NARRATION, P_LAPTOP, ROUTE,
                     RUN, STRIP_ROWS, SYSTEM, TOOL, TURN, VENV, VM12, LayerStack, PathDoors,
                     VersionLine, attach, bare_prompt, beside, box, capture, chip, code, cross_mark,
-                    erratum_tag, figure, file_glyph, folder_glyph, glyph_range, hl_bar, istep, label,
-                    laptop_term, mono, mono_line, outline_box, pin, readme_card, resize, row_tag, steady,
-                    substring, tag, track, tracker_a, type_cmd, under, wide_term)
+                    erratum_tag, excerpt, figure, file_glyph, folder_glyph, glyph_range, hl_bar, istep,
+                    label, laptop_term, mono, mono_line, outline_box, pin, readme_card, resize, row_tag,
+                    steady, substring, tag, track, tracker_a, type_cmd, under, unpin, wide_term)
 
 SAY = NARRATION["S07"]
 
@@ -137,6 +138,8 @@ APP_PROMPT, _ex = C22.istep(32)
 assert (APP_PROMPT, _ex) == ("(app) root@01dca6d0f4d8:/#", "exit"), EXIT_LINE
 EXIT_ECHO = C22.at(33)
 assert EXIT_ECHO == ["exit"], EXIT_ECHO
+APP_NAME = excerpt("pyproject.toml", 2, 2)               # where the prompt's (app) comes from
+assert APP_NAME == 'name = "app"' and APP_PROMPT.startswith("(app) "), APP_NAME
 
 _hist = capture("34", LAPTOP_DIR).line(22)               # the base image's ENV PATH row (docker history)
 ENV_PATH = _hist[_hist.index("ENV PATH="):_hist.index("…") + 1]
@@ -533,6 +536,8 @@ class StepUvSync(VoiceScene):
             self.play(track(tr, 10, extra=True), run_time=0.3)
             r_ls = istep(self, w, LS_LINE, 0.3)
             pin(self, r_ls, beside(row_tag("extra"), r_ls), run_time=0.25)
+            vo.wait_until("which also lists hidden")
+            self.play(Indicate(substring(r_ls, "-a"), color=TURN, scale_factor=1.5), run_time=0.7)
             vo.wait_until("Now the listing")
             o5 = w.print(self, LS_OUT, run_time=0.6, lag=0.12)
             g_dv = substring(o5[5], ".venv")
@@ -644,7 +649,10 @@ class StepUvSync(VoiceScene):
             p7 = bare_prompt(self, w)
             g_app = substring(p7, "(app)")
             self.play(Indicate(g_app, color=VENV, scale_factor=1.4), run_time=0.8)
+            app_src = beside(row_tag([("pyproject.toml", "mono"), ("· line 2:", "label"), (APP_NAME, "mono")]), p7)
+            pin(self, p7, app_src, run_time=0.3)        # why "app": the project's name, not the folder's
             vo.wait_until("Type exit")
+            unpin(self, [(p7, app_src)], 0.25)          # typing at the prompt replaces its bare row
             istep(self, w, EXIT_LINE, 0.3)
             w.print(self, EXIT_ECHO, run_time=0.25)
             w.set_prompt(P_LAPTOP)

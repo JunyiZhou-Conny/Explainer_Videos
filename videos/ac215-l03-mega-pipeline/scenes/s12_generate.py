@@ -85,8 +85,9 @@ Beats (script.md "## S12", one voiceover block each):
     typed); "with a current model": <current model> pulses and a third GREY row writes under the
     chip: "pick one on Vertex AI's “Model versions” page · listed replacement: gemini-3.1-flash-lite";
     "in the Gemini model variable": GEMINI_MODEL underlines YELLOW in line 73 and the chip. On
-    "Google retires" the GOLD tag shrinks into the right end of the strip's `--generate` row.
-12  The panel, card and cloud go. The "with your key, look for" card writes item by item (lines
+    "Google retires" the GOLD tag moves to the strip's top-right corner.
+12  The panel, card and cloud go; the GOLD tag shrinks into the right end of the new card's title
+    row (the card reaches down to the strip). The "with your key, look for" card writes item by item (lines
     74, 80, 81, 84, 103) on their words, then two RED-bordered lines: "if it fails: 404 …
     Publisher Model … not found → export GEMINI_MODEL=gemini-3.1-flash-lite" (the retired default)
     and "if it fails: 429 RESOURCE_EXHAUSTED …"; ▶ your turn beside the strip's last command on
@@ -932,6 +933,8 @@ class GenerateText(VoiceScene):
         place(nfr1, left=ncard_fr.get_left()[0], top=ncard_fr.get_top()[1])
         assert h0 <= nfr1.height <= ncard_fr.height, (h0, nfr1.height, ncard_fr.height)
         u_env1 = under(code_span(c73, 0, '"GEMINI_MODEL"'), TURN)
+        cost_home = np.array([EDGE - cost.width / 2, -1.44 + 0.12 + cost.height / 2, 0])
+        assert cost_home[1] + cost.height / 2 < ncard.get_bottom()[1] - 0.2, ncard.get_bottom()
         u_env2 = under(substring(gchip.rows[0], "GEMINI_MODEL"), TURN)
 
         with self.voiceover(SAY[11]) as vo:
@@ -958,12 +961,7 @@ class GenerateText(VoiceScene):
             self.play(Indicate(gem.title, color=CLOUD, scale_factor=1.1), FadeIn(cost, shift=UP * 0.1),
                       run_time=0.6)
             vo.wait_until("Google retires")
-            # the GOLD tag settles at the right end of the strip's `--generate` row (the call that
-            # is billed), row-sized: beat 12's card reaches down to just above the strip
-            r_gen = t.lines[-2]
-            assert r_gen.text.endswith(README_CMDS[1]), r_gen.text
-            cost_row = at_right(tag20("billed to the course project", COST), t, r_gen)
-            self.play(FadeOut(gem), Transform(cost, cost_row), run_time=0.5)
+            self.play(FadeOut(gem), cost.animate.move_to(cost_home), run_time=0.5)
             full_fr = ncard_fr.copy()
             ncard_fr.become(nfr0)
             self.play(FadeIn(ncard_fr), FadeIn(note11, shift=DOWN * 0.1), run_time=0.5)
@@ -996,10 +994,17 @@ class GenerateText(VoiceScene):
         lf.part("fail2", f2, shown=False)
         place(lf, cx=0, top=TOP)
         assert lf.get_bottom()[1] > strip_top(3) + 0.1 and lf.width < 2 * 6.5, (lf.get_bottom(), lf.width)
+        # the card now reaches down to just above the strip, over the GOLD tag's corner: the tag moves
+        # into the card's title row, row-sized (running these with the key bills the course project)
+        cost_lf = tag20("billed to the course project", COST)
+        place(cost_lf, right=lf.frame.get_right()[0] - 0.25, cy=lf.title.get_center()[1])
+        assert cost_lf.get_bottom()[1] > lf.rows[0].get_top()[1] + 0.06, (cost_lf.get_bottom(), lf.rows[0].get_top())
 
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeOut(VGroup(p73, bar, u_def, ncard, u_env1, u_env2)), run_time=0.5)
-            self.play(FadeIn(lf), run_time=0.4)
+            self.add(lf)
+            self.add(cost)                                   # above the card, which arrives under it
+            self.play(FadeIn(lf), Transform(cost, cost_lf), run_time=0.45)
             lf.write_item(self, 0, run_time=0.4)
             vo.wait_until("generated text")
             lf.write_item(self, 1, run_time=0.4)

@@ -1,0 +1,30 @@
+$ python cli.py --load --chunk_type recursive-split
+load()
+Creating collection: recursive-split-collection
+Collection 'recursive-split-collection' did not exist. Creating new.
+Created new empty collection 'recursive-split-collection'
+Collection: Collection(name=recursive-split-collection)
+Number of files to process: 11
+Processing file: outputs/embeddings-recursive-split-The book of The Cheese Being traits and stories of Ye Olde Cheshire Cheese.jsonl
+Finished inserting 923 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-Hand-book on cheese making.jsonl
+Finished inserting 714 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-The Book of Cheese.jsonl
+Finished inserting 3569 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-Dairying exemplified, or, The business of cheese-making.jsonl
+Finished inserting 926 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-Womans Institute Library of Cookery.jsonl
+Finished inserting 2623 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-Theres Pippins and Cheese to Come.jsonl
+Finished inserting 1198 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-Hints on cheese-making, for the dairyman, the factoryman, and the manufacturer.jsonl
+Finished inserting 1146 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-Cheese and its economical uses in the diet.jsonl
+Finished inserting 678 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-The Complete Book of Cheese.jsonl
+Finished inserting 2147 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-Cottage Cheese Recipe Book.jsonl
+Finished inserting 269 items into collection 'recursive-split-collection'
+Processing file: outputs/embeddings-recursive-split-Tolminc Cheese.jsonl
+Finished inserting 35 items into collection 'recursive-split-collection'
+[exit 0]

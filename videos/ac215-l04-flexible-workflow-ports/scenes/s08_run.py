@@ -54,7 +54,7 @@ Beats (script.md "## S08", one voiceover block each):
     environment". Excerpt chip ImportError … (generate_text · ./docker-shell.sh run (excerpt)) RED
     under it, YELLOW tick "puzzle 1".
 10  TRACKER R/3 · extra. Second terminal strip (opens on ~, "new terminal: cd here first", just
-    before the block): `ls -la` (extra) -> 73 …, 7, …; a GREY Pipfile glyph with a RED root badge
+    before the block): `ls -la` (extra) -> 73 …, 7; a GREY Pipfile glyph with a RED root badge
     drops out under the box and slides to your laptop; at "owned by root" the ls row's root turns
     RED and the badge flashes; `git status
     --short` (extra) -> …, 20; two GREY command chips: `rm Pipfile` (extra), `./docker-shell.sh dev`
@@ -84,8 +84,13 @@ Deviations from SHOW (and why):
 - Beat 10: the Pipfile lands under your laptop (the screen holds the pulled copy); it travels
   under the shelf's caption, clear of the box's four labels. The second
   terminal opens between beats 9 and 10 (its ~ / "cd here first" opening takes 2.6 s, which the
-  7.7 s SAY can't also hold); in the 3-row strip the prompt scrolls off when `git status --short`
-  and its two output rows print.
+  7.7 s SAY can't also hold). `ls -la` prints "…" and line 7 without the trailing "…": with it,
+  the 3-row strip scrolled the command away as its output arrived; now the strip shows the
+  command and its key line together, as `git status --short` with "…" and line 20 does after it.
+- Beat 2: RunDecision's "yes" sits under the middle of its arrow (beside "local image?" it read
+  "local image? yes").
+- Beat 6: the command is typed and its first three lines print between beats 5 and 6, so "Local
+  image not found" is on screen, and turns YELLOW, as the SAY begins with those words.
 - Beats 2, 3, 8, 10: a short hold after the block keeps the your-turn card / README chip / the
   panel's "= root" / the command chips readable before the next beat clears them.
 """
@@ -98,6 +103,7 @@ from manim import (
     PI,
     RIGHT,
     UP,
+    AnimationGroup,
     Arrow,
     Create,
     FadeIn,
@@ -112,6 +118,7 @@ from manim import (
     Transform,
     VGroup,
     VMobject,
+    there_and_back,
 )
 
 from explainer import style as S
@@ -189,6 +196,14 @@ P_A = p_comp("transcribe_audio")
 
 def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
+
+
+def flash_framed(frame, text, color: str = TURN, k: float = 1.1, run_time: float = 0.7):
+    """Flash a tag or a board with an opaque dark fill: its text indicates and its outline turns
+    `color` and back (Indicate on the whole group would fill the frame with the colour)."""
+    return AnimationGroup(Indicate(text, color=color, scale_factor=k),
+                          frame.animate(rate_func=there_and_back).set_stroke(color),
+                          run_time=run_time)
 
 
 def code_row(panel, n: int):
@@ -486,14 +501,14 @@ class DevAndRun(VoiceScene):
         pkg.move_to([(pic.app.get_right()[0] + pic.cf.get_right()[0]) / 2, pic.rfiles[0].get_center()[1], 0])
         baked = note("baked in", VENV)
         with self.voiceover(SAY[1]) as vo:
+            # the lines go while the frame turns TEAL, then it shrinks straight to the strip (no
+            # empty 10-row terminal on screen)
             out0, done0 = wipe(t)
             self.play(out0, FadeOut(note0), FadeOut(sw), FadeOut(tr, shift=UP * 0.25),
-                      FadeIn(y_tr, shift=DOWN * 0.25), run_time=0.6)
+                      FadeIn(y_tr, shift=DOWN * 0.25), *enter_container(t, "transcribe_audio"), run_time=0.6)
             done0()
             tr = y_tr
-            self.play(*enter_container(t, "transcribe_audio"), run_time=0.4)
-            resize(self, t, 3, run_time=0.6)
-            self.play(FadeIn(chip89, shift=DOWN * 0.1), run_time=0.4)
+            resize(self, t, 3, run_time=0.6, extra=[FadeIn(chip89, shift=DOWN * 0.1)])
             vo.wait_until("Adding a package")
             self.play(FadeIn(pic), run_time=0.7)
             vo.wait_until("uv add")
@@ -527,6 +542,10 @@ class DevAndRun(VoiceScene):
         run_y = run_st.dot.get_center()[1]
         place(rd, right=6.4)
         rd.shift(UP * (run_y - rd.diamond[0].get_center()[1]))
+        # "yes" under its arrow's middle, so it doesn't read on as "local image? yes"
+        ya = rd.yes.arrow
+        u = (ya.get_end() - ya.get_start()) / np.linalg.norm(ya.get_end() - ya.get_start())
+        rd.yes.word.move_to(ya.get_center() + 0.3 * np.array([u[1], -u[0], 0]))
         link = Line(run_st.desc.get_right() + RIGHT * 0.15, rd.diamond[0].get_left() + LEFT * 0.04,
                     color=TOOL, stroke_width=5)
         link.set_y(run_y)
@@ -534,12 +553,11 @@ class DevAndRun(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             out1, done1 = wipe(t)
             self.play(out1, FadeOut(VGroup(pic, pic.slab, pic.slab_label, pkg, baked, chip89)),
-                      FadeOut(tr, shift=UP * 0.25), FadeIn(r_tr, shift=DOWN * 0.25), run_time=0.5)
+                      FadeOut(tr, shift=UP * 0.25), FadeIn(r_tr, shift=DOWN * 0.25), FadeIn(sw), run_time=0.6)
             done1()
             tr = r_tr
-            self.play(FadeIn(sw), run_time=0.4)
-            resize(self, t, 8, run_time=0.5, extra=[sw.unlight("dev"), sw.light("run")])
-            self.play(Create(link), FadeIn(rd, shift=LEFT * 0.2), run_time=0.6)
+            resize(self, t, 8, run_time=0.6, extra=[sw.unlight("dev"), sw.light("run"), Create(link),
+                                                    FadeIn(rd, shift=LEFT * 0.2)])
             rcmd = type_cmd(self, t, C18.cmd, type_time=0.5)
             outs = session(self, t, C18, (2, 4), out_time=0.4)
             vo.wait_until("using local image")
@@ -598,7 +616,7 @@ class DevAndRun(VoiceScene):
             vo.wait_until("any local image")
             self.play(FadeIn(bar85), FadeIn(t85, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("however old")
-            self.play(flash(t85, TURN, 1.08), run_time=0.6)
+            self.play(flash_framed(t85.box, t85.text, TURN, 1.08), run_time=0.6)
             vo.wait_until("otherwise it runs")
             self.play(FadeIn(bar88), FadeIn(t88, shift=LEFT * 0.1), run_time=0.5)
             self.play(FadeIn(c214, shift=UP * 0.1), run_time=0.4)      # the README's step list is right
@@ -676,11 +694,12 @@ class DevAndRun(VoiceScene):
         pull = Arrow(v1.box.front.get_left() + LEFT * 0.1, [scr.get_right()[0] + 0.12, v1.box.front.get_center()[1], 0],
                      buff=0, color=HUB, stroke_width=5, max_tip_length_to_length_ratio=0.08)
         pull.set_z_index(2)
+        # between the blocks: the command runs, so its first lines are there when the SAY reads them
+        self.play(caption_extra(tr, False), run_time=0.3)
+        type_cmd(self, t, C72.cmd, type_time=0.5)
+        o6 = t.print(self, C72.at(2, 3, 4), run_time=0.4)
+        nf = o6[2]
         with self.voiceover(SAY[6]) as vo:
-            self.play(caption_extra(tr, False), run_time=0.3)
-            type_cmd(self, t, C72.cmd, type_time=0.5)
-            o6 = t.print(self, C72.at(2, 3, 4), run_time=0.4)
-            nf = o6[2]
             self.play(nf.animate.set_color(TURN), run_time=0.4)
             self.play(flash(dia4, TURN, 1.15), no_a.animate.set_color(TURN), no_l.animate.set_color(TURN),
                       run_time=0.7)
@@ -703,9 +722,9 @@ class DevAndRun(VoiceScene):
         # ========================================================== 7 · inside: root, Python 3.8.17, pipenv
         comp = VGroup(dia4, wiring, copy)
         out6, done6 = wipe(t)                      # between the blocks: the picture makes way
-        self.play(out6, FadeOut(v1), FadeOut(comp), run_time=0.5)
+        self.play(out6, FadeOut(v1), FadeOut(comp), *enter_container(t, "transcribe_audio", P_STALE),
+                  run_time=0.5)
         done6()
-        self.play(*enter_container(t, "transcribe_audio", P_STALE), run_time=0.4)
         resize(self, t, 10, run_time=0.5)
         t._prompt_colors = stale_colors
         pr = bare_prompt(self, t)
@@ -831,7 +850,8 @@ class DevAndRun(VoiceScene):
         t2 = second_terminal(self, P_A, rows=3, top=STRIP_TOP)
         with self.voiceover(SAY[10]) as vo:
             type_extra(self, t2, LS, type_time=0.3, under_prompt=True)
-            ls_rows = t2.print(self, ["…", C73.line(7), "…"], run_time=0.4)
+            # "…", line 7 (no trailing "…"): the 3-row strip then holds the command and its key line
+            ls_rows = t2.print(self, ["…", C73.line(7)], run_time=0.4)
             vo.wait_until("in your folder")
             pip.move_to(pip_low)
             self.play(FadeIn(pip, shift=DOWN * 0.3), run_time=0.5)
@@ -868,7 +888,8 @@ class DevAndRun(VoiceScene):
                       v1.image.animate.become(img_full), v1.image_label.animate.become(lbl_full), run_time=0.9)
             vo.wait_until("and use run only")
             self.play(FadeIn(r2, shift=UP * 0.1), run_time=0.5)
-            self.play(flash(v1.box, TURN, 1.08), flash(v1.post.board, TURN, 1.04), run_time=0.7)
+            self.play(flash(v1.box, TURN, 1.08), flash_framed(v1.post.board, v1.post.text, TURN, 1.04),
+                      run_time=0.7)
             vo.wait_until("under your own")
             self.play(flash(r2[2], TURN, 1.1), run_time=0.7)
         self.play(FadeIn(r3, shift=UP * 0.1), run_time=0.5)

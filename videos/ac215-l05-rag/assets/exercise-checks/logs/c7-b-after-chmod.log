@@ -1,0 +1,6 @@
+$ ls -ld outputs; python cli.py --chunk --chunk_type char-split > /tmp/o.txt; echo exit $?; ls outputs | wc -l; ls -ln outputs | sed -n 2p | cut -c1-40
+drwxrwxrwx 2 1001 1001 4096 Oct 16 15:34 outputs
+exit 0
+11
+-rw-r--r-- 1 1000 1000 171164 Oct 16 15:
+[exit 0]

@@ -1,0 +1,11 @@
+$ python /checks/space_check.py
+8248 vectors x 256 numbers; lengths min 0.342, max 0.405
+queries: 8248 | same top 10 in the same order: 458 | same 10 chunks, any order: 2650
+after normalising every vector to length 1: 0 of 165 sampled queries differ
+l2-check configuration space: l2 | char-split-collection space: cosine
+stand-in query: stored vector of 8440accaceb0ce96-6
+cosine: ['0.0000', '0.0804', '0.0914', '0.0931', '0.1033', '0.1265', '0.1287', '0.1471', '0.1585', '0.1627']
+l2:     ['0.0000', '0.0237', '0.0269', '0.0279', '0.0320', '0.0384', '0.0388', '0.0450', '0.0456', '0.0496']
+cosine top-10 books: ['Tolminc Cheese']
+l2 top-10 ids from: ['Tolminc Cheese']
+[exit 0]

@@ -1,0 +1,16 @@
+$ docker rm -f l05ex-portblock; sh docker-shell.sh; sleep 3; docker port l05ex-rag-chromadb; docker inspect l05ex-rag-chromadb --format 'networks: {{json .NetworkSettings.Networks}}'; curl -sS --max-time 3 http://localhost:18766/api/v2/heartbeat; echo
+l05ex-portblock
+ Container l05ex-rag-chromadb Starting 
+ Container l05ex-rag-chromadb Started 
+ Container l05ex-rag-llm-rag-cli-run-38b5482f1210 Creating 
+ Container l05ex-rag-llm-rag-cli-run-38b5482f1210 Created 
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.1 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+networks: {}
+curl: (7) Failed to connect to localhost port 18766 after 0 ms: Couldn't connect to server
+
+[exit 0]

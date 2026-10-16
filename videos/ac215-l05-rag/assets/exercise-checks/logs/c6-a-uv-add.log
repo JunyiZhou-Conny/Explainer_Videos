@@ -1,0 +1,7 @@
+$ uv add rank-bm25; python -c 'import rank_bm25; print(rank_bm25.__file__)'
+Resolved 127 packages in 6.08s
+Prepared 1 package in 288ms
+Installed 1 package in 6ms
+ + rank-bm25==0.2.2
+/.venv/lib/python3.12/site-packages/rank_bm25.py
+[exit 0]

@@ -1,0 +1,6 @@
+$ grep -n rank-bm25 pyproject.toml; python -c 'import rank_bm25'
+15:    "rank-bm25>=0.2.2",
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'rank_bm25'
+[exit 1]

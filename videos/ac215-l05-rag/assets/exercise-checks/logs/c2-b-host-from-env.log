@@ -1,0 +1,18 @@
+$ python cli.py --get --chunk_type char-split | python /checks/get_summary.py
+CLI Arguments: Namespace(chunk=False, embed=False, load=False, query=False, chat=False, get=True, agent=False, chunk_type='char-split')
+get()
+
+
+ids: ['1021665fac86c5a5-0', '1021665fac86c5a5-1', '1021665fac86c5a5-2', '1021665fac86c5a5-3', '1021665fac86c5a5-4', '1021665fac86c5a5-5', '1021665fac86c5a5-6', '1021665fac86c5a5-7', '1021665fac86c5a5-8', '1021665fac86c5a5-9']
+books: ['The Complete Book of Cheese'] | keys: ['documents', 'metadatas']
+  1021665fac86c5a5-0  350 chars  '\ufeffThe Project'
+  1021665fac86c5a5-1  350 chars  ' ebook or on'
+  1021665fac86c5a5-2  350 chars  ', 2020\n\nLang'
+  1021665fac86c5a5-3  350 chars  'e Book\nof Ch'
+  1021665fac86c5a5-4  350 chars  'INING AND DI'
+  1021665fac86c5a5-5  350 chars  'Cheese\n\n3 Fo'
+  1021665fac86c5a5-6  350 chars  '-B-Z of Chee'
+  1021665fac86c5a5-7  350 chars  'ess of judgi'
+  1021665fac86c5a5-8  350 chars  'e connoisseu'
+  1021665fac86c5a5-9  350 chars  ' All morning'
+[exit 0]

@@ -1,0 +1,15 @@
+$ sh docker-shell.sh; docker inspect l05ex-rag-chromadb --format '{{range .Mounts}}{{.Source}} -> {{.Destination}}{{end}}  created {{.Created}}'
+ Container l05ex-rag-chromadb Recreate 
+ Container l05ex-rag-chromadb Recreated 
+ Container l05ex-rag-chromadb Starting 
+ Container l05ex-rag-chromadb Started 
+ Container l05ex-rag-llm-rag-cli-run-4ec7db9200ea Creating 
+ Container l05ex-rag-llm-rag-cli-run-4ec7db9200ea Created 
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.1 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+<work>/compB/l05ex-rag/docker-volumes/chromadb -> /data  created 2026-10-16T15:47:47.047395448Z
+[exit 0]

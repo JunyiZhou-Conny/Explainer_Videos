@@ -1,0 +1,5 @@
+$ git diff --stat   (on the laptop, after exit)
+ pyproject.toml |  1 +
+ uv.lock        | 25 +++++++++++++++++++++----
+ 2 files changed, 22 insertions(+), 4 deletions(-)
+[exit 0]

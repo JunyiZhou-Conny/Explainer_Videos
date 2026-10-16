@@ -1,0 +1,4 @@
+$ docker rm -f l05ex-portblock >/dev/null; sh docker-shell.sh >/dev/null 2>&1; docker run --rm --network l05ex-rag-network --entrypoint bash l05ex-cli -c 'getent hosts l05ex-rag-chromadb; echo getent exit $?; source /.venv/bin/activate; python -c "import chromadb; chromadb.HttpClient(host=\"l05ex-rag-chromadb\", port=8000)" 2>&1 | tail -1'
+getent exit 2
+ValueError: Could not connect to a Chroma server. Are you sure it is running?
+[exit 0]

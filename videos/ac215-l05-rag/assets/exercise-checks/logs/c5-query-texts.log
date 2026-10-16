@@ -1,0 +1,8 @@
+$ python /checks/query_texts_check.py localhost 18765
+collection embedding function: {'type': 'known', 'name': 'default', 'config': {}}
+
+[download progress bar, shortened for this log: /home/app/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz, 79.3M, 100%]
+
+query_texts: chromadb.errors.InvalidArgumentError: Collection expecting embedding with dimension of 256, got 384
+Chroma's default embedding function: DefaultEmbeddingFunction -> 384 numbers
+[exit 0]

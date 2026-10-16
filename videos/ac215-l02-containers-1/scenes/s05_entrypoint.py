@@ -7,8 +7,9 @@ Beats (script.md "## S05", one voiceover block each):
     -> laptop/13 lines 2-5 while "slash bin slash bash" is said
     (the beat is 6.5 s: typed any later, the output would be gone a second after it appears); on
     "Put it under the FROM line" the FROM row pulses and line 5 (the new line) gets a YELLOW bar.
- 1  TRACKER A8 (" · extra" fades as the build is typed). The terminal grows to 8 rows (the README panel stays above it; the cat output
-    scrolls away under the build, its YELLOW ENTRYPOINT row last to go):
+ 1  TRACKER A8 (" · extra" fades as the build is typed). The terminal grows to 8 rows (the
+    README panel stays above it; the cat output scrolls away under the build, its YELLOW
+    ENTRYPOINT row last to go):
     `docker build -t simple-translate -f Dockerfile .` (folds onto 2 rows) + ▶ your turn ->
     laptop/14 lines 15 (cut after `@sha256:34386ef0`, folded onto 2 rows: wider than a row), 17, …,
     25. `#4 CACHED` turns TEAL and pulses on "The FROM step says CACHED". On "and no layer is added"

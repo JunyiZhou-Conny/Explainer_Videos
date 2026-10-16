@@ -1,0 +1,4 @@
+$ python3 (chunk lengths in the staff's embeddings files, 68e0bde: identical chunks to ours)
+char-split 8248 chunks | median 350.0 | longest 350 | shorter than 350: 0.1%
+recursive-split 14228 chunks | median 297.0 | longest 349 | shorter than 350: 100.0%
+[exit 0]

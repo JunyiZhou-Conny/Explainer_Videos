@@ -1,0 +1,20 @@
+$ docker run --rm --entrypoint bash l05ex-cli-ignore -c "du -sh /app; ls -a /app"
+4.5M	/app
+.
+..
+.dockerignore
+.gitignore
+Dockerfile
+README.md
+agent_tools.py
+cli.py
+docker-compose.yml
+docker-entrypoint.sh
+docker-shell.sh
+images
+input-datasets
+out.txt
+pyproject.toml
+semantic_splitter.py
+uv.lock
+[exit 0]

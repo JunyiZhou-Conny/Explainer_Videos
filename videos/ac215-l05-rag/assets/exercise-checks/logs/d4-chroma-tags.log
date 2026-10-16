@@ -1,0 +1,12 @@
+$ curl -s https://hub.docker.com/v2/repositories/chromadb/chroma/tags/latest | python3 -c 'print name, digest, last_updated of the JSON'
+latest sha256:1e0b73a187a28757c572acba508c46f48c9e8b0acaf5c20e6d95cdedce1acdf6 2026-05-05T05:36:39.533991Z
+[exit 0]
+$ curl -s https://hub.docker.com/v2/repositories/chromadb/chroma/tags/1.5.9 | python3 -c 'print name, digest, last_updated of the JSON'
+1.5.9 sha256:1e0b73a187a28757c572acba508c46f48c9e8b0acaf5c20e6d95cdedce1acdf6 2026-05-05T05:36:35.374571Z
+[exit 0]
+$ curl -s https://hub.docker.com/v2/repositories/chromadb/chroma/tags/1.4.4 | python3 -c 'print name, digest, last_updated of the JSON'
+None None None
+[exit 0]
+$ curl -s https://hub.docker.com/v2/repositories/chromadb/chroma/tags/1.1.0 | python3 -c 'print name, digest, last_updated of the JSON'
+1.1.0 sha256:df33933c9b8275477bf6b883fc6323dfc9f13ea2c62054ccee2420405819e7a8 2025-09-16T21:08:00.11027Z
+[exit 0]

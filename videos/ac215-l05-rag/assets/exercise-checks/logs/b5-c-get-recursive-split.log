@@ -1,0 +1,18 @@
+$ python cli.py --get --chunk_type recursive-split | python /checks/get_summary.py
+CLI Arguments: Namespace(chunk=False, embed=False, load=False, query=False, chat=False, get=True, agent=False, chunk_type='recursive-split')
+get()
+
+
+ids: ['1021665fac86c5a5-0', '1021665fac86c5a5-1', '1021665fac86c5a5-2', '1021665fac86c5a5-3', '1021665fac86c5a5-4', '1021665fac86c5a5-5', '1021665fac86c5a5-6', '1021665fac86c5a5-7', '1021665fac86c5a5-8', '1021665fac86c5a5-9']
+books: ['The Complete Book of Cheese'] | keys: ['documents', 'metadatas']
+  1021665fac86c5a5-0  346 chars  '\ufeffThe Project'
+  1021665fac86c5a5-1  299 chars  'whatsoever. '
+  1021665fac86c5a5-2  283 chars  'Title: The C'
+  1021665fac86c5a5-3  338 chars  'Language: En'
+  1021665fac86c5a5-4  342 chars  'Produced by '
+  1021665fac86c5a5-5  337 chars  '[Illustratio'
+  1021665fac86c5a5-6  334 chars  'THE SOUTH AM'
+  1021665fac86c5a5-7  331 chars  'MOST FOR YOU'
+  1021665fac86c5a5-8  332 chars  'LET THERE BE'
+  1021665fac86c5a5-9  343 chars  '1 I Remember'
+[exit 0]

@@ -1,0 +1,11 @@
+$ python /checks/book_key_check.py; python cli.py --chunk --chunk_type char-split > /tmp/o.txt; ls outputs | grep -i womans; wc -l outputs/chunks-char-split-Womans*; ls outputs/chunks-char-split-* | wc -l; python cli.py --embed --chunk_type char-split 2>&1 | grep -m1 'Number of files'
+split('.')[0]  (cli.py:178): 'Womans Institute Library of Cookery' -> in book_mappings: False | id prefix 53b50dfe8ba86654
+os.path.splitext(...)[0]: 'Womans Institute Library of Cookery. Volume 2_ Milk, Butter and Cheese Eggs Vegetables' -> in book_mappings: True | id prefix 318f802bd1ab68d7
+chunks-char-split-Womans Institute Library of Cookery. Volume 2_ Milk, Butter and Cheese Eggs Vegetables.jsonl
+chunks-char-split-Womans Institute Library of Cookery.jsonl
+   1505 outputs/chunks-char-split-Womans Institute Library of Cookery. Volume 2_ Milk, Butter and Cheese Eggs Vegetables.jsonl
+   1505 outputs/chunks-char-split-Womans Institute Library of Cookery.jsonl
+   3010 total
+12
+Number of files to process: 12
+[exit 0]

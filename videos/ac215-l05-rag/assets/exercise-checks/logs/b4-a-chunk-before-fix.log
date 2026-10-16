@@ -1,0 +1,3 @@
+$ python cli.py --chunk --chunk_type char-split > /tmp/o.txt; ls outputs | grep -i womans
+chunks-char-split-Womans Institute Library of Cookery.jsonl
+[exit 0]

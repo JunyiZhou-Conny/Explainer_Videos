@@ -1,0 +1,17 @@
+$ docker rm -f l05ex-rag-chromadb; sh docker-shell.sh; docker ps --filter name=l05ex-rag --format 'table {{.Names}}\t{{.Ports}}'
+l05ex-rag-chromadb
+ Container l05ex-rag-chromadb Creating 
+ Container l05ex-rag-chromadb Created 
+ Container l05ex-rag-chromadb Starting 
+ Container l05ex-rag-chromadb Started 
+ Container l05ex-rag-llm-rag-cli-run-945c036d1d48 Creating 
+ Container l05ex-rag-llm-rag-cli-run-945c036d1d48 Created 
+Container is running!!!
+Architecture: x86_64
+Environment ready! Virtual environment activated.
+Python version: Python 3.12.15
+UV version: uv 0.13.1 (x86_64-unknown-linux-gnu)
+Activating virtual environment...
+NAMES                PORTS
+l05ex-rag-chromadb   0.0.0.0:18766->8000/tcp
+[exit 0]

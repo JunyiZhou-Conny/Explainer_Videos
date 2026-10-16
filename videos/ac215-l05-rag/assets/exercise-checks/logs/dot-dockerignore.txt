@@ -1,0 +1,4 @@
+.git
+outputs/
+docker-volumes/
+__pycache__/

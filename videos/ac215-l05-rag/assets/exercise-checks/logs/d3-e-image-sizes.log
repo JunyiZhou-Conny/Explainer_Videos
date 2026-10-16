@@ -1,0 +1,6 @@
+$ docker images | grep l05ex-cli
+IMAGE                                                                                     ID             DISK USAGE   CONTENT SIZE   EXTRA
+l05ex-cli-ignore:latest                                                                   1d317653fc6e       1.89GB          429MB        
+l05ex-cli-noignore:latest                                                                 9fb082e51c08       2.31GB          597MB        
+l05ex-cli:latest                                                                          3af3359448a8       2.11GB          537MB   U    
+[exit 0]
