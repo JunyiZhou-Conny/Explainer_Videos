@@ -238,7 +238,7 @@ arrows fade and get a GREY cross. Bottom, "here: write outputs to shared storage
 reads them", with the same boxes over a BLUE cabinet.
 SAY: In production, services call each other's APIs. This tutorial simplifies: each component writes its output to shared storage, where the next one reads it.
 
-SHOW: V1 in full, with the GREY lecture tag "Lecture 3 · slides 25" top right (from "That storage
+SHOW: V1 in full, with the GREY lecture tag "Lecture 3 · slide 25" top right (from "That storage
 is one Google Cloud Storage bucket"). The six drawers along the bottom get their labels at 20 pt (sans), each on two
 lines split after the first underscore (`input_` / `audios/`, `text_` / `prompts/`, `text_` /
 `paragraphs/` …), in pipeline order: `input_audios/` · `text_prompts/` · `text_paragraphs/` ·
@@ -462,7 +462,7 @@ at the start of the value underlines PINK.
 SAY: Line 10 tells Google's libraries where the key is: secrets, slash, mega-pipeline dot json, a relative path.
 
 SHOW: The panel swaps to PANEL(files/transcribe_audio.Dockerfile: 12–21, "transcribe_audio/Dockerfile ·
-lines 12–21"); for this beat the GREY lecture tag "Lecture 3 · slides 40" takes the top-right
+lines 12–21"); for this beat the GREY lecture tag "Lecture 3 · slide 40" takes the top-right
 corner in place of the caption. The `&& \` at each line end pulses. `RUN` drops one fat ORANGE slab onto the stack;
 the slab zooms up to show its inside, in order: small "apt lists" pages appear (line 12), packages
 fill in (lines 13–14), then the pages crumple and vanish (lines 15–16), all inside the slab, never
@@ -560,7 +560,7 @@ cli.py" hovers beside the stack.
 PONDER(8 s, "You change only group_name in cli.py\nand build again.\nWhich of the five build steps run again?")
 SAY: Ponder this. You change only the group name in cli.py and build again: which of the five build steps run again?
 
-SHOW: The GREY lecture tag "Lecture 3 · slides 33" top right from "Build steps 4 and 5". The chip
+SHOW: The GREY lecture tag "Lecture 3 · slide 33" top right from "Build steps 4 and 5". The chip
 drops into the COPY slab, which flashes YELLOW; the COPY slab and the uv sync slab above it
 dissolve and re-form; slabs 2–3 get GREEN "CACHED" stamps, and build step 1 is marked as the base
 image you already have (that slab stays as is). Caption: "part 2: for real".
@@ -889,7 +889,7 @@ sliced to `line[32:90]`. Rows 5, 6 and 9 lift out of the panel and land on their
 labels: uv sync `105MB` (GREEN, split "venv ≈ 50 MB + uv cache ≈ 58 MB"), COPY `193kB` (GREY), apt
 RUN `842MB` (ORANGE); the 0B rows flick onto the config card. V2's brace now reads "≈ 1.1 GB of
 layers" with the GREY note "+ 388 MB compressed copy = 1.48 GB disk usage · this machine". The GREY
-lecture tag "Lecture 3 · slides 38" top right from "Two more extras".
+lecture tag "Lecture 3 · slide 38" top right from "Two more extras".
 SAY: Two more extras. The image grew to 1.48 gigabytes, and docker history lists one row per instruction: card-only lines show zero bytes. The uv sync layer now holds 105 megabytes, the packages plus uv's download cache.
 
 SHOW: It types `docker run --rm -ti -v "$(pwd):/app" transcribe_audio` (extra), then
@@ -900,7 +900,7 @@ SAY: And a fresh container now imports all three packages with no uv add at all:
 SHOW: V2 alone: an edit chip "group_name" drops into the COPY slab; the uv sync slab above it
 falls like a domino, dissolves, and its 26 chips rain in again (the cache can't help). A GREY note:
 "later tutorials: COPY pyproject.toml uv.lock first, then uv sync, then the rest", and the GREY
-lecture tag "Lecture 3 · slides 33" top right from "Later tutorials". Fade out.
+lecture tag "Lecture 3 · slide 33" top right from "Later tutorials". Fade out.
 SAY: One more thing: because the copy comes before uv sync, any edit, even the group name, knocks over uv sync, like lecture 2's dominoes. Later tutorials copy pyproject.toml and uv.lock first.
 
 ---
@@ -1282,6 +1282,6 @@ SHOW: The questions shrink to the top. Two footer cards: "Answers: study guide �
 and "Study guide + every command: github.com/JunyiZhou-Conny/MLOps_Learning ·
 guides/L03-containers-2-mega-pipeline.md". A "Next: L4" card: "your own bucket + service account ·
 the key outside the repo · docker-shell.sh builds and runs for you" (branch `flexible-workflow`),
-with the GREY lecture tag "Lecture 3 · slides 70" top right from "Next lecture". Everything fades
+with the GREY lecture tag "Lecture 3 · slide 70" top right from "Next lecture". Everything fades
 to an empty frame (end of part 2).
 SAY: Answers are in the exercises; every command is in the study guide. Next lecture: your own bucket and service account, the key outside the repo, and a script that builds and runs each container.

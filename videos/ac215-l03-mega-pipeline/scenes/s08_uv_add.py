@@ -735,7 +735,7 @@ class UvAdd(VoiceScene):
             link_lab[1].align_to(link_lab[0], DOWN)
             place(link_lab, left=link.get_center()[0] + 0.3, cy=link.get_center()[1])
             self.play(FadeIn(link), FadeIn(link_lab, shift=LEFT * 0.1), run_time=0.6)
-            self.play(Indicate(new_str, color=TURN, scale_factor=1.2), Indicate(g_term, color=TURN, scale_factor=1.2),
+            self.play(Indicate(new_str, color=TURN, scale_factor=1.1), Indicate(g_term, color=TURN, scale_factor=1.1),
                       Indicate(link, color=TURN, scale_factor=1.0), run_time=0.9)
             vo.wait_until("Use the same name")
             self.play(Indicate(note, color=INK, scale_factor=1.08), FadeOut(yt8), run_time=0.7)
