@@ -18,7 +18,8 @@ Beats (script.md "## S04", one voiceover block each):
     WHITE ("the recipe"), the final `.` gets a PINK ring ("build context: this folder"); a GREY
     folder pops out of the dot and rides a PINK route into a PURPLE "builder" box. On "Step 3" the
     tracker's step-9 dot pulses. GREY `Lecture 2 · slides 32, 56` (lecture_ref, top right) from
-    "Dash t names" through the build (beat 3); it fades with the build's notes as beat 4 starts.
+    "Now the build command" (with the command) through the build (beat 3); it fades with the
+    build's notes as beat 4 starts.
  3  The labels leave and the 13-row laptop terminal fades in while the big command's glyphs fly
     into its two folded rows (the slide is the typing). ▶ your turn. laptop/09 lines 2, …, 15 (cut
     after `@sha256:34386ef0`, folds onto 2 rows), …, 31-34 (hash12), …, 38 (67 columns: soft-wraps
@@ -360,9 +361,12 @@ class StepFrom(VoiceScene):
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(panel, bar1, *uls, *links, *chips), shift=UP * 0.1),
                       FadeOut(strip), track(tr, 7), run_time=0.5)
-            self.play(FadeIn(head2), ShowIncreasingSubsets(big.glyphs, rate_func=linear), run_time=1.0)
+            # the tag comes with the command (script.md: from "Now the build command") and stays
+            # through the build
+            self.play(FadeIn(head2), ShowIncreasingSubsets(big.glyphs, rate_func=linear), FadeIn(lref),
+                      run_time=1.0)
             vo.wait_until("Dash t names")
-            self.play(Create(ul_name), substring(big, "simple-translate").animate.set_color(IMAGE), FadeIn(lref),
+            self.play(Create(ul_name), substring(big, "simple-translate").animate.set_color(IMAGE),
                       run_time=0.5)
             self.play(FadeIn(lab_name, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("dash f picks")
