@@ -72,8 +72,8 @@ Beats (script.md "## S13", one voiceover block each):
     `README.md · lines 148–149` + GREY tag "same as -d · -s" under the tracker. It types
     `python cli.py --download`, `python cli.py --synthesis` (a compact GOLD "billed" tag beside
     it), `exit` (GREY frame, laptop), `docker build -t synthesis_audio_en .` → 42-c-rebuild.txt
-    lines 3, 14–17; CACHED GREEN. ▶ your turn: one 0.9 s move brings the terminal back, types
-    `--download` and lands ▶ beside it just after "pause" (it wiggles on "pause to run" and stays
+    lines 3, 14–17; CACHED GREEN. ▶ your turn: a 0.5 s move brings the terminal back, then
+    `--download` is typed and ▶ lands beside it while "pause to run" is heard (it wiggles and stays
     until the section switch); a second ▶ by the rebuild once it is typed; the CACHED rows held 1 s.
  8  The terminal clears; the tracker switches: "README › translate_text", 13 dots, and the section
     name pulses. "races through the same setup": dots 1–5 ripple. The montage starts at "cd, key"
@@ -102,7 +102,7 @@ Beats (script.md "## S13", one voiceover block each):
 11  TRACKER D10 → D13. V8 goes; the terminal returns (11 rows, container). README chip
     `README.md · lines 155–157` + "same as -d · -t · -u". It types the three commands (compact
     GOLD "billed" by --translate), `exit`, `docker build -t translate_text .` → 52-d-rebuild.txt
-    lines 3, 14–17. "Pause to run" (the first words): the same 0.9 s move as in C10 brings the
+    lines 3, 14–17. "Pause to run" (the first words): the same two moves as in C10 bring the
     terminal back with `--download` typed and ▶ your turn beside it (wiggles; it stays until the
     section switch), a second ▶ by the rebuild once it is typed; the CACHED rows held 1 s.
 12  The terminal clears to 8 rows while the tracker switches: "README › synthesis_audio", 12 dots.
@@ -599,21 +599,24 @@ def _in_late(a: float) -> float:
 
 
 def _typed(a: float) -> float:
-    """rate_func: the first command is typed from 45 % to 80 % of the run, as the terminal shows."""
-    return min(1.0, max(0.0, (a - 0.45) / 0.35))
+    """rate_func: the command is typed over the first 65 % of the run."""
+    return min(1.0, a / 0.65)
 
 
 def _tag_in(a: float) -> float:
-    """rate_func: ▶ your turn comes in over the last 20 % of the run, once its command is typed."""
-    return smooth(max(0.0, (a - 0.8) / 0.2))
+    """rate_func: ▶ your turn comes in over the last 35 % of the run, once its command is typed."""
+    return smooth(max(0.0, (a - 0.65) / 0.35))
 
 
-def back_to_terminal(scene, old, t, chip, note, tr_anim, cmd: str, run_time: float = 0.9):
-    """One move from a V8 picture to the pause terminal, so ▶ is up while "pause" is still being
-    heard: the picture goes; the terminal, the README chip and its 'same as' note come in; `cmd` is
-    typed at the prompt as soon as the terminal shows, and ▶ your turn lands beside it, pinned to its
-    row so it stays until the terminal clears; the tracker steps on. `t` starts empty (its prompt
-    comes with the command). Returns (the typed line, as Terminal.type returns it; the tag)."""
+def back_to_terminal(scene, old, t, chip, note, tr_anim, cmd: str, run_time: float = 0.5,
+                     type_time: float = 0.55):
+    """Two quick moves from a V8 picture to the pause terminal, so ▶ is up while "pause" is still
+    being heard. First (run_time) the picture goes; the terminal with its prompt, the README chip and
+    its 'same as' note come in; the tracker steps on. Then (type_time) `cmd` is typed at the prompt
+    and ▶ your turn lands beside it, pinned to its row so it stays until the terminal clears.
+    Typing waits for the terminal: glyphs typed while it faded in sat UNDER its filled box (an
+    animation's new mobject goes on top) and blinked dim, and the first ones floated over the old
+    picture. `t` starts empty. Returns (the typed line, as Terminal.type returns it; the tag)."""
     assert not len(t.lines), "the pause terminal starts empty"
     p = t.prompt + " "
     assert len(t.fold(p + cmd, first_prefix=len(p))) == 1, cmd
@@ -622,10 +625,10 @@ def back_to_terminal(scene, old, t, chip, note, tr_anim, cmd: str, run_time: flo
     assert yt.get_left()[0] > ln.glyphs.get_right()[0] + 0.1, (yt.get_left(), ln.glyphs.get_right())
     scene.play(FadeOut(old, rate_func=_out_early), FadeIn(t, rate_func=_in_late),
                FadeIn(glyph_range(ln, 0, len(p)), rate_func=_in_late),
-               ShowIncreasingSubsets(glyph_range(ln, len(p)), rate_func=_typed),
-               FadeIn(yt, shift=LEFT * 0.1, rate_func=_tag_in),
                FadeIn(chip, shift=DOWN * 0.1, rate_func=_in_late), FadeIn(note, shift=DOWN * 0.1, rate_func=_in_late),
                tr_anim, run_time=run_time)
+    scene.play(ShowIncreasingSubsets(glyph_range(ln, len(p)), rate_func=_typed),
+               FadeIn(yt, shift=LEFT * 0.1, rate_func=_tag_in), run_time=type_time)
     scene.remove(yt)
     ln.add(yt)                                        # pinned, as pin() does
     t.lines.add(ln)
@@ -976,8 +979,8 @@ class SpeedRound(VoiceScene):
         assert rc7.get_bottom()[1] > strip_top(10) + 0.1
 
         with self.voiceover(SAY[7]) as vo:
-            # ▶ beside the first command to run (as in E10) lands just after "pause" is spoken, in the
-            # same move that brings the terminal back; it stays until the section switch
+            # ▶ beside the first command to run (as in E10) lands while "pause to run" is spoken, right
+            # after the terminal comes back; it stays until the section switch
             l7a, yt7 = back_to_terminal(self, VGroup(api, p88, bar, stub, arc, base, rlab, crate, cost5, route, r151),
                                         t2, rc7, sm7, tr.goto(10), CMDS[C][0])
             vo.wait_until("pause to run")
@@ -1131,8 +1134,8 @@ class SpeedRound(VoiceScene):
         assert rc11.get_bottom()[1] > strip_top(11) + 0.08, (rc11.get_bottom(), strip_top(11))
 
         with self.voiceover(SAY[11]) as vo:
-            # "Pause" opens this line: ▶ lands beside the first command to run in the same move that
-            # brings the terminal back (0.9 s), and stays until the section switch
+            # "Pause" opens this line: the terminal comes back (0.5 s), the first command to run is
+            # typed and ▶ lands beside it (0.55 s); it stays until the section switch
             vo.wait_until("Pause to run")
             l11a, yt11 = back_to_terminal(self, VGroup(api2, folder, p58, bar10, cost10, nostub, fr_pg, saved, bucket,
                                                        bcap, up_note), t3, rc11, sm11, tr.goto(10), CMDS[D][0])

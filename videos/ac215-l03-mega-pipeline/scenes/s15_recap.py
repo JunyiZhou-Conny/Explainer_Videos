@@ -16,14 +16,14 @@ Beats (script.md "## S15", one voiceover block each):
     bars one after another while boxes B-E pulse.
  2  V1 and the old screen fade together (a fresh screen, as `clear`); the terminal shrinks to 10
     rows with the bare prompt at the top; on "An extra git status" it types `git status` (extra) -> 71-git-status.txt lines
-    5-9, 11-14 (tabs shown as a terminal shows them, 8 columns). Line 9 gets a YELLOW bar on "your
-    edited cli.py files" as the GREY caption "we set group_name only in transcribe_audio: yours
-    also lists the other four cli.py / and, with your key, generate_text's text_prompts/ and
-    text_paragraphs/ / and the five .dockerignore files you added: commit those (no -f needed)"
-    appears above the terminal (the capture removed its .dockerignore; a viewer has five, untracked);
-    lines 8, 13, 14 get bars on "the files in generate text". On "but the other four folders hide"
-    the terminal shrinks to a 3-row strip (`git status`, lines 13-14), then the caption goes;
-    CODE(transcribe_audio/.gitignore: 3-9, 24 pt, lines
+    5-9, 11-14 (tabs shown as a terminal shows them, 8 columns), and with the output the GREY caption
+    "we set group_name only in transcribe_audio: yours also lists the other four cli.py / and, with
+    your key, generate_text's text_prompts/ and text_paragraphs/ / and the five .dockerignore files
+    you added: commit those (no -f needed)" appears above the terminal (how a viewer's own output
+    differs: the capture removed its .dockerignore; a viewer has five, untracked). Line 9 gets a
+    YELLOW bar on "your edited cli.py files"; lines 8, 13, 14 get bars on "the files in generate
+    text". On "but the other four folders hide" the terminal shrinks to a 3-row strip (`git status`,
+    lines 13-14), then the caption goes; CODE(transcribe_audio/.gitignore: 3-9, 24 pt, lines
     5-7 in focus) slides in top right and four GREY dashed ghost chips, the other four Dockerfiles
     (`transcribe_audio/Dockerfile` ...), appear top left under "missing from git status:" and are
     struck through; on "and project files" lines 5-7 get one YELLOW bar and the note "and their
@@ -754,10 +754,11 @@ class Recap(VoiceScene):
             vo.wait_until("An extra git status")
             c_gs = type_in(self, t, GST.cmd, 0.45)
             pin_tags(self, t, c_gs, extra_tag())
-            g_out = print_in(self, t, GST_OUT, run_time=0.5)
+            make_room(self, t, len(GST_OUT))              # the caption (how yours differs) comes with the output
+            g_out = print_with(self, t, GST_OUT, run_time=0.5, extra=[FadeIn(gcap, shift=DOWN * 0.1)])
             l8, l9, l13, l14 = g_out[3], g_out[4], g_out[7], g_out[8]
             vo.wait_until("your edited cli.py files")
-            bars_on(self, [(l9, "transcribe_audio/cli.py")], run_time=0.5, extra=[FadeIn(gcap, shift=DOWN * 0.1)])
+            bars_on(self, [(l9, "transcribe_audio/cli.py")], run_time=0.5)
             vo.wait_until("and the files in generate text")
             bars_on(self, [(l8, "generate_text/pyproject.toml"), (l13, "generate_text/Dockerfile"),
                            (l14, "generate_text/uv.lock")])

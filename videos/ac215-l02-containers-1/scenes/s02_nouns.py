@@ -14,24 +14,27 @@ Beats (script.md "## S02", one voiceover block each):
     items' boxes merge and their letters regroup into the label), "packages" (GREEN), "your code"
     (GREY); a lock glyph "read-only" on the stack's top corner. Each slab pulses on "Each layer".
     At "Beside it" a TEAL config card with four empty rows ENV, ENTRYPOINT, CMD, WorkingDir slides
-    in at right; ENV lights on "settings like", ENTRYPOINT + CMD on "which program". The GREY tag
-    "Lecture 2 · slides 30–31, 35" (right-aligned under the header) shows from the block's start
-    until "Beside it", just before the card.
+    in at right (its top 0.12 under the tag); ENV lights on "settings like", ENTRYPOINT + CMD on
+    "which program". The GREY tag "Lecture 2 · slides 30–31, 35" (right-aligned under the header)
+    shows from the block's start ("An image is a stack") through "Think of the image as a class": it
+    leaves with the class/instance captions at "One small slip" (block 4).
  2. A GREY page "Dockerfile" at far left, lines `FROM …`, `RUN …`, `COPY …`, `CMD …`. A YELLOW bar
     reads them one at a time and each keyword flies (TransformFromCopy) to what it makes, landing as
     a TEAL tile just left of its slab: FROM by the base slab, RUN and COPY by theirs (a brace on
     their right: "adds a layer"); CMD arcs over the stack into the card's CMD slot as a tile
     `["…"]` ("config only" under the card). No arrows: the flying keywords are the arrows.
- 3. The page, the card and the tags fade; the lock moves to the stack's side. A PURPLE `docker run`
-    chip: a dashed, glowing TEAL glass slab lands on the stack ("writable layer") with a TEAL dot
-    "main process"; the chip turns into the label "container". At "the same layers" it lifts left
-    and a second container appears beside it, both linked by thin TEAL lines to the SAME stack,
+ 3. The page, the card and its notes ("adds a layer", "config only") fade (the slide tag stays);
+    the lock moves to the stack's side. A PURPLE `docker run` chip: a dashed, glowing TEAL glass
+    slab lands on the stack ("writable layer") with a TEAL dot "main process"; the chip turns into
+    the label "container". At "the same layers" it lifts left and a second container appears
+    beside it, both linked by thin TEAL lines to the SAME stack,
     caption "shared, not copied". The glass slabs pulse on "plus a thin", the dots on "one main
     process". The first dot
     goes out ("stopped"); a `--rm` chip lands on it and, at "deletes it", that whole container
     (glass, labels, link) dissolves; the chip leaves with the GREEN check "image unchanged".
  4. The remaining container settles on the stack and the picture moves left; captions under it:
-    "image = class", "container = instance" (TEAL). They fade; README card (README.md · line 173)
+    "image = class", "container = instance" (TEAL). They fade with the slide tag at "One small slip";
+    README card (README.md · line 173)
     "Build the docker container by running", and a second card slides in under it (README.md ·
     line 146) "Install uv & copy source code into the container". At "the docker container" both
     "container"s are struck YELLOW with "image" above them, tag "erratum". "Building makes an
@@ -48,12 +51,13 @@ Beats (script.md "## S02", one voiceover block each):
     (slide 22); at "that share one" the kernel bars slide together into one GREY "Linux kernel ·
     shared", which pulses; then GREY tags "namespaces" and "cgroups" sit on the bar under the outer
     containers (slide 22).
-    Tag "Lecture 2 · slides 9–12, 22–24" (under the header) from "A VM boots" to the end of the block.
+    Tag "Lecture 2 · slides 9–12, 22–24" (under the header) from the block's start ("And a container
+    is not a small VM", with the VMs) to the end of the scene (it fades with the last frame).
  7. V8, second half: a GREY laptop outline wraps the picture ("Mac · Windows"); a dashed GREY box
     "Linux VM · Docker Desktop" slides in under the kernel bar. Then the laptop outline morphs into
     a BLUE VM outline ("cloud VM", ending under the kernel bar), the dashed box fades: caption "on a
-    cloud VM: its own Linux". "user space" and the slide tag leave with the caption at the start;
-    the two chips stay on the bar (no arrow through a daemon: SLIDES.md Conflict 9).
+    cloud VM: its own Linux". "user space" leaves with the caption at the start; the two chips stay on
+    the bar (no arrow through a daemon: SLIDES.md Conflict 9).
  8. L1's three chips return beside a stack whose two bottom slots are empty (dashed), each RED-
     outlined chip level with its slot: "the operating system's files" slides into the bottom slot at
     "the system's files", "system libraries" into the next at "and libraries", both becoming ORANGE
@@ -225,9 +229,11 @@ class FourNouns(VoiceScene):
         slabs = [s_os, s_pkg, s_code]
         lock_g = VGroup(lock_glyph(0.4, S.GREY), label("read-only", 24, S.GREY)).arrange(RIGHT, buff=0.15)
         lock_g.next_to(s_code.box, UP, buff=0.14).align_to(s_code.box, RIGHT)
-        card = ConfigCard(rows=("ENV", "ENTRYPOINT", "CMD", "WorkingDir"), card_w=3.2)
-        card.move_to([4.9, 0, 0]).align_to(s_os.box, DOWN)
         ref1 = slide_ref(head, "30–31, 35")
+        card = ConfigCard(rows=("ENV", "ENTRYPOINT", "CMD", "WorkingDir"), card_w=3.2)
+        # the slide tag stays on through block 4's class/instance line, so the card's top keeps 0.12
+        # under it (its bottom then sits 0.2 below the stack's base)
+        card.move_to([4.9, ref1.get_bottom()[1] - 0.12 - card.height / 2, 0])
 
         with self.voiceover(SAY[1]) as vo:
             self.play(head.words[0].animate.set_color(IMAGE), FadeOut(VGroup(nest, right_os)), FadeIn(ref1),
@@ -249,7 +255,6 @@ class FourNouns(VoiceScene):
             self.play(LaggedStart(*[Indicate(s.box, color=IMAGE, scale_factor=1.04) for s in slabs],
                                   lag_ratio=0.45), run_time=2.2)
             vo.wait_until("Beside it")
-            self.play(FadeOut(ref1), run_time=0.3)
             self.play(FadeIn(card, shift=LEFT * 0.4), run_time=0.8)
             vo.wait_until("settings like")
             self.play(Indicate(card.keys["ENV"], color=TURN, scale_factor=1.15), run_time=0.9)
@@ -393,7 +398,7 @@ class FourNouns(VoiceScene):
                       run_time=0.6)
             vo.wait_until("One small slip")
             # both README lines come in as one group; both get corrected when "container" is said
-            self.play(FadeOut(cls_cap), FadeIn(card173, shift=LEFT * 0.4), run_time=0.7)
+            self.play(FadeOut(VGroup(cls_cap, ref1)), FadeIn(card173, shift=LEFT * 0.4), run_time=0.7)
             self.play(FadeIn(card146, shift=UP * 0.3), run_time=0.6)
             w1 = word_glyphs(t173, s173, "container")
             k1 = strike(w1)
@@ -461,10 +466,11 @@ class FourNouns(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(hub, py_stack, old, new, n_py, n_dl, k_py, k_dl_new, tag_cap)),
                       run_time=0.6)
-            self.play(LaggedStart(*[FadeIn(v, shift=UP * 0.2) for v in kp.vms], lag_ratio=0.25), run_time=1.2)
+            self.play(LaggedStart(*[FadeIn(v, shift=UP * 0.2) for v in kp.vms], lag_ratio=0.25), FadeIn(ref2),
+                      run_time=1.2)
             vo.wait_until("A VM boots")
             self.play(LaggedStart(*[Indicate(v.kernel, color=TURN, scale_factor=1.08) for v in kp.vms],
-                                  lag_ratio=0.25), FadeIn(ref2), run_time=1.4)
+                                  lag_ratio=0.25), run_time=1.4)
             vo.wait_until("the core of")
             self.play(FadeIn(core, shift=UP * 0.1), run_time=0.6)
             anims = kp.to_containers()
@@ -503,7 +509,7 @@ class FourNouns(VoiceScene):
         own = label("on a cloud VM: its own Linux", 28, CLOUD)
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(iso, uspace, ref2)), Create(lap.screen), FadeIn(lap.base, shift=UP * 0.1),
+            self.play(FadeOut(VGroup(iso, uspace)), Create(lap.screen), FadeIn(lap.base, shift=UP * 0.1),
                       FadeIn(mac),
                       run_time=1.0)
             vo.wait_until("Docker Desktop provides")

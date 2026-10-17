@@ -104,6 +104,8 @@ Deviations from SHOW (and why):
   scrolled away under `docker image ls` by the time the SAY says "pause"). The image list's slicing is
   named by a GREY tag "2 of 5 columns" on its header row (a longer tag does not fit beside it). The
   `docker compose ps -a` header fills all 65 columns, so its "empty" tag sits beside the command.
+  These three tags (and the `extra` on `docker image ls`, right above "2 of 5 columns") are slim, a
+  row tall like the time tags: the house pills on adjacent rows touched.
 - Beats 7–9: each question has a YELLOW number badge (the narration counts "One", "Two", …), and each
   icon sits in a small dark card. Highlights follow the words being said and never mark an answer.
   The old question slides up and has mostly left before the next one writes in (lagged, so the two
@@ -321,11 +323,13 @@ def text_span(txt, s: str, sub: str) -> VGroup:
     return VGroup(*txt.submobjects[a:a + len("".join(sub.split()))])
 
 
-def type_extra(scene, t, cmd: str, type_time: float | None = None):
-    """Type an extra command (not in the README) with a GREY `extra` tag pinned beside it."""
+def type_extra(scene, t, cmd: str, type_time: float | None = None, thin: bool = False):
+    """Type an extra command (not in the README) with a GREY `extra` tag pinned beside it (a slim
+    one with `thin`, where the next row carries a tag too)."""
     ln = type_cmd(scene, t, cmd, type_time=type_time)
-    tg = beside(extra_tag(), t, ln, buff=0.4)
+    tg = beside(slim(extra_tag(), t) if thin else extra_tag(), t, ln, buff=0.4)
     pin(scene, ln, tg, run_time=0.25)
+    ln.extra_tag = tg
     return ln
 
 
@@ -383,17 +387,23 @@ def wipe(scene, t, extra=(), run_time: float = 0.3):
         scene.remove(m)
 
 
-def row_time(tm: str, t) -> VGroup:
-    """A row's GREY time tag, its pill a little lower than a terminal row (time_tag()'s pill is
-    0.47 tall on a 0.40 row pitch, so tags on adjacent rows touched); the text keeps its size."""
-    tg = time_tag(tm)
+def slim(tg, t) -> VGroup:
+    """Tag `tg` (tag(): .box .text) with its pill a little lower than a row of terminal `t` (the
+    house pill is 0.47 tall on a 0.40 row pitch, so tags on adjacent rows touched); the text keeps
+    its size and colour."""
     h = t.pitch - 0.06
-    pill = RoundedRectangle(width=tg.box.width, height=h, corner_radius=h / 2, stroke_color=S.GREY,
-                            stroke_width=2).set_fill(S.BG, 0.92).move_to(tg.box)
+    pill = RoundedRectangle(width=tg.box.width, height=h, corner_radius=h / 2,
+                            stroke_color=tg.box.get_stroke_color(), stroke_width=2).set_fill(S.BG, 0.92)
+    pill.move_to(tg.box)
     tg.remove(tg.box)
     tg.add_to_back(pill)
     tg.box = pill
     return tg
+
+
+def row_time(tm: str, t) -> VGroup:
+    """A row's GREY time tag, slim (see slim())."""
+    return slim(time_tag(tm), t)
 
 
 def print_rows(scene, t, rows: list, run_time: float = 0.6, lag: float = 0.12, extra=()) -> VGroup:
@@ -916,8 +926,8 @@ class Recap(VoiceScene):
             resize(self, t, 4, keep=1, run_time=0.5,
                    extra=[FadeOut(VGroup(rc487, ed)), caption_extra(tr, False), FadeIn(net)])
             type_cmd(self, t, UP_D, type_time=0.5)
-            r58 = print_rows(self, t, [C58.line(2), (C58.line(3), VENV, VENV), (C58.line(4), TURN, TURN)],
-                             run_time=0.4, extra=[FadeIn(halo)])
+            print_rows(self, t, [C58.line(2), (C58.line(3), VENV, VENV), (C58.line(4), TURN, TURN)],
+                       run_time=0.4, extra=[FadeIn(halo)])
             vo.wait_until("Compose recreates only the gateway")
             self.play(net.reform("gateway", run_time=1.0), net.set_door("127.0.0.1:8095", run_time=1.0),
                       flash(halo, CTR, 1.0, 1.0))
@@ -976,9 +986,13 @@ class Recap(VoiceScene):
             dp = t.print(self, [(C61.line(10), VENV), (C61.line(11), VENV)], run_time=0.4)
             vo.wait_until("We added a comment")
             self.play(flash(dp[1].glyphs, VENV, 1.15), flash(added, VENV, 1.15), run_time=0.6)
-            self.play(FadeOut(VGroup(edp, cap_p)), caption_extra(tr, False), run_time=0.4)
-            resize(self, t, 13, run_time=0.6)
-            type_cmd(self, t, UP_BUILD, type_time=0.9)
+            # brisk, so the build's rows print as "only the copy layer is new" is said (they came 1.3 s
+            # late): the strip's rows leave with the editor (the build would scroll them away anyway),
+            # then the empty terminal grows (the growing terminal swept over the editor's fading text
+            # when the two ran together) and the build needs no scroll.
+            wipe(self, t, extra=[FadeOut(VGroup(edp, cap_p)), caption_extra(tr, False)], run_time=0.3)
+            resize(self, t, 13, run_time=0.5)
+            type_cmd(self, t, UP_BUILD, type_time=0.7)
             cols = {21: VENV, 22: VENV, 23: VENV}
             items = [(s, cols.get(n, OUTPUT)) if s != "…" else s
                      for s, n in zip(B_ROWS, [3, 0, 21, 22, 23, 24, 0, 43, 44, 45, 46, 47])]
@@ -1058,13 +1072,16 @@ class Recap(VoiceScene):
             vo.wait_until("nothing is left in ps dash a")
             ps_ln = type_cmd(self, t, PS_A, type_time=0.6)
             t.print(self, [C65.line(2)], run_time=0.3)
-            pin(self, ps_ln, beside(grey_tag("empty"), t, ps_ln, buff=0.4), run_time=0.4)
+            pin(self, ps_ln, beside(slim(grey_tag("empty"), t), t, ps_ln, buff=0.4), run_time=0.4)
             vo.wait_until("The images remain")
             self.play(FadeIn(rc515, shift=DOWN * 0.1), caption_extra(tr, True), run_time=0.5)
-            type_extra(self, t, IMG_LS, type_time=0.5)
+            ls_ln = type_extra(self, t, IMG_LS, type_time=0.5, thin=True)
             imgs = t.print(self, IMG_ROWS, run_time=0.6)
-            ct = beside(grey_tag("2 of 5 columns"), t, imgs[0], buff=0.45)
+            # slim: the row above carries the `extra` tag over the same columns (house pills touched)
+            ct = beside(slim(grey_tag("2 of 5 columns"), t), t, imgs[0], buff=0.45)
             assert ct.get_left()[0] > imgs[0].glyphs.get_right()[0] + 0.2, ct.get_left()[0]
+            ex_bottom = ls_ln.extra_tag.get_bottom()[1]
+            assert ct.get_top()[1] < ex_bottom - 0.03, (ct.get_top()[1], ex_bottom)
             pin(self, imgs[0], ct, run_time=0.3)
             hl = []
             for k, n in SHARED.items():
@@ -1087,8 +1104,9 @@ class Recap(VoiceScene):
             self.play(FadeIn(free, shift=LEFT * 0.1), run_time=0.4)
             self.play(flash(free, VENV, 1.08), run_time=0.6)
             vo.wait_until("Pause and shut it down")
-            self.play(FadeOut(VGroup(t, br_, br_l)), caption_extra(tr, False), run_time=0.4)
-            self.play(FadeIn(card, shift=UP * 0.15), run_time=0.5)
+            # the card takes the terminal's place as "Pause" is said (it was up only at the SAY's end)
+            self.play(FadeOut(VGroup(t, br_, br_l)), caption_extra(tr, False), FadeIn(card, shift=UP * 0.15),
+                      run_time=0.5)
             self.wait(1.0)                                              # the card, held to be read
 
         # ============================================================ 7 · Test yourself: Q1
@@ -1171,7 +1189,12 @@ class Recap(VoiceScene):
             vo.wait_until("Which number does the browser use")
             self.play(flash(q_span(g4.q, "-p127.0.0.1:8095:9100"), TURN, 1.06), flash(i4.street, TURN, 1.25),
                       run_time=0.8)
-            vo.wait_until("which does the gateway bind")
+            # interpolated by characters, this clause start lands ≈ 1 s late: the spoken address later
+            # in the sentence is far longer than its 9 characters (the audio pauses at "use," then
+            # "bind,"), so the flash starts 0.9 s before the estimate
+            lead = vo.time_until("which does the gateway bind") - 0.9
+            if lead > 0.02:
+                self.wait(lead)
             self.play(flash(q_span(g4.q, "gateway.py"), TURN, 1.12), flash(i4.room, TURN, 1.25), run_time=0.8)
             vo.wait_until("and what does 127.0.0.1 restrict")
             self.play(flash(q_span(g4.q, "127.0.0.1", occurrence=1), TURN, 1.12), run_time=0.8)

@@ -23,7 +23,8 @@ Beats (script.md "## S14", one voiceover block each):
     underlines YELLOW; CODE(transcribe_audio/.gitignore: 3) top right. The terminal shrinks to the
     strip (the check-ignore rows stay) as V6 returns; the .gitignore sieve lowers over the book; the
     folder pours into the book and the key stays on the sieve.
- 2  `docker build -t transcribe_audio .` (extra here; title "laptop · the same build, full log")
+ 2  The strip clears (the check-ignore rows go together, so no continuation row is left alone);
+    `docker build -t transcribe_audio .` (extra here; title "laptop · the same build, full log")
     -> 21-g1 lines 30-31, COPY underlined TEAL. The folder pours into the box with no sieve: the key
     lands in the COPY slab, which turns RED. The box parks top right, the terminal grows to 7 rows:
     `docker run --rm --entrypoint ls transcribe_audio -la /app/secrets` (extra) -> 22-g1 lines 2-6,
@@ -570,6 +571,9 @@ class KeepTheKeyOut(VoiceScene):
         place(ep, left=-6.3, top=TRACK_BOTTOM - 0.3)
         assert asset_lines("files/transcribe_audio.Dockerfile", 29, 29) == 'ENTRYPOINT ["/bin/bash"]'
         with self.voiceover(SAY[2]) as vo:
+            # the check-ignore rows leave together: a one-row scroll would leave its continuation
+            # row ("check-ignore -v ...") on top without the prompt row that starts it
+            t.clear(self, run_time=0.25)
             c_b = type_in(self, t, BUILD, 0.6)
             x_b = xtag(t, c_b, "extra here")
             pin(self, c_b, x_b, run_time=0.3,

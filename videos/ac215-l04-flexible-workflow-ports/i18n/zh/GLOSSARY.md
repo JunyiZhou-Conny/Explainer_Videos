@@ -146,7 +146,7 @@
 | English | 字幕 | 首次出现 | 说明 |
 |---|---|---|---|
 | branch / switch branches / this branch checked out / the branch's files | 分支 / 切换分支 / 这个分支的文件 | S03：在你的工作区目录里 clone 这个 repo，直接 checkout 到这个分支：git clone，加上 --branch flexible-workflow。 | 第 1 讲：branch → 分支。带 URL 的完整 clone 命令不写进中文行（G3）；en_display：--branch。 |
-| checkout / git checkout / the checkout works / and Git refuses | checkout / git checkout / 拒绝 | S03：第 3 步，git checkout flexible-workflow，Git 拒绝了，原因有两个。 | 新进封闭清单：“checkout 成功了”是实验课说法。Git 作为产品名可以放在句首。 |
+| checkout / git checkout / the checkout works / and Git refuses | checkout / git checkout / 拒绝 | S03：第 3 步：git checkout flexible-workflow，Git 拒绝了，原因有两个。 | 新进封闭清单：“checkout 成功了”是实验课说法。Git 作为产品名可以放在句首。 |
 | stash / git stash / git stash -u / stashes untracked files too / your edits wait in the stash | stash / git stash / git stash -u | S03：额外跑一个 git stash -u，把未跟踪的文件也 stash 起来，checkout 就成功了。 | 新进封闭清单（stash 一下、还在 stash 里）。puts your edits away → 把你的修改收起来。en_display：git stash -u。 |
 | tracked / untracked / ignored / three piles | 已跟踪 / 未跟踪 / 被忽略 / 三堆 | S03：在 transcribe audio 里，Dockerfile、pyproject.toml、uv.lock 和密钥都是被忽略的。 | Git 中文界面的“未跟踪”（第 1 讲）。Three piles. → 分成三堆。 |
 | wall / the first wall falls / overwritten / sit where the branch has files of its own | 墙 / 第一堵墙 / 被覆盖 | S03：README 的提示解决的是第一个原因：git stash 把你的修改收起来，第一堵墙倒了。 | V2 里红色的墙。 |
@@ -181,7 +181,7 @@
 | gate / three gates / gate 1 / who you are / what you may do / switched on | 关卡 / 三道关卡 / 第 1 关 | S05：第 1 关问你是谁：没有密钥，调用在你的 container 里就失败了。 | V3。编号的关卡写数字（第 1 关、第 2 关、第 3 关；C1）。不说“闸门”，也不说“门”（门是 API 的门，第二部分又是 host port）。 |
 | role / grant / four roles / needs a role / Text-to-Speech needs no role | 角色 / 授予 / 四个角色 / IAM 角色 | S05：给它授予四个角色：所有组件都要的 Storage Admin，Gemini 要的 Agent Platform User，还有 Cloud Speech Client 和 Cloud Translation API User。 | 角色名照控制台写（A1 a）。 |
 | Vertex AI User / finds nothing now / role picker | Vertex AI User / 搜不到 | S05：一个小疏漏：generate text 的 README 还写着 Vertex AI User，现在已经搜不到这个角色了。 | 勘误：语气温和，紧跟改法（Agent Platform User）。 |
-| API / the APIs / the five APIs / enable / switches on all five | API / 启用 / 打开 | S05：接着用 gcloud services enable 这条命令把五个 API 全部打开。 | 第 1 讲：enable → 启用。 |
+| API / the APIs / the five APIs / enable / switches on all five | API / 启用 / 打开 | S05：接着用 gcloud services enable 这条命令，把五个 API 全部打开。 | 第 1 讲：enable → 启用。 |
 | console / in the console / create a service account / download a JSON key / rename it | 控制台 / 创建 / 下载 / 重命名 | S05：把它重命名为 mega-pipeline.json，放进 repo 旁边的 secrets 目录。 | 第 1 讲：控制台。提到控制台上的按钮和字段时照英文写（A1 a）。 |
 | gcloud / the set project command / placeholder / angle brackets / redirections / without brackets | gcloud / 占位符 / 尖括号 / 重定向 | S05：照原样输入的话，设置项目的那条命令会失败：shell 把占位符两边的尖括号当成了重定向。 | B3：中文行里不出现尖括号。Type your own project ID, without brackets → 输入你自己的项目 ID，不要带尖括号。 |
 | no active account / the login step / logged in | 没有活动账号 / 登录那一步 | S05：我们的笔记本没有 Google 账号，所以 gcloud 提示没有活动账号：这就是 Tutorial 0 里的登录那一步。 | 转述 You do not currently have an active account selected（英文旁白也是转述）。 |

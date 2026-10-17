@@ -19,18 +19,19 @@ Beats (script.md "## S08", one voiceover block each):
     the cosine row is ringed YELLOW.
  3  cli.py · lines 22–27 (a 6-line panel: the mini-map hides); lines 24–26 highlight. A BLUE bar of
     3,072 cells (GREY labels "the model's full output · 3,072 numbers" and "length 1") is cut after
-    256 cells, which turn GREEN ("output_dimensionality = 256"); beside it a BLUE arrow of length 1
-    in a dashed unit circle shrinks GREEN to ≈ 0.4.
+    256 cells, which turn GREEN ("output_dimensionality = 256", "length 1" becomes "length ≈ 0.4");
+    beside it a BLUE arrow of length 1 in a dashed unit circle shrinks GREEN to ≈ 0.4.
  4  cli.py · lines 96–106 (line 105 wrapped). On the right a stack of GREEN chunk cards goes to the
-    BLUE box in batches of 100, a GOLD tick per batch; chips cli.py · lines 252–253 batch_size=100
-    and cli.py · lines 108–119 "on an API error: retry after 5, 10, 20, 40, 80 s · then give up".
+    BLUE box in batches of 100, a GOLD tick per batch ("one paid call per batch"); chips cli.py ·
+    lines 252–253 batch_size=100 and cli.py · lines 108–119 "on an API error: retry after 5, 10, 20,
+    40, 80 s · then give up".
  5  LECTURE B59–B60. The panel leaves; the mini-map grows into V1; the shared BLUE box lights, the
     top lane pulses ("chunks · now"), then the bottom lane ("questions · later"); chip cli.py ·
     lines 75–84 generate_query_embedding "same model, same 256".
  6  TRACKER Embed 1. V1 shrinks back to the mini-map, which leaves as the TEAL terminal (13 rows)
     comes in; it types python cli.py --embed --chunk_type char-split -> cli-container/20 lines 2
     (cut), 3–6, …, 21–22, …, 73 (RED, wrapped); tag real run · no key on the title bar; GOLD tag on
-    the command "first Google call · your project pays".
+    the command's prompt row "first Google call · your project pays".
  7  The terminal shrinks to the strip (the command and the error's last row); a GREY "with your
     key, look for" card above it, four items writing in as named (cli.py lines 240, 256, 259–260,
     262–264).
@@ -44,19 +45,21 @@ Beats (script.md "## S08", one voiceover block each):
 10  A card (tag recorded · the staff's vectors (68e0bde)): 68e0bde "the staff committed their
     outputs/" -> d9ced19 struck RED "reverted · merged in e17a39f" -> "still in every clone's
     history"; 58dd602 "their database removed too"; 22 files · 82 MB (recorded-embeddings/00 lines
-    2–3); GREEN check "their 22 chunk files = ours, byte for byte". The strip's command flashes.
+    2–3, shown as "embeddings-* · 22 files · 82 MB"); GREEN check "their 22 chunk files = ours, byte
+    for byte". The strip's command flashes.
 11  TRACKER Embed 2 · extra. GREY card "an extra Python check · in the study guide": "Tolminc's
     vectors: count, first five, lengths" (code not shown); the strip grows to 4 rows ->
-    recorded-embeddings/06 lines 9–11 (tag recorded · the staff's vectors (68e0bde)). Left, V4: a
-    dashed unit circle, 24 GREEN arrows (directions ours, lengths 0.369–0.402), a ruler along the
-    axis and a YELLOW mark at ≈ 0.4.
+    recorded-embeddings/06 lines 9–11 (tag recorded · the staff's vectors (68e0bde), just above the
+    strip). Left, V4: the upper half of a dashed unit circle, 24 GREEN arrows (directions ours,
+    lengths 0.369–0.402), a ruler along the axis (0.4, 1) and a YELLOW dashed mark at ≈ 0.4 across
+    the arrow tips ("lengths 0.369–0.402"); "length 1" at the circle.
 12  The strip, card and ruler leave; the dashed circle and the short arrows stay, a PINK query arrow
     joins; one arrow stretches to length 1 and back; chip "hnsw:space": "cosine" (cli.py line 288).
     PONDER 8 s in the lower third.
 13  The other arrows dim; the stretched arrow keeps its YELLOW angle arc to the query ("cosine:
-    same"); a GREY "what if" inset (tag illustration): with straight-line distance the RED distance
-    to the query grows as the arrow stretches ("Chroma's default: L2", "dot product: changes too");
-    a GREY chip recalls the game. Fade to an empty frame.
+    same"); a GREY "what if · straight-line distance" inset on the right (tag illustration): the RED
+    distance to the query grows as the arrow stretches ("distance: changes"; "Chroma's default:
+    L2", "dot product: changes too"); a GREY chip recalls the game. Fade to an empty frame.
 
 Deviations from SHOW (see the scene report): cli-container/20 line 2 is cut with … instead of
 wrapped and the terminal has 13 rows, so the typed command and its GOLD tag stay on screen (wrapped,
@@ -64,8 +67,12 @@ the 15 rows would scroll the command away); the mini-map also hides during the 6
 beat 3 (the "more than 5 lines" rule) and stays hidden from beat 6 on (terminals, cards above the
 strip, the ponder card and the inset leave no free corner); beat 8's rows are ordered as the
 narration names them (the retry message first); the dot-product podium's tag and the GOLD calls tag
-are two-row tags (one row would cross the frame); a PINK query arrow joins V4 in beat 12, so that
-beat 13 has a query to measure the angle and the distance against.
+are two-row tags (one row would cross the frame); the GOLD "first Google call" tag sits on the
+prompt row (the command row, folded under the long container prompt, has no room for it); beats
+11–13 draw only the upper half of the dashed unit circle (every arrow points up; the full circle
+would run into the strip and the ponder card), at a size where 24 arrows of length 0.4 stay
+distinct; a PINK query arrow joins V4 in beat 12, so that beat 13 has a query to measure the angle
+and the distance against.
 """
 
 import numpy as np
@@ -75,6 +82,7 @@ from manim import (
     PI,
     RIGHT,
     UP,
+    Arc,
     Arrow,
     Create,
     DashedVMobject,
@@ -140,6 +148,7 @@ from common import (
     src_panel,
     staff_tag,
     strike,
+    strip_top,
     table_card,
     term,
     tracker,
@@ -203,10 +212,10 @@ GAME_O = np.array([-6.0, -2.0, 0])           # beats 1–2: the 2-D sketch's ori
 GAME_R = 3.4
 INSTR = 8.0                                 # the instructor's direction (degrees)
 CAND = {"A": (INSTR + 10, 0.60), "B": (INSTR + 25, 0.84), "C": (INSTR + 45, 0.72)}   # angle, length
-V4_O = np.array([-3.4, 1.15, 0])             # beats 11–13: V4's origin
-V4_R = 1.6
-QUERY_DEG = 100.0
-FAN = (20.0, 72.0)                          # beat 11's 24 directions (our illustration)
+V4_O = np.array([-3.25, -0.2, 0])            # beats 11–13: V4's origin (an upper half-circle above)
+V4_R = 2.95
+QUERY_DEG = 112.0
+FAN = (10.0, 85.0)                          # beat 11's 24 directions (our illustration)
 
 
 def mixed(parts, size: float = CAPTION, color: str = INK) -> VGroup:
@@ -263,7 +272,7 @@ def podium(title: str, n: int, x0: float, base: float, heights=(0.6, 0.45, 0.32)
         blocks.add(b)
         slots.append(np.array([b.get_center()[0], base + h + 0.05 + 0.26, 0]))
     ttl = label(title, 24, INK)
-    ttl.move_to([x0 + ttl.width / 2, base + max(heights) + 0.95, 0])
+    ttl.move_to([x0 + ttl.width / 2, base + max(heights) + 1.05, 0])
     g = VGroup(ttl, blocks)
     g.title, g.blocks, g.slots = ttl, blocks, slots
     return g
@@ -275,6 +284,18 @@ def place_origin(vs: VectorSketch, at) -> VectorSketch:
 
 def unit_dir(deg: float):
     return np.array([np.cos(np.radians(deg)), np.sin(np.radians(deg)), 0])
+
+
+def thin_arrow(vs: VectorSketch, deg: float, length: float, color: str = DATA, stroke: float = 2.5) -> Arrow:
+    """A V4 arrow with a small tip (24 of them side by side stay 24 arrows)."""
+    return Arrow(vs.o.get_center(), vs.point(deg, length), buff=0, color=color, stroke_width=stroke,
+                 tip_length=0.12, max_tip_length_to_length_ratio=0.2)
+
+
+def half_circle(vs: VectorSketch, color: str = S.GREY):
+    """The dashed unit circle's upper half (every arrow of beats 11–13 points up)."""
+    return DashedVMobject(Arc(radius=vs.r(), start_angle=0, angle=PI, arc_center=vs.o.get_center()),
+                          num_dashes=30, dashed_ratio=0.5).set_stroke(color, 2)
 
 
 class Embeddings(VoiceScene):
@@ -349,13 +370,13 @@ class Embeddings(VoiceScene):
         a_ins = gs.arrow(INSTR, 0.92, LOOKUP)
         l_ins = label("instructor", 24, LOOKUP).next_to(a_ins.get_end(), RIGHT, buff=0.12)
         a_c = {k: gs.arrow(d, ln, DATA) for k, (d, ln) in CAND.items()}
-        l_c = {k: label(k, 26, INK).move_to(a_c[k].get_end() + unit_dir(CAND[k][0] + 90) * 0.28) for k in CAND}
+        l_c = {k: label(k, 26, INK).move_to(a_c[k].get_end() + unit_dir(CAND[k][0]) * 0.26) for k in CAND}
         arcs = {k: gs.arc(INSTR, CAND[k][0], radius=r) for k, r in (("A", 0.3), ("B", 0.42), ("C", 0.54))}
         sk_tag = grey_tag("sketch · not to scale")
         sk_tag.move_to([GAME_O[0] + sk_tag.width / 2, GAME_O[1] - 0.55, 0])
         pc = podium("cosine similarity", 3, x0=0.6, base=1.15)
         med_c = {k: medal(k, s).move_to(pc.slots[i]) for i, (k, s) in enumerate(COSINE)}
-        tick = check_mark(0.3, DATA).next_to(med_c["A"], UP, buff=0.08)
+        tick = check_mark(0.3, DATA).next_to(med_c["A"], LEFT, buff=0.1)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(vs, arrows0, lab_cheese, lab_lic, cap0, ill0, sent, emb)), run_time=0.5)
@@ -385,7 +406,7 @@ class Embeddings(VoiceScene):
         pd = podium("dot product", 2, x0=0.6, base=-0.75)
         med_d = {k: medal(k, DOT[k]).move_to(pd.slots[i]) for i, k in enumerate("AB")}
         dtag = two_row_tag(["computed from the lecture's table", "not on the slides"])
-        dtag.move_to([pd.blocks.get_right()[0] + 0.3 + dtag.width / 2, pd.blocks.get_center()[1] + 0.1, 0])
+        dtag.move_to([pd.blocks.get_left()[0] + dtag.width / 2, pd.blocks.get_bottom()[1] - 0.2 - dtag.height / 2, 0])
         measures = table_card(["measure", "compares"], [["cosine", "the angle"], ["Euclidean", "the distance"],
                                                          ["dot product", "angle and length"]])
         measures.move_to([-6.35 + measures.width / 2, 2.78 - measures.height / 2, 0])
@@ -404,8 +425,8 @@ class Embeddings(VoiceScene):
             self.play(flash(a_c["A"], INK), flash(a_c["B"], INK), run_time=0.8)
             vo.wait_until("and would pick the second candidate")
             self.play(flash(a_c["B"]), run_time=0.7)
-            self.play(med_d["A"].animate(path_arc=-PI / 2).move_to(pd.slots[1]),
-                      med_d["B"].animate(path_arc=-PI / 2).move_to(pd.slots[0]), run_time=0.9)
+            self.play(med_d["A"].animate(path_arc=-PI / 3).move_to(pd.slots[1]),
+                      med_d["B"].animate(path_arc=-PI / 3).move_to(pd.slots[0]), run_time=0.9)
             self.play(flash(a_c["B"]), Indicate(med_d["B"], color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("So a measure is a choice")
             self.play(FadeIn(measures.frame), FadeIn(measures[1]), *[FadeIn(h) for h in measures.heads], run_time=0.4)
@@ -434,6 +455,7 @@ class Embeddings(VoiceScene):
         a_full = us.arrow(35, 1.0, CLOUD)
         a_256 = us.arrow(35, 0.4, DATA)
         one = label("1", CAPTION, S.GREY).move_to(us.point(35, 1.0) + unit_dir(35) * 0.25)
+        len04 = note("length ≈ 0.4").next_to(cb.segs[3], RIGHT, buff=0.25)
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(game), FadeOut(lr), FadeOut(mm), run_time=0.6)
@@ -448,7 +470,8 @@ class Embeddings(VoiceScene):
             self.play(FadeIn(len_lab), FadeIn(us), Create(u_circ), GrowArrow(a_full), FadeIn(one), run_time=0.8)
             vo.wait_until("the code asks for the first 256")
             self.play(Indicate(dim256, color=TURN, scale_factor=1.3), *cb.parts_in("keep"), run_time=0.7)
-            self.play(*cb.cut(), Transform(a_full, a_256), FadeIn(keep_lab, shift=UP * 0.1), run_time=1.0)
+            self.play(*cb.cut(), Transform(a_full, a_256), FadeIn(keep_lab, shift=UP * 0.1),
+                      ReplacementTransform(len_lab, len04), run_time=1.0)
             vo.wait_until("a prefix the model is trained")
             self.play(Indicate(cb.parts["keep"], color=TURN, scale_factor=1.15), run_time=0.9)
 
@@ -465,7 +488,8 @@ class Embeddings(VoiceScene):
         box4 = model_box("embedding\nmodel", w=1.9, h=0.95).move_to([col_x, 0.35, 0])
         ticks = VGroup(*[check_mark(0.26, COST) for _ in range(3)]).arrange(RIGHT, buff=0.32)
         ticks.next_to(box4, DOWN, buff=0.28)
-        calls = note("one paid call per batch", COST).next_to(ticks, DOWN, buff=0.14)
+        calls = VGroup(note("one paid call", COST), note("per batch", COST)).arrange(DOWN, buff=0.08)
+        calls.next_to(ticks, DOWN, buff=0.14)
         b_chip = excerpt_chip(BATCH, "cli.py · lines 252–253")
         b_chip.move_to([-6.35 + b_chip.width / 2, -3.0, 0])
         r_head = VGroup(mono("cli.py", CAPTION, S.GREY), label("· lines 108–119", CAPTION, S.GREY)).arrange(RIGHT, buff=0.12)
@@ -482,7 +506,7 @@ class Embeddings(VoiceScene):
             return VGroup(g, n)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(p1, bars1, cb, full_lab, len_lab, keep_lab, us, u_circ, a_full, one)),
+            self.play(FadeOut(VGroup(p1, bars1, cb, full_lab, len04, keep_lab, us, u_circ, a_full, one)),
                       FadeIn(p2, shift=UP * 0.2), run_time=0.8)
             self.play(FadeIn(stack), FadeIn(stack_lab), FadeIn(box4), FadeIn(bar100), run_time=0.5)
             self.play(FadeIn(b_chip, shift=UP * 0.1), run_time=0.4)
@@ -546,7 +570,8 @@ class Embeddings(VoiceScene):
             cmd = type_cmd(self, t, EMB_CMD, type_time=1.4)
             assert hasattr(cmd, "rows") and len(cmd.rows) == 2
             vo.wait_until("the first call to Google")
-            pin(self, cmd, beside(gold, t, cmd, buff=0.4), anim=FadeIn(gold, scale=1.15), run_time=0.5)
+            pin(self, cmd.rows[0], beside(gold, t, cmd.rows[0], buff=0.5), anim=FadeIn(gold, scale=1.15),
+                run_time=0.5)
             vo.wait_until("On our machine")
             self.play(FadeIn(nk, shift=LEFT * 0.1), run_time=0.3)
             t.print(self, EMB_HEAD, run_time=0.7)
@@ -556,7 +581,7 @@ class Embeddings(VoiceScene):
             assert len(err) == 2
             self.play(Indicate(err, color=ERR, scale_factor=1.03), run_time=0.7)
             vo.wait_until("On yours, it runs")
-            self.play(Indicate(gold, color=COST, scale_factor=1.15), run_time=0.7)
+            self.play(gold.animate(rate_func=there_and_back).scale(1.15), run_time=0.7)
 
         # ========================================================== 7 · with your key, look for
         lf = LookFor([("`Processing file: outputs/chunks-char-split-…`", "per book · cli.py · line 240"),
@@ -586,14 +611,13 @@ class Embeddings(VoiceScene):
 
         rows8 = [
             item(mixed(["`API error (code: 403) … Retrying in 5 seconds (attempt 1/5)`"]),
-                 mixed(["→ the message names the cause · gives up after 5 tries, ~2.5 min",
+                 mixed(["→ the message names the cause · gives up after 5 tries, ≈ 2.5 min",
                         ("· cli.py · lines 117–118", S.GREY)])),
             item(mixed(["`File /secrets/llm-service-account.json was not found`"]),
                  mixed(["→ not in", "`../secrets`", "under that name · check:", "`ls -la /secrets`",
                         "in the container"])),
-            item(mixed(["`PERMISSION_DENIED`"]),
-                 mixed(["→ fix", "`GCP_PROJECT`", "or the role in", "`docker-shell.sh`", "· then", "`exit`",
-                        "and", "`sh docker-shell.sh`", "again"])),
+            item(mixed(["`PERMISSION_DENIED`", "→ fix", "`GCP_PROJECT`", "or the role in", "`docker-shell.sh`"]),
+                 mixed(["then", "`exit`", "and", "`sh docker-shell.sh`", "again"])),
             mixed(["`SERVICE_DISABLED`", "→ enable the Vertex AI API, wait a minute, rerun"]),
         ]
         rows8[0][0][0].set_color(ERR)
@@ -607,7 +631,7 @@ class Embeddings(VoiceScene):
         f_head.shift(RIGHT * 0.12)
         fcard = VGroup(f_frame, f_head, fails)
         fcard.move_to([0, (STRIP_TOP + 2.85) / 2 - 0.05, 0])
-        again = VGroup(*rows8[2][1][5:])
+        again = rows8[2][1]
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(lf), FadeIn(f_frame), FadeIn(f_head), run_time=0.5)
@@ -654,15 +678,15 @@ class Embeddings(VoiceScene):
         c3.shift(RIGHT * 0.12)
         db_chip = VGroup(chip("58dd602", S.GREY, size=CAPTION, font=MONO),
                          note("their database removed too")).arrange(RIGHT, buff=0.2)
-        size_lab = label(STAFF_SIZE, 26, INK)
+        size_lab = mixed(["`embeddings-*`", "· " + STAFF_SIZE], size=24)
         same_files = VGroup(check_mark(0.3, DATA), label("their 22 chunk files = ours, byte for byte", CAPTION, INK))
         same_files.arrange(RIGHT, buff=0.2)
         right = VGroup(db_chip, size_lab, same_files).arrange(DOWN, aligned_edge=LEFT, buff=0.42)
-        content = VGroup(left, right).arrange(RIGHT, buff=0.9, aligned_edge=UP)
+        content = VGroup(left, right).arrange(RIGHT, buff=0.6, aligned_edge=UP)
         d1 = Arrow(c1[0].get_bottom(), c2[0].get_top(), buff=0.06, color=S.GREY, stroke_width=3, tip_length=0.12)
         d2 = Arrow(c2[0].get_bottom(), [c2[0].get_center()[0], c3.get_top()[1], 0], buff=0.06, color=S.GREY,
                    stroke_width=3, tip_length=0.12)
-        s_frame = box(content.width + 0.8, content.height + 0.8, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+        s_frame = box(content.width + 0.5, content.height + 0.8, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
         s_card = VGroup(s_frame, content, d1, d2)
         s_frame.move_to(content)
         s_card.move_to([0, (STRIP_TOP + 2.85) / 2 + 0.05, 0])
@@ -686,14 +710,14 @@ class Embeddings(VoiceScene):
 
         # ========================================================== 11 · an extra check: 24 vectors, lengths 0.369–0.402
         ck = check_card("Tolminc's vectors: count, first five, lengths")
-        ck.move_to([3.4, 1.3, 0])
+        ck.move_to([3.45, 1.55, 0])
         v4 = place_origin(VectorSketch(r=V4_R, sphere=False), V4_O)
-        circ = v4.unit_circle(1.0)
+        circ = half_circle(v4)
         rng = np.random.default_rng(8)
         lengths = np.linspace(L_MIN, L_MAX, 24)
         rng.shuffle(lengths)
-        degs = np.linspace(FAN[0], FAN[1], 24) + rng.uniform(-1.0, 1.0, 24)
-        fan = VGroup(*[v4.arrow(float(d), float(ln), DATA, stroke=3) for d, ln in zip(degs, lengths)])
+        degs = np.linspace(FAN[0], FAN[1], 24) + rng.uniform(-0.8, 0.8, 24)
+        fan = VGroup(*[thin_arrow(v4, float(d), float(ln)) for d, ln in zip(degs, lengths)])
         k_pick = int(np.argmax(degs))
         ruler = VGroup(Line(v4.point(0, 0), v4.point(0, 1.0), color=S.GREY, stroke_width=2.5))
         for k in range(6):
@@ -701,19 +725,21 @@ class Embeddings(VoiceScene):
             ruler.add(Line(p + DOWN * 0.07, p + UP * (0.07 if k % 5 else 0.12), color=S.GREY, stroke_width=2.5))
         r04 = label("0.4", CAPTION, S.GREY).next_to(v4.point(0, 0.4), DOWN, buff=0.14)
         r1 = label("1", CAPTION, S.GREY).next_to(v4.point(0, 1.0), DOWN, buff=0.14)
-        mark04 = DashedVMobject(v4.arc(FAN[0] - 6, FAN[1] + 6, radius=(L_MIN + L_MAX) / 2, color=TURN, stroke=3),
+        mark04 = DashedVMobject(v4.arc(FAN[0] - 5, FAN[1] + 5, radius=(L_MIN + L_MAX) / 2, color=TURN, stroke=3),
                                 num_dashes=14)
-        rng_lab = label("lengths 0.369–0.402", CAPTION, TURN)
-        rng_lab.move_to(v4.point(5, 0.62) + np.array([rng_lab.width / 2 + 0.6, 0.62, 0]))
-        len1 = note("length 1").move_to(v4.point(-40, 1.0) + np.array([0.75, -0.15, 0]))
+        rng_lab = VGroup(label("lengths", CAPTION, TURN), label("0.369–0.402", CAPTION, TURN))
+        rng_lab.arrange(DOWN, aligned_edge=LEFT, buff=0.06)
+        rng_lab.move_to(v4.point(26, 0.52) + RIGHT * rng_lab.width / 2)
+        len1 = note("length 1").move_to(v4.point(128, 0.78))
+        n_strip = 4
+        st = staff_tag()
+        st.move_to([6.3 - st.width / 2, strip_top(n_strip) + 0.12 + st.height / 2, 0])
 
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(VGroup(s_card, stf)), caption_extra(tr, True), run_time=0.5)
             self.play(FadeIn(ck, shift=UP * 0.1), run_time=0.5)
             t.clear(self, run_time=0.25)
-            resize(self, t, 4, run_time=0.5)
-            st = staff_tag()
-            st.move_to([t.box.get_right()[0] - 0.2 - st.width / 2, t.box.get_top()[1] - t.bar_h / 2, 0])
+            resize(self, t, n_strip, run_time=0.5)
             out = t.print(self, NORMS_OUT, run_time=0.6)
             bare_prompt(self, t)
             self.play(FadeIn(st), FadeIn(v4), Create(circ), run_time=0.6)
@@ -726,17 +752,18 @@ class Embeddings(VoiceScene):
                       Create(ruler), FadeIn(r04), FadeIn(r1), run_time=0.7)
             self.play(Create(mark04), FadeIn(rng_lab, shift=LEFT * 0.1), run_time=0.7)
             vo.wait_until("not 1")
-            self.play(Indicate(circ, color=INK, scale_factor=1.03), FadeIn(len1), run_time=0.7)
+            self.play(Indicate(circ, color=INK, scale_factor=1.02), Indicate(r1, color=INK), FadeIn(len1),
+                      run_time=0.7)
 
         # ========================================================== 12 · ponder: does length matter?
-        a_q = v4.arrow(QUERY_DEG, (L_MIN + L_MAX) / 2, LOOKUP)
-        l_q = label("query", CAPTION, LOOKUP).next_to(a_q.get_end(), UP, buff=0.12)
+        a_q = v4.arrow(QUERY_DEG, (L_MIN + L_MAX) / 2, LOOKUP, stroke=4)
+        l_q = label("query", CAPTION, LOOKUP).next_to(a_q.get_end(), LEFT, buff=0.12)
         hn = excerpt_chip(HNSW, "cli.py · line 288 (excerpt)", line=excerpt("cli.py", 288, 288))
-        hn.move_to([2.9, 1.7, 0])
+        hn.move_to([3.45, 1.55, 0])
         picked = fan[k_pick]
         d_pick, l_pick = float(degs[k_pick]), float(lengths[k_pick])
-        long_ = v4.arrow(d_pick, 1.0, DATA, stroke=3)
-        short_ = v4.arrow(d_pick, l_pick, DATA, stroke=3)
+        long_ = thin_arrow(v4, d_pick, 1.0, stroke=4)
+        short_ = thin_arrow(v4, d_pick, l_pick, stroke=4)
 
         with self.voiceover(SAY[12]) as vo:
             self.play(FadeOut(VGroup(t, st, ck, ruler, r04, r1, mark04, rng_lab)), caption_extra(tr, False),
@@ -753,27 +780,29 @@ class Embeddings(VoiceScene):
 
         # ========================================================== 13 · no: cosine sees only the angle
         others = VGroup(*[a for i, a in enumerate(fan) if i != k_pick])
-        arc = v4.arc(d_pick, QUERY_DEG, radius=0.26)
-        same_lab = label("cosine: same", CAPTION, TURN).move_to(V4_O + np.array([0, -0.45, 0]))
-        ins = box(6.0, 4.3, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.16).move_to([3.4, 0.4, 0])
+        arc = v4.arc(d_pick, QUERY_DEG, radius=0.25)
+        same_lab = label("cosine: same", CAPTION, TURN)
+        same_lab.move_to(v4.point(QUERY_DEG, 0.25) + np.array([-0.3 - same_lab.width / 2, -0.1, 0]))
+        ins = box(5.9, 4.5, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.16).move_to([3.45, 0.35, 0])
         ins_t = grey_tag("what if · straight-line distance")
         ins_t.move_to(ins.get_corner(UP + LEFT) + np.array([0.3 + ins_t.width / 2, 0, 0]))
         ins_i = illustration_tag()
-        ins_i.move_to(ins.get_corner(UP + RIGHT) + np.array([-0.3 - ins_i.width / 2, 0, 0]))
-        w = place_origin(VectorSketch(r=2.4, sphere=False), [2.1, -1.35, 0])
-        w_circ = DashedVMobject(w.arc(35, 140, radius=1.0, color=S.GREY, stroke=2), num_dashes=22)
-        wq = w.arrow(QUERY_DEG, (L_MIN + L_MAX) / 2, LOOKUP)
-        wc = w.arrow(d_pick, l_pick, DATA)
-        wc_long = w.arrow(d_pick, 1.0, DATA)
+        ins_i.move_to(ins.get_corner(DOWN + RIGHT) + np.array([-0.3 - ins_i.width / 2, 0, 0]))
+        w = place_origin(VectorSketch(r=3.0, sphere=False), [2.4, -1.45, 0])
+        w_circ = DashedVMobject(w.arc(65, 125, radius=1.0, color=S.GREY, stroke=2), num_dashes=16)
+        wq = w.arrow(QUERY_DEG, (L_MIN + L_MAX) / 2, LOOKUP, stroke=4)
+        wc = thin_arrow(w, d_pick, l_pick, stroke=4)
+        wc_long = thin_arrow(w, d_pick, 1.0, stroke=4)
         dist = Line(wq.get_end(), wc.get_end(), color=ERR, stroke_width=5)
         dist_long = Line(wq.get_end(), wc_long.get_end(), color=ERR, stroke_width=5)
         d_lab = label("distance: changes", CAPTION, ERR)
-        d_lab.move_to(dist_long.get_center() + np.array([0.3 + d_lab.width / 2, -0.1, 0]))
-        n_l2 = note("Chroma's default: L2").move_to([5.0, 1.75, 0])
-        n_dot = note("dot product: changes too").move_to([5.0, 1.3, 0])
-        n_l2.align_to(n_dot, LEFT)
+        d_lab.move_to([w.point(d_pick, 0.6)[0] + 0.3 + d_lab.width / 2, dist_long.get_center()[1] - 0.15, 0])
+        n_l2 = note("Chroma's default: L2")
+        n_dot = note("dot product: changes too")
+        VGroup(n_l2, n_dot).arrange(DOWN, aligned_edge=RIGHT, buff=0.16).move_to(
+            [ins.get_right()[0] - 0.3, 1.88, 0], aligned_edge=RIGHT)
         game_chip = chip("the game: cosine picks A · the dot product picks B", S.GREY, size=CAPTION)
-        game_chip.move_to([0, -2.6, 0])
+        game_chip.move_to([-0.6, -2.75, 0])
 
         with self.voiceover(SAY[13]) as vo:
             self.play(FadeOut(card), FadeOut(hn), others.animate.set_opacity(0.25), run_time=0.5)
@@ -783,7 +812,7 @@ class Embeddings(VoiceScene):
                       run_time=0.6)
             vo.wait_until("With straight-line distance")
             self.play(FadeIn(ins), FadeIn(ins_t), FadeIn(ins_i), FadeIn(w), Create(w_circ),
-                      TransformFromCopy(a_q, wq), GrowArrow(wc), run_time=0.7)
+                      GrowArrow(wq), GrowArrow(wc), run_time=0.7)
             self.play(Create(dist), run_time=0.4)
             self.play(Transform(wc, wc_long), Transform(dist, dist_long), run_time=1.0)
             self.play(FadeIn(d_lab, shift=RIGHT * 0.1), run_time=0.4)

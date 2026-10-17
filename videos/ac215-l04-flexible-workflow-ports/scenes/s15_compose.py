@@ -46,11 +46,11 @@ Beats (script.md "## S15", one voiceover block each):
     "There, docker compose ps" TRACKER P4/2, `docker compose ps` -> 48 lines 2–4 (wrap), the PORTS
     header and `127.0.0.1:8090->9100/tcp` boxed YELLOW.
  6  TRACKER P4/2 · extra: `docker network ls` (GREY `extra` tag) -> 50 lines 2–6, `toynet` TEAL with
-    the GREY tag "created by Compose". On "and compose exec reaches the processor" TRACKER P4/2:
-    `docker compose exec gateway curl http://processor:9200/health` (folded at a space with ` \`) ->
-    51 line 2 `ok` GREEN with the GREY tag "no progress meter: compose exec gives curl a terminal",
-    and the GREY caption "the README's table writes curl ...: this is step 2's command" above the
-    terminal; on "ok" the `ok` flashes.
+    the GREY tag "created by Compose". On "and compose exec reaches the processor" TRACKER P4/2 and
+    the GREY caption "the README's table writes curl ...: this is step 2's command" above the
+    terminal; `docker compose exec gateway curl http://processor:9200/health` (on the row under the
+    prompt, indented) -> 51 line 2 `ok` GREEN with the GREY tag "no progress meter: compose exec
+    gives curl a terminal"; on "ok" the `ok` flashes.
  7  The second terminal and the caption go. The README's comparison table (`README.md · lines
     478–484`) as a two-column card "By hand" | "With Compose", its five rows writing in. On "In the
     first terminal" the card goes, the first terminal grows back to 7 rows and 47 lines 52–54 appear
@@ -115,6 +115,14 @@ Critic pass (fixes, kept as rules for this file):
   the RED chip sits 0.12 higher so it clears the processor's envelope.
 - Beat 10: the stopped boxes' port cells turn GREY with the frame and labels (stop_box leaves them
   TEAL), so the whole box reads as stopped.
+- Beats 1–2: the panel swaps go through swap_panel(): old panel out, then new panel in (played
+  together, with play(run_time=...) stretching both, the two panels' rows cross-faded into double
+  text).
+- Beat 5: the captions beside `~$` fade before the prompt becomes the longer `~/AC215/port_toy$`
+  (it was drawn over "new terminal: cd here first"). REPLY wraps after `"listen_port": 9200, `
+  (STRIP_COLS, as S12 does): the default width split 47534 into "4" / "7534".
+- Beat 6: the "step 2's command" caption comes in as the SAY reaches compose exec, just before the
+  command is typed, not after `ok` (it was on screen for under 2 s).
 """
 
 import numpy as np
@@ -172,6 +180,7 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Create,
     FadeIn,
     FadeOut,
@@ -188,6 +197,7 @@ from manim import (
 
 from explainer import style as S
 from explainer.devops import (
+    CAPTION,
     MONO,
     OUTPUT,
     box,
@@ -280,6 +290,7 @@ X_L, X_R = -6.45, 6.45
 T7 = strip_top(7)                 # 0.17: V6 sits on a 7-row terminal
 BAND_Y = 3.2                      # the top band, right of the tracker (its right edge is -0.45)
 T2_TOP = 2.36                     # the second terminal (7 rows) above the 3-row strip
+STRIP_COLS = 56                   # REPLY wraps after `"listen_port": 9200, ` (as in S12), not mid-number
 
 
 # ------------------------------------------------------------------ small helpers
@@ -474,6 +485,18 @@ def fly(scene, cm: ComposeMap, flights, bars, run_time: float = 1.1, extra=(), l
     return new_bars
 
 
+def swap_panel(scene, cm: ComposeMap, which: str, extra=()) -> None:
+    """cm.swap() in turn: the old panel (and the `extra` FadeOuts) leave, then the new panel fades
+    in. Played together, the two panels' rows cross-faded into double text for half a second."""
+    out_, in_ = cm.swap(which)
+    out_.run_time, in_.run_time = 0.35, 0.45
+    for e in extra:
+        e.run_time = 0.35
+    ag = AnimationGroup(AnimationGroup(out_, *extra), in_, lag_ratio=1.0)
+    scene.play(ag)
+    scene.remove(ag.group)
+
+
 def mixed_cell(s: str, mono_parts) -> VGroup:
     return mixed(s, mono_parts, 20, INK)
 
@@ -531,7 +554,7 @@ class ComposeUp(VoiceScene):
                                      (4, "-e PROCESSOR_PORT=9200", 21, 'PROCESSOR_PORT: "9200"')], [19, 20, 21]))
             vo.wait_until("and the network is named")
             gb.append(fly(self, cm, [(4, "--network toynet", 25, "- toynet")], [24, 25], run_time=0.9))
-            self.play(*cm.swap("processor", run_time=0.6), FadeOut(VGroup(*gb), run_time=0.3))
+            swap_panel(self, cm, "processor", extra=[FadeOut(VGroup(*gb))])
             pb = [fly(self, cm, [(0, "toynet", 39, "toynet")], [37, 38, 39],
                       extra=[flash(cm.flag(0, "docker network create"), VENV, 1.06)])]
             pb.append(fly(self, cm, [(3, "--name processor", 28, "container_name: processor"),
@@ -544,7 +567,7 @@ class ComposeUp(VoiceScene):
 
         # ============================================================ 2 · two new keys; one command
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(*pb), run_time=0.3), *cm.swap("gateway", run_time=0.8), run_time=0.8)
+            swap_panel(self, cm, "gateway", extra=[FadeOut(VGroup(*pb))])
             gbars = VGroup(*[cm.panel.bar(n, VENV, 0.22) for n in GW_BARS])
             self.play(FadeIn(gbars), run_time=0.4)
             vo.wait_until("the volumes key mounts")
@@ -638,7 +661,8 @@ class ComposeUp(VoiceScene):
         # ============================================================ 5 · the page; a second terminal; ps
         pg = PortPage(8090, reply=R49, compact=True, ports=False)
         pg.shift([0 - pg.frame.get_center()[0], (TOP - 0.5) - pg.frame.get_top()[1], 0])
-        rs = ReplyStrip(C49.line(2))
+        rs = ReplyStrip(C49.line(2), width=0.5 + (STRIP_COLS + 0.5) * cell_width(CAPTION))
+        assert [r.text for r in rs.rows] == [C49.line(2)[:STRIP_COLS], C49.line(2)[STRIP_COLS:]]
         rs.shift([0 - rs.frame.get_center()[0], (STRIP_TOP + 0.16) - rs.frame.get_bottom()[1], 0])
         assert rs.get_top()[1] < pg.frame.get_bottom()[1] - 0.05, (rs.get_top()[1], pg.frame.get_bottom()[1])
         rc460 = readme_chip("README.md · line 460", "Open http://localhost:8090")
@@ -667,12 +691,13 @@ class ComposeUp(VoiceScene):
             self.play(Indicate(tilde, color=TURN, scale_factor=1.4), FadeIn(cap_a), run_time=0.8)
             vo.wait_until("Compose reads the file in the current folder")
             self.play(FadeIn(cap_b, shift=LEFT * 0.1), run_time=0.5)
-            self.wait(0.8)
+            self.wait(0.6)
+            self.play(FadeOut(caps), run_time=0.35)     # gone before the longer prompt reaches it
             _drop_bare(self, t2)
             t2.set_prompt(P_TOY)
             ln2 = bare_prompt(self, t2)
-            self.play(FadeOut(caps), Indicate(glyph_range(ln2, P_TOY.index(":") + 1, len(P_TOY) - 1), color=TURN,
-                                              scale_factor=1.05), run_time=0.6)
+            self.play(Indicate(glyph_range(ln2, P_TOY.index(":") + 1, len(P_TOY) - 1), color=TURN,
+                               scale_factor=1.05), run_time=0.6)
             vo.wait_until("There, docker compose ps")
             self.play(tr.goto(2), run_time=0.4)
             type_cmd(self, t2, PS, type_time=0.5)
@@ -700,13 +725,12 @@ class ComposeUp(VoiceScene):
             self.play(substring(tn, "toynet").animate.set_color(CTR), run_time=0.4)
             pin(self, tn, by)
             vo.wait_until("and compose exec reaches the processor")
-            self.play(caption_extra(tr, False), run_time=0.3)
+            self.play(caption_extra(tr, False), FadeIn(cap6, shift=DOWN * 0.1), run_time=0.4)
             room(self, t2, 2)                       # the prompt row + the command row
             type_cmd(self, t2, EXEC, type_time=1.0)
-            ok = t2.print(self, [(C51.line(2), VENV)], run_time=0.35)[0]
+            ok =t2.print(self, [(C51.line(2), VENV)], run_time=0.35)[0]
             meter = tag_after(t2, ok, grey_tag("no progress meter: compose exec gives curl a terminal"))
             pin(self, ok, meter)
-            self.play(FadeIn(cap6, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("ok")
             self.play(flash(ok.glyphs, VENV, 1.3), run_time=0.6)
 

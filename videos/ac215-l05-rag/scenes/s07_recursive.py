@@ -4,15 +4,16 @@ Beats (script.md "## S07", one voiceover block each):
  0  TRACKER Chunk 3. cli.py · lines 196–205 (the mini-map stays hidden while it is up); line 197
     `chunk_size = 350` highlights YELLOW; a GREY dashed ghost argument `chunk_overlap = ?` appears
     beside lines 199–200.
- 1  LECTURE B16–B19. The panel leaves; the mini-map fades in, "chunking" lit. V3: the story as a
+ 1  LECTURE B16–B19. The panel leaves; the mini-map fades in, and with the lecture tag, small at
+    the bottom left (tag illustration), the lecture's mock paper twice: a 200-character ruler
+    cutting a word and running the abstract into the next section's heading (RED) beside one
+    chunk per section (GREEN); it stays still (the narration never names it). V3: the story as a
     ribbon of word blocks, GREY ticks at the paragraph gaps (tall) and at the one line break
-    (short); four PURPLE separator chips \\n\\n → \\n → " " → "" with their names. PURPLE scissors
-    hunt along the ribbon and snip at the story's real chunk ends (all blank lines) while chip 1
-    is lit; chips 2, 3 and 4 light as the narration names them. Small, bottom left (tag
-    illustration): the lecture's mock paper twice, a 200-character ruler cutting a word and
-    running the abstract into the next section's heading (RED) beside one chunk per section
-    (GREEN). Then chip 1 lights again, a GREY note says every cut here is a blank line, the cuts
-    flash and a callout shows one cut between "table." and "On".
+    (short); "chunking" lit; four PURPLE separator chips \\n\\n → \\n → " " → "" with their
+    names. PURPLE scissors hunt along the ribbon and snip at the story's real chunk ends (all
+    blank lines) while chip 1 is lit; chips 2, 3 and 4 light as the narration names them. Then
+    chip 1 lights again, a GREY note says every cut here is a blank line, the cuts flash and a
+    callout shows one cut between "table." and "On".
  2  The TEAL container terminal (13 rows; the mini-map hides) types `python cli.py --chunk
     --chunk_type recursive-split` -> cli-container/13 lines 2–4, …, 32–33 (line 2 cut); TRACKER
     Chunk 3 · extra: `wc -l outputs/chunks-recursive-split-*.jsonl` (extra) -> cli-container/14
@@ -21,7 +22,8 @@ Beats (script.md "## S07", one voiceover block each):
     bars, char-split 8,248 and recursive-split 14,228 (the number lifts out of the strip), each
     labelled "chunk size 350". PONDER (8 s): the card in the lower third, above the strip.
  4  TRACKER Chunk 3 · extra. The bars go; the terminal grows to 12 rows and types the one-liner
-    of cli-container/15 (extra; it folds onto 5 rows) -> lines 8–16, wrapped (12 rows: the
+    of cli-container/15 (extra; it folds onto 5 rows, the row that continues the file name at
+    column 0, see literal_safe_rows), holds it 0.6 s -> lines 8–16, wrapped (12 rows: the
     command scrolls away). GREY brackets 0 and 1 mark the end of chunk 0 and chunk 1; line 12's
     `## Chapter One: The First Slice` and line 8's turn YELLOW, joined by a PINK bracket
     "repeated". Top right: the chip "library default: chunk_overlap = 200", then the tag
@@ -31,18 +33,23 @@ Beats (script.md "## S07", one voiceover block each):
     recursive chunks as GREEN cards on two rows (numbered), the overlap bands shaded YELLOW;
     a GOLD coin on each band, "embedded, stored, paid for". The erratum tag gives way to a GREY
     chip "want another value? set chunk_overlap".
- 6  LECTURE B16–B19. The strip, the ribbon and the chips leave; the mini-map returns. The
+ 6  LECTURE B16–B19. The strip, the ribbon and the chips leave (the tracker drops " · extra");
+    the mini-map returns. The
     lecture's GREEN paper from beat 1 grows: three section-shaped chunks (title, abstract,
     methods), "ideal: a chunk per section". From the PURPLE scissors chip "recursive-split", an
     arrow "recursive: paragraphs" goes part of the way, a GREY dashed one "semantic chunking ·
     part 2" all the way. The mini-map's "chunking" gets a GREEN tick. Fade to an empty frame.
 
 Deviations from SHOW (see the scene report): the cli-container/15 one-liner folds onto 5 rows and
-its 12 output rows scroll it away (the tracker's "· extra" stays); the two arrows of beat 6 start
+its 12 output rows scroll it away (the tracker's "· extra" stays); its fold breaks inside the
+'...' file name, so that continuation row starts at column 0 (the house 4-space indent would
+put four spaces into the file name); the two arrows of beat 6 start
 at a PURPLE "recursive-split" scissors chip, because the strip at that point holds output, not a
 command, and leaves with the ribbon; the lecture tag is shown in beats 1 and 6 (the lecture's
 pictures), not over the overlap beats, which the slides never mention (SLIDES.md Conflict 5).
 """
+
+import ast
 
 import numpy as np
 from manim import (
@@ -90,10 +97,13 @@ from common import (
     Ribbon,
     beside,
     capture,
+    _space_levels,
+    _type_rows,
     caption_extra,
     coin_glyph,
     erratum_tag,
     extra_tag,
+    fold_cmd,
     grid_x0,
     illustration_tag,
     lref,
@@ -271,6 +281,48 @@ def x_col(line, col: float) -> float:
     return grid_x0(line) + col * cell_width(line.pt)
 
 
+def literal_safe_rows(prompt: str, cmd: str, limit: int = 65) -> list[str]:
+    """fold_cmd's rows for `prompt cmd`, except that a row continuing a '...' literal starts at
+    column 0: inside "..." bash drops only the backslash-newline, so the house 4-space indent
+    would land inside the literal (here the file name 'outputs/chunks-recursive-split-Tolminc
+    Cheese.jsonl' would gain four spaces). Checked: the rows paste back as the captured command."""
+    p = prompt + " "
+    full = p + cmd
+    rows, hard = fold_cmd(full, limit, len(p))
+    assert not hard and len(rows) > 1, rows
+    levels = _space_levels(full)
+    out, start, prefix = [], 0, ""
+    for k, r in enumerate(rows):
+        assert k == 0 or r.startswith("    "), r
+        seg = r[4:] if k else r                 # fold_cmd indents every continuation row by 4
+        if k == len(rows) - 1:
+            assert full[start:] == seg, (seg, full[start:])
+            out.append(prefix + seg)
+            break
+        assert seg.endswith(" \\"), seg
+        seg = seg[:-2]
+        j = start + len(seg)
+        assert full[start:j] == seg and full[j] == " ", (seg, full[start:j + 1])
+        out.append(prefix + seg + " \\")
+        start, prefix = j + 1, ("" if levels.get(j) == 2 else "    ")
+    assert all(len(r) <= limit for r in out), out
+    return out
+
+
+def type_literal_safe(scene, t, cmd: str, type_time: float):
+    """type_cmd for a one-liner whose fold breaks inside a '...' literal (see literal_safe_rows)."""
+    p = t.prompt + " "
+    rows = literal_safe_rows(t.prompt, cmd, t.max_chars)
+    return _type_rows(scene, t, rows, len(p), type_time, len(cmd))
+
+
+# the rows as bash reads them (it drops each "\" + newline) hold the captured program, file name intact
+_typed = "".join(r[:-1] if r.endswith("\\") else r for r in literal_safe_rows(P_CTR, FIRST.cmd))
+_typed = _typed[len(P_CTR) + 1:]
+assert _typed.startswith("python -c ") and ast.dump(ast.parse(_typed.split('"', 1)[1][:-1])) == \
+    ast.dump(ast.parse(FIRST.cmd.split('"', 1)[1][:-1])), _typed
+
+
 class RecursiveSplit(VoiceScene):
     def construct(self):
         assert len(SAY) == 7, len(SAY)
@@ -344,9 +396,12 @@ class RecursiveSplit(VoiceScene):
         ill = illustration_tag()
         ill.move_to([-0.35 + ill.width / 2, -3.12, 0])
 
+        bad.heads["methods"].set_fill(ERR, 1)
+        papers = VGroup(bad, bad_marks, good, lab_bad, lab_good, ill)   # the lecture's picture, quietly
+
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(panel, bar197, ghost), shift=DOWN * 0.3), FadeIn(lr), FadeIn(mm),
-                      run_time=0.6)
+                      FadeIn(papers), run_time=0.7)
             self.play(mm.light("chunking"), LaggedStart(*[FadeIn(b) for b in rb.blocks], lag_ratio=0.004),
                       run_time=1.0)
             self.add(rb)
@@ -364,11 +419,6 @@ class RecursiveSplit(VoiceScene):
             self.play(light(chips[1], False), light(chips[2]), run_time=0.3)
             vo.wait_until("and only as a last resort")
             self.play(light(chips[2], False), light(chips[3]), run_time=0.3)
-            self.play(FadeIn(bad), FadeIn(good.paper), FadeIn(ill), run_time=0.5)
-            self.play(Create(bad_marks.c1), Create(bad_marks.c2), Create(good.boxes),
-                      FadeIn(lab_bad), FadeIn(lab_good), run_time=0.7)
-            self.play(Create(bad_marks.cut), Create(bad_marks.head), bad.heads["methods"].animate.set_fill(ERR, 1),
-                      run_time=0.5)
             vo.wait_until("So every cut falls")
             self.play(light(chips[3], False), light(chips[0]), FadeIn(here, shift=UP * 0.1),
                       LaggedStart(*[Indicate(c, color=TURN, scale_factor=1.15) for c in cuts], lag_ratio=0.15),
@@ -379,8 +429,7 @@ class RecursiveSplit(VoiceScene):
 
         # ========================================================== 2 · step 3: recursive-split, for real
         t = term(P_CTR, rows=13, container=True)
-        beat1 = VGroup(rb, cap_rb, chips, names, thens, here, sc, cuts, callout, c_cut,
-                       bad, bad_marks, good, lab_bad, lab_good, ill)
+        beat1 = VGroup(rb, cap_rb, chips, names, thens, here, sc, cuts, callout, c_cut, papers)
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(beat1), FadeOut(mm), FadeOut(lr), run_time=0.6)
@@ -454,12 +503,14 @@ class RecursiveSplit(VoiceScene):
         err.move_to([6.45 - err.width / 2, 2.6, 0])
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(card), FadeOut(VGroup(bars, nums, labs, ins)), run_time=0.35)
-            t.clear(self, run_time=0.25)
-            resize(self, t, 12, run_time=0.5)
-            ol = type_cmd(self, t, FIRST.cmd, type_time=1.2)
+            # card, bars and the strip's lines leave together (t.clear, folded into one play)
+            self.play(FadeOut(card), FadeOut(VGroup(bars, nums, labs, ins)), FadeOut(t.lines), run_time=0.35)
+            for m in list(t.lines):
+                t.lines.remove(m)
+            resize(self, t, 12, run_time=0.45)
+            ol = type_literal_safe(self, t, FIRST.cmd, type_time=1.0)
             pin(self, ol, beside(extra_tag(), t, ol, buff=0.4), run_time=0.25)
-            self.wait(0.35)                    # let the command read: its output scrolls it away
+            self.wait(0.6)                     # let the command read: its output scrolls it away
             rows = t.print(self, FIRST_OUT, wrap=True, run_time=0.5)
             assert len(rows) == 12 and rows[0].text == HEAD and rows[4].text == HEAD
             sep_tag = row_tag("above: the end of chunk 0  ·  below: chunk 1")
@@ -519,13 +570,13 @@ class RecursiveSplit(VoiceScene):
         h_chip = VGroup(h_box, hint).move_to([6.45 - (hint.width + 0.44) / 2, 2.6, 0])
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(sep_tag, rep, rep_lab, short, err)), run_time=0.4)
-            resize(self, t, 3, keep=[rows[0], rows[3], rows[4]], run_time=0.7)
+            self.play(FadeOut(VGroup(sep_tag, rep, rep_lab, short, err)), run_time=0.3)
+            resize(self, t, 3, keep=[rows[0], rows[3], rows[4]], run_time=0.6)
             self.play(LaggedStart(*[FadeIn(b) for b in rb2.blocks], lag_ratio=0.003), FadeIn(cap2),
-                      run_time=0.8)
+                      run_time=0.6)
             self.add(rb2)
             self.play(LaggedStart(*[FadeIn(VGroup(c, n), shift=DOWN * 0.1) for c, n in zip(cards, nos)],
-                                  lag_ratio=0.2), run_time=1.0)
+                                  lag_ratio=0.2), run_time=0.8)
             self.play(FadeIn(bands), run_time=0.5)
             vo.wait_until("But every repeated character")
             self.play(LaggedStart(*[FadeIn(c, scale=1.6) for c in coins], lag_ratio=0.25), run_time=0.8)
@@ -555,7 +606,7 @@ class RecursiveSplit(VoiceScene):
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(t, rb2, cards, nos, bands, coins, paid, cap2, h_chip, d_chip)),
-                      FadeIn(lr2), run_time=0.6)
+                      FadeIn(lr2), caption_extra(tr, False), run_time=0.6)
             self.play(FadeIn(mm), FadeIn(gp), run_time=0.5)
             self.play(gp.animate.scale(big_k).move_to(PAPER_BIG), run_time=1.0)
             for name, bx in zip(("title", "abstract", "methods"), gp.boxes):

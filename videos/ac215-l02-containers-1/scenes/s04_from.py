@@ -18,7 +18,7 @@ Beats (script.md "## S04", one voiceover block each):
     WHITE ("the recipe"), the final `.` gets a PINK ring ("build context: this folder"); a GREY
     folder pops out of the dot and rides a PINK route into a PURPLE "builder" box. On "Step 3" the
     tracker's step-9 dot pulses. GREY `Lecture 2 · slides 32, 56` (lecture_ref, top right) from
-    "Dash t names" to "this folder".
+    "Dash t names" through the build (beat 3); it fades with the build's notes as beat 4 starts.
  3  The labels leave and the 13-row laptop terminal fades in while the big command's glyphs fly
     into its two folded rows (the slide is the typing). ▶ your turn. laptop/09 lines 2, …, 15 (cut
     after `@sha256:34386ef0`, folds onto 2 rows), …, 31-34 (hash12), …, 38 (67 columns: soft-wraps
@@ -354,7 +354,8 @@ class StepFrom(VoiceScene):
         builder = builder_box("builder", 2.1, 0.95, 24)
         builder.move_to([5.2, -2.45, 0])
         path2 = route(ring.get_bottom() + DOWN * 0.08, builder.frame.get_top() + UP * 0.05, arc=-0.35)
-        lref = lecture_ref(2, "32, 56")                     # top right, bottom at 3.13 (all else < 2.8)
+        lref = lecture_ref(2, "32, 56")                     # top right, bottom at 3.13 (all else < 2.8,
+                                                            # the 13-row terminal's top at 2.59)
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(panel, bar1, *uls, *links, *chips), shift=UP * 0.1),
@@ -373,7 +374,7 @@ class StepFrom(VoiceScene):
             vo.wait_until("the build context")
             self.play(FadeIn(lab_ctx, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("this folder")
-            self.play(GrowFromCenter(folder), FadeOut(lref), run_time=0.5)
+            self.play(GrowFromCenter(folder), run_time=0.5)
             vo.wait_until("which Docker sends")
             self.play(Create(path2), FadeIn(builder, shift=UP * 0.1), run_time=0.6)
             self.play(travel(folder, path2.copy(), run_time=1.1))
@@ -458,7 +459,8 @@ class StepFrom(VoiceScene):
         total.next_to(rule, DOWN, buff=0.14).align_to(rule, LEFT)
 
         with self.voiceover(SAY[4]) as vo:
-            unpin(self, [(dots6, note_c), (o2[1], note_d), (dots11, note_r), (r1, yt3)], 0.3)
+            unpin(self, [(dots6, note_c), (o2[1], note_d), (dots11, note_r), (r1, yt3)], 0.3,
+                  FadeOut(lref))                     # the tag stays through the build (script.md)
             vo.wait_until("four layers")
             sz_glyphs = [substring(row, s) for row, s in zip(o_sz, SIZES)]
             self.play(LaggedStart(*[g.animate.set_color(SYSTEM) for g in sz_glyphs], lag_ratio=0.35),

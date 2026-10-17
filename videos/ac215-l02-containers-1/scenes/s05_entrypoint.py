@@ -24,8 +24,10 @@ Beats (script.md "## S05", one voiceover block each):
  2  V3 close-up of the card: the README panel and caption leave, the stack dims. GREY labels with
     short arrows point at the slots from the left (the stacked card has no room under its slots):
     ENTRYPOINT "the program", CMD "its default arguments", each as it is said. GREY
-    `Lecture 2 · slides 32–33` (lecture_ref) from "Think of ENTRYPOINT" to "and the command slot",
-    under the tracker at the left (the card fills the top right). The `["/bin/bash"]`
+    `Lecture 2 · slides 32–33` (lecture_ref) from "Think of ENTRYPOINT" through the question
+    (program + default arguments, applied), under the tracker at the left (the card fills the top
+    right); it fades as beat 3's extra inspect is typed (the reset of the inherited CMD is
+    tutorial-only, SLIDES.md). The `["/bin/bash"]`
     tile pulses on "The entrypoint is now bash"; the inherited `["python3"]` tile turns dashed on
     "the command slot still says python3". On "So will the container start" the start-up line
     becomes `/bin/bash python3` (the tile's /bin/bash is copied down in front of python3) with a
@@ -313,7 +315,7 @@ class StepEntrypoint(VoiceScene):
             vo.wait_until("The entrypoint is now")
             self.play(Indicate(t_ent, color=TURN, scale_factor=1.12), run_time=0.8)
             vo.wait_until("and the command slot")
-            self.play(FadeTransform(t_cmd, t_cmd2), FadeOut(lref), run_time=0.6)
+            self.play(FadeTransform(t_cmd, t_cmd2), run_time=0.6)
             card.tiles["CMD"] = t_cmd2
             self.play(Indicate(t_cmd2, color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("So will the container")
@@ -333,7 +335,8 @@ class StepEntrypoint(VoiceScene):
         null_cmd = card.note("CMD", "null")
 
         with self.voiceover(SAY[3]) as vo:
-            c3 = type_rows(self, t, INSPECT_ROWS, 1.1, extra=[extra_caption(self, tr, True)])
+            # the slide tag leaves as the extra inspect starts: its answer (the reset) is tutorial-only
+            c3 = type_rows(self, t, INSPECT_ROWS, 1.1, extra=[extra_caption(self, tr, True), FadeOut(lref)])
             pin(self, c3.rows[0], beside(row_tag("extra"), c3.rows[0]), run_time=0.25)
             out3 = t.print(self, [INSPECT_OUT], run_time=0.3)[0]
             vo.wait_until("the entrypoint is bash")

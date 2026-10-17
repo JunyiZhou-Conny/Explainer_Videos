@@ -15,8 +15,9 @@ Beats (script.md "## S03", one voiceover block each):
     Desktop" appears left of the Docker Desktop chip (above the terminal, for the same reason), and
     that chip is circled on "start Docker Desktop". ▶ your turn (wiggles on "Pause and run it").
     GREY lecture tag "Lecture 2 · slides 54, 61–62, 73" (SLIDES.md, S03 (i)) top right, from
-    "First, docker container ls" until "If yours can't connect" (bottom 3.13, the Docker Desktop
-    chip under it at y ≈ 2.2).
+    "First, docker container ls" to the end of the scene (script.md's span; it goes with the final
+    fade-out). Its bottom is at 3.13, its left edge at 2.11: the Docker Desktop chip is under it at
+    y ≈ 2.2, the tracker's widest caption (A5 · extra) ends at x ≈ 1.4, cards stay under 2.8.
  2  TRACKER A2. Above the terminal: README card (README.md · line 116) "Stop any container that is
     running"; the row tag "no rows: nothing running" pulses on "There's nothing to stop"; beside the
     card a GREY mono chip `docker stop <CONTAINER ID>` with the tag "only if you have one · not run
@@ -254,7 +255,7 @@ class CleanSlate(VoiceScene):
         # ========================================================== 1 · docker container ls
         cc = chip("cannot connect? → start Docker Desktop", S.GREY, size=22)
         cc.move_to([dd.get_left()[0] - 0.35 - cc.width / 2, band_y, 0])
-        lref = lecture_ref(2, "54, 61–62, 73")              # top right, bottom at 3.13
+        lref = lecture_ref(2, "54, 61–62, 73")              # top right, bottom at 3.13, to the end
 
         with self.voiceover(SAY[1]) as vo:
             vo.wait_until("First, docker container ls")
@@ -266,7 +267,7 @@ class CleanSlate(VoiceScene):
             cols = at_row(row_tag("the columns · no rows: nothing running"), t, 2)
             pin(self, h1, cols, run_time=0.5)
             vo.wait_until("If yours can't connect")
-            self.play(FadeIn(cc, shift=RIGHT * 0.2), FadeOut(lref), run_time=0.5)
+            self.play(FadeIn(cc, shift=RIGHT * 0.2), run_time=0.5)
             vo.wait_until("start Docker Desktop")
             self.play(Circumscribe(dd, color=TURN, buff=0.06), run_time=1.0)
             yt1 = beside(turn_tag(), c1)
