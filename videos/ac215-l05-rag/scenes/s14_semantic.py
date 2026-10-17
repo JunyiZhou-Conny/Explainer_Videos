@@ -2,11 +2,11 @@
 
 Beats (script.md "## S14", one voiceover block each):
  0  LECTURE B19–B33. TRACKER Semantic (no step lit yet). The mini-map, "chunking" lit. Small, at
-    the upper left (tag `lecture example`): six numbered sentence tiles, a GREY "?" over the row
-    (where to cut?); an anchor under tile 1; the similarity 0.89 rises over gap 1–2 and a GREEN
-    group joins tiles 1–2; the anchor moves to tile 3, 0.85 and 0.68 rise; the YELLOW threshold
-    line 0.8 draws; the group grows to tiles 1–3 = "chunk 1", the 0.68 bar grays out and the "?"
-    becomes the YELLOW cut between tiles 3 and 4.
+    the upper left (tag `lecture example`): six numbered sentence tiles; GREY dashed candidate
+    cuts in every gap (where to cut?); an anchor under tile 1; the similarity 0.89 rises over gap
+    1–2 and a GREEN group joins tiles 1–2; the anchor moves to tile 3, 0.85 and 0.68 rise; the
+    YELLOW threshold line 0.8 draws; the group grows to tiles 1–3 = "chunk 1", the 0.68 bar grays
+    out, and of the candidates only the one between tiles 3 and 4 stays, as the YELLOW cut.
  1  The walk shrinks into three GREEN ticks: "split at . ? !", "one neighbor each side", "cosine".
     V8 full width (the mini-map leaves): a GREEN block of text splits into seven numbered sentence
     tiles of the story (first three words) beside the regex chip `semantic_splitter.py · line 118`
@@ -14,9 +14,9 @@ Beats (script.md "## S14", one voiceover block each):
     the BLUE embedding band appears and every three-tile window, as the bracket slides tile to
     tile, peels off, drops through the band and becomes a GREEN arrow under its tile (a GOLD coin
     for the batch of 50, chip `semantic_splitter.py · line 206` (excerpt)).
- 2  Arrows 74 and 75 pair up: a copy of 75 slides onto 74, the PINK arc between them flies up and
-    becomes the spike over their gap; the spikes and the curve build left to right (tag
-    `our illustration`).
+ 2  The regex chip and the bracket leave. Arrows 74 and 75 pair up: a copy of 75 slides onto 74,
+    the PINK arc between them flies up and becomes the spike over their gap; the spikes and the
+    curve build left to right (tag `our illustration`).
  3  CODE(semantic_splitter.py: 91–96) along the bottom (arrows, band and chips leave), line 92 lit;
     the YELLOW 95th-percentile line rises. The panel becomes CODE(semantic_splitter.py: 239–243),
     line 242 lit: the spike above the line flashes, the tiles part there (YELLOW cut), the bump
@@ -28,7 +28,7 @@ Beats (script.md "## S14", one voiceover block each):
     embedding box; bracket and box flash, the cut dims, GREY note "every window is embedded before
     a single cut". Then CODE(cli.py: 207–215, at 20 pt) with line 210 lit and
     `generate_text_embeddings` underlined; a BLUE embedding-box glyph and a GOLD tag "a Google call"
-    beside it; GREY note "embed() calls it too · cli.py · lines 249, 252".
+    above the panel's right end; GREY note "embed() calls it too · cli.py · lines 249, 252".
  6  TRACKER Semantic 1. Terminal (12 rows, TEAL): the README command folds onto two rows →
     TERM(cli-container/60: 2–5, …, 11, 14, 17, 20, 23, …, 75; wrap), "chunk=True, embed=True,
     load=True" underlined, tag `real run · no key` in the title bar; line 75 RED; the five File frames
@@ -44,16 +44,19 @@ Beats (script.md "## S14", one voiceover block each):
     card: the README command (header "your turn · with your key") and the extra chat command after
     the load. Hold 2 s, then everything fades: empty frame.
 
-Deviations from SHOW (see the scene report): the V8 row shows 7 tiles (sentences 73–79), not 9:
-three words of a sentence at 20 pt need two rows in a tile 1.6 wide (the scene re-lays each tile's
-words on two rows; Seismograph puts one row). The window chosen holds the chapter-five spike above
-the line and a bump below it. The walk shrinks into its three ticks at the start of beat 1, where
-the SAY says "the same ingredients". The mini-map leaves when V8 takes the full width (its band and
-arrows need the bottom of the frame). The GOLD "tick per batch of 50" is a GOLD coin. Beat 4 moves
-the tile row up and hides the spikes so the two cards fit above the ponder card. Beat 7's GOLD tags
-move down above the strip while the "look for" card takes the top (all three groups would not fit
-otherwise); the tip card leaves then. Beat 8's bars come from the whole story under this
-illustration's distances (our illustration), not from a measurement.
+Deviations from SHOW (see the scene report): the V8 row shows 7 tiles (sentences 73–79, row 12.7
+wide), not 9: three words of a sentence at 20 pt need two rows in a tile 1.68 wide (the scene
+re-lays each tile's words on two rows; Seismograph puts one row), and tiles that cannot hold three
+words show two. The window chosen holds the chapter-five spike above the line and a bump below
+it. CODE(cli.py: 207–215) is set at 20 pt: lines 212 and 214 are 70 and 67 characters, too wide
+for a 22 pt panel, and wrapping them would change the header the SHOW gives. The walk shrinks
+into its three ticks at the start of beat 1, where the SAY says "the same ingredients". The
+mini-map leaves when V8 takes the full width (its band and arrows need the bottom of the frame).
+The GOLD "tick per batch of 50" is a GOLD coin. Beat 4 moves the tile row up and hides the spikes
+so the two cards fit above the ponder card. Beat 7's GOLD tags move down above the strip while the
+"look for" card takes the top (all three groups would not fit otherwise); the tip card leaves
+then. Beat 8's bars come from the whole story under this illustration's distances (our
+illustration), not from a measurement.
 """
 
 import numpy as np

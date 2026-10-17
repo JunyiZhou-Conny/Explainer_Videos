@@ -1,7 +1,13 @@
-"""S05 · Three gates: account, role, API (README "Service Account & Secrets", steps 1-6).
+"""S05 · Three gates: account, role, API (README "Service Account & Secrets": its numbered steps
+1-5, then "To enable them").
+
+The tracker numbers the steps as README.md:175-183 does (see KTracker): 1 Service accounts,
+2 Create account, 3 Grant roles, 4 JSON key, 5 Save key ("step k of 5"); the two commands under
+"To enable them" (:189-198) are not numbered there: "after step 5: Set project / Enable APIs".
+script.md's K/1-K/6 map to README 1-2, 3, 4, 5, then the two unnumbered ones.
 
 Beats (script.md "## S05", one voiceover block each):
- 0  TRACKER K/1. V3 builds at full width: the TEAL container with its dashed /secrets slot, the
+ 0  TRACKER README 1. V3 builds at full width: the TEAL container with its dashed /secrets slot, the
     GREY secrets/ folder with the GOLD key outside its left edge, the PINK route between them. The
     route pulses once and the GOLD key outline appears in the slot at the same instant (nothing
     travels). GREY README card (top band) README.md · line 171: "an identity for your code, not
@@ -14,8 +20,9 @@ Beats (script.md "## S05", one voiceover block each):
     + "inside the container". The key comes back (pulse). "may?": the lock slots glow BLUE (a
     filled halo: they are BLUE already). "switched on?": the switches glow BLUE.
  3  V3 shrinks to the right third (the door column; the container side fades). Schematic console
-    at left (illustration): IAM & Admin › Service accounts › Create service account, name
-    mega-pipeline-sa typed. TRACKER K/2 + README chip lines 177–181: the name becomes the page head
+    at left (illustration): IAM & Admin › Service accounts › Create service account (TRACKER
+    README 2), name mega-pipeline-sa typed. TRACKER README 3 + README chip lines 177–181: the name
+    becomes the page head
     "› Grant roles"; four roles appear one by one in README order, each with its ID chip (tags
     "all five components", "generate_text · Gemini"); a BLUE padlock flies from each role onto its
     lock (Storage, Vertex AI, Speech-to-Text, Translation).
@@ -23,18 +30,19 @@ Beats (script.md "## S05", one voiceover block each):
     console goes; README card generate_text/README.md · line 46 "Vertex AI User" (erratum) is
     flashes YELLOW on "still says Vertex AI User" and is struck RED; README card README.md · line
     179 "Search the role picker for Agent Platform User" gets a GREEN check.
- 5  TRACKER K/3. V3 and the cards go; the console's Keys page: Keys › Add Key › Create new key ›
-    JSON builds up, Create flashes, a download chip <project>-<hex>.json with the GOLD key (GREY
-    caption "the console picks a long name" under the window). TRACKER K/4: S04's tree slides in
+ 5  TRACKER README 4. V3 and the cards go; the console's Keys page: Keys › Add Key › Create new
+    key › JSON builds up, Create flashes, a download chip <project>-<hex>.json with the GOLD key
+    (GREY caption "the console picks a long name" under the window). TRACKER README 5: S04's tree
+    slides in
     small at right;
     the chip renames itself mega-pipeline.json; the GOLD key drops out of the browser into
     secrets/, the dashed row turns solid (README chip line 183). Two GOLD tags: "whoever holds
     this file spends your project's money", "never commit it · never paste it".
- 6  TRACKER K/5. README card lines 187–189 + a tiny console Library (illustration). The 8-row
+ 6  TRACKER after 5: Set project. README card lines 187–189 + a tiny console Library (illustration). The 8-row
     laptop terminal (~): `gcloud config set project <your-project-id>` -> gcloud-laptop/01 line 3
     RED; RED rings on < and >, GREY tag "the shell: redirection"; GREY chip "macOS zsh says: …".
     `gcloud config set project your-project-id` -> 02 line 2; YELLOW box + tag "your own ID".
- 7  TRACKER K/6. The terminal clears and grows to 12 rows; the README's six rows of `gcloud
+ 7  TRACKER after 5: Enable APIs. The terminal clears and grows to 12 rows; the README's six rows of `gcloud
     services enable \\` are typed -> 03 lines 7 (folded, RED), 8–10, …; the message underlines
     YELLOW; GREY note "Tutorial 0: gcloud auth login" beside line 10. Chip `gcloud services list
     --enabled` (extra) "with your account: lists the five". The terminal shrinks to the strip; V3
@@ -52,6 +60,12 @@ Beats (script.md "## S05", one voiceover block each):
     ▶ your turn. Fade out to an empty frame.
 
 Deviations from SHOW (and why):
+- TRACKER: script.md's K (common.SECTIONS["K"]: 6 steps, "Create account" first) numbers each
+  step one lower than the README's own list (README 3 "Grant it these roles" read "step 2 of 6");
+  a viewer with the README open finds the step by its number, so this scene's KTracker uses the
+  README's numbers (beats 0-2 sit at README step 1, the Service accounts page the concept is
+  about; step 2 when "Create service account" appears) and leaves the unnumbered "To enable
+  them" commands unnumbered (hollow dots after a gap).
 - Beat 2: while gate 1 refuses, the laptop's key dims too (without the key there is nothing to
   see in /secrets), and the token leaves; both come back before gate 2.
 - Beats 3-4, 9: "V3 shrinks to the right third" keeps the door column (locks, switches, the
@@ -88,6 +102,7 @@ from manim import (
     TAU,
     UP,
     AnimationGroup,
+    Circle,
     Create,
     FadeIn,
     FadeOut,
@@ -109,7 +124,7 @@ from manim import (
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import form_rows
+from explainer.devops import ReadmeTracker, form_rows
 from explainer.scene import VoiceScene
 
 ThreeGatesPiece = ThreeGates          # V3 from common.py (this file's scene class takes the name)
@@ -158,6 +173,11 @@ assert "**Text-to-Speech needs no role**" in L185
 L189 = excerpt(README, 189, 189)
 assert "go to **APIs & Services → Library**, search each name, and click **Enable**. Or do all five at once:" \
     in L189
+assert L189.startswith("**To enable them**")       # not a numbered step
+# the tracker's numbers are the README's: its list numbers these lines 1-5 (README.md:175-183)
+for _n, _ln in ((1, 175), (2, 176), (3, 177), (4, 182), (5, 183)):
+    assert excerpt(README, _ln, _ln).startswith(f"{_n}. "), (_n, _ln)
+assert "Service accounts" in L175
 README_CMDS = excerpt(README, 192, 198).split("\n")
 
 # ------------------------------------------------------------------ captures
@@ -194,6 +214,34 @@ TOP = 2.8               # top of the pictures under the tracker
 K_THIRD = 0.8           # V3's scale as the door column in the right third (beats 3-4, 9)
 K_FULL = 0.9            # V3's scale as the whole piece above the strip / the ponder card (7-9)
 DOOR_DX = 0.32          # the door column moves right: room for the waiting token (widen_gap)
+
+
+K_STEPS = ["Service accounts", "Create account", "Grant roles", "JSON key", "Save key",  # README 1-5
+           "Set project", "Enable APIs"]                                                  # "To enable them"
+K_NUM = 5               # the README numbers the first five (README.md:175-183)
+
+
+class KTracker(ReadmeTracker):
+    """common.tracker("K") with the README's own numbering: "step k of 5" for its numbered list,
+    "after step 5: …" for the two unnumbered commands under "To enable them", whose dots are
+    hollow and sit after a gap. Only the caption and the tail dots differ from ReadmeTracker."""
+
+    def __init__(self):
+        super().__init__(SECTIONS["K"][0], K_STEPS)
+        for d in self.dots[K_NUM:]:
+            d.become(Circle(radius=0.06, stroke_color=S.GREY_DARK, stroke_width=2).set_fill(opacity=0)
+                     .move_to(d).shift(RIGHT * 0.14))
+        self.caption.next_to(self.dots, RIGHT, buff=0.25)
+
+    def _caption(self, k: int):
+        s = f"step {k} of {K_NUM}" if k <= K_NUM else f"after step {K_NUM}"
+        return label(f"{s}: {self.steps[k - 1]}", self.size, self.hi_color).next_to(self.dots, RIGHT, buff=0.25)
+
+
+def k_tracker(step: int = 1):
+    tr = KTracker().set_step(step)
+    tr.key = "K"
+    return place_tracker(tr)
 
 
 def at_left(m, x: float, y: float):
@@ -486,7 +534,7 @@ def door_tick(v3, i: int):
 
 class ThreeGates(VoiceScene):
     def construct(self):
-        tr = tracker("K", 1)
+        tr = k_tracker(1)                  # README step 1: IAM & Admin → Service accounts
 
         v3 = ThreeGatesPiece(show=("container",))
         v3.parts["gate2"].shift(LEFT * 0.1)            # room between "may?" and "switched on?" at 0.8
@@ -555,15 +603,15 @@ class ThreeGates(VoiceScene):
             self.play(FadeIn(con.win), FadeIn(con.ill),
                       *[FadeIn(m) for m in con.crumb if m not in (crumb3, crumb3_sep)], run_time=0.6)
             vo.wait_until("create a service account")
-            self.play(FadeIn(VGroup(crumb3_sep, crumb3), shift=LEFT * 0.15), FadeIn(con.form), FadeIn(con.btn),
-                      run_time=0.6)
+            self.play(tr.goto(2), FadeIn(VGroup(crumb3_sep, crumb3), shift=LEFT * 0.15), FadeIn(con.form),
+                      FadeIn(con.btn), run_time=0.6)
             vo.wait_until("for example")
             self.play(ShowIncreasingSubsets(con.value, rate_func=linear), run_time=0.8)
             self.add(con.value)
             self.play(flash(con.btn, CLOUD, 1.1, 0.6))
             vo.wait_until("Grant it four roles")
             con.value.set_z_index(2)              # it travels above the fading form field
-            self.play(tr.goto(2), FadeIn(chip177, shift=DOWN * 0.1),
+            self.play(tr.goto(3), FadeIn(chip177, shift=DOWN * 0.1),
                       FadeOut(VGroup(con.form, con.btn)),
                       con.value.animate.move_to(con.head.name).set_color(INK),
                       run_time=0.7)
@@ -622,7 +670,7 @@ class ThreeGates(VoiceScene):
         pays = VGroup(pay1, pay2).arrange(DOWN, buff=0.2)
         pays.move_to([0, -2.35, 0])
         with self.voiceover(SAY[5]) as vo:
-            self.play(tr.goto(3), FadeOut(VGroup(card46, err46, st46, card179, ok179, no185, chip177)),
+            self.play(tr.goto(4), FadeOut(VGroup(card46, err46, st46, card179, ok179, no185, chip177)),
                       FadeOut(v3), run_time=0.6)
             self.play(FadeIn(VGroup(kc.win, kc.ill, kc.ctx)), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(m, shift=LEFT * 0.1) for m in kc.path], lag_ratio=0.25),
@@ -633,7 +681,7 @@ class ThreeGates(VoiceScene):
             self.play(FadeIn(kc.dl, shift=UP * 0.15), run_time=0.5)
             self.play(FadeIn(kc.dl_note), flash(kc.dl.name, S.WHITE, 1.08, 0.6), run_time=0.6)
             vo.wait_until("Rename it")
-            self.play(tr.goto(4), tree.animate.shift(LEFT * tree_x), FadeOut(kc.dl_note), run_time=0.8)
+            self.play(tr.goto(5), tree.animate.shift(LEFT * tree_x), FadeOut(kc.dl_note), run_time=0.8)
             self.play(Transform(kc.dl.name, newname), run_time=0.7)
             vo.wait_until("in the secrets folder")
             solid = file_row("mega-pipeline.json", INK, LAPTOP)
@@ -661,7 +709,7 @@ class ThreeGates(VoiceScene):
         at_right(zsh, X_R, 0)
         zsh.shift(UP * (t.box.get_top()[1] + 0.35 + zsh.height / 2 - zsh.get_center()[1]))
         with self.voiceover(SAY[6]) as vo:
-            self.play(tr.goto(5), FadeOut(VGroup(kc, kc.dl, tree.header, tree.conns, tree.ws, tree.repo, tree.sec, solid,
+            self.play(tr.goto(6), FadeOut(VGroup(kc, kc.dl, tree.header, tree.conns, tree.ws, tree.repo, tree.sec, solid,
                                                   chip183, pays)),
                       run_time=0.6)
             self.play(FadeIn(card189, shift=DOWN * 0.1), FadeIn(lib), run_time=0.7)
@@ -700,7 +748,7 @@ class ThreeGates(VoiceScene):
         list_grp.shift(UP * (Y_BAND + 0.04 - listc.chip.get_center()[1]))
         with self.voiceover(SAY[7]) as vo:
             self.wait(0.6)                         # "your own ID" stays a moment into this block
-            self.play(tr.goto(6), FadeOut(zsh), FadeOut(VGroup(rings, pbox, own)), run_time=0.4)
+            self.play(tr.goto(7), FadeOut(zsh), FadeOut(VGroup(rings, pbox, own)), run_time=0.4)
             t.clear(self, run_time=0.3)
             resize(self, t, 12, run_time=0.6)
             type_rows(self, t, ENABLE_ROWS, type_time=2.3)

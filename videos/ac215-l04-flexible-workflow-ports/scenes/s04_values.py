@@ -83,8 +83,8 @@ Deviations from SHOW (and why):
   watcher: the viewer must create the bucket and upload a clip, and bucket names are global). The
   sentence asked of script.md, "Bucket names are global: pick a unique one. Pause and create yours.",
   is anchored (GLOBAL7, PAUSE7) once SAY[7] holds it; until then the card follows the picture and
-  holds 2 s after the narration (1 s with the sentence). The gcloud pair is named, not typed (the study guide has both
-  commands, extra, not captured).
+  holds 2 s after the narration (1 s with the sentence). The gcloud pair is named, not typed (the
+  study guide has both commands, extra, not captured).
 """
 
 from common import *

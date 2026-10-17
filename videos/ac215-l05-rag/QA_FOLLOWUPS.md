@@ -25,3 +25,8 @@ Each item was found on a work-in-progress checkpoint; check it in the CURRENT co
   highlight now slices the row itself (glyphs 23–29 = "line372", asserted). The scene's build was cut off by
   a usage limit: on resume its check stopped earlier, at the `ill`/`src` assert (line 519). Check the
   beat-9 frame once the scene builds.
+- S14 (s14_semantic.py ~587–602, Bugbot thread "Strip shrink drops container frame color", found while the scene
+  was still being built): beat 7 shrinks the TEAL container terminal by Transform-ing `t.box` into a dummy
+  `Terminal` that keeps the default GREY laptop chrome, so the strip turns GREY while its title still says
+  container. Use the house `resize()` helper (it copies the live stroke onto the dummy) or copy the stroke
+  before the Transform; check the frame after beat 7.
