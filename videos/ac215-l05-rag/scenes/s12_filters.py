@@ -83,6 +83,7 @@ from common import (
     NARRATION,
     P_CTR2,
     STANDIN_ID,
+    STRIP_TOP,
     TURN,
     Counter,
     DotCloud,
@@ -178,8 +179,12 @@ assert excerpt("cli.py", 402, 402).startswith("def get(") and "limit=10" in exce
 
 # ------------------------------------------------------------------ layout
 CC = np.array([0.0, 1.25, 0])           # the dot cloud's centre (10.0 x 2.6: y -0.05..2.55)
-ROW_Y = -0.55                           # the filter row under the cloud
+ROW_Y = -0.5                            # the filter row under the cloud
 BAND_Y = 3.22                           # tags in the band right of the tracker
+CARD_Y = 2.36                           # the check card (left) and the staff tag (right) above an 11-row terminal
+LABEL_Y = -0.25                         # the survivors' label, under the cloud
+CARDS_Y = 2.33                          # beat 7: the ten record cards, above a 4-row strip
+FIX_Y = 0.22                            # beat 7: the fix card (its header included)
 
 
 def pink_bar(panel, n: int):
@@ -269,6 +274,7 @@ class FiltersFirst(VoiceScene):
 
         # ========================================================== 1 · the cloud; ponder
         dc = DotCloud(width=10.0, height=2.6, show=("dots",)).shift(CC)
+        dc.parts["tolminc_label"].shift(UP * 0.12)      # clear of the cloud's top edge
         ill = our_illustration_tag().move_to([6.45 - our_illustration_tag().width / 2, 2.5, 0])
         cap = VGroup(note("char-split collection"), note("1 dot ≈ 8 chunks")).arrange(DOWN, aligned_edge=LEFT,
                                                                                        buff=0.1)
@@ -297,8 +303,13 @@ class FiltersFirst(VoiceScene):
         f_book.move_to([-6.3 + f_book.width / 2, ROW_Y, 0])
         f_ital.next_to(f_book, RIGHT, buff=0.35)
         cnt = Counter("chunks", COUNTS["char-split"], size=26)
+        cnt.num.scale(1.38)                     # the TeX digits as tall as the 26 pt label's
+        cnt.num.next_to(cnt.label, RIGHT, buff=0.15).align_to(cnt.label, DOWN)
         cnt.move_to([6.3 - cnt.width / 2, ROW_Y, 0])
         t = term(P_CTR2, rows=3, container=True)
+        stf = staff_tag()
+        stf.move_to([6.3 - stf.width / 2, STRIP_TOP + 0.06 + stf.height / 2, 0])     # on the strip's top right
+        stf_hi = [6.3 - stf.width / 2, CARD_Y, 0]                                      # above an 11-row terminal
         tc = dc.standin_dot.get_center()
         tz = backed(sans("mentioning Tolminc: 0", 24, TURN)).move_to(tc + DOWN * 0.62)
 
@@ -317,7 +328,7 @@ class FiltersFirst(VoiceScene):
             vo.wait_until("How many mention Tolminc")
             self.play(FadeOut(ck), FadeIn(t, shift=UP * 0.2), run_time=0.5)
             out = t.print(self, CNT.at((13, 15)), run_time=0.5)
-            pin(self, out[2], beside(staff_tag(), t, out[2], buff=0.25), run_time=0.3)
+            self.play(FadeIn(stf, shift=DOWN * 0.1), run_time=0.3)
             vo.wait_until("None")
             z14 = col_box(out[1], 0, len(out[1].text), TURN)
             pin(self, out[1], z14, anim=Create(z14), run_time=0.4)
@@ -326,13 +337,14 @@ class FiltersFirst(VoiceScene):
 
         # ========================================================== 3 · a stand-in query, no filter
         ck2 = one_line_card("an extra Python check · query with a stored vector")
-        ck2.move_to([-6.3 + ck2.width / 2, 2.36, 0])
+        ck2.move_to([-6.3 + ck2.width / 2, CARD_Y, 0])
         sti = standin_tag()
         sti.move_to([6.5 - sti.width / 2, BAND_Y, 0])
 
         with self.voiceover(SAY[3]) as vo:
+            vo.wait_until("The real question")          # "Now a search.": the count stays a moment
             self.play(FadeOut(VGroup(dc, ill, cap, f_book, f_ital, cnt, tz)), run_time=0.5)
-            resize(self, t, 11, keep=0, extra=[FadeIn(ck2, shift=DOWN * 0.1)])
+            resize(self, t, 11, keep=0, extra=[FadeIn(ck2, shift=DOWN * 0.1), stf.animate.move_to(stf_hi)])
             vo.wait_until("so we use a stand-in")
             self.play(ReplacementTransform(qcard, sti), run_time=0.7)
             vo.wait_until("the stored vector")
@@ -340,7 +352,7 @@ class FiltersFirst(VoiceScene):
             self.play(substring(o16[1], STANDIN_ID).animate.set_color(LOOKUP), run_time=0.4)
             vo.wait_until("Without filters")
             o18 = t.print(self, Q.at((18, 28)), run_time=0.7)
-            pin(self, o18[0], beside(staff_tag(), t, o18[0], buff=0.6), run_time=0.3)
+            self.play(Indicate(o18[0], color=TURN, scale_factor=1.06), run_time=0.6)
             vo.wait_until("the chunk itself")
             z0 = col_box(o18[1], 0, 6, S.GREY)
             pin(self, o18[1], z0, anim=Create(z0), run_time=0.3)
@@ -357,12 +369,13 @@ class FiltersFirst(VoiceScene):
         dc.level = "all"
         near0 = dc.nearest(10, "all")
         beam = dc.beam(near0)
-        surv_lab = backed(note(BOOK, INK))
+        far = dc.nearest(10, "italian")
+        fv = VGroup(*far)
+        surv_lab = backed(note(f"all 10: {BOOK}", INK)).move_to([fv.get_center()[0], LABEL_Y, 0])
 
         with self.voiceover(SAY[4]) as vo:
             t.clear(self)
             o29 = t.print(self, Q.at((29, 39)), run_time=0.7)
-            pin(self, o29[1], beside(staff_tag(), t, o29[1], buff=0.6), run_time=0.3)
             vo.wait_until("all 10 results")
             bk = rows_box(list(o29[1:]), 8, 8 + len(BOOK), TURN)
             self.play(Create(bk), run_time=0.6)
@@ -374,18 +387,15 @@ class FiltersFirst(VoiceScene):
             pin(self, o29[10], z3, anim=Create(z3), run_time=0.35)
             vo.wait_until("The filters act first")
             self.play(FadeOut(bk), FadeOut(ck2), run_time=0.3)
-            resize(self, t, 3, run_time=0.6)
+            stf_lo = [6.3 - stf.width / 2, STRIP_TOP + 0.06 + stf.height / 2, 0]
+            resize(self, t, 3, run_time=0.6, extra=[stf.animate.move_to(stf_lo)])
             self.play(FadeIn(dc), FadeIn(ill), FadeIn(cap[0]), run_time=0.5)
             self.play(Create(beam), run_time=0.5)
-            self.play(*mask_to(dc, "italian"), FadeIn(f_book, shift=RIGHT * 0.1),
-                      FadeIn(f_ital, shift=RIGHT * 0.1), FadeIn(cap[1]), run_time=0.8)
-            far = dc.nearest(10, "italian")
+            self.play(*mask_to(dc, "italian"), FadeIn(cap[1]), run_time=0.8)
             beam2 = dc.beam(far)
             self.play(Transform(beam, beam2), run_time=0.9)
             vo.wait_until("with whatever survives")
-            fv = VGroup(*far)
-            surv_lab.move_to([fv.get_center()[0], 2.78, 0])
-            self.play(FadeIn(surv_lab, shift=DOWN * 0.1), Indicate(fv, color=DATA, scale_factor=1.3),
+            self.play(FadeIn(surv_lab, shift=UP * 0.1), Indicate(fv, color=DATA, scale_factor=1.3),
                       run_time=0.6)
             vo.wait_until("however far")
             self.play(ShowPassingFlash(beam2.copy().set_stroke(TURN, 5), time_width=0.6), run_time=0.9)
@@ -395,26 +405,29 @@ class FiltersFirst(VoiceScene):
         st = StageStrip().shift(UP * 1.75)
         qbox = st.boxes[2]
         filt = st.parts["filter"]
+        filt.set_z_index(2)                     # the cards pass behind it
         story = VGroup(*[chunk_card(0.5, 0.32) for _ in range(10)]).arrange_in_grid(2, 5, buff=0.1)
         story.move_to([qbox.get_center()[0], filt.get_center()[1], 0])
         s_lab = note("10 story chunks, ranked").next_to(story, DOWN, buff=0.15)
-        through = story.copy().move_to([filt.get_center()[0], -0.3, 0])
+        through = story.copy().move_to([filt.get_center()[0], -0.35, 0])
         strikes = VGroup(*[cross_mark(0.26, ERR, 4).move_to(c) for c in through])
         empty = mono("[]", 26, INK)
         nothing = sans("nothing left", CAPTION + 2, ERR)
         none_g = VGroup(empty, nothing).arrange(RIGHT, buff=0.3).move_to([filt.get_center()[0], -1.3, 0])
         res = VGroup(*[chunk_card(0.5, 0.32) for _ in range(10)]).arrange_in_grid(2, 5, buff=0.1)
-        res.move_to([qbox.get_center()[0], -0.15, 0])
-        caption = note("Chroma: filter, then rank · 10 results, wrong cheese").move_to([0, -1.3, 0])
+        res_x = (st.boxes[2].get_center()[0] + st.boxes[3].get_center()[0]) / 2
+        res.move_to([res_x, filt.get_center()[1], 0])
+        caption = note("Chroma: filter, then rank · 10 results, wrong cheese").move_to([0, -0.55, 0])
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(dc, beam, ill, cap, f_book, f_ital, surv_lab, t)), FadeOut(sti),
+            self.play(FadeOut(VGroup(dc, beam, ill, cap, surv_lab, t, stf)), FadeOut(sti),
                       FadeIn(lr), run_time=0.6)
             self.play(FadeIn(st, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("here, that would drop")
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.25) for c in story], lag_ratio=0.08),
                       FadeIn(s_lab), run_time=0.9)
-            self.play(FadeOut(s_lab), story.animate.move_to(through), run_time=0.9)
+            self.play(FadeOut(s_lab), story.animate.scale(0.4).move_to(filt), run_time=0.7)
+            self.play(story.animate.scale(2.5).move_to(through), run_time=0.6)
             self.play(LaggedStart(*[Create(x) for x in strikes], lag_ratio=0.08),
                       story.animate.set_fill(S.GREY, 0.15).set_stroke(S.GREY, opacity=0.5), run_time=0.9)
             vo.wait_until("and return nothing")
@@ -423,7 +436,7 @@ class FiltersFirst(VoiceScene):
             self.play(FadeOut(VGroup(story, strikes, none_g)), run_time=0.4)
             self.play(st.slide_filter(2, run_time=1.1))
             vo.wait_until("so you get 10 results")
-            self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.25) for c in res], lag_ratio=0.08), run_time=0.8)
+            self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.25) for c in res], lag_ratio=0.08), run_time=0.8)
             vo.wait_until("about the wrong cheese")
             self.play(FadeIn(caption, shift=UP * 0.1), run_time=0.5)
 
@@ -465,39 +478,42 @@ class FiltersFirst(VoiceScene):
         rm_note = note("not in the README · cli.py · lines 402–418")
         nd = note("no distances: no ranking")
 
-        cyl = cylinder(2.0, 3.0).move_to([-4.85, 0.82, 0])
+        cyl = cylinder(1.25, 1.45).move_to([-5.6, CARDS_Y - 0.55, 0])
         cards = VGroup()
         for k in range(10):
-            fr = RoundedRectangle(width=1.45, height=0.22, corner_radius=0.05, stroke_color=DATA,
-                                  stroke_width=2).set_fill(S.BG, 0.9)
+            fr = RoundedRectangle(width=0.82, height=0.46, corner_radius=0.07, stroke_color=DATA,
+                                  stroke_width=2.5).set_fill(S.BG, 0.9)
             tx = mono(f"-{k}", CAPTION, INK).move_to(fr)
             cards.add(VGroup(fr, tx))
-        cards.arrange(DOWN, buff=0.035).move_to(cyl.body).shift(DOWN * 0.08)
-        groups = [(range(0, 3), ERR, "-0 to -2 · Gutenberg header"),
-                  (range(3, 6), S.GREY, "-3 to -5 · title page, contents"),
-                  (range(6, 10), DATA, "-6 to -9 · chapter one begins")]
+        cards.arrange(RIGHT, buff=0.12)
+        cards.move_to([cyl.get_right()[0] + 0.3 + cards.width / 2, CARDS_Y, 0])
+        groups = [(range(0, 3), ERR, "-0 to -2", "Gutenberg header"),
+                  (range(3, 6), S.GREY, "-3 to -5", "title page, contents"),
+                  (range(6, 10), DATA, "-6 to -9", "chapter one begins")]
         brackets, labels = VGroup(), VGroup()
-        x_br = cyl.get_right()[0] + 0.2
-        for ks, col, text in groups:
+        y_br = cards.get_bottom()[1] - 0.16
+        for ks, col, ids_, words in groups:
             g = VGroup(*[cards[k] for k in ks])
-            top, bot = g.get_top()[1], g.get_bottom()[1]
-            br = VGroup(Line([x_br, top, 0], [x_br, bot, 0], color=col, stroke_width=3),
-                        Line([x_br - 0.1, top, 0], [x_br, top, 0], color=col, stroke_width=3),
-                        Line([x_br - 0.1, bot, 0], [x_br, bot, 0], color=col, stroke_width=3))
-            lb = sans(text, CAPTION, col).next_to(br, RIGHT, buff=0.2)
+            x0, x1 = g.get_left()[0], g.get_right()[0]
+            br = VGroup(Line([x0, y_br, 0], [x1, y_br, 0], color=col, stroke_width=3),
+                        Line([x0, y_br, 0], [x0, y_br + 0.1, 0], color=col, stroke_width=3),
+                        Line([x1, y_br, 0], [x1, y_br + 0.1, 0], color=col, stroke_width=3))
+            lb = VGroup(mono(ids_, CAPTION, col), sans(words, CAPTION, col)).arrange(DOWN, buff=0.08)
+            lb.next_to(br, DOWN, buff=0.14)
             brackets.add(br)
             labels.add(lb)
         fix = card_rows(["strip outside the START/END markers", "then chunk, embed, load again"],
                         header="the fix", frame_color=DATA)
-        fix.move_to([6.35 - fix.width / 2, 0.5, 0])
+        fix.move_to([cards.get_center()[0], FIX_Y, 0])
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(p2, hbox, err, rm, unc, cont_g)), run_time=0.5)
             self.play(FadeIn(tg, shift=UP * 0.2), run_time=0.5)
             g = type_cmd(self, tg, GET.cmd, type_time=1.0)
+            assert hasattr(g, "rows") and len(g.rows) == 2       # the command folds under the prompt
             tagrow = VGroup(extra_tag(), rm_note).arrange(RIGHT, buff=0.3)
-            beside(tagrow, tg, g, buff=0.5)
-            pin(self, g, tagrow, run_time=0.4)
+            beside(tagrow, tg, g.rows[0], buff=0.5)
+            pin(self, g.rows[0], tagrow, run_time=0.4)
             vo.wait_until("uses the same book filter")
             out7 = tg.print(self, ARGS_ROWS + [GET.line(3)], run_time=0.5)
             pin(self, out7[3], beside(staff_tag(), tg, out7[3], buff=0.6), run_time=0.3)
@@ -513,17 +529,19 @@ class FiltersFirst(VoiceScene):
                 row = next(r for r in ids if sid in r.text)
                 flying.add(substring(row, sid).copy())
             self.play(*[ReplacementTransform(flying[k], cards[k]) for k in range(10)], run_time=1.0)
-            self.play(Create(brackets[0]), FadeIn(labels[0], shift=RIGHT * 0.1),
+            self.play(Create(brackets[0]), FadeIn(labels[0], shift=DOWN * 0.1),
                       *[cards[k][0].animate.set_stroke(ERR) for k in range(3)], run_time=0.5)
             vo.wait_until("then the title page")
-            self.play(Create(brackets[1]), FadeIn(labels[1], shift=RIGHT * 0.1),
+            self.play(Create(brackets[1]), FadeIn(labels[1], shift=DOWN * 0.1),
                       *[cards[k][0].animate.set_stroke(S.GREY) for k in range(3, 6)], run_time=0.5)
-            self.play(Create(brackets[2]), FadeIn(labels[2], shift=RIGHT * 0.1), run_time=0.5)
+            self.play(Create(brackets[2]), FadeIn(labels[2], shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("That header")
             self.play(*[Indicate(cards[k], color=ERR, scale_factor=1.15) for k in range(3)],
                       Indicate(labels[0], color=ERR, scale_factor=1.06), run_time=0.9)
+            vo.wait_until("are indexed like any text")
+            self.play(Indicate(cyl, color=DATA, scale_factor=1.08), run_time=0.8)
             vo.wait_until("strip them before chunking")
-            self.play(FadeIn(fix, shift=LEFT * 0.15), run_time=0.6)
+            self.play(FadeIn(fix, shift=UP * 0.15), run_time=0.6)
 
         self.play(FadeOut(VGroup(tr, tg, cyl, cards, brackets, labels, fix)), run_time=0.8)
         self.wait(0.3)

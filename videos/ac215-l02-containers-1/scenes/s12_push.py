@@ -18,8 +18,9 @@ Beats (script.md "## S12", one voiceover block each):
     "We have no account": GREY note "no Docker Hub account in our recording · not run here".
     GREY `Lecture 2 · slides 67–69` (lecture_ref, standard top right, bottom at 3.13) fades in with the
     card ("Next, log in") and stays through the push (script.md: login, tag, the name, push); it fades
-    in beat 6 on "Without an account", as the push picture parks in that corner (the real denial is
-    tutorial-only, SLIDES.md).
+    out in beat 6 on "Without an account", as the push picture parks in that corner (the real denial
+    is tutorial-only, SLIDES.md), fades in again with "if you see this:" once the picture is back (log
+    in, a token, your username first: slides 67–69) and fades out as beat 7's stand-in shelf comes in.
  2  TRACKER B2 · extra. The card moves to the top; an 8-row laptop terminal fades in with
     `stand_in_tag()` on its frame and its prompt waiting (the tag's "watch only" line pulses on "just
     watch those"). "Logging in to
@@ -495,8 +496,9 @@ class TagAndPush(VoiceScene):
         yours2 = label("yours", 22, TURN).move_to([bx_tok.get_x(), y_low, 0])
         not_run = label("no Docker Hub account in our recording · not run here", 22, S.GREY)
         not_run.move_to([0, y_low - 0.75, 0])
-        # top right, bottom at 3.13: from "Next, log in" (with the card) through the push (beat 6); every card,
-        # terminal and the shelf's title stay under y 2.9 meanwhile, the tracker ends left of x 0.1
+        # top right, bottom at 3.13: from "Next, log in" (with the card) through the push (beat 6), away while
+        # the picture is parked in its corner (the denial); every card, terminal and the shelf's title stay
+        # under y 2.9 meanwhile, the tracker ends left of x 0.1
         lref = lecture_ref(2, "67–69")
 
         with self.voiceover(SAY[1]) as vo:
@@ -776,7 +778,7 @@ class TagAndPush(VoiceScene):
             self.remove(ghost, x_small)
             self.add(st, path, hub, x_big, *parcels)
             self.play(FadeIn(hub.title), FadeIn(id_lbl), FadeIn(fix[0]), FadeIn(fix[1], shift=UP * 0.1),
-                      FadeIn(ok_note, shift=UP * 0.1), run_time=0.4)
+                      FadeIn(ok_note, shift=UP * 0.1), FadeIn(lref), run_time=0.4)   # the corner is free again
             self.add(hub)
             back = [Succession(go(p, path.get_start(), 0.5), go(p, s.box.get_center(), 0.3, fade=True))
                     for p, s in zip(reversed(parcels), reversed(list(st.slabs)))]
@@ -796,7 +798,7 @@ class TagAndPush(VoiceScene):
             # tag comes with it); the two commands type quickly; "the push goes through": the slabs travel while
             # the output prints, and the digest underlines as it is said
             self.play(track(tr, 4, extra=True), FadeOut(fix), FadeOut(ok_note), FadeOut(VGroup(hub, x_big)),
-                      FadeIn(sin, shift=DOWN * 0.1), FadeOut(t6.lines), run_time=0.5)
+                      FadeIn(sin, shift=DOWN * 0.1), FadeOut(t6.lines), FadeOut(lref), run_time=0.5)
             for m in list(t6.lines):
                 t6.lines.remove(m)
             on_frame(t6, sit7, rows=STAND_ROWS)

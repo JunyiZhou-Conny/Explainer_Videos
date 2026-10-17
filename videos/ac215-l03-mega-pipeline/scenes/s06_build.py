@@ -58,12 +58,15 @@ Beats (script.md "## S06", one voiceover block each):
  7  The panel fades. A GREY chip "edit: group_name in cli.py" hovers right of the stack; the five
     badges pulse on "which of the five". After the SAY: PONDER (8 s) at the bottom, "You change only group_name in cli.py / and build again. /
     Which of the five build steps run again?".
- 8  The card goes while V2 settles nearer the centre (the bottom band is free);
-    on "Build steps 4 and 5" badges 4, 5 turn YELLOW. On "The copied folder changed" the chip
-    drops into the COPY slab, which flashes YELLOW; on "so the copy runs again" it dissolves and
-    re-forms, on "and so does every step" the uv sync hairline flashes YELLOW and does the same;
-    badges 1-3 turn GREEN and the apt and WORKDIR slabs get GREEN "CACHED" stamps (the base slab
-    stays as is). GREY caption "part 2: for real" under the floor. Fade out: empty frame.
+ 8  The card goes while V2 settles nearer the centre (the bottom band is free) and the GREY
+    lecture tag "Lecture 3 · slides 33" (lecture_ref: cache order, the ponder's answer) fades in
+    top right, where it stays to the final fade; on "Build steps 4 and 5" badges 4, 5 turn
+    YELLOW. On "The copied folder changed" the chip drops into the COPY slab, which flashes
+    YELLOW; on "so the copy runs again" it dissolves and re-forms, on "and so does every step" the
+    uv sync hairline flashes YELLOW and does the same. On "Build steps 2 and 3" badges 2, 3 turn
+    GREEN and the apt and WORKDIR slabs get GREEN "CACHED" stamps; on "and build step 1 is the base
+    image" badge 1 turns GREEN (the base slab stays as is). GREY caption "part 2: for real" under
+    the floor. Fade out: empty frame.
 
 Timing: `at()` = vo.wait_until plus a shift measured from the clip's pauses (see its docstring).
 """
@@ -73,8 +76,8 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import (cell_width, code_span, file_glyph, folder_glyph, label, line_pitch, mono,
-                              step_badge, substring, tag)
+from explainer.devops import (cell_width, code_span, file_glyph, folder_glyph, label, lecture_ref,
+                              line_pitch, mono, step_badge, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, LAPTOP, LOOKUP, NARRATION, P_A, SYSTEM, TERMINAL, TOOL, TURN, VENV,
@@ -776,10 +779,11 @@ class BuildImage(VoiceScene):
 
         # ========================================================== 8 · the answer
         cp, sync = st.slabs["copy"], st.slabs["sync"]
+        lref = lecture_ref(3, "33")          # top right (empty in this beat) to the final fade
         with self.voiceover(SAY[8]) as vo:
             # the bottom band is free: V2 settles nearer the centre while the card goes (the chip
             # stays, now above the stack's right end); then the answer, badges 4 and 5, turns YELLOW
-            self.play(FadeOut(card), st.animate.shift(DROP), run_time=0.6)
+            self.play(FadeOut(card), st.animate.shift(DROP), FadeIn(lref), run_time=0.6)
             self.play(recolor(badges[3], TURN), recolor(badges[4], TURN), run_time=0.4)
             self.play(pulse(badges[3], TURN), pulse(badges[4], TURN), run_time=0.6)
             saved_cp = VGroup(cp.box.copy(), st.copy_files.copy())
@@ -810,9 +814,11 @@ class BuildImage(VoiceScene):
             place(part2, cx=st.floor.get_center()[0], top=st.floor.get_center()[1] - 0.4)
 
             at(self, vo, "Build steps 2 and 3")
-            self.play(*[recolor(b, VENV) for b in badges[:3]], run_time=0.6)
+            self.play(*[recolor(b, VENV) for b in badges[1:3]], run_time=0.6)
             self.play(LaggedStart(*[AnimationGroup(Create(ln), FadeIn(s_, scale=1.4))
                                     for ln, s_ in zip(stamp_leads, stamps)], lag_ratio=0.4), run_time=0.9)
+            at(self, vo, "and build step 1 is the base image")
+            self.play(recolor(badges[0], VENV), run_time=0.5)
             at(self, vo, "We'll see it")
             self.play(FadeIn(part2, shift=UP * 0.1), run_time=0.6)
         self.wait(0.6)

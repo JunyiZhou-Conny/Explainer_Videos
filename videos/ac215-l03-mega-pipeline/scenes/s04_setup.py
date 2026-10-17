@@ -138,8 +138,8 @@ AXIS_Y = 0.3                       # V7's axis (beats 9-10), above the 3-row str
 # It must never land after that cue; landing up to ~3 s early (in beat 6's `uv --version`) is fine.
 # 2026-10-17, after the S01/S03 re-voices: explainer.check ends S01 79.7, S02 112.9, S03 86.9, so S04
 # starts at 279.5; beat 7 starts at 68.2 in S04's subs.json, so the cue is at 347.7 (5:47.7) and 5:47
-# lands 0.7 s early. The 30 fps previews (S01 79.83, S02 112.80, S03 about 87.0, beat 7 at 68.23)
-# put the cue at about 347.9, so frame rounding does not push it before 5:47.
+# lands 0.7 s early. A 30 fps dry run (S01 79.83, S02 112.80, S03 86.97; beat 7 at 68.23 in the 720p30
+# subs.json) puts the cue at 347.83, so frame rounding does not push it before 5:47.
 SKIP_TO = "5:47"
 
 
