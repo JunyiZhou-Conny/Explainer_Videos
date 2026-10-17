@@ -45,7 +45,8 @@ Beats (script.md "## S14", one voiceover block each):
     `README.md · lines 103–106` + `erratum`: "we’ve already added a .gitignore entry / so the file
     won’t be pushed accidentally" -> caption "about Git only · says nothing about the image" (the
     book pulses, the box flashes RED).
- 4  The fix. `cat .dockerignore` (tag "extra · recommended") -> 23-g1 line 2. The .dockerignore sieve
+ 4  The fix; the GREY lecture tag "Lecture 3 · slides 34, 43" (lecture_ref, top right) from "The fix"
+    to beat 6's first play. `cat .dockerignore` (tag "extra · recommended") -> 23-g1 line 2. The .dockerignore sieve
     lowers over the box; a GREY note bottom right "create it in VS Code: a file named .dockerignore /
     one line secrets/ · in all five component folders"; `secrets/` pulses; ▶ your turn, "in all
     five component folders" underlines YELLOW. At the end the box parks and the terminal grows to 7
@@ -84,7 +85,7 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import box, cell_width, check_mark, label, line_bar, mono, substring, tag
+from explainer.devops import box, cell_width, check_mark, label, lecture_ref, line_bar, mono, substring, tag
 from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, KEY, LAPTOP, LOOKUP, NARRATION, P_A, SYSTEM, TURN, VENV, Window,
@@ -696,8 +697,9 @@ class KeepTheKeyOut(VoiceScene):
         note.arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         place(note, right=EDGE, top=PANEL_TOP - 0.2)
         five = note[1][-1]
+        lref = lecture_ref(3, "34, 43")      # top right, from "The fix" through the rebuild (to beat 6's first play)
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(rc, git_only)), run_time=0.4)
+            self.play(FadeOut(VGroup(rc, git_only)), FadeIn(lref), run_time=0.4)
             c_cat = type_in(self, t, CAT, 0.5)
             x_cat = xtag(t, c_cat, "extra · recommended")
             pin(self, c_cat, x_cat, run_time=0.3)
@@ -779,7 +781,7 @@ class KeepTheKeyOut(VoiceScene):
         post.shift(np.array([app_lbl.get_center()[0], app_lbl.get_top()[1] + 0.05, 0]) - post.root())
         assert post.get_top()[1] < TRACK_BOTTOM - 0.05 and post.get_right()[0] < EDGE, (post.get_top(), post.get_right())
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(t), FadeOut(v6), FadeOut(chk), run_time=0.5)
+            self.play(FadeOut(t), FadeOut(v6), FadeOut(chk), FadeOut(lref), run_time=0.5)
             self.play(FadeIn(win), FadeIn(run_c, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("because the mount brings")
             win.mount(self, run_time=1.5)
@@ -820,6 +822,7 @@ class KeepTheKeyOut(VoiceScene):
             vo.wait_until("create an access token there")
             self.play(FadeIn(hub_card.hl), run_time=0.4)
             vo.wait_until("then log in")
+            tr.caption.become(tr._caption(1)).set_opacity(0)    # step 1's caption fades in where it sits
             self.play(tr.goto(1), Transform(chips[0], full[0]), run_time=0.5)
             vo.wait_until("tag and push")
             self.play(tr.goto(2), Transform(chips[1], full[1]), run_time=0.5)

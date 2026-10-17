@@ -2,19 +2,22 @@
 
 Beats (script.md "## S15", one voiceover block each):
  0  S14 ended on an empty frame: TRACKER C4 fades in with the VM terminal (12 rows, `ssh · ac215-l02`) and
-    moves to C5. "sudo docker run": it types `sudo docker run --rm -ti dlops/simple-translate` (README.md
+    moves to C5, with GREY `Lecture 2 · slides 70–71` (lecture_ref, standard top right; "Then the deploy"
+    to the end of the beat: pull and run, the pull from a registry; above the shelf's title, not on it).
+    "sudo docker run": it types `sudo docker run --rm -ti dlops/simple-translate` (README.md
     line 215; folds); "dlops slash simple-translate": the name turns TEAL and pulses. "Pause and run it": ▶
     your turn. "The image isn't on this VM yet": vm-debian12/06: 2-4, …, 10-12 (hash12), `Unable to find
     image` underlined YELLOW. "so Docker pulls it": the terminal shrinks to the strip; V6 above it: the
     BLUE Docker Hub shelf (top right, `dlops/simple-translate` on its board, seven small slabs) and the
-    BLUE VM `ac215-l02` (left: its Debian kernel bar, PURPLE `dockerd`); a PINK route curves down from the
-    shelf to the VM. "from Docker Hub" (through "seven layers"): seven copies of the shelf's slabs ride the
-    route and stack up on `dockerd`, bottom-up (the shelf keeps its copy). "then starts a container": the
-    TEAL glass slab (writable layer, main process) lands on top and the strip shows the container's own
-    prompt `root@c7c280390994:/#` (line 13).
- 1  TRACKER C6. The picture goes; the strip grows back to 12 rows; at line 13's prompt it types
-    `python cli.py` (README.md line 218) -> vm-debian12/06: 16-20, 24 (wrap), 26-27. "and its
-    defaults": `text='I love cheese'` underlined YELLOW; "comes back in Italian": `Output: Adoro il
+    BLUE VM `ac215-l02` (left: S14's two bars, "Linux kernel" with "user space · Debian" on it, PURPLE
+    `dockerd` on user space); a PINK route curves down from the shelf to the VM. "from Docker Hub"
+    (through "seven layers"): seven copies of the shelf's slabs ride the route and stack up on `dockerd`,
+    bottom-up (the shelf keeps its copy). "then starts a container": the TEAL glass slab (writable layer,
+    main process) lands on top and the strip shows the container's own prompt `root@c7c280390994:/#`
+    (line 13).
+ 1  TRACKER C6. The picture goes, and the lecture tag with it; the strip grows back to 12 rows; at line
+    13's prompt it types `python cli.py` (README.md line 218) -> vm-debian12/06: 16-20, 24 (wrap), 26-27.
+    "and its defaults": `text='I love cheese'` underlined YELLOW; "comes back in Italian": `Output: Adoro il
     formaggio` turns GREEN and pulses. "Pause and run it": ▶ your turn. "No clone, no pip, no uv":
     top right, above the terminal, three dashed GREY chips `git clone` `pip` `uv` appear as named;
     "just Docker and one image": a PURPLE `docker` chip + a small TEAL image glyph.
@@ -77,7 +80,7 @@ import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
-from explainer.devops import MONO, OUTPUT, TERM_BG, code_span, line_pitch
+from explainer.devops import MONO, OUTPUT, TERM_BG, code_span, lecture_ref, line_pitch
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, DEPLOY, ERR, EXIT, IMAGE, INK, LAPTOP, LAPTOP_DIR, NARRATION, P_VM, REPO_ENTRIES,
@@ -167,6 +170,7 @@ LOGIN = "sudo docker login -u <USER NAME>"
 ROWS = 12                                  # the full VM terminal (top edge at y 2.19)
 VM_C, VM_W, VM_H = np.array([-3.6, 0.72, 0]), 5.2, 4.0      # beat 0: the VM, above the strip
 STACK_X, STACK_W = -3.0, 2.6               # the image stack inside the VM
+BAR_H, VM_K = 0.36, 0.8                    # the VM's two bars; its stack at 0.8 x H_STACK (room for the bars)
 SHELF_C, SHELF_W, SHELF_H = np.array([4.4, 1.45, 0]), 3.6, 1.5
 H_STACK = [0.1] * 4 + [0.3, 0.3, 0.5]      # V6's seven slabs (as S12): four base, apt/pip, COPY, uv sync
 FILLS = [SYSTEM] * 5 + [LAPTOP, VENV]
@@ -193,19 +197,22 @@ def text_span(t: Text, s: str, sub: str) -> VGroup:
 
 
 def vm_box() -> VGroup:
-    """The BLUE VM (S14's picture, taller): frame, title top-left, the Debian kernel bar, PURPLE dockerd
-    under the image's spot. .frame .title .kernel .dockerd .floor_y"""
+    """The BLUE VM (S14's picture, taller): frame, title top-left, S14's two bars (slide 12's stack: the
+    Linux kernel, user space · Debian on it), PURPLE dockerd on user space under the image's spot.
+    .frame .title .kernel .user .dockerd .floor_y"""
     f = box(VM_W, VM_H, CLOUD, fill_opacity=0.06).move_to(VM_C)
     t = label(f"VM · {VM_HOST}", 22, CLOUD)
     t.move_to(f.get_corner(UL) + np.array([0.25 + t.width / 2, -0.3, 0]))
-    kr = RoundedRectangle(width=VM_W - 0.4, height=0.4, corner_radius=0.06, stroke_color=S.GREY,
+    kr = RoundedRectangle(width=VM_W - 0.4, height=BAR_H, corner_radius=0.06, stroke_color=S.GREY,
                           stroke_width=2).set_fill(S.GREY, 0.22)
-    kr.move_to([f.get_center()[0], f.get_bottom()[1] + 0.32, 0])
-    kt = label("Debian · Linux kernel", 20, INK).move_to(kr)
-    dk = box(STACK_W, 0.42, TOOL, fill_opacity=0.18).move_to([STACK_X, kr.get_top()[1] + 0.31, 0])
+    kr.move_to([f.get_center()[0], f.get_bottom()[1] + 0.1 + BAR_H / 2, 0])
+    kt = label("Linux kernel", 20, INK).move_to(kr)
+    ub = kr.copy().next_to(kr, UP, buff=0.06)
+    ut = label("user space · Debian", 20, INK).move_to(ub)
+    dk = box(STACK_W, 0.42, TOOL, fill_opacity=0.18).move_to([STACK_X, ub.get_top()[1] + 0.31, 0])
     dt = mono("dockerd", 20, TOOL).move_to(dk)
-    g = VGroup(f, t, VGroup(kr, kt), VGroup(dk, dt))
-    g.frame, g.title, g.kernel, g.dockerd = f, t, g[2], g[3]
+    g = VGroup(f, t, VGroup(kr, kt), VGroup(ub, ut), VGroup(dk, dt))
+    g.frame, g.title, g.kernel, g.user, g.dockerd = f, t, g[2], g[3], g[4]
     g.floor_y = dk.get_top()[1] + 0.06
     return g
 
@@ -354,19 +361,27 @@ class Deploy(VoiceScene):
         hub = hub_shelf()
         st = LayerStack(stack_w=STACK_W)
         st.floor.move_to([STACK_X, vm.floor_y, 0])
-        slabs = [st.make(None, f, h) for f, h in zip(FILLS, H_STACK)]
+        slabs = [st.make(None, f, h * VM_K) for f, h in zip(FILLS, H_STACK)]
         glass = Glass(glass_w=STACK_W, process="main process").on(st)
         assert glass.dot_label.get_top()[1] < vm.frame.get_top()[1] - 0.12, "the glass label leaves the VM"
+        assert glass.slab.get_top()[1] < vm.title.get_bottom()[1] - 0.12, "the glass slab runs into the title"
+        assert vm.kernel.get_bottom()[1] > vm.frame.get_bottom()[1] + 0.05 and \
+            vm.frame.get_bottom()[1] > STRIP_TOP + 0.1, "the VM's bars leave the frame / the VM meets the strip"
         assert glass.dot_label.get_left()[0] > vm.title.get_right()[0] + 0.3, "glass label runs into the title"
         assert hub.shelf.title.get_left()[0] > tr.get_right()[0] + 0.3 or \
             hub.shelf.title.get_bottom()[1] > tr.get_top()[1], "the shelf title runs into the tracker"
         assert vm.frame.get_top()[1] < tr.get_bottom()[1] - 0.1, "the VM runs into the tracker"
         path = route(hub.shelf.frame.get_left() + np.array([-0.2, -0.15, 0]),
                      np.array([vm.frame.get_right()[0] + 0.25, 0.7, 0]), arc=-0.6)
+        # slides 70-71 (pull and run; pull downloads from a registry): standard top right, from "Then the
+        # deploy" until the picture goes in beat 1; the shelf's title stays under it
+        lref = lecture_ref(2, "70–71")
+        assert lref.get_bottom()[1] > hub.shelf.title.get_top()[1] + 0.15, "lecture tag on the shelf's title"
+        assert lref.get_left()[0] > tr.get_right()[0] + 0.3, "lecture tag runs into the tracker"
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t), run_time=0.6)
-            self.play(track(tr, 5), run_time=0.5)
+            self.play(track(tr, 5), FadeIn(lref, shift=DOWN * 0.1), run_time=0.5)
             bare_prompt(self, t)
             vo.wait_until("sudo docker run")
             c0 = type_cmd(self, t, DEPLOY, 2.0)
@@ -417,7 +432,7 @@ class Deploy(VoiceScene):
         assert nos.get_left()[0] > tr.get_right()[0] + 0.3 and just.get_bottom()[1] > 2.3
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(vm, hub, st, glass)), track(tr, 6), run_time=0.5)
+            self.play(FadeOut(VGroup(vm, hub, st, glass, lref)), track(tr, 6), run_time=0.5)
             resize(self, t, ROWS, run_time=0.7)
             vo.wait_until("python cli.py")
             c1 = istep(self, t, L13, 0.6)

@@ -607,7 +607,7 @@ Dockerfile.txt". The terminal clears (the laptop prompt stays); it types
 dim RED); a GREY note on the frame "our diff prints + and − · on a Mac, Linux or Git Bash: diff -u
 for this layout". The three `+ENV` lines (10, 15, 18) get GREY labels: "no apt questions", "UTF-8
 text", "logs appear at once". A GREY note under the diff: "lecture slide 57: a different version ·
-build this file"; GREY tag `Lecture 2 · slides 57` (top right, from "The README then points to a
+build this file"; GREY tag `Lecture 2 · slide 57` (top right, from "The README then points to a
 solution, Dockerfile.txt.").
 SAY: The README then points to a solution, Dockerfile.txt. An extra diff shows what it adds; if yours prints less-than and greater-than signs, add dash u. First, three ENV lines: no questions from apt, a UTF-8 locale, and unbuffered logs.
 
@@ -971,7 +971,7 @@ schematic console (browser, tag `illustration`, as in L1): VM instances → Crea
 fill: Name `ac215-l02` · Machine type `e2-small` · Boot disk `Debian GNU/Linux 12 (bookworm)`; GREY
 footnote "the README gives no settings: sensible choices · Debian 13 works too · E2 = amd64". The
 GOLD dial starts sweeping, with tags "billed per second while running" and "disk: billed while it
-exists". GREY tag `Lecture 2 · slides 77` (top right, from "The last README section").
+exists". GREY tag `Lecture 2 · slide 77` (top right, from "The last README section").
 SAY: The last README section: Running App on VM using Docker. First, create a VM, as in lecture 1. The README gives no settings. An ordinary E2 machine with Debian 12 or 13 will do; E2 machines are amd64. The meter starts: the VM bills by the second while it runs, its disk while it exists.
 
 SHOW: TRACKER C2. "SSH" is clicked: the browser window transforms into a terminal (title
@@ -1087,7 +1087,7 @@ SAY: Last README step: delete the VM, with its boot disk, then check that VM ins
 SHOW: GREY optional chips: "Docker Hub repository: public until you delete it or make it private",
 `docker system prune -a` "frees the laptop's disk · said, not typed here", and, smaller,
 `docker buildx rm multi-arch` "if you ran the push script" · `docker logout` "optional". GREY tag
-`Lecture 2 · slides 73` (top right, from "And to reclaim the space").
+`Lecture 2 · slide 73` (top right, from "And to reclaim the space").
 SAY: Two optional chores. Your Docker Hub repository stays public until you delete it or make it private. And to reclaim the space your images take on the laptop, run docker system prune dash a.
 
 SHOW: V1 closing picture: a BLUE VM box containing a GREEN venv box; between them a dashed GREY box
@@ -1117,6 +1117,6 @@ SHOW: The label list stays at left. Two footer cards: "Answers: exercises.md" an
 every command: github.com/JunyiZhou-Conny/MLOps_Learning · guides/L02-containers-1.md". A "Next: L3 ·
 Containers II" card with a GREY dashed teaser: five small TEAL boxes linked in a row, a chip
 `WORKDIR /app`, a chip "non-root user", and a GREY laptop folder with a dashed arrow into a container,
-"mounted". GREY tag `Lecture 2 · slides 42–51, 78–79` (top right, on the Next card). Everything
+"mounted". GREY tag `Lecture 2 · slides 42–51, 78–79` (under the Next card: it is wider than the free space inside it). Everything
 fades to an empty frame (end of part 2).
 SAY: The answers are in the exercises, and every command is in the study guide. Next time, Containers 2: five containers working together, a working directory, a non-root user, and your laptop's folder mounted inside a container.

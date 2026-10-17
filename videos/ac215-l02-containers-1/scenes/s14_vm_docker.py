@@ -5,13 +5,13 @@ Beats (script.md "## S14", one voiceover block each):
     VM using Docker" (7 dots); its section name pulses. "First, create a VM": C1, a schematic console
     (browser `console.cloud.google.com/compute/instances`, tag `illustration`): "Compute Engine ›
     VM instances" and a BLUE "Create instance" button that pulses and becomes the form's title. GREY
-    `Lecture 2 · slide 77` (lecture_ref, standard top right) fades in as the section name lands in the
-    tracker and goes at "The README gives no settings", where the GREY footnote "the README gives no
-    settings: sensible choices" fades in. The rows fill as named: Name `ac215-l02`, Machine type `e2-small`, Boot disk `Debian GNU/Linux 12
-    (bookworm)`; footnote "Debian 13 works too", then "· E2 = amd64" (amd64 BLUE, e2-small pulses
-    BLUE). "The meter starts": the GOLD dial (no digits) fades in at the right and sweeps; GOLD tags
-    "billed per second / while running" and "disk: billed / while it exists" (the boot disk row
-    pulses GOLD).
+    `Lecture 2 · slide 77` (lecture_ref, standard top right) fades in with the section card, on "The
+    last README section", and goes at "The README gives no settings", where the GREY footnote "the
+    README gives no settings: sensible choices" fades in. The rows fill as named: Name `ac215-l02`,
+    Machine type `e2-small`, Boot disk `Debian GNU/Linux 12 (bookworm)`; footnote "Debian 13 works
+    too", then "· E2 = amd64" (amd64 BLUE, e2-small pulses BLUE). "The meter starts": the GOLD dial
+    (no digits) fades in at the right and sweeps; GOLD tags "billed per second / while running" and
+    "disk: billed / while it exists" (the boot disk row pulses GOLD).
  1  TRACKER C2. Create -> the form collapses into the instance row (GREEN check, `ac215-l02`,
     `e2-small`, SSH); SSH is clicked; the browser becomes the VM terminal (9 rows, `ssh · ac215-l02`,
     `student@ac215-l02:~$`) while the dial moves into a badge top right (a BLUE `ac215-l02` box and
@@ -316,7 +316,9 @@ class DockerOnVM(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr_b, shift=DOWN * 0.1), run_time=0.5)
-            self.play(FadeIn(sec, shift=UP * 0.2), run_time=0.6)
+            # slide 77 is this README section: its tag comes with the section card, on "The last
+            # README section" (script.md's SHOW), and stays while the section's first step is shown
+            self.play(FadeIn(sec, shift=UP * 0.2), FadeIn(lref77, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("Running App on VM using Docker")
             # the README's heading becomes the new tracker's section name (what became what)
             self.play(FadeOut(tr_b, shift=UP * 0.25), FadeIn(tr_rest, shift=UP * 0.25),
@@ -324,8 +326,7 @@ class DockerOnVM(VoiceScene):
                       run_time=1.0)
             self.remove(tr_rest, tr.head[2])
             self.add(tr)
-            self.play(Indicate(tr.head[2], color=TURN, scale_factor=1.08), FadeIn(lref77, shift=DOWN * 0.1),
-                      run_time=0.8)
+            self.play(Indicate(tr.head[2], color=TURN, scale_factor=1.08), run_time=0.8)
             vo.wait_until("First, create a VM")
             self.play(track(tr, 1), FadeIn(br, shift=RIGHT * 0.2), FadeIn(ill), run_time=0.6)
             self.play(FadeIn(heading, shift=RIGHT * 0.15), FadeIn(create_i, shift=UP * 0.1), run_time=0.5)

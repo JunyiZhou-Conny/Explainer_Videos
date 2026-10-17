@@ -36,7 +36,7 @@ Beats (script.md "## S13", one voiceover block each):
  3  TRACKER C6. V2 goes; the terminal clears to 10 rows. `docker run --rm -ti -v "$(pwd):/app"
     synthesis_audio_en` (folds; TEAL frame, "container · synthesis_audio_en"). TRACKER C7:
     `uv add google-cloud-storage google-cloud-texttospeech` → synthesis_audio_en/01-uv-add.txt
-    lines 2, 8; "24 packages": "Installed 24 packages" GREEN, underlined.
+    lines 2, …, 8; "24 packages": "Installed 24 packages" GREEN, underlined.
  4  TRACKER C8: the terminal shrinks to 8 rows; editor inset (top right) CODE(synthesis_audio_en/
     cli.py: 18, comment cut), `group_name` YELLOW + underline. "then check the help": TRACKER C9,
     the inset goes, the terminal clears to 10 rows; `python cli.py --help` → 03-help.txt lines
@@ -81,9 +81,9 @@ Beats (script.md "## S13", one voiceover block each):
     `uv init --bare` → 50-d-uv-init.txt line 2; D4 PANEL(files/translate_text.Dockerfile: 3)
     flashes by (top right, its line barred YELLOW); D5 `docker build -t translate_text .` →
     51-d-build.txt lines 3, 14 (CACHED GREEN).
- 9  The terminal clears to 8 rows (no scrolling in the race). TRACKER D6 `docker run …
+ 9  The terminal clears to 8 rows (only the --help output scrolls). TRACKER D6 `docker run …
     translate_text` (TEAL); D7 `uv add google-cloud-storage google-cloud-translate` →
-    translate_text/01-uv-add.txt lines 2, 8; "and set the group name": D8, editor inset
+    translate_text/01-uv-add.txt lines 2, …, 8; "and set the group name": D8, editor inset
     CODE(translate_text/cli.py: 18, comment cut), group_name YELLOW; it stays up while D9 types
     `python cli.py --help` → 03-help.txt lines 2–4, …, 22 (wrap), line 22 RED. "Like C, even
     help": tag "recorded without the key"; the inset goes, the terminal shrinks to the strip and
@@ -102,13 +102,13 @@ Beats (script.md "## S13", one voiceover block each):
 11  TRACKER D10 → D13. V8 goes; the terminal returns (11 rows, container). README chip
     `README.md · lines 155–157` + "same as -d · -t · -u". It types the three commands (compact
     GOLD "billed" by --translate), `exit`, `docker build -t translate_text .` → 52-d-rebuild.txt
-    lines 3, 14–17. "Pause to run" (the first words): the same two moves as in C10 bring the
+    lines 3, 14–17. "Pause to run" (the first words): the same two moves as in C10 (quicker) bring the
     terminal back with `--download` typed and ▶ your turn beside it (wiggles; it stays until the
     section switch), a second ▶ by the rebuild once it is typed; the CACHED rows held 1 s.
 12  The terminal clears to 8 rows while the tracker switches: "README › synthesis_audio", 12 dots.
     A quicker montage: E1 `cd ../synthesis_audio`; E2 key; E3 `uv init --bare` → 60 line 2; E4
     the Dockerfile line 3 flashes; E5 `docker build -t synthesis_audio .` → 61 lines 3, 14; E6
-    `docker run … synthesis_audio`; E7 `uv add …texttospeech` → synthesis_audio/01 lines 2, 8; E8
+    `docker run … synthesis_audio`; E7 `uv add …texttospeech` → synthesis_audio/01 lines 2, …, 8; E8
     the cli.py:18 inset (group_name YELLOW, underlined) stays up while E9 types `python cli.py
     --help` → 03-help.txt line 25 (wrap, RED, recorded without the key). "its help text says":
     the inset goes, the strip; PANEL(expected/synthesis_audio-help.txt: 3–10) above (expected). "transcribe audio file to text": its line 5 "Synthesis audio
@@ -123,7 +123,8 @@ Beats (script.md "## S13", one voiceover block each):
     key": ▶ your turn beside `--download` (the --synthesis row is full with "billed").
 14  The chips and ▶ go; the terminal shrinks to the strip (the two commands). The tracker
     switches: "README › ElevenLabs bonus" + tag optional (right of the widest caption, so no
-    step's caption runs under it), 3 dots. A small schematic
+    step's caption runs under it), 3 dots; GREY lecture tag "Lecture 3 · slides 23–24" (lecture_ref,
+    top right) with the picture, to beat 15's first play. A small schematic
     (illustration): a French page → GREY cloud "ElevenLabs" → a wave into the dashed bonus drawer
     output_audios_pp/, with the GREY note "synthesis_audio_en/README.md mentions cli_11.py too ·
     the file is in synthesis_audio/" under it; "in the instructor's voice" under the cloud. "It
@@ -134,8 +135,8 @@ Beats (script.md "## S13", one voiceover block each):
     "synthesis_audio/README.md · line 112: here too". "and uv add requests": TRACKER X2, the strip
     types `uv add requests` → 04-bonus-uv-add-requests.txt lines 2–3, GREY tag "already
     installed · now listed".
-15  TRACKER X3. The cards go; a GREY README card `synthesis_audio/README.md · lines 151–153` with
-    the three cli_11.py commands, the GOLD tag moves beside it; the terminal grows to 7 rows; it
+15  TRACKER X3. The cards and the lecture tag go; a GREY README card `synthesis_audio/README.md ·
+    lines 151–153` with the three cli_11.py commands, the GOLD tag moves beside it; the terminal grows to 7 rows; it
     types `python cli_11.py --download` → 05-bonus-cli11-download.txt lines 2–3, 6 (wrap), line 6
     RED. "even download fails": underline + tag "recorded without the key". "the script reads that
     file": the card goes, the terminal shrinks to the strip, CODE(synthesis_audio/cli_11.py:
@@ -159,7 +160,8 @@ from manim import *
 
 from explainer import style as S
 from explainer.devops import (box, check_mark, chip, cloud, code_panel, code_span, cross_mark, folder_glyph,
-                              glyph_range, label, line_bar, mono, mono_line, step_badge, substring, tag)
+                              glyph_range, label, lecture_ref, line_bar, mono, mono_line, step_badge, substring,
+                              tag)
 from explainer.scene import VoiceScene
 
 # after `from manim import *`: manim exports a `capture` too
@@ -651,6 +653,7 @@ class SpeedRound(VoiceScene):
             tr = switch_section(self, tr, "C", None, run_time=0.7)
             self.play(Indicate(tr.head[2], color=TURN, scale_factor=1.1), run_time=0.6)
             vo.wait_until("For C, synthesis audio")
+            tr.caption.become(tr._caption(1)).set_opacity(0)    # step 1's caption fades in where it sits
             self.play(tr.goto(1), run_time=0.3)
             tcmd(self, t, CD[C], 0.6)
             t.set_prompt(P_C)
@@ -798,11 +801,11 @@ class SpeedRound(VoiceScene):
             enter(self, t, C)
             self.play(tr.goto(7), run_time=0.25)
             tcmd(self, t, UVA[C].cmd, 0.6)
-            o3 = tprint(self, t, UVA[C].at(2, 8), run_time=0.3)
+            o3 = tprint(self, t, UVA[C].at(2, "…", 8), run_time=0.3)
             vo.wait_until("24 packages")
-            u24 = uline(o3[1], "Installed 24 packages", VENV)
-            self.play(substring(o3[1], "Installed 24 packages").animate.set_color(VENV), Create(u24), run_time=0.5)
-            stick(self, o3[1], u24)
+            u24 = uline(o3[2], "Installed 24 packages", VENV)
+            self.play(substring(o3[2], "Installed 24 packages").animate.set_color(VENV), Create(u24), run_time=0.5)
+            stick(self, o3[2], u24)
 
         # ========================================================== 4 · C8-C9: group name; --help needs the key
         ins, gn, u_gn = inset18(CLI_C)
@@ -1011,6 +1014,7 @@ class SpeedRound(VoiceScene):
             self.play(LaggedStart(*[Indicate(d, color=TURN, scale_factor=1.8) for d in tr.dots[:5]], lag_ratio=0.3),
                       run_time=1.0)
             vo.wait_until("cd, key")
+            tr.caption.become(tr._caption(1)).set_opacity(0)    # step 1's caption fades in where it sits
             self.play(tr.goto(1), run_time=0.2)
             tcmd(self, t2, CD[D], 0.35)
             t2.set_prompt(P_D)
@@ -1039,11 +1043,11 @@ class SpeedRound(VoiceScene):
         place(yt9, left=card_d.frame.get_right()[0] + 0.35, bottom=card_d.frame.get_bottom()[1])
 
         with self.voiceover(SAY[9]) as vo:
-            reset(self, t2, 8, run_time=0.35, extra=[tr.goto(6)])    # a clean screen: no scrolling in the race
+            reset(self, t2, 8, run_time=0.35, extra=[tr.goto(6)])    # a clean screen: only --help's output scrolls
             tcmd(self, t2, RUN[D], 0.4)
             enter(self, t2, D, run_time=0.25, extra=[tr.goto(7)])
             tcmd(self, t2, UVA[D].cmd, 0.4)
-            tprint(self, t2, UVA[D].at(2, 8), run_time=0.25)
+            tprint(self, t2, UVA[D].at(2, "…", 8), run_time=0.25)
             vo.wait_until("and set the group name")
             self.play(tr.goto(8), FadeIn(ins_d, shift=DOWN * 0.1), run_time=0.3)
             self.play(gn_d.animate.set_color(TURN), Create(u_gn_d), run_time=0.35)
@@ -1134,11 +1138,13 @@ class SpeedRound(VoiceScene):
         assert rc11.get_bottom()[1] > strip_top(11) + 0.08, (rc11.get_bottom(), strip_top(11))
 
         with self.voiceover(SAY[11]) as vo:
-            # "Pause" opens this line: the terminal comes back (0.5 s), the first command to run is
-            # typed and ▶ lands beside it (0.55 s); it stays until the section switch
-            vo.wait_until("Pause to run")
+            # as in beat 7, but quicker: "Pause" opens this line, so the terminal comes back (0.3 s) and
+            # the first command to run is typed with ▶ beside it (0.4 s), up by the end of "Pause to
+            # run" (~0.7 s into the clip); then ▶ wiggles and stays until the section switch
             l11a, yt11 = back_to_terminal(self, VGroup(api2, folder, p58, bar10, cost10, nostub, fr_pg, saved, bucket,
-                                                       bcap, up_note), t3, rc11, sm11, tr.goto(10), CMDS[D][0])
+                                                       bcap, up_note), t3, rc11, sm11, tr.goto(10), CMDS[D][0],
+                                          run_time=0.3, type_time=0.4)
+            vo.wait_until("Pause to run")
             self.play(Wiggle(yt11, scale_value=1.12, rotation_angle=0.02 * TAU), tr.goto(11), run_time=0.6)
             l11 = tcmd(self, t3, CMDS[D][1], 0.4)
             pin(self, l11, beside(ttag("billed", COST), t3, l11), run_time=0.25)
@@ -1207,7 +1213,7 @@ class SpeedRound(VoiceScene):
             tcmd(self, t3, RUN[E], 0.25)
             enter(self, t3, E, run_time=0.15, extra=[tr.goto(7)])
             tcmd(self, t3, UVA[E].cmd, 0.25)
-            tprint(self, t3, UVA[E].at(2, 8), run_time=0.15)
+            tprint(self, t3, UVA[E].at(2, "…", 8), run_time=0.15)
             gn_e.set_color(TURN)
             self.play(tr.goto(8), FadeIn(ins_e, shift=DOWN * 0.1), Create(u_gn_e), run_time=0.25)
             self.play(tr.goto(9), run_time=0.15)           # the inset stays up while --help runs
@@ -1283,6 +1289,9 @@ class SpeedRound(VoiceScene):
         quota14 = cost_tag("your own ElevenLabs key and quota")
         ill14 = illustration_tag()
         place(ill14, right=EDGE, top=TOP)
+        lref = lecture_ref(3, "23–24")       # top right, from the bonus picture through the key and quota (to beat 15)
+        assert lref.get_bottom()[1] > ill14.get_top()[1] + 0.1 and lref.get_left()[0] > opt.get_right()[0] + 0.2, \
+            (lref.get_bottom(), ill14.get_top(), lref.get_left(), opt.get_right())
         # X1: the key file; the group name in cli_11.py
         kf_name = file_row("secrets/11lab_api_key.txt", color=INK, glyph_color=S.GREY)
         kf_line = mono_line("XI_API_KEY=…", 20, INK)
@@ -1315,7 +1324,7 @@ class SpeedRound(VoiceScene):
             resize(self, t3, 3, keep=[l13a, l13], run_time=0.4, extra=[FadeOut(VGroup(rc13, sm13, yt13))])
             tr = switch_section(self, tr, "X", None, run_time=0.5)
             self.play(FadeIn(opt, shift=LEFT * 0.1), FadeIn(fr14, shift=RIGHT * 0.1), FadeIn(VGroup(el, el_t)),
-                      FadeIn(bdr), FadeIn(bonus_t), FadeIn(ill14), run_time=0.45)
+                      FadeIn(bdr), FadeIn(bonus_t), FadeIn(ill14), FadeIn(lref), run_time=0.45)
             vo.wait_until("speaks the French")
             self.play(GrowArrow(a14a), fr14.animate.move_to(el.get_center()).set_opacity(0), run_time=0.7)
             self.remove(fr14)
@@ -1329,6 +1338,7 @@ class SpeedRound(VoiceScene):
             self.play(FadeOut(VGroup(fr14, el, el_t, el_c, bdr, bonus_t, a14a, a14b, ill14, wv14, note14)), run_time=0.45)
             self.play(FadeIn(quota14, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("a key file in secrets")
+            tr.caption.become(tr._caption(1)).set_opacity(0)    # step 1's caption fades in where it sits
             self.play(tr.goto(1), FadeIn(kcard, shift=DOWN * 0.1), run_time=0.5)
             self.play(Indicate(kf_line, color=INK, scale_factor=1.08), run_time=0.5)
             vo.wait_until("your group name in the bonus")
@@ -1364,7 +1374,7 @@ class SpeedRound(VoiceScene):
         assert startup.get_right()[0] < EDGE
 
         with self.voiceover(SAY[15]) as vo:
-            self.play(FadeOut(VGroup(kcard, ins19, u19, cap19)), tr.goto(3), run_time=0.4)
+            self.play(FadeOut(VGroup(kcard, ins19, u19, cap19)), tr.goto(3), FadeOut(lref), run_time=0.4)
             resize(self, t3, 7, run_time=0.45, extra=[FadeIn(card15, shift=DOWN * 0.1),
                                                      quota14.animate.move_to(quota_to)])
             c15 = tcmd(self, t3, BONUS_CMDS[0], 0.45)

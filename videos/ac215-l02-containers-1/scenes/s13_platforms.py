@@ -35,7 +35,8 @@ Beats (script.md "## S13", one voiceover block each):
     BLUE `linux/amd64` row and a dimmed `unknown/unknown` row; "plus an attestation": GREY note
     "attestation · how it was built"; "Built on an M-series Mac": a GREY dashed overlay right of the first
     row "built on a Mac: linux/arm64" and a GREY note under the menu "containerd image store · the older
-    store pushes one image, no menu". That note is not narrated: the picture holds 3 s after the
+    store pushes one image, no menu"; "the amd64 row would say": the amd64 row pulses inside the
+    overlay. That note is not narrated: the picture holds 3 s after the
     narration so it can be read (the dashed row and its `linux/arm64` pulse once at its start).
  5  The strip and the menu go. Top band: "You built on an M-series Mac": the GREY arm64 chip over a
     laptop builds an image card `linux/arm64` (arm64 glyphs); "and pushed": a PINK route carries it to a
@@ -503,6 +504,8 @@ class Platforms(VoiceScene):
             vo.wait_until("Built on an M-series Mac")
             self.play(Create(mac4_b), FadeIn(mac4_t, shift=LEFT * 0.1), run_time=0.6)
             self.play(FadeIn(cd4, shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("the amd64 row would say")   # 1.04: 1.08 brought the `l` onto the overlay's left dashes
+            self.play(Indicate(menu4.rows[0], color=INK, scale_factor=1.04), run_time=0.6)
         # the containerd note is not narrated: time to read it before the picture goes. The dashed row and the arm64 it
         # would read pulse once (the eye pairs them, and nothing sits still for more than ~3 s). 1.05 at most: the
         # `linux/arm64` sits 0.15 right of "built on a Mac:", and 1.12 closed that gap at the pulse's peak

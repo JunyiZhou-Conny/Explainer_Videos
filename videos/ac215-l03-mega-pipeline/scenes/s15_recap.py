@@ -59,7 +59,8 @@ Beats (script.md "## S15", one voiceover block each):
     guide's path (it pulses on "study guide"); on "Next lecture" a dashed GREY card at the right,
     "next: L4" / "branch flexible-workflow", whose three lines appear as they are said ("your own
     bucket + service account", "the key outside the repo", "docker-shell.sh / builds and runs for
-    you"). Everything fades to an empty frame (end of part 2).
+    you"); the GREY lecture tag "Lecture 3 · slide 70" (lecture_ref, top right) comes with the card
+    and stays to the end. Everything fades to an empty frame (end of part 2).
 
 Terminal output comes only from assets/terminal/laptop/70-72 (capture()); the .gitignore panel quotes
 assets/source/transcribe_audio/.gitignore with its real line numbers. The question text helpers are
@@ -73,8 +74,8 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (MONO, OUTPUT, box, check_mark, chip, cross_mark, folder_glyph, label, mono,
-                              mono_line, step_badge, substring)
+from explainer.devops import (MONO, OUTPUT, box, check_mark, chip, cross_mark, folder_glyph, label, lecture_ref,
+                              mono, mono_line, step_badge, substring)
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, CTR, ERR, GROUP, INK, KEY, LAPTOP, LOOKUP, NARRATION, P_A, P_REPO,
@@ -965,6 +966,8 @@ class Recap(VoiceScene):
         assert nxt.get_bottom()[1] > -3.5, nxt.get_bottom()
         assert n_body.get_right()[0] < n_box.get_right()[0] - 0.15, n_body.get_right()
         assert finals[-1].get_bottom()[1] > card1.get_top()[1] + 0.15
+        lref = lecture_ref(3, "70")          # top right (empty above Q1's row), from the L4 card to the final fade
+        assert lref.get_bottom()[1] > finals[0].get_top()[1] + 0.15, (lref.get_bottom(), finals[0].get_top())
 
         with self.voiceover(SAY[7]) as vo:
             smalls.append(q5)                   # Q5 goes straight from its big form to the final layout
@@ -979,7 +982,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(card2, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(g_url, color=TURN, scale_factor=1.04), run_time=0.7)
             vo.wait_until("Next lecture")
-            self.play(FadeIn(n_box), FadeIn(n_head, shift=LEFT * 0.15), FadeIn(n_branch), run_time=0.5)
+            self.play(FadeIn(n_box), FadeIn(n_head, shift=LEFT * 0.15), FadeIn(n_branch), FadeIn(lref), run_time=0.5)
             for it, anchor in zip(n_items, ("your own bucket", "the key outside", "a script that builds")):
                 vo.wait_until(anchor)
                 self.play(FadeIn(it, shift=UP * 0.1), run_time=0.4)

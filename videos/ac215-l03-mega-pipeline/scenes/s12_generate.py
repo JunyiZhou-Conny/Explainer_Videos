@@ -84,11 +84,12 @@ Beats (script.md "## S12", one voiceover block each):
     then:", the date pulses on "on October 20"; "after that, start": the chip `docker run --rm -ti
     -e GEMINI_MODEL=<current model> -v "$(pwd):/app" generate_text` (two rows, extra, shown, not
     typed); "with a current model": <current model> pulses and a third GREY row writes under the
-    chip: "pick one on Vertex AI's “Model versions” page · listed replacement: gemini-3.1-flash-lite",
-    then a fourth: "it is not served in us-central1: in cli.py line 24, set location='global'";
-    "in the Gemini model variable": GEMINI_MODEL underlines YELLOW in line 73 and the chip. On
-    "Google retires" the GOLD tag shrinks (row-sized) into the strip's top-right corner. A 1.2 s
-    hold after the SAY (the last two rows are not narrated).
+    chip: "pick one on Vertex AI's “Model versions” page · listed replacement: gemini-3.1-flash-lite";
+    "in the Gemini model variable": GEMINI_MODEL underlines YELLOW in line 73 and the chip; "Newer
+    models aren't served": the card grows by a fourth row, "it is not served in us-central1: in
+    cli.py line 24, set location='global'"; "so also set the location": `location='global'` pulses
+    YELLOW. On "Google retires" the GOLD tag shrinks (row-sized) into the strip's top-right corner.
+    A 0.6 s hold after the SAY (the third row is not narrated).
 12  The panel, card and cloud go; the GOLD tag moves into the right end of the new card's title
     row (the card reaches down to the strip). The "with your key, look for" card writes item by item (lines
     74, 80, 81, 84, 103) on their words, then two RED-bordered lines: "if it fails: 404 …
@@ -587,6 +588,9 @@ class GenerateText(VoiceScene):
             self.play(LaggedStart(*[rec[k].animate.scale(0.05).move_to(tr.dots[k]).set_opacity(0)
                                     for k in range(13)], lag_ratio=0.04), run_time=0.8)
             self.remove(rec)
+            # the blank caption takes its final shape, invisible, so goto() fades it in in place
+            # (from a blank it would fly in from where the tracker was built)
+            tr.caption.become(tr._caption(1)).set_opacity(0)
             self.play(FadeIn(t), tr.goto(1), run_time=0.6)
             vo.wait_until("Steps 1 and 2")
             tcmd(self, t, CD, 0.8)
@@ -931,7 +935,7 @@ class GenerateText(VoiceScene):
         # where <current model> comes from (third row, on "with a current model")
         pick = VGroup(label(PICK, 20, S.GREY), mono(NEW_MODEL, 20, S.GREY)).arrange(RIGHT, buff=0.12)
         pick[1].align_to(pick[0], DOWN)
-        # ...and the region it needs (fourth row, right after the third; not narrated)
+        # ...and the region it needs (fourth row, on "Newer models aren't served")
         loc = VGroup(label(LOC, 20, S.GREY), mono(LOC_FIX, 20, S.GREY)).arrange(RIGHT, buff=0.12)
         loc[1].align_to(loc[0], DOWN)
         body = VGroup(note11, crow, pick)
@@ -952,7 +956,11 @@ class GenerateText(VoiceScene):
         nfr1 = box(max(note11.width, crow.width) + 0.5, ncard_fr.get_top()[1] - crow.get_bottom()[1] + 0.2,
                    S.GREY, fill=S.BG, fill_opacity=1, radius=0.12)
         place(nfr1, left=ncard_fr.get_left()[0], top=ncard_fr.get_top()[1])
-        assert h0 <= nfr1.height <= ncard_fr.height, (h0, nfr1.height, ncard_fr.height)
+        # ...and around the first three rows (the fourth arrives a sentence later)
+        nfr2 = box(max(note11.width, crow.width, pick.width) + 0.5, ncard_fr.get_top()[1] - pick.get_bottom()[1] + 0.2,
+                   S.GREY, fill=S.BG, fill_opacity=1, radius=0.12)
+        place(nfr2, left=ncard_fr.get_left()[0], top=ncard_fr.get_top()[1])
+        assert h0 <= nfr1.height <= nfr2.height <= ncard_fr.height, (h0, nfr1.height, nfr2.height, ncard_fr.height)
         u_env1 = under(code_span(c73, 0, '"GEMINI_MODEL"'), TURN)
         # the GOLD tag waits in the strip's top-right corner, row-sized (the four-row note reaches
         # further down than the shared tag's height leaves room for)
@@ -996,14 +1004,20 @@ class GenerateText(VoiceScene):
             self.play(FadeIn(gchip, shift=DOWN * 0.1), FadeIn(xt), run_time=0.5)
             vo.wait_until("with a current model")
             self.play(Indicate(substring(gchip.rows[0], "<current model>"), color=TURN, scale_factor=1.1),
-                      Transform(ncard_fr, full_fr), run_time=0.5)
+                      Transform(ncard_fr, nfr2), run_time=0.5)
             self.play(FadeIn(pick, shift=DOWN * 0.1), run_time=0.4)
-            self.play(FadeIn(loc, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("in the Gemini model variable")
             self.play(Create(u_env1), Create(u_env2), run_time=0.5)
             self.play(Indicate(substring(gchip.rows[0], "GEMINI_MODEL"), color=TURN, scale_factor=1.1),
                       Indicate(code_span(c73, 0, '"GEMINI_MODEL"'), color=TURN, scale_factor=1.1), run_time=0.7)
-        self.wait(1.2)                    # the note's last two rows are not narrated: time to read them
+            vo.wait_until("Newer models aren't served")
+            self.play(Transform(ncard_fr, full_fr), run_time=0.3)
+            self.play(FadeIn(loc, shift=DOWN * 0.1), run_time=0.4)
+            vo.wait_until("so also set the location")
+            # Indicate's pulse, grown from the left edge (scaled about its centre it touches "set")
+            self.play(loc[1].animate(rate_func=there_and_back_with_pause).scale(1.1, about_edge=LEFT)
+                      .set_color(TURN), run_time=0.6)
+        self.wait(0.6)                    # the note's third row (where to pick a model) is not narrated
 
         # ========================================================== 12 · with your key, look for
         lf = LookFor(LOOK, fail=FAIL404)

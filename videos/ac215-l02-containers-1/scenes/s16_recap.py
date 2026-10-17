@@ -23,7 +23,8 @@ Beats (script.md "## S16", one voiceover block each):
     Hub repository": a BLUE shelf glyph and the GREY chip "Docker Hub repository: public until you
     delete it or make it private"; "stays public": "public" underlined YELLOW; "or make it private": a
     GREY padlock lands on the shelf, "private" underlined. "And to reclaim the space": a GREY laptop
-    whose screen holds a TEAL bar (the images); "run docker system prune dash a": the GREY mono chip
+    whose screen holds a TEAL bar (the images), and the tag `Lecture 2 · slide 73` (top right, until
+    the chores leave at beat 3's start); "run docker system prune dash a": the GREY mono chip
     `docker system prune -a` with "frees the laptop's disk · said, not typed here"; the TEAL bar
     shrinks to a sliver. Then, smaller and unspoken: `docker buildx rm multi-arch` "if you ran the push
     script" and `docker logout` "optional", held 3 s on a pause so they can be read.
@@ -56,7 +57,9 @@ Beats (script.md "## S16", one voiceover block each):
     guides/L02-containers-1.md. "Next time": a GREY dashed card "Next: L3 · Containers II"; "five
     containers": five small dashed TEAL boxes linked in a row; "a working directory": chip `WORKDIR /app`;
     "a non-root user": chip "non-root user"; "and your laptop's folder": a GREY folder, a dashed arrow
-    into a dashed TEAL container, "mounted". Everything fades to an empty frame (end of part 2).
+    into a dashed TEAL container, "mounted". The tag `Lecture 2 · slides 42–51, 78–79` comes with the Next
+    card ("Next time"), under it and right-aligned with it (the Answers card holds the top right), and
+    leaves with it. Everything fades to an empty frame (end of part 2).
 
 Terminal output comes from capture() only (vm-debian12/11). The console, dialog and checklist
 vocabulary is L1's s15_recap.py / S14's console (same layout ideas, same glyphs); the question layout
@@ -70,7 +73,7 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import MONO, TERM_BG, browser_window, file_glyph, folder_glyph, step_badge
+from explainer.devops import MONO, TERM_BG, browser_window, file_glyph, folder_glyph, lecture_ref, step_badge
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, COST, ERR, IMAGE, INK, LAPTOP, NARRATION, ROUTE, STRIP_ROWS, SYSTEM, TURN,
@@ -114,13 +117,14 @@ DIAL_C, DIAL_R = np.array([4.55, 1.7, 0]), 0.55             # beats 0-1: the dia
 RATE = 1 / 60                                               # dial turns per second while the VM exists (S14's)
 # The meter never rewinds (script.md conventions): the needle starts where the VM's meter has got to.
 # S14's dial starts at "The meter starts" (24:56.3 in the 2026-10-15 draft) and sweeps at 1/60 turn/s
-# until S14 freezes it before its last fade (26:34.0); S15 (26:35-28:36, 121 s) carries it on at the
-# same rate. Re-measure if S14 or S15 changes length by more than a few seconds (1 s = 6 degrees).
+# until S14 freezes it before its last fade (26:34.0); S15 (121 s then, 124.3 s re-measured 2026-10-17
+# after its narration edits; S14's meter span still 97.7 s) carries it on at the same rate. Re-measure
+# if S14 or S15 changes length by more than a few seconds (1 s = 6 degrees).
 # These are clock values. A rendered updater loses one frame of dt per play()/wait(), so S14's needle
 # really stops near 1.55 turns at 30 fps (1.48 in the 15 fps draft). Starting S16 from the clock value
 # therefore errs forward, never back.
 S14_END = (1594.0 - 1496.3) / 60                            # 1.63 turns
-S15_END = S14_END + 121 / 60                                # 3.65 turns: S16's dial starts here
+S15_END = S14_END + 124.3 / 60                              # 3.70 turns: S16's dial starts here
 SM_C, SM_W, SM_H = np.array([4.45, -0.88, 0]), 3.8, 2.55    # beat 1: the VM in the right column
 BR_LEFT, BR_TOP, BR_W, BR_H = -6.55, 2.72, 8.6, 5.2         # beat 1: the console
 C_LEFT = BR_LEFT + 0.35
@@ -607,7 +611,7 @@ class Recap(VoiceScene):
             c_ps = type_cmd(self, t, PS_A, 0.8)
             x_tag = beside(row_tag("extra"), c_ps, buff=0.45)
             pin(self, c_ps, x_tag, run_time=0.35)
-            vo.wait_until("docker ps dash a")
+            vo.wait_until("sudo docker ps dash a")          # the clause start (SAY[0] now says "sudo")
             out = t.print(self, HEADER, run_time=0.4)
             bare_prompt(self, t)
             vo.wait_until("shows no containers")
@@ -775,6 +779,8 @@ class Recap(VoiceScene):
             small.add(VGroup(chip(cmd, S.GREY, size=20, font=MONO), label(note, 20, S.GREY)).arrange(RIGHT, buff=0.2))
         small.arrange(DOWN, aligned_edge=LEFT, buff=0.16).move_to([0, -2.45, 0]).set_x(CHIP_L, LEFT)
         assert hub.get_right()[0] < 6.5 and prune_cap.get_right()[0] < 6.5, "chores too wide"
+        lref73 = lecture_ref(2, "73")                    # standard top right, "And to reclaim" to beat 2's end
+        assert lref73.get_bottom()[1] > hub.get_top()[1] + 0.3 and lref73.get_left()[0] > tr.get_right()[0] + 0.3
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(check, yt, dial_g)), track(tr, extra=True), run_time=0.6)
@@ -787,7 +793,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(lock, shift=DOWN * 0.3), Create(u_private), run_time=0.6)
             self.play(pulse(lock, 1.3), run_time=0.6)
             vo.wait_until("And to reclaim the space")
-            self.play(FadeIn(lap, shift=RIGHT * 0.15), FadeIn(used_frame), run_time=0.5)
+            self.play(FadeIn(lap, shift=RIGHT * 0.15), FadeIn(used_frame), FadeIn(lref73), run_time=0.5)
             self.play(GrowFromEdge(used, LEFT), run_time=0.6)
             vo.wait_until("run docker system prune")
             self.play(FadeIn(prune, shift=RIGHT * 0.2), run_time=0.5)
@@ -837,7 +843,7 @@ class Recap(VoiceScene):
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(opt, shelf, hub, lock, u_public, u_private, lap, used_frame, used,
-                                     prune, prune_cap, small, tr)), run_time=0.6)
+                                     prune, prune_cap, small, tr, lref73)), run_time=0.6)
             self.play(FadeIn(nest.vm, scale=0.96), FadeIn(tag_l1), run_time=0.6)
             self.play(FadeIn(nest.venv, shift=UP * 0.2), run_time=0.5)
             vo.wait_until("Today a container")
@@ -992,6 +998,11 @@ class Recap(VoiceScene):
         assert nx.get_top()[1] < c2.get_bottom()[1] - 0.25, (nx.get_top(), c2.get_bottom())
         assert nx.body.get_right()[0] < nx.frame.get_right()[0] - 0.2, "teaser wider than its card"
         ul_g = uline(VGroup(g_body[1], g_body[2]), TURN, stroke=3, dy=0.06)
+        # the Answers card holds the top right: the tag sits under the Next card, right-aligned with it,
+        # from "Next time" until the card leaves in the final fade
+        lref_nx = lecture_ref(2, "42–51, 78–79")
+        lref_nx.next_to(nx.frame, DOWN, buff=0.15).align_to(nx.frame, RIGHT)
+        assert lref_nx.get_bottom()[1] > -3.6, lref_nx.get_bottom()
 
         with self.voiceover(SAY[6]) as vo:
             rows.append(demote(q5, 5, ic5, FadeIn(c1, shift=UP * 0.15)))
@@ -999,7 +1010,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(c2, shift=UP * 0.15), run_time=0.5)
             self.play(Create(ul_g), run_time=0.6)
             vo.wait_until("Next time")
-            self.play(Create(nx.frame), FadeIn(nx.head, shift=RIGHT * 0.15), run_time=0.6)
+            self.play(Create(nx.frame), FadeIn(nx.head, shift=RIGHT * 0.15), FadeIn(lref_nx), run_time=0.6)
             cue(self, vo, "five containers", 0.65)          # measured: 7.37 s (6.70)
             self.play(LaggedStart(*[FadeIn(b, scale=0.6) for b in nx.five], lag_ratio=0.18), run_time=0.8)
             self.play(Create(nx.links), run_time=0.4)
