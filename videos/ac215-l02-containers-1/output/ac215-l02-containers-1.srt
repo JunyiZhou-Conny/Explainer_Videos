@@ -1620,8 +1620,8 @@ Then tag the image:
 
 355
 00:21:33,797 --> 00:21:39,812
-docker tag simple-translate <USER
-NAME>/simple-translate-ac215.
+docker tag simple-translate
+<USER NAME>/simple-translate-ac215.
 
 356
 00:21:40,132 --> 00:21:42,159
@@ -2128,8 +2128,8 @@ but this command runs the instructor's.
 
 467
 00:28:49,293 --> 00:28:53,880
-Your image is <USER
-NAME>/simple-translate-ac215.
+Your image
+is <USER NAME>/simple-translate-ac215.
 
 468
 00:28:54,200 --> 00:28:58,488

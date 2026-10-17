@@ -37,8 +37,8 @@ Dialogue: 0,0:01:11.97,0:01:15.78,Bilingual,,0,0,0,,你需要运行中的 Docker
 Dialogue: 0,0:01:15.78,0:01:19.14,Bilingual,,0,0,0,,还有你的 Google Cloud 项目，最后开 VM 要用\N{\fs33\c&H00C8C0B8&\bord1.4}and your Google Cloud project for the VM at the end.
 Dialogue: 0,0:01:19.46,0:01:21.65,Bilingual,,0,0,0,,今天不需要服务账号，也不需要密钥\N{\fs33\c&H00C8C0B8&\bord1.4}No service account or keys today.
 Dialogue: 0,0:01:22.70,0:01:24.98,Bilingual,,0,0,0,,先来看贯穿整节课的四个词\N{\fs33\c&H00C8C0B8&\bord1.4}First, four words for the whole lecture.
-Dialogue: 0,0:01:25.30,0:01:30.47,Bilingual,,0,0,0,,在第 1 讲里，每台新 VM 都要把同样的配置再做一遍\N{\fs33\c&H00C8C0B8&\bord1.4}In lecture 1, every new VM needed the same setup, on an operating system
-Dialogue: 0,0:01:30.47,0:01:32.07,Bilingual,,0,0,0,,还得操作系统配合\N{\fs33\c&H00C8C0B8&\bord1.4}that had to cooperate.
+Dialogue: 0,0:01:25.30,0:01:28.82,Bilingual,,0,0,0,,在第 1 讲里，每台新 VM 都要把同样的配置再做一遍\N{\fs33\c&H00C8C0B8&\bord1.4}In lecture 1, every new VM needed the same setup,
+Dialogue: 0,0:01:28.82,0:01:32.04,Bilingual,,0,0,0,,而且是在一个得配合才行的操作系统上\N{\fs33\c&H00C8C0B8&\bord1.4}on an operating system that had to cooperate.
 Dialogue: 0,0:01:32.36,0:01:36.21,Bilingual,,0,0,0,,Docker image 把这些全装进一个能复制的东西\N{\fs33\c&H00C8C0B8&\bord1.4}A Docker image packs it all into one thing you can copy:
 Dialogue: 0,0:01:36.21,0:01:39.51,Bilingual,,0,0,0,,系统文件、Python、各种包和代码\N{\fs33\c&H00C8C0B8&\bord1.4}system files, Python, the packages and the code.
 Dialogue: 0,0:01:39.75,0:01:42.46,Bilingual,,0,0,0,,一个 image 就是一叠只读层\N{\fs33\c&H00C8C0B8&\bord1.4}An image is a stack of read-only layers.
@@ -72,9 +72,8 @@ Dialogue: 0,0:03:18.51,0:03:20.68,Bilingual,,0,0,0,,Developing App using Contain
 Dialogue: 0,0:03:21.00,0:03:23.04,Bilingual,,0,0,0,,在你的笔记本上打开一个终端\N{\fs33\c&H00C8C0B8&\bord1.4}Open a terminal on your laptop.
 Dialogue: 0,0:03:23.36,0:03:26.15,Bilingual,,0,0,0,,在 Mac 上，你的提示符会不一样\N{\fs33\c&H00C8C0B8&\bord1.4}On a Mac your prompt looks different;
 Dialogue: 0,0:03:26.15,0:03:30.30,Bilingual,,0,0,0,,在 Windows 上，用 WSL 里的 Ubuntu 终端，或者 Git Bash\N{\fs33\c&H00C8C0B8&\bord1.4}on Windows, use an Ubuntu terminal in WSL, or Git Bash.
-Dialogue: 0,0:03:30.62,0:03:31.68,Bilingual,,0,0,0,,在 Git Bash 里\N{\fs33\c&H00C8C0B8&\bord1.4}In Git Bash,
-Dialogue: 0,0:03:31.68,0:03:34.92,Bilingual,,0,0,0,,如果 docker run 报 stdin is not a terminal\N{\fs33\c&H00C8C0B8&\bord1.4}put winpty in front of docker run if it says
-Dialogue: 0,0:03:34.92,0:03:36.76,Bilingual,,0,0,0,,就在它前面加上 winpty\N{\fs33\c&H00C8C0B8&\bord1.4}stdin is not a terminal.
+Dialogue: 0,0:03:30.62,0:03:34.11,Bilingual,,0,0,0,,在 Git Bash 里，docker run 前面要加上 winpty\N{\fs33\c&H00C8C0B8&\bord1.4}In Git Bash, put winpty in front of docker run
+Dialogue: 0,0:03:34.11,0:03:36.76,Bilingual,,0,0,0,,如果它报 stdin is not a terminal 的话\N{\fs33\c&H00C8C0B8&\bord1.4}if it says stdin is not a terminal.
 Dialogue: 0,0:03:37.00,0:03:40.39,Bilingual,,0,0,0,,首先，docker container ls 列出正在运行的 container\N{\fs33\c&H00C8C0B8&\bord1.4}First, docker container ls lists running containers.
 Dialogue: 0,0:03:40.71,0:03:43.68,Bilingual,,0,0,0,,这里只显示了表头，所以什么都没在运行\N{\fs33\c&H00C8C0B8&\bord1.4}Here it shows only the header, so nothing is running.
 Dialogue: 0,0:03:44.00,0:03:46.71,Bilingual,,0,0,0,,如果你那边连不上 Docker daemon\N{\fs33\c&H00C8C0B8&\bord1.4}If yours can't connect to the Docker daemon,
@@ -217,8 +216,9 @@ Dialogue: 0,0:11:16.53,0:11:21.34,Bilingual,,0,0,0,,ls -a，它连隐藏文件�
 Dialogue: 0,0:11:21.66,0:11:25.33,Bilingual,,0,0,0,,现在列表里多了 .venv，还有一个新的 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}Now the listing shows .venv, and a new uv.lock.
 Dialogue: 0,0:11:25.65,0:11:29.54,Bilingual,,0,0,0,,可 python cli.py 还是和之前一样，失败了\N{\fs33\c&H00C8C0B8&\bord1.4}But python cli.py fails exactly as before.
 Dialogue: 0,0:11:29.86,0:11:34.02,Bilingual,,0,0,0,,为什么？回想一下第 1 讲：激活其实只是改 PATH\N{\fs33\c&H00C8C0B8&\bord1.4}Why? Remember lecture 1: activation is just PATH.
-Dialogue: 0,0:11:34.34,0:11:37.63,Bilingual,,0,0,0,,没有任何东西激活这个 venv，所以 python 这个词先找到的\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing has activated the venv, so the word python
-Dialogue: 0,0:11:37.63,0:11:41.72,Bilingual,,0,0,0,,是 /usr/local/bin 里的 Python，来自 base image\N{\fs33\c&H00C8C0B8&\bord1.4}first finds the Python in /usr/local/bin, from the base image.
+Dialogue: 0,0:11:34.34,0:11:36.40,Bilingual,,0,0,0,,没有任何东西激活这个 venv\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing has activated the venv,
+Dialogue: 0,0:11:36.40,0:11:40.39,Bilingual,,0,0,0,,所以 python 这个词会先找到 /usr/local/bin 里的 Python\N{\fs33\c&H00C8C0B8&\bord1.4}so the word python first finds the Python in /usr/local/bin,
+Dialogue: 0,0:11:40.39,0:11:41.99,Bilingual,,0,0,0,,它来自 base image\N{\fs33\c&H00C8C0B8&\bord1.4}from the base image.
 Dialogue: 0,0:11:42.04,0:11:45.37,Bilingual,,0,0,0,,那是 3.12，我们的包它一个都没有\N{\fs33\c&H00C8C0B8&\bord1.4}That's 3.12, and it has none of our packages.
 Dialogue: 0,0:11:45.60,0:11:49.79,Bilingual,,0,0,0,,激活 venv 会把它的 bin 目录放到最前面\N{\fs33\c&H00C8C0B8&\bord1.4}Activating the venv would put its bin folder in front,
 Dialogue: 0,0:11:49.79,0:11:52.04,Bilingual,,0,0,0,,python 就会找到 3.15.0\N{\fs33\c&H00C8C0B8&\bord1.4}and python would find 3.15.0.
@@ -265,8 +265,8 @@ Dialogue: 0,0:13:59.72,0:14:05.20,Bilingual,,0,0,0,,更新并升级 Debian 软�
 Dialogue: 0,0:14:05.52,0:14:07.74,Bilingual,,0,0,0,,还有，ENTRYPOINT 挪到了最后\N{\fs33\c&H00C8C0B8&\bord1.4}And ENTRYPOINT moved to the end:
 Dialogue: 0,0:14:07.74,0:14:11.01,Bilingual,,0,0,0,,ENTRYPOINT 和 CMD 的顺序无所谓\N{\fs33\c&H00C8C0B8&\bord1.4}the order of ENTRYPOINT and CMD doesn't matter.
 Dialogue: 0,0:14:11.25,0:14:13.30,Bilingual,,0,0,0,,README 只提到了这个文件名\N{\fs33\c&H00C8C0B8&\bord1.4}The README only names the file.
-Dialogue: 0,0:14:13.62,0:14:15.52,Bilingual,,0,0,0,,所以最快的办法是一条额外的命令\N{\fs33\c&H00C8C0B8&\bord1.4}So here's the quickest way,
-Dialogue: 0,0:14:15.52,0:14:18.69,Bilingual,,0,0,0,,用 cp 把它复制过来，覆盖你的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}an extra command: copy it over yours with cp.
+Dialogue: 0,0:14:13.62,0:14:16.44,Bilingual,,0,0,0,,所以最快的办法是这样，一条额外的命令\N{\fs33\c&H00C8C0B8&\bord1.4}So here's the quickest way, an extra command:
+Dialogue: 0,0:14:16.44,0:14:18.69,Bilingual,,0,0,0,,用 cp 把它复制过来，覆盖你的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}copy it over yours with cp.
 Dialogue: 0,0:14:19.01,0:14:20.45,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do that.
 Dialogue: 0,0:14:20.50,0:14:23.31,Bilingual,,0,0,0,,现在是 README 的 Build Docker Image 一节\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's Build Docker Image section:
 Dialogue: 0,0:14:23.31,0:14:26.43,Bilingual,,0,0,0,,在 simple-translate 目录里，跑同样的构建\N{\fs33\c&H00C8C0B8&\bord1.4}from the simple-translate folder, the same build.
@@ -341,8 +341,8 @@ Dialogue: 0,0:18:24.13,0:18:26.16,Bilingual,,0,0,0,,还有 README 和你的 Dock
 Dialogue: 0,0:18:26.48,0:18:30.96,Bilingual,,0,0,0,,COPY 那一行复制了整个构建上下文，连你的 Git 历史也在里面\N{\fs33\c&H00C8C0B8&\bord1.4}The COPY line copied the whole build context, your git history included.
 Dialogue: 0,0:18:31.28,0:18:33.54,Bilingual,,0,0,0,,输入 exit，回到你的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit to get back to your laptop.
 Dialogue: 0,0:18:33.78,0:18:37.39,Bilingual,,0,0,0,,这是教程里的一个缺口：没有 .dockerignore 文件\N{\fs33\c&H00C8C0B8&\bord1.4}That's a gap in the tutorial: there's no .dockerignore file.
-Dialogue: 0,0:18:37.71,0:18:39.24,Bilingual,,0,0,0,,在你自己的项目里加一个\N{\fs33\c&H00C8C0B8&\bord1.4}In your own projects,
-Dialogue: 0,0:18:39.24,0:18:43.04,Bilingual,,0,0,0,,写上 .git、.venv 和你的 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}add one listing .git, .venv and your secrets folder.
+Dialogue: 0,0:18:37.71,0:18:39.24,Bilingual,,0,0,0,,在你自己的项目里\N{\fs33\c&H00C8C0B8&\bord1.4}In your own projects,
+Dialogue: 0,0:18:39.24,0:18:43.04,Bilingual,,0,0,0,,加一个这样的文件，写上 .git、.venv 和你的 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}add one listing .git, .venv and your secrets folder.
 Dialogue: 0,0:18:43.36,0:18:46.69,Bilingual,,0,0,0,,等 image 公开了，这一点最要紧，而它很快就会公开\N{\fs33\c&H00C8C0B8&\bord1.4}It matters most once the image is public, and that's soon.
 Dialogue: 0,0:18:47.73,0:18:50.12,Bilingual,,0,0,0,,那为什么 COPY 和 uv sync 又重跑了一遍\N{\fs33\c&H00C8C0B8&\bord1.4}So why did COPY and uv sync rerun
 Dialogue: 0,0:18:50.12,0:18:52.00,Bilingual,,0,0,0,,明明我们只加了一行？\N{\fs33\c&H00C8C0B8&\bord1.4}when we only added a line?
@@ -442,8 +442,8 @@ Dialogue: 0,0:24:24.80,0:24:25.80,Bilingual,,0,0,0,,不能\N{\fs33\c&H00C8C0B8&\
 Dialogue: 0,0:24:25.85,0:24:31.38,Bilingual,,0,0,0,,这是反过来的同一个失败，发生在我们这台没有模拟器的机器上\N{\fs33\c&H00C8C0B8&\bord1.4}Here's the same failure the other way around, on our machine, which has no emulator:
 Dialogue: 0,0:24:31.38,0:24:32.84,Bilingual,,0,0,0,,exec format error\N{\fs33\c&H00C8C0B8&\bord1.4}exec format error.
 Dialogue: 0,0:24:32.89,0:24:35.68,Bilingual,,0,0,0,,换成 Docker Desktop，会直接把它模拟运行起来\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Desktop would just run it, emulated.
-Dialogue: 0,0:24:36.00,0:24:39.28,Bilingual,,0,0,0,,Mac 上构建的 image 放到默认的 VM 上\N{\fs33\c&H00C8C0B8&\bord1.4}A Mac-built image on a default VM fails like this,
-Dialogue: 0,0:24:39.28,0:24:41.67,Bilingual,,0,0,0,,就会这样失败，或者报 no matching manifest\N{\fs33\c&H00C8C0B8&\bord1.4}or with no matching manifest.
+Dialogue: 0,0:24:36.00,0:24:39.59,Bilingual,,0,0,0,,Mac 上构建的 image 放到默认的 VM 上会这样失败\N{\fs33\c&H00C8C0B8&\bord1.4}A Mac-built image on a default VM fails like this,
+Dialogue: 0,0:24:39.59,0:24:41.67,Bilingual,,0,0,0,,或者报 no matching manifest\N{\fs33\c&H00C8C0B8&\bord1.4}or with no matching manifest.
 Dialogue: 0,0:24:42.52,0:24:44.69,Bilingual,,0,0,0,,有两个办法，README 里都没有\N{\fs33\c&H00C8C0B8&\bord1.4}Two fixes, neither in the README.
 Dialogue: 0,0:24:45.01,0:24:48.63,Bilingual,,0,0,0,,第一：为 VM 的平台构建\N{\fs33\c&H00C8C0B8&\bord1.4}One: build for the VM's platform,
 Dialogue: 0,0:24:48.63,0:24:52.69,Bilingual,,0,0,0,,加上 --platform 参数，设成 linux/amd64\N{\fs33\c&H00C8C0B8&\bord1.4}with the flag --platform=linux/amd64.
@@ -502,8 +502,8 @@ Dialogue: 0,0:27:40.74,0:27:43.32,Bilingual,,0,0,0,,一共 7 层，然后启动�
 Dialogue: 0,0:27:43.57,0:27:47.60,Bilingual,,0,0,0,,现在用 python cli.py 运行这个应用，用它的默认设置\N{\fs33\c&H00C8C0B8&\bord1.4}Now run the app with python cli.py and its defaults:
 Dialogue: 0,0:27:47.60,0:27:50.39,Bilingual,,0,0,0,,I love cheese 翻成了意大利语\N{\fs33\c&H00C8C0B8&\bord1.4}I love cheese comes back in Italian.
 Dialogue: 0,0:27:50.71,0:27:52.14,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
-Dialogue: 0,0:27:52.19,0:27:53.93,Bilingual,,0,0,0,,这台 VM 上没有 clone，没有 pip\N{\fs33\c&H00C8C0B8&\bord1.4}No clone, no pip,
-Dialogue: 0,0:27:53.93,0:27:56.75,Bilingual,,0,0,0,,也没有 uv：只有 Docker 和一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}no uv on this VM: just Docker and one image.
+Dialogue: 0,0:27:52.19,0:27:54.80,Bilingual,,0,0,0,,没有 clone，没有 pip，这台 VM 上也没有 uv\N{\fs33\c&H00C8C0B8&\bord1.4}No clone, no pip, no uv on this VM:
+Dialogue: 0,0:27:54.80,0:27:56.75,Bilingual,,0,0,0,,只有 Docker 和一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}just Docker and one image.
 Dialogue: 0,0:27:57.00,0:28:03.40,Bilingual,,0,0,0,,再回到开头那个问题：为什么是 3.14.7，配方明明写的是 3.12？\N{\fs33\c&H00C8C0B8&\bord1.4}And the opening question: why 3.14.7, when the recipe says 3.12?
 Dialogue: 0,0:28:03.72,0:28:05.81,Bilingual,,0,0,0,,原因和我们那次构建一样\N{\fs33\c&H00C8C0B8&\bord1.4}The same reason as in our build.
 Dialogue: 0,0:28:06.13,0:28:11.36,Bilingual,,0,0,0,,这个 image 是 9 月 16 日构建的，用的是 uv 0.12.15\N{\fs33\c&H00C8C0B8&\bord1.4}This image was built on September 16 with uv 0.12.15,
@@ -524,10 +524,9 @@ Dialogue: 0,0:28:59.68,0:29:04.63,Bilingual,,0,0,0,,额外检查一下还会发�
 Dialogue: 0,0:29:04.63,0:29:09.33,Bilingual,,0,0,0,,它的 cli.py 是旧版，没有把 raise exception 设为 True\N{\fs33\c&H00C8C0B8&\bord1.4}its cli.py is the older one, without raise_exception=True.
 Dialogue: 0,0:29:09.65,0:29:14.19,Bilingual,,0,0,0,,如果 Google 拒绝请求，那一版会悄悄把你的输入原样打出来\N{\fs33\c&H00C8C0B8&\bord1.4}If Google refuses a request, that version quietly prints your input back.
 Dialogue: 0,0:29:14.51,0:29:16.24,Bilingual,,0,0,0,,这不是 Docker 的问题\N{\fs33\c&H00C8C0B8&\bord1.4}That's not a Docker problem.
-Dialogue: 0,0:29:16.48,0:29:18.50,Bilingual,,0,0,0,,还有，如果 pull 这个 image 时失败了\N{\fs33\c&H00C8C0B8&\bord1.4}And if pulling the image fails
-Dialogue: 0,0:29:18.50,0:29:20.57,Bilingual,,0,0,0,,报 toomanyrequests\N{\fs33\c&H00C8C0B8&\bord1.4}with toomanyrequests: Docker Hub
-Dialogue: 0,0:29:20.57,0:29:24.71,Bilingual,,0,0,0,,Docker Hub 按网络地址限制匿名用户 pull 的次数\N{\fs33\c&H00C8C0B8&\bord1.4}limits how often anonymous users can pull, per network address,
-Dialogue: 0,0:29:24.71,0:29:26.42,Bilingual,,0,0,0,,一整个教室的人可能会碰到\N{\fs33\c&H00C8C0B8&\bord1.4}which a classroom can hit.
+Dialogue: 0,0:29:16.48,0:29:19.88,Bilingual,,0,0,0,,还有，如果 pull 这个 image 时报 toomanyrequests 失败了\N{\fs33\c&H00C8C0B8&\bord1.4}And if pulling the image fails with toomanyrequests:
+Dialogue: 0,0:29:19.88,0:29:24.72,Bilingual,,0,0,0,,Docker Hub 按网络地址限制匿名用户 pull 的次数\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Hub limits how often anonymous users can pull, per network address,
+Dialogue: 0,0:29:24.72,0:29:26.42,Bilingual,,0,0,0,,一整个教室的人可能会碰到\N{\fs33\c&H00C8C0B8&\bord1.4}which a classroom can hit.
 Dialogue: 0,0:29:26.74,0:29:30.54,Bilingual,,0,0,0,,等一会儿，或者先登录：sudo docker login\N{\fs33\c&H00C8C0B8&\bord1.4}Wait a while, or log in first, with sudo docker login.
 Dialogue: 0,0:29:31.78,0:29:33.43,Bilingual,,0,0,0,,走之前，先清理一下\N{\fs33\c&H00C8C0B8&\bord1.4}Before you go, clean up.
 Dialogue: 0,0:29:33.75,0:29:36.89,Bilingual,,0,0,0,,额外检查 sudo docker ps -a\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check, sudo docker ps -a,
@@ -537,8 +536,8 @@ Dialogue: 0,0:29:45.49,0:29:49.54,Bilingual,,0,0,0,,然后确认 VM instances �
 Dialogue: 0,0:29:49.86,0:29:51.40,Bilingual,,0,0,0,,现在就暂停去做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it now.
 Dialogue: 0,0:29:51.45,0:29:53.05,Bilingual,,0,0,0,,还有两件可选的杂事\N{\fs33\c&H00C8C0B8&\bord1.4}Two optional chores.
 Dialogue: 0,0:29:53.18,0:29:58.41,Bilingual,,0,0,0,,你的 Docker Hub 仓库会一直公开，直到你把它删掉或设成私有\N{\fs33\c&H00C8C0B8&\bord1.4}Your Docker Hub repository stays public until you delete it or make it private.
-Dialogue: 0,0:29:58.73,0:30:02.47,Bilingual,,0,0,0,,另外，想回收 image 占用的空间，就在笔记本上运行\N{\fs33\c&H00C8C0B8&\bord1.4}And to reclaim the space your images take on the laptop,
-Dialogue: 0,0:30:02.47,0:30:04.27,Bilingual,,0,0,0,,docker system prune -a\N{\fs33\c&H00C8C0B8&\bord1.4}run docker system prune -a.
+Dialogue: 0,0:29:58.73,0:30:02.47,Bilingual,,0,0,0,,另外，想回收 image 在笔记本上占用的空间\N{\fs33\c&H00C8C0B8&\bord1.4}And to reclaim the space your images take on the laptop,
+Dialogue: 0,0:30:02.47,0:30:04.27,Bilingual,,0,0,0,,就运行：docker system prune -a\N{\fs33\c&H00C8C0B8&\bord1.4}run docker system prune -a.
 Dialogue: 0,0:30:07.52,0:30:10.76,Bilingual,,0,0,0,,第 1 讲给了我们一台装着 venv 的 VM\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 1 gave us a VM with a venv inside.
 Dialogue: 0,0:30:11.08,0:30:13.72,Bilingual,,0,0,0,,今天，container 插到了中间\N{\fs33\c&H00C8C0B8&\bord1.4}Today a container slid in between:
 Dialogue: 0,0:30:13.72,0:30:16.99,Bilingual,,0,0,0,,venv 现在住在一个 image 里，就在 /.venv\N{\fs33\c&H00C8C0B8&\bord1.4}the venv now lives in an image, at /.venv.
@@ -556,5 +555,6 @@ Dialogue: 0,0:30:50.90,0:30:55.38,Bilingual,,0,0,0,,哪些构建步骤会重新�
 Dialogue: 0,0:30:55.70,0:30:56.70,Bilingual,,0,0,0,,第五题\N{\fs33\c&H00C8C0B8&\bord1.4}Five:
 Dialogue: 0,0:30:56.70,0:31:00.50,Bilingual,,0,0,0,,说出两种办法，让 Mac 上构建的 image 能在默认的 VM 上运行\N{\fs33\c&H00C8C0B8&\bord1.4}name two ways to make a Mac-built image run on a default VM.
 Dialogue: 0,0:31:00.75,0:31:05.44,Bilingual,,0,0,0,,答案在练习里，每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}The answers are in the exercises, and every command is in the study guide.
-Dialogue: 0,0:31:05.76,0:31:09.75,Bilingual,,0,0,0,,下节课是容器 II：五个 container 协同工作，一个工作目录\N{\fs33\c&H00C8C0B8&\bord1.4}Next time, Containers 2: five containers working together,
-Dialogue: 0,0:31:09.75,0:31:15.94,Bilingual,,0,0,0,,一个非 root 用户，还有把你笔记本上的目录挂载进 container\N{\fs33\c&H00C8C0B8&\bord1.4}a working directory, a non-root user, and your laptop's folder mounted inside a container.
+Dialogue: 0,0:31:05.76,0:31:09.78,Bilingual,,0,0,0,,下节课是容器 II：五个 container 协同工作\N{\fs33\c&H00C8C0B8&\bord1.4}Next time, Containers 2: five containers working together,
+Dialogue: 0,0:31:09.78,0:31:12.34,Bilingual,,0,0,0,,还有一个工作目录、一个非 root 用户\N{\fs33\c&H00C8C0B8&\bord1.4}a working directory, a non-root user,
+Dialogue: 0,0:31:12.34,0:31:15.94,Bilingual,,0,0,0,,以及把你笔记本上的目录挂载进 container\N{\fs33\c&H00C8C0B8&\bord1.4}and your laptop's folder mounted inside a container.

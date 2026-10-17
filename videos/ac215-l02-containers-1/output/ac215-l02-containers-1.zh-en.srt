@@ -124,14 +124,14 @@ No service account or keys today.
 First, four words for the whole lecture.
 
 26
-00:01:25,303 --> 00:01:30,466
+00:01:25,303 --> 00:01:28,817
 在第 1 讲里，每台新 VM 都要把同样的配置再做一遍
-In lecture 1, every new VM needed the same setup, on an operating system
+In lecture 1, every new VM needed the same setup,
 
 27
-00:01:30,466 --> 00:01:32,066
-还得操作系统配合
-that had to cooperate.
+00:01:28,817 --> 00:01:32,044
+而且是在一个得配合才行的操作系统上
+on an operating system that had to cooperate.
 
 28
 00:01:32,364 --> 00:01:36,212
@@ -299,739 +299,739 @@ On a Mac your prompt looks different;
 on Windows, use an Ubuntu terminal in WSL, or Git Bash.
 
 61
-00:03:30,617 --> 00:03:31,682
-在 Git Bash 里
-In Git Bash,
+00:03:30,617 --> 00:03:34,106
+在 Git Bash 里，docker run 前面要加上 winpty
+In Git Bash, put winpty in front of docker run
 
 62
-00:03:31,682 --> 00:03:34,918
-如果 docker run 报 stdin is not a terminal
-put winpty in front of docker run if it says
+00:03:34,106 --> 00:03:36,761
+如果它报 stdin is not a terminal 的话
+if it says stdin is not a terminal.
 
 63
-00:03:34,918 --> 00:03:36,761
-就在它前面加上 winpty
-stdin is not a terminal.
-
-64
 00:03:37,000 --> 00:03:40,392
 首先，docker container ls 列出正在运行的 container
 First, docker container ls lists running containers.
 
-65
+64
 00:03:40,712 --> 00:03:43,677
 这里只显示了表头，所以什么都没在运行
 Here it shows only the header, so nothing is running.
 
-66
+65
 00:03:43,997 --> 00:03:46,706
 如果你那边连不上 Docker daemon
 If yours can't connect to the Docker daemon,
 
-67
+66
 00:03:46,706 --> 00:03:48,861
 就启动 Docker Desktop 再试
 start Docker Desktop and try again.
 
-68
+67
 00:03:49,181 --> 00:03:50,533
 暂停一下，自己跑一遍
 Pause and run it.
 
-69
+68
 00:03:50,583 --> 00:03:52,844
 接着，停掉所有正在运行的 container
 Next, stop any running container.
 
-70
+69
 00:03:53,164 --> 00:03:57,794
 这里没有要停的；如果你有，docker stop 加上它的 ID 就行
 There's nothing to stop here; if you have one, docker stop with its ID does it.
 
-71
+70
 00:03:58,033 --> 00:03:59,700
 然后是 docker system prune
 Then docker system prune.
 
-72
+71
 00:03:59,996 --> 00:04:02,982
 它会列出要删掉的东西，再问你；输入 y
 It lists what it will remove and asks; type y.
 
-73
+72
 00:04:03,302 --> 00:04:04,878
 这里没有空间可回收
 Nothing to reclaim here;
 
-74
+73
 00:04:04,878 --> 00:04:07,925
 你那边可能会删掉一个停了的 hello-world container
 yours may delete the stopped hello-world container
 
-75
+74
 00:04:07,925 --> 00:04:09,482
 是 Tutorial 0 留下的
 from Tutorial 0.
 
-76
+75
 00:04:09,532 --> 00:04:10,883
 暂停一下，自己跑一遍
 Pause and run it.
 
-77
+76
 00:04:10,933 --> 00:04:14,944
 看第三项：dangling images，也就是没有名字的 image
 Look at the third item: dangling images, the ones without a name.
 
-78
+77
 00:04:15,264 --> 00:04:18,403
 别看 README 的标题那么写，有名字的 image 其实会留下来
 Despite the README's heading, named images survive.
 
-79
+78
 00:04:18,720 --> 00:04:22,027
 加上 -a 的话，prune 会删掉所有没在用的 image
 With -a, prune would remove every unused image.
 
-80
+79
 00:04:22,267 --> 00:04:25,104
 然后，docker image ls 列出你的 image
 Then docker image ls lists your images.
 
-81
+80
 00:04:25,424 --> 00:04:26,868
 这里列表是空的
 The list is empty here;
 
-82
+81
 00:04:26,868 --> 00:04:30,886
 你那边可能还会显示 hello-world：它有名字，所以留了下来
 yours may still show hello-world: it has a name, so it survived.
 
-83
+82
 00:04:31,206 --> 00:04:36,112
 你看到的列可能不一样：这是录制时的 Docker 29
 Your columns may differ: this is Docker 29, at the time of recording.
 
-84
+83
 00:04:36,350 --> 00:04:37,687
 接下来是代码
 Now the code.
 
-85
+84
 00:04:37,737 --> 00:04:42,249
 README 也提醒了，上节课在 VM 上 clone 的那份帮不上忙
 As the README notes, a clone on last lecture's VM doesn't help:
 
-86
+85
 00:04:42,249 --> 00:04:44,755
 Docker Desktop 跑在你的笔记本上
 Docker Desktop runs on your laptop.
 
-87
+86
 00:04:45,075 --> 00:04:48,019
 在这里 clone，然后 cd 进 simple-translate
 Clone it here, then cd into simple-translate.
 
-88
+87
 00:04:48,339 --> 00:04:49,833
 暂停一下，两条都跑一遍
 Pause and run both.
 
-89
+88
 00:04:49,883 --> 00:04:53,104
 额外检查一下，README 里没有这一步：ls -a
 An extra check, not in the README: ls -a.
 
-90
+89
 00:04:53,424 --> 00:04:56,447
 参考答案 Dockerfile.txt 在这儿
 There's the solution, Dockerfile.txt,
 
-91
+90
 00:04:56,447 --> 00:05:00,614
 但没有一个就叫 Dockerfile 的文件，也没有 uv.lock
 but no file called just Dockerfile, and no uv.lock.
 
-92
+91
 00:05:00,850 --> 00:05:04,060
 现在就跑一下 README 里的构建命令，这是额外的一步
 Run the README's build command now, as an extra:
 
-93
+92
 00:05:04,060 --> 00:05:05,799
 报 failed to read dockerfile
 failed to read dockerfile.
 
-94
+93
 00:05:06,119 --> 00:05:08,850
 README 是要你自己写这个文件，分五步
 The README wants you to write it, in five steps.
 
-95
+94
 00:05:09,900 --> 00:05:12,783
 接下来，在 simple-translate 目录里
 Next, inside the simple-translate folder,
 
-96
+95
 00:05:12,783 --> 00:05:16,791
 建一个叫 Dockerfile 的文件：大写 D，没有扩展名
 create a file called Dockerfile: capital D, no extension.
 
-97
+96
 00:05:17,111 --> 00:05:21,420
 README 分五步把它填满，每一步之后都构建一次、运行一次
 The README fills it in five steps, with a build and a run after each.
 
-98
+97
 00:05:21,740 --> 00:05:23,383
 暂停一下，把文件建好
 Pause and create the file.
 
-99
+98
 00:05:23,617 --> 00:05:26,740
 Dockerfile 的第 1 步只有一条指令
 Dockerfile step 1 is one instruction:
 
-100
+99
 00:05:26,740 --> 00:05:29,356
 FROM python:3.12-slim-bookworm
 FROM python:3.12-slim-bookworm.
 
-101
+100
 00:05:29,676 --> 00:05:31,829
 这是官方的 Python image
 That's the official Python image,
 
-102
+101
 00:05:31,829 --> 00:05:34,177
 基于精简版的 Debian 12，代号 bookworm
 on a slim Debian 12 called bookworm.
 
-103
+102
 00:05:34,497 --> 00:05:37,441
 粘贴进去，保存，再用 cat 检查一下，这是额外的一步
 Paste it in, save, and check with cat, an extra.
 
-104
+103
 00:05:37,683 --> 00:05:39,283
 接下来是构建命令
 Now the build command.
 
-105
+104
 00:05:39,368 --> 00:05:43,976
 参数 -t 给 image 取名 simple-translate；-f 指定配方
 -t names the image simple-translate; -f picks the recipe.
 
-106
+105
 00:05:44,296 --> 00:05:47,599
 末尾那个点就是构建上下文，也就是这个目录
 And the final dot is the build context: this folder,
 
-107
+106
 00:05:47,599 --> 00:05:49,758
 Docker 会把它发给构建器
 which Docker sends to the builder.
 
-108
+107
 00:05:50,078 --> 00:05:52,083
 第 3 步会说明这为什么重要
 Step 3 shows why that matters.
 
-109
+108
 00:05:52,333 --> 00:05:53,933
 暂停一下，跑一下构建
 Pause and run the build.
 
-110
+109
 00:05:54,146 --> 00:05:56,216
 你的终端显示的是精简视图
 Your terminal shows a compact view.
 
-111
+110
 00:05:56,536 --> 00:05:58,697
 这里看到的是完整日志
 Here you see the full log;
 
-112
+111
 00:05:58,697 --> 00:06:01,357
 要看到它，就加上 --progress 参数，设成 plain
 to get it, add --progress=plain.
 
-113
+112
 00:06:01,677 --> 00:06:03,177
 在 Docker Desktop 上
 On Docker Desktop,
 
-114
+113
 00:06:03,177 --> 00:06:06,307
 构建器叫 desktop-linux，不叫 default
 the builder is called desktop-linux, not default.
 
-115
+114
 00:06:06,550 --> 00:06:11,614
 Docker 下载了 base image：4 层，压缩后不到 50 MB
 Docker fetches the base image, four layers, under 50 megabytes compressed,
 
-116
+115
 00:06:11,614 --> 00:06:15,446
 然后把结果存为 simple-translate，tag 是 latest
 and saves the result as simple-translate, tagged latest.
 
-117
+116
 00:06:15,766 --> 00:06:18,262
 这 4 层就是我们这叠层的最底部
 Those four layers are the bottom of our stack.
 
-118
+117
 00:06:18,500 --> 00:06:20,100
 它启动的时候会做什么？
 What will it do when it starts?
 
-119
+118
 00:06:20,420 --> 00:06:24,234
 额外用 docker image inspect 读一下配置卡片
 An extra docker image inspect reads the config card:
 
-120
+119
 00:06:24,234 --> 00:06:25,627
 没有 ENTRYPOINT
 no entrypoint,
 
-121
+120
 00:06:25,627 --> 00:06:29,295
 CMD 是 python3，是从 base image 继承来的
 and the command python3, inherited from the base image.
 
-122
+121
 00:06:29,615 --> 00:06:31,548
 所以我们预测会出现 Python 提示符
 So we predict a Python prompt.
 
-123
+122
 00:06:31,733 --> 00:06:37,450
 现在是运行命令：docker run --rm -ti simple-translate
 Now the run command: docker run --rm -ti simple-translate.
 
-124
+123
 00:06:37,770 --> 00:06:42,656
 其中 --rm 负责事后清理；-ti 让你能往里面输入
 --rm cleans up afterwards; -ti lets you type into it.
 
-125
+124
 00:06:42,976 --> 00:06:44,398
 暂停一下，自己跑一遍
 Pause and run it.
 
-126
+125
 00:06:44,448 --> 00:06:48,864
 Python 提示符出来了，录制时是 3.12.15
 There's the Python prompt, 3.12.15 at the time of recording.
 
-127
+126
 00:06:49,184 --> 00:06:51,445
 输入带括号的 exit 退出
 Type exit() to leave.
 
-128
+127
 00:06:51,683 --> 00:06:54,153
 有个意外：额外用 git status 看一下
 One surprise: an extra git status says
 
-129
+128
 00:06:54,153 --> 00:06:57,144
 显示 nothing to commit，可我们刚建了一个文件
 nothing to commit, though we just made a file.
 
-130
+129
 00:06:57,464 --> 00:07:00,603
 这里的 .gitignore 文件第 3 行写着 Dockerfile
 The .gitignore file here lists Dockerfile on line 3,
 
-131
+130
 00:07:00,603 --> 00:07:02,203
 所以 git 把你的忽略了
 so git hides yours.
 
-132
+131
 00:07:02,371 --> 00:07:05,081
 想照样 commit 它，就用 git add -f
 To commit it anyway, use git add -f.
 
-133
+132
 00:07:06,117 --> 00:07:10,213
 第 2 步加一行：ENTRYPOINT /bin/bash
 Step 2 adds one line: ENTRYPOINT /bin/bash.
 
-134
+133
 00:07:10,533 --> 00:07:12,581
 放在 FROM 那一行下面，保存
 Put it under the FROM line, and save.
 
-135
+134
 00:07:12,817 --> 00:07:14,417
 暂停一下，再构建一次
 Pause and build again.
 
-136
+135
 00:07:14,524 --> 00:07:19,004
 FROM 那一步显示 CACHED：什么都没下载，也没有加层
 The FROM step says CACHED: nothing is downloaded, and no layer is added.
 
-137
+136
 00:07:19,324 --> 00:07:22,118
 ENTRYPOINT 只写在配置卡片上
 ENTRYPOINT only writes on the config card.
 
-138
+137
 00:07:22,367 --> 00:07:25,548
 可以把 ENTRYPOINT 想成要启动的程序
 Think of ENTRYPOINT as the program to start,
 
-139
+138
 00:07:25,548 --> 00:07:27,935
 把 CMD 想成它的默认参数
 and CMD as its default arguments.
 
-140
+139
 00:07:28,255 --> 00:07:32,714
 现在 ENTRYPOINT 是 bash，而 CMD 那一格还写着 python3
 The entrypoint is now bash, and the command slot still says python3.
 
-141
+140
 00:07:33,034 --> 00:07:36,212
 那么 container 会启动 bash，再让它运行 python3 吗？
 So will the container start bash, running python3?
 
-142
+141
 00:07:36,450 --> 00:07:38,265
 这个额外的 inspect 说不会
 This extra inspect says no:
 
-143
+142
 00:07:38,265 --> 00:07:41,762
 ENTRYPOINT 是 bash，CMD 现在是 null
 the entrypoint is bash, and the command is now null.
 
-144
+143
 00:07:42,082 --> 00:07:46,541
 一设置 ENTRYPOINT，从 base image 继承来的 CMD 就被清空了
 Setting an entrypoint resets the command you inherited from the base image.
 
-145
+144
 00:07:46,861 --> 00:07:48,568
 所以启动的就只有 bash 本身
 So bash starts on its own.
 
-146
+145
 00:07:48,817 --> 00:07:51,372
 暂停一下，自己跑一遍：只有一个光秃秃的提示符
 Pause and run it: a bare prompt.
 
-147
+146
 00:07:51,422 --> 00:07:52,863
 从左往右读
 Read it left to right.
 
-148
+147
 00:07:52,913 --> 00:07:55,985
 你是 root，也就是 container 里的管理员
 You're root, the administrator, inside the container.
 
-149
+148
 00:07:56,305 --> 00:07:59,237
 @ 符号后面是 container 的 ID
 After the @ sign comes the container's ID,
 
-150
+149
 00:07:59,237 --> 00:08:02,449
 每次运行都不一样，所以你的会不同
 which changes every run, so yours will differ.
 
-151
+150
 00:08:02,684 --> 00:08:06,452
 而那个斜杠表示你从 image 的根目录开始
 And the slash means you start in the top folder of the image,
 
-152
+151
 00:08:06,452 --> 00:08:09,233
 因为这个 image 没有设置工作目录
 because this image sets no working directory.
 
-153
+152
 00:08:09,553 --> 00:08:11,153
 输入 exit 退出
 Type exit to leave.
 
-154
+153
 00:08:11,983 --> 00:08:14,031
 第 3 步加两条指令
 Step 3 adds two instructions.
 
-155
+154
 00:08:14,351 --> 00:08:19,407
 RUN pip install uv：用 base image 自带的 pip 来装 uv
 RUN pip install uv uses the pip of the base image to install uv.
 
-156
+155
 00:08:19,727 --> 00:08:22,785
 而 COPY 那一行把这个目录，也就是那个点
 And the COPY line copies this folder, .,
 
-157
+156
 00:08:22,785 --> 00:08:25,231
 复制到 image 的根目录，也就是点斜杠
 into the image's top folder, ./.
 
-158
+157
 00:08:25,551 --> 00:08:27,471
 两行都加在末尾，保存
 Add both at the end, and save.
 
-159
+158
 00:08:27,716 --> 00:08:29,849
 末尾那个点为什么重要，原因在这儿
 Here's why the final dot matters.
 
-160
+159
 00:08:30,169 --> 00:08:36,036
 Docker 把整个目录打成一个包裹，也就是构建上下文，发给构建器
 Docker packs the whole folder into one parcel, the build context, and sends it to the builder.
 
-161
+160
 00:08:36,356 --> 00:08:37,655
 每个文件都会进去
 Every file goes in,
 
-162
+161
 00:08:37,655 --> 00:08:40,800
 隐藏的 .git 目录和你的 Dockerfile 也不例外
 the hidden git folder and your Dockerfile too;
 
-163
+162
 00:08:40,800 --> 00:08:44,149
 一个 .dockerignore 文件可以排除一些文件
 a file called .dockerignore could leave some out,
 
-164
+163
 00:08:44,149 --> 00:08:45,749
 但这个 repo 里没有
 but this repo has none.
 
-165
+164
 00:08:46,041 --> 00:08:49,604
 COPY 那一行把它全部拆开，放进 image 的根目录
 The COPY line unpacks it all into the image's top folder.
 
-166
+165
 00:08:49,850 --> 00:08:51,293
 暂停一下，构建一次
 Pause and build.
 
-167
+166
 00:08:51,343 --> 00:08:54,866
 日志也证实了：没有 .dockerignore 文件
 The log confirms it: there's no .dockerignore file,
 
-168
+167
 00:08:54,866 --> 00:08:58,319
 所以什么都没被过滤掉，整个构建上下文
 so nothing is filtered out, and the whole context,
 
-169
+168
 00:08:58,319 --> 00:09:01,220
 这里是 63 KB，都传给了构建器
 63 kilobytes here, travels to the builder.
 
-170
+169
 00:09:01,466 --> 00:09:07,044
 接着 pip 装了 uv，录制时是 0.13.0 版
 Then pip installs uv, version 0.13.0 at the time of recording,
 
-171
+170
 00:09:07,044 --> 00:09:09,743
 然后 COPY 运行：多了两个新层
 and COPY runs: two new layers.
 
-172
+171
 00:09:10,063 --> 00:09:12,410
 另外，pip 还警告说不该用 root 运行
 Pip also warns about running as root.
 
-173
+172
 00:09:12,730 --> 00:09:15,150
 在第 1 讲里这个警告很重要
 In lecture 1 that warning mattered;
 
-174
+173
 00:09:15,150 --> 00:09:17,914
 在这里，image 本身就起到了隔离的作用
 here, the image itself is the isolation.
 
-175
+174
 00:09:18,933 --> 00:09:23,306
 来想一个问题：uv 装好了，代码也进了 image
 Something to ponder: uv is installed, and the code is in the image.
 
-176
+175
 00:09:23,626 --> 00:09:25,802
 那 python cli.py 能跑起来吗？
 Will python cli.py run?
 
-177
+176
 00:09:32,650 --> 00:09:36,591
 不能。暂停一下，自己跑一遍，然后用 ls 四处看看
 No. Pause and run it, then look around with ls,
 
-178
+177
 00:09:36,591 --> 00:09:40,863
 这是额外的一步：我们的文件就挨着系统自己的目录
 an extra: our files sit right next to the system's own folders.
 
-179
+178
 00:09:41,100 --> 00:09:44,162
 然后是 python cli.py，又一个额外检查
 Then python cli.py, another extra:
 
-180
+179
 00:09:44,162 --> 00:09:48,033
 报 ModuleNotFoundError，No module named art
 ModuleNotFoundError, No module named 'art'.
 
-181
+180
 00:09:48,353 --> 00:09:51,169
 我们装了装包的工具，却没装包
 We installed the installer, not the packages.
 
-182
+181
 00:09:51,489 --> 00:09:53,089
 输入 exit
 Type exit.
 
-183
+182
 00:09:54,383 --> 00:09:58,287
 第 4 步加上 RUN uv sync；加在末尾，保存
 Step 4 adds RUN uv sync; add it at the end, and save.
 
-184
+183
 00:09:58,607 --> 00:10:05,647
 和上节课在 VM 上一样，它读 pyproject.toml，把包装进 venv
 Like on last lecture's VM, it reads pyproject.toml and installs the packages into a venv.
 
-185
+184
 00:10:05,883 --> 00:10:07,198
 先预测一下
 Now predict.
 
-186
+185
 00:10:07,248 --> 00:10:10,101
 这个 image 的 Python 是 3.12
 This image's Python is 3.12,
 
-187
+186
 00:10:10,101 --> 00:10:15,398
 而 pyproject.toml 第 6 行要求 3.13 及以上
 and line 6 of pyproject.toml asks for 3.13 or newer.
 
-188
+187
 00:10:15,718 --> 00:10:17,830
 构建的时候，uv sync 会做什么？
 What will uv sync do during the build?
 
-189
+188
 00:10:26,666 --> 00:10:28,109
 暂停一下，构建一次
 Pause and build.
 
-190
+189
 00:10:28,159 --> 00:10:32,110
 先注意：pip 那一步是 CACHED，COPY 却是 DONE
 First, notice: the pip step says CACHED, but COPY says DONE:
 
-191
+190
 00:10:32,110 --> 00:10:35,007
 它又跑了一遍，虽然我们只加了一行
 it ran again, although we only added a line.
 
-192
+191
 00:10:35,327 --> 00:10:37,312
 这个问题留到第二部分
 Keep that question for part 2.
 
-193
+192
 00:10:37,550 --> 00:10:38,993
 现在揭晓答案
 Now the answer.
 
-194
+193
 00:10:39,043 --> 00:10:42,485
 和第 1 讲里那台 Debian 12 的 VM 一样
 As on the Debian 12 VM in lecture 1,
 
-195
+194
 00:10:42,485 --> 00:10:49,177
 uv 自己下载了一个 Python：录制时是 CPython 3.15.0
 uv downloads its own Python: CPython 3.15.0, at the time of recording.
 
-196
+195
 00:10:49,497 --> 00:10:54,382
 然后它在 /.venv 建了一个 venv，装了 11 个包
 Then it creates a venv at /.venv, and installs 11 packages.
 
-197
+196
 00:10:54,616 --> 00:10:58,648
 在数轴上，这个要求覆盖 3.13 及以上
 On the number line, the requirement covers 3.13 and newer.
 
-198
+197
 00:10:58,968 --> 00:11:01,489
 而 base image 的 3.12 落在范围外
 The base image's 3.12 falls outside,
 
-199
+198
 00:11:01,489 --> 00:11:05,901
 所以 uv 从它知道的版本里，下载了范围内最新的稳定版 Python
 so uv downloads the newest stable Python it knows in the range,
 
-200
+199
 00:11:05,901 --> 00:11:08,632
 venv 里的 python 就软链接到它
 and the python in the venv links to it.
 
-201
+200
 00:11:13,600 --> 00:11:16,526
 暂停一下，自己跑一遍，再做两个额外检查
 Pause and run it, then two extras:
 
-202
+201
 00:11:16,526 --> 00:11:21,344
 ls -a，它连隐藏文件也会列出来；还有 python cli.py
 ls -a, which also lists hidden files, and python cli.py.
 
-203
+202
 00:11:21,664 --> 00:11:25,333
 现在列表里多了 .venv，还有一个新的 uv.lock
 Now the listing shows .venv, and a new uv.lock.
 
-204
+203
 00:11:25,653 --> 00:11:29,536
 可 python cli.py 还是和之前一样，失败了
 But python cli.py fails exactly as before.
 
-205
+204
 00:11:29,856 --> 00:11:34,016
 为什么？回想一下第 1 讲：激活其实只是改 PATH
 Why? Remember lecture 1: activation is just PATH.
 
+205
+00:11:34,336 --> 00:11:36,398
+没有任何东西激活这个 venv
+Nothing has activated the venv,
+
 206
-00:11:34,336 --> 00:11:37,631
-没有任何东西激活这个 venv，所以 python 这个词先找到的
-Nothing has activated the venv, so the word python
+00:11:36,398 --> 00:11:40,387
+所以 python 这个词会先找到 /usr/local/bin 里的 Python
+so the word python first finds the Python in /usr/local/bin,
 
 207
-00:11:37,631 --> 00:11:41,717
-是 /usr/local/bin 里的 Python，来自 base image
-first finds the Python in /usr/local/bin, from the base image.
+00:11:40,387 --> 00:11:41,987
+它来自 base image
+from the base image.
 
 208
 00:11:42,037 --> 00:11:45,366
@@ -1264,14 +1264,14 @@ README 只提到了这个文件名
 The README only names the file.
 
 254
-00:14:13,618 --> 00:14:15,522
-所以最快的办法是一条额外的命令
-So here's the quickest way,
+00:14:13,618 --> 00:14:16,445
+所以最快的办法是这样，一条额外的命令
+So here's the quickest way, an extra command:
 
 255
-00:14:15,522 --> 00:14:18,695
+00:14:16,445 --> 00:14:18,695
 用 cp 把它复制过来，覆盖你的 Dockerfile
-an extra command: copy it over yours with cp.
+copy it over yours with cp.
 
 256
 00:14:19,015 --> 00:14:20,450
@@ -1645,12 +1645,12 @@ That's a gap in the tutorial: there's no .dockerignore file.
 
 330
 00:18:37,708 --> 00:18:39,242
-在你自己的项目里加一个
+在你自己的项目里
 In your own projects,
 
 331
 00:18:39,242 --> 00:18:43,042
-写上 .git、.venv 和你的 secrets 目录
+加一个这样的文件，写上 .git、.venv 和你的 secrets 目录
 add one listing .git, .venv and your secrets folder.
 
 332
@@ -2149,13 +2149,13 @@ exec format error.
 Docker Desktop would just run it, emulated.
 
 431
-00:24:36,000 --> 00:24:39,280
-Mac 上构建的 image 放到默认的 VM 上
+00:24:36,000 --> 00:24:39,591
+Mac 上构建的 image 放到默认的 VM 上会这样失败
 A Mac-built image on a default VM fails like this,
 
 432
-00:24:39,280 --> 00:24:41,674
-就会这样失败，或者报 no matching manifest
+00:24:39,591 --> 00:24:41,674
+或者报 no matching manifest
 or with no matching manifest.
 
 433
@@ -2449,14 +2449,14 @@ I love cheese comes back in Italian.
 Pause and run it.
 
 491
-00:27:52,186 --> 00:27:53,930
-这台 VM 上没有 clone，没有 pip
-No clone, no pip,
+00:27:52,186 --> 00:27:54,805
+没有 clone，没有 pip，这台 VM 上也没有 uv
+No clone, no pip, no uv on this VM:
 
 492
-00:27:53,930 --> 00:27:56,751
-也没有 uv：只有 Docker 和一个 image
-no uv on this VM: just Docker and one image.
+00:27:54,805 --> 00:27:56,751
+只有 Docker 和一个 image
+just Docker and one image.
 
 493
 00:27:57,000 --> 00:28:03,400
@@ -2559,171 +2559,171 @@ If Google refuses a request, that version quietly prints your input back.
 That's not a Docker problem.
 
 513
-00:29:16,484 --> 00:29:18,500
-还有，如果 pull 这个 image 时失败了
-And if pulling the image fails
+00:29:16,484 --> 00:29:19,885
+还有，如果 pull 这个 image 时报 toomanyrequests 失败了
+And if pulling the image fails with toomanyrequests:
 
 514
-00:29:18,500 --> 00:29:20,565
-报 toomanyrequests
-with toomanyrequests: Docker Hub
+00:29:19,885 --> 00:29:24,724
+Docker Hub 按网络地址限制匿名用户 pull 的次数
+Docker Hub limits how often anonymous users can pull, per network address,
 
 515
-00:29:20,565 --> 00:29:24,713
-Docker Hub 按网络地址限制匿名用户 pull 的次数
-limits how often anonymous users can pull, per network address,
-
-516
-00:29:24,713 --> 00:29:26,425
+00:29:24,724 --> 00:29:26,425
 一整个教室的人可能会碰到
 which a classroom can hit.
 
-517
+516
 00:29:26,745 --> 00:29:30,542
 等一会儿，或者先登录：sudo docker login
 Wait a while, or log in first, with sudo docker login.
 
-518
+517
 00:29:31,783 --> 00:29:33,426
 走之前，先清理一下
 Before you go, clean up.
 
-519
+518
 00:29:33,746 --> 00:29:36,886
 额外检查 sudo docker ps -a
 An extra check, sudo docker ps -a,
 
-520
+519
 00:29:36,886 --> 00:29:41,319
 没有留下任何 container，多亏了 --rm
 shows no containers left behind, thanks to --rm.
 
-521
+520
 00:29:41,583 --> 00:29:45,487
 README 的最后一步：删除 VM，连同它的启动磁盘
 Last README step: delete the VM, with its boot disk,
 
-522
+521
 00:29:45,487 --> 00:29:49,540
 然后确认 VM instances 和 Disks 两个页面都是空的
 then check that VM instances and Disks are both empty.
 
-523
+522
 00:29:49,860 --> 00:29:51,400
 现在就暂停去做
 Pause and do it now.
 
-524
+523
 00:29:51,450 --> 00:29:53,050
 还有两件可选的杂事
 Two optional chores.
 
-525
+524
 00:29:53,178 --> 00:29:58,405
 你的 Docker Hub 仓库会一直公开，直到你把它删掉或设成私有
 Your Docker Hub repository stays public until you delete it or make it private.
 
-526
+525
 00:29:58,725 --> 00:30:02,467
-另外，想回收 image 占用的空间，就在笔记本上运行
+另外，想回收 image 在笔记本上占用的空间
 And to reclaim the space your images take on the laptop,
 
-527
+526
 00:30:02,467 --> 00:30:04,271
-docker system prune -a
+就运行：docker system prune -a
 run docker system prune -a.
 
-528
+527
 00:30:07,516 --> 00:30:10,759
 第 1 讲给了我们一台装着 venv 的 VM
 Lecture 1 gave us a VM with a venv inside.
 
-529
+528
 00:30:11,079 --> 00:30:13,723
 今天，container 插到了中间
 Today a container slid in between:
 
-530
+529
 00:30:13,723 --> 00:30:16,988
 venv 现在住在一个 image 里，就在 /.venv
 the venv now lives in an image, at /.venv.
 
-531
+530
 00:30:17,308 --> 00:30:20,700
 你在笔记本上构建了它，push 到 registry
 You built it on your laptop, pushed it to a registry,
 
-532
+531
 00:30:20,700 --> 00:30:23,004
 再在 VM 上用一条命令运行了它
 and ran it on a VM with one command.
 
-533
+532
 00:30:23,583 --> 00:30:25,588
 五道自测题
 Five questions to test yourself.
 
-534
+533
 00:30:25,908 --> 00:30:30,121
 第一题：image 和 container 有什么区别
 One: what's the difference between an image and a container,
 
-535
+534
 00:30:30,121 --> 00:30:31,946
 --rm 又删掉了什么？
 and what does --rm delete?
 
-536
+535
 00:30:32,266 --> 00:30:35,372
 第二题：我们的 container 启动时运行什么
 Two: what does our container run at startup,
 
-537
+536
 00:30:35,372 --> 00:30:39,818
 如果在 image 名后面加上 python cli.py，又会怎样？
 and what happens if you add python cli.py after the image name?
 
-538
+537
 00:30:40,066 --> 00:30:44,005
 第三题：Dockerfile 写的是 Python 3.12
 Three: the Dockerfile says Python 3.12,
 
-539
+538
 00:30:44,005 --> 00:30:48,045
 那为什么 python 显示的是 3.15，或者 3.14？
 so why does python report 3.15, or 3.14?
 
-540
+539
 00:30:48,365 --> 00:30:50,904
 第四题：你改了 cli.py 里的一行
 Four: you edit one line of cli.py;
 
-541
+540
 00:30:50,904 --> 00:30:55,383
 哪些构建步骤会重新运行，你又会怎么调整 Dockerfile 的顺序？
 which steps rerun, and how would you reorder the Dockerfile?
 
-542
+541
 00:30:55,703 --> 00:30:56,703
 第五题
 Five:
 
-543
+542
 00:30:56,703 --> 00:31:00,504
 说出两种办法，让 Mac 上构建的 image 能在默认的 VM 上运行
 name two ways to make a Mac-built image run on a default VM.
 
-544
+543
 00:31:00,750 --> 00:31:05,443
 答案在练习里，每条命令都在学习指南里
 The answers are in the exercises, and every command is in the study guide.
 
-545
-00:31:05,763 --> 00:31:09,751
-下节课是容器 II：五个 container 协同工作，一个工作目录
+544
+00:31:05,763 --> 00:31:09,778
+下节课是容器 II：五个 container 协同工作
 Next time, Containers 2: five containers working together,
 
+545
+00:31:09,778 --> 00:31:12,340
+还有一个工作目录、一个非 root 用户
+a working directory, a non-root user,
+
 546
-00:31:09,751 --> 00:31:15,939
-一个非 root 用户，还有把你笔记本上的目录挂载进 container
-a working directory, a non-root user, and your laptop's folder mounted inside a container.
+00:31:12,340 --> 00:31:15,939
+以及把你笔记本上的目录挂载进 container
+and your laptop's folder mounted inside a container.

@@ -828,3 +828,55 @@ def test_r5_meta_video_srt():
     t = "It wasn't. The translation had a full stop after that no, so the cue split there."
     out = build.split_cues(10.0, 15.0, t, marks=[(0, 0.0), (11, 1.22)])
     assert out[0] == (10.0, 11.0, "It wasn't.") and out[1][0] == 11.22
+
+
+# ---------------------------------------------------------------- placeholders the viewer copies
+
+def _split_placeholder(texts, ph="<USER NAME>"):
+    """The lines (cue texts split at their line breaks) that hold only part of the placeholder."""
+    return [ln for t in texts for ln in t.split("\n") if ("<USER" in ln or "NAME>" in ln) and ph not in ln]
+
+
+def test_placeholder_english_cue_never_breaks_inside():
+    from explainer import build
+    # the AC215 L02 .srt: "docker tag simple-translate <USER / NAME>/simple-translate-ac215."
+    tag = "docker tag simple-translate <USER NAME>/simple-translate-ac215."
+    assert build.split_cues(0.0, 4.0, tag)[0][2] == "docker tag simple-translate\n<USER NAME>/simple-translate-ac215."
+    assert [c[2] for c in S.tracks([(0.0, 4.0, "", tag)])["en"]] == [
+        "docker tag simple-translate\n<USER NAME>/simple-translate-ac215."]
+    e = ("Then tag the image: docker tag simple-translate <USER NAME>/simple-translate-ac215, "
+         "with your own Docker Hub user name.")
+    for t in (tag, "Your image is <USER NAME>/simple-translate-ac215.", e):
+        assert not _split_placeholder(c[2] for c in build.split_cues(0.0, len(t) / 15, t)), t
+        assert not _split_placeholder(c[2] for c in S.tracks([(0.0, 8.0, "", t)])["en"]), t
+    for n in (26, 30, 34, 38, 42, 44, 46, 48):            # cue cuts and line breaks, at the widths where they
+                                                          # fell inside it (29 to 46 characters)
+        assert not _split_placeholder(S.split_balanced(e, n * 0.55, clauses=True)), n
+        assert not _split_placeholder(S.wrap_en(e, n * 0.55)), n
+        assert not _split_placeholder(S.split_balanced(e, n * 0.55)), n
+    t = "Log in first, then run docker login -u <USER NAME> and paste the token."
+    assert S.wrap_greedy(t, 42) == ["Log in first, then run docker login -u", "<USER NAME> and paste the token."]
+    assert build._lines(t, 30, 1) == ["Log in first, then run docker", "login -u <USER NAME> and paste", "the token."]
+    assert S.wrap_greedy("set the project to <your-project-id> now", 30) == [   # not "<your- / project-id>"
+        "set the project to", "<your-project-id> now"]
+    assert S.in_placeholder(tag, tag.index(" NAME>") + 1) and not S.in_placeholder(tag, tag.index("<"))
+    assert not S._placeholders("if x < 5 and y > 3")     # a comparison is not a placeholder
+
+
+def test_placeholder_chinese_cue_never_breaks_inside():
+    z = "然后给镜像打标签：docker tag simple-translate <USER NAME>/simple-translate-ac215，把 USER NAME 换成你自己的 Docker Hub 用户名。"
+    e = ("Then tag the image: docker tag simple-translate <USER NAME>/simple-translate-ac215, "
+         "with your own Docker Hub user name.")
+    assert zh(z)[1] == "docker tag simple-translate / <USER NAME>/simple-translate-ac215"   # was "…<USER / NAME>/…"
+    pairs = bi(z, e)
+    assert pairs[1] == ("<USER NAME>/simple-translate-ac215", "<USER NAME>/simple-translate-ac215,")
+    assert not _split_placeholder(x for p in pairs for x in p)
+    login = "在终端里输入 docker login -u <USER NAME>，再粘贴你的令牌。"
+    assert zh(login, 4.0) == ["在终端里输入 docker login -u / <USER NAME>，再粘贴你的令牌"]
+    for t in (z, login):
+        assert not _split_placeholder(c[2] for c in S.tracks([(0.0, 8.0, t, "x")])["zh"])
+        for n in (7, 8, 12, 16, 18, 20, 22, 26, 30):      # cue cuts and line breaks, at the widths where
+                                                          # they fell inside it (7, 8, 16 to 30 units)
+            assert not _split_placeholder(S.split_balanced(t, n, hang=True)), (t, n)
+            assert not _split_placeholder(S._wrapped(t, n)), (t, n)
+            assert not _split_placeholder(S.split_balanced(t, 2 * n, hang=True, line=n)), (t, n)

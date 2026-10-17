@@ -43,7 +43,7 @@ S10:
 - en: "That's a gap in the tutorial: there's no dockerignore file. In your own projects, add one listing dot git, dot venv and your secrets folder. It matters most once the image is public, and that's soon."
   zh:
   - "这是教程里的一个缺口：没有 .dockerignore 文件。"
-  - "在你自己的项目里加一个，写上 .git、.venv 和你的 secrets 目录。"
+  - "在你自己的项目里，加一个这样的文件，写上 .git、.venv 和你的 secrets 目录。"
   - "等 image 公开了，这一点最要紧，而它很快就会公开。"
   en_display:
   - "That's a gap in the tutorial: there's no .dockerignore file."
@@ -200,7 +200,7 @@ S13:
   - "不能。"
   - "这是反过来的同一个失败，发生在我们这台没有模拟器的机器上：exec format error。"
   - "换成 Docker Desktop，会直接把它模拟运行起来。"
-  - "Mac 上构建的 image 放到默认的 VM 上，就会这样失败，或者报 no matching manifest。"
+  - "Mac 上构建的 image 放到默认的 VM 上会这样失败，或者报 no matching manifest。"
 - en: "Two fixes, neither in the README. One: build for the VM's platform, with the flag dash dash platform equals linux slash amd64. It's the commented-out line 12 of docker-shell.sh. On a Mac, it runs emulated: slower, but it works. Then tag and push again, as before."
   zh:
   - "有两个办法，README 里都没有。"
@@ -290,7 +290,7 @@ S15:
   zh:
   - "现在用 python cli.py 运行这个应用，用它的默认设置：I love cheese 翻成了意大利语。"
   - "暂停一下，自己跑一遍。"
-  - "这台 VM 上没有 clone，没有 pip，也没有 uv：只有 Docker 和一个 image。"
+  - "没有 clone，没有 pip，这台 VM 上也没有 uv：只有 Docker 和一个 image。"
 - en: "And the opening question: why 3.14.7, when the recipe says 3.12? The same reason as in our build. This image was built on September 16 with uv 0.12.15, and the newest stable Python that uv knew in the range was 3.14.7. Our build today got 3.15.0."
   zh:
   - "再回到开头那个问题：为什么是 3.14.7，配方明明写的是 3.12？"
@@ -324,7 +324,7 @@ S15:
   - null
 - en: "And if pulling the image fails with too many requests: Docker Hub limits how often anonymous users can pull, per network address, which a classroom can hit. Wait a while, or log in first, with sudo docker login."
   zh:
-  - "还有，如果 pull 这个 image 时失败了，报 toomanyrequests：Docker Hub 按网络地址限制匿名用户 pull 的次数，一整个教室的人可能会碰到。"
+  - "还有，如果 pull 这个 image 时报 toomanyrequests 失败了：Docker Hub 按网络地址限制匿名用户 pull 的次数，一整个教室的人可能会碰到。"
   - "等一会儿，或者先登录：sudo docker login。"
   en_display:
   - "And if pulling the image fails with toomanyrequests: Docker Hub limits how often anonymous users can pull, per network address, which a classroom can hit."
@@ -345,7 +345,7 @@ S16:
   zh:
   - "还有两件可选的杂事。"
   - "你的 Docker Hub 仓库会一直公开，直到你把它删掉或设成私有。"
-  - "另外，想回收 image 占用的空间，就在笔记本上运行：docker system prune -a。"
+  - "另外，想回收 image 在笔记本上占用的空间，就运行：docker system prune -a。"
   en_display:
   - null
   - null
@@ -376,4 +376,4 @@ S16:
 - en: "The answers are in the exercises, and every command is in the study guide. Next time, Containers 2: five containers working together, a working directory, a non-root user, and your laptop's folder mounted inside a container."
   zh:
   - "答案在练习里，每条命令都在学习指南里。"
-  - "下节课是容器 II：五个 container 协同工作，一个工作目录，一个非 root 用户，还有把你笔记本上的目录挂载进 container。"
+  - "下节课是容器 II：五个 container 协同工作，还有一个工作目录、一个非 root 用户，以及把你笔记本上的目录挂载进 container。"

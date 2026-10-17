@@ -45,7 +45,7 @@ S02:
 - en: "First, four words for the whole lecture. In lecture 1, every new VM needed the same setup, on an operating system that had to cooperate. A Docker image packs it all into one thing you can copy: system files, Python, the packages and the code."
   zh:
   - "先来看贯穿整节课的四个词。"
-  - "在第 1 讲里，每台新 VM 都要把同样的配置再做一遍，还得操作系统配合。"
+  - "在第 1 讲里，每台新 VM 都要把同样的配置再做一遍，而且是在一个得配合才行的操作系统上。"
   - "Docker image 把这些全装进一个能复制的东西：系统文件、Python、各种包和代码。"
 - en: "An image is a stack of read-only layers. Each layer holds the files added or changed by one build step. Beside it sits a small config card: settings like environment variables, and which program to start."
   zh:
@@ -94,7 +94,7 @@ S03:
   - "现在进入 README 的这一节：Developing App using Containers。"
   - "在你的笔记本上打开一个终端。"
   - "在 Mac 上，你的提示符会不一样；在 Windows 上，用 WSL 里的 Ubuntu 终端，或者 Git Bash。"
-  - "在 Git Bash 里，如果 docker run 报 stdin is not a terminal，就在它前面加上 winpty。"
+  - "在 Git Bash 里，docker run 前面要加上 winpty，如果它报 stdin is not a terminal 的话。"
 - en: "First, docker container ls lists running containers. Here it shows only the header, so nothing is running. If yours can't connect to the Docker daemon, start Docker Desktop and try again. Pause and run it."
   zh:
   - "首先，docker container ls 列出正在运行的 container。"
@@ -342,7 +342,7 @@ S07:
 - en: "Remember lecture 1: activation is just PATH. Nothing has activated the venv, so the word python first finds the Python in user local bin, from the base image. That's 3.12, and it has none of our packages."
   zh:
   - "回想一下第 1 讲：激活其实只是改 PATH。"
-  - "没有任何东西激活这个 venv，所以 python 这个词先找到的，是 /usr/local/bin 里的 Python，来自 base image。"
+  - "没有任何东西激活这个 venv，所以 python 这个词会先找到 /usr/local/bin 里的 Python，它来自 base image。"
   - "那是 3.12，我们的包它一个都没有。"
   en_display:
   - null
@@ -421,7 +421,7 @@ S08:
 - en: "The README only names the file. So here's the quickest way, an extra command: copy it over yours with cp. Pause and do that."
   zh:
   - "README 只提到了这个文件名。"
-  - "所以最快的办法是一条额外的命令：用 cp 把它复制过来，覆盖你的 Dockerfile。"
+  - "所以最快的办法是这样，一条额外的命令：用 cp 把它复制过来，覆盖你的 Dockerfile。"
   - "暂停一下，照着做。"
 - en: "Now the README's Build Docker Image section: from the simple-translate folder, the same build. Pause and run it. This compact view is what you'll see: four steps, the apt and pip step the slowest."
   zh:

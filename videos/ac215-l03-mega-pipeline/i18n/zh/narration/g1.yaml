@@ -35,7 +35,7 @@ S01:
   - "有一点先说清楚：我们录制时没有课程密钥，所以凡是代码要和 Google 打交道的地方，你看到的是命令和该看什么，而不是它的输出。"
 - en: "We recorded on a Debian 12 laptop with Docker Engine 29, at the time of recording. On a Mac or Windows, the prompt differs and Docker Desktop runs the containers; the commands are the same."
   zh:
-  - "我们录制时用的是一台装着 Docker Engine 29 的 Debian 12 笔记本。"
+  - "我们录制时用的是一台 Debian 12 笔记本，装着 Docker Engine 29。"
   - "在 Mac 或 Windows 上，提示符不一样，由 Docker Desktop 来跑 container；命令都是一样的。"
 S02:
 - en: "In production, services call each other's APIs. This tutorial simplifies: each component writes its output to shared storage, where the next one reads it."
@@ -95,7 +95,7 @@ S03:
 - en: "Two differences to remember. The generate text folder already has its own pyproject.toml and a main dot py file, but no dot gitignore file. And synthesis audio has a bonus script."
   zh:
   - "有两处不同要记住。"
-  - "一是 generate text 目录已经有自己的 pyproject.toml 和一个 main.py 文件，但没有 .gitignore 文件。"
+  - "一是 generate text 目录已经有自己的 pyproject.toml，还有一个 main.py 文件，但没有 .gitignore 文件。"
   - "二是 synthesis audio 目录里有个附加脚本。"
   en_display:
   - null
@@ -154,7 +154,7 @@ S04:
   - "在 Windows 上，用 PowerShell 那一行；任何系统都能用：pip install uv。"
 - en: "Then restart your terminal, as the installer says, cd back into transcribe audio, and uv answers."
   zh:
-  - "然后按安装脚本说的重启终端，再 cd 回 transcribe audio 目录，uv 就有回应了。"
+  - "然后重启终端，正如安装脚本所说，再 cd 回 transcribe audio 目录，uv 就有回应了。"
 - en: "Now the step itself: uv init dash dash bare. It writes just one file, pyproject.toml, for a project named transcribe dash audio. Pause and run it."
   zh:
   - "现在是这一步本身：uv init --bare。"
@@ -270,7 +270,7 @@ S06:
 - en: "Build steps 3 and 4 set the working folder and copy our files. Build step 5 runs uv sync with the image's own Python 3.12, creates the venv, and resolves 1 package: the project itself, with no dependencies yet."
   zh:
   - "构建步骤 3 和 4 设置工作目录，复制我们的文件。"
-  - "构建步骤 5 用 image 自带的 Python 3.12 运行 uv sync，建好 venv，解析出 1 个包：就是项目本身，还没有任何依赖。"
+  - "构建步骤 5 用 image 自带的 Python 3.12 运行 uv sync，建好 venv，然后解析出 1 个包：就是项目本身，还没有任何依赖。"
 - en: "It ends by naming the image, with a warning about line 10: Docker flags any variable whose name sounds secret. The value is just a path, so it's harmless, and you'll see it every build."
   zh:
   - "最后它给 image 命名，还有一条关于第 10 行的警告：Docker 会标出任何名字听起来像密钥的变量。"
@@ -318,7 +318,7 @@ S07:
   zh:
   - "来想一想。"
   - "在第 2 讲里，venv 就放在代码旁边。"
-  - "如果这里它也放在 /app 里，有了这个挂载，container 会在那儿看到什么？"
+  - "如果这里它也放在 /app 里，那 container 透过这个挂载会在那儿看到什么？"
   en_display:
   - null
   - null

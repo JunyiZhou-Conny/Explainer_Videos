@@ -63,7 +63,7 @@ S08:
   - "暂停一下，把它改好。"
 - en: "Inside, an extra grep already shows the new line: the window works both ways. Use the same name in all five cli.py files, or the stages won't find each other's work."
   zh:
-  - "在 container 里，额外用 grep 查一下，已经能看到新的那一行：这扇窗两边都通。"
+  - "在 container 里，额外的 grep 已经显示出新的那一行：这扇窗两边都是通的。"
   - "五个 cli.py 文件里都要用同一个名字，不然各个阶段就找不到彼此的成果。"
 - en: "Step 9: python cli.py dash dash help. This time it works, and it matches the README's block line for line. Pause, and get to this point."
   zh:
@@ -179,7 +179,7 @@ S11:
   - "输入 exit，container 就被删掉，连同用完就扔的可写层；26 个包也跟着没了。"
 - en: "Back on the laptop, an extra check: the pyproject.toml with three dependencies, the lock file, and the two new folders all survived, because they were in the window."
   zh:
-  - "回到笔记本上，做一个额外检查：带三个依赖的 pyproject.toml、lock 文件，还有那两个新目录，全都留了下来，因为它们在这扇窗里。"
+  - "回到笔记本上，做一个额外检查：带三个依赖的 pyproject.toml、lock 文件和那两个新目录都还在，因为它们在这扇窗里。"
 - en: "Git status shows only cli.py as changed. We'll see why the rest is invisible at the end."
   zh:
   - "而 git status 只显示 cli.py 改过了。"
@@ -297,7 +297,7 @@ S13:
 - en: "Speed round: C, D and E. For C, synthesis audio E-N, cd in, copy the key, and run uv init. If it stamps 3.13 or newer, change it to 3.12, here and in D and E."
   zh:
   - "快速过一遍：C、D 和 E。"
-  - "先是 C，也就是 synthesis audio en：cd 进去，复制密钥，再跑 uv init。"
+  - "C 是 synthesis audio en：cd 进去，复制密钥，再跑 uv init。"
   - "如果它写进去的是 3.13 及以上，就改成 3.12，这里和 D、E 都要改。"
   en_display:
   - null
@@ -338,14 +338,14 @@ S13:
   - "暂停一下，跟上进度。"
 - en: "Translation has no ticket stub: the French comes straight back, is printed and saved under text translated, so D needs an upload."
   zh:
-  - "翻译服务没有取件单：法语直接返回，打印出来，再存到 text translated 下面，所以 D 需要上传这一步。"
+  - "翻译服务没有取件单：法语直接返回，然后打印出来、存进 text translated，所以 D 需要上传这一步。"
 - en: "Pause to run download, translate and upload, then exit and rebuild."
   zh:
   - "暂停一下，跑下载、翻译和上传，然后退出、重新构建。"
 - en: "E, synthesis audio, is C again, group name on line 18 too. One harmless slip: its help text says transcribe audio file to text, pasted from A's code. Pause and catch up."
   zh:
   - "至于 E，也就是 synthesis audio，就是再来一遍 C，组名也在第 18 行。"
-  - "一个无害的小疏漏：它的帮助文本写着：Transcribe audio file to text，是从 A 的代码粘过来的。"
+  - "一个无害的小疏漏：它的帮助文本写着 Transcribe audio file to text，是从 A 的代码粘过来的。"
   - "暂停一下，跟上进度。"
   en_display:
   - null
@@ -413,7 +413,7 @@ S14:
   - null
 - en: "And the run still works, because the mount brings your secrets folder in when the container starts."
   zh:
-  - "而运行照样没问题，因为 container 启动时，挂载会让你的 secrets 目录出现在里面。"
+  - "而运行照样没问题，因为挂载会在 container 启动时把你的 secrets 目录带进来。"
 - en: "The README's optional last section pushes the image to Docker Hub: create an access token there, then log in, tag and push. Only push an image built with that dot dockerignore."
   zh:
   - "README 最后那个可选部分，是把 image push 到 Docker Hub：先在那里创建一个访问令牌，然后登录、打 tag、push。"
@@ -423,7 +423,7 @@ S14:
   - "Only push an image built with that .dockerignore."
 - en: "Log in with just your user name and paste the token at the prompt; after dash p it stays in your shell history. If you ever pushed an image with the key, delete it and tell the staff."
   zh:
-  - "登录时只给用户名，等它提示输入时再粘贴访问令牌；写在 -p 后面的话，它会留在你的 shell 历史记录里。"
+  - "登录时只给用户名，等它提示输入时再粘贴访问令牌；令牌写在 -p 后面就会留在你的 shell 历史记录里。"
   - "如果你曾经 push 过带密钥的 image，把它删掉，并告诉课程团队。"
   en_display:
   - "Log in with just your user name and paste the token at the prompt; after -p it stays in your shell history."
@@ -463,7 +463,7 @@ S15:
 - en: "Five questions to test yourself. One: which drawer does D, translate text, read, and who wrote it? Two: why doesn't the mount hide the packages, and what breaks without uv project environment?"
   zh:
   - "五道自测题。"
-  - "第一题：D，也就是 translate text，读的是哪个抽屉，又是谁写的？"
+  - "第一题：D，也就是 translate text，读哪个抽屉，又是谁写的？"
   - "第二题：为什么挂载没有盖住那些包，没有 uv project environment 这个变量，又会出什么问题？"
   en_display:
   - null

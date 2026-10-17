@@ -15,6 +15,7 @@ cover the bottom of a scene, where these videos often put labels).
 
 from __future__ import annotations
 
+import os
 import re
 import subprocess
 from collections import Counter
@@ -41,11 +42,44 @@ def units(s: str) -> float:
     return round(sum(1.0 if _CJK.match(ch) else 0.55 for ch in s), 6)
 
 
+# a placeholder the viewer types in their own value for: <USER NAME>, <YOUR_TOKEN>, <your-project-id>
+# ("<" to the next ">", no other "<" inside, at most 40 characters; not "x < 5 and y > 3")
+_PLACEHOLDER = re.compile(r"<(?! )[^<>\n]{1,38}(?<! )>")
+
+
+@lru_cache(maxsize=8192)
+def _placeholders(text: str) -> tuple[tuple[int, int], ...]:
+    """The (start, end) spans of the placeholders in text."""
+    return tuple(m.span() for m in _PLACEHOLDER.finditer(text))
+
+
+def in_placeholder(text: str, c: int) -> bool:
+    """A line break or cue cut at c (before text[c]) falls inside a placeholder ("<USER / NAME>"):
+    never a valid break, the viewer copies the placeholder whole."""
+    return any(a < c < b for a, b in _placeholders(text))
+
+
+def wrap_greedy(text: str, width: int) -> list[str]:
+    """textwrap.wrap(text, width), but never inside a placeholder (its spaces and hyphens are glued
+    while wrapping): the greedy fallback of the English video's .srt lines (explainer.build._lines)."""
+    import textwrap
+    spans = _placeholders(text)
+    if not spans:
+        return textwrap.wrap(text, width)
+    glue = {" ": "\ue000", "-": "\ue001"}                 # (private-use characters)
+    unglue = {v: k for k, v in glue.items()}
+    glued = list(text)
+    for a, b in spans:
+        glued[a:b] = [glue.get(ch, ch) for ch in text[a:b]]
+    return ["".join(unglue.get(ch, ch) for ch in ln) for ln in textwrap.wrap("".join(glued), width)]
+
+
 def _cuts(text: str, lines: bool = False) -> tuple[list[int], list[int]]:
     """Positions where a line or cue may break. 'good': after punctuation, and at spaces between
     Latin words. 'ok': between two CJK characters, at a space next to CJK text, or anywhere inside
     “…” or （…） (a last resort, see _cut_penalty). Never inside a number (255,168 / 0.5), between
     a number and its measure word (5 步), inside 《…》 (but at its spaces, as a last resort),
+    inside a placeholder (<USER NAME>, in_placeholder),
     before punctuation, after an opening bracket or before a bracket glued to the word it glosses
     (hybrid argument（混合论证）), except, between the `lines` of one cue, an English gloss of a
     Chinese term (差分隐私 / （differential privacy）: both lines are on screen together)."""
@@ -61,6 +95,8 @@ def _cuts(text: str, lines: bool = False) -> tuple[list[int], list[int]]:
         elif a == "》":
             depth = max(0, depth - 1)
         quoted = quoted + 1 if a in "“（" else max(0, quoted - 1) if a in "”）" else quoted
+        if in_placeholder(text, i):
+            continue                                          # "<USER / NAME>": copied whole
         if b in "（(" and a != " " and a not in _BREAK_AFTER:
             if lines and is_cjk(a) and re.match(r"[（(][A-Za-z]", text[i:]):
                 ok.append(i)                                  # 差分隐私 / （differential privacy）
@@ -1784,6 +1820,10 @@ def burn(src: Path, ass: Path, dst: Path, band: float = BAND, crf: int = 23, bg:
         w, h = int(W * (1 - band)) // 2 * 2, int(H * (1 - band)) // 2 * 2
         vf = (f"scale={w}:{h}:flags=lanczos,pad={W}:{H}:{(W - w) // 2}:0:color={bg},"
               f"{ass_filter}")
+    # written beside dst and renamed into place on success: a killed burn leaves no truncated copy
+    tmp = Path(dst).with_name(Path(dst).stem + ".partial" + Path(dst).suffix)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(src), "-vf", vf, "-c:v", "libx264",
                     "-preset", "medium", "-tune", "animation", "-crf", str(crf), "-pix_fmt", "yuv420p",
-                    "-c:a", "copy", "-movflags", "+faststart", str(dst)], cwd=cwd, check=True)
+                    "-c:a", "copy", "-movflags", "+faststart", str(tmp)], cwd=cwd, check=True)
+    base = Path(cwd) if cwd is not None else Path()
+    os.replace(base / tmp, base / Path(dst))

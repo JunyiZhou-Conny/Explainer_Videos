@@ -1,0 +1,1219 @@
+1
+00:00:00,000 --> 00:00:02,140
+第二部分先打开我们构建好的 image 看看
+Part 2 opens the image we built;
+
+2
+00:00:02,140 --> 00:00:04,480
+这一段和下一段都是额外内容
+this scene and the next are extras.
+
+3
+00:00:04,800 --> 00:00:06,923
+首先是 docker image ls
+First, docker image ls:
+
+4
+00:00:06,923 --> 00:00:14,123
+录制时，磁盘占用 518 MB，内容大小 144 MB
+518 megabytes on disk, and 144 megabytes of content, at the time of recording.
+
+5
+00:00:14,443 --> 00:00:18,464
+内容就是压缩后的那些层，也就是传到 registry 的部分
+Content is the compressed layers that travel to a registry;
+
+6
+00:00:18,464 --> 00:00:20,373
+磁盘占用还要加上解压后的那一份
+disk adds the unpacked copy.
+
+7
+00:00:21,617 --> 00:00:24,817
+然后 docker history 列出各层，最新的在最上面
+Then docker history lists the layers, newest first.
+
+8
+00:00:25,137 --> 00:00:29,884
+从下往上读，就是从上往下读 Dockerfile
+Read it bottom-up, and it's the Dockerfile top-down:
+
+9
+00:00:29,884 --> 00:00:33,444
+apt 和 pip 那一步 97.5 MB
+the apt and pip step at 97.5 megabytes,
+
+10
+00:00:33,444 --> 00:00:38,556
+我们的代码 250 KB，uv sync 125 MB
+our code at 250 kilobytes, and uv sync at 125 megabytes.
+
+11
+00:00:38,876 --> 00:00:44,251
+ENV、ENTRYPOINT、CMD 这几行都是 0 字节：只是配置
+The ENV, ENTRYPOINT and CMD rows are zero bytes: config only.
+
+12
+00:00:46,133 --> 00:00:49,423
+它们下面是 base image 自己的几行
+Below them sit the base image's own rows:
+
+13
+00:00:49,423 --> 00:00:51,830
+最底下是 Debian bookworm
+Debian bookworm at the bottom,
+
+14
+00:00:51,830 --> 00:00:55,040
+然后是把 /usr/local/bin 放在最前面的 PATH
+the PATH that puts /usr/local/bin first,
+
+15
+00:00:55,040 --> 00:00:56,640
+还有 Python 3.12.15
+and Python 3.12.15.
+
+16
+00:00:59,967 --> 00:01:02,666
+想自己看的话，就再起一个 container
+To look yourself, start a container again;
+
+17
+00:01:02,666 --> 00:01:05,236
+这里显示的是我们第一部分第二次运行时的结果
+these are from our second run in part 1.
+
+18
+00:01:05,556 --> 00:01:08,018
+在那里，python 是 3.15.0
+There, python is 3.15.0,
+
+19
+00:01:08,018 --> 00:01:12,020
+而 base image 自带的 Python 还是 3.12.15
+while the base Python is still 3.12.15.
+
+20
+00:01:12,340 --> 00:01:17,042
+那个 125 MB 的层，大部分就是这第二个 Python
+Most of that 125 megabyte layer is this second Python,
+
+21
+00:01:17,042 --> 00:01:18,697
+放在 uv 自己的目录里
+in uv's own folder.
+
+22
+00:01:18,933 --> 00:01:20,533
+现在列一下根目录
+Now list the top folder.
+
+23
+00:01:20,853 --> 00:01:26,176
+系统目录旁边有：隐藏的 .git 目录、编辑器的 .vscode 目录
+Beside the system folders sit the hidden git folder, the editor's VS Code folder,
+
+24
+00:01:26,176 --> 00:01:28,213
+还有 README 和你的 Dockerfile
+the README and your Dockerfile.
+
+25
+00:01:28,533 --> 00:01:33,013
+COPY 那一行复制了整个构建上下文，连你的 Git 历史也在里面
+The COPY line copied the whole build context, your git history included.
+
+26
+00:01:33,333 --> 00:01:35,595
+输入 exit，回到你的笔记本
+Type exit to get back to your laptop.
+
+27
+00:01:35,833 --> 00:01:39,438
+这是教程里的一个缺口：没有 .dockerignore 文件
+That's a gap in the tutorial: there's no .dockerignore file.
+
+28
+00:01:39,758 --> 00:01:41,292
+在你自己的项目里
+In your own projects,
+
+29
+00:01:41,292 --> 00:01:45,092
+加一个这样的文件，写上 .git、.venv 和你的 secrets 目录
+add one listing .git, .venv and your secrets folder.
+
+30
+00:01:45,412 --> 00:01:48,740
+等 image 公开了，这一点最要紧，而它很快就会公开
+It matters most once the image is public, and that's soon.
+
+31
+00:01:49,783 --> 00:01:52,170
+那为什么 COPY 和 uv sync 又重跑了一遍
+So why did COPY and uv sync rerun
+
+32
+00:01:52,170 --> 00:01:54,050
+明明我们只加了一行？
+when we only added a line?
+
+33
+00:01:54,370 --> 00:01:56,418
+Docker 会缓存每一个构建步骤
+Docker caches every build step.
+
+34
+00:01:56,738 --> 00:02:01,175
+一个步骤，只要上一步和它的指令都没变，就会被重用
+A step is reused when its parent step and its instruction are unchanged.
+
+35
+00:02:01,495 --> 00:02:04,951
+对 COPY 来说，复制进来的文件，校验和也得一致
+For COPY, the checksum of the copied files must match too.
+
+36
+00:02:05,271 --> 00:02:09,687
+第一个变了的步骤会重新运行，它后面的每一步也一样
+The first step that changes runs again, and so does every step after it.
+
+37
+00:02:10,000 --> 00:02:14,331
+什么都不改，再构建一次，加上那个看完整日志的额外参数
+Rebuild with nothing changed, adding the extra flag for the full log.
+
+38
+00:02:14,651 --> 00:02:16,151
+FROM 重用了 base image
+FROM reuses the base,
+
+39
+00:02:16,151 --> 00:02:19,706
+它后面的三步都显示 CACHED：什么都没跑
+and the three steps after it all say CACHED: nothing runs.
+
+40
+00:02:19,950 --> 00:02:21,265
+先预测一下
+Now predict.
+
+41
+00:02:21,315 --> 00:02:24,878
+你改了 cli.py 里的一个词，然后重新构建
+You change one word in cli.py and rebuild.
+
+42
+00:02:25,198 --> 00:02:27,087
+四个构建步骤里，哪几个会重新运行？
+Which of the four steps run again?
+
+43
+00:02:35,900 --> 00:02:37,400
+作为额外的一步，试试看
+Try it, as an extra:
+
+44
+00:02:37,400 --> 00:02:40,977
+把第 49 行的 I love cheese 改成 I love brie
+on line 49, change I love cheese to I love brie.
+
+45
+00:02:41,297 --> 00:02:45,905
+用 git diff 能看到这处改动；现在构建上下文的校验和不一样了
+The git diff shows the change; the build context now has a different checksum.
+
+46
+00:02:46,150 --> 00:02:49,777
+再构建一次。FROM，还有 apt 和 pip 那一步，都被重用了
+Rebuild. FROM and the apt and pip step are reused.
+
+47
+00:02:50,097 --> 00:02:54,173
+但复制进来的文件校验和变了，所以 COPY 会运行
+But the checksum of the copied files changed, so COPY runs,
+
+48
+00:02:54,173 --> 00:02:57,350
+它后面的 uv sync 也一样，连 Python 都要重新下载
+and uv sync after it, Python download and all.
+
+49
+00:02:57,600 --> 00:02:59,840
+现在用 git checkout 撤销修改
+Now undo the edit with git checkout.
+
+50
+00:03:00,160 --> 00:03:02,485
+文件一样了，缓存就回来了吗？
+Same files, so the cache comes back?
+
+51
+00:03:02,805 --> 00:03:05,301
+没有：COPY 和 uv sync 又跑了一遍
+No: COPY and uv sync run again.
+
+52
+00:03:05,621 --> 00:03:09,612
+Git 重写了它自己的 index 文件，就在隐藏的 .git 目录里
+Git rewrote its own index file, inside the hidden git folder,
+
+53
+00:03:09,612 --> 00:03:12,490
+而这个目录也在构建上下文里
+and that folder is in the build context too.
+
+54
+00:03:12,733 --> 00:03:15,016
+第一部分留下的问题，这下有答案了
+That answers the question from part 1.
+
+55
+00:03:15,336 --> 00:03:18,191
+你的 Dockerfile 也在构建上下文里
+Your Dockerfile sits in the build context too,
+
+56
+00:03:18,191 --> 00:03:20,797
+所以每改它一次，那个校验和就变一次
+so every edit to it changed that checksum.
+
+57
+00:03:21,117 --> 00:03:24,466
+你照着 README 一步步做的时候，这是正常的
+While you follow the README step by step, that's expected.
+
+58
+00:03:24,716 --> 00:03:28,046
+在你自己的项目里，把慢的步骤放前面
+In your own projects, put the slow steps first:
+
+59
+00:03:28,046 --> 00:03:32,439
+先只复制 uv sync 需要的文件，运行它，再复制其余的
+copy only the files uv sync needs, run it, then copy the rest.
+
+60
+00:03:32,759 --> 00:03:36,126
+一个 .dockerignore 文件，可以把 .git 目录、本地的 venv
+A .dockerignore keeps the git folder, any local venv
+
+61
+00:03:36,126 --> 00:03:37,726
+还有 Dockerfile 都排除在外
+and the Dockerfile out.
+
+62
+00:03:37,921 --> 00:03:42,551
+这样一来，改 cli.py 只会让最后那个 COPY 重新运行
+Now an edit to cli.py reruns only the last COPY.
+
+63
+00:03:44,800 --> 00:03:46,329
+现在进入 README 的这一节
+Now the README section Pushing Docker Image to Docker Hub.
+
+64
+00:03:46,329 --> 00:03:48,576
+Pushing Docker Image to Docker Hub
+Now the README section Pushing Docker Image to Docker Hub.
+
+65
+00:03:48,896 --> 00:03:54,720
+首先，注册账号，再建一个访问令牌，权限选读写，不要用默认的
+First, sign up and create an access token, with read and write access, not the default.
+
+66
+00:03:55,040 --> 00:03:59,541
+马上复制：它只显示一次，作用和密码一样
+Copy it right away: it's shown only once, and it works like a password.
+
+67
+00:03:59,861 --> 00:04:01,461
+暂停一下，建好你自己的令牌
+Pause and make yours.
+
+68
+00:04:01,517 --> 00:04:06,957
+接着登录：docker login，-u 加你的用户名，-p 加你的令牌
+Next, log in: docker login, -u with your user name, -p with your token.
+
+69
+00:04:07,277 --> 00:04:09,666
+我们没有账号，所以没法跑
+We have no account, so we couldn't run it.
+
+70
+00:04:09,900 --> 00:04:11,853
+所以有些步骤用了替身
+So some steps use a stand-in,
+
+71
+00:04:11,853 --> 00:04:15,489
+也就是本机上的一个小 registry：那些只看就好
+a small registry on our own machine: just watch those.
+
+72
+00:04:15,809 --> 00:04:20,396
+登录它时会警告：在命令行里写密码不安全
+Logging in to it warns that a password on the command line is insecure.
+
+73
+00:04:20,633 --> 00:04:22,844
+这是 README 的一个小疏漏
+That's a small slip in the README:
+
+74
+00:04:22,844 --> 00:04:25,966
+用 -p 的话，你的令牌会留在 shell 历史记录里
+with -p, your token stays in your shell history.
+
+75
+00:04:26,286 --> 00:04:29,819
+改成输入 docker login、-u 和你的用户名
+Instead, type docker login, -u, and your user name,
+
+76
+00:04:29,819 --> 00:04:32,174
+等它问的时候再粘贴令牌
+then paste the token when it asks.
+
+77
+00:04:32,494 --> 00:04:33,983
+暂停一下，登录
+Pause and log in.
+
+78
+00:04:34,033 --> 00:04:38,520
+然后给 image 打 tag：docker tag，先写 simple-translate
+Then tag the image: docker tag simple-translate
+
+79
+00:04:38,520 --> 00:04:41,862
+再写你的用户名/simple-translate-ac215
+<USER NAME>/simple-translate-ac215.
+
+80
+00:04:42,182 --> 00:04:44,209
+暂停一下，用你自己的用户名跑一遍
+Pause and run it with your own name.
+
+81
+00:04:44,529 --> 00:04:47,874
+额外用 docker image ls 看一下：两个名字，一个 ID
+An extra docker image ls shows two names, one ID:
+
+82
+00:04:47,874 --> 00:04:49,649
+是第二个名字，不是一份副本
+a second name, not a copy.
+
+83
+00:04:49,883 --> 00:04:55,190
+把这个长名字分成四段来读：registry，也就是默认的 docker.io
+Read the long name in four parts: the registry, docker.io, the default;
+
+84
+00:04:55,190 --> 00:04:58,928
+你的账号；仓库；还有 tag，latest
+your account; the repository; and the tag, latest.
+
+85
+00:04:59,248 --> 00:05:01,656
+没有账号部分的名字，比如我们的第一个名字
+Names without an account, like our first,
+
+86
+00:05:01,656 --> 00:05:03,050
+都归在 library 下面
+fall under library.
+
+87
+00:05:03,100 --> 00:05:05,767
+然后 push：docker push，用同一个名字
+Then push: docker push, with the same name.
+
+88
+00:05:06,087 --> 00:05:07,509
+暂停一下，自己跑一遍
+Pause and run it.
+
+89
+00:05:07,559 --> 00:05:11,249
+你那边应该会上传每一层，最后一行是 digest
+Yours should upload each layer and end with a digest line.
+
+90
+00:05:11,569 --> 00:05:15,836
+我们没有账号，被 Docker Hub 拒绝了：push access denied
+Without an account, Docker Hub refused ours: push access denied.
+
+91
+00:05:16,156 --> 00:05:19,268
+如果你也碰到了，就先登录，再检查令牌有没有写权限
+If you see it, log in, and check your token can write
+
+92
+00:05:19,268 --> 00:05:21,617
+名字是不是以你的用户名开头
+and the name starts with your user name.
+
+93
+00:05:21,867 --> 00:05:25,591
+在替身上，push 成功了，最后是一行 digest
+On the stand-in, the push goes through, ending with a digest:
+
+94
+00:05:25,591 --> 00:05:27,605
+整个 image 的指纹
+a fingerprint of the whole image.
+
+95
+00:05:27,850 --> 00:05:32,287
+再 push 一次：每一层都已经在了，只有缺的层才会传过去
+Push again: every layer already exists, and only missing layers travel.
+
+96
+00:05:32,607 --> 00:05:33,671
+在 Docker Hub 上
+On Docker Hub,
+
+97
+00:05:33,671 --> 00:05:37,384
+连 base image 的层也可能显示 Mounted from library/python
+even the base layers may say Mounted from library/python:
+
+98
+00:05:37,384 --> 00:05:38,917
+它本来就有这些层
+it already has them.
+
+99
+00:05:38,967 --> 00:05:43,447
+还要记住：新建的 Docker Hub 仓库默认是公开的
+And remember: a new Docker Hub repository is public by default.
+
+100
+00:05:43,767 --> 00:05:46,156
+谁都能 pull 它，连 .git 目录一起
+Anyone can pull it, git folder and all.
+
+101
+00:05:48,483 --> 00:05:52,088
+上 VM 之前再检查一项；这一段全是额外内容
+One more check before the VM; this scene is all extras.
+
+102
+00:05:52,408 --> 00:05:58,126
+我们的机器是 Intel 或 AMD 的，image 上写的是 linux/amd64
+Our machine is Intel or AMD, and the image says linux/amd64.
+
+103
+00:05:58,446 --> 00:06:01,731
+在 Apple Silicon 的 Mac 上，你会看到 arm64
+On an Apple Silicon Mac, you'd see arm64.
+
+104
+00:06:01,966 --> 00:06:03,495
+这为什么重要？
+Why does that matter?
+
+105
+00:06:03,545 --> 00:06:07,824
+一个 image 里的每个程序，bash、Python、uv
+Every program in an image, bash, Python, uv,
+
+106
+00:06:07,824 --> 00:06:11,325
+都是给某一种 CPU 用的机器码
+is machine code for one kind of CPU:
+
+107
+00:06:11,325 --> 00:06:16,089
+Intel 和 AMD 用 amd64，Apple Silicon 用 arm64
+amd64 for Intel and AMD, arm64 for Apple Silicon.
+
+108
+00:06:16,409 --> 00:06:19,813
+一个 container 里的程序直接跑在 CPU 上
+A container's programs run directly on the CPU,
+
+109
+00:06:19,813 --> 00:06:25,027
+所以除非有模拟器帮忙，CPU 得会说这个 image 的语言
+so unless an emulator steps in, the CPU must speak the image's language.
+
+110
+00:06:25,347 --> 00:06:29,785
+Docker Desktop 自带一个模拟器；普通的 Linux VM 没有
+Docker Desktop has one built in; a plain Linux VM doesn't.
+
+111
+00:06:30,033 --> 00:06:33,297
+一个 tag 可以指向一份菜单，每个平台一个 image
+A tag can point at a menu, one image per platform.
+
+112
+00:06:33,617 --> 00:06:36,667
+这个 python tag 列了五个平台
+This python tag lists five platforms:
+
+113
+00:06:36,667 --> 00:06:40,294
+amd64、两种 arm，还有两种比较少见的
+amd64, two kinds of arm, and two rarer ones.
+
+114
+00:06:40,614 --> 00:06:43,196
+Docker 会 pull 和你的机器对得上的那一行
+Docker pulls the row that matches your machine.
+
+115
+00:06:43,433 --> 00:06:48,013
+授课老师的 image，dlops/simple-translate
+The instructor's image, dlops/simple-translate,
+
+116
+00:06:48,013 --> 00:06:51,326
+不是菜单：只有一个 image，只有 amd64
+is no menu: one image, amd64 only.
+
+117
+00:06:51,566 --> 00:06:54,311
+我们在替身上 push 的是一份小菜单
+Our stand-in push is a small menu:
+
+118
+00:06:54,311 --> 00:06:56,490
+amd64，外加一个 attestation
+amd64, plus an attestation,
+
+119
+00:06:56,490 --> 00:06:59,395
+也就是这个 image 是怎么构建出来的记录
+a record of how the image was built.
+
+120
+00:06:59,715 --> 00:07:05,134
+如果是在 M 系列 Mac 上构建的，amd64 那一行就会变成 arm64
+Built on an M-series Mac, the amd64 row would say arm64.
+
+121
+00:07:08,383 --> 00:07:09,677
+来想一想
+Now ponder.
+
+122
+00:07:09,727 --> 00:07:12,074
+你在 M 系列 Mac 上构建，然后 push 了
+You built on an M-series Mac and pushed.
+
+123
+00:07:12,394 --> 00:07:16,148
+你的 VM 是一台普通的 Intel 或 AMD 机器
+Your VM is an ordinary Intel or AMD machine.
+
+124
+00:07:16,468 --> 00:07:18,068
+你的 image 在那儿能跑吗？
+Will your image run there?
+
+125
+00:07:26,850 --> 00:07:27,850
+不能
+No.
+
+126
+00:07:27,900 --> 00:07:33,426
+这是反过来的同一个失败，发生在我们这台没有模拟器的机器上
+Here's the same failure the other way around, on our machine, which has no emulator:
+
+127
+00:07:33,426 --> 00:07:34,885
+exec format error
+exec format error.
+
+128
+00:07:34,935 --> 00:07:37,730
+换成 Docker Desktop，会直接把它模拟运行起来
+Docker Desktop would just run it, emulated.
+
+129
+00:07:38,050 --> 00:07:41,641
+Mac 上构建的 image 放到默认的 VM 上会这样失败
+A Mac-built image on a default VM fails like this,
+
+130
+00:07:41,641 --> 00:07:43,724
+或者报 no matching manifest
+or with no matching manifest.
+
+131
+00:07:44,566 --> 00:07:46,742
+有两个办法，README 里都没有
+Two fixes, neither in the README.
+
+132
+00:07:47,062 --> 00:07:50,683
+第一：为 VM 的平台构建
+One: build for the VM's platform,
+
+133
+00:07:50,683 --> 00:07:54,742
+加上 --platform 参数，设成 linux/amd64
+with the flag --platform=linux/amd64.
+
+134
+00:07:55,062 --> 00:07:58,859
+它就是 docker-shell.sh 的第 12 行，被注释掉了
+It's the commented-out line 12 of docker-shell.sh.
+
+135
+00:07:59,179 --> 00:08:02,507
+在 Mac 上，它是模拟运行的：慢一些，但能用
+On a Mac, it runs emulated: slower, but it works.
+
+136
+00:08:02,827 --> 00:08:05,004
+然后像之前一样，再打 tag、再 push
+Then tag and push again, as before.
+
+137
+00:08:05,250 --> 00:08:08,207
+第二：docker-build-push.sh 用 buildx
+Two: docker-build-push.sh uses buildx,
+
+138
+00:08:08,207 --> 00:08:10,697
+也就是 Docker 的多平台构建器
+Docker's multi-platform builder,
+
+139
+00:08:10,697 --> 00:08:13,186
+两个平台都构建，再 push 一份菜单
+to build both and push one menu.
+
+140
+00:08:16,500 --> 00:08:18,992
+在第 11 行填你的用户名
+Put your user name on line 11,
+
+141
+00:08:18,992 --> 00:08:22,061
+在第 7 行填 simple-translate-ac215
+and simple-translate-ac215 on line 7,
+
+142
+00:08:22,061 --> 00:08:23,661
+也就是 README 里的名字
+the README's name.
+
+143
+00:08:23,881 --> 00:08:26,207
+先登录，再用 bash 运行它
+Log in first, then run it with bash.
+
+144
+00:08:26,527 --> 00:08:30,438
+之后再切回来：docker buildx use default
+Afterwards, switch back with docker buildx use default,
+
+145
+00:08:30,438 --> 00:08:32,926
+在 Docker Desktop 上则是 desktop-linux
+or desktop-linux on Docker Desktop.
+
+146
+00:08:33,967 --> 00:08:38,063
+README 的最后一节：Running App on VM using Docker
+The last README section: Running App on VM using Docker.
+
+147
+00:08:38,383 --> 00:08:41,135
+首先，像第 1 讲那样创建一台 VM
+First, create a VM, as in lecture 1.
+
+148
+00:08:41,455 --> 00:08:43,204
+README 没给任何配置
+The README gives no settings.
+
+149
+00:08:43,524 --> 00:08:48,561
+一台普通的 E2 机器，装 Debian 12 或 13 就行
+An ordinary E2 machine with Debian 12 or 13 will do;
+
+150
+00:08:48,561 --> 00:08:50,692
+E2 机器都是 amd64
+E2 machines are amd64.
+
+151
+00:08:51,012 --> 00:08:56,602
+计价器开始跳了：VM 运行时按秒计费，它的磁盘只要还在就计费
+The meter starts: the VM bills by the second while it runs, its disk while it exists.
+
+152
+00:08:56,867 --> 00:08:58,467
+接着，SSH 进去
+Next, SSH in.
+
+153
+00:08:58,702 --> 00:09:03,843
+现在暂停：创建你的 VM，等到它的 SSH 终端打开
+Pause now: create your VM, and wait until its SSH terminal is open.
+
+154
+00:09:04,100 --> 00:09:08,004
+然后安装 Docker：sudo apt install docker.io
+Then install Docker: sudo apt install docker.io.
+
+155
+00:09:08,324 --> 00:09:09,746
+暂停一下，自己跑一遍
+Pause and run it.
+
+156
+00:09:09,796 --> 00:09:13,840
+在我们的替身里，也就是一个软件包列表为空的全新 Debian
+In our stand-in, a fresh Debian with empty package lists,
+
+157
+00:09:13,840 --> 00:09:16,324
+它失败了：Unable to locate package
+it fails: Unable to locate package.
+
+158
+00:09:16,644 --> 00:09:19,695
+如果你那边装好了，就直接跳到检查版本那一步
+If yours installed, skip ahead to the version check.
+
+159
+00:09:19,950 --> 00:09:21,779
+README 的一个小缺口
+A small gap in the README:
+
+160
+00:09:21,779 --> 00:09:25,859
+这一节跳过了第 1 讲用过的 sudo apt-get update
+this section skips sudo apt-get update, used in lecture 1.
+
+161
+00:09:26,179 --> 00:09:29,532
+不跑它的话，软件包列表可能是空的，就像这里
+Without it, the package lists may be empty, as here,
+
+162
+00:09:29,532 --> 00:09:31,982
+也可能已经过期，会报 Not Found
+or out of date, with Not Found errors.
+
+163
+00:09:32,302 --> 00:09:35,481
+先跑 update，这是额外的一步，跑完先暂停
+Run the update first, an extra, and pause after it.
+
+164
+00:09:35,734 --> 00:09:37,994
+现在安装成功了
+Now the install works:
+
+165
+00:09:37,994 --> 00:09:43,646
+在 Debian 12 上是 92 个新软件包，下载 107 MB
+92 new packages, a 107 megabyte download, on Debian 12;
+
+166
+00:09:43,646 --> 00:09:48,065
+在 Debian 13 上是 91 个软件包，118 MB
+91 packages and 118 megabytes on Debian 13.
+
+167
+00:09:48,385 --> 00:09:49,679
+输入 Y
+Answer Y.
+
+168
+00:09:49,729 --> 00:09:51,100
+暂停一下，自己跑一遍
+Pause and run it.
+
+169
+00:09:51,150 --> 00:09:53,475
+然后是 sudo docker --version
+Then sudo docker --version.
+
+170
+00:09:53,795 --> 00:09:57,591
+这是 Debian 自己打包的 Docker
+This is Debian's own Docker package:
+
+171
+00:09:57,591 --> 00:10:04,867
+录制时 Debian 12 上是 20.10.24，Debian 13 上是 26.1.5
+20.10.24 on Debian 12, 26.1.5 on Debian 13, at the time of recording.
+
+172
+00:10:05,187 --> 00:10:07,428
+比笔记本上的旧，但够用了
+Older than the laptop's, but plenty.
+
+173
+00:10:07,684 --> 00:10:11,161
+在这里，Docker 直接跑在 VM 的 Linux 内核上
+Here Docker runs right on the VM's Linux kernel;
+
+174
+00:10:11,161 --> 00:10:15,001
+没有隐藏的 VM，不像 Mac 上的 Docker Desktop
+there's no hidden VM, unlike Docker Desktop on a Mac.
+
+175
+00:10:15,267 --> 00:10:16,689
+那为什么要 sudo？
+And why sudo?
+
+176
+00:10:16,739 --> 00:10:19,654
+不加 sudo 的话，这个额外的 docker ps 会被拒绝
+Without it, this extra docker ps is refused:
+
+177
+00:10:19,654 --> 00:10:22,238
+访问 Docker socket 时 permission denied
+permission denied on the Docker socket,
+
+178
+00:10:22,238 --> 00:10:24,888
+socket 就是通往 Docker 后台服务的那扇门
+the door to Docker's background service.
+
+179
+00:10:25,208 --> 00:10:27,982
+只有 root 和 docker 组能打开它
+Only root and the docker group may open it.
+
+180
+00:10:29,417 --> 00:10:31,187
+然后是部署
+Then the deploy:
+
+181
+00:10:31,187 --> 00:10:36,500
+sudo docker run --rm -ti dlops/simple-translate
+sudo docker run --rm -ti dlops/simple-translate.
+
+182
+00:10:36,820 --> 00:10:38,242
+暂停一下，自己跑一遍
+Pause and run it.
+
+183
+00:10:38,292 --> 00:10:40,403
+这台 VM 上还没有这个 image
+The image isn't on this VM yet,
+
+184
+00:10:40,403 --> 00:10:42,786
+所以 Docker 从 Docker Hub 把它 pull 下来
+so Docker pulls it from Docker Hub,
+
+185
+00:10:42,786 --> 00:10:45,374
+一共 7 层，然后启动一个 container
+seven layers, then starts a container.
+
+186
+00:10:45,617 --> 00:10:49,651
+现在用 python cli.py 运行这个应用，用它的默认设置
+Now run the app with python cli.py and its defaults:
+
+187
+00:10:49,651 --> 00:10:52,444
+I love cheese 翻成了意大利语
+I love cheese comes back in Italian.
+
+188
+00:10:52,764 --> 00:10:54,186
+暂停一下，自己跑一遍
+Pause and run it.
+
+189
+00:10:54,236 --> 00:10:56,855
+没有 clone，没有 pip，这台 VM 上也没有 uv
+No clone, no pip, no uv on this VM:
+
+190
+00:10:56,855 --> 00:10:58,801
+只有 Docker 和一个 image
+just Docker and one image.
+
+191
+00:10:59,050 --> 00:11:05,450
+再回到开头那个问题：为什么是 3.14.7，配方明明写的是 3.12？
+And the opening question: why 3.14.7, when the recipe says 3.12?
+
+192
+00:11:05,770 --> 00:11:07,861
+原因和我们那次构建一样
+The same reason as in our build.
+
+193
+00:11:08,181 --> 00:11:13,406
+这个 image 是 9 月 16 日构建的，用的是 uv 0.12.15
+This image was built on September 16 with uv 0.12.15,
+
+194
+00:11:13,406 --> 00:11:19,914
+当时 uv 知道的、范围内最新的稳定版 Python 是 3.14.7
+and the newest stable Python that uv knew in the range was 3.14.7.
+
+195
+00:11:20,234 --> 00:11:23,221
+我们今天构建得到的是 3.15.0
+Our build today got 3.15.0.
+
+196
+00:11:23,467 --> 00:11:26,454
+同一个 Dockerfile，相隔一个月，两个 Python
+Same Dockerfile, a month apart, two Pythons.
+
+197
+00:11:26,774 --> 00:11:31,383
+配方里什么都没 pin 住：pip 装的是最新的 uv
+Nothing in the recipe is pinned: pip installs the latest uv,
+
+198
+00:11:31,383 --> 00:11:35,532
+Python 的范围没有上限，这个 repo 里也没有 uv.lock
+the Python range is open, and the repo has no uv.lock,
+
+199
+00:11:35,532 --> 00:11:37,760
+所以每次构建都会自己写一个
+so each build writes its own.
+
+200
+00:11:38,080 --> 00:11:41,984
+一个 image 会把这一切都冻结下来：要交付 image，而不是配方
+An image freezes all that: ship the image, not the recipe.
+
+201
+00:11:42,234 --> 00:11:43,549
+输入 exit
+Type exit.
+
+202
+00:11:43,599 --> 00:11:45,190
+还有一个小小的不一致
+One more small mismatch:
+
+203
+00:11:45,190 --> 00:11:48,438
+README 说要 pull 你 push 的那个 image
+the README promises to pull the image you pushed,
+
+204
+00:11:48,438 --> 00:11:51,023
+可这条命令跑的是授课老师的
+but this command runs the instructor's.
+
+205
+00:11:51,343 --> 00:11:55,930
+你的 image 是：你的用户名/simple-translate-ac215
+Your image is <USER NAME>/simple-translate-ac215.
+
+206
+00:11:56,250 --> 00:12:00,538
+用同一条命令运行它就行，前提是它已经为 amd64 构建好了
+Run it with the same command, once it's built for amd64.
+
+207
+00:12:01,734 --> 00:12:06,677
+额外检查一下还会发现，发布出来的 image 比 repo 落后
+Also, an extra check shows the published image lags the repo:
+
+208
+00:12:06,677 --> 00:12:11,377
+它的 cli.py 是旧版，没有把 raise exception 设为 True
+its cli.py is the older one, without raise_exception=True.
+
+209
+00:12:11,697 --> 00:12:16,241
+如果 Google 拒绝请求，那一版会悄悄把你的输入原样打出来
+If Google refuses a request, that version quietly prints your input back.
+
+210
+00:12:16,561 --> 00:12:18,288
+这不是 Docker 的问题
+That's not a Docker problem.
+
+211
+00:12:18,534 --> 00:12:21,935
+还有，如果 pull 这个 image 时报 toomanyrequests 失败了
+And if pulling the image fails with toomanyrequests:
+
+212
+00:12:21,935 --> 00:12:26,774
+Docker Hub 按网络地址限制匿名用户 pull 的次数
+Docker Hub limits how often anonymous users can pull, per network address,
+
+213
+00:12:26,774 --> 00:12:28,475
+一整个教室的人可能会碰到
+which a classroom can hit.
+
+214
+00:12:28,795 --> 00:12:32,592
+等一会儿，或者先登录：sudo docker login
+Wait a while, or log in first, with sudo docker login.
+
+215
+00:12:33,833 --> 00:12:35,476
+走之前，先清理一下
+Before you go, clean up.
+
+216
+00:12:35,796 --> 00:12:38,936
+额外检查 sudo docker ps -a
+An extra check, sudo docker ps -a,
+
+217
+00:12:38,936 --> 00:12:43,369
+没有留下任何 container，多亏了 --rm
+shows no containers left behind, thanks to --rm.
+
+218
+00:12:43,633 --> 00:12:47,537
+README 的最后一步：删除 VM，连同它的启动磁盘
+Last README step: delete the VM, with its boot disk,
+
+219
+00:12:47,537 --> 00:12:51,590
+然后确认 VM instances 和 Disks 两个页面都是空的
+then check that VM instances and Disks are both empty.
+
+220
+00:12:51,910 --> 00:12:53,450
+现在就暂停去做
+Pause and do it now.
+
+221
+00:12:53,500 --> 00:12:55,100
+还有两件可选的杂事
+Two optional chores.
+
+222
+00:12:55,228 --> 00:13:00,455
+你的 Docker Hub 仓库会一直公开，直到你把它删掉或设成私有
+Your Docker Hub repository stays public until you delete it or make it private.
+
+223
+00:13:00,775 --> 00:13:04,517
+另外，想回收 image 在笔记本上占用的空间
+And to reclaim the space your images take on the laptop,
+
+224
+00:13:04,517 --> 00:13:06,321
+就运行：docker system prune -a
+run docker system prune -a.
+
+225
+00:13:09,566 --> 00:13:12,809
+第 1 讲给了我们一台装着 venv 的 VM
+Lecture 1 gave us a VM with a venv inside.
+
+226
+00:13:13,129 --> 00:13:15,773
+今天，container 插到了中间
+Today a container slid in between:
+
+227
+00:13:15,773 --> 00:13:19,038
+venv 现在住在一个 image 里，就在 /.venv
+the venv now lives in an image, at /.venv.
+
+228
+00:13:19,358 --> 00:13:22,750
+你在笔记本上构建了它，push 到 registry
+You built it on your laptop, pushed it to a registry,
+
+229
+00:13:22,750 --> 00:13:25,054
+再在 VM 上用一条命令运行了它
+and ran it on a VM with one command.
+
+230
+00:13:25,633 --> 00:13:27,638
+五道自测题
+Five questions to test yourself.
+
+231
+00:13:27,958 --> 00:13:32,171
+第一题：image 和 container 有什么区别
+One: what's the difference between an image and a container,
+
+232
+00:13:32,171 --> 00:13:33,996
+--rm 又删掉了什么？
+and what does --rm delete?
+
+233
+00:13:34,316 --> 00:13:37,422
+第二题：我们的 container 启动时运行什么
+Two: what does our container run at startup,
+
+234
+00:13:37,422 --> 00:13:41,868
+如果在 image 名后面加上 python cli.py，又会怎样？
+and what happens if you add python cli.py after the image name?
+
+235
+00:13:42,116 --> 00:13:46,055
+第三题：Dockerfile 写的是 Python 3.12
+Three: the Dockerfile says Python 3.12,
+
+236
+00:13:46,055 --> 00:13:50,095
+那为什么 python 显示的是 3.15，或者 3.14？
+so why does python report 3.15, or 3.14?
+
+237
+00:13:50,415 --> 00:13:52,954
+第四题：你改了 cli.py 里的一行
+Four: you edit one line of cli.py;
+
+238
+00:13:52,954 --> 00:13:57,433
+哪些构建步骤会重新运行，你又会怎么调整 Dockerfile 的顺序？
+which steps rerun, and how would you reorder the Dockerfile?
+
+239
+00:13:57,753 --> 00:13:58,753
+第五题
+Five:
+
+240
+00:13:58,753 --> 00:14:02,554
+说出两种办法，让 Mac 上构建的 image 能在默认的 VM 上运行
+name two ways to make a Mac-built image run on a default VM.
+
+241
+00:14:02,800 --> 00:14:07,493
+答案在练习里，每条命令都在学习指南里
+The answers are in the exercises, and every command is in the study guide.
+
+242
+00:14:07,813 --> 00:14:11,828
+下节课是容器 II：五个 container 协同工作
+Next time, Containers 2: five containers working together,
+
+243
+00:14:11,828 --> 00:14:14,390
+还有一个工作目录、一个非 root 用户
+a working directory, a non-root user,
+
+244
+00:14:14,390 --> 00:14:17,989
+以及把你笔记本上的目录挂载进 container
+and your laptop's folder mounted inside a container.

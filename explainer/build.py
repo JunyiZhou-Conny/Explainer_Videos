@@ -58,7 +58,6 @@ import json
 import os
 import subprocess
 import sys
-import textwrap
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -217,17 +216,21 @@ def normalize(src: Path, dst: Path, crf: int | None = None) -> None:
     """Same audio layout for every scene (48 kHz stereo AAC, padded to video length).
 
     With `crf`, the video is re-encoded once here (x264, tuned for flat animation), so the full
-    video and every part are later joined without re-encoding."""
+    video and every part are later joined without re-encoding. The result is written beside `dst`
+    and renamed into place only when FFmpeg succeeds: the stitch reuses an existing `dst`, so an
+    interrupted encode must not leave a truncated one behind."""
     vcodec = ["-c:v", "copy"] if crf is None else [
         "-c:v", "libx264", "-preset", "medium", "-tune", "animation", "-crf", str(crf), "-pix_fmt", "yuv420p"]
+    tmp = dst.with_name(dst.stem + ".partial" + dst.suffix)
     if has_audio(src):
         cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), *vcodec, "-af",
-               "aresample=48000,apad", "-ac", "2", "-c:a", "aac", "-b:a", "192k", "-shortest", str(dst)]
+               "aresample=48000,apad", "-ac", "2", "-c:a", "aac", "-b:a", "192k", "-shortest", str(tmp)]
     else:
         cmd = ["ffmpeg", "-y", "-v", "error", "-i", str(src), "-f", "lavfi", "-i",
                "anullsrc=r=48000:cl=stereo", *vcodec, "-c:a", "aac", "-b:a", "192k",
-               "-shortest", str(dst)]
+               "-shortest", str(tmp)]
     subprocess.run(cmd, check=True)
+    os.replace(tmp, dst)
 
 
 def fmt_srt(t: float) -> str:
@@ -352,9 +355,10 @@ def split_cues(start: float, end: float, text: str, width: int = 44, lines: int 
 def _lines(cue: str, width: int, lines: int) -> list[str]:
     """The lines of one cue: balanced and kept off mid-phrase breaks (subtitles.wrap_en: "The earlier
     framework's sharper analysis / got this down…", not the greedy "…analysis got / this down…")
-    when that fits `lines` lines of `width` characters, else greedy."""
+    when that fits `lines` lines of `width` characters, else greedy; never inside a placeholder
+    (<USER NAME>: subtitles.in_placeholder, subtitles.wrap_greedy)."""
     ls = list(subs.wrap_en(" ".join(cue.split()), width * 0.55))
-    return ls if len(ls) <= lines and all(len(x) <= width for x in ls) else textwrap.wrap(cue, width)
+    return ls if len(ls) <= lines and all(len(x) <= width for x in ls) else subs.wrap_greedy(cue, width)
 
 
 def main(argv=None):
