@@ -41,28 +41,35 @@ Beats (script.md "## S08", one voiceover block each):
     "pipenv: the course's tool before uv".
  7  V1 leaves; the terminal clears and grows to 10 rows, TEAL (container · transcribe_audio):
     prompt (app) root@36615ab6e34b:/app# with root RED + RED tag "root"; session 72 lines 24-29, …,
-    33, 38-39: "Python 3.8.17" boxed YELLOW; the virtualenvs path underlined; "optional arguments:"
-    + GREY tag "Python 3.8's argparse wording"; `exit`.
- 8  TRACKER R/3 · extra. The terminal goes; V1 returns. Under it PANEL(74: 4, 6-7, "docker image
-    inspect dlops/mega-pipeline-transcribe-audio · extra") and the excerpt chip PYTHON_VERSION=3.8.17
-    (docker image inspect · env (excerpt)). The sealed box opens; the four labels rise as they are
-    said (2025-02-18, Python 3.8.17, pipenv shell, user: root RED), each with its panel part lit.
+    33, 38-39: `python --version` and `which python` are extras (GREY extra tags, the RED root tag
+    stays on the prompt; TRACKER R/3 · extra until `python cli.py --help`, README line 98);
+    "Python 3.8.17" boxed YELLOW; the virtualenvs path underlined; "optional arguments:" + GREY tag
+    "Python 3.8's argparse wording"; `exit`.
+ 8  TRACKER R/3 · extra. Just before the block the container is gone: the terminal turns GREY
+    (laptop), clears, goes to 20 pt and types the extra inspect as captured (74 line 1, its
+    `docker image inspect` part, folded by hand: GREY ↪ rows, extra tag, GREY note "one command,
+    folded to fit · type it as one line") -> 74 lines 4-7, the prompt returns. In the block the
+    terminal goes; V1 returns. Under it PANEL(74: 4, 6-7, "docker image inspect --format …
+    dlops/mega-pipeline-transcribe-audio · extra") and the excerpt chip PYTHON_VERSION=3.8.17
+    (docker image inspect · env (excerpt)). The sealed box opens and turns RED (the stale dlops
+    image; its pulled copy on your laptop too); the four labels rise as they are said
+    (2025-02-18, Python 3.8.17, pipenv shell, user: root RED), each with its panel part lit.
  9  TRACKER R/3. Panel and chip clear (labels stay). CODE(pipenv-flexible-workflow ·
     transcribe_audio/Dockerfile · line 2) under V1; an older GREY card on a second shelf "branch
     pipenv-flexible-workflow", a dashed GREY line from the open box to it (your GREEN card dims).
-    A GREY sheet (your folder) slides from your laptop over the box's front: "your code, their
-    environment". Excerpt chip ImportError … (generate_text · ./docker-shell.sh run (excerpt)) RED
-    under it, YELLOW tick "puzzle 1".
+    A GREY sheet (your folder) slides from your laptop over the box's front, inside its RED
+    outline: "your code, their environment". Excerpt chip ImportError … (generate_text ·
+    ./docker-shell.sh run (excerpt)) RED under it, YELLOW tick "puzzle 1".
 10  TRACKER R/3 · extra. Second terminal strip (opens on ~, "new terminal: cd here first", just
     before the block): `ls -la` (extra) -> 73 …, 7; a GREY Pipfile glyph with a RED root badge
     drops out under the box and slides to your laptop; at "owned by root" the ls row's root turns
     RED and the badge flashes; `git status
-    --short` (extra) -> …, 20; two GREY command chips: `rm Pipfile` (extra), `./docker-shell.sh dev`
-    "your own image back".
-11  The extras go; the box closes; the fix card under V1: GREEN "build locally · no argument, or
-    dev" (the build arrow grows, your image returns), BLUE "run · only images your team pushed from
-    this branch · your own DOCKER_USERNAME" (box and signpost flash), GREY "their newer push?
-    docker pull <user>/<image>". Fade out to an empty frame.
+    --short` (extra) -> …, 20; two GREY command chips: `rm Pipfile` (extra; GREY note under it
+    "Linux asks first (root's file) → y"), `./docker-shell.sh dev` "your own image back".
+11  The extras go; the box closes and is TEAL again; the fix card under V1: GREEN "build locally ·
+    no argument, or dev" (the build arrow grows, your image returns), BLUE "run · only images your
+    team pushed from this branch · your own DOCKER_USERNAME" (box and signpost flash), GREY "their
+    newer push? docker pull <user>/<image>". Fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - Beats 0-2: the switchboard shows each mode's word and what it does, not its line chips (no room
@@ -80,7 +87,16 @@ Deviations from SHOW (and why):
 - Beats 5-6: the terminal has 5 rows, not 12, so V1 stays above it (the image that dissolves, the
   diamond's "no", the pull); the output scrolls, each highlight is on screen when it is said.
 - Beat 3: the code panel's background is 0.45 wider than its text, so the line-88 tag sits inside.
-- Beat 8: the strip leaves (the panel and the chip need the room under V1).
+- Beat 8: the strip leaves (the panel and the chip need the room under V1). The inspect is typed
+  in the terminal BEFORE the block (the panel alone, captioned with a shorter command, could not be
+  reproduced: typed as captioned, docker image inspect prints ~150 lines of JSON). The study guide
+  lists only `--format '{{.Created}}'`, so the note doesn't send the viewer there (S06's does). The
+  terminal goes to 20 pt (72 characters a row) for it: at 22 pt the 123-character --format string
+  would fold inside its {{json …}} fields. Its rows break at spaces inside the single quotes, where
+  a " \" would be literal, so those breaks are GREY ↪ rows (as S06 does); joined they are the
+  captured command. The panel's caption names the --format … so it no longer reads as a command.
+- Beats 8-10: the stale dlops image is RED (BRIEF colour table) from "opens the box" until the box
+  closes in beat 11; the folder sheet is inset in the box's front so the RED outline stays visible.
 - Beat 10: the Pipfile lands under your laptop (the screen holds the pulled copy); it travels
   under the shelf's caption, clear of the box's four labels. The second
   terminal opens between beats 9 and 10 (its ~ / "cd here first" opening takes 2.6 s, which the
@@ -93,6 +109,9 @@ Deviations from SHOW (and why):
   image not found" is on screen, and turns YELLOW, as the SAY begins with those words.
 - Beats 2, 3, 8, 10: a short hold after the block keeps the your-turn card / README chip / the
   panel's "= root" / the command chips readable before the next beat clears them.
+- Beat 10: `rm Pipfile` gets a GREY note under its chip: the file is root's (73 line 7), so GNU rm
+  asks before removing a write-protected file (not captured, so a note, not output); the chips row
+  is top-aligned under V1 to hold it above the strip.
 """
 
 from common import *
@@ -181,6 +200,17 @@ C74 = capture("74", ML)
 assert C74.line(4).startswith("created 2025-02-18")
 assert C74.line(6) == 'cmd ["-c","pipenv shell"]' and C74.line(7) == 'user ""'
 assert '"PYTHON_VERSION=3.8.17"' in C74.line(5)
+# the capture ran `docker image ls …; docker image inspect --format '…' …`: the inspect alone prints
+# lines 4-7. Its --format string (123 characters) wraps INSIDE the single quotes, where a " \" would
+# be literal: those breaks are GREY ↪ rows (the code panels' wrap mark), each at a space, never in a
+# {{…}} field; the only " \" follows the closing quote. Joined, the rows are the captured command.
+INSPECT = C74.cmd.split("; ", 1)[1]
+INSPECT_ROWS = ["    docker image inspect --format 'created {{.Created}}{{println}}env",
+                "      ↪ {{json .Config.Env}}{{println}}cmd",
+                "      ↪ {{json .Config.Cmd}}{{println}}user \"{{.Config.User}}\"' \\",
+                "    dlops/mega-pipeline-transcribe-audio"]
+assert " ".join(r.strip().removesuffix(" \\").removeprefix("↪ ") for r in INSPECT_ROWS) == INSPECT
+INSPECT_PT = 20          # 72 characters a row (22 pt: 65, too few for the rows above)
 C76 = capture("76", ML)
 IMPORT_ERR = "ImportError: cannot import name 'genai' from 'google'"
 assert C76.line(25).startswith(IMPORT_ERR)
@@ -261,26 +291,47 @@ def fit_tag(t, line, s: str = "extra", color: str = S.GREY):
     return None
 
 
-def type_under(scene, t, cmd: str, type_time: float = 0.5):
-    """Type `cmd` on the row under the prompt, indented 4 (the house layout for long prompts), even
-    when it would fit after it: the row keeps room for its tag. Returns a VGroup with .rows."""
+def type_rows(scene, t, rows_text, type_time: float = 0.5):
+    """Type a command folded by hand: the prompt alone on its row, then `rows_text` (the command's
+    rows, indented as in type_cmd's 'under the prompt' layout; a ↪ in a row is drawn GREY, as in
+    the code panels). Returns a VGroup with .rows."""
     from common import _drop_bare
     _drop_bare(scene, t)
-    texts = [t.prompt, "    " + cmd]
+    texts = [t.prompt] + list(rows_text)
+    assert all(len(s) <= t.max_chars for s in texts[1:]), rows_text
     t._make_room(scene, len(texts))
     rows = []
     for k, s in enumerate(texts):
-        ln = mono_line(s, t.size, INK, t2c=t._prompt_colors(t.prompt) if k == 0 else None)
+        t2c = t._prompt_colors(t.prompt) if k == 0 else ({"↪": S.GREY} if "↪" in s else None)
+        ln = mono_line(s, t.size, INK, t2c=t2c)
         t._place(ln, len(t.lines))
         t.lines.add(ln)
         rows.append(ln)
     scene.add(rows[0])
-    scene.play(ShowIncreasingSubsets(glyph_range(rows[1], 0), rate_func=linear), run_time=type_time)
+    typed = VGroup(*[g for r in rows[1:] for g in glyph_range(r, 0)])
+    scene.play(ShowIncreasingSubsets(typed, rate_func=linear), run_time=type_time)
     for r in rows:
         scene.add(r)
     g = VGroup(*rows)
     g.rows, g.text = rows, " ".join(r.text.strip() for r in rows)
     return g
+
+
+def type_under(scene, t, cmd: str, type_time: float = 0.5):
+    """Type `cmd` on the row under the prompt, indented 4 (the house layout for long prompts), even
+    when it would fit after it: the row keeps room for its tag. Returns a VGroup with .rows."""
+    return type_rows(scene, t, ["    " + cmd], type_time=type_time)
+
+
+def pin_extra(scene, tr, line, tg, run_time: float = 0.3):
+    """Show a positioned GREY extra tag `tg` and pin it to terminal line `line` (its last row when
+    folded) while the tracker caption gains ' · extra' (no change when it has it)."""
+    scene.play(FadeIn(tg, shift=LEFT * 0.1), caption_extra(tr, True), run_time=run_time)
+    row = line.rows[-1] if hasattr(line, "rows") else line
+    scene.remove(tg)
+    row.add(tg)
+    scene.add(row)
+    return tg
 
 
 def type_extra(scene, t, cmd: str, type_time: float = 0.5, under_prompt: bool = False):
@@ -739,18 +790,27 @@ class DevAndRun(VoiceScene):
             vo.wait_until("Python is 3.8.17")
             pr.remove(rt)
             self.add(rt)
-            o7 = session(self, t, C72, 24, 25, type_time=0.5, out_time=0.3)
+            o24 = session(self, t, C72, 24, type_time=0.5)[24]
             self.remove(rt)
-            o7[24].add(rt)
-            self.add(o7[24])
-            pyb = glyph_box(o7[25], "Python 3.8.17")
-            pin(self, o7[25], pyb, run_time=0.4, anim=Create(pyb))
+            o24.add(rt)
+            self.add(o24)
+            # python --version and which python are extras (not in the README): GREY tags, the
+            # RED root tag stays on the prompt's row before them
+            pin_extra(self, tr, o24, extra_tag().next_to(rt, RIGHT, buff=0.15))
+            o25 = session(self, t, C72, 25, out_time=0.3)[25]
+            pyb = glyph_box(o25, "Python 3.8.17")
+            pin(self, o25, pyb, run_time=0.4, anim=Create(pyb))
             vo.wait_until("in an environment")
-            o7 = session(self, t, C72, 26, 27, type_time=0.4, out_time=0.3)
-            uvenv = under(substring(o7[27], "/root/.local/share/virtualenvs/app-4PlAip0Q"), TURN)
-            pin(self, o7[27], uvenv, run_time=0.4, anim=Create(uvenv))
+            o26 = session(self, t, C72, 26, type_time=0.4)[26]
+            x26 = fit_tag(t, o26)
+            assert x26 is not None
+            pin_extra(self, tr, o26, x26, run_time=0.25)
+            o27 = session(self, t, C72, 27, out_time=0.3)[27]
+            uvenv = under(substring(o27, "/root/.local/share/virtualenvs/app-4PlAip0Q"), TURN)
+            pin(self, o27, uvenv, run_time=0.4, anim=Create(uvenv))
             vo.wait_until("Help still works")
-            o7 = session(self, t, C72, 28, 29, "…", 33, type_time=0.5, out_time=0.5)
+            self.play(caption_extra(tr, False), run_time=0.25)     # python cli.py --help: README line 98
+            o7 = session(self, t, C72, 28, 29, "…", 33, type_time=0.45, out_time=0.5)
             vo.wait_until("in the older wording")
             oa = fit_tag(t, o7[33], "Python 3.8's argparse wording")
             pin(self, o7[33], oa, run_time=0.4)
@@ -759,20 +819,47 @@ class DevAndRun(VoiceScene):
             del t._prompt_colors
 
         # ========================================================== 8 · the box opens: what's inside
-        lp = log_panel(C74.at(4, 6, 7), "docker image inspect dlops/mega-pipeline-transcribe-audio · extra", width=6.9)
+        # between the blocks: the container is gone; back on the laptop, the extra inspect is typed
+        # as captured (20 pt, so its --format string folds at spaces into whole {{…}} fields)
+        out7, done7 = wipe(t)
+        self.play(out7, *leave_container(t, P_A), caption_extra(tr, True), run_time=0.5)
+        done7()
+        t.size, t.pitch = INSPECT_PT, line_pitch(INSPECT_PT)
+        t.max_chars = int((t.box.width - 0.6) / cell_width(INSPECT_PT))
+        resize(self, t, 10, run_time=0.4)
+        insp = type_rows(self, t, INSPECT_ROWS, type_time=1.6)
+        x74 = beside(_keep(tag("extra", S.GREY, size=CAPTION)), t, insp)    # 20 pt: the rows' height
+        one = note("one command, folded to fit · type it as one line")
+        place(one, left=t.box.get_left()[0] + 0.15, bottom=t.box.get_top()[1] + 0.15)
+        self.play(FadeIn(x74, shift=LEFT * 0.1), FadeIn(one, shift=UP * 0.1), run_time=0.4)
+        self.remove(x74)
+        insp.rows[-1].add(x74)
+        self.add(insp.rows[-1])
+        t.print(self, C74.at(4, 5, 6, 7), run_time=0.5)          # line 5 (env, 533 characters) cut with …
+        bare_prompt(self, t)
+        self.wait(1.2)
+
+        lp = log_panel(C74.at(4, 6, 7), "docker image inspect --format … dlops/mega-pipeline-transcribe-audio · extra",
+                       width=6.9)
         place(lp, left=-6.3, top=-0.62)
         env = excerpt_chip("PYTHON_VERSION=3.8.17", "docker image inspect · env (excerpt)", line=C74.line(5))
         place(env, right=6.3, cy=lp.frame.get_center()[1] + 0.1)
+        assert lp.header.get_bottom()[1] > env.get_top()[1] + 0.1, (lp.header.get_bottom(), env.get_top())
         root8 = note("= root", ERR).next_to(lp.rows[2].glyphs, RIGHT, buff=0.25)   # plain text: no pill to touch the underline above
         labels, oanims = v1.open_box([("2025-02-18", INK), ("Python 3.8.17", TURN), ("pipenv shell", INK),
                                       ("user: root", ERR)])
-        lid, tape, rise = oanims[0], oanims[1], oanims[2].animations
+        tape, rise = oanims[1], oanims[2].animations
+        # the lid opens and the stale dlops image turns RED (BRIEF colour table: avoid this); built
+        # after open_box, whose own lid animation (oanims[0]) would keep it TEAL
+        bx = v1.box
+        lid = bx.lid.animate.rotate(-PI * 0.55, about_point=bx.front.get_corner(UP + RIGHT)).set_color(ERR)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(t), run_time=0.4)
-            self.play(caption_extra(tr, True), FadeIn(v1), FadeIn(copy), run_time=0.6)
+            self.play(FadeOut(t), FadeOut(one), run_time=0.4)
+            self.play(FadeIn(v1), FadeIn(copy), run_time=0.6)
             self.play(FadeIn(lp, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("opens the box")
-            self.play(lid, tape, run_time=0.7)
+            self.play(lid, tape, bx.front.animate.set_color(ERR), bx.side.animate.set_color(ERR),
+                      copy.animate.set_color(ERR), run_time=0.7)
             vo.wait_until("created on")
             d8 = under(substring(lp.rows[0], "2025-02-18"), TURN)
             self.play(Create(d8), rise[0], run_time=0.8)
@@ -797,7 +884,8 @@ class DevAndRun(VoiceScene):
         place(old, right=6.35, top=-0.6)
         place(p9, left=-6.3, top=-0.75)
         link9 = BuildOrPull.dashed_link(v1.box, old.card, text=None)
-        sheet = Rectangle(width=v1.box.front.width + 0.1, height=v1.box.front.height + 0.1)
+        # inset in the box's front: the stale image's RED outline stays visible around your folder
+        sheet = Rectangle(width=v1.box.front.width - 0.16, height=v1.box.front.height - 0.16)
         sheet.set_stroke(LAPTOP, 2).set_fill(LAPTOP, 0.55).move_to(copy_t)
         sheet.set_z_index(3)
         yours = note("your code, their environment", INK)
@@ -840,10 +928,18 @@ class DevAndRun(VoiceScene):
                                                      pip_end.get_center()])
         pip.move_to(v1.box.front)
         pip.set_z_index(4)                         # above the GREY sheet it starts on
-        rm_chip = VGroup(cmd_chip("rm Pipfile"), extra_tag()).arrange(RIGHT, buff=0.2)
+        rm_row = VGroup(cmd_chip("rm Pipfile"), extra_tag()).arrange(RIGHT, buff=0.2)
+        # the Pipfile is root's (73 line 7): GNU rm asks before removing a write-protected file
+        rm_note = note("Linux asks first (root's file) → y")
+        rm_note.next_to(rm_row, DOWN, buff=0.06).align_to(rm_row, LEFT).shift(RIGHT * 0.1)
+        rm_chip = VGroup(rm_row, rm_note)
         dev_chip = VGroup(cmd_chip(C17.cmd), note("your own image back")).arrange(RIGHT, buff=0.2)
-        chips10 = VGroup(rm_chip, dev_chip).arrange(RIGHT, buff=0.8)
-        place(chips10, cx=0, cy=(v1.get_bottom()[1] + STRIP_TOP) / 2 - 0.02)
+        chips10 = VGroup(rm_chip, dev_chip).arrange(RIGHT, buff=0.8, aligned_edge=UP)
+        # top-aligned under V1's lowest visible parts (the shelves' captions, the landed Pipfile)
+        v1_low = min(v1.git_shelf.caption.get_bottom()[1], v1.hub_shelf.caption.get_bottom()[1],
+                     pip_end.get_bottom()[1])
+        place(chips10, cx=0, top=v1_low - 0.12)
+        assert chips10.get_bottom()[1] >= STRIP_TOP + 0.05, (chips10.get_bottom(), STRIP_TOP)
         # between the blocks: beat 9's extras leave and the second terminal opens (in ~ first)
         self.play(FadeOut(VGroup(old, link9, ie, puzzle, yours)), Transform(v1.card, card_full),
                   caption_extra(tr, True), run_time=0.5)
@@ -878,10 +974,12 @@ class DevAndRun(VoiceScene):
         fix_h = note("the fix").next_to(fix.frame, UP, buff=0.08).align_to(fix.frame, LEFT).shift(RIGHT * 0.12)
         fix_g = VGroup(fix, fix_h)
         place(fix_g, cx=0, cy=(v1.get_bottom()[1] - 3.45) / 2)
-        lid_back = v1.box.lid.animate.rotate(PI * 0.55, about_point=v1.box.front.get_corner(UP + RIGHT))
+        # the box closes and is a plain TEAL image again (the shelf for your team's pushes)
+        lid_back = bx.lid.animate.rotate(PI * 0.55, about_point=bx.front.get_corner(UP + RIGHT)).set_color(CTR)
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(VGroup(t2, chips10, labels, sheet, pip)), caption_extra(tr, False), run_time=0.5)
-            self.play(lid_back, v1.box.tape.animate.set_opacity(0.8), run_time=0.6)
+            self.play(lid_back, bx.tape.animate.set_opacity(0.8), bx.front.animate.set_color(CTR),
+                      bx.side.animate.set_color(CTR), run_time=0.6)
             self.play(FadeIn(fix.frame), FadeIn(fix_h), FadeIn(r1, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("with no argument")
             self.play(*v1.parts_in("build", anim=lambda m: FadeIn(m, shift=RIGHT * 0.25)), FadeOut(copy),

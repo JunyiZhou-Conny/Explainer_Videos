@@ -1,0 +1,560 @@
+[Script Info]
+Title: AC215 · Lecture 2 — Containers I: one image, from laptop to VM (follow-along: simple-translate)
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.13,Bilingual,,0,0,0,,这是云上一台全新的虚拟机\N{\fs33\c&H00C8C0B8&\bord1.4}Here's a fresh virtual machine in the cloud:
+Dialogue: 0,0:00:03.13,0:00:06.76,Bilingual,,0,0,0,,没有我们代码的副本，没有虚拟环境，没有 uv\N{\fs33\c&H00C8C0B8&\bord1.4}no copy of our code, no virtual environment, no uv.
+Dialogue: 0,0:00:07.08,0:00:09.83,Bilingual,,0,0,0,,它只有 Docker，我们只输入一条命令\N{\fs33\c&H00C8C0B8&\bord1.4}It has only Docker, and we type one command.
+Dialogue: 0,0:00:10.15,0:00:12.63,Bilingual,,0,0,0,,先看就好；最后你会自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Just watch; you'll run it yourself at the end.
+Dialogue: 0,0:00:12.87,0:00:15.59,Bilingual,,0,0,0,,Docker 下载了一个 image，一共 7 层\N{\fs33\c&H00C8C0B8&\bord1.4}Docker downloads an image, in seven layers,
+Dialogue: 0,0:00:15.59,0:00:17.43,Bilingual,,0,0,0,,然后在里面启动一个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}and starts a shell inside it.
+Dialogue: 0,0:00:17.75,0:00:19.25,Bilingual,,0,0,0,,我们在里面运行这个应用\N{\fs33\c&H00C8C0B8&\bord1.4}There we run the app,
+Dialogue: 0,0:00:19.25,0:00:22.70,Bilingual,,0,0,0,,它的默认文本 I love cheese 翻成了意大利语\N{\fs33\c&H00C8C0B8&\bord1.4}and its default text, I love cheese, comes back in Italian.
+Dialogue: 0,0:00:22.95,0:00:26.62,Bilingual,,0,0,0,,额外检查一下，README 里没有这一步：这是哪个 Python？\N{\fs33\c&H00C8C0B8&\bord1.4}One extra check, not in the README: which Python is this?
+Dialogue: 0,0:00:26.94,0:00:28.90,Bilingual,,0,0,0,,是 3.14.7\N{\fs33\c&H00C8C0B8&\bord1.4}It's 3.14.7.
+Dialogue: 0,0:00:29.22,0:00:33.19,Bilingual,,0,0,0,,可这个 image 的配方是从 Python 3.12 开始的\N{\fs33\c&H00C8C0B8&\bord1.4}Yet the recipe for this image starts from Python 3.12.
+Dialogue: 0,0:00:33.51,0:00:36.11,Bilingual,,0,0,0,,先记住这个问题；今天我们会分两次解开它\N{\fs33\c&H00C8C0B8&\bord1.4}Hold that thought; we'll solve it twice today.
+Dialogue: 0,0:00:36.35,0:00:39.61,Bilingual,,0,0,0,,今天的教程 simple-translate 就在这里收尾\N{\fs33\c&H00C8C0B8&\bord1.4}That's where today's tutorial, simple-translate, ends.
+Dialogue: 0,0:00:39.93,0:00:45.86,Bilingual,,0,0,0,,上节课我们爬了它的前两级：先在 VM 上手动安装，再用 uv\N{\fs33\c&H00C8C0B8&\bord1.4}Last lecture we climbed its first two rungs: a manual install on a VM, then uv.
+Dialogue: 0,0:00:46.18,0:00:51.16,Bilingual,,0,0,0,,今天爬另外两级：在笔记本上把应用打包成一个 Docker image\N{\fs33\c&H00C8C0B8&\bord1.4}Today, the other two: package the app as a Docker image on your laptop,
+Dialogue: 0,0:00:51.16,0:00:54.10,Bilingual,,0,0,0,,push 到 Docker Hub，再在 VM 上运行它\N{\fs33\c&H00C8C0B8&\bord1.4}push it to Docker Hub, and run it on a VM.
+Dialogue: 0,0:00:54.33,0:00:57.58,Bilingual,,0,0,0,,想跟着做的话，把 README 打开，放在视频旁边\N{\fs33\c&H00C8C0B8&\bord1.4}To follow along, open the README beside this video.
+Dialogue: 0,0:00:57.90,0:01:00.85,Bilingual,,0,0,0,,左上角的三个进度条显示我们在哪儿\N{\fs33\c&H00C8C0B8&\bord1.4}Three trackers, top left, show where we are:
+Dialogue: 0,0:01:00.85,0:01:03.53,Bilingual,,0,0,0,,在笔记本上，在 Docker Hub 上，还是在 VM 上\N{\fs33\c&H00C8C0B8&\bord1.4}on the laptop, on Docker Hub, on the VM.
+Dialogue: 0,0:01:03.85,0:01:08.08,Bilingual,,0,0,0,,看到黄色的 your turn 标签，就暂停，自己跑这条命令\N{\fs33\c&H00C8C0B8&\bord1.4}When the yellow your-turn tag appears, pause and run the command;
+Dialogue: 0,0:01:08.08,0:01:11.72,Bilingual,,0,0,0,,灰色的 extra 标签表示这个检查 README 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}a gray extra tag marks a check that isn't in the README.
+Dialogue: 0,0:01:11.97,0:01:15.78,Bilingual,,0,0,0,,你需要运行中的 Docker Desktop、一个免费的 Docker Hub 账号\N{\fs33\c&H00C8C0B8&\bord1.4}You need Docker Desktop running, a free Docker Hub account,
+Dialogue: 0,0:01:15.78,0:01:19.14,Bilingual,,0,0,0,,还有你的 Google Cloud 项目，最后开 VM 要用\N{\fs33\c&H00C8C0B8&\bord1.4}and your Google Cloud project for the VM at the end.
+Dialogue: 0,0:01:19.46,0:01:21.65,Bilingual,,0,0,0,,今天不需要服务账号，也不需要密钥\N{\fs33\c&H00C8C0B8&\bord1.4}No service account or keys today.
+Dialogue: 0,0:01:22.70,0:01:24.98,Bilingual,,0,0,0,,先来看贯穿整节课的四个词\N{\fs33\c&H00C8C0B8&\bord1.4}First, four words for the whole lecture.
+Dialogue: 0,0:01:25.30,0:01:30.47,Bilingual,,0,0,0,,在第 1 讲里，每台新 VM 都要把同样的配置再做一遍\N{\fs33\c&H00C8C0B8&\bord1.4}In lecture 1, every new VM needed the same setup, on an operating system
+Dialogue: 0,0:01:30.47,0:01:32.07,Bilingual,,0,0,0,,还得操作系统配合\N{\fs33\c&H00C8C0B8&\bord1.4}that had to cooperate.
+Dialogue: 0,0:01:32.36,0:01:36.21,Bilingual,,0,0,0,,Docker image 把这些全装进一个能复制的东西\N{\fs33\c&H00C8C0B8&\bord1.4}A Docker image packs it all into one thing you can copy:
+Dialogue: 0,0:01:36.21,0:01:39.51,Bilingual,,0,0,0,,系统文件、Python、各种包和代码\N{\fs33\c&H00C8C0B8&\bord1.4}system files, Python, the packages and the code.
+Dialogue: 0,0:01:39.75,0:01:42.46,Bilingual,,0,0,0,,一个 image 就是一叠只读层\N{\fs33\c&H00C8C0B8&\bord1.4}An image is a stack of read-only layers.
+Dialogue: 0,0:01:42.78,0:01:46.96,Bilingual,,0,0,0,,每一层放的是某个构建步骤新增或改动的文件\N{\fs33\c&H00C8C0B8&\bord1.4}Each layer holds the files added or changed by one build step.
+Dialogue: 0,0:01:47.28,0:01:49.58,Bilingual,,0,0,0,,旁边还有一张小小的配置卡片\N{\fs33\c&H00C8C0B8&\bord1.4}Beside it sits a small config card:
+Dialogue: 0,0:01:49.58,0:01:53.79,Bilingual,,0,0,0,,放环境变量这类设置，还有要启动哪个程序\N{\fs33\c&H00C8C0B8&\bord1.4}settings like environment variables, and which program to start.
+Dialogue: 0,0:01:54.03,0:01:57.83,Bilingual,,0,0,0,,配方就是 Dockerfile，Docker 一次读一条指令\N{\fs33\c&H00C8C0B8&\bord1.4}The recipe is a Dockerfile, read one instruction at a time.
+Dialogue: 0,0:01:58.15,0:02:02.16,Bilingual,,0,0,0,,会改文件的指令，比如 RUN 和 COPY，会加一层\N{\fs33\c&H00C8C0B8&\bord1.4}Instructions that change files, like RUN and COPY, add a layer.
+Dialogue: 0,0:02:02.48,0:02:05.43,Bilingual,,0,0,0,,别的指令，比如 CMD，只写在卡片上\N{\fs33\c&H00C8C0B8&\bord1.4}Others, like CMD, only write on the card.
+Dialogue: 0,0:02:05.67,0:02:08.18,Bilingual,,0,0,0,,运行一个 image，就得到一个 container\N{\fs33\c&H00C8C0B8&\bord1.4}Run an image and you get a container:
+Dialogue: 0,0:02:08.18,0:02:13.67,Bilingual,,0,0,0,,共用同样那几层，最上面再加一层薄薄的可写层，外加一个主进程\N{\fs33\c&H00C8C0B8&\bord1.4}the same layers, shared, plus a thin writable layer on top, and one main process.
+Dialogue: 0,0:02:13.99,0:02:17.32,Bilingual,,0,0,0,,进程结束，container 就停了\N{\fs33\c&H00C8C0B8&\bord1.4}When that process ends, the container stops,
+Dialogue: 0,0:02:17.32,0:02:20.64,Bilingual,,0,0,0,,而 --rm 会把它删掉，连同可写层一起\N{\fs33\c&H00C8C0B8&\bord1.4}and --rm deletes it, writable layer and all.
+Dialogue: 0,0:02:20.96,0:02:22.76,Bilingual,,0,0,0,,而 image 从来不变\N{\fs33\c&H00C8C0B8&\bord1.4}The image never changes.
+Dialogue: 0,0:02:23.00,0:02:26.88,Bilingual,,0,0,0,,可以把 image 想成一个类，每个 container 就是一个实例\N{\fs33\c&H00C8C0B8&\bord1.4}Think of the image as a class, and each container as an instance.
+Dialogue: 0,0:02:27.20,0:02:31.17,Bilingual,,0,0,0,,README 里有一个小疏漏：它说要构建 docker container\N{\fs33\c&H00C8C0B8&\bord1.4}One small slip in the README: it says build the docker container.
+Dialogue: 0,0:02:31.49,0:02:34.56,Bilingual,,0,0,0,,构建得到的是 image；运行得到的才是 container\N{\fs33\c&H00C8C0B8&\bord1.4}Building makes an image; running makes a container.
+Dialogue: 0,0:02:34.80,0:02:39.17,Bilingual,,0,0,0,,像 Docker Hub 这样的 registry，按名字把 image 存在货架上\N{\fs33\c&H00C8C0B8&\bord1.4}A registry, like Docker Hub, stores images by name, on shelves.
+Dialogue: 0,0:02:39.49,0:02:42.97,Bilingual,,0,0,0,,所谓 tag，就是指向某一个 image 的名字，比如 latest\N{\fs33\c&H00C8C0B8&\bord1.4}A tag is a name that points at one image, such as latest.
+Dialogue: 0,0:02:43.22,0:02:45.67,Bilingual,,0,0,0,,而且，container 不是一台小 VM\N{\fs33\c&H00C8C0B8&\bord1.4}And a container is not a small VM.
+Dialogue: 0,0:02:45.99,0:02:50.06,Bilingual,,0,0,0,,VM 会启动自己的内核，也就是操作系统的核心\N{\fs33\c&H00C8C0B8&\bord1.4}A VM boots its own kernel, the core of the operating system.
+Dialogue: 0,0:02:50.38,0:02:54.59,Bilingual,,0,0,0,,而 container 是一些相互隔离的进程，共用同一个 Linux 内核\N{\fs33\c&H00C8C0B8&\bord1.4}Containers are isolated processes that share one Linux kernel.
+Dialogue: 0,0:02:54.98,0:02:56.82,Bilingual,,0,0,0,,在 Mac 或 Windows 笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}On a Mac or Windows laptop,
+Dialogue: 0,0:02:56.82,0:03:01.32,Bilingual,,0,0,0,,Docker Desktop 靠一台隐藏的小 Linux VM，来提供这个内核\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Desktop provides that kernel with a small, hidden Linux VM.
+Dialogue: 0,0:03:01.64,0:03:05.67,Bilingual,,0,0,0,,在云上的 VM 里，Docker 直接跑在 VM 自己的 Linux 上\N{\fs33\c&H00C8C0B8&\bord1.4}On a cloud VM, Docker runs right on the VM's own Linux.
+Dialogue: 0,0:03:05.92,0:03:11.19,Bilingual,,0,0,0,,第 1 讲里 venv 隔离不了的东西，也就是系统文件和库\N{\fs33\c&H00C8C0B8&\bord1.4}What a venv couldn't isolate in lecture 1, the system's files and libraries,
+Dialogue: 0,0:03:11.19,0:03:12.79,Bilingual,,0,0,0,,现在都装进了盒子里\N{\fs33\c&H00C8C0B8&\bord1.4}is now inside the box.
+Dialogue: 0,0:03:13.04,0:03:15.67,Bilingual,,0,0,0,,GPU 驱动还是来自宿主机\N{\fs33\c&H00C8C0B8&\bord1.4}GPU drivers still come from the host.
+Dialogue: 0,0:03:16.90,0:03:18.51,Bilingual,,0,0,0,,现在进入 README 的这一节\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README section Developing App using Containers.
+Dialogue: 0,0:03:18.51,0:03:20.68,Bilingual,,0,0,0,,Developing App using Containers\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README section Developing App using Containers.
+Dialogue: 0,0:03:21.00,0:03:23.04,Bilingual,,0,0,0,,在你的笔记本上打开一个终端\N{\fs33\c&H00C8C0B8&\bord1.4}Open a terminal on your laptop.
+Dialogue: 0,0:03:23.36,0:03:26.15,Bilingual,,0,0,0,,在 Mac 上，你的提示符会不一样\N{\fs33\c&H00C8C0B8&\bord1.4}On a Mac your prompt looks different;
+Dialogue: 0,0:03:26.15,0:03:30.30,Bilingual,,0,0,0,,在 Windows 上，用 WSL 里的 Ubuntu 终端，或者 Git Bash\N{\fs33\c&H00C8C0B8&\bord1.4}on Windows, use an Ubuntu terminal in WSL, or Git Bash.
+Dialogue: 0,0:03:30.62,0:03:31.68,Bilingual,,0,0,0,,在 Git Bash 里\N{\fs33\c&H00C8C0B8&\bord1.4}In Git Bash,
+Dialogue: 0,0:03:31.68,0:03:34.92,Bilingual,,0,0,0,,如果 docker run 报 stdin is not a terminal\N{\fs33\c&H00C8C0B8&\bord1.4}put winpty in front of docker run if it says
+Dialogue: 0,0:03:34.92,0:03:36.76,Bilingual,,0,0,0,,就在它前面加上 winpty\N{\fs33\c&H00C8C0B8&\bord1.4}stdin is not a terminal.
+Dialogue: 0,0:03:37.00,0:03:40.39,Bilingual,,0,0,0,,首先，docker container ls 列出正在运行的 container\N{\fs33\c&H00C8C0B8&\bord1.4}First, docker container ls lists running containers.
+Dialogue: 0,0:03:40.71,0:03:43.68,Bilingual,,0,0,0,,这里只显示了表头，所以什么都没在运行\N{\fs33\c&H00C8C0B8&\bord1.4}Here it shows only the header, so nothing is running.
+Dialogue: 0,0:03:44.00,0:03:46.71,Bilingual,,0,0,0,,如果你那边连不上 Docker daemon\N{\fs33\c&H00C8C0B8&\bord1.4}If yours can't connect to the Docker daemon,
+Dialogue: 0,0:03:46.71,0:03:48.86,Bilingual,,0,0,0,,就启动 Docker Desktop 再试\N{\fs33\c&H00C8C0B8&\bord1.4}start Docker Desktop and try again.
+Dialogue: 0,0:03:49.18,0:03:50.53,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:03:50.58,0:03:52.84,Bilingual,,0,0,0,,接着，停掉所有正在运行的 container\N{\fs33\c&H00C8C0B8&\bord1.4}Next, stop any running container.
+Dialogue: 0,0:03:53.16,0:03:57.79,Bilingual,,0,0,0,,这里没有要停的；如果你有，docker stop 加上它的 ID 就行\N{\fs33\c&H00C8C0B8&\bord1.4}There's nothing to stop here; if you have one, docker stop with its ID does it.
+Dialogue: 0,0:03:58.03,0:03:59.70,Bilingual,,0,0,0,,然后是 docker system prune\N{\fs33\c&H00C8C0B8&\bord1.4}Then docker system prune.
+Dialogue: 0,0:04:00.00,0:04:02.98,Bilingual,,0,0,0,,它会列出要删掉的东西，再问你；输入 y\N{\fs33\c&H00C8C0B8&\bord1.4}It lists what it will remove and asks; type y.
+Dialogue: 0,0:04:03.30,0:04:04.88,Bilingual,,0,0,0,,这里没有空间可回收\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing to reclaim here;
+Dialogue: 0,0:04:04.88,0:04:07.93,Bilingual,,0,0,0,,你那边可能会删掉一个停了的 hello-world container\N{\fs33\c&H00C8C0B8&\bord1.4}yours may delete the stopped hello-world container
+Dialogue: 0,0:04:07.93,0:04:09.48,Bilingual,,0,0,0,,是 Tutorial 0 留下的\N{\fs33\c&H00C8C0B8&\bord1.4}from Tutorial 0.
+Dialogue: 0,0:04:09.53,0:04:10.88,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:04:10.93,0:04:14.94,Bilingual,,0,0,0,,看第三项：dangling images，也就是没有名字的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Look at the third item: dangling images, the ones without a name.
+Dialogue: 0,0:04:15.26,0:04:18.40,Bilingual,,0,0,0,,别看 README 的标题那么写，有名字的 image 其实会留下来\N{\fs33\c&H00C8C0B8&\bord1.4}Despite the README's heading, named images survive.
+Dialogue: 0,0:04:18.72,0:04:22.03,Bilingual,,0,0,0,,加上 -a 的话，prune 会删掉所有没在用的 image\N{\fs33\c&H00C8C0B8&\bord1.4}With -a, prune would remove every unused image.
+Dialogue: 0,0:04:22.27,0:04:25.10,Bilingual,,0,0,0,,然后，docker image ls 列出你的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Then docker image ls lists your images.
+Dialogue: 0,0:04:25.42,0:04:26.87,Bilingual,,0,0,0,,这里列表是空的\N{\fs33\c&H00C8C0B8&\bord1.4}The list is empty here;
+Dialogue: 0,0:04:26.87,0:04:30.89,Bilingual,,0,0,0,,你那边可能还会显示 hello-world：它有名字，所以留了下来\N{\fs33\c&H00C8C0B8&\bord1.4}yours may still show hello-world: it has a name, so it survived.
+Dialogue: 0,0:04:31.21,0:04:36.11,Bilingual,,0,0,0,,你看到的列可能不一样：这是录制时的 Docker 29\N{\fs33\c&H00C8C0B8&\bord1.4}Your columns may differ: this is Docker 29, at the time of recording.
+Dialogue: 0,0:04:36.35,0:04:37.69,Bilingual,,0,0,0,,接下来是代码\N{\fs33\c&H00C8C0B8&\bord1.4}Now the code.
+Dialogue: 0,0:04:37.74,0:04:42.25,Bilingual,,0,0,0,,README 也提醒了，上节课在 VM 上 clone 的那份帮不上忙\N{\fs33\c&H00C8C0B8&\bord1.4}As the README notes, a clone on last lecture's VM doesn't help:
+Dialogue: 0,0:04:42.25,0:04:44.76,Bilingual,,0,0,0,,Docker Desktop 跑在你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Desktop runs on your laptop.
+Dialogue: 0,0:04:45.08,0:04:48.02,Bilingual,,0,0,0,,在这里 clone，然后 cd 进 simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}Clone it here, then cd into simple-translate.
+Dialogue: 0,0:04:48.34,0:04:49.83,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:04:49.88,0:04:53.10,Bilingual,,0,0,0,,额外检查一下，README 里没有这一步：ls -a\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check, not in the README: ls -a.
+Dialogue: 0,0:04:53.42,0:04:56.45,Bilingual,,0,0,0,,参考答案 Dockerfile.txt 在这儿\N{\fs33\c&H00C8C0B8&\bord1.4}There's the solution, Dockerfile.txt,
+Dialogue: 0,0:04:56.45,0:05:00.61,Bilingual,,0,0,0,,但没有一个就叫 Dockerfile 的文件，也没有 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}but no file called just Dockerfile, and no uv.lock.
+Dialogue: 0,0:05:00.85,0:05:04.06,Bilingual,,0,0,0,,现在就跑一下 README 里的构建命令，这是额外的一步\N{\fs33\c&H00C8C0B8&\bord1.4}Run the README's build command now, as an extra:
+Dialogue: 0,0:05:04.06,0:05:05.80,Bilingual,,0,0,0,,报 failed to read dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}failed to read dockerfile.
+Dialogue: 0,0:05:06.12,0:05:08.85,Bilingual,,0,0,0,,README 是要你自己写这个文件，分五步\N{\fs33\c&H00C8C0B8&\bord1.4}The README wants you to write it, in five steps.
+Dialogue: 0,0:05:09.90,0:05:12.78,Bilingual,,0,0,0,,接下来，在 simple-translate 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}Next, inside the simple-translate folder,
+Dialogue: 0,0:05:12.78,0:05:16.79,Bilingual,,0,0,0,,建一个叫 Dockerfile 的文件：大写 D，没有扩展名\N{\fs33\c&H00C8C0B8&\bord1.4}create a file called Dockerfile: capital D, no extension.
+Dialogue: 0,0:05:17.11,0:05:21.42,Bilingual,,0,0,0,,README 分五步把它填满，每一步之后都构建一次、运行一次\N{\fs33\c&H00C8C0B8&\bord1.4}The README fills it in five steps, with a build and a run after each.
+Dialogue: 0,0:05:21.74,0:05:23.38,Bilingual,,0,0,0,,暂停一下，把文件建好\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and create the file.
+Dialogue: 0,0:05:23.62,0:05:26.74,Bilingual,,0,0,0,,Dockerfile 的第 1 步只有一条指令\N{\fs33\c&H00C8C0B8&\bord1.4}Dockerfile step 1 is one instruction:
+Dialogue: 0,0:05:26.74,0:05:29.36,Bilingual,,0,0,0,,FROM python:3.12-slim-bookworm\N{\fs33\c&H00C8C0B8&\bord1.4}FROM python:3.12-slim-bookworm.
+Dialogue: 0,0:05:29.68,0:05:31.83,Bilingual,,0,0,0,,这是官方的 Python image\N{\fs33\c&H00C8C0B8&\bord1.4}That's the official Python image,
+Dialogue: 0,0:05:31.83,0:05:34.18,Bilingual,,0,0,0,,基于精简版的 Debian 12，代号 bookworm\N{\fs33\c&H00C8C0B8&\bord1.4}on a slim Debian 12 called bookworm.
+Dialogue: 0,0:05:34.50,0:05:37.44,Bilingual,,0,0,0,,粘贴进去，保存，再用 cat 检查一下，这是额外的一步\N{\fs33\c&H00C8C0B8&\bord1.4}Paste it in, save, and check with cat, an extra.
+Dialogue: 0,0:05:37.68,0:05:39.28,Bilingual,,0,0,0,,接下来是构建命令\N{\fs33\c&H00C8C0B8&\bord1.4}Now the build command.
+Dialogue: 0,0:05:39.37,0:05:43.98,Bilingual,,0,0,0,,参数 -t 给 image 取名 simple-translate；-f 指定配方\N{\fs33\c&H00C8C0B8&\bord1.4}-t names the image simple-translate; -f picks the recipe.
+Dialogue: 0,0:05:44.30,0:05:47.60,Bilingual,,0,0,0,,末尾那个点就是构建上下文，也就是这个目录\N{\fs33\c&H00C8C0B8&\bord1.4}And the final dot is the build context: this folder,
+Dialogue: 0,0:05:47.60,0:05:49.76,Bilingual,,0,0,0,,Docker 会把它发给构建器\N{\fs33\c&H00C8C0B8&\bord1.4}which Docker sends to the builder.
+Dialogue: 0,0:05:50.08,0:05:52.08,Bilingual,,0,0,0,,第 3 步会说明这为什么重要\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3 shows why that matters.
+Dialogue: 0,0:05:52.33,0:05:53.93,Bilingual,,0,0,0,,暂停一下，跑一下构建\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run the build.
+Dialogue: 0,0:05:54.15,0:05:56.22,Bilingual,,0,0,0,,你的终端显示的是精简视图\N{\fs33\c&H00C8C0B8&\bord1.4}Your terminal shows a compact view.
+Dialogue: 0,0:05:56.54,0:05:58.70,Bilingual,,0,0,0,,这里看到的是完整日志\N{\fs33\c&H00C8C0B8&\bord1.4}Here you see the full log;
+Dialogue: 0,0:05:58.70,0:06:01.36,Bilingual,,0,0,0,,要看到它，就加上 --progress 参数，设成 plain\N{\fs33\c&H00C8C0B8&\bord1.4}to get it, add --progress=plain.
+Dialogue: 0,0:06:01.68,0:06:03.18,Bilingual,,0,0,0,,在 Docker Desktop 上\N{\fs33\c&H00C8C0B8&\bord1.4}On Docker Desktop,
+Dialogue: 0,0:06:03.18,0:06:06.31,Bilingual,,0,0,0,,构建器叫 desktop-linux，不叫 default\N{\fs33\c&H00C8C0B8&\bord1.4}the builder is called desktop-linux, not default.
+Dialogue: 0,0:06:06.55,0:06:11.61,Bilingual,,0,0,0,,Docker 下载了 base image：4 层，压缩后不到 50 MB\N{\fs33\c&H00C8C0B8&\bord1.4}Docker fetches the base image, four layers, under 50 megabytes compressed,
+Dialogue: 0,0:06:11.61,0:06:15.45,Bilingual,,0,0,0,,然后把结果存为 simple-translate，tag 是 latest\N{\fs33\c&H00C8C0B8&\bord1.4}and saves the result as simple-translate, tagged latest.
+Dialogue: 0,0:06:15.77,0:06:18.26,Bilingual,,0,0,0,,这 4 层就是我们这叠层的最底部\N{\fs33\c&H00C8C0B8&\bord1.4}Those four layers are the bottom of our stack.
+Dialogue: 0,0:06:18.50,0:06:20.10,Bilingual,,0,0,0,,它启动的时候会做什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What will it do when it starts?
+Dialogue: 0,0:06:20.42,0:06:24.23,Bilingual,,0,0,0,,额外用 docker image inspect 读一下配置卡片\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker image inspect reads the config card:
+Dialogue: 0,0:06:24.23,0:06:25.63,Bilingual,,0,0,0,,没有 ENTRYPOINT\N{\fs33\c&H00C8C0B8&\bord1.4}no entrypoint,
+Dialogue: 0,0:06:25.63,0:06:29.30,Bilingual,,0,0,0,,CMD 是 python3，是从 base image 继承来的\N{\fs33\c&H00C8C0B8&\bord1.4}and the command python3, inherited from the base image.
+Dialogue: 0,0:06:29.62,0:06:31.55,Bilingual,,0,0,0,,所以我们预测会出现 Python 提示符\N{\fs33\c&H00C8C0B8&\bord1.4}So we predict a Python prompt.
+Dialogue: 0,0:06:31.73,0:06:37.45,Bilingual,,0,0,0,,现在是运行命令：docker run --rm -ti simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}Now the run command: docker run --rm -ti simple-translate.
+Dialogue: 0,0:06:37.77,0:06:42.66,Bilingual,,0,0,0,,其中 --rm 负责事后清理；-ti 让你能往里面输入\N{\fs33\c&H00C8C0B8&\bord1.4}--rm cleans up afterwards; -ti lets you type into it.
+Dialogue: 0,0:06:42.98,0:06:44.40,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:06:44.45,0:06:48.86,Bilingual,,0,0,0,,Python 提示符出来了，录制时是 3.12.15\N{\fs33\c&H00C8C0B8&\bord1.4}There's the Python prompt, 3.12.15 at the time of recording.
+Dialogue: 0,0:06:49.18,0:06:51.44,Bilingual,,0,0,0,,输入带括号的 exit 退出\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit() to leave.
+Dialogue: 0,0:06:51.68,0:06:54.15,Bilingual,,0,0,0,,有个意外：额外用 git status 看一下\N{\fs33\c&H00C8C0B8&\bord1.4}One surprise: an extra git status says
+Dialogue: 0,0:06:54.15,0:06:57.14,Bilingual,,0,0,0,,显示 nothing to commit，可我们刚建了一个文件\N{\fs33\c&H00C8C0B8&\bord1.4}nothing to commit, though we just made a file.
+Dialogue: 0,0:06:57.46,0:07:00.60,Bilingual,,0,0,0,,这里的 .gitignore 文件第 3 行写着 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}The .gitignore file here lists Dockerfile on line 3,
+Dialogue: 0,0:07:00.60,0:07:02.20,Bilingual,,0,0,0,,所以 git 把你的忽略了\N{\fs33\c&H00C8C0B8&\bord1.4}so git hides yours.
+Dialogue: 0,0:07:02.37,0:07:05.08,Bilingual,,0,0,0,,想照样 commit 它，就用 git add -f\N{\fs33\c&H00C8C0B8&\bord1.4}To commit it anyway, use git add -f.
+Dialogue: 0,0:07:06.12,0:07:10.21,Bilingual,,0,0,0,,第 2 步加一行：ENTRYPOINT /bin/bash\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 adds one line: ENTRYPOINT /bin/bash.
+Dialogue: 0,0:07:10.53,0:07:12.58,Bilingual,,0,0,0,,放在 FROM 那一行下面，保存\N{\fs33\c&H00C8C0B8&\bord1.4}Put it under the FROM line, and save.
+Dialogue: 0,0:07:12.82,0:07:14.42,Bilingual,,0,0,0,,暂停一下，再构建一次\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and build again.
+Dialogue: 0,0:07:14.52,0:07:19.00,Bilingual,,0,0,0,,FROM 那一步显示 CACHED：什么都没下载，也没有加层\N{\fs33\c&H00C8C0B8&\bord1.4}The FROM step says CACHED: nothing is downloaded, and no layer is added.
+Dialogue: 0,0:07:19.32,0:07:22.12,Bilingual,,0,0,0,,ENTRYPOINT 只写在配置卡片上\N{\fs33\c&H00C8C0B8&\bord1.4}ENTRYPOINT only writes on the config card.
+Dialogue: 0,0:07:22.37,0:07:25.55,Bilingual,,0,0,0,,可以把 ENTRYPOINT 想成要启动的程序\N{\fs33\c&H00C8C0B8&\bord1.4}Think of ENTRYPOINT as the program to start,
+Dialogue: 0,0:07:25.55,0:07:27.93,Bilingual,,0,0,0,,把 CMD 想成它的默认参数\N{\fs33\c&H00C8C0B8&\bord1.4}and CMD as its default arguments.
+Dialogue: 0,0:07:28.25,0:07:32.71,Bilingual,,0,0,0,,现在 ENTRYPOINT 是 bash，而 CMD 那一格还写着 python3\N{\fs33\c&H00C8C0B8&\bord1.4}The entrypoint is now bash, and the command slot still says python3.
+Dialogue: 0,0:07:33.03,0:07:36.21,Bilingual,,0,0,0,,那么 container 会启动 bash，再让它运行 python3 吗？\N{\fs33\c&H00C8C0B8&\bord1.4}So will the container start bash, running python3?
+Dialogue: 0,0:07:36.45,0:07:38.27,Bilingual,,0,0,0,,这个额外的 inspect 说不会\N{\fs33\c&H00C8C0B8&\bord1.4}This extra inspect says no:
+Dialogue: 0,0:07:38.27,0:07:41.76,Bilingual,,0,0,0,,ENTRYPOINT 是 bash，CMD 现在是 null\N{\fs33\c&H00C8C0B8&\bord1.4}the entrypoint is bash, and the command is now null.
+Dialogue: 0,0:07:42.08,0:07:46.54,Bilingual,,0,0,0,,一设置 ENTRYPOINT，从 base image 继承来的 CMD 就被清空了\N{\fs33\c&H00C8C0B8&\bord1.4}Setting an entrypoint resets the command you inherited from the base image.
+Dialogue: 0,0:07:46.86,0:07:48.57,Bilingual,,0,0,0,,所以启动的就只有 bash 本身\N{\fs33\c&H00C8C0B8&\bord1.4}So bash starts on its own.
+Dialogue: 0,0:07:48.82,0:07:51.37,Bilingual,,0,0,0,,暂停一下，自己跑一遍：只有一个光秃秃的提示符\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it: a bare prompt.
+Dialogue: 0,0:07:51.42,0:07:52.86,Bilingual,,0,0,0,,从左往右读\N{\fs33\c&H00C8C0B8&\bord1.4}Read it left to right.
+Dialogue: 0,0:07:52.91,0:07:55.98,Bilingual,,0,0,0,,你是 root，也就是 container 里的管理员\N{\fs33\c&H00C8C0B8&\bord1.4}You're root, the administrator, inside the container.
+Dialogue: 0,0:07:56.30,0:07:59.24,Bilingual,,0,0,0,,@ 符号后面是 container 的 ID\N{\fs33\c&H00C8C0B8&\bord1.4}After the @ sign comes the container's ID,
+Dialogue: 0,0:07:59.24,0:08:02.45,Bilingual,,0,0,0,,每次运行都不一样，所以你的会不同\N{\fs33\c&H00C8C0B8&\bord1.4}which changes every run, so yours will differ.
+Dialogue: 0,0:08:02.68,0:08:06.45,Bilingual,,0,0,0,,而那个斜杠表示你从 image 的根目录开始\N{\fs33\c&H00C8C0B8&\bord1.4}And the slash means you start in the top folder of the image,
+Dialogue: 0,0:08:06.45,0:08:09.23,Bilingual,,0,0,0,,因为这个 image 没有设置工作目录\N{\fs33\c&H00C8C0B8&\bord1.4}because this image sets no working directory.
+Dialogue: 0,0:08:09.55,0:08:11.15,Bilingual,,0,0,0,,输入 exit 退出\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit to leave.
+Dialogue: 0,0:08:11.98,0:08:14.03,Bilingual,,0,0,0,,第 3 步加两条指令\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3 adds two instructions.
+Dialogue: 0,0:08:14.35,0:08:19.41,Bilingual,,0,0,0,,RUN pip install uv：用 base image 自带的 pip 来装 uv\N{\fs33\c&H00C8C0B8&\bord1.4}RUN pip install uv uses the pip of the base image to install uv.
+Dialogue: 0,0:08:19.73,0:08:22.79,Bilingual,,0,0,0,,而 COPY 那一行把这个目录，也就是那个点\N{\fs33\c&H00C8C0B8&\bord1.4}And the COPY line copies this folder, .,
+Dialogue: 0,0:08:22.79,0:08:25.23,Bilingual,,0,0,0,,复制到 image 的根目录，也就是点斜杠\N{\fs33\c&H00C8C0B8&\bord1.4}into the image's top folder, ./.
+Dialogue: 0,0:08:25.55,0:08:27.47,Bilingual,,0,0,0,,两行都加在末尾，保存\N{\fs33\c&H00C8C0B8&\bord1.4}Add both at the end, and save.
+Dialogue: 0,0:08:27.72,0:08:29.85,Bilingual,,0,0,0,,末尾那个点为什么重要，原因在这儿\N{\fs33\c&H00C8C0B8&\bord1.4}Here's why the final dot matters.
+Dialogue: 0,0:08:30.17,0:08:36.04,Bilingual,,0,0,0,,Docker 把整个目录打成一个包裹，也就是构建上下文，发给构建器\N{\fs33\c&H00C8C0B8&\bord1.4}Docker packs the whole folder into one parcel, the build context, and sends it to the builder.
+Dialogue: 0,0:08:36.36,0:08:37.66,Bilingual,,0,0,0,,每个文件都会进去\N{\fs33\c&H00C8C0B8&\bord1.4}Every file goes in,
+Dialogue: 0,0:08:37.66,0:08:40.80,Bilingual,,0,0,0,,隐藏的 .git 目录和你的 Dockerfile 也不例外\N{\fs33\c&H00C8C0B8&\bord1.4}the hidden git folder and your Dockerfile too;
+Dialogue: 0,0:08:40.80,0:08:44.15,Bilingual,,0,0,0,,一个 .dockerignore 文件可以排除一些文件\N{\fs33\c&H00C8C0B8&\bord1.4}a file called .dockerignore could leave some out,
+Dialogue: 0,0:08:44.15,0:08:45.75,Bilingual,,0,0,0,,但这个 repo 里没有\N{\fs33\c&H00C8C0B8&\bord1.4}but this repo has none.
+Dialogue: 0,0:08:46.04,0:08:49.60,Bilingual,,0,0,0,,COPY 那一行把它全部拆开，放进 image 的根目录\N{\fs33\c&H00C8C0B8&\bord1.4}The COPY line unpacks it all into the image's top folder.
+Dialogue: 0,0:08:49.85,0:08:51.29,Bilingual,,0,0,0,,暂停一下，构建一次\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and build.
+Dialogue: 0,0:08:51.34,0:08:54.87,Bilingual,,0,0,0,,日志也证实了：没有 .dockerignore 文件\N{\fs33\c&H00C8C0B8&\bord1.4}The log confirms it: there's no .dockerignore file,
+Dialogue: 0,0:08:54.87,0:08:58.32,Bilingual,,0,0,0,,所以什么都没被过滤掉，整个构建上下文\N{\fs33\c&H00C8C0B8&\bord1.4}so nothing is filtered out, and the whole context,
+Dialogue: 0,0:08:58.32,0:09:01.22,Bilingual,,0,0,0,,这里是 63 KB，都传给了构建器\N{\fs33\c&H00C8C0B8&\bord1.4}63 kilobytes here, travels to the builder.
+Dialogue: 0,0:09:01.47,0:09:07.04,Bilingual,,0,0,0,,接着 pip 装了 uv，录制时是 0.13.0 版\N{\fs33\c&H00C8C0B8&\bord1.4}Then pip installs uv, version 0.13.0 at the time of recording,
+Dialogue: 0,0:09:07.04,0:09:09.74,Bilingual,,0,0,0,,然后 COPY 运行：多了两个新层\N{\fs33\c&H00C8C0B8&\bord1.4}and COPY runs: two new layers.
+Dialogue: 0,0:09:10.06,0:09:12.41,Bilingual,,0,0,0,,另外，pip 还警告说不该用 root 运行\N{\fs33\c&H00C8C0B8&\bord1.4}Pip also warns about running as root.
+Dialogue: 0,0:09:12.73,0:09:15.15,Bilingual,,0,0,0,,在第 1 讲里这个警告很重要\N{\fs33\c&H00C8C0B8&\bord1.4}In lecture 1 that warning mattered;
+Dialogue: 0,0:09:15.15,0:09:17.91,Bilingual,,0,0,0,,在这里，image 本身就起到了隔离的作用\N{\fs33\c&H00C8C0B8&\bord1.4}here, the image itself is the isolation.
+Dialogue: 0,0:09:18.93,0:09:23.31,Bilingual,,0,0,0,,来想一个问题：uv 装好了，代码也进了 image\N{\fs33\c&H00C8C0B8&\bord1.4}Something to ponder: uv is installed, and the code is in the image.
+Dialogue: 0,0:09:23.63,0:09:25.80,Bilingual,,0,0,0,,那 python cli.py 能跑起来吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Will python cli.py run?
+Dialogue: 0,0:09:32.65,0:09:36.59,Bilingual,,0,0,0,,不能。暂停一下，自己跑一遍，然后用 ls 四处看看\N{\fs33\c&H00C8C0B8&\bord1.4}No. Pause and run it, then look around with ls,
+Dialogue: 0,0:09:36.59,0:09:40.86,Bilingual,,0,0,0,,这是额外的一步：我们的文件就挨着系统自己的目录\N{\fs33\c&H00C8C0B8&\bord1.4}an extra: our files sit right next to the system's own folders.
+Dialogue: 0,0:09:41.10,0:09:44.16,Bilingual,,0,0,0,,然后是 python cli.py，又一个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Then python cli.py, another extra:
+Dialogue: 0,0:09:44.16,0:09:48.03,Bilingual,,0,0,0,,报 ModuleNotFoundError，No module named art\N{\fs33\c&H00C8C0B8&\bord1.4}ModuleNotFoundError, No module named 'art'.
+Dialogue: 0,0:09:48.35,0:09:51.17,Bilingual,,0,0,0,,我们装了装包的工具，却没装包\N{\fs33\c&H00C8C0B8&\bord1.4}We installed the installer, not the packages.
+Dialogue: 0,0:09:51.49,0:09:53.09,Bilingual,,0,0,0,,输入 exit\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit.
+Dialogue: 0,0:09:54.38,0:09:58.29,Bilingual,,0,0,0,,第 4 步加上 RUN uv sync；加在末尾，保存\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4 adds RUN uv sync; add it at the end, and save.
+Dialogue: 0,0:09:58.61,0:10:05.65,Bilingual,,0,0,0,,和上节课在 VM 上一样，它读 pyproject.toml，把包装进 venv\N{\fs33\c&H00C8C0B8&\bord1.4}Like on last lecture's VM, it reads pyproject.toml and installs the packages into a venv.
+Dialogue: 0,0:10:05.88,0:10:07.20,Bilingual,,0,0,0,,先预测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Now predict.
+Dialogue: 0,0:10:07.25,0:10:10.10,Bilingual,,0,0,0,,这个 image 的 Python 是 3.12\N{\fs33\c&H00C8C0B8&\bord1.4}This image's Python is 3.12,
+Dialogue: 0,0:10:10.10,0:10:15.40,Bilingual,,0,0,0,,而 pyproject.toml 第 6 行要求 3.13 及以上\N{\fs33\c&H00C8C0B8&\bord1.4}and line 6 of pyproject.toml asks for 3.13 or newer.
+Dialogue: 0,0:10:15.72,0:10:17.83,Bilingual,,0,0,0,,构建的时候，uv sync 会做什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What will uv sync do during the build?
+Dialogue: 0,0:10:26.67,0:10:28.11,Bilingual,,0,0,0,,暂停一下，构建一次\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and build.
+Dialogue: 0,0:10:28.16,0:10:32.11,Bilingual,,0,0,0,,先注意：pip 那一步是 CACHED，COPY 却是 DONE\N{\fs33\c&H00C8C0B8&\bord1.4}First, notice: the pip step says CACHED, but COPY says DONE:
+Dialogue: 0,0:10:32.11,0:10:35.01,Bilingual,,0,0,0,,它又跑了一遍，虽然我们只加了一行\N{\fs33\c&H00C8C0B8&\bord1.4}it ran again, although we only added a line.
+Dialogue: 0,0:10:35.33,0:10:37.31,Bilingual,,0,0,0,,这个问题留到第二部分\N{\fs33\c&H00C8C0B8&\bord1.4}Keep that question for part 2.
+Dialogue: 0,0:10:37.55,0:10:38.99,Bilingual,,0,0,0,,现在揭晓答案\N{\fs33\c&H00C8C0B8&\bord1.4}Now the answer.
+Dialogue: 0,0:10:39.04,0:10:42.49,Bilingual,,0,0,0,,和第 1 讲里那台 Debian 12 的 VM 一样\N{\fs33\c&H00C8C0B8&\bord1.4}As on the Debian 12 VM in lecture 1,
+Dialogue: 0,0:10:42.49,0:10:49.18,Bilingual,,0,0,0,,uv 自己下载了一个 Python：录制时是 CPython 3.15.0\N{\fs33\c&H00C8C0B8&\bord1.4}uv downloads its own Python: CPython 3.15.0, at the time of recording.
+Dialogue: 0,0:10:49.50,0:10:54.38,Bilingual,,0,0,0,,然后它在 /.venv 建了一个 venv，装了 11 个包\N{\fs33\c&H00C8C0B8&\bord1.4}Then it creates a venv at /.venv, and installs 11 packages.
+Dialogue: 0,0:10:54.62,0:10:58.65,Bilingual,,0,0,0,,在数轴上，这个要求覆盖 3.13 及以上\N{\fs33\c&H00C8C0B8&\bord1.4}On the number line, the requirement covers 3.13 and newer.
+Dialogue: 0,0:10:58.97,0:11:01.49,Bilingual,,0,0,0,,而 base image 的 3.12 落在范围外\N{\fs33\c&H00C8C0B8&\bord1.4}The base image's 3.12 falls outside,
+Dialogue: 0,0:11:01.49,0:11:05.90,Bilingual,,0,0,0,,所以 uv 从它知道的版本里，下载了范围内最新的稳定版 Python\N{\fs33\c&H00C8C0B8&\bord1.4}so uv downloads the newest stable Python it knows in the range,
+Dialogue: 0,0:11:05.90,0:11:08.63,Bilingual,,0,0,0,,venv 里的 python 就软链接到它\N{\fs33\c&H00C8C0B8&\bord1.4}and the python in the venv links to it.
+Dialogue: 0,0:11:13.60,0:11:16.53,Bilingual,,0,0,0,,暂停一下，自己跑一遍，再做两个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it, then two extras:
+Dialogue: 0,0:11:16.53,0:11:21.34,Bilingual,,0,0,0,,ls -a，它连隐藏文件也会列出来；还有 python cli.py\N{\fs33\c&H00C8C0B8&\bord1.4}ls -a, which also lists hidden files, and python cli.py.
+Dialogue: 0,0:11:21.66,0:11:25.33,Bilingual,,0,0,0,,现在列表里多了 .venv，还有一个新的 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}Now the listing shows .venv, and a new uv.lock.
+Dialogue: 0,0:11:25.65,0:11:29.54,Bilingual,,0,0,0,,可 python cli.py 还是和之前一样，失败了\N{\fs33\c&H00C8C0B8&\bord1.4}But python cli.py fails exactly as before.
+Dialogue: 0,0:11:29.86,0:11:34.02,Bilingual,,0,0,0,,为什么？回想一下第 1 讲：激活其实只是改 PATH\N{\fs33\c&H00C8C0B8&\bord1.4}Why? Remember lecture 1: activation is just PATH.
+Dialogue: 0,0:11:34.34,0:11:37.63,Bilingual,,0,0,0,,没有任何东西激活这个 venv，所以 python 这个词先找到的\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing has activated the venv, so the word python
+Dialogue: 0,0:11:37.63,0:11:41.72,Bilingual,,0,0,0,,是 /usr/local/bin 里的 Python，来自 base image\N{\fs33\c&H00C8C0B8&\bord1.4}first finds the Python in /usr/local/bin, from the base image.
+Dialogue: 0,0:11:42.04,0:11:45.37,Bilingual,,0,0,0,,那是 3.12，我们的包它一个都没有\N{\fs33\c&H00C8C0B8&\bord1.4}That's 3.12, and it has none of our packages.
+Dialogue: 0,0:11:45.60,0:11:49.79,Bilingual,,0,0,0,,激活 venv 会把它的 bin 目录放到最前面\N{\fs33\c&H00C8C0B8&\bord1.4}Activating the venv would put its bin folder in front,
+Dialogue: 0,0:11:49.79,0:11:52.04,Bilingual,,0,0,0,,python 就会找到 3.15.0\N{\fs33\c&H00C8C0B8&\bord1.4}and python would find 3.15.0.
+Dialogue: 0,0:11:52.36,0:11:54.83,Bilingual,,0,0,0,,两个额外检查证实了这一点\N{\fs33\c&H00C8C0B8&\bord1.4}Two extra checks confirm it:
+Dialogue: 0,0:11:54.83,0:11:58.10,Bilingual,,0,0,0,,venv 自己的 python 显示版本是 3.15.0\N{\fs33\c&H00C8C0B8&\bord1.4}the venv's own python reports 3.15.0,
+Dialogue: 0,0:11:58.10,0:12:03.39,Bilingual,,0,0,0,,source 一下 activate 脚本之后，python cli.py 就能跑了\N{\fs33\c&H00C8C0B8&\bord1.4}and after sourcing the activate script, python cli.py works.
+Dialogue: 0,0:12:03.71,0:12:06.08,Bilingual,,0,0,0,,提示符前面多了带括号的 app\N{\fs33\c&H00C8C0B8&\bord1.4}The prompt now shows (app).
+Dialogue: 0,0:12:06.40,0:12:08.66,Bilingual,,0,0,0,,输入 exit，回到你的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit to get back to your laptop.
+Dialogue: 0,0:12:08.90,0:12:11.69,Bilingual,,0,0,0,,所以这个 image 里有两个 Python\N{\fs33\c&H00C8C0B8&\bord1.4}So this image carries two Pythons:
+Dialogue: 0,0:12:11.69,0:12:17.09,Bilingual,,0,0,0,,base image 带的 3.12，只用来装了 uv；还有给应用用的 3.15\N{\fs33\c&H00C8C0B8&\bord1.4}3.12 from the base, which only installed uv, and 3.15 for the app.
+Dialogue: 0,0:12:17.41,0:12:21.49,Bilingual,,0,0,0,,这解开了开头那个谜题的一半，也是教程里一个小小的不一致\N{\fs33\c&H00C8C0B8&\bord1.4}That's half of the opening puzzle, and a small mismatch in the tutorial.
+Dialogue: 0,0:12:21.81,0:12:25.70,Bilingual,,0,0,0,,在你自己的项目里，要么从 Python 3.13 的 image 开始\N{\fs33\c&H00C8C0B8&\bord1.4}In your own projects, start from a Python 3.13 image,
+Dialogue: 0,0:12:25.70,0:12:28.63,Bilingual,,0,0,0,,要么让 requires-python 和 image 对上\N{\fs33\c&H00C8C0B8&\bord1.4}or make requires-python match the image.
+Dialogue: 0,0:12:30.07,0:12:33.22,Bilingual,,0,0,0,,第 5 步加上最后一条指令：CMD\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5 adds the last instruction, CMD.
+Dialogue: 0,0:12:33.54,0:12:36.10,Bilingual,,0,0,0,,CMD 包含 -c 和一条带引号的命令\N{\fs33\c&H00C8C0B8&\bord1.4}It holds -c and one quoted command:
+Dialogue: 0,0:12:36.10,0:12:39.24,Bilingual,,0,0,0,,先 source activate 脚本，再 exec bash\N{\fs33\c&H00C8C0B8&\bord1.4}source the activate script, then exec bash.
+Dialogue: 0,0:12:39.56,0:12:41.22,Bilingual,,0,0,0,,加在末尾，保存\N{\fs33\c&H00C8C0B8&\bord1.4}Add it at the end, and save.
+Dialogue: 0,0:12:41.47,0:12:46.38,Bilingual,,0,0,0,,在卡片上，ENTRYPOINT 和 CMD 拼成一条命令行\N{\fs33\c&H00C8C0B8&\bord1.4}On the card, the entrypoint and the command join into one command line:
+Dialogue: 0,0:12:46.38,0:12:48.25,Bilingual,,0,0,0,,bash、-c，再加上那个字符串\N{\fs33\c&H00C8C0B8&\bord1.4}bash, -c, then that string.
+Dialogue: 0,0:12:48.57,0:12:51.94,Bilingual,,0,0,0,,单独的 bash -c 会运行这个字符串，然后退出\N{\fs33\c&H00C8C0B8&\bord1.4}On its own, bash -c runs the string and exits.
+Dialogue: 0,0:12:52.18,0:12:55.26,Bilingual,,0,0,0,,这里的字符串先 source activate 脚本\N{\fs33\c&H00C8C0B8&\bord1.4}Here the string first sources the activate script,
+Dialogue: 0,0:12:55.26,0:12:58.46,Bilingual,,0,0,0,,它会把 venv 的 bin 目录放到 PATH 的最前面\N{\fs33\c&H00C8C0B8&\bord1.4}which puts the bin folder of the venv first in PATH.
+Dialogue: 0,0:12:58.78,0:13:02.36,Bilingual,,0,0,0,,接着 exec bash 把这个 bash 换成一个交互式的 bash\N{\fs33\c&H00C8C0B8&\bord1.4}Then exec bash swaps this bash for an interactive one that keeps the new PATH and gives you a prompt.
+Dialogue: 0,0:13:02.36,0:13:04.79,Bilingual,,0,0,0,,它保留新的 PATH，还给你一个提示符\N{\fs33\c&H00C8C0B8&\bord1.4}Then exec bash swaps this bash for an interactive one that keeps the new PATH and gives you a prompt.
+Dialogue: 0,0:13:05.03,0:13:06.48,Bilingual,,0,0,0,,暂停一下，构建一次\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and build.
+Dialogue: 0,0:13:06.53,0:13:08.50,Bilingual,,0,0,0,,COPY 和 uv sync 又跑了一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Again COPY and uv sync run,
+Dialogue: 0,0:13:08.50,0:13:11.92,Bilingual,,0,0,0,,Python 也重新下载了，只因为加了一行\N{\fs33\c&H00C8C0B8&\bord1.4}and Python downloads again, for one added line.
+Dialogue: 0,0:13:12.24,0:13:13.84,Bilingual,,0,0,0,,原因第二部分再讲\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 explains why.
+Dialogue: 0,0:13:14.05,0:13:15.47,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:13:15.52,0:13:19.13,Bilingual,,0,0,0,,这次提示符前面没有带括号的 app；venv 激活了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}No (app) this time; is the venv active?
+Dialogue: 0,0:13:19.45,0:13:24.36,Bilingual,,0,0,0,,这几个额外检查说是：which python 指向 .venv 里面\N{\fs33\c&H00C8C0B8&\bord1.4}These extra checks say yes: which python points into .venv,
+Dialogue: 0,0:13:24.36,0:13:28.45,Bilingual,,0,0,0,,版本是 3.15.0，virtual env 这个变量也设置好了\N{\fs33\c&H00C8C0B8&\bord1.4}it's 3.15.0, and the VIRTUAL_ENV variable is set.
+Dialogue: 0,0:13:28.77,0:13:30.73,Bilingual,,0,0,0,,新起的 bash 设置了自己的提示符\N{\fs33\c&H00C8C0B8&\bord1.4}The fresh bash set its own prompt.
+Dialogue: 0,0:13:31.05,0:13:34.22,Bilingual,,0,0,0,,今天课件里的 run 命令多加了 --entrypoint\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture's run command adds --entrypoint,
+Dialogue: 0,0:13:34.22,0:13:37.32,Bilingual,,0,0,0,,它会把这个 CMD 连同 venv 一起去掉\N{\fs33\c&H00C8C0B8&\bord1.4}which drops this CMD, and the venv with it.
+Dialogue: 0,0:13:37.64,0:13:40.06,Bilingual,,0,0,0,,然后输入 exit，回到你的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}Then type exit, back to your laptop.
+Dialogue: 0,0:13:40.30,0:13:44.40,Bilingual,,0,0,0,,README 接着给了一个参考答案：Dockerfile.txt 这个文件\N{\fs33\c&H00C8C0B8&\bord1.4}The README then points to a solution, Dockerfile.txt.
+Dialogue: 0,0:13:44.72,0:13:46.97,Bilingual,,0,0,0,,额外用 diff 看一下它多了什么\N{\fs33\c&H00C8C0B8&\bord1.4}An extra diff shows what it adds;
+Dialogue: 0,0:13:46.97,0:13:50.86,Bilingual,,0,0,0,,如果你的输出是小于号和大于号，就加上 -u\N{\fs33\c&H00C8C0B8&\bord1.4}if yours prints less-than and greater-than signs, add -u.
+Dialogue: 0,0:13:51.18,0:13:54.93,Bilingual,,0,0,0,,首先是三行 ENV：让 apt 不再提问\N{\fs33\c&H00C8C0B8&\bord1.4}First, three ENV lines: no questions from apt,
+Dialogue: 0,0:13:54.93,0:13:57.86,Bilingual,,0,0,0,,用 UTF-8 的 locale，日志不缓冲\N{\fs33\c&H00C8C0B8&\bord1.4}a UTF-8 locale, and unbuffered logs.
+Dialogue: 0,0:13:58.10,0:13:59.72,Bilingual,,0,0,0,,其次是一条更大的 RUN\N{\fs33\c&H00C8C0B8&\bord1.4}Second, one bigger RUN:
+Dialogue: 0,0:13:59.72,0:14:05.20,Bilingual,,0,0,0,,更新并升级 Debian 软件包，做清理，升级 pip，再装 uv\N{\fs33\c&H00C8C0B8&\bord1.4}update and upgrade the Debian packages, clean up, upgrade pip, and install uv.
+Dialogue: 0,0:14:05.52,0:14:07.74,Bilingual,,0,0,0,,还有，ENTRYPOINT 挪到了最后\N{\fs33\c&H00C8C0B8&\bord1.4}And ENTRYPOINT moved to the end:
+Dialogue: 0,0:14:07.74,0:14:11.01,Bilingual,,0,0,0,,ENTRYPOINT 和 CMD 的顺序无所谓\N{\fs33\c&H00C8C0B8&\bord1.4}the order of ENTRYPOINT and CMD doesn't matter.
+Dialogue: 0,0:14:11.25,0:14:13.30,Bilingual,,0,0,0,,README 只提到了这个文件名\N{\fs33\c&H00C8C0B8&\bord1.4}The README only names the file.
+Dialogue: 0,0:14:13.62,0:14:15.52,Bilingual,,0,0,0,,所以最快的办法是一条额外的命令\N{\fs33\c&H00C8C0B8&\bord1.4}So here's the quickest way,
+Dialogue: 0,0:14:15.52,0:14:18.69,Bilingual,,0,0,0,,用 cp 把它复制过来，覆盖你的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}an extra command: copy it over yours with cp.
+Dialogue: 0,0:14:19.01,0:14:20.45,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do that.
+Dialogue: 0,0:14:20.50,0:14:23.31,Bilingual,,0,0,0,,现在是 README 的 Build Docker Image 一节\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's Build Docker Image section:
+Dialogue: 0,0:14:23.31,0:14:26.43,Bilingual,,0,0,0,,在 simple-translate 目录里，跑同样的构建\N{\fs33\c&H00C8C0B8&\bord1.4}from the simple-translate folder, the same build.
+Dialogue: 0,0:14:26.75,0:14:28.17,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:14:28.22,0:14:30.54,Bilingual,,0,0,0,,你看到的会是这样的精简视图\N{\fs33\c&H00C8C0B8&\bord1.4}This compact view is what you'll see:
+Dialogue: 0,0:14:30.54,0:14:33.36,Bilingual,,0,0,0,,四个构建步骤，apt 和 pip 那一步最慢\N{\fs33\c&H00C8C0B8&\bord1.4}four steps, the apt and pip step the slowest.
+Dialogue: 0,0:14:34.40,0:14:38.40,Bilingual,,0,0,0,,README 的 Run Docker Container 这一步\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README's Run Docker Container step:
+Dialogue: 0,0:14:38.40,0:14:41.84,Bilingual,,0,0,0,,docker run --rm -ti simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}docker run --rm -ti simple-translate.
+Dialogue: 0,0:14:42.17,0:14:44.96,Bilingual,,0,0,0,,在提示符后面，输入 README 里的翻译\N{\fs33\c&H00C8C0B8&\bord1.4}At the prompt, type the README's translation:
+Dialogue: 0,0:14:44.96,0:14:47.33,Bilingual,,0,0,0,,Good morning，从英语翻成西班牙语\N{\fs33\c&H00C8C0B8&\bord1.4}Good morning, from English to Spanish.
+Dialogue: 0,0:14:47.65,0:14:49.13,Bilingual,,0,0,0,,暂停一下，两条都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run both.
+Dialogue: 0,0:14:49.18,0:14:51.28,Bilingual,,0,0,0,,Good morning 翻成了西班牙语\N{\fs33\c&H00C8C0B8&\bord1.4}Good morning comes back in Spanish:
+Dialogue: 0,0:14:51.28,0:14:55.97,Bilingual,,0,0,0,,请求从 container 出发，经过你笔记本的网络，到了 Google\N{\fs33\c&H00C8C0B8&\bord1.4}the request went from the container, through your laptop's network, to Google.
+Dialogue: 0,0:14:56.29,0:14:58.60,Bilingual,,0,0,0,,如果你那边最后报了运行时错误\N{\fs33\c&H00C8C0B8&\bord1.4}If yours ends in a runtime error,
+Dialogue: 0,0:14:58.60,0:15:01.27,Bilingual,,0,0,0,,那是 Google 拒绝了请求：过一会儿再试\N{\fs33\c&H00C8C0B8&\bord1.4}Google refused the request: try later;
+Dialogue: 0,0:15:01.27,0:15:02.52,Bilingual,,0,0,0,,Docker 没问题\N{\fs33\c&H00C8C0B8&\bord1.4}Docker is fine.
+Dialogue: 0,0:15:02.57,0:15:05.70,Bilingual,,0,0,0,,要离开，输入 exit，就回到你的笔记本上了\N{\fs33\c&H00C8C0B8&\bord1.4}To leave, type exit, and you're back on your laptop.
+Dialogue: 0,0:15:06.02,0:15:07.38,Bilingual,,0,0,0,,暂停一下，照着做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it.
+Dialogue: 0,0:15:07.43,0:15:09.00,Bilingual,,0,0,0,,那 exit 做了什么？\N{\fs33\c&H00C8C0B8&\bord1.4}What did exit do?
+Dialogue: 0,0:15:09.05,0:15:11.50,Bilingual,,0,0,0,,它结束了 container 的进程\N{\fs33\c&H00C8C0B8&\bord1.4}It ended the container's process,
+Dialogue: 0,0:15:11.50,0:15:14.92,Bilingual,,0,0,0,,所以 container 停了，然后 --rm 把它删掉了\N{\fs33\c&H00C8C0B8&\bord1.4}so the container stopped, and --rm deleted it.
+Dialogue: 0,0:15:15.24,0:15:20.47,Bilingual,,0,0,0,,额外检查 docker ps -a，会列出所有 container，连停了的也算\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check, docker ps -a, lists every container, even stopped ones.
+Dialogue: 0,0:15:20.79,0:15:23.48,Bilingual,,0,0,0,,什么都没剩下；image 原封不动\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing is left; the image is untouched.
+Dialogue: 0,0:15:23.72,0:15:29.67,Bilingual,,0,0,0,,第二次运行时，额外检查 echo $$ 显示 bash 是 1 号进程\N{\fs33\c&H00C8C0B8&\bord1.4}In a second run, an extra check, echo $$, shows that bash is process number 1.
+Dialogue: 0,0:15:29.99,0:15:33.12,Bilingual,,0,0,0,,这就是今天这节课讲的 PID 命名空间\N{\fs33\c&H00C8C0B8&\bord1.4}That's the PID namespace from today's lecture:
+Dialogue: 0,0:15:33.12,0:15:36.32,Bilingual,,0,0,0,,每个 container 都从 1 开始给自己的进程编号\N{\fs33\c&H00C8C0B8&\bord1.4}each container counts its own processes from 1.
+Dialogue: 0,0:15:36.65,0:15:39.40,Bilingual,,0,0,0,,只要这个进程还在，container 就还在\N{\fs33\c&H00C8C0B8&\bord1.4}The container lives as long as that process.
+Dialogue: 0,0:15:39.72,0:15:43.60,Bilingual,,0,0,0,,参数 -i 接上你的键盘，-t 给它一个终端\N{\fs33\c&H00C8C0B8&\bord1.4}-i connects your keyboard, and -t gives it a terminal.
+Dialogue: 0,0:15:43.92,0:15:45.52,Bilingual,,0,0,0,,然后输入 exit\N{\fs33\c&H00C8C0B8&\bord1.4}Then type exit.
+Dialogue: 0,0:15:46.52,0:15:47.79,Bilingual,,0,0,0,,先出个小题\N{\fs33\c&H00C8C0B8&\bord1.4}Now a puzzle.
+Dialogue: 0,0:15:47.84,0:15:51.25,Bilingual,,0,0,0,,记住，CMD 只放默认参数\N{\fs33\c&H00C8C0B8&\bord1.4}Remember, CMD only holds the default arguments.
+Dialogue: 0,0:15:51.57,0:15:55.02,Bilingual,,0,0,0,,如果在 image 名后面直接写几个词会怎样\N{\fs33\c&H00C8C0B8&\bord1.4}What if you put words right after the image name:
+Dialogue: 0,0:15:55.02,0:15:58.61,Bilingual,,0,0,0,,docker run --rm -ti simple-translate python cli.py？\N{\fs33\c&H00C8C0B8&\bord1.4}docker run --rm -ti simple-translate python cli.py?
+Dialogue: 0,0:15:58.93,0:16:01.19,Bilingual,,0,0,0,,这个 container 会运行哪条命令行？\N{\fs33\c&H00C8C0B8&\bord1.4}What command line does the container run?
+Dialogue: 0,0:16:10.63,0:16:14.81,Bilingual,,0,0,0,,写在 image 名后面的词会替换 CMD，而且只替换 CMD\N{\fs33\c&H00C8C0B8&\bord1.4}Words after the image name replace CMD, and only CMD.
+Dialogue: 0,0:16:15.13,0:16:18.76,Bilingual,,0,0,0,,所以 container 运行的是：/bin/bash python cli.py\N{\fs33\c&H00C8C0B8&\bord1.4}So the container runs /bin/bash python cli.py.
+Dialogue: 0,0:16:19.08,0:16:21.38,Bilingual,,0,0,0,,于是 bash 把 python 当成脚本名\N{\fs33\c&H00C8C0B8&\bord1.4}Bash takes python as a script name,
+Dialogue: 0,0:16:21.38,0:16:24.46,Bilingual,,0,0,0,,在 /usr/local/bin 里找到了 Python 程序\N{\fs33\c&H00C8C0B8&\bord1.4}and finds the Python program in /usr/local/bin.
+Dialogue: 0,0:16:24.78,0:16:27.78,Bilingual,,0,0,0,,那是一个二进制文件，所以 bash 拒绝了\N{\fs33\c&H00C8C0B8&\bord1.4}That's a binary, so bash refuses:
+Dialogue: 0,0:16:27.78,0:16:31.60,Bilingual,,0,0,0,,cannot execute binary file，退出码 126\N{\fs33\c&H00C8C0B8&\bord1.4}cannot execute binary file, exit code 126.
+Dialogue: 0,0:16:31.85,0:16:36.13,Bilingual,,0,0,0,,想一次就跑完，就用你自己的 -c 字符串替换 CMD\N{\fs33\c&H00C8C0B8&\bord1.4}To run it in one go, replace CMD with your own -c string,
+Dialogue: 0,0:16:36.13,0:16:40.11,Bilingual,,0,0,0,,像这个额外命令一样：先激活，再翻译成法语\N{\fs33\c&H00C8C0B8&\bord1.4}as in this extra: activate, then translate to French.
+Dialogue: 0,0:16:41.35,0:16:46.31,Bilingual,,0,0,0,,这个 repo 的辅助脚本 docker-shell.sh 一次就能构建并运行\N{\fs33\c&H00C8C0B8&\bord1.4}A repo helper, docker-shell.sh, builds and runs in one go:
+Dialogue: 0,0:16:46.31,0:16:48.97,Bilingual,,0,0,0,,跑它的命令是：sh docker-shell.sh\N{\fs33\c&H00C8C0B8&\bord1.4}run it with sh docker-shell.sh.
+Dialogue: 0,0:16:49.20,0:16:51.23,Bilingual,,0,0,0,,你已经构建并运行了自己的 image\N{\fs33\c&H00C8C0B8&\bord1.4}You've built and run your own image.
+Dialogue: 0,0:16:51.55,0:16:53.42,Bilingual,,0,0,0,,第二部分讲：image 里有什么\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2: what's inside it,
+Dialogue: 0,0:16:53.42,0:16:56.90,Bilingual,,0,0,0,,为什么老是重新构建，以及怎么把它送到 VM 上\N{\fs33\c&H00C8C0B8&\bord1.4}why it keeps rebuilding, and how to ship it to a VM.
+Dialogue: 0,0:16:57.95,0:17:00.09,Bilingual,,0,0,0,,第二部分先打开我们构建好的 image 看看\N{\fs33\c&H00C8C0B8&\bord1.4}Part 2 opens the image we built;
+Dialogue: 0,0:17:00.09,0:17:02.43,Bilingual,,0,0,0,,这一段和下一段都是额外内容\N{\fs33\c&H00C8C0B8&\bord1.4}this scene and the next are extras.
+Dialogue: 0,0:17:02.75,0:17:04.87,Bilingual,,0,0,0,,首先是 docker image ls\N{\fs33\c&H00C8C0B8&\bord1.4}First, docker image ls:
+Dialogue: 0,0:17:04.87,0:17:12.07,Bilingual,,0,0,0,,录制时，磁盘占用 518 MB，内容大小 144 MB\N{\fs33\c&H00C8C0B8&\bord1.4}518 megabytes on disk, and 144 megabytes of content, at the time of recording.
+Dialogue: 0,0:17:12.39,0:17:16.41,Bilingual,,0,0,0,,内容就是压缩后的那些层，也就是传到 registry 的部分\N{\fs33\c&H00C8C0B8&\bord1.4}Content is the compressed layers that travel to a registry;
+Dialogue: 0,0:17:16.41,0:17:18.32,Bilingual,,0,0,0,,磁盘占用还要加上解压后的那一份\N{\fs33\c&H00C8C0B8&\bord1.4}disk adds the unpacked copy.
+Dialogue: 0,0:17:19.57,0:17:22.77,Bilingual,,0,0,0,,然后 docker history 列出各层，最新的在最上面\N{\fs33\c&H00C8C0B8&\bord1.4}Then docker history lists the layers, newest first.
+Dialogue: 0,0:17:23.09,0:17:27.83,Bilingual,,0,0,0,,从下往上读，就是从上往下读 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}Read it bottom-up, and it's the Dockerfile top-down:
+Dialogue: 0,0:17:27.83,0:17:31.39,Bilingual,,0,0,0,,apt 和 pip 那一步 97.5 MB\N{\fs33\c&H00C8C0B8&\bord1.4}the apt and pip step at 97.5 megabytes,
+Dialogue: 0,0:17:31.39,0:17:36.51,Bilingual,,0,0,0,,我们的代码 250 KB，uv sync 125 MB\N{\fs33\c&H00C8C0B8&\bord1.4}our code at 250 kilobytes, and uv sync at 125 megabytes.
+Dialogue: 0,0:17:36.83,0:17:42.20,Bilingual,,0,0,0,,ENV、ENTRYPOINT、CMD 这几行都是 0 字节：只是配置\N{\fs33\c&H00C8C0B8&\bord1.4}The ENV, ENTRYPOINT and CMD rows are zero bytes: config only.
+Dialogue: 0,0:17:44.08,0:17:47.37,Bilingual,,0,0,0,,它们下面是 base image 自己的几行\N{\fs33\c&H00C8C0B8&\bord1.4}Below them sit the base image's own rows:
+Dialogue: 0,0:17:47.37,0:17:49.78,Bilingual,,0,0,0,,最底下是 Debian bookworm\N{\fs33\c&H00C8C0B8&\bord1.4}Debian bookworm at the bottom,
+Dialogue: 0,0:17:49.78,0:17:52.99,Bilingual,,0,0,0,,然后是把 /usr/local/bin 放在最前面的 PATH\N{\fs33\c&H00C8C0B8&\bord1.4}the PATH that puts /usr/local/bin first,
+Dialogue: 0,0:17:52.99,0:17:54.59,Bilingual,,0,0,0,,还有 Python 3.12.15\N{\fs33\c&H00C8C0B8&\bord1.4}and Python 3.12.15.
+Dialogue: 0,0:17:57.92,0:18:00.62,Bilingual,,0,0,0,,想自己看的话，就再起一个 container\N{\fs33\c&H00C8C0B8&\bord1.4}To look yourself, start a container again;
+Dialogue: 0,0:18:00.62,0:18:03.19,Bilingual,,0,0,0,,这里显示的是我们第一部分第二次运行时的结果\N{\fs33\c&H00C8C0B8&\bord1.4}these are from our second run in part 1.
+Dialogue: 0,0:18:03.51,0:18:05.97,Bilingual,,0,0,0,,在那里，python 是 3.15.0\N{\fs33\c&H00C8C0B8&\bord1.4}There, python is 3.15.0,
+Dialogue: 0,0:18:05.97,0:18:09.97,Bilingual,,0,0,0,,而 base image 自带的 Python 还是 3.12.15\N{\fs33\c&H00C8C0B8&\bord1.4}while the base Python is still 3.12.15.
+Dialogue: 0,0:18:10.29,0:18:14.99,Bilingual,,0,0,0,,那个 125 MB 的层，大部分就是这第二个 Python\N{\fs33\c&H00C8C0B8&\bord1.4}Most of that 125 megabyte layer is this second Python,
+Dialogue: 0,0:18:14.99,0:18:16.65,Bilingual,,0,0,0,,放在 uv 自己的目录里\N{\fs33\c&H00C8C0B8&\bord1.4}in uv's own folder.
+Dialogue: 0,0:18:16.88,0:18:18.48,Bilingual,,0,0,0,,现在列一下根目录\N{\fs33\c&H00C8C0B8&\bord1.4}Now list the top folder.
+Dialogue: 0,0:18:18.80,0:18:24.13,Bilingual,,0,0,0,,系统目录旁边有：隐藏的 .git 目录、编辑器的 .vscode 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Beside the system folders sit the hidden git folder, the editor's VS Code folder,
+Dialogue: 0,0:18:24.13,0:18:26.16,Bilingual,,0,0,0,,还有 README 和你的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}the README and your Dockerfile.
+Dialogue: 0,0:18:26.48,0:18:30.96,Bilingual,,0,0,0,,COPY 那一行复制了整个构建上下文，连你的 Git 历史也在里面\N{\fs33\c&H00C8C0B8&\bord1.4}The COPY line copied the whole build context, your git history included.
+Dialogue: 0,0:18:31.28,0:18:33.54,Bilingual,,0,0,0,,输入 exit，回到你的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit to get back to your laptop.
+Dialogue: 0,0:18:33.78,0:18:37.39,Bilingual,,0,0,0,,这是教程里的一个缺口：没有 .dockerignore 文件\N{\fs33\c&H00C8C0B8&\bord1.4}That's a gap in the tutorial: there's no .dockerignore file.
+Dialogue: 0,0:18:37.71,0:18:39.24,Bilingual,,0,0,0,,在你自己的项目里加一个\N{\fs33\c&H00C8C0B8&\bord1.4}In your own projects,
+Dialogue: 0,0:18:39.24,0:18:43.04,Bilingual,,0,0,0,,写上 .git、.venv 和你的 secrets 目录\N{\fs33\c&H00C8C0B8&\bord1.4}add one listing .git, .venv and your secrets folder.
+Dialogue: 0,0:18:43.36,0:18:46.69,Bilingual,,0,0,0,,等 image 公开了，这一点最要紧，而它很快就会公开\N{\fs33\c&H00C8C0B8&\bord1.4}It matters most once the image is public, and that's soon.
+Dialogue: 0,0:18:47.73,0:18:50.12,Bilingual,,0,0,0,,那为什么 COPY 和 uv sync 又重跑了一遍\N{\fs33\c&H00C8C0B8&\bord1.4}So why did COPY and uv sync rerun
+Dialogue: 0,0:18:50.12,0:18:52.00,Bilingual,,0,0,0,,明明我们只加了一行？\N{\fs33\c&H00C8C0B8&\bord1.4}when we only added a line?
+Dialogue: 0,0:18:52.32,0:18:54.37,Bilingual,,0,0,0,,Docker 会缓存每一个构建步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Docker caches every build step.
+Dialogue: 0,0:18:54.69,0:18:59.13,Bilingual,,0,0,0,,一个步骤，只要上一步和它的指令都没变，就会被重用\N{\fs33\c&H00C8C0B8&\bord1.4}A step is reused when its parent step and its instruction are unchanged.
+Dialogue: 0,0:18:59.45,0:19:02.90,Bilingual,,0,0,0,,对 COPY 来说，复制进来的文件，校验和也得一致\N{\fs33\c&H00C8C0B8&\bord1.4}For COPY, the checksum of the copied files must match too.
+Dialogue: 0,0:19:03.22,0:19:07.64,Bilingual,,0,0,0,,第一个变了的步骤会重新运行，它后面的每一步也一样\N{\fs33\c&H00C8C0B8&\bord1.4}The first step that changes runs again, and so does every step after it.
+Dialogue: 0,0:19:07.95,0:19:12.28,Bilingual,,0,0,0,,什么都不改，再构建一次，加上那个看完整日志的额外参数\N{\fs33\c&H00C8C0B8&\bord1.4}Rebuild with nothing changed, adding the extra flag for the full log.
+Dialogue: 0,0:19:12.60,0:19:14.10,Bilingual,,0,0,0,,FROM 重用了 base image\N{\fs33\c&H00C8C0B8&\bord1.4}FROM reuses the base,
+Dialogue: 0,0:19:14.10,0:19:17.66,Bilingual,,0,0,0,,它后面的三步都显示 CACHED：什么都没跑\N{\fs33\c&H00C8C0B8&\bord1.4}and the three steps after it all say CACHED: nothing runs.
+Dialogue: 0,0:19:17.90,0:19:19.22,Bilingual,,0,0,0,,先预测一下\N{\fs33\c&H00C8C0B8&\bord1.4}Now predict.
+Dialogue: 0,0:19:19.27,0:19:22.83,Bilingual,,0,0,0,,你改了 cli.py 里的一个词，然后重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}You change one word in cli.py and rebuild.
+Dialogue: 0,0:19:23.15,0:19:25.04,Bilingual,,0,0,0,,四个构建步骤里，哪几个会重新运行？\N{\fs33\c&H00C8C0B8&\bord1.4}Which of the four steps run again?
+Dialogue: 0,0:19:33.85,0:19:35.35,Bilingual,,0,0,0,,作为额外的一步，试试看\N{\fs33\c&H00C8C0B8&\bord1.4}Try it, as an extra:
+Dialogue: 0,0:19:35.35,0:19:38.93,Bilingual,,0,0,0,,把第 49 行的 I love cheese 改成 I love brie\N{\fs33\c&H00C8C0B8&\bord1.4}on line 49, change I love cheese to I love brie.
+Dialogue: 0,0:19:39.25,0:19:43.86,Bilingual,,0,0,0,,用 git diff 能看到这处改动；现在构建上下文的校验和不一样了\N{\fs33\c&H00C8C0B8&\bord1.4}The git diff shows the change; the build context now has a different checksum.
+Dialogue: 0,0:19:44.10,0:19:47.73,Bilingual,,0,0,0,,再构建一次。FROM，还有 apt 和 pip 那一步，都被重用了\N{\fs33\c&H00C8C0B8&\bord1.4}Rebuild. FROM and the apt and pip step are reused.
+Dialogue: 0,0:19:48.05,0:19:52.12,Bilingual,,0,0,0,,但复制进来的文件校验和变了，所以 COPY 会运行\N{\fs33\c&H00C8C0B8&\bord1.4}But the checksum of the copied files changed, so COPY runs,
+Dialogue: 0,0:19:52.12,0:19:55.30,Bilingual,,0,0,0,,它后面的 uv sync 也一样，连 Python 都要重新下载\N{\fs33\c&H00C8C0B8&\bord1.4}and uv sync after it, Python download and all.
+Dialogue: 0,0:19:55.55,0:19:57.79,Bilingual,,0,0,0,,现在用 git checkout 撤销修改\N{\fs33\c&H00C8C0B8&\bord1.4}Now undo the edit with git checkout.
+Dialogue: 0,0:19:58.11,0:20:00.44,Bilingual,,0,0,0,,文件一样了，缓存就回来了吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Same files, so the cache comes back?
+Dialogue: 0,0:20:00.76,0:20:03.25,Bilingual,,0,0,0,,没有：COPY 和 uv sync 又跑了一遍\N{\fs33\c&H00C8C0B8&\bord1.4}No: COPY and uv sync run again.
+Dialogue: 0,0:20:03.57,0:20:07.56,Bilingual,,0,0,0,,Git 重写了它自己的 index 文件，就在隐藏的 .git 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}Git rewrote its own index file, inside the hidden git folder,
+Dialogue: 0,0:20:07.56,0:20:10.44,Bilingual,,0,0,0,,而这个目录也在构建上下文里\N{\fs33\c&H00C8C0B8&\bord1.4}and that folder is in the build context too.
+Dialogue: 0,0:20:10.68,0:20:12.97,Bilingual,,0,0,0,,第一部分留下的问题，这下有答案了\N{\fs33\c&H00C8C0B8&\bord1.4}That answers the question from part 1.
+Dialogue: 0,0:20:13.29,0:20:16.14,Bilingual,,0,0,0,,你的 Dockerfile 也在构建上下文里\N{\fs33\c&H00C8C0B8&\bord1.4}Your Dockerfile sits in the build context too,
+Dialogue: 0,0:20:16.14,0:20:18.75,Bilingual,,0,0,0,,所以每改它一次，那个校验和就变一次\N{\fs33\c&H00C8C0B8&\bord1.4}so every edit to it changed that checksum.
+Dialogue: 0,0:20:19.07,0:20:22.42,Bilingual,,0,0,0,,你照着 README 一步步做的时候，这是正常的\N{\fs33\c&H00C8C0B8&\bord1.4}While you follow the README step by step, that's expected.
+Dialogue: 0,0:20:22.67,0:20:26.00,Bilingual,,0,0,0,,在你自己的项目里，把慢的步骤放前面\N{\fs33\c&H00C8C0B8&\bord1.4}In your own projects, put the slow steps first:
+Dialogue: 0,0:20:26.00,0:20:30.39,Bilingual,,0,0,0,,先只复制 uv sync 需要的文件，运行它，再复制其余的\N{\fs33\c&H00C8C0B8&\bord1.4}copy only the files uv sync needs, run it, then copy the rest.
+Dialogue: 0,0:20:30.71,0:20:34.08,Bilingual,,0,0,0,,一个 .dockerignore 文件，可以把 .git 目录、本地的 venv\N{\fs33\c&H00C8C0B8&\bord1.4}A .dockerignore keeps the git folder, any local venv
+Dialogue: 0,0:20:34.08,0:20:35.68,Bilingual,,0,0,0,,还有 Dockerfile 都排除在外\N{\fs33\c&H00C8C0B8&\bord1.4}and the Dockerfile out.
+Dialogue: 0,0:20:35.87,0:20:40.50,Bilingual,,0,0,0,,这样一来，改 cli.py 只会让最后那个 COPY 重新运行\N{\fs33\c&H00C8C0B8&\bord1.4}Now an edit to cli.py reruns only the last COPY.
+Dialogue: 0,0:20:42.75,0:20:44.28,Bilingual,,0,0,0,,现在进入 README 的这一节\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README section Pushing Docker Image to Docker Hub.
+Dialogue: 0,0:20:44.28,0:20:46.53,Bilingual,,0,0,0,,Pushing Docker Image to Docker Hub\N{\fs33\c&H00C8C0B8&\bord1.4}Now the README section Pushing Docker Image to Docker Hub.
+Dialogue: 0,0:20:46.85,0:20:52.67,Bilingual,,0,0,0,,首先，注册账号，再建一个访问令牌，权限选读写，不要用默认的\N{\fs33\c&H00C8C0B8&\bord1.4}First, sign up and create an access token, with read and write access, not the default.
+Dialogue: 0,0:20:52.99,0:20:57.49,Bilingual,,0,0,0,,马上复制：它只显示一次，作用和密码一样\N{\fs33\c&H00C8C0B8&\bord1.4}Copy it right away: it's shown only once, and it works like a password.
+Dialogue: 0,0:20:57.81,0:20:59.41,Bilingual,,0,0,0,,暂停一下，建好你自己的令牌\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and make yours.
+Dialogue: 0,0:20:59.47,0:21:04.91,Bilingual,,0,0,0,,接着登录：docker login，-u 加你的用户名，-p 加你的令牌\N{\fs33\c&H00C8C0B8&\bord1.4}Next, log in: docker login, -u with your user name, -p with your token.
+Dialogue: 0,0:21:05.23,0:21:07.62,Bilingual,,0,0,0,,我们没有账号，所以没法跑\N{\fs33\c&H00C8C0B8&\bord1.4}We have no account, so we couldn't run it.
+Dialogue: 0,0:21:07.85,0:21:09.80,Bilingual,,0,0,0,,所以有些步骤用了替身\N{\fs33\c&H00C8C0B8&\bord1.4}So some steps use a stand-in,
+Dialogue: 0,0:21:09.80,0:21:13.44,Bilingual,,0,0,0,,也就是本机上的一个小 registry：那些只看就好\N{\fs33\c&H00C8C0B8&\bord1.4}a small registry on our own machine: just watch those.
+Dialogue: 0,0:21:13.76,0:21:18.35,Bilingual,,0,0,0,,登录它时会警告：在命令行里写密码不安全\N{\fs33\c&H00C8C0B8&\bord1.4}Logging in to it warns that a password on the command line is insecure.
+Dialogue: 0,0:21:18.58,0:21:20.79,Bilingual,,0,0,0,,这是 README 的一个小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}That's a small slip in the README:
+Dialogue: 0,0:21:20.79,0:21:23.92,Bilingual,,0,0,0,,用 -p 的话，你的令牌会留在 shell 历史记录里\N{\fs33\c&H00C8C0B8&\bord1.4}with -p, your token stays in your shell history.
+Dialogue: 0,0:21:24.24,0:21:27.77,Bilingual,,0,0,0,,改成输入 docker login、-u 和你的用户名\N{\fs33\c&H00C8C0B8&\bord1.4}Instead, type docker login, -u, and your user name,
+Dialogue: 0,0:21:27.77,0:21:30.12,Bilingual,,0,0,0,,等它问的时候再粘贴令牌\N{\fs33\c&H00C8C0B8&\bord1.4}then paste the token when it asks.
+Dialogue: 0,0:21:30.44,0:21:31.93,Bilingual,,0,0,0,,暂停一下，登录\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and log in.
+Dialogue: 0,0:21:31.98,0:21:36.47,Bilingual,,0,0,0,,然后给 image 打 tag：docker tag，先写 simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}Then tag the image: docker tag simple-translate
+Dialogue: 0,0:21:36.47,0:21:39.81,Bilingual,,0,0,0,,再写你的用户名/simple-translate-ac215\N{\fs33\c&H00C8C0B8&\bord1.4}<USER NAME>/simple-translate-ac215.
+Dialogue: 0,0:21:40.13,0:21:42.16,Bilingual,,0,0,0,,暂停一下，用你自己的用户名跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it with your own name.
+Dialogue: 0,0:21:42.48,0:21:45.82,Bilingual,,0,0,0,,额外用 docker image ls 看一下：两个名字，一个 ID\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker image ls shows two names, one ID:
+Dialogue: 0,0:21:45.82,0:21:47.60,Bilingual,,0,0,0,,是第二个名字，不是一份副本\N{\fs33\c&H00C8C0B8&\bord1.4}a second name, not a copy.
+Dialogue: 0,0:21:47.83,0:21:53.14,Bilingual,,0,0,0,,把这个长名字分成四段来读：registry，也就是默认的 docker.io\N{\fs33\c&H00C8C0B8&\bord1.4}Read the long name in four parts: the registry, docker.io, the default;
+Dialogue: 0,0:21:53.14,0:21:56.88,Bilingual,,0,0,0,,你的账号；仓库；还有 tag，latest\N{\fs33\c&H00C8C0B8&\bord1.4}your account; the repository; and the tag, latest.
+Dialogue: 0,0:21:57.20,0:21:59.61,Bilingual,,0,0,0,,没有账号部分的名字，比如我们的第一个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Names without an account, like our first,
+Dialogue: 0,0:21:59.61,0:22:01.00,Bilingual,,0,0,0,,都归在 library 下面\N{\fs33\c&H00C8C0B8&\bord1.4}fall under library.
+Dialogue: 0,0:22:01.05,0:22:03.72,Bilingual,,0,0,0,,然后 push：docker push，用同一个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Then push: docker push, with the same name.
+Dialogue: 0,0:22:04.04,0:22:05.46,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:22:05.51,0:22:09.20,Bilingual,,0,0,0,,你那边应该会上传每一层，最后一行是 digest\N{\fs33\c&H00C8C0B8&\bord1.4}Yours should upload each layer and end with a digest line.
+Dialogue: 0,0:22:09.52,0:22:13.79,Bilingual,,0,0,0,,我们没有账号，被 Docker Hub 拒绝了：push access denied\N{\fs33\c&H00C8C0B8&\bord1.4}Without an account, Docker Hub refused ours: push access denied.
+Dialogue: 0,0:22:14.11,0:22:17.22,Bilingual,,0,0,0,,如果你也碰到了，就先登录，再检查令牌有没有写权限\N{\fs33\c&H00C8C0B8&\bord1.4}If you see it, log in, and check your token can write
+Dialogue: 0,0:22:17.22,0:22:19.57,Bilingual,,0,0,0,,名字是不是以你的用户名开头\N{\fs33\c&H00C8C0B8&\bord1.4}and the name starts with your user name.
+Dialogue: 0,0:22:19.82,0:22:23.54,Bilingual,,0,0,0,,在替身上，push 成功了，最后是一行 digest\N{\fs33\c&H00C8C0B8&\bord1.4}On the stand-in, the push goes through, ending with a digest:
+Dialogue: 0,0:22:23.54,0:22:25.56,Bilingual,,0,0,0,,整个 image 的指纹\N{\fs33\c&H00C8C0B8&\bord1.4}a fingerprint of the whole image.
+Dialogue: 0,0:22:25.80,0:22:30.24,Bilingual,,0,0,0,,再 push 一次：每一层都已经在了，只有缺的层才会传过去\N{\fs33\c&H00C8C0B8&\bord1.4}Push again: every layer already exists, and only missing layers travel.
+Dialogue: 0,0:22:30.56,0:22:31.62,Bilingual,,0,0,0,,在 Docker Hub 上\N{\fs33\c&H00C8C0B8&\bord1.4}On Docker Hub,
+Dialogue: 0,0:22:31.62,0:22:35.33,Bilingual,,0,0,0,,连 base image 的层也可能显示 Mounted from library/python\N{\fs33\c&H00C8C0B8&\bord1.4}even the base layers may say Mounted from library/python:
+Dialogue: 0,0:22:35.33,0:22:36.87,Bilingual,,0,0,0,,它本来就有这些层\N{\fs33\c&H00C8C0B8&\bord1.4}it already has them.
+Dialogue: 0,0:22:36.92,0:22:41.40,Bilingual,,0,0,0,,还要记住：新建的 Docker Hub 仓库默认是公开的\N{\fs33\c&H00C8C0B8&\bord1.4}And remember: a new Docker Hub repository is public by default.
+Dialogue: 0,0:22:41.72,0:22:44.11,Bilingual,,0,0,0,,谁都能 pull 它，连 .git 目录一起\N{\fs33\c&H00C8C0B8&\bord1.4}Anyone can pull it, git folder and all.
+Dialogue: 0,0:22:46.43,0:22:50.04,Bilingual,,0,0,0,,上 VM 之前再检查一项；这一段全是额外内容\N{\fs33\c&H00C8C0B8&\bord1.4}One more check before the VM; this scene is all extras.
+Dialogue: 0,0:22:50.36,0:22:56.08,Bilingual,,0,0,0,,我们的机器是 Intel 或 AMD 的，image 上写的是 linux/amd64\N{\fs33\c&H00C8C0B8&\bord1.4}Our machine is Intel or AMD, and the image says linux/amd64.
+Dialogue: 0,0:22:56.40,0:22:59.68,Bilingual,,0,0,0,,在 Apple Silicon 的 Mac 上，你会看到 arm64\N{\fs33\c&H00C8C0B8&\bord1.4}On an Apple Silicon Mac, you'd see arm64.
+Dialogue: 0,0:22:59.92,0:23:01.45,Bilingual,,0,0,0,,这为什么重要？\N{\fs33\c&H00C8C0B8&\bord1.4}Why does that matter?
+Dialogue: 0,0:23:01.50,0:23:05.77,Bilingual,,0,0,0,,一个 image 里的每个程序，bash、Python、uv\N{\fs33\c&H00C8C0B8&\bord1.4}Every program in an image, bash, Python, uv,
+Dialogue: 0,0:23:05.77,0:23:09.27,Bilingual,,0,0,0,,都是给某一种 CPU 用的机器码\N{\fs33\c&H00C8C0B8&\bord1.4}is machine code for one kind of CPU:
+Dialogue: 0,0:23:09.27,0:23:14.04,Bilingual,,0,0,0,,Intel 和 AMD 用 amd64，Apple Silicon 用 arm64\N{\fs33\c&H00C8C0B8&\bord1.4}amd64 for Intel and AMD, arm64 for Apple Silicon.
+Dialogue: 0,0:23:14.36,0:23:17.76,Bilingual,,0,0,0,,一个 container 里的程序直接跑在 CPU 上\N{\fs33\c&H00C8C0B8&\bord1.4}A container's programs run directly on the CPU,
+Dialogue: 0,0:23:17.76,0:23:22.98,Bilingual,,0,0,0,,所以除非有模拟器帮忙，CPU 得会说这个 image 的语言\N{\fs33\c&H00C8C0B8&\bord1.4}so unless an emulator steps in, the CPU must speak the image's language.
+Dialogue: 0,0:23:23.30,0:23:27.74,Bilingual,,0,0,0,,Docker Desktop 自带一个模拟器；普通的 Linux VM 没有\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Desktop has one built in; a plain Linux VM doesn't.
+Dialogue: 0,0:23:27.98,0:23:31.25,Bilingual,,0,0,0,,一个 tag 可以指向一份菜单，每个平台一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}A tag can point at a menu, one image per platform.
+Dialogue: 0,0:23:31.57,0:23:34.62,Bilingual,,0,0,0,,这个 python tag 列了五个平台\N{\fs33\c&H00C8C0B8&\bord1.4}This python tag lists five platforms:
+Dialogue: 0,0:23:34.62,0:23:38.24,Bilingual,,0,0,0,,amd64、两种 arm，还有两种比较少见的\N{\fs33\c&H00C8C0B8&\bord1.4}amd64, two kinds of arm, and two rarer ones.
+Dialogue: 0,0:23:38.56,0:23:41.15,Bilingual,,0,0,0,,Docker 会 pull 和你的机器对得上的那一行\N{\fs33\c&H00C8C0B8&\bord1.4}Docker pulls the row that matches your machine.
+Dialogue: 0,0:23:41.38,0:23:45.96,Bilingual,,0,0,0,,授课老师的 image，dlops/simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}The instructor's image, dlops/simple-translate,
+Dialogue: 0,0:23:45.96,0:23:49.28,Bilingual,,0,0,0,,不是菜单：只有一个 image，只有 amd64\N{\fs33\c&H00C8C0B8&\bord1.4}is no menu: one image, amd64 only.
+Dialogue: 0,0:23:49.52,0:23:52.26,Bilingual,,0,0,0,,我们在替身上 push 的是一份小菜单\N{\fs33\c&H00C8C0B8&\bord1.4}Our stand-in push is a small menu:
+Dialogue: 0,0:23:52.26,0:23:54.44,Bilingual,,0,0,0,,amd64，外加一个 attestation\N{\fs33\c&H00C8C0B8&\bord1.4}amd64, plus an attestation,
+Dialogue: 0,0:23:54.44,0:23:57.35,Bilingual,,0,0,0,,也就是这个 image 是怎么构建出来的记录\N{\fs33\c&H00C8C0B8&\bord1.4}a record of how the image was built.
+Dialogue: 0,0:23:57.67,0:24:03.08,Bilingual,,0,0,0,,如果是在 M 系列 Mac 上构建的，amd64 那一行就会变成 arm64\N{\fs33\c&H00C8C0B8&\bord1.4}Built on an M-series Mac, the amd64 row would say arm64.
+Dialogue: 0,0:24:06.33,0:24:07.63,Bilingual,,0,0,0,,来想一想\N{\fs33\c&H00C8C0B8&\bord1.4}Now ponder.
+Dialogue: 0,0:24:07.68,0:24:10.02,Bilingual,,0,0,0,,你在 M 系列 Mac 上构建，然后 push 了\N{\fs33\c&H00C8C0B8&\bord1.4}You built on an M-series Mac and pushed.
+Dialogue: 0,0:24:10.34,0:24:14.10,Bilingual,,0,0,0,,你的 VM 是一台普通的 Intel 或 AMD 机器\N{\fs33\c&H00C8C0B8&\bord1.4}Your VM is an ordinary Intel or AMD machine.
+Dialogue: 0,0:24:14.42,0:24:16.02,Bilingual,,0,0,0,,你的 image 在那儿能跑吗？\N{\fs33\c&H00C8C0B8&\bord1.4}Will your image run there?
+Dialogue: 0,0:24:24.80,0:24:25.80,Bilingual,,0,0,0,,不能\N{\fs33\c&H00C8C0B8&\bord1.4}No.
+Dialogue: 0,0:24:25.85,0:24:31.38,Bilingual,,0,0,0,,这是反过来的同一个失败，发生在我们这台没有模拟器的机器上\N{\fs33\c&H00C8C0B8&\bord1.4}Here's the same failure the other way around, on our machine, which has no emulator:
+Dialogue: 0,0:24:31.38,0:24:32.84,Bilingual,,0,0,0,,exec format error\N{\fs33\c&H00C8C0B8&\bord1.4}exec format error.
+Dialogue: 0,0:24:32.89,0:24:35.68,Bilingual,,0,0,0,,换成 Docker Desktop，会直接把它模拟运行起来\N{\fs33\c&H00C8C0B8&\bord1.4}Docker Desktop would just run it, emulated.
+Dialogue: 0,0:24:36.00,0:24:39.28,Bilingual,,0,0,0,,Mac 上构建的 image 放到默认的 VM 上\N{\fs33\c&H00C8C0B8&\bord1.4}A Mac-built image on a default VM fails like this,
+Dialogue: 0,0:24:39.28,0:24:41.67,Bilingual,,0,0,0,,就会这样失败，或者报 no matching manifest\N{\fs33\c&H00C8C0B8&\bord1.4}or with no matching manifest.
+Dialogue: 0,0:24:42.52,0:24:44.69,Bilingual,,0,0,0,,有两个办法，README 里都没有\N{\fs33\c&H00C8C0B8&\bord1.4}Two fixes, neither in the README.
+Dialogue: 0,0:24:45.01,0:24:48.63,Bilingual,,0,0,0,,第一：为 VM 的平台构建\N{\fs33\c&H00C8C0B8&\bord1.4}One: build for the VM's platform,
+Dialogue: 0,0:24:48.63,0:24:52.69,Bilingual,,0,0,0,,加上 --platform 参数，设成 linux/amd64\N{\fs33\c&H00C8C0B8&\bord1.4}with the flag --platform=linux/amd64.
+Dialogue: 0,0:24:53.01,0:24:56.81,Bilingual,,0,0,0,,它就是 docker-shell.sh 的第 12 行，被注释掉了\N{\fs33\c&H00C8C0B8&\bord1.4}It's the commented-out line 12 of docker-shell.sh.
+Dialogue: 0,0:24:57.13,0:25:00.46,Bilingual,,0,0,0,,在 Mac 上，它是模拟运行的：慢一些，但能用\N{\fs33\c&H00C8C0B8&\bord1.4}On a Mac, it runs emulated: slower, but it works.
+Dialogue: 0,0:25:00.78,0:25:02.95,Bilingual,,0,0,0,,然后像之前一样，再打 tag、再 push\N{\fs33\c&H00C8C0B8&\bord1.4}Then tag and push again, as before.
+Dialogue: 0,0:25:03.20,0:25:06.16,Bilingual,,0,0,0,,第二：docker-build-push.sh 用 buildx\N{\fs33\c&H00C8C0B8&\bord1.4}Two: docker-build-push.sh uses buildx,
+Dialogue: 0,0:25:06.16,0:25:08.65,Bilingual,,0,0,0,,也就是 Docker 的多平台构建器\N{\fs33\c&H00C8C0B8&\bord1.4}Docker's multi-platform builder,
+Dialogue: 0,0:25:08.65,0:25:11.14,Bilingual,,0,0,0,,两个平台都构建，再 push 一份菜单\N{\fs33\c&H00C8C0B8&\bord1.4}to build both and push one menu.
+Dialogue: 0,0:25:14.45,0:25:16.94,Bilingual,,0,0,0,,在第 11 行填你的用户名\N{\fs33\c&H00C8C0B8&\bord1.4}Put your user name on line 11,
+Dialogue: 0,0:25:16.94,0:25:20.01,Bilingual,,0,0,0,,在第 7 行填 simple-translate-ac215\N{\fs33\c&H00C8C0B8&\bord1.4}and simple-translate-ac215 on line 7,
+Dialogue: 0,0:25:20.01,0:25:21.61,Bilingual,,0,0,0,,也就是 README 里的名字\N{\fs33\c&H00C8C0B8&\bord1.4}the README's name.
+Dialogue: 0,0:25:21.83,0:25:24.16,Bilingual,,0,0,0,,先登录，再用 bash 运行它\N{\fs33\c&H00C8C0B8&\bord1.4}Log in first, then run it with bash.
+Dialogue: 0,0:25:24.48,0:25:28.39,Bilingual,,0,0,0,,之后再切回来：docker buildx use default\N{\fs33\c&H00C8C0B8&\bord1.4}Afterwards, switch back with docker buildx use default,
+Dialogue: 0,0:25:28.39,0:25:30.88,Bilingual,,0,0,0,,在 Docker Desktop 上则是 desktop-linux\N{\fs33\c&H00C8C0B8&\bord1.4}or desktop-linux on Docker Desktop.
+Dialogue: 0,0:25:31.92,0:25:36.01,Bilingual,,0,0,0,,README 的最后一节：Running App on VM using Docker\N{\fs33\c&H00C8C0B8&\bord1.4}The last README section: Running App on VM using Docker.
+Dialogue: 0,0:25:36.33,0:25:39.08,Bilingual,,0,0,0,,首先，像第 1 讲那样创建一台 VM\N{\fs33\c&H00C8C0B8&\bord1.4}First, create a VM, as in lecture 1.
+Dialogue: 0,0:25:39.40,0:25:41.15,Bilingual,,0,0,0,,README 没给任何配置\N{\fs33\c&H00C8C0B8&\bord1.4}The README gives no settings.
+Dialogue: 0,0:25:41.47,0:25:46.51,Bilingual,,0,0,0,,一台普通的 E2 机器，装 Debian 12 或 13 就行\N{\fs33\c&H00C8C0B8&\bord1.4}An ordinary E2 machine with Debian 12 or 13 will do;
+Dialogue: 0,0:25:46.51,0:25:48.64,Bilingual,,0,0,0,,E2 机器都是 amd64\N{\fs33\c&H00C8C0B8&\bord1.4}E2 machines are amd64.
+Dialogue: 0,0:25:48.96,0:25:54.55,Bilingual,,0,0,0,,计价器开始跳了：VM 运行时按秒计费，它的磁盘只要还在就计费\N{\fs33\c&H00C8C0B8&\bord1.4}The meter starts: the VM bills by the second while it runs, its disk while it exists.
+Dialogue: 0,0:25:54.82,0:25:56.42,Bilingual,,0,0,0,,接着，SSH 进去\N{\fs33\c&H00C8C0B8&\bord1.4}Next, SSH in.
+Dialogue: 0,0:25:56.65,0:26:01.79,Bilingual,,0,0,0,,现在暂停：创建你的 VM，等到它的 SSH 终端打开\N{\fs33\c&H00C8C0B8&\bord1.4}Pause now: create your VM, and wait until its SSH terminal is open.
+Dialogue: 0,0:26:02.05,0:26:05.95,Bilingual,,0,0,0,,然后安装 Docker：sudo apt install docker.io\N{\fs33\c&H00C8C0B8&\bord1.4}Then install Docker: sudo apt install docker.io.
+Dialogue: 0,0:26:06.27,0:26:07.70,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:26:07.75,0:26:11.79,Bilingual,,0,0,0,,在我们的替身里，也就是一个软件包列表为空的全新 Debian\N{\fs33\c&H00C8C0B8&\bord1.4}In our stand-in, a fresh Debian with empty package lists,
+Dialogue: 0,0:26:11.79,0:26:14.27,Bilingual,,0,0,0,,它失败了：Unable to locate package\N{\fs33\c&H00C8C0B8&\bord1.4}it fails: Unable to locate package.
+Dialogue: 0,0:26:14.59,0:26:17.64,Bilingual,,0,0,0,,如果你那边装好了，就直接跳到检查版本那一步\N{\fs33\c&H00C8C0B8&\bord1.4}If yours installed, skip ahead to the version check.
+Dialogue: 0,0:26:17.90,0:26:19.73,Bilingual,,0,0,0,,README 的一个小缺口\N{\fs33\c&H00C8C0B8&\bord1.4}A small gap in the README:
+Dialogue: 0,0:26:19.73,0:26:23.81,Bilingual,,0,0,0,,这一节跳过了第 1 讲用过的 sudo apt-get update\N{\fs33\c&H00C8C0B8&\bord1.4}this section skips sudo apt-get update, used in lecture 1.
+Dialogue: 0,0:26:24.13,0:26:27.48,Bilingual,,0,0,0,,不跑它的话，软件包列表可能是空的，就像这里\N{\fs33\c&H00C8C0B8&\bord1.4}Without it, the package lists may be empty, as here,
+Dialogue: 0,0:26:27.48,0:26:29.93,Bilingual,,0,0,0,,也可能已经过期，会报 Not Found\N{\fs33\c&H00C8C0B8&\bord1.4}or out of date, with Not Found errors.
+Dialogue: 0,0:26:30.25,0:26:33.43,Bilingual,,0,0,0,,先跑 update，这是额外的一步，跑完先暂停\N{\fs33\c&H00C8C0B8&\bord1.4}Run the update first, an extra, and pause after it.
+Dialogue: 0,0:26:33.68,0:26:35.94,Bilingual,,0,0,0,,现在安装成功了\N{\fs33\c&H00C8C0B8&\bord1.4}Now the install works:
+Dialogue: 0,0:26:35.94,0:26:41.60,Bilingual,,0,0,0,,在 Debian 12 上是 92 个新软件包，下载 107 MB\N{\fs33\c&H00C8C0B8&\bord1.4}92 new packages, a 107 megabyte download, on Debian 12;
+Dialogue: 0,0:26:41.60,0:26:46.01,Bilingual,,0,0,0,,在 Debian 13 上是 91 个软件包，118 MB\N{\fs33\c&H00C8C0B8&\bord1.4}91 packages and 118 megabytes on Debian 13.
+Dialogue: 0,0:26:46.33,0:26:47.63,Bilingual,,0,0,0,,输入 Y\N{\fs33\c&H00C8C0B8&\bord1.4}Answer Y.
+Dialogue: 0,0:26:47.68,0:26:49.05,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:26:49.10,0:26:51.42,Bilingual,,0,0,0,,然后是 sudo docker --version\N{\fs33\c&H00C8C0B8&\bord1.4}Then sudo docker --version.
+Dialogue: 0,0:26:51.74,0:26:55.54,Bilingual,,0,0,0,,这是 Debian 自己打包的 Docker\N{\fs33\c&H00C8C0B8&\bord1.4}This is Debian's own Docker package:
+Dialogue: 0,0:26:55.54,0:27:02.82,Bilingual,,0,0,0,,录制时 Debian 12 上是 20.10.24，Debian 13 上是 26.1.5\N{\fs33\c&H00C8C0B8&\bord1.4}20.10.24 on Debian 12, 26.1.5 on Debian 13, at the time of recording.
+Dialogue: 0,0:27:03.14,0:27:05.38,Bilingual,,0,0,0,,比笔记本上的旧，但够用了\N{\fs33\c&H00C8C0B8&\bord1.4}Older than the laptop's, but plenty.
+Dialogue: 0,0:27:05.63,0:27:09.11,Bilingual,,0,0,0,,在这里，Docker 直接跑在 VM 的 Linux 内核上\N{\fs33\c&H00C8C0B8&\bord1.4}Here Docker runs right on the VM's Linux kernel;
+Dialogue: 0,0:27:09.11,0:27:12.95,Bilingual,,0,0,0,,没有隐藏的 VM，不像 Mac 上的 Docker Desktop\N{\fs33\c&H00C8C0B8&\bord1.4}there's no hidden VM, unlike Docker Desktop on a Mac.
+Dialogue: 0,0:27:13.22,0:27:14.64,Bilingual,,0,0,0,,那为什么要 sudo？\N{\fs33\c&H00C8C0B8&\bord1.4}And why sudo?
+Dialogue: 0,0:27:14.69,0:27:17.60,Bilingual,,0,0,0,,不加 sudo 的话，这个额外的 docker ps 会被拒绝\N{\fs33\c&H00C8C0B8&\bord1.4}Without it, this extra docker ps is refused:
+Dialogue: 0,0:27:17.60,0:27:20.19,Bilingual,,0,0,0,,访问 Docker socket 时 permission denied\N{\fs33\c&H00C8C0B8&\bord1.4}permission denied on the Docker socket,
+Dialogue: 0,0:27:20.19,0:27:22.84,Bilingual,,0,0,0,,socket 就是通往 Docker 后台服务的那扇门\N{\fs33\c&H00C8C0B8&\bord1.4}the door to Docker's background service.
+Dialogue: 0,0:27:23.16,0:27:25.93,Bilingual,,0,0,0,,只有 root 和 docker 组能打开它\N{\fs33\c&H00C8C0B8&\bord1.4}Only root and the docker group may open it.
+Dialogue: 0,0:27:27.37,0:27:29.14,Bilingual,,0,0,0,,然后是部署\N{\fs33\c&H00C8C0B8&\bord1.4}Then the deploy:
+Dialogue: 0,0:27:29.14,0:27:34.45,Bilingual,,0,0,0,,sudo docker run --rm -ti dlops/simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}sudo docker run --rm -ti dlops/simple-translate.
+Dialogue: 0,0:27:34.77,0:27:36.19,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:27:36.24,0:27:38.35,Bilingual,,0,0,0,,这台 VM 上还没有这个 image\N{\fs33\c&H00C8C0B8&\bord1.4}The image isn't on this VM yet,
+Dialogue: 0,0:27:38.35,0:27:40.74,Bilingual,,0,0,0,,所以 Docker 从 Docker Hub 把它 pull 下来\N{\fs33\c&H00C8C0B8&\bord1.4}so Docker pulls it from Docker Hub,
+Dialogue: 0,0:27:40.74,0:27:43.32,Bilingual,,0,0,0,,一共 7 层，然后启动一个 container\N{\fs33\c&H00C8C0B8&\bord1.4}seven layers, then starts a container.
+Dialogue: 0,0:27:43.57,0:27:47.60,Bilingual,,0,0,0,,现在用 python cli.py 运行这个应用，用它的默认设置\N{\fs33\c&H00C8C0B8&\bord1.4}Now run the app with python cli.py and its defaults:
+Dialogue: 0,0:27:47.60,0:27:50.39,Bilingual,,0,0,0,,I love cheese 翻成了意大利语\N{\fs33\c&H00C8C0B8&\bord1.4}I love cheese comes back in Italian.
+Dialogue: 0,0:27:50.71,0:27:52.14,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:27:52.19,0:27:53.93,Bilingual,,0,0,0,,这台 VM 上没有 clone，没有 pip\N{\fs33\c&H00C8C0B8&\bord1.4}No clone, no pip,
+Dialogue: 0,0:27:53.93,0:27:56.75,Bilingual,,0,0,0,,也没有 uv：只有 Docker 和一个 image\N{\fs33\c&H00C8C0B8&\bord1.4}no uv on this VM: just Docker and one image.
+Dialogue: 0,0:27:57.00,0:28:03.40,Bilingual,,0,0,0,,再回到开头那个问题：为什么是 3.14.7，配方明明写的是 3.12？\N{\fs33\c&H00C8C0B8&\bord1.4}And the opening question: why 3.14.7, when the recipe says 3.12?
+Dialogue: 0,0:28:03.72,0:28:05.81,Bilingual,,0,0,0,,原因和我们那次构建一样\N{\fs33\c&H00C8C0B8&\bord1.4}The same reason as in our build.
+Dialogue: 0,0:28:06.13,0:28:11.36,Bilingual,,0,0,0,,这个 image 是 9 月 16 日构建的，用的是 uv 0.12.15\N{\fs33\c&H00C8C0B8&\bord1.4}This image was built on September 16 with uv 0.12.15,
+Dialogue: 0,0:28:11.36,0:28:17.86,Bilingual,,0,0,0,,当时 uv 知道的、范围内最新的稳定版 Python 是 3.14.7\N{\fs33\c&H00C8C0B8&\bord1.4}and the newest stable Python that uv knew in the range was 3.14.7.
+Dialogue: 0,0:28:18.18,0:28:21.17,Bilingual,,0,0,0,,我们今天构建得到的是 3.15.0\N{\fs33\c&H00C8C0B8&\bord1.4}Our build today got 3.15.0.
+Dialogue: 0,0:28:21.42,0:28:24.40,Bilingual,,0,0,0,,同一个 Dockerfile，相隔一个月，两个 Python\N{\fs33\c&H00C8C0B8&\bord1.4}Same Dockerfile, a month apart, two Pythons.
+Dialogue: 0,0:28:24.72,0:28:29.33,Bilingual,,0,0,0,,配方里什么都没 pin 住：pip 装的是最新的 uv\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing in the recipe is pinned: pip installs the latest uv,
+Dialogue: 0,0:28:29.33,0:28:33.48,Bilingual,,0,0,0,,Python 的范围没有上限，这个 repo 里也没有 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}the Python range is open, and the repo has no uv.lock,
+Dialogue: 0,0:28:33.48,0:28:35.71,Bilingual,,0,0,0,,所以每次构建都会自己写一个\N{\fs33\c&H00C8C0B8&\bord1.4}so each build writes its own.
+Dialogue: 0,0:28:36.03,0:28:39.93,Bilingual,,0,0,0,,一个 image 会把这一切都冻结下来：要交付 image，而不是配方\N{\fs33\c&H00C8C0B8&\bord1.4}An image freezes all that: ship the image, not the recipe.
+Dialogue: 0,0:28:40.18,0:28:41.50,Bilingual,,0,0,0,,输入 exit\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit.
+Dialogue: 0,0:28:41.55,0:28:43.14,Bilingual,,0,0,0,,还有一个小小的不一致\N{\fs33\c&H00C8C0B8&\bord1.4}One more small mismatch:
+Dialogue: 0,0:28:43.14,0:28:46.39,Bilingual,,0,0,0,,README 说要 pull 你 push 的那个 image\N{\fs33\c&H00C8C0B8&\bord1.4}the README promises to pull the image you pushed,
+Dialogue: 0,0:28:46.39,0:28:48.97,Bilingual,,0,0,0,,可这条命令跑的是授课老师的\N{\fs33\c&H00C8C0B8&\bord1.4}but this command runs the instructor's.
+Dialogue: 0,0:28:49.29,0:28:53.88,Bilingual,,0,0,0,,你的 image 是：你的用户名/simple-translate-ac215\N{\fs33\c&H00C8C0B8&\bord1.4}Your image is <USER NAME>/simple-translate-ac215.
+Dialogue: 0,0:28:54.20,0:28:58.49,Bilingual,,0,0,0,,用同一条命令运行它就行，前提是它已经为 amd64 构建好了\N{\fs33\c&H00C8C0B8&\bord1.4}Run it with the same command, once it's built for amd64.
+Dialogue: 0,0:28:59.68,0:29:04.63,Bilingual,,0,0,0,,额外检查一下还会发现，发布出来的 image 比 repo 落后\N{\fs33\c&H00C8C0B8&\bord1.4}Also, an extra check shows the published image lags the repo:
+Dialogue: 0,0:29:04.63,0:29:09.33,Bilingual,,0,0,0,,它的 cli.py 是旧版，没有把 raise exception 设为 True\N{\fs33\c&H00C8C0B8&\bord1.4}its cli.py is the older one, without raise_exception=True.
+Dialogue: 0,0:29:09.65,0:29:14.19,Bilingual,,0,0,0,,如果 Google 拒绝请求，那一版会悄悄把你的输入原样打出来\N{\fs33\c&H00C8C0B8&\bord1.4}If Google refuses a request, that version quietly prints your input back.
+Dialogue: 0,0:29:14.51,0:29:16.24,Bilingual,,0,0,0,,这不是 Docker 的问题\N{\fs33\c&H00C8C0B8&\bord1.4}That's not a Docker problem.
+Dialogue: 0,0:29:16.48,0:29:18.50,Bilingual,,0,0,0,,还有，如果 pull 这个 image 时失败了\N{\fs33\c&H00C8C0B8&\bord1.4}And if pulling the image fails
+Dialogue: 0,0:29:18.50,0:29:20.57,Bilingual,,0,0,0,,报 toomanyrequests\N{\fs33\c&H00C8C0B8&\bord1.4}with toomanyrequests: Docker Hub
+Dialogue: 0,0:29:20.57,0:29:24.71,Bilingual,,0,0,0,,Docker Hub 按网络地址限制匿名用户 pull 的次数\N{\fs33\c&H00C8C0B8&\bord1.4}limits how often anonymous users can pull, per network address,
+Dialogue: 0,0:29:24.71,0:29:26.42,Bilingual,,0,0,0,,一整个教室的人可能会碰到\N{\fs33\c&H00C8C0B8&\bord1.4}which a classroom can hit.
+Dialogue: 0,0:29:26.74,0:29:30.54,Bilingual,,0,0,0,,等一会儿，或者先登录：sudo docker login\N{\fs33\c&H00C8C0B8&\bord1.4}Wait a while, or log in first, with sudo docker login.
+Dialogue: 0,0:29:31.78,0:29:33.43,Bilingual,,0,0,0,,走之前，先清理一下\N{\fs33\c&H00C8C0B8&\bord1.4}Before you go, clean up.
+Dialogue: 0,0:29:33.75,0:29:36.89,Bilingual,,0,0,0,,额外检查 sudo docker ps -a\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check, sudo docker ps -a,
+Dialogue: 0,0:29:36.89,0:29:41.32,Bilingual,,0,0,0,,没有留下任何 container，多亏了 --rm\N{\fs33\c&H00C8C0B8&\bord1.4}shows no containers left behind, thanks to --rm.
+Dialogue: 0,0:29:41.58,0:29:45.49,Bilingual,,0,0,0,,README 的最后一步：删除 VM，连同它的启动磁盘\N{\fs33\c&H00C8C0B8&\bord1.4}Last README step: delete the VM, with its boot disk,
+Dialogue: 0,0:29:45.49,0:29:49.54,Bilingual,,0,0,0,,然后确认 VM instances 和 Disks 两个页面都是空的\N{\fs33\c&H00C8C0B8&\bord1.4}then check that VM instances and Disks are both empty.
+Dialogue: 0,0:29:49.86,0:29:51.40,Bilingual,,0,0,0,,现在就暂停去做\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and do it now.
+Dialogue: 0,0:29:51.45,0:29:53.05,Bilingual,,0,0,0,,还有两件可选的杂事\N{\fs33\c&H00C8C0B8&\bord1.4}Two optional chores.
+Dialogue: 0,0:29:53.18,0:29:58.41,Bilingual,,0,0,0,,你的 Docker Hub 仓库会一直公开，直到你把它删掉或设成私有\N{\fs33\c&H00C8C0B8&\bord1.4}Your Docker Hub repository stays public until you delete it or make it private.
+Dialogue: 0,0:29:58.73,0:30:02.47,Bilingual,,0,0,0,,另外，想回收 image 占用的空间，就在笔记本上运行\N{\fs33\c&H00C8C0B8&\bord1.4}And to reclaim the space your images take on the laptop,
+Dialogue: 0,0:30:02.47,0:30:04.27,Bilingual,,0,0,0,,docker system prune -a\N{\fs33\c&H00C8C0B8&\bord1.4}run docker system prune -a.
+Dialogue: 0,0:30:07.52,0:30:10.76,Bilingual,,0,0,0,,第 1 讲给了我们一台装着 venv 的 VM\N{\fs33\c&H00C8C0B8&\bord1.4}Lecture 1 gave us a VM with a venv inside.
+Dialogue: 0,0:30:11.08,0:30:13.72,Bilingual,,0,0,0,,今天，container 插到了中间\N{\fs33\c&H00C8C0B8&\bord1.4}Today a container slid in between:
+Dialogue: 0,0:30:13.72,0:30:16.99,Bilingual,,0,0,0,,venv 现在住在一个 image 里，就在 /.venv\N{\fs33\c&H00C8C0B8&\bord1.4}the venv now lives in an image, at /.venv.
+Dialogue: 0,0:30:17.31,0:30:20.70,Bilingual,,0,0,0,,你在笔记本上构建了它，push 到 registry\N{\fs33\c&H00C8C0B8&\bord1.4}You built it on your laptop, pushed it to a registry,
+Dialogue: 0,0:30:20.70,0:30:23.00,Bilingual,,0,0,0,,再在 VM 上用一条命令运行了它\N{\fs33\c&H00C8C0B8&\bord1.4}and ran it on a VM with one command.
+Dialogue: 0,0:30:23.58,0:30:25.59,Bilingual,,0,0,0,,五道自测题\N{\fs33\c&H00C8C0B8&\bord1.4}Five questions to test yourself.
+Dialogue: 0,0:30:25.91,0:30:30.12,Bilingual,,0,0,0,,第一题：image 和 container 有什么区别\N{\fs33\c&H00C8C0B8&\bord1.4}One: what's the difference between an image and a container,
+Dialogue: 0,0:30:30.12,0:30:31.95,Bilingual,,0,0,0,,--rm 又删掉了什么？\N{\fs33\c&H00C8C0B8&\bord1.4}and what does --rm delete?
+Dialogue: 0,0:30:32.27,0:30:35.37,Bilingual,,0,0,0,,第二题：我们的 container 启动时运行什么\N{\fs33\c&H00C8C0B8&\bord1.4}Two: what does our container run at startup,
+Dialogue: 0,0:30:35.37,0:30:39.82,Bilingual,,0,0,0,,如果在 image 名后面加上 python cli.py，又会怎样？\N{\fs33\c&H00C8C0B8&\bord1.4}and what happens if you add python cli.py after the image name?
+Dialogue: 0,0:30:40.07,0:30:44.01,Bilingual,,0,0,0,,第三题：Dockerfile 写的是 Python 3.12\N{\fs33\c&H00C8C0B8&\bord1.4}Three: the Dockerfile says Python 3.12,
+Dialogue: 0,0:30:44.01,0:30:48.05,Bilingual,,0,0,0,,那为什么 python 显示的是 3.15，或者 3.14？\N{\fs33\c&H00C8C0B8&\bord1.4}so why does python report 3.15, or 3.14?
+Dialogue: 0,0:30:48.37,0:30:50.90,Bilingual,,0,0,0,,第四题：你改了 cli.py 里的一行\N{\fs33\c&H00C8C0B8&\bord1.4}Four: you edit one line of cli.py;
+Dialogue: 0,0:30:50.90,0:30:55.38,Bilingual,,0,0,0,,哪些构建步骤会重新运行，你又会怎么调整 Dockerfile 的顺序？\N{\fs33\c&H00C8C0B8&\bord1.4}which steps rerun, and how would you reorder the Dockerfile?
+Dialogue: 0,0:30:55.70,0:30:56.70,Bilingual,,0,0,0,,第五题\N{\fs33\c&H00C8C0B8&\bord1.4}Five:
+Dialogue: 0,0:30:56.70,0:31:00.50,Bilingual,,0,0,0,,说出两种办法，让 Mac 上构建的 image 能在默认的 VM 上运行\N{\fs33\c&H00C8C0B8&\bord1.4}name two ways to make a Mac-built image run on a default VM.
+Dialogue: 0,0:31:00.75,0:31:05.44,Bilingual,,0,0,0,,答案在练习里，每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}The answers are in the exercises, and every command is in the study guide.
+Dialogue: 0,0:31:05.76,0:31:09.75,Bilingual,,0,0,0,,下节课是容器 II：五个 container 协同工作，一个工作目录\N{\fs33\c&H00C8C0B8&\bord1.4}Next time, Containers 2: five containers working together,
+Dialogue: 0,0:31:09.75,0:31:15.94,Bilingual,,0,0,0,,一个非 root 用户，还有把你笔记本上的目录挂载进 container\N{\fs33\c&H00C8C0B8&\bord1.4}a working directory, a non-root user, and your laptop's folder mounted inside a container.

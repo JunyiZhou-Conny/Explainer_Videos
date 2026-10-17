@@ -3,13 +3,15 @@ Quick Reference transcribe_audio step 1).
 
 Beats (script.md "## S06", one voiceover block each):
  0  TRACKER R/1. CODE(transcribe_audio/docker-shell.sh: 6–14), full width, centred under the
-    tracker; its header flashes PURPLE ("its docker-shell.sh"). Line 7 gets a YELLOW bar,
-    IMAGE_NAME flashes, a two-row tag "image name = / container name" beside it (hanging upward
+    tracker, with a left gutter; its header flashes PURPLE ("its docker-shell.sh"). Each line the
+    SAY cites gets its GREY number in the gutter as it lights (7, 8, 9, 10, 13; they leave with the
+    panel). Line 7 gets a YELLOW bar, IMAGE_NAME flashes, a two-row tag "image name = / container name" beside it (hanging upward
     from the bar into the empty end of row 6, so line 8's bar stays clear);
     lines 8–9 get bars, both $(pwd) are underlined PINK, tag "the folder you're in" beside line 8.
  1  YELLOW caption "run it from the component folder" beside line 9. Line 10: PINK bar, tag
     "the key's path inside the container" on the blank row 11 under it; line 13: BLUE bar, tag
-    "Docker Hub account"; line 14: GREY tag "default".
+    "Docker Hub account" (right of line 14's text too: the tag is taller than a row); line 14: GREY
+    tag "default".
  2  V4. The panel becomes CODE(docker-shell.sh: 28–39) at left (6.2 wide); "$1" flashes PURPLE and
     the switchboard grows out of it at right (input "first word", four tracks with their line
     chips). The tracks light one by one as named, each with a YELLOW bar on the branch of the code
@@ -27,12 +29,16 @@ Beats (script.md "## S06", one voiceover block each):
     is never copied": the TEAL image slab, "never in here" across it. "slash secrets shows it": the
     clock "docker run" ticks, the /secrets route pulses and a GOLD key outline appears in /secrets
     (the laptop's key stays and flashes with it); the clock reads "exit", the outline vanishes.
- 6  13-row laptop terminal at ~/AC215/mega-pipeline: `cd transcribe_audio` (GREY two-row caption
+ 6  12-row laptop terminal at ~/AC215/mega-pipeline: `cd transcribe_audio` (GREY two-row caption
     in the top band: transcribe_audio/README.md · line 15, "cd into the transcribe_audio folder"),
     the new path flashes; `./docker-shell.sh` (on the row under the long prompt) → mega-laptop/12
     lines 2–4, 14–18, 24 (BuildKit rows, GREY time tags one row high). "Build Mode: dev-run"
     boxed; "Building 99.5s" underlined; [2/5] boxed TEAL with a TEAL "2" badge, its 44.7s tag YELLOW; the 52.9s tag
-    YELLOW; GREY note "first build: Docker also pulls python:3.14-slim-bookworm"; ▶ your turn.
+    YELLOW; GREY note "first build: Docker also pulls python:3.14-slim-bookworm" (under the band);
+    ▶ your turn, and in the band beside the tracker a two-row GREY hint for a failing first run
+    (README lines 220–226, narrated in beat 10): "Permission denied → chmod +x docker-shell.sh
+    (step 5)" / "Windows: Git BASH; “not a TTY” → winpty in front (step 6)"; it stays through
+    beat 7 while ▶ your turn is on the strip.
  7  The terminal shrinks to the strip (the command and the [5/5] uv sync row, its 1.6s tag YELLOW).
     Above: CODE(pyproject.toml: 6) over the GREEN band of a version line, and PANEL(12-a-docker-
     shell.plain: 1427) "the same build, full log · line 1427" with 3.14.8 boxed and tagged "at the
@@ -46,9 +52,11 @@ Beats (script.md "## S06", one voiceover block each):
  9  TRACKER QA/1 · extra: `which python` → mega-transcribe_audio/03 line 2 (GREEN), `echo
     $GOOGLE_APPLICATION_CREDENTIALS` → 05 line 2 (PINK), `ls -la /secrets` → 06 lines 2–4, tag
     "empty here · yours lists mega-pipeline.json" (all three tagged extra). The TEAL terminal
-    shrinks to the strip; a second terminal (7 rows) opens on ~ ("new terminal: cd here first"),
-    then reads ~/AC215/mega-pipeline/transcribe_audio; the docker inspect (extra, folded) →
-    mega-laptop/14 lines 2–3; GREY caption "one command · copy it from the study guide".
+    shrinks to the strip, keeping `ls -la /secrets` with "total 8" and "." under it; a second
+    terminal (7 rows) opens on ~ ("new terminal: cd here first"), then reads
+    ~/AC215/mega-pipeline/transcribe_audio; the docker inspect (extra, wrapped) with the GREY
+    caption "one command · copy it from the study guide" → mega-laptop/14 lines 2–3; the caption
+    stays until the chmod scrolls the command away.
 10  TRACKER R/5 · extra: `ls -l docker-shell.sh` → mega-laptop/19 line 2, -rwxr-xr-x boxed; TRACKER
     R/5: `chmod +x docker-shell.sh` → the prompt returns; GREY tag "already executable · needed
     only if the bit got lost". TRACKER R/6: the second terminal gives way to a GREY card (README.md ·
@@ -59,6 +67,8 @@ Beats (script.md "## S06", one voiceover block each):
 Deviations from SHOW (and why):
 - Beat 0: line 7's tag has two rows ("image name =" / "container name"): one row is 4.5 wide and
   line 7 leaves 3.0 of the panel; rows 6 and 8 are empty at that height.
+- Beat 0: the panel gets a left gutter (0.3 wider, scaled back to 12.6: code at 21.6 pt) so the
+  line numbers the SAY cites ("Line 7", "Lines 8 and 9", ...) sit beside their rows.
 - Beat 1: the YELLOW caption sits beside line 9 (there is no free row under lines 8–9: line 10
   follows) and reads "run it from the component folder", the SAY's words ("from inside the
   component folder" is 4.8 wide and ran past the panel); line 10's tag sits on the blank row 11
@@ -74,13 +84,21 @@ Deviations from SHOW (and why):
   only while the container runs" (SHOW lists the bar last; the SAY says "never copied" first).
 - Beat 6: the README line-15 caption is two rows in the top band (one row is 10.5 wide; the band
   right of the tracker is 7.9); "build step 2" is a TEAL badge "2" at the row's left margin plus a
-  TEAL box on [2/5] (the cut row has no room for the worded badge).
+  TEAL box on [2/5] (the cut row has no room for the worded badge). The terminal has 12 rows (the
+  beat's 12 lines) so the band holds the pull note under the failing-run hint. The hint is not in
+  SHOW: steps 5–6 are narrated 40 s after the first run, and a viewer on Windows or with a lost
+  execute bit fails at this pause (it is 7.7 wide: no room beside ▶ your turn).
+- Beat 7: the pyproject panel sits 0.1 under TOP, clear of the hint above it (the version line
+  0.04 closer under it, clear of the log panel's tag).
 - Beat 7: "at the time of recording" sits just above the log row, right of the panel header (the
   68-character row has no room beside it); the drop lands at "already satisfies" and flies straight
   to the line (a first hop up would park the copy on that tag).
 - Beat 9: the docker inspect is typed on the row under the prompt and folded by this scene at
-  spaces (never inside a word: Terminal.type's fold would split `{{println}}`); the rows, joined,
-  are the captured command. The kept strip rows are the last three (total 8 / . / ..).
+  spaces (never inside a word: Terminal.type's fold would split `{{println}}`). The --format string
+  is 68 characters, so it wraps INSIDE its single quotes, where a trailing backslash would be
+  literal: that row break is a GREY ↪ (the code panels' wrap mark), and the only backslash
+  continuation follows the closing quote; the rows, joined, are the captured command. The strip
+  keeps the command, "total 8" and "." (the ".." row goes).
 - Beat 10: the chmod tag reads "already executable · needed only if the bit got lost" ("after a
   clone" left out: the full text is 8.9 wide and the chmod row leaves 7.0); the Windows card
   replaces the second terminal (no room above the strip with both).
@@ -91,6 +109,7 @@ from common import _drop_bare, _header_text
 from manim import (
     DOWN,
     LEFT,
+    ORIGIN,
     RIGHT,
     TAU,
     UP,
@@ -173,16 +192,22 @@ C14 = capture("14", ML)
 MOUNTS = C14.at(2, 3)
 assert MOUNTS == ["/home/student/AC215/mega-pipeline/transcribe_audio -> /app",
                   "/home/student/AC215/secrets -> /secrets"]
-INSPECT_ROWS = ["    docker inspect --format '{{range .Mounts}}{{.Source}} -> \\",
-                "    {{.Destination}}{{println}}{{end}}' \\",
+# The quoted --format string is longer than a row, so it wraps INSIDE the quotes, where a " \" would
+# be literal: row 2 carries the code panels' GREY ↪ (the same line, wrapped for the screen) and the
+# only " \" is the shell continuation after the closing quote.
+INSPECT_ROWS = ["    docker inspect --format '{{range .Mounts}}{{.Source}} ->",
+                "      ↪ {{.Destination}}{{println}}{{end}}' \\",
                 "    mega-pipeline-transcribe-audio"]
-assert " ".join(r.strip().removesuffix(" \\") for r in INSPECT_ROWS) == C14.cmd
+_ir = [r.strip().removesuffix(" \\").removeprefix("↪ ") for r in INSPECT_ROWS]
+assert " ".join(_ir) == C14.cmd
+assert INSPECT_ROWS[0].count("'") == 1 and not INSPECT_ROWS[0].endswith("\\")   # break inside the quotes
 
 C19, C20 = capture("19", ML), capture("20", ML)
 assert C19.cmd == "ls -l docker-shell.sh" and C19.line(2).startswith("-rwxr-xr-x ")
 assert C20.cmd == "chmod +x docker-shell.sh" and C20.lines == []
 
 # ------------------------------------------------------------------ layout
+GUTTER = 0.3             # beat 0: extra left margin of the 6-14 panel for line numbers
 TOP = 2.78               # top of the pictures under the tracker (tracker bottom 2.92)
 BAND_Y = 3.21            # the top band, right of the tracker
 BAND_X = -1.45           # its left edge (tracker R right edge: -1.71)
@@ -210,6 +235,15 @@ def code_row(panel, n: int):
 
 def row_y(panel, n: int) -> float:
     return panel.bar(n).get_center()[1]
+
+
+def line_no(panel, n: int) -> VGroup:
+    """File line n's number, GREY 20 pt, right-aligned in the panel's left gutter on the row's
+    baseline (not added)."""
+    num = mono(str(n), CAPTION, S.GREY)
+    first = code_row(panel, n)[0]
+    num.move_to([panel.code.code_lines.get_left()[0] - 0.14 - num.width / 2, 0, 0])
+    return num.align_to(first, DOWN)
 
 
 def tag2(lines, color: str = S.GREY, size: float = TAG) -> VGroup:
@@ -274,13 +308,15 @@ def type_extra(scene, t, cmd: str, type_time: float = 0.5):
 
 def type_rows(scene, t, rows_text, type_time: float = 2.0):
     """Type a command folded by hand: the prompt alone on its row, then `rows_text` (the command's
-    rows, as in type_cmd's 'under the prompt' layout). Returns a VGroup with .rows."""
+    rows, as in type_cmd's 'under the prompt' layout; a ↪ in a row is drawn GREY, as in the code
+    panels). Returns a VGroup with .rows."""
     _drop_bare(scene, t)
     texts = [t.prompt] + list(rows_text)
     t._make_room(scene, len(texts))
     rows = []
     for k, s in enumerate(texts):
-        ln = mono_line(s, t.size, INK, t2c=t._prompt_colors(t.prompt) if k == 0 else None)
+        t2c = t._prompt_colors(t.prompt) if k == 0 else ({"↪": S.GREY} if "↪" in s else None)
+        ln = mono_line(s, t.size, INK, t2c=t2c)
         t._place(ln, len(t.lines))
         t.lines.add(ln)
         rows.append(ln)
@@ -369,7 +405,15 @@ class DockerShell(VoiceScene):
 
         # ========================================================== 0 · lines 6-14: names and paths
         p0 = src_panel(SH, 6, 14)
+        # a gutter for the line numbers the SAY cites: the frame grows left by GUTTER, then the code
+        # scales back to the house width (22 pt -> 21.6 pt); the header keeps its size
+        bg0 = p0.code.background
+        bg0.stretch_to_fit_width(bg0.width + GUTTER, about_edge=RIGHT)
+        p0.code.scale(TERM_W / bg0.width).move_to(ORIGIN)
+        p0.header.next_to(p0.code, UP, buff=0.1).align_to(p0.code, LEFT).shift(RIGHT * 0.12)
         p0.shift(UP * ((TOP + BOTTOM) / 2 + 0.2 - p0.get_center()[1]))
+        nums = {n: line_no(p0, n) for n in (7, 8, 9, 10, 13)}
+        assert all(m.get_left()[0] > bg0.get_left()[0] + 0.1 for m in nums.values())
         bar7 = p0.bar(7, TURN)
         bars89 = VGroup(p0.bar(8, TURN), p0.bar(9, TURN))
         # underlines hug the glyphs: the rows are tight, a lower line touches the next row's caps
@@ -384,10 +428,10 @@ class DockerShell(VoiceScene):
             self.play(FadeIn(tr), FadeIn(p0, shift=UP * 0.15), run_time=0.8)
             self.play(flash(p0.header, TOOL, 1.06), run_time=0.8)
             vo.wait_until("Line 7 names")
-            self.play(FadeIn(bar7), flash(p0.span(7, "IMAGE_NAME")), run_time=0.7)
+            self.play(FadeIn(bar7), FadeIn(nums[7]), flash(p0.span(7, "IMAGE_NAME")), run_time=0.7)
             self.play(FadeIn(t7, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("Lines 8 and 9")
-            self.play(FadeIn(bars89), run_time=0.5)
+            self.play(FadeIn(bars89), FadeIn(nums[8]), FadeIn(nums[9]), run_time=0.5)
             self.play(Create(pwd), run_time=0.6)
             vo.wait_until("the folder you're in")
             self.play(FadeIn(t8, shift=LEFT * 0.1), run_time=0.5)
@@ -401,22 +445,27 @@ class DockerShell(VoiceScene):
         t10.move_to([code_row(p0, 10).get_right()[0] - t10.width / 2,
                      bar10.get_bottom()[1] - 0.02 - t10.height / 2, 0])
         bar13 = p0.bar(13, CLOUD, 0.25)
+        assert c9.get_right()[0] < bg0.get_right()[0] - 0.1
         t13 = grey_tag("Docker Hub account")
         t13.next_to(code_row(p0, 13), RIGHT, buff=0.3).set_y(row_y(p0, 13))
+        # the tag is taller than a row: it also clears line 14's text, or it cuts the tops of "# Default mode"
+        t13.set_x(max(t13.get_center()[0], code_row(p0, 14).get_right()[0] + 0.3 + t13.width / 2))
+        assert t13.get_left()[0] > code_row(p0, 14).get_right()[0] + 0.2
         assert t10.get_bottom()[1] > t13.get_top()[1] + 0.02
         t14 = grey_tag("default")
         t14.next_to(code_row(p0, 14), RIGHT, buff=0.3).set_y(row_y(p0, 14))
         t14.set_x(max(t14.get_center()[0], t13.get_right()[0] + 0.25 + t14.width / 2))
         t14.set_y(min(row_y(p0, 14), bar13.get_bottom()[1] - 0.02 - t14.height / 2))   # clear of line 13's bar
         assert t14.get_bottom()[1] > p0.get_bottom()[1] + 0.05
+        assert t14.get_right()[0] < bg0.get_right()[0] - 0.1                            # inside the panel
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(c9, shift=LEFT * 0.15), flash(pwd, TURN, 1.05), run_time=0.7)
             vo.wait_until("Line 10 is")
-            self.play(FadeIn(bar10), flash(p0.span(10, "/secrets/mega-pipeline.json"), LOOKUP, 1.08),
-                      run_time=0.7)
+            self.play(FadeIn(bar10), FadeIn(nums[10]),
+                      flash(p0.span(10, "/secrets/mega-pipeline.json"), LOOKUP, 1.08), run_time=0.7)
             self.play(FadeIn(t10, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("line 13 names")
-            self.play(FadeIn(bar13), FadeIn(t13, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeIn(bar13), FadeIn(nums[13]), FadeIn(t13, shift=LEFT * 0.1), run_time=0.6)
             self.play(flash(p0.span(13, '"dlops"'), CLOUD, 1.15), run_time=0.6)
             self.play(FadeIn(t14, shift=LEFT * 0.1), run_time=0.5)
 
@@ -434,7 +483,7 @@ class DockerShell(VoiceScene):
                   "run": VGroup(*[p2.bar(n, TURN) for n in (36, 37, 38)])}
         with self.voiceover(SAY[2]) as vo:
             self.play(*[FadeOut(m) for m in notes0], run_time=0.3)
-            self.play(FadeTransform(p0, p2), run_time=0.9)
+            self.play(FadeTransform(p0, p2), FadeOut(VGroup(*nums.values())), run_time=0.9)
             self.play(flash(quote, TOOL, 1.3), run_time=0.6)
             ghost = quote.copy()
             self.add(ghost)
@@ -533,14 +582,23 @@ class DockerShell(VoiceScene):
             self.play(Transform(clock_l, exit_l), *v5.parts_out("ghost"), run_time=0.6)
 
         # ========================================================== 6 · cd, then ./docker-shell.sh
-        t = term(P_REPO, rows=13)
+        t = term(P_REPO, rows=12)                      # the 12 lines of this beat fill it; room above for notes
         q15 = mixed(["“", ("mono", "cd"), "into the", ("mono", "transcribe_audio"), "folder”"])
         q15[0].shift(RIGHT * 0.09)                     # the opening quote hugs `cd`, as the closing one does
         cap15 = VGroup(_header_text("transcribe_audio/README.md · line 15"), q15)
         cap15.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         cap15.move_to([BAND_X + cap15.width / 2, 3.1, 0])
+        # if the first run fails (README lines 220–226, narrated in beat 10): beside the tracker from
+        # "Pause and run it" until the terminal grows back in beat 8 (the band stays free in beat 7)
+        hint = VGroup(mixed(["Permission denied →", ("mono", "chmod +x docker-shell.sh"), "(step 5)"]),
+                      mixed(["Windows: Git BASH; “not a TTY” →", ("mono", "winpty"), "in front (step 6)"]))
+        hint.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        hint.move_to([BAND_X + hint.width / 2, BAND_Y, 0])
+        assert hint.get_right()[0] < 6.5 and hint.get_top()[1] < 3.58
+        assert hint.get_bottom()[1] > TOP + 0.05                  # clear of beat 7's pyproject panel
         pull = mixed(["first build: Docker also pulls", ("mono", "python:3.14-slim-bookworm")])
-        pull.move_to([BAND_X + pull.width / 2, BAND_Y, 0])
+        pull.move_to([BAND_X + pull.width / 2, hint.get_bottom()[1] - 0.12 - pull.height / 2, 0])
+        assert pull.get_bottom()[1] > t.box.get_top()[1] + 0.15
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(v5, p5, bar17)), FadeIn(t), run_time=0.7)
             type_cmd(self, t, CD_A, type_time=0.6)
@@ -566,14 +624,19 @@ class DockerShell(VoiceScene):
             vo.wait_until("a first build also pulls")
             self.play(FadeOut(cap15), FadeIn(pull, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("Pause and run it")
-            pin(self, ds, beside(your_turn(), t, ds), run_time=0.4)
+            yt = beside(your_turn(), t, ds)
+            pin(self, ds, yt, run_time=0.5,
+                anim=AnimationGroup(FadeIn(yt, shift=LEFT * 0.1), FadeIn(hint, shift=DOWN * 0.1)))
 
         # ========================================================== 7 · uv sync is quick: 3.14.8 inside >=3.14
         uv_row = rows[6]
         pp = src_panel(PYPROJECT, 6, 6)
-        pp.move_to([6.3 - pp.width / 2, 0, 0]).shift(UP * (TOP - pp.get_top()[1]))
+        # 0.1 under TOP (and the line 0.04 closer under it): its GREY header would otherwise read as
+        # a third row of the hint above it
+        pp.move_to([6.3 - pp.width / 2, 0, 0]).shift(UP * (TOP - 0.1 - pp.get_top()[1]))
+        assert pp.get_top()[1] < hint.get_bottom()[1] - 0.2
         vl = VersionLine(10, 16, lo=14, label_=False)
-        vl.move_to([0, 0, 0]).shift(UP * (pp.get_bottom()[1] - 0.78 - vl.axis.get_center()[1]))
+        vl.move_to([0, 0, 0]).shift(UP * (pp.get_bottom()[1] - 0.74 - vl.axis.get_center()[1]))
         dot = vl.dot(14.3, "3.14.8", SYSTEM)
         assert dot.text.get_top()[1] < pp.get_bottom()[1] - 0.02
         lg = log_panel([PLAIN], "the same build, full log · line 1427")
@@ -582,6 +645,7 @@ class DockerShell(VoiceScene):
         box148 = glyph_box(lg.rows[0], "3.14.8")
         rec = recorded_tag()
         rec.next_to(lg.header, RIGHT, buff=0.35).set_y(lg.header.get_center()[1] + 0.02)
+        assert vl.get_bottom()[1] > rec.get_top()[1] + 0.1 and dot.text.get_top()[1] < pp.get_bottom()[1] - 0.08
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(mode_box, u99, b2, box25, pull)), run_time=0.3)
             resize(self, t, 3, keep=[ds.rows[0], ds.rows[1], uv_row])
@@ -605,7 +669,7 @@ class DockerShell(VoiceScene):
 
         # ========================================================== 8 · inside: user app, /app, a new id each run
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(lg, box148, rec, pp, vl, dot)), run_time=0.4)
+            self.play(FadeOut(VGroup(lg, box148, rec, pp, vl, dot, hint)), run_time=0.4)
             resize(self, t, 13, run_time=0.6)
             t.print(self, C12.at(26, 27), run_time=0.4)
             self.play(*enter_container(t, "transcribe_audio"), run_time=0.6)
@@ -654,34 +718,39 @@ class DockerShell(VoiceScene):
             type_extra(self, t, C05.cmd)
             t.print(self, [(C05.line(2), LOOKUP)], run_time=0.3)
             vo.wait_until("and slash secrets is empty")
-            type_extra(self, t, C06.cmd)
+            cmd06 = type_extra(self, t, C06.cmd)
             ls_rows = t.print(self, LS_SEC, run_time=0.4)
             pin(self, ls_rows[0], beside(grey_tag("empty here · yours lists mega-pipeline.json"), t, ls_rows[0]),
                 run_time=0.4)
             vo.wait_until("In a second terminal")
-            resize(self, t, 3, run_time=0.6)
+            # the strip keeps the command with its key output (not just the last three rows)
+            resize(self, t, 3, keep=[cmd06, ls_rows[0], ls_rows[1]], run_time=0.6)
             t2 = second_terminal(self, p_comp("transcribe_audio"), rows=7, top=2.75)
             insp = type_rows(self, t2, INSPECT_ROWS, type_time=1.3)
-            pin(self, insp, fit_tag(t2, insp), run_time=0.25)
             cap14 = note("one command · copy it from the study guide")
             cap14.move_to([t2.box.get_left()[0] + 0.15 + cap14.width / 2,
                            (t2.box.get_bottom()[1] + t.box.get_top()[1]) / 2, 0])
+            tg14 = fit_tag(t2, insp)
+            # the caption comes with the command and stays while it is on screen (gone with the chmod)
+            pin(self, insp, tg14, run_time=0.4,
+                anim=AnimationGroup(FadeIn(tg14, shift=LEFT * 0.1), FadeIn(cap14, shift=UP * 0.1)))
             m_rows = t2.print(self, MOUNTS, run_time=0.5)
-            self.play(FadeIn(cap14), flash(substring(m_rows[0], "-> /app"), LOOKUP, 1.1),
+            self.play(flash(substring(m_rows[0], "-> /app"), LOOKUP, 1.1),
                       flash(substring(m_rows[1], "-> /secrets"), LOOKUP, 1.1), run_time=0.7)
 
         # ========================================================== 10 · chmod +x (harmless); winpty on Windows
         card226 = windows_card()
         card226.move_to([0, (TOP + STRIP_TOP) / 2 + 0.1, 0])
         with self.voiceover(SAY[10]) as vo:
-            self.play(FadeOut(cap14), run_time=0.3)
             tr = switch_section(self, tr, "R", 5, run_time=0.6)
             self.play(caption_extra(tr, True), run_time=0.3)
             type_extra(self, t2, C19.cmd)
             out19 = t2.print(self, [C19.line(2)], run_time=0.4)[0]
             rwx = glyph_box(out19, "-rwxr-xr-x", TURN)
             pin(self, out19, rwx, anim=Create(rwx))
-            self.play(caption_extra(tr, False), run_time=0.3)
+            # the chmod scrolls the folded docker inspect away: its caption leaves now, so it never
+            # sits under the chmod
+            self.play(caption_extra(tr, False), FadeOut(cap14), run_time=0.3)
             ch = type_cmd(self, t2, C20.cmd, type_time=0.6)
             bare_prompt(self, t2)
             done = fit_tag(t2, ch, "already executable · needed only if the bit got lost")

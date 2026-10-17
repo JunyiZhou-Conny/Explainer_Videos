@@ -1,10 +1,11 @@
 """S01 · A model that never read the book (cold open of AC215 L5). Lecture: A6–A11.
 
 Beats (script.md "## S01", one voiceover block each):
-0. Black frame, no tracker. A GREY chat box (browser frame, tag `illustration`) fades in centre;
-   the README's sample question `How is tolminc cheese made?` (cli.py:318, PINK, with a GREY note
-   "the README's sample question") types into its input field, a cursor blinks, and the BLUE "LLM"
-   box above it begins to answer: four gray placeholder bars stream out (no words).
+0. Black frame, no tracker. A GREY chat box (browser frame, tag `illustration`) fades in centre,
+   a cursor blinking in its empty field; the BLUE "LLM" box drops in above it as "a language model"
+   is said. The README's sample question `How is tolminc cheese made?` (cli.py:318, PINK, with a
+   GREY note "the README's sample question") types into the field, the cursor blinks, and the LLM
+   box begins to answer: four gray placeholder bars stream out (no words).
 1. The chat box shrinks to the upper left (the LLM box moves to the upper right). A shelf of eleven
    GREEN spines slides in along the bottom; ten carry a GREY "Project Gutenberg" label, the
    eleventh (thin: a short story) glows YELLOW and opens into CODE(Tolminc Cheese.txt: 3–4),
@@ -27,16 +28,18 @@ Beats (script.md "## S01", one voiceover block each):
    redrawing"); it dims, and four YELLOW questions write in over it, each with a short arrow into
    the blur: "What is an embedding?", "a vector database?", "a query?", "the context?".
 5. A GREY file row `llm-rag/README.md` "beside this video" turns into the ReadmeTracker. Layout
-   preview in three steps, each clearing the last: the tracker ("README › Run Container", 3 dots)
-   in a pulsing YELLOW ring; the GREY tag "Lecture 5 · slides A16–A19" with the
-   caption "A = main deck · B = supplement"; a 3-row terminal strip (GREY tag "preview"):
+   preview in three steps, each clearing the last: the tracker ("README › Run Container", 3 dots),
+   a YELLOW pointer on its step while the lit dot pulses (the tracker sits at the safe-frame corner,
+   so a ring around it would touch its text); the pointer swings to the GREY tag "Lecture 5 · slides
+   A16–A19" with the caption "A = main deck · B = supplement"; a 3-row terminal strip (GREY tag
+   "preview"):
    `sh docker-shell.sh` + ▶ your turn, then `docker ps` + extra. Then the caption "every command:
    MLOps_Learning · guides/L05-rag.md".
 6. A card "Recorded October 16, 2026": "Docker, chunking, Chroma: real runs" (GREEN check),
    "embeddings: the staff's recorded vectors" (tag recorded), "Google calls: the command, the real
    no-key error, what to look for" (GREY key glyph crossed out); under it a GREY chip "Linux laptop ·
    Docker Engine 29.8.2 · Compose v5.6.0" (laptop/00 lines 3–5) with "at the time of recording".
-   Everything fades to an empty frame.
+   The three parts of the Google row light YELLOW as named. Everything fades to an empty frame.
 """
 
 import numpy as np
@@ -105,6 +108,7 @@ from manim import (
     RoundedRectangle,
     ShowIncreasingSubsets,
     ShowPassingFlash,
+    Transform,
     VGroup,
     VMobject,
     Write,
@@ -315,7 +319,7 @@ class Hook(VoiceScene):
         q = mono(QUESTION, 25, LOOKUP)
         q.move_to(win.field).align_to(win.field, LEFT).shift(RIGHT * 0.22)
         cur = Rectangle(width=0.04, height=0.36, stroke_width=0).set_fill(INK, 1)
-        cur.next_to(q, RIGHT, buff=0.07)
+        cur.move_to(q.get_left() + RIGHT * 0.02)              # waiting in the empty field
         bars = stream_bars(win.answer.width - 0.2).move_to(win.answer).align_to(win.answer, LEFT) \
             .shift(RIGHT * 0.1)
         llm = model_box("LLM", 1.7, 1.0, size=26).move_to([0, 2.6, 0])
@@ -325,9 +329,17 @@ class Hook(VoiceScene):
         sample = note("the README's sample question").next_to(win.frame, DOWN, buff=0.2)
 
         with self.voiceover(SAY[0]) as vo:
-            self.play(FadeIn(win), FadeIn(ill), FadeIn(llm, shift=DOWN * 0.2), run_time=0.8)
+            self.play(FadeIn(win), FadeIn(ill), run_time=0.8)
+            self.add(cur)
+            for _ in range(2):
+                self.play(cur.animate.set_opacity(0), run_time=0.2)
+                self.play(cur.animate.set_opacity(1), run_time=0.2)
+            vo.wait_until("asks a language model")
+            self.play(FadeIn(llm, shift=DOWN * 0.3), run_time=0.6)
             vo.wait_until("how is Tolminc")
+            self.remove(cur)
             self.play(ShowIncreasingSubsets(q, rate_func=linear), run_time=1.3)
+            cur.next_to(q, RIGHT, buff=0.07)
             self.add(cur)
             self.play(FadeIn(sample, shift=UP * 0.1), run_time=0.4)
             for _ in range(2):
@@ -553,12 +565,16 @@ class Hook(VoiceScene):
         tr = tracker("Run", 3)
         readme = VGroup(file_row("llm-rag/README.md", size=26), note("beside this video", size=24))
         readme.arrange(DOWN, buff=0.25).move_to([0, 0.4, 0])
-        rx0, ry0 = -6.58, 3.58                                 # the ring stays inside the safe frame
-        rx1, ry1 = tr.get_right()[0] + 0.18, tr.get_bottom()[1] - 0.14
-        ring_ = RoundedRectangle(width=rx1 - rx0, height=ry0 - ry1, corner_radius=0.12, stroke_color=TURN,
-                                 stroke_width=3).move_to([(rx0 + rx1) / 2, (ry0 + ry1) / 2, 0])
+        # a YELLOW pointer (the tracker sits at the safe-frame corner: no room for a ring around it);
+        # it swings from the tracker's step to the lecture tag
         lr5 = lref("A16–A19")
         decks = note("A = main deck · B = supplement").next_to(lr5, DOWN, buff=0.15).align_to(lr5, RIGHT)
+        aim = tr.caption.get_bottom() + DOWN * 0.17
+        ptr = Arrow(aim + np.array([2.1, -1.35, 0]), aim, buff=0, color=TURN, stroke_width=6,
+                    max_tip_length_to_length_ratio=0.18)
+        aim_r = lr5.get_left() + LEFT * 0.1
+        ptr_r = Arrow(aim_r + np.array([-2.5, -0.8, 0]), aim_r, buff=0, color=TURN, stroke_width=6,
+                      max_tip_length_to_length_ratio=0.18)
         t5 = term(P_REPO, rows=3)
         prev = grey_tag("preview").next_to(t5.box, UP, buff=0.12).align_to(t5.box, RIGHT).shift(LEFT * 0.2)
         foot = VGroup(label("every command:", 24, S.GREY), mono(GUIDE, 22, S.GREY)).arrange(RIGHT, buff=0.25)
@@ -570,17 +586,20 @@ class Hook(VoiceScene):
             vo.wait_until("Top left, the tracker")
             self.play(FadeTransform(readme, tr), run_time=0.7)
             self.remove(readme)
-            self.play(Create(ring_), run_time=0.4)
+            self.play(GrowArrow(ptr), run_time=0.5)
+            lit = tr.dots[tr.k - 1]
             for _ in range(2):
-                self.play(ring_.animate(rate_func=there_and_back).set_stroke(width=7), run_time=0.5)
+                self.play(lit.animate(rate_func=there_and_back).scale(1.4),
+                          ptr.animate(rate_func=there_and_back).shift((aim - ptr.get_start()) * 0.06),
+                          run_time=0.5)
             vo.wait_until("top right, the gray tag")
-            self.play(FadeOut(tr), FadeOut(ring_), FadeIn(lr5), run_time=0.5)
-            self.remove(tr, ring_)
+            self.play(FadeOut(tr), Transform(ptr, ptr_r), FadeIn(lr5), run_time=0.6)
+            self.remove(tr)
             self.play(FadeIn(decks, shift=DOWN * 0.1), run_time=0.5)
             self.play(lr5.box.animate(rate_func=there_and_back).set_stroke(TURN, 5), run_time=0.8)
             vo.wait_until("When the yellow")
-            self.play(FadeOut(VGroup(lr5, decks)), FadeIn(t5), FadeIn(prev), run_time=0.5)
-            self.remove(lr5, decks)
+            self.play(FadeOut(VGroup(lr5, decks, ptr)), FadeIn(t5), FadeIn(prev), run_time=0.5)
+            self.remove(lr5, decks, ptr)
             ln = type_cmd(self, t5, RUN.cmd, type_time=0.8)
             yt = pin(self, ln, beside(your_turn(), t5, ln))
             vo.wait_until("pause and run")
@@ -612,7 +631,15 @@ class Hook(VoiceScene):
         envg = VGroup(env, at_rec).arrange(RIGHT, buff=0.3).next_to(card, DOWN, buff=0.45)
         whole = VGroup(card, body, tick, rec, kg, kx, envg)
         whole.shift(UP * (0.15 - whole.get_center()[1]))           # card and chip centred together
-        look = rows[2][-len("whattolookfor"):]                 # "what to look for" (glyphs: no spaces)
+        assert len(rows[2]) == len("".join(ROWS6[2].split())), "one glyph per non-space character"
+
+        def part(i: int, sub: str) -> VGroup:
+            """The glyphs of `sub` in row i (Text glyphs skip spaces)."""
+            s = ROWS6[i]
+            a = len("".join(s[:s.index(sub)].split()))
+            return VGroup(*rows[i].submobjects[a:a + len("".join(sub.split()))])
+
+        looks = [part(2, s) for s in ("the command", "the real no-key error", "what to look for")]
 
         with self.voiceover(SAY[6]) as vo:
             clear_stage(self, run_time=0.5)
@@ -624,7 +651,8 @@ class Hook(VoiceScene):
             self.play(FadeIn(rows[1], shift=RIGHT * 0.15), FadeIn(rec, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("Where the code calls")
             self.play(FadeIn(kg), Create(kx), FadeIn(rows[2], shift=RIGHT * 0.15), run_time=0.7)
-            vo.wait_until("and what to look for")
-            self.play(Indicate(look, color=TURN, scale_factor=1.06), run_time=0.8)
+            for lk, a in zip(looks, ["you see the command", "the real error", "and what to look for"]):
+                vo.wait_until(a)
+                self.play(Indicate(lk, color=TURN, scale_factor=1.06), run_time=0.7)
 
         clear_stage(self, run_time=0.8)

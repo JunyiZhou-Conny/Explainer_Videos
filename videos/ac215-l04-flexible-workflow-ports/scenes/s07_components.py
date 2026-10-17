@@ -50,7 +50,8 @@ Beats (script.md "## S07", one voiceover block each):
  9  TRACKER QC/1 · extra. A second terminal (4 rows) opens on ~ (flashing YELLOW, "new terminal:
     cd here first", ~1.2 s), and that prompt becomes …/synthesis_audio_en$ (a transform). Title-bar
     icons: cli.py (laptop) and /app/cli.py (container). A pencil edits cli.py ("in your editor"):
-    both icons blink at the same instant; `git diff cli.py` (extra) -> 41 lines 16–17. The TEAL
+    both icons blink at the same instant; `git diff cli.py` (extra) -> 41 lines …, 16–17, the "…"
+    row with the GREY note "gcp_project and bucket_name edited too" (lines 10–13). The TEAL
     terminal: `python cli.py --help` -> mega-synthesis_audio_en/02 lines 2–4, …, 55 (wrapped):
     line 3 YELLOW. The second terminal gives way to CODE(cli.py: 23) as a one-line chip (line
     barred YELLOW, tag "runs on import"); line 55 flashes RED; the terminal shrinks to the strip.
@@ -77,9 +78,10 @@ Beats (script.md "## S07", one voiceover block each):
     cli.py: 48–49) (comment cut) with fr-FR BLUE; GREEN fix chip target_language="fr" + GREY tag
     "you set it in Before you run, step 2" (pulses on "that's why you switched it"). Card 2
     (erratum): GREY caption "optional ElevenLabs bonus: cli_11.py looks for its key file inside
-    /app" (/app flashes RED on "reads its key from inside") and the GREEN fix chip (header
-    synthesis_audio/cli_11.py · line 30). Each card's frame grows as its parts arrive. No ▶. A
-    1.2 s hold, then fade out to an empty frame.
+    /app" over CODE(synthesis_audio/cli_11.py: 30), the real line; on "reads its key from inside"
+    its 'secrets/ turns RED, underlined, then /app flashes RED; on "point it at slash secrets" the
+    GREEN fix chip (no file header) + GREY tag "add a leading /". Each card's frame grows as its
+    parts arrive. No ▶. A 1.5 s hold, then fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - Beat 0: the tag "recorded without a key" is pinned beside the error's second row (the only row
@@ -100,7 +102,11 @@ Deviations from SHOW (and why):
   /app/cli.py) that blink together. The second terminal is 4 rows (prompt, the command under
   it, the two diff lines) so the TEAL terminal keeps 7 rows for the help command and its whole
   output; the second terminal stays until "the Google client" and the line-23 chip
-  takes its place (the diff stays readable while help is typed).
+  takes its place (the diff stays readable while help is typed). The diff prints "…" before lines
+  16–17 (lines 2–15 cut) with a GREY note naming the hidden edits (lines 10–13: gcp_project and
+  bucket_name), so the 4-row terminal scrolls its prompt row away as the diff prints (the folder
+  prompt was on screen from the cd-here caption to the edit); script.md SHOW still says
+  TERM(41: 16–17).
 - Beat 10: the expected panel shows while download and synthesis are typed; the Text-to-Speech
   picture replaces it on "There's no upload step". The picture adds a PINK request arrow from
   the strip (where `--synthesis` was typed) to the door, so "straight into your bucket" reads as
@@ -115,10 +121,13 @@ Deviations from SHOW (and why):
   Card 1's fix chip comes right after the French lines (not on "that's why you switched it",
   where it pulses), so it is readable ~2.3 s before card 2 takes over at the bonus sentence's
   start.
+- Beat 13: card 2 quotes the real line 30 (src_panel, relative 'secrets/ RED) and puts the GREEN fix
+  under it with a GREY tag instead of a file header (a header over the corrected line read as a
+  quote of line 30); script.md SHOW still gives the fix chip the header.
 """
 
 from common import *
-from common import _drop_bare, _header_text, _row_of, _save_op, _set_op
+from common import _drop_bare, _row_of, _save_op, _set_op
 from manim import (
     DOWN,
     LEFT,
@@ -881,8 +890,13 @@ class RunComponents(VoiceScene):
                       flash(ic_ctr, TURN, 1.3), run_time=0.6)
             gd = type_cmd(self, t2, C41.cmd, type_time=0.35)
             note_with(self, t2, gd, extra_tag(), FadeOut(VGroup(pen, ed)), run_time=0.25)
-            t2.print(self, [(C41.line(16), S.GREY), (C41.line(17), INK)], run_time=0.3)
-            assert len(t2.lines) == 4
+            # lines 2-15 are cut ("…" first); the note names what the cut hides (lines 10-13: the
+            # other two values were edited too). The 4-row terminal scrolls its prompt row away.
+            quick_scroll(t2, 0.25)
+            d9 = t2.print(self, C41.at("") + [(C41.line(16), S.GREY), (C41.line(17), INK)], run_time=0.35)
+            assert len(t2.lines) == 4 and t2.lines[0] is gd.rows[-1]
+            also = mixed([("mono", "gcp_project"), "and", ("mono", "bucket_name"), "edited too"], CAPTION, S.GREY)
+            note_with(self, t2, d9[0], also, run_time=0.3)
             vo.wait_until("Now help fails")
             hl = type_cmd(self, t, CC2.cmd, type_time=0.4)
             o9 = t.print(self, CC2.at((2, 4), "") + [(ERR_LINE, ERR)], wrap=True, run_time=0.5)
@@ -1011,17 +1025,23 @@ class RunComponents(VoiceScene):
         u_fr = VGroup(*[under(m, CLOUD) for m in fr])
         cap2 = mixed(["optional ElevenLabs bonus:", ("mono", "cli_11.py", INK), "looks for its key file inside",
                       ("mono", "/app", INK)], CAPTION, S.GREY)
+        # the real line 30 (relative path, RED), then the fix under it with no file header (as card 1)
+        p30 = src_panel(SY11, 30, 30)
+        rel = p30.span(30, "'secrets/")
         fix2 = fix_chip(FIX11, font=MONO)
-        h2 = _header_text("synthesis_audio/cli_11.py · line 30")
-        fx2 = VGroup(h2, fix2).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
-        body2 = VGroup(cap2, fx2).arrange(DOWN, aligned_edge=LEFT, buff=0.45)
+        why2 = grey_tag("add a leading /")
+        fx2 = VGroup(fix2, why2).arrange(RIGHT, buff=0.3)
+        body2 = VGroup(cap2, p30, fx2).arrange(DOWN, aligned_edge=LEFT, buff=0.45)
         card2b = framed(body2, pad_x=0.35, pad_y=0.3)
         card2b.move_to([0, (TOP + BOTTOM) / 2 + 0.2, 0])
+        assert card2b.get_left()[0] > -6.6 and card2b.get_right()[0] < 6.6
+        u_rel = under(rel, ERR)                           # after the move (it is not in the card)
         et2 = erratum_tag().move_to(card2b.frame.get_corner(UP + RIGHT)).shift(LEFT * 0.9)
         # each card's frame first holds only what is in it, and grows as the rest arrives
         f1 = box(card1.frame.width, p64.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14, stroke=2)
         f1.align_to(card1.frame, UP).align_to(card1.frame, LEFT)
-        f2 = box(card2b.frame.width, cap2.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14, stroke=2)
+        f2 = box(card2b.frame.width, VGroup(cap2, p30).height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95,
+                 radius=0.14, stroke=2)
         f2.align_to(card2b.frame, UP).align_to(card2b.frame, LEFT)
         app2 = cap2[3]                                    # "/app"
         with self.voiceover(SAY[13]) as vo:
@@ -1038,13 +1058,16 @@ class RunComponents(VoiceScene):
             self.play(pulse(fix1, 1.1), run_time=0.6)
             vo.wait_until("And the optional ElevenLabs bonus")
             self.play(FadeOut(VGroup(f1, p64, p48, fx1, et1, u_es, u_fr)), run_time=0.4)
-            self.play(FadeIn(f2), FadeIn(et2), FadeIn(cap2, shift=DOWN * 0.1), run_time=0.5)
+            self.play(FadeIn(f2), FadeIn(et2), FadeIn(cap2, shift=DOWN * 0.1), FadeIn(p30, shift=DOWN * 0.1),
+                      run_time=0.5)
             vo.wait_until("reads its key from inside")
-            self.play(Indicate(app2, color=ERR, scale_factor=1.25), run_time=0.8)
+            self.play(rel.animate.set_color(ERR), Create(u_rel), run_time=0.5)
+            self.play(Indicate(app2, color=ERR, scale_factor=1.25), run_time=0.7)
             vo.wait_until("point it at slash secrets")
-            self.play(Transform(f2, card2b.frame.copy()), FadeIn(fx2, shift=UP * 0.1), run_time=0.5)
+            self.play(Transform(f2, card2b.frame.copy()), FadeIn(fix2, shift=UP * 0.1),
+                      FadeIn(why2, shift=LEFT * 0.1), run_time=0.5)
             self.play(flash(substring_text(fix2.text, FIX11, "/secrets/"), VENV, 1.15), run_time=0.7)
-        self.wait(1.2)                    # the fix stays readable a moment
+        self.wait(1.5)                    # the line and its fix stay readable a moment
         self.play(FadeOut(*self.mobjects), run_time=0.8)
         self.wait(0.3)
 
