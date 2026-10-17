@@ -36,9 +36,10 @@ Beats (script.md "## S08", one voiceover block each):
     `extra` in one column), each output turning GREEN as it is said (`/.venv/bin/python`,
     `Python 3.15.0`, `/.venv`). "The fresh bash set its own prompt": GREY tag "not an error" after
     "no (app)". "The lecture's run command" (the bridge, SLIDES.md Conflict 1): GREY
-    `Lecture 2 · slides 64, 75` (lecture_ref, top right, over the 12-row terminal's top edge); the
-    three GREEN outputs pulse on "and the venv with it". "Then type exit": the tag goes, `exit`
-    (line 8) -> line 9; the laptop prompt returns and pulses YELLOW on "back to your laptop".
+    `Lecture 2 · slides 64, 75` (lecture_ref, top right, over the 12-row terminal's top edge), then
+    the `docker run` command pulses YELLOW; the three GREEN outputs pulse on "and the venv with it".
+    "Then type exit": the tag goes, `exit` (line 8) -> line 9; the laptop prompt returns and pulses
+    YELLOW on "back to your laptop".
  5  TRACKER A12. The terminal clears to the laptop prompt and shrinks to the 3-row strip; the
     README card (`README.md · lines 167-168`: "Solution Dockerfile:" / `Dockerfile.txt`, 26 pt)
     appears above it; once it lands, GREY `Lecture 2 · slides 57` (lecture_ref, top right, until
@@ -510,6 +511,10 @@ class StepCmd(VoiceScene):
             lref4 = lecture_ref(2, "64, 75")                 # top right, over the terminal's top edge
             assert lref4.get_bottom()[1] > t.get_top()[1] + 0.1, (lref4.get_bottom(), t.get_top())
             self.play(FadeIn(lref4), run_time=0.5)
+            # our run command pulses as "run command" is said (the lecture's adds a flag to it); without
+            # it nothing would move for ~4.5 s until "and the venv with it"
+            run4 = VGroup(substring(c4.rows[0], "docker run --rm"), substring(c4.rows[1], "-ti simple-translate"))
+            self.play(Indicate(run4, color=TURN, scale_factor=1.04), run_time=0.7)
             vo.wait_until("and the venv with it")
             self.play(*[Indicate(o.glyphs, color=TURN, scale_factor=1.08) for _, _, o in checks], run_time=0.8)
             vo.wait_until("Then type exit")

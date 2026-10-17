@@ -26,8 +26,10 @@ Beats (script.md "## S10", one voiceover block each):
     for COPY, its words moving left of it, the ORANGE apt/pip slab); the three sizes are copied up
     from the strip beside their slabs, while the TEAL config card at the right ("config · 0B, no
     layer") lists the 0B rows (three ENV, ENTRYPOINT, CMD, abbreviated); its title pulses on "config
-    only"; then part 1's slab name `RUN pip install uv` becomes `RUN apt…uv` (S11's name) as the
-    strip's `apt-get update` pulses; a short hold to read it.
+    only"; then the ORANGE slab's name `RUN apt…uv` (S11's name, as in S09's recap) pulses with the
+    strip's `apt-get update`; a short hold to read it. GREY `Lecture 2 · slides 34–37, 59`
+    (lecture_ref) from "Then docker history" through beat 2 (the history and the stack), left of the
+    corner glyph (the glyph blocks the standard spot); it goes with the picture at beat 3.
  2  The picture parks again; the terminal grows back and continues -> laptop/34 "…", lines 14-23
     (rows 11-13 never printed; it scrolls). Row 23 (`debian.sh … 'bookworm'`, `85.3MB`) ORANGE bar on
     "Debian", row 22 (`ENV PATH=/usr/local/bin:…`) PINK bar on "the PATH". The terminal shrinks to
@@ -72,6 +74,7 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
+from explainer.devops import lecture_ref
 from explainer.scene import VoiceScene
 
 from common import (IMAGE, IMAGE_LS, INK, LAPTOP, LAPTOP_DIR, CLOUD, NARRATION, OUTPUT, P_LAPTOP,
@@ -115,8 +118,8 @@ UV_DIR = "/root/.local/share/uv/python"
 # ------------------------------------------------------------------ the picture's values
 ENT = '["/bin/bash"]'                                      # S09's card tiles
 CMD_IMG = '["-c", "source … && exec bash"]'
-TEXTS_S09 = [None] * 4 + ["RUN pip install uv", "COPY . ./", "RUN uv sync"]   # part 1's picture (S09)
 TEXTS = [None] * 4 + ["RUN apt…uv", "COPY . ./", "RUN uv sync"]   # the solution's apt+pip step (S11: [2/4] RUN apt…uv)
+TEXTS_S09 = TEXTS                                        # part 1's picture: S09's recap names it the same
 FILLS = [SYSTEM] * 4 + [SYSTEM, LAPTOP, VENV]
 H_S09 = [0.15] * 4 + [0.46, 0.46, 0.8]                   # part 1's stack (S09's recap)
 TOP_MB = [97.5, 0.25, 125.0]                             # rows 7, 6, 5
@@ -152,7 +155,7 @@ def lead(vo, phrase: str, early: float) -> None:
 
 def make_stack(x: float, floor_y: float, heights, texts=TEXTS):
     """The V2 stack with these slab heights (bottom-up): four unlabelled ORANGE base slabs, then
-    `RUN apt…uv` (part 1's `RUN pip install uv` with texts=TEXTS_S09), `COPY . ./`, `RUN uv sync`; a
+    `RUN apt…uv` (as in S09's recap: TEXTS_S09 == TEXTS), `COPY . ./`, `RUN uv sync`; a
     slab too thin for its words has them just left of the stack (as LayerStack.restack does). Not
     added. -> (stack, slabs, base brace)"""
     st = LayerStack(stack_w=STACK_W)
@@ -193,6 +196,20 @@ def thumb(heights) -> VGroup:
         g.add(r.move_to([THUMB_X, y + hh / 2, 0]))
         y += hh + 0.015
     return g
+
+
+def via_below(drop_first: bool, dy: float = 0.8):
+    """A path_func for the corner glyph's moves while the lecture tag sits just left of it: straight,
+    but through the glyph's spot `dy` lower, so the moving stack passes under the tag, never over it.
+    drop_first: the glyph drops out of the corner first (unpark); else it rises into it last (park)."""
+    k = 0.25 if drop_first else 0.75
+
+    def f(p0, p1, a):
+        mid = (p0 if drop_first else p1) + DOWN * dy
+        if a < k:
+            return p0 + (mid - p0) * (a / k)
+        return mid + (p1 - mid) * ((a - k) / (1 - k))
+    return f
 
 
 def boxes_of(slabs) -> VGroup:
@@ -322,23 +339,23 @@ def widen(scene, t, rows: int, prompt: str, run_time: float = 0.7, keep: int | N
 
 # ------------------------------------------------------------------ the scene
 class InsideTheImage(VoiceScene):
-    def park(self, st, slabs, *extra, run_time: float = 0.6) -> VGroup:
-        """The stack's slabs shrink into the corner glyph (its words, braces and `extra` fade); the stack
-        leaves the scene. Returns the glyph."""
+    def park(self, st, slabs, *extra, run_time: float = 0.6, also=(), path_func=None) -> VGroup:
+        """The stack's slabs shrink into the corner glyph (its words, braces and `extra` fade), with
+        `also`; the stack leaves the scene. Returns the glyph."""
         glyph = thumb([s.box.height for s in slabs])
         ghost = boxes_of(slabs)
         self.add(ghost)
-        self.play(ReplacementTransform(ghost, glyph), FadeOut(words(slabs)), *[FadeOut(m) for m in extra],
-                  run_time=run_time)
+        self.play(ReplacementTransform(ghost, glyph, path_func=path_func), FadeOut(words(slabs)),
+                  *[FadeOut(m) for m in extra], *also, run_time=run_time)
         self.unstack(st)
         return glyph
 
-    def unpark(self, glyph, st, slabs, *extra, run_time: float = 0.6, also=()) -> None:
+    def unpark(self, glyph, st, slabs, *extra, run_time: float = 0.6, also=(), path_func=None) -> None:
         """The corner glyph grows back into stack `st` (its words and `extra` fade in), with `also`."""
         ghost = boxes_of(slabs)
         ws = words(slabs)
         ex = VGroup(*extra)
-        self.play(ReplacementTransform(glyph, ghost), *also, run_time=run_time)
+        self.play(ReplacementTransform(glyph, ghost, path_func=path_func), *also, run_time=run_time)
         self.play(FadeIn(ws), FadeIn(ex), run_time=0.3)
         self.remove(ghost, ws, ex)
         self.add(st, *extra)
@@ -435,13 +452,23 @@ class InsideTheImage(VoiceScene):
         self.wait(1.0)                       # disk = content + the unpacked copy: a moment to look
 
         # ========================================================== 1 · docker history: our three layers
-        st2, slabs2, br2 = make_stack(SX, SFLOOR, H_S09, TEXTS_S09)           # renamed below
+        st2, slabs2, br2 = make_stack(SX, SFLOOR, H_S09, TEXTS_S09)
         _, top2, _ = make_stack(SX, SFLOOR, H_TOP)                     # where the slabs land (layout only)
         card = config_list()
         card.move_to([6.3 - card.width / 2, 0.45, 0])
+        # the parked glyph holds the top-right spot: the tag sits just left of it, centred on it, through
+        # beat 2 (it stays when the glyph leaves; beat 2's glyph has the same left edge)
+        lref = lecture_ref(2, "34–37, 59")
+        g_at = thumb([s.box.height for s in slabs1])
+        lref.move_to([g_at.get_left()[0] - 0.12 - lref.width / 2, g_at.get_center()[1], 0])
+        assert lref.get_left()[0] > tr.caption.get_right()[0] + 0.1, (lref.get_left(), tr.caption.get_right())
+        t12 = laptop_term(12).get_top()[1]                           # the 12-row terminal of beats 1-2
+        assert lref.get_bottom()[1] > t12 + 0.1, (lref.get_bottom(), t12)
 
         with self.voiceover(SAY[1]) as vo:
-            g = self.park(st1, slabs1, br1, bundle, b_label, both, disk)
+            vo.wait_until("Then docker history")
+            g = self.park(st1, slabs1, br1, bundle, b_label, both, disk, also=[FadeIn(lref, shift=LEFT * 0.1)],
+                          path_func=via_below(False))
             resize(self, t, 12, run_time=0.7)
             c_h = type_cmd(self, t, HISTORY, 0.9)                    # folds: 66 characters with the prompt
             c_h_last = c_h.rows[-1] if hasattr(c_h, "rows") else c_h
@@ -480,16 +507,16 @@ class InsideTheImage(VoiceScene):
             attach(self, R[9], co2)
             lead(vo, "config only", 2.5)     # the card's rows land on "zero bytes: config only"
             resize(self, t, STRIP_ROWS, keep=[R[5], R[6], R[7]], run_time=0.7)
-            self.unpark(g, st2, slabs2, br2, also=[FadeIn(card.frame), FadeIn(card.title, shift=UP * 0.1)])
+            self.unpark(g, st2, slabs2, br2, also=[FadeIn(card.frame), FadeIn(card.title, shift=UP * 0.1)],
+                        path_func=via_below(True))
             sizes2 = [size_at(s, top2[4 + i], c) for i, (s, c) in
                       enumerate(zip(TOP_SIZES, (SYSTEM, LAPTOP, VENV)))]
             src = [substring(R[n], SIZE[n]) for n in (7, 6, 5)]
             self.play(*st2.restack(H_TOP), *[TransformFromCopy(a, b) for a, b in zip(src, sizes2)],
                       LaggedStart(*[FadeIn(r, shift=RIGHT * 0.1) for r in card.rows], lag_ratio=0.2), run_time=1.1)
             self.play(Indicate(card.title, color=IMAGE, scale_factor=1.12), run_time=0.7)
-            apt = slabs2[4].text                                     # part 1's name -> the real step's
-            g_apt = substring(R[7], "apt-get update")
-            self.play(Transform(apt, top2[4].text.copy().move_to(apt)),
+            g_apt = substring(R[7], "apt-get update")               # the slab's name is this step's
+            self.play(Indicate(slabs2[4].text, color=SYSTEM, scale_factor=1.1),
                       Indicate(g_apt, color=SYSTEM, scale_factor=1.15), run_time=0.8)
             self.add(R[7])
         self.wait(1.0)                       # the card: a moment to read it
@@ -504,7 +531,7 @@ class InsideTheImage(VoiceScene):
         assert len(unz[0]) == len(lst[2]) + len("download"), (len(unz[0]), len(lst[2]))   # glyphs, no spaces
 
         with self.voiceover(SAY[2]) as vo:
-            g = self.park(st2, slabs2, br2, card, *sizes2)
+            g = self.park(st2, slabs2, br2, card, *sizes2, path_func=via_below(False))
             resize(self, t, 12, run_time=0.7)
             rows2 = t.print(self, ["…"] + [H[n] for n in range(14, 24)], run_time=0.8, lag=0.06)
             R2 = dict(zip(range(14, 24), rows2[1:]))
@@ -520,7 +547,8 @@ class InsideTheImage(VoiceScene):
                 self.add(R2[n])
                 if k == 1:          # the strip keeps rows 18, 22, 23; Python is marked there
                     resize(self, t, STRIP_ROWS, keep=[R2[18], R2[22], R2[23]], run_time=0.7)
-                    self.unpark(g, st3, slabs3, br3, *sizes3, also=[FadeIn(lst, shift=LEFT * 0.15)])
+                    self.unpark(g, st3, slabs3, br3, *sizes3, also=[FadeIn(lst, shift=LEFT * 0.15)],
+                                path_func=via_below(True))
             base_lab = []
             _, full, _ = make_stack(SX, SFLOOR, H_ALL)
             unz.move_to([size_at(BASE_SIZES[0], full[0], SYSTEM).get_right()[0] + 0.5 + unz.width / 2,
@@ -552,7 +580,7 @@ class InsideTheImage(VoiceScene):
         picture3 = VGroup(*slabs3, br3, *sizes3, *base_lab, unz)
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(picture3), run_time=0.5)
+            self.play(FadeOut(picture3), FadeOut(lref), run_time=0.5)      # the history's picture goes
             self.unstack(st3)
             # the wide terminal now (13 rows): the run line fits one row, and a row is left for the tag
             w = widen(self, t, 13, P_LAPTOP, keep=0)

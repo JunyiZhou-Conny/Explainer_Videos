@@ -174,6 +174,15 @@ assert NAMES.cmd.startswith("curl -s http://localhost:8000/api/v2/tenants/") and
 assert NAMES.at((2, 5)) == ['"name":"char-split-collection"', '"dimension":256',
                             '"name":"recursive-split-collection"', '"dimension":256'], NAMES.lines
 
+# the curl line folds at spaces, and once inside its URL at a "/" with no space before the "\" and
+# no indent after it (bash joins backslash-newline, so the URL stays one word)
+_u = NAMES.cmd.split()
+assert _u[:2] == ["curl", "-s"] and _u[3:6] == ["|", "grep", "-oE"] and len(_u) == 7, _u
+_cut = _u[2].index("/databases")
+CURL_ROWS = [f"{P_REPO} curl -s \\", f"    {_u[2][:_cut]}\\", f"{_u[2][_cut:]} | grep -oE \\", f"    {_u[6]}"]
+_joined = "\n".join(CURL_ROWS)[len(P_REPO) + 1:].replace("\\\n", "")
+assert " ".join(_joined.split()) == NAMES.cmd and all(len(r) <= 65 for r in CURL_ROWS), CURL_ROWS
+
 GET = capture("70", "cli-container")
 GET_BEFORE = capture("05", "recorded-embeddings")
 assert GET.cmd == GET_BEFORE.cmd == "python cli.py --get --chunk_type char-split"
@@ -283,12 +292,12 @@ def compact_v2() -> SimpleNamespace:
     hb = box(2.9, 1.3, CTR, fill_opacity=0.08, radius=0.16, stroke=3).move_to([2.05, Y0 + 2.18, 0])
     ht = left_at(sans("Chroma container", CAPTION, CTR), hb.get_left()[0] + 0.15, hb.get_top()[1] - 0.25)
     w_data = ComposeView._window("/data", w=1.05, h=0.46).move_to([1.3, Y0 + 1.92, 0])
-    cyl = cylinder(0.6, 0.6).move_to([3.1, Y0 + 2.04, 0])
+    cyl = cylinder(0.6, 0.6).move_to([3.15, Y0 + 2.12, 0])
     c.chroma = VGroup(hb, ht, w_data, cyl)
     c.name = mono("llm-rag-chromadb", CAPTION, CTR).move_to([2.05, hb.get_top()[1] + 0.2, 0])
     pc = chip(":8000", CTR, size=CAPTION, font="DejaVu Sans Mono", fill_opacity=0.9)
     pc.box.set_fill(ManimColorMix(CTR, 0.15), 1)
-    c.port_chip = pc.move_to([2.55, hb.get_bottom()[1] - 0.04, 0])
+    c.port_chip = pc.move_to([2.45, hb.get_bottom()[1] - 0.04, 0])
 
     # the rail (its name at its right end), the plugs
     rail_y = Y0 + 1.22
@@ -314,7 +323,7 @@ def compact_v2() -> SimpleNamespace:
     c.route_port_line = rp
 
     q = q_badge()
-    q.move_to([r3b.glyph.get_left()[0] - 0.25, yd, 0])
+    q.move_to([r3b.glyph.get_left()[0] - 0.3, yd, 0])
     c.qmark = q
     # back to front: what the scene adds, in this order
     c.order = [c.zone, c.route_app, c.route_data, c.route_port, c.row_repo, c.row_volumes, c.door,
@@ -341,6 +350,15 @@ def grey_out(m, k: float = 0.45):
             f.set_fill(S.GREY, family=False)
     m.fade(k)
     return m
+
+
+def tag2(lines, color: str = S.GREY) -> VGroup:
+    """A two-row GREY tag (house look: text in its colour, opaque dark fill)."""
+    from explainer.devops import TAG, label
+    t = VGroup(*[label(s, TAG, color) for s in lines]).arrange(DOWN, buff=0.06)
+    b = RoundedRectangle(width=t.width + 0.4, height=t.height + 0.22, corner_radius=0.18,
+                         stroke_color=color, stroke_width=2).set_fill(S.BG, 0.92)
+    return VGroup(b, t.move_to(b))
 
 
 def light_door(c, color: str):
@@ -382,7 +400,7 @@ class IndexSurvives(VoiceScene):
         rm = RagMap(show=RagMap.TOP + RagMap.BOTTOM + RagMap.LABELS + RagMap.FLAGS)
         for n in RagMap.BOTTOM + ("lab_user", "lab_query", "lab_question", "flag_query", "flag_chat"):
             grey_out(rm.parts[n])
-        ticks = [rm.tick(n) for n in ("chunking", "embedding", "database")]
+        ticks = [rm.tick(n).shift(np.array([0.1, -0.08, 0])) for n in ("chunking", "embedding", "database")]
         part2 = grey_tag("part 2").move_to([-3.7, -1.75, 0])
         db = rm.item("database").copy()
 
@@ -394,7 +412,7 @@ class IndexSurvives(VoiceScene):
         forming = [hb.copy(), ht.copy(), w_data.copy()]
         cyl_target = cyl.copy()
         r_chroma = cv.rows["chromadb"]
-        q0 = q_badge().move_to([r_chroma.glyph.get_left()[0] - 0.25, r_chroma.get_center()[1], 0])
+        q0 = q_badge().move_to([r_chroma.glyph.get_left()[0] - 0.3, r_chroma.get_center()[1], 0])
         c = compact_v2()
 
         with self.voiceover(SAY[0]) as vo:
@@ -408,15 +426,15 @@ class IndexSurvives(VoiceScene):
             vo.wait_until("But first, a test")
             self.add(db)
             self.play(FadeOut(rm), FadeOut(part2), *[FadeOut(tk) for tk in ticks],
-                      db.animate.scale(1.3).move_to([db.get_center()[0], 0.2, 0]), run_time=0.8)
-            self.play(Transform(db, cyl_target), *[FadeIn(m) for m in forming], run_time=0.9)
+                      db.animate.scale(1.3).move_to([db.get_center()[0], 0.2, 0]), run_time=0.7)
+            self.play(Transform(db, cyl_target), *[FadeIn(m) for m in forming], run_time=0.8)
             self.remove(db, *forming)
             self.add(cv)
-            self.play(*cv.parts_in("rail", "plug_chroma", "name", "port_chip"), run_time=0.5)
-            self.play(*cv.parts_in("cli", "venv", "plug_cli"), run_time=0.45)
-            self.play(*cv.parts_in("zone", "row_repo", "row_secrets", "row_volumes", "key", "door"), run_time=0.45)
+            self.play(*cv.parts_in("rail", "plug_chroma", "name", "port_chip", "cli", "venv", "plug_cli"),
+                      run_time=0.5)
+            self.play(*cv.parts_in("zone", "row_repo", "row_secrets", "row_volumes", "key", "door"), run_time=0.4)
             self.play(*cv.parts_in("route_app", "route_secrets", "route_data", "route_port", anim=Create),
-                      run_time=0.6)
+                      run_time=0.5)
             vo.wait_until("does the index survive")
             self.play(FadeIn(q0, scale=1.4), Indicate(r_chroma, color=TURN, scale_factor=1.1), run_time=0.6)
             # V2 shrinks to the top: each part becomes its compact twin
@@ -443,7 +461,7 @@ class IndexSurvives(VoiceScene):
         t = term(P_CTR, rows=3, container=True)
         ghost = box(c.cli[0].width, c.cli[0].height, S.GREY, dashed=True, stroke=2).move_to(c.cli[0])
         cols = grey_tag("3 of 7 columns")
-        rmt = grey_tag("--rm: removed on exit").move_to(c.cli[0])
+        rmt = tag2(["--rm:", "removed on exit"]).move_to(c.cli[0])
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t, shift=UP * 0.2), run_time=0.6)
@@ -502,8 +520,8 @@ class IndexSurvives(VoiceScene):
 
         # ========================================================== 3 · nothing runs; the folder holds the data
         band = right_at(file_row("docker-volumes/chromadb/"), BAND_RIGHT, BAND_Y)
-        q_at = np.array([band.glyph.get_left()[0] - 0.27, BAND_Y, 0])
-        outs = right_at(file_row("outputs/"), q_at[0] - 0.75, BAND_Y)
+        q_at = np.array([band.glyph.get_left()[0] - 0.45, BAND_Y, 0])
+        outs = right_at(file_row("outputs/"), q_at[0] - 1.1, BAND_Y)
         outs_tick = check_mark(0.24, DATA, 4).next_to(outs, RIGHT, buff=0.16)
         glow = backlight(band)
         ans = tick_badge().move_to(q_at)
@@ -530,7 +548,7 @@ class IndexSurvives(VoiceScene):
             sq = out[9]
             i_sq = sq.text.index("chroma.sqlite3")
             sqb = col_box(sq, i_sq, i_sq + len("chroma.sqlite3"), TURN)
-            self.play(Create(sqb), Transform(c.qmark, ans), run_time=0.7)
+            self.play(Create(sqb), FadeOut(c.qmark, scale=0.6), FadeIn(ans, scale=1.5), run_time=0.7)
             stick(self, sq, sqb)
             ubs = [col_box(out[k], out[k].text.index(u), len(out[k].text), DATA) for k, u in ((8, UUIDS[0]), (10, UUIDS[1]))]
             dif = differ_tag()
@@ -553,7 +571,7 @@ class IndexSurvives(VoiceScene):
         yt = your_turn()
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(caption_extra(tr, False), FadeOut(VGroup(outs, outs_tick, c.qmark, nonet)),
+            self.play(caption_extra(tr, False), FadeOut(VGroup(outs, outs_tick, ans, nonet)),
                       glow.animate.set_fill(S.GREY, 0).set_stroke(opacity=0), run_time=0.5)
             t.clear(self, run_time=0.3)
             vo.wait_until("sh docker-shell.sh again")
@@ -597,54 +615,54 @@ class IndexSurvives(VoiceScene):
         stf = staff_tag()
         match = chip("10 of 10 match", DATA, size=CAPTION)
 
+        self.play(caption_extra(tr, True), FadeOut(VGroup(t, idt, yt, gnote)), FadeIn(t2, shift=UP * 0.2),
+                  run_time=0.6)
         with self.voiceover(SAY[5]) as vo:
-            self.play(caption_extra(tr, True), FadeOut(VGroup(t, idt, yt, gnote)), FadeIn(t2, shift=UP * 0.2),
-                      run_time=0.6)
             ln = bare_prompt(self, t2)
             tilde = glyph_range(ln, P_HOME.index("~"), P_HOME.index("~") + 1)
             beside(cap2, t2, ln, buff=0.5)
-            self.play(Indicate(tilde, color=TURN, scale_factor=1.4), FadeIn(cap2), run_time=0.6)
+            self.play(Indicate(tilde, color=TURN, scale_factor=1.4), FadeIn(cap2), run_time=0.5)
             t2.set_prompt(P_REPO)
             t2.lines.remove(ln)
             ln2 = mono_line(P_REPO, t2.size, INK, t2c=t2._prompt_colors(P_REPO))
             t2._place(ln2, len(t2.lines))
-            self.play(FadeOut(cap2), ReplacementTransform(ln, ln2), run_time=0.4)
-            t2.lines.add(ln2)
-            ln2.bare = True                      # type_cmd replaces it with the typed line
-            cu = type_cmd(self, t2, NAMES.cmd, 1.2)
-            pin(self, cu, beside(extra_tag(), t2, cu), run_time=0.3)
-            o = t2.print(self, NAMES.at((2, 5)), run_time=0.4)
+            self.play(FadeOut(cap2), ReplacementTransform(ln, ln2), run_time=0.35)
+            self.remove(ln2)                     # the typed rows start with the same prompt
+            cu = _type_rows(self, t2, CURL_ROWS, len(P_REPO) + 1, 1.0, len(NAMES.cmd))
+            pin(self, cu, beside(extra_tag(), t2, cu), run_time=0.25)
+            o = t2.print(self, NAMES.at((2, 5)), run_time=0.35)
             self.play(substring(o[0], "char-split-collection").animate.set_color(DATA),
-                      substring(o[2], "recursive-split-collection").animate.set_color(DATA), run_time=0.4)
+                      substring(o[2], "recursive-split-collection").animate.set_color(DATA), run_time=0.35)
             vo.wait_until("with dimension 256")
             dims = [col_box(o[k], 0, len(o[k].text), TURN) for k in (1, 3)]
-            self.play(*[Create(b) for b in dims], run_time=0.5)
+            self.play(*[Create(b) for b in dims], run_time=0.45)
             for k, b in zip((1, 3), dims):
                 stick(self, o[k], b)
             vo.wait_until("and an extra command called get")
-            self.play(FadeOut(t2), FadeIn(tc, shift=UP * 0.2), run_time=0.6)
-            g = type_cmd(self, tc, GET.cmd, 0.8)
-            pin(self, g, beside(extra_tag(), tc, g), run_time=0.3)
+            self.play(FadeOut(t2), FadeIn(tc, shift=UP * 0.2), run_time=0.5)
+            g = type_cmd(self, tc, GET.cmd, 0.7)
+            ext = beside(extra_tag(), tc, g)
             beside(rmnote, tc, g.rows[0], buff=0.4)
-            self.play(FadeIn(rmnote, shift=LEFT * 0.1), run_time=0.3)
+            self.play(FadeIn(ext, shift=LEFT * 0.1), FadeIn(rmnote, shift=LEFT * 0.1), run_time=0.3)
+            stick(self, g, ext)
             stick(self, g.rows[0], rmnote)
-            got = tc.print(self, IDS_ROWS, run_time=0.5)
+            got = tc.print(self, IDS_ROWS, run_time=0.4)
             # the PANEL above: the same command before exit (rows aligned with the terminal's)
             x_text = got[0].strut.get_left()[0]
             panel.shift(np.array([x_text - panel.rows[0].strut.get_left()[0],
                                   tc.box.get_top()[1] + 0.3 - panel.frame.get_bottom()[1], 0]))
             stf.next_to(panel.header, RIGHT, buff=0.35)
             match.move_to(panel.header).align_to(panel.frame, RIGHT)
-            self.play(FadeIn(panel, shift=DOWN * 0.15), FadeIn(stf), run_time=0.5)
+            self.play(FadeIn(panel, shift=DOWN * 0.15), FadeIn(stf), run_time=0.45)
             marks = VGroup()
             colour = []
             for rows in (panel.rows, got):
                 for k, sid in ((0, FIRST_ID), (3, LAST_ID)):
                     colour.append(substring(rows[k], sid).animate.set_color(DATA))
-                    marks.add(check_mark(0.2, DATA, 4).move_to([rows[k].strut.get_left()[0] - 0.1,
+                    marks.add(check_mark(0.2, DATA, 4).move_to([rows[k].strut.get_left()[0] - 0.07,
                                                                 rows[k].strut.get_center()[1], 0]))
-            self.play(*colour, *[Create(m) for m in marks], run_time=0.6)
-            self.play(FadeIn(match, scale=0.8), run_time=0.4)
+            self.play(*colour, *[Create(m) for m in marks], run_time=0.5)
+            self.play(FadeIn(match, scale=0.8), run_time=0.35)
             vo.wait_until("The container was disposable")
             self.play(FadeOut(VGroup(tc, panel, stf, match, marks)), run_time=0.5)
             pic = VGroup(mm.rail, mm.route, mm.cli, mm.chroma, band)

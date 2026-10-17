@@ -89,10 +89,11 @@ S09:
   en_display:
   - null
   - "The last line says DefaultCredentialsError: the file secrets/mega-pipeline.json was not found."
-- en: "Read it as in lecture 1. Our code, line 36, built a storage client; the client asked Google's auth library for credentials, and that library looked for a missing file."
+- en: "Read it as in lecture 1. Our code, line 36, built a storage client. The client asked Google's auth library for credentials, and that library looked for a missing file."
   zh:
   - "按第 1 讲的方法来读。"
-  - "我们的代码在第 36 行创建了一个 storage 客户端；客户端向 Google 的认证库要凭据，认证库就去找一个不存在的文件。"
+  - "我们的代码在第 36 行创建了一个 storage 客户端。"
+  - "客户端向 Google 的认证库要凭据，认证库就去找一个不存在的文件。"
 - en: "Here's the chain when it works. Your code never passes the key: the client asks Google's auth library who it is. That search is called application default credentials, or ADC, and its first stop is the variable from line 10."
   zh:
   - "正常情况下，链条是这样的。"
@@ -179,9 +180,10 @@ S11:
 - en: "Back on the laptop, an extra check: the pyproject.toml with three dependencies, the lock file, and the two new folders all survived, because they were in the window."
   zh:
   - "回到笔记本上，做一个额外检查：带三个依赖的 pyproject.toml、lock 文件，还有那两个新目录，全都留了下来，因为它们在这扇窗里。"
-- en: "Git status shows only cli.py as changed; we'll see why the rest is invisible at the end."
+- en: "Git status shows only cli.py as changed. We'll see why the rest is invisible at the end."
   zh:
-  - "而 git status 只显示 cli.py 改过了；其余的为什么看不见，我们最后再说。"
+  - "而 git status 只显示 cli.py 改过了。"
+  - "其余的为什么看不见，我们最后再说。"
 - en: "Now the trap, as an extra. Start a new container from the image you built earlier, and ask for help again. It's module not found again: the packages lived only in the old container."
   zh:
   - "现在来看那个坑，这也是额外步骤。"
@@ -243,9 +245,9 @@ S12:
   - "来想一想。"
   - "这个 image 里是 Python 3.12；这个 pyproject.toml 却要求 3.14 或更新。"
   - "那 venv 会用哪个 Python？"
-- en: "The live view hides it; the full log shows it: uv downloaded its own Python, 3.15.0 at the time of recording, and built the venv on it."
+- en: "Surprise two: the live view hides it; the full log shows it: uv downloaded its own Python, 3.15.0 at the time of recording, and built the venv on it."
   zh:
-  - "实时视图里看不到；完整日志里能看到：uv 下载了它自己的 Python，录制时是 3.15.0，并用它建了 venv。"
+  - "第二个意外：实时视图里看不到；完整日志里能看到：uv 下载了它自己的 Python，录制时是 3.15.0，并用它建了 venv。"
 - en: "The image's 3.12 falls outside the interval, so uv fetched the newest Python in range, as in lecture 2."
   zh:
   - "这个 image 里的 3.12 落在范围之外，所以 uv 去下载了范围内最新的 Python，和第 2 讲一样。"
@@ -259,17 +261,19 @@ S12:
   zh:
   - "第 8 和第 9 步：设置组名，这里是第 19 行，再检查一下帮助，和 README 一致。"
   - "暂停一下，跟上进度。"
-- en: "Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026. After that, start the container with a current model in the Gemini model variable."
+- en: "Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026. After that, start the container with a current model in the Gemini model variable. Newer models aren't served in the region cli.py uses, so also set the location on line 24 to global."
   zh:
   - "第 10 到 12 步：下载、生成、上传。"
   - "生成这一步把每份转写文本发给 Gemini 2.5 Flash Lite，它跑在 Vertex AI 上。"
   - "Google 在 2026 年 10 月 20 日下线该模型。"
   - "之后启动 container 时，要在 Gemini 模型变量里填一个现行的模型。"
+  - "较新的模型在 cli.py 用的那个区域里没有提供，所以还要把第 24 行的区域改成 global。"
   en_display:
   - null
   - null
   - null
   - "After that, start the container with a current model in the GEMINI_MODEL variable."
+  - null
 - en: "Look for your prompt, generated text and a long podcast script, then the upload. Pause and run all three."
   zh:
   - "要找的是你的 prompt、Generated text 和一份很长的播客稿，然后是上传。"
@@ -345,7 +349,7 @@ S13:
   - "暂停一下，跟上进度。"
   en_display:
   - null
-  - "One harmless slip: its help text says Transcribe audio file to text, pasted from A's code."
+  - "One harmless slip: its help text says “Transcribe audio file to text”, pasted from A's code."
   - null
 - en: "Pause, and run download and synthesis with your key."
   zh:
@@ -384,7 +388,7 @@ S14:
   - null
   - "There it is: mega-pipeline.json, inside the image."
   - null
-- en: "Docker doesn't read dot gitignore. Remember lecture 2's parcel: the build context is the whole folder, key included, and the copy line unpacks all of it. The README's secrets note covers Git only."
+- en: "Docker doesn't read dot gitignore. Remember lecture 2's parcel: the build context is the whole folder, key included, and the copy line unpacks all of it. The README's secrets note only covers Git."
   zh:
   - "Docker 不读 .gitignore。"
   - "还记得第 2 讲的包裹吗：构建上下文就是整个目录，密钥也在里面，COPY 那一行会把它全部拆开放进去。"

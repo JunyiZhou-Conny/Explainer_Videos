@@ -3,7 +3,7 @@
 视频：*AC215 · Lecture 3 — Containers II: five containers, one bucket (follow-along: mega-pipeline)*（`videos/ac215-l03-mega-pipeline`）  
 受众：上哈佛 AC215（MLOps & LLMOps）的中文研究生：会 Python 和基础 ML，英文技术文档读得很顺；做过第 1 讲（VM、venv、uv）和第 2 讲（现成的 Dockerfile、image 和 container 的区别、层缓存、Docker Hub），这次第一次自己写 Dockerfile；在自己的笔记本上开着 mega-pipeline 的 README，边看边敲命令  
 中文版：**只有字幕，没有中文配音**。英文旁白（Kokoro `af_heart`），中文按英文的时间轴显示：`output/ac215-l03-mega-pipeline.zh-en.mp4` 画面下方烧录的双语字幕带（中文在上，英文原句在下）、`.zh.srt`、`.zh-en.srt` / `.ass`。所以没有 `say:`、没有锚点、没有读法、不管配音时长，只有显示规则  
-英文原稿：`script.md` v2（SAY 行是旁白：158 段、310 句；SHOW 行是画面）  
+英文原稿：`script.md` v2（SAY 行是旁白：158 段、318 句；SHOW 行是画面）  
 先例：系列试点 [`videos/ac215-l01-vms-venvs/i18n/zh`](../../../ac215-l01-vms-venvs/i18n/zh/GLOSSARY.md)。L1 已经定下的词沿用 L1 的写法；改动的两处（container / image、屏幕标签名）在规则里写明理由（A2、A11）  
 机器可读版本：[`glossary.yaml`](glossary.yaml)（内容相同，两份要同步修改；`python -m explainer.i18n check` 和字幕切分都读它）
 
@@ -17,7 +17,7 @@
 
 ## 总原则
 
-用一位中国 MLOps 助教在实验课上带同学一步步操作时的普通话，只在这样的人真的会说英文的地方说英文，写成英文旁白下面的字幕。观众是上 AC215 的中文研究生：英文技术文档读得很顺，平时就说“起一个 container”“构建 image”“把 repo clone 下来”“push 到 Docker Hub”“激活 venv”。每个选择过三关：实验课上的真实说法；能搜到的标准中文名（Docker 和 Google Cloud 的中文文档）；和系列试点（L1）一致。（1）**实物原样**：观众要输入、要在屏幕上对照的东西（命令、参数、文件和目录名、路径、包名、配置项、Dockerfile 指令、终端原文和报错名、屏幕上的标签、README 标题）逐字照抄，不翻译、不变形、不加引号；唯一的例外是检查器逼出来的：带下划线的名字按旁白的说法写（A6）。这个系列不翻译屏幕：终端输出、代码面板、README 卡片、标签和进度条都是英文，只翻译旁白。（2）**实验课口语里的英文**，封闭清单：沿用 L1 的 venv、shell、root、repo、clone、commit、import、traceback、lock 文件；容器这几讲新增 container、image、Dockerfile、bucket、pipeline、bind mount、push、tag（打 tag）、prompt（只指 LLM 的 prompt）、API、ID。（3）**其余一律用中文标准术语**：构建、重新构建、构建步骤 k、构建上下文、构建参数、层、可写层、缓存、挂载、工作目录、指令、配置卡片、目录、终端、提示符、包、软件包、依赖、激活、解析、密钥、服务账号、凭据、应用默认凭据、访问令牌、身份验证、授权、客户端、请求、对象名、前缀、阶段、组件、组名、排行榜、转写、合成、翻译、播客。（4）**视频自己的比喻按意思译**，一个比喻一个词：柜子和抽屉（bucket）、窗（bind mount）、路标（指向密钥的变量）、取件单（长时间运行的操作）、包裹和多米诺骨牌（来自第 2 讲）、清单和小票（pyproject.toml 和 uv.lock，来自第 1 讲）。（5）标题、meta.yaml 和配套文档用**书面语体**：仓库、克隆、提交、容器、镜像、存储桶、推送、绑定挂载。（6）双语字幕带在每行中文下面放英文原句，所以中文行**不加括注，任何括号都不用**（没有 say: 时检查器禁止括号）。（7）工具链的约束也是规则：每个英文句子对应一个中文句子（158 段、310 句）；显示行要过检查器（D3）；SAY 把实物念成单词的句子都要写 en_display（D4）。大陆简体中文；口语轻松、指令清楚，像助教带实验课，但不用网络流行语。
+用一位中国 MLOps 助教在实验课上带同学一步步操作时的普通话，只在这样的人真的会说英文的地方说英文，写成英文旁白下面的字幕。观众是上 AC215 的中文研究生：英文技术文档读得很顺，平时就说“起一个 container”“构建 image”“把 repo clone 下来”“push 到 Docker Hub”“激活 venv”。每个选择过三关：实验课上的真实说法；能搜到的标准中文名（Docker 和 Google Cloud 的中文文档）；和系列试点（L1）一致。（1）**实物原样**：观众要输入、要在屏幕上对照的东西（命令、参数、文件和目录名、路径、包名、配置项、Dockerfile 指令、终端原文和报错名、屏幕上的标签、README 标题）逐字照抄，不翻译、不变形、不加引号；唯一的例外是检查器逼出来的：带下划线的名字按旁白的说法写（A6）。这个系列不翻译屏幕：终端输出、代码面板、README 卡片、标签和进度条都是英文，只翻译旁白。（2）**实验课口语里的英文**，封闭清单：沿用 L1 的 venv、shell、root、repo、clone、commit、import、traceback、lock 文件；容器这几讲新增 container、image、Dockerfile、bucket、pipeline、bind mount、push、tag（打 tag）、prompt（只指 LLM 的 prompt）、API、ID。（3）**其余一律用中文标准术语**：构建、重新构建、构建步骤 k、构建上下文、构建参数、层、可写层、缓存、挂载、工作目录、指令、配置卡片、目录、终端、提示符、包、软件包、依赖、激活、解析、密钥、服务账号、凭据、应用默认凭据、访问令牌、身份验证、授权、客户端、请求、对象名、前缀、阶段、组件、组名、排行榜、转写、合成、翻译、播客。（4）**视频自己的比喻按意思译**，一个比喻一个词：柜子和抽屉（bucket）、窗（bind mount）、路标（指向密钥的变量）、取件单（长时间运行的操作）、包裹和多米诺骨牌（来自第 2 讲）、清单和小票（pyproject.toml 和 uv.lock，来自第 1 讲）。（5）标题、meta.yaml 和配套文档用**书面语体**：仓库、克隆、提交、容器、镜像、存储桶、推送、绑定挂载。（6）双语字幕带在每行中文下面放英文原句，所以中文行**不加括注，任何括号都不用**（没有 say: 时检查器禁止括号）。（7）工具链的约束也是规则：每个英文句子对应一个中文句子（158 段、318 句）；显示行要过检查器（D3）；SAY 把实物念成单词的句子都要写 en_display（D4）。大陆简体中文；口语轻松、指令清楚，像助教带实验课，但不用网络流行语。
 
 ## 关键决定
 
@@ -94,7 +94,7 @@
 | build argument / ARG / a variable that exists only during the build | 构建参数 / 只在构建期间存在的变量 | S05：第 3 行声明了一个构建参数，一个只在构建期间存在的变量：Debian 软件包 build-essential 和 ffmpeg。 | 和“参数”（flag）、“环境变量”（ENV）分开。它的名字 DEBIAN_PACKAGES 不写出来（A6）。 |
 | layer / one layer / no layers / the biggest layer / one fat layer / B's big layer | 层 / 一层 / 不产生层 / 最大的一层 / 一个特别大的层 | S05：和第 2 讲一样，它们只写在配置卡片上，不产生层。S13：所以 Docker 直接复用了 B 的那个大层。 | 中国工程师口头说“层”（书面“镜像层”）。字幕里不说 layer。 |
 | writable layer / a thin writable layer / the throwaway layer / thrown away on exit | 可写层 / 一层薄薄的可写层 / 用完就扔的那一层 | S07：和第 2 讲一样，container 会在上面加一层薄薄的可写层，--rm 让它在退出时被扔掉。 | throwaway → 用完就扔（L1 形容 VM 的说法）。on the container's throwaway layer → 在 container 那层用完就扔的可写层上。 |
-| cache / cached / come from the cache / CACHED | 缓存 / 用缓存 / 直接用缓存 / CACHED | S06：构建步骤 1 到 3 直接用缓存。S11：构建步骤 2 和 3 用了缓存。 | 旁白指着终端里的 CACHED 时，照原文写。 |
+| cache / cached / come from the cache / CACHED | 缓存 / 用缓存 / 直接用缓存 / CACHED | S06：构建步骤 2 和 3 直接用缓存。S11：构建步骤 2 和 3 用了缓存。 | 旁白指着终端里的 CACHED 时，照原文写。 |
 | live view / compact live view / full log / landmarks | 实时视图 / 精简的实时视图 / 完整日志 / 关键行 | S06：你的终端显示的是精简的实时视图；这里是完整日志里的几处关键行。 | landmarks → 关键行，不用“路标”（路标是 S09 的比喻）。 |
 | instruction / RUN instruction / chained with double ampersands | 指令 / RUN 指令 / 用 && 串起来 | S05：第 12 到 21 行是一条 RUN 指令，用 && 串起来，所以只产生一层。 | en_display 把 double ampersands 写成 &&（D4）。 |
 | Dockerfile instructions: FROM / ARG / ENV / RUN / USER / WORKDIR / COPY / the FROM line / the copy line | FROM / ARG / ENV / RUN / USER / WORKDIR / COPY / FROM 那一行 / COPY 那一行 | S05：先敲 FROM 那一行，再把 README 的六个代码块按顺序复制到下面。 | 照原样写；复制那一步说“复制那一步”或“COPY 那一步”，绝不说“挂载”（A7）。 |
@@ -164,6 +164,7 @@
 | MP3 / FLAC / converts / long audio comes back in pieces / join every piece | MP3 / FLAC / 转成 / 分段返回 / 拼起来 | S10：每段录音，ffmpeg 先把 MP3 转成 FLAC，所以构建参数里要有 ffmpeg。 |  |
 | bonus / an optional bonus / ElevenLabs / the instructor's voice / the bonus script / a key file | 附加任务 / 可选的附加任务 / ElevenLabs / 授课老师的声音 / 附加脚本 / 密钥文件 | S13：E 里有一个可选的附加任务，用 ElevenLabs 以授课老师的声音念出法语。 | 绝不出现授课老师的名字。附加脚本是 cli_11.py（能通过检查）。 |
 | Gemini model variable / a current model | Gemini 模型变量 / 现行的模型 | S12：之后启动 container 时，要在 Gemini 模型变量里填一个现行的模型。 | GEMINI_MODEL 不写出来（A6）。 |
+| newer models / the region cli.py uses / the location on line 24 / global | 较新的模型 / 区域 / global | S12：较新的模型在 cli.py 用的那个区域里没有提供，所以还要把第 24 行的区域改成 global。 | cli.py 第 24 行把 location 设成 us-central1，这个值不念出来。参数说“区域”，和 region 一样（不说“位置”）；global 是要敲进去的值，照写英文（A1 a）。 |
 
 ### 带下划线的名字（A6）/ Names with an underscore (A6)
 
@@ -208,7 +209,7 @@
 
 | English | 字幕 | 首次出现 | 说明 |
 |---|---|---|---|
-| the tracker / code panels / the yellow your-turn tag / a gray extra tag / study guide / exercises | 进度条 / 代码面板 / your turn 标签 / extra 标签 / 学习指南 / 练习 | S01：左上角的进度条显示 README 的步骤；代码面板会标出文件和行号。 | A11：标签名照画面写；L1 写“轮到你了”“额外”，是因为它计划翻译屏幕上的标签。 |
+| the tracker / code panels / the yellow your-turn tag / a gray extra tag / study guide / exercises | 进度条 / 代码面板 / your turn 标签 / extra 标签 / 学习指南 / 练习 | S01：左上角的进度条把 README 分成一个个编号的步骤；代码面板会标出文件和行号。 | A11：标签名照画面写；L1 写“轮到你了”“额外”，是因为它计划翻译屏幕上的标签。 |
 | an extra check / extras / not in the README / this one isn't from the README | 额外检查 / 额外的命令 / README 里没有 | S03：一个额外检查，README 里没有：列出文件，再显示 commit。 | D6。 |
 | at the time of recording / we recorded without a course key | 录制时 / 我们录制时没有课程密钥 | S01：有一点先说清楚：我们录制时没有课程密钥，所以凡是代码要和 Google 打交道的地方，你看到的是命令和该看什么，而不是它的输出。 | 绝不省略（A9）。 |
 | a small mistake / a small slip / one harmless slip / a small gap / older Canvas file | 一个小错误 / 一个小疏漏 / 一个无害的小疏漏 / 一个小缺口 / 旧的 Canvas 文件 | S04：一个小错误：各组件的 README 链接的是一个旧的 Canvas 文件，所以用主 README 的链接。 | 一定紧跟改法（A9）。 |
@@ -305,7 +306,7 @@ AC、access、ADC、add、AI、API、app、Appendix、apt、ARG、audio、audios
 
 ### D. 旁白文件（narration/*.yaml）
 
-- **[D1]** 句子对齐（explainer/i18n.py）。narration/*.yaml 里 script.md 的每个 SAY 行一条（158 段）；`en` 和 SAY 行逐字节相同；`zh` 按 explainer.voice.split_sentences 的切分，每个英文句子正好一项（这份脚本共 310 句）。只在句子内部重组，绝不合并或拆分。短句也单独一项：Ponder this. → 来想一想。；Pause and run it. → 暂停一下，自己跑一遍。；Welcome back. → 欢迎回来。；Time to clean up. → 该清理了。反复运行 `python -m explainer.i18n check videos/ac215-l03-mega-pipeline --lang zh`，直到打印 OK。
+- **[D1]** 句子对齐（explainer/i18n.py）。narration/*.yaml 里 script.md 的每个 SAY 行一条（158 段）；`en` 和 SAY 行逐字节相同；`zh` 按 explainer.voice.split_sentences 的切分，每个英文句子正好一项（这份脚本共 318 句）。只在句子内部重组，绝不合并或拆分。短句也单独一项：Ponder this. → 来想一想。；Pause and run it. → 暂停一下，自己跑一遍。；Welcome back. → 欢迎回来。；Time to clean up. → 该清理了。反复运行 `python -m explainer.i18n check videos/ac215-l03-mega-pipeline --lang zh`，直到打印 OK。
 - **[D2]** 没有 say:，没有锚点。没有中文配音：绝不写 say:（显示行就是唯一的文本），也绝不写 anchors:（锚点只给中文配音版安排动画节拍）。字幕按英文音频计时；工具链按位置把每个中文句子和对应的英文句子配对。
 - **[D3]** 过得了检查器的显示行。没有 say: 时，每个显示句都要通过 explainer.i18n.spoken_problems：没有括号（B2）、没有数学符号、没有 letter_letter 名字（A6）、数字后面没有 !、没有以“种”结尾再接，。！？的分句（改写，比如“三种情况。”）、汉字和拉丁字母或数字之间有半角空格（B1）、每句以。！？或……结尾（后面可以跟”或」）、每个拉丁词都在本词表里（zh_subtitle、first_use 或 allowed_spoken_latin）。检查器用正则 `[A-Za-z][A-Za-z'.-]*` 切词：group-01 切成 group-，MP3 切成 MP，/home/app/.venv 切成 home、app 和 venv。它报出的拉丁词，要么是该翻译的英文词（通常如此），要么是漏收的实物：按同样的切法把它加进 allowed_spoken_latin，并加进对应的术语条目。
 - **[D4]** 英文行（en_display）。双语字幕带的英文行显示 SAY 句子，而 SAY 为了配音把实物念成了单词（dash dash r m、dash t i、dash v、slash app、slash home slash app slash dot venv、secrets slash mega-pipeline dot json、dot gitignore、dot dockerignore、secrets slash、uv dash dash version、uv init dash dash bare、python cli.py dash dash help / download / transcribe / upload、dash d / dash t / dash u、git add dash f、cd dot dot、main dot py、ffmpeg dash python、transcribe dash audio、input dash something dot t x t、T-T-Y、E-N、double ampersands、the at sign）。每个这样的句子都写一项 en_display，显示屏幕上的字面形式（--rm、-ti、-v、/app、/home/app/.venv、secrets/mega-pipeline.json、.gitignore、.dockerignore、secrets/、uv --version、uv init --bare、python cli.py --help、-d、-t、-u、git add -f、cd ..、main.py、ffmpeg-python、transcribe-audio、input-….txt、TTY、synthesis_audio_en、&&、@），其余部分和 SAY 句子逐词一致；同一段里的其他句子写 null。带下划线的名字（A6）只在观众要输入的命令里（cd transcribe_audio、docker build -t transcribe_audio .）在 en_display 里写回字面形式；单纯提到时，两行都保留 SAY 的说法。英文视频自己的 .srt 不受影响。

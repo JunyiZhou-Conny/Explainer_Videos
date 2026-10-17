@@ -98,7 +98,8 @@ push. Five test-yourself questions close the video (answers in `exercises.md`).
 12. **generate_text: same recipe, two surprises** — `uv init` fails (skip it); the Dockerfile
     without ffmpeg; `requires-python = ">=3.14"` makes uv download its own Python (3.15.0 at the
     time of recording), fixed with `>=3.12`; Gemini 2.5 Flash Lite on Vertex AI, which Google
-    retires on October 20, 2026, and the `GEMINI_MODEL` variable for a current model.
+    retires on October 20, 2026, the `GEMINI_MODEL` variable for a current model, and
+    `location='global'` at `cli.py:24`.
 13. **Synthesize, translate, synthesize** — C, D and E at speed: C reuses B's big layer (a 0.6 s
     build); even `--help` needs the key in C, D and E; Text-to-Speech writes straight into the
     bucket (no upload), Translation answers at once (D uploads); the optional ElevenLabs bonus.

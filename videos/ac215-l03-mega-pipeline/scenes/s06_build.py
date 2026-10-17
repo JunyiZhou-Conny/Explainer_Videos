@@ -809,7 +809,7 @@ class BuildImage(VoiceScene):
             part2 = label("part 2: for real", 22, S.GREY)
             place(part2, cx=st.floor.get_center()[0], top=st.floor.get_center()[1] - 0.4)
 
-            at(self, vo, "build steps 1 to 3")
+            at(self, vo, "Build steps 2 and 3")
             self.play(*[recolor(b, VENV) for b in badges[:3]], run_time=0.6)
             self.play(LaggedStart(*[AnimationGroup(Create(ln), FadeIn(s_, scale=1.4))
                                     for ln, s_ in zip(stamp_leads, stamps)], lag_ratio=0.4), run_time=0.9)

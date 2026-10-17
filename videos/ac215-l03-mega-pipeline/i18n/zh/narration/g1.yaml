@@ -21,10 +21,10 @@ S01:
   zh:
   - "和上节课比，有四处变化：你要自己写 Dockerfile，而且要构建五个 image，而不是一个。"
   - "一个 bind mount 会打开一扇通往你笔记本的窗；container 则连到 Google Cloud，靠的是共享的 bucket 和服务账号密钥。"
-- en: "Open the mega-pipeline README beside this video. The tracker, top left, shows the README step; code panels show file and line numbers. Pause at the yellow your-turn tag; a gray extra tag marks a command not in the README."
+- en: "Open the mega-pipeline README beside this video. The tracker, top left, splits the README into numbered steps; code panels show file and line numbers. Pause at the yellow your-turn tag; a gray extra tag marks a command not in the README."
   zh:
   - "把 mega-pipeline 的 README 打开，放在视频旁边。"
-  - "左上角的进度条显示 README 的步骤；代码面板会标出文件和行号。"
+  - "左上角的进度条把 README 分成一个个编号的步骤；代码面板会标出文件和行号。"
   - "看到黄色的 your turn 标签就暂停；灰色的 extra 标签表示这条命令 README 里没有。"
 - en: "You'll need Tutorial 0, for Docker Desktop and uv, the course key from Canvas, and your group name. Every command is also in the study guide, linked in the description."
   zh:
@@ -35,7 +35,7 @@ S01:
   - "有一点先说清楚：我们录制时没有课程密钥，所以凡是代码要和 Google 打交道的地方，你看到的是命令和该看什么，而不是它的输出。"
 - en: "We recorded on a Debian 12 laptop with Docker Engine 29, at the time of recording. On a Mac or Windows, the prompt differs and Docker Desktop runs the containers; the commands are the same."
   zh:
-  - "我们录制用的是一台 Debian 12 笔记本，录制时是 Docker Engine 29。"
+  - "我们录制时用的是一台装着 Docker Engine 29 的 Debian 12 笔记本。"
   - "在 Mac 或 Windows 上，提示符不一样，由 Docker Desktop 来跑 container；命令都是一样的。"
 S02:
 - en: "In production, services call each other's APIs. This tutorial simplifies: each component writes its output to shared storage, where the next one reads it."
@@ -115,9 +115,9 @@ S03:
   - "在编辑器里打开 cli.py。"
   - "前几个 import 是 Python 自带的，但两个 Google Cloud 模块和 ffmpeg 不是。"
   - "第二部分会讲它们从哪儿来。"
-- en: "Next come four settings: the bucket's name, the two drawers this stage uses, and on line 21 the group name, which you'll change soon."
+- en: "Next come four settings: the bucket's name, the two drawers this stage uses, and on line 21 the group name, still at its default, which you'll change soon."
   zh:
-  - "接下来是四个设置：bucket 的名字、这个阶段用的两个抽屉，还有第 21 行的组名，你很快就要改它。"
+  - "接下来是四个设置：bucket 的名字、这个阶段用的两个抽屉，还有第 21 行的组名，现在还是默认值，你很快就要改它。"
 - en: "At the bottom, main runs up to three verbs, always in this order: download, transcribe, upload."
   zh:
   - "在最下面，main 最多执行三个动作，顺序永远是：下载、转写、上传。"
@@ -286,10 +286,11 @@ S06:
   zh:
   - "来想一想。"
   - "你只改了 cli.py 里的组名，然后重新构建：五个构建步骤里，哪些会重新运行？"
-- en: "Build steps 4 and 5. The copied folder changed, so the copy runs again, and so does every step after it; build steps 1 to 3 come from the cache. We'll see it in part 2."
+- en: "Build steps 4 and 5. The copied folder changed, so the copy runs again, and so does every step after it. Build steps 2 and 3 come from the cache, and build step 1 is the base image you already have. We'll see it in part 2."
   zh:
   - "构建步骤 4 和 5。"
-  - "复制进来的目录变了，所以复制那一步要重新跑，它后面的每一步也一样；构建步骤 1 到 3 直接用缓存。"
+  - "复制进来的目录变了，所以复制那一步要重新跑，它后面的每一步也一样。"
+  - "构建步骤 2 和 3 直接用缓存，构建步骤 1 是你本地已经有的基础 image。"
   - "第二部分我们会亲眼看到。"
 S07:
 - en: "Step 6 runs the image, so first, a picture. The copied files sit in slash app; the venv sits outside it, in slash home. As in lecture 2, a container adds a thin writable layer, thrown away on exit by dash dash r m."

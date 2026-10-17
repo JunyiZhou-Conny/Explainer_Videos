@@ -18,20 +18,22 @@ Beats (script.md "## S01", one voiceover block each):
    drawer and BLUE "shared bucket", a GOLD key and GOLD "service-account key").
 2. Layout preview. A README.md page glyph (mono caption under it: the repo's address,
    "github.com/dlops-io/mega-pipeline", from the clone command) and a GREY "this video" frame side
-   by side; on "The tracker" the page flies to the top-left corner and turns into the
-   ReadmeTracker (FadeTransform; "README › Clone this Repository", 2 dots; the address and the
-   frame fade) in a YELLOW ring that pulses as step 1 ("step 1 of
-   2: Clone") lights on "shows the README step"; the code panel
-   transcribe_audio/cli.py · lines 18–20 slides in, its header ringed YELLOW on "file and line
-   numbers"; the 3-row laptop strip (GREY tag "preview") types `git clone
+   by side, and the GREY lecture tag "Lecture 3 · slides 24–28 · Tutorial 5" (lecture_ref, top
+   right) fades in with the page; on "The tracker" the page flies to the top-left corner and
+   turns into the ReadmeTracker (FadeTransform; "README › Clone this Repository", 2 dots; the
+   address and the frame fade) in a YELLOW ring that pulses as step 1 ("step 1 of 2: Clone")
+   lights on "splits the README"; on "code panels show" the ring and the lecture tag
+   fade as the code panel transcribe_audio/cli.py · lines 18–20 slides in, its header ringed
+   YELLOW on "file and line numbers"; the 3-row laptop strip (GREY tag "preview") types `git clone
    https://github.com/dlops-io/mega-pipeline.git` (it folds onto two rows) + ▶ your turn, then
    `ls` + extra (no output: a preview).
 3. The preview clears. Checklist card; each row writes in with a GREEN tick as it is said:
    "Tutorial 0: Docker Desktop + uv" (the tools turn PURPLE as they are named) · "the course
    key, from Canvas" (GOLD key glyph) · "your team's group name". Footer: "every command:"
    over "MLOps_Learning · guides/L03-containers-2-mega-pipeline.md" (the guide path
-   pulses YELLOW on "in the study guide"; on "linked in the description" the repo name pulses and
-   a GREY third line "link in the description" fades in under it).
+   pulses YELLOW on "in the study guide"; on "linked in the description" a small GREY tag "link in
+   the description" fades in under the repo name, MLOps_Learning).
+   Beat 4's clear_stage takes the whole footer, tag included.
 4. A TEAL container strip (container · transcribe_audio, prompt app@5b4d4981ec25:/app$, GREY tag
    "preview") types `python cli.py --download`. GREY caption "recorded without the course key";
    a dashed BLUE cloud draws itself; the typed command pulses on "you'll see the command"; the
@@ -50,8 +52,8 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import box, check_mark, chip, cloud, folder_glyph, glyph_range, label, laptop, mono, \
-    substring
+from explainer.devops import box, check_mark, chip, cloud, folder_glyph, glyph_range, label, laptop, \
+    lecture_ref, mono, substring, tag
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, COST, CTR, INK, LAPTOP, LOOKUP, NARRATION, P_HOME, TOOL, TURN, VENV, Relay,
@@ -286,9 +288,10 @@ class Hook(VoiceScene):
                                          stroke_width=3)
         t = term(P_HOME, rows=3)
         prev = above_right(preview_tag(), t)
+        lref = lecture_ref(3, "24–28 · Tutorial 5")      # top right, while the README page is up
 
         with self.voiceover(SAY[2]) as vo:
-            clear_stage(self, FadeIn(readme, shift=LEFT * 0.6), run_time=0.8)
+            clear_stage(self, FadeIn(readme, shift=LEFT * 0.6), FadeIn(lref), run_time=0.8)
             vo.wait_until("beside this video")
             self.play(FadeIn(video, shift=RIGHT * 0.3), run_time=0.6)
             vo.wait_until("The tracker")
@@ -298,15 +301,15 @@ class Hook(VoiceScene):
             self.play(FadeTransform(page, tr), FadeOut(url), FadeOut(video), run_time=1.0)
             self.remove(video, readme)
             self.play(Create(ring), run_time=0.5)
-            vo.wait_until("shows the README step")
+            vo.wait_until("splits the README")
             # the blank caption takes its final shape, invisible, so goto() fades it in in place
             # (from a blank it would fly in from where the tracker was built)
             tr.caption.become(tr._caption(1)).set_opacity(0)
             self.play(tr.goto(1), ring.animate(rate_func=there_and_back).set_stroke(width=6), run_time=0.6)
             self.play(ring.animate(rate_func=there_and_back).set_stroke(width=6), run_time=0.6)
             vo.wait_until("code panels show")
-            self.play(FadeOut(ring), FadeIn(panel, shift=RIGHT * 0.6), run_time=0.8)
-            self.remove(ring)
+            self.play(FadeOut(ring), FadeOut(lref), FadeIn(panel, shift=RIGHT * 0.6), run_time=0.8)
+            self.remove(ring, lref)
             vo.wait_until("file and line numbers")
             self.play(Create(head_ring), run_time=0.6)
             vo.wait_until("Pause at the yellow")
@@ -340,10 +343,11 @@ class Hook(VoiceScene):
         VGroup(card, body).move_to([0, 0.9, 0])
         foot = VGroup(label("every command:", 22, S.GREY), mono(GUIDE, 22, INK)).arrange(DOWN, buff=0.16)
         foot.move_to([0, -1.25, 0])
-        # where the guide lives (the URL itself is in the upload description, not on screen)
-        link = label("link in the description", 22, S.GREY).next_to(foot, DOWN, buff=0.22)
         guide_path = VGroup(*foot[1][len("MLOps_Learning·"):])        # glyphs: no spaces
         repo_name = VGroup(*foot[1][:len("MLOps_Learning")])
+        # where the guide lives (the URL itself is in the upload description, not on screen)
+        link = tag("link in the description", S.GREY).next_to(repo_name, DOWN, buff=0.18) \
+            .align_to(repo_name, LEFT)
 
         # the tools write in white and turn PURPLE when the narration names them
         tools = VGroup(*[text_span(rows[0].text, CHECKS[0][0], w) for w in CHECKS[0][1]])
@@ -367,8 +371,7 @@ class Hook(VoiceScene):
             # colour pulses only: scaling a 7-unit path pushes it into the " · " beside it
             self.play(Indicate(guide_path, color=TURN, scale_factor=1.0), run_time=0.8)
             vo.wait_until("linked in the description")
-            self.play(FadeIn(link, shift=UP * 0.15), Indicate(repo_name, color=TURN, scale_factor=1.04),
-                      run_time=0.8)
+            self.play(FadeIn(link, shift=UP * 0.15), run_time=0.6)
 
         # ========================================================== 4. the honest limit
         t4 = term(component="transcribe_audio", rows=3)

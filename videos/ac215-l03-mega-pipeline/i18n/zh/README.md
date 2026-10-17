@@ -33,7 +33,7 @@
 ## 怎么生成
 
 ```bash
-python -m explainer.i18n check videos/ac215-l03-mega-pipeline --lang zh                # 中文译文和英文是否逐句对齐（158 段、310 句）
+python -m explainer.i18n check videos/ac215-l03-mega-pipeline --lang zh                # 中文译文和英文是否逐句对齐（158 段、318 句）
 python -m explainer.build videos/ac215-l03-mega-pipeline --render-only --jobs 3        # 渲染各场景（1080p60）
 python -m explainer.build videos/ac215-l03-mega-pipeline --no-render --crf 27 --burn   # 拼接：英文版、上下两部分、中文 / 双语字幕、烧录版、章节
 python -m explainer.build videos/ac215-l03-mega-pipeline --subs-only                   # 只重写字幕（改了译文之后）

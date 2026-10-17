@@ -1,0 +1,7 @@
+00:00 Two little computers, one network
+01:22 Build, start, read the logs
+02:56 Send a message: ports on the wire
+04:09 Who can reach whom
+06:43 Change the ports
+08:53 Compose: the same app, declared
+11:05 Edit, apply, tear down, recap

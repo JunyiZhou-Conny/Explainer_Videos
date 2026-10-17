@@ -62,16 +62,22 @@ Deviations from SHOW (see the scene report):
   (SHOW: id first, then Transforms into metadata).
 - The rows stack into the collection at the start of beat 2 ("Records go into a collection"),
   not at the end of beat 1.
-- Beats 4–6 use one 13-row terminal (SHOW: 10 rows, then 13): its command folds onto 2 rows, so
-  10 rows would scroll the command away. Beat 6 cuts recorded-embeddings/02 line 2 with … (as
-  S08 does) so the 13 rows hold the typed command; beat 5's counter sits in the band above the
-  13-row terminal, right of the tracker.
+- Beats 4–6 use one 13-row terminal (SHOW: 10 rows, then 13): type_cmd puts the command on the
+  row under the prompt, and 10 rows would scroll it away. Beat 6 cuts recorded-embeddings/02
+  line 2 with … (as S08 does) so the 13 rows keep the typed command; beat 5's counter sits in
+  the band above the terminal, right of the tracker. Tags on a typed command sit on its prompt
+  row (the command row has no room).
 - Beat 7 opens the second laptop terminal straight at ~/AC215/llm-rag (S05 already showed the
-  "new terminal: cd here first" step; the beat has 6.7 s) and gives it 9 rows (its command folds
-  onto 4 rows), with the ghost above it; beat 9 reuses that terminal.
-- Beat 9: nothing travels along the /data route (script conventions: the route pulses, both
-  sides blink); the UUID rows are cut after 8 hex digits so a GREEN "index" tag fits on each,
-  and "one per collection" sits by the folder in the picture.
+  "new terminal: cd here first" step and the beat has 6.7 s) with 9 rows (the curl line folds
+  onto 4 rows); the ghost sits above it. Beat 9 reuses that terminal.
+- Beat 9 shows the picture first (concept before command), then the terminal; nothing travels
+  along the /data route (script conventions: the route pulses, both sides blink). The UUID rows
+  are cut after 8 hex digits so a GREEN "index" tag fits on each; "one per collection" sits by
+  the folder.
+- The recorded outputs of 03, 04 and 07 carry the "recorded · the staff's vectors (68e0bde)"
+  tag (script conventions: every panel from recorded-embeddings/01–09); the fix card carries
+  "fix · not in the repo".
+- Beat 10's two strips sit under the browser frame (a 58-character line does not fit beside it).
 - recorded-embeddings/01 line 12's invisible byte-order mark is dropped before printing (it has
   no glyph and would shift every highlight on that row).
 """
@@ -272,10 +278,6 @@ def row_with(rows, sub: str):
         if sub in r.text:
             return r
     raise KeyError(sub)
-
-
-def title_bar_y(t) -> float:
-    return t.box.get_top()[1] - t.bar_h / 2
 
 
 def compact_collection(name: str) -> VGroup:
@@ -524,7 +526,8 @@ class LoadChroma(VoiceScene):
             self.play(counter.count_to(8248, 0.9))
             vo.wait_until("in batches of 500")
             b500 = row_with(batch, "Inserted 500 items")
-            self.play(b500.animate.set_color(TURN), Indicate(b500, color=TURN, scale_factor=1.06), run_time=0.8)
+            self.play(b500.animate.set_color(TURN), run_time=0.4)
+            self.play(Indicate(b500, color=TURN, scale_factor=1.06), run_time=0.7)
 
         # ========================================================== 6 · step 2: recursive split; your turn
         c1 = collection_glyph("char-split-collection", "8,248")
@@ -734,7 +737,11 @@ class LoadChroma(VoiceScene):
             self.play(FadeOut(VGroup(br, ill10, c_head, list_rows, lan, ar, dr, dr_lab, chroma10, strips)),
                       run_time=0.5)
             self.play(FadeIn(rm), run_time=0.6)
-            ticks = [rm.tick(n) for n in ("chunking", "embedding", "database")]
+            ticks = []                     # right of each box's top, clear of the labels and the arrows
+            for n in ("chunking", "embedding", "database"):
+                bx = rm.item(n)
+                ticks.append(check_mark(0.32, DATA).move_to([bx.get_right()[0] + 0.2,
+                                                             min(bx.get_top()[1] + 0.02, 1.5), 0]))
             self.play(rm.pulse_lane("top", DATA, run_time=1.0),
                       LaggedStart(*[Create(k) for k in ticks], lag_ratio=0.35, run_time=1.0))
             vo.wait_until("the index is built")
