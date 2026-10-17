@@ -6,6 +6,8 @@ Beats (script.md "## S04", one voiceover block each):
     logo: two text-free placeholder rows and the GOLD key glyph `mega-pipeline.json`), drawn LIFT
     lower than in beat 1 so the picture sits centred. On "It lets your code act" the key leaves
     the card, enlarges centre-right and gets a GOLD glow; GREY label under it: "the course's service account", then (on "so guard it") "spends the course's money".
+    The GREY lecture tag "Lecture 3 · slides 23, 70" (lecture_ref, top right) arrives with the
+    key's enlarging and goes when the key returns into the card (beat 1's first play).
  1  The glow and labels go; the key shrinks back into the card as the card rises. Right: the
     five GREY folders `<component>/secrets/` of the clone, with ▶ your turn beside
     `transcribe_audio/secrets/` (that row and the tag arrive with the card's rise, on "Pause", the
@@ -30,7 +32,7 @@ Beats (script.md "## S04", one voiceover block each):
     TRACKER A3 · extra. `uv --version` (extra; its row is 62 characters, so the `extra` tag sits
     at the right end of the row below, as the pilot does) -> 06-uv-missing.txt line 2 in RED,
     "command not found" underlined RED. On "so skip ahead to uv init" the tracker caption pulses
-    and a GREY chip "have uv? skip to 5:43" (SKIP_TO: where beat 7 starts in the video) appears
+    and a GREY chip "have uv? skip to 5:47" (SKIP_TO: where beat 7 starts in the video) appears
     left of the README chip; it goes on "Otherwise".
  5  TRACKER A3 (extra off). The chip flashes YELLOW ("the README's installer"). `curl -LsSf
     https://astral.sh/uv/install.sh | sh` (folds onto two rows; GREY tag "macOS / Linux") ->
@@ -74,7 +76,7 @@ from manim import *
 
 from explainer import style as S
 from explainer.devops import (MONO, box, check_mark, chip, cross_mark, file_glyph, folder_glyph,
-                              label, mono, substring, tag)
+                              label, lecture_ref, mono, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CAPTION, COMPONENTS, COST, ERR, INK, LAPTOP, NARRATION, P_A, P_HOME, SYSTEM,
@@ -134,10 +136,11 @@ AXIS_Y = 0.3                       # V7's axis (beats 9-10), above the 3-row str
 # full video and in part 1 (part 1 starts at 0:00). It is S04's start plus beat 7's start in this
 # scene (the SRT cue "Now the step itself"), rounded down: re-check it whenever S01-S04 change length.
 # It must never land after that cue; landing up to ~3 s early (in beat 6's `uv --version`) is fine.
-# 2026-10-16 draft: 275.6 + 68.3 = 343.9 (5:43.9). After the S01/S03 narration fixes (explainer.check
-# ends: S01 78.6, S02 112.9, S03 85.3) S04 starts at 276.8 and the cue at 345.1 (5:45.1): 5:43 lands
-# 2.1 s early, which leaves margin for the 30 fps render's frame rounding.
-SKIP_TO = "5:43"
+# 2026-10-17, after the S01/S03 re-voices: explainer.check ends S01 79.7, S02 112.9, S03 86.9, so S04
+# starts at 279.5; beat 7 starts at 68.2 in S04's subs.json, so the cue is at 347.7 (5:47.7) and 5:47
+# lands 0.7 s early. The 30 fps previews (S01 79.83, S02 112.80, S03 about 87.0, beat 7 at 68.23)
+# put the cue at about 347.9, so frame rounding does not push it before 5:47.
+SKIP_TO = "5:47"
 
 
 # ------------------------------------------------------------------ small helpers
@@ -323,6 +326,7 @@ class KeyAndInit(VoiceScene):
         place(ill0, left=card[0].get_left()[0], top=card[0].get_bottom()[1] - 0.18)
         lab1 = sans("the course's service account", 22, LAPTOP)
         lab2 = sans("spends the course's money", 22, LAPTOP)
+        lref = lecture_ref(3, "23, 70")      # top right, while the key is enlarged (to beat 1's first play)
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(card), FadeIn(ill0), run_time=0.6)
@@ -332,7 +336,7 @@ class KeyAndInit(VoiceScene):
             vo.wait_until("called mega-pipeline")
             self.play(Indicate(keyrow.name, color=COST, scale_factor=1.12), run_time=0.7)
             vo.wait_until("It lets your code")
-            self.play(keyrow.animate.scale(1.8).move_to(BIG_C), run_time=1.0)
+            self.play(keyrow.animate.scale(1.8).move_to(BIG_C), FadeIn(lref), run_time=1.0)
             glow = halo(keyrow.key.get_center())
             self.add(glow)
             self.bring_to_back(glow)
@@ -364,8 +368,9 @@ class KeyAndInit(VoiceScene):
             # shrinking key's path (y -0.1 -> 0.46), so it can arrive while the key goes home; the
             # other four rows (on that path) and the README card follow. The check caption comes
             # once the first key has landed.
-            self.play(FadeOut(glow), FadeOut(labs), keyrow.animate.scale(1 / 1.8).move_to(slot),
-                      card.animate.shift(UP * LIFT), ill0.animate.shift(UP * LIFT),
+            self.play(FadeOut(glow), FadeOut(labs), FadeOut(lref),
+                      keyrow.animate.scale(1 / 1.8).move_to(slot), card.animate.shift(UP * LIFT),
+                      ill0.animate.shift(UP * LIFT),
                       FadeIn(rows[0], shift=LEFT * 0.15), FadeIn(yt1, shift=LEFT * 0.15), run_time=0.7)
             self.play(FadeIn(VGroup(*rows[1:]), shift=LEFT * 0.15), FadeIn(rc, shift=UP * 0.15),
                       run_time=0.6)

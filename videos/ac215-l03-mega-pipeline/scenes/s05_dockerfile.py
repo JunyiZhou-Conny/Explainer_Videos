@@ -2,10 +2,12 @@ r"""S05 · Write the Dockerfile, line by line (README › transcribe_audio step 
 
 Layout for the whole scene: the Dockerfile panel (files/transcribe_audio.Dockerfile, 20 pt, the
 file a student ends up with) at the top, left edge fixed, so a "swap" reads as scrolling the same
-file; its caption "from transcribe_audio/README.md · lines 41–90" in the top-right corner. V2 in
-the bottom band (y −1.43 … −3.55): lecture 2's TEAL config card at left, the layer stack at right.
-Each highlighted line sends a copy of its keyword down into the band, where it turns into its slab
-or into its line on the card.
+file; its caption "from transcribe_audio/README.md · lines 41–90" in the top-right corner (beat 6
+lends that corner to the GREY lecture tag "Lecture 3 · slides 40", lecture_ref: there is no room
+under the caption, the panel's top is at 2.47; beat 7's first bar swaps them back). V2 in the
+bottom band (y −1.43 … −3.55): lecture 2's TEAL config card at left, the layer stack at right. Each
+highlighted line sends a copy of its keyword down into the band, where it turns into its slab or
+into its line on the card.
 
 Beats (script.md "## S05", one voiceover block each):
  0  TRACKER A3→A4. A GREY README card (transcribe_audio/README.md · line 38: the README's two
@@ -25,14 +27,16 @@ Beats (script.md "## S05", one voiceover block each):
     YELLOW tag "remember this line" (wiggles on "Soon").
  5  Bar on line 10; its card line turns PINK, "where the key is · a relative path", with a small
     PINK signpost glyph; `secrets/` underlines PINK.
- 6  The panel scrolls to PANEL(12–21); `RUN` pulses on "one RUN instruction". The nine `\` pulse
-    on "backslash", then the nine `&&` on "double ampersands"; `RUN` drops one fat ORANGE slab. The
-    slab zooms up (an ORANGE inset over the card, dashed zoom lines to the slab): "apt lists" pages
-    appear (line 12), ORANGE packages fill in (13–14), the pages crumple and vanish inside the slab
-    (15–16); on "cost nothing" the "apt lists" label is struck through and the apt slab on the
-    stack pulses.
- 7  Bar on 17–18: an ORANGE `pip` chip, then a PURPLE `uv` chip drops in beside it. GREY note (two
-    rows): "this Python is the image's own (/usr/local), / not Debian's → pip may install".
+ 6  The panel scrolls to PANEL(12–21) while the caption gives way to the lecture tag (slide 40:
+    one RUN chain that cleans up in the same layer); `RUN` pulses on "one RUN instruction". The
+    nine `\` pulse on "backslash", then the nine `&&` on "double ampersands"; `RUN` drops one fat
+    ORANGE slab. The slab zooms up (an ORANGE inset over the card, dashed zoom lines to the slab):
+    "apt lists" pages appear (line 12), ORANGE packages fill in (13–14), the pages crumple and
+    vanish inside the slab (15–16); on "cost nothing" the "apt lists" label is struck through and
+    the apt slab on the stack pulses.
+ 7  Bar on 17–18 (the lecture tag leaves, the caption returns): an ORANGE `pip` chip, then a
+    PURPLE `uv` chip drops in beside it. GREY note (two rows): "this Python is the image's own
+    (/usr/local), / not Debian's → pip may install".
  8  Bar on 19–21: a GREY user glyph "app · uid 1000", an arrow "owns" to a TEAL folder `/app`. The
     caption gives way to a two-row README chip `transcribe_audio/README.md · line 72` "Running
     containers as root is a security risk". The zoom shrinks back into its slab.
@@ -69,7 +73,7 @@ from manim import *
 from explainer import style as S
 from explainer.components import person_icon
 from explainer.devops import (MONO, PANEL, box, chip, code_span, file_glyph, folder_glyph, label,
-                              line_bar, mono, mono_line, substring, tag)
+                              lecture_ref, line_bar, mono, mono_line, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, LOOKUP, NARRATION, SYSTEM, TOOL, TURN, VENV, ConfigCard,
@@ -397,8 +401,10 @@ class WriteDockerfile(VoiceScene):
         gone = strike(lab_lists, S.GREY, 3)        # the label is struck through: deleted
         dots = pkg_dots(18, cols=6, color=SYSTEM).move_to([zx0 + 2.95, yg, 0])
         lab_pk = sans("build-essential, ffmpeg", PT, S.GREY).move_to([zx0 + 2.95, yl, 0])
+        # top right in the caption's place (no room under it) until beat 7's first bar
+        lref = lecture_ref(3, "40")
         with self.voiceover(SAY[6]) as vo:
-            self.swap(p12, extra=[FadeOut(b), FadeOut(u_sec)])
+            self.swap(p12, extra=[FadeOut(b), FadeOut(u_sec), FadeOut(cap)], extra_in=[FadeIn(lref)])
             vo.wait_until("one RUN instruction")        # (else ~4 s without motion after the swap)
             self.play(Indicate(span(p12, 12, "RUN"), color=TURN, scale_factor=1.2), run_time=0.8)
             vo.wait_until("ends in a backslash")
@@ -448,7 +454,7 @@ class WriteDockerfile(VoiceScene):
         note7.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
         note7.move_to([zx0 + 0.3, -3.06, 0], aligned_edge=LEFT)
         with self.voiceover(SAY[7]) as vo:
-            self.play(Transform(b, bar(p12, 17, 18)), run_time=0.4)
+            self.play(Transform(b, bar(p12, 17, 18)), FadeOut(lref), FadeIn(cap), run_time=0.4)
             vo.wait_until("upgrades pip")
             self.play(FadeIn(pip_c, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("and installs uv")

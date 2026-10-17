@@ -37,8 +37,10 @@ Beats (script.md "## S10", one voiceover block each):
     "[+] run 2/2" boxed YELLOW + GREY chip "no pull · no build: the image exists"; GREY note "after
     a git pull that changes pyproject.toml / or the Dockerfile: docker compose build". ▶ your turn.
     Hold 2 s.
- 5  TRACKER Run 3 · extra. The second laptop terminal (8 rows; opens on ~ with "new terminal: cd
-    here first"): the curl … | grep … line (extra, folds) -> laptop/24 lines 2–5: the collection
+ 5  TRACKER Run 3 · extra. After the hold, the second laptop terminal (8 rows) replaces it; it opens
+    on ~ with "new terminal: cd here first", then ~/AC215/llm-rag$: the curl … | grep … line (extra;
+    folded at spaces, and once inside the URL at "/databases" with no space before the "\" and no
+    indent after it, so the rows join into the captured line) -> laptop/24 lines 2–5: the collection
     names GREEN, both "dimension":256 boxed YELLOW. The container terminal (6 rows): `python cli.py
     --get --chunk_type char-split` (extra; GREY note "not in the README · S12") -> cli-container/70
     line 6 cut after the ids list's "]" (word-folded); above it the PANEL of
@@ -54,8 +56,10 @@ Deviations from SHOW (see the scene report): V2 above the terminal is a compact 
 picture lives in the free band right of the tracker (y > 2.6): the folder, then the new boxes as
 small glyphs beside it. laptop/20 is sliced from its STATUS column on (STATUS, PORTS, NAMES:
 "Up 2 minutes" must show), not PORTS and NAMES only. laptop/21's WARN lines and the ids lines are
-word-folded (cutting them at 65 would hide "is not set"; the ids stay whole). The final picture
-(boxes dissolve, folder glows) illustrates the last sentence; SHOW has no picture there.
+word-folded (cutting them at 65 would hide "is not set"; the ids stay whole). The curl line of
+laptop/24 is folded here, not by type_cmd: fold_cmd's hard break inside the URL ends the row with
+" \" and indents the next, which splits the URL into two words. The final picture (boxes dissolve,
+folder glows) illustrates the last sentence; SHOW has no picture there.
 """
 
 from types import SimpleNamespace

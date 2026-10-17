@@ -16,6 +16,10 @@ Beats (script.md "## S12", one voiceover block each):
     mono, 24 pt; CODE(README.md: 189) at >= 20 pt is the card: line 190 would be 16 units wide).
     "dash u": `<USER NAME>` boxed YELLOW, "dash p": `<ACCESS TOKEN>` boxed YELLOW, "yours" under each.
     "We have no account": GREY note "no Docker Hub account in our recording · not run here".
+    GREY `Lecture 2 · slides 67–69` (lecture_ref, standard top right, bottom at 3.13) fades in with the
+    card ("Next, log in") and stays through the push (script.md: login, tag, the name, push); it fades
+    in beat 6 on "Without an account", as the push picture parks in that corner (the real denial is
+    tutorial-only, SLIDES.md).
  2  TRACKER B2 · extra. The card moves to the top; an 8-row laptop terminal fades in with
     `stand_in_tag()` on its frame and its prompt waiting (the tag's "watch only" line pulses on "just
     watch those"). "Logging in to
@@ -97,7 +101,7 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import person_icon
-from explainer.devops import MONO, OUTPUT, browser_window, cross_mark, folder_glyph
+from explainer.devops import MONO, OUTPUT, browser_window, cross_mark, folder_glyph, lecture_ref
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, DOCKER_PUSH, DOCKER_TAG, ERR, IMAGE, IMAGE_LS, INK, LAPTOP, LAPTOP_DIR,
@@ -491,11 +495,14 @@ class TagAndPush(VoiceScene):
         yours2 = label("yours", 22, TURN).move_to([bx_tok.get_x(), y_low, 0])
         not_run = label("no Docker Hub account in our recording · not run here", 22, S.GREY)
         not_run.move_to([0, y_low - 0.75, 0])
+        # top right, bottom at 3.13: from "Next, log in" (with the card) through the push (beat 6); every card,
+        # terminal and the shelf's title stay under y 2.9 meanwhile, the tracker ends left of x 0.1
+        lref = lecture_ref(2, "67–69")
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(page, ill0, pw, yt0), shift=DOWN * 0.2), FadeOut(c188, shift=UP * 0.2),
                       track(tr, 2), run_time=0.6)
-            self.play(FadeIn(c189, shift=UP * 0.2), run_time=0.6)
+            self.play(FadeIn(c189, shift=UP * 0.2), FadeIn(lref), run_time=0.6)
             vo.wait_until("docker login")
             self.play(Indicate(c189.cmd, color=INK, scale_factor=1.04), run_time=0.6)
             vo.wait_until("dash u with your user name")
@@ -736,8 +743,9 @@ class TagAndPush(VoiceScene):
             t6 = laptop_term(12)
             self.remove(*body, *st.get_family(), hub, *parcels)
             self.add(ghost)
+            # the parked picture takes the lecture tag's corner: the tag is gone before it gets there
             self.play(ghost.animate.scale(k).move_to(THUMB_C), FadeOut(texts), FadeOut(VGroup(c191, yt6, ok_note)),
-                      run_time=0.7)
+                      FadeOut(lref, rate_func=quick), run_time=0.7)
             self.play(FadeIn(t6), run_time=0.4)
             bare_prompt(self, t6)
             type_cmd(self, t6, DOCKER_PUSH, 0.9)

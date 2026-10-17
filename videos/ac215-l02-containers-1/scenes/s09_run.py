@@ -392,7 +392,9 @@ class RunIt(VoiceScene):
         lref_pid = lecture_ref(2, "13–14")                  # top right, through the PID namespace bridge
 
         with self.voiceover(SAY[4]) as vo:
-            resize(self, t, 4, extra=[FadeOut(unchanged), FadeOut(lref_run), FadeIn(lref_pid)], run_time=0.5)
+            # the tags share the corner: one out, then the next in (a crossfade mixes their glyphs)
+            resize(self, t, 4, extra=[FadeOut(unchanged), Succession(FadeOut(lref_run), FadeIn(lref_pid))],
+                   run_time=0.5)
             c_run2 = type_cmd(self, t, RUN, 1.0)
             t.set_prompt(P33)
             bare_prompt(self, t)

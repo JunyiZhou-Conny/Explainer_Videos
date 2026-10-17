@@ -2,19 +2,23 @@
 
 Beats (script.md "## S11", one voiceover block each):
  0  Concept first, no terminal. Boxes 3 and 4 (`[3/4] COPY . ./`, `[4/4] RUN uv sync`) appear and
-    flash RED on "rerun"; at "caches every build step" boxes 1 and 2 join them and every box drops a
-    domino. At "its parent step" thin TEAL arrows grow from each box to the next box's badge spot,
-    at "and its instruction" from each box up to its own spot; at "are unchanged" they merge into
-    four TEAL fingerprint badges. "For COPY, the checksum": a small GREY parcel (PINK tape, "build
-    context") docks above COPY's badge and feeds it a third arrow. "The first step that changes":
-    box 2's instruction flickers YELLOW, its badge turns RED, dominoes 2, 3, 4 topple on "runs
-    again" / "every step after it"; then they stand back up and the badge returns to TEAL.
- 1  The parcel leaves; the chain rises and closes up (badges sit on the box lids); then an 8-row
-    terminal fades in under it and types `docker build --progress=plain -t simple-translate -f
-    Dockerfile .` (extra; row tag "extra · full log", `--progress=plain` underlined) -> laptop/38:
-    23 (cut after `apt-get update &&`), 24, 26–27, 29–30. "FROM reuses the base": box 1 gets a TEAL
-    "reused" stamp; "and the three steps … all say CACHED": the three CACHED words turn TEAL as
-    boxes 2–4 get TEAL CACHED stamps; the standing dominoes pulse on "nothing runs".
+    flash RED on "rerun"; at "Docker caches" boxes 1 and 2 join them and GREY `Lecture 2 · slides 36,
+    58–60` (lecture_ref, top right) fades in, out again at "For COPY" (the lecture leaves out what
+    invalidates a step); at "every build step" every box drops a domino and a GREY caption "one
+    numbered step per instruction" fades in under the dominoes (slide 58). At "its parent step" thin
+    TEAL arrows grow from each box to the next box's badge spot, at "and its instruction" from each
+    box up to its own spot; at "are unchanged" they merge into four TEAL fingerprint badges. "For
+    COPY, the checksum": a small GREY parcel (PINK tape, "build context") docks above COPY's badge
+    and feeds it a third arrow. "The first step that changes": box 2's instruction flickers YELLOW,
+    its badge turns RED, dominoes 2, 3, 4 topple on "runs again" / "every step after it"; then they
+    stand back up and the badge returns to TEAL.
+ 1  The caption leaves, then the parcel; the chain rises and closes up (badges sit on the box lids);
+    then an 8-row terminal fades in under it and types `docker build --progress=plain -t
+    simple-translate -f Dockerfile .` (extra; row tag "extra · full log", `--progress=plain`
+    underlined) -> laptop/38: 23 (cut after `apt-get update &&`), 24, 26–27, 29–30. "FROM reuses
+    the base": box 1 gets a TEAL "reused" stamp; "and the three steps … all say CACHED": the three
+    CACHED words turn TEAL as boxes 2–4 get TEAL CACHED stamps; the standing dominoes pulse on
+    "nothing runs".
  2  The terminal shrinks to the 3-row strip. The parcel returns under COPY and enlarges (.git/,
     .git/index, cli.py, Dockerfile); cli.py lights YELLOW and CODE(cli.py: 49) docks beside it
     (YELLOW bar). The four boxes pulse on "Which of the four steps". PONDER (8 s): the card covers
@@ -61,7 +65,7 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import code_panel, code_span, line_bar
+from explainer.devops import code_panel, code_span, lecture_ref, line_bar
 from explainer.scene import VoiceScene
 
 from common import (BUILD_PLAIN, ERR, IMAGE, INK, LAPTOP, LAPTOP_DIR, NARRATION, ROUTE, STRIP_ROWS, TERMINAL,
@@ -236,6 +240,9 @@ class LayerCache(VoiceScene):
         feed_p = Arrow(mini.get_bottom(), b3.get_top(), buff=0.06, stroke_width=2.5, tip_length=0.12,
                        max_tip_length_to_length_ratio=0.35, color=IMAGE)
         run_txt = ch.boxes[1].text[1]                    # "RUN apt…uv"
+        lref = lecture_ref(2, "36, 58–60")               # top right, "Docker caches" to "For COPY"
+        steps_cap = label("one numbered step per instruction", 22, S.GREY).next_to(ch.dominoes, DOWN, buff=0.3)
+        gone_early = lambda a: smooth(min(1.0, a / 0.4))           # gone before the badges get there
 
         # ========================================================== 0 · the rule, concept first
         with self.voiceover(SAY[0]) as vo:
@@ -246,10 +253,10 @@ class LayerCache(VoiceScene):
             self.play(*[pulse(ch.boxes[k], ERR, 1.08, 1.4, there_and_back_with_pause) for k in (2, 3)])
             vo.wait_until("Docker caches")
             self.play(LaggedStart(FadeIn(ch.boxes[0], shift=RIGHT * 0.2), FadeIn(ch.boxes[1], shift=RIGHT * 0.2),
-                                  lag_ratio=0.35), run_time=0.7)
+                                  lag_ratio=0.35), FadeIn(lref), run_time=0.7)
             vo.wait_until("every build step")
             self.play(LaggedStart(*[FadeIn(d, shift=DOWN * 0.35) for d in ch.dominoes], lag_ratio=0.25),
-                      run_time=1.0)
+                      FadeIn(steps_cap, shift=UP * 0.1), run_time=1.0)
             vo.wait_until("its parent step")
             self.play(LaggedStart(*[GrowArrow(a) for a in parents], lag_ratio=0.3), run_time=0.9)
             vo.wait_until("and its instruction")
@@ -265,7 +272,8 @@ class LayerCache(VoiceScene):
                       run_time=0.9)
             self.add(ch)
             vo.wait_until("For COPY")
-            self.play(FadeIn(mini, shift=DOWN * 0.3), FadeIn(mini_t, shift=DOWN * 0.3), run_time=0.6)
+            self.play(FadeOut(lref, rate_func=gone_early), FadeIn(mini, shift=DOWN * 0.3),
+                      FadeIn(mini_t, shift=DOWN * 0.3), run_time=0.6)        # the tag is gone before the parcel docks
             vo.wait_until("the checksum")
             self.play(GrowArrow(feed_p), Indicate(mini.files, color=INK, scale_factor=1.15), run_time=0.6)
             vo.wait_until("must match too")
@@ -288,7 +296,7 @@ class LayerCache(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             # the chain is out of the terminal's way before the terminal comes in
-            gone_early = lambda a: smooth(min(1.0, a / 0.4))           # gone before the badges get there
+            self.play(FadeOut(steps_cap), run_time=0.25)              # the caption leaves before the chain rises
             self.play(FadeOut(VGroup(mini, mini_t, feed_p), shift=UP * 0.2, rate_func=gone_early), MoveToTarget(ch),
                       run_time=0.6)
             self.play(FadeIn(t, shift=UP * 0.15), run_time=0.35)

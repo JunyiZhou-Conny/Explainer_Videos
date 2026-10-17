@@ -29,7 +29,8 @@ Beats (script.md "## S10", one voiceover block each):
     only"; then the ORANGE slab's name `RUN apt…uv` (S11's name, as in S09's recap) pulses with the
     strip's `apt-get update`; a short hold to read it. GREY `Lecture 2 · slides 34–37, 59`
     (lecture_ref) from "Then docker history" through beat 2 (the history and the stack), left of the
-    corner glyph (the glyph blocks the standard spot); it goes with the picture at beat 3.
+    corner glyph (the glyph blocks the standard spot); it goes with the picture at beat 3. While it is
+    up, the glyph leaves and enters its corner from just below, so the moving stack passes under it.
  2  The picture parks again; the terminal grows back and continues -> laptop/34 "…", lines 14-23
     (rows 11-13 never printed; it scrolls). Row 23 (`debian.sh … 'bookworm'`, `85.3MB`) ORANGE bar on
     "Debian", row 22 (`ENV PATH=/usr/local/bin:…`) PINK bar on "the PATH". The terminal shrinks to
@@ -344,8 +345,9 @@ class InsideTheImage(VoiceScene):
         `also`; the stack leaves the scene. Returns the glyph."""
         glyph = thumb([s.box.height for s in slabs])
         ghost = boxes_of(slabs)
+        self.remove(*[s.box for s in slabs])     # the ghost IS the slabs now: no copy left behind to pop off
         self.add(ghost)
-        self.play(ReplacementTransform(ghost, glyph, path_func=path_func), FadeOut(words(slabs)),
+        self.play(ReplacementTransform(ghost, glyph, path_func=path_func), FadeOut(words(slabs), rate_func=first_half),
                   *[FadeOut(m) for m in extra], *also, run_time=run_time)
         self.unstack(st)
         return glyph
