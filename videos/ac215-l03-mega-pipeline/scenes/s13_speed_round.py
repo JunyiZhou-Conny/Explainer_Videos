@@ -72,8 +72,9 @@ Beats (script.md "## S13", one voiceover block each):
     `README.md · lines 148–149` + GREY tag "same as -d · -s" under the tracker. It types
     `python cli.py --download`, `python cli.py --synthesis` (a compact GOLD "billed" tag beside
     it), `exit` (GREY frame, laptop), `docker build -t synthesis_audio_en .` → 42-c-rebuild.txt
-    lines 3, 14–17; CACHED GREEN. "pause to run": ▶ your turn beside `--download` as soon as it is
-    typed (wiggles; it stays until the section switch), a second ▶ by the rebuild once it is typed.
+    lines 3, 14–17; CACHED GREEN. ▶ your turn: one 0.9 s move brings the terminal back, types
+    `--download` and lands ▶ beside it just after "pause" (it wiggles on "pause to run" and stays
+    until the section switch); a second ▶ by the rebuild once it is typed; the CACHED rows held 1 s.
  8  The terminal clears; the tracker switches: "README › translate_text", 13 dots, and the section
     name pulses. "races through the same setup": dots 1–5 ripple. The montage starts at "cd, key"
     (fast typing): TRACKER D1 `cd ../translate_text`; D2 the GOLD key drops into secrets/; D3
@@ -101,8 +102,9 @@ Beats (script.md "## S13", one voiceover block each):
 11  TRACKER D10 → D13. V8 goes; the terminal returns (11 rows, container). README chip
     `README.md · lines 155–157` + "same as -d · -t · -u". It types the three commands (compact
     GOLD "billed" by --translate), `exit`, `docker build -t translate_text .` → 52-d-rebuild.txt
-    lines 3, 14–17. "Pause to run": ▶ your turn beside `--download` as soon as it is typed (wiggles;
-    it stays until the section switch), a second ▶ by the rebuild once it is typed.
+    lines 3, 14–17. "Pause to run" (the first words): the same 0.9 s move as in C10 brings the
+    terminal back with `--download` typed and ▶ your turn beside it (wiggles; it stays until the
+    section switch), a second ▶ by the rebuild once it is typed; the CACHED rows held 1 s.
 12  The terminal clears to 8 rows while the tracker switches: "README › synthesis_audio", 12 dots.
     A quicker montage: E1 `cd ../synthesis_audio`; E2 key; E3 `uv init --bare` → 60 line 2; E4
     the Dockerfile line 3 flashes; E5 `docker build -t synthesis_audio .` → 61 lines 3, 14; E6
@@ -157,7 +159,7 @@ from manim import *
 
 from explainer import style as S
 from explainer.devops import (box, check_mark, chip, cloud, code_panel, code_span, cross_mark, folder_glyph,
-                              label, line_bar, mono, mono_line, step_badge, substring, tag)
+                              glyph_range, label, line_bar, mono, mono_line, step_badge, substring, tag)
 from explainer.scene import VoiceScene
 
 # after `from manim import *`: manim exports a `capture` too
@@ -596,21 +598,39 @@ def _in_late(a: float) -> float:
     return smooth(max(0.0, (a - 0.4) / 0.6))
 
 
-def back_to_terminal(scene, old, t, chip, note, tr_anim, run_time: float = 0.6):
-    """One move from a V8 picture to the pause terminal: the picture goes, the terminal, the README
-    chip and its 'same as' note come in, and the tracker steps on."""
+def _typed(a: float) -> float:
+    """rate_func: the first command is typed from 45 % to 80 % of the run, as the terminal shows."""
+    return min(1.0, max(0.0, (a - 0.45) / 0.35))
+
+
+def _tag_in(a: float) -> float:
+    """rate_func: ▶ your turn comes in over the last 20 % of the run, once its command is typed."""
+    return smooth(max(0.0, (a - 0.8) / 0.2))
+
+
+def back_to_terminal(scene, old, t, chip, note, tr_anim, cmd: str, run_time: float = 0.9):
+    """One move from a V8 picture to the pause terminal, so ▶ is up while "pause" is still being
+    heard: the picture goes; the terminal, the README chip and its 'same as' note come in; `cmd` is
+    typed at the prompt as soon as the terminal shows, and ▶ your turn lands beside it, pinned to its
+    row so it stays until the terminal clears; the tracker steps on. `t` starts empty (its prompt
+    comes with the command). Returns (the typed line, as Terminal.type returns it; the tag)."""
+    assert not len(t.lines), "the pause terminal starts empty"
+    p = t.prompt + " "
+    assert len(t.fold(p + cmd, first_prefix=len(p))) == 1, cmd
+    ln = t._place(mono_line(p + cmd, t.size, INK, t2c=t._prompt_colors(t.prompt)), 0)
+    yt = beside(your_turn(), t, ln)
+    assert yt.get_left()[0] > ln.glyphs.get_right()[0] + 0.1, (yt.get_left(), ln.glyphs.get_right())
     scene.play(FadeOut(old, rate_func=_out_early), FadeIn(t, rate_func=_in_late),
+               FadeIn(glyph_range(ln, 0, len(p)), rate_func=_in_late),
+               ShowIncreasingSubsets(glyph_range(ln, len(p)), rate_func=_typed),
+               FadeIn(yt, shift=LEFT * 0.1, rate_func=_tag_in),
                FadeIn(chip, shift=DOWN * 0.1, rate_func=_in_late), FadeIn(note, shift=DOWN * 0.1, rate_func=_in_late),
                tr_anim, run_time=run_time)
-
-
-def turn_on(scene, t, line, run_time: float = 0.3):
-    """▶ your turn beside the first command of a pause, pinned to its row so it stays until the
-    terminal clears. Returns the tag (the caller wiggles it)."""
-    yt = beside(your_turn(), t, line)
-    assert yt.get_left()[0] > line.glyphs.get_right()[0] + 0.1, (yt.get_left(), line.glyphs.get_right())
-    pin(scene, line, yt, run_time=run_time)
-    return yt
+    scene.remove(yt)
+    ln.add(yt)                                        # pinned, as pin() does
+    t.lines.add(ln)
+    scene.add(ln)
+    return ln, yt
 
 
 # ------------------------------------------------------------------ the scene
@@ -949,7 +969,6 @@ class SpeedRound(VoiceScene):
 
         # ========================================================== 7 · C10-C12: download, synthesis; exit; rebuild
         t2 = term(P_CTR, 10, component=C)
-        seed_prompt(t2)
         rc7 = readme_chip("README.md · lines 148–149")
         place(rc7, left=-6.4, cy=2.45)
         sm7 = tag("same as -d · -s", S.GREY)
@@ -957,12 +976,11 @@ class SpeedRound(VoiceScene):
         assert rc7.get_bottom()[1] > strip_top(10) + 0.1
 
         with self.voiceover(SAY[7]) as vo:
-            back_to_terminal(self, VGroup(api, p88, bar, stub, arc, base, rlab, crate, cost5, route, r151), t2,
-                             rc7, sm7, tr.goto(10))
-            l7a = tcmd(self, t2, CMDS[C][0], 0.4)
+            # ▶ beside the first command to run (as in E10) lands just after "pause" is spoken, in the
+            # same move that brings the terminal back; it stays until the section switch
+            l7a, yt7 = back_to_terminal(self, VGroup(api, p88, bar, stub, arc, base, rlab, crate, cost5, route, r151),
+                                        t2, rc7, sm7, tr.goto(10), CMDS[C][0])
             vo.wait_until("pause to run")
-            # ▶ on "pause", beside the first command to run (as in E10): it stays until the section switch
-            yt7 = turn_on(self, t2, l7a)
             self.play(Wiggle(yt7, scale_value=1.12, rotation_angle=0.02 * TAU), tr.goto(11), run_time=0.6)
             l7 = tcmd(self, t2, CMDS[C][1], 0.45)
             ct7 = beside(ttag("billed", COST), t2, l7)
@@ -975,7 +993,7 @@ class SpeedRound(VoiceScene):
             pin(self, c7, yt7b, run_time=0.25)                # and on the rebuild as soon as it is typed (as in E12)
             o7, _ = live_build(self, t2, RBLD[C])
             cached_green(self, o7[1])
-            self.wait(0.6)                                    # the CACHED rows, before the section switch
+            self.wait(1.0)                                    # the CACHED rows, before the section switch
 
         # ========================================================== 8 · D1-D5: the montage, first half
         dfD = file_panel(f"files/{D}.Dockerfile", 3, 3, f"{D}/Dockerfile")
@@ -1106,7 +1124,6 @@ class SpeedRound(VoiceScene):
 
         # ========================================================== 11 · D10-D13: download, translate, upload; rebuild
         t3 = term(P_CTR, 11, component=D)
-        seed_prompt(t3)
         rc11 = readme_chip("README.md · lines 155–157")
         place(rc11, left=-6.4, cy=2.45)
         sm11 = tag("same as -d · -t · -u", S.GREY)
@@ -1114,12 +1131,11 @@ class SpeedRound(VoiceScene):
         assert rc11.get_bottom()[1] > strip_top(11) + 0.08, (rc11.get_bottom(), strip_top(11))
 
         with self.voiceover(SAY[11]) as vo:
-            back_to_terminal(self, VGroup(api2, folder, p58, bar10, cost10, nostub, fr_pg, saved, bucket, bcap,
-                                          up_note), t3, rc11, sm11, tr.goto(10))
-            l11a = tcmd(self, t3, CMDS[D][0], 0.4)
+            # "Pause" opens this line: ▶ lands beside the first command to run in the same move that
+            # brings the terminal back (0.9 s), and stays until the section switch
             vo.wait_until("Pause to run")
-            # ▶ beside the first command to run, as soon as it is typed: it stays until the section switch
-            yt11 = turn_on(self, t3, l11a)
+            l11a, yt11 = back_to_terminal(self, VGroup(api2, folder, p58, bar10, cost10, nostub, fr_pg, saved, bucket,
+                                                       bcap, up_note), t3, rc11, sm11, tr.goto(10), CMDS[D][0])
             self.play(Wiggle(yt11, scale_value=1.12, rotation_angle=0.02 * TAU), tr.goto(11), run_time=0.6)
             l11 = tcmd(self, t3, CMDS[D][1], 0.4)
             pin(self, l11, beside(ttag("billed", COST), t3, l11), run_time=0.25)
@@ -1133,7 +1149,7 @@ class SpeedRound(VoiceScene):
             pin(self, c11, yt11b, run_time=0.25)              # and on the rebuild as soon as it is typed (as in E12)
             o11, _ = live_build(self, t3, RBLD[D])
             cached_green(self, o11[1], run_time=0.3)
-            self.wait(0.6)                                    # the CACHED rows, before the section switch
+            self.wait(1.0)                                    # the CACHED rows, before the section switch
 
         # ========================================================== 12 · E1-E9: the montage again; the help slip
         dfE = file_panel(f"files/{E}.Dockerfile", 3, 3, f"{E}/Dockerfile")

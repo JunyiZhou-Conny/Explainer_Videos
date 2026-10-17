@@ -28,8 +28,8 @@ Beats (script.md "## S07", one voiceover block each):
     `3.12.15` / "base image"; "falls outside": RED cross. "so uv downloads": a PURPLE `uv` chip
     (top right), a PURPLE arrow, a GREEN dot rides it down to 3.15, label `3.15.0` / "uv download ·
     35.9 MiB"; "the newest stable": tag "newest stable · at the time of recording" beside the uv
-    chip; "and the venv's python": GREEN chip `/.venv/bin/python` (below right) and a GREEN link
-    arrow to the dot. After the sentence the number line fades except the GREEN dot; the V2 stack
+    chip; "and the python in the venv": GREEN chip `/.venv/bin/python` (below right); "links to
+    it": a GREEN link arrow to the dot. After the sentence the number line fades except the GREEN dot; the V2 stack
     (S06's: four thin ORANGE base slabs, brace "base image", caption `python:3.12-slim-bookworm`,
     ORANGE `RUN pip install uv` with its PURPLE uv chip, GREY `COPY . ./` with file glyphs, the
     dashed slot "packages: none yet") slides in from the right; a copy of the strip's `RUN uv sync`
@@ -489,6 +489,7 @@ class StepUvSync(VoiceScene):
             self.play(Indicate(g_dot, color=VENV, scale_factor=1.6), run_time=0.6)
             vo.wait_until("and the python in the venv")
             self.play(FadeIn(vpy, shift=UP * 0.1), run_time=0.4)
+            vo.wait_until("links to it")
             self.play(GrowArrow(link), run_time=0.5)
             self.wait(0.5)                      # chip -> link -> dot, read before the line goes
             # the picture of the image: everything but the GREEN dot goes, the stack comes back (quick,

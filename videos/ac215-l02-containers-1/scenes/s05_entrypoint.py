@@ -23,7 +23,9 @@ Beats (script.md "## S05", one voiceover block each):
     and card.
  2  V3 close-up of the card: the README panel and caption leave, the stack dims. GREY labels with
     short arrows point at the slots from the left (the stacked card has no room under its slots):
-    ENTRYPOINT "the program", CMD "its default arguments", each as it is said. The `["/bin/bash"]`
+    ENTRYPOINT "the program", CMD "its default arguments", each as it is said. GREY
+    `Lecture 2 · slides 32–33` (lecture_ref) from "Think of ENTRYPOINT" to "and the command slot",
+    under the tracker at the left (the card fills the top right). The `["/bin/bash"]`
     tile pulses on "The entrypoint is now bash"; the inherited `["python3"]` tile turns dashed on
     "the command slot still says python3". On "So will the container start" the start-up line
     becomes `/bin/bash python3` (the tile's /bin/bash is copied down in front of python3) with a
@@ -57,7 +59,7 @@ import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
-from explainer.devops import code_span
+from explainer.devops import code_span, lecture_ref
 from explainer.scene import VoiceScene
 
 from common import (BUILD, CAT, INK, INSPECT_V2, IMAGE, LAPTOP_DIR, MONO, NARRATION, P_LAPTOP, RUN,
@@ -292,12 +294,18 @@ class StepEntrypoint(VoiceScene):
         line1.move_to(line0, aligned_edge=LEFT)
         qmark = label("?", 30, TURN).next_to(line1, RIGHT, buff=0.12)
         dim = VGroup(*base, brace, base_name)
+        # the lecture tag goes under the tracker, not top right: the card fills that corner
+        lref = lecture_ref(2, "32–33")
+        lref.move_to([-6.5 + lref.width / 2, 2.75 - lref.height / 2, 0])
+        assert lref.get_top()[1] < tr.get_bottom()[1] - 0.1, (lref.get_top(), tr.get_bottom())
+        assert lref.get_right()[0] < lab_ent.get_left()[0] - 0.3, (lref.get_right(), lab_ent.get_left())
+        assert lref.get_bottom()[1] > dim.get_top()[1] + 0.3, (lref.get_bottom(), dim.get_top())
 
         with self.voiceover(SAY[2]) as vo:
             unpin(self, [(c1.rows[0], yt1)], 0.3, FadeOut(VGroup(panel, cfg_cap), shift=UP * 0.1),
                   dim.animate.set_opacity(0.35))
             vo.wait_until("Think of ENTRYPOINT")
-            self.play(GrowArrow(lab_ent.arrow), FadeIn(lab_ent.text, shift=RIGHT * 0.15),
+            self.play(GrowArrow(lab_ent.arrow), FadeIn(lab_ent.text, shift=RIGHT * 0.15), FadeIn(lref),
                       Indicate(card.keys["ENTRYPOINT"], color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("and CMD as")
             self.play(GrowArrow(lab_cmd.arrow), FadeIn(lab_cmd.text, shift=RIGHT * 0.15),
@@ -305,7 +313,7 @@ class StepEntrypoint(VoiceScene):
             vo.wait_until("The entrypoint is now")
             self.play(Indicate(t_ent, color=TURN, scale_factor=1.12), run_time=0.8)
             vo.wait_until("and the command slot")
-            self.play(FadeTransform(t_cmd, t_cmd2), run_time=0.6)
+            self.play(FadeTransform(t_cmd, t_cmd2), FadeOut(lref), run_time=0.6)
             card.tiles["CMD"] = t_cmd2
             self.play(Indicate(t_cmd2, color=TURN, scale_factor=1.12), run_time=0.7)
             vo.wait_until("So will the container")

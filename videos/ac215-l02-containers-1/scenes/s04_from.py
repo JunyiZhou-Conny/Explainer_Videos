@@ -17,7 +17,8 @@ Beats (script.md "## S04", one voiceover block each):
     writes large (28 pt). `-t simple-translate` underlines TEAL ("the image's name"), `-f Dockerfile`
     WHITE ("the recipe"), the final `.` gets a PINK ring ("build context: this folder"); a GREY
     folder pops out of the dot and rides a PINK route into a PURPLE "builder" box. On "Step 3" the
-    tracker's step-9 dot pulses.
+    tracker's step-9 dot pulses. GREY `Lecture 2 · slides 32, 56` (lecture_ref, top right) from
+    "Dash t names" to "this folder".
  3  The labels leave and the 13-row laptop terminal fades in while the big command's glyphs fly
     into its two folded rows (the slide is the typing). ▶ your turn. laptop/09 lines 2, …, 15 (cut
     after `@sha256:34386ef0`, folds onto 2 rows), …, 31-34 (hash12), …, 38 (67 columns: soft-wraps
@@ -65,7 +66,7 @@ import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
-from explainer.devops import code_span, line_bar
+from explainer.devops import code_span, lecture_ref, line_bar
 from explainer.scene import VoiceScene
 
 from common import (BUILD, CAT, IMAGE, INK, INSPECT_V1, LAPTOP, MONO, NARRATION, P_LAPTOP, ROUTE,
@@ -353,13 +354,15 @@ class StepFrom(VoiceScene):
         builder = builder_box("builder", 2.1, 0.95, 24)
         builder.move_to([5.2, -2.45, 0])
         path2 = route(ring.get_bottom() + DOWN * 0.08, builder.frame.get_top() + UP * 0.05, arc=-0.35)
+        lref = lecture_ref(2, "32, 56")                     # top right, bottom at 3.13 (all else < 2.8)
 
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(VGroup(panel, bar1, *uls, *links, *chips), shift=UP * 0.1),
                       FadeOut(strip), track(tr, 7), run_time=0.5)
             self.play(FadeIn(head2), ShowIncreasingSubsets(big.glyphs, rate_func=linear), run_time=1.0)
             vo.wait_until("Dash t names")
-            self.play(Create(ul_name), substring(big, "simple-translate").animate.set_color(IMAGE), run_time=0.5)
+            self.play(Create(ul_name), substring(big, "simple-translate").animate.set_color(IMAGE), FadeIn(lref),
+                      run_time=0.5)
             self.play(FadeIn(lab_name, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("dash f picks")
             self.play(Create(ul_recipe), run_time=0.5)
@@ -370,7 +373,7 @@ class StepFrom(VoiceScene):
             vo.wait_until("the build context")
             self.play(FadeIn(lab_ctx, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("this folder")
-            self.play(GrowFromCenter(folder), run_time=0.5)
+            self.play(GrowFromCenter(folder), FadeOut(lref), run_time=0.5)
             vo.wait_until("which Docker sends")
             self.play(Create(path2), FadeIn(builder, shift=UP * 0.1), run_time=0.6)
             self.play(travel(folder, path2.copy(), run_time=1.1))

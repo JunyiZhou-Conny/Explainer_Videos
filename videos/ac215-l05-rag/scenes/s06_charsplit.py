@@ -3,11 +3,11 @@
 Beats (script.md "## S06", one voiceover block each):
  0  LECTURE A19–A22. TRACKER Chunk 1. The V1 mini-map fades in bottom right, "chunking" lit.
     Center (tag illustration): a GREEN book holds three topic arrows (curd · pasture ·
-    grandfather) that Transform into one averaged arrow; three PINK questions all land on it and
-    the whole book goes into the prompt card; 11 books pile in, the card overflows and turns RED
-    ("slow", "costly", "garbage"). Then the book splits into six GREEN cards, each with its own
-    arrow; one question lands next to one card and only that card slides into the prompt card.
-    GREY chip "a chunk = what you retrieve = what you paste".
+    grandfather) that Transform into one averaged arrow ("one vector, averaged"); three PINK
+    questions all land on it and the whole book goes into the prompt card; 11 books pile in, the
+    card overflows and turns RED ("slow", "costly", "garbage"). Then the book splits into six
+    GREEN cards, each with its own arrow; one question lands next to one card and only that card
+    slides into the prompt card. GREY chip "a chunk = what you retrieve = what you paste".
  1  A GREY browser frame (illustration) at ac215-llm-rag.dlops.io/chunkviz: a paragraph of word
     blocks with GREEN chunk bands (YELLOW where windows overlap) and two sliders, "chunk size" and
     "overlap", that move while the bands re-flow. README chip README.md · line 95 "check out this
@@ -21,34 +21,39 @@ Beats (script.md "## S06", one voiceover block each):
     measure "7,808 characters"), rulers and band with it; the mini-map returns. PONDER (8 s): the
     card in the lower third, left of the mini-map.
  4  The first window ("350") and the second one's new characters ("+330") are named; the equation
-    1 + ⌈(7,808 − 350) / 330⌉ = 24 writes in ("7,458" over the subtraction); the ruler runs along
-    the bar in steps, leaving a PURPLE outline per window, the counter ticks to 24 ("23" under the
-    ceiling); "= 24" turns YELLOW.
+    1 + ⌈(7,808 − 350) / 330⌉ writes in ("7,458" over the subtraction); the ruler runs along the
+    bar in steps, leaving a PURPLE outline per window, the counter ticks to 24 ("23 more windows"
+    under the ceiling); "= 24" writes in and turns YELLOW.
  5  TRACKER Chunk 2. The TEAL container terminal (13 rows, app@92c5bfd26089:/app$; the mini-map
     hides) types `python cli.py --chunk --chunk_type char-split` -> cli-container/10 lines 2–7, …,
-    32–34 (2 and 5 cut). `11` and `24` YELLOW; GREY tag "your book order may differ" beside line 6
-    (line 5 is full width); GREY chip "no Google call in char-split's branch" beside `chunk()`;
-    ▶ your turn; GREY card "Linux · PermissionError … 'outputs'? / on the laptop: mkdir outputs &&
-    chmod a+w outputs" in the free rows bottom right. Hold 2 s.
- 6  TRACKER Chunk 2 · extra. `wc -l outputs/chunks-char-split-*.jsonl` (extra) -> cli-container/11
-    lines 2–13 (names cut); `24` and `8248 total` YELLOW.
- 7  LECTURE B14–B15. The one-liner of cli-container/12 (extra; it folds onto 5 rows at 65
-    characters) -> lines 2–4; the terminal shrinks to the 3-row strip. Above it, the two printed
-    lines lift into the seam: `…things she intended to ac` over `s she intended to accomplish…`,
-    aligned by character, each in its PURPLE window, the shared 20 characters in a YELLOW band;
-    `ac` and the lone `s` underline YELLOW; "accomplish" is whole in chunk 1. Under it, the
-    lecture's example: GREY cards "…artificial intelli" | "gence…" end to end, no band (tag
-    "lecture example").
- 8  A second laptop terminal (6 rows, above the strip; "new terminal: cd here first") types
-    `ls -la outputs | head -5` (extra) -> laptop/16 lines 2–6; `student student` YELLOW; top right
-    the chip .gitignore · line 4 `/outputs`. Then a PANEL of cli-container/10 lines 8–9 ("python
-    cli.py --chunk … · the first book's table"): row 0's text boxed RED, RED tag "erratum · header
-    and license, chunked like the rest · see part 2". Fade to an empty frame.
+    32–34 (2 and 5 cut). `11` and `24` YELLOW; GREY tag "your book order may differ" beside line 6;
+    GREY chip "no Google call in char-split's branch" beside `chunk()`; ▶ your turn; GREY card
+    "Linux · PermissionError … 'outputs'? / on the laptop: mkdir outputs && chmod a+w outputs" in
+    the free rows bottom right. Hold 2 s.
+ 6  TRACKER Chunk 2 · extra. The terminal clears; `wc -l outputs/chunks-char-split-*.jsonl`
+    (extra; its tag in the title bar) -> cli-container/11 lines 2–13 (names cut); `24` and
+    `8248 total` YELLOW.
+ 7  LECTURE B14–B15. The terminal clears; the one-liner of cli-container/12 (extra; it folds onto
+    5 rows at 65 characters) -> lines 2–4; the terminal shrinks to the 3-row strip. Above it, the
+    two printed lines lift into the seam: `…things she intended to ac` over `s she intended to
+    accomplish…`, aligned by character, each in its PURPLE window, the shared 20 characters in a
+    YELLOW band; `ac` and the lone `s` underline YELLOW; "accomplish" is whole in chunk 1. Under
+    it, the lecture's example: GREY cards "…artificial intelli" | "gence…" end to end, no band
+    (tag "lecture example").
+ 8  The seam and the container strip leave. A second laptop terminal (6 rows, at the bottom; "new
+    terminal: cd here first") types `ls -la outputs | head -5` (extra) -> laptop/16 lines 2–6;
+    `student student` boxed YELLOW; top right the chip .gitignore · line 4 `/outputs`. Then, above
+    the terminal, a PANEL of cli-container/10 lines 8–9 ("python cli.py --chunk … · the first
+    book's table"): row 0's text boxed RED, RED tag "erratum · header and license, chunked like
+    the rest · see part 2". Fade to an empty frame.
 
 Deviations from SHOW (see the scene report): the one-liner of beat 7 folds onto 5 rows, not 3
-(65 characters a row); beat 5's book-order tag sits beside line 6 and the PermissionError card in
-the free rows at the bottom right (line 5 and the rows beside the ▶ are full); the README command
-is typed with Terminal.type, which keeps `--chunk_type char-split` together on one row.
+(65 characters a row); in beat 5 the book-order tag sits beside line 6 (line 5 is full width) and
+the PermissionError card in the free rows at the bottom right (no room beside the ▶); the wc
+command fills its row, so its `extra` tag sits in the title bar; the terminal clears before the wc
+and the seam commands (a 12-row scroll would sweep over the tracker); in beat 8 the container strip
+leaves so that the second terminal shows all five lines while the panel sits above it; the README
+command is typed with Terminal.type, which keeps `--chunk_type char-split` on one row.
 """
 
 import re
@@ -203,7 +208,7 @@ BAR_Y = 1.0           # beats 3-4: the whole story
 PANEL_TOP = 0.85
 COUNTER_AT = np.array([5.45, 2.45, 0])
 BOOK_C = np.array([-4.4, 0.15, 0])        # beat 0: the book (x -6.2..-2.6)
-ORIGIN_V = np.array([-4.3, -0.6, 0])      # where the topic arrows start
+ORIGIN_V = np.array([-4.4, -0.6, 0])      # where the topic arrows start
 PROMPT_C = np.array([4.45, 0.45, 0])      # the prompt card
 
 
@@ -401,11 +406,10 @@ class CharSplit(VoiceScene):
         topics = [("curd", 15), ("pasture", 42), ("grandfather", 150)]
         t_arrows = VGroup(*[vec(ORIGIN_V, a, 1.0) for _, a in topics])
         t_labels = VGroup()
-        for (name, a), arr in zip(topics, t_arrows):
-            lb = sans(name, CAPTION, INK)
-            lb.move_to(ORIGIN_V + deg(a) * 1.0 + deg(a) * (0.12 + lb.width / 2 * abs(np.cos(np.radians(a)))
-                                                           + lb.height / 2 * abs(np.sin(np.radians(a)))))
+        for (name, a), arr, side in zip(topics, t_arrows, (RIGHT, UP, UP)):
+            lb = sans(name, CAPTION, INK).next_to(arr.get_end(), side, buff=0.12)
             t_labels.add(lb)
+        t_labels[2].shift(RIGHT * 0.2)          # grandfather: clear of the spine
         mean = sum(deg(a) for _, a in topics) / 3
         avg_deg = float(np.degrees(np.arctan2(mean[1], mean[0])))
         avg = vec(ORIGIN_V, avg_deg, 0.95, stroke=7)
@@ -501,7 +505,7 @@ class CharSplit(VoiceScene):
         lab350 = label("350 characters", CAPTION, TOOL).move_to([r0.frame.get_center()[0], 2.52, 0])
         lab20 = label("overlap 20", CAPTION, TURN).move_to([band.get_center()[0] + 0.25, 2.52, 0])
         cap_rb = VGroup(mono("Tolminc Cheese.txt", CAPTION, S.GREY),
-                        label("· the instructor's story, first 1,000 characters", CAPTION, S.GREY))
+                        label("· first 1,000 characters", CAPTION, S.GREY))
         cap_rb.arrange(RIGHT, buff=0.12)
         cap_rb.move_to([6.2 - cap_rb.width / 2, RIB_Y - 0.48, 0])
         y_step = RIB_Y - 0.5
@@ -749,7 +753,7 @@ class CharSplit(VoiceScene):
                         chip(GITIGNORE, S.GREY, size=CAPTION, font=MONO)).arrange(RIGHT, buff=0.15)
         g_chip.move_to([6.45 - g_chip.width / 2, 3.28, 0])
         panel2 = log_panel(TABLE, "python cli.py --chunk … · the first book's table")
-        panel2.shift(UP * (0.78 - panel2.frame.get_bottom()[1]))      # above the 6-row second terminal
+        panel2.shift(UP * (1.0 - panel2.frame.get_bottom()[1]))      # above the 6-row second terminal
         row0 = substring(panel2.rows[1], ROW0)
         row0_box = RoundedRectangle(width=row0.width + 0.2, height=panel2.rows[1].strut.height + 0.1,
                                     corner_radius=0.06, stroke_color=ERR, stroke_width=3)
@@ -765,7 +769,7 @@ class CharSplit(VoiceScene):
             pin(self, ll, beside(extra_tag(), t2, ll, buff=0.4))
             l_lines = t2.print(self, LS_OUT, run_time=0.4)
             own = VGroup(*[substring(l_lines[i], "student student") for i in range(1, 5)])
-            own_box = RoundedRectangle(width=own.width + 0.18, height=own.height + 0.16, corner_radius=0.06,
+            own_box = RoundedRectangle(width=own.width + 0.1, height=own.height + 0.16, corner_radius=0.06,
                                        stroke_color=TURN, stroke_width=3).move_to(own)
             self.play(Create(own_box), own.animate.set_color(TURN), FadeIn(g_chip, shift=DOWN * 0.1),
                       run_time=0.5)

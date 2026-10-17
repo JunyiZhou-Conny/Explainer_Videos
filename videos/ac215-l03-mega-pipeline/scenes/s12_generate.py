@@ -49,8 +49,9 @@ Beats (script.md "## S12", one voiceover block each):
     After the SAY: PONDER (8 s), the card over the strip (V7 shows no answer).
  6  The card and the chips go. Row 17 `[5/5] RUN uv sync` gets a YELLOW bar that unfolds into
     PANEL(32-b-build.plain.txt: 341–344, "the same build, full log · lines 341–344") in the strip's
-    place (the strip fades). "uv downloaded": the Downloading part of line 341 underlines PURPLE
-    and `(35.9MiB)` GREY; "3.15.0 at the time": `3.15.0` (line 343) YELLOW + tag "at the time of
+    place (the strip fades). "uv downloaded": the Downloading part of line 341 underlines PURPLE,
+    a PURPLE tag "surprise two · uv brings its own Python" at the header row's right end, and
+    `(35.9MiB)` GREY; "3.15.0 at the time": `3.15.0` (line 343) YELLOW + tag "at the time of
     recording"; "and built the venv": `/home/app/.venv` GREEN.
  7  V7: the 3.12 dot turns RED (outside); on "so uv fetched" a PURPLE download arrow drops a
     GREEN-ringed dot onto 3.15, labelled "3.15.0 · uv-managed · 35.9 MiB" above it and "the newest
@@ -83,15 +84,17 @@ Beats (script.md "## S12", one voiceover block each):
     then:", the date pulses on "on October 20"; "after that, start": the chip `docker run --rm -ti
     -e GEMINI_MODEL=<current model> -v "$(pwd):/app" generate_text` (two rows, extra, shown, not
     typed); "with a current model": <current model> pulses and a third GREY row writes under the
-    chip: "pick one on Vertex AI's “Model versions” page · listed replacement: gemini-3.1-flash-lite";
+    chip: "pick one on Vertex AI's “Model versions” page · listed replacement: gemini-3.1-flash-lite",
+    then a fourth: "it is not served in us-central1: in cli.py line 24, set location='global'";
     "in the Gemini model variable": GEMINI_MODEL underlines YELLOW in line 73 and the chip. On
-    "Google retires" the GOLD tag moves to the strip's top-right corner.
-12  The panel, card and cloud go; the GOLD tag shrinks into the right end of the new card's title
+    "Google retires" the GOLD tag shrinks (row-sized) into the strip's top-right corner. A 1.2 s
+    hold after the SAY (the last two rows are not narrated).
+12  The panel, card and cloud go; the GOLD tag moves into the right end of the new card's title
     row (the card reaches down to the strip). The "with your key, look for" card writes item by item (lines
     74, 80, 81, 84, 103) on their words, then two RED-bordered lines: "if it fails: 404 …
-    Publisher Model … not found → export GEMINI_MODEL=gemini-3.1-flash-lite" (the retired default)
+    Publisher Model … not found → location='global' (line 24) + GEMINI_MODEL" (the retired default)
     and "if it fails: 429 RESOURCE_EXHAUSTED …"; ▶ your turn beside the strip's last command on
-    "Pause".
+    "Pause"; a 0.8 s hold after the SAY.
 13  TRACKER B13. The card goes; the terminal grows to 8 rows and types `exit` (GREY frame, title
     laptop, generate_text prompt). "brings the fix": an editor inset with
     CODE(generate_text/pyproject.toml: 4); "lower the minimum": `">=3.14"` becomes `">=3.12"`
@@ -276,6 +279,12 @@ GEMINI_CMD = ['docker run --rm -ti -e GEMINI_MODEL=<current model> \\',
 # The same tier as the default: gemini-3.1-flash-lite.
 NEW_MODEL = "gemini-3.1-flash-lite"
 PICK = "pick one on Vertex AI's “Model versions” page · listed replacement:"
+# The variable alone is not enough: each replacement's own Vertex AI page (fetched 2026-10-16)
+# lists it at `global` and the `us`/`eu` multi-regions only (gemini-2.5-flash-lite's page lists
+# us-central1), and cli.py:24 pins the client to us-central1. So the viewer also sets line 24 to
+# location='global' (google-genai 2.29.0, the captured version, sends that to aiplatform.googleapis.com).
+assert "location='us-central1'" in excerpt(CLI, 24, 24), excerpt(CLI, 24, 24)
+LOC, LOC_FIX = "it is not served in us-central1: in cli.py line 24, set", "location='global'"
 
 LOOK = [("your prompt, printed", "line 74"), ("Generated text:", "line 80"),
         ("a long podcast script", "line 81"),
@@ -283,9 +292,9 @@ LOOK = [("your prompt, printed", "line 74"), ("Generated text:", "line 80"),
         (f"Uploading: text_paragraphs/{GROUP}/…", "line 103")]
 # Two RED lines. A retired (or misspelled) model answers `404 … Publisher Model … not found`
 # (digest.md, Component B "If it fails"); from 2026-10-20 that is what the default model gives, so
-# it comes first, with the fix inside the running container (cli.py:73 reads the variable on
-# every call). The quota line is script.md's.
-FAIL404 = f"if it fails: 404 … Publisher Model … not found → export GEMINI_MODEL={NEW_MODEL}"
+# it comes first, with both fixes of beat 11's note (cli.py line 24 and the variable; the card's
+# other cites are cli.py lines too). The quota line is script.md's.
+FAIL404 = "if it fails: 404 … Publisher Model … not found → location='global' (line 24) + GEMINI_MODEL"
 FAIL = "if it fails: 429 RESOURCE_EXHAUSTED → the class shares one quota; wait a minute, retry"
 
 PONDER_Q = ("The image has Python 3.12.\nThis pyproject.toml says >=3.14.\n"
@@ -763,6 +772,12 @@ class GenerateText(VoiceScene):
         # ========================================================== 6 · the full log shows it
         panel = unfold_panel(PLAIN, "the same build, full log · lines 341–344")
         p_rows = panel.rows
+        # The chapter title promises two surprises and SAY[2] names the first; the second gets a
+        # PURPLE tag at the right end of the panel's header row (SAY[6] does not say it).
+        s2 = tag20("surprise two · uv brings its own Python", TOOL)
+        place(s2, right=panel.frame.get_right()[0] - 0.1, cy=panel.header.get_center()[1])
+        assert s2.get_bottom()[1] > panel.frame.get_top()[1] + 0.02, (s2.get_bottom(), panel.frame.get_top())
+        assert s2.get_left()[0] > panel.header.get_right()[0] + 0.3, (s2.get_left(), panel.header.get_right())
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(pcard), FadeOut(answers), run_time=0.4)
@@ -780,7 +795,8 @@ class GenerateText(VoiceScene):
             dl = "Downloading cpython-3.15.0-linux-x86_64-gnu"
             u_dl = uline(p_rows[0], dl, TOOL)
             u_mb = uline(p_rows[0], "(35.9MiB)", S.GREY)
-            self.play(Create(u_dl), substring(p_rows[0], dl).animate.set_color(TOOL), run_time=0.6)
+            self.play(Create(u_dl), substring(p_rows[0], dl).animate.set_color(TOOL), FadeIn(s2, shift=LEFT * 0.1),
+                      run_time=0.6)
             self.play(Create(u_mb), run_time=0.4)
             vo.wait_until("3.15.0 at the time")
             v315 = substring(p_rows[2], "3.15.0")
@@ -813,7 +829,7 @@ class GenerateText(VoiceScene):
 
         # ========================================================== 8 · step 6: run; Python 3.15.0 (extra)
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(panel, u_dl, u_mb, atr, u_v)), FadeOut(VGroup(vl, d12, arrow, ud, newest)),
+            self.play(FadeOut(VGroup(panel, s2, u_dl, u_mb, atr, u_v)), FadeOut(VGroup(vl, d12, arrow, ud, newest)),
                       FadeIn(t), tr.goto(6), run_time=0.4)
             resize(self, t, 10, run_time=0.45)
             tcmd(self, t, RUN, 0.6)
@@ -915,8 +931,13 @@ class GenerateText(VoiceScene):
         # where <current model> comes from (third row, on "with a current model")
         pick = VGroup(label(PICK, 20, S.GREY), mono(NEW_MODEL, 20, S.GREY)).arrange(RIGHT, buff=0.12)
         pick[1].align_to(pick[0], DOWN)
+        # ...and the region it needs (fourth row, right after the third; not narrated)
+        loc = VGroup(label(LOC, 20, S.GREY), mono(LOC_FIX, 20, S.GREY)).arrange(RIGHT, buff=0.12)
+        loc[1].align_to(loc[0], DOWN)
         body = VGroup(note11, crow, pick)
         body.arrange(DOWN, aligned_edge=LEFT, buff=0.18)
+        loc.next_to(pick, DOWN, buff=0.1, aligned_edge=LEFT)
+        body.add(loc)
         ncard_fr = box(body.width + 0.5, body.height + 0.4, S.GREY, fill=S.BG, fill_opacity=1, radius=0.12)
         ncard_fr.move_to(body)
         ncard = VGroup(ncard_fr, body)
@@ -933,8 +954,11 @@ class GenerateText(VoiceScene):
         place(nfr1, left=ncard_fr.get_left()[0], top=ncard_fr.get_top()[1])
         assert h0 <= nfr1.height <= ncard_fr.height, (h0, nfr1.height, ncard_fr.height)
         u_env1 = under(code_span(c73, 0, '"GEMINI_MODEL"'), TURN)
-        cost_home = np.array([EDGE - cost.width / 2, -1.44 + 0.12 + cost.height / 2, 0])
-        assert cost_home[1] + cost.height / 2 < ncard.get_bottom()[1] - 0.2, ncard.get_bottom()
+        # the GOLD tag waits in the strip's top-right corner, row-sized (the four-row note reaches
+        # further down than the shared tag's height leaves room for)
+        cost_mid = tag20("billed to the course project", COST)
+        place(cost_mid, right=EDGE, bottom=strip_top(3) + 0.06)
+        assert cost_mid.get_top()[1] < ncard.get_bottom()[1] - 0.1, (cost_mid.get_top(), ncard.get_bottom())
         u_env2 = under(substring(gchip.rows[0], "GEMINI_MODEL"), TURN)
 
         with self.voiceover(SAY[11]) as vo:
@@ -961,7 +985,7 @@ class GenerateText(VoiceScene):
             self.play(Indicate(gem.title, color=CLOUD, scale_factor=1.1), FadeIn(cost, shift=UP * 0.1),
                       run_time=0.6)
             vo.wait_until("Google retires")
-            self.play(FadeOut(gem), cost.animate.move_to(cost_home), run_time=0.5)
+            self.play(FadeOut(gem), Transform(cost, cost_mid), run_time=0.5)
             full_fr = ncard_fr.copy()
             ncard_fr.become(nfr0)
             self.play(FadeIn(ncard_fr), FadeIn(note11, shift=DOWN * 0.1), run_time=0.5)
@@ -974,10 +998,12 @@ class GenerateText(VoiceScene):
             self.play(Indicate(substring(gchip.rows[0], "<current model>"), color=TURN, scale_factor=1.1),
                       Transform(ncard_fr, full_fr), run_time=0.5)
             self.play(FadeIn(pick, shift=DOWN * 0.1), run_time=0.4)
+            self.play(FadeIn(loc, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("in the Gemini model variable")
             self.play(Create(u_env1), Create(u_env2), run_time=0.5)
             self.play(Indicate(substring(gchip.rows[0], "GEMINI_MODEL"), color=TURN, scale_factor=1.1),
                       Indicate(code_span(c73, 0, '"GEMINI_MODEL"'), color=TURN, scale_factor=1.1), run_time=0.7)
+        self.wait(1.2)                    # the note's last two rows are not narrated: time to read them
 
         # ========================================================== 12 · with your key, look for
         lf = LookFor(LOOK, fail=FAIL404)
@@ -1019,6 +1045,7 @@ class GenerateText(VoiceScene):
             yt12 = beside(yturn(), t, last)
             pin(self, last, yt12, run_time=0.4)
             self.play(Indicate(yt12, color=TURN, scale_factor=1.1), run_time=0.7)
+        self.wait(0.8)                    # the two RED lines arrive late in the sentence: time to read them
 
         # ========================================================== 13 · step 13: exit; the fix; git status
         pp_old = src_panel("generate_text/pyproject.toml", 4, 4)

@@ -837,7 +837,7 @@ class ChangePorts(VoiceScene):
                            Prose("in your browser: open localhost:8090 and send a message")])
         for row in card8.rows[1][1:]:                    # the README's continuation rows keep their 2 spaces
             row.shift(RIGHT * 2 * cell_width(CAPTION))
-        card8.shift([0 - card8.frame.get_center()[0], TOP - 0.05 - card8.get_top()[1], 0])
+        card8.shift([0 - card8.frame.get_center()[0], TOP - 0.3 - card8.get_top()[1], 0])   # header clear of the tracker
         assert card8.frame.get_bottom()[1] > STRIP_TOP + 0.15, card8.frame.get_bottom()[1]
         with self.voiceover(SAY[8], pad=1.0) as vo:
             self.play(FadeOut(pc), flash(ch_gw.chip, TURN, 1.12), tr.goto(3), run_time=0.7)

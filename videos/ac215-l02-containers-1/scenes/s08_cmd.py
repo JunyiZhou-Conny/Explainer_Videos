@@ -17,7 +17,7 @@ Beats (script.md "## S08", one voiceover block each):
  2  Card and panel fade, then the start-up line rises to the top (it no longer crosses the card).
     A TEAL bubble "bash 1" appears (its name copied from the line's `/bin/bash`); inside it "runs
     source .venv/bin/activate" (copied from the line) and PATH as a door row: `/usr/local/bin`
-    (ORANGE), `…`. "which puts the venv's bin folder first": the doors move right and a GREEN
+    (ORANGE), `…`. "which puts the bin folder": the doors move right and a GREEN
     `/.venv/bin` door forms at the front from the `.venv/bin` of the running command. "Then exec
     bash": `exec bash` underlines in the line, the bubble now runs `exec bash`, and in place
     "bash 1" becomes "bash 2 · interactive" (the 1 rolls over to 2, " · interactive" joins; the
@@ -35,13 +35,17 @@ Beats (script.md "## S08", one voiceover block each):
     `which python`, `python --version`, `echo $VIRTUAL_ENV` (laptop/26 lines 2-7, row tags
     `extra` in one column), each output turning GREEN as it is said (`/.venv/bin/python`,
     `Python 3.15.0`, `/.venv`). "The fresh bash set its own prompt": GREY tag "not an error" after
-    "no (app)". "Then type exit": `exit` (line 8) -> line 9; the laptop prompt returns and pulses
-    YELLOW on "back to your laptop".
+    "no (app)". "The lecture's run command" (the bridge, SLIDES.md Conflict 1): GREY
+    `Lecture 2 · slides 64, 75` (lecture_ref, top right, over the 12-row terminal's top edge); the
+    three GREEN outputs pulse on "and the venv with it". "Then type exit": the tag goes, `exit`
+    (line 8) -> line 9; the laptop prompt returns and pulses YELLOW on "back to your laptop".
  5  TRACKER A12. The terminal clears to the laptop prompt and shrinks to the 3-row strip; the
     README card (`README.md · lines 167-168`: "Solution Dockerfile:" / `Dockerfile.txt`, 26 pt)
-    appears above it; `Dockerfile.txt` pulses on "Dockerfile.txt". "An extra diff" (A12 · extra):
-    the card fades (a full terminal and a picture never share the frame; parked top right it sat
-    on the 12-row terminal's top edge), the terminal grows to 12 rows and types `diff Dockerfile
+    appears above it; once it lands, GREY `Lecture 2 · slides 57` (lecture_ref, top right, until
+    "if yours prints") and, under the card, the GREY note "lecture slide 57: a different version ·
+    build this file" (22 pt; SLIDES.md Conflict 2). `Dockerfile.txt` pulses on "Dockerfile.txt".
+    "An extra diff" (A12 · extra): the card and its note fade (a full terminal and a picture never
+    share the frame; parked top right it sat on the 12-row terminal's top edge), the terminal grows to 12 rows and types `diff Dockerfile
     Dockerfile.txt` (a full row: its `extra` tag stands just above the terminal's top edge, its right
     edge at the command's end, a short GREY leader down to the command; on the next row it read as a
     tag of the first output row) -> laptop/27 lines 8-18, `+` lines GREEN, `-` lines dim RED.
@@ -78,7 +82,7 @@ Beats (script.md "## S08", one voiceover block each):
 from manim import *  # noqa: I001  (manim first, then common: common must win)
 
 from explainer import style as S
-from explainer.devops import code_span
+from explainer.devops import code_span, lecture_ref
 from explainer.scene import VoiceScene
 
 from common import (BUILD, CAT, ERR, IMAGE, INK, LAPTOP_DIR, NARRATION, OUTPUT, P_LAPTOP, ROUTE, RUN,
@@ -502,7 +506,14 @@ class StepCmd(VoiceScene):
             nae = row_tag("not an error")
             nae.next_to(noapp, RIGHT, buff=0.2)
             self.play(FadeIn(nae, shift=LEFT * 0.1), pulse_tag(noapp, INK), run_time=0.6)
+            vo.wait_until("The lecture's run command")
+            lref4 = lecture_ref(2, "64, 75")                 # top right, over the terminal's top edge
+            assert lref4.get_bottom()[1] > t.get_top()[1] + 0.1, (lref4.get_bottom(), t.get_top())
+            self.play(FadeIn(lref4), run_time=0.5)
+            vo.wait_until("and the venv with it")
+            self.play(*[Indicate(o.glyphs, color=TURN, scale_factor=1.08) for _, _, o in checks], run_time=0.8)
             vo.wait_until("Then type exit")
+            self.play(FadeOut(lref4), run_time=0.2)
             istep(self, t, C26.line(8), 0.25)
             t.print(self, C26.at(9), run_time=0.25)
             t.set_prompt(P_LAPTOP)
@@ -518,18 +529,23 @@ class StepCmd(VoiceScene):
                            ("for this layout", "label")]])
         note5_diffu = note5.lines[1][1]
         env_tags = ["no apt questions", "UTF-8 text", "logs appear at once"]
+        lref5 = lecture_ref(2, "57")                         # top right, above the diff's `extra` tag
+        note57 = label("lecture slide 57: a different version · build this file", 22, S.GREY)
+        note57.next_to(card_c, DOWN, buff=0.25)              # between the card and the strip
 
         with self.voiceover(SAY[5]) as vo:
             marks4 = [noapp, nae] + [x for _, x, _ in checks]
             unpin(self, [(c4.rows[-1], yt4)], 0.3, *[FadeOut(m) for m in marks4], track(tr, 12))
             resize(self, t, STRIP_ROWS, keep=[p4b], extra=[FadeIn(card_c, shift=UP * 0.1)], run_time=0.7)
+            assert note57.get_bottom()[1] > t.get_top()[1] + 0.2, (note57.get_bottom(), t.get_top())
+            self.play(FadeIn(lref5), FadeIn(note57, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Dockerfile.txt")
             self.play(Indicate(card_c.file, color=TURN, scale_factor=1.06), run_time=0.8)
             vo.wait_until("An extra diff")
             # a full terminal and a picture never share the frame: the card goes while the terminal grows
             # (parked top right it sat on the 12-row terminal's top edge); it returns in beat 7
-            resize(self, t, 12, extra=[FadeOut(card_c, shift=UP * 0.15), track(tr, 12, extra=True)],
-                   run_time=0.7)
+            resize(self, t, 12, extra=[FadeOut(card_c, shift=UP * 0.15), FadeOut(note57, shift=UP * 0.15),
+                                       track(tr, 12, extra=True)], run_time=0.7)
             c5 = type_cmd(self, t, DIFF, 0.6)
             # the command fills its row: the tag stands above the terminal, a leader down to the command
             x5 = head_tag(t, c5, xtag())
@@ -538,7 +554,7 @@ class StepCmd(VoiceScene):
             vo.wait_until("if yours prints")
             pm = VGroup(*[glyph_range(r, 0, 1) for r in out5 if r.text[:1] in "+-"])
             at_right(note5, out5[4])                     # over rows 11-13 (all short)
-            self.play(*[Indicate(g, color=TURN, scale_factor=1.6) for g in pm], run_time=0.8)
+            self.play(*[Indicate(g, color=TURN, scale_factor=1.6) for g in pm], FadeOut(lref5), run_time=0.8)
             self.play(FadeIn(note5, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("add dash u")
             self.play(Indicate(note5_diffu, color=TURN, scale_factor=1.12), run_time=0.7)

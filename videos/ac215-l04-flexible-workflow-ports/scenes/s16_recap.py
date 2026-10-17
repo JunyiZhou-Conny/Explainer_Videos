@@ -344,28 +344,84 @@ def row_split(s: str, width: int):
     return (s if len(s) <= width + 7 else s[:width + 6] + "…"), None
 
 
-def print_rows(scene, t, rows: list, run_time: float = 0.6, lag: float = 0.12) -> VGroup:
-    """Print progress rows (raw capture lines, "…", or (line, colour)); a row's time becomes a GREY
-    time tag at the row's right end, part of the row (.time_tag; None without a time)."""
+def room(scene, t, n_new: int, extra=(), run_time: float = 0.35, house=None):
+    """Make room for `n_new` rows. Rows that scroll away fade where they are, then the rest moves
+    up (with `extra` animations): the house scroll slides them `overflow` rows up as they fade, so a
+    scroll of several rows dragged old text over the frame's top band and the tracker. A plain
+    one-row scroll stays the house one (`house`), which keeps the row inside the title bar."""
+    overflow = len(t.lines) + n_new - t.rows
+    if overflow <= 1 and not extra and house is not None:
+        return house(scene, n_new, run_time)
+    anims = list(extra)
+    if overflow > 0:
+        gone = list(t.lines.submobjects[:overflow])
+        stay = VGroup(*t.lines.submobjects[overflow:])
+        scene.play(FadeOut(VGroup(*gone)), run_time=0.2)
+        for m in gone:
+            t.lines.remove(m)
+            scene.remove(m)
+        if len(stay):
+            anims.append(stay.animate.shift(UP * t.pitch * overflow))
+    if anims:
+        scene.play(*anims, run_time=run_time)
+
+
+def calm(t):
+    """Give terminal `t` the room() scroll (this instance only)."""
+    house = t._make_room
+    t._make_room = lambda scene, n_new, run_time=0.35: room(scene, t, n_new, run_time=run_time, house=house)
+    return t
+
+
+def wipe(scene, t, extra=(), run_time: float = 0.3):
+    """All of a strip's rows scroll away at once (the next command and its output fill it): they
+    fade where they are, with `extra` animations."""
+    gone = list(t.lines.submobjects)
+    scene.play(FadeOut(VGroup(*gone)), *extra, run_time=run_time)
+    for m in gone:
+        t.lines.remove(m)
+        scene.remove(m)
+
+
+def row_time(tm: str, t) -> VGroup:
+    """A row's GREY time tag, its pill a little lower than a terminal row (time_tag()'s pill is
+    0.47 tall on a 0.40 row pitch, so tags on adjacent rows touched); the text keeps its size."""
+    tg = time_tag(tm)
+    h = t.pitch - 0.06
+    pill = RoundedRectangle(width=tg.box.width, height=h, corner_radius=h / 2, stroke_color=S.GREY,
+                            stroke_width=2).set_fill(S.BG, 0.92).move_to(tg.box)
+    tg.remove(tg.box)
+    tg.add_to_back(pill)
+    tg.box = pill
+    return tg
+
+
+def print_rows(scene, t, rows: list, run_time: float = 0.6, lag: float = 0.12, extra=()) -> VGroup:
+    """Print progress rows (raw capture lines, "…", (line, colour) or (line, colour, tag colour)); a
+    row's time becomes a GREY time tag at the row's right end (in the tag colour when one is given),
+    part of the row (.time_tag; None without a time). `extra` animations play with the rows."""
     items = []
     for r in rows:
-        s, col = (r, OUTPUT) if isinstance(r, str) else r
+        s, col, tcol = (r, OUTPUT, None) if isinstance(r, str) else (*r, None)[:3]
         txt, tm = ("…", None) if s == "…" else row_split(s, t.max_chars - 7)
-        items.append((txt, col, tm))
+        items.append((txt, col, tm, tcol))
     t._make_room(scene, len(items))
     new = VGroup()
-    for txt, col, tm in items:
+    for txt, col, tm, tcol in items:
         ln = mono_line(txt, t.size, col)
         t._place(ln, len(t.lines))
         ln.time_tag = None
         if tm:
-            tg = time_tag(tm)
+            tg = row_time(tm, t)
+            if tcol:
+                tg.box.set_stroke(tcol)
+                tg.text.set_color(tcol)
             place_time(tg, t, ln)
             ln.add(tg)
             ln.time_tag = tg
         t.lines.add(ln)
         new.add(ln)
-    scene.play(LaggedStart(*[FadeIn(m) for m in new], lag_ratio=lag), run_time=run_time)
+    scene.play(LaggedStart(*[FadeIn(m) for m in new], lag_ratio=lag), *extra, run_time=run_time)
     return new
 
 
@@ -765,7 +821,7 @@ class Recap(VoiceScene):
 
         # ============================================================ 0 · up -d: in the background
         tr = tracker("P4", 3)
-        t = term(P_TOY, rows=12, title="laptop")
+        t = calm(term(P_TOY, rows=12, title="laptop"))
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t), run_time=0.6)
             bare_prompt(self, t)
@@ -844,28 +900,27 @@ class Recap(VoiceScene):
             tr = switch_section(self, tr, "P4", 3, run_time=0.6)
             self.play(FadeIn(rc487, shift=DOWN * 0.1), FadeIn(ed, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("Change 8090 to 8095")
-            self.play(caption_extra(tr, True), run_time=0.3)
             line16 = ed.panel.code.code_lines[1]
             pen.move_to(line16.get_right() + RIGHT * 0.9 + UP * 0.3)
-            self.play(FadeIn(pen), run_time=0.2)
-            self.play(pen_to(pen, line16), run_time=0.4)
-            self.play(Transform(line16, ed_after.panel.code.code_lines[1]), run_time=0.5)
-            self.play(pen.animate.shift(RIGHT * 0.4 + UP * 0.3).set_opacity(0), run_time=0.3)
+            self.play(caption_extra(tr, True), FadeIn(pen), run_time=0.25)
+            self.play(pen_to(pen, line16), run_time=0.3)
+            self.play(Transform(line16, ed_after.panel.code.code_lines[1]), run_time=0.4)
+            self.play(pen.animate.shift(RIGHT * 0.4 + UP * 0.3).set_opacity(0), run_time=0.2)
             self.remove(pen)
-            type_extra(self, t, DIFF, type_time=0.4)
-            d = t.print(self, [(C57.line(10), ERR), (C57.line(11), VENV)], run_time=0.45)
+            type_extra(self, t, DIFF, type_time=0.35)
+            d = t.print(self, [(C57.line(10), ERR), (C57.line(11), VENV)], run_time=0.4)
             b95 = glyph_box(d[1], "8095", TURN)
-            pin(self, d[1], b95, anim=Create(b95), run_time=0.4)
+            pin(self, d[1], b95, anim=Create(b95), run_time=0.3)
             vo.wait_until("and run up dash d")
-            self.play(FadeOut(VGroup(rc487, ed)), caption_extra(tr, False), run_time=0.4)
-            resize(self, t, 4, run_time=0.6, extra=[FadeIn(net)])
-            type_cmd(self, t, UP_D, type_time=0.7)
-            r58 = print_rows(self, t, C58.at((2, 4)), run_time=0.5)
-            self.play(*paint(r58[1], VENV), *paint(r58[2], TURN), run_time=0.5)
+            # the strip keeps the boxed `+` row; up -d and its rows then need a one-row scroll only
+            resize(self, t, 4, keep=1, run_time=0.5,
+                   extra=[FadeOut(VGroup(rc487, ed)), caption_extra(tr, False), FadeIn(net)])
+            type_cmd(self, t, UP_D, type_time=0.5)
+            r58 = print_rows(self, t, [C58.line(2), (C58.line(3), VENV, VENV), (C58.line(4), TURN, TURN)],
+                             run_time=0.4, extra=[FadeIn(halo)])
             vo.wait_until("Compose recreates only the gateway")
-            self.play(FadeIn(halo), run_time=0.4)
-            self.play(net.reform("gateway", run_time=1.2), net.set_door("127.0.0.1:8095", run_time=1.2),
-                      flash(halo, CTR, 1.0, 1.2))
+            self.play(net.reform("gateway", run_time=1.0), net.set_door("127.0.0.1:8095", run_time=1.0),
+                      flash(halo, CTR, 1.0, 1.0))
 
         # ============================================================ 3 · the page on 8095; change it back
         pg3 = PortPage(8095, reply=R59, compact=True, ports=False)

@@ -102,6 +102,19 @@ Deviations from SHOW (and why):
   its right); the chip "137 = 128 + 9: killed" is RED (exit code 137 is RED in the terminal).
 - Beat 11: the `▶ your turn` is on a static card (the cycle's first commands have scrolled away);
   V6's parts dissolve one per `Removed` row, the order of the output.
+
+Critic pass (fixes, kept as rules for this file):
+- Beat 1: each flag copy turns GREEN on its way and fades out as it reaches its YAML span (flight()),
+  instead of landing on top of the YAML text; the processor's five flights are staggered (lag 0.18).
+- Beat 3: the PURPLE chip stays in front while the terminal fades in (it vanished under the
+  terminal's fill until bring_to_front), and the bare prompt shows before it slides onto the row,
+  so it lands where the command is typed.
+- Every scroll of more than one row goes through room(): the leaving lines fade in place, then the
+  rest slide up (Terminal's own scroll slid fading lines out over V6 and the title bar).
+- Beat 9: the "kill" stamp spans the box's whole port strip (a small stamp half-covered `65535`);
+  the RED chip sits 0.12 higher so it clears the processor's envelope.
+- Beat 10: the stopped boxes' port cells turn GREY with the frame and labels (stop_box leaves them
+  TEAL), so the whole box reads as stopped.
 """
 
 import numpy as np
@@ -164,8 +177,13 @@ from manim import (
     FadeOut,
     Indicate,
     LaggedStart,
+    ManimColor,
+    UpdateFromAlphaFunc,
     VGroup,
     Wiggle,
+    interpolate_color,
+    linear,
+    smooth,
 )
 
 from explainer import style as S
@@ -312,6 +330,31 @@ def row_split(s: str, width: int):
     return (s if len(s) <= width + 7 else s[:width + 6] + "…"), None
 
 
+def n_rows(t, lines, wrap: bool = False) -> int:
+    """The rows Terminal.print will use for `lines` (str or (str, colour))."""
+    n = 0
+    for x in lines:
+        s = x if isinstance(x, str) else x[0]
+        n += max(1, -(-len(s) // t.max_chars)) if wrap else 1
+    return n
+
+
+def room(scene, t, n_new: int, run_time: float = 0.4) -> None:
+    """Make room for `n_new` rows when more than one row must go: the leaving lines fade where they
+    are, then the rest slide up (Terminal's own scroll slides them out over the picture above the
+    terminal). A one-row scroll is left to the terminal."""
+    overflow = len(t.lines) + n_new - t.rows
+    if overflow <= 1:
+        return
+    gone = VGroup(*t.lines.submobjects[:overflow])
+    stay = VGroup(*t.lines.submobjects[overflow:])
+    scene.play(FadeOut(gone), run_time=run_time * 0.45)
+    for m in gone.submobjects:
+        t.lines.remove(m)
+    if len(stay):
+        scene.play(stay.animate.shift(UP * t.pitch * overflow), run_time=run_time * 0.55)
+
+
 def out_rows(scene, t, rows: list, run_time: float = 0.5, lag: float = 0.12, extra=(),
              scroll_time: float = 0.25) -> VGroup:
     """Print rows (capture lines, "…", or (line, colour)); a progress row's time becomes a GREY
@@ -322,6 +365,7 @@ def out_rows(scene, t, rows: list, run_time: float = 0.5, lag: float = 0.12, ext
         s, col = (r, OUTPUT) if isinstance(r, str) else r
         txt, tm = ("…", None) if s == "…" else row_split(s, t.max_chars - 7)
         items.append((txt, col, tm))
+    room(scene, t, len(items))
     t._make_room(scene, len(items), run_time=scroll_time)
     new = VGroup()
     for txt, col, tm in items:
@@ -384,19 +428,49 @@ def tick(at) -> VGroup:
     return check_mark(0.28, INK, 5).move_to(at)
 
 
-def fly(scene, cm: ComposeMap, flights, bars, run_time: float = 1.1, extra=()) -> VGroup:
-    """Copies of flags lift off their chips and fly to their YAML spans (turning GREEN), then fade
-    as the lines in `bars` get a GREEN bar each. flights: [(chip, flag, file line, YAML sub)].
-    Plays two plain plays (no wrapper groups left in the scene); returns the bars, scene-owned and
-    drawn above the panel (cm.bars would sit under a panel that swap() re-added)."""
+def kill_stamp(b) -> VGroup:
+    """The RED "kill" stamp of a ToyNet box, as wide as its port strip so it covers the whole strip
+    (a small stamp left "1 ▯▯▯ …35" showing, a broken number)."""
+    k = stamp("kill", angle=0)
+    k.frame.stretch_to_fit_width(b.strip.width + 0.12).set_fill(S.BG, 1)
+    k.text.move_to(k.frame)
+    return k.rotate(0.05).move_to(b.strip)
+
+
+def flight(cp, tgt) -> UpdateFromAlphaFunc:
+    """A flag copy flies to `tgt` (a YAML span) in one piece, turning GREEN on the way and fading
+    out as it arrives, so it never sits on top of the YAML text (a glyph morph read as scrambled
+    shapes mid-flight)."""
+    start, end = cp.get_center().copy(), tgt.get_center().copy()
+
+    def step(m, a):
+        m.move_to(start + (end - start) * smooth(a))
+        m.set_color(interpolate_color(ManimColor(INK), ManimColor(VENV), min(1.0, a / 0.5)))
+        m.set_opacity(1.0 if a < 0.55 else max(0.0, 1.0 - (a - 0.55) / 0.35))
+
+    return UpdateFromAlphaFunc(cp, step, rate_func=linear)
+
+
+def fly(scene, cm: ComposeMap, flights, bars, run_time: float = 1.1, extra=(), lag: float = 0.0) -> VGroup:
+    """Copies of flags lift off their chips and fly to their YAML spans (flight(): GREEN on the
+    way, gone as they land), then the lines in `bars` get a GREEN bar each. flights: [(chip, flag,
+    file line, YAML sub)]; lag > 0 staggers the flights. Leaves no copy or wrapper group in the
+    scene; returns the bars, scene-owned and drawn above the panel (cm.bars would sit under a
+    panel that swap() re-added)."""
     copies, moves = [], []
     for i, sub, line, sub_yaml in flights:
         cp = cm.flag(i, sub).copy()
         copies.append(cp)
-        moves.append(cp.animate.move_to(cm.panel.span(line, sub_yaml)).set_color(VENV))
-    scene.play(*moves, *extra, run_time=run_time * 0.7)
+        moves.append(flight(cp, cm.panel.span(line, sub_yaml)))
+    if lag and len(moves) > 1:
+        lg = LaggedStart(*moves, lag_ratio=lag)
+        scene.play(lg, *extra, run_time=run_time * 0.8 * (1 + lag * (len(moves) - 1)))
+        scene.remove(lg.group)
+    else:
+        scene.play(*moves, *extra, run_time=run_time * 0.8)
+    scene.remove(*copies)
     new_bars = VGroup(*[cm.panel.bar(n, VENV, 0.22) for n in bars])
-    scene.play(*[FadeOut(c) for c in copies], FadeIn(new_bars), run_time=run_time * 0.35)
+    scene.play(FadeIn(new_bars), run_time=run_time * 0.25)
     return new_bars
 
 
@@ -463,7 +537,8 @@ class ComposeUp(VoiceScene):
             pb.append(fly(self, cm, [(3, "--name processor", 28, "container_name: processor"),
                                      (1, "docker build", 29, "build:"), (1, "./processor", 29, "./processor"),
                                      (3, "-e PORT=9200", 31, 'PORT: "9200"'),
-                                     (3, "--network toynet", 33, "- toynet")], [28, 29, 30, 31, 32, 33]))
+                                     (3, "--network toynet", 33, "- toynet")], [28, 29, 30, 31, 32, 33],
+                      lag=0.18))
             self.play(*[cm.dim_flag(i, s, 0.3) for i, s in NO_HOME], FadeIn(nohome, shift=UP * 0.1),
                       run_time=0.6)
 
@@ -493,11 +568,11 @@ class ComposeUp(VoiceScene):
         row0_y = t._slot(0)[1] - probe.strut.height / 2
         with self.voiceover(SAY[3]) as vo:
             cm.remove(up_chip)
-            self.add(up_chip)
+            self.add_foreground_mobject(up_chip)    # the terminal fades in under it, not over it
             self.play(FadeOut(VGroup(cm.panel, gbars, o1.frame, o2.frame, o2.tag, o2.line)), FadeIn(t),
                       run_time=0.6)
             assert not len(cm.chips) and not len(cm.bars)
-            self.bring_to_front(up_chip)
+            bare_prompt(self, t)                    # the chip lands after the waiting prompt
             self.play(up_chip.animate.shift([x_txt - up_chip.text.get_left()[0],
                                              row0_y - up_chip.text.get_center()[1], 0]), run_time=0.5)
             self.play(FadeOut(up_chip), run_time=0.2)
@@ -618,6 +693,7 @@ class ComposeUp(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             self.play(caption_extra(tr, True), run_time=0.3)
             type_extra(self, t2, NET_LS, type_time=0.5)
+            room(self, t2, n_rows(t2, C50.at((2, 6))))
             nl = t2.print(self, C50.at((2, 6)), run_time=0.5)
             tn = nl[4]
             by = tag_after(t2, tn, grey_tag("created by Compose"))
@@ -625,6 +701,7 @@ class ComposeUp(VoiceScene):
             pin(self, tn, by)
             vo.wait_until("and compose exec reaches the processor")
             self.play(caption_extra(tr, False), run_time=0.3)
+            room(self, t2, 2)                       # the prompt row + the command row
             type_cmd(self, t2, EXEC, type_time=1.0)
             ok = t2.print(self, [(C51.line(2), VENV)], run_time=0.35)[0]
             meter = tag_after(t2, ok, grey_tag("no progress meter: compose exec gives curl a terminal"))
@@ -678,8 +755,10 @@ class ComposeUp(VoiceScene):
             self.play(FadeIn(sw), run_time=0.3)
             t.print(self, [C47.line(56)], run_time=0.25)
             self.play(sw.sweep(1 / 6, 1.4))
+            room(self, t, 3, run_time=0.3)
             t.print(self, [C47.line(57), C47.line(58), (C47.line(59), ERR)], run_time=0.35)
             self.play(sw.sweep(1 / 6, 1.4))
+            room(self, t, 2, run_time=0.3)
             t.print(self, [C47.line(60), (C47.line(61), ERR)], run_time=0.35)
             sw.freeze()
 
@@ -699,12 +778,13 @@ class ComposeUp(VoiceScene):
         env2 = envelope("stop")
         place(env2, cx=pf.get_left()[0] - 1.0, cy=mid_y - 0.2)
         env2_at = pf.get_left()[0] - 0.08 - env2.frame.get_right()[0]
-        k1, k2 = stamp("kill"), stamp("kill")
-        k1.move_to(gf.get_center() + np.array([0.25, 0.05, 0]))
-        k2.move_to(pf.get_center() + np.array([0.25, 0.05, 0]))
+        k1, k2 = kill_stamp(net9.boxes["gateway"]), kill_stamp(net9.boxes["processor"])
+        for k, fr in ((k1, gf), (k2, pf)):
+            assert fr.get_left()[0] + 0.02 < k.get_left()[0] and k.get_right()[0] < fr.get_right()[0] - 0.02
         c137 = _keep(chip("137 = 128 + 9: killed", ERR, size=22, text_color=ERR))
-        place(c137, cx=(gf.get_right()[0] + pf.get_left()[0]) / 2, cy=gf.get_top()[1] - 0.45)
+        place(c137, cx=(gf.get_right()[0] + pf.get_left()[0]) / 2, cy=gf.get_top()[1] - 0.33)
         assert c137.get_left()[0] > gf.get_right()[0] + 0.1 and c137.get_right()[0] < pf.get_left()[0] - 0.1
+        assert c137.get_bottom()[1] > env2.frame.get_top()[1] + 0.08, (c137.get_bottom()[1], env2.frame.get_top()[1])
         assert clk2.get_left()[0] > clk1.get_right()[0] + 0.3
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(VGroup(kc, sw, cap8)), FadeIn(net9), run_time=0.6)
@@ -721,14 +801,14 @@ class ComposeUp(VoiceScene):
             self.play(clk1.sweep(1 / 6, 1.2))
             clk1.freeze()
             vo.wait_until("then kills it")
-            self.play(FadeIn(k1, scale=1.6), run_time=0.35)
+            self.play(FadeIn(k1, scale=1.25), run_time=0.35)
             self.play(FadeOut(clk1), FadeIn(env2, shift=RIGHT * 0.2), run_time=0.3)
             self.play(env2.animate.shift(RIGHT * env2_at), run_time=0.6)
             self.play(Wiggle(env2, scale_value=1.15, rotation_angle=0.05), run_time=0.5)
             self.play(env2.animate.set_opacity(0.35), FadeIn(clk2), run_time=0.3)
             self.play(clk2.sweep(1 / 6, 1.0))
             clk2.freeze()
-            self.play(FadeIn(k2, scale=1.6), run_time=0.35)
+            self.play(FadeIn(k2, scale=1.25), run_time=0.35)
             self.play(FadeOut(clk2), FadeIn(c137, shift=UP * 0.1), run_time=0.4)
 
         # ============================================================ 10 · 137; ps -a: still there
@@ -740,6 +820,7 @@ class ComposeUp(VoiceScene):
             bare_prompt(self, t)
             vo.wait_until("Docker compose ps dash a")
             type_cmd(self, t, PS_A, type_time=0.5)
+            room(self, t, n_rows(t, C52.at((2, 4)), wrap=True))
             pa = t.print(self, C52.at((2, 4)), wrap=True, run_time=0.5)
             e0 = EXITED_COL - 65
             bxs = [col_box(pa[k], e0, e0 + len("Exited (137)")) for k in (3, 5)]
@@ -749,7 +830,8 @@ class ComposeUp(VoiceScene):
                 pa[k].add(bb)
             vo.wait_until("both containers exited")
             self.play(FadeOut(VGroup(k1, k2, c137, env1, env2)), net9.stop_box("gateway"), net9.stop_box("processor"),
-                      run_time=0.7)
+                      *[net9.boxes[n].cells.animate.set_stroke(S.GREY).set_fill(S.GREY, 0.12)
+                        for n in ("gateway", "processor")], run_time=0.7)
             vo.wait_until("but they're still there")
             self.play(flash(gf, S.GREY, 1.04), flash(pf, S.GREY, 1.04), run_time=0.7)
 
