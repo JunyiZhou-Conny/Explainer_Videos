@@ -12,7 +12,10 @@ real) and, after every play()/wait(), reports:
          projects scale the whole picture above the band, so their scenes may use the full
          frame and are skipped, as are portrait shorts and full-bleed backdrops. Set
          EXPLAINER_CAPTION_RESERVE to the band height in pixels for other presets, or 0 to
-         disable.
+         disable. Policy: this lint is deliberately stricter than the pixel gate
+         (explainer.style_check excuses a uniformly scene-painted band; here any in-band
+         ink is advice to move it, and a preset route that paints its own band disables
+         the lint via the environment variable).
 and at the end lists mobjects still visible (scenes should end on an empty frame). For a short-format
 BeatScene the HUD (fixed in the frame) may be tiny and a scene may end with objects on screen (they
 carry over into the next shot); its length in bars is printed instead.
@@ -48,6 +51,9 @@ def main(argv=None) -> int:
         return 2
     scene_file, cls_name = Path(argv[0]).resolve(), argv[1]
     project = scene_file.parent.parent
+    environ_before = dict(os.environ)       # main() mutates env/cwd/sys.path; restore for
+    cwd_before = os.getcwd()                # in-process callers (tests, future tooling)
+    path_before = list(sys.path)
     reserve = float(os.environ.get("EXPLAINER_CAPTION_RESERVE", "170"))  # px rows of 1080; 0 disables
     if (project / "video.yaml").exists():   # the video's own voice (and language), as preview uses
         # Legacy route: burn() scales the picture above the band, so scenes own the full frame.
@@ -170,6 +176,10 @@ def main(argv=None) -> int:
                 left = []
     finally:
         Scene.play, Scene.wait = orig_play, orig_wait  # repeated in-process calls must not stack wrappers
+        os.environ.clear()
+        os.environ.update(environ_before)
+        os.chdir(cwd_before)
+        sys.path[:] = path_before
     print("OK" if problems == 0 and not left else f"{problems + len(left)} problem(s)")
     return 0 if problems == 0 and not left else 1
 

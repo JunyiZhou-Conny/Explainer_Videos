@@ -406,14 +406,17 @@ def main(argv=None):
     if golden_path.is_file() and not args.sample:
         from . import golden
         diffs = output / "golden-diffs"
-        drift = golden.check(clean, golden_path, save_diffs=diffs)
+        scene_offsets = [{"id": c["id"], "start": c["start"], "duration": s["duration"]}
+                         for (s, _), c in zip(rendered, chapters)]
+        drift = golden.check(clean, golden_path, scene_offsets, save_diffs=diffs)
         if drift:
+            where = f" (changed cells outlined in red under {diffs})" if diffs.is_dir() else ""
             raise RuntimeError(
-                "Golden-frame check failed (changed cells outlined in red under "
-                f"{diffs}). If the change is intended, accept it with:\n"
-                f"  python -m explainer.golden update {clean} --golden {golden_path}\n"
+                f"Golden-frame check failed{where}. If the change is intended, accept it "
+                f"with:\n  python -m explainer.golden update {clean} --golden {golden_path}\n"
                 + "\n".join(drift))
-        print(f"Golden frames match {golden_path.relative_to(ROOT)}", flush=True)
+        shown = golden_path.relative_to(ROOT) if golden_path.is_relative_to(ROOT) else golden_path
+        print(f"Golden frames match {shown}", flush=True)
 
     music = music_settings(settings, args.no_music)
     music_report = None

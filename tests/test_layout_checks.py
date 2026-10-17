@@ -74,30 +74,70 @@ def tiny_movie(tmp_path, name, paint=None, seconds=2):
     return movie
 
 
+SCENES = [{"id": "s01", "start": 0.0, "duration": 2.0}]
+
+
 def test_golden_roundtrip_and_drift(tmp_path):
     base = tiny_movie(tmp_path, "base")
     gold = tmp_path / "golden.json"
-    stored = golden.update(base, gold, count=4)
-    assert gold.is_file() and len(stored["frames"]) == 4
+    stored = golden.update(base, gold, SCENES)
+    assert gold.is_file() and stored["scenes"][0]["samples"]
 
     # The identical render passes (encoder noise stays under the tolerance).
-    assert golden.check(base, gold) == []
+    assert golden.check(base, gold, SCENES) == []
 
-    # A moved/added element drifts, and the report localizes it.
+    # A moved/added element drifts, and the report localizes it per scene.
     changed = tiny_movie(tmp_path, "changed",
                          paint=lambda d: d.rectangle([800, 200, 1100, 500], fill=SWISS_RED))
-    problems = golden.check(changed, gold, save_diffs=tmp_path / "diffs")
-    assert problems and all("changed around x" in p for p in problems)
-    assert list((tmp_path / "diffs").glob("t-*.png"))
+    problems = golden.check(changed, gold, SCENES, save_diffs=tmp_path / "diffs")
+    assert problems and all(p.startswith("s01 ") and "changed around x" in p for p in problems)
+    assert list((tmp_path / "diffs").glob("s01-*.png"))
+
+    # A re-run that passes clears stale diff frames instead of leaving them around.
+    assert golden.check(base, gold, SCENES, save_diffs=tmp_path / "diffs") == []
+    assert not (tmp_path / "diffs").exists()
 
 
-def test_golden_duration_drift_is_its_own_finding(tmp_path):
+def test_golden_scene_timing_change_is_its_own_finding(tmp_path):
+    # frame_budget moves scene durations whenever narration changes; that must read as
+    # "timing changed", never as layout drift at absolute times that no longer line up.
     base = tiny_movie(tmp_path, "base")
     gold = tmp_path / "golden.json"
-    golden.update(base, gold, count=2)
+    golden.update(base, gold, SCENES)
     longer = tiny_movie(tmp_path, "longer", seconds=3)
-    problems = golden.check(longer, gold)
-    assert len(problems) == 1 and "duration" in problems[0]
+    problems = golden.check(longer, gold, [{"id": "s01", "start": 0.0, "duration": 3.0}])
+    assert len(problems) == 1 and "narration timing changed in s01" in problems[0]
+    missing = golden.check(base, gold, [{"id": "s02", "start": 0.0, "duration": 2.0}])
+    assert len(missing) == 1 and "not in the current cut" in missing[0]
+
+
+def test_golden_rejects_degenerate_files(tmp_path):
+    base = tiny_movie(tmp_path, "base")
+    old_schema = tmp_path / "v1.json"
+    old_schema.write_text(json.dumps({"schema": 1, "grid": [32, 18], "frames": []}))
+    problems = golden.check(base, old_schema, SCENES)
+    assert len(problems) == 1 and "unsupported schema" in problems[0]
+    empty = tmp_path / "empty.json"
+    empty.write_text(json.dumps({"schema": 2, "grid": [32, 18], "scenes": []}))
+    problems = golden.check(base, empty, SCENES)
+    assert len(problems) == 1 and "no scenes stored" in problems[0]
+    corrupt = tmp_path / "corrupt.json"
+    corrupt.write_text(json.dumps({"schema": 2, "grid": [32, 18], "scenes": [
+        {"id": "s01", "duration": 2.0, "samples": [{"frac": 0.5, "sig": "AAAA"}]}]}))
+    problems = golden.check(base, corrupt, SCENES)
+    assert len(problems) == 1 and "corrupted signature" in problems[0]
+
+
+def test_golden_scenes_from_plan(tmp_path):
+    movie = tmp_path / "x.clean.mp4"
+    movie.touch()
+    (tmp_path / "plan.json").write_text(json.dumps(
+        {"scenes": [{"id": "s01", "duration": 2.0}, {"id": "s02", "duration": 1.5}]}))
+    scenes = golden.scenes_from_plan(movie)
+    assert scenes == [{"id": "s01", "start": 0.0, "duration": 2.0},
+                      {"id": "s02", "start": 2.0, "duration": 1.5}]
+    with pytest.raises(SystemExit):
+        golden.scenes_from_plan(tmp_path / "elsewhere" / "y.mp4")
 
 
 def test_golden_signature_localizes_cells():
@@ -112,7 +152,8 @@ def test_golden_signature_localizes_cells():
 # ------------------------------------------------------- pre-render band lint
 
 CHECK_SCENE = '''
-from manim import DOWN, Scene, Square
+import types
+from manim import DOWN, Rectangle, Scene, Square, config
 
 class BandDip(Scene):
     def construct(self):
@@ -128,20 +169,62 @@ class BandClear(Scene):
         self.play(box.animate.set_fill(opacity=0.9), run_time=0.2)
         self.remove(box)
         self.wait(0.1)
+
+class Backdrop(Scene):
+    def construct(self):
+        full = Rectangle(width=config.frame_width, height=config.frame_height,
+                         fill_opacity=1, stroke_width=0)   # full-bleed: exempt from BAND
+        self.play(full.animate.set_fill(opacity=0.9), run_time=0.2)
+        self.remove(full)
+        self.wait(0.1)
+
+class ShortLike(Scene):
+    def construct(self):
+        self.grid = types.SimpleNamespace(bar=0.3)   # a BeatScene marker: band check skipped
+        box = Square(side_length=1, fill_opacity=1)
+        box.move_to(2.6 * DOWN)
+        self.play(box.animate.set_fill(opacity=0.9), run_time=0.2)
+        self.remove(box)
+        self.wait(0.1)
 '''
 
 
-@pytest.mark.parametrize("cls,expect_band", [("BandDip", True), ("BandClear", False)])
-def test_check_flags_caption_band(tmp_path, capsys, cls, expect_band):
+def run_lint(tmp_path, monkeypatch, cls, extra_args=(), env=None):
+    monkeypatch.delenv("EXPLAINER_CAPTION_RESERVE", raising=False)
+    for k, v in (env or {}).items():
+        monkeypatch.setenv(k, v)
     scenes = tmp_path / "project" / "scenes"
-    scenes.mkdir(parents=True)
+    scenes.mkdir(parents=True, exist_ok=True)
     (scenes / "s01_band.py").write_text(CHECK_SCENE)
     from explainer import check as lint
-    rc = lint.main([str(scenes / "s01_band.py"), cls])
+    rc = lint.main([str(scenes / "s01_band.py"), cls, *extra_args])
+    return rc
+
+
+@pytest.mark.parametrize("cls,expect_band", [("BandDip", True), ("BandClear", False)])
+def test_check_flags_caption_band(tmp_path, capsys, monkeypatch, cls, expect_band):
+    rc = run_lint(tmp_path, monkeypatch, cls)
     out = capsys.readouterr().out
     assert ("BAND" in out) == expect_band
     assert (rc != 0) == expect_band
     assert "OUT" not in out        # the boxes stay inside the safe area
+
+
+def test_check_band_edge_cases(tmp_path, capsys, monkeypatch):
+    # A full-bleed backdrop is exempt from BAND (it still trips OUT, as it always has).
+    rc = run_lint(tmp_path, monkeypatch, "Backdrop")
+    out = capsys.readouterr().out
+    assert "BAND" not in out and "OUT" in out and rc != 0
+
+    # A BeatScene-style short (scene.grid set) skips the band check entirely.
+    run_lint(tmp_path, monkeypatch, "ShortLike")
+    out = capsys.readouterr().out
+    assert "BAND" not in out
+
+    # EXPLAINER_CAPTION_RESERVE=0 disables the check for band-painting preset routes.
+    rc = run_lint(tmp_path, monkeypatch, "BandDip", env={"EXPLAINER_CAPTION_RESERVE": "0"})
+    out = capsys.readouterr().out
+    assert "BAND" not in out and rc == 0
 
 
 def test_check_skips_band_for_legacy_scale_mode(tmp_path, capsys):
