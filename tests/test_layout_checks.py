@@ -140,6 +140,19 @@ def test_golden_scenes_from_plan(tmp_path):
         golden.scenes_from_plan(tmp_path / "elsewhere" / "y.mp4")
 
 
+def test_golden_unsettled_motion_still_roundtrips(tmp_path):
+    # Continuous motion never settles, so the nudge loop exhausts its attempts. The
+    # stored frac must still name the frame whose signature was stored: checking the
+    # very render that produced the golden has to pass.
+    movie = tmp_path / "motion.mp4"
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "lavfi",
+                    "-i", "testsrc=duration=2:size=320x180:rate=12",
+                    "-pix_fmt", "yuv420p", str(movie)], check=True)
+    gold = tmp_path / "golden.json"
+    golden.update(movie, gold, SCENES)
+    assert golden.check(movie, gold, SCENES) == []
+
+
 def test_golden_signature_localizes_cells():
     a = np.full((golden.GRID_H, golden.GRID_W, 3), 200, dtype=np.uint8)
     b = a.copy()

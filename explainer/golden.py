@@ -119,16 +119,22 @@ def update(movie: Path, golden_path: Path, scenes: list[dict],
         td = Path(td)
         for scene in scenes:
             samples = []
+            cap = scene["start"] + max(scene["duration"] / 2,
+                                       scene["duration"] - EDGE_END_S)
             for t in _sample_times(scene):
                 # Settle: prefer a frame identical to its successor, so the sample sits in
-                # a still moment rather than mid-animation; nudge forward a few times.
+                # a still moment rather than mid-animation; nudge forward a few times. The
+                # stored frac must name the frame actually captured, so t is clamped
+                # BEFORE extraction and never advanced after the final attempt.
                 for nudge in range(4):
-                    png = _extract(movie, min(t, video_end - 1.5 / fps), td / "a.png")
+                    t = min(t, cap, video_end - 1.5 / fps)
+                    png = _extract(movie, t, td / "a.png")
                     nxt = _extract(movie, min(t + 1 / fps, video_end - 0.5 / fps), td / "b.png")
                     if png and (not nxt or not changed_cells(signature(png), signature(nxt),
                                                              tolerance)):
                         break
-                    t = min(t + 0.25, scene["start"] + scene["duration"] - EDGE_END_S)
+                    if nudge < 3:
+                        t += 0.25
                 if png is None:
                     continue
                 samples.append({"frac": round((t - scene["start"]) / scene["duration"], 4),
