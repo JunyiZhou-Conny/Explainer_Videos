@@ -797,6 +797,10 @@ class ProdAndCleanup(VoiceScene):
             self.play(FadeIn(fix_rows[1], shift=RIGHT * 0.1), run_time=0.5)
             vo.wait_until("and if a key was ever pushed")
             self.play(FadeIn(fix_rows[2], shift=RIGHT * 0.1), run_time=0.5)
+            vo.wait_until("Prod is optional")             # README: OPTIONAL: Publish the container
+            self.play(flash(tr.caption, TURN, 1.08), run_time=0.7)
+            vo.wait_until("after the fix")
+            self.play(flash(fix.frame, TURN, 1.03), run_time=0.6)
             vo.wait_until("Pause and check yours")
             self.play(FadeIn(yt, shift=LEFT * 0.1), run_time=0.4)
         self.wait(1.5)                    # the your-turn card stays up to be read / paused on

@@ -406,7 +406,7 @@ The terminal clears; it types `ls -a transcribe_audio` (extra; the second comman
 `mega-laptop/04-x-ls.txt`) → TERM(mega-laptop/04-x-ls.txt: 10–18). `Dockerfile`, `docker-shell.sh`,
 `pyproject.toml`, `uv.lock` highlight GREEN one by one, and a small GREEN recipe card "committed"
 gathers them.
-SAY: Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which you wrote in lecture 3.
+SAY: Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits.
 
 SHOW: TRACKER L/1. The terminal clears; title `laptop · lecture 3 clone`, prompt
 `student@laptop:~/AC215-l03$`; a GREY chip at the top right: "cloned fresh? skip to the next chapter".
@@ -991,7 +991,7 @@ SHOW: Tag `erratum`: a GREY README card `README.md · line 203` "the canonical w
 impossible" with a GREY note "for Git: yes · for images: no". A fix card writes in: "delete the
 secrets/ folder inside each component" · "add a .dockerignore listing secrets/ (lecture 3)" · RED
 "a key was ever pushed? delete that key in IAM". `▶ your turn`.
-SAY: So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Pause and check yours.
+SAY: So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Prod is optional: after the fix, run it only if your team publishes. Pause and check yours.
 
 SHOW: TRACKER R/4 · extra. Terminal (8 rows, title `laptop`, prompt `student@laptop:~/AC215/mega-pipeline$`)
 types `docker images` (extra) → TERM(mega-laptop/70-x-images.txt: 2–7; column view); `1.48GB` and
@@ -1335,7 +1335,7 @@ Right (x > 0.2, from the top edge): CODE(port_toy/docker-compose.yml: 11–25) w
 characters, so line 14 becomes `build: ./gateway  # …` (≈ 6.3 × 6.5; header `docker-compose.yml ·
 lines 11–25 · comment cut`). A one-line README chip `README.md · lines 432–446` "an excerpt" sits
 under the panel's header.
-SAY: Step 4: Docker Compose. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it.
+SAY: Step 4: Docker Compose, which builds and starts the whole app from one YAML file. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it.
 
 SHOW: Each flag lifts off its chip and flies left → right to its YAML key, which highlights GREEN as
 it lands: `--name gateway` → `container_name: gateway` (line 13); `docker build ./gateway` → `build:
@@ -1432,7 +1432,7 @@ experiments in docker-compose.yml". A pencil edits line 16 in a small editor pan
 TRACKER P4/3. The strip types `docker compose up -d` → TERM(port-laptop/58-compose-up-d-changed.txt:
 2–4): `processor Running` GREEN, `gateway Started 10.5s` YELLOW. Above the strip, V6's two boxes: in
 V8's coda the gateway box re-forms with a door `8095`, while the processor keeps glowing.
-SAY: Step 3: repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway.
+SAY: Next, the README says to repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway.
 
 SHOW: A compact PAGE(port-laptop/59-x-send-8095-compose.txt) flashes on `localhost:8095`. Then the
 pencil changes line 16 back and the strip types `docker compose up -d` →
@@ -1445,7 +1445,7 @@ TERM(port-laptop/61-x-edit-processor.txt: 10–11). TRACKER P4/4. The terminal (
 compose up -d --build` → TERM(port-laptop/62-compose-up-d-build.txt: 3, …, 21–24, …, 43–47) (BuildKit
 rows); line 24 `[processor 4/4] COPY . .` (not CACHED) highlights YELLOW; line 46 `gateway Running`
 GREEN, line 47 `processor Started 10.4s` YELLOW.
-SAY: Changed code that's copied into an image needs dash dash build. We added a comment to the processor's code: only the copy layer is new, and only the processor is recreated.
+SAY: We added a comment to the processor's code. Changed code that's copied into an image needs dash dash build. Only the copy layer is new, and only the processor is recreated.
 
 SHOW: Tag `illustration` ("what if"). CODE(port_toy/docker-compose.yml: 17–18) (comment cut) beside
 CODE(port_toy/gateway/gateway.py: 20) `with open("index.html", "rb") as f:`; a pencil edits

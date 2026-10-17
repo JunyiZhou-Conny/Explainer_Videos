@@ -1007,8 +1007,8 @@ class Recap(VoiceScene):
             self.remove(pen)
             type_extra(self, t, DIFF, type_time=0.4)
             dp = t.print(self, [(C61.line(10), VENV), (C61.line(11), VENV)], run_time=0.4)
-            vo.wait_until("We added a comment")
             self.play(flash(dp[1].glyphs, VENV, 1.15), flash(added, VENV, 1.15), run_time=0.6)
+            vo.wait_until("needs dash dash build")      # the edit and its diff stay up while it is named
             # brisk, so the build's rows print as "only the copy layer is new" is said (they came 1.3 s
             # late): the strip's rows leave with the editor (the build would scroll them away anyway),
             # then the empty terminal grows (the growing terminal swept over the editor's fading text
@@ -1023,7 +1023,7 @@ class Recap(VoiceScene):
             assert len(t.lines) == 13, len(t.lines)
             r24, r46, r47 = br[5], br[10], br[11]
             assert "[processor 4/4] COPY" in r24.text and "Running" in r46.text and "Started" in r47.text
-            vo.wait_until("only the copy layer is new")
+            vo.wait_until("Only the copy layer is new")
             nc = beside(grey_tag("not CACHED"), t, r24, buff=0.5)
             self.play(*paint(r24, TURN), run_time=0.5)
             pin(self, r24, nc, run_time=0.35)

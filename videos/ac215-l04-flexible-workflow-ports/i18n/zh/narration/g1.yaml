@@ -14,7 +14,8 @@
 # git stash -u, git checkout -- ., git branch: * flexible-workflow, test.mp3, input_audios and
 # input-something.mp3, -v / -e / -p, /app, /secrets, @, chmod +x, TTY, DefaultCredentialsError: File
 # /secrets/mega-pipeline.json was not found., text_prompts/group-01, synthesis_audio_en,
-# pipenv-flexible-workflow, --use, .gitignore / .dockerignore, --rm); null = the SAY text.
+# pipenv-flexible-workflow, --use, .gitignore / .dockerignore, --rm; printed output keeps its case: Using local
+# image, Creating a Pipfile); null = the SAY text.
 S01:
 - en: "A command from this lecture's README, on a laptop that never built this image: with no local image, it pulls one from Docker Hub. Inside, Python says 3.8.17, and the Gemini library won't import."
   zh:
@@ -85,7 +86,7 @@ S03:
 - en: "Starting fresh? From your workspace folder, clone the repo with this branch checked out: git clone, dash dash branch flexible-workflow. Then cd into mega-pipeline. Pause and run both."
   zh:
   - "从头开始？"
-  - "在你的工作区目录里 clone 这个 repo，直接 checkout 到这个分支：git clone，加上 --branch flexible-workflow。"
+  - "在你的工作区目录里，clone 这个 repo 并直接 checkout 到这个分支：git clone，加上 --branch flexible-workflow。"
   - "然后 cd 进 mega-pipeline。"
   - "暂停一下，两条都跑一遍。"
   en_display:
@@ -93,9 +94,9 @@ S03:
   - "From your workspace folder, clone the repo with this branch checked out: git clone, --branch flexible-workflow."
   - null
   - null
-- en: "Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which you wrote in lecture 3."
+- en: "Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits."
   zh:
-  - "两个额外检查：git branch 显示，当前分支是 flexible-workflow，停在 pin 住的 commit；transcribe audio 里有 Dockerfile、这个脚本、pyproject.toml 和 uv.lock，就是你第 3 讲写过的那些。"
+  - "两个额外检查：git branch 显示，当前分支是 flexible-workflow，停在 pin 住的 commit；transcribe audio 里有 Dockerfile、这个脚本、pyproject.toml 和 uv.lock，都由这个分支 commit 好了。"
 - en: "Already have your clone from lecture 3? It's on main; if you cloned fresh, skip to the next chapter. Step 1: cd into it. Two extra checks show its state."
   zh:
   - "已经有第 3 讲的 clone 了？"
@@ -118,7 +119,7 @@ S03:
   - "第 3 步：git checkout flexible-workflow，Git 拒绝了，原因有两个。"
 - en: "Your edits to cli.py would be overwritten, and two untracked files sit where the branch has files of its own. Nothing changed."
   zh:
-  - "你对 cli.py 的修改会被覆盖，而且两个未跟踪的文件，正好放在这个分支自己也有文件的地方。"
+  - "你对 cli.py 的修改会被覆盖，而且两个未跟踪的文件正好放在这个分支自己也有文件的地方。"
   - "什么都没变。"
 - en: "The README's note covers the first reason: git stash puts your edits away, and the first wall falls. On a retry, the untracked files still block it."
   zh:
@@ -292,7 +293,7 @@ S06:
 - en: "Step 5, chmod plus x, is harmless: an extra ls shows it's already executable. Step 6, on Windows: use Git BASH, and put winpty in front if Docker says the input device is not a T-T-Y."
   zh:
   - "第 5 步，用 chmod 加上可执行权限，没有坏处：额外的 ls 显示它本来就是可执行的。"
-  - "第 6 步，在 Windows 上：用 Git BASH，如果 Docker 报 the input device is not a TTY，就在前面加上 winpty。"
+  - "第 6 步，在 Windows 上：用 Git BASH，并在前面加上 winpty，如果 Docker 报错：the input device is not a TTY。"
   en_display:
   - "Step 5, chmod +x, is harmless: an extra ls shows it's already executable."
   - "Step 6, on Windows: use Git BASH, and put winpty in front if Docker says the input device is not a TTY."
@@ -341,7 +342,7 @@ S07:
   - "Gemini 按 token 计费。"
 - en: "Next, synthesis audio E-N builds in 8 seconds, its system layer cached. We left its cli.py unedited on purpose: help stops at the assert; here, the guard works."
   zh:
-  - "接下来，synthesis audio en 只用 8 秒就构建好了，它的系统层用了缓存。"
+  - "接下来，synthesis audio en 的构建只要 8 秒：它的系统层用了缓存。"
   - "我们故意没改它的 cli.py：help 停在了 assert 那里；在这里，这道检查起作用了。"
   en_display:
   - "Next, synthesis_audio_en builds in 8 seconds, its system layer cached."
@@ -374,7 +375,7 @@ S08:
 - en: "Exit, and cd back into transcribe audio. Step 2 of How to Run, docker-shell.sh dev, only builds: no container starts. Here, all was cached; after any change in the folder, the copy and uv sync steps run again."
   zh:
   - "输入 exit，再 cd 回 transcribe audio。"
-  - "在 How to Run 里，第 2 步是 docker-shell.sh dev，它只构建：不会启动 container。"
+  - "在 How to Run 那一节，第 2 步 docker-shell.sh dev 只构建：不会启动 container。"
   - "这里全都用了缓存；只要目录里有任何改动，COPY 和 uv sync 这两步就会重新跑。"
 - en: "What is dev for? Adding a package: uv add, inside the container, updates pyproject.toml and uv.lock through the window; then dev bakes it into the image."
   zh:
@@ -384,6 +385,9 @@ S08:
   zh:
   - "第 3 步，run，跳过构建：显示 Using local image，因为本地已经有一个。"
   - "暂停一下，自己试试 dev 和 run。"
+  en_display:
+  - "Step 3, run, skips the build: Using local image, because one exists."
+  - null
 - en: "A small inaccuracy: the README's overview says run pulls from the registry. In fact, any local image of that name wins, however old; otherwise it runs the Docker Hub image, pulled only the first time."
   zh:
   - "一个小小的不准确：README 的概述说 run 会从 registry pull。"
@@ -401,6 +405,10 @@ S08:
   - "提示 Local image not found，于是它从 Docker Hub pull 了 dlops 的 image。"
   - "接着来了个意外：显示 Creating a Pipfile。"
   - "这是 pipenv，这门课在 uv 之前用的工具。"
+  en_display:
+  - null
+  - "Then, a surprise: Creating a Pipfile."
+  - null
 - en: "The prompt says root. Python is 3.8.17, in an environment pipenv made. Help still works here, in the older wording of Python 3.8. Then type exit."
   zh:
   - "提示符显示的是 root。"
@@ -425,7 +433,7 @@ S08:
   - "如果你试过这一步，就把它删掉，再跑一次 dev，把你自己的 image 找回来。"
 - en: "So build locally, with no argument or dev, and use run only for images your team pushed from this branch, under your own Docker Hub account."
   zh:
-  - "所以要在本地构建，不带参数或者用 dev；run 只用于你们组从这个分支 push 到你们自己 Docker Hub 账号下的 image。"
+  - "所以要在本地构建，不带参数或者用 dev；run 只用于你们组从这个分支 push 上去的 image，而且是在你们自己的 Docker Hub 账号下。"
 S09:
 - en: "Step 4, prod, publishes. It recreates a builder named multi-arch, a build engine for several processor types. Dash dash use makes it current, and the script never switches back: docker buildx use default does."
   zh:
@@ -459,21 +467,23 @@ S09:
   - "Build there with dev, and an extra command lists the new image's /app: the key is inside."
 - en: "The copy line takes the whole folder. The gitignore keeps secrets out of Git, not out of images, and no branch has a dockerignore. Prod would push your key to Docker Hub."
   zh:
-  - "其中 COPY 那一行会把整个目录都装进去。"
+  - "而 COPY 那一行会把整个目录都装进去。"
   - "那个 .gitignore 让 secrets 进不了 Git，却挡不住它进 image；而且哪个分支都没有 .dockerignore。"
   - "跑 prod 就会把你的密钥 push 到 Docker Hub。"
   en_display:
   - null
   - "The .gitignore keeps secrets out of Git, not out of images, and no branch has a .dockerignore."
   - null
-- en: "So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Pause and check yours."
+- en: "So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Prod is optional: after the fix, run it only if your team publishes. Pause and check yours."
   zh:
   - "所以 README 的承诺对 Git 成立，对 image 不成立。"
   - "删掉组件里面的每个 secrets 目录，加一个列出 secrets 的 .dockerignore；如果哪个密钥曾经被 push 出去，就把那个密钥删掉。"
+  - "至于 prod，它是可选的：修好之后，只有你们组要发布时才运行它。"
   - "暂停一下，检查你自己的。"
   en_display:
   - null
   - "Delete any secrets folder inside a component, add a .dockerignore listing secrets, and if a key was ever pushed, delete that key."
+  - null
   - null
 - en: "Clean-up for part 1. Exit each container; dash dash r m deletes it. The transcribe image alone is 1.48 gigabytes: remove all five with docker image rm, plus any dlops images you pulled."
   zh:

@@ -459,7 +459,7 @@ class GetTheCode(VoiceScene):
                                                                if i == 0 else []), run_time=0.3)
                 self.play(TransformFromCopy(ln.glyphs, card.rows[i]), flash(ln.glyphs, VENV, 1.12),
                           run_time=0.6)
-            vo.wait_until("which you wrote")
+            vo.wait_until("which this branch")
             self.play(FadeIn(card.caption, shift=UP * 0.1), flash(card.frame, VENV, 1.04), run_time=0.6)
 
         # ========================================================== 2 · the lecture 3 clone

@@ -105,6 +105,8 @@ mega-pipeline-sa: {ipa: "mˈɛɡə pˈaɪplaɪn ˈɛs ˈeɪ", say: "mega pipelin
 docker-compose.yml: {ipa: "dˈɑːkɚ kəmpˈoʊz dˈɑːt jˈæməl", say: "docker compose dot yaml"}
 toynet: {ipa: "tˈɔɪ nˈɛt", say: "toy net"}
 "toynet's": {ipa: "tˈɔɪ nˈɛts", say: "toy net's"}
+"port toy": {ipa: "pˈɔːɹt tˈoɪ", say: "port toy"}
+"Port toy": {ipa: "pˈɔːɹt tˈoɪ", say: "Port toy"}
 "3.8": {ipa: "θɹˈiː pɔɪnt ˈeɪt", say: "three point eight"}
 "3.8.17": {ipa: "θɹˈiː pɔɪnt ˈeɪt pɔɪnt sˈɛvəntˌiːn", say: "three point eight point seventeen"}
 "3.14.8": {ipa: "θɹˈiː pɔɪnt fˈɔːɹtiːn pɔɪnt ˈeɪt", say: "three point fourteen point eight"}

@@ -9,9 +9,10 @@
 # with an artifact or a kept-English word (A5: 日志里，processor……; 代码里，gateway 的第 38 行……; 用 docker ps……;
 # 输入 docker compose down……; 原来的 --name……). Kept English per A13: port, host port, container port, localhost;
 # the metaphors of V6/V7: 小电脑, 局域网, 电话簿, 导轨, 临街的门 (host port), 房间 (container port).
-# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4, blocks S11[0,3,4,5]
-# S12[0] S13[10] S14[3] S15[1,2,3,8,10,11] S16[0,1,2,4,6,9]: -u, -p, -e, localhost:8090, -it, --name, /app,
-# port_toy-gateway, Ctrl+C, -a, -d, -f, --build, -p 127.0.0.1:8095:9100); null = the SAY text. Mentions only
+# en_display: the English subtitle line where the SAY spells an artifact as words (rule D4, blocks S10[3] S11[0,3,4,5]
+# S12[0] S13[0,4,10] S14[3,5] S15[1,2,3,8,10,11] S16[0,1,2,4,6,9]: -u, -p, -e, localhost:8090, -it, --name, /app,
+# port_toy-gateway, Ctrl+C, -a, -d, -f, --build, -p 127.0.0.1:8095:9100; a command opening a sentence stays
+# lowercase, and printed output keeps its case: Hello from Docker!, Empty reply from server); null = the SAY text. Mentions only
 # (port toy, container name, depends on, the gateway's processor port) keep the SAY form on both lines.
 S10:
 - en: "In part 1, containers only left files in a bucket. Port toy makes two containers talk directly, and needs only Docker: a gateway serves a web page and forwards your text to a processor, which turns it into capitals."
@@ -30,6 +31,9 @@ S10:
   zh:
   - "先看 Prerequisites：用 docker run hello-world 检查 Docker 有没有在运行。"
   - "它会 pull 一个很小的 image，打印出 Hello from Docker。"
+  en_display:
+  - null
+  - "It pulls a tiny image and prints Hello from Docker!"
 - en: "Step 1 sets the app up by hand. From your workspace folder, clone the code: the README says clone or download but prints no command. Then cd into port toy. Pause and run them."
   zh:
   - "第 1 步手动把应用搭起来。"
@@ -128,6 +132,10 @@ S13:
   - "第 2 步检查 port。"
   - "用 docker ps 能看到 gateway 的映射，host 那一侧在前：127.0.0.1，port 8090，到 9100。"
   - "而 processor 的 PORTS 那一列是空的：在监听，但没有发布。"
+  en_display:
+  - null
+  - "docker ps shows the gateway's mapping, host side first: 127.0.0.1, port 8090, to 9100."
+  - null
 - en: "An extra docker ps with three columns matches the README's sample."
   zh:
   - "额外跑一个只有三列的 docker ps，和 README 里的示例一致。"
@@ -146,6 +154,9 @@ S13:
   zh:
   - "在笔记本上，用 curl 访问 8090，返回的是 gateway 的页面。"
   - "用 curl 访问 9200 就连不上：你的笔记本上没有通向它的门，除非你自己有别的程序在用 9200。"
+  en_display:
+  - null
+  - "curl on 9200 can't connect: your laptop has no door to it, unless something else of yours uses 9200."
 - en: "From inside the gateway, docker exec runs curl, asking for the name processor, on port 9200. The answer: ok."
   zh:
   - "用 docker exec 在 gateway 里面运行 curl，按名字 processor 去问 port 9200。"
@@ -211,6 +222,9 @@ S14:
   zh:
   - "确实失败了，只是悄无声息。"
   - "页面没有错误处理，所以上面什么都不会变；我们录下的那次请求只拿到 curl 的报错：Empty reply from server。"
+  en_display:
+  - null
+  - "The page has no error handling, so nothing on it changes; the captured request got only curl's error, Empty reply from server."
 - en: "An extra docker logs on the gateway shows why: it found the processor by name, but the connection was refused: nobody listens on 9200 anymore. A wrong name fails differently: see the exercises."
   zh:
   - "额外在 gateway 上跑一下 docker logs，就知道原因：它通过名字找到了 processor，但连接被拒绝了，已经没有人在 9200 上监听。"
@@ -235,9 +249,9 @@ S14:
   - "跳过这一步，Compose 就会遇到名字冲突。"
   - "暂停一下，清理干净。"
 S15:
-- en: "Step 4: Docker Compose. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it."
+- en: "Step 4: Docker Compose, which builds and starts the whole app from one YAML file. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it."
   zh:
-  - "第 4 步：Docker Compose。"
+  - "第 4 步：Docker Compose，它根据一个配置文件，把整个应用构建好并启动起来。"
   - "README 里只给了节选；把完整的 docker-compose.yml 打开。"
   - "你手动敲过的参数，几乎每一个都能在里面找到位置。"
 - en: "Dash dash name becomes container name, and the build command becomes build. Dash p becomes ports, dash e becomes environment, and the network is named at the bottom of the file."
@@ -272,7 +286,7 @@ S15:
   - "在那里，docker compose ps 显示同样的映射。"
 - en: "An extra network ls shows that Compose made toynet, and compose exec reaches the processor by name: ok."
   zh:
-  - "额外的 network ls 显示，toynet 是 Compose 创建的，而 compose exec 按名字连到了 processor：ok。"
+  - "额外的 network ls 显示，toynet 是 Compose 创建的，而 compose exec 按名字连到了 processor，回复 ok。"
 - en: "The README's table pairs each by-hand command with its Compose version. In the first terminal, your requests now show in the log."
   zh:
   - "README 的那张表把每条手动敲的命令和它在 Compose 里的写法一一对应。"
@@ -317,11 +331,11 @@ S16:
   - "用 compose exec gateway sh 打开一个 shell，在里面，环境变量显示的是 processor 和 9200。"
   en_display:
   - null
-  - "Compose logs -f follows the gateway's log; Ctrl+C stops only the following."
-  - null
-- en: "Step 3: repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway."
+  - "docker compose logs -f follows the gateway's log; Ctrl+C stops only the following."
+  - "docker compose exec gateway sh opens a shell, where the environment shows processor and 9200."
+- en: "Next, the README says to repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway."
   zh:
-  - "第 3 步：在文件里重做一遍 port 实验。"
+  - "接下来，README 里说：在文件里重做一遍 port 实验。"
   - "把 8090 改成 8095，再运行 up -d：Compose 只重新创建 gateway。"
   en_display:
   - null
@@ -329,11 +343,13 @@ S16:
 - en: "The page answers on 8095; change it back and apply again."
   zh:
   - "页面在 8095 上有回应；把它改回去，再让它生效一次。"
-- en: "Changed code that's copied into an image needs dash dash build. We added a comment to the processor's code: only the copy layer is new, and only the processor is recreated."
+- en: "We added a comment to the processor's code. Changed code that's copied into an image needs dash dash build. Only the copy layer is new, and only the processor is recreated."
   zh:
+  - "我们在 processor 的代码里加了一行注释。"
   - "复制进 image 的代码改了，就要加 --build。"
-  - "我们在 processor 的代码里加了一行注释：只有 COPY 那一层是新的，也只有 processor 被重新创建。"
+  - "只有 COPY 那一层是新的，也只有 processor 被重新创建。"
   en_display:
+  - null
   - "Changed code that's copied into an image needs --build."
   - null
 - en: "The gateway's folder is mounted, and it rereads its page on each load: edits show on the next reload, without a rebuild."
