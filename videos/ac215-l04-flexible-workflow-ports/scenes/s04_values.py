@@ -47,7 +47,12 @@ Beats (script.md "## S04", one voiceover block each):
     (caption "transcribe · cli.py line 62: same name, .txt"). The excerpt chip `"input-*.txt"`
     (transcribe_audio/cli.py · line 102 (excerpt)) stands beside the cabinet's text_prompts/ row:
     it lifts like a barrier, the .txt chip passes under it into text_prompts/ group-01/, it drops
-    back with a GREEN tick; a `test.txt` chip bounces off it (GREY). Fade out to an empty frame.
+    back with a GREEN tick; a `test.txt` chip bounces off it (GREY). The picture fades (the tracker
+    stays) and a GREY "your turn" card writes in (QA 06:18): Cloud Storage › Buckets › Create ·
+    Name: globally unique, e.g. `<team>-mega-pipeline` = your `bucket_name` · Create folder
+    `input_audios` · Upload files › a short clip named `input-<something>.mp3` · GREY "or:
+    `gcloud storage buckets create` / `gcloud storage cp` · study guide" (extra); "globally
+    unique" flashes, ▶ your turn wiggles. Fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - Beat 0: the tracker caption gets " · extra" while the four extra commands are typed (the script's
@@ -74,6 +79,12 @@ Deviations from SHOW (and why):
 - Beat 7: the `"input-*.txt"` gate stands beside the cabinet's text_prompts/ row (between the
   local folder and the bucket's text_prompts/ group-01/), the local folder below it, drawn as a
   drawer: name on its front (bottom row), files on top, so they leave upwards without crossing it.
+- Beat 7: the ▶ your-turn card (bucket, folder, upload) is not in script.md's SHOW (QA 06:18, newcomer
+  watcher: the viewer must create the bucket and upload a clip, and bucket names are global). The
+  sentence asked of script.md, "Bucket names are global: pick a unique one. Pause and create yours.",
+  is anchored (GLOBAL7, PAUSE7) once SAY[7] holds it; until then the card follows the picture and
+  holds 2 s after the narration (1 s with the sentence). The gcloud pair is named, not typed (the study guide has both
+  commands, extra, not captured).
 """
 
 from common import *
@@ -144,6 +155,11 @@ SHIPPED = {2: '"ac215-project"', 3: '"mega-pipeline-bucket"', 4: '"pavlos-advanc
 for _n, _v in SHIPPED.items():
     assert f"= {_v}" in GREP.line(_n), (_n, _v)
 COURSE = ["course's project", "course's bucket", "instructor's group"]
+# Beat 7's ▶ your turn (QA 06:18). The sentence asked of script.md, "Bucket names are global: pick
+# a unique one. Pause and create yours.", is anchored only once SAY[7] holds it; until then the
+# card follows the picture and holds a moment after the narration.
+GLOBAL7 = "Bucket names are global" if "Bucket names are global" in SAY[7] else None
+PAUSE7 = "Pause" if GLOBAL7 and "Pause" in SAY[7] else None
 
 CD_A = "cd transcribe_audio"                     # extra (script.md S04)
 EDIT = capture("11", ML)
@@ -434,6 +450,42 @@ def wave_file(h: float = 0.5):
 
 def name_chip(s: str):
     return chip(s, S.GREY, size=CAPTION, font=MONO, fill_opacity=0.12)
+
+
+def mixed_row(parts):
+    """One card row of serif / mono parts: parts = [(text, "mono"|"serif", colour)] (20 pt)."""
+    mobs = VGroup(*[(mono if kind == "mono" else label)(s, CAPTION, col) for s, kind, col in parts])
+    mobs.arrange(RIGHT, buff=0.14)
+    for m in mobs:
+        m.match_y(mobs[0])
+    return mobs
+
+
+def bucket_card():
+    """The ▶ your-turn card of step 3 (common.turn_card's look, rows of mixed serif / mono parts):
+    the console clicks, the global bucket name, the folder and the upload, and the study guide's
+    gcloud pair (extra). .frame .rows .header .tag .name (the "globally unique" part)"""
+    sv, mo, G = "serif", "mono", S.GREY
+    rows = [
+        mixed_row([("Cloud Storage › Buckets › Create", sv, INK)]),
+        mixed_row([("Name: globally unique, e.g.", sv, INK), ("<team>-mega-pipeline", mo, INK),
+                   ("= your", sv, G), ("bucket_name", mo, G)]),
+        mixed_row([("In the bucket: Create folder", sv, INK), ("input_audios", mo, INK)]),
+        mixed_row([("In that folder: Upload files › a short clip named", sv, INK),
+                   ("input-<something>.mp3", mo, INK)]),
+        mixed_row([("or:", sv, G), ("gcloud storage buckets create", mo, G), ("/", sv, G),
+                   ("gcloud storage cp", mo, G), ("· study guide", sv, G)]),
+    ]
+    ex = extra_tag().next_to(rows[-1], RIGHT, buff=0.25)
+    rows[-1].add(ex)
+    items = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
+    fr = box(items.width + 0.6, items.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+    items.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.3)
+    h = note("your turn").next_to(fr, UP, buff=0.08).align_to(fr, LEFT).shift(RIGHT * 0.12)
+    tg = your_turn().move_to(fr.get_corner(UP + RIGHT)).shift(LEFT * 1.0)
+    g = VGroup(fr, items, h, tg)
+    g.frame, g.rows, g.header, g.tag, g.name = fr, items, h, tg, rows[1][0]
+    return g
 
 
 class YourValues(VoiceScene):
@@ -755,6 +807,8 @@ class YourValues(VoiceScene):
         g_tick = check_mark(0.3, VENV).next_to(gate.chip, DOWN, buff=0.12)
         wait_x = gate.chip.get_right()[0] + 0.15         # chips wait right of the gate
         lift = gate.chip.height + 0.1                    # the gate lifts clear of a waiting chip
+        card = bucket_card()
+        card.move_to([0, -0.2, 0])                       # centred below the tracker (bottom 2.92)
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(con, scale=0.4, target_position=cab.title.get_center()),
                       FadeOut(VGroup(p313, st, err6)), run_time=0.7)
@@ -785,6 +839,22 @@ class YourValues(VoiceScene):
             self.play(test.animate(rate_func=there_and_back).shift(LEFT * 0.2),
                       flash(gate.chip, S.GREY, 1.1, 0.6), run_time=0.6)
             self.play(test.animate.set_color(S.GREY_DARK), run_time=0.3)
-            self.wait(0.4)
+            # ▶ your turn: the picture gives way to the step-3 card (bucket, folder, upload)
+            if GLOBAL7:
+                vo.wait_until(GLOBAL7)
+            # the tracker stays: tr.goto()'s AnimationGroup left its dots and caption on the scene
+            # in a Group of their own, so keep every top-level mobject that holds a tracker part
+            trf = set(tr.get_family())
+            pic = [m for m in self.mobjects if not trf.intersection(m.get_family())]
+            self.play(FadeOut(*pic), run_time=0.4)
+            self.play(FadeIn(card.frame), FadeIn(card.header),
+                      LaggedStart(*[FadeIn(r, shift=RIGHT * 0.12) for r in card.rows], lag_ratio=0.25),
+                      run_time=1.1)
+            self.play(flash(card.name, TURN, 1.04, 0.7))     # 1.04: clears the mono example beside it
+            if PAUSE7:
+                vo.wait_until(PAUSE7)
+            self.play(FadeIn(card.tag, shift=LEFT * 0.15), run_time=0.4)
+            self.play(Wiggle(card.tag, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
+        self.wait(1.0 if PAUSE7 else 2.0)        # the card holds a moment after the narration
         self.play(FadeOut(*self.mobjects), run_time=0.8)
         self.wait(0.3)

@@ -44,9 +44,14 @@ where the SHOW introduces it with its model chip). Beat 1's PromptStack leaves, 
 its system block back as a copy above the tutorial's prompt card (PromptStack's own ghost and cables
 assume its three-block layout, which the tutorial's prompt card replaces from beat 2 on). The ghost
 card opens to full width to hold the two wrapped code panels (12 columns of 65 characters do not fit
-in a 4-wide card), then folds back. Beat 5 removes the ghost and its (fixed) cable so the picture
-shows the code as it is. Beat 6 types the two commands one after the other in a cleared strip:
-with no output shown, a second prompt right under the first would read as "it printed nothing".
+in a 4-wide card), then folds back. Code panels change by swap_panel (the dark panel morphs, the
+code swaps out then in) rather than a glyph Transform, which scrambles code half-way. The fix row
+and the pipenv panel sit under the picture, the pipenv panel replacing the call panel at the bottom
+edge. Beat 5 removes the ghost and its (fixed) cable so the picture shows the code as it is. Beat 6
+draws the mini-map large above the strip (where the run stops, where the two paid calls are) and
+types the two commands one after the other in a cleared strip: with no output shown, a second
+prompt right under the first would read as "it printed nothing". SLIDES.md's optional "IsSUP ·
+slide B78" tag at the grounding test is not drawn: the script's SHOW does not adopt it.
 """
 
 import numpy as np
@@ -69,6 +74,7 @@ from manim import (
     VGroup,
     VMobject,
     Write,
+    smooth,
 )
 
 from common import (
@@ -166,7 +172,7 @@ PC_C = np.array([-2.85, 1.05, 0])        # the prompt card (2.4 x 1.89): x -4.05
 GHOST_C = np.array([-2.8, 2.45, 0])      # the system block / SYSTEM_INSTRUCTION ghost above it
 LLM_C = np.array([1.3, 1.25, 0])         # the LLM box (1.9 x 1.2): x 0.35..2.25, y 0.65..1.85
 CODE_X = -0.4                            # code panels sit on the bottom edge, centred here
-MID_Y = -0.9                             # the band between the picture and a 3-row code strip
+MID_Y = -0.84                            # the band between the answer bars and a 3-row code strip
 BAND_Y = 3.22                            # README chip in the band right of the tracker
 
 
@@ -202,6 +208,26 @@ def mixed(parts, size: float = CAPTION, color: str = INK) -> VGroup:
 def under_bar(win) -> float:
     """y of a browser window's title-bar line (explainer.devops.browser_window: 0.55 below the top)."""
     return win.frame.get_top()[1] - 0.55
+
+
+def first_half(t: float) -> float:
+    return smooth(min(1.0, 2 * t))
+
+
+def second_half(t: float) -> float:
+    return smooth(max(0.0, 2 * t - 1))
+
+
+def swap_panel(scene, old, new, *extra, run_time: float = 0.7):
+    """A code panel becomes the next one: the dark panel morphs into its new size while the header
+    and the code swap, old out in the first half, new in the second (a glyph-by-glyph Transform
+    scrambles the code half-way). The new panel ends on the scene as one group."""
+    scene.play(ReplacementTransform(old.code.background, new.code.background),
+               FadeOut(VGroup(old.code.code_lines, old.header), shift=UP * 0.12, rate_func=first_half),
+               FadeIn(VGroup(new.code.code_lines, new.header), shift=UP * 0.12, rate_func=second_half),
+               *extra, run_time=run_time)
+    scene.remove(old)
+    scene.add(new)
 
 
 def code_rows(panel, n: int) -> VGroup:
@@ -298,7 +324,7 @@ class FinalPrompt(VoiceScene):
                         for b, r in ((0, 5), (1, 7), (2, 9))])
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(bars1, u_ten, nofilt)), ReplacementTransform(p1, p2), run_time=0.7)
+            swap_panel(self, p1, p2, FadeOut(VGroup(bars1, u_ten, nofilt)))
             vo.wait_until("the input prompt")
             self.play(Indicate(p2.span(388, "INPUT_PROMPT"), color=TURN, scale_factor=1.15), run_time=0.6)
             vo.wait_until("the question")
@@ -313,8 +339,7 @@ class FinalPrompt(VoiceScene):
             vo.wait_until("joined by newlines")
             self.play(Create(u_nl), FadeIn(py, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("The prompt goes to Gemini")
-            self.play(FadeOut(VGroup(b389, b390, u_nl, py)), ReplacementTransform(p2, p3), FadeIn(llm),
-                      run_time=0.7)
+            swap_panel(self, p2, p3, FadeOut(VGroup(b389, b390, u_nl, py)), FadeIn(llm))
             fly = pc.copy()
             self.play(fly.animate.scale(0.15).move_to(llm).set_opacity(0), Create(feed),
                       FadeIn(mchip, shift=LEFT * 0.15), FadeIn(l27), run_time=0.8)
@@ -331,7 +356,9 @@ class FinalPrompt(VoiceScene):
         content = VGroup(big_label, p41, p47).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
         big_h = content.height + 0.4
         big_frame = box(12.9, big_h, S.GREY, dashed=True, stroke=3).move_to([0, 2.78 - big_h / 2, 0])
-        backing = Rectangle(width=12.9, height=big_h, stroke_width=0).set_fill(S.BG, 1).move_to(big_frame)
+        # the backing hides the picture behind the opened card, to the safe edges (the model chip reaches x 6.47)
+        backing = Rectangle(width=13.2, height=big_h, stroke_width=0).set_fill(S.BG, 1).move_to(big_frame)
+        big = VGroup(big_frame, big_label)              # the opened ghost card (one group, both transforms)
         content.move_to(big_frame).align_to(big_frame, LEFT).shift(RIGHT * 0.3)
         r41 = p41.rows_of(41)
         u41 = VGroup(under(p41.span(41, "based solely on the information provided in"), TURN),
@@ -358,8 +385,7 @@ class FinalPrompt(VoiceScene):
             self.play(Indicate(sys_block, color=INK, scale_factor=1.05), run_time=0.7)
             vo.wait_until("Line 40 defines one")
             self.add(backing, sys_block)
-            self.play(FadeIn(backing), FadeOut(p3), ReplacementTransform(sys_block, VGroup(big_frame, big_label)),
-                      run_time=0.7)
+            self.play(FadeIn(backing), FadeOut(p3), ReplacementTransform(sys_block, big), run_time=0.7)
             self.play(FadeIn(p41, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("answer only from the chunks")
             self.play(LaggedStart(*[Create(u) for u in u41], lag_ratio=0.5), run_time=0.8)
@@ -367,7 +393,7 @@ class FinalPrompt(VoiceScene):
             self.play(FadeIn(p47, shift=UP * 0.1), run_time=0.5)
             self.play(Create(u47), run_time=0.6)
             vo.wait_until("But look at the call")
-            self.play(ReplacementTransform(VGroup(big_frame, big_label), ghost),
+            self.play(ReplacementTransform(big, ghost),
                       FadeOut(VGroup(p41, p47, u41, u47, backing)), FadeIn(p3), run_time=0.7)
             self.play(Indicate(code_rows(p3, 395), color=TURN, scale_factor=1.03), Create(u_contents),
                       FadeIn(noconf, shift=LEFT * 0.15), run_time=0.7)
@@ -381,7 +407,7 @@ class FinalPrompt(VoiceScene):
         fix_txt = VGroup(*[mono(r.strip(), CAPTION, INK) for r in FIX_ROWS]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         indent = len(FIX_ROWS[1]) - len(FIX_ROWS[1].lstrip())
         fix_txt[1].shift(RIGHT * indent * cell_width(CAPTION))        # mono() drops leading spaces
-        fix_fr = box(fix_txt.width + 0.5, fix_txt.height + 0.3, DATA, fill=S.BG, fill_opacity=0.95, radius=0.12)
+        fix_fr = box(fix_txt.width + 0.5, fix_txt.height + 0.22, DATA, fill=S.BG, fill_opacity=0.95, radius=0.12)
         fix = VGroup(fix_fr, fix_txt.move_to(fix_fr))
         ftag = fix_tag()
         ftag.move_to([6.45 - ftag.width / 2, MID_Y, 0])
@@ -393,6 +419,9 @@ class FinalPrompt(VoiceScene):
         b64 = p62.bar(64, DATA)
         ptag = two_row_tag(["pipenv branch (March 2025)", "sent it"])
         ptag.move_to([p62.get_right()[0] + 0.3 + ptag.width / 2, p62.code.get_center()[1], 0])
+        # the fix row fits between the answer bars and the code strip's header
+        assert fix.get_top()[1] < ans.get_bottom()[1] - 0.15, (fix.get_top(), ans.get_bottom())
+        assert fix.get_bottom()[1] > max(p3.get_top()[1], p62.get_top()[1]) + 0.15, (fix.get_bottom(), p3.get_top())
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeIn(err, shift=RIGHT * 0.15), run_time=0.5)
@@ -401,7 +430,7 @@ class FinalPrompt(VoiceScene):
             self.play(FadeIn(ftag, shift=LEFT * 0.15), Indicate(g_label, color=DATA, scale_factor=1.06),
                       run_time=0.6)
             vo.wait_until("The older pipenv branch")
-            self.play(FadeOut(VGroup(u_contents, noconf)), ReplacementTransform(p3, p62), run_time=0.8)
+            swap_panel(self, p3, p62, FadeOut(VGroup(u_contents, noconf)), run_time=0.8)
             self.play(FadeIn(b64), FadeIn(ptag, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("the README's promise")
             self.play(Indicate(rm, color=TURN, scale_factor=1.05), run_time=0.8)
@@ -442,8 +471,9 @@ class FinalPrompt(VoiceScene):
         nk.move_to([0, mm2.get_bottom()[1] - 0.2 - nk.height / 2, 0])
         gold = cost_tag("per question: one embedding call + one Gemini call")
         gold.move_to([0, (nk.get_bottom()[1] + t.box.get_top()[1]) / 2, 0])
-        coins = VGroup(coin_glyph(0.15).next_to(emb, RIGHT, buff=0.1).align_to(emb, UP),
+        coins = VGroup(coin_glyph(0.15).next_to(emb, UP, buff=0.08),
                        coin_glyph(0.15).next_to(mm2.items["llm"], UP, buff=0.12))
+        assert coins[0].get_top()[1] < mm2.frame.get_top()[1] - 0.05, (coins[0].get_top(), mm2.frame.get_top())
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(cyl, pc, llm, mchip, l27, feed, ans, lock_g, dele, lr)), run_time=0.5)
@@ -499,9 +529,10 @@ class FinalPrompt(VoiceScene):
             self.play(lf.write_item(6))
 
         # ========================================================== 8 · the opening question, answered
-        win = chat_window("a chat with an LLM", 6.0, 2.7).move_to([-3.3, 1.45, 0])
+        win = chat_window("a chat with an LLM", 6.4, 2.7).move_to([-3.1, 1.45, 0])
         q = mono(QUESTION, 22, LOOKUP)
         q.move_to(win.field).align_to(win.field, LEFT).shift(RIGHT * 0.2)
+        assert q.get_right()[0] < win.field.get_right()[0] - 0.15, (q.get_right(), win.field.get_right())
         bars = VGroup(*[RoundedRectangle(width=(win.answer.width - 0.3) * k, height=0.14, corner_radius=0.07,
                                          stroke_width=0).set_fill(S.GREY, 0.8) for k in (1.0, 0.9, 0.96, 0.55)])
         bars.arrange(DOWN, aligned_edge=LEFT, buff=0.13)
@@ -510,7 +541,7 @@ class FinalPrompt(VoiceScene):
         bars.set_stroke(ERR, 1.6, opacity=1)
         grounded, memory = (0, 1, 2), 3                    # bars drawn from the chunks; the one from memory
         qmark = label("?", 72, TURN).move_to([1.5, 1.5, 0])
-        src = VGroup(*[chunk_card(0.62, 0.36) for _ in range(3)]).arrange(DOWN, buff=0.25).move_to([1.5, 1.5, 0])
+        src = VGroup(*[chunk_card(0.62, 0.36) for _ in range(3)]).arrange(DOWN, buff=0.25).move_to([1.5, 1.4, 0])
         links = VGroup(*[Arrow([bars[b].get_right()[0] + 0.06, bars[b].get_center()[1], 0], src[k].get_left(),
                                buff=0.08, color=DATA, stroke_width=2.5, tip_length=0.14)
                          for k, b in enumerate(grounded)])

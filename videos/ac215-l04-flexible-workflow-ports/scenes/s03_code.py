@@ -10,13 +10,13 @@ Beats (script.md "## S03", one voiceover block each):
     output), the new path part flashes BLUE. ▶ your turn on the cd row.
  1  TRACKER F/2 · extra. The terminal clears; `git branch` and `git log --oneline -1` (the two
     commands of mega-laptop/03, typed separately, each with an `extra` tag) -> lines 2, 3;
-    `* flexible-workflow` flashes, `cc67f3b` flashes and its row gets the GREY label "the pinned
-    commit · 2026-09-18". `ls -a transcribe_audio` (extra; the second command of mega-laptop/04)
-    -> lines 10-18 (the two `git branch` rows scroll away); Dockerfile, docker-shell.sh,
+    `* flexible-workflow` flashes, `cc67f3b` flashes and flies up under the tracker into the GREY
+    note "cc67f3b = the commit we recorded · 2026-09-18 · yours may be newer". `ls -a
+    transcribe_audio` (extra; the second command of mega-laptop/04) -> lines 10-18 (the two `git branch` rows scroll away); Dockerfile, docker-shell.sh,
     pyproject.toml, uv.lock turn GREEN as they are named and a copy of each flies into a GREEN
     recipe card; its caption "committed" on "which you wrote".
  2  TRACKER L/1 (the tracker switches section). The terminal clears, title `laptop · lecture 3
-    clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to the next chapter".
+    clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to 4:59" (SKIP_TO).
     `cd mega-pipeline` (no output). TRACKER L/1 · extra: `git status --short` -> mega-l03-laptop/01
     lines 2-4, `git status --short --ignored | grep '^!!'` -> lines 5-8 (both extra).
  3  On "Three piles", copies of the seven status lines fly into V2's three piles while the
@@ -50,15 +50,18 @@ Beats (script.md "## S03", one voiceover block each):
     never typed) and its notes, RED "throws your edits away", GREY "leaves untracked files where
     they are", each as it is said.
  9  TRACKER L/5. `git branch` -> 09 lines 2-3, `* flexible-workflow` GREEN. V2 and the chips
-    fade; a static GREY "your turn" card (the seven commands as typed, `git stash -u` tagged
-    extra) with ▶ your turn, centred above the strip.
+    fade; a static GREY "your turn" card with ▶ your turn, right-aligned above the strip: first a
+    serif block "first: copy out your lecture 3 Dockerfile, / pyproject.toml, uv.lock · the switch
+    replaces them" (tag extra), then the seven commands as typed (`git stash -u` tagged extra). The
+    block flashes YELLOW with the ▶ wiggle on "Pause and switch" (on "Before you switch" once
+    script.md carries that sentence).
 10  TRACKER L/5 · extra. The card clears; the strip grows to 4 rows; V2 returns (state after the
     switch). `head -2 transcribe_audio/Dockerfile` (extra; its tag with a flash of the ignored
     Dockerfile on "lecture 3 Dockerfile") -> 11 lines 2-3; an excerpt chip
     `FROM python:3.12-slim-bookworm` (mega-l03-laptop/01 line 9, "line 1 · before") appears
     above the ignored pile, the ignored Dockerfile card flips and the chip becomes
     `FROM python:3.14-slim-bookworm` (11 line 3, "line 2 · after"). `ls -la transcribe_audio`
-    (extra) -> 10 lines 8, 12, 14; the pyproject.toml and uv.lock cards flip; GREY tag "the
+    (extra) -> 10 lines 12, "…", 14; the pyproject.toml and uv.lock cards flip; GREY tag "the
     branch's files · same sizes as a fresh clone"; GREY tag "replaced · no warning" + `erratum`;
     a GREY fix card "want your lecture 3 Dockerfile, / pyproject.toml, uv.lock (or
     docker-shell.sh)? / copy them out before switching".
@@ -77,10 +80,16 @@ Deviations from SHOW (and why):
 - Beat 1: the capture's `git branch; git log --oneline -1` and `ls; ls -a transcribe_audio` are
   typed as separate commands (conventions: `;` lines are typed one command at a time; `ls` is not
   shown, so it is not typed). The terminal does not clear before `ls -a`: it scrolls, so the
-  pinned-commit label (beside `cc67f3b …`) stays readable while the sentence goes on. It is a
-  plain GREY label, not a pill: a 20 pt pill filled the row's free 23 characters, touching
-  `flow` and the `extra` pill on the row above.
+  `cc67f3b …` row stays on screen while the sentence goes on.
 - Beat 1: the recipe card holds all four files the SHOW highlights (docker-shell.sh included).
+- Beat 1: the commit note sits under the tracker, not beside `cc67f3b …`: the row leaves 4.3 units
+  and the note is 7.3 wide; the hash flies from the row into the note. The SAY anchor is "at the
+  commit we recorded" once script.md says so, "at the pinned commit" until then (said()).
+- Beat 2: the chip names the time S04 starts (SKIP_TO) instead of "the next chapter": the part 1
+  upload may carry no chapter marks.
+- Beat 9: the card leads with the lecture 3 files warning (the switch replaces them silently, and
+  `git stash -u` does not save ignored files), so it comes before the pause, not after it in
+  beat 10; nine rows fit only 0.14 apart and right-aligned (its top passes the tracker band).
 - Beat 3: the strip keeps the second status command and the prompt; copies of the seven output
   lines sort into the piles line by line while the terminal shrinks, all on "Three piles" (a
   separate lift first put the pencil 2 s behind "Your edited cli.py"), then each pile is
@@ -105,7 +114,10 @@ Deviations from SHOW (and why):
   transcribe_audio` stays on screen with its three output rows; its `extra` tag sits on the
   strip's title bar (the 64-character row has no room).
   `ls -la transcribe_audio` is typed as the SHOW gives it; the capture ran
-  `ls -la transcribe_audio transcribe_audio/secrets`, whose rows 8, 12 and 14 are printed.
+  `ls -la transcribe_audio transcribe_audio/secrets`, whose rows 12, "…", 14 are printed: the cut
+  (secrets/) is marked, and row 8 (Dockerfile) is left out because head -2 has just shown that
+  file replaced and the 4-row strip holds the command and three rows (six would push V2 into the
+  chips above it).
 - Rows of 60+ characters (the long prompts) take a 20 pt `extra` tag at the frame's edge.
 - Beats 10-11: the fix chips are 3-line GREY cards at the top right (as one-line chips they are
   13+ wide); beat 10's "replaced · no warning" + `erratum` sit under the tracker.
@@ -194,9 +206,10 @@ BR3_OUT = BR3.at((2, 3))
 _after = capture("10", L3)
 LS_LA = "ls -la transcribe_audio"                     # as script.md gives it (see the docstring)
 assert _after.cmd.split("; ")[1].startswith(LS_LA + " ")
-LA_OUT = _after.at(8, 12, 14)
-assert [s.split()[-1] for s in LA_OUT] == ["Dockerfile", "pyproject.toml", "uv.lock"]
-assert [s.split()[4] for s in LA_OUT] == ["1274", "249", "85761"]   # = the branch's files at cc67f3b
+LA_OUT = _after.at(12, "…", 14)                       # the cut (line 13, secrets/) marked "…"
+assert [s.split()[-1] for s in LA_OUT] == ["pyproject.toml", "…", "uv.lock"]
+assert [LA_OUT[0].split()[4], LA_OUT[2].split()[4]] == ["249", "85761"]   # = the branch's files at cc67f3b
+assert _after.line(8).split()[4] == "1274"            # Dockerfile: proven by head -2 (FROM ... 3.14)
 STASH_LIST = _after.cmd.split("; ")[2]
 assert STASH_LIST == "git stash list"
 LIST_OUT = _after.at(21, 22)
@@ -229,6 +242,12 @@ V2_P1 = 0.52            # V2's shift from its built position: beats 3-4 (stand-i
 V2_P2 = 0.19            # beats 6-9 (frames just above the 3-row strip, stand-in tag off)
 V2_P3 = 0.61            # beats 10-11 (above a 4-row strip)
 INCOMING_Y = 2.66       # where the branch's files wait (just under the tracker)
+# Beat 2's "cloned fresh? skip to …" chip: where S04 starts in the full video and in part 1 (part 1
+# starts at 0:00), i.e. S01 + S02 + S03 durations, rounded down: re-check it whenever S01-S03 change
+# length. It must never land after S04's start; landing a second or two early (in this scene's
+# fade-out) is fine. 2026-10-17 QA draft: S01 90.86 + S02 73.13 + S03 135.72 = 299.7 (4:59.7);
+# after this pass S03 ends at 135.7 (explainer.check) / 136.0 (720p30): S04 at ~299.9.
+SKIP_TO = "4:59"
 
 
 def at_left(m, x: float, y: float):
@@ -339,6 +358,33 @@ def tprint(scene, t, lines, wrap: bool = False, run_time: float = 0.5, lag: floa
     return out
 
 
+def said(say: str, *phrases: str) -> str:
+    """The first of `phrases` that the SAY line contains: the anchor survives a pending script.md
+    rewording (the last phrase is the current wording; neither found -> the usual warning)."""
+    return next((p for p in phrases if p in " ".join(say.split())), phrases[-1])
+
+
+def first_turn_card(first: list[str], cmds: list, buff: float = 0.14) -> VGroup:
+    """turn_card with a serif "first" block (lines 0.16 apart, so the extra tag on the first line
+    clears the second) above the commands, rows `buff` apart (turn_card's 0.2 would push the nine
+    rows into the tracker band). .frame .rows .tag .first as turn_card; the block is drawn over
+    the frame."""
+    c = turn_card(cmds)
+    lines = VGroup(*[label(s, CAPTION, INK) for s in first]).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
+    xt = extra_tag().next_to(lines[0], RIGHT, buff=0.3)
+    block = VGroup(lines, xt)
+    c.rows.arrange(DOWN, aligned_edge=LEFT, buff=buff)
+    body = VGroup(block, c.rows).arrange(DOWN, aligned_edge=LEFT, buff=buff)
+    c.frame.become(box(body.width + 0.6, body.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95,
+                       radius=0.14))
+    body.move_to(c.frame).align_to(c.frame, LEFT).shift(RIGHT * 0.3)
+    c[2].next_to(c.frame, UP, buff=0.08).align_to(c.frame, LEFT).shift(RIGHT * 0.12)   # "your turn"
+    c.tag.move_to(c.frame.get_corner(UP + RIGHT)).shift(LEFT * 1.0)
+    c.add(block)
+    c.first = block
+    return c
+
+
 class GetTheCode(VoiceScene):
     def construct(self):
         tr = tracker("F", 1)
@@ -377,6 +423,11 @@ class GetTheCode(VoiceScene):
             self.play(Wiggle(yt0, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
 
         # ========================================================== 1 · two extra checks
+        # under the tracker (where beat 0's workspace note was): beside the `cc67f3b …` row only 4.3
+        # of its 7.3 units fit; the hash flies up from the row into it
+        rec = VGroup(mono("cc67f3b", CAPTION, S.GREY),
+                     note("= the commit we recorded · 2026-09-18 · yours may be newer")).arrange(RIGHT, buff=0.15)
+        at_left(rec, -6.45, Y_UNDER)
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(ws_note), caption_extra(tr, True), run_time=0.4)
             t.clear(self, run_time=0.3)
@@ -388,14 +439,10 @@ class GetTheCode(VoiceScene):
             g1 = type_cmd(self, t, LOG1, type_time=0.8)
             pin(self, g1, fit_tag(t, g1), run_time=0.3)
             lo = t.print(self, [LOG_OUT], run_time=0.3)[0]
-            vo.wait_until("at the pinned commit")
+            vo.wait_until(said(SAY[1], "at the commit we recorded", "at the pinned commit"))
             sha = substring(lo, "cc67f3b")
             self.play(flash(sha, TURN, 1.2))
-            # a plain GREY label, not a pill: a 20 pt pill fills the row's last 23 characters,
-            # touching `flow` and the `extra` pill on the row above
-            pc = beside(note("the pinned commit · 2026-09-18"), t, lo, buff=0.25)
-            assert pc.get_left()[0] > lo.glyphs.get_right()[0] + 0.15, "pinned-commit label"
-            pin(self, lo, pc, run_time=0.4)
+            self.play(TransformFromCopy(sha, rec[0]), FadeIn(rec[1], shift=RIGHT * 0.15), run_time=0.6)
 
             vo.wait_until("and transcribe audio holds")
             la = type_cmd(self, t, LS_A, type_time=0.9)
@@ -416,10 +463,10 @@ class GetTheCode(VoiceScene):
             self.play(FadeIn(card.caption, shift=UP * 0.1), flash(card.frame, VENV, 1.04), run_time=0.6)
 
         # ========================================================== 2 · the lecture 3 clone
-        fresh = chip("cloned fresh? skip to the next chapter", S.GREY, size=CAPTION)
+        fresh = chip(f"cloned fresh? skip to {SKIP_TO}", S.GREY, size=CAPTION)
         at_right(fresh, X_R, Y_UNDER)
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(card), run_time=0.3)
+            self.play(FadeOut(card), FadeOut(rec), run_time=0.3)
             tr = switch_section(self, tr, "L", 1)
             t.clear(self, run_time=0.3)
             t.set_prompt(P_L03)
@@ -616,10 +663,17 @@ class GetTheCode(VoiceScene):
             self.play(FadeIn(n_grey, shift=LEFT * 0.15), run_time=0.5)
 
         # ========================================================== 9 · git branch; your turn
-        card9 = turn_card([CD.cmd, FETCH.cmd, CHECKOUT.cmd, STASH.cmd, (STASH_U.cmd, "extra"),
-                           CHECKOUT.cmd, BR3.cmd])
+        # the switch silently replaces the ignored lecture 3 files (beat 10 proves it): the card says
+        # so first, so a viewer who pauses here copies them out before switching
+        card9 = first_turn_card(["first: copy out your lecture 3 Dockerfile,",
+                                 "pyproject.toml, uv.lock · the switch replaces them"],
+                                [CD.cmd, FETCH.cmd, CHECKOUT.cmd, STASH.cmd, (STASH_U.cmd, "extra"),
+                                 CHECKOUT.cmd, BR3.cmd])
+        # on the strip, right-aligned: its top rises past the tracker band's bottom, so it stays
+        # right of the tracker
         card9.shift(UP * (STRIP_TOP + 0.14 - card9.frame.get_bottom()[1])
-                    + LEFT * card9.frame.get_center()[0])              # centred over the strip
+                    + RIGHT * (X_R + 0.08 - card9.frame.get_right()[0]))
+        warned = "Before you switch" in " ".join(SAY[9].split())   # script.md's reworded line
         with self.voiceover(SAY[9]) as vo:
             self.play(tr.goto(5), run_time=0.4)
             type_cmd(self, t, BR3.cmd, type_time=0.4)
@@ -629,8 +683,12 @@ class GetTheCode(VoiceScene):
             self.play(flash(b9[0].glyphs, VENV, 1.15, 0.7))
             self.play(FadeOut(v2), FadeOut(VGroup(chip48, err8, grp8)), run_time=0.4)
             self.play(FadeIn(card9, shift=UP * 0.15), run_time=0.5)
+            if warned:
+                vo.wait_until("Before you switch")
+                self.play(flash(card9.first[0], TURN, 1.05, 0.9))   # the lines: not the opaque tag
             vo.wait_until("Pause and switch")
-            self.play(Wiggle(card9.tag, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
+            self.play(Wiggle(card9.tag, scale_value=1.15, rotation_angle=0.025 * TAU),
+                      *([] if warned else [flash(card9.first[0], TURN, 1.05, 0.9)]), run_time=0.9)
 
         # ========================================================== 10 · the ignored files were replaced
         v2.shift(UP * (V2_P3 - V2_P2))
@@ -671,7 +729,8 @@ class GetTheCode(VoiceScene):
                       FadeOut(new), run_time=0.8)
             vo.wait_until("the branch's")
             self.play(FadeIn(same, shift=LEFT * 0.2),
-                      *[flash(substring(ln, ln.text.split()[4]), S.WHITE, 1.2) for ln in lout],
+                      *[flash(substring(ln, ln.text.split()[4]), S.WHITE, 1.2) for ln in lout
+                        if ln.text != "…"],
                       run_time=0.7)
             vo.wait_until("without a word")
             self.play(FadeIn(quiet10, shift=DOWN * 0.1), run_time=0.5)

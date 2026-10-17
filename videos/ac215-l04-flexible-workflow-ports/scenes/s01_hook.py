@@ -7,8 +7,9 @@ Beats (script.md "## S01", one voiceover block each):
    found, using image from registry..." prints YELLOW, line 20 "Python 3.8.17" YELLOW, line 25
    (the ImportError) RED with `genai` underlined; the GREY tag "the Gemini library" sits after the
    traceback's `from google import genai`, right above it. GREY tag top right: "no local image of
-   generate_text".
-1. The terminal shrinks to a 3-row strip (lines 20 and 25 stay). Above it the V1 teaser: at left a
+   generate_text". At "Inside, Python" the frame turns TEAL, title "container · generate_text"
+   (enter_container, as in S06/S08), before the container's `python --version` is typed.
+1. The TEAL terminal shrinks to a 3-row strip (lines 20 and 25 stay). Above it the V1 teaser: at left a
    GREEN recipe card holding generate_text/Dockerfile · line 2 (`3.14` pulses); at right the BLUE
    "Docker Hub" shelf (illustration) with the sealed TEAL box, the PINK signpost
    dlops/mega-pipeline-generate-text:latest aiming at it and a GREY chip "pushed 2025-02-18";
@@ -61,6 +62,7 @@ from common import (
     beside,
     capture,
     door,
+    enter_container,
     extra_tag,
     grey_tag,
     log_panel,
@@ -288,7 +290,9 @@ class Hook(VoiceScene):
             vo.wait_until("it pulls one")
             t.print(self, RUN.at(5, "…", (15, 16)), wrap=True, run_time=0.9)
             vo.wait_until("Inside, Python")
-            t.set_prompt(split_prompt(RUN.line(19))[0])
+            # inside the container now: TEAL frame, title "container · generate_text" (as in S06/S08);
+            # the prompt is the capture's own pipenv prompt, not CTR_PROMPT's
+            self.play(*enter_container(t, "generate_text", split_prompt(RUN.line(19))[0]), run_time=0.4)
             type_cmd(self, t, RUN.typed(19), type_time=0.6)
             l20 = t.print(self, [(RUN.line(20), TURN)], run_time=0.4)[0]
             vo.wait_until("and the Gemini")
