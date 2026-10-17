@@ -79,7 +79,6 @@ from common import (
     INK,
     LLM_MODEL,
     LOOKUP,
-    MINI_ABOVE_STRIP,
     MINI_CENTER,
     NARRATION,
     P_CTR2,
@@ -123,7 +122,7 @@ from common import (
     under,
 )
 from explainer import style as S
-from explainer.devops import CAPTION, MONO, box, chip, label, mono
+from explainer.devops import CAPTION, MONO, box, cell_width, chip, cross_mark, label, mono
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S13"]
@@ -198,6 +197,11 @@ def mixed(parts, size: float = CAPTION, color: str = INK) -> VGroup:
         else:
             mobs.append(label(s, size, col))
     return VGroup(*mobs).arrange(RIGHT, buff=0.12)
+
+
+def under_bar(win) -> float:
+    """y of a browser window's title-bar line (explainer.devops.browser_window: 0.55 below the top)."""
+    return win.frame.get_top()[1] - 0.55
 
 
 def code_rows(panel, n: int) -> VGroup:
@@ -300,9 +304,12 @@ class FinalPrompt(VoiceScene):
             vo.wait_until("the question")
             self.play(FadeIn(b389), FadeIn(qcard, shift=DOWN * 0.2), run_time=0.5)
             vo.wait_until("followed by the 10 chunks")
-            self.play(FadeIn(pc.frame), FadeIn(b390), ReplacementTransform(qcard, pc.question), run_time=0.6)
-            self.play(LaggedStart(*[ReplacementTransform(cards[k], pc.cards[k]) for k in range(10)],
-                                  lag_ratio=0.08), run_time=1.1)
+            self.play(FadeIn(pc.frame), FadeIn(b390), run_time=0.4)
+            # one LaggedStart: its group lands above the card's opaque frame (a bare ReplacementTransform
+            # would leave the target at the source's depth, under the frame)
+            self.play(LaggedStart(ReplacementTransform(qcard, pc.question),
+                                  *[ReplacementTransform(cards[k], pc.cards[k]) for k in range(10)],
+                                  lag_ratio=0.08), run_time=1.3)
             vo.wait_until("joined by newlines")
             self.play(Create(u_nl), FadeIn(py, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("The prompt goes to Gemini")
@@ -371,11 +378,14 @@ class FinalPrompt(VoiceScene):
         # ========================================================== 4 · the slip, the fix, last year's code
         cin = curve([gr, gr + np.array([0.7, 0.05, 0]), [0.4, 2.35, 0], [0.8, 2.05, 0],
                      [0.85, llm.get_top()[1], 0]], DATA)
-        fix_txt = VGroup(*[mono(r, CAPTION, INK) for r in FIX_ROWS]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        fix_txt = VGroup(*[mono(r.strip(), CAPTION, INK) for r in FIX_ROWS]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        indent = len(FIX_ROWS[1]) - len(FIX_ROWS[1].lstrip())
+        fix_txt[1].shift(RIGHT * indent * cell_width(CAPTION))        # mono() drops leading spaces
         fix_fr = box(fix_txt.width + 0.5, fix_txt.height + 0.3, DATA, fill=S.BG, fill_opacity=0.95, radius=0.12)
-        fix = VGroup(fix_fr, fix_txt.move_to(fix_fr)).move_to([-0.2, MID_Y, 0])
+        fix = VGroup(fix_fr, fix_txt.move_to(fix_fr))
         ftag = fix_tag()
-        ftag.move_to([fix.get_right()[0] + 0.25 + ftag.width / 2, MID_Y, 0])
+        ftag.move_to([6.45 - ftag.width / 2, MID_Y, 0])
+        fix.move_to([ftag.get_left()[0] - 0.25 - fix.width / 2, MID_Y, 0])
         err = erratum_tag()
         err.move_to([fix.get_left()[0] - 0.25 - err.width / 2, MID_Y, 0])
         p62 = src_panel("pipenv-branch/cli.py", 62, 64)
@@ -423,13 +433,17 @@ class FinalPrompt(VoiceScene):
 
         # ========================================================== 6 · steps 1 and 2: the commands
         t = term(P_CTR2, rows=3, container=True)
-        mm2 = MiniMap(MINI_ABOVE_STRIP)
+        # the mini-map, drawn large above the strip (glyph-only: it scales freely) to carry the beat
+        mm2 = MiniMap(MINI_CENTER).scale(1.6).move_to([0, 1.35, 0])
+        emb, qry = mm2.items["embedding"], mm2.items["query"]
+        yb = qry.get_center()[1]
+        stop = cross_mark(0.3, ERR, 5).move_to([(emb.get_right()[0] + qry.get_left()[0]) / 2, yb + 0.02, 0])
         nk = note("no key: both stop at cli.py · line 373, embedding the question")
-        nk.move_to([-6.3 + nk.width / 2, -0.85, 0])
+        nk.move_to([0, mm2.get_bottom()[1] - 0.2 - nk.height / 2, 0])
         gold = cost_tag("per question: one embedding call + one Gemini call")
-        gold.move_to([-6.3 + gold.width / 2, -0.2, 0])
-        coins = VGroup(coin_glyph(0.12).next_to(mm2.items["embedding"], RIGHT, buff=0.08).shift(UP * 0.2),
-                       coin_glyph(0.12).next_to(mm2.items["llm"], UP, buff=0.08))
+        gold.move_to([0, (nk.get_bottom()[1] + t.box.get_top()[1]) / 2, 0])
+        coins = VGroup(coin_glyph(0.15).next_to(emb, RIGHT, buff=0.1).align_to(emb, UP),
+                       coin_glyph(0.15).next_to(mm2.items["llm"], UP, buff=0.12))
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(cyl, pc, llm, mchip, l27, feed, ans, lock_g, dele, lr)), run_time=0.5)
@@ -444,10 +458,10 @@ class FinalPrompt(VoiceScene):
             c2 = type_cmd(self, t, CHAT2, type_time=1.6)
             assert hasattr(c2, "rows") and len(c2.rows) == 2, c2
             vo.wait_until("Without a key")
-            self.play(FadeIn(nk, shift=UP * 0.1), run_time=0.5)
+            self.play(Create(stop), emb.animate.set_stroke(ERR, 4), FadeIn(nk, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("Each question costs")
-            self.play(FadeIn(gold, shift=UP * 0.1), run_time=0.5)
-            self.play(LaggedStart(*[FadeIn(c, scale=1.6) for c in coins], lag_ratio=0.4), run_time=0.8)
+            self.play(FadeOut(stop), emb.animate.set_stroke(CLOUD, 2.5), FadeIn(gold, shift=UP * 0.1), run_time=0.5)
+            self.play(LaggedStart(*[FadeIn(c, scale=1.6) for c in coins], lag_ratio=0.5), run_time=0.9)
 
         # ========================================================== 7 · with your key, look for
         lf = LookFor([("`chat()`", "cli.py · line 365"),
@@ -485,22 +499,24 @@ class FinalPrompt(VoiceScene):
             self.play(lf.write_item(6))
 
         # ========================================================== 8 · the opening question, answered
-        win = chat_window("a chat with an LLM", 6.0, 2.6).move_to([-3.3, 1.5, 0])
+        win = chat_window("a chat with an LLM", 6.0, 2.7).move_to([-3.3, 1.45, 0])
         q = mono(QUESTION, 22, LOOKUP)
         q.move_to(win.field).align_to(win.field, LEFT).shift(RIGHT * 0.2)
         bars = VGroup(*[RoundedRectangle(width=(win.answer.width - 0.3) * k, height=0.14, corner_radius=0.07,
                                          stroke_width=0).set_fill(S.GREY, 0.8) for k in (1.0, 0.9, 0.96, 0.55)])
-        bars.arrange(DOWN, aligned_edge=LEFT, buff=0.15)
-        bars.move_to(win.answer).align_to(win.answer, LEFT).shift(RIGHT * 0.1)
+        bars.arrange(DOWN, aligned_edge=LEFT, buff=0.13)
+        bars.move_to([win.answer.get_left()[0] + 0.1 + bars.width / 2, under_bar(win) - 0.2 - bars.height / 2, 0])
+        assert bars.get_bottom()[1] > win.field.get_top()[1] + 0.1, (bars.get_bottom(), win.field.get_top())
         bars.set_stroke(ERR, 1.6, opacity=1)
-        qmark = label("?", 72, TURN).move_to([1.6, 1.5, 0])
-        src = VGroup(*[chunk_card(0.62, 0.36) for _ in range(4)]).arrange(DOWN, buff=0.18).move_to([1.6, 1.5, 0])
-        links = VGroup()
-        for b, c in ((0, 0), (1, 1), (3, 3)):
-            links.add(Arrow([bars[b].get_right()[0] + 0.06, bars[b].get_center()[1], 0], src[c].get_left(), buff=0.08,
-                            color=DATA, stroke_width=2.5, tip_length=0.14))
+        grounded, memory = (0, 1, 2), 3                    # bars drawn from the chunks; the one from memory
+        qmark = label("?", 72, TURN).move_to([1.5, 1.5, 0])
+        src = VGroup(*[chunk_card(0.62, 0.36) for _ in range(3)]).arrange(DOWN, buff=0.25).move_to([1.5, 1.5, 0])
+        links = VGroup(*[Arrow([bars[b].get_right()[0] + 0.06, bars[b].get_center()[1], 0], src[k].get_left(),
+                               buff=0.08, color=DATA, stroke_width=2.5, tip_length=0.14)
+                         for k, b in enumerate(grounded)])
         ill = illustration_tag("a shape, not an answer")
-        ill.move_to([6.45 - ill.width / 2, 2.55, 0])
+        ill.move_to([6.45 - ill.width / 2, 2.62, 0])
+        assert ill.get_bottom()[1] > src.get_top()[1] + 0.1, (ill.get_bottom(), src.get_top())
 
         def column(head, head_col, rows, frame_col):
             items = VGroup(label(head, CAPTION + 2, head_col), *rows).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
@@ -513,7 +529,8 @@ class FinalPrompt(VoiceScene):
         chip4 = excerpt_chip("A fictional tale", "Tolminc Cheese.txt · line 4 (excerpt)", line=STORY4)
         left = column("from your chunks", DATA, [label("Mara · her grandfather · the curd", CAPTION + 2, INK), chip4],
                       DATA)
-        only3 = note("only 3 char-split chunks contain the word “Tolminc”")
+        only3 = VGroup(note("only 3 char-split chunks"), note("contain the word “Tolminc”"))
+        only3.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
         right = column("not in your chunks", ERR, [label("real-world rules for Tolminc", CAPTION + 2, INK), only3],
                        ERR)
         h = max(left.frame.height, right.frame.height)
@@ -521,7 +538,7 @@ class FinalPrompt(VoiceScene):
             g.frame.stretch_to_fit_height(h)
             g.items.align_to(g.frame, UP).shift(DOWN * 0.25)
         cols = VGroup(left, right).arrange(RIGHT, buff=0.3, aligned_edge=UP)
-        cols.move_to([0, -0.15 - cols.height / 2, 0])
+        cols.move_to([0, -0.3 - cols.height / 2, 0])
         gt_head = note("a grounding test").next_to(cols, UP, buff=0.08).align_to(cols, LEFT).shift(RIGHT * 0.12)
         cmp_note = note("compare the char-split and recursive-split answers")
         cmp_note.next_to(cols, DOWN, buff=0.18)
@@ -532,17 +549,17 @@ class FinalPrompt(VoiceScene):
             vo.wait_until("The story is fiction")
             self.play(ReplacementTransform(qmark, src), FadeIn(ill, shift=LEFT * 0.15), run_time=0.8)
             self.play(LaggedStart(*[Create(a) for a in links], lag_ratio=0.3), run_time=0.8)
-            self.play(*[bars[b].animate.set_fill(DATA, 0.85).set_stroke(DATA, 1.6) for b in (0, 1, 3)], run_time=0.5)
+            self.play(*[bars[b].animate.set_fill(DATA, 0.85).set_stroke(DATA, 1.6) for b in grounded], run_time=0.5)
             vo.wait_until("an answer about Mara")
             self.play(FadeIn(gt_head), FadeIn(left.frame), FadeIn(left.items[0]), FadeIn(left.items[1]),
                       run_time=0.6)
             self.play(FadeIn(chip4, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("came from your chunks")
             self.play(Indicate(left.items[0], color=DATA, scale_factor=1.08),
-                      Indicate(VGroup(*[bars[b] for b in (0, 1, 3)]), color=DATA, scale_factor=1.04), run_time=0.8)
+                      Indicate(VGroup(*[bars[b] for b in grounded]), color=DATA, scale_factor=1.04), run_time=0.8)
             vo.wait_until("Real-world rules for Tolminc")
             self.play(FadeIn(right.frame), FadeIn(right.items[0]), FadeIn(right.items[1]),
-                      Indicate(bars[2], color=ERR, scale_factor=1.06), run_time=0.7)
+                      Indicate(bars[memory], color=ERR, scale_factor=1.06), run_time=0.7)
             self.play(FadeIn(only3, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Compare both chunk types")
             self.play(FadeIn(cmp_note, shift=UP * 0.1), run_time=0.5)
@@ -551,6 +568,12 @@ class FinalPrompt(VoiceScene):
         br = chat_window(CHAT_URL, 6.8, 2.5).move_to([-2.95, 1.5, 0])
         bq = mono(QUESTION, 22, LOOKUP)
         bq.move_to(br.field).align_to(br.field, LEFT).shift(RIGHT * 0.2)
+        br_bars = VGroup(*[RoundedRectangle(width=(br.answer.width - 0.3) * k, height=0.14, corner_radius=0.07,
+                                            stroke_width=0).set_fill(S.GREY, 0.8) for k in (1.0, 0.92, 0.5)])
+        br_bars.arrange(DOWN, aligned_edge=LEFT, buff=0.14)
+        br_bars.move_to([br.answer.get_left()[0] + 0.1 + br_bars.width / 2,
+                         under_bar(br) - 0.2 - br_bars.height / 2, 0])
+        assert br_bars.get_bottom()[1] > br.field.get_top()[1] + 0.1
         ill9 = illustration_tag()
         ill9.move_to([br.get_right()[0] + 0.3 + ill9.width / 2, br.get_top()[1] - 0.3, 0])
         chrome = note("use Chrome").next_to(ill9, DOWN, buff=0.25).align_to(ill9, LEFT)
@@ -567,9 +590,14 @@ class FinalPrompt(VoiceScene):
             self.play(FadeIn(chrome, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Pause: run both chat commands")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.6)
+            vo.wait_until("then try the tool")
+            self.play(LaggedStart(*[GrowFromEdge(b, LEFT) for b in br_bars], lag_ratio=0.6), run_time=1.4)
             vo.wait_until("For your own question")
             self.play(Indicate(tc.rows[3], color=TURN, scale_factor=1.04), run_time=0.9)
+            vo.wait_until("change line 372")
+            l372 = tc.rows[3][0][len("yourownquestion:cli.py·"):][:len("line372")]
+            self.play(l372.animate.set_color(TURN), run_time=0.5)
         self.wait(2)                                   # ▶ beat: hold the frame
 
-        self.play(FadeOut(VGroup(tr, br, bq, ill9, chrome, tc)), run_time=0.8)
+        self.play(FadeOut(VGroup(tr, br, bq, br_bars, ill9, chrome, tc)), run_time=0.8)
         self.wait(0.3)

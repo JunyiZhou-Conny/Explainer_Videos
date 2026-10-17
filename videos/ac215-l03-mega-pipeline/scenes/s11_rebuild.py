@@ -52,7 +52,8 @@ Beats (script.md "## S11", one voiceover block each):
     `Resolved 27 packages` turns GREEN; on "and uv installed" `Installed 26 packages` turns GREEN,
     the uv sync slab grows and 26 GREEN chips stream into it from uv.lock; the slab pulses on
     "into the image".
- 7  TRACKER A13 · extra. The panel goes; a 4-row strip: `docker images transcribe_audio` (extra)
+ 7  TRACKER A13 · extra. The panel goes; a 4-row strip, and the GREY lecture tag "Lecture 3 · slide
+    38" (lecture_ref, top right, to beat 8's first call): `docker images transcribe_audio` (extra)
     -> TERM(16-images-after.txt: 2–3); `1.48GB` gets a YELLOW bar, and V2 a GREY brace on its left
     "≈ 1.1 GB of layers" + "+ 388 MB compressed copy" / "= 1.48 GB disk usage · this machine".
     `docker history transcribe_audio` (extra); the brace and the strip give way to
@@ -72,7 +73,8 @@ Beats (script.md "## S11", one voiceover block each):
     the group name" and drops into the COPY slab (YELLOW flash); on "knocks over" the uv sync slab
     tips and slides off like a domino; it re-forms and its 26 chips pour in again. A GREY note: "later
     tutorials: COPY pyproject.toml uv.lock first, / then uv sync, then the rest"; its first part
-    underlines YELLOW. Fade out: empty frame.
+    underlines YELLOW; with the note, the GREY lecture tag "Lecture 3 · slide 33" (top right). Fade
+    out: empty frame.
 """
 
 import numpy as np
