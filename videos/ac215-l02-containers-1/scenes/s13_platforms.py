@@ -33,10 +33,10 @@ Beats (script.md "## S13", one voiceover block each):
     localhost:5000/student/simple-translate-ac215` (folds) -> laptop-push/09: 3, 9, 13. "a small
     menu": the strip keeps the command and line 3, the two platforms fly up into a menu "our push": a
     BLUE `linux/amd64` row and a dimmed `unknown/unknown` row; "plus an attestation": GREY note
-    "attestation · how it was built"; "a record of how": a GREY dashed overlay right of the first row
-    "built on a Mac: linux/arm64" and a GREY note under the menu "containerd image store · the older
-    store pushes one image, no menu". Neither note is narrated: the picture holds 3 s after the
-    narration so they can be read (the dashed row and its `linux/arm64` pulse once at its start).
+    "attestation · how it was built"; "Built on an M-series Mac": a GREY dashed overlay right of the first
+    row "built on a Mac: linux/arm64" and a GREY note under the menu "containerd image store · the older
+    store pushes one image, no menu". That note is not narrated: the picture holds 3 s after the
+    narration so it can be read (the dashed row and its `linux/arm64` pulse once at its start).
  5  The strip and the menu go. Top band: "You built on an M-series Mac": the GREY arm64 chip over a
     laptop builds an image card `linux/arm64` (arm64 glyphs); "and pushed": a PINK route carries it to a
     BLUE shelf "Docker Hub"; "Your VM is an ordinary": a BLUE VM with an `amd64 · default VM` chip and
@@ -500,10 +500,10 @@ class Platforms(VoiceScene):
             vo.wait_until("plus an attestation")
             self.play(FadeIn(att4, shift=LEFT * 0.15), menu4.rows[1].animate.set_opacity(1), run_time=0.5)
             self.play(menu4.rows[1].animate.set_opacity(0.6), run_time=0.3)
-            vo.wait_until("a record of how")
+            vo.wait_until("Built on an M-series Mac")
             self.play(Create(mac4_b), FadeIn(mac4_t, shift=LEFT * 0.1), run_time=0.6)
             self.play(FadeIn(cd4, shift=UP * 0.1), run_time=0.5)
-        # neither note is narrated: time to read them before the picture goes. The dashed row and the arm64 it
+        # the containerd note is not narrated: time to read it before the picture goes. The dashed row and the arm64 it
         # would read pulse once (the eye pairs them, and nothing sits still for more than ~3 s). 1.05 at most: the
         # `linux/arm64` sits 0.15 right of "built on a Mac:", and 1.12 closed that gap at the pulse's peak
         self.play(Indicate(mac4_b, color=INK, scale_factor=1.04), Indicate(mac4_t[1], color=INK, scale_factor=1.05),

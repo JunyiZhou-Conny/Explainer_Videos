@@ -79,8 +79,8 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (box, file_glyph, folder_glyph, label, mono, mono_line, step_badge, substring,
-                              tag)
+from explainer.devops import (box, file_glyph, folder_glyph, label, lecture_ref, mono, mono_line, step_badge,
+                              substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, LAPTOP, NARRATION, P_A, P_CTR, PANEL, SYSTEM, TOOL, TURN, VENV,
@@ -692,8 +692,10 @@ class BakeItIn(VoiceScene):
         place(card, right=EDGE, bottom=-3.5)
         brace = stack_brace(st)
         assert brace.get_left()[0] > -EDGE and brace.get_bottom()[1] > strip_top(STRIP7) + 0.1, brace.get_corner(DL)
+        lref38 = lecture_ref(3, "38")        # top right, over docker images and docker history (to beat 8)
+        assert lref38.get_bottom()[1] > st.get_top()[1] + 0.1, (lref38.get_bottom(), st.get_top())
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(plog), FadeIn(t7), caption_extra(tr), run_time=0.6)
+            self.play(FadeOut(plog), FadeIn(t7), caption_extra(tr), FadeIn(lref38), run_time=0.6)
             c8 = type_cmd(self, t7, IMG.cmd, 0.8)
             out8 = t7.print(self, IMG_OUT, run_time=0.4)
             x8 = beside(extra_tag(), t7, c8)
@@ -759,7 +761,7 @@ class BakeItIn(VoiceScene):
         t8 = term(P_A, MID)
         with self.voiceover(SAY[8]) as vo:
             st.detach(self, split, *[v[1] for v in sizes.values()], run_time=0.4,
-                      extra=[FadeOut(hpan), FadeOut(card)])
+                      extra=[FadeOut(hpan), FadeOut(card), FadeOut(lref38)])
             self.play(FadeIn(t8), run_time=0.4)
             c10 = type_cmd(self, t8, RUN, 1.1)
             x10 = beside(extra_tag(), t8, c10)
@@ -820,7 +822,9 @@ class BakeItIn(VoiceScene):
             self.play(Transform(st.sync_chips, sv_chips, lag_ratio=0.05), run_time=1.6)
 
             vo.wait_until("Later tutorials")
-            self.play(FadeIn(note, shift=UP * 0.15), run_time=0.7)
+            lref33 = lecture_ref(3, "33")    # top right (empty above the centred stack) to the fade out
+            assert lref33.get_bottom()[1] > st.get_top()[1] + 0.3, (lref33.get_bottom(), st.get_top())
+            self.play(FadeIn(note, shift=UP * 0.15), FadeIn(lref33), run_time=0.7)
             first = note[0]
             u9 = Line(first.get_corner(DL) + DOWN * 0.06, first.get_corner(DR) + DOWN * 0.06, color=TURN,
                       stroke_width=3.5)

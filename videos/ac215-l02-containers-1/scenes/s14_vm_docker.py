@@ -4,9 +4,10 @@ Beats (script.md "## S14", one voiceover block each):
  0  S13 ended on an empty frame: TRACKER B4 · extra fades in and switches to "README › Running App on
     VM using Docker" (7 dots); its section name pulses. "First, create a VM": C1, a schematic console
     (browser `console.cloud.google.com/compute/instances`, tag `illustration`): "Compute Engine ›
-    VM instances" and a BLUE "Create instance" button that pulses and becomes the form's title. "The
-    README gives no settings": GREY footnote "the README gives no settings: sensible choices". The
-    rows fill as named: Name `ac215-l02`, Machine type `e2-small`, Boot disk `Debian GNU/Linux 12
+    VM instances" and a BLUE "Create instance" button that pulses and becomes the form's title. GREY
+    `Lecture 2 · slide 77` (lecture_ref, standard top right) fades in as the section name lands in the
+    tracker and goes at "The README gives no settings", where the GREY footnote "the README gives no
+    settings: sensible choices" fades in. The rows fill as named: Name `ac215-l02`, Machine type `e2-small`, Boot disk `Debian GNU/Linux 12
     (bookworm)`; footnote "Debian 13 works too", then "· E2 = amd64" (amd64 BLUE, e2-small pulses
     BLUE). "The meter starts": the GOLD dial (no digits) fades in at the right and sweeps; GOLD tags
     "billed per second / while running" and "disk: billed / while it exists" (the boot disk row
@@ -47,11 +48,14 @@ Beats (script.md "## S14", one voiceover block each):
     row and on the card's top edge. "Older than the laptop's": GREY note "our laptop: Docker 29.8.2"
     (laptop/00 line 4) under the chip, with its own tag `at the time of recording` under it.
  6  The chip, card, note and the version's underline go; the terminal shrinks to the strip. V8 (S14
-    half) above it: the BLUE VM `ac215-l02` with its own bar "Debian · Linux kernel"; the PURPLE
-    `dockerd` block drops onto the bar; an empty dashed TEAL "container" slot above it. "there's no
-    hidden VM": S02's dashed GREY "Linux VM" box appears small at the right and is crossed out (GREY);
-    "unlike Docker Desktop": caption "Docker Desktop only".
- 7  V8 fades. "why sudo?": the strip's `sudo` (of `sudo docker --version`) pulses YELLOW. The strip
+    half) above it: the BLUE VM `ac215-l02` with its own bar split as in slide 12's stack, "Linux
+    kernel" with "user space · Debian" above it (split here, not in common.py's shared V8); the PURPLE
+    `dockerd` block drops onto user space; an empty dashed TEAL "container" slot above it. GREY
+    `Lecture 2 · slides 12, 24` (lecture_ref, left of the cost badge, which holds the top right) with
+    the VM, to the end of the beat. "there's no hidden VM": S02's dashed GREY "Linux VM" box (slide
+    24's extra layer) appears small at the right and is crossed out (GREY); "unlike Docker Desktop":
+    caption "Docker Desktop only".
+ 7  V8 and its lecture tag fade. "why sudo?": the strip's `sudo` (of `sudo docker --version`) pulses YELLOW. The strip
     grows to 5 rows (the error is 4 rows wrapped) while, above it, a PURPLE door
     `/var/run/docker.sock` with a GREY lock and the PURPLE `dockerd` box behind it fade in. "Without
     it": the strip types `docker ps` (row tag `extra`; TRACKER C4 · extra). "is refused": a PURPLE
@@ -69,10 +73,10 @@ import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
-from explainer.devops import MONO, OUTPUT, TERM_BG, browser_window, form_rows
+from explainer.devops import MONO, OUTPUT, TERM_BG, browser_window, form_rows, lecture_ref
 from explainer.scene import VoiceScene
 
-from common import (APT_DOCKER, APT_UPDATE, CLOUD, COST, DOCKER_VERSION, ERR, INK, LAPTOP_DIR,
+from common import (APT_DOCKER, APT_UPDATE, CLOUD, COST, DOCKER_VERSION, ERR, IMAGE, INK, LAPTOP_DIR,
                     NARRATION, SECTION_C, STEPS_C, SYSTEM, TOOL, TURN, VM12, VM13, VM_HOST, CostDial,
                     ask, attach, bare_prompt, beside, box, capture, check_mark, chip, cross_mark,
                     erratum_tag, illustration_tag, label, lock_glyph, mono, mono_line, pin,
@@ -307,6 +311,8 @@ class DockerOnVM(VoiceScene):
         rows = form.rows
         sec = readme_card(203, label(SECTION_C, 34, INK)).move_to([0, 0.5, 0])
         tr_rest = VGroup(tr.head[0], tr.head[1], tr.dots, tr.caption)
+        lref77 = lecture_ref(2, "77")                   # standard top right, until "The README gives no"
+        assert lref77.get_left()[0] > br.frame.get_right()[0] + 0.3, "lecture tag over the console"
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr_b, shift=DOWN * 0.1), run_time=0.5)
@@ -318,7 +324,8 @@ class DockerOnVM(VoiceScene):
                       run_time=1.0)
             self.remove(tr_rest, tr.head[2])
             self.add(tr)
-            self.play(Indicate(tr.head[2], color=TURN, scale_factor=1.08), run_time=0.8)
+            self.play(Indicate(tr.head[2], color=TURN, scale_factor=1.08), FadeIn(lref77, shift=DOWN * 0.1),
+                      run_time=0.8)
             vo.wait_until("First, create a VM")
             self.play(track(tr, 1), FadeIn(br, shift=RIGHT * 0.2), FadeIn(ill), run_time=0.6)
             self.play(FadeIn(heading, shift=RIGHT * 0.15), FadeIn(create_i, shift=UP * 0.1), run_time=0.5)
@@ -329,7 +336,7 @@ class DockerOnVM(VoiceScene):
             self.play(LaggedStart(*[FadeIn(VGroup(r.label, r.field)) for r in rows], lag_ratio=0.12),
                       FadeIn(create), run_time=0.7)
             vo.wait_until("The README gives no settings")
-            self.play(FadeIn(foot1, shift=UP * 0.1), run_time=0.5)
+            self.play(FadeIn(foot1, shift=UP * 0.1), FadeOut(lref77), run_time=0.5)
             vo.wait_until("An ordinary E2 machine")
             fill(rows[0], 0.4)
             fill(rows[1], 0.4)
@@ -590,6 +597,26 @@ class DockerOnVM(VoiceScene):
         # ========================================================== 6 · V8: Docker right on the VM's kernel
         vm = vm_with_docker(vm_w=5.6, vm_h=3.4, size=22)
         vm.move_to([-1.3, 0.72, 0])
+        # slide 12's stack, here only (common.py's V8 is shared): the bar becomes the kernel, user space
+        # (Debian's files) goes on it, and dockerd sits on user space; the slot shrinks to keep the
+        # title clear
+        kr = vm.kernel[0]
+        vm.kernel.remove(vm.kernel[1])
+        vm.kernel.add(label("Linux kernel", 22, INK).move_to(kr))
+        ub = kr.copy()
+        user = VGroup(ub, label("user space · Debian", 22, INK).move_to(ub)).next_to(kr, UP, buff=0.1)
+        vm.add(user)
+        VGroup(vm.dockerd, vm.slot).shift(UP * (ub.height + 0.1))
+        old_sl = vm.slot[0]
+        sl = box(old_sl.width, 0.8, IMAGE, dashed=True).move_to(old_sl).align_to(old_sl, DOWN)
+        vm.slot.remove(old_sl)
+        vm.slot.add_to_back(sl)
+        vm.slot[1].move_to(sl)
+        assert vm.slot.get_top()[1] < vm.title.get_bottom()[1] - 0.15, "the slot runs into the VM's title"
+        lref12 = lecture_ref(2, "12, 24")               # left of the cost badge (it holds the top right)
+        lref12.move_to([mini.get_left()[0] - 0.2 - lref12.width / 2, mini.get_y(), 0])
+        assert lref12.get_left()[0] > tr.get_right()[0] + 0.3, "lecture tag runs into the tracker"
+        assert lref12.get_bottom()[1] > vm.frame.get_top()[1] + 0.2, "lecture tag runs into the VM"
         dvm_box = box(2.3, 0.75, S.GREY, dashed=True)
         dvm_t = label("Linux VM", 22, S.GREY).move_to(dvm_box)
         dvm = VGroup(dvm_box, dvm_t).move_to([4.15, 1.05, 0])
@@ -600,7 +627,8 @@ class DockerOnVM(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             unpin(self, [(r_ver, u12)], 0.4, FadeOut(VGroup(chip5, lap5, lap5_rec, card5, u13, rec_card)))
             resize(self, t, 3, run_time=0.6)
-            self.play(FadeIn(VGroup(vm.frame, vm.title, vm.kernel), shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(VGroup(vm.frame, vm.title, vm.kernel, user), shift=UP * 0.15),
+                      FadeIn(lref12, shift=DOWN * 0.1), run_time=0.6)
             self.play(FadeIn(vm.dockerd, shift=DOWN * 1.0), run_time=0.6, rate_func=rate_functions.ease_out_cubic)
             self.play(FadeIn(vm.slot), Indicate(vm.kernel, color=CLOUD, scale_factor=1.04), run_time=0.6)
             vo.wait_until("there's no hidden VM")
@@ -639,7 +667,7 @@ class DockerOnVM(VoiceScene):
         keys.arrange(DOWN, aligned_edge=RIGHT, buff=0.3).move_to([-3.2, 0.2, 0])
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(vm, dvm, dvm_x, dvm_cap)), run_time=0.5)
+            self.play(FadeOut(VGroup(vm, dvm, dvm_x, dvm_cap, lref12)), run_time=0.5)
             # "And why sudo?": the sudo of the last command, still in the strip. A copy flashes over the
             # hidden glyphs, so the row is never split on the scene (its later scroll fades it whole)
             sudo = substring(c_ver, "sudo")

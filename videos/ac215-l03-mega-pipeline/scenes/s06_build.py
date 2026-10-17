@@ -59,7 +59,7 @@ Beats (script.md "## S06", one voiceover block each):
     badges pulse on "which of the five". After the SAY: PONDER (8 s) at the bottom, "You change only group_name in cli.py / and build again. /
     Which of the five build steps run again?".
  8  The card goes while V2 settles nearer the centre (the bottom band is free) and the GREY
-    lecture tag "Lecture 3 · slides 33" (lecture_ref: cache order, the ponder's answer) fades in
+    lecture tag "Lecture 3 · slide 33" (lecture_ref: cache order, the ponder's answer) fades in
     top right, where it stays to the final fade; on "Build steps 4 and 5" badges 4, 5 turn
     YELLOW. On "The copied folder changed" the chip drops into the COPY slab, which flashes
     YELLOW; on "so the copy runs again" it dissolves and re-forms, on "and so does every step" the

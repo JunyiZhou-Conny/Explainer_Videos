@@ -14,18 +14,19 @@ Beats (script.md "## S12", one voiceover block each):
     row: the counter "chunks: 8,248"; the PINK chip "book = The Complete Book of Cheese" appears and
     the mask dims all but the book's dots (1,355); the PINK chip `$contains "Italian"` appears and
     the mask dims all but 64 brighter dots (caption "64 bright dots = 64 chunks"). The card gives
-    way to the 3-row container strip: recorded-embeddings/08 lines 13–15 (tag "recorded · the
-    staff's vectors (68e0bde)"); line 14 boxed YELLOW and a YELLOW "mentioning Tolminc: 0" on the
-    fully dimmed Tolminc cluster.
- 3  The picture leaves; the strip grows to 11 rows; the card becomes "an extra Python check · query
-    with a stored vector"; the question card becomes the tag "stand-in query · a stored story
-    chunk's vector". TERM(recorded-embeddings/09: 16–17 word-folded, the chunk id PINK; then 18–28):
-    0.0000 boxed with the GREY tag "itself", 0.1627 boxed YELLOW.
+    way to the 3-row container strip: recorded-embeddings/08 lines 13–15 (the tag "recorded · the
+    staff's vectors (68e0bde)" on the strip's top right); line 14 boxed YELLOW and a YELLOW
+    "mentioning Tolminc: 0" on the fully dimmed Tolminc cluster.
+ 3  After "Now a search." the picture leaves; the strip grows to 11 rows; the card above it becomes
+    "an extra Python check · query with a stored vector" (the staff tag moves up beside it); the
+    question card becomes the tag "stand-in query · a stored story chunk's vector".
+    TERM(recorded-embeddings/09: 16–17 word-folded, the chunk id PINK; then 18–28, "-- no filter"
+    flashes): 0.0000 boxed with the GREY tag "itself", 0.1627 boxed YELLOW.
  4  The terminal clears: TERM(09: 29–39); the book names of the ten rows boxed YELLOW, 0.2833 and
     0.3123 boxed YELLOW. The terminal shrinks to the strip and the cloud returns unmasked: the PINK
-    beam from the stand-in reaches its ten nearest, inside the Tolminc cluster. The filter chips
-    return with the mask, and the beam stretches past the dimmed cluster to the far, lit survivors,
-    labelled "The Complete Book of Cheese"; the long beam flashes ("however far").
+    beam from the stand-in reaches its ten nearest, inside the Tolminc cluster. The mask returns,
+    and the beam stretches past the dimmed cluster to the far, lit survivors, labelled "all 10: The
+    Complete Book of Cheese" under the cloud; the long beam flashes ("however far").
  5  LECTURE A54–A55. The lecture's four-stage strip (Indexing → Vector Database → Querying → Post
     Processing) with the PINK-edged "metadata filter" under Post Processing: ten story result cards
     come out of Querying, slide through the filter and are all struck out: an empty list `[]`, RED
@@ -39,10 +40,11 @@ Beats (script.md "## S12", one voiceover block each):
     GREY note "not in the README · cli.py · lines 402–418") -> recorded-embeddings/05 lines 2–3
     (word-folded) and line 6 cut after the ids list's "]" (word-folded), tag "recorded · the
     staff's vectors (68e0bde)", GREY note "no distances: no ranking". The terminal shrinks to a
-    4-row strip holding the ids while copies of the ten ids become ten cards in a TEAL cylinder,
-    bracketed "-0 to -2 · Gutenberg header" (RED), "-3 to -5 · title page, contents" (GREY), "-6 to
-    -9 · chapter one begins" (GREEN); the RED cards flash; last, the GREEN fix card "strip outside
-    the START/END markers / then chunk, embed, load again". Everything fades: empty frame.
+    4-row strip holding the ids while copies of the ten ids become ten cards ("-0" … "-9") in a row
+    beside a TEAL cylinder, bracketed "-0 to -2 / Gutenberg header" (RED), "-3 to -5 / title page,
+    contents" (GREY), "-6 to -9 / chapter one begins" (GREEN); the RED cards flash, the cylinder
+    pulses ("indexed like any text"); last, the GREEN fix card "strip outside the START/END markers /
+    then chunk, embed, load again". Everything fades: empty frame.
 
 Deviations from SHOW (see the scene report): the "extra Python check" cards are one-line GREY cards
 with the SHOW's own wording (the two-line check_card does not fit above an 11-row terminal under
@@ -50,8 +52,12 @@ the tracker band). Beat 3 shows no picture: its beam (the ten nearest inside the
 opens beat 4's picture, so the unfiltered and the filtered beam are seen one after the other while
 "The filters act first" is said, and beat 3's narration stays on the numbers it reads out. Beat 7's
 terminal has 10 rows (the folded command, the folded Namespace line and the four ids rows need
-10), and it shrinks to a 4-row strip so all ten ids stay on screen while they become cards. The
-`$contains` chip says "(later)" for "(S15)": scene numbers are not on screen anywhere.
+10), and it shrinks to a 4-row strip so all ten ids stay on screen while they become cards; the
+ten cards stand in a row beside the cylinder (ten cards stacked inside it would be 0.22 tall,
+too small for their 20 pt labels). The `$contains` chip says "(later)" for "(S15)": scene numbers
+are not on screen anywhere. Additions: PINK chips naming the two filters under the beat-0 panel
+and the filter chips in beat 2's row (the SAY names them), "64 bright dots = 64 chunks" (the 64
+brighter dots would contradict "1 dot ≈ 8 chunks"), ten result cards out of Querying in beat 5.
 """
 
 import numpy as np

@@ -548,7 +548,7 @@ class FinalPrompt(VoiceScene):
             self.play(FadeIn(cmp_note, shift=UP * 0.1), run_time=0.5)
 
         # ========================================================== 9 · step 3: the chat tool; your turn
-        br = chat_window(CHAT_URL, 6.0, 2.5).move_to([-3.25, 1.5, 0])
+        br = chat_window(CHAT_URL, 6.8, 2.5).move_to([-2.95, 1.5, 0])
         bq = mono(QUESTION, 22, LOOKUP)
         bq.move_to(br.field).align_to(br.field, LEFT).shift(RIGHT * 0.2)
         ill9 = illustration_tag()

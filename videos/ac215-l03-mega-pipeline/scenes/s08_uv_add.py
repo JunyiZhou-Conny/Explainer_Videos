@@ -517,7 +517,10 @@ class UvAdd(VoiceScene):
             lines3 = [three_lines(r.glyph) for r in rows_p]
             self.play(*[r.animate.set_color(VENV) for r in rows_p], run_time=0.5)
             win.attach(self, *lines3, anims=[Create(lines3[0]), Create(lines3[1])], run_time=0.6)
-            self.play(win.blink("pyproject.toml", VENV), run_time=0.8)
+            # blink() pulses the route with LOOKUP on a LOOKUP stroke (invisible): the stroke pulse
+            # after it wins, as in S07
+            self.play(win.blink("pyproject.toml", VENV),
+                      win.route.animate(rate_func=there_and_back).set_stroke(width=12), run_time=0.8)
 
             vo.wait_until("and the receipt")
             win.add_file(self, "uv.lock", VENV, run_time=0.7)
@@ -527,7 +530,7 @@ class UvAdd(VoiceScene):
             both = VGroup(win.row("pyproject.toml", "laptop"), win.row("uv.lock", "laptop"))
             both2 = VGroup(win.row("pyproject.toml", "cover"), win.row("uv.lock", "cover"))
             self.play(Indicate(both, color=VENV, scale_factor=1.12), Indicate(both2, color=VENV, scale_factor=1.12),
-                      Indicate(win.route, color=LOOKUP, scale_factor=1.0),
+                      win.route.animate(rate_func=there_and_back).set_stroke(width=12),
                       Indicate(win.laptop.caption, color=INK, scale_factor=1.15), run_time=1.0)
 
             vo.wait_until("The 26 packages")
@@ -733,7 +736,7 @@ class UvAdd(VoiceScene):
             place(link_lab, left=link.get_center()[0] + 0.3, cy=link.get_center()[1])
             self.play(FadeIn(link), FadeIn(link_lab, shift=LEFT * 0.1), run_time=0.6)
             self.play(Indicate(new_str, color=TURN, scale_factor=1.2), Indicate(g_term, color=TURN, scale_factor=1.2),
-                      Indicate(link, color=LOOKUP, scale_factor=1.0), run_time=0.9)
+                      Indicate(link, color=TURN, scale_factor=1.0), run_time=0.9)
             vo.wait_until("Use the same name")
             self.play(Indicate(note, color=INK, scale_factor=1.08), FadeOut(yt8), run_time=0.7)
             self.play(LaggedStart(*[b[0].animate(rate_func=there_and_back).set_fill(VENV, 0.5) for b in boxes],
