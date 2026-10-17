@@ -10,8 +10,8 @@ Beats (script.md "## S04", one voiceover block each):
     The three export lines light in turn as named; a PINK value chip lifts off each
     (your-project-id, /secrets/llm-service-account.json, llm-rag-cli) to the right of the laptop.
     Line 12 lights YELLOW, "--rm" flashes, and the llm-rag-cli chip drops onto $IMAGE_NAME.
- 2  The script panels leave; the laptop becomes V2's GREY laptop zone (V2 fitted to the top, two
-    chips wait at the right). A 3-row code strip along the bottom edge: CODE(docker-compose.yml:
+ 2  The script panels leave; the laptop becomes V2's GREY laptop zone (V2 squeezed in height
+    above the strip by fit_v2, two chips wait at the right). A 3-row code strip along the bottom edge: CODE(docker-compose.yml:
     1–3) lays the TEAL rail llm-rag-network (line 3 lit); it Transforms into CODE(6–8): the TEAL
     "CLI container" box on the rail (line 6), then the GREEN "build: ." chip (line 8).
  3  CODE(10–12): the PINK route llm-rag/ → /app (line 12), then secrets/ → /secrets (line 11).
@@ -29,9 +29,10 @@ Beats (script.md "## S04", one voiceover block each):
     "your repo" covers /app only (/.venv stays visible). A pencil edits a cli.py row on the laptop,
     the file blinks on both sides, GREY tag "no rebuild".
  6  The picture shrinks to the top: a glyph-only thumbnail of V2 (everything the run creates is
-    a faint plan) and, beside it, the Docker Hub shelf at full size. Terminal (9 rows, `laptop`,
-    ~/AC215/llm-rag) types `sh docker-shell.sh` -> laptop/07 lines 2–5; as lines 3–5 print, the
-    image flies from the shelf into the thumbnail, the rail fills in, the Chroma box fills in.
+    a faint plan) and, beside it, the Docker Hub shelf at full size; the tracker lights on
+    "Step 3". Terminal (9 rows, `laptop`, ~/AC215/llm-rag) types `sh docker-shell.sh` -> laptop/07
+    lines 2–5; as lines 3–5 print, the image flies from the shelf into the thumbnail, the rail
+    fills in, the Chroma box fills in.
     GREY tag on the row under line 5: "first build also pulls python:3.12-slim-bookworm (about
     48 MB)".
  7  laptop/07 line 6 and lines 7–8 joined (folded at spaces), RED; on the shelf an empty dashed
@@ -42,38 +43,18 @@ Beats (script.md "## S04", one voiceover block each):
     ".git · 103 MB" (laptop/05b) holding a small GREEN cylinder (the old database copy), a sliver
     "the rest" with a tiny GREEN chroma.sqlite3 (laptop/14b); an erratum tag "no .dockerignore →
     exercises" and a GREY caption "the mounts hide both at run time".
- 9  The parcel leaves, the terminal grows back: laptop/07 lines 37–44. The run-container name
-    (line 38) underlines GREY and the thumbnail's CLI box fills in; line 40 gets "Apple Silicon:
-    aarch64 · both native"; 3.12.15 and 0.13.1 underline GREY + "at the time of recording";
-    lines 41 and 44 get a GREY bracket and an erratum tag "says it before it does · cosmetic".
+ 9  The parcel leaves, the terminal grows back: laptop/07 lines 37–44. 3.12.15 and 0.13.1
+    underline GREY as they are said, + "at the time of recording"; in the pause after it, the
+    run-container name (line 38) underlines GREY as the thumbnail's CLI box fills in, and line 40
+    gets "Apple Silicon: aarch64 · both native"; lines 41 and 44 get a GREY bracket and an
+    erratum tag "says it before it does · cosmetic".
 10  The prompt of line 45 alone (app@92c5bfd26089:/app$, nothing typed); the frame turns TEAL,
-    title "container · llm-rag-cli"; the id underlines GREY + tag "container id · your numbers
-    will differ"; the thumbnail's CLI box lights YELLOW; ▶ your turn. Hold 2 s, empty frame.
+    title "container · llm-rag-cli", and the thumbnail's CLI box lights YELLOW; the id underlines
+    GREY + tag "container id · your numbers will differ"; ▶ your turn. Hold 2 s, empty frame.
 """
 
-import numpy as np
-from manim import (
-    DOWN,
-    LEFT,
-    RIGHT,
-    UP,
-    Create,
-    DashedVMobject,
-    FadeIn,
-    FadeOut,
-    Indicate,
-    Line,
-    ManimColor,
-    Polygon,
-    ReplacementTransform,
-    RoundedRectangle,
-    Text,
-    Transform,
-    VGroup,
-    VMobject,
-)
-
 import common as _common
+import numpy as np
 from common import (
     BOTTOM,
     CTR,
@@ -117,6 +98,28 @@ from common import (
     under,
     your_turn,
 )
+from manim import (
+    DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    Create,
+    DashedVMobject,
+    FadeIn,
+    FadeOut,
+    Indicate,
+    Line,
+    ManimColor,
+    Polygon,
+    ReplacementTransform,
+    RoundedRectangle,
+    Text,
+    Transform,
+    VGroup,
+    VMobject,
+    there_and_back,
+)
+
 from explainer import style as S
 from explainer.devops import (
     CAPTION,
@@ -314,6 +317,23 @@ def print_rows(scene, t, rows: list, **kw) -> VGroup:
         _common.time_tag = orig
 
 
+def flash(text, border, color: str = TURN, k: float = 1.06) -> list:
+    """Indicate for a filled chip, tag, window or sheet: its text and border take `color` and the
+    text swells; the opaque fill stays (Indicate paints the fill too, hiding the text at its peak).
+    Two animations, play(*flash(...)): an AnimationGroup would put a Group(text, border) on the
+    scene, whose opaque border then draws over the text."""
+    w = border.get_stroke_width()
+    return [Indicate(text, color=color, scale_factor=k),
+            border.animate(rate_func=there_and_back).set_stroke(color, w + 1.5)]
+
+
+def blink(cv: ComposeView, name: str) -> list:
+    """cv.blink (both ends of a mount light at once) without painting the window's opaque fill
+    YELLOW over its name."""
+    row, win = cv.row("repo" if name == "app" else name), cv.window(name)
+    return [Indicate(row, color=TURN, scale_factor=1.08), *flash(win.text, win.frame, TURN, 1.08)]
+
+
 def word_fold(s: str, n: int) -> list[str]:
     """A long output line folded at spaces into rows of at most n characters (no token is cut)."""
     rows, cur = [], ""
@@ -335,17 +355,6 @@ def hub_slot() -> VGroup:
                         num_dashes=24).set_stroke(S.GREY, 2)
     g = VGroup(sf, st.move_to(sf))
     g.frame, g.text = sf, st
-    return g
-
-
-def tag2(lines, color: str = S.GREY, size: float = TAG) -> VGroup:
-    """A two-row tag (house look: text in its colour, opaque dark fill, round ends)."""
-    t = VGroup(*[label(s, size, color) for s in lines]).arrange(DOWN, buff=0.06)
-    b = RoundedRectangle(width=t.width + 0.4, height=t.height + 0.2, corner_radius=0.2,
-                         stroke_color=color, stroke_width=2).set_fill(S.BG, 0.92)
-    t.move_to(b)
-    g = VGroup(b, t)
-    g.box, g.text = b, t
     return g
 
 
@@ -536,7 +545,7 @@ class TwoContainers(VoiceScene):
             self.play(FadeIn(bar6), *cv.parts_in("cli", "plug_cli"), run_time=0.7)
             vo.wait_until("with an image built")
             self.play(FadeOut(bar6), FadeIn(bar8), *cv.parts_in("build"), run_time=0.6)
-            self.play(Indicate(cv.parts["build"], color=DATA, scale_factor=1.15), run_time=0.7)
+            self.play(*flash(cv.parts["build"].text, cv.parts["build"].box, DATA, 1.1), run_time=0.7)
 
         # ========================================================== 3 · mounts, slots, depends_on
         s10 = strip(10, 12)
@@ -554,10 +563,10 @@ class TwoContainers(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(bar8), ReplacementTransform(s6, s10), run_time=0.5)
             self.play(FadeIn(bar12), *cv.parts_in("route_app", anim=Create), run_time=0.8)
-            self.play(cv.blink("app"), run_time=0.7)
+            self.play(*blink(cv, "app"), run_time=0.7)
             vo.wait_until("and secrets onto")
             self.play(FadeOut(bar12), FadeIn(bar11), *cv.parts_in("route_secrets", anim=Create), run_time=0.8)
-            self.play(cv.blink("secrets"), run_time=0.7)
+            self.play(*blink(cv, "secrets"), run_time=0.7)
             vo.wait_until("Two slots")
             self.play(FadeOut(bar11), ReplacementTransform(s10, s13), *cv.parts_in("slots"), run_time=0.6)
             self.play(FadeIn(bar14), FadeIn(bar15), run_time=0.3)
@@ -633,7 +642,7 @@ class TwoContainers(VoiceScene):
             self.play(Indicate(cv.parts["venv"], color=DATA, scale_factor=1.12),
                       Indicate(d45.span(45, "uv sync"), color=DATA, scale_factor=1.1), run_time=0.8)
             vo.wait_until("outside slash app")
-            self.play(Indicate(w_app, color=TURN, scale_factor=1.1), run_time=0.7)
+            self.play(*flash(w_app.text, w_app.frame, TURN, 1.1), run_time=0.7)
             vo.wait_until("so the code mount")
             self.play(cv.pulse("app"), run_time=0.8)
             self.play(FadeIn(sheet, shift=DOWN * 0.25), run_time=0.6)
@@ -648,10 +657,10 @@ class TwoContainers(VoiceScene):
                       run_time=0.6)
             vo.wait_until("and rerun")
             self.play(FadeOut(pen), Indicate(cli_row, color=TURN, scale_factor=1.12),
-                      Indicate(sheet, color=TURN, scale_factor=1.08), cv.pulse("app"), run_time=0.8)
+                      *flash(sheet[1], sheet[0]), cv.pulse("app"), run_time=0.8)
             self.play(FadeIn(nreb, shift=DOWN * 0.1), run_time=0.4)
             vo.wait_until("no rebuild")
-            self.play(Indicate(nreb, color=TURN, scale_factor=1.1), run_time=0.6)
+            self.play(*flash(nreb.text, nreb.box), run_time=0.6)
 
         # ========================================================== 6 · sh docker-shell.sh: Chroma first
         t = term(P_REPO, rows=TERM_ROWS)
@@ -832,7 +841,7 @@ class TwoContainers(VoiceScene):
             attach(self, pr, uid)
             pin(self, pr, idt, run_time=0.4)
             vo.wait_until("it changes")
-            self.play(Indicate(idt, color=TURN, scale_factor=1.06), run_time=0.6)
+            self.play(*flash(idt.text, idt.box), run_time=0.6)
             vo.wait_until("Pause")
             yt10 = your_turn()
             beside(yt10, t, pr, buff=0.3)

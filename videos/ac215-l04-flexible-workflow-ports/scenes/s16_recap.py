@@ -25,7 +25,8 @@ Beats (script.md "## S16", one voiceover block each):
     127.0.0.1:8090, rooms :9100 / :9200, the toynet rail) appears above it. The strip types `docker
     compose up -d` -> 58 lines 2–4: `processor Running` GREEN, `gateway Started` and its `10.5s` YELLOW.
     On "Compose recreates only the gateway": a TEAL halo stays on the processor while the gateway box
-    re-forms (fades, comes back, flashes) and the street door's label turns 127.0.0.1:8095.
+    re-forms (fades, comes back, flashes) and the street door's label turns 127.0.0.1:8095; then
+    the GREY tag "≈10 s: stop ignored, as at Ctrl+C" between the row and its 10.5s pill.
  3  V6 leaves; a compact PAGE(59) (localhost:8095, the reply filled) at the centre, its address flashes.
     On "change it back": the page goes, the editor returns and the pencil turns 8095 back into 8090
     (the file's own line 16). On "and apply again": the strip types `docker compose up -d` -> 60 lines
@@ -52,7 +53,8 @@ Beats (script.md "## S16", one voiceover block each):
     "without a rebuild" the page's first line turns YELLOW and the GREY caption "no rebuild" appears
     beside the route (held 1.6 s).
  6  TRACKER P4/5. The picture goes; the terminal grows to 10 rows. `docker compose down` -> 64 lines
-    2–5 (the two containers' `Removed` rows and `10.2s` tags turn YELLOW), `docker compose ps -a` -> 65
+    2–5 (the two containers' `Removed` rows and `10.2s` tags turn YELLOW; the GREY tag "≈10 s each,
+    ≈20 s in all: stop ignored, as at Ctrl+C" on the `[+] down 3/3` row), `docker compose ps -a` -> 65
     line 2 (GREY tag "empty" beside the command). TRACKER P4/5 · extra: README chip `README.md · line
     515` "The built images remain." in the top band; `docker image ls` (extra) -> 66 lines 2–8 as the
     column view (GREY tag "2 of 5 columns" on its header row); `port_toy-*` and `toy-*` turn YELLOW and
@@ -64,7 +66,9 @@ Beats (script.md "## S16", one voiceover block each):
     (`docker compose down`, `docker compose ps -a`, `docker image ls` extra) takes its place (held 1 s).
  7  Everything goes (the tracker too). "Test yourself" (40 pt, YELLOW underline) at the top. Q1 writes
     in at 26 pt in the centre with a YELLOW number badge and, at its left, a glyph-only icon of V1 (the
-    BLUE shelf, the sealed TEAL box, the PINK signpost whose pointer aims at it). On "which files
+    BLUE shelf, the sealed TEAL box, the PINK signpost whose pointer aims at it). The GREY caption
+    "pause after each question" sits under the title; Q1–Q3's icon cards carry a GREY "part 1" tag
+    under them (part-1 material in the part-2 upload). On "which files
     define" the box flashes; on "and what does run use" `run` turns YELLOW and the pointer flashes.
  8  Q1 slides up and fades as Q2 writes in (icon: V3's three gates, a key outline in a dashed slot, a
     padlock, a switch, then a BLUE door, a PINK route through them): the gates pulse in turn, then
@@ -106,6 +110,10 @@ Deviations from SHOW (and why):
   `docker compose ps -a` header fills all 65 columns, so its "empty" tag sits beside the command.
   These three tags (and the `extra` on `docker image ls`, right above "2 of 5 columns") are slim, a
   row tall like the time tags: the house pills on adjacent rows touched.
+- Beats 2 and 6: the ≈10 s waits (the old gateway stopped by `up -d`, both containers by `down`)
+  carry a GREY tag naming S15's cause (the ignored stop signal): a viewer running them sees the
+  command hang. Beat 2's sits in the gateway row (it fits before the pill); beat 6's two rows
+  leave no room before their pills, so the tag sits on the `[+] down 3/3` row above them.
 - Beats 7–9: each question has a YELLOW number badge (the narration counts "One", "Two", …), and each
   icon sits in a small dark card. Highlights follow the words being said and never mark an answer.
   The old question slides up and has mostly left before the next one writes in (lagged, so the two
@@ -278,6 +286,12 @@ SHARED = {2: "port_toy-gateway", 3: "port_toy-processor", 5: "toy-gateway", 6: "
 for _k, _n in SHARED.items():
     assert IMG_ROWS[_k].startswith(_n + ":latest") and IMG_ROWS[_k].endswith("198MB"), IMG_ROWS[_k]
 assert IMG_ROWS[4].startswith("python:3.14-slim") and IMG_ROWS[1].startswith("hello-world")
+
+# the ≈10 s stop waits (S15: Python ignores the polite stop signal; Docker waits 10 s, then kills)
+assert C58.line(4).endswith("10.5s") and C60.line(4).endswith("10.5s")
+assert C64.line(3).endswith("10.2s") and C64.line(4).endswith("10.2s")
+STOP_10 = "≈10 s: stop ignored, as at Ctrl+C"
+STOP_DOWN = "≈10 s each, ≈20 s in all: stop ignored, as at Ctrl+C"
 
 GUIDE_REPO = "github.com/JunyiZhou-Conny/MLOps_Learning"
 GUIDE_PATH = "guides/L04-containers-2b-flexible-workflow-ports.md"
@@ -926,11 +940,15 @@ class Recap(VoiceScene):
             resize(self, t, 4, keep=1, run_time=0.5,
                    extra=[FadeOut(VGroup(rc487, ed)), caption_extra(tr, False), FadeIn(net)])
             type_cmd(self, t, UP_D, type_time=0.5)
-            print_rows(self, t, [C58.line(2), (C58.line(3), VENV, VENV), (C58.line(4), TURN, TURN)],
-                       run_time=0.4, extra=[FadeIn(halo)])
+            r58 = print_rows(self, t, [C58.line(2), (C58.line(3), VENV, VENV), (C58.line(4), TURN, TURN)],
+                             run_time=0.4, extra=[FadeIn(halo)])
             vo.wait_until("Compose recreates only the gateway")
             self.play(net.reform("gateway", run_time=1.0), net.set_door("127.0.0.1:8095", run_time=1.0),
                       flash(halo, CTR, 1.0, 1.0))
+            # why the gateway took 10.5 s: the old one was stopped (S15's ignored stop signal)
+            w58 = beside(slim(grey_tag(STOP_10), t), t, r58[2], buff=0.25)
+            assert w58.get_right()[0] < r58[2].time_tag.get_left()[0] - 0.08, w58.get_right()[0]
+            pin(self, r58[2], w58, run_time=0.35)
 
         # ============================================================ 3 · the page on 8095; change it back
         pg3 = PortPage(8095, reply=R59, compact=True, ports=False)
@@ -1069,6 +1087,10 @@ class Recap(VoiceScene):
             type_cmd(self, t, DOWN_CMD, type_time=0.6)
             r64 = print_rows(self, t, C64.at((2, 5)), run_time=0.5)
             self.play(*paint(r64[1], TURN), *paint(r64[2], TURN), run_time=0.5)
+            # the two ≈10 s stops (≈20 s in all, as at Ctrl+C in S15), on the `[+] down` row above them
+            w64 = beside(slim(grey_tag(STOP_DOWN), t), t, r64[0], buff=0.4)
+            assert w64.get_right()[0] < r64[1].time_tag.get_left()[0] - 0.2, w64.get_right()[0]
+            pin(self, r64[0], w64, run_time=0.35)
             vo.wait_until("nothing is left in ps dash a")
             ps_ln = type_cmd(self, t, PS_A, type_time=0.6)
             t.print(self, [C65.line(2)], run_time=0.3)
@@ -1115,6 +1137,9 @@ class Recap(VoiceScene):
         t_ul = Line(title.get_corner(DOWN + LEFT) + DOWN * 0.12, title.get_corner(DOWN + RIGHT) + DOWN * 0.12,
                     color=TURN, stroke_width=4)
         Q_CY = 0.15
+        PART1_QS = 3                         # Q1–Q3 ask about part 1 (mega-pipeline, gates, the key)
+        pause_cap = note("pause after each question")
+        place(pause_cap, cx=0, top=t_ul.get_bottom()[1] - 0.2)
 
         def q_with_icon(i: int, content: VGroup):
             q = question(i)
@@ -1125,6 +1150,9 @@ class Recap(VoiceScene):
             q.shift(UP * (th.get_center()[1] - q.text.get_center()[1]))
             g.shift(RIGHT * (0 - g.get_center()[0]) + UP * (Q_CY - g.get_center()[1]))
             assert g.get_left()[0] > X_L and g.get_right()[0] < X_R, (i, g.get_left()[0], g.get_right()[0])
+            if i <= PART1_QS:                # part-1 material: a GREY tag under the icon card
+                p1 = grey_tag("part 1").next_to(th.frame, DOWN, buff=0.12)
+                th.add(p1)                   # (added after centring: Q1–Q5 sit at the same place)
             g.q, g.th = q, th
             return g
 
@@ -1147,7 +1175,7 @@ class Recap(VoiceScene):
         g1 = q_with_icon(1, i1)
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(Group(*self.mobjects)), run_time=0.6)
-            self.play(FadeIn(title, shift=DOWN * 0.15), Create(t_ul), run_time=0.7)
+            self.play(FadeIn(title, shift=DOWN * 0.15), Create(t_ul), FadeIn(pause_cap), run_time=0.7)
             vo.wait_until("One")
             q_show(g1)
             vo.wait_until("which files define")
@@ -1214,7 +1242,7 @@ class Recap(VoiceScene):
         assert fc.get_left()[0] > X_L - 0.05 and fc.get_right()[0] < X_R + 0.05, (fc.get_left(), fc.get_right())
         assert tz.get_bottom()[1] > fc.get_top()[1] + 0.2, (tz.get_bottom()[1], fc.get_top()[1])
         with self.voiceover(SAY[10]) as vo:
-            self.play(LaggedStart(AnimationGroup(FadeOut(g5, shift=UP * 1.0), FadeOut(VGroup(title, t_ul))),
+            self.play(LaggedStart(AnimationGroup(FadeOut(g5, shift=UP * 1.0), FadeOut(VGroup(title, t_ul, pause_cap))),
                                   AnimationGroup(Create(tz.frame), FadeIn(tz.tag)), lag_ratio=0.5), run_time=1.1)
             vo.wait_until("a command-line container")
             self.play(FadeIn(VGroup(tz.cli, tz.cli_label)), FadeIn(VGroup(tz.db, tz.db_label)),

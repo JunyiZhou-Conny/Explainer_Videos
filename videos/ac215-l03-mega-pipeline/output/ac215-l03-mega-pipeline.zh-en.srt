@@ -1,0 +1,2544 @@
+1
+00:00:00,000 --> 00:00:02,155
+一段录音从左边送进来
+A voice recording goes in on the left.
+
+2
+00:00:02,475 --> 00:00:05,072
+五个程序，各自在自己的 container 里
+Five programs, each in its own container,
+
+3
+00:00:05,072 --> 00:00:10,837
+把它变成英文和法文的播客，彼此之间从不发一条消息
+turn it into a podcast in English and in French, without ever sending each other a message.
+
+4
+00:00:11,157 --> 00:00:13,547
+那它们是怎么配合的，又是谁来付钱？
+So how do they cooperate, and who pays?
+
+5
+00:00:13,783 --> 00:00:17,846
+和上节课比，有四处变化：你要自己写 Dockerfile
+Since last lecture, four things change: you write the Dockerfile,
+
+6
+00:00:17,846 --> 00:00:20,034
+而且要构建五个 image，而不是一个
+and you build five images, not one.
+
+7
+00:00:20,354 --> 00:00:23,183
+一个 bind mount 会打开一扇通往你笔记本的窗
+A bind mount opens a window into your laptop,
+
+8
+00:00:23,183 --> 00:00:25,509
+container 则连到 Google Cloud
+and the containers reach Google Cloud
+
+9
+00:00:25,509 --> 00:00:28,653
+靠的是共享的 bucket 和服务账号密钥
+through a shared bucket and a service account key.
+
+10
+00:00:28,900 --> 00:00:32,143
+把 mega-pipeline 的 README 打开，放在视频旁边
+Open the mega-pipeline README beside this video.
+
+11
+00:00:32,463 --> 00:00:36,549
+左上角的进度条把 README 分成一个个编号的步骤
+The tracker, top left, splits the README into numbered steps;
+
+12
+00:00:36,549 --> 00:00:39,161
+代码面板会标出文件和行号
+code panels show file and line numbers.
+
+13
+00:00:39,481 --> 00:00:41,845
+看到黄色的 your turn 标签就暂停
+Pause at the yellow your-turn tag;
+
+14
+00:00:41,845 --> 00:00:45,391
+灰色的 extra 标签表示这条命令 README 里没有
+a gray extra tag marks a command not in the README.
+
+15
+00:00:45,633 --> 00:00:48,833
+你需要先做完 Tutorial 0，装好 Docker Desktop 和 uv
+You'll need Tutorial 0, for Docker Desktop and uv,
+
+16
+00:00:48,833 --> 00:00:51,905
+还要有从 Canvas 下载的课程密钥和你们组的组名
+the course key from Canvas, and your group name.
+
+17
+00:00:52,225 --> 00:00:56,364
+每条命令也都在学习指南里，链接在视频简介里
+Every command is also in the study guide, linked in the description.
+
+18
+00:00:56,600 --> 00:00:59,666
+有一点先说清楚：我们录制时没有课程密钥
+One honest limit: we recorded without a course key,
+
+19
+00:00:59,666 --> 00:01:01,890
+所以凡是代码要和 Google 打交道的地方
+so wherever the code talks to Google,
+
+20
+00:01:01,890 --> 00:01:05,496
+你看到的是命令和该看什么，而不是它的输出
+you'll see the command and what to look for, not its output.
+
+21
+00:01:05,733 --> 00:01:09,456
+我们录制时用的是一台 Debian 12 笔记本
+We recorded on a Debian 12 laptop with Docker Engine 29, at the time of recording.
+
+22
+00:01:09,456 --> 00:01:11,749
+装着 Docker Engine 29
+We recorded on a Debian 12 laptop with Docker Engine 29, at the time of recording.
+
+23
+00:01:12,069 --> 00:01:13,569
+在 Mac 或 Windows 上
+On a Mac or Windows,
+
+24
+00:01:13,569 --> 00:01:17,141
+提示符不一样，由 Docker Desktop 来跑 container
+the prompt differs and Docker Desktop runs the containers;
+
+25
+00:01:17,141 --> 00:01:18,832
+命令都是一样的
+the commands are the same.
+
+26
+00:01:19,867 --> 00:01:23,110
+在生产环境里，服务之间会互相调 API
+In production, services call each other's APIs.
+
+27
+00:01:23,430 --> 00:01:25,019
+这个教程做了简化
+This tutorial simplifies:
+
+28
+00:01:25,019 --> 00:01:30,107
+每个组件把输出写进共享存储，下一个组件再从那里读
+each component writes its output to shared storage, where the next one reads it.
+
+29
+00:01:30,350 --> 00:01:33,579
+这个共享存储就是一个 Google Cloud Storage 的 bucket
+That storage is one Google Cloud Storage bucket,
+
+30
+00:01:33,579 --> 00:01:35,598
+画成一个带抽屉的柜子
+drawn as a cabinet of drawers.
+
+31
+00:01:35,918 --> 00:01:40,370
+第一个阶段 A，把 input audios 里的录音转写成文字
+The first stage, A, turns recordings from input audios into transcripts
+
+32
+00:01:40,370 --> 00:01:41,970
+放进 text prompts
+in text prompts.
+
+33
+00:01:42,190 --> 00:01:45,874
+然后 B 把每份转写文本写成更长的播客稿
+Then B turns each transcript into a longer podcast script,
+
+34
+00:01:45,874 --> 00:01:47,474
+放进 text paragraphs
+in text paragraphs.
+
+35
+00:01:47,617 --> 00:01:49,217
+从这里开始，路分成了两条
+From there the path splits.
+
+36
+00:01:49,452 --> 00:01:54,444
+C 把播客稿变成英文语音，存进名叫 text audios 的抽屉
+C turns the script into English speech, stored in the drawer named text audios.
+
+37
+00:01:54,764 --> 00:01:57,938
+D 把它翻译成法语，放进 text translated
+D translates it into French, in text translated,
+
+38
+00:01:57,938 --> 00:02:00,716
+E 再把法语念出来，放进 output audios
+and E speaks the French, in output audios.
+
+39
+00:02:01,000 --> 00:02:05,502
+没有谁会触发谁：每个组件都由你自己按这个顺序来跑
+Nothing triggers anything: you run each component yourself, in this order.
+
+40
+00:02:05,784 --> 00:02:08,715
+一个 bucket 里并没有真正的目录
+A bucket has no real folders: a name like text_prompts/group-01/input-….txt is one single object name.
+
+41
+00:02:08,715 --> 00:02:12,307
+前缀 text prompts，加上组名 group-01
+A bucket has no real folders: a name like text_prompts/group-01/input-….txt is one single object name.
+
+42
+00:02:12,307 --> 00:02:17,026
+再加上 input- 开头的文件名，这一整串只是一个对象名
+A bucket has no real folders: a name like text_prompts/group-01/input-….txt is one single object name.
+
+43
+00:02:17,267 --> 00:02:21,021
+这是 A 的上传代码：前缀、组名、文件名
+Here's A's upload code: prefix, group name, file name,
+
+44
+00:02:21,021 --> 00:02:23,454
+而且只传 input 开头的文件
+and only files starting with input.
+
+45
+00:02:23,774 --> 00:02:28,766
+B 用同样的模式下载：这条命名约定，就是全部的连线
+B downloads with the same pattern: that naming contract is the whole wiring.
+
+46
+00:02:29,000 --> 00:02:32,983
+组名把各组分开，但它的默认值没有任何保护
+The group name keeps teams apart, and its default has no guard:
+
+47
+00:02:32,983 --> 00:02:39,432
+忘了改的组件会写进默认组的抽屉，可能还会覆盖别人的成果
+a component you forgot to edit writes into the default group's drawer, maybe over someone else's work.
+
+48
+00:02:39,752 --> 00:02:41,352
+每次运行之前都要把它设好
+Set it before every run.
+
+49
+00:02:41,534 --> 00:02:45,310
+每个阶段成功了，实时排行榜上你那一行就会亮起来
+Each stage that succeeds lights up your row on a live leaderboard.
+
+50
+00:02:45,630 --> 00:02:50,088
+每次调用、每个字节，都记在课程项目的账上，不是你的
+Every call and every byte is billed to the course's project, not yours.
+
+51
+00:02:50,334 --> 00:02:54,387
+哪两个阶段可以同时跑，哪一个又必须等？
+Which two stages could run at the same time, and which one has to wait?
+
+52
+00:03:03,234 --> 00:03:08,482
+C 和 D 都只读 B 写的 text paragraphs，所以它们可以并行跑
+C and D both read only B's text paragraphs, so they could run side by side.
+
+53
+00:03:08,802 --> 00:03:11,554
+E 读的是 D 写的东西，所以它要等 D
+E reads what D writes, so it waits for D.
+
+54
+00:03:12,600 --> 00:03:15,416
+README 的第一条命令：把 repo clone 下来
+The README's first command: clone the repo.
+
+55
+00:03:15,736 --> 00:03:18,826
+输入 git clone，加上从 README 复制来的地址
+Type git clone and the address, copied from the README,
+
+56
+00:03:18,826 --> 00:03:20,426
+然后暂停，自己跑一遍
+and pause to run it.
+
+57
+00:03:20,483 --> 00:03:22,254
+然后 cd mega-pipeline
+Then cd mega-pipeline.
+
+58
+00:03:22,574 --> 00:03:24,845
+一个额外检查，README 里没有
+An extra check, not in the README,
+
+59
+00:03:24,845 --> 00:03:28,919
+列出文件，再显示 commit，可以看到五个组件目录
+lists the files and shows the commit: five component folders,
+
+60
+00:03:28,919 --> 00:03:32,259
+在 main 分支上，正是这个视频用的 commit
+on the main branch, at the commit this video uses.
+
+61
+00:03:32,500 --> 00:03:34,889
+再加一个额外检查，列出全部五个目录
+Another extra lists all five folders.
+
+62
+00:03:35,209 --> 00:03:39,289
+每个目录都有 README、自己的 cli.py 和 secrets 目录
+Each has a README, its own cli.py, and a secrets folder,
+
+63
+00:03:39,289 --> 00:03:44,681
+却没有一个有 Dockerfile：README 里说，五个都要你自己写
+and not one has a Dockerfile: the README says you write all five yourself.
+
+64
+00:03:44,917 --> 00:03:46,560
+有两处不同要记住
+Two differences to remember.
+
+65
+00:03:46,880 --> 00:03:51,717
+一是 generate text 目录已经有自己的 pyproject.toml
+The generate text folder already has its own pyproject.toml
+
+66
+00:03:51,717 --> 00:03:55,242
+还有一个 main.py 文件，但没有 .gitignore 文件
+and a main.py file, but no .gitignore file.
+
+67
+00:03:55,562 --> 00:03:58,037
+二是 synthesis audio 目录里有个附加脚本
+And synthesis audio has a bonus script.
+
+68
+00:03:58,283 --> 00:03:59,883
+现在来看第一个组件
+Now the first component.
+
+69
+00:04:00,182 --> 00:04:03,430
+打开 transcribe audio 目录里的 README
+Open the README in the transcribe audio folder:
+
+70
+00:04:03,430 --> 00:04:07,990
+进度条切换到它，它的第 1 步是 cd 进这个目录
+the tracker switches to it, and its step 1 is cd transcribe_audio.
+
+71
+00:04:08,310 --> 00:04:10,017
+暂停一下，跟上进度
+Pause, and catch up to here.
+
+72
+00:04:10,267 --> 00:04:12,614
+在编辑器里打开 cli.py
+Open cli.py in your editor.
+
+73
+00:04:12,934 --> 00:04:15,297
+前几个 import 是 Python 自带的
+The first imports come with Python,
+
+74
+00:04:15,297 --> 00:04:18,672
+但两个 Google Cloud 模块和 ffmpeg 不是
+but the two Google Cloud modules and ffmpeg don't.
+
+75
+00:04:18,992 --> 00:04:20,891
+第二部分会讲它们从哪儿来
+Part 2 shows where they come from.
+
+76
+00:04:21,133 --> 00:04:26,081
+接下来是四个设置：bucket 的名字、这个阶段用的两个抽屉
+Next come four settings: the bucket's name, the two drawers this stage uses,
+
+77
+00:04:26,081 --> 00:04:31,160
+还有第 21 行的组名，现在还是默认值，你很快就要改它
+and on line 21 the group name, still at its default, which you'll change soon.
+
+78
+00:04:31,400 --> 00:04:34,260
+在最下面，main 最多执行三个动作
+At the bottom, main runs up to three verbs,
+
+79
+00:04:34,260 --> 00:04:37,651
+顺序永远是：下载、转写、上传
+always in this order: download, transcribe, upload.
+
+80
+00:04:39,633 --> 00:04:42,728
+第 2 步是密钥：从 Canvas 下载的一个文件
+Step 2 is the key: a file from Canvas
+
+81
+00:04:42,728 --> 00:04:44,902
+叫 mega-pipeline.json
+called mega-pipeline.json.
+
+82
+00:04:45,222 --> 00:04:48,689
+有了它，你的代码就能以课程的服务账号的身份行事
+It lets your code act as the course's service account,
+
+83
+00:04:48,689 --> 00:04:52,220
+那是一个机器人 Google 账号，所以要像保管信用卡一样保管它
+a robot Google account, so guard it like a credit card.
+
+84
+00:04:52,466 --> 00:04:56,299
+暂停一下，把它下载下来，放进这个目录下的 secrets 目录
+Pause, download it, and put it in this folder's secrets folder,
+
+85
+00:04:56,299 --> 00:04:58,610
+另外四个目录也各放一份
+with a copy in each of the other four.
+
+86
+00:04:59,716 --> 00:05:01,316
+文件名必须一字不差
+The name must be exact.
+
+87
+00:05:01,551 --> 00:05:05,306
+如果你的浏览器保存时给它加了一个带括号的 1，就重命名一下
+If your browser saved it with a 1 in parentheses, rename it.
+
+88
+00:05:05,866 --> 00:05:10,381
+一个小错误：各组件的 README 链接的是一个旧的 Canvas 文件
+A small mistake: the component READMEs link to an older Canvas file,
+
+89
+00:05:10,381 --> 00:05:12,373
+所以用主 README 的链接
+so use the main README's link.
+
+90
+00:05:12,616 --> 00:05:14,323
+第 3 步用的是 uv
+Step 3 uses uv.
+
+91
+00:05:14,643 --> 00:05:16,143
+做完 Tutorial 0 的话
+After Tutorial 0,
+
+92
+00:05:16,143 --> 00:05:20,893
+uv --version 会打印出一个版本号，那就直接跳到 uv init
+uv --version prints a version, so skip ahead to uv init.
+
+93
+00:05:21,213 --> 00:05:24,840
+我们录制用的这台笔记本没装 uv：报 command not found
+This recording laptop had no uv: command not found.
+
+94
+00:05:25,083 --> 00:05:30,065
+否则就用 README 里的安装脚本：在 macOS 或 Linux 上
+Otherwise, use the README's installer: on macOS or Linux,
+
+95
+00:05:30,065 --> 00:05:35,920
+用这行 curl 命令，录制时它装的是 uv 0.13.0
+this curl line, which installed uv 0.13.0 at the time of recording.
+
+96
+00:05:36,240 --> 00:05:38,453
+在 Windows 上，用 PowerShell 那一行
+On Windows, the PowerShell line;
+
+97
+00:05:38,453 --> 00:05:40,528
+任何系统都能用：pip install uv
+on any system, pip install uv.
+
+98
+00:05:40,766 --> 00:05:44,266
+然后重启终端，正如安装脚本所说
+Then restart your terminal, as the installer says,
+
+99
+00:05:44,266 --> 00:05:47,486
+再 cd 回 transcribe audio 目录，uv 就有回应了
+cd back into transcribe audio, and uv answers.
+
+100
+00:05:47,933 --> 00:05:51,261
+现在是这一步本身：uv init --bare
+Now the step itself: uv init --bare.
+
+101
+00:05:51,581 --> 00:05:54,862
+它只写一个文件，pyproject.toml
+It writes just one file, pyproject.toml,
+
+102
+00:05:54,862 --> 00:05:57,896
+项目名叫 transcribe-audio
+for a project named transcribe-audio.
+
+103
+00:05:58,216 --> 00:05:59,566
+暂停一下，自己跑一遍
+Pause and run it.
+
+104
+00:05:59,616 --> 00:06:05,240
+额外看一眼里面的内容：一个名字、一个版本号、一个空的依赖列表
+An extra look inside: a name, a version, an empty list of dependencies,
+
+105
+00:06:05,240 --> 00:06:08,171
+还有最低 Python 版本 3.11
+and the minimum Python version, 3.11.
+
+106
+00:06:08,416 --> 00:06:13,600
+这个 3.11 来自这台笔记本上的 Python，3.11.2
+That 3.11 comes from this laptop's Python, 3.11.2.
+
+107
+00:06:13,920 --> 00:06:17,748
+在 image 里，uv sync 需要一个落在这个范围内的 Python
+In the image, uv sync needs a Python in this range,
+
+108
+00:06:17,748 --> 00:06:20,299
+3.12 正好在里面，所以没问题
+and 3.12 is in it, so all is well.
+
+109
+00:06:20,533 --> 00:06:22,666
+你看到的数字取决于你的笔记本
+Your number depends on your laptop.
+
+110
+00:06:22,986 --> 00:06:25,708
+如果你的是 3.13 及以上
+If yours says 3.13 or newer,
+
+111
+00:06:25,708 --> 00:06:30,666
+image 里的 3.12 就落在范围之外，那就把它改成 3.12
+the image's 3.12 falls outside, so edit it to 3.12.
+
+112
+00:06:30,986 --> 00:06:32,475
+这个改法 README 里没有
+That fix isn't in the README;
+
+113
+00:06:32,475 --> 00:06:34,614
+到了 generate text 组件你就知道为什么
+generate text shows why.
+
+114
+00:06:35,883 --> 00:06:39,836
+第 4 步是这节课的核心：这里没有 Dockerfile
+Step 4 is the heart of this lecture: there's no Dockerfile here,
+
+115
+00:06:39,836 --> 00:06:42,368
+所以你要自己写，一块一块地拼起来
+so you write it yourself, piece by piece.
+
+116
+00:06:42,616 --> 00:06:47,885
+第 1 行从 Debian 12 上的官方 Python 3.12 image 开始
+Line 1 starts from the official Python 3.12 image on Debian 12.
+
+117
+00:06:48,205 --> 00:06:51,384
+README 是在正文里提到它的，而不是在代码块里
+The README names it in its text, not in a code block.
+
+118
+00:06:51,633 --> 00:06:57,492
+第 3 行声明了一个构建参数，一个只在构建期间存在的变量
+Line 3 declares a build argument, a variable that exists only during the build:
+
+119
+00:06:57,492 --> 00:07:00,977
+Debian 软件包 build-essential 和 ffmpeg
+the Debian packages build-essential and ffmpeg.
+
+120
+00:07:01,297 --> 00:07:07,036
+而 Python 包 ffmpeg-python 只是用来运行 ffmpeg 程序
+The Python package ffmpeg-python just runs the ffmpeg program.
+
+121
+00:07:07,283 --> 00:07:10,846
+第 5 到 10 行设置了六个环境变量
+Lines 5 to 10 set six environment variables.
+
+122
+00:07:11,166 --> 00:07:15,582
+和第 2 讲一样，它们只写在配置卡片上：不产生层
+As in lecture 2, they only write on the config card: no layers.
+
+123
+00:07:15,902 --> 00:07:19,980
+前四个是：apt 从不提问，文本用 Unicode
+The first four: apt never asks questions, text is Unicode,
+
+124
+00:07:19,980 --> 00:07:24,691
+Python 立刻输出，uv 复制文件而不是建链接
+Python prints at once, and uv copies files instead of linking them.
+
+125
+00:07:24,933 --> 00:07:26,928
+第 9 行最要紧
+Line 9 matters most:
+
+126
+00:07:26,928 --> 00:07:33,210
+它告诉 uv，venv 要建在 /home/app/.venv，在 /app 外面
+it tells uv to build the venv in /home/app/.venv, outside /app.
+
+127
+00:07:33,530 --> 00:07:35,152
+很快，这一行就会救我们一命
+Soon, this line saves us.
+
+128
+00:07:35,400 --> 00:07:39,724
+第 10 行告诉 Google 的库，密钥在哪里
+Line 10 tells Google's libraries where the key is:
+
+129
+00:07:39,724 --> 00:07:43,528
+secrets/mega-pipeline.json，一个相对路径
+secrets/mega-pipeline.json, a relative path.
+
+130
+00:07:43,766 --> 00:07:47,115
+第 12 到 21 行是一条 RUN 指令
+Lines 12 to 21 are one RUN instruction.
+
+131
+00:07:47,435 --> 00:07:51,864
+除了最后一行，每行都以反斜杠结尾，让指令接着往下写
+Every line but the last ends in a backslash, which continues it,
+
+132
+00:07:51,864 --> 00:07:55,393
+&& 把各条命令串起来，所以只产生一层
+and && chains the commands, so they make one layer.
+
+133
+00:07:55,713 --> 00:07:58,315
+它更新 Debian，装上我们要的软件包
+It updates Debian, installs our packages,
+
+134
+00:07:58,315 --> 00:08:03,073
+再在同一层里删掉 apt 的软件包列表，所以它们不占空间
+and deletes the apt package lists in that same layer, so they cost nothing.
+
+135
+00:08:03,316 --> 00:08:06,153
+然后它升级 pip，再用 pip 装上 uv
+Then it upgrades pip and installs uv with it.
+
+136
+00:08:06,473 --> 00:08:09,385
+和第 1 讲里 Debian 的系统 Python 不同
+Unlike Debian's system Python in lecture 1,
+
+137
+00:08:09,385 --> 00:08:13,514
+这个 Python 属于 image，所以 pip 可以往里装
+this Python belongs to the image, so pip may install into it.
+
+138
+00:08:13,750 --> 00:08:17,730
+最后，它创建一个叫 app 的用户，用户 ID 1000
+Last, it creates a user called app, user ID 1000,
+
+139
+00:08:17,730 --> 00:08:23,414
+拥有 /app：README 里说，用 root 运行有安全风险
+who owns /app: as the README says, running as root is a security risk.
+
+140
+00:08:23,650 --> 00:08:29,154
+第 23 和 24 行切换到这个用户，并把 /app 设成工作目录
+Lines 23 and 24 switch to that user and make /app the working folder.
+
+141
+00:08:29,474 --> 00:08:35,660
+第 26 行把这个目录里的一切都复制进 image；记住这个词：一切
+Line 26 copies everything in this folder into the image; hold on to that word, everything.
+
+142
+00:08:35,900 --> 00:08:40,992
+第 27 行运行 uv sync，按 pyproject.toml 建好 venv
+Line 27 runs uv sync to build the venv from pyproject.toml,
+
+143
+00:08:40,992 --> 00:08:47,206
+第 29 和 30 行启动 bash，并激活 venv，和第 2 讲一样
+and lines 29 and 30 start bash with the venv activated, as in lecture 2.
+
+144
+00:08:50,733 --> 00:08:54,392
+主 README 的 Appendix 部分有个示例 Dockerfile
+The main README's appendix has a sample Dockerfile,
+
+145
+00:08:54,392 --> 00:08:57,978
+但它的构建参数是 curl 而不是 ffmpeg
+but its build argument has curl instead of ffmpeg:
+
+146
+00:08:57,978 --> 00:09:00,632
+别把它贴进 transcribe audio 组件
+don't paste it into transcribe audio.
+
+147
+00:09:00,866 --> 00:09:02,487
+现在暂停，把它写出来
+Pause now and write it:
+
+148
+00:09:02,487 --> 00:09:05,517
+一个名叫 Dockerfile、没有扩展名的文件
+a file named Dockerfile, with no extension.
+
+149
+00:09:05,837 --> 00:09:10,875
+先敲 FROM 那一行，再把 README 的六个代码块按顺序复制到下面
+Type the FROM line, then copy the README's six code blocks below it, in order,
+
+150
+00:09:10,875 --> 00:09:15,266
+块与块之间空一行，这样你的行号就和我们的一致
+with one blank line between blocks, so your line numbers match ours.
+
+151
+00:09:16,050 --> 00:09:19,101
+先额外检查一下：你的 Dockerfile
+First, an extra check: your Dockerfile,
+
+152
+00:09:19,101 --> 00:09:22,855
+名字一字不差，就在 pyproject.toml 旁边
+named exactly that, sits next to pyproject.toml.
+
+153
+00:09:23,100 --> 00:09:26,086
+第 5 步构建 image。一个小缺口
+Step 5 builds the image. A small gap:
+
+154
+00:09:26,086 --> 00:09:30,033
+README 给了 image 的名字 transcribe audio，却没给命令
+the README names it, transcribe audio, but gives no command.
+
+155
+00:09:30,353 --> 00:09:33,191
+命令是这样的：docker build，加上 -t 和 image 名
+Here it is: docker build -t transcribe_audio,
+
+156
+00:09:33,191 --> 00:09:36,092
+然后是一个点，代表这个目录，也就是构建上下文
+then a dot for this folder, the build context.
+
+157
+00:09:36,333 --> 00:09:37,755
+暂停一下，自己跑一遍
+Pause and run it.
+
+158
+00:09:37,805 --> 00:09:40,152
+你的终端显示的是精简的实时视图
+Your terminal shows a compact live view
+
+159
+00:09:40,152 --> 00:09:43,522
+每个构建步骤跑完后都会折叠成一行
+that folds each build step into one line when it's done.
+
+160
+00:09:43,842 --> 00:09:46,470
+这里是完整日志里的几处关键行
+Here are the full log's landmarks;
+
+161
+00:09:46,470 --> 00:09:49,794
+想自己看到它们，就加上右上角灰字里的那个参数
+to see them yourself, add --progress=plain.
+
+162
+00:09:50,114 --> 00:09:55,981
+构建步骤 2 是我们那个大 RUN：apt 装了 237 个软件包
+Build step 2 is our big RUN: apt installs 237 packages,
+
+163
+00:09:55,981 --> 00:10:03,128
+下载了 205 MB，然后 pip 装好 uv，一共 46.9 秒
+a 205 megabyte download, then pip installs uv, all in 46.9 seconds.
+
+164
+00:10:03,367 --> 00:10:07,442
+构建步骤 3 和 4 设置工作目录，复制我们的文件
+Build steps 3 and 4 set the working folder and copy our files.
+
+165
+00:10:07,762 --> 00:10:12,546
+构建步骤 5 用 image 自带的 Python 3.12 运行 uv sync
+Build step 5 runs uv sync with the image's own Python 3.12,
+
+166
+00:10:12,546 --> 00:10:19,601
+建好 venv，然后解析出 1 个包：就是项目本身，还没有任何依赖
+creates the venv, and resolves 1 package: the project itself, with no dependencies yet.
+
+167
+00:10:19,850 --> 00:10:23,800
+最后它给 image 命名，还有一条关于第 10 行的警告
+It ends by naming the image, with a warning about line 10:
+
+168
+00:10:23,800 --> 00:10:27,274
+Docker 会标出任何名字听起来像密钥的变量
+Docker flags any variable whose name sounds secret.
+
+169
+00:10:27,594 --> 00:10:31,818
+它的值只是一个路径，所以无害，而且每次构建你都会看到它
+The value is just a path, so it's harmless, and you'll see it every build.
+
+170
+00:10:32,067 --> 00:10:37,550
+额外跑一下 docker images：在这台机器上是 1.35 GB
+An extra check, docker images, says 1.35 gigabytes on this machine.
+
+171
+00:10:37,870 --> 00:10:41,075
+最大的一层就是那个 RUN，比其他层大得多
+By far the biggest layer is that one RUN,
+
+172
+00:10:41,075 --> 00:10:45,374
+842 MB 的编译器、ffmpeg 和它们的库
+842 megabytes of compilers, ffmpeg and their libraries,
+
+173
+00:10:45,374 --> 00:10:47,875
+复制进来的目录则小得很
+while the copied folder is tiny.
+
+174
+00:10:48,117 --> 00:10:51,609
+如果你跳过了 uv init，构建步骤 5 就会失败
+And if you skipped uv init, build step 5 fails,
+
+175
+00:10:51,609 --> 00:10:54,730
+因为没有 pyproject.toml 可以同步
+because there's no pyproject.toml to sync.
+
+176
+00:10:54,967 --> 00:11:00,430
+来想一想。你只改了 cli.py 里的组名，然后重新构建
+Ponder this. You change only the group name in cli.py and build again:
+
+177
+00:11:00,430 --> 00:11:03,351
+五个构建步骤里，哪些会重新运行？
+which of the five build steps run again?
+
+178
+00:11:12,200 --> 00:11:13,821
+构建步骤 4 和 5
+Build steps 4 and 5.
+
+179
+00:11:14,141 --> 00:11:17,458
+复制进来的目录变了，所以复制那一步要重新跑
+The copied folder changed, so the copy runs again,
+
+180
+00:11:17,458 --> 00:11:19,581
+它后面的每一步也一样
+and so does every step after it.
+
+181
+00:11:19,901 --> 00:11:22,591
+构建步骤 2 和 3 直接用缓存
+Build steps 2 and 3 come from the cache,
+
+182
+00:11:22,591 --> 00:11:26,088
+构建步骤 1 是你本地已经有的基础 image
+and build step 1 is the base image you already have.
+
+183
+00:11:26,408 --> 00:11:28,008
+第二部分我们会亲眼看到
+We'll see it in part 2.
+
+184
+00:11:29,650 --> 00:11:32,743
+第 6 步运行 image，所以先看一张图
+Step 6 runs the image, so first, a picture.
+
+185
+00:11:33,063 --> 00:11:37,842
+复制进来的文件在 /app 里；venv 在它外面，在 /home 里
+The copied files sit in /app; the venv sits outside it, in /home.
+
+186
+00:11:38,162 --> 00:11:42,941
+和第 2 讲一样，container 会在上面加一层薄薄的可写层
+As in lecture 2, a container adds a thin writable layer,
+
+187
+00:11:42,941 --> 00:11:45,330
+--rm 让它在退出时被扔掉
+thrown away on exit by --rm.
+
+188
+00:11:45,567 --> 00:11:49,445
+用 -v 把当前目录，也就是 pwd，挂载到 /app 上
+-v mounts the current folder, pwd, onto /app:
+
+189
+00:11:49,445 --> 00:11:54,185
+它盖住了复制进来的文件，所以 /app 现在就是你的目录
+it covers the copied files, so /app is now your folder.
+
+190
+00:11:54,433 --> 00:11:57,612
+所以你在 VS Code 里的修改，container 里马上就能看到
+So edits in VS Code show up inside at once.
+
+191
+00:11:57,932 --> 00:11:59,622
+写在 /app 下面的东西
+Anything written under /app
+
+192
+00:11:59,622 --> 00:12:02,750
+会直接写进你笔记本上的目录，而且留下来
+goes straight into your laptop's folder and stays;
+
+193
+00:12:02,750 --> 00:12:05,441
+其他东西都落在用完就扔的那一层上
+anything else lands on the throwaway layer.
+
+194
+00:12:05,683 --> 00:12:09,843
+来想一想。在第 2 讲里，venv 就放在代码旁边
+Ponder this. In lecture 2, the venv sat next to the code.
+
+195
+00:12:10,163 --> 00:12:11,663
+如果这里它也放在 /app 里
+If it sat in /app here,
+
+196
+00:12:11,663 --> 00:12:14,409
+那 container 透过这个挂载会在那儿看到什么？
+what would the container find there with this mount?
+
+197
+00:12:23,250 --> 00:12:28,007
+它会看到你笔记本上的目录，里面没有 venv，所以激活会失败
+It would find your laptop's folder, with no venv in it, so activation would fail.
+
+198
+00:12:28,327 --> 00:12:32,082
+第 9 行的 uv project environment 这个变量，防的就是这个
+That's what line 9, UV_PROJECT_ENVIRONMENT, prevents.
+
+199
+00:12:32,317 --> 00:12:34,692
+输入 docker run，加上 --rm 和 -ti
+Type docker run, --rm, -ti,
+
+200
+00:12:34,692 --> 00:12:38,034
+带挂载的 -v，再加上 image 名
+-v with the mount, and the image name.
+
+201
+00:12:38,354 --> 00:12:42,066
+从 README 里复制，连引号一起，然后暂停，自己跑一遍
+Copy it from the README, quotes included, and pause to run it.
+
+202
+00:12:42,300 --> 00:12:45,944
+在 Windows 上，这些命令要在 Git BASH 里跑
+On Windows, run these commands in Git BASH,
+
+203
+00:12:45,944 --> 00:12:48,231
+pwd 两边的引号要保留
+keep the quotes around pwd,
+
+204
+00:12:48,231 --> 00:12:52,722
+如果 docker run 报错：the input device is not a TTY
+and if docker run says the input device is not a TTY,
+
+205
+00:12:52,722 --> 00:12:54,417
+就在它前面加上 winpty
+put winpty in front.
+
+206
+00:12:54,667 --> 00:12:56,063
+提示符变了
+The prompt changes:
+
+207
+00:12:56,063 --> 00:13:01,162
+你是用户 app，在 /app 里，@ 符号后面是 container 的 ID
+you're user app, in /app, and after the @ sign comes the container's ID,
+
+208
+00:13:01,162 --> 00:13:02,762
+每次运行都不一样
+new on every run.
+
+209
+00:13:02,850 --> 00:13:07,357
+提示符里没有显示 venv 的名字，但 venv 其实已经激活了
+No venv name shows in the prompt, yet the venv is active:
+
+210
+00:13:07,357 --> 00:13:11,469
+两个额外检查显示 python 在 /home 下，版本 3.12
+two extra checks find python in /home, version 3.12.
+
+211
+00:13:11,717 --> 00:13:15,775
+再做两个额外检查：列出目录，是你笔记本上的文件
+Two more extras: listing the folder shows your laptop's files,
+
+212
+00:13:15,775 --> 00:13:18,458
+第 10 行那个指向密钥的变量也设好了
+and the key variable from line 10 is set.
+
+213
+00:13:18,700 --> 00:13:22,028
+最后一个额外检查：让 cli.py 打印帮助
+Last extra: ask cli.py for its help.
+
+214
+00:13:22,348 --> 00:13:23,848
+报 ModuleNotFoundError
+ModuleNotFoundError,
+
+215
+00:13:23,848 --> 00:13:27,831
+No module named google：包还没装
+No module named google: the packages aren't installed yet.
+
+216
+00:13:28,067 --> 00:13:30,491
+这个 container 跑起来了，也看得到你的目录
+The container runs and sees your folder,
+
+217
+00:13:30,491 --> 00:13:32,248
+但 Python 找不到 Google
+but Python can't find Google.
+
+218
+00:13:32,568 --> 00:13:35,453
+如果你在这里停下，就重跑同一条 docker run
+If you stop here, rerun the same docker run
+
+219
+00:13:35,453 --> 00:13:38,606
+在 transcribe audio 目录里跑，再看第二部分
+from the transcribe audio folder before part 2.
+
+220
+00:13:38,926 --> 00:13:42,872
+第二部分，我们来加上这些包，并弄清楚它们为什么会消失
+In part 2, we add the packages, and find out why they vanish.
+
+221
+00:13:44,517 --> 00:13:45,832
+欢迎回来
+Welcome back.
+
+222
+00:13:45,882 --> 00:13:48,645
+我们在 transcribe audio 这个 container 里
+We're inside the transcribe audio container,
+
+223
+00:13:48,645 --> 00:13:51,408
+Python 还找不到 Google 的包
+and Python can't find Google's packages yet.
+
+224
+00:13:51,650 --> 00:13:55,118
+第 7 步：README 列出了三个要加的包
+Step 7: the README lists three packages to add,
+
+225
+00:13:55,118 --> 00:13:58,071
+所以用一条 uv add 命令把三个一起加上
+so type all three in one uv add command.
+
+226
+00:13:58,391 --> 00:13:59,991
+暂停一下，自己跑一遍
+Pause and run it.
+
+227
+00:14:01,684 --> 00:14:04,863
+要了 3 个包，装了 26 个
+Three packages asked for, and 26 installed.
+
+228
+00:14:05,183 --> 00:14:09,311
+和第 1 讲一样，每个包都会带来自己的依赖
+As in lecture 1, each package brings its own dependencies,
+
+229
+00:14:09,311 --> 00:14:11,518
+uv 会解析整棵依赖树
+and uv resolves the whole tree.
+
+230
+00:14:11,767 --> 00:14:13,388
+那这些东西都去了哪儿？
+But where did everything land?
+
+231
+00:14:13,708 --> 00:14:18,738
+清单 pyproject.toml 和小票 uv.lock 都在 /app 里
+The list, pyproject.toml, and the receipt, uv.lock, sit in /app,
+
+232
+00:14:18,738 --> 00:14:21,410
+所以它们直接写进了你的笔记本
+so they're written to your laptop.
+
+233
+00:14:21,730 --> 00:14:24,843
+而那 26 个包进了 /home 下的 venv
+The 26 packages went into the venv in /home,
+
+234
+00:14:24,843 --> 00:14:27,319
+落在 container 那层用完就扔的可写层上
+on the container's throwaway layer.
+
+235
+00:14:27,567 --> 00:14:29,160
+两个额外检查
+Two extra checks.
+
+236
+00:14:29,210 --> 00:14:33,462
+这个 pyproject.toml 现在列出了这三个包
+The pyproject.toml now lists the three packages,
+
+237
+00:14:33,462 --> 00:14:35,588
+每个都带版本下限
+each with a lower bound,
+
+238
+00:14:35,588 --> 00:14:40,991
+cli.py 旁边多了一个约 138 KB 的新 uv.lock
+and a new uv.lock of about 138 kilobytes sits next to cli.py,
+
+239
+00:14:40,991 --> 00:14:42,591
+所有者是用户 app
+owned by user app.
+
+240
+00:14:42,834 --> 00:14:49,298
+再加一个额外检查：venv 变量是 /home/app/.venv，在窗外
+Another extra: the venv variable says /home/app/.venv, outside the window.
+
+241
+00:14:49,534 --> 00:14:50,913
+补充两句
+Two asides.
+
+242
+00:14:50,963 --> 00:14:56,361
+这个包叫 ffmpeg-python；单单一个 ffmpeg 是另一个项目
+The package is ffmpeg-python; plain ffmpeg is another project.
+
+243
+00:14:56,681 --> 00:14:58,442
+还有，如果你用的是 Linux 笔记本
+And on a Linux laptop
+
+244
+00:14:58,442 --> 00:15:04,383
+目录又不属于用户 ID 1000，uv add 会报 permission denied
+whose folder isn't owned by user ID 1000, uv add fails with permission denied:
+
+245
+00:15:04,383 --> 00:15:07,262
+屏幕上的 chown 命令能修好它
+the chown command on screen fixes it.
+
+246
+00:15:09,217 --> 00:15:12,332
+README 里还说：退出以后，要重新构建 image
+The README adds: when you exit, rebuild the image.
+
+247
+00:15:12,652 --> 00:15:14,985
+我们最后再做这一步，到时候就知道为什么了
+We'll do that at the end, and see why.
+
+248
+00:15:15,035 --> 00:15:16,869
+第 8 步：设置你的组名
+Step 8: set your group name.
+
+249
+00:15:17,189 --> 00:15:20,841
+在你的笔记本上，用 VS Code 打开 cli.py
+On your laptop, in VS Code, open cli.py
+
+250
+00:15:20,841 --> 00:15:24,493
+把第 21 行改成你们组的名字
+and change line 21 to your team's name;
+
+251
+00:15:24,493 --> 00:15:26,093
+我们的是 group-01
+ours is group-01.
+
+252
+00:15:26,405 --> 00:15:28,005
+暂停一下，把它改好
+Pause and make the change.
+
+253
+00:15:28,200 --> 00:15:31,390
+在 container 里，额外的 grep 已经显示出新的那一行
+Inside, an extra grep already shows the new line:
+
+254
+00:15:31,390 --> 00:15:33,149
+这扇窗两边都是通的
+the window works both ways.
+
+255
+00:15:33,469 --> 00:15:36,754
+五个 cli.py 文件里都要用同一个名字
+Use the same name in all five cli.py files,
+
+256
+00:15:36,754 --> 00:15:40,040
+不然各个阶段就找不到彼此的成果
+or the stages won't find each other's work.
+
+257
+00:15:40,284 --> 00:15:43,932
+第 9 步：python cli.py --help
+Step 9: python cli.py --help.
+
+258
+00:15:44,252 --> 00:15:48,071
+这次成功了，而且和 README 里那段逐行一致
+This time it works, and it matches the README's block line for line.
+
+259
+00:15:48,391 --> 00:15:50,118
+暂停一下，跟到这一步
+Pause, and get to this point.
+
+260
+00:15:51,967 --> 00:15:59,348
+第 10 步下载录音：python cli.py --download，简写是 -d
+Step 10 downloads the recordings: python cli.py --download, or -d for short.
+
+261
+00:15:59,668 --> 00:16:03,359
+我们录制的机器上没有密钥，所以这里看到的是缺密钥时的样子
+Our machine had no key, so here's what a missing key looks like.
+
+262
+00:16:03,600 --> 00:16:07,291
+它先打印出参数和 download 这个词，然后是一段 traceback
+It printed the arguments and the word download, then a traceback.
+
+263
+00:16:07,611 --> 00:16:11,250
+最后一行是 DefaultCredentialsError
+The last line says DefaultCredentialsError:
+
+264
+00:16:11,250 --> 00:16:15,483
+找不到 secrets/mega-pipeline.json 这个文件
+the file secrets/mega-pipeline.json was not found.
+
+265
+00:16:15,717 --> 00:16:17,445
+按第 1 讲的方法来读
+Read it as in lecture 1.
+
+266
+00:16:17,765 --> 00:16:20,858
+我们的代码在第 36 行创建了一个 storage 客户端
+Our code, line 36, built a storage client.
+
+267
+00:16:21,178 --> 00:16:24,530
+客户端向 Google 的认证库要凭据
+The client asked Google's auth library for credentials,
+
+268
+00:16:24,530 --> 00:16:27,152
+认证库就去找一个不存在的文件
+and that library looked for a missing file.
+
+269
+00:16:27,400 --> 00:16:29,064
+正常情况下，链条是这样的
+Here's the chain when it works.
+
+270
+00:16:29,384 --> 00:16:34,504
+你的代码从来不传密钥：客户端会去问 Google 的认证库“我是谁”
+Your code never passes the key: the client asks Google's auth library who it is.
+
+271
+00:16:34,824 --> 00:16:39,273
+这个查找过程叫应用默认凭据，简称 ADC
+That search is called application default credentials, or ADC,
+
+272
+00:16:39,273 --> 00:16:42,718
+它的第一站就是第 10 行的那个变量
+and its first stop is the variable from line 10.
+
+273
+00:16:42,967 --> 00:16:45,368
+这个变量就是一个路标
+That variable is a signpost:
+
+274
+00:16:45,368 --> 00:16:51,116
+secrets/mega-pipeline.json，从当前目录 /app 算起
+secrets/mega-pipeline.json, starting from the current folder, /app.
+
+275
+00:16:51,436 --> 00:16:54,444
+透过这扇窗，它指向你笔记本上的密钥
+Through the window, it leads to the key on your laptop.
+
+276
+00:16:54,834 --> 00:16:58,558
+认证库用密钥生成一个短期有效的访问令牌
+From the key, the library makes a short-lived access token,
+
+277
+00:16:58,558 --> 00:17:01,020
+每个发给 Google 的请求都带着它
+and every request to Google carries it.
+
+278
+00:17:01,267 --> 00:17:04,104
+接着 Google 会检查两次，README 里也这么说
+Google then checks twice, as the README says.
+
+279
+00:17:04,424 --> 00:17:10,317
+身份验证问的是谁在调用，密钥说是课程的服务账号
+Authentication asks who is calling, and the key says it's the course's service account;
+
+280
+00:17:10,317 --> 00:17:15,262
+授权问的是它有没有权限做这件事，IAM 角色为它打开了 bucket
+authorization asks whether it may do this, and IAM roles open the bucket.
+
+281
+00:17:15,500 --> 00:17:17,676
+这个报错通常有三个原因
+This error has three usual causes.
+
+282
+00:17:17,996 --> 00:17:21,261
+要么密钥不在这个组件的 secrets 目录里
+The key isn't in this component's secrets folder,
+
+283
+00:17:21,261 --> 00:17:23,728
+要么你 cd 离开了 /app
+you changed directory away from /app,
+
+284
+00:17:23,728 --> 00:17:27,127
+要么你在笔记本上错误的目录里跑了 docker run
+or you ran docker run from the wrong laptop folder.
+
+285
+00:17:31,067 --> 00:17:33,629
+一个额外检查：就连这次失败的运行
+One extra check: even this failed run
+
+286
+00:17:33,629 --> 00:17:37,022
+也在你笔记本上建了两个目录，input audios
+created two folders on your laptop, input audios,
+
+287
+00:17:37,022 --> 00:17:39,792
+还有里面带着你们组目录的 text prompts
+and text prompts with your group inside.
+
+288
+00:17:40,112 --> 00:17:42,736
+代码是在创建客户端之前建好它们的
+The code makes them before it builds the client.
+
+289
+00:17:43,784 --> 00:17:48,630
+有密钥的话，要找的是 download 这个词、每段录音一个对象名
+With your key, look for the word download, one object name per recording,
+
+290
+00:17:48,630 --> 00:17:52,680
+还有出现在你笔记本上 input audios 里的音频文件
+and the audio files appearing in input audios on your laptop.
+
+291
+00:17:53,000 --> 00:17:55,837
+暂停一下，确认密钥在 secrets 目录里，然后跑一遍
+Pause, check your key is in secrets, and run it.
+
+292
+00:17:58,383 --> 00:18:00,132
+第 11 步是转写
+Step 11 transcribes.
+
+293
+00:18:00,452 --> 00:18:05,118
+对每段录音，ffmpeg 都先把 MP3 转成 FLAC
+For each recording, ffmpeg first converts the MP3 into FLAC,
+
+294
+00:18:05,118 --> 00:18:08,772
+所以构建参数里要有 ffmpeg
+and that's why ffmpeg is in the build argument.
+
+295
+00:18:09,016 --> 00:18:11,597
+音频的字节就放在请求里一起发过去
+The audio bytes travel inside the request.
+
+296
+00:18:11,917 --> 00:18:15,898
+长时间运行的 recognize 调用会马上交回一个操作对象
+The long-running recognize call hands back an operation at once,
+
+297
+00:18:15,898 --> 00:18:17,350
+就像一张取件单
+like a ticket stub.
+
+298
+00:18:17,400 --> 00:18:21,326
+然后它的 result 调用最多等 90 秒，等转写文本回来
+Its result call then waits up to 90 seconds for the transcript.
+
+299
+00:18:21,833 --> 00:18:27,378
+长音频是分段返回的，所以第 84 到 91 行把每一段拼起来
+Long audio comes back in pieces, so lines 84 to 91 join every piece;
+
+300
+00:18:27,378 --> 00:18:30,068
+这正是最新那个 commit 修好的
+that was the latest commit's fix.
+
+301
+00:18:30,316 --> 00:18:34,753
+输入 python cli.py --transcribe，或者 -t
+Type python cli.py --transcribe, or -t.
+
+302
+00:18:35,073 --> 00:18:37,687
+要找的是 Transcribing 加一个文件名
+Look for Transcribing and a file name,
+
+303
+00:18:37,687 --> 00:18:40,919
+ffmpeg 的日志、响应，还有转写文本
+ffmpeg's log, the response, and the transcript.
+
+304
+00:18:41,239 --> 00:18:43,338
+如果报 No such file
+If it says no such file,
+
+305
+00:18:43,338 --> 00:18:47,447
+后面是 ffmpeg，就把 ffmpeg 加到第 3 行，然后退出、重新构建
+ffmpeg, add ffmpeg to line 3, exit and rebuild.
+
+306
+00:18:47,683 --> 00:18:51,705
+然后打开 text prompts 下 group-01 里那个新的文本文件
+Then open the new text file under text prompts, group-01,
+
+307
+00:18:51,705 --> 00:18:53,158
+就在你的笔记本上
+on your laptop.
+
+308
+00:18:53,208 --> 00:18:56,182
+如果里面是 None，说明 Speech-to-Text 什么也没返回
+If it says None, Speech-to-Text returned nothing:
+
+309
+00:18:56,182 --> 00:19:00,248
+删掉它，重新转写，因为转写过的文件会被跳过
+delete it and transcribe again, because finished files are skipped.
+
+310
+00:19:00,483 --> 00:19:05,368
+第 12 步：python cli.py --upload，或者 -u
+Step 12: python cli.py --upload, or -u.
+
+311
+00:19:05,688 --> 00:19:10,535
+它只上传 input 开头的文件，在 bucket 里也用同样的名字
+It uploads only files starting with input, under the same name in the bucket:
+
+312
+00:19:10,535 --> 00:19:14,563
+要找的是 Uploading，后面是 text prompts、你们组和文件名
+look for Uploading, then text prompts, your group, and the file.
+
+313
+00:19:14,800 --> 00:19:17,455
+你的转写文本会落进你们组的抽屉
+Your transcript drops into your group's drawer,
+
+314
+00:19:17,455 --> 00:19:22,651
+排行榜上转写那一格也会亮起来，README 里说的检查方法就是这个
+and the transcribe cell lights up on the leaderboard, which is how the README says to check.
+
+315
+00:19:22,971 --> 00:19:25,616
+暂停一下，用你的密钥把三步都跑一遍
+Pause and run all three steps, with your key.
+
+316
+00:19:25,850 --> 00:19:28,729
+额外提示一句：这些参数可以合在一起用
+An extra tip: the flags combine,
+
+317
+00:19:28,729 --> 00:19:32,058
+-d -t -u 会按顺序把三步都跑完
+so -d -t -u runs all three, in order.
+
+318
+00:19:32,378 --> 00:19:34,660
+每次调用都记在课程项目的账上
+Each call is billed to the course project.
+
+319
+00:19:36,000 --> 00:19:38,453
+第 13 步：退出，然后重新构建
+Step 13: exit, and rebuild.
+
+320
+00:19:38,773 --> 00:19:43,121
+输入 exit，container 就被删掉，连同用完就扔的可写层
+Type exit, and the container is removed with its throwaway layer,
+
+321
+00:19:43,121 --> 00:19:45,195
+26 个包也跟着没了
+and the 26 packages go with it.
+
+322
+00:19:45,433 --> 00:19:47,778
+回到笔记本上，做一个额外检查
+Back on the laptop, an extra check:
+
+323
+00:19:47,778 --> 00:19:54,212
+带三个依赖的 pyproject.toml、lock 文件和那两个新目录都还在
+the pyproject.toml with three dependencies, the lock file, and the two new folders all survived,
+
+324
+00:19:54,212 --> 00:19:56,356
+因为它们在这扇窗里
+because they were in the window.
+
+325
+00:19:56,600 --> 00:19:59,928
+而 git status 只显示 cli.py 改过了
+Git status shows only cli.py as changed.
+
+326
+00:20:00,248 --> 00:20:02,979
+其余的为什么看不见，我们最后再说
+We'll see why the rest is invisible at the end.
+
+327
+00:20:03,217 --> 00:20:04,995
+现在来看那个坑，这也是额外步骤
+Now the trap, as an extra.
+
+328
+00:20:05,244 --> 00:20:08,441
+用你之前构建的 image 起一个新的 container
+Start a new container from the image you built earlier,
+
+329
+00:20:08,441 --> 00:20:10,041
+再让它打印一次帮助
+and ask for help again.
+
+330
+00:20:10,108 --> 00:20:12,013
+又是 ModuleNotFoundError
+It's ModuleNotFoundError again:
+
+331
+00:20:12,013 --> 00:20:14,779
+那些包只存在于旧的 container 里
+the packages lived only in the old container.
+
+332
+00:20:15,017 --> 00:20:16,371
+README 给的办法是
+The README's fix:
+
+333
+00:20:16,371 --> 00:20:20,350
+退出，然后用同一条 docker build 命令重新构建 image
+exit, and rebuild the image with the same docker build command.
+
+334
+00:20:20,670 --> 00:20:22,017
+暂停一下，自己跑一遍
+Pause and run it.
+
+335
+00:20:22,067 --> 00:20:24,240
+刚才那道题的答案，这次是真的
+The ponder's answer, for real:
+
+336
+00:20:24,240 --> 00:20:29,746
+构建步骤 2 和 3 用了缓存，构建步骤 4 复制改过的目录
+build steps 2 and 3 are cached, while build step 4 copies the changed folder
+
+337
+00:20:29,746 --> 00:20:32,499
+构建步骤 5，也就是 uv sync，重新运行
+and build step 5, uv sync, runs again.
+
+338
+00:20:32,819 --> 00:20:34,589
+这次构建不到 10 秒
+The build took under ten seconds.
+
+339
+00:20:34,833 --> 00:20:38,172
+完整日志显示了 uv sync 这次做了什么
+The full log shows what uv sync did this time:
+
+340
+00:20:38,172 --> 00:20:40,641
+复制那一步带进了 lock 文件
+the copy brought in the lock file,
+
+341
+00:20:40,641 --> 00:20:44,561
+uv 装上了同样的 26 个包，装进了 image 里
+and uv installed the same 26 packages, into the image.
+
+342
+00:20:44,800 --> 00:20:46,286
+再做两个额外检查
+Two more extras.
+
+343
+00:20:46,336 --> 00:20:52,910
+这个 image 涨到了 1.48 GB，docker history 每条指令列一行
+The image grew to 1.48 gigabytes, and docker history lists one row per instruction:
+
+344
+00:20:52,910 --> 00:20:55,445
+只写配置卡片的那几行显示 0 字节
+card-only lines show zero bytes.
+
+345
+00:20:55,765 --> 00:21:02,272
+现在 uv sync 那一层有 105 MB，是这些包加上 uv 的下载缓存
+The uv sync layer now holds 105 megabytes, the packages plus uv's download cache.
+
+346
+00:21:02,517 --> 00:21:07,374
+现在新起的 container 不用 uv add 就能导入这三个包
+And a fresh container now imports all three packages with no uv add at all:
+
+347
+00:21:07,374 --> 00:21:08,974
+它们已经打包进 image 了
+they're baked in.
+
+348
+00:21:09,500 --> 00:21:13,396
+还有一点：因为复制那一步在 uv sync 前面
+One more thing: because the copy comes before uv sync,
+
+349
+00:21:13,396 --> 00:21:15,560
+任何修改，哪怕只是组名
+any edit, even the group name,
+
+350
+00:21:15,560 --> 00:21:18,951
+都会像第 2 讲的多米诺骨牌一样，把 uv sync 也推倒
+knocks over uv sync, like lecture 2's dominoes.
+
+351
+00:21:19,271 --> 00:21:24,177
+后面的教程会先复制 pyproject.toml 和 uv.lock
+Later tutorials copy pyproject.toml and uv.lock first.
+
+352
+00:21:25,617 --> 00:21:30,566
+组件 B，也就是 generate text，流程一样；我们会快一点
+Component B, generate text, follows the same recipe; we'll go faster.
+
+353
+00:21:30,886 --> 00:21:32,131
+第 1 和第 2 步
+Steps 1 and 2:
+
+354
+00:21:32,131 --> 00:21:36,326
+cd 进它的目录，再把密钥复制到它的 secrets 目录里
+cd into its folder, and copy the key into its secrets folder.
+
+355
+00:21:36,567 --> 00:21:41,691
+额外看一眼：这个目录已经有自己的 pyproject.toml
+An extra look: this folder already has its own pyproject.toml,
+
+356
+00:21:41,691 --> 00:21:46,402
+两个包都列上了，还要求 Python 3.14 或更新
+listing both packages and requiring Python 3.14 or newer.
+
+357
+00:21:46,722 --> 00:21:48,642
+这个先放着，到第 13 步再说
+Leave that until step 13.
+
+358
+00:21:48,884 --> 00:21:53,620
+第一个意外：uv init 失败了，因为项目已经初始化过了
+Surprise one: uv init fails: the project is already initialized.
+
+359
+00:21:53,940 --> 00:21:57,620
+README 里还是让你跑它，这是一个小错误
+The README still says to run it, a small mistake:
+
+360
+00:21:57,620 --> 00:22:01,001
+跳过第 3 步，也别管那个遗留的 main.py
+skip step 3, and ignore the leftover main.py.
+
+361
+00:22:01,250 --> 00:22:03,417
+第 4 步：还是同样的 Dockerfile
+Step 4: the same Dockerfile,
+
+362
+00:22:03,417 --> 00:22:08,759
+只是第 3 行去掉了 ffmpeg，因为这个组件根本不碰音频
+except line 3 drops ffmpeg, since this component never touches audio.
+
+363
+00:22:09,079 --> 00:22:11,256
+把你的复制过来，改掉那一行
+Copy yours and change that line.
+
+364
+00:22:11,500 --> 00:22:14,812
+第 5 步构建它，那个大 RUN 会重新运行
+Step 5 builds it, and the big RUN step runs again,
+
+365
+00:22:14,812 --> 00:22:17,793
+因为它要装的软件包变了
+because the package list it installs changed.
+
+366
+00:22:18,113 --> 00:22:19,450
+暂停一下，自己跑一遍
+Pause and run it.
+
+367
+00:22:19,500 --> 00:22:23,526
+来想一想。这个 image 里是 Python 3.12
+Ponder this. The image has Python 3.12;
+
+368
+00:22:23,526 --> 00:22:28,033
+这个 pyproject.toml 却要求 3.14 或更新
+this pyproject.toml asks for 3.14 or newer.
+
+369
+00:22:28,353 --> 00:22:30,124
+那 venv 会用哪个 Python？
+Which Python will the venv use?
+
+370
+00:22:38,967 --> 00:22:41,877
+第二个意外：实时视图里看不到
+Surprise two: the live view hides it;
+
+371
+00:22:41,877 --> 00:22:45,967
+完整日志里能看到：uv 下载了它自己的 Python
+the full log shows it: uv downloaded its own Python,
+
+372
+00:22:45,967 --> 00:22:50,530
+录制时是 3.15.0，并用它建了 venv
+3.15.0 at the time of recording, and built the venv on it.
+
+373
+00:22:50,767 --> 00:22:54,116
+这个 image 里的 3.12 落在范围之外
+The image's 3.12 falls outside the interval,
+
+374
+00:22:54,116 --> 00:22:58,532
+所以 uv 去下载了范围内最新的 Python，和第 2 讲一样
+so uv fetched the newest Python in range, as in lecture 2.
+
+375
+00:22:58,767 --> 00:23:03,864
+第 6 步运行它，一个额外检查确认是 Python 3.15.0
+Step 6 runs it, and an extra check confirms Python 3.15.0,
+
+376
+00:23:03,864 --> 00:23:06,852
+来自 uv 的目录，而不是 image 自带的
+from uv's folder, not the image's.
+
+377
+00:23:07,100 --> 00:23:11,917
+第 7 步的 uv add 没找到新东西，因为两个包都已经列上了
+Step 7's uv add finds nothing new, since both packages are listed;
+
+378
+00:23:11,917 --> 00:23:14,034
+它只写了 lock 文件
+it only writes the lock file.
+
+379
+00:23:14,284 --> 00:23:17,639
+第 8 和第 9 步：设置组名，这里是第 19 行
+Steps 8 and 9: set the group name, here on line 19,
+
+380
+00:23:17,639 --> 00:23:20,599
+再检查一下帮助，和 README 一致
+and check the help, which matches the README.
+
+381
+00:23:20,919 --> 00:23:22,384
+暂停一下，跟上进度
+Pause and catch up.
+
+382
+00:23:22,434 --> 00:23:25,805
+第 10 到 12 步：下载、生成、上传
+Steps 10 to 12: download, generate, upload.
+
+383
+00:23:26,125 --> 00:23:30,792
+生成这一步把每份转写文本发给 Gemini 2.5 Flash Lite
+The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI.
+
+384
+00:23:30,792 --> 00:23:32,695
+它跑在 Vertex AI 上
+The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI.
+
+385
+00:23:33,015 --> 00:23:37,410
+Google 在 2026 年 10 月 20 日下线该模型
+Google retires that model on October 20, 2026.
+
+386
+00:23:37,730 --> 00:23:39,608
+之后启动 container 时
+After that, start the container
+
+387
+00:23:39,608 --> 00:23:42,637
+要在 Gemini 模型变量里填一个现行的模型
+with a current model in the GEMINI_MODEL variable.
+
+388
+00:23:42,957 --> 00:23:47,354
+较新的模型在 cli.py 用的那个区域里没有提供
+Newer models aren't served in the region cli.py uses,
+
+389
+00:23:47,354 --> 00:23:51,170
+所以还要把第 24 行的区域改成 global
+so also set the location on line 24 to global.
+
+390
+00:23:52,017 --> 00:23:54,282
+要找的是你的 prompt、Generated text
+Look for your prompt, Generated text
+
+391
+00:23:54,282 --> 00:23:56,988
+和一份很长的播客稿，然后是上传
+and a long podcast script, then the upload.
+
+392
+00:23:57,308 --> 00:23:58,908
+暂停一下，三步都跑一遍
+Pause and run all three.
+
+393
+00:23:59,900 --> 00:24:03,397
+第 13 步是退出并重新构建，修复也在这一步
+Step 13, exit and rebuild, brings the fix:
+
+394
+00:24:03,397 --> 00:24:06,812
+把最低 Python 版本降到 3.12
+lower the minimum Python version to 3.12.
+
+395
+00:24:07,132 --> 00:24:09,715
+而 git status 把 Dockerfile 也列出来了
+Git status lists the Dockerfile too:
+
+396
+00:24:09,715 --> 00:24:11,868
+这个目录没有 .gitignore
+this folder has no .gitignore.
+
+397
+00:24:13,817 --> 00:24:15,353
+暂停一下，重新构建
+Pause and rebuild:
+
+398
+00:24:15,353 --> 00:24:18,852
+现在 uv sync 用的是 image 自带的 Python 3.12
+uv sync now uses the image's Python 3.12,
+
+399
+00:24:18,852 --> 00:24:21,156
+下一个 container 也一样
+as does the next container.
+
+400
+00:24:21,476 --> 00:24:22,865
+然后退出这个 container
+Exit it.
+
+401
+00:24:22,915 --> 00:24:25,444
+更好的办法是：在第一次构建之前就把它改好
+Better still, fix this before your first build.
+
+402
+00:24:26,783 --> 00:24:28,916
+快速过一遍：C、D 和 E
+Speed round: C, D and E.
+
+403
+00:24:29,236 --> 00:24:34,612
+C 是 synthesis audio en：cd 进去，复制密钥，再跑 uv init
+For C, synthesis_audio_en, cd in, copy the key, and run uv init.
+
+404
+00:24:34,932 --> 00:24:38,991
+如果它写进去的是 3.13 及以上，就改成 3.12
+If it stamps 3.13 or newer, change it to 3.12,
+
+405
+00:24:38,991 --> 00:24:40,756
+这里和 D、E 都要改
+here and in D and E.
+
+406
+00:24:41,000 --> 00:24:43,176
+写一个和 B 一样的 Dockerfile
+Write the same Dockerfile as B's.
+
+407
+00:24:43,496 --> 00:24:48,065
+一个小疏漏，这里和 E 都有：README 的正文说要保留 ffmpeg
+A small slip, here and in E: the README's text says to keep ffmpeg,
+
+408
+00:24:48,065 --> 00:24:51,474
+但它的代码块里没有 ffmpeg，这才是对的
+but its code block, which is right, leaves it out.
+
+409
+00:24:51,716 --> 00:24:56,729
+构建它：构建步骤 2 用了缓存，整个构建只花了 0.6 秒
+Build it: build step 2 is cached and the build takes 0.6 seconds:
+
+410
+00:24:56,729 --> 00:24:59,737
+C 的 Dockerfile 到这里为止和 B 的一样
+C's Dockerfile matches B's up to there,
+
+411
+00:24:59,737 --> 00:25:02,127
+所以 Docker 直接复用了 B 的那个大层
+so Docker reuses B's big layer.
+
+412
+00:25:02,366 --> 00:25:06,718
+运行它，加上 storage 和 text to speech：一共 24 个包
+Run it, and add storage and text to speech: 24 packages.
+
+413
+00:25:06,966 --> 00:25:10,102
+在第 18 行设置组名，然后检查一下帮助
+Set the group name on line 18, then check the help.
+
+414
+00:25:10,422 --> 00:25:12,517
+没有密钥的话，连帮助都会失败
+Without a key, even help fails:
+
+415
+00:25:12,517 --> 00:25:17,245
+脚本一启动，第 22 行就创建 Text-to-Speech 客户端
+line 22 builds the Text-to-Speech client as soon as the script starts,
+
+416
+00:25:17,245 --> 00:25:18,934
+比读取任何参数都早
+before reading any flags.
+
+417
+00:25:19,254 --> 00:25:20,854
+暂停一下，跟上进度
+Pause and catch up.
+
+418
+00:25:22,250 --> 00:25:26,666
+请求里带着文本，还有 bucket 里的一个地址，就在第 78 行
+The request carries the text and an address in the bucket, line 78.
+
+419
+00:25:26,986 --> 00:25:30,413
+Google 的长音频服务把语音直接写到那里
+Google's long audio service writes the speech straight there,
+
+420
+00:25:30,413 --> 00:25:32,042
+从不经过你的 container
+never through your container.
+
+421
+00:25:32,283 --> 00:25:35,874
+C 只是拿着一张取件单，最多等 300 秒
+C just holds a ticket stub for up to 300 seconds,
+
+422
+00:25:35,874 --> 00:25:40,710
+然后打印出音频会被保存：所以 C 没有上传这一步
+then prints that the audio will be saved: so C has no upload step.
+
+423
+00:25:40,950 --> 00:25:45,814
+所以在 C 里，暂停一下，跑下载和合成，然后退出、重新构建
+So in C, pause to run download and synthesis, then exit and rebuild.
+
+424
+00:25:46,800 --> 00:25:50,519
+D，也就是 translate text，飞快地走完同样的准备
+D, translate text, races through the same setup:
+
+425
+00:25:50,519 --> 00:25:54,160
+cd、密钥、uv init、同样的 Dockerfile、构建
+cd, key, uv init, the same Dockerfile, a build.
+
+426
+00:25:54,483 --> 00:25:57,071
+然后运行它，加上 storage 和 translate
+Then run it, add storage and translate,
+
+427
+00:25:57,071 --> 00:25:59,326
+再在第 18 行设置组名
+and set the group name on line 18.
+
+428
+00:25:59,646 --> 00:26:01,864
+和 C 一样，连帮助都需要密钥
+Like C, even help needs the key.
+
+429
+00:26:02,184 --> 00:26:03,784
+暂停一下，跟上进度
+Pause and catch up.
+
+430
+00:26:06,333 --> 00:26:08,442
+翻译服务没有取件单
+Translation has no ticket stub:
+
+431
+00:26:08,442 --> 00:26:13,473
+法语直接返回，然后打印出来、存进 text translated
+the French comes straight back, is printed and saved under text translated,
+
+432
+00:26:13,473 --> 00:26:15,073
+所以 D 需要上传这一步
+so D needs an upload.
+
+433
+00:26:15,216 --> 00:26:19,782
+暂停一下，跑下载、翻译和上传，然后退出、重新构建
+Pause to run download, translate and upload, then exit and rebuild.
+
+434
+00:26:21,066 --> 00:26:22,833
+至于 E，也就是 synthesis audio
+E, synthesis audio,
+
+435
+00:26:22,833 --> 00:26:25,482
+就是再来一遍 C，组名也在第 18 行
+is C again, group name on line 18 too.
+
+436
+00:26:25,802 --> 00:26:27,057
+一个无害的小疏漏
+One harmless slip:
+
+437
+00:26:27,057 --> 00:26:30,574
+它的帮助文本写着 Transcribe audio file to text
+its help text says “Transcribe audio file to text”,
+
+438
+00:26:30,574 --> 00:26:32,174
+是从 A 的代码粘过来的
+pasted from A's code.
+
+439
+00:26:32,394 --> 00:26:33,994
+暂停一下，跟上进度
+Pause and catch up.
+
+440
+00:26:36,533 --> 00:26:39,541
+暂停一下，用你的密钥跑下载和合成
+Pause, and run download and synthesis with your key.
+
+441
+00:26:40,216 --> 00:26:42,314
+E 里有一个可选的附加任务
+An optional bonus in E speaks the French with ElevenLabs, in the instructor's voice.
+
+442
+00:26:42,314 --> 00:26:45,613
+用 ElevenLabs 以授课老师的声音念出法语
+An optional bonus in E speaks the French with ElevenLabs, in the instructor's voice.
+
+443
+00:26:45,933 --> 00:26:48,973
+它用的是你自己的 ElevenLabs 密钥和配额
+It uses your own ElevenLabs key and quota:
+
+444
+00:26:48,973 --> 00:26:50,565
+secrets 里放一个密钥文件
+a key file in secrets,
+
+445
+00:26:50,565 --> 00:26:54,979
+附加脚本里也要填上你的组名，还要 uv add requests
+your group name in the bonus script too, and uv add requests.
+
+446
+00:26:55,216 --> 00:26:56,837
+然后跑它的三条命令
+Then run its three commands.
+
+447
+00:26:57,157 --> 00:27:02,747
+没有密钥文件的话，连下载都会失败：脚本一启动就会读那个文件
+Without the key file, even download fails: the script reads that file as soon as it starts.
+
+448
+00:27:02,983 --> 00:27:04,967
+暂停一下，退出，然后重新构建 E
+Pause to exit and rebuild E.
+
+449
+00:27:05,287 --> 00:27:07,977
+五个都做完以后，你们组的抽屉一个个填满
+With all five done, your group's drawers fill,
+
+450
+00:27:07,977 --> 00:27:10,023
+排行榜上你那一行也会亮起来
+and your leaderboard row lights up.
+
+451
+00:27:12,167 --> 00:27:14,130
+关于密钥，最后一个问题
+One last question about the key.
+
+452
+00:27:14,450 --> 00:27:17,202
+它被 Git 忽略了，所以永远不会传到 GitHub
+It's git-ignored, so it never reaches GitHub.
+
+453
+00:27:17,522 --> 00:27:20,596
+可是你构建了 image，还把它 push 到了 Docker Hub
+But you build the image and push it to Docker Hub:
+
+454
+00:27:20,596 --> 00:27:22,196
+密钥在不在里面？
+is the key inside?
+
+455
+00:27:30,550 --> 00:27:34,177
+我们来验证一下，用一个 82 字节的替身文件代替真正的密钥
+Let's test it, with an 82 byte stand-in for the real key.
+
+456
+00:27:34,497 --> 00:27:39,276
+这几条额外的 Git 命令显示，它被 .gitignore 的第 3 行忽略了
+These extra Git commands show it's ignored, by line 3 of .gitignore.
+
+457
+00:27:41,050 --> 00:27:46,213
+现在重新构建，再列出 image 本身里面的 secrets 目录，不挂载
+Now rebuild, and list the secrets folder inside the image itself, with no mount.
+
+458
+00:27:46,533 --> 00:27:50,607
+就在这儿：mega-pipeline.json，在 image 里面
+There it is: mega-pipeline.json, inside the image.
+
+459
+00:27:50,927 --> 00:27:54,136
+你真正的密钥就在你今天构建的每个 image 里
+Your real key is in every image you built today,
+
+460
+00:27:54,136 --> 00:27:56,410
+因为第 2 步在第 5 步之前
+because step 2 came before step 5.
+
+461
+00:27:56,650 --> 00:27:58,783
+Docker 不读 .gitignore
+Docker doesn't read .gitignore.
+
+462
+00:27:59,103 --> 00:28:03,672
+还记得第 2 讲的包裹吗：构建上下文就是整个目录
+Remember lecture 2's parcel: the build context is the whole folder,
+
+463
+00:28:03,672 --> 00:28:07,082
+密钥也在里面，COPY 那一行会把它全部拆开放进去
+key included, and the copy line unpacks all of it.
+
+464
+00:28:07,402 --> 00:28:10,005
+README 里关于 secrets 的提示只管 Git
+The README's secrets note only covers Git.
+
+465
+00:28:10,250 --> 00:28:14,537
+解决办法第 2 讲也推荐过，在这里算额外步骤
+The fix, which lecture 2 recommended, is an extra here:
+
+466
+00:28:14,537 --> 00:28:18,591
+一个叫 .dockerignore 的文件，只有一行：secrets/
+a file named .dockerignore, with one line, secrets/.
+
+467
+00:28:18,911 --> 00:28:23,733
+五个 image 都复制了密钥，所以暂停一下，在五个目录里都加上它
+All five images copied the key, so pause and add it in all five folders.
+
+468
+00:28:25,200 --> 00:28:26,917
+重新构建，再列一次
+Rebuild, and list again:
+
+469
+00:28:26,917 --> 00:28:29,851
+报 cannot access，No such file or directory
+cannot access, No such file or directory.
+
+470
+00:28:30,171 --> 00:28:31,878
+密钥没有进 image
+The key stayed out of the image.
+
+471
+00:28:32,567 --> 00:28:33,925
+而运行照样没问题
+And the run still works,
+
+472
+00:28:33,925 --> 00:28:38,114
+因为挂载会在 container 启动时把你的 secrets 目录带进来
+because the mount brings your secrets folder in when the container starts.
+
+473
+00:28:38,350 --> 00:28:42,909
+README 最后那个可选部分，是把 image push 到 Docker Hub
+The README's optional last section pushes the image to Docker Hub:
+
+474
+00:28:42,909 --> 00:28:46,777
+先在那里创建一个访问令牌，然后登录、打 tag、push
+create an access token there, then log in, tag and push.
+
+475
+00:28:47,097 --> 00:28:50,510
+只 push 用那个 .dockerignore 构建出来的 image
+Only push an image built with that .dockerignore.
+
+476
+00:28:50,750 --> 00:28:55,186
+登录时只给用户名，等它提示输入时再粘贴访问令牌
+Log in with just your user name and paste the token at the prompt;
+
+477
+00:28:55,186 --> 00:28:57,875
+令牌写在 -p 后面就会留在你的 shell 历史记录里
+after -p it stays in your shell history.
+
+478
+00:28:58,195 --> 00:29:02,142
+如果你曾经 push 过带密钥的 image，把它删掉，并告诉课程团队
+If you ever pushed an image with the key, delete it and tell the staff.
+
+479
+00:29:02,384 --> 00:29:04,222
+课程接下来的方向
+Where the course is heading:
+
+480
+00:29:04,222 --> 00:29:08,228
+去年的参考答案把 secrets 目录放在 repo 外面
+last year's solution kept the secrets folder outside the repo
+
+481
+00:29:08,228 --> 00:29:10,789
+运行时再把它挂载到 /secrets
+and mounted it at /secrets at run time.
+
+482
+00:29:11,109 --> 00:29:13,157
+密钥从来不会进入 image
+No key ever enters the image.
+
+483
+00:29:14,500 --> 00:29:16,007
+该清理了
+Time to clean up.
+
+484
+00:29:16,057 --> 00:29:21,071
+云上没有要删的东西：你没有创建任何机器、bucket 或账号
+In the cloud there's nothing to delete: you created no machine, bucket or account.
+
+485
+00:29:21,317 --> 00:29:24,325
+在本地，用 cd .. 回到 repo 的根目录
+Locally, cd .. back up to the repo.
+
+486
+00:29:24,645 --> 00:29:28,079
+一条额外的命令列出这五个 image
+An extra command lists the five images:
+
+487
+00:29:28,079 --> 00:29:35,034
+transcribe audio 是 1.48 GB，其他四个各约 845 MB
+transcribe audio at 1.48 gigabytes, the other four at about 845 megabytes each.
+
+488
+00:29:35,283 --> 00:29:37,083
+想保住你的成果，就检查一下 Git
+To keep your work, check Git.
+
+489
+00:29:37,331 --> 00:29:38,831
+额外跑一下 git status
+An extra git status
+
+490
+00:29:38,831 --> 00:29:43,420
+它显示你改过的 cli.py 和 generate text 里的文件
+shows your edited cli.py files and the files in generate text,
+
+491
+00:29:43,420 --> 00:29:48,531
+但另外四个目录藏起了它们的 Dockerfile 和项目文件
+but the other four folders hide their Dockerfiles and project files.
+
+492
+00:29:48,767 --> 00:29:50,209
+在你自己的 repo 里
+In your own repo,
+
+493
+00:29:50,209 --> 00:29:54,117
+用 git add -f 把这些 Dockerfile 和项目文件加进去
+add those Dockerfiles and project files with git add -f,
+
+494
+00:29:54,117 --> 00:29:58,367
+但别加数据目录，secrets 则要一直忽略下去
+but not the data folders, and never stop ignoring secrets.
+
+495
+00:29:58,617 --> 00:30:02,650
+然后暂停，用 docker image rm 删掉这五个 image
+Then pause and remove the five images with docker image rm,
+
+496
+00:30:02,650 --> 00:30:04,114
+这也是额外步骤
+another extra.
+
+497
+00:30:04,164 --> 00:30:07,999
+旧的构建会留下来，没有 tag，每个都带着你的密钥
+Older builds stay behind untagged, each holding your key,
+
+498
+00:30:07,999 --> 00:30:10,691
+所以再用 docker image prune 把它们也删掉
+so docker image prune removes those too.
+
+499
+00:30:13,717 --> 00:30:15,722
+五道自测题
+Five questions to test yourself.
+
+500
+00:30:16,042 --> 00:30:20,053
+第一题：D，也就是 translate text，读哪个抽屉，又是谁写的？
+One: which drawer does D, translate text, read, and who wrote it?
+
+501
+00:30:20,373 --> 00:30:23,085
+第二题：为什么挂载没有盖住那些包
+Two: why doesn't the mount hide the packages,
+
+502
+00:30:23,085 --> 00:30:26,218
+没有 uv project environment 这个变量，又会出什么问题？
+and what breaks without UV_PROJECT_ENVIRONMENT?
+
+503
+00:30:26,467 --> 00:30:29,489
+第三题：在用完就扔的 container 里 uv add 之后
+Three: after uv add in a throwaway container,
+
+504
+00:30:29,489 --> 00:30:32,376
+什么会留下来，又是什么让它永久保留？
+what survives, and what makes it permanent?
+
+505
+00:30:32,696 --> 00:30:37,091
+第四题：哪个变量指向密钥，为什么只有在 /app 里才管用？
+Four: which variable points to the key, and why only from /app?
+
+506
+00:30:37,411 --> 00:30:41,101
+第五题：被 Git 忽略的密钥怎么会进 image，怎么修？
+Five: how can an image hold a git-ignored key, and the fix?
+
+507
+00:30:41,350 --> 00:30:45,787
+答案在练习里；每条命令都在学习指南里
+Answers are in the exercises; every command is in the study guide.
+
+508
+00:30:46,107 --> 00:30:50,932
+下节课：你自己的 bucket 和服务账号，放在 repo 外面的密钥
+Next lecture: your own bucket and service account, the key outside the repo,
+
+509
+00:30:50,932 --> 00:30:54,043
+还有一个帮你构建并运行每个 container 的脚本
+and a script that builds and runs each container.

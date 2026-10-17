@@ -42,7 +42,8 @@ Beats (script.md "## S15", one voiceover block each):
     address and the reply flash. On "In a second terminal" the page goes and a second terminal (`laptop
     · second terminal`, 7 rows) slides in above the strip: `student@laptop:~$`, the `~` flashes YELLOW
     with the GREY caption "new terminal: cd here first", "· Compose reads the file in the current
-    folder" joins it on that clause, then the prompt reads student@laptop:~/AC215/port_toy$. On
+    folder" joins it on that clause; the captions go, `cd ~/AC215/port_toy` is typed and the prompt
+    reads student@laptop:~/AC215/port_toy$ (the new path flashes YELLOW). On
     "There, docker compose ps" TRACKER P4/2, `docker compose ps` -> 48 lines 2–4 (wrap), the PORTS
     header and `127.0.0.1:8090->9100/tcp` boxed YELLOW.
  6  TRACKER P4/2 · extra: `docker network ls` (GREY `extra` tag) -> 50 lines 2–6, `toynet` TEAL with
@@ -93,6 +94,9 @@ Deviations from SHOW (and why):
 - Beat 5: the second terminal has 7 rows, not 10: above the 3-row strip there are 4.2 units, and the
   GREY caption of beat 6 needs a row above it. The README chip quotes the link text only ("Open
   http://localhost:8090"): the whole sentence is 9.4 wide, wider than the top band.
+  SHOW names no command between the two prompts; the SAY says "cd into port toy first", so `cd
+  ~/AC215/port_toy` is typed (a fresh terminal opens in ~, where the README's `cd port_toy` of Step 1
+  would fail). A cd prints nothing, so no capture backs it.
 - Beat 7: the comparison card leaves when the first terminal grows (card + terminal don't fit
   together); its `rm -f` cell wraps onto two lines, as the README's cell joins two commands.
 - Beats 8–11: the first terminal has 7 rows, not 6: lines 55–61 (7 lines) stay on screen together,
@@ -121,6 +125,9 @@ Critic pass (fixes, kept as rules for this file):
 - Beat 5: the captions beside `~$` fade before the prompt becomes the longer `~/AC215/port_toy$`
   (it was drawn over "new terminal: cd here first"). REPLY wraps after `"listen_port": 9200, `
   (STRIP_COLS, as S12 does): the default width split 47534 into "4" / "7534".
+- Beat 5: the cd into port_toy is typed, not a silent prompt switch (a newcomer had nothing to copy);
+  the two YELLOW boxes of `docker compose ps` are pinned with row.add + scene.add(row): the recolour of
+  ps[3] split that row on the scene, and the value box, added only to the row, vanished for 1.9 s.
 - Beat 6: the "step 2's command" caption comes in as the SAY reaches compose exec, just before the
   command is typed, not after `ok` (it was on screen for under 2 s).
 """
@@ -142,7 +149,6 @@ from common import (
     ReplyStrip,
     Stopwatch,
     ToyNet,
-    _drop_bare,
     _header_text,
     _keep,
     _set_op,
@@ -151,6 +157,7 @@ from common import (
     build_row,
     caption_extra,
     capture,
+    cd_prompt,
     check_mark,
     col_box,
     envelope,
@@ -232,6 +239,8 @@ PS_A = C52.cmd
 assert PS_A == "docker compose ps -a" == C54.cmd == excerpt(TOY, 524, 524)
 DOWN_CMD = C53.cmd
 assert DOWN_CMD == "docker compose down" == excerpt(TOY, 512, 512)
+CD_TOY = "cd ~/AC215/port_toy"     # the second terminal opens in ~ (SAY "cd into port toy first"); a cd prints nothing
+assert P_TOY.endswith(CD_TOY[3:] + "$")
 assert "This is an excerpt" in excerpt(TOY, 446, 446) and excerpt(TOY, 432, 432) == "```yaml"
 assert "Open [http://localhost:8090](http://localhost:8090)" in excerpt(TOY, 460, 460)
 assert excerpt(TOY, 519, 519) == "`Ctrl+C` stops the containers but leaves them in place."
@@ -692,12 +701,9 @@ class ComposeUp(VoiceScene):
             vo.wait_until("Compose reads the file in the current folder")
             self.play(FadeIn(cap_b, shift=LEFT * 0.1), run_time=0.5)
             self.wait(0.6)
-            self.play(FadeOut(caps), run_time=0.35)     # gone before the longer prompt reaches it
-            _drop_bare(self, t2)
-            t2.set_prompt(P_TOY)
-            ln2 = bare_prompt(self, t2)
-            self.play(Indicate(glyph_range(ln2, P_TOY.index(":") + 1, len(P_TOY) - 1), color=TURN,
-                               scale_factor=1.05), run_time=0.6)
+            self.play(FadeOut(caps), run_time=0.35)     # gone before the typed cd reaches it
+            type_cmd(self, t2, CD_TOY, type_time=0.6)   # a fresh terminal opens in ~: the cd is typed
+            cd_prompt(self, t2, P_TOY, color=TURN, run_time=0.6)
             vo.wait_until("There, docker compose ps")
             self.play(tr.goto(2), run_time=0.4)
             type_cmd(self, t2, PS, type_time=0.5)
@@ -710,6 +716,7 @@ class ComposeUp(VoiceScene):
             for row, bb in ((ps[1], b_head), (ps[3], b_val)):
                 self.remove(bb)
                 row.add(bb)
+                self.add(row)        # the recolour split ps[3] on the scene: re-add it, as pin() does
 
         # ============================================================ 6 · network ls (extra); compose exec
         cap6 = mixed("the README's table writes curl ...: this is step 2's command", ["curl ..."])

@@ -52,7 +52,8 @@ Beats (script.md "## S03", one voiceover block each):
     column after line 10's closing quote, with a short arrow down through it (so nothing frames
     the old value); line 12's path underlined GREY + tag on line 13's row "↑ leave this: a path
     inside the container". GREY note "skip it → calls go to the course's project → permission
-    error". The pencil rests beside the card; ▶ your turn on the card; hold 2 s; fade to empty.
+    error" low on the left. The card sits top right (the tracker owns the top left); the pencil
+    rests to its left, where ▶ your turn replaces it; hold 2 s; fade to empty.
 """
 
 import numpy as np
@@ -740,26 +741,27 @@ class KeyAndProject(VoiceScene):
             pin(self, log, cm, run_time=0.4)
 
         # ========================================================== 6 · GCP_PROJECT in docker-shell.sh
+        # the band above the 10-row terminal: the editor card top right (the tracker owns the top
+        # left), the pencil and later ▶ your turn to its left, the skip note low on the left
         fc = file_card()
-        at_left(fc, -6.3, 0)
-        fc.shift(UP * (t5.box.get_top()[1] + 0.12 - fc.frame.get_bottom()[1]))   # just above the terminal
+        fc.move_to([6.45 - fc.width / 2, (t5.box.get_top()[1] + 3.4) / 2, 0])
         pen = pencil(0.6, S.GREY)
-        pen.move_to(fc.rows[0].get_right() + np.array([0.5, 0.35, 0]))
+        pen.move_to(fc.frame.get_left() + np.array([-0.7, 0.25, 0]))
         skip = note("skip it → calls go to the course's project → permission error")
-        skip.move_to([6.45 - skip.width / 2, fc.frame.get_center()[1] - 0.12, 0])
+        at_left(skip, -6.4, t5.box.get_top()[1] + 0.3)
 
         with self.voiceover(SAY[6]) as vo:
             # the ls output leaves as the editor card arrives: the edit happens there first
             self.play(tr.goto(2), FadeIn(fc, shift=DOWN * 0.1), FadeOut(t5.lines), run_time=0.6)
             for m in list(t5.lines):
                 t5.lines.remove(m)
-            self.play(FadeIn(pen, shift=LEFT * 0.2), run_time=0.3)
+            self.play(FadeIn(pen, shift=RIGHT * 0.2), run_time=0.3)
             r0 = fc.rows[0]
             tip = pen.tip_point()
             a = r0.get_left() + RIGHT * 0.3
             self.play(pen.animate.shift(a - tip), run_time=0.4)
             self.play(pen.animate.shift(RIGHT * 2.0), r0.animate.set_color(TURN), run_time=0.7)
-            self.play(pen.animate.shift(fc.frame.get_right() + RIGHT * 0.25 - pen.get_left()
+            self.play(pen.animate.shift(fc.frame.get_left() + LEFT * 0.3 - pen.get_right()
                                         + DOWN * (pen.get_center()[1] - fc.frame.get_center()[1])),
                       caption_extra(tr, True), run_time=0.4)
             cmd6 = type_cmd(self, t5, DIFF, 0.9)
@@ -800,7 +802,8 @@ class KeyAndProject(VoiceScene):
             self.play(FadeIn(skip, shift=LEFT * 0.15), run_time=0.6)
 
             vo.wait_until("Pause and edit")
-            yt6 = your_turn().move_to(fc.frame.get_corner(UP + RIGHT) + LEFT * 0.5)
+            yt6 = your_turn()                             # where the pencil rested
+            yt6.move_to(fc.frame.get_left() + LEFT * (0.3 + yt6.width / 2))
             self.play(FadeIn(yt6, scale=1.2), FadeOut(pen), run_time=0.5)
         self.wait(2)                                   # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tr, t5, fc, yt6, skip)), run_time=0.8)

@@ -665,10 +665,11 @@ class ChangePorts(VoiceScene):
             type_extra(self, t, CURL_8090, type_time=1.0)
             t.print(self, [(C33.line(2), ERR)], run_time=0.35)
             vo.wait_until("and docker ps shows")
-            type_extra(self, t, PS_SHORT, type_time=1.3)
-            ps = t.print(self, C35.at((2, 4)), run_time=0.4)
+            # (brisk: the highlight must end before "Pause and move", or the card arrives late)
+            type_extra(self, t, PS_SHORT, type_time=0.9)
+            ps = t.print(self, C35.at((2, 4)), run_time=0.3)
             m95 = substring(ps[1], "127.0.0.1:8095->9100/tcp")
-            self.play(m95.animate.set_color(TURN), run_time=0.4)
+            self.play(m95.animate.set_color(TURN), run_time=0.3)
             vo.wait_until("Pause and move")
             # 5 rows: docker ps (its prompt row with the extra tag, the command) and its output stay;
             # the card arrives in the same move, so a pause on "Pause" already lands on it
