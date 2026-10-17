@@ -52,6 +52,8 @@ def test_tokens_parse_and_check_thresholds_sane():
         checks = t.get("checks", {})
         assert 0 < checks.get("min_background_share", 0.35) <= 1
         assert 0 < checks.get("background_tolerance", 30) < 128
+        assert 0 < checks.get("band_tolerance", 40) < 128
+        assert 0 < checks.get("band_tile_tolerance", 0.15) <= 1  # a fraction, not a percent
 
 
 def test_styles_doc_in_sync():

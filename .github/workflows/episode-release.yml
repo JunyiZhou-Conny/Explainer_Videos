@@ -47,6 +47,16 @@ jobs:
         run: |
           set -euo pipefail
           python3 skill-library/conny-explainer-video/scripts/render.py "${{ inputs.episode }}" --jobs 4
+      - name: Keep the evidence when the render fails
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-failure-${{ github.run_id }}
+          path: |
+            outputs/*/golden-diffs/*.png
+            outputs/*/*.clean.mp4
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Tag, upload and emit the publish manifest
         env:
           GH_TOKEN: ${{ github.token }}

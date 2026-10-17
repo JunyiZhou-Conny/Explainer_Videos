@@ -6,6 +6,16 @@ Runs the scene as a Manim dry run (narration audio comes from the TTS cache, so 
 real) and, after every play()/wait(), reports:
   OUT    a visible mobject outside the safe area x in [-6.6, 6.6], y in [-3.6, 3.6]
   SMALL  a Text / MathTex rendered below 20 pt
+  BAND   a visible mobject dipping into the reserved caption band (the bottom 170 of 1080
+         pixel rows; in scene units y below -2.74 on the default frame). Only for projects
+         that burn captions in overlay mode (episode.json route): legacy video.yaml
+         projects scale the whole picture above the band, so their scenes may use the full
+         frame and are skipped, as are portrait shorts and full-bleed backdrops. Set
+         EXPLAINER_CAPTION_RESERVE to the band height in pixels for other presets, or 0 to
+         disable. Policy: this lint is deliberately stricter than the pixel gate
+         (explainer.style_check excuses a uniformly scene-painted band; here any in-band
+         ink is advice to move it, and a preset route that paints its own band disables
+         the lint via the environment variable).
 and at the end lists mobjects still visible (scenes should end on an empty frame). For a short-format
 BeatScene the HUD (fixed in the frame) may be tiny and a scene may end with objects on screen (they
 carry over into the next shot); its length in bars is printed instead.
@@ -41,7 +51,13 @@ def main(argv=None) -> int:
         return 2
     scene_file, cls_name = Path(argv[0]).resolve(), argv[1]
     project = scene_file.parent.parent
+    environ_before = dict(os.environ)       # main() mutates env/cwd/sys.path; restore for
+    cwd_before = os.getcwd()                # in-process callers (tests, future tooling)
+    path_before = list(sys.path)
+    reserve = float(os.environ.get("EXPLAINER_CAPTION_RESERVE", "170"))  # px rows of 1080; 0 disables
     if (project / "video.yaml").exists():   # the video's own voice (and language), as preview uses
+        # Legacy route: burn() scales the picture above the band, so scenes own the full frame.
+        reserve = 0.0
         import yaml
 
         from .build import scene_env
@@ -53,6 +69,7 @@ def main(argv=None) -> int:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
     from manim import Scene, SingleStringMathTex, Text, VMobject, tempconfig
+    from manim import config as mconfig
 
     seen: set = set()
     problems = 0
@@ -84,6 +101,12 @@ def main(argv=None) -> int:
         nonlocal problems
         t = scene.renderer.time
         hud = {id(x) for m in getattr(scene.renderer.camera, "fixed_mobjects", []) for x in m.get_family()}
+        fw, fh = mconfig.frame_width, mconfig.frame_height
+        # The presets reserve the bottom RESERVE of 1080 pixel rows for burned captions;
+        # dry runs render at other pixel sizes, so work in frame units via the fraction.
+        band_top = None
+        if reserve > 0 and fw > fh and getattr(scene, "grid", None) is None:
+            band_top = -fh / 2 + reserve / 1080 * fh
         for top in scene.mobjects:
             for m, label in leaves(top):
                 if isinstance(m, (Text, SingleStringMathTex)):
@@ -103,6 +126,14 @@ def main(argv=None) -> int:
                         problems += 1
                         print(f"[{t:6.2f}s] OUT   {type(m).__name__} x[{x0:.2f}, {x1:.2f}] "
                               f"y[{y0:.2f}, {y1:.2f}] {label!r:.60}")
+                if (band_top is not None and y0 < band_top - 0.01
+                        and not (x1 - x0 >= 0.95 * fw and y1 - y0 >= 0.95 * fh)):  # backdrops may
+                    key = ("band", id(m), round(x0, 1), round(y0, 1))
+                    if key not in seen:
+                        seen.add(key)
+                        problems += 1
+                        print(f"[{t:6.2f}s] BAND  {type(m).__name__} dips to y={y0:.2f}; "
+                              f"captions own y < {band_top:.2f} {label!r:.60}")
                 if isinstance(m, (Text, SingleStringMathTex)) and id(m) not in hud:   # (HUD: tiny on purpose)
                     fs = getattr(m, "font_size", None)
                     if fs is not None and fs < MIN_PT:
@@ -124,24 +155,31 @@ def main(argv=None) -> int:
 
     Scene.play, Scene.wait = play, wait
 
-    spec = importlib.util.spec_from_file_location(scene_file.stem, scene_file)
-    mod = importlib.util.module_from_spec(spec)
-    os.chdir(scene_file.parent.parent)
-    spec.loader.exec_module(mod)
-    with tempfile.TemporaryDirectory() as media, tempconfig({
-            "dry_run": True, "quality": "low_quality", "disable_caching": True,
-            "progress_bar": "none", "verbosity": "WARNING", "media_dir": media}):
-        scene = getattr(mod, cls_name)()
-        scene.render()
-        left = [m for m in scene.mobjects if any(visible(s) for s in m.get_family())]
-        print(f"end at {scene.renderer.time:.1f}s; {len(left)} visible mobject(s) left on screen")
-        for m in left:
-            print("  LEFT:", type(m).__name__)
-        if getattr(scene, "grid", None) is not None:      # a short: shots hand objects on (match cuts)
-            bar = scene.grid.bar
-            off = scene.renderer.time / bar - round(scene.renderer.time / bar)
-            print(f"short: {scene.renderer.time / bar:.2f} bars" + ("" if abs(off) < 1e-3 else "  (NOT on a bar line)"))
-            left = []
+    try:
+        spec = importlib.util.spec_from_file_location(scene_file.stem, scene_file)
+        mod = importlib.util.module_from_spec(spec)
+        os.chdir(scene_file.parent.parent)
+        spec.loader.exec_module(mod)
+        with tempfile.TemporaryDirectory() as media, tempconfig({
+                "dry_run": True, "quality": "low_quality", "disable_caching": True,
+                "progress_bar": "none", "verbosity": "WARNING", "media_dir": media}):
+            scene = getattr(mod, cls_name)()
+            scene.render()
+            left = [m for m in scene.mobjects if any(visible(s) for s in m.get_family())]
+            print(f"end at {scene.renderer.time:.1f}s; {len(left)} visible mobject(s) left on screen")
+            for m in left:
+                print("  LEFT:", type(m).__name__)
+            if getattr(scene, "grid", None) is not None:  # a short: shots hand objects on (match cuts)
+                bar = scene.grid.bar
+                off = scene.renderer.time / bar - round(scene.renderer.time / bar)
+                print(f"short: {scene.renderer.time / bar:.2f} bars" + ("" if abs(off) < 1e-3 else "  (NOT on a bar line)"))
+                left = []
+    finally:
+        Scene.play, Scene.wait = orig_play, orig_wait  # repeated in-process calls must not stack wrappers
+        os.environ.clear()
+        os.environ.update(environ_before)
+        os.chdir(cwd_before)
+        sys.path[:] = path_before
     print("OK" if problems == 0 and not left else f"{problems + len(left)} problem(s)")
     return 0 if problems == 0 and not left else 1
 

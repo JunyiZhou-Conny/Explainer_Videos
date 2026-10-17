@@ -128,3 +128,18 @@ Keep these responsibilities separate in the repository:
 | A release or published artifact | The specific finished files shared with viewers. |
 
 This is how a successful workflow becomes a skill: save the stable sequence, encode repeated choices once, keep tools executable and documented, test it on a new topic, and improve it from specific failures. Another agent can then use a short request because the detailed instructions travel with the repository.
+
+## External renderer candidates
+
+[Multiplane](https://github.com/LBEILC/Multiplane) (Apache-2.0) is the designated candidate
+for a future 3D/parallax/alpha scene route: a deterministic headless-Chromium HTML renderer
+built for agents, with pixel-exact `verify`, alpha WebM/ProRes output, and segment-level
+resume. Evaluated 2026-10-17 against this pipeline: rendering is not our bottleneck, and it
+ships no TTS, captions, music or validation, so adopting it wholesale was rejected. Its two
+transferable ideas were implemented natively instead (`explainer.golden` golden-frame
+regression; the caption-band checks in `explainer.check` and `explainer.style_check`).
+Revisit as an optional `episode.py` scene type (an alpha video track with Python-computed
+timings injected) only when all three hold: a concrete episode needs 3D/parallax; the
+project has reached 1.0 or shown ~6 months of continued maintenance (it was days old at
+evaluation, single-maintainer, Node >= 24); and a narrated proof scene with CJK text passes
+sample review, as this lifecycle requires of any new route.
