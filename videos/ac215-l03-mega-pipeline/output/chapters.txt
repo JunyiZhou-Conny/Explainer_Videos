@@ -1,15 +1,15 @@
 00:00 Five containers, one bucket
 01:19 The bucket is the message bus
 03:12 Clone: five folders, no Dockerfile
-04:35 The key, and uv init
-06:31 Write the Dockerfile, line by line
-09:01 Build: five steps, one fat layer
-11:03 Run: a window into your laptop
-13:11 uv add: what lands where
-15:16 Who is calling? The key and ADC
-17:23 Transcribe and upload
-19:00 Exit, and bake it in
-20:50 generate_text: same recipe, two surprises
-23:40 Synthesize, translate, synthesize
-26:26 Keep the key out of the image
-28:28 Clean up, recap, and what's next
+04:39 The key, and uv init
+06:35 Write the Dockerfile, line by line
+09:16 Build: five steps, one fat layer
+11:29 Run: a window into your laptop
+13:44 uv add: what lands where
+15:51 Who is calling? The key and ADC
+17:58 Transcribe and upload
+19:36 Exit, and bake it in
+21:25 generate_text: same recipe, two surprises
+24:26 Synthesize, translate, synthesize
+27:12 Keep the key out of the image
+29:14 Clean up, recap, and what's next

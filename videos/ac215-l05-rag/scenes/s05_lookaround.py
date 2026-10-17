@@ -65,12 +65,15 @@ from manim import (
     FadeIn,
     FadeOut,
     Indicate,
+    LaggedStart,
     Line,
     ReplacementTransform,
     RoundedRectangle,
+    ShowIncreasingSubsets,
     TransformFromCopy,
     VGroup,
     VMobject,
+    linear,
 )
 
 from common import (
@@ -92,8 +95,10 @@ from common import (
     ComposeView,
     STRIP_TOP,
     Prose,
+    _drop_bare,
     bare_prompt,
     beside,
+    build_row,
     capture,
     caption_extra,
     cd_prompt,
@@ -111,12 +116,13 @@ from common import (
     note,
     padlock,
     pin,
-    print_build,
+    place_time,
     recording_tag,
     second_terminal,
     signpost,
     strip_top,
     term,
+    time_tag,
     tracker,
     turn_card,
     type_cmd,
@@ -124,7 +130,8 @@ from common import (
     what_if_frame,
 )
 from explainer import style as S
-from explainer.devops import CAPTION, MONO, box, chip, folder_glyph, mono, substring, tag
+from explainer.devops import (CAPTION, MONO, OUTPUT, box, chip, folder_glyph, glyph_range, mono,
+                              mono_line, substring, tag)
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S05"]
@@ -188,6 +195,25 @@ COMPOSE = "docker-compose.yml"
 assert excerpt(COMPOSE, 9, 9).strip() == "container_name: llm-rag-cli"
 assert excerpt(COMPOSE, 19, 19).strip() == "image: chromadb/chroma:latest"
 assert excerpt(COMPOSE, 12, 12).strip() == "- ../llm-rag:/app"
+
+# ------------------------------------------------------------------ commands folded by hand
+# type_cmd's fold of these three breaks where a viewer who retypes the rows gets another command:
+# inside the 63-character token GOOGLE_…=$GOOGLE_…; (a hard break) and inside the 68-character
+# '{{…}}' literal of docker inspect (a " \" there is literal). Folded here instead: " \" only
+# outside quotes (the env check's long token starts its row at column 0, as S07 does for a
+# literal), and the literal wraps at a space onto a GREY ↪ row, the code panels' wrap mark (as
+# L04 S08 does for its --format string). type_rows asserts that the rows join back into the capture.
+ENV_ROWS = [P_CTR + " echo GCP_PROJECT=$GCP_PROJECT; echo \\",
+            "GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS; \\",
+            "    ls -la /secrets"]
+FMT_A, FMT_B = "'{{range .Mounts}}{{.Source}} ->", "{{.Destination}}{{println}}{{end}}'"
+INSPECT_CLI_ROWS = [P_REPO + " docker inspect \\",
+                    f"    {CLI_NAME} --format \\",
+                    "    " + FMT_A,
+                    "      ↪ " + FMT_B]
+INSPECT_CHROMA_ROWS = [P_REPO + " docker inspect llm-rag-chromadb \\",
+                       "    --format " + FMT_A,
+                       "      ↪ " + FMT_B]
 
 # ------------------------------------------------------------------ layout
 T8_TOP = strip_top(8)            # 0.58: top of the 8-row terminals
@@ -288,6 +314,55 @@ def dashed_folder(h: float = 0.42, color: str = LAPTOP) -> VGroup:
     return VGroup(*[DashedVMobject(m, num_dashes=14, dashed_ratio=0.55).set_stroke(color, 2.5) for m in f])
 
 
+def type_rows(scene, t, rows: list[str], cmd: str, type_time: float):
+    """Type `cmd` at t's prompt, folded by hand into `rows` (row 0 starts with the prompt). A row
+    ending in " \\" continues outside quotes; a row whose text starts with "↪ " continues a '...'
+    literal at a space (the ↪ drawn GREY, not typed). Returns a VGroup with .rows, as type_cmd."""
+    _drop_bare(scene, t)
+    p = t.prompt + " "
+    assert rows[0].startswith(p) and all(len(r) <= t.max_chars for r in rows), rows
+    segs = [rows[0][len(p):]] + [r.strip().removeprefix("↪ ") for r in rows[1:]]
+    assert " ".join(s.removesuffix(" \\") for s in segs) == cmd, segs
+    for k in range(1, len(rows)):
+        assert rows[k].strip().startswith("↪ ") != rows[k - 1].endswith(" \\"), rows
+    t._make_room(scene, len(rows))
+    out = []
+    for k, s in enumerate(rows):
+        t2c = t._prompt_colors(t.prompt) if k == 0 else ({"↪": S.GREY} if "↪" in s else None)
+        ln = mono_line(s, t.size, INK, t2c=t2c)
+        t._place(ln, len(t.lines))
+        t.lines.add(ln)
+        out.append(ln)
+    scene.add(glyph_range(out[0], 0, len(p)))
+    typed = VGroup(*glyph_range(out[0], len(p)), *[g for r in out[1:] for g in glyph_range(r, 0)])
+    scene.play(ShowIncreasingSubsets(typed, rate_func=linear), run_time=type_time)
+    for r in out:
+        scene.add(r)
+    g = VGroup(*out)
+    g.rows, g.text = out, " ".join(r.text.strip() for r in out)
+    return g
+
+
+def print_rows(scene, t, rows: list, run_time: float = 0.6, lag: float = 0.12) -> VGroup:
+    """Print capture lines with one scroll: a Compose "✔" row as print_build shows it (its time a
+    GREY tag at the row's end), any other row as Terminal.print does. (text, colour) accepted."""
+    items = [(r, OUTPUT) if isinstance(r, str) else r for r in rows]
+    t._make_room(scene, len(items))
+    new = VGroup()
+    for s, col in items:
+        txt, tm = build_row(s, t.max_chars - 7)
+        ln = mono_line(txt if tm else t._cut(s), t.size, col)
+        t._place(ln, len(t.lines))
+        ln.time_tag = None
+        if tm:
+            ln.time_tag = place_time(time_tag(tm), t, ln)
+            ln.add(ln.time_tag)
+        t.lines.add(ln)
+        new.add(ln)
+    scene.play(LaggedStart(*[FadeIn(m) for m in new], lag_ratio=lag), run_time=run_time)
+    return new
+
+
 def card_text(lines, size: float = CAPTION, color: str = INK):
     return VGroup(*[note(s, color, size) for s in lines]).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
 
@@ -320,11 +395,12 @@ class NamesAndMounts(VoiceScene):
             ps_head, ps_cli, ps_chroma = rows
             pin(self, ps_head, beside(hdr_tag, t2, ps_head, buff=0.6))
             port = substring(ps_chroma, "0.0.0.0:8000->8000/tcp")
-            self.play(port.animate.set_color(LOOKUP), th.pulse("port"), Indicate(th.door_glyph, color=LOOKUP),
-                      run_time=1.0)
             vo.wait_until("Chroma with port 8000")
             self.play(substring(ps_chroma, "llm-rag-chromadb").animate.set_color(TURN),
                       Indicate(th.parts["chroma"], color=TURN, scale_factor=1.06), run_time=0.8)
+            vo.wait_until("port 8000 published")
+            self.play(port.animate.set_color(LOOKUP), th.pulse("port"), Indicate(th.door_glyph, color=LOOKUP),
+                      run_time=1.0)
             vo.wait_until("But the CLI container")
             cli_name = substring(ps_cli, CLI_NAME)
             self.play(cli_name.animate.set_color(TURN), Indicate(th.parts["cli"], color=TURN, scale_factor=1.06),
@@ -339,7 +415,7 @@ class NamesAndMounts(VoiceScene):
         yours = tag("yours differs · copy it from docker ps", S.GREY, size=CAPTION)
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(chip9, err9, strike9)), run_time=0.4)
-            c1 = type_cmd(self, t2, INSPECT_CLI, 1.5)
+            c1 = type_rows(self, t2, INSPECT_CLI_ROWS, INSPECT_CLI, 1.5)
             name_row = next(r for r in c1.rows if CLI_NAME in r.text)
             u1 = under(substring(name_row, CLI_NAME), TURN)
             at_left(yours, ps_cli.strut.get_left()[0] + 0.02, ps_cli.strut.get_center()[1])
@@ -354,7 +430,7 @@ class NamesAndMounts(VoiceScene):
             vo.wait_until("secrets on slash secrets")
             o3 = t2.print(self, [MOUNTS.line(3)], run_time=0.3)[0]
             self.play(th.pulse("secrets"), substring(o3, "/secrets", 1).animate.set_color(LOOKUP), run_time=0.9)
-            c2 = type_cmd(self, t2, INSPECT_CHROMA, 1.3)
+            c2 = type_rows(self, t2, INSPECT_CHROMA_ROWS, INSPECT_CHROMA, 1.2)
             pin(self, c2, beside(extra_tag(), t2, c2), run_time=0.3)
             o5 = t2.print(self, [MOUNTS.line(5)], run_time=0.3)[0]
             self.play(th.pulse("data"), substring(o5, "/data").animate.set_color(LOOKUP), run_time=0.9)
@@ -371,17 +447,18 @@ class NamesAndMounts(VoiceScene):
         yk = grey_tag("yours: the key file").next_to(sec, DOWN, buff=0.18)
         yk.shift(RIGHT * min(0.0, 6.35 - yk.get_right()[0]))
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(t2), FadeIn(tc, shift=UP * 0.2), run_time=0.7)
-            env = type_cmd(self, tc, ENV.cmd, 1.6)
+            self.play(FadeOut(t2), run_time=0.3)        # one terminal leaves, then the other comes:
+            self.play(FadeIn(tc, shift=UP * 0.2), run_time=0.4)   # never two texts crossfading
+            env = type_rows(self, tc, ENV_ROWS, ENV.cmd, 1.2)
             pin(self, env, beside(extra_tag(), tc, env), run_time=0.3)
-            out = tc.print(self, ENV.at((2, 6)), run_time=0.6)
+            out = tc.print(self, ENV.at((2, 6)), run_time=0.5)
             pid, cred = out[0], out[1]
             self.play(substring(pid, "your-project-id").animate.set_color(TURN),
-                      *[Indicate(s, color=LOOKUP, scale_factor=1.2) for s in th.slot_list], run_time=0.8)
+                      *[Indicate(s, color=LOOKUP, scale_factor=1.2) for s in th.slot_list], run_time=0.7)
             path = substring(cred, SECRETS_PATH)
-            self.play(path.animate.set_color(LOOKUP), run_time=0.4)
-            self.play(FadeIn(VGroup(sp.board, sp.post, sp.foot), shift=UP * 0.1), run_time=0.4)
-            self.play(TransformFromCopy(path, sp.text[0]), run_time=0.8)   # the board first: the text on top
+            self.play(path.animate.set_color(LOOKUP), FadeIn(VGroup(sp.board, sp.post, sp.foot), shift=UP * 0.1),
+                      run_time=0.4)
+            self.play(TransformFromCopy(path, sp.text[0]), run_time=0.7)   # the board first: the text on top
             vo.wait_until("Our secrets folder is empty")
             self.play(FadeIn(sec, shift=LEFT * 0.15), Indicate(VGroup(out[3], out[4]), color=TURN, scale_factor=1.03),
                       run_time=0.7)
@@ -395,26 +472,30 @@ class NamesAndMounts(VoiceScene):
         book.move_to(rail_end + RIGHT * (0.12 + book.width / 2))
         book_link = Line(rail_end, book.frame.get_left(), color=CTR, stroke_width=4)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(sp, sec, ko, yk)), run_time=0.4)
-            gc = type_cmd(self, tc, BYNAME.cmd, 1.3)
+            self.play(FadeOut(VGroup(sp, sec, ko, yk)), run_time=0.3)
+            gc = type_cmd(self, tc, BYNAME.cmd, 1.0)
             pin(self, gc, beside(extra_tag(), tc, gc), run_time=0.3)
-            o = tc.print(self, BYNAME.at(2, 3), run_time=0.4)
-            hosts, beat = o
-            self.play(hosts.animate.set_color(LOOKUP), run_time=0.4)
-            self.play(Create(book_link), FadeIn(book.frame), run_time=0.4)
-            self.play(TransformFromCopy(VGroup(*hosts.glyphs), book.text),
-                      Indicate(th.parts["rail"], color=LOOKUP, scale_factor=1.0), run_time=0.8)
-            pin(self, beat, beside(differ_tag(), tc, beat), run_time=0.4)
+            hosts, beat = tc.print(self, BYNAME.at(2, 3), run_time=0.4)
+            self.play(hosts.animate.set_color(LOOKUP), Create(book_link), FadeIn(book.frame), run_time=0.4)
+            # the phone book's line is the hosts line read the other way round: name -> address
+            self.play(TransformFromCopy(substring(hosts, "llm-rag-chromadb"), text_sub(book.text, "llm-rag-chromadb")),
+                      TransformFromCopy(substring(hosts, "172.19.0.2"), text_sub(book.text, "172.19.0.2")),
+                      FadeIn(text_sub(book.text, "→")),
+                      Indicate(th.parts["rail"], color=LOOKUP, scale_factor=1.0), run_time=0.9)
+            pin(self, beat, beside(differ_tag(), tc, beat), run_time=0.3)
             vo.wait_until("From your laptop")
-            self.play(FadeOut(tc), FadeOut(VGroup(book, book_link)), FadeIn(t2, shift=UP * 0.2), run_time=0.7)
-            hc = type_cmd(self, t2, HEART.cmd, 1.1)
+            self.play(FadeOut(tc), FadeOut(VGroup(book, book_link)), run_time=0.3)
+            self.play(FadeIn(t2, shift=UP * 0.2), run_time=0.4)
+            hc = type_cmd(self, t2, HEART.cmd, 0.9)
             pin(self, hc, beside(extra_tag(), t2, hc), run_time=0.3)
             hb = t2.print(self, [HEART.line(2)], run_time=0.3)[0]
+            vo.wait_until("localhost port 8000")
+            self.play(substring(hc.rows[-1], "localhost:8000").animate.set_color(LOOKUP), th.pulse("port"),
+                      run_time=0.9)
             vo.wait_until("the published door")
             self.play(th.pulse("port", run_time=1.2), Indicate(th.door_glyph, color=TURN, scale_factor=1.6),
                       run_time=1.2)
             pin(self, hb, beside(differ_tag(), t2, hb), run_time=0.4)
-            self.play(th.pulse("port", run_time=1.0), run_time=1.0)
 
         # ========================================================== 4 · the data folder: made by Docker, root's
         vol_row = file_row("docker-volumes/chromadb/", INK, LAPTOP)
@@ -525,48 +606,46 @@ class NamesAndMounts(VoiceScene):
         after_cd = note("after cd llm-rag-main")
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(tw, th, c35, startup, always)), run_time=0.5)
-            self.play(FadeIn(tz, shift=UP * 0.2), run_time=0.5)
-            gl = type_cmd(self, tz, CLONE.cmd, 1.4)
+            self.play(FadeOut(VGroup(tw, th, c35, startup, always)), run_time=0.4)
+            self.play(FadeIn(tz, shift=UP * 0.2), run_time=0.4)
+            gl = type_cmd(self, tz, CLONE.cmd, 1.1)
             pin(self, gl, beside(extra_tag(), tz, gl), run_time=0.3)
-            co = tz.print(self, CLONE.at((2, 4)), run_time=0.5)
-            pin(self, co[1], beside(unpacks, tz, co[1], buff=0.6), run_time=0.4)
-            self.play(Create(zone), FadeIn(zlab), TransformFromCopy(VGroup(*co[1].glyphs), r_main.text),
-                      FadeIn(r_main.glyph), TransformFromCopy(VGroup(*co[2].glyphs), r_sec.text), FadeIn(r_sec.glyph),
-                      run_time=0.9)
-            vo.wait_until("The compose file mounts")
-            bare = cd_prompt(self, tz, P_ZIP_REPO, LAPTOP, run_time=0.6)
+            co = tz.print(self, CLONE.at((2, 4)), run_time=0.4)
+            beside(unpacks, tz, co[1], buff=0.6)
+            self.play(FadeIn(unpacks, shift=LEFT * 0.1), Create(zone), FadeIn(zlab),
+                      TransformFromCopy(VGroup(*co[1].glyphs), r_main.text), FadeIn(r_main.glyph),
+                      TransformFromCopy(VGroup(*co[2].glyphs), r_sec.text), FadeIn(r_sec.glyph), run_time=0.8)
+            attach(self, co[1], unpacks)
+            bare = cd_prompt(self, tz, P_ZIP_REPO, LAPTOP, run_time=0.5)    # not narrated: no anchor
             beside(after_cd, tz, bare, buff=0.5)
             self.play(FadeIn(after_cd), run_time=0.3)
-            self.play(FadeIn(ctl), FadeIn(appw), FadeIn(code), run_time=0.6)
-            self.play(FadeOut(after_cd), run_time=0.2)
-            type_cmd(self, tz, SHELL.cmd, 0.6)
-            tz.print(self, SHELL.at(2), run_time=0.2)
-            print_build(self, tz, SHELL.at(3, 4), run_time=0.4)
-            so = tz.print(self, SHELL.at(5, 6) + [(SHELL.line(7), ERR)], run_time=0.5)
+            vo.wait_until("The compose file mounts")
             ghost_row[1].set_color(LOOKUP)
-            self.play(Create(miss), FadeIn(ghost_row[1]), Create(route), FadeIn(rlab), run_time=0.8)
+            self.play(FadeIn(ctl), FadeIn(appw), FadeIn(code), Create(miss), FadeIn(ghost_row[1]), Create(route),
+                      FadeIn(rlab), FadeOut(after_cd), run_time=0.8)
+            type_cmd(self, tz, SHELL.cmd, 0.5)
+            so = print_rows(self, tz, SHELL.at((2, 6)) + [(SHELL.line(7), ERR)], run_time=0.6)
             vo.wait_until("so Docker creates")
             self.play(ReplacementTransform(miss, ghost_row[0]), ghost_row[1].animate.set_color(S.GREY),
                       run_time=0.6)
-            self.play(FadeIn(root_t, shift=LEFT * 0.1), run_time=0.4)
+            st = type_cmd(self, tz, STRAY.cmd, 0.7)
+            pin(self, st, beside(extra_tag(), tz, st), run_time=0.3)
+            sl = tz.print(self, STRAY.at(2, (5, 6), (8, 10)), run_time=0.4)
+            vo.wait_until("owned by root")
+            self.play(substring(sl[1], "root    root").animate.set_color(TURN),
+                      substring(sl[1], "llm-rag").animate.set_color(TURN),
+                      substring(sl[4], "root    root").animate.set_color(TURN),
+                      FadeIn(root_t, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("over your code")
             mover = ghost_row[0].copy()
             self.play(mover.animate.scale(2.4).move_to(appw.frame.get_center() + DOWN * 0.2),
-                      code.animate.set_opacity(0.0), run_time=1.0)
-            self.play(Indicate(so[-1], color=ERR, scale_factor=1.04), run_time=0.6)
-            st = type_cmd(self, tz, STRAY.cmd, 0.9)
-            pin(self, st, beside(extra_tag(), tz, st), run_time=0.3)
-            sl = tz.print(self, STRAY.at(2, (5, 6), (8, 10)), run_time=0.5)
-            self.play(substring(sl[1], "root    root").animate.set_color(TURN),
-                      substring(sl[1], "llm-rag").animate.set_color(TURN),
-                      substring(sl[4], "root    root").animate.set_color(TURN), run_time=0.6)
+                      code.animate.set_opacity(0.0), Indicate(so[-1], color=ERR, scale_factor=1.04), run_time=1.0)
             vo.wait_until("Keep the name")
             at_left(fix, -0.6, 1.65)
-            self.play(FadeOut(VGroup(route, rlab, ctl, appw, code, mover)), run_time=0.4)
-            self.play(FadeIn(fix[0], shift=UP * 0.1), Indicate(r_main, color=TURN, scale_factor=1.06), run_time=0.6)
+            self.play(FadeOut(VGroup(route, rlab, ctl, appw, code, mover)), run_time=0.3)
+            self.play(FadeIn(fix[0], shift=UP * 0.1), Indicate(r_main, color=TURN, scale_factor=1.06), run_time=0.5)
             vo.wait_until("and delete the stray folder")
-            self.play(FadeIn(fix[1], shift=UP * 0.1), Indicate(VGroup(ghost_row, root_t), color=ERR, scale_factor=1.06),
+            self.play(FadeIn(fix[1], shift=UP * 0.1), Indicate(ghost_row, color=ERR, scale_factor=1.12),
                       run_time=0.6)
 
         # ========================================================== 7 · back home: versions, then your turn

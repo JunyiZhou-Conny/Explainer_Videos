@@ -1,7 +1,7 @@
 00:00 Five containers, one bucket
 01:19 The bucket is the message bus
 03:12 Clone: five folders, no Dockerfile
-04:35 The key, and uv init
-06:31 Write the Dockerfile, line by line
-09:01 Build: five steps, one fat layer
-11:03 Run: a window into your laptop
+04:39 The key, and uv init
+06:35 Write the Dockerfile, line by line
+09:16 Build: five steps, one fat layer
+11:29 Run: a window into your laptop

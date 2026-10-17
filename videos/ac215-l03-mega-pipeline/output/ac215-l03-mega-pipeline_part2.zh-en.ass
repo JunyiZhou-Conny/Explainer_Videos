@@ -1,0 +1,303 @@
+[Script Info]
+Title: AC215 · L3, part 2: packages, the key, and all five components
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:01.32,Bilingual,,0,0,0,,欢迎回来\N{\fs33\c&H00C8C0B8&\bord1.4}Welcome back.
+Dialogue: 0,0:00:01.36,0:00:04.13,Bilingual,,0,0,0,,我们在 transcribe audio 这个 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}We're inside the transcribe audio container,
+Dialogue: 0,0:00:04.13,0:00:06.89,Bilingual,,0,0,0,,Python 还找不到 Google 的包\N{\fs33\c&H00C8C0B8&\bord1.4}and Python can't find Google's packages yet.
+Dialogue: 0,0:00:07.13,0:00:10.60,Bilingual,,0,0,0,,第 7 步：README 列出了三个要加的包\N{\fs33\c&H00C8C0B8&\bord1.4}Step 7: the README lists three packages to add,
+Dialogue: 0,0:00:10.60,0:00:13.55,Bilingual,,0,0,0,,所以用一条 uv add 命令把三个一起加上\N{\fs33\c&H00C8C0B8&\bord1.4}so type all three in one uv add command.
+Dialogue: 0,0:00:13.87,0:00:15.47,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:00:17.17,0:00:20.35,Bilingual,,0,0,0,,要了 3 个包，装了 26 个\N{\fs33\c&H00C8C0B8&\bord1.4}Three packages asked for, and 26 installed.
+Dialogue: 0,0:00:20.67,0:00:24.79,Bilingual,,0,0,0,,和第 1 讲一样，每个包都会带来自己的依赖\N{\fs33\c&H00C8C0B8&\bord1.4}As in lecture 1, each package brings its own dependencies,
+Dialogue: 0,0:00:24.79,0:00:27.00,Bilingual,,0,0,0,,uv 会解析整棵依赖树\N{\fs33\c&H00C8C0B8&\bord1.4}and uv resolves the whole tree.
+Dialogue: 0,0:00:27.25,0:00:28.87,Bilingual,,0,0,0,,那这些东西都去了哪儿？\N{\fs33\c&H00C8C0B8&\bord1.4}But where did everything land?
+Dialogue: 0,0:00:29.19,0:00:34.22,Bilingual,,0,0,0,,清单 pyproject.toml 和小票 uv.lock 都在 /app 里\N{\fs33\c&H00C8C0B8&\bord1.4}The list, pyproject.toml, and the receipt, uv.lock, sit in /app,
+Dialogue: 0,0:00:34.22,0:00:36.89,Bilingual,,0,0,0,,所以它们直接写进了你的笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}so they're written to your laptop.
+Dialogue: 0,0:00:37.21,0:00:40.33,Bilingual,,0,0,0,,而那 26 个包进了 /home 下的 venv\N{\fs33\c&H00C8C0B8&\bord1.4}The 26 packages went into the venv in /home,
+Dialogue: 0,0:00:40.33,0:00:42.80,Bilingual,,0,0,0,,落在 container 那层用完就扔的可写层上\N{\fs33\c&H00C8C0B8&\bord1.4}on the container's throwaway layer.
+Dialogue: 0,0:00:43.05,0:00:44.64,Bilingual,,0,0,0,,两个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Two extra checks.
+Dialogue: 0,0:00:44.69,0:00:48.94,Bilingual,,0,0,0,,这个 pyproject.toml 现在列出了这三个包\N{\fs33\c&H00C8C0B8&\bord1.4}The pyproject.toml now lists the three packages,
+Dialogue: 0,0:00:48.94,0:00:51.07,Bilingual,,0,0,0,,每个都带版本下限\N{\fs33\c&H00C8C0B8&\bord1.4}each with a lower bound,
+Dialogue: 0,0:00:51.07,0:00:56.47,Bilingual,,0,0,0,,cli.py 旁边多了一个约 138 KB 的新 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}and a new uv.lock of about 138 kilobytes sits next to cli.py,
+Dialogue: 0,0:00:56.47,0:00:58.07,Bilingual,,0,0,0,,所有者是用户 app\N{\fs33\c&H00C8C0B8&\bord1.4}owned by user app.
+Dialogue: 0,0:00:58.32,0:01:04.78,Bilingual,,0,0,0,,再加一个额外检查：venv 变量是 /home/app/.venv，在窗外\N{\fs33\c&H00C8C0B8&\bord1.4}Another extra: the venv variable says /home/app/.venv, outside the window.
+Dialogue: 0,0:01:05.02,0:01:06.40,Bilingual,,0,0,0,,补充两句\N{\fs33\c&H00C8C0B8&\bord1.4}Two asides.
+Dialogue: 0,0:01:06.45,0:01:11.84,Bilingual,,0,0,0,,这个包叫 ffmpeg-python；单单一个 ffmpeg 是另一个项目\N{\fs33\c&H00C8C0B8&\bord1.4}The package is ffmpeg-python; plain ffmpeg is another project.
+Dialogue: 0,0:01:12.16,0:01:13.93,Bilingual,,0,0,0,,还有，如果你用的是 Linux 笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}And on a Linux laptop
+Dialogue: 0,0:01:13.93,0:01:19.87,Bilingual,,0,0,0,,目录又不属于用户 ID 1000，uv add 会报 permission denied\N{\fs33\c&H00C8C0B8&\bord1.4}whose folder isn't owned by user ID 1000, uv add fails with permission denied:
+Dialogue: 0,0:01:19.87,0:01:22.74,Bilingual,,0,0,0,,屏幕上的 chown 命令能修好它\N{\fs33\c&H00C8C0B8&\bord1.4}the chown command on screen fixes it.
+Dialogue: 0,0:01:24.70,0:01:27.82,Bilingual,,0,0,0,,README 里还说：退出以后，要重新构建 image\N{\fs33\c&H00C8C0B8&\bord1.4}The README adds: when you exit, rebuild the image.
+Dialogue: 0,0:01:28.14,0:01:30.47,Bilingual,,0,0,0,,我们最后再做这一步，到时候就知道为什么了\N{\fs33\c&H00C8C0B8&\bord1.4}We'll do that at the end, and see why.
+Dialogue: 0,0:01:30.52,0:01:32.35,Bilingual,,0,0,0,,第 8 步：设置你的组名\N{\fs33\c&H00C8C0B8&\bord1.4}Step 8: set your group name.
+Dialogue: 0,0:01:32.67,0:01:36.32,Bilingual,,0,0,0,,在你的笔记本上，用 VS Code 打开 cli.py\N{\fs33\c&H00C8C0B8&\bord1.4}On your laptop, in VS Code, open cli.py
+Dialogue: 0,0:01:36.32,0:01:39.98,Bilingual,,0,0,0,,把第 21 行改成你们组的名字\N{\fs33\c&H00C8C0B8&\bord1.4}and change line 21 to your team's name;
+Dialogue: 0,0:01:39.98,0:01:41.58,Bilingual,,0,0,0,,我们的是 group-01\N{\fs33\c&H00C8C0B8&\bord1.4}ours is group-01.
+Dialogue: 0,0:01:41.89,0:01:43.49,Bilingual,,0,0,0,,暂停一下，把它改好\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and make the change.
+Dialogue: 0,0:01:43.68,0:01:46.87,Bilingual,,0,0,0,,在 container 里，额外的 grep 已经显示出新的那一行\N{\fs33\c&H00C8C0B8&\bord1.4}Inside, an extra grep already shows the new line:
+Dialogue: 0,0:01:46.87,0:01:48.63,Bilingual,,0,0,0,,这扇窗两边都是通的\N{\fs33\c&H00C8C0B8&\bord1.4}the window works both ways.
+Dialogue: 0,0:01:48.95,0:01:52.24,Bilingual,,0,0,0,,五个 cli.py 文件里都要用同一个名字\N{\fs33\c&H00C8C0B8&\bord1.4}Use the same name in all five cli.py files,
+Dialogue: 0,0:01:52.24,0:01:55.52,Bilingual,,0,0,0,,不然各个阶段就找不到彼此的成果\N{\fs33\c&H00C8C0B8&\bord1.4}or the stages won't find each other's work.
+Dialogue: 0,0:01:55.77,0:01:59.42,Bilingual,,0,0,0,,第 9 步：python cli.py --help\N{\fs33\c&H00C8C0B8&\bord1.4}Step 9: python cli.py --help.
+Dialogue: 0,0:01:59.74,0:02:03.55,Bilingual,,0,0,0,,这次成功了，而且和 README 里那段逐行一致\N{\fs33\c&H00C8C0B8&\bord1.4}This time it works, and it matches the README's block line for line.
+Dialogue: 0,0:02:03.87,0:02:05.60,Bilingual,,0,0,0,,暂停一下，跟到这一步\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and get to this point.
+Dialogue: 0,0:02:07.45,0:02:14.83,Bilingual,,0,0,0,,第 10 步下载录音：python cli.py --download，简写是 -d\N{\fs33\c&H00C8C0B8&\bord1.4}Step 10 downloads the recordings: python cli.py --download, or -d for short.
+Dialogue: 0,0:02:15.15,0:02:18.84,Bilingual,,0,0,0,,我们录制的机器上没有密钥，所以这里看到的是缺密钥时的样子\N{\fs33\c&H00C8C0B8&\bord1.4}Our machine had no key, so here's what a missing key looks like.
+Dialogue: 0,0:02:19.08,0:02:22.77,Bilingual,,0,0,0,,它先打印出参数和 download 这个词，然后是一段 traceback\N{\fs33\c&H00C8C0B8&\bord1.4}It printed the arguments and the word download, then a traceback.
+Dialogue: 0,0:02:23.09,0:02:26.73,Bilingual,,0,0,0,,最后一行是 DefaultCredentialsError\N{\fs33\c&H00C8C0B8&\bord1.4}The last line says DefaultCredentialsError:
+Dialogue: 0,0:02:26.73,0:02:30.97,Bilingual,,0,0,0,,找不到 secrets/mega-pipeline.json 这个文件\N{\fs33\c&H00C8C0B8&\bord1.4}the file secrets/mega-pipeline.json was not found.
+Dialogue: 0,0:02:31.20,0:02:32.93,Bilingual,,0,0,0,,按第 1 讲的方法来读\N{\fs33\c&H00C8C0B8&\bord1.4}Read it as in lecture 1.
+Dialogue: 0,0:02:33.25,0:02:36.34,Bilingual,,0,0,0,,我们的代码在第 36 行创建了一个 storage 客户端\N{\fs33\c&H00C8C0B8&\bord1.4}Our code, line 36, built a storage client.
+Dialogue: 0,0:02:36.66,0:02:40.01,Bilingual,,0,0,0,,客户端向 Google 的认证库要凭据\N{\fs33\c&H00C8C0B8&\bord1.4}The client asked Google's auth library for credentials,
+Dialogue: 0,0:02:40.01,0:02:42.64,Bilingual,,0,0,0,,认证库就去找一个不存在的文件\N{\fs33\c&H00C8C0B8&\bord1.4}and that library looked for a missing file.
+Dialogue: 0,0:02:42.88,0:02:44.55,Bilingual,,0,0,0,,正常情况下，链条是这样的\N{\fs33\c&H00C8C0B8&\bord1.4}Here's the chain when it works.
+Dialogue: 0,0:02:44.87,0:02:49.99,Bilingual,,0,0,0,,你的代码从来不传密钥：客户端会去问 Google 的认证库“我是谁”\N{\fs33\c&H00C8C0B8&\bord1.4}Your code never passes the key: the client asks Google's auth library who it is.
+Dialogue: 0,0:02:50.31,0:02:54.76,Bilingual,,0,0,0,,这个查找过程叫应用默认凭据，简称 ADC\N{\fs33\c&H00C8C0B8&\bord1.4}That search is called application default credentials, or ADC,
+Dialogue: 0,0:02:54.76,0:02:58.20,Bilingual,,0,0,0,,它的第一站就是第 10 行的那个变量\N{\fs33\c&H00C8C0B8&\bord1.4}and its first stop is the variable from line 10.
+Dialogue: 0,0:02:58.45,0:03:00.85,Bilingual,,0,0,0,,这个变量就是一个路标\N{\fs33\c&H00C8C0B8&\bord1.4}That variable is a signpost:
+Dialogue: 0,0:03:00.85,0:03:06.60,Bilingual,,0,0,0,,secrets/mega-pipeline.json，从当前目录 /app 算起\N{\fs33\c&H00C8C0B8&\bord1.4}secrets/mega-pipeline.json, starting from the current folder, /app.
+Dialogue: 0,0:03:06.92,0:03:09.93,Bilingual,,0,0,0,,透过这扇窗，它指向你笔记本上的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Through the window, it leads to the key on your laptop.
+Dialogue: 0,0:03:10.32,0:03:14.04,Bilingual,,0,0,0,,认证库用密钥生成一个短期有效的访问令牌\N{\fs33\c&H00C8C0B8&\bord1.4}From the key, the library makes a short-lived access token,
+Dialogue: 0,0:03:14.04,0:03:16.50,Bilingual,,0,0,0,,每个发给 Google 的请求都带着它\N{\fs33\c&H00C8C0B8&\bord1.4}and every request to Google carries it.
+Dialogue: 0,0:03:16.75,0:03:19.59,Bilingual,,0,0,0,,接着 Google 会检查两次，README 里也这么说\N{\fs33\c&H00C8C0B8&\bord1.4}Google then checks twice, as the README says.
+Dialogue: 0,0:03:19.91,0:03:25.80,Bilingual,,0,0,0,,身份验证问的是谁在调用，密钥说是课程的服务账号\N{\fs33\c&H00C8C0B8&\bord1.4}Authentication asks who is calling, and the key says it's the course's service account;
+Dialogue: 0,0:03:25.80,0:03:30.74,Bilingual,,0,0,0,,授权问的是它有没有权限做这件事，IAM 角色为它打开了 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}authorization asks whether it may do this, and IAM roles open the bucket.
+Dialogue: 0,0:03:30.98,0:03:33.16,Bilingual,,0,0,0,,这个报错通常有三个原因\N{\fs33\c&H00C8C0B8&\bord1.4}This error has three usual causes.
+Dialogue: 0,0:03:33.48,0:03:36.74,Bilingual,,0,0,0,,要么密钥不在这个组件的 secrets 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}The key isn't in this component's secrets folder,
+Dialogue: 0,0:03:36.74,0:03:39.21,Bilingual,,0,0,0,,要么你 cd 离开了 /app\N{\fs33\c&H00C8C0B8&\bord1.4}you changed directory away from /app,
+Dialogue: 0,0:03:39.21,0:03:42.61,Bilingual,,0,0,0,,要么你在笔记本上错误的目录里跑了 docker run\N{\fs33\c&H00C8C0B8&\bord1.4}or you ran docker run from the wrong laptop folder.
+Dialogue: 0,0:03:46.55,0:03:49.11,Bilingual,,0,0,0,,一个额外检查：就连这次失败的运行\N{\fs33\c&H00C8C0B8&\bord1.4}One extra check: even this failed run
+Dialogue: 0,0:03:49.11,0:03:52.51,Bilingual,,0,0,0,,也在你笔记本上建了两个目录，input audios\N{\fs33\c&H00C8C0B8&\bord1.4}created two folders on your laptop, input audios,
+Dialogue: 0,0:03:52.51,0:03:55.28,Bilingual,,0,0,0,,还有里面带着你们组目录的 text prompts\N{\fs33\c&H00C8C0B8&\bord1.4}and text prompts with your group inside.
+Dialogue: 0,0:03:55.60,0:03:58.22,Bilingual,,0,0,0,,代码是在创建客户端之前建好它们的\N{\fs33\c&H00C8C0B8&\bord1.4}The code makes them before it builds the client.
+Dialogue: 0,0:03:59.27,0:04:04.11,Bilingual,,0,0,0,,有密钥的话，要找的是 download 这个词、每段录音一个对象名\N{\fs33\c&H00C8C0B8&\bord1.4}With your key, look for the word download, one object name per recording,
+Dialogue: 0,0:04:04.11,0:04:08.16,Bilingual,,0,0,0,,还有出现在你笔记本上 input audios 里的音频文件\N{\fs33\c&H00C8C0B8&\bord1.4}and the audio files appearing in input audios on your laptop.
+Dialogue: 0,0:04:08.48,0:04:11.32,Bilingual,,0,0,0,,暂停一下，确认密钥在 secrets 目录里，然后跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, check your key is in secrets, and run it.
+Dialogue: 0,0:04:13.87,0:04:15.62,Bilingual,,0,0,0,,第 11 步是转写\N{\fs33\c&H00C8C0B8&\bord1.4}Step 11 transcribes.
+Dialogue: 0,0:04:15.94,0:04:20.60,Bilingual,,0,0,0,,对每段录音，ffmpeg 都先把 MP3 转成 FLAC\N{\fs33\c&H00C8C0B8&\bord1.4}For each recording, ffmpeg first converts the MP3 into FLAC,
+Dialogue: 0,0:04:20.60,0:04:24.26,Bilingual,,0,0,0,,所以构建参数里要有 ffmpeg\N{\fs33\c&H00C8C0B8&\bord1.4}and that's why ffmpeg is in the build argument.
+Dialogue: 0,0:04:24.50,0:04:27.08,Bilingual,,0,0,0,,音频的字节就放在请求里一起发过去\N{\fs33\c&H00C8C0B8&\bord1.4}The audio bytes travel inside the request.
+Dialogue: 0,0:04:27.40,0:04:31.38,Bilingual,,0,0,0,,长时间运行的 recognize 调用会马上交回一个操作对象\N{\fs33\c&H00C8C0B8&\bord1.4}The long-running recognize call hands back an operation at once,
+Dialogue: 0,0:04:31.38,0:04:32.83,Bilingual,,0,0,0,,就像一张取件单\N{\fs33\c&H00C8C0B8&\bord1.4}like a ticket stub.
+Dialogue: 0,0:04:32.88,0:04:36.81,Bilingual,,0,0,0,,然后它的 result 调用最多等 90 秒，等转写文本回来\N{\fs33\c&H00C8C0B8&\bord1.4}Its result call then waits up to 90 seconds for the transcript.
+Dialogue: 0,0:04:37.32,0:04:42.86,Bilingual,,0,0,0,,长音频是分段返回的，所以第 84 到 91 行把每一段拼起来\N{\fs33\c&H00C8C0B8&\bord1.4}Long audio comes back in pieces, so lines 84 to 91 join every piece;
+Dialogue: 0,0:04:42.86,0:04:45.55,Bilingual,,0,0,0,,这正是最新那个 commit 修好的\N{\fs33\c&H00C8C0B8&\bord1.4}that was the latest commit's fix.
+Dialogue: 0,0:04:45.80,0:04:50.24,Bilingual,,0,0,0,,输入 python cli.py --transcribe，或者 -t\N{\fs33\c&H00C8C0B8&\bord1.4}Type python cli.py --transcribe, or -t.
+Dialogue: 0,0:04:50.56,0:04:53.17,Bilingual,,0,0,0,,要找的是 Transcribing 加一个文件名\N{\fs33\c&H00C8C0B8&\bord1.4}Look for Transcribing and a file name,
+Dialogue: 0,0:04:53.17,0:04:56.40,Bilingual,,0,0,0,,ffmpeg 的日志、响应，还有转写文本\N{\fs33\c&H00C8C0B8&\bord1.4}ffmpeg's log, the response, and the transcript.
+Dialogue: 0,0:04:56.72,0:04:58.82,Bilingual,,0,0,0,,如果报 No such file\N{\fs33\c&H00C8C0B8&\bord1.4}If it says no such file,
+Dialogue: 0,0:04:58.82,0:05:02.93,Bilingual,,0,0,0,,后面是 ffmpeg，就把 ffmpeg 加到第 3 行，然后退出、重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}ffmpeg, add ffmpeg to line 3, exit and rebuild.
+Dialogue: 0,0:05:03.17,0:05:07.19,Bilingual,,0,0,0,,然后打开 text prompts 下 group-01 里那个新的文本文件\N{\fs33\c&H00C8C0B8&\bord1.4}Then open the new text file under text prompts, group-01,
+Dialogue: 0,0:05:07.19,0:05:08.64,Bilingual,,0,0,0,,就在你的笔记本上\N{\fs33\c&H00C8C0B8&\bord1.4}on your laptop.
+Dialogue: 0,0:05:08.69,0:05:11.67,Bilingual,,0,0,0,,如果里面是 None，说明 Speech-to-Text 什么也没返回\N{\fs33\c&H00C8C0B8&\bord1.4}If it says None, Speech-to-Text returned nothing:
+Dialogue: 0,0:05:11.67,0:05:15.73,Bilingual,,0,0,0,,删掉它，重新转写，因为转写过的文件会被跳过\N{\fs33\c&H00C8C0B8&\bord1.4}delete it and transcribe again, because finished files are skipped.
+Dialogue: 0,0:05:15.97,0:05:20.85,Bilingual,,0,0,0,,第 12 步：python cli.py --upload，或者 -u\N{\fs33\c&H00C8C0B8&\bord1.4}Step 12: python cli.py --upload, or -u.
+Dialogue: 0,0:05:21.17,0:05:26.02,Bilingual,,0,0,0,,它只上传 input 开头的文件，在 bucket 里也用同样的名字\N{\fs33\c&H00C8C0B8&\bord1.4}It uploads only files starting with input, under the same name in the bucket:
+Dialogue: 0,0:05:26.02,0:05:30.05,Bilingual,,0,0,0,,要找的是 Uploading，后面是 text prompts、你们组和文件名\N{\fs33\c&H00C8C0B8&\bord1.4}look for Uploading, then text prompts, your group, and the file.
+Dialogue: 0,0:05:30.28,0:05:32.94,Bilingual,,0,0,0,,你的转写文本会落进你们组的抽屉\N{\fs33\c&H00C8C0B8&\bord1.4}Your transcript drops into your group's drawer,
+Dialogue: 0,0:05:32.94,0:05:38.13,Bilingual,,0,0,0,,排行榜上转写那一格也会亮起来，README 里说的检查方法就是这个\N{\fs33\c&H00C8C0B8&\bord1.4}and the transcribe cell lights up on the leaderboard, which is how the README says to check.
+Dialogue: 0,0:05:38.45,0:05:41.10,Bilingual,,0,0,0,,暂停一下，用你的密钥把三步都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run all three steps, with your key.
+Dialogue: 0,0:05:41.33,0:05:44.21,Bilingual,,0,0,0,,额外提示一句：这些参数可以合在一起用\N{\fs33\c&H00C8C0B8&\bord1.4}An extra tip: the flags combine,
+Dialogue: 0,0:05:44.21,0:05:47.54,Bilingual,,0,0,0,,-d -t -u 会按顺序把三步都跑完\N{\fs33\c&H00C8C0B8&\bord1.4}so -d -t -u runs all three, in order.
+Dialogue: 0,0:05:47.86,0:05:50.14,Bilingual,,0,0,0,,每次调用都记在课程项目的账上\N{\fs33\c&H00C8C0B8&\bord1.4}Each call is billed to the course project.
+Dialogue: 0,0:05:51.48,0:05:53.94,Bilingual,,0,0,0,,第 13 步：退出，然后重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}Step 13: exit, and rebuild.
+Dialogue: 0,0:05:54.26,0:05:58.60,Bilingual,,0,0,0,,输入 exit，container 就被删掉，连同用完就扔的可写层\N{\fs33\c&H00C8C0B8&\bord1.4}Type exit, and the container is removed with its throwaway layer,
+Dialogue: 0,0:05:58.60,0:06:00.68,Bilingual,,0,0,0,,26 个包也跟着没了\N{\fs33\c&H00C8C0B8&\bord1.4}and the 26 packages go with it.
+Dialogue: 0,0:06:00.92,0:06:03.26,Bilingual,,0,0,0,,回到笔记本上，做一个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Back on the laptop, an extra check:
+Dialogue: 0,0:06:03.26,0:06:09.69,Bilingual,,0,0,0,,带三个依赖的 pyproject.toml、lock 文件和那两个新目录都还在\N{\fs33\c&H00C8C0B8&\bord1.4}the pyproject.toml with three dependencies, the lock file, and the two new folders all survived,
+Dialogue: 0,0:06:09.69,0:06:11.84,Bilingual,,0,0,0,,因为它们在这扇窗里\N{\fs33\c&H00C8C0B8&\bord1.4}because they were in the window.
+Dialogue: 0,0:06:12.08,0:06:15.41,Bilingual,,0,0,0,,而 git status 只显示 cli.py 改过了\N{\fs33\c&H00C8C0B8&\bord1.4}Git status shows only cli.py as changed.
+Dialogue: 0,0:06:15.73,0:06:18.46,Bilingual,,0,0,0,,其余的为什么看不见，我们最后再说\N{\fs33\c&H00C8C0B8&\bord1.4}We'll see why the rest is invisible at the end.
+Dialogue: 0,0:06:18.70,0:06:20.48,Bilingual,,0,0,0,,现在来看那个坑，这也是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}Now the trap, as an extra.
+Dialogue: 0,0:06:20.73,0:06:23.92,Bilingual,,0,0,0,,用你之前构建的 image 起一个新的 container\N{\fs33\c&H00C8C0B8&\bord1.4}Start a new container from the image you built earlier,
+Dialogue: 0,0:06:23.92,0:06:25.52,Bilingual,,0,0,0,,再让它打印一次帮助\N{\fs33\c&H00C8C0B8&\bord1.4}and ask for help again.
+Dialogue: 0,0:06:25.59,0:06:27.50,Bilingual,,0,0,0,,又是 ModuleNotFoundError\N{\fs33\c&H00C8C0B8&\bord1.4}It's ModuleNotFoundError again:
+Dialogue: 0,0:06:27.50,0:06:30.26,Bilingual,,0,0,0,,那些包只存在于旧的 container 里\N{\fs33\c&H00C8C0B8&\bord1.4}the packages lived only in the old container.
+Dialogue: 0,0:06:30.50,0:06:31.85,Bilingual,,0,0,0,,README 给的办法是\N{\fs33\c&H00C8C0B8&\bord1.4}The README's fix:
+Dialogue: 0,0:06:31.85,0:06:35.83,Bilingual,,0,0,0,,退出，然后用同一条 docker build 命令重新构建 image\N{\fs33\c&H00C8C0B8&\bord1.4}exit, and rebuild the image with the same docker build command.
+Dialogue: 0,0:06:36.15,0:06:37.50,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:06:37.55,0:06:39.72,Bilingual,,0,0,0,,刚才那道题的答案，这次是真的\N{\fs33\c&H00C8C0B8&\bord1.4}The ponder's answer, for real:
+Dialogue: 0,0:06:39.72,0:06:45.23,Bilingual,,0,0,0,,构建步骤 2 和 3 用了缓存，构建步骤 4 复制改过的目录\N{\fs33\c&H00C8C0B8&\bord1.4}build steps 2 and 3 are cached, while build step 4 copies the changed folder
+Dialogue: 0,0:06:45.23,0:06:47.98,Bilingual,,0,0,0,,构建步骤 5，也就是 uv sync，重新运行\N{\fs33\c&H00C8C0B8&\bord1.4}and build step 5, uv sync, runs again.
+Dialogue: 0,0:06:48.30,0:06:50.07,Bilingual,,0,0,0,,这次构建不到 10 秒\N{\fs33\c&H00C8C0B8&\bord1.4}The build took under ten seconds.
+Dialogue: 0,0:06:50.32,0:06:53.66,Bilingual,,0,0,0,,完整日志显示了 uv sync 这次做了什么\N{\fs33\c&H00C8C0B8&\bord1.4}The full log shows what uv sync did this time:
+Dialogue: 0,0:06:53.66,0:06:56.12,Bilingual,,0,0,0,,复制那一步带进了 lock 文件\N{\fs33\c&H00C8C0B8&\bord1.4}the copy brought in the lock file,
+Dialogue: 0,0:06:56.12,0:07:00.04,Bilingual,,0,0,0,,uv 装上了同样的 26 个包，装进了 image 里\N{\fs33\c&H00C8C0B8&\bord1.4}and uv installed the same 26 packages, into the image.
+Dialogue: 0,0:07:00.28,0:07:01.77,Bilingual,,0,0,0,,再做两个额外检查\N{\fs33\c&H00C8C0B8&\bord1.4}Two more extras.
+Dialogue: 0,0:07:01.82,0:07:08.39,Bilingual,,0,0,0,,这个 image 涨到了 1.48 GB，docker history 每条指令列一行\N{\fs33\c&H00C8C0B8&\bord1.4}The image grew to 1.48 gigabytes, and docker history lists one row per instruction:
+Dialogue: 0,0:07:08.39,0:07:10.93,Bilingual,,0,0,0,,只写配置卡片的那几行显示 0 字节\N{\fs33\c&H00C8C0B8&\bord1.4}card-only lines show zero bytes.
+Dialogue: 0,0:07:11.25,0:07:17.76,Bilingual,,0,0,0,,现在 uv sync 那一层有 105 MB，是这些包加上 uv 的下载缓存\N{\fs33\c&H00C8C0B8&\bord1.4}The uv sync layer now holds 105 megabytes, the packages plus uv's download cache.
+Dialogue: 0,0:07:18.00,0:07:22.86,Bilingual,,0,0,0,,现在新起的 container 不用 uv add 就能导入这三个包\N{\fs33\c&H00C8C0B8&\bord1.4}And a fresh container now imports all three packages with no uv add at all:
+Dialogue: 0,0:07:22.86,0:07:24.46,Bilingual,,0,0,0,,它们已经打包进 image 了\N{\fs33\c&H00C8C0B8&\bord1.4}they're baked in.
+Dialogue: 0,0:07:24.98,0:07:28.88,Bilingual,,0,0,0,,还有一点：因为复制那一步在 uv sync 前面\N{\fs33\c&H00C8C0B8&\bord1.4}One more thing: because the copy comes before uv sync,
+Dialogue: 0,0:07:28.88,0:07:31.04,Bilingual,,0,0,0,,任何修改，哪怕只是组名\N{\fs33\c&H00C8C0B8&\bord1.4}any edit, even the group name,
+Dialogue: 0,0:07:31.04,0:07:34.43,Bilingual,,0,0,0,,都会像第 2 讲的多米诺骨牌一样，把 uv sync 也推倒\N{\fs33\c&H00C8C0B8&\bord1.4}knocks over uv sync, like lecture 2's dominoes.
+Dialogue: 0,0:07:34.75,0:07:39.66,Bilingual,,0,0,0,,后面的教程会先复制 pyproject.toml 和 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}Later tutorials copy pyproject.toml and uv.lock first.
+Dialogue: 0,0:07:41.10,0:07:46.05,Bilingual,,0,0,0,,组件 B，也就是 generate text，流程一样；我们会快一点\N{\fs33\c&H00C8C0B8&\bord1.4}Component B, generate text, follows the same recipe; we'll go faster.
+Dialogue: 0,0:07:46.37,0:07:47.61,Bilingual,,0,0,0,,第 1 和第 2 步\N{\fs33\c&H00C8C0B8&\bord1.4}Steps 1 and 2:
+Dialogue: 0,0:07:47.61,0:07:51.81,Bilingual,,0,0,0,,cd 进它的目录，再把密钥复制到它的 secrets 目录里\N{\fs33\c&H00C8C0B8&\bord1.4}cd into its folder, and copy the key into its secrets folder.
+Dialogue: 0,0:07:52.05,0:07:57.17,Bilingual,,0,0,0,,额外看一眼：这个目录已经有自己的 pyproject.toml\N{\fs33\c&H00C8C0B8&\bord1.4}An extra look: this folder already has its own pyproject.toml,
+Dialogue: 0,0:07:57.17,0:08:01.89,Bilingual,,0,0,0,,两个包都列上了，还要求 Python 3.14 或更新\N{\fs33\c&H00C8C0B8&\bord1.4}listing both packages and requiring Python 3.14 or newer.
+Dialogue: 0,0:08:02.21,0:08:04.13,Bilingual,,0,0,0,,这个先放着，到第 13 步再说\N{\fs33\c&H00C8C0B8&\bord1.4}Leave that until step 13.
+Dialogue: 0,0:08:04.37,0:08:09.10,Bilingual,,0,0,0,,第一个意外：uv init 失败了，因为项目已经初始化过了\N{\fs33\c&H00C8C0B8&\bord1.4}Surprise one: uv init fails: the project is already initialized.
+Dialogue: 0,0:08:09.42,0:08:13.10,Bilingual,,0,0,0,,README 里还是让你跑它，这是一个小错误\N{\fs33\c&H00C8C0B8&\bord1.4}The README still says to run it, a small mistake:
+Dialogue: 0,0:08:13.10,0:08:16.48,Bilingual,,0,0,0,,跳过第 3 步，也别管那个遗留的 main.py\N{\fs33\c&H00C8C0B8&\bord1.4}skip step 3, and ignore the leftover main.py.
+Dialogue: 0,0:08:16.73,0:08:18.90,Bilingual,,0,0,0,,第 4 步：还是同样的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: the same Dockerfile,
+Dialogue: 0,0:08:18.90,0:08:24.24,Bilingual,,0,0,0,,只是第 3 行去掉了 ffmpeg，因为这个组件根本不碰音频\N{\fs33\c&H00C8C0B8&\bord1.4}except line 3 drops ffmpeg, since this component never touches audio.
+Dialogue: 0,0:08:24.56,0:08:26.74,Bilingual,,0,0,0,,把你的复制过来，改掉那一行\N{\fs33\c&H00C8C0B8&\bord1.4}Copy yours and change that line.
+Dialogue: 0,0:08:26.98,0:08:30.30,Bilingual,,0,0,0,,第 5 步构建它，那个大 RUN 会重新运行\N{\fs33\c&H00C8C0B8&\bord1.4}Step 5 builds it, and the big RUN step runs again,
+Dialogue: 0,0:08:30.30,0:08:33.28,Bilingual,,0,0,0,,因为它要装的软件包变了\N{\fs33\c&H00C8C0B8&\bord1.4}because the package list it installs changed.
+Dialogue: 0,0:08:33.60,0:08:34.93,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:08:34.98,0:08:39.01,Bilingual,,0,0,0,,来想一想。这个 image 里是 Python 3.12\N{\fs33\c&H00C8C0B8&\bord1.4}Ponder this. The image has Python 3.12;
+Dialogue: 0,0:08:39.01,0:08:43.52,Bilingual,,0,0,0,,这个 pyproject.toml 却要求 3.14 或更新\N{\fs33\c&H00C8C0B8&\bord1.4}this pyproject.toml asks for 3.14 or newer.
+Dialogue: 0,0:08:43.84,0:08:45.61,Bilingual,,0,0,0,,那 venv 会用哪个 Python？\N{\fs33\c&H00C8C0B8&\bord1.4}Which Python will the venv use?
+Dialogue: 0,0:08:54.45,0:08:57.36,Bilingual,,0,0,0,,第二个意外：实时视图里看不到\N{\fs33\c&H00C8C0B8&\bord1.4}Surprise two: the live view hides it;
+Dialogue: 0,0:08:57.36,0:09:01.45,Bilingual,,0,0,0,,完整日志里能看到：uv 下载了它自己的 Python\N{\fs33\c&H00C8C0B8&\bord1.4}the full log shows it: uv downloaded its own Python,
+Dialogue: 0,0:09:01.45,0:09:06.01,Bilingual,,0,0,0,,录制时是 3.15.0，并用它建了 venv\N{\fs33\c&H00C8C0B8&\bord1.4}3.15.0 at the time of recording, and built the venv on it.
+Dialogue: 0,0:09:06.25,0:09:09.60,Bilingual,,0,0,0,,这个 image 里的 3.12 落在范围之外\N{\fs33\c&H00C8C0B8&\bord1.4}The image's 3.12 falls outside the interval,
+Dialogue: 0,0:09:09.60,0:09:14.02,Bilingual,,0,0,0,,所以 uv 去下载了范围内最新的 Python，和第 2 讲一样\N{\fs33\c&H00C8C0B8&\bord1.4}so uv fetched the newest Python in range, as in lecture 2.
+Dialogue: 0,0:09:14.25,0:09:19.35,Bilingual,,0,0,0,,第 6 步运行它，一个额外检查确认是 Python 3.15.0\N{\fs33\c&H00C8C0B8&\bord1.4}Step 6 runs it, and an extra check confirms Python 3.15.0,
+Dialogue: 0,0:09:19.35,0:09:22.34,Bilingual,,0,0,0,,来自 uv 的目录，而不是 image 自带的\N{\fs33\c&H00C8C0B8&\bord1.4}from uv's folder, not the image's.
+Dialogue: 0,0:09:22.58,0:09:27.40,Bilingual,,0,0,0,,第 7 步的 uv add 没找到新东西，因为两个包都已经列上了\N{\fs33\c&H00C8C0B8&\bord1.4}Step 7's uv add finds nothing new, since both packages are listed;
+Dialogue: 0,0:09:27.40,0:09:29.52,Bilingual,,0,0,0,,它只写了 lock 文件\N{\fs33\c&H00C8C0B8&\bord1.4}it only writes the lock file.
+Dialogue: 0,0:09:29.77,0:09:33.12,Bilingual,,0,0,0,,第 8 和第 9 步：设置组名，这里是第 19 行\N{\fs33\c&H00C8C0B8&\bord1.4}Steps 8 and 9: set the group name, here on line 19,
+Dialogue: 0,0:09:33.12,0:09:36.08,Bilingual,,0,0,0,,再检查一下帮助，和 README 一致\N{\fs33\c&H00C8C0B8&\bord1.4}and check the help, which matches the README.
+Dialogue: 0,0:09:36.40,0:09:37.87,Bilingual,,0,0,0,,暂停一下，跟上进度\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and catch up.
+Dialogue: 0,0:09:37.92,0:09:41.29,Bilingual,,0,0,0,,第 10 到 12 步：下载、生成、上传\N{\fs33\c&H00C8C0B8&\bord1.4}Steps 10 to 12: download, generate, upload.
+Dialogue: 0,0:09:41.61,0:09:46.28,Bilingual,,0,0,0,,生成这一步把每份转写文本发给 Gemini 2.5 Flash Lite\N{\fs33\c&H00C8C0B8&\bord1.4}The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI.
+Dialogue: 0,0:09:46.28,0:09:48.18,Bilingual,,0,0,0,,它跑在 Vertex AI 上\N{\fs33\c&H00C8C0B8&\bord1.4}The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI.
+Dialogue: 0,0:09:48.50,0:09:52.89,Bilingual,,0,0,0,,Google 在 2026 年 10 月 20 日下线该模型\N{\fs33\c&H00C8C0B8&\bord1.4}Google retires that model on October 20, 2026.
+Dialogue: 0,0:09:53.21,0:09:55.09,Bilingual,,0,0,0,,之后启动 container 时\N{\fs33\c&H00C8C0B8&\bord1.4}After that, start the container
+Dialogue: 0,0:09:55.09,0:09:58.12,Bilingual,,0,0,0,,要在 Gemini 模型变量里填一个现行的模型\N{\fs33\c&H00C8C0B8&\bord1.4}with a current model in the GEMINI_MODEL variable.
+Dialogue: 0,0:09:58.44,0:10:02.84,Bilingual,,0,0,0,,较新的模型在 cli.py 用的那个区域里没有提供\N{\fs33\c&H00C8C0B8&\bord1.4}Newer models aren't served in the region cli.py uses,
+Dialogue: 0,0:10:02.84,0:10:06.65,Bilingual,,0,0,0,,所以还要把第 24 行的区域改成 global\N{\fs33\c&H00C8C0B8&\bord1.4}so also set the location on line 24 to global.
+Dialogue: 0,0:10:07.50,0:10:09.77,Bilingual,,0,0,0,,要找的是你的 prompt、Generated text\N{\fs33\c&H00C8C0B8&\bord1.4}Look for your prompt, Generated text
+Dialogue: 0,0:10:09.77,0:10:12.47,Bilingual,,0,0,0,,和一份很长的播客稿，然后是上传\N{\fs33\c&H00C8C0B8&\bord1.4}and a long podcast script, then the upload.
+Dialogue: 0,0:10:12.79,0:10:14.39,Bilingual,,0,0,0,,暂停一下，三步都跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run all three.
+Dialogue: 0,0:10:15.38,0:10:18.88,Bilingual,,0,0,0,,第 13 步是退出并重新构建，修复也在这一步\N{\fs33\c&H00C8C0B8&\bord1.4}Step 13, exit and rebuild, brings the fix:
+Dialogue: 0,0:10:18.88,0:10:22.30,Bilingual,,0,0,0,,把最低 Python 版本降到 3.12\N{\fs33\c&H00C8C0B8&\bord1.4}lower the minimum Python version to 3.12.
+Dialogue: 0,0:10:22.62,0:10:25.20,Bilingual,,0,0,0,,而 git status 把 Dockerfile 也列出来了\N{\fs33\c&H00C8C0B8&\bord1.4}Git status lists the Dockerfile too:
+Dialogue: 0,0:10:25.20,0:10:27.35,Bilingual,,0,0,0,,这个目录没有 .gitignore\N{\fs33\c&H00C8C0B8&\bord1.4}this folder has no .gitignore.
+Dialogue: 0,0:10:29.30,0:10:30.84,Bilingual,,0,0,0,,暂停一下，重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and rebuild:
+Dialogue: 0,0:10:30.84,0:10:34.33,Bilingual,,0,0,0,,现在 uv sync 用的是 image 自带的 Python 3.12\N{\fs33\c&H00C8C0B8&\bord1.4}uv sync now uses the image's Python 3.12,
+Dialogue: 0,0:10:34.33,0:10:36.64,Bilingual,,0,0,0,,下一个 container 也一样\N{\fs33\c&H00C8C0B8&\bord1.4}as does the next container.
+Dialogue: 0,0:10:36.96,0:10:38.35,Bilingual,,0,0,0,,然后退出这个 container\N{\fs33\c&H00C8C0B8&\bord1.4}Exit it.
+Dialogue: 0,0:10:38.40,0:10:40.93,Bilingual,,0,0,0,,更好的办法是：在第一次构建之前就把它改好\N{\fs33\c&H00C8C0B8&\bord1.4}Better still, fix this before your first build.
+Dialogue: 0,0:10:42.27,0:10:44.40,Bilingual,,0,0,0,,快速过一遍：C、D 和 E\N{\fs33\c&H00C8C0B8&\bord1.4}Speed round: C, D and E.
+Dialogue: 0,0:10:44.72,0:10:50.10,Bilingual,,0,0,0,,C 是 synthesis audio en：cd 进去，复制密钥，再跑 uv init\N{\fs33\c&H00C8C0B8&\bord1.4}For C, synthesis_audio_en, cd in, copy the key, and run uv init.
+Dialogue: 0,0:10:50.42,0:10:54.47,Bilingual,,0,0,0,,如果它写进去的是 3.13 及以上，就改成 3.12\N{\fs33\c&H00C8C0B8&\bord1.4}If it stamps 3.13 or newer, change it to 3.12,
+Dialogue: 0,0:10:54.47,0:10:56.24,Bilingual,,0,0,0,,这里和 D、E 都要改\N{\fs33\c&H00C8C0B8&\bord1.4}here and in D and E.
+Dialogue: 0,0:10:56.48,0:10:58.66,Bilingual,,0,0,0,,写一个和 B 一样的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}Write the same Dockerfile as B's.
+Dialogue: 0,0:10:58.98,0:11:03.55,Bilingual,,0,0,0,,一个小疏漏，这里和 E 都有：README 的正文说要保留 ffmpeg\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip, here and in E: the README's text says to keep ffmpeg,
+Dialogue: 0,0:11:03.55,0:11:06.96,Bilingual,,0,0,0,,但它的代码块里没有 ffmpeg，这才是对的\N{\fs33\c&H00C8C0B8&\bord1.4}but its code block, which is right, leaves it out.
+Dialogue: 0,0:11:07.20,0:11:12.21,Bilingual,,0,0,0,,构建它：构建步骤 2 用了缓存，整个构建只花了 0.6 秒\N{\fs33\c&H00C8C0B8&\bord1.4}Build it: build step 2 is cached and the build takes 0.6 seconds:
+Dialogue: 0,0:11:12.21,0:11:15.22,Bilingual,,0,0,0,,C 的 Dockerfile 到这里为止和 B 的一样\N{\fs33\c&H00C8C0B8&\bord1.4}C's Dockerfile matches B's up to there,
+Dialogue: 0,0:11:15.22,0:11:17.61,Bilingual,,0,0,0,,所以 Docker 直接复用了 B 的那个大层\N{\fs33\c&H00C8C0B8&\bord1.4}so Docker reuses B's big layer.
+Dialogue: 0,0:11:17.85,0:11:22.20,Bilingual,,0,0,0,,运行它，加上 storage 和 text to speech：一共 24 个包\N{\fs33\c&H00C8C0B8&\bord1.4}Run it, and add storage and text to speech: 24 packages.
+Dialogue: 0,0:11:22.45,0:11:25.59,Bilingual,,0,0,0,,在第 18 行设置组名，然后检查一下帮助\N{\fs33\c&H00C8C0B8&\bord1.4}Set the group name on line 18, then check the help.
+Dialogue: 0,0:11:25.91,0:11:28.00,Bilingual,,0,0,0,,没有密钥的话，连帮助都会失败\N{\fs33\c&H00C8C0B8&\bord1.4}Without a key, even help fails:
+Dialogue: 0,0:11:28.00,0:11:32.73,Bilingual,,0,0,0,,脚本一启动，第 22 行就创建 Text-to-Speech 客户端\N{\fs33\c&H00C8C0B8&\bord1.4}line 22 builds the Text-to-Speech client as soon as the script starts,
+Dialogue: 0,0:11:32.73,0:11:34.42,Bilingual,,0,0,0,,比读取任何参数都早\N{\fs33\c&H00C8C0B8&\bord1.4}before reading any flags.
+Dialogue: 0,0:11:34.74,0:11:36.34,Bilingual,,0,0,0,,暂停一下，跟上进度\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and catch up.
+Dialogue: 0,0:11:37.73,0:11:42.15,Bilingual,,0,0,0,,请求里带着文本，还有 bucket 里的一个地址，就在第 78 行\N{\fs33\c&H00C8C0B8&\bord1.4}The request carries the text and an address in the bucket, line 78.
+Dialogue: 0,0:11:42.47,0:11:45.90,Bilingual,,0,0,0,,Google 的长音频服务把语音直接写到那里\N{\fs33\c&H00C8C0B8&\bord1.4}Google's long audio service writes the speech straight there,
+Dialogue: 0,0:11:45.90,0:11:47.53,Bilingual,,0,0,0,,从不经过你的 container\N{\fs33\c&H00C8C0B8&\bord1.4}never through your container.
+Dialogue: 0,0:11:47.77,0:11:51.36,Bilingual,,0,0,0,,C 只是拿着一张取件单，最多等 300 秒\N{\fs33\c&H00C8C0B8&\bord1.4}C just holds a ticket stub for up to 300 seconds,
+Dialogue: 0,0:11:51.36,0:11:56.19,Bilingual,,0,0,0,,然后打印出音频会被保存：所以 C 没有上传这一步\N{\fs33\c&H00C8C0B8&\bord1.4}then prints that the audio will be saved: so C has no upload step.
+Dialogue: 0,0:11:56.43,0:12:01.30,Bilingual,,0,0,0,,所以在 C 里，暂停一下，跑下载和合成，然后退出、重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}So in C, pause to run download and synthesis, then exit and rebuild.
+Dialogue: 0,0:12:02.28,0:12:06.00,Bilingual,,0,0,0,,D，也就是 translate text，飞快地走完同样的准备\N{\fs33\c&H00C8C0B8&\bord1.4}D, translate text, races through the same setup:
+Dialogue: 0,0:12:06.00,0:12:09.64,Bilingual,,0,0,0,,cd、密钥、uv init、同样的 Dockerfile、构建\N{\fs33\c&H00C8C0B8&\bord1.4}cd, key, uv init, the same Dockerfile, a build.
+Dialogue: 0,0:12:09.97,0:12:12.55,Bilingual,,0,0,0,,然后运行它，加上 storage 和 translate\N{\fs33\c&H00C8C0B8&\bord1.4}Then run it, add storage and translate,
+Dialogue: 0,0:12:12.55,0:12:14.81,Bilingual,,0,0,0,,再在第 18 行设置组名\N{\fs33\c&H00C8C0B8&\bord1.4}and set the group name on line 18.
+Dialogue: 0,0:12:15.13,0:12:17.35,Bilingual,,0,0,0,,和 C 一样，连帮助都需要密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Like C, even help needs the key.
+Dialogue: 0,0:12:17.67,0:12:19.27,Bilingual,,0,0,0,,暂停一下，跟上进度\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and catch up.
+Dialogue: 0,0:12:21.82,0:12:23.93,Bilingual,,0,0,0,,翻译服务没有取件单\N{\fs33\c&H00C8C0B8&\bord1.4}Translation has no ticket stub:
+Dialogue: 0,0:12:23.93,0:12:28.96,Bilingual,,0,0,0,,法语直接返回，然后打印出来、存进 text translated\N{\fs33\c&H00C8C0B8&\bord1.4}the French comes straight back, is printed and saved under text translated,
+Dialogue: 0,0:12:28.96,0:12:30.56,Bilingual,,0,0,0,,所以 D 需要上传这一步\N{\fs33\c&H00C8C0B8&\bord1.4}so D needs an upload.
+Dialogue: 0,0:12:30.70,0:12:35.27,Bilingual,,0,0,0,,暂停一下，跑下载、翻译和上传，然后退出、重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}Pause to run download, translate and upload, then exit and rebuild.
+Dialogue: 0,0:12:36.55,0:12:38.32,Bilingual,,0,0,0,,至于 E，也就是 synthesis audio\N{\fs33\c&H00C8C0B8&\bord1.4}E, synthesis audio,
+Dialogue: 0,0:12:38.32,0:12:40.97,Bilingual,,0,0,0,,就是再来一遍 C，组名也在第 18 行\N{\fs33\c&H00C8C0B8&\bord1.4}is C again, group name on line 18 too.
+Dialogue: 0,0:12:41.29,0:12:42.54,Bilingual,,0,0,0,,一个无害的小疏漏\N{\fs33\c&H00C8C0B8&\bord1.4}One harmless slip:
+Dialogue: 0,0:12:42.54,0:12:46.06,Bilingual,,0,0,0,,它的帮助文本写着 Transcribe audio file to text\N{\fs33\c&H00C8C0B8&\bord1.4}its help text says “Transcribe audio file to text”,
+Dialogue: 0,0:12:46.06,0:12:47.66,Bilingual,,0,0,0,,是从 A 的代码粘过来的\N{\fs33\c&H00C8C0B8&\bord1.4}pasted from A's code.
+Dialogue: 0,0:12:47.88,0:12:49.48,Bilingual,,0,0,0,,暂停一下，跟上进度\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and catch up.
+Dialogue: 0,0:12:52.02,0:12:55.02,Bilingual,,0,0,0,,暂停一下，用你的密钥跑下载和合成\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and run download and synthesis with your key.
+Dialogue: 0,0:12:55.70,0:12:57.80,Bilingual,,0,0,0,,E 里有一个可选的附加任务\N{\fs33\c&H00C8C0B8&\bord1.4}An optional bonus in E speaks the French with ElevenLabs, in the instructor's voice.
+Dialogue: 0,0:12:57.80,0:13:01.10,Bilingual,,0,0,0,,用 ElevenLabs 以授课老师的声音念出法语\N{\fs33\c&H00C8C0B8&\bord1.4}An optional bonus in E speaks the French with ElevenLabs, in the instructor's voice.
+Dialogue: 0,0:13:01.42,0:13:04.46,Bilingual,,0,0,0,,它用的是你自己的 ElevenLabs 密钥和配额\N{\fs33\c&H00C8C0B8&\bord1.4}It uses your own ElevenLabs key and quota:
+Dialogue: 0,0:13:04.46,0:13:06.05,Bilingual,,0,0,0,,secrets 里放一个密钥文件\N{\fs33\c&H00C8C0B8&\bord1.4}a key file in secrets,
+Dialogue: 0,0:13:06.05,0:13:10.46,Bilingual,,0,0,0,,附加脚本里也要填上你的组名，还要 uv add requests\N{\fs33\c&H00C8C0B8&\bord1.4}your group name in the bonus script too, and uv add requests.
+Dialogue: 0,0:13:10.70,0:13:12.32,Bilingual,,0,0,0,,然后跑它的三条命令\N{\fs33\c&H00C8C0B8&\bord1.4}Then run its three commands.
+Dialogue: 0,0:13:12.64,0:13:18.23,Bilingual,,0,0,0,,没有密钥文件的话，连下载都会失败：脚本一启动就会读那个文件\N{\fs33\c&H00C8C0B8&\bord1.4}Without the key file, even download fails: the script reads that file as soon as it starts.
+Dialogue: 0,0:13:18.47,0:13:20.45,Bilingual,,0,0,0,,暂停一下，退出，然后重新构建 E\N{\fs33\c&H00C8C0B8&\bord1.4}Pause to exit and rebuild E.
+Dialogue: 0,0:13:20.77,0:13:23.46,Bilingual,,0,0,0,,五个都做完以后，你们组的抽屉一个个填满\N{\fs33\c&H00C8C0B8&\bord1.4}With all five done, your group's drawers fill,
+Dialogue: 0,0:13:23.46,0:13:25.51,Bilingual,,0,0,0,,排行榜上你那一行也会亮起来\N{\fs33\c&H00C8C0B8&\bord1.4}and your leaderboard row lights up.
+Dialogue: 0,0:13:27.65,0:13:29.61,Bilingual,,0,0,0,,关于密钥，最后一个问题\N{\fs33\c&H00C8C0B8&\bord1.4}One last question about the key.
+Dialogue: 0,0:13:29.93,0:13:32.69,Bilingual,,0,0,0,,它被 Git 忽略了，所以永远不会传到 GitHub\N{\fs33\c&H00C8C0B8&\bord1.4}It's git-ignored, so it never reaches GitHub.
+Dialogue: 0,0:13:33.01,0:13:36.08,Bilingual,,0,0,0,,可是你构建了 image，还把它 push 到了 Docker Hub\N{\fs33\c&H00C8C0B8&\bord1.4}But you build the image and push it to Docker Hub:
+Dialogue: 0,0:13:36.08,0:13:37.68,Bilingual,,0,0,0,,密钥在不在里面？\N{\fs33\c&H00C8C0B8&\bord1.4}is the key inside?
+Dialogue: 0,0:13:46.03,0:13:49.66,Bilingual,,0,0,0,,我们来验证一下，用一个 82 字节的替身文件代替真正的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Let's test it, with an 82 byte stand-in for the real key.
+Dialogue: 0,0:13:49.98,0:13:54.76,Bilingual,,0,0,0,,这几条额外的 Git 命令显示，它被 .gitignore 的第 3 行忽略了\N{\fs33\c&H00C8C0B8&\bord1.4}These extra Git commands show it's ignored, by line 3 of .gitignore.
+Dialogue: 0,0:13:56.53,0:14:01.70,Bilingual,,0,0,0,,现在重新构建，再列出 image 本身里面的 secrets 目录，不挂载\N{\fs33\c&H00C8C0B8&\bord1.4}Now rebuild, and list the secrets folder inside the image itself, with no mount.
+Dialogue: 0,0:14:02.02,0:14:06.09,Bilingual,,0,0,0,,就在这儿：mega-pipeline.json，在 image 里面\N{\fs33\c&H00C8C0B8&\bord1.4}There it is: mega-pipeline.json, inside the image.
+Dialogue: 0,0:14:06.41,0:14:09.62,Bilingual,,0,0,0,,你真正的密钥就在你今天构建的每个 image 里\N{\fs33\c&H00C8C0B8&\bord1.4}Your real key is in every image you built today,
+Dialogue: 0,0:14:09.62,0:14:11.89,Bilingual,,0,0,0,,因为第 2 步在第 5 步之前\N{\fs33\c&H00C8C0B8&\bord1.4}because step 2 came before step 5.
+Dialogue: 0,0:14:12.13,0:14:14.27,Bilingual,,0,0,0,,Docker 不读 .gitignore\N{\fs33\c&H00C8C0B8&\bord1.4}Docker doesn't read .gitignore.
+Dialogue: 0,0:14:14.59,0:14:19.16,Bilingual,,0,0,0,,还记得第 2 讲的包裹吗：构建上下文就是整个目录\N{\fs33\c&H00C8C0B8&\bord1.4}Remember lecture 2's parcel: the build context is the whole folder,
+Dialogue: 0,0:14:19.16,0:14:22.57,Bilingual,,0,0,0,,密钥也在里面，COPY 那一行会把它全部拆开放进去\N{\fs33\c&H00C8C0B8&\bord1.4}key included, and the copy line unpacks all of it.
+Dialogue: 0,0:14:22.89,0:14:25.49,Bilingual,,0,0,0,,README 里关于 secrets 的提示只管 Git\N{\fs33\c&H00C8C0B8&\bord1.4}The README's secrets note only covers Git.
+Dialogue: 0,0:14:25.73,0:14:30.02,Bilingual,,0,0,0,,解决办法第 2 讲也推荐过，在这里算额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}The fix, which lecture 2 recommended, is an extra here:
+Dialogue: 0,0:14:30.02,0:14:34.07,Bilingual,,0,0,0,,一个叫 .dockerignore 的文件，只有一行：secrets/\N{\fs33\c&H00C8C0B8&\bord1.4}a file named .dockerignore, with one line, secrets/.
+Dialogue: 0,0:14:34.39,0:14:39.22,Bilingual,,0,0,0,,五个 image 都复制了密钥，所以暂停一下，在五个目录里都加上它\N{\fs33\c&H00C8C0B8&\bord1.4}All five images copied the key, so pause and add it in all five folders.
+Dialogue: 0,0:14:40.68,0:14:42.40,Bilingual,,0,0,0,,重新构建，再列一次\N{\fs33\c&H00C8C0B8&\bord1.4}Rebuild, and list again:
+Dialogue: 0,0:14:42.40,0:14:45.33,Bilingual,,0,0,0,,报 cannot access，No such file or directory\N{\fs33\c&H00C8C0B8&\bord1.4}cannot access, No such file or directory.
+Dialogue: 0,0:14:45.65,0:14:47.36,Bilingual,,0,0,0,,密钥没有进 image\N{\fs33\c&H00C8C0B8&\bord1.4}The key stayed out of the image.
+Dialogue: 0,0:14:48.05,0:14:49.41,Bilingual,,0,0,0,,而运行照样没问题\N{\fs33\c&H00C8C0B8&\bord1.4}And the run still works,
+Dialogue: 0,0:14:49.41,0:14:53.60,Bilingual,,0,0,0,,因为挂载会在 container 启动时把你的 secrets 目录带进来\N{\fs33\c&H00C8C0B8&\bord1.4}because the mount brings your secrets folder in when the container starts.
+Dialogue: 0,0:14:53.83,0:14:58.39,Bilingual,,0,0,0,,README 最后那个可选部分，是把 image push 到 Docker Hub\N{\fs33\c&H00C8C0B8&\bord1.4}The README's optional last section pushes the image to Docker Hub:
+Dialogue: 0,0:14:58.39,0:15:02.26,Bilingual,,0,0,0,,先在那里创建一个访问令牌，然后登录、打 tag、push\N{\fs33\c&H00C8C0B8&\bord1.4}create an access token there, then log in, tag and push.
+Dialogue: 0,0:15:02.58,0:15:05.99,Bilingual,,0,0,0,,只 push 用那个 .dockerignore 构建出来的 image\N{\fs33\c&H00C8C0B8&\bord1.4}Only push an image built with that .dockerignore.
+Dialogue: 0,0:15:06.23,0:15:10.67,Bilingual,,0,0,0,,登录时只给用户名，等它提示输入时再粘贴访问令牌\N{\fs33\c&H00C8C0B8&\bord1.4}Log in with just your user name and paste the token at the prompt;
+Dialogue: 0,0:15:10.67,0:15:13.36,Bilingual,,0,0,0,,令牌写在 -p 后面就会留在你的 shell 历史记录里\N{\fs33\c&H00C8C0B8&\bord1.4}after -p it stays in your shell history.
+Dialogue: 0,0:15:13.68,0:15:17.63,Bilingual,,0,0,0,,如果你曾经 push 过带密钥的 image，把它删掉，并告诉课程团队\N{\fs33\c&H00C8C0B8&\bord1.4}If you ever pushed an image with the key, delete it and tell the staff.
+Dialogue: 0,0:15:17.87,0:15:19.71,Bilingual,,0,0,0,,课程接下来的方向\N{\fs33\c&H00C8C0B8&\bord1.4}Where the course is heading:
+Dialogue: 0,0:15:19.71,0:15:23.71,Bilingual,,0,0,0,,去年的参考答案把 secrets 目录放在 repo 外面\N{\fs33\c&H00C8C0B8&\bord1.4}last year's solution kept the secrets folder outside the repo
+Dialogue: 0,0:15:23.71,0:15:26.27,Bilingual,,0,0,0,,运行时再把它挂载到 /secrets\N{\fs33\c&H00C8C0B8&\bord1.4}and mounted it at /secrets at run time.
+Dialogue: 0,0:15:26.59,0:15:28.64,Bilingual,,0,0,0,,密钥从来不会进入 image\N{\fs33\c&H00C8C0B8&\bord1.4}No key ever enters the image.
+Dialogue: 0,0:15:29.98,0:15:31.49,Bilingual,,0,0,0,,该清理了\N{\fs33\c&H00C8C0B8&\bord1.4}Time to clean up.
+Dialogue: 0,0:15:31.54,0:15:36.55,Bilingual,,0,0,0,,云上没有要删的东西：你没有创建任何机器、bucket 或账号\N{\fs33\c&H00C8C0B8&\bord1.4}In the cloud there's nothing to delete: you created no machine, bucket or account.
+Dialogue: 0,0:15:36.80,0:15:39.81,Bilingual,,0,0,0,,在本地，用 cd .. 回到 repo 的根目录\N{\fs33\c&H00C8C0B8&\bord1.4}Locally, cd .. back up to the repo.
+Dialogue: 0,0:15:40.13,0:15:43.56,Bilingual,,0,0,0,,一条额外的命令列出这五个 image\N{\fs33\c&H00C8C0B8&\bord1.4}An extra command lists the five images:
+Dialogue: 0,0:15:43.56,0:15:50.52,Bilingual,,0,0,0,,transcribe audio 是 1.48 GB，其他四个各约 845 MB\N{\fs33\c&H00C8C0B8&\bord1.4}transcribe audio at 1.48 gigabytes, the other four at about 845 megabytes each.
+Dialogue: 0,0:15:50.77,0:15:52.57,Bilingual,,0,0,0,,想保住你的成果，就检查一下 Git\N{\fs33\c&H00C8C0B8&\bord1.4}To keep your work, check Git.
+Dialogue: 0,0:15:52.81,0:15:54.31,Bilingual,,0,0,0,,额外跑一下 git status\N{\fs33\c&H00C8C0B8&\bord1.4}An extra git status
+Dialogue: 0,0:15:54.31,0:15:58.90,Bilingual,,0,0,0,,它显示你改过的 cli.py 和 generate text 里的文件\N{\fs33\c&H00C8C0B8&\bord1.4}shows your edited cli.py files and the files in generate text,
+Dialogue: 0,0:15:58.90,0:16:04.01,Bilingual,,0,0,0,,但另外四个目录藏起了它们的 Dockerfile 和项目文件\N{\fs33\c&H00C8C0B8&\bord1.4}but the other four folders hide their Dockerfiles and project files.
+Dialogue: 0,0:16:04.25,0:16:05.69,Bilingual,,0,0,0,,在你自己的 repo 里\N{\fs33\c&H00C8C0B8&\bord1.4}In your own repo,
+Dialogue: 0,0:16:05.69,0:16:09.60,Bilingual,,0,0,0,,用 git add -f 把这些 Dockerfile 和项目文件加进去\N{\fs33\c&H00C8C0B8&\bord1.4}add those Dockerfiles and project files with git add -f,
+Dialogue: 0,0:16:09.60,0:16:13.85,Bilingual,,0,0,0,,但别加数据目录，secrets 则要一直忽略下去\N{\fs33\c&H00C8C0B8&\bord1.4}but not the data folders, and never stop ignoring secrets.
+Dialogue: 0,0:16:14.10,0:16:18.13,Bilingual,,0,0,0,,然后暂停，用 docker image rm 删掉这五个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Then pause and remove the five images with docker image rm,
+Dialogue: 0,0:16:18.13,0:16:19.60,Bilingual,,0,0,0,,这也是额外步骤\N{\fs33\c&H00C8C0B8&\bord1.4}another extra.
+Dialogue: 0,0:16:19.65,0:16:23.48,Bilingual,,0,0,0,,旧的构建会留下来，没有 tag，每个都带着你的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Older builds stay behind untagged, each holding your key,
+Dialogue: 0,0:16:23.48,0:16:26.17,Bilingual,,0,0,0,,所以再用 docker image prune 把它们也删掉\N{\fs33\c&H00C8C0B8&\bord1.4}so docker image prune removes those too.
+Dialogue: 0,0:16:29.20,0:16:31.21,Bilingual,,0,0,0,,五道自测题\N{\fs33\c&H00C8C0B8&\bord1.4}Five questions to test yourself.
+Dialogue: 0,0:16:31.53,0:16:35.54,Bilingual,,0,0,0,,第一题：D，也就是 translate text，读哪个抽屉，又是谁写的？\N{\fs33\c&H00C8C0B8&\bord1.4}One: which drawer does D, translate text, read, and who wrote it?
+Dialogue: 0,0:16:35.86,0:16:38.57,Bilingual,,0,0,0,,第二题：为什么挂载没有盖住那些包\N{\fs33\c&H00C8C0B8&\bord1.4}Two: why doesn't the mount hide the packages,
+Dialogue: 0,0:16:38.57,0:16:41.70,Bilingual,,0,0,0,,没有 uv project environment 这个变量，又会出什么问题？\N{\fs33\c&H00C8C0B8&\bord1.4}and what breaks without UV_PROJECT_ENVIRONMENT?
+Dialogue: 0,0:16:41.95,0:16:44.97,Bilingual,,0,0,0,,第三题：在用完就扔的 container 里 uv add 之后\N{\fs33\c&H00C8C0B8&\bord1.4}Three: after uv add in a throwaway container,
+Dialogue: 0,0:16:44.97,0:16:47.86,Bilingual,,0,0,0,,什么会留下来，又是什么让它永久保留？\N{\fs33\c&H00C8C0B8&\bord1.4}what survives, and what makes it permanent?
+Dialogue: 0,0:16:48.18,0:16:52.57,Bilingual,,0,0,0,,第四题：哪个变量指向密钥，为什么只有在 /app 里才管用？\N{\fs33\c&H00C8C0B8&\bord1.4}Four: which variable points to the key, and why only from /app?
+Dialogue: 0,0:16:52.89,0:16:56.58,Bilingual,,0,0,0,,第五题：被 Git 忽略的密钥怎么会进 image，怎么修？\N{\fs33\c&H00C8C0B8&\bord1.4}Five: how can an image hold a git-ignored key, and the fix?
+Dialogue: 0,0:16:56.83,0:17:01.27,Bilingual,,0,0,0,,答案在练习里；每条命令都在学习指南里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises; every command is in the study guide.
+Dialogue: 0,0:17:01.59,0:17:06.42,Bilingual,,0,0,0,,下节课：你自己的 bucket 和服务账号，放在 repo 外面的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture: your own bucket and service account, the key outside the repo,
+Dialogue: 0,0:17:06.42,0:17:09.53,Bilingual,,0,0,0,,还有一个帮你构建并运行每个 container 的脚本\N{\fs33\c&H00C8C0B8&\bord1.4}and a script that builds and runs each container.

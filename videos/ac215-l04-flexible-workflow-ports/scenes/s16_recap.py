@@ -30,7 +30,8 @@ Beats (script.md "## S16", one voiceover block each):
  3  V6 leaves; a compact PAGE(59) (localhost:8095, the reply filled) at the centre, its address flashes.
     On "change it back": the page goes, the editor returns and the pencil turns 8095 back into 8090
     (the file's own line 16). On "and apply again": the strip types `docker compose up -d` -> 60 lines
-    2–4 (same colours); the editor goes, V6 returns and the gateway re-forms with door 127.0.0.1:8090.
+    2–4 (same colours, the same GREY "≈10 s" tag); the editor goes, V6 returns and the gateway re-forms
+    with door 127.0.0.1:8090.
  4  TRACKER P4/4 · extra. V6 leaves; a GREY editor with processor/processor.py · line 45 and the GREY
     caption "edit: add `# edited` at the end · remove it when you're done" under it; the pencil writes
     lines 46–47 (a blank line and `# edited`, the capture's `+` lines; the header becomes "lines
@@ -968,8 +969,12 @@ class Recap(VoiceScene):
             vo.wait_until("and apply again")
             type_cmd(self, t, UP_D, type_time=0.5)
             r60 = print_rows(self, t, C60.at((2, 4)), run_time=0.4)
-            self.play(*paint(r60[1], VENV), *paint(r60[2], TURN), FadeOut(ed), FadeIn(net), FadeIn(halo),
-                      run_time=0.5)
+            w60 = beside(slim(grey_tag(STOP_10), t), t, r60[2], buff=0.25)     # the same 10 s wait again
+            self.play(*paint(r60[1], VENV), *paint(r60[2], TURN), FadeIn(w60, shift=LEFT * 0.1), FadeOut(ed),
+                      FadeIn(net), FadeIn(halo), run_time=0.5)
+            self.remove(w60)                                                    # pinned: part of the row
+            r60[2].add(w60)
+            self.add(r60[2])
             self.play(net.reform("gateway", run_time=1.0), net.set_door("127.0.0.1:8090", run_time=1.0),
                       flash(halo, CTR, 1.0, 1.0))
 
