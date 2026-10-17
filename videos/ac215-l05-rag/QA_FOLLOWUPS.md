@@ -20,3 +20,8 @@ Each item was found on a work-in-progress checkpoint; check it in the CURRENT co
   end of `app@390fe47a277a:/app$`. Move it off that row.
 - Pattern across S03/S08/S11: `beside(tag, t, row)` on a long row clamps over the text. Grep every L05 scene
   for `beside(` and check each frame.
+- S13 (s13_chat.py, Bugbot thread "Line 372 highlight indexes wrong glyphs", fixed by the coordinator):
+  `tc.rows[3]` is one Text of 40 glyphs, so `[0]` was the first glyph and the slice was empty. The beat-9
+  highlight now slices the row itself (glyphs 23–29 = "line372", asserted). The scene's build was cut off by
+  a usage limit: on resume its check stopped earlier, at the `ill`/`src` assert (line 519). Check the
+  beat-9 frame once the scene builds.

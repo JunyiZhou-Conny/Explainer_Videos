@@ -595,7 +595,10 @@ class FinalPrompt(VoiceScene):
             vo.wait_until("For your own question")
             self.play(Indicate(tc.rows[3], color=TURN, scale_factor=1.04), run_time=0.9)
             vo.wait_until("change line 372")
-            l372 = tc.rows[3][0][len("yourownquestion:cli.py·"):][:len("line372")]
+            # the row is one Text: its glyphs follow the string without spaces
+            i372 = "yourownquestion:cli.py·line372·norebuild".index("line372")
+            l372 = tc.rows[3][i372:i372 + len("line372")]
+            assert len(l372) == 7 and len(tc.rows[3]) == 40, (len(l372), len(tc.rows[3]))
             self.play(l372.animate.set_color(TURN), run_time=0.5)
         self.wait(2)                                   # ▶ beat: hold the frame
 
