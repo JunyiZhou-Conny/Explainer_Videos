@@ -20,7 +20,9 @@ Beats (script.md "## S11", one voiceover block each):
     away). On "from the cache" both `CACHED` words turn GREEN and two GREEN `CACHED` tags fly to
     the gateway card's RUN and WORKDIR rows; on "because the two files match" GREY `=` marks
     link lines 1–4 of the two cards one by one and a GREY `≠` sits on line 5 (both file names
-    flash); on "up to the copy line" both COPY rows flash. `Building 0.3s` underlines YELLOW on
+    flash); on "up to the copy line" both COPY rows flash with the build's `[4/4] COPY . .` row (no
+    CACHED), and the GREY tag "same line · different files copied → rebuilt" lands on that row
+    (QA 20:04: an identical COPY line is not a cache hit). `Building 0.3s` underlines YELLOW on
     "It's done in under a second".
  3  TRACKER P1/4. The cards go. The README's two rows are typed under the prompt
     (`docker run -d --name processor --network toynet \` / `  -e PORT=9200 toy-processor`) ->
@@ -88,6 +90,8 @@ Deviations from SHOW (and why):
   the tracker; it sits over the picture, and the three labels form a legend row under it (the
   numbers land there, in the README's order) instead of standing on the door: the door and the
   room are 2 units apart at the far left, too close for three labels of 2.6–3.5 units.
+- Beat 2 has pad=1.0: the COPY row's tag (44 characters) lands on "up to the copy line", 2 s
+  before the clip ends; the pad gives it 3 s on screen before beat 3 clears the cards.
 - Beat 4's narration names the last number ("then room 9100") at the clip's very end, so the
   block has pad=1.5: the complete legend stays 2 s before beat 5 clears it.
 - Timing: anchors inside a sentence go through cue(), with shifts measured on the cached Kokoro
@@ -486,7 +490,7 @@ class BuildAndStart(VoiceScene):
             cg.next_to(c_gw.frame, RIGHT, buff=0.1).set_y(c_gw.rows[i].strut.get_center()[1])
             cached.add(cg)
         assert cached.get_right()[0] < 6.5 and t6.get_left()[0] > -6.5
-        with self.voiceover(SAY[2]) as vo:
+        with self.voiceover(SAY[2], pad=1.0) as vo:     # the COPY tag lands 2 s before the clip ends
             self.play(FadeOut(VGroup(b2, box24, u75)), *[a for a in hi_time(rows[1], S.GREY)], run_time=0.3)
             type_cmd(self, t, B_GW.cmd, type_time=1.0)
             g_rows = print_build(self, t, GW_ROWS, run_time=0.5, lag=0.1)
@@ -502,7 +506,17 @@ class BuildAndStart(VoiceScene):
             self.play(FadeIn(eqs[4], scale=1.4), flash(substring(c_pr.rows[4], '"processor.py"'), TURN, 1.1),
                       flash(substring(c_gw.rows[4], '"gateway.py"'), TURN, 1.1), run_time=0.7)
             vo.wait_until("up to the copy line")
-            self.play(flash(c_pr.rows[3], VENV, 1.15), flash(c_gw.rows[3], VENV, 1.15), run_time=0.7)
+            # an identical COPY line is still rebuilt: it copies another folder's files (the build
+            # row above has no CACHED). The tag sits on that row, one row high (the cards have no
+            # room for it); it is not pinned, beat 3 fades it with the cards.
+            c_row = g_rows[3]
+            c_txt = substring(c_row, "[4/4] COPY . .")
+            c_tag = grey_tag("same line · different files copied → rebuilt")
+            c_tag.box.stretch_to_fit_height(t.pitch - 0.05)
+            c_tag.next_to(c_txt, RIGHT, buff=0.45).set_y(c_row.strut.get_center()[1])
+            assert c_tag.get_right()[0] < c_row.time_tag.get_left()[0] - 0.2
+            self.play(flash(c_pr.rows[3], VENV, 1.15), flash(c_gw.rows[3], VENV, 1.15),
+                      flash(c_txt, TURN, 1.1), FadeIn(c_tag, shift=LEFT * 0.1), run_time=0.7)
             vo.wait_until("It's done in under a second")
             u03 = under(substring(g_rows[0], "Building 0.3s"), TURN)
             self.play(Create(u03), run_time=0.4)
@@ -532,7 +546,7 @@ class BuildAndStart(VoiceScene):
         ghost = ghost_door(d1.frame)
         no_door = note("no street door").next_to(ghost, LEFT, buff=0.15)
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(cards, t6, cached, eqs, u03)), tr.goto(4), run_time=0.5)
+            self.play(FadeOut(VGroup(cards, t6, cached, eqs, u03, c_tag)), tr.goto(4), run_time=0.5)
             run_p = type_rows(self, t, PR_RUN, type_time=1.5, room_after=1)
             t.print(self, [PR_ID], run_time=0.35)
             # "with PORT set to 9200" is spoken while the rows are typed: light it at once

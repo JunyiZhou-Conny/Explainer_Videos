@@ -18,10 +18,10 @@ Beats (script.md "## S14", one voiceover block each):
     leaves and the page folds its port card (address bar + reply card stay) while the terminal
     grows to 7 rows; it types `curl --max-time 3 http://localhost:8090` (extra, GREY tag) -> 33
     line 2, RED; then `docker ps --format 'table {{.Image}}\t{{.Ports}}\t{{.Names}}'` (extra) -> 35
-    lines 2–4, `127.0.0.1:8095->9100/tcp` YELLOW. On "Pause and move your gateway's door": the page
-    leaves, the terminal shrinks to 5 rows (docker ps's prompt row with its extra tag, the command,
-    its output) and the static GREY your-turn card (`docker rm -f gateway` · the run's five rows ·
-    open localhost:8095) appears above it, ▶ your turn on it.
+    lines 2–4, `127.0.0.1:8095->9100/tcp` YELLOW. On "Pause and move your gateway's door", in one
+    move: the page leaves, the terminal shrinks to 5 rows (docker ps's prompt row with its extra
+    tag, the command, its output) and the static GREY your-turn card (`docker rm -f gateway` · the
+    run's five rows · open localhost:8095) appears above it, ▶ your turn on it (held >= 2.5 s).
  2  The card leaves and the terminal shrinks to the strip (docker ps's output). A GREY README card
     `README.md · lines 357–363` (the heading and lines 359, 361,
     363 as rendered) at the left; at the right, a small V7-style picture: the laptop's dashed wall
@@ -80,14 +80,15 @@ Beats (script.md "## S14", one voiceover block each):
 10  TRACKER P3/4. The chips and the strip's rows leave; the terminal grows to 7 rows under V7. `docker rm -f
     gateway processor` -> 44 lines 2–3: both boxes (and the door, route, aim and slider) dissolve;
     `docker network rm toynet` -> 45 line 2: the rail dissolves. TRACKER P3/4 · extra: the rest of
-    V7 leaves and the terminal grows to 10 rows; `docker ps -a` (extra) -> 46 lines 2–3 (wrap),
+    V7 leaves and the terminal grows to 10 rows, the five clean-up rows staying until the extras'
+    output scrolls them away; `docker ps -a` (extra) -> 46 lines 2–3 (wrap),
     `hello-world` boxed YELLOW; `docker network ls` (extra) -> 46 lines 4–7, GREY tag "no toynet".
     On "Skip this" the RED excerpt chip `Conflict. The container name "/processor" is already in
     use` (header `docker compose up · if the old containers remain (excerpt)`, from 68 lines 8–9
     joined) drops in above the terminal, the GREY caption "if you skip this: Compose wants these
     names" right of the tracker. On "Pause and clean up" the static GREY your-turn card (the two
     README commands, the two extras tagged) replaces the terminal and the tracker caption drops
-    " · extra". Fade out to an empty frame.
+    " · extra"; it is held >= 2.5 s. Fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - The terminal under V7 has 7 rows (top y 0.17), not 8 (top 0.58), and V7 is S11's 0.83 vertical
@@ -648,7 +649,7 @@ class ChangePorts(VoiceScene):
             row.shift(RIGHT * 2 * cell_width(CAPTION))
         card1.shift([0 - card1.frame.get_center()[0], strip_top(5) + 0.17 - card1.frame.get_bottom()[1], 0])
         assert card1.frame.get_top()[1] < TOP - 0.1 and card1.tag.get_top()[1] < 3.1, card1.get_top()[1]
-        with self.voiceover(SAY[1], pad=1.2) as vo:
+        with self.voiceover(SAY[1], pad=2.5) as vo:      # the card stays >= 2.5 s after the clip
             keep = [run1.rows[2], run1.rows[3], run1.rows[4]]
             # V7 leaves while the page and the reply arrive (no empty frame between them)
             resize(self, t, 3, keep=keep, run_time=1.0,
@@ -669,9 +670,10 @@ class ChangePorts(VoiceScene):
             m95 = substring(ps[1], "127.0.0.1:8095->9100/tcp")
             self.play(m95.animate.set_color(TURN), run_time=0.4)
             vo.wait_until("Pause and move")
-            # 5 rows: docker ps (its prompt row with the extra tag, the command) and its output stay
-            resize(self, t, 5, run_time=0.5, extra=[FadeOut(pg1), caption_extra(tr, False)])
-            self.play(FadeIn(card1, shift=UP * 0.15), run_time=0.5)
+            # 5 rows: docker ps (its prompt row with the extra tag, the command) and its output stay;
+            # the card arrives in the same move, so a pause on "Pause" already lands on it
+            resize(self, t, 5, run_time=0.5, extra=[FadeOut(pg1), caption_extra(tr, False),
+                                                    FadeIn(card1, shift=UP * 0.15)])
 
         # ============================================================ 2 · why: another app holds 8090
         rc = readme_rows_card("README.md · lines 357–363", README_357)
@@ -904,7 +906,7 @@ class ChangePorts(VoiceScene):
         cap10 = note("if you skip this: Compose wants these names")
         card10 = turn_card([RM_BOTH, NET_RM, (PS_A, "extra"), (NET_LS, "extra")])
         card10.shift([0 - card10.frame.get_center()[0], 0.3 - card10.frame.get_center()[1], 0])
-        with self.voiceover(SAY[10], pad=1.2) as vo:
+        with self.voiceover(SAY[10], pad=2.5) as vo:     # the closing card stays >= 2.5 s
             strip = list(t8.lines.submobjects)          # the strip's rows leave with the chips
             self.play(FadeOut(VGroup(g9, p9, eq, cap9)), FadeOut(VGroup(*strip)), tr.goto(4), run_time=0.5)
             for ln in strip:
@@ -921,7 +923,8 @@ class ChangePorts(VoiceScene):
             t8.print(self, [C45.line(2)], run_time=0.25)
             self.play(*net.parts_out("rail", "rail_label"), run_time=0.5)
             vo.wait_until("An extra check")
-            resize(self, t8, 10, keep=[], run_time=0.6, extra=[FadeOut(net), caption_extra(tr, True)])
+            # the five clean-up rows stay; the extras' output scrolls them away
+            resize(self, t8, 10, keep=None, run_time=0.6, extra=[FadeOut(net), caption_extra(tr, True)])
             type_extra(self, t8, PS_A, type_time=0.5)
             ps_a = t8.print(self, C46.at(2, 3), wrap=True, run_time=0.4)
             type_extra(self, t8, NET_LS, type_time=0.6)

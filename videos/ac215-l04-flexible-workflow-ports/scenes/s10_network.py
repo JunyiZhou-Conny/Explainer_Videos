@@ -16,7 +16,8 @@ Beats (script.md "## S10", one voiceover block each):
     own localhost": each box's TEAL localhost loop appears and a dot circles it (it glows YELLOW),
     and the laptop's third GREY loop does the same. On "full set of ports": a port strip
     1 … 65535 in each box. Both strips light 9100 at once (YELLOW cell + number), GREY caption
-    "each box: its own ports".
+    "each box: its own ports · both could use 9100" (the real processor listens on 9200: the
+    picture says "could", it does not give the processor 9100).
  2  The 9100 lights go out. A TEAL rail draws itself under the boxes, labelled "user-defined
     network"; a PINK phone-book glyph sits on it and its two blank lines (_____ → _______)
     rise out of the book glyph to their place between the boxes; GREY note "Docker's default
@@ -31,11 +32,14 @@ Beats (script.md "## S10", one voiceover block each):
     prints no clone command" on the prompt row; the chip flashes. `cd port_toy` -> no output, the
     prompt becomes student@laptop:~/AC215/port_toy$ (the new part flashes YELLOW). ▶ your turn.
  5  TRACKER P1/1 · extra. The terminal shrinks to the 3-row strip (the ▶ rides along on its row
-    and scrolls away at the first output); above it the README's tree (README.md · lines 59–69,
-    comments GREY). `ls gateway processor` (extra) -> 04 lines 11-18, printed three rows at a
-    time; a GREEN check lands in the tree beside each folder and file as it prints.
-    `git log --oneline -1` (extra) -> 04 line 19; `d190c71` is boxed GREY and lifts into a GREY
-    chip in the top band, right of the tracker, with the GREY tag "the pinned commit".
+    and fades when the strip is cleared for the listing); above it the README's tree (README.md ·
+    lines 59–69, comments GREY). `ls gateway processor` (extra) is typed and lifts into a GREY
+    command chip with an `extra` tag in the card's header row (right-aligned with the card), where
+    it stays until the card leaves in beat 6. -> 04 lines 11-18 in three batches, the strip
+    cleared in place before each (11-13 · 14-15 · 16-18), each held ~0.9 s; a GREEN check lands
+    in the tree beside each folder and file as it prints. `git log --oneline -1` (extra) -> 04
+    line 19; `d190c71` is boxed GREY and lifts into a GREY chip in the top band, right of the
+    tracker, with the GREY tag "the pinned commit".
  6  TRACKER P1/2. The tree and the hash's box leave; V6 returns above the strip (the ToyNet
     moves up 0.55 while hidden). `docker network create toynet`; the word toynet flies from the
     command onto the rail and replaces "user-defined network" (the commit chip leaves now) ->
@@ -57,7 +61,9 @@ Deviations from SHOW (and why):
   illustration of "forwards your text … turns it into capitals" (no terminal, nothing captured).
 - Beat 1: the boxes' strips and loops are registered here as extra hidden parts of ToyNet so they
   appear after the boxes have grown; ToyNet's dashed wall (V7's street doors, S11) is taken out
-  of this scene's copy: nothing on screen explains it yet.
+  of this scene's copy: nothing on screen explains it yet. The caption adds "· both could use
+  9100" to SHOW's "each box: its own ports": port_toy's processor listens on 9200 (README.md:55),
+  and a bare 9100 lit in the box named processor read as its real port (QA 18:36).
 - Beat 2: the phone book's "two blank lines" are drawn as `_____ → _______` (blank name, blank
   address), at the place where S13's entries will be written.
 - Beat 4: the README chip quotes "Clone or download" (README.md:81 starts "Clone or download the
@@ -65,9 +71,13 @@ Deviations from SHOW (and why):
 - Beat 5: the 3-row strip, not a taller terminal: the README's tree (9 rows) needs the 4.1 units
   above the strip. "the pinned commit" does not fit beside `d190c71 …` in its row (the line is 55
   characters), so the hash is boxed in the row and lifted into a chip in the top band (right of
-  the tracker), where the tag sits; the checked tree stays up until beat 6. Terminal.print
-  places every line of one call before scrolling, so a print of more than 3 lines spills under a
-  3-row strip's frame: the ls output prints three rows at a time.
+  the tracker), where the tag sits; the checked tree stays up until beat 6. The ls output (8
+  lines) does not fit the strip: it prints in three batches, and the strip is cleared in place
+  before each (a house scroll of 2–3 rows dragged them over the strip's title bar and the
+  card's border, and scrolled the command out after half a second), so the command is pinned as
+  a chip by the card instead (QA 19:12). Batches keep the processor listing whole: gateway:,
+  Dockerfile, gateway.py · index.html, (blank) · processor:, Dockerfile, processor.py. Both chips
+  in the top right are slim (pad 0.08) and right-aligned with the card, one above the other.
 - Beat 6: the ID chip carries the first 12 characters + "…" (the short ID `docker network ls`
   prints); the full 64-character line is in the strip. The tag sits under the laptop outline (no
   room on the rail). No ghost plugs: the gateway's plug would cross the chip; the rail flash and
@@ -203,6 +213,8 @@ NET_UP = 0.55            # beat 6, above the 3-row strip: outline -0.75..2.15
 P20 = line_pitch(CAPTION)
 Y_ROW = 0.1              # beat 0: the right-hand row (arrows, packet)
 TREE_BOTTOM = -1.30      # the tree card's frame sits on this (the strip's top is -1.44)
+HASH_Y = 3.30            # beat 5: the commit chip's row (the ls chip's row is under it)
+SLIM = 0.08              # beat 5: the two chips' vertical padding (two rows fit above the card)
 
 
 def relay_routes(relay) -> VGroup:
@@ -298,6 +310,17 @@ def tree_card():
     return g
 
 
+def wipe(scene, t, run_time: float = 0.25) -> None:
+    """Clear the strip in place: every row fades where it is (nothing slides over the title bar)
+    and is forgotten, so the next print starts on the first row (S16's wipe)."""
+    gone = list(t.lines.submobjects)
+    if gone:
+        scene.play(FadeOut(VGroup(*gone)), run_time=run_time)
+    for m in gone:
+        t.lines.remove(m)
+        scene.remove(m)
+
+
 def glyph_box(row, sub: str, color: str) -> VMobject:
     """A box around the glyphs of `sub` in a terminal row, the row's full height (not added)."""
     g = substring(row, sub)
@@ -381,7 +404,7 @@ class TwoComputers(VoiceScene):
         # ------------------------------------------------------------ 1. each box: its own localhost, its own ports
         boxes_t = {n: VGroup(net.boxes[n].frame.copy(), net.boxes[n].name.copy()) for n in net.boxes}
         brw_t = VGroup(net.browser.copy(), net.browser_label.copy())
-        cap_ports = note("each box: its own ports").move_to([1.95, under_net - 0.45, 0])
+        cap_ports = note("each box: its own ports · both could use 9100").move_to([1.95, under_net - 0.45, 0])
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(relay, routes, c142, ch24, c52, u_seg1, u_seg2, a_bg, a_gp, pkt)),
                       run_time=0.5)
@@ -492,25 +515,41 @@ class TwoComputers(VoiceScene):
         card.shift(UP * (TREE_BOTTOM - card.frame.get_bottom()[1]))
         card.shift(RIGHT * (-card.get_center()[0]))
         checks = {i: card.check_at(i) for i in range(2, 9)}
+        # the ls command stays readable all beat: a GREY chip + `extra` in the card's header row
+        lschip = chip(LS_CMD, S.GREY, size=CAPTION, font=MONO, pad_y=SLIM)
+        lsg = VGroup(lschip, extra_tag()).arrange(RIGHT, buff=0.25).align_to(card.frame, RIGHT)
+        lsg.shift(UP * (card.frame.get_top()[1] + 0.06 - lsg.get_bottom()[1]))
+        assert lsg.get_left()[0] > card.header.get_right()[0] + 0.5
+        # three batches (the strip has 3 rows), the strip cleared in place before each
+        batches = ((LS_GW[:3], (2, 3, 4), 0.55), (LS_GW[3:] + LS_PR[:1], (5,), 0.45),
+                   (LS_PR[1:], (6, 7, 8), 0.55))
+        assert LS_PR[0] == "" and LS_PR[1] == "processor:"
         with self.voiceover(SAY[5]) as vo:
-            # the ▶ rides along on its row and scrolls away with it at the first print
-            resize(self, t, 3, keep=2, run_time=0.6,
+            # the ▶ rides along on its row and fades with it when the strip is cleared
+            resize(self, t, 3, keep=2, run_time=0.5,
                    extra=[FadeIn(card, shift=UP * 0.15), FadeOut(ch81), caption_extra(tr, True)])
             ln_ls = type_cmd(self, t, LS_CMD, type_time=0.5)
-            pin(self, ln_ls, beside(extra_tag(), t, ln_ls), run_time=0.25)
-            # at most 3 lines per print: the strip has 3 rows (a longer print overflows its frame)
-            ls_out = LS_GW + LS_PR
-            for lines, rows in ((ls_out[:3], (2, 3, 4)), (ls_out[3:6], (5, 6)), (ls_out[6:], (7, 8))):
-                t.print(self, lines, run_time=0.3)
+            etag = beside(extra_tag(), t, ln_ls)
+            self.add(lschip.box)                         # under the text that lands in it
+            self.play(FadeIn(etag, shift=LEFT * 0.1), TransformFromCopy(substring(ln_ls, LS_CMD), lschip.text),
+                      FadeIn(lschip.box), FadeIn(lsg[1], shift=LEFT * 0.1), run_time=0.45)
+            self.remove(etag)                            # pinned: it fades with its row
+            ln_ls.add(etag)
+            for k, (lines, rows, rt) in enumerate(batches):
+                wipe(self, t)
+                t.print(self, lines, run_time=rt)
                 self.play(LaggedStart(*[Create(checks[i]) for i in rows], lag_ratio=0.4), run_time=0.3)
+                if k < len(batches) - 1:
+                    self.wait(0.3)                       # each batch holds ~0.9 s before the next wipe
             vo.wait_until("and git log shows")
             ln_log = type_cmd(self, t, LOG_CMD, type_time=0.5)
             pin(self, ln_log, beside(extra_tag(), t, ln_log), run_time=0.25)
             row = t.print(self, [LOG], run_time=0.35)[0]
             hbox = glyph_box(row, "d190c71", S.GREY)
-            hchip = chip("d190c71", S.GREY, size=CAPTION, font=MONO)
+            hchip = chip("d190c71", S.GREY, size=CAPTION, font=MONO, pad_y=SLIM)
             htag = grey_tag("the pinned commit")
-            VGroup(hchip, htag).arrange(RIGHT, buff=0.25).move_to([0, 3.2, 0]).align_to([6.45, 0, 0], RIGHT)
+            VGroup(hchip, htag).arrange(RIGHT, buff=0.25).move_to([0, HASH_Y, 0]).align_to(card.frame, RIGHT)
+            assert htag.get_bottom()[1] > lsg.get_top()[1] + 0.1 and htag.get_top()[1] < 3.6
             self.add(hchip.box)                          # under the text that lands in it
             self.play(Create(hbox), TransformFromCopy(glyph_range(row, 0, 7), hchip.text), FadeIn(hchip.box),
                       FadeIn(htag, shift=LEFT * 0.1), run_time=0.6)
@@ -521,8 +560,8 @@ class TwoComputers(VoiceScene):
         dtag = differ_tag().move_to([0.2, net.parts["outline"].get_bottom()[1] - 0.36, 0])
         with self.voiceover(SAY[6]) as vo:
             # the hash's box goes now (its row scrolls); the commit chip stays until the rail is named
-            self.play(FadeOut(card), *[FadeOut(c) for c in checks.values()], FadeOut(hbox), tr.goto(2),
-                      run_time=0.3)
+            self.play(FadeOut(card), *[FadeOut(c) for c in checks.values()], FadeOut(hbox), FadeOut(lsg),
+                      tr.goto(2), run_time=0.3)
             self.play(FadeIn(net), run_time=0.3)        # one after the other: a cross-fade muddles both
             ln_net = type_cmd(self, t, NET.cmd, type_time=1.0)
             fly = substring(ln_net, "toynet").copy()

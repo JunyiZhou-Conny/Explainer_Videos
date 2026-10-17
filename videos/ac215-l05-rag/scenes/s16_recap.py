@@ -12,9 +12,9 @@ Beats (script.md "## S16", one voiceover block each):
     down` (extra) -> laptop/25 lines 2–3 joined and 4 (GREY, cut at 65 with …; a GREY "harmless"
     tag in the strip's title bar), then 5–7 (Compose rows, times as GREY tags): with line 6 the
     Chroma box, its name, port, /data and :8000 routes dissolve; with line 7 the rail. The GREY
-    laptop zone stays; it re-lays itself as a band along the top while the strip grows to 8 rows.
- 1  `docker images` (extra) -> laptop/26 lines 2–5 as the column view (IMAGE, DISK USAGE; GREY tag
-    "docker images · IMAGE and DISK USAGE" in the title bar). `2.11GB` boxed YELLOW as it is said,
+    laptop zone stays; it re-lays itself as a band along the top while the strip grows to 7 rows.
+ 1  `docker images` (extra) -> laptop/26 lines 2–5 as the column view (IMAGE, DISK USAGE; GREY header
+    "docker images · IMAGE and DISK USAGE" just above the terminal). `2.11GB` boxed YELLOW as said,
     GREY tag "already inside the 2.11 GB" on the python:3.12-slim-bookworm row, `826MB` boxed
     YELLOW. GREY chip "need the space? docker image rm llm-rag-cli chromadb/chroma:latest" between
     the band and the terminal.
@@ -23,12 +23,14 @@ Beats (script.md "## S16", one voiceover block each):
     edit"; `!! docker-volumes/` and `!! outputs/` GREEN + GREEN tag "ignored · stays on your disk";
     in the band outputs/ appears and both folders get a GREEN tick. The chip becomes "Linux: sudo rm
     -rf docker-volumes".
- 3  The terminal leaves. GOLD tag "nothing runs in Google Cloud · you paid only for what you sent".
-    The GOLD key in the band's secrets/ (beside llm-rag/) pulses. A RED "what if · just watch" frame
+ 3  The terminal leaves. A BLUE cloud "Google Cloud" with the GREY note "no VM · no bucket · no
+    endpoint", then the GOLD tag "nothing runs in Google Cloud · you paid only for what you sent".
+    The cloud goes and the GOLD tag moves up; the GOLD key in the band's secrets/ (beside llm-rag/)
+    pulses. A RED "what if · just watch" frame
     (tag illustration): a copy of the key flies into an llm-rag/ folder card (Dockerfile, cli.py, the
     key file); RED tag "not in .gitignore"; a TEAL arrow labelled `COPY --chown=app:app . ./`
-    (Dockerfile · line 48) carries the key into the top layer of an "llm-rag-cli image" (three
-    layers), RED cross. The frame clears; the GOLD tag becomes the GOLD row of the static GREY card
+    (Dockerfile · line 48) carries the key into the COPY layer ("your files") of an "llm-rag-cli
+    image" (three layers), RED cross. The frame clears; the GOLD tag becomes the GOLD row of the static GREY card
     "tear down" (checkboxes): `exit` (in the container) · `docker compose down` (laptop, in
     ~/AC215/llm-rag) · `docker image rm llm-rag-cli chromadb/chroma:latest` (optional) · keep
     docker-volumes/ and outputs/: your index · course over: IAM › Service accounts › KEYS › delete ·
@@ -37,13 +39,13 @@ Beats (script.md "## S16", one voiceover block each):
     Hold 2 s.
  4  The stale index. TRACKER Run 3 (no extra). PANEL expected/out-txt-agent-run.txt line 74 cut after
     "economic life" (header `out.txt · line 73 (excerpt)`, tag "recorded · the staff's agent run,
-    September 22, 2026"), "transhumance" YELLOW; under it the excerpt chip `…known as transhumance,
-    shaped not just the economic life…` (`96d5fd7 · Tolminc Cheese.txt · line 102 (excerpt)`), its
-    "transhumance" YELLOW; today's file `Tolminc Cheese.txt` with the GREY chip "line 4: A fictional
-    tale…" and the RED tag "not in today's book". A TEAL cylinder holding RED-edged cards (RED tag
-    "stale"); a copy of the old excerpt shrinks into one more stale card. On "rebuild the index" a
-    GREEN arrow "books changed → chunk, embed, load again" runs into the cylinder and the cards turn
-    GREEN.
+    September 22, 2026", flashing on "recorded run"), "transhumance" YELLOW; under it the excerpt
+    chip `…known as transhumance, shaped not just the economic life…` (`96d5fd7 · Tolminc Cheese.txt
+    · line 102 (excerpt)`), its "transhumance" YELLOW; today's file `Tolminc Cheese.txt` ("today")
+    with the GREY chip "line 4: A fictional tale…" and the RED tag "not in today's book". A TEAL
+    cylinder holding RED-edged cards; the old chip's frame shrinks into one more card that drops in
+    (RED tag "stale"). On "rebuild the index" a GREEN arrow "books changed → chunk, embed, load
+    again" runs into the cylinder, the cards turn GREEN and "stale" goes.
  5  TRACKER Agents 1. Static GREY card "next lecture · inside the container:" with `python cli.py
     --agent --chunk_type char-split` (tag preview · L06; not typed, no output). PANEL
     expected/out-txt-agent-run.txt line 65 (header `out.txt · line 64`, tag recorded) `Function:
@@ -52,26 +54,32 @@ Beats (script.md "## S16", one voiceover block each):
     dim; a GREY dashed "Retrieve?" diamond (tag concept), caption "a related idea, further: whether
     to retrieve"; its No branch to "answer", its Yes branch to "retrieve", then "check what it found".
  6  LECTURE A63. S01's blurred map returns (dimmed, tag "illustration · our redrawing") with its four
-    questions dim; each lights up YELLOW as answered, with a GREEN tick and a tiny glyph-only
-    thumbnail: V4's arrows, V5's cylinder, V6's beam, V7's prompt card.
- 7  No lecture tag. "Test yourself" (YELLOW underline). Q1 with V1 under it (both lanes, the five
-    flags; each flag gets a GREEN tick; the embedding box and the cylinder light YELLOW on "what must
-    both lanes share"). Q2 writes in below as Q1 turns small and GREY (V1 leaves); its code and
+    questions dim; each lights up YELLOW as answered, with a tiny glyph-only thumbnail (above the top
+    two, below the bottom two) and a GREEN tick beside it: V4's arrows (S08's angles), V5's
+    cylinder, V6's beam, V7's prompt card.
+ 7  No lecture tag, no tracker. "Test yourself" (YELLOW underline). Q1 with V1 under it, full size
+    (both lanes, the five flags; each flag gets a GREEN tick; "flags" and "share" turn YELLOW, the
+    embedding box and the cylinder light YELLOW and both lanes pulse on "what must both lanes
+    share"). Q2 writes in below as Q1 turns small and GREY (V1 leaves); its code and
     "published port 8000" turn YELLOW as said.
  8  Q3, Q4, Q5 the same way, their key words YELLOW as said.
  9  Q5 turns small; the five questions sit at the top; the footer cards "Answers: exercises.md" and
     "Study guide + every command: github.com/JunyiZhou-Conny/MLOps_Learning · guides/L05-rag.md"
-    (MLOps_Learning underlined YELLOW), a GREY dashed "next: agents · L06". Everything fades: empty
-    frame (end of part 2).
+    (MLOps_Learning underlined YELLOW) under them; a GREY dashed "next: agents · L06" top right.
+    Everything fades: empty frame (end of part 2).
 
 Deviations from SHOW (see the scene report): laptop/25's WARN lines are cut at 65 with … (the script's
-rule without `wrap`), and the "harmless" and "docker images · IMAGE and DISK USAGE" tags sit in the
-terminal's title bar (the rows are too full for a tag beside them). V2's laptop zone stays as a band
-along the top for beats 1–3 (the terminal grows to 8 rows for docker images and git status), which
-is also where the key "beside the repo" is shown. The git command folds after "git status;" (one
-valid line when joined). The COPY arrow carries the Dockerfile's real line 48, `COPY --chown=app:app
-. ./`, not the shorthand `COPY . ./`. The tear-down card's GOLD row has a coin instead of a
-checkbox. The "check what it found" box after the Yes branch illustrates the SAY's last clause.
+rule without `wrap`; S10 word-folded them), and the "harmless" tag sits in the strip's title bar (a
+cut row has no room for a tag). The column view's header sits above the terminal like a panel
+header (no row has room for it). V2's laptop zone stays as a band along the top for beats 1–3 (the
+terminal grows to 7 rows for docker images and git status), which is also where the key "beside the
+repo" is shown. Beat 3 opens on a Google Cloud picture (BRIEF.md: no VM, no bucket, no endpoint) and
+follows the SAY's order (the GOLD tag first). The git command folds after "git status;" (one valid
+line when joined). The COPY arrow carries the Dockerfile's real line 48, `COPY --chown=app:app .
+./`, not the shorthand `COPY . ./`. The tear-down card's GOLD row has a coin instead of a checkbox.
+The "check what it found" box after the Yes branch illustrates the SAY's last clause (critique
+tokens, B78, under the B74–B76 tag). "Test yourself" is a title, not a card; V1 is shown full size
+(scaled down, its flags collide). The "next" box sits top right (the footer row has no room).
 """
 
 from types import SimpleNamespace
@@ -100,6 +108,7 @@ from manim import (
     RoundedRectangle,
     Transform,
     VGroup,
+    there_and_back,
 )
 
 from common import (
@@ -649,9 +658,9 @@ class Recap(VoiceScene):
 
         with self.voiceover(SAY[0]) as vo:
             vo.wait_until("Type exit")
-            out = session(self, t, AGAIN, 13, 14, type_time=0.35, out_time=0.25)
-            pin(self, out[13], beside(extra_tag(), t, out[13]), run_time=0.25)
-            self.play(*cv.remove_cli(), *leave_container(t, P_REPO), run_time=0.8)
+            out = session(self, t, AGAIN, 13, 14, type_time=0.35, out_time=0.2)
+            pin(self, out[13], beside(extra_tag(), t, out[13]), run_time=0.2)
+            self.play(*cv.remove_cli(), *leave_container(t, P_REPO), run_time=0.7)
             bare_prompt(self, t)
             vo.wait_until("then docker compose down")
             dn = type_cmd(self, t, DOWN_.cmd, 0.6)
@@ -676,7 +685,8 @@ class Recap(VoiceScene):
                           Transform(P["row_volumes"], b.volumes), Transform(P["door"], b.door)])
 
         # ========================================================== 1 · docker images: the images stay
-        hdr = VGroup(mono("docker images", 20, S.GREY), label("· IMAGE and DISK USAGE", 20, S.GREY)).arrange(RIGHT, buff=0.12)
+        hdr = VGroup(mono("docker images", 20, S.GREY), label("· IMAGE and DISK USAGE", 20, S.GREY))
+        hdr.arrange(RIGHT, buff=0.12)
         base_tag = grey_tag("already inside the 2.11 GB")
         need = need_chip().move_to([0, CHIP_Y, 0])
 
@@ -735,7 +745,8 @@ class Recap(VoiceScene):
             self.play(FadeOut(need, shift=DOWN * 0.1), FadeIn(lin, shift=UP * 0.1), run_time=0.6)
 
         # ========================================================== 3 · nothing in the cloud; the key; ▶ tear down
-        gold = _keep(cost_tag("nothing runs in Google Cloud · you paid only for what you sent")).move_to([0, -2.15, 0])
+        gold = _keep(cost_tag("nothing runs in Google Cloud · you paid only for what you sent"))
+        gold.move_to([0, -2.15, 0])
         gc = cloud(2.6, CLOUD).move_to([0, -0.35, 0])
         gc_t = sans("Google Cloud", 24, INK).move_to(gc)
         none_ = note("no VM · no bucket · no endpoint", size=22).next_to(gc, DOWN, buff=0.22)
@@ -751,7 +762,8 @@ class Recap(VoiceScene):
             self.play(FadeIn(gold, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("Keep the key beside the repo")
             self.play(FadeOut(VGroup(gc, gc_t, none_)), gold.animate.move_to([0, CHIP_Y, 0]), run_time=0.6)
-            self.play(Indicate(key, color=COST, scale_factor=1.6), Indicate(P["row_secrets"], color=COST, scale_factor=1.08),
+            self.play(Indicate(key, color=COST, scale_factor=1.6),
+                      Indicate(P["row_secrets"], color=COST, scale_factor=1.08),
                       Indicate(P["row_repo"], color=INK, scale_factor=1.08), run_time=0.9)
             vo.wait_until("inside it")
             self.play(FadeIn(w.frame), FadeIn(w.card), FadeIn(w.head), FadeIn(w.files), run_time=0.5)
@@ -815,8 +827,10 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             clear_stage(self, keep=[tr], extra=[caption_extra(tr, False)], run_time=0.6)
             self.play(FadeIn(panel, shift=DOWN * 0.1), FadeIn(rec), run_time=0.7)
-            vo.wait_until("It retrieved text about transhumance")
-            self.wait(0.9)
+            vo.wait_until("recorded run")
+            self.play(Indicate(rec.text, color=INK, scale_factor=1.06),
+                      rec.box.animate(rate_func=there_and_back).set_stroke(INK, 4), run_time=0.7)
+            vo.wait_until("transhumance")
             self.play(p_word.animate.set_color(TURN), Create(under(p_word, TURN, 3)), run_time=0.6)
             vo.wait_until("from an older Tolminc book")
             self.play(FadeIn(old, shift=DOWN * 0.1), run_time=0.6)
@@ -836,7 +850,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(rb_text, shift=LEFT * 0.1), run_time=0.5)
             self.play(GrowArrow(rb_arrow), run_time=0.6)
             self.play(*[c.frame.animate.set_stroke(DATA, 2) for c in cards], FadeOut(stale),
-                      Indicate(cyl, color=DATA, scale_factor=1.06), run_time=0.8)
+                      cyl.animate(rate_func=there_and_back).set_stroke(DATA), run_time=0.8)
 
         # ========================================================== 5 · next lecture: an agent; Self-RAG
         agent_card = VGroup(mono(AGENT_CMD, 22, INK))
@@ -926,7 +940,7 @@ class Recap(VoiceScene):
                 self.play(qs[k].animate.set_opacity(1), arrows[k].animate.set_opacity(1),
                           FadeIn(thumbs[k], shift=(DOWN if spots[k][1] > 0 else UP) * 0.15), run_time=0.6)
                 qs[k].box.set_fill(S.BG, 0.95)
-                self.play(Create(qticks[k]), Indicate(qs[k], color=TURN, scale_factor=1.08), run_time=0.6)
+                self.play(Create(qticks[k]), qs[k].animate(rate_func=there_and_back).scale(1.1), run_time=0.6)
 
         # ========================================================== 7 · test yourself: Q1, Q2
         title = label("Test yourself", 34, INK)
@@ -968,8 +982,8 @@ class Recap(VoiceScene):
             vo.wait_until("by name")
             self.play(q_span(q2, "llm-rag-chromadb:8000").animate.set_color(TURN), run_time=0.5)
             vo.wait_until("who uses port 8000")
-            self.play(q_span(q2, "published").animate.set_color(TURN), q_span(q2, "port 8000?").animate.set_color(TURN),
-                      run_time=0.5)
+            self.play(q_span(q2, "published").animate.set_color(TURN),
+                      q_span(q2, "port 8000?").animate.set_color(TURN), run_time=0.5)
 
         # ========================================================== 8 · Q3, Q4, Q5
         smalls = [small1]

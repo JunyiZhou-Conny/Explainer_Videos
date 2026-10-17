@@ -67,11 +67,13 @@ from manim import (
     Polygon,
     ReplacementTransform,
     RoundedRectangle,
+    Text,
     Transform,
     VGroup,
     VMobject,
 )
 
+import common as _common
 from common import (
     BOTTOM,
     CTR,
@@ -181,7 +183,8 @@ assert _img.line(7).endswith("chroma.sqlite3"), _img.line(7)  # the image keeps 
 
 # ------------------------------------------------------------------ layout
 TOP_Y = 2.82                  # nothing above this left of x = -2.8 (the tracker band)
-CV_BOTTOM = -1.1              # V2 fitted with its bottom here: room for the 4-row strip (lines 13–15)
+CV_BOTTOM = -1.05             # V2's laptop zone ends here: room for the 4-row strip (lines 13–15)
+KY = 0.85                     # V2 squeezed in height only (fit_v2): the zone then ends at y 2.78
 TERM_ROWS = 9                 # beats 6–10 (SHOW: 12; 9 leaves the picture legible above it)
 PARK_X = 6.4                  # right edge of the waiting value chips (beat 2)
 RUN_PARTS = ("rail", "plug_cli", "plug_chroma", "chroma", "port_chip", "door", "cli", "venv", "slots",
@@ -290,6 +293,27 @@ def wide_laptop(w: float, h: float) -> VGroup:
     return g
 
 
+def print_rows(scene, t, rows: list, **kw) -> VGroup:
+    """common.print_build, with time tags 0.36 tall: its tags are 0.42 tall on the terminal's
+    0.40 row pitch, so the tags of neighbouring rows touch (lines 3–5, 21–26). Swaps
+    common.time_tag for this call only."""
+    orig = _common.time_tag
+
+    def compact(time: str) -> VGroup:
+        g = orig(time)
+        b = g.box
+        b.become(RoundedRectangle(width=b.width, height=0.36, corner_radius=0.18,
+                                  stroke_color=b.get_stroke_color(), stroke_width=b.get_stroke_width())
+                 .set_fill(S.BG, 0.92).move_to(b))
+        return g
+
+    _common.time_tag = compact
+    try:
+        return print_build(scene, t, rows, **kw)
+    finally:
+        _common.time_tag = orig
+
+
 def word_fold(s: str, n: int) -> list[str]:
     """A long output line folded at spaces into rows of at most n characters (no token is cut)."""
     rows, cur = [], ""
@@ -323,6 +347,66 @@ def tag2(lines, color: str = S.GREY, size: float = TAG) -> VGroup:
     g = VGroup(b, t)
     g.box, g.text = b, t
     return g
+
+
+def fit_v2(cv: ComposeView, ky: float = KY, bottom: float = CV_BOTTOM) -> ComposeView:
+    """V2 above the code strip. ComposeView.fit_top shrinks both ways and keeps every text and
+    window at full size, so at 0.84 the windows and chips overflow the CLI box, docker-volumes/
+    overflows the laptop and the titles touch their borders. Here the shapes shrink in height
+    only (text, chips and kept glyphs keep their size: the same walk as Piece.rescale), then a
+    few parts move apart; the routes are redrawn to their moved ends. The zone's bottom edge
+    lands on `bottom` (what lies lower — the port route, the image — shows only above 3-row
+    strips)."""
+    units = []
+
+    def walk(m):
+        if getattr(m, "keep_size", False) or isinstance(m, Text) or hasattr(m, "pt"):
+            units.append(m)
+            return
+        for s in m.submobjects:
+            walk(s)
+
+    for s in cv.submobjects:
+        walk(s)
+    cv.stretch(ky, 1, about_point=cv.get_center())
+    for u in units:
+        u.stretch(1 / ky, 1)
+    P = cv.parts
+    # the zone's caption with "~/AC215" in the mono font (CMU Sans draws "~" raised)
+    zone = P["zone"]
+    old = zone[1]
+    cap = VGroup(sans("laptop ·", CAPTION, LAPTOP), mono("~/AC215", CAPTION, LAPTOP)).arrange(RIGHT, buff=0.12)
+    zone.remove(old)
+    zone.add(cap.move_to(old))
+    # the folder rows: docker-volumes/ inside the zone; the data route passes under the rail's label
+    r1, r2, r3b = cv.rows["repo"], cv.rows["secrets"], cv.rows["chromadb"]
+    for r in (r1, r2):
+        r.shift(LEFT * 0.08)
+    P["row_volumes"].shift(LEFT * 0.08 + DOWN * 0.14)
+    # windows and chips clear of their box's borders; the cylinder clear of the :8000 chip
+    w_app, w_sec, w_data = cv.windows["app"], cv.windows["secrets"], cv.windows["data"]
+    for w in (w_app, w_sec, w_data):
+        w.shift(RIGHT * 0.05)
+    P["build"].shift(RIGHT * 0.14 + DOWN * 0.06)
+    P["port_chip"].shift(LEFT * 0.15)
+    P["route_port"][1].shift(LEFT * 0.15)            # the arrow tip under :8000
+    cv.cyl.shift(UP * 0.08)
+    P["name"].shift(UP * 0.06)
+    P["image"].shift(DOWN * 0.1)                     # clear of the "Docker Hub" caption
+    VGroup(P["hub"], P["image"]).shift(DOWN * 0.2)   # the shelf's board clearly below the rail
+    pc = P["port_chip"]
+    cv.routes["app"].set_points_as_corners([[r1.get_right()[0] + 0.1, r1.get_center()[1], 0],
+                                            [w_app.get_left()[0] - 0.02, w_app.get_center()[1], 0]])
+    cv.routes["secrets"].set_points_as_corners([[r2.get_right()[0] + 0.1, r2.get_center()[1], 0],
+                                                [w_sec.get_left()[0] - 0.02, w_sec.get_center()[1], 0]])
+    yd, xd = r3b.get_center()[1], w_data.get_center()[0]
+    cv.routes["data"].set_points_as_corners([[r3b.get_right()[0] + 0.1, yd, 0], [xd, yd, 0],
+                                             [xd, w_data.get_bottom()[1] - 0.02, 0]])
+    rp = cv.routes["port"]
+    a, yp, xp = rp.get_start(), rp.get_start()[1], pc.get_center()[0]
+    rp.set_points_as_corners([a, [xp, yp, 0], [xp, pc.get_bottom()[1] - 0.02, 0]])
+    cv.shift(UP * (bottom - zone[0].get_bottom()[1]))
+    return cv
 
 
 def thumbnail() -> ComposeView:
@@ -422,12 +506,7 @@ class TwoContainers(VoiceScene):
             self.play(Indicate(ch_img.text, color=TURN, scale_factor=1.15), run_time=0.6)
 
         # ========================================================== 2 · the compose file: network, CLI service
-        cv = ComposeView(show=("zone", "row_repo", "row_secrets"))
-        cv.fit_top(bottom=CV_BOTTOM)
-        # fit_top keeps the box titles at full size while the boxes shrink: keep them inside
-        cli_t, chr_t = cv.parts["cli"][1], cv.parts["chroma"][1]
-        cli_t.align_to(cv.parts["cli"].frame, LEFT).shift(RIGHT * 0.12)
-        chr_t.set_x(cv.parts["chroma"].frame.get_center()[0])
+        cv = fit_v2(ComposeView(show=("zone", "row_repo", "row_secrets")))
         zone, r_repo, r_sec = cv.parts["zone"], cv.parts["row_repo"], cv.parts["row_secrets"]
         s1 = strip(1, 3)
         bar3 = s1.bar(3, TURN, 0.2)
@@ -589,17 +668,17 @@ class TwoContainers(VoiceScene):
         with self.voiceover(SAY[6]) as vo:
             cv.remove(hub, img)
             self.add(hub, img)
-            self.play(FadeOut(VGroup(pair, sheet, cli_row, nreb)), run_time=0.4)
+            self.play(FadeOut(VGroup(pair, sheet, cli_row, nreb)),
+                      Indicate(tr.caption, color=TURN, scale_factor=1.06), run_time=0.5)
             self.play(FadeOut(cv, target_position=th.get_center(), scale=th.width / cv.width),
                       FadeIn(th, target_position=cv.get_center(), scale=cv.width / th.width),
                       Transform(hub, hubg_target[0]), Transform(img, hubg_target[1]), run_time=1.0)
             self.play(FadeIn(t, shift=UP * 0.2), run_time=0.5)
             vo.wait_until("sh docker-shell.sh")
-            self.play(Indicate(tr.caption, color=TURN, scale_factor=1.06), run_time=0.5)
             type_cmd(self, t, RUN.cmd, 0.9)
             t.print(self, [RUN.line(2)], run_time=0.3)
             vo.wait_until("Compose pulls")
-            l3 = print_build(self, t, [RUN.line(3)], run_time=0.4)[0]
+            l3 = print_rows(self, t, [RUN.line(3)], run_time=0.4)[0]
             fly = img.copy()
             self.add(fly)
             self.play(FadeOut(fly, target_position=th.parts["chroma"].get_center(), scale=0.25),
@@ -609,10 +688,10 @@ class TwoContainers(VoiceScene):
             pull.move_to(t._slot(len(t.lines) + 2) + np.array([pull.width / 2, -t.pitch / 2, 0]))
             self.play(FadeIn(pull, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("creates the network")
-            print_build(self, t, [RUN.line(4)], run_time=0.4)
+            print_rows(self, t, [RUN.line(4)], run_time=0.4)
             self.play(unghost(th.parts["rail"]), run_time=0.6)
             vo.wait_until("and creates the Chroma")
-            print_build(self, t, [RUN.line(5)], run_time=0.4)
+            print_rows(self, t, [RUN.line(5)], run_time=0.4)
             self.play(*[unghost(th.parts[n]) for n in ("chroma", "plug_chroma", "port_chip", "door",
                                                        "route_port", "route_data")], run_time=0.8)
 
@@ -635,7 +714,7 @@ class TwoContainers(VoiceScene):
 
         # ========================================================== 8 · the build: 81 s, 112 MB of context
         with self.voiceover(SAY[8]) as vo:
-            rows = print_build(self, t, [RUN.line(9), RUN.line(10), RUN.line(21), ROW22, RUN.line(25),
+            rows = print_rows(self, t, [RUN.line(9), RUN.line(10), RUN.line(21), ROW22, RUN.line(25),
                                          RUN.line(26), "…", RUN.line(36)], run_time=0.9, lag=0.08)
             l10, l21, l22, l25, l26, l36 = rows[1], rows[2], rows[3], rows[4], rows[5], rows[7]
             box81 = under(substring(l10, "81.5s"), TURN, stroke=4)
@@ -704,21 +783,26 @@ class TwoContainers(VoiceScene):
             resize(self, t, TERM_ROWS, keep=[l36])
             out = t.print(self, RUN.at((37, 44)), run_time=0.8)
             l38, l40, l41, l42, l43, l44 = out[1], out[3], out[4], out[5], out[6], out[7]
+            vo.wait_until("Python 3.12.15")
+            u42 = under(substring(l42, "3.12.15"), S.GREY, stroke=3)
+            u43 = under(substring(l43, "0.13.1"), S.GREY, stroke=3)
+            self.play(Create(u42), Indicate(substring(l42, "3.12.15"), color=TURN, scale_factor=1.1),
+                      run_time=0.6)
+            self.play(Create(u43), Indicate(substring(l43, "0.13.1"), color=TURN, scale_factor=1.1),
+                      run_time=0.6)
+            attach(self, l42, u42)
+            attach(self, l43, u43)
+            vo.wait_until("at the time of recording")
+            rec = recording_tag()
+            beside(rec, t, l42, buff=0.4)
+            pin(self, l42, rec, run_time=0.4)
+            # the run's unspoken lines, in the pause: the CLI container now exists (its name: S05)
             u38 = under(substring(l38, CTR_NAME), S.GREY, stroke=3)
             arch = grey_tag("Apple Silicon: aarch64 · both native")
             beside(arch, t, l40, buff=0.4)
             self.play(Create(u38), *[unghost(th.parts[n]) for n in CLI_PARTS], run_time=0.8)
             attach(self, l38, u38)
             pin(self, l40, arch, run_time=0.4)
-            vo.wait_until("Then the banner")
-            u42 = under(substring(l42, "3.12.15"), S.GREY, stroke=3)
-            u43 = under(substring(l43, "0.13.1"), S.GREY, stroke=3)
-            rec = recording_tag()
-            beside(rec, t, l42, buff=0.4)
-            self.play(Create(u42), Create(u43), run_time=0.5)
-            attach(self, l42, u42)
-            attach(self, l43, u43)
-            pin(self, l42, rec, run_time=0.4)
             vo.wait_until("It says activated")
             # a small GREY bracket in the left margin, from line 41 to line 44
             xb = l41.strut.get_left()[0] - 0.14
@@ -738,7 +822,7 @@ class TwoContainers(VoiceScene):
         with self.voiceover(SAY[10]) as vo:
             t.set_prompt(P_CTR)
             pr = t.type(self, "", type_time=0)
-            self.play(*enter_container(t), run_time=0.7)
+            self.play(*enter_container(t), th.light("cli"), run_time=0.7)
             vo.wait_until("The part after")
             cid = substring(pr, "92c5bfd26089")
             uid = under(cid, S.GREY, stroke=3)
@@ -747,7 +831,8 @@ class TwoContainers(VoiceScene):
             self.play(Create(uid), Indicate(cid, color=TURN, scale_factor=1.1), run_time=0.6)
             attach(self, pr, uid)
             pin(self, pr, idt, run_time=0.4)
-            self.play(th.light("cli"), run_time=0.6)
+            vo.wait_until("it changes")
+            self.play(Indicate(idt, color=TURN, scale_factor=1.06), run_time=0.6)
             vo.wait_until("Pause")
             yt10 = your_turn()
             beside(yt10, t, pr, buff=0.3)

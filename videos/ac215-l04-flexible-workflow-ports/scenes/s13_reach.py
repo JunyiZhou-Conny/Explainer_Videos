@@ -19,7 +19,7 @@ Beats (script.md "## S13", one voiceover block each):
     … -p 8090:9100 …` is typed; "leaves it out": README chip `README.md · line 239` "-p
     8090:9100" and the command's -p flag PINK; the ID prints and a dashed TEAL box `gateway-all`
     (with its own room :9100) appears between the boxes. A dashed PINK request arrow runs from it toward the laptop's door.
-    "Docker refuses": 18 line 3 prints wrapped; `Bind for 127.0.0.1:8090 failed: port is already
+    "Docker refuses": 18 line 3 prints folded at spaces; `Bind for 127.0.0.1:8090 failed: port is already
     allocated` turns RED, the arrow turns RED and stops on a cross, the door flashes RED. "our
     gateway holds 8090": the PINK route flashes; caption "host doors collide / rooms never do"
     under the ghost box (the three rooms unchanged). `docker rm gateway-all` (extra) -> 19 line
@@ -46,7 +46,7 @@ Beats (script.md "## S13", one voiceover block each):
     YELLOW. After the block: PONDER(6 s) card at the bottom right (the picture shows no answer).
  7  The card leaves, the terminal returns empty and the chip's command drops into it as the
     typed `docker exec gateway curl --max-time 3 http://localhost:9200/health` (glyph for glyph,
-    `localhost` still YELLOW) -> 25: `…` (the progress meter), lines 5-6 joined and wrapped,
+    `localhost` still YELLOW) -> 25: `…` (the progress meter), lines 5-6 joined and folded at a space,
     RED. "Inside the gateway, localhost is the gateway itself": only now the gateway's loop
     glows YELLOW as a packet dot circles it; "nothing there listens on 9200": the dot turns RED
     with a cross. "the second puzzle": README chip `README.md · line 290` "localhost means the
@@ -109,6 +109,9 @@ Deviations from SHOW (and why):
 - Beat 7: "the packet loops back" is a PINK dot circling the gateway's loop (ToyNet.loopback);
   "where no :9200 door exists" is the dot turning RED with a cross; it then hops to room :9100.
 - Beat 8: the terminal grows to 13 rows, not 12: the command plus the 12 listed lines.
+- Beats 2 and 7: the long error lines (18 line 3, 25 lines 5-6) fold at the last space before
+  column 65 (fold_words), not at column 65, so "port is already allocated" and "Could not connect
+  to server" each keep one row for their RED highlight (the text is the capture's).
 - Beats 8 and 10: the picture leaves before the terminal grows (or the panel arrives) and returns
   after the terminal has shrunk, and the terminal leaves before the your-turn card takes its
   place, so no two of them cross mid-move.
@@ -259,6 +262,24 @@ CW = cell_width(TERM_PT)
 # ------------------------------------------------------------------ helpers
 def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
+
+
+def fold_words(s: str, width: int) -> list[str]:
+    """A long output line folded at the last space at or before `width` (that space dropped; a
+    single token longer than a row is broken where it must). The text stays the capture's, only
+    the break points move, so a phrase the narration reads keeps one row (Terminal.print(wrap=True)
+    slices at `width`, mid-word)."""
+    rows = []
+    while len(s) > width:
+        cut = s.rfind(" ", 0, width + 1)
+        if cut <= 0:
+            rows.append(s[:width])
+            s = s[width:]
+        else:
+            rows.append(s[:cut])
+            s = s[cut + 1:]
+    rows.append(s)
+    return rows
 
 
 def band(m, right: float = BAND_R):
@@ -574,10 +595,9 @@ class WhoCanReach(VoiceScene):
             self.play(Create(req.line), run_time=0.7)
             self.play(FadeIn(req.tip, scale=0.5), flash(d1.label[9:], TURN, 1.2), run_time=0.4)
             vo.wait_until("Docker refuses")
-            err = t.print(self, [C18.line(3)], wrap=True, run_time=0.5)
-            assert err[3].text.endswith("Bind for 127.0.0.1:8090 failed: port is alrea"), err[3].text
-            bind = VGroup(substring(err[3], "Bind for 127.0.0.1:8090 failed: port is alrea"),
-                          substring(err[4], "dy allocated"))
+            err = t.print(self, fold_words(C18.line(3), t.max_chars), run_time=0.5)
+            assert len(err) == 5 and err[-1].text.endswith(BIND), [r.text for r in err]
+            bind = substring(err[-1], BIND)                 # one row: "port is already allocated" whole
             self.play(bind.animate.set_color(ERR), req.animate.set_color(ERR), Create(xcross),
                       flash(d1.frame, ERR, 1.25), run_time=0.8)
             vo.wait_until("our gateway holds 8090")
@@ -729,7 +749,9 @@ class WhoCanReach(VoiceScene):
                 t.lines.add(ln)
             self.add(*typed)
             self.remove(*flying)
-            t.print(self, ["…", (ERR25, ERR)], wrap=True, run_time=0.4)
+            e25 = fold_words(ERR25, t.max_chars)
+            assert e25[-1] == "Could not connect to server", e25      # whole on its own row
+            t.print(self, ["…"] + [(r, ERR) for r in e25], run_time=0.4)
             vo.wait_until("Inside the gateway, localhost is")
             self.play(fade_to(gw.loop, None), fade_to(gw.loop_label, None), FadeOut(qs[0]), run_time=0.4)
             dot, loop_anims = net.loopback("gateway")

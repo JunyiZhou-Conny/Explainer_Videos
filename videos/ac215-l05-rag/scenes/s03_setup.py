@@ -29,22 +29,24 @@ Beats (script.md "## S03", one voiceover block each):
     row "secrets" under line 5 with tag "not here". Both folders pulse ("beside"). Then L04's three
     gates in miniature along the bottom, BLUE, each label and item as named: "who?" + GOLD key,
     "may?" + the two role chips, "switched on?" + an API switch (off).
- 4  The top half clears. An erratum tag beside the two role chips; Storage Admin dims to GREY with
+ 4  The top half clears and the gates rise to the middle (they go back down when the Vertex AI
+    screen arrives above them). An erratum tag beside the two role chips; Storage Admin dims to GREY with
     a note "no storage call in this code"; the Agent Platform chip flashes. TRACKER Account 6 ·
     extra: a schematic "APIs & Services › Vertex AI API" screen (aiplatform.googleapis.com, a BLUE
     Enable button; tag illustration); Enable pulses, the switch flips on, the third gate opens with
     a white tick. A dimmed RED chip under the screen: "without it: SERVICE_DISABLED on the first
     embed, after 5 retries". Then everything leaves; all 6 tracker dots light; a static GREY
     "your turn · in the console" card (tag illustration) with the five console rows and a GREY
-    look-for line "check: ls secrets → llm-service-account.json". Hold 2 s.
- 5  TRACKER Run 1. A 9-row terminal at ~/AC215 types `cd llm-rag` (no output); the prompt becomes
+    look-for line "check: ls secrets → llm-service-account.json"; its rows light one by one as
+    "account, roles, key, and API" are named. Hold 2 s.
+ 5  TRACKER Run 1. A 10-row terminal (9 rows of output + a row for the commit tag) at ~/AC215 types `cd llm-rag` (no output); the prompt becomes
     ~/AC215/llm-rag, the new path part flashing GREY. TRACKER Run 1 · extra: `ls -a; git log
     --oneline -1` (extra) -> laptop/05 lines 2-5 (wrapped), line 6 cut after "origin/HEAD)".
     docker-shell.sh, docker-compose.yml and cli.py box GREEN one by one as named; e17a39f gets a
-    GREY box and the GREY tag "the commit this video was recorded on" on the nearly empty row
-    above it (the commit row is full).
- 6  TRACKER Run 2. Above the terminal: a GREY pencil edits a GREY file card docker-shell.sh
-    ("in your editor"). The terminal clears; `git diff docker-shell.sh` (extra) -> laptop/06 lines
+    GREY box and the GREY tag "↑ the commit this video was recorded on" on the empty row under
+    it (the commit row is full; on the row above, the tag would touch the cli.py box).
+ 6  TRACKER Run 2. The ls output leaves as, above the terminal, a GREY pencil edits a GREY file
+    card docker-shell.sh ("in your editor"). Then `git diff docker-shell.sh` (extra) -> laptop/06 lines
     6-13: line 10 RED, line 11 GREEN; a YELLOW box on your-project-id and, two rows up (the only
     free row space near it), a YELLOW tag "your Project ID · not the name" starting at the blank
     column after line 10's closing quote, with a short arrow down through it (so nothing frames
@@ -285,11 +287,26 @@ def gate(text: str, w: float = 1.2, h: float = 1.0) -> VGroup:
     lintel = Line([-w / 2 - 0.08, h / 2, 0], [w / 2 + 0.08, h / 2, 0], color=CLOUD, stroke_width=6)
     barrier = Rectangle(width=w - 0.08, height=0.13, stroke_color=CLOUD, stroke_width=2)
     barrier.set_fill(CLOUD, 0.6).move_to([0, -0.05, 0])
-    q = label(text, TAG, INK).next_to(lintel, UP, buff=0.14)
+    # the question on a common baseline (a bare next_to lifts "may?" by its descender): laid out
+    # as "|" + text, the pipe's foot set just above the lintel, then the pipe dropped
+    full = label("|" + text, TAG, INK)
+    q = VGroup(*full.submobjects[1:])
+    q.shift(np.array([-q.get_center()[0], h / 2 + 0.08 - full[0].get_bottom()[1], 0]))
     g = VGroup(l_post, r_post, lintel, barrier, q)
     g.barrier, g.label, g.posts = barrier, q, VGroup(l_post, r_post, lintel)
     g.open = lambda: barrier.animate.stretch(0.06, 0, about_edge=LEFT)
     return g
+
+
+def course_row() -> VGroup:
+    """The turn card's first row, "in your course folder (~/AC215)", with the path in mono (the
+    serif font draws '~' as a raised accent). Baselines matched glyph to glyph."""
+    a = label("in your course folder (", CAPTION, INK)
+    m = mono("~/AC215", CAPTION, INK).next_to(a, RIGHT, buff=0.05)
+    m.shift(UP * (a[0].get_bottom()[1] - m[2].get_bottom()[1]))           # "i" and "A" on one line
+    c = label(")", CAPTION, INK).next_to(m, RIGHT, buff=0.05)
+    c.shift(UP * (a[-1].get_bottom()[1] - c.get_bottom()[1]))              # ")" level with "("
+    return VGroup(a, m, c)
 
 
 def error_chip() -> VGroup:
@@ -312,7 +329,7 @@ def file_card() -> VGroup:
     rows = VGroup(Line(LEFT * 0, RIGHT * 2.9, color=S.GREY_DARK, stroke_width=5))
     rows.next_to(head, DOWN, buff=0.22).align_to(head, LEFT)
     body = VGroup(head, rows)
-    fr = box(body.width + 0.6, body.height + 0.45, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+    fr = box(body.width + 0.6, body.height + 0.36, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
     body.move_to(fr)
     cap = note("in your editor").next_to(fr, UP, buff=0.08).align_to(fr, LEFT).shift(RIGHT * 0.12)
     g = VGroup(fr, body, cap)
@@ -454,8 +471,8 @@ class KeyAndProject(VoiceScene):
             gap.set_fill(TURN, 0.75)
             words = glyph_range(line, sp - len("docker"), sp + len(" compose"))
             self.play(FadeIn(gap, scale=1.6), words.animate.set_color(TURN), run_time=0.4)
-            self.play(Indicate(gap, color=TURN, scale_factor=1.8), run_time=0.6)
-            self.play(Indicate(gap, color=TURN, scale_factor=1.8), run_time=0.6)
+            self.play(Indicate(gap, color=TURN, scale_factor=1.35), run_time=0.6)
+            self.play(Indicate(gap, color=TURN, scale_factor=1.35), run_time=0.6)
             self.play(FadeOut(gap), words.animate.set_color(INK), run_time=0.4)
 
             vo.wait_until("On a Mac")
@@ -466,15 +483,17 @@ class KeyAndProject(VoiceScene):
         # ========================================================== 1 · clone, secrets, the layout
         chip48 = readme_chip("README.md · line 48", "Cloned this repository")
         chip48.move_to([6.45 - chip48.width / 2, 3.2, 0])
-        fo = folders().move_to([RX, 1.75, 0])
+        fo = folders().move_to([RX, 1.95, 0])
         u_repo = under(fo.repo_name, TURN, stroke=4)
         exact = tag("exactly this name", TURN).next_to(u_repo, DOWN, buff=0.14)
         exact.set_x(fo.repo_name.get_center()[0])
         if exact.get_left()[0] < 2.75:
             exact.shift(RIGHT * (2.75 - exact.get_left()[0]))
         card66 = readme_card("README.md · lines 66–69", ["`|-llm-rag`", "`|-secrets`"])
-        card66.move_to([RX, -0.55, 0])
+        card66.move_to([RX, -0.6, 0])
         tcard = turn_card([Prose("in your course folder (~/AC215)"), CLONE, (MKDIR, "extra")])
+        row0 = tcard.rows[0]
+        tcard.rows.submobjects[0] = course_row().move_to(row0).align_to(row0, LEFT)
         at_left(tcard, -6.4, 0.55)
 
         with self.voiceover(SAY[1]) as vo:
@@ -572,7 +591,7 @@ class KeyAndProject(VoiceScene):
         gi = src_panel(".gitignore", 1, 5)
         gi.move_to([3.6, 1.55, 0])
         ghost_txt = mono("secrets", TAG, S.GREY)
-        ghost_box = box(ghost_txt.width + 0.3, ghost_txt.height + 0.2, S.GREY, dashed=True, stroke=2)
+        ghost_box = box(ghost_txt.width + 0.6, ghost_txt.height + 0.3, S.GREY, dashed=True, stroke=2)
         ghost = VGroup(ghost_box, ghost_txt)
         ghost.next_to(gi, DOWN, buff=0.2).align_to(gi.code, LEFT).shift(RIGHT * 0.25)
         ghost_txt.move_to(ghost_box)
@@ -624,8 +643,12 @@ class KeyAndProject(VoiceScene):
             self.play(Indicate(sw, color=TURN, scale_factor=1.25), run_time=0.7)
 
         # ========================================================== 4 · two slips, the API, your turn
-        err_tag = erratum_tag().next_to(c_vert, RIGHT, buff=0.3)
-        no_store = note("no storage call in this code").next_to(c_store, RIGHT, buff=0.3)
+        # while the slips are named, the gates rise to the middle of the emptied frame; they go
+        # back down when the Vertex AI screen arrives above them
+        LIFT = UP * 1.75
+        gate_row = VGroup(*gates, g_key, roles, sw)
+        err_tag = erratum_tag().next_to(c_vert, RIGHT, buff=0.3).shift(LIFT)
+        no_store = note("no storage call in this code").next_to(c_store, RIGHT, buff=0.3).shift(LIFT)
         vx = vertex_console([-0.75, 1.55, 0])
         sw_on = toggle(True, CLOUD, w=0.62).move_to(sw)
         tick = check_mark(0.42, INK).move_to(gates[2].posts.get_center() + DOWN * 0.05)
@@ -647,9 +670,10 @@ class KeyAndProject(VoiceScene):
         card4.move_to([0, -0.15, 0])
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(drop, money, gi, ghost, not_here)), run_time=0.5)
+            self.play(FadeOut(VGroup(drop, money, gi, ghost, not_here)), run_time=0.45)
+            self.play(gate_row.animate.shift(LIFT), run_time=0.6)
             self.play(FadeIn(err_tag, shift=LEFT * 0.1),
-                      Indicate(roles, color=TURN, scale_factor=1.04), run_time=0.7)
+                      Indicate(roles, color=TURN, scale_factor=1.04), run_time=0.6)
             vo.wait_until("Nothing here uses Cloud Storage")
             self.play(c_store.box.animate.set_stroke(S.GREY), c_store.text.animate.set_color(S.GREY),
                       FadeIn(no_store, shift=LEFT * 0.1), run_time=0.6)
@@ -657,7 +681,8 @@ class KeyAndProject(VoiceScene):
             self.play(Indicate(c_vert, color=TURN, scale_factor=1.08), run_time=0.8)
 
             vo.wait_until("And the README never says")
-            self.play(caption_extra(tr, True), FadeIn(vx, shift=DOWN * 0.15), run_time=0.7)
+            self.play(caption_extra(tr, True), VGroup(gate_row, err_tag, no_store).animate.shift(-LIFT),
+                      FadeIn(vx, shift=DOWN * 0.15), run_time=0.8)
             vo.wait_until("to enable the Vertex AI API")
             self.play(Indicate(vx.enable, color=TURN, scale_factor=1.2), run_time=0.6)
             self.play(Transform(sw, sw_on), run_time=0.5)
@@ -674,10 +699,13 @@ class KeyAndProject(VoiceScene):
                       run_time=0.5)
             self.play(*[d.animate.set_color(TURN) for d in tr.dots], FadeIn(card4, shift=UP * 0.15),
                       run_time=0.7)
+            vo.wait_until("account, roles")              # the rows light as they are named
+            self.play(LaggedStart(*[Indicate(r, color=TURN, scale_factor=1.0) for r in card4.rows[:5]],
+                                  lag_ratio=0.45), run_time=2.2)
         self.wait(2)                                   # ▶ beat: hold the frame
 
         # ========================================================== 5 · cd llm-rag, an extra look
-        t5 = term(P_WS, rows=9)
+        t5 = term(P_WS, rows=10)      # 9 rows of output + one empty row for the commit tag
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(card4), run_time=0.4)
             tr = switch_section(self, tr, "Run", 1)
@@ -687,10 +715,10 @@ class KeyAndProject(VoiceScene):
 
             vo.wait_until("An extra look")
             self.play(caption_extra(tr, True), run_time=0.3)
-            cmd5 = type_cmd(self, t5, LS, 0.8)
-            pin(self, cmd5, beside(extra_tag(), t5, cmd5), run_time=0.3)
-            t5.print(self, LS_OUT, run_time=0.5, wrap=True)
-            log = t5.print(self, [LOG], run_time=0.3)[0]
+            cmd5 = type_cmd(self, t5, LS, 0.7)
+            pin(self, cmd5, beside(extra_tag(), t5, cmd5), run_time=0.25)
+            log = t5.print(self, LS_OUT + [LOG], run_time=0.5, wrap=True)[-1]     # LOG fits a row
+            assert log.text == LOG, log.text
             hl = []
             for name, anchor in (("docker-shell.sh", "the scripts"), ("docker-compose.yml", "the compose file"),
                                  ("cli.py", "cli.py, and")):
@@ -703,25 +731,28 @@ class KeyAndProject(VoiceScene):
                 hl.append(b)
             vo.wait_until("and the commit")
             ring_ = cbox(log, 0, 7, S.GREY)
-            # the commit row has no room left for the tag; the row above it (line 5's wrap,
-            # "er.py") is nearly empty, so the tag sits there, just up-right of the hash's box
-            cm = grey_tag("the commit this video was recorded on")
-            above = t5.lines[len(t5.lines) - 2]
-            at_left(cm, ring_.get_right()[0] + 0.12, above.strut.get_center()[1])
+            # the commit row has no room left for the tag (and a tag on the row above would
+            # touch the cli.py box): it sits on the empty last row, under the hash
+            cm = grey_tag("↑ the commit this video was recorded on")
+            at_left(cm, ring_.get_left()[0], log.strut.get_center()[1] - t5.pitch)
             self.play(Create(ring_), run_time=0.4)
             attach(self, log, ring_)
             pin(self, log, cm, run_time=0.4)
 
         # ========================================================== 6 · GCP_PROJECT in docker-shell.sh
         fc = file_card()
-        at_left(fc, -6.3, 1.68)
+        at_left(fc, -6.3, 0)
+        fc.shift(UP * (t5.box.get_top()[1] + 0.12 - fc.frame.get_bottom()[1]))   # just above the terminal
         pen = pencil(0.6, S.GREY)
         pen.move_to(fc.rows[0].get_right() + np.array([0.5, 0.35, 0]))
         skip = note("skip it → calls go to the course's project → permission error")
-        skip.move_to([6.45 - skip.width / 2, 1.38, 0])
+        skip.move_to([6.45 - skip.width / 2, fc.frame.get_center()[1] - 0.12, 0])
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(tr.goto(2), FadeIn(fc, shift=DOWN * 0.1), run_time=0.6)
+            # the ls output leaves as the editor card arrives: the edit happens there first
+            self.play(tr.goto(2), FadeIn(fc, shift=DOWN * 0.1), FadeOut(t5.lines), run_time=0.6)
+            for m in list(t5.lines):
+                t5.lines.remove(m)
             self.play(FadeIn(pen, shift=LEFT * 0.2), run_time=0.3)
             r0 = fc.rows[0]
             tip = pen.tip_point()
@@ -730,9 +761,7 @@ class KeyAndProject(VoiceScene):
             self.play(pen.animate.shift(RIGHT * 2.0), r0.animate.set_color(TURN), run_time=0.7)
             self.play(pen.animate.shift(fc.frame.get_right() + RIGHT * 0.25 - pen.get_left()
                                         + DOWN * (pen.get_center()[1] - fc.frame.get_center()[1])),
-                      run_time=0.4)
-            t5.clear(self, run_time=0.3)
-            self.play(caption_extra(tr, True), run_time=0.3)
+                      caption_extra(tr, True), run_time=0.4)
             cmd6 = type_cmd(self, t5, DIFF, 0.9)
             pin(self, cmd6, beside(extra_tag(), t5, cmd6), run_time=0.3)
             cols = {4: ERR, 5: DATA}
@@ -771,7 +800,7 @@ class KeyAndProject(VoiceScene):
             self.play(FadeIn(skip, shift=LEFT * 0.15), run_time=0.6)
 
             vo.wait_until("Pause and edit")
-            yt6 = your_turn().move_to(fc.frame.get_corner(UP + RIGHT) + LEFT * 0.9)
+            yt6 = your_turn().move_to(fc.frame.get_corner(UP + RIGHT) + LEFT * 0.5)
             self.play(FadeIn(yt6, scale=1.2), FadeOut(pen), run_time=0.5)
         self.wait(2)                                   # ▶ beat: hold the frame
         self.play(FadeOut(VGroup(tr, t5, fc, yt6, skip)), run_time=0.8)

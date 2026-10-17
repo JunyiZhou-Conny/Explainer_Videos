@@ -11,8 +11,8 @@ Beats (script.md "## S09", one voiceover block each):
  1  The panel swaps to CODE(… · lines 65-66 · line 66 wrapped): `--platform linux/amd64,linux/arm64`
     PURPLE, two TEAL boxes amd64 / arm64 appear; `--push` BLUE, the BLUE Docker Hub shelf
     (illustration) and the boxes land on it; the PINK signpost $DOCKER_USERNAME/$IMAGE_NAME with two
-    arrows (one tag); GREY tag "lecture 2"; a GREY Apple-silicon Mac pulls arm64, a GREY cloud VM
-    amd64 (BLUE pull arrows; the arch label flashes as it is pulled).
+    arrows (one tag); GREY tag "lecture 2"; a GREY Apple-silicon Mac pulls arm64, a BLUE cloud VM
+    (a remote machine) amd64 (BLUE pull arrows; the arch label flashes as it is pulled).
  2  TRACKER U/1, README chip transcribe_audio/README.md · line 129. 3-row strip (laptop):
     `docker login -u <USER NAME> -p <ACCESS TOKEN>` (command only, GREY "not run here"); `-p` ringed
     GOLD, a GOLD tag under it "the token stays in your shell history", GREY chip `--password-stdin`
@@ -28,7 +28,8 @@ Beats (script.md "## S09", one voiceover block each):
     `docker run --rm --entrypoint ls mega-pipeline-transcribe-audio -la /app /app/secrets`
     (extra; folds) -> 13 lines 2, …, 12, …, 15, 19: `mega-pipeline.json` RED, GREY tag "stand-in file
     · not a real key" above it.
- 4  The terminal shrinks to the strip (the command's last row, /app/secrets:, line 19). V5 contrast
+ 4  The terminal shrinks to the strip (the folded command's two rows, line 19; the stand-in tag
+    becomes a short GREY "stand-in" beside line 19). V5 contrast
     above: lecture 3's laptop folder (~/AC215-l03/ … transcribe_audio/ secrets/ + GOLD key) and a
     TEAL image layer; CODE(transcribe_audio/Dockerfile · line 39) top right; COPY packs the folder,
     secrets/ and the key into the layer (copies: here the key really is copied). The GREY Git shelf
@@ -42,12 +43,16 @@ Beats (script.md "## S09", one voiceover block each):
     card (rows write in as said): delete the secrets/ folder inside each component · add a
     .dockerignore listing secrets/ (lecture 3) · RED "a key was ever pushed? delete that key in
     IAM"; ▶ your turn on the card's header row, right.
- 6  TRACKER R/4 · extra. Clean-up card for part 1, top right (rows write in as said). 7-row terminal
-    (laptop, ~/AC215/mega-pipeline): `docker images` (extra) -> mega-laptop/70 lines 2-7, column
-    view (IMAGE and DISK USAGE) with S16's GREY tag "2 of 5 columns" in the header row's gap (its
-    end has no room); the card's `--rm` flashes YELLOW as it is said, then `docker images` is typed:
-    the transcribe row flashes, then 1.48GB is boxed YELLOW, the four ~830MB underlined.
- 7  The terminal goes (the tracker drops " · extra"), then the card moves down and grows: three GOLD
+ 6  TRACKER R/4 · extra. Clean-up card for part 1, top right (rows write in as said: header + 3).
+    10-row terminal (laptop, ~/AC215/mega-pipeline): `docker images` (extra) -> mega-laptop/70
+    lines 2-7, column view (IMAGE and DISK USAGE) with S16's GREY tag "2 of 5 columns" in the
+    header row's gap (its end has no room); the card's `--rm` flashes YELLOW as it is said, then
+    `docker images` is typed: the transcribe row flashes, then 1.48GB is boxed YELLOW, the four
+    ~830MB underlined. At "plus any dlops images": a '…' row (70's line 8, the python base, cut)
+    with a GREY divider tag "after the run demo (S08):", then mega-laptop/78 lines 3-4 in the same
+    column view (the dlops/* images S08 pulled, sizes right-aligned with 70's); their names flash.
+ 7  The terminal goes (the tracker drops " · extra"), then the card moves down and grows (its
+    Pipfile and GREY buildx rows write in as it settles): three GOLD
     rows (bucket in two cues, key + a tiny illustration of the console's key list beside that row,
     whose RED trash can flashes at "in the console", a pushed Docker Hub repo on two lines); card
     and console are centred together. Closing card "Part 2: containers that talk to each other
@@ -60,7 +65,8 @@ Deviations from SHOW (and why):
   leaves while the shorter panel is up (the shelf, the signpost and the two machines need the
   height); the machines sit left and right of the shelf, not under it.
 - Beat 0: the GREY fix chip is a command chip (GREY) with its note to its right.
-- Beat 1: the "lecture 2" tag sits above the Mac (under the shelf there is no room left).
+- Beat 1: the "lecture 2" tag sits above the Mac (under the shelf there is no room left). The
+  cloud VM is BLUE, not GREY: in the series colours a VM / remote machine is BLUE, GREY a laptop.
 - Beat 2: the two README chips: line 129 in the band (no phrase: the line is the command itself),
   line 76 under the line-13 panel; "(and R/4)" is a GREY note beside the tracker's caption. The
   GOLD note is a GOLD tag in the strip's empty third row, right under `-p` (a line from `-p` to a
@@ -68,13 +74,19 @@ Deviations from SHOW (and why):
   strip, right.
 - Beat 3: the stand-in tag sits in the row above line 19, over the file name (line 19 has no room
   left for it); the miniature is the three piles only (glyph-only, its key enlarged so it reads).
+- Beat 4: the strip keeps the folded command's two rows (not its prompt row, which has no
+  command on it) and line 19; "/app/secrets:" goes, so the stand-in tag on it shortens to
+  "stand-in" beside line 19 (the full tag was up in beat 3).
 - Beat 4: V5 is its laptop side (lecture 3's tree) and its image layer only: no container runs in
   a build. The image layer is shortened to 3.6 units. The Docker Hub shelf's illustration tag sits
   above it (under it the .gitignore header needs the room).
 - Beat 5: the SHOW names no tracker step; it returns from R/2 · extra (the dev build, gone) to R/4,
   prod: the fix is what to do before running prod. Beat 6 then only adds " · extra".
-- Beat 6: the terminal has 7 rows (the column view is 7 rows), so the clean-up card fits above it
-  in the band's right half (never beside the terminal); the card's header is its first row.
+- Beat 6: the terminal has 10 rows (command, header, five rows, the '…' + divider row, two dlops
+  rows: the SAY's "any dlops images you pulled" points at real rows, from 78, the same command
+  after S08's demo; 70 is kept for the five sizes the SAY names). The card above it (never beside
+  the terminal) has room for its header and the three rows the SAY names only; its two unsaid
+  rows (Pipfile, buildx rm) write in at the start of beat 7, when the terminal has gone.
 - Beat 7: the third GOLD row is two lines (one would be 10.8 units at 22 pt); its "·" becomes the
   line break.
 - Timing: a few in-sentence anchors are shifted by hand with at() (PLAYBOOK §2.6), from a Kokoro
@@ -106,6 +118,8 @@ from manim import (
     Text,
     Transform,
     VGroup,
+    smooth,
+    squish_rate_func,
 )
 
 from explainer import style as S
@@ -164,6 +178,20 @@ assert IMG_ROWS[4].startswith("mega-pipeline-transcribe-audio:latest") and IMG_R
 SMALL_IMGS = {1: "821MB", 2: "833MB", 3: "833MB", 5: "836MB"}
 for k, v in SMALL_IMGS.items():
     assert IMG_ROWS[k].endswith(v), IMG_ROWS[k]
+assert C70.line(8).startswith("python:3.14-slim-bookworm")       # cut: the '…' row stands for it
+# the dlops/* images S08's run demo pulled: the same command after that demo (78), its IMAGE / DISK
+# USAGE slices re-spaced so the sizes right-align with 70's column view (its names are longer)
+C78 = capture("78", ML)
+assert C78.cmd == "docker images"
+_dl = column_view(C78.at(2, 3, 4))[1:]
+_w = len(IMG_ROWS[1])
+DL_ROWS = []
+for s in _dl:
+    name, size = s.split()[0], s.split()[-1]
+    assert len(s.split()) == 2 and _w - len(name) - len(size) >= 3, s
+    DL_ROWS.append(name + " " * (_w - len(name) - len(size)) + size)
+assert DL_ROWS[0].startswith("dlops/mega-pipeline-generate-text:latest") and DL_ROWS[0].endswith("1.02GB")
+assert DL_ROWS[1].startswith("dlops/mega-pipeline-transcribe-audio:latest") and DL_ROWS[1].endswith("1.17GB")
 
 # ------------------------------------------------------------------ layout
 TOP = 2.78               # top of the pictures under the tracker (tracker bottom 2.92)
@@ -353,8 +381,8 @@ def piles_mini(h: float = 1.0) -> VGroup:
 
 def arch_picture() -> VGroup:
     """Beat 1: the BLUE Docker Hub shelf with two TEAL boxes amd64 / arm64, the PINK signpost
-    $DOCKER_USERNAME/$IMAGE_NAME above them (two arrows), a GREY cloud VM left and a GREY
-    Apple-silicon Mac right. Centred at ORIGIN; parts as attributes."""
+    $DOCKER_USERNAME/$IMAGE_NAME above them (two arrows), a BLUE cloud VM left (a remote machine)
+    and a GREY Apple-silicon Mac right (a laptop). Centred at ORIGIN; parts as attributes."""
     hub = shelf("Docker Hub", 6.2, HUB)
     place(hub, cx=0, ref=hub.board)
     place(hub, cy=-1.0, ref=hub.board)
@@ -381,9 +409,9 @@ def arch_picture() -> VGroup:
         n = np.linalg.norm(b_ - a) - 0.08
         arrows.add(Arrow(a, b_, buff=0.04, color=LOOKUP, stroke_width=4,
                          max_tip_length_to_length_ratio=0.24 / n, max_stroke_width_to_length_ratio=10))
-    vm = server(1.05, 3, LAPTOP)
+    vm = server(1.05, 3, CLOUD)
     place(vm, cx=-5.2, cy=-0.45)
-    vm_l = sans("cloud VM", CAPTION, LAPTOP).next_to(vm, DOWN, buff=0.12)
+    vm_l = sans("cloud VM", CAPTION, CLOUD).next_to(vm, DOWN, buff=0.12)
     mac = laptop(1.6, LAPTOP)
     place(mac, cx=5.0, cy=-0.5)
     mac_l = sans("Apple-silicon Mac", CAPTION, LAPTOP).next_to(mac, DOWN, buff=0.12)
@@ -641,10 +669,6 @@ class ProdAndCleanup(VoiceScene):
             kname = substring(ls[5], "mega-pipeline.json")
             st = standin_tag()
             place(st, cx=kname.get_center()[0], cy=ls[4].strut.get_center()[1])
-            # in beat 4's strip the command's row sits right above this one: stay left of its tag
-            x_extra = run_ln.rows[-1].glyphs.get_right()[0] + 0.3
-            if st.get_right()[0] > x_extra - 0.15:
-                st.shift(LEFT * (st.get_right()[0] - x_extra + 0.15))
             self.play(kname.animate.set_color(ERR), run_time=0.3)
             self.play(flash(kname, ERR, 1.1), run_time=0.5)
             pin(self, ls[4], st, run_time=0.4)
@@ -685,12 +709,28 @@ class ProdAndCleanup(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             # the packing has to be done before "The gitignore …" (2.5 s in): the strip's old
             # lines fade with the miniature, then the shrink, then the picture, then COPY
-            keep4 = [run_ln.rows[-1], ls[4], ls[5]]
+            # the strip keeps the whole folded command (its two rows, not the prompt row) and line
+            # 19; "/app/secrets:" goes, and the stand-in tag on it becomes a short one beside line 19
+            assert len(run_ln.rows) == 3, run_ln.text
+            keep4 = [run_ln.rows[1], run_ln.rows[2], ls[5]]
             gone4 = [ln for ln in t.lines.submobjects if ln not in keep4]
-            stage_out(self, tr, t, run_time=0.35, extra=[FadeOut(VGroup(*gone4))])
+            ref4 = term(P_L3A, rows=3)
+            y19 = ref4._slot(2)[1] - (ls[5].strut.get_corner(UP + LEFT)[1] - ls[5].strut.get_center()[1])
+            st4 = _keep(tag("stand-in", S.GREY, size=CAPTION))     # 22 pt would leave 0.15 to the name
+            # it sits under the command's "extra" tag: both one row high (as slim_times does)
+            xt = run_ln.rows[-1].submobjects[-1]
+            assert xt.text.text == "extra", xt
+            st4.box.stretch_to_fit_height(t.pitch - 0.05)
+            place(st4, right=t.box.get_right()[0] - 0.12, cy=y19)
+            assert st4.get_left()[0] >= kname.get_right()[0] + 0.2, (st4.get_left()[0], kname.get_right()[0])
+            stage_out(self, tr, t, run_time=0.35,                                     # st with ls[4]
+                      extra=[FadeOut(VGroup(*gone4)), xt.box.animate.stretch_to_fit_height(t.pitch - 0.05)])
             for ln in gone4:
                 t.lines.remove(ln)
-            resize(self, t, 3, keep=keep4, run_time=0.45)
+            # (a Transform of the long tag into the short one would pass through text < 20 pt)
+            resize(self, t, 3, keep=keep4, run_time=0.45, extra=[FadeIn(st4, shift=LEFT * 0.1)])
+            self.remove(st4)
+            ls[5].add(st4)                # it fades with line 19 from now on
             self.play(FadeIn(v5), FadeIn(p39, shift=DOWN * 0.1), run_time=0.4)
             copies, anims = v5.pack(run_time=1.0)
             self.add(copies)
@@ -762,7 +802,7 @@ class ProdAndCleanup(VoiceScene):
         self.wait(1.5)                    # the your-turn card stays up to be read / paused on
 
         # ========================================================== 6 · clean-up for part 1: docker images
-        t6 = term(P_REPO, rows=7, title="laptop")
+        t6 = term(P_REPO, rows=10, title="laptop")   # command, header, 5 rows, '…' + divider, 2 rows
         pushed = [mixed(["pushed with prod? that Docker Hub repo is public"], color=COST, size=TAG),
                   mixed(["delete it if you don't need it"], color=COST, size=TAG)]
         lines = [
@@ -777,13 +817,16 @@ class ProdAndCleanup(VoiceScene):
             mixed(["key: valid until you delete it · IAM › Service accounts › Keys"], color=COST, size=TAG),
             *pushed,
         ]
-        stack(lines, 0.43, head_gap=0.06)          # equal baselines (serif and mono rows)
-        pushed[1].shift(np.array([0.3, 0.07, 0]))   # its continuation: indented, a little closer
+        stack(lines, 0.40, head_gap=0.06)          # equal baselines (serif and mono rows)
+        pushed[1].shift(np.array([0.3, 0.05, 0]))   # its continuation: indented, a little closer
         crows = VGroup(*lines[:8], VGroup(*pushed))
-        first6 = VGroup(*crows[:6])
-        frA = box(first6.width + 0.6, first6.height + 0.4, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
-        frA.move_to(first6).align_to(first6, LEFT).shift(LEFT * 0.3)
-        place(VGroup(frA, crows), right=6.4, top=3.42, ref=frA)
+        # beat 6 shows the rows the SAY names (header + 3) above the 10-row terminal; the
+        # Pipfile and buildx rows join as the terminal goes (beat 7)
+        first4 = VGroup(*crows[:4])
+        frA = box(first4.width + 0.6, first4.height + 0.3, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+        frA.move_to(first4).align_to(first4, LEFT).shift(LEFT * 0.3)
+        place(VGroup(frA, crows), right=6.4, top=3.45, ref=frA)
+        assert frA.get_bottom()[1] > t6.box.get_top()[1] + 0.15, (frA.get_bottom()[1], t6.box.get_top()[1])
         with self.voiceover(SAY[6]) as vo:
             stage_out(self, tr, run_time=0.5)
             self.play(FadeIn(t6, shift=UP * 0.2), FadeIn(frA), FadeIn(crows[0]), run_time=0.6)
@@ -810,10 +853,16 @@ class ProdAndCleanup(VoiceScene):
             unders = [under(substring(imgs[k], v), TURN, stroke=3) for k, v in SMALL_IMGS.items()]
             self.play(LaggedStart(*[Create(u) for u in unders], lag_ratio=0.2), run_time=0.7)
             self.play(FadeIn(crows[2], shift=RIGHT * 0.1), run_time=0.5)
-            vo.wait_until("plus any dlops images")
-            self.play(FadeIn(crows[3], shift=RIGHT * 0.1), run_time=0.5)
-            self.play(FadeIn(crows[4], shift=RIGHT * 0.1), run_time=0.5)
-            self.play(FadeIn(crows[5], shift=RIGHT * 0.1), run_time=0.5)
+            at(self, vo, "plus any dlops images", -0.2)
+            self.play(FadeIn(crows[3], shift=RIGHT * 0.1), run_time=0.4)
+            # 70 is cut after line 7 ('…': the python base image); below a GREY divider, the
+            # dlops/* rows the same command lists after S08's run demo (78)
+            dots = t6.print(self, ["…"], run_time=0.25)
+            div = beside(grey_tag("after the run demo (S08):"), t6, dots[0])
+            pin(self, dots[0], div, run_time=0.3)
+            dl = t6.print(self, DL_ROWS, run_time=0.4)
+            self.play(*[flash(substring(r, s.split()[0]), TURN, 1.04) for r, s in zip(dl, DL_ROWS)],
+                      run_time=0.6)
 
         # ========================================================== 7 · the cloud; part 2 teaser; empty frame
         frB = box(crows.width + 0.6, crows.height + 0.4, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
@@ -828,10 +877,13 @@ class ProdAndCleanup(VoiceScene):
         with self.voiceover(SAY[7]) as vo:
             # the terminal goes first (the extra command with it), then the card moves and grows:
             # the card never slides over half-faded terminal text
-            stage_out(self, tr, frA, *crows[:6], run_time=0.35, extra=[caption_extra(tr, False)])
-            self.play(*[r.animate.shift(dxy) for r in crows[:6]], Transform(frA, frB), run_time=0.5)
-            for r in crows[6:]:
+            stage_out(self, tr, frA, *crows[:4], run_time=0.35, extra=[caption_extra(tr, False)])
+            for r in crows[4:]:
                 r.shift(dxy)
+            # the two laptop rows beat 6 had no room for write in as the card settles
+            self.play(*[r.animate.shift(dxy) for r in crows[:4]], Transform(frA, frB),
+                      *[FadeIn(r, shift=RIGHT * 0.1, rate_func=squish_rate_func(smooth, 0.45, 1.0))
+                        for r in crows[4:6]], run_time=0.6)
             vo.wait_until("the bucket bills")
             self.play(FadeIn(crows[6][0], shift=RIGHT * 0.1), run_time=0.5)
             at(self, vo, "when the course is over", -0.2)

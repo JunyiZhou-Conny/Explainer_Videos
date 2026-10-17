@@ -16,7 +16,8 @@ Beats (script.md "## S02", one voiceover block each):
 2. LECTURE B5–B6. The bottom lane goes on (cylinder -> GREEN prompt card -> BLUE LLM -> answer,
    a BLUE arrow back to the user) while "the pipeline slide" is named; then B5's three dashed
    regions fade in one at a time as named: Indexing (the whole top lane), Retrieval (the lower
-   half of the embedding box, the query vector, the cylinder, the arrow into the prompt card),
+   half of the embedding box, the query vector, the cylinder, the arrow into the prompt card; a
+   YELLOW flash runs along that arrow into the pulsing prompt card, "brings the context"),
    Augmentation & Generation (the LLM only).
 3. The regions dim to outlines (tabs and lecture tag leave). The README's two step titles
    (README.md lines 5 and 9) label the lanes; five YELLOW flag chips (README.md lines 17–21 as
@@ -82,6 +83,7 @@ from manim import (
     RoundedRectangle,
     Rotate,
     ShowPassingFlash,
+    Succession,
     Text,
     Transform,
     VGroup,
@@ -207,7 +209,12 @@ class TwoLanes(VoiceScene):
 
         # ========================================================== 1. V1 grows out of the gears
         m = RagMap(show=())
-        bands = VGroup(*[RoundedRectangle(width=12.9, height=1.3, corner_radius=0.3, stroke_width=0)
+        # clearances the shared layout leaves at zero (a request for common.py is in the report)
+        m.parts["lab_query"].shift(UP * 0.08)           # off the Retrieval region's bottom edge
+        m.parts["loc_google"][2].shift(DOWN * 0.13)     # "Google · Vertex AI" off the embedding box
+        m.parts["loc_google"][3].shift(UP * 0.12)       # "Google" off the LLM box's top edge
+        m.parts["loc_chroma"][1].shift(UP * 0.08)       # "Chroma container" off the cylinder's lid
+        bands =VGroup(*[RoundedRectangle(width=12.9, height=1.3, corner_radius=0.3, stroke_width=0)
                          .set_fill(S.GREY, 0.07).move_to([0, y, 0]) for y in (YT, YB)])
         bands.set_z_index(-2)
         morph = {"user": user, "lab_user": u_lab, "database": cyl, "lab_database": c_lab, "llm": llm}
@@ -232,7 +239,8 @@ class TwoLanes(VoiceScene):
         with self.voiceover(SAY[1]) as vo:
             self.add(m)
             lr16 = lref("A16")
-            self.play(FadeOut(lr), FadeIn(lr16), FadeOut(a12_rest), FadeOut(gears, scale=2.4), FadeOut(g_lab),
+            self.play(Succession(FadeOut(lr), FadeIn(lr16)), FadeOut(a12_rest), FadeOut(gears, scale=2.4),
+                      FadeOut(g_lab),
                       *[GrowFromPoint(b, gears.get_center()) for b in bands],
                       *[Transform(morph[k], targets[k]) for k in morph], run_time=1.4)
             for k in morph:
@@ -277,7 +285,7 @@ class TwoLanes(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             lr5 = lref("B5–B6")
-            self.play(FadeOut(lr), FadeIn(lr5), FadeOut(nums), FadeOut(nums_link), run_time=0.5)
+            self.play(Succession(FadeOut(lr), FadeIn(lr5)), FadeOut(nums), FadeOut(nums_link), run_time=0.6)
             lr = lr5
             self.play(LaggedStart(*m.parts_in("a_context", anim=GrowArrow), *m.parts_in("prompt"),
                                   *m.parts_in("a_prompt", anim=GrowArrow), *m.parts_in("a_answer", anim=GrowArrow),
@@ -287,6 +295,9 @@ class TwoLanes(VoiceScene):
             self.play(FadeOut(bands), *m.parts_in("reg_indexing", "tab_indexing"), run_time=0.7)
             vo.wait_until("Retrieval brings the context")
             self.play(*m.parts_in("reg_retrieval", "tab_retrieval"), run_time=0.7)
+            ac = m.parts["a_context"]                   # "brings the context to the prompt"
+            self.play(ShowPassingFlash(Line(ac.get_start(), ac.get_end()).set_stroke(TURN, 8), time_width=0.6),
+                      pulse(m.parts["prompt"], TURN, 1.06), run_time=0.8)
             vo.wait_until("and the model does")
             self.play(*m.parts_in("reg_generation", "tab_generation"), run_time=0.7)
 
@@ -316,7 +327,7 @@ class TwoLanes(VoiceScene):
         every = grey_tag("every question").move_to([-3.75, YB - 0.52, 0])
         rule = card([sans("same model · same 256 numbers · both lanes", 22, INK),
                      sans("chunks before, questions later", 20, S.GREY)], TURN)
-        rule.move_to([-1.75, 2.62, 0])
+        rule.move_to([-1.75, 2.76, 0])                 # clear of the top labels (y ≤ 2.05)
         # the "what if" inset, right of the top lane's end: another model puts the question where
         # no chunk is
         wf = box(3.45, 2.45, ERR, dashed=True, stroke=3).move_to([4.825, 1.72, 0])
@@ -359,8 +370,8 @@ class TwoLanes(VoiceScene):
 
         # ========================================================== 5. where each box runs
         no_net = grey_tag("no network needed").move_to([X["chunking"], 2.82, 0])
-        pay = cost_tag("pay per use · your key").move_to([X["embedding"], -2.45, 0])
-        no_vm = note("no VM, no bucket: nothing keeps running").move_to([X["embedding"], -3.02, 0])
+        pay = cost_tag("pay per use · your key").move_to([X["embedding"], -2.56, 0])
+        no_vm = note("no VM, no bucket: nothing keeps running").move_to([X["embedding"], -3.12, 0])
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(once, every, rule, inset)), m.unlight("embedding"),
