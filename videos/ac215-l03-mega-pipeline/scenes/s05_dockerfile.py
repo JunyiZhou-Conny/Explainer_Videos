@@ -454,7 +454,9 @@ class WriteDockerfile(VoiceScene):
         note7.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
         note7.move_to([zx0 + 0.3, -3.06, 0], aligned_edge=LEFT)
         with self.voiceover(SAY[7]) as vo:
-            self.play(Transform(b, bar(p12, 17, 18)), FadeOut(lref), FadeIn(cap), run_time=0.4)
+            # the tag and the caption share the top right: hand it over in two phases, as in beat 6
+            self.play(Transform(b, bar(p12, 17, 18)), FadeOut(lref), run_time=0.3)
+            self.play(FadeIn(cap), run_time=0.3)
             vo.wait_until("upgrades pip")
             self.play(FadeIn(pip_c, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("and installs uv")

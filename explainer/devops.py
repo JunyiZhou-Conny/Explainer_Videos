@@ -176,8 +176,9 @@ def tag(s: str, color: str = S.GREY, size: float = TAG, text_color: str | None =
 def lecture_ref(lecture: int | str, slides: str, color: str = S.GREY) -> VGroup:
     """'Lecture 2 · slides 10–18': where the idea on screen is in the instructor's lecture slides
     (docs/AC215_SERIES.md, rule 9). A tag pinned top right inside the safe frame, opposite the
-    README tracker; the slides themselves are never shown. .box .text"""
-    g = tag(f"Lecture {int(lecture)} · slides {slides}", color)
+    README tracker; the slides themselves are never shown. One slide reads 'slide 40'. .box .text"""
+    one = slides.split("·")[0].strip().isdigit()
+    g = tag(f"Lecture {int(lecture)} · {'slide' if one else 'slides'} {slides}", color)
     return g.move_to([6.6 - g.width / 2, 3.6 - g.height / 2, 0])
 
 
