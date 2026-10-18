@@ -120,8 +120,9 @@ Deviations from SHOW (and why):
   to server" each keep one row for their RED highlight (the text is the capture's). Beat 4's
   23 line 2 (the same error from the laptop) folds right before "Could not connect to server"
   (fold_before) instead of being cut to "…: Could …", so both errors read alike.
-- Beat 8: the GREY tag "toynet's address range" beside the Subnet line glosses the narration's
-  "subnet" (QA, newcomer), and the shared `172.19.` flashes on the subnet and both addresses.
+- Beat 8: the GREY tag "toynet's address range" beside the Subnet line lands as the narration says
+  "from toynet's own address range", before "its subnet" (QA, newcomer: the word needed a gloss),
+  and the shared `172.19.` flashes on the subnet and both addresses.
 - Beats 8 and 10: the picture leaves before the terminal grows (or the panel arrives) and returns
   after the terminal has shrunk, and the terminal leaves before the your-turn card takes its
   place, so no two of them cross mid-move.
@@ -259,7 +260,7 @@ PH262 = readme_has(262, "nothing else is using port 9200")
 PH290 = readme_has(290, "localhost means the gateway")
 assert "processor image does not need it" in excerpt(TOY, 294, 294)
 assert excerpt(TOY, 204, 206).split("\n") == EXP.at(2, 3, 4)
-RANGE_TAG = "toynet's address range"           # glosses "subnet" (QA: a newcomer doesn't know the word)
+RANGE_TAG = "toynet's address range"           # the narration's words for "subnet" (QA: a newcomer doesn't know it)
 PONDER_Q = "Same command,\nbut localhost instead of processor.\nWhat answers?"
 PONDER_ROWS = ["docker exec gateway curl --max-time 3 \\", "    http://localhost:9200/health"]
 assert " ".join(r.strip(" \\") for r in PONDER_ROWS) == C25.cmd
