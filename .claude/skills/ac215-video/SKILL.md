@@ -171,6 +171,36 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
 - Agents working in parallel never edit shared files (`explainer/*.py`, `scenes/common.py` once
   scenes start); they put requests in their report.
 
+## Coordinator lessons (L02–L05: each cost hours)
+
+- **Finish before starting.** Four videos in flight split 4 CPUs and drained the usage limit faster,
+  and every limit pause (~2 h) stopped all of them. A video in final review or release has priority;
+  keep at most one other in production.
+- **Never interrupt an encode.** A stitch killed mid-encode left a truncated cached scene encode
+  (`build/stitch_h/NN_<Cls>_crf27.mp4`) that the next stitch reused: L03's subtitles from 22:52 on
+  ran 94 s early. normalize/burn now write `.partial` and rename. If one stops anyway, compare every
+  cached encode's duration with its scene render before stitching again.
+- **Don't commit a video's `output/` while it stitches.** Full-cut subtitles are written first, the
+  parts minutes later; a mid-stitch checkpoint shipped mismatched part-2 subtitles. The checkpoint
+  script skips `output/` while that video's build runs or a `.partial.mp4` exists.
+- **Read every caller before changing a shared helper's contract.** Making `beside()` raise broke
+  L04's `fit_tag`, which probes 22 pt, then 20 pt, then falls back: false alarms and a restarted
+  finishing run. Enforce at the point of use (`pin()` refuses a tag that `covers_text()`; outline
+  boxes are fine), and run `explainer.check` on every scene before launching agents that rely on it.
+- **Workflow prompts never embed an earlier agent's text.** On resume only an unchanged prefix
+  replays; a verifier whose prompt quotes the fixer's report gets a new cache key and re-runs, with
+  everything after it. Pass reports as files and name the path. Right after any resume, read the
+  journal; if finished agents start again, stop it and launch only the pending ones.
+- **The scratchpad belongs to the coordinator.** One agent's `rm -rf scratchpad/*` erased the tools,
+  clones and slides. Keep master copies outside it, lock it, and tell every agent: delete only files
+  you created, by exact path, never with a wildcard.
+- **Chinese keeps the English clause order.** The builder pairs zh and en clause by clause; a
+  condition-first Chinese sentence (如果…，就…) swaps meaning between two neighbouring cues.
+- **Measure before changing an encode setting.** `TP=-2` on one-pass loudnorm made peaks worse
+  (−0.5 dBTP); a limiter after it fixed them. Test on the real joined audio first.
+- **Numbers in comments come from files.** Count from the output JSON before posting; write
+  "queued" for something queued, "fixed" only after frames show it.
+
 ## Never
 
 No slide images or PDF pages in a frame or a repository (re-draw the idea, cite the slide number);
