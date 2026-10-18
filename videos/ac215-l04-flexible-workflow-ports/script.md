@@ -147,8 +147,11 @@ Conventions
     4 Stash, retry · 5 Confirm branch.
   - `B` = "Before you run" (`:105-158`: layout, Configure each cli.py, GCS Bucket Details), 3:
     1 Secrets folder · 2 Set cli.py · 3 Your bucket.
-  - `K` = "Service Account & Secrets" (`:169-203`), 6: 1 Create account · 2 Grant roles · 3 JSON key ·
-    4 Save key · 5 Set project · 6 Enable APIs.
+  - `K` = "Service Account & Secrets" (`:169-203`), the README's own numbered list (`:175-183`), 5:
+    1 Service accounts · 2 Create account · 3 Grant roles · 4 JSON key · 5 Save key; then the two
+    unnumbered commands under "To enable them" (`:189-198`), `TRACKER K/after 5` (caption "after
+    step 5: Set project", then "after step 5: Enable APIs"; hollow dots after a gap). The scene's
+    `KTracker` draws this; `common.SECTIONS["K"]` keeps its six names.
   - `R` = "How to Run a Component" (`:207-226`), 6: 1 Build and run · 2 dev · 3 run · 4 prod ·
     5 chmod +x · 6 winpty.
   - Quick Reference (`:230-274` with each component README's `--help`), section = component folder:
@@ -564,8 +567,8 @@ SAY: Then upload a short recording into a folder named input audios, as input, d
 
 ## S05 · Three gates: account, role, API — `s05_gates.py` · `ThreeGates`
 
-SHOW: TRACKER K/1. V3 builds: at left a TEAL container box with a dashed slot `/secrets`; outside its
-left edge a GREY `secrets/` folder holding the GOLD key glyph, joined to the slot by a PINK route. The
+SHOW: TRACKER K/1 (README step 1, Service accounts). V3 builds: at left a TEAL container box with a
+dashed slot `/secrets`; outside its left edge a GREY `secrets/` folder holding the GOLD key glyph, joined to the slot by a PINK route. The
 route pulses once, and a GOLD key outline appears in the slot at the same instant: one file, seen from
 both sides (nothing travels along the route). A GREY README card, header `README.md · line 171`: "an
 identity for your code, not for you".
@@ -584,8 +587,8 @@ says where gates 2 and 3 fail: that is the ponder.)
 SAY: Gate 1 asks who you are: without the key, the call fails inside your container. Gate 2 asks what you may do: the account needs a role. Gate 3 asks if the API is switched on.
 
 SHOW: V3 shrinks to the right third. At left a schematic console (browser window, tag
-`illustration`, no logo): breadcrumb "IAM & Admin › Service accounts" → "Create service account",
-name `mega-pipeline-sa`. TRACKER K/2: a role picker; four roles appear one by one in README order,
+`illustration`, no logo): breadcrumb "IAM & Admin › Service accounts" → "Create service account" (TRACKER K/2),
+name `mega-pipeline-sa`. TRACKER K/3: a role picker; four roles appear one by one in README order,
 each with its ID chip: "Storage Admin" (`roles/storage.admin`, GREY tag "all five components"),
 "Agent Platform User" (`roles/aiplatform.user`, tag "generate_text · Gemini"), "Cloud Speech Client"
 (`roles/speech.client`), "Cloud Translation API User" (`roles/cloudtranslate.user`). As each appears,
@@ -598,16 +601,16 @@ SHOW: The Text-to-Speech door gets a GREY note "no role needed · README.md line
 `README.md · line 179` "Search the role picker for Agent Platform User" gets a GREEN check.
 SAY: Text-to-Speech needs no role. A small slip: the generate text README still says Vertex AI User, which finds nothing now.
 
-SHOW: TRACKER K/3. The console: "Keys › Add key › Create new key › JSON"; a download chip appears
+SHOW: TRACKER K/4. The console: "Keys › Add key › Create new key › JSON"; a download chip appears
 with a GREY placeholder name `<project>-<hex>.json` (GREY caption "the console picks a long name").
-TRACKER K/4. The chip renames itself `mega-pipeline.json` and the GOLD key glyph drops out of the
+TRACKER K/5. The chip renames itself `mega-pipeline.json` and the GOLD key glyph drops out of the
 browser into S04's file tree (it slides back in, small) as `secrets/mega-pipeline.json` (README chip
 `README.md · line 183`); the dashed row turns solid. A GOLD tag: "whoever holds this file spends your
 project's money · never commit it · never paste it".
 SAY: Download a JSON key; it arrives with a long generated name. Rename it mega-pipeline.json, in the secrets folder beside the repo. Whoever holds it can spend your project's money: never commit or paste it.
 
-SHOW: TRACKER K/5. A GREY README card `README.md · lines 187–189` ("APIs & Services › Library ›
-Enable · or all five at once") with a tiny console Library illustration. Terminal (full width, 8
+SHOW: TRACKER K/after 5 (Set project). A GREY README card `README.md · lines 187–189` ("APIs &
+Services › Library › Enable · or all five at once") with a tiny console Library illustration. Terminal (full width, 8
 rows, title `laptop`, prompt `student@laptop:~$`). It types `gcloud config set project
 <your-project-id>` exactly as the README writes it (TERM(gcloud-laptop/01-config-set-project.txt: 2–3;
 session)): line 3 `-bash: syntax error near unexpected token `newline'` prints RED; `<` and `>` in the
@@ -617,8 +620,8 @@ your-project-id` → TERM(gcloud-laptop/02-config-set-project-filled.txt: 2); `y
 YELLOW tag "your own ID".
 SAY: Next, enable the APIs, in the console or with gcloud. Typed exactly as written, the set project command fails: the shell reads the placeholder's angle brackets as redirections. Type your own project ID, without brackets.
 
-SHOW: TRACKER K/6. The terminal clears (12 rows). It types the README's six rows, `gcloud services
-enable \` … `translate.googleapis.com` → TERM(gcloud-laptop/03-services-enable.txt: 7–12, …); line 7
+SHOW: TRACKER K/after 5 (Enable APIs). The terminal clears (12 rows). It types the README's six rows,
+`gcloud services enable \` … `translate.googleapis.com` → TERM(gcloud-laptop/03-services-enable.txt: 7–12, …); line 7
 prints RED. A GREY note: "Tutorial 0: gcloud auth login". A GREY command-only chip
 `gcloud services list --enabled` (tag `extra`, "with your account: lists the five"). The terminal
 shrinks to the strip; in V3 the five API switches flip on one by one (GREY tag `illustration` "with
@@ -807,8 +810,8 @@ SAY: Next, synthesis audio E-N builds in 8 seconds, its system layer cached. We 
 SHOW: TRACKER QC/1 · extra. The second terminal (5 rows) slides in at the top; its first prompt shows
 the home folder with the folder part flashing YELLOW and the GREY caption "new terminal: cd here
 first", then reads `student@laptop:~/AC215/mega-pipeline/synthesis_audio_en$`. A pencil edits
-`cli.py`, then it types `git diff cli.py` (extra) → TERM(mega-laptop/41-c-x-edit-cli.txt: 16–17); the
-same file blinks inside the TEAL terminal's folder icon at the same instant. In the TEAL terminal it
+`cli.py`, then it types `git diff cli.py` (extra) → TERM(mega-laptop/41-c-x-edit-cli.txt: …, 16–17), the
+`…` row with the GREY note "gcp_project and bucket_name edited too"; the same file blinks inside the TEAL terminal's folder icon at the same instant. In the TEAL terminal it
 types `python cli.py --help` → TERM(mega-synthesis_audio_en/02-help.txt: 2–4, …, 55; wrap); line 3
 (`File "/app/cli.py", line 23`) highlights YELLOW; CODE(mega-pipeline/synthesis_audio_en/cli.py: 23)
 appears as a one-line chip "runs on import"; line 55 RED.
@@ -850,9 +853,11 @@ SHOW: The card clears. Two cards, one after the other above the strip, tag `erra
 the chip CODE(mega-pipeline/translate_text/cli.py: 64) `target_language="es",` RED, stacked over
 CODE(mega-pipeline/synthesis_audio/cli.py: 48–49) (comment cut) with `fr-FR` BLUE; a GREEN fix chip
 `target_language="fr"` with a GREY tag "you set it in Before you run, step 2". Card 1 clears; card 2:
-a GREY caption "optional ElevenLabs bonus: cli_11.py looks for its key file inside /app" and a GREEN
-fix chip `secrets_file_path = '/secrets/11lab_api_key.txt'` (header `synthesis_audio/cli_11.py · line
-30`). No ▶. Fade out.
+a GREY caption "optional ElevenLabs bonus: cli_11.py looks for its key file inside /app" over the real
+line 30, CODE(mega-pipeline/synthesis_audio/cli_11.py: 30) (header `synthesis_audio/cli_11.py · line
+30`), its `'secrets/` RED and underlined; then the GREEN fix chip
+`secrets_file_path = '/secrets/11lab_api_key.txt'` with no header and the GREY tag "add a leading /".
+No ▶. Fade out.
 SAY: Two small slips. The translation targeted Spanish, but the final voice is French: that's why you switched it. And the optional ElevenLabs bonus reads its key from inside slash app: point it at slash secrets.
 
 ---
@@ -912,16 +917,21 @@ SAY: Local image not found, so it pulls the dlops image from Docker Hub. Then, a
 
 SHOW: The terminal clears and the session continues: TERM(mega-laptop/72-run-registry.txt: 24–29, …,
 33, 38–39; session). At the prompt `(app) root@36615ab6e34b:/app#` (`root` tagged RED "root") it types
-`python --version` (line 24) → line 25, `which python` (26) → 27, `python cli.py --help` (28) → 29,
+`python --version` (line 24) → line 25, `which python` (26) → 27 (both with GREY `extra` tags; the
+tracker reads TRACKER R/3 · extra until `python cli.py --help`), `python cli.py --help` (28) → 29,
 `…`, 33, then `exit` (38) → 39. `Python 3.8.17` highlights YELLOW; `optional arguments:` gets a GREY
 tag "Python 3.8's argparse wording".
 SAY: The prompt says root. Python is 3.8.17, in an environment pipenv made. Help still works here, in the older wording of Python 3.8. Then type exit.
 
-SHOW: TRACKER R/3 · extra. Above the strip, PANEL(mega-laptop/74-x-registry-image.txt: 4, 6–7,
-"docker image inspect dlops/mega-pipeline-transcribe-audio · extra") and the excerpt chip
-`PYTHON_VERSION=3.8.17` (header `docker image inspect · env (excerpt)`). In V1 the sealed box opens;
-four labels rise out of it as they're said: `2025-02-18`, `Python 3.8.17`, `pipenv shell`, `user: root`
-(RED).
+SHOW: TRACKER R/3 · extra. The terminal turns GREY (laptop) and types the extra inspect as captured
+(the `docker image inspect` part of mega-laptop/74-x-registry-image.txt line 1), folded to fit: its
+`--format` string breaks inside the quotes on GREY `↪` rows, and the only ` \` follows the closing
+quote; GREY note "one command, folded to fit · type it as one line" → lines 4–7. Then, above the
+strip, PANEL(mega-laptop/74-x-registry-image.txt: 4, 6–7, "docker image inspect --format …
+dlops/mega-pipeline-transcribe-audio · extra") and the excerpt chip `PYTHON_VERSION=3.8.17` (header
+`docker image inspect · env (excerpt)`). In V1 the sealed box opens and turns RED from "opens the box"
+(the stale dlops image) until it closes in the fix-card beat; four labels rise out of it as they're
+said: `2025-02-18`, `Python 3.8.17`, `pipenv shell`, `user: root` (RED).
 SAY: An extra inspect opens the box: created on February 18, 2025, with Python 3.8.17, starting pipenv shell, as root.
 
 SHOW: The inspect panel clears (the four labels stay on the box).
@@ -939,10 +949,11 @@ SHOW: TRACKER R/3 · extra. A laptop strip (title `laptop · second terminal`, p
 TERM(mega-laptop/73-x-host-after-registry.txt: …, 7, …) (`root` in line 7 RED), then `git status --short`
 (extra) → TERM(mega-laptop/73-x-host-after-registry.txt: …, 20). In V1 a small GREY file glyph
 `Pipfile` with a RED `root` badge drops out of the box into the laptop folder. Two GREY command-only
-chips (tag `extra`, no output panel): `rm Pipfile` and `./docker-shell.sh dev` ("your own image back").
+chips (tag `extra`, no output panel): `rm Pipfile` (GREY note under it "Linux asks first (root's file)
+→ y") and `./docker-shell.sh dev` ("your own image back").
 SAY: It also left a Pipfile in your folder, owned by root. If you tried this, delete it and run dev to get your own image back.
 
-SHOW: The fix card, three rows: GREEN "build locally · no argument, or dev"; BLUE "run · only images
+SHOW: The box closes and is TEAL again. The fix card, three rows: GREEN "build locally · no argument, or dev"; BLUE "run · only images
 your team pushed from this branch · your own DOCKER_USERNAME"; GREY "their newer push? docker pull
 <user>/<image>". Fade out.
 SAY: So build locally, with no argument or dev, and use run only for images your team pushed from this branch, under your own Docker Hub account.
@@ -963,11 +974,13 @@ SHOW: The panel swaps to CODE(mega-pipeline/transcribe_audio/docker-shell.sh: 65
 wrapped into three rows `docker buildx build --platform linux/amd64,linux/arm64` / `↪ --push -t
 $DOCKER_USERNAME/$IMAGE_NAME` / `↪ -f Dockerfile .` (header `… · lines 65–66 · line 66 wrapped`):
 `--platform linux/amd64,linux/arm64` PURPLE, `--push` BLUE. A PINK signpost with two arrows: one to a
-TEAL box "amd64", one to a TEAL box "arm64", both on the BLUE shelf; two small GREY glyphs below: an
-Apple-silicon Mac taking "arm64", a cloud VM taking "amd64" (tag "lecture 2").
+TEAL box "amd64", one to a TEAL box "arm64", both on the BLUE shelf; left and right of the shelf, a
+GREY Mac glyph (Apple silicon) pulls "arm64" and a BLUE cloud-VM glyph (a remote machine) pulls
+"amd64" (GREY tag "lecture 2" above the Mac).
 SAY: Then one buildx build makes amd64 and arm64 images and pushes both under one tag: as in lecture 2, an Apple-silicon Mac pulls one, a cloud VM the other.
 
-SHOW: TRACKER U/1. A one-line README chip `transcribe_audio/README.md · line 129`. A strip (title
+SHOW: TRACKER U/1 (section "Publish the container (optional)"; the README heading is "OPTIONAL:
+Publish the container"). A one-line README chip `transcribe_audio/README.md · line 129`. A strip (title
 `laptop`, prompt `student@laptop:~/AC215/mega-pipeline/transcribe_audio$`) types `docker login -u
 <USER NAME> -p <ACCESS TOKEN>` (command only, GREY tag "not run here"); `-p` gets a GOLD note "the
 token stays in your shell history" and a GREY chip "--password-stdin avoids it".
@@ -998,16 +1011,23 @@ SAY: The copy line takes the whole folder. The gitignore keeps secrets out of Gi
 
 SHOW: Tag `erratum`: a GREY README card `README.md · line 203` "the canonical way to make that mistake
 impossible" with a GREY note "for Git: yes · for images: no". A fix card writes in: "delete the
-secrets/ folder inside each component" · "add a .dockerignore listing secrets/ (lecture 3)" · RED
-"a key was ever pushed? delete that key in IAM". `▶ your turn`.
+secrets/ folder inside each component" · "add a .dockerignore listing secrets/ (lecture 3)", the
+row listing what this repo needs, in the spirit of lecture 4 slide 8: `secrets/`, the data folders
+(`input_audios/`, `text_*/`, `output_audios*/`) and `__pycache__/` · a GREY row "remove images built
+before the fix · a deleted file stays in its layer" (slides 12, 15) · RED "a key was ever pushed?
+delete that key in IAM". `▶ your turn`.
 SAY: So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Prod is optional: after the fix, run it only if your team publishes. Pause and check yours.
 
-SHOW: TRACKER R/4 · extra. Terminal (8 rows, title `laptop`, prompt `student@laptop:~/AC215/mega-pipeline$`)
-types `docker images` (extra) → TERM(mega-laptop/70-x-images.txt: 2–7; column view); `1.48GB` and
-the four ~830 MB sizes highlight. A clean-up card for part 1 writes in beside the strip as the SAY
-names it: "exit each container · --rm removes it" · "docker image rm <name> · your five images" ·
-"any dlops/* images you pulled" · "the root-owned Pipfile" · GREY "ran prod? docker buildx rm
-multi-arch".
+SHOW: TRACKER R/4 · extra. Terminal (10 rows, title `laptop`, prompt `student@laptop:~/AC215/mega-pipeline$`)
+types `docker images` (extra) → TERM(mega-laptop/70-x-images.txt: 2–7, …; column view: IMAGE and DISK
+USAGE, GREY tag "2 of 5 columns"); `1.48GB` and the four ~830 MB sizes highlight. At "plus any dlops
+images", the `…` row (line 8, the python base, cut) gets the GREY divider tag "after the run demo
+(S08):", then TERM(mega-laptop/78-x-images-all.txt: 3–4; same column view), the `dlops/*` images
+S08 pulled. A clean-up card for part 1 writes in above the terminal as the SAY names it: "exit each
+container · --rm removes it" · "docker image rm <name> · your five images" · "any dlops/* images you
+pulled". Its unsaid rows join at the start of the next beat, when the terminal has gone: "the
+root-owned Pipfile" · GREY "ran prod? docker buildx rm multi-arch", and a GREY "· the python base
+image" at the end of the `dlops/*` row.
 SAY: Clean-up for part 1. Exit each container; dash dash r m deletes it. The transcribe image alone is 1.48 gigabytes: remove all five with docker image rm, plus any dlops images you pulled.
 
 SHOW: Three GOLD rows join the card: "bucket: storage bills until you delete it · when the course is
@@ -1202,7 +1222,9 @@ SHOW: It types `docker run -d --name gateway-all --network toynet -p 8091:9100 t
 `0.0.0.0:8091->9100/tcp` YELLOW and a GREY tag "yours may also list [::]:8091 (IPv6)"; then `docker
 rm -f gateway-all` (extra) → TERM(port-laptop/21-x-ps-all-addresses.txt: 6). In V7, a wide GREY door
 `0.0.0.0:8091` faces the street (small GREY glyphs of other machines outside), while `127.0.0.1:8090`
-faces only inward.
+faces only inward. GREY tag `Lecture 4 · slide 35` (top right, from "That's why the README writes"
+until the next beat's first play), with the GREY note under it "lecture's short form = every
+address" (SLIDES.md Conflict 1).
 SAY: With door 8091 it works, and the mapping shows 0.0.0.0: every address, so other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only.
 
 SHOW: TRACKER P2/2. The terminal clears. It types `curl http://localhost:8090` →
@@ -1230,7 +1252,9 @@ joined), the last line RED. Only now does the gateway's loop glow YELLOW: in V6 
 into the gateway itself, where no `:9200` door exists. TRACKER P2/3 · extra: it types `docker exec
 gateway curl -s http://localhost:9100 | head -4` (extra) → TERM(port-laptop/26-x-exec-localhost-9100.txt:
 2–5); the loop lands on the gateway's own `:9100` door (GREEN). A one-line README chip `README.md ·
-line 290` "localhost means the gateway itself"; a YELLOW tick "puzzle 2".
+line 290` "localhost means the gateway itself"; a YELLOW tick "puzzle 2". GREY tag `Lecture 4 · slides
+33–34` (top right, from "That's the second puzzle" until the next beat's first play; it replaces the
+README chip).
 SAY: Nothing. Inside the gateway, localhost is the gateway itself, and nothing there listens on 9200. That's the second puzzle: each container has its own localhost. An extra check: on 9100, its own port, localhost returns the page.
 
 SHOW: TRACKER PH/5. V6/V7 fade; the terminal grows to 12 rows. It types `docker network inspect
@@ -1380,10 +1404,11 @@ SAY: Then it creates the network and both containers, and prints both banners, e
 SHOW: The first terminal shrinks to a strip at the bottom (still running). TRACKER P4/1: a compact
 PAGE(port-laptop/49-send-compose.txt) (address bar and reply card only, address `localhost:8090`)
 flashes in with REPLY(port-laptop/49-send-compose.txt: 2) (README chip `README.md · line 460`). A
-second terminal (title `laptop · second terminal`, 10 rows) slides in above the strip; its first
-prompt shows the home folder `student@laptop:~$` with the folder part flashing YELLOW and a GREY
-caption "new terminal: cd here first · Compose reads the file in the current folder", then the prompt
-reads `student@laptop:~/AC215/port_toy$`. TRACKER P4/2: it types `docker compose ps` →
+second terminal (title `laptop · second terminal`) slides in above the strip; it opens on
+`student@laptop:~$`, the `~` flashing YELLOW with a GREY caption "new terminal: cd here first";
+"· Compose reads the file in the current folder" joins it on that clause. The captions go, it types
+`cd ~/AC215/port_toy` (no output), and the prompt reads `student@laptop:~/AC215/port_toy$` (the new
+path flashes YELLOW). TRACKER P4/2: it types `docker compose ps` →
 TERM(port-laptop/48-compose-ps.txt: 2–4; wrap), PORTS cell YELLOW.
 SAY: Open the page: it works. In a second terminal, cd into port toy first: Compose reads the file in the current folder. There, docker compose ps shows the same mapping.
 

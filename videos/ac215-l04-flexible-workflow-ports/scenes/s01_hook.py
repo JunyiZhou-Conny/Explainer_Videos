@@ -22,7 +22,9 @@ Beats (script.md "## S01", one voiceover block each):
    a PINK arrow labelled "processor" grows from gateway to the door, and it and "ok" turn GREEN.
 3. Both pictures become glyph-only thumbnails (left: shelf, box, signpost; right: the two boxes
    and the laptop), each pulsing as its question writes in under it, 26 pt YELLOW, "Part 1" over
-   "Where did that image come from?" and "Part 2" over "Whose localhost is it?".
+   "Where did that image come from?" and "Part 2" over "Whose localhost is it?". GREY `Lecture 4 ·
+   slides 42–43` (lecture_ref, top right: the two tutorials) arrives with the left thumbnail and
+   leaves with beat 4's clear.
 4. The questions clear. Layout preview: the tracker ("README › Get the Code · starting fresh", 2
    dots) in a pulsing YELLOW ring; the code panel transcribe_audio/docker-shell.sh · lines 7–8
    slides in, its header ringed; a 5-row laptop strip (GREY tag "preview") types `git clone
@@ -118,6 +120,7 @@ from explainer.devops import (
     cross_mark,
     label,
     laptop,
+    lecture_ref,
     mono,
     substring,
 )
@@ -393,6 +396,7 @@ class Hook(VoiceScene):
         k_r = min(5.8 / net_shapes.width, 2.3 / net_shapes.height)
         q1 = question(Q1).move_to([-3.3, -1.35, 0])
         q2 = question(Q2).move_to([3.4, -1.35, 0]).align_to(q1, UP)
+        lref = lecture_ref(4, "42–43")                # top right, bottom at 3.13; thumbnails top ≈ 2.0
 
         with self.voiceover(SAY[3]) as vo:
             self.add(net_shapes)
@@ -407,7 +411,7 @@ class Hook(VoiceScene):
             self.remove(t2, pic, drop, texts, g_lab)
             net.remove(texts)
             self.add(net_shapes)
-            self.play(FadeIn(thumb_l, scale=1.4), run_time=0.5)
+            self.play(FadeIn(thumb_l, scale=1.4), FadeIn(lref, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("Part 1")
             self.play(Write(q1), pulse(thumb_l), run_time=1.0)
             vo.wait_until("and should you build")

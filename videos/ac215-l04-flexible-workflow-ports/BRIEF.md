@@ -199,8 +199,9 @@ the five component READMEs, which share one recipe).
   Fetch · Checkout · Stash, retry · Confirm branch (5).
 - *Before you run* (`:105-160`: folder layout, Configure each `cli.py`, GCS Bucket Details):
   Secrets folder · Set cli.py · Your bucket (3).
-- *Service Account & Secrets* (`:169-203`): Create account · Grant roles · JSON key · Save key ·
-  Set project · Enable APIs (6).
+- *Service Account & Secrets* (`:169-203`), numbered as the README's own list (`:175-183`):
+  Service accounts · Create account · Grant roles · JSON key · Save key (5); then, unnumbered
+  ("To enable them", `:189-198`), "after step 5: Set project" · "after step 5: Enable APIs".
 - *How to Run a Component* (`:207-226`): Build and run · dev · run · prod · chmod +x · winpty (6).
 - *Quick Reference* (`:230-274`, with each component README's `--help` and "Testing" blocks), section
   = component folder: `transcribe_audio`: Check --help · Download · Transcribe · Upload (4);

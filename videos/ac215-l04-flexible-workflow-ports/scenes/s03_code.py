@@ -16,7 +16,7 @@ Beats (script.md "## S03", one voiceover block each):
     pyproject.toml, uv.lock turn GREEN as they are named and a copy of each flies into a GREEN
     recipe card; its caption "committed" on "which this branch".
  2  TRACKER L/1 (the tracker switches section). The terminal clears, title `laptop · lecture 3
-    clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to 4:59" (SKIP_TO).
+    clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to 5:09" (SKIP_TO).
     `cd mega-pipeline` (no output). TRACKER L/1 · extra: `git status --short` -> mega-l03-laptop/01
     lines 2-4, `git status --short --ignored | grep '^!!'` -> lines 5-8 (both extra).
  3  On "Three piles", copies of the seven status lines fly into V2's three piles while the
@@ -250,7 +250,9 @@ INCOMING_Y = 2.66       # where the branch's files wait (just under the tracker)
 # 2026-10-18 re-check (S03 re-voiced, "which this branch commits"): 15 fps S01 90.86 + S02 73.13 +
 # S03 135.59 = 299.58, 4:59 lands 0.6 s early; 30 fps (720p30 renders) S01 91.00 + S02 73.30 +
 # S03 135.79 = 300.09, 4:59 lands 1.1 s early, at the start of the final fade-out.
-SKIP_TO = "4:59"
+# 2026-10-18 finishing pass (Step 5 gained the copy-out sentence, S03 ~10 s longer): 15 fps S01
+# 90.86 + S02 73.13 + S03 145.99 = 309.98, 5:09 lands 1.0 s early; 30 fps adds ~0.4 s.
+SKIP_TO = "5:09"
 
 
 def at_left(m, x: float, y: float):

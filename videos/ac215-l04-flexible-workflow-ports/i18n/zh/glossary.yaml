@@ -591,7 +591,7 @@ terms:
   note: 'A11: tag names as the screen shows them (L2, L3).'
 - en: 'an extra check / extra checks / an extra command / not in the README / handy commands'
   zh_subtitle: '额外检查 / 额外的命令 / README 里没有 / Handy commands'
-  first_use: 'S03：两个额外检查：git branch 显示，当前分支是 flexible-workflow，停在 pin 住的 commit；transcribe audio 里有 Dockerfile、这个脚本、pyproject.toml 和 uv.lock，就是你第 3 讲写过的那些。'
+  first_use: 'S03：两个额外检查：git branch 显示，当前分支是 flexible-workflow，停在我们录制时的那个 commit；transcribe audio 里有 Dockerfile、这个脚本、pyproject.toml 和 uv.lock，就是你第 3 讲写过的那些。'
   note: 'D6. the README''s handy commands → README 的 Handy commands 一节 (a heading, A11).'
 - en: 'at the time of recording / we recorded on Linux / One honest limit / we had no Google account'
   zh_subtitle: '录制时'
