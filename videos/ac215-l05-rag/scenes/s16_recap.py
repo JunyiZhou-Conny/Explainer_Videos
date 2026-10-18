@@ -1001,10 +1001,14 @@ class Recap(VoiceScene):
             db_strokes = list(rm.item("database").frame.submobjects)
             # the flags (YELLOW chips) and their ticks step back, so the two shared boxes are the
             # YELLOW things on screen while "share" is said
+            # (each flag = VGroup(frame, words): the frame keeps its opaque fill, so the boxes
+            # behind a flag stay hidden while its outline and words dim)
             flags = [rm.parts[n] for n in RagMap.FLAGS]
             self.play(q_span(q1, "share").animate.set_color(TURN), rm.light("embedding"),
                       *[m.animate.set_stroke(TURN, 5) for m in db_strokes],
-                      *[m.animate.fade(0.7) for m in flags + fticks], run_time=0.6)
+                      *[f[0].animate.set_stroke(opacity=0.3) for f in flags],
+                      *[f[1].animate.set_opacity(0.3) for f in flags],
+                      *[tk.animate.set_stroke(opacity=0.3) for tk in fticks], run_time=0.6)
             self.play(rm.pulse_lane("top", DATA), rm.pulse_lane("bottom", LOOKUP), run_time=1.0)
             vo.wait_until("Two:")
             small1 = q_at(question(1, Q_SMALL, S.GREY, S.GREY), Q_TOP)
