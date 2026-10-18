@@ -10,8 +10,10 @@ Beats (script.md "## S16", one voiceover block each):
     `exit` (extra) -> laptop/23 line 14 (session); the CLI box, its routes and plug dissolve while
     the frame turns GREY (title laptop, prompt student@laptop:~/AC215/llm-rag$). `docker compose
     down` (extra) -> laptop/25 lines 2–3 joined and 4 (GREY, cut at 65 with …; a GREY "harmless"
-    tag in the strip's title bar), then 5–7 (Compose rows, times as GREY tags): with line 6 the
-    Chroma box, its name, port, /data and :8000 routes dissolve; with line 7 the rail. The GREY
+    tag in the strip's title bar), then 5–7 (Compose rows, times as GREY tags 0.36 tall, as in
+    S04, so neighbouring tags don't touch): with line 6 the Chroma box, its name, port, /data and
+    :8000 routes dissolve and "harmless" leaves (line 7 scrolls the last WARN line out); with line
+    7 the rail. The GREY
     laptop zone stays; it re-lays itself as a band along the top while the strip grows to 7 rows.
  1  `docker images` (extra) -> laptop/26 lines 2–5 as the column view (IMAGE, DISK USAGE; GREY header
     "docker images · IMAGE and DISK USAGE" just above the terminal). `2.11GB` boxed YELLOW as said,
@@ -59,8 +61,9 @@ Beats (script.md "## S16", one voiceover block each):
     cylinder, V6's beam, V7's prompt card.
  7  No lecture tag, no tracker. "Test yourself" (YELLOW underline). Q1 with V1 under it, full size
     (both lanes, the five flags; each flag gets a GREEN tick; "flags" and "share" turn YELLOW, the
-    embedding box and the cylinder light YELLOW and both lanes pulse on "what must both lanes
-    share"). Q2 writes in below as Q1 turns small and GREY (V1 leaves); its code and
+    embedding box and the cylinder light YELLOW while the flags and ticks step back, and both
+    lanes pulse on "what must both lanes share"). Q2 writes in below as Q1 turns small and GREY
+    (V1 leaves); its code and
     "published port 8000" turn YELLOW as said.
  8  Q3, Q4, Q5 the same way, their key words YELLOW as said.
  9  Q5 turns small; the five questions sit at the top; the footer cards "Answers: exercises.md" and
@@ -111,6 +114,7 @@ from manim import (
     there_and_back,
 )
 
+import common as _common
 from common import (
     CLOUD,
     COST,
@@ -337,6 +341,27 @@ def text_span(t, sub: str) -> VGroup:
     return VGroup(*t[a:a + n])
 
 
+def print_rows(scene, t, rows: list, **kw) -> VGroup:
+    """common.print_build with time tags 0.36 tall (as S04 does): its tags are 0.42 tall on the
+    terminal's 0.40 row pitch, so the tags of the two Compose rows touched. Swaps
+    common.time_tag for this call only."""
+    orig = _common.time_tag
+
+    def compact(time: str) -> VGroup:
+        g = orig(time)
+        b = g.box
+        b.become(RoundedRectangle(width=b.width, height=0.36, corner_radius=0.18,
+                                  stroke_color=b.get_stroke_color(), stroke_width=b.get_stroke_width())
+                 .set_fill(S.BG, 0.92).move_to(b))
+        return g
+
+    _common.time_tag = compact
+    try:
+        return print_build(scene, t, rows, **kw)
+    finally:
+        _common.time_tag = orig
+
+
 def checkbox(s: float = 0.32) -> RoundedRectangle:
     return RoundedRectangle(width=s, height=s, corner_radius=0.06, stroke_color=S.GREY,
                             stroke_width=2.5).set_fill(S.BG, 1)
@@ -453,9 +478,14 @@ def stale_cards(n: int = 4) -> VGroup:
 
 # ------------------------------------------------------------------ beat 5: Self-RAG's Retrieve token
 def dashed_box(s: str, w: float | None = None) -> VGroup:
+    """A GREY dashed box of one fixed height, its text on the baseline of a capital centred in the
+    box (so "answer", which has no ascender, sits level with "retrieve"). No descenders here."""
+    assert not any(ch in s for ch in "gjpqy"), s
     t = sans(s, 20, S.GREY)
-    b = box(w or t.width + 0.5, t.height + 0.36, S.GREY, dashed=True, stroke=2.5, radius=0.1)
-    return VGroup(b, t.move_to(b))
+    cap = sans("A", 20, S.GREY)
+    b = box(w or t.width + 0.5, cap.height + 0.5, S.GREY, dashed=True, stroke=2.5, radius=0.1)
+    t.move_to(b).align_to(cap.move_to(b), DOWN)
+    return VGroup(b, t)
 
 
 def retrieve_diamond() -> SimpleNamespace:
@@ -670,12 +700,13 @@ class Recap(VoiceScene):
             in_title_bar(harm, t)
             self.play(FadeIn(harm, shift=LEFT * 0.1), run_time=0.4)
             vo.wait_until("then Chroma and the network")
-            print_build(self, t, [DOWN_.line(5)], run_time=0.3)
-            print_build(self, t, [DOWN_.line(6)], run_time=0.3)
+            print_rows(self, t, [DOWN_.line(5)], run_time=0.3)
+            print_rows(self, t, [DOWN_.line(6)], run_time=0.3)
+            # "harmless" leaves with the last WARN line, which line 7 scrolls out of the strip
             self.play(*cv.parts_out("chroma", "name", "port_chip", "plug_chroma", "route_data", "route_port"),
-                      run_time=0.7)
-            print_build(self, t, [DOWN_.line(7)], run_time=0.3)
-            self.play(*cv.parts_out("rail"), FadeOut(harm), run_time=0.6)
+                      FadeOut(harm), run_time=0.7)
+            print_rows(self, t, [DOWN_.line(7)], run_time=0.3)
+            self.play(*cv.parts_out("rail"), run_time=0.6)
             # the laptop zone stays: it re-lays itself as a band along the top; the terminal grows
             b = band_targets()
             P = cv.parts
@@ -783,9 +814,9 @@ class Recap(VoiceScene):
             vo.wait_until("Delete it when the course ends")
             inset = VGroup(w.frame, w.card, w.head, w.files, w.key, w.key_name, w.not_ignored, w.image,
                            w.copy_label, w.copy_where, w.arrow, rider, x_)
-            self.play(FadeOut(inset), run_time=0.45)
-            self.play(FadeIn(card.frame), FadeIn(card.header), FadeIn(VGroup(*card.items[:-1])),
-                      FadeTransform(gold, card.gold), run_time=0.7)
+            # the inset cross-fades into the card, so the course-over row lights on its own words
+            self.play(FadeOut(inset), FadeIn(card.frame), FadeIn(card.header), FadeIn(VGroup(*card.items[:-1])),
+                      FadeTransform(gold, card.gold), run_time=0.6)
             self.play(card.rows[4].animate.set_color(TURN), Create(card.ticks[4]),
                       Indicate(key, color=COST, scale_factor=1.5), run_time=0.6)
             vo.wait_until("Pause and tear down now")
@@ -950,7 +981,7 @@ class Recap(VoiceScene):
         q1 = q_at(question(1, Q_BIG, INK, TURN), Q_TOP)
         rm = RagMap(show=RagMap.TOP + RagMap.BOTTOM + RagMap.FLAGS)
         vis = VGroup(*[rm.parts[n] for n in RagMap.TOP + RagMap.BOTTOM + RagMap.FLAGS])
-        rm.shift(np.array([-vis.get_center()[0], q_bottom(q1) - 0.5 - vis.get_top()[1], 0]))
+        rm.shift(np.array([-vis.get_center()[0], q_bottom(q1) - 0.85 - vis.get_top()[1], 0]))   # mid-gap
         fticks = [rm.tick(n) for n in RagMap.FLAGS]
 
         with self.voiceover(SAY[7]) as vo:
@@ -968,8 +999,12 @@ class Recap(VoiceScene):
             # the cylinder's strokes one by one: RagMap.light("database") animates the helper group
             # cylinder.frame, which the scene would add on top of the flags
             db_strokes = list(rm.item("database").frame.submobjects)
+            # the flags (YELLOW chips) and their ticks step back, so the two shared boxes are the
+            # YELLOW things on screen while "share" is said
+            flags = [rm.parts[n] for n in RagMap.FLAGS]
             self.play(q_span(q1, "share").animate.set_color(TURN), rm.light("embedding"),
-                      *[m.animate.set_stroke(TURN, 5) for m in db_strokes], run_time=0.6)
+                      *[m.animate.set_stroke(TURN, 5) for m in db_strokes],
+                      *[m.animate.fade(0.7) for m in flags + fticks], run_time=0.6)
             self.play(rm.pulse_lane("top", DATA), rm.pulse_lane("bottom", LOOKUP), run_time=1.0)
             vo.wait_until("Two:")
             small1 = q_at(question(1, Q_SMALL, S.GREY, S.GREY), Q_TOP)
