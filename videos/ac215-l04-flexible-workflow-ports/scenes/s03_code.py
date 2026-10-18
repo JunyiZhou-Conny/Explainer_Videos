@@ -254,7 +254,9 @@ INCOMING_Y = 2.66       # where the branch's files wait (just under the tracker)
 # 2026-10-18 finishing pass (Step 5 gained the copy-out sentence, S03 ~10 s longer): 15 fps S01
 # 90.86 + S02 73.13 + S03 145.99 = 309.98 (floor 5:09), 5:09 lands 1.0 s early; 30 fps (720p30)
 # S01 91.00 + S02 73.30 + S03 146.16 = 310.45 (floor 5:10), 5:09 lands 1.5 s early. Take the
-# smaller floor: 5:10 would land after S04's start in a 15 fps render.
+# smaller floor: 5:10 would land after S04's start in a 15 fps render. The 1080p60 release (dry
+# runs): S01 91.02 + S02 73.35 + S03 146.18 = 310.55, so its chapters.txt reads 05:10 and 5:09
+# lands 1.6 s early, on the stash relabel just before the fade-out: expected, not a mismatch.
 SKIP_TO = "5:09"
 
 

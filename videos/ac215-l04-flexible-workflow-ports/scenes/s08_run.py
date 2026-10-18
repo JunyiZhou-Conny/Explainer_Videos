@@ -112,6 +112,9 @@ Deviations from SHOW (and why):
 - Beat 10: `rm Pipfile` gets a GREY note under its chip: the file is root's (73 line 7), so GNU rm
   asks before removing a write-protected file (not captured, so a note, not output); the chips row
   is top-aligned under V1 to hold it above the strip.
+- Beats 0-1 (SLIDES.md S08 i): the switchboard leaves at "after any change" for the "Lecture 4 ·
+  slide 7" tag and the GREY "lecture's order" note; the "slides 37–38" tag sits between the slab and
+  the strip, since chip89 holds the band.
 """
 
 from common import *
@@ -122,6 +125,7 @@ from manim import (
     PI,
     RIGHT,
     UP,
+    AnimationGroup,
     Arrow,
     Create,
     FadeIn,
@@ -133,6 +137,7 @@ from manim import (
     MoveAlongPath,
     Rectangle,
     ShowIncreasingSubsets,
+    Succession,
     Transform,
     VGroup,
     VMobject,
@@ -141,7 +146,7 @@ from manim import (
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import PROMPT_PATH, PROMPT_USER
+from explainer.devops import PROMPT_PATH, PROMPT_USER, lecture_ref
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S08"]
@@ -499,6 +504,13 @@ class DevAndRun(VoiceScene):
                        note("→ build steps 4–5 run again"))
         note0.arrange(DOWN, aligned_edge=LEFT, buff=0.14)
         place(note0, left=-6.3, cy=(2.9 + t.box.get_top()[1]) / 2)
+        # SLIDES.md S08 (i): at "after any change" the switchboard has done its job (dev lit, "only
+        # builds" flashed); the slide 7 tag and the lecture's order take the top right until beat 1
+        lref7 = lecture_ref(4, "7")
+        order7 = note("lecture's order: lock files first, code last")
+        place(order7, right=6.6, cy=2.85)
+        assert order7.get_top()[1] < lref7.get_bottom()[1] - 0.05, (order7.get_top()[1], lref7.get_bottom()[1])
+        assert order7.get_bottom()[1] > t.box.get_top()[1] + 0.15, (order7.get_bottom()[1], t.box.get_top()[1])
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr), FadeIn(t), FadeIn(sw), run_time=0.7)
             session(self, t, C61, 95, 96, type_time=0.3, out_time=0.3)
@@ -528,7 +540,10 @@ class DevAndRun(VoiceScene):
             u03 = under(substring(rows[2], "Building 0.3s"), TURN)
             pin(self, rows[2], u03, run_time=0.5, anim=Create(u03))
             vo.wait_until("after any change")
-            self.play(FadeIn(note0[0], shift=DOWN * 0.1), FadeIn(note0[1], shift=DOWN * 0.1), run_time=0.6)
+            # the switchboard goes first, then the tag and note come in (no crossfade over its words)
+            self.play(FadeIn(note0[0], shift=DOWN * 0.1), FadeIn(note0[1], shift=DOWN * 0.1),
+                      Succession(FadeOut(sw), AnimationGroup(FadeIn(lref7, shift=DOWN * 0.1),
+                                                             FadeIn(order7, shift=DOWN * 0.1))), run_time=0.8)
             vo.wait_until("the copy and uv sync")
             badges = []
             for r, k in ((rows[5], 4), (rows[6], 5)):
@@ -551,17 +566,23 @@ class DevAndRun(VoiceScene):
         pkg = chip("<package>", VENV, size=CAPTION, font=MONO, fill_opacity=0.2)
         pkg.move_to([(pic.app.get_right()[0] + pic.cf.get_right()[0]) / 2, pic.rfiles[0].get_center()[1], 0])
         baked = note("baked in", VENV)
+        # SLIDES.md S08 (i): slides 37-38 in the gap between the picture's slab and the strip (chip89
+        # holds the band), from "Adding a package" to beat 2's first play
+        lref37 = lecture_ref(4, "37–38")
+        place(lref37, right=6.35, cy=-1.0)
+        assert lref37.get_top()[1] < pic.slab.get_bottom()[1] - 0.15, (lref37.get_top()[1], pic.slab.get_bottom()[1])
+        assert lref37.get_bottom()[1] > STRIP_TOP + 0.15, (lref37.get_bottom()[1], STRIP_TOP)
         with self.voiceover(SAY[1]) as vo:
             # the lines go while the frame turns TEAL, then it shrinks straight to the strip (no
             # empty 10-row terminal on screen)
             out0, done0 = wipe(t)
-            self.play(out0, FadeOut(note0), FadeOut(sw), FadeOut(tr, shift=UP * 0.25),
+            self.play(out0, FadeOut(note0), FadeOut(lref7), FadeOut(order7), FadeOut(tr, shift=UP * 0.25),
                       FadeIn(y_tr, shift=DOWN * 0.25), *enter_container(t, "transcribe_audio"), run_time=0.6)
             done0()
             tr = y_tr
             resize(self, t, 3, run_time=0.6, extra=[FadeIn(chip89, shift=DOWN * 0.1)])
             vo.wait_until("Adding a package")
-            self.play(FadeIn(pic), run_time=0.7)
+            self.play(FadeIn(pic), FadeIn(lref37, shift=DOWN * 0.1), run_time=0.7)
             vo.wait_until("uv add")
             ua = type_cmd(self, t, UV_ADD, type_time=0.5)
             ph = fit_tag(t, ua, "placeholder · lecture 3 ran it")
@@ -580,6 +601,7 @@ class DevAndRun(VoiceScene):
             type_cmd(self, t, C17.cmd, type_time=0.4)
             target = pic.slab.get_center() + RIGHT * 0.6
             baked.next_to(pic.slab, LEFT, buff=0.3)
+            assert lref37.get_top()[1] < baked.get_bottom()[1] - 0.15 or lref37.get_left()[0] > baked.get_right()[0] + 0.15
             self.play(pkg.animate.move_to(target), FadeIn(baked, shift=LEFT * 0.1), run_time=0.7)
             self.play(flash(pic.slab, CTR, 1.04), run_time=0.5)
         self.wait(0.6)
@@ -603,7 +625,7 @@ class DevAndRun(VoiceScene):
         card2 = turn_card([C17.cmd, C18.cmd])
         with self.voiceover(SAY[2]) as vo:
             out1, done1 = wipe(t)
-            self.play(out1, FadeOut(VGroup(pic, pic.slab, pic.slab_label, pkg, baked, chip89)),
+            self.play(out1, FadeOut(VGroup(pic, pic.slab, pic.slab_label, pkg, baked, chip89)), FadeOut(lref37),
                       FadeOut(tr, shift=UP * 0.25), FadeIn(r_tr, shift=DOWN * 0.25), FadeIn(sw), run_time=0.6)
             done1()
             tr = r_tr

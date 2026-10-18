@@ -17,11 +17,17 @@ Beats (script.md "## S10", one voiceover block each):
     and the laptop's third GREY loop does the same. On "full set of ports": a port strip
     1 … 65535 in each box. Both strips light 9100 at once (YELLOW cell + number), GREY caption
     "each box: its own ports · both could use 9100" (the real processor listens on 9200: the
-    picture says "could", it does not give the processor 9100).
+    picture says "could", it does not give the processor 9100). The GREY tag "Lecture 4 · slide 33"
+    (lecture_ref, top right) arrives with the laptop outline. On "The lecture calls this" each
+    glass box's frame flashes TEAL on its own; on "each container is isolated" both localhost
+    loops are indicated (SLIDES.md S10 i, ii).
  2  The 9100 lights go out. A TEAL rail draws itself under the boxes, labelled "user-defined
     network"; a PINK phone-book glyph sits on it and its two blank lines (_____ → _______)
     rise out of the book glyph to their place between the boxes; GREY note "Docker's default
-    network: no phone book (exercises)".
+    network: no phone book (exercises)". The tag becomes "Lecture 4 · slide 34" in the first play;
+    the PINK label "Docker DNS" (slide 34's term) arrives with the book glyph, under it, in the row
+    of "user-defined network" (SLIDES.md S10 iii). Tag and label leave with V6 in beat 3; the
+    label is taken out of the piece before beat 6 (the ID chip lands on its spot).
  3  TRACKER P0/1 (port_toy README › Prerequisites). V6 leaves; the 12-row terminal `laptop` at
     student@laptop:~/AC215$ with the GREY caption "your workspace" at the row's right end (the
     path flashes YELLOW). `docker run hello-world` -> port-laptop/01 lines 2-3, …, 7 (on "It pulls
@@ -154,6 +160,7 @@ from explainer.devops import (
     check_mark,
     chip,
     glyph_range,
+    lecture_ref,
     line_pitch,
     mono,
     mono_line,
@@ -405,6 +412,7 @@ class TwoComputers(VoiceScene):
         boxes_t = {n: VGroup(net.boxes[n].frame.copy(), net.boxes[n].name.copy()) for n in net.boxes}
         brw_t = VGroup(net.browser.copy(), net.browser_label.copy())
         cap_ports = note("each box: its own ports · both could use 9100").move_to([1.95, under_net - 0.45, 0])
+        lref33, lref34 = lecture_ref(4, "33"), lecture_ref(4, "34")   # top right (SLIDES.md S10 i)
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(relay, routes, c142, ch24, c52, u_seg1, u_seg2, a_bg, a_gp, pkt)),
                       run_time=0.5)
@@ -412,7 +420,7 @@ class TwoComputers(VoiceScene):
                       Transform(brw0, brw_t), run_time=1.1)
             self.remove(gw0, pr0, brw0)
             self.add(net)                               # its visible parts sit where the copies landed
-            self.play(*net.parts_in("outline", "laptop_label"), run_time=0.6)
+            self.play(*net.parts_in("outline", "laptop_label"), FadeIn(lref33, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("with its own localhost")
             self.play(*net.parts_in("gateway_loop", "gateway_ll", "processor_loop", "processor_ll",
                                     "lp_loop", "lp_ll"), run_time=0.35)
@@ -434,6 +442,18 @@ class TwoComputers(VoiceScene):
             vo.wait_until("without any clash")
             self.play(FadeIn(cap_ports, shift=UP * 0.1), Indicate(n1, color=TURN), Indicate(n2, color=TURN),
                       run_time=0.8)
+            # the bridge (SLIDES.md S10 ii): each glass box's frame flashes on its own (nothing joins
+            # them yet), on "a network namespace"; then both localhost loops on "isolated"
+            vo.wait_until("The lecture calls this")
+            self.wait(0.7)        # "The lecture calls this" takes ~1 s: the flash runs on "a network namespace"
+            self.play(*[ShowPassingFlash(net.boxes[n].frame.copy().set_stroke(CTR, 9, opacity=1).set_fill(opacity=0),
+                                         time_width=0.5) for n in net.boxes], run_time=1.9)
+            vo.wait_until("each container is isolated")
+            # loop and label each grow about their own centre (as one group, the loop crossed the frame);
+            # the label grows less, so its "l" does not touch the loop at the peak
+            self.play(*[Indicate(net.boxes[n].loop, color=TURN, scale_factor=1.12) for n in net.boxes],
+                      *[Indicate(net.boxes[n].loop_label, color=TURN, scale_factor=1.05) for n in net.boxes],
+                      run_time=1.0)
 
         # ------------------------------------------------------------ 2. a network you create: a rail and a phone book
         udn = note("user-defined network", CTR).next_to(net.rail, DOWN, buff=0.05).align_to(net.rail, LEFT)
@@ -442,13 +462,16 @@ class TwoComputers(VoiceScene):
         blanks[0].move_to([mid_x, net.book_lines[0].get_center()[1], 0])
         blanks[1].move_to([mid_x, net.book_lines[1].get_center()[1], 0])
         no_book = note("Docker's default network: no phone book (exercises)").move_to(cap_ports)
+        # slide 34's term under the book glyph, in udn's row (udn ends at x ≈ 0.47)
+        dns_l = note("Docker DNS", LOOKUP).align_to(udn, UP).set_x(net.parts["book"].get_center()[0])
+        assert dns_l.get_left()[0] > udn.get_right()[0] + 0.3
         with self.voiceover(SAY[2]) as vo:
             self.play(FadeOut(n1), FadeOut(n2), FadeOut(cap_ports), net.unlight_port("gateway", 9100),
-                      net.unlight_port("processor", 9100), run_time=0.5)
+                      net.unlight_port("processor", 9100), ReplacementTransform(lref33, lref34), run_time=0.5)
             self.play(*net.parts_in("rail", anim=Create), run_time=1.0)
             net.attach(self, udn, anims=[FadeIn(udn, shift=UP * 0.1)], run_time=0.5)
             vo.wait_until("with a phone book")
-            self.play(*net.parts_in("book"), run_time=0.5)
+            net.attach(self, dns_l, anims=[*net.parts_in("book"), FadeIn(dns_l, shift=UP * 0.1)], run_time=0.5)
             self.play(Indicate(net.parts["book"], color=LOOKUP, scale_factor=1.3), run_time=0.6)
             vo.wait_until("that turns container names into addresses")
             # the two blank lines rise out of the book glyph to where S13 writes the entries
@@ -466,7 +489,7 @@ class TwoComputers(VoiceScene):
         t = term(P_WS, rows=12, title="laptop")
         cap_ws = note("your workspace")
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(net), FadeOut(no_book), run_time=0.3)
+            self.play(FadeOut(net), FadeOut(no_book), FadeOut(lref34), run_time=0.3)
             self.play(FadeIn(tr), FadeIn(t), run_time=0.3)
             ln0 = bare_prompt(self, t)
             cap_ws.set_y(ln0.strut.get_center()[1]).align_to(t.box, RIGHT).shift(LEFT * 0.35)
@@ -556,6 +579,7 @@ class TwoComputers(VoiceScene):
 
         # ------------------------------------------------------------ 6. Step 1 · Create network: the rail gets its name
         net.shift(UP * NET_UP)                          # (invisible since beat 3) above the strip
+        net.remove(dns_l)                               # beat 2's label: the ID chip lands on its spot
         idchip = solid_chip(ID_SHORT + "…", CTR).move_to([0.2, net.rail.get_center()[1], 0])
         dtag = differ_tag().move_to([0.2, net.parts["outline"].get_bottom()[1] - 0.36, 0])
         with self.voiceover(SAY[6]) as vo:

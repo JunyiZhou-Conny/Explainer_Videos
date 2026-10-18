@@ -13,6 +13,8 @@ Beats (script.md "## S09", one voiceover block each):
     (illustration) and the boxes land on it; the PINK signpost $DOCKER_USERNAME/$IMAGE_NAME with two
     arrows (one tag); GREY tag "lecture 2"; a GREY Apple-silicon Mac pulls arm64, a BLUE cloud VM
     (a remote machine) amd64 (BLUE pull arrows; the arch label flashes as it is pulled).
+    With the PURPLE flag: "Lecture 4 · slide 13" top right and, under the panel, the GREY note of
+    SLIDES.md Conflict 9 "lecture: one `docker build` line · the script brings its own builder".
  2  TRACKER U/1 (its section "Publish the container (optional)"), README chip
     transcribe_audio/README.md · line 129. 3-row strip (laptop):
     `docker login -u <USER NAME> -p <ACCESS TOKEN>` (command only, GREY "not run here"); `-p` ringed
@@ -38,12 +40,15 @@ Beats (script.md "## S09", one voiceover block each):
     in front of it, which flashes GREEN as a dashed GREY arrow from secrets/ stops at it; the key
     in the layer flashes RED ("not out of images");
     dashed GREY chip ".dockerignore: none, on every branch". The PURPLE prod track carries the
-    layer to the BLUE Docker Hub shelf, which flashes RED.
+    layer to the BLUE Docker Hub shelf, which flashes RED. "Lecture 4 · slides 8, 15" sits under the
+    Dockerfile panel from "The gitignore" until the prod track comes into its strip.
  5  TRACKER R/4 (the extra dev build has gone). GREY tag erratum. README card README.md · line 203
     (the canonical way … impossible, underlined) and GREY "for Git: yes ✓ · for images: no ✗". Fix
     card (rows write in as said): delete the secrets/ folder inside each component · add a
-    .dockerignore listing secrets/ (lecture 3) · RED "a key was ever pushed? delete that key in
-    IAM"; ▶ your turn on the card's header row, right.
+    .dockerignore listing secrets/ (lecture 3), with a GREY continuation "· also input_audios/
+    text_*/ output_audios*/ __pycache__/" (SLIDES.md Gap 2) · RED "a key was ever pushed? delete that
+    key in IAM" · GREY "remove images built before the fix · a deleted file stays in its layer" (Gap 7,
+    at "after the fix"); ▶ your turn on the card's header row, right.
  6  TRACKER R/4 · extra. Clean-up card for part 1, top right (rows write in as said: header + 3).
     10-row terminal (laptop, ~/AC215/mega-pipeline): `docker images` (extra) -> mega-laptop/70
     lines 2-7, column view (IMAGE and DISK USAGE) with S16's GREY tag "2 of 5 columns" in the
@@ -110,6 +115,7 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Arrow,
     Create,
     DashedLine,
@@ -128,7 +134,7 @@ from manim import (
 )
 
 from explainer import style as S
-from explainer.devops import laptop, server
+from explainer.devops import laptop, lecture_ref, server
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S09"]
@@ -582,13 +588,21 @@ class ProdAndCleanup(VoiceScene):
         for b in pic.boxes.values():
             b.save_state()
             b.shift(UP * 0.35)
+        # SLIDES.md S09 (i): slide 13's multi-platform push, and Conflict 9 (the slide's one plain
+        # docker build line; the script creates its own builder): under p1, right of the signpost
+        ref13 = lecture_ref(4, "13")
+        c9 = VGroup(mixed(["lecture: one", ("mono", "docker build"), "line"]),
+                    mixed(["· the script brings its own builder"])).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        place(c9, right=6.45, top=0.35)
+        assert c9.get_top()[1] < p1.get_bottom()[1] - 0.1 and c9.get_left()[0] > pic.post.get_right()[0] + 0.3
+        assert c9.get_bottom()[1] > pic.l2.get_top()[1] + 0.3, (c9.get_bottom()[1], pic.l2.get_top()[1])
         with self.voiceover(SAY[1]) as vo:
             stage_out(self, tr, run_time=0.5)
             self.play(FadeIn(p1, shift=UP * 0.15), run_time=0.5)
             # one 13 s sentence: "amd64" / "arm64" are long when spoken, so the clauses after
             # them come later than the character count says (shifts measured on Kokoro)
             at(self, vo, "makes amd64 and arm64", -0.35)
-            self.play(plat.animate.set_color(TOOL), run_time=0.4)
+            self.play(plat.animate.set_color(TOOL), FadeIn(ref13), FadeIn(c9, shift=LEFT * 0.1), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(b, scale=0.8) for b in pic.boxes.values()], lag_ratio=0.3),
                       run_time=0.8)
             at(self, vo, "and pushes both", 0.8)
@@ -620,8 +634,8 @@ class ProdAndCleanup(VoiceScene):
         u4 = note("= How to Run · step 4")
         warn = note("first: check what it would publish", TURN)
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(VGroup(p1, pic)), FadeOut(tr, shift=UP * 0.25), FadeIn(u_tr, shift=DOWN * 0.25),
-                      run_time=0.6)
+            self.play(FadeOut(VGroup(p1, pic, ref13, c9)), FadeOut(tr, shift=UP * 0.25),
+                      FadeIn(u_tr, shift=DOWN * 0.25), run_time=0.6)
             tr = u_tr
             self.play(FadeIn(t, shift=UP * 0.2), FadeIn(chip129, shift=DOWN * 0.1), run_time=0.5)
             login = type_tagged(self, t, LOGIN, "not run here", type_time=0.9)
@@ -726,6 +740,12 @@ class ProdAndCleanup(VoiceScene):
         track = Line([slab.get_right()[0] + 0.1, slab.get_center()[1], 0],
                      [hub.board.get_left()[0] - 0.1, slab.get_center()[1], 0], color=TOOL, stroke_width=5)
         prod_l = mono("prod", CAPTION, TOOL).next_to(track, UP, buff=0.1)
+        # SLIDES.md S09 (i): slides 8 (.dockerignore keeps secrets/ out) and 15 (a COPY-ed secret stays
+        # in its layer). p39's header holds the top right: the tag sits under p39's code box, right of
+        # the slab; it leaves as the track, the hub and its tag come into that strip
+        ref8 = lecture_ref(4, "8, 15")
+        place(ref8, right=6.6, top=p39.code.get_bottom()[1] - 0.1)
+        assert ref8.get_left()[0] > slab.get_right()[0] + 0.1, (ref8.get_left()[0], slab.get_right()[0])
         with self.voiceover(SAY[4]) as vo:
             # the packing has to be done before "The gitignore …" (2.5 s in): the strip's old
             # lines fade with the miniature, then the shrink, then the picture, then COPY
@@ -756,7 +776,7 @@ class ProdAndCleanup(VoiceScene):
             self.add(copies)
             self.play(flash(p39.span(39, "COPY --chown=app:app . ./"), TURN, 1.06), *anims)
             vo.wait_until("The gitignore keeps secrets out of Git")
-            self.play(FadeIn(git), FadeIn(tracked), FadeIn(shd), FadeIn(gi_head), run_time=0.5)
+            self.play(FadeIn(git), FadeIn(tracked), FadeIn(shd), FadeIn(gi_head), FadeIn(ref8), run_time=0.5)
             self.play(Create(git_try), run_time=0.8)
             self.play(flash(shd.body, VENV, 1.15), run_time=0.5)
             at(self, vo, "not out of images", -0.5)
@@ -765,7 +785,9 @@ class ProdAndCleanup(VoiceScene):
             at(self, vo, "and no branch has a dockerignore", -0.4)
             self.play(FadeIn(dock, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("Prod would push your key")
-            self.play(Create(track), FadeIn(prod_l), FadeIn(hub), FadeIn(hub_tag), run_time=0.5)
+            # the slide tag leaves first: the prod label and the hub's tag come where it sat
+            self.play(Create(track), FadeIn(hub), LaggedStart(
+                FadeOut(ref8), AnimationGroup(FadeIn(prod_l), FadeIn(hub_tag)), lag_ratio=1.0), run_time=0.5)
             layer = VGroup(slab.copy(), *[c.copy() for c in copies])
             self.add(layer)
             lw = hub.board.get_width() - 0.2
@@ -794,11 +816,23 @@ class ProdAndCleanup(VoiceScene):
             mixed(["delete the", ("mono", "secrets/", INK), "folder inside each component"], color=INK, size=SMALL),
             mixed(["add a", ("mono", ".dockerignore", INK), "listing", ("mono", "secrets/", INK),
                    "(lecture 3)"], color=INK, size=SMALL),
+            # SLIDES.md S09 (iii), Gap 2: the .dockerignore row's continuation, what else the
+            # components write and Git ignores (their .gitignore files: input_audios, text_prompts /
+            # paragraphs / translated, output_audios(_pp)) and Python's cache
+            mixed(["· also", ("mono", "input_audios/"), ("mono", "text_*/"), ("mono", "output_audios*/"),
+                   ("mono", "__pycache__/")], size=SMALL),
             mixed(["a key was ever pushed? delete that key in IAM"], color=ERR, size=SMALL),
-        ).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
+            # Gap 7 (slides 12, 15): layers only add
+            mixed(["remove images built before the fix · a deleted file stays in its layer"], size=SMALL),
+        )
+        VGroup(fix_rows[0], VGroup(*fix_rows[1:3]).arrange(DOWN, aligned_edge=LEFT, buff=0.12),
+               *fix_rows[3:]).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
+        fix_rows[2].shift(RIGHT * 0.3)     # a continuation: indented, a little closer
         fix = card_frame(fix_rows, None, pad_x=0.4, pad_y=0.3)
         fix_h = note("the fix").next_to(fix.frame, UP, buff=0.08).align_to(fix.frame, LEFT).shift(RIGHT * 0.12)
         place(VGroup(fix, fix_h), left=-6.3, top=vrow.get_bottom()[1] - 0.6)
+        assert fix.frame.get_right()[0] <= 6.4 and fix.frame.get_bottom()[1] >= -3.6, \
+            fix.frame.get_corner(DOWN + RIGHT)
         yt = your_turn()                   # on the card's header row, right (not on its border)
         place(yt, right=fix.frame.get_right()[0], bottom=fix.frame.get_top()[1] + 0.08)
         with self.voiceover(SAY[5]) as vo:
@@ -814,13 +848,14 @@ class ProdAndCleanup(VoiceScene):
             vo.wait_until("Delete any secrets folder")
             self.play(FadeIn(fix.frame), FadeIn(fix_h), FadeIn(fix_rows[0], shift=RIGHT * 0.1), run_time=0.6)
             at(self, vo, "add a dockerignore", -0.35)
-            self.play(FadeIn(fix_rows[1], shift=RIGHT * 0.1), run_time=0.5)
+            self.play(FadeIn(fix_rows[1], shift=RIGHT * 0.1), FadeIn(fix_rows[2], shift=RIGHT * 0.1), run_time=0.5)
             vo.wait_until("and if a key was ever pushed")
-            self.play(FadeIn(fix_rows[2], shift=RIGHT * 0.1), run_time=0.5)
+            self.play(FadeIn(fix_rows[3], shift=RIGHT * 0.1), run_time=0.5)
             vo.wait_until("Prod is optional")             # README: OPTIONAL: Publish the container
             self.play(flash(tr.caption, TURN, 1.08), run_time=0.7)
             vo.wait_until("after the fix")
             self.play(flash(fix.frame, TURN, 1.03), run_time=0.6)
+            self.play(FadeIn(fix_rows[4], shift=RIGHT * 0.1), run_time=0.5)     # (not inside the flash)
             vo.wait_until("Pause and check yours")
             self.play(FadeIn(yt, shift=LEFT * 0.1), run_time=0.4)
         self.wait(1.5)                    # the your-turn card stays up to be read / paused on

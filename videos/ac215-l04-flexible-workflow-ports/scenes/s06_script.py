@@ -24,6 +24,9 @@ Beats (script.md "## S06", one voiceover block each):
     and "../.." into secrets/ while $(pwd)/../../secrets/ writes itself (GREY "docker-shell.sh ·
     line 9" under the laptop); line 94: bar + route secrets/ → /secrets. Line 95: bar,
     GOOGLE_APPLICATION_CREDENTIALS underlined PINK, the signpost rises into /secrets.
+    SLIDES.md S06 (i), (iii): with line 93, "Lecture 4 · slides 23–24" (lecture_ref, top right) and
+    the routes' GREY end labels "host folder" / "container path"; at line 95 the lecture tag
+    becomes "slide 26". All three leave with the 92–96 panel at beat 5's first play.
  5  The 92–96 panel goes; CODE(Dockerfile: 17) above the container with a GREEN line to the venv
     box, which glows; a GREY laptop sheet slides over /app and leaves the venv uncovered. "The key
     is never copied": the TEAL image slab, "never in here" across it. "slash secrets shows it": the
@@ -78,6 +81,10 @@ Deviations from SHOW (and why):
   The card and the switchboard cross-fade into beat 4's panel and picture (no empty frame).
 - Beat 4: the chip "docker-shell.sh · line 9" is a GREY header-style caption under the laptop box
   (there is no room for a framed chip inside it).
+- Beat 4: "host folder" sits just outside the laptop's bottom-right corner, under the routes' exit
+  (inside it, the walker's path text fills the bottom row and only 0.36 is left between the
+  routes); "container path" just under the container frame's left edge, where beat 5's image
+  slab comes (so both leave at beat 5's start).
 - Beat 5: the Dockerfile line sits ABOVE the container with a GREEN line down to the venv box (under
   the venv box is the signpost); the 92–96 panel leaves to make room. "never in here" comes first,
   with "The key is never copied", and the clock / pulse / outline follow "slash secrets shows it
@@ -125,11 +132,13 @@ from manim import (
     ShowIncreasingSubsets,
     Transform,
     VGroup,
+    Write,
     linear,
     there_and_back,
 )
 
 from explainer import style as S
+from explainer.devops import lecture_ref
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S06"]
@@ -524,12 +533,27 @@ class DockerShell(VoiceScene):
         bar93, bar94 = p4.bar(93, LOOKUP, 0.22), p4.bar(94, LOOKUP, 0.22)
         bar95 = p4.bar(95, LOOKUP, 0.22)
         gac = under(p4.span(95, "GOOGLE_APPLICATION_CREDENTIALS"), LOOKUP, 3, 0.0)   # 20 pt rows: hug the glyphs
+        # SLIDES.md S06: the lecture's bind mount (slides 23–24), then -e at run time (slide 26)
+        lref24, lref26 = lecture_ref(4, "23–24"), lecture_ref(4, "26")
+        # slide 24's two sides of source:target, at the routes' two ends. "host folder" just outside
+        # the laptop's bottom-right corner, under the routes' exit (inside, the walker's path text
+        # fills the bottom row and the rows above leave 0.36 between the routes); "container path"
+        # just under the container frame
+        lf, cf = v5.laptop_frame, v5.container_frame
+        sec_y = v5.route_secrets.get_start()[1]
+        end_host = label("host folder", CAPTION, S.GREY)
+        end_host.move_to([lf.get_right()[0] + 0.1 + end_host.width / 2, sec_y - 0.15 - end_host.height / 2, 0])
+        end_ctr = label("container path", CAPTION, S.GREY)
+        end_ctr.move_to([cf.get_left()[0] + 0.1 + end_ctr.width / 2, cf.get_bottom()[1] - 0.1 - end_ctr.height / 2, 0])
+        assert end_host.get_right()[0] < cf.get_left()[0] - 0.4
+        assert end_ctr.get_bottom()[1] > -3.55 and lref24.get_bottom()[1] > p4.get_top()[1] + 0.2
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(card, sw, later)), FadeIn(p4, shift=DOWN * 0.1), FadeIn(v5), run_time=0.7)
             vo.wait_until("two windows")
             self.play(flash(v5.app, TURN, 1.08), flash(v5.secrets_area, TURN, 1.08), run_time=0.8)
             vo.wait_until("Dash v puts")
-            self.play(FadeIn(bar93), *v5.parts_in("route_app", anim=Create), run_time=0.9)
+            self.play(FadeIn(bar93), *v5.parts_in("route_app", anim=Create), FadeIn(lref24, shift=DOWN * 0.1),
+                      Write(end_host), Write(end_ctr), run_time=0.9)
             self.play(v5.blink("app"), run_time=0.7)
             vo.wait_until("and the secrets folder")
             walker, steps = v5.walk(run_time=0.5)
@@ -539,7 +563,8 @@ class DockerShell(VoiceScene):
             vo.wait_until("at slash secrets")
             self.play(FadeIn(bar94), *v5.parts_in("route_secrets", anim=Create), run_time=0.9)
             vo.wait_until("Dash e sets")
-            self.play(FadeOut(walker), FadeOut(line9), FadeIn(bar95), Create(gac), run_time=0.6)
+            self.play(FadeOut(walker), FadeOut(line9), FadeIn(bar95), Create(gac), FadeTransform(lref24, lref26),
+                      run_time=0.6)
             self.play(*v5.parts_in("post", anim=lambda m: FadeIn(m, shift=UP * 0.35)), run_time=0.8)
             vo.wait_until("a signpost to the key")
             self.play(flash_framed(v5.post, LOOKUP, 1.06), flash(v5.key, KEY, 1.3), run_time=0.8)
@@ -559,7 +584,8 @@ class DockerShell(VoiceScene):
         clock_c = v5.parts["clock"][0][0]
         clock_l = v5.parts["clock"][1]
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(p4, bar93, bar94, bar95, gac)), run_time=0.4)
+            # the end labels leave too: the image slab arrives under the container frame
+            self.play(FadeOut(VGroup(p4, bar93, bar94, bar95, gac, lref26, end_host, end_ctr)), run_time=0.4)
             self.play(FadeIn(p5, shift=DOWN * 0.1), FadeIn(bar17), run_time=0.6)
             vo.wait_until("the venv lives outside")
             self.play(Create(link), flash(span17, VENV, 1.1), run_time=0.7)
