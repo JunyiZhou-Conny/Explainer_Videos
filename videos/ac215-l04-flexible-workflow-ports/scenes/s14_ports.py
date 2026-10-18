@@ -72,7 +72,9 @@ Beats (script.md "## S14", one voiceover block each):
     V7 leaves, PAGE(43) (compact, port card) at the right with `processor listening on port 9300`
     YELLOW, REPLY(43: 2) in the left column with `"listen_port": 9300,` YELLOW. On "No image was
     rebuilt" a GREY card "no rebuild · configuration only" / "README.md · lines 404–409" under the
-    reply. On "Pause and fix yours" the page, the reply and that card give way to the static GREY
+    reply, and the GREY lecture tag "Lecture 4 · slide 26" (lecture_ref; SLIDES.md S14 i: -e values
+    exist only at run time) in the top band left of the page's illustration tag; it stays there
+    through beat 9 and leaves in beat 10's first play. On "Pause and fix yours" the page, the reply and that card give way to the static GREY
     your-turn card (`docker rm -f gateway` · the run's five rows · open localhost:8090 and send a
     message), ▶ your turn on it.
  9  The your-turn card leaves; the strip's `PROCESSOR_PORT=9300` lifts into a chip
@@ -220,6 +222,7 @@ from explainer.devops import (
     chip,
     glyph_range,
     label,
+    lecture_ref,
     line_pitch,
     mono,
     mono_line,
@@ -896,7 +899,13 @@ class ChangePorts(VoiceScene):
             nr = no_rebuild_chip()
             nr.shift([COL_L - nr.chip.get_left()[0], rp8.frame.get_bottom()[1] - 0.14 - nr.get_top()[1], 0])
             assert nr.get_bottom()[1] > STRIP_TOP + 0.08 and nr.get_right()[0] < pg8.frame.get_left()[0] - 0.1
-            self.play(FadeIn(nr, shift=UP * 0.1), flash(lis, TURN, 1.2), run_time=0.6)
+            # SLIDES.md S14 (i): slide 26 (-e values exist only in the running container), in the top
+            # band left of the page's illustration tag; it stays through card8 and beat 9
+            lref26 = lecture_ref(4, "26")
+            lref26.shift([pg8.tag.get_left()[0] - 0.15 - lref26.get_right()[0], 3.6 - lref26.get_top()[1], 0])
+            assert lref26.get_left()[0] > tr.get_right()[0] + 0.3, (lref26.get_left()[0], tr.get_right()[0])
+            self.play(FadeIn(nr, shift=UP * 0.1), FadeIn(lref26, shift=DOWN * 0.1), flash(lis, TURN, 1.2),
+                      run_time=0.6)
             vo.wait_until("Pause and fix yours")
             self.play(FadeOut(VGroup(pg8, rp8, nr)), FadeIn(card8, shift=UP * 0.15), run_time=0.6)
 
@@ -929,7 +938,7 @@ class ChangePorts(VoiceScene):
         card10.shift([0 - card10.frame.get_center()[0], 0.3 - card10.frame.get_center()[1], 0])
         with self.voiceover(SAY[10], pad=2.5) as vo:     # the closing card stays >= 2.5 s
             strip = list(t8.lines.submobjects)          # the strip's rows leave with the chips
-            self.play(FadeOut(VGroup(g9, p9, eq, cap9)), FadeOut(VGroup(*strip)), tr.goto(4), run_time=0.5)
+            self.play(FadeOut(VGroup(g9, p9, eq, cap9, lref26)), FadeOut(VGroup(*strip)), tr.goto(4), run_time=0.5)
             for ln in strip:
                 t8.lines.remove(ln)
                 self.remove(ln)
