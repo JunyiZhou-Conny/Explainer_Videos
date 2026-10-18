@@ -3,7 +3,7 @@
 视频：*AC215 · Lecture 4 — Containers II-b: build or pull, ports and Compose (follow-along: mega-pipeline flexible-workflow, port_toy)*（`videos/ac215-l04-flexible-workflow-ports`）  
 受众：上哈佛 AC215（MLOps & LLMOps）的中文研究生：会 Python 和基础 ML，英文技术文档读得很顺；做过第 1 讲（VM、venv、uv）、第 2 讲（现成的 Dockerfile、image 和 container、层缓存、Docker Hub、平台）和第 3 讲（用课程密钥跑五个 container 的 mega-pipeline、bind mount、uv add）；这一讲第一次自己管服务账号、用包装脚本、在“构建还是 pull”之间做选择，也第一次接触 container 网络、port 和 Compose；开着两个 clone（mega-pipeline 的 flexible-workflow 分支和 port_toy），边看边敲命令  
 中文版：**只有字幕，没有中文配音**。英文旁白（Kokoro `af_heart`），中文按英文的时间轴显示：`output/ac215-l04-flexible-workflow-ports.zh-en.mp4` 画面下方烧录的双语字幕带（中文在上，英文原句在下）、`.zh.srt`、`.zh-en.srt` / `.ass`。所以没有 `say:`、没有锚点、没有读法、不管配音时长：第 1 讲里所有关于朗读的规则（F1–F6、C2–C5，“三点十一点二”“点 venv”“杠 m”这类读法、数字和符号怎么念）都不适用，只保留显示规则  
-英文原稿：`script.md` v2（SAY 行是旁白：156 段、363 句；SHOW 行是画面）；`build/review_spoken.md` 第 22 条（要进词表的说法和需要 `en_display` 的段落）和第 29 条（章节名）已并入  
+英文原稿：`script.md` v2（SAY 行是旁白：156 段、369 句；SHOW 行是画面）；`build/review_spoken.md` 第 22 条（要进词表的说法和需要 `en_display` 的段落）和第 29 条（章节名）已并入  
 先例：系列试点 [`videos/ac215-l01-vms-venvs/i18n/zh`](../../../ac215-l01-vms-venvs/i18n/zh/GLOSSARY.md) 定下共用的词；容器两讲 [`ac215-l02-containers-1`](../../../ac215-l02-containers-1/i18n/zh/GLOSSARY.md) 和 [`ac215-l03-mega-pipeline`](../../../ac215-l03-mega-pipeline/i18n/zh/GLOSSARY.md) 定下容器的词和“只有字幕”的整套规则。前三讲已经定下的词一律沿用；新的是第二部分的网络词汇（A13）和 flexible workflow 的词（服务账号、三道关卡、构建还是 pull、docker-shell.sh）  
 机器可读版本：[`glossary.yaml`](glossary.yaml)（内容相同，两份要同步修改；`python -m explainer.i18n check` 和字幕切分都读它）
 
@@ -25,7 +25,7 @@
 4. **视频的比喻按意思译，一个比喻一个词**：配方（recipe，第 2 讲）、路标（signpost，第 3 讲）、窗（bind mount，第 3 讲）、盒子（box）、三堆和墙（切换分支时的三堆文件和两堵墙）、关卡（gate）、小电脑（little computer）、局域网（home network）、电话簿（phone book）、导轨（rail）、临街的门和房间（street door 和 room，也就是 host port 和 container port）。
 5. **书面语体**（标题、meta.yaml、配套文档）：仓库、克隆、提交、容器、镜像、基础镜像、镜像仓库、存储桶、推送、拉取、绑定挂载、端口。
 6. **不加括注、不用括号**：双语字幕带里英文原句就在中文下方；没有 say: 时检查器也不允许括号。
-7. **工具链的约束也是规则**：每个英文句子对应一个中文句子（156 段、363 句）；显示行要过检查器（D3）；SAY 把实物念成单词的句子都要写 en_display（D4）。
+7. **工具链的约束也是规则**：每个英文句子对应一个中文句子（156 段、369 句）；显示行要过检查器（D3）；SAY 把实物念成单词的句子都要写 en_display（D4）。
 
 大陆简体中文；口语轻松、指令清楚，像助教带实验课，但不用网络流行语。
 
@@ -113,7 +113,7 @@
 | Docker Hub / Docker Hub account / Docker username / dlops / dlops images | Docker Hub / Docker Hub 账号 / Docker Hub 用户名 / dlops / dlops 的 image | S06：第 10 行是密钥在 container 里的路径；第 13 行是 Docker Hub 账号的名字，dlops。 | DOCKER_USERNAME → 脚本里的 Docker Hub 用户名（A6）。dlops（课程的 Docker Hub 账号）≠ dlops-io（GitHub 组织）。 |
 | base image / pulls the base image / the Python base image | base image / 基础镜像（书面） | S11：你第一次构建时，还会 pull Python 的 base image。 | 第 2 讲：字幕说 base image，书面写“基础镜像”。 |
 | build step / build step 2 / the system packages / writing out the image | 构建步骤 / 构建步骤 2 / 系统软件包 / 写出 image | S06：有两步占了几乎全部时间：构建步骤 2，也就是系统软件包，还有写出 image；第一次构建还会 pull base image。 | A3、A7：BuildKit 的 [k/5] 永远是“构建步骤 k”；“第 k 步”是 README 的步骤。 |
-| layer / system layer / apt layer / copy layer / cached / reuses from the cache | 层 / 系统层 / apt 那一层 / COPY 那一层 / 缓存 / 用了缓存 | S07：接下来，synthesis audio en 只用 8 秒就构建好了，它的系统层用了缓存。 | 第 3 讲。the copy line → COPY 那一行；only the copy layer is new → 只有 COPY 那一层是新的。 |
+| layer / system layer / apt layer / copy layer / cached / reuses from the cache | 层 / 系统层 / apt 那一层 / COPY 那一层 / 缓存 / 用了缓存 | S07：接下来，synthesis audio en 的构建只要 8 秒：它的系统层用了缓存。 | 第 3 讲。the copy line → COPY 那一行；only the copy layer is new → 只有 COPY 那一层是新的。 |
 | full log / the full log shows | 完整日志 | S06：完整日志说明了 uv sync 为什么这么快：image 自带的 Python，录制时是 3.14.8，已经满足 3.14 及以上，所以 uv 一个都不用下载。 | 第 3 讲。at the time of recording → 录制时（A9）。 |
 | builder / build engine / multi-arch / processor types / makes it current / docker buildx use default | 构建器 / 构建引擎 / 处理器类型 / multi-arch / buildx | S09：它会重新创建一个叫 multi-arch 的构建器，一个能为多种处理器构建的构建引擎。 | builder → 构建器（第 2 讲）。processor types → 处理器类型 / 多种处理器：绝不写 processor（那是 port_toy 的 container，A7）。Dash dash use makes it current → 加了 --use，它就成了当前的构建器。 |
 | amd64 / arm64 / Apple-silicon Mac / cloud VM | amd64 / arm64 / Apple Silicon 的 Mac / 云上的 VM | S09：然后一条 buildx build 做出 amd64 和 arm64 两个 image，用同一个 tag 一起 push 上去：和第 2 讲一样，Apple Silicon 的 Mac 会 pull 其中一个，云上的 VM 会 pull 另一个。 | 平台名照写（第 2 讲）。 |
@@ -152,7 +152,7 @@
 | wall / the first wall falls / overwritten / sit where the branch has files of its own | 墙 / 第一堵墙 / 被覆盖 | S03：README 的提示解决的是第一个原因：git stash 把你的修改收起来，第一堵墙倒了。 | V2 里红色的墙。 |
 | git checkout dash dash dot / discards your edits / leaves untracked files alone | 丢弃 / 未跟踪的文件 | S03：另一个办法是 git checkout，加上 -- 和一个点：它丢弃你的修改，不动未跟踪的文件。 | B3：单独的点写成“一个点”；en_display：git checkout -- . |
 | git fetch origin / upstream / updates | git fetch origin / 上游 / 更新 | S03：在这里它什么都没打印：clone 下来的 repo 本来就有所有分支，上游也没有任何变化。 | Yours may list updates → 你的可能会列出一些更新。 |
-| git branch / star / the pinned commit / the commit this video pins / git log / git diff / grep | git branch / 星号 / pin 住的 commit / git log / git diff / grep | S03：第 5 步，git branch：星号在 flexible-workflow 上。 | pin（第 1 讲）。git log shows the commit this video pins → git log 显示这个视频 pin 住的 commit。 |
+| git branch / star / the commit we recorded / the commit this video pins / git log / git diff / grep | git branch / 星号 / 我们录制时的那个 commit / pin 住的 commit / git log / git diff / grep | S03：第 5 步，git branch：星号在 flexible-workflow 上。 | pin（第 1 讲）。at the commit we recorded（S03）→ 停在我们录制时的那个 commit；git log shows the commit this video pins（S10）→ git log 显示这个视频 pin 住的 commit。 |
 | replaced without a word / copy them out first | 替换 | S03：额外检查显示，你在第 3 讲里那些被忽略的 Dockerfile、pyproject.toml 和 uv.lock，已经被这个分支的版本一声不吭地替换了：想留着的话，先把它们复制出来。 | A8。 |
 | main / your clone from lecture 3 / if you cloned fresh / the next chapter | main / 第 3 讲的 clone / 重新 clone / 下一章 | S03：它在 main 上；如果你是重新 clone 的，直接跳到下一章。 | A10。 |
 
@@ -220,8 +220,9 @@
 | network / a network you create / Docker's default network / built-in networks / toynet | 网络 / 默认网络 / 内置网络 / toynet | S10：从 README 的 Handy commands 里拿一条：docker network ls 把它列出来，旁边是 Docker 的三个内置网络。 | A13。Docker's default network has none → Docker 的默认网络没有电话簿。 |
 | rail / the rail both containers will plug into | 导轨 | S10：Docker 打印出新网络的 ID：这就是两个 container 都要接上去的那根导轨。 | V6 里青色的导轨；量词“根”。不说“轨道”（像火车轨道）。 |
 | little computer / its own little computer / its own full set of ports / without any clash | 小电脑 / 一整套 port / 冲突 | S10：把每个 container 想成一台独立的小电脑，有自己的 localhost，也有自己的一整套 port。 | V6。 |
+| network namespace / isolated / until you wire it | 网络命名空间 / 隔离 | S10：这节课把这叫作网络命名空间：每个 container 都是隔离的，直到你把它们连起来。 | 这节课的术语（幻灯片第 33 页），只在 S10 的衔接句里说一次；和第 2 讲 PID 命名空间里的“命名空间”同一个词（内核意义上的）。until you wire it → 直到你把它们连起来。 |
 | home network / a small home network / phone book / Docker's built-in phone book / turns names into addresses | 局域网 / 家里的小局域网 / 电话簿 / 内置的电话簿 | S10：你自己创建的网络把它们连起来，就像家里的小局域网，还带一本电话簿，把 container 名变成地址。 | V6（局域网）；电话簿就是 Docker 在 127.0.0.11 的 DNS，字幕里不说 DNS（英文也不说）。 |
-| address / IP address / subnet / toynet's own subnet / addresses can change when a container restarts | 地址 / IP 地址 / 子网 | S13：一个 container 重启时，地址可能会变；名字不会变。 | A13。 |
+| address / IP address / subnet / toynet's own address range, its subnet / addresses can change when a container restarts | 地址 / IP 地址 / 地址范围 / 子网 | S13：一个 container 重启时，地址可能会变；名字不会变。 | A13。 |
 | gateway / processor / port toy / a web page / forwards your text / turns it into capitals | gateway / processor / port toy / 网页 / 转发 / 大写 | S10：这个 port toy 让两个 container 直接通信，而且只需要 Docker：一个 gateway 提供网页，把你的文字转发给一个 processor，processor 再把它变成大写。 | container 名照写（A1 a）；port_toy → port toy（A6）。processor ≠ 处理器（A7）。 |
 | Prerequisites / docker run hello-world / Hello from Docker / checks that Docker is running | Prerequisites / hello-world / Hello from Docker | S10：先看 Prerequisites：用 docker run hello-world 检查 Docker 有没有在运行。 | B3：Hello from Docker 去掉感叹号。 |
 | clone or download / prints no command / the README's tree | README 里的目录树 | S10：两个额外检查：文件和 README 里的目录树一致，一个 gateway，一个 processor；git log 显示这个视频 pin 住的 commit。 | the README says clone or download but prints no command → README 说 clone 或下载，却没给命令（画面上灰色的说明引用 README 的那一行）。 |
@@ -281,7 +282,7 @@
 | with your key, look for / with your key, you'd see / what to look for / the real error a missing key gives | 报错 | S01：凡是代码调用 Google 的地方，你会看到命令、缺少密钥时的真实报错，以及该看什么。 | D6：with your key, look for → 有密钥的话，要找的是……；with your key, you'd see → 有密钥的话，你会看到……；what to look for → 该看什么；the real error a missing key gives → 缺少密钥时的真实报错。 |
 | a small slip / a small gap / another small gap / a small inaccuracy / two small slips / one aside | 一个小疏漏 / 一个小缺口 / 一个小小的不准确 / 两个小疏漏 / 补充一句 | S13：补充一句：processor 的 image 里其实也有 curl，虽然 README 暗示它没有。 | A9：后面一定紧跟改法。 |
 | Ponder this / the answer / solved | 来想一想 | S05：来想一想。 | 思考卡片在画面上是英文（A11）。问题绝不泄露答案（A9）。 |
-| To test yourself / One: … Five: / Answers are in the exercises / Next lecture | 自测一下 / 第一题 / 第五题 / 答案在练习里 / 下节课 | S16：自测一下。 | D6。 |
+| To test yourself / pause after each question / One: … Five: / Answers are in the exercises / Next lecture | 自测一下 / 每道题之后都暂停一下 / 第一题 / 第五题 / 答案在练习里 / 下节课 | S16：自测一下，每道题之后都暂停一下。 | D6。 |
 | part 1 / part 2 / lecture 2 / lecture 3 / this lecture / next lecture / parts 1 and 2 together | 第一部分 / 第二部分 / 第 2 讲 / 第 3 讲 / 这节课 / 下节课 | S09：第二部分：互相直接通信的 container。 | A10。 |
 | step 2 / step 3 of How to Run / the Quick Reference / step 1 sets the app up by hand | 第 2 步 / How to Run 那一节 / Quick Reference 那一节 | S07：回到 container 里，看 Quick Reference 那一节。 | A7、A11：README 的章节标题照写英文。 |
 
@@ -368,23 +369,23 @@ AC、add、Admin、Agent、AI、allocated、already、amd、API、app、Apple、
 
 ### D. 旁白文件（narration/*.yaml）
 
-- **[D1]** 句子对齐（explainer/i18n.py）。narration/*.yaml 里 script.md 的每个 SAY 行一条（156 段）；`en` 和 SAY 行逐字节相同；`zh` 按 explainer.voice.split_sentences 的切分，每个英文句子正好一项（这份脚本共 363 句）。只在句子内部重组，绝不合并或拆分。短句也单独一项：Ponder this. → 来想一想。；Pause and run it. → 暂停一下，自己跑一遍。；Two puzzles. → 两个谜题。；Three piles. → 分成三堆。；Nothing. → 什么都没有。；Run it. → 运行它。；Here's why. → 原因是这样的。；No. → 没有。；To test yourself. → 自测一下。反复运行 `python -m explainer.i18n check videos/ac215-l04-flexible-workflow-ports --lang zh`，直到打印 OK。
+- **[D1]** 句子对齐（explainer/i18n.py）。narration/*.yaml 里 script.md 的每个 SAY 行一条（156 段）；`en` 和 SAY 行逐字节相同；`zh` 按 explainer.voice.split_sentences 的切分，每个英文句子正好一项（这份脚本共 369 句）。只在句子内部重组，绝不合并或拆分。短句也单独一项：Ponder this. → 来想一想。；Pause and run it. → 暂停一下，自己跑一遍。；Pause and switch. → 暂停一下，切换过去。；Two puzzles. → 两个谜题。；Three piles. → 分成三堆。；Nothing. → 什么都没有。；Run it. → 运行它。；Here's why. → 原因是这样的。；No. → 没有。反复运行 `python -m explainer.i18n check videos/ac215-l04-flexible-workflow-ports --lang zh`，直到打印 OK。
 - **[D2]** 没有 say:，没有锚点。没有中文配音：绝不写 say:（显示行就是唯一的文本），也绝不写 anchors:（锚点只给中文配音版安排动画节拍）。字幕按英文音频计时；工具链按位置把每个中文句子和对应的英文句子配对。
 - **[D3]** 过得了检查器的显示行。没有 say: 时，每个显示句都要通过 explainer.i18n.spoken_problems：没有括号（B2）、没有数学符号（B3）、没有 letter_letter 名字（A6）、数字后面没有 !、没有以“种”结尾再接，。！？的分句（改写：两种方式。→ 有两种方式拿到。或 两个办法。）、汉字和拉丁字母或数字之间有半角空格（B1）、每句以。！？或……结尾（后面可以跟”或」）、每个拉丁词都在本词表里（zh_subtitle、first_use 或 allowed_spoken_latin）。检查器用正则 `[A-Za-z][A-Za-z'.-]*` 切词：group-01 切成 group-，amd64 切成 amd，arm64 切成 arm，input-….mp3 切成 input- 和 mp，/home/app/.venv 切成 home、app 和 venv，Ctrl-C 是一个词。它报出的拉丁词，要么是该翻译的英文词（通常如此），要么是漏收的实物：按同样的切法把它加进 allowed_spoken_latin，并加进对应的术语条目。
 - **[D4]** 英文行（en_display）。双语字幕带的英文行显示 SAY 句子，而 SAY 为了配音把实物念成了单词。每个这样的句子都写一项 en_display，显示屏幕上的字面形式，其余部分和 SAY 句子逐词一致；同一段里的其他句子写 null。这份脚本的念法 → 字面形式：dash dash branch → --branch；git stash dash u → git stash -u；git checkout dash dash dot → git checkout -- .；git branch: star, flexible-workflow → git branch: * flexible-workflow；test dot mp3 → test.mp3；input, dash, something, dot mp3 → input-something.mp3；dash v / dash e / dash p / dash u / dash i t / dash a / dash f → -v / -e / -p / -u / -it / -a / -f；up dash d → up -d；dash dash r m / dash dash name / dash dash build / dash dash use → --rm / --name / --build / --use；chmod plus x → chmod +x；slash app / slash secrets → /app / /secrets；file slash secrets slash mega-pipeline.json → File /secrets/mega-pipeline.json；default credentials error → DefaultCredentialsError；text prompts, slash group-01 → text_prompts/group-01（观众要找的路径）；the at sign → @；T-T-Y → TTY；localhost 8090 → localhost:8090；pipenv flexible workflow → pipenv-flexible-workflow；port toy, dash gateway → port_toy-gateway；Control C → Ctrl+C；dash p 127.0.0.1, 8095, 9100 → -p 127.0.0.1:8095:9100。段落（扫描 v2 脚本得到；脚本改了就重扫）：S03[0,8,9] S04[6,7] S06[4,5,8,9,10] S07[0,2,8,13] S08[9] S09[0,2,3,6] S11[0,3,4,5] S12[0] S13[10] S14[3] S15[1,2,3,8,10,11] S16[0,1,2,4,6,9]。带下划线的名字（A6）只在观众要输入或要找的路径和命令里（text_prompts/group-01、port_toy-gateway；S07[8] 的 synthesis_audio_en 可以保留念法）在 en_display 里写回字面形式；单纯提到时，两行都保留 SAY 的说法（transcribe audio、port toy、container name、depends on、the gateway's processor port）。英文视频自己的 .srt 不受影响。
 - **[D5]** 内容对等。每个中文句子只译它对应的英文句子：不加命令、参数、括注、中文控制台名或解释；“额外”只用在英文标了 extra 的地方；保留英文的词不加中文解释（英文行就在正下方）。
 - **[D6]** 固定句式：
   - Pause and run it. → 暂停一下，自己跑一遍。Pause and run both. → 暂停一下，两条都跑一遍。Pause and run them. → 暂停一下，把它们跑一遍。
-  - Pause and try dev and run yourself. → 暂停一下，自己试试 dev 和 run。Pause and switch your own clone. → 暂停一下，把你自己的 clone 也切过去。Pause and edit them. → 暂停一下，把它们改好。
+  - Pause and try dev and run yourself. → 暂停一下，自己试试 dev 和 run。Pause and switch. → 暂停一下，切换过去。Pause and edit them. → 暂停一下，把它们改好。
   - Pause, and set up your account, key and APIs. → 暂停一下，把账号、密钥和 API 都设置好。Pause, and run all five with your key, checking the bucket after each. → 暂停一下，用你的密钥把五个都跑一遍，每跑完一个就看看 bucket。Pause and check yours. → 暂停一下，检查你自己的。
-  - Pause, and create yours. → 暂停一下，创建你自己的网络。Pause and start both. → 暂停一下，把两个都启动。Pause, send a message, and leave both running. → 暂停一下，发一条消息，两个都别停。Pause, and test from both sides. → 暂停一下，从两边都试一试。
+  - Pause, and create yours. → 暂停一下，创建你自己的网络。Pause and create yours.（S04，bucket）→ 暂停一下，创建你自己的 bucket。Pause and start both. → 暂停一下，把两个都启动。Pause, send a message, and leave both running. → 暂停一下，发一条消息，两个都别停。Pause, and test from both sides. → 暂停一下，从两边都试一试。
   - Pause and move your gateway's door. → 暂停一下，把你的 gateway 的门也挪过去。Pause and fix yours. → 暂停一下，把你的也修好。Pause and clean up. → 暂停一下，清理干净。Pause, and run the whole cycle. → 暂停一下，把整个流程跑一遍。Pause and shut it down. → 暂停一下，把它关掉。
   - Pause at the yellow your-turn tag → 看到黄色的 your turn 标签就暂停；gray extra tags mark commands the README doesn't have → 灰色的 extra 标签表示 README 里没有的命令。
   - An extra check / Two extra checks / Three extra checks inside / Another handy command / An extra … → 一个额外检查 / 两个额外检查 / 在里面做三个额外检查 / 再来一条 Handy commands 里的命令 / 额外的……
   - Ponder this. → 来想一想。Step N: / Step N, … → 第 N 步：/ 第 N 步，……
   - With your key, look for … → 有密钥的话，要找的是……；With your key, you'd see … → 有密钥的话，你会看到……
   - A small slip: / A small gap: / Another small gap: / A small inaccuracy: / Two small slips. → 一个小疏漏：/ 一个小缺口：/ 还有一个小缺口：/ 一个小小的不准确：/ 两个小疏漏。One aside: → 补充一句：
-  - To test yourself. → 自测一下。One: … Five: → 第一题：……第五题：Answers are in the exercises. → 答案在练习里。Next lecture, … → 下节课，……In part 2: … → 第二部分：……Every command is also in the study guide. → 每条命令也都在学习指南里。
+  - To test yourself, pause after each question. → 自测一下，每道题之后都暂停一下。One: … Five: → 第一题：……第五题：Answers are in the exercises. → 答案在练习里。Next lecture, … → 下节课，……In part 2: … → 第二部分：……Every command is also in the study guide. → 每条命令也都在学习指南里。
 - **[D7]** 文件。narration/g1.yaml = S01–S09（第一部分，mega-pipeline flexible-workflow），narration/g2.yaml = S10–S16（第二部分，port_toy），和 video.yaml 的 parts 一致；每个文件开头一段注释（覆盖哪些场景、用到的规则：A6 带空格的名字、B3 写成文字的符号、D4 en_display、没有 say: / anchors），按脚本顺序排列。字符串用双引号；字面的双引号或反斜杠按 YAML 转义。
 - **[D8]** 按英文时间轴的长度。中文是在听英文的同时读的，字幕带在英文分段处切换（读得比每秒 9 个单位还快的中文片段，最多多给 1 秒）。每个中文句子读起来的时间要和英文听起来差不多：经验上每个英文单词最多约 2 个单位（一个汉字算 1，一个拉丁字母算 0.55），所以删掉多余的连接词和重复的主语，绝不删内容。长实物也算数（DefaultCredentialsError 是 12.7 个单位，/secrets/mega-pipeline.json 14.9，Cloud Translation API User 14.3）：英文没有重复的地方，中文不要重复；长的终端消息按关键字转述（报 DefaultCredentialsError：找不到 /secrets/mega-pipeline.json 这个文件）。
 

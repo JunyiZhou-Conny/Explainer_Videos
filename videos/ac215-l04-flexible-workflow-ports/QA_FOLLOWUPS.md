@@ -10,3 +10,6 @@
   (AnimationGroup begins every part at once). Nothing to do unless a contact sheet shows two panels at once.
 - L04/L05 `col_box` now measures column 0 from the glyphs (`grid_x0`, e815bd3): boxes in S13 and S15
   moved right by about 0.6 cell. Check that each box frames exactly its characters.
+- S03 (s03_code.py SKIP_TO, Bugbot thread "Skip timestamp misses the next chapter"): the finishing pass lengthens
+  S03 (copy-out warning before the pause), so the "cloned fresh? skip to …" chip must be recomputed from the
+  re-voiced scene durations. After the 1080p stitch, check the chip text equals S04's start in output/chapters.txt.

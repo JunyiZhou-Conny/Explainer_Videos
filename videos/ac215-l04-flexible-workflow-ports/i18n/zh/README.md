@@ -33,7 +33,7 @@ flexible-workflow、port_toy）**）是英文旁白，配中文字幕和中英�
 | `output/ac215-l04-flexible-workflow-ports.zh-en.srt` / `.zh-en.ass` | 中英双语字幕 |
 | `output/ac215-l04-flexible-workflow-ports.srt` | 英文字幕 |
 | `output/chapters.txt`、`chapters_part1.txt`、`chapters_part2.txt` | 章节时间轴 |
-| `i18n/zh/narration/g1.yaml`、`g2.yaml` | 逐句对齐英文的中文译文（字幕用；g1 = 第一部分 S01–S09，g2 = 第二部分 S10–S16；共 156 段旁白、363 句）。`en_display:` 是英文字幕行的显示形式：旁白把命令念成单词的地方（dash p、slash app、Control C），英文行换回屏幕上的写法（`-p`、`/app`、`Ctrl+C`） |
+| `i18n/zh/narration/g1.yaml`、`g2.yaml` | 逐句对齐英文的中文译文（字幕用；g1 = 第一部分 S01–S09，g2 = 第二部分 S10–S16；共 156 段旁白、369 句）。`en_display:` 是英文字幕行的显示形式：旁白把命令念成单词的地方（dash p、slash app、Control C），英文行换回屏幕上的写法（`-p`、`/app`、`Ctrl+C`） |
 | `i18n/zh/GLOSSARY.md`、`glossary.yaml` | 术语表：哪些词保留英文、哪些用中文，以及字幕的标点、空格、数字和换行规则（两份内容一致，yaml 供检查器读取） |
 | `i18n/zh/meta.yaml` | 中文标题、两部分的标题、章节名和简介 |
 

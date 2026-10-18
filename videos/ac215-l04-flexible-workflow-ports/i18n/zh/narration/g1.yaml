@@ -1,5 +1,5 @@
 # zh narration for S01-S09 (part 1, group g1: mega-pipeline, branch flexible-workflow), sentence-aligned to
-# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 90 SAY lines, 209
+# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 90 SAY lines, 213
 # sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml (binding).
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).

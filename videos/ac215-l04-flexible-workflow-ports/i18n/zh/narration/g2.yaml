@@ -1,5 +1,5 @@
 # zh narration for S10-S16 (part 2, group g2: port_toy), sentence-aligned to script.md v2: one zh sentence per
-# English sentence (explainer.voice.split_sentences; 66 SAY lines, 154 sentences). Terms and rules: ../GLOSSARY.md,
+# English sentence (explainer.voice.split_sentences; 66 SAY lines, 156 sentences). Terms and rules: ../GLOSSARY.md,
 # ../glossary.yaml (binding).
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
@@ -19,10 +19,11 @@ S10:
   zh:
   - "在第一部分，container 只是把文件留在 bucket 里。"
   - "这个 port toy 让两个 container 直接通信，而且只需要 Docker：一个 gateway 提供网页，把你的文字转发给一个 processor，processor 再把它变成大写。"
-- en: "Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash."
+- en: "Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash. The lecture calls this a network namespace: each container is isolated until you wire it."
   zh:
   - "把每个 container 想成一台独立的小电脑，有自己的 localhost，也有自己的一整套 port。"
   - "两个 container 都可以用 port 9100，完全不会冲突。"
+  - "这节课把这叫作网络命名空间：每个 container 都是隔离的，直到你把它们连起来。"
 - en: "A network you create joins them like a small home network, with a phone book that turns container names into addresses. Docker's default network has none."
   zh:
   - "你自己创建的网络把它们连起来，就像家里的小局域网，还带一本电话簿，把 container 名变成地址。"
@@ -172,10 +173,10 @@ S13:
   - "在 gateway 里面，localhost 就是 gateway 自己，而它那里没有任何东西在 9200 上监听。"
   - "这就是第二个谜题的答案：每个 container 都有自己的 localhost。"
   - "一个额外检查：换成 9100，也就是它自己的 port，localhost 就返回页面。"
-- en: "So how did the name work? From the handy commands, docker network inspect shows an address for each container, on toynet's own subnet."
+- en: "So how did the name work? From the handy commands, docker network inspect shows an address for each container, from toynet's own address range, its subnet."
   zh:
   - "那名字又是怎么起作用的？"
-  - "从 Handy commands 里拿一条：docker network inspect 显示每个 container 的地址，都在 toynet 自己的子网里。"
+  - "从 Handy commands 里拿一条：docker network inspect 显示每个 container 的地址，都来自 toynet 自己的地址范围，也就是它的子网。"
 - en: "Each container asks Docker's built-in phone book, at 127.0.0.11, which turns names into those addresses. Addresses can change when a container restarts; names stay."
   zh:
   - "每个 container 都去问 Docker 内置的电话簿，它在 127.0.0.11，把名字变成这些地址。"
@@ -366,9 +367,9 @@ S16:
   - null
   - null
   - null
-- en: "To test yourself. One: which files define a mega-pipeline image, and what does run use when there's no local image?"
+- en: "To test yourself, pause after each question. One: which files define a mega-pipeline image, and what does run use when there's no local image?"
   zh:
-  - "自测一下。"
+  - "自测一下，每道题之后都暂停一下。"
   - "第一题：哪些文件定义了一个 mega-pipeline 的 image，本地没有 image 时，run 用的又是什么？"
 - en: "Two: which three gates must a call to your bucket pass, and where does each one fail? Three: how does a git-ignored key end up in an image, and what's the fix?"
   zh:

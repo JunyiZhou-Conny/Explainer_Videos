@@ -825,7 +825,7 @@ class WhoCanReach(VoiceScene):
             n_gw, a_gw = substring(l32, "gateway"), substring(l35, "172.19.0.3/16")
             n_pr, a_pr = substring(l39, "processor"), substring(l42, "172.19.0.2/16")
             self.play(*[m.animate.set_color(LOOKUP) for m in (n_gw, a_gw, n_pr, a_pr)], run_time=0.6)
-            vo.wait_until("on toynet's own subnet")
+            vo.wait_until("from toynet's own address range")
             rtag = beside(grey_tag(RANGE_TAG), t, l16)
             assert rtag.get_left()[0] > l16.glyphs.get_right()[0] + 0.2, rtag.get_left()[0]
             pin(self, l16, rtag, anim=AnimationGroup(substring(l16, "172.19.0.0/16").animate.set_color(LOOKUP),

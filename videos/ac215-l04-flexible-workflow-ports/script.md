@@ -1031,11 +1031,14 @@ SAY: In part 1, containers only left files in a bucket. Port toy makes two conta
 SHOW: V6. The two TEAL boxes grow into glass boxes. Inside each, a small `localhost` loop and a
 strip of ports `1 … 65535`; both strips light `9100` at the same time without clashing (caption
 "each box: its own ports"). A GREY laptop outline around them has its own third `localhost` loop.
-(The port-strip cells are the "rooms" S11 lifts out.)
-SAY: Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash.
+(The port-strip cells are the "rooms" S11 lifts out.) The bridge (SLIDES.md S10 ii): on "The lecture
+calls this a network namespace", the two glass boxes flash, each on its own (isolated: nothing joins
+them yet).
+SAY: Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash. The lecture calls this a network namespace: each container is isolated until you wire it.
 
 SHOW: A TEAL rail slides under the boxes, labelled "user-defined network"; a PINK phone-book icon sits
-on it with two blank lines. A GREY note: "Docker's default network: no phone book (exercises)".
+on it with two blank lines, labelled "Docker DNS" (slide 34's term) where it first appears. A GREY
+note: "Docker's default network: no phone book (exercises)".
 SAY: A network you create joins them like a small home network, with a phone book that turns container names into addresses. Docker's default network has none.
 
 SHOW: TRACKER P0/1 (the tracker appears, port_toy README). Terminal (full width, 12 rows, title
@@ -1232,10 +1235,11 @@ SAY: Nothing. Inside the gateway, localhost is the gateway itself, and nothing t
 
 SHOW: TRACKER PH/5. V6/V7 fade; the terminal grows to 12 rows. It types `docker network inspect
 toynet` → TERM(port-laptop/28-network-inspect.txt: 4, …, 16, …, 32, …, 35, …, 39, …, 42, …);
-`172.19.0.0/16`, `gateway` / `172.19.0.3/16` and `processor` / `172.19.0.2/16` highlight PINK. Then the
+`172.19.0.0/16`, `gateway` / `172.19.0.3/16` and `processor` / `172.19.0.2/16` highlight PINK; on
+"from toynet's own address range" `172.19.0.0/16` gets the GREY tag "toynet's address range". Then the
 terminal shrinks back to 6 rows, V6 returns, and the highlighted values fly from the terminal into
 V6's phone book on the rail (TransformFromCopy): `processor → 172.19.0.2`, `gateway → 172.19.0.3`.
-SAY: So how did the name work? From the handy commands, docker network inspect shows an address for each container, on toynet's own subnet.
+SAY: So how did the name work? From the handy commands, docker network inspect shows an address for each container, from toynet's own address range, its subnet.
 
 SHOW: TRACKER PH/5 · extra. It types `docker exec gateway cat /etc/resolv.conf` (extra) →
 TERM(port-laptop/29-x-dns.txt: …, 6, …) (`nameserver 127.0.0.11` PINK), then `docker exec gateway getent
@@ -1476,7 +1480,7 @@ SHOW: The terminal fades. A card "Test yourself". Questions appear one at a time
 centre, each with a glyph-only icon at its left (no text inside the icon); each question slides up
 and fades as the next writes in. Q1 "Which files define a mega-pipeline image? What does run use
 when there's no local image?" (icon: V1's signpost and box).
-SAY: To test yourself. One: which files define a mega-pipeline image, and what does run use when there's no local image?
+SAY: To test yourself, pause after each question. One: which files define a mega-pipeline image, and what does run use when there's no local image?
 
 SHOW: Q2 "Which three gates must a call to your bucket pass, and where does each one fail?" (icon:
 V3's three gates). Q3 "How does a git-ignored key end up in an image? The fix?" (icon: V5's COPY
