@@ -625,7 +625,7 @@ class SemanticSplit(VoiceScene):
             vo.wait_until("by our estimate")
             self.play(FadeIn(est, shift=RIGHT * 0.15), run_time=0.4)
             vo.wait_until("about 528 embedding calls")
-            self.play(FadeIn(g1, shift=RIGHT * 0.15), run_time=0.5)
+            self.play(FadeIn(g1, shift=RIGHT * 0.15), run_time=0.9)
             vo.wait_until("about 90 more")
             self.play(FadeIn(g2, shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("and 10 to 20 minutes")
@@ -651,7 +651,7 @@ class SemanticSplit(VoiceScene):
         long_i, short_i = int(np.argmax(lens)), int(np.argmin(lens))
         # "very uneven", in numbers: the longest and the shortest chunk's characters at their bar's end
         n_long = note(f"{lens[long_i]:,} characters").next_to(bars[long_i], RIGHT, buff=0.15)
-        n_short = note(f"{lens[short_i]:,} characters", TURN).next_to(bars[short_i], RIGHT, buff=0.15)
+        n_short = note(f"{lens[short_i]:,} characters").next_to(bars[short_i], RIGHT, buff=0.15)
         single = note("a single-topic book still gets its top 5 % cut")
         single.move_to([6.3 - single.width / 2, bars[-1].get_center()[1], 0])   # below the count labels
         tc = turn_card([CMD, (Prose("extra, after the load finishes:"), S.GREY), (CHAT, "extra")],

@@ -113,7 +113,7 @@ elif [ "$PART" = adk ]; then
     [ -n "$HTTPS_PROXY" ] && printf "https-proxy=%s\ncafile=/etc/ssl/certs/ca-certificates.crt\n" "$HTTPS_PROXY" > /home/student/.npmrc
     chown -R student:student /home/student
     # Node.js: the newest LTS release of nodejs.org, its Linux x64 binaries in /usr/local
-    V=$(curl -fsSL https://nodejs.org/dist/index.json | grep -o "\"version\":\"v[0-9.]*\"[^}]*\"lts\":\"[A-Za-z]*\"" | head -1 | grep -o "v[0-9.]*" | head -1)
+    V=$(curl -fsSL https://nodejs.org/dist/index.json | grep -o "\"version\":\"v[0-9.]*\"[^}]*\"lts\":\"[A-Za-z]*\"" | head -1 | grep -o "v[0-9][0-9.]*" | head -1)
     curl -fsSL "https://nodejs.org/dist/$V/node-$V-linux-x64.tar.xz" | tar -xJ -C /usr/local --strip-components=1
     echo "export SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt" > /etc/profile.d/capture-ca.sh'
   # uv, installed the way L01 does (Astral's installer), as the student
