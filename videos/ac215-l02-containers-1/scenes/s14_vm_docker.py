@@ -2,20 +2,22 @@
 
 Beats (script.md "## S14", one voiceover block each):
  0  S13 ended on an empty frame: TRACKER B4 · extra fades in and switches to "README › Running App on
-    VM using Docker" (7 dots); its section name pulses. "First, create a VM": C1, a schematic console
-    (browser `console.cloud.google.com/compute/instances`, tag `illustration`): "Compute Engine ›
-    VM instances" and a BLUE "Create instance" button that pulses and becomes the form's title. GREY
-    `Lecture 2 · slide 77` (lecture_ref, standard top right) fades in with the section card, on "The
-    last README section", and goes at "The README gives no settings", where the GREY footnote "the
-    README gives no settings: sensible choices" fades in. The rows fill as named: Name `ac215-l02`,
+    VM using Docker" (7 dots); as its section name pulses, a schematic console fades in (browser
+    `console.cloud.google.com/compute/instances`, tag `illustration`, "Compute Engine › VM
+    instances"). "First, create a VM": C1, and a BLUE "Create instance" button that pulses and becomes
+    the form's title. GREY `Lecture 2 · slide 77` (lecture_ref, standard top right) fades in with the
+    section card, on "The last README section", and stays while the console does (it goes in beat 1).
+    "The README gives no settings": the GREY footnote "the README gives no settings: sensible choices"
+    fades in. The rows fill as named: Name `ac215-l02`,
     Machine type `e2-small`, Boot disk `Debian GNU/Linux 12 (bookworm)`; footnote "Debian 13 works
     too", then "· E2 = amd64" (amd64 BLUE, e2-small pulses BLUE). "The meter starts": the GOLD dial
     (no digits) fades in at the right and sweeps; GOLD tags "billed per second / while running" and
     "disk: billed / while it exists" (the boot disk row pulses GOLD).
  1  TRACKER C2. Create -> the form collapses into the instance row (GREEN check, `ac215-l02`,
     `e2-small`, SSH); SSH is clicked; the browser becomes the VM terminal (9 rows, `ssh · ac215-l02`,
-    `student@ac215-l02:~$`) while the dial moves into a badge top right (a BLUE `ac215-l02` box and
-    the dial, which keeps sweeping to the end of the scene). "Pause now": ▶ your turn beside the
+    `student@ac215-l02:~$`) while the slide-77 tag goes with the console and the dial moves into a
+    badge top right, where the tag was (a BLUE `ac215-l02` box and the dial, which keeps sweeping to
+    the end of the scene). "Pause now": ▶ your turn beside the
     prompt; "until its SSH terminal is open": the title pulses.
  2  TRACKER C3. It types `sudo apt install docker.io` (README.md line 210) as it is said; "Pause and
     run it": ▶ your turn. "In our stand-in": vm-debian12/01: 4-8 (+Done), lines 7-8 RED, row tag
@@ -159,6 +161,11 @@ def pulse(m, factor: float = 1.15):
 def quick(t: float) -> float:
     """Rate function: a fade that is done in the first third of a longer move."""
     return min(1.0, 3.0 * t)
+
+
+def late(t: float) -> float:
+    """Rate function: a fade that starts once a quick() fade is done (it takes the faded thing's place)."""
+    return smooth(max(0.0, 1.5 * t - 0.5))
 
 
 def deb13_card(rows, size: float = 20) -> VGroup:
@@ -311,13 +318,13 @@ class DockerOnVM(VoiceScene):
         rows = form.rows
         sec = readme_card(203, label(SECTION_C, 34, INK)).move_to([0, 0.5, 0])
         tr_rest = VGroup(tr.head[0], tr.head[1], tr.dots, tr.caption)
-        lref77 = lecture_ref(2, "77")                   # standard top right, until "The README gives no"
+        lref77 = lecture_ref(2, "77")                   # standard top right, until the console goes (beat 1)
         assert lref77.get_left()[0] > br.frame.get_right()[0] + 0.3, "lecture tag over the console"
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr_b, shift=DOWN * 0.1), run_time=0.5)
             # slide 77 is this README section: its tag comes with the section card, on "The last
-            # README section" (script.md's SHOW), and stays while the section's first step is shown
+            # README section" (script.md's SHOW), and stays while the console of step 1 is shown
             self.play(FadeIn(sec, shift=UP * 0.2), FadeIn(lref77, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("Running App on VM using Docker")
             # the README's heading becomes the new tracker's section name (what became what)
@@ -326,10 +333,11 @@ class DockerOnVM(VoiceScene):
                       run_time=1.0)
             self.remove(tr_rest, tr.head[2])
             self.add(tr)
-            self.play(Indicate(tr.head[2], color=TURN, scale_factor=1.08), run_time=0.8)
+            # the console comes in as the section name pulses (no near-empty frame before step 1)
+            self.play(Indicate(tr.head[2], color=TURN, scale_factor=1.08), FadeIn(br, shift=RIGHT * 0.2),
+                      FadeIn(ill), FadeIn(heading, shift=RIGHT * 0.2), run_time=0.8)
             vo.wait_until("First, create a VM")
-            self.play(track(tr, 1), FadeIn(br, shift=RIGHT * 0.2), FadeIn(ill), run_time=0.6)
-            self.play(FadeIn(heading, shift=RIGHT * 0.15), FadeIn(create_i, shift=UP * 0.1), run_time=0.5)
+            self.play(track(tr, 1), FadeIn(create_i, shift=UP * 0.1), run_time=0.6)
             self.play(Indicate(create_i, color=S.WHITE, scale_factor=1.12), run_time=0.6)
             vo.wait_until("as in lecture 1")
             # the clicked button becomes the form's title (what became what)
@@ -337,7 +345,7 @@ class DockerOnVM(VoiceScene):
             self.play(LaggedStart(*[FadeIn(VGroup(r.label, r.field)) for r in rows], lag_ratio=0.12),
                       FadeIn(create), run_time=0.7)
             vo.wait_until("The README gives no settings")
-            self.play(FadeIn(foot1, shift=UP * 0.1), FadeOut(lref77), run_time=0.5)
+            self.play(FadeIn(foot1, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("An ordinary E2 machine")
             fill(rows[0], 0.4)
             fill(rows[1], 0.4)
@@ -397,13 +405,14 @@ class DockerOnVM(VoiceScene):
             dial_to = VGroup(badge_dial.face, badge_dial.ticks, badge_dial.needle, badge_dial.hub).copy()
             for m in dial_to.get_family():
                 m.clear_updaters()
-            # the page fades out early in the move, so it never sits under the terminal's title
+            # the page fades out early in the move, so it never sits under the terminal's title; the
+            # slide-77 tag goes with the console it cites, and the badge then comes in where it was
             self.play(ReplacementTransform(br.frame, t.box),
-                      FadeOut(VGroup(*[m for m in br.submobjects if m is not br.frame], ill, page3),
+                      FadeOut(VGroup(*[m for m in br.submobjects if m is not br.frame], ill, page3, lref77),
                               rate_func=quick),
                       FadeIn(VGroup(t.bar, t.dots, t.title), rate_func=rate_functions.ease_in_quad),
-                      Transform(dial_parts, dial_to), FadeOut(cost, rate_func=quick), FadeIn(mini, shift=LEFT * 0.2),
-                      run_time=1.0)
+                      Transform(dial_parts, dial_to), FadeOut(cost, rate_func=quick),
+                      FadeIn(mini, shift=LEFT * 0.2, rate_func=late), run_time=1.0)
             self.remove(dial, dial_parts, t.box, t.bar, t.dots, t.title)
             self.add(badge_dial, t)
             p0 = bare_prompt(self, t)

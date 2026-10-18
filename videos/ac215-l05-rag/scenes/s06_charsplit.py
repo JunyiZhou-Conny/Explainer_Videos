@@ -3,7 +3,8 @@
 Beats (script.md "## S06", one voiceover block each):
  0  LECTURE A19–A22. TRACKER Chunk 1. The V1 mini-map fades in bottom right, "chunking" lit.
     Center (tag illustration): a GREEN book holds three topic arrows (curd · pasture ·
-    grandfather) that Transform into one averaged arrow ("one vector, averaged"); three PINK
+    grandfather) that Transform into one averaged arrow (the three words give way to the
+    caption "one vector, averaged"); three PINK
     questions all land on it and the whole book goes into the prompt card; 11 books pile in, the
     card overflows and turns RED ("slow", "costly", "garbage"). Then the book splits into six
     GREEN cards, each with its own arrow; one question lands next to one card and only that card
@@ -14,9 +15,11 @@ Beats (script.md "## S06", one voiceover block each):
     visualization" and a GREY note "use Chrome".
  2  V3: the story as a GREEN ribbon of word blocks (~1,000 characters); a PURPLE ruler window of
     350 characters lands on its start; cli.py · lines 184–189 · line 189 wrapped slides in below
-    (the mini-map hides); lines 185 and 186 highlight as the ruler pulses; `separator=''` boxes
-    YELLOW. The ruler steps 330 characters; the 20-character band glows where the two windows
-    overlap; the counter "chunks: 1" goes to 2.
+    (the mini-map hides); line 185 highlights, its 350 pulses with the ruler and its label; at
+    "overlapping by 20" the bar grows over line 186 and its 20 pulses; `separator=''` boxes
+    YELLOW; "counts characters": a ripple runs along the ruler's ticks. The ruler steps 330
+    characters; the 20-character band glows where the two windows overlap; the counter
+    "chunks: 1" goes to 2.
  3  The panel leaves; the ribbon shrinks into its place at the left end of the whole story (GREY
     measure "7,808 characters"), rulers and band with it; the mini-map returns. PONDER (8 s): the
     card in the lower third, left of the mini-map.
@@ -451,8 +454,10 @@ class CharSplit(VoiceScene):
             self.play(LaggedStart(*[Create(a) for a in t_arrows], lag_ratio=0.3),
                       LaggedStart(*[FadeIn(lb) for lb in t_labels], lag_ratio=0.3), run_time=0.9)
             vo.wait_until("averages its topics")
-            self.play(ReplacementTransform(t_arrows, avg), ReplacementTransform(t_labels, avg_lab),
-                      run_time=1.3)
+            # the arrows merge (what became what); the three words make way for one caption
+            # (a text-to-text morph between different words passes through an unreadable blob)
+            self.play(ReplacementTransform(t_arrows, avg), FadeOut(t_labels, scale=0.8),
+                      FadeIn(avg_lab, shift=UP * 0.1), run_time=1.3)
             vo.wait_until("so every question")
             self.play(LaggedStart(*[FadeIn(c, shift=LEFT * 0.2) for c in q_cards], lag_ratio=0.25),
                       run_time=0.8)
@@ -478,8 +483,8 @@ class CharSplit(VoiceScene):
         # ========================================================== 1 · step 1: the visualizer
         br = browser_window(VIZ_URL, width=9.6, height=4.3).move_to([0, 0.6, 0])
         viz = ChunkViz()
-        bill = illustration_tag()
-        bill.move_to(br.frame.get_corner(UP + RIGHT) + np.array([-0.3 - bill.width / 2, 0, 0]))
+        bill = illustration_tag()          # on the bottom edge: the top edge is the address bar
+        bill.move_to(br.frame.get_corner(DOWN + RIGHT) + np.array([-0.3 - bill.width / 2, 0, 0]))
         chip95 = readme_chip("README.md · line 95", "check out this visualization")
         chip95.move_to([-6.25 + chip95.width / 2, -2.3, 0])
         chrome = note("use Chrome").next_to(chip95, RIGHT, buff=0.35)
@@ -512,10 +517,21 @@ class CharSplit(VoiceScene):
         step_ln = Arrow([rb.x_of(0), y_step, 0], [rb.x_of(330), y_step, 0], buff=0, color=TOOL,
                         stroke_width=3, tip_length=0.14)
         step_lab = with_bg(label("step 330", CAPTION, TOOL)).move_to(step_ln.get_center())
-        cnt = Counter("chunks", 1).move_to(COUNTER_AT)
+        cnt = Counter("chunks", 1)
+        # the number (TeX digits) renders smaller than its serif label: match the digit heights
+        # (idempotent: k is 1 once common.Counter matches them itself)
+        k_num = label("1", 26, INK).height / cnt.num.height
+        if abs(k_num - 1) > 0.04:
+            cnt.num.scale(k_num, about_edge=LEFT + DOWN)
+        cnt.move_to(COUNTER_AT)
         panel = src_panel("cli.py", 184, 189, wrap=True)
         panel.shift(np.array([-panel.get_center()[0], PANEL_TOP - panel.get_top()[1], 0]))
         bar185, bar186 = panel.bar(185, TURN, 0.22), panel.bar(186, TURN, 0.22)
+        # lines 185-186 as ONE bar (two line bars overlap and leave a bright seam between them)
+        bars56 = Rectangle(width=bar185.width, height=bar185.get_top()[1] - bar186.get_bottom()[1],
+                           stroke_width=0).set_fill(TURN, 0.22)
+        bars56.move_to([bar185.get_center()[0], (bar185.get_top()[1] + bar186.get_bottom()[1]) / 2, 0])
+        span350, span20 = panel.span(185, "350"), panel.span(186, "20")
         sep = panel.span(189, "separator=''")
         sep_box = RoundedRectangle(width=sep.width + 0.16, height=sep.height + 0.16, corner_radius=0.06,
                                    stroke_color=TURN, stroke_width=3).move_to(sep)
@@ -527,17 +543,26 @@ class CharSplit(VoiceScene):
             self.play(FadeIn(r0, shift=DOWN * 0.3), FadeIn(lab350), FadeIn(cnt), run_time=0.7)
             vo.wait_until("Lines 185 and 186")
             self.play(FadeOut(mm), FadeIn(panel, shift=UP * 0.3), run_time=0.7)
-            self.play(FadeIn(bar185), r0.frame.animate(rate_func=there_and_back).set_stroke(width=7),
-                      run_time=0.8)
+            self.play(FadeIn(bar185), run_time=0.5)
+            # "...set windows of 350 characters": the 350 of line 185 and the ruler, together. The
+            # spoken numbers before it make an interpolated anchor early, so time it back from the
+            # next clause instead.
+            lead = vo.time_until("overlapping by 20") - 1.4
+            if lead > 0.05:
+                self.wait(lead)
+            self.play(Indicate(span350, color=TOOL, scale_factor=1.3), Indicate(lab350, color=TOOL),
+                      r0.frame.animate(rate_func=there_and_back).set_stroke(width=7), run_time=1.0)
             vo.wait_until("overlapping by 20")
-            self.play(FadeIn(bar186), run_time=0.5)
+            self.play(Transform(bar185, bars56), Indicate(span20, color=TURN, scale_factor=1.3),
+                      run_time=0.7)
             vo.wait_until("The separator is empty")
             self.play(Create(sep_box), run_time=0.6)
-            vo.wait_until("not words")
-            self.play(r0.animate.set_stroke(opacity=0.5), run_time=0.3)
+            vo.wait_until("so it counts")          # counting characters: a ripple along the ticks
+            self.play(LaggedStart(*[Indicate(tk, color=TURN, scale_factor=1.8) for tk in r0.ticks],
+                                  lag_ratio=0.25), run_time=1.3)
             vo.wait_until("stepping 330")
-            self.play(TransformFromCopy(r0, r1), Create(step_ln), FadeIn(step_lab), cnt.count_to(2, 0.9),
-                      run_time=0.9)
+            self.play(TransformFromCopy(r0, r1), r0.animate.set_stroke(opacity=0.5), Create(step_ln),
+                      FadeIn(step_lab), cnt.count_to(2, 0.9), run_time=0.9)
             r1.set_stroke(opacity=1)
             self.play(FadeIn(band), FadeIn(lab20), run_time=0.4)
             self.play(band.animate(rate_func=there_and_back).set_fill(opacity=0.9), run_time=0.8)
@@ -567,9 +592,10 @@ class CharSplit(VoiceScene):
             self.add(r0, r1, band)
             self.play(Create(m_line), FadeIn(m_lab), FadeIn(mm), run_time=0.7)
             vo.wait_until("Windows of 350")
-            self.play(r0.frame.animate(rate_func=there_and_back).set_stroke(width=7),
-                      r1.frame.animate(rate_func=there_and_back).set_stroke(width=7), run_time=0.8)
-            self.play(band.animate(rate_func=there_and_back).set_fill(opacity=0.9), run_time=0.6)
+            # at this scale the windows are small: the pulses scale, not only thicken
+            self.play(Indicate(r0, color=TOOL, scale_factor=1.5), run_time=0.7)
+            self.play(Indicate(r1, color=TOOL, scale_factor=1.5),
+                      Indicate(band, color=TURN, scale_factor=1.8), run_time=0.8)
         card = ponder_card(PONDER_Q, width=9.2)
         card[0].set_fill(S.BG, 1)
         card.move_to([-1.55, -1.95, 0])
@@ -691,13 +717,15 @@ class CharSplit(VoiceScene):
         cut_x = x_of_col(row_a, len(ROW_A))
         band_x0 = x_of_col(row_a, SHIFT_B)
         h_row = row_a.strut.height
-        win_a = Rectangle(width=cut_x - (x_of_col(row_a, 0) - 0.15), height=h_row + 0.3,
+        pad_cut = 0.1           # the window edges at the cut clear the glyphs ("ac", the lone "s")
+        a_left, a_right = x_of_col(row_a, 0) - 0.15, cut_x + pad_cut
+        win_a = Rectangle(width=a_right - a_left, height=h_row + 0.3,
                           stroke_color=TOOL, stroke_width=3).set_fill(TOOL, 0.06)
-        win_a.move_to([(cut_x + x_of_col(row_a, 0) - 0.15) / 2, ya, 0])
-        b_right = x_of_col(row_b, len(ROW_B)) + 0.15
-        win_b = Rectangle(width=b_right - band_x0, height=h_row + 0.3, stroke_color=TOOL,
+        win_a.move_to([(a_left + a_right) / 2, ya, 0])
+        b_left, b_right = band_x0 - pad_cut, x_of_col(row_b, len(ROW_B)) + 0.15
+        win_b = Rectangle(width=b_right - b_left, height=h_row + 0.3, stroke_color=TOOL,
                           stroke_width=3).set_fill(TOOL, 0.06)
-        win_b.move_to([(b_right + band_x0) / 2, yb, 0])
+        win_b.move_to([(b_right + b_left) / 2, yb, 0])
         seam_band = Rectangle(width=cut_x - band_x0, height=ya - yb + h_row + 0.3, stroke_width=0)
         seam_band.set_fill(TURN, 0.22).move_to([(cut_x + band_x0) / 2, (ya + yb) / 2, 0])
         lab_a = label("end of chunk 0", CAPTION, S.GREY)
@@ -710,6 +738,10 @@ class CharSplit(VoiceScene):
         acc = substring(row_b, "accomplish")
         lec1 = chip("…artificial intelli", S.GREY, size=22, font=MONO)
         lec2 = chip("gence…", S.GREY, size=22, font=MONO)
+        # one string cut in two: put both texts on one baseline (the g's descender centres
+        # "gence…" higher in its chip); glyph 1 is an x-height letter in both ('a', 'e')
+        lec2.text.shift(UP * (lec1.text[1].get_bottom()[1] - lec1.get_center()[1]
+                              - (lec2.text[1].get_bottom()[1] - lec2.get_center()[1])))
         lec_y = -0.35
         lec1.move_to([cut_x - lec1.width / 2, lec_y, 0])
         lec2.move_to([cut_x + lec2.width / 2, lec_y, 0])
@@ -717,13 +749,12 @@ class CharSplit(VoiceScene):
         lec_note = note("end to end · no overlap").next_to(VGroup(lec1, lec2), DOWN, buff=0.15)
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeIn(lr2), run_time=0.4)
-            self.play(FadeOut(x_wc), run_time=0.2)
+            self.play(FadeIn(lr2), FadeOut(x_wc), run_time=0.4)
             t.clear(self, run_time=0.25)
             sl = type_cmd(self, t, SEAM.cmd, type_time=1.4)
             pin(self, sl, beside(extra_tag(), t, sl, buff=0.4))
             s_lines = t.print(self, SEAM_OUT, run_time=0.4)
-            resize(self, t, 3, run_time=0.7)
+            resize(self, t, 3, run_time=0.6)
             vo.wait_until("Chunk 0 stops")
             tgt_a = VGroup(*glyph_range(row_a, 1))
             self.play(TransformFromCopy(substring(s_lines[1], ROW_A[1:]), tgt_a),

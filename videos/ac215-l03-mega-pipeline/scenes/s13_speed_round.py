@@ -124,7 +124,7 @@ Beats (script.md "## S13", one voiceover block each):
 14  The chips and ▶ go; the terminal shrinks to the strip (the two commands). The tracker
     switches: "README › ElevenLabs bonus" + tag optional (right of the widest caption, so no
     step's caption runs under it), 3 dots; GREY lecture tag "Lecture 3 · slides 23–24" (lecture_ref,
-    top right) with the picture, to beat 15's first play. A small schematic
+    top right) with the picture, until the bonus section leaves (beat 16's first play). A small schematic
     (illustration): a French page → GREY cloud "ElevenLabs" → a wave into the dashed bonus drawer
     output_audios_pp/, with the GREY note "synthesis_audio_en/README.md mentions cli_11.py too ·
     the file is in synthesis_audio/" under it; "in the instructor's voice" under the cloud. "It
@@ -135,14 +135,14 @@ Beats (script.md "## S13", one voiceover block each):
     "synthesis_audio/README.md · line 112: here too". "and uv add requests": TRACKER X2, the strip
     types `uv add requests` → 04-bonus-uv-add-requests.txt lines 2–3, GREY tag "already
     installed · now listed".
-15  TRACKER X3. The cards and the lecture tag go; a GREY README card `synthesis_audio/README.md ·
+15  TRACKER X3. The cards go; a GREY README card `synthesis_audio/README.md ·
     lines 151–153` with the three cli_11.py commands, the GOLD tag moves beside it; the terminal grows to 7 rows; it
     types `python cli_11.py --download` → 05-bonus-cli11-download.txt lines 2–3, 6 (wrap), line 6
     RED. "even download fails": underline + tag "recorded without the key". "the script reads that
     file": the card goes, the terminal shrinks to the strip, CODE(synthesis_audio/cli_11.py:
     30–39) slides in above; lines 33–37 YELLOW, YELLOW "read at start-up". "as soon as it starts":
     line 30 (the path) and line 33 pulse.
-16  The tracker returns to "synthesis_audio", TRACKER E12; the panel goes; the terminal clears to
+16  The tracker returns to "synthesis_audio", TRACKER E12; the panel and the lecture tag go; the terminal clears to
     8 rows: `exit` (laptop), `docker build -t synthesis_audio .` + ▶ your turn → 62-e-rebuild.txt
     lines 3, 14–17. "With all five done": the terminal goes; V1 (letters, drawer labels, the dashed
     bonus drawer) with A's and B's drawers already filled; GREY "your group's files:" + PINK
@@ -1289,7 +1289,7 @@ class SpeedRound(VoiceScene):
         quota14 = cost_tag("your own ElevenLabs key and quota")
         ill14 = illustration_tag()
         place(ill14, right=EDGE, top=TOP)
-        lref = lecture_ref(3, "23–24")       # top right, from the bonus picture through the key and quota (to beat 15)
+        lref = lecture_ref(3, "23–24")       # top right, from the bonus picture until the bonus section leaves (beat 16)
         assert lref.get_bottom()[1] > ill14.get_top()[1] + 0.1 and lref.get_left()[0] > opt.get_right()[0] + 0.2, \
             (lref.get_bottom(), ill14.get_top(), lref.get_left(), opt.get_right())
         # X1: the key file; the group name in cli_11.py
@@ -1374,7 +1374,7 @@ class SpeedRound(VoiceScene):
         assert startup.get_right()[0] < EDGE
 
         with self.voiceover(SAY[15]) as vo:
-            self.play(FadeOut(VGroup(kcard, ins19, u19, cap19)), tr.goto(3), FadeOut(lref), run_time=0.4)
+            self.play(FadeOut(VGroup(kcard, ins19, u19, cap19)), tr.goto(3), run_time=0.4)
             resize(self, t3, 7, run_time=0.45, extra=[FadeIn(card15, shift=DOWN * 0.1),
                                                      quota14.animate.move_to(quota_to)])
             c15 = tcmd(self, t3, BONUS_CMDS[0], 0.45)
@@ -1431,7 +1431,7 @@ class SpeedRound(VoiceScene):
             trE = tracker("E", 12)
             # a cleared 8-row terminal: exit + build + its 5 rows fit without scrolling
             reset(self, t3, 8, run_time=0.4, extra=[FadeOut(VGroup(tr, opt), shift=UP * 0.25),
-                                                   FadeIn(trE, shift=DOWN * 0.25), FadeOut(VGroup(p30, bar30, startup))])
+                                                   FadeIn(trE, shift=DOWN * 0.25), FadeOut(VGroup(p30, bar30, startup, lref))])
             tr = trE
             tcmd(self, t3, "exit", 0.2)
             leave(self, t3, P_E, run_time=0.2)

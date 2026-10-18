@@ -2,7 +2,9 @@ r"""S15 · Compose: the same app, declared (port_toy README › Step 4, steps 1,
 
 Beats (script.md "## S15", one voiceover block each):
  0  TRACKER P4/1. V8 (ComposeMap) in two columns: on "Step 4" the left column's GREY chips (Step 1's
-    five by-hand commands, folded at <= 36 characters) write in; on "The README shows an excerpt" the
+    five by-hand commands, folded at <= 36 characters) write in; on "which builds and starts" the two
+    `docker build` chips flash PURPLE, then the network and the two `docker run` chips (what Compose
+    does, the colour of beat 2's `docker compose up` chip); on "The README shows an excerpt" the
     README chip `README.md · lines 432–446` "an excerpt" appears in the right column; on "open the
     whole docker-compose.yml" CODE(port_toy/docker-compose.yml: 11–25, comments cut) drops in above it
     (header `docker-compose.yml · lines 11–25 · comment cut`). On "Almost every flag" every flag of
@@ -128,6 +130,8 @@ Critic pass (fixes, kept as rules for this file):
 - Beat 5: the cd into port_toy is typed, not a silent prompt switch (a newcomer had nothing to copy);
   the two YELLOW boxes of `docker compose ps` are pinned with row.add + scene.add(row): the recolour of
   ps[3] split that row on the scene, and the value box, added only to the row, vanished for 1.9 s.
+- Beat 0: the definition clause ("which builds and starts the whole app ...") had 4.1 s with
+  nothing moving; the build chips, then the network and run chips, now flash PURPLE on it.
 - Beat 6: the "step 2's command" caption comes in as the SAY reaches compose exec, just before the
   command is typed, not after `ok` (it was on screen for under 2 s).
 """
@@ -539,6 +543,11 @@ class ComposeUp(VoiceScene):
             self.play(FadeIn(tr, shift=DOWN * 0.1),
                       LaggedStart(*[FadeIn(c, shift=RIGHT * 0.15) for c in cm.chips], lag_ratio=0.18),
                       run_time=1.4)
+            vo.wait_until("which builds and starts")     # what Compose does: these builds, then these runs
+            self.play(LaggedStart(*[flash(cm.chips[i], TOOL, 1.03, 0.6) for i in (1, 2)], lag_ratio=0.3),
+                      run_time=0.8)
+            self.play(LaggedStart(*[flash(cm.chips[i], TOOL, 1.03, 0.6) for i in (0, 3, 4)], lag_ratio=0.25),
+                      run_time=1.0)
             vo.wait_until("The README shows an excerpt")
             self.play(FadeIn(rc432, shift=UP * 0.1), run_time=0.5)
             self.play(flash(rc432.phrase, TURN, 1.08), run_time=0.6)

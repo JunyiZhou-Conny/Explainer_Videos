@@ -34,7 +34,7 @@ Beats (script.md "## S13", one voiceover block each):
     laptop's own browser lights up (only the laptop reaches that door).
  4  TRACKER P2/2. The terminal clears. `curl http://localhost:8090` (the route from the browser
     lights up) -> 22 lines 2-6, 0.7 s later 7, …, 154-155 (cut). `curl --max-time 3 http://localhost:9200/health`
-    -> 23 line 2 RED; V7's dashed ":9200 ?" arrow from the laptop stops at the wall and turns RED
+    -> 23 line 2 RED, folded before "Could not connect to server"; V7's dashed ":9200 ?" arrow from the laptop stops at the wall and turns RED
     with a cross. README chip `README.md · line 262` "nothing else is using port 9200".
  5  TRACKER P2/3. The terminal clears. `docker exec gateway curl http://processor:9200/health`;
     its `processor` turns PINK as it is named and a PINK packet leaves the gateway, runs along
@@ -57,7 +57,8 @@ Beats (script.md "## S13", one voiceover block each):
  8  TRACKER PH/5. "So how did the name work?": the phone book flashes. V6/V7 fade while the
     terminal (cleared) grows to 13 rows; `docker network inspect toynet` -> 28 lines 4, …, 16, …,
     32, …, 35, …, 39, …, 42, …; `gateway` / `172.19.0.3/16` and `processor` / `172.19.0.2/16`
-    turn PINK, then `172.19.0.0/16`. The terminal shrinks to 6 rows keeping those five lines, V6
+    turn PINK, then `172.19.0.0/16` with the GREY tag "toynet's address range" beside it, and the
+    `172.19.` of the subnet and both addresses flashes. The terminal shrinks to 6 rows keeping those five lines, V6
     returns, and the names and addresses fly into the phone book (TransformFromCopy, glyph for
     glyph; the arrow grows from the name): `processor → 172.19.0.2`, `gateway → 172.19.0.3`.
  9  TRACKER PH/5 · extra. The terminal clears. `docker exec gateway cat /etc/resolv.conf`
@@ -111,7 +112,11 @@ Deviations from SHOW (and why):
 - Beat 8: the terminal grows to 13 rows, not 12: the command plus the 12 listed lines.
 - Beats 2 and 7: the long error lines (18 line 3, 25 lines 5-6) fold at the last space before
   column 65 (fold_words), not at column 65, so "port is already allocated" and "Could not connect
-  to server" each keep one row for their RED highlight (the text is the capture's).
+  to server" each keep one row for their RED highlight (the text is the capture's). Beat 4's
+  23 line 2 (the same error from the laptop) folds right before "Could not connect to server"
+  (fold_before) instead of being cut to "…: Could …", so both errors read alike.
+- Beat 8: the GREY tag "toynet's address range" beside the Subnet line glosses the narration's
+  "subnet" (QA, newcomer), and the shared `172.19.` flashes on the subnet and both addresses.
 - Beats 8 and 10: the picture leaves before the terminal grows (or the panel arrives) and returns
   after the terminal has shrunk, and the terminal leaves before the your-turn card takes its
   place, so no two of them cross mid-move.
@@ -229,7 +234,8 @@ assert C28.line(16).strip() == '"Subnet": "172.19.0.0/16",'
 assert '"gateway"' in C28.line(32) and "172.19.0.3/16" in C28.line(35)
 assert '"processor"' in C28.line(39) and "172.19.0.2/16" in C28.line(42)
 ERR25 = C25.join(5, 6)                              # one line the capture terminal wrapped at 80
-assert ERR25.endswith("Could not connect to server"), ERR25
+NOCONN = "Could not connect to server"
+assert ERR25.endswith(NOCONN) and C23.line(2).endswith(NOCONN), (ERR25, C23.line(2))
 
 # ------------------------------------------------------------------ README phrases
 TOY = "port_toy/README.md"
@@ -246,6 +252,7 @@ PH262 = readme_has(262, "nothing else is using port 9200")
 PH290 = readme_has(290, "localhost means the gateway")
 assert "processor image does not need it" in excerpt(TOY, 294, 294)
 assert excerpt(TOY, 204, 206).split("\n") == EXP.at(2, 3, 4)
+RANGE_TAG = "toynet's address range"           # glosses "subnet" (QA: a newcomer doesn't know the word)
 PONDER_Q = "Same command,\nbut localhost instead of processor.\nWhat answers?"
 PONDER_ROWS = ["docker exec gateway curl --max-time 3 \\", "    http://localhost:9200/health"]
 assert " ".join(r.strip(" \\") for r in PONDER_ROWS) == C25.cmd
@@ -279,6 +286,15 @@ def fold_words(s: str, width: int) -> list[str]:
             rows.append(s[:cut])
             s = s[cut + 1:]
     rows.append(s)
+    return rows
+
+
+def fold_before(s: str, phrase: str, width: int) -> list[str]:
+    """A long output line folded on two rows right before `phrase` (the space before it dropped),
+    so a clause that fold_words would split keeps one row. The text stays the capture's."""
+    i = s.index(phrase)
+    rows = [s[:i].rstrip(" "), s[i:]]
+    assert all(len(r) <= width for r in rows), rows
     return rows
 
 
@@ -660,7 +676,7 @@ class WhoCanReach(VoiceScene):
             t.print(self, C22.at(7, "…", 154, 155), run_time=0.5)
             vo.wait_until("Curl on 9200")
             type_cmd(self, t, C23.cmd, type_time=1.0)
-            t.print(self, [(C23.line(2), ERR)], run_time=0.3)
+            t.print(self, [(r, ERR) for r in fold_before(C23.line(2), NOCONN, t.max_chars)], run_time=0.3)
             bounce, (b1, b2) = net.bounce_from_laptop()
             self.play(b1)
             vo.wait_until("your laptop has no door to it")
@@ -750,7 +766,7 @@ class WhoCanReach(VoiceScene):
             self.add(*typed)
             self.remove(*flying)
             e25 = fold_words(ERR25, t.max_chars)
-            assert e25[-1] == "Could not connect to server", e25      # whole on its own row
+            assert e25[-1] == NOCONN, e25                    # whole on its own row
             t.print(self, ["…"] + [(r, ERR) for r in e25], run_time=0.4)
             vo.wait_until("Inside the gateway, localhost is")
             self.play(fade_to(gw.loop, None), fade_to(gw.loop_label, None), FadeOut(qs[0]), run_time=0.4)
@@ -790,7 +806,11 @@ class WhoCanReach(VoiceScene):
             n_pr, a_pr = substring(l39, "processor"), substring(l42, "172.19.0.2/16")
             self.play(*[m.animate.set_color(LOOKUP) for m in (n_gw, a_gw, n_pr, a_pr)], run_time=0.6)
             vo.wait_until("on toynet's own subnet")
-            self.play(substring(l16, "172.19.0.0/16").animate.set_color(LOOKUP), run_time=0.5)
+            rtag = beside(grey_tag(RANGE_TAG), t, l16)
+            assert rtag.get_left()[0] > l16.glyphs.get_right()[0] + 0.2, rtag.get_left()[0]
+            pin(self, l16, rtag, anim=AnimationGroup(substring(l16, "172.19.0.0/16").animate.set_color(LOOKUP),
+                                                     FadeIn(rtag, shift=LEFT * 0.1)), run_time=0.5)
+            self.play(*[flash(substring(ln, "172.19."), TURN, 1.15) for ln in (l16, l35, l42)], run_time=0.6)
             resize(self, t, 6, keep=[l16, l32, l35, l39, l42], run_time=0.6)
             self.play(FadeIn(net), run_time=0.4)
             show_part(net, "book0")

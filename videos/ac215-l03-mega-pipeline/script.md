@@ -580,7 +580,8 @@ SAY: Step 6 runs the image, so first, a picture. The copied files sit in slash a
 SHOW: The laptop (GREY) appears at left with the folder `transcribe_audio/`. A PINK route labelled
 `-v "$(pwd):/app"` runs from the laptop folder to the cavity, with two small GREY labels under
 it: "host folder" under `$(pwd)`, "container path" under `/app`; the GREY lecture tag "Lecture 3 ·
-slides 51–52" top right. A GREY sheet carrying the laptop's
+slides 51–52" top right, through the ponder until just before the answer's "start: bash, venv on"
+label arrives. A GREY sheet carrying the laptop's
 files slides along the route and covers the cavity; the copied files dim underneath. Caption: "/app now
 is your folder".
 SAY: Dash v mounts the current folder, pwd, onto slash app: it covers the copied files, so slash app is now your folder.

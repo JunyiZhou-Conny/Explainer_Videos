@@ -529,8 +529,8 @@ class TwoContainers(VoiceScene):
             self.play(Indicate(p8.span(12, "--rm"), color=TURN, scale_factor=1.3), run_time=0.7)
             vo.wait_until("for that one service")
             slot_img = p8.span(12, "$IMAGE_NAME")
-            self.play(Transform(ch_img, value_chip("llm-rag-cli", 0.1, 0.02).move_to(slot_img)), run_time=0.7)
-            self.play(Indicate(ch_img.text, color=TURN, scale_factor=1.15), run_time=0.6)
+            self.play(Transform(ch_img, value_chip("llm-rag-cli", 0.14, 0.02).move_to(slot_img)), run_time=0.7)
+            self.play(*flash(ch_img.text, ch_img.box, TURN, 1.04), run_time=0.6)   # text stays inside the tight chip
 
         # ========================================================== 2 · the compose file: network, CLI service
         cv = fit_v2(ComposeView(show=("zone", "row_repo", "row_secrets")))

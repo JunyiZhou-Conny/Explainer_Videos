@@ -32,11 +32,11 @@ Beats (script.md "## S08", one voiceover block each):
     comes in; it types python cli.py --embed --chunk_type char-split -> cli-container/20 lines 2
     (cut), 3–6, …, 21–22, …, 73 (RED, wrapped); tag real run · no key on the title bar; GOLD tag on
     the command's prompt row "first Google call · your project pays".
- 7  The terminal shrinks to the strip (the command and the error's last row); a GREY "with your
-    key, look for" card above it, four items writing in as named (cli.py lines 240, 256, 259–260,
-    262–264).
+ 7  The terminal shrinks to a 4-row strip (the command's two rows and the error's two rows); a
+    GREY "with your key, look for" card above it, four items writing in as named (cli.py lines
+    240, 256, 259–260, 262–264).
  8  A second GREY card "if it fails (with your key)", rows writing in as named: the retry message
-    (cli.py lines 117–118), key file not found (the strip's error row flashes), PERMISSION_DENIED,
+    (cli.py lines 117–118), key file not found (the strip's error rows flash), PERMISSION_DENIED,
     SERVICE_DISABLED.
  9  TRACKER Embed 2. The strip types python cli.py --embed --chunk_type recursive-split (no output).
     ▶ your turn on a GREY card listing both embed commands and "each run sleeps 5 s per book"; a
@@ -51,8 +51,9 @@ Beats (script.md "## S08", one voiceover block each):
     vectors: count, first five, lengths" (code not shown); the strip grows to 4 rows ->
     recorded-embeddings/06 lines 9–11 (tag recorded · the staff's vectors (68e0bde), just above the
     strip). Left, V4: the upper half of a dashed unit circle, 24 GREEN arrows (directions ours,
-    lengths 0.369–0.402), a ruler along the axis (0.4, 1) and a YELLOW dashed mark at ≈ 0.4 across
-    the arrow tips ("lengths 0.369–0.402"); "length 1" at the circle.
+    lengths 0.369–0.402; tag "our illustration · the directions"), a ruler along the axis (0.4, 1)
+    and a YELLOW dashed mark at ≈ 0.4 across the arrow tips ("lengths 0.369–0.402"); "length 1"
+    at the circle.
 12  The strip, card and ruler leave; the dashed circle and the short arrows stay, a PINK query arrow
     joins; one arrow stretches to length 1 and back; chip "hnsw:space": "cosine" (cli.py line 288).
     PONDER 8 s in the lower third.
@@ -63,7 +64,8 @@ Beats (script.md "## S08", one voiceover block each):
 
 Deviations from SHOW (see the scene report): cli-container/20 line 2 is cut with … instead of
 wrapped and the terminal has 13 rows, so the typed command and its GOLD tag stay on screen (wrapped,
-the 15 rows would scroll the command away); the mini-map also hides during the 6-line panel of
+the 15 rows would scroll the command away); the strip of beats 7–10 has 4 rows, not 3, so the
+wrapped error shows whole (3 rows left half a line of it); the mini-map also hides during the 6-line panel of
 beat 3 (the "more than 5 lines" rule) and stays hidden from beat 6 on (terminals, cards above the
 strip, the ponder card and the inset leave no free corner); beat 8's rows are ordered as the
 narration names them (the retry message first); the dot-product podium's tag and the GOLD calls tag
@@ -114,7 +116,6 @@ from common import (
     MINI_CENTER,
     NARRATION,
     P_CTR,
-    STRIP_TOP,
     TURN,
     CellBar,
     LookFor,
@@ -253,13 +254,13 @@ def medal(name: str, score: str) -> VGroup:
     nm = label(name, 26, INK)
     sc = mono(score, 22, INK)
     row = VGroup(nm, sc).arrange(RIGHT, buff=0.25)
-    fr = box(1.4, 0.52, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.1).move_to(row)
+    fr = box(1.68, 0.52, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.1).move_to(row)   # row ≤ 1.38 wide
     g = VGroup(fr, row)
     g.frame, g.name, g.score = fr, nm, sc
     return g
 
 
-def podium(title: str, n: int, x0: float, base: float, heights=(0.6, 0.45, 0.32), w: float = 1.5,
+def podium(title: str, n: int, x0: float, base: float, heights=(0.6, 0.45, 0.32), w: float = 1.75,
            gap: float = 0.15) -> VGroup:
     """A small podium (rank 1 on the left, blocks numbered), its title above. .title .blocks
     .slots (where each rank's medal card sits)."""
@@ -389,14 +390,14 @@ class Embeddings(VoiceScene):
             self.play(Indicate(values, color=LOOKUP, scale_factor=1.15), run_time=0.7)
             self.play(FadeIn(gs), ReplacementTransform(values, a_ins), Transform(table.heads[1], l_ins),
                       FadeOut(VGroup(table.frame, table[1], table.heads[0], *[row[0] for row in table.cells])),
-                      ex.animate.move_to([pc.title.get_right()[0] + 0.3 + ex.width / 2, pc.title.get_center()[1], 0]),
-                      run_time=1.1)
+                      FadeOut(ex), run_time=1.1)
+            ex.move_to([pc.title.get_right()[0] + 0.3 + ex.width / 2, pc.title.get_center()[1], 0])
             self.play(LaggedStart(*[GrowArrow(a_c[k]) for k in "ABC"], lag_ratio=0.3),
                       LaggedStart(*[FadeIn(l_c[k]) for k in "ABC"], lag_ratio=0.3), FadeIn(sk_tag), run_time=1.0)
             vo.wait_until("Cosine similarity compares only the angle")
             self.play(LaggedStart(*[Create(arcs[k]) for k in "ABC"], lag_ratio=0.35), run_time=1.0)
             vo.wait_until("and picks the first candidate")
-            self.play(FadeIn(pc), run_time=0.4)
+            self.play(FadeIn(pc), FadeIn(ex), run_time=0.4)
             self.play(LaggedStart(*[FadeIn(med_c[k], shift=DOWN * 0.15) for k in "ABC"], lag_ratio=0.2),
                       run_time=0.7)
             self.play(Create(tick), Indicate(arcs["A"], color=TURN, scale_factor=1.0), run_time=0.5)
@@ -419,9 +420,15 @@ class Embeddings(VoiceScene):
 
         with self.voiceover(SAY[2]) as vo:
             lr = lref_swap(self, lr, "A44–A47")
+            # the cards' frames and letters copy down; the new scores write in (a digit-by-digit
+            # morph of 0.986 into 80.2 reads as noise)
             self.play(FadeIn(pd), FadeIn(dtag),
-                      TransformFromCopy(med_c["A"], med_d["A"]), TransformFromCopy(med_c["B"], med_d["B"]),
-                      run_time=0.9)
+                      *[TransformFromCopy(VGroup(med_c[k].frame, med_c[k].name), VGroup(med_d[k].frame, med_d[k].name))
+                        for k in "AB"],
+                      *[FadeIn(med_d[k].score, shift=DOWN * 0.1) for k in "AB"], run_time=0.9)
+            for k in "AB":
+                self.remove(med_d[k].frame, med_d[k].name, med_d[k].score)
+                self.add(med_d[k])
             self.play(flash(a_c["A"], INK), flash(a_c["B"], INK), run_time=0.8)
             vo.wait_until("and would pick the second candidate")
             self.play(flash(a_c["B"]), run_time=0.7)
@@ -474,6 +481,7 @@ class Embeddings(VoiceScene):
                       ReplacementTransform(len_lab, len04), run_time=1.0)
             vo.wait_until("a prefix the model is trained")
             self.play(Indicate(cb.parts["keep"], color=TURN, scale_factor=1.15), run_time=0.9)
+            self.play(flash(a_full), Indicate(keep_lab, color=TURN, scale_factor=1.05), run_time=1.1)
 
         # ========================================================== 4 · batches of 100, retries
         p2 = src_panel("cli.py", 96, 106, wrap=True)
@@ -507,7 +515,8 @@ class Embeddings(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(p1, bars1, cb, full_lab, len04, keep_lab, us, u_circ, a_full, one)),
-                      FadeIn(p2, shift=UP * 0.2), run_time=0.8)
+                      run_time=0.4)
+            self.play(FadeIn(p2, shift=UP * 0.2), run_time=0.5)
             self.play(FadeIn(stack), FadeIn(stack_lab), FadeIn(box4), FadeIn(bar100), run_time=0.5)
             self.play(FadeIn(b_chip, shift=UP * 0.1), run_time=0.4)
             for k in range(3):
@@ -588,11 +597,14 @@ class Embeddings(VoiceScene):
                       ("a 5-second pause", "cli.py · line 256"),
                       ("a second table with an embedding column", "cli.py · lines 259–260"),
                       (mixed(["`embeddings-char-split-*.jsonl`", "beside the chunks"]), "cli.py · lines 262–264")])
-        lf.move_to([0, (STRIP_TOP + 2.85) / 2, 0])
+        # beats 7–10: a 4-row strip keeps the command (prompt row with its GOLD tag + command row)
+        # and both rows of the wrapped error, so no half-line of the error is left on screen
+        s4 = strip_top(4)
+        lf.move_to([0, (s4 + 2.75) / 2, 0])
 
         with self.voiceover(SAY[7]) as vo:
-            nk_y = STRIP_TOP - t.bar_h / 2
-            resize(self, t, 3, keep=[cmd.rows[0], cmd.rows[1], err[1]], run_time=0.7,
+            nk_y = s4 - t.bar_h / 2
+            resize(self, t, 4, keep=[cmd.rows[0], cmd.rows[1], err[0], err[1]], run_time=0.7,
                    extra=[nk.animate.set_y(nk_y)])
             self.play(FadeIn(lf), run_time=0.4)
             self.play(lf.write_item(0))
@@ -624,14 +636,16 @@ class Embeddings(VoiceScene):
         rows8[1][0][0].set_color(ERR)
         rows8[2][0][0].set_color(ERR)
         rows8[3][0].set_color(ERR)
-        fails = VGroup(*rows8).arrange(DOWN, aligned_edge=LEFT, buff=0.22)
-        f_frame = box(fails.width + 0.6, fails.height + 0.5, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+        fails = VGroup(*rows8).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
+        f_frame = box(fails.width + 0.6, fails.height + 0.44, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
         fails.move_to(f_frame).align_to(f_frame, LEFT).shift(RIGHT * 0.3)
         f_head = note("if it fails (with your key)").next_to(f_frame, UP, buff=0.08).align_to(f_frame, LEFT)
         f_head.shift(RIGHT * 0.12)
         fcard = VGroup(f_frame, f_head, fails)
-        fcard.move_to([0, (STRIP_TOP + 2.85) / 2 - 0.05, 0])
+        fcard.move_to([0, 0, 0]).shift(UP * (s4 + 0.22 - f_frame.get_bottom()[1]))
+        assert fcard.get_top()[1] < 2.72, fcard.get_top()[1]            # clear of the tracker
         again = rows8[2][1]
+        err_rows = VGroup(err[0], err[1])
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(lf), FadeIn(f_frame), FadeIn(f_head), run_time=0.5)
@@ -639,7 +653,7 @@ class Embeddings(VoiceScene):
             self.play(FadeIn(rows8[0], shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("Key file not found")
             self.play(FadeIn(rows8[1], shift=RIGHT * 0.15), run_time=0.5)
-            self.play(Indicate(err[1], color=ERR, scale_factor=1.05), Indicate(rows8[1][0], color=ERR, scale_factor=1.04),
+            self.play(Indicate(err_rows, color=ERR, scale_factor=1.03), Indicate(rows8[1][0], color=ERR, scale_factor=1.04),
                       run_time=0.8)
             vo.wait_until("Permission denied")
             self.play(FadeIn(rows8[2], shift=RIGHT * 0.15), run_time=0.5)
@@ -650,10 +664,11 @@ class Embeddings(VoiceScene):
 
         # ========================================================== 9 · step 2, your turn, the calls
         tc = turn_card([EMB_CMD, EMB2_CMD, (Prose("each run sleeps 5 s per book · cli.py · line 256"), S.GREY)])
-        tc.move_to([0, 1.25, 0])
         calls_tag = two_row_tag(["≈ 89 calls (char-split) · ≈ 148 calls (recursive-split)",
                                  "cents, by our estimate · check the current price list"], COST)
-        calls_tag.move_to([0, tc.frame.get_bottom()[1] - 0.25 - calls_tag.height / 2, 0])
+        calls_tag.move_to([0, s4 + 0.25 + calls_tag.height / 2, 0])
+        tc.move_to([0, 0, 0]).shift(UP * (calls_tag.get_top()[1] + 0.25 - tc.frame.get_bottom()[1]))
+        assert tc.get_top()[1] < 2.72, tc.get_top()[1]
 
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(fcard), FadeOut(nk), tr.goto(2), run_time=0.5)
@@ -689,7 +704,7 @@ class Embeddings(VoiceScene):
         s_frame = box(content.width + 0.5, content.height + 0.8, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
         s_card = VGroup(s_frame, content, d1, d2)
         s_frame.move_to(content)
-        s_card.move_to([0, (STRIP_TOP + 2.85) / 2 + 0.05, 0])
+        s_card.move_to([0, (s4 + 2.75) / 2, 0])
         stf = staff_tag()
         stf.move_to(s_frame.get_corner(UP + RIGHT) + np.array([-0.3 - stf.width / 2, 0, 0]))
 
@@ -731,6 +746,11 @@ class Embeddings(VoiceScene):
         rng_lab.arrange(DOWN, aligned_edge=LEFT, buff=0.06)
         rng_lab.move_to(v4.point(26, 0.52) + RIGHT * rng_lab.width / 2)
         len1 = note("length 1").move_to(v4.point(128, 0.78))
+        # the 24 lengths are spread over the measured range; their directions are ours
+        fan_tag = our_illustration_tag("· the directions")
+        fan_tag.move_to([-1.2 + fan_tag.width / 2, 2.5, 0])                 # outside the circle, top right
+        assert fan_tag.get_right()[0] < 2.6 and np.linalg.norm(
+            fan_tag.get_corner(DOWN + LEFT) - v4.o.get_center()) > v4.r() + 0.15
         n_strip = 4
         st = staff_tag()
         st.move_to([6.3 - st.width / 2, strip_top(n_strip) + 0.12 + st.height / 2, 0])
@@ -739,10 +759,11 @@ class Embeddings(VoiceScene):
             self.play(FadeOut(VGroup(s_card, stf)), caption_extra(tr, True), run_time=0.5)
             self.play(FadeIn(ck, shift=UP * 0.1), run_time=0.5)
             t.clear(self, run_time=0.25)
-            resize(self, t, n_strip, run_time=0.5)
+            if t.rows != n_strip:
+                resize(self, t, n_strip, run_time=0.5)
             out = t.print(self, NORMS_OUT, run_time=0.6)
             bare_prompt(self, t)
-            self.play(FadeIn(st), FadeIn(v4), Create(circ), run_time=0.6)
+            self.play(FadeIn(st), FadeIn(v4), Create(circ), FadeIn(fan_tag), run_time=0.6)
             vo.wait_until("24 rows of 256 numbers")
             self.play(substring(out[0], "24 rows").animate.set_color(TURN),
                       substring(out[0], "256 numbers").animate.set_color(TURN),
@@ -805,7 +826,9 @@ class Embeddings(VoiceScene):
         game_chip.move_to([-0.6, -2.75, 0])
 
         with self.voiceover(SAY[13]) as vo:
-            self.play(FadeOut(card), FadeOut(hn), others.animate.set_opacity(0.25), run_time=0.5)
+            self.play(FadeOut(card), FadeOut(hn), others.animate.set_opacity(0.25),
+                      fan_tag.animate.move_to([v4.point(180, 1.0)[0] + fan_tag.width / 2, V4_O[1] - 0.45, 0]),
+                      run_time=0.5)                       # the inset needs the top right; the card has gone
             self.play(Create(arc), FadeIn(same_lab), run_time=0.6)
             self.play(Transform(picked, long_), run_time=0.9)
             self.play(Indicate(arc, color=TURN, scale_factor=1.0), Indicate(same_lab, color=TURN, scale_factor=1.1),
@@ -826,6 +849,6 @@ class Embeddings(VoiceScene):
             vo.wait_until("the game's lesson")
             self.play(FadeIn(game_chip, shift=UP * 0.1), run_time=0.5)
         self.wait(0.8)
-        self.play(FadeOut(VGroup(tr, v4, circ, fan, a_q, l_q, len1, arc, same_lab, ins, ins_t, ins_i, w, w_circ,
-                                 wq, wc, dist, d_lab, n_l2, n_dot, game_chip)), run_time=0.8)
+        self.play(FadeOut(VGroup(tr, v4, circ, fan, fan_tag, a_q, l_q, len1, arc, same_lab, ins, ins_t, ins_i, w,
+                                 w_circ, wq, wc, dist, d_lab, n_l2, n_dot, game_chip)), run_time=0.8)
         self.wait(0.3)

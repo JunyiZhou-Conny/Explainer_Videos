@@ -973,7 +973,8 @@ schematic console (browser, tag `illustration`, as in L1): VM instances → Crea
 fill: Name `ac215-l02` · Machine type `e2-small` · Boot disk `Debian GNU/Linux 12 (bookworm)`; GREY
 footnote "the README gives no settings: sensible choices · Debian 13 works too · E2 = amd64". The
 GOLD dial starts sweeping, with tags "billed per second while running" and "disk: billed while it
-exists". GREY tag `Lecture 2 · slide 77` (top right, from "The last README section").
+exists". GREY tag `Lecture 2 · slide 77` (top right, from "The last README section" until the
+console becomes the SSH terminal).
 SAY: The last README section: Running App on VM using Docker. First, create a VM, as in lecture 1. The README gives no settings. An ordinary E2 machine with Debian 12 or 13 will do; E2 machines are amd64. The meter starts: the VM bills by the second while it runs, its disk while it exists.
 
 SHOW: TRACKER C2. "SSH" is clicked: the browser window transforms into a terminal (title

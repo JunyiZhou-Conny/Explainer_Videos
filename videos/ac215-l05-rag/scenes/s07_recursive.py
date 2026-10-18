@@ -11,7 +11,8 @@ Beats (script.md "## S07", one voiceover block each):
     ribbon of word blocks, GREY ticks at the paragraph gaps (tall) and at the one line break
     (short); "chunking" lit; four PURPLE separator chips \\n\\n → \\n → " " → "" with their
     names. PURPLE scissors hunt along the ribbon and snip at the story's real chunk ends (all
-    blank lines) while chip 1 is lit; chips 2, 3 and 4 light as the narration names them. Then
+    blank lines) while chip 1 is lit; chips 2, 3 and 4 light as the narration names them (the
+    ribbon's one line break flashes with chip 2; chip 4 pulses at "a single character"). Then
     chip 1 lights again, a GREY note says every cut here is a blank line, the cuts flash and a
     callout shows one cut between "table." and "On".
  2  The TEAL container terminal (13 rows; the mini-map hides) types `python cli.py --chunk
@@ -23,10 +24,12 @@ Beats (script.md "## S07", one voiceover block each):
     labelled "chunk size 350". PONDER (8 s): the card in the lower third, above the strip.
  4  TRACKER Chunk 3 · extra. The bars go; the terminal grows to 12 rows and types the one-liner
     of cli-container/15 (extra; it folds onto 5 rows, the row that continues the file name at
-    column 0, see literal_safe_rows), holds it 0.6 s -> lines 8–16, wrapped (12 rows: the
-    command scrolls away). GREY brackets 0 and 1 mark the end of chunk 0 and chunk 1; line 12's
-    `## Chapter One: The First Slice` and line 8's turn YELLOW, joined by a PINK bracket
-    "repeated". Top right: the chip "library default: chunk_overlap = 200", then the tag
+    column 0, see literal_safe_rows), holds it 0.9 s -> lines 8–16, wrapped (12 rows: the
+    command scrolls away). A GREY row tag on the --- line says which side is chunk 0's end and
+    which is chunk 1; chunk 1's first two lines (line 12's `## Chapter One: The First Slice` and
+    line 14's sentence) turn YELLOW, then the same two lines at chunk 0's end (8, 10), joined by
+    a PINK bracket "repeated". Top right: the chip "library default: chunk_overlap = 200"
+    (its value pulses at "up to 200 characters"), then the tag
     "erratum · the README says overlapping, not how much". A GREY tag "chunk 1: 328 characters"
     at the end of chunk 1.
  5  The terminal shrinks to the strip (line 8, ---, line 12). V3's ribbon returns with the
@@ -146,6 +149,8 @@ assert FIRST.cmd.startswith('python -c "import json;') and FIRST.exit == 0
 FIRST_OUT = FIRST.at((8, 16))
 HEAD = "## Chapter One: The First Slice"
 assert FIRST.line(8) == HEAD and FIRST.line(12) == HEAD and FIRST.line(11) == "---"
+SENT = "The first thing Mara noticed was that nobody hurried."            # repeated too
+assert FIRST.line(10) == SENT and FIRST.line(14) == SENT
 CHUNK1 = "\n".join(FIRST.line(n) for n in range(12, 17))     # chunk 1, as printed
 assert len(CHUNK1) == 328 and FIRST.line(17) == "---"
 assert STORY_TEXT[RECURSIVE_SPANS[1][0]:RECURSIVE_SPANS[1][1]] == CHUNK1   # our spans match the run
@@ -382,7 +387,10 @@ class RecursiveSplit(VoiceScene):
 
         sc.move_to(sc_at(rb.x_of(VIEW[0]) - 0.05))
         cuts = VGroup(*[rb.cut(b + 1) for b in ENDS])
+        lb_ticks = [m for m in rb.parts["breaks"] if m.get_stroke_width() < 2.5]   # the one line break
+        assert len(lb_ticks) == 1, len(lb_ticks)
         callout = rb.callout(CALL_A, CALL_B)
+        callout.shift(UP * 0.12)                        # clear of the cut lines' and ticks' tops
         k_seam = SEAM - CALL_A + 1                      # the boundary between the two blanks
         cx = x_col(callout.text, k_seam)
         c_cut = Line([cx, callout.frame.get_top()[1] - 0.04, 0], [cx, callout.frame.get_bottom()[1] + 0.04, 0],
@@ -411,14 +419,18 @@ class RecursiveSplit(VoiceScene):
             vo.wait_until("First a blank line")
             self.play(light(chips[0]), run_time=0.3)
             for b, cl in zip(ENDS, cuts):
-                self.play(sc.animate.move_to(sc_at(rb.x_of(b + 1))), run_time=0.35)
-                self.play(sc.animate(rate_func=there_and_back).stretch(0.7, 0), Create(cl), run_time=0.25)
+                self.play(sc.animate.move_to(sc_at(rb.x_of(b + 1))), run_time=0.3)
+                self.play(sc.animate(rate_func=there_and_back).stretch(0.7, 0), Create(cl), run_time=0.22)
             vo.wait_until("then a line break")
-            self.play(light(chips[0], False), light(chips[1]), run_time=0.3)
+            # chip 2 lights and the ribbon's one line break (the short tick) flashes
+            self.play(light(chips[0], False), light(chips[1]),
+                      Indicate(lb_ticks[0], color=TURN, scale_factor=1.6), run_time=0.7)
             vo.wait_until("then a space")
             self.play(light(chips[1], False), light(chips[2]), run_time=0.3)
             vo.wait_until("and only as a last resort")
             self.play(light(chips[2], False), light(chips[3]), run_time=0.3)
+            vo.wait_until("a single character")
+            self.play(Indicate(VGroup(chips[3], names[3]), color=TURN, scale_factor=1.15), run_time=0.7)
             vo.wait_until("So every cut falls")
             self.play(light(chips[3], False), light(chips[0]), FadeIn(here, shift=UP * 0.1),
                       LaggedStart(*[Indicate(c, color=TURN, scale_factor=1.15) for c in cuts], lag_ratio=0.15),
@@ -487,8 +499,11 @@ class RecursiveSplit(VoiceScene):
             self.play(FadeIn(ins), FadeIn(nums[0]),
                       TransformFromCopy(substring(ltot, "14228"), nums[1]), run_time=0.7)
             vo.wait_until("So why")
-            self.play(Indicate(nums[1], color=TURN, scale_factor=1.2), run_time=0.6)
-            self.play(Indicate(nums[0], color=TURN, scale_factor=1.2), run_time=0.6)
+            self.play(Indicate(nums[1], color=TURN, scale_factor=1.2),
+                      bars[1].animate(rate_func=there_and_back).set_fill(opacity=0.7), run_time=0.8)
+            vo.wait_until("instead of")
+            self.play(Indicate(nums[0], color=TURN, scale_factor=1.2),
+                      bars[0].animate(rate_func=there_and_back).set_fill(opacity=0.7), run_time=0.8)
         card = ponder_at(self, PONDER_Q, 8, y=card_y)
 
         # ========================================================== 4 · the first chunks: the overlap
@@ -510,16 +525,20 @@ class RecursiveSplit(VoiceScene):
             resize(self, t, 12, run_time=0.45)
             ol = type_literal_safe(self, t, FIRST.cmd, type_time=1.0)
             pin(self, ol, beside(extra_tag(), t, ol, buff=0.4), run_time=0.25)
-            self.wait(0.6)                     # let the command read: its output scrolls it away
+            self.wait(0.9)                     # let the command read: its output scrolls it away
             rows = t.print(self, FIRST_OUT, wrap=True, run_time=0.5)
             assert len(rows) == 12 and rows[0].text == HEAD and rows[4].text == HEAD
+            assert rows[2].text == SENT and rows[6].text == SENT
             sep_tag = row_tag("above: the end of chunk 0  ·  below: chunk 1")
             beside(sep_tag, t, rows[3], buff=0.4)
             vo.wait_until("Chunk 1 starts again")
+            # chunk 1's start (heading + first sentence), then the same two lines at chunk 0's end
             h1, h0 = substring(rows[4], HEAD), substring(rows[0], HEAD)
-            self.play(h1.animate.set_color(TURN), FadeIn(sep_tag, shift=LEFT * 0.1), run_time=0.5)
+            s1, s0 = substring(rows[6], SENT), substring(rows[2], SENT)
+            self.play(h1.animate.set_color(TURN), s1.animate.set_color(TURN),
+                      FadeIn(sep_tag, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("repeating the end")
-            self.play(h0.animate.set_color(TURN), run_time=0.5)
+            self.play(h0.animate.set_color(TURN), s0.animate.set_color(TURN), run_time=0.5)
             xv = max(r.get_right()[0] for r in rows[0:5]) + 0.3
             ya, yb = rows[0].strut.get_center()[1], rows[4].strut.get_center()[1]
             rep = VMobject(stroke_color=LOOKUP, stroke_width=4)
@@ -529,7 +548,8 @@ class RecursiveSplit(VoiceScene):
             self.play(Create(rep), FadeIn(rep_lab, shift=LEFT * 0.1), run_time=0.7)
             vo.wait_until("The splitter's library default")
             self.play(FadeIn(d_chip, shift=DOWN * 0.1), run_time=0.5)
-            self.play(Indicate(default[1], color=TURN, scale_factor=1.1), run_time=0.6)
+            vo.wait_until("up to 200 characters")
+            self.play(Indicate(default[1], color=TURN, scale_factor=1.03), run_time=0.6)
             vo.wait_until("which the README never mentions")
             self.play(FadeIn(err, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("Cutting at boundaries")
@@ -567,7 +587,8 @@ class RecursiveSplit(VoiceScene):
         hint = VGroup(label("want another value? set", CAPTION, INK), mono("chunk_overlap", 22, INK))
         hint.arrange(RIGHT, buff=0.15)
         h_box = box(hint.width + 0.44, hint.height + 0.24, S.GREY, fill_opacity=0.16, radius=0.2).move_to(hint)
-        h_chip = VGroup(h_box, hint).move_to([6.45 - (hint.width + 0.44) / 2, 2.6, 0])
+        h_chip = VGroup(h_box, hint).move_to([6.45 - (hint.width + 0.44) / 2, 2.5, 0])
+        assert h_chip.get_top()[1] < d_chip.get_bottom()[1] - 0.06, (h_chip.get_top(), d_chip.get_bottom())
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(sep_tag, rep, rep_lab, short, err)), run_time=0.3)
@@ -586,7 +607,7 @@ class RecursiveSplit(VoiceScene):
                       run_time=1.0)
             vo.wait_until("If you want a different value")
             self.play(FadeIn(h_chip, shift=DOWN * 0.1), run_time=0.5)
-            self.play(Indicate(hint[1], color=TURN, scale_factor=1.1), run_time=0.7)
+            self.play(Indicate(hint[1], color=TURN, scale_factor=1.03), run_time=0.7)
 
         # ========================================================== 6 · the document's own structure
         lr2 = lref("B16–B19")

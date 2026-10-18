@@ -18,10 +18,11 @@ Beats (script.md "## S14", one voiceover block each):
     leaves and the page folds its port card (address bar + reply card stay) while the terminal
     grows to 7 rows; it types `curl --max-time 3 http://localhost:8090` (extra, GREY tag) -> 33
     line 2, RED; then `docker ps --format 'table {{.Image}}\t{{.Ports}}\t{{.Names}}'` (extra) -> 35
-    lines 2–4, `127.0.0.1:8095->9100/tcp` YELLOW. On "Pause and move your gateway's door", in one
-    move: the page leaves, the terminal shrinks to 5 rows (docker ps's prompt row with its extra
-    tag, the command, its output) and the static GREY your-turn card (`docker rm -f gateway` · the
-    run's five rows · open localhost:8095) appears above it, ▶ your turn on it (held >= 2.5 s).
+    lines 2–4, `127.0.0.1:8095->9100/tcp` YELLOW as the page leaves. On "Pause and move your
+    gateway's door", in one move: the terminal shrinks to 5 rows (docker ps's prompt row with its
+    extra tag, the command, its output; the curl rows fade) and the static GREY your-turn card
+    (`docker rm -f gateway` · the run's five rows · open localhost:8095) appears above it, full
+    0.4 s after "Pause", ▶ your turn on it (held >= 2.5 s).
  2  The card leaves and the terminal shrinks to the strip (docker ps's output). A GREY README card
     `README.md · lines 357–363` (the heading and lines 359, 361,
     363 as rendered) at the left; at the right, a small V7-style picture: the laptop's dashed wall
@@ -86,9 +87,10 @@ Beats (script.md "## S14", one voiceover block each):
     On "Skip this" the RED excerpt chip `Conflict. The container name "/processor" is already in
     use` (header `docker compose up · if the old containers remain (excerpt)`, from 68 lines 8–9
     joined) drops in above the terminal, the GREY caption "if you skip this: Compose wants these
-    names" right of the tracker. On "Pause and clean up" the static GREY your-turn card (the two
-    README commands, the two extras tagged) replaces the terminal and the tracker caption drops
-    " · extra"; it is held >= 2.5 s. Fade out to an empty frame.
+    names" right of the tracker. On "Pause and clean up", in one lagged move, the static GREY
+    your-turn card (the two README commands, the two extras tagged) replaces the terminal and the
+    tracker caption drops " · extra"; it is full 0.6 s after "Pause" and held >= 2.5 s. Fade out
+    to an empty frame.
 
 Deviations from SHOW (and why):
 - The terminal under V7 has 7 rows (top y 0.17), not 8 (top 0.58), and V7 is S11's 0.83 vertical
@@ -200,6 +202,7 @@ from manim import (
     TransformFromCopy,
     VGroup,
     linear,
+    smooth,
     there_and_back,
 )
 
@@ -299,6 +302,12 @@ CAP_GREY = S.GREY
 # ------------------------------------------------------------------ helpers
 def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
+
+
+def window(a0: float, a1: float):
+    """A smooth rate function that runs only between a0 and a1 of its play (still before a0,
+    done after a1): one animation inside a longer move."""
+    return lambda a: smooth(min(1.0, max(0.0, (a - a0) / (a1 - a0))))
 
 
 def flash_chip(c, color: str, k: float = 1.1, run_time: float = 0.7):
@@ -669,12 +678,21 @@ class ChangePorts(VoiceScene):
             type_extra(self, t, PS_SHORT, type_time=0.9)
             ps = t.print(self, C35.at((2, 4)), run_time=0.3)
             m95 = substring(ps[1], "127.0.0.1:8095->9100/tcp")
-            self.play(m95.animate.set_color(TURN), run_time=0.3)
+            # the page leaves with the highlight, so the card never fades in over it
+            self.play(m95.animate.set_color(TURN), FadeOut(pg1), run_time=0.3)
             vo.wait_until("Pause and move")
             # 5 rows: docker ps (its prompt row with the extra tag, the command) and its output stay;
-            # the card arrives in the same move, so a pause on "Pause" already lands on it
-            resize(self, t, 5, run_time=0.5, extra=[FadeOut(pg1), caption_extra(tr, False),
-                                                    FadeIn(card1, shift=UP * 0.15)])
+            # the curl rows leave in the same move (not in resize's own fade first) and the card
+            # arrives in it, full 0.4 s after "Pause": a pause on "Pause" already lands on it
+            gone = list(t.lines.submobjects[:-5])
+            assert len(gone) == 2, len(gone)
+            for ln in gone:
+                t.lines.remove(ln)
+            resize(self, t, 5, run_time=0.5,
+                   extra=[FadeOut(VGroup(*gone), rate_func=window(0, 0.4)),    # gone before the title bar reaches them
+                          caption_extra(tr, False),
+                          FadeIn(card1, shift=UP * 0.15, rate_func=window(0.1, 0.8))])
+            self.remove(*gone)
 
         # ============================================================ 2 · why: another app holds 8090
         rc = readme_rows_card("README.md · lines 357–363", README_357)
@@ -687,7 +705,9 @@ class ChangePorts(VoiceScene):
         assert cap2.get_bottom()[1] > STRIP_TOP + 0.08 and rc.frame.get_bottom()[1] > STRIP_TOP + 0.08
         rows = rc.rows
         with self.voiceover(SAY[2]) as vo:
-            resize(self, t, 3, run_time=0.6, extra=[FadeOut(card1), FadeIn(rc, shift=DOWN * 0.1)])
+            # lagged: the README card's rows do not fade in over the your-turn card's rows
+            resize(self, t, 3, run_time=0.6,
+                   extra=[LaggedStart(FadeOut(card1), FadeIn(rc, shift=DOWN * 0.1), lag_ratio=0.6)])
             self.play(rows[0].animate.set_color(TURN), run_time=0.3)
             vo.wait_until("Another app on your laptop")
             self.play(rows[0].animate.set_color(INK), rows[1].animate.set_color(TURN),
@@ -943,8 +963,10 @@ class ChangePorts(VoiceScene):
             self.play(FadeIn(ec10, shift=DOWN * 0.15), run_time=0.5)
             self.play(FadeIn(cap10), flash(ec10.text, ERR, 1.04), run_time=0.6)
             vo.wait_until("Pause and clean up")
-            self.play(FadeOut(VGroup(t8, b_hw, no_tn, ec10, cap10)), caption_extra(tr, False), run_time=0.4)
-            self.play(FadeIn(card10, shift=UP * 0.15), run_time=0.5)
+            # one lagged move: the card is full 0.6 s after "Pause", with no empty frame before it
+            self.play(LaggedStart(AnimationGroup(FadeOut(VGroup(t8, b_hw, no_tn, ec10, cap10)),
+                                                 caption_extra(tr, False)),
+                                  FadeIn(card10, shift=UP * 0.15), lag_ratio=0.5), run_time=0.6)
         self.play(*[FadeOut(m) for m in list(self.mobjects)], run_time=0.6)
         self.wait(0.2)
 

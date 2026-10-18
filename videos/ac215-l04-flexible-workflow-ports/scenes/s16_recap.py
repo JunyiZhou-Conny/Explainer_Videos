@@ -32,13 +32,15 @@ Beats (script.md "## S16", one voiceover block each):
     (the file's own line 16). On "and apply again": the strip types `docker compose up -d` -> 60 lines
     2–4 (same colours, the same GREY "≈10 s" tag); the editor goes, V6 returns and the gateway re-forms
     with door 127.0.0.1:8090.
- 4  TRACKER P4/4 · extra. V6 leaves; a GREY editor with processor/processor.py · line 45 and the GREY
-    caption "edit: add `# edited` at the end · remove it when you're done" under it; the pencil writes
-    lines 46–47 (a blank line and `# edited`, the capture's `+` lines; the header becomes "lines
-    45–47"). The strip types `git diff` (extra) -> 61 lines 10–11, GREEN. On "We added a comment" the
-    `+# edited` row flashes. TRACKER P4/4: the editor goes, the terminal grows to 13 rows and types
-    `docker compose up -d --build` -> 62 lines 3, …, 21–24, …, 43–47 (BuildKit rows, times as GREY
-    tags; the CACHED rows GREEN). On "only the copy layer is new" line 24 `[processor 4/4] COPY . .`
+ 4  TRACKER P4/4 · extra. V6 and the strip's rows leave; a GREY editor with processor/processor.py ·
+    line 45 and the GREY caption "edit: add `# edited` at the end · remove it when you're done" under
+    it; the pencil writes lines 46–47 (a blank line and `# edited`, the capture's `+` lines; the header
+    becomes "lines 45–47"). The strip types `git diff` (extra) -> 61 lines 10–11, GREEN (all during
+    "We added a comment to the processor's code"). On "Changed code" the `+# edited` row and the
+    editor's line flash. On "needs dash dash build" (TRACKER P4/4) the editor goes, the terminal
+    grows to 13 rows and types `docker compose up -d --build` -> 62 lines 3, …, 21–24, …, 43–47
+    (BuildKit rows, times as GREY tags; the CACHED rows GREEN). On "Only the copy layer is new" line
+    24 `[processor 4/4] COPY . .`
     and its time turn YELLOW, GREY tag "not CACHED"; on "and only the processor is recreated" line 46
     `gateway Running` GREEN, line 47 `processor Started` and `10.4s` YELLOW.
  5  The terminal shrinks to the 3-row strip. Tag `illustration · what if` (top band, right). Left
@@ -910,7 +912,7 @@ class Recap(VoiceScene):
             self.play(*leave_container(t, P_TOY), run_time=0.4)
             bare_prompt(self, t)
 
-        # ============================================================ 2 · Step 3: repeat the port experiments
+        # ============================================================ 2 · README line 487: repeat the port experiments
         rc487 = readme_chip("README.md · line 487", "repeat the port experiments in docker-compose.yml", max_w=10.0)
         place(rc487, left=X_L, top=TOP - 0.02)
         ed = editor(E_BEFORE, "docker-compose.yml", 15, "docker-compose.yml · lines 15–16 · comment cut")
@@ -979,34 +981,50 @@ class Recap(VoiceScene):
                       flash(halo, CTR, 1.0, 1.0))
 
         # ============================================================ 4 · --build: only the processor
-        edp = editor(P_AFTER, "processor/processor.py", 45, "processor/processor.py · line 45", "python")
+        # the editor is built with the header the pencil leaves, so its frame fits "lines 45–47" (built
+        # for "line 45", the longer header later ran across the frame's right edge); it reads "line 45"
+        # until the pencil adds lines 46–47
+        edp = editor(P_AFTER, "processor/processor.py", 45, "processor/processor.py · lines 45–47", "python")
         added = VGroup(*edp.panel.code.code_lines[2])                 # "# edited"
         cap_p = mixed([("edit: add", "serif"), ("# edited", "mono"),
                        ("at the end · remove it when you're done", "serif")])
         place(edp, cx=0, top=TOP - 0.1)
-        hd_after = _header_text("processor/processor.py · lines 45–47").move_to(edp.panel.header, aligned_edge=LEFT)
+        hd_after = edp.panel.header
+        hd_45 = _header_text("processor/processor.py · line 45").move_to(hd_after, aligned_edge=LEFT)
+        edp.panel.remove(hd_after)
+        edp.panel.add(hd_45)
+        edp.panel.header = hd_45
+        assert hd_after.get_right()[0] < edp.frame.get_right()[0] - 0.1, (hd_after.get_right(), edp.frame.get_right())
         place(cap_p, cx=0, top=edp.get_bottom()[1] - 0.18)
         assert cap_p.get_bottom()[1] > STRIP4 + 0.15, cap_p.get_bottom()[1]
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(net), FadeOut(halo), tr.goto(4), run_time=0.5)
+            # brisk, so the edit and its git diff are drawn while "We added a comment to the processor's
+            # code" is said, and the diff then stays up ≈2 s, through "Changed code that's copied into an
+            # image" (it printed 1.9 s into that sentence and was readable for under 1 s): the strip's
+            # old rows leave with V6, so git diff and its rows print without a scroll
+            wipe(self, t, extra=[FadeOut(net), FadeOut(halo), tr.goto(4)], run_time=0.5)
             for m in added:
                 m.set_opacity(0)
-            self.play(caption_extra(tr, True), FadeIn(edp, shift=DOWN * 0.1), FadeIn(cap_p), run_time=0.5)
+            self.play(caption_extra(tr, True), FadeIn(edp, shift=DOWN * 0.1), FadeIn(cap_p), run_time=0.45)
             for m in added:
                 m.set_opacity(1)
             self.remove(*added)
             pen = pencil(0.5, TURN).move_to(edp.panel.code.code_lines[0].get_right() + RIGHT * 0.6 + UP * 0.2)
-            self.play(FadeIn(pen), run_time=0.2)
-            self.play(pen_to(pen, VGroup(*added)), Transform(edp.panel.header, hd_after), run_time=0.4)
+            # the header crossfades to "lines 45–47"; the old one leaves the panel too (FadeOut pitfall)
+            self.play(FadeIn(pen), pen_to(pen, VGroup(*added)), FadeOut(hd_45), FadeIn(hd_after), run_time=0.35)
+            edp.panel.remove(hd_45)
+            edp.panel.add(hd_after)
+            edp.panel.header = hd_after
             self.add(*added)
             for m in added:
                 m.set_opacity(0)
-            self.play(*[m.animate.set_opacity(1) for m in added], pen_to(pen, VGroup(*added), run_time=0.6),
-                      run_time=0.6)
-            self.play(pen.animate.shift(RIGHT * 0.4 + UP * 0.3).set_opacity(0), run_time=0.3)
+            self.play(*[m.animate.set_opacity(1) for m in added], pen_to(pen, VGroup(*added), run_time=0.5),
+                      run_time=0.5)
+            self.play(pen.animate.shift(RIGHT * 0.4 + UP * 0.3).set_opacity(0), run_time=0.25)
             self.remove(pen)
-            type_extra(self, t, DIFF, type_time=0.4)
+            type_extra(self, t, DIFF, type_time=0.35)
             dp = t.print(self, [(C61.line(10), VENV), (C61.line(11), VENV)], run_time=0.4)
+            vo.wait_until("Changed code")
             self.play(flash(dp[1].glyphs, VENV, 1.15), flash(added, VENV, 1.15), run_time=0.6)
             vo.wait_until("needs dash dash build")      # the edit and its diff stay up while it is named
             # brisk, so the build's rows print as "only the copy layer is new" is said (they came 1.3 s

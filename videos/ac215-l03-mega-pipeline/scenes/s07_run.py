@@ -14,8 +14,8 @@ Beats (script.md "## S07", one voiceover block each):
     image + a thin writable layer", then "thrown away on exit: --rm" while a ghost of the layer
     floats up and fades.
  1  V3 slides right and the laptop (GREY, transcribe_audio/) fades in at left; "Lecture 3 ·
-    slides 51–52" top right (to beat 3's first play). The PINK route draws with its label
-    -v "$(pwd):/app"; the folder name pulses ("the current folder, pwd").
+    slides 51–52" top right (through the ponder, to beat 4's route-label drop). The PINK route
+    draws with its label -v "$(pwd):/app"; the folder name pulses ("the current folder, pwd").
     A GREY sheet carrying the laptop's files appears on the laptop folder and slides along the
     route over the cavity; the copied files dim underneath. Once it lands, slide 52's two sides
     under the route, in the gap (no narration): GREY "host folder" under $(pwd), "container
@@ -25,14 +25,15 @@ Beats (script.md "## S07", one voiceover block each):
     travels). A page appears in the fifth row on both sides at the same instant, blinks on both
     (route pulse), and gets a GREEN check (it stays). A page lands on the dashed writable layer,
     with a GREY tag "/tmp · throwaway" above it.
- 3  The beat-2 marks, the two-sides labels and the lecture tag go. Tag "illustration · lecture
-    2's layout: .venv next to the code". The route label rises into the band above the gap (the
+ 3  The beat-2 marks and the two-sides labels go (the lecture tag stays). Tag "illustration ·
+    lecture 2's layout: .venv next to the code". The route label rises into the band above the gap (the
     half-open sheet will hide the route), the laptop sheet slides halfway back along the route
     (the copied files undim); the GREEN venv
     box slides into the cavity's fifth row as /app/.venv; on "with this mount" the sheet's frame
     and the route label pulse. PONDER (8 s, card under V3) while the sheet waits half open.
  4  The sheet slides back over the cavity and covers the .venv box completely (copied files dim
-    again) and the route label drops back onto the route. A TEAL label "start: bash, venv on"
+    again) and the route label drops back onto the route as the lecture tag goes (it would meet
+    the next label). A TEAL label "start: bash, venv on"
     above the layer sends an "activate" arrow down; it hits the sheet and turns RED with a
     cross and "no .venv on your laptop". The marks and
     the illustration tag go; the box slides back out to /home/app/.venv and CODE(Dockerfile: 9)
@@ -353,8 +354,9 @@ class RunContainer(VoiceScene):
 
         # ========================================================== 1 · -v: the laptop sheet covers /app
         cap1 = caption("`/app`", "now is your folder").move_to([0, CAP_Y, 0])
-        # top right from beat 1's first play to beat 3's first (one folder, two sides): clears the
-        # writable layer (top ~2.3) and beat 2's "/tmp · throwaway" tag (top ~2.85)
+        # top right from beat 1's first play through the ponder (the mount picture) to beat 4's
+        # route-label drop, just before "start: bash, venv on" reaches its corner: clears the
+        # writable layer (top ~2.3; ~2.7 once V3 is up) and beat 2's "/tmp · throwaway" (top ~2.85)
         lref = lecture_ref(3, "51–52")
         with self.voiceover(SAY[1]) as vo:
             self.play(win.animate.shift(LEFT * X_SOLO), FadeOut(VGroup(cap0a, cap0b)), FadeIn(lref), run_time=0.7)
@@ -443,7 +445,7 @@ class RunContainer(VoiceScene):
             return ill, fr, lab
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(cap2, chk, tmp_pg, tmp_tag, lref, sides)), win.animate.shift(UP * (Y_WIN - Y0)),
+            self.play(FadeOut(VGroup(cap2, chk, tmp_pg, tmp_tag, sides)), win.animate.shift(UP * (Y_WIN - Y0)),
                       run_time=0.6)
             ill, v_fr, v_lab = layout3()
             home_fr, home_lab = win.venv.frame.copy(), win.venv.label.copy()
@@ -493,7 +495,7 @@ class RunContainer(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(card), run_time=0.4)
             self.play(win.cover_to(1.0), Transform(win.copied, op_target(win.copied, 0.3)), run_time=1.1)
-            self.play(win.route_label.animate.move_to(lab_home), run_time=0.3)
+            self.play(win.route_label.animate.move_to(lab_home), FadeOut(lref), run_time=0.3)
             vo.wait_until("with no venv in it")
             self.play(FadeIn(start, shift=DOWN * 0.1), run_time=0.4)
             self.play(GrowArrow(arr), FadeIn(act), run_time=0.6)

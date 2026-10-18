@@ -65,8 +65,8 @@ Beats (script.md "## S06", one voiceover block each):
     YELLOW; on "so the copy runs again" it dissolves and re-forms, on "and so does every step" the
     uv sync hairline flashes YELLOW and does the same. On "Build steps 2 and 3" badges 2, 3 turn
     GREEN and the apt and WORKDIR slabs get GREEN "CACHED" stamps; on "and build step 1 is the base
-    image" badge 1 turns GREEN (the base slab stays as is). GREY caption "part 2: for real" under
-    the floor. Fade out: empty frame.
+    image" badge 1 turns ORANGE, its base slab's colour, and pulses (not the CACHED GREEN; the base
+    slab stays as is). GREY caption "part 2: for real" under the floor. Fade out: empty frame.
 
 Timing: `at()` = vo.wait_until plus a shift measured from the clip's pauses (see its docstring).
 """
@@ -818,7 +818,10 @@ class BuildImage(VoiceScene):
             self.play(LaggedStart(*[AnimationGroup(Create(ln), FadeIn(s_, scale=1.4))
                                     for ln, s_ in zip(stamp_leads, stamps)], lag_ratio=0.4), run_time=0.9)
             at(self, vo, "and build step 1 is the base image")
-            self.play(recolor(badges[0], VENV), run_time=0.5)
+            # not cached: the base image is already on this machine. ORANGE (system, its slab's
+            # colour), never the CACHED GREEN of badges 2-3
+            self.play(recolor(badges[0], SYSTEM), run_time=0.5)
+            self.play(pulse(badges[0], SYSTEM), run_time=0.6)
             at(self, vo, "We'll see it")
             self.play(FadeIn(part2, shift=UP * 0.1), run_time=0.6)
         self.wait(0.6)

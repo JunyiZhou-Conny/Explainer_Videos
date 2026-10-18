@@ -411,7 +411,8 @@ class StepCopy(VoiceScene):
             no_ign = beside(row_tag([("no", "label"), (".dockerignore", "mono")]), r13)
             pin(self, r13, no_ign, run_time=0.4)
             vo.wait_until("so nothing is filtered")
-            self.play(Indicate(no_ign.text, color=INK, scale_factor=1.08), run_time=0.6)
+            self.play(Indicate(no_ign.text, color=INK, scale_factor=1.08),     # text only: no flood
+                      no_ign.box.animate(rate_func=there_and_back).scale(1.08), run_time=0.6)
             vo.wait_until("and the whole context")
             g63 = substring(r17, "63.12kB")
             self.play(g63.animate.set_color(ROUTE), run_time=0.4)
@@ -420,7 +421,8 @@ class StepCopy(VoiceScene):
             parcel_tag = beside(row_tag("the parcel", ROUTE), r17)
             pin(self, r17, parcel_tag, run_time=0.4)
             vo.wait_until("travels to the builder")
-            self.play(Indicate(parcel_tag.text, color=ROUTE, scale_factor=1.12), run_time=0.7)
+            self.play(Indicate(parcel_tag.text, color=ROUTE, scale_factor=1.12),  # pill grows with it
+                      parcel_tag.box.animate(rate_func=there_and_back).scale(1.12), run_time=0.7)
 
         # ========================================================== 3 · pip installs uv, COPY runs
         stack = LayerStack(stack_w=3.2)
