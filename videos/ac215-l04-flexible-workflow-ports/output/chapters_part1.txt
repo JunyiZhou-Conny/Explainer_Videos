@@ -6,4 +6,4 @@
 09:09 docker-shell.sh: one script, two windows
 11:26 Five components, five honest errors
 14:06 dev, run, and a stale image
-16:44 prod, a stowaway key, and clean-up
+16:45 prod, a stowaway key, and clean-up

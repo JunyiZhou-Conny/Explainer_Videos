@@ -1766,661 +1766,668 @@ and leave both running.
 Step 2 checks the ports.
 
 389
-00:22:58,755 --> 00:23:05,505
+00:22:58,755 --> 00:23:02,361
 docker ps shows the gateway's mapping,
-host side first:
+host side first.
 
 390
-00:23:05,505 --> 00:23:09,187
-127.0.0.1, port 8090, to 9100.
+00:23:02,681 --> 00:23:09,145
+It reads 127.0.0.1, port 8090, to 9100.
 
 391
-00:23:09,507 --> 00:23:14,051
+00:23:09,465 --> 00:23:14,009
 The processor's PORTS column is empty:
 listening, but not published.
 
 392
-00:23:14,300 --> 00:23:18,673
+00:23:14,250 --> 00:23:18,623
 An extra docker ps with three columns
 matches the README's sample.
 
 393
-00:23:20,067 --> 00:23:23,822
+00:23:20,017 --> 00:23:23,772
 What does the 127.0.0.1 do?
 
 394
-00:23:24,142 --> 00:23:28,750
+00:23:24,092 --> 00:23:28,700
 This extra run leaves it out,
 asking for door 8090 on every address.
 
 395
-00:23:29,070 --> 00:23:33,998
+00:23:29,020 --> 00:23:33,948
 Docker refuses, port is already allocated:
 our gateway holds 8090.
 
 396
-00:23:34,318 --> 00:23:37,155
+00:23:34,268 --> 00:23:37,105
 The container was still created,
 so remove it.
 
 397
-00:23:37,400 --> 00:23:42,143
-With door 8091 it works,
-and the mapping shows 0.0.0.0:
+00:23:37,350 --> 00:23:39,441
+With door 8091 it works.
 
 398
-00:23:42,143 --> 00:23:47,576
-every address, so other machines
-on your network could connect.
+00:23:39,761 --> 00:23:43,515
+The mapping shows 0.0.0.0.
 
 399
-00:23:47,896 --> 00:23:48,896
-Remove it.
+00:23:43,835 --> 00:23:45,245
+That means every address:
 
 400
-00:23:49,176 --> 00:23:55,427
+00:23:45,245 --> 00:23:47,782
+other machines
+on your network could connect.
+
+401
+00:23:48,102 --> 00:23:49,102
+Remove it.
+
+402
+00:23:49,382 --> 00:23:55,633
 That's why the README writes 127.0.0.1:
 this laptop only.
 
-401
-00:23:55,667 --> 00:23:59,784
+403
+00:23:55,867 --> 00:23:59,984
 From the laptop,
 curl on 8090 returns the gateway's page.
 
-402
-00:24:00,104 --> 00:24:04,991
+404
+00:24:00,304 --> 00:24:05,191
 curl on 9200 can't connect:
 your laptop has no door to it,
 
-403
-00:24:04,991 --> 00:24:08,445
+405
+00:24:05,191 --> 00:24:08,645
 unless something else of yours uses 9200.
 
-404
-00:24:08,683 --> 00:24:12,275
+406
+00:24:08,883 --> 00:24:12,475
 From inside the gateway,
 docker exec runs curl,
 
-405
-00:24:12,275 --> 00:24:15,638
+407
+00:24:12,475 --> 00:24:15,838
 asking for the name processor, on port 9200.
 
-406
-00:24:15,958 --> 00:24:17,473
+408
+00:24:16,158 --> 00:24:17,673
 The answer: ok.
 
-407
-00:24:17,717 --> 00:24:18,717
+409
+00:24:17,917 --> 00:24:18,917
 Ponder this.
 
-408
-00:24:19,018 --> 00:24:22,325
+410
+00:24:19,218 --> 00:24:22,525
 The same command
 with localhost instead of processor.
 
-409
-00:24:22,645 --> 00:24:23,669
+411
+00:24:22,845 --> 00:24:23,869
 What answers?
 
-410
-00:24:30,517 --> 00:24:31,517
+412
+00:24:30,717 --> 00:24:31,717
 Nothing.
 
-411
-00:24:31,648 --> 00:24:35,673
+413
+00:24:31,848 --> 00:24:35,873
 Inside the gateway,
 localhost is the gateway itself,
 
-412
-00:24:35,673 --> 00:24:38,304
+414
+00:24:35,873 --> 00:24:38,504
 and nothing there listens on 9200.
 
-413
-00:24:38,624 --> 00:24:42,656
+415
+00:24:38,824 --> 00:24:42,856
 That's the second puzzle:
 each container has its own localhost.
 
-414
-00:24:42,976 --> 00:24:48,522
+416
+00:24:43,176 --> 00:24:48,722
 An extra check: on 9100, its own port,
 localhost returns the page.
 
-415
-00:24:48,767 --> 00:24:50,324
+417
+00:24:48,967 --> 00:24:50,524
 So how did the name work?
 
-416
-00:24:50,644 --> 00:24:52,166
+418
+00:24:50,844 --> 00:24:52,366
 From the handy commands,
 
-417
-00:24:52,166 --> 00:24:55,908
+419
+00:24:52,366 --> 00:24:56,108
 docker network inspect shows an address
 for each container,
 
-418
-00:24:55,908 --> 00:24:58,665
+420
+00:24:56,108 --> 00:24:58,865
 from toynet's own address range, its subnet.
 
-419
-00:24:59,767 --> 00:25:04,222
+421
+00:24:59,967 --> 00:25:04,422
 Each container asks
 Docker's built-in phone book,
 
-420
-00:25:04,222 --> 00:25:09,132
+422
+00:25:04,422 --> 00:25:09,332
 at 127.0.0.11,
 which turns names into those addresses.
 
-421
-00:25:09,452 --> 00:25:13,143
+423
+00:25:09,652 --> 00:25:13,343
 Addresses can change
 when a container restarts; names stay.
 
-422
-00:25:13,383 --> 00:25:15,264
+424
+00:25:13,583 --> 00:25:15,464
 Another handy command,
 
-423
-00:25:15,264 --> 00:25:19,454
+425
+00:25:15,464 --> 00:25:19,654
 docker exec -it gateway sh,
 opens a shell inside;
 
-424
-00:25:19,454 --> 00:25:22,236
+426
+00:25:19,654 --> 00:25:22,436
 its hostname is the container ID.
 
-425
-00:25:22,556 --> 00:25:27,783
+427
+00:25:22,756 --> 00:25:27,983
 One aside: the processor image has curl too,
 though the README implies it doesn't.
 
-426
-00:25:28,103 --> 00:25:30,151
+428
+00:25:28,303 --> 00:25:30,351
 Pause, and test from both sides.
 
-427
-00:25:31,800 --> 00:25:33,720
+429
+00:25:32,000 --> 00:25:33,920
 Step 3 changes the ports.
 
-428
-00:25:34,040 --> 00:25:42,957
+430
+00:25:34,240 --> 00:25:43,157
 First the street door: remove the gateway,
 and start it again on 127.0.0.1, port 8095.
 
-429
-00:25:43,277 --> 00:25:45,880
+431
+00:25:43,477 --> 00:25:46,080
 The room inside stays 9100.
 
-430
-00:25:46,117 --> 00:25:48,400
+432
+00:25:46,317 --> 00:25:48,600
 The page works on 8095.
 
-431
-00:25:48,720 --> 00:25:54,352
+433
+00:25:48,920 --> 00:25:54,552
 Two extra checks: 8090 no longer connects,
 and docker ps shows the new mapping.
 
-432
-00:25:54,672 --> 00:25:56,677
+434
+00:25:54,872 --> 00:25:56,877
 Pause and move your gateway's door.
 
-433
-00:25:59,167 --> 00:26:00,170
+435
+00:25:59,367 --> 00:26:00,370
 Why do this?
 
-434
-00:26:00,490 --> 00:26:04,074
+436
+00:26:00,690 --> 00:26:04,274
 Another app on your laptop
 might already hold 8090.
 
-435
-00:26:04,394 --> 00:26:09,428
+437
+00:26:04,594 --> 00:26:09,628
 Doors on the laptop must be unique;
 rooms inside containers never collide.
 
-436
-00:26:09,667 --> 00:26:14,510
+438
+00:26:09,867 --> 00:26:14,710
 A small slip: the gateway's log
 still says open localhost:8090.
 
-437
-00:26:14,830 --> 00:26:17,411
+439
+00:26:15,030 --> 00:26:17,611
 That text is hard-coded in line 53.
 
-438
-00:26:17,731 --> 00:26:20,333
+440
+00:26:17,931 --> 00:26:20,533
 Trust docker ps and the page instead.
 
-439
-00:26:20,583 --> 00:26:26,215
+441
+00:26:20,783 --> 00:26:26,415
 Next, the processor's port: remove it,
 and start it with PORT set to 9300.
 
-440
-00:26:26,535 --> 00:26:29,671
+442
+00:26:26,735 --> 00:26:29,871
 The README says:
 send a message, and it should fail.
 
-441
-00:26:30,067 --> 00:26:31,560
+443
+00:26:30,267 --> 00:26:31,760
 It does, but quietly.
 
-442
-00:26:31,880 --> 00:26:35,742
+444
+00:26:32,080 --> 00:26:35,942
 The page has no error handling,
 so nothing on it changes;
 
-443
-00:26:35,742 --> 00:26:40,349
+445
+00:26:35,942 --> 00:26:40,549
 the captured request got only curl's error,
 Empty reply from server.
 
-444
-00:26:40,583 --> 00:26:44,122
+446
+00:26:40,783 --> 00:26:44,322
 An extra docker logs
 on the gateway shows why:
 
-445
-00:26:44,122 --> 00:26:46,507
+447
+00:26:44,322 --> 00:26:46,707
 it found the processor by name,
 
-446
-00:26:46,507 --> 00:26:51,292
+448
+00:26:46,707 --> 00:26:51,492
 but the connection was refused:
 nobody listens on 9200 anymore.
 
-447
-00:26:51,612 --> 00:26:55,026
+449
+00:26:51,812 --> 00:26:55,226
 A wrong name fails differently:
 see the exercises.
 
-448
-00:26:55,267 --> 00:26:56,267
+450
+00:26:55,467 --> 00:26:56,467
 Ponder this.
 
-449
-00:26:56,568 --> 00:27:00,387
+451
+00:26:56,768 --> 00:27:00,587
 Which one setting fixes it,
 and does any image need rebuilding?
 
-450
-00:27:07,233 --> 00:27:09,025
+452
+00:27:07,433 --> 00:27:09,225
 The gateway's processor port.
 
-451
-00:27:09,345 --> 00:27:15,724
+453
+00:27:09,545 --> 00:27:15,924
 Remove the gateway and start it with 9300,
 back on 8090, and the message goes through.
 
-452
-00:27:16,044 --> 00:27:19,478
+454
+00:27:16,244 --> 00:27:19,678
 No image was rebuilt:
 it's only configuration.
 
-453
-00:27:19,798 --> 00:27:21,249
+455
+00:27:19,998 --> 00:27:21,449
 Pause and fix yours.
 
-454
-00:27:22,233 --> 00:27:23,967
+456
+00:27:22,433 --> 00:27:24,167
 The two settings must agree:
 
-455
-00:27:23,967 --> 00:27:27,311
+457
+00:27:24,167 --> 00:27:27,511
 the processor's PORT
 and the gateway's processor port.
 
-456
-00:27:27,550 --> 00:27:32,286
+458
+00:27:27,750 --> 00:27:32,486
 Finally, clean up before Compose:
 remove both containers, then the network.
 
-457
-00:27:32,606 --> 00:27:36,361
+459
+00:27:32,806 --> 00:27:36,561
 An extra check shows only
 hello-world's old container left.
 
-458
-00:27:36,681 --> 00:27:39,518
+460
+00:27:36,881 --> 00:27:39,718
 Skip this, and Compose hits a name conflict.
 
-459
-00:27:39,838 --> 00:27:41,139
+461
+00:27:40,038 --> 00:27:41,339
 Pause and clean up.
 
-460
-00:27:44,433 --> 00:27:49,660
+462
+00:27:44,633 --> 00:27:49,860
 Step 4: Docker Compose, which builds
 and starts the whole app from one YAML file.
 
-461
-00:27:49,980 --> 00:27:54,460
+463
+00:27:50,180 --> 00:27:54,660
 The README shows an excerpt;
 open the whole docker-compose.yml.
 
-462
-00:27:54,780 --> 00:27:58,150
+464
+00:27:54,980 --> 00:27:58,350
 Almost every flag you typed
 by hand has a home in it.
 
-463
-00:27:58,400 --> 00:28:02,987
+465
+00:27:58,600 --> 00:28:03,187
 --name becomes container name,
 and the build command becomes build.
 
-464
-00:28:03,307 --> 00:28:06,340
+466
+00:28:03,507 --> 00:28:06,540
 -p becomes ports, -e becomes environment,
 
-465
-00:28:06,340 --> 00:28:10,112
+467
+00:28:06,540 --> 00:28:10,312
 and the network is named
 at the bottom of the file.
 
-466
-00:28:12,000 --> 00:28:13,155
+468
+00:28:12,200 --> 00:28:13,355
 Two keys are new:
 
-467
-00:28:13,155 --> 00:28:16,823
+469
+00:28:13,355 --> 00:28:17,023
 the volumes key mounts the gateway's folder
 into /app,
 
-468
-00:28:16,823 --> 00:28:20,171
+470
+00:28:17,023 --> 00:28:20,371
 and the depends on key
 starts the processor first.
 
-469
-00:28:20,491 --> 00:28:24,565
+471
+00:28:20,691 --> 00:28:24,765
 All of step 1 collapses into one command:
 docker compose up.
 
-470
-00:28:24,800 --> 00:28:25,800
+472
+00:28:25,000 --> 00:28:26,000
 Run it.
 
-471
-00:28:25,952 --> 00:28:29,244
+473
+00:28:26,152 --> 00:28:29,444
 Compose builds both images,
 all from the cache,
 
-472
-00:28:29,244 --> 00:28:33,866
+474
+00:28:29,444 --> 00:28:34,066
 and names them after the folder
 and the service: port_toy-gateway.
 
-473
-00:28:34,116 --> 00:28:37,038
+475
+00:28:34,316 --> 00:28:37,238
 Then it creates the network
 and both containers,
 
-474
-00:28:37,038 --> 00:28:40,751
+476
+00:28:37,238 --> 00:28:40,951
 and prints both banners,
 each line prefixed with its service.
 
-475
-00:28:41,071 --> 00:28:42,223
+477
+00:28:41,271 --> 00:28:42,423
 Pause and run it.
 
-476
-00:28:42,466 --> 00:28:44,279
+478
+00:28:42,666 --> 00:28:44,479
 Open the page: it works.
 
-477
-00:28:44,599 --> 00:28:47,725
+479
+00:28:44,799 --> 00:28:47,925
 In a second terminal,
 cd into port toy first:
 
-478
-00:28:47,725 --> 00:28:50,850
+480
+00:28:47,925 --> 00:28:51,050
 Compose reads the file
 in the current folder.
 
-479
-00:28:51,170 --> 00:28:54,306
+481
+00:28:51,370 --> 00:28:54,506
 There, docker compose ps
 shows the same mapping.
 
-480
-00:28:54,550 --> 00:28:58,475
+482
+00:28:54,750 --> 00:28:58,675
 An extra network ls shows
 that Compose made toynet,
 
-481
-00:28:58,475 --> 00:29:02,400
+483
+00:28:58,675 --> 00:29:02,600
 and compose exec reaches the processor
 by name: ok.
 
-482
-00:29:02,766 --> 00:29:07,310
+484
+00:29:02,966 --> 00:29:07,510
 The README's table pairs each by-hand
 command with its Compose version.
 
-483
-00:29:07,630 --> 00:29:10,937
+485
+00:29:07,830 --> 00:29:11,137
 In the first terminal,
 your requests now show in the log.
 
-484
-00:29:11,183 --> 00:29:14,305
+486
+00:29:11,383 --> 00:29:14,505
 The README stops the app
 at the end of step 4;
 
-485
-00:29:14,305 --> 00:29:17,562
+487
+00:29:14,505 --> 00:29:17,762
 we stop it now, in the foreground:
 press Ctrl+C.
 
-486
-00:29:17,882 --> 00:29:22,042
+488
+00:29:18,082 --> 00:29:22,242
 Compose says it's stopping gracefully,
 but it takes about 20 seconds.
 
-487
-00:29:25,250 --> 00:29:27,836
+489
+00:29:25,450 --> 00:29:28,036
 Python, each container's first process,
 
-488
-00:29:27,836 --> 00:29:32,013
+490
+00:29:28,036 --> 00:29:32,213
 ignores the polite stop signal
 unless it's written to catch it.
 
-489
-00:29:32,333 --> 00:29:35,874
+491
+00:29:32,533 --> 00:29:36,074
 So Docker waits 10 seconds per container,
 then kills it.
 
-490
-00:29:38,783 --> 00:29:41,578
+492
+00:29:38,983 --> 00:29:41,778
 Exit code 137 means killed.
 
-491
-00:29:41,898 --> 00:29:43,450
+493
+00:29:42,098 --> 00:29:43,650
 docker compose ps -a:
 
-492
-00:29:43,450 --> 00:29:46,996
+494
+00:29:43,650 --> 00:29:47,196
 both containers exited,
 but they're still there.
 
-493
-00:29:47,233 --> 00:29:51,495
+495
+00:29:47,433 --> 00:29:51,695
 docker compose down removes the containers
 and the network,
 
-494
-00:29:51,495 --> 00:29:53,590
+496
+00:29:51,695 --> 00:29:53,790
 and nothing is left in ps -a.
 
-495
-00:29:53,910 --> 00:29:56,236
+497
+00:29:54,110 --> 00:29:56,436
 Ctrl+C stops; down removes.
 
-496
-00:29:56,556 --> 00:29:58,497
+498
+00:29:56,756 --> 00:29:58,697
 Pause, and run the whole cycle.
 
-497
-00:29:59,533 --> 00:30:01,268
+499
+00:29:59,733 --> 00:30:01,468
 Back to the README's order:
 
-498
-00:30:01,268 --> 00:30:05,314
+500
+00:30:01,468 --> 00:30:05,514
 up -d starts the app in the background
 and returns your prompt.
 
-499
-00:30:05,550 --> 00:30:06,894
+501
+00:30:05,750 --> 00:30:07,094
 Two handy commands.
 
-500
-00:30:07,214 --> 00:30:10,815
+502
+00:30:07,414 --> 00:30:11,015
 docker compose logs -f
 follows the gateway's log;
 
-501
-00:30:10,815 --> 00:30:13,166
+503
+00:30:11,015 --> 00:30:13,366
 Ctrl+C stops only the following.
 
-502
-00:30:13,486 --> 00:30:16,888
+504
+00:30:13,686 --> 00:30:17,088
 docker compose exec
 gateway sh opens a shell,
 
-503
-00:30:16,888 --> 00:30:20,440
+505
+00:30:17,088 --> 00:30:20,640
 where the environment
 shows processor and 9200.
 
-504
-00:30:22,083 --> 00:30:25,859
+506
+00:30:22,283 --> 00:30:26,059
 Next, the README says
 to repeat the port experiments in the file.
 
-505
-00:30:26,179 --> 00:30:32,878
+507
+00:30:26,379 --> 00:30:33,078
 Change 8090 to 8095 and run up -d:
 Compose recreates only the gateway.
 
-506
-00:30:33,116 --> 00:30:37,447
+508
+00:30:33,316 --> 00:30:37,647
 The page answers on 8095;
 change it back and apply again.
 
-507
-00:30:40,300 --> 00:30:42,647
+509
+00:30:40,500 --> 00:30:42,847
 We added a comment to the processor's code.
 
-508
-00:30:42,967 --> 00:30:46,913
+510
+00:30:43,167 --> 00:30:47,113
 Changed code that's copied
 into an image needs --build.
 
-509
-00:30:47,233 --> 00:30:51,478
+511
+00:30:47,433 --> 00:30:51,678
 Only the copy layer is new,
 and only the processor is recreated.
 
-510
-00:30:51,716 --> 00:30:56,184
+512
+00:30:51,916 --> 00:30:56,384
 The gateway's folder is mounted,
 and it rereads its page on each load:
 
-511
-00:30:56,184 --> 00:30:59,311
+513
+00:30:56,384 --> 00:30:59,511
 edits show on the next reload,
 without a rebuild.
 
-512
-00:31:00,166 --> 00:31:04,731
+514
+00:31:00,366 --> 00:31:04,931
 To finish, docker compose down;
 nothing is left in ps -a.
 
-513
-00:31:05,051 --> 00:31:08,568
+515
+00:31:05,251 --> 00:31:08,768
 The images remain,
 sharing about 200 megabytes;
 
-514
-00:31:08,568 --> 00:31:10,513
+516
+00:31:08,768 --> 00:31:10,713
 remove them to free space.
 
-515
-00:31:10,833 --> 00:31:12,326
+517
+00:31:11,033 --> 00:31:12,526
 Port toy costs nothing.
 
-516
-00:31:12,646 --> 00:31:14,097
+518
+00:31:12,846 --> 00:31:14,297
 Pause and shut it down.
 
-517
-00:31:14,333 --> 00:31:17,106
+519
+00:31:14,533 --> 00:31:17,306
 To test yourself, pause after each question.
 
-518
-00:31:17,426 --> 00:31:20,442
+520
+00:31:17,626 --> 00:31:20,642
 One:
 which files define a mega-pipeline image,
 
-519
-00:31:20,442 --> 00:31:23,720
+521
+00:31:20,642 --> 00:31:23,920
 and what does run use
 when there's no local image?
 
-520
-00:31:23,966 --> 00:31:27,165
+522
+00:31:24,166 --> 00:31:27,365
 Two: which three gates must a call
 to your bucket pass,
 
-521
-00:31:27,165 --> 00:31:28,851
+523
+00:31:27,365 --> 00:31:29,051
 and where does each one fail?
 
-522
-00:31:29,171 --> 00:31:32,329
+524
+00:31:29,371 --> 00:31:32,529
 Three: how does a git-ignored key
 end up in an image,
 
-523
-00:31:32,329 --> 00:31:33,460
+525
+00:31:32,529 --> 00:31:33,660
 and what's the fix?
 
-524
-00:31:33,700 --> 00:31:40,655
+526
+00:31:33,900 --> 00:31:40,855
 Four: -p 127.0.0.1:8095:9100.
 
-525
-00:31:40,975 --> 00:31:44,005
+527
+00:31:41,175 --> 00:31:44,205
 Which number does the browser use,
 
-526
-00:31:44,005 --> 00:31:49,529
+528
+00:31:44,205 --> 00:31:49,729
 which does the gateway bind,
 and what does 127.0.0.1 restrict?
 
-527
-00:31:49,849 --> 00:31:55,012
+529
+00:31:50,049 --> 00:31:55,212
 Five: inside the gateway, what is localhost,
 and which name reaches the processor?
 
-528
-00:31:55,250 --> 00:32:00,155
+530
+00:31:55,450 --> 00:32:00,355
 Next lecture, a command-line container
 calls a database container by name
 
-529
-00:32:00,155 --> 00:32:03,561
+531
+00:32:00,355 --> 00:32:03,761
 on a Compose network,
 with the same secrets mount:
 
-530
-00:32:03,561 --> 00:32:05,127
+532
+00:32:03,761 --> 00:32:05,327
 parts 1 and 2 together.
 
-531
-00:32:05,447 --> 00:32:07,495
+533
+00:32:05,647 --> 00:32:07,695
 Answers are in the exercises.
 

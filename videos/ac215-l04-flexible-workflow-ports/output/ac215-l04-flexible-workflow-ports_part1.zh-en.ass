@@ -102,10 +102,9 @@ Dialogue: 0,0:04:27.32,0:04:30.75,Bilingual,,0,0,0,,第 5 步，git branch：星
 Dialogue: 0,0:04:31.07,0:04:36.05,Bilingual,,0,0,0,,切换你自己的 clone 之前，先把第 3 讲里想保留的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}Before you switch your own clone, copy out any lecture 3 Dockerfile,
 Dialogue: 0,0:04:36.05,0:04:41.18,Bilingual,,0,0,0,,pyproject.toml 和 uv.lock 复制出来：切换会把它们替换掉\N{\fs33\c&H00C8C0B8&\bord1.4}pyproject.toml and uv.lock you want to keep: the switch replaces them.
 Dialogue: 0,0:04:41.50,0:04:42.88,Bilingual,,0,0,0,,暂停一下，切换过去\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and switch.
-Dialogue: 0,0:04:42.93,0:04:46.79,Bilingual,,0,0,0,,额外检查显示，你在第 3 讲里\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks show your ignored lecture 3 Dockerfile,
-Dialogue: 0,0:04:46.79,0:04:50.13,Bilingual,,0,0,0,,那些被忽略的 Dockerfile、pyproject.toml 和 uv.lock\N{\fs33\c&H00C8C0B8&\bord1.4}pyproject.toml and uv.lock were replaced by the branch's,
-Dialogue: 0,0:04:50.13,0:04:52.13,Bilingual,,0,0,0,,已经被这个分支的版本一声不吭地替换了\N{\fs33\c&H00C8C0B8&\bord1.4}without a word:
-Dialogue: 0,0:04:52.13,0:04:54.88,Bilingual,,0,0,0,,想留着的话，先把它们复制出来\N{\fs33\c&H00C8C0B8&\bord1.4}copy them out first if you want them.
+Dialogue: 0,0:04:42.93,0:04:46.77,Bilingual,,0,0,0,,额外检查显示，你第 3 讲里被忽略的 Dockerfile\N{\fs33\c&H00C8C0B8&\bord1.4}Extra checks show your ignored lecture 3 Dockerfile,
+Dialogue: 0,0:04:46.77,0:04:50.97,Bilingual,,0,0,0,,pyproject.toml 和 uv.lock 已经换成了这个分支的版本\N{\fs33\c&H00C8C0B8&\bord1.4}pyproject.toml and uv.lock were replaced by the branch's,
+Dialogue: 0,0:04:50.97,0:04:54.88,Bilingual,,0,0,0,,没有任何提示：想留着的话，先把它们复制出来\N{\fs33\c&H00C8C0B8&\bord1.4}without a word: copy them out first if you want them.
 Dialogue: 0,0:04:55.12,0:04:58.41,Bilingual,,0,0,0,,旧密钥还留在 transcribe audio 里\N{\fs33\c&H00C8C0B8&\bord1.4}The old key still sits inside transcribe audio;
 Dialogue: 0,0:04:58.41,0:05:01.35,Bilingual,,0,0,0,,你的 secrets 原地不动，README 也是这么说的\N{\fs33\c&H00C8C0B8&\bord1.4}your secrets stay put, as the README says.
 Dialogue: 0,0:05:01.67,0:05:04.24,Bilingual,,0,0,0,,在那个目录里，每次构建都会把它复制进 image\N{\fs33\c&H00C8C0B8&\bord1.4}Every build there copies it into the image,
@@ -116,11 +115,11 @@ Dialogue: 0,0:05:13.43,0:05:18.00,Bilingual,,0,0,0,,你的密钥放在 repo 旁�
 Dialogue: 0,0:05:18.32,0:05:21.64,Bilingual,,0,0,0,,往上退一级，回到你的工作区目录，把这个目录建好\N{\fs33\c&H00C8C0B8&\bord1.4}Go up one level, to your workspace, and create that folder.
 Dialogue: 0,0:05:24.08,0:05:28.12,Bilingual,,0,0,0,,第 2 步：每个 cli.py 都在开头附近设置三个值\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2: every cli.py sets three values near the top:
 Dialogue: 0,0:05:28.12,0:05:32.00,Bilingual,,0,0,0,,你的项目 ID、你的 bucket 和你们的组名\N{\fs33\c&H00C8C0B8&\bord1.4}your project ID, your bucket, and your group name.
-Dialogue: 0,0:05:32.23,0:05:35.77,Bilingual,,0,0,0,,一个额外的 grep 显示 repo 里原本写的是什么\N{\fs33\c&H00C8C0B8&\bord1.4}An extra grep shows what ships: three files are blank,
-Dialogue: 0,0:05:35.77,0:05:40.59,Bilingual,,0,0,0,,三个文件留空，但 generate text 和 translate text 里\N{\fs33\c&H00C8C0B8&\bord1.4}but generate text and translate text already hold the course's project and bucket,
-Dialogue: 0,0:05:40.59,0:05:43.24,Bilingual,,0,0,0,,已经写着课程的项目和 bucket，还有授课老师的组名\N{\fs33\c&H00C8C0B8&\bord1.4}and the instructor's group name.
-Dialogue: 0,0:05:43.48,0:05:47.65,Bilingual,,0,0,0,,一个小疏漏：README 说如果你忘了改\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README says an assert stops you if you forget,
-Dialogue: 0,0:05:47.65,0:05:49.93,Bilingual,,0,0,0,,assert 会拦住你，但它只拒绝空值\N{\fs33\c&H00C8C0B8&\bord1.4}but it only rejects an empty value.
+Dialogue: 0,0:05:32.23,0:05:35.73,Bilingual,,0,0,0,,一个额外的 grep 显示原本的写法：三个文件是空的\N{\fs33\c&H00C8C0B8&\bord1.4}An extra grep shows what ships: three files are blank,
+Dialogue: 0,0:05:35.73,0:05:41.13,Bilingual,,0,0,0,,但 generate text、translate text 已有课程的项目和 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}but generate text and translate text already hold the course's project and bucket,
+Dialogue: 0,0:05:41.13,0:05:43.24,Bilingual,,0,0,0,,还有授课老师的组名\N{\fs33\c&H00C8C0B8&\bord1.4}and the instructor's group name.
+Dialogue: 0,0:05:43.48,0:05:47.65,Bilingual,,0,0,0,,一个小疏漏：README 说忘了改的话 assert 会拦住你\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the README says an assert stops you if you forget,
+Dialogue: 0,0:05:47.65,0:05:49.93,Bilingual,,0,0,0,,但其实它只拒绝空值\N{\fs33\c&H00C8C0B8&\bord1.4}but it only rejects an empty value.
 Dialogue: 0,0:05:50.25,0:05:54.25,Bilingual,,0,0,0,,那两个文件会把你的调用发到课程的项目和 bucket\N{\fs33\c&H00C8C0B8&\bord1.4}Those two files would send your calls to the course's project and bucket,
 Dialogue: 0,0:05:54.25,0:05:56.39,Bilingual,,0,0,0,,在那边报权限错误\N{\fs33\c&H00C8C0B8&\bord1.4}where they fail with permission errors.
 Dialogue: 0,0:05:56.63,0:05:58.92,Bilingual,,0,0,0,,三个值都要设置，五个文件都要改\N{\fs33\c&H00C8C0B8&\bord1.4}Set all three, in all five files.
@@ -297,8 +296,7 @@ Dialogue: 0,0:16:10.23,0:16:14.42,Bilingual,,0,0,0,,你的目录盖在它的 /ap
 Dialogue: 0,0:16:14.74,0:16:18.30,Bilingual,,0,0,0,,对 generate text 来说，这就是开头那个导入错误\N{\fs33\c&H00C8C0B8&\bord1.4}For generate text, that's the import error from the start:
 Dialogue: 0,0:16:18.30,0:16:19.90,Bilingual,,0,0,0,,第一个谜题，解开了\N{\fs33\c&H00C8C0B8&\bord1.4}the first puzzle, solved.
 Dialogue: 0,0:16:23.18,0:16:26.60,Bilingual,,0,0,0,,它还在你的目录里留下了一个 Pipfile，属于 root\N{\fs33\c&H00C8C0B8&\bord1.4}It also left a Pipfile in your folder, owned by root.
-Dialogue: 0,0:16:26.92,0:16:28.47,Bilingual,,0,0,0,,如果你试过这一步，就把它删掉\N{\fs33\c&H00C8C0B8&\bord1.4}If you tried this,
-Dialogue: 0,0:16:28.47,0:16:30.91,Bilingual,,0,0,0,,再跑一次 dev，把你自己的 image 找回来\N{\fs33\c&H00C8C0B8&\bord1.4}delete it and run dev to get your own image back.
+Dialogue: 0,0:16:26.92,0:16:30.91,Bilingual,,0,0,0,,如果你试过这一步，删掉它并再跑一次 dev，找回你自己的 image\N{\fs33\c&H00C8C0B8&\bord1.4}If you tried this, delete it and run dev to get your own image back.
 Dialogue: 0,0:16:32.35,0:16:35.15,Bilingual,,0,0,0,,所以要在本地构建，不带参数或者用 dev\N{\fs33\c&H00C8C0B8&\bord1.4}So build locally, with no argument or dev,
 Dialogue: 0,0:16:35.15,0:16:39.30,Bilingual,,0,0,0,,run 只用于你们组从这个分支 push 上去的 image\N{\fs33\c&H00C8C0B8&\bord1.4}and use run only for images your team pushed from this branch,
 Dialogue: 0,0:16:39.30,0:16:41.57,Bilingual,,0,0,0,,而且是在你们自己的 Docker Hub 账号下\N{\fs33\c&H00C8C0B8&\bord1.4}under your own Docker Hub account.
@@ -335,7 +333,7 @@ Dialogue: 0,0:18:11.90,0:18:15.37,Bilingual,,0,0,0,,退出每个 container；--r
 Dialogue: 0,0:18:15.69,0:18:19.53,Bilingual,,0,0,0,,光 transcribe 的 image 就有 1.48 GB\N{\fs33\c&H00C8C0B8&\bord1.4}The transcribe image alone is 1.48 gigabytes:
 Dialogue: 0,0:18:19.53,0:18:22.68,Bilingual,,0,0,0,,用 docker image rm 把五个都删掉\N{\fs33\c&H00C8C0B8&\bord1.4}remove all five with docker image rm,
 Dialogue: 0,0:18:22.68,0:18:25.49,Bilingual,,0,0,0,,再加上你 pull 过的 dlops 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}plus any dlops images you pulled.
-Dialogue: 0,0:18:25.73,0:18:29.33,Bilingual,,0,0,0,,在云上，bucket 会一直收一点存储费\N{\fs33\c&H00C8C0B8&\bord1.4}In the cloud, the bucket bills a little storage until you delete it,
-Dialogue: 0,0:18:29.33,0:18:31.22,Bilingual,,0,0,0,,直到你删掉它，也就是课程结束的时候\N{\fs33\c&H00C8C0B8&\bord1.4}when the course is over;
+Dialogue: 0,0:18:25.73,0:18:29.72,Bilingual,,0,0,0,,在云上，bucket 在你删掉它之前会一直收一点存储费\N{\fs33\c&H00C8C0B8&\bord1.4}In the cloud, the bucket bills a little storage until you delete it,
+Dialogue: 0,0:18:29.72,0:18:31.22,Bilingual,,0,0,0,,也就是到课程结束为止\N{\fs33\c&H00C8C0B8&\bord1.4}when the course is over;
 Dialogue: 0,0:18:31.22,0:18:34.14,Bilingual,,0,0,0,,密钥在你去控制台删掉之前一直有效\N{\fs33\c&H00C8C0B8&\bord1.4}the key works until you delete it in the console.
 Dialogue: 0,0:18:34.46,0:18:37.98,Bilingual,,0,0,0,,第二部分：互相直接通信的 container\N{\fs33\c&H00C8C0B8&\bord1.4}In part 2: containers that talk to each other directly.

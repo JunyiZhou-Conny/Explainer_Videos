@@ -98,7 +98,7 @@ Its build matches an older branch, pipenv flexible workflow, not your recipe. Yo
 It also left a Pipfile in your folder, owned by root. If you tried this, delete it and run dev to get your own image back.
 So build locally, with no argument or dev, and use run only for images your team pushed from this branch, under your own Docker Hub account.
 
-## 16:44 — prod, a stowaway key, and clean-up
+## 16:45 — prod, a stowaway key, and clean-up
 Step 4, prod, publishes. It recreates a builder named multi-arch, a build engine for several processor types. Dash dash use makes it current, and the script never switches back: docker buildx use default does.
 Then one buildx build makes amd64 and arm64 images and pushes both under one tag: as in lecture 2, an Apple-silicon Mac pulls one, a cloud VM the other.
 Before prod, log in with an access token; dash p leaves it in your shell history. Set the Docker username in the script to your own. Don't run prod yet: first, check what it would publish.
@@ -136,10 +136,10 @@ Send again, and the number changes: a new connection, a new temporary port. Your
 One more detail: the page's diagram shows 8090 by reading its own address bar. The container can't know which door on your laptop you gave it. Pause, send a message, and leave both running.
 
 ## 22:56 — Who can reach whom
-Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first: 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published.
+Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first. It reads 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published.
 An extra docker ps with three columns matches the README's sample.
 What does the 127.0.0.1 do? This extra run leaves it out, asking for door 8090 on every address. Docker refuses, port is already allocated: our gateway holds 8090. The container was still created, so remove it.
-With door 8091 it works, and the mapping shows 0.0.0.0: every address, so other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only.
+With door 8091 it works. The mapping shows 0.0.0.0. That means every address: other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only.
 From the laptop, curl on 8090 returns the gateway's page. Curl on 9200 can't connect: your laptop has no door to it, unless something else of yours uses 9200.
 From inside the gateway, docker exec runs curl, asking for the name processor, on port 9200. The answer: ok.
 Ponder this. The same command with localhost instead of processor. What answers?
@@ -148,7 +148,7 @@ So how did the name work? From the handy commands, docker network inspect shows 
 Each container asks Docker's built-in phone book, at 127.0.0.11, which turns names into those addresses. Addresses can change when a container restarts; names stay.
 Another handy command, docker exec dash i t gateway sh, opens a shell inside; its hostname is the container ID. One aside: the processor image has curl too, though the README implies it doesn't. Pause, and test from both sides.
 
-## 25:31 — Change the ports
+## 25:32 — Change the ports
 Step 3 changes the ports. First the street door: remove the gateway, and start it again on 127.0.0.1, port 8095. The room inside stays 9100.
 The page works on 8095. Two extra checks: 8090 no longer connects, and docker ps shows the new mapping. Pause and move your gateway's door.
 Why do this? Another app on your laptop might already hold 8090. Doors on the laptop must be unique; rooms inside containers never collide.
