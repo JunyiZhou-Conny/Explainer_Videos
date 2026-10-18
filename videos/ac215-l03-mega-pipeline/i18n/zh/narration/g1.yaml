@@ -20,22 +20,22 @@ S01:
 - en: "Since last lecture, four things change: you write the Dockerfile, and you build five images, not one. A bind mount opens a window into your laptop, and the containers reach Google Cloud through a shared bucket and a service account key."
   zh:
   - "和上节课比，有四处变化：你要自己写 Dockerfile，而且要构建五个 image，而不是一个。"
-  - "一个 bind mount 会打开一扇通往你笔记本的窗；container 则通过共享的 bucket 和服务账号密钥连到 Google Cloud。"
-- en: "Open the mega-pipeline README beside this video. The tracker, top left, shows the README step; code panels show file and line numbers. Pause at the yellow your-turn tag; a gray extra tag marks a command not in the README."
+  - "一个 bind mount 会打开一扇通往你笔记本的窗；container 则连到 Google Cloud，靠的是共享的 bucket 和服务账号密钥。"
+- en: "Open the mega-pipeline README beside this video. The tracker, top left, splits the README into numbered steps; code panels show file and line numbers. Pause at the yellow your-turn tag; a gray extra tag marks a command not in the README."
   zh:
   - "把 mega-pipeline 的 README 打开，放在视频旁边。"
-  - "左上角的进度条显示 README 的步骤；代码面板会标出文件和行号。"
+  - "左上角的进度条把 README 分成一个个编号的步骤；代码面板会标出文件和行号。"
   - "看到黄色的 your turn 标签就暂停；灰色的 extra 标签表示这条命令 README 里没有。"
-- en: "You'll need Tutorial 0, for Docker Desktop and uv, the course key from Canvas, and your group name. Every command is also in the study guide, in the MLOps Learning repo."
+- en: "You'll need Tutorial 0, for Docker Desktop and uv, the course key from Canvas, and your group name. Every command is also in the study guide, linked in the description."
   zh:
   - "你需要先做完 Tutorial 0，装好 Docker Desktop 和 uv，还要有从 Canvas 下载的课程密钥和你们组的组名。"
-  - "每条命令也都在学习指南里，在 MLOps Learning 这个 repo 里。"
+  - "每条命令也都在学习指南里，链接在视频简介里。"
 - en: "One honest limit: we recorded without a course key, so wherever the code talks to Google, you'll see the command and what to look for, not its output."
   zh:
   - "有一点先说清楚：我们录制时没有课程密钥，所以凡是代码要和 Google 打交道的地方，你看到的是命令和该看什么，而不是它的输出。"
 - en: "We recorded on a Debian 12 laptop with Docker Engine 29, at the time of recording. On a Mac or Windows, the prompt differs and Docker Desktop runs the containers; the commands are the same."
   zh:
-  - "我们录制用的是一台 Debian 12 笔记本，录制时是 Docker Engine 29。"
+  - "我们录制时用的是一台 Debian 12 笔记本，装着 Docker Engine 29。"
   - "在 Mac 或 Windows 上，提示符不一样，由 Docker Desktop 来跑 container；命令都是一样的。"
 S02:
 - en: "In production, services call each other's APIs. This tutorial simplifies: each component writes its output to shared storage, where the next one reads it."
@@ -87,7 +87,7 @@ S03:
 - en: "Then cd mega-pipeline. An extra check, not in the README, lists the files and shows the commit: five component folders, on the main branch, at the commit this video uses."
   zh:
   - "然后 cd mega-pipeline。"
-  - "一个额外检查，README 里没有，它列出文件并显示 commit：五个组件目录，在 main 分支上，正是这个视频用的 commit。"
+  - "一个额外检查，README 里没有：列出文件，再显示 commit，可以看到五个组件目录，在 main 分支上，正是这个视频用的 commit。"
 - en: "Another extra lists all five folders. Each has a README, its own cli.py, and a secrets folder, and not one has a Dockerfile: the README says you write all five yourself."
   zh:
   - "再加一个额外检查，列出全部五个目录。"
@@ -95,29 +95,29 @@ S03:
 - en: "Two differences to remember. The generate text folder already has its own pyproject.toml and a main dot py file, but no dot gitignore file. And synthesis audio has a bonus script."
   zh:
   - "有两处不同要记住。"
-  - "其中 generate text 目录已经有自己的 pyproject.toml 和一个 main.py 文件，但没有 .gitignore 文件。"
-  - "还有，synthesis audio 目录里有个附加脚本。"
+  - "一是 generate text 目录已经有自己的 pyproject.toml，还有一个 main.py 文件，但没有 .gitignore 文件。"
+  - "二是 synthesis audio 目录里有个附加脚本。"
   en_display:
   - null
   - "The generate text folder already has its own pyproject.toml and a main.py file, but no .gitignore file."
   - null
-- en: "Now the first component. The tracker switches to the transcribe audio README, whose step 1 is cd transcribe audio. Pause, and catch up to here."
+- en: "Now the first component. Open the README in the transcribe audio folder: the tracker switches to it, and its step 1 is cd transcribe audio. Pause, and catch up to here."
   zh:
   - "现在来看第一个组件。"
-  - "进度条切换到 transcribe audio 的 README，它的第 1 步是 cd 进这个目录。"
+  - "打开 transcribe audio 目录里的 README：进度条切换到它，它的第 1 步是 cd 进这个目录。"
   - "暂停一下，跟上进度。"
   en_display:
   - null
-  - "The tracker switches to the transcribe audio README, whose step 1 is cd transcribe_audio."
+  - "Open the README in the transcribe audio folder: the tracker switches to it, and its step 1 is cd transcribe_audio."
   - null
 - en: "Open cli.py in your editor. The first imports come with Python, but the two Google Cloud modules and ffmpeg don't. Part 2 shows where they come from."
   zh:
   - "在编辑器里打开 cli.py。"
   - "前几个 import 是 Python 自带的，但两个 Google Cloud 模块和 ffmpeg 不是。"
   - "第二部分会讲它们从哪儿来。"
-- en: "Next come four settings: the bucket's name, the two drawers this stage uses, and on line 21 the group name, which you'll change soon."
+- en: "Next come four settings: the bucket's name, the two drawers this stage uses, and on line 21 the group name, still at its default, which you'll change soon."
   zh:
-  - "接下来是四个设置：bucket 的名字、这个阶段用的两个抽屉，还有第 21 行的组名，你很快就要改它。"
+  - "接下来是四个设置：bucket 的名字、这个阶段用的两个抽屉，还有第 21 行的组名，现在还是默认值，你很快就要改它。"
 - en: "At the bottom, main runs up to three verbs, always in this order: download, transcribe, upload."
   zh:
   - "在最下面，main 最多执行三个动作，顺序永远是：下载、转写、上传。"
@@ -154,11 +154,11 @@ S04:
   - "在 Windows 上，用 PowerShell 那一行；任何系统都能用：pip install uv。"
 - en: "Then restart your terminal, as the installer says, cd back into transcribe audio, and uv answers."
   zh:
-  - "然后按安装脚本说的重启终端，再 cd 回 transcribe audio 目录，uv 就有回应了。"
+  - "然后重启终端，正如安装脚本所说，再 cd 回 transcribe audio 目录，uv 就有回应了。"
 - en: "Now the step itself: uv init dash dash bare. It writes just one file, pyproject.toml, for a project named transcribe dash audio. Pause and run it."
   zh:
   - "现在是这一步本身：uv init --bare。"
-  - "它只写一个文件，pyproject.toml，项目名叫 transcribe audio。"
+  - "它只写一个文件，pyproject.toml，项目名叫 transcribe-audio。"
   - "暂停一下，自己跑一遍。"
   en_display:
   - "Now the step itself: uv init --bare."
@@ -175,7 +175,7 @@ S04:
   zh:
   - "你看到的数字取决于你的笔记本。"
   - "如果你的是 3.13 及以上，image 里的 3.12 就落在范围之外，那就把它改成 3.12。"
-  - "这个改法 README 里没有；到了 generate text 你就知道为什么。"
+  - "这个改法 README 里没有；到了 generate text 组件你就知道为什么。"
 S05:
 - en: "Step 4 is the heart of this lecture: there's no Dockerfile here, so you write it yourself, piece by piece."
   zh:
@@ -198,22 +198,24 @@ S05:
   - "前四个是：apt 从不提问，文本用 Unicode，Python 立刻输出，uv 复制文件而不是建链接。"
 - en: "Line 9 matters most: it tells uv to build the venv in slash home, slash app, slash dot venv, outside slash app. Soon, this line saves us."
   zh:
-  - "第 9 行最要紧：它让 uv 把 venv 建在 /home/app/.venv，在 /app 外面。"
+  - "第 9 行最要紧：它告诉 uv，venv 要建在 /home/app/.venv，在 /app 外面。"
   - "很快，这一行就会救我们一命。"
   en_display:
   - "Line 9 matters most: it tells uv to build the venv in /home/app/.venv, outside /app."
   - null
 - en: "Line 10 tells Google's libraries where the key is: secrets, slash, mega-pipeline dot json, a relative path."
   zh:
-  - "第 10 行告诉 Google 的库密钥在哪里：secrets/mega-pipeline.json，一个相对路径。"
+  - "第 10 行告诉 Google 的库，密钥在哪里：secrets/mega-pipeline.json，一个相对路径。"
   en_display:
   - "Line 10 tells Google's libraries where the key is: secrets/mega-pipeline.json, a relative path."
-- en: "Lines 12 to 21 are one RUN instruction, chained with double ampersands, so they make one layer. It updates Debian, installs our packages, and deletes apt's package lists in that same layer, so they cost nothing."
+- en: "Lines 12 to 21 are one RUN instruction. Every line but the last ends in a backslash, which continues it, and double ampersands chain the commands, so they make one layer. It updates Debian, installs our packages, and deletes the apt package lists in that same layer, so they cost nothing."
   zh:
-  - "第 12 到 21 行是一条 RUN 指令，用 && 串起来，所以只产生一层。"
+  - "第 12 到 21 行是一条 RUN 指令。"
+  - "除了最后一行，每行都以反斜杠结尾，让指令接着往下写；&& 把各条命令串起来，所以只产生一层。"
   - "它更新 Debian，装上我们要的软件包，再在同一层里删掉 apt 的软件包列表，所以它们不占空间。"
   en_display:
-  - "Lines 12 to 21 are one RUN instruction, chained with &&, so they make one layer."
+  - null
+  - "Every line but the last ends in a backslash, which continues it, and && chains the commands, so they make one layer."
   - null
 - en: "Then it upgrades pip and installs uv with it. Unlike Debian's system Python in lecture 1, this Python belongs to the image, so pip may install into it."
   zh:
@@ -237,10 +239,10 @@ S05:
 - en: "The main README's appendix has a sample Dockerfile, but its build argument has curl instead of ffmpeg: don't paste it into transcribe audio."
   zh:
   - "主 README 的 Appendix 部分有个示例 Dockerfile，但它的构建参数是 curl 而不是 ffmpeg：别把它贴进 transcribe audio 组件。"
-- en: "Pause now and write it: a file named Dockerfile, with no extension. Type the FROM line, then copy the README's six code blocks below it, in order."
+- en: "Pause now and write it: a file named Dockerfile, with no extension. Type the FROM line, then copy the README's six code blocks below it, in order, with one blank line between blocks, so your line numbers match ours."
   zh:
   - "现在暂停，把它写出来：一个名叫 Dockerfile、没有扩展名的文件。"
-  - "先敲 FROM 那一行，再把 README 的六个代码块按顺序复制到下面。"
+  - "先敲 FROM 那一行，再把 README 的六个代码块按顺序复制到下面，块与块之间空一行，这样你的行号就和我们的一致。"
 S06:
 - en: "First, an extra check: your Dockerfile, named exactly that, sits next to pyproject.toml."
   zh:
@@ -254,15 +256,21 @@ S06:
   - null
   - null
   - "Here it is: docker build -t transcribe_audio, then a dot for this folder, the build context."
-- en: "Pause and run it. Your terminal shows a compact live view; here are the full log's landmarks. Build step 2 is our big RUN: apt installs 237 packages, a 205 megabyte download, then pip installs uv, all in 46.9 seconds."
+- en: "Pause and run it. Your terminal shows a compact live view that folds each build step into one line when it's done. Here are the full log's landmarks; to see them yourself, add dash dash progress equals plain. Build step 2 is our big RUN: apt installs 237 packages, a 205 megabyte download, then pip installs uv, all in 46.9 seconds."
   zh:
   - "暂停一下，自己跑一遍。"
-  - "你的终端显示的是精简的实时视图；这里是完整日志里的几处关键行。"
+  - "你的终端显示的是精简的实时视图，每个构建步骤跑完后都会折叠成一行。"
+  - "这里是完整日志里的几处关键行；想自己看到它们，就加上右上角灰字里的那个参数。"
   - "构建步骤 2 是我们那个大 RUN：apt 装了 237 个软件包，下载了 205 MB，然后 pip 装好 uv，一共 46.9 秒。"
+  en_display:
+  - null
+  - null
+  - "Here are the full log's landmarks; to see them yourself, add --progress=plain."
+  - null
 - en: "Build steps 3 and 4 set the working folder and copy our files. Build step 5 runs uv sync with the image's own Python 3.12, creates the venv, and resolves 1 package: the project itself, with no dependencies yet."
   zh:
   - "构建步骤 3 和 4 设置工作目录，复制我们的文件。"
-  - "构建步骤 5 用 image 自带的 Python 3.12 运行 uv sync，建好 venv，解析出 1 个包：就是项目本身，还没有任何依赖。"
+  - "构建步骤 5 用 image 自带的 Python 3.12 运行 uv sync，建好 venv，然后解析出 1 个包：就是项目本身，还没有任何依赖。"
 - en: "It ends by naming the image, with a warning about line 10: Docker flags any variable whose name sounds secret. The value is just a path, so it's harmless, and you'll see it every build."
   zh:
   - "最后它给 image 命名，还有一条关于第 10 行的警告：Docker 会标出任何名字听起来像密钥的变量。"
@@ -270,7 +278,7 @@ S06:
 - en: "An extra check, docker images, says 1.35 gigabytes on this machine. By far the biggest layer is that one RUN, 842 megabytes of compilers, ffmpeg and their libraries, while the copied folder is tiny."
   zh:
   - "额外跑一下 docker images：在这台机器上是 1.35 GB。"
-  - "最大的一层远远超过其他，就是那个 RUN：842 MB 的编译器、ffmpeg 和它们的库；复制进来的目录则非常小。"
+  - "最大的一层就是那个 RUN，比其他层大得多：842 MB 的编译器、ffmpeg 和它们的库；复制进来的目录则小得很。"
 - en: "And if you skipped uv init, build step 5 fails, because there's no pyproject.toml to sync."
   zh:
   - "如果你跳过了 uv init，构建步骤 5 就会失败，因为没有 pyproject.toml 可以同步。"
@@ -278,10 +286,11 @@ S06:
   zh:
   - "来想一想。"
   - "你只改了 cli.py 里的组名，然后重新构建：五个构建步骤里，哪些会重新运行？"
-- en: "Build steps 4 and 5. The copied folder changed, so the copy runs again, and so does every step after it; build steps 1 to 3 come from the cache. We'll see it in part 2."
+- en: "Build steps 4 and 5. The copied folder changed, so the copy runs again, and so does every step after it. Build steps 2 and 3 come from the cache, and build step 1 is the base image you already have. We'll see it in part 2."
   zh:
   - "构建步骤 4 和 5。"
-  - "复制进来的目录变了，所以复制那一步要重新跑，它后面的每一步也一样；构建步骤 1 到 3 直接用缓存。"
+  - "复制进来的目录变了，所以复制那一步要重新跑，它后面的每一步也一样。"
+  - "构建步骤 2 和 3 直接用缓存，构建步骤 1 是你本地已经有的基础 image。"
   - "第二部分我们会亲眼看到。"
 S07:
 - en: "Step 6 runs the image, so first, a picture. The copied files sit in slash app; the venv sits outside it, in slash home. As in lecture 2, a container adds a thin writable layer, thrown away on exit by dash dash r m."
@@ -309,7 +318,7 @@ S07:
   zh:
   - "来想一想。"
   - "在第 2 讲里，venv 就放在代码旁边。"
-  - "如果这里它也放在 /app 里，有了这个挂载，container 会在那儿看到什么？"
+  - "如果这里它也放在 /app 里，那 container 透过这个挂载会在那儿看到什么？"
   en_display:
   - null
   - null
@@ -317,17 +326,20 @@ S07:
 - en: "It would find your laptop's folder, with no venv in it, so activation would fail. That's what line 9, uv project environment, prevents."
   zh:
   - "它会看到你笔记本上的目录，里面没有 venv，所以激活会失败。"
-  - "第 9 行的 uv project environment 变量，防的就是这个。"
+  - "第 9 行的 uv project environment 这个变量，防的就是这个。"
+  en_display:
+  - null
+  - "That's what line 9, UV_PROJECT_ENVIRONMENT, prevents."
 - en: "Type docker run, dash dash r m, dash t i, dash v with the mount, and the image name. Copy it from the README, quotes included, and pause to run it."
   zh:
-  - "输入 docker run，加上 --rm、-ti、带挂载的 -v，再加上 image 名。"
+  - "输入 docker run，加上 --rm 和 -ti，带挂载的 -v，再加上 image 名。"
   - "从 README 里复制，连引号一起，然后暂停，自己跑一遍。"
   en_display:
   - "Type docker run, --rm, -ti, -v with the mount, and the image name."
   - null
 - en: "On Windows, run these commands in Git BASH, keep the quotes around pwd, and if docker run says the input device is not a T-T-Y, put winpty in front."
   zh:
-  - "在 Windows 上，这些命令要在 Git BASH 里跑，pwd 两边的引号要保留；如果 docker run 报 the input device is not a TTY，就在前面加上 winpty。"
+  - "在 Windows 上，这些命令要在 Git BASH 里跑，pwd 两边的引号要保留；如果 docker run 报错：the input device is not a TTY，就在它前面加上 winpty。"
   en_display:
   - "On Windows, run these commands in Git BASH, keep the quotes around pwd, and if docker run says the input device is not a TTY, put winpty in front."
 - en: "The prompt changes: you're user app, in slash app, and after the at sign comes the container's ID, new on every run."
@@ -350,7 +362,8 @@ S07:
   en_display:
   - null
   - "ModuleNotFoundError, No module named google: the packages aren't installed yet."
-- en: "The container runs and sees your folder, but Python can't find Google. In part 2, we add the packages, and find out why they vanish."
+- en: "The container runs and sees your folder, but Python can't find Google. If you stop here, rerun the same docker run from the transcribe audio folder before part 2. In part 2, we add the packages, and find out why they vanish."
   zh:
   - "这个 container 跑起来了，也看得到你的目录，但 Python 找不到 Google。"
+  - "如果你在这里停下，就重跑同一条 docker run，在 transcribe audio 目录里跑，再看第二部分。"
   - "第二部分，我们来加上这些包，并弄清楚它们为什么会消失。"

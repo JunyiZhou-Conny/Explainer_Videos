@@ -362,7 +362,7 @@ python cli.py --upload
 - `--generate` builds a cheese-podcast prompt around the transcript, "1000 or more words" with host Pavlos Protopapas (`generate_text/cli.py:65-72`), and calls Gemini on Vertex AI in `us-central1` with model `$GEMINI_MODEL` or `gemini-2.5-flash-lite`.
 - `--upload` pushes `text_paragraphs/<group>/input-*.txt`.
 
-*You should see* the prompt printed, three blank lines, `Generated text:` and a long article. To try another model, start the container with `-e GEMINI_MODEL=<model-id>` (an exercise in §9). *If it fails:* `404 … Publisher Model … not found` means a retired or misspelled model name. `429 RESOURCE_EXHAUSTED` means the whole class is sharing one project quota, so wait and retry (G12).
+*You should see* the prompt printed, three blank lines, `Generated text:` and a long article. To try another model, start the container with `-e GEMINI_MODEL=<model-id>` (an exercise in §9). *If it fails:* `404 … Publisher Model … not found` means a retired or misspelled model name; a model not offered in `us-central1` answers 404 too, fixed with `location='global'` at `generate_text/cli.py:24`. `429 RESOURCE_EXHAUSTED` means the whole class is sharing one project quota, so wait and retry (G12).
 
 ### Component C: `synthesis_audio_en`
 

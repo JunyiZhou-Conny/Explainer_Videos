@@ -168,9 +168,9 @@ Conventions
   prompt is `app@5b4d4981ec25:/app$` (from `transcribe_audio/01-docker-run-tty.txt`), reused for
   every container. Group name `group-01` (the README's example). Images `transcribe_audio`,
   `generate_text`, `synthesis_audio_en`, `translate_text`, `synthesis_audio`.
-- Length and parts: narration 4,294 words (BRIEF.md: 3,900–4,300); part 1 1,900, part 2 2,394
+- Length and parts: narration 4,402 words after the QA fixes (BRIEF.md: 3,900–4,300); part 1 1,987, part 2 2,415
   (`python -m explainer.script`). At the measured ≈ 155 wpm of af_heart at 0.9 (all v1 sentences
-  synthesized, review_spoken.md) that is ≈ 27.7 min of voice (part 1 ≈ 12.3, part 2 ≈ 15.4);
+  synthesized, review_spoken.md) that is ≈ 28.4 min of voice (part 1 ≈ 12.8, part 2 ≈ 15.6);
   typing, outputs and five ponder timers bring the video to ≈ 31–34 min. Part 1 = S01–S07 (the pipeline, and component A up to a running container that
   can't import yet), part 2 = S08–S15 (packages, the key, running A, B–E, secrets, teardown).
   Each part ends on an empty frame.
@@ -197,18 +197,22 @@ into your laptop" (a PINK route) · "no key" → "a shared bucket + a service-ac
 drawer and a GOLD key glyph).
 SAY: Since last lecture, four things change: you write the Dockerfile, and you build five images, not one. A bind mount opens a window into your laptop, and the containers reach Google Cloud through a shared bucket and a service account key.
 
-SHOW: A layout preview, built piece by piece as named: the ReadmeTracker appears top-left
-("README › Clone this Repository", 2 dots) with a YELLOW circle pulsing around it; a code panel
+SHOW: A layout preview, built piece by piece as named: a README.md page glyph (captioned with the
+repo's address) beside a GREY "this video" frame, and, while the page is up, the GREY lecture tag
+"Lecture 3 · slides 24–28 · Tutorial 5" top right; the page flies top-left and becomes the
+ReadmeTracker ("README › Clone this Repository", 2 dots) with a YELLOW circle pulsing around it,
+step 1 lighting as the numbered steps are named; a code panel
 slides in with header `transcribe_audio/cli.py · lines 18–20` (CODE(transcribe_audio/cli.py:
 18–20)); a two-line terminal at the bottom (GREY tag "preview") shows
 `git clone https://github.com/dlops-io/mega-pipeline.git` with a YELLOW `▶ your turn` tag, then
 `ls` with the GREY `extra` tag.
-SAY: Open the mega-pipeline README beside this video. The tracker, top left, shows the README step; code panels show file and line numbers. Pause at the yellow your-turn tag; a gray extra tag marks a command not in the README.
+SAY: Open the mega-pipeline README beside this video. The tracker, top left, splits the README into numbered steps; code panels show file and line numbers. Pause at the yellow your-turn tag; a gray extra tag marks a command not in the README.
 
 SHOW: The preview clears. A checklist card ticks GREEN line by line: "Tutorial 0: Docker Desktop +
 uv" · "the course key, from Canvas" (GOLD key glyph) · "your team's group name". Footer caption:
-"every command: MLOps_Learning · guides/L03-containers-2-mega-pipeline.md".
-SAY: You'll need Tutorial 0, for Docker Desktop and uv, the course key from Canvas, and your group name. Every command is also in the study guide, in the MLOps Learning repo.
+"every command: MLOps_Learning · guides/L03-containers-2-mega-pipeline.md"; on "linked in the
+description" the repo name pulses and a GREY tag "link in the description" fades in under it.
+SAY: You'll need Tutorial 0, for Docker Desktop and uv, the course key from Canvas, and your group name. Every command is also in the study guide, linked in the description.
 
 SHOW: A TEAL-framed terminal strip (GREY tag "preview", prompt `app@5b4d4981ec25:/app$`) types
 `python cli.py --download`. Where its output would print, a dashed empty box draws itself, and a
@@ -229,11 +233,13 @@ SAY: We recorded on a Debian 12 laptop with Docker Engine 29, at the time of rec
 
 SHOW: No tracker (concept scene). A GREY README card, header `README.md · lines 60–67`, condenses
 into two rows: top, "production: services call each other's APIs" with five TEAL boxes joined by
-direct GREY arrows; the arrows fade and get a GREY cross. Bottom, "here: write outputs to shared
-storage; the next stage reads them", with the same boxes over a BLUE cabinet.
+direct GREY arrows (with it, the GREY lecture tag "Lecture 3 · slides 7, 15" top right); the
+arrows fade and get a GREY cross. Bottom, "here: write outputs to shared storage; the next stage
+reads them", with the same boxes over a BLUE cabinet.
 SAY: In production, services call each other's APIs. This tutorial simplifies: each component writes its output to shared storage, where the next one reads it.
 
-SHOW: V1 in full. The six drawers along the bottom get their labels at 20 pt (sans), each on two
+SHOW: V1 in full, with the GREY lecture tag "Lecture 3 · slide 25" top right (from "That storage
+is one Google Cloud Storage bucket"). The six drawers along the bottom get their labels at 20 pt (sans), each on two
 lines split after the first underscore (`input_` / `audios/`, `text_` / `prompts/`, `text_` /
 `paragraphs/` …), in pipeline order: `input_audios/` · `text_prompts/` · `text_paragraphs/` ·
 `text_audios/` · `text_translated/` · `output_audios/`; `output_audios_pp/` is a small dashed drawer
@@ -324,10 +330,11 @@ SHOW: In the `generate_text/` row, `pyproject.toml` and `main.py` highlight YELL
 GREY tag "bonus".
 SAY: Two differences to remember. The generate text folder already has its own pyproject.toml and a main dot py file, but no dot gitignore file. And synthesis audio has a bonus script.
 
-SHOW: The tree and rows fade. The terminal grows back. The tracker switches section: "README ›
-transcribe_audio", 13 dots. TRACKER A1. It types `cd transcribe_audio` → (no output); the prompt
+SHOW: The tree and rows fade. The terminal grows back. A one-line README chip
+"transcribe_audio/README.md · open it now" drops into the top band. The tracker switches section:
+"README › transcribe_audio", 13 dots. TRACKER A1. It types `cd transcribe_audio` → (no output); the prompt
 becomes `student@laptop:~/mega-pipeline/transcribe_audio$`. `▶ your turn`.
-SAY: Now the first component. The tracker switches to the transcribe audio README, whose step 1 is cd transcribe audio. Pause, and catch up to here.
+SAY: Now the first component. Open the README in the transcribe audio folder: the tracker switches to it, and its step 1 is cd transcribe audio. Pause, and catch up to here.
 
 SHOW: The terminal shrinks to the bottom strip. CODE(transcribe_audio/cli.py: 4–12) at the top,
 full width. Lines 4–8 get a GREY side tag "comes with Python"; lines 9–11 a PINK side tag "where
@@ -337,7 +344,7 @@ SAY: Open cli.py in your editor. The first imports come with Python, but the two
 SHOW: The panel swaps to CODE(transcribe_audio/cli.py: 18–21), header suffix "· comment cut".
 Line 18 (bucket) gets a BLUE tag "the bucket", lines 19–20 a BLUE tag "its two drawers", line 21
 `group_name` highlights YELLOW with a tag "you'll change this".
-SAY: Next come four settings: the bucket's name, the two drawers this stage uses, and on line 21 the group name, which you'll change soon.
+SAY: Next come four settings: the bucket's name, the two drawers this stage uses, and on line 21 the group name, still at its default, which you'll change soon.
 
 SHOW: The panel swaps to CODE(transcribe_audio/cli.py: 118–126). Lines 121–126 get three numbered
 YELLOW badges: 1 download, 2 transcribe, 3 upload. Fade out.
@@ -349,7 +356,9 @@ SAY: At the bottom, main runs up to three verbs, always in this order: download,
 
 SHOW: TRACKER A2. Schematic (tag `illustration`): a GREY card "course site · Files" (text only, no
 logo) with a GOLD key glyph `mega-pipeline.json`. The key glyph enlarges and gets a GOLD glow; a
-small GREY label under it: "the course's service account · spends the course's money".
+small GREY label under it: "the course's service account · spends the course's money". From "It
+lets your code act as the course's service account", the GREY lecture tag "Lecture 3 · slides 23,
+70" top right.
 SAY: Step 2 is the key: a file from Canvas called mega-pipeline dot json. It lets your code act as the course's service account, a robot Google account, so guard it like a credit card.
 
 SHOW: The key shrinks back; an arrow carries it into the GREY folder `transcribe_audio/secrets/`.
@@ -453,11 +462,12 @@ at the start of the value underlines PINK.
 SAY: Line 10 tells Google's libraries where the key is: secrets, slash, mega-pipeline dot json, a relative path.
 
 SHOW: The panel swaps to PANEL(files/transcribe_audio.Dockerfile: 12–21, "transcribe_audio/Dockerfile ·
-lines 12–21"). The `&& \` at each line end pulses. `RUN` drops one fat ORANGE slab onto the stack;
+lines 12–21"); for this beat the GREY lecture tag "Lecture 3 · slide 40" takes the top-right
+corner in place of the caption. The `&& \` at each line end pulses. `RUN` drops one fat ORANGE slab onto the stack;
 the slab zooms up to show its inside, in order: small "apt lists" pages appear (line 12), packages
 fill in (lines 13–14), then the pages crumple and vanish (lines 15–16), all inside the slab, never
 reaching the stack.
-SAY: Lines 12 to 21 are one RUN instruction, chained with double ampersands, so they make one layer. It updates Debian, installs our packages, and deletes apt's package lists in that same layer, so they cost nothing.
+SAY: Lines 12 to 21 are one RUN instruction. Every line but the last ends in a backslash, which continues it, and double ampersands chain the commands, so they make one layer. It updates Debian, installs our packages, and deletes the apt package lists in that same layer, so they cost nothing.
 
 SHOW: Lines 17–18 highlight; a PURPLE `uv` chip drops into the zoomed slab beside a small ORANGE
 `pip` chip. A GREY note: "this Python is the image's own (/usr/local), not Debian's → pip may
@@ -492,7 +502,7 @@ SAY: The main README's appendix has a sample Dockerfile, but its build argument 
 SHOW: The appendix card fades. Beside the file glyph, a GREY card: "Dockerfile = FROM
 python:3.12-slim-bookworm (README line 41) + the README's six code blocks, in order: lines 45 ·
 50–55 · 60–69 · 76–77 · 82–83 · 88–89". `▶ your turn` beside the file glyph. Fade out.
-SAY: Pause now and write it: a file named Dockerfile, with no extension. Type the FROM line, then copy the README's six code blocks below it, in order.
+SAY: Pause now and write it: a file named Dockerfile, with no extension. Type the FROM line, then copy the README's six code blocks below it, in order, with one blank line between blocks, so your line numbers match ours.
 
 ---
 
@@ -518,7 +528,7 @@ TERM(laptop/12-build.txt: 9, 23, …, 148–149, …, 1368, 1375, 1377). `▶ yo
 gets a TEAL badge "build step 2"; `237 newly installed` and `205 MB` (lines 148–149) underline
 ORANGE; `uv-0.13.0` (line 1375) PURPLE; `DONE 46.9s` underlines. A GREY note: "first build: Docker
 also pulls python:3.12-slim-bookworm".
-SAY: Pause and run it. Your terminal shows a compact live view; here are the full log's landmarks. Build step 2 is our big RUN: apt installs 237 packages, a 205 megabyte download, then pip installs uv, all in 46.9 seconds.
+SAY: Pause and run it. Your terminal shows a compact live view that folds each build step into one line when it's done. Here are the full log's landmarks; to see them yourself, add dash dash progress equals plain. Build step 2 is our big RUN: apt installs 237 packages, a 205 megabyte download, then pip installs uv, all in 46.9 seconds.
 
 SHOW: TERM(laptop/12-build.txt: 1379, 1382, 1385–1388, …, 1399, …, 1404–1405; wrap) (same header).
 `[3/5]`, `[4/5]`, `[5/5]` get TEAL badges in turn; line 1386 `Using CPython 3.12.15 interpreter at:
@@ -541,7 +551,7 @@ a brace "≈ 1 GB of layers" with a GREY note "+ 357 MB compressed copy = 1.35 G
 machine".
 SAY: An extra check, docker images, says 1.35 gigabytes on this machine. By far the biggest layer is that one RUN, 842 megabytes of compilers, ffmpeg and their libraries, while the copied folder is tiny.
 
-SHOW: Tag `illustration` ("what if"). A small RED-bordered panel, header "if you skipped uv init",
+SHOW: GREY tag "what if · a real run" (a recorded extra run). A small RED-bordered panel, header "if you skipped uv init",
 shows TERM(laptop/26-g21-no-pyproject.txt: 34, 51; wrap) in RED.
 SAY: And if you skipped uv init, build step 5 fails, because there's no pyproject.toml to sync.
 
@@ -550,11 +560,12 @@ cli.py" hovers beside the stack.
 PONDER(8 s, "You change only group_name in cli.py\nand build again.\nWhich of the five build steps run again?")
 SAY: Ponder this. You change only the group name in cli.py and build again: which of the five build steps run again?
 
-SHOW: The chip drops into the COPY slab, which flashes YELLOW; the COPY slab and the uv sync slab
-above it dissolve and re-form; slabs 2–3 get GREEN "CACHED" stamps and the base slab stays as is.
-Caption: "part 2: for real".
+SHOW: The GREY lecture tag "Lecture 3 · slide 33" top right from "Build steps 4 and 5". The chip
+drops into the COPY slab, which flashes YELLOW; the COPY slab and the uv sync slab above it
+dissolve and re-form; slabs 2–3 get GREEN "CACHED" stamps, and build step 1 is marked as the base
+image you already have (that slab stays as is). Caption: "part 2: for real".
 Fade out.
-SAY: Build steps 4 and 5. The copied folder changed, so the copy runs again, and so does every step after it; build steps 1 to 3 come from the cache. We'll see it in part 2.
+SAY: Build steps 4 and 5. The copied folder changed, so the copy runs again, and so does every step after it. Build steps 2 and 3 come from the cache, and build step 1 is the base image you already have. We'll see it in part 2.
 
 ---
 
@@ -567,8 +578,11 @@ image + a thin writable layer".
 SAY: Step 6 runs the image, so first, a picture. The copied files sit in slash app; the venv sits outside it, in slash home. As in lecture 2, a container adds a thin writable layer, thrown away on exit by dash dash r m.
 
 SHOW: The laptop (GREY) appears at left with the folder `transcribe_audio/`. A PINK route labelled
-`-v "$(pwd):/app"` runs from the laptop folder to the cavity; a GREY sheet carrying the laptop's
-files slides along it and covers the cavity; the copied files dim underneath. Caption: "/app now
+`-v "$(pwd):/app"` runs from the laptop folder to the cavity, with two small GREY labels under
+it: "host folder" under `$(pwd)`, "container path" under `/app`; the GREY lecture tag "Lecture 3 ·
+slides 51–52" top right, through the ponder until just before the answer's "start: bash, venv on"
+label arrives. A GREY sheet carrying the laptop's
+files slides along the route and covers the cavity; the copied files dim underneath. Caption: "/app now
 is your folder".
 SAY: Dash v mounts the current folder, pwd, onto slash app: it covers the copied files, so slash app is now your folder.
 
@@ -627,10 +641,13 @@ SHOW: It types `python cli.py --help` (extra) → TERM(transcribe_audio/01-docke
 line 14 `ModuleNotFoundError: No module named 'google'` prints RED.
 SAY: Last extra: ask cli.py for its help. Module not found, no module named google: the packages aren't installed yet.
 
-SHOW: V3 returns: the window works (PINK route lit), the GREEN venv box is empty, and a RED "?"
-hovers between `cli.py` and a BLUE "google" chip. Caption: "Part 2: packages, and why they
+SHOW: V3 returns above the strip: the window works (PINK route lit), the GREEN venv box is empty,
+and a RED "?" hovers between `cli.py` and a BLUE "google" chip. On "If you stop here" a 3-row
+laptop strip types the README's `docker run --rm -ti -v "$(pwd):/app" transcribe_audio` again (the
+rerun); its prompt's `transcribe_audio` underlines and V3's laptop folder pulses on "from the
+transcribe audio folder". Then the strip goes. Caption: "Part 2: packages, and why they
 vanish". Everything fades to an empty frame (end of part 1).
-SAY: The container runs and sees your folder, but Python can't find Google. In part 2, we add the packages, and find out why they vanish.
+SAY: The container runs and sees your folder, but Python can't find Google. If you stop here, rerun the same docker run from the transcribe audio folder before part 2. In part 2, we add the packages, and find out why they vanish.
 
 ---
 
@@ -719,7 +736,7 @@ SHOW: A YELLOW eye glyph reads downward, from our code into the libraries: line 
 "/app/cli.py", line 36, in download` → line 10 `client = storage.Client()` (YELLOW) → line 23
 `_, project = google.auth.default()` (PINK) → line 36 (RED). Three small labels: "our code", "the
 client asks", "google.auth looks for the file".
-SAY: Read it as in lecture 1. Our code, line 36, built a storage client; the client asked Google's auth library for credentials, and that library looked for a missing file.
+SAY: Read it as in lecture 1. Our code, line 36, built a storage client. The client asked Google's auth library for credentials, and that library looked for a missing file.
 
 SHOW: The terminal shrinks to the bottom strip, and the traceback becomes the picture: line 10
 `client = storage.Client()` lifts out and turns into a small machine `storage.Client()` inside a
@@ -811,7 +828,8 @@ caption card "with your key, look for": "Uploading: text_prompts/group-01/input-
 SAY: Step 12: python cli.py dash dash upload, or dash u. It uploads only files starting with input, under the same name in the bucket: look for uploading, then text prompts, your group, and the file.
 
 SHOW: V1 returns, small: the transcript token drops into `text_prompts/group-01/`; the schematic
-leaderboard (tag `illustration`; caption "check: transcribe_audio/README.md · line 134") lights
+leaderboard (tag `illustration`; caption "check: ac215-mega-pipeline.dlops.io" over
+"(transcribe_audio/README.md · line 134)") lights
 the `group-01` × Transcribe cell. `▶ your turn` beside the three commands, listed together.
 SAY: Your transcript drops into your group's drawer, and the transcribe cell lights up on the leaderboard, which is how the README says to check. Pause and run all three steps, with your key.
 
@@ -838,7 +856,7 @@ SAY: Back on the laptop, an extra check: the pyproject.toml with three dependenc
 
 SHOW: It types `git status --short` (extra) → TERM(laptop/14-host-after-uv-add.txt: 36); a GREY
 tag "the rest is hidden from Git · S15".
-SAY: Git status shows only cli.py as changed; we'll see why the rest is invisible at the end.
+SAY: Git status shows only cli.py as changed. We'll see why the rest is invisible at the end.
 
 SHOW: The trap, tag `extra`. The terminal shrinks to 7 rows (the folded `docker run`, the help
 command and 4 output rows). It types `docker run --rm -ti -v "$(pwd):/app" transcribe_audio`
@@ -855,7 +873,8 @@ SAY: The README's fix: exit, and rebuild the image with the same docker build co
 SHOW: `CACHED [2/5]` and `CACHED [3/5]` (lines 14–15) get GREEN stamps; `[4/5] COPY` and `[5/5] RUN
 uv sync` (lines 16–17) get TEAL build-step badges, and line 17's time lifts into a GREY tag `2.9s`;
 `Building 9.9s` (line 3) underlines. Above, V2: slabs 2–3 stamped CACHED (the base slab is reused
-as is), the COPY and uv sync slabs dissolve and re-form. A GREY tag "ponder 2".
+as is), the COPY and uv sync slabs dissolve and re-form. A GREY tag "part 1's ponder: which steps
+run again?".
 SAY: The ponder's answer, for real: build steps 2 and 3 are cached, while build step 4 copies the changed folder and build step 5, uv sync, runs again. The build took under ten seconds.
 
 SHOW: PANEL(laptop/15-rebuild.plain.txt: 30–33, 38–39, "the same build, full log · lines 30–39").
@@ -870,7 +889,8 @@ TERM(laptop/16-images-after.txt: 2–3), `1.48GB` highlights; then `docker histo
 sliced to `line[32:90]`. Rows 5, 6 and 9 lift out of the panel and land on their slabs as size
 labels: uv sync `105MB` (GREEN, split "venv ≈ 50 MB + uv cache ≈ 58 MB"), COPY `193kB` (GREY), apt
 RUN `842MB` (ORANGE); the 0B rows flick onto the config card. V2's brace now reads "≈ 1.1 GB of
-layers" with the GREY note "+ 388 MB compressed copy = 1.48 GB disk usage · this machine".
+layers" with the GREY note "+ 388 MB compressed copy = 1.48 GB disk usage · this machine". The GREY
+lecture tag "Lecture 3 · slide 38" top right from "Two more extras".
 SAY: Two more extras. The image grew to 1.48 gigabytes, and docker history lists one row per instruction: card-only lines show zero bytes. The uv sync layer now holds 105 megabytes, the packages plus uv's download cache.
 
 SHOW: It types `docker run --rm -ti -v "$(pwd):/app" transcribe_audio` (extra), then
@@ -880,7 +900,8 @@ SAY: And a fresh container now imports all three packages with no uv add at all:
 
 SHOW: V2 alone: an edit chip "group_name" drops into the COPY slab; the uv sync slab above it
 falls like a domino, dissolves, and its 26 chips rain in again (the cache can't help). A GREY note:
-"later tutorials: COPY pyproject.toml uv.lock first, then uv sync, then the rest". Fade out.
+"later tutorials: COPY pyproject.toml uv.lock first, then uv sync, then the rest", and the GREY
+lecture tag "Lecture 3 · slide 33" top right from "Later tutorials". Fade out.
 SAY: One more thing: because the copy comes before uv sync, any edit, even the group name, knocks over uv sync, like lecture 2's dominoes. Later tutorials copy pyproject.toml and uv.lock first.
 
 ---
@@ -927,8 +948,9 @@ SAY: Ponder this. The image has Python 3.12; this pyproject.toml asks for 3.14 o
 
 SHOW: The live view's row 17 `[5/5] RUN uv sync 5.9s` unfolds into
 PANEL(laptop/32-b-build.plain.txt: 341–344, "the same build, full log · lines 341–344");
+a PURPLE tag "surprise two · uv brings its own Python" at the header row's right end;
 `3.15.0` gets the tag `at the time of recording`, `(35.9MiB)` underlines GREY.
-SAY: The live view hides it; the full log shows it: uv downloaded its own Python, 3.15.0 at the time of recording, and built the venv on it.
+SAY: Surprise two: the live view hides it; the full log shows it: uv downloaded its own Python, 3.15.0 at the time of recording, and built the venv on it.
 
 SHOW: V7: the ORANGE 3.12 dot turns RED, outside the interval; a PURPLE download arrow drops a
 GREEN-ringed dot onto 3.15, labelled "3.15.0 · uv-managed · 35.9 MiB" and "the newest at the time
@@ -959,16 +981,20 @@ after another, with no output: `python cli.py --download`, `python cli.py --gene
 -d · -g · -u". CODE(generate_text/cli.py: 73–76) at the top: line 73 (`GEMINI_MODEL`, default
 `"gemini-2.5-flash-lite"`) highlights, then line 75. A GREY note under line 73: "Vertex AI retires
 gemini-2.5-flash-lite on 2026-10-20 · then:" and the chip `docker run --rm -ti -e
-GEMINI_MODEL=<current model> -v "$(pwd):/app" generate_text` (extra, shown, not typed). Between
+GEMINI_MODEL=<current model> -v "$(pwd):/app" generate_text` (extra, shown, not typed), then a
+third row "pick one on Vertex AI's “Model versions” page · listed replacement:
+gemini-3.1-flash-lite" and, on "Newer models aren't served", a fourth: "it is not served in
+us-central1: in cli.py line 24, set location='global'". Between
 the panel and the strip, a BLUE cloud "Gemini · Vertex AI" with a GOLD tag "billed to the course
 project".
-SAY: Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026; after that, start the container with a current model in the Gemini model variable.
+SAY: Steps 10 to 12: download, generate, upload. The generate step sends each transcript to Gemini 2.5 Flash Lite on Vertex AI. Google retires that model on October 20, 2026. After that, start the container with a current model in the Gemini model variable. Newer models aren't served in the region cli.py uses, so also set the location on line 24 to global.
 
 SHOW: A caption card "with your key, look for" builds item by item: "your prompt, printed" (line
 74) · "Generated text:" (line 80) · "a long podcast script" (line 81) ·
 "text_paragraphs/group-01/input-….txt on your laptop" (line 84) · "Uploading:
-text_paragraphs/group-01/…" (generate_text/cli.py line 103); then a RED-bordered line "if it fails:
-429 RESOURCE_EXHAUSTED → the class shares one quota; wait a minute, retry". `▶ your turn`.
+text_paragraphs/group-01/…" (generate_text/cli.py line 103); then two RED-bordered lines: "if it
+fails: 404 … Publisher Model … not found → location='global' (line 24) + GEMINI_MODEL" and "if it
+fails: 429 RESOURCE_EXHAUSTED → the class shares one quota; wait a minute, retry". `▶ your turn`.
 SAY: Look for your prompt, generated text and a long podcast script, then the upload. Pause and run all three.
 
 SHOW: TRACKER B13. The terminal grows back and types `exit` (frame GREY, laptop prompt). An editor
@@ -1106,7 +1132,8 @@ CODE(synthesis_audio/cli_11.py: 19) (comment cut), `group_name` YELLOW, caption
 "synthesis_audio/README.md · line 112: here too". TRACKER X2: it types `uv add requests` →
 TERM(synthesis_audio/04-bonus-uv-add-requests.txt: 2–3); a GREY tag "already installed · now
 listed". A small GREY note: "synthesis_audio_en/README.md mentions cli_11.py too · the file is in
-synthesis_audio/".
+synthesis_audio/". The GREY lecture tag "Lecture 3 · slides 23–24" top right from "An optional
+bonus in E".
 SAY: An optional bonus in E speaks the French with ElevenLabs, in the instructor's voice. It uses your own ElevenLabs key and quota: a key file in secrets, your group name in the bonus script too, and uv add requests.
 
 SHOW: TRACKER X3. A one-line README chip `synthesis_audio/README.md · lines 151–153`. It types
@@ -1159,16 +1186,17 @@ lecture 2's parcel replays small: the whole folder, key included, packs into the
 COPY unpacks it into the slab. Caption "Docker doesn't read .gitignore". A GREY README card, header
 `README.md · lines 103–106`, tag `erratum`: "we've already added a .gitignore entry so the file
 won't be pushed accidentally" → caption "about Git only · says nothing about the image".
-SAY: Docker doesn't read dot gitignore. Remember lecture 2's parcel: the build context is the whole folder, key included, and the copy line unpacks all of it. The README's secrets note covers Git only.
+SAY: Docker doesn't read dot gitignore. Remember lecture 2's parcel: the build context is the whole folder, key included, and the copy line unpacks all of it. The README's secrets note only covers Git.
 
 SHOW: The fix, tag `extra` "recommended". The terminal grows back. It types `cat .dockerignore`
 (extra) → TERM(laptop/23-g1-dockerignore.txt: 2), with a GREY note "create it in VS Code: a file
 named .dockerignore, one line secrets/ · in all five component folders". `▶ your turn`. In V6 a
-second sieve, `.dockerignore`, lowers over the box.
-SAY: The fix, which lecture 2 recommended, is an extra here: a file named dot dockerignore, with one line, secrets slash. All five images copied the key, so pause and add it in all five folders.
+second sieve, `.dockerignore`, lowers over the box. The GREY lecture tag "Lecture 3 · slides 34,
+43" top right from "The fix".
+SAY: The fix, which lecture 2 recommended, is an extra here: a file named dot dockerignore, with one line, secrets, slash. All five images copied the key, so pause and add it in all five folders.
 
 SHOW: It types `docker build -t transcribe_audio .` → TERM(laptop/24-g1-rebuild-dockerignore.txt:
-12–13, …, 30–31); `49B` (line 13) highlights GREEN, with a GREY tag "was 2B: now there's a file";
+12–13, …, 30–31); `49B` (line 13) highlights GREEN, with a GREY tag ".dockerignore: was 2B, now a file";
 then `docker run --rm --entrypoint ls transcribe_audio -la /app/secrets` (extra) →
 TERM(laptop/25-g1-key-not-in-image.txt: 2), GREEN. In V6 the folder pours in again; the key is
 caught by the second sieve; the COPY slab is clean.
@@ -1218,8 +1246,9 @@ reference=transcribe_audio --filter reference=generate_text --filter reference=s
 SAY: Locally, cd dot dot back up to the repo. An extra command lists the five images: transcribe audio at 1.48 gigabytes, the other four at about 845 megabytes each.
 
 SHOW: It types `git status` (extra) → TERM(laptop/71-git-status.txt: 5–9, 11–14). Lines 8–9 and
-13–14 highlight; a GREY caption: "we set group_name only in transcribe_audio: yours also lists the
-other four cli.py and, with your key, generate_text's text_prompts/ and text_paragraphs/". Four
+13–14 highlight; with the output, a GREY caption: "we set group_name only in transcribe_audio: yours also lists the
+other four cli.py and, with your key, generate_text's text_prompts/ and text_paragraphs/", and a
+third row: "and the five .dockerignore files you added: commit those (no -f needed)". Four
 GREY ghost chips appear beside the rows, struck through: "the other four Dockerfiles,
 pyproject.toml, uv.lock". CODE(transcribe_audio/.gitignore: 5–7) slides in above the strip as the
 terminal shrinks.
@@ -1250,9 +1279,10 @@ SHOW: Q3 "After uv add in a --rm container: what survives, what is lost, what ma
 (signpost) · Q5 "How can an image contain a git-ignored key? The fix?" (sieve).
 SAY: Three: after uv add in a throwaway container, what survives, and what makes it permanent? Four: which variable points to the key, and why only from slash app? Five: how can an image hold a git-ignored key, and the fix?
 
-SHOW: The questions shrink to the top. Two footer cards: "Answers: exercises.md" and "Study guide +
-every command: github.com/JunyiZhou-Conny/MLOps_Learning · guides/L03-containers-2-mega-pipeline.md".
-A "Next: L4" card: "your own bucket + service account · the key outside the repo · docker-shell.sh
-builds and runs for you" (branch `flexible-workflow`). Everything fades to an empty frame (end of
-part 2).
+SHOW: The questions shrink to the top. Two footer cards: "Answers: study guide §8 (exercises.md)"
+and "Study guide + every command: github.com/JunyiZhou-Conny/MLOps_Learning ·
+guides/L03-containers-2-mega-pipeline.md". A "Next: L4" card: "your own bucket + service account ·
+the key outside the repo · docker-shell.sh builds and runs for you" (branch `flexible-workflow`),
+with the GREY lecture tag "Lecture 3 · slide 70" top right from "Next lecture". Everything fades
+to an empty frame (end of part 2).
 SAY: Answers are in the exercises; every command is in the study guide. Next lecture: your own bucket and service account, the key outside the repo, and a script that builds and runs each container.

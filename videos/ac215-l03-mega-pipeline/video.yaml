@@ -44,3 +44,18 @@ parts:
   - id: part2
     title: "AC215 · L3, part 2: packages, the key, and all five components"
     scenes: [s08_uv_add, s09_credentials, s10_transcribe, s11_rebuild, s12_generate, s13_speed_round, s14_secrets, s15_recap]
+publish:
+  title_zh: "AC215 第3讲跟练 · 容器进阶：五个容器，一个 bucket"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 3 讲教程的逐条命令跟练：照着 dlops-io/mega-pipeline 的 README，
+    自己从零写 Dockerfile（ARG、ENV、单层 RUN、非 root 用户、UV_PROJECT_ENVIRONMENT），用 -v 挂载 build 并运行容器，
+    走一遍 uv add → 退出 → 重新 build 的循环，放好服务账号密钥并读懂 DefaultCredentialsError，
+    再用同一套配方搭好转写、生成、合成、翻译、合成五个组件，它们通过同一个 GCS bucket 串成一条流水线；最后讲怎样不把密钥打进 image。
+    边看边暂停，在自己的电脑上跑每一条命令。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/mega-pipeline
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L03-containers-2-mega-pipeline.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, Docker, 容器, Dockerfile, 哈佛, 教程跟练, 云计算, GCP]
+  tid: 231

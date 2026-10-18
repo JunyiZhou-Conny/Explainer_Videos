@@ -2,10 +2,12 @@ r"""S05 · Write the Dockerfile, line by line (README › transcribe_audio step 
 
 Layout for the whole scene: the Dockerfile panel (files/transcribe_audio.Dockerfile, 20 pt, the
 file a student ends up with) at the top, left edge fixed, so a "swap" reads as scrolling the same
-file; its caption "from transcribe_audio/README.md · lines 41–90" in the top-right corner. V2 in
-the bottom band (y −1.43 … −3.55): lecture 2's TEAL config card at left, the layer stack at right.
-Each highlighted line sends a copy of its keyword down into the band, where it turns into its slab
-or into its line on the card.
+file; its caption "from transcribe_audio/README.md · lines 41–90" in the top-right corner (beat 6
+lends that corner to the GREY lecture tag "Lecture 3 · slides 40", lecture_ref: there is no room
+under the caption, the panel's top is at 2.47; beat 7's first bar swaps them back). V2 in the
+bottom band (y −1.43 … −3.55): lecture 2's TEAL config card at left, the layer stack at right. Each
+highlighted line sends a copy of its keyword down into the band, where it turns into its slab or
+into its line on the card.
 
 Beats (script.md "## S05", one voiceover block each):
  0  TRACKER A3→A4. A GREY README card (transcribe_audio/README.md · line 38: the README's two
@@ -25,13 +27,16 @@ Beats (script.md "## S05", one voiceover block each):
     YELLOW tag "remember this line" (wiggles on "Soon").
  5  Bar on line 10; its card line turns PINK, "where the key is · a relative path", with a small
     PINK signpost glyph; `secrets/` underlines PINK.
- 6  The panel scrolls to PANEL(12–21). The nine `&& \` pulse; `RUN` drops one fat ORANGE slab. The
-    slab zooms up (an ORANGE inset over the card, dashed zoom lines to the slab): "apt lists" pages
-    appear (line 12), ORANGE packages fill in (13–14), the pages crumple and vanish inside the slab
-    (15–16); on "cost nothing" the "apt lists" label is struck through and the apt slab on the
-    stack pulses.
- 7  Bar on 17–18: an ORANGE `pip` chip, then a PURPLE `uv` chip drops in beside it. GREY note (two
-    rows): "this Python is the image's own (/usr/local), / not Debian's → pip may install".
+ 6  The panel scrolls to PANEL(12–21) while the caption gives way to the lecture tag (slide 40:
+    one RUN chain that cleans up in the same layer); `RUN` pulses on "one RUN instruction". The
+    nine `\` pulse on "backslash", then the nine `&&` on "double ampersands"; `RUN` drops one fat
+    ORANGE slab. The slab zooms up (an ORANGE inset over the card, dashed zoom lines to the slab):
+    "apt lists" pages appear (line 12), ORANGE packages fill in (13–14), the pages crumple and
+    vanish inside the slab (15–16); on "cost nothing" the "apt lists" label is struck through and
+    the apt slab on the stack pulses.
+ 7  Bar on 17–18 (the lecture tag leaves, the caption returns): an ORANGE `pip` chip, then a
+    PURPLE `uv` chip drops in beside it. GREY note (two rows): "this Python is the image's own
+    (/usr/local), / not Debian's → pip may install".
  8  Bar on 19–21: a GREY user glyph "app · uid 1000", an arrow "owns" to a TEAL folder `/app`. The
     caption gives way to a two-row README chip `transcribe_audio/README.md · line 72` "Running
     containers as root is a security risk". The zoom shrinks back into its slab.
@@ -48,14 +53,16 @@ Beats (script.md "## S05", one voiceover block each):
     lines it made, which flash YELLOW. Lines to the card stop at its top edge; wires to slabs run
     along a bus above the card and down the gap between card and stack (nothing crosses text).
 11  The chips give way to a GREY card headed `README.md · lines 175–225 · Appendix · Sample
-    Dockerfile`: line numbers + lines 179, …, 199 and 200 (200 as an excerpt: the man-page loop
-    without its indent and `&& \`). Line 179 is barred; `curl` turns RED with a RED tag "no
-    ffmpeg"; a RED stamp "don't paste into transcribe_audio" under the card.
+    Dockerfile`: line numbers + lines 179, …, 199 and 200 (200 with its indent, cut before its
+    `&& \` and ending in a GREY "…"). A GREY tag beside 199: "199–200: extra lines you can leave
+    out". Line 179 is barred; `curl` turns RED with a RED tag "no ffmpeg"; a RED stamp "don't
+    paste into transcribe_audio" under the card.
 12  The appendix card fades. Under the file row a GREY card: "Dockerfile = FROM python:3.12-slim-
     bookworm (README line 41) / + the README's six code blocks, in order: / lines 45 · 50–55 ·
-    60–69 · 76–77 · 82–83 · 88–89", and ▶ your turn beside the file row (together, so a paused
-    frame shows the recipe); `Dockerfile` underlines, the FROM line and then the six block numbers
-    pulse as named. Everything fades: empty frame.
+    60–69 · 76–77 · 82–83 · 88–89 / one blank line between blocks → 30 lines, numbered as in this
+    video", and ▶ your turn beside the file row (together, so a paused frame shows the recipe);
+    `Dockerfile` underlines, the FROM line, the six block numbers, then the blank-line row pulse
+    as named ("30 lines" with the file row's "· 30 lines"). Everything fades: empty frame.
 """
 
 from pathlib import Path
@@ -66,7 +73,7 @@ from manim import *
 from explainer import style as S
 from explainer.components import person_icon
 from explainer.devops import (MONO, PANEL, box, chip, code_span, file_glyph, folder_glyph, label,
-                              line_bar, mono, mono_line, substring, tag)
+                              lecture_ref, line_bar, mono, mono_line, substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CTR, ERR, INK, LOOKUP, NARRATION, SYSTEM, TOOL, TURN, VENV, ConfigCard,
@@ -106,8 +113,9 @@ _rm = source_text("README.md").split("\n")
 APPX = {179: _rm[178], 199: _rm[198], 200: _rm[199]}
 assert APPX[179] == 'ARG DEBIAN_PACKAGES="build-essential curl"', APPX[179]
 assert APPX[199] == "RUN set -ex; \\", APPX[199]
-LOOP = 'for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done'   # line 200 (excerpt)
-assert APPX[200].strip().startswith(LOOP), APPX[200]
+LOOP = 'for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done'
+assert APPX[200] == "    " + LOOP + " && \\", APPX[200]
+ROW200 = "    " + LOOP + " …"        # line 200 with its indent; the GREY "…" marks the cut `&& \`
 assert _rm[174] == "```dockerfile" and _rm[224] == "```"
 
 # ------------------------------------------------------------------ layout
@@ -393,12 +401,20 @@ class WriteDockerfile(VoiceScene):
         gone = strike(lab_lists, S.GREY, 3)        # the label is struck through: deleted
         dots = pkg_dots(18, cols=6, color=SYSTEM).move_to([zx0 + 2.95, yg, 0])
         lab_pk = sans("build-essential, ffmpeg", PT, S.GREY).move_to([zx0 + 2.95, yl, 0])
+        # top right in the caption's place (no room under it) until beat 7's first bar
+        lref = lecture_ref(3, "40")
         with self.voiceover(SAY[6]) as vo:
-            self.swap(p12, extra=[FadeOut(b), FadeOut(u_sec)])
-            vo.wait_until("chained with double")
-            amps = [span(p12, n, "&& \\") for n in range(12, 21)]
+            self.swap(p12, extra=[FadeOut(b), FadeOut(u_sec), FadeOut(cap)], extra_in=[FadeIn(lref)])
+            vo.wait_until("one RUN instruction")        # (else ~4 s without motion after the swap)
+            self.play(Indicate(span(p12, 12, "RUN"), color=TURN, scale_factor=1.2), run_time=0.8)
+            vo.wait_until("ends in a backslash")
+            slashes = [span(p12, n, "\\") for n in range(12, 21)]
+            self.play(LaggedStart(*[Indicate(a, color=TURN, scale_factor=1.3) for a in slashes],
+                                  lag_ratio=0.12), run_time=1.1)
+            vo.wait_until("and double ampersands")
+            amps = [span(p12, n, "&&") for n in range(12, 21)]
             self.play(LaggedStart(*[Indicate(a, color=TURN, scale_factor=1.3) for a in amps],
-                                  lag_ratio=0.12), run_time=1.4)
+                                  lag_ratio=0.12), run_time=1.1)
             vo.wait_until("so they make one layer")
             b = bar(p12, 12, 21)
             self.play(FadeIn(b), run_time=0.3)
@@ -419,7 +435,7 @@ class WriteDockerfile(VoiceScene):
             self.play(Transform(b, bar(p12, 13, 14)), run_time=0.3)
             self.play(LaggedStart(*[FadeIn(d, scale=0.4) for d in dots], lag_ratio=0.08),
                       FadeIn(lab_pk), run_time=1.0)
-            vo.wait_until("and deletes apt's")
+            vo.wait_until("and deletes the apt")
             self.play(Transform(b, bar(p12, 15, 16)), run_time=0.3)
             self.play(*[pg.animate.scale(0.12).rotate(1.2).set_opacity(0) for pg in pages],
                       run_time=0.9)
@@ -438,7 +454,9 @@ class WriteDockerfile(VoiceScene):
         note7.arrange(DOWN, aligned_edge=LEFT, buff=0.08)
         note7.move_to([zx0 + 0.3, -3.06, 0], aligned_edge=LEFT)
         with self.voiceover(SAY[7]) as vo:
-            self.play(Transform(b, bar(p12, 17, 18)), run_time=0.4)
+            # the tag and the caption share the top right: hand it over in two phases, as in beat 6
+            self.play(Transform(b, bar(p12, 17, 18)), FadeOut(lref), run_time=0.3)
+            self.play(FadeIn(cap), run_time=0.3)
             vo.wait_until("upgrades pip")
             self.play(FadeIn(pip_c, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("and installs uv")
@@ -581,9 +599,11 @@ class WriteDockerfile(VoiceScene):
         # ========================================================== 11 · the appendix sample
         gut = 0.75
         rws = VGroup()
-        for n, s_ in [("179", APPX[179]), ("…", ""), ("199", APPX[199]), ("200", LOOP)]:
+        for n, s_ in [("179", APPX[179]), ("…", ""), ("199", APPX[199]), ("200", ROW200)]:
             num = mono_line(n, PT, S.GREY)
             txt = mono_line(s_, PT, INK)
+            if s_ == ROW200:
+                substring(txt, "…").set_color(S.GREY)
             txt.shift(num.strut.get_corner(UL) + RIGHT * gut - txt.strut.get_corner(UL))
             rws.add(VGroup(num, txt))
         rws.arrange(DOWN, aligned_edge=LEFT, buff=0.12)
@@ -595,17 +615,24 @@ class WriteDockerfile(VoiceScene):
                                                               PT, S.GREY))
         ahead.arrange(RIGHT, buff=0.12).next_to(afr, UP, buff=0.08).align_to(afr, LEFT).shift(RIGHT * 0.1)
         appx = VGroup(afr, inner, ahead)
-        appx.move_to([-0.3, 0.0, 0]).align_to(frow, DOWN).shift(DOWN * (0.24 + appx.height))
+        appx.move_to([0.0, 0.0, 0]).align_to(frow, DOWN).shift(DOWN * (0.24 + appx.height))
+        assert afr.get_left()[0] > -6.55 and afr.get_right()[0] < 6.55, afr.width
         r179 = rws[0]
         curl = substring(r179[1], "curl")
         b179 = Rectangle(width=afr.width - 0.2, height=r179.height + 0.14, stroke_width=0)
         b179.set_fill(TURN, 0.16).move_to([afr.get_x(), r179.get_y(), 0])
         noff = tag("no ffmpeg", ERR).next_to(r179, RIGHT, buff=0.35)
+        # rows 199-200 are the appendix's extras (BRIEF: "it adds set -ex and the man-page loop")
+        # a row-high tag (the house tag is taller than the row pitch and grazed row 200's glyphs),
+        # centred on row 199's strut
+        xtra = row_tag("199–200: extra lines you can leave out", S.GREY)
+        xtra.next_to(rws[2], RIGHT, buff=0.35).set_y(rws[2][1].strut.get_y())
         nopaste = stamp("don't paste into transcribe_audio", ERR, size=PT, angle=0.04)
         nopaste.next_to(afr, DOWN, buff=0.1).align_to(afr, LEFT).shift(RIGHT * 0.35)
         assert nopaste.get_bottom()[1] > card.get_top()[1] + 0.05, nopaste.get_bottom()
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(chips, shift=DOWN * 0.1), FadeIn(appx, shift=UP * 0.1), run_time=0.8)
+            self.play(FadeIn(xtra, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("but its build argument")
             self.play(FadeIn(b179), run_time=0.4)
             vo.wait_until("has curl instead")
@@ -626,14 +653,22 @@ class WriteDockerfile(VoiceScene):
                 bl.add(seps[i - 1])
             bl.add(n)
         bl.arrange(RIGHT, buff=0.16)
-        rows3 = VGroup(fl, sl, bl).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
+        # the layout rule that keeps the student's line numbers equal to the video's (S06's
+        # Docker warning names "line 10", S07 names lines 9 and 10)
+        GAP_A, GAP_B = "one blank line between blocks →", "30 lines, numbered as in this video"
+        gap = label(f"{GAP_A} {GAP_B}", PT, INK)           # one Text: one baseline, real spacing
+        _na = len("".join(GAP_A.split()))                   # Text has no glyphs for spaces
+        assert len(gap) == _na + len("".join(GAP_B.split())), len(gap)
+        gap_a, gap_b = gap[:_na], gap[_na:]
+        rows3 = VGroup(fl, sl, bl, gap).arrange(DOWN, aligned_edge=LEFT, buff=0.2)
         ffr = box(rows3.width + 0.6, rows3.height + 0.45, S.GREY, fill=S.BG, fill_opacity=0.95,
                   radius=0.12).move_to(rows3)
         final = VGroup(ffr, rows3).next_to(frow, DOWN, buff=0.45).align_to(frow, LEFT)
         yt = your_turn().next_to(frow, RIGHT, buff=0.4)
         u_name = under(fr_name[-10:], TURN)
         with self.voiceover(SAY[12]) as vo:
-            self.play(FadeOut(appx), FadeOut(b179), FadeOut(noff), FadeOut(nopaste), run_time=0.4)
+            self.play(FadeOut(appx), FadeOut(b179), FadeOut(noff), FadeOut(xtra), FadeOut(nopaste),
+                      run_time=0.4)
             self.play(FadeIn(final, shift=UP * 0.1), FadeIn(yt, shift=LEFT * 0.1), run_time=0.5)
             self.play(Wiggle(yt, scale_value=1.12, rotation_angle=0.02 * TAU), run_time=0.7)
             vo.wait_until("a file named Dockerfile")
@@ -645,5 +680,10 @@ class WriteDockerfile(VoiceScene):
             vo.wait_until("then copy the README's")
             self.play(LaggedStart(*[Indicate(n, color=TURN, scale_factor=1.25) for n in nums],
                                   lag_ratio=0.35), run_time=2.0)
+            vo.wait_until("with one blank line")
+            self.play(Indicate(gap_a, color=TURN, scale_factor=1.06), run_time=0.8)
+            vo.wait_until("so your line numbers")
+            self.play(Indicate(gap_b, color=TURN, scale_factor=1.06),
+                      Indicate(fr_n, color=TURN, scale_factor=1.12), run_time=0.8)
             self.wait(max(0.05, vo.remaining(0.05)))
             self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)

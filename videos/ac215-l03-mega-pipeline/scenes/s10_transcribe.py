@@ -23,37 +23,42 @@ Beats (script.md "## S10", one voiceover block each):
     lines 86–88 bar and the strips pulse one by one; line 90 bars and the strips snap into one
     page; a GREY tag "the latest commit's fix" beside line 90.
  3  The panel and V8 go; the GOLD tag moves onto the strip's top-right corner. Terminal strip
-    (TEAL, `container · transcribe_audio`). A GREY README card above it, header `README.md ·
-    line 135`, the README's `python cli.py --transcribe` + tag "same as -t"; it types the
-    command (no output). On "Look for" the README card gives way to the "with your key, look
+    (TEAL, `container · transcribe_audio`; 2 rows, as S11 opens on it, so beat 4's window
+    fits). A GREY README card above it, header `README.md · line 135`, the README's
+    `python cli.py --transcribe` + tag "same as -t"; it types the command (no output). On "Look for" the README card gives way to the "with your key, look
     for" card: items write on their words (lines 64, 69, 79, 91); the RED-bordered "if it
     fails" line writes on "If it says no such file" and pulses on "add ffmpeg to line 3"; the
     tracker's step-13 dot pulses on "exit and rebuild".
- 4  The card's line-95 item writes ("Then open the new text file"); the card goes. V3 (mounted,
-    the GOLD key in secrets/, 26 GREEN chips on the shelf) with tag `illustration · with your
-    key`: a page lands on the `text_prompts/` folder on the laptop and on the sheet over /app at
-    the same instant, the route pulses; the laptop's page opens into a page headed
-    `text_prompts/group-01/input-….txt`, its text gray bars only, while V3 leaves. "If it says
-    None": that page dims; a RED-bordered page reading `None` appears; "Speech-to-Text returned
-    nothing": CODE(cli.py: 80) above it with a GREY pointer from `None` up to `"None"`; "delete
+ 4  The card's line-95 item writes ("Then open the new text file"); the card and the GOLD tag
+    go. V3 + V4 as S08 left them and S11 opens on them (mounted; the laptop folder holds cli.py,
+    Dockerfile, pyproject.toml and uv.lock GREEN, secrets/ with the GOLD key, input_audios/,
+    text_prompts/; the dashed "writable layer · throwaway" with 26 GREEN chips on its shelf),
+    0.25 right of centre above the strip, with tag `illustration · with your key` top right: a
+    page lands on the `text_prompts/` folder on the laptop and on the sheet over /app at the same
+    instant, the PINK route pulses in width; the laptop's page opens into a page headed
+    `text_prompts/group-01/input-….txt`, its text gray bars only, while V3 and its tag leave.
+    "If it says None": that page dims, the tag comes back bottom left, and a copy of the page
+    becomes a RED-bordered page reading `None` (the same file's other outcome); "Speech-to-Text
+    returned nothing": CODE(cli.py: 80) above it with a GREY pointer from `None` up to `"None"`; "delete
     it…": the None page is struck, GREY note "delete it, transcribe again"; "because finished
     files are skipped": GREY note "files already done are skipped (cli.py lines 61–62): delete
     one to redo it".
- 5  TRACKER A12. The picture goes; the strip clears. GREY README card `README.md · line 136`,
-    `python cli.py --upload` + "same as -u"; it types the command. "It uploads only files
+ 5  TRACKER A12. The picture goes, the GOLD tag returns; the strip clears. GREY README card
+    `README.md · line 136`, `python cli.py --upload` + "same as -u"; it types the command. "It uploads only files
     starting with input": the card gives way to the line-108 excerpt chip of S02, `"input-*.txt"`
     turns PINK and underlines; "under the same name": CODE(111–115) at 20 pt, line 112 PINK bar.
     "look for": the chip goes, the panel rises, and a "with your key, look for" card: "Uploading:
     text_prompts/group-01/input-….txt …" (line 114); the prefix, the group and the file turn
-    PINK on their words.
+    PINK on their words; a thin GREY line joins the item's "line 114" to that line of the panel.
  6  The strip and the panels go; the GOLD tag moves to the right. V1 small (letters only)
     top-left: a transcript page appears in A and drops into the second drawer, labelled PINK
     `text_prompts/group-01/`. The schematic leaderboard (tag illustration) lights the
-    group-01 × Transcribe cell; caption "check: transcribe_audio/README.md · line 134". On
+    group-01 × Transcribe cell; caption "check: ac215-mega-pipeline.dlops.io" over
+    "(transcribe_audio/README.md · line 134)". On
     "Pause": a static GREY card `README.md · lines 134–136` listing the three commands, ▶ your
     turn under it (the GOLD tag beside).
- 7  TRACKER A12 · extra. The picture goes. A chip `python cli.py -d -t -u` (extra; shown, not
-    typed); three elbow arrows from -d, -t, -u to download(), transcribe(), upload() in
+ 7  TRACKER A12 · extra. The picture goes; on "the flags combine" the three-command card
+    collapses into a chip `python cli.py -d -t -u` (extra; shown, not typed); three elbow arrows from -d, -t, -u to download(), transcribe(), upload() in
     CODE(121–126) as each flag is said; on "in order" the three call lines bar in sequence. The
     GOLD tag moves under the chip and pulses on "Each call is billed". Everything fades: empty
     frame.
@@ -66,10 +71,10 @@ from explainer import style as S
 from explainer.devops import PANEL, box, code_span, label, line_bar, mono, mono_line, substring, tag
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, CTR, ERR, GROUP, INK, LOOKUP, NARRATION, P_CTR, STRIP_TOP, SYSTEM, TURN,
+from common import (CLOUD, CTR, ERR, GROUP, INK, LOOKUP, NARRATION, P_CTR, SYSTEM, TURN, VENV,
                     ApiCall, Leaderboard, LookFor, Relay, Window, asset_lines, caption_extra, cost_tag,
-                    excerpt, extra_tag, file_panel, illustration_tag, page_token, pkg_dots, source_text,
-                    src_panel, term, tracker, type_cmd, under, your_turn)
+                    excerpt, extra_tag, file_panel, illustration_tag, page_token, pkg_dots, sans, source_text,
+                    src_panel, strip_top, term, tracker, type_cmd, under, your_turn)
 
 SAY = NARRATION["S10"]
 
@@ -113,6 +118,8 @@ T_CMD, U_CMD = README_CMDS[1], README_CMDS[2]
 _RA = source_text("transcribe_audio/README.md").split("\n")
 assert "`python cli.py -t`" in _RA[131] and "`python cli.py -u`" in _RA[132]
 assert "Verify that your uploaded data shows up" in _RA[133]      # line 134: the check
+LB_URL = "ac215-mega-pipeline.dlops.io"
+assert LB_URL in _RA[133], _RA[133]                                  # ... and its address
 
 COMBO = "python cli.py -d -t -u"                  # extra: shown, not typed
 
@@ -129,7 +136,14 @@ TOP = 2.78                       # top of a panel under the tracker band (y 2.92
 EDGE = 6.3
 CTR_L, CTR_W = -6.35, 4.7        # V8's container, widened so the ffmpeg step fits inside
 V8_DY = -2.9                     # ApiCall's container centre y 0.6 -> -2.3
-WIN_Y = 0.95                     # V3 centre above the strip
+STRIP = 2                        # the container strip of beats 3-5: 2 rows, as S11 opens on it,
+ST = strip_top(STRIP)            # so the 7-row window of beat 4 fits between it and the tracker
+WIN_DX = 0.25                    # the window sits 0.25 right (as in S11): its writable layer clears the tracker
+
+# V3 + V4 as S08 left them and S11 opens on them (s11_rebuild.py WIN_FILES / WIN_COPIED)
+WIN_FILES = ("cli.py", "Dockerfile", ("pyproject.toml", VENV), "secrets/", ("uv.lock", VENV), "input_audios/",
+             "text_prompts/")
+WIN_COPIED = ("cli.py", "Dockerfile", "pyproject.toml", "secrets/")      # what the step-5 image copied
 
 
 # ------------------------------------------------------------------ small helpers
@@ -323,8 +337,10 @@ class TranscribeUpload(VoiceScene):
         mp3_g = VGroup(mp3, mp3_lab.next_to(mp3, DOWN, buff=0.12))
         place(mp3_g, left=CTR_L + 0.15, cy=cy - 0.05)
         fun = funnel()
-        fun.move_to([CTR_L + 2.65, cy - 0.12, 0])
-        fun_lab = mono("ffmpeg", 20, SYSTEM).next_to(fun, UP, buff=0.12)
+        fun.move_to([CTR_L + 2.65, cy + 0.05, 0])
+        # the label sits under the funnel (like the MP3's), so the page dropping into the mouth
+        # never crosses it
+        fun_lab = mono("ffmpeg", 20, SYSTEM).next_to(fun, DOWN, buff=0.1)
         flac = flac_block()
         flac_home = np.array([CTR_L + CTR_W - 0.2 - flac.width / 2, cy - 0.12, 0])
 
@@ -381,6 +397,7 @@ class TranscribeUpload(VoiceScene):
                       run_time=0.5)
             vo.wait_until("The long-running recognize call")
             self.play(Transform(bar, line_bar(c2, 2, TURN)), FadeOut(u_content), run_time=0.35)
+            vo.wait_until("hands back")
             stub = api.stub(self)
             vo.wait_until("like a ticket stub")
             self.play(Indicate(stub, color=CTR, scale_factor=1.15), run_time=0.7)
@@ -412,7 +429,7 @@ class TranscribeUpload(VoiceScene):
             bar = lines_bar(c3, 2, 4, TURN)
             self.play(FadeIn(bar), run_time=0.3)
             self.play(LaggedStart(*[Indicate(s, color=TURN, scale_factor=1.15) for s in slips], lag_ratio=0.5),
-                      run_time=1.4)
+                      run_time=1.1)
             self.play(Transform(bar, line_bar(c3, 6, TURN)), run_time=0.3)
             page = page_token().scale(1.25).move_to(ic)
             self.play(ReplacementTransform(slips, page), run_time=0.8)
@@ -421,13 +438,14 @@ class TranscribeUpload(VoiceScene):
             self.play(Indicate(fix.text, color=INK, scale_factor=1.12), run_time=0.6)
 
         # ========================================================== 3 · type --transcribe; look for
-        t = term(P_CTR, 3, component="transcribe_audio")
+        t = term(P_CTR, STRIP, component="transcribe_audio")
         seed_prompt(t)
         card_t = readme_cmd_card(135, T_CMD, "-t")
-        place(card_t, left=-EDGE, bottom=STRIP_TOP + 0.14)
+        place(card_t, left=-EDGE, bottom=ST + 0.14)
         lf = LookFor(LOOK_T, fail=FAIL_T)
         place(lf, cx=0, top=TOP - 0.02)
-        cost_home = np.array([EDGE - cost.width / 2, STRIP_TOP + 0.08 + cost.height / 2, 0])
+        cost_home = np.array([EDGE - cost.width / 2, ST + 0.08 + cost.height / 2, 0])
+        assert lf.get_bottom()[1] > cost_home[1] + cost.height / 2 + 0.1, lf.get_bottom()
 
         with self.voiceover(SAY[3]) as vo:
             self.play(FadeOut(VGroup(p3, bar, fix, page, api)), cost.animate.move_to(cost_home),
@@ -454,17 +472,31 @@ class TranscribeUpload(VoiceScene):
             self.play(Indicate(tr.dots[12], color=TURN, scale_factor=2.2), run_time=0.8)
 
         # ========================================================== 4 · the file on your laptop; None
-        win = Window(files=("cli.py", "secrets/", "input_audios/", "text_prompts/"),
-                     copied=("cli.py", "Dockerfile", "pyproject.toml", "secrets/"), key=True, mounted=True)
-        win.move_to([0, WIN_Y, 0])
-        sh = win.sheet.shelf                         # the 26 packages of S08, still on this container's layer
+        # the same window S08 left and S11 opens on: 7 rows, the sheet captioned "throwaway", the
+        # 26 packages of S08 still on this container's layer; plus the GOLD key S09 put in secrets/
+        win = Window(files=WIN_FILES, copied=WIN_COPIED, key=True, mounted=True)
+        cap = win.sheet.caption
+        new_cap = sans("writable layer · throwaway", 20, CTR).move_to(cap, aligned_edge=LEFT)
+        win.sheet.remove(cap)
+        win.sheet.add(new_cap)
+        win.sheet.caption = new_cap
+        sh = win.sheet.shelf
         chips = pkg_dots(26, cols=13)
         if chips.width > sh.get_length() - 0.1:
             chips.scale_to_fit_width(sh.get_length() - 0.1)
         chips.next_to(sh, UP, buff=0.03)
         win.sheet.add(chips)
+        place(win, bottom=ST + 0.06)
+        win.shift(RIGHT * WIN_DX)
+        assert win.get_top()[1] < tr.get_bottom()[1] - 0.02, win.get_top()
+        assert win.sheet.frame.get_left()[0] > tr.get_right()[0] + 0.05
+        # no room under the 7-row window: its tag sits top right (beside the tracker) while it is
+        # up, and bottom left over the strip once the opened page replaces it
         ill = illustration_tag("with your key")
-        place(ill, left=-EDGE, bottom=STRIP_TOP + 0.08)
+        place(ill, right=win.get_right()[0], cy=(tr.get_bottom()[1] + tr.get_top()[1]) / 2)
+        assert ill.get_bottom()[1] > win.get_top()[1] + 0.05 and ill.get_left()[0] > tr.get_right()[0] + 0.3
+        ill2 = illustration_tag("with your key")
+        place(ill2, left=-EDGE, bottom=ST + 0.08)
         badges = []
         for side in ("laptop", "cover"):
             g = win.row("text_prompts/", side).glyph
@@ -495,17 +527,22 @@ class TranscribeUpload(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             lf.write_item(self, 4, run_time=0.5)
             self.play(Indicate(lf.rows[4].text, color=INK, scale_factor=1.04), run_time=0.6)
-            self.play(FadeOut(lf), FadeIn(win), FadeIn(ill), run_time=0.8)
+            # the cost tag steps out while the window needs the bottom right (back in beat 5)
+            self.play(FadeOut(lf), FadeOut(cost), FadeIn(win), FadeIn(ill), run_time=0.8)
             vo.wait_until("under text prompts")
+            # the page lands on both sides at once: it reached the laptop through the mount (the
+            # route is already PINK, so it pulses in width)
             self.play(*[FadeIn(b, scale=1.6) for b in badges],
-                      Indicate(win.route, color=LOOKUP, scale_factor=1.0), run_time=0.7)
+                      win.route.animate(rate_func=there_and_back).set_stroke(width=12), run_time=0.7)
             vo.wait_until("on your laptop")
-            self.play(Indicate(win.row("text_prompts/", "laptop"), color=TURN, scale_factor=1.15), run_time=0.5)
+            self.play(Indicate(win.row("text_prompts/", "laptop"), color=TURN, scale_factor=1.15), run_time=0.45)
             grow = badges[0].copy()
             self.remove(badges[0])
-            self.play(ReplacementTransform(grow, op), FadeOut(win), FadeOut(badges[1]), run_time=1.0)
+            self.play(ReplacementTransform(grow, op), FadeOut(win), FadeOut(badges[1]), FadeOut(ill),
+                      run_time=0.75)
             vo.wait_until("If it says None")
-            self.play(*dim_page(op, 0.35), FadeIn(np_, shift=UP * 0.15), run_time=0.6)
+            # the None page is the same file in its other outcome: a copy of the page becomes it
+            self.play(*dim_page(op, 0.5), FadeTransform(op.frame.copy(), np_), FadeIn(ill2), run_time=0.7)
             vo.wait_until("Speech-to-Text returned nothing")
             self.play(FadeIn(code80, shift=DOWN * 0.1), run_time=0.5)
             self.play(GrowArrow(ptr), Create(u_none), run_time=0.6)
@@ -517,7 +554,7 @@ class TranscribeUpload(VoiceScene):
 
         # ========================================================== 5 · step 12: --upload
         card_u = readme_cmd_card(136, U_CMD, "-u")
-        place(card_u, left=-EDGE, bottom=STRIP_TOP + 0.14)
+        place(card_u, left=-EDGE, bottom=ST + 0.14)
         xc = excerpt_chip(CLI, GLOB_LINE, GLOB)
         place(xc, cx=0, top=TOP)
         g_inp = substring(xc.code, '"input-*.txt"')
@@ -530,8 +567,8 @@ class TranscribeUpload(VoiceScene):
         parts = [tglyphs(utext, s) for s in ("text_prompts/", f"{GROUP}/", "input-….txt")]
 
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(op, np_, code80, ptr, u_none, strike_n, del_note, skip, ill)),
-                      tr.goto(12), run_time=0.6)
+            self.play(FadeOut(VGroup(op, np_, code80, ptr, u_none, strike_n, del_note, skip, ill2)),
+                      FadeIn(cost), tr.goto(12), run_time=0.6)
             t.clear(self)
             vo.wait_until("python cli.py dash dash upload")
             self.play(FadeIn(card_u, shift=UP * 0.1), run_time=0.4)
@@ -549,8 +586,15 @@ class TranscribeUpload(VoiceScene):
             dy = TOP - p111.get_top()[1]
             place(lfu, left=-EDGE, top=p111.get_bottom()[1] + dy - 0.2)
             self.play(FadeOut(VGroup(xc, u_inp), shift=UP * 0.2), run_time=0.3)
-            self.play(VGroup(p111, bar).animate.shift(UP * dy), FadeIn(lfu, shift=UP * dy), run_time=0.5)
-            lfu.write_item(self, 0, run_time=0.4)
+            self.play(VGroup(p111, bar).animate.shift(UP * dy), FadeIn(lfu, shift=UP * 0.15), run_time=0.5)
+            # the item's thin GREY line to the cli.py line it cites (114; line 115 is shorter, so
+            # the line crosses no code)
+            cite = lfu.rows[0].cite
+            hook = Line(cite.get_top() + UP * 0.06,
+                        [cite.get_center()[0], c111.code_lines[3].get_bottom()[1] - 0.05, 0],
+                        color=S.GREY, stroke_width=2)
+            assert c111.code_lines[4].get_right()[0] < cite.get_left()[0] - 0.2
+            lfu.reveal(self, "item0", run_time=0.4, extra=[Create(hook)])
             vo.wait_until("then text prompts")
             self.play(parts[0].animate.set_color(LOOKUP), run_time=0.3)
             vo.wait_until("your group")
@@ -575,15 +619,24 @@ class TranscribeUpload(VoiceScene):
         place(yt, right=EDGE, top=cards.get_bottom()[1] - 0.18)
         lb = Leaderboard()
         place(lb, cx=0, top=-0.45)
-        lb_cap = VGroup(label("check:", 20, S.GREY), mono("transcribe_audio/README.md", 20, S.GREY),
-                        label("· line 134", 20, S.GREY)).arrange(RIGHT, buff=0.12)
-        place(lb_cap, left=lb.get_left()[0], top=lb.get_bottom()[1] - 0.2)
+        # where to check (the address S02 showed), and the README line that says so, under it
+        lb_url = VGroup(label("check:", 20, S.GREY), mono(LB_URL, 20, S.GREY)).arrange(RIGHT, buff=0.12)
+        lb_src = VGroup(label("(", 20, S.GREY), mono("transcribe_audio/README.md", 20, S.GREY),
+                        label("· line 134)", 20, S.GREY))
+        lb_src.arrange(RIGHT, buff=0.12)
+        lb_src[0].next_to(lb_src[1], LEFT, buff=0.04)
+        place(lb_url, left=lb.get_left()[0], top=lb.get_bottom()[1] - 0.2)
+        place(lb_src, left=lb_url[1].get_left()[0] - lb_src[1].get_left()[0] + lb_src.get_left()[0],
+              top=lb_url.get_bottom()[1] - 0.12)
+        lb_cap = VGroup(lb_url, lb_src)
+        assert lb_cap.get_bottom()[1] > -3.55, lb_cap.get_bottom()
         lb_ill = illustration_tag()
-        place(lb_ill, right=lb.get_right()[0], cy=lb_cap.get_center()[1])
+        place(lb_ill, right=lb.get_right()[0], cy=lb_url.get_center()[1])
+        assert lb_ill.get_left()[0] > max(lb_url.get_right()[0], lb_src.get_right()[0]) + 0.3
         cost6 = np.array([yt.get_left()[0] - 0.25 - cost.width / 2, yt.get_center()[1], 0])
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(t, p111, bar, lfu)), cost.animate.move_to(cost6), run_time=0.6)
+            self.play(FadeOut(VGroup(t, p111, bar, lfu, hook)), cost.animate.move_to(cost6), run_time=0.6)
             relay.reveal(self, "letters", run_time=0.6,
                          extra=[FadeIn(VGroup(relay.cabinet, relay.drawers, relay.boxes))])
             self.play(FadeIn(tok, scale=0.5), Indicate(relay.boxes[0], color=CTR, scale_factor=1.08), run_time=0.4)
@@ -622,10 +675,13 @@ class TranscribeUpload(VoiceScene):
         cost7 = np.array([chip_c.get_left()[0] + cost.width / 2, chip_c.get_bottom()[1] - 0.3 - cost.height / 2, 0])
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(tok, dlab, tick, lb, lb_cap, lb_ill, cards, yt)), FadeOut(relay),
+            self.play(FadeOut(VGroup(tok, dlab, tick, lb, lb_cap, lb_ill, yt)), FadeOut(relay),
                       caption_extra(tr, True), cost.animate.move_to(cost7), run_time=0.7)
-            self.play(FadeIn(chip_c, shift=UP * 0.1), FadeIn(xtag, shift=LEFT * 0.1), run_time=0.5)
             vo.wait_until("the flags combine")
+            # the three README commands collapse into the one extra command
+            self.play(ReplacementTransform(cards.frame, cfr),
+                      FadeTransform(cards.rows, combo, stretch=False, dim_to_match=0),
+                      FadeOut(cards.header), FadeIn(xtag, shift=LEFT * 0.1), run_time=0.8)
             self.play(FadeIn(p121, shift=LEFT * 0.15), run_time=0.5)
             for k, phrase in enumerate(("so dash d", "dash t", "dash u")):
                 vo.wait_until(phrase)
