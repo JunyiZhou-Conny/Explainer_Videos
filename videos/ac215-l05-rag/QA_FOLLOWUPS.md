@@ -30,3 +30,12 @@ Each item was found on a work-in-progress checkpoint; check it in the CURRENT co
   `Terminal` that keeps the default GREY laptop chrome, so the strip turns GREY while its title still says
   container. Use the house `resize()` helper (it copies the live stroke onto the dummy) or copy the stroke
   before the Transform; check the frame after beat 7.
+- S11 (s11_query.py ~539–549, Bugbot thread "Cleared strip leaves typed command"): `FadeOut(t.lines)` takes the
+  lines group off the terminal (Manim's Scene.remove on a submobject splits it from `t`), so the next
+  `type_cmd` adds its rows as top-level objects and the later `FadeOut(t)` can leave
+  `python cli.py --query --chunk_type recursive-split` on screen, in the band the your-turn card moves into.
+  Check the frames after that FadeOut(t); clear the strip with the house helper (or `t.clear`) instead.
+- S13 (s13_chat.py ~254–262, Bugbot thread "Tracker caption pops instead of fading"): `tracker_to` calls
+  `become` and sets the live caption to opacity 0 before `play`, then fades out a `caption.copy()` that was never
+  added to the scene, so the old step label vanishes in one frame instead of cross-fading. Check the frames of
+  a tracker step change; add the copy to the scene before fading it (or cross-fade the live caption).

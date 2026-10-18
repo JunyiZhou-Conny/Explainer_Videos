@@ -1431,12 +1431,12 @@ Pushing Docker Image to Docker Hub
 暂停一下，登录
 
 319
-00:21:31,983 --> 00:21:33,641
+00:21:31,983 --> 00:21:33,483
 然后给 image 打 tag
 
 320
-00:21:33,641 --> 00:21:39,812
-docker tag，先写 simple-translate，
+00:21:33,483 --> 00:21:39,812
+在 docker tag 后面先写 simple-translate
 再写你的用户名/simple-translate-ac215
 
 321

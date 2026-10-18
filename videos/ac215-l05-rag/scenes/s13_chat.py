@@ -430,9 +430,11 @@ class FinalPrompt(VoiceScene):
             self.play(Create(u47), run_time=0.6)
             vo.wait_until("But look at the call")
             self.remove(big_frame)
+            # the backing fades on its own: inside a new VGroup it would be re-added above the outline
             dashed_morph(self, big_rect, (g_frame.get_center(), g_frame.width, g_frame.height),
                          ReplacementTransform(big_label, g_label),
-                         FadeOut(VGroup(p41, p47, u41, u47, backing)), FadeIn(p3))
+                         FadeOut(VGroup(p41, p47, u41, u47), rate_func=first_half),
+                         FadeOut(backing, rate_func=first_half), FadeIn(p3, rate_func=second_half))
             self.add(g_frame)
             self.play(Indicate(code_rows(p3, 395), color=TURN, scale_factor=1.03), Create(u_contents),
                       FadeIn(noconf, shift=LEFT * 0.15), run_time=0.7)
@@ -517,8 +519,8 @@ class FinalPrompt(VoiceScene):
         assert coins[0].get_top()[1] < mm2.frame.get_top()[1] - 0.05, (coins[0].get_top(), mm2.frame.get_top())
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(cyl, pc, llm, mchip, l27, feed, ans, lock_g, dele, lr)), run_time=0.5)
-            self.play(FadeIn(t, shift=UP * 0.2), FadeIn(mm2), *tracker_to(tr, 1), run_time=0.6)
+            self.play(FadeOut(VGroup(cyl, pc, llm, mchip, l27, feed, ans, lock_g, dele, lr)), run_time=0.4)
+            self.play(FadeIn(t, shift=UP * 0.2), FadeIn(mm2), *tracker_to(tr, 1), run_time=0.5)
             self.play(*light_chat(mm2), run_time=0.3)
             vo.wait_until("python cli.py")
             c1 = type_cmd(self, t, CHAT1, type_time=1.6)
@@ -526,7 +528,7 @@ class FinalPrompt(VoiceScene):
             vo.wait_until("and for recursive split")
             self.play(*tracker_to(tr, 2), run_time=0.4)
             t.clear(self, run_time=0.25)
-            c2 = type_cmd(self, t, CHAT2, type_time=1.6)
+            c2 = type_cmd(self, t, CHAT2, type_time=1.4)
             assert hasattr(c2, "rows") and len(c2.rows) == 2, c2
             vo.wait_until("Without a key")
             self.play(Create(stop), emb.animate.set_stroke(ERR, 4), FadeIn(nk, shift=UP * 0.1), run_time=0.6)
@@ -663,7 +665,7 @@ class FinalPrompt(VoiceScene):
             vo.wait_until("Pause: run both chat commands")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.6)
             vo.wait_until("then try the tool")
-            self.play(LaggedStart(*[GrowFromEdge(b, LEFT) for b in br_bars], lag_ratio=0.6), run_time=1.4)
+            self.play(LaggedStart(*[GrowFromEdge(b, LEFT) for b in br_bars], lag_ratio=0.6), run_time=1.2)
             vo.wait_until("For your own question")
             self.play(Indicate(tc.rows[3], color=TURN, scale_factor=1.04), run_time=0.9)
             vo.wait_until("change line 372")

@@ -391,8 +391,8 @@ Dialogue: 0,0:21:20.79,0:21:23.92,Bilingual,,0,0,0,,用 -p 的话，你的令牌
 Dialogue: 0,0:21:24.24,0:21:27.77,Bilingual,,0,0,0,,改成输入 docker login、-u 和你的用户名\N{\fs33\c&H00C8C0B8&\bord1.4}Instead, type docker login, -u, and your user name,
 Dialogue: 0,0:21:27.77,0:21:30.12,Bilingual,,0,0,0,,等它问的时候再粘贴令牌\N{\fs33\c&H00C8C0B8&\bord1.4}then paste the token when it asks.
 Dialogue: 0,0:21:30.44,0:21:31.93,Bilingual,,0,0,0,,暂停一下，登录\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and log in.
-Dialogue: 0,0:21:31.98,0:21:36.47,Bilingual,,0,0,0,,然后给 image 打 tag：docker tag，先写 simple-translate\N{\fs33\c&H00C8C0B8&\bord1.4}Then tag the image: docker tag simple-translate
-Dialogue: 0,0:21:36.47,0:21:39.81,Bilingual,,0,0,0,,再写你的用户名/simple-translate-ac215\N{\fs33\c&H00C8C0B8&\bord1.4}<USER NAME>/simple-translate-ac215.
+Dialogue: 0,0:21:31.98,0:21:34.50,Bilingual,,0,0,0,,然后给 image 打 tag：在 docker tag 后面先写\N{\fs33\c&H00C8C0B8&\bord1.4}Then tag the image:
+Dialogue: 0,0:21:34.50,0:21:39.81,Bilingual,,0,0,0,,simple-translate 再写你的用户名/simple-translate-ac215\N{\fs33\c&H00C8C0B8&\bord1.4}docker tag simple-translate <USER NAME>/simple-translate-ac215.
 Dialogue: 0,0:21:40.13,0:21:42.16,Bilingual,,0,0,0,,暂停一下，用你自己的用户名跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it with your own name.
 Dialogue: 0,0:21:42.48,0:21:45.82,Bilingual,,0,0,0,,额外用 docker image ls 看一下：两个名字，一个 ID\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker image ls shows two names, one ID:
 Dialogue: 0,0:21:45.82,0:21:47.60,Bilingual,,0,0,0,,是第二个名字，不是一份副本\N{\fs33\c&H00C8C0B8&\bord1.4}a second name, not a copy.
