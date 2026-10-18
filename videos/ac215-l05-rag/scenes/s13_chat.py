@@ -416,8 +416,12 @@ class FinalPrompt(VoiceScene):
             self.play(FadeIn(sys_block, shift=DOWN * 0.2), run_time=0.6)
             self.play(Indicate(sys_block, color=INK, scale_factor=1.05), run_time=0.7)
             vo.wait_until("Line 40 defines one")
+            # the solid block opens into the dashed ghost card: outline grows, the label swaps
             self.add(backing, sys_block)
-            self.play(FadeIn(backing), FadeOut(p3), ReplacementTransform(sys_block, big), run_time=0.7)
+            dashed_morph(self, (sys_block.get_center(), sys_block.frame.width, sys_block.frame.height), big_rect,
+                         FadeIn(backing), FadeOut(p3), FadeOut(sys_block, rate_func=first_half),
+                         FadeIn(big_label, rate_func=second_half))
+            self.add(big_frame)
             self.play(FadeIn(p41, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("answer only from the chunks")
             self.play(LaggedStart(*[Create(u) for u in u41], lag_ratio=0.5), run_time=0.8)
