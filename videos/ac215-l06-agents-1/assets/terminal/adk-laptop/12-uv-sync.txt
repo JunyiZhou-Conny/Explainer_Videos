@@ -1,0 +1,18 @@
+$ uv sync
+Using CPython 3.13.16
+Removed virtual environment at: .venv
+Creating virtual environment at: .venv
+Resolved 189 packages in 2ms
+error: Failed to download `triton==3.8.0`
+  cause: Failed to extract archive:
+         triton-3.8.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.wh
+l
+  cause: I/O operation failed during extraction
+  cause: failed to write to file
+         `/home/student/.cache/uv/.tmplO2Qv3/triton/_C/libtriton.so`: No space
+         left on device (os error 28)
+
+hint: `triton` (v3.8.0) was included because `google-adk-tutorial` (v0.1.0) depe
+nds on `sentence-transformers` (v6.1.0) which depends on `torch` (v2.14.1) which
+ depends on `triton`
+[exit 1]

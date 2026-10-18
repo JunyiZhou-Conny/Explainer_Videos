@@ -10,3 +10,4 @@
 09-x-python-pin.txt	exit=+4.5s
 10-x-sync-plan	23:05:58 UTC	0.5s
 11-x-capture-uv-config	23:05:58 UTC	0.1s
+12-uv-sync.txt	exit=+223.2s
