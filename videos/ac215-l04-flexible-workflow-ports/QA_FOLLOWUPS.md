@@ -17,3 +17,8 @@
   live on `card9` in a new VGroup that `play` adds to the scene, so `FadeOut(card9)` at the start of beat 10 may leave
   `Dockerfile,` and `pyproject.toml, uv.lock` on screen over V2 (the FadeOut snap-back pattern in SKILL.md). Check the
   frames just after beat 10 starts; fade or remove the wrapper itself.
+- Checked 10:20 UTC Oct 18 (fixer + verifier on fresh 720p frames): S02 tag vs README card does not reproduce (0.22-unit
+  gutter); S03 leftover glyphs do not reproduce (FadeOut(card9) re-adds the card, dropping the flash wrapper first);
+  S02 lead label inside x = 6.6; S10 flash + Docker DNS label done; S11 underlines clear. Open for the final review: the
+  S02 beat-4 box flying to the shelf (TransformFromCopy, ~51.9–52.5 s) briefly crosses the "Docker Hub · images"
+  caption mid-move; S03 SKIP_TO chip vs the 1080p chapters.
