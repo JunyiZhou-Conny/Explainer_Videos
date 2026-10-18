@@ -13,3 +13,7 @@
 - S03 (s03_code.py SKIP_TO, Bugbot thread "Skip timestamp misses the next chapter"): the finishing pass lengthens
   S03 (copy-out warning before the pause), so the "cloned fresh? skip to …" chip must be recomputed from the
   re-voiced scene durations. After the 1080p stitch, check the chip text equals S04's start in output/chapters.txt.
+- S03 (s03_code.py ~700–706, Bugbot thread "File flashes leave leftover glyphs"): slicing `l0`/`l1` wraps glyphs that
+  live on `card9` in a new VGroup that `play` adds to the scene, so `FadeOut(card9)` at the start of beat 10 may leave
+  `Dockerfile,` and `pyproject.toml, uv.lock` on screen over V2 (the FadeOut snap-back pattern in SKILL.md). Check the
+  frames just after beat 10 starts; fade or remove the wrapper itself.
