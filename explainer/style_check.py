@@ -3,7 +3,13 @@
 Samples frames from a CLEAN (pre-burn) render and asserts measurable invariants from
 presets/<id>.tokens.json: the background colour dominates within tolerance, and the
 reserved caption band holds nothing but background (the presets promise that area to the
-subtitles). These are guardrails against a silent style drift, not a design review.
+subtitles). The band is checked twice: as a whole (97% clear) and tile by tile, because a
+small tag can hide inside a 3% global tolerance — any ~120x42px tile that is more than
+`checks.band_tile_tolerance` (a 0-1 fraction of the tile, default 0.15) non-background is
+an intrusion, and a tile is
+excused as a scene-painted band only when it is almost entirely band-coloured, so
+ink-coloured objects are caught even where ink equals the band colour (swiss). These are
+guardrails against a silent style drift, not a design review.
 
   .venv/bin/python -m explainer.style_check outputs/<slug>/<slug>.clean.mp4 --preset swiss
 """
@@ -50,7 +56,11 @@ def check_frames(frames: list[Path], preset: str) -> list[str]:
     bg_tol = float(checks.get("background_tolerance", 30))
     band_tol = float(checks.get("band_tolerance", 40))
     min_share = float(checks.get("min_background_share", 0.35))
-    reserve = int(t.get("captions", {}).get("reserve_px", 0))
+    tile_tol = float(checks.get("band_tile_tolerance", 0.15))
+    if not 0 < tile_tol <= 1:
+        raise ValueError(f"band_tile_tolerance must be a 0-1 fraction, got {tile_tol}")
+    reserve_px = int(t.get("captions", {}).get("reserve_px", 0))
+    canvas_h = int(t.get("canvas", {}).get("height", 1080))
     problems = []
     for frame in frames:
         img = np.asarray(Image.open(frame).convert("RGB"), dtype=float)
@@ -60,7 +70,10 @@ def check_frames(frames: list[Path], preset: str) -> list[str]:
         if share < min_share:
             problems.append(f"{frame.name}: background {t['palette']['background']} covers "
                             f"{share:.0%} < {min_share:.0%} of the frame")
-        if reserve:
+        # The tokens state the band in canvas pixels; scale to this frame's actual height
+        # (burn() does the same), and skip degenerate frames the band cannot fit.
+        reserve = int(round(height * reserve_px / canvas_h))
+        if 0 < reserve < height:
             band = img[height - reserve:, :, :]
             near_bg = np.sqrt(((band - bg) ** 2).sum(axis=2)) < band_tol
             near_band = np.sqrt(((band - band_colour) ** 2).sum(axis=2)) < band_tol
@@ -69,7 +82,40 @@ def check_frames(frames: list[Path], preset: str) -> list[str]:
                 problems.append(f"{frame.name}: the reserved caption band (bottom {reserve}px) is "
                                 f"only {clear:.0%} background — diagrams are intruding on the "
                                 "subtitle area")
+            problems += _band_tiles(frame.name, near_bg, near_band, tile_tol, height - reserve)
     return problems
+
+
+def _band_tiles(name: str, near_bg, near_band, tile_tol: float,
+                band_y: int, rows: int = 4, cols: int = 16) -> list[str]:
+    """Concentrated intrusions the global share misses: flag tiles mostly not background.
+
+    A tile that is almost entirely band-coloured counts as a scene-painted band and is
+    excused; a small object merely the same colour as the band sits in a mixed tile and
+    is still caught."""
+    import numpy as np
+
+    h, w = near_bg.shape
+    intruding = ~near_bg
+    hits = []
+    worst = 0.0
+    for r in range(rows):
+        y0, y1 = h * r // rows, h * (r + 1) // rows
+        for c in range(cols):
+            x0, x1 = w * c // cols, w * (c + 1) // cols
+            if y0 == y1 or x0 == x1:   # a band smaller than the grid: no empty tiles
+                continue
+            share = float(intruding[y0:y1, x0:x1].mean())
+            if share > tile_tol and float(near_band[y0:y1, x0:x1].mean()) < 0.95:
+                hits.append((x0, y0, x1, y1))
+                worst = max(worst, share)
+    if not hits:
+        return []
+    xs0, ys0, xs1, ys1 = (min(t[0] for t in hits), min(t[1] for t in hits),
+                          max(t[2] for t in hits), max(t[3] for t in hits))
+    return [f"{name}: object intruding on the caption band around x {xs0}-{xs1}px, "
+            f"y {band_y + ys0}-{band_y + ys1}px ({len(hits)} tile(s), worst {worst:.0%} "
+            "non-background)"]
 
 
 def main(argv=None) -> int:

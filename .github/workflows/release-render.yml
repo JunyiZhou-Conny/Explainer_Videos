@@ -65,6 +65,7 @@ jobs:
           python3 skill-library/conny-explainer-video/scripts/render.py "${{ steps.pick.outputs.episode }}" --jobs 4
           ls -l "outputs/$(basename "${{ steps.pick.outputs.episode }}")/"
       - name: Upload the episode
+        if: always()   # on a failed golden check the diffs and the clean render are the evidence
         uses: actions/upload-artifact@v4
         with:
           name: episode-${{ github.event.pull_request.number || github.run_id }}
@@ -73,6 +74,7 @@ jobs:
             outputs/*/*.srt
             outputs/*/*.ass
             outputs/*/*.validation.json
+            outputs/*/golden-diffs/*.png
             outputs/*/*.chapters.txt
           retention-days: 30
       - name: Tell the PR
