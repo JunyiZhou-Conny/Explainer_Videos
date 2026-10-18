@@ -68,6 +68,17 @@ That `<slug>.validation.json` ships with the release. The Bilibili title, descri
 come from the `publish:` block of `video.yaml`; the asset is `<slug>.zh-en.mp4`. The workflow
 checks the sign-off line and the publish block before it spends any runner time.
 
+### What is live on Bilibili: `catalog/bilibili.json`
+
+The registry maps each episode slug to its Bilibili video; the site's library page reads it.
+The publish worker records every upload it makes. `.github/workflows/bilibili-sync.yml` runs
+`tools/bilibili_registry.py sync` daily: it reads the channel's public video list and
+records videos whose title equals an episode's `title_zh`, which catches uploads made by
+hand. Channel videos it cannot place stay under `unmatched` and are listed on the library
+page; to place one, run `python3 tools/bilibili_registry.py record --slug <slug> --bvid <BV…>
+--title "<title>"` and commit. Bilibili's risk control sometimes refuses datacenter IPs
+(HTTP 412); a refused sync leaves the registry unchanged and retries the next day.
+
 ## Current collection
 
 The initial incubator release collects seven full videos. The catalog links all 23 current

@@ -401,6 +401,23 @@ def main(argv=None):
             raise RuntimeError("Style check failed:\n" + "\n".join(problems))
         print(f"Style check passed: {settings['preset']} tokens hold on sampled frames", flush=True)
 
+    # Golden-frame regression, for episodes that committed signatures (full builds only).
+    golden_path = project / "golden.json"
+    if golden_path.is_file() and not args.sample:
+        from . import golden
+        diffs = output / "golden-diffs"
+        scene_offsets = [{"id": c["id"], "start": c["start"], "duration": s["duration"]}
+                         for (s, _), c in zip(rendered, chapters)]
+        drift = golden.check(clean, golden_path, scene_offsets, save_diffs=diffs)
+        if drift:
+            where = f" (changed cells outlined in red under {diffs})" if diffs.is_dir() else ""
+            raise RuntimeError(
+                f"Golden-frame check failed{where}. If the change is intended, accept it "
+                f"with:\n  python -m explainer.golden update {clean} --golden {golden_path}\n"
+                + "\n".join(drift))
+        shown = golden_path.relative_to(ROOT) if golden_path.is_relative_to(ROOT) else golden_path
+        print(f"Golden frames match {shown}", flush=True)
+
     music = music_settings(settings, args.no_music)
     music_report = None
     burn_src = clean

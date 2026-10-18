@@ -199,7 +199,7 @@ Moved here from the production branch's CLAUDE.md so the repository entry files 
 ### Commands
 ```bash
 python -m explainer.script videos/<id>/script.md                      # word count / duration, caches the voice
-python -m explainer.check  videos/<id>/scenes/s03_x.py Class          # lint: off-frame, < 20 pt, leftovers (no render)
+python -m explainer.check  videos/<id>/scenes/s03_x.py Class          # lint: off-frame, < 20 pt, leftovers (no render; the caption-band check is episode.json-route only)
 python -m explainer.preview videos/<id>/scenes/s03_x.py Class --every 3   # 480p + contact sheets; -q m --at t1,t2
 python -m explainer.build videos/<id> -q l                            # 480p draft of the whole video
 python -m explainer.build videos/<id> --only s03_x                    # re-render one scene, re-stitch
