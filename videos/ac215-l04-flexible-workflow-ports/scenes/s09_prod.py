@@ -13,7 +13,8 @@ Beats (script.md "## S09", one voiceover block each):
     (illustration) and the boxes land on it; the PINK signpost $DOCKER_USERNAME/$IMAGE_NAME with two
     arrows (one tag); GREY tag "lecture 2"; a GREY Apple-silicon Mac pulls arm64, a BLUE cloud VM
     (a remote machine) amd64 (BLUE pull arrows; the arch label flashes as it is pulled).
- 2  TRACKER U/1, README chip transcribe_audio/README.md · line 129. 3-row strip (laptop):
+ 2  TRACKER U/1 (its section "Publish the container (optional)"), README chip
+    transcribe_audio/README.md · line 129. 3-row strip (laptop):
     `docker login -u <USER NAME> -p <ACCESS TOKEN>` (command only, GREY "not run here"); `-p` ringed
     GOLD, a GOLD tag under it "the token stays in your shell history", GREY chip `--password-stdin`
     "avoids it" above the strip. CODE(docker-shell.sh · line 13) with `dlops` underlined + README
@@ -52,7 +53,8 @@ Beats (script.md "## S09", one voiceover block each):
     with a GREY divider tag "after the run demo (S08):", then mega-laptop/78 lines 3-4 in the same
     column view (the dlops/* images S08 pulled, sizes right-aligned with 70's); their names flash.
  7  The terminal goes (the tracker drops " · extra"), then the card moves down and grows (its
-    Pipfile and GREY buildx rows write in as it settles): three GOLD
+    Pipfile and GREY buildx rows, and a GREY "· the python base image" at the end of the dlops/* row,
+    write in as it settles): three GOLD
     rows (bucket in two cues, key + a tiny illustration of the console's key list beside that row,
     whose RED trash can flashes at "in the console", a pushed Docker Hub repo on two lines); card
     and console are centred together. Closing card "Part 2: containers that talk to each other
@@ -87,6 +89,11 @@ Deviations from SHOW (and why):
   after S08's demo; 70 is kept for the five sizes the SAY names). The card above it (never beside
   the terminal) has room for its header and the three rows the SAY names only; its two unsaid
   rows (Pipfile, buildx rm) write in at the start of beat 7, when the terminal has gone.
+- Beat 2: the U tracker's section reads "Publish the container (optional)" (the README heading is
+  "OPTIONAL: Publish the container"; common.py's SECTIONS has it without, and only S09 uses it).
+- Beat 7: the card names the python base (python:3.14-slim-bookworm, 195MB in `docker images`, the
+  terminal's '…' row) as a GREY tail of the dlops/* row: it is unsaid, so it joins with the
+  Pipfile and buildx rows.
 - Beat 7: the third GOLD row is two lines (one would be 10.8 units at 22 pt); its "·" becomes the
   line break.
 - Timing: a few in-sentence anchors are shifted by hand with at() (PLAYBOOK §2.6), from a Kokoro
@@ -328,6 +335,21 @@ def wipe(t):
         for m in lines:
             t.lines.remove(m)
     return FadeOut(VGroup(*lines)), cleanup
+
+
+U_TITLE = "Publish the container (optional)"       # README: "## OPTIONAL: Publish the container"
+
+
+def u_tracker(step: int):
+    """TRACKER U (only S09 uses it), its section named as optional, as the README heading says:
+    the "P" of the new name sits where the old one's did, so the baseline stays."""
+    t = tracker("U", step)
+    old = t.head[2]
+    new = label(U_TITLE, t.size, INK)
+    new.shift(old[0].get_center() - new[0].get_center())
+    t.head.remove(old)
+    t.head.add(new)
+    return t
 
 
 def compact_switchboard(k: float = 0.5) -> Switchboard:
@@ -588,7 +610,7 @@ class ProdAndCleanup(VoiceScene):
 
         # ========================================================== 2 · log in, your username, don't run prod yet
         t = term(P_A, rows=3, title="laptop")
-        u_tr = tracker("U", 1)
+        u_tr = u_tracker(1)
         chip129 = readme_chip("transcribe_audio/README.md · line 129")
         place(chip129, left=u_tr.get_right()[0] + 0.35, cy=BAND_Y)
         p13 = src_panel(SH, 13, 13)
@@ -813,7 +835,8 @@ class ProdAndCleanup(VoiceScene):
             mixed(["clean-up · part 1"], color=INK, size=SMALL),
             mixed(["exit each container ·", ("mono", "--rm", INK), "removes it"], color=INK, size=TAG),
             mixed([("mono", "docker image rm <name>", INK), "· your five images"], color=INK, size=TAG),
-            mixed(["any", ("mono", "dlops/*", INK), "images you pulled"], color=INK, size=TAG),
+            mixed(["any", ("mono", "dlops/*", INK), "images you pulled", ("· the python base image", S.GREY)],
+                  color=INK, size=TAG),
             mixed(["the root-owned", ("mono", "Pipfile", INK)], color=INK, size=TAG),
             mixed(["ran prod?", ("mono", "docker buildx rm multi-arch", S.GREY)], color=S.GREY, size=TAG),
             mixed(["bucket: storage bills until you delete it", "· when the course is over"],   # 2 parts:
@@ -823,13 +846,17 @@ class ProdAndCleanup(VoiceScene):
         ]
         stack(lines, 0.40, head_gap=0.06)          # equal baselines (serif and mono rows)
         pushed[1].shift(np.array([0.3, 0.05, 0]))   # its continuation: indented, a little closer
+        # the python base (70's line 8, the terminal's '…' row) is unsaid: it joins in beat 7, with
+        # the other unsaid rows, at the end of the dlops/* row
+        base_img = lines[3].submobjects[-1]
+        lines[3].remove(base_img)
         crows = VGroup(*lines[:8], VGroup(*pushed))
         # beat 6 shows the rows the SAY names (header + 3) above the 10-row terminal; the
         # Pipfile and buildx rows join as the terminal goes (beat 7)
         first4 = VGroup(*crows[:4])
         frA = box(first4.width + 0.6, first4.height + 0.3, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
         frA.move_to(first4).align_to(first4, LEFT).shift(LEFT * 0.3)
-        place(VGroup(frA, crows), right=6.4, top=3.45, ref=frA)
+        place(VGroup(frA, crows, base_img), right=6.4, top=3.45, ref=frA)
         assert frA.get_bottom()[1] > t6.box.get_top()[1] + 0.15, (frA.get_bottom()[1], t6.box.get_top()[1])
         with self.voiceover(SAY[6]) as vo:
             stage_out(self, tr, run_time=0.5)
@@ -871,6 +898,7 @@ class ProdAndCleanup(VoiceScene):
         # ========================================================== 7 · the cloud; part 2 teaser; empty frame
         frB = box(crows.width + 0.6, crows.height + 0.4, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
         frB.move_to(crows)
+        assert base_img.get_right()[0] < crows.get_right()[0], "the python base widens the card"
         con = console_mini()
         gap = 0.45                                 # the console sits beside the key row; both centred
         span = frB.width + gap + con.width
@@ -882,12 +910,12 @@ class ProdAndCleanup(VoiceScene):
             # the terminal goes first (the extra command with it), then the card moves and grows:
             # the card never slides over half-faded terminal text
             stage_out(self, tr, frA, *crows[:4], run_time=0.35, extra=[caption_extra(tr, False)])
-            for r in crows[4:]:
+            for r in (*crows[4:], base_img):
                 r.shift(dxy)
-            # the two laptop rows beat 6 had no room for write in as the card settles
+            # the laptop rows beat 6 had no room for (and the python base) write in as the card settles
             self.play(*[r.animate.shift(dxy) for r in crows[:4]], Transform(frA, frB),
                       *[FadeIn(r, shift=RIGHT * 0.1, rate_func=squish_rate_func(smooth, 0.45, 1.0))
-                        for r in crows[4:6]], run_time=0.6)
+                        for r in (base_img, *crows[4:6])], run_time=0.6)
             vo.wait_until("the bucket bills")
             self.play(FadeIn(crows[6][0], shift=RIGHT * 0.1), run_time=0.5)
             at(self, vo, "when the course is over", -0.2)

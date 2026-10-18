@@ -106,7 +106,9 @@ Deviations from SHOW (and why):
   16–17 (lines 2–15 cut) with a GREY note naming the hidden edits (lines 10–13: gcp_project and
   bucket_name), so the 4-row terminal scrolls its prompt row away as the diff prints (the folder
   prompt was on screen from the cd-here caption to the edit); script.md SHOW still says
-  TERM(41: 16–17).
+  TERM(41: 16–17). The TEAL terminal's old help run fades in place as the note comes, so
+  the new help types on an empty screen (a 6-row scroll would slide the old lines up through
+  the second terminal), and the second terminal fades out before the line-23 chip fades in.
 - Beat 10: the expected panel shows while download and synthesis are typed; the Text-to-Speech
   picture replaces it on "There's no upload step". The picture adds a PINK request arrow from
   the strip (where `--synthesis` was typed) to the door, so "straight into your bucket" reads as
@@ -959,8 +961,10 @@ class RunComponents(VoiceScene):
             ln = type_cmd(self, t, QC_CMDS[1], type_time=0.35)
             note_with(self, t, ln, "needs the key", run_time=0.25)
             vo.wait_until("There's no upload step")
-            self.play(FadeOut(VGroup(exp, etag)), FadeIn(r257, shift=DOWN * 0.1), FadeIn(door), FadeIn(dr10),
-                      FadeIn(ill10), FadeIn(cost10, shift=DOWN * 0.1), run_time=0.6)
+            late = {"rate_func": lambda a: smooth(max(0.0, 2 * a - 1))}   # the panel leaves first
+            self.play(FadeOut(VGroup(exp, etag), rate_func=lambda a: smooth(min(1.0, 2 * a))),
+                      FadeIn(r257, shift=DOWN * 0.1), FadeIn(door, **late), FadeIn(dr10, **late),
+                      FadeIn(ill10, **late), FadeIn(cost10, shift=DOWN * 0.1, **late), run_time=0.6)
             vo.wait_until("Text-to-Speech writes")
             self.play(GrowArrow(req), run_time=0.5)
             self.play(flash(door, CLOUD, 1.05), FadeIn(wave, scale=0.5), Create(path), run_time=0.5)
