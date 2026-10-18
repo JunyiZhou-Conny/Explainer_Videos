@@ -623,8 +623,11 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
             # composed scores (explainer.music) are mixed after stitching by add_music()
             mix_music(joined, final, music_spec, project, build, offset)
         else:
+            # one-pass loudnorm overshoots its TP after AAC (−0.9 dBTP measured on a 31-min cut);
+            # a sample-peak limit at 0.79 (−2 dBFS) lands the encoded file at about −1.6 dBTP
             subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
-                            "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
+                            "loudnorm=I=-16:TP=-1.5:LRA=11,alimiter=limit=0.79:level=disabled",
+                            "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
                             "-movflags", "+faststart", str(final)], check=True)
             if ctx.get("music"):               # the same narration before AAC: the music is mixed from it,
                 voice_wav = build / f"voice_{stem.name}.wav"                 # so the voice is encoded once
