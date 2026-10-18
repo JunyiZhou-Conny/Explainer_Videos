@@ -401,15 +401,17 @@ TRACKER F/2. It types `cd mega-pipeline` → (no output); the prompt becomes
 SAY: Starting fresh? From your workspace folder, clone the repo with this branch checked out: git clone, dash dash branch flexible-workflow. Then cd into mega-pipeline. Pause and run both.
 
 SHOW: TRACKER F/2 · extra. It types `git branch; git log --oneline -1` (extra) →
-TERM(mega-laptop/03-x-branch.txt: 2–3); `cc67f3b` gets a GREY tag "the pinned commit · 2026-09-18".
+TERM(mega-laptop/03-x-branch.txt: 2–3); `cc67f3b` gets a GREY tag "cc67f3b = the commit we recorded ·
+2026-09-18 · yours may be newer".
 The terminal clears; it types `ls -a transcribe_audio` (extra; the second command of
 `mega-laptop/04-x-ls.txt`) → TERM(mega-laptop/04-x-ls.txt: 10–18). `Dockerfile`, `docker-shell.sh`,
 `pyproject.toml`, `uv.lock` highlight GREEN one by one, and a small GREEN recipe card "committed"
 gathers them.
-SAY: Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits.
+SAY: Two extra checks: git branch shows flexible-workflow at the commit we recorded, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits.
 
 SHOW: TRACKER L/1. The terminal clears; title `laptop · lecture 3 clone`, prompt
-`student@laptop:~/AC215-l03$`; a GREY chip at the top right: "cloned fresh? skip to the next chapter".
+`student@laptop:~/AC215-l03$`; a GREY chip at the top right: "cloned fresh? skip to <SKIP_TO>" (the
+time S04 starts; the SAY keeps "skip to the next chapter").
 It types `cd mega-pipeline` → (no output); prompt `student@laptop:~/AC215-l03/mega-pipeline$`.
 TRACKER L/1 · extra. It types `git status --short` (extra) → TERM(mega-l03-laptop/01-x-l03-state.txt:
 2–4), then `git status --short --ignored | grep '^!!'` (extra) →
@@ -457,16 +459,18 @@ SAY: A small gap: the note covers only edited files. An extra git stash dash u s
 
 SHOW: TRACKER L/5. It types `git branch` → TERM(mega-l03-laptop/09-branch.txt: 2–3); `*
 flexible-workflow` highlights GREEN. V2 fades; a static GREY "your turn" card fills the space above
-the strip, the commands exactly as typed: `cd mega-pipeline` · `git fetch origin` · `git checkout
-flexible-workflow` · `git stash` · `git stash -u` (tag `extra`) · `git checkout flexible-workflow` ·
-`git branch`. `▶ your turn` on the card.
-SAY: Step 5, git branch: star, flexible-workflow. Pause and switch your own clone.
+the strip. It leads with a GREY row "first: copy out your lecture 3 Dockerfile, pyproject.toml,
+uv.lock · the switch replaces them" (tag `extra`; its first line flashes on "Before you switch", its
+second on "the switch replaces"), then the commands exactly as typed: `cd mega-pipeline` · `git fetch
+origin` · `git checkout flexible-workflow` · `git stash` · `git stash -u` (tag `extra`) · `git
+checkout flexible-workflow` · `git branch`. `▶ your turn` on the card (it wiggles on "Pause and switch").
+SAY: Step 5, git branch: star, flexible-workflow. Before you switch your own clone, copy out any lecture 3 Dockerfile, pyproject.toml and uv.lock you want to keep: the switch replaces them. Pause and switch.
 
 SHOW: TRACKER L/5 · extra. The card clears; V2 returns above the strip. The strip types `head -2
 transcribe_audio/Dockerfile` (extra) → TERM(mega-l03-laptop/11-x-dockerfile-replaced.txt: 2–3). In
 V2's ignored pile the Dockerfile card flips from `FROM python:3.12-slim-bookworm`
 (mega-l03-laptop/01-x-l03-state.txt line 9) to `FROM python:3.14-slim-bookworm` (line 3 of 11); then
-the strip types `ls -la transcribe_audio` (extra) → TERM(mega-l03-laptop/10-x-after.txt: 8, 12, 14)
+the strip types `ls -la transcribe_audio` (extra) → TERM(mega-l03-laptop/10-x-after.txt: 12, …, 14)
 and the `pyproject.toml` and `uv.lock` cards flip too (GREY tag "the branch's files · same sizes as a
 fresh clone"). A GREY tag "replaced · no warning" and the tag `erratum`; a GREY fix chip: "want your
 lecture 3 Dockerfile, pyproject.toml, uv.lock (or docker-shell.sh)? copy them out before switching".
@@ -548,8 +552,13 @@ SHOW: The console shrinks away. The `input_audios/` drawer receives a small wave
 `text_prompts/group-01/` drawer (caption "transcribe · cli.py line 62: same name, .txt"). An excerpt
 chip `"input-*.txt"` (header `transcribe_audio/cli.py · line 102 (excerpt)`) stands in its path like a
 gate: the `input-….txt` chip passes with a GREEN tick, and a second chip `test.txt` bounces off GREY.
-Fade out.
-SAY: Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input.
+From "Bucket names are global" the picture gives way (the tracker stays) to a static GREY "your turn"
+card: "Cloud Storage › Buckets › Create" · "Name: globally unique, e.g. `<team>-mega-pipeline`" (GREY
+"= your `bucket_name`"; the rule flashes) · "In the bucket: Create folder `input_audios`" · "In that
+folder: Upload files › a short clip named `input-<something>.mp3`", then GREY "or, after gcloud login
+· study guide:" over `gcloud storage buckets create` / `gcloud storage cp` (tag `extra`; named, not
+typed). `▶ your turn` on the card (it wiggles on "Pause"). Fade out.
+SAY: Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input. Bucket names are global: pick a unique one. Pause and create yours.
 
 ---
 

@@ -94,9 +94,9 @@ S03:
   - "From your workspace folder, clone the repo with this branch checked out: git clone, --branch flexible-workflow."
   - null
   - null
-- en: "Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits."
+- en: "Two extra checks: git branch shows flexible-workflow at the commit we recorded, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits."
   zh:
-  - "两个额外检查：git branch 显示，当前分支是 flexible-workflow，停在 pin 住的 commit；transcribe audio 里有 Dockerfile、这个脚本、pyproject.toml 和 uv.lock，都由这个分支 commit 好了。"
+  - "两个额外检查：git branch 显示，当前分支是 flexible-workflow，停在我们录制时的那个 commit；transcribe audio 里有 Dockerfile、这个脚本、pyproject.toml 和 uv.lock，都由这个分支 commit 好了。"
 - en: "Already have your clone from lecture 3? It's on main; if you cloned fresh, skip to the next chapter. Step 1: cd into it. Two extra checks show its state."
   zh:
   - "已经有第 3 讲的 clone 了？"
@@ -134,12 +134,14 @@ S03:
   - null
   - "An extra git stash -u stashes untracked files too, and the checkout works."
   - "The other option, git checkout -- ., discards your edits and leaves untracked files alone."
-- en: "Step 5, git branch: star, flexible-workflow. Pause and switch your own clone."
+- en: "Step 5, git branch: star, flexible-workflow. Before you switch your own clone, copy out any lecture 3 Dockerfile, pyproject.toml and uv.lock you want to keep: the switch replaces them. Pause and switch."
   zh:
   - "第 5 步，git branch：星号在 flexible-workflow 上。"
-  - "暂停一下，把你自己的 clone 也切过去。"
+  - "切换你自己的 clone 之前，先把第 3 讲里想保留的 Dockerfile、pyproject.toml 和 uv.lock 复制出来：切换会把它们替换掉。"
+  - "暂停一下，切换过去。"
   en_display:
   - "Step 5, git branch: * flexible-workflow."
+  - null
   - null
 - en: "Extra checks show your ignored lecture 3 Dockerfile, pyproject.toml and uv.lock were replaced by the branch's, without a word: copy them out first if you want them."
   zh:
@@ -180,12 +182,16 @@ S04:
   en_display:
   - "Another small gap: the README never says how to create the bucket, and its sample upload is named test.mp3."
   - null
-- en: "Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input."
+- en: "Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input. Bucket names are global: pick a unique one. Pause and create yours."
   zh:
   - "然后把一段短录音上传到一个叫 input audios 的目录里，文件名以 input- 开头、以 .mp3 结尾。"
   - "转写文本沿用这个名字，而且上传时只会发送名字以 input 开头的文件。"
+  - "bucket 的名字是全局唯一的：挑一个别人没用过的。"
+  - "暂停一下，创建你自己的 bucket。"
   en_display:
   - "Then upload a short recording into a folder named input_audios, as input-something.mp3."
+  - null
+  - null
   - null
 S05:
 - en: "Your bucket only lets in callers who prove who they are and have permission. For code, that identity is a service account, with one JSON key."
