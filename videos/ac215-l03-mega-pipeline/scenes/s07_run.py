@@ -13,22 +13,27 @@ Beats (script.md "## S07", one voiceover block each):
     GREEN package shelf stays invisible all scene: S08 introduces it); GREY caption "container =
     image + a thin writable layer", then "thrown away on exit: --rm" while a ghost of the layer
     floats up and fades.
- 1  V3 slides right and the laptop (GREY, transcribe_audio/) fades in at left. The PINK route
+ 1  V3 slides right and the laptop (GREY, transcribe_audio/) fades in at left; "Lecture 3 ·
+    slides 51–52" top right (through the ponder, to beat 4's route-label drop). The PINK route
     draws with its label -v "$(pwd):/app"; the folder name pulses ("the current folder, pwd").
     A GREY sheet carrying the laptop's files appears on the laptop folder and slides along the
-    route over the cavity; the copied files dim underneath. Caption "/app now is your folder".
+    route over the cavity; the copied files dim underneath. Once it lands, slide 52's two sides
+    under the route, in the gap (no narration): GREY "host folder" under $(pwd), "container
+    path" one row lower, ending under /app. Caption "/app now is your folder".
  2  Caption "one folder, seen from two sides". A pencil edits cli.py in the laptop folder; at the
     same instant cli.py blinks on the sheet over the cavity and the route pulses (nothing
     travels). A page appears in the fifth row on both sides at the same instant, blinks on both
     (route pulse), and gets a GREEN check (it stays). A page lands on the dashed writable layer,
     with a GREY tag "/tmp · throwaway" above it.
- 3  The beat-2 marks go. Tag "illustration · lecture 2's layout: .venv next to the code". The
-    route label rises into the band above the gap (the half-open sheet will hide the route), the
-    laptop sheet slides halfway back along the route (the copied files undim); the GREEN venv
+ 3  The beat-2 marks and the two-sides labels go (the lecture tag stays). Tag "illustration ·
+    lecture 2's layout: .venv next to the code". The route label rises into the band above the gap (the
+    half-open sheet will hide the route), the laptop sheet slides halfway back along the route
+    (the copied files undim); the GREEN venv
     box slides into the cavity's fifth row as /app/.venv; on "with this mount" the sheet's frame
     and the route label pulse. PONDER (8 s, card under V3) while the sheet waits half open.
  4  The sheet slides back over the cavity and covers the .venv box completely (copied files dim
-    again) and the route label drops back onto the route. A TEAL label "start: bash, venv on"
+    again) and the route label drops back onto the route as the lecture tag goes (it would meet
+    the next label). A TEAL label "start: bash, venv on"
     above the layer sends an "activate" arrow down; it hits the sheet and turns RED with a
     cross and "no .venv on your laptop". The marks and
     the illustration tag go; the box slides back out to /home/app/.venv and CODE(Dockerfile: 9)
@@ -63,15 +68,19 @@ Beats (script.md "## S07", one voiceover block each):
 11  TRACKER A6. The terminal shrinks to the strip (the import and the RED error stay); V3
     returns above it, mounted: the route pulses, the sheet over /app pulses; cli.py turns RED,
     a RED "?" hovers between it and a BLUE "google" chip above the empty venv box, which pulses.
-    On "In part 2" the strip goes and the caption "Part 2: packages, and why they vanish"
-    appears. Fade out: empty frame (end of part 1).
+    On "If you stop here" the strip gives way to a 3-row laptop strip; on "rerun" it types
+    the README's docker run again; on "from the transcribe audio folder" the prompt's
+    transcribe_audio underlines and the laptop folder in V3 pulses. On "In part 2" the strip
+    goes and the caption "Part 2: packages, and why they vanish" appears. Fade out: empty
+    frame (end of part 1).
 """
 
 from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import MONO, box, check_mark, chip, code_span, cross_mark, label, line_bar, mono, substring, tag
+from explainer.devops import (MONO, box, check_mark, chip, code_span, cross_mark, label, lecture_ref, line_bar, mono,
+                              substring, tag)
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, CTR, ERR, INK, LOOKUP, NARRATION, P_A, P_CTR, SYSTEM, TURN, VENV,
@@ -345,8 +354,24 @@ class RunContainer(VoiceScene):
 
         # ========================================================== 1 · -v: the laptop sheet covers /app
         cap1 = caption("`/app`", "now is your folder").move_to([0, CAP_Y, 0])
+        # top right from beat 1's first play through the ponder (the mount picture) to beat 4's
+        # route-label drop, just before "start: bash, venv on" reaches its corner: clears the
+        # writable layer (top ~2.3; ~2.7 once V3 is up) and beat 2's "/tmp · throwaway" (top ~2.85)
+        lref = lecture_ref(3, "51–52")
         with self.voiceover(SAY[1]) as vo:
-            self.play(win.animate.shift(LEFT * X_SOLO), FadeOut(VGroup(cap0a, cap0b)), run_time=0.7)
+            self.play(win.animate.shift(LEFT * X_SOLO), FadeOut(VGroup(cap0a, cap0b)), FadeIn(lref), run_time=0.7)
+            # slide 52's two-sided reading of source:container, under the route in the gap
+            # between the frames (no narration): "host folder" under $(pwd), "container path"
+            # one row lower, ending under /app (centred under it, it would cross the image frame)
+            gap_l, gap_r = win.laptop.frame.get_right()[0], win.image.frame.get_left()[0]
+            host_l = label("host folder", SZ, S.GREY)
+            place(host_l, cx=win.route_label[3:9].get_center()[0], top=win.route.get_center()[1] - 0.18)
+            ctr_l = label("container path", SZ, S.GREY)
+            place(ctr_l, right=gap_r - 0.12, cy=host_l.get_center()[1] - 0.375)
+            sides = VGroup(host_l, ctr_l)
+            for m in sides:
+                assert gap_l + 0.05 < m.get_left()[0] and m.get_right()[0] < gap_r - 0.05, (m.get_left(), m.get_right())
+            assert host_l.get_bottom()[1] - ctr_l.get_top()[1] > 0.08
             win.reveal(self, "laptop", anim=lambda m: FadeIn(m, shift=RIGHT * 0.2), run_time=0.5)
             win.reveal(self, "route", anim=Create, run_time=0.5)
             win.reveal(self, "route_label", anim=lambda m: FadeIn(m, shift=DOWN * 0.1), run_time=0.4)
@@ -356,6 +381,8 @@ class RunContainer(VoiceScene):
             win.reveal(self, "cover", run_time=0.3)
             self.play(win.cover_to(1.0), Transform(win.copied, op_target(win.copied, 0.3)), run_time=1.1)
             win.mounted = True
+            self.play(LaggedStart(FadeIn(host_l, shift=UP * 0.08), FadeIn(ctr_l, shift=UP * 0.08), lag_ratio=0.4),
+                      run_time=0.5)
             vo.wait_until("so slash app is now")
             self.play(FadeIn(cap1, shift=UP * 0.1), run_time=0.5)
             self.play(Indicate(win.image.app, color=INK, scale_factor=1.3), frame_pulse(win.cover.frame, INK),
@@ -418,7 +445,7 @@ class RunContainer(VoiceScene):
             return ill, fr, lab
 
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(VGroup(cap2, chk, tmp_pg, tmp_tag)), win.animate.shift(UP * (Y_WIN - Y0)),
+            self.play(FadeOut(VGroup(cap2, chk, tmp_pg, tmp_tag, sides)), win.animate.shift(UP * (Y_WIN - Y0)),
                       run_time=0.6)
             ill, v_fr, v_lab = layout3()
             home_fr, home_lab = win.venv.frame.copy(), win.venv.label.copy()
@@ -468,7 +495,7 @@ class RunContainer(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(card), run_time=0.4)
             self.play(win.cover_to(1.0), Transform(win.copied, op_target(win.copied, 0.3)), run_time=1.1)
-            self.play(win.route_label.animate.move_to(lab_home), run_time=0.3)
+            self.play(win.route_label.animate.move_to(lab_home), FadeOut(lref), run_time=0.3)
             vo.wait_until("with no venv in it")
             self.play(FadeIn(start, shift=DOWN * 0.1), run_time=0.4)
             self.play(GrowArrow(arr), FadeIn(act), run_time=0.6)
@@ -599,8 +626,13 @@ class RunContainer(VoiceScene):
         note1 = VGroup(label("no", SZ, S.GREY), nm, label("in the prompt", SZ, S.GREY)).arrange(RIGHT, buff=0.12)
         note2 = label("· the venv is active anyway", SZ, S.GREY)
         note = VGroup(note1, note2).arrange(RIGHT, buff=0.15)
-        for m in (*note1[::2], note2):
-            m.align_to(note1[0], DOWN)
+        # one baseline for serif and mono: align the bottoms of flat-bottomed glyphs (n, r, i, h),
+        # not the boxes (the parentheses and the p/y descenders reach below the baseline)
+        def base_y(m, ch):
+            return m[m.text.index(ch)].get_bottom()[1]
+        y0 = base_y(note1[0], "n")
+        for m, ch in ((nm, "r"), (note1[2], "i"), (note2, "h")):
+            m.shift(UP * (y0 - base_y(m, ch)))
         place(note, left=t.box.get_left()[0] + 0.1, cy=(t.box.get_top()[1] + TRACK_BOTTOM) / 2)
         nm_x = Line(nm.get_left() + LEFT * 0.05, nm.get_right() + RIGHT * 0.05, color=S.GREY, stroke_width=3)
         with self.voiceover(SAY[8]) as vo:
@@ -690,6 +722,7 @@ class RunContainer(VoiceScene):
         cli_c = win.row("cli.py", "cover")
         part2 = caption("Part 2: packages, and why they vanish", color=S.GREY)
         part2.scale(22 / 20).move_to([0, -2.45, 0])
+        t11 = term(P_A, 3)            # the laptop again, in the strip's place
         with self.voiceover(SAY[11]) as vo:
             self.play(caption_extra(tr, False), run_time=0.3)
             resize(self, t, 3, run_time=0.7)
@@ -706,8 +739,20 @@ class RunContainer(VoiceScene):
             self.play(Create(link), FadeIn(q, scale=1.5), Indicate(win.venv.frame, color=VENV, scale_factor=1.06),
                       run_time=0.6)
             self.play(Wiggle(q, scale_value=1.2), run_time=0.8)
+            # part 1 is its own upload: how to get back in after a break. The container strip
+            # gives way to a laptop strip in the same place, and the README's command is typed
+            # again; its prompt shows the folder to run it from.
+            vo.wait_until("If you stop here")
+            self.play(FadeOut(t), FadeIn(t11), run_time=0.5)
+            vo.wait_until("rerun the same docker run")
+            c11 = type_cmd(self, t11, RUN, 1.0)
+            r11 = c11.rows[0]
+            assert r11.text.startswith(P_A), r11.text
+            vo.wait_until("from the transcribe audio folder")
+            u11 = uline(r11, "transcribe_audio", INK)
+            self.play(Create(u11), Indicate(win.laptop.folder, color=INK, scale_factor=1.12), run_time=0.6)
             vo.wait_until("In part 2")
-            self.play(FadeOut(t), FadeIn(part2, shift=UP * 0.1), run_time=0.6)
+            self.play(FadeOut(VGroup(t11, u11)), FadeIn(part2, shift=UP * 0.1), run_time=0.6)
         self.wait(0.6)
         self.play(*[FadeOut(m) for m in self.mobjects], run_time=0.8)
 

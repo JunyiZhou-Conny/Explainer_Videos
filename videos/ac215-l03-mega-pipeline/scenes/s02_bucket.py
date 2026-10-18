@@ -5,6 +5,8 @@ Beats (script.md "## S02", one voiceover block each):
    rows. Top: "production: services call each other's APIs", five small TEAL boxes joined by
    direct GREY arrows (A→B, B→C, B→D over C, D→E); the arrows fade (stroke and tips only) and
    each gets a GREY cross.
+   GREY lecture tag "Lecture 3 · slides 7, 15" top right from the README card until the top row
+   leaves (cap_top sits at y 2.95 so its right end clears the tag's lower-left corner).
    Bottom: "here: write outputs to shared storage; the next stage reads them", the same boxes
    (copied down) over a small BLUE cabinet; on the words, every box writes into a drawer, then
    reads from one (thin GREY arrows, always box↔drawer).
@@ -13,8 +15,10 @@ Beats (script.md "## S02", one voiceover block each):
    above; letter by letter each prefix flies down into its drawer's two-line label (pipeline
    order, so text_translated/ and text_audios/ cross), output_audios_pp/ into the dashed bonus
    drawer (tag "bonus"); the content icons fade in; the card leaves, then V1 rises to the middle;
-   tag "illustration" on the cabinet. A's letter and name appear; a copy of the waveform rises
-   from input_audios/ into A (A's label dims while it is inside) and comes out as a short page
+   tag "illustration" on the cabinet; the GREY lecture tag "Lecture 3 · slides 25" comes in top
+   right as the card leaves and stays through beat 3 (out with V1 at the zoom). A's letter and
+   name appear; a copy of the waveform rises from input_audios/ into A (A's label dims while it
+   is inside) and comes out as a short page
    into text_prompts/; then B: a long page into text_paragraphs/.
 2. "The path splits": two copies of the long page slide out of text_paragraphs/. C's label; one
    copy through C into text_audios/ as a waveform. D's label; the other through D into
@@ -68,8 +72,8 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import PANEL, code_span, cross_mark, glyph_range, label, line_pitch, mono, \
-    mono_line, substring
+from explainer.devops import PANEL, code_span, cross_mark, glyph_range, label, lecture_ref, line_pitch, \
+    mono, mono_line, substring
 from explainer.scene import VoiceScene
 
 from common import (BONUS_PREFIX, CLOUD, clock_glyph, COST, CTR, ERR, INK, LOOKUP, NARRATION, OUT_KIND, PREFIXES,
@@ -308,15 +312,16 @@ class BucketBus(VoiceScene):
         crosses = VGroup(*[cross_mark(0.2, S.GREY, stroke=4).move_to(a.point_from_proportion(0.5))
                            for a in prod.arrows])
         cap_top = label("production: services call each other's APIs", 26, INK,
-                        t2c={"production:": S.GREY}).move_to([0, 3.05, 0])
+                        t2c={"production:": S.GREY}).move_to([0, 2.95, 0])     # clears lref1's corner
         bot_a = label("here: write outputs to shared storage;", 26, INK, t2c={"here:": S.GREY})
         bot_b = label("the next stage reads them", 26, INK)
         cap_bot = VGroup(bot_a, bot_b).arrange(RIGHT, buff=0.16, aligned_edge=DOWN).move_to([0, 0.55, 0])
         card = readme_card("README.md · lines 60–67", README_6067, size=22).move_to([0, 0.6, 0])
+        lref1 = lecture_ref(3, "7, 15")                 # top right, while the production row is up
 
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(card.frame), FadeIn(card.header), *[FadeIn(r, shift=UP * 0.1) for r in card.rows],
-                      run_time=0.9)
+                      FadeIn(lref1), run_time=0.9)
             self.wait(0.7)
             # the card condenses: its first line becomes the top row, the rest the bottom row
             self.play(ReplacementTransform(card.rows[0], cap_top), ReplacementTransform(card.rows[1], bot_a),
@@ -346,10 +351,11 @@ class BucketBus(VoiceScene):
         pc = prefix_card().move_to(ORIGIN)     # a clear gap above the boxes, inside the safe frame
         pc.shift(UP * (relay.boxes.get_top()[1] + 0.18 - pc.frame.get_bottom()[1]))
         assert pc.get_top()[1] <= 3.52, pc.get_top()[1]
+        lref2 = lecture_ref(3, "25")       # top right, from the card's exit (the card would touch it) to the zoom
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(VGroup(prod, crosses, cap_top, cap_bot)), ReplacementTransform(mini, relay),
-                      run_time=1.2)
+            self.play(FadeOut(VGroup(prod, crosses, cap_top, cap_bot)), FadeOut(lref1),
+                      ReplacementTransform(mini, relay), run_time=1.2)
             self.play(FadeIn(pc.frame), FadeIn(pc.header), FadeIn(pc.items, lag_ratio=0.08), run_time=0.8)
             # each prefix flies down into its drawer (pipeline order: text_translated/ and
             # text_audios/ cross); output_audios_pp/ into the dashed bonus drawer
@@ -378,7 +384,7 @@ class BucketBus(VoiceScene):
             # the card leaves, then V1 rises to the middle of the frame (the card never slides
             # over the boxes)
             rise = -relay.get_center()[1]
-            self.play(FadeOut(pc.frame), FadeOut(pc.header), FadeOut(pc.items), run_time=0.35)
+            self.play(FadeOut(pc.frame), FadeOut(pc.header), FadeOut(pc.items), FadeIn(lref2), run_time=0.35)
             self.remove(pc)
             self.play(relay.animate.shift(UP * rise), run_time=0.6)
             ill = illustration_tag().next_to(relay.cabinet, DOWN, buff=0.17).align_to(relay.drawers[0].frame, LEFT)
@@ -461,7 +467,7 @@ class BucketBus(VoiceScene):
         ill4 = illustration_tag().next_to(big_fr, DOWN, buff=0.38).align_to(big_fr, RIGHT)
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(relay), FadeOut(every), FadeOut(hand),
+            self.play(FadeOut(relay), FadeOut(every), FadeOut(hand), FadeOut(lref2),
                       TransformFromCopy(relay.drawers[1], VGroup(big_fr, big_handle)),
                       TransformFromCopy(relay.drawer_labels[1], big_label), run_time=1.3)
             self.play(FadeIn(ill4), run_time=0.4)

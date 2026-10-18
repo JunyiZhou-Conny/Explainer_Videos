@@ -3,23 +3,27 @@
 Beats (script.md "## S15", one voiceover block each):
  0  No tracker: a GREY caption top-left "after the README · clean up". V1 (common.Relay: five TEAL
     boxes with their letters over the BLUE cabinet, every drawer holding its token) appears at full
-    width and zooms out to the top of the frame; a checklist card below: "cloud: nothing to delete",
-    GREY sub-items "no VM", "no bucket", "no service account" (a GREEN tick as each is named; the
-    cabinet pulses BLUE on "In the cloud"), then "your outputs stay in the bucket, under group-01"
-    (the drawers' tokens pulse).
+    width and zooms out to the top of the frame; a checklist card below: "cloud: nothing to delete"
+    (the cabinet pulses BLUE on "In the cloud"); on "nothing to delete" its last row "your outputs
+    stay in the bucket, under group-01" (the drawers' tokens pulse), so it is up through the ticks;
+    then the GREY sub-items "no VM", "no bucket", "no service account" fill the middle row (a GREEN
+    tick as each is named).
  1  V1 shrinks into the top-right corner (letters only); the card goes; a 13-row terminal (title
     laptop, prompt .../mega-pipeline/transcribe_audio$). `cd ..` (extra) -> (no output), the prompt
     becomes .../mega-pipeline$. The five-filter `docker image ls` (extra; Terminal.type folds it
     onto six rows, one filter a row) -> laptop/70-images-all.txt lines 2-7. On "transcribe audio
     at" 1.48GB gets a YELLOW bar and box A pulses; on "the other four" the four 84xMB sizes get
-    bars and boxes B-E pulse.
- 2  V1 fades; the terminal shrinks to 10 rows; `git status` (extra) -> 71-git-status.txt lines
-    5-9, 11-14 (tabs shown as a terminal shows them, 8 columns). Line 9 gets a YELLOW bar on "your
-    edited cli.py files" and the GREY caption "we set group_name only in transcribe_audio: yours
-    also lists the other four cli.py and, / with your key, generate_text's text_prompts/ and
-    text_paragraphs/" appears above the terminal; lines 8, 13, 14 get bars on "the files in
-    generate text". On "but the other four folders hide" the caption goes, the terminal shrinks to
-    a 3-row strip (`git status`, lines 13-14), CODE(transcribe_audio/.gitignore: 3-9, 24 pt, lines
+    bars one after another while boxes B-E pulse.
+ 2  V1 and the old screen fade together (a fresh screen, as `clear`); the terminal shrinks to 10
+    rows with the bare prompt at the top; on "An extra git status" it types `git status` (extra) -> 71-git-status.txt lines
+    5-9, 11-14 (tabs shown as a terminal shows them, 8 columns), and with the output the GREY caption
+    "we set group_name only in transcribe_audio: yours also lists the other four cli.py / and, with
+    your key, generate_text's text_prompts/ and text_paragraphs/ / and the five .dockerignore files
+    you added: commit those (no -f needed)" appears above the terminal (how a viewer's own output
+    differs: the capture removed its .dockerignore; a viewer has five, untracked). Line 9 gets a
+    YELLOW bar on "your edited cli.py files"; lines 8, 13, 14 get bars on "the files in generate
+    text". On "but the other four folders hide" the terminal shrinks to a 3-row strip (`git status`,
+    lines 13-14), then the caption goes; CODE(transcribe_audio/.gitignore: 3-9, 24 pt, lines
     5-7 in focus) slides in top right and four GREY dashed ghost chips, the other four Dockerfiles
     (`transcribe_audio/Dockerfile` ...), appear top left under "missing from git status:" and are
     struck through; on "and project files" lines 5-7 get one YELLOW bar and the note "and their
@@ -35,26 +39,28 @@ Beats (script.md "## S15", one voiceover block each):
     lines 2-11, printed pair by pair while V1's boxes A-E dissolve one by one (the cabinet stays).
     "Older builds stay behind untagged": the terminal shrinks to the strip (the last pair) and
     four dashed TEAL boxes, each with a GOLD key, appear above it over the GREY label "older builds
-    · untagged" (the keys pulse on "each holding your key"). `docker image prune -f` (extra; no
+    · untagged" (the keys pulse RED on "each holding your key": a key inside an image). `docker image prune -f` (extra; no
     output: not captured), the GREY caption "removes the untagged older builds · each held your
     key" above them, and the boxes and their label dissolve. In their place the GREY caption "still
     on disk: the base image (L4 uses it again) and the build cache / docker builder prune frees it"
     and a GREEN check "no containers left: every run used --rm"; a 2.4 s hold (silent) to read them.
  5  Everything goes. "Test yourself" (YELLOW underline). Q1 (26 pt, YELLOW badge) with a text-free
     thumbnail of V1 (box D pulses on "translate text", the cabinet on "who wrote it"); Q1 shrinks to
-    22 pt GREY and Q2 comes in below (thumbnail: V3's window, the image block with its /app cavity,
+    22 pt GREY, keeping its line breaks (each glyph only shrinks and slides), and Q2 comes in below (thumbnail: V3's window, the image block with its /app cavity,
     the GREEN venv box outside it and the PINK route from the laptop folder; the cavity pulses on
     "the mount", the venv box on "uv project environment").
  6  Q3 (thumbnail: V4's dashed writable sheet with a GREEN shelf of package chips; it pulses on "what
     survives"), Q4 (a text-free PINK signpost, a GOLD key at its tip; `/app` YELLOW on "why only
     from slash app"), Q5 (a sieve with the GOLD key on it over a TEAL box; the key pulses on "a
-    git-ignored key", the sieve on "and the fix").
- 7  The thumbnail goes; the five questions reflow to full width at the top; footer cards "Answers:
-    exercises.md" and, under it, "Study guide + every command:" with the MLOps_Learning link and the
+    git-ignored key" (RED: a key inside an image), the sieve on "and the fix").
+ 7  The thumbnail goes; the five questions (Q5 straight from its big form) reflow to full width at
+    the top, top to bottom; footer cards "Answers: study guide §8 (exercises.md)" (the file is in this
+    video's folder, which the guide's §8 links) and, under it, "Study guide + every command:" with the MLOps_Learning link and the
     guide's path (it pulses on "study guide"); on "Next lecture" a dashed GREY card at the right,
     "next: L4" / "branch flexible-workflow", whose three lines appear as they are said ("your own
     bucket + service account", "the key outside the repo", "docker-shell.sh / builds and runs for
-    you"). Everything fades to an empty frame (end of part 2).
+    you"); the GREY lecture tag "Lecture 3 · slide 70" (lecture_ref, top right) comes with the card
+    and stays to the end. Everything fades to an empty frame (end of part 2).
 
 Terminal output comes only from assets/terminal/laptop/70-72 (capture()); the .gitignore panel quotes
 assets/source/transcribe_audio/.gitignore with its real line numbers. The question text helpers are
@@ -68,8 +74,8 @@ import numpy as np
 from manim import *
 
 from explainer import style as S
-from explainer.devops import (MONO, box, check_mark, chip, cross_mark, folder_glyph, label, mono,
-                              mono_line, step_badge, substring)
+from explainer.devops import (MONO, OUTPUT, box, check_mark, chip, cross_mark, folder_glyph, label, lecture_ref,
+                              mono, mono_line, step_badge, substring)
 from explainer.scene import VoiceScene
 
 from common import (CLOUD, CTR, ERR, GROUP, INK, KEY, LAPTOP, LOOKUP, NARRATION, P_A, P_REPO,
@@ -161,13 +167,14 @@ def place(m, left=None, right=None, top=None, bottom=None, cx=None, cy=None):
 
 def words(*parts, size: float = 20, color=S.GREY, code_color=None, t2c=None) -> Text:
     """A caption line as ONE Text (one baseline): plain strings in serif, 1-tuples in the code font
-    (and code_color). A part that starts with punctuation hugs the part before it. .src"""
+    (and code_color). A plain part that starts with punctuation hugs the part before it (a code
+    part such as `.dockerignore` never does). .src"""
     s, code = "", []
     for p in parts:
         txt = p[0] if isinstance(p, tuple) else p
         if isinstance(p, tuple):
             code.append(txt)
-        if s and txt[:1] not in ",.:;'’":
+        if s and (isinstance(p, tuple) or txt[:1] not in ",.:;'’"):
             s += " "
         s += txt
     cmap = {c: code_color for c in code} if code_color else {}
@@ -220,6 +227,20 @@ def print_in(scene, t, lines, run_time: float = 0.4):
     return t.print(scene, lines, run_time=run_time, lag=0.12)
 
 
+def print_with(scene, t, lines, extra=(), run_time: float = 0.35):
+    """Print output lines the way Terminal.print does (cut at the row, OUTPUT colour), in ONE play
+    together with `extra` animations (Terminal.print plays alone). The room must be made first."""
+    assert len(t.lines) + len(lines) <= t.rows, (len(t.lines), len(lines), t.rows)
+    new = []
+    for s in lines:
+        ln = mono_line(t._cut(s), t.size, OUTPUT)
+        t._place(ln, len(t.lines))
+        t.lines.add(ln)
+        new.append(ln)
+    scene.play(LaggedStart(*[FadeIn(m) for m in new], lag_ratio=0.12), *extra, run_time=run_time)
+    return new
+
+
 def bare(scene, t):
     """The prompt returns (no output)."""
     make_room(scene, t, 1)
@@ -248,10 +269,15 @@ def sbar(line, sub: str | None, color=TURN, opacity: float = 0.3) -> Rectangle:
         .set_fill(color, opacity).move_to([g.get_center()[0], line.strut.get_center()[1], 0])
 
 
-def bars_on(scene, pairs, run_time: float = 0.4, extra=()):
-    """Bars over (row, sub) pairs, faded in together, each made part of its row (it scrolls with it)."""
+def bars_on(scene, pairs, run_time: float = 0.4, extra=(), lag: float = 0.0):
+    """Bars over (row, sub) pairs, faded in together (one after another with lag > 0, the `extra`
+    animations staggered alike), each made part of its row (it scrolls with it)."""
     bars = [sbar(r, s) for r, s in pairs]
-    scene.play(*[FadeIn(b) for b in bars], *extra, run_time=run_time)
+    if lag:
+        scene.play(LaggedStart(*[FadeIn(b) for b in bars], lag_ratio=lag),
+                   LaggedStart(*extra, lag_ratio=lag), run_time=run_time)
+    else:
+        scene.play(*[FadeIn(b) for b in bars], *extra, run_time=run_time)
     for (r, _), b in zip(pairs, bars):
         scene.remove(b)
         r.add(b)
@@ -461,8 +487,11 @@ def wrap_lines(s: str, size: float, width: float, code=()) -> list:
     return [ln.replace(NBSP, " ") for ln in whole]
 
 
-def wrapped(s: str, size: float, color: str, width: float, code=()) -> VGroup:
-    strs = wrap_lines(s, size, width, code)
+def wrapped(s: str, size: float, color: str, width: float, code=(), strs=None) -> VGroup:
+    """s wrapped to `width`, or broken exactly as the given line strings `strs`."""
+    if strs is None:
+        strs = wrap_lines(s, size, width, code)
+    assert " ".join(strs) == s, (strs, s)
     rows = [text_line(ln, size, color, code) for ln in strs]
     pitch = rows[0].strut.height * 1.22
     for k, r in enumerate(rows):
@@ -473,11 +502,11 @@ def wrapped(s: str, size: float, color: str, width: float, code=()) -> VGroup:
     return g
 
 
-def question(i: int, size: float, color: str, badge_color: str, width: float) -> VGroup:
-    """Question i (1-based): a numbered badge and the wrapped text, the text's top-left at the
-    origin. .badge .text .flat (badge + glyphs, for glyph-to-glyph transforms)"""
+def question(i: int, size: float, color: str, badge_color: str, width: float, strs=None) -> VGroup:
+    """Question i (1-based): a numbered badge and the wrapped text (or the line breaks `strs`), the
+    text's top-left at the origin. .badge .text .flat (badge + glyphs, for glyph-to-glyph transforms)"""
     s, code = QUESTIONS[i - 1]
-    txt = wrapped(s, size, color, width, code)
+    txt = wrapped(s, size, color, width, code, strs)
     r = 0.24 if size >= Q_BIG else 0.19
     b = step_badge(i, badge_color, size=22 if size >= Q_BIG else 20, radius=r)
     first = txt.lines[0].strut
@@ -623,7 +652,10 @@ class Recap(VoiceScene):
         return th
 
     def demote(self, q: VGroup, i: int, top: float, width: float = Q_W, size: float = Q_SMALL):
-        small = self.place_q(question(i, size, S.GREY, S.GREY, width), top)
+        """q made small and GREY with the SAME line breaks, so every glyph only shrinks and slides
+        (no word jumps to another line); the one reflow is the final layout (beat 7)."""
+        small = self.place_q(question(i, size, S.GREY, S.GREY, width, strs=q.text.strs), top)
+        assert len(small.flat) == len(q.flat), (i, len(small.flat), len(q.flat))
         return Transform(q.flat, small.flat), small
 
     def swap_in(self, q_old, new):
@@ -648,13 +680,14 @@ class Recap(VoiceScene):
             vo.wait_until("In the cloud")
             self.play(FadeIn(card.frame), FadeIn(card.title, shift=UP * 0.1),
                       Indicate(relay.cabinet, color=CLOUD, scale_factor=1.03), run_time=0.6)
-            for it, anchor in zip(card.items, ("machine", "bucket", "or account")):
-                vo.wait_until(anchor)
-                self.play(FadeIn(it.text, shift=UP * 0.1), Create(it.tick), run_time=0.4)
+            vo.wait_until("nothing to delete")   # what stays comes first: it is up through the three ticks
             self.play(FadeIn(card.outputs, shift=UP * 0.1), run_time=0.5)
             self.play(LaggedStart(*[Indicate(ic, color=INK, scale_factor=1.25) for ic in relay.icons],
                                   lag_ratio=0.12),
                       Indicate(card.group, color=LOOKUP, scale_factor=1.1), run_time=1.0)
+            for it, anchor in zip(card.items, ("machine", "bucket", "or account")):
+                vo.wait_until(anchor)
+                self.play(FadeIn(it.text, shift=UP * 0.1), Create(it.tick), run_time=0.4)
 
         # ========================================================== 1 · cd .., the five images
         t = term(P_A, rows=ROWS_FULL)
@@ -681,7 +714,7 @@ class Recap(VoiceScene):
                     extra=[Indicate(relay.boxes[0], color=TURN, scale_factor=1.15)])
             vo.wait_until("the other four")
             others = ["generate_text", "synthesis_audio_en", "translate_text", "synthesis_audio"]
-            bars_on(self, [(rows[n], IMG_SIZES[n]) for n in others], run_time=0.5,
+            bars_on(self, [(rows[n], IMG_SIZES[n]) for n in others], run_time=1.6, lag=0.3,
                     extra=[Indicate(relay.boxes[j], color=TURN, scale_factor=1.15) for j in (1, 2, 3, 4)])
 
         # ========================================================== 2 · git status
@@ -689,6 +722,9 @@ class Recap(VoiceScene):
             words("we set", ("group_name",), "only in", ("transcribe_audio",), ": yours also lists the other four",
                   ("cli.py",), size=22),
             words("and, with your key,", ("generate_text",), "'s", ("text_prompts/",), "and", ("text_paragraphs/",),
+                  size=22),
+            # the S14 "your turn": no .gitignore lists .dockerignore, so yours shows five untracked ones
+            words("and the five", (".dockerignore",), "files you added: commit those (no", ("-f",), "needed)",
                   size=22),
         ).arrange(DOWN, buff=0.16, aligned_edge=LEFT)
         place(gcap, left=-6.3, cy=(cap.get_bottom()[1] + TOP_GIT) / 2)
@@ -709,21 +745,27 @@ class Recap(VoiceScene):
                   .move_to([code.background.get_center()[0], (_l5.get_top()[1] + _l7.get_bottom()[1]) / 2, 0])]
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(relay), run_time=0.4)
+            old = list(t.lines.submobjects)               # a fresh screen for the new topic (as `clear`)
+            self.play(FadeOut(relay), FadeOut(VGroup(*old)), run_time=0.45)
+            for ln in old:
+                t.lines.remove(ln)
+                self.remove(ln)
             resize(self, t, ROWS_GIT, run_time=0.5)
+            bare(self, t)                                 # the prompt waits at the top of the fresh screen
+            vo.wait_until("An extra git status")
             c_gs = type_in(self, t, GST.cmd, 0.45)
             pin_tags(self, t, c_gs, extra_tag())
-            g_out = print_in(self, t, GST_OUT, run_time=0.5)
+            make_room(self, t, len(GST_OUT))              # the caption (how yours differs) comes with the output
+            g_out = print_with(self, t, GST_OUT, run_time=0.5, extra=[FadeIn(gcap, shift=DOWN * 0.1)])
             l8, l9, l13, l14 = g_out[3], g_out[4], g_out[7], g_out[8]
             vo.wait_until("your edited cli.py files")
-            bars_on(self, [(l9, "transcribe_audio/cli.py")])
-            self.play(FadeIn(gcap, shift=DOWN * 0.1), run_time=0.5)
+            bars_on(self, [(l9, "transcribe_audio/cli.py")], run_time=0.5)
             vo.wait_until("and the files in generate text")
             bars_on(self, [(l8, "generate_text/pyproject.toml"), (l13, "generate_text/Dockerfile"),
                            (l14, "generate_text/uv.lock")])
             vo.wait_until("but the other four folders hide")
+            resize(self, t, 3, keep=[c_gs, l13, l14], run_time=0.6)    # the caption stays while the terminal shrinks
             self.play(FadeOut(gcap), run_time=0.3)
-            resize(self, t, 3, keep=[c_gs, l13, l14], run_time=0.6)
             self.play(FadeIn(panel, shift=DOWN * 0.3), FadeIn(ghosts.head), FadeIn(ghosts.chips, shift=RIGHT * 0.2),
                       run_time=0.6)
             self.play(*[Create(c.strike) for c in ghosts.chips], run_time=0.5)
@@ -794,16 +836,17 @@ class Recap(VoiceScene):
             resize(self, t, ROWS_FULL, run_time=0.6, extra=[FadeIn(relay)])
             c_rm = type_in(self, t, RM.cmd, 1.8)
             pin_tags(self, t, c_rm, extra_tag(), your_turn())
-            for j in range(5):                               # one pair a box: A..E dissolve
-                print_in(self, t, RM_OUT[2 * j:2 * j + 2], run_time=0.3)
-                self.play(relay.boxes[j].animate.scale(0.3).set_opacity(0),
-                          relay.letters[j].animate.scale(0.3).set_opacity(0), run_time=0.3)
+            make_room(self, t, len(RM_OUT))                  # one scroll for the whole output
+            for j in range(5):                               # one pair a box: A..E dissolve as it prints
+                print_with(self, t, RM_OUT[2 * j:2 * j + 2], run_time=0.38,
+                           extra=[relay.boxes[j].animate.scale(0.3).set_opacity(0),
+                                  relay.letters[j].animate.scale(0.3).set_opacity(0)])
             vo.wait_until("Older builds stay behind untagged")
-            resize(self, t, 3, keep=list(t.lines.submobjects[-2:]), run_time=0.6)
+            resize(self, t, 3, keep=list(t.lines.submobjects[-2:]), run_time=0.45)
             self.play(LaggedStart(*[FadeIn(b, shift=DOWN * 0.15) for b in olds.boxes], lag_ratio=0.15),
-                      FadeIn(olds.label), run_time=0.7)
-            vo.wait_until("each holding your key")
-            self.play(*[Indicate(b.key, color=KEY, scale_factor=1.4) for b in olds.boxes], run_time=0.7)
+                      FadeIn(olds.label), run_time=0.6)
+            vo.wait_until("each holding your key")            # a key inside an image: RED (semantic table, S14)
+            self.play(*[Indicate(b.key, color=ERR, scale_factor=1.4) for b in olds.boxes], run_time=0.6)
             vo.wait_until("so docker image prune")
             c_pr = type_in(self, t, PRUNE, 0.8)
             pin_tags(self, t, c_pr, extra_tag())
@@ -872,10 +915,10 @@ class Recap(VoiceScene):
             self.play(q_span(q4, "/app").animate.set_color(TURN), Indicate(th4.key, color=KEY, scale_factor=1.3),
                       run_time=0.7)
             vo.wait_until("Five")
-            s4, q5, th5, top5 = step(q4, 4, top4, th4, thumb_sieve)
+            s4, q5, th5, _ = step(q4, 4, top4, th4, thumb_sieve)
             smalls.append(s4)
             vo.wait_until("git-ignored key")
-            self.play(Indicate(th5.key, color=KEY, scale_factor=1.35), run_time=0.7)
+            self.play(Indicate(th5.key, color=ERR, scale_factor=1.35), run_time=0.7)   # the key inside an image: RED
             vo.wait_until("and the fix")
             self.play(Indicate(th5.sieve, color=INK, scale_factor=1.1), run_time=0.7)
 
@@ -889,7 +932,8 @@ class Recap(VoiceScene):
             f = self.place_q(question(i, Q_FINAL, S.GREY, S.GREY, 12.15), top)
             finals.append(f)
             top = self.q_bottom(f) - 0.2
-        ans = VGroup(label("Answers:", 26, INK), mono("exercises.md", 24, INK)).arrange(RIGHT, buff=0.2)
+        # exercises.md is in this video's folder, not in the tutorial repo: the study guide's §8 links it
+        ans = S.text("Answers: study guide §8 (exercises.md)", 26, INK, t2f={"exercises.md": MONO})
         ans_box = box(ans.width + 0.7, ans.height + 0.45, S.GREY, fill=S.GREY_DARKER, fill_opacity=1)
         ans.move_to(ans_box)
         card1 = VGroup(ans_box, ans)
@@ -918,17 +962,18 @@ class Recap(VoiceScene):
         nxt = VGroup(n_box, n_body)
         place(nxt, right=EDGE, top=card1.get_top()[1])
         assert card2.get_right()[0] < nxt.get_left()[0] - 0.2 and card2.get_bottom()[1] > -3.5, card2.get_right()
+        assert card1.get_right()[0] < nxt.get_left()[0] - 0.2, (card1.get_right(), nxt.get_left())
         assert nxt.get_bottom()[1] > -3.5, nxt.get_bottom()
         assert n_body.get_right()[0] < n_box.get_right()[0] - 0.15, n_body.get_right()
         assert finals[-1].get_bottom()[1] > card1.get_top()[1] + 0.15
+        lref = lecture_ref(3, "70")          # top right (empty above Q1's row), from the L4 card to the final fade
+        assert lref.get_bottom()[1] > finals[0].get_top()[1] + 0.15, (lref.get_bottom(), finals[0].get_top())
 
         with self.voiceover(SAY[7]) as vo:
-            anim5, s5 = self.demote(q5, 5, top5)
-            self.play(anim5, FadeOut(th5), run_time=0.5)
-            self.swap_in(q5, s5)
-            smalls.append(s5)
-            self.play(Transform(title, title2), Transform(t_ul, t_ul2),
-                      *[Transform(s.flat, f.flat) for s, f in zip(smalls, finals)], run_time=1.0)
+            smalls.append(q5)                   # Q5 goes straight from its big form to the final layout
+            self.play(FadeOut(th5, shift=RIGHT * 0.2), Transform(title, title2), Transform(t_ul, t_ul2),
+                      LaggedStart(*[Transform(s.flat, f.flat) for s, f in zip(smalls, finals)], lag_ratio=0.12),
+                      run_time=1.1)
             for s, f in zip(smalls, finals):
                 self.swap_in(s, f)
             vo.wait_until("in the exercises")
@@ -937,7 +982,7 @@ class Recap(VoiceScene):
             self.play(FadeIn(card2, shift=UP * 0.15), run_time=0.5)
             self.play(Indicate(g_url, color=TURN, scale_factor=1.04), run_time=0.7)
             vo.wait_until("Next lecture")
-            self.play(FadeIn(n_box), FadeIn(n_head, shift=LEFT * 0.15), FadeIn(n_branch), run_time=0.5)
+            self.play(FadeIn(n_box), FadeIn(n_head, shift=LEFT * 0.15), FadeIn(n_branch), FadeIn(lref), run_time=0.5)
             for it, anchor in zip(n_items, ("your own bucket", "the key outside", "a script that builds")):
                 vo.wait_until(anchor)
                 self.play(FadeIn(it, shift=UP * 0.1), run_time=0.4)
