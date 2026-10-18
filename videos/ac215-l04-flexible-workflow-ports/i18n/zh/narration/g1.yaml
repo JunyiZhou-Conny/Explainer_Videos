@@ -1,5 +1,5 @@
 # zh narration for S01-S09 (part 1, group g1: mega-pipeline, branch flexible-workflow), sentence-aligned to
-# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 90 SAY lines, 209
+# script.md v2: one zh sentence per English sentence (explainer.voice.split_sentences; 90 SAY lines, 213
 # sentences). Terms and rules: ../GLOSSARY.md, ../glossary.yaml (binding).
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
@@ -14,7 +14,8 @@
 # git stash -u, git checkout -- ., git branch: * flexible-workflow, test.mp3, input_audios and
 # input-something.mp3, -v / -e / -p, /app, /secrets, @, chmod +x, TTY, DefaultCredentialsError: File
 # /secrets/mega-pipeline.json was not found., text_prompts/group-01, synthesis_audio_en,
-# pipenv-flexible-workflow, --use, .gitignore / .dockerignore, --rm); null = the SAY text.
+# pipenv-flexible-workflow, --use, .gitignore / .dockerignore, --rm; printed output keeps its case: Using local
+# image, Creating a Pipfile); null = the SAY text.
 S01:
 - en: "A command from this lecture's README, on a laptop that never built this image: with no local image, it pulls one from Docker Hub. Inside, Python says 3.8.17, and the Gemini library won't import."
   zh:
@@ -85,7 +86,7 @@ S03:
 - en: "Starting fresh? From your workspace folder, clone the repo with this branch checked out: git clone, dash dash branch flexible-workflow. Then cd into mega-pipeline. Pause and run both."
   zh:
   - "从头开始？"
-  - "在你的工作区目录里 clone 这个 repo，直接 checkout 到这个分支：git clone，加上 --branch flexible-workflow。"
+  - "在你的工作区目录里，clone 这个 repo 并直接 checkout 到这个分支：git clone，加上 --branch flexible-workflow。"
   - "然后 cd 进 mega-pipeline。"
   - "暂停一下，两条都跑一遍。"
   en_display:
@@ -93,9 +94,9 @@ S03:
   - "From your workspace folder, clone the repo with this branch checked out: git clone, --branch flexible-workflow."
   - null
   - null
-- en: "Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which you wrote in lecture 3."
+- en: "Two extra checks: git branch shows flexible-workflow at the commit we recorded, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits."
   zh:
-  - "两个额外检查：git branch 显示，当前分支是 flexible-workflow，停在 pin 住的 commit；transcribe audio 里有 Dockerfile、这个脚本、pyproject.toml 和 uv.lock，就是你第 3 讲写过的那些。"
+  - "两个额外检查：git branch 显示，当前分支是 flexible-workflow，停在我们录制时的那个 commit；transcribe audio 里有 Dockerfile、这个脚本、pyproject.toml 和 uv.lock，都由这个分支 commit 好了。"
 - en: "Already have your clone from lecture 3? It's on main; if you cloned fresh, skip to the next chapter. Step 1: cd into it. Two extra checks show its state."
   zh:
   - "已经有第 3 讲的 clone 了？"
@@ -118,7 +119,7 @@ S03:
   - "第 3 步：git checkout flexible-workflow，Git 拒绝了，原因有两个。"
 - en: "Your edits to cli.py would be overwritten, and two untracked files sit where the branch has files of its own. Nothing changed."
   zh:
-  - "你对 cli.py 的修改会被覆盖，而且两个未跟踪的文件，正好放在这个分支自己也有文件的地方。"
+  - "你对 cli.py 的修改会被覆盖，而且两个未跟踪的文件正好放在这个分支自己也有文件的地方。"
   - "什么都没变。"
 - en: "The README's note covers the first reason: git stash puts your edits away, and the first wall falls. On a retry, the untracked files still block it."
   zh:
@@ -133,16 +134,18 @@ S03:
   - null
   - "An extra git stash -u stashes untracked files too, and the checkout works."
   - "The other option, git checkout -- ., discards your edits and leaves untracked files alone."
-- en: "Step 5, git branch: star, flexible-workflow. Pause and switch your own clone."
+- en: "Step 5, git branch: star, flexible-workflow. Before you switch your own clone, copy out any lecture 3 Dockerfile, pyproject.toml and uv.lock you want to keep: the switch replaces them. Pause and switch."
   zh:
   - "第 5 步，git branch：星号在 flexible-workflow 上。"
-  - "暂停一下，把你自己的 clone 也切过去。"
+  - "切换你自己的 clone 之前，先把第 3 讲里想保留的 Dockerfile、pyproject.toml 和 uv.lock 复制出来：切换会把它们替换掉。"
+  - "暂停一下，切换过去。"
   en_display:
   - "Step 5, git branch: * flexible-workflow."
   - null
+  - null
 - en: "Extra checks show your ignored lecture 3 Dockerfile, pyproject.toml and uv.lock were replaced by the branch's, without a word: copy them out first if you want them."
   zh:
-  - "额外检查显示，你在第 3 讲里那些被忽略的 Dockerfile、pyproject.toml 和 uv.lock，已经被这个分支的版本一声不吭地替换了：想留着的话，先把它们复制出来。"
+  - "额外检查显示，你第 3 讲里被忽略的 Dockerfile、pyproject.toml 和 uv.lock 已经换成了这个分支的版本，没有任何提示：想留着的话，先把它们复制出来。"
 - en: "The old key still sits inside transcribe audio; your secrets stay put, as the README says. Every build there copies it into the image, so delete each component's secrets folder now. Your edits wait in the stash."
   zh:
   - "旧密钥还留在 transcribe audio 里；你的 secrets 原地不动，README 也是这么说的。"
@@ -158,10 +161,10 @@ S04:
   - "第 2 步：每个 cli.py 都在开头附近设置三个值：你的项目 ID、你的 bucket 和你们的组名。"
 - en: "An extra grep shows what ships: three files are blank, but generate text and translate text already hold the course's project and bucket, and the instructor's group name."
   zh:
-  - "一个额外的 grep 显示 repo 里原本写的是什么：三个文件留空，但 generate text 和 translate text 里已经写着课程的项目和 bucket，还有授课老师的组名。"
+  - "一个额外的 grep 显示原本的写法：三个文件是空的，但 generate text、translate text 已有课程的项目和 bucket，还有授课老师的组名。"
 - en: "A small slip: the README says an assert stops you if you forget, but it only rejects an empty value. Those two files would send your calls to the course's project and bucket, where they fail with permission errors."
   zh:
-  - "一个小疏漏：README 说如果你忘了改，assert 会拦住你，但它只拒绝空值。"
+  - "一个小疏漏：README 说忘了改的话 assert 会拦住你，但其实它只拒绝空值。"
   - "那两个文件会把你的调用发到课程的项目和 bucket，在那边报权限错误。"
 - en: "Set all three, in all five files. An extra git diff shows our placeholders, your-project-id, your-team-bucket and group-01; type your own. In translate text, also change the target language from Spanish to French. Pause and edit them."
   zh:
@@ -179,12 +182,16 @@ S04:
   en_display:
   - "Another small gap: the README never says how to create the bucket, and its sample upload is named test.mp3."
   - null
-- en: "Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input."
+- en: "Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input. Bucket names are global: pick a unique one. Pause and create yours."
   zh:
   - "然后把一段短录音上传到一个叫 input audios 的目录里，文件名以 input- 开头、以 .mp3 结尾。"
   - "转写文本沿用这个名字，而且上传时只会发送名字以 input 开头的文件。"
+  - "bucket 的名字是全局唯一的：挑一个别人没用过的。"
+  - "暂停一下，创建你自己的 bucket。"
   en_display:
   - "Then upload a short recording into a folder named input_audios, as input-something.mp3."
+  - null
+  - null
   - null
 S05:
 - en: "Your bucket only lets in callers who prove who they are and have permission. For code, that identity is a service account, with one JSON key."
@@ -292,7 +299,7 @@ S06:
 - en: "Step 5, chmod plus x, is harmless: an extra ls shows it's already executable. Step 6, on Windows: use Git BASH, and put winpty in front if Docker says the input device is not a T-T-Y."
   zh:
   - "第 5 步，用 chmod 加上可执行权限，没有坏处：额外的 ls 显示它本来就是可执行的。"
-  - "第 6 步，在 Windows 上：用 Git BASH，如果 Docker 报 the input device is not a TTY，就在前面加上 winpty。"
+  - "第 6 步，在 Windows 上：用 Git BASH，并在前面加上 winpty，如果 Docker 报错：the input device is not a TTY。"
   en_display:
   - "Step 5, chmod +x, is harmless: an extra ls shows it's already executable."
   - "Step 6, on Windows: use Git BASH, and put winpty in front if Docker says the input device is not a TTY."
@@ -341,7 +348,7 @@ S07:
   - "Gemini 按 token 计费。"
 - en: "Next, synthesis audio E-N builds in 8 seconds, its system layer cached. We left its cli.py unedited on purpose: help stops at the assert; here, the guard works."
   zh:
-  - "接下来，synthesis audio en 只用 8 秒就构建好了，它的系统层用了缓存。"
+  - "接下来，synthesis audio en 的构建只要 8 秒：它的系统层用了缓存。"
   - "我们故意没改它的 cli.py：help 停在了 assert 那里；在这里，这道检查起作用了。"
   en_display:
   - "Next, synthesis_audio_en builds in 8 seconds, its system layer cached."
@@ -374,7 +381,7 @@ S08:
 - en: "Exit, and cd back into transcribe audio. Step 2 of How to Run, docker-shell.sh dev, only builds: no container starts. Here, all was cached; after any change in the folder, the copy and uv sync steps run again."
   zh:
   - "输入 exit，再 cd 回 transcribe audio。"
-  - "在 How to Run 里，第 2 步是 docker-shell.sh dev，它只构建：不会启动 container。"
+  - "在 How to Run 那一节，第 2 步 docker-shell.sh dev 只构建：不会启动 container。"
   - "这里全都用了缓存；只要目录里有任何改动，COPY 和 uv sync 这两步就会重新跑。"
 - en: "What is dev for? Adding a package: uv add, inside the container, updates pyproject.toml and uv.lock through the window; then dev bakes it into the image."
   zh:
@@ -384,6 +391,9 @@ S08:
   zh:
   - "第 3 步，run，跳过构建：显示 Using local image，因为本地已经有一个。"
   - "暂停一下，自己试试 dev 和 run。"
+  en_display:
+  - "Step 3, run, skips the build: Using local image, because one exists."
+  - null
 - en: "A small inaccuracy: the README's overview says run pulls from the registry. In fact, any local image of that name wins, however old; otherwise it runs the Docker Hub image, pulled only the first time."
   zh:
   - "一个小小的不准确：README 的概述说 run 会从 registry pull。"
@@ -401,6 +411,10 @@ S08:
   - "提示 Local image not found，于是它从 Docker Hub pull 了 dlops 的 image。"
   - "接着来了个意外：显示 Creating a Pipfile。"
   - "这是 pipenv，这门课在 uv 之前用的工具。"
+  en_display:
+  - null
+  - "Then, a surprise: Creating a Pipfile."
+  - null
 - en: "The prompt says root. Python is 3.8.17, in an environment pipenv made. Help still works here, in the older wording of Python 3.8. Then type exit."
   zh:
   - "提示符显示的是 root。"
@@ -422,10 +436,10 @@ S08:
 - en: "It also left a Pipfile in your folder, owned by root. If you tried this, delete it and run dev to get your own image back."
   zh:
   - "它还在你的目录里留下了一个 Pipfile，属于 root。"
-  - "如果你试过这一步，就把它删掉，再跑一次 dev，把你自己的 image 找回来。"
+  - "如果你试过这一步，删掉它并再跑一次 dev，找回你自己的 image。"
 - en: "So build locally, with no argument or dev, and use run only for images your team pushed from this branch, under your own Docker Hub account."
   zh:
-  - "所以要在本地构建，不带参数或者用 dev；run 只用于你们组从这个分支 push 到你们自己 Docker Hub 账号下的 image。"
+  - "所以要在本地构建，不带参数或者用 dev；run 只用于你们组从这个分支 push 上去的 image，而且是在你们自己的 Docker Hub 账号下。"
 S09:
 - en: "Step 4, prod, publishes. It recreates a builder named multi-arch, a build engine for several processor types. Dash dash use makes it current, and the script never switches back: docker buildx use default does."
   zh:
@@ -459,21 +473,23 @@ S09:
   - "Build there with dev, and an extra command lists the new image's /app: the key is inside."
 - en: "The copy line takes the whole folder. The gitignore keeps secrets out of Git, not out of images, and no branch has a dockerignore. Prod would push your key to Docker Hub."
   zh:
-  - "其中 COPY 那一行会把整个目录都装进去。"
+  - "而 COPY 那一行会把整个目录都装进去。"
   - "那个 .gitignore 让 secrets 进不了 Git，却挡不住它进 image；而且哪个分支都没有 .dockerignore。"
   - "跑 prod 就会把你的密钥 push 到 Docker Hub。"
   en_display:
   - null
   - "The .gitignore keeps secrets out of Git, not out of images, and no branch has a .dockerignore."
   - null
-- en: "So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Pause and check yours."
+- en: "So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Prod is optional: after the fix, run it only if your team publishes. Pause and check yours."
   zh:
   - "所以 README 的承诺对 Git 成立，对 image 不成立。"
   - "删掉组件里面的每个 secrets 目录，加一个列出 secrets 的 .dockerignore；如果哪个密钥曾经被 push 出去，就把那个密钥删掉。"
+  - "至于 prod，它是可选的：修好之后，只有你们组要发布时才运行它。"
   - "暂停一下，检查你自己的。"
   en_display:
   - null
   - "Delete any secrets folder inside a component, add a .dockerignore listing secrets, and if a key was ever pushed, delete that key."
+  - null
   - null
 - en: "Clean-up for part 1. Exit each container; dash dash r m deletes it. The transcribe image alone is 1.48 gigabytes: remove all five with docker image rm, plus any dlops images you pulled."
   zh:
@@ -486,5 +502,5 @@ S09:
   - null
 - en: "In the cloud, the bucket bills a little storage until you delete it, when the course is over; the key works until you delete it in the console. In part 2: containers that talk to each other directly."
   zh:
-  - "在云上，bucket 会一直收一点存储费，直到你删掉它，也就是课程结束的时候；密钥在你去控制台删掉之前一直有效。"
+  - "在云上，bucket 在你删掉它之前会一直收一点存储费，也就是到课程结束为止；密钥在你去控制台删掉之前一直有效。"
   - "第二部分：互相直接通信的 container。"

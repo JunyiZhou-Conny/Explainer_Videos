@@ -1,0 +1,1009 @@
+1
+00:00:00,000 --> 00:00:03,349
+In part 1,
+containers only left files in a bucket.
+
+2
+00:00:03,669 --> 00:00:08,116
+Port toy makes two containers talk directly,
+and needs only Docker:
+
+3
+00:00:08,116 --> 00:00:12,496
+a gateway serves a web page
+and forwards your text to a processor,
+
+4
+00:00:12,496 --> 00:00:14,421
+which turns it into capitals.
+
+5
+00:00:14,667 --> 00:00:17,827
+Think of each container
+as its own little computer,
+
+6
+00:00:17,827 --> 00:00:21,110
+with its own localhost
+and its own full set of ports.
+
+7
+00:00:21,430 --> 00:00:25,739
+Two containers can both use
+port 9100 without any clash.
+
+8
+00:00:26,059 --> 00:00:28,999
+The lecture calls this a network namespace:
+
+9
+00:00:28,999 --> 00:00:32,075
+each container is isolated
+until you wire it.
+
+10
+00:00:32,317 --> 00:00:35,935
+A network you create joins them
+like a small home network,
+
+11
+00:00:35,935 --> 00:00:39,677
+with a phone book
+that turns container names into addresses.
+
+12
+00:00:39,997 --> 00:00:42,109
+Docker's default network has none.
+
+13
+00:00:42,350 --> 00:00:46,702
+Prerequisites: docker run hello-world checks
+that Docker is running.
+
+14
+00:00:47,022 --> 00:00:50,307
+It pulls a tiny image and prints
+Hello from Docker!
+
+15
+00:00:50,550 --> 00:00:52,790
+Step 1 sets the app up by hand.
+
+16
+00:00:53,110 --> 00:00:55,834
+From your workspace folder, clone the code:
+
+17
+00:00:55,834 --> 00:00:59,382
+the README says clone or download
+but prints no command.
+
+18
+00:00:59,702 --> 00:01:01,430
+Then cd into port toy.
+
+19
+00:01:01,750 --> 00:01:03,009
+Pause and run them.
+
+20
+00:01:03,250 --> 00:01:06,685
+Two extra checks:
+the files match the README's tree,
+
+21
+00:01:06,685 --> 00:01:08,427
+a gateway and a processor,
+
+22
+00:01:08,427 --> 00:01:11,442
+and git log shows
+the commit this video pins.
+
+23
+00:01:11,683 --> 00:01:14,094
+Next, docker network create toynet.
+
+24
+00:01:14,414 --> 00:01:16,590
+Docker prints the new network's ID:
+
+25
+00:01:16,590 --> 00:01:19,513
+that's the rail both containers
+will plug into.
+
+26
+00:01:19,750 --> 00:01:23,719
+From the README's handy commands,
+docker network ls lists it,
+
+27
+00:01:23,719 --> 00:01:26,321
+beside Docker's three built-in networks.
+
+28
+00:01:26,641 --> 00:01:28,219
+Pause, and create yours.
+
+29
+00:01:29,267 --> 00:01:30,974
+Next, build two images.
+
+30
+00:01:31,294 --> 00:01:34,741
+The two Dockerfiles are almost identical:
+
+31
+00:01:34,741 --> 00:01:38,526
+a slim Python 3.14 image,
+plus curl from apt.
+
+32
+00:01:38,846 --> 00:01:43,752
+Each copies its code and runs it with -u,
+so prints reach the logs at once.
+
+33
+00:01:44,000 --> 00:01:47,797
+The processor builds first,
+and its apt layer takes a few seconds.
+
+34
+00:01:48,117 --> 00:01:51,318
+Your first build also pulls
+the Python base image.
+
+35
+00:01:51,567 --> 00:01:52,691
+Then the gateway:
+
+36
+00:01:52,691 --> 00:01:56,329
+Docker reuses the processor's apt layer
+from the cache,
+
+37
+00:01:56,329 --> 00:01:59,460
+because the two files match up
+to the copy line.
+
+38
+00:01:59,780 --> 00:02:01,380
+It's done in under a second.
+
+39
+00:02:02,367 --> 00:02:08,148
+Then start the processor on toynet,
+with PORT set to 9200, and no -p.
+
+40
+00:02:08,468 --> 00:02:14,335
+It listens on 9200 inside its own box,
+but nothing on your laptop leads to it.
+
+41
+00:02:14,584 --> 00:02:15,992
+Then start the gateway.
+
+42
+00:02:16,312 --> 00:02:17,749
+-p publishes a port:
+
+43
+00:02:17,749 --> 00:02:23,501
+it opens a street door on your laptop
+that leads to a room inside the container.
+
+44
+00:02:23,821 --> 00:02:29,261
+The order is IP address,
+host port, container port:
+
+45
+00:02:29,261 --> 00:02:34,890
+127.0.0.1,
+meaning this laptop only, then door 8090,
+
+46
+00:02:34,890 --> 00:02:36,514
+then room 9100.
+
+47
+00:02:38,000 --> 00:02:41,781
+The two -e flags tell the gateway
+where to call:
+
+48
+00:02:41,781 --> 00:02:44,144
+the name processor, port 9200.
+
+49
+00:02:44,464 --> 00:02:47,150
+Lines 13 and 14 of its code read them;
+
+50
+00:02:47,150 --> 00:02:50,331
+the values in quotes there
+are only defaults.
+
+51
+00:02:50,567 --> 00:02:52,551
+Now check docker logs for each.
+
+52
+00:02:52,871 --> 00:02:59,634
+The processor listens on 9200,
+internal only; the gateway listens on 9100.
+
+53
+00:02:59,954 --> 00:03:01,383
+Pause and start both.
+
+54
+00:03:03,617 --> 00:03:07,493
+To finish step 1,
+open localhost:8090 in your browser,
+
+55
+00:03:07,493 --> 00:03:09,718
+type a message, and click Send.
+
+56
+00:03:10,038 --> 00:03:13,584
+The reply comes back in capitals,
+with three port numbers:
+
+57
+00:03:13,584 --> 00:03:17,131
+where the gateway sent from,
+where the processor listened,
+
+58
+00:03:17,131 --> 00:03:19,638
+and where it saw the message arrive from.
+
+59
+00:03:19,884 --> 00:03:21,938
+We recorded without a browser,
+
+60
+00:03:21,938 --> 00:03:25,020
+so curl sent the same request
+the page sends;
+
+61
+00:03:25,020 --> 00:03:26,710
+this is the reply it got.
+
+62
+00:03:27,434 --> 00:03:31,231
+The processor listened on 9200,
+the destination.
+
+63
+00:03:31,551 --> 00:03:35,882
+But every connection has two ends,
+so the gateway's side needs a port too.
+
+64
+00:03:36,202 --> 00:03:40,825
+Its operating system picked
+a temporary one, 55620,
+
+65
+00:03:40,825 --> 00:03:43,455
+and stapled it to the packet.
+
+66
+00:03:43,700 --> 00:03:46,105
+The processor saw the same number arrive,
+
+67
+00:03:46,105 --> 00:03:48,863
+because nothing
+rewrites it inside the network.
+
+68
+00:03:49,183 --> 00:03:55,946
+Line 38 of the gateway reads its own port;
+line 32 of the processor reads the sender's.
+
+69
+00:03:56,184 --> 00:04:01,112
+Send again, and the number changes:
+a new connection, a new temporary port.
+
+70
+00:04:01,432 --> 00:04:02,690
+Yours will differ.
+
+71
+00:04:02,934 --> 00:04:04,162
+One more detail:
+
+72
+00:04:04,162 --> 00:04:08,843
+the page's diagram shows 8090
+by reading its own address bar.
+
+73
+00:04:09,163 --> 00:04:12,513
+The container can't know
+which door on your laptop you gave it.
+
+74
+00:04:12,833 --> 00:04:15,584
+Pause, send a message,
+and leave both running.
+
+75
+00:04:16,633 --> 00:04:18,318
+Step 2 checks the ports.
+
+76
+00:04:18,638 --> 00:04:22,244
+docker ps shows the gateway's mapping,
+host side first.
+
+77
+00:04:22,564 --> 00:04:29,028
+It reads 127.0.0.1, port 8090, to 9100.
+
+78
+00:04:29,348 --> 00:04:33,892
+The processor's PORTS column is empty:
+listening, but not published.
+
+79
+00:04:34,133 --> 00:04:38,506
+An extra docker ps with three columns
+matches the README's sample.
+
+80
+00:04:39,900 --> 00:04:43,655
+What does the 127.0.0.1 do?
+
+81
+00:04:43,975 --> 00:04:48,583
+This extra run leaves it out,
+asking for door 8090 on every address.
+
+82
+00:04:48,903 --> 00:04:53,831
+Docker refuses, port is already allocated:
+our gateway holds 8090.
+
+83
+00:04:54,151 --> 00:04:56,988
+The container was still created,
+so remove it.
+
+84
+00:04:57,233 --> 00:04:59,324
+With door 8091 it works.
+
+85
+00:04:59,644 --> 00:05:03,398
+The mapping shows 0.0.0.0.
+
+86
+00:05:03,718 --> 00:05:05,128
+That means every address:
+
+87
+00:05:05,128 --> 00:05:07,665
+other machines
+on your network could connect.
+
+88
+00:05:07,985 --> 00:05:08,985
+Remove it.
+
+89
+00:05:09,265 --> 00:05:15,516
+That's why the README writes 127.0.0.1:
+this laptop only.
+
+90
+00:05:15,750 --> 00:05:19,867
+From the laptop,
+curl on 8090 returns the gateway's page.
+
+91
+00:05:20,187 --> 00:05:25,074
+curl on 9200 can't connect:
+your laptop has no door to it,
+
+92
+00:05:25,074 --> 00:05:28,528
+unless something else of yours uses 9200.
+
+93
+00:05:28,766 --> 00:05:32,358
+From inside the gateway,
+docker exec runs curl,
+
+94
+00:05:32,358 --> 00:05:35,721
+asking for the name processor, on port 9200.
+
+95
+00:05:36,041 --> 00:05:37,556
+The answer: ok.
+
+96
+00:05:37,800 --> 00:05:38,800
+Ponder this.
+
+97
+00:05:39,101 --> 00:05:42,408
+The same command
+with localhost instead of processor.
+
+98
+00:05:42,728 --> 00:05:43,752
+What answers?
+
+99
+00:05:50,600 --> 00:05:51,600
+Nothing.
+
+100
+00:05:51,731 --> 00:05:55,756
+Inside the gateway,
+localhost is the gateway itself,
+
+101
+00:05:55,756 --> 00:05:58,387
+and nothing there listens on 9200.
+
+102
+00:05:58,707 --> 00:06:02,739
+That's the second puzzle:
+each container has its own localhost.
+
+103
+00:06:03,059 --> 00:06:08,605
+An extra check: on 9100, its own port,
+localhost returns the page.
+
+104
+00:06:08,850 --> 00:06:10,407
+So how did the name work?
+
+105
+00:06:10,727 --> 00:06:12,249
+From the handy commands,
+
+106
+00:06:12,249 --> 00:06:15,991
+docker network inspect shows an address
+for each container,
+
+107
+00:06:15,991 --> 00:06:18,748
+from toynet's own address range, its subnet.
+
+108
+00:06:19,850 --> 00:06:24,306
+Each container asks
+Docker's built-in phone book,
+
+109
+00:06:24,306 --> 00:06:29,215
+at 127.0.0.11,
+which turns names into those addresses.
+
+110
+00:06:29,535 --> 00:06:33,226
+Addresses can change
+when a container restarts; names stay.
+
+111
+00:06:33,466 --> 00:06:35,347
+Another handy command,
+
+112
+00:06:35,347 --> 00:06:39,537
+docker exec -it gateway sh,
+opens a shell inside;
+
+113
+00:06:39,537 --> 00:06:42,319
+its hostname is the container ID.
+
+114
+00:06:42,639 --> 00:06:47,866
+One aside: the processor image has curl too,
+though the README implies it doesn't.
+
+115
+00:06:48,186 --> 00:06:50,234
+Pause, and test from both sides.
+
+116
+00:06:51,883 --> 00:06:53,803
+Step 3 changes the ports.
+
+117
+00:06:54,123 --> 00:07:03,040
+First the street door: remove the gateway,
+and start it again on 127.0.0.1, port 8095.
+
+118
+00:07:03,360 --> 00:07:05,963
+The room inside stays 9100.
+
+119
+00:07:06,200 --> 00:07:08,483
+The page works on 8095.
+
+120
+00:07:08,803 --> 00:07:14,435
+Two extra checks: 8090 no longer connects,
+and docker ps shows the new mapping.
+
+121
+00:07:14,755 --> 00:07:16,760
+Pause and move your gateway's door.
+
+122
+00:07:19,250 --> 00:07:20,253
+Why do this?
+
+123
+00:07:20,573 --> 00:07:24,157
+Another app on your laptop
+might already hold 8090.
+
+124
+00:07:24,477 --> 00:07:29,511
+Doors on the laptop must be unique;
+rooms inside containers never collide.
+
+125
+00:07:29,750 --> 00:07:34,593
+A small slip: the gateway's log
+still says open localhost:8090.
+
+126
+00:07:34,913 --> 00:07:37,494
+That text is hard-coded in line 53.
+
+127
+00:07:37,814 --> 00:07:40,416
+Trust docker ps and the page instead.
+
+128
+00:07:40,666 --> 00:07:46,298
+Next, the processor's port: remove it,
+and start it with PORT set to 9300.
+
+129
+00:07:46,618 --> 00:07:49,754
+The README says:
+send a message, and it should fail.
+
+130
+00:07:50,150 --> 00:07:51,643
+It does, but quietly.
+
+131
+00:07:51,963 --> 00:07:55,825
+The page has no error handling,
+so nothing on it changes;
+
+132
+00:07:55,825 --> 00:08:00,432
+the captured request got only curl's error,
+Empty reply from server.
+
+133
+00:08:00,666 --> 00:08:04,205
+An extra docker logs
+on the gateway shows why:
+
+134
+00:08:04,205 --> 00:08:06,590
+it found the processor by name,
+
+135
+00:08:06,590 --> 00:08:11,375
+but the connection was refused:
+nobody listens on 9200 anymore.
+
+136
+00:08:11,695 --> 00:08:15,109
+A wrong name fails differently:
+see the exercises.
+
+137
+00:08:15,350 --> 00:08:16,350
+Ponder this.
+
+138
+00:08:16,651 --> 00:08:20,470
+Which one setting fixes it,
+and does any image need rebuilding?
+
+139
+00:08:27,316 --> 00:08:29,108
+The gateway's processor port.
+
+140
+00:08:29,428 --> 00:08:35,807
+Remove the gateway and start it with 9300,
+back on 8090, and the message goes through.
+
+141
+00:08:36,127 --> 00:08:39,561
+No image was rebuilt:
+it's only configuration.
+
+142
+00:08:39,881 --> 00:08:41,332
+Pause and fix yours.
+
+143
+00:08:42,316 --> 00:08:44,050
+The two settings must agree:
+
+144
+00:08:44,050 --> 00:08:47,394
+the processor's PORT
+and the gateway's processor port.
+
+145
+00:08:47,633 --> 00:08:52,369
+Finally, clean up before Compose:
+remove both containers, then the network.
+
+146
+00:08:52,689 --> 00:08:56,444
+An extra check shows only
+hello-world's old container left.
+
+147
+00:08:56,764 --> 00:08:59,601
+Skip this, and Compose hits a name conflict.
+
+148
+00:08:59,921 --> 00:09:01,222
+Pause and clean up.
+
+149
+00:09:04,517 --> 00:09:09,744
+Step 4: Docker Compose, which builds
+and starts the whole app from one YAML file.
+
+150
+00:09:10,064 --> 00:09:14,544
+The README shows an excerpt;
+open the whole docker-compose.yml.
+
+151
+00:09:14,864 --> 00:09:18,234
+Almost every flag you typed
+by hand has a home in it.
+
+152
+00:09:18,484 --> 00:09:23,071
+--name becomes container name,
+and the build command becomes build.
+
+153
+00:09:23,391 --> 00:09:26,423
+-p becomes ports, -e becomes environment,
+
+154
+00:09:26,423 --> 00:09:30,196
+and the network is named
+at the bottom of the file.
+
+155
+00:09:32,084 --> 00:09:33,238
+Two keys are new:
+
+156
+00:09:33,238 --> 00:09:36,906
+the volumes key mounts the gateway's folder
+into /app,
+
+157
+00:09:36,906 --> 00:09:40,255
+and the depends on key
+starts the processor first.
+
+158
+00:09:40,575 --> 00:09:44,649
+All of step 1 collapses into one command:
+docker compose up.
+
+159
+00:09:44,884 --> 00:09:45,884
+Run it.
+
+160
+00:09:46,036 --> 00:09:49,327
+Compose builds both images,
+all from the cache,
+
+161
+00:09:49,327 --> 00:09:53,950
+and names them after the folder
+and the service: port_toy-gateway.
+
+162
+00:09:54,200 --> 00:09:57,122
+Then it creates the network
+and both containers,
+
+163
+00:09:57,122 --> 00:10:00,835
+and prints both banners,
+each line prefixed with its service.
+
+164
+00:10:01,155 --> 00:10:02,307
+Pause and run it.
+
+165
+00:10:02,550 --> 00:10:04,363
+Open the page: it works.
+
+166
+00:10:04,683 --> 00:10:07,808
+In a second terminal,
+cd into port toy first:
+
+167
+00:10:07,808 --> 00:10:10,934
+Compose reads the file
+in the current folder.
+
+168
+00:10:11,254 --> 00:10:14,390
+There, docker compose ps
+shows the same mapping.
+
+169
+00:10:14,634 --> 00:10:18,559
+An extra network ls shows
+that Compose made toynet,
+
+170
+00:10:18,559 --> 00:10:22,484
+and compose exec reaches the processor
+by name: ok.
+
+171
+00:10:22,850 --> 00:10:27,394
+The README's table pairs each by-hand
+command with its Compose version.
+
+172
+00:10:27,714 --> 00:10:31,021
+In the first terminal,
+your requests now show in the log.
+
+173
+00:10:31,267 --> 00:10:34,388
+The README stops the app
+at the end of step 4;
+
+174
+00:10:34,388 --> 00:10:37,646
+we stop it now, in the foreground:
+press Ctrl+C.
+
+175
+00:10:37,966 --> 00:10:42,126
+Compose says it's stopping gracefully,
+but it takes about 20 seconds.
+
+176
+00:10:45,334 --> 00:10:47,920
+Python, each container's first process,
+
+177
+00:10:47,920 --> 00:10:52,097
+ignores the polite stop signal
+unless it's written to catch it.
+
+178
+00:10:52,417 --> 00:10:55,958
+So Docker waits 10 seconds per container,
+then kills it.
+
+179
+00:10:58,867 --> 00:11:01,662
+Exit code 137 means killed.
+
+180
+00:11:01,982 --> 00:11:03,533
+docker compose ps -a:
+
+181
+00:11:03,533 --> 00:11:07,080
+both containers exited,
+but they're still there.
+
+182
+00:11:07,317 --> 00:11:11,579
+docker compose down removes the containers
+and the network,
+
+183
+00:11:11,579 --> 00:11:13,674
+and nothing is left in ps -a.
+
+184
+00:11:13,994 --> 00:11:16,320
+Ctrl+C stops; down removes.
+
+185
+00:11:16,640 --> 00:11:18,581
+Pause, and run the whole cycle.
+
+186
+00:11:19,617 --> 00:11:21,351
+Back to the README's order:
+
+187
+00:11:21,351 --> 00:11:25,398
+up -d starts the app in the background
+and returns your prompt.
+
+188
+00:11:25,634 --> 00:11:26,978
+Two handy commands.
+
+189
+00:11:27,298 --> 00:11:30,898
+docker compose logs -f
+follows the gateway's log;
+
+190
+00:11:30,898 --> 00:11:33,250
+Ctrl+C stops only the following.
+
+191
+00:11:33,570 --> 00:11:36,971
+docker compose exec
+gateway sh opens a shell,
+
+192
+00:11:36,971 --> 00:11:40,524
+where the environment
+shows processor and 9200.
+
+193
+00:11:42,167 --> 00:11:45,943
+Next, the README says
+to repeat the port experiments in the file.
+
+194
+00:11:46,263 --> 00:11:52,962
+Change 8090 to 8095 and run up -d:
+Compose recreates only the gateway.
+
+195
+00:11:53,200 --> 00:11:57,531
+The page answers on 8095;
+change it back and apply again.
+
+196
+00:12:00,384 --> 00:12:02,731
+We added a comment to the processor's code.
+
+197
+00:12:03,051 --> 00:12:06,997
+Changed code that's copied
+into an image needs --build.
+
+198
+00:12:07,317 --> 00:12:11,562
+Only the copy layer is new,
+and only the processor is recreated.
+
+199
+00:12:11,800 --> 00:12:16,267
+The gateway's folder is mounted,
+and it rereads its page on each load:
+
+200
+00:12:16,267 --> 00:12:19,395
+edits show on the next reload,
+without a rebuild.
+
+201
+00:12:20,250 --> 00:12:24,815
+To finish, docker compose down;
+nothing is left in ps -a.
+
+202
+00:12:25,135 --> 00:12:28,651
+The images remain,
+sharing about 200 megabytes;
+
+203
+00:12:28,651 --> 00:12:30,597
+remove them to free space.
+
+204
+00:12:30,917 --> 00:12:32,410
+Port toy costs nothing.
+
+205
+00:12:32,730 --> 00:12:34,181
+Pause and shut it down.
+
+206
+00:12:34,417 --> 00:12:37,190
+To test yourself, pause after each question.
+
+207
+00:12:37,510 --> 00:12:40,526
+One:
+which files define a mega-pipeline image,
+
+208
+00:12:40,526 --> 00:12:43,804
+and what does run use
+when there's no local image?
+
+209
+00:12:44,050 --> 00:12:47,248
+Two: which three gates must a call
+to your bucket pass,
+
+210
+00:12:47,248 --> 00:12:48,935
+and where does each one fail?
+
+211
+00:12:49,255 --> 00:12:52,412
+Three: how does a git-ignored key
+end up in an image,
+
+212
+00:12:52,412 --> 00:12:53,544
+and what's the fix?
+
+213
+00:12:53,784 --> 00:13:00,739
+Four: -p 127.0.0.1:8095:9100.
+
+214
+00:13:01,059 --> 00:13:04,088
+Which number does the browser use,
+
+215
+00:13:04,088 --> 00:13:09,613
+which does the gateway bind,
+and what does 127.0.0.1 restrict?
+
+216
+00:13:09,933 --> 00:13:15,096
+Five: inside the gateway, what is localhost,
+and which name reaches the processor?
+
+217
+00:13:15,334 --> 00:13:20,239
+Next lecture, a command-line container
+calls a database container by name
+
+218
+00:13:20,239 --> 00:13:23,644
+on a Compose network,
+with the same secrets mount:
+
+219
+00:13:23,644 --> 00:13:25,211
+parts 1 and 2 together.
+
+220
+00:13:25,531 --> 00:13:27,579
+Answers are in the exercises.
+

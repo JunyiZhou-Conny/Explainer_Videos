@@ -21,10 +21,11 @@ Beats (script.md "## S04", one voiceover block each):
     said (the values themselves stay in the strip only).
  3  TRACKER B/2. The strip fades; the grid shrinks into a glyph-only miniature at the top right.
     README chip README.md · line 134 "if you forget, the script stops before doing anything" +
-    erratum tag (right of the chip). generate_text/cli.py · line 21: `!= ""` highlights; a GREEN tick lands on the
-    miniature's RED generate_text row, note "not empty → passes". The chip and panel go; both RED
-    rows flash; a PINK arrow runs from the row to a BLUE cloud "course project · not yours" and
-    bounces RED (cross); RED chip "permission error".
+    erratum tag (right of the chip). generate_text/cli.py · line 21 (mid-frame): `!= ""`
+    highlights; a GREEN tick lands on the miniature's RED generate_text row, note "not empty →
+    passes". The chip and panel go; both RED
+    rows flash; a PINK arrow runs from each RED row to a BLUE cloud "course project · not yours" and
+    both bounce RED (crosses); RED chip "permission error".
  4  TRACKER B/2 · extra. Chip "all five folders" (top band). A GREY editor ("in your editor") with
     transcribe_audio/cli.py · lines 17–21: a YELLOW pencil sets lines 17, 18, 21 (the edited text is
     the capture's own `+` lines). The editor goes; the terminal returns (10 rows, ~/AC215/mega-
@@ -32,21 +33,26 @@ Beats (script.md "## S04", one voiceover block each):
     `+` GREEN; the three placeholders get YELLOW boxes as named and a YELLOW tag "type your own";
     `cd ..` (extra), prompt back. GREY chip "translate_text/cli.py · line 64: target_language="es" →
     "fr" · why: in a few minutes" ("es" / "fr" flash as said). ▶ your turn by "all five folders".
- 5  TRACKER B/3. The terminal fades. A BLUE cabinet `your-team-bucket` (illustration) with the seven
-    drawers of README.md:152–158 (the bonus dashed); the drawers light in turn; every drawer but
-    input_audios/ opens a PINK `group-01/`; the GOLD tag "your project pays · storage (tiny)" slides
-    onto the cabinet.
- 6  Tag "erratum · no command given" (top band). A schematic console (browser, illustration tag on
-    its bottom edge): "Cloud Storage › Buckets › Create", Name field, Create button. README.md ·
-    line 313 · Appendix under the cabinet: `input_audios/test.mp3` struck through RED. On "Create
+ 5  TRACKER B/3. The terminal fades. A BLUE cabinet `your-team-bucket` (illustration), centred,
+    with the seven drawers of README.md:152–158 (the bonus dashed); the drawers light in turn;
+    every drawer but input_audios/ opens a PINK `group-01/`; the GOLD tag "your project pays ·
+    storage (tiny)" slides onto the cabinet.
+ 6  Tag "erratum · no command given" (top band) as the cabinet slides left. A schematic console
+    (browser, illustration tag on its bottom edge): "Cloud Storage › Buckets › Create", Name field,
+    Create button. README.md · line 313 · Appendix under the cabinet: `input_audios/test.mp3` struck through RED. On "Create
     the bucket": `your-team-bucket` types into the field, Create flashes, the cabinet's name flashes.
  7  The console shrinks away (and the 313 panel goes). A waveform file with the chip
     `input-<something>.mp3` slides into input_audios/ (file in the drawer, chip beside the cabinet).
     The chip slides down into a GREY `text_prompts/group-01/` folder and morphs .mp3 → .txt
     (caption "transcribe · cli.py line 62: same name, .txt"). The excerpt chip `"input-*.txt"`
     (transcribe_audio/cli.py · line 102 (excerpt)) stands beside the cabinet's text_prompts/ row:
-    the .txt chip passes it (GREEN tick) into text_prompts/ group-01/; a `test.txt` chip bounces
-    off it (GREY). Fade out to an empty frame.
+    it lifts like a barrier, the .txt chip passes under it into text_prompts/ group-01/, it drops
+    back with a GREEN tick; a `test.txt` chip bounces off it (GREY). The picture fades (the tracker
+    stays) and a GREY "your turn" card writes in (QA 06:18): Cloud Storage › Buckets › Create ·
+    Name: globally unique, e.g. `<team>-mega-pipeline` = your `bucket_name` · Create folder
+    `input_audios` · Upload files › a short clip named `input-<something>.mp3` · GREY "or, after
+    gcloud login · study guide:" over `gcloud storage buckets create` / `gcloud storage cp`
+    (extra); "globally unique" flashes, ▶ your turn wiggles. Fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - Beat 0: the tracker caption gets " · extra" while the four extra commands are typed (the script's
@@ -66,12 +72,20 @@ Deviations from SHOW (and why):
 - Beat 3: the erratum tag sits right of the README chip (on its corner it covered the frame line).
 - Beat 4: the editor comes first, then the terminal (both do not fit at once above/beside a
   10-row terminal); the edited lines are the capture's `+` lines. The `cd ..` row (60 characters
-  after the long prompt) has no room for its `extra` tag, so that tag sits on the terminal's title
-  bar. `cd transcribe_audio` scrolls off when the diff prints (11 rows in a 10-row terminal).
+  after the long prompt) leaves just under a tag's width, so its `extra` tag (20 pt) has narrower
+  side padding (narrow_tag) and sits centred in the row's free end. `cd transcribe_audio` scrolls
+  off when the diff prints (11 rows in a 10-row terminal).
 - Beat 4: the chip "translate_text/cli.py · line 64 …" is one GREY chip with mono parts.
 - Beat 7: the `"input-*.txt"` gate stands beside the cabinet's text_prompts/ row (between the
   local folder and the bucket's text_prompts/ group-01/), the local folder below it, drawn as a
   drawer: name on its front (bottom row), files on top, so they leave upwards without crossing it.
+- Beat 7: the ▶ your-turn card (bucket, folder, upload; QA 06:18, newcomer watcher: the viewer must
+  create the bucket and upload a clip, and bucket names are global) lands on SAY[7]'s "Bucket names
+  are global" (GLOBAL7) and its ▶ wiggles on "Pause" (PAUSE7); it holds 1 s after the narration
+  (should the sentence leave SAY[7], it follows the picture and holds 2 s). The gcloud pair is
+  named, not typed (the study guide has both commands, extra, not captured, after `gcloud config
+  set project` and the login note), hence "after gcloud login". The gate and the test.txt bounce
+  take 3.1 s (they ran past the narration's end), so the card can land on "Bucket names are global".
 """
 
 from common import *
@@ -90,6 +104,7 @@ from manim import (
     Indicate,
     LaggedStart,
     Line,
+    RoundedRectangle,
     ShowIncreasingSubsets,
     Transform,
     VGroup,
@@ -141,6 +156,10 @@ SHIPPED = {2: '"ac215-project"', 3: '"mega-pipeline-bucket"', 4: '"pavlos-advanc
 for _n, _v in SHIPPED.items():
     assert f"= {_v}" in GREP.line(_n), (_n, _v)
 COURSE = ["course's project", "course's bucket", "instructor's group"]
+# Beat 7's ▶ your turn (QA 06:18): the card lands on "Bucket names are global", the ▶ wiggles on
+# "Pause" (both in SAY[7]); without that sentence the card would follow the picture.
+GLOBAL7 = "Bucket names are global" if "Bucket names are global" in SAY[7] else None
+PAUSE7 = "Pause" if GLOBAL7 and "Pause" in SAY[7] else None
 
 CD_A = "cd transcribe_audio"                     # extra (script.md S04)
 EDIT = capture("11", ML)
@@ -207,6 +226,19 @@ def fit_tag(t, line, s: str = "extra"):
     raise ValueError(f"no room for the tag {s!r} beside {row.text!r}")
 
 
+def narrow_tag(s: str, color: str = S.GREY):
+    """devops.tag(s, size=20) with half its side padding: for a row that has just too little
+    room (the text stays 20 pt). .box .text"""
+    t = label(s, CAPTION, color)
+    h = mono("|", CAPTION).height + 0.16
+    b = RoundedRectangle(width=t.width + 0.22, height=h, corner_radius=h / 2, stroke_color=color,
+                         stroke_width=2).set_fill(S.BG, 0.92)
+    t.move_to(b)
+    g = VGroup(b, t)
+    g.box, g.text = b, t
+    return g
+
+
 def glyph_box(line, sub: str, color: str = TURN, pad: float = 0.06):
     """A box around the glyphs of `sub` in a terminal line, as tall as the row (not added).
     common.col_box() sits about one cell-bearing (~0.1) left of the glyphs."""
@@ -226,18 +258,29 @@ def adopt(scene, group):
 
 
 def type_extra(scene, t, cmd: str, type_time: float = 0.5):
-    """Type an extra command and pin its GREY `extra` tag beside it; when the row has no room
-    (a long prompt), the tag sits at the right end of the terminal's title bar instead (as a
-    member of the terminal, so it leaves with it). Returns the line."""
+    """Type an extra command and pin its GREY `extra` tag beside it. When the row leaves too
+    little room for the usual margins (`cd ..` after the 54-character component prompt), the
+    20 pt tag sits flush with the terminal's right edge, still on that row; only when even that
+    fails does it go to the right end of the title bar (kept on the scene AND made a member of
+    the terminal: the terminal itself is split off the scene by the first typed line, so a tag
+    that is only its member would never be drawn). Returns the line."""
     ln = type_cmd(scene, t, cmd, type_time=type_time)
     try:
         pin(scene, ln, fit_tag(t, ln), run_time=0.25)
+        return ln
     except ValueError:
-        tg = extra_tag()
-        tg.move_to([t.box.get_right()[0] - 0.2 - tg.width / 2, t.title.get_center()[1], 0])
-        scene.play(FadeIn(tg), run_time=0.25)
-        scene.remove(tg)
-        t.add(tg)
+        pass
+    row = ln.rows[-1] if hasattr(ln, "rows") else ln
+    tg = narrow_tag("extra")
+    end, edge = row.glyphs.get_right()[0], t.box.get_right()[0]
+    tg.move_to([(end + edge) / 2, row.strut.get_center()[1], 0])     # centred in the free space
+    if tg.get_left()[0] >= end + 0.1:
+        pin(scene, ln, tg, run_time=0.25)
+        return ln
+    tg = extra_tag()
+    tg.move_to([t.box.get_right()[0] - 0.2 - tg.width / 2, t.title.get_center()[1], 0])
+    scene.play(FadeIn(tg), run_time=0.25)
+    t.add(tg)
     return ln
 
 
@@ -246,13 +289,13 @@ def build_tree():
     """README.md:107-117 as a tree (no frame): .header .ws .repo .five .five_note .sec .sec_note
     (.out .rest) .json .conns .check_at (where the GREEN check goes)."""
     size = TAG
-    x0, pitch, ind = -6.3, 0.44, 0.55
+    x0, pitch, ind = -6.3, 0.41, 0.55     # 0.41: the json row's "next" tag clears the terminal
     ws = file_row("<your-workspace>/", INK, LAPTOP, size=size)
     repo = file_row("mega-pipeline/", INK, LAPTOP, size=size)
     sec = file_row("secrets/", INK, LAPTOP, size=size)
     js = ghost_file("mega-pipeline.json")
     rows = [(ws, 0), (repo, 1), (sec, 1), (js, 2)]
-    y0 = TOP - 0.62
+    y0 = TOP - 0.6
     for i, (r, lvl) in enumerate(rows):
         r.shift(np.array([x0 + lvl * ind - r.glyph.get_left()[0], y0 - i * pitch - r.text.get_center()[1], 0]))
     five = VGroup(*[folder_glyph(0.2, LAPTOP) for _ in range(5)]).arrange(RIGHT, buff=0.1)
@@ -409,6 +452,45 @@ def name_chip(s: str):
     return chip(s, S.GREY, size=CAPTION, font=MONO, fill_opacity=0.12)
 
 
+def mixed_row(parts):
+    """One card row of serif / mono parts: parts = [(text, "mono"|"serif", colour)] (20 pt)."""
+    mobs = VGroup(*[(mono if kind == "mono" else label)(s, CAPTION, col) for s, kind, col in parts])
+    mobs.arrange(RIGHT, buff=0.14)
+    for m in mobs:
+        m.match_y(mobs[0])
+    return mobs
+
+
+def bucket_card():
+    """The ▶ your-turn card of step 3 (common.turn_card's look, rows of mixed serif / mono parts):
+    the console clicks, the global bucket name, the folder and the upload, and the study guide's
+    gcloud pair (extra). .frame .rows .header .tag .name (the "globally unique" rule with its example,
+    one subgroup so a flash scales them together instead of into each other)"""
+    sv, mo, G = "serif", "mono", S.GREY
+    rows = [
+        mixed_row([("Cloud Storage › Buckets › Create", sv, INK)]),
+        mixed_row([("Name: globally unique, e.g.", sv, INK), ("<team>-mega-pipeline", mo, INK),
+                   ("= your", sv, G), ("bucket_name", mo, G)]),
+        mixed_row([("In the bucket: Create folder", sv, INK), ("input_audios", mo, INK)]),
+        mixed_row([("In that folder: Upload files › a short clip named", sv, INK),
+                   ("input-<something>.mp3", mo, INK)]),
+        mixed_row([("or, after gcloud login · study guide:", sv, G)]),
+        mixed_row([("gcloud storage buckets create", mo, G), ("/", sv, G), ("gcloud storage cp", mo, G)]),
+    ]
+    r1 = rows[1]
+    rows[1] = VGroup(VGroup(r1[0], r1[1]), r1[2], r1[3])
+    ex = extra_tag().next_to(rows[-1], RIGHT, buff=0.25)
+    rows[-1].add(ex)
+    items = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
+    fr = box(items.width + 0.6, items.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+    items.move_to(fr).align_to(fr, LEFT).shift(RIGHT * 0.3)
+    h = note("your turn").next_to(fr, UP, buff=0.08).align_to(fr, LEFT).shift(RIGHT * 0.12)
+    tg = your_turn().move_to(fr.get_corner(UP + RIGHT)).shift(LEFT * 1.0)
+    g = VGroup(fr, items, h, tg)
+    g.frame, g.rows, g.header, g.tag, g.name = fr, items, h, tg, rows[1][0]
+    return g
+
+
 class YourValues(VoiceScene):
     def construct(self):
         tr = tracker("B", 1)
@@ -436,23 +518,24 @@ class YourValues(VoiceScene):
             self.play(flash(tree.sec_note.out, TURN, 1.12, 0.8))
 
             vo.wait_until("Go up one level")
-            self.play(caption_extra(tr, True), run_time=0.3)
-            up = type_extra(self, t, CD_UP, type_time=0.35)
+            self.play(caption_extra(tr, True), run_time=0.25)
+            up = type_extra(self, t, CD_UP, type_time=0.3)
             t.set_prompt(P_WS)
             bp = bare_prompt(self, t)
-            self.play(flash(substring(up, "/mega-pipeline"), CLOUD, 1.15),
-                      flash(glyph_range(bp, P_WS.index("~"), len(P_WS) - 1), CLOUD, 1.1), run_time=0.7)
+            # the dropped part flashes BLUE as the tree's workspace row says "you are here"
             vo.wait_until("to your workspace")
-            self.play(FadeIn(here, shift=LEFT * 0.15), flash(tree.ws, TURN, 1.1, 0.8), run_time=0.8)
+            self.play(flash(substring(up, "/mega-pipeline"), CLOUD, 1.15),
+                      flash(glyph_range(bp, P_WS.index("~"), len(P_WS) - 1), CLOUD, 1.1),
+                      FadeIn(here, shift=LEFT * 0.15), flash(tree.ws, TURN, 1.1, 0.8), run_time=0.8)
             vo.wait_until("and create that folder")
-            type_extra(self, t, MKDIR, type_time=0.5)
+            type_extra(self, t, MKDIR, type_time=0.45)
             bare_prompt(self, t)
             type_extra(self, t, LS, type_time=0.2)
             lo = t.print(self, LS_OUT, run_time=0.3)
-            self.play(flash(lo[1].glyphs, INK, 1.15, 0.5), flash(tree.sec.text, INK, 1.1, 0.5))
-            type_extra(self, t, LS_SEC, type_time=0.5)
-            t.print(self, LA_OUT, run_time=0.35)
-            self.play(Create(chk), FadeIn(nxt, shift=LEFT * 0.1), run_time=0.6)
+            self.play(flash(lo[1].glyphs, INK, 1.15, 0.45), flash(tree.sec.text, INK, 1.1, 0.45))
+            type_extra(self, t, LS_SEC, type_time=0.45)
+            t.print(self, LA_OUT, run_time=0.3)
+            self.play(Create(chk), FadeIn(nxt, shift=LEFT * 0.1), run_time=0.5)
 
         # ========================================================== 1 · the three values
         p130 = src_panel(README, 128, 130, cut_comments=True)
@@ -479,12 +562,12 @@ class YourValues(VoiceScene):
         grid.move_to([0, 0, 0])
         grid.shift(UP * (STRIP_TOP + 0.22 - grid.frame.get_bottom()[1]))
         with self.voiceover(SAY[2]) as vo:
-            resize(self, t, 12, keep=0, run_time=0.45,
+            resize(self, t, 12, keep=0, run_time=0.35,
                    extra=(FadeOut(VGroup(p130, *labs)), caption_extra(tr, True)))
-            type_extra(self, t, CD_REPO, type_time=0.35)
-            cd_prompt(self, t, P_REPO, run_time=0.4)
-            type_extra(self, t, GREP.cmd, type_time=0.8)
-            out = t.print(self, GREP_OUT, run_time=0.4, lag=0.05)
+            type_extra(self, t, CD_REPO, type_time=0.3)
+            cd_prompt(self, t, P_REPO, run_time=0.3)
+            type_extra(self, t, GREP.cmd, type_time=0.65)
+            out = t.print(self, GREP_OUT, run_time=0.35, lag=0.04)
             by_line = dict(zip([2, 3, 4, None, 11, 12, 13, 14, 15, 16], out))
             dots = out[3]
             vo.wait_until("three files are blank")
@@ -547,17 +630,23 @@ class YourValues(VoiceScene):
         at_left(chip134, X_L, Y_UNDER)
         err134 = erratum_tag()
         at_left(err134, chip134.frame.get_right()[0] + 0.2, Y_UNDER)
-        p21 = src_panel(CLI_B, 21, 21)
-        at_left(p21, X_L, 1.25)
+        p21 = src_panel(CLI_B, 21, 21)               # the line the beat is about: nearer mid-frame
+        at_left(p21, X_L, 0)
+        p21.shift(UP * (0.9 - p21.get_top()[1]))
+        assert p21.get_right()[0] < mini.frame.get_left()[0] - 0.15
         neq = p21.span(21, '!= ""')
         bar21 = p21.bar(21, TURN)
         cl = cloud(3.0, CLOUD).move_to([-1.2, -1.75, 0])
         cl_lab = note("course project · not yours", CLOUD).next_to(cl, DOWN, buff=0.15)
-        start = mini.rows[0].get_left() + LEFT * 0.15
-        end = cl.get_top() + np.array([0.75, -0.25, 0])
-        arr = Arrow(start, end, color=LOOKUP, buff=0.05, stroke_width=5, max_tip_length_to_length_ratio=0.08)
-        direction = (end - start) / np.linalg.norm(end - start)
-        xm = cross_mark(0.3, ERR).move_to(end + direction * 0.1)
+        # "Those two files": one PINK arrow from each RED row (generate_text, translate_text)
+        arrs, xms, dirs = [], [], []
+        for r, off in ((0, np.array([0.55, -0.2, 0])), (4, np.array([0.98, -0.42, 0]))):
+            start = mini.rows[r].get_left() + LEFT * 0.15
+            end = cl.get_top() + off
+            arrs.append(Arrow(start, end, color=LOOKUP, buff=0.05, stroke_width=5,
+                              max_tip_length_to_length_ratio=0.08))
+            dirs.append((end - start) / np.linalg.norm(end - start))
+            xms.append(cross_mark(0.26, ERR).move_to(end + dirs[-1] * 0.1))
         perm = chip("permission error", ERR, size=CAPTION, text_color=ERR)
         perm.next_to(cl, RIGHT, buff=0.35)
         with self.voiceover(SAY[3]) as vo:
@@ -574,10 +663,11 @@ class YourValues(VoiceScene):
                       flash(mini.rows[0], ERR, 1.12), flash(mini.rows[4], ERR, 1.12), run_time=0.7)
             vo.wait_until("would send your calls")
             self.play(FadeIn(cl), FadeIn(cl_lab), run_time=0.5)
-            self.play(GrowArrow(arr), run_time=0.9)
+            self.play(LaggedStart(*[GrowArrow(a) for a in arrs], lag_ratio=0.3), run_time=1.0)
             vo.wait_until("where they fail")
-            self.play(arr.animate.set_color(ERR), FadeIn(xm, scale=1.4), run_time=0.4)
-            self.play(arr.animate(rate_func=there_and_back).shift(-direction * 0.35),
+            self.play(*[a.animate.set_color(ERR) for a in arrs], *[FadeIn(x, scale=1.4) for x in xms],
+                      run_time=0.4)
+            self.play(*[a.animate(rate_func=there_and_back).shift(-d * 0.35) for a, d in zip(arrs, dirs)],
                       FadeIn(perm, shift=LEFT * 0.15), run_time=0.7)
 
         # ========================================================== 4 · set all three, in all five
@@ -586,7 +676,7 @@ class YourValues(VoiceScene):
         before = src_panel(CLI_A, 17, 21, size=20)
         after = code_panel("\n".join(AFTER), "transcribe_audio/cli.py", 17, "python", font_size=20)
         ed = editor_inset(after)
-        ed.move_to([0, 0, 0]).shift(UP * (TOP - 0.1 - ed.get_top()[1]))
+        ed.move_to([0, -0.25, 0])                    # centred in the frame below the tracker band
         before.shift(after.code.get_corner(UP + LEFT) - before.code.get_corner(UP + LEFT))
         before.header.align_to(after.header, LEFT).match_y(after.header)
         pen = pencil(0.5, TURN)
@@ -598,7 +688,7 @@ class YourValues(VoiceScene):
                               ("· why: in a few minutes", "serif", S.GREY)])
         es_chip.move_to([0, strip_top(10) + 0.14 + es_chip.height / 2, 0])
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(mini, tick, ok_note, cl, cl_lab, arr, xm, perm)),
+            self.play(FadeOut(VGroup(mini, tick, ok_note, cl, cl_lab, *arrs, *xms, perm)),
                       caption_extra(tr, True), FadeIn(VGroup(ed.frame, ed[1], ed.title)), FadeIn(before),
                       run_time=0.6)
             pen.move_to(before.code.code_lines[0].get_right() + RIGHT * 0.5 + UP * 0.2)
@@ -653,6 +743,9 @@ class YourValues(VoiceScene):
         ill5.move_to(cab.frame.get_corner(UP + RIGHT) + LEFT * (ill5.width / 2 + 0.15))
         pays = cost_tag("your project pays · storage (tiny)")
         pays.move_to(cab.frame.get_bottom())
+        bucket = VGroup(cab, ill5, pays)
+        to_left = -cab.frame.get_center()[0]         # centred while it is the only picture (beat 5);
+        bucket.shift(RIGHT * to_left)                # it slides left when the console arrives (beat 6)
         with self.voiceover(SAY[5]) as vo:
             self.play(tr.goto(3), FadeOut(VGroup(t4, es_chip, five_chip, yt)), run_time=0.45)
             self.play(FadeIn(cab, shift=RIGHT * 0.2), FadeIn(ill5), run_time=0.7)
@@ -675,7 +768,10 @@ class YourValues(VoiceScene):
         test_span = p313.span(313, TEST_MP3)
         st = strike(test_span, ERR)
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeIn(err6, shift=DOWN * 0.1), run_time=0.5)
+            # parts_in() split the cabinet on the scene: put it back as one group (cabinet under its
+            # two tags), else animating `cab` re-adds it on top of the tags and draws parts twice
+            adopt(self, bucket)
+            self.play(FadeIn(err6, shift=DOWN * 0.1), bucket.animate.shift(LEFT * to_left), run_time=0.7)
             vo.wait_until("how to create the bucket")
             self.play(FadeIn(VGroup(con.win, con.body)), FadeIn(con.ill), run_time=0.7)
             vo.wait_until("and its sample upload")
@@ -713,6 +809,9 @@ class YourValues(VoiceScene):
                              d_tp.get_center()[1] - gate.chip.get_center()[1], 0]))
         g_tick = check_mark(0.3, VENV).next_to(gate.chip, DOWN, buff=0.12)
         wait_x = gate.chip.get_right()[0] + 0.15         # chips wait right of the gate
+        lift = gate.chip.height + 0.1                    # the gate lifts clear of a waiting chip
+        card = bucket_card()
+        card.move_to([0, -0.2, 0])                       # centred below the tracker (bottom 2.92)
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(con, scale=0.4, target_position=cab.title.get_center()),
                       FadeOut(VGroup(p313, st, err6)), run_time=0.7)
@@ -727,18 +826,42 @@ class YourValues(VoiceScene):
             self.play(Transform(mp3, txt), run_time=1.0)
             self.remove(mp3)
             self.add(txt)
-            self.play(FadeIn(cap62, shift=UP * 0.1), flash(txt.text, INK, 1.08, 0.6))
+            self.play(FadeIn(cap62, shift=UP * 0.1), flash(txt.text, INK, 1.08, 0.6), run_time=0.6)
+            # the gate and the bounce fit between "and upload only sends" and the end of the
+            # sentence, so the card can arrive on "Bucket names are global" (GLOBAL7; they end
+            # 0.13 s after it starts; with 4.5 s here, the card came 2 s after it started)
             vo.wait_until("and upload only sends")
-            self.play(FadeIn(gate, shift=LEFT * 0.15), run_time=0.5)
-            self.play(txt.animate.move_to([wait_x + txt.width / 2, d_tp.get_center()[1], 0]), run_time=0.7)
-            self.play(FadeOut(txt, target_position=sub_tp.get_center()),
-                      flash(gate.chip, VENV, 1.1, 0.8), FadeIn(g_tick, scale=1.3), run_time=0.9)
-            self.play(flash(sub_tp, LOOKUP, 1.2, 0.6), flash(d_tp, CLOUD, 1.05, 0.6))
-            self.play(FadeIn(test, shift=UP * 0.1), run_time=0.4)
-            self.play(test.animate.move_to([wait_x + test.width / 2, d_tp.get_center()[1], 0]), run_time=0.6)
+            self.play(FadeIn(gate, shift=LEFT * 0.15),
+                      txt.animate.move_to([wait_x + txt.width / 2, d_tp.get_center()[1], 0]), run_time=0.6)
+            # the name matches: the gate lifts like a barrier, the chip passes under it into the
+            # bucket's text_prompts/ group-01/, the gate drops back with its GREEN tick
+            self.play(gate.animate.shift(UP * lift), run_time=0.3)
+            self.play(FadeOut(txt, target_position=sub_tp.get_center(), scale=0.5), run_time=0.5)
+            # test.txt does not match: it rises from the folder as the gate drops back, and
+            # bounces off the closed gate, GREY
+            self.play(gate.animate.shift(DOWN * lift), FadeIn(g_tick, scale=1.3),
+                      flash(sub_tp, LOOKUP, 1.1, 0.5), flash(d_tp, CLOUD, 1.05, 0.5),
+                      FadeIn(test, shift=UP * 0.1), run_time=0.5)
+            self.play(test.animate.move_to([wait_x + test.width / 2, d_tp.get_center()[1], 0]), run_time=0.45)
             self.play(test.animate(rate_func=there_and_back).shift(LEFT * 0.2),
-                      flash(gate.chip, S.GREY, 1.1, 0.6), run_time=0.6)
-            self.play(test.animate.set_color(S.GREY_DARK), run_time=0.3)
-            self.wait(0.6)
+                      flash(gate.chip, S.GREY, 1.1, 0.5), run_time=0.5)
+            self.play(test.animate.set_color(S.GREY_DARK), run_time=0.25)
+            # ▶ your turn: the picture gives way to the step-3 card (bucket, folder, upload)
+            if GLOBAL7:
+                vo.wait_until(GLOBAL7)
+            # the tracker stays: tr.goto()'s AnimationGroup left its dots and caption on the scene
+            # in a Group of their own, so keep every top-level mobject that holds a tracker part
+            trf = set(tr.get_family())
+            pic = [m for m in self.mobjects if not trf.intersection(m.get_family())]
+            self.play(FadeOut(*pic), run_time=0.4)
+            self.play(FadeIn(card.frame), FadeIn(card.header),
+                      LaggedStart(*[FadeIn(r, shift=RIGHT * 0.12) for r in card.rows], lag_ratio=0.25),
+                      run_time=1.1)
+            self.play(flash(card.name, TURN, 1.03, 0.7))     # 1.03: clears "= your" beside it
+            if PAUSE7:
+                vo.wait_until(PAUSE7)
+            self.play(FadeIn(card.tag, shift=LEFT * 0.15), run_time=0.4)
+            self.play(Wiggle(card.tag, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
+        self.wait(1.0 if PAUSE7 else 2.0)        # the card holds a moment after the narration
         self.play(FadeOut(*self.mobjects), run_time=0.8)
         self.wait(0.3)

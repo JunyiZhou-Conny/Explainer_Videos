@@ -147,8 +147,11 @@ Conventions
     4 Stash, retry · 5 Confirm branch.
   - `B` = "Before you run" (`:105-158`: layout, Configure each cli.py, GCS Bucket Details), 3:
     1 Secrets folder · 2 Set cli.py · 3 Your bucket.
-  - `K` = "Service Account & Secrets" (`:169-203`), 6: 1 Create account · 2 Grant roles · 3 JSON key ·
-    4 Save key · 5 Set project · 6 Enable APIs.
+  - `K` = "Service Account & Secrets" (`:169-203`), the README's own numbered list (`:175-183`), 5:
+    1 Service accounts · 2 Create account · 3 Grant roles · 4 JSON key · 5 Save key; then the two
+    unnumbered commands under "To enable them" (`:189-198`), `TRACKER K/after 5` (caption "after
+    step 5: Set project", then "after step 5: Enable APIs"; hollow dots after a gap). The scene's
+    `KTracker` draws this; `common.SECTIONS["K"]` keeps its six names.
   - `R` = "How to Run a Component" (`:207-226`), 6: 1 Build and run · 2 dev · 3 run · 4 prod ·
     5 chmod +x · 6 winpty.
   - Quick Reference (`:230-274` with each component README's `--help`), section = component folder:
@@ -230,9 +233,9 @@ Conventions
   image), `#` (`sh` in the gateway). Values `your-project-id`, `your-team-bucket`, `group-01` (the
   captures' placeholders; the SAY says "type your own"). port_toy: gateway on host port 8090 (then
   8095), processor 9200 (then 9300); ephemeral ports 55620, 55634, … ("your numbers will differ").
-- Length and parts: narration 4,297 words (`python -m explainer.script`; BRIEF.md: 3,900–4,300,
-  plan ~4,220). Part 1 = S01–S09 (mega-pipeline `flexible-workflow`) 2,537 words; part 2 = S10–S16
-  (port_toy) 1,760 words. Every scene is within ±15 % of its BRIEF.md budget. Voice rate as measured
+- Length and parts: narration 4,379 words (`python -m explainer.script`; BRIEF.md: 3,900–4,300,
+  plan ~4,220). Part 1 = S01–S09 (mega-pipeline `flexible-workflow`) 2,581 words; part 2 = S10–S16
+  (port_toy) 1,798 words. Every scene is within ±15 % of its BRIEF.md budget. Voice rate as measured
   on v1 (build/review_spoken.md: every sentence synthesized with af_heart at 0.9): ≈ 146 wpm overall,
   ≈ 151 in part 1 and ≈ 143 in part 2, where addresses and ports are long when spoken (the L04
   lexicon entries shorten them), not the nominal 174 wpm of the series docs. That is ≈ 29 min of
@@ -310,7 +313,8 @@ SAY: A second surprise, from the other tutorial: a server listening on port 9200
 
 SHOW: Both pictures shrink to glyph-only thumbnails (shapes, colours, no text), left (signpost and
 box) and right (the two boxes). Under them two YELLOW questions write in at 26 pt, one per thumbnail:
-"Part 1 · Where did that image come from?" and "Part 2 · Whose localhost is it?".
+"Part 1 · Where did that image come from?" and "Part 2 · Whose localhost is it?". GREY tag `Lecture 4 ·
+slides 42–43` (top right, with the left thumbnail, from "Two puzzles" until "The tracker shows").
 SAY: Two puzzles. Part 1: where did that image come from, and should you build or pull? Part 2: whose localhost is it?
 
 SHOW: The questions clear. A layout preview, built piece by piece as named: the ReadmeTracker appears
@@ -373,7 +377,8 @@ into a TEAL image box labelled `Python 3.14.8 · uv` on a GREY laptop. Right: a 
 Hub" (tag `illustration`) with a sealed TEAL box. Phase 1, caption "early in development": three
 GREY teammate glyphs each draw a PURPLE build arrow from the card. Phase 2, caption "later in
 development": one teammate pushes a box up onto the BLUE shelf; the other two draw BLUE pull arrows
-down from it.
+down from it. GREY tag `Lecture 4 · slides 37–40` (top right, from "A team can get an image two ways"
+until "Look closely at the tag").
 SAY: A team can get an image two ways. Early in a project, everyone builds it from the recipe in Git. Later, one person publishes finished images to Docker Hub, and everyone else pulls.
 
 SHOW: Zoom on the BLUE shelf: a PINK signpost `dlops/mega-pipeline-transcribe-audio:latest` stands
@@ -401,15 +406,17 @@ TRACKER F/2. It types `cd mega-pipeline` → (no output); the prompt becomes
 SAY: Starting fresh? From your workspace folder, clone the repo with this branch checked out: git clone, dash dash branch flexible-workflow. Then cd into mega-pipeline. Pause and run both.
 
 SHOW: TRACKER F/2 · extra. It types `git branch; git log --oneline -1` (extra) →
-TERM(mega-laptop/03-x-branch.txt: 2–3); `cc67f3b` gets a GREY tag "the pinned commit · 2026-09-18".
+TERM(mega-laptop/03-x-branch.txt: 2–3); `cc67f3b` gets a GREY tag "cc67f3b = the commit we recorded ·
+2026-09-18 · yours may be newer".
 The terminal clears; it types `ls -a transcribe_audio` (extra; the second command of
 `mega-laptop/04-x-ls.txt`) → TERM(mega-laptop/04-x-ls.txt: 10–18). `Dockerfile`, `docker-shell.sh`,
 `pyproject.toml`, `uv.lock` highlight GREEN one by one, and a small GREEN recipe card "committed"
 gathers them.
-SAY: Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which you wrote in lecture 3.
+SAY: Two extra checks: git branch shows flexible-workflow at the commit we recorded, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits.
 
 SHOW: TRACKER L/1. The terminal clears; title `laptop · lecture 3 clone`, prompt
-`student@laptop:~/AC215-l03$`; a GREY chip at the top right: "cloned fresh? skip to the next chapter".
+`student@laptop:~/AC215-l03$`; a GREY chip at the top right: "cloned fresh? skip to <SKIP_TO>" (the
+time S04 starts; the SAY keeps "skip to the next chapter").
 It types `cd mega-pipeline` → (no output); prompt `student@laptop:~/AC215-l03/mega-pipeline$`.
 TRACKER L/1 · extra. It types `git status --short` (extra) → TERM(mega-l03-laptop/01-x-l03-state.txt:
 2–4), then `git status --short --ignored | grep '^!!'` (extra) →
@@ -457,16 +464,18 @@ SAY: A small gap: the note covers only edited files. An extra git stash dash u s
 
 SHOW: TRACKER L/5. It types `git branch` → TERM(mega-l03-laptop/09-branch.txt: 2–3); `*
 flexible-workflow` highlights GREEN. V2 fades; a static GREY "your turn" card fills the space above
-the strip, the commands exactly as typed: `cd mega-pipeline` · `git fetch origin` · `git checkout
-flexible-workflow` · `git stash` · `git stash -u` (tag `extra`) · `git checkout flexible-workflow` ·
-`git branch`. `▶ your turn` on the card.
-SAY: Step 5, git branch: star, flexible-workflow. Pause and switch your own clone.
+the strip. It leads with a GREY row "first: copy out your lecture 3 Dockerfile, pyproject.toml,
+uv.lock · the switch replaces them" (tag `extra`; its first line flashes on "Before you switch", its
+second on "the switch replaces"), then the commands exactly as typed: `cd mega-pipeline` · `git fetch
+origin` · `git checkout flexible-workflow` · `git stash` · `git stash -u` (tag `extra`) · `git
+checkout flexible-workflow` · `git branch`. `▶ your turn` on the card (it wiggles on "Pause and switch").
+SAY: Step 5, git branch: star, flexible-workflow. Before you switch your own clone, copy out any lecture 3 Dockerfile, pyproject.toml and uv.lock you want to keep: the switch replaces them. Pause and switch.
 
 SHOW: TRACKER L/5 · extra. The card clears; V2 returns above the strip. The strip types `head -2
 transcribe_audio/Dockerfile` (extra) → TERM(mega-l03-laptop/11-x-dockerfile-replaced.txt: 2–3). In
 V2's ignored pile the Dockerfile card flips from `FROM python:3.12-slim-bookworm`
 (mega-l03-laptop/01-x-l03-state.txt line 9) to `FROM python:3.14-slim-bookworm` (line 3 of 11); then
-the strip types `ls -la transcribe_audio` (extra) → TERM(mega-l03-laptop/10-x-after.txt: 8, 12, 14)
+the strip types `ls -la transcribe_audio` (extra) → TERM(mega-l03-laptop/10-x-after.txt: 12, …, 14)
 and the `pyproject.toml` and `uv.lock` cards flip too (GREY tag "the branch's files · same sizes as a
 fresh clone"). A GREY tag "replaced · no warning" and the tag `erratum`; a GREY fix chip: "want your
 lecture 3 Dockerfile, pyproject.toml, uv.lock (or docker-shell.sh)? copy them out before switching".
@@ -548,15 +557,20 @@ SHOW: The console shrinks away. The `input_audios/` drawer receives a small wave
 `text_prompts/group-01/` drawer (caption "transcribe · cli.py line 62: same name, .txt"). An excerpt
 chip `"input-*.txt"` (header `transcribe_audio/cli.py · line 102 (excerpt)`) stands in its path like a
 gate: the `input-….txt` chip passes with a GREEN tick, and a second chip `test.txt` bounces off GREY.
-Fade out.
-SAY: Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input.
+From "Bucket names are global" the picture gives way (the tracker stays) to a static GREY "your turn"
+card: "Cloud Storage › Buckets › Create" · "Name: globally unique, e.g. `<team>-mega-pipeline`" (GREY
+"= your `bucket_name`"; the rule flashes) · "In the bucket: Create folder `input_audios`" · "In that
+folder: Upload files › a short clip named `input-<something>.mp3`", then GREY "or, after gcloud login
+· study guide:" over `gcloud storage buckets create` / `gcloud storage cp` (tag `extra`; named, not
+typed). `▶ your turn` on the card (it wiggles on "Pause"). Fade out.
+SAY: Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input. Bucket names are global: pick a unique one. Pause and create yours.
 
 ---
 
 ## S05 · Three gates: account, role, API — `s05_gates.py` · `ThreeGates`
 
-SHOW: TRACKER K/1. V3 builds: at left a TEAL container box with a dashed slot `/secrets`; outside its
-left edge a GREY `secrets/` folder holding the GOLD key glyph, joined to the slot by a PINK route. The
+SHOW: TRACKER K/1 (README step 1, Service accounts). V3 builds: at left a TEAL container box with a
+dashed slot `/secrets`; outside its left edge a GREY `secrets/` folder holding the GOLD key glyph, joined to the slot by a PINK route. The
 route pulses once, and a GOLD key outline appears in the slot at the same instant: one file, seen from
 both sides (nothing travels along the route). A GREY README card, header `README.md · line 171`: "an
 identity for your code, not for you".
@@ -575,8 +589,8 @@ says where gates 2 and 3 fail: that is the ponder.)
 SAY: Gate 1 asks who you are: without the key, the call fails inside your container. Gate 2 asks what you may do: the account needs a role. Gate 3 asks if the API is switched on.
 
 SHOW: V3 shrinks to the right third. At left a schematic console (browser window, tag
-`illustration`, no logo): breadcrumb "IAM & Admin › Service accounts" → "Create service account",
-name `mega-pipeline-sa`. TRACKER K/2: a role picker; four roles appear one by one in README order,
+`illustration`, no logo): breadcrumb "IAM & Admin › Service accounts" → "Create service account" (TRACKER K/2),
+name `mega-pipeline-sa`. TRACKER K/3: a role picker; four roles appear one by one in README order,
 each with its ID chip: "Storage Admin" (`roles/storage.admin`, GREY tag "all five components"),
 "Agent Platform User" (`roles/aiplatform.user`, tag "generate_text · Gemini"), "Cloud Speech Client"
 (`roles/speech.client`), "Cloud Translation API User" (`roles/cloudtranslate.user`). As each appears,
@@ -589,16 +603,16 @@ SHOW: The Text-to-Speech door gets a GREY note "no role needed · README.md line
 `README.md · line 179` "Search the role picker for Agent Platform User" gets a GREEN check.
 SAY: Text-to-Speech needs no role. A small slip: the generate text README still says Vertex AI User, which finds nothing now.
 
-SHOW: TRACKER K/3. The console: "Keys › Add key › Create new key › JSON"; a download chip appears
+SHOW: TRACKER K/4. The console: "Keys › Add key › Create new key › JSON"; a download chip appears
 with a GREY placeholder name `<project>-<hex>.json` (GREY caption "the console picks a long name").
-TRACKER K/4. The chip renames itself `mega-pipeline.json` and the GOLD key glyph drops out of the
+TRACKER K/5. The chip renames itself `mega-pipeline.json` and the GOLD key glyph drops out of the
 browser into S04's file tree (it slides back in, small) as `secrets/mega-pipeline.json` (README chip
 `README.md · line 183`); the dashed row turns solid. A GOLD tag: "whoever holds this file spends your
 project's money · never commit it · never paste it".
 SAY: Download a JSON key; it arrives with a long generated name. Rename it mega-pipeline.json, in the secrets folder beside the repo. Whoever holds it can spend your project's money: never commit or paste it.
 
-SHOW: TRACKER K/5. A GREY README card `README.md · lines 187–189` ("APIs & Services › Library ›
-Enable · or all five at once") with a tiny console Library illustration. Terminal (full width, 8
+SHOW: TRACKER K/after 5 (Set project). A GREY README card `README.md · lines 187–189` ("APIs &
+Services › Library › Enable · or all five at once") with a tiny console Library illustration. Terminal (full width, 8
 rows, title `laptop`, prompt `student@laptop:~$`). It types `gcloud config set project
 <your-project-id>` exactly as the README writes it (TERM(gcloud-laptop/01-config-set-project.txt: 2–3;
 session)): line 3 `-bash: syntax error near unexpected token `newline'` prints RED; `<` and `>` in the
@@ -608,8 +622,8 @@ your-project-id` → TERM(gcloud-laptop/02-config-set-project-filled.txt: 2); `y
 YELLOW tag "your own ID".
 SAY: Next, enable the APIs, in the console or with gcloud. Typed exactly as written, the set project command fails: the shell reads the placeholder's angle brackets as redirections. Type your own project ID, without brackets.
 
-SHOW: TRACKER K/6. The terminal clears (12 rows). It types the README's six rows, `gcloud services
-enable \` … `translate.googleapis.com` → TERM(gcloud-laptop/03-services-enable.txt: 7–12, …); line 7
+SHOW: TRACKER K/after 5 (Enable APIs). The terminal clears (12 rows). It types the README's six rows,
+`gcloud services enable \` … `translate.googleapis.com` → TERM(gcloud-laptop/03-services-enable.txt: 7–12, …); line 7
 prints RED. A GREY note: "Tutorial 0: gcloud auth login". A GREY command-only chip
 `gcloud services list --enabled` (tag `extra`, "with your account: lists the five"). The terminal
 shrinks to the strip; in V3 the five API switches flip on one by one (GREY tag `illustration` "with
@@ -664,7 +678,8 @@ container (TEAL) with `/app` and `/secrets`, and a GREEN box `/home/app/.venv` o
 CODE(mega-pipeline/transcribe_audio/docker-shell.sh: 92–96): line 93 draws a PINK route from the
 component folder to `/app`; line 94 a PINK route from `secrets/` to `/secrets`; line 95 raises a PINK
 signpost reading `/secrets/mega-pipeline.json` (4.6 wide; the variable's name stays in the code
-panel, underlined PINK) pointing into `/secrets`.
+panel, underlined PINK) pointing into `/secrets`. GREY tag `Lecture 4 · slides 23–24` (top right, from
+"Dash v puts" until "Dash e sets", where it becomes `Lecture 4 · slide 26` until "As in lecture 3").
 SAY: Running opens two windows into your laptop. Dash v puts the component folder at slash app, and the secrets folder beside the repo at slash secrets. Dash e sets an environment variable: a signpost to the key for Google's libraries.
 
 SHOW: CODE(mega-pipeline/transcribe_audio/Dockerfile: 17) `ENV UV_PROJECT_ENVIRONMENT=/home/app/.venv`
@@ -798,8 +813,8 @@ SAY: Next, synthesis audio E-N builds in 8 seconds, its system layer cached. We 
 SHOW: TRACKER QC/1 · extra. The second terminal (5 rows) slides in at the top; its first prompt shows
 the home folder with the folder part flashing YELLOW and the GREY caption "new terminal: cd here
 first", then reads `student@laptop:~/AC215/mega-pipeline/synthesis_audio_en$`. A pencil edits
-`cli.py`, then it types `git diff cli.py` (extra) → TERM(mega-laptop/41-c-x-edit-cli.txt: 16–17); the
-same file blinks inside the TEAL terminal's folder icon at the same instant. In the TEAL terminal it
+`cli.py`, then it types `git diff cli.py` (extra) → TERM(mega-laptop/41-c-x-edit-cli.txt: …, 16–17), the
+`…` row with the GREY note "gcp_project and bucket_name edited too"; the same file blinks inside the TEAL terminal's folder icon at the same instant. In the TEAL terminal it
 types `python cli.py --help` → TERM(mega-synthesis_audio_en/02-help.txt: 2–4, …, 55; wrap); line 3
 (`File "/app/cli.py", line 23`) highlights YELLOW; CODE(mega-pipeline/synthesis_audio_en/cli.py: 23)
 appears as a one-line chip "runs on import"; line 55 RED.
@@ -841,9 +856,11 @@ SHOW: The card clears. Two cards, one after the other above the strip, tag `erra
 the chip CODE(mega-pipeline/translate_text/cli.py: 64) `target_language="es",` RED, stacked over
 CODE(mega-pipeline/synthesis_audio/cli.py: 48–49) (comment cut) with `fr-FR` BLUE; a GREEN fix chip
 `target_language="fr"` with a GREY tag "you set it in Before you run, step 2". Card 1 clears; card 2:
-a GREY caption "optional ElevenLabs bonus: cli_11.py looks for its key file inside /app" and a GREEN
-fix chip `secrets_file_path = '/secrets/11lab_api_key.txt'` (header `synthesis_audio/cli_11.py · line
-30`). No ▶. Fade out.
+a GREY caption "optional ElevenLabs bonus: cli_11.py looks for its key file inside /app" over the real
+line 30, CODE(mega-pipeline/synthesis_audio/cli_11.py: 30) (header `synthesis_audio/cli_11.py · line
+30`), its `'secrets/` RED and underlined; then the GREEN fix chip
+`secrets_file_path = '/secrets/11lab_api_key.txt'` with no header and the GREY tag "add a leading /".
+No ▶. Fade out.
 SAY: Two small slips. The translation targeted Spanish, but the final voice is French: that's why you switched it. And the optional ElevenLabs bonus reads its key from inside slash app: point it at slash secrets.
 
 ---
@@ -858,7 +875,8 @@ SHOW: TRACKER R/2. A small V4 switchboard at the top with the `dev` track lit. T
 `./docker-shell.sh dev` → TERM(mega-laptop/17-a-dev.txt: 2–4, 14–17) (BuildKit rows); `Build Mode: dev`
 highlights; each `CACHED` turns GREEN; `Building 0.3s` underlines; the prompt returns (GREY tag "no
 container"). A GREY note: "anything new in the folder (e.g. input_audios/ from --download) → build
-steps 4–5 run again".
+steps 4–5 run again". GREY tag `Lecture 4 · slide 7` (top right, from "after any change" until "What is
+dev for?").
 SAY: Exit, and cd back into transcribe audio. Step 2 of How to Run, docker-shell.sh dev, only builds: no container starts. Here, all was cached; after any change in the folder, the copy and uv sync steps run again.
 
 SHOW: TRACKER Y/1. README chip `transcribe_audio/README.md · line 89`. The strip turns TEAL for this
@@ -866,7 +884,8 @@ beat (title `container · transcribe_audio`) and types `uv add <package>` (comma
 "placeholder · lecture 3 ran it"). Above: glyph-only V5, laptop sheet and `/app` side by side, two
 GREEN file glyphs (`pyproject.toml`, `uv.lock`) blinking on both sides at once. The strip turns GREY
 again and shows `./docker-shell.sh dev` (an arrow from the earlier line); a GREEN package chip drops
-into a TEAL image block "baked in".
+into a TEAL image block "baked in". GREY tag `Lecture 4 · slides 37–38` (right, above the strip: the
+README chip holds the top band; from "Adding a package" until "Step 3, run").
 SAY: What is dev for? Adding a package: uv add, inside the container, updates pyproject.toml and uv.lock through the window; then dev bakes it into the image.
 
 SHOW: TRACKER R/3. V4: the `run` track lights; a PINK diamond "local image?" sits on it. The terminal
@@ -903,16 +922,21 @@ SAY: Local image not found, so it pulls the dlops image from Docker Hub. Then, a
 
 SHOW: The terminal clears and the session continues: TERM(mega-laptop/72-run-registry.txt: 24–29, …,
 33, 38–39; session). At the prompt `(app) root@36615ab6e34b:/app#` (`root` tagged RED "root") it types
-`python --version` (line 24) → line 25, `which python` (26) → 27, `python cli.py --help` (28) → 29,
+`python --version` (line 24) → line 25, `which python` (26) → 27 (both with GREY `extra` tags; the
+tracker reads TRACKER R/3 · extra until `python cli.py --help`), `python cli.py --help` (28) → 29,
 `…`, 33, then `exit` (38) → 39. `Python 3.8.17` highlights YELLOW; `optional arguments:` gets a GREY
 tag "Python 3.8's argparse wording".
 SAY: The prompt says root. Python is 3.8.17, in an environment pipenv made. Help still works here, in the older wording of Python 3.8. Then type exit.
 
-SHOW: TRACKER R/3 · extra. Above the strip, PANEL(mega-laptop/74-x-registry-image.txt: 4, 6–7,
-"docker image inspect dlops/mega-pipeline-transcribe-audio · extra") and the excerpt chip
-`PYTHON_VERSION=3.8.17` (header `docker image inspect · env (excerpt)`). In V1 the sealed box opens;
-four labels rise out of it as they're said: `2025-02-18`, `Python 3.8.17`, `pipenv shell`, `user: root`
-(RED).
+SHOW: TRACKER R/3 · extra. The terminal turns GREY (laptop) and types the extra inspect as captured
+(the `docker image inspect` part of mega-laptop/74-x-registry-image.txt line 1), folded to fit: its
+`--format` string breaks inside the quotes on GREY `↪` rows, and the only ` \` follows the closing
+quote; GREY note "one command, folded to fit · type it as one line" → lines 4–7. Then, above the
+strip, PANEL(mega-laptop/74-x-registry-image.txt: 4, 6–7, "docker image inspect --format …
+dlops/mega-pipeline-transcribe-audio · extra") and the excerpt chip `PYTHON_VERSION=3.8.17` (header
+`docker image inspect · env (excerpt)`). In V1 the sealed box opens and turns RED from "opens the box"
+(the stale dlops image) until it closes in the fix-card beat; four labels rise out of it as they're
+said: `2025-02-18`, `Python 3.8.17`, `pipenv shell`, `user: root` (RED).
 SAY: An extra inspect opens the box: created on February 18, 2025, with Python 3.8.17, starting pipenv shell, as root.
 
 SHOW: The inspect panel clears (the four labels stay on the box).
@@ -930,10 +954,11 @@ SHOW: TRACKER R/3 · extra. A laptop strip (title `laptop · second terminal`, p
 TERM(mega-laptop/73-x-host-after-registry.txt: …, 7, …) (`root` in line 7 RED), then `git status --short`
 (extra) → TERM(mega-laptop/73-x-host-after-registry.txt: …, 20). In V1 a small GREY file glyph
 `Pipfile` with a RED `root` badge drops out of the box into the laptop folder. Two GREY command-only
-chips (tag `extra`, no output panel): `rm Pipfile` and `./docker-shell.sh dev` ("your own image back").
+chips (tag `extra`, no output panel): `rm Pipfile` (GREY note under it "Linux asks first (root's file)
+→ y") and `./docker-shell.sh dev` ("your own image back").
 SAY: It also left a Pipfile in your folder, owned by root. If you tried this, delete it and run dev to get your own image back.
 
-SHOW: The fix card, three rows: GREEN "build locally · no argument, or dev"; BLUE "run · only images
+SHOW: The box closes and is TEAL again. The fix card, three rows: GREEN "build locally · no argument, or dev"; BLUE "run · only images
 your team pushed from this branch · your own DOCKER_USERNAME"; GREY "their newer push? docker pull
 <user>/<image>". Fade out.
 SAY: So build locally, with no argument or dev, and use run only for images your team pushed from this branch, under your own Docker Hub account.
@@ -954,11 +979,14 @@ SHOW: The panel swaps to CODE(mega-pipeline/transcribe_audio/docker-shell.sh: 65
 wrapped into three rows `docker buildx build --platform linux/amd64,linux/arm64` / `↪ --push -t
 $DOCKER_USERNAME/$IMAGE_NAME` / `↪ -f Dockerfile .` (header `… · lines 65–66 · line 66 wrapped`):
 `--platform linux/amd64,linux/arm64` PURPLE, `--push` BLUE. A PINK signpost with two arrows: one to a
-TEAL box "amd64", one to a TEAL box "arm64", both on the BLUE shelf; two small GREY glyphs below: an
-Apple-silicon Mac taking "arm64", a cloud VM taking "amd64" (tag "lecture 2").
+TEAL box "amd64", one to a TEAL box "arm64", both on the BLUE shelf; left and right of the shelf, a
+GREY Mac glyph (Apple silicon) pulls "arm64" and a BLUE cloud-VM glyph (a remote machine) pulls
+"amd64" (GREY tag "lecture 2" above the Mac). GREY tag `Lecture 4 · slide 13` (top right, from "makes
+amd64 and arm64" until "Before prod").
 SAY: Then one buildx build makes amd64 and arm64 images and pushes both under one tag: as in lecture 2, an Apple-silicon Mac pulls one, a cloud VM the other.
 
-SHOW: TRACKER U/1. A one-line README chip `transcribe_audio/README.md · line 129`. A strip (title
+SHOW: TRACKER U/1 (section "Publish the container (optional)"; the README heading is "OPTIONAL:
+Publish the container"). A one-line README chip `transcribe_audio/README.md · line 129`. A strip (title
 `laptop`, prompt `student@laptop:~/AC215/mega-pipeline/transcribe_audio$`) types `docker login -u
 <USER NAME> -p <ACCESS TOKEN>` (command only, GREY tag "not run here"); `-p` gets a GOLD note "the
 token stays in your shell history" and a GREY chip "--password-stdin avoids it".
@@ -984,21 +1012,29 @@ SHOW: The terminal shrinks to the strip. V5 contrast above: CODE(mega-pipeline/t
 packs into a TEAL image layer (here, unlike the mount, the key really is copied). 
 CODE(mega-pipeline/transcribe_audio/.gitignore: 3) `/secrets` drawn as a shield standing only in front
 of a GREY "Git" shelf; a dashed GREY chip "`.dockerignore`: none, on every branch". The prod track
-carries the layer up to the BLUE shelf, which flashes RED.
+carries the layer up to the BLUE shelf, which flashes RED. GREY tag `Lecture 4 · slides 8, 15` (right,
+under the line 39 panel, from "The gitignore keeps secrets out of Git" until "Prod would push your key").
 SAY: The copy line takes the whole folder. The gitignore keeps secrets out of Git, not out of images, and no branch has a dockerignore. Prod would push your key to Docker Hub.
 
 SHOW: Tag `erratum`: a GREY README card `README.md · line 203` "the canonical way to make that mistake
 impossible" with a GREY note "for Git: yes · for images: no". A fix card writes in: "delete the
-secrets/ folder inside each component" · "add a .dockerignore listing secrets/ (lecture 3)" · RED
-"a key was ever pushed? delete that key in IAM". `▶ your turn`.
-SAY: So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Pause and check yours.
+secrets/ folder inside each component" · "add a .dockerignore listing secrets/ (lecture 3)", the
+row listing what this repo needs, in the spirit of lecture 4 slide 8: `secrets/`, the data folders
+(`input_audios/`, `text_*/`, `output_audios*/`) and `__pycache__/` · a GREY row "remove images built
+before the fix · a deleted file stays in its layer" (slides 12, 15) · RED "a key was ever pushed?
+delete that key in IAM". `▶ your turn`.
+SAY: So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Prod is optional: after the fix, run it only if your team publishes. Pause and check yours.
 
-SHOW: TRACKER R/4 · extra. Terminal (8 rows, title `laptop`, prompt `student@laptop:~/AC215/mega-pipeline$`)
-types `docker images` (extra) → TERM(mega-laptop/70-x-images.txt: 2–7; column view); `1.48GB` and
-the four ~830 MB sizes highlight. A clean-up card for part 1 writes in beside the strip as the SAY
-names it: "exit each container · --rm removes it" · "docker image rm <name> · your five images" ·
-"any dlops/* images you pulled" · "the root-owned Pipfile" · GREY "ran prod? docker buildx rm
-multi-arch".
+SHOW: TRACKER R/4 · extra. Terminal (10 rows, title `laptop`, prompt `student@laptop:~/AC215/mega-pipeline$`)
+types `docker images` (extra) → TERM(mega-laptop/70-x-images.txt: 2–7, …; column view: IMAGE and DISK
+USAGE, GREY tag "2 of 5 columns"); `1.48GB` and the four ~830 MB sizes highlight. At "plus any dlops
+images", the `…` row (line 8, the python base, cut) gets the GREY divider tag "after the run demo
+(S08):", then TERM(mega-laptop/78-x-images-all.txt: 3–4; same column view), the `dlops/*` images
+S08 pulled. A clean-up card for part 1 writes in above the terminal as the SAY names it: "exit each
+container · --rm removes it" · "docker image rm <name> · your five images" · "any dlops/* images you
+pulled". Its unsaid rows join at the start of the next beat, when the terminal has gone: "the
+root-owned Pipfile" · GREY "ran prod? docker buildx rm multi-arch", and a GREY "· the python base
+image" at the end of the `dlops/*` row.
 SAY: Clean-up for part 1. Exit each container; dash dash r m deletes it. The transcribe image alone is 1.48 gigabytes: remove all five with docker image rm, plus any dlops images you pulled.
 
 SHOW: Three GOLD rows join the card: "bucket: storage bills until you delete it · when the course is
@@ -1022,11 +1058,16 @@ SAY: In part 1, containers only left files in a bucket. Port toy makes two conta
 SHOW: V6. The two TEAL boxes grow into glass boxes. Inside each, a small `localhost` loop and a
 strip of ports `1 … 65535`; both strips light `9100` at the same time without clashing (caption
 "each box: its own ports"). A GREY laptop outline around them has its own third `localhost` loop.
-(The port-strip cells are the "rooms" S11 lifts out.)
-SAY: Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash.
+(The port-strip cells are the "rooms" S11 lifts out.) The bridge (SLIDES.md S10 ii): on "The lecture
+calls this a network namespace", the two glass boxes flash, each on its own (isolated: nothing joins
+them yet). GREY tag `Lecture 4 · slide 33` (top right, with the laptop outline, from "Think of each
+container" until "A network you create").
+SAY: Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash. The lecture calls this a network namespace: each container is isolated until you wire it.
 
 SHOW: A TEAL rail slides under the boxes, labelled "user-defined network"; a PINK phone-book icon sits
-on it with two blank lines. A GREY note: "Docker's default network: no phone book (exercises)".
+on it with two blank lines, labelled "Docker DNS" (slide 34's term) where it first appears. A GREY
+note: "Docker's default network: no phone book (exercises)". The slide 33 tag becomes `Lecture 4 ·
+slide 34` (top right, from "A network you create" until "Prerequisites").
 SAY: A network you create joins them like a small home network, with a phone book that turns container names into addresses. Docker's default network has none.
 
 SHOW: TRACKER P0/1 (the tracker appears, port_toy README). Terminal (full width, 12 rows, title
@@ -1066,7 +1107,8 @@ SHOW: TRACKER P1/3. CODE(port_toy/gateway/Dockerfile: 1–5), line 2 wrapped at 
 /var/lib/apt/lists/*` (header `gateway/Dockerfile · lines 1–5 · line 2 wrapped`) at the top; line 1
 `FROM python:3.14-slim` ORANGE, line 2 (apt installs `curl`) ORANGE, line 4 `COPY . .` GREEN, line 5
 `CMD ["python", "-u", "gateway.py"]` with `-u` circled and a GREY tag "unbuffered: prints reach docker
-logs at once". A GREY chip "processor/Dockerfile: the same, except line 5".
+logs at once". A GREY chip "processor/Dockerfile: the same, except line 5". GREY tag `Lecture 4 ·
+slide 12` (top right, from "The two Dockerfiles are almost identical" until "Then the gateway").
 SAY: Next, build two images. The two Dockerfiles are almost identical: a slim Python 3.14 image, plus curl from apt. Each copies its code and runs it with dash u, so prints reach the logs at once.
 
 SHOW: Terminal (full width, 12 rows, title `laptop`, prompt `student@laptop:~/AC215/port_toy$`). It
@@ -1098,7 +1140,8 @@ shrinks to the strip (the `-p` row stays); V7 is drawn full width above it. The 
 and "host port · street door" on a GREY door `127.0.0.1:8090` on the laptop; "container port · room"
 on the gateway, where its ports-strip cell 9100 from S10 lifts out (TransformFromCopy) and becomes
 the room's door `:9100`. A PINK arrow goes through the street door and bends into the room (one-line
-README chip `README.md · lines 224–228` "IP address : host port : container port").
+README chip `README.md · lines 224–228` "IP address : host port : container port"). GREY tag
+`Lecture 4 · slide 35` (top right, with the `-p` box, from "Dash p publishes a port" until "The two dash e flags").
 SAY: Then start the gateway. Dash p publishes a port: it opens a street door on your laptop that leads to a room inside the container. The order is IP address, host port, container port: 127.0.0.1, meaning this laptop only, then door 8090, then room 9100.
 
 SHOW: The two `-e` rows highlight PINK in the strip; CODE(port_toy/gateway/gateway.py: 13–14) appears
@@ -1166,7 +1209,7 @@ SHOW: TRACKER P2/1. Terminal (full width, 12 rows, title `laptop`, prompt
 gateway's `127.0.0.1:8090->9100/tcp` highlights YELLOW; the processor's empty PORTS cell gets a dashed
 YELLOW box and a GREY tag "listening ≠ published". A one-line README chip `README.md · line 230` "The
 host port comes first".
-SAY: Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first: 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published.
+SAY: Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first. It reads 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published.
 
 SHOW: TRACKER P2/1 · extra. It types `docker ps --format 'table {{.Image}}\t{{.Ports}}\t{{.Names}}'`
 (extra; folds) → TERM(port-laptop/17-ps-short.txt: 2–4); beside it a small GREY card,
@@ -1190,8 +1233,10 @@ SHOW: It types `docker run -d --name gateway-all --network toynet -p 8091:9100 t
 `0.0.0.0:8091->9100/tcp` YELLOW and a GREY tag "yours may also list [::]:8091 (IPv6)"; then `docker
 rm -f gateway-all` (extra) → TERM(port-laptop/21-x-ps-all-addresses.txt: 6). In V7, a wide GREY door
 `0.0.0.0:8091` faces the street (small GREY glyphs of other machines outside), while `127.0.0.1:8090`
-faces only inward.
-SAY: With door 8091 it works, and the mapping shows 0.0.0.0: every address, so other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only.
+faces only inward. GREY tag `Lecture 4 · slide 35` (top right, from "That's why the README writes"
+until the next beat's first play), with the GREY note under it "lecture's short form = every
+address" (SLIDES.md Conflict 1).
+SAY: With door 8091 it works. The mapping shows 0.0.0.0. That means every address: other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only.
 
 SHOW: TRACKER P2/2. The terminal clears. It types `curl http://localhost:8090` →
 TERM(port-laptop/22-curl-8090.txt: 2–7, …, 154–155) (cut). Then `curl --max-time 3
@@ -1218,15 +1263,18 @@ joined), the last line RED. Only now does the gateway's loop glow YELLOW: in V6 
 into the gateway itself, where no `:9200` door exists. TRACKER P2/3 · extra: it types `docker exec
 gateway curl -s http://localhost:9100 | head -4` (extra) → TERM(port-laptop/26-x-exec-localhost-9100.txt:
 2–5); the loop lands on the gateway's own `:9100` door (GREEN). A one-line README chip `README.md ·
-line 290` "localhost means the gateway itself"; a YELLOW tick "puzzle 2".
+line 290` "localhost means the gateway itself"; a YELLOW tick "puzzle 2". GREY tag `Lecture 4 · slides
+33–34` (top right, from "That's the second puzzle" until the next beat's first play; it replaces the
+README chip).
 SAY: Nothing. Inside the gateway, localhost is the gateway itself, and nothing there listens on 9200. That's the second puzzle: each container has its own localhost. An extra check: on 9100, its own port, localhost returns the page.
 
 SHOW: TRACKER PH/5. V6/V7 fade; the terminal grows to 12 rows. It types `docker network inspect
 toynet` → TERM(port-laptop/28-network-inspect.txt: 4, …, 16, …, 32, …, 35, …, 39, …, 42, …);
-`172.19.0.0/16`, `gateway` / `172.19.0.3/16` and `processor` / `172.19.0.2/16` highlight PINK. Then the
+`172.19.0.0/16`, `gateway` / `172.19.0.3/16` and `processor` / `172.19.0.2/16` highlight PINK; on
+"from toynet's own address range" `172.19.0.0/16` gets the GREY tag "toynet's address range". Then the
 terminal shrinks back to 6 rows, V6 returns, and the highlighted values fly from the terminal into
 V6's phone book on the rail (TransformFromCopy): `processor → 172.19.0.2`, `gateway → 172.19.0.3`.
-SAY: So how did the name work? From the handy commands, docker network inspect shows an address for each container, on toynet's own subnet.
+SAY: So how did the name work? From the handy commands, docker network inspect shows an address for each container, from toynet's own address range, its subnet.
 
 SHOW: TRACKER PH/5 · extra. It types `docker exec gateway cat /etc/resolv.conf` (extra) →
 TERM(port-laptop/29-x-dns.txt: …, 6, …) (`nameserver 127.0.0.11` PINK), then `docker exec gateway getent
@@ -1307,7 +1355,9 @@ TERM(port-laptop/42-run-gateway-9300.txt: 6) (cut); `PROCESSOR_PORT=9300` highli
 gateway's arrow re-aims at `:9300` and turns PINK; the street door slides back to `8090`. The terminal
 shrinks to the strip (the run stays visible); a compact PAGE(port-laptop/43-send-9300.txt) shows
 `processor listening on port 9300`; REPLY(port-laptop/43-send-9300.txt: 2) (wrap). A GREY chip "no
-rebuild · configuration only (README.md lines 404–409)". `▶ your turn` on the strip's run line.
+rebuild · configuration only (README.md lines 404–409)". `▶ your turn` on the strip's run line. GREY
+tag `Lecture 4 · slide 26` (top band, left of the page's illustration tag, from "No image was rebuilt"
+until "Finally, clean up").
 SAY: The gateway's processor port. Remove the gateway and start it with 9300, back on 8090, and the message goes through. No image was rebuilt: it's only configuration. Pause and fix yours.
 
 SHOW: The two chips `PORT=9300` (processor) and `PROCESSOR_PORT=9300` (gateway) link with a GREEN
@@ -1335,7 +1385,7 @@ Right (x > 0.2, from the top edge): CODE(port_toy/docker-compose.yml: 11–25) w
 characters, so line 14 becomes `build: ./gateway  # …` (≈ 6.3 × 6.5; header `docker-compose.yml ·
 lines 11–25 · comment cut`). A one-line README chip `README.md · lines 432–446` "an excerpt" sits
 under the panel's header.
-SAY: Step 4: Docker Compose. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it.
+SAY: Step 4: Docker Compose, which builds and starts the whole app from one YAML file. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it.
 
 SHOW: Each flag lifts off its chip and flies left → right to its YAML key, which highlights GREEN as
 it lands: `--name gateway` → `container_name: gateway` (line 13); `docker build ./gateway` → `build:
@@ -1344,13 +1394,15 @@ PROCESSOR_PORT=9200` → `environment:` (19–21); `--network toynet` → `netwo
 toy-gateway` and `-d` stay behind, dimmed (GREY tag "no home: Compose names the image itself"). The
 panel swaps to CODE(port_toy/docker-compose.yml: 27–39) for the processor (its chips fly the same way:
 `--name`, `build`, `-e PORT=9200`, `--network`), where `docker network create toynet` lands on `name:
-toynet` (39).
+toynet` (39). GREY tag `Lecture 4 · slides 17–20` (bottom right: the top band is full; from "Almost
+every flag" until "and the depends on key").
 SAY: Dash dash name becomes container name, and the build command becomes build. Dash p becomes ports, dash e becomes environment, and the network is named at the bottom of the file.
 
 SHOW: Back on CODE(port_toy/docker-compose.yml: 11–25): two keys with no by-hand ancestor fade in with
 GREEN outlines: `volumes:` / `- ./gateway:/app` (17–18, tag "live-mount the gateway's folder") and
 `depends_on:` / `- processor` (22–23, tag "start the processor first"). Then the left column's chips
-collapse into one PURPLE chip: `docker compose up`.
+collapse into one PURPLE chip: `docker compose up`. On "and the depends on key" the slides 17–20 tag
+becomes `Lecture 4 · slide 27` (same slot, until "Run it").
 SAY: Two keys are new: the volumes key mounts the gateway's folder into slash app, and the depends on key starts the processor first. All of step 1 collapses into one command: docker compose up.
 
 SHOW: Terminal (full width, 13 rows, title `laptop`, prompt `student@laptop:~/AC215/port_toy$`). It
@@ -1367,10 +1419,11 @@ SAY: Then it creates the network and both containers, and prints both banners, e
 SHOW: The first terminal shrinks to a strip at the bottom (still running). TRACKER P4/1: a compact
 PAGE(port-laptop/49-send-compose.txt) (address bar and reply card only, address `localhost:8090`)
 flashes in with REPLY(port-laptop/49-send-compose.txt: 2) (README chip `README.md · line 460`). A
-second terminal (title `laptop · second terminal`, 10 rows) slides in above the strip; its first
-prompt shows the home folder `student@laptop:~$` with the folder part flashing YELLOW and a GREY
-caption "new terminal: cd here first · Compose reads the file in the current folder", then the prompt
-reads `student@laptop:~/AC215/port_toy$`. TRACKER P4/2: it types `docker compose ps` →
+second terminal (title `laptop · second terminal`) slides in above the strip; it opens on
+`student@laptop:~$`, the `~` flashing YELLOW with a GREY caption "new terminal: cd here first";
+"· Compose reads the file in the current folder" joins it on that clause. The captions go, it types
+`cd ~/AC215/port_toy` (no output), and the prompt reads `student@laptop:~/AC215/port_toy$` (the new
+path flashes YELLOW). TRACKER P4/2: it types `docker compose ps` →
 TERM(port-laptop/48-compose-ps.txt: 2–4; wrap), PORTS cell YELLOW.
 SAY: Open the page: it works. In a second terminal, cd into port toy first: Compose reads the file in the current folder. There, docker compose ps shows the same mapping.
 
@@ -1416,6 +1469,8 @@ SAY: Docker compose down removes the containers and the network, and nothing is 
 SHOW: TRACKER P4/3. Terminal (full width, 12 rows, title `laptop`, prompt
 `student@laptop:~/AC215/port_toy$`). It types `docker compose up -d` →
 TERM(port-laptop/55-compose-up-d.txt: 2–5); the prompt returns at once (GREY tag "in the background").
+GREY tag `Lecture 4 · slide 29` (top right, from "up dash d starts the app" until the next beat's compact
+page arrives, after "Compose logs dash f").
 SAY: Back to the README's order: up dash d starts the app in the background and returns your prompt.
 
 SHOW: TRACKER PH/2. It types `docker compose logs -f gateway` → TERM(port-laptop/56b-compose-logs-f.txt:
@@ -1432,7 +1487,7 @@ experiments in docker-compose.yml". A pencil edits line 16 in a small editor pan
 TRACKER P4/3. The strip types `docker compose up -d` → TERM(port-laptop/58-compose-up-d-changed.txt:
 2–4): `processor Running` GREEN, `gateway Started 10.5s` YELLOW. Above the strip, V6's two boxes: in
 V8's coda the gateway box re-forms with a door `8095`, while the processor keeps glowing.
-SAY: Step 3: repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway.
+SAY: Next, the README says to repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway.
 
 SHOW: A compact PAGE(port-laptop/59-x-send-8095-compose.txt) flashes on `localhost:8095`. Then the
 pencil changes line 16 back and the strip types `docker compose up -d` →
@@ -1445,7 +1500,7 @@ TERM(port-laptop/61-x-edit-processor.txt: 10–11). TRACKER P4/4. The terminal (
 compose up -d --build` → TERM(port-laptop/62-compose-up-d-build.txt: 3, …, 21–24, …, 43–47) (BuildKit
 rows); line 24 `[processor 4/4] COPY . .` (not CACHED) highlights YELLOW; line 46 `gateway Running`
 GREEN, line 47 `processor Started 10.4s` YELLOW.
-SAY: Changed code that's copied into an image needs dash dash build. We added a comment to the processor's code: only the copy layer is new, and only the processor is recreated.
+SAY: We added a comment to the processor's code. Changed code that's copied into an image needs dash dash build. Only the copy layer is new, and only the processor is recreated.
 
 SHOW: Tag `illustration` ("what if"). CODE(port_toy/docker-compose.yml: 17–18) (comment cut) beside
 CODE(port_toy/gateway/gateway.py: 20) `with open("index.html", "rb") as f:`; a pencil edits
@@ -1467,7 +1522,7 @@ SHOW: The terminal fades. A card "Test yourself". Questions appear one at a time
 centre, each with a glyph-only icon at its left (no text inside the icon); each question slides up
 and fades as the next writes in. Q1 "Which files define a mega-pipeline image? What does run use
 when there's no local image?" (icon: V1's signpost and box).
-SAY: To test yourself. One: which files define a mega-pipeline image, and what does run use when there's no local image?
+SAY: To test yourself, pause after each question. One: which files define a mega-pipeline image, and what does run use when there's no local image?
 
 SHOW: Q2 "Which three gates must a call to your bucket pass, and where does each one fail?" (icon:
 V3's three gates). Q3 "How does a git-ignored key end up in an image? The fix?" (icon: V5's COPY

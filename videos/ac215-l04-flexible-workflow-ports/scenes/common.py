@@ -967,7 +967,9 @@ def _row_of(line):
 def beside(mob, t: Terminal, line, buff: float = 0.3):
     """Position `mob` (a tag, a check mark ...) right after the text of terminal line `line` (its
     last row when folded), centred on that row; if it would cross the terminal's right edge it
-    sits at the right end of the row instead. Returns mob (not added)."""
+    sits at the right end of the row instead, where it may cover the end of a full row: callers
+    may probe and fall back, and pin() refuses a tag that covers its row's text. Returns mob
+    (not added)."""
     row = _row_of(line)
     ref = row.glyphs if len(getattr(row, "glyphs", [])) else row.strut
     mob.next_to(ref, RIGHT, buff=buff)
@@ -977,10 +979,30 @@ def beside(mob, t: Terminal, line, buff: float = 0.3):
     return mob
 
 
+def covers_text(mob, line) -> bool:
+    """True when `mob` would hide the text of terminal line `line` (its last row when folded): it
+    carries text or a filled box (a tag, a check mark) and crosses the row's glyphs. An outline drawn
+    around the text (glyph_box) hides nothing."""
+    hides = any(type(m).__name__ in ("Text", "MarkupText", "Paragraph")
+                or (isinstance(m, Rectangle) and m.get_fill_opacity() > 0.3) for m in mob.get_family())
+    g = getattr(_row_of(line), "glyphs", None)
+    if not hides or g is None or not len(g):
+        return False
+    l, r, b, t = mob.get_left()[0], mob.get_right()[0], mob.get_bottom()[1], mob.get_top()[1]
+    return any(l < ch.get_right()[0] + 0.03 and r > ch.get_left()[0] - 0.03
+               and b < ch.get_top()[1] and t > ch.get_bottom()[1]
+               for ch in g.family_members_with_points())   # per character: a tag in a gap is fine
+
+
 def pin(scene, line, mob, run_time: float = 0.4, anim=None):
     """Show `mob` (positioned, e.g. with beside()) and make it part of the terminal line (its
-    last row when folded), so it scrolls and fades with it."""
+    last row when folded), so it scrolls and fades with it. A tag that would cover the row's text
+    is an error: put it on an output row or under the terminal."""
     row = _row_of(line)
+    if covers_text(mob, row):
+        raise ValueError(f"pin(): this {mob.width:.2f}-wide tag would cover the text of its row "
+                         f"(the text ends at x={row.glyphs.get_right()[0]:.2f}). "
+                         "Put the tag on an output row or under the terminal.")
     scene.play(anim or FadeIn(mob, shift=LEFT * 0.1), run_time=run_time)
     scene.remove(mob)
     row.add(mob)
@@ -1033,11 +1055,28 @@ def print_build(scene, t: Terminal, rows: list, run_time: float = 0.6, color: st
     return new
 
 
+def grid_x0(line) -> float:
+    """The x of column 0's left edge in a mono_line, measured from its glyphs: the median over
+    non-space characters of (glyph centre − (k + 0.5) · cell width). Falls back to the strut."""
+    cw = cell_width(line.pt)
+    offs, gi = [], 0
+    for k, ch in enumerate(line.text):
+        if ch.isspace():
+            continue
+        if gi >= len(line.glyphs):
+            break
+        offs.append(line.glyphs[gi].get_center()[0] - (k + 0.5) * cw)
+        gi += 1
+    return float(np.median(offs)) if offs else line.strut.get_left()[0]
+
+
 def col_box(line, a: int, b: int, color: str = TURN, dashed: bool = False, pad: float = 0.04):
     """A box over character columns a..b (exclusive) of a mono_line, blank cells included (the
-    processor's empty PORTS cell). Not added."""
+    processor's empty PORTS cell). Not added.
+    The columns are measured from the glyphs (grid_x0): the strut's left edge sits about 0.6 of a
+    cell left of column 0, which put every box short of its text (Bugbot, PR #29)."""
     cw = cell_width(line.pt)
-    x0 = line.strut.get_left()[0] + a * cw
+    x0 = grid_x0(line) + a * cw
     r = box((b - a) * cw + 2 * pad, line.strut.height + 2 * pad, color, fill_opacity=0.0,
             radius=0.06, dashed=dashed, stroke=3)
     r.move_to([x0 + (b - a) * cw / 2, line.strut.get_center()[1], 0])
