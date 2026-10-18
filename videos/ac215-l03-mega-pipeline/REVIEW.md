@@ -506,10 +506,10 @@ on the 06:26 stitch and were not repeated on the current files.
      ORANGE, the colour of its base slab, and pulses once, so the closing reply should say that. The
      S01 (`PRRT_kwDOU7eKAs6tWpWM`) and S13 (`PRRT_kwDOU7eKAs6tbH32`) threads were answered and
      resolved on 2026-10-18.
-   - `QA_FOLLOWUPS.md` records no outcome for five entries that QA closed: the S07→S08 continuity
-     check, the S07 unused imports (`ruff --select F401` now passes), the S07 GREEN shelf line, the
-     all-scenes FadeOut grep and the S14 full read. They still read as to-dos. Its snap-back and
-     `Window.blink()` entries were marked done on 10-17 (`43fa0c7`).
+   - `QA_FOLLOWUPS.md` now records the outcome of the five entries QA closed (the S07→S08 continuity
+     check, the S07 unused imports, the S07 GREEN shelf line, the all-scenes FadeOut grep and the S14
+     full read), marked done on 2026-10-18. Its snap-back and `Window.blink()` entries were marked done
+     on 10-17 (`43fa0c7`).
 
 ## Verified (re-stitched final render)
 
