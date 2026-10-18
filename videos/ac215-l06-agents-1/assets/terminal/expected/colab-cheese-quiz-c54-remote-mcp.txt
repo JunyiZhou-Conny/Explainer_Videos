@@ -1,0 +1,34 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 54 (0-based index in the .ipynb; first line: '# MCP Server'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[display: markdown]
+For the perfect grilled cheese sandwich, consider using a combination of cheeses to achieve the ideal melt and flavor. Here are some top choices:
+
+1. **Cheddar**: 
+   - **Melting Properties**: Cheddar melts beautifully, especially when aged for about 3-6 months.
+   - **Flavor Profile**: Offers a sharp, tangy flavor that pairs well with bread.
+   - **Availability**: Widely available in most grocery stores.
+   - **Cooking Tip**: Use medium heat to ensure even melting without burning the bread.
+
+2. **Gruyère**:
+   - **Melting Properties**: Known for its smooth melt, making it perfect for a creamy texture.
+   - **Flavor Profile**: Nutty and slightly sweet, adding depth to your sandwich.
+   - **Availability**: Found in most cheese sections, especially in larger stores.
+   - **Cooking Tip**: Combine with Cheddar for a balanced flavor and melt.
+
+3. **Mozzarella**:
+   - **Melting Properties**: Offers a gooey, stretchy melt.
+   - **Flavor Profile**: Mild, allowing other flavors to shine.
+   - **Availability**: Easily found in both block and shredded forms.
+   - **Cooking Tip**: Pair with a sharper cheese like Cheddar for added flavor.
+
+4. **Brie**:
+   - **Melting Properties**: Soft and creamy, melts quickly.
+   - **Flavor Profile**: Rich and buttery with earthy notes from the rind.
+   - **Availability**: Available in most grocery stores, often in the specialty cheese section.
+   - **Cooking Tip**: Use rind-on for added flavor; it contributes mushroomy, earthy notes.
+
+### Fun Cheese Facts:
+- **Salt's Role**: Salt helps control moisture and rind formation during cheesemaking, crucial for texture and flavor.
+- **Fondue Favorites**: Gruyère and Emmental are classics for fondue thanks to their smooth melt, making them great for grilled cheese too.
+- **Brie Rind**: Rind-on bries are edible; the rind adds mushroomy, earthy notes, enhancing the overall taste.
+
+By combining these cheeses, you can create a grilled cheese sandwich that's both flavorful and perfectly melted. Enjoy experimenting with different combinations to find your favorite!

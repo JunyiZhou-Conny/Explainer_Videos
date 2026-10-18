@@ -1,0 +1,3 @@
+$ git status --short
+ M docker-shell.sh
+[exit 0]

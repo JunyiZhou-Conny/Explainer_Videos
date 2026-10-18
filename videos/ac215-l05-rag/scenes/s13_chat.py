@@ -256,7 +256,10 @@ def dashed_morph(scene, a, b, *extra, run_time: float = 0.7):
 
 def tracker_to(tr, k: int) -> list:
     """tr.goto(k) with its caption cross-faded in place: the shared Transform flies the first
-    caption in from the empty one's position and scrambles one caption into the next."""
+    caption in from the empty one's position and scrambles one caption into the next. The old
+    caption's copy needs no scene.add: Scene.play adds every animated mobject that is not on the
+    scene yet (add_mobjects_from_animations), so it fades out over the first half (frames checked:
+    build/rest/s13/trk_*.png)."""
     anims = []
     if tr.k:
         anims.append(FadeOut(tr.caption.copy(), rate_func=first_half))
@@ -383,7 +386,11 @@ class FinalPrompt(VoiceScene):
             self.play(LaggedStart(*[Create(a) for a in back], lag_ratio=0.25), run_time=0.7)
 
         # ========================================================== 3 · the system prompt: defined, never sent
-        sys_block.move_to(GHOST_C)
+        # right of GHOST_C and a little up: at GHOST_C its corner met the cylinder's top (0.05 apart)
+        # and its bottom sat 0.1 above the prompt card
+        sys_block.move_to(GHOST_C + np.array([0.3, 0.06, 0]))
+        assert sys_block.get_left()[0] > cyl.get_right()[0] + 0.3, (sys_block.get_left(), cyl.get_right())
+        assert sys_block.get_bottom()[1] > pc.get_top()[1] + 0.12, (sys_block.get_bottom(), pc.get_top())
         p41 = src_panel("cli.py", 40, 41, wrap=True)
         p47 = src_panel("cli.py", 47, 47, wrap=True)
         big_label = mono("SYSTEM_INSTRUCTION", 22, S.GREY)
@@ -617,10 +624,13 @@ class FinalPrompt(VoiceScene):
             g.frame.stretch_to_fit_height(h)
             g.items.align_to(g.frame, UP).shift(DOWN * 0.25)
         cols = VGroup(left, right).arrange(RIGHT, buff=0.3, aligned_edge=UP)
-        cols.move_to([0, -0.3 - cols.height / 2, 0])
+        cols.move_to([0, -0.42 - cols.height / 2, 0])
         gt_head = note("a grounding test").next_to(cols, UP, buff=0.08).align_to(cols, LEFT).shift(RIGHT * 0.12)
         cmp_note = note("compare the char-split and recursive-split answers")
         cmp_note.next_to(cols, DOWN, buff=0.18)
+        # the heading clears the chat window above it; the note stays inside the safe frame
+        assert gt_head.get_top()[1] < win.get_bottom()[1] - 0.15, (gt_head.get_top(), win.get_bottom())
+        assert cmp_note.get_bottom()[1] > -3.45, cmp_note.get_bottom()
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(lf, qbox, etag, t)), run_time=0.5)
@@ -662,7 +672,10 @@ class FinalPrompt(VoiceScene):
         tc.move_to([0, (br.get_bottom()[1] - 0.3 + -3.45) / 2, 0])
 
         def shell(w, question) -> VGroup:
-            """A chat window's frame, title bar, dots, address field and input field, the question on top."""
+            """A chat window's frame, title bar, dots, address field and input field, the question on top.
+            No second chrome is left behind: Scene.play adds the source wrapper with Scene.add, which
+            first takes these members out of win/q on the scene, and ReplacementTransform then swaps the
+            wrapper for the target one (frames checked: build/rest/s13/morph_*.png, end_*.png)."""
             return VGroup(w.frame, w[1], w[2], w[3], w.field, question)
 
         with self.voiceover(SAY[9]) as vo:

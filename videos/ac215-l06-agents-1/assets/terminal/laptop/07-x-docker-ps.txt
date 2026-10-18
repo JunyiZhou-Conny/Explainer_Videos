@@ -1,0 +1,5 @@
+$ docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'
+NAMES                                  IMAGE                    PORTS
+llm-rag-llm-rag-cli-run-61b50b7d6730   llm-rag-cli              
+llm-rag-chromadb                       chromadb/chroma:latest   0.0.0.0:8000->8000/tcp
+[exit 0]

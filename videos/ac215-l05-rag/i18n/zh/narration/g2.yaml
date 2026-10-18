@@ -90,7 +90,7 @@ S11:
   - null
 - en: "The question must become a vector before the database can compare it, and only the same Google model makes one in the same space."
   zh:
-  - "问题必须先变成向量，数据库才能拿它来比较；而只有同一个 Google 模型，才能做出同一个空间里的向量。"
+  - "问题必须先变成向量，数据库才能拿它来比较，而只有同一个 Google 模型才能做出同一个空间里的向量。"
 - en: "Step 2 runs it on recursive split; pause and run both. With your key, look for 256 embedding values, the query, and the results. The results are lists of lists: one list per query, holding IDs, distances, metadata and documents."
   zh:
   - "第 2 步用 recursive-split 再跑一次；暂停一下，两条都跑一遍。"
@@ -102,7 +102,7 @@ S11:
   - null
 - en: "That's why chat, later, reads documents, item zero. No results were recorded, so next we ask the loaded database directly."
   zh:
-  - "所以后面 chat 读的是 documents 的第 0 项。"
+  - "所以后面 chat 这一步读的是 documents 的第 0 项。"
   - "我们没有录到任何结果，所以接下来直接去问加载好的数据库。"
   en_display:
   - "That's why chat, later, reads documents[0]."
@@ -149,7 +149,7 @@ S12:
   zh:
   - "重启后检查用的那条 --get 命令，用了同样的按书过滤，但没有问题，所以也没有距离。"
   - "这 10 条记录，最前面是 Gutenberg 的开头声明，接着是书名页和书的目录。"
-  - "这段声明，还有每本书结尾的许可证，都会像普通文本一样被建进索引：分块之前先把它们去掉。"
+  - "这段声明，还有每本书结尾的许可证，都会像普通文本一样被建进索引：先把它们去掉，再分块。"
   en_display:
   - "The --get command from the restart check uses the same book filter, but no question, so no distances."
   - null
@@ -213,7 +213,7 @@ S14:
 - en: "Back to chunking, with the lecture's best answer: cut where the meaning changes. On the slides, an anchor walks through the sentences and joins neighbors while their similarity stays above 0.8."
   zh:
   - "回到分块，看看课上最好的答案：在意思变化的地方切开。"
-  - "课件上，一个锚点沿着句子往前走，只要相似度保持在 0.8 以上，就把相邻的句子并进来。"
+  - "在课件上，一个锚点沿着这些句子一路往前走，把相邻的句子并进来，前提是相似度保持在 0.8 以上。"
 - en: "The code uses the same ingredients with a different rule. Every sentence gets a window, itself and one neighbor on each side, and each window is embedded."
   zh:
   - "代码用的是同样的材料，规则却不一样。"
@@ -260,7 +260,7 @@ S14:
 - en: "The chunks come out very uneven, and even a single-topic book gets cut at its biggest gaps. Afterwards, an extra: chat works the same way. Pause and try it, with your key."
   zh:
   - "切出来的 chunk 长短很不均匀；就连只讲一个主题的书，也会在它最大的几处落差上被切开。"
-  - "之后再加一个额外步骤：chat 也一样能用。"
+  - "之后再加一个额外步骤：chat 这一步也一样能用。"
   - "暂停一下，用你的密钥试试。"
 S15:
 - en: "The lecture goes further. Its frame adds a pre-retrieval stage and a post-retrieval stage. Semantic chunking sits in pre-retrieval: the one advanced lever this tutorial implements. Here are three more, as ideas only."
@@ -282,8 +282,8 @@ S15:
   - "两种方法给三个段落排出的顺序不一样。"
 - en: "Reciprocal rank fusion gives each paragraph one half divided by its rank, in each list, and adds them up. The near paraphrase wins with 0.75, ahead of 0.67 and 0.42."
   zh:
-  - "倒数排名融合在每个列表里给每个段落记二分之一除以它的排名，再加起来。"
-  - "几乎是原句改写的那一段以 0.75 胜出，领先 0.67 和 0.42。"
+  - "倒数排名融合给每个段落记二分之一除以它的排名，每个列表各记一次，再加起来。"
+  - "和问题几乎同义的那一段以 0.75 胜出，领先 0.67 和 0.42。"
 - en: "After retrieval: re-ranking. A fast retriever, whose vectors were made before the question existed, returns 25 candidates with the right ones scattered. A slower model reads each question and chunk together and reorders them."
   zh:
   - "检索之后：重排序。"
@@ -292,7 +292,7 @@ S15:
 - en: "None of these is in cli.py. They're what you reach for when naive retrieval brings back the wrong chunks; our filtered query only needed its filter removed."
   zh:
   - "这些都不在 cli.py 里。"
-  - "当朴素检索取回了错的 chunk 时，你才会用上它们；而我们那个带过滤的查询，只需要把过滤去掉。"
+  - "你会用上它们，是在朴素检索取回了错的 chunk 的时候；而我们那个带过滤的查询，只需要把过滤去掉。"
 S16:
 - en: "Time to tear down. Type exit, then docker compose down from the repo folder: the same harmless warnings, then Chroma and the network are gone."
   zh:
@@ -311,7 +311,7 @@ S16:
 - en: "Nothing keeps running in Google Cloud; you paid only for what you sent. Keep the key beside the repo: inside it, git wouldn't ignore the key, and the image would copy it. Delete it when the course ends. Pause and tear down now, so port 8000 is free next time."
   zh:
   - "Google Cloud 上没有任何东西一直在运行；你只为发送过的内容付了费。"
-  - "把密钥放在 repo 旁边：放进 repo 里的话，git 不会忽略它，image 也会把它复制进去。"
+  - "把密钥放在 repo 旁边：放在里面的话，git 不会忽略它，image 也会把它复制进去。"
   - "课程结束后，把它删掉。"
   - "现在就暂停，把它拆掉，这样下次 port 8000 就是空着的。"
 - en: "One last lesson, from the staff's recorded run of next lecture's agent. It retrieved text about transhumance from an older Tolminc book, replaced that same day. The database answers from what was loaded: when the books change, rebuild the index."
@@ -322,7 +322,7 @@ S16:
 - en: "Next lecture runs this command with an agent. In the staff's run, the model chose which retrieval tool to call. The lecture's Self-RAG goes further: the model decides whether to retrieve at all, then checks what it found."
   zh:
   - "下节课会用一个 agent 来跑这条命令。"
-  - "在课程团队的那次运行里，模型自己选择调用哪个检索工具。"
+  - "在课程团队的那次运行里，模型自己选了要调用哪个检索工具。"
   - "课上讲的 Self-RAG 走得更远：由模型决定到底要不要检索，然后再检查它找到的东西。"
 - en: "And the four questions? An embedding is a direction for meaning. A vector database stores records, with an index to search them. A query finds the question's nearest neighbors. The context is the chunks you paste into the prompt."
   zh:
@@ -344,5 +344,5 @@ S16:
   - "第五题：这个 prompt 少了什么，又该怎么修？"
 - en: "The answers are in the exercises, and every command is in the study guide, in the MLOps Learning repo. Next time: agents."
   zh:
-  - "答案在练习里；每条命令都在学习指南里，在 MLOps Learning 这个 repo 里。"
+  - "答案在练习里，每条命令都在学习指南里，就在 MLOps Learning 这个 repo 里。"
   - "下节课：agent。"

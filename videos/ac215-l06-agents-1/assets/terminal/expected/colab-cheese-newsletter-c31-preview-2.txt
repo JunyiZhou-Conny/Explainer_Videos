@@ -1,0 +1,42 @@
+# recorded: Colab notebook "Cheese Newsletter - Harness" (L06_cheese_newsletter_harness.ipynb; https://colab.research.google.com/drive/1nnHrJ4Si3tpgUQl6HqlcwxKymV1-ecPv), cell 31 (0-based index in the .ipynb; first line: 'display(HTML(Path(receipts[1]["path"]).read_text(encoding="utf-8")))'). Saved output of the staff's last run, 2026-09-20 13:27 UTC (footer of the saved HTML); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed). Course staff's names and e-mail addresses replaced by <reader1>.. / <email>.
+[display: HTML, 5669 characters; its text:]
+A warm September welcome to Charlotte’s cheese season
+LOCAL EMAIL PREVIEW · NOT SENT
+From: Formaggio.me
+To: <reader2> <<email>>
+Subject: A warm September welcome to Charlotte’s cheese season
+Formaggio.me · The cheese letter
+Charlotte, with cheese.
+2026-09 edition
+Hi <reader2>,
+Charlotte’s September cheese calendar is full of upcoming pairings and tastings. Here are three verified events, plus an evergreen local-shop spotlight for your next cheese stop.
+From the cheese counter
+Upcoming: Wine and Cheese Pairing at Assorted Table with Orrman’s
+Wednesday, September 23, 2026, from 6:00 to 7:30 p.m. at The Market at 7th Street, 224 E. 7th Street, Charlotte, NC 28202. Enjoy five wines paired with five cheeses. Admission is $60 per person; the event is for guests 21 and older and limited to 18 guests. Parking validation is available for two hours in the 7th Street Station Garage. Official source: S1.
+Source: Wine & Cheese Pairing at Assorted Table - September 23rd – Orrman's Cheese Shop
+Upcoming: Fall Harvest Burgundy Grande Tasting at Petit Philippe
+Friday, September 25, 2026, from 6:00 to 8:00 p.m. at Petit Philippe in Charlotte. The $59 ticket includes ten Burgundy wines plus light cheese and charcuterie. Tickets are non-refundable after September 24. Official source: S2.
+Source: Fall Harvest: Burgundy Grande Tasting TICKET - Friday, September 25, 2026 | 6-8PM - Petit Philippe
+Upcoming: Oktoberfest Wine and Cheese Pairing at Frenchy’s and Orrman’s
+Monday, September 28, 2026, from 6:00 to 7:00 p.m. at Frenchy’s Sip and Shop, 200 W. Tremont Ave., Charlotte, NC 28203. German and Oktoberfest-associated wines will be paired with cheese by Rachel of Orrman’s. Tickets are required; the price was not displayed in the official listing. Official source: S3.
+Source: EVENTS | Explore & Enjoy: Join Our Events — FRENCHY'S SIP AND SHOP
+Local spotlight: Orrman’s Cheese Shop
+Evergreen local feature: Orrman’s is a Charlotte specialty cheese shop at 2901 Selwyn Ave., Charlotte, NC 28209, focused mostly on farmstead and artisanal cheeses. The shop also offers charcuterie, boards, pantry goods, catering, and delivery within a seven-mile radius. Its site lists complimentary wine tastings on Thursdays from 5:00 to 7:00 p.m.; confirm details before visiting. Official source: S4.
+Source: Orrman's Cheese Shop
+Offers & discoveries
+No Charlotte retailer-owned cheese offer was verified as available at a Charlotte location as of September 20, 2026. The researched promotions were either expired, tied to another market, or not reliably connected to a Charlotte store, so no offers are included.
+All three events are upcoming as of September 20, 2026. Details and ticket availability can change, so check the official source listings before making plans. Source and verification references: S1, S2, S3, and S4 in the supplied source registry.
+Created 2026-09-20 13:28 UTC · AC215 Fall 2026
+This is a locally saved email preview. No email was sent. Prices and availability can change.
+
+[display]
+/content/newsletter_output/<reader1>-2026-09-25fd23e3.html
+
+[display]
+/content/newsletter_output/<reader2>-2026-09-25fd23e3.html
+
+[display]
+/content/newsletter_output/<reader3>-2026-09-25fd23e3.html
+
+[display]
+/content/newsletter_output/<reader4>-2026-09-25fd23e3.html

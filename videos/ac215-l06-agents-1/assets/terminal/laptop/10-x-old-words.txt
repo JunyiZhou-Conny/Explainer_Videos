@@ -1,0 +1,6 @@
+$ for w in transhumance 'Soča' 'Monastic' 'cultural artifact'; do printf '%-18s out.txt %2s   book today %2s   book before 85bba32 %2s\n' "$w" "$(grep -c "$w" out.txt)" "$(grep -c "$w" 'input-datasets/books/Tolminc Cheese.txt')" "$(git show '85bba32^:input-datasets/books/Tolminc Cheese.txt' | grep -c "$w")"; done
+transhumance       out.txt  2   book today  0   book before 85bba32  3
+Soča              out.txt  3   book today  0   book before 85bba32  7
+Monastic           out.txt  1   book today  0   book before 85bba32  1
+cultural artifact  out.txt  2   book today  0   book before 85bba32  1
+[exit 0]

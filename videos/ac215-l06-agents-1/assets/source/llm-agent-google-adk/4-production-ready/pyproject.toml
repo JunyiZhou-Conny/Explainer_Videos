@@ -1,0 +1,32 @@
+[project]
+name = "adk-tutorial-production"
+version = "0.1.0"
+description = "Tutorial 4: Production-ready deployment with FastAPI and Google ADK"
+requires-python = ">=3.10"
+dependencies = [
+    "google-adk[all]>=1.8.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+]
+
+[project.optional-dependencies]
+deployment = [
+    "google-cloud-storage>=2.10.0",
+    "google-cloud-aiplatform>=1.70.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/adk_tutorial_baseline"]
+
+
+
+[tool.uv]
+dev-dependencies = []

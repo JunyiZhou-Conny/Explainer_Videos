@@ -17,19 +17,22 @@ Beats (script.md "## S12", one voiceover block each):
     way to the 3-row container strip: recorded-embeddings/08 lines 13–15 (the tag "recorded · the
     staff's vectors (68e0bde)" on the strip's top right); line 14 boxed YELLOW and a YELLOW
     "mentioning Tolminc: 0" on the fully dimmed Tolminc cluster.
- 3  After "Now a search." the picture leaves; the strip grows to 11 rows; the card above it becomes
-    "an extra Python check · query with a stored vector" (the staff tag moves up beside it); the
-    question card becomes the tag "stand-in query · a stored story chunk's vector".
-    TERM(recorded-embeddings/09: 16–17 word-folded, the chunk id PINK; then 18–28, "-- no filter"
-    flashes): 0.0000 boxed with the GREY tag "itself", 0.1627 boxed YELLOW.
+ 3  After "Now a search." the filter row leaves and the question card flashes, then becomes the tag
+    "stand-in query · a stored story chunk's vector"; the strip grows to 4 rows under the card
+    "an extra Python check · query with a stored vector" (the staff tag beside it):
+    TERM(recorded-embeddings/09: 16–17 word-folded, the chunk id PINK, the stand-in dot flashes).
+    "Without filters": the mask lifts and the PINK beam reaches the stand-in's ten nearest, inside
+    the Tolminc cluster (its label flashes). At "at distances" the picture leaves, the terminal grows
+    to 11 rows: TERM(09: 18–28): 0.0000 boxed with the GREY tag "itself", 0.1627 boxed YELLOW.
  4  The terminal clears: TERM(09: 29–39); the book names of the ten rows boxed YELLOW, 0.2833 and
-    0.3123 boxed YELLOW. The terminal shrinks to the strip and the cloud returns unmasked: the PINK
-    beam from the stand-in reaches its ten nearest, inside the Tolminc cluster. The mask returns,
+    0.3123 boxed YELLOW. The terminal shrinks to the strip while the cloud returns as beat 3 left it
+    (unmasked, the beam inside the Tolminc cluster). "The filters act first": the mask returns,
     and the beam stretches past the dimmed cluster to the far, lit survivors, labelled "all 10: The
     Complete Book of Cheese" under the cloud; the long beam flashes ("however far").
  5  LECTURE A54–A55. The lecture's four-stage strip (Indexing → Vector Database → Querying → Post
-    Processing) with the PINK-edged "metadata filter" under Post Processing: ten story result cards
-    come out of Querying, slide through the filter and are all struck out: an empty list `[]`, RED
+    Processing) with the PINK-edged "metadata filter" under Post Processing (flashes on "metadata
+    filtering"); "after ranking": ten story result cards come out of Querying; "that would drop":
+    they slide through the filter and are all struck out; "return nothing": an empty list `[]`, RED
     "nothing left". The filter slides to before Querying; ten cards come out of Querying again and
     the GREY caption reads "Chroma: filter, then rank · 10 results, wrong cheese".
  6  CODE(cli.py: 325–331), the '#' column boxed GREY, tag "erratum"; README chip "README.md · line
@@ -39,18 +42,18 @@ Beats (script.md "## S12", one voiceover block each):
  7  Container terminal (TEAL, 10 rows): `python cli.py --get --chunk_type char-split` (tag extra +
     GREY note "not in the README · cli.py · lines 402–418") -> recorded-embeddings/05 lines 2–3
     (word-folded) and line 6 cut after the ids list's "]" (word-folded), tag "recorded · the
-    staff's vectors (68e0bde)", GREY note "no distances: no ranking". The terminal shrinks to a
-    4-row strip holding the ids while copies of the ten ids become ten cards ("-0" … "-9") in a row
-    beside a TEAL cylinder, bracketed "-0 to -2 / Gutenberg header" (RED), "-3 to -5 / title page,
-    contents" (GREY), "-6 to -9 / chapter one begins" (GREEN); the RED cards flash, the cylinder
-    pulses ("indexed like any text"); last, the GREEN fix card "strip outside the START/END markers /
-    then chunk, embed, load again". Everything fades: empty frame.
+    staff's vectors (68e0bde)", GREY note "no distances: no ranking" (on "so no distances"). The
+    terminal shrinks to a 4-row strip holding the ids and a TEAL cylinder appears; "Its 10 records":
+    copies of the ten ids become ten cards ("-0" … "-9") in a row beside the cylinder, bracketed
+    "-0 to -2 / Gutenberg header" (RED), "-3 to -5 / title page, contents" (GREY), "-6 to -9 /
+    chapter one begins" (GREEN); the RED cards flash, the cylinder pulses ("indexed like any text");
+    last, the GREEN fix card "strip outside the START/END markers / then chunk, embed, load again"
+    bottom left on the strip, beside the staff tag. Everything fades: empty frame.
 
 Deviations from SHOW (see the scene report): the "extra Python check" cards are one-line GREY cards
 with the SHOW's own wording (the two-line check_card does not fit above an 11-row terminal under
-the tracker band). Beat 3 shows no picture: its beam (the ten nearest inside the Tolminc cluster)
-opens beat 4's picture, so the unfiltered and the filtered beam are seen one after the other while
-"The filters act first" is said, and beat 3's narration stays on the numbers it reads out. Beat 7's
+the tracker band). Beat 3 prints lines 16–17 in a 4-row strip under the picture first (the beam
+needs the picture), and the 11-row terminal only for the distances (18–28). Beat 7's
 terminal has 10 rows (the folded command, the folded Namespace line and the four ids rows need
 10), and it shrinks to a 4-row strip so all ten ids stay on screen while they become cards; the
 ten cards stand in a row beside the cylinder (ten cards stacked inside it would be 0.22 tall,
@@ -66,6 +69,7 @@ from manim import (
     LEFT,
     RIGHT,
     UP,
+    AnimationGroup,
     Create,
     FadeIn,
     FadeOut,
@@ -191,7 +195,6 @@ BAND_Y = 3.22                           # tags in the band right of the tracker
 CARD_Y = 2.36                           # the check card (left) and the staff tag (right) above an 11-row terminal
 LABEL_Y = -0.25                         # the survivors' label, under the cloud
 CARDS_Y = 2.33                          # beat 7: the ten record cards, above a 4-row strip
-FIX_Y = 0.4                             # beat 7: the fix card (its header included), clear of the strip's tag
 
 
 def pink_bar(panel, n: int):
@@ -390,10 +393,10 @@ class FiltersFirst(VoiceScene):
             vo.wait_until("its 10 nearest")
             self.play(Indicate(tl, color=TURN, scale_factor=1.15),
                       ShowPassingFlash(beam.copy().set_stroke(TURN, 4), time_width=0.6), run_time=0.8)
-            vo.wait_until("at distances from 0")
-            self.play(FadeOut(VGroup(dc, beam, ill, cap)), run_time=0.45)
-            resize(self, t, 11, keep=0, run_time=0.6, extra=[ck2.animate.move_to(ck2_hi), stf.animate.move_to(stf_hi)])
-            o18 = t.print(self, Q.at((18, 28)), run_time=0.6)
+            vo.wait_until("at distances from 0")        # quick: the numbers are in before "the chunk itself"
+            self.play(FadeOut(VGroup(dc, beam, ill, cap)), run_time=0.35)
+            resize(self, t, 11, keep=0, run_time=0.45, extra=[ck2.animate.move_to(ck2_hi), stf.animate.move_to(stf_hi)])
+            o18 = t.print(self, Q.at((18, 28)), run_time=0.5)
             vo.wait_until("the chunk itself")
             z0 = col_box(o18[1], 0, 6, S.GREY)
             pin(self, o18[1], z0, anim=Create(z0), run_time=0.3)
@@ -423,11 +426,11 @@ class FiltersFirst(VoiceScene):
             pin(self, o30[0], z2, anim=Create(z2), run_time=0.35)
             vo.wait_until("to 0.31")
             z3 = col_box(o30[9], 0, 6, TURN)
-            pin(self, o30[9], z3, anim=Create(z3), run_time=0.35)
-            # the picture comes back as beat 3 left it (no mask, the beam in the story) ...
-            self.play(FadeOut(bk), FadeOut(ck2), run_time=0.25)
-            resize(self, t, 3, run_time=0.5, extra=[stf.animate.move_to(stf_lo)])
-            self.play(FadeIn(VGroup(dc, ill, cap, beam)), run_time=0.5)
+            pin(self, o30[9], z3, anim=AnimationGroup(Create(z3), FadeOut(bk), FadeOut(ck2)), run_time=0.3)
+            # the picture comes back as beat 3 left it (no mask, the beam in the story) while the
+            # terminal shrinks (in sequence the mask came 1.2 s after "The filters act first") ...
+            resize(self, t, 3, run_time=0.4, extra=[stf.animate.move_to(stf_lo),
+                                                    FadeIn(VGroup(dc, ill, cap, beam), rate_func=lambda a: a * a)])
             vo.wait_until("The filters act first")      # ... and the filters act first: the mask returns
             self.play(*mask_to(dc, "italian", shrink=near0), Transform(cap[1], cap2), run_time=0.8)
             vo.wait_until("and top K fills")
@@ -461,19 +464,21 @@ class FiltersFirst(VoiceScene):
             self.play(FadeOut(VGroup(dc, beam, ill, cap, surv_lab, t, stf)), FadeOut(sti),
                       FadeIn(lr), run_time=0.6)
             self.play(FadeIn(st, shift=UP * 0.1), run_time=0.6)
-            self.play(Indicate(filt, color=TURN, scale_factor=1.12), run_time=0.7)     # "filtering after ranking"
-            vo.wait_until("here, that would drop")
+            vo.wait_until("metadata filtering")
+            self.play(Indicate(filt, color=TURN, scale_factor=1.12), run_time=0.7)
+            vo.wait_until("after ranking")              # the ranked results come out of Querying
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.25) for c in story], lag_ratio=0.08),
                       FadeIn(s_lab), run_time=0.9)
-            self.play(FadeOut(s_lab), story.animate.scale(0.4).move_to(filt), run_time=0.7)
-            self.play(story.animate.scale(2.5).move_to(through), run_time=0.6)
+            vo.wait_until("here, that would drop")      # through the filter: all ten struck out
+            self.play(FadeOut(s_lab), story.animate.scale(0.4).move_to(filt), run_time=0.6)
+            self.play(story.animate.scale(2.5).move_to(through), run_time=0.5)
             self.play(LaggedStart(*[Create(x) for x in strikes], lag_ratio=0.08),
                       story.animate.set_fill(S.GREY, 0.15).set_stroke(S.GREY, opacity=0.5), run_time=0.9)
             vo.wait_until("and return nothing")
             self.play(FadeIn(none_g, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Chroma filters first")
             self.play(FadeOut(VGroup(story, strikes, none_g)), run_time=0.4)
-            self.play(st.slide_filter(2, run_time=1.1))
+            self.play(st.slide_filter(2, run_time=1.0))
             vo.wait_until("so you get 10 results")
             self.play(LaggedStart(*[FadeIn(c, shift=RIGHT * 0.25) for c in res], lag_ratio=0.08), run_time=0.8)
             vo.wait_until("about the wrong cheese")
@@ -506,7 +511,9 @@ class FiltersFirst(VoiceScene):
             vo.wait_until("but only variant 4 runs")
             self.play(Indicate(err, color=TURN, scale_factor=1.15), run_time=0.7)
             vo.wait_until("variants 1 to 3")
-            self.play(FadeIn(hbox), Indicate(hashes, color=INK, scale_factor=1.2), run_time=0.8)
+            # each '#' pulses in place (one Indicate on the whole column stretched it off its rows)
+            self.play(FadeIn(hbox), LaggedStart(*[Indicate(h, color=INK, scale_factor=1.4) for h in hashes],
+                                                lag_ratio=0.12), run_time=0.8)
             vo.wait_until("Uncomment the first")
             self.play(hbox.animate.set_stroke(TURN).set_fill(TURN, 0.12), FadeIn(unc.frame), run_time=0.5)
             for r in unc.rows:
@@ -548,7 +555,10 @@ class FiltersFirst(VoiceScene):
             labels.add(lb)
         fix = card_rows(["strip outside the START/END markers", "then chunk, embed, load again"],
                         header="the fix", frame_color=DATA)
-        fix.move_to([cards.get_center()[0], FIX_Y, 0])
+        # bottom left, on the 4-row strip beside the staff tag (centred under the cards, its header
+        # sat 0.2 under the RED "Gutenberg header" label)
+        fix.move_to([-6.3 + fix.width / 2, st4 + 0.08 + fix.height / 2, 0])
+        assert fix.get_right()[0] < stf7_4[0] - stf7.width / 2 - 0.4, "the fix card would touch the staff tag"
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(p2, hbox, err, rm, unc, cont_g)), run_time=0.5)
@@ -562,17 +572,19 @@ class FiltersFirst(VoiceScene):
             tg.print(self, ARGS_ROWS + [GET.line(3)], run_time=0.5)
             self.play(FadeIn(stf7, shift=DOWN * 0.1), run_time=0.3)
             ids = tg.print(self, IDS_ROWS, run_time=0.5)
-            vo.wait_until("but no question")
+            vo.wait_until("so no distances")
             pin(self, ids[3], beside(nd, tg, ids[3], buff=0.5), run_time=0.4)
-            vo.wait_until("Its 10 records start")
-            resize(self, tg, 4, keep=list(ids), run_time=0.7, extra=[stf7.animate.move_to(stf7_4)])
-            self.play(FadeIn(cyl), run_time=0.4)
+            # the strip and the cylinder are ready before "Its 10 records start" (in sequence after
+            # it, the RED "Gutenberg header" label came 0.75 s after the words)
+            resize(self, tg, 4, keep=list(ids), run_time=0.55, extra=[stf7.animate.move_to(stf7_4), FadeIn(cyl)])
             flying = VGroup()
             for k in range(10):
                 sid = f"'{ID_BASE}{k}'"
                 row = next(r for r in ids if sid in r.text)
                 flying.add(substring(row, sid).copy())
+            vo.wait_until("Its 10 records start")
             self.play(*[ReplacementTransform(flying[k], cards[k]) for k in range(10)], run_time=1.0)
+            vo.wait_until("with the Gutenberg header")
             self.play(Create(brackets[0]), FadeIn(labels[0], shift=DOWN * 0.1),
                       *[cards[k][0].animate.set_stroke(ERR) for k in range(3)], run_time=0.5)
             vo.wait_until("then the title page")

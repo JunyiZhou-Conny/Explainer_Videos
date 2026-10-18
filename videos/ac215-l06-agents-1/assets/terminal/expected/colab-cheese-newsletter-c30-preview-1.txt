@@ -1,0 +1,47 @@
+# recorded: Colab notebook "Cheese Newsletter - Harness" (L06_cheese_newsletter_harness.ipynb; https://colab.research.google.com/drive/1nnHrJ4Si3tpgUQl6HqlcwxKymV1-ecPv), cell 30 (0-based index in the .ipynb; first line: 'from IPython.display import HTML, FileLink, display'). Saved output of the staff's last run, 2026-09-20 13:27 UTC (footer of the saved HTML); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed). Course staff's names and e-mail addresses replaced by <reader1>.. / <email>.
+[display: HTML, 7964 characters; its text:]
+Summerville cheese notes — September 20, 2026
+LOCAL EMAIL PREVIEW · NOT SENT
+From: Formaggio.me
+To: <reader1> <<email>>
+Subject: Summerville cheese notes — September 20, 2026
+Formaggio.me · The cheese letter
+Summerville, with cheese.
+2026-09 edition
+Hi <reader1>,
+Hello from Formaggio.me. Here is your Summerville, South Carolina cheese roundup for September 20, 2026: Sept. 19 events are past, the Sept. 26 market date comes from the official recurring Saturday April–December schedule, Sweet Mae’s attendance is unconfirmed, and two verified Lowes Foods offers remain available.
+From the cheese counter
+Next scheduled market date: Saturday, Sept. 26
+The Summerville Farmers’ Market operates Saturdays from 8:00 a.m. to 1:00 p.m., April through December, at 200 South Main Street, Summerville, SC 29483. September 26 is derived from that official recurring schedule. Sweet Mae’s attendance has not been confirmed for that date. No cheese-specific Summerville events or classes were verified for September 20–30, 2026.
+Source: Visit Summerville SC | At the Heart of It All
+Sept. 19 events are past
+The Sept. 19 Summerville Farmers’ Market and 2026 Sweet Tea Festival are past as of September 20, 2026. The festival took place at Hutchinson Square from 10:00 a.m. to 4:00 p.m.; neither event should be treated as upcoming.
+Source: Visit Summerville SC | At the Heart of It All · Sweet Tea Trail | Summerville, SC | Birthplace of Sweet Tea
+Evergreen product spotlight: Sweet Mae’s Pimento Cheese
+Sweet Mae’s makes small-batch pimento cheese by hand in Charleston, with Original, Southern Kick, and Hatch Chile varieties. This is an evergreen product feature, not a September 2026 event announcement. The brand appears in local Summerville food-market directories, but no specific September market appearance was confirmed.
+Source: What’s Up Summerville | Events, Businesses, Guides & Local Info · Sweet Mae’s Pimento Cheese | Charleston Handmade Pimento Cheese — Sweet Mae’s Charleston Private Events
+Offers & discoveries
+Only the two retailer-owned Lowes Foods offers above are verified. Sweet Mae’s party-pack listing was not treated as a current local September offer because it has no September 2026 expiration date. Offers are subject to the stated terms, eligibility, availability, and inventory.
+Save $1 on two Cabot Cheese Bars or Cracker Cuts
+Lowes Foods of Summerville, 10048 Dorchester Road, Summerville, SC 29485, Store #270. Ends September 22, 2026. Selected products only: 7–8 oz Cabot Cheese Bars or Cracker Cuts. Limit two offers per cart; Lowes Foods Fresh Rewards Card or telephone number required; limit one coupon per purchase and one coupon per household; digital and paper coupons may not be combined on the same item. Subject to product availability and coupon eligibility. Promotion URL: https://shop.lowesfoods.com/promotions/save-1-on-two-2-cabot-cheese-bars-or-cracker-cuts-7-8oz-/8959240?utm_source=openai Store URL: https://www.lowesfoods.com/Store-Locator/Store-270?utm_source=openai
+Published expiry: 2026-09-22
+Source: Lowes Foods of Summerville, SC | Dorchester Road | Lowes Foods #270 · Save $1 on TWO (2) Cabot Cheese Bars or Cracker Cuts 7-8oz. Save $1 on TWO (2) Cabot Cheese Bars or Cracker Cuts 7-8oz. Offer Is On Selected Products Only. Limit 2 Offers. | Promotions | Lowes Foods To Go - Local and Fresh, Same-Day Grocery Pickup and Delivery
+Kraft Parmesan & Romano Grated Cheese, 8 oz
+Lowes Foods of Summerville, 10048 Dorchester Road, Summerville, SC 29485, Store #270. $5.49 reduced to $4.99, a $0.50 savings. Valid until September 29, 2026. Online availability and store inventory may vary. Product URL: https://shop.lowesfoods.com/products/kraft-grated-parmesan-romano-cheese/3402584?utm_source=openai Store URL: https://www.lowesfoods.com/Store-Locator/Store-270?utm_source=openai
+Published expiry: 2026-09-29
+Source: Lowes Foods of Summerville, SC | Dorchester Road | Lowes Foods #270 · Kraft Parmesan & Romano Grated Cheese 8 oz | Products | Lowes Foods To Go - Local and Fresh, Same-Day Grocery Pickup and Delivery
+All dates and offer terms are checked against the cited sources. Past events are labeled as past, the Sept. 26 market date is based on the recurring official schedule, Sweet Mae’s attendance is unconfirmed, and no unsupported cheese events or offers are included.
+Created 2026-09-20 13:27 UTC · AC215 Fall 2026
+This is a locally saved email preview. No email was sent. Prices and availability can change.
+
+[display]
+/content/newsletter_output/<reader1>-2026-09-25fd23e3.html
+
+[display]
+/content/newsletter_output/<reader2>-2026-09-25fd23e3.html
+
+[display]
+/content/newsletter_output/<reader3>-2026-09-25fd23e3.html
+
+[display]
+/content/newsletter_output/<reader4>-2026-09-25fd23e3.html

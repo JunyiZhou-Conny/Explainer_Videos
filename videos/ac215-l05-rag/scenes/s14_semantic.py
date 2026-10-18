@@ -20,13 +20,14 @@ Beats (script.md "## S14", one voiceover block each):
  3  CODE(semantic_splitter.py: 91–96) along the bottom (arrows, band and chips leave), line 92 lit;
     the YELLOW 95th-percentile line rises. The panel becomes CODE(semantic_splitter.py: 239–243),
     line 242 lit: the spike above the line flashes, the tiles part there (YELLOW cut), the bump
-    below the line stays; GREEN outlines show two chunks of very different lengths.
+    below the line stays; at "So the biggest 5 percent" the cut and its spike flash, and at
+    "become chunk boundaries" GREEN outlines show two chunks of very different lengths.
  4  The panel, the lecture tag and the spikes leave; the tiles move up. Two small cards:
     "char-split · --chunk · no key: ✓" (GREEN) and "semantic-split · --chunk · no key: ?"
     (YELLOW). PONDER(8 s) in the lower third.
  5  The "?" becomes a RED cross; the bracket returns on tile 74, its window drops into the BLUE
-    embedding box; bracket and box flash, the cut dims, GREY note "every window is embedded before
-    a single cut". Then CODE(cli.py: 207–215, at 20 pt) with line 210 lit and
+    embedding box; bracket and box flash, the cut and the chunk outlines dim, GREY note "every
+    window is embedded before a single cut". Then CODE(cli.py: 207–215, at 20 pt) with line 210 lit and
     `generate_text_embeddings` underlined; a BLUE embedding-box glyph and a GOLD tag "a Google call"
     above the panel's right end; GREY note "embed() calls it too · cli.py · lines 249, 252".
  6  TRACKER Semantic 1. Terminal (12 rows, TEAL): the README command folds onto two rows →
@@ -40,7 +41,8 @@ Beats (script.md "## S14", one voiceover block each):
     tags move down above the strip and the "with your key, look for" card writes in (three items,
     cli.py lines 215, 240, 161) with the GREY 429 note under it.
  8  The cards leave. Seven GREEN bars: the story's chunks under this seismograph, very uneven (tag
-    `our illustration`); GREY note "a single-topic book still gets its top 5 % cut"; the ▶ your-turn
+    `our illustration`), the longest and the shortest flash with their character counts; GREY note
+    "a single-topic book still gets its top 5 % cut"; the ▶ your-turn
     card: the README command (header "your turn · with your key") and the extra chat command after
     the load. Hold 2 s, then everything fades: empty frame.
 
@@ -82,6 +84,8 @@ from manim import (
     Succession,
     Transform,
     VGroup,
+    Wait,
+    there_and_back,
 )
 
 from common import (
@@ -136,7 +140,7 @@ from explainer.scene import VoiceScene
 SAY = NARRATION["S14"]
 
 # ------------------------------------------------------------------ the sources this scene quotes
-CMD = "python cli.py --chunk --embed --load --chunk_type semantic-split"    # README.md line 228
+CMD = "python cli.py --chunk --embed --load --chunk_type semantic-split"    # README.md line 227
 CHAT = "python cli.py --chat --chunk_type semantic-split"                   # extra (digest)
 assert CMD in excerpt("README.md", 220, 236), "README command changed"
 RUN = capture("60", "cli-container")
@@ -415,11 +419,12 @@ class SemanticSplit(VoiceScene):
         ill.move_to([6.4 - ill.width / 2, 2.62, 0])
 
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(rx), FadeOut(br), a2.animate.shift(o1 - arrows[PAIR + 1].get_start()), run_time=0.6)
-            self.play(Create(arc), run_time=0.4)
+            self.play(FadeOut(rx), FadeOut(br), run_time=0.4)
+            self.play(a2.animate.shift(o1 - arrows[PAIR + 1].get_start()), run_time=1.0)
+            self.play(Create(arc), run_time=0.8)
             vo.wait_until("and plots it over the text")
-            self.play(ReplacementTransform(arc, sp_copy), FadeOut(a2), run_time=0.7)
-            self.play(sg.spikes_in(run_time=1.8), FadeIn(ill, shift=LEFT * 0.15), run_time=1.8)
+            self.play(ReplacementTransform(arc, sp_copy), FadeOut(a2), run_time=0.5)
+            self.play(sg.spikes_in(run_time=1.1), FadeIn(ill, shift=LEFT * 0.15), run_time=1.1)
             self.remove(sp_copy)
             vo.wait_until("like a seismograph")
             self.play(Indicate(sg.parts["curve"], color=LOOKUP, scale_factor=1.03), run_time=0.7)
@@ -447,8 +452,10 @@ class SemanticSplit(VoiceScene):
             self.play(*sg.cuts(), run_time=1.0)
             chunks = VGroup(outline(tiles[:PAIR + 1]), outline(tiles[PAIR + 1:]))
             vo.wait_until("So the biggest 5 percent")
+            self.play(Indicate(sg.cut_marks, color=TURN, scale_factor=1.2),
+                      Indicate(sg.spikes[PAIR], color=TURN, scale_factor=1.1), run_time=0.7)
+            vo.wait_until("become chunk boundaries")
             self.play(LaggedStart(*[Create(c) for c in chunks], lag_ratio=0.3), run_time=0.8)
-            self.play(Indicate(sg.cut_marks, color=TURN, scale_factor=1.2), run_time=0.7)
 
         # ========================================================== 4 · ponder: does it need a key?
         c_char = key_card("char-split", DATA, check_mark(0.28, DATA))
@@ -457,13 +464,13 @@ class SemanticSplit(VoiceScene):
 
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeOut(VGroup(p239, b242, lr, ill)), *sg.parts_out("spikes", "curve", "threshold"),
-                      run_time=0.5)
+                      run_time=0.4)
             moving = VGroup(sg, sg.cut_marks, chunks)
-            self.play(moving.animate.shift(UP * (TY4 - TY)), run_time=0.6)
+            # the card writes in under the row once the row has moved clear of it (on "Char split ran")
+            self.play(moving.animate.shift(UP * (TY4 - TY)),
+                      Succession(Wait(0.35), FadeIn(c_char, shift=UP * 0.15, run_time=0.4)), run_time=0.75)
             self.remove(moving)
-            self.add(sg, sg.cut_marks, chunks)
-            vo.wait_until("Char split ran")
-            self.play(FadeIn(c_char, shift=UP * 0.15), run_time=0.5)
+            self.add(sg, sg.cut_marks, chunks, c_char)
             vo.wait_until("Can semantic split")
             self.play(FadeIn(c_sem, shift=UP * 0.15), run_time=0.5)
         pcard = ponder_at(self, PONDER_Q, 8.0, y=-2.2)
@@ -493,13 +500,16 @@ class SemanticSplit(VoiceScene):
             self.play(Transform(c_sem.mark, xm), c_sem.frame.animate.set_stroke(ERR),
                       FadeOut(c_char), run_time=0.5)
             vo.wait_until("To find where the meaning shifts")
+            # before a single cut: the cut and the two chunk outlines dim, so the bracket reads alone
             self.play(FadeIn(br5, shift=UP * 0.1), FadeIn(ebox), sg.cut_marks.animate.set_stroke(opacity=0.25),
-                      run_time=0.6)
+                      chunks.animate.set_stroke(opacity=0.25), run_time=0.6)
             w = VGroup(*[tiles[j].frame.copy() for j in window(ZOOM)])
             self.add(w)
             self.play(w.animate.scale(0.22).move_to(ebox), run_time=0.8)
             self.remove(w)
-            self.play(Indicate(br5, color=TURN, scale_factor=1.1), Indicate(ebox, color=CLOUD, scale_factor=1.08),
+            # the bracket flashes in place (a scaling Indicate would push its left end off the safe frame)
+            self.play(br5[0].animate(rate_func=there_and_back).set_stroke(width=9),
+                      Indicate(br5[1], color=TURN, scale_factor=1.3), Indicate(ebox, color=CLOUD, scale_factor=1.08),
                       FadeIn(enote, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("Look at the function")
             self.play(FadeOut(VGroup(sg, sg.cut_marks, chunks, c_sem, br5, ebox, enote)), run_time=0.5)
@@ -517,9 +527,8 @@ class SemanticSplit(VoiceScene):
         nk.move_to([t.box.get_right()[0] - 0.2 - nk.width / 2, t.box.get_top()[1] - t.bar_h / 2, 0])
 
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(VGroup(p207, b210, u210, gl, gold, both)), run_time=0.5)
-            self.play(FadeIn(t), tr.goto(1), run_time=0.6)
-            cmd = type_cmd(self, t, CMD, type_time=1.6)
+            self.play(FadeOut(VGroup(p207, b210, u210, gl, gold, both)), FadeIn(t), tr.goto(1), run_time=0.5)
+            cmd = type_cmd(self, t, CMD, type_time=1.1)
             assert hasattr(cmd, "rows") and len(cmd.rows) == 2, cmd
             cmd_copy = [r.copy() for r in cmd.rows]
             vo.wait_until("runs all three steps")
@@ -528,11 +537,11 @@ class SemanticSplit(VoiceScene):
             u3 = under(substring(head[0], "chunk=True, embed=True, load=True"), TURN)
             pin(self, head[0], u3, anim=Create(u3), run_time=0.4)
             vo.wait_until("On our machine")
-            self.play(FadeIn(nk, shift=LEFT * 0.1), run_time=0.3)
-            frames = t.print(self, RUN.at("", 11, 14, 17, 20, 23), wrap=True, run_time=0.6)
+            self.play(FadeIn(nk, shift=LEFT * 0.1), run_time=0.25)
+            frames = t.print(self, RUN.at("", 11, 14, 17, 20, 23), wrap=True, run_time=0.45)
             assert len(frames) == 7, len(frames)
             vo.wait_until("it fails inside")
-            tail = t.print(self, ["…", (RUN.line(75), ERR)], wrap=True, run_time=0.5)
+            tail = t.print(self, ["…", (RUN.line(75), ERR)], wrap=True, run_time=0.4)
             assert len(tail) == 3, len(tail)
             fr_rows = [frames[k] for k in (1, 2, 3, 4, 6)]
             boxes = []
@@ -544,7 +553,7 @@ class SemanticSplit(VoiceScene):
             dots = [Dot([sx, r.strut.get_center()[1], 0], radius=0.06, color=LOOKUP) for r in fr_rows]
             spine = Line(dots[0].get_center(), dots[-1].get_center(), color=LOOKUP, stroke_width=3)
             self.play(Create(spine), LaggedStart(*[FadeIn(VGroup(d, bx)) for d, bx in zip(dots, boxes)],
-                                                 lag_ratio=0.35), run_time=1.3)
+                                                 lag_ratio=0.35), run_time=1.0)
             vo.wait_until("on the first book")
             b5a, b5b = head[5], head[6]
             ub = VGroup(under(substring(b5a, "The Complete Book of Chees"), TURN), under(b5b.glyphs, TURN))
@@ -593,6 +602,8 @@ class SemanticSplit(VoiceScene):
             ref = Terminal(prompt=t.prompt, width=t.box.width, rows=3, size=t.size, title="x")
             ref.shift(np.array([t.box.get_center()[0] - ref.box.get_center()[0],
                                 t.box.get_bottom()[1] - ref.box.get_bottom()[1], 0]))
+            # keep the live frame colour (TEAL inside the container), as the house resize() does
+            ref.box.set_stroke(t.box.get_stroke_color(), t.box.get_stroke_width())
             gone = [ln for ln in t.lines.submobjects if ln is not keep]
             self.play(FadeOut(VGroup(*gone)), FadeOut(nsg), FadeOut(VGroup(spine, *dots, *boxes, ub)), run_time=0.3)
             for ln in gone:
@@ -637,19 +648,23 @@ class SemanticSplit(VoiceScene):
         ill8 = our_illustration_tag()
         ill8.move_to([bars.get_right()[0] + 0.35 + ill8.width / 2, bars.get_top()[1] - ill8.height / 2, 0])
         cap8 = note("the story's chunks under this seismograph").next_to(bars, DOWN, buff=0.15).align_to(bars, LEFT)
+        long_i, short_i = int(np.argmax(lens)), int(np.argmin(lens))
+        # "very uneven", in numbers: the longest and the shortest chunk's characters at their bar's end
+        n_long = note(f"{lens[long_i]:,} characters").next_to(bars[long_i], RIGHT, buff=0.15)
+        n_short = note(f"{lens[short_i]:,} characters", TURN).next_to(bars[short_i], RIGHT, buff=0.15)
         single = note("a single-topic book still gets its top 5 % cut")
-        single.move_to([0.6 + single.width / 2, bars.get_center()[1], 0])
+        single.move_to([6.3 - single.width / 2, bars[-1].get_center()[1], 0])   # below the count labels
         tc = turn_card([CMD, (Prose("extra, after the load finishes:"), S.GREY), (CHAT, "extra")],
                        header="your turn · with your key")
         tc.move_to([0, -3.45 + tc.height / 2, 0])
-        long_i, short_i = int(np.argmax(lens)), int(np.argmin(lens))
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(lf, n429, row1, row2, t, nk)), run_time=0.5)
             self.play(LaggedStart(*[GrowFromEdge(b, LEFT) for b in bars], lag_ratio=0.15), FadeIn(ill8),
                       FadeIn(cap8), run_time=1.2)
             self.play(Indicate(bars[long_i], color=DATA, scale_factor=1.05),
-                      Indicate(bars[short_i], color=TURN, scale_factor=1.1), run_time=0.8)
+                      Indicate(bars[short_i], color=TURN, scale_factor=1.1),
+                      FadeIn(n_long, shift=LEFT * 0.1), FadeIn(n_short, shift=LEFT * 0.1), run_time=0.8)
             vo.wait_until("and even a single-topic book")
             self.play(FadeIn(single, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("Afterwards, an extra")
@@ -658,5 +673,5 @@ class SemanticSplit(VoiceScene):
             self.play(Indicate(tc.tag, color=TURN, scale_factor=1.15), run_time=0.7)
         self.wait(2)                                   # ▶ beat: hold the frame
 
-        self.play(FadeOut(VGroup(tr, bars, ill8, cap8, single, tc)), run_time=0.8)
+        self.play(FadeOut(VGroup(tr, bars, ill8, cap8, n_long, n_short, single, tc)), run_time=0.8)
         self.wait(0.3)

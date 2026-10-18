@@ -1,0 +1,40 @@
+Machine Learning Fundamentals
+
+Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without being explicitly programmed. The core idea is to develop algorithms that can access data and use it to learn for themselves.
+
+Types of Machine Learning:
+
+1. Supervised Learning
+In supervised learning, the algorithm learns from labeled training data. The model is trained on a dataset where the correct answers (labels) are provided. Common applications include:
+- Image classification
+- Spam detection
+- Price prediction
+- Medical diagnosis
+
+2. Unsupervised Learning
+Unsupervised learning works with unlabeled data. The algorithm tries to find patterns and structures in the data without predefined labels. Applications include:
+- Customer segmentation
+- Anomaly detection
+- Dimensionality reduction
+- Recommendation systems
+
+3. Reinforcement Learning
+In reinforcement learning, an agent learns to make decisions by interacting with an environment. The agent receives rewards or penalties for its actions and learns to maximize cumulative rewards. Common uses:
+- Game playing (Chess, Go)
+- Robotics
+- Autonomous vehicles
+- Resource optimization
+
+Key Concepts:
+
+Training and Testing: Machine learning models are trained on a portion of data (training set) and evaluated on unseen data (test set) to assess their performance and generalization ability.
+
+Overfitting: When a model learns the training data too well, including noise and outliers, it performs poorly on new data. Techniques like regularization and cross-validation help prevent overfitting.
+
+Feature Engineering: The process of selecting, creating, and transforming variables (features) that help the model make better predictions. Good features are crucial for model performance.
+
+Neural Networks: Inspired by biological neurons, neural networks consist of layers of interconnected nodes. Deep neural networks with many layers power modern AI applications like computer vision and natural language processing.
+
+Model Evaluation: Common metrics include accuracy, precision, recall, F1-score for classification tasks, and mean squared error for regression tasks.
+
+The name of the teacher is Pavlos

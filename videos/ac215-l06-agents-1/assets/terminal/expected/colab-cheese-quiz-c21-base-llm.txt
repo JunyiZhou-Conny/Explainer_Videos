@@ -1,0 +1,30 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 21 (0-based index in the .ipynb; first line: '# Initialize'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[stdout]
+🧠 BaseLLM: Making single API call...
+
+==================================================
+BASE LLM: gpt-4o
+==================================================
+Response:
+
+[display: markdown]
+The best cheese for a grilled cheese sandwich often depends on personal preference, but some popular choices include:
+
+1. **American Cheese**: Known for its excellent melting properties and creamy texture, American cheese is a classic choice for a traditional grilled cheese.
+
+2. **Cheddar**: Offers a sharp, tangy flavor and melts well. Aged cheddar can add more depth to the sandwich.
+
+3. **Gruyère**: This Swiss cheese has a nutty, slightly sweet flavor and melts beautifully, making it a great choice for a more gourmet grilled cheese.
+
+4. **Fontina**: Known for its buttery and slightly nutty taste, Fontina melts smoothly and adds a rich flavor.
+
+5. **Monterey Jack**: Mild and creamy, this cheese melts easily and can be paired with other cheeses for added complexity.
+
+6. **Mozzarella**: Offers a mild flavor and excellent stretchiness, making it a good option for those who enjoy a gooey texture.
+
+7. **Provolone**: With a mild, slightly tangy flavor, provolone melts well and can be combined with other cheeses for a more complex taste.
+
+For the best results, you can also mix different cheeses to balance flavors and textures. Adding a touch of butter or mayonnaise to the outside of the bread before grilling can enhance the crispiness and flavor of the sandwich.
+
+[stdout]
+Tokens: 293, Time: 2.81s

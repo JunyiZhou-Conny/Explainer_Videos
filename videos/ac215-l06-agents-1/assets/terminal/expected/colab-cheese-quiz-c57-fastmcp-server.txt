@@ -1,0 +1,22 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 57 (0-based index in the .ipynb; first line: '# --- Define your MCP server with one tool: pavlos_fun_fact'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[stdout]
+FastMCP server starting on http://127.0.0.1:8000/mcp
+Server thread alive: True
+
+[display: HTML, 8121 characters]
+
+
+                 ╭──────────────────────────────────────────────────────────────────────────────╮
+                 │                                                                              │
+                 │                                                                              │
+                 │                         ▄▀▀ ▄▀█ █▀▀ ▀█▀ █▀▄▀█ █▀▀ █▀█                        │
+                 │                         █▀  █▀█ ▄▄█  █  █ ▀ █ █▄▄ █▀▀                        │
+                 │                                                                              │
+                 │                                                                              │
+                 │                                FastMCP 4.0.5                                 │
+                 │                            https://gofastmcp.com                             │
+                 │                                                                              │
+                 │                🖥  Server:      Pavlos Cheese MCP Local, 4.0.5                │
+                 │                🚀 Deploy free: https://horizon.prefect.io                    │
+                 │                                                                              │
+                 ╰──────────────────────────────────────────────────────────────────────────────╯

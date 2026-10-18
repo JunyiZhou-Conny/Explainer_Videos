@@ -71,6 +71,7 @@ from manim import (
     DashedVMobject,
     FadeIn,
     FadeOut,
+    FadeTransform,
     GrowFromEdge,
     Indicate,
     LaggedStart,
@@ -84,10 +85,11 @@ from manim import (
     VGroup,
     Write,
     linear,
+    smooth,
 )
 
 from explainer import style as S
-from explainer.devops import box, check_mark, chip, file_glyph, label, mono, step_badge, tag
+from explainer.devops import TAG, box, check_mark, chip, file_glyph, label, mono, step_badge, tag
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S15"]
@@ -170,6 +172,16 @@ def level_boxes(chips, y):
     for ch in chips:
         ch.shift(UP * (y - ch.box.get_center()[1]))
     return chips
+
+
+def seat_text(ch, s, size=TAG):
+    """Put a tag's text on the baseline every tag shares: centre it in its box as if it had the
+    tallest ascender and the deepest descender, so "rank fusion" (no descender) sits level with
+    "hybrid search" in the row of chips."""
+    ref = label(s + " Hgkdlfjy", size).move_to(ch.box)
+    n = len("".join(s.split()))
+    ch.text.shift(UP * (VGroup(*ref.submobjects[:n]).get_center()[1] - ch.text.get_center()[1]))
+    return ch
 
 
 def panel_title(s):
@@ -313,7 +325,7 @@ def hybrid_picture():
     fr = box(h.tol.width + 0.44, h.tol.height + 0.32, GREY, fill=S.BG, fill_opacity=0.95, radius=0.12)
     h.tol.move_to(fr)
     h.tol = VGroup(fr, h.tol)
-    left_at(h.tol, LEFT_X, -2.95)
+    left_at(h.tol, LEFT_X, -2.88)
     h.cards, h.kw_cells, h.vec_cells = VGroup(), VGroup(), VGroup()
     for i, (txt, y) in enumerate(zip(PARAS, ROW_Y)):
         b = step_badge(i + 1, DATA, size=20, radius=0.16)
@@ -347,7 +359,7 @@ def hybrid_picture():
         h.totals.add(label(f"{FUSED[i]:.2f}", 22, INK).move_to([x + 0.42, y, 0]))
     h.first = label("1st", 22, TURN).next_to(h.totals[0], RIGHT, buff=0.22)
     h.contains = chip("tutorial: $contains only filters", GREY, size=20)
-    left_at(h.contains, LEFT_X, -2.95)
+    left_at(h.contains, LEFT_X, -2.88)
     return h
 
 
@@ -383,7 +395,7 @@ def rerank_picture():
         r.rows.add(rr.set_fill(DATA, 0.55).move_to([COL_X, row_y(k), 0]))
     sw = RoundedRectangle(width=0.4, height=0.12, corner_radius=0.04, stroke_width=0).set_fill(TURN, 0.95)
     r.legend = VGroup(sw, label("truly relevant", 20, TURN)).arrange(RIGHT, buff=0.15)
-    left_at(r.legend, 1.6, 0.85)
+    left_at(r.legend, 1.6, row_y(0))                 # level with the top row, clear of the question
     d = Polygon(DIA + UP * 0.85, DIA + RIGHT * 1.5, DIA + DOWN * 0.85, DIA + LEFT * 1.5)
     r.dia_bg = d.copy().set_stroke(width=0).set_fill(GREY, 0.08)
     r.dia = VGroup(r.dia_bg, DashedVMobject(d, num_dashes=28, dashed_ratio=0.55).set_stroke(GREY, 2.5),
@@ -450,18 +462,20 @@ class BeyondNaive(VoiceScene):
                 FadeOut(ref), FadeIn(ref2),
                 run_time=1.3)
             self.play(FadeIn(c.a3), light(c.pre), Create(panel.dash), FadeIn(title), run_time=0.8)
-            self.play(FadeIn(p.h1), FadeIn(p.h2), Indicate(c.slots[0], color=TURN, scale_factor=1.25),
+            # light the slot's dashes and number only: Indicate recolours fills too, and the slot's
+            # dark disc would turn into a solid YELLOW dot that hides its number
+            self.play(FadeIn(p.h1), FadeIn(p.h2), Indicate(VGroup(*c.slots[0][1:]), color=TURN, scale_factor=1.25),
                       run_time=0.7)
             vo.wait_until("A model turns")
             self.play(FadeIn(p.clutter, shift=RIGHT * 0.2), run_time=0.6)
             vo.wait_until("into a clean one")
-            self.play(GrowFromEdge(p.a1, LEFT), TransformFromCopy(p.clutter, p.clean), run_time=1.0)
+            self.play(GrowFromEdge(p.a1, LEFT), FadeTransform(p.clutter.copy(), p.clean), run_time=1.0)
             vo.wait_until("like where do dolphins live")
             self.play(Create(p.tick), Indicate(p.clean, color=DATA, scale_factor=1.06), run_time=0.7)
             vo.wait_until("But hand it a vague question")
             self.play(FadeIn(p.vague, shift=RIGHT * 0.2), FadeIn(p.vnote), run_time=0.6)
             vo.wait_until("and the rewrite")
-            self.play(GrowFromEdge(p.a2, LEFT), TransformFromCopy(p.vague, p.rewrite), run_time=1.0)
+            self.play(GrowFromEdge(p.a2, LEFT), FadeTransform(p.vague.copy(), p.rewrite), run_time=1.0)
             vo.wait_until("can invent details")
             self.play(*[g.animate.set_color(ERR) for g in p.marks], Create(p.unders), FadeIn(p.invented),
                       run_time=0.7)
@@ -472,6 +486,8 @@ class BeyondNaive(VoiceScene):
         pair = VGroup(concept_tag("hybrid search"), concept_tag("rank fusion")).arrange(RIGHT, buff=0.15)
         pair.move_to([DOCK_X[1], DOCK_Y, 0])
         level_boxes([chip1, *pair], DOCK_Y)
+        for ch, s in ((chip1, "query rewriting"), (pair[0], "hybrid search"), (pair[1], "rank fusion")):
+            seat_text(ch, s)
         chip2, chip3 = pair[0], pair[1]
         title2 = panel_title("hybrid search")
         with self.voiceover(SAY[2]) as vo:
@@ -479,7 +495,7 @@ class BeyondNaive(VoiceScene):
             self.play(FadeOut(p.all, scale=0.15, target_position=c.slots[0].get_center()),
                       ReplacementTransform(c.slots[0], chip1), light(c.pre, False), light(c.ret),
                       Transform(title, title2), FadeOut(ref2), FadeIn(ref3), run_time=1.2)
-            self.play(Indicate(c.slots[1], color=TURN, scale_factor=1.25), run_time=0.6)
+            self.play(Indicate(VGroup(*c.slots[1][1:]), color=TURN, scale_factor=1.25), run_time=0.6)
             vo.wait_until("Keywords pin down")
             self.play(FadeIn(h.kw, shift=DOWN * 0.2), run_time=0.5)
             vo.wait_until("names and rare words")
@@ -496,7 +512,9 @@ class BeyondNaive(VoiceScene):
             self.play(LaggedStart(*[FadeIn(x, scale=0.7) for x in h.vec_cells], lag_ratio=0.3), run_time=0.9)
 
         # ========================================================== 3 · reciprocal rank fusion
-        with self.voiceover(SAY[3]) as vo:
+        # pad: a breath after "0.42", so the closing chip "tutorial: $contains only filters" can be read
+        # before the picture folds into its chips
+        with self.voiceover(SAY[3], pad=1.0) as vo:
             self.play(Write(h.formula), run_time=0.9)
             vo.wait_until("gives each paragraph")
             self.play(FadeIn(h.knote, shift=DOWN * 0.15), run_time=0.6)
@@ -511,22 +529,27 @@ class BeyondNaive(VoiceScene):
             vo.wait_until("The near paraphrase")
             self.play(h.cards[0].frame.animate.set_stroke(TURN, 4),
                       *[b[0].animate.set_stroke(TURN, 3) for b in h.blocks[0]],
-                      Indicate(h.cards[0][1], color=TURN, scale_factor=1.06), run_time=0.8)
+                      Indicate(h.cards[0][1][1], color=TURN, scale_factor=1.06), run_time=0.8)
             vo.wait_until("wins with")
             self.play(FadeIn(h.first, shift=LEFT * 0.15), h.totals[0].animate.set_color(TURN), run_time=0.5)
+            # each runner-up lights as it is said (the numbers are long to say: 0.42 comes ~1.6 s later)
             vo.wait_until("ahead of")
-            self.play(Indicate(h.totals[1], scale_factor=1.15), Indicate(h.totals[2], scale_factor=1.15),
-                      run_time=0.8)
-            self.play(ReplacementTransform(h.tol, h.contains), run_time=0.8)
+            self.play(Indicate(h.totals[1], color=TURN, scale_factor=1.15), run_time=0.7)
+            vo.wait_until("and 0.42")
+            self.play(Indicate(h.totals[2], color=TURN, scale_factor=1.15), run_time=0.6)
+            self.play(ReplacementTransform(h.tol, h.contains), run_time=0.7)
 
         # ========================================================== 4 · re-ranking (B51–B65)
         r = rerank_picture()
         chip4 = concept_tag("re-ranking").move_to(c.slots[2])
         level_boxes([chip4], DOCK_Y)
+        seat_text(chip4, "re-ranking")
         title3 = panel_title("re-ranking")
         hybrid_all = VGroup(h.q, h.ex, h.kw, h.vec, h.cards, h.kw_cells, h.vec_cells, h.formula, h.knote,
                             *[b for row in h.blocks for b in row], h.totals, h.first, h.contains)
-        with self.voiceover(SAY[4]) as vo:
+        # pad: a breath after "reorders them", so the caption "strong together" can be read before
+        # the picture folds into its chip
+        with self.voiceover(SAY[4], pad=1.3) as vo:
             ref4 = lref("B51–B65")
             self.play(FadeOut(hybrid_all, scale=0.15, target_position=c.slots[1].get_center()),
                       ReplacementTransform(c.slots[1], pair), light(c.ret, False), light(c.post),
@@ -543,23 +566,24 @@ class BeyondNaive(VoiceScene):
             self.play(*[r.rows[k].animate.set_fill(TURN, 0.95) for k in RELEVANT], FadeIn(r.legend), run_time=0.8)
             vo.wait_until("A slower model")
             self.play(FadeIn(r.dia, scale=0.85), TransformFromCopy(r.q, r.q2), run_time=0.7)
-            self.play(GrowFromEdge(r.a_q2, UP), FadeIn(r.slow), run_time=0.4)
+            self.play(GrowFromEdge(r.a_q2, UP), run_time=0.35)
             # the cross-encoder reads one (question, chunk) pair at a time
+            vo.wait_until("reads each question")
             ptr = Polygon([0, 0, 0], [0.2, 0.11, 0], [0.2, -0.11, 0], stroke_width=0).set_fill(LOOKUP, 1)
             ptr.move_to([COL_X + COL_W / 2 + 0.16, row_y(0), 0])
             left_vertex = DIA + LEFT * 1.5
             link = Line(ptr.get_right(), left_vertex, color=LOOKUP, stroke_width=2.5)
             link.add_updater(lambda ln: ln.put_start_and_end_on(ptr.get_right(), left_vertex))
-            self.play(FadeIn(ptr), FadeIn(link), run_time=0.2)
-            self.play(ptr.animate.move_to([ptr.get_center()[0], row_y(TOP_K - 1), 0]), run_time=1.8,
+            self.play(FadeIn(ptr), FadeIn(link), FadeIn(r.slow), run_time=0.3)
+            self.play(ptr.animate.move_to([ptr.get_center()[0], row_y(TOP_K - 1), 0]), run_time=1.5,
                       rate_func=linear)
             link.clear_updaters()
             self.play(FadeOut(ptr), FadeOut(link), run_time=0.2)
             vo.wait_until("and reorders them")
             order = list(RELEVANT) + [k for k in range(TOP_K) if k not in RELEVANT]
             self.play(*[r.rows[k].animate.move_to([COL_X, row_y(pos), 0]) for pos, k in enumerate(order)],
-                      run_time=1.1)
-            self.play(Write(r.together), run_time=0.7)
+                      FadeIn(r.together, shift=UP * 0.15, rate_func=lambda t: smooth(min(1.0, t / 0.6))),
+                      run_time=1.0)
 
         # ========================================================== 5 · none of this is in cli.py
         rerank_all = VGroup(r.q, r.ex, r.ret, r.a_q, r.bi, r.a_k, r.k_lab, r.rows, r.legend, r.dia, r.q2,
@@ -578,12 +602,15 @@ class BeyondNaive(VoiceScene):
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(rerank_all, scale=0.15, target_position=c.slots[2].get_center()),
                       ReplacementTransform(c.slots[2], chip4), light(c.post, False),
-                      FadeOut(panel.dash), FadeOut(title), FadeOut(ref4), run_time=1.1)
-            self.play(*[ch.animate.move_to(t) for ch, t in zip(chips, row)], run_time=0.9)
-            self.play(FadeIn(cli), FadeIn(not_here, shift=UP * 0.1), run_time=0.6)
+                      FadeOut(panel.dash), FadeOut(title), FadeOut(ref4), run_time=1.0)
+            # cli.py arrives with the chips, while "cli.py" is said
+            self.play(*[ch.animate.move_to(t) for ch, t in zip(chips, row)],
+                      FadeIn(cli, shift=LEFT * 0.2), FadeIn(not_here, shift=UP * 0.1), run_time=0.9)
             vo.wait_until("They're what you reach for")
-            self.play(LaggedStart(*[Indicate(ch, color=INK, scale_factor=1.08) for ch in chips], lag_ratio=0.2),
-                      run_time=1.2)
+            # light each chip's dashes and words (not its dark fill, which Indicate would turn into a
+            # solid pill that hides the words)
+            self.play(LaggedStart(*[Indicate(VGroup(*ch[1:]), color=TURN, scale_factor=1.08) for ch in chips],
+                                  lag_ratio=0.2), run_time=1.2)
             vo.wait_until("when naive retrieval")
             self.play(c.ret.animate.set_stroke(ERR, 4), run_time=0.4)
             self.play(Indicate(c.ret_lab, color=ERR, scale_factor=1.1), run_time=0.8)
@@ -592,6 +619,8 @@ class BeyondNaive(VoiceScene):
             self.play(FadeIn(fbox, shift=UP * 0.2), run_time=0.6)
             self.play(Write(fnote), run_time=0.8)
             vo.wait_until("its filter removed")
-            self.play(FadeIn(ghost), fbox.animate.set_opacity(0.0), run_time=0.9)
+            # the box becomes a dashed ghost; its name stays, faint, so the empty outline says what went
+            self.play(FadeIn(ghost), fbox[0].animate.set_opacity(0.0), fbox[1].animate.set_opacity(0.4),
+                      run_time=0.9)
         self.wait(0.6)
         self.play(FadeOut(VGroup(concept, c.all, chips, cli_g, ghost, fnote, fbox)), run_time=0.9)

@@ -1,0 +1,16 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 40 (0-based index in the .ipynb; first line: '# @title Step 3: Retrieve Relevant Documents (e.g. RAG)'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[stdout]
+======================================================================
+Step 3: With RAG (Retrieved Knowledge)
+======================================================================
+
+[display: markdown]
+When choosing the best cheese for a grilled cheese sandwich, consider both the melting properties and the flavor profile you desire.
+
+1. **American Cheese**: This is a classic choice for grilled cheese sandwiches, especially if you're looking for a smooth melt and a mild flavor. American cheese melts at around 150°F, which is lower than other cheeses, making it easy to achieve that gooey texture without much effort. Its emulsifiers ensure a perfect, uniform melt, making it ideal for a straightforward, comforting sandwich. It's also widely available in most grocery stores.
+
+2. **Cheddar**: If you're looking for a more flavor-focused sandwich, cheddar is an excellent option. It melts at around 170°F, so you'll need to be a bit more careful with the heat to prevent it from separating. A medium cheddar offers a good balance between meltability and flavor, while sharp cheddar provides a more intense taste. Cheddar is also readily available and can add a rich, tangy flavor to your sandwich.
+
+3. **Gruyere**: For a gourmet twist, gruyere is an exceptional choice. It melts beautifully at around 170°F and has a nutty, slightly sweet flavor that can elevate your grilled cheese to a more sophisticated level. Gruyere is perfect if you're aiming for a more complex flavor profile, perhaps paired with additional ingredients like caramelized onions or mushrooms.
+
+In summary, for a classic and easy-to-make grilled cheese, go with American cheese. If you want a richer flavor, opt for cheddar. For a gourmet experience, choose gruyere. Each cheese brings its unique qualities to the table, so your choice depends on the flavor and texture you're aiming for.

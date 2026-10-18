@@ -1,0 +1,110 @@
+# recorded: Colab notebook "Travel Planner" (L06_travel_planner.ipynb; https://colab.research.google.com/drive/1I_jJEHJsVkGxNoSC1c4wEoVF2QL6vCVY), cell 25 (0-based index in the .ipynb; first line: '# Turn 2: resolve the city and state both allowances with exact units.'). Saved output of the staff's last run, date not stored (trip dates 2026-11-06..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[stdout]
+  [tool] flight_search: Seattle -> San Francisco, 2026-11-06
+  [catalog] flight_search:
+[
+  {
+    "id": "SEA-SFO-20261106-1",
+    "origin": "Seattle",
+    "destination": "San Francisco",
+    "date": "2026-11-06",
+    "departure_local": "09:00",
+    "airline": "Demo Air",
+    "seats_available": 8,
+    "price_basis": "per person, one way, economy, all-in mock fare",
+    "price_cents": 22000,
+    "price_usd": 220.0
+  },
+  {
+    "id": "SEA-SFO-20261106-2",
+    "origin": "Seattle",
+    "destination": "San Francisco",
+    "date": "2026-11-06",
+    "departure_local": "15:00",
+    "airline": "Tutorial Airways",
+    "seats_available": 8,
+    "price_basis": "per person, one way, economy, all-in mock fare",
+    "price_cents": 27000,
+    "price_usd": 270.0
+  }
+]
+  [tool] flight_search: San Francisco -> Seattle, 2026-11-10
+  [catalog] flight_search:
+[
+  {
+    "id": "SFO-SEA-20261110-1",
+    "origin": "San Francisco",
+    "destination": "Seattle",
+    "date": "2026-11-10",
+    "departure_local": "09:00",
+    "airline": "Demo Air",
+    "seats_available": 8,
+    "price_basis": "per person, one way, economy, all-in mock fare",
+    "price_cents": 22000,
+    "price_usd": 220.0
+  },
+  {
+    "id": "SFO-SEA-20261110-2",
+    "origin": "San Francisco",
+    "destination": "Seattle",
+    "date": "2026-11-10",
+    "departure_local": "15:00",
+    "airline": "Tutorial Airways",
+    "seats_available": 8,
+    "price_basis": "per person, one way, economy, all-in mock fare",
+    "price_cents": 27000,
+    "price_usd": 270.0
+  }
+]
+  [tool] hotel_search: San Francisco, 4 nights, pet-friendly=True
+  [catalog] hotel_search:
+[
+  {
+    "id": "SFO-BAY",
+    "city": "San Francisco",
+    "name": "Bay Area Suite",
+    "pet_friendly": true,
+    "nightly_usd": 250.0,
+    "nights": 4,
+    "stay_total_usd": 1000.0,
+    "room_capacity": 2
+  }
+]
+  [tool] attraction_search: San Francisco
+  [catalog] attraction_search:
+[
+  {
+    "id": "SFO-BRIDGE",
+    "name": "Golden Gate Bridge",
+    "admission_usd": 0.0
+  },
+  {
+    "id": "SFO-MUSEUM",
+    "name": "Bay Art Museum",
+    "admission_usd": 30.0
+  }
+]
+  [tool] restaurant_search: San Francisco, all cuisines
+  [catalog] restaurant_search:
+[
+  {
+    "city": "San Francisco",
+    "name": "San Francisco Italian Kitchen",
+    "cuisine": "Italian",
+    "estimated_meal_usd": 30
+  },
+  {
+    "city": "San Francisco",
+    "name": "San Francisco Mexican Kitchen",
+    "cuisine": "Mexican",
+    "estimated_meal_usd": 20
+  },
+  {
+    "city": "San Francisco",
+    "name": "San Francisco French Kitchen",
+    "cuisine": "French",
+    "estimated_meal_usd": 45
+  }
+]
+Kind: options
+San Francisco options found for Nov 6–10, 2026. Outbound: SEA-SFO-20261106-1 or SEA-SFO-20261106-2. Return: SFO-SEA-20261110-1 or SFO-SEA-20261110-2. The only pet-friendly one-room hotel is Bay Area Suite (SFO-BAY). Attractions: Golden Gate Bridge (SFO-BRIDGE) and Bay Art Museum (SFO-MUSEUM). Please choose one flight each way and any attractions; restaurant preference is optional: Italian, Mexican, or French.

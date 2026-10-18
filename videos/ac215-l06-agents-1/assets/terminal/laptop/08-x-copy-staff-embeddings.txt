@@ -1,0 +1,4 @@
+$ mkdir -p outputs; git ls-tree -z --name-only 68e0bde llmrag/outputs/ | tr "\0" "\n" | grep "/embeddings-char-split-" | while IFS= read -r f; do git show "68e0bde:$f" > "outputs/${f##*/}"; done; ls outputs | wc -l; du -ch outputs/embeddings-* | tail -1
+11
+31M	total
+[exit 0]

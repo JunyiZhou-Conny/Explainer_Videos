@@ -1,0 +1,131 @@
+# recorded: Colab notebook "Cheese Quiz" (L06_cheese_quiz.ipynb; https://colab.research.google.com/drive/14UKW-Z7kFPuCwVqyUFcLxeA1KF70fwfm), cell 75 (0-based index in the .ipynb; first line: '# Create a quiz'). Saved output of the staff's last run, 2026-09-23 (tool outputs carry generated_at 1790132526..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[stderr]
+ERROR:openai.agents:Error getting response
+ERROR:openai.agents:Error getting response
+ERROR:openai.agents:Error getting response
+
+[display: HTML quiz widget, 12432 characters; its embedded quiz data:]
+{
+ "title": "Quiz",
+ "questions": [
+  {
+   "id": 1,
+   "text": "What type of cheese was served at Dex’s Diner on Coruscant?",
+   "options": [
+    {
+     "key": "a",
+     "text": "Womp rat cheese"
+    },
+    {
+     "key": "b",
+     "text": "Gonzo yellow cheese"
+    },
+    {
+     "key": "c",
+     "text": "Bantha cheese"
+    },
+    {
+     "key": "d",
+     "text": "Falumpaset cheese"
+    }
+   ],
+   "answer": "b"
+  },
+  {
+   "id": 2,
+   "text": "What is unique about duusha cheese from Star Wars Legends?",
+   "options": [
+    {
+     "key": "a",
+     "text": "It is red with a spicy rind."
+    },
+    {
+     "key": "b",
+     "text": "It is made from green milk."
+    },
+    {
+     "key": "c",
+     "text": "It is blue inside with a fungal rind."
+    },
+    {
+     "key": "d",
+     "text": "It is served frozen only."
+    }
+   ],
+   "answer": "c"
+  },
+  {
+   "id": 3,
+   "text": "What did Aunt Beru make that was praised by her cooking teacher in the New Canon?",
+   "options": [
+    {
+     "key": "a",
+     "text": "Spicy Endorian Tip-Yip"
+    },
+    {
+     "key": "b",
+     "text": "Blue-milk cheese"
+    },
+    {
+     "key": "c",
+     "text": "Corellian pie"
+    },
+    {
+     "key": "d",
+     "text": "Mustafarian lava buns"
+    }
+   ],
+   "answer": "b"
+  },
+  {
+   "id": 4,
+   "text": "Where did bantha cheese first appear canonically?",
+   "options": [
+    {
+     "key": "a",
+     "text": "Star Wars: A New Hope"
+    },
+    {
+     "key": "b",
+     "text": "The Mandalorian"
+    },
+    {
+     "key": "c",
+     "text": "Star Wars: Creatures Big & Small"
+    },
+    {
+     "key": "d",
+     "text": "Star Wars: Galaxy’s Edge Cookbook"
+    }
+   ],
+   "answer": "c"
+  },
+  {
+   "id": 5,
+   "text": "Falumpaset cheese is an ingredient in a dish served at which Star Wars-themed location?",
+   "options": [
+    {
+     "key": "a",
+     "text": "Mos Eisley Cantina"
+    },
+    {
+     "key": "b",
+     "text": "Dex’s Diner"
+    },
+    {
+     "key": "c",
+     "text": "Theed Palace Restaurant"
+    },
+    {
+     "key": "d",
+     "text": "Star Wars: Galaxy’s Edge"
+    }
+   ],
+   "answer": "d"
+  }
+ ],
+ "settings": {
+  "shuffleQuestions": false,
+  "shuffleOptions": false
+ }
+}

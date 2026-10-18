@@ -1,0 +1,1 @@
+In this notebook, we explore some handy frameworks that allow us to work with LLMs in an agentic setup, i.e. designed to complete any complex task with iterative steps. While agents and agentic workflows can be extremely complex and span entire project directories, we have selected a few smaller examples to demonstrate the power of such a setup.

@@ -1,0 +1,36 @@
+# recorded: Colab notebook "Travel Planner" (L06_travel_planner.ipynb; https://colab.research.google.com/drive/1I_jJEHJsVkGxNoSC1c4wEoVF2QL6vCVY), cell 27 (0-based index in the .ipynb; first line: '# Turn 4: only this later human turn approves the displayed proposal.'). Saved output of the staff's last run, date not stored (trip dates 2026-11-06..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[stdout]
+  [tool] finalize_plan: validating selections and calculating costs
+Kind: itinerary
+Your checked round trip from Seattle to San Francisco is ready for 2 traveler(s), with Bay Area Suite and Golden Gate Bridge, Bay Art Museum. Budget report is shown below. Nothing has been booked.
+Budget report (computed by Python; fictional planning only):
+{
+  "status": "within_budget",
+  "booking_status": "Not booked \u2014 fictional planning only",
+  "origin": "Seattle",
+  "destination": "San Francisco",
+  "start_date": "2026-11-06",
+  "end_date": "2026-11-10",
+  "travelers": 2,
+  "rooms": 1,
+  "nights": 4,
+  "pet_friendly_required": true,
+  "outbound_flight": "SEA-SFO-20261106-1",
+  "return_flight": "SFO-SEA-20261110-1",
+  "hotel": "Bay Area Suite",
+  "attractions": [
+    "Golden Gate Bridge",
+    "Bay Art Museum"
+  ],
+  "costs_usd": {
+    "round_trip_flights": 880.0,
+    "hotel": 1000.0,
+    "food_allowance": 600.0,
+    "local_transport_allowance": 150.0,
+    "attractions": 60.0
+  },
+  "total_usd": 2690.0,
+  "budget_usd": 6000,
+  "remaining_usd": 3310.0,
+  "assumptions": "One shared room; food for every calendar day, including arrival/departure; transport is a whole-trip allowance."
+}

@@ -1,0 +1,19 @@
+# recorded: Colab notebook "Travel Planner" (L06_travel_planner.ipynb; https://colab.research.google.com/drive/1I_jJEHJsVkGxNoSC1c4wEoVF2QL6vCVY), cell 26 (0-based index in the .ipynb; first line: '# Turn 3: select every catalog item and ask for the exact proposal.'). Saved output of the staff's last run, date not stored (trip dates 2026-11-06..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[stdout]
+  [tool] finalize_plan: validating selections and calculating costs
+Kind: clarification
+Please review this exact proposed plan and reply with 'yes' to approve it, or tell me what to change. Food is per person per calendar day; local transport is for the whole trip.
+{
+  "outbound_id": "SEA-SFO-20261106-1",
+  "return_id": "SFO-SEA-20261110-1",
+  "hotel_id": "SFO-BAY",
+  "travelers": 2,
+  "budget_usd": 6000,
+  "daily_food_usd": 60,
+  "local_transport_usd": 150,
+  "pet_friendly": true,
+  "attraction_ids": [
+    "SFO-BRIDGE",
+    "SFO-MUSEUM"
+  ]
+}

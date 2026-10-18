@@ -21,7 +21,7 @@ S01:
   - "Tolminc 是一种真实的阿尔卑斯奶酪，但我们要的答案在某一篇特定的文本里。"
 - en: "The knowledge base is eleven books: ten old cheese books from Project Gutenberg, and the instructor's short story, a fictional tale. A model trained before that story existed has never read it, so it answers from somewhere else. How do we make it answer from this story, without retraining it?"
   zh:
-  - "知识库是 11 本书：10 本来自 Project Gutenberg 的讲奶酪的老书，加上授课老师写的一个短篇故事，一个虚构的故事。"
+  - "知识库一共是 11 本书：10 本 Project Gutenberg 上讲奶酪的老书，加上授课老师写的一个短篇故事，一个虚构的故事。"
   - "在这个故事出现之前训练的模型从没读过它，所以它的回答来自别处。"
   - "怎样让它根据这个故事回答，又不用重新训练？"
 - en: "The lecture lists four weaknesses: stale training data, no specialized knowledge, hallucination, and no sources. RAG, retrieval augmented generation, goes after the first two."
@@ -138,7 +138,7 @@ S03:
   - null
 - en: "Step 2: in your editor, set GCP project on line 7 to your own Project ID, the ID, not the name. Leave line 8 alone. Skip this, and your calls go to the course's project and fail. Pause and edit."
   zh:
-  - "第 2 步：在编辑器里，把第 7 行的 GCP project 变量改成你自己的项目 ID，是 ID，不是项目名称。"
+  - "第 2 步：在编辑器里，把第 7 行的 GCP project 变量改成自己的项目 ID，是 ID，不是项目名称。"
   - "第 8 行别动。"
   - "跳过这一步，你的调用就会发到课程的项目上，然后失败。"
   - "暂停一下，改好它。"
@@ -205,7 +205,7 @@ S04:
   - "With no .dockerignore file, the image keeps it."
 - en: "Then the banner: Python 3.12.15 and uv 0.13.1, at the time of recording. It says activated before it activates: cosmetic."
   zh:
-  - "然后是横幅：录制时是 Python 3.12.15 和 uv 0.13.1。"
+  - "然后是横幅：Python 3.12.15 和 uv 0.13.1，都是录制时的版本。"
   - "它在激活之前就说已经激活了：只是显示问题。"
 - en: "You're at the container's prompt. The part after the at sign is the container's ID; it changes every run. Pause, and get to this prompt."
   zh:
@@ -313,7 +313,7 @@ S06:
 - en: "The chunk files land in outputs, on your laptop, and git ignores them. Row 0 of a Gutenberg book is the Project Gutenberg header: these books start with a header and end with a license, both chunked like the rest."
   zh:
   - "这些 chunk 文件落在你笔记本上的 outputs 目录里，git 会忽略它们。"
-  - "Gutenberg 的书的第 0 行是 Project Gutenberg 的开头声明：这些书以声明开头，以许可证结尾，两者都和正文一样切成了 chunk。"
+  - "一本 Gutenberg 书的第 0 行，是 Project Gutenberg 的开头声明：这些书开头是声明，结尾是许可证，两者都和正文一样切成了 chunk。"
   en_display:
   - "The chunk files land in outputs/, on your laptop, and git ignores them."
   - null
@@ -358,7 +358,7 @@ S07:
 - en: "The lecture's point is that ideal chunks follow the document's own structure. Recursive splitting goes part of the way, using paragraphs. Semantic chunking, in part 2, goes further."
   zh:
   - "课上的观点是：理想的 chunk 应该顺着文档自身的结构。"
-  - "递归切分借助段落，做到了一部分。"
+  - "递归切分做到了一部分，靠的是段落。"
   - "第二部分的语义分块走得更远。"
 S08:
 - en: "Next, the embedding model. It turns each chunk into one vector, a list of numbers, so similar meanings point in similar directions: in this sketch, curd near curd, license text elsewhere."
@@ -368,7 +368,7 @@ S08:
 - en: "The personality game from lecture makes this concrete. Five scores make each person a five-number vector. Cosine similarity compares only the angle, and picks the first candidate."
   zh:
   - "课上的性格游戏把这件事讲得很具体。"
-  - "五个分数让每个人成为一个五维向量。"
+  - "五个分数把每个人变成一个五维向量。"
   - "余弦相似度只比较夹角，选中的是第一个候选人。"
 - en: "The dot product also counts length, and would pick the second candidate, whose arrow is longer. So a measure is a choice; for text, cosine is the usual one."
   zh:
@@ -385,12 +385,12 @@ S08:
   - "遇到 API 错误，它最多重试 5 次，等待时间从 5 秒开始逐次翻倍。"
 - en: "Your question will use this same model, later. Chunks now, questions later: one model."
   zh:
-  - "之后，你的问题也会用这同一个模型。"
+  - "你的问题之后也会用这同一个模型。"
   - "现在是 chunk，之后是问题：同一个模型。"
 - en: "Step 1: python cli.py, dash dash embed, chunk type char split: the first call to Google. On our machine it reads the first book, then stops at the missing key file. On yours, it runs."
   zh:
   - "第 1 步：python cli.py --embed，chunk type 用 char-split：第一次调用 Google。"
-  - "在我们的机器上，它读入第一本书，然后因为没有密钥文件停住了。"
+  - "在我们的机器上，它读入第一本书，然后停住了：没有密钥文件。"
   - "在你的机器上，它能跑通。"
   en_display:
   - "Step 1: python cli.py --embed --chunk_type char-split: the first call to Google."
@@ -401,7 +401,7 @@ S08:
   - "有密钥的话，要找的是每本书的文件、5 秒的停顿、一张带 embedding 列的表，以及 chunk 旁边新出现的 embeddings 文件。"
 - en: "If yours fails, or keeps retrying, read the error. Key file not found: check its name in secrets. Permission denied: fix the Project ID or the role, then exit and start the script again. Service disabled: switch on the API."
   zh:
-  - "如果你的失败了，或者一直在重试，就读报错。"
+  - "如果你那边失败了，或者一直在重试，就去读报错。"
   - "找不到密钥文件：检查 secrets 目录里它的名字。"
   - "报 permission denied：改好项目 ID 或角色，然后退出，重新运行脚本。"
   - "报 service disabled：把 API 打开。"
@@ -449,8 +449,8 @@ S09:
   - "而 load 这一步先删掉它，再重新创建，用余弦作为度量：每次 load 都是完全重建。"
 - en: "Comparing a question with every vector is slow at scale. So the database builds an index, in these slides' sense: a layered graph called H-N-S-W, where a search hops down in a few steps."
   zh:
-  - "数据量一大，拿问题和每个向量逐一比较就很慢。"
-  - "所以数据库会建一个索引，这里是按这几页课件的意思：一张叫 HNSW 的分层图，搜索几步就能跳下来。"
+  - "拿问题和每个向量逐一比较，数据量一大就很慢。"
+  - "所以数据库会建一个索引，就是这几页课件说的那种：一张叫 HNSW 的分层图，搜索几步就能一层层跳下来。"
   en_display:
   - null
   - "So the database builds an index, in these slides' sense: a layered graph called HNSW, where a search hops down in a few steps."

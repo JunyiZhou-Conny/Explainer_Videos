@@ -1,0 +1,29 @@
+$ python - <<'EOF'
+import cli, agent_tools
+c = cli.chromadb.HttpClient(host=cli.CHROMADB_HOST, port=cli.CHROMADB_PORT).get_collection("char-split-collection")
+enum = agent_tools.get_book_by_author_func.parameters.properties["author"].enum
+metas = c.get(include=["metadatas"])["metadatas"]
+print("chunks in char-split-collection:", len(metas))
+print("author (enum value)                          chunks")
+for a in enum:
+    print(f"  {a:<42} {sum(m.get('author') == a for m in metas):>5}")
+print("books whose chunks no enum value can select:")
+for b in sorted({m["book"] for m in metas if m.get("author") not in enum}):
+    n = sum(m["book"] == b for m in metas)
+    print(f"  {b!r}: {n} chunks, author = {next(m.get('author') for m in metas if m['book'] == b)!r}")
+EOF
+chunks in char-split-collection: 8248
+author (enum value)                          chunks
+  C. F. Langworthy and Caroline Louisa Hunt    401
+  J. Twamley                                   545
+  George E. Newell                             395
+  T. D. Curtis                                 640
+  Charles Thom and W. W. Fisk                 2047
+  Thomas Wilson Reid                           522
+  Bob Brown                                   1355
+  Charles S. Brooks                            636
+  Pavlos Protopapas                             24
+books whose chunks no enum value can select:
+  'Cottage Cheese Recipe Book': 178 chunks, author = 'Milk Industry Foundation'
+  'Womans Institute Library of Cookery': 1505 chunks, author = None
+[exit 0]

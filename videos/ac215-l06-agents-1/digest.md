@@ -6,13 +6,18 @@
   - It depends on L05's sections `#prerequisites` (45-69), `#run-llm-rag-container` (75-85) and `#chunk-documents` through `#load-embeddings-into-vector-database` (91-166): the agent queries the vector collection you built there.
 - **Repo 2:** `dlops-io/llm-agent-google-adk`, branch `main` (its only branch), commit `f89faa79de744f6a046e30dff24b3b6f1d73720b`, committed 2025-12-02 14:02:38 -0500 ("fix bugs and clean readme"). It has **no lockfile**: `uv.lock` is git-ignored (`llm-agent-google-adk/.gitignore:34`).
 - **Colab notebooks** (local JSON copies; Colab links at `2026-AC215/tutorials_demo.md:88, 94, 98`):
-  - `L06_cheese_quiz.ipynb`, "Cheese Quiz". 79 cells. OpenAI API + OpenAI Agents SDK + FastMCP. Last saved run: 2026-09-23 (the tool outputs carry `generated_at: 1790132526`).
+  - `L06_cheese_quiz.ipynb`, "Cheese Quiz". 79 cells. OpenAI API + OpenAI Agents SDK + FastMCP. Last saved run: 2026-09-23 (the tool outputs carry `generated_at: 1790132526` = 2026-09-23 03:02 UTC). The FastMCP banner in cell 57's saved output says `FastMCP 4.0.5`.
   - `L06_travel_planner.ipynb`, "Travel Planner". 31 cells. OpenAI Agents SDK `0.3.2`.
   - `L06_cheese_newsletter_harness.ipynb`, "Cheese Newsletter - Harness". 33 cells. Microsoft Agent Framework. Last saved run: 2026-09-20 13:27 UTC (footer of the saved HTML).
   - Cell numbers below are 0-based indices in the `.ipynb` JSON. Colab does not show numbers, so I also give each cell's `# @title` or first line.
 - **Files read in full:** every tracked text file in both repos. In `llm-rag`: `README.md`, `cli.py`, `agent_tools.py`, `semantic_splitter.py`, `Dockerfile`, `docker-compose.yml`, `docker-entrypoint.sh`, `docker-shell.sh`, `pyproject.toml`, the relevant part of `uv.lock`, `.gitignore` and `out.txt` (a recorded `--agent` run), plus the flow diagram `images/llm-rag-flow-3.png`. In `llm-agent-google-adk`: all 54 tracked files (53 text files plus `demo.gif`), covering the 6 modules, READMEs, `QUICKSTART.md`, every `.env.example` and `pyproject.toml`. All three notebooks: every code and markdown cell, plus the saved outputs.
-- **Third-party code I read to check claims** (downloaded wheels, unzipped, read only): `google-adk` 1.19.0 (current on the repo's last commit date), 1.27.5, 1.28.0 and 2.11.0 (what `uv sync` resolves today); `google-genai` 1.39.1 (pinned by llm-rag's `uv.lock:496-497`); `chromadb` 1.1.0; `openai-agents` 0.3.2 and 0.23.1; `fastmcp-slim` 4.1.0; the npm package `@modelcontextprotocol/server-filesystem` 1.0.0. I also checked Google's Gemini deprecation page (last updated 2026-10-09) and OpenAI's deprecation page.
-- **How claims were checked:** every repo `path:line` below was checked with `sed -n` / `grep -n`. I did **not** run Docker, the notebooks, or any repo script. Two things I did run: (1) a metadata-only dependency resolution (`uv pip compile --only-binary :all:`) on a copy of the ADK repo's dependency list, to see which versions `uv sync` picks today; (2) the langchain splitter (version from `uv.lock`) on the book files, to count chunks. Claims I reasoned out but could not run are marked *(reasoned, not run)*.
+- **Third-party code read to check claims** (downloaded wheels, unzipped, read only): `google-adk` 1.19.0 (current on the repo's last commit date; 1.20.0 came out the next day), 1.27.5, 1.28.0, 2.11.0 and 2.12.0 (released 2026-10-13; what `uv sync` resolves on 2026-10-18 for Python ≥ 3.11, while Python 3.10 gets 2.11.0); `google-genai` 1.39.1 (pinned by llm-rag's `uv.lock:496-497`); `chromadb` 1.1.0; `openai-agents` 0.3.2, 0.22.3, 0.23.1 and 0.24.0 (current on 2026-10-18); `fastmcp-slim` 4.1.0 (fastmcp 4.1.1 came out 2026-10-18); the npm package `@modelcontextprotocol/server-filesystem` 1.0.0 (2026-10-11). Also Google's Gemini API deprecation page (re-checked 2026-10-18, "last updated 2026-10-12") and OpenAI's deprecation page (re-checked 2026-10-18).
+- **How claims were checked:** every repo `path:line` below was checked with `sed -n` / `grep -n`; commits with `git rev-parse` / `git log`. The notebooks and the cloud steps were **not** run (no API keys here). Things that were run:
+  1. In a disposable `python:3.12-slim-bookworm` container (2026-10-18, uv 0.13.1) on a copy of the ADK repo: `uv lock` without and with the G1 pin; `AgentLoader('.').list_agents()` and `load_agent('1-baseline')` under google-adk 1.27.5 and 2.12.0; `adk --version`; `adk web 1-baseline/agent.py`; `uv sync` of a toy project with the modules' hatch settings. The repo's agents were only imported, never sent a message.
+  2. The `chromadb/chroma` image (digest `sha256:1e0b73a1…`, chroma 1.4.4, the one L05's captures pulled as `latest`): `/api/v1/heartbeat`, `command -v curl`, a host-side bind of the published port.
+  3. The remote MCP server: `GET`, then MCP `initialize` + `tools/list`. The two Drive files of Cheese Quiz cell 13 (downloaded, read only).
+  4. Chunk counts come from L05's real captures (`videos/ac215-l05-rag/assets/terminal/cli-container/11-x-wc-char-split.txt`).
+  Claims reasoned out but not run are marked *(reasoned, not run)*.
 
 ---
 
@@ -38,7 +43,7 @@ YOUR LAPTOP  (~/Desktop/AC215)
 +-----------------------------------------------------------------------------------------------+
 | (B) llm-rag/   sh docker-shell.sh  ->  docker compose run --rm llm-rag-cli                     |
 |     docker network "llm-rag-network"                                                          |
-|     +---------------- container llm-rag-cli (python:3.12-slim, venv /.venv) ---------------+  |
+|     +-- one-off container llm-rag-llm-rag-cli-run-<id> (image llm-rag-cli, venv /.venv) --+  |
 |     | /app     <- bind ../llm-rag        /secrets <- bind ../secrets                        |  |
 |     | $ python cli.py --agent --chunk_type char-split                                     |  |
 |     |   (1) generate_content(question, tools, mode=ANY) -------------------------------+  |  |
@@ -67,6 +72,7 @@ GOOGLE COLAB VM (browser)     notebook --HTTPS--> OpenAI API (gpt-4o, gpt-5.6-lu
 ```
 
 (*) `adk web` and the llm-rag ChromaDB both want port **8000** on your laptop. See G3.
+The CLI image `llm-rag-cli` is built `FROM python:3.12-slim-bookworm` (`Dockerfile:2`). `docker compose run` ignores `container_name: llm-rag-cli` (`docker-compose.yml:9`): the one-off container is named `llm-rag-llm-rag-cli-run-<id>` (L05 capture `laptop/07-docker-shell.txt`). Only `llm-rag-chromadb` keeps its fixed name.
 
 ---
 
@@ -80,11 +86,11 @@ GOOGLE COLAB VM (browser)     notebook --HTTPS--> OpenAI API (gpt-4o, gpt-5.6-lu
 | Service account `llm-service-account` with **Vertex AI User** (now listed as "Gemini Enterprise Agent Platform User") | llm-rag | README.md:52-62. The JSON key goes to `../secrets/llm-service-account.json`, i.e. `~/Desktop/AC215/secrets/`, a sibling of `llm-rag/` (README.md:64-69). It is mounted at `/secrets` (`docker-compose.yml:11`), and `GOOGLE_APPLICATION_CREDENTIALS=/secrets/llm-service-account.json` (`docker-shell.sh:8`). The README also grants **Storage Admin** (README.md:57). Nothing in the L06 code path touches Cloud Storage, so the agent does not need it. |
 | A loaded Chroma collection `char-split-collection` | llm-rag `--agent` | `cli.py:427-429` calls `get_collection(f"{method}-collection")`. You build it with L05's `--chunk`, `--embed`, `--load`. |
 | **Google AI Studio API key** | ADK repo | `GOOGLE_API_KEY` in `llm-agent-google-adk/.env` (`.env.example:5`). Alternative: Vertex mode via `GOOGLE_GENAI_USE_VERTEXAI=true`, `GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION` (`1-baseline/.env.example:10-12`, commented out). |
-| A **current Gemini model name** | ADK repo | Read as `GEMINI_MODEL` from `.env` (root `.env.example:21` says `gemini-2.5-flash`). Every `agent.py` except `6-rag/1-vertex-rag-engine/agent.py` (which hard-codes `gemini-2.5-flash`, line 47) falls back to `gemini-2.0-flash` (e.g. `1-baseline/agent.py:12`), which is **shut down**. See G2. |
+| A **current Gemini model name** | ADK repo | Read as `GEMINI_MODEL` from `.env` (root `.env.example:21` says `gemini-2.5-flash`). Every Gemini `agent.py` falls back to `gemini-2.0-flash` when `GEMINI_MODEL` is unset (e.g. `1-baseline/agent.py:12`), and that model is **shut down**. The exceptions: `6-rag/1-vertex-rag-engine/agent.py:47` hard-codes `gemini-2.5-flash`, and `2-litellm/agent.py:26` uses `"gpt-4"`. See G2. |
 | **OpenAI API key** with billing | all three notebooks; ADK `2-litellm` | Colab **Secrets** panel, name `OPENAI_API_KEY`, with notebook access on. Read via `userdata.get('OPENAI_API_KEY')`: Cheese Quiz cell 12 (`# @title Set Up OpenAI Key`), Travel Planner cell 10, Newsletter cell 10. |
 
 **Local installs:**
-- Docker Desktop with Compose v2, for llm-rag.
+- Docker (Desktop) with the Compose plugin (`docker compose`; L05's captures used Docker Engine 29.8.2 + Compose v5.6.0), for llm-rag.
 - `uv`, for the ADK repo (`README.md:59-64` says Python 3.10+; uv can fetch Python for you).
 - **Node.js + npm (`npx`)**, for `3-mcp-tools` (`3-mcp-tools/README.md:53-64`).
 - Git.
@@ -92,9 +98,9 @@ GOOGLE COLAB VM (browser)     notebook --HTTPS--> OpenAI API (gpt-4o, gpt-5.6-lu
 **Platform:** `python:3.12-slim-bookworm` and `chromadb/chroma` are multi-arch images, and `uv.lock` pins chromadb 1.1.0 wheels for `manylinux_2_17_aarch64` as well as x86_64. So Apple Silicon runs natively. The entrypoint prints `Architecture: aarch64` on an M-series Mac (`docker-entrypoint.sh:4`).
 
 **Costs (all small, but not zero):**
-- *Vertex embeddings (only if you rebuild the collection).* char-split produces **8,248 chunks** of ≤350 characters (I counted with the locked splitter version): about 2.9 M characters. `embed()` batches per book file, up to 100 chunks per request (`cli.py:239-253`), so that is 89 embedding requests, not 83. That costs pennies.
+- *Vertex embeddings (only if you rebuild the collection).* char-split produces **8,248 chunks** of ≤350 characters (confirmed by L05's real run, `cli-container/11-x-wc-char-split.txt`; Tolminc has 24): about 2.9 M characters. `embed()` batches per book file, up to 100 chunks per request (`cli.py:239-253`), so that is 89 embedding requests (the sum of ⌈chunks/100⌉ over the 11 books), not 83. That costs pennies.
 - *Vertex Gemini.* The recorded agent run used 247 + 1,269 tokens (`out.txt:49`, `out.txt:135`). Negligible.
-- *OpenAI.* Cheese Quiz makes dozens of `gpt-4o` calls. The "Reasoning LLM" alone makes 11 calls per question (saved output, cell 25). The hosted **web search** tool is billed by OpenAI per call on top of tokens, and Stilton, Cashew and SimpleAgent use it. The Newsletter runs a researcher with web search at least once per reader (the orchestrator may make up to four researcher calls, cell 24; the saved run made one per reader). Expect cents to low dollars per full run.
+- *OpenAI.* Cheese Quiz makes dozens of model calls. Most name `gpt-4o`; the "Reasoning LLM" alone made 11 calls for one question in the saved run (cell 25). Cheddar, Mozzarella, Cashew, Ricotta and the Guild orchestrator (cells 66, 70) set no `model=`, so they run on the Agents SDK's default model: `gpt-5.6-luna` in openai-agents 0.22.3–0.24.0 (`agents/models/default_models.py`, `get_default_model()`, overridable with `OPENAI_DEFAULT_MODEL`). The hosted **web search** tool is billed by OpenAI per call on top of tokens, and Stilton, Cashew and SimpleAgent use it. The Newsletter runs a researcher with web search at least once per reader (the orchestrator may make up to four researcher calls, cell 24; the saved run made one per reader). Expect cents to low dollars per full run.
 - *Gemini API (AI Studio):* free-tier limits may cover the ADK exercises. Check your quota page.
 - *Optional `6-rag/1-vertex-rag-engine`:* creates a managed **Vertex AI RAG Engine corpus** in your project (`setup_corpus.py:41-64`). Delete it when done: `uv run python setup_corpus.py`, then option `5. Delete corpus` (`setup_corpus.py:160, 192-194`).
 
@@ -112,7 +118,7 @@ GOOGLE COLAB VM (browser)     notebook --HTTPS--> OpenAI API (gpt-4o, gpt-5.6-lu
 ### C1. LLM vs workflow vs agent: who holds the steering wheel?   **[ANIMATE]**
 - **Explanation:** The Cheese Quiz notebook asks the same question three ways.
   - *Base LLM:* one call (cell 20, `# @title Define BaseLLM`).
-  - *"Reasoning LLM":* **your Python** decides the steps. Analyse → decompose → answer each sub-question → verify → synthesise = 11 calls (cell 24, `# @title Define ReasoningLLM`).
+  - *"Reasoning LLM":* **your Python** decides the steps. Analyse → decompose → answer each sub-question → verify → synthesise (cell 24, `# @title Define ReasoningLLM`). With at most 4 sub-questions (`questions[:4]`, cell 24 line 41) that is at most 1 + 1 + 4 × 2 + 1 = 11 calls, which is what the saved run made (cell 25).
   - *Agent:* **the model** decides what to do next, including when to call `web_search` and when to stop (cell 30, `# @title Define SimpleAgent`; definition in cell 8: "a component that uses an LLM with instructions and tools that can run autonomously").
 - **Mental model:** The difference is *who controls the control flow*. In a workflow, the `if`/`for` live in your code. In an agent, they live in the model's next-token choices, and your code is a loop that obeys.
 - **Analogy:** A recipe card (workflow) vs a chef who reads the order and decides which station to visit (agent).
@@ -127,7 +133,7 @@ GOOGLE COLAB VM (browser)     notebook --HTTPS--> OpenAI API (gpt-4o, gpt-5.6-lu
 - **Animation:** A speech bubble from the model morphs into a JSON card `{name, args}`. The card slides across a dashed "trust boundary" into a Python box. The box spins and emits 10 text chunks, which are stapled to the card as a `function_response`. The bundle slides back into the model, which outputs prose. Show `thought_signature` as a small wax seal on the card that must stay attached on the way back (`out.txt:28`).
 
 ### C3. The agent loop and its stopping rule   **[ANIMATE]**
-- **Explanation:** Real agents repeat C2 until the model stops asking for tools. In ADK the core is literally `while True:`. Run one LLM step (which may execute tools), then break if the last event `is_final_response()` (google-adk 1.19.0 `flows/llm_flows/base_llm_flow.py:343-352`). An event counts as final when it has no function calls, no function responses and is not partial (`events/event.py:82-97`; also true when a tool set `skip_summarization` or is long-running). The OpenAI Agents SDK does the same with a `max_turns` budget (default 10, `openai-agents 0.3.2 agents/run.py:77`). The notebooks set `max_turns=12` (Cheese Quiz cell 71, Travel Planner cell 21). Microsoft Agent Framework calls the budget `max_iterations` (Newsletter cell 25, `{"max_iterations": 16}`).
+- **Explanation:** Real agents repeat C2 until the model stops asking for tools. In ADK the core is literally `while True:`. Run one LLM step (which may execute tools), then break if the last event `is_final_response()` (google-adk 1.19.0 `flows/llm_flows/base_llm_flow.py:343-352`; identical in 1.27.5 at lines 755-764). An event counts as final when it has no function calls, no function responses, is not partial and has no trailing code-execution result (`events/event.py:82-97`; also true when a tool set `skip_summarization` or is long-running). The OpenAI Agents SDK does the same with a `max_turns` budget (default 10, `openai-agents 0.3.2 agents/run.py:77`). The notebooks set `max_turns=12` (Cheese Quiz cell 71, Travel Planner cell 21). Microsoft Agent Framework calls the budget `max_iterations` (Newsletter cell 25, `{"max_iterations": 16}`).
 - **Mental model:** A `while` loop whose exit condition is decided by the model, plus a hard iteration cap decided by you.
 - **Analogy:** A detective who keeps sending the intern for evidence until ready to name the culprit, with a deadline.
 - **Misconception:** "`llm-rag --agent` is an agent loop." It is a fixed two-call pipeline: forced tool call → answer (`cli.py:439-478`). If the second call asked for another tool, the code would just print that request (P2 in §8).
@@ -149,7 +155,7 @@ GOOGLE COLAB VM (browser)     notebook --HTTPS--> OpenAI API (gpt-4o, gpt-5.6-lu
 
   By contrast, llm-rag writes the JSON schema by hand (`agent_tools.py:9-38`).
 
-  **MCP** (Model Context Protocol) standardises *where tools live*. A server lists its tools, and any client can call them over **stdio** (a child process) or **HTTP**. The Cheese Quiz connects to a remote server (cell 54, `https://pavlos-fun-facts.dlops.io/mcp`) and to a local FastMCP server it starts in a thread on port 8001 (cells 57-59). ADK `3-mcp-tools` spawns the npm filesystem server over stdio and whitelists three tools (`3-mcp-tools/agent.py:20-29`).
+  **MCP** (Model Context Protocol) standardises *where tools live*. A server lists its tools, and any client can call them over **stdio** (a child process) or **HTTP**. The Cheese Quiz connects to a remote server (cell 54, `https://pavlos-fun-facts.dlops.io/mcp`; on 2026-10-18 its `tools/list` returned one tool, `pavlos_fun_fact_mcp`, server name "Pavlos Cheese MCP") and to a local FastMCP server it starts in a thread on port 8001 (cells 57-59) that defines a tool of the same name. ADK `3-mcp-tools` spawns the npm filesystem server over stdio and whitelists three tools (`3-mcp-tools/agent.py:20-29`).
 - **Mental model:** Tool = function + contract. MCP = a USB standard for plugging tool servers into any agent.
 - **Analogy:** A universal power socket. The appliance (tool server) does not care which house (agent framework) it is plugged into.
 - **Misconception:** "MCP gives the model network access." The *client process* talks to the server. The model still only emits a function call, and `tool_filter` (`3-mcp-tools/agent.py:28`) limits what it can even ask for.
@@ -158,10 +164,10 @@ GOOGLE COLAB VM (browser)     notebook --HTTPS--> OpenAI API (gpt-4o, gpt-5.6-lu
 - **Explanation:**
   - An **`LlmAgent`** (alias `Agent`) bundles model + instruction + tools.
   - A **Runner** executes an agent for a `(user_id, session_id)`, streams **Events**, and appends each event to the **Session** (`4-production-ready/app/runner.py:16-46`).
-  - A session holds **state**, a dict. When an `LlmAgent` has `output_key="x"`, its final text is written into `state["x"]` (google-adk 1.19.0 `agents/llm_agent.py:796-816`).
+  - A session holds **state**, a dict. When an `LlmAgent` has `output_key="x"`, its final text is written into `state["x"]` (google-adk 1.19.0 `agents/llm_agent.py:795-816`; 1.27.5: lines 821-851).
   - Any later instruction containing `{x}` gets that value pasted in before the call. A missing key raises `KeyError: Context variable not found` unless you write `{x?}` (`utils/instructions_utils.py:81-124`).
   - `SequentialAgent` runs sub-agents in order (`1-baseline/agent.py:35-39`). `ParallelAgent` runs them concurrently on separate *branches* but with shared state (`agents/parallel_agent.py`, `_create_branch_ctx_for_sub_agent`).
-  - `adk web` imports `<folder>/agent.py`, looks for `root_agent`, and loads the nearest `.env` walking up from that folder with `override=True` (`cli/utils/envs.py`, `load_dotenv_for_agent`). In 1.27.5 (the version the G1 pin installs) variables you exported in the shell before starting `adk web` are restored afterwards, so only earlier `.env` values get overridden.
+  - `adk web` imports `<folder>/agent.py`, looks for `root_agent`, and loads **only the nearest** `.env`, walking up from that folder, with `override=True` (`cli/utils/envs.py`, `load_dotenv_for_agent`). A module `.env` therefore hides the root one completely. In 1.27.5 (the version the G1 pin installs) variables you exported in the shell before starting `adk web` are restored afterwards, so only earlier `.env` values get overridden.
 - **Mental model:** A shared whiteboard (state). Each agent reads cells off the board through `{placeholders}` and writes its answer into one named cell.
 - **Analogy:** A relay race where the baton is a labelled envelope pinned to a corkboard.
 - **Misconception:** "Sub-agents pass messages directly to each other." They do not. Data flows through session state (and the shared event history), which is why `output_key` names matter.
@@ -173,12 +179,12 @@ GOOGLE COLAB VM (browser)     notebook --HTTPS--> OpenAI API (gpt-4o, gpt-5.6-lu
 
 ### C7. Multi-agent patterns: workflow agents, agents-as-tools, custom routers
 - **Explanation:** There are three ways to compose agents in this lecture.
-  - (a) **Workflow agents:** `SequentialAgent`, `ParallelAgent` and `LoopAgent`. Deterministic orchestration, LLM inside each step. Only `SequentialAgent` is in runnable code (`1-baseline/agent.py:35-39`); `ParallelAgent` appears only as a README snippet (`1-baseline/README.md:139-150`) and `LoopAgent` only in `5-custom-agent/README.md:232-260`.
+  - (a) **Workflow agents:** `SequentialAgent`, `ParallelAgent` and `LoopAgent`. Deterministic orchestration, LLM inside each step. Only `SequentialAgent` is in runnable code (`1-baseline/agent.py:35-39`); `ParallelAgent` appears only as a README snippet (`1-baseline/README.md:138-145`) and `LoopAgent` only in `5-custom-agent/README.md:232-259`.
   - (b) **Agents-as-tools:** each specialist is wrapped with `.as_tool(name, description)`, and an orchestrator LLM decides which one to call (Cheese Quiz cells 64-71: Stilton, Cashew, Brie, Cheddar, Mozzarella, Ricotta). The Newsletter wraps the researcher and editor as `@tool` functions (cells 21-22).
   - (c) **Custom agents:** subclass `BaseAgent` and write `_run_async_impl` with ordinary `if` statements (`5-custom-agent/conditional_agent.py:72-104`).
 - **Mental model:** (a) is an assembly line, (b) is a manager with a phone book of specialists, (c) is code that you write yourself.
 - **Analogy:** A factory line, a general contractor, and your own hand-written SOP.
-- **Misconception:** "More agents means better answers." Each hop adds latency, cost and failure points. In the saved run, three `ERROR:openai.agents:Error getting response` lines appear in each of the two quiz runs (Cheese Quiz cells 75 and 77), yet both still render a quiz.
+- **Misconception:** "More agents means better answers." Each hop adds latency, cost and failure points. In the saved run, three `ERROR:openai.agents:Error getting response` lines appear in each of the two quiz runs (Cheese Quiz cells 75 and 77), yet both still render a quiz. The SDK logs that line and re-raises the model error (`agents/models/openai_responses.py`); inside an agent-as-tool the default `failure_error_function` (openai-agents 0.22.3 `agents/agent.py:599`) turns it into an error string the orchestrator receives as a tool result and can work around *(reasoned, not run: the saved output does not say which call failed)*.
 
 ### C8. The harness: Python owns state, approvals, validation and the definition of success   **[ANIMATE]**
 - **Explanation:** In the last two notebooks the model chooses actions, but deterministic code decides what those actions are *allowed* to mean.
@@ -209,11 +215,12 @@ This follows the course-site order (`tutorials_demo.md:86-98`): Tutorial 1 = Che
 **A3. Install, import, download.**
 - *Cells 10-13.* Cell 10 runs `!pip -q install fastmcp openai-agents > /dev/null 2>&1`. These are **unpinned**, and errors are hidden by the redirect, so if cell 11 fails to import `agents` or `fastmcp`, re-run the install without `> /dev/null 2>&1` to see why.
 - *Cell 13* runs `!gdown` twice. *Checkpoint (saved output):* `To: /content/quiz-schema.json … 2.10k` and `To: /content/quiz-ui.html … 10.8k`. Both files are needed later by cell 62.
+- What they contain (downloaded from the same Drive IDs on 2026-10-18: 2,099 and 10,814 bytes, matching the saved sizes): `quiz-schema.json` is a strict JSON Schema `{questions: [{id: integer, text: string, options: [{letter: "^[a-d]$", text}], answer: string}]}` with `additionalProperties: false` at every level; `quiz-ui.html` is the quiz widget template whose `{ data_json }` placeholder `render_quiz_html` fills (cell 62, line 102).
 
 **A4. LLM → Reasoning LLM → Agent** (cells 17-31).
 - *Under the hood:*
   - `BaseLLM.generate` makes one `chat.completions.create` call (cell 20).
-  - `ReasoningLLM.reason` chains 11 calls: 1 analyse + 1 decompose + 4 × (answer + verify) + 1 synthesise (cell 24).
+  - `ReasoningLLM.reason` chains up to 11 calls: 1 analyse + 1 decompose + (up to 4) × (answer + verify) + 1 synthesise (cell 24).
   - `SimpleAgent` gives a `WebSearchTool` to an Agents-SDK `Agent` and calls `Runner.run` (cell 30).
 - *Checkpoints (saved outputs):*
   - cell 21 `Tokens: 293, Time: 2.81s`
@@ -232,14 +239,14 @@ This follows the course-site order (`tutorials_demo.md:86-98`): Tutorial 1 = Che
 - *Checkpoint (saved output, cell 50):* `1. pavlos_fun_fact_tool  args={}` three times, then three fact dicts. Because the facts are drawn with `random.choice`, a duplicate can appear (it did in the saved run).
 
 **A7. MCP** (cells 51-59).
-- Cell 54 connects `MCPServerStreamableHttp(params={"url": "https://pavlos-fun-facts.dlops.io/mcp"})` and passes it as `mcp_servers=` (not `tools=`). (A plain browser GET of that URL returns HTTP 406, because the streamable-HTTP transport expects MCP's own headers. That does not mean the server is down; it answered on 2026-10-13.)
+- Cell 54 connects `MCPServerStreamableHttp(params={"url": "https://pavlos-fun-facts.dlops.io/mcp"})` and passes it as `mcp_servers=` (not `tools=`). (A plain browser GET of that URL returns HTTP 406, because the streamable-HTTP transport expects MCP's own headers. That does not mean the server is down: re-checked 2026-10-18, a JSON-RPC `initialize` POST got 200 with an `mcp-session-id`, and `tools/list` returned `pavlos_fun_fact_mcp`.)
 - Cell 57 starts **your own** FastMCP server in a daemon thread at `http://127.0.0.1:8001/mcp`. The comment in that cell says port 8000; the code uses 8001.
 - *Checkpoint (cell 59):* uvicorn log lines `"POST /mcp HTTP/1.1" 200 OK` interleaved with `Pavlos Fun Fact Tool Called`.
 - *If it fails:* re-running cell 57 in the same runtime tries to bind 8001 again ("address already in use"). Restart the runtime or skip it.
 
 **A8. The Cheese Quiz Guild** (cells 60-77).
 - Cell 62 defines the Pydantic contracts and the custom output schema `QuizAgentOutputSchema`, which validates against `quiz-schema.json`.
-- Cells 64-66 define the six specialists. Cell 68 wraps them with `.as_tool(...)`. Cell 70 builds the orchestrator with `output_type=QuizAgentOutputSchema()`. Cell 71 runs `Runner.run(orchestrator, prompt, max_turns=12)` and renders the HTML quiz.
+- Cells 64-66 define the six specialists (64 Stilton, 65 Brie, 66 Cheddar + Mozzarella + Cashew + Ricotta). Only Stilton and Brie name a model (`gpt-4o`); the other four and the orchestrator use the SDK default (`gpt-5.6-luna` with today's openai-agents). Cell 68 wraps them with `.as_tool(...)`. Cell 70 builds the orchestrator with `output_type=QuizAgentOutputSchema()`. Cell 71 runs `Runner.run(orchestrator, prompt, max_turns=12)` and renders the HTML quiz.
 - *Run:* `await run_guild("Cheeses from Star Wars")` (cell 75), then `await run_guild("Greek cheeses")` (cell 77).
 - *Checkpoint:* an interactive quiz widget. In the saved run each of the two cells also printed three `ERROR:openai.agents:Error getting response` lines and still produced HTML.
 - *If it fails:* `MaxTurnsExceeded` means raise `max_turns`, or simplify the topic. `ModelBehaviorError: JSON failed schema validation` comes from the guardrail in cell 62.
@@ -247,9 +254,9 @@ This follows the course-site order (`tutorials_demo.md:86-98`): Tutorial 1 = Che
 ### Part B — Tutorial 1b: llm-rag "Agents" (local Docker)
 
 **B1. Start the container** (README.md:75-85).
-- *First* (README.md:80): edit `docker-shell.sh:7`, replacing `"ac215-project"` with your own GCP project ID.
+- *First* (README.md:79-80): open a terminal in the `llm-rag` folder and edit `docker-shell.sh:7`, replacing `"ac215-project"` with your own GCP project ID.
 ```bash
-cd ~/Desktop/AC215/llm-rag
+cd ~/Desktop/AC215/llm-rag     # or wherever your clone is (MLOps_Learning's sync script uses ~/Desktop/AC215/tutorials/llm-rag)
 sh docker-shell.sh
 ```
 - *Under the hood:*
@@ -257,20 +264,21 @@ sh docker-shell.sh
   - Line 12 runs `docker compose run --rm $IMAGE_NAME`. Compose builds the image if it is missing (`docker-compose.yml:8`; `Dockerfile:45` runs `uv sync --frozen` into `/.venv`) and starts the `chromadb` dependency (`docker-compose.yml:16-17`).
   - It bind-mounts `../secrets` and `../llm-rag` (`docker-compose.yml:10-12`).
   - The entrypoint activates the venv and execs bash (`docker-entrypoint.sh:12, 15`).
-- *Checkpoint:* `Container is running!!!`, `Architecture: aarch64` (or `x86_64`), `Environment ready! Virtual environment activated.`, `Python version: Python 3.12.x`, `UV version: uv …`, `Activating virtual environment...`, then a prompt like `app@<id>:/app$` (`docker-entrypoint.sh:3-15`; note the "activated" line is printed before the venv is actually activated at line 12).
+- *Checkpoint* (real output, L05 capture `laptop/07-docker-shell.txt`, 2026-10-16): on the first run Compose first tries to pull the image (`Image llm-rag-cli failed to resolve reference "docker.io/library/llm-rag-cli:latest" … not found`, harmless), then builds it, then `Container llm-rag-llm-rag-cli-run-<id> Created`, then the entrypoint's banner: `Container is running!!!`, `Architecture: x86_64` (`aarch64` on an M-series Mac), `Environment ready! Virtual environment activated.`, `Python version: Python 3.12.15`, `UV version: uv 0.13.1 (x86_64-unknown-linux-gnu)`, `Activating virtual environment...`, then a prompt like `app@92c5bfd26089:/app$` (`docker-entrypoint.sh:3-15`; the "activated" line is printed before the venv is actually activated at line 12; versions at the time of recording).
 - *If it fails:* see G5 (project / key) and G8 (folder names).
 
 **B2. Make sure the collection exists and is current.** This is not in the Agents section, but the agent needs it.
 ```bash
 python cli.py --get --chunk_type char-split
 ```
-- *Under the hood:* `get()` fetches 10 documents `where={"book": "The Complete Book of Cheese"}` (`cli.py:402-418`).
-- *Checkpoint:* a dict with `ids`, `documents`, `metadatas`.
+- *Under the hood:* `get()` fetches 10 documents `where={"book": "The Complete Book of Cheese"}` (`cli.py:402-418`). It makes no Vertex AI call, so it works even without a key.
+- *Checkpoint:* `Results: {'ids': ['1021665fac86c5a5-0', …], …, 'metadatas': [{'book': 'The Complete Book of Cheese', 'author': 'Bob Brown', 'year': 2024}, …], 'documents': [...], …}`. The 10 documents are the book's first chunks in storage order, i.e. Project Gutenberg header text (L05 capture `recorded-embeddings/05-x-get.txt`). Empty lists (`'ids': []`, L05 `cli-container/42-x-get.txt`) mean the collection exists but is empty: the load never succeeded.
 - *If it fails* with a "collection does not exist" / NotFound error, build it (L05 steps). The three flags may be combined because `main()` checks them in order (`cli.py:484-491`):
 ```bash
 python cli.py --chunk --embed --load --chunk_type char-split
 ```
-- **Rebuild anyway if you loaded before 2026-09-22.** That day Pavlos's book `Tolminc Cheese.txt` was rewritten into a fictional story (commit `85bba32`; it now starts with `Author: Pavlos Protopapas` / `*A fictional tale inspired by Alpine cheesemaking*`). `load` drops and recreates the collection (`cli.py:280-289`), so re-running it is safe.
+- **Rebuild anyway if you loaded before 2026-09-22.** That day Pavlos's book `Tolminc Cheese.txt` was rewritten into a fictional story (commit `85bba32`; it now starts with `Author: Pavlos Protopapas`, the heading `# Tolminc: A Cheese, a Valley, and the Art of Waiting` and `*A fictional tale inspired by Alpine cheesemaking*`). `load` drops and recreates the collection (`cli.py:280-289`), so re-running it is safe.
+- Without Vertex AI access, `--embed` cannot run. The staff's own chunk and embedding files (made from the current book: the Tolminc embeddings file has 24 lines) are in `main`'s history under `llmrag/outputs/` in `68e0bde` (2026-10-07), removed again by the revert; L05's captures loaded them with the README's `--load` (`videos/ac215-l05-rag/ASSETS.md`, `recorded-embeddings/`).
 
 **B3. Run the agent** (README.md:257-259).
 ```bash
@@ -292,18 +300,21 @@ python cli.py --agent --chunk_type char-split
 - **Expect different content than `out.txt`.** The recorded run retrieved chunks about the Soča Valley, transhumance and monastic orders. None of those words exist in the current book; they are all in the pre-`85bba32` version, so `out.txt` was produced with a stale index. With today's book you will get a story about Mara and her grandfather. The README diagram's sample answer ("…production of Tolminc cheese, a traditional cheese made in the Slovenian Alps…", `images/llm-rag-flow-3.png`) also comes from the old book.
 - *If it fails:*
   - `KeyError: 'GCP_PROJECT'`: you are not inside the container started by `docker-shell.sh`.
-  - `403 PERMISSION_DENIED`: the service-account role is missing, or the Vertex AI API is disabled.
+  - A NotFound error at `get_collection` (`cli.py:429`) comes before any Vertex AI call: the collection is missing (G6).
+  - `DefaultCredentialsError: File /secrets/llm-service-account.json was not found.` at the first `generate_content` (`cli.py:441`): the key is missing. google-genai loads credentials lazily on the first request (L05 found the same on `--embed`).
+  - `403 PERMISSION_DENIED`: the service-account role is missing, the Vertex AI API is disabled, or `GCP_PROJECT` is still `ac215-project`. Unlike `--embed`, the agent's calls have no retry loop, so the error is immediate.
   - `404 … model`: the project cannot see `gemini-3.1-flash-lite` in location `global`. Check model availability.
 
 **B4. Read the output like a debugger.** Find the three objects of C2: the `FunctionCall` (with an `id='call_…'`), your `Response:` block, and the final text. Note `automatic_function_calling_history=[]` (out.txt:51): google-genai did **not** auto-run anything, because the tools were declarations, not Python callables.
 
-**B5. (Optional) Hosted demo.** The "Cheese Agent Tool" at https://ac215-llm-rag.dlops.io/agent (README.md:268; it responded HTTP 200 on 2026-10-12). The compose file whitelists that origin for browser access to your local Chroma (`docker-compose.yml:25-26`), which is how the hosted **Chroma UI** (README.md:162) can read `localhost:8000`.
+**B5. (Optional) Hosted demo.** The "Cheese Agent Tool" at https://ac215-llm-rag.dlops.io/agent (README.md:268; it responded HTTP 200 on 2026-10-18). The compose file whitelists that origin for browser access to your local Chroma (`docker-compose.yml:25-26`), which is how the hosted **Chroma UI** (README.md:162) can read `localhost:8000`.
 
 **B6. Exit and stop.**
 ```bash
-exit                   # leaves the llm-rag-cli container (it is removed: --rm)
+exit                   # leaves the one-off llm-rag-llm-rag-cli-run-<id> container (removed: --rm)
 docker compose down    # stops llm-rag-chromadb (data stays in ./docker-volumes/chromadb)
 ```
+- Run outside `docker-shell.sh`, `docker compose down` first prints two harmless warnings, `The "GOOGLE_APPLICATION_CREDENTIALS" variable is not set. Defaulting to a blank string.` and the same for `GCP_PROJECT`, then `Container llm-rag-chromadb Removed` and `Network llm-rag-network Removed` (L05 capture `laptop/21-x-compose-down.txt`).
 
 ### Part C — Tutorial 1c: Google ADK (`llm-agent-google-adk`, local uv)
 
@@ -315,11 +326,12 @@ cd llm-agent-google-adk
 cp .env.example .env
 #   edit .env:  GOOGLE_API_KEY=<your AI Studio key>
 #               GEMINI_MODEL=gemini-3.1-flash-lite     (see G2; not the file's gemini-2.5-flash)
-uv add "google-adk>=1.8.0,<1.28"    # my fix, not in the README: see G1
+uv add "google-adk>=1.8.0,<1.28"    # the digest's fix, not in the README: see G1
 uv sync
 ```
-- *Under the hood:* the root `pyproject.toml:9-20` installs ADK, LiteLLM, FastAPI, MCP, Vertex SDK, **chromadb and sentence-transformers (which pulls PyTorch)**. With no lockfile, `uv sync` without my pin resolves **google-adk 2.11.0** today. That version refuses folder names like `1-baseline` (G1). With the pin it resolves **1.27.5** (I checked both by metadata-only resolution).
-- *Checkpoint:* `uv run adk --version` prints a line ending in `version 1.27.5` (the CLI has a click `version_option`).
+- README order (`README.md:74-119`): clone → `cp .env.example .env` and add the key (steps 2-3) → `uv sync` (step 4) → `uv run adk web` ("Running Agents"). The README's `git clone <repository-url>` is spelled out above.
+- *Under the hood:* the root `pyproject.toml:9-20` installs ADK, LiteLLM, FastAPI, MCP, Vertex SDK, **chromadb and sentence-transformers (which pulls PyTorch)**. With no lockfile, `uv sync` without the pin resolves **google-adk 2.12.0** on 2026-10-18 (2.11.0 if your Python is 3.10). Both refuse folder names like `1-baseline` (G1). With the pin it resolves **1.27.5** (both checked with `uv lock` in a container). `uv add` rewrites `pyproject.toml:10` to `"google-adk>=1.8.0,<1.28"`, writes the (git-ignored) `uv.lock` and already syncs the venv, so the `uv sync` after it is a harmless no-op.
+- *Checkpoint:* `uv run adk --version` prints `adk, version 1.27.5` (run in the container check).
 - *If it fails:* expect a large download because of torch (G13).
 
 **C2. Run the web UI** (`README.md:111-119`).
@@ -328,15 +340,16 @@ uv run adk web            # add --port 8080 if llm-rag's ChromaDB still holds 80
 ```
 - *Under the hood:*
   - `adk web` takes an *agents directory* (default: the current directory; `cli_tools_click.py`, `agents_dir` argument with `file_okay=False`).
-  - It lists the subfolders. When you pick one, it imports `<folder>.agent` and reads `root_agent`, after loading the nearest `.env` with `override=True`.
+  - It lists the subfolders that look like agents (an `agent.py`, `__init__.py` or `root_agent.yaml` inside). When you pick one, it imports `<folder>.agent` and reads `root_agent`, after loading the nearest `.env` with `override=True`.
   - It serves FastAPI on `127.0.0.1:8000` (`--host`/`--port` defaults).
-- *Checkpoint:* open http://localhost:8000 and pick `1-baseline` in the agent dropdown.
+- *Checkpoint:* open http://localhost:8000. The dropdown lists exactly `1-baseline`, `2-litellm`, `3-mcp-tools`, `5-custom-agent`: `4-production-ready` (its `agent.py` is in `app/`) and `6-rag` (agents one level deeper) are not agent folders (`list_agents()` checked under 1.27.5 and 2.12.0). Pick `1-baseline`.
 - *If it fails:*
   - `Invalid agent name: '1-baseline'` → G1.
   - `address already in use` → G3.
-  - `QUICKSTART.md`'s `uv run adk web 1-baseline/agent.py` fails because the argument must be a directory (G9).
+  - `QUICKSTART.md`'s `uv run adk web 1-baseline/agent.py` fails with `Error: Invalid value for '[AGENTS_DIR]': Directory '1-baseline/agent.py' is a file.` (run; G9).
 
 **C3. Module 1: Travel-planner pipeline** (`1-baseline/README.md:76-92`, `1-baseline/agent.py:14-39`).
+- *Skip the module README's own Setup* (`1-baseline/README.md:52-74`: `uv sync` and `cp .env.example .env`). The same two steps appear in `2-litellm/README.md:22-48`, `3-mcp-tools/README.md:29-51` and `5-custom-agent/README.md:93-99`. Run inside a module, `cp` creates a module `.env`, and ADK then loads only that file (C6). `1-baseline/.env.example` has `GEMINI_MODEL` commented out (lines 15-16) and a placeholder `GOOGLE_API_KEY`, so the agent falls back to the retired `gemini-2.0-flash` with a bad key (G2). The root setup from C1 is all you need.
 - *Do:* type a trip request, e.g. "2 adults, Boston → Montréal, Oct 30-Nov 2, $1500, train preferred".
 - *Under the hood:* `SequentialAgent` runs `ItineraryValidator` → `TravelPlanner` → `TripSummarizer`. Each `output_key` lands in session state, and `{itinerary_validation}` / `{travel_plan}` are substituted into the next instruction (C6).
 - *Checkpoint:* three agent responses in order. In the UI's event/state inspector, the three state keys `itinerary_validation`, `travel_plan`, `trip_summary` appear.
@@ -349,7 +362,7 @@ uv run adk web            # add --port 8080 if llm-rag's ChromaDB still holds 80
 
 **C5. Module 3: MCP filesystem tools** (`3-mcp-tools/README.md:78-94`).
 - *Prereq:* `node --version` works.
-- *Do:* in the UI pick `3-mcp-tools` and ask "List files in this directory", then "Read the README.md file".
+- *Do:* in the UI pick `3-mcp-tools` and ask "List files in this directory", then "Read the README.md file" (`3-mcp-tools/README.md:88-92`). The README's fourth prompt, "Search for files containing 'agent'", exercises `search_files`, which matches file **names** with a glob pattern, not file contents (server-filesystem 1.0.0 `dist/server.js:533-539`).
 - *Under the hood:* `MCPToolset(StdioConnectionParams(StdioServerParameters(command='npx', args=['-y', '@modelcontextprotocol/server-filesystem', ALLOWED_PATH]), timeout=10), tool_filter=[...])` (`3-mcp-tools/agent.py:20-29`). ADK spawns the Node server as a **child process** and talks MCP over stdin/stdout. `ALLOWED_PATH` defaults to the module folder (`agent.py:17-18`).
 - *Checkpoint:* function-call events for `list_directory` and `read_file`, with the folder's four tracked files listed (`.env.example`, `README.md`, `agent.py`, `pyproject.toml`), plus a `__pycache__` directory once Python has imported `agent.py`.
 - *If it fails:* `npx: command not found` → install Node. The first run downloads the package; a 10 s timeout on a slow network gives a connection timeout, so retry.
@@ -380,11 +393,12 @@ uv run --project .. python conditional_agent.py
 ```
 - *Checkpoint:*
   - `simple_custom_agent.py` prints `Agent: 🤖 [Bot]: …` (`simple_custom_agent.py:84-94`).
-  - `conditional_agent.py` prints `→ Routed to: SimpleHandler` / `ComplexHandler` / `ClarificationHandler`, once per handler event, then `Response:` for each of three test queries (`conditional_agent.py:243-250`).
+  - `conditional_agent.py` prints `→ Routed to: SimpleHandler` / `ComplexHandler` / `ClarificationHandler`, once per handler event, then `Response:` for each of the three test queries (`conditional_agent.py:138-147`, queries at 243-247). Its `logging.basicConfig(level=logging.INFO)` (line 24) also prints `INFO:__main__:  Classification: …` lines.
+- These run with the root venv via `--project ..`. The README's form (`cd 5-custom-agent && uv run python …`, `5-custom-agent/README.md:129-146`) instead builds a second venv from `5-custom-agent/pyproject.toml` (`google-adk[all]`, unpinned) and, after the module Setup's `cp .env.example .env`, picks up `GEMINI_MODEL=gemini-2.0-flash` from `5-custom-agent/.env.example:5`.
 
 **C8. Module 6: RAG agents (optional; RAG was L05's topic).**
 - `6-rag/2-custom-chromadb-rag`: `docker compose up -d`, `uv sync`, `cp .env.example .env`, `uv run python ingest_documents.py`, then `uv run python agent.py` (`6-rag/README.md:122-141`). That module's `.env.example:10` sets `GEMINI_MODEL=gemini-2.0-flash`, and the copied `.env` becomes the nearest one, so fix it (G2). `agent.py` connects to Chroma and calls `get_collection` at import time (lines 42-43), so ingest first.
-- Its ChromaDB also publishes port 8000 (`6-rag/2-custom-chromadb-rag/docker-compose.yml:7-8`), so stop llm-rag's first.
+- Its ChromaDB also publishes port 8000 (`6-rag/2-custom-chromadb-rag/docker-compose.yml:7-8`), so stop llm-rag's first. Its healthcheck can never pass with today's image (G14).
 - `uv run adk web` *in that folder* does not find the agent: ADK looks for subfolders, and the module imports `agent_tools` relative to itself (G14).
 
 **C9. Stop.** Ctrl+C the servers. `docker compose down` any ChromaDB you started.
@@ -419,7 +433,7 @@ uv run --project .. python conditional_agent.py
 | Hotel | 4 nights × 250 | $1000 |
 | Food | 60 × 2 people × 5 calendar days | $600 |
 | Transport | whole-trip allowance | $150 |
-| Museum | 30 × 2 people | $60 |
+| Attractions | Bay Art Museum 30 × 2 people + Golden Gate Bridge 0 | $60 |
 | **Total** | | **$2690** |
 
 - *If it fails:* an `AssertionError` on `reply.kind` means the model took a different but plausible path, for example asking one more question. Re-run the turn or continue interactively.
@@ -571,7 +585,7 @@ def get_book_by_author(author, search_content, collection, embed_func):
         )
 ```
 - The history is three turns: the user question, **the model's own turn unchanged**, and your function responses.
-- Re-sending `response.candidates[0].content` verbatim preserves the `thought_signature` (out.txt:28). Google's thinking guide says thought blocks must be resent "exactly as they were received".
+- Re-sending `response.candidates[0].content` verbatim preserves the `thought_signature` (out.txt:28). The Gemini API thinking guide (ai.google.dev, "Stateless mode") says you must resend all thought blocks "exactly as they were received from the model".
 - `tools=` is passed again but without `tool_config`, so the mode is AUTO. The model *may* call another tool, and this code has no loop to handle it (C3).
 - Line 478 prints the whole response object. To see only the answer, print `response.text`.
 
@@ -609,7 +623,7 @@ def get_book_by_author(author, search_content, collection, embed_func):
 - One "step" is one LLM call plus any tool executions it triggers.
 - Every event is streamed out with `yield`. That is what `adk web` displays, and what your `async for event in runner.run_async(...)` receives.
 - The exit test is `is_final_response()`: no function calls, no function responses, not partial (`events/event.py:82-97`). This is exactly the loop llm-rag hand-codes with only two iterations.
-- ADK 2.11 keeps the same `while True` shape and adds abort checks (`base_llm_flow.py:322-343`).
+- The pinned 1.27.5 has the same ten lines at `base_llm_flow.py:755-764`. ADK 2.11/2.12 keep the same `while True` shape and add `is_aborted` checks (2.11: `base_llm_flow.py:322-343`; 2.12: 332-353).
 
 **Excerpt 7. A pipeline that communicates through state**
 
@@ -725,7 +739,7 @@ cheddar_tool = cheddar_agent.as_tool("review_quiz", "QA the quiz against the fac
 mozzarella_tool = mozzarella_agent.as_tool("format_quiz", "Format quiz into Markdown.")
 ricotta_tool = ricotta_agent.as_tool("format_quiz_json", "Format quiz into JSON.")
 ```
-- `.as_tool(name, description)` turns an entire agent, with its own model, tools and `output_type`, into a single function the orchestrator can call with a text input (`openai-agents 0.23.1 agents/agent.py:606-618`).
+- `.as_tool(name, description)` turns an entire agent, with its own model, tools and `output_type`, into a single function the orchestrator can call with a text input (`openai-agents 0.23.1` and 0.24.0 `agents/agent.py:606`; 0.22.3: line 583). Lines 9-11 of the cell (not shown) wrap Cashew as `vegan_specialist`.
 - The orchestrator (cell 70) decides the order. The "assembly line" lives only in its instructions, so nothing in code enforces "at most 2 review rounds". Compare ADK's `SequentialAgent`, where the order *is* code.
 - `mozzarella_tool` is defined but not given to the orchestrator (cell 70, tools list).
 
@@ -735,24 +749,24 @@ ricotta_tool = ricotta_agent.as_tool("format_quiz_json", "Format quiz into JSON.
 
 | # | Symptom | Cause | Fix |
 |---|---|---|---|
-| G1 | `uv run adk web` lists `1-baseline`, `2-litellm`… but selecting one fails with `Invalid agent name: '1-baseline'. Agent names must be valid Python identifiers (letters, digits, and underscores only).` | No lockfile (`.gitignore:34`). `google-adk>=1.8.0` (`pyproject.toml:10`) resolves to **2.11.0** today. Since **1.28.0** (2026-03-26), ADK validates folder names against `^[a-zA-Z0-9_]+$` (`cli/utils/agent_loader.py`: line 191 in 1.28.0, line 250 in 2.11.0). The repo was written for ≤1.27, when `import_module("1-baseline.agent")` worked. (2.11 also hides folders without an `agent.py` or `__init__.py`, so `4-production-ready` and `6-rag` are not even listed.) | Pin: `uv add "google-adk>=1.8.0,<1.28"` (resolves 1.27.5), then `uv sync`. Or keep 2.x and give the folders valid names *(reasoned, not run)*: `mkdir agents && ln -s ../1-baseline agents/baseline && ln -s ../3-mcp-tools agents/mcp_tools && ln -s ../5-custom-agent agents/custom_agent`, then `uv run adk web agents`. |
-| G2 | `404 NOT_FOUND … models/gemini-2.0-flash is not found` (or a "no access" error for 2.5) | Every agent falls back to `gemini-2.0-flash` (e.g. `1-baseline/agent.py:12`, `4-production-ready/app/agent.py:12`), and `5-custom-agent/.env.example:5` sets it explicitly. Google shut it down on **2026-06-01**. The root `.env.example:21` uses `gemini-2.5-flash`, which Google now limits "to users who have actively used them in the past". ADK loads the **nearest** `.env` with `override=True`, so a copied module `.env` silently wins over the root one. | In the root `.env` set `GEMINI_MODEL=gemini-3.1-flash-lite` (the model llm-rag uses, `cli.py:27`; earliest shutdown 2027-05-07). Do not copy module `.env.example` files, or fix their `GEMINI_MODEL` too. |
-| G3 | `adk web` exits with an `[Errno 48]` (macOS) / `[Errno 98]` (Linux) "address already in use" error for port 8000 | `adk web` defaults to `127.0.0.1:8000`. llm-rag's ChromaDB publishes `8000:8000` (`docker-compose.yml:21-22`), and so does `6-rag/2-custom-chromadb-rag/docker-compose.yml:7-8`. | `docker compose down` in llm-rag, or `uv run adk web --port 8080`. |
+| G1 | `uv run adk web` lists `1-baseline`, `2-litellm`, `3-mcp-tools`, `5-custom-agent`, but selecting one fails with `Invalid agent name: '1-baseline'. Agent names must be valid Python identifiers (letters, digits, and underscores only).` | No lockfile (`.gitignore:34`). `google-adk>=1.8.0` (`pyproject.toml:10`) resolves to **2.12.0** on 2026-10-18 (2.11.0 on Python 3.10). Since **1.28.0** (2026-03-26; the 1.x line continues to 1.39.x with the same check), ADK validates folder names against `^[a-zA-Z0-9_]+$` (`cli/utils/agent_loader.py`: line 191 in 1.28.0, 250 in 2.11.0, 255 in 2.12.0). The repo was written for ≤1.27, when `import_module("1-baseline.agent")` worked. Verified in a container: under 2.12.0 `load_agent('1-baseline')` raises exactly this `ValueError`; under 1.27.5 it returns the `SequentialAgent` `TravelPlannerPipeline`. Both versions list only folders with an `agent.py`/`__init__.py`, so `4-production-ready` and `6-rag` never appear. | Pin: `uv add "google-adk>=1.8.0,<1.28"` (resolves 1.27.5), then `uv sync`. Or keep 2.x and give the folders valid names *(reasoned, not run)*: `mkdir agents && ln -s ../1-baseline agents/baseline && ln -s ../3-mcp-tools agents/mcp_tools && ln -s ../5-custom-agent agents/custom_agent`, then `uv run adk web agents`. |
+| G2 | `404 NOT_FOUND … models/gemini-2.0-flash is not found` (or a "no access" error for 2.5), or an invalid-API-key error although the root `.env` has a good key | Every Gemini agent falls back to `gemini-2.0-flash` when `GEMINI_MODEL` is unset (e.g. `1-baseline/agent.py:12`, `4-production-ready/app/agent.py:12`), and `5-custom-agent/.env.example:5` sets it explicitly. Google's deprecation page lists its shutdown date as **2026-06-01** (past). The root `.env.example:21` uses `gemini-2.5-flash`, which Google now limits "to users who have actively used them in the past". ADK loads **only the nearest** `.env`, with `override=True`, so a module `.env` made by a module README's `cp .env.example .env` replaces the root one entirely: `GEMINI_MODEL` unset or 2.0-flash, and a placeholder `GOOGLE_API_KEY`. | In the root `.env` set `GEMINI_MODEL=gemini-3.1-flash-lite` (the model llm-rag uses, `cli.py:27`; Google lists its earliest shutdown as 2027-05-07 and names `gemini-3.5-flash-lite` as its replacement, which also works). Do not copy module `.env.example` files; if you did, delete those `.env` files or fix both `GEMINI_MODEL` and `GOOGLE_API_KEY` in them. |
+| G3 | `adk web` exits with `[Errno 98] … address already in use` for port 8000 (Linux; macOS reports `[Errno 48]` *(reasoned, not run on macOS)*) | `adk web` defaults to `127.0.0.1:8000`. llm-rag's ChromaDB publishes `8000:8000` (`docker-compose.yml:21-22`), and so does `6-rag/2-custom-chromadb-rag/docker-compose.yml:7-8`. Checked on Linux: with a Chroma container publishing a port, binding `127.0.0.1` on that port fails with Errno 98 even with `SO_REUSEADDR`. | `docker compose down` in llm-rag, or `uv run adk web --port 8080`. |
 | G4 | Port 8000 is still busy after you `exit`ed the llm-rag shell | `docker compose run --rm llm-rag-cli` (`docker-shell.sh:12`) starts the `chromadb` dependency (`docker-compose.yml:16-17`), but `--rm` removes only the one-off CLI container. | `docker compose down` (or `docker stop llm-rag-chromadb`). |
 | G5 | `KeyError: 'GCP_PROJECT'`, `403 PERMISSION_DENIED`, `DefaultCredentialsError` | `cli.py:23` requires `GCP_PROJECT`, which only `docker-shell.sh:7` sets. The key must exist at `../secrets/llm-service-account.json`, and the SA needs the Vertex AI User role. | Always start via `sh docker-shell.sh`; edit line 7; check `ls ../secrets`; grant the role; enable the Vertex AI API. |
 | G6 | `--agent` fails at `get_collection` with "Collection [char-split-collection] does not exist"-style NotFound | The agent uses the L05 collection (`cli.py:427-429`). ChromaDB data lives in `llm-rag/docker-volumes/chromadb`, which is git-ignored (`llm-rag/.gitignore:3`), so a fresh clone has none. | `python cli.py --chunk --embed --load --chunk_type char-split`. Or run with the chunk type you did load (`--chunk_type recursive-split`). |
 | G7 | Your answer is about "Mara" and her grandfather, not the Soča Valley as in `out.txt` and the README diagram | `Tolminc Cheese.txt` was rewritten on 2026-09-22 (`85bba32`). `out.txt` was recorded against an index built from the old file. | Expected. Re-load if you want your index to match the current repo. Remember that changing source docs requires re-running chunk → embed → load. |
-| G8 | Inside the container `/app` is empty, or `/secrets` is empty | Bind mounts are relative and name-dependent: `../llm-rag:/app` and `../secrets:/secrets` (`docker-compose.yml:11-12`). Cloning into a folder not named `llm-rag`, or putting `secrets/` inside the repo, breaks them. | Layout must be `AC215/llm-rag/` and `AC215/secrets/` side by side (README.md:64-69). |
-| G9 | `QUICKSTART.md` commands fail: click rejects the argument with an `Invalid value for '[AGENTS_DIR]'` / "is a file" error *(reasoned, not run)*; `No such file` for `sequential_example.py`, `story_flow_agent.py` …; `3-mcp-connections` not found | `adk web` takes a directory (`file_okay=False`). The scripts named at `QUICKSTART.md:70-72, 79, 85, 91-92` never existed in this repo's git history (only `conditional_agent.py`, line 93, exists). The module has been called `3-mcp-tools` since the initial commit `f24b771`; no `3-mcp-connections` folder ever existed in this repo's history, so QUICKSTART was stale from the start. | Use `uv run adk web` from the repo root and pick the folder in the UI. Use the README module instructions, not QUICKSTART. |
+| G8 | `sh docker-shell.sh` ends with `/bin/bash: docker-entrypoint.sh: No such file or directory` (exit 127); or `DefaultCredentialsError: File /secrets/llm-service-account.json was not found.` at the first Vertex AI call | Bind mounts are relative and name-dependent: `../llm-rag:/app` and `../secrets:/secrets` (`docker-compose.yml:11-12`). A clone in a folder not named `llm-rag` makes Docker create an empty, root-owned `../llm-rag` and mount that over `/app` (L05 captures `gotchas/03`-`05`); a `secrets/` folder inside the repo is not where `../secrets` points. | Layout must be `llm-rag/` and `secrets/` side by side (README.md:64-69). Remove the stray empty `llm-rag` folder Docker created. |
+| G9 | `QUICKSTART.md` commands fail: `Error: Invalid value for '[AGENTS_DIR]': Directory '1-baseline/agent.py' is a file.` (run under 1.27.5); `No such file` for `sequential_example.py`, `story_flow_agent.py` …; `3-mcp-connections` not found | `adk web` takes a directory (`file_okay=False`). The scripts named at `QUICKSTART.md:70-72, 79, 85, 91-92` never existed in this repo's git history (only `conditional_agent.py`, line 93, exists). The module has been called `3-mcp-tools` since the initial commit `f24b771`; no `3-mcp-connections` folder ever existed in this repo's history, so QUICKSTART was stale from the start. | Use `uv run adk web` from the repo root and pick the folder in the UI. Use the README module instructions, not QUICKSTART. |
 | G10 | `uv run adk` prints a usage/help screen and nothing starts | `2-litellm/README.md:74`, `3-mcp-tools/README.md:85` and `5-custom-agent/README.md:120` omit the `web` subcommand. | `uv run adk web`. |
 | G11 | `2-litellm` errors on the first message: `Model gpt-4 not found.` (ADK 1.x), or an OpenAI auth error (ADK 2.x) | `model="gpt-4"` (`2-litellm/agent.py:26`) is a bare name. google-adk 1.19.0 registers only Gemini/Gemma/Apigee names (`models/__init__.py:33-35`). 1.27.5 also registers `LiteLlm` when `litellm` is installed, but only for provider-prefixed patterns such as `openai/.*` (`models/lite_llm.py`, `supported_models`), so a bare `gpt-4` still matches nothing and raises `Model gpt-4 not found.` You need `LiteLlm(model="openai/…")` (or, in 1.27.5, the string `"openai/…"`). The README's "ADK supports LiteLLM model names natively" (`2-litellm/README.md:195`) is wrong for bare names. `AWS_OPENAI_API_KEY` is read nowhere. | Exercise 7. |
 | G12 | `3-mcp-tools`: `npx: command not found`, or "connection timeout" | Needs Node.js. The first `npx -y` download can exceed `timeout=10` (`3-mcp-tools/agent.py:26`). | Install Node (`brew install node`), run `npx -y @modelcontextprotocol/server-filesystem .` once to warm the cache (it then waits on stdin; stop it with Ctrl+C), retry. |
-| G13 | `uv sync` in the ADK repo downloads gigabytes / takes many minutes | The root `pyproject.toml:18-19` includes `chromadb` and `sentence-transformers`, which pull PyTorch (the version depends on platform and pins: my pinned macOS-arm64 resolution picked torch 2.11.0, my unpinned Linux x86_64 resolution 2.14.1). The README's per-module `uv sync` creates *additional* venvs; module `pyproject.toml`s ask for `google-adk[all]`, which on 2.x pulls dozens more packages. | Sync once at the root and run module scripts with `uv run --project .. …`. Be patient the first time. |
-| G14 | `6-rag/2-custom-chromadb-rag`: healthcheck stays unhealthy; `curl …/api/v1/heartbeat` errors; no agent appears in `adk web` | The healthcheck and README use the v1 API (`6-rag/2-custom-chromadb-rag/docker-compose.yml:16`, `6-rag/2-custom-chromadb-rag/README.md:33`), but the chromadb client of this era talks `/api/v2` (chromadb 1.1.0 `config.py:153`). The volume path `/chroma/chroma` and the env vars `IS_PERSISTENT`/`PERSIST_DIRECTORY` (`6-rag/2-custom-chromadb-rag/docker-compose.yml:10-13`) are from older images; llm-rag mounts `/data`. `adk web` run inside that folder lists *subfolders*, and `6-rag/2-custom-chromadb-rag/agent.py:29` imports `agent_tools` as a top-level module. | Check with `curl http://localhost:8000/api/v2/heartbeat`. Mount the volume at `/data` if you need persistence. Run the agent with `uv run python agent.py` as the README's "recommended" path says. |
+| G13 | `uv sync` in the ADK repo downloads gigabytes / takes many minutes | The root `pyproject.toml:18-19` includes `chromadb` and `sentence-transformers`, which pull PyTorch (torch 2.14.1 in a universal `uv lock` on 2026-10-18, with and without the G1 pin; the lock resolved 189 packages unpinned, 218 pinned). The README's per-module `uv sync` creates *additional* venvs; module `pyproject.toml`s ask for `google-adk[all]`, which on 2.x pulls dozens more packages. | Sync once at the root and run module scripts with `uv run --project .. …`. Be patient the first time. |
+| G14 | `6-rag/2-custom-chromadb-rag`: the container stays `unhealthy`; the README's `curl http://localhost:8000/api/v1/heartbeat` returns `{"error":"Unimplemented","message":"The v1 API is deprecated. Please use /v2 apis"}`; no agent appears in `adk web` | The healthcheck and README use the v1 API (`6-rag/2-custom-chromadb-rag/docker-compose.yml:16`, `6-rag/2-custom-chromadb-rag/README.md:33`). Today's `chromadb/chroma:latest` (chroma 1.4.4) answers v1 with HTTP 410, and its image has no `curl` at all, so the healthcheck fails either way (both checked 2026-10-18). The client side talks `/api/v2` too (chromadb 1.1.0 `config.py:153`). The server keeps its data in `/data` (`chroma.sqlite3` there in a fresh container), so the volume at `/chroma/chroma` and the env vars `IS_PERSISTENT`/`PERSIST_DIRECTORY` (`docker-compose.yml:10-13`, from older images) persist nothing. `adk web` run inside that folder lists *subfolders*, and `6-rag/2-custom-chromadb-rag/agent.py:29` imports `agent_tools` as a top-level module. | Check with `curl http://localhost:8000/api/v2/heartbeat`. Ignore the health status (or drop the healthcheck). Mount the volume at `/data` if you need persistence. Run the agent with `uv run python agent.py`, the README's "recommended" path. |
 | G15 | Colab: `SecretNotFoundError` / `NotebookAccessError`; or `FileNotFoundError: quiz-ui.html` in cell 62 | The secret must be named exactly `OPENAI_API_KEY` with notebook access on. Cell 13's `gdown` from Google Drive can fail (quota or permission) and then `open("quiz-ui.html")` fails. | Fix the secret. Re-run cell 13 and check the two `To: /content/...` lines. |
-| G16 | Colab Cheese Quiz: import errors or API changes | Cell 10 installs `fastmcp` and `openai-agents` **unpinned**, with all output hidden. Today that means fastmcp 4.1.0 and openai-agents 0.23.1. I verified that the classes the notebook imports still exist in 0.23.1. The notebook was last run on 2026-09-23. | If something breaks, pin what worked then, e.g. `pip install "openai-agents==0.22.3"`, and remove the `> /dev/null 2>&1`. |
+| G16 | Colab Cheese Quiz: import errors or API changes | Cell 10 installs `fastmcp` and `openai-agents` **unpinned**, with all output hidden. On 2026-10-18 that means fastmcp 4.1.1 (released that day) and openai-agents 0.24.0. The names cell 11 imports from `agents` still exist in 0.23.1 and 0.24.0 (static check of the wheels). The notebook was last run on 2026-09-23, with FastMCP 4.0.5 (cell 57's banner) and, by date, openai-agents ≤ 0.22.3. | If something breaks, pin what worked then: `pip install "fastmcp==4.0.5" "openai-agents==0.22.3"`, and remove the `> /dev/null 2>&1` to see errors. |
 | G17 | Copying `await …` cells into a `.py` file gives `SyntaxError: 'await' outside function` | Colab/Jupyter allow top-level `await`; Python scripts do not. | Wrap the code in `async def main(): …` and call `asyncio.run(main())`, as `5-custom-agent/simple_custom_agent.py:97-99` does. |
-| G18 | A key ends up on GitHub | You keep these clones inside your own `MLOps_Learning` repo. `secrets/` lives *outside* `llm-rag/` and is not covered by llm-rag's `.gitignore`. ADK `.env` files are ignored only by the ADK repo's own `.gitignore:24, 48`. | Add `secrets/`, `**/.env` and `*.json` keys to the top-level `.gitignore` of `MLOps_Learning` before the first `git add`. Never paste keys into notebooks; use Colab Secrets. |
+| G18 | A key ends up on GitHub | `secrets/` lives *outside* `llm-rag/` and is not covered by llm-rag's `.gitignore`. ADK `.env` files are ignored only by the ADK repo's own `.gitignore:24, 48`. If the folder that holds your clones is itself a git repo, its own `.gitignore` decides. | `MLOps_Learning`'s top-level `.gitignore` already ignores `tutorials/`, `secrets/`, `**/secrets/`, `.env`, `.env.*`, `*service-account*.json` and `*-key.json`; any other parent repo needs the same lines before the first `git add`. Never paste keys into notebooks; use Colab Secrets. |
 | G19 | `cd 2-litellm && uv run python litellm_config.py` ("Test LiteLLM Configuration", `2-litellm/README.md:81-88`) prints nothing, even with keys set | `litellm_config.py` only defines `configure_litellm()` and `get_available_models()`; there is no `if __name__ == "__main__":` block. (Run from `2-litellm/`, plain `uv run` also builds that module's own venv from `2-litellm/pyproject.toml`.) | `uv run --project .. python -c "from litellm_config import configure_litellm; configure_litellm()"` (Part C4). |
 
 ---
@@ -776,10 +790,11 @@ ricotta_tool = ricotta_agent.as_tool("format_quiz_json", "Format quiz into JSON.
 | Date | Commit | Change |
 |---|---|---|
 | 2024-09-25 | `64aa948` | Agent tools added |
-| 2025-10-01 | `59a0f80` | Migrated from the `vertexai` SDK to `google-genai` + uv. Diff vs the legacy `pipenv` branch: `vertexai.generative_models.FunctionDeclaration` → `google.genai.types.FunctionDeclaration`; `ToolConfig.FunctionCallingConfig.Mode.ANY` → `types.FunctionCallingConfig(mode="any")`; `gemini-1.5-flash-002` → `gemini-2.0-flash-001`. The `GenerativeModel(..., system_instruction=[SYSTEM_INSTRUCTION])` wrapper was dropped (E3). |
+| 2025-10-01 | `59a0f80` | "Migrated to uv and genai" (its parent is the `pipenv` branch tip `0b671ed`): `vertexai.generative_models.FunctionDeclaration` → `google.genai.types.FunctionDeclaration`; `gemini-1.5-flash-002` → `gemini-2.0-flash-001`; a `genai.Client(vertexai=True, …)`. The `GenerativeModel(..., system_instruction=[SYSTEM_INSTRUCTION])` wrapper was commented out (E3). `agent()` itself still used the old `ToolConfig.FunctionCallingConfig.Mode.ANY` call at that commit. |
+| 2025-10-07 | `629fdd9` | "added missing imports": `agent()` ported to `llm_client.models.generate_content(..., types.FunctionCallingConfig(mode="any"))`, today's shape |
 | 2026-09-16 | `51a2865` | "Model fix": `gemini-2.0-flash-001` → `gemini-3.1-flash-lite` |
 | 2026-09-17 | `74dba4a` | Embedding model `text-embedding-004` → `gemini-embedding-001` |
-| 2026-09-22 | `85bba32` / `2079962` | New Pavlos book + `out.txt` |
+| 2026-09-22 | `85bba32` / `2079962` | New Pavlos book + `out.txt` (these touch `input-datasets/`, `out.txt` and `README.md`, so they are not in the `git log -- agent_tools.py cli.py` above) |
 
 `git diff --stat origin/pipenv origin/main` touches 14 files (+3703/−3781), mostly the Pipfile → uv swap.
 
@@ -795,13 +810,13 @@ ricotta_tool = ricotta_agent.as_tool("format_quiz_json", "Format quiz into JSON.
 
 **Hook question:** "Gemini lives in a Google data center. Your ChromaDB lives in a Docker container on your laptop, at `localhost:8000`. Yet, asked about 'Pavlos's book', Gemini came back with exactly ten paragraphs from exactly that book, filtered by author. Gemini never touched your database. So who did, and who decided which book to search?"
 
-**Target length:** ~29 minutes, the sum of the chapter timings below (≈4,500 spoken words at ~155 wpm). The viewer should have three things open: `~/Desktop/AC215/llm-rag`, `~/Desktop/AC215/llm-agent-google-adk`, and a Colab copy of the Cheese Quiz.
+**Target length:** ~29 minutes, the sum of the chapter timings below. Narration budget per the series rule: 3,900–4,300 words at the house voice's ~174 wpm (≈23-25 min of speech); typing, real output and ponder pauses fill the rest. The viewer should have three things open: `~/Desktop/AC215/llm-rag`, `~/Desktop/AC215/llm-agent-google-adk`, and a Colab copy of the Cheese Quiz.
 
 **Chapters**
 
 1. **Who holds the steering wheel?** (2.5 min)
    - *Idea:* LLM vs workflow vs agent differ in *who controls the control flow* (C1).
-   - *Visual:* the three-lane animation from C1. The "decision diamond" changes colour from code-blue to model-orange.
+   - *Visual:* the three-lane animation from C1. The "decision diamond" changes from a "code" colour to a "model" colour (pick both from the series colour table in the brief; BLUE and ORANGE already mean cloud and system-wide).
    - *On screen:* Cheese Quiz cells 20, 24 (scroll the five step methods) and 30. Saved outputs: eleven `Making single API call...` lines vs `Tools used: 1` (and why that label lies).
 
 2. **Everything the model knows is in the envelope** (2.5 min)
@@ -893,7 +908,7 @@ Delete the `tool_config=…` block (`cli.py:447-451`) and ask `"Hi! Who are you?
 
 **Exercise 3 (debugging, ADK): "Invalid agent name".**
 `uv run adk web` shows the folders, but clicking `1-baseline` gives `Invalid agent name: '1-baseline'. Agent names must be valid Python identifiers …`. Why, and give two fixes.
-- *Answer:* No lockfile, so `google-adk>=1.8.0` resolved to 2.x. Since 1.28.0 the loader validates names with `^[a-zA-Z0-9_]+$` (`cli/utils/agent_loader.py:250` in 2.11.0), and the hyphen fails. Fix A: `uv add "google-adk>=1.8.0,<1.28"` then `uv sync` (→ 1.27.5). Fix B: symlink the folders under valid names into an `agents/` dir and run `uv run adk web agents` (G1).
+- *Answer:* No lockfile, so `google-adk>=1.8.0` resolved to 2.x. Since 1.28.0 the loader validates names with `^[a-zA-Z0-9_]+$` (`cli/utils/agent_loader.py:255` in 2.12.0), and the hyphen fails. Fix A: `uv add "google-adk>=1.8.0,<1.28"` then `uv sync` (→ 1.27.5). Fix B: symlink the folders under valid names into an `agents/` dir and run `uv run adk web agents` (G1).
 
 **Exercise 4 (debugging): the port that won't let go.**
 You just finished Part B, exited the container, and now `uv run adk web` fails with `Address already in use`. Explain using two specific file lines.
@@ -905,7 +920,7 @@ Suppose `conditional_agent.py` routes "What is Python?" to `ClarificationHandler
 ```python
 complexity = ctx.session.state.get("query_complexity", "simple").strip().lower()
 ```
-  A sturdier fix is a structured output: `output_schema=` with an enum field.
+  A sturdier fix is a structured output: `output_schema=` with an enum field. Then `output_key` stores the validated dict (`model_dump()`, google-adk 1.19.0 `agents/llm_agent.py:807-816`), so the router reads `state["query_complexity"]["<field>"]`.
 
 **Exercise 6 (conceptual): why a receipt?**
 The Newsletter orchestrator's final message says "Newsletter sent successfully!", but `generate_newsletter` raises `RuntimeError: No successful tool receipt`. Is the harness being too strict?
@@ -918,12 +933,12 @@ Make the module answer with an OpenAI model.
 from google.adk.models.lite_llm import LiteLlm
 
 root_agent = LlmAgent(
-    model=LiteLlm(model="openai/gpt-4o-mini"),
+    model=LiteLlm(model="openai/gpt-5.6-luna"),
     name="assistant",
     instruction="You are a helpful AI assistant."
 )
 ```
-  `LiteLlm` exists in google-adk 1.x (`models/lite_llm.py`), and `litellm` is already in the root `pyproject.toml:13`. A bare `"gpt-4"` fails because no registered pattern matches it: 1.19.0 registers only Gemini/Gemma/Apigee, and 1.27.5 adds LiteLLM only for provider prefixes like `openai/`. If `gpt-4o-mini` has been retired by the time you run this, use a current OpenAI model such as `openai/gpt-5.6-luna` (the notebooks' model).
+  `LiteLlm` exists in google-adk 1.x (`models/lite_llm.py`), and `litellm` is already in the root `pyproject.toml:13`. A bare `"gpt-4"` fails because no registered pattern matches it: 1.19.0 registers only Gemini/Gemma/Apigee, and 1.27.5 adds LiteLLM only for provider prefixes like `openai/`. `gpt-5.6-luna` is the notebooks' model; avoid `gpt-4o-mini`, which OpenAI announced on 2026-10-14 for shutdown on 2027-01-14.
 
 **Exercise 8 (hands-on, stretch): turn llm-rag's pipeline into a real loop.**
 Replace `cli.py:439-478` with a loop that keeps executing tool calls until the model answers in text, with at most 5 steps. Keep `mode="any"` off so the model can stop.
@@ -955,14 +970,14 @@ Replace `cli.py:439-478` with a loop that keeps executing tool calls until the m
 
 - **E1. Cheese Quiz Step 2 swaps roles.** Cell 39, lines 18-21 send `{"role": "user", "content": system_prompt}` and `{"role": "system", "content": user_prompt}`. The "prompt engineering" comparison therefore tests a malformed conversation. Step 3 onward uses the correct order (cell 40).
 - **E2. `out.txt` and the README diagram come from the old Pavlos book.** The recorded retrieval mentions "cultural artifact", "transhumance", "Monastic orders", "within two milkings" and "Soča Valley". Every one of these is absent from the current `input-datasets/books/Tolminc Cheese.txt`, and all are present in `85bba32^`. Your run will differ.
-- **E3. `SYSTEM_INSTRUCTION` is dead code.** It is defined at `llm-rag/cli.py:40-58`, but neither `chat()` (`cli.py:394-396`) nor `agent()` passes it, so "answer only from chunks" is never enforced. The legacy `pipenv` branch did use it (`GenerativeModel(GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION])`, `origin/pipenv:cli.py:62-65`, used by `chat()` and `agent()`). The `59a0f80` migration to google-genai dropped it.
-- **E4. Two of eleven books are unreachable by author.** "Milk Industry Foundation" (`cli.py:62`) and "Woman's Institute…" (`cli.py:70`) are missing from the enum (`agent_tools.py:19-29`). In addition, `filename.split(".")[0]` (`cli.py:178`) turns "Womans Institute Library of Cookery. Volume 2_ …" into "Womans Institute Library of Cookery", so that book's chunks get no `author`/`year` metadata (`cli.py:135-138`).
+- **E3. `SYSTEM_INSTRUCTION` is dead code.** It is defined at `llm-rag/cli.py:40-58`, but neither `chat()` (`cli.py:394-396`) nor `agent()` passes it, so "answer only from chunks" is never enforced. The legacy `pipenv` branch did use it (`GenerativeModel(GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION])`, `origin/pipenv:cli.py:62-65`, used by `chat()` and `agent()`). The `59a0f80` migration to google-genai commented that wrapper out, and no later commit passes the instruction to `generate_content`.
+- **E4. Two of eleven books are unreachable by author.** "Milk Industry Foundation" (`cli.py:62`) and "Woman's Institute…" (`cli.py:70`) are missing from the enum (`agent_tools.py:19-29`). In addition, `filename.split(".")[0]` (`cli.py:178`) turns "Womans Institute Library of Cookery. Volume 2_ …" into "Womans Institute Library of Cookery", so that book's chunks get no `author`/`year` metadata (`cli.py:135-138`; confirmed on a real collection by L05's capture `recorded-embeddings/07-x-metadata-per-book.txt`). Both books stay reachable through `get_book_by_search_content`.
 - **E5. README says "Displays the LLM's response"** (README.md:266). The code prints the entire SDK response object (`cli.py:478`; see `out.txt:98-137`), so the answer is buried in metadata.
 - **E6. ADK repo dependency drift.**
-  - No lockfile (`.gitignore:34`), and every pin is open-ended (`pyproject.toml:9-20`). Today this yields google-adk 2.11.0, which rejects all six module folder names (G1).
-  - The `pyproject.toml:2` comment "google-adk[all] extra doesn't exist" was true for 1.x (1.19.0 METADATA has no `all` extra) but is false for 2.x, while the module `pyproject.toml`s still request `google-adk[all]`.
-  - Module `pyproject.toml`s point hatch at a non-existent `src/adk_tutorial_baseline` (e.g. `5-custom-agent/pyproject.toml:16-17`). A toy replica builds anyway (an empty package) with a uv deprecation warning for `tool.uv.dev-dependencies`.
-- **E7. Retired model defaults.** `gemini-2.0-flash` is hard-coded as the fallback in 8 places (e.g. `1-baseline/agent.py:12`, `2-litellm/litellm_config.py:62`), set in 4 `.env.example` files (e.g. `5-custom-agent/.env.example:5`) and suggested in 3 more as comments (`1-baseline/.env.example:16`, `3-mcp-tools/.env.example:14`, `2-litellm/.env.example:22` as `FALLBACK_MODEL`). Google's deprecation page lists its shutdown as 2026-06-01. `6-rag/1-vertex-rag-engine/agent.py:47` hard-codes `gemini-2.5-flash` and ignores `GEMINI_MODEL`.
+  - No lockfile (`.gitignore:34`), and every pin is open-ended (`pyproject.toml:9-20`). On 2026-10-18 this yields google-adk 2.12.0 (2.11.0 on Python 3.10), which rejects every hyphenated module folder name (G1).
+  - The `pyproject.toml:2` comment "google-adk[all] extra doesn't exist" was true for 1.x (the 1.19.0 and 1.27.5 METADATA have no `all` extra) but is false for 2.x (2.12.0 has one), while the module `pyproject.toml`s still request `google-adk[all]`.
+  - Module `pyproject.toml`s point hatch at a non-existent `src/adk_tutorial_baseline` (e.g. `5-custom-agent/pyproject.toml:16-17`). A toy project with the same build settings still builds and installs (an empty package); uv 0.13.1 printed no warning about `tool.uv.dev-dependencies`.
+- **E7. Retired model defaults.** `gemini-2.0-flash` is hard-coded as the fallback in 8 places (e.g. `1-baseline/agent.py:12`, `2-litellm/litellm_config.py:62`), set in 4 `.env.example` files (e.g. `5-custom-agent/.env.example:5`) and suggested in 3 more as comments (`1-baseline/.env.example:16`, `3-mcp-tools/.env.example:14`, `2-litellm/.env.example:22` as `FALLBACK_MODEL`). Google's deprecation page lists its shutdown as 2026-06-01. `6-rag/1-vertex-rag-engine/agent.py:47` hard-codes `gemini-2.5-flash` and ignores `GEMINI_MODEL`. The module READMEs' code samples also use `gemini-2.0-flash` (e.g. `1-baseline/README.md:111`, `3-mcp-tools/README.md:120`).
 - **E8. QUICKSTART.md is stale throughout.**
   - `cd google-adk-tutorial` (`QUICKSTART.md:10`; also `README.md:78`).
   - File paths passed to `adk web` (`QUICKSTART.md:24, 32, 42, 57`).
@@ -975,11 +990,11 @@ Replace `cli.py:439-478` with a loop that keeps executing tool calls until the m
   - `model="gpt-4"` (`2-litellm/agent.py:26`) has no provider prefix, so ADK 1.x does not route it to LiteLLM.
   - `AWS_OPENAI_API_KEY` (`2-litellm/.env.example:5`) is unused.
   - "Option 2: Test LiteLLM Configuration" (`2-litellm/README.md:81-88`, also `QUICKSTART.md:78`) runs `litellm_config.py` as a script, but the file has no `__main__` block, so it never calls `configure_litellm()` and prints nothing (G19).
-  - "ADK supports LiteLLM model names natively" (`2-litellm/README.md:195`) is inaccurate. ADK 2.x does resolve bare `gpt-*` names, but through a native OpenAI class (2.11 `models/__init__.py:80-83`), not LiteLLM.
+  - "ADK supports LiteLLM model names natively" (`2-litellm/README.md:195`) is inaccurate. ADK 2.x does resolve bare `gpt-*` names, but through a native `OpenAILlm` class (2.11 and 2.12 `models/__init__.py:80-81`, which needs the `openai` package), not LiteLLM.
 - **E11. 5-custom-agent README uses attributes that do not exist.** `ctx.history` (`5-custom-agent/README.md:80, 288`) and `ctx.session_id` (`5-custom-agent/README.md:81`) are not `InvocationContext` attributes in google-adk 1.19 (fields at `agents/invocation_context.py:144-206`; there is a `user_id` property at line 324). Use `ctx.session.events`, `ctx.user_content` and `ctx.session.id`.
 - **E12. "Memory" vs "state."** `llm-agent-google-adk/README.md:140` defines "Memory" as per-session structured state and says "separate sessions do not share memory". In ADK, per-session data is *state*. *Memory* is the separate, cross-session `memory_service` (`invocation_context.py:146`). The Cheese Quiz's own definitions (cells 41-42) use the standard meaning.
 - **E13. 6-rag/2-custom-chromadb-rag details.**
-  - v1 heartbeat (`6-rag/2-custom-chromadb-rag/docker-compose.yml:16`, `6-rag/2-custom-chromadb-rag/README.md:33`) against a v2-era server.
+  - v1 heartbeat (`6-rag/2-custom-chromadb-rag/docker-compose.yml:16`, `6-rag/2-custom-chromadb-rag/README.md:33`) against a v2-era server: HTTP 410 today, and the image has no `curl` for the healthcheck (G14).
   - The collection is created with the default distance (L2) (`6-rag/2-custom-chromadb-rag/ingest_documents.py:130-133`), yet results are reported as `"similarity": 1 - distance` (`6-rag/2-custom-chromadb-rag/agent_tools.py:151`). That is not a cosine similarity and can be negative.
   - `6-rag/README.md:133` says "ingest documents (assumes RAG is already populated)", which contradicts the command it precedes.
 - **E14. Notebook nits.**
@@ -990,15 +1005,16 @@ Replace `cli.py:439-478` with a loop that keeps executing tool calls until the m
   - The Newsletter's cell 23 markdown ("six tools… clarification, options, a checked itinerary…") is copied from the Travel Planner. The orchestrator has three tools (cell 25, lines 12-16).
   - The Newsletter's `USERS` list contains real staff email addresses (cell 16). Nothing is sent, but replace them before sharing outputs.
   - The Newsletter's saved Run Demo output (cell 27) shows four readers, but two of them (Rashmi, Chris) are now commented out in cell 16 (lines 10-11). The saved output therefore does not match what the current code produces.
-- **E15. The harness does not enforce "plain text, no URLs".** `EDITOR_INSTRUCTIONS` (cell 22) forbids embedded URLs, but `validate_newsletter` (cell 18) doesn't check, and the saved Summerville preview contains `Promotion URL: https://shop.lowesfoods.com/...` inside an offer summary. This is a good example of a soft (prompt) rule vs a hard (code) rule.
+- **E15. The harness does not enforce "plain text, no URLs".** `EDITOR_INSTRUCTIONS` (cell 22, line 16) forbids embedded URLs, but `validate_newsletter` (cell 18) doesn't check, and the saved Summerville preview contains `Promotion URL: https://shop.lowesfoods.com/...` (plus `Store URL:` and `Product URL:` lines) inside offer summaries. This is a good example of a soft (prompt) rule vs a hard (code) rule.
+- **E16. The README's agent diagram simplifies step 5.** `images/llm-rag-flow-3.png` shows step 5 as "User question + chunks to build prompt". The code does not rebuild a prompt: the second call sends three contents, the question, the model's own function-call turn (with its thought signature) and a `function_response` part holding the chunks (`cli.py:465-477`). The diagram's search text "cheese making" also differs from the recorded call's `'cheese making importance location'` (out.txt:23). It is not wrong as a picture of the idea, but the video should show the real three-part request.
 
 **Open questions (could not determine from the sources)**
 
-- What the Ed lesson itself contains: slides, the recorded lecture, any announcements about version pins. I could not access Ed.
-- `quiz-schema.json` and `quiz-ui.html` are downloaded from Google Drive at run time (Cheese Quiz cell 13) and are not in any repo, so I could not read the schema the Ricotta agent and orchestrator must satisfy.
-- What backend the hosted "Cheese Agent Tool" (https://ac215-llm-rag.dlops.io/agent) calls, and whether it needs your local ChromaDB. The page loads, but its client bundle reveals no endpoint.
+- What the Ed lesson itself contains beyond the slides (the recorded lecture, announcements about version pins). Ed could not be opened; the lecture slides are digested separately in `SLIDES.md`.
+- What backend the hosted "Cheese Agent Tool" (https://ac215-llm-rag.dlops.io/agent) calls, and whether it needs your local ChromaDB. The page loads (HTTP 200 on 2026-10-18), but its client bundle reveals no endpoint.
+- Whether today's `@modelcontextprotocol/server-filesystem` 1.0.0 (which declares JSON-Schema-2020 input and output schemas) works with the ADK 1.27.5 `MCPToolset` + Gemini combination; not run (no API key).
 - Whether `gemini-3.1-flash-lite` is enabled for every student project in location `global`. It worked for the course staff on 2026-09-22 (`out.txt:34`). Availability can vary by project and organisation policy.
 - Whether the course intends students to run the ADK repo with a pinned ADK version. Neither README mentions version constraints, and the repo predates ADK 1.28/2.x.
-- OpenAI model lifecycles: `gpt-5.6-luna` (Travel Planner, Newsletter) is listed by OpenAI as a recommended replacement model, so it is current. The `gpt-4o-2024-05-13` snapshot shuts down 2026-10-23, but the deprecations page I checked did not list the `gpt-4o` alias used by the Cheese Quiz. Re-check if Cheese Quiz calls start failing after that date.
+- OpenAI model lifecycles (deprecations page re-checked 2026-10-18): `gpt-5.6-luna` (Travel Planner, Newsletter, and the Agents SDK default) is listed only as a recommended replacement, so it is current. The `gpt-4o-2024-05-13` snapshot shuts down 2026-10-23. On 2026-10-14 OpenAI announced that GPT-4o (`gpt-4o-2024-08-06`, `gpt-4o-2024-11-20`), GPT-4o mini, GPT-4.1 and GPT-4.1 mini shut down on **2027-01-14** (replacement `gpt-6-luna`). The page does not name the bare `gpt-4o` alias the Cheese Quiz uses; expect it to stop working by then, after the Fall 2026 term.
 
-_Verified against the repos on 2026-10-13 (adversarial check)._
+_Drafted 2026-10-13; adversarially verified on 2026-10-18 against the repos (llm-rag `e17a39f`, llm-agent-google-adk `f89faa7`), the three notebook JSONs, the course-site source at `12dfbff` (`tutorials_demo.md:83-108`), third-party wheels, L05's real captures and the container checks listed at the top._

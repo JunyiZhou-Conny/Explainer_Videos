@@ -1,0 +1,4 @@
+# recorded: Colab notebook "Travel Planner" (L06_travel_planner.ipynb; https://colab.research.google.com/drive/1I_jJEHJsVkGxNoSC1c4wEoVF2QL6vCVY), cell 24 (0-based index in the .ipynb; first line: '# Build the Agent'). Saved output of the staff's last run, date not stored (trip dates 2026-11-06..); not run here (needs an OpenAI API key). Extracted unchanged by assets/terminal/colab_outputs.py (ANSI codes removed).
+[stdout]
+Kind: clarification
+Which supported California city would you like: San Francisco or Los Angeles? Please also provide your separate food allowance per person per calendar day and local-transport allowance for the whole trip.

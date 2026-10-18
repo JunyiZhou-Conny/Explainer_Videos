@@ -1,0 +1,1 @@
+In this notebook, we will build an LLM agent from scratch. We will build a LLM based Travel Agent using mock tools to make searching hotels, flights, restaurants simpler. In a real LLM based Travel Planner you would connect to real APIs for Hotels, Airlines, Restaurant searches.
