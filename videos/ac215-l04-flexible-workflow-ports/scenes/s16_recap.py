@@ -73,8 +73,7 @@ Beats (script.md "## S16", one voiceover block each):
     in at 26 pt in the centre with a YELLOW number badge and, at its left, a glyph-only icon of V1 (the
     BLUE shelf, the sealed TEAL box, the PINK signpost whose pointer aims at it). The GREY caption
     "pause after each question" sits under the title (it flashes as that is said); Q1–Q3's icon
-    cards carry a GREY "part 1" tag
-    under them (part-1 material in the part-2 upload). On "which files
+    cards carry a GREY "part 1" tag under them (part-1 material in the part-2 upload). On "which files
     define" the box flashes; on "and what does run use" `run` turns YELLOW and the pointer flashes.
  8  Q1 slides up and fades as Q2 writes in (icon: V3's three gates, a key outline in a dashed slot, a
     padlock, a switch, then a BLUE door, a PINK route through them): the gates pulse in turn, then
@@ -885,9 +884,10 @@ class Recap(VoiceScene):
             type_cmd(self, t, LOGS_F, type_time=0.9)
             t.print(self, [C56B.line(2)], run_time=0.35)
             # the page's illustration tag takes the lecture tag's place in the top band: the lecture tag
-            # leaves first (run together, the two tags crossfaded over each other)
-            self.play(LaggedStart(FadeOut(lref29), FadeIn(pg1, shift=LEFT * 0.15), lag_ratio=1.0), run_time=0.7)
-            self.play(pg1.click(), run_time=0.5)
+            # leaves first (run together, the two tags crossfaded over each other). 0.6 + 0.4 s keeps
+            # the ^C row where it was before the tag (the "Control C" anchor has passed by then)
+            self.play(LaggedStart(FadeOut(lref29), FadeIn(pg1, shift=LEFT * 0.15), lag_ratio=1.0), run_time=0.6)
+            self.play(pg1.click(), run_time=0.4)
             post = t.print(self, [C56B.line(3)], run_time=0.35)[0]
             self.play(*pg1.parts_in("reply"), substring(post, "POST").animate.set_color(TURN), run_time=0.5)
             vo.wait_until("Control C stops only the following")
