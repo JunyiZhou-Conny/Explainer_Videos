@@ -2,26 +2,31 @@
 
 - S07 → S08 continuity (Bugbot, PR #6 thread on s08_uv_add.py:267): part 2 opens by reusing part 1's last
   picture; S08's recap now rebuilds S07's close (recap_window/recap_extras). Verify the two frames match in
-  the whole-video pass (S07 last frame vs S08 first frames).
-- S07: two unused imports (ruff F401) left by concurrent edits.
+  the whole-video pass (S07 last frame vs S08 first frames). DONE in whole-video QA: S08's opening recap no longer
+  shows the GREEN shelf line, so it matches S07's last frame (REVIEW.md, "Picture and continuity").
+- S07: two unused imports (ruff F401) left by concurrent edits. DONE: `ruff check --select F401 scenes/s07_run.py` passes.
 - Shared-code requests from scene agents: VersionLine label-over-start option (S04), beside() row-below
   fallback (S04), code_panel font_size + line-number gutter (S05), ConfigCard attached glyph (S05),
   readme_chip two-row variant (S05), Window.blink() invisible on PINK route + outline-pulse helper (S07; done locally: S07 and S08, the only callers, pulse the route's stroke themselves, so common.py's blink() is unchanged),
   public hidden-part registration on Window (S07).
 - S07: a short GREEN line (Window's package shelf, filled in S08) sits right of the writable layer from beat 0
-  and is never explained in S07. Decide in the whole-video pass: hide it until S08, or name it.
+  and is never explained in S07. Decide in the whole-video pass: hide it until S08, or name it. DONE in whole-video
+  QA (the follow-ups watcher closed it; REVIEW.md, "Whole-video QA").
 - S08 (s08_uv_add.py ~701–702, Bugbot thread 4267126161, FIXED: `self.remove(ov.panel, ov.rows)` at line 780; the frame at ~125 s shows the overlay gone): FadeOut(VGroup(ov.panel, ov.rows)) —
   the wrapper isn't on the scene, the children stay in the scene via `ov`, and FadeOut's clean-up restores their
   opacity, so the README overlay snaps back before the "your turn" tag and covers the --help output. Fix: FadeOut(ov)
   (or self.remove(ov.panel, ov.rows) after the fade). Verify in the frames around the "your turn" beat.
 - All scenes, all lectures: grep for FadeOut(VGroup(...)) / FadeOut of throwaway wrappers whose members stay on the
-  scene through another parent; same snap-back.
+  scene through another parent; same snap-back. DONE for L03: an audit of 1,122 FadeOuts found no snap-back
+  (REVIEW.md, "Whole-video QA").
 
 ## S14 (s14_secrets.py) — build agent returned before reading its preview
 The build agent ended with "The preview is still rendering; I'll wait for the monitor's notice before
 reading the sheets." The file is structurally complete (10/10 voiceover blocks, `explainer.check` OK at
 11:16 UTC, 124.5 s, empty last frame), but nobody looked at its frames during the build. The critique stage
 reviews them; at whole-video QA, give S14's contact sheets a full read regardless of the critique's verdict.
+DONE: the whole-video QA read S14 in full (its beat-1 extras and the `.dockerignore` rebuild were fixed from that read;
+REVIEW.md, "Whole-video QA").
 
 ## How to judge the FadeOut "snap-back" findings above (tested 2026-10-15, Manim 0.22)
 `FadeOut(wrapper)` takes every member off the scene, even members that are children of a panel on the scene,
