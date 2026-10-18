@@ -429,8 +429,11 @@ class FinalPrompt(VoiceScene):
             self.play(FadeIn(p47, shift=UP * 0.1), run_time=0.5)
             self.play(Create(u47), run_time=0.6)
             vo.wait_until("But look at the call")
-            self.play(ReplacementTransform(big, ghost),
-                      FadeOut(VGroup(p41, p47, u41, u47, backing)), FadeIn(p3), run_time=0.7)
+            self.remove(big_frame)
+            dashed_morph(self, big_rect, (g_frame.get_center(), g_frame.width, g_frame.height),
+                         ReplacementTransform(big_label, g_label),
+                         FadeOut(VGroup(p41, p47, u41, u47, backing)), FadeIn(p3))
+            self.add(g_frame)
             self.play(Indicate(code_rows(p3, 395), color=TURN, scale_factor=1.03), Create(u_contents),
                       FadeIn(noconf, shift=LEFT * 0.15), run_time=0.7)
             vo.wait_until("It's never sent")
@@ -469,7 +472,9 @@ class FinalPrompt(VoiceScene):
             swap_panel(self, p3, p62, FadeOut(VGroup(u_contents, noconf)), run_time=0.8)
             self.play(FadeIn(b64), FadeIn(ptag, shift=LEFT * 0.15), run_time=0.5)
             vo.wait_until("the README's promise")
-            self.play(Indicate(rm, color=TURN, scale_factor=1.05), run_time=0.8)
+            # the phrase and the chip's edge light (Indicate on the whole chip floods its fill YELLOW)
+            self.play(Indicate(rm.phrase, color=TURN, scale_factor=1.08),
+                      rm.frame.animate(rate_func=there_and_back).set_stroke(TURN, 3.5), run_time=0.8)
             vo.wait_until("rests on the chunks alone")
             self.play(Indicate(pc.cards, color=DATA, scale_factor=1.06), run_time=0.8)
 
@@ -513,13 +518,13 @@ class FinalPrompt(VoiceScene):
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(VGroup(cyl, pc, llm, mchip, l27, feed, ans, lock_g, dele, lr)), run_time=0.5)
-            self.play(FadeIn(t, shift=UP * 0.2), FadeIn(mm2), tr.goto(1), run_time=0.6)
+            self.play(FadeIn(t, shift=UP * 0.2), FadeIn(mm2), *tracker_to(tr, 1), run_time=0.6)
             self.play(*light_chat(mm2), run_time=0.3)
             vo.wait_until("python cli.py")
             c1 = type_cmd(self, t, CHAT1, type_time=1.6)
             assert hasattr(c1, "rows") and len(c1.rows) == 2, c1
             vo.wait_until("and for recursive split")
-            self.play(tr.goto(2), run_time=0.4)
+            self.play(*tracker_to(tr, 2), run_time=0.4)
             t.clear(self, run_time=0.25)
             c2 = type_cmd(self, t, CHAT2, type_time=1.6)
             assert hasattr(c2, "rows") and len(c2.rows) == 2, c2
@@ -651,7 +656,7 @@ class FinalPrompt(VoiceScene):
 
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(VGroup(win, q, bars, src, links, ill, cols, gt_head, cmp_note)), run_time=0.5)
-            self.play(tr.goto(3), FadeIn(br), FadeIn(ill9), run_time=0.6)
+            self.play(*tracker_to(tr, 3), FadeIn(br), FadeIn(ill9), run_time=0.6)
             self.play(FadeIn(bq), run_time=0.4)
             vo.wait_until("in Chrome")
             self.play(FadeIn(chrome, shift=UP * 0.1), run_time=0.4)
