@@ -41,8 +41,8 @@ Beats (script.md "## S06", one voiceover block each):
     code is in the image", its glyphs on "Will python cli.py run?". PONDER (6 s) card at the bottom:
     the strip fades out as it comes in (its rows would show through the card and past its sides).
  5  The ponder card gets a RED cross beside the question on "No." and leaves with the picture.
-    Full wide terminal (13.2 wide, 20 pt, 13 rows): `docker run --rm -ti simple-translate` +
-    ▶ your turn (on the next row: the command fills its row) -> at the capture's prompt
+    Full wide terminal (13.2 wide, 20 pt, 14 rows): `docker run --rm \\` / `    -ti simple-translate`
+    (folded as in S04/S05/S08/S09) + ▶ your turn beside its second row -> at the capture's prompt
     `root@1f2c7df8735d:/#`, TRACKER A9 · extra, `ls` (row tag `extra`) -> laptop/19 lines 3–7 in
     columns. "our files sit": the seven repo entries turn white and pulse; "the system's own
     folders": the others dim ORANGE.
@@ -95,6 +95,10 @@ EXIT_ECHO = C19.at(14)                                   # ["exit"]
 assert PY_ERR[-1] == "ModuleNotFoundError: No module named 'art'", PY_ERR
 REPO_FILES = ["Dockerfile", "Dockerfile.txt", "README.md", "cli.py", "docker-build-push.sh",
               "docker-shell.sh", "pyproject.toml"]
+# beat 5: the run command folded as S04/S05/S08/S09 show it (it would fill the wide row, leaving no
+# room for ▶ your turn); the house fold " \" + 4-space indent pastes back as the same command
+RUN_ROWS = [P_LAPTOP + " docker run --rm \\", "    -ti simple-translate"]
+assert RUN_ROWS[0][:-2] + " " + RUN_ROWS[1].strip() == P_LAPTOP + " " + RUN, RUN_ROWS
 
 # ------------------------------------------------------------------ layout
 PANEL_X = -0.9                       # beat 0: README panel (4.6 wide) left of centre, the uv chip right of it
@@ -115,6 +119,34 @@ def lead(vo, phrase: str, early: float) -> None:
 def turn_tag() -> VGroup:
     """YELLOW '▶ your turn', the height of a terminal row."""
     return row_tag("▶ your turn", TURN)
+
+
+def type_rows(scene, t, rows_text: list[str], type_time: float) -> VGroup:
+    """type_cmd with rows folded by the caller (rows_text[0] starts with the prompt; a bare prompt
+    line is replaced, as type_cmd does). Returns the rows (.rows). As S05's type_rows."""
+    p = t.prompt + " "
+    assert rows_text[0].startswith(p) and all(len(s) <= t.max_chars for s in rows_text)
+    if len(t.lines) and getattr(t.lines[-1], "bare", False):
+        last = t.lines[-1]
+        scene.remove(last, *last.submobjects)
+        t.lines.remove(last)
+    t2c = t._prompt_colors(t.prompt)
+    t._make_room(scene, len(rows_text))
+    rows = []
+    for k, s in enumerate(rows_text):
+        ln = mono_line(s, t.size, INK, t2c=t2c if k == 0 else None)
+        t._place(ln, len(t.lines))
+        t.lines.add(ln)
+        rows.append(ln)
+    typed = [glyph_range(rows[0], len(p))] + [glyph_range(r, 0) for r in rows[1:]]
+    scene.add(glyph_range(rows[0], 0, len(p)))
+    scene.play(ShowIncreasingSubsets(VGroup(*[g for grp in typed for g in grp]), rate_func=linear),
+               run_time=type_time)
+    for r in rows:
+        scene.add(r)
+    g = VGroup(*rows)
+    g.rows, g.text = rows, " ".join(r.text for r in rows)
+    return g
 
 
 def leader(glyphs, lab, side) -> VMobject:
@@ -379,7 +411,8 @@ class StepCopy(VoiceScene):
             no_ign = beside(row_tag([("no", "label"), (".dockerignore", "mono")]), r13)
             pin(self, r13, no_ign, run_time=0.4)
             vo.wait_until("so nothing is filtered")
-            self.play(Indicate(no_ign, color=INK, scale_factor=1.08), run_time=0.6)
+            self.play(Indicate(no_ign.text, color=INK, scale_factor=1.08),     # text only: no flood
+                      no_ign.box.animate(rate_func=there_and_back).scale(1.08), run_time=0.6)
             vo.wait_until("and the whole context")
             g63 = substring(r17, "63.12kB")
             self.play(g63.animate.set_color(ROUTE), run_time=0.4)
@@ -388,7 +421,8 @@ class StepCopy(VoiceScene):
             parcel_tag = beside(row_tag("the parcel", ROUTE), r17)
             pin(self, r17, parcel_tag, run_time=0.4)
             vo.wait_until("travels to the builder")
-            self.play(Indicate(parcel_tag, color=ROUTE, scale_factor=1.12), run_time=0.7)
+            self.play(Indicate(parcel_tag.text, color=ROUTE, scale_factor=1.12),  # pill grows with it
+                      parcel_tag.box.animate(rate_func=there_and_back).scale(1.12), run_time=0.7)
 
         # ========================================================== 3 · pip installs uv, COPY runs
         stack = LayerStack(stack_w=3.2)
@@ -473,8 +507,8 @@ class StepCopy(VoiceScene):
                   run_time=6)
 
         # ========================================================== 5 · run it: ls
-        w = wide_term(13)
-        q_text = q[2]                                       # the question; its last glyph is the "?"
+        w = wide_term(14)                                   # 2 + 1 + 5 + 1 + 4 + 1 rows: nothing scrolls
+        q_text = q[2]                                      # the question; its last glyph is the "?"
         no = cross_mark(0.55, ERR, stroke=7).next_to(q_text[-1], RIGHT, buff=0.45)
         no.set_y(q_text[-1].get_center()[1])
         picture4 = VGroup(*stack.slabs, brace, base_name, uv_tag)
@@ -486,16 +520,13 @@ class StepCopy(VoiceScene):
             self.play(FadeIn(w), run_time=0.3)
             bare_prompt(self, w)
             vo.wait_until("Pause and run it")
-            c5 = type_cmd(self, w, RUN, 0.8)
-            assert not hasattr(c5, "rows"), "RUN fits one 75-character row"
-            yt5 = row_tag("▶ your turn", TURN)
-            yt5.move_to([c5.strut.get_right()[0] - yt5.width / 2, c5.strut.get_center()[1] - w.pitch, 0])
-            self.play(FadeIn(yt5, shift=LEFT * 0.1), run_time=0.3)
+            c5 = type_rows(self, w, RUN_ROWS, 0.8)
+            yt5 = beside(turn_tag(), c5.rows[1])            # beside the command's own row: it scrolls with it
+            pin(self, c5.rows[1], yt5, run_time=0.3)
             self.play(Wiggle(yt5, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.5)
             vo.wait_until("then look around")
             self.play(track(tr, 9, extra=True), run_time=0.3)
             r_ls = istep(self, w, C19.line(2), 0.3)
-            attach(self, r_ls, yt5)
             pin(self, r_ls, beside(row_tag("extra"), r_ls), run_time=0.25)
             o5 = w.print(self, LS_OUT, run_time=0.6, lag=0.12)
             ours, theirs = [], []

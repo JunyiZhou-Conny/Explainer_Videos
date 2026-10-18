@@ -1,0 +1,996 @@
+1
+00:00:00,000 --> 00:00:04,480
+Part 2 opens the image we built;
+this scene and the next are extras.
+
+2
+00:00:04,800 --> 00:00:09,046
+First, docker image ls:
+518 megabytes on disk,
+
+3
+00:00:09,046 --> 00:00:14,123
+and 144 megabytes of content,
+at the time of recording.
+
+4
+00:00:14,443 --> 00:00:18,464
+Content is the compressed layers
+that travel to a registry;
+
+5
+00:00:18,464 --> 00:00:20,373
+disk adds the unpacked copy.
+
+6
+00:00:21,617 --> 00:00:24,817
+Then docker history lists the layers,
+newest first.
+
+7
+00:00:25,137 --> 00:00:29,884
+Read it bottom-up,
+and it's the Dockerfile top-down:
+
+8
+00:00:29,884 --> 00:00:33,444
+the apt and pip step at 97.5 megabytes,
+
+9
+00:00:33,444 --> 00:00:38,556
+our code at 250 kilobytes,
+and uv sync at 125 megabytes.
+
+10
+00:00:38,876 --> 00:00:44,251
+The ENV, ENTRYPOINT and CMD rows
+are zero bytes: config only.
+
+11
+00:00:46,133 --> 00:00:51,823
+Below them sit the base image's own rows:
+Debian bookworm at the bottom,
+
+12
+00:00:51,823 --> 00:00:56,565
+the PATH that puts /usr/local/bin first,
+and Python 3.12.15.
+
+13
+00:00:59,967 --> 00:01:05,236
+To look yourself, start a container again;
+these are from our second run in part 1.
+
+14
+00:01:05,556 --> 00:01:12,020
+There, python is 3.15.0,
+while the base Python is still 3.12.15.
+
+15
+00:01:12,340 --> 00:01:18,697
+Most of that 125 megabyte layer
+is this second Python, in uv's own folder.
+
+16
+00:01:18,933 --> 00:01:20,533
+Now list the top folder.
+
+17
+00:01:20,853 --> 00:01:24,270
+Beside the system folders
+sit the hidden git folder,
+
+18
+00:01:24,270 --> 00:01:28,213
+the editor's VS Code folder,
+the README and your Dockerfile.
+
+19
+00:01:28,533 --> 00:01:31,372
+The COPY line copied
+the whole build context,
+
+20
+00:01:31,372 --> 00:01:33,013
+your git history included.
+
+21
+00:01:33,333 --> 00:01:35,595
+Type exit to get back to your laptop.
+
+22
+00:01:35,833 --> 00:01:39,438
+That's a gap in the tutorial:
+there's no .dockerignore file.
+
+23
+00:01:39,758 --> 00:01:45,092
+In your own projects, add one listing .git,
+.venv and your secrets folder.
+
+24
+00:01:45,412 --> 00:01:48,740
+It matters most once the image is public,
+and that's soon.
+
+25
+00:01:49,783 --> 00:01:54,050
+So why did COPY and uv sync rerun
+when we only added a line?
+
+26
+00:01:54,370 --> 00:01:56,418
+Docker caches every build step.
+
+27
+00:01:56,738 --> 00:02:01,175
+A step is reused when its parent step
+and its instruction are unchanged.
+
+28
+00:02:01,495 --> 00:02:04,951
+For COPY, the checksum
+of the copied files must match too.
+
+29
+00:02:05,271 --> 00:02:09,687
+The first step that changes runs again,
+and so does every step after it.
+
+30
+00:02:10,000 --> 00:02:14,331
+Rebuild with nothing changed,
+adding the extra flag for the full log.
+
+31
+00:02:14,651 --> 00:02:15,995
+FROM reuses the base,
+
+32
+00:02:15,995 --> 00:02:19,706
+and the three steps after it all say CACHED:
+nothing runs.
+
+33
+00:02:19,950 --> 00:02:20,995
+Now predict.
+
+34
+00:02:21,315 --> 00:02:24,878
+You change one word in cli.py and rebuild.
+
+35
+00:02:25,198 --> 00:02:27,054
+Which of the four steps run again?
+
+36
+00:02:35,900 --> 00:02:40,977
+Try it, as an extra: on line 49,
+change I love cheese to I love brie.
+
+37
+00:02:41,297 --> 00:02:43,093
+The git diff shows the change;
+
+38
+00:02:43,093 --> 00:02:45,905
+the build context now
+has a different checksum.
+
+39
+00:02:46,150 --> 00:02:47,150
+Rebuild.
+
+40
+00:02:47,345 --> 00:02:49,777
+FROM and the apt and pip step are reused.
+
+41
+00:02:50,097 --> 00:02:54,173
+But the checksum of the copied files
+changed, so COPY runs,
+
+42
+00:02:54,173 --> 00:02:57,350
+and uv sync after it,
+Python download and all.
+
+43
+00:02:57,600 --> 00:02:59,840
+Now undo the edit with git checkout.
+
+44
+00:03:00,160 --> 00:03:02,485
+Same files, so the cache comes back?
+
+45
+00:03:02,805 --> 00:03:05,301
+No: COPY and uv sync run again.
+
+46
+00:03:05,621 --> 00:03:09,612
+Git rewrote its own index file,
+inside the hidden git folder,
+
+47
+00:03:09,612 --> 00:03:12,490
+and that folder is in the build context too.
+
+48
+00:03:12,733 --> 00:03:15,016
+That answers the question from part 1.
+
+49
+00:03:15,336 --> 00:03:18,191
+Your Dockerfile sits
+in the build context too,
+
+50
+00:03:18,191 --> 00:03:20,797
+so every edit to it changed that checksum.
+
+51
+00:03:21,117 --> 00:03:24,466
+While you follow the README step by step,
+that's expected.
+
+52
+00:03:24,716 --> 00:03:28,046
+In your own projects,
+put the slow steps first:
+
+53
+00:03:28,046 --> 00:03:32,439
+copy only the files uv sync needs,
+run it, then copy the rest.
+
+54
+00:03:32,759 --> 00:03:37,601
+A .dockerignore keeps the git folder,
+any local venv and the Dockerfile out.
+
+55
+00:03:37,921 --> 00:03:42,551
+Now an edit to cli.py reruns
+only the last COPY.
+
+56
+00:03:44,800 --> 00:03:48,576
+Now the README section
+Pushing Docker Image to Docker Hub.
+
+57
+00:03:48,896 --> 00:03:54,720
+First, sign up and create an access token,
+with read and write access, not the default.
+
+58
+00:03:55,040 --> 00:03:59,541
+Copy it right away: it's shown only once,
+and it works like a password.
+
+59
+00:03:59,861 --> 00:04:01,269
+Pause and make yours.
+
+60
+00:04:01,517 --> 00:04:06,957
+Next, log in: docker login,
+-u with your user name, -p with your token.
+
+61
+00:04:07,277 --> 00:04:09,666
+We have no account, so we couldn't run it.
+
+62
+00:04:09,900 --> 00:04:14,344
+So some steps use a stand-in,
+a small registry on our own machine:
+
+63
+00:04:14,344 --> 00:04:15,489
+just watch those.
+
+64
+00:04:15,809 --> 00:04:20,396
+Logging in to it warns that a password
+on the command line is insecure.
+
+65
+00:04:20,633 --> 00:04:25,966
+That's a small slip in the README: with -p,
+your token stays in your shell history.
+
+66
+00:04:26,286 --> 00:04:29,819
+Instead, type docker login,
+-u, and your user name,
+
+67
+00:04:29,819 --> 00:04:32,174
+then paste the token when it asks.
+
+68
+00:04:32,494 --> 00:04:33,796
+Pause and log in.
+
+69
+00:04:34,033 --> 00:04:35,847
+Then tag the image:
+
+70
+00:04:35,847 --> 00:04:41,862
+docker tag simple-translate
+<USER NAME>/simple-translate-ac215.
+
+71
+00:04:42,182 --> 00:04:44,209
+Pause and run it with your own name.
+
+72
+00:04:44,529 --> 00:04:49,649
+An extra docker image ls shows two names,
+one ID: a second name, not a copy.
+
+73
+00:04:49,883 --> 00:04:55,190
+Read the long name in four parts:
+the registry, docker.io, the default;
+
+74
+00:04:55,190 --> 00:04:58,928
+your account; the repository;
+and the tag, latest.
+
+75
+00:04:59,248 --> 00:05:02,854
+Names without an account,
+like our first, fall under library.
+
+76
+00:05:03,100 --> 00:05:05,767
+Then push: docker push, with the same name.
+
+77
+00:05:06,087 --> 00:05:07,239
+Pause and run it.
+
+78
+00:05:07,559 --> 00:05:11,249
+Yours should upload each layer
+and end with a digest line.
+
+79
+00:05:11,569 --> 00:05:15,836
+Without an account, Docker Hub refused ours:
+push access denied.
+
+80
+00:05:16,156 --> 00:05:17,448
+If you see it, log in,
+
+81
+00:05:17,448 --> 00:05:21,617
+and check your token can write
+and the name starts with your user name.
+
+82
+00:05:21,867 --> 00:05:25,591
+On the stand-in, the push goes through,
+ending with a digest:
+
+83
+00:05:25,591 --> 00:05:27,605
+a fingerprint of the whole image.
+
+84
+00:05:27,850 --> 00:05:32,287
+Push again: every layer already exists,
+and only missing layers travel.
+
+85
+00:05:32,607 --> 00:05:37,399
+On Docker Hub, even the base layers
+may say Mounted from library/python:
+
+86
+00:05:37,399 --> 00:05:38,730
+it already has them.
+
+87
+00:05:38,967 --> 00:05:43,447
+And remember: a new Docker Hub repository
+is public by default.
+
+88
+00:05:43,767 --> 00:05:46,156
+Anyone can pull it, git folder and all.
+
+89
+00:05:48,483 --> 00:05:52,088
+One more check before the VM;
+this scene is all extras.
+
+90
+00:05:52,408 --> 00:05:58,126
+Our machine is Intel or AMD,
+and the image says linux/amd64.
+
+91
+00:05:58,446 --> 00:06:01,731
+On an Apple Silicon Mac, you'd see arm64.
+
+92
+00:06:01,966 --> 00:06:03,225
+Why does that matter?
+
+93
+00:06:03,545 --> 00:06:11,361
+Every program in an image, bash, Python, uv,
+is machine code for one kind of CPU:
+
+94
+00:06:11,361 --> 00:06:16,089
+amd64 for Intel and AMD,
+arm64 for Apple Silicon.
+
+95
+00:06:16,409 --> 00:06:19,813
+A container's programs
+run directly on the CPU,
+
+96
+00:06:19,813 --> 00:06:25,027
+so unless an emulator steps in,
+the CPU must speak the image's language.
+
+97
+00:06:25,347 --> 00:06:29,785
+Docker Desktop has one built in;
+a plain Linux VM doesn't.
+
+98
+00:06:30,033 --> 00:06:33,297
+A tag can point at a menu,
+one image per platform.
+
+99
+00:06:33,617 --> 00:06:40,294
+This python tag lists five platforms:
+amd64, two kinds of arm, and two rarer ones.
+
+100
+00:06:40,614 --> 00:06:43,196
+Docker pulls the row
+that matches your machine.
+
+101
+00:06:43,433 --> 00:06:49,183
+The instructor's image,
+dlops/simple-translate, is no menu:
+
+102
+00:06:49,183 --> 00:06:51,326
+one image, amd64 only.
+
+103
+00:06:51,566 --> 00:06:54,283
+Our stand-in push is a small menu:
+
+104
+00:06:54,283 --> 00:06:59,395
+amd64, plus an attestation,
+a record of how the image was built.
+
+105
+00:06:59,715 --> 00:07:05,134
+Built on an M-series Mac,
+the amd64 row would say arm64.
+
+106
+00:07:08,383 --> 00:07:09,407
+Now ponder.
+
+107
+00:07:09,727 --> 00:07:12,074
+You built on an M-series Mac and pushed.
+
+108
+00:07:12,394 --> 00:07:16,148
+Your VM is an ordinary Intel or AMD machine.
+
+109
+00:07:16,468 --> 00:07:18,004
+Will your image run there?
+
+110
+00:07:26,850 --> 00:07:30,848
+No. Here's the same failure
+the other way around,
+
+111
+00:07:30,848 --> 00:07:34,615
+on our machine, which has no emulator:
+exec format error.
+
+112
+00:07:34,935 --> 00:07:37,730
+Docker Desktop would just run it, emulated.
+
+113
+00:07:38,050 --> 00:07:43,724
+A Mac-built image on a default VM fails
+like this, or with no matching manifest.
+
+114
+00:07:44,566 --> 00:07:46,742
+Two fixes, neither in the README.
+
+115
+00:07:47,062 --> 00:07:54,742
+One: build for the VM's platform,
+with the flag --platform=linux/amd64.
+
+116
+00:07:55,062 --> 00:07:58,859
+It's the commented-out
+line 12 of docker-shell.sh.
+
+117
+00:07:59,179 --> 00:08:02,507
+On a Mac, it runs emulated:
+slower, but it works.
+
+118
+00:08:02,827 --> 00:08:05,004
+Then tag and push again, as before.
+
+119
+00:08:05,250 --> 00:08:08,178
+Two: docker-build-push.sh uses buildx,
+
+120
+00:08:08,178 --> 00:08:13,186
+Docker's multi-platform builder,
+to build both and push one menu.
+
+121
+00:08:16,500 --> 00:08:18,963
+Put your user name on line 11,
+
+122
+00:08:18,963 --> 00:08:23,561
+and simple-translate-ac215 on line 7,
+the README's name.
+
+123
+00:08:23,881 --> 00:08:26,207
+Log in first, then run it with bash.
+
+124
+00:08:26,527 --> 00:08:30,438
+Afterwards,
+switch back with docker buildx use default,
+
+125
+00:08:30,438 --> 00:08:32,926
+or desktop-linux on Docker Desktop.
+
+126
+00:08:33,967 --> 00:08:38,063
+The last README section:
+Running App on VM using Docker.
+
+127
+00:08:38,383 --> 00:08:41,135
+First, create a VM, as in lecture 1.
+
+128
+00:08:41,455 --> 00:08:43,204
+The README gives no settings.
+
+129
+00:08:43,524 --> 00:08:48,561
+An ordinary E2 machine
+with Debian 12 or 13 will do;
+
+130
+00:08:48,561 --> 00:08:50,692
+E2 machines are amd64.
+
+131
+00:08:51,012 --> 00:08:56,602
+The meter starts: the VM bills by the second
+while it runs, its disk while it exists.
+
+132
+00:08:56,867 --> 00:08:58,382
+Next, SSH in.
+
+133
+00:08:58,702 --> 00:09:03,843
+Pause now: create your VM,
+and wait until its SSH terminal is open.
+
+134
+00:09:04,100 --> 00:09:08,004
+Then install Docker:
+sudo apt install docker.io.
+
+135
+00:09:08,324 --> 00:09:09,476
+Pause and run it.
+
+136
+00:09:09,796 --> 00:09:10,948
+In our stand-in,
+
+137
+00:09:10,948 --> 00:09:14,550
+a fresh Debian with empty package lists,
+it fails:
+
+138
+00:09:14,550 --> 00:09:16,324
+Unable to locate package.
+
+139
+00:09:16,644 --> 00:09:19,695
+If yours installed,
+skip ahead to the version check.
+
+140
+00:09:19,950 --> 00:09:21,779
+A small gap in the README:
+
+141
+00:09:21,779 --> 00:09:25,859
+this section skips sudo apt-get update,
+used in lecture 1.
+
+142
+00:09:26,179 --> 00:09:28,951
+Without it, the package lists may be empty,
+
+143
+00:09:28,951 --> 00:09:31,982
+as here, or out of date,
+with Not Found errors.
+
+144
+00:09:32,302 --> 00:09:35,481
+Run the update first,
+an extra, and pause after it.
+
+145
+00:09:35,734 --> 00:09:43,683
+Now the install works: 92 new packages,
+a 107 megabyte download, on Debian 12;
+
+146
+00:09:43,683 --> 00:09:48,065
+91 packages and 118 megabytes on Debian 13.
+
+147
+00:09:48,385 --> 00:09:49,409
+Answer Y.
+
+148
+00:09:49,729 --> 00:09:50,880
+Pause and run it.
+
+149
+00:09:51,150 --> 00:09:53,475
+Then sudo docker --version.
+
+150
+00:09:53,795 --> 00:09:57,591
+This is Debian's own Docker package:
+
+151
+00:09:57,591 --> 00:10:04,867
+20.10.24 on Debian 12, 26.1.5 on Debian 13,
+at the time of recording.
+
+152
+00:10:05,187 --> 00:10:07,428
+Older than the laptop's, but plenty.
+
+153
+00:10:07,684 --> 00:10:11,161
+Here Docker runs right
+on the VM's Linux kernel;
+
+154
+00:10:11,161 --> 00:10:15,001
+there's no hidden VM,
+unlike Docker Desktop on a Mac.
+
+155
+00:10:15,267 --> 00:10:16,419
+And why sudo?
+
+156
+00:10:16,739 --> 00:10:19,630
+Without it, this extra docker ps is refused:
+
+157
+00:10:19,630 --> 00:10:24,888
+permission denied on the Docker socket,
+the door to Docker's background service.
+
+158
+00:10:25,208 --> 00:10:27,982
+Only root and the docker group may open it.
+
+159
+00:10:29,417 --> 00:10:31,187
+Then the deploy:
+
+160
+00:10:31,187 --> 00:10:36,500
+sudo docker run --rm -ti
+dlops/simple-translate.
+
+161
+00:10:36,820 --> 00:10:37,972
+Pause and run it.
+
+162
+00:10:38,292 --> 00:10:42,811
+The image isn't on this VM yet,
+so Docker pulls it from Docker Hub,
+
+163
+00:10:42,811 --> 00:10:45,374
+seven layers, then starts a container.
+
+164
+00:10:45,617 --> 00:10:49,651
+Now run the app with python cli.py
+and its defaults:
+
+165
+00:10:49,651 --> 00:10:52,444
+I love cheese comes back in Italian.
+
+166
+00:10:52,764 --> 00:10:53,916
+Pause and run it.
+
+167
+00:10:54,236 --> 00:10:58,801
+No clone, no pip, no uv on this VM:
+just Docker and one image.
+
+168
+00:10:59,050 --> 00:11:05,450
+And the opening question:
+why 3.14.7, when the recipe says 3.12?
+
+169
+00:11:05,770 --> 00:11:07,861
+The same reason as in our build.
+
+170
+00:11:08,181 --> 00:11:13,406
+This image was built
+on September 16 with uv 0.12.15,
+
+171
+00:11:13,406 --> 00:11:19,914
+and the newest stable Python
+that uv knew in the range was 3.14.7.
+
+172
+00:11:20,234 --> 00:11:23,221
+Our build today got 3.15.0.
+
+173
+00:11:23,467 --> 00:11:26,454
+Same Dockerfile, a month apart, two Pythons.
+
+174
+00:11:26,774 --> 00:11:31,351
+Nothing in the recipe is pinned:
+pip installs the latest uv,
+
+175
+00:11:31,351 --> 00:11:35,521
+the Python range is open,
+and the repo has no uv.lock,
+
+176
+00:11:35,521 --> 00:11:37,760
+so each build writes its own.
+
+177
+00:11:38,080 --> 00:11:41,984
+An image freezes all that:
+ship the image, not the recipe.
+
+178
+00:11:42,234 --> 00:11:43,279
+Type exit.
+
+179
+00:11:43,599 --> 00:11:45,197
+One more small mismatch:
+
+180
+00:11:45,197 --> 00:11:48,460
+the README promises
+to pull the image you pushed,
+
+181
+00:11:48,460 --> 00:11:51,023
+but this command runs the instructor's.
+
+182
+00:11:51,343 --> 00:11:55,930
+Your image
+is <USER NAME>/simple-translate-ac215.
+
+183
+00:11:56,250 --> 00:12:00,538
+Run it with the same command,
+once it's built for amd64.
+
+184
+00:12:01,734 --> 00:12:06,677
+Also, an extra check shows
+the published image lags the repo:
+
+185
+00:12:06,677 --> 00:12:11,377
+its cli.py is the older one,
+without raise_exception=True.
+
+186
+00:12:11,697 --> 00:12:16,241
+If Google refuses a request,
+that version quietly prints your input back.
+
+187
+00:12:16,561 --> 00:12:18,288
+That's not a Docker problem.
+
+188
+00:12:18,534 --> 00:12:21,935
+And if pulling the image fails
+with toomanyrequests:
+
+189
+00:12:21,935 --> 00:12:25,401
+Docker Hub limits how
+often anonymous users can pull,
+
+190
+00:12:25,401 --> 00:12:28,475
+per network address,
+which a classroom can hit.
+
+191
+00:12:28,795 --> 00:12:32,592
+Wait a while, or log in first,
+with sudo docker login.
+
+192
+00:12:33,833 --> 00:12:35,476
+Before you go, clean up.
+
+193
+00:12:35,796 --> 00:12:38,936
+An extra check, sudo docker ps -a,
+
+194
+00:12:38,936 --> 00:12:43,369
+shows no containers left behind,
+thanks to --rm.
+
+195
+00:12:43,633 --> 00:12:47,537
+Last README step:
+delete the VM, with its boot disk,
+
+196
+00:12:47,537 --> 00:12:51,590
+then check that VM instances
+and Disks are both empty.
+
+197
+00:12:51,910 --> 00:12:53,254
+Pause and do it now.
+
+198
+00:12:53,500 --> 00:12:54,908
+Two optional chores.
+
+199
+00:12:55,228 --> 00:13:00,455
+Your Docker Hub repository stays public
+until you delete it or make it private.
+
+200
+00:13:00,775 --> 00:13:06,321
+And to reclaim the space your images take
+on the laptop, run docker system prune -a.
+
+201
+00:13:09,566 --> 00:13:12,809
+Lecture 1 gave us a VM with a venv inside.
+
+202
+00:13:13,129 --> 00:13:19,038
+Today a container slid in between:
+the venv now lives in an image, at /.venv.
+
+203
+00:13:19,358 --> 00:13:22,750
+You built it on your laptop,
+pushed it to a registry,
+
+204
+00:13:22,750 --> 00:13:25,054
+and ran it on a VM with one command.
+
+205
+00:13:25,633 --> 00:13:27,638
+Five questions to test yourself.
+
+206
+00:13:27,958 --> 00:13:33,996
+One: what's the difference between an image
+and a container, and what does --rm delete?
+
+207
+00:13:34,316 --> 00:13:37,422
+Two: what does our container run at startup,
+
+208
+00:13:37,422 --> 00:13:38,569
+and what happens
+
+209
+00:13:38,569 --> 00:13:41,868
+if you add python cli.py
+after the image name?
+
+210
+00:13:42,116 --> 00:13:50,095
+Three: the Dockerfile says Python 3.12,
+so why does python report 3.15, or 3.14?
+
+211
+00:13:50,415 --> 00:13:52,954
+Four: you edit one line of cli.py;
+
+212
+00:13:52,954 --> 00:13:57,433
+which steps rerun,
+and how would you reorder the Dockerfile?
+
+213
+00:13:57,753 --> 00:14:02,554
+Five: name two ways to make
+a Mac-built image run on a default VM.
+
+214
+00:14:02,800 --> 00:14:07,493
+The answers are in the exercises,
+and every command is in the study guide.
+
+215
+00:14:07,813 --> 00:14:11,828
+Next time, Containers 2:
+five containers working together,
+
+216
+00:14:11,828 --> 00:14:14,390
+a working directory, a non-root user,
+
+217
+00:14:14,390 --> 00:14:17,989
+and your laptop's folder
+mounted inside a container.
+

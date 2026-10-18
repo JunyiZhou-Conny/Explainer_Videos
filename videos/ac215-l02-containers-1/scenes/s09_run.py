@@ -6,7 +6,9 @@ Beats (script.md "## S09", one voiceover block each):
     line 2) appears and pulses on "At the prompt". TRACKER A15: it types
     `python cli.py -t "Good morning" -s "en" -d "es"` (folds) -> laptop/31 lines 5-9, 13 (wrapped),
     15-16; `Output: Buen día` GREEN, it pulses on "from English to Spanish". On "Pause and run both"
-    a YELLOW `▶ your turn` beside each command.
+    a YELLOW `▶ your turn` beside each command. GREY `Lecture 2 · slides 63–65, 74` (lecture_ref, top
+    right, above the terminal's top edge at 2.59) fades in with the tracker's step 14 ("Now the
+    README's Run Docker Container step") and stays through the `docker ps -a` beat (end of beat 3).
  1  The terminal shrinks to the 3-row strip (the translate command and `Output: Buen día`); the
     output line is copied up, enlarged (GREEN). Above the strip: a GREY laptop with a TEAL
     container in its screen ("the request"), a PINK route out of the laptop (the laptop pulses on
@@ -18,7 +20,7 @@ Beats (script.md "## S09", one voiceover block each):
     container prompt (laptop/31 line 17) -> line 18; the laptop prompt returns and pulses YELLOW.
     ▶ your turn beside `exit` on "Pause and do it".
  3  The terminal shrinks to the strip. V2 above it: the TEAL stack (four thin ORANGE base slabs with
-    the brace "base image", ORANGE `RUN pip install uv`, GREY `COPY . ./`, GREEN `RUN uv sync`) and
+    the brace "base image", ORANGE `RUN apt…uv`, GREY `COPY . ./`, GREEN `RUN uv sync`) and
     the dashed glowing glass slab with its dot "main process". The `exit` replays: the strip's exit
     is copied to the dot; "so the container stopped": the dot goes out ("stopped"); "and dash dash
     rm": a TEAL chip `--rm` appears and the glass slab, dot and label dissolve; the stack stays, a
@@ -26,15 +28,20 @@ Beats (script.md "## S09", one voiceover block each):
     `extra`) -> laptop/32 line 2 squeezed (the header only); a GREY row tag "empty"; the stack and
     the check pulse on "the image is untouched".
  4  TRACKER A16 · extra. The strip grows to 4 rows: a second run (row tag `extra`); a new glass
-    slab and dot. At `root@1d1fecf6ff8f:/#` it types `echo $$` (laptop/33 line 4) -> line 5; on
-    "shows that bash" the `1` flies to the dot, whose label becomes "PID 1 · bash". A `…` row with
-    the GREY row tag "more checks · part 2". "The container lives": the dot and glass pulse.
+    slab and dot. The slides 63–65, 74 tag gives way to GREY `Lecture 2 · slides 13–14` (top right,
+    from "In a second run" through the PID namespace bridge, out at "The container lives"). At
+    `root@1d1fecf6ff8f:/#` it types `echo $$` (laptop/33 line 4) -> line 5; on "shows that bash" the
+    `1` flies to the dot, whose label becomes "PID 1 · bash". A `…` row with the GREY row tag "more
+    checks · part 2". "each container counts": the `1` and "PID 1 · bash" pulse. "The container
+    lives": the dot and glass pulse.
     Labels right of the stack: `-i` "your keyboard → bash", `-t` "a terminal: prompt, line
     editing", each as it is said, while the strip's `-ti` glows TEAL. "Then type exit": `exit`
     (line 29) -> line 30, the laptop prompt returns; the dot goes out and the slab dissolves.
  5  The picture and the strip clear. V3 card (TEAL): ENTRYPOINT `["/bin/bash"]`, CMD
     `["-c", "source … && exec bash"]`, S05's GREY labels with short arrows ("the program", then
-    "its default arguments" on "the default arguments"). "What if you put words": the chip
+    "its default arguments" on "the default arguments"); GREY `Lecture 2 · slides 40–41` (top right)
+    fades in with the card ("Now a puzzle") and stays while the card is on screen, through the ponder
+    and the knock-out, until the card fades in beat 6. "What if you put words": the chip
     `docker run --rm -ti simple-translate python cli.py` at the top; the image name glows TEAL on
     "right after the image name" and as it is said; `python cli.py` boxed YELLOW as it is said;
     a YELLOW "?" where the start-up line goes. PONDER (8 s): the card group slides down, the
@@ -55,11 +62,13 @@ Beats (script.md "## S09", one voiceover block each):
     tiles). "as in this extra": the strip (5 rows) types `docker run --rm simple-translate -c
     "source .venv/bin/activate && python cli.py -d fr"` (folds; row tags `extra` and "no -ti ·
     nothing to type") -> laptop/37 lines 12 (wrapped), 14-15; `Output: j'adore le fromage` GREEN.
- 8  CODE(docker-shell.sh: 10-15) (line 12, the commented platform build, dimmed); YELLOW bars on
-    line 11 on "builds" and line 15 on "and runs"; GREY tag "not in the README · builds and runs in
-    one go".
+ 8  The terminal clears and shrinks to a 1-row strip. CODE(docker-shell.sh: 10-15) above it (line
+    12, the commented platform build, dimmed). On "docker-shell.sh" the strip types
+    `sh docker-shell.sh` (laptop/42 line 1, row tag `extra`: how to run the helper); GREY tag "not in
+    the README · builds and runs in one go". YELLOW bars on line 11 on "builds" and line 15 on "and
+    runs"; the strip's command glows YELLOW on "run it with sh".
  9  TRACKER A16. Part-1 recap: the full V2 stack (brace "base image", caption
-    `python:3.12-slim-bookworm`, ORANGE `RUN pip install uv`, GREY `COPY . ./`, GREEN `RUN uv sync`)
+    `python:3.12-slim-bookworm`, ORANGE `RUN apt…uv`, GREY `COPY . ./`, GREEN `RUN uv sync`)
     beside the config card; a TEAL check "your image: built and run"; on "In part 2" the closing
     card "Part 2: what's inside, why it rebuilt, and shipping it to a VM". Fade to an empty frame
     (end of part 1).
@@ -70,7 +79,7 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import line_bar
+from explainer.devops import lecture_ref, line_bar
 from explainer.scene import VoiceScene
 
 from common import (ERR, EXIT, IMAGE, INK, LAPTOP, LAPTOP_DIR, CLOUD, MONO, NARRATION, P_LAPTOP,
@@ -117,6 +126,10 @@ RUN_C = C37.cmd
 assert RUN_C == 'docker run --rm simple-translate -c "source .venv/bin/activate && python cli.py -d fr"'
 OUT37 = C37.at(12, 14, 15)
 assert OUT37[-1] == "Output: j'adore le fromage", OUT37
+
+C42 = capture("42", LAPTOP_DIR)                          # laptop/42-docker-shell.txt
+SHELL_CMD = C42.cmd                                      # line 1: how to run the repo helper
+assert SHELL_CMD == "sh docker-shell.sh", SHELL_CMD
 
 # ------------------------------------------------------------------ the V3 values
 ENT = '["/bin/bash"]'
@@ -192,11 +205,12 @@ def clear_with(scene, t, *anims, run_time: float = 0.4) -> None:
 
 def build_stack(x: float, floor_y: float, uv_h: float):
     """The finished V2 stack: four thin ORANGE base slabs (brace 'base image'), ORANGE
-    `RUN pip install uv`, GREY `COPY . ./`, GREEN `RUN uv sync`. Returns (stack, slabs, brace)."""
+    `RUN apt…uv` (the solution's apt + pip step since S08's cp; S10's and S11's name), GREY
+    `COPY . ./`, GREEN `RUN uv sync`. Returns (stack, slabs, brace)."""
     st = LayerStack(stack_w=3.4)
     st.floor.move_to([x, floor_y, 0])
     base = [st.make(None, SYSTEM, 0.15) for _ in range(4)]
-    rest = [st.make("RUN pip install uv", SYSTEM), st.make("COPY . ./", LAPTOP),
+    rest = [st.make("RUN apt…uv", SYSTEM), st.make("COPY . ./", LAPTOP),
             st.make("RUN uv sync", VENV, uv_h)]
     for s in base + rest:
         st.slabs.add(s)
@@ -237,12 +251,14 @@ class RunIt(VoiceScene):
 
         tr = tracker_a(13)
         t = laptop_term(13)
+        lref_run = lecture_ref(2, "63–65, 74")              # top right, through the docker ps -a beat
+        assert lref_run.get_bottom()[1] > t.get_top()[1] + 0.1, (lref_run.get_bottom(), t.get_top())
 
         # ========================================================== 0 · run, then translate
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t), run_time=0.5)
             bare_prompt(self, t)
-            self.play(track(tr, 14), run_time=0.5)
+            self.play(track(tr, 14), FadeIn(lref_run), run_time=0.5)
             self.play(Indicate(VGroup(tr.dots[13], tr.caption), color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("docker run")
             c_run = type_cmd(self, t, RUN, 2.4)
@@ -373,9 +389,12 @@ class RunIt(VoiceScene):
         lab_t = two_part("-t", "a terminal: prompt, line editing")
         flags = VGroup(lab_i, lab_t).arrange(DOWN, buff=0.35, aligned_edge=LEFT)
         flags.next_to(stack.slabs, RIGHT, buff=0.55).set_y(1.05)
+        lref_pid = lecture_ref(2, "13–14")                  # top right, through the PID namespace bridge
 
         with self.voiceover(SAY[4]) as vo:
-            resize(self, t, 4, extra=[FadeOut(unchanged)], run_time=0.5)
+            # the tags share the corner: one out, then the next in (a crossfade mixes their glyphs)
+            resize(self, t, 4, extra=[FadeOut(unchanged), Succession(FadeOut(lref_run), FadeIn(lref_pid))],
+                   run_time=0.5)
             c_run2 = type_cmd(self, t, RUN, 1.0)
             t.set_prompt(P33)
             bare_prompt(self, t)
@@ -393,9 +412,12 @@ class RunIt(VoiceScene):
                       line_length=0.15, flash_radius=0.25), run_time=0.5)
             dots = t.print(self, ["…"], run_time=0.25)[0]
             pin(self, dots, beside(row_tag("more checks · part 2"), dots, buff=0.35), run_time=0.3)
+            vo.wait_until("each container counts")          # the bridge: its own count, from 1
+            self.play(Indicate(one.glyphs, color=IMAGE, scale_factor=1.3),
+                      Indicate(glass2.dot_label, color=IMAGE, scale_factor=1.12), run_time=0.8)
             vo.wait_until("The container lives")
             self.play(Indicate(VGroup(glass2.dot, glass2.dot_label), color=IMAGE, scale_factor=1.25),
-                      glass2.glow.animate.set_stroke(opacity=0.6), run_time=0.8)
+                      glass2.glow.animate.set_stroke(opacity=0.6), FadeOut(lref_pid), run_time=0.8)
             self.play(glass2.glow.animate.set_stroke(opacity=0.25), run_time=0.4)
             ti = substring(c_run2.rows[1], "-ti")             # the flags on the strip, still in view
             vo.wait_until("Dash i")
@@ -427,11 +449,13 @@ class RunIt(VoiceScene):
         img_name = text_span(cmd_chip.text, RUN_ARGS, "simple-translate")
         words_box = SurroundingRectangle(words, color=TURN, buff=0.05, stroke_width=3, corner_radius=0.05)
         group5 = VGroup(card, t_ent, t_cmd, lab_ent, lab_cmd, q_line)
+        lref_cmd = lecture_ref(2, "40–41")                  # top right, while the card is on screen
+        assert lref_cmd.get_bottom()[1] > cmd_chip.get_top()[1] + 0.3, (lref_cmd.get_bottom(), cmd_chip.get_top())
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(*slabs, brace, flags)), FadeOut(t, shift=DOWN * 0.2), run_time=0.6)
             self.remove(stack, t, *t.lines)
-            self.play(FadeIn(VGroup(card, t_ent, t_cmd), shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(VGroup(card, t_ent, t_cmd), shift=UP * 0.15), FadeIn(lref_cmd), run_time=0.6)
             self.play(GrowArrow(lab_ent.arrow), FadeIn(lab_ent.text, shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("the default arguments")
             self.play(GrowArrow(lab_cmd.arrow), FadeIn(lab_cmd.text, shift=RIGHT * 0.15),
@@ -483,7 +507,7 @@ class RunIt(VoiceScene):
             self.play(bad.animate.set_color(ERR), Flash(bad.get_right() + RIGHT * 0.15, color=ERR,
                       line_length=0.18, flash_radius=0.3), run_time=0.6)
             self.play(FadeOut(VGroup(card, t_ent, new_tile, lab_ent, lab_cmd, cmd_chip, words_box)),
-                      bad.animate.move_to(bad_top), run_time=0.8)
+                      FadeOut(lref_cmd), bad.animate.move_to(bad_top), run_time=0.8)
             vo.wait_until("Bash takes python")
             u_py = Line(py_top.get_corner(DL) + DOWN * 0.08, py_top.get_corner(DR) + DOWN * 0.08,
                         color=S.GREY, stroke_width=3)
@@ -566,14 +590,24 @@ class RunIt(VoiceScene):
         helper.next_to(panel, DOWN, buff=0.35)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(good), FadeOut(t2), run_time=0.5)
-            self.remove(t2, *t2.lines)
+            # the terminal stays: it clears and shrinks to a 1-row strip (under the helper tag), so
+            # the helper's own run command can be typed in it
+            clear_with(self, t2, FadeOut(good), run_time=0.35)
+            resize(self, t2, 1, run_time=0.45)
+            bare_prompt(self, t2)
             self.play(FadeIn(panel, shift=UP * 0.15), run_time=0.5)
-            self.play(FadeIn(helper, shift=UP * 0.1), run_time=0.4)
+            vo.wait_until("docker-shell.sh")
+            c42 = type_cmd(self, t2, SHELL_CMD, 0.6)
+            x42 = beside(row_tag("extra"), c42)
+            self.play(FadeIn(x42, shift=LEFT * 0.1), FadeIn(helper, shift=UP * 0.1), run_time=0.4)
+            attach(self, c42, x42)
             vo.wait_until("builds")
             self.play(FadeIn(bar11), Indicate(panel.code.code_lines[1], color=TURN, scale_factor=1.04), run_time=0.5)
             vo.wait_until("and runs")
             self.play(FadeIn(bar15), Indicate(panel.code.code_lines[5], color=TURN, scale_factor=1.04), run_time=0.5)
+            vo.wait_until("run it with sh")
+            self.play(Indicate(substring(c42, SHELL_CMD), color=TURN, scale_factor=1.1), run_time=0.6)
+            self.add(c42)                 # animating a substring splits the row out of the scene's list
 
         # ========================================================== 9 · part-1 recap
         stack9, slabs9, brace9 = build_stack(-3.0, -0.45, 0.8)
@@ -590,7 +624,8 @@ class RunIt(VoiceScene):
         closing = VGroup(nxt_box, nxt).move_to([0, -2.75, 0])
 
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(panel, bar11, bar15, helper)), track(tr, 16), run_time=0.5)
+            self.play(FadeOut(VGroup(panel, bar11, bar15, helper)), FadeOut(t2), track(tr, 16), run_time=0.5)
+            self.remove(t2, *t2.lines)
             self.play(LaggedStart(*[FadeIn(s, shift=DOWN * 0.4) for s in slabs9], lag_ratio=0.12),
                       FadeIn(VGroup(brace9, base_name)), FadeIn(VGroup(card9, t_ent9, t_cmd9), shift=LEFT * 0.2),
                       run_time=1.1)

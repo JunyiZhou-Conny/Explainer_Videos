@@ -6,13 +6,18 @@ Beats (script.md "## S03", one voiceover block each):
     pulses on "Open a terminal on your laptop" and a GREY chip "Docker Desktop: running" with a
     GREEN dot appears above its top-right corner. On "On a Mac" the prompt pulses and a GREY note
     appears above the terminal's left end, one line per clause: "on a Mac: zsh, a % prompt" /
-    "on Windows: Git Bash · same commands" (the terminal fills the frame down to the bottom edge, so
-    the note sits above it rather than under it).
+    "on Windows: Ubuntu (WSL) or Git Bash" / on "In Git Bash" "in Git Bash: winpty docker run …"
+    (the terminal fills the frame down to the bottom edge, so the note sits above it rather than
+    under it; three lines fit the band between tracker and terminal with 0.2 to spare each side).
  1  TRACKER A1. `docker container ls` -> laptop/01 line 2 (squeezed: the 70-character header does
     not fit a 65-column row). The header pulses; GREY row tag under it "the columns · no rows:
     nothing running". On "If yours can't connect" a GREY chip "cannot connect? → start Docker
     Desktop" appears left of the Docker Desktop chip (above the terminal, for the same reason), and
     that chip is circled on "start Docker Desktop". ▶ your turn (wiggles on "Pause and run it").
+    GREY lecture tag "Lecture 2 · slides 54, 61–62, 73" (SLIDES.md, S03 (i)) top right, from
+    "First, docker container ls" to the end of the scene (script.md's span; it goes with the final
+    fade-out). Its bottom is at 3.13, its left edge at 2.11: the Docker Desktop chip is under it at
+    y ≈ 2.2, the tracker's widest caption (A5 · extra) ends at x ≈ 1.4, cards stay under 2.8.
  2  TRACKER A2. Above the terminal: README card (README.md · line 116) "Stop any container that is
     running"; the row tag "no rows: nothing running" pulses on "There's nothing to stop"; beside the
     card a GREY mono chip `docker stop <CONTAINER ID>` with the tag "only if you have one · not run
@@ -27,8 +32,8 @@ Beats (script.md "## S03", one voiceover block each):
     "images with no name" and the `<none>` stack is swept away (FadeOut + shift) on "without a
     name". Right column: README card (README.md · line 113) "… and clear up an unused images" with
     the tag `erratum`; on "named images survive" the hello-world stack gets a GREEN check "named:
-    kept"; on "With dash a" a GREY mono chip `docker system prune -a`, captioned "every unused
-    image" as that is said.
+    kept"; on "With dash a" a GREY mono chip `docker system prune -a` with its caption "every
+    unused image" under it (the caption pulses as it is said).
  5  TRACKER A4. The right column leaves, the hello-world image moves to the middle. The strip clears;
     `docker image ls` -> laptop/03 line 2 (squeeze). GREY row tag "no images yet · yours may list
     hello-world" under the header; the hello-world name and then its check pulse as they are
@@ -46,24 +51,27 @@ Beats (script.md "## S03", one voiceover block each):
     `student@laptop:~/simple-translate$`, its new path flashing BLUE. A GREY row tag "README.md ·
     lines 50–51 · same as L1" beside the first `git clone` row and ▶ your turn beside the cd row
     (wiggles on "Pause and run both").
- 7  TRACKER A5 · extra. The picture leaves; the strip clears and grows back to 10 rows. `ls -a`
-    (row tag `extra`) -> laptop/05 lines 4-12 (the clone's own listing; lines 2-3 are . and ..).
-    Dockerfile.txt gets a YELLOW bar and the GREY row
-    tag "the solution"; dashed GREY ghost chips `Dockerfile` and `uv.lock` appear side by side on
-    that row, right of the listing, as they are named; "not in the repo" under them.
- 8  TRACKER A5 · extra. The listing clears (the `Dockerfile` ghost stays); `docker build -t
-    simple-translate -f Dockerfile .` (two rows, row tag `extra`) -> laptop/07 line 7, wrapped, RED;
-    "failed to read dockerfil|e" is underlined YELLOW and the ghost slides beside "no such file or
-    directory". On "The README wants you to write it" a YELLOW brace grows under tracker dots 7-11
-    (FROM … CMD) and the ghost rises under it with "5 steps"; the five dots pulse on "in five
-    steps". Fade out to an empty frame.
+ 7  TRACKER A5 · extra. The picture leaves; the strip grows back to 10 rows WITHOUT clearing (the
+    clone and cd rows, with their tags, stay until `ls -a` is typed under them; then they fade in
+    place and `ls -a` slides up to row 0). `ls -a` (row tag `extra`, which comes in as those rows
+    fade) at the waiting prompt -> laptop/05 lines 4-12 (the clone's own listing; lines 2-3 are
+    . and ..). Dockerfile.txt gets a YELLOW bar and the GREY row tag "the solution"; dashed GREY
+    ghost chips `Dockerfile` and `uv.lock` appear side by side on that row, right of the listing, as
+    they are named; "not in the repo" comes under the first and slides to the pair's middle.
+ 8  TRACKER A5 · extra. The listing clears (the ghosts and their caption stay); `docker build -t
+    simple-translate -f Dockerfile .` (two rows, row tag `extra`); then `uv.lock` and the caption
+    go -> laptop/07 line 7, wrapped, RED; "failed to read dockerfil|e" is underlined YELLOW and the
+    `Dockerfile` ghost slides beside "no such file or directory". On "The README wants you to write
+    it" a YELLOW brace grows under tracker dots 7-11 (FROM … CMD); the ghost shrinks away in the
+    terminal and fades up in under the brace with "5 steps" (a flight would cross the RED rows);
+    the five dots pulse on "in five steps". Fade out to an empty frame.
 """
 
 import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
-from explainer.devops import line_pitch
+from explainer.devops import lecture_ref, line_pitch
 from explainer.scene import VoiceScene
 
 from common import (BOTTOM, BUILD, CD, CLONE, CLOUD, CONTAINER_LS, ERR, IMAGE_LS, INK, LAPTOP, MONO,
@@ -80,6 +88,7 @@ SAY = NARRATION["S03"]
 LS_A = "ls -a"                                           # extra (not in the README)
 STOP = "docker stop <CONTAINER ID>"                      # README.md:116, said, not run
 PRUNE_A = "docker system prune -a"                       # said, not run
+WINPTY = "in Git Bash: winpty docker run …"              # a hint for the README's later run command
 
 C01 = capture("01")                                      # laptop/01-container-ls.txt
 assert C01.cmd == CONTAINER_LS, C01.cmd
@@ -213,7 +222,8 @@ class CleanSlate(VoiceScene):
 
         # ========================================================== 0 · open a terminal
         note = VGroup(label("on a Mac: zsh, a % prompt", 22, S.GREY),
-                      label("on Windows: Git Bash · same commands", 22, S.GREY))
+                      label("on Windows: Ubuntu (WSL) or Git Bash", 22, S.GREY),
+                      label(WINPTY, 22, S.GREY))
         note.arrange(DOWN, aligned_edge=LEFT, buff=0.1)
         note.move_to([t_left + note.width / 2, band_y, 0])
         dd = status_chip("Docker Desktop: running")
@@ -233,13 +243,23 @@ class CleanSlate(VoiceScene):
             self.play(FadeIn(note[0], shift=UP * 0.1), run_time=0.5)
             vo.wait_until("on Windows")
             self.play(FadeIn(note[1], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("In Git Bash")
+            self.play(FadeIn(note[2], shift=UP * 0.1), run_time=0.5)
+            vo.wait_until("put winpty")
+            self.play(Indicate(substring_text(note[2], WINPTY, "winpty"), color=INK, scale_factor=1.15),
+                      run_time=0.7)
+            vo.wait_until("in front of docker run")
+            self.play(Indicate(substring_text(note[2], WINPTY, "docker run …"), color=INK, scale_factor=1.1),
+                      run_time=0.7)
 
         # ========================================================== 1 · docker container ls
         cc = chip("cannot connect? → start Docker Desktop", S.GREY, size=22)
         cc.move_to([dd.get_left()[0] - 0.35 - cc.width / 2, band_y, 0])
+        lref = lecture_ref(2, "54, 61–62, 73")              # top right, bottom at 3.13, to the end
 
         with self.voiceover(SAY[1]) as vo:
-            self.play(FadeOut(note, shift=UP * 0.1), run_time=0.3)
+            vo.wait_until("First, docker container ls")
+            self.play(FadeOut(note, shift=UP * 0.1), FadeIn(lref), run_time=0.4)
             c1 = type_cmd(self, t, CONTAINER_LS, 0.8)
             h1 = t.print(self, PS_HEAD, run_time=0.4)[0]
             vo.wait_until("Here it shows")
@@ -340,10 +360,11 @@ class CleanSlate(VoiceScene):
             vo.wait_until("named images survive")
             self.play(Create(kept[0]), FadeIn(kept[1], shift=UP * 0.1), run_time=0.6)
             vo.wait_until("With dash a")
-            self.play(FadeIn(all_chip, shift=UP * 0.15), run_time=0.5)
+            # the caption comes with the chip (on its own words it showed for under a second)
+            self.play(FadeIn(all_chip, shift=UP * 0.15), FadeIn(every, shift=UP * 0.1), run_time=0.5)
             self.play(Indicate(substring_text(all_chip.text, PRUNE_A, "-a"), color=TURN, scale_factor=1.5), run_time=0.6)
             vo.wait_until("every unused image")
-            self.play(FadeIn(every, shift=UP * 0.1), run_time=0.5)
+            self.play(Indicate(every, color=INK, scale_factor=1.1), run_time=0.6)
 
         # ========================================================== 5 · docker image ls
         survivor = VGroup(named, kept)
@@ -442,12 +463,25 @@ class CleanSlate(VoiceScene):
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(vm, x_vm, lap, dock, fold, lap_name), shift=UP * 0.1),
                       track(tr, 5, extra=True), run_time=0.6)
-            t.clear(self)
+            # no clear: the clone and cd rows (with their tags) stay while the strip grows back to
+            # 10 rows and `ls -a` is typed at the waiting prompt under them, so a viewer who pauses a
+            # moment after "Pause and run both" still has the clone URL
             resize(self, t, 10)
             lead(vo, "ls dash a", 0.5)
             c7 = type_cmd(self, t, LS_A, 0.4)
-            pin(self, c7, beside(row_tag("extra"), c7), run_time=0.3)
+            # room for the listing: those four rows fade where they are (with the `extra` tag coming
+            # in), then `ls -a` slides up to the first row. Terminal.print's own scroll would carry
+            # them four rows up, over the title bar and out of the terminal, as they fade.
+            old = [ln for ln in t.lines if ln is not c7]
+            x7 = beside(row_tag("extra"), c7)
+            pin(self, c7, x7, run_time=0.3,
+                anim=AnimationGroup(FadeIn(x7, shift=LEFT * 0.1), FadeOut(VGroup(*old))))
+            for ln in old:
+                t.lines.remove(ln)
+                self.remove(ln)
+            self.play(c7.animate.shift(t._slot(0) - c7.strut.get_corner(UL)), run_time=0.3)
             out7 = t.print(self, LISTING, run_time=0.9, lag=0.1)
+            assert list(t.lines).index(c7) == 0, "`ls -a` is on the first row, the listing under it"
             df = out7[LISTING.index("Dockerfile.txt")]
             vo.wait_until("There's the solution")
             bar7 = hl_bar(df.glyphs, TURN, 0.25)
@@ -462,12 +496,15 @@ class CleanSlate(VoiceScene):
             row_df = list(t.lines).index(df)
             gx = sol.get_right()[0] + 1.4
             at_row(g_df, t, row_df, x=gx)
-            self.play(FadeIn(g_df, shift=LEFT * 0.2), run_time=0.5)
-            vo.wait_until("and no uv.lock")
             at_row(g_uv, t, row_df, x=g_df.get_right()[0] + 0.35)
-            not_repo.move_to([VGroup(g_df, g_uv).get_center()[0], row_y(t, row_df + 1), 0])
-            self.play(FadeIn(g_uv, shift=LEFT * 0.2), run_time=0.5)
+            # "not in the repo" comes under the first ghost and slides to the middle of the pair when
+            # uv.lock joins it (only on the sentence's last words it showed for under a second)
+            not_repo.move_to([g_df.get_center()[0], row_y(t, row_df + 1), 0])
+            self.play(FadeIn(g_df, shift=LEFT * 0.2), run_time=0.5)
             self.play(FadeIn(not_repo, shift=UP * 0.1), run_time=0.4)
+            vo.wait_until("and no uv.lock")
+            self.play(FadeIn(g_uv, shift=LEFT * 0.2),
+                      not_repo.animate.set_x(VGroup(g_df, g_uv).get_center()[0]), run_time=0.5)
 
         # ========================================================== 8 · the build fails (extra here)
         five = VGroup(*tr.dots[6:11])
@@ -475,9 +512,11 @@ class CleanSlate(VoiceScene):
         steps5 = label("5 steps", 22, TURN)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(g_uv, not_repo)), run_time=0.3)
+            # the listing clears; both ghosts and "not in the repo" stay while the build command is
+            # typed (rows 0-1, above them), then uv.lock and the caption go and the Dockerfile ghost stays
             t.clear(self)
             c8 = type_cmd(self, t, BUILD, 1.3)
+            self.play(FadeOut(VGroup(g_uv, not_repo)), run_time=0.3)
             pin(self, c8.rows[1], beside(row_tag("extra"), c8.rows[1]), run_time=0.3)
             vo.wait_until("failed to read")
             err = t.print(self, [BUILD_ERR], color=ERR, wrap=True, run_time=0.4)
@@ -491,16 +530,30 @@ class CleanSlate(VoiceScene):
             attach(self, err[0], u1)
             attach(self, err[1], u2)
             gone = substring(err[1], "no such file or directory")
-            self.play(g_df.animate.move_to([gone.get_right()[0] + 0.45 + g_df.width / 2, row_y(t, 3), 0]),
-                      run_time=0.5)
+            # along its own empty row to the right, then up beside the text (a straight diagonal
+            # crossed "or directory")
+            p0 = g_df.get_center()
+            p1 = np.array([gone.get_right()[0] + 0.45 + g_df.width / 2, row_y(t, 3), 0])
+            r = min(0.2, (p1[1] - p0[1]) / 2)
+            assert p1[0] - p0[0] > r and r > 0, "the ghost moves right, then up one row"
+            route = VMobject()
+            route.start_new_path(p0)
+            route.add_line_to(np.array([p1[0] - r, p0[1], 0]))
+            route.add_quadratic_bezier_curve_to(np.array([p1[0], p0[1], 0]), np.array([p1[0], p0[1] + r, 0]))
+            route.add_line_to(p1)
+            self.play(MoveAlongPath(g_df, route), run_time=0.6)
             self.play(Wiggle(g_df, scale_value=1.15, rotation_angle=0.02 * TAU), run_time=0.45)
             vo.wait_until("The README wants")
             steps5.next_to(br, DOWN, buff=0.2)
             row5 = VGroup(g_df.copy(), steps5.copy()).arrange(RIGHT, buff=0.25)
             row5.next_to(br, DOWN, buff=0.18).align_to(br, LEFT).shift(LEFT * 0.3)
+            # the ghost leaves the terminal in place and reappears under the brace, both drifting up:
+            # a flight to the tracker would cross the RED error row, which fills the terminal's width
+            g_up = g_df.copy().move_to(row5[0])
             self.play(Create(br), run_time=0.4)
-            self.play(g_df.animate.move_to(row5[0]), FadeIn(steps5.move_to(row5[1]), shift=LEFT * 0.1),
-                      run_time=0.7)
+            # (the one that leaves shrinks in place: any drift up touches row 2's YELLOW underline)
+            self.play(FadeOut(g_df, scale=0.85), FadeIn(g_up, shift=UP * 0.3),
+                      FadeIn(steps5.move_to(row5[1]), shift=LEFT * 0.1), run_time=0.7)
             vo.wait_until("in five steps")
             self.play(LaggedStart(*[Indicate(d, color=TURN, scale_factor=2.0) for d in five], lag_ratio=0.25),
                       run_time=1.0)

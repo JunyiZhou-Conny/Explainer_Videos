@@ -26,13 +26,18 @@ Beats (script.md, ## S01; one voiceover block each):
    icon pulses on "package the app"; a BLUE "Docker Hub" shelf right of the ladder gets a PINK route
    from rung 3 on "push it", and a second route up to rung 4's VM on "run it on a VM".
 4. Layout preview: a README page glyph appears ("open the README"); on "Three trackers" its outline
-   flies to the top-left corner and becomes a YELLOW ring (its text shrinks away into it); three
-   tracker chips appear in it, dim, and the ring pulses; each chip lights as named, its icon
-   pulsing: "A · Developing App using Containers · 16" (GREY laptop), "B · Pushing Docker
-   Image to Docker Hub · 4" (BLUE shelf), "C · Running App on VM using Docker · 7" (BLUE VM).
-   On "When the yellow" a 2-row strip (GREY tag "preview") types `docker image ls` with
-   a YELLOW `▶ your turn` row tag (pulses on "pause and run"), then `ls -a` with the GREY `extra`
-   tag; the footer "every command: MLOps_Learning · guides/L02-containers-1.md" fades in.
+   flies to the top-left corner and becomes a YELLOW ring (its text shrinks away into it) around
+   the tracker's place; the real tracker A (common.tracker_a(1): "README › Developing App using
+   Containers", 16 dots, "step 1 of 16: container ls") appears in it and the ring pulses. Beside
+   the ring a small icon names where: on "on the laptop" a GREY laptop (A's section name pulses),
+   on "on Docker Hub" A becomes tracker_b(1) and the icon a BLUE shelf, on "on the VM" tracker_c(1)
+   and a BLUE VM; the ring follows each tracker's width. On "When the yellow" a 2-row strip at
+   the home prompt (GREY tag "preview") fades in, the tracker goes back to A, step 1 (the ring
+   dims), and the strip types README step A1, `docker container ls`, with a YELLOW `▶ your turn`
+   row tag (pulses on "pause and run"); the footer "every command: MLOps_Learning ·
+   guides/L02-containers-1.md · link in the description" fades in. On "a gray extra tag" it types
+   `ls -a` with the GREY `extra` row tag while the tracker caption gains " · extra"
+   (common.track(..., extra=True)); both pulse on "marks a check".
 5. Checklist card, rows as named: ✓ Docker Desktop running (Tutorial 0), ✓ a free Docker Hub
    account, ✓ your GCP project, for the VM at the end (+ GOLD tag "a VM costs money while it
    exists" beside it), GREY ✗ no service account, no keys (README.md · line 23). Fade out to an
@@ -46,18 +51,19 @@ from explainer import style as S
 from explainer.devops import cell_width, code_span
 from explainer.scene import VoiceScene
 
-from common import (CLOUD, COST, DEPLOY, ERR, IMAGE, IMAGE_LS, INK, LAPTOP, NARRATION, P_LAPTOP,
-                    P_LAPTOP_HOME, P_VM, ROUTE, SECTION_A, SECTION_B, SECTION_C, STEPS_A, STEPS_B,
-                    STEPS_C, STRIP_TOP, SYSTEM, TURN, VENV, VM12, Ladder, box, capture, check_mark,
-                    chip, code, cross_mark, docker_chip, hash12, label, laptop, mono, mono_line,
-                    preview_tag, resize, row_tag, shelf_glyph, short_extra, split_prompt, steady,
-                    substring, tag, term, type_cmd, vm_term)
+from common import (CLOUD, CONTAINER_LS, COST, DEPLOY, ERR, IMAGE, INK, LAPTOP, NARRATION,
+                    P_LAPTOP_HOME, P_VM, ROUTE, STRIP_TOP, SYSTEM, TURN, VENV, VM12, Ladder, box,
+                    capture, check_mark, chip, code, cross_mark, docker_chip, hash12, label, laptop,
+                    mono, mono_line, preview_tag, resize, row_tag, shelf_glyph, short_extra,
+                    split_prompt, steady, substring, tag, term, track, tracker_a, tracker_b,
+                    tracker_c, type_cmd, vm_term)
 
 SAY = NARRATION["S01"]
 
 RUN6 = capture("06", VM12)                     # vm-debian12/06-docker-run.txt
 assert RUN6.cmd == DEPLOY, RUN6.cmd
 GUIDE = "MLOps_Learning · guides/L02-containers-1.md"
+EXTRA = "ls -a"                                # script.md's first laptop extra (S03), harmless in ~
 
 
 # ------------------------------------------------------------------ small pictures
@@ -90,17 +96,26 @@ def vm_icon(w: float = 0.62) -> VGroup:
     return VGroup(f, slots)
 
 
-def tracker_chip(letter: str, section: str, n: int, icon: VGroup, chip_w: float) -> VGroup:
-    """One tracker of the video, as a chip: icon, 'A · <README section> · <steps>'. .icon .text"""
-    t = label(f"{letter} · {section} · {n}", 22, INK)
-    t[0].set_color(TURN)                          # one Text: the letter shares the baseline
-    icon.scale_to_fit_height(0.4)
-    frame = box(chip_w, 0.62, S.GREY, fill_opacity=0.06, radius=0.12)
-    icon.move_to(frame.get_left() + RIGHT * (0.22 + icon.width / 2))
-    t.next_to(icon, RIGHT, buff=0.25)
-    g = VGroup(frame, icon, t)
-    g.icon, g.text = icon, t
-    return g
+def tracker_ring(tr, stroke: float = 3, opacity: float = 1.0) -> RoundedRectangle:
+    """The YELLOW ring around the tracker's place (top-left corner): fixed left and top edges at
+    the safe frame's corner, as wide as tracker `tr` (it follows the tracker as it changes)."""
+    x0, y0 = -6.59, 3.59
+    x1, y1 = tr.get_right()[0] + 0.2, tr.get_bottom()[1] - 0.12
+    r = RoundedRectangle(width=x1 - x0, height=y0 - y1, corner_radius=0.14, stroke_color=TURN,
+                         stroke_width=stroke, stroke_opacity=opacity).set_fill(S.BG, 0)
+    return r.move_to([(x0 + x1) / 2, (y0 + y1) / 2, 0])
+
+
+def swap_tracker(scene, old, new, *anims, run_time: float = 0.6):
+    """Tracker `old` becomes `new` in place: 'README ›' stays, the section name and the caption
+    cross-fade, the dots regroup. `new` ends on the scene as one piece."""
+    keep = VGroup(old.head[0], old.head[1])
+    scene.remove(old)
+    scene.add(keep, old.head[2], old.dots, old.caption)
+    scene.play(FadeTransform(old.head[2], new.head[2]), ReplacementTransform(old.dots, new.dots),
+               FadeTransform(old.caption, new.caption), *anims, run_time=run_time)
+    scene.remove(keep, new.head[2], new.dots, new.caption)
+    scene.add(new)
 
 
 def counter_box(k: int, box_w: float) -> tuple[VGroup, Text]:
@@ -373,22 +388,20 @@ class Hook(VoiceScene):
 
         # ========================================================== 4. how to follow along
         page = readme_page().move_to([0, 0.2, 0])
-        icons = [laptop(0.62, LAPTOP), shelf_glyph(0.62), vm_icon()]
-        rows = [("A", SECTION_A, len(STEPS_A)), ("B", SECTION_B, len(STEPS_B)), ("C", SECTION_C, len(STEPS_C))]
-        probe = [label(f"{a} · {s} · {n}", 22) for a, s, n in rows]
-        chip_w = max(p_.width for p_ in probe) + 1.25
-        tchips = VGroup(*[tracker_chip(a, s, n, ic, chip_w) for (a, s, n), ic in zip(rows, icons)])
-        tchips.arrange(DOWN, buff=0.14, aligned_edge=LEFT)
-        tchips.move_to([-6.4 + tchips.width / 2 + 0.12, 3.42 - tchips.height / 2 - 0.12, 0])
-        veils = VGroup(*[Rectangle(width=c.width + 0.04, height=c.height + 0.04, stroke_width=0)
-                         .set_fill(S.BG, 0.72).move_to(c) for c in tchips])
-        ring = RoundedRectangle(width=tchips.width + 0.24, height=tchips.height + 0.24, corner_radius=0.16,
-                                stroke_color=TURN, stroke_width=3).set_fill(S.BG, 0).move_to(tchips)
-        t2 = term(P_LAPTOP_HOME, rows=2)              # the 2-row preview strip
+        # the real trackers of the walkthrough scenes (common.tracker_a/b/c), each at step 1
+        tr_a, tr_b, tr_c = tracker_a(1), tracker_b(1), tracker_c(1)
+        ring = tracker_ring(tr_a)
+        where = [laptop(0.62, LAPTOP), shelf_glyph(0.62), vm_icon()]   # beside the ring: on what
+
+        def by_ring(icon, r):
+            return icon.next_to(r, RIGHT, buff=0.3)
+
+        t2 = term(P_LAPTOP_HOME, rows=2)              # the 2-row preview strip, in the home folder
         t2.shift([0, -2.9 - t2.box.get_bottom()[1], 0])
         prev2 = tag("preview", S.GREY)
         prev2.move_to(t2.box.get_corner(UR) + LEFT * (prev2.width / 2 + 0.35))
-        foot = VGroup(label("every command:", 22, S.GREY), mono(GUIDE, 22, INK)).arrange(RIGHT, buff=0.2)
+        foot = VGroup(label("every command:", 20, S.GREY), mono(GUIDE, 20, INK),
+                      label("· link in the description", 20, S.GREY)).arrange(RIGHT, buff=0.2)
         foot.move_to([0, -3.28, 0])
 
         with self.voiceover(SAY[4]) as vo:
@@ -396,35 +409,60 @@ class Hook(VoiceScene):
             vo.wait_until("open the README")
             self.play(FadeIn(page, shift=UP * 0.2), run_time=0.7)
             vo.wait_until("Three trackers")
-            # the page flies into the corner: its outline becomes the YELLOW ring (its text shrinks
-            # away inside it), then the three trackers appear in the ring, dim until named
+            # the page flies into the corner: its outline becomes the YELLOW ring around the
+            # tracker's place (its text shrinks away inside it), then tracker A appears in the ring
             outline, *words = page.submobjects
             self.remove(page)
             self.add(outline, *words)                 # each piece on the scene on its own
             self.play(ReplacementTransform(outline, ring),
                       *[FadeOut(w, target_position=ring.get_center(), scale=0.25) for w in words],
                       run_time=0.9)
-            self.play(FadeIn(tchips, shift=DOWN * 0.1), FadeIn(veils, shift=DOWN * 0.1), run_time=0.45)
+            self.play(FadeIn(tr_a, shift=DOWN * 0.1), run_time=0.45)
             self.play(ring.animate(rate_func=there_and_back).set_stroke(width=6), run_time=0.6)
-            for c, v, anchor in zip(tchips, veils, ("on the laptop", "on Docker Hub", "on the VM")):
+            vo.wait_until("on the laptop")
+            icon = by_ring(where[0], ring)
+            self.play(FadeIn(icon, scale=0.6), Indicate(tr_a.head[2], color=INK, scale_factor=1.08),
+                      run_time=0.6)
+            # A becomes B, then C, in the same place; the ring follows, the icon says where
+            old = tr_a
+            for new, ic, anchor in ((tr_b, where[1], "on Docker Hub"), (tr_c, where[2], "on the VM")):
                 vo.wait_until(anchor)
-                self.play(FadeOut(v), Indicate(c.icon, color=INK, scale_factor=1.3), run_time=0.6)
-                self.remove(v)
+                r_new = tracker_ring(new)
+                swap_tracker(self, old, new, Transform(ring, r_new), FadeTransform(icon, by_ring(ic, r_new)),
+                             run_time=0.45)
+                icon, old = ic, new
             vo.wait_until("When the yellow")
-            self.play(FadeIn(t2), FadeIn(prev2), ring.animate.set_stroke(width=2, opacity=0.5), run_time=0.5)
-            l1_ = t2.type(self, IMAGE_LS, type_time=0.7)
+            # the strip first (C stays readable a moment longer), then back to the start (A, step 1)
+            # for the strip's first command, README step A1
+            self.play(FadeIn(t2), FadeIn(prev2), run_time=0.35)
+            slack = vo.time_until("tag appears") - (0.5 + 0.55 + 0.05)   # swap + typing below
+            if slack > 0.05:                          # spend it on C (it is up only ~0.7 s otherwise)
+                self.wait(slack)
+            tr_a = tracker_a(1)
+            r_new = tracker_ring(tr_a, stroke=2, opacity=0.5)
+            swap_tracker(self, old, tr_a, Transform(ring, r_new), FadeTransform(icon, by_ring(where[0], r_new)),
+                         run_time=0.5)
+            icon = where[0]
+            l1_ = t2.type(self, CONTAINER_LS, type_time=0.55)
             yt = row_tag("▶ your turn", TURN).next_to(l1_.strut, RIGHT, buff=0.45)
             vo.wait_until("tag appears")
             self.play(FadeIn(yt, scale=0.8), run_time=0.45)
             vo.wait_until("pause and run")
-            self.play(Indicate(yt, color=TURN, scale_factor=1.15), run_time=0.8)
+            # a pulse (Indicate would fill the tag's dark box with its colour)
+            self.play(yt.animate(rate_func=there_and_back).scale(1.2), run_time=0.8)
+            self.play(FadeIn(foot, shift=UP * 0.15), run_time=0.6)     # on screen ~5 s
             vo.wait_until("a gray extra tag")
-            t2.set_prompt(P_LAPTOP)
-            l2_ = t2.type(self, "ls -a", type_time=0.4)
+            l2_ = t2.type(self, EXTRA, type_time=0.4)
             xt2 = row_tag("extra").next_to(l2_.strut, RIGHT, buff=0.45)
-            self.play(FadeIn(xt2, scale=0.8), run_time=0.45)
-            vo.wait_until("marks a check")             # the footer stays ~3.5 s
-            self.play(FadeIn(foot, shift=UP * 0.15), run_time=0.6)
+            caption_x = tracker_a(1, extra=True)      # where the ring and the icon go with the caption
+            r_new = tracker_ring(caption_x, stroke=2, opacity=0.5)
+            self.play(FadeIn(xt2, scale=0.8), track(tr_a, 1, extra=True), Transform(ring, r_new),
+                      icon.animate.next_to(r_new, RIGHT, buff=0.3), run_time=0.5)
+            vo.wait_until("marks a check")
+            suffix = VGroup(*tr_a.caption[-len("·extra"):])          # the caption's "· extra"
+            self.play(xt2.animate(rate_func=there_and_back).scale(1.2),
+                      Indicate(suffix, color=INK, scale_factor=1.2), run_time=0.8)
+            self.add(tr_a)
 
         # ========================================================== 5. before you start
         items = [(True, "Docker Desktop running (Tutorial 0)"),

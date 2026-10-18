@@ -38,3 +38,18 @@ parts:
   - id: part2
     title: "AC215 · L2, part 2: layers, cache, Docker Hub and a VM"
     scenes: [s10_inside, s11_cache, s12_push, s13_platforms, s14_vm_docker, s15_deploy, s16_recap]
+# Bilibili metadata for the release (tools/release_episode.py → PUBLISH.json → the Mac publish worker)
+publish:
+  title_zh: "AC215 第2讲跟练 · 容器入门：一个 image，从笔记本到虚拟机"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 2 讲教程的逐条命令跟练：照着 dlops-io/simple-translate 的 README，
+    自己写 Dockerfile（FROM、ENTRYPOINT、COPY、uv sync、CMD），build 并运行 image，理解 image、layer、container、registry 和层缓存，
+    推到 Docker Hub，处理 arm64 / amd64 平台问题，最后在一台只装了 Docker 的 VM 上一条命令部署。
+    边看边暂停，在自己的电脑上跑每一条命令。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/simple-translate
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L02-containers-1.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, Docker, 容器, Dockerfile, 哈佛, 教程跟练, 云计算]
+  tid: 231

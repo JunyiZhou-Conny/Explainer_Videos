@@ -4,19 +4,15 @@
 # line is shown on the English timing, so each sentence keeps the English order of ideas (D8).
 # Artifacts the checker does not allow in a displayed line are described in words (rule A6):
 # --platform=linux/amd64 -> --platform 参数设成 linux/amd64, raise_exception=True -> 把 raise exception 设为
-# True, <your user name>/simple-translate-ac215 -> 你的用户名/simple-translate-ac215, docker login -u ... -p ...
+# True, <USER NAME>/simple-translate-ac215 -> 你的用户名/simple-translate-ac215, docker login -u ... -p ...
 # -> docker login，-u 加你的用户名，-p 加你的令牌. Whole commands sit at the end of a clause, after a
-# full-width colon (G3). The glossary's first-use example sentences for S10-S16 are used as written.
-# Two glossary notes are not followed because glossary.yaml's allowed_spoken_latin lacks the word, so the
-# checker rejects it: S10 your secrets folder -> 你放密钥的目录 (note: 你的 secrets 目录; needs "secrets"), S13
-# switch back with docker buildx use default -> 用 buildx 切回 default 构建器 (note: 再用 docker buildx use
-# default 切回来; needs "use"). Restore the literal forms once those words are added to the glossary.
+# full-width colon (G3): 之后再切回来：docker buildx use default. your secrets folder -> 你的 secrets 目录 (as L3).
 # en_display: the English subtitle line where the SAY spells an artifact as words (rule D4: /usr/local/bin,
-# .dockerignore, .git, .venv, -u, -p, <your user name>/simple-translate-ac215, docker.io,
-# Mounted from library/python, linux/amd64, dlops/simple-translate, --platform=linux/amd64, desktop-linux,
-# docker.io, Unable to locate package, sudo docker --version, sudo docker run --rm -ti
-# dlops/simple-translate, raise_exception=True, toomanyrequests, docker ps -a, --rm, docker system prune -a,
-# /.venv); null = the SAY text.
+# .dockerignore, .git, .venv, -u, -p, <USER NAME>/simple-translate-ac215 (the README's placeholder, as on
+# screen), docker.io, Mounted from library/python, linux/amd64, dlops/simple-translate,
+# --platform=linux/amd64, desktop-linux, Unable to locate package, sudo docker --version,
+# sudo docker run --rm -ti dlops/simple-translate, raise_exception=True, toomanyrequests, docker ps -a, --rm,
+# docker system prune -a, /.venv); null = the SAY text.
 S10:
 - en: "Part 2 opens the image we built; this scene and the next are extras. First, docker image ls: 518 megabytes on disk, and 144 megabytes of content, at the time of recording. Content is the compressed layers that travel to a registry; disk adds the unpacked copy."
   zh:
@@ -27,7 +23,7 @@ S10:
   zh:
   - "然后 docker history 列出各层，最新的在最上面。"
   - "从下往上读，就是从上往下读 Dockerfile：apt 和 pip 那一步 97.5 MB，我们的代码 250 KB，uv sync 125 MB。"
-  - "ENV、ENTRYPOINT 和 CMD 这几行都是 0 字节：只是配置。"
+  - "ENV、ENTRYPOINT、CMD 这几行都是 0 字节：只是配置。"
 - en: "Below them sit the base image's own rows: Debian bookworm at the bottom, the PATH that puts user local bin first, and Python 3.12.15."
   zh:
   - "它们下面是 base image 自己的几行：最底下是 Debian bookworm，然后是把 /usr/local/bin 放在最前面的 PATH，还有 Python 3.12.15。"
@@ -38,16 +34,17 @@ S10:
   - "想自己看的话，就再起一个 container；这里显示的是我们第一部分第二次运行时的结果。"
   - "在那里，python 是 3.15.0，而 base image 自带的 Python 还是 3.12.15。"
   - "那个 125 MB 的层，大部分就是这第二个 Python，放在 uv 自己的目录里。"
-- en: "Now list the top folder. Beside the system folders sit the hidden git folder, the editor's VS Code folder, the README and your Dockerfile. The COPY line copied the whole build context, your git history included."
+- en: "Now list the top folder. Beside the system folders sit the hidden git folder, the editor's VS Code folder, the README and your Dockerfile. The COPY line copied the whole build context, your git history included. Type exit to get back to your laptop."
   zh:
   - "现在列一下根目录。"
-  - "系统目录旁边是隐藏的 .git 目录、编辑器的 .vscode 目录、README，还有你的 Dockerfile。"
+  - "系统目录旁边有：隐藏的 .git 目录、编辑器的 .vscode 目录，还有 README 和你的 Dockerfile。"
   - "COPY 那一行复制了整个构建上下文，连你的 Git 历史也在里面。"
+  - "输入 exit，回到你的笔记本。"
 - en: "That's a gap in the tutorial: there's no dockerignore file. In your own projects, add one listing dot git, dot venv and your secrets folder. It matters most once the image is public, and that's soon."
   zh:
   - "这是教程里的一个缺口：没有 .dockerignore 文件。"
-  - "在你自己的项目里，加一个，写上 .git、.venv 和你放密钥的目录。"
-  - "等 image 公开了，这一点最要紧，而那一刻很快就到。"
+  - "在你自己的项目里，加一个这样的文件，写上 .git、.venv 和你的 secrets 目录。"
+  - "等 image 公开了，这一点最要紧，而它很快就会公开。"
   en_display:
   - "That's a gap in the tutorial: there's no .dockerignore file."
   - "In your own projects, add one listing .git, .venv and your secrets folder."
@@ -57,8 +54,8 @@ S11:
   zh:
   - "那为什么 COPY 和 uv sync 又重跑了一遍，明明我们只加了一行？"
   - "Docker 会缓存每一个构建步骤。"
-  - "一个步骤，只要它的上一步和它自己的指令都没变，就会被重用。"
-  - "对 COPY 来说，复制进来的文件的校验和也得一致。"
+  - "一个步骤，只要上一步和它的指令都没变，就会被重用。"
+  - "对 COPY 来说，复制进来的文件，校验和也得一致。"
   - "第一个变了的步骤会重新运行，它后面的每一步也一样。"
 - en: "Rebuild with nothing changed, adding the extra flag for the full log. FROM reuses the base, and the three steps after it all say CACHED: nothing runs."
   zh:
@@ -92,7 +89,7 @@ S11:
 - en: "In your own projects, put the slow steps first: copy only the files uv sync needs, run it, then copy the rest. A dockerignore keeps the git folder, any local venv and the Dockerfile out. Now an edit to cli.py reruns only the last COPY."
   zh:
   - "在你自己的项目里，把慢的步骤放前面：先只复制 uv sync 需要的文件，运行它，再复制其余的。"
-  - "一个 .dockerignore 文件可以把 .git 目录、本地的 venv 和 Dockerfile 都排除在外。"
+  - "一个 .dockerignore 文件，可以把 .git 目录、本地的 venv，还有 Dockerfile 都排除在外。"
   - "这样一来，改 cli.py 只会让最后那个 COPY 重新运行。"
   en_display:
   - null
@@ -102,7 +99,7 @@ S12:
 - en: "Now the README section Pushing Docker Image to Docker Hub. First, sign up and create an access token, with read and write access, not the default. Copy it right away: it's shown only once, and it works like a password. Pause and make yours."
   zh:
   - "现在进入 README 的这一节：Pushing Docker Image to Docker Hub。"
-  - "首先，注册，再建一个访问令牌，权限选读写，不要用默认的。"
+  - "首先，注册账号，再建一个访问令牌，权限选读写，不要用默认的。"
   - "马上复制：它只显示一次，作用和密码一样。"
   - "暂停一下，建好你自己的令牌。"
 - en: "Next, log in: docker login, dash u with your user name, dash p with your token. We have no account, so we couldn't run it."
@@ -114,7 +111,7 @@ S12:
   - null
 - en: "So some steps use a stand-in, a small registry on our own machine: just watch those. Logging in to it warns that a password on the command line is insecure."
   zh:
-  - "所以有些步骤用了替身，也就是我们自己机器上的一个小 registry：那些只看就好。"
+  - "所以有些步骤用了替身，也就是本机上的一个小 registry：那些只看就好。"
   - "登录它时会警告：在命令行里写密码不安全。"
 - en: "That's a small slip in the README: with dash p, your token stays in your shell history. Instead, type docker login, dash u, and your user name, then paste the token when it asks. Pause and log in."
   zh:
@@ -127,13 +124,13 @@ S12:
   - null
 - en: "Then tag the image: docker tag, simple-translate, then your user name, slash simple-translate-ac215. Pause and run it with your own name. An extra image ls shows two names, one ID: a second name, not a copy."
   zh:
-  - "然后给 image 打 tag：docker tag，先写 simple-translate，再写你的用户名/simple-translate-ac215。"
+  - "然后给 image 打 tag：在 docker tag 后面先写 simple-translate 再写你的用户名/simple-translate-ac215。"
   - "暂停一下，用你自己的用户名跑一遍。"
   - "额外用 docker image ls 看一下：两个名字，一个 ID；是第二个名字，不是一份副本。"
   en_display:
-  - "Then tag the image: docker tag simple-translate <your user name>/simple-translate-ac215."
+  - "Then tag the image: docker tag simple-translate <USER NAME>/simple-translate-ac215."
   - null
-  - null
+  - "An extra docker image ls shows two names, one ID: a second name, not a copy."
 - en: "Read the long name in four parts: the registry, docker dot I-O, the default; your account; the repository; and the tag, latest. Names without an account, like our first, fall under library."
   zh:
   - "把这个长名字分成四段来读：registry，也就是默认的 docker.io；你的账号；仓库；还有 tag，latest。"
@@ -145,16 +142,16 @@ S12:
   zh:
   - "然后 push：docker push，用同一个名字。"
   - "暂停一下，自己跑一遍。"
-  - "你的应该会上传每一层，最后一行是 digest。"
+  - "你那边应该会上传每一层，最后一行是 digest。"
   - "我们没有账号，被 Docker Hub 拒绝了：push access denied。"
-  - "如果你也碰到它，就先登录，再检查你的令牌有写权限、名字以你的用户名开头。"
+  - "如果你也碰到了，就先登录，再检查令牌有没有写权限，名字是不是以你的用户名开头。"
 - en: "On the stand-in, the push goes through, ending with a digest: a fingerprint of the whole image."
   zh:
   - "在替身上，push 成功了，最后是一行 digest：整个 image 的指纹。"
 - en: "Push again: every layer already exists, and only missing layers travel. On Docker Hub, even the base layers may say mounted from library python: it already has them."
   zh:
   - "再 push 一次：每一层都已经在了，只有缺的层才会传过去。"
-  - "在 Docker Hub 上，连 base image 的那几层也可能显示：Mounted from library/python；它本来就有这些层。"
+  - "在 Docker Hub 上，连 base image 的层也可能显示 Mounted from library/python：它本来就有这些层。"
   en_display:
   - null
   - "On Docker Hub, even the base layers may say Mounted from library/python: it already has them."
@@ -188,9 +185,10 @@ S13:
   - "授课老师的 image，dlops/simple-translate，不是菜单：只有一个 image，只有 amd64。"
   en_display:
   - "The instructor's image, dlops/simple-translate, is no menu: one image, amd64 only."
-- en: "Our stand-in push is a small menu: amd64, plus an attestation, a record of how the image was built."
+- en: "Our stand-in push is a small menu: amd64, plus an attestation, a record of how the image was built. Built on an M-series Mac, the amd64 row would say arm64."
   zh:
   - "我们在替身上 push 的是一份小菜单：amd64，外加一个 attestation，也就是这个 image 是怎么构建出来的记录。"
+  - "如果是在 M 系列 Mac 上构建的，amd64 那一行就会变成 arm64。"
 - en: "Now ponder. You built on an M-series Mac and pushed. Your VM is an ordinary Intel or AMD machine. Will your image run there?"
   zh:
   - "来想一想。"
@@ -202,12 +200,12 @@ S13:
   - "不能。"
   - "这是反过来的同一个失败，发生在我们这台没有模拟器的机器上：exec format error。"
   - "换成 Docker Desktop，会直接把它模拟运行起来。"
-  - "Mac 上构建的 image 放到默认的 VM 上，就会这样失败，或者报 no matching manifest。"
+  - "Mac 上构建的 image 放到默认的 VM 上会这样失败，或者报 no matching manifest。"
 - en: "Two fixes, neither in the README. One: build for the VM's platform, with the flag dash dash platform equals linux slash amd64. It's the commented-out line 12 of docker-shell.sh. On a Mac, it runs emulated: slower, but it works. Then tag and push again, as before."
   zh:
   - "有两个办法，README 里都没有。"
   - "第一：为 VM 的平台构建，加上 --platform 参数，设成 linux/amd64。"
-  - "它就是 docker-shell.sh 里被注释掉的第 12 行。"
+  - "它就是 docker-shell.sh 的第 12 行，被注释掉了。"
   - "在 Mac 上，它是模拟运行的：慢一些，但能用。"
   - "然后像之前一样，再打 tag、再 push。"
   en_display:
@@ -218,12 +216,12 @@ S13:
   - null
 - en: "Two: docker-build-push.sh uses buildx, Docker's multi-platform builder, to build both and push one menu."
   zh:
-  - "第二：docker-build-push.sh 用 buildx，也就是 Docker 的多平台构建器，把两个平台都构建出来，再 push 一份菜单。"
+  - "第二：docker-build-push.sh 用 buildx，也就是 Docker 的多平台构建器，两个平台都构建，再 push 一份菜单。"
 - en: "Put your user name on line 11, and simple-translate-ac215 on line 7, the README's name. Log in first, then run it with bash. Afterwards, switch back with docker buildx use default, or desktop linux on Docker Desktop."
   zh:
   - "在第 11 行填你的用户名，在第 7 行填 simple-translate-ac215，也就是 README 里的名字。"
   - "先登录，再用 bash 运行它。"
-  - "之后用 buildx 切回 default 构建器；在 Docker Desktop 上则切回 desktop-linux。"
+  - "之后再切回来：docker buildx use default；在 Docker Desktop 上则是 desktop-linux。"
   en_display:
   - null
   - null
@@ -245,7 +243,7 @@ S14:
   - "然后安装 Docker：sudo apt install docker.io。"
   - "暂停一下，自己跑一遍。"
   - "在我们的替身里，也就是一个软件包列表为空的全新 Debian，它失败了：Unable to locate package。"
-  - "如果你的装好了，就直接跳到检查版本那一步。"
+  - "如果你那边装好了，就直接跳到检查版本那一步。"
   en_display:
   - "Then install Docker: sudo apt install docker.io."
   - null
@@ -276,7 +274,7 @@ S14:
 - en: "And why sudo? Without it, this extra docker ps is refused: permission denied on the Docker socket, the door to Docker's background service. Only root and the docker group may open it."
   zh:
   - "那为什么要 sudo？"
-  - "不加 sudo 的话，这个额外的 docker ps 会被拒绝：Docker socket 上 permission denied，socket 就是通往 Docker 后台服务的那扇门。"
+  - "不加 sudo 的话，这个额外的 docker ps 会被拒绝：访问 Docker socket 时 permission denied；socket 就是通往 Docker 后台服务的那扇门。"
   - "只有 root 和 docker 组能打开它。"
 S15:
 - en: "Then the deploy: sudo docker run, dash dash rm, dash t i, dlops slash simple-translate. Pause and run it. The image isn't on this VM yet, so Docker pulls it from Docker Hub, seven layers, then starts a container."
@@ -292,12 +290,12 @@ S15:
   zh:
   - "现在用 python cli.py 运行这个应用，用它的默认设置：I love cheese 翻成了意大利语。"
   - "暂停一下，自己跑一遍。"
-  - "这台 VM 上没有 clone，没有 pip，也没有 uv：只有 Docker 和一个 image。"
+  - "没有 clone，没有 pip，这台 VM 上也没有 uv：只有 Docker 和一个 image。"
 - en: "And the opening question: why 3.14.7, when the recipe says 3.12? The same reason as in our build. This image was built on September 16 with uv 0.12.15, and the newest stable Python that uv knew in the range was 3.14.7. Our build today got 3.15.0."
   zh:
   - "再回到开头那个问题：为什么是 3.14.7，配方明明写的是 3.12？"
   - "原因和我们那次构建一样。"
-  - "这个 image 是 9 月 16 日用 uv 0.12.15 构建的，范围内 uv 当时知道的最新稳定版 Python 是 3.14.7。"
+  - "这个 image 是 9 月 16 日构建的，用的是 uv 0.12.15，当时 uv 知道的、范围内最新的稳定版 Python 是 3.14.7。"
   - "我们今天构建得到的是 3.15.0。"
 - en: "Same Dockerfile, a month apart, two Pythons. Nothing in the recipe is pinned: pip installs the latest uv, the Python range is open, and the repo has no uv.lock, so each build writes its own. An image freezes all that: ship the image, not the recipe."
   zh:
@@ -308,12 +306,12 @@ S15:
   zh:
   - "输入 exit。"
   - "还有一个小小的不一致：README 说要 pull 你 push 的那个 image，可这条命令跑的是授课老师的。"
-  - "你的 image 是你的用户名/simple-translate-ac215。"
+  - "你的 image 是：你的用户名/simple-translate-ac215。"
   - "用同一条命令运行它就行，前提是它已经为 amd64 构建好了。"
   en_display:
   - null
   - null
-  - "Your image is <your user name>/simple-translate-ac215."
+  - "Your image is <USER NAME>/simple-translate-ac215."
   - null
 - en: "Also, an extra check shows the published image lags the repo: its cli.py is the older one, without raise exception equals True. If Google refuses a request, that version quietly prints your input back. That's not a Docker problem."
   zh:
@@ -324,21 +322,21 @@ S15:
   - "Also, an extra check shows the published image lags the repo: its cli.py is the older one, without raise_exception=True."
   - null
   - null
-- en: "And if the pull itself fails with too many requests: Docker Hub limits anonymous pulls per network address, which a classroom can hit. Wait a while, or log in first, with sudo docker login."
+- en: "And if pulling the image fails with too many requests: Docker Hub limits how often anonymous users can pull, per network address, which a classroom can hit. Wait a while, or log in first, with sudo docker login."
   zh:
-  - "还有，如果连 pull 本身都失败了，报 toomanyrequests：Docker Hub 按网络地址限制匿名 pull 的次数，一整个教室的人可能会碰到。"
+  - "还有，如果 pull 这个 image 时报 toomanyrequests 失败了：Docker Hub 按网络地址限制匿名用户 pull 的次数，一整个教室的人可能会碰到。"
   - "等一会儿，或者先登录：sudo docker login。"
   en_display:
-  - "And if the pull itself fails with toomanyrequests: Docker Hub limits anonymous pulls per network address, which a classroom can hit."
+  - "And if pulling the image fails with toomanyrequests: Docker Hub limits how often anonymous users can pull, per network address, which a classroom can hit."
   - null
 S16:
-- en: "Before you go, clean up. An extra check, docker ps dash a, shows no containers left behind, thanks to dash dash rm."
+- en: "Before you go, clean up. An extra check, sudo docker ps dash a, shows no containers left behind, thanks to dash dash rm."
   zh:
   - "走之前，先清理一下。"
-  - "额外检查 docker ps -a，没有留下任何 container，多亏了 --rm。"
+  - "额外检查 sudo docker ps -a，没有留下任何 container，多亏了 --rm。"
   en_display:
   - null
-  - "An extra check, docker ps -a, shows no containers left behind, thanks to --rm."
+  - "An extra check, sudo docker ps -a, shows no containers left behind, thanks to --rm."
 - en: "Last README step: delete the VM, with its boot disk, then check that VM instances and Disks are both empty. Pause and do it now."
   zh:
   - "README 的最后一步：删除 VM，连同它的启动磁盘，然后确认 VM instances 和 Disks 两个页面都是空的。"
@@ -347,7 +345,7 @@ S16:
   zh:
   - "还有两件可选的杂事。"
   - "你的 Docker Hub 仓库会一直公开，直到你把它删掉或设成私有。"
-  - "另外，想回收 image 在笔记本上占的空间，就运行：docker system prune -a。"
+  - "另外，想回收 image 在笔记本上占用的空间，就运行：docker system prune -a。"
   en_display:
   - null
   - null
@@ -378,4 +376,4 @@ S16:
 - en: "The answers are in the exercises, and every command is in the study guide. Next time, Containers 2: five containers working together, a working directory, a non-root user, and your laptop's folder mounted inside a container."
   zh:
   - "答案在练习里，每条命令都在学习指南里。"
-  - "下节课是容器 II：五个 container 协同工作，一个工作目录，一个非 root 用户，还有把你笔记本上的目录挂载进 container。"
+  - "下节课是容器 II：五个 container 协同工作，还有一个工作目录、一个非 root 用户，以及把你笔记本上的目录挂载进 container。"
