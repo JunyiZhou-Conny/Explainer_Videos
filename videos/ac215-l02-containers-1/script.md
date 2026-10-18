@@ -779,7 +779,9 @@ SHOW: A bottom terminal of 8 rows (the boxes stay above it) types
 `docker build --progress=plain -t simple-translate -f Dockerfile .` (extra flag; tag "extra · full
 log"; folds) → TERM(laptop/38: 23; cut after `apt-get update &&`, 24, 26–27, 29–30). Boxes 2–4 get a TEAL
 `CACHED` stamp as their lines print; box 1 gets a TEAL "reused" stamp (the plain log just resolves
-the base, `#4 DONE 0.0s`; the compact view calls it `CACHED`, laptop/29 line 9).
+the base, `#4 DONE 0.0s`; the compact view calls it `CACHED`, laptop/29 line 9). GREY tag
+`Lecture 2 · slide 60` (top right: slide 60's all-CACHED rebuild) comes in with the terminal and
+leaves as it shrinks to the strip at "Now predict".
 SAY: Rebuild with nothing changed, adding the extra flag for the full log. FROM reuses the base, and the three steps after it all say CACHED: nothing runs.
 
 SHOW: The parcel under COPY enlarges; its `cli.py` glyph highlights YELLOW, and CODE(cli.py: 49)

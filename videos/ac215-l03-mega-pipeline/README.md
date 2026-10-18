@@ -22,10 +22,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l03-mega-pipeline.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:56, 98 MB. The only video file committed |
-| `output/ac215-l03-mega-pipeline.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not committed: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l03-mega-pipeline_part1.mp4` | part 1, 13:44: the pipeline, and your first Dockerfile (S01–S07). Not committed: rebuilt with `--no-render` |
-| `output/ac215-l03-mega-pipeline_part2.mp4` | part 2, 17:11: packages, the key, and all five components (S08–S15). Not committed: rebuilt with `--no-render` |
+| `output/ac215-l03-mega-pipeline.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:56, 98 MB. A release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l03-mega-pipeline.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not in Git: rebuild it with `--no-render` (see Rebuild) |
+| `output/ac215-l03-mega-pipeline_part1.mp4` | part 1, 13:44: the pipeline, and your first Dockerfile (S01–S07). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l03-mega-pipeline_part2.mp4` | part 2, 17:11: packages, the key, and all five components (S08–S15). Not in Git: rebuilt with `--no-render` |
 | `output/ac215-l03-mega-pipeline.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l03-mega-pipeline.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l03-mega-pipeline.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -163,8 +163,9 @@ python -m explainer.build videos/ac215-l03-mega-pipeline --subs-only            
 python -m explainer.i18n check videos/ac215-l03-mega-pipeline --lang zh                # Chinese text aligned with the English
 ```
 
-The clean video and the two part cuts are not in Git: after a fresh clone, render the scenes once,
-then the `--no-render` line rebuilds them (and the burned-in copy) from the scene renders.
+No MP4 is in Git (`.gitignore` excludes them; the burned-in copy is a release asset): after a fresh
+clone, render the scenes once, then the `--no-render` line rebuilds the clean video, the two part
+cuts and the burned-in copy from the scene renders.
 
 Narration: Kokoro (`af_heart`, speed 0.9), generated locally.
 

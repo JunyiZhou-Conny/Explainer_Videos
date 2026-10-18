@@ -13,13 +13,15 @@ Beats (script.md "## S11", one voiceover block each):
     its badge turns RED, dominoes 2, 3, 4 topple on "runs again" / "every step after it"; then they
     stand back up and the badge returns to TEAL.
  1  The caption leaves, then the parcel; the chain rises and closes up (badges sit on the box lids);
-    then an 8-row terminal fades in under it and types `docker build --progress=plain -t
-    simple-translate -f Dockerfile .` (extra; row tag "extra · full log", `--progress=plain`
+    then an 8-row terminal fades in under it, and with it GREY `Lecture 2 · slide 60` (lecture_ref,
+    top right: slide 60 is this all-CACHED rebuild; it leaves as the terminal shrinks, beat 2), and
+    types `docker build --progress=plain -t simple-translate -f Dockerfile .` (extra; row tag
+    "extra · full log", `--progress=plain`
     underlined) -> laptop/38: 23 (cut after `apt-get update &&`), 24, 26–27, 29–30. "FROM reuses
     the base": box 1 gets a TEAL "reused" stamp; "and the three steps … all say CACHED": the three
     CACHED words turn TEAL as boxes 2–4 get TEAL CACHED stamps; the standing dominoes pulse on
     "nothing runs".
- 2  The terminal shrinks to the 3-row strip. The parcel returns under COPY and enlarges (.git/,
+ 2  The terminal shrinks to the 3-row strip and the slide-60 tag fades out. The parcel returns under COPY and enlarges (.git/,
     .git/index, cli.py, Dockerfile); cli.py lights YELLOW and CODE(cli.py: 49) docks beside it
     (YELLOW bar). The four boxes pulse on "Which of the four steps". PONDER (8 s): the card covers
     the strip.
@@ -241,6 +243,7 @@ class LayerCache(VoiceScene):
                        max_tip_length_to_length_ratio=0.35, color=IMAGE)
         run_txt = ch.boxes[1].text[1]                    # "RUN apt…uv"
         lref = lecture_ref(2, "36, 58–60")               # top right, "Docker caches" to "For COPY"
+        lref60 = lecture_ref(2, "60")                    # top right, the all-CACHED rebuild's 8-row terminal
         steps_cap = label("one numbered step per instruction", 22, S.GREY).next_to(ch.dominoes, DOWN, buff=0.3)
         gone_early = lambda a: smooth(min(1.0, a / 0.4))           # gone before the badges get there
 
@@ -299,7 +302,7 @@ class LayerCache(VoiceScene):
             self.play(FadeOut(steps_cap), run_time=0.25)              # the caption leaves before the chain rises
             self.play(FadeOut(VGroup(mini, mini_t, feed_p), shift=UP * 0.2, rate_func=gone_early), MoveToTarget(ch),
                       run_time=0.6)
-            self.play(FadeIn(t, shift=UP * 0.15), run_time=0.35)
+            self.play(FadeIn(t, shift=UP * 0.15), FadeIn(lref60), run_time=0.35)   # slide 60: this rebuild
             bare_prompt(self, t)
             c1 = type_cmd(self, t, BUILD_PLAIN, 1.3)
             r1a, r1b = c1.rows
@@ -336,7 +339,7 @@ class LayerCache(VoiceScene):
         glyphs = VGroup(*[it.glyph for it in parcel.items.values()])
 
         with self.voiceover(SAY[2]) as vo:
-            resize(self, t, STRIP_ROWS, run_time=0.7)
+            resize(self, t, STRIP_ROWS, extra=[FadeOut(lref60)], run_time=0.7)   # the rebuild's log leaves
             vo.wait_until("You change one word")
             self.play(FadeIn(seed, scale=0.6), run_time=0.4)
             self.play(ReplacementTransform(seed.frame, parcel.frame), ReplacementTransform(seed.tape, parcel.tape),

@@ -18,9 +18,10 @@ Beats (script.md "## S05", one voiceover block each):
     the path on line 3 becomes a PINK signpost pointing at an empty TEAL /secrets box; a GOLD
     dashed key outline sits where yours would be, tag "yours: the key file".
  3  `getent hosts …; curl …; echo` (extra, folds) -> cli-container/04 lines 2–3: line 2 PINK
-    becomes V2's phone-book card on the thumbnail's rail, `llm-rag-chromadb → 172.19.0.2`. Then
-    the second terminal: `curl http://localhost:8000/api/v2/heartbeat` (extra) -> laptop/10 line
-    2; the thumbnail's 8000:8000 route and street door pulse. Heartbeats: "your numbers will differ".
+    becomes V2's phone-book card on the thumbnail's rail, `llm-rag-chromadb → 172.19.0.2` (it
+    stays through the laptop half: by name inside, by the door outside). Then the second
+    terminal: `curl http://localhost:8000/api/v2/heartbeat` (extra) -> laptop/10 line 2; the
+    thumbnail's 8000:8000 route and street door pulse. Heartbeats: "your numbers will differ".
  4  `ls -la docker-volumes/chromadb` (extra) -> laptop/13 lines 2–5; `root root` YELLOW. Beside
     the thumbnail, its chromadb folder at full size: GREY tag "made by Docker: the mount's source"
     (the data route pulses), then a GREY lock and "root's · Linux: sudo to delete".
@@ -219,6 +220,7 @@ INSPECT_CHROMA_ROWS = [P_REPO + " docker inspect llm-rag-chromadb \\",
 T8_TOP = strip_top(8)            # 0.58: top of the 8-row terminals
 T9_TOP = strip_top(9)            # 0.98: top of trap 2's 9-row terminal
 THUMB_TOP, THUMB_BOTTOM = 2.27, 0.68    # inside the what-if frame (its title reaches down to 2.37)
+THUMB_LEFT = -6.3                # the terminals' left edge; 0.15 inside the what-if frame's border
 OVER_X = -2.35                   # the overlay area: x from here to 6.4, right of the thumbnail
 TERM_ROWS = 8
 
@@ -274,7 +276,7 @@ def thumbnail() -> ComposeView:
         s.fill_sq.set_fill(LOOKUP, 0.55)
     th = cv.glyph_only()
     th.scale((THUMB_TOP - THUMB_BOTTOM) / th.height)
-    th.shift(np.array([-6.35 - th.get_left()[0], THUMB_TOP - th.get_top()[1], 0]))
+    th.shift(np.array([THUMB_LEFT - th.get_left()[0], THUMB_TOP - th.get_top()[1], 0]))
     for m in th.get_family():                  # thinner strokes at this size
         if isinstance(m, VMobject) and m.get_stroke_width() > 2.5:
             m.set_stroke(width=m.get_stroke_width() * 0.7)
@@ -484,7 +486,7 @@ class NamesAndMounts(VoiceScene):
                       Indicate(th.parts["rail"], color=LOOKUP, scale_factor=1.0), run_time=0.9)
             pin(self, beat, beside(differ_tag(), tc, beat), run_time=0.3)
             vo.wait_until("From your laptop")
-            self.play(FadeOut(tc), FadeOut(VGroup(book, book_link)), run_time=0.3)
+            self.play(FadeOut(tc), run_time=0.3)     # the phone book stays: by name inside, by the door outside
             self.play(FadeIn(t2, shift=UP * 0.2), run_time=0.4)
             hc = type_cmd(self, t2, HEART.cmd, 0.9)
             pin(self, hc, beside(extra_tag(), t2, hc), run_time=0.3)
@@ -506,6 +508,7 @@ class NamesAndMounts(VoiceScene):
         roots = grey_tag("root's · Linux: sudo to delete")
         roots.next_to(lock, DOWN, buff=0.14).align_to(lock, RIGHT)
         with self.voiceover(SAY[4]) as vo:
+            self.play(FadeOut(VGroup(book, book_link)), run_time=0.3)
             type_cmd(self, t2, VOLS.cmd, 0.9)
             lv = t2.print(self, VOLS.at((2, 5)), run_time=0.5)
             ex4 = extra_tag()            # the typed row is full: the tag sits at the end of the row under it
@@ -576,20 +579,21 @@ class NamesAndMounts(VoiceScene):
         # ========================================================== 6 · trap 2: a clone with another name
         tz = term(P_ZIP, rows=9, title="laptop")
         # the picture: ~/AC215-zip on the laptop, the route ../llm-rag -> /app into the CLI container
-        zone = box(5.3, 1.18, LAPTOP, fill_opacity=0.05, radius=0.14).move_to([-3.65, 1.65, 0])
+        zone = box(5.3, 1.06, LAPTOP, fill_opacity=0.05, radius=0.14).move_to([-3.65, 1.71, 0])   # clear of
+        # the frame's title above and of the terminal's title bar below (0.2)
         r_main = file_row("llm-rag-main/", INK, LAPTOP)
         r_sec = file_row("secrets/", INK, LAPTOP)
         zlab = mono("~/AC215-zip/", CAPTION, LAPTOP)
-        at_left(r_main, -6.1, 1.97)
-        at_left(r_sec, -6.1, 1.6)
-        at_left(zlab, -6.1, 1.24)
-        y_r = 1.72                                   # the route's height
+        at_left(r_main, -6.1, 2.0)
+        at_left(r_sec, -6.1, 1.68)
+        at_left(zlab, -6.1, 1.36)
+        y_r = 2.0                                    # the route's height (the stray folder's row)
         ghost_row = VGroup(dashed_folder(0.22, LAPTOP), mono("llm-rag/", CAPTION, S.GREY))
         ghost_row[1].next_to(ghost_row[0], RIGHT, buff=0.12)
         at_left(ghost_row, -3.25, y_r)
         root_t = tag("root · empty", S.GREY, size=CAPTION)
-        at_left(root_t, -3.3, 1.3)
-        appw = window("/app", 1.7, 1.0).move_to([3.55, 1.56, 0])
+        at_left(root_t, -3.3, 1.5)
+        appw = window("/app", 1.7, 1.0).move_to([3.55, 1.72, 0])   # under the frame's note (2.37), over the terminal
         ctl = VGroup(mono("CLI", CAPTION, CTR), mono("container", CAPTION, CTR)).arrange(DOWN, aligned_edge=LEFT,
                                                                                           buff=0.08)
         ctl.next_to(appw, RIGHT, buff=0.2)
@@ -622,7 +626,8 @@ class NamesAndMounts(VoiceScene):
             vo.wait_until("The compose file mounts")
             ghost_row[1].set_color(LOOKUP)
             self.play(FadeIn(ctl), FadeIn(appw), FadeIn(code), Create(miss), FadeIn(ghost_row[1]), Create(route),
-                      FadeIn(rlab), FadeOut(after_cd), run_time=0.8)
+                      FadeIn(rlab), run_time=0.8)
+            self.play(FadeOut(after_cd), run_time=0.2)   # its row now gets the command
             type_cmd(self, tz, SHELL.cmd, 0.5)
             so = print_rows(self, tz, SHELL.at((2, 6)) + [(SHELL.line(7), ERR)], run_time=0.6)
             vo.wait_until("so Docker creates")
@@ -674,6 +679,8 @@ class NamesAndMounts(VoiceScene):
                           (Prose("second terminal, in llm-rag"), LAPTOP),
                           f"{PS.cmd}\n{HEART.cmd}\n{VOLS.cmd}"], header=None)
         turn.move_to([0, (2.85 + STRIP_TOP) / 2, 0])
+        turn.shift(UP * (STRIP_TOP + 0.16 - turn.frame.get_bottom()[1]))   # 0.16 above the strip; its ▶ tag
+        # (top right, 2.93) is clear of the tracker (top left)
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(VGroup(wf, tz, zone, zlab, r_main, r_sec, ghost_row, root_t, fix)), run_time=0.6)
@@ -690,7 +697,8 @@ class NamesAndMounts(VoiceScene):
             vo.wait_until("a team should pin a tag")
             self.play(FadeIn(tip, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Pause and try these checks")
-            self.play(FadeOut(VGroup(vcard, u_latest, chips, rec, tip)), FadeIn(turn, shift=UP * 0.2), run_time=0.8)
+            self.play(FadeOut(VGroup(vcard, u_latest, chips, rec, tip)), run_time=0.4)   # one card leaves, then
+            self.play(FadeIn(turn, shift=UP * 0.2), run_time=0.5)                          # the other comes
             vo.wait_until("your key in slash secrets")
             self.play(Indicate(turn.rows[2], color=COST, scale_factor=1.06), run_time=0.8)
         self.wait(2)                                   # ▶ beat: hold the frame

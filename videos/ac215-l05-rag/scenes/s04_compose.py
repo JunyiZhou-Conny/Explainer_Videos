@@ -49,7 +49,8 @@ Beats (script.md "## S04", one voiceover block each):
     gets "Apple Silicon: aarch64 · both native"; lines 41 and 44 get a GREY bracket and an
     erratum tag "says it before it does · cosmetic".
 10  The prompt of line 45 alone (app@92c5bfd26089:/app$, nothing typed); the frame turns TEAL,
-    title "container · llm-rag-cli", and the thumbnail's CLI box lights YELLOW; the id underlines
+    title "container · llm-rag-cli", and the thumbnail's CLI box lights YELLOW (the erratum's
+    bracket, underlines and tag leave: that idea is done); the id underlines
     GREY + tag "container id · your numbers will differ"; ▶ your turn. Hold 2 s, empty frame.
 """
 
@@ -214,9 +215,11 @@ def strip(a: int, b: int, wrap=None):
     return at_bottom(src_panel(COMPOSE, a, b, wrap=wrap))
 
 
-def value_chip(s: str) -> VGroup:
-    """A PINK value chip (an exported value), opaque so it can travel over anything."""
-    c = chip(s, LOOKUP, size=CAPTION, font=MONO, fill_opacity=1)
+def value_chip(s: str, pad_x: float = 0.24, pad_y: float = 0.12) -> VGroup:
+    """A PINK value chip (an exported value), opaque so it can travel over anything. With small
+    pads it fits one code row (the landing on $IMAGE_NAME: the full chip is 0.52 tall on a 0.34
+    row pitch and covered the comment row's descenders and the "m" of --rm)."""
+    c = chip(s, LOOKUP, size=CAPTION, font=MONO, fill_opacity=1, pad_x=pad_x, pad_y=pad_y)
     c.box.set_fill(ManimColor(S.BG).interpolate(ManimColor(LOOKUP), 0.18), 1)
     return c
 
@@ -396,6 +399,20 @@ def fit_v2(cv: ComposeView, ky: float = KY, bottom: float = CV_BOTTOM) -> Compos
     w_app, w_sec, w_data = cv.windows["app"], cv.windows["secrets"], cv.windows["data"]
     for w in (w_app, w_sec, w_data):
         w.shift(RIGHT * 0.05)
+    # "/.venv" fills its 1.0-wide box edge to edge (its "/" sits on the border): /app (a short
+    # name) gives up 0.09 of width on its right, the /.venv box grows to text + 0.14 and sits
+    # centred between /app and the CLI box's right border
+    w_app.frame.stretch_to_fit_width(w_app.frame.width - 0.09, about_edge=LEFT)
+    w_app.text.move_to(w_app.frame)
+    venv = P["venv"]
+    venv[0].stretch_to_fit_width(venv[1].width + 0.14)
+    cb_r = P["cli"].frame.get_right()[0]
+    venv.move_to([(w_app.frame.get_right()[0] + cb_r) / 2, venv.get_center()[1], 0])
+    venv[1].move_to(venv[0])
+    # "depends" / "on": the height squeeze pulled the two lines into each other
+    dlab = P["depends"][2]
+    dc = dlab.get_center()
+    dlab.arrange(DOWN, buff=0.08).move_to(dc)
     P["build"].shift(RIGHT * 0.14 + DOWN * 0.06)
     P["port_chip"].shift(LEFT * 0.15)
     P["route_port"][1].shift(LEFT * 0.15)            # the arrow tip under :8000
@@ -421,9 +438,10 @@ def fit_v2(cv: ComposeView, ky: float = KY, bottom: float = CV_BOTTOM) -> Compos
 def thumbnail() -> ComposeView:
     """V2 as a glyph-only thumbnail (no text: scale it freely): the laptop zone and folders as they
     are, and everything the run creates faint (the plan). Hub, Vertex AI and the phone book left
-    out (the shelf stands beside it at full size)."""
+    out (the shelf stands beside it at full size), and the key glyph too: the full-size V2 of
+    beats 2–5 never showed it, so it would pop up unexplained."""
     cv = ComposeView()
-    for n in ("book", "cloud", "vertex", "key_ride", "hub", "hub_slot", "image", "name"):
+    for n in ("book", "cloud", "vertex", "key_ride", "hub", "hub_slot", "image", "name", "key"):
         cv.remove(cv.parts[n])
     for s in cv.slot_list:                     # the script's values are in the slots
         s.fill_sq.set_fill(LOOKUP, 0.55)
@@ -489,11 +507,11 @@ class TwoContainers(VoiceScene):
         park_x = lap_target.get_right()[0] + 0.35
         park = {ch_pid: 2.52, ch_key: 1.92, ch_img: 1.32}
 
-        def lift(ch, src, bar):
+        def lift(ch, src, bar):        # 1.05 s: the next value is named about 1 s later
             ch.move_to(src)
-            self.play(FadeIn(bar), Indicate(src, color=LOOKUP, scale_factor=1.08), run_time=0.5)
-            self.play(FadeIn(ch, scale=0.8), run_time=0.25)
-            self.play(ch.animate.move_to([park_x + ch.width / 2, park[ch], 0]), run_time=0.7)
+            self.play(FadeIn(bar), Indicate(src, color=LOOKUP, scale_factor=1.08), run_time=0.35)
+            self.play(FadeIn(ch, scale=0.8), run_time=0.2)
+            self.play(ch.animate.move_to([park_x + ch.width / 2, park[ch], 0]), run_time=0.5)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(Transform(pic, lap_target), FadeOut(today), run_time=0.8)
@@ -511,7 +529,7 @@ class TwoContainers(VoiceScene):
             self.play(Indicate(p8.span(12, "--rm"), color=TURN, scale_factor=1.3), run_time=0.7)
             vo.wait_until("for that one service")
             slot_img = p8.span(12, "$IMAGE_NAME")
-            self.play(ch_img.animate.move_to(slot_img), run_time=0.7)
+            self.play(Transform(ch_img, value_chip("llm-rag-cli", 0.1, 0.02).move_to(slot_img)), run_time=0.7)
             self.play(Indicate(ch_img.text, color=TURN, scale_factor=1.15), run_time=0.6)
 
         # ========================================================== 2 · the compose file: network, CLI service
@@ -678,11 +696,12 @@ class TwoContainers(VoiceScene):
             cv.remove(hub, img)
             self.add(hub, img)
             self.play(FadeOut(VGroup(pair, sheet, cli_row, nreb)),
-                      Indicate(tr.caption, color=TURN, scale_factor=1.06), run_time=0.5)
+                      Indicate(tr.caption, color=TURN, scale_factor=1.06), run_time=0.4)
+            # the terminal rises while the picture shrinks: typing then meets "sh docker-shell.sh"
             self.play(FadeOut(cv, target_position=th.get_center(), scale=th.width / cv.width),
                       FadeIn(th, target_position=cv.get_center(), scale=cv.width / th.width),
-                      Transform(hub, hubg_target[0]), Transform(img, hubg_target[1]), run_time=1.0)
-            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.5)
+                      Transform(hub, hubg_target[0]), Transform(img, hubg_target[1]),
+                      FadeIn(t, shift=UP * 0.2), run_time=0.9)
             vo.wait_until("sh docker-shell.sh")
             type_cmd(self, t, RUN.cmd, 0.9)
             t.print(self, [RUN.line(2)], run_time=0.3)
@@ -741,6 +760,8 @@ class TwoContainers(VoiceScene):
             mbox = col_box(l21, i_mb, i_mb + 8, TURN)
             self.play(Create(mbox), substring(l21, "112.26MB").animate.set_color(TURN), run_time=0.5)
             attach(self, l21, mbox)
+            # the 3-row strip before "mostly git history" (the parcel then keeps up with the words)
+            resize(self, t, 3, keep=[l10, l21, l36])
             # the parcel: the build context, mostly .git
             par = box(9.0, 0.95, DATA, fill_opacity=0.06, radius=0.12, stroke=3).move_to([0, 0.27, 0])
             phead = VGroup(sans("build context · 112 MB", CAPTION, DATA))
@@ -772,7 +793,6 @@ class TwoContainers(VoiceScene):
             hide = note("the mounts hide both at run time")
             at_left(hide, par.get_left()[0] + 0.1, err_t.get_bottom()[1] - 0.24)
             vo.wait_until("mostly git history")
-            resize(self, t, 3, keep=[l10, l21, l36])
             self.play(Create(par), FadeIn(phead, shift=DOWN * 0.1), run_time=0.5)
             self.play(FadeIn(git, scale=0.9), FadeIn(git_lab), run_time=0.5)
             vo.wait_until("that still holds")
@@ -788,9 +808,9 @@ class TwoContainers(VoiceScene):
 
         # ========================================================== 9 · the banner
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(parcel), run_time=0.4)
-            resize(self, t, TERM_ROWS, keep=[l36])
-            out = t.print(self, RUN.at((37, 44)), run_time=0.8)
+            self.play(FadeOut(parcel), run_time=0.3)
+            resize(self, t, TERM_ROWS, keep=[l36], run_time=0.7)
+            out = t.print(self, RUN.at((37, 44)), run_time=0.7)
             l38, l40, l41, l42, l43, l44 = out[1], out[3], out[4], out[5], out[6], out[7]
             vo.wait_until("Python 3.12.15")
             u42 = under(substring(l42, "3.12.15"), S.GREY, stroke=3)
@@ -831,7 +851,13 @@ class TwoContainers(VoiceScene):
         with self.voiceover(SAY[10]) as vo:
             t.set_prompt(P_CTR)
             pr = t.type(self, "", type_time=0)
-            self.play(*enter_container(t), th.light("cli"), run_time=0.7)
+            # the erratum is done: its tag (0.42 tall) would touch the id tag on the prompt row
+            # below (0.40 pitch). Out of their rows first, so the rows can't bring them back.
+            gone9 = VGroup(ua, brk, ub, err9)
+            for row, mobs in ((l41, (ua, brk)), (l44, (ub, err9))):
+                row.remove(*mobs)
+            self.add(gone9)
+            self.play(*enter_container(t), th.light("cli"), FadeOut(gone9), run_time=0.7)
             vo.wait_until("The part after")
             cid = substring(pr, "92c5bfd26089")
             uid = under(cid, S.GREY, stroke=3)

@@ -3,23 +3,27 @@
 Follow-along of [dlops-io/mega-pipeline](https://github.com/dlops-io/mega-pipeline) (`main` @
 `c6bbc9b`). The issue of record is #36. The work is in the series draft PR #29. Claude Code cloud
 sessions (Claude) produced the episode from 2026-10-13 to 2026-10-17: captures on 10-13, the
-whole-video QA on the 480p draft of 10-15, two finishing passes on 10-16 and 10-17, and the 1080p60
-final cut, measured on 2026-10-17 at 23:52 UTC. This record was written on 2026-10-18 from the final
-cut's checks. Verified facts and unclaimed reviews are kept in separate sections.
+whole-video QA on the 480p draft of 10-15 (its fixes and verifiers ran through 10-16), one finishing
+pass on 10-17 that a usage limit split into two runs (01:23–03:35 and 14:53–16:20 UTC), a
+bilingual-order audit of the subtitles on 10-17 (`0c4d0e9`), and the 1080p60 final cut, measured on
+2026-10-17 at 23:52 UTC. This record was written on 2026-10-18 from the final cut's checks.
+Verified facts and unclaimed reviews are kept in separate sections.
 
 Times are mm:ss in the full video (`output/ac215-l03-mega-pipeline.mp4`, 30:56.4), except where
-marked *draft*. Draft times refer to the 480p QA draft, which ran 30:11.7. Later fixes, mostly
-longer narration, lengthened the video by 44.7 s, so draft times sit up to that much earlier than
-the final cut. The evidence files named below are in `build/final-review/`. That folder is git-ignored and exists only
-in the producing session, so a successor has to re-run the checks to reproduce the evidence.
+marked *draft*. Draft times refer to the 480p QA draft, which ran 30:11.7 (1811.72 s in its
+`build/qa/scenes.json`). Later fixes, mostly longer narration, lengthened the video by 44.6 s in all.
+Scene starts moved by up to about 47 s (S13–S15; S15 itself got 1.9 s shorter), so a draft time sits
+up to about 47 s earlier than the same moment in the final cut. The evidence files named below are
+in `build/final-review/`. That folder is git-ignored and exists only in the producing session, so a
+successor has to re-run the checks to reproduce the evidence.
 
 ## Content gates (AGENTS.md)
 
 1. **Hook** ✔. S01 opens on a puzzle, not a value proposition. A voice recording goes in on the
    left, and five programs, "each in its own container", turn it into an English and a French
    podcast "without ever sending each other a message. So how do they cooperate, and who pays?"
-   (00:00–00:13.5). The unlabelled V1 relay plays under the question. The answer, that the bucket is
-   the message bus, comes in S02.
+   (00:00–00:13.5). The V1 relay plays under the question, its boxes and drawers unlabelled (only
+   an `illustration` tag). The answer, that the bucket is the message bus, comes in S02.
 2. **Intuition before formalism, with an animated mechanism per core idea** ✔. Eight set pieces
    (BRIEF.md, "Visual set pieces") are each animated before the commands they explain, as
    script.md's SHOW lines specify. The director watchers read every draft sheet against those
@@ -42,8 +46,10 @@ in the producing session, so a successor has to re-run the checks to reproduce t
      visible on the burned-in copy. That is one ponder every 6.2 min. AGENTS.md aims for one every
      2 min, which would be about 15 for this length. The longest gap is 615.7 s, from 12:14 to 22:30.
    - **Series rule:** the series brief fixes 3–5 ponders per lecture (ac215-video skill, step 3).
-     Separately, the narration has 26 spoken prompts to pause and type at README checkpoints (the
-     longest gap between them is 192.9 s). These are follow-along pauses, not ponders.
+     Separately, 27 SAY blocks tell the viewer to pause (`measured.json`): 26 follow-along pauses at
+     README steps (run, type, edit or catch up), plus S01's "Pause at the yellow your-turn tag",
+     which explains the convention. The longest gap between them is 192.9 s (05:47.9–09:00.9).
+     These are follow-along pauses, not ponders.
    - **Recap:** S15 starts at 29:14.5 and runs 101.8 s. It closes with five test-yourself
      questions, one per core idea, each with its set piece's icon (30:13.7–30:41.1). The answers are
      in `exercises.md` (study guide §8). There is no spoken summary of the content.
@@ -51,8 +57,10 @@ in the producing session, so a successor has to re-run the checks to reproduce t
      satisfy this gate for AC215?
 4. **Narration written for the ear, with word-anchored cues** ✔.
    - **Spoken style:** following script.md's conventions, commands, flags and paths are spoken in
-     words ("dash dash r m", "slash app"). Versions are said "at the time of recording", and no
-     sentence opens with a command.
+     words ("dash dash r m", "slash app"). Versions are said "at the time of recording", and every
+     sentence starts with a capital letter. Two sentences open with a command name, capitalised:
+     "Git status shows only cli.py as changed." (S11) and "Git status lists the Dockerfile too"
+     (S12), against script.md's convention "No sentence opens with a command".
    - **Size:** 158 SAY lines with 4,402 words, identical in order to the 158 blocks spoken in the
      renders. The longest block is 62 words.
    - **Anchors:** the scenes have 643 anchor calls: 594 direct `vo.wait_until` calls, 46 through
@@ -64,12 +72,13 @@ in the producing session, so a successor has to re-run the checks to reproduce t
      (S09, S11, S12).
 5. **Simulated-target-viewer QA over the full draft** ✔. Seven watchers reviewed the 480p draft.
    Two of them were simulated target viewers ("newcomer", one for each part), who watched with the
-   README open. They produced 77 timestamped findings. The one must and all 30 shoulds were fixed,
-   re-rendered and verified on fresh frames. The nits left open are listed below with the reasons.
+   README open. The seven produced 77 timestamped findings (the two newcomers 32 of them). The one
+   must and all 30 shoulds were fixed, re-rendered and verified on fresh frames. The nits left open are listed below with the reasons.
 6. **Measured checks** ✔, with two notes. The numbers are under "Verified (final render)".
    - The true peak is −0.9 dBTP, above the build's −1.5 target.
    - The music-balance check does not apply. This series has no music bed: `video.yaml` has no
-     `music:` block, and the audio between cues is at −120 dBFS.
+     `music:` block, and between the voice clips the audio is digital silence (zero samples; the
+     onset check's meter floor is −120 dBFS), apart from each clip's last few milliseconds.
 
    **Human review:** the series waiver below stands in for a listening sign-off.
 
@@ -157,10 +166,12 @@ the 138,445 bytes. There were no wrong facts or wrong commands.
   - It applied 11 narration and subtitle items, and re-voiced S01, S03, S06, S09, S11, S12 and S14.
   - It added the 12 `lecture_ref` slide tags that SLIDES.md marks "do", and the S07 "host folder" /
     "container path" labels.
-  - It closed the S01 and S13 review-bot threads and the toolkit workarounds that a scene file can
-    close.
-- Every `QA_FOLLOWUPS.md` item was resolved or shown not to reproduce. An audit of 1,122 FadeOuts
-  found no snap-back. Two entries in that file still read as open, though their fixes are in.
+  - It fixed, in the scene files, the items of the S01 and S13 review-bot threads and the toolkit
+    workarounds that a scene file can close. Both threads (`PRRT_kwDOU7eKAs6tWpWM`,
+    `PRRT_kwDOU7eKAs6tbH32`) are still unresolved on PR #29 (checked 2026-10-18).
+- QA's follow-ups watcher closed every `QA_FOLLOWUPS.md` item in the scenes: fixed, or shown not
+  to reproduce. An audit of 1,122 FadeOuts found no snap-back. The shared-code requests in that file
+  stay unimplemented in `scenes/common.py`; the scenes carry local workarounds.
 
 **Left open on purpose (nits), with the reasons.**
 - **S14, draft 27:24: the `erratum` tag on README.md:103–106.** That README note is true for Git
@@ -229,8 +240,9 @@ mp4's audio and was compared with the 503 cues of the `.srt`.
   cue-boundary effects.
 - **Whole text:** aligned against the text sent to the voice (from `subs.json`), 4,616 expected
   words meet 4,618 recognised words, a 0.955 match with 190 places that differ.
-- **Recheck:** `large-v3-turbo` rechecked 48 clips covering about 60 doubtful cues. Every doubtful
-  word was either heard correctly or is explained by known noise:
+- **Recheck:** `large-v3-turbo` rechecked 48 clips that span 93 cues (`asr/clips*/clips.json`;
+  the check put the doubtful ones at about 60). Every doubtful word was either heard correctly or
+  is explained by known noise:
   - sound-alikes ("changed" heard as "change", "at sign");
   - terms the recogniser doesn't know: venv, git, ffmpeg, uv add. Their Kokoro phonemes were checked
     and are correct, and the same words are recognised elsewhere in the video;
@@ -238,7 +250,8 @@ mp4's audio and was compared with the 503 cues of the `.srt`.
   - 04:39–04:45, which `base.en` skipped and the large model hears word for word.
 - **Real mispronunciations or swallowed words: none.**
 - **Late audio:** no cue's audio starts more than 1 s after the cue. This was checked at −40 and −30
-  dBFS. The largest delay is 0.60 s, cue 488 at 29:54.
+  dBFS. The largest delay is 0.60 s at −40 dBFS (cue 488, 29:54.1) and 0.74 s at −30 dBFS (cue 409,
+  24:56.7); `asr/verdicts.json` reports only the −40 figure.
 - **End:** the last cue ends at 30:54.0, and the video runs to 30:56.4.
 - **Evidence:** `asr.json`, `asr/verdicts.json`, `asr/global_diffs.json`, `asr/large_clips*.log`,
   `asr/onsets*.json`.
@@ -277,13 +290,15 @@ frame strips.
 
 1. **S06, 11:22.7–11:23.2: a real defect (Bugbot 4300879315 is not fixed).**
    - At 11:19.9–11:20.5, build steps 2 and 3 turn green with their CACHED stamps.
-   - Then badge 1 turns the same green on "and build step 1 is the base image". The measured ring
-     colour is (128,187,117), against (134,184,110) for badges 2 and 3. Badge 1 gets no stamp, so it
-     reads as cached.
+   - Then badge 1 turns the same green on "and build step 1 is the base image". The tags check
+     measured the ring at (128,187,117), against (134,184,110) for badges 2 and 3; a re-sample of the
+     ring pixels gives (138,191,132) against (142,186,120). Badge 1 gets no stamp, but its colour
+     matches the cached steps.
    - The cause is `scenes/s06_build.py:821`, `self.play(recolor(badges[0], VENV), run_time=0.5)`.
-     `VENV` is also the CACHED stamp colour. The finishing pass added this line on purpose ("green =
-     does not run again"), but the thread reply had promised that only `badges[1:3]` take the cached
-     colour.
+     `VENV` is also the CACHED stamp colour. The finishing plan specified this line (S06 item
+     "qa-text"), in line with the QA verifier's reading of green badges as "does not run again". But
+     the reply on the thread (`PRRT_kwDOU7eKAs6tb1ui`) had promised that only `badges[1:3]` take the
+     cached colour and that step 1 keeps its base-image look.
    - The choice: change or drop that recolour, then re-render S06 and re-stitch. Or answer the
      thread with the reason.
    - Evidence: `bot/s06_badges_{672.90,681.50,684.00}.png`, `bot/s06_badges_strip.png`.
@@ -302,11 +317,13 @@ frame strips.
 4. **Gate 3 shortfall:** five ponders against the aim of about 15, and the recap is made of
    questions rather than a spoken summary. See gate 3.
 5. **Minor visual findings (nits):**
-   - **Still stretches over 4 s outside ponder timers, with narration running over each:**
-     - 11:21.4–11:26.7 (5.3 s): the layer stack with the CACHED tags. The badge-1 recolour falls
-       inside this span.
-     - 13:39.5–13:44.0 (4.5 s): the end of S07.
-     - 23:48.0–23:52.2 (4.2 s): the Vertex AI note.
+   - **Still stretches of about 4 s outside ponder timers, with narration running over each**
+     (times from the scenes' `events.json`; freezedetect, blind to small animations, reports them a
+     little longer):
+     - 13:39.5–13:43.7 (4.2 s): the end of S07, before its fade-out.
+     - 23:48.0–23:52.0 (4.0 s): the Vertex AI note.
+     - Nearly still, 11:21.4–11:26.4: the layer stack with the CACHED tags. Only the 0.5 s badge-1
+       recolour (11:22.7–11:23.2) moves, so the longest fully still part is 3.2 s.
    - **Small layout points:**
      - 16:55–17:14: the "token" tag sits across two panel borders, though it stays readable.
      - 12:07–12:25, during the ponder: the floating folder copy sits flush against the `/app` box.
@@ -321,14 +338,22 @@ frame strips.
    - Here one English sentence carries two or three Chinese pieces, so `.zh-en.srt`'s English is not
      word for word the `.srt`. The Chinese matches `.zh.srt` exactly.
    - The pairing check rates all four as intended: each Chinese piece is part of the English
-     sentence above it. #21–22 is the case the S01 verifier flagged, though. The finishing plan's
-     one-clause zh, with no comma, is not what `i18n/zh/narration/g1.yaml:38` holds: it still has
-     the comma, so the line still splits. A nit.
+     sentence above it. #21–22 is the case the S01 verifier flagged, though. The finishing pass
+     applied the one-clause zh with no comma (`43eea56`). The bilingual-order audit (`0c4d0e9`,
+     2026-10-17 19:38) then rewrote `i18n/zh/narration/g1.yaml:38` to follow the English order,
+     "我们录制时用的是一台 Debian 12 笔记本，装着 Docker Engine 29。", and its comma splits the line
+     again. A nit.
 7. **Publishing prerequisites, outside the cut:**
    - `video.yaml` has no `publish:` block yet, and the release preflight refuses to start without
      one. That block is also where the study-guide URL goes, which S01 announces as "linked in the
      description".
-   - Two `QA_FOLLOWUPS.md` entries still read as open, though their fixes are in.
+   - Three L03 review-bot threads on PR #29 are unresolved (checked 2026-10-18): S01
+     (`PRRT_kwDOU7eKAs6tWpWM`) and S13 (`PRRT_kwDOU7eKAs6tbH32`), both fixed and verified in this cut
+     and waiting for a reply and resolve, and S06 (`PRRT_kwDOU7eKAs6tb1ui`, item 1).
+   - `QA_FOLLOWUPS.md` records no outcome for five entries that QA closed: the S07→S08 continuity
+     check, the S07 unused imports (`ruff --select F401` now passes), the S07 GREEN shelf line, the
+     all-scenes FadeOut grep and the S14 full read. They still read as to-dos. Its snap-back and
+     `Window.blink()` entries were marked done on 10-17 (`43fa0c7`).
 
 ## Verified (final render)
 
@@ -351,7 +376,8 @@ frame strips.
     509 events.
   - **Order and bounds:** in all three files the cues are numbered in sequence, ordered, not
     overlapping and not empty. They run from 0.000 to 1854.043 s, inside the runtime.
-  - **Shortest cues:** 1.000, 1.234 and 1.245 s, so none is under 0.8 s.
+  - **Shortest cues:** 1.000 s in `.srt`, 1.234 s in `.zh.srt` and 1.245 s in `.zh-en.srt`, so
+    none is under 0.8 s.
   - **Both languages:** all 509 zh-en cues are one Chinese line followed by one English line.
   - **Parts:** the part files add up to the full files (224 + 279, 186 + 234, 220 + 289) with the
     same text, and their timings match within 0.0007 s. No cue crosses the part boundary.
@@ -379,8 +405,8 @@ frame strips.
 - **Lecture slides:** 12 `lecture_ref` tags cite slides 7, 15, 23–28, 33, 34, 38, 40, 43, 51–52 and
   70. They are the 12 tags that SLIDES.md §5 marks "do", and each tag's label was checked on
   frames.
-- **S04's "have uv? skip to 5:47" chip** lands 0.9 s before the cue "Now the step itself"
-  (05:47.9), as the comment above `SKIP_TO` requires.
+- **S04's "have uv? skip to 5:47" chip** points 0.9 s before the cue "Now the step itself"
+  (05:47.9), so a viewer who jumps there misses nothing, as the comment above `SKIP_TO` requires.
 
 ## Not claimed
 
@@ -391,6 +417,9 @@ frame strips.
   verifiers and the pairing check. No native-speaker human has read them.
 - **The visual review sampled the video.** It used contact sheets every 3 s plus targeted frames,
   not continuous playback, so a defect shorter than 3 s between samples could be missed.
+- **The QA fixes were verified on preview renders, not one by one in this cut.** The fixers and
+  verifiers checked them on 480p/720p renders of the scene files. The 1080p60 cut was checked only
+  by the five final-cut checks above.
 - **Nothing that needs the course key was run:**
   - `--download` with a key, `--transcribe`, `--generate`, `--synthesis`, `--translate` and
     `--upload`, for all five components.

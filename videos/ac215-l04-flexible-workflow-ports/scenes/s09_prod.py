@@ -54,7 +54,7 @@ Beats (script.md "## S09", one voiceover block each):
     column view (the dlops/* images S08 pulled, sizes right-aligned with 70's); their names flash.
  7  The terminal goes (the tracker drops " · extra"), then the card moves down and grows (its
     Pipfile and GREY buildx rows, and a GREY "· the python base image" at the end of the dlops/* row,
-    write in as it settles): three GOLD
+    write in as it grows, travelling with its rows): three GOLD
     rows (bucket in two cues, key + a tiny illustration of the console's key list beside that row,
     whose RED trash can flashes at "in the console", a pushed Docker Hub repo on two lines); card
     and console are centred together. Closing card "Part 2: containers that talk to each other
@@ -125,8 +125,6 @@ from manim import (
     Text,
     Transform,
     VGroup,
-    smooth,
-    squish_rate_func,
 )
 
 from explainer import style as S
@@ -912,10 +910,10 @@ class ProdAndCleanup(VoiceScene):
             stage_out(self, tr, frA, *crows[:4], run_time=0.35, extra=[caption_extra(tr, False)])
             for r in (*crows[4:], base_img):
                 r.shift(dxy)
-            # the laptop rows beat 6 had no room for (and the python base) write in as the card settles
+            # the laptop rows beat 6 had no room for (and the python base) write in as the card grows:
+            # they travel with the card's rows (no faint copy waiting outside the moving frame)
             self.play(*[r.animate.shift(dxy) for r in crows[:4]], Transform(frA, frB),
-                      *[FadeIn(r, shift=RIGHT * 0.1, rate_func=squish_rate_func(smooth, 0.45, 1.0))
-                        for r in (base_img, *crows[4:6])], run_time=0.6)
+                      *[FadeIn(r, shift=dxy) for r in (base_img, *crows[4:6])], run_time=0.6)
             vo.wait_until("the bucket bills")
             self.play(FadeIn(crows[6][0], shift=RIGHT * 0.1), run_time=0.5)
             at(self, vo, "when the course is over", -0.2)
