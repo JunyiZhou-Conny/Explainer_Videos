@@ -39,3 +39,10 @@ Each item was found on a work-in-progress checkpoint; check it in the CURRENT co
   `become` and sets the live caption to opacity 0 before `play`, then fades out a `caption.copy()` that was never
   added to the scene, so the old step label vanishes in one frame instead of cross-fading. Check the frames of
   a tracker step change; add the copy to the scene before fading it (or cross-fade the live caption).
+- S13 (s13_chat.py ~663–673 and ~690–691, Bugbot thread "Chat morph leaves original window", High): the
+  `ReplacementTransform` runs on throwaway `shell()` wrappers around members that still belong to the
+  on-scene `win` and `q`; only the wrappers swap, so `win` can stay on screen as a second chrome copy beside
+  `br`, and the closing fade (`br`, `bq`) leaves `win`/`q` behind after the empty-frame hold. Check the frames
+  around the morph and the scene's last frame (`explainer.check` leftovers); transform `win`/`q` themselves,
+  or remove the members from them first, and fade everything at the end. (The S13 critique was paused
+  mid-edit at 05:15 UTC Oct 18: check this after it resumes.)
