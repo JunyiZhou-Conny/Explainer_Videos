@@ -72,7 +72,7 @@ Would install 167 packages
  + jiter==0.17.0
  + jmespath==1.1.0
  + joblib==1.6.0
- + joserfc==1.7.5
+ + joserfc==1.7.6
  + jsonschema==4.26.0
  + jsonschema-specifications==2025.9.1
  + kubernetes==37.0.1

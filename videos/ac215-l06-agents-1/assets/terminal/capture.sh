@@ -28,11 +28,13 @@
 #    Dockerfile builds unchanged. The laptop's engine pulls Docker Hub images through mirror.gcr.io and stores
 #    images with the classic overlay2 driver (containerd-snapshotter off) to halve its disk use; pull and build
 #    lines read the same.
-#  - adk: the README's `uv sync` runs with UV_INDEX=https://download.pytorch.org/whl/cpu and
-#    UV_INDEX_STRATEGY=unsafe-best-match in the environment, so PyTorch (pulled in by sentence-transformers) comes
-#    as the CPU-only Linux wheel (torch==<v>+cpu, ~0.2 GB) instead of the CUDA build with its nvidia-* packages
-#    (several GB, more than the recording machine's free disk). `uv sync --dry-run` (no override) records the plan
-#    a Linux PC gets. A Mac gets neither: macOS wheels have no CUDA. The G3 check starts a Chroma container in the
+#  - adk: the README's first `uv sync` runs as written and fails (CPython 3.15, see ASSETS.md). After the Python pin and
+#    `uv sync --dry-run` (the plan a Linux PC gets), run_steps.sh removes the lockfile that sync wrote and puts
+#    index-strategy = "unsafe-best-match" and an extra index https://download.pytorch.org/whl/cpu into the student's
+#    ~/.config/uv/uv.toml, so every later uv command takes PyTorch (pulled in by sentence-transformers) as the CPU-only
+#    Linux wheel (torch==<v>+cpu) instead of the CUDA build with its nvidia-* packages and triton (about 3 GB, more
+#    than the recording machine could hold). A Mac gets neither: macOS wheels have no CUDA. The student's home is a
+#    3 GB tmpfs. ~/.npmrc carries the proxy for npx (see below). The G3 check starts a Chroma container in the
 #    laptop's network namespace (docker run --network container:l06-adk) to stand in for llm-rag's published 8000.
 #  - run_steps.sh is copied to a temporary file before it runs (so it can be edited while a capture runs).
 set -e

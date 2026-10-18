@@ -270,9 +270,10 @@ adk)  # ===================== dlops-io/llm-agent-google-adk, README.md (the whol
   # The fix (not in the README): a Python that every dependency has wheels for
   tstep $F 09-x-python-pin $A "" "uv python pin 3.13"
   step $F 10-x-sync-plan $A "uv sync --dry-run"                       # extra: the plan on Linux x86_64 (no override)
-  # capture-only: from here on uv takes PyTorch's CPU-only wheels (capture.sh), from the user's uv config
-  as_student "" "mkdir -p ~/.config/uv; printf '%s\n' '# capture-only (ASSETS.md): CPU-only PyTorch wheels instead of the CUDA build' 'index-strategy = \"unsafe-best-match\"' '' '[[index]]' 'url = \"https://download.pytorch.org/whl/cpu\"' > ~/.config/uv/uv.toml"
-  step $F 11-x-capture-uv-config "" "cat ~/.config/uv/uv.toml"
+  # capture-only: from here on uv takes PyTorch's CPU-only wheels (capture.sh), from the user's uv config; the lockfile
+  # the failed sync wrote pins the CUDA build, so it is removed and the next sync resolves again
+  as_student $A "rm -f uv.lock; mkdir -p ~/.config/uv; printf '%s\n' '# capture-only (ASSETS.md): CPU-only PyTorch wheels instead of the CUDA build' 'index-strategy = \"unsafe-best-match\"' '' '[[index]]' 'url = \"https://download.pytorch.org/whl/cpu\"' > ~/.config/uv/uv.toml"
+  step $F 11-x-capture-only-uv-config $A "cat ~/.config/uv/uv.toml; ls uv.lock"
   tstep $F 12-uv-sync $A "" "uv sync"                                  # README.md:100, again, with the pin
   step $F 13-x-adk-version $A "uv run adk --version"
   step $F 14-x-packages $A "uv pip list 2>/dev/null | grep -E '^(google-adk|google-genai|litellm|fastapi|uvicorn|mcp|chromadb|sentence-transformers|torch|onnxruntime) '; du -sh .venv"

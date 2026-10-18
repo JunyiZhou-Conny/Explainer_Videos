@@ -1,7 +1,7 @@
 $ uv sync
 Using CPython 3.15.0
 Creating virtual environment at: .venv
-Resolved 189 packages in 9.40s
+Resolved 189 packages in 3.80s
 error: Distribution `onnxruntime==1.31.0 @ registry+https://pypi.org/simple`
        can't be installed because it doesn't have a source distribution or wheel
        for the current platform
