@@ -438,10 +438,15 @@ class TwoComputers(VoiceScene):
             vo.wait_until("Two containers can both use port 9100")
             n1, a1 = net.light_port("gateway", 9100)
             n2, a2 = net.light_port("processor", 9100)
+            # each number starts under its lit cell, flush with "localhost": centred on the cell it
+            # touched the loop's arrowhead (final review 19:06); now 0.15 clear of it
+            n1.align_to(net.boxes["gateway"].loop_label, LEFT)
+            n2.align_to(net.boxes["processor"].loop_label, LEFT)
             self.play(*a1, *a2, run_time=0.8)
             vo.wait_until("without any clash")
-            self.play(FadeIn(cap_ports, shift=UP * 0.1), Indicate(n1, color=TURN), Indicate(n2, color=TURN),
-                      run_time=0.8)
+            # 1.15, not the default 1.2: at 1.2 the number's peak came 0.09 from the arrowhead (now 0.11)
+            self.play(FadeIn(cap_ports, shift=UP * 0.1), Indicate(n1, color=TURN, scale_factor=1.15),
+                      Indicate(n2, color=TURN, scale_factor=1.15), run_time=0.8)
             # the bridge (SLIDES.md S10 ii): each glass box's frame flashes on its own (nothing joins
             # them yet), on "a network namespace"; then both localhost loops on "isolated"
             vo.wait_until("The lecture calls this")

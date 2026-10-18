@@ -129,6 +129,7 @@ from manim import (
     Line,
     Rectangle,
     Rotate,
+    RoundedRectangle,
     ShowIncreasingSubsets,
     Transform,
     VGroup,
@@ -264,6 +265,23 @@ def tag2(lines, color: str = S.GREY, size: float = TAG) -> VGroup:
     g = VGroup(fr, rows)
     g.box, g.text = fr, rows
     return g
+
+
+def slim_tag(s: str, color: str = S.GREY, h: float = 0.31) -> VGroup:
+    """A 20 pt tag with tight padding (S03's slim_tag), for a code row: the house tag (0.47) is
+    taller than the panel's row pitch (0.34). .box .text"""
+    t = label(s, CAPTION, color)
+    b = RoundedRectangle(width=t.width + 0.26, height=h, corner_radius=h / 2, stroke_color=color,
+                         stroke_width=2).set_fill(S.BG, 0.92)
+    t.move_to(b)
+    g = VGroup(b, t)
+    g.box, g.text = b, t
+    return g
+
+
+def glyphs_in(row, x0: float, x1: float) -> list:
+    """The glyphs of a code row that overlap the x range [x0, x1]."""
+    return [c for c in row if c.get_right()[0] > x0 and c.get_left()[0] < x1 and c.has_points()]
 
 
 def _part(s: str, size: float, color: str, font: str | None = None) -> VGroup:
@@ -431,8 +449,14 @@ class DockerShell(VoiceScene):
         # hangs from line 7's bar upward (row 6 is empty there): line 8's bar stays uncovered
         t7.next_to(code_row(p0, 7), RIGHT, buff=0.3).set_y(bar7.get_bottom()[1] + 0.1 + t7.height / 2)
         assert t7.get_top()[1] < p0.code.background.get_top()[1] - 0.05      # inside the panel
-        t8 = grey_tag("the folder you're in")
-        t8.next_to(code_row(p0, 8), RIGHT, buff=0.3).set_y(row_y(p0, 8))
+        # a slim pill centred between line 7's descenders and line 9's tops (a house tag clipped both)
+        t8 = slim_tag("the folder you're in")
+        t8.next_to(code_row(p0, 8), RIGHT, buff=0.3)
+        x8 = (t8.get_left()[0], t8.get_right()[0])
+        lo7 = min(c.get_bottom()[1] for c in glyphs_in(code_row(p0, 7), *x8))
+        hi9 = max(c.get_top()[1] for c in glyphs_in(code_row(p0, 9), *x8))
+        t8.set_y((lo7 + hi9) / 2)
+        assert lo7 - t8.get_top()[1] > 0.03 and t8.get_bottom()[1] - hi9 > 0.03, (lo7, hi9)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr), FadeIn(p0, shift=UP * 0.15), run_time=0.8)
             self.play(flash(p0.header, TOOL, 1.06), run_time=0.8)

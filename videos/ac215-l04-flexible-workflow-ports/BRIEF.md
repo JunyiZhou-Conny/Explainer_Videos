@@ -321,8 +321,8 @@ of the placeholder; with a value → `Updated property [core/project].` (`02`). 
 \ …` (`03`): our laptop has no account → `ERROR: … You do not currently have an active account
 selected.` — that is Tutorial 0's `gcloud auth login`; with it, the five APIs are enabled (the README
 shows no output). V3's switches flip. GOLD tag: calls to these APIs now bill your project.
-PONDER 1 (8 s): "Your key is in place and every API is enabled, but you forgot Cloud Speech Client.
-Where does transcribe fail — inside your container, or at Google?" Answer right after: at Google, as
+PONDER 1 (8 s): "Your key is in place and every API is enabled, but you forgot the Agent Platform User
+role. Where does generate text fail: inside your container, or at Google?" Answer right after: at Google, as
 a permission error; the key proved *who*, the role decides *may*. ▶ your turn.
 
 **S06 · docker-shell.sh: one script, two windows (~310).** Tracker *How to Run a Component*. V4: read
@@ -531,7 +531,7 @@ Clean frame.
 
 | # | scene | question | answer (said right after the timer) |
 | --- | --- | --- | --- |
-| 1 | S05 | Key in place, APIs enabled, Cloud Speech Client forgotten: where does transcribe fail? | at Google, as a permission error: the key proved who; the role decides what it may do |
+| 1 | S05 | Key in place, APIs enabled, Agent Platform User role forgotten: where does generate text fail? | at Google, as a permission error: the key proved who; the role decides what it may do |
 | 2 | S07 | `--generate` exited with status 0: did it call Gemini? | no: `--download` had failed, so there was nothing to generate (`mega-generate_text/03`) |
 | 3 | S08 | A teammate never built the image and types `./docker-shell.sh run`: which Python? | whatever `dlops/…:latest` holds: Python 3.8.17 from 2025-02-18 (`72`, `74`) |
 | 4 | S13 | `docker exec gateway curl … http://localhost:9200/health`: what answers? | nothing: inside the gateway, `localhost` is the gateway (`25`, `26`) |

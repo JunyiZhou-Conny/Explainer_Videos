@@ -52,7 +52,8 @@ Beats (script.md "## S13", one voiceover block each):
     `localhost` still YELLOW) -> 25: `…` (the progress meter), lines 5-6 joined and folded at a space,
     RED. "Inside the gateway, localhost is the gateway itself": README chip `README.md · line
     290` "localhost means the gateway" in the band, and only now the gateway's loop glows YELLOW
-    as a packet dot circles it; "nothing there listens on 9200": the dot turns RED with a cross.
+    as a packet dot circles it; "nothing there listens on 9200": the dot turns RED with a cross,
+    then the error's `localhost port 9200` flashes YELLOW.
     "the second puzzle": the chip gives way to the GREY lecture tag "Lecture 4 · slides 33–34"
     (lecture_ref, top right; it stays to beat 8's first play) and a YELLOW tick "puzzle 2" by
     the gateway; "each container has its own localhost": the three loops (laptop, gateway,
@@ -561,9 +562,9 @@ class WhoCanReach(VoiceScene):
             self.play(gw_map.animate.set_color(TURN), run_time=0.5)
             vo.wait_until("host side first")
             self.play(FadeIn(ch230, shift=DOWN * 0.1), run_time=0.5)
-            vo.wait_until("127.0.0.1, port 8090")
+            vo.wait_until("It reads 127.0.0.1")
             self.play(flash(substring(gw_b, "127.0.0.1"), TURN, 1.2), run_time=0.6)
-            vo.wait_until("port 8090, to")
+            vo.wait_until("8090, to")          # "port 8090" lands 0.9 s early: the address before it is long when spoken
             self.play(flash(substring(gw_b, "8090"), TURN, 1.3), run_time=0.6)
             vo.wait_until("to 9100")
             self.play(flash(substring(gw_b, "9100"), TURN, 1.3), run_time=0.6)
@@ -654,15 +655,15 @@ class WhoCanReach(VoiceScene):
             self.play(substring(run20.rows[1], "-p 8091:9100").animate.set_color(LOOKUP),
                       Create(ghost2.frame), Create(ghost2.plug), FadeIn(VGroup(ghost2.room, ghost2.name)),
                       *net.parts_in("door2"), run_time=0.55)
-            vo.wait_until("and the mapping shows 0.0.0.0")
+            vo.wait_until("The mapping shows 0.0.0.0")
             type_extra(self, t, PS_FMT, type_time=0.9)
             o21 = t.print(self, C21.at((2, 5)), run_time=0.4)
             zero = substring(o21[1], ZERO_MAP)
             self.play(zero.animate.set_color(TURN), flash(d2.label, TURN, 1.15), FadeIn(ipv6, shift=DOWN * 0.1),
                       run_time=0.7)
-            vo.wait_until("every address")
+            vo.wait_until("That means every address")
             self.play(flash(d2.frame, TURN, 1.3), flash(substring(o21[1], "0.0.0.0"), TURN, 1.2), run_time=0.7)
-            vo.wait_until("so other machines")
+            vo.wait_until("other machines")
             self.play(*net.parts_in("outside"), run_time=0.6)
             visitor, walk = other_machine_dot(outside[2])
             self.add(visitor)
@@ -786,7 +787,7 @@ class WhoCanReach(VoiceScene):
             self.remove(*flying)
             e25 = fold_words(ERR25, t.max_chars)
             assert e25[-1] == NOCONN, e25                    # whole on its own row
-            t.print(self, ["…"] + [(r, ERR) for r in e25], run_time=0.4)
+            o25 = t.print(self, ["…"] + [(r, ERR) for r in e25], run_time=0.4)
             vo.wait_until("Inside the gateway, localhost is")
             self.play(fade_to(gw.loop, None), fade_to(gw.loop_label, None), FadeOut(qs[0]),
                       FadeIn(ch290, shift=DOWN * 0.1), run_time=0.4)
@@ -796,6 +797,8 @@ class WhoCanReach(VoiceScene):
             vo.wait_until("and nothing there listens on 9200")
             xg = cross_mark(0.24, ERR).move_to(dot)
             self.play(dot.animate.set_color(ERR), Create(xg), run_time=0.5)
+            # the error says it; 1.05: a 19-cell span at 1.1 closes the spaces to "to" and "after"
+            self.play(flash(substring(o25[1], "localhost port 9200"), TURN, 1.05), run_time=0.7)
             vo.wait_until("That's the second puzzle")
             self.play(Succession(FadeOut(ch290), FadeIn(lref33, shift=DOWN * 0.1)),
                       FadeIn(tick2, shift=LEFT * 0.1), run_time=0.6)

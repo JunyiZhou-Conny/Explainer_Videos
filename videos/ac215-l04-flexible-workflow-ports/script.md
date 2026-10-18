@@ -233,9 +233,9 @@ Conventions
   image), `#` (`sh` in the gateway). Values `your-project-id`, `your-team-bucket`, `group-01` (the
   captures' placeholders; the SAY says "type your own"). port_toy: gateway on host port 8090 (then
   8095), processor 9200 (then 9300); ephemeral ports 55620, 55634, … ("your numbers will differ").
-- Length and parts: narration 4,297 words (`python -m explainer.script`; BRIEF.md: 3,900–4,300,
-  plan ~4,220). Part 1 = S01–S09 (mega-pipeline `flexible-workflow`) 2,537 words; part 2 = S10–S16
-  (port_toy) 1,760 words. Every scene is within ±15 % of its BRIEF.md budget. Voice rate as measured
+- Length and parts: narration 4,379 words (`python -m explainer.script`; BRIEF.md: 3,900–4,300,
+  plan ~4,220). Part 1 = S01–S09 (mega-pipeline `flexible-workflow`) 2,581 words; part 2 = S10–S16
+  (port_toy) 1,798 words. Every scene is within ±15 % of its BRIEF.md budget. Voice rate as measured
   on v1 (build/review_spoken.md: every sentence synthesized with af_heart at 0.9): ≈ 146 wpm overall,
   ≈ 151 in part 1 and ≈ 143 in part 2, where addresses and ports are long when spoken (the L04
   lexicon entries shorten them), not the nominal 174 wpm of the series docs. That is ≈ 29 min of
@@ -313,7 +313,8 @@ SAY: A second surprise, from the other tutorial: a server listening on port 9200
 
 SHOW: Both pictures shrink to glyph-only thumbnails (shapes, colours, no text), left (signpost and
 box) and right (the two boxes). Under them two YELLOW questions write in at 26 pt, one per thumbnail:
-"Part 1 · Where did that image come from?" and "Part 2 · Whose localhost is it?".
+"Part 1 · Where did that image come from?" and "Part 2 · Whose localhost is it?". GREY tag `Lecture 4 ·
+slides 42–43` (top right, with the left thumbnail, from "Two puzzles" until "The tracker shows").
 SAY: Two puzzles. Part 1: where did that image come from, and should you build or pull? Part 2: whose localhost is it?
 
 SHOW: The questions clear. A layout preview, built piece by piece as named: the ReadmeTracker appears
@@ -376,7 +377,8 @@ into a TEAL image box labelled `Python 3.14.8 · uv` on a GREY laptop. Right: a 
 Hub" (tag `illustration`) with a sealed TEAL box. Phase 1, caption "early in development": three
 GREY teammate glyphs each draw a PURPLE build arrow from the card. Phase 2, caption "later in
 development": one teammate pushes a box up onto the BLUE shelf; the other two draw BLUE pull arrows
-down from it.
+down from it. GREY tag `Lecture 4 · slides 37–40` (top right, from "A team can get an image two ways"
+until "Look closely at the tag").
 SAY: A team can get an image two ways. Early in a project, everyone builds it from the recipe in Git. Later, one person publishes finished images to Docker Hub, and everyone else pulls.
 
 SHOW: Zoom on the BLUE shelf: a PINK signpost `dlops/mega-pipeline-transcribe-audio:latest` stands
@@ -676,7 +678,8 @@ container (TEAL) with `/app` and `/secrets`, and a GREEN box `/home/app/.venv` o
 CODE(mega-pipeline/transcribe_audio/docker-shell.sh: 92–96): line 93 draws a PINK route from the
 component folder to `/app`; line 94 a PINK route from `secrets/` to `/secrets`; line 95 raises a PINK
 signpost reading `/secrets/mega-pipeline.json` (4.6 wide; the variable's name stays in the code
-panel, underlined PINK) pointing into `/secrets`.
+panel, underlined PINK) pointing into `/secrets`. GREY tag `Lecture 4 · slides 23–24` (top right, from
+"Dash v puts" until "Dash e sets", where it becomes `Lecture 4 · slide 26` until "As in lecture 3").
 SAY: Running opens two windows into your laptop. Dash v puts the component folder at slash app, and the secrets folder beside the repo at slash secrets. Dash e sets an environment variable: a signpost to the key for Google's libraries.
 
 SHOW: CODE(mega-pipeline/transcribe_audio/Dockerfile: 17) `ENV UV_PROJECT_ENVIRONMENT=/home/app/.venv`
@@ -872,7 +875,8 @@ SHOW: TRACKER R/2. A small V4 switchboard at the top with the `dev` track lit. T
 `./docker-shell.sh dev` → TERM(mega-laptop/17-a-dev.txt: 2–4, 14–17) (BuildKit rows); `Build Mode: dev`
 highlights; each `CACHED` turns GREEN; `Building 0.3s` underlines; the prompt returns (GREY tag "no
 container"). A GREY note: "anything new in the folder (e.g. input_audios/ from --download) → build
-steps 4–5 run again".
+steps 4–5 run again". GREY tag `Lecture 4 · slide 7` (top right, from "after any change" until "What is
+dev for?").
 SAY: Exit, and cd back into transcribe audio. Step 2 of How to Run, docker-shell.sh dev, only builds: no container starts. Here, all was cached; after any change in the folder, the copy and uv sync steps run again.
 
 SHOW: TRACKER Y/1. README chip `transcribe_audio/README.md · line 89`. The strip turns TEAL for this
@@ -880,7 +884,8 @@ beat (title `container · transcribe_audio`) and types `uv add <package>` (comma
 "placeholder · lecture 3 ran it"). Above: glyph-only V5, laptop sheet and `/app` side by side, two
 GREEN file glyphs (`pyproject.toml`, `uv.lock`) blinking on both sides at once. The strip turns GREY
 again and shows `./docker-shell.sh dev` (an arrow from the earlier line); a GREEN package chip drops
-into a TEAL image block "baked in".
+into a TEAL image block "baked in". GREY tag `Lecture 4 · slides 37–38` (right, above the strip: the
+README chip holds the top band; from "Adding a package" until "Step 3, run").
 SAY: What is dev for? Adding a package: uv add, inside the container, updates pyproject.toml and uv.lock through the window; then dev bakes it into the image.
 
 SHOW: TRACKER R/3. V4: the `run` track lights; a PINK diamond "local image?" sits on it. The terminal
@@ -976,7 +981,8 @@ $DOCKER_USERNAME/$IMAGE_NAME` / `↪ -f Dockerfile .` (header `… · lines 65�
 `--platform linux/amd64,linux/arm64` PURPLE, `--push` BLUE. A PINK signpost with two arrows: one to a
 TEAL box "amd64", one to a TEAL box "arm64", both on the BLUE shelf; left and right of the shelf, a
 GREY Mac glyph (Apple silicon) pulls "arm64" and a BLUE cloud-VM glyph (a remote machine) pulls
-"amd64" (GREY tag "lecture 2" above the Mac).
+"amd64" (GREY tag "lecture 2" above the Mac). GREY tag `Lecture 4 · slide 13` (top right, from "makes
+amd64 and arm64" until "Before prod").
 SAY: Then one buildx build makes amd64 and arm64 images and pushes both under one tag: as in lecture 2, an Apple-silicon Mac pulls one, a cloud VM the other.
 
 SHOW: TRACKER U/1 (section "Publish the container (optional)"; the README heading is "OPTIONAL:
@@ -1006,7 +1012,8 @@ SHOW: The terminal shrinks to the strip. V5 contrast above: CODE(mega-pipeline/t
 packs into a TEAL image layer (here, unlike the mount, the key really is copied). 
 CODE(mega-pipeline/transcribe_audio/.gitignore: 3) `/secrets` drawn as a shield standing only in front
 of a GREY "Git" shelf; a dashed GREY chip "`.dockerignore`: none, on every branch". The prod track
-carries the layer up to the BLUE shelf, which flashes RED.
+carries the layer up to the BLUE shelf, which flashes RED. GREY tag `Lecture 4 · slides 8, 15` (right,
+under the line 39 panel, from "The gitignore keeps secrets out of Git" until "Prod would push your key").
 SAY: The copy line takes the whole folder. The gitignore keeps secrets out of Git, not out of images, and no branch has a dockerignore. Prod would push your key to Docker Hub.
 
 SHOW: Tag `erratum`: a GREY README card `README.md · line 203` "the canonical way to make that mistake
@@ -1053,12 +1060,14 @@ strip of ports `1 … 65535`; both strips light `9100` at the same time without 
 "each box: its own ports"). A GREY laptop outline around them has its own third `localhost` loop.
 (The port-strip cells are the "rooms" S11 lifts out.) The bridge (SLIDES.md S10 ii): on "The lecture
 calls this a network namespace", the two glass boxes flash, each on its own (isolated: nothing joins
-them yet).
+them yet). GREY tag `Lecture 4 · slide 33` (top right, with the laptop outline, from "Think of each
+container" until "A network you create").
 SAY: Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash. The lecture calls this a network namespace: each container is isolated until you wire it.
 
 SHOW: A TEAL rail slides under the boxes, labelled "user-defined network"; a PINK phone-book icon sits
 on it with two blank lines, labelled "Docker DNS" (slide 34's term) where it first appears. A GREY
-note: "Docker's default network: no phone book (exercises)".
+note: "Docker's default network: no phone book (exercises)". The slide 33 tag becomes `Lecture 4 ·
+slide 34` (top right, from "A network you create" until "Prerequisites").
 SAY: A network you create joins them like a small home network, with a phone book that turns container names into addresses. Docker's default network has none.
 
 SHOW: TRACKER P0/1 (the tracker appears, port_toy README). Terminal (full width, 12 rows, title
@@ -1098,7 +1107,8 @@ SHOW: TRACKER P1/3. CODE(port_toy/gateway/Dockerfile: 1–5), line 2 wrapped at 
 /var/lib/apt/lists/*` (header `gateway/Dockerfile · lines 1–5 · line 2 wrapped`) at the top; line 1
 `FROM python:3.14-slim` ORANGE, line 2 (apt installs `curl`) ORANGE, line 4 `COPY . .` GREEN, line 5
 `CMD ["python", "-u", "gateway.py"]` with `-u` circled and a GREY tag "unbuffered: prints reach docker
-logs at once". A GREY chip "processor/Dockerfile: the same, except line 5".
+logs at once". A GREY chip "processor/Dockerfile: the same, except line 5". GREY tag `Lecture 4 ·
+slide 12` (top right, from "The two Dockerfiles are almost identical" until "Then the gateway").
 SAY: Next, build two images. The two Dockerfiles are almost identical: a slim Python 3.14 image, plus curl from apt. Each copies its code and runs it with dash u, so prints reach the logs at once.
 
 SHOW: Terminal (full width, 12 rows, title `laptop`, prompt `student@laptop:~/AC215/port_toy$`). It
@@ -1130,7 +1140,8 @@ shrinks to the strip (the `-p` row stays); V7 is drawn full width above it. The 
 and "host port · street door" on a GREY door `127.0.0.1:8090` on the laptop; "container port · room"
 on the gateway, where its ports-strip cell 9100 from S10 lifts out (TransformFromCopy) and becomes
 the room's door `:9100`. A PINK arrow goes through the street door and bends into the room (one-line
-README chip `README.md · lines 224–228` "IP address : host port : container port").
+README chip `README.md · lines 224–228` "IP address : host port : container port"). GREY tag
+`Lecture 4 · slide 35` (top right, with the `-p` box, from "Dash p publishes a port" until "The two dash e flags").
 SAY: Then start the gateway. Dash p publishes a port: it opens a street door on your laptop that leads to a room inside the container. The order is IP address, host port, container port: 127.0.0.1, meaning this laptop only, then door 8090, then room 9100.
 
 SHOW: The two `-e` rows highlight PINK in the strip; CODE(port_toy/gateway/gateway.py: 13–14) appears
@@ -1198,7 +1209,7 @@ SHOW: TRACKER P2/1. Terminal (full width, 12 rows, title `laptop`, prompt
 gateway's `127.0.0.1:8090->9100/tcp` highlights YELLOW; the processor's empty PORTS cell gets a dashed
 YELLOW box and a GREY tag "listening ≠ published". A one-line README chip `README.md · line 230` "The
 host port comes first".
-SAY: Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first: 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published.
+SAY: Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first. It reads 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published.
 
 SHOW: TRACKER P2/1 · extra. It types `docker ps --format 'table {{.Image}}\t{{.Ports}}\t{{.Names}}'`
 (extra; folds) → TERM(port-laptop/17-ps-short.txt: 2–4); beside it a small GREY card,
@@ -1225,7 +1236,7 @@ rm -f gateway-all` (extra) → TERM(port-laptop/21-x-ps-all-addresses.txt: 6). I
 faces only inward. GREY tag `Lecture 4 · slide 35` (top right, from "That's why the README writes"
 until the next beat's first play), with the GREY note under it "lecture's short form = every
 address" (SLIDES.md Conflict 1).
-SAY: With door 8091 it works, and the mapping shows 0.0.0.0: every address, so other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only.
+SAY: With door 8091 it works. The mapping shows 0.0.0.0. That means every address: other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only.
 
 SHOW: TRACKER P2/2. The terminal clears. It types `curl http://localhost:8090` →
 TERM(port-laptop/22-curl-8090.txt: 2–7, …, 154–155) (cut). Then `curl --max-time 3
@@ -1344,7 +1355,9 @@ TERM(port-laptop/42-run-gateway-9300.txt: 6) (cut); `PROCESSOR_PORT=9300` highli
 gateway's arrow re-aims at `:9300` and turns PINK; the street door slides back to `8090`. The terminal
 shrinks to the strip (the run stays visible); a compact PAGE(port-laptop/43-send-9300.txt) shows
 `processor listening on port 9300`; REPLY(port-laptop/43-send-9300.txt: 2) (wrap). A GREY chip "no
-rebuild · configuration only (README.md lines 404–409)". `▶ your turn` on the strip's run line.
+rebuild · configuration only (README.md lines 404–409)". `▶ your turn` on the strip's run line. GREY
+tag `Lecture 4 · slide 26` (top band, left of the page's illustration tag, from "No image was rebuilt"
+until "Finally, clean up").
 SAY: The gateway's processor port. Remove the gateway and start it with 9300, back on 8090, and the message goes through. No image was rebuilt: it's only configuration. Pause and fix yours.
 
 SHOW: The two chips `PORT=9300` (processor) and `PROCESSOR_PORT=9300` (gateway) link with a GREEN
@@ -1381,13 +1394,15 @@ PROCESSOR_PORT=9200` → `environment:` (19–21); `--network toynet` → `netwo
 toy-gateway` and `-d` stay behind, dimmed (GREY tag "no home: Compose names the image itself"). The
 panel swaps to CODE(port_toy/docker-compose.yml: 27–39) for the processor (its chips fly the same way:
 `--name`, `build`, `-e PORT=9200`, `--network`), where `docker network create toynet` lands on `name:
-toynet` (39).
+toynet` (39). GREY tag `Lecture 4 · slides 17–20` (bottom right: the top band is full; from "Almost
+every flag" until "and the depends on key").
 SAY: Dash dash name becomes container name, and the build command becomes build. Dash p becomes ports, dash e becomes environment, and the network is named at the bottom of the file.
 
 SHOW: Back on CODE(port_toy/docker-compose.yml: 11–25): two keys with no by-hand ancestor fade in with
 GREEN outlines: `volumes:` / `- ./gateway:/app` (17–18, tag "live-mount the gateway's folder") and
 `depends_on:` / `- processor` (22–23, tag "start the processor first"). Then the left column's chips
-collapse into one PURPLE chip: `docker compose up`.
+collapse into one PURPLE chip: `docker compose up`. On "and the depends on key" the slides 17–20 tag
+becomes `Lecture 4 · slide 27` (same slot, until "Run it").
 SAY: Two keys are new: the volumes key mounts the gateway's folder into slash app, and the depends on key starts the processor first. All of step 1 collapses into one command: docker compose up.
 
 SHOW: Terminal (full width, 13 rows, title `laptop`, prompt `student@laptop:~/AC215/port_toy$`). It
@@ -1454,6 +1469,8 @@ SAY: Docker compose down removes the containers and the network, and nothing is 
 SHOW: TRACKER P4/3. Terminal (full width, 12 rows, title `laptop`, prompt
 `student@laptop:~/AC215/port_toy$`). It types `docker compose up -d` →
 TERM(port-laptop/55-compose-up-d.txt: 2–5); the prompt returns at once (GREY tag "in the background").
+GREY tag `Lecture 4 · slide 29` (top right, from "up dash d starts the app" until the next beat's compact
+page arrives, after "Compose logs dash f").
 SAY: Back to the README's order: up dash d starts the app in the background and returns your prompt.
 
 SHOW: TRACKER PH/2. It types `docker compose logs -f gateway` → TERM(port-laptop/56b-compose-logs-f.txt:

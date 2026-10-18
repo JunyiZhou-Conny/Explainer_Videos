@@ -1,8 +1,10 @@
 # L04 QA follow-ups (from PR review bots while scenes were being built)
 
-- S11 (s11_start.py, Bugbot thread on line 268, OPEN until checked on frames): the processor's default-value
+- S11 (s11_start.py, Bugbot thread on line 268, DONE): the processor's default-value
   underlines on YAML line 13 crossed the capitals on line 14. `base_under` now builds `d_lines` (line 622).
   Verify in the frames of that beat that every underline sits under its own line and clear of line 14.
+  DONE in the final review (1080p): REVIEW.md "Final-cut checks" › review-bot items, S11; evidence
+  `build/final-review/report-tags.md` item 7, `build/final-review/tags/bot/s11_under_1289.5_crop2x.png`.
 - S16 (s16_recap.py, Bugbot, resolved): the shared-layers bracket now sits right of the image rows
   (`x = max(glyph right) + 0.25`). Check in the recap frames that the brace and its label
   `shared layers · ≈ 200 MB in all` stay right of the names and inside the frame.
@@ -13,6 +15,8 @@
 - S03 (s03_code.py SKIP_TO, Bugbot thread "Skip timestamp misses the next chapter"): the finishing pass lengthens
   S03 (copy-out warning before the pause), so the "cloned fresh? skip to …" chip must be recomputed from the
   re-voiced scene durations. After the 1080p stitch, check the chip text equals S04's start in output/chapters.txt.
+  DONE in the final review (1080p, "skip to 5:10" = S04 at 05:10): REVIEW.md "Final-cut checks" › review-bot items,
+  S03 skip chip; evidence `build/final-review/report-tags.md` item 1, `build/final-review/tags/sheets/s03_skip_sheet.png`.
 - S03 (s03_code.py ~700–706, Bugbot thread "File flashes leave leftover glyphs"): slicing `l0`/`l1` wraps glyphs that
   live on `card9` in a new VGroup that `play` adds to the scene, so `FadeOut(card9)` at the start of beat 10 may leave
   `Dockerfile,` and `pyproject.toml, uv.lock` on screen over V2 (the FadeOut snap-back pattern in SKILL.md). Check the
@@ -21,4 +25,4 @@
   gutter); S03 leftover glyphs do not reproduce (FadeOut(card9) re-adds the card, dropping the flash wrapper first);
   S02 lead label inside x = 6.6; S10 flash + Docker DNS label done; S11 underlines clear. Open for the final review: the
   S02 beat-4 box flying to the shelf (TransformFromCopy, ~51.9–52.5 s) briefly crosses the "Docker Hub · images"
-  caption mid-move; S03 SKIP_TO chip vs the 1080p chapters.
+  caption mid-move (still open, a nit); S03 SKIP_TO chip vs the 1080p chapters (DONE, see the S03 SKIP_TO item).

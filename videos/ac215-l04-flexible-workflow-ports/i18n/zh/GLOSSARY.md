@@ -3,7 +3,7 @@
 视频：*AC215 · Lecture 4 — Containers II-b: build or pull, ports and Compose (follow-along: mega-pipeline flexible-workflow, port_toy)*（`videos/ac215-l04-flexible-workflow-ports`）  
 受众：上哈佛 AC215（MLOps & LLMOps）的中文研究生：会 Python 和基础 ML，英文技术文档读得很顺；做过第 1 讲（VM、venv、uv）、第 2 讲（现成的 Dockerfile、image 和 container、层缓存、Docker Hub、平台）和第 3 讲（用课程密钥跑五个 container 的 mega-pipeline、bind mount、uv add）；这一讲第一次自己管服务账号、用包装脚本、在“构建还是 pull”之间做选择，也第一次接触 container 网络、port 和 Compose；开着两个 clone（mega-pipeline 的 flexible-workflow 分支和 port_toy），边看边敲命令  
 中文版：**只有字幕，没有中文配音**。英文旁白（Kokoro `af_heart`），中文按英文的时间轴显示：`output/ac215-l04-flexible-workflow-ports.zh-en.mp4` 画面下方烧录的双语字幕带（中文在上，英文原句在下）、`.zh.srt`、`.zh-en.srt` / `.ass`。所以没有 `say:`、没有锚点、没有读法、不管配音时长：第 1 讲里所有关于朗读的规则（F1–F6、C2–C5，“三点十一点二”“点 venv”“杠 m”这类读法、数字和符号怎么念）都不适用，只保留显示规则  
-英文原稿：`script.md` v2（SAY 行是旁白：156 段、369 句；SHOW 行是画面）；`build/review_spoken.md` 第 22 条（要进词表的说法和需要 `en_display` 的段落）和第 29 条（章节名）已并入  
+英文原稿：`script.md` v2（SAY 行是旁白：156 段、372 句；SHOW 行是画面）；`build/review_spoken.md` 第 22 条（要进词表的说法和需要 `en_display` 的段落）和第 29 条（章节名）已并入  
 先例：系列试点 [`videos/ac215-l01-vms-venvs/i18n/zh`](../../../ac215-l01-vms-venvs/i18n/zh/GLOSSARY.md) 定下共用的词；容器两讲 [`ac215-l02-containers-1`](../../../ac215-l02-containers-1/i18n/zh/GLOSSARY.md) 和 [`ac215-l03-mega-pipeline`](../../../ac215-l03-mega-pipeline/i18n/zh/GLOSSARY.md) 定下容器的词和“只有字幕”的整套规则。前三讲已经定下的词一律沿用；新的是第二部分的网络词汇（A13）和 flexible workflow 的词（服务账号、三道关卡、构建还是 pull、docker-shell.sh）  
 机器可读版本：[`glossary.yaml`](glossary.yaml)（内容相同，两份要同步修改；`python -m explainer.i18n check` 和字幕切分都读它）
 
@@ -25,7 +25,7 @@
 4. **视频的比喻按意思译，一个比喻一个词**：配方（recipe，第 2 讲）、路标（signpost，第 3 讲）、窗（bind mount，第 3 讲）、盒子（box）、三堆和墙（切换分支时的三堆文件和两堵墙）、关卡（gate）、小电脑（little computer）、局域网（home network）、电话簿（phone book）、导轨（rail）、临街的门和房间（street door 和 room，也就是 host port 和 container port）。
 5. **书面语体**（标题、meta.yaml、配套文档）：仓库、克隆、提交、容器、镜像、基础镜像、镜像仓库、存储桶、推送、拉取、绑定挂载、端口。
 6. **不加括注、不用括号**：双语字幕带里英文原句就在中文下方；没有 say: 时检查器也不允许括号。
-7. **工具链的约束也是规则**：每个英文句子对应一个中文句子（156 段、369 句）；显示行要过检查器（D3）；SAY 把实物念成单词的句子都要写 en_display（D4）。
+7. **工具链的约束也是规则**：每个英文句子对应一个中文句子（156 段、372 句）；显示行要过检查器（D3）；SAY 把实物念成单词的句子都要写 en_display（D4）。
 
 大陆简体中文；口语轻松、指令清楚，像助教带实验课，但不用网络流行语。
 
@@ -369,7 +369,7 @@ AC、add、Admin、Agent、AI、allocated、already、amd、API、app、Apple、
 
 ### D. 旁白文件（narration/*.yaml）
 
-- **[D1]** 句子对齐（explainer/i18n.py）。narration/*.yaml 里 script.md 的每个 SAY 行一条（156 段）；`en` 和 SAY 行逐字节相同；`zh` 按 explainer.voice.split_sentences 的切分，每个英文句子正好一项（这份脚本共 369 句）。只在句子内部重组，绝不合并或拆分。短句也单独一项：Ponder this. → 来想一想。；Pause and run it. → 暂停一下，自己跑一遍。；Pause and switch. → 暂停一下，切换过去。；Two puzzles. → 两个谜题。；Three piles. → 分成三堆。；Nothing. → 什么都没有。；Run it. → 运行它。；Here's why. → 原因是这样的。；No. → 没有。反复运行 `python -m explainer.i18n check videos/ac215-l04-flexible-workflow-ports --lang zh`，直到打印 OK。
+- **[D1]** 句子对齐（explainer/i18n.py）。narration/*.yaml 里 script.md 的每个 SAY 行一条（156 段）；`en` 和 SAY 行逐字节相同；`zh` 按 explainer.voice.split_sentences 的切分，每个英文句子正好一项（这份脚本共 372 句）。只在句子内部重组，绝不合并或拆分。短句也单独一项：Ponder this. → 来想一想。；Pause and run it. → 暂停一下，自己跑一遍。；Pause and switch. → 暂停一下，切换过去。；Two puzzles. → 两个谜题。；Three piles. → 分成三堆。；Nothing. → 什么都没有。；Run it. → 运行它。；Here's why. → 原因是这样的。；No. → 没有。反复运行 `python -m explainer.i18n check videos/ac215-l04-flexible-workflow-ports --lang zh`，直到打印 OK。
 - **[D2]** 没有 say:，没有锚点。没有中文配音：绝不写 say:（显示行就是唯一的文本），也绝不写 anchors:（锚点只给中文配音版安排动画节拍）。字幕按英文音频计时；工具链按位置把每个中文句子和对应的英文句子配对。
 - **[D3]** 过得了检查器的显示行。没有 say: 时，每个显示句都要通过 explainer.i18n.spoken_problems：没有括号（B2）、没有数学符号（B3）、没有 letter_letter 名字（A6）、数字后面没有 !、没有以“种”结尾再接，。！？的分句（改写：两种方式。→ 有两种方式拿到。或 两个办法。）、汉字和拉丁字母或数字之间有半角空格（B1）、每句以。！？或……结尾（后面可以跟”或」）、每个拉丁词都在本词表里（zh_subtitle、first_use 或 allowed_spoken_latin）。检查器用正则 `[A-Za-z][A-Za-z'.-]*` 切词：group-01 切成 group-，amd64 切成 amd，arm64 切成 arm，input-….mp3 切成 input- 和 mp，/home/app/.venv 切成 home、app 和 venv，Ctrl-C 是一个词。它报出的拉丁词，要么是该翻译的英文词（通常如此），要么是漏收的实物：按同样的切法把它加进 allowed_spoken_latin，并加进对应的术语条目。
 - **[D4]** 英文行（en_display）。双语字幕带的英文行显示 SAY 句子，而 SAY 为了配音把实物念成了单词。每个这样的句子都写一项 en_display，显示屏幕上的字面形式，其余部分和 SAY 句子逐词一致；同一段里的其他句子写 null。这份脚本的念法 → 字面形式：dash dash branch → --branch；git stash dash u → git stash -u；git checkout dash dash dot → git checkout -- .；git branch: star, flexible-workflow → git branch: * flexible-workflow；test dot mp3 → test.mp3；input, dash, something, dot mp3 → input-something.mp3；dash v / dash e / dash p / dash u / dash i t / dash a / dash f → -v / -e / -p / -u / -it / -a / -f；up dash d → up -d；dash dash r m / dash dash name / dash dash build / dash dash use → --rm / --name / --build / --use；chmod plus x → chmod +x；slash app / slash secrets → /app / /secrets；file slash secrets slash mega-pipeline.json → File /secrets/mega-pipeline.json；default credentials error → DefaultCredentialsError；text prompts, slash group-01 → text_prompts/group-01（观众要找的路径）；the at sign → @；T-T-Y → TTY；localhost 8090 → localhost:8090；pipenv flexible workflow → pipenv-flexible-workflow；port toy, dash gateway → port_toy-gateway；Control C → Ctrl+C；dash p 127.0.0.1, 8095, 9100 → -p 127.0.0.1:8095:9100。段落（扫描 v2 脚本得到；脚本改了就重扫）：S03[0,8,9] S04[6,7] S06[4,5,8,9,10] S07[0,2,8,13] S08[9] S09[0,2,3,6] S11[0,3,4,5] S12[0] S13[10] S14[3] S15[1,2,3,8,10,11] S16[0,1,2,4,6,9]。带下划线的名字（A6）只在观众要输入或要找的路径和命令里（text_prompts/group-01、port_toy-gateway；S07[8] 的 synthesis_audio_en 可以保留念法）在 en_display 里写回字面形式；单纯提到时，两行都保留 SAY 的说法（transcribe audio、port toy、container name、depends on、the gateway's processor port）。英文视频自己的 .srt 不受影响。

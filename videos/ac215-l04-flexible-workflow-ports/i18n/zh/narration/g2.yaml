@@ -1,5 +1,5 @@
 # zh narration for S10-S16 (part 2, group g2: port_toy), sentence-aligned to script.md v2: one zh sentence per
-# English sentence (explainer.voice.split_sentences; 66 SAY lines, 156 sentences). Terms and rules: ../GLOSSARY.md,
+# English sentence (explainer.voice.split_sentences; 66 SAY lines, 159 sentences). Terms and rules: ../GLOSSARY.md,
 # ../glossary.yaml (binding).
 # Subtitles only: there is no Chinese voice in this series, so no say: and no anchors (rule D2); the zh line is
 # shown on the English timing, so each sentence keeps the English order of ideas and about its length (D8).
@@ -128,14 +128,16 @@ S12:
   - "这个 container 没法知道，你在笔记本上给它开的是哪扇门。"
   - "暂停一下，发一条消息，两个都别停。"
 S13:
-- en: "Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first: 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published."
+- en: "Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first. It reads 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published."
   zh:
   - "第 2 步检查 port。"
-  - "用 docker ps 能看到 gateway 的映射，host 那一侧在前：127.0.0.1，port 8090，到 9100。"
+  - "用 docker ps 能看到 gateway 的映射，host 那一侧在前。"
+  - "上面写着 127.0.0.1，port 8090，到 9100。"
   - "而 processor 的 PORTS 那一列是空的：在监听，但没有发布。"
   en_display:
   - null
-  - "docker ps shows the gateway's mapping, host side first: 127.0.0.1, port 8090, to 9100."
+  - "docker ps shows the gateway's mapping, host side first."
+  - null
   - null
 - en: "An extra docker ps with three columns matches the README's sample."
   zh:
@@ -146,9 +148,11 @@ S13:
   - "这次额外的运行把它去掉了，要在所有地址上开 8090 号门。"
   - "Docker 拒绝了，报 port is already allocated：我们的 gateway 占着 8090。"
   - "不过 container 还是创建出来了，所以要把它删掉。"
-- en: "With door 8091 it works, and the mapping shows 0.0.0.0: every address, so other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only."
+- en: "With door 8091 it works. The mapping shows 0.0.0.0. That means every address: other machines on your network could connect. Remove it. That's why the README writes 127.0.0.1: this laptop only."
   zh:
-  - "用 8091 号门就成功了，映射显示 0.0.0.0：所有地址，所以你所在网络里的其他机器也能连进来。"
+  - "用 8091 号门就成功了。"
+  - "映射显示 0.0.0.0。"
+  - "意思是所有地址：你所在网络里的其他机器也能连进来。"
   - "把它删掉。"
   - "所以 README 写的是 127.0.0.1：只限这台笔记本。"
 - en: "From the laptop, curl on 8090 returns the gateway's page. Curl on 9200 can't connect: your laptop has no door to it, unless something else of yours uses 9200."
@@ -312,7 +316,7 @@ S15:
   - "docker compose ps -a: both containers exited, but they're still there."
 - en: "Docker compose down removes the containers and the network, and nothing is left in ps dash a. Control C stops; down removes. Pause, and run the whole cycle."
   zh:
-  - "输入 docker compose down：它删掉 container 和网络，ps -a 里什么都不剩。"
+  - "输入 docker compose down 会删掉 container 和网络，ps -a 里什么都不剩。"
   - "按 Ctrl-C 是停止；down 才是删除。"
   - "暂停一下，把整个流程跑一遍。"
   en_display:
@@ -373,7 +377,7 @@ S16:
   - "第一题：哪些文件定义了一个 mega-pipeline 的 image，本地没有 image 时，run 用的又是什么？"
 - en: "Two: which three gates must a call to your bucket pass, and where does each one fail? Three: how does a git-ignored key end up in an image, and what's the fix?"
   zh:
-  - "第二题：调用你的 bucket 时，必须通过哪三道关卡，每一道又在哪里失败？"
+  - "第二题：一个调用要通过哪三道关卡，才能进到你的 bucket，每一道又在哪里失败？"
   - "第三题：一个被 Git 忽略的密钥，怎么会跑进 image 里，又该怎么修？"
 - en: "Four: dash p 127.0.0.1, 8095, 9100. Which number does the browser use, which does the gateway bind, and what does 127.0.0.1 restrict? Five: inside the gateway, what is localhost, and which name reaches the processor?"
   zh:
@@ -386,5 +390,5 @@ S16:
   - null
 - en: "Next lecture, a command-line container calls a database container by name on a Compose network, with the same secrets mount: parts 1 and 2 together. Answers are in the exercises."
   zh:
-  - "下节课，一个命令行 container 会在 Compose 网络上，按名字调用一个数据库 container，用的还是同样的 secrets 挂载：第一部分和第二部分合在一起。"
+  - "下节课，一个命令行 container 会调用一个数据库 container，在 Compose 网络上按名字找到它，用的还是同样的 secrets 挂载：第一部分和第二部分合在一起。"
   - "答案在练习里。"

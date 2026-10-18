@@ -145,7 +145,7 @@ S03:
   - null
 - en: "Extra checks show your ignored lecture 3 Dockerfile, pyproject.toml and uv.lock were replaced by the branch's, without a word: copy them out first if you want them."
   zh:
-  - "额外检查显示，你在第 3 讲里那些被忽略的 Dockerfile、pyproject.toml 和 uv.lock，已经被这个分支的版本一声不吭地替换了：想留着的话，先把它们复制出来。"
+  - "额外检查显示，你第 3 讲里被忽略的 Dockerfile、pyproject.toml 和 uv.lock 已经换成了这个分支的版本，没有任何提示：想留着的话，先把它们复制出来。"
 - en: "The old key still sits inside transcribe audio; your secrets stay put, as the README says. Every build there copies it into the image, so delete each component's secrets folder now. Your edits wait in the stash."
   zh:
   - "旧密钥还留在 transcribe audio 里；你的 secrets 原地不动，README 也是这么说的。"
@@ -161,10 +161,10 @@ S04:
   - "第 2 步：每个 cli.py 都在开头附近设置三个值：你的项目 ID、你的 bucket 和你们的组名。"
 - en: "An extra grep shows what ships: three files are blank, but generate text and translate text already hold the course's project and bucket, and the instructor's group name."
   zh:
-  - "一个额外的 grep 显示 repo 里原本写的是什么：三个文件留空，但 generate text 和 translate text 里已经写着课程的项目和 bucket，还有授课老师的组名。"
+  - "一个额外的 grep 显示原本的写法：三个文件是空的，但 generate text、translate text 已有课程的项目和 bucket，还有授课老师的组名。"
 - en: "A small slip: the README says an assert stops you if you forget, but it only rejects an empty value. Those two files would send your calls to the course's project and bucket, where they fail with permission errors."
   zh:
-  - "一个小疏漏：README 说如果你忘了改，assert 会拦住你，但它只拒绝空值。"
+  - "一个小疏漏：README 说忘了改的话 assert 会拦住你，但其实它只拒绝空值。"
   - "那两个文件会把你的调用发到课程的项目和 bucket，在那边报权限错误。"
 - en: "Set all three, in all five files. An extra git diff shows our placeholders, your-project-id, your-team-bucket and group-01; type your own. In translate text, also change the target language from Spanish to French. Pause and edit them."
   zh:
@@ -436,7 +436,7 @@ S08:
 - en: "It also left a Pipfile in your folder, owned by root. If you tried this, delete it and run dev to get your own image back."
   zh:
   - "它还在你的目录里留下了一个 Pipfile，属于 root。"
-  - "如果你试过这一步，就把它删掉，再跑一次 dev，把你自己的 image 找回来。"
+  - "如果你试过这一步，删掉它并再跑一次 dev，找回你自己的 image。"
 - en: "So build locally, with no argument or dev, and use run only for images your team pushed from this branch, under your own Docker Hub account."
   zh:
   - "所以要在本地构建，不带参数或者用 dev；run 只用于你们组从这个分支 push 上去的 image，而且是在你们自己的 Docker Hub 账号下。"
@@ -502,5 +502,5 @@ S09:
   - null
 - en: "In the cloud, the bucket bills a little storage until you delete it, when the course is over; the key works until you delete it in the console. In part 2: containers that talk to each other directly."
   zh:
-  - "在云上，bucket 会一直收一点存储费，直到你删掉它，也就是课程结束的时候；密钥在你去控制台删掉之前一直有效。"
+  - "在云上，bucket 在你删掉它之前会一直收一点存储费，也就是到课程结束为止；密钥在你去控制台删掉之前一直有效。"
   - "第二部分：互相直接通信的 container。"
