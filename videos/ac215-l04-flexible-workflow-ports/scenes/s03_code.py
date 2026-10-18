@@ -256,8 +256,11 @@ INCOMING_Y = 2.66       # where the branch's files wait (just under the tracker)
 # S01 91.00 + S02 73.30 + S03 146.16 = 310.45 (floor 5:10), 5:09 lands 1.5 s early. Take the
 # smaller floor: 5:10 would land after S04's start in a 15 fps render. The 1080p60 release (dry
 # runs): S01 91.02 + S02 73.35 + S03 146.18 = 310.55, so its chapters.txt reads 05:10 and 5:09
-# lands 1.6 s early, on the stash relabel just before the fade-out: expected, not a mismatch.
-SKIP_TO = "5:09"
+# lands 1.6 s early, on the stash relabel just before the fade-out.
+# 2026-10-18 release render (1080p60, the only cut that ships; Bugbot tn9i7): the chip follows the
+# release's chapters.txt, 5:10, which lands 0.55 s early inside the fade-out. A 15 fps draft
+# (309.98) would land 0.02 s late; drafts are not published.
+SKIP_TO = "5:10"
 
 
 def at_left(m, x: float, y: float):
