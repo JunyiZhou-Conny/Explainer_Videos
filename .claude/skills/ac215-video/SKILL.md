@@ -193,6 +193,11 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   replays; a verifier whose prompt quotes the fixer's report gets a new cache key and re-runs, with
   everything after it. Pass reports as files and name the path. Right after any resume, read the
   journal; if finished agents start again, stop it and launch only the pending ones.
+  Workflow agents refuse to write report files ("return findings as text") and a script cannot
+  write files, so the coordinator saves them: run the producing agents as one workflow, write each
+  returned text from its journal to a file, then run the consumers as a second workflow that reads
+  those paths (`ac215-final-review.js` stage `checks`, then stage `write`). L04's single-run review
+  got five refusals, and its writer wrote REVIEW.md without the reports.
 - **State each workflow's scope in its prompts.** A user message sent mid-run reaches the running
   agents: L04's whole finishing run (28 agents) read a status question about L02/L03 as its task and
   declined every edit. Every agent prompt says what the task is, who assigned it, and that user
