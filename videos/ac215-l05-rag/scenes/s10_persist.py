@@ -106,6 +106,7 @@ from common import (
     beside,
     capture,
     caption_extra,
+    cmd_chip,
     col_box,
     cylinder,
     differ_tag,
@@ -356,13 +357,12 @@ def grey_out(m, k: float = 0.45):
     return m
 
 
-def tag2(lines, color: str = S.GREY) -> VGroup:
-    """A two-row GREY tag (house look: text in its colour, opaque dark fill)."""
-    from explainer.devops import TAG, label
-    t = VGroup(*[label(s, TAG, color) for s in lines]).arrange(DOWN, buff=0.06)
-    b = RoundedRectangle(width=t.width + 0.4, height=t.height + 0.22, corner_radius=0.18,
-                         stroke_color=color, stroke_width=2).set_fill(S.BG, 0.92)
-    return VGroup(b, t.move_to(b))
+def rm_note(ghost) -> VGroup:
+    """'--rm' over 'removed on exit', GREY, inside the dashed outline the CLI box left behind (the
+    outline is its frame)."""
+    t = VGroup(mono("--rm", CAPTION, S.GREY), note("removed on exit")).arrange(DOWN, buff=0.1)
+    assert t.width < ghost.width - 0.2, t.width
+    return t.move_to(ghost)
 
 
 def light_door(c, color: str):
@@ -430,17 +430,17 @@ class IndexSurvives(VoiceScene):
             vo.wait_until("But first, a test")
             self.add(db)
             self.play(FadeOut(rm), FadeOut(part2), *[FadeOut(tk) for tk in ticks],
-                      db.animate.scale(1.3).move_to([db.get_center()[0], 0.2, 0]), run_time=0.7)
-            self.play(Transform(db, cyl_target), *[FadeIn(m) for m in forming], run_time=0.8)
+                      db.animate.scale(1.3).move_to([db.get_center()[0], 0.2, 0]), run_time=0.6)
+            self.play(Transform(db, cyl_target), *[FadeIn(m) for m in forming], run_time=0.7)
             self.remove(db, *forming)
             self.add(cv)
-            self.play(*cv.parts_in("rail", "plug_chroma", "name", "port_chip", "cli", "venv", "plug_cli"),
-                      run_time=0.5)
-            self.play(*cv.parts_in("zone", "row_repo", "row_secrets", "row_volumes", "key", "door"), run_time=0.4)
+            self.play(*cv.parts_in("rail", "plug_chroma", "name", "port_chip", "cli", "venv", "plug_cli",
+                                   "zone", "row_repo", "row_secrets", "row_volumes", "key", "door"),
+                      run_time=0.6)
             self.play(*cv.parts_in("route_app", "route_secrets", "route_data", "route_port", anim=Create),
-                      run_time=0.5)
+                      run_time=0.45)
             vo.wait_until("does the index survive")
-            self.play(FadeIn(q0, scale=1.4), Indicate(r_chroma, color=TURN, scale_factor=1.1), run_time=0.6)
+            self.play(FadeIn(q0, scale=1.4), Indicate(r_chroma, color=TURN, scale_factor=1.1), run_time=0.55)
             # V2 shrinks to the top: each part becomes its compact twin
             P = cv.parts
             pairs = [(P["zone"][0], c.zone[0]), (P["zone"][1], c.zone[1]), (P["route_app"], c.route_app),
@@ -456,7 +456,7 @@ class IndexSurvives(VoiceScene):
             self.remove(cv, q0)
             self.add(*srcs[:-1], *gcop, srcs[-1])
             self.play(*[ReplacementTransform(s, b) for s, (_, b) in zip(srcs, pairs)],
-                      *[FadeOut(g) for g in gcop], run_time=1.1)
+                      *[FadeOut(g) for g in gcop], run_time=1.0)
             self.remove(*[b for _, b in pairs])
             self.add(*c.order)
 
@@ -465,7 +465,7 @@ class IndexSurvives(VoiceScene):
         t = term(P_CTR, rows=3, container=True)
         ghost = box(c.cli[0].width, c.cli[0].height, S.GREY, dashed=True, stroke=2).move_to(c.cli[0])
         cols = grey_tag("3 of 7 columns")
-        rmt = tag2(["--rm:", "removed on exit"]).move_to(c.cli[0])
+        rmt = rm_note(ghost)
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t, shift=UP * 0.2), run_time=0.6)
@@ -486,7 +486,9 @@ class IndexSurvives(VoiceScene):
             head, crow = t.print(self, PS_ROWS, run_time=0.4)
             pin(self, head, beside(cols, t, head, buff=0.6), run_time=0.3)
             vo.wait_until("The CLI container is gone")
-            self.play(Indicate(ghost, color=TURN, scale_factor=1.04), FadeIn(rmt, scale=0.9), run_time=0.8)
+            self.play(Indicate(ghost, color=TURN, scale_factor=1.04), run_time=0.7)
+            vo.wait_until("removed on exit")
+            self.play(FadeIn(rmt, scale=0.9), run_time=0.5)
             vo.wait_until("but Chroma is still up")
             up = col_box(crow, 0, len("Up 2 minutes"), TURN)
             self.play(Create(up), substring(crow, "llm-rag-chromadb").animate.set_color(TURN),
@@ -514,13 +516,14 @@ class IndexSurvives(VoiceScene):
             beside(harm, t, w[3], buff=0.4)
             self.play(*[r.animate.set_color(S.GREY) for r in w], run_time=0.6)
             pin(self, w[3], harm, run_time=0.4)
+            vo.wait_until("and the down command needs neither")
+            self.play(Indicate(substring(dn, DOWN_.cmd), color=TURN, scale_factor=1.06), run_time=0.8)
             vo.wait_until("Then Chroma and the network")
-            print_build(self, t, [DOWN_.line(5)], run_time=0.3)
-            print_build(self, t, [DOWN_.line(6)], run_time=0.3)
+            gone = print_build(self, t, [DOWN_.line(n) for n in (5, 6, 7)], run_time=0.5)
             self.play(FadeOut(VGroup(c.chroma, c.name, c.port_chip, c.plug_chroma, c.route_data, c.route_port,
-                                     ghost)), *light_door(c, LAPTOP), run_time=0.8)
-            print_build(self, t, [DOWN_.line(7)], run_time=0.3)
-            self.play(FadeOut(c.rail), run_time=0.6)
+                                     ghost)), *light_door(c, LAPTOP),
+                      Indicate(gone[1], color=TURN, scale_factor=1.03), run_time=0.7)
+            self.play(FadeOut(c.rail), Indicate(gone[2], color=TURN, scale_factor=1.03), run_time=0.5)
 
         # ========================================================== 3 · nothing runs; the folder holds the data
         band = right_at(file_row("docker-volumes/chromadb/"), BAND_RIGHT, BAND_Y)
@@ -557,6 +560,7 @@ class IndexSurvives(VoiceScene):
             ubs = [col_box(out[k], out[k].text.index(u), len(out[k].text), DATA) for k, u in ((8, UUIDS[0]), (10, UUIDS[1]))]
             dif = differ_tag()
             dif.move_to(out[5].strut).align_to(t.box, RIGHT).shift(LEFT * 0.12)
+            vo.wait_until("and both index folders")
             self.play(*[Create(b) for b in ubs], FadeIn(dif), run_time=0.6)
             stick(self, out[8], ubs[0])
             stick(self, out[10], ubs[1])
@@ -569,8 +573,9 @@ class IndexSurvives(VoiceScene):
         mm = band_minis(band)
         np_chip = grey_tag("no pull · no build: the image exists")
         g1 = note("after a git pull that changes pyproject.toml")
-        g2 = VGroup(note("or the Dockerfile:"), mono("docker compose build", CAPTION, INK)).arrange(RIGHT, buff=0.15)
-        gnote = VGroup(g1, g2).arrange(DOWN, aligned_edge=LEFT, buff=0.1)
+        build_chip = cmd_chip("docker compose build")          # a command shown, not output
+        g2 = VGroup(note("or the Dockerfile:"), build_chip).arrange(RIGHT, buff=0.15)
+        gnote = VGroup(g1, g2)
         idt = grey_tag("container id · your numbers will differ")
         yt = your_turn()
 
@@ -579,13 +584,13 @@ class IndexSurvives(VoiceScene):
                       glow.animate.set_fill(S.GREY, 0).set_stroke(opacity=0), run_time=0.5)
             t.clear(self, run_time=0.3)
             vo.wait_until("sh docker-shell.sh again")
-            type_cmd(self, t, AGAIN.cmd, 0.7)
+            cmd4 = type_cmd(self, t, AGAIN.cmd, 0.7)
             l2 = t.print(self, [AGAIN.line(2)], run_time=0.25)[0]
             print_build(self, t, [AGAIN.line(3)], run_time=0.3)
-            self.play(Create(mm.rail), run_time=0.4)
+            self.play(Create(mm.rail), run_time=0.3)
             print_build(self, t, [AGAIN.line(4)], run_time=0.3)
-            self.play(FadeIn(mm.chroma, shift=DOWN * 0.3), run_time=0.5)
-            self.play(Create(mm.route), Indicate(band, color=LOOKUP, scale_factor=1.05), run_time=0.6)
+            self.play(FadeIn(mm.chroma, shift=DOWN * 0.3), run_time=0.4)
+            self.play(Create(mm.route), Indicate(band, color=LOOKUP, scale_factor=1.05), run_time=0.5)
             vo.wait_until("No pull, no build")
             rb = col_box(l2, 0, len(l2.text), TURN)
             beside(np_chip, t, l2, buff=0.5)
@@ -596,43 +601,56 @@ class IndexSurvives(VoiceScene):
                       run_time=0.6)
             t.set_prompt(P_CTR2)
             pr = bare_prompt(self, t)
-            self.play(*enter_container(t, P_CTR2), run_time=0.6)
+            self.play(*enter_container(t, P_CTR2), run_time=0.5)
             cid = substring(pr, P_CTR2.split("@")[1].split(":")[0])
             uid = under(cid, S.GREY, stroke=3)
             beside(idt, t, pr, buff=0.35)
-            self.play(Create(uid), FadeIn(idt, shift=LEFT * 0.1), run_time=0.5)
+            self.play(Create(uid), FadeIn(idt, shift=LEFT * 0.1), run_time=0.45)
             stick(self, pr, uid)
             vo.wait_until("After a git pull")
-            left_at(gnote, out4[2].get_right()[0] + 0.9, (out4[2].get_center()[1] + out4[3].get_center()[1]) / 2)
+            x_note = out4[2].get_right()[0] + 0.9         # right of the two short rows, one line each
+            left_at(g1, x_note, out4[2].strut.get_center()[1])
+            left_at(g2, x_note, out4[3].strut.get_center()[1])
             self.play(FadeIn(gnote, shift=LEFT * 0.15), run_time=0.6)
+            vo.wait_until("run docker compose build first")
+            self.play(Indicate(build_chip, color=TURN, scale_factor=1.08), run_time=0.8)
             vo.wait_until("Pause and restart")
-            yt.next_to(idt, RIGHT, buff=0.25)
+            beside(yt, t, cmd4, buff=0.4)
             self.play(FadeIn(yt, scale=1.2), run_time=0.5)
         self.wait(2)                                   # ▶ beat: hold the frame
 
         # ========================================================== 5 · two extra checks: the data never lived in it
         t2 = term(P_HOME, rows=8, title="laptop · second terminal")
-        cap2 = note("new terminal: cd here first")
+        ln = mono_line(P_HOME, t2.size, INK, t2c=t2._prompt_colors(P_HOME))   # it opens in ~
+        t2._place(ln, 0)
+        t2.lines.add(ln)
+        ti = P_HOME.index("~")
+        # above the frame, so it stays readable while the curl line is typed (rows 0–3 are full)
+        cap2 = note("new terminal: cd here first").next_to(t2.box, UP, buff=0.15)
+        cap2.align_to(t2.box, LEFT).shift(RIGHT * 0.3)
         tc = term(P_CTR2, rows=6, container=True)
         rmnote = note("not in the README · S12")
         panel = log_panel(IDS_ROWS, "the same command before exit", width=TERM_W, size=TERM_PT)
         stf = staff_tag()
         match = chip("10 of 10 match", DATA, size=CAPTION)
 
+        # after the ▶ hold (silent): the second terminal opens in ~, the caption says cd first
         self.play(caption_extra(tr, True), FadeOut(VGroup(t, idt, yt, gnote)), FadeIn(t2, shift=UP * 0.2),
                   run_time=0.6)
+        self.play(Indicate(glyph_range(ln, ti, ti + 1), color=TURN, scale_factor=1.4),
+                  FadeIn(cap2, shift=DOWN * 0.1), run_time=0.6)
         with self.voiceover(SAY[5]) as vo:
-            ln = bare_prompt(self, t2)
-            tilde = glyph_range(ln, P_HOME.index("~"), P_HOME.index("~") + 1)
-            beside(cap2, t2, ln, buff=0.5)
-            self.play(Indicate(tilde, color=TURN, scale_factor=1.4), FadeIn(cap2), run_time=0.5)
+            # after the cd: "~$" stretches into "~/AC215/llm-rag$"; "student@laptop:" stays put
             t2.set_prompt(P_REPO)
-            t2.lines.remove(ln)
             ln2 = mono_line(P_REPO, t2.size, INK, t2c=t2._prompt_colors(P_REPO))
-            t2._place(ln2, len(t2.lines))
-            self.play(FadeOut(cap2), ReplacementTransform(ln, ln2), run_time=0.35)
-            self.remove(ln2)                     # the typed rows start with the same prompt
-            cu = _type_rows(self, t2, CURL_ROWS, len(P_REPO) + 1, 1.0, len(NAMES.cmd))
+            t2._place(ln2, 0)
+            t2.lines.remove(ln)
+            head, tail = glyph_range(ln, 0, ti), glyph_range(ln, ti, len(P_HOME))
+            tail2 = glyph_range(ln2, ti, len(P_REPO))
+            self.add(head, tail)
+            self.play(ReplacementTransform(tail, tail2), run_time=0.4)
+            self.remove(head, tail2)             # the typed rows start with the same prompt
+            cu = _type_rows(self, t2, CURL_ROWS, len(P_REPO) + 1, 0.9, len(NAMES.cmd))
             pin(self, cu, beside(extra_tag(), t2, cu), run_time=0.25)
             o = t2.print(self, NAMES.at((2, 5)), run_time=0.35)
             self.play(substring(o[0], "char-split-collection").animate.set_color(DATA),
@@ -643,7 +661,7 @@ class IndexSurvives(VoiceScene):
             for k, b in zip((1, 3), dims):
                 stick(self, o[k], b)
             vo.wait_until("and an extra command called get")
-            self.play(FadeOut(t2), FadeIn(tc, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(VGroup(t2, cap2)), FadeIn(tc, shift=UP * 0.2), run_time=0.5)
             g = type_cmd(self, tc, GET.cmd, 0.7)
             ext = beside(extra_tag(), tc, g)
             beside(rmnote, tc, g.rows[0], buff=0.4)

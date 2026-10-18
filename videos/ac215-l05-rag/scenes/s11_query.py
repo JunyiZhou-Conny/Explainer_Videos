@@ -303,16 +303,16 @@ class NearestNeighbours(VoiceScene):
             self.play(qc.animate.move_to([RagMap.X["embedding"], RagMap.YB, 0]).scale(0.18).set_opacity(0),
                       rm.light("embedding"), run_time=1.2)
             self.remove(qc)
-            self.play(Indicate(rm.item("query"), color=LOOKUP, scale_factor=1.35), run_time=0.7)
             vo.wait_until("and becomes a query vector")
+            self.play(Indicate(rm.item("query"), color=LOOKUP, scale_factor=1.35), run_time=0.7)
             q_from = rm.item("query").copy()
             self.add(q_from)
-            self.play(FadeOut(rm), FadeIn(vs), LaggedStart(*[GrowArrow(a) for a in green], lag_ratio=0.05),
-                      run_time=1.0)
-            self.play(ReplacementTransform(q_from, qa), FadeIn(q_lab, shift=RIGHT * 0.1), run_time=0.8)
+            self.play(FadeOut(rm), run_time=0.5)            # the map goes first; the query vector stays
             vo.wait_until("in the same space")
+            self.play(FadeIn(vs), LaggedStart(*[GrowArrow(a) for a in green], lag_ratio=0.05),
+                      ReplacementTransform(q_from, qa), FadeIn(q_lab, shift=RIGHT * 0.1), run_time=1.2)
             self.play(LaggedStart(*[Indicate(a, color=DATA, scale_factor=1.08) for a in green], lag_ratio=0.04),
-                      FadeIn(c_lab, shift=LEFT * 0.1), FadeIn(ill), run_time=1.0)
+                      FadeIn(c_lab, shift=LEFT * 0.1), FadeIn(ill), run_time=0.9)
             vo.wait_until("Querying means")
             beam, grow = beam_anim(vs, Q_DEG, 13)
             self.add(beam, qa)
@@ -339,11 +339,12 @@ class NearestNeighbours(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             lr = lref_swap(self, lr, "A48–A53", run_time=0.4)
+            # the sphere goes first (nothing overlaps the column); four arrows and the query stay
+            self.play(FadeOut(VGroup(vs, beam, c_lab, n_lab, ill, q_lab,
+                                     *[arrows[d] for d in NEAR + FAR if d not in TO_CARDS])), run_time=0.5)
             rc.reveal(self, "cards", "header", "arrow", run_time=1.2,
-                      extra=[FadeOut(VGroup(vs, beam, c_lab, n_lab, ill, q_lab)),
-                             *[FadeOut(arrows[d], target_position=rc.cards[k].get_center(), scale=0.6)
+                      extra=[*[FadeOut(arrows[d], target_position=rc.cards[k].get_center(), scale=0.6)
                                for k, d in enumerate(TO_CARDS)],
-                             FadeOut(VGroup(*[arrows[d] for d in NEAR + FAR if d not in TO_CARDS])),
                              ReplacementTransform(qa, qbar), FadeIn(qbar_lab), FadeIn(ex)])
             for k, t in enumerate(SCORE_T):
                 _at(self, vo, t - 0.35)
@@ -407,7 +408,7 @@ class NearestNeighbours(VoiceScene):
 
         # ========================================================== 4 · CODE(cli.py: 316–323)
         p = src_panel("cli.py", 316, 323)
-        p.move_to([-0.4, 0.35, 0])
+        p.move_to([-0.95, 0.35, 0])              # room at the right for the glyph's two-line label
         bar = p.bar(318)
         s_q = p.span(318, '"How is tolminc cheese made?"')
         s_g = p.span(319, "generate_query_embedding")
@@ -471,9 +472,9 @@ class NearestNeighbours(VoiceScene):
             err = t.print(self, [(Q_ERR, ERR)], wrap=True, run_time=0.4)
             assert len(err) == 2 and len(t.lines) <= 13, (len(err), len(t.lines))
             vo.wait_until("Then it connects to Chroma")
-            resize(self, t, 3, keep=[cmd.rows[0], cmd.rows[1], err[1]], run_time=0.7,
+            resize(self, t, 3, keep=[cmd.rows[0], cmd.rows[1], err[1]], run_time=0.55,
                    extra=[nk.animate.set_y(STRIP_TOP - t.bar_h / 2)])
-            self.play(FadeIn(emb), FadeIn(card), FadeIn(cyl), FadeIn(cyl_lab), run_time=0.4)
+            self.play(FadeIn(emb), FadeIn(card), FadeIn(cyl), FadeIn(cyl_lab), run_time=0.3)
             self.play(Indicate(cyl, color=CTR, scale_factor=1.1), FadeIn(conn, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("but stops at the key")
             self.play(card.animate.move_to(stop_at), run_time=0.8)
@@ -492,7 +493,7 @@ class NearestNeighbours(VoiceScene):
         kx = cross_mark(0.42, ERR).move_to(key)
         k_lab = label("no key", CAPTION, COST).next_to(VGroup(key, kx), DOWN, buff=0.12)
         same = chip("only the same model makes a vector in the same space", S.GREY, size=CAPTION)
-        same.move_to([BOX_AT[0] + 0.6, emb.get_bottom()[1] - 0.12 - same.height / 2, 0])
+        same.move_to([BOX_AT[0] + 0.6, emb.get_bottom()[1] - 0.34 - same.height / 2, 0])   # clear of "no key"
 
         with self.voiceover(SAY[6]) as vo:
             self.play(FadeOut(x5), FadeIn(slot), run_time=0.4)
