@@ -39,10 +39,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l04-flexible-workflow-ports.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l04-flexible-workflow-ports.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 32:09 (1929.8 s), 122 MB. Published as a GitHub release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l04-flexible-workflow-ports.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not in Git: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l04-flexible-workflow-ports_part1.mp4` | part 1, DURATION_P1: the flexible workflow — your own cloud, one script, build or pull (S01–S09). Not in Git: rebuilt with `--no-render` |
-| `output/ac215-l04-flexible-workflow-ports_part2.mp4` | part 2, DURATION_P2: port_toy — networks, ports and Compose (S10–S16). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l04-flexible-workflow-ports_part1.mp4` | part 1, 18:40 (1120.2 s): the flexible workflow — your own cloud, one script, build or pull (S01–S09). Not in Git: rebuilt with `--no-render` |
+| `output/ac215-l04-flexible-workflow-ports_part2.mp4` | part 2, 13:29 (809.7 s): port_toy — networks, ports and Compose (S10–S16). Not in Git: rebuilt with `--no-render` |
 | `output/ac215-l04-flexible-workflow-ports.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l04-flexible-workflow-ports.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l04-flexible-workflow-ports.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -57,7 +57,38 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+
+```
+00:00 Build or pull? Whose localhost?
+01:31 Same pipeline, built like a team
+02:44 Get the code: clone, or switch branches
+05:10 Your bucket and your three values
+06:51 Three gates: account, role, API
+09:09 docker-shell.sh: one script, two windows
+11:26 Five components, five honest errors
+14:06 dev, run, and a stale image
+16:44 prod, a stowaway key, and clean-up
+18:40 Two little computers, one network
+20:09 Build, start, read the logs
+21:43 Send a message: ports on the wire
+22:56 Who can reach whom
+25:31 Change the ports
+27:44 Compose: the same app, declared
+29:59 Edit, apply, tear down, recap
+```
+
+Part 1 uses the first nine lines as they are. Part 2 starts its clock at 0:00:
+
+```
+00:00 Two little computers, one network
+01:29 Build, start, read the logs
+03:03 Send a message: ports on the wire
+04:16 Who can reach whom
+06:51 Change the ports
+09:04 Compose: the same app, declared
+11:19 Edit, apply, tear down, recap
+```
 
 ## What you'll learn
 
