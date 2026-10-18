@@ -562,7 +562,8 @@ def mix_music(joined: Path, final: Path, music: dict, project: Path, build: Path
         "[voice][ducked]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.89[a]",
     ])
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), *inputs, "-filter_complex", graph,
-                    "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-ar", "48000", "-c:a", "aac", "-b:a", "160k",
+                    "-map", "0:v", "-map", "[a]", "-c:v", "copy", "-ar", "48000", "-c:a", "aac", "-aac_pns", "0",
+                    "-b:a", "160k",
                     "-movflags", "+faststart", str(final)], check=True)
 
 
@@ -624,10 +625,12 @@ def stitch(items, stem: Path, title: str, build: Path, chapters_file: Path,
             mix_music(joined, final, music_spec, project, build, offset)
         else:
             # one-pass loudnorm overshoots its TP after AAC (−0.9 dBTP measured on a 31-min cut);
-            # a sample-peak limit at 0.79 (−2 dBFS) lands the encoded file at about −1.6 dBTP
+            # a sample-peak limit at 0.79 (−2 dBFS) lands the encoded file at about −1.6 dBTP.
+            # No perceptual noise substitution: its random noise put a +0.9 dBTP spike into L03 part 2
+            # (−1.8 without it), and only when decoded from the start, so a seek never shows it.
             subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", str(joined), "-c:v", "copy", "-af",
                             "loudnorm=I=-16:TP=-1.5:LRA=11,alimiter=limit=0.79:level=disabled",
-                            "-ar", "48000", "-c:a", "aac", "-b:a", "128k",
+                            "-ar", "48000", "-c:a", "aac", "-aac_pns", "0", "-b:a", "128k",
                             "-movflags", "+faststart", str(final)], check=True)
             if ctx.get("music"):               # the same narration before AAC: the music is mixed from it,
                 voice_wav = build / f"voice_{stem.name}.wav"                 # so the voice is encoded once
