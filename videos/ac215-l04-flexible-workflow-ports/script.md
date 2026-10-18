@@ -235,7 +235,8 @@ Conventions
   8095), processor 9200 (then 9300); ephemeral ports 55620, 55634, … ("your numbers will differ").
 - Length and parts: narration 4,379 words (`python -m explainer.script`; BRIEF.md: 3,900–4,300,
   plan ~4,220). Part 1 = S01–S09 (mega-pipeline `flexible-workflow`) 2,581 words; part 2 = S10–S16
-  (port_toy) 1,798 words. Every scene is within ±15 % of its BRIEF.md budget. Voice rate as measured
+  (port_toy) 1,798 words. Every scene is within ±15 % of its BRIEF.md budget except S03 (332 words,
+  +18.6 %) and S04 (242, +15.2 %), which grew in the finishing pass. Voice rate as measured
   on v1 (build/review_spoken.md: every sentence synthesized with af_heart at 0.9): ≈ 146 wpm overall,
   ≈ 151 in part 1 and ≈ 143 in part 2, where addresses and ports are long when spoken (the L04
   lexicon entries shorten them), not the nominal 174 wpm of the series docs. That is ≈ 29 min of
