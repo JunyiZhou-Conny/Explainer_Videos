@@ -539,6 +539,22 @@ class ComposeUp(VoiceScene):
         nohome = grey_tag("no home: Compose names the image itself")
         place(nohome, cx=bg.get_center()[0], top=cm.panel.get_bottom()[1] - 0.22)
         assert rc432.get_bottom()[1] > -3.6 and nohome.get_right()[0] < 6.6
+        # SLIDES.md S15 (i): the lecture tags take a second row under the panel (row 1 holds rc432,
+        # nohome and the outline tags; the YAML panel holds the top right through beats 0–2)
+        lref20, lref27 = lecture_ref(4, "17–20"), lecture_ref(4, "27")
+        for lr in (lref20, lref27):
+            place(lr, right=6.5, top=-3.05)
+        assert lref20.get_top()[1] < nohome.get_bottom()[1] - 0.1 and lref20.get_bottom()[1] > -3.6
+        # SLIDES.md S15 (iii): GREY notes (Conflict 4) inside the outlines, right of their keys,
+        # and "started, not ready" (Gap 4) at the left of the lecture tags' row
+        n_v = note("lecture's by-hand run: -v")
+        place(n_v, left=cm.yaml(17).get_right()[0] + 0.4, cy=cm.yaml(17).get_center()[1])
+        n_d = note("= your typing order")
+        place(n_d, left=cm.yaml(22).get_right()[0] + 0.4, cy=cm.yaml(22).get_center()[1])
+        n_r = note("started, not ready")
+        place(n_r, left=0.1, cy=lref27.get_center()[1])
+        assert n_v.get_right()[0] < 6.0 and n_d.get_right()[0] < 6.0
+        assert n_r.get_right()[0] < lref27.get_left()[0] - 0.4
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1),
                       LaggedStart(*[FadeIn(c, shift=RIGHT * 0.15) for c in cm.chips], lag_ratio=0.18),
@@ -557,7 +573,7 @@ class ComposeUp(VoiceScene):
             self.add(cm)
             vo.wait_until("Almost every flag")
             self.play(LaggedStart(*[flash(cm.flag(i, s), TURN, 1.1, 0.6) for i, s in G_FLAGS], lag_ratio=0.15),
-                      run_time=2.0)
+                      FadeIn(lref20, shift=UP * 0.1), run_time=2.0)
 
         # ============================================================ 1 · each flag finds its key
         with self.voiceover(SAY[1]) as vo:
