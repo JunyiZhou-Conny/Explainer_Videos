@@ -55,3 +55,20 @@ parts:
   - id: part2
     title: "AC215 · L4, part 2: port_toy — networks, ports and Compose"
     scenes: [s10_network, s11_start, s12_send, s13_reach, s14_ports, s15_compose, s16_recap]
+publish:
+  title_zh: "AC215 第4讲跟练 · 容器进阶 II：build 还是 pull，端口与 Compose"
+  description_zh: |
+    哈佛 AC215（MLOps & LLMOps，2026 秋）第 4 讲两份教程的逐条命令跟练。
+    第一部分照着 dlops-io/mega-pipeline 的 flexible-workflow 分支：从第 3 讲的 clone 切换分支（git stash -u），
+    填好你自己的 bucket 和三个值，过账号、角色、API 三道关，用每个组件的 docker-shell.sh 在本地 build 和从 Docker Hub pull 之间选择，
+    跑通五个组件并读懂它们的报错，认出过期的 image、prod 模式里混进 image 的密钥，最后清理干净。
+    第二部分照着 dlops-io/port_toy：两个容器在自己的网络上直接对话，build、启动、看日志、发消息，
+    弄清楚端口映射、谁能连到谁（127.0.0.1 和 0.0.0.0）、Docker 内置的 DNS，改端口，最后用 Docker Compose 把同一个应用写成声明式配置。
+    边看边暂停，在自己的电脑上跑每一条命令。英文旁白，中英双语字幕。
+
+    教程仓库：https://github.com/dlops-io/mega-pipeline/tree/flexible-workflow 和 https://github.com/dlops-io/port_toy
+    学习笔记（全部命令、真实输出和练习答案）：https://github.com/JunyiZhou-Conny/MLOps_Learning/blob/main/guides/L04-containers-2b-flexible-workflow-ports.md
+
+    课程与教程内容来自 Harvard AC215 课程组（Pavlos Protopapas 等）；本视频是个人学习用的非官方讲解，引用课件只注明页码，不展示课件。
+  tags_zh: [AC215, MLOps, Docker, 容器, Docker Compose, 端口, 哈佛, 教程跟练, GCP]
+  tid: 231
