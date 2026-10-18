@@ -1,0 +1,12 @@
+00-x-env	23:05:39 UTC	0.3s
+01-clone	23:05:40 UTC	1.1s
+02-cd-as-written	23:05:41 UTC	0.1s
+03-cd	23:05:41 UTC	0.1s
+04-x-ls.txt	exit=+0.1s
+05-cp-env	23:05:41 UTC	0.1s
+06-x-env-file	23:05:41 UTC	0.1s
+07-uv-sync.txt	exit=+11.5s
+08-x-after-failed-sync	23:05:53 UTC	0.2s
+09-x-python-pin.txt	exit=+4.5s
+10-x-sync-plan	23:05:58 UTC	0.5s
+11-x-capture-uv-config	23:05:58 UTC	0.1s

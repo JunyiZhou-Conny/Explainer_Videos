@@ -1,0 +1,7 @@
+$ cat ~/.config/uv/uv.toml
+# capture-only (ASSETS.md): CPU-only PyTorch wheels instead of the CUDA build
+index-strategy = "unsafe-best-match"
+
+[[index]]
+url = "https://download.pytorch.org/whl/cpu"
+[exit 0]

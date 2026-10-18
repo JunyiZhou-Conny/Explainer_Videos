@@ -32,11 +32,13 @@ Beats (script.md "## S15", one voiceover block each):
    arrow "top K = 25" → a column of 25 GREEN rows; five turn YELLOW (rows 1, 2, 11, 17, 22, as on
    B53) "truly relevant". A GREY dashed diamond "cross-encoder" gets the question; a PINK pointer
    reads the rows one pair at a time ("slower: one model run per pair"); the column reorders and
-   the YELLOW rows rise to the top. Caption "fast + accurate: strong together".
+   the YELLOW rows rise to the top, with the caption "fast + accurate: strong together" (a 1.3 s
+   pad after the line lets it be read before the fold).
 5. The re-ranking picture shrinks into slot 3 ("re-ranking"); the lecture tag leaves. The four
    GREY dashed chips gather into a row with a `cli.py` file glyph and a GREY "not here". The strip's
    Retrieval box flashes RED ("the wrong chunks"); S12's PINK-edged "metadata filter" box returns
-   with the GREY note "our query: remove the filter" and fades to a dashed ghost. Fade out.
+   with the GREY note "our query: remove the filter" and fades to a dashed ghost (its name stays,
+   faint). Fade out.
 """
 
 from types import SimpleNamespace
