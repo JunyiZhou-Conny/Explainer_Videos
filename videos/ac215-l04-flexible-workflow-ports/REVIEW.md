@@ -749,10 +749,8 @@ update (F10). Their numbers are kept so that references stay valid.
    - S03 (332 words against 280, +18.6 %) and S04 (242 against 210, +15.2 %) are outside ±15 %.
    - Both grew in the finishing pass, with the S03 warning and the S04 bucket sentence.
    - The runtime, 32:10.0, is inside 25–35 min.
-   - **A doc line out of step:** `script.md:238` still says "Every scene is within ±15 % of its
-     BRIEF.md budget", which S03 and S04 contradict. The totals in that paragraph (4,379 on line
-     236; 2,581 and 1,798 on lines 237–238) are right.
-     Fix: correct that sentence (text only, no render).
+   - *Fixed after the re-check: `script.md:238` said "Every scene is within ±15 % of its BRIEF.md
+     budget"; it now names S03 and S04 as the two exceptions (text only, no render).*
 5. **Gate 3 shortfall:** five ponders against the aim of about 16, and a recap made of questions.
    See gate 3, with its question for Conny.
 6. **Minor visual findings (nits).** Each was left because it is cosmetic: the text stays legible,
