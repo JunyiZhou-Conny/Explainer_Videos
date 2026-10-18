@@ -384,14 +384,14 @@ then paste the token when it asks.
 Pause and log in.
 
 78
-00:04:34,033 --> 00:04:38,520
-然后给 image 打 tag：docker tag，先写 simple-translate
-Then tag the image: docker tag simple-translate
+00:04:34,033 --> 00:04:36,550
+然后给 image 打 tag：在 docker tag 后面先写
+Then tag the image:
 
 79
-00:04:38,520 --> 00:04:41,862
-再写你的用户名/simple-translate-ac215
-<USER NAME>/simple-translate-ac215.
+00:04:36,550 --> 00:04:41,862
+simple-translate 再写你的用户名/simple-translate-ac215
+docker tag simple-translate <USER NAME>/simple-translate-ac215.
 
 80
 00:04:42,182 --> 00:04:44,209

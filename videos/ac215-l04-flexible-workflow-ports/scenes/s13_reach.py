@@ -31,7 +31,10 @@ Beats (script.md "## S13", one voiceover block each):
     the outside machines and their dashed route to that door. "Remove it": `docker rm -f
     gateway-all` (extra) -> 21 line 6. "That's why the README writes 127.0.0.1": the box, the door
     and the machines leave as the first door's `127.0.0.1` flashes and the route from the
-    laptop's own browser lights up (only the laptop reaches that door).
+    laptop's own browser lights up (only the laptop reaches that door). As the IPv6 tag leaves,
+    the GREY lecture tag "Lecture 4 · slide 35" (lecture_ref, top right) and under it the GREY
+    note "lecture's short form = every address" (SLIDES.md Conflict 1) come in; both leave in
+    beat 4's first play.
  4  TRACKER P2/2. The terminal clears. `curl http://localhost:8090` (the route from the browser
     lights up) -> 22 lines 2-6, 0.7 s later 7, …, 154-155 (cut). `curl --max-time 3 http://localhost:9200/health`
     -> 23 line 2 RED, folded before "Could not connect to server"; V7's dashed ":9200 ?" arrow from the laptop stops at the wall and turns RED
@@ -47,11 +50,13 @@ Beats (script.md "## S13", one voiceover block each):
  7  The card leaves, the terminal returns empty and the chip's command drops into it as the
     typed `docker exec gateway curl --max-time 3 http://localhost:9200/health` (glyph for glyph,
     `localhost` still YELLOW) -> 25: `…` (the progress meter), lines 5-6 joined and folded at a space,
-    RED. "Inside the gateway, localhost is the gateway itself": only now the gateway's loop
-    glows YELLOW as a packet dot circles it; "nothing there listens on 9200": the dot turns RED
-    with a cross. "the second puzzle": README chip `README.md · line 290` "localhost means the
-    gateway" in the band and a YELLOW tick "puzzle 2" by the gateway; "each container has its
-    own localhost": the three loops (laptop, gateway, processor) flash. TRACKER P2/3 · extra:
+    RED. "Inside the gateway, localhost is the gateway itself": README chip `README.md · line
+    290` "localhost means the gateway" in the band, and only now the gateway's loop glows YELLOW
+    as a packet dot circles it; "nothing there listens on 9200": the dot turns RED with a cross.
+    "the second puzzle": the chip gives way to the GREY lecture tag "Lecture 4 · slides 33–34"
+    (lecture_ref, top right; it stays to beat 8's first play) and a YELLOW tick "puzzle 2" by
+    the gateway; "each container has its own localhost": the three loops (laptop, gateway,
+    processor) flash. TRACKER P2/3 · extra:
     `docker exec gateway curl -s http://localhost:9100 | head -4` (extra) -> 26 lines 2-5; the dot
     lands on the gateway's own room :9100, which flashes GREEN with a GREEN tick.
  8  TRACKER PH/5. "So how did the name work?": the phone book flashes. V6/V7 fade while the
@@ -182,6 +187,7 @@ from manim import (
     MoveAlongPath,
     Polygon,
     ShowPassingFlash,
+    Succession,
     Text,
     Transform,
     TransformFromCopy,
@@ -199,6 +205,7 @@ from explainer.devops import (
     check_mark,
     cross_mark,
     glyph_range,
+    lecture_ref,
     mono,
     mono_line,
     substring,
@@ -632,6 +639,12 @@ class WhoCanReach(VoiceScene):
         ipv6 = band(grey_tag("yours may also list [::]:8091 (IPv6)"))
         assert ipv6.get_left()[0] > tr.get_right()[0] + 0.12
         outside = net.parts["outside"]
+        lref35 = lecture_ref(4, "35")        # top right, once ch239 and the IPv6 tag have left the band
+        short = note("lecture's short form = every address")          # SLIDES.md Conflict 1
+        short.move_to([0, 2.925, 0]).align_to([6.5, 0, 0], RIGHT)
+        assert short.width <= 4.5 and short.get_left()[0] > tr.get_right()[0] + 0.12, short.get_left()[0]
+        assert short.get_top()[1] < lref35.get_bottom()[1] - 0.05, (short.get_top()[1], lref35.get_bottom()[1])
+        assert short.get_bottom()[1] > net.parts["outline"].get_top()[1] + 0.1, short.get_bottom()[1]
 
         with self.voiceover(SAY[3]) as vo:
             clear_with(self, t, FadeOut(ch239), FadeOut(cap), d1_ip.animate.set_color(INK), run_time=0.4)
@@ -658,7 +671,9 @@ class WhoCanReach(VoiceScene):
             type_extra(self, t, RM_F, type_time=0.6)
             t.print(self, [C21.line(6)], run_time=0.3)
             vo.wait_until("That's why the README writes")
-            self.play(FadeOut(ghost2), *net.parts_out("door2", "outside"), FadeOut(ipv6),
+            self.play(FadeOut(ghost2), *net.parts_out("door2", "outside"),
+                      Succession(FadeOut(ipv6), AnimationGroup(FadeIn(lref35, shift=DOWN * 0.1),
+                                                               FadeIn(short, shift=DOWN * 0.1))),
                       d1_ip.animate.set_color(TURN), flash(d1.frame, TURN, 1.25), run_time=0.8)
             vo.wait_until("this laptop only")
             self.play(flash_path(map_line, TURN), flash(net.browser, TURN, 1.2), run_time=0.9)
@@ -668,7 +683,8 @@ class WhoCanReach(VoiceScene):
         assert ch262.get_left()[0] > tracker("P2", 2).get_right()[0] + 0.35, ch262.get_left()[0]
 
         with self.voiceover(SAY[4]) as vo:
-            clear_with(self, t, tr.goto(2), d1_ip.animate.set_color(INK), run_time=0.5)
+            clear_with(self, t, tr.goto(2), d1_ip.animate.set_color(INK), FadeOut(lref35), FadeOut(short),
+                       run_time=0.5)
             type_cmd(self, t, C22.cmd, type_time=1.0)
             self.play(flash_path(map_line, LOOKUP), flash(net.rooms["gateway"], CTR, 1.2), run_time=0.7)
             t.print(self, C22.at((2, 6)), run_time=0.5)             # a chunk at most as tall as the strip
@@ -735,6 +751,8 @@ class WhoCanReach(VoiceScene):
         tick2.move_to([g_fr.get_right()[0] + 0.3 + tick2.width / 2, gw.loop.get_center()[1], 0])
         ch290 = band(readme_chip("README.md · line 290", PH290))
         assert ch290.get_left()[0] > tr.get_right()[0] + 0.12, ch290.get_left()[0]
+        lref33 = lecture_ref(4, "33–34")     # top right, from "the second puzzle" to beat 8's first play
+        assert lref33.get_left()[0] > tr.get_right()[0] + 1.2, lref33.get_left()[0]     # room for " · extra"
         room_g = net.rooms["gateway"]
         gtick = check_mark(0.3, VENV).next_to(room_g, RIGHT, buff=0.2)
         loops3 = [net.laptop_loop, VGroup(gw.loop, gw.loop_label), VGroup(pr.loop, pr.loop_label)]
@@ -769,7 +787,8 @@ class WhoCanReach(VoiceScene):
             assert e25[-1] == NOCONN, e25                    # whole on its own row
             t.print(self, ["…"] + [(r, ERR) for r in e25], run_time=0.4)
             vo.wait_until("Inside the gateway, localhost is")
-            self.play(fade_to(gw.loop, None), fade_to(gw.loop_label, None), FadeOut(qs[0]), run_time=0.4)
+            self.play(fade_to(gw.loop, None), fade_to(gw.loop_label, None), FadeOut(qs[0]),
+                      FadeIn(ch290, shift=DOWN * 0.1), run_time=0.4)
             dot, loop_anims = net.loopback("gateway")
             self.add(dot)
             self.play(*loop_anims)
@@ -777,7 +796,8 @@ class WhoCanReach(VoiceScene):
             xg = cross_mark(0.24, ERR).move_to(dot)
             self.play(dot.animate.set_color(ERR), Create(xg), run_time=0.5)
             vo.wait_until("That's the second puzzle")
-            self.play(FadeIn(ch290, shift=DOWN * 0.1), FadeIn(tick2, shift=LEFT * 0.1), run_time=0.6)
+            self.play(Succession(FadeOut(ch290), FadeIn(lref33, shift=DOWN * 0.1)),
+                      FadeIn(tick2, shift=LEFT * 0.1), run_time=0.6)
             vo.wait_until("each container has its own localhost")
             self.play(fade_to(pr.loop, None), fade_to(pr.loop_label, None), FadeOut(qs[1]), run_time=0.4)
             self.play(*[flash(m, TURN, 1.15) for m in loops3], run_time=0.9)
@@ -792,7 +812,7 @@ class WhoCanReach(VoiceScene):
         # ============================================================ 8 · docker network inspect: the addresses
         book0, book1 = net.book_lines
         with self.voiceover(SAY[8]) as vo:
-            self.play(flash(net.parts["book"], LOOKUP, 1.4), FadeOut(tick2), FadeOut(gtick), FadeOut(ch290),
+            self.play(flash(net.parts["book"], LOOKUP, 1.4), FadeOut(tick2), FadeOut(gtick), FadeOut(lref33),
                       net.unloop("gateway"), run_time=0.8)
             vo.wait_until("From the handy commands")
             tr = switch_section(self, tr, "PH", 5, run_time=0.6)
