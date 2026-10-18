@@ -14,7 +14,7 @@ Beats (script.md "## S03", one voiceover block each):
     note "cc67f3b = the commit we recorded · 2026-09-18 · yours may be newer". `ls -a
     transcribe_audio` (extra; the second command of mega-laptop/04) -> lines 10-18 (the two `git branch` rows scroll away); Dockerfile, docker-shell.sh,
     pyproject.toml, uv.lock turn GREEN as they are named and a copy of each flies into a GREEN
-    recipe card; its caption "committed" on "which you wrote".
+    recipe card; its caption "committed" on "which this branch".
  2  TRACKER L/1 (the tracker switches section). The terminal clears, title `laptop · lecture 3
     clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to 4:59" (SKIP_TO).
     `cd mega-pipeline` (no output). TRACKER L/1 · extra: `git status --short` -> mega-l03-laptop/01
@@ -53,8 +53,9 @@ Beats (script.md "## S03", one voiceover block each):
     fade; a static GREY "your turn" card with ▶ your turn, right-aligned above the strip: first a
     serif block "first: copy out your lecture 3 Dockerfile, / pyproject.toml, uv.lock · the switch
     replaces them" (tag extra), then the seven commands as typed (`git stash -u` tagged extra). The
-    block flashes YELLOW with the ▶ wiggle on "Pause and switch" (on "Before you switch" once
-    script.md carries that sentence).
+    block flashes YELLOW with the ▶ wiggle on "Pause and switch"; once script.md carries the
+    warning sentence, its first line flashes on "Before you switch", its second on "the switch
+    replaces" (when said), and the ▶ wiggles alone on "Pause and switch".
 10  TRACKER L/5 · extra. The card clears; the strip grows to 4 rows; V2 returns (state after the
     switch). `head -2 transcribe_audio/Dockerfile` (extra; its tag with a flash of the ignored
     Dockerfile on "lecture 3 Dockerfile") -> 11 lines 2-3; an excerpt chip
@@ -246,7 +247,9 @@ INCOMING_Y = 2.66       # where the branch's files wait (just under the tracker)
 # starts at 0:00), i.e. S01 + S02 + S03 durations, rounded down: re-check it whenever S01-S03 change
 # length. It must never land after S04's start; landing a second or two early (in this scene's
 # fade-out) is fine. 2026-10-17 QA draft: S01 90.86 + S02 73.13 + S03 135.72 = 299.7 (4:59.7);
-# after this pass S03 ends at 135.7 (explainer.check) / 136.0 (720p30): S04 at ~299.9.
+# 2026-10-18 re-check (S03 re-voiced, "which this branch commits"): 15 fps S01 90.86 + S02 73.13 +
+# S03 135.59 = 299.58, 4:59 lands 0.6 s early; 30 fps (720p30 renders) S01 91.00 + S02 73.30 +
+# S03 135.79 = 300.09, 4:59 lands 1.1 s early, at the start of the final fade-out.
 SKIP_TO = "4:59"
 
 
@@ -673,7 +676,8 @@ class GetTheCode(VoiceScene):
         # right of the tracker
         card9.shift(UP * (STRIP_TOP + 0.14 - card9.frame.get_bottom()[1])
                     + RIGHT * (X_R + 0.08 - card9.frame.get_right()[0]))
-        warned = "Before you switch" in " ".join(SAY[9].split())   # script.md's reworded line
+        say9 = " ".join(SAY[9].split())
+        warned = "Before you switch" in say9      # script.md's reworded line (requested)
         with self.voiceover(SAY[9]) as vo:
             self.play(tr.goto(5), run_time=0.4)
             type_cmd(self, t, BR3.cmd, type_time=0.4)
@@ -683,9 +687,12 @@ class GetTheCode(VoiceScene):
             self.play(flash(b9[0].glyphs, VENV, 1.15, 0.7))
             self.play(FadeOut(v2), FadeOut(VGroup(chip48, err8, grp8)), run_time=0.4)
             self.play(FadeIn(card9, shift=UP * 0.15), run_time=0.5)
-            if warned:
-                vo.wait_until("Before you switch")
-                self.play(flash(card9.first[0], TURN, 1.05, 0.9))   # the lines: not the opaque tag
+            if warned:                # the lines, not the opaque tag; one line per clause, so the
+                vo.wait_until("Before you switch")       # long warning sentence is not a still
+                self.play(flash(card9.first[0][0], TURN, 1.05, 0.9))
+                if "the switch replaces" in say9:
+                    vo.wait_until("the switch replaces")
+                    self.play(flash(card9.first[0][1], TURN, 1.05, 0.9))
             vo.wait_until("Pause and switch")
             self.play(Wiggle(card9.tag, scale_value=1.15, rotation_angle=0.025 * TAU),
                       *([] if warned else [flash(card9.first[0], TURN, 1.05, 0.9)]), run_time=0.9)

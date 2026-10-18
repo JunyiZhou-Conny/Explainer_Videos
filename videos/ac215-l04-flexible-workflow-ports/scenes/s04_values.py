@@ -50,9 +50,9 @@ Beats (script.md "## S04", one voiceover block each):
     back with a GREEN tick; a `test.txt` chip bounces off it (GREY). The picture fades (the tracker
     stays) and a GREY "your turn" card writes in (QA 06:18): Cloud Storage › Buckets › Create ·
     Name: globally unique, e.g. `<team>-mega-pipeline` = your `bucket_name` · Create folder
-    `input_audios` · Upload files › a short clip named `input-<something>.mp3` · GREY "or:
-    `gcloud storage buckets create` / `gcloud storage cp` · study guide" (extra); "globally
-    unique" flashes, ▶ your turn wiggles. Fade out to an empty frame.
+    `input_audios` · Upload files › a short clip named `input-<something>.mp3` · GREY "or, after
+    gcloud login · study guide:" over `gcloud storage buckets create` / `gcloud storage cp`
+    (extra); "globally unique" flashes, ▶ your turn wiggles. Fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - Beat 0: the tracker caption gets " · extra" while the four extra commands are typed (the script's
@@ -84,7 +84,9 @@ Deviations from SHOW (and why):
   sentence asked of script.md, "Bucket names are global: pick a unique one. Pause and create yours.",
   is anchored (GLOBAL7, PAUSE7) once SAY[7] holds it; until then the card follows the picture and
   holds 2 s after the narration (1 s with the sentence). The gcloud pair is named, not typed (the
-  study guide has both commands, extra, not captured).
+  study guide has both commands, extra, not captured, after `gcloud config set project` and the
+  login note), hence "after gcloud login". The gate and the test.txt bounce take 3.1 s (they ran
+  past the narration's end), so the card can land on "Bucket names are global".
 """
 
 from common import *
@@ -464,7 +466,8 @@ def mixed_row(parts):
 def bucket_card():
     """The ▶ your-turn card of step 3 (common.turn_card's look, rows of mixed serif / mono parts):
     the console clicks, the global bucket name, the folder and the upload, and the study guide's
-    gcloud pair (extra). .frame .rows .header .tag .name (the "globally unique" part)"""
+    gcloud pair (extra). .frame .rows .header .tag .name (the "globally unique" rule with its example,
+    one subgroup so a flash scales them together instead of into each other)"""
     sv, mo, G = "serif", "mono", S.GREY
     rows = [
         mixed_row([("Cloud Storage › Buckets › Create", sv, INK)]),
@@ -473,9 +476,11 @@ def bucket_card():
         mixed_row([("In the bucket: Create folder", sv, INK), ("input_audios", mo, INK)]),
         mixed_row([("In that folder: Upload files › a short clip named", sv, INK),
                    ("input-<something>.mp3", mo, INK)]),
-        mixed_row([("or:", sv, G), ("gcloud storage buckets create", mo, G), ("/", sv, G),
-                   ("gcloud storage cp", mo, G), ("· study guide", sv, G)]),
+        mixed_row([("or, after gcloud login · study guide:", sv, G)]),
+        mixed_row([("gcloud storage buckets create", mo, G), ("/", sv, G), ("gcloud storage cp", mo, G)]),
     ]
+    r1 = rows[1]
+    rows[1] = VGroup(VGroup(r1[0], r1[1]), r1[2], r1[3])
     ex = extra_tag().next_to(rows[-1], RIGHT, buff=0.25)
     rows[-1].add(ex)
     items = VGroup(*rows).arrange(DOWN, aligned_edge=LEFT, buff=0.24)
@@ -823,22 +828,26 @@ class YourValues(VoiceScene):
             self.play(Transform(mp3, txt), run_time=1.0)
             self.remove(mp3)
             self.add(txt)
-            self.play(FadeIn(cap62, shift=UP * 0.1), flash(txt.text, INK, 1.08, 0.6))
+            self.play(FadeIn(cap62, shift=UP * 0.1), flash(txt.text, INK, 1.08, 0.6), run_time=0.6)
+            # the gate and the bounce fit between "and upload only sends" and the end of the
+            # sentence, so the card can arrive on "Bucket names are global" (GLOBAL7) once SAY[7]
+            # holds it (with 4.5 s here, the card came 2 s after that sentence started)
             vo.wait_until("and upload only sends")
-            self.play(FadeIn(gate, shift=LEFT * 0.15), run_time=0.5)
-            self.play(txt.animate.move_to([wait_x + txt.width / 2, d_tp.get_center()[1], 0]), run_time=0.6)
+            self.play(FadeIn(gate, shift=LEFT * 0.15),
+                      txt.animate.move_to([wait_x + txt.width / 2, d_tp.get_center()[1], 0]), run_time=0.6)
             # the name matches: the gate lifts like a barrier, the chip passes under it into the
             # bucket's text_prompts/ group-01/, the gate drops back with its GREEN tick
             self.play(gate.animate.shift(UP * lift), run_time=0.3)
-            self.play(FadeOut(txt, target_position=sub_tp.get_center(), scale=0.5), run_time=0.6)
+            self.play(FadeOut(txt, target_position=sub_tp.get_center(), scale=0.5), run_time=0.5)
+            # test.txt does not match: it rises from the folder as the gate drops back, and
+            # bounces off the closed gate, GREY
             self.play(gate.animate.shift(DOWN * lift), FadeIn(g_tick, scale=1.3),
-                      flash(sub_tp, LOOKUP, 1.1, 0.5), flash(d_tp, CLOUD, 1.05, 0.5), run_time=0.5)
-            # test.txt does not match: the gate stays down and it bounces off, GREY
-            self.play(FadeIn(test, shift=UP * 0.1), run_time=0.35)
-            self.play(test.animate.move_to([wait_x + test.width / 2, d_tp.get_center()[1], 0]), run_time=0.5)
+                      flash(sub_tp, LOOKUP, 1.1, 0.5), flash(d_tp, CLOUD, 1.05, 0.5),
+                      FadeIn(test, shift=UP * 0.1), run_time=0.5)
+            self.play(test.animate.move_to([wait_x + test.width / 2, d_tp.get_center()[1], 0]), run_time=0.45)
             self.play(test.animate(rate_func=there_and_back).shift(LEFT * 0.2),
-                      flash(gate.chip, S.GREY, 1.1, 0.6), run_time=0.6)
-            self.play(test.animate.set_color(S.GREY_DARK), run_time=0.3)
+                      flash(gate.chip, S.GREY, 1.1, 0.5), run_time=0.5)
+            self.play(test.animate.set_color(S.GREY_DARK), run_time=0.25)
             # ▶ your turn: the picture gives way to the step-3 card (bucket, folder, upload)
             if GLOBAL7:
                 vo.wait_until(GLOBAL7)
@@ -850,7 +859,7 @@ class YourValues(VoiceScene):
             self.play(FadeIn(card.frame), FadeIn(card.header),
                       LaggedStart(*[FadeIn(r, shift=RIGHT * 0.12) for r in card.rows], lag_ratio=0.25),
                       run_time=1.1)
-            self.play(flash(card.name, TURN, 1.04, 0.7))     # 1.04: clears the mono example beside it
+            self.play(flash(card.name, TURN, 1.03, 0.7))     # 1.03: clears "= your" beside it
             if PAUSE7:
                 vo.wait_until(PAUSE7)
             self.play(FadeIn(card.tag, shift=LEFT * 0.15), run_time=0.4)

@@ -896,7 +896,12 @@ class RunComponents(VoiceScene):
             d9 = t2.print(self, C41.at("") + [(C41.line(16), S.GREY), (C41.line(17), INK)], run_time=0.35)
             assert len(t2.lines) == 4 and t2.lines[0] is gd.rows[-1]
             also = mixed([("mono", "gcp_project"), "and", ("mono", "bucket_name"), "edited too"], CAPTION, S.GREY)
-            note_with(self, t2, d9[0], also, run_time=0.3)
+            # the TEAL terminal's old help run fades in place as the note comes (a 6-row scroll of
+            # it would slide through the second terminal above); help then types on an empty screen
+            old8 = VGroup(*t.lines.submobjects)
+            note_with(self, t2, d9[0], also, FadeOut(old8), run_time=0.3)
+            for m in list(old8):
+                t.lines.remove(m)
             vo.wait_until("Now help fails")
             hl = type_cmd(self, t, CC2.cmd, type_time=0.4)
             o9 = t.print(self, CC2.at((2, 4), "") + [(ERR_LINE, ERR)], wrap=True, run_time=0.5)
@@ -912,8 +917,10 @@ class RunComponents(VoiceScene):
             imp = grey_tag("runs on import").next_to(p23.header, RIGHT, buff=0.4)
             imp.set_y(p23.header.get_center()[1])
             # the extra command leaves the screen: the tracker caption loses " · extra" with it
-            self.play(FadeOut(VGroup(t2, ic_lap, ic_ctr)), FadeIn(p23, shift=DOWN * 0.1), caption_extra(tr, False),
-                      run_time=0.5)
+            # (out, then in: the diff and the chip share the band, so they never overlap)
+            self.play(FadeOut(VGroup(t2, ic_lap, ic_ctr), rate_func=lambda a: smooth(min(1.0, 2 * a))),
+                      FadeIn(p23, shift=DOWN * 0.1, rate_func=lambda a: smooth(max(0.0, 2 * a - 1))),
+                      caption_extra(tr, False), run_time=0.5)
             self.play(FadeIn(imp, shift=LEFT * 0.1), FadeIn(bar23), run_time=0.5)
             vo.wait_until("even help needs the key")
             self.play(flash(VGroup(*o9[-2:]), ERR, 1.03), run_time=0.7)

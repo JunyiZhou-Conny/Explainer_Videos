@@ -22,10 +22,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l03-mega-pipeline.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. The only video file committed |
+| `output/ac215-l03-mega-pipeline.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:56, 98 MB. The only video file committed |
 | `output/ac215-l03-mega-pipeline.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not committed: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l03-mega-pipeline_part1.mp4` | part 1, DURATION_P1: the pipeline, and your first Dockerfile (S01–S07). Not committed: rebuilt with `--no-render` |
-| `output/ac215-l03-mega-pipeline_part2.mp4` | part 2, DURATION_P2: packages, the key, and all five components (S08–S15). Not committed: rebuilt with `--no-render` |
+| `output/ac215-l03-mega-pipeline_part1.mp4` | part 1, 13:44: the pipeline, and your first Dockerfile (S01–S07). Not committed: rebuilt with `--no-render` |
+| `output/ac215-l03-mega-pipeline_part2.mp4` | part 2, 17:11: packages, the key, and all five components (S08–S15). Not committed: rebuilt with `--no-render` |
 | `output/ac215-l03-mega-pipeline.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l03-mega-pipeline.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l03-mega-pipeline.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -40,7 +40,38 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+
+```
+00:00 Five containers, one bucket
+01:19 The bucket is the message bus
+03:12 Clone: five folders, no Dockerfile
+04:39 The key, and uv init
+06:35 Write the Dockerfile, line by line
+09:16 Build: five steps, one fat layer
+11:29 Run: a window into your laptop
+13:44 uv add: what lands where
+15:51 Who is calling? The key and ADC
+17:58 Transcribe and upload
+19:36 Exit, and bake it in
+21:25 generate_text: same recipe, two surprises
+24:26 Synthesize, translate, synthesize
+27:12 Keep the key out of the image
+29:14 Clean up, recap, and what's next
+```
+
+Part 1 uses the first seven lines as they are. Part 2 starts its clock at 0:00:
+
+```
+00:00 uv add: what lands where
+02:07 Who is calling? The key and ADC
+04:13 Transcribe and upload
+05:51 Exit, and bake it in
+07:41 generate_text: same recipe, two surprises
+10:42 Synthesize, translate, synthesize
+13:27 Keep the key out of the image
+15:29 Clean up, recap, and what's next
+```
 
 ## What you'll learn
 
