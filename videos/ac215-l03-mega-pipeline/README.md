@@ -22,7 +22,7 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l03-mega-pipeline.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:56, 98 MB. A release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
+| `output/ac215-l03-mega-pipeline.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 30:56, 112 MB. A release asset: no MP4 is kept in Git ([`docs/PUBLISHING.md`](../../docs/PUBLISHING.md)) |
 | `output/ac215-l03-mega-pipeline.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not in Git: rebuild it with `--no-render` (see Rebuild) |
 | `output/ac215-l03-mega-pipeline_part1.mp4` | part 1, 13:44: the pipeline, and your first Dockerfile (S01–S07). Not in Git: rebuilt with `--no-render` |
 | `output/ac215-l03-mega-pipeline_part2.mp4` | part 2, 17:11: packages, the key, and all five components (S08–S15). Not in Git: rebuilt with `--no-render` |

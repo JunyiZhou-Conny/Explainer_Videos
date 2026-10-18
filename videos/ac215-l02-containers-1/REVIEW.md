@@ -5,21 +5,30 @@ PR Explainer_Videos#29 (branch `claude/mlops-learning-videos-7b5use`). The final
 stitched on 2026-10-17 (19:42–20:42 UTC) from the 1080p60 scene renders of 16:01–17:15 UTC and
 checked (*Final-cut checks*). A fix round then changed four scenes (S02, S06, S11, S14), re-rendered
 them at 1080p60 on 2026-10-18 (04:09–04:39 UTC) and re-stitched the cut on 2026-10-18 from those
-four renders and the twelve unchanged stitched segments of 2026-10-17. The final stitch run wrote the
-deliverables at 05:20–06:09 UTC; it reused the four new scene segments that an earlier run of the
-same stitch (started 04:44 UTC) had normalized at 04:46–04:52 UTC. The re-stitch is the cut this
-record describes (*Fix round and recheck*). The fix round's commits are:
+four renders and the twelve unchanged stitched segments of 2026-10-17. That stitch run (the
+re-stitch) wrote the deliverables at 05:20–06:09 UTC; it reused the four new scene segments that an
+earlier run of the same stitch (started 04:44 UTC) had normalized at 04:46–04:52 UTC, and it was
+rechecked (*Fix round and recheck*). Two stitcher commits then changed the final audio encode, and
+the same stitch (`--no-render --crf 27 --burn`) wrote the deliverables again at 09:34–10:22 UTC from
+the same sixteen scene segments; only the final audio encode differs. This final stitch is the cut
+this record describes and measures. Its frames were not checked again: the frames cited here are of
+the re-stitch (the four changed scenes), which used the same sixteen scene segments, or of the
+2026-10-17 stitch (the whole cut); the ASR round trip ran on the 2026-10-17 stitch, with the same
+narration. The fix round's commits are:
 - the four scene files and their SHOW lines in `script.md`: `661cc16`, `e4ab95c`, `85fb162` and
   `8a61f62`. No SAY line changed.
 - one Chinese sentence in `i18n/zh/narration/g2.yaml`: `8a61f62`.
 - a sample-peak limiter after `loudnorm` in the stitcher (`explainer/build.py`): `5a02ba1`.
+- the stitcher's final audio encode (`explainer/build.py`): no AAC noise substitution, `8a092e4`;
+  the limit lowered from 0.79 to 0.71 and AAC at 192k instead of 128k, `5833542`.
 - the regenerated subtitles: `48068d7` for the full cut and `bdfead6` for part 2.
 
 Apart from these, the scenes and `script.md` are unchanged since `5215879`, and `i18n/` and the
 subtitle toolkit since `0c4d0e9`. The toolkit's only other change since then is two
 `explainer/lexicon.yaml` entries for "port toy" (`e018fb0`), a phrase L02 never says. Later commits
-up to `855cbd7` touch neither this folder nor `explainer/`. Verified facts and unclaimed reviews are
-kept separate.
+up to `855cbd7` touch neither this folder nor `explainer/`; from there to `86fb60c`, this folder
+changed only in `REVIEW.md` and `QA_FOLLOWUPS.md` (`bf99362`, `7312ec1`) and `explainer/` only in
+`8a092e4` and `5833542`. Verified facts and unclaimed reviews are kept separate.
 
 Times are mm:ss in the full video (`output/ac215-l02-containers-1.zh-en.mp4`, 31:17.7) unless
 marked "draft". The evidence for the final-cut checks is in `build/final-review/` (git-ignored,
@@ -35,6 +44,11 @@ git-ignored, on the same machine):
 - `adv/`: an adversarial re-check of this record: its own `ebur128` / `loudnorm` / audio-MD5 logs
   and probes (`adv/logs/`), stitch-segment and render probes (`adv/segments.json`), subtitle checks
   (`adv/subs_check.json`) and frames of both cuts (`adv/frames/`).
+
+The evidence for the re-measure of the final stitch is in `build/remeasure/` (also git-ignored, on
+the same machine): `measured.json`, `subs_chapters.json`, the raw logs in `logs/`, and the scripts
+that wrote them (`run.sh`, `subs_chapters.py`, `assemble.py`). An adversarial verifier's own
+re-measure of it is in `build/remeasure/verify/` (`verify_summary.json`, `logs/` and its scripts).
 
 ## Content gates (AGENTS.md)
 
@@ -86,17 +100,19 @@ git-ignored, on the same machine):
    fixers and skeptical verifiers, two finishing passes, then four checks of the final cut. A fix
    round on four scenes followed, with a fixer and a verifier each, and then a recheck of the
    re-stitched cut. Findings, fixes and what stayed open are below. ✔
-6. **Measured checks**: see *Verified (final render)*, measured on the re-stitched cut. Decode,
-   durations, loudness, true peak, subtitle bounds and chapters pass. This episode has no music bed
-   (`video.yaml` has no `music` key; the mix is narration only), so there is no music-balance figure.
-   True peak is now −1.53 dBTP (both full cuts and part 1) and −1.63 dBTP (part 2), so the stitcher's
-   −1.5 dBTP target is met. The limiter after `loudnorm` (`5a02ba1`) did this; the previous stitch
-   read −1.0 to −1.3. ✔
+6. **Measured checks**: see *Verified (final render)*, measured on the final stitch (09:34–10:22
+   UTC). Decode, durations, loudness, true peak, subtitle bounds and chapters pass. This episode has
+   no music bed (`video.yaml` has no `music` key; the mix is narration only), so there is no
+   music-balance figure. True peak is now −2.34 dBTP (both full cuts and part 1) and −2.81 dBTP
+   (part 2), 0.84–1.31 dB under the stitcher's −1.5 dBTP target, at −16.07 to −16.10 LUFS. The
+   limiter after `loudnorm` (`5a02ba1`) first met the target, at −1.53 / −1.63 on the re-stitch; the
+   audio encode change (`8a092e4`, `5833542`) gave the margin. The 2026-10-17 stitch read −1.0 to
+   −1.3. ✔
    - Listening sign-off: waived by Conny for the AC215 series (Explainer_Videos#29, 2026-10-15): 「不需要，我现在对视频质量很满意的」 — no human listened to this cut; the ASR round trip below is the substitute.
-   - The ASR round trip was run on the previous stitch (2026-10-17), not on this re-stitch. The
-     narration is the same: no SAY line changed, and the 129 voice blocks have the same per-scene
-     durations (1762.133 s in all). The re-stitch changed only the four scenes listed and added the
-     limiter.
+   - The ASR round trip was run on the previous stitch (2026-10-17), not on the re-stitch or the
+     final stitch. The narration is the same: no SAY line changed, and the 129 voice blocks have the
+     same per-scene durations (1762.133 s in all). The re-stitch changed only the four scenes listed
+     and added the limiter; the final stitch changed only the final audio encode.
 
 ## Whole-video QA (480p draft, 30:20, 2026-10-16) and the finishing passes (2026-10-17)
 
@@ -193,6 +209,8 @@ the probes and the subtitles and re-extracted frames for each fixed item below
   scene's `events.json` plus the scene's start. For the four scenes, contact sheets of
   `zh-en.mp4` at one frame every 2 s, with the time burned in; all 16 sheets were read.
 - **Measurement recheck** (`build/recheck/measured.json`).
+- **Re-measure of the final stitch** after the audio encode change (`build/remeasure/`): see
+  *Audio encode* below the table.
 
 Every item below is fixed on the re-stitched cut. Frame paths are under `build/recheck/`.
 
@@ -203,7 +221,7 @@ Every item below is fixed on the re-stitched cut. Frame paths are under `build/r
 | 25:32.4–25:57.3 | S14 | **Slide-77 tag:** it now stays until the create-VM console becomes the SSH terminal. It comes in at 25:32.417 and is still on at 25:39.3 and 25:40.0 (the old exit was at ≈25:39.4). It is fully on at 25:56.40, faint at 25:56.60 and gone at 25:56.80. **Near-empty frame:** closed. The console now fades in during the section-name pulse, 25:34.850–25:35.650. The frame holds only the tracker and the tag for about 0.5 s (≈25:34.6–25:35.2), while the title lands in the tracker; the old gap was 25:34.9–25:36.9. **Badge:** the `ac215-l02` box appears from about 25:57.03, left of the cost dial, and the dial never crosses it (checked 25:56.95–25:57.30). | `scenes/s14/f_25m39.300`, `f_25m40.000`, `f_25m56.400`, `f_25m56.600_tr`, `f_25m56.800_tr`; `f_25m34.000` to `f_25m35.900` and `scenes/s14/gap_fill.json`; `f_25m56.950_tr`, `f_25m56.990` to `f_25m57.300` (each with `_zoom`) |
 | 03:05.9–03:16.7 | S02 | Tag `slides 9–12, 22–24` now fades out with its VM/kernel picture, 03:05.917–03:06.517. A new `Lecture 2 · slides 5–7, 10, 22` fades in with beat 8's image stack at 03:06.517–03:07.517, in the old tag's spot under "registry". It leaves with the final fade, 03:15.900–03:16.700. `SLIDES.md` ties beat 8 to slides 5–7, 10 and 22. The two tags never show together and the new one overlaps nothing. `script.md`'s S02 SHOW lines now give these spans. | `scenes/s02/f_03m05.700`, `f_03m06.200`, `f_03m06.530`, `f_03m07.000`, `f_03m07.600`, `f_03m13.500`, `f_03m15.800` (and `_tr`), `f_03m16.300` |
 | 21:31.98–21:39.81 | S12 | The bilingual English line now holds `docker tag simple-translate <USER NAME>/simple-translate-ac215` whole: the zh in `i18n/zh/narration/g2.yaml` was reworded. In `.zh-en.srt`, cue 380 (21:31.983–21:34.500) reads 然后给 image 打 tag：在 docker tag 后面先写 / "Then tag the image:". Cue 381 (21:34.500–21:39.812) reads simple-translate 再写你的用户名/simple-translate-ac215 over the whole command, and the `.ass` matches. In `.zh.srt`, cues 319/320 run 21:31.983–21:33.483 (1.500 s) and 21:33.483–21:39.812. The English `.srt` (cue 355) was already whole and is unchanged. Part 2 has the same wording: `.zh-en.srt` cues 78/79, `.ass` lines 92/93 and `.zh.srt` cues 64/65, all at 04:34.033–04:41.862. Every part-2 cue (217 / 205 / 244 / 244) equals the full cut's minus 1017.950 s, in both text and timing; in the `.ass`, which rounds to the centisecond, two end times differ by 0.01 s (the cues starting 18:31.28 and 22:23.54). The burned copy shows two lines here: 897 px of Chinese and 706 px of English. | `scenes/subs/zhen_1293.20.png`, `scenes/subs/zhen_1297.50.png`, `frames/zh-en_t1293.0.png`, `frames/zh-en_t1297.0.png`, `s12_tag_burned_extent.json`, `scenes/subs/part2_vs_full.json`; commits `48068d7` and `bdfead6` |
-| whole cut | all | True peak is −1.53 dBTP (full cut, Bilibili copy, part 1) and −1.63 (part 2); it was −1.0 to −1.3. The stitcher's −1.5 dBTP target is now met. Integrated loudness is −16.06 to −16.09 LUFS. | `measured.json` (`loudness.loudnorm_measure_2dp`), `logs/*.ebur128.log`, `logs/*.loudnorm_measure.log` |
+| whole cut | all | True peak is −2.34 dBTP (full cut, Bilibili copy, part 1) and −2.81 (part 2) on the final stitch, after the audio encode change below. The limiter (`5a02ba1`) first met the stitcher's −1.5 dBTP target on the re-stitch, at −1.53 and −1.63; the 2026-10-17 stitch read −1.0 to −1.3. Integrated loudness is −16.07 to −16.10 LUFS. | `build/remeasure/measured.json` (`loudness.loudnorm_measure_2dp`), `build/remeasure/logs/*.ebur128.log`, `build/remeasure/logs/*.loudnorm_measure.log`; the re-stitch's figures: `build/recheck/measured.json`, `build/recheck/logs/` |
 | — | docs | `script.md` (line 146) now gives the measured word count: 4,398 words (2,428 / 1,970), changed in `8a61f62`. | `script.md:146` |
 
 Checked across the four scenes:
@@ -216,6 +234,18 @@ Checked across the four scenes:
 
 Chapters did not move: the 16 re-stitched scene lengths equal the previous ones to the millisecond
 (`scenes/scene_offsets.json`).
+
+**Audio encode, after the recheck (final stitch, 09:34–10:22 UTC).** The re-stitch met the −1.5 dBTP
+target by only 0.03–0.13 dB. The encoded file's true peak overshoots the sample-peak limit: with AAC
+at 128k, by about 1.1 dB on L03's full cut (−0.9 dBTP at limit 0.79, i.e. −2.05 dBFS) and by
+0.42–0.52 dB on this re-stitch. AAC noise substitution put a +0.9 dBTP spike into L03 part 2 that showed only when decoding from the
+start. `8a092e4` turns noise substitution off (`-aac_pns 0`); `5833542` lowers the limit from 0.79
+to 0.71 and encodes at 192k instead of 128k. The cut was stitched again with `--no-render --crf 27
+--burn` from the same sixteen segments (all dated 04:52 UTC or earlier); the 16 tracked subtitle,
+chapter and transcript files it rewrote are byte-identical to HEAD. Re-measured
+(`build/remeasure/measured.json`): true peak −2.34 dBTP (full cut, Bilibili copy, part 1) and
+−2.81 (part 2), 0.84–1.31 dB under the target; −16.07 to −16.10 LUFS; LRA 2.1–2.2 LU; AAC 178–179
+kb/s; 103.39 / 104.38 / 54.52 / 49.87 MB. Durations, frame counts and video bitrates are as before.
 
 ## Open items in this cut (left as is, with the reason)
 
@@ -254,27 +284,45 @@ fix round, and the adversarial re-check confirmed both on the re-stitched 1080p6
 
 ## Verified (final render)
 
-Measured on the re-stitched cut (`build/recheck/measured.json`, 2026-10-18 06:34 UTC); the sizes,
-bitrates, frame counts, loudness, true peak, LRA and audio MD5s were measured again independently
-and agree (`build/recheck/adv/logs/`). Items marked "previous stitch" come from the 2026-10-17
-stitch (`build/final-review/`) and were not re-run.
+Measured on the final stitch (`build/remeasure/measured.json`, 2026-10-18 10:26–10:50 UTC, one
+ffmpeg job at a time; raw logs in `build/remeasure/logs/`, subtitle and chapter checks in
+`build/remeasure/subs_chapters.json`). The MP4s were written at 09:38:09 (clean), 10:19:55 (zh-en),
+10:21:32 (part 1) and 10:22:50 (part 2) UTC, and their timestamps did not change while they were
+measured. The independent re-measure in `build/recheck/adv/logs/` was of the re-stitch, whose
+figures it confirmed. An adversarial verifier then re-measured all four final files on its own,
+10:56–11:05 UTC, one ffmpeg job at a time (`build/remeasure/verify/`: probes, packet counts,
+`ebur128`, `loudnorm`, a 4× soxr-oversampled peak with its location, audio MD5). Sizes, bitrates,
+packet counts, loudness, true peak, LRA and audio MD5s agree with `build/remeasure/` (the figures
+below); it did not re-run the full decode. Items marked "previous stitch" come
+from the 2026-10-17 stitch (`build/final-review/`) and were not re-run; items marked "re-stitch"
+come from the 05:20 stitch (`build/recheck/`), which used the same scene segments as the final one.
 
 - **Encode and decode.** All four files are H.264 High, 1920×1080, 60 fps, yuv420p, with AAC-LC
-  48 kHz stereo at 117–118 kb/s. A full `ffmpeg -v error … -f null -` decode of each exited 0 with
-  no error lines, and the frame counts read during decoding match the file headers. Overall
-  bitrates are 379.8 / 384.0 / 367.5 / 403.5 kb/s, in the order of the table.
+  48 kHz stereo at 178–179 kb/s (the re-stitch had 117–118 kb/s at 128k). A full `ffmpeg -v error …
+  -f null -` decode of each exited 0 with no error lines, and the frame counts read during decoding
+  match the file headers. Overall bitrates are 440.5 / 444.7 / 428.4 / 464.1 kb/s, in the order of
+  the table; the video bitrates, 250.4 / 254.6 / 237.7 / 274.6 kb/s, and the audio packet counts
+  equal the re-stitch's.
 
   | file | duration | video frames | size | loudness | true peak | LRA |
   | --- | --- | --- | --- | --- | --- | --- |
-  | `ac215-l02-containers-1.zh-en.mp4` (Bilibili) | 1877.715 s (31:17.7) | 112,662 | 89.14 MB | −16.0 LUFS (−16.08) | −1.5 dBTP (−1.53) | 2.1 LU |
-  | `ac215-l02-containers-1.mp4` | 1877.715 s | 112,661 | 90.13 MB | −16.0 LUFS (−16.08) | −1.5 dBTP (−1.53) | 2.1 LU |
-  | `ac215-l02-containers-1_part1.mp4` | 1018.004 s (16:58.0) | 61,077 | 46.76 MB | −16.1 LUFS (−16.09) | −1.5 dBTP (−1.53) | 2.1 LU |
-  | `ac215-l02-containers-1_part2.mp4` | 859.813 s (14:19.8) | 51,584 | 43.37 MB | −16.0 LUFS (−16.06) | −1.6 dBTP (−1.63) | 2.2 LU |
+  | `ac215-l02-containers-1.zh-en.mp4` (Bilibili) | 1877.715 s (31:17.7) | 112,662 | 103.39 MB | −16.1 LUFS (−16.08) | −2.3 dBTP (−2.34) | 2.1 LU |
+  | `ac215-l02-containers-1.mp4` | 1877.715 s | 112,661 | 104.38 MB | −16.1 LUFS (−16.08) | −2.3 dBTP (−2.34) | 2.1 LU |
+  | `ac215-l02-containers-1_part1.mp4` | 1018.004 s (16:58.0) | 61,077 | 54.52 MB | −16.1 LUFS (−16.10) | −2.3 dBTP (−2.34) | 2.1 LU |
+  | `ac215-l02-containers-1_part2.mp4` | 859.813 s (14:19.8) | 51,584 | 49.87 MB | −16.0 LUFS (−16.07) | −2.8 dBTP (−2.81) | 2.2 LU |
 
   Loudness, true peak and LRA come from `ebur128=peak=true`. The two-decimal figures in brackets
   come from `loudnorm` run in measure-only mode. The true-peak target of −1.5 dBTP is met on every
-  file; the previous stitch read −1.2, −1.2, −1.3 and −1.0. The audio packets of `zh-en.mp4` are
-  identical to the clean cut's (same MD5).
+  file, by 0.84–1.31 dB; the re-stitch read −1.53, −1.53, −1.53 and −1.63 (0.03–0.13 dB under), and
+  the previous stitch −1.2, −1.2, −1.3 and −1.0. In every file both channels peak at the same level
+  (to 0.1 dB; 4× oversampled, left / right −2.340 / −2.343 dB in the full cuts and part 1,
+  −2.813 / −2.813 in part 2). In that oversampled decode from the start, the highest peak falls at
+  04:11.8 (251.81 s) in both full cuts and part 1, and part 2's at 06:45.6 of the part (405.58 s,
+  23:43.5 in the full cut). The full cuts' one-decimal loudness reads −16.1 where the re-stitch's
+  read −16.0 because `ebur128`'s own integrated value sits on the rounding edge: −16.055 unrounded
+  on the final stitch (part 2: −16.040), while `loudnorm` reads −16.08 on both stitches. The audio
+  packets of `zh-en.mp4` are identical to the clean cut's (same MD5); every file's audio MD5 is new, as
+  expected from the new encode.
 - **Lengths and chapters.** The 16 scene renders sum to 1877.683 s and 112,661 frames. The four
   re-rendered scenes (S02, S06, S11, S14) keep their lengths to the millisecond, and each stitched
   scene's frame count equals its render's. The other twelve are stitched from the same normalized
@@ -317,11 +365,12 @@ stitch (`build/final-review/`) and were not re-run.
   at 16:06–16:10 and 24:18–24:22. The longest, 8.4 s at 10:07.9–10:16.3, is narrated over the "Now
   predict" chips.
 - **ASR round trip** (substitute for a listen; previous stitch). It was run on the 2026-10-17
-  stitch and not re-run on the re-stitch. The narration is the same: no SAY line changed in the
-  fix round (`script.md` changed only SHOW lines and the word count), and the 129 voice blocks have
-  the same per-scene durations, 1762.133 s in all. The re-stitch changed only the four scenes listed
-  and added the limiter after `loudnorm`. `asr_video.py` with base.en on the clean cut against
-  its `.srt`: 502 cues, 4,538 words recognised, 225 cues differing. Every differing cue was re-run with
+  stitch and not re-run on the re-stitch or the final stitch. The narration is the same: no SAY line
+  changed in the fix round (`script.md` changed only SHOW lines and the word count), and the 129
+  voice blocks have the same per-scene durations, 1762.133 s in all. The re-stitch changed only the
+  four scenes listed and added the limiter after `loudnorm`; the final stitch changed only the final
+  audio encode (limit 0.71, AAC at 192k, no noise substitution). `asr_video.py` with base.en on the
+  clean cut against its `.srt`: 502 cues, 4,538 words recognised, 225 cues differing. Every differing cue was re-run with
   large-v3-turbo in 91 windows that include the neighbouring cues: 17 match exactly; the other 74
   differ only by ASR noise (Dockerfile → "docker file", sudo → "pseudo", digits vs words), by the 65
   intended spoken-vs-subtitle forms, or by edge bleed. base.en drop-outs at 06:49, 19:12,
@@ -394,7 +443,15 @@ stitch (`build/final-review/`) and were not re-run.
 - **No human listened to this cut** and no human watched it through; the listen is waived for the
   series (gate 6). The ASR round trip shows the words are recognisable; it says nothing about voice
   quality, pacing preference or how the video feels. It ran on the previous stitch and was not
-  re-run on the re-stitch, whose audio passes through the new limiter.
+  re-run on the re-stitch, whose audio passes through the new limiter, or on the final stitch, whose
+  audio is limited at 0.71 and encoded at 192k without noise substitution.
+- **The final stitch was only re-measured.** Its decode, probes, loudness, true peak, subtitles and
+  chapters were checked (`build/remeasure/`), and its probes, loudness and true peak again
+  independently (`build/remeasure/verify/`); none of its frames were looked at. Every frame cited in
+  this record is of the re-stitch or the 2026-10-17 stitch; the re-stitch used the same sixteen
+  scene segments. The final stitch's durations, frame counts and video bitrates equal the
+  re-stitch's, but no video-packet checksum of the re-stitch was kept, so the picture was not
+  compared byte for byte.
 - **The re-stitch was checked only where it changed.** The four changed scenes were re-read at one
   frame every 2 s plus exact frames, and every file was re-measured. The other twelve scenes were
   not looked at again; their stitched segments are the same files as in the previous stitch. These
