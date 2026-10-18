@@ -5,7 +5,9 @@ Beats (script.md "## S16", one voiceover block each):
  0  TRACKER P4/3. Terminal (full width, 12 rows, `laptop`, student@laptop:~/AC215/port_toy$). It types
     `docker compose up -d` -> port-laptop/55 lines 2–5 (each `✔` row's time is a GREY tag at the row's
     end); the prompt returns at once with the GREY tag "in the background"; the prompt flashes on "and
-    returns your prompt".
+    returns your prompt". On "up dash d starts the app" the GREY lecture tag "Lecture 4 · slide 29"
+    (lecture_ref, top right; SLIDES.md S16 i) fades in; it leaves as beat 1's compact page arrives
+    (the page's illustration tag takes its place in the top band).
  1  TRACKER PH/2 (the tracker switches section). The terminal shrinks to 6 rows. `docker compose logs -f
     gateway` -> 56b line 2 (the banner); a compact PAGE (localhost:8090) at the top right; its address
     bar is clicked (Send) and 56b line 3, the `POST` line, prints while the page fills with 56c's reply
@@ -70,7 +72,8 @@ Beats (script.md "## S16", one voiceover block each):
  7  Everything goes (the tracker too). "Test yourself" (40 pt, YELLOW underline) at the top. Q1 writes
     in at 26 pt in the centre with a YELLOW number badge and, at its left, a glyph-only icon of V1 (the
     BLUE shelf, the sealed TEAL box, the PINK signpost whose pointer aims at it). The GREY caption
-    "pause after each question" sits under the title; Q1–Q3's icon cards carry a GREY "part 1" tag
+    "pause after each question" sits under the title (it flashes as that is said); Q1–Q3's icon
+    cards carry a GREY "part 1" tag
     under them (part-1 material in the part-2 upload). On "which files
     define" the box flashes; on "and what does run use" `run` turns YELLOW and the pointer flashes.
  8  Q1 slides up and fades as Q2 writes in (icon: V3's three gates, a key outline in a dashed slot, a
@@ -222,6 +225,7 @@ from explainer.devops import (
     file_glyph,
     folder_glyph,
     label,
+    lecture_ref,
     mono,
     mono_line,
     step_badge,
@@ -849,10 +853,13 @@ class Recap(VoiceScene):
         # ============================================================ 0 · up -d: in the background
         tr = tracker("P4", 3)
         t = calm(term(P_TOY, rows=12, title="laptop"))
+        lref29 = lecture_ref(4, "29")        # top right, to the compact page's arrival (SLIDES.md S16 i)
+        assert lref29.get_bottom()[1] > t.get_top()[1] + 0.1, (lref29.get_bottom()[1], t.get_top()[1])
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.1), FadeIn(t), run_time=0.6)
             bare_prompt(self, t)
             vo.wait_until("up dash d starts the app")
+            self.play(FadeIn(lref29, shift=DOWN * 0.1), run_time=0.3)
             type_cmd(self, t, UP_D, type_time=0.8)
             print_rows(self, t, C55.at((2, 5)), run_time=0.6)
             vo.wait_until("in the background")
@@ -877,7 +884,9 @@ class Recap(VoiceScene):
             vo.wait_until("Compose logs dash f")
             type_cmd(self, t, LOGS_F, type_time=0.9)
             t.print(self, [C56B.line(2)], run_time=0.35)
-            self.play(FadeIn(pg1, shift=LEFT * 0.15), run_time=0.5)
+            # the page's illustration tag takes the lecture tag's place in the top band: the lecture tag
+            # leaves first (run together, the two tags crossfaded over each other)
+            self.play(LaggedStart(FadeOut(lref29), FadeIn(pg1, shift=LEFT * 0.15), lag_ratio=1.0), run_time=0.7)
             self.play(pg1.click(), run_time=0.5)
             post = t.print(self, [C56B.line(3)], run_time=0.35)[0]
             self.play(*pg1.parts_in("reply"), substring(post, "POST").animate.set_color(TURN), run_time=0.5)
@@ -1199,6 +1208,8 @@ class Recap(VoiceScene):
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeOut(Group(*self.mobjects)), run_time=0.6)
             self.play(FadeIn(title, shift=DOWN * 0.15), Create(t_ul), FadeIn(pause_cap), run_time=0.7)
+            vo.wait_until("pause after each question")
+            self.play(flash(pause_cap, TURN, 1.08), run_time=0.7)
             vo.wait_until("One")
             q_show(g1)
             vo.wait_until("which files define")
