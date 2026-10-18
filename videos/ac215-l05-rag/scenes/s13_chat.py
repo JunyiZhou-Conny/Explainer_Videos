@@ -34,8 +34,8 @@ Beats (script.md "## S13", one voiceover block each):
     · her grandfather · the curd; excerpt chip `Tolminc Cheese.txt · line 4` "A fictional tale") and
     RED "not in your chunks" (real-world rules for Tolminc; GREY note: only 3 char-split chunks
     contain the word); GREY note "compare the char-split and recursive-split answers".
- 9  TRACKER Chat 3. A GREY browser frame (tag illustration) at ac215-llm-rag.dlops.io/chat with a
-    schematic chat page, GREY note "use Chrome"; the ▶ your-turn card: both chat commands, the link,
+ 9  TRACKER Chat 3. S01's chat box becomes a GREY browser frame (tag illustration) at
+    ac215-llm-rag.dlops.io/chat with a schematic chat page, GREY note "use Chrome"; the ▶ your-turn card: both chat commands, the link,
     "your own question: cli.py · line 372 · no rebuild", "404 NOT_FOUND for the model? change
     GENERATIVE_MODEL, cli.py · line 27". Hold 2 s, then everything fades: empty frame.
 
@@ -44,13 +44,15 @@ where the SHOW introduces it with its model chip). Beat 1's PromptStack leaves, 
 its system block back as a copy above the tutorial's prompt card (PromptStack's own ghost and cables
 assume its three-block layout, which the tutorial's prompt card replaces from beat 2 on). The ghost
 card opens to full width to hold the two wrapped code panels (12 columns of 65 characters do not fit
-in a 4-wide card), then folds back. Code panels change by swap_panel (the dark panel morphs, the
+in a 4-wide card), then folds back; its dashed outline is redrawn each frame (dashed_morph), as a
+Transform between dashed boxes of different dash counts tangles into a comb. Code panels change by swap_panel (the dark panel morphs, the
 code swaps out then in) rather than a glyph Transform, which scrambles code half-way. The fix row
 and the pipenv panel sit under the picture, the pipenv panel replacing the call panel at the bottom
 edge. Beat 5 removes the ghost and its (fixed) cable so the picture shows the code as it is. Beat 6
 draws the mini-map large above the strip (where the run stops, where the two paid calls are) and
 types the two commands one after the other in a cleared strip: with no output shown, a second
-prompt right under the first would read as "it printed nothing". SLIDES.md's optional "IsSUP ·
+prompt right under the first would read as "it printed nothing". Tracker steps cross-fade their
+caption (tracker_to): the shared goto() flies the first caption in from the empty one's place. SLIDES.md's optional "IsSUP ·
 slide B78" tag at the grounding test is not drawn: the script's SHOW does not adopt it.
 """
 
