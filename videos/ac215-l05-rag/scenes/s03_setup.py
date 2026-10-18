@@ -4,8 +4,8 @@
 Beats (script.md "## S03", one voiceover block each):
  0  TRACKER Prereq 1 · extra. The house terminal (10 rows, `laptop`, prompt ~/AC215) types
     `docker --version; docker compose version` (extra) -> laptop/01 lines 2-3; the command row is
-    62 characters, so its extra tag sits at the right end of the row below (the pilot's
-    under_row). 29.8.2 and v5.6.0 underline GREY under one bracket + tag "at the time of
+    64 of the 65 columns (beside() would clamp the tag over "version"), so its extra tag sits at
+    the right end of the output row below (the pilot's under_row; QA_FOLLOWUPS S03). 29.8.2 and v5.6.0 underline GREY under one bracket + tag "at the time of
     recording"; the space in
     `docker compose` flashes YELLOW. GREY note under the terminal, in two halves as named:
     "Mac: zsh, prompt ends in %" · "Windows: WSL or Git Bash".
@@ -448,7 +448,7 @@ class KeyAndProject(VoiceScene):
             self.play(caption_extra(tr, True), run_time=0.4)
             cmd0 = type_cmd(self, t, DOCKER_CHECK, 1.3)
             out0 = t.print(self, VER_OUT, run_time=0.5)
-            # a 62-character row: the extra tag sits at the right end of the row below
+            # a 64-of-65-column row: the extra tag sits at the right end of the output row below
             xt0 = under_row(extra_tag(), t, cmd0)
             pin(self, out0[0], xt0, run_time=0.3)
             # the two versions: GREY underlines, one bracket, one tag (attached to the first row)
@@ -717,6 +717,8 @@ class KeyAndProject(VoiceScene):
             vo.wait_until("An extra look")
             self.play(caption_extra(tr, True), run_time=0.3)
             cmd5 = type_cmd(self, t5, LS, 0.7)
+            # 59 of 65 columns: beside() clamps the tag to the terminal's right end, still ~0.17
+            # clear of "-1" (pin() would refuse a cover); the row below is full ls output
             pin(self, cmd5, beside(extra_tag(), t5, cmd5), run_time=0.25)
             log = t5.print(self, LS_OUT + [LOG], run_time=0.5, wrap=True)[-1]     # LOG fits a row
             assert log.text == LOG, log.text
