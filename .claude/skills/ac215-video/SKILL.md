@@ -178,8 +178,10 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   keep at most one other in production.
 - **Never interrupt an encode.** A stitch killed mid-encode left a truncated cached scene encode
   (`build/stitch_h/NN_<Cls>_crf27.mp4`) that the next stitch reused: L03's subtitles from 22:52 on
-  ran 94 s early. normalize/burn now write `.partial` and rename. If one stops anyway, compare every
-  cached encode's duration with its scene render before stitching again.
+  ran 94 s early. normalize/burn now write `.partial` and rename. Run stitches and full renders
+  detached (`setsid nohup … &`, then wait on the log), never as a harness background task: its
+  default 30-minute limit killed an L02 stitch mid-burn. If one stops anyway, compare every cached
+  encode's duration with its scene render before stitching again.
 - **Don't commit a video's `output/` while it stitches.** Full-cut subtitles are written first, the
   parts minutes later; a mid-stitch checkpoint shipped mismatched part-2 subtitles. The checkpoint
   script skips `output/` while that video's build runs or a `.partial.mp4` exists.

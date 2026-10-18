@@ -988,8 +988,10 @@ def covers_text(mob, line) -> bool:
     g = getattr(_row_of(line), "glyphs", None)
     if not hides or g is None or not len(g):
         return False
-    return (mob.get_left()[0] < g.get_right()[0] + 0.05 and mob.get_right()[0] > g.get_left()[0]
-            and mob.get_bottom()[1] < g.get_top()[1] and mob.get_top()[1] > g.get_bottom()[1])
+    l, r, b, t = mob.get_left()[0], mob.get_right()[0], mob.get_bottom()[1], mob.get_top()[1]
+    return any(l < ch.get_right()[0] + 0.03 and r > ch.get_left()[0] - 0.03
+               and b < ch.get_top()[1] and t > ch.get_bottom()[1]
+               for ch in g.family_members_with_points())   # per character: a tag in a gap is fine
 
 
 def pin(scene, line, mob, run_time: float = 0.4, anim=None):
