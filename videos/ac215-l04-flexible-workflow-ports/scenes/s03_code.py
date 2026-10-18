@@ -54,8 +54,9 @@ Beats (script.md "## S03", one voiceover block each):
     serif block "first: copy out your lecture 3 Dockerfile, / pyproject.toml, uv.lock · the switch
     replaces them" (tag extra), then the seven commands as typed (`git stash -u` tagged extra). The
     block flashes YELLOW with the ▶ wiggle on "Pause and switch"; once script.md carries the
-    warning sentence, its first line flashes on "Before you switch", its second on "the switch
-    replaces" (when said), and the ▶ wiggles alone on "Pause and switch".
+    warning sentence, its first line flashes on "Before you switch", "Dockerfile," then
+    "pyproject.toml, uv.lock" on "copy out any", its second line on "the switch replaces" (when
+    said), and the ▶ wiggles alone on "Pause and switch".
 10  TRACKER L/5 · extra. The card clears; the strip grows to 4 rows; V2 returns (state after the
     switch). `head -2 transcribe_audio/Dockerfile` (extra; its tag with a flash of the ignored
     Dockerfile on "lecture 3 Dockerfile") -> 11 lines 2-3; an excerpt chip
@@ -251,7 +252,9 @@ INCOMING_Y = 2.66       # where the branch's files wait (just under the tracker)
 # S03 135.59 = 299.58, 4:59 lands 0.6 s early; 30 fps (720p30 renders) S01 91.00 + S02 73.30 +
 # S03 135.79 = 300.09, 4:59 lands 1.1 s early, at the start of the final fade-out.
 # 2026-10-18 finishing pass (Step 5 gained the copy-out sentence, S03 ~10 s longer): 15 fps S01
-# 90.86 + S02 73.13 + S03 145.99 = 309.98, 5:09 lands 1.0 s early; 30 fps adds ~0.4 s.
+# 90.86 + S02 73.13 + S03 145.99 = 309.98 (floor 5:09), 5:09 lands 1.0 s early; 30 fps (720p30)
+# S01 91.00 + S02 73.30 + S03 146.16 = 310.45 (floor 5:10), 5:09 lands 1.5 s early. Take the
+# smaller floor: 5:10 would land after S04's start in a 15 fps render.
 SKIP_TO = "5:09"
 
 
@@ -692,6 +695,15 @@ class GetTheCode(VoiceScene):
             if warned:                # the lines, not the opaque tag; one line per clause, so the
                 vo.wait_until("Before you switch")       # long warning sentence is not a still
                 self.play(flash(card9.first[0][0], TURN, 1.05, 0.9))
+                # the files light up as they are named (else a 7 s still). Glyphs, not characters:
+                # line 0 [24:34] = "Dockerfile," ("fi" is one ligature glyph, twice in that line),
+                # line 1 [0:22] = "pyproject.toml, uv.lock"
+                if "copy out any" in say9:
+                    vo.wait_until("copy out any")
+                    l0, l1 = card9.first[0]
+                    assert len(l0) == 34 and len(l1) == 44, (len(l0), len(l1))
+                    self.play(LaggedStart(flash(l0[24:34], TURN, 1.05), flash(l1[0:22], TURN, 1.05),
+                                          lag_ratio=0.6), run_time=2.8)
                 if "the switch replaces" in say9:
                     vo.wait_until("the switch replaces")
                     self.play(flash(card9.first[0][1], TURN, 1.05, 0.9))

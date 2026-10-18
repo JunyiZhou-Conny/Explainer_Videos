@@ -79,14 +79,13 @@ Deviations from SHOW (and why):
 - Beat 7: the `"input-*.txt"` gate stands beside the cabinet's text_prompts/ row (between the
   local folder and the bucket's text_prompts/ group-01/), the local folder below it, drawn as a
   drawer: name on its front (bottom row), files on top, so they leave upwards without crossing it.
-- Beat 7: the ▶ your-turn card (bucket, folder, upload) is not in script.md's SHOW (QA 06:18, newcomer
-  watcher: the viewer must create the bucket and upload a clip, and bucket names are global). The
-  sentence asked of script.md, "Bucket names are global: pick a unique one. Pause and create yours.",
-  is anchored (GLOBAL7, PAUSE7) once SAY[7] holds it; until then the card follows the picture and
-  holds 2 s after the narration (1 s with the sentence). The gcloud pair is named, not typed (the
-  study guide has both commands, extra, not captured, after `gcloud config set project` and the
-  login note), hence "after gcloud login". The gate and the test.txt bounce take 3.1 s (they ran
-  past the narration's end), so the card can land on "Bucket names are global".
+- Beat 7: the ▶ your-turn card (bucket, folder, upload; QA 06:18, newcomer watcher: the viewer must
+  create the bucket and upload a clip, and bucket names are global) lands on SAY[7]'s "Bucket names
+  are global" (GLOBAL7) and its ▶ wiggles on "Pause" (PAUSE7); it holds 1 s after the narration
+  (should the sentence leave SAY[7], it follows the picture and holds 2 s). The gcloud pair is
+  named, not typed (the study guide has both commands, extra, not captured, after `gcloud config
+  set project` and the login note), hence "after gcloud login". The gate and the test.txt bounce
+  take 3.1 s (they ran past the narration's end), so the card can land on "Bucket names are global".
 """
 
 from common import *
@@ -157,9 +156,8 @@ SHIPPED = {2: '"ac215-project"', 3: '"mega-pipeline-bucket"', 4: '"pavlos-advanc
 for _n, _v in SHIPPED.items():
     assert f"= {_v}" in GREP.line(_n), (_n, _v)
 COURSE = ["course's project", "course's bucket", "instructor's group"]
-# Beat 7's ▶ your turn (QA 06:18). The sentence asked of script.md, "Bucket names are global: pick
-# a unique one. Pause and create yours.", is anchored only once SAY[7] holds it; until then the
-# card follows the picture and holds a moment after the narration.
+# Beat 7's ▶ your turn (QA 06:18): the card lands on "Bucket names are global", the ▶ wiggles on
+# "Pause" (both in SAY[7]); without that sentence the card would follow the picture.
 GLOBAL7 = "Bucket names are global" if "Bucket names are global" in SAY[7] else None
 PAUSE7 = "Pause" if GLOBAL7 and "Pause" in SAY[7] else None
 
@@ -830,8 +828,8 @@ class YourValues(VoiceScene):
             self.add(txt)
             self.play(FadeIn(cap62, shift=UP * 0.1), flash(txt.text, INK, 1.08, 0.6), run_time=0.6)
             # the gate and the bounce fit between "and upload only sends" and the end of the
-            # sentence, so the card can arrive on "Bucket names are global" (GLOBAL7) once SAY[7]
-            # holds it (with 4.5 s here, the card came 2 s after that sentence started)
+            # sentence, so the card can arrive on "Bucket names are global" (GLOBAL7; they end
+            # 0.13 s after it starts; with 4.5 s here, the card came 2 s after it started)
             vo.wait_until("and upload only sends")
             self.play(FadeIn(gate, shift=LEFT * 0.15),
                       txt.animate.move_to([wait_x + txt.width / 2, d_tp.get_center()[1], 0]), run_time=0.6)

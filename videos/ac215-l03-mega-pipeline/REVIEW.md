@@ -225,9 +225,11 @@ result here, this section says so.
   drawn. The fix round made S13 "slides 23–24" span its picture and kept S07 "slides 51–52" on
   through the ponder, so 10 tags now span their picture. S02 "slide 25" and S07 "slides 51–52"
   still do not, for the reasons under "Open", item 2.
-- **The S06, S07 and S13 rows below are from the re-stitch** (`build/recheck/scenes/summary.json`,
-  pixel counts in `build/recheck/scenes/tag_lit.json` and `topright_s07.json`). The other nine rows
-  are from the final cut; their scenes were not re-rendered.
+- **The S06, S07 and S13 rows below are from the re-stitch:** times from the re-rendered scenes'
+  `events.json`, checked on frames and against the pixel counts in
+  `build/recheck/scenes/tag_lit.json` and `topright_s07.json` (summary in
+  `build/recheck/scenes/summary.json`). The other nine rows are from the final cut; their scenes
+  were not re-rendered.
 
 | tag | scene | on (fade in) | off (fade out) | spans its picture? |
 |---|---|---|---|---|
@@ -237,7 +239,7 @@ result here, this section says so.
 | Lecture 3 · slides 23, 70 | S04 | 04:45.2 | 04:52.5–04:53.2 | yes |
 | Lecture 3 · slide 40 | S05 | 07:44.1 | 08:03.3–08:03.6 | yes |
 | Lecture 3 · slide 33 | S06 | 11:12.2 | 11:28.9–11:29.6 (scene fade) | yes |
-| Lecture 3 · slides 51–52 | S07 | 11:45.6 | 12:24.85–12:24.98 (was 12:05.7–12:06.3) | through the ponder; leaves 7.3 s before the mount picture (12:32.3), clear of the 12:25.65 label |
+| Lecture 3 · slides 51–52 | S07 | 11:45.6 | 12:24.75–12:25.05 (was 12:05.7–12:06.3) | through the ponder; leaves 7.3 s before the mount picture (12:32.3), clear of the label that fades in from 12:25.47 |
 | Lecture 3 · slide 38 | S11 | 20:44.8 | 21:02.5–21:02.9 | yes |
 | Lecture 3 · slide 33 | S11 | 21:19.5 | 21:24.8–21:25.6 (scene fade) | yes |
 | Lecture 3 · slides 23–24 | S13 | 26:41.4 | 27:03.0–27:03.4 (was 26:55.2–26:55.6) | yes (leaves with the bonus tracker and the cli_11.py panel) |
@@ -269,10 +271,12 @@ mp4's audio and was compared with the 503 cues of the `.srt`.
   subtitle, and added the limiter. It was not transcribed again. Instead its audio was compared
   with the 16 kHz audio the ASR heard (`build/final-review/asr/final_16k.wav`, the same length,
   1856.448 s). Per scene, including the three re-rendered ones, the correlation is 0.9982–0.9985 at
-  a constant 5 ms delay, and the difference sits 24.5–25.1 dB below the signal, which is the limiter
-  plus a second AAC encode (`build/recheck/narration_vs_asr/compare.json`). The 5 ms delay is
-  consistent with the limiter's look-ahead, though that was not proven, and it is negligible next to
-  the cue timing.
+  a constant 5 ms delay, and the difference sits 24.5–25.1 dB below the signal
+  (`build/recheck/narration_vs_asr/compare.json`). That difference is consistent with the limiter
+  and a fresh AAC encode; how much each contributes was not measured. The 5 ms delay matches the
+  limiter's look-ahead: `alimiter` delays its output by its attack time (default 5 ms) unless
+  `latency` is set, and the build leaves both at their defaults. It is negligible next to the cue
+  timing.
 - **Per cue:** it recognised 4,476 words, and 236 of the 503 cues differ. These are mostly
   cue-boundary effects.
 - **Whole text:** aligned against the text sent to the voice (from `subs.json`), 4,616 expected
@@ -341,13 +345,16 @@ and no subtitle changed.
    - **The change:** `scenes/s06_build.py:823–824` now recolours badge 1 to `SYSTEM` (ORANGE, the
      base slab's colour and the series colour for system parts) and pulses it once, on the same
      anchor "and build step 1 is the base image". It used to be `recolor(badges[0], VENV)`.
-   - **On the re-stitch:** badges 2 and 3 turn green with their CACHED stamps at 11:19.9–11:20.5.
-     Badge 1 stays teal through 11:22.60. On the anchor (11:22.733; its cue #182 starts at 11:22.591)
-     it turns orange and pulses until 11:23.83, then stays orange to the end of the scene.
+   - **On the re-stitch:** badges 2 and 3 turn green at 11:19.9–11:20.5, and their CACHED stamps
+     arrive at 11:20.5–11:21.4. Badge 1 stays teal up to the anchor (11:22.733; its cue starts at
+     11:22.591, #182 in `.zh-en.srt` and #188 in `.srt`). On the anchor it turns orange and pulses
+     until 11:23.83, then stays orange to the end of the scene.
    - **Ring colours:** badges 2 and 3 measure (130,176,111). Badge 1 measures (99,188,163) before
      the anchor and (213,134,80) after it. The final cut had badge 1 at (138,191,132), matching the
-     cached green. The closest badge 1 now comes to that green is an RGB distance of 42.5, on one
-     frame partway through its teal-to-orange change.
+     cached green. Midway through the teal-to-orange change (11:23.00, `g_025.png`), badge 1 passes
+     through a grey-green for a few frames: its closest approach is an RGB distance of 42.5 to the
+     green of badges 2 and 3 in the same frames, and 29.4 to the final cut's (138,191,132). Its teal
+     sits 61 from the green of badges 2 and 3.
    - **The "slide 33" tag** still fades in at 11:12.2–11:12.8, stays clear of the "edit: group_name
      in cli.py" chip, and leaves with the scene fade at 11:28.9–11:29.6. The last frame is empty.
    - **Evidence:** `build/recheck/scenes/t_s06_a.png`, `t_s06_b.png`, `t_s06_c.png`, every frame
@@ -363,8 +370,10 @@ and no subtitle changed.
      and the cli_11.py panel ("read at start-up"), and nothing overlaps it. It fades out at
      27:03.0–27:03.4 in the same move as the bonus tracker and the panel, and is gone by 27:03.5.
      The last frame is empty.
-   - **Unchanged older effect:** during the 0.4 s cross-fade at 27:03.2, the old and new tracker
-     captions overlap at the top left. It clears as the animation settles.
+   - **Unchanged older effect:** during the 0.4 s cross-fade at 27:03.0–27:03.4, the old and new
+     tracker captions overlap at the top left, and the fading cli_11.py panel lies over the terminal's
+     title bar as the terminal grows upward (frame at 27:03.18 in
+     `build/recheck/verify2/s13/full_1623.18.png`). Both clear as the animation settles.
    - **Evidence:** `build/recheck/scenes/t_s13_a.png`, `t_s13_b.png`, `t_s13_c.png`,
      `st_s13_a.png`, `st_s13_b.png`, and `build/recheck/scenes/tag_lit.json`.
 3. **S07, 11:45.6–12:25.0: the "slides 51–52" tag now stays through the ponder** (was "Open", item
@@ -373,12 +382,14 @@ and no subtitle changed.
      existing play (line 498), just before the answer's label arrives.
    - **On the re-stitch:** the tag fades in at 11:45.6–11:46.3 with the laptop folder and the mount.
      It stays past the old exit (12:05.7) and through the ponder (card at 12:14.7, timer until
-     12:23.3), about 0.4 units clear of the writable layer. Pixel counts at the top right show it
-     fading at 12:24.85–12:24.98, the corner empty from 12:24.98 to 12:25.62, and "start: bash,
-     venv on" first appearing at 12:25.65. The last frame is empty.
+     12:23.3), about 0.4 units clear of the writable layer. `events.json` puts its fade-out at
+     12:24.75–12:25.05 and the fade-in of "start: bash, venv on" at 12:25.47–12:25.87. On frames,
+     the tag is gone by about 12:24.97 and the label shows from about 12:25.55, so the corner is
+     empty for about half a second. The last frame is empty.
    - **Evidence:** `build/recheck/scenes/t_s07_a.png`, `t_s07_b.png`, `t_s07_c.png`,
-     `st_s07_a.png`, `st_s07_b.png`, `st_s07_c.png`, `build/recheck/scenes/topright_s07.json` and
-     `build/recheck/scenes/tag_lit.json`.
+     `st_s07_a.png`, `st_s07_b.png`, `st_s07_c.png`, `build/recheck/scenes/topright_s07.json`,
+     `build/recheck/scenes/tag_lit.json`, and every frame from 12:24.67 to 12:25.85
+     (`build/recheck/verify2/s07/fine/f_000000.png`–`f_000071.png`, cut frames 44680–44751).
 4. **True peak in the full cut, the zh-en copy and part 1: −0.9 → −1.6 dBTP** (was "Open", item 3).
    The limiter after loudnorm brings all three under the build's −1.5 dBTP target. No 100 ms window
    in them goes above −1.5 dBTP (`build/recheck/ftpk_windows.json`). Part 2 went the other way; see
@@ -388,12 +399,14 @@ and no subtitle changed.
      41.5 and 39.3 dB PSNR. At 12:15.0 and 26:58.0 those frames show the tags the final cut did not.
    - All 15 scene starts equal the final cut's to the millisecond (S06 556.05 s, S07 689.65 s, S13
      1466.783 s), and `chapters.txt` is identical to the README's chapter list.
-   - Every tracked file in `output/` (all `.srt`, `.zh.srt`, `.zh-en.srt` and `.ass` files, the
-     part files, the chapter files and `transcript.md`) has the same bytes as the commit the final
-     review measured. The cues at the fixed moments are unchanged: #182 (11:22.591), #197
-     (12:23.250–12:28.007) and #448 (27:02.983).
+   - Every tracked file in `output/` (every `.srt`, `.zh.srt`, `.zh-en.srt` and `.ass` file, the
+     parts' included, the three chapter files and `transcript.md`; no MP4 is tracked) has the same
+     bytes as the commit the final review measured. The cues at the fixed moments are unchanged
+     (numbered as in `.zh-en.srt`): #182 (11:22.591), #197 (12:23.250–12:28.007) and #448
+     (27:02.983).
    - In the zh-en copy, a 4 fps scan of the three scenes (1,736 frames) found picture content no
-     lower than row 888, subtitles no higher than row 992, and nothing in rows 940–991, so no
+     lower than about row 890 (rows 888–891, depending on the brightness threshold), subtitles no
+     higher than row 992, and nothing in rows 940–991, so no
      subtitle covers a tag or a command (`build/recheck/scenes/bandscan_s06.json`,
      `bandscan_s07.json`, `bandscan_s13.json`). The contact sheets
      `build/recheck/scenes/sheets_zhen/s06_01.png`–`s13_10.png` were all read.
@@ -409,10 +422,12 @@ and no subtitle changed.
    - **The overshoot comes with the encode:** the limiter caps the samples at 0.79 (−2.05 dBFS)
      before the AAC encode, but decoding part 2 from its start gives a sample peak of −0.76 dBFS
      (0.916) there.
-   - **It depends on where decoding starts:** after a seek to 900, 915 or 916 s, the same moment
-     peaks at only −3.75 dBFS. One plausible cause is the AAC encoder's noise substitution, which
-     is on by default, but that is unproven. Anything that plays or re-encodes part 2 from the start
-     gets the +0.9 samples.
+   - **It depends on where decoding starts:** after a seek to 900, 915 or 916 s, the spike is gone:
+     within 50 ms of it the left channel reaches only −9.0 to −7.2 dBFS, and the whole 2 s stretch
+     peaks at −3.75 dBFS (at 916.40 s, away from the spike). One plausible cause is the AAC
+     encoder's noise substitution, which is on by default, but that is unproven. ffmpeg's decoder
+     produces the +0.9 samples whenever it decodes part 2 from the start, as a loudness meter or a
+     re-encode does; other decoders were not tried (`build/recheck/verify2/p2_*.f32`).
    - **The choice:** re-stitch part 2 with different encoder or limiter settings (untested), or
      accept it for a file that is not the Bilibili asset, with a note.
    - **Evidence:** `build/recheck/part2_peak.json`, `build/recheck/ftpk_windows.json`, and the
@@ -421,10 +436,10 @@ and no subtitle changed.
    otherwise:
    - **S02 "slide 25":** it starts at 01:35.0, 4.6 s after "That storage is…". This is on purpose:
      the prefix card would sit about 16 px from it (`extra/s02_bucket_before_tag_92.20.png`).
-   - **S07 "slides 51–52":** after the fix round it stays through the ponder and leaves at
-     12:24.98, but the mount picture stays until 12:32.3, so the picture runs 7.3 s without its
+   - **S07 "slides 51–52":** after the fix round it stays through the ponder and is gone by
+     12:25.05, but the mount picture stays until 12:32.3, so the picture runs 7.3 s without its
      tag (it was 26 s). It cannot stay: the tag and the ponder answer's "start: bash, venv on"
-     label (from 12:25.65) would overlap at about x 1378–1420 px, y 100–134 px.
+     label (fading in from 12:25.47) would overlap at about x 1377–1420 px, y 103–118 px.
 3. **Gate 3 shortfall:** five ponders against the aim of about 15, and the recap is made of
    questions rather than a spoken summary. See gate 3.
 4. **Minor visual findings (nits):**
@@ -442,8 +457,11 @@ and no subtitle changed.
      - 12:07–12:25, during the ponder: the floating folder copy sits flush against the `/app` box.
      - 01:25.6, from the tags check: the five boxes cross the "here: write outputs…" caption for
        about 1 s as they move down.
-     - 27:03.2, from the recheck: the old and new tracker captions overlap during a 0.4 s
-       cross-fade.
+     - 27:03.0–27:03.4, from the recheck: during a 0.4 s cross-fade the old and new tracker
+       captions overlap, and the fading cli_11.py panel lies over the rising terminal's title bar.
+     - 12:05.9–12:06.3, from the fix round's S07 verifier and older than the fix: the fading
+       "/tmp · throwaway" tag crosses the rising writable layer's dashed border
+       (`build/recheck/verify2/s07/x_sheet.png`).
    - **Intended by the scene code, kept as is:**
      - 18:50–18:53: the page badge sits on the `text_prompts/` icon (`s10_transcribe.py:502`).
      - 05:30–05:37: the installer line breaks mid-word, "shell o" / "r run:". This is the real
@@ -500,8 +518,10 @@ bitrates, slightly.
   frames. The zh-en cut has one extra frame and starts at 0.000 s instead of 0.021 s, which is
   negligible. Its audio packets are identical to the full cut's (same MD5).
 - **True peak:** the build's −1.5 dBTP target is met in the full cut, the zh-en copy and part 1.
-  Each peaks at −1.6 dBTP, first reached at 02:22.0 (S02) and again at 10:43.8 (S06), and no 100 ms
-  window goes above −1.5 dBTP (`build/recheck/ftpk_windows.json`). Part 2 does not meet it:
+  Each peaks at −1.6 dBTP, first reached at 02:22.0 (S02) and again at 10:43.8 (S06); the full cut
+  and the zh-en copy reach it a third time at 29:01.4 (S14), the spot where part 2 overshoots. No
+  100 ms window goes above −1.5 dBTP (`build/recheck/ftpk_windows.json`, and per-window logs in
+  `build/recheck/verify2/`). Part 2 does not meet it:
   +0.9 dBTP at 29:01.3 on the full clock ("Open", item 1).
 - **Subtitles:** unchanged since the final cut. The re-stitch rewrote every tracked file in
   `output/` with the same bytes as the committed copies the final review measured.
@@ -525,7 +545,8 @@ bitrates, slightly.
   ASR round trip).
 - **Burned-in layout:** the picture is scaled to the top 87 % of the frame, and the subtitles sit in
   the band below it. The longest lines fit inside the 1840 px usable width. In the re-stitch's
-  S06, S07 and S13, the picture never reaches below row 888 and the subtitles never above row 992.
+  S06, S07 and S13, the picture never reaches below about row 890 and the subtitles never above
+  row 992.
 - **Provenance:** this comes from ASSETS.md. The QA watchers checked the draft's terminal lines
   against the captures, and lines added later are asserted against their capture lines in the scene
   code.
@@ -563,8 +584,9 @@ bitrates, slightly.
 - **The QA fixes were verified on preview renders, not one by one in this cut.** The fixers and
   verifiers checked them on 480p/720p renders of the scene files. The 1080p60 cut was checked only
   by the five final-cut checks above, and the re-stitch only by the 2026-10-18 recheck.
-- **The cause of part 2's +0.9 dBTP peak is not established.** AAC noise substitution is a guess,
-  and so is the limiter's look-ahead as the cause of the 5 ms audio delay.
+- **The cause of part 2's +0.9 dBTP peak is not established.** AAC noise substitution is a guess.
+  How the limiter and the fresh AAC encode share the −25 dB difference from the final cut's audio
+  was not measured either.
 - **Nothing that needs the course key was run:**
   - `--download` with a key, `--transcribe`, `--generate`, `--synthesis`, `--translate` and
     `--upload`, for all five components.
