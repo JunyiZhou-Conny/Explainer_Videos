@@ -3,7 +3,9 @@ r"""S11 · Build, start, read the logs (port_toy README › Step 1, steps 3–6;
 Beats (script.md "## S11", one voiceover block each):
  0  TRACKER P1/3. CODE(port_toy/gateway/Dockerfile: 1–5) at the top, line 2 wrapped at its two
     `&&` (header "gateway/Dockerfile · lines 1–5 · line 2 wrapped"). On "almost identical" a GREY
-    chip "processor/Dockerfile: the same, except line 5" under it; line 1 (FROM python:3.14-slim)
+    chip "processor/Dockerfile: the same, except line 5" under it, and the GREY lecture tag
+    "Lecture 4 · slide 12" (lecture_ref, top right; SLIDES.md S11 i: the chained apt RUN) that
+    stays to beat 2's first play; line 1 (FROM python:3.14-slim)
     and line 2 (apt installs curl) get ORANGE bars as they are named, line 4 (COPY . .) a GREEN
     bar; `-u` in line 5 is circled YELLOW and the GREY tag "unbuffered: prints reach docker logs
     at once" appears under it.
@@ -38,7 +40,9 @@ Beats (script.md "## S11", one voiceover block each):
     GREY ghost door on the laptop's wall, GREY note "no street door".
  4  TRACKER P1/5. Panel and chip go; the terminal grows to 7 rows while V7 rises above it; the
     README's five rows of the gateway's `docker run` are typed -> 11 line 6 (the ID). The gateway
-    box appears and plugs into the rail while `-p 127.0.0.1:8090:9100` is boxed PINK. Still above
+    box appears and plugs into the rail while `-p 127.0.0.1:8090:9100` is boxed PINK, and the GREY
+    lecture tag "Lecture 4 · slide 35" (lecture_ref, top right; SLIDES.md S11 i) arrives with the
+    box and stays to beat 5's first play. Still above
     the 7-row terminal: on "it opens a street door" the ghost door turns into the GREY door and
     `127.0.0.1:8090` lifts off the flag onto it (TransformFromCopy); on "that leads to a room"
     the gateway's cell 9100 lifts out and becomes the room `:9100`, and the PINK map arrow runs
@@ -165,6 +169,7 @@ from explainer.devops import (
     cell_width,
     glyph_range,
     label,
+    lecture_ref,
     line_pitch,
     mono,
     mono_line,
@@ -430,10 +435,12 @@ class BuildAndStart(VoiceScene):
         same_box.move_to(same)
         chip_same = VGroup(same_box, same)
         chip_same.next_to(u_tag, DOWN, buff=0.35).set_x(0)
+        lref12 = lecture_ref(4, "12")          # top right, to beat 2's first play (SLIDES.md S11 i)
+        assert lref12.get_bottom()[1] > df.get_top()[1] + 0.1
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr), FadeIn(df, shift=DOWN * 0.15), run_time=0.8)
             vo.wait_until("The two Dockerfiles are almost identical")
-            self.play(FadeIn(chip_same, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeIn(chip_same, shift=UP * 0.15), FadeIn(lref12, shift=DOWN * 0.1), run_time=0.6)
             vo.wait_until("a slim Python 3.14 image")
             self.play(FadeIn(bars[1]), flash(df.span(1, "python:3.14-slim"), SYSTEM, 1.08), run_time=0.7)
             vo.wait_until("plus curl from apt")
@@ -491,7 +498,8 @@ class BuildAndStart(VoiceScene):
             cached.add(cg)
         assert cached.get_right()[0] < 6.5 and t6.get_left()[0] > -6.5
         with self.voiceover(SAY[2], pad=1.0) as vo:     # the COPY tag lands 2 s before the clip ends
-            self.play(FadeOut(VGroup(b2, box24, u75)), *[a for a in hi_time(rows[1], S.GREY)], run_time=0.3)
+            self.play(FadeOut(VGroup(b2, box24, u75)), FadeOut(lref12), *[a for a in hi_time(rows[1], S.GREY)],
+                      run_time=0.3)
             type_cmd(self, t, B_GW.cmd, type_time=1.0)
             g_rows = print_build(self, t, GW_ROWS, run_time=0.5, lag=0.1)
             slim_times(t, g_rows)
@@ -577,6 +585,8 @@ class BuildAndStart(VoiceScene):
                         legend_item("9100", "container port · room"))
         legend.arrange(RIGHT, buff=0.6, aligned_edge=UP)
         legend.move_to([0.25, 0, 0]).shift(UP * (ch227.get_bottom()[1] - 0.12 - legend.get_top()[1]))
+        lref35 = lecture_ref(4, "35")          # top right, with the -p box to beat 5's first play (SLIDES.md S11 i)
+        assert lref35.get_bottom()[1] > max(TOP, ch227.get_top()[1]) + 0.1
         with self.voiceover(SAY[4], pad=1.5) as vo:      # the legend's last item lands at the very end
             self.play(FadeOut(VGroup(pp, e_ring, e_tag, ch113)), tr.goto(5), run_time=0.5)
             assert net.get_top()[1] + up_dy <= TOP + 0.01 < tr.get_bottom()[1]
@@ -585,13 +595,13 @@ class BuildAndStart(VoiceScene):
             run_g = type_rows(self, t, GW_RUN, type_time=1.9, room_after=1)
             t.print(self, [GW_ID], run_time=0.35)
             # the container exists: its box plugs in, and the -p flag is boxed ("Dash p publishes a
-            # port" was spoken while it was typed). The door and the room then open on their words,
-            # above the 7-row terminal; the strip comes after, for the legend's band.
+            # port" was spoken while it was typed), with the slide 35 tag. The door and the room then
+            # open on their words, above the 7-row terminal; the strip comes after, for the legend's band.
             p_row = run_g.rows[2]
             p_box = glyph_box(p_row, "-p " + FLAG, LOOKUP)
             pin(self, p_row, p_box, run_time=0.5,
                 anim=AnimationGroup(Create(p_box), *net.parts_in("gw_box"),
-                                    *net.parts_in("plug_gateway", anim=Create)))
+                                    *net.parts_in("plug_gateway", anim=Create), FadeIn(lref35, shift=DOWN * 0.1)))
             cue(self, vo, "it opens a street door on your laptop", 0.57)
             net.detach(self, ghost, no_door, anims=[FadeOut(ghost), FadeOut(no_door)],
                        extra=[*net.parts_in("door_frame"),
@@ -642,7 +652,7 @@ class BuildAndStart(VoiceScene):
         assert d_tag.get_bottom()[1] > gp.code.background.get_top()[1] + 0.03
         e_rows = keep[1:]
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(VGroup(ch227, legend)), FadeOut(boxes), run_time=0.5)
+            self.play(FadeOut(VGroup(ch227, legend)), FadeOut(boxes), FadeOut(lref35), run_time=0.5)
             self.play(*[r.glyphs.animate.set_color(LOOKUP) for r in e_rows], run_time=0.6)
             cue(self, vo, "the name processor, port 9200", -0.63)
             self.play(*net.parts_in("aim", anim=lambda m: AnimationGroup(Create(m[0]), FadeIn(m[1]))),
