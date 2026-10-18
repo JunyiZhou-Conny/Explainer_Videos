@@ -16,7 +16,7 @@ Beats (script.md "## S03", one voiceover block each):
     pyproject.toml, uv.lock turn GREEN as they are named and a copy of each flies into a GREEN
     recipe card; its caption "committed" on "which this branch".
  2  TRACKER L/1 (the tracker switches section). The terminal clears, title `laptop · lecture 3
-    clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to 5:09" (SKIP_TO).
+    clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to 5:10" (SKIP_TO).
     `cd mega-pipeline` (no output). TRACKER L/1 · extra: `git status --short` -> mega-l03-laptop/01
     lines 2-4, `git status --short --ignored | grep '^!!'` -> lines 5-8 (both extra).
  3  On "Three piles", copies of the seven status lines fly into V2's three piles while the
