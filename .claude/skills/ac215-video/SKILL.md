@@ -193,6 +193,13 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   replays; a verifier whose prompt quotes the fixer's report gets a new cache key and re-runs, with
   everything after it. Pass reports as files and name the path. Right after any resume, read the
   journal; if finished agents start again, stop it and launch only the pending ones.
+- **State each workflow's scope in its prompts.** A user message sent mid-run reaches the running
+  agents: L04's whole finishing run (28 agents) read a status question about L02/L03 as its task and
+  declined every edit. Every agent prompt says what the task is, who assigned it, and that user
+  messages arriving during the run are for the coordinator. After a user message, read the running
+  workflows' results for "out of scope" refusals before relying on them.
+- **Agents never kill processes they did not start.** A planner's `pkill` pattern killed the
+  coordinator's check; the same pattern could kill a stitch. Stop your own process by its PID.
 - **The scratchpad belongs to the coordinator.** One agent's `rm -rf scratchpad/*` erased the tools,
   clones and slides. Keep master copies outside it, lock it, and tell every agent: delete only files
   you created, by exact path, never with a wildcard.
