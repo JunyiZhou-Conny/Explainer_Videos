@@ -71,10 +71,13 @@ from manim import (
     Rectangle,
     ReplacementTransform,
     RoundedRectangle,
+    ValueTracker,
     VGroup,
     VMobject,
     Write,
+    always_redraw,
     smooth,
+    there_and_back,
 )
 
 from common import (
@@ -230,6 +233,35 @@ def swap_panel(scene, old, new, *extra, run_time: float = 0.7):
     scene.add(new)
 
 
+def dashed_morph(scene, a, b, *extra, run_time: float = 0.7):
+    """A GREY dashed card grows or shrinks from rectangle a to rectangle b ((centre, w, h) each),
+    redrawn each frame: a Transform between dashed boxes of different dash counts tangles the
+    dashes into a comb. The morphing outline leaves the scene at the end (add the final card)."""
+    (ca, wa, ha), (cb, wb, hb) = a, b
+    ca, cb = np.array(ca, dtype=float), np.array(cb, dtype=float)
+    vt = ValueTracker(0)
+
+    def outline():
+        s = vt.get_value()
+        return box(wa + (wb - wa) * s, ha + (hb - ha) * s, S.GREY, dashed=True, stroke=3).move_to(ca + (cb - ca) * s)
+
+    m = always_redraw(outline)
+    scene.add(m)
+    scene.play(vt.animate.set_value(1), *extra, run_time=run_time)
+    m.clear_updaters()
+    scene.remove(m)
+
+
+def tracker_to(tr, k: int) -> list:
+    """tr.goto(k) with its caption cross-faded in place: the shared Transform flies the first
+    caption in from the empty one's position and scrambles one caption into the next."""
+    anims = []
+    if tr.k:
+        anims.append(FadeOut(tr.caption.copy(), rate_func=first_half))
+    tr.caption.become(tr._caption(k)).set_opacity(0)
+    return [tr.goto(k), *anims]
+
+
 def code_rows(panel, n: int) -> VGroup:
     return VGroup(*[panel.code.code_lines[k] for k in panel.rows_of(n)])
 
@@ -358,8 +390,8 @@ class FinalPrompt(VoiceScene):
         big_frame = box(12.9, big_h, S.GREY, dashed=True, stroke=3).move_to([0, 2.78 - big_h / 2, 0])
         # the backing hides the picture behind the opened card, to the safe edges (the model chip reaches x 6.47)
         backing = Rectangle(width=13.2, height=big_h, stroke_width=0).set_fill(S.BG, 1).move_to(big_frame)
-        big = VGroup(big_frame, big_label)              # the opened ghost card (one group, both transforms)
         content.move_to(big_frame).align_to(big_frame, LEFT).shift(RIGHT * 0.3)
+        big_rect = (big_frame.get_center(), 12.9, big_h)
         r41 = p41.rows_of(41)
         u41 = VGroup(under(p41.span(41, "based solely on the information provided in"), TURN),
                      under(p41.span(41, "the text chunks"), TURN))
