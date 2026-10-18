@@ -16,15 +16,14 @@ Beats (script.md "## S11", one voiceover block each):
     then an 8-row terminal fades in under it, and with it GREY `Lecture 2 · slide 60` (lecture_ref,
     top right: slide 60 is this all-CACHED rebuild; it leaves as the terminal shrinks, beat 2), and
     types `docker build --progress=plain -t simple-translate -f Dockerfile .` (extra; row tag
-    "extra · full log", `--progress=plain`
-    underlined) -> laptop/38: 23 (cut after `apt-get update &&`), 24, 26–27, 29–30. "FROM reuses
-    the base": box 1 gets a TEAL "reused" stamp; "and the three steps … all say CACHED": the three
-    CACHED words turn TEAL as boxes 2–4 get TEAL CACHED stamps; the standing dominoes pulse on
-    "nothing runs".
- 2  The terminal shrinks to the 3-row strip and the slide-60 tag fades out. The parcel returns under COPY and enlarges (.git/,
-    .git/index, cli.py, Dockerfile); cli.py lights YELLOW and CODE(cli.py: 49) docks beside it
-    (YELLOW bar). The four boxes pulse on "Which of the four steps". PONDER (8 s): the card covers
-    the strip.
+    "extra · full log", `--progress=plain` underlined) -> laptop/38: 23 (cut after `apt-get update
+    &&`), 24, 26–27, 29–30. "FROM reuses the base": box 1 gets a TEAL "reused" stamp; "and the
+    three steps … all say CACHED": the three CACHED words turn TEAL as boxes 2–4 get TEAL CACHED
+    stamps; the standing dominoes pulse on "nothing runs".
+ 2  The terminal shrinks to the 3-row strip and the slide-60 tag fades out. The parcel returns
+    under COPY and enlarges (.git/, .git/index, cli.py, Dockerfile); cli.py lights YELLOW and
+    CODE(cli.py: 49) docks beside it (YELLOW bar). The four boxes pulse on "Which of the four
+    steps". PONDER (8 s): the card covers the strip.
  3  "on line 49": the panel header pulses; `cheese` morphs into a YELLOW `brie`. The strip types
     `git diff` (extra) -> laptop/39: 10–11 (- RED, + GREEN). "a different checksum": a RED
     fingerprint rises from cli.py into COPY's badge, which turns RED.
