@@ -8,7 +8,9 @@ Beats (script.md "## S15", one voiceover block each):
     README chip `README.md · lines 432–446` "an excerpt" appears in the right column; on "open the
     whole docker-compose.yml" CODE(port_toy/docker-compose.yml: 11–25, comments cut) drops in above it
     (header `docker-compose.yml · lines 11–25 · comment cut`). On "Almost every flag" every flag of
-    the chips flashes YELLOW in turn.
+    the chips flashes YELLOW in turn and the GREY tag "Lecture 4 · slides 17–20" (lecture_ref,
+    SLIDES.md S15 i) fades in under the panel's tag row (right edge 6.5, top -3.05; the panel holds
+    the top right through beats 0–2). It stays to beat 2.
  1  The README chip goes. Each flag's copy lifts off its chip and flies to its YAML key, which gets a
     GREEN bar as it lands: on "Dash dash name" `--name gateway` -> `container_name: gateway` (13); on
     "and the build command" `docker build` and `./gateway` -> `build: ./gateway` (14); on "Dash p"
@@ -22,7 +24,11 @@ Beats (script.md "## S15", one voiceover block each):
  2  The tag goes; the panel swaps back to lines 11–25 and its GREEN bars return. On "the volumes key"
     `volumes:` / `- ./gateway:/app` (17–18) get a GREEN outline and the GREEN tag "live-mount the
     gateway's folder"; on "and the depends on key" `depends_on:` / `- processor` (22–23) get theirs
-    and the tag "start the processor first" (the first tag gives way; both outlines stay). On "All of
+    and the tag "start the processor first" (the first tag gives way; both outlines stay).
+    SLIDES.md S15 (iii), GREY 20 pt notes: with the first outline "lecture's by-hand run: -v" right of
+    `volumes:` (it leaves with the first tag); with the second "= your typing order" right of
+    `depends_on:`, the lecture tag becomes "Lecture 4 · slide 27" in the same slot and "started, not
+    ready" sits at the left of its row (all three leave with the panel in beat 3). On "All of
     step 1 collapses" the left column's chips fold into one PURPLE chip `docker compose up`, which
     flashes on "docker compose up".
  3  The panel goes; the terminal (full width, 13 rows, `laptop`, student@laptop:~/AC215/port_toy$)
@@ -195,6 +201,7 @@ from manim import (
     Create,
     FadeIn,
     FadeOut,
+    FadeTransform,
     Indicate,
     LaggedStart,
     ManimColor,
@@ -215,6 +222,7 @@ from explainer.devops import (
     cell_width,
     chip,
     glyph_range,
+    lecture_ref,
     mono,
     mono_line,
     substring,
