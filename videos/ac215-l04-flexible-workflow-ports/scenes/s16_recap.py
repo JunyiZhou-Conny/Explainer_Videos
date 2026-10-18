@@ -999,13 +999,13 @@ class Recap(VoiceScene):
         assert cap_p.get_bottom()[1] > STRIP4 + 0.15, cap_p.get_bottom()[1]
         with self.voiceover(SAY[4]) as vo:
             # brisk, so the edit and its git diff are drawn while "We added a comment to the processor's
-            # code" is said, and the diff then stays up ≈2 s, through "Changed code that's copied into an
+            # code" is said, and the diff then stays up ≈2.8 s, through "Changed code that's copied into an
             # image" (it printed 1.9 s into that sentence and was readable for under 1 s): the strip's
             # old rows leave with V6, so git diff and its rows print without a scroll
-            wipe(self, t, extra=[FadeOut(net), FadeOut(halo), tr.goto(4)], run_time=0.5)
+            wipe(self, t, extra=[FadeOut(net), FadeOut(halo), tr.goto(4)], run_time=0.4)
             for m in added:
                 m.set_opacity(0)
-            self.play(caption_extra(tr, True), FadeIn(edp, shift=DOWN * 0.1), FadeIn(cap_p), run_time=0.45)
+            self.play(caption_extra(tr, True), FadeIn(edp, shift=DOWN * 0.1), FadeIn(cap_p), run_time=0.4)
             for m in added:
                 m.set_opacity(1)
             self.remove(*added)
@@ -1018,13 +1018,13 @@ class Recap(VoiceScene):
             self.add(*added)
             for m in added:
                 m.set_opacity(0)
-            self.play(*[m.animate.set_opacity(1) for m in added], pen_to(pen, VGroup(*added), run_time=0.5),
-                      run_time=0.5)
-            self.play(pen.animate.shift(RIGHT * 0.4 + UP * 0.3).set_opacity(0), run_time=0.25)
+            self.play(*[m.animate.set_opacity(1) for m in added], pen_to(pen, VGroup(*added), run_time=0.45),
+                      run_time=0.45)
+            self.play(pen.animate.shift(RIGHT * 0.4 + UP * 0.3).set_opacity(0), run_time=0.2)
             self.remove(pen)
             type_extra(self, t, DIFF, type_time=0.35)
-            dp = t.print(self, [(C61.line(10), VENV), (C61.line(11), VENV)], run_time=0.4)
-            vo.wait_until("Changed code")
+            dp = t.print(self, [(C61.line(10), VENV), (C61.line(11), VENV)], run_time=0.3)
+            vo.wait_until("Changed code")                # the diff has printed by the end of sentence 1
             self.play(flash(dp[1].glyphs, VENV, 1.15), flash(added, VENV, 1.15), run_time=0.6)
             vo.wait_until("needs dash dash build")      # the edit and its diff stay up while it is named
             # brisk, so the build's rows print as "only the copy layer is new" is said (they came 1.3 s
@@ -1037,13 +1037,13 @@ class Recap(VoiceScene):
             cols = {21: VENV, 22: VENV, 23: VENV}
             items = [(s, cols.get(n, OUTPUT)) if s != "…" else s
                      for s, n in zip(B_ROWS, [3, 0, 21, 22, 23, 24, 0, 43, 44, 45, 46, 47])]
-            br = print_rows(self, t, items, run_time=0.9, lag=0.08)
+            br = print_rows(self, t, items, run_time=0.75, lag=0.08)
             assert len(t.lines) == 13, len(t.lines)
             r24, r46, r47 = br[5], br[10], br[11]
             assert "[processor 4/4] COPY" in r24.text and "Running" in r46.text and "Started" in r47.text
             vo.wait_until("Only the copy layer is new")
             nc = beside(grey_tag("not CACHED"), t, r24, buff=0.5)
-            self.play(*paint(r24, TURN), run_time=0.5)
+            self.play(*paint(r24, TURN), run_time=0.4)
             pin(self, r24, nc, run_time=0.35)
             vo.wait_until("and only the processor is recreated")
             self.play(*paint(r46, VENV), run_time=0.4)

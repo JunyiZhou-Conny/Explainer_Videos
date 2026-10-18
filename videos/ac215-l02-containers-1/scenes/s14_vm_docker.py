@@ -164,8 +164,9 @@ def quick(t: float) -> float:
 
 
 def late(t: float) -> float:
-    """Rate function: a fade that starts once a quick() fade is done (it takes the faded thing's place)."""
-    return smooth(max(0.0, 1.5 * t - 0.5))
+    """Rate function: a fade in the last 30% of a move, long after a quick() fade is done (it takes
+    the faded thing's place) and once the moving dial has passed the corner of that place."""
+    return smooth(max(0.0, (t - 0.7) / 0.3))
 
 
 def deb13_card(rows, size: float = 20) -> VGroup:
@@ -407,12 +408,13 @@ class DockerOnVM(VoiceScene):
                 m.clear_updaters()
             # the page fades out early in the move, so it never sits under the terminal's title; the
             # slide-77 tag goes with the console it cites, and the badge then comes in where it was
+            # (from the left, after the dial's straight path has crossed its lower-right corner)
             self.play(ReplacementTransform(br.frame, t.box),
                       FadeOut(VGroup(*[m for m in br.submobjects if m is not br.frame], ill, page3, lref77),
                               rate_func=quick),
                       FadeIn(VGroup(t.bar, t.dots, t.title), rate_func=rate_functions.ease_in_quad),
                       Transform(dial_parts, dial_to), FadeOut(cost, rate_func=quick),
-                      FadeIn(mini, shift=LEFT * 0.2, rate_func=late), run_time=1.0)
+                      FadeIn(mini, shift=RIGHT * 0.2, rate_func=late), run_time=1.0)
             self.remove(dial, dial_parts, t.box, t.bar, t.dots, t.title)
             self.add(badge_dial, t)
             p0 = bare_prompt(self, t)

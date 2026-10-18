@@ -7,7 +7,7 @@ Beats (script.md "## S08", one voiceover block each):
     a row of number cells that becomes a GREEN arrow in a 2-D drawing of a sphere, the others come
     out as arrows: the cheese cards cluster, the license cards sit elsewhere (tag our illustration,
     caption "a sketch of 3-D; each real vector has 256 numbers"). GREY chip "one vector per chunk ·
-    a sentence embedding, not a word embedding".
+    a sentence embedding, not a word embedding" (in at "It turns each chunk into one vector").
  1  LECTURE A40–A43. Only the instructor's column of the lecture's Big Five table writes in (tag
     lecture example) and becomes a PINK arrow; the three candidates appear as GREEN arrows (tag
     sketch · not to scale: A 10° away and short, B 25° away and 1.4× longer, C 45° away); YELLOW
@@ -30,8 +30,9 @@ Beats (script.md "## S08", one voiceover block each):
     lines 75–84 generate_query_embedding "same model, same 256".
  6  TRACKER Embed 1. V1 shrinks back to the mini-map, which leaves as the TEAL terminal (13 rows)
     comes in; it types python cli.py --embed --chunk_type char-split -> cli-container/20 lines 2
-    (cut), 3–6, …, 21–22, …, 73 (RED, wrapped); tag real run · no key on the title bar; GOLD tag on
-    the command's prompt row "first Google call · your project pays".
+    (cut), 3–6, …, 21–22, …, 73 (RED, wrapped); the "Processing file" line flashes YELLOW at "it
+    reads the first book"; tag real run · no key on the title bar; GOLD tag on the command's prompt
+    row "first Google call · your project pays".
  7  The terminal shrinks to a 4-row strip (the command's two rows and the error's two rows); a
     GREY "with your key, look for" card above it, four items writing in as named (cli.py lines
     240, 256, 259–260, 262–264).
@@ -51,7 +52,7 @@ Beats (script.md "## S08", one voiceover block each):
     vectors: count, first five, lengths" (code not shown); the strip grows to 4 rows ->
     recorded-embeddings/06 lines 9–11 (tag recorded · the staff's vectors (68e0bde), just above the
     strip). Left, V4: the upper half of a dashed unit circle, 24 GREEN arrows (directions ours,
-    lengths 0.369–0.402; tag "our illustration · the directions"), a ruler along the axis (0.4, 1)
+    lengths 0.369–0.402; tag our illustration), a ruler along the axis (0.4, 1)
     and a YELLOW dashed mark at ≈ 0.4 across the arrow tips ("lengths 0.369–0.402"); "length 1"
     at the circle.
 12  The strip, card and ruler leave; the dashed circle and the short arrows stay, a PINK query arrow
@@ -208,7 +209,7 @@ PONDER_Q = ("Our collection compares by cosine.\nThese vectors are shorter than 
 TOPICS = ["curd", "milk", "license", "curd", "whey", "license"]         # beat 0's chunk cards
 ANGLES0 = {0: (42, 0.86), 1: (55, 0.80), 2: (203, 0.84), 3: (48, 0.90), 4: (61, 0.82), 5: (216, 0.78)}
 SPH_O = np.array([1.75, 0.35, 0])           # beat 0: the sphere's centre
-BOX_X = -2.85                               # beat 0: the embedding box
+BOX_X = -3.3                                # beat 0: the embedding box (room for "a list of numbers")
 GAME_O = np.array([-6.0, -2.0, 0])           # beats 1–2: the 2-D sketch's origin
 GAME_R = 3.4
 INSTR = 8.0                                 # the instructor's direction (degrees)
@@ -338,10 +339,12 @@ class Embeddings(VoiceScene):
                                                                       lag_ratio=0.1), FadeIn(cards_lab), run_time=0.9)
             self.play(FadeIn(vs), run_time=0.5)
             vo.wait_until("It turns each chunk")
-            self.play(into_box(cards[0]), run_time=0.6)
+            # the chip says what the sentence says, and stays up long enough to be read
+            self.play(into_box(cards[0]), FadeIn(sent, shift=UP * 0.1), run_time=0.6)
             vo.wait_until("a list of numbers")
-            self.play(LaggedStart(*[FadeIn(c) for c in cells], lag_ratio=0.12), FadeIn(cells_lab), run_time=0.6)
-            self.play(ReplacementTransform(cells, arrows0[0]), FadeOut(cells_lab), run_time=0.8)
+            self.play(LaggedStart(*[FadeIn(c) for c in cells], lag_ratio=0.12), FadeIn(cells_lab), run_time=0.5)
+            self.wait(0.3)                         # the list of numbers holds before it becomes an arrow
+            self.play(ReplacementTransform(cells, arrows0[0]), FadeOut(cells_lab), run_time=0.7)
             vo.wait_until("so similar meanings")
             self.play(LaggedStart(*[Succession(into_box(cards[i]), GrowArrow(arrows0[i]))
                                     for i in range(1, len(TOPICS))], lag_ratio=0.3), run_time=2.4)
@@ -357,7 +360,6 @@ class Embeddings(VoiceScene):
             self.play(FadeIn(lab_lic, shift=RIGHT * 0.1),
                       LaggedStart(*[Indicate(a, color=TURN, scale_factor=1.0) for a in lic], lag_ratio=0.2),
                       run_time=0.7)
-            self.play(FadeIn(sent, shift=UP * 0.1), run_time=0.5)
         self.wait(0.3)
 
         # ========================================================== 1 · the personality game: cosine
@@ -387,7 +389,9 @@ class Embeddings(VoiceScene):
             self.play(LaggedStart(*[FadeIn(VGroup(*row), shift=RIGHT * 0.1) for row in table.cells], lag_ratio=0.2),
                       run_time=1.2)
             vo.wait_until("Five scores make each person")
-            self.play(Indicate(values, color=LOOKUP, scale_factor=1.15), run_time=0.7)
+            # each value pulses about its own centre (a column-wide Indicate pushed 4.8 into the header)
+            self.play(LaggedStart(*[Indicate(v, color=LOOKUP, scale_factor=1.15) for v in values], lag_ratio=0.1),
+                      run_time=0.7)
             self.play(FadeIn(gs), ReplacementTransform(values, a_ins), Transform(table.heads[1], l_ins),
                       FadeOut(VGroup(table.frame, table[1], table.heads[0], *[row[0] for row in table.cells])),
                       FadeOut(ex), run_time=1.1)
@@ -408,11 +412,20 @@ class Embeddings(VoiceScene):
         med_d = {k: medal(k, DOT[k]).move_to(pd.slots[i]) for i, k in enumerate("AB")}
         dtag = two_row_tag(["computed from the lecture's table", "not on the slides"])
         dtag.move_to([pd.blocks.get_left()[0] + dtag.width / 2, pd.blocks.get_bottom()[1] - 0.2 - dtag.height / 2, 0])
-        measures = table_card(["measure", "compares"], [["cosine", "the angle"], ["Euclidean", "the distance"],
-                                                         ["dot product", "angle and length"]])
+        m_rows = [["cosine", "the angle"], ["Euclidean", "the distance"], ["dot product", "angle and length"]]
+        usual = note("usual for text", TURN)
+        # the "compares" column is wide enough for "the angle", the ring and "usual for text" inside the
+        # frame (next to the ring, the note used to cross the frame's right edge)
+        w_col0 = max(label(s, CAPTION).width for s in ["measure"] + [r[0] for r in m_rows]) + 0.4
+        w_col1 = max(label(r[1], CAPTION).width for r in m_rows)
+        w_col1 = max(w_col1, label("the angle", CAPTION).width + 0.1 + 0.2 + usual.width + 0.1) + 0.4
+        measures = table_card(["measure", "compares"], m_rows, col_w=[w_col0, w_col1])
         measures.move_to([-6.35 + measures.width / 2, 2.78 - measures.height / 2, 0])
         cos_ring = ring(VGroup(*measures.cells[0]), TURN, buff=0.1)
-        usual = note("usual for text", TURN).next_to(cos_ring, RIGHT, buff=0.2)
+        cos_ring.stretch_to_fit_height(VGroup(*measures.cells[0]).height + 0.1)   # clear of the header rule
+        usual.next_to(cos_ring, RIGHT, buff=0.2)
+        assert usual.get_right()[0] < measures.frame.get_right()[0] - 0.1
+        assert measures.frame.get_right()[0] < 0.4             # clear of the podiums (x0 = 0.6)
 
         def flash(arrow, color=TURN):
             ln = Line(arrow.get_start(), arrow.get_end()).set_stroke(color, 10)
@@ -546,7 +559,8 @@ class Embeddings(VoiceScene):
 
         with self.voiceover(SAY[5]) as vo:
             self.play(FadeOut(VGroup(p2, bar100, bar96, stack, stack_lab, box4, ticks, calls, b_chip, retry)),
-                      FadeIn(lr), FadeIn(mm_g), run_time=0.6)
+                      FadeIn(lr), run_time=0.45)
+            self.play(FadeIn(mm_g), run_time=0.3)          # after the retry chip has gone from its corner
             body = VGroup(*[m for m in mm_g.submobjects if m is not mm_g.frame])
             self.play(FadeOut(mm_g.frame), body.animate.scale(4, about_point=MINI_CENTER).shift(-MINI_CENTER),
                       run_time=1.0)
@@ -583,7 +597,10 @@ class Embeddings(VoiceScene):
                 run_time=0.5)
             vo.wait_until("On our machine")
             self.play(FadeIn(nk, shift=LEFT * 0.1), run_time=0.3)
-            t.print(self, EMB_HEAD, run_time=0.7)
+            head = t.print(self, EMB_HEAD, run_time=0.7)
+            assert len(head) == 5 and "Processing file" in EMB_HEAD[3]
+            vo.wait_until("it reads the first book")
+            self.play(Indicate(head[3], color=TURN, scale_factor=1.03), run_time=0.6)
             vo.wait_until("then stops at the missing key file")
             t.print(self, EMB_MID, run_time=0.4)
             err = t.print(self, [(EMB_ERR, ERR)], wrap=True, run_time=0.5)
@@ -747,9 +764,9 @@ class Embeddings(VoiceScene):
         rng_lab.move_to(v4.point(26, 0.52) + RIGHT * rng_lab.width / 2)
         len1 = note("length 1").move_to(v4.point(128, 0.78))
         # the 24 lengths are spread over the measured range; their directions are ours
-        fan_tag = our_illustration_tag("· the directions")
+        fan_tag = our_illustration_tag()
         fan_tag.move_to([-1.2 + fan_tag.width / 2, 2.5, 0])                 # outside the circle, top right
-        assert fan_tag.get_right()[0] < 2.6 and np.linalg.norm(
+        assert fan_tag.get_right()[0] < 2.0 and np.linalg.norm(
             fan_tag.get_corner(DOWN + LEFT) - v4.o.get_center()) > v4.r() + 0.15
         n_strip = 4
         st = staff_tag()
@@ -848,7 +865,7 @@ class Embeddings(VoiceScene):
                       run_time=0.8)
             vo.wait_until("the game's lesson")
             self.play(FadeIn(game_chip, shift=UP * 0.1), run_time=0.5)
-        self.wait(0.8)
+        self.wait(1.5)                                 # time to read the game chip before the fade
         self.play(FadeOut(VGroup(tr, v4, circ, fan, fan_tag, a_q, l_q, len1, arc, same_lab, ins, ins_t, ins_i, w,
                                  w_circ, wq, wc, dist, d_lab, n_l2, n_dot, game_chip)), run_time=0.8)
         self.wait(0.3)

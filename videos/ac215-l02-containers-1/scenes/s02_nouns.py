@@ -52,7 +52,7 @@ Beats (script.md "## S02", one voiceover block each):
     shared", which pulses; then GREY tags "namespaces" and "cgroups" sit on the bar under the outer
     containers (slide 22).
     Tag "Lecture 2 · slides 9–12, 22–24" (under the header) from the block's start ("And a container
-    is not a small VM", with the VMs) to the end of the scene (it fades with the last frame).
+    is not a small VM", with the VMs) through block 7: it fades with the V8 picture at block 8's start.
  7. V8, second half: a GREY laptop outline wraps the picture ("Mac · Windows"); a dashed GREY box
     "Linux VM · Docker Desktop" slides in under the kernel bar. Then the laptop outline morphs into
     a BLUE VM outline ("cloud VM", ending under the kernel bar), the dashed box fades: caption "on a
@@ -62,7 +62,9 @@ Beats (script.md "## S02", one voiceover block each):
     outlined chip level with its slot: "the operating system's files" slides into the bottom slot at
     "the system's files", "system libraries" into the next at "and libraries", both becoming ORANGE
     slabs (GREEN check); the third, "GPU drivers", stays outside below them and turns GREY, "still
-    the host's", at "GPU drivers still". Fade out to an empty frame.
+    the host's", at "GPU drivers still". Tag "Lecture 2 · slides 5–7, 10, 22" in the V8 tag's spot,
+    in with the stack and chips (SLIDES.md claim 3; the host's GPU drivers: slide 22). Fade out to an
+    empty frame (the tag with it).
 """
 
 import numpy as np  # noqa: I001  (manim first, then common: common must win)
@@ -546,6 +548,9 @@ class FourNouns(VoiceScene):
         ok2 = check_mark(0.45).next_to(VGroup(hole1, hole2), LEFT, buff=0.3)
         gpu_grey = chip("GPU drivers", S.GREY, size=26, fill_opacity=0.06).move_to(gpu_c, aligned_edge=LEFT)
         hosts = label("still the host's", 26, S.GREY).next_to(gpu_grey, RIGHT, buff=0.3)
+        # this picture cites what each tool isolates (SLIDES.md claim 3: slides 5–7, 10; the host's GPU
+        # drivers: slide 22), so the V8 tag leaves with V8 and this one takes its spot
+        ref3 = slide_ref(head, "5–7, 10, 22")
         # QA 03:06: the GPU chip (review P36, exercise D1c) greys on its own sentence, "GPU drivers
         # still come from the host." (if a SAY revision drops that sentence, it greys with the libraries)
         gpu_said = "GPU drivers still" in SAY[8]
@@ -554,8 +559,8 @@ class FourNouns(VoiceScene):
             return ReplacementTransform(gpu_c, gpu_grey), FadeIn(hosts, shift=LEFT * 0.1)
 
         with self.voiceover(SAY[8]) as vo:
-            self.play(FadeOut(VGroup(kp, ns_chips, vm_out, vm_lab, own)), run_time=0.6)
-            self.play(FadeIn(VGroup(hole1, hole2, p2, y2, img_lab), shift=UP * 0.2),
+            self.play(FadeOut(VGroup(kp, ns_chips, vm_out, vm_lab, own, ref2)), run_time=0.6)
+            self.play(FadeIn(VGroup(hole1, hole2, p2, y2, img_lab), shift=UP * 0.2), FadeIn(ref3),
                       LaggedStart(*[FadeIn(c, shift=LEFT * 0.3) for c in (os_c, lib_c, gpu_c)], lag_ratio=0.2),
                       run_time=1.0)
             vo.wait_until("the system's files")

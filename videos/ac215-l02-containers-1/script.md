@@ -143,8 +143,8 @@ Conventions
   "`<USER NAME>` = your Docker Hub username (here: student)". The VM: `ac215-l02`, prompt
   `student@ac215-l02:~$`, title `ssh · ac215-l02` (fresh `debian:12` / `debian:13` containers stand
   in, as in L1); Debian 13 appears as a small GREY card where its output differs.
-- Length and parts: narration 4,294 words (`python -m explainer.script`; part 1 = 2,348,
-  part 2 = 1,946). Measured on v1: 150 wpm with Kokoro af_heart at 0.9 (sentence gaps included),
+- Length and parts: narration 4,398 words (`python -m explainer.script`; part 1 = 2,428,
+  part 2 = 1,970). Measured on v1: 150 wpm with Kokoro af_heart at 0.9 (sentence gaps included),
   so ≈ 28.5 min of narration, ≈ 31–33 min with typing, outputs and ponder timers (L1's 4,287 words
   gave 29:52). Part 1 = S01–S09 (write the Dockerfile, build and run it; ends on A16), part 2 =
   S10–S16 (layers, cache, Docker Hub, platforms, the VM, teardown). Each part ends on an empty frame.
@@ -283,8 +283,8 @@ band (L1's server slices). At "share one Linux kernel", the three kernel bars sl
 into one GREY bar "Linux kernel · shared", and the VM outlines shrink into three TEAL "container"
 boxes standing on it; caption "isolated processes, not machines". Two small GREY chips sit on the
 shared kernel bar, "namespaces" and "cgroups", and a GREY caption "user space" beside the containers.
-GREY tag `Lecture 2 · slides 9–12, 22–24` (top right, from "And a container is not a small VM" to
-the end of the scene).
+GREY tag `Lecture 2 · slides 9–12, 22–24` (top right, from "And a container is not a small VM"
+until the V8 picture fades at the start of the scene's last block).
 SAY: And a container is not a small VM. A VM boots its own kernel, the core of the operating system. Containers are isolated processes that share one Linux kernel.
 
 SHOW: V8, second half. A GREY laptop outline wraps the picture; a dashed GREY box "Linux VM · Docker
@@ -294,8 +294,9 @@ SAY: On a Mac or Windows laptop, Docker Desktop provides that kernel with a smal
 
 SHOW: L1's three chips return: two RED-outlined, "the operating system's files" and "system
 libraries", fly into the TEAL stack, turning ORANGE fills (GREEN check); the third, "GPU drivers",
-stays outside and, at "GPU drivers still come from the host", turns GREY, "still the host's". Fade
-out.
+stays outside and, at "GPU drivers still come from the host", turns GREY, "still the host's". GREY
+tag `Lecture 2 · slides 5–7, 10, 22` (top right, in the V8 tag's place, from when the chips return
+to the end of the scene). Fade out.
 SAY: What a venv couldn't isolate in lecture 1, the system's files and libraries, is now inside the box. GPU drivers still come from the host.
 
 ---

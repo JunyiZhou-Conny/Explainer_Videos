@@ -124,7 +124,7 @@ S12:
   - null
 - en: "Then tag the image: docker tag, simple-translate, then your user name, slash simple-translate-ac215. Pause and run it with your own name. An extra image ls shows two names, one ID: a second name, not a copy."
   zh:
-  - "然后给 image 打 tag：docker tag，先写 simple-translate，再写你的用户名/simple-translate-ac215。"
+  - "然后给 image 打 tag：在 docker tag 后面先写 simple-translate 再写你的用户名/simple-translate-ac215。"
   - "暂停一下，用你自己的用户名跑一遍。"
   - "额外用 docker image ls 看一下：两个名字，一个 ID；是第二个名字，不是一份副本。"
   en_display:

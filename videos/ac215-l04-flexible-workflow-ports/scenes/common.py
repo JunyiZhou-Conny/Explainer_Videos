@@ -967,13 +967,18 @@ def _row_of(line):
 def beside(mob, t: Terminal, line, buff: float = 0.3):
     """Position `mob` (a tag, a check mark ...) right after the text of terminal line `line` (its
     last row when folded), centred on that row; if it would cross the terminal's right edge it
-    sits at the right end of the row instead. Returns mob (not added)."""
+    sits at the right end of the row instead. A row too full for that (the tag would cover its
+    text) is an error: put the tag on another row or under the terminal. Returns mob (not added)."""
     row = _row_of(line)
     ref = row.glyphs if len(getattr(row, "glyphs", [])) else row.strut
     mob.next_to(ref, RIGHT, buff=buff)
     mob.set_y(row.strut.get_center()[1])
     if mob.get_right()[0] > t.box.get_right()[0] - 0.12:
         mob.align_to(t.box, RIGHT).shift(LEFT * 0.12)
+        if ref is row.glyphs and mob.get_left()[0] < ref.get_right()[0] + 0.1:
+            raise ValueError(f"beside(): no room for a {mob.width:.2f}-wide tag after this row's text "
+                             f"(it ends at x={ref.get_right()[0]:.2f}); it would cover the text. "
+                             "Put the tag on an output row or under the terminal.")
     return mob
 
 

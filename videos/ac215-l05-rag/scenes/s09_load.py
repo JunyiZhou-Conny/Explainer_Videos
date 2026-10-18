@@ -67,9 +67,13 @@ Deviations from SHOW (see the scene report):
   line 2 with … (as S08 does) so the 13 rows keep the typed command; beat 5's counter sits in
   the band above the terminal, right of the tracker. Tags on a typed command sit on its prompt
   row (the command row has no room).
+- Beat 6's strip keeps the first wrapped row of recorded-embeddings/02 line 164; its last
+  character turns into … as the strip forms (a cut line, as the conventions mark one).
 - Beat 7 opens the second laptop terminal straight at ~/AC215/llm-rag (S05 already showed the
   "new terminal: cd here first" step and the beat has 6.7 s) with 9 rows (the curl line folds
-  onto 4 rows); the ghost sits above it. Beat 9 reuses that terminal.
+  onto 4 rows, as S10 folds it: inside the URL with "\" and no indent, so the rows retype as one
+  valid command); the ghost sits above it. Beat 9 reuses that terminal.
+- The counters' numbers are scaled to their labels' size (Counter's LaTeX digits read small).
 - Beat 9 shows the picture first (concept before command), then the terminal; nothing travels
   along the /data route (script conventions: the route pulses, both sides blink). The UUID rows
   are cut after 8 hex digits so a GREEN "index" tag fits on each; "one per collection" sits by
@@ -117,6 +121,7 @@ from common import (
     P_REPO,
     STRIP_TOP,
     TURN,
+    _type_rows,
     Counter,
     HnswGraph,
     MiniMap,
@@ -159,6 +164,7 @@ from explainer import style as S
 from explainer.devops import (
     CAPTION,
     MONO,
+    OUTPUT,
     box,
     browser_window,
     check_mark,
@@ -168,6 +174,7 @@ from explainer.devops import (
     glyph_range,
     label,
     mono,
+    mono_line,
     substring,
 )
 from explainer.scene import VoiceScene
@@ -210,6 +217,16 @@ assert REC2.line(8) == "Number of files to process: 11" and REC2.line(163) == "I
 
 NAMES = capture("03", "recorded-embeddings")           # extra: the collections' dimension
 assert NAMES.exit == 0 and NAMES.line(3) == '"dimension":256' and NAMES.line(5) == '"dimension":256'
+# The curl line folds as S10 folds the same check: at spaces, and once inside its URL at a "/" with
+# no space before the "\" and no indent after it (bash joins backslash-newline, so the URL stays one
+# word). type_cmd's hard break there ends the row with " \" and indents the next, which retyped
+# splits the URL into two words.
+_u = NAMES.cmd.split()
+assert _u[:2] == ["curl", "-s"] and _u[3:6] == ["|", "grep", "-oE"] and len(_u) == 7, _u
+_cut = _u[2].index("/databases")
+CURL_ROWS = [f"{P_REPO} curl -s \\", f"    {_u[2][:_cut]}\\", f"{_u[2][_cut:]} | grep -oE \\", f"    {_u[6]}"]
+_joined = "\n".join(CURL_ROWS)[len(P_REPO) + 1:].replace("\\\n", "")
+assert " ".join(_joined.split()) == NAMES.cmd and all(len(r) <= 65 for r in CURL_ROWS), CURL_ROWS
 GHOST = capture("17b", "laptop").line(3)               # the same check before the first insert
 assert GHOST == '"dimension":null'
 
@@ -278,6 +295,15 @@ def row_with(rows, sub: str):
         if sub in r.text:
             return r
     raise KeyError(sub)
+
+
+def big_digits(c: Counter, k: float = 1.35) -> Counter:
+    """Counter draws its number with LaTeX digits about 0.73 of its label's size: scale the number
+    to the label's visual size (DecimalNumber keeps the scale when its value changes) and put it
+    back beside the label. Its left edge stays fixed as it counts."""
+    c.num.scale(k)
+    c.num.next_to(c.label, RIGHT, buff=0.15).align_to(c.label, DOWN)
+    return c
 
 
 def compact_collection(name: str) -> VGroup:
@@ -360,12 +386,12 @@ class LoadChroma(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(VGroup(tbl, tbl_lab, hits, sql, tick, cross, cyl, cyl_lab)), FadeOut(lr),
-                      FadeOut(mm), run_time=0.5)
+                      FadeOut(mm), run_time=0.4)
             self.play(FadeIn(rt), LaggedStart(*[FadeIn(d, shift=DOWN * 0.2) for d in drops], lag_ratio=0.25),
-                      run_time=0.6)
+                      run_time=0.5)
             self.play(LaggedStart(*[d.animate.move_to(rt.cell(i, "embedding")) for i, d in enumerate(drops)],
-                                  lag_ratio=0.25), run_time=0.7)
-            self.play(*rt.parts_in("row0", "row1", "row2"), run_time=0.4)
+                                  lag_ratio=0.25), run_time=0.6)
+            self.play(*rt.parts_in("row0", "row1", "row2"), run_time=0.35)
             self.remove(*drops)                  # (and the LaggedStart's wrapper group around them)
             vo.wait_until("an ID")
             self.play(Create(cbox), run_time=0.35)
@@ -427,6 +453,7 @@ class LoadChroma(VoiceScene):
         st.shift(np.array([-st.boxes.get_center()[0], 2.32 - st.boxes.get_center()[1], 0]))
         idx_frame = st.boxes[0][0]
         sc = ScanColumn(n=28).move_to(SCAN_C)
+        big_digits(sc.counter)
         slow = note("slow").next_to(sc.counter, DOWN, buff=0.2).align_to(sc.counter, LEFT)
         hg = HnswGraph(width=HNSW_W, gap=HNSW_GAP, show=()).move_to(HNSW_C)
         bottom = hg.nodes[-1]
@@ -468,8 +495,8 @@ class LoadChroma(VoiceScene):
         zero_note = note("0 here = your embed step didn't finish")
 
         with self.voiceover(SAY[4]) as vo:
-            self.play(FadeOut(VGroup(st, hg, ptr, ill)), FadeOut(lr), FadeOut(mm), tr.goto(1), run_time=0.6)
-            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)
+            self.play(FadeOut(VGroup(st, hg, ptr, ill)), FadeOut(lr), FadeOut(mm), tr.goto(1), run_time=0.45)
+            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.3)
             vo.wait_until("python cli.py")
             cmd = type_cmd(self, t, LOAD_CMD, type_time=1.6)
             assert hasattr(cmd, "rows") and len(cmd.rows) == 2
@@ -492,7 +519,7 @@ class LoadChroma(VoiceScene):
 
         # ========================================================== 5 · the staff's vectors: 8,248 records
         stf = staff_tag()
-        counter = Counter("records", 8248, DATA, size=32)        # placed at its widest, then reset
+        counter = big_digits(Counter("records", 8248, DATA, size=32))   # placed at its widest, then reset
         counter.move_to([6.3 - counter.width / 2, 3.08, 0])
         counter.tracker.set_value(0)
         counter.num.set_value(0)
@@ -519,11 +546,11 @@ class LoadChroma(VoiceScene):
                       glyph_range(v1, v1.text.index("[-0.")).animate.set_color(DATA),
                       v2.animate.set_color(DATA), run_time=0.7)
             vo.wait_until("It inserts 8,248 records")
-            batch = t.print(self, REC1_BATCH, wrap=True, run_time=0.5)
-            self.play(FadeIn(counter, shift=DOWN * 0.1), run_time=0.3)
-            self.play(counter.count_to(1355, 0.7))
-            t.print(self, REC1_TAIL, wrap=True, run_time=0.5)
-            self.play(counter.count_to(8248, 0.9))
+            batch = t.print(self, REC1_BATCH, wrap=True, run_time=0.4)
+            self.play(FadeIn(counter, shift=DOWN * 0.1), run_time=0.25)
+            self.play(counter.count_to(1355, 0.5))
+            t.print(self, REC1_TAIL, wrap=True, run_time=0.4)
+            self.play(counter.count_to(8248, 0.7))
             vo.wait_until("in batches of 500")
             b500 = row_with(batch, "Inserted 500 items")
             self.play(b500.animate.set_color(TURN), run_time=0.4)
@@ -542,12 +569,19 @@ class LoadChroma(VoiceScene):
             stf2 = staff_tag()
             pin(self, cmd3.rows[0], beside(stf2, t, cmd3.rows[0], buff=0.5), run_time=0.3)
             out3 = t.print(self, REC2_OUT, wrap=True, run_time=0.6)
-            assert len(t.lines) == 13, len(t.lines)
+            # the 13 rows hold only this command and its output (nothing of the char-split run)
+            assert len(t.lines) == 13 and t.lines[0] is cmd3.rows[0], len(t.lines)
             fin = row_with(out3, "Finished inserting 35")
+            # in the strip the line keeps only its first wrapped row: its last character becomes …
+            assert len(fin.text) == 65 and fin.text.endswith("'recursive-split-coll"), fin.text
+            last = glyph_range(fin, 64)[0]
             vo.wait_until("14,228 records")
             counter.freeze()
             resize(self, t, 3, keep=[cmd3.rows[0], cmd3.rows[1], fin], run_time=0.7)
-            self.play(ReplacementTransform(counter, c1.count), FadeIn(VGroup(c1.stack, c1.name)), run_time=0.6)
+            ell = mono_line("…", t.size, OUTPUT).align_to(fin.strut, UP)
+            ell.shift(RIGHT * (last.get_center()[0] - ell.glyphs.get_center()[0]))
+            self.play(ReplacementTransform(counter, c1.count), FadeIn(VGroup(c1.stack, c1.name)),
+                      Transform(last, ell.glyphs[0]), run_time=0.6)
             self.play(FadeIn(c2, shift=LEFT * 0.3), run_time=0.5)
             vo.wait_until("Pause and run both loads")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.5)
@@ -566,7 +600,7 @@ class LoadChroma(VoiceScene):
             self.play(caption_extra(tr, True), FadeOut(VGroup(tc, c1, c2)), FadeOut(t, shift=DOWN * 0.2),
                       run_time=0.5)
             self.play(FadeIn(tl, shift=UP * 0.2), run_time=0.4)
-            cmd4 = type_cmd(self, tl, NAMES.cmd, type_time=1.5)
+            cmd4 = _type_rows(self, tl, CURL_ROWS, len(P_REPO) + 1, 1.5, len(NAMES.cmd))
             pin(self, cmd4.rows[0], beside(extra_tag(), tl, cmd4.rows[0], buff=0.5), run_time=0.3)
             out4 = tl.print(self, NAMES.at((2, 5)), run_time=0.5)
             pin(self, out4[0], beside(staff_tag(), tl, out4[0], buff=0.6), run_time=0.3)
@@ -584,7 +618,7 @@ class LoadChroma(VoiceScene):
         sp_chip = excerpt_chip(SPLIT, "cli.py · line 178 (excerpt)", line=excerpt("cli.py", 178, 178))
         sp_chip.move_to([-6.3 + sp_chip.width / 2, 2.25, 0])
         fname = mono(WOMAN_SHOWN, CAPTION, INK)
-        fname.move_to([-6.2 + fname.width / 2, 1.05, 0])
+        fname.move_to([-6.2 + fname.width / 2, 1.11, 0])
         fname_head = note("its file name in input-datasets/books").next_to(fname, UP, buff=0.14).align_to(fname, LEFT)
         kept = fname[:len(WOMAN_SHOWN[:WOMAN_CUT].replace(" ", ""))]
         lost = fname[len(kept):]
@@ -600,7 +634,7 @@ class LoadChroma(VoiceScene):
         fix_items.move_to(fix_fr).align_to(fix_fr, LEFT).shift(RIGHT * 0.3)
         fx_tag = fix_tag().move_to(fix_fr.get_corner(UP + RIGHT)).shift(LEFT * (fix_tag().width / 2 + 0.3))
         fix_card = VGroup(fix_fr, fix_items, fx_tag)
-        fix_card.move_to([-6.3 + fix_card.width / 2, -0.35, 0])
+        fix_card.move_to([-6.3 + fix_card.width / 2, -0.25, 0])   # clear of the strip below and the file name above
 
         with self.voiceover(SAY[8]) as vo:
             self.play(FadeOut(VGroup(tl, ghost_all)), FadeIn(t, shift=UP * 0.2), run_time=0.5)
@@ -613,8 +647,8 @@ class LoadChroma(VoiceScene):
             self.play(FadeIn(fname_head), FadeIn(fname), run_time=0.5)
             vo.wait_until("at the first dot")
             self.play(Create(cut), lost.animate.set_color(S.GREY_DARK), kept.animate.set_color(TURN),
-                      Indicate(sp_chip.text, color=ERR, scale_factor=1.06), run_time=0.8)
-            self.play(Indicate(out5[2], color=ERR, scale_factor=1.04), run_time=0.7)
+                      Indicate(sp_chip.text, color=ERR, scale_factor=1.06), run_time=0.7)
+            self.play(Indicate(out5[2], color=ERR, scale_factor=1.04), run_time=0.55)
             vo.wait_until("Split off only the extension")
             self.play(FadeIn(fix_fr), FadeIn(fx_tag), FadeIn(fix_rows[0], shift=RIGHT * 0.15), run_time=0.6)
             vo.wait_until("delete that book's old files")
@@ -647,14 +681,14 @@ class LoadChroma(VoiceScene):
 
         with self.voiceover(SAY[9]) as vo:
             self.play(FadeOut(VGroup(t, sp_chip, fname_head, fname, cut, fix_card)), FadeIn(zoom), run_time=0.5)
-            self.play(zoom.animate.scale(0.12).move_to(cyl9).set_opacity(0), FadeIn(pic), run_time=0.9)
+            self.play(zoom.animate.scale(0.12).move_to(cyl9).set_opacity(0), FadeIn(pic), run_time=0.8)
             self.remove(zoom)
             path = VGroup(route.copy(), bend.copy()).set_stroke(LOOKUP, 9)
             self.play(ShowPassingFlash(path[0], time_width=0.6), Indicate(cyl9, color=DATA, scale_factor=1.08),
-                      run_time=0.6)
+                      run_time=0.5)
             self.play(Indicate(win, color=TURN, scale_factor=1.1), Indicate(VGroup(fold, fold_name), color=TURN,
-                                                                            scale_factor=1.06), run_time=0.7)
-            self.play(FadeIn(tl, shift=UP * 0.2), run_time=0.35)
+                                                                            scale_factor=1.06), run_time=0.55)
+            self.play(FadeIn(tl, shift=UP * 0.2), run_time=0.3)
             cmd5 = type_cmd(self, tl, VOL.cmd, type_time=1.0)
             assert hasattr(cmd5, "rows") and len(cmd5.rows) == 2
             pin(self, cmd5.rows[-1], beside(extra_tag(), tl, cmd5.rows[-1], buff=0.5), run_time=0.3)
@@ -701,6 +735,9 @@ class LoadChroma(VoiceScene):
                    color=LOOKUP, stroke_width=5, tip_length=0.2, max_tip_length_to_length_ratio=0.1)
         s_head = VGroup(mono(CORS_HEAD, CAPTION, S.GREY), extra_tag()).arrange(RIGHT, buff=0.3)
         s1_txt = mono(CORS_LINE, CAPTION, DATA)
+        _k = CORS_LINE.index("https://")                        # the one site (Text glyphs skip spaces)
+        site = s1_txt[_k - CORS_LINE[:_k].count(" "):]
+        assert len(site) == len(CORS_LINE) - _k
         s1 = VGroup(box(s1_txt.width + 0.5, 0.5, S.GREY_DARK, fill=S.GREY_DARKER, fill_opacity=1, radius=0.1),
                     s1_txt)
         s1_txt.move_to(s1[0])
@@ -727,7 +764,8 @@ class LoadChroma(VoiceScene):
             vo.wait_until("Chroma's settings")
             self.play(FadeIn(s_head), FadeIn(s1, shift=UP * 0.1), run_time=0.5)
             self.play(FadeIn(s2, shift=UP * 0.1), run_time=0.4)
-            self.play(Indicate(s1_txt, color=DATA, scale_factor=1.04), run_time=0.8)
+            vo.wait_until("allow that one site")
+            self.play(Indicate(site, color=TURN, scale_factor=1.05), run_time=0.8)
 
         # ========================================================== 11 · part 1 done: the index is built
         rm = RagMap(show=RagMap.TOP + RagMap.BOTTOM + RagMap.LABELS)
@@ -735,15 +773,15 @@ class LoadChroma(VoiceScene):
 
         with self.voiceover(SAY[11]) as vo:
             self.play(FadeOut(VGroup(br, ill10, c_head, list_rows, lan, ar, dr, dr_lab, chroma10, strips)),
-                      run_time=0.5)
-            self.play(FadeIn(rm), run_time=0.6)
+                      run_time=0.4)
+            self.play(FadeIn(rm), run_time=0.45)
             ticks = []                     # right of each box's top, clear of the labels and the arrows
             for n in ("chunking", "embedding", "database"):
                 bx = rm.item(n)
                 ticks.append(check_mark(0.32, DATA).move_to([bx.get_right()[0] + 0.2,
                                                              min(bx.get_top()[1] + 0.02, 1.5), 0]))
-            self.play(rm.pulse_lane("top", DATA, run_time=1.0),
-                      LaggedStart(*[Create(k) for k in ticks], lag_ratio=0.35, run_time=1.0))
+            self.play(rm.pulse_lane("top", DATA, run_time=0.85),
+                      LaggedStart(*[Create(k) for k in ticks], lag_ratio=0.35, run_time=0.85))
             vo.wait_until("the index is built")
             self.play(FadeIn(done, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("In part 2")
