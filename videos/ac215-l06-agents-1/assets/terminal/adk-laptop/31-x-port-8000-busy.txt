@@ -1,0 +1,28 @@
+$ curl -s http://localhost:8000/api/v2/heartbeat; echo; uv run adk web
+{"nanosecond heartbeat":1792365974446218186}
+2026-10-18 23:26:15,803 - INFO - service_factory.py:266 - Using in-memory memory service
+2026-10-18 23:26:15,803 - INFO - local_storage.py:84 - Using per-agent session storage rooted at /home/student/AC215/llm-agent-google-adk
+2026-10-18 23:26:15,804 - INFO - local_storage.py:110 - Using file artifact service at /home/student/AC215/llm-agent-google-adk/.adk/artifacts
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/cli/fast_api.py:192: UserWarning: [EXPERIMENTAL] InMemoryCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  credential_service = InMemoryCredentialService()
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/auth/credential_service/in_memory_credential_service.py:33: UserWarning: [EXPERIMENTAL] BaseCredentialService: This feature is experimental and may change or be removed in future versions without notice. It may introduce breaking changes at any time.
+  super().__init__()
+INFO:     Started server process [4110]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server started                                                      |
+|                                                                             |
+| For local testing, access at http://127.0.0.1:8000.                         |
++-----------------------------------------------------------------------------+
+
+ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8000): address already in use
+INFO:     Waiting for application shutdown.
+
++-----------------------------------------------------------------------------+
+| ADK Web Server shutting down...                                             |
++-----------------------------------------------------------------------------+
+
+INFO:     Application shutdown complete.
+[exit 3]

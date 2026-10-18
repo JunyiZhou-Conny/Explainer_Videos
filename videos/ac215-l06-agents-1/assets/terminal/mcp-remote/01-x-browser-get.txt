@@ -1,0 +1,12 @@
+$ curl -si https://pavlos-fun-facts.dlops.io/mcp | head -12
+HTTP/1.1 200 Connection Established
+
+HTTP/2 406 
+content-type: application/json
+mcp-session-id: 8bf81878ed4048a6bf833232f90e9b54
+x-cloud-trace-context: 8d970e40b82134127164d103020d5d74;o=1
+date: Sun, 18 Oct 2026 23:26:27 GMT
+server: Google Frontend
+content-length: 126
+
+{"jsonrpc":"2.0","id":"server-error","error":{"code":-32600,"message":"Not Acceptable: Client must accept text/event-stream"}}[exit 0]

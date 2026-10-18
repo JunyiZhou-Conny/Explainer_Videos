@@ -1,0 +1,34 @@
+$ uv run python - <<'EOF'
+import asyncio, importlib.util
+spec = importlib.util.spec_from_file_location("mcp_tools_agent", "3-mcp-tools/agent.py")
+agent = importlib.util.module_from_spec(spec); spec.loader.exec_module(agent)
+async def main():
+    tools = await agent.toolset.get_tools()
+    print("tools the agent sees:", [t.name for t in tools])
+    session = await agent.toolset._mcp_session_manager.create_session()
+    listed = await session.list_tools()
+    print("tools the server offers:", len(listed.tools), [t.name for t in listed.tools])
+    result = await session.call_tool("list_directory", {"path": agent.ALLOWED_PATH})
+    print("list_directory", agent.ALLOWED_PATH, "->")
+    print(result.content[0].text)
+    await agent.toolset.close()
+asyncio.run(main())
+EOF
+Secure MCP Filesystem Server running on stdio
+Client does not support MCP Roots, using allowed directories set from server args: [ '/home/student/AC215/llm-agent-google-adk/3-mcp-tools' ]
+/home/student/AC215/llm-agent-google-adk/.venv/lib/python3.13/site-packages/google/adk/features/_feature_decorator.py:72: UserWarning: [EXPERIMENTAL] feature FeatureName.BASE_AUTHENTICATED_TOOL is enabled.
+  check_feature_enabled()
+npm notice
+npm notice New major version of npm available! 11.19.1 -> 12.2.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+npm notice To update run: npm install -g npm@12.2.0
+npm notice
+tools the agent sees: ['read_file', 'list_directory', 'search_files']
+tools the server offers: 14 ['read_file', 'read_text_file', 'read_media_file', 'read_multiple_files', 'write_file', 'edit_file', 'create_directory', 'list_directory', 'list_directory_with_sizes', 'directory_tree', 'move_file', 'search_files', 'get_file_info', 'list_allowed_directories']
+list_directory /home/student/AC215/llm-agent-google-adk/3-mcp-tools ->
+[FILE] .env.example
+[FILE] README.md
+[DIR] __pycache__
+[FILE] agent.py
+[FILE] pyproject.toml
+[exit 0]
