@@ -1149,27 +1149,44 @@ def _row_of(line):
 
 
 def beside(mob, t: Terminal, line, buff: float = 0.3):
-    """Position `mob` right after the text of terminal line `line` (its last row when folded),
-    centred on that row; if it would cross the terminal's right edge it sits at the right end of
-    the row instead. A row too full for that (the tag would cover its text) is an error: put the
-    tag on another row or under the terminal. Returns mob (not added)."""
+    """Position `mob` (a tag, a check mark ...) right after the text of terminal line `line` (its
+    last row when folded), centred on that row; if it would cross the terminal's right edge it
+    sits at the right end of the row instead, where it may cover the end of a full row: callers
+    may probe and fall back, and pin() refuses a tag that covers its row's text. Returns mob
+    (not added)."""
     row = _row_of(line)
     ref = row.glyphs if len(getattr(row, "glyphs", [])) else row.strut
     mob.next_to(ref, RIGHT, buff=buff)
     mob.set_y(row.strut.get_center()[1])
     if mob.get_right()[0] > t.box.get_right()[0] - 0.12:
         mob.align_to(t.box, RIGHT).shift(LEFT * 0.12)
-        if ref is row.glyphs and mob.get_left()[0] < ref.get_right()[0] + 0.1:
-            raise ValueError(f"beside(): no room for a {mob.width:.2f}-wide tag after this row's text "
-                             f"(it ends at x={ref.get_right()[0]:.2f}); it would cover the text. "
-                             "Put the tag on an output row or under the terminal.")
     return mob
 
 
+def covers_text(mob, line) -> bool:
+    """True when `mob` would hide the text of terminal line `line` (its last row when folded): it
+    carries text or a filled box (a tag, a check mark) and crosses the row's glyphs. An outline drawn
+    around the text (glyph_box) hides nothing."""
+    hides = any(type(m).__name__ in ("Text", "MarkupText", "Paragraph")
+                or (isinstance(m, Rectangle) and m.get_fill_opacity() > 0.3) for m in mob.get_family())
+    g = getattr(_row_of(line), "glyphs", None)
+    if not hides or g is None or not len(g):
+        return False
+    l, r, b, t = mob.get_left()[0], mob.get_right()[0], mob.get_bottom()[1], mob.get_top()[1]
+    return any(l < ch.get_right()[0] + 0.03 and r > ch.get_left()[0] - 0.03
+               and b < ch.get_top()[1] and t > ch.get_bottom()[1]
+               for ch in g.family_members_with_points())   # per character: a tag in a gap is fine
+
+
 def pin(scene, line, mob, run_time: float = 0.4, anim=None):
-    """Show `mob` (positioned, e.g. with beside()) and make it part of the terminal line, so it
-    scrolls and fades with it."""
+    """Show `mob` (positioned, e.g. with beside()) and make it part of the terminal line (its
+    last row when folded), so it scrolls and fades with it. A tag that would cover the row's text
+    is an error: put it on an output row or under the terminal."""
     row = _row_of(line)
+    if covers_text(mob, row):
+        raise ValueError(f"pin(): this {mob.width:.2f}-wide tag would cover the text of its row "
+                         f"(the text ends at x={row.glyphs.get_right()[0]:.2f}). "
+                         "Put the tag on an output row or under the terminal.")
     scene.play(anim or FadeIn(mob, shift=LEFT * 0.1), run_time=run_time)
     scene.remove(mob)
     row.add(mob)
