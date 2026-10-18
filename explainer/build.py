@@ -242,7 +242,9 @@ def fmt_srt(t: float) -> str:
 
 
 def fmt_chapter(t: float) -> str:
-    t = int(t)
+    # Down to the second, so a chapter never points past its scene, but after rounding to the
+    # millisecond: an offset is a sum of ffprobe durations, and 1004.999999 is 16:45 (L04's S09), not 16:44.
+    t = int(round(t, 3))
     return f"{t // 3600}:{t % 3600 // 60:02d}:{t % 60:02d}" if t >= 3600 else f"{t // 60:02d}:{t % 60:02d}"
 
 
