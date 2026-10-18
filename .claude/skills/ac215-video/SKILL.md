@@ -200,6 +200,10 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   workflows' results for "out of scope" refusals before relying on them.
 - **Agents never kill processes they did not start.** A planner's `pkill` pattern killed the
   coordinator's check; the same pattern could kill a stitch. Stop your own process by its PID.
+- **Agents write evidence under `build/`, never in the episode folder itself.** The WIP checkpoint
+  adds everything under `videos/`, so a scratch file left beside `script.md` ships (L03's
+  `snap_s08.json` reached the episode PR). Before an episode PR, list the tracked files outside
+  scenes/, assets/, i18n/ and output/ and remove anything that is not a deliverable.
 - **The scratchpad belongs to the coordinator.** One agent's `rm -rf scratchpad/*` erased the tools,
   clones and slides. Keep master copies outside it, lock it, and tell every agent: delete only files
   you created, by exact path, never with a wildcard.
