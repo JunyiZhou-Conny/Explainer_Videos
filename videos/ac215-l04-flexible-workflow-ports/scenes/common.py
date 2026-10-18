@@ -980,9 +980,13 @@ def beside(mob, t: Terminal, line, buff: float = 0.3):
 
 
 def covers_text(mob, line) -> bool:
-    """True when `mob` overlaps the glyphs of terminal line `line` (its last row when folded)."""
+    """True when `mob` would hide the text of terminal line `line` (its last row when folded): it
+    carries text or a filled box (a tag, a check mark) and crosses the row's glyphs. An outline drawn
+    around the text (glyph_box) hides nothing."""
+    hides = any(type(m).__name__ in ("Text", "MarkupText", "Paragraph")
+                or (isinstance(m, Rectangle) and m.get_fill_opacity() > 0.3) for m in mob.get_family())
     g = getattr(_row_of(line), "glyphs", None)
-    if g is None or not len(g):
+    if not hides or g is None or not len(g):
         return False
     return (mob.get_left()[0] < g.get_right()[0] + 0.05 and mob.get_right()[0] > g.get_left()[0]
             and mob.get_bottom()[1] < g.get_top()[1] and mob.get_top()[1] > g.get_bottom()[1])

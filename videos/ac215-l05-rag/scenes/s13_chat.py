@@ -467,7 +467,10 @@ class FinalPrompt(VoiceScene):
         with self.voiceover(SAY[4]) as vo:
             self.play(FadeIn(err, shift=RIGHT * 0.15), run_time=0.5)
             vo.wait_until("pass it in a config argument")
-            self.play(FadeOut(VGroup(loose, plug)), Create(cin), FadeIn(fix, shift=UP * 0.15), run_time=0.8)
+            # the loose RED cable swings over and plugs into the LLM, turning GREEN
+            self.play(ReplacementTransform(loose, cin), plug.animate.move_to(cin.get_end()).set_opacity(0),
+                      FadeIn(fix, shift=UP * 0.15), run_time=0.8)
+            self.remove(plug)
             self.play(FadeIn(ftag, shift=LEFT * 0.15), Indicate(g_label, color=DATA, scale_factor=1.06),
                       run_time=0.6)
             vo.wait_until("The older pipenv branch")
@@ -656,10 +659,17 @@ class FinalPrompt(VoiceScene):
                         (Prose("404 NOT_FOUND for the model? change GENERATIVE_MODEL, cli.py · line 27"), S.GREY)])
         tc.move_to([0, (br.get_bottom()[1] - 0.3 + -3.45) / 2, 0])
 
+        def shell(w, question) -> VGroup:
+            """A chat window's frame, title bar, dots, address field and input field, the question on top."""
+            return VGroup(w.frame, w[1], w[2], w[3], w.field, question)
+
         with self.voiceover(SAY[9]) as vo:
-            self.play(FadeOut(VGroup(win, q, bars, src, links, ill, cols, gt_head, cmp_note)), run_time=0.5)
-            self.play(*tracker_to(tr, 3), FadeIn(br), FadeIn(ill9), run_time=0.6)
-            self.play(FadeIn(bq), run_time=0.4)
+            # the opening chat box becomes the course's chat tool: the window moves, its address swaps
+            self.play(FadeOut(VGroup(bars, src, links, ill, cols, gt_head, cmp_note)),
+                      FadeOut(VGroup(win.address, win.content, win.answer)), run_time=0.5)
+            self.play(*tracker_to(tr, 3), ReplacementTransform(shell(win, q), shell(br, bq)),
+                      FadeIn(br.address, rate_func=second_half), FadeIn(ill9), run_time=0.8)
+            self.play(Indicate(br.address, color=TURN, scale_factor=1.06), run_time=0.6)
             vo.wait_until("in Chrome")
             self.play(FadeIn(chrome, shift=UP * 0.1), run_time=0.4)
             vo.wait_until("Pause: run both chat commands")

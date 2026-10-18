@@ -118,6 +118,7 @@ from common import (
     src_panel,
     staff_tag,
     standin_tag,
+    strip_top,
     term,
     tracker,
     type_cmd,
@@ -190,7 +191,7 @@ BAND_Y = 3.22                           # tags in the band right of the tracker
 CARD_Y = 2.36                           # the check card (left) and the staff tag (right) above an 11-row terminal
 LABEL_Y = -0.25                         # the survivors' label, under the cloud
 CARDS_Y = 2.33                          # beat 7: the ten record cards, above a 4-row strip
-FIX_Y = 0.22                            # beat 7: the fix card (its header included)
+FIX_Y = 0.4                             # beat 7: the fix card (its header included), clear of the strip's tag
 
 
 def pink_bar(panel, n: int):
@@ -227,16 +228,31 @@ def survivors(dc) -> VGroup:
     return VGroup(*[dc.dots[i] for i in dc.italian_ids])
 
 
-def mask_to(dc, level: str, dim: float = 0.12, bright: float = 1.7) -> list:
-    """DotCloud.mask; for "italian" the 64 survivors also grow (the SHOW's "64 separate brighter
-    dots"), each in one animation (fill and scale together, so no two animations share a dot)."""
+BRIGHT = 1.7        # the 64 survivors' scale under the "italian" mask ("64 separate brighter dots")
+NEAR_K = 1.6        # the unfiltered ten nearest grow while the beam reaches them (they are tiny)
+
+
+def mask_to(dc, level: str, dim: float = 0.12, shrink=()) -> list:
+    """DotCloud.mask; for "italian" the 64 survivors also grow, and the dots in `shrink` (the
+    grown ten nearest) dim and shrink back, each dot in ONE animation (fill and scale together,
+    so no two animations share a dot)."""
     if level != "italian":
         return dc.mask(level, dim)
     keep = set(dc.italian_ids)
-    off = VGroup(*[d for i, d in enumerate(dc.dots) if i not in keep])
+    sk = {id(d) for d in shrink}
+    off = VGroup(*[d for i, d in enumerate(dc.dots) if i not in keep and id(d) not in sk])
     dc.level = level
     return [off.animate.set_fill(S.GREY, dim)] + \
-        [d.animate.set_fill(DATA, 1).scale(bright) for d in survivors(dc)]
+        [d.animate.set_fill(S.GREY, dim).scale(1 / NEAR_K) for d in shrink] + \
+        [d.animate.set_fill(DATA, 1).scale(BRIGHT) for d in survivors(dc)]
+
+
+def unmask(dc) -> list:
+    """The "italian" mask lifts: every dot GREEN again, the survivors back to their size."""
+    keep = set(dc.italian_ids)
+    off = VGroup(*[d for i, d in enumerate(dc.dots) if i not in keep])
+    dc.level = "all"
+    return [off.animate.set_fill(DATA, 1)] + [d.animate.scale(1 / BRIGHT) for d in survivors(dc)]
 
 
 class FiltersFirst(VoiceScene):
@@ -286,6 +302,7 @@ class FiltersFirst(VoiceScene):
                                                                                        buff=0.1)
         cap.move_to([6.4 - cap.width / 2, 0.22, 0])
         cap2 = note("64 bright dots = 64 chunks").move_to(cap[1]).align_to(cap, RIGHT)
+        cap1 = cap[1].copy()                    # "1 dot ≈ 8 chunks" again when the mask lifts (beat 3)
         qcard = question_card()
         qcard.move_to([6.45 - qcard.width / 2, BAND_Y, 0])
 
@@ -332,7 +349,8 @@ class FiltersFirst(VoiceScene):
             self.play(*mask_to(dc, "italian"), cnt.count_to(COUNTS["italian"]), Transform(cap[1], cap2),
                       run_time=1.1)
             vo.wait_until("How many mention Tolminc")
-            self.play(FadeOut(ck), FadeIn(t, shift=UP * 0.2), run_time=0.5)
+            self.play(FadeOut(ck, shift=DOWN * 0.1), run_time=0.3)        # gone before the strip comes up
+            self.play(FadeIn(t, shift=UP * 0.2), run_time=0.4)
             out = t.print(self, CNT.at((13, 15)), run_time=0.5)
             self.play(FadeIn(stf, shift=DOWN * 0.1), run_time=0.3)
             vo.wait_until("None")
@@ -342,23 +360,40 @@ class FiltersFirst(VoiceScene):
         cnt.freeze()
 
         # ========================================================== 3 · a stand-in query, no filter
+        st4 = strip_top(4)
         ck2 = one_line_card("an extra Python check · query with a stored vector")
-        ck2.move_to([-6.3 + ck2.width / 2, CARD_Y, 0])
+        ck2_hi = [-6.3 + ck2.width / 2, CARD_Y, 0]                          # above an 11-row terminal
+        ck2.move_to([-6.3 + ck2.width / 2, st4 + 0.06 + ck2.height / 2, 0])  # above the 4-row strip
+        stf_4 = [6.3 - stf.width / 2, st4 + 0.06 + stf.height / 2, 0]
         sti = standin_tag()
         sti.move_to([6.5 - sti.width / 2, BAND_Y, 0])
+        near0 = dc.nearest(10, "all")          # the stand-in's ten nearest without a filter: the story
+        beam = dc.beam(near0)
+        tl = dc.parts["tolminc_label"]
 
         with self.voiceover(SAY[3]) as vo:
             vo.wait_until("The real question")          # "Now a search.": the count stays a moment
-            self.play(FadeOut(VGroup(dc, ill, cap, f_book, f_ital, cnt, tz)), run_time=0.5)
-            resize(self, t, 11, keep=0, extra=[FadeIn(ck2, shift=DOWN * 0.1), stf.animate.move_to(stf_hi)])
+            self.play(FadeOut(VGroup(f_book, f_ital, cnt, tz)), Indicate(qcard, color=LOOKUP, scale_factor=1.08),
+                      run_time=0.8)
             vo.wait_until("so we use a stand-in")
             self.play(ReplacementTransform(qcard, sti), run_time=0.7)
+            self.play(Indicate(dc.standin_dot, color=LOOKUP, scale_factor=2.0), run_time=0.7)
             vo.wait_until("the stored vector")
+            t.clear(self, run_time=0.25)
+            resize(self, t, 4, keep=0, run_time=0.6, extra=[FadeIn(ck2, shift=UP * 0.1), stf.animate.move_to(stf_4)])
             o16 = t.print(self, STANDIN_ROWS, run_time=0.6)
-            self.play(substring(o16[1], STANDIN_ID).animate.set_color(LOOKUP), run_time=0.4)
+            self.play(substring(o16[1], STANDIN_ID).animate.set_color(LOOKUP),
+                      Indicate(dc.standin_dot, color=LOOKUP, scale_factor=1.8), run_time=0.5)
             vo.wait_until("Without filters")
-            o18 = t.print(self, Q.at((18, 28)), run_time=0.7)
-            self.play(Indicate(o18[0], color=TURN, scale_factor=1.06), run_time=0.6)
+            self.play(*unmask(dc), Transform(cap[1], cap1), run_time=0.8)
+            self.play(Create(beam), *[d.animate.scale(NEAR_K) for d in near0], run_time=0.6)
+            vo.wait_until("its 10 nearest")
+            self.play(Indicate(tl, color=TURN, scale_factor=1.15),
+                      ShowPassingFlash(beam.copy().set_stroke(TURN, 4), time_width=0.6), run_time=0.8)
+            vo.wait_until("at distances from 0")
+            self.play(FadeOut(VGroup(dc, beam, ill, cap)), run_time=0.45)
+            resize(self, t, 11, keep=0, run_time=0.6, extra=[ck2.animate.move_to(ck2_hi), stf.animate.move_to(stf_hi)])
+            o18 = t.print(self, Q.at((18, 28)), run_time=0.6)
             vo.wait_until("the chunk itself")
             z0 = col_box(o18[1], 0, 6, S.GREY)
             pin(self, o18[1], z0, anim=Create(z0), run_time=0.3)
@@ -368,37 +403,34 @@ class FiltersFirst(VoiceScene):
             pin(self, o18[10], z1, anim=Create(z1), run_time=0.4)
 
         # ========================================================== 4 · with the code's filters
-        for d in dc.dots:                       # the picture comes back unmasked
-            d.set_fill(DATA, 1)
-        for d in survivors(dc):
-            d.scale(1 / 1.7)
-        dc.level = "all"
-        near0 = dc.nearest(10, "all")
-        beam = dc.beam(near0)
         far = dc.nearest(10, "italian")
         fv = VGroup(*far)
+        beam2 = dc.beam(far)
         surv_lab = backed(note(f"all 10: {BOOK}", INK)).move_to([fv.get_center()[0], LABEL_Y, 0])
+        stf_lo = [6.3 - stf.width / 2, STRIP_TOP + 0.06 + stf.height / 2, 0]
 
         with self.voiceover(SAY[4]) as vo:
-            t.clear(self)
-            o29 = t.print(self, Q.at((29, 39)), run_time=0.7)
+            t.clear(self, run_time=0.25)
+            o29 = t.print(self, [Q.line(29)], run_time=0.3)
+            self.play(Indicate(o29[0], color=TURN, scale_factor=1.04), run_time=0.6)   # "the code's filters"
             vo.wait_until("all 10 results")
-            bk = rows_box(list(o29[1:]), 8, 8 + len(BOOK), TURN)
+            o30 = t.print(self, Q.at((30, 39)), run_time=0.7)
+            vo.wait_until("The Complete Book of Cheese")
+            bk = rows_box(list(o30), 8, 8 + len(BOOK), TURN)
             self.play(Create(bk), run_time=0.6)
             vo.wait_until("at 0.28")
-            z2 = col_box(o29[1], 0, 6, TURN)
-            pin(self, o29[1], z2, anim=Create(z2), run_time=0.35)
+            z2 = col_box(o30[0], 0, 6, TURN)
+            pin(self, o30[0], z2, anim=Create(z2), run_time=0.35)
             vo.wait_until("to 0.31")
-            z3 = col_box(o29[10], 0, 6, TURN)
-            pin(self, o29[10], z3, anim=Create(z3), run_time=0.35)
-            vo.wait_until("The filters act first")
-            self.play(FadeOut(bk), FadeOut(ck2), run_time=0.3)
-            stf_lo = [6.3 - stf.width / 2, STRIP_TOP + 0.06 + stf.height / 2, 0]
-            resize(self, t, 3, run_time=0.6, extra=[stf.animate.move_to(stf_lo)])
-            self.play(FadeIn(dc), FadeIn(ill), FadeIn(cap[0]), run_time=0.5)
-            self.play(Create(beam), run_time=0.5)
-            self.play(*mask_to(dc, "italian"), FadeIn(cap[1]), run_time=0.8)
-            beam2 = dc.beam(far)
+            z3 = col_box(o30[9], 0, 6, TURN)
+            pin(self, o30[9], z3, anim=Create(z3), run_time=0.35)
+            # the picture comes back as beat 3 left it (no mask, the beam in the story) ...
+            self.play(FadeOut(bk), FadeOut(ck2), run_time=0.25)
+            resize(self, t, 3, run_time=0.5, extra=[stf.animate.move_to(stf_lo)])
+            self.play(FadeIn(VGroup(dc, ill, cap, beam)), run_time=0.5)
+            vo.wait_until("The filters act first")      # ... and the filters act first: the mask returns
+            self.play(*mask_to(dc, "italian", shrink=near0), Transform(cap[1], cap2), run_time=0.8)
+            vo.wait_until("and top K fills")
             self.play(Transform(beam, beam2), run_time=0.9)
             vo.wait_until("with whatever survives")
             self.play(FadeIn(surv_lab, shift=UP * 0.1), Indicate(fv, color=DATA, scale_factor=1.3),
@@ -429,6 +461,7 @@ class FiltersFirst(VoiceScene):
             self.play(FadeOut(VGroup(dc, beam, ill, cap, surv_lab, t, stf)), FadeOut(sti),
                       FadeIn(lr), run_time=0.6)
             self.play(FadeIn(st, shift=UP * 0.1), run_time=0.6)
+            self.play(Indicate(filt, color=TURN, scale_factor=1.12), run_time=0.7)     # "filtering after ranking"
             vo.wait_until("here, that would drop")
             self.play(LaggedStart(*[FadeIn(c, shift=DOWN * 0.25) for c in story], lag_ratio=0.08),
                       FadeIn(s_lab), run_time=0.9)
@@ -470,6 +503,8 @@ class FiltersFirst(VoiceScene):
             self.play(FadeIn(p2, shift=UP * 0.2), FadeIn(err), run_time=0.6)
             vo.wait_until("the README promises")
             self.play(FadeIn(rm, shift=DOWN * 0.1), run_time=0.5)
+            vo.wait_until("but only variant 4 runs")
+            self.play(Indicate(err, color=TURN, scale_factor=1.15), run_time=0.7)
             vo.wait_until("variants 1 to 3")
             self.play(FadeIn(hbox), Indicate(hashes, color=INK, scale_factor=1.2), run_time=0.8)
             vo.wait_until("Uncomment the first")
@@ -483,6 +518,9 @@ class FiltersFirst(VoiceScene):
         tg = term(P_CTR2, rows=10, container=True)
         rm_note = note("not in the README · cli.py · lines 402–418")
         nd = note("no distances: no ranking")
+        stf7 = staff_tag()                      # on the terminal's top right; it follows the shrink
+        stf7.move_to([6.3 - stf7.width / 2, tg.box.get_top()[1] + 0.06 + stf7.height / 2, 0])
+        stf7_4 = [6.3 - stf7.width / 2, st4 + 0.06 + stf7.height / 2, 0]
 
         cyl = cylinder(1.25, 1.45).move_to([-5.6, CARDS_Y - 0.55, 0])
         cards = VGroup()
@@ -521,13 +559,13 @@ class FiltersFirst(VoiceScene):
             beside(tagrow, tg, g.rows[0], buff=0.5)
             pin(self, g.rows[0], tagrow, run_time=0.4)
             vo.wait_until("uses the same book filter")
-            out7 = tg.print(self, ARGS_ROWS + [GET.line(3)], run_time=0.5)
-            pin(self, out7[3], beside(staff_tag(), tg, out7[3], buff=0.6), run_time=0.3)
+            tg.print(self, ARGS_ROWS + [GET.line(3)], run_time=0.5)
+            self.play(FadeIn(stf7, shift=DOWN * 0.1), run_time=0.3)
             ids = tg.print(self, IDS_ROWS, run_time=0.5)
             vo.wait_until("but no question")
             pin(self, ids[3], beside(nd, tg, ids[3], buff=0.5), run_time=0.4)
             vo.wait_until("Its 10 records start")
-            resize(self, tg, 4, keep=list(ids), run_time=0.7)
+            resize(self, tg, 4, keep=list(ids), run_time=0.7, extra=[stf7.animate.move_to(stf7_4)])
             self.play(FadeIn(cyl), run_time=0.4)
             flying = VGroup()
             for k in range(10):
@@ -549,5 +587,5 @@ class FiltersFirst(VoiceScene):
             vo.wait_until("strip them before chunking")
             self.play(FadeIn(fix, shift=UP * 0.15), run_time=0.6)
 
-        self.play(FadeOut(VGroup(tr, tg, cyl, cards, brackets, labels, fix)), run_time=0.8)
+        self.play(FadeOut(VGroup(tr, tg, stf7, cyl, cards, brackets, labels, fix)), run_time=0.8)
         self.wait(0.3)
