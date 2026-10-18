@@ -20,7 +20,7 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l02-containers-1.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:18, 89 MB. Not committed (rendered MP4s are release assets, git-ignored); rebuilt with `--no-render --burn` |
+| `output/ac215-l02-containers-1.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:18, 103 MB. Not committed (rendered MP4s are release assets, git-ignored); rebuilt with `--no-render --burn` |
 | `output/ac215-l02-containers-1.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not committed: rebuild it with `--no-render` (see Rebuild) |
 | `output/ac215-l02-containers-1_part1.mp4` | part 1, 16:58: write a Dockerfile, build and run the image (S01–S09). Not committed: rebuilt with `--no-render` |
 | `output/ac215-l02-containers-1_part2.mp4` | part 2, 14:20: layers, cache, Docker Hub and a VM (S10–S16). Not committed: rebuilt with `--no-render` |
