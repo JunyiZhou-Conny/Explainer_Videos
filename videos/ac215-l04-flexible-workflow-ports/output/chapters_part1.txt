@@ -1,0 +1,9 @@
+00:00 Build or pull? Whose localhost?
+01:31 Same pipeline, built like a team
+02:44 Get the code: clone, or switch branches
+05:10 Your bucket and your three values
+06:51 Three gates: account, role, API
+09:09 docker-shell.sh: one script, two windows
+11:26 Five components, five honest errors
+14:06 dev, run, and a stale image
+16:45 prod, a stowaway key, and clean-up

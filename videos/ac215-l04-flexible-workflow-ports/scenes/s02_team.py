@@ -6,7 +6,9 @@ Beats (script.md "## S02", one voiceover block each):
    its frame becomes a two-column card "L03" (GREY) | "L04" (YELLOW), line 60 becomes a one-line
    README chip above it, and the two phrases become row 1 "a shared bucket" (BLUE drawer
    "course") and row 2 "one shared key, copied into five folders" (five GREY folders, each with a
-   small GOLD key; chip main · README.md · line 97). On "This branch is …" the chip's phrase
+   small GOLD key; chip main · README.md · line 97), in two steps: first the lines that are not
+   carried over leave and line 60 rises into the chip, then the frame and the two phrases move,
+   so the old lines never sit inside the new frame. On "This branch is …" the chip's phrase
    ("the same pipeline, built the way a real team would build it") underlines YELLOW and rows 1–2
    morph into the L04 column: "your own bucket" (BLUE drawer "your team"); "your own service
    account · one key outside the repo" (the five keys become one GOLD key outside a GREY repo
@@ -29,14 +31,19 @@ Beats (script.md "## S02", one voiceover block each):
    `Python 3.14.8 · uv`. "early in development": three GREY teammates; three PURPLE build arrows
    from the card, a small image on each laptop. "later in development": the build arrows, the
    middle laptop and its `docker build` arrow leave; a copy of the right teammate's image flies up
-   onto the BLUE shelf and becomes the sealed box; BLUE pull arrows run from it down to the other
-   two, a sealed box lands on each of their laptops.
+   onto the BLUE shelf and becomes the sealed box; BLUE pull arrows arc from it (over the shelf's
+   left end, not through its plank) down to the other two, a sealed box lands on each laptop.
+   With V1 and the card, the GREY lecture tag "Lecture 4 · slides 37–40" (top right, to beat 5's
+   first play) and the shelf titles of slides 39–40: GREY "source control" under "Git", BLUE
+   "· images" after "Docker Hub". On "Later, one person" the GREY "lead (“senior”) developer"
+   appears right of the right teammate; it leaves with the teammates.
 5. Teammates and README card leave and the rest of V1 moves down to the centre; the PINK signpost
    dlops/mega-pipeline-transcribe-audio:latest appears beside the box, its pointer on the box (the
    pointer and the box flash); a dashed GREY "?" line from the card to the box and the GREY
    caption "built on some day, from some commit". On "Nothing promises": the box slides left (the
-   pointer and the "?" line follow it), a second sealed box rises onto the shelf in its place, the
-   signpost swings to the new box, then back.
+   pointer and the "?" line follow it), a second sealed box is set down onto the shelf in its
+   place (from above: rising from below, it crossed the "Docker Hub" caption), the signpost swings
+   to the new box, then back.
 6. The "?" line leaves; the two halves slide toward the centre; between them the PURPLE
    switchboard silhouette (V4, no labels) captioned `docker-shell.sh`. Fade out to an empty frame.
 
@@ -49,6 +56,10 @@ Deviations from SHOW (and why):
   three boxes; and "early in development" nothing has been published yet.
 - Beat 4: V1's illustration tag sits under the "Docker Hub" caption (not beside it) so the BLUE
   pull arrows and the tag never cross and the piece stays inside x <= 6.6.
+- Beat 4: "source control" sits under "Git", not after it on its baseline as "· images" does:
+  there the PURPLE build arrows from the card cross it. Under "Docker Hub" is the illustration tag.
+- Beat 5: the "lead" label fades in the play's first 0.3 s, as the illustration tag slides down
+  over its row.
 - Beat 4, phase 2: the middle laptop and its `docker build` arrow fade with the PURPLE build
   arrows ("later", nobody builds but the publisher): the BLUE pull arrows to the left teammates
   would otherwise cross the `Python 3.14.8 · uv` label. The publisher keeps its local image (a
@@ -104,6 +115,7 @@ from manim import (
     PI,
     RIGHT,
     UP,
+    AnimationGroup,
     ArcBetweenPoints,
     Arrow,
     Create,
@@ -138,6 +150,7 @@ from explainer.devops import (
     folder_glyph,
     label,
     laptop,
+    lecture_ref,
     mono,
 )
 from explainer.scene import VoiceScene
@@ -352,13 +365,21 @@ class TeamWorkflow(VoiceScene):
             self.play(Create(u_bucket), run_time=0.4)
             vo.wait_until("and one shared key")
             self.play(Create(u_sa), run_time=0.4)
-            self.play(ReplacementTransform(card.frame, frame), FadeOut(card.header),
-                      FadeOut(r58a), FadeOut(r58b), FadeOut(u_bucket), FadeOut(u_sa),
-                      FadeTransform(r60, chip60),
-                      TransformFromCopy(chars(r58b, R58B, "a shared bucket"), t1_03),
-                      TransformFromCopy(chars(r58b, R58B, "a shared service account"), t2_03),
+            # the card condenses in two steps, so the old lines never sit inside the new frame:
+            # 1. what is not carried over leaves, and line 60 becomes the chip above;
+            # 2. the frame becomes the L03 | L04 card and the two phrases fly to their rows
+            ph_b = chars(r58b, R58B, "a shared bucket")
+            ph_sa = chars(r58b, R58B, "a shared service account")
+            kept = set(ph_b.submobjects) | set(ph_sa.submobjects)
+            rest_b = VGroup(*[m for m in r58b.submobjects if m.has_points() and m not in kept])
+            # the lines line 60 flies past fade quickly, so they are gone when it reaches them
+            self.play(AnimationGroup(FadeOut(card.header, run_time=0.25), FadeOut(r58a, run_time=0.2),
+                                     FadeOut(rest_b, run_time=0.25), FadeTransform(r60, chip60, run_time=0.55)))
+            self.play(ReplacementTransform(card.frame, frame), FadeOut(u_bucket), FadeOut(u_sa),
+                      ReplacementTransform(ph_b, t1_03), FadeTransform(ph_sa, t2_03),
                       FadeIn(head03), FadeIn(head04), Create(sep), Create(div), FadeIn(d1_03),
-                      run_time=0.9)
+                      run_time=0.8)
+            self.remove(r58b)                       # its glyphs have all left or become row texts
             vo.wait_until("copied into")
             self.play(LaggedStart(*[FadeIn(VGroup(f, k), shift=DOWN * 0.15) for f, k in zip(folders, keys)],
                                   lag_ratio=0.18), run_time=1.0)
@@ -384,24 +405,30 @@ class TeamWorkflow(VoiceScene):
         # ------------------------------------------------------------ 2. rows 3-4: recipe, script
         with self.voiceover(SAY[2]) as vo:
             self.play(Transform(frame, frame_full), Transform(div, div_full),
-                      ReplacementTransform(chip62, chip64), run_time=0.8)
+                      FadeTransform(chip62, chip64), run_time=0.8)
             self.play(FadeIn(pen), FadeIn(t3_03), run_time=0.6)
-            vo.wait_until("it's committed")
+            # the character-count estimate puts "it's committed" ~0.5 s late (the file names that
+            # follow are spoken slowly): start the morph a little before it
+            self.wait(max(0.0, vo.time_until("it's committed") - 0.4))
             self.play(TransformFromCopy(pen, recipe), FadeIn(t3_04, shift=RIGHT * 0.4), run_time=1.0)
             vo.wait_until("together with")
-            self.play(LaggedStart(Indicate(recipe.rows[1], color=VENV, scale_factor=1.12),
-                                  Indicate(recipe.rows[2], color=VENV, scale_factor=1.12),
-                                  lag_ratio=0.5), run_time=1.3)
+            self.play(Indicate(recipe.rows[1], color=VENV, scale_factor=1.12), run_time=0.8)
+            # same skew, larger: the estimate for "and uv.lock" is ~0.9 s after the voice says it
+            self.wait(max(0.0, vo.time_until("and uv.lock") - 0.8))
+            self.play(Indicate(recipe.rows[2], color=VENV, scale_factor=1.12), run_time=0.8)
             vo.wait_until("And each component")
             self.play(FadeIn(run_chip), FadeIn(t4_03), run_time=0.7)
             vo.wait_until("one script")
             shell_morph(self, (run_chip.box,), sh_chip, (sh_chip.box,), sh_chip.text)
-            vo.wait_until("that holds")
             for m in holds:
                 m.save_state()
                 m.move_to(sh_chip).set_opacity(0)
-            self.play(LaggedStart(*[Restore(m) for m in holds], lag_ratio=0.35),
-                      Indicate(sh_chip.box, color=TOOL, scale_factor=1.06), run_time=1.2)
+            vo.wait_until("that holds")
+            self.play(Indicate(sh_chip.box, color=TOOL, scale_factor=1.06), run_time=0.8)
+            vo.wait_until("the long docker build")
+            self.play(Restore(holds[0]), run_time=0.7)
+            vo.wait_until("and docker run")
+            self.play(Restore(holds[1]), run_time=0.7)
 
         # ------------------------------------------------------------ 3. still a relay through the bucket
         relay = MiniRelay().move_to([0, 1.05, 0])
@@ -450,8 +477,19 @@ class TeamWorkflow(VoiceScene):
             m.move_to([x, BASE - 1.45, 0])
         mini = [small_image().move_to(m.laptop[0]) for m in mates]
         cap = note("early in development").move_to([0, BASE - 2.2, 0])
+        lref = lecture_ref(4, "37–40")          # top right, to beat 5's first play (SLIDES.md S02 i)
+        # the shelves titled as slides 39–40 title their boxes (SLIDES.md S02 iii); members of v1,
+        # so they move with it. "source control" sits under "Git": beside it, the build arrows
+        # from the card cross it. "· images" shares the "Docker Hub" baseline (the tag is under it)
+        src_ctl = note("source control").next_to(v1.git_shelf.caption, DOWN, buff=0.12)
+        images = label("· images", CAPTION, HUB).next_to(v1.hub_shelf.caption, RIGHT, buff=0.12)
+        i_glyph = [m for m in images.submobjects if m.has_points()][1]        # the "i": on the baseline
+        images.shift(UP * (v1.hub_shelf.caption.get_bottom()[1] - i_glyph.get_bottom()[1]))
+        v1.add(src_ctl, images)
+        lead = note("lead (“senior”) developer").next_to(mates[2], RIGHT, buff=0.15)
         with self.voiceover(SAY[4]) as vo:
-            self.play(*[FadeOut(m) for m in list(self.mobjects)], FadeIn(v1), FadeIn(card67), run_time=0.8)
+            self.play(*[FadeOut(m) for m in list(self.mobjects)], run_time=0.4)   # no crossfade:
+            self.play(FadeIn(v1), FadeIn(card67), FadeIn(lref), run_time=0.6)     # the two overlap
             self.play(*v1.parts_in("build", anim=lambda m: FadeIn(m, shift=RIGHT * 0.2)), FadeIn(lp),
                       run_time=0.5)
             self.play(TransformFromCopy(v1.card.frame, img), FadeIn(img_label), run_time=0.8)
@@ -466,21 +504,30 @@ class TeamWorkflow(VoiceScene):
             cap2 = note("later in development").move_to(cap)
             self.play(Transform(cap, cap2), *[FadeOut(a) for a in b_arrows], FadeOut(mini[0]),
                       FadeOut(mini[1]), FadeOut(lp), FadeOut(img), FadeOut(img_label),
-                      *v1.parts_out("build"), Indicate(mates[2][0], color=INK), run_time=0.8)
+                      *v1.parts_out("build"), Indicate(mates[2][0], color=INK), FadeIn(lead),
+                      run_time=0.8)
             box = sealed_box(1.3, CTR).move_to(v1.box)          # the pushed image (the box)
             self.play(TransformFromCopy(mini[2], box, path_arc=PI / 2), run_time=1.2)
             vo.wait_until("and everyone else pulls")
-            p_arrows = [Arrow(box.front.get_left() + LEFT * 0.04, mates[i].laptop.get_top() + UP * 0.1,
-                              buff=0.08, color=HUB, stroke_width=4, max_tip_length_to_length_ratio=0.12)
-                        for i in (0, 1)]
+            # arcs that bow up over the shelf's left end instead of cutting through its plank; the
+            # arc to the far teammate leaves higher and bows more, so the two never cross
+            p_arrows = [Arrow(box.front.get_left() + LEFT * 0.04 + UP * dy, mates[i].laptop.get_top() + UP * 0.1,
+                              buff=0.08, color=HUB, stroke_width=4, max_tip_length_to_length_ratio=0.12,
+                              path_arc=arc_)
+                        for i, dy, arc_ in ((0, 0.12, 1.1), (1, -0.12, 1.3))]
             pulled = [small_image(sealed=True).move_to(mates[i].laptop[0]) for i in (0, 1)]
             self.play(LaggedStart(*[GrowArrow(a) for a in p_arrows], lag_ratio=0.3), run_time=0.9)
             self.play(*[FadeIn(p, shift=DOWN * 0.1) for p in pulled], run_time=0.5)
 
         # ------------------------------------------------------------ 5. the tag is a signpost
         with self.voiceover(SAY[5]) as vo:
-            self.play(FadeOut(mates), *[FadeOut(a) for a in p_arrows], *[FadeOut(p) for p in pulled],
-                      FadeOut(mini[2]), FadeOut(cap), FadeOut(card67), v1.animate.shift(DOWN * D5),
+            # the "lead" label goes in the first 0.3 s: the illustration tag slides down over its row.
+            # Each teammate fades on its own: `mates` itself is not on the scene, and FadeOut(mates)
+            # re-added it on top, so the laptop screens hid the small images on them at once
+            self.play(*[FadeOut(m) for m in mates], FadeOut(lead, rate_func=lambda a: smooth(min(1.0, a / 0.4))),
+                      *[FadeOut(a) for a in p_arrows],
+                      *[FadeOut(p) for p in pulled], FadeOut(mini[2]), FadeOut(cap), FadeOut(card67),
+                      FadeOut(lref), v1.animate.shift(DOWN * D5),
                       box.animate.shift(DOWN * D5), run_time=0.8)
             v1.post.set_z_index(1)              # the board covers the pointer's start (see docstring)
             self.play(*v1.parts_in("post"), *v1.parts_in("pointer", anim=GrowArrow), run_time=0.8)
@@ -499,23 +546,23 @@ class TeamWorkflow(VoiceScene):
             link2 = BuildOrPull.dashed_link(v1.card, proxy, text="?")
             box2 = sealed_box(1.3, CTR).move_to(box)
             box2.save_state()
-            box2.shift(DOWN * 0.6).set_opacity(0)
+            box2.shift(UP * 0.45).set_opacity(0)    # set down onto the shelf (rising from below
+            #                                         it crossed the "Docker Hub" caption)
             self.play(box.animate.shift(LEFT * d), v1.aim(proxy), Transform(link, link2), Restore(box2),
                       run_time=0.9)
-            self.play(v1.aim(box2), run_time=0.6)
-            self.play(v1.aim(box), run_time=0.6)
+            self.play(v1.aim(box2), run_time=0.8)
+            self.play(v1.aim(box), run_time=0.8)
 
         # ------------------------------------------------------------ 6. one script decides
         sw = Switchboard(labels=False)
         vis = VGroup(sw.input, sw.junction, *sw.tracks.values(), *[st.dot for st in sw.stations.values()])
         sw.shift(np.array([-0.95, BASE - D5 + 0.65, 0]) - vis.get_center())
         sw_cap = mono("docker-shell.sh", CAPTION, TOOL).next_to(vis, DOWN, buff=0.25)
-        left = [v1.git_shelf, v1.card, v1.parts["build"], v1.parts["local"]]
-        right = [v1.hub_shelf, hub_tag, v1.post, v1.pointer, v1.box, box, box2]
+        left = [v1.git_shelf, src_ctl, v1.card, v1.parts["build"], v1.parts["local"]]
+        right = [v1.hub_shelf, images, hub_tag, v1.post, v1.pointer, v1.box, box, box2]
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(link), FadeOut(cap5), run_time=0.5)
-            self.play(*[m.animate.shift(RIGHT * 0.8) for m in left],
-                      *[m.animate.shift(LEFT * 0.8) for m in right], run_time=1.0)
+            self.play(FadeOut(link), FadeOut(cap5), *[m.animate.shift(RIGHT * 0.8) for m in left],
+                      *[m.animate.shift(LEFT * 0.8) for m in right], run_time=0.9)
             self.play(FadeIn(sw), FadeIn(sw_cap, shift=UP * 0.1), run_time=0.8)
             vo.wait_until("First, the code")
             self.play(FadeOut(v1), FadeOut(box), FadeOut(box2), FadeOut(sw), FadeOut(sw_cap),

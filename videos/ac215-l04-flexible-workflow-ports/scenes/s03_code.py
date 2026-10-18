@@ -10,20 +10,21 @@ Beats (script.md "## S03", one voiceover block each):
     output), the new path part flashes BLUE. ▶ your turn on the cd row.
  1  TRACKER F/2 · extra. The terminal clears; `git branch` and `git log --oneline -1` (the two
     commands of mega-laptop/03, typed separately, each with an `extra` tag) -> lines 2, 3;
-    `* flexible-workflow` flashes, `cc67f3b` flashes and its row gets the GREY tag "the pinned
-    commit · 2026-09-18". `ls -a transcribe_audio` (extra; the second command of mega-laptop/04)
-    -> lines 10-18 (the two `git branch` rows scroll away); Dockerfile, docker-shell.sh,
+    `* flexible-workflow` flashes, `cc67f3b` flashes and flies up under the tracker into the GREY
+    note "cc67f3b = the commit we recorded · 2026-09-18 · yours may be newer". `ls -a
+    transcribe_audio` (extra; the second command of mega-laptop/04) -> lines 10-18 (the two `git branch` rows scroll away); Dockerfile, docker-shell.sh,
     pyproject.toml, uv.lock turn GREEN as they are named and a copy of each flies into a GREEN
-    recipe card; its caption "committed" on "which you wrote".
+    recipe card; its caption "committed" on "which this branch".
  2  TRACKER L/1 (the tracker switches section). The terminal clears, title `laptop · lecture 3
-    clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to the next chapter".
+    clone`, prompt ~/AC215-l03; GREY chip top right "cloned fresh? skip to 5:10" (SKIP_TO).
     `cd mega-pipeline` (no output). TRACKER L/1 · extra: `git status --short` -> mega-l03-laptop/01
     lines 2-4, `git status --short --ignored | grep '^!!'` -> lines 5-8 (both extra).
- 3  Copies of the seven status lines lift off; the terminal shrinks to the 3-row strip; the
-    copies sort themselves into V2's three piles (markers -> pile names, folders -> pile headers,
-    file names -> rows, mega-pipeline.json -> the GOLD key). Tracked pile + YELLOW pencil
-    "edited" as cli.py is named; untracked pile flashes; ignored rows flash one by one, the key
-    pulses and gets the tag "stand-in file · not a real key"; the dashed frame flashes.
+ 3  On "Three piles", copies of the seven status lines fly into V2's three piles while the
+    terminal shrinks to the 3-row strip (markers -> pile names, folders -> pile headers, file
+    names -> rows, mega-pipeline.json -> the GOLD key). YELLOW pencil "edited" as cli.py is
+    named, the tracked label on "is tracked"; untracked rows, then their label; ignored rows flash
+    one by one, the key pulses and gets the tag "stand-in file · not a real key" (under the key);
+    the dashed frame flashes.
  4  TRACKER L/2. README chip under the tracker: README.md · line 43 "# get the branches you
     don't have yet". The strip types `git fetch origin` -> the prompt returns (it flashes); the
     chip's phrase flashes on "a clone already has every branch"; the GREY tag "nothing new
@@ -32,37 +33,48 @@ Beats (script.md "## S03", one voiceover block each):
     flexible-workflow` -> mega-l03-laptop/04 lines 2-9 (wrap): 13 rows, nothing scrolls. RED
     bracket "1" on lines 2-4, RED bracket "2" on lines 5-8, `Aborting` underlined RED.
  6  The brackets go; the strip keeps the last three rows (`Aborting` and its underline); V2
-    returns (stand-in tag put away). The branch's files fade in above the piles; RED wall 1 rises
+    returns with the branch's files waiting above it (stand-in tag put away); RED wall 1 rises
     over the edited cli.py (which flashes RED), wall 2 over the untracked pile; the files slide
     down and stop at the walls (a small bump). "Nothing changed": `Aborting` flashes.
  7  TRACKER L/4. README chip under the tracker: line 48 "Either stash them (git stash) or throw
     them away (git checkout -- .)". `git stash` -> 05 line 2 (cut); cli.py lifts into a stash box,
-    the pencil fades, wall 1 falls. `git checkout flexible-workflow` -> 06 lines 2-6 (wrap; the
+    the pencil fades, wall 1 falls. The retry `git checkout flexible-workflow` is typed as that
+    sentence ends; on "On a retry" -> 06 lines 2-6 (wrap; the
     strip ends on `Please move or remove them …`, `Aborting`); the files bump wall 2, which
     flashes RED and stays.
- 8  TRACKER L/4 · extra. The tag `erratum · covers only edited files` lands on the README chip.
+ 8  TRACKER L/4 · extra. The tag `erratum · covers only edited files` over the chip's right end.
     `git stash -u` (extra) -> 07 line 2 (cut); the untracked pair lifts into a second stash box,
     wall 2 falls. TRACKER L/4: `git checkout flexible-workflow` -> 08 lines 2-3; line 3 turns
-    GREEN and the branch's files land. Above the piles: the GREY chip `git checkout -- .` (shown,
+    GREEN and the branch's files land: four in the tracked frame, two in the untracked one; the
+    branch name fades as they land. Above the piles: the GREY chip `git checkout -- .` (shown,
     never typed) and its notes, RED "throws your edits away", GREY "leaves untracked files where
     they are", each as it is said.
  9  TRACKER L/5. `git branch` -> 09 lines 2-3, `* flexible-workflow` GREEN. V2 and the chips
-    fade; a static GREY "your turn" card (the seven commands as typed, `git stash -u` tagged
-    extra) with ▶ your turn above the strip.
+    fade; a static GREY "your turn" card with ▶ your turn, right-aligned above the strip: first a
+    serif block "first: copy out your lecture 3 Dockerfile, / pyproject.toml, uv.lock · the switch
+    replaces them" (tag extra), then the seven commands as typed (`git stash -u` tagged extra). The
+    block flashes YELLOW with the ▶ wiggle on "Pause and switch"; once script.md carries the
+    warning sentence, its first line flashes on "Before you switch", "Dockerfile," then
+    "pyproject.toml, uv.lock" on "copy out any", its second line on "the switch replaces" (when
+    said), and the ▶ wiggles alone on "Pause and switch".
 10  TRACKER L/5 · extra. The card clears; the strip grows to 4 rows; V2 returns (state after the
-    switch). `head -2 transcribe_audio/Dockerfile` (extra) -> 11 lines 2-3; an excerpt chip
+    switch). `head -2 transcribe_audio/Dockerfile` (extra; its tag with a flash of the ignored
+    Dockerfile on "lecture 3 Dockerfile") -> 11 lines 2-3; an excerpt chip
     `FROM python:3.12-slim-bookworm` (mega-l03-laptop/01 line 9, "line 1 · before") appears
     above the ignored pile, the ignored Dockerfile card flips and the chip becomes
     `FROM python:3.14-slim-bookworm` (11 line 3, "line 2 · after"). `ls -la transcribe_audio`
-    (extra) -> 10 lines 8, 12, 14; the pyproject.toml and uv.lock cards flip; GREY tag "the
+    (extra) -> 10 lines 12, "…", 14; the pyproject.toml and uv.lock cards flip; GREY tag "the
     branch's files · same sizes as a fresh clone"; GREY tag "replaced · no warning" + `erratum`;
     a GREY fix card "want your lecture 3 Dockerfile, / pyproject.toml, uv.lock (or
     docker-shell.sh)? / copy them out before switching".
-11  `ls transcribe_audio/secrets` (extra) -> 11 line 4; the GOLD key pulses and stays put.
-    README chip line 50 "Your secrets/ folder … stay put". GREY fix card "delete each
+11  The key glows on "The old key"; `ls transcribe_audio/secrets` (extra) -> 11 line 4, the line
+    and V2's secrets/ row pulse GOLD. README chip line 50 "Your secrets/ folder … stay put" (its
+    phrase flashes on "as the README says"); the key flashes RED on "Every build there". GREY
+    fix card "delete each
     <component>/secrets/ now · your key goes in secrets/ beside the repo · why: end of part 1".
-    `git stash list` (extra) -> 10 lines 21-22 (cut); the pair's box becomes `stash@{0}`, the
-    cli.py box `stash@{1}`. Fade out to an empty frame.
+    `git stash list` (extra, typed on "secrets folder now") -> 10 lines 21-22 (cut) on "Your
+    edits wait"; on "in the stash" the pair's box becomes `stash@{0}`, the cli.py box
+    `stash@{1}`. Fade out to an empty frame.
 
 Deviations from SHOW (and why):
 - Beat 0: the house fold puts `--branch flexible-workflow` on its own row, so its label sits
@@ -70,17 +82,33 @@ Deviations from SHOW (and why):
 - Beat 1: the capture's `git branch; git log --oneline -1` and `ls; ls -a transcribe_audio` are
   typed as separate commands (conventions: `;` lines are typed one command at a time; `ls` is not
   shown, so it is not typed). The terminal does not clear before `ls -a`: it scrolls, so the
-  pinned-commit tag (20 pt, beside `cc67f3b …`) stays readable while the sentence goes on.
+  `cc67f3b …` row stays on screen while the sentence goes on.
 - Beat 1: the recipe card holds all four files the SHOW highlights (docker-shell.sh included).
+- Beat 1: the commit note sits under the tracker, not beside `cc67f3b …`: the row leaves 4.3 units
+  and the note is 7.3 wide; the hash flies from the row into the note. The SAY anchor is "at the
+  commit we recorded" once script.md says so, "at the pinned commit" until then (said()).
+- Beat 2: the chip names the time S04 starts (SKIP_TO) instead of "the next chapter": the part 1
+  upload may carry no chapter marks.
+- Beat 9: the card leads with the lecture 3 files warning (the switch replaces them silently, and
+  `git stash -u` does not save ignored files), so it comes before the pause, not after it in
+  beat 10; nine rows fit only 0.14 apart and right-aligned (its top passes the tracker band).
 - Beat 3: the strip keeps the second status command and the prompt; copies of the seven output
-  lines rise clear of the strip and sort into the piles line by line at "Three piles", then each
-  pile is emphasised as it is named.
+  lines sort into the piles line by line while the terminal shrinks, all on "Three piles" (a
+  separate lift first put the pencil 2 s behind "Your edited cli.py"), then each pile is
+  emphasised as it is named. The stand-in tag sits under the key, clear of the untracked frame
+  (centred on the ignored frame, it covered that frame's corner).
 - Beat 4: the tag "nothing new upstream · yours may list updates" (6.7 wide) sits in the top band
   right of the tracker: it fits neither beside the returned prompt in the strip nor beside the
   README chip, which is under the tracker because at 7.7 wide it doesn't fit right of it.
 - Beats 4, 7, 11: README chips sit under the tracker, not right of it (too wide for the top band).
 - Beat 6: the branch's files wait just above the walls and slide ~0.6 down: higher, they would
   cross the tracker.
+- Beat 8: the erratum tag sits in the top band over the README chip's right end (on the chip's
+  top edge it crossed the frame next to the quote). The branch's files land split four/two in
+  the emptied frames (ThreePiles.land() leaves the six-file row across both frames, its last
+  file on the tracked frame's edge and the branch name inside the untracked frame).
+- Tags with an opaque fill flash with flash_tag() (text + outline): Indicate on the whole tag
+  painted the fill white over the text.
 - Beats 6-9: V2 sits lower than in beats 3-4 (frames on the strip) and its stand-in tag is put
   away (it would cross the strip); beats 10-11 raise V2 above a 4-row strip.
 - Beat 10: the FROM chip shows the lecture 3 line as V2 returns, before `head -2` is typed (the
@@ -88,7 +116,10 @@ Deviations from SHOW (and why):
   transcribe_audio` stays on screen with its three output rows; its `extra` tag sits on the
   strip's title bar (the 64-character row has no room).
   `ls -la transcribe_audio` is typed as the SHOW gives it; the capture ran
-  `ls -la transcribe_audio transcribe_audio/secrets`, whose rows 8, 12 and 14 are printed.
+  `ls -la transcribe_audio transcribe_audio/secrets`, whose rows 12, "…", 14 are printed: the cut
+  (secrets/) is marked, and row 8 (Dockerfile) is left out because head -2 has just shown that
+  file replaced and the 4-row strip holds the command and three rows (six would push V2 into the
+  chips above it).
 - Rows of 60+ characters (the long prompts) take a 20 pt `extra` tag at the frame's edge.
 - Beats 10-11: the fix chips are 3-line GREY cards at the top right (as one-line chips they are
   13+ wide); beat 10's "replaced · no warning" + `erratum` sit under the tracker.
@@ -177,9 +208,10 @@ BR3_OUT = BR3.at((2, 3))
 _after = capture("10", L3)
 LS_LA = "ls -la transcribe_audio"                     # as script.md gives it (see the docstring)
 assert _after.cmd.split("; ")[1].startswith(LS_LA + " ")
-LA_OUT = _after.at(8, 12, 14)
-assert [s.split()[-1] for s in LA_OUT] == ["Dockerfile", "pyproject.toml", "uv.lock"]
-assert [s.split()[4] for s in LA_OUT] == ["1274", "249", "85761"]   # = the branch's files at cc67f3b
+LA_OUT = _after.at(12, "…", 14)                       # the cut (line 13, secrets/) marked "…"
+assert [s.split()[-1] for s in LA_OUT] == ["pyproject.toml", "…", "uv.lock"]
+assert [LA_OUT[0].split()[4], LA_OUT[2].split()[4]] == ["249", "85761"]   # = the branch's files at cc67f3b
+assert _after.line(8).split()[4] == "1274"            # Dockerfile: proven by head -2 (FROM ... 3.14)
 STASH_LIST = _after.cmd.split("; ")[2]
 assert STASH_LIST == "git stash list"
 LIST_OUT = _after.at(21, 22)
@@ -212,7 +244,23 @@ V2_P1 = 0.52            # V2's shift from its built position: beats 3-4 (stand-i
 V2_P2 = 0.19            # beats 6-9 (frames just above the 3-row strip, stand-in tag off)
 V2_P3 = 0.61            # beats 10-11 (above a 4-row strip)
 INCOMING_Y = 2.66       # where the branch's files wait (just under the tracker)
-LIFT = 1.5              # beat 3: the status lines rise clear of the strip before they sort
+# Beat 2's "cloned fresh? skip to …" chip: where S04 starts in the full video and in part 1 (part 1
+# starts at 0:00), i.e. S01 + S02 + S03 durations, rounded down: re-check it whenever S01-S03 change
+# length. It must never land after S04's start; landing a second or two early (in this scene's
+# fade-out) is fine. 2026-10-17 QA draft: S01 90.86 + S02 73.13 + S03 135.72 = 299.7 (4:59.7);
+# 2026-10-18 re-check (S03 re-voiced, "which this branch commits"): 15 fps S01 90.86 + S02 73.13 +
+# S03 135.59 = 299.58, 4:59 lands 0.6 s early; 30 fps (720p30 renders) S01 91.00 + S02 73.30 +
+# S03 135.79 = 300.09, 4:59 lands 1.1 s early, at the start of the final fade-out.
+# 2026-10-18 finishing pass (Step 5 gained the copy-out sentence, S03 ~10 s longer): 15 fps S01
+# 90.86 + S02 73.13 + S03 145.99 = 309.98 (floor 5:09), 5:09 lands 1.0 s early; 30 fps (720p30)
+# S01 91.00 + S02 73.30 + S03 146.16 = 310.45 (floor 5:10), 5:09 lands 1.5 s early. Take the
+# smaller floor: 5:10 would land after S04's start in a 15 fps render. The 1080p60 release (dry
+# runs): S01 91.02 + S02 73.35 + S03 146.18 = 310.55, so its chapters.txt reads 05:10 and 5:09
+# lands 1.6 s early, on the stash relabel just before the fade-out.
+# 2026-10-18 release render (1080p60, the only cut that ships; Bugbot tn9i7): the chip follows the
+# release's chapters.txt, 5:10, which lands 0.55 s early inside the fade-out. A 15 fps draft
+# (309.98) would land 0.02 s late; drafts are not published.
+SKIP_TO = "5:10"
 
 
 def at_left(m, x: float, y: float):
@@ -247,6 +295,31 @@ def note_card(lines, color: str = S.GREY):
 
 def flash(m, color: str = TURN, k: float = 1.12, run_time: float = 0.7):
     return Indicate(m, color=color, scale_factor=k, run_time=run_time)
+
+
+def flash_tag(tg, color: str = S.WHITE, k: float = 1.08, run_time: float = 0.8) -> list:
+    """Indicate for a tag (opaque dark fill): the text takes `color`, the pill's outline glows,
+    the fill stays dark (Indicate on the whole tag would paint the fill and hide the text).
+    Two animations, not an AnimationGroup: the group a play adds to the scene would draw the
+    pill again over its text. Use as self.play(*flash_tag(t))."""
+    return [Indicate(tg.text, color=color, scale_factor=k, run_time=run_time),
+            tg.box.animate(rate_func=there_and_back, run_time=run_time).set_stroke(color).scale(k)]
+
+
+def land_split(v2, run_time: float = 1.0) -> list:
+    """The branch's files land in the emptied piles: four in the tracked frame, two in the
+    untracked one (ThreePiles.land() would leave the six-file row across both frames, its last
+    file on the tracked frame's edge and the branch name inside the untracked frame); the
+    branch name fades as they land (the strip's GREEN "Switched to a new branch" says it)."""
+    files, name = v2.incoming[0], v2.incoming[1]
+    tgt = files.copy()
+    VGroup(*tgt[:4]).arrange(RIGHT, buff=0.26).move_to(v2.piles["tracked"].frame)
+    VGroup(*tgt[4:]).arrange(RIGHT, buff=0.26).move_to(v2.piles["untracked"].frame)
+    drop = v2.piles["tracked"].frame.get_center()[1] - files.get_center()[1]
+    return [Transform(files, tgt, run_time=run_time),
+            name.animate(run_time=run_time * 0.6).shift(UP * drop * 0.5).set_opacity(0),
+            Indicate(v2.piles["tracked"].frame, color=VENV, scale_factor=1.0, run_time=run_time),
+            Indicate(v2.piles["untracked"].frame, color=VENV, scale_factor=1.0, run_time=run_time)]
 
 
 def bump(m, d: float = 0.12):
@@ -298,13 +371,43 @@ def tprint(scene, t, lines, wrap: bool = False, run_time: float = 0.5, lag: floa
     return out
 
 
+def said(say: str, *phrases: str) -> str:
+    """The first of `phrases` that the SAY line contains: the anchor survives a pending script.md
+    rewording (the last phrase is the current wording; neither found -> the usual warning)."""
+    return next((p for p in phrases if p in " ".join(say.split())), phrases[-1])
+
+
+def first_turn_card(first: list[str], cmds: list, buff: float = 0.14) -> VGroup:
+    """turn_card with a serif "first" block (lines 0.16 apart, so the extra tag on the first line
+    clears the second) above the commands, rows `buff` apart (turn_card's 0.2 would push the nine
+    rows into the tracker band). .frame .rows .tag .first as turn_card; the block is drawn over
+    the frame."""
+    c = turn_card(cmds)
+    lines = VGroup(*[label(s, CAPTION, INK) for s in first]).arrange(DOWN, aligned_edge=LEFT, buff=0.16)
+    xt = extra_tag().next_to(lines[0], RIGHT, buff=0.3)
+    block = VGroup(lines, xt)
+    c.rows.arrange(DOWN, aligned_edge=LEFT, buff=buff)
+    body = VGroup(block, c.rows).arrange(DOWN, aligned_edge=LEFT, buff=buff)
+    c.frame.become(box(body.width + 0.6, body.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95,
+                       radius=0.14))
+    body.move_to(c.frame).align_to(c.frame, LEFT).shift(RIGHT * 0.3)
+    c[2].next_to(c.frame, UP, buff=0.08).align_to(c.frame, LEFT).shift(RIGHT * 0.12)   # "your turn"
+    c.tag.move_to(c.frame.get_corner(UP + RIGHT)).shift(LEFT * 1.0)
+    c.add(block)
+    c.first = block
+    return c
+
+
 class GetTheCode(VoiceScene):
     def construct(self):
         tr = tracker("F", 1)
         t = term(P_WS, rows=12)
 
         # ========================================================== 0 · clone the branch, cd
-        ws_note = at_left(note("~/AC215 = the README's <your-workspace>"), -6.45, Y_UNDER)
+        # the paths in mono: the serif face draws "~" as a raised accent
+        ws_note = VGroup(mono("~/AC215", CAPTION, S.GREY), note("= the README's"),
+                         mono("<your-workspace>", CAPTION, S.GREY)).arrange(RIGHT, buff=0.15)
+        at_left(ws_note, -6.45, Y_UNDER)
         with self.voiceover(SAY[0]) as vo:
             self.play(FadeIn(tr, shift=DOWN * 0.15), FadeIn(t), run_time=0.6)
             p0 = bare_prompt(self, t)
@@ -333,6 +436,11 @@ class GetTheCode(VoiceScene):
             self.play(Wiggle(yt0, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
 
         # ========================================================== 1 · two extra checks
+        # under the tracker (where beat 0's workspace note was): beside the `cc67f3b …` row only 4.3
+        # of its 7.3 units fit; the hash flies up from the row into it
+        rec = VGroup(mono("cc67f3b", CAPTION, S.GREY),
+                     note("= the commit we recorded · 2026-09-18 · yours may be newer")).arrange(RIGHT, buff=0.15)
+        at_left(rec, -6.45, Y_UNDER)
         with self.voiceover(SAY[1]) as vo:
             self.play(FadeOut(ws_note), caption_extra(tr, True), run_time=0.4)
             t.clear(self, run_time=0.3)
@@ -344,10 +452,10 @@ class GetTheCode(VoiceScene):
             g1 = type_cmd(self, t, LOG1, type_time=0.8)
             pin(self, g1, fit_tag(t, g1), run_time=0.3)
             lo = t.print(self, [LOG_OUT], run_time=0.3)[0]
-            vo.wait_until("at the pinned commit")
+            vo.wait_until(said(SAY[1], "at the commit we recorded", "at the pinned commit"))
             sha = substring(lo, "cc67f3b")
             self.play(flash(sha, TURN, 1.2))
-            pin(self, lo, fit_tag(t, lo, "the pinned commit · 2026-09-18"), run_time=0.4)
+            self.play(TransformFromCopy(sha, rec[0]), FadeIn(rec[1], shift=RIGHT * 0.15), run_time=0.6)
 
             vo.wait_until("and transcribe audio holds")
             la = type_cmd(self, t, LS_A, type_time=0.9)
@@ -364,14 +472,14 @@ class GetTheCode(VoiceScene):
                                                                if i == 0 else []), run_time=0.3)
                 self.play(TransformFromCopy(ln.glyphs, card.rows[i]), flash(ln.glyphs, VENV, 1.12),
                           run_time=0.6)
-            vo.wait_until("which you wrote")
+            vo.wait_until("which this branch")
             self.play(FadeIn(card.caption, shift=UP * 0.1), flash(card.frame, VENV, 1.04), run_time=0.6)
 
         # ========================================================== 2 · the lecture 3 clone
-        fresh = chip("cloned fresh? skip to the next chapter", S.GREY, size=CAPTION)
+        fresh = chip(f"cloned fresh? skip to {SKIP_TO}", S.GREY, size=CAPTION)
         at_right(fresh, X_R, Y_UNDER)
         with self.voiceover(SAY[2]) as vo:
-            self.play(FadeOut(card), run_time=0.3)
+            self.play(FadeOut(card), FadeOut(rec), run_time=0.3)
             tr = switch_section(self, tr, "L", 1)
             t.clear(self, run_time=0.3)
             t.set_prompt(P_L03)
@@ -383,15 +491,15 @@ class GetTheCode(VoiceScene):
             self.play(FadeIn(fresh, shift=LEFT * 0.2), run_time=0.5)
             vo.wait_until("Step 1")
             type_cmd(self, t, CD.cmd, type_time=0.6)
-            cd_prompt(self, t, P_L03_REPO)
-            vo.wait_until("Two extra checks")
+            cd_prompt(self, t, P_L03_REPO, run_time=0.6)
             self.play(caption_extra(tr, True), run_time=0.3)
-            s1 = type_cmd(self, t, ST1, type_time=0.7)
-            pin(self, s1, fit_tag(t, s1), run_time=0.3)
-            st_a = t.print(self, ST1_OUT, run_time=0.4)
-            s2 = type_cmd(self, t, ST2, type_time=1.2)
-            pin(self, s2, fit_tag(t, s2), run_time=0.3)
-            st_b = t.print(self, ST2_OUT, run_time=0.5)
+            vo.wait_until("Two extra checks")
+            s1 = type_cmd(self, t, ST1, type_time=0.55)
+            pin(self, s1, fit_tag(t, s1), run_time=0.25)
+            st_a = t.print(self, ST1_OUT, run_time=0.35)
+            s2 = type_cmd(self, t, ST2, type_time=0.9)
+            pin(self, s2, fit_tag(t, s2), run_time=0.25)
+            st_b = t.print(self, ST2_OUT, run_time=0.4)
             bp2 = bare_prompt(self, t)
 
         # ========================================================== 3 · three piles (V2)
@@ -405,6 +513,11 @@ class GetTheCode(VoiceScene):
                 hidden += [r.glyph, r.text]
         for m in hidden:
             _hidden(m)
+        # the stand-in tag sits under the key, clear of the untracked frame's corner (centred on
+        # the ignored frame, its left end covered that corner)
+        st_tag = v2.parts["standin"]
+        st_tag.set_x(v2.key.get_center()[0])
+        st_tag.shift(RIGHT * max(0.0, P["untracked"].frame.get_right()[0] + 0.15 - st_tag.get_left()[0]))
         status = list(st_a) + list(st_b)
         kinds = {"M": "tracked", "??": "untracked", "!!": "ignored"}
         pairs, groups, movers = [], [], []
@@ -424,27 +537,31 @@ class GetTheCode(VoiceScene):
             groups.append(AnimationGroup(*an))
         glyphs = [r.glyph for p in P.values() for r in p.rows]
         with self.voiceover(SAY[3]) as vo:
-            self.play(FadeOut(fresh), run_time=0.3)
             self.add(*movers)
-            # the seven lines lift off; the strip keeps the command that printed them
-            resize(self, t, 3, keep=[*s2.rows, bp2], run_time=0.7,
-                   extra=(VGroup(*movers).animate.shift(UP * LIFT),))
+            # the seven lines fly into the piles while the terminal shrinks to the strip (which
+            # keeps the command that printed them): all of it on "Three piles"
+            frames = [p.frame for p in P.values()]
+            for f in frames:
+                _set_op(f)               # not on screen yet: Create brings each frame in
+            resize(self, t, 3, keep=[*s2.rows, bp2], run_time=1.2,
+                   extra=(LaggedStart(*groups, lag_ratio=0.15), *[Create(f) for f in frames],
+                          FadeOut(fresh)))
+            self.remove(*movers, *frames)
             self.add(v2)
-            for p in P.values():
-                _set_op(p.frame)
-            self.play(LaggedStart(*groups, lag_ratio=0.15), *[Create(p.frame) for p in P.values()],
-                      run_time=1.7)
-            self.remove(*movers)
             for _, dst in pairs:
                 _set_op(dst)
-            self.play(*[show(g) for g in glyphs], run_time=0.4)
 
             vo.wait_until("Your edited cli.py")
-            self.play(show(v2.pencil), flash(P["tracked"].frame, VENV, 1.04, 0.9))
-            self.play(flash(v2.row("tracked", "cli.py").text, TURN, 1.2))
+            self.play(*[show(g) for g in glyphs], show(v2.pencil),
+                      flash(v2.row("tracked", "cli.py").text, TURN, 1.2), run_time=0.8)
+            vo.wait_until("is tracked")
+            self.play(flash(P["tracked"].kind, VENV, 1.2), flash(P["tracked"].frame, VENV, 1.04),
+                      run_time=0.8)
             vo.wait_until("Your two new files")
-            self.play(flash(P["untracked"].rows, S.WHITE, 1.12, 0.8),
-                      flash(P["untracked"].kind, S.WHITE, 1.2, 0.8))
+            self.play(flash(P["untracked"].rows, S.WHITE, 1.12, 0.8))
+            vo.wait_until("are untracked")
+            self.play(flash(P["untracked"].kind, S.WHITE, 1.2), flash(P["untracked"].frame, S.WHITE, 1.03),
+                      run_time=0.8)
             vo.wait_until("In transcribe audio")
             self.play(flash(P["ignored"].folder, S.WHITE, 1.15, 0.6))
             for name, cue in (("Dockerfile", "the Dockerfile, pyproject"),
@@ -471,7 +588,7 @@ class GetTheCode(VoiceScene):
             vo.wait_until("and nothing had changed")
             self.play(FadeIn(quiet, shift=LEFT * 0.2), run_time=0.5)
             vo.wait_until("Yours may list updates")
-            self.play(flash(quiet, S.WHITE, 1.08, 0.8))
+            self.play(*flash_tag(quiet, S.WHITE, 1.08, 0.8))
 
         # ========================================================== 5 · checkout refuses
         with self.voiceover(SAY[5]) as vo:
@@ -498,10 +615,9 @@ class GetTheCode(VoiceScene):
         inc = v2.incoming
         inc.shift(UP * (INCOMING_Y - inc.get_center()[1]))
         with self.voiceover(SAY[6]) as vo:
-            self.play(FadeOut(br1), FadeOut(br2), run_time=0.3)
-            resize(self, t, 3, keep=list(t.lines[-3:]), run_time=0.7)
+            resize(self, t, 3, keep=list(t.lines[-3:]), run_time=0.7, extra=(FadeOut(br1), FadeOut(br2)))
+            v2.parts_in("incoming")          # unhidden now: it fades in with the piles
             self.play(FadeIn(v2), run_time=0.6)
-            self.play(*v2.parts_in("incoming"), run_time=0.4)
             vo.wait_until("would be overwritten")
             self.play(*v2.parts_in("wall1", anim=GrowFromCenter),
                       flash(v2.row("tracked", "cli.py"), ERR, 1.12, 0.8), run_time=0.8)
@@ -518,20 +634,21 @@ class GetTheCode(VoiceScene):
         chip48 = at_left(readme_chip("README.md · line 48", PH48, max_w=12.6), -6.45, Y_UNDER)
         with self.voiceover(SAY[7]) as vo:
             self.play(tr.goto(4), FadeIn(chip48, shift=DOWN * 0.1), run_time=0.6)
-            vo.wait_until("git stash puts")
+            vo.wait_until("the first reason")         # typed as "git stash" is said
             type_cmd(self, t, STASH.cmd, type_time=0.45)
             t.print(self, STASH_OUT, run_time=0.3)
             vo.wait_until("puts your edits away")
-            self.play(*v2.stash(1, run_time=1.2))
+            self.play(*v2.stash(1, run_time=1.5))     # the lift and wall 1's fall span the clause
+            type_cmd(self, t, CO2.cmd, type_time=0.8)  # the retry, typed as the sentence ends
             vo.wait_until("On a retry")
-            type_cmd(self, t, CO2.cmd, type_time=0.9)
             tprint(self, t, CO2_OUT, wrap=True, run_time=0.9, lag=0.06)
             vo.wait_until("still block it")
             self.play(bump(inc, 0.1), flash(v2.wall2, ERR, 1.1, 0.8), run_time=0.8)
 
         # ========================================================== 8 · git stash -u; the checkout works
-        err8 = erratum_tag("covers only edited files")
-        err8.move_to(chip48.frame.get_corner(UP + RIGHT) + LEFT * (err8.width / 2 + 0.3) + UP * 0.1)
+        # in the top band over the chip's right end (on the chip's edge it crossed the frame and
+        # crowded the quote)
+        err8 = at_right(erratum_tag("covers only edited files"), X_R, Y_BAND)
         dash = cmd_chip("git checkout -- .")
         n_red = note("throws your edits away", ERR)
         n_grey = note("leaves untracked files where they are")
@@ -540,19 +657,16 @@ class GetTheCode(VoiceScene):
         with self.voiceover(SAY[8]) as vo:
             self.play(caption_extra(tr, True), FadeIn(err8, shift=DOWN * 0.1), run_time=0.5)
             vo.wait_until("covers only edited files")
-            self.play(flash(err8, S.WHITE, 1.1, 0.8))
-            vo.wait_until("An extra git stash")
-            su = type_cmd(self, t, STASH_U.cmd, type_time=0.6)
-            pin(self, su, fit_tag(t, su), run_time=0.3)
+            self.play(*flash_tag(err8, S.WHITE, 1.08, 0.8))
+            su = type_cmd(self, t, STASH_U.cmd, type_time=0.6)     # typed as "An extra git stash"
+            pin(self, su, fit_tag(t, su), run_time=0.25)
             t.print(self, STASH_U.at(2), run_time=0.3)
             vo.wait_until("stashes untracked files too")
-            self.play(*v2.stash(2, run_time=1.2))
+            self.play(*v2.stash(2, run_time=1.0), caption_extra(tr, False))
+            type_cmd(self, t, CO3.cmd, type_time=0.8)
             vo.wait_until("and the checkout works")
-            self.play(caption_extra(tr, False), run_time=0.3)
-            type_cmd(self, t, CO3.cmd, type_time=0.9)
             ok = t.print(self, CO3_OUT, run_time=0.4)
-            self.play(ok[1].glyphs.animate.set_color(VENV), run_time=0.3)
-            self.play(*v2.land(run_time=1.0), flash(ok[1].glyphs, VENV, 1.06, 1.0))
+            self.play(ok[1].glyphs.animate.set_color(VENV), *land_split(v2, run_time=1.0))
             at_left(grp8, -6.35, P["tracked"].kind.get_top()[1] + 0.12 + grp8.height / 2)
             vo.wait_until("The other option")
             self.play(FadeIn(dash, shift=DOWN * 0.1), run_time=0.5)
@@ -562,21 +676,45 @@ class GetTheCode(VoiceScene):
             self.play(FadeIn(n_grey, shift=LEFT * 0.15), run_time=0.5)
 
         # ========================================================== 9 · git branch; your turn
-        card9 = turn_card([CD.cmd, FETCH.cmd, CHECKOUT.cmd, STASH.cmd, (STASH_U.cmd, "extra"),
-                           CHECKOUT.cmd, BR3.cmd])
+        # the switch silently replaces the ignored lecture 3 files (beat 10 proves it): the card says
+        # so first, so a viewer who pauses here copies them out before switching
+        card9 = first_turn_card(["first: copy out your lecture 3 Dockerfile,",
+                                 "pyproject.toml, uv.lock · the switch replaces them"],
+                                [CD.cmd, FETCH.cmd, CHECKOUT.cmd, STASH.cmd, (STASH_U.cmd, "extra"),
+                                 CHECKOUT.cmd, BR3.cmd])
+        # on the strip, right-aligned: its top rises past the tracker band's bottom, so it stays
+        # right of the tracker
         card9.shift(UP * (STRIP_TOP + 0.14 - card9.frame.get_bottom()[1])
-                    + RIGHT * (X_R - card9.frame.get_right()[0]))
+                    + RIGHT * (X_R + 0.08 - card9.frame.get_right()[0]))
+        say9 = " ".join(SAY[9].split())
+        warned = "Before you switch" in say9      # script.md's reworded line (requested)
         with self.voiceover(SAY[9]) as vo:
-            self.play(tr.goto(5), run_time=0.5)
-            type_cmd(self, t, BR3.cmd, type_time=0.45)
+            self.play(tr.goto(5), run_time=0.4)
+            type_cmd(self, t, BR3.cmd, type_time=0.4)
             b9 = t.print(self, BR3_OUT, run_time=0.3)
-            self.play(b9[0].glyphs.animate.set_color(VENV), run_time=0.3)
             vo.wait_until("star, flexible-workflow")
+            self.play(b9[0].glyphs.animate.set_color(VENV), run_time=0.3)
             self.play(flash(b9[0].glyphs, VENV, 1.15, 0.7))
-            self.play(FadeOut(v2), FadeOut(VGroup(chip48, err8, grp8)), run_time=0.5)
-            self.play(FadeIn(card9, shift=UP * 0.15), run_time=0.6)
+            self.play(FadeOut(v2), FadeOut(VGroup(chip48, err8, grp8)), run_time=0.4)
+            self.play(FadeIn(card9, shift=UP * 0.15), run_time=0.5)
+            if warned:                # the lines, not the opaque tag; one line per clause, so the
+                vo.wait_until("Before you switch")       # long warning sentence is not a still
+                self.play(flash(card9.first[0][0], TURN, 1.05, 0.9))
+                # the files light up as they are named (else a 7 s still). Glyphs, not characters:
+                # line 0 [24:34] = "Dockerfile," ("fi" is one ligature glyph, twice in that line),
+                # line 1 [0:22] = "pyproject.toml, uv.lock"
+                if "copy out any" in say9:
+                    vo.wait_until("copy out any")
+                    l0, l1 = card9.first[0]
+                    assert len(l0) == 34 and len(l1) == 44, (len(l0), len(l1))
+                    self.play(LaggedStart(flash(l0[24:34], TURN, 1.05), flash(l1[0:22], TURN, 1.05),
+                                          lag_ratio=0.6), run_time=2.8)
+                if "the switch replaces" in say9:
+                    vo.wait_until("the switch replaces")
+                    self.play(flash(card9.first[0][1], TURN, 1.05, 0.9))
             vo.wait_until("Pause and switch")
-            self.play(Wiggle(card9.tag, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.7)
+            self.play(Wiggle(card9.tag, scale_value=1.15, rotation_angle=0.025 * TAU),
+                      *([] if warned else [flash(card9.first[0], TURN, 1.05, 0.9)]), run_time=0.9)
 
         # ========================================================== 10 · the ignored files were replaced
         v2.shift(UP * (V2_P3 - V2_P2))
@@ -594,26 +732,31 @@ class GetTheCode(VoiceScene):
         fix10.shift(UP * (2.0 - fix10.frame.get_bottom()[1]))
         with self.voiceover(SAY[10]) as vo:
             self.play(FadeOut(card9), caption_extra(tr, True), run_time=0.4)
-            resize(self, t, 4, run_time=0.6, extra=(FadeIn(v2),))
-            self.play(FadeIn(old, shift=DOWN * 0.1), flash(v2.row("ignored", "Dockerfile").text, S.WHITE,
-                                                         1.15), run_time=0.6)
-            h2 = type_cmd(self, t, HEAD2, type_time=0.8)
-            pin(self, h2, fit_tag(t, h2), run_time=0.3)
+            resize(self, t, 4, run_time=0.6, extra=(FadeIn(v2), FadeIn(old, shift=DOWN * 0.1)))
+            h2 = type_cmd(self, t, HEAD2, type_time=0.7)
+            xt_h2 = fit_tag(t, h2)
+            vo.wait_until("lecture 3 Dockerfile")
+            # pin()'s steps by hand, so the tag's FadeIn shares its play with the row's flash
+            self.play(FadeIn(xt_h2, shift=LEFT * 0.1), flash(v2.row("ignored", "Dockerfile").text,
+                                                            S.WHITE, 1.15), run_time=0.5)
+            h2_row = h2.rows[-1] if hasattr(h2, "rows") else h2
+            self.remove(xt_h2)
+            h2_row.add(xt_h2)
+            self.add(h2_row)
             hout = t.print(self, HEAD2_OUT, run_time=0.4)
-            self.play(v2.flip_card("ignored", "Dockerfile", run_time=1.0),
-                      FadeTransform(old, new), run_time=1.0)
-            self.play(flash(new.text, TURN, 1.08), flash(substring(hout[1], "3.14"), TURN, 1.3),
-                      run_time=0.5)
-            type_cmd(self, t, LS_LA, type_time=0.7)
-            lout = t.print(self, LA_OUT, run_time=0.4)
+            self.play(v2.flip_card("ignored", "Dockerfile", run_time=1.0), FadeTransform(old, new),
+                      flash(substring(hout[1], "3.14"), TURN, 1.3), run_time=1.0)
+            type_cmd(self, t, LS_LA, type_time=0.6)
+            lout = t.print(self, LA_OUT, run_time=0.35)
             xt10 = extra_tag()
             xt10.move_to([t.box.get_right()[0] - 0.2 - xt10.width / 2, t.title.get_center()[1], 0])
             self.play(v2.flip_card("ignored", "pyproject.toml", run_time=0.8),
                       v2.flip_card("ignored", "uv.lock", run_time=0.8), FadeIn(xt10),
                       FadeOut(new), run_time=0.8)
-            vo.wait_until("were replaced by")
+            vo.wait_until("the branch's")
             self.play(FadeIn(same, shift=LEFT * 0.2),
-                      *[flash(substring(ln, ln.text.split()[4]), S.WHITE, 1.2) for ln in lout],
+                      *[flash(substring(ln, ln.text.split()[4]), S.WHITE, 1.2) for ln in lout
+                        if ln.text != "…"],
                       run_time=0.7)
             vo.wait_until("without a word")
             self.play(FadeIn(quiet10, shift=DOWN * 0.1), run_time=0.5)
@@ -627,24 +770,29 @@ class GetTheCode(VoiceScene):
                            "why: end of part 1"])
         at_right(fix11, X_R + 0.13, 2.75)
         with self.voiceover(SAY[11]) as vo:
-            self.play(FadeOut(VGroup(quiet10, fix10, xt10)), run_time=0.4)
-            ls2 = type_cmd(self, t, LS_SEC, type_time=0.8)
-            pin(self, ls2, fit_tag(t, ls2), run_time=0.3)
+            # "The old key": the key glows as the coda's cards go
+            self.play(FadeOut(VGroup(quiet10, fix10, xt10)), flash(v2.key, KEY, 1.5), run_time=0.8)
+            ls2 = type_cmd(self, t, LS_SEC, type_time=0.7)
+            pin(self, ls2, fit_tag(t, ls2), run_time=0.25)
             sec = t.print(self, SEC_OUT, run_time=0.3)[0]
-            vo.wait_until("still sits inside")
-            self.play(flash(v2.key, KEY, 1.5, 0.8), flash(sec.glyphs, KEY, 1.1, 0.8))
-            self.play(flash(v2.row("ignored", "secrets/"), KEY, 1.1, 0.7))
+            vo.wait_until("transcribe audio;")
+            self.play(flash(sec.glyphs, KEY, 1.1), flash(v2.row("ignored", "secrets/"), KEY, 1.1),
+                      run_time=0.8)
             vo.wait_until("your secrets stay put")
             self.play(FadeIn(chip50, shift=DOWN * 0.1), run_time=0.5)
+            vo.wait_until("as the README says")
+            self.play(flash(chip50.phrase, S.WHITE, 1.06, 0.8))
             vo.wait_until("Every build there")
             self.play(flash(v2.key, ERR, 1.4, 0.9))
             vo.wait_until("so delete each")
             self.play(FadeIn(fix11, shift=LEFT * 0.2), run_time=0.6)
-            vo.wait_until("Your edits wait")
+            vo.wait_until("secrets folder now")       # its output lands on "Your edits wait"
             gl = type_cmd(self, t, STASH_LIST, type_time=0.6)
-            pin(self, gl, fit_tag(t, gl), run_time=0.3)
+            pin(self, gl, fit_tag(t, gl), run_time=0.25)
+            vo.wait_until("Your edits wait")
             t.print(self, LIST_OUT, run_time=0.4)
+            vo.wait_until("in the stash")
             self.play(v2.relabel(2, "stash@{0}"), v2.relabel(1, "stash@{1}"), run_time=0.6)
-            self.wait(0.8)
+            self.wait(0.6)
         self.play(FadeOut(*self.mobjects), run_time=0.8)
         self.wait(0.3)
