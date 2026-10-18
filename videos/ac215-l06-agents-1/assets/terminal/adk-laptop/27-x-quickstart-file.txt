@@ -1,0 +1,6 @@
+$ uv run adk web 1-baseline/agent.py
+Usage: adk web [OPTIONS] [AGENTS_DIR]
+Try 'adk web --help' for help.
+
+Error: Invalid value for '[AGENTS_DIR]': Directory '1-baseline/agent.py' is a file.
+[exit 2]

@@ -1,15 +1,30 @@
-00-x-env	23:12:53 UTC	0.3s
-01-clone	23:12:54 UTC	1.0s
-02-cd-as-written	23:12:55 UTC	0.1s
-03-cd	23:12:55 UTC	0.1s
+00-x-env	23:25:08 UTC	0.3s
+01-clone	23:25:09 UTC	0.9s
+02-cd-as-written	23:25:10 UTC	0.1s
+03-cd	23:25:10 UTC	0.1s
 04-x-ls.txt	exit=+0.1s
-05-cp-env	23:12:55 UTC	0.1s
-06-x-env-file	23:12:55 UTC	0.1s
-07-uv-sync.txt	exit=+5.7s
-08-x-after-failed-sync	23:13:01 UTC	0.1s
+05-cp-env	23:25:10 UTC	0.1s
+06-x-env-file	23:25:10 UTC	0.1s
+07-uv-sync.txt	exit=+6.9s
+08-x-after-failed-sync	23:25:17 UTC	0.1s
 09-x-python-pin.txt	exit=+1.7s
-10-x-sync-plan	23:13:03 UTC	0.6s
-11-x-capture-only-uv-config	23:13:03 UTC	0.1s
-12-uv-sync.txt	exit=+11.5s
-13-x-adk-version	23:13:18 UTC	0.8s
-14-x-packages	23:13:19 UTC	0.2s
+10-x-sync-plan	23:25:20 UTC	0.6s
+11-x-capture-only-uv-config	23:25:20 UTC	0.1s
+12-uv-sync.txt	exit=+11.4s
+13-x-adk-version	23:25:35 UTC	0.9s
+14-x-packages	23:25:35 UTC	0.2s
+16-x-root-page	23:25:40 UTC	0.2s
+17-x-list-apps	23:25:40 UTC	0.1s
+18-x-select-1-baseline	23:25:40 UTC	0.1s
+15-adk-web.txt	ctrl-c=+6.7s exit=+7.3s
+19-x-uv-add-pin.txt	exit=+5.2s
+20-x-adk-version-pinned	23:25:51 UTC	3.5s
+21-x-diff-pyproject	23:25:52 UTC	0.1s
+23-x-list-apps	23:25:54 UTC	0.1s
+24-x-select-1-baseline	23:25:54 UTC	0.1s
+25-x-new-session	23:25:54 UTC	0.1s
+26-x-send-placeholder-key	23:25:54 UTC	0.1s
+22-adk-web-pinned.txt	ctrl-c=+3.6s exit=+4.3s
+27-x-quickstart-file	23:25:58 UTC	2.0s
+28-x-adk-without-web	23:26:00 UTC	1.8s
+29-x-node	23:26:00 UTC	0.2s

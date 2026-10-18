@@ -1,0 +1,3 @@
+$ curl -s -X POST http://localhost:8000/apps/1-baseline/users/student/sessions; echo
+{"id":"45a85776-bcf3-424d-bd1f-6a441e5e4c0c","appName":"1-baseline","userId":"student","state":{},"events":[],"lastUpdateTime":1792365954.3785188}
+[exit 0]

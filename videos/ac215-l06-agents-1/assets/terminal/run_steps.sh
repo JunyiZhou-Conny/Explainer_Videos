@@ -37,7 +37,8 @@ step() {
 tstep() {
   local f=$1 name=$2 dir=$3 typed=$4; shift 4; mkdir -p "$HERE/$f"
   local sf; sf=$(mktemp); printf '%s\n' "$typed" > "$sf"
-  SHOW_CMD="$*" TIMING_FILE="$HERE/capture-only/$f-timings.txt" "$PY" -I "$HERE/tty_session.py" "$HERE/$f/$name.txt" "$sf" \
+  SHOW_CMD="$*" PROMPT_RE="${TTY_PROMPT:-[\$#] \$}" TIMING_FILE="$HERE/capture-only/$f-timings.txt" \
+    "$PY" -I "$HERE/tty_session.py" "$HERE/$f/$name.txt" "$sf" \
     docker exec -ti -u student -w "$(wdir "$dir")" "${EXEC_ENV[@]}" $L bash -lc "$*"
   rm -f "$sf"
 }
@@ -55,12 +56,15 @@ session_start() {
   while [ ! -e "$SIG/up" ] && kill -0 $BGPID 2>/dev/null; do sleep 1; done
 }
 session_end() { touch "$SIG/stop"; wait $BGPID; }
-# server_start <folder> <name> <dir> <ready-regex> <command>: a terminal running a server (adk web) until session_end
-# presses Ctrl+C: tstep in the background, ready once the output matches <ready-regex>.
+# server_start <folder> <name> <dir> <ready-regex> <answer> <command>: a terminal running a server (adk web) until
+# session_end presses Ctrl+C: tstep in the background, ready once the output matches <ready-regex>. <answer> (may be
+# empty) is typed at a "[Y/n]: " question first (ADK 2.x asks about telemetry the first time it runs in a terminal).
 server_start() {
-  local f=$1 name=$2 dir=$3 ready=$4; shift 4
+  local f=$1 name=$2 dir=$3 ready=$4 answer=$5; shift 5
   rm -f "$SIG/up" "$SIG/stop"
-  local script="@@wait $ready"$'\n'"@@touch $SIG/up"$'\n'"@@waitfile $SIG/stop"$'\n'"@@sleep 1"$'\n'"@@ctrl-c"
+  local script="" TTY_PROMPT=
+  [ -n "$answer" ] && { script="$answer"$'\n'; TTY_PROMPT='\[Y/n\]: $'; }
+  script+="@@wait $ready"$'\n'"@@touch $SIG/up"$'\n'"@@waitfile $SIG/stop"$'\n'"@@sleep 1"$'\n'"@@ctrl-c"
   tstep "$f" "$name" "$dir" "$script" "$@" &
   BGPID=$!
   while [ ! -e "$SIG/up" ] && kill -0 $BGPID 2>/dev/null; do sleep 1; done
@@ -278,7 +282,7 @@ adk)  # ===================== dlops-io/llm-agent-google-adk, README.md (the whol
   step $F 13-x-adk-version $A "uv run adk --version"
   step $F 14-x-packages $A "uv pip list 2>/dev/null | grep -E '^(google-adk|google-genai|litellm|fastapi|uvicorn|mcp|chromadb|sentence-transformers|torch|onnxruntime) '; du -sh .venv"
   # Running Agents, option 1 (README.md:111-119): `uv run adk web`, then http://localhost:8000 in a browser
-  server_start $F 15-adk-web $A "Uvicorn running on" "uv run adk web"
+  server_start $F 15-adk-web $A "Uvicorn running on" n "uv run adk web"
   step $F 16-x-root-page $A "curl -sI http://localhost:8000/ | head -3"
   step $F 17-x-list-apps $A "curl -s http://localhost:8000/list-apps; echo"
   step $F 18-x-select-1-baseline $A "curl -s http://localhost:8000/dev/apps/1-baseline/build_graph; echo"
@@ -287,7 +291,7 @@ adk)  # ===================== dlops-io/llm-agent-google-adk, README.md (the whol
   tstep $F 19-x-uv-add-pin $A "" 'uv add "google-adk>=1.8.0,<1.28"'
   step $F 20-x-adk-version-pinned $A "uv run adk --version"
   step $F 21-x-diff-pyproject $A "git diff pyproject.toml"
-  server_start $F 22-adk-web-pinned $A "Uvicorn running on" "uv run adk web"
+  server_start $F 22-adk-web-pinned $A "Uvicorn running on" "" "uv run adk web"
   step $F 23-x-list-apps $A "curl -s http://localhost:8000/list-apps; echo"
   step $F 24-x-select-1-baseline $A "curl -s http://localhost:8000/dev/build_graph/1-baseline; echo"
   step $F 25-x-new-session $A "curl -s -X POST http://localhost:8000/apps/1-baseline/users/student/sessions; echo"
@@ -304,7 +308,7 @@ adk)  # ===================== dlops-io/llm-agent-google-adk, README.md (the whol
   docker run -d --rm --name l06-adk-chroma --network container:$L "${CHROMA_IMAGE:-chromadb/chroma:latest}" >/dev/null
   sleep 5
   step $F 31-x-port-8000-busy $A "curl -s http://localhost:8000/api/v2/heartbeat; echo; uv run adk web"
-  server_start $F 32-x-adk-web-port-8080 $A "Uvicorn running on" "uv run adk web --port 8080"
+  server_start $F 32-x-adk-web-port-8080 $A "Uvicorn running on" "" "uv run adk web --port 8080"
   step $F 33-x-list-apps-8080 $A "curl -s http://localhost:8080/list-apps; echo"
   session_end
   docker rm -f l06-adk-chroma >/dev/null 2>&1 || true
