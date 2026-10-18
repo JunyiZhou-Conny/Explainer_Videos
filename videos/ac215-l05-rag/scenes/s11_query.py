@@ -3,11 +3,13 @@
 Beats (script.md "## S11", one voiceover block each):
  0  LECTURE A39. TRACKER Query (no step lit yet). V1 with both lanes; the bottom lane flashes PINK
     and its query box lights. The PINK question card `How is tolminc cheese made?` slides into the
-    lower half of the BLUE embedding box; V1's query vector comes out and becomes the PINK query
-    arrow in V4's sphere drawing, among GREEN chunk arrows (tag our illustration). A PINK beam
+    lower half of the BLUE embedding box; V1's query vector flashes, the map fades around it, and
+    it becomes the PINK query arrow in V4's sphere drawing, among GREEN chunk arrows (tag our
+    illustration). A PINK beam
     widens from the query to its nearest arrows (YELLOW flash, "nearest neighbors"). The mini-map
     comes in, query lit.
- 1  LECTURE A48–A53. V6, first half: the sphere goes; four GREEN arrows fly into a column of GREEN
+ 1  LECTURE A48–A53. V6, first half: the sphere goes (first, so nothing overlaps the column); four
+    remaining GREEN arrows fly into a column of GREEN
     cards, the query arrow becomes a PINK query bar on the left (header "similarity (lecture)",
     "bigger = closer", tag lecture example). As each number is spoken the query bar slides down
     beside its row, a PINK comparison line flashes and the score writes in: 0.57, 0.77, 0.43,
@@ -39,7 +41,8 @@ Beats (script.md "## S11", one voiceover block each):
     (what the box would make) slides out and fits the slot; it fades, a dashed GOLD key outline
     with a RED cross and "no key" appears at the box, which stays dark; GREY chip "only the same
     model makes a vector in the same space".
- 7  TRACKER Query 2. The picture leaves; the strip types `python cli.py --query --chunk_type
+ 7  TRACKER Query 2. The picture leaves; the strip is cleared and loses its `real run · no key` tag
+    (this command was not run here), then types `python cli.py --query --chunk_type
     recursive-split` (no output). ▶ your turn on a GREY card listing both query commands (GOLD tag
     "one embedding call per question"). The strip leaves and the card moves down to its place; a
     GREY "with your key, look for" card writes in its rows as named (cli.py lines 320, 360, 361);
@@ -532,14 +535,18 @@ class NearestNeighbours(VoiceScene):
         slots.move_to([0, slot_top - slots.height / 2, 0])
 
         with self.voiceover(SAY[7]) as vo:
-            self.play(FadeOut(VGroup(emb, card, cyl, cyl_lab, conn, nosearch, slot, vtw, key, kx, k_lab, same)), tr.goto(2),
-                      run_time=0.5)
+            # the strip is cleared (the first run's error would sit above the new command) and loses
+            # its `real run · no key` tag: the second command was not run here
+            self.play(FadeOut(VGroup(emb, card, cyl, cyl_lab, conn, nosearch, slot, vtw, key, kx, k_lab, same)),
+                      FadeOut(t.lines), FadeOut(nk), tr.goto(2), run_time=0.5)
+            for m in list(t.lines):
+                t.lines.remove(m)
             cmd2 = type_cmd(self, t, Q2, type_time=1.4)
             assert hasattr(cmd2, "rows") and len(cmd2.rows) == 2
             vo.wait_until("pause and run both")
             self.play(FadeIn(tc, shift=UP * 0.15), run_time=0.5)
             vo.wait_until("With your key")
-            self.play(FadeOut(VGroup(t, nk)), Transform(tc, tc_low), run_time=0.7)
+            self.play(FadeOut(t), Transform(tc, tc_low), run_time=0.7)
             self.play(FadeIn(lf), run_time=0.3)
             vo.wait_until("look for 256")
             self.play(lf.write_item(0))

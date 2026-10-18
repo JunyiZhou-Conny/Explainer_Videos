@@ -14,15 +14,16 @@ Beats (script.md "## S10", one voiceover block each):
  1  TRACKER Run 3 · extra. Container terminal (3-row strip, TEAL, app@92c5bfd26089:/app$) types
     `exit` (extra) -> laptop/07 line 46; the CLI box dissolves into a dashed GREY outline. The frame
     turns GREY, title laptop, prompt ~/AC215/llm-rag$, and it grows to 6 rows. `docker ps -a`
-    (extra) -> laptop/20 lines 2–3 sliced from STATUS on (GREY tag "3 of 7 columns"). "--rm:
-    removed on exit" on the outline; the Chroma row: "Up 2 minutes" boxed and the name YELLOW
-    (the Chroma box flashes); 0.0.0.0:8000->8000/tcp PINK, the :8000 door lights PINK, its route
-    pulses.
+    (extra) -> laptop/20 lines 2–3 sliced from STATUS on (GREY tag "3 of 7 columns"). The outline
+    flashes at "gone"; "--rm / removed on exit" writes inside it; the Chroma row: "Up 2 minutes"
+    boxed and the name YELLOW (the Chroma box flashes); 0.0.0.0:8000->8000/tcp PINK, the :8000
+    door lights PINK, its route pulses.
  2  `docker compose down` (extra) -> laptop/21 lines 2–3 joined and 4 (word-folded, RED; the two
     variable names flash), fading to GREY with the tag "harmless: the values live only in
-    docker-shell.sh"; lines 5–7 (Compose rows, times as tags): with line 6 the Chroma box, its
-    name, port, /data and :8000 routes and the dashed outline leave and the door unlights; with
-    line 7 the rail leaves. Only the laptop zone remains.
+    docker-shell.sh"; the typed command flashes YELLOW at "the down command needs neither";
+    lines 5–7 (Compose rows, times as tags) print together: as line 6 flashes the Chroma box, its
+    name, port, /data and :8000 routes and the dashed outline leave and the door unlights; as
+    line 7 flashes the rail leaves. Only the laptop zone remains.
  3  The terminal clears and grows to 13 rows; the zone fades and its docker-volumes/chromadb/
     folder (with the "?") moves to the top-right band. `docker ps -a; docker network ls; ls -la
     docker-volumes/chromadb` (extra; folded after "-a;") -> laptop/22 lines 2–12 (long rows cut
@@ -35,10 +36,13 @@ Beats (script.md "## S10", one voiceover block each):
     underlined + "container id · your numbers will differ"). As lines 3–4 and 5–6 print, a rail,
     a Chroma box (PINK route to the folder) and a CLI box land beside the same GREY folder.
     "[+] run 2/2" boxed YELLOW + GREY chip "no pull · no build: the image exists"; GREY note "after
-    a git pull that changes pyproject.toml / or the Dockerfile: docker compose build". ▶ your turn.
-    Hold 2 s.
- 5  TRACKER Run 3 · extra. After the hold, the second laptop terminal (8 rows) replaces it; it opens
-    on ~ with "new terminal: cd here first", then ~/AC215/llm-rag$: the curl … | grep … line (extra;
+    a git pull that changes pyproject.toml / or the Dockerfile: [docker compose build]" (the
+    command in a slim GREY pill, so it never reads as output; it flashes YELLOW at "run docker
+    compose build first"). ▶ your turn beside the typed command. Hold 2 s.
+ 5  TRACKER Run 3 · extra. After the hold (silent), the second laptop terminal (8 rows) replaces it;
+    it opens on ~ (the ~ flashes) with the GREY caption "new terminal: cd here first" above its
+    frame (it stays there, readable, until the terminal leaves). With the narration "~$" stretches
+    into "~/AC215/llm-rag$" ("student@laptop:" stays put): the curl … | grep … line (extra;
     folded at spaces, and once inside the URL at "/databases" with no space before the "\" and no
     indent after it, so the rows join into the captured line) -> laptop/24 lines 2–5: the collection
     names GREEN, both "dimension":256 boxed YELLOW. The container terminal (6 rows): `python cli.py
@@ -59,7 +63,9 @@ small glyphs beside it. laptop/20 is sliced from its STATUS column on (STATUS, P
 word-folded (cutting them at 65 would hide "is not set"; the ids stay whole). The curl line of
 laptop/24 is folded here, not by type_cmd: fold_cmd's hard break inside the URL ends the row with
 " \" and indents the next, which splits the URL into two words. The final picture (boxes dissolve,
-folder glows) illustrates the last sentence; SHOW has no picture there.
+folder glows) illustrates the last sentence; SHOW has no picture there. The second terminal's
+"cd here first" caption sits above its frame, not beside the prompt (rows 0–3 fill with the curl
+line, and beside the prompt it was readable for under a second).
 """
 
 from types import SimpleNamespace
@@ -106,7 +112,6 @@ from common import (
     beside,
     capture,
     caption_extra,
-    cmd_chip,
     col_box,
     cylinder,
     differ_tag,
@@ -132,7 +137,18 @@ from common import (
     your_turn,
 )
 from explainer import style as S
-from explainer.devops import CAPTION, box, check_mark, chip, glyph_range, mono, mono_line, step_badge, substring
+from explainer.devops import (
+    CAPTION,
+    MONO,
+    box,
+    check_mark,
+    chip,
+    glyph_range,
+    mono,
+    mono_line,
+    step_badge,
+    substring,
+)
 from explainer.scene import VoiceScene
 
 SAY = NARRATION["S10"]
@@ -573,7 +589,9 @@ class IndexSurvives(VoiceScene):
         mm = band_minis(band)
         np_chip = grey_tag("no pull · no build: the image exists")
         g1 = note("after a git pull that changes pyproject.toml")
-        build_chip = cmd_chip("docker compose build")          # a command shown, not output
+        # a command shown, not output: a pill slim enough to sit on one terminal row
+        build_chip = chip("docker compose build", S.GREY, size=CAPTION, font=MONO, pad_x=0.14, pad_y=0.04)
+        assert build_chip.height < 0.36, build_chip.height
         g2 = VGroup(note("or the Dockerfile:"), build_chip).arrange(RIGHT, buff=0.15)
         gnote = VGroup(g1, g2)
         idt = grey_tag("container id · your numbers will differ")
