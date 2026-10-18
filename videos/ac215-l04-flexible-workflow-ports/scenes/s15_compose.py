@@ -607,11 +607,12 @@ class ComposeUp(VoiceScene):
             vo.wait_until("the volumes key mounts")
             o1 = cm.outline(17, 18, "live-mount the gateway's folder")
             self.play(FadeOut(nohome, run_time=0.3), run_time=0.3)
-            self.play(Create(o1.frame), Create(o1.line), FadeIn(o1.tag, shift=UP * 0.1), run_time=0.7)
+            self.play(Create(o1.frame), Create(o1.line), FadeIn(o1.tag, shift=UP * 0.1), FadeIn(n_v), run_time=0.7)
             vo.wait_until("and the depends on key")
             o2 = cm.outline(22, 23, "start the processor first")
-            self.play(FadeOut(VGroup(o1.tag, o1.line)), Create(o2.frame), Create(o2.line),
-                      FadeIn(o2.tag, shift=UP * 0.1), run_time=0.7)
+            self.play(FadeOut(VGroup(o1.tag, o1.line, n_v)), Create(o2.frame), Create(o2.line),
+                      FadeIn(o2.tag, shift=UP * 0.1), FadeIn(n_d), FadeTransform(lref20, lref27), run_time=0.7)
+            self.play(FadeIn(n_r, shift=RIGHT * 0.1), run_time=0.4)
             vo.wait_until("All of step 1 collapses")
             up_chip, anims = cm.collapse()
             self.play(*anims)
@@ -626,8 +627,8 @@ class ComposeUp(VoiceScene):
         with self.voiceover(SAY[3]) as vo:
             cm.remove(up_chip)
             self.add_foreground_mobject(up_chip)    # the terminal fades in under it, not over it
-            self.play(FadeOut(VGroup(cm.panel, gbars, o1.frame, o2.frame, o2.tag, o2.line)), FadeIn(t),
-                      run_time=0.6)
+            self.play(FadeOut(VGroup(cm.panel, gbars, o1.frame, o2.frame, o2.tag, o2.line, n_d, n_r, lref27)),
+                      FadeIn(t), run_time=0.6)
             assert not len(cm.chips) and not len(cm.bars)
             bare_prompt(self, t)                    # the chip lands after the waiting prompt
             self.play(up_chip.animate.shift([x_txt - up_chip.text.get_left()[0],
