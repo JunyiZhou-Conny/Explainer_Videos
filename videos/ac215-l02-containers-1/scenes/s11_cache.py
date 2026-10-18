@@ -2,53 +2,63 @@
 
 Beats (script.md "## S11", one voiceover block each):
  0  Concept first, no terminal. Boxes 3 and 4 (`[3/4] COPY . ./`, `[4/4] RUN uv sync`) appear and
-    flash RED on "rerun"; at "caches every build step" boxes 1 and 2 join them and every box drops a
-    domino. At "its parent step" thin TEAL arrows grow from each box to the next box's badge spot, at
-    "and its instruction" from each box up to its own spot; at "are unchanged" they merge into four
-    TEAL fingerprint badges. "For COPY, the checksum": a small GREY parcel (PINK tape, "build
-    context") docks above COPY's badge and feeds it a third arrow. "The first step that changes":
-    box 2's instruction flickers YELLOW, its badge turns RED, dominoes 2, 3, 4 topple on "runs
-    again" / "every step after it"; then they stand back up and the badge returns to TEAL.
- 1  The parcel leaves; the chain rises and closes up (badges sit on the box lids) above an 8-row
-    terminal that types `docker build --progress=plain -t simple-translate -f Dockerfile .` (extra;
-    row tag "extra · full log", `--progress=plain` underlined) -> laptop/38: 23 (cut after
-    `apt-get update &&`), 24, 26–27, 29–30. "FROM reuses the base": box 1 gets a TEAL "reused"
-    stamp; "and the three steps … all say CACHED": the three CACHED words turn TEAL as boxes 2–4 get
-    TEAL CACHED stamps; the standing dominoes pulse on "nothing runs".
- 2  The terminal shrinks to the 3-row strip. The parcel returns under COPY and enlarges (.git/,
-    .git/index, cli.py, Dockerfile); cli.py lights YELLOW and CODE(cli.py: 49) docks beside it
-    (YELLOW bar). The four boxes pulse on "Which of the four steps". PONDER (8 s): the card covers
-    the strip.
+    flash RED on "rerun"; at "Docker caches" boxes 1 and 2 join them and GREY `Lecture 2 · slides 36,
+    58–60` (lecture_ref, top right) fades in, out again at "For COPY" (the lecture leaves out what
+    invalidates a step); at "every build step" every box drops a domino and a GREY caption "one
+    numbered step per instruction" fades in under the dominoes (slide 58). At "its parent step" thin
+    TEAL arrows grow from each box to the next box's badge spot, at "and its instruction" from each
+    box up to its own spot; at "are unchanged" they merge into four TEAL fingerprint badges. "For
+    COPY, the checksum": a small GREY parcel (PINK tape, "build context") docks above COPY's badge
+    and feeds it a third arrow. "The first step that changes": box 2's instruction flickers YELLOW,
+    its badge turns RED, dominoes 2, 3, 4 topple on "runs again" / "every step after it"; then they
+    stand back up and the badge returns to TEAL.
+ 1  The caption leaves, then the parcel; the chain rises and closes up (badges sit on the box lids);
+    then an 8-row terminal fades in under it, and with it GREY `Lecture 2 · slide 60` (lecture_ref,
+    top right: slide 60 is this all-CACHED rebuild; it leaves as the terminal shrinks, beat 2), and
+    types `docker build --progress=plain -t simple-translate -f Dockerfile .` (extra; row tag
+    "extra · full log", `--progress=plain` underlined) -> laptop/38: 23 (cut after `apt-get update
+    &&`), 24, 26–27, 29–30. "FROM reuses the base": box 1 gets a TEAL "reused" stamp; "and the
+    three steps … all say CACHED": the three CACHED words turn TEAL as boxes 2–4 get TEAL CACHED
+    stamps; the standing dominoes pulse on "nothing runs".
+ 2  The terminal shrinks to the 3-row strip and the slide-60 tag fades out. The parcel returns
+    under COPY and enlarges (.git/, .git/index, cli.py, Dockerfile); cli.py lights YELLOW and
+    CODE(cli.py: 49) docks beside it (YELLOW bar). The four boxes pulse on "Which of the four
+    steps". PONDER (8 s): the card covers the strip.
  3  "on line 49": the panel header pulses; `cheese` morphs into a YELLOW `brie`. The strip types
     `git diff` (extra) -> laptop/39: 10–11 (- RED, + GREEN). "a different checksum": a RED
     fingerprint rises from cli.py into COPY's badge, which turns RED.
- 4  The parcel and panel leave; the strip grows to 8 rows: `docker build --progress=plain …` (extra)
-    -> laptop/40: 23 (cut), 24 (stamps 1–2 pulse, CACHED TEAL), then on "so COPY runs" 26–27 (stamp 3
-    falls, domino 3 topples RED), on "and uv sync after it" 29–30 wrapped (stamp 4 falls, domino 4
-    topples), on "Python download and all" a PURPLE "35.9 MiB" download arrow fires into box 4
-    (`35.9MiB` underlined PURPLE), then "…", 36.
+ 4  The parcel and panel leave, then the strip grows to 8 rows: `docker build --progress=plain …`
+    (extra) -> laptop/40: 23 (cut), 24 (stamps 1–2 pulse, CACHED TEAL), then on "so COPY runs" 26–27
+    (stamp 3 falls, domino 3 topples RED), on "and uv sync after it" 29–30 wrapped (stamp 4 falls,
+    domino 4 topples), on "Python download and all" a PURPLE "35.9 MiB" download arrow fires into
+    box 4 (`35.9MiB` underlined PURPLE), then "…", 36.
  5  The dominoes stand back up as the terminal shrinks to the strip; the parcel and panel return.
     `git checkout -q cli.py` (extra; run_steps.sh line 139) -> no output; `brie` morphs back to
-    `cheese`, cli.py dims. "Same files": COPY's badge flickers TEAL but stays RED. The picture leaves,
-    the terminal grows to 8 rows: `docker build --progress=plain …` (extra) -> laptop/41: 26–27, 29–30
-    (wrap); the RED wave topples dominoes 3 and 4 again. "Git rewrote its own index file": the
-    terminal shrinks to the strip (rows 26, 27, 29), the parcel returns, `.git/index` flips YELLOW,
-    `.git/` pulses, a RED fingerprint rises from it into COPY's badge.
+    `cheese`, cli.py dims. "Same files": COPY's badge flickers TEAL but stays RED. The picture
+    leaves, then the terminal grows to 8 rows: `docker build --progress=plain …` (extra) ->
+    laptop/41: 26–27, 29–30 (wrap); the RED wave topples dominoes 3 and 4 again. "Git rewrote its
+    own index file": the terminal shrinks to the strip (rows 26, 27, 29), the parcel returns alone,
+    centred under the chain, `.git/index` flips YELLOW, `.git/` pulses, a RED fingerprint rises from
+    it into COPY's badge.
  6  The strip leaves, the dominoes stand up, boxes 3–4 pulse ("the question from part 1"). The
     `Dockerfile` glyph flips YELLOW; a RED fingerprint rises into COPY's badge; GREY caption
     "Dockerfile steps 4 and 5: every edit to the Dockerfile changed the parcel"; tag "erratum ·
     expected while learning".
- 7  The chain and the parcel settle lower (the parcel's title moves to its left); tag "a pattern for
-    your own projects / not the course solution" top right. "put the slow steps first": uv sync
-    pulses. "copy only the files uv sync needs": `COPY . ./` steps out of the row and a new
-    `[3/5] COPY pyproject.toml README.md ./` box splits off it, left of `RUN uv sync` (renumbered
-    [4/5]); "then copy the rest": the old box slides under uv sync to the end as [5/5] and a fifth
-    domino stands up. The `.dockerignore` card (tag "illustration · a file you'd
-    add") returns with `.git`, `.venv`, `secrets/` (GREEN) and `Dockerfile` slides in YELLOW; a dashed
-    sieve over the parcel turns solid GREEN and catches `.git/`, `.git/index` and `Dockerfile`.
-    `cli.py` lights YELLOW, a RED fingerprint rises into the last badge, only the last domino
-    topples; boxes 1–4 get "reused"/CACHED stamps, uv sync's pulses. GREY footnote "full
-    Dockerfile: exercises.md". Fade out to an empty frame.
+ 7  The chain and the parcel settle lower, the parcel back at the right (its title moves to its
+    left); tag "a pattern for your own projects / not the course solution" top right. "put the slow
+    steps first": uv sync pulses. "copy only the files uv sync needs": `COPY . ./` steps out of the
+    row and a new `[3/5] COPY pyproject.toml README.md ./` box splits off it, left of `RUN uv sync`
+    (renumbered [4/5]); "then copy the rest": the old box slides under uv sync to the end as [5/5]
+    and a fifth domino stands up. The `.dockerignore` card (tag "illustration · a file you'd add")
+    returns with `.git`, `.venv`, `secrets/` (GREEN) and `Dockerfile` slides in YELLOW; a dashed
+    sieve over the parcel turns solid GREEN and catches `.git/`, `.git/index` and `Dockerfile` (each
+    rests on a dark patch of the mesh, so no grid line crosses its name). `cli.py` lights YELLOW, a
+    RED fingerprint rises into the last badge, only the last domino topples; boxes 1–4 get
+    "reused"/CACHED stamps, uv sync's pulses. GREY footnote "full Dockerfile: exercises.md". Fade
+    out to an empty frame.
+
+Layout: the dominoes are 0.36 tall so that a 0.57-tall stamp fits in the gap between a box and its
+domino in the compact chain (stamps never cover a domino).
 """
 
 import numpy as np  # noqa: I001  (manim first, then common: common must win)
@@ -56,7 +66,7 @@ from manim import *
 
 from explainer import style as S
 from explainer.components import ponder_card
-from explainer.devops import code_panel, code_span, line_bar
+from explainer.devops import code_panel, code_span, lecture_ref, line_bar
 from explainer.scene import VoiceScene
 
 from common import (BUILD_PLAIN, ERR, IMAGE, INK, LAPTOP, LAPTOP_DIR, NARRATION, ROUTE, STRIP_ROWS, TERMINAL,
@@ -231,6 +241,10 @@ class LayerCache(VoiceScene):
         feed_p = Arrow(mini.get_bottom(), b3.get_top(), buff=0.06, stroke_width=2.5, tip_length=0.12,
                        max_tip_length_to_length_ratio=0.35, color=IMAGE)
         run_txt = ch.boxes[1].text[1]                    # "RUN apt…uv"
+        lref = lecture_ref(2, "36, 58–60")               # top right, "Docker caches" to "For COPY"
+        lref60 = lecture_ref(2, "60")                    # top right, the all-CACHED rebuild's 8-row terminal
+        steps_cap = label("one numbered step per instruction", 22, S.GREY).next_to(ch.dominoes, DOWN, buff=0.3)
+        gone_early = lambda a: smooth(min(1.0, a / 0.4))           # gone before the badges get there
 
         # ========================================================== 0 · the rule, concept first
         with self.voiceover(SAY[0]) as vo:
@@ -241,10 +255,10 @@ class LayerCache(VoiceScene):
             self.play(*[pulse(ch.boxes[k], ERR, 1.08, 1.4, there_and_back_with_pause) for k in (2, 3)])
             vo.wait_until("Docker caches")
             self.play(LaggedStart(FadeIn(ch.boxes[0], shift=RIGHT * 0.2), FadeIn(ch.boxes[1], shift=RIGHT * 0.2),
-                                  lag_ratio=0.35), run_time=0.7)
+                                  lag_ratio=0.35), FadeIn(lref), run_time=0.7)
             vo.wait_until("every build step")
             self.play(LaggedStart(*[FadeIn(d, shift=DOWN * 0.35) for d in ch.dominoes], lag_ratio=0.25),
-                      run_time=1.0)
+                      FadeIn(steps_cap, shift=UP * 0.1), run_time=1.0)
             vo.wait_until("its parent step")
             self.play(LaggedStart(*[GrowArrow(a) for a in parents], lag_ratio=0.3), run_time=0.9)
             vo.wait_until("and its instruction")
@@ -260,7 +274,8 @@ class LayerCache(VoiceScene):
                       run_time=0.9)
             self.add(ch)
             vo.wait_until("For COPY")
-            self.play(FadeIn(mini, shift=DOWN * 0.3), FadeIn(mini_t, shift=DOWN * 0.3), run_time=0.6)
+            self.play(FadeOut(lref, rate_func=gone_early), FadeIn(mini, shift=DOWN * 0.3),
+                      FadeIn(mini_t, shift=DOWN * 0.3), run_time=0.6)        # the tag is gone before the parcel docks
             vo.wait_until("the checksum")
             self.play(GrowArrow(feed_p), Indicate(mini.files, color=INK, scale_factor=1.15), run_time=0.6)
             vo.wait_until("must match too")
@@ -283,8 +298,10 @@ class LayerCache(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             # the chain is out of the terminal's way before the terminal comes in
-            self.play(FadeOut(VGroup(mini, mini_t, feed_p), shift=UP * 0.2), MoveToTarget(ch), run_time=0.6)
-            self.play(FadeIn(t, shift=UP * 0.15), run_time=0.35)
+            self.play(FadeOut(steps_cap), run_time=0.25)              # the caption leaves before the chain rises
+            self.play(FadeOut(VGroup(mini, mini_t, feed_p), shift=UP * 0.2, rate_func=gone_early), MoveToTarget(ch),
+                      run_time=0.6)
+            self.play(FadeIn(t, shift=UP * 0.15), FadeIn(lref60), run_time=0.35)   # slide 60: this rebuild
             bare_prompt(self, t)
             c1 = type_cmd(self, t, BUILD_PLAIN, 1.3)
             r1a, r1b = c1.rows
@@ -321,7 +338,7 @@ class LayerCache(VoiceScene):
         glyphs = VGroup(*[it.glyph for it in parcel.items.values()])
 
         with self.voiceover(SAY[2]) as vo:
-            resize(self, t, STRIP_ROWS, run_time=0.7)
+            resize(self, t, STRIP_ROWS, extra=[FadeOut(lref60)], run_time=0.7)   # the rebuild's log leaves
             vo.wait_until("You change one word")
             self.play(FadeIn(seed, scale=0.6), run_time=0.4)
             self.play(ReplacementTransform(seed.frame, parcel.frame), ReplacementTransform(seed.tape, parcel.tape),

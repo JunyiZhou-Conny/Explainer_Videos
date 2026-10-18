@@ -1,0 +1,7 @@
+00:00 What's inside the image
+01:49 The layer cache
+03:44 Tag and push
+05:48 Platforms: arm64 vs amd64
+08:33 A VM with only Docker
+10:29 One-command deploy
+12:33 Tear down, recap, and what's next

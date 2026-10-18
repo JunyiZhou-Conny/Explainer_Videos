@@ -28,22 +28,24 @@ Beats (script.md "## S07", one voiceover block each):
     `3.12.15` / "base image"; "falls outside": RED cross. "so uv downloads": a PURPLE `uv` chip
     (top right), a PURPLE arrow, a GREEN dot rides it down to 3.15, label `3.15.0` / "uv download ·
     35.9 MiB"; "the newest stable": tag "newest stable · at the time of recording" beside the uv
-    chip; "and the venv's python": GREEN chip `/.venv/bin/python` (below right) and a GREEN link
-    arrow to the dot. After the sentence the number line fades except the GREEN dot; the V2 stack
+    chip; "and the python in the venv": GREEN chip `/.venv/bin/python` (below right); "links to
+    it": a GREEN link arrow to the dot. After the sentence the number line fades except the GREEN dot; the V2 stack
     (S06's: four thin ORANGE base slabs, brace "base image", caption `python:3.12-slim-bookworm`,
     ORANGE `RUN pip install uv` with its PURPLE uv chip, GREY `COPY . ./` with file glyphs, the
     dashed slot "packages: none yet") slides in from the right; a copy of the strip's `RUN uv sync`
     (line 29) travels along its empty row and up the clear column right of the stack to meet the
     GREEN dot beside the slot, and the two fly into the slot as the fat GREEN slab "RUN uv sync"
     (a straight flight would cut through the base slabs); GREY note "CPython 3.15.0 + /.venv" /
-    "11 packages". (This runs about 3.4 s past the sentence: the finished stack holds 0.6 s.)
+    "11 packages". The link holds 0.5 s, then the line fades and the stack comes in quickly; the
+    finished stack and its note hold 2 s in silence before the run (about 3.9 s past the sentence).
  5  TRACKER A10. The picture and the strip go; full wide terminal (13.2 wide, 20 pt, 13 rows):
-    `docker run --rm -ti simple-translate` + ▶ your turn (on the next row: the command fills its
-    row) -> TRACKER A10 · extra, `ls -a` (row tag `extra`) at the capture's prompt
-    `root@01dca6d0f4d8:/#` -> laptop/22 lines 3–9; `.venv` and `uv.lock` GREEN as they are said.
+    `docker run --rm \\` / `    -ti simple-translate` (folded as in S04/S05/S06/S08/S09: it would
+    fill its row) + ▶ your turn beside its second row -> TRACKER A10 · extra, `ls -a` (row tag
+    `extra`) at the capture's prompt `root@01dca6d0f4d8:/#`, its `-a` pulses YELLOW on "which also
+    lists hidden files" -> laptop/22 lines 3–9; `.venv` and `uv.lock` GREEN as they are said.
     "But python cli.py" -> `python cli.py` (row tag `extra`) -> lines 11–14 RED, the prompt
-    returns; "Why?": the ModuleNotFoundError row pulses. The `your turn` tag sits on the row under
-    `docker run` (the command fills its row) and belongs to that row: it scrolls away with it.
+    returns; "Why?": the ModuleNotFoundError row pulses. The `your turn` tag belongs to the
+    command's second row: it scrolls away with it (2 + 1 + 7 + 1 + 4 + 1 rows in 13).
  6  V4's PATH half. The terminal shrinks to the strip (the `python cli.py` row, the RED line, the
     prompt). The base image's `ENV PATH=/usr/local/bin:/usr/local/sbin:/usr…` (laptop/34 line 22)
     as a GREY chip top right; its three parts are copied down into three doors: `/usr/local/bin`
@@ -60,8 +62,9 @@ Beats (script.md "## S07", one voiceover block each):
     `.venv/bin/python --version` (row tag `extra`) -> laptop/22 line 16, `3.15.0` GREEN with the
     dot; `source .venv/bin/activate && python cli.py` (row tag `extra`) -> lines 28, 30–31 (it
     scrolls; `Output: Adoro il formaggio` GREEN stays); "The prompt now shows app": the prompt
-    `(app) root@01dca6d0f4d8:/#` (line 32), `(app)` GREEN pulses; "Type exit" -> `exit`, line 33,
-    the laptop prompt returns.
+    `(app) root@01dca6d0f4d8:/#` (line 32), `(app)` GREEN pulses, GREY row tag `pyproject.toml ·
+    line 2: name = "app"` beside it (why "app", not "simple-translate"; it fades before typing);
+    "Type exit" -> `exit`, line 33, the laptop prompt returns.
  8  TRACKER A10. The strip and the doors go; the two dots move up side by side with two-line labels:
     ORANGE `3.12.15` / "base · only ran pip install uv", GREEN `3.15.0` / "uv download · runs the
     app" (each as it is said). "half of the opening puzzle": S01's `3.12` YELLOW "?" GREY `3.14.7`
@@ -86,9 +89,9 @@ from explainer.scene import VoiceScene
 from common import (BUILD, ERR, IMAGE, INK, LAPTOP, LAPTOP_DIR, MONO, NARRATION, P_LAPTOP, ROUTE,
                     RUN, STRIP_ROWS, SYSTEM, TOOL, TURN, VENV, VM12, LayerStack, PathDoors,
                     VersionLine, attach, bare_prompt, beside, box, capture, chip, code, cross_mark,
-                    erratum_tag, figure, file_glyph, folder_glyph, glyph_range, hl_bar, istep, label,
-                    laptop_term, mono, outline_box, pin, readme_card, resize, row_tag, steady,
-                    substring, tag, track, tracker_a, type_cmd, under, wide_term)
+                    erratum_tag, excerpt, figure, file_glyph, folder_glyph, glyph_range, hl_bar, istep,
+                    label, laptop_term, mono, mono_line, outline_box, pin, readme_card, resize, row_tag,
+                    steady, substring, tag, track, tracker_a, type_cmd, under, unpin, wide_term)
 
 SAY = NARRATION["S07"]
 
@@ -109,6 +112,10 @@ assert "Installed 11 packages" in BUILD_E[0] and BUILD_E[-1].endswith("+ idna==3
 
 C22 = capture("22", LAPTOP_DIR)                          # laptop/22-run-v4.txt
 assert C22.cmd == RUN, C22.cmd
+# beat 5: the run command folded as S04/S05/S06/S08/S09 show it (it would fill the wide row, leaving no
+# room for ▶ your turn); the house fold " \" + 4-space indent pastes back as the same command
+RUN_ROWS = [P_LAPTOP + " docker run --rm \\", "    -ti simple-translate"]
+assert RUN_ROWS[0][:-2] + " " + RUN_ROWS[1].strip() == P_LAPTOP + " " + RUN, RUN_ROWS
 LS_LINE = C22.line(2)                                    # root@01dca6d0f4d8:/# ls -a
 C_PROMPT, _ls = C22.istep(2)
 assert (C_PROMPT, _ls) == ("root@01dca6d0f4d8:/#", "ls -a"), LS_LINE
@@ -131,6 +138,8 @@ APP_PROMPT, _ex = C22.istep(32)
 assert (APP_PROMPT, _ex) == ("(app) root@01dca6d0f4d8:/#", "exit"), EXIT_LINE
 EXIT_ECHO = C22.at(33)
 assert EXIT_ECHO == ["exit"], EXIT_ECHO
+APP_NAME = excerpt("pyproject.toml", 2, 2)               # where the prompt's (app) comes from
+assert APP_NAME == 'name = "app"' and APP_PROMPT.startswith("(app) "), APP_NAME
 
 _hist = capture("34", LAPTOP_DIR).line(22)               # the base image's ENV PATH row (docker history)
 ENV_PATH = _hist[_hist.index("ENV PATH="):_hist.index("…") + 1]
@@ -156,6 +165,34 @@ PONDER_Q = ("This image's Python is 3.12.\npyproject.toml asks for 3.13 or newer
 def turn_tag() -> VGroup:
     """YELLOW '▶ your turn', the height of a terminal row."""
     return row_tag("▶ your turn", TURN)
+
+
+def type_rows(scene, t, rows_text: list[str], type_time: float) -> VGroup:
+    """type_cmd with rows folded by the caller (rows_text[0] starts with the prompt; a bare prompt
+    line is replaced, as type_cmd does). Returns the rows (.rows). As S05/S06's type_rows."""
+    p = t.prompt + " "
+    assert rows_text[0].startswith(p) and all(len(s) <= t.max_chars for s in rows_text)
+    if len(t.lines) and getattr(t.lines[-1], "bare", False):
+        last = t.lines[-1]
+        scene.remove(last, *last.submobjects)
+        t.lines.remove(last)
+    t2c = t._prompt_colors(t.prompt)
+    t._make_room(scene, len(rows_text))
+    rows = []
+    for k, s in enumerate(rows_text):
+        ln = mono_line(s, t.size, INK, t2c=t2c if k == 0 else None)
+        t._place(ln, len(t.lines))
+        t.lines.add(ln)
+        rows.append(ln)
+    typed = [glyph_range(rows[0], len(p))] + [glyph_range(r, 0) for r in rows[1:]]
+    scene.add(glyph_range(rows[0], 0, len(p)))
+    scene.play(ShowIncreasingSubsets(VGroup(*[g for grp in typed for g in grp]), rate_func=linear),
+               run_time=type_time)
+    for r in rows:
+        scene.add(r)
+    g = VGroup(*rows)
+    g.rows, g.text = rows, " ".join(r.text for r in rows)
+    return g
 
 
 def bar_on(scene, row, glyphs, color, opacity: float = 0.25):
@@ -450,15 +487,17 @@ class StepUvSync(VoiceScene):
             vo.wait_until("the newest stable")
             self.play(FadeIn(newest, shift=LEFT * 0.15), run_time=0.4)
             self.play(Indicate(g_dot, color=VENV, scale_factor=1.6), run_time=0.6)
-            vo.wait_until("and the venv's python")
+            vo.wait_until("and the python in the venv")
             self.play(FadeIn(vpy, shift=UP * 0.1), run_time=0.4)
+            vo.wait_until("links to it")
             self.play(GrowArrow(link), run_time=0.5)
-            self.play(Indicate(g_dot, color=VENV, scale_factor=1.6), run_time=0.6)
-            # the picture of the image: everything but the GREEN dot goes, the stack comes back
+            self.wait(0.5)                      # chip -> link -> dot, read before the line goes
+            # the picture of the image: everything but the GREEN dot goes, the stack comes back (quick,
+            # so the finished stack can hold 2 s before the run; overlapped, the two pictures smear)
             line_parts = VGroup(vl.axis, vl.ticks, vl.band, vl.band_label, o_dot, o_lab, o_x, uv_chip,
                                 newest, g_lab, vpy, link)
-            self.play(FadeOut(line_parts), run_time=0.5)
-            self.play(FadeIn(picture, shift=LEFT * 1.5), run_time=0.7)
+            self.play(FadeOut(line_parts), run_time=0.4)
+            self.play(FadeIn(picture, shift=LEFT * 1.5), run_time=0.6)
             stack.accept(self, *base, uv_slab, cp_slab)
             # the strip's `RUN uv sync` travels round the right of the stack (along its own empty row,
             # then up a clear column) to meet the GREEN dot beside the slot; together they fly into
@@ -475,12 +514,12 @@ class StepUvSync(VoiceScene):
             assert UP_X - txt.width / 2 > uv_tag.get_right()[0] + 0.3, "the column clears the uv tag"
             self.add(txt)
             self.play(MoveAlongPath(txt, route), g_dot.animate.move_to([UP_X + txt.width / 2 + 0.4, y_slab, 0]),
-                      FadeOut(VGroup(slot, slot_t)), run_time=1.0)
-            self.play(ReplacementTransform(txt, sync.text), ReplacementTransform(g_dot, sync.box), run_time=0.8)
+                      FadeOut(VGroup(slot, slot_t)), run_time=0.7)
+            self.play(ReplacementTransform(txt, sync.text), ReplacementTransform(g_dot, sync.box), run_time=0.6)
             self.remove(sync.box, sync.text)
             stack.accept(self, sync)
             self.play(FadeIn(note, shift=LEFT * 0.1), run_time=0.5)
-            self.wait(0.6)                      # the finished stack holds before the run
+            self.wait(2.0)                      # the finished stack and its note hold before the run
 
         # ========================================================== 5 · run it: .venv, uv.lock, same error
         w = wide_term(13)
@@ -490,17 +529,16 @@ class StepUvSync(VoiceScene):
             self.play(FadeOut(everything4), FadeOut(t), run_time=0.5)
             self.play(FadeIn(w), run_time=0.3)
             bare_prompt(self, w)
-            c5 = type_cmd(self, w, RUN, 0.8)
-            assert not hasattr(c5, "rows"), "RUN fits one 75-character row"
-            yt5 = turn_tag()
-            yt5.move_to([c5.strut.get_right()[0] - yt5.width / 2, c5.strut.get_center()[1] - w.pitch, 0])
-            self.play(FadeIn(yt5, shift=LEFT * 0.1), run_time=0.3)
+            c5 = type_rows(self, w, RUN_ROWS, 0.8)
+            yt5 = beside(turn_tag(), c5.rows[1])            # beside the command's own row: it scrolls with it
+            pin(self, c5.rows[1], yt5, run_time=0.3)
             self.play(Wiggle(yt5, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.5)
-            attach(self, c5, yt5)           # it belongs to docker run: it scrolls away with that row
-            vo.wait_until("then try the same")
+            vo.wait_until("then two extras")
             self.play(track(tr, 10, extra=True), run_time=0.3)
             r_ls = istep(self, w, LS_LINE, 0.3)
             pin(self, r_ls, beside(row_tag("extra"), r_ls), run_time=0.25)
+            vo.wait_until("which also lists hidden")
+            self.play(Indicate(substring(r_ls, "-a"), color=TURN, scale_factor=1.5), run_time=0.7)
             vo.wait_until("Now the listing")
             o5 = w.print(self, LS_OUT, run_time=0.6, lag=0.12)
             g_dv = substring(o5[5], ".venv")
@@ -611,8 +649,12 @@ class StepUvSync(VoiceScene):
             w.set_prompt(APP_PROMPT)
             p7 = bare_prompt(self, w)
             g_app = substring(p7, "(app)")
-            self.play(Indicate(g_app, color=VENV, scale_factor=1.4), run_time=0.8)
+            # why "app" (not simple-translate): the project's name, shown with the pulse so it can be read
+            app_src = beside(row_tag([("pyproject.toml", "mono"), ("· line 2:", "label"), (APP_NAME, "mono")]), p7)
+            self.play(Indicate(g_app, color=VENV, scale_factor=1.4), FadeIn(app_src, shift=LEFT * 0.1), run_time=0.8)
+            attach(self, p7, app_src)
             vo.wait_until("Type exit")
+            unpin(self, [(p7, app_src)], 0.25)          # typing at the prompt replaces its bare row
             istep(self, w, EXIT_LINE, 0.3)
             w.print(self, EXIT_ECHO, run_time=0.25)
             w.set_prompt(P_LAPTOP)

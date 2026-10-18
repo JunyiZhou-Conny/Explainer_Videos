@@ -20,10 +20,10 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 | file | what it is |
 | --- | --- |
-| `output/ac215-l02-containers-1.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, DURATION_FULL. The only video file committed |
+| `output/ac215-l02-containers-1.zh-en.mp4` | **the copy to watch**: 1080p60, English narration, bilingual subtitles (Chinese above, English below) burned in, 31:18, 103 MB. Not committed (rendered MP4s are release assets, git-ignored); rebuilt with `--no-render --burn` |
 | `output/ac215-l02-containers-1.mp4` | the same video without burned-in subtitles; load any `.srt` below in your player. Not committed: rebuild it with `--no-render` (see Rebuild) |
-| `output/ac215-l02-containers-1_part1.mp4` | part 1, DURATION_P1: write a Dockerfile, build and run the image (S01–S09). Not committed: rebuilt with `--no-render` |
-| `output/ac215-l02-containers-1_part2.mp4` | part 2, DURATION_P2: layers, cache, Docker Hub and a VM (S10–S16). Not committed: rebuilt with `--no-render` |
+| `output/ac215-l02-containers-1_part1.mp4` | part 1, 16:58: write a Dockerfile, build and run the image (S01–S09). Not committed: rebuilt with `--no-render` |
+| `output/ac215-l02-containers-1_part2.mp4` | part 2, 14:20: layers, cache, Docker Hub and a VM (S10–S16). Not committed: rebuilt with `--no-render` |
 | `output/ac215-l02-containers-1.srt` | English subtitles (each part has its own `.srt`, `.zh.srt`, `.zh-en.srt` / `.ass`) |
 | `output/ac215-l02-containers-1.zh.srt` | Chinese subtitles (on the English timing) |
 | `output/ac215-l02-containers-1.zh-en.srt` / `.zh-en.ass` | bilingual subtitles |
@@ -38,7 +38,38 @@ English narration; Chinese and bilingual subtitles (中文字幕说明见 [`i18n
 
 ## Chapters
 
-CHAPTERS
+Paste-ready in `output/chapters.txt` (and `chapters_part1.txt`, `chapters_part2.txt` for the parts).
+
+```
+00:00 One command on a fresh VM
+01:22 Image, layer, container, registry
+03:16 A clean slate, and the clone
+05:09 Dockerfile step 1: FROM
+07:06 Step 2: ENTRYPOINT
+08:11 Step 3: install uv, copy the code
+09:54 Step 4: uv sync, and two Pythons
+12:30 Step 5: CMD, the solution, the build
+14:34 Run it, translate, exit
+16:57 What's inside the image
+18:47 The layer cache
+20:42 Tag and push
+22:46 Platforms: arm64 vs amd64
+25:31 A VM with only Docker
+27:27 One-command deploy
+29:31 Tear down, recap, and what's next
+```
+
+Part 1 uses the first nine of these unchanged. Part 2 on its own (`chapters_part2.txt`):
+
+```
+00:00 What's inside the image
+01:49 The layer cache
+03:44 Tag and push
+05:48 Platforms: arm64 vs amd64
+08:33 A VM with only Docker
+10:29 One-command deploy
+12:33 Tear down, recap, and what's next
+```
 
 ## What you'll learn
 
@@ -147,8 +178,9 @@ python -m explainer.build videos/ac215-l02-containers-1 --subs-only             
 python -m explainer.i18n check videos/ac215-l02-containers-1 --lang zh                # Chinese text aligned with the English
 ```
 
-The clean video and the two part cuts are not in Git: after a fresh clone, render the scenes once,
-then the `--no-render` line rebuilds them (and the burned-in copy) from the scene renders.
+No video file is in Git (rendered MP4s are release assets): after a fresh clone, render the scenes
+once, then the `--no-render` line rebuilds the video, the two part cuts and the burned-in copy from
+the scene renders.
 
 Narration: Kokoro (`af_heart`, speed 0.9), generated locally.
 

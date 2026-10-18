@@ -3,11 +3,13 @@
 Beats (script.md "## S05", one voiceover block each):
  0  TRACKER A7 -> A8. CODE(README.md: 142) `ENTRYPOINT ["/bin/bash"]` at the top (its keyword and
     then its value pulse as they are said) and a 5-row strip terminal below it. The strip types
-    `cat Dockerfile` (row tag `extra`) -> laptop/13 lines 2-5 while "slash bin slash bash" is said
+    `cat Dockerfile` (row tag `extra`; TRACKER A8 · extra while it is typed, as in S04/S06/S08)
+    -> laptop/13 lines 2-5 while "slash bin slash bash" is said
     (the beat is 6.5 s: typed any later, the output would be gone a second after it appears); on
     "Put it under the FROM line" the FROM row pulses and line 5 (the new line) gets a YELLOW bar.
- 1  TRACKER A8. The terminal grows to 8 rows (the README panel stays above it; the cat output
-    scrolls away under the build, its YELLOW ENTRYPOINT row last to go):
+ 1  TRACKER A8 (" · extra" fades as the build is typed). The terminal grows to 8 rows (the
+    README panel stays above it; the cat output scrolls away under the build, its YELLOW
+    ENTRYPOINT row last to go):
     `docker build -t simple-translate -f Dockerfile .` (folds onto 2 rows) + ▶ your turn ->
     laptop/14 lines 15 (cut after `@sha256:34386ef0`, folded onto 2 rows: wider than a row), 17, …,
     25. `#4 CACHED` turns TEAL and pulses on "The FROM step says CACHED". On "and no layer is added"
@@ -21,7 +23,11 @@ Beats (script.md "## S05", one voiceover block each):
     and card.
  2  V3 close-up of the card: the README panel and caption leave, the stack dims. GREY labels with
     short arrows point at the slots from the left (the stacked card has no room under its slots):
-    ENTRYPOINT "the program", CMD "its default arguments", each as it is said. The `["/bin/bash"]`
+    ENTRYPOINT "the program", CMD "its default arguments", each as it is said. GREY
+    `Lecture 2 · slides 32–33` (lecture_ref) from "Think of ENTRYPOINT" through the question
+    (program + default arguments, applied), under the tracker at the left (the card fills the top
+    right); it fades as beat 3's extra inspect is typed (the reset of the inherited CMD is
+    tutorial-only, SLIDES.md). The `["/bin/bash"]`
     tile pulses on "The entrypoint is now bash"; the inherited `["python3"]` tile turns dashed on
     "the command slot still says python3". On "So will the container start" the start-up line
     becomes `/bin/bash python3` (the tile's /bin/bash is copied down in front of python3) with a
@@ -55,7 +61,7 @@ import numpy as np  # noqa: I001  (manim first, then common: common must win)
 from manim import *
 
 from explainer import style as S
-from explainer.devops import code_span
+from explainer.devops import code_span, lecture_ref
 from explainer.scene import VoiceScene
 
 from common import (BUILD, CAT, INK, INSPECT_V2, IMAGE, LAPTOP_DIR, MONO, NARRATION, P_LAPTOP, RUN,
@@ -113,10 +119,14 @@ def turn_tag() -> VGroup:
 
 
 def type_rows(scene, t, rows_text: list[str], type_time: float, extra=()) -> VGroup:
-    """Terminal.type with rows folded by the caller (rows_text[0] starts with the prompt);
-    `extra` animations play during the typing."""
+    """type_cmd with rows folded by the caller (rows_text[0] starts with the prompt; a bare prompt
+    line is replaced, as type_cmd does); `extra` animations play during the typing."""
     p = t.prompt + " "
     assert rows_text[0].startswith(p) and all(len(s) <= t.max_chars for s in rows_text)
+    if len(t.lines) and getattr(t.lines[-1], "bare", False):
+        last = t.lines[-1]
+        scene.remove(last, *last.submobjects)
+        t.lines.remove(last)
     t2c = t._prompt_colors(t.prompt)
     t._make_room(scene, len(rows_text))
     rows = []
@@ -213,7 +223,8 @@ class StepEntrypoint(VoiceScene):
             self.play(Indicate(p_kw, color=TURN, scale_factor=1.12), run_time=0.6)
             vo.wait_until("slash bin")
             self.play(Indicate(p_val, color=TURN, scale_factor=1.12), run_time=0.6)
-            c0 = type_cmd(self, t, CAT, 0.45)
+            # an extra check: the tracker says so (" · extra") while it is typed, as in S04/S06/S08
+            c0 = type_rows(self, t, [f"{t.prompt} {CAT}"], 0.45, extra=[extra_caption(self, tr, True)]).rows[0]
             pin(self, c0, beside(row_tag("extra"), c0), run_time=0.25)
             out0 = t.print(self, CAT_OUT, run_time=0.45, lag=0.12)
             from_row, ent_row = out0[1], out0[3]
@@ -247,7 +258,9 @@ class StepEntrypoint(VoiceScene):
 
         with self.voiceover(SAY[1]) as vo:
             resize(self, t, 8, run_time=0.5)
-            c1 = type_cmd(self, t, BUILD, 0.8)
+            # back to the README: " · extra" fades while its build is typed (folded as Terminal.type does)
+            c1 = type_rows(self, t, t.fold(f"{t.prompt} {BUILD}", first_prefix=len(t.prompt) + 1), 0.8,
+                           extra=[extra_caption(self, tr, False)])
             yt1 = beside(turn_tag(), c1.rows[0])
             pin(self, c1.rows[0], yt1, run_time=0.35)
             self.play(Wiggle(yt1, scale_value=1.15, rotation_angle=0.025 * TAU), run_time=0.6)
@@ -283,12 +296,18 @@ class StepEntrypoint(VoiceScene):
         line1.move_to(line0, aligned_edge=LEFT)
         qmark = label("?", 30, TURN).next_to(line1, RIGHT, buff=0.12)
         dim = VGroup(*base, brace, base_name)
+        # the lecture tag goes under the tracker, not top right: the card fills that corner
+        lref = lecture_ref(2, "32–33")
+        lref.move_to([-6.5 + lref.width / 2, 2.75 - lref.height / 2, 0])
+        assert lref.get_top()[1] < tr.get_bottom()[1] - 0.1, (lref.get_top(), tr.get_bottom())
+        assert lref.get_right()[0] < lab_ent.get_left()[0] - 0.3, (lref.get_right(), lab_ent.get_left())
+        assert lref.get_bottom()[1] > dim.get_top()[1] + 0.3, (lref.get_bottom(), dim.get_top())
 
         with self.voiceover(SAY[2]) as vo:
             unpin(self, [(c1.rows[0], yt1)], 0.3, FadeOut(VGroup(panel, cfg_cap), shift=UP * 0.1),
                   dim.animate.set_opacity(0.35))
             vo.wait_until("Think of ENTRYPOINT")
-            self.play(GrowArrow(lab_ent.arrow), FadeIn(lab_ent.text, shift=RIGHT * 0.15),
+            self.play(GrowArrow(lab_ent.arrow), FadeIn(lab_ent.text, shift=RIGHT * 0.15), FadeIn(lref),
                       Indicate(card.keys["ENTRYPOINT"], color=TURN, scale_factor=1.1), run_time=0.7)
             vo.wait_until("and CMD as")
             self.play(GrowArrow(lab_cmd.arrow), FadeIn(lab_cmd.text, shift=RIGHT * 0.15),
@@ -316,7 +335,8 @@ class StepEntrypoint(VoiceScene):
         null_cmd = card.note("CMD", "null")
 
         with self.voiceover(SAY[3]) as vo:
-            c3 = type_rows(self, t, INSPECT_ROWS, 1.1, extra=[extra_caption(self, tr, True)])
+            # the slide tag leaves as the extra inspect starts: its answer (the reset) is tutorial-only
+            c3 = type_rows(self, t, INSPECT_ROWS, 1.1, extra=[extra_caption(self, tr, True), FadeOut(lref)])
             pin(self, c3.rows[0], beside(row_tag("extra"), c3.rows[0]), run_time=0.25)
             out3 = t.print(self, [INSPECT_OUT], run_time=0.3)[0]
             vo.wait_until("the entrypoint is bash")
