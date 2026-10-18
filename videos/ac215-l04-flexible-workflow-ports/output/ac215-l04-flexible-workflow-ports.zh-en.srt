@@ -1,0 +1,2769 @@
+1
+00:00:00,000 --> 00:00:02,455
+这条命令来自这节课的 README
+A command from this lecture's README,
+
+2
+00:00:02,455 --> 00:00:05,109
+在一台从没构建过这个 image 的笔记本上运行
+on a laptop that never built this image:
+
+3
+00:00:05,109 --> 00:00:08,427
+本地没有 image，它就从 Docker Hub pull 一个下来
+with no local image, it pulls one from Docker Hub.
+
+4
+00:00:08,747 --> 00:00:14,997
+在里面，Python 显示的是 3.8.17，而 Gemini 的库导入不了
+Inside, Python says 3.8.17, and the Gemini library won't import.
+
+5
+00:00:15,233 --> 00:00:19,030
+可这个 repo 的 Dockerfile 写的是 Python 3.14
+Yet this repo's Dockerfile says Python 3.14.
+
+6
+00:00:19,350 --> 00:00:24,684
+这个 image 是 2025 年 2 月构建的，用的是 Python 3.8
+This image was built in February 2025, with Python 3.8.
+
+7
+00:00:25,004 --> 00:00:26,417
+它是从哪儿来的？
+Where did it come from?
+
+8
+00:00:26,467 --> 00:00:32,398
+第二个意外来自另一个教程：一个在 port 9200 上监听的服务器
+A second surprise, from the other tutorial: a server listening on port 9200.
+
+9
+00:00:32,718 --> 00:00:34,673
+笔记本连不上它
+The laptop can't reach it;
+
+10
+00:00:34,673 --> 00:00:38,584
+另一个 container 按名字去问，却得到了回复：ok
+another container, asking by name, gets a reply: ok.
+
+11
+00:00:38,833 --> 00:00:40,127
+两个谜题
+Two puzzles.
+
+12
+00:00:40,177 --> 00:00:44,145
+第一部分：那个 image 是从哪儿来的，你该自己构建还是 pull？
+Part 1: where did that image come from, and should you build or pull?
+
+13
+00:00:44,465 --> 00:00:46,620
+第二部分：这是谁的 localhost？
+Part 2: whose localhost is it?
+
+14
+00:00:46,867 --> 00:00:51,390
+进度条显示 README 的步骤，代码面板标出文件和行号
+The tracker shows the README step, code panels show file and line numbers.
+
+15
+00:00:51,710 --> 00:00:53,968
+看到黄色的 your turn 标签就暂停
+Pause at the yellow your-turn tag;
+
+16
+00:00:53,968 --> 00:00:57,555
+灰色的 extra 标签表示 README 里没有的命令
+gray extra tags mark commands the README doesn't have.
+
+17
+00:00:57,800 --> 00:01:00,339
+每条命令也都在学习指南里
+Every command is also in the study guide.
+
+18
+00:01:00,659 --> 00:01:02,558
+第一部分需要 Tutorial 0
+Part 1 needs Tutorial 0 and a Google Cloud project with billing; part 2 needs only Docker.
+
+19
+00:01:02,558 --> 00:01:05,569
+以及一个开通了结算的 Google Cloud 项目
+Part 1 needs Tutorial 0 and a Google Cloud project with billing; part 2 needs only Docker.
+
+20
+00:01:05,569 --> 00:01:07,293
+第二部分只需要 Docker
+Part 1 needs Tutorial 0 and a Google Cloud project with billing; part 2 needs only Docker.
+
+21
+00:01:07,533 --> 00:01:09,338
+我们是在 Linux 上录制的
+We recorded on Linux,
+
+22
+00:01:09,338 --> 00:01:13,720
+录制时用的是 Docker Engine 29.8.2
+with Docker Engine 29.8.2 at the time of recording.
+
+23
+00:01:14,040 --> 00:01:18,008
+在 Mac 或 Git BASH 里，提示符和少数几条消息会不一样
+On a Mac or in Git BASH, the prompt and a few messages differ;
+
+24
+00:01:18,008 --> 00:01:19,864
+命令和 port 不会变
+the commands and ports don't.
+
+25
+00:01:20,100 --> 00:01:23,023
+有一点先说清楚：我们录制时没有 Google 账号
+One honest limit: we had no Google account.
+
+26
+00:01:23,343 --> 00:01:25,179
+凡是代码调用 Google 的地方
+Wherever the code calls Google,
+
+27
+00:01:25,179 --> 00:01:29,977
+你会看到命令、缺少密钥时的真实报错，以及该看什么
+you'll see the command, the real error a missing key gives, and what to look for.
+
+28
+00:01:31,017 --> 00:01:35,489
+在第 3 讲里，课程给了你一个共用的 bucket 和一个共用的密钥
+In lecture 3, the course handed you a shared bucket and one shared key,
+
+29
+00:01:35,489 --> 00:01:37,694
+复制进了每个组件目录
+copied into every component folder.
+
+30
+00:01:38,014 --> 00:01:42,494
+这个分支还是同一条 pipeline，只是照真正团队的做法来搭建
+This branch is the same pipeline, built the way a real team would build it.
+
+31
+00:01:42,734 --> 00:01:44,441
+你们组有自己的 bucket
+Your team owns its bucket.
+
+32
+00:01:44,761 --> 00:01:49,155
+你要创建自己的服务账号，把它唯一的密钥放在 repo 外面
+You create your own service account, and keep its one key outside the repo.
+
+33
+00:01:49,400 --> 00:01:51,989
+你不用再写 Dockerfile 了
+You no longer write the Dockerfile:
+
+34
+00:01:51,989 --> 00:01:56,205
+它已经和 pyproject.toml、uv.lock 一起 commit 了
+it's committed, together with pyproject.toml and uv.lock.
+
+35
+00:01:56,525 --> 00:02:00,111
+而且每个组件都有一个脚本，docker-shell.sh
+And each component has one script, docker-shell.sh,
+
+36
+00:02:00,111 --> 00:02:04,120
+里面装着那两条很长的 docker build 和 docker run 命令
+that holds the long docker build and docker run commands.
+
+37
+00:02:04,367 --> 00:02:08,533
+五个阶段没有变，它们仍然从不互相调用
+The five stages haven't changed, and they still never call each other:
+
+38
+00:02:08,533 --> 00:02:11,748
+每个都写进 bucket，下一个再从里面读
+each writes to the bucket, and the next reads from it.
+
+39
+00:02:12,068 --> 00:02:14,970
+直接通信的 container，第二部分再讲
+Containers that talk directly come in part 2.
+
+40
+00:02:15,217 --> 00:02:17,350
+一个团队有两个办法拿到 image
+A team can get an image two ways.
+
+41
+00:02:17,670 --> 00:02:21,638
+项目早期，每个人都用 Git 里的配方自己构建
+Early in a project, everyone builds it from the recipe in Git.
+
+42
+00:02:21,958 --> 00:02:25,776
+后来，一个人把做好的 image 发布到 Docker Hub
+Later, one person publishes finished images to Docker Hub,
+
+43
+00:02:25,776 --> 00:02:27,376
+其他人都直接 pull
+and everyone else pulls.
+
+44
+00:02:27,600 --> 00:02:29,200
+仔细看这个 tag
+Look closely at the tag.
+
+45
+00:02:29,349 --> 00:02:33,097
+它是一个路标，指向某一个特定的 image
+It's a signpost to one particular image, built on some day,
+
+46
+00:02:33,097 --> 00:02:35,131
+某一天、用某个版本的配方构建出来的
+from some version of the recipe.
+
+47
+00:02:35,451 --> 00:02:38,224
+没有任何东西保证它和你手上的 commit 对得上
+Nothing promises it matches the commit you have.
+
+48
+00:02:38,467 --> 00:02:42,648
+有一个脚本决定你拿到的是哪一个；我们会一行一行地读它
+One script decides which of the two you get; we'll read it line by line.
+
+49
+00:02:42,968 --> 00:02:44,317
+先拿到代码
+First, the code.
+
+50
+00:02:44,367 --> 00:02:45,789
+从头开始？
+Starting fresh?
+
+51
+00:02:45,839 --> 00:02:47,646
+在你的工作区目录里
+From your workspace folder,
+
+52
+00:02:47,646 --> 00:02:50,591
+clone 这个 repo 并直接 checkout 到这个分支
+clone the repo with this branch checked out:
+
+53
+00:02:50,591 --> 00:02:53,135
+git clone，加上 --branch flexible-workflow
+git clone, --branch flexible-workflow.
+
+54
+00:02:53,455 --> 00:02:55,546
+然后 cd 进 mega-pipeline
+Then cd into mega-pipeline.
+
+55
+00:02:55,866 --> 00:02:57,350
+暂停一下，两条都跑一遍
+Pause and run both.
+
+56
+00:02:57,400 --> 00:02:59,511
+两个额外检查：git branch 显示
+Two extra checks: git branch
+
+57
+00:02:59,511 --> 00:03:03,282
+当前分支是 flexible-workflow，停在我们录制时的那个 commit
+shows flexible-workflow at the commit we recorded,
+
+58
+00:03:03,282 --> 00:03:04,790
+transcribe audio 里有
+and transcribe audio
+
+59
+00:03:04,790 --> 00:03:09,391
+Dockerfile、这个脚本、pyproject.toml 和 uv.lock
+holds its Dockerfile, the script, pyproject.toml and uv.lock,
+
+60
+00:03:09,391 --> 00:03:11,352
+都由这个分支 commit 好了
+which this branch commits.
+
+61
+00:03:11,600 --> 00:03:13,819
+已经有第 3 讲的 clone 了？
+Already have your clone from lecture 3?
+
+62
+00:03:14,139 --> 00:03:17,637
+它在 main 上；如果你是重新 clone 的，直接跳到下一章
+It's on main; if you cloned fresh, skip to the next chapter.
+
+63
+00:03:17,957 --> 00:03:19,856
+第 1 步：cd 进去
+Step 1: cd into it.
+
+64
+00:03:20,176 --> 00:03:22,160
+两个额外检查显示它现在的状态
+Two extra checks show its state.
+
+65
+00:03:22,867 --> 00:03:24,225
+分成三堆
+Three piles.
+
+66
+00:03:24,275 --> 00:03:26,728
+你改过的 cli.py 是已跟踪的
+Your edited cli.py is tracked.
+
+67
+00:03:27,048 --> 00:03:30,142
+你在 generate text 里新建的两个文件是未跟踪的
+Your two new files in generate text are untracked.
+
+68
+00:03:30,462 --> 00:03:32,112
+在 transcribe audio 里
+In transcribe audio,
+
+69
+00:03:32,112 --> 00:03:37,395
+Dockerfile、pyproject.toml、uv.lock 和密钥都是被忽略的
+the Dockerfile, pyproject.toml, uv.lock and the key are ignored.
+
+70
+00:03:37,634 --> 00:03:39,661
+第 2 步：git fetch origin
+Step 2, git fetch origin.
+
+71
+00:03:39,981 --> 00:03:41,422
+在这里它什么都没打印
+Here it prints nothing:
+
+72
+00:03:41,422 --> 00:03:45,399
+clone 下来的 repo 本来就有所有分支，上游也没有任何变化
+a clone already has every branch, and nothing had changed upstream.
+
+73
+00:03:45,719 --> 00:03:47,319
+你的可能会列出一些更新
+Yours may list updates.
+
+74
+00:03:47,534 --> 00:03:50,226
+第 3 步：git checkout flexible-workflow
+Step 3, git checkout flexible-workflow,
+
+75
+00:03:50,226 --> 00:03:52,504
+Git 拒绝了，原因有两个
+and Git refuses, for two reasons.
+
+76
+00:03:52,750 --> 00:03:55,620
+你对 cli.py 的修改会被覆盖
+Your edits to cli.py would be overwritten,
+
+77
+00:03:55,620 --> 00:04:00,131
+而且两个未跟踪的文件正好放在这个分支自己也有文件的地方
+and two untracked files sit where the branch has files of its own.
+
+78
+00:04:00,451 --> 00:04:01,817
+什么都没变
+Nothing changed.
+
+79
+00:04:01,867 --> 00:04:04,528
+README 的提示解决的是第一个原因
+The README's note covers the first reason:
+
+80
+00:04:04,528 --> 00:04:08,139
+git stash 把你的修改收起来，第一堵墙倒了
+git stash puts your edits away, and the first wall falls.
+
+81
+00:04:08,459 --> 00:04:11,339
+再试一次，未跟踪的文件还是挡着它
+On a retry, the untracked files still block it.
+
+82
+00:04:11,584 --> 00:04:14,784
+一个小缺口：这条提示只管改过的文件
+A small gap: the note covers only edited files.
+
+83
+00:04:15,104 --> 00:04:16,604
+额外跑一个 git stash -u
+An extra git stash -u
+
+84
+00:04:16,604 --> 00:04:20,181
+把未跟踪的文件也 stash 起来，checkout 就成功了
+stashes untracked files too, and the checkout works.
+
+85
+00:04:20,501 --> 00:04:23,159
+另一个办法是 git checkout，加上 -- 和一个点
+The other option, git checkout -- .,
+
+86
+00:04:23,159 --> 00:04:27,072
+它丢弃你的修改，不动未跟踪的文件
+discards your edits and leaves untracked files alone.
+
+87
+00:04:27,317 --> 00:04:30,752
+第 5 步，git branch：星号在 flexible-workflow 上
+Step 5, git branch: * flexible-workflow.
+
+88
+00:04:31,072 --> 00:04:36,054
+切换你自己的 clone 之前，先把第 3 讲里想保留的 Dockerfile
+Before you switch your own clone, copy out any lecture 3 Dockerfile,
+
+89
+00:04:36,054 --> 00:04:41,184
+pyproject.toml 和 uv.lock 复制出来：切换会把它们替换掉
+pyproject.toml and uv.lock you want to keep: the switch replaces them.
+
+90
+00:04:41,504 --> 00:04:42,884
+暂停一下，切换过去
+Pause and switch.
+
+91
+00:04:42,934 --> 00:04:46,792
+额外检查显示，你在第 3 讲里
+Extra checks show your ignored lecture 3 Dockerfile,
+
+92
+00:04:46,792 --> 00:04:50,134
+那些被忽略的 Dockerfile、pyproject.toml 和 uv.lock
+pyproject.toml and uv.lock were replaced by the branch's,
+
+93
+00:04:50,134 --> 00:04:52,134
+已经被这个分支的版本一声不吭地替换了
+without a word:
+
+94
+00:04:52,134 --> 00:04:54,880
+想留着的话，先把它们复制出来
+copy them out first if you want them.
+
+95
+00:04:55,117 --> 00:04:58,406
+旧密钥还留在 transcribe audio 里
+The old key still sits inside transcribe audio;
+
+96
+00:04:58,406 --> 00:05:01,346
+你的 secrets 原地不动，README 也是这么说的
+your secrets stay put, as the README says.
+
+97
+00:05:01,666 --> 00:05:04,243
+在那个目录里，每次构建都会把它复制进 image
+Every build there copies it into the image,
+
+98
+00:05:04,243 --> 00:05:07,000
+所以现在就把每个组件的 secrets 目录删掉
+so delete each component's secrets folder now.
+
+99
+00:05:07,320 --> 00:05:09,026
+你的修改还在 stash 里等着
+Your edits wait in the stash.
+
+100
+00:05:10,550 --> 00:05:13,434
+运行之前，先看 README 里的目录结构
+Before you run, the README's folder layout:
+
+101
+00:05:13,434 --> 00:05:17,995
+你的密钥放在 repo 旁边的 secrets 目录里，绝不放进 repo
+your key lives in a secrets folder beside the repo, never inside it.
+
+102
+00:05:18,315 --> 00:05:21,643
+往上退一级，回到你的工作区目录，把这个目录建好
+Go up one level, to your workspace, and create that folder.
+
+103
+00:05:24,083 --> 00:05:28,118
+第 2 步：每个 cli.py 都在开头附近设置三个值
+Step 2: every cli.py sets three values near the top:
+
+104
+00:05:28,118 --> 00:05:31,998
+你的项目 ID、你的 bucket 和你们的组名
+your project ID, your bucket, and your group name.
+
+105
+00:05:32,233 --> 00:05:35,771
+一个额外的 grep 显示 repo 里原本写的是什么
+An extra grep shows what ships: three files are blank,
+
+106
+00:05:35,771 --> 00:05:40,591
+三个文件留空，但 generate text 和 translate text 里
+but generate text and translate text already hold the course's project and bucket,
+
+107
+00:05:40,591 --> 00:05:43,241
+已经写着课程的项目和 bucket，还有授课老师的组名
+and the instructor's group name.
+
+108
+00:05:43,483 --> 00:05:47,648
+一个小疏漏：README 说如果你忘了改
+A small slip: the README says an assert stops you if you forget,
+
+109
+00:05:47,648 --> 00:05:49,926
+assert 会拦住你，但它只拒绝空值
+but it only rejects an empty value.
+
+110
+00:05:50,246 --> 00:05:54,251
+那两个文件会把你的调用发到课程的项目和 bucket
+Those two files would send your calls to the course's project and bucket,
+
+111
+00:05:54,251 --> 00:05:56,390
+在那边报权限错误
+where they fail with permission errors.
+
+112
+00:05:56,633 --> 00:05:58,916
+三个值都要设置，五个文件都要改
+Set all three, in all five files.
+
+113
+00:05:59,236 --> 00:06:02,117
+额外的 git diff 显示了我们的占位值
+An extra git diff shows our placeholders,
+
+114
+00:06:02,117 --> 00:06:05,404
+your-project-id、your-team-bucket 和 group-01
+your-project-id, your-team-bucket and group-01;
+
+115
+00:06:05,404 --> 00:06:06,674
+换成你自己的
+type your own.
+
+116
+00:06:06,724 --> 00:06:11,566
+在 translate text 里，还要把目标语言从西班牙语改成法语
+In translate text, also change the target language from Spanish to French.
+
+117
+00:06:11,886 --> 00:06:13,400
+暂停一下，把它们改好
+Pause and edit them.
+
+118
+00:06:13,450 --> 00:06:17,798
+第 3 步，你的 bucket：各个组件读写这些前缀
+Step 3, your bucket: the components read and write these prefixes,
+
+119
+00:06:17,798 --> 00:06:20,895
+每个输出都落在你们组名的下面
+and every output lands under your group's name.
+
+120
+00:06:21,133 --> 00:06:26,048
+还有一个小缺口：README 没说怎么创建 bucket
+Another small gap: the README never says how to create the bucket,
+
+121
+00:06:26,048 --> 00:06:29,026
+而且它的示例上传文件叫 test.mp3
+and its sample upload is named test.mp3.
+
+122
+00:06:29,346 --> 00:06:31,267
+在控制台里把 bucket 创建好
+Create the bucket in the console.
+
+123
+00:06:31,517 --> 00:06:36,956
+然后把一段短录音上传到一个叫 input audios 的目录里
+Then upload a short recording into a folder named input_audios,
+
+124
+00:06:36,956 --> 00:06:38,941
+文件名以 input- 开头、以 .mp3 结尾
+as input-something.mp3.
+
+125
+00:06:39,261 --> 00:06:41,094
+转写文本沿用这个名字
+The transcript keeps that name,
+
+126
+00:06:41,094 --> 00:06:43,933
+而且上传时只会发送名字以 input 开头的文件
+and upload only sends names starting with input.
+
+127
+00:06:44,253 --> 00:06:46,920
+bucket 的名字是全局唯一的：挑一个别人没用过的
+Bucket names are global: pick a unique one.
+
+128
+00:06:47,240 --> 00:06:49,001
+暂停一下，创建你自己的 bucket
+Pause and create yours.
+
+129
+00:06:51,100 --> 00:06:55,708
+你的 bucket 只放行能证明自己是谁、而且有权限的调用方
+Your bucket only lets in callers who prove who they are and have permission.
+
+130
+00:06:56,028 --> 00:07:00,380
+对代码来说，这个身份就是一个服务账号，配一个 JSON 密钥
+For code, that identity is a service account, with one JSON key.
+
+131
+00:07:00,750 --> 00:07:04,737
+Google 的库会把这个密钥换成一个短期有效的访问令牌
+Google's libraries turn that key into a short-lived token,
+
+132
+00:07:04,737 --> 00:07:08,793
+每个打到 Google API 门口的调用，都必须通过三道关卡
+and every call to Google's API doors must pass three gates.
+
+133
+00:07:09,033 --> 00:07:14,174
+第 1 关问你是谁：没有密钥，调用在你的 container 里就失败了
+Gate 1 asks who you are: without the key, the call fails inside your container.
+
+134
+00:07:14,494 --> 00:07:18,014
+第 2 关问你能做什么：这个账号需要角色
+Gate 2 asks what you may do: the account needs a role.
+
+135
+00:07:18,334 --> 00:07:21,257
+第 3 关问这个 API 打开了没有
+Gate 3 asks if the API is switched on.
+
+136
+00:07:21,500 --> 00:07:26,321
+在控制台里创建一个服务账号，比如叫 mega-pipeline-sa
+In the console, create a service account, for example mega-pipeline-sa.
+
+137
+00:07:26,641 --> 00:07:30,926
+给它授予四个角色：所有组件都要的 Storage Admin
+Grant it four roles: Storage Admin for every component,
+
+138
+00:07:30,926 --> 00:07:33,342
+Gemini 要的 Agent Platform User
+Agent Platform User for Gemini,
+
+139
+00:07:33,342 --> 00:07:37,393
+还有 Cloud Speech Client 和 Cloud Translation API User
+Cloud Speech Client, and Cloud Translation API User.
+
+140
+00:07:37,633 --> 00:07:40,718
+Text-to-Speech 不需要角色。一个小疏漏
+Text-to-Speech needs no role. A small slip:
+
+141
+00:07:40,718 --> 00:07:44,365
+generate text 的 README 还写着 Vertex AI User
+the generate text README still says Vertex AI User,
+
+142
+00:07:44,365 --> 00:07:46,081
+现在已经搜不到这个角色了
+which finds nothing now.
+
+143
+00:07:46,317 --> 00:07:50,648
+下载一个 JSON 密钥；它的文件名是一长串自动生成的字符
+Download a JSON key; it arrives with a long generated name.
+
+144
+00:07:50,968 --> 00:07:53,184
+把它重命名为 mega-pipeline.json
+Rename it mega-pipeline.json,
+
+145
+00:07:53,184 --> 00:07:56,088
+放进 repo 旁边的 secrets 目录
+in the secrets folder beside the repo.
+
+146
+00:07:56,408 --> 00:07:58,951
+谁拿到它，谁就能花你项目的钱
+Whoever holds it can spend your project's money:
+
+147
+00:07:58,951 --> 00:08:00,823
+绝不要 commit，也不要贴到任何地方
+never commit or paste it.
+
+148
+00:08:01,067 --> 00:08:05,355
+接下来启用 API，在控制台里或者用 gcloud 都行
+Next, enable the APIs, in the console or with gcloud.
+
+149
+00:08:05,675 --> 00:08:09,387
+照原样输入的话，设置项目的那条命令会失败
+Typed exactly as written, the set project command fails:
+
+150
+00:08:09,387 --> 00:08:13,696
+shell 把占位符两边的尖括号当成了重定向
+the shell reads the placeholder's angle brackets as redirections.
+
+151
+00:08:14,016 --> 00:08:16,896
+输入你自己的项目 ID，不要带尖括号
+Type your own project ID, without brackets.
+
+152
+00:08:17,133 --> 00:08:19,920
+接着用 gcloud services enable 这条命令
+Then the gcloud services enable command
+
+153
+00:08:19,920 --> 00:08:21,520
+把五个 API 全部打开
+switches on all five.
+
+154
+00:08:21,741 --> 00:08:26,682
+我们的笔记本没有 Google 账号，所以 gcloud 提示没有活动账号
+Our laptop had no Google account, so gcloud says no active account:
+
+155
+00:08:26,682 --> 00:08:29,485
+这就是 Tutorial 0 里的登录那一步
+that's the login step from Tutorial 0.
+
+156
+00:08:29,805 --> 00:08:33,283
+登录之后，它就会启用这些 API，调用也开始记在你项目的账上
+Logged in, it enables them, and calls bill your project.
+
+157
+00:08:33,517 --> 00:08:38,035
+来想一想。密钥放好了，每个 API 也都启用了
+Ponder this. Your key is in place and every API is enabled,
+
+158
+00:08:38,035 --> 00:08:41,112
+但你忘了 Agent Platform User 这个角色
+but you forgot the Agent Platform User role.
+
+159
+00:08:41,432 --> 00:08:43,238
+那 generate text 会在哪里失败
+Where does generate text fail:
+
+160
+00:08:43,238 --> 00:08:45,621
+在你的 container 里，还是在 Google 那边？
+inside your container, or at Google?
+
+161
+00:08:54,417 --> 00:08:56,486
+在 Google 那边，报的是权限错误
+At Google, as a permission error.
+
+162
+00:08:56,806 --> 00:09:00,305
+密钥证明了你是谁；角色决定你能做什么
+The key proved who you are; the role decides what you may do.
+
+163
+00:09:00,625 --> 00:09:03,932
+新的角色和 API 可能要几分钟才生效
+New roles and APIs can take minutes to apply.
+
+164
+00:09:04,252 --> 00:09:07,195
+暂停一下，把账号、密钥和 API 都设置好
+Pause, and set up your account, key and APIs.
+
+165
+00:09:09,333 --> 00:09:14,090
+每个组件都用自己的 docker-shell.sh 来运行；我们把它读一遍
+Every component runs through its docker-shell.sh; let's read it once.
+
+166
+00:09:14,410 --> 00:09:17,525
+第 7 行给 image 命名，container 也用这个名字
+Line 7 names the image, and the container too.
+
+167
+00:09:17,845 --> 00:09:22,389
+第 8 和第 9 行用 pwd，也就是你当前所在的目录，拼出路径
+Lines 8 and 9 build paths from pwd, the folder you're in.
+
+168
+00:09:22,633 --> 00:09:24,852
+所以要在组件目录里运行它
+So run it from the component folder.
+
+169
+00:09:25,172 --> 00:09:28,874
+第 10 行是密钥在 container 里的路径
+Line 10 is the key's path inside the container;
+
+170
+00:09:28,874 --> 00:09:32,340
+第 13 行是 Docker Hub 账号的名字，dlops
+line 13 names the Docker Hub account, dlops.
+
+171
+00:09:32,583 --> 00:09:35,506
+脚本里的 case 语句，把你输入的第一个词变成一种模式
+The case statement turns your first word into a mode.
+
+172
+00:09:35,826 --> 00:09:37,724
+什么都不加：先构建，再运行
+No word: build, then run.
+
+173
+00:09:38,044 --> 00:09:40,198
+用 dev 只构建，用 run 只运行
+Dev only builds, run only runs,
+
+174
+00:09:40,198 --> 00:09:43,740
+用 prod 则为两种处理器构建并 push
+and prod builds for two processor types and pushes.
+
+175
+00:09:43,983 --> 00:09:47,844
+五个组件我们都先用默认模式，之后再回来讲另外三个模式
+We'll use the default for all five, then come back to the other three.
+
+176
+00:09:48,083 --> 00:09:50,600
+运行时会开两扇通往你笔记本的窗
+Running opens two windows into your laptop.
+
+177
+00:09:50,920 --> 00:09:53,701
+用 -v 把组件目录放到 /app
+-v puts the component folder at /app,
+
+178
+00:09:53,701 --> 00:09:57,534
+把 repo 旁边的 secrets 目录放到 /secrets
+and the secrets folder beside the repo at /secrets.
+
+179
+00:09:57,854 --> 00:10:00,124
+再用 -e 设置一个环境变量
+-e sets an environment variable:
+
+180
+00:10:00,124 --> 00:10:03,315
+一个路标，告诉 Google 的库密钥在哪里
+a signpost to the key for Google's libraries.
+
+181
+00:10:03,550 --> 00:10:08,649
+和第 3 讲一样，venv 放在 /app 外面，所以这扇窗盖不住它
+As in lecture 3, the venv lives outside /app, so the window can't hide it.
+
+182
+00:10:08,969 --> 00:10:10,583
+密钥从来不会被复制
+The key is never copied:
+
+183
+00:10:10,583 --> 00:10:13,811
+只有 container 运行的时候，/secrets 才显示它
+/secrets shows it only while the container runs.
+
+184
+00:10:14,050 --> 00:10:17,123
+现在 cd 进 transcribe audio
+Now cd into transcribe audio and run
+
+185
+00:10:17,123 --> 00:10:19,597
+运行 docker-shell.sh，不带参数
+docker-shell.sh, no argument.
+
+186
+00:10:19,917 --> 00:10:22,360
+有两步占了几乎全部时间
+Two steps take nearly all the time:
+
+187
+00:10:22,360 --> 00:10:26,618
+构建步骤 2，也就是系统软件包，还有写出 image
+build step 2, the system packages, and writing out the image;
+
+188
+00:10:26,618 --> 00:10:29,410
+第一次构建还会 pull base image
+a first build also pulls the base image.
+
+189
+00:10:29,730 --> 00:10:31,066
+暂停一下，自己跑一遍
+Pause and run it.
+
+190
+00:10:31,116 --> 00:10:34,664
+完整日志说明了 uv sync 为什么这么快
+The full log shows why uv sync is quick:
+
+191
+00:10:34,664 --> 00:10:39,277
+image 自带的 Python，录制时是 3.14.8
+the image's Python, 3.14.8 at the time of recording,
+
+192
+00:10:39,277 --> 00:10:44,066
+已经满足 3.14 及以上，所以 uv 一个都不用下载
+already satisfies 3.14 or newer, so uv downloads none.
+
+193
+00:10:44,300 --> 00:10:47,239
+你已经在里面了，用户是 app，在 /app 里
+You're inside, as user app, in /app;
+
+194
+00:10:47,239 --> 00:10:51,319
+@ 符号后面是 container ID，每次运行都不一样
+after the @ comes the container ID, new every run.
+
+195
+00:10:51,639 --> 00:10:54,134
+第一个检查是 help，和 README 里的一致
+The first check, help, matches the README.
+
+196
+00:10:54,383 --> 00:10:58,436
+在里面做三个额外检查：python 来自 venv
+Three extra checks inside: python comes from the venv,
+
+197
+00:10:58,436 --> 00:11:02,938
+路标指向 /secrets，而这里的 /secrets 是空的
+the signpost points to /secrets, and /secrets is empty here.
+
+198
+00:11:03,258 --> 00:11:04,758
+在同一个目录里再开一个终端
+In a second terminal,
+
+199
+00:11:04,758 --> 00:11:09,210
+额外跑一个 docker inspect，就能列出这两个挂载
+opened in the same folder, an extra docker inspect lists both mounts.
+
+200
+00:11:09,600 --> 00:11:12,329
+第 5 步，用 chmod 加上可执行权限，没有坏处
+Step 5, chmod +x, is harmless:
+
+201
+00:11:12,329 --> 00:11:16,149
+额外的 ls 显示它本来就是可执行的
+an extra ls shows it's already executable.
+
+202
+00:11:16,469 --> 00:11:21,309
+第 6 步，在 Windows 上：用 Git BASH，并在前面加上 winpty
+Step 6, on Windows: use Git BASH, and put winpty in front
+
+203
+00:11:21,309 --> 00:11:25,130
+如果 Docker 报错：the input device is not a TTY
+if Docker says the input device is not a TTY.
+
+204
+00:11:26,467 --> 00:11:29,178
+回到 container 里，看 Quick Reference 那一节
+Back in the container, the Quick Reference.
+
+205
+00:11:29,228 --> 00:11:33,335
+下载这一步先打印它的参数，然后就停了
+The download step prints its arguments, then stops:
+
+206
+00:11:33,335 --> 00:11:35,268
+报 DefaultCredentialsError
+DefaultCredentialsError:
+
+207
+00:11:35,268 --> 00:11:39,054
+找不到 /secrets/mega-pipeline.json 这个文件
+File /secrets/mega-pipeline.json was not found.
+
+208
+00:11:39,300 --> 00:11:42,137
+这就是第 1 关，在 container 里就失败了
+That's gate 1, failing inside the container.
+
+209
+00:11:42,457 --> 00:11:45,434
+常见原因有：secrets 目录里没有密钥
+Usual causes: no key in the secrets folder,
+
+210
+00:11:45,434 --> 00:11:49,519
+文件名不对，或者在错误的目录里运行了脚本
+another file name, or the script run from the wrong folder.
+
+211
+00:11:49,767 --> 00:11:52,540
+转写和上传也都这样停下来
+Both transcribe and upload stop the same way.
+
+212
+00:11:52,860 --> 00:11:55,628
+有密钥的话，要找的是转写文本
+With your key, look for the transcript,
+
+213
+00:11:55,628 --> 00:11:58,822
+然后是 text prompts 下 group-01 里的一个文本文件
+then a text file under text_prompts/group-01,
+
+214
+00:11:58,822 --> 00:12:00,668
+本地和 bucket 里都有
+locally and in the bucket.
+
+215
+00:12:00,917 --> 00:12:03,349
+Speech-to-Text 按音频的分钟数计费
+Speech-to-Text bills per audio minute,
+
+216
+00:12:03,349 --> 00:12:08,213
+而且这个分支只保留长录音的第一段：用一段短音频
+and this branch keeps only a long recording's first chunk: use a short clip.
+
+217
+00:12:08,533 --> 00:12:12,032
+暂停一下，自己跑一遍：下一个组件要读它的输出
+Pause and run it: the next component reads its output.
+
+218
+00:12:12,267 --> 00:12:16,384
+接下来：输入 exit，cd 进 generate text，再运行这个脚本
+Next: exit, cd into generate text, and run the script.
+
+219
+00:12:16,704 --> 00:12:22,272
+它不装 ffmpeg，系统层就不一样：要从头构建，大约 50 秒
+Without ffmpeg, its system layer differs: a fresh build, about 50 seconds.
+
+220
+00:12:22,592 --> 00:12:24,336
+这里的 help 也和 README 一致
+Help matches the README.
+
+221
+00:12:25,434 --> 00:12:27,397
+下载也一样失败了
+The download fails the same way.
+
+222
+00:12:27,717 --> 00:12:32,234
+生成这一步只打印参数和 generate 这个词
+The generate step prints only its arguments and the word generate,
+
+223
+00:12:32,234 --> 00:12:33,946
+然后以退出码 0 退出
+then exits with status 0.
+
+224
+00:12:34,266 --> 00:12:35,866
+它调用 Gemini 了吗？
+Did it call Gemini?
+
+225
+00:12:42,534 --> 00:12:47,121
+没有。下载失败了，所以循环里没有 prompt 可处理
+No. The download had failed, so the loop had no prompts to work on.
+
+226
+00:12:47,441 --> 00:12:50,427
+退出码 0 并不能证明它做了任何事
+Exit status 0 doesn't prove it did anything.
+
+227
+00:12:50,667 --> 00:12:52,395
+上传也需要密钥
+The upload needs the key too.
+
+228
+00:12:52,715 --> 00:12:55,461
+在 generate text 的 README 里还多一步
+The generate text README adds one step:
+
+229
+00:12:55,461 --> 00:12:57,856
+用一个变量选择 Gemini 模型
+a variable picks the Gemini model.
+
+230
+00:12:58,176 --> 00:12:59,947
+Gemini 按 token 计费
+Gemini bills per token.
+
+231
+00:13:00,184 --> 00:13:03,536
+接下来，synthesis audio en 的构建只要 8 秒
+Next, synthesis_audio_en builds in 8 seconds,
+
+232
+00:13:03,536 --> 00:13:05,325
+它的系统层用了缓存
+its system layer cached.
+
+233
+00:13:05,645 --> 00:13:10,681
+我们故意没改它的 cli.py：help 停在了 assert 那里
+We left its cli.py unedited on purpose: help stops at the assert;
+
+234
+00:13:10,681 --> 00:13:12,386
+在这里，这道检查起作用了
+here, the guard works.
+
+235
+00:13:12,634 --> 00:13:15,749
+在笔记本上改它：透过这扇窗，改动马上就能看到
+Edit it on the laptop: the window shows it at once.
+
+236
+00:13:16,069 --> 00:13:20,988
+现在 help 停在第 23 行，那一行在导入时就创建 Google 客户端
+Now help fails at line 23, which builds the Google client on import:
+
+237
+00:13:20,988 --> 00:13:22,724
+连 help 都需要密钥
+even help needs the key.
+
+238
+00:13:22,967 --> 00:13:25,428
+有密钥的话，你会看到 README 里的那份 help
+With your key, you'd see the README's help.
+
+239
+00:13:25,634 --> 00:13:27,069
+这里没有上传这一步
+There's no upload step:
+
+240
+00:13:27,069 --> 00:13:30,434
+Text-to-Speech 直接把音频写进你的 bucket
+Text-to-Speech writes the audio straight into your bucket.
+
+241
+00:13:32,034 --> 00:13:33,534
+在 translate text 里
+In translate text:
+
+242
+00:13:33,534 --> 00:13:38,754
+构建用 8 秒，help 在导入时失败，然后是下载、翻译和上传
+an 8-second build, help failing at import, then download, translate and upload.
+
+243
+00:13:39,000 --> 00:13:42,691
+在 synthesis audio 里也一样：先下载，再合成
+In synthesis audio, the same: download, then synthesis.
+
+244
+00:13:43,011 --> 00:13:47,022
+暂停一下，用你的密钥把五个都跑一遍，每跑完一个就看看 bucket
+Pause, and run all five with your key, checking the bucket after each.
+
+245
+00:13:49,467 --> 00:13:50,974
+两个小疏漏
+Two small slips.
+
+246
+00:13:51,024 --> 00:13:53,066
+翻译的目标语言是西班牙语
+The translation targeted Spanish,
+
+247
+00:13:53,066 --> 00:13:56,656
+但最后的语音是法语：所以你才把它改了
+but the final voice is French: that's why you switched it.
+
+248
+00:13:56,976 --> 00:13:59,505
+还有那个可选的 ElevenLabs 附加任务
+And the optional ElevenLabs bonus
+
+249
+00:13:59,505 --> 00:14:03,568
+是从 /app 里面读密钥的：把它改成指向 /secrets
+reads its key from inside /app: point it at /secrets.
+
+250
+00:14:06,417 --> 00:14:09,382
+输入 exit，再 cd 回 transcribe audio
+Exit, and cd back into transcribe audio.
+
+251
+00:14:09,702 --> 00:14:14,083
+在 How to Run 那一节，第 2 步 docker-shell.sh dev 只构建
+Step 2 of How to Run, docker-shell.sh dev, only builds:
+
+252
+00:14:14,083 --> 00:14:15,683
+不会启动 container
+no container starts.
+
+253
+00:14:15,996 --> 00:14:17,429
+这里全都用了缓存
+Here, all was cached;
+
+254
+00:14:17,429 --> 00:14:22,140
+只要目录里有任何改动，COPY 和 uv sync 这两步就会重新跑
+after any change in the folder, the copy and uv sync steps run again.
+
+255
+00:14:22,384 --> 00:14:23,827
+那 dev 是干什么用的？
+What is dev for?
+
+256
+00:14:23,877 --> 00:14:27,551
+加包的时候：在 container 里跑 uv add
+Adding a package: uv add, inside the container,
+
+257
+00:14:27,551 --> 00:14:31,772
+它会透过这扇窗更新 pyproject.toml 和 uv.lock
+updates pyproject.toml and uv.lock through the window;
+
+258
+00:14:31,772 --> 00:14:34,352
+然后用 dev 把它打包进 image
+then dev bakes it into the image.
+
+259
+00:14:35,200 --> 00:14:37,250
+第 3 步，run，跳过构建
+Step 3, run, skips the build:
+
+260
+00:14:37,250 --> 00:14:39,936
+显示 Using local image，因为本地已经有一个
+Using local image, because one exists.
+
+261
+00:14:40,256 --> 00:14:42,347
+暂停一下，自己试试 dev 和 run
+Pause and try dev and run yourself.
+
+262
+00:14:44,584 --> 00:14:49,448
+一个小小的不准确：README 的概述说 run 会从 registry pull
+A small inaccuracy: the README's overview says run pulls from the registry.
+
+263
+00:14:49,768 --> 00:14:53,662
+实际上，只要本地有同名的 image，不管多旧都会被用上
+In fact, any local image of that name wins, however old;
+
+264
+00:14:53,662 --> 00:14:58,322
+否则它运行 Docker Hub 上的 image，只在第一次 pull
+otherwise it runs the Docker Hub image, pulled only the first time.
+
+265
+00:14:59,567 --> 00:15:03,491
+来想一想。有个队友从没构建过这个 image
+Ponder this. A teammate has never built this image,
+
+266
+00:15:03,491 --> 00:15:05,562
+直接输入 docker-shell.sh run
+and types docker-shell.sh run.
+
+267
+00:15:05,882 --> 00:15:07,482
+这个队友会拿到哪个 Python？
+Which Python do they get?
+
+268
+00:15:16,217 --> 00:15:20,676
+这条额外的命令删掉我们本地的 image，这样我们就成了那个队友
+This extra command deletes our local image, so we become that teammate.
+
+269
+00:15:22,817 --> 00:15:24,445
+提示 Local image not found
+Local image not found,
+
+270
+00:15:24,445 --> 00:15:27,702
+于是它从 Docker Hub pull 了 dlops 的 image
+so it pulls the dlops image from Docker Hub.
+
+271
+00:15:28,022 --> 00:15:30,476
+接着来了个意外：显示 Creating a Pipfile
+Then, a surprise: Creating a Pipfile.
+
+272
+00:15:30,796 --> 00:15:33,740
+这是 pipenv，这门课在 uv 之前用的工具
+That's pipenv, this course's tool before uv.
+
+273
+00:15:34,984 --> 00:15:36,577
+提示符显示的是 root
+The prompt says root.
+
+274
+00:15:36,627 --> 00:15:41,256
+Python 是 3.8.17，在一个 pipenv 建的环境里
+Python is 3.8.17, in an environment pipenv made.
+
+275
+00:15:41,576 --> 00:15:45,587
+这里 help 还能用，只是用的是 Python 3.8 的旧措辞
+Help still works here, in the older wording of Python 3.8.
+
+276
+00:15:45,907 --> 00:15:47,507
+然后输入 exit
+Then type exit.
+
+277
+00:15:52,000 --> 00:15:55,247
+一个额外的 inspect 打开了这个盒子
+An extra inspect opens the box:
+
+278
+00:15:55,247 --> 00:16:00,379
+创建于 2025 年 2 月 18 日，Python 3.8.17
+created on February 18, 2025, with Python 3.8.17,
+
+279
+00:16:00,379 --> 00:16:03,627
+启动 pipenv shell，以 root 运行
+starting pipenv shell, as root.
+
+280
+00:16:04,667 --> 00:16:08,810
+它的构建对应的是一个更旧的分支，pipenv-flexible-workflow
+Its build matches an older branch, pipenv-flexible-workflow,
+
+281
+00:16:08,810 --> 00:16:10,185
+而不是你的配方
+not your recipe.
+
+282
+00:16:10,235 --> 00:16:14,416
+你的目录盖在它的 /app 上：你的代码，他们的环境
+Your folder slides over its /app: your code, their environment.
+
+283
+00:16:14,736 --> 00:16:18,299
+对 generate text 来说，这就是开头那个导入错误
+For generate text, that's the import error from the start:
+
+284
+00:16:18,299 --> 00:16:19,899
+第一个谜题，解开了
+the first puzzle, solved.
+
+285
+00:16:23,184 --> 00:16:26,597
+它还在你的目录里留下了一个 Pipfile，属于 root
+It also left a Pipfile in your folder, owned by root.
+
+286
+00:16:26,917 --> 00:16:28,472
+如果你试过这一步，就把它删掉
+If you tried this,
+
+287
+00:16:28,472 --> 00:16:30,906
+再跑一次 dev，把你自己的 image 找回来
+delete it and run dev to get your own image back.
+
+288
+00:16:32,350 --> 00:16:35,155
+所以要在本地构建，不带参数或者用 dev
+So build locally, with no argument or dev,
+
+289
+00:16:35,155 --> 00:16:39,295
+run 只用于你们组从这个分支 push 上去的 image
+and use run only for images your team pushed from this branch,
+
+290
+00:16:39,295 --> 00:16:41,566
+而且是在你们自己的 Docker Hub 账号下
+under your own Docker Hub account.
+
+291
+00:16:45,000 --> 00:16:46,941
+第 4 步，prod，负责发布
+Step 4, prod, publishes.
+
+292
+00:16:47,261 --> 00:16:49,914
+它会重新创建一个叫 multi-arch 的构建器
+It recreates a builder named multi-arch,
+
+293
+00:16:49,914 --> 00:16:52,765
+一个能为多种处理器构建的构建引擎
+a build engine for several processor types.
+
+294
+00:16:53,085 --> 00:16:57,211
+加了 --use，它就成了当前的构建器，而脚本从不切回去
+--use makes it current, and the script never switches back:
+
+295
+00:16:57,211 --> 00:16:59,379
+切回来要用 docker buildx use default
+docker buildx use default does.
+
+296
+00:16:59,617 --> 00:17:04,077
+然后一条 buildx build 做出 amd64 和 arm64 两个 image
+Then one buildx build makes amd64 and arm64 images
+
+297
+00:17:04,077 --> 00:17:06,753
+用同一个 tag 一起 push 上去
+and pushes both under one tag:
+
+298
+00:17:06,753 --> 00:17:11,034
+和第 2 讲一样，Apple Silicon 的 Mac 会 pull 其中一个
+as in lecture 2, an Apple-silicon Mac pulls one,
+
+299
+00:17:11,034 --> 00:17:12,907
+云上的 VM 会 pull 另一个
+a cloud VM the other.
+
+300
+00:17:13,150 --> 00:17:16,039
+跑 prod 之前，先用访问令牌登录
+Before prod, log in with an access token;
+
+301
+00:17:16,039 --> 00:17:18,505
+用 -p 的话，它会留在你的 shell 历史记录里
+-p leaves it in your shell history.
+
+302
+00:17:18,825 --> 00:17:21,470
+把脚本里的 Docker Hub 用户名改成你自己的
+Set the Docker username in the script to your own.
+
+303
+00:17:21,790 --> 00:17:25,118
+暂时别跑 prod：先检查一下它会发布什么
+Don't run prod yet: first, check what it would publish.
+
+304
+00:17:25,367 --> 00:17:28,698
+原因是这样的。在切换了分支的第 3 讲 clone 里
+Here's why. In the switched lecture 3 clone,
+
+305
+00:17:28,698 --> 00:17:31,426
+旧密钥还留在 transcribe audio 里
+the old key still sits in transcribe audio.
+
+306
+00:17:31,746 --> 00:17:36,514
+在那里用 dev 构建，再用一条额外的命令列出新 image 的 /app
+Build there with dev, and an extra command lists the new image's /app:
+
+307
+00:17:36,514 --> 00:17:37,933
+密钥就在里面
+the key is inside.
+
+308
+00:17:37,983 --> 00:17:40,202
+而 COPY 那一行会把整个目录都装进去
+The copy line takes the whole folder.
+
+309
+00:17:40,522 --> 00:17:43,018
+那个 .gitignore 让 secrets 进不了 Git
+The .gitignore keeps secrets out of Git,
+
+310
+00:17:43,018 --> 00:17:44,209
+却挡不住它进 image
+not out of images,
+
+311
+00:17:44,209 --> 00:17:46,346
+而且哪个分支都没有 .dockerignore
+and no branch has a .dockerignore.
+
+312
+00:17:46,666 --> 00:17:49,183
+跑 prod 就会把你的密钥 push 到 Docker Hub
+Prod would push your key to Docker Hub.
+
+313
+00:17:49,233 --> 00:17:52,724
+所以 README 的承诺对 Git 成立，对 image 不成立
+So the README's promise holds for Git, not for images.
+
+314
+00:17:53,044 --> 00:17:56,022
+删掉组件里面的每个 secrets 目录
+Delete any secrets folder inside a component,
+
+315
+00:17:56,022 --> 00:17:58,405
+加一个列出 secrets 的 .dockerignore
+add a .dockerignore listing secrets,
+
+316
+00:17:58,405 --> 00:18:01,449
+如果哪个密钥曾经被 push 出去，就把那个密钥删掉
+and if a key was ever pushed, delete that key.
+
+317
+00:18:01,769 --> 00:18:06,548
+至于 prod，它是可选的：修好之后，只有你们组要发布时才运行它
+Prod is optional: after the fix, run it only if your team publishes.
+
+318
+00:18:06,868 --> 00:18:08,468
+暂停一下，检查你自己的
+Pause and check yours.
+
+319
+00:18:10,083 --> 00:18:11,683
+第一部分的清理
+Clean-up for part 1.
+
+320
+00:18:11,896 --> 00:18:15,374
+退出每个 container；--rm 会把它删掉
+Exit each container; --rm deletes it.
+
+321
+00:18:15,694 --> 00:18:19,526
+光 transcribe 的 image 就有 1.48 GB
+The transcribe image alone is 1.48 gigabytes:
+
+322
+00:18:19,526 --> 00:18:22,676
+用 docker image rm 把五个都删掉
+remove all five with docker image rm,
+
+323
+00:18:22,676 --> 00:18:25,486
+再加上你 pull 过的 dlops 的 image
+plus any dlops images you pulled.
+
+324
+00:18:25,733 --> 00:18:29,328
+在云上，bucket 会一直收一点存储费
+In the cloud, the bucket bills a little storage until you delete it,
+
+325
+00:18:29,328 --> 00:18:31,217
+直到你删掉它，也就是课程结束的时候
+when the course is over;
+
+326
+00:18:31,217 --> 00:18:34,138
+密钥在你去控制台删掉之前一直有效
+the key works until you delete it in the console.
+
+327
+00:18:34,458 --> 00:18:37,979
+第二部分：互相直接通信的 container
+In part 2: containers that talk to each other directly.
+
+328
+00:18:40,117 --> 00:18:43,466
+在第一部分，container 只是把文件留在 bucket 里
+In part 1, containers only left files in a bucket.
+
+329
+00:18:43,786 --> 00:18:46,706
+这个 port toy 让两个 container 直接通信
+Port toy makes two containers talk directly,
+
+330
+00:18:46,706 --> 00:18:50,024
+而且只需要 Docker：一个 gateway 提供网页
+and needs only Docker: a gateway serves a web page
+
+331
+00:18:50,024 --> 00:18:54,538
+把你的文字转发给一个 processor，processor 再把它变成大写
+and forwards your text to a processor, which turns it into capitals.
+
+332
+00:18:54,784 --> 00:18:57,943
+把每个 container 想成一台独立的小电脑
+Think of each container as its own little computer,
+
+333
+00:18:57,943 --> 00:19:01,227
+有自己的 localhost，也有自己的一整套 port
+with its own localhost and its own full set of ports.
+
+334
+00:19:01,547 --> 00:19:05,856
+两个 container 都可以用 port 9100，完全不会冲突
+Two containers can both use port 9100 without any clash.
+
+335
+00:19:06,176 --> 00:19:09,115
+这节课把这叫作网络命名空间
+The lecture calls this a network namespace:
+
+336
+00:19:09,115 --> 00:19:12,192
+每个 container 都是隔离的，直到你把它们连起来
+each container is isolated until you wire it.
+
+337
+00:19:12,434 --> 00:19:16,051
+你自己创建的网络把它们连起来，就像家里的小局域网
+A network you create joins them like a small home network,
+
+338
+00:19:16,051 --> 00:19:19,794
+还带一本电话簿，把 container 名变成地址
+with a phone book that turns container names into addresses.
+
+339
+00:19:20,114 --> 00:19:22,226
+Docker 的默认网络没有电话簿
+Docker's default network has none.
+
+340
+00:19:22,467 --> 00:19:23,630
+先看 Prerequisites
+Prerequisites:
+
+341
+00:19:23,630 --> 00:19:26,819
+用 docker run hello-world 检查 Docker 有没有在运行
+docker run hello-world checks that Docker is running.
+
+342
+00:19:27,139 --> 00:19:30,424
+它会 pull 一个很小的 image，打印出 Hello from Docker
+It pulls a tiny image and prints Hello from Docker!
+
+343
+00:19:30,667 --> 00:19:32,907
+第 1 步手动把应用搭起来
+Step 1 sets the app up by hand.
+
+344
+00:19:33,227 --> 00:19:35,951
+在你的工作区目录里，把代码 clone 下来
+From your workspace folder, clone the code:
+
+345
+00:19:35,951 --> 00:19:39,499
+README 说 clone 或下载，却没给命令
+the README says clone or download but prints no command.
+
+346
+00:19:39,819 --> 00:19:41,547
+然后 cd 进 port toy 目录
+Then cd into port toy.
+
+347
+00:19:41,867 --> 00:19:43,317
+暂停一下，把它们跑一遍
+Pause and run them.
+
+348
+00:19:43,367 --> 00:19:46,830
+两个额外检查：文件和 README 里的目录树一致
+Two extra checks: the files match the README's tree,
+
+349
+00:19:46,830 --> 00:19:48,562
+一个 gateway，一个 processor
+a gateway and a processor,
+
+350
+00:19:48,562 --> 00:19:51,559
+git log 显示这个视频 pin 住的 commit
+and git log shows the commit this video pins.
+
+351
+00:19:51,800 --> 00:19:54,211
+接下来：docker network create toynet
+Next, docker network create toynet.
+
+352
+00:19:54,531 --> 00:19:56,707
+Docker 打印出新网络的 ID
+Docker prints the new network's ID:
+
+353
+00:19:56,707 --> 00:19:59,630
+这就是两个 container 都要接上去的那根导轨
+that's the rail both containers will plug into.
+
+354
+00:19:59,867 --> 00:20:02,035
+从 README 的 Handy commands 里拿一条
+From the README's handy commands,
+
+355
+00:20:02,035 --> 00:20:03,809
+docker network ls 把它列出来
+docker network ls lists it,
+
+356
+00:20:03,809 --> 00:20:06,438
+旁边是 Docker 的三个内置网络
+beside Docker's three built-in networks.
+
+357
+00:20:06,758 --> 00:20:08,358
+暂停一下，创建你自己的网络
+Pause, and create yours.
+
+358
+00:20:09,383 --> 00:20:11,090
+接下来，构建两个 image
+Next, build two images.
+
+359
+00:20:11,410 --> 00:20:14,858
+两个 Dockerfile 几乎一模一样
+The two Dockerfiles are almost identical:
+
+360
+00:20:14,858 --> 00:20:18,642
+一个精简版的 Python 3.14 image，再从 apt 装上 curl
+a slim Python 3.14 image, plus curl from apt.
+
+361
+00:20:18,962 --> 00:20:21,681
+每个都把自己的代码复制进去，用 -u 运行
+Each copies its code and runs it with -u,
+
+362
+00:20:21,681 --> 00:20:23,868
+这样打印的内容会马上进到日志里
+so prints reach the logs at once.
+
+363
+00:20:24,116 --> 00:20:27,913
+先构建的是 processor，它的 apt 那一层要花几秒钟
+The processor builds first, and its apt layer takes a few seconds.
+
+364
+00:20:28,233 --> 00:20:31,434
+你第一次构建时，还会 pull Python 的 base image
+Your first build also pulls the Python base image.
+
+365
+00:20:31,683 --> 00:20:32,812
+然后是 gateway
+Then the gateway:
+
+366
+00:20:32,812 --> 00:20:36,419
+Docker 从缓存里复用了 processor 的 apt 那一层
+Docker reuses the processor's apt layer from the cache,
+
+367
+00:20:36,419 --> 00:20:39,576
+因为两个文件在 COPY 那一行之前都一样
+because the two files match up to the copy line.
+
+368
+00:20:39,896 --> 00:20:41,496
+不到 1 秒就构建完了
+It's done in under a second.
+
+369
+00:20:42,483 --> 00:20:48,264
+然后在 toynet 上启动 processor，PORT 设为 9200，不加 -p
+Then start the processor on toynet, with PORT set to 9200, and no -p.
+
+370
+00:20:48,584 --> 00:20:54,451
+它在自己的盒子里监听 9200，但你笔记本上没有任何东西通向它
+It listens on 9200 inside its own box, but nothing on your laptop leads to it.
+
+371
+00:20:54,700 --> 00:20:56,300
+然后启动 gateway
+Then start the gateway.
+
+372
+00:20:56,428 --> 00:21:00,598
+这里的 -p 会发布一个 port：它在你笔记本上开一扇临街的门
+-p publishes a port: it opens a street door on your laptop
+
+373
+00:21:00,598 --> 00:21:03,617
+通向 container 里面的一个房间
+that leads to a room inside the container.
+
+374
+00:21:03,937 --> 00:21:09,423
+顺序是 IP 地址、host port、container port
+The order is IP address, host port, container port:
+
+375
+00:21:09,423 --> 00:21:13,296
+127.0.0.1，意思是只限这台笔记本
+127.0.0.1, meaning this laptop only,
+
+376
+00:21:13,296 --> 00:21:16,630
+然后是 8090 号门，最后是 9100 号房间
+then door 8090, then room 9100.
+
+377
+00:21:18,116 --> 00:21:21,897
+两个 -e 参数告诉 gateway 该去调用哪里
+The two -e flags tell the gateway where to call:
+
+378
+00:21:21,897 --> 00:21:24,260
+名字是 processor，port 是 9200
+the name processor, port 9200.
+
+379
+00:21:24,580 --> 00:21:27,266
+它代码里的第 13 和第 14 行读取这两个值
+Lines 13 and 14 of its code read them;
+
+380
+00:21:27,266 --> 00:21:30,447
+那里引号里的值只是默认值
+the values in quotes there are only defaults.
+
+381
+00:21:30,683 --> 00:21:32,667
+现在对两个分别跑一下 docker logs
+Now check docker logs for each.
+
+382
+00:21:32,987 --> 00:21:39,750
+日志里，processor 监听 9200，只在内部；gateway 监听 9100
+The processor listens on 9200, internal only; the gateway listens on 9100.
+
+383
+00:21:40,070 --> 00:21:41,670
+暂停一下，把两个都启动
+Pause and start both.
+
+384
+00:21:43,733 --> 00:21:47,609
+第 1 步的最后，在浏览器里打开 localhost:8090
+To finish step 1, open localhost:8090 in your browser,
+
+385
+00:21:47,609 --> 00:21:49,834
+输入一条消息，点 Send
+type a message, and click Send.
+
+386
+00:21:50,154 --> 00:21:55,440
+回复是大写的，还带着三个 port 数字：gateway 从哪里发出
+The reply comes back in capitals, with three port numbers: where the gateway sent from,
+
+387
+00:21:55,440 --> 00:21:59,754
+processor 在哪里监听，以及它看到消息是从哪里来的
+where the processor listened, and where it saw the message arrive from.
+
+388
+00:22:00,000 --> 00:22:05,137
+我们录制时没有浏览器，所以用 curl 发了和网页一模一样的请求
+We recorded without a browser, so curl sent the same request the page sends;
+
+389
+00:22:05,137 --> 00:22:06,826
+这是它拿到的回复
+this is the reply it got.
+
+390
+00:22:07,550 --> 00:22:11,347
+这个 processor 监听的是 9200，也就是目的地
+The processor listened on 9200, the destination.
+
+391
+00:22:11,667 --> 00:22:15,998
+但每个连接都有两端，所以 gateway 这一端也需要一个 port
+But every connection has two ends, so the gateway's side needs a port too.
+
+392
+00:22:16,318 --> 00:22:23,571
+它的操作系统挑了一个临时的，55620，把它钉在数据包上
+Its operating system picked a temporary one, 55620, and stapled it to the packet.
+
+393
+00:22:23,816 --> 00:22:26,222
+在 processor 那边，看到的是同一个数字
+The processor saw the same number arrive,
+
+394
+00:22:26,222 --> 00:22:28,979
+因为在网络内部没有任何东西会改写它
+because nothing rewrites it inside the network.
+
+395
+00:22:29,299 --> 00:22:32,602
+代码里，gateway 的第 38 行读取自己的 port
+Line 38 of the gateway reads its own port;
+
+396
+00:22:32,602 --> 00:22:36,062
+processor 的第 32 行读取发送方的 port
+line 32 of the processor reads the sender's.
+
+397
+00:22:36,300 --> 00:22:41,228
+再发一次，这个数字就变了：新的连接，新的临时 port
+Send again, and the number changes: a new connection, a new temporary port.
+
+398
+00:22:41,548 --> 00:22:43,000
+你的会不一样
+Yours will differ.
+
+399
+00:22:43,050 --> 00:22:46,580
+还有一个细节：页面上的示意图显示 8090
+One more detail: the page's diagram shows 8090
+
+400
+00:22:46,580 --> 00:22:48,959
+靠的是读取它自己的地址栏
+by reading its own address bar.
+
+401
+00:22:49,279 --> 00:22:52,629
+这个 container 没法知道，你在笔记本上给它开的是哪扇门
+The container can't know which door on your laptop you gave it.
+
+402
+00:22:52,949 --> 00:22:55,700
+暂停一下，发一条消息，两个都别停
+Pause, send a message, and leave both running.
+
+403
+00:22:56,750 --> 00:22:58,435
+第 2 步检查 port
+Step 2 checks the ports.
+
+404
+00:22:58,755 --> 00:23:05,505
+用 docker ps 能看到 gateway 的映射，host 那一侧在前
+docker ps shows the gateway's mapping, host side first:
+
+405
+00:23:05,505 --> 00:23:09,187
+127.0.0.1，port 8090，到 9100
+127.0.0.1, port 8090, to 9100.
+
+406
+00:23:09,507 --> 00:23:14,051
+而 processor 的 PORTS 那一列是空的：在监听，但没有发布
+The processor's PORTS column is empty: listening, but not published.
+
+407
+00:23:14,300 --> 00:23:18,673
+额外跑一个只有三列的 docker ps，和 README 里的示例一致
+An extra docker ps with three columns matches the README's sample.
+
+408
+00:23:20,067 --> 00:23:23,822
+那个 127.0.0.1 有什么用？
+What does the 127.0.0.1 do?
+
+409
+00:23:24,142 --> 00:23:28,750
+这次额外的运行把它去掉了，要在所有地址上开 8090 号门
+This extra run leaves it out, asking for door 8090 on every address.
+
+410
+00:23:29,070 --> 00:23:32,254
+Docker 拒绝了，报 port is already allocated
+Docker refuses, port is already allocated:
+
+411
+00:23:32,254 --> 00:23:33,998
+我们的 gateway 占着 8090
+our gateway holds 8090.
+
+412
+00:23:34,318 --> 00:23:37,155
+不过 container 还是创建出来了，所以要把它删掉
+The container was still created, so remove it.
+
+413
+00:23:37,400 --> 00:23:42,143
+用 8091 号门就成功了，映射显示 0.0.0.0
+With door 8091 it works, and the mapping shows 0.0.0.0:
+
+414
+00:23:42,143 --> 00:23:47,576
+所有地址，所以你所在网络里的其他机器也能连进来
+every address, so other machines on your network could connect.
+
+415
+00:23:47,896 --> 00:23:55,427
+把它删掉。所以 README 写的是 127.0.0.1：只限这台笔记本
+Remove it. That's why the README writes 127.0.0.1: this laptop only.
+
+416
+00:23:55,667 --> 00:23:59,784
+在笔记本上，用 curl 访问 8090，返回的是 gateway 的页面
+From the laptop, curl on 8090 returns the gateway's page.
+
+417
+00:24:00,104 --> 00:24:02,379
+用 curl 访问 9200 就连不上
+curl on 9200 can't connect:
+
+418
+00:24:02,379 --> 00:24:08,445
+你的笔记本上没有通向它的门，除非你自己有别的程序在用 9200
+your laptop has no door to it, unless something else of yours uses 9200.
+
+419
+00:24:08,683 --> 00:24:12,275
+用 docker exec 在 gateway 里面运行 curl
+From inside the gateway, docker exec runs curl,
+
+420
+00:24:12,275 --> 00:24:15,638
+按名字 processor 去问 port 9200
+asking for the name processor, on port 9200.
+
+421
+00:24:15,958 --> 00:24:17,558
+回答是：ok
+The answer: ok.
+
+422
+00:24:17,717 --> 00:24:22,325
+来想一想。同一条命令，把 processor 换成 localhost
+Ponder this. The same command with localhost instead of processor.
+
+423
+00:24:22,645 --> 00:24:24,245
+谁会回答？
+What answers?
+
+424
+00:24:30,517 --> 00:24:35,673
+什么都没有。在 gateway 里面，localhost 就是 gateway 自己
+Nothing. Inside the gateway, localhost is the gateway itself,
+
+425
+00:24:35,673 --> 00:24:38,304
+而它那里没有任何东西在 9200 上监听
+and nothing there listens on 9200.
+
+426
+00:24:38,624 --> 00:24:40,250
+这就是第二个谜题的答案
+That's the second puzzle:
+
+427
+00:24:40,250 --> 00:24:42,656
+每个 container 都有自己的 localhost
+each container has its own localhost.
+
+428
+00:24:42,976 --> 00:24:46,218
+一个额外检查：换成 9100，也就是它自己的 port
+An extra check: on 9100, its own port,
+
+429
+00:24:46,218 --> 00:24:48,522
+localhost 就返回页面
+localhost returns the page.
+
+430
+00:24:48,767 --> 00:24:50,367
+那名字又是怎么起作用的？
+So how did the name work?
+
+431
+00:24:50,644 --> 00:24:52,177
+从 Handy commands 里拿一条
+From the handy commands,
+
+432
+00:24:52,177 --> 00:24:55,886
+docker network inspect 显示每个 container 的地址
+docker network inspect shows an address for each container,
+
+433
+00:24:55,886 --> 00:24:58,665
+都来自 toynet 自己的地址范围，也就是它的子网
+from toynet's own address range, its subnet.
+
+434
+00:24:59,767 --> 00:25:04,222
+每个 container 都去问 Docker 内置的电话簿
+Each container asks Docker's built-in phone book,
+
+435
+00:25:04,222 --> 00:25:09,132
+它在 127.0.0.11，把名字变成这些地址
+at 127.0.0.11, which turns names into those addresses.
+
+436
+00:25:09,452 --> 00:25:13,143
+一个 container 重启时，地址可能会变；名字不会变
+Addresses can change when a container restarts; names stay.
+
+437
+00:25:13,383 --> 00:25:15,256
+再来一条 Handy commands 里的命令
+Another handy command,
+
+438
+00:25:15,256 --> 00:25:19,427
+docker exec -it gateway sh，在里面打开一个 shell
+docker exec -it gateway sh, opens a shell inside;
+
+439
+00:25:19,427 --> 00:25:22,236
+它的主机名就是 container ID
+its hostname is the container ID.
+
+440
+00:25:22,556 --> 00:25:25,395
+补充一句：processor 的 image 里其实也有 curl
+One aside: the processor image has curl too,
+
+441
+00:25:25,395 --> 00:25:27,783
+虽然 README 暗示它没有
+though the README implies it doesn't.
+
+442
+00:25:28,103 --> 00:25:30,151
+暂停一下，从两边都试一试
+Pause, and test from both sides.
+
+443
+00:25:31,800 --> 00:25:33,720
+第 3 步修改 port
+Step 3 changes the ports.
+
+444
+00:25:34,040 --> 00:25:36,348
+先改临街的门
+First the street door:
+
+445
+00:25:36,348 --> 00:25:42,957
+删掉 gateway，再在 127.0.0.1 的 port 8095 上重新启动它
+remove the gateway, and start it again on 127.0.0.1, port 8095.
+
+446
+00:25:43,277 --> 00:25:45,880
+里面的房间还是 9100
+The room inside stays 9100.
+
+447
+00:25:46,117 --> 00:25:48,400
+页面在 8095 上能用
+The page works on 8095.
+
+448
+00:25:48,720 --> 00:25:51,753
+两个额外检查：8090 已经连不上了
+Two extra checks: 8090 no longer connects,
+
+449
+00:25:51,753 --> 00:25:54,352
+docker ps 也显示出新的映射
+and docker ps shows the new mapping.
+
+450
+00:25:54,672 --> 00:25:56,889
+暂停一下，把你的 gateway 的门也挪过去
+Pause and move your gateway's door.
+
+451
+00:25:59,167 --> 00:26:00,440
+为什么要这么做？
+Why do this?
+
+452
+00:26:00,490 --> 00:26:04,074
+你笔记本上可能已经有别的应用占着 8090
+Another app on your laptop might already hold 8090.
+
+453
+00:26:04,394 --> 00:26:09,428
+笔记本上的门必须各不相同；container 里的房间永远不会撞车
+Doors on the laptop must be unique; rooms inside containers never collide.
+
+454
+00:26:09,667 --> 00:26:14,510
+一个小疏漏：gateway 的日志里还是说打开 localhost:8090
+A small slip: the gateway's log still says open localhost:8090.
+
+455
+00:26:14,830 --> 00:26:17,411
+那段文字是写死在第 53 行的
+That text is hard-coded in line 53.
+
+456
+00:26:17,731 --> 00:26:20,333
+要以 docker ps 和页面为准
+Trust docker ps and the page instead.
+
+457
+00:26:20,583 --> 00:26:22,666
+接下来是 processor 的 port
+Next, the processor's port:
+
+458
+00:26:22,666 --> 00:26:26,215
+删掉它，再把 PORT 设为 9300 启动它
+remove it, and start it with PORT set to 9300.
+
+459
+00:26:26,535 --> 00:26:29,671
+README 里说：发一条消息，应该会失败
+The README says: send a message, and it should fail.
+
+460
+00:26:30,067 --> 00:26:31,667
+确实失败了，只是悄无声息
+It does, but quietly.
+
+461
+00:26:31,880 --> 00:26:35,773
+页面没有错误处理，所以上面什么都不会变
+The page has no error handling, so nothing on it changes;
+
+462
+00:26:35,773 --> 00:26:38,710
+我们录下的那次请求只拿到 curl 的报错
+the captured request got only curl's error,
+
+463
+00:26:38,710 --> 00:26:40,349
+Empty reply from server
+Empty reply from server.
+
+464
+00:26:40,583 --> 00:26:44,102
+额外在 gateway 上跑一下 docker logs
+An extra docker logs on the gateway shows why:
+
+465
+00:26:44,102 --> 00:26:46,473
+就知道原因：它通过名字找到了 processor
+it found the processor by name,
+
+466
+00:26:46,473 --> 00:26:51,292
+但连接被拒绝了，已经没有人在 9200 上监听
+but the connection was refused: nobody listens on 9200 anymore.
+
+467
+00:26:51,612 --> 00:26:56,248
+名字写错的话，失败的方式不一样：见练习。来想一想
+A wrong name fails differently: see the exercises. Ponder this.
+
+468
+00:26:56,568 --> 00:27:00,387
+改哪一个设置能修好它，又有没有哪个 image 需要重新构建？
+Which one setting fixes it, and does any image need rebuilding?
+
+469
+00:27:07,233 --> 00:27:09,316
+改 gateway 的 processor port 变量
+The gateway's processor port.
+
+470
+00:27:09,366 --> 00:27:12,508
+删掉 gateway，用 9300 重新启动它
+Remove the gateway and start it with 9300,
+
+471
+00:27:12,508 --> 00:27:15,724
+门也换回 8090，消息就能发过去了
+back on 8090, and the message goes through.
+
+472
+00:27:16,044 --> 00:27:19,478
+没有重新构建任何 image：这只是配置
+No image was rebuilt: it's only configuration.
+
+473
+00:27:19,798 --> 00:27:21,398
+暂停一下，把你的也修好
+Pause and fix yours.
+
+474
+00:27:22,233 --> 00:27:25,267
+两个设置必须一致：processor 的 PORT
+The two settings must agree: the processor's PORT
+
+475
+00:27:25,267 --> 00:27:27,311
+和 gateway 的 processor port
+and the gateway's processor port.
+
+476
+00:27:27,550 --> 00:27:32,286
+最后，用 Compose 之前先清理：删掉两个 container，再删网络
+Finally, clean up before Compose: remove both containers, then the network.
+
+477
+00:27:32,606 --> 00:27:36,361
+一个额外检查显示，只剩下 hello-world 那个旧 container
+An extra check shows only hello-world's old container left.
+
+478
+00:27:36,681 --> 00:27:39,518
+跳过这一步，Compose 就会遇到名字冲突
+Skip this, and Compose hits a name conflict.
+
+479
+00:27:39,838 --> 00:27:41,438
+暂停一下，清理干净
+Pause and clean up.
+
+480
+00:27:44,433 --> 00:27:47,701
+第 4 步：Docker Compose，它根据一个配置文件
+Step 4: Docker Compose, which builds and starts the whole app from one YAML file.
+
+481
+00:27:47,701 --> 00:27:49,660
+把整个应用构建好并启动起来
+Step 4: Docker Compose, which builds and starts the whole app from one YAML file.
+
+482
+00:27:49,980 --> 00:27:54,460
+README 里只给了节选；把完整的 docker-compose.yml 打开
+The README shows an excerpt; open the whole docker-compose.yml.
+
+483
+00:27:54,780 --> 00:27:58,150
+你手动敲过的参数，几乎每一个都能在里面找到位置
+Almost every flag you typed by hand has a home in it.
+
+484
+00:27:58,400 --> 00:28:02,987
+原来的 --name 变成了 container name，构建命令变成了 build
+--name becomes container name, and the build command becomes build.
+
+485
+00:28:03,307 --> 00:28:04,807
+原来的 -p 变成了 ports
+-p becomes ports,
+
+486
+00:28:04,807 --> 00:28:10,112
+-e 变成了 environment，而网络在文件最下面命名
+-e becomes environment, and the network is named at the bottom of the file.
+
+487
+00:28:12,000 --> 00:28:13,154
+有两个键是新的
+Two keys are new:
+
+488
+00:28:13,154 --> 00:28:16,795
+volumes 这个键把 gateway 的目录挂载到 /app
+the volumes key mounts the gateway's folder into /app,
+
+489
+00:28:16,795 --> 00:28:20,171
+depends on 这个键让 processor 先启动
+and the depends on key starts the processor first.
+
+490
+00:28:20,491 --> 00:28:24,565
+整个第 1 步合成了一条命令：docker compose up
+All of step 1 collapses into one command: docker compose up.
+
+491
+00:28:24,800 --> 00:28:29,244
+运行它。Compose 构建了两个 image，全部用了缓存
+Run it. Compose builds both images, all from the cache,
+
+492
+00:28:29,244 --> 00:28:33,866
+并按目录名和服务名给它们命名：port toy 加上 -gateway
+and names them after the folder and the service: port_toy-gateway.
+
+493
+00:28:34,116 --> 00:28:37,038
+然后它创建网络和两个 container
+Then it creates the network and both containers,
+
+494
+00:28:37,038 --> 00:28:40,751
+打印出两个横幅，每一行前面都标着它的服务名
+and prints both banners, each line prefixed with its service.
+
+495
+00:28:41,071 --> 00:28:42,416
+暂停一下，自己跑一遍
+Pause and run it.
+
+496
+00:28:42,466 --> 00:28:44,279
+打开页面：能用
+Open the page: it works.
+
+497
+00:28:44,599 --> 00:28:47,725
+在第二个终端里，先 cd 进 port toy
+In a second terminal, cd into port toy first:
+
+498
+00:28:47,725 --> 00:28:50,850
+Compose 读的是当前目录里的文件
+Compose reads the file in the current folder.
+
+499
+00:28:51,170 --> 00:28:54,306
+在那里，docker compose ps 显示同样的映射
+There, docker compose ps shows the same mapping.
+
+500
+00:28:54,550 --> 00:28:58,475
+额外的 network ls 显示，toynet 是 Compose 创建的
+An extra network ls shows that Compose made toynet,
+
+501
+00:28:58,475 --> 00:29:02,400
+而 compose exec 按名字连到了 processor，回复 ok
+and compose exec reaches the processor by name: ok.
+
+502
+00:29:02,766 --> 00:29:05,032
+README 的那张表把每条手动敲的命令
+The README's table pairs each by-hand command with its Compose version.
+
+503
+00:29:05,032 --> 00:29:07,310
+和它在 Compose 里的写法一一对应
+The README's table pairs each by-hand command with its Compose version.
+
+504
+00:29:07,630 --> 00:29:10,937
+在第一个终端里，你的请求现在会出现在日志里
+In the first terminal, your requests now show in the log.
+
+505
+00:29:11,183 --> 00:29:14,305
+README 到第 4 步最后才停掉应用
+The README stops the app at the end of step 4;
+
+506
+00:29:14,305 --> 00:29:17,562
+我们现在就在前台停掉它：按 Ctrl-C
+we stop it now, in the foreground: press Ctrl+C.
+
+507
+00:29:17,882 --> 00:29:22,042
+Compose 说它正在优雅地停止，但要花大约 20 秒
+Compose says it's stopping gracefully, but it takes about 20 seconds.
+
+508
+00:29:25,250 --> 00:29:27,862
+作为每个 container 的第一个进程
+Python, each container's first process,
+
+509
+00:29:27,862 --> 00:29:29,871
+Python 会忽略这个礼貌的停止信号
+ignores the polite stop signal
+
+510
+00:29:29,871 --> 00:29:32,013
+除非程序里专门写了捕获它的代码
+unless it's written to catch it.
+
+511
+00:29:32,333 --> 00:29:35,874
+所以 Docker 对每个 container 等 10 秒，然后强行杀掉它
+So Docker waits 10 seconds per container, then kills it.
+
+512
+00:29:38,783 --> 00:29:41,578
+退出码 137 表示被强行杀掉
+Exit code 137 means killed.
+
+513
+00:29:41,898 --> 00:29:43,576
+用 docker compose ps -a 一看
+docker compose ps -a:
+
+514
+00:29:43,576 --> 00:29:46,996
+两个 container 都退出了，但还在那里
+both containers exited, but they're still there.
+
+515
+00:29:47,233 --> 00:29:50,267
+输入 docker compose down
+docker compose down removes the containers
+
+516
+00:29:50,267 --> 00:29:53,590
+它删掉 container 和网络，ps -a 里什么都不剩
+and the network, and nothing is left in ps -a.
+
+517
+00:29:53,910 --> 00:29:56,236
+按 Ctrl-C 是停止；down 才是删除
+Ctrl+C stops; down removes.
+
+518
+00:29:56,556 --> 00:29:58,497
+暂停一下，把整个流程跑一遍
+Pause, and run the whole cycle.
+
+519
+00:29:59,533 --> 00:30:05,314
+回到 README 的顺序：up -d 在后台启动应用，把提示符还给你
+Back to the README's order: up -d starts the app in the background and returns your prompt.
+
+520
+00:30:05,550 --> 00:30:07,306
+两条 Handy commands 里的命令
+Two handy commands.
+
+521
+00:30:07,356 --> 00:30:10,871
+用 compose logs -f 持续跟踪 gateway 的日志
+docker compose logs -f follows the gateway's log;
+
+522
+00:30:10,871 --> 00:30:13,166
+按 Ctrl-C 只停止跟踪
+Ctrl+C stops only the following.
+
+523
+00:30:13,486 --> 00:30:16,888
+用 compose exec gateway sh 打开一个 shell
+docker compose exec gateway sh opens a shell,
+
+524
+00:30:16,888 --> 00:30:20,440
+在里面，环境变量显示的是 processor 和 9200
+where the environment shows processor and 9200.
+
+525
+00:30:22,083 --> 00:30:25,859
+接下来，README 里说：在文件里重做一遍 port 实验
+Next, the README says to repeat the port experiments in the file.
+
+526
+00:30:26,179 --> 00:30:29,480
+把 8090 改成 8095，再运行 up -d
+Change 8090 to 8095 and run up -d:
+
+527
+00:30:29,480 --> 00:30:32,878
+Compose 只重新创建 gateway
+Compose recreates only the gateway.
+
+528
+00:30:33,116 --> 00:30:37,447
+页面在 8095 上有回应；把它改回去，再让它生效一次
+The page answers on 8095; change it back and apply again.
+
+529
+00:30:40,300 --> 00:30:42,647
+我们在 processor 的代码里加了一行注释
+We added a comment to the processor's code.
+
+530
+00:30:42,967 --> 00:30:46,913
+复制进 image 的代码改了，就要加 --build
+Changed code that's copied into an image needs --build.
+
+531
+00:30:47,233 --> 00:30:51,478
+只有 COPY 那一层是新的，也只有 processor 被重新创建
+Only the copy layer is new, and only the processor is recreated.
+
+532
+00:30:51,716 --> 00:30:53,776
+那个 gateway 的目录是挂载进去的
+The gateway's folder is mounted,
+
+533
+00:30:53,776 --> 00:30:56,157
+而且它每次加载都会重新读页面
+and it rereads its page on each load:
+
+534
+00:30:56,157 --> 00:30:59,311
+改动在下次刷新时就能看到，不用重新构建
+edits show on the next reload, without a rebuild.
+
+535
+00:31:00,166 --> 00:31:04,731
+最后，docker compose down；ps -a 里什么都不剩
+To finish, docker compose down; nothing is left in ps -a.
+
+536
+00:31:05,051 --> 00:31:10,513
+这些 image 还在，共用大约 200 MB；删掉它们可以腾出空间
+The images remain, sharing about 200 megabytes; remove them to free space.
+
+537
+00:31:10,833 --> 00:31:12,444
+这个 port toy 一分钱都不花
+Port toy costs nothing.
+
+538
+00:31:12,646 --> 00:31:14,246
+暂停一下，把它关掉
+Pause and shut it down.
+
+539
+00:31:14,333 --> 00:31:17,106
+自测一下，每道题之后都暂停一下
+To test yourself, pause after each question.
+
+540
+00:31:17,426 --> 00:31:20,442
+第一题：哪些文件定义了一个 mega-pipeline 的 image
+One: which files define a mega-pipeline image,
+
+541
+00:31:20,442 --> 00:31:23,720
+本地没有 image 时，run 用的又是什么？
+and what does run use when there's no local image?
+
+542
+00:31:23,966 --> 00:31:25,944
+第二题：调用你的 bucket 时
+Two: which three gates must a call
+
+543
+00:31:25,944 --> 00:31:28,851
+必须通过哪三道关卡，每一道又在哪里失败？
+to your bucket pass, and where does each one fail?
+
+544
+00:31:29,171 --> 00:31:31,137
+第三题：一个被 Git 忽略的密钥
+Three: how does a git-ignored key
+
+545
+00:31:31,137 --> 00:31:33,460
+怎么会跑进 image 里，又该怎么修？
+end up in an image, and what's the fix?
+
+546
+00:31:33,700 --> 00:31:40,655
+第四题：-p 127.0.0.1:8095:9100
+Four: -p 127.0.0.1:8095:9100.
+
+547
+00:31:40,975 --> 00:31:46,589
+浏览器用哪个数字，gateway 绑定哪个
+Which number does the browser use, which does the gateway bind,
+
+548
+00:31:46,589 --> 00:31:49,529
+127.0.0.1 又限制了什么？
+and what does 127.0.0.1 restrict?
+
+549
+00:31:49,849 --> 00:31:52,654
+第五题：在 gateway 里面，localhost 是什么
+Five: inside the gateway, what is localhost,
+
+550
+00:31:52,654 --> 00:31:55,012
+哪个名字能连到 processor？
+and which name reaches the processor?
+
+551
+00:31:55,250 --> 00:31:58,971
+下节课，一个命令行 container 会在 Compose 网络上
+Next lecture, a command-line container calls a database
+
+552
+00:31:58,971 --> 00:32:01,609
+按名字调用一个数据库 container
+container by name on a Compose network,
+
+553
+00:32:01,609 --> 00:32:05,127
+用的还是同样的 secrets 挂载：第一部分和第二部分合在一起
+with the same secrets mount: parts 1 and 2 together.
+
+554
+00:32:05,447 --> 00:32:07,495
+答案在练习里
+Answers are in the exercises.

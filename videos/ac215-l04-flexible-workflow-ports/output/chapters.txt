@@ -1,16 +1,16 @@
 00:00 Build or pull? Whose localhost?
-01:30 Same pipeline, built like a team
-02:43 Get the code: clone, or switch branches
-04:59 Your bucket and your three values
-06:36 Three gates: account, role, API
-08:54 docker-shell.sh: one script, two windows
-11:11 Five components, five honest errors
-13:51 dev, run, and a stale image
-16:24 prod, a stowaway key, and clean-up
-18:14 Two little computers, one network
-19:37 Build, start, read the logs
-21:10 Send a message: ports on the wire
-22:23 Who can reach whom
-24:58 Change the ports
-27:07 Compose: the same app, declared
-29:20 Edit, apply, tear down, recap
+01:31 Same pipeline, built like a team
+02:44 Get the code: clone, or switch branches
+05:10 Your bucket and your three values
+06:51 Three gates: account, role, API
+09:09 docker-shell.sh: one script, two windows
+11:26 Five components, five honest errors
+14:06 dev, run, and a stale image
+16:44 prod, a stowaway key, and clean-up
+18:40 Two little computers, one network
+20:09 Build, start, read the logs
+21:43 Send a message: ports on the wire
+22:56 Who can reach whom
+25:31 Change the ports
+27:44 Compose: the same app, declared
+29:59 Edit, apply, tear down, recap

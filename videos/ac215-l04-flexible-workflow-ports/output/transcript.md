@@ -10,7 +10,7 @@ Every command is also in the study guide. Part 1 needs Tutorial 0 and a Google C
 We recorded on Linux, with Docker Engine 29.8.2 at the time of recording. On a Mac or in Git BASH, the prompt and a few messages differ; the commands and ports don't.
 One honest limit: we had no Google account. Wherever the code calls Google, you'll see the command, the real error a missing key gives, and what to look for.
 
-## 01:30 — Same pipeline, built like a team
+## 01:31 — Same pipeline, built like a team
 In lecture 3, the course handed you a shared bucket and one shared key, copied into every component folder. This branch is the same pipeline, built the way a real team would build it.
 Your team owns its bucket. You create your own service account, and keep its one key outside the repo.
 You no longer write the Dockerfile: it's committed, together with pyproject.toml and uv.lock. And each component has one script, docker-shell.sh, that holds the long docker build and docker run commands.
@@ -19,9 +19,9 @@ A team can get an image two ways. Early in a project, everyone builds it from th
 Look closely at the tag. It's a signpost to one particular image, built on some day, from some version of the recipe. Nothing promises it matches the commit you have.
 One script decides which of the two you get; we'll read it line by line. First, the code.
 
-## 02:43 — Get the code: clone, or switch branches
+## 02:44 — Get the code: clone, or switch branches
 Starting fresh? From your workspace folder, clone the repo with this branch checked out: git clone, dash dash branch flexible-workflow. Then cd into mega-pipeline. Pause and run both.
-Two extra checks: git branch shows flexible-workflow at the pinned commit, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which you wrote in lecture 3.
+Two extra checks: git branch shows flexible-workflow at the commit we recorded, and transcribe audio holds its Dockerfile, the script, pyproject.toml and uv.lock, which this branch commits.
 Already have your clone from lecture 3? It's on main; if you cloned fresh, skip to the next chapter. Step 1: cd into it. Two extra checks show its state.
 Three piles. Your edited cli.py is tracked. Your two new files in generate text are untracked. In transcribe audio, the Dockerfile, pyproject.toml, uv.lock and the key are ignored.
 Step 2, git fetch origin. Here it prints nothing: a clone already has every branch, and nothing had changed upstream. Yours may list updates.
@@ -29,11 +29,11 @@ Step 3, git checkout flexible-workflow, and Git refuses, for two reasons.
 Your edits to cli.py would be overwritten, and two untracked files sit where the branch has files of its own. Nothing changed.
 The README's note covers the first reason: git stash puts your edits away, and the first wall falls. On a retry, the untracked files still block it.
 A small gap: the note covers only edited files. An extra git stash dash u stashes untracked files too, and the checkout works. The other option, git checkout dash dash dot, discards your edits and leaves untracked files alone.
-Step 5, git branch: star, flexible-workflow. Pause and switch your own clone.
+Step 5, git branch: star, flexible-workflow. Before you switch your own clone, copy out any lecture 3 Dockerfile, pyproject.toml and uv.lock you want to keep: the switch replaces them. Pause and switch.
 Extra checks show your ignored lecture 3 Dockerfile, pyproject.toml and uv.lock were replaced by the branch's, without a word: copy them out first if you want them.
 The old key still sits inside transcribe audio; your secrets stay put, as the README says. Every build there copies it into the image, so delete each component's secrets folder now. Your edits wait in the stash.
 
-## 04:59 — Your bucket and your three values
+## 05:10 — Your bucket and your three values
 Before you run, the README's folder layout: your key lives in a secrets folder beside the repo, never inside it. Go up one level, to your workspace, and create that folder.
 Step 2: every cli.py sets three values near the top: your project ID, your bucket, and your group name.
 An extra grep shows what ships: three files are blank, but generate text and translate text already hold the course's project and bucket, and the instructor's group name.
@@ -41,9 +41,9 @@ A small slip: the README says an assert stops you if you forget, but it only rej
 Set all three, in all five files. An extra git diff shows our placeholders, your-project-id, your-team-bucket and group-01; type your own. In translate text, also change the target language from Spanish to French. Pause and edit them.
 Step 3, your bucket: the components read and write these prefixes, and every output lands under your group's name.
 Another small gap: the README never says how to create the bucket, and its sample upload is named test dot mp3. Create the bucket in the console.
-Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input.
+Then upload a short recording into a folder named input audios, as input, dash, something, dot mp3. The transcript keeps that name, and upload only sends names starting with input. Bucket names are global: pick a unique one. Pause and create yours.
 
-## 06:36 — Three gates: account, role, API
+## 06:51 — Three gates: account, role, API
 Your bucket only lets in callers who prove who they are and have permission. For code, that identity is a service account, with one JSON key.
 Google's libraries turn that key into a short-lived token, and every call to Google's API doors must pass three gates.
 Gate 1 asks who you are: without the key, the call fails inside your container. Gate 2 asks what you may do: the account needs a role. Gate 3 asks if the API is switched on.
@@ -55,7 +55,7 @@ Then the gcloud services enable command switches on all five. Our laptop had no 
 Ponder this. Your key is in place and every API is enabled, but you forgot the Agent Platform User role. Where does generate text fail: inside your container, or at Google?
 At Google, as a permission error. The key proved who you are; the role decides what you may do. New roles and APIs can take minutes to apply. Pause, and set up your account, key and APIs.
 
-## 08:54 — docker-shell.sh: one script, two windows
+## 09:09 — docker-shell.sh: one script, two windows
 Every component runs through its docker-shell.sh; let's read it once. Line 7 names the image, and the container too. Lines 8 and 9 build paths from pwd, the folder you're in.
 So run it from the component folder. Line 10 is the key's path inside the container; line 13 names the Docker Hub account, dlops.
 The case statement turns your first word into a mode. No word: build, then run. Dev only builds, run only runs, and prod builds for two processor types and pushes.
@@ -68,7 +68,7 @@ You're inside, as user app, in slash app; after the at sign comes the container 
 Three extra checks inside: python comes from the venv, the signpost points to slash secrets, and slash secrets is empty here. In a second terminal, opened in the same folder, an extra docker inspect lists both mounts.
 Step 5, chmod plus x, is harmless: an extra ls shows it's already executable. Step 6, on Windows: use Git BASH, and put winpty in front if Docker says the input device is not a T-T-Y.
 
-## 11:11 — Five components, five honest errors
+## 11:26 — Five components, five honest errors
 Back in the container, the Quick Reference. The download step prints its arguments, then stops: default credentials error, file slash secrets slash mega-pipeline.json was not found.
 That's gate 1, failing inside the container. Usual causes: no key in the secrets folder, another file name, or the script run from the wrong folder.
 Both transcribe and upload stop the same way. With your key, look for the transcript, then a text file under text prompts, slash group-01, locally and in the bucket.
@@ -84,7 +84,7 @@ In translate text: an 8-second build, help failing at import, then download, tra
 In synthesis audio, the same: download, then synthesis. Pause, and run all five with your key, checking the bucket after each.
 Two small slips. The translation targeted Spanish, but the final voice is French: that's why you switched it. And the optional ElevenLabs bonus reads its key from inside slash app: point it at slash secrets.
 
-## 13:51 — dev, run, and a stale image
+## 14:06 — dev, run, and a stale image
 Exit, and cd back into transcribe audio. Step 2 of How to Run, docker-shell.sh dev, only builds: no container starts. Here, all was cached; after any change in the folder, the copy and uv sync steps run again.
 What is dev for? Adding a package: uv add, inside the container, updates pyproject.toml and uv.lock through the window; then dev bakes it into the image.
 Step 3, run, skips the build: using local image, because one exists. Pause and try dev and run yourself.
@@ -98,19 +98,19 @@ Its build matches an older branch, pipenv flexible workflow, not your recipe. Yo
 It also left a Pipfile in your folder, owned by root. If you tried this, delete it and run dev to get your own image back.
 So build locally, with no argument or dev, and use run only for images your team pushed from this branch, under your own Docker Hub account.
 
-## 16:24 — prod, a stowaway key, and clean-up
+## 16:44 — prod, a stowaway key, and clean-up
 Step 4, prod, publishes. It recreates a builder named multi-arch, a build engine for several processor types. Dash dash use makes it current, and the script never switches back: docker buildx use default does.
 Then one buildx build makes amd64 and arm64 images and pushes both under one tag: as in lecture 2, an Apple-silicon Mac pulls one, a cloud VM the other.
 Before prod, log in with an access token; dash p leaves it in your shell history. Set the Docker username in the script to your own. Don't run prod yet: first, check what it would publish.
 Here's why. In the switched lecture 3 clone, the old key still sits in transcribe audio. Build there with dev, and an extra command lists the new image's slash app: the key is inside.
 The copy line takes the whole folder. The gitignore keeps secrets out of Git, not out of images, and no branch has a dockerignore. Prod would push your key to Docker Hub.
-So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Pause and check yours.
+So the README's promise holds for Git, not for images. Delete any secrets folder inside a component, add a dockerignore listing secrets, and if a key was ever pushed, delete that key. Prod is optional: after the fix, run it only if your team publishes. Pause and check yours.
 Clean-up for part 1. Exit each container; dash dash r m deletes it. The transcribe image alone is 1.48 gigabytes: remove all five with docker image rm, plus any dlops images you pulled.
 In the cloud, the bucket bills a little storage until you delete it, when the course is over; the key works until you delete it in the console. In part 2: containers that talk to each other directly.
 
-## 18:14 — Two little computers, one network
+## 18:40 — Two little computers, one network
 In part 1, containers only left files in a bucket. Port toy makes two containers talk directly, and needs only Docker: a gateway serves a web page and forwards your text to a processor, which turns it into capitals.
-Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash.
+Think of each container as its own little computer, with its own localhost and its own full set of ports. Two containers can both use port 9100 without any clash. The lecture calls this a network namespace: each container is isolated until you wire it.
 A network you create joins them like a small home network, with a phone book that turns container names into addresses. Docker's default network has none.
 Prerequisites: docker run hello-world checks that Docker is running. It pulls a tiny image and prints hello from Docker.
 Step 1 sets the app up by hand. From your workspace folder, clone the code: the README says clone or download but prints no command. Then cd into port toy. Pause and run them.
@@ -118,7 +118,7 @@ Two extra checks: the files match the README's tree, a gateway and a processor, 
 Next, docker network create toynet. Docker prints the new network's ID: that's the rail both containers will plug into.
 From the README's handy commands, docker network ls lists it, beside Docker's three built-in networks. Pause, and create yours.
 
-## 19:37 — Build, start, read the logs
+## 20:09 — Build, start, read the logs
 Next, build two images. The two Dockerfiles are almost identical: a slim Python 3.14 image, plus curl from apt. Each copies its code and runs it with dash u, so prints reach the logs at once.
 The processor builds first, and its apt layer takes a few seconds. Your first build also pulls the Python base image.
 Then the gateway: Docker reuses the processor's apt layer from the cache, because the two files match up to the copy line. It's done in under a second.
@@ -127,7 +127,7 @@ Then start the gateway. Dash p publishes a port: it opens a street door on your 
 The two dash e flags tell the gateway where to call: the name processor, port 9200. Lines 13 and 14 of its code read them; the values in quotes there are only defaults.
 Now check docker logs for each. The processor listens on 9200, internal only; the gateway listens on 9100. Pause and start both.
 
-## 21:10 — Send a message: ports on the wire
+## 21:43 — Send a message: ports on the wire
 To finish step 1, open localhost 8090 in your browser, type a message, and click Send. The reply comes back in capitals, with three port numbers: where the gateway sent from, where the processor listened, and where it saw the message arrive from.
 We recorded without a browser, so curl sent the same request the page sends; this is the reply it got.
 The processor listened on 9200, the destination. But every connection has two ends, so the gateway's side needs a port too. Its operating system picked a temporary one, 55620, and stapled it to the packet.
@@ -135,7 +135,7 @@ The processor saw the same number arrive, because nothing rewrites it inside the
 Send again, and the number changes: a new connection, a new temporary port. Yours will differ.
 One more detail: the page's diagram shows 8090 by reading its own address bar. The container can't know which door on your laptop you gave it. Pause, send a message, and leave both running.
 
-## 22:23 — Who can reach whom
+## 22:56 — Who can reach whom
 Step 2 checks the ports. Docker ps shows the gateway's mapping, host side first: 127.0.0.1, port 8090, to 9100. The processor's PORTS column is empty: listening, but not published.
 An extra docker ps with three columns matches the README's sample.
 What does the 127.0.0.1 do? This extra run leaves it out, asking for door 8090 on every address. Docker refuses, port is already allocated: our gateway holds 8090. The container was still created, so remove it.
@@ -144,11 +144,11 @@ From the laptop, curl on 8090 returns the gateway's page. Curl on 9200 can't con
 From inside the gateway, docker exec runs curl, asking for the name processor, on port 9200. The answer: ok.
 Ponder this. The same command with localhost instead of processor. What answers?
 Nothing. Inside the gateway, localhost is the gateway itself, and nothing there listens on 9200. That's the second puzzle: each container has its own localhost. An extra check: on 9100, its own port, localhost returns the page.
-So how did the name work? From the handy commands, docker network inspect shows an address for each container, on toynet's own subnet.
+So how did the name work? From the handy commands, docker network inspect shows an address for each container, from toynet's own address range, its subnet.
 Each container asks Docker's built-in phone book, at 127.0.0.11, which turns names into those addresses. Addresses can change when a container restarts; names stay.
 Another handy command, docker exec dash i t gateway sh, opens a shell inside; its hostname is the container ID. One aside: the processor image has curl too, though the README implies it doesn't. Pause, and test from both sides.
 
-## 24:58 — Change the ports
+## 25:31 — Change the ports
 Step 3 changes the ports. First the street door: remove the gateway, and start it again on 127.0.0.1, port 8095. The room inside stays 9100.
 The page works on 8095. Two extra checks: 8090 no longer connects, and docker ps shows the new mapping. Pause and move your gateway's door.
 Why do this? Another app on your laptop might already hold 8090. Doors on the laptop must be unique; rooms inside containers never collide.
@@ -161,8 +161,8 @@ The gateway's processor port. Remove the gateway and start it with 9300, back on
 The two settings must agree: the processor's PORT and the gateway's processor port.
 Finally, clean up before Compose: remove both containers, then the network. An extra check shows only hello-world's old container left. Skip this, and Compose hits a name conflict. Pause and clean up.
 
-## 27:07 — Compose: the same app, declared
-Step 4: Docker Compose. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it.
+## 27:44 — Compose: the same app, declared
+Step 4: Docker Compose, which builds and starts the whole app from one YAML file. The README shows an excerpt; open the whole docker-compose.yml. Almost every flag you typed by hand has a home in it.
 Dash dash name becomes container name, and the build command becomes build. Dash p becomes ports, dash e becomes environment, and the network is named at the bottom of the file.
 Two keys are new: the volumes key mounts the gateway's folder into slash app, and the depends on key starts the processor first. All of step 1 collapses into one command: docker compose up.
 Run it. Compose builds both images, all from the cache, and names them after the folder and the service: port toy, dash gateway.
@@ -175,15 +175,15 @@ Python, each container's first process, ignores the polite stop signal unless it
 Exit code 137 means killed. Docker compose ps dash a: both containers exited, but they're still there.
 Docker compose down removes the containers and the network, and nothing is left in ps dash a. Control C stops; down removes. Pause, and run the whole cycle.
 
-## 29:20 — Edit, apply, tear down, recap
+## 29:59 — Edit, apply, tear down, recap
 Back to the README's order: up dash d starts the app in the background and returns your prompt.
 Two handy commands. Compose logs dash f follows the gateway's log; Control C stops only the following. Compose exec gateway sh opens a shell, where the environment shows processor and 9200.
-Step 3: repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway.
+Next, the README says to repeat the port experiments in the file. Change 8090 to 8095 and run up dash d: Compose recreates only the gateway.
 The page answers on 8095; change it back and apply again.
-Changed code that's copied into an image needs dash dash build. We added a comment to the processor's code: only the copy layer is new, and only the processor is recreated.
+We added a comment to the processor's code. Changed code that's copied into an image needs dash dash build. Only the copy layer is new, and only the processor is recreated.
 The gateway's folder is mounted, and it rereads its page on each load: edits show on the next reload, without a rebuild.
 To finish, docker compose down; nothing is left in ps dash a. The images remain, sharing about 200 megabytes; remove them to free space. Port toy costs nothing. Pause and shut it down.
-To test yourself. One: which files define a mega-pipeline image, and what does run use when there's no local image?
+To test yourself, pause after each question. One: which files define a mega-pipeline image, and what does run use when there's no local image?
 Two: which three gates must a call to your bucket pass, and where does each one fail? Three: how does a git-ignored key end up in an image, and what's the fix?
 Four: dash p 127.0.0.1, 8095, 9100. Which number does the browser use, which does the gateway bind, and what does 127.0.0.1 restrict? Five: inside the gateway, what is localhost, and which name reaches the processor?
 Next lecture, a command-line container calls a database container by name on a Compose network, with the same secrets mount: parts 1 and 2 together. Answers are in the exercises.

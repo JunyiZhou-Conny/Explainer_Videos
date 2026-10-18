@@ -1,0 +1,241 @@
+[Script Info]
+Title: AC215 · L4, part 2: port_toy — networks, ports and Compose
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 2
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Bilingual,Noto Sans CJK SC,50,&H00F2F2F2,&H00F2F2F2,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,0,2,40,40,16,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.35,Bilingual,,0,0,0,,在第一部分，container 只是把文件留在 bucket 里\N{\fs33\c&H00C8C0B8&\bord1.4}In part 1, containers only left files in a bucket.
+Dialogue: 0,0:00:03.67,0:00:06.59,Bilingual,,0,0,0,,这个 port toy 让两个 container 直接通信\N{\fs33\c&H00C8C0B8&\bord1.4}Port toy makes two containers talk directly,
+Dialogue: 0,0:00:06.59,0:00:09.91,Bilingual,,0,0,0,,而且只需要 Docker：一个 gateway 提供网页\N{\fs33\c&H00C8C0B8&\bord1.4}and needs only Docker: a gateway serves a web page
+Dialogue: 0,0:00:09.91,0:00:14.42,Bilingual,,0,0,0,,把你的文字转发给一个 processor，processor 再把它变成大写\N{\fs33\c&H00C8C0B8&\bord1.4}and forwards your text to a processor, which turns it into capitals.
+Dialogue: 0,0:00:14.67,0:00:17.83,Bilingual,,0,0,0,,把每个 container 想成一台独立的小电脑\N{\fs33\c&H00C8C0B8&\bord1.4}Think of each container as its own little computer,
+Dialogue: 0,0:00:17.83,0:00:21.11,Bilingual,,0,0,0,,有自己的 localhost，也有自己的一整套 port\N{\fs33\c&H00C8C0B8&\bord1.4}with its own localhost and its own full set of ports.
+Dialogue: 0,0:00:21.43,0:00:25.74,Bilingual,,0,0,0,,两个 container 都可以用 port 9100，完全不会冲突\N{\fs33\c&H00C8C0B8&\bord1.4}Two containers can both use port 9100 without any clash.
+Dialogue: 0,0:00:26.06,0:00:29.00,Bilingual,,0,0,0,,这节课把这叫作网络命名空间\N{\fs33\c&H00C8C0B8&\bord1.4}The lecture calls this a network namespace:
+Dialogue: 0,0:00:29.00,0:00:32.08,Bilingual,,0,0,0,,每个 container 都是隔离的，直到你把它们连起来\N{\fs33\c&H00C8C0B8&\bord1.4}each container is isolated until you wire it.
+Dialogue: 0,0:00:32.32,0:00:35.93,Bilingual,,0,0,0,,你自己创建的网络把它们连起来，就像家里的小局域网\N{\fs33\c&H00C8C0B8&\bord1.4}A network you create joins them like a small home network,
+Dialogue: 0,0:00:35.93,0:00:39.68,Bilingual,,0,0,0,,还带一本电话簿，把 container 名变成地址\N{\fs33\c&H00C8C0B8&\bord1.4}with a phone book that turns container names into addresses.
+Dialogue: 0,0:00:40.00,0:00:42.11,Bilingual,,0,0,0,,Docker 的默认网络没有电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}Docker's default network has none.
+Dialogue: 0,0:00:42.35,0:00:43.51,Bilingual,,0,0,0,,先看 Prerequisites\N{\fs33\c&H00C8C0B8&\bord1.4}Prerequisites:
+Dialogue: 0,0:00:43.51,0:00:46.70,Bilingual,,0,0,0,,用 docker run hello-world 检查 Docker 有没有在运行\N{\fs33\c&H00C8C0B8&\bord1.4}docker run hello-world checks that Docker is running.
+Dialogue: 0,0:00:47.02,0:00:50.31,Bilingual,,0,0,0,,它会 pull 一个很小的 image，打印出 Hello from Docker\N{\fs33\c&H00C8C0B8&\bord1.4}It pulls a tiny image and prints Hello from Docker!
+Dialogue: 0,0:00:50.55,0:00:52.79,Bilingual,,0,0,0,,第 1 步手动把应用搭起来\N{\fs33\c&H00C8C0B8&\bord1.4}Step 1 sets the app up by hand.
+Dialogue: 0,0:00:53.11,0:00:55.83,Bilingual,,0,0,0,,在你的工作区目录里，把代码 clone 下来\N{\fs33\c&H00C8C0B8&\bord1.4}From your workspace folder, clone the code:
+Dialogue: 0,0:00:55.83,0:00:59.38,Bilingual,,0,0,0,,README 说 clone 或下载，却没给命令\N{\fs33\c&H00C8C0B8&\bord1.4}the README says clone or download but prints no command.
+Dialogue: 0,0:00:59.70,0:01:01.43,Bilingual,,0,0,0,,然后 cd 进 port toy 目录\N{\fs33\c&H00C8C0B8&\bord1.4}Then cd into port toy.
+Dialogue: 0,0:01:01.75,0:01:03.20,Bilingual,,0,0,0,,暂停一下，把它们跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run them.
+Dialogue: 0,0:01:03.25,0:01:06.71,Bilingual,,0,0,0,,两个额外检查：文件和 README 里的目录树一致\N{\fs33\c&H00C8C0B8&\bord1.4}Two extra checks: the files match the README's tree,
+Dialogue: 0,0:01:06.71,0:01:08.44,Bilingual,,0,0,0,,一个 gateway，一个 processor\N{\fs33\c&H00C8C0B8&\bord1.4}a gateway and a processor,
+Dialogue: 0,0:01:08.44,0:01:11.44,Bilingual,,0,0,0,,git log 显示这个视频 pin 住的 commit\N{\fs33\c&H00C8C0B8&\bord1.4}and git log shows the commit this video pins.
+Dialogue: 0,0:01:11.68,0:01:14.09,Bilingual,,0,0,0,,接下来：docker network create toynet\N{\fs33\c&H00C8C0B8&\bord1.4}Next, docker network create toynet.
+Dialogue: 0,0:01:14.41,0:01:16.59,Bilingual,,0,0,0,,Docker 打印出新网络的 ID\N{\fs33\c&H00C8C0B8&\bord1.4}Docker prints the new network's ID:
+Dialogue: 0,0:01:16.59,0:01:19.51,Bilingual,,0,0,0,,这就是两个 container 都要接上去的那根导轨\N{\fs33\c&H00C8C0B8&\bord1.4}that's the rail both containers will plug into.
+Dialogue: 0,0:01:19.75,0:01:21.92,Bilingual,,0,0,0,,从 README 的 Handy commands 里拿一条\N{\fs33\c&H00C8C0B8&\bord1.4}From the README's handy commands,
+Dialogue: 0,0:01:21.92,0:01:23.69,Bilingual,,0,0,0,,docker network ls 把它列出来\N{\fs33\c&H00C8C0B8&\bord1.4}docker network ls lists it,
+Dialogue: 0,0:01:23.69,0:01:26.32,Bilingual,,0,0,0,,旁边是 Docker 的三个内置网络\N{\fs33\c&H00C8C0B8&\bord1.4}beside Docker's three built-in networks.
+Dialogue: 0,0:01:26.64,0:01:28.24,Bilingual,,0,0,0,,暂停一下，创建你自己的网络\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and create yours.
+Dialogue: 0,0:01:29.27,0:01:30.97,Bilingual,,0,0,0,,接下来，构建两个 image\N{\fs33\c&H00C8C0B8&\bord1.4}Next, build two images.
+Dialogue: 0,0:01:31.29,0:01:34.74,Bilingual,,0,0,0,,两个 Dockerfile 几乎一模一样\N{\fs33\c&H00C8C0B8&\bord1.4}The two Dockerfiles are almost identical:
+Dialogue: 0,0:01:34.74,0:01:38.53,Bilingual,,0,0,0,,一个精简版的 Python 3.14 image，再从 apt 装上 curl\N{\fs33\c&H00C8C0B8&\bord1.4}a slim Python 3.14 image, plus curl from apt.
+Dialogue: 0,0:01:38.85,0:01:41.56,Bilingual,,0,0,0,,每个都把自己的代码复制进去，用 -u 运行\N{\fs33\c&H00C8C0B8&\bord1.4}Each copies its code and runs it with -u,
+Dialogue: 0,0:01:41.56,0:01:43.75,Bilingual,,0,0,0,,这样打印的内容会马上进到日志里\N{\fs33\c&H00C8C0B8&\bord1.4}so prints reach the logs at once.
+Dialogue: 0,0:01:44.00,0:01:47.80,Bilingual,,0,0,0,,先构建的是 processor，它的 apt 那一层要花几秒钟\N{\fs33\c&H00C8C0B8&\bord1.4}The processor builds first, and its apt layer takes a few seconds.
+Dialogue: 0,0:01:48.12,0:01:51.32,Bilingual,,0,0,0,,你第一次构建时，还会 pull Python 的 base image\N{\fs33\c&H00C8C0B8&\bord1.4}Your first build also pulls the Python base image.
+Dialogue: 0,0:01:51.57,0:01:52.70,Bilingual,,0,0,0,,然后是 gateway\N{\fs33\c&H00C8C0B8&\bord1.4}Then the gateway:
+Dialogue: 0,0:01:52.70,0:01:56.30,Bilingual,,0,0,0,,Docker 从缓存里复用了 processor 的 apt 那一层\N{\fs33\c&H00C8C0B8&\bord1.4}Docker reuses the processor's apt layer from the cache,
+Dialogue: 0,0:01:56.30,0:01:59.46,Bilingual,,0,0,0,,因为两个文件在 COPY 那一行之前都一样\N{\fs33\c&H00C8C0B8&\bord1.4}because the two files match up to the copy line.
+Dialogue: 0,0:01:59.78,0:02:01.38,Bilingual,,0,0,0,,不到 1 秒就构建完了\N{\fs33\c&H00C8C0B8&\bord1.4}It's done in under a second.
+Dialogue: 0,0:02:02.37,0:02:08.15,Bilingual,,0,0,0,,然后在 toynet 上启动 processor，PORT 设为 9200，不加 -p\N{\fs33\c&H00C8C0B8&\bord1.4}Then start the processor on toynet, with PORT set to 9200, and no -p.
+Dialogue: 0,0:02:08.47,0:02:14.33,Bilingual,,0,0,0,,它在自己的盒子里监听 9200，但你笔记本上没有任何东西通向它\N{\fs33\c&H00C8C0B8&\bord1.4}It listens on 9200 inside its own box, but nothing on your laptop leads to it.
+Dialogue: 0,0:02:14.58,0:02:16.18,Bilingual,,0,0,0,,然后启动 gateway\N{\fs33\c&H00C8C0B8&\bord1.4}Then start the gateway.
+Dialogue: 0,0:02:16.31,0:02:20.48,Bilingual,,0,0,0,,这里的 -p 会发布一个 port：它在你笔记本上开一扇临街的门\N{\fs33\c&H00C8C0B8&\bord1.4}-p publishes a port: it opens a street door on your laptop
+Dialogue: 0,0:02:20.48,0:02:23.50,Bilingual,,0,0,0,,通向 container 里面的一个房间\N{\fs33\c&H00C8C0B8&\bord1.4}that leads to a room inside the container.
+Dialogue: 0,0:02:23.82,0:02:29.31,Bilingual,,0,0,0,,顺序是 IP 地址、host port、container port\N{\fs33\c&H00C8C0B8&\bord1.4}The order is IP address, host port, container port:
+Dialogue: 0,0:02:29.31,0:02:33.18,Bilingual,,0,0,0,,127.0.0.1，意思是只限这台笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}127.0.0.1, meaning this laptop only,
+Dialogue: 0,0:02:33.18,0:02:36.51,Bilingual,,0,0,0,,然后是 8090 号门，最后是 9100 号房间\N{\fs33\c&H00C8C0B8&\bord1.4}then door 8090, then room 9100.
+Dialogue: 0,0:02:38.00,0:02:41.78,Bilingual,,0,0,0,,两个 -e 参数告诉 gateway 该去调用哪里\N{\fs33\c&H00C8C0B8&\bord1.4}The two -e flags tell the gateway where to call:
+Dialogue: 0,0:02:41.78,0:02:44.14,Bilingual,,0,0,0,,名字是 processor，port 是 9200\N{\fs33\c&H00C8C0B8&\bord1.4}the name processor, port 9200.
+Dialogue: 0,0:02:44.46,0:02:47.15,Bilingual,,0,0,0,,它代码里的第 13 和第 14 行读取这两个值\N{\fs33\c&H00C8C0B8&\bord1.4}Lines 13 and 14 of its code read them;
+Dialogue: 0,0:02:47.15,0:02:50.33,Bilingual,,0,0,0,,那里引号里的值只是默认值\N{\fs33\c&H00C8C0B8&\bord1.4}the values in quotes there are only defaults.
+Dialogue: 0,0:02:50.57,0:02:52.55,Bilingual,,0,0,0,,现在对两个分别跑一下 docker logs\N{\fs33\c&H00C8C0B8&\bord1.4}Now check docker logs for each.
+Dialogue: 0,0:02:52.87,0:02:59.63,Bilingual,,0,0,0,,日志里，processor 监听 9200，只在内部；gateway 监听 9100\N{\fs33\c&H00C8C0B8&\bord1.4}The processor listens on 9200, internal only; the gateway listens on 9100.
+Dialogue: 0,0:02:59.95,0:03:01.55,Bilingual,,0,0,0,,暂停一下，把两个都启动\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and start both.
+Dialogue: 0,0:03:03.62,0:03:07.49,Bilingual,,0,0,0,,第 1 步的最后，在浏览器里打开 localhost:8090\N{\fs33\c&H00C8C0B8&\bord1.4}To finish step 1, open localhost:8090 in your browser,
+Dialogue: 0,0:03:07.49,0:03:09.72,Bilingual,,0,0,0,,输入一条消息，点 Send\N{\fs33\c&H00C8C0B8&\bord1.4}type a message, and click Send.
+Dialogue: 0,0:03:10.04,0:03:15.32,Bilingual,,0,0,0,,回复是大写的，还带着三个 port 数字：gateway 从哪里发出\N{\fs33\c&H00C8C0B8&\bord1.4}The reply comes back in capitals, with three port numbers: where the gateway sent from,
+Dialogue: 0,0:03:15.32,0:03:19.64,Bilingual,,0,0,0,,processor 在哪里监听，以及它看到消息是从哪里来的\N{\fs33\c&H00C8C0B8&\bord1.4}where the processor listened, and where it saw the message arrive from.
+Dialogue: 0,0:03:19.88,0:03:25.02,Bilingual,,0,0,0,,我们录制时没有浏览器，所以用 curl 发了和网页一模一样的请求\N{\fs33\c&H00C8C0B8&\bord1.4}We recorded without a browser, so curl sent the same request the page sends;
+Dialogue: 0,0:03:25.02,0:03:26.71,Bilingual,,0,0,0,,这是它拿到的回复\N{\fs33\c&H00C8C0B8&\bord1.4}this is the reply it got.
+Dialogue: 0,0:03:27.43,0:03:31.23,Bilingual,,0,0,0,,这个 processor 监听的是 9200，也就是目的地\N{\fs33\c&H00C8C0B8&\bord1.4}The processor listened on 9200, the destination.
+Dialogue: 0,0:03:31.55,0:03:35.88,Bilingual,,0,0,0,,但每个连接都有两端，所以 gateway 这一端也需要一个 port\N{\fs33\c&H00C8C0B8&\bord1.4}But every connection has two ends, so the gateway's side needs a port too.
+Dialogue: 0,0:03:36.20,0:03:43.45,Bilingual,,0,0,0,,它的操作系统挑了一个临时的，55620，把它钉在数据包上\N{\fs33\c&H00C8C0B8&\bord1.4}Its operating system picked a temporary one, 55620, and stapled it to the packet.
+Dialogue: 0,0:03:43.70,0:03:46.11,Bilingual,,0,0,0,,在 processor 那边，看到的是同一个数字\N{\fs33\c&H00C8C0B8&\bord1.4}The processor saw the same number arrive,
+Dialogue: 0,0:03:46.11,0:03:48.86,Bilingual,,0,0,0,,因为在网络内部没有任何东西会改写它\N{\fs33\c&H00C8C0B8&\bord1.4}because nothing rewrites it inside the network.
+Dialogue: 0,0:03:49.18,0:03:52.49,Bilingual,,0,0,0,,代码里，gateway 的第 38 行读取自己的 port\N{\fs33\c&H00C8C0B8&\bord1.4}Line 38 of the gateway reads its own port;
+Dialogue: 0,0:03:52.49,0:03:55.95,Bilingual,,0,0,0,,processor 的第 32 行读取发送方的 port\N{\fs33\c&H00C8C0B8&\bord1.4}line 32 of the processor reads the sender's.
+Dialogue: 0,0:03:56.18,0:04:01.11,Bilingual,,0,0,0,,再发一次，这个数字就变了：新的连接，新的临时 port\N{\fs33\c&H00C8C0B8&\bord1.4}Send again, and the number changes: a new connection, a new temporary port.
+Dialogue: 0,0:04:01.43,0:04:02.88,Bilingual,,0,0,0,,你的会不一样\N{\fs33\c&H00C8C0B8&\bord1.4}Yours will differ.
+Dialogue: 0,0:04:02.93,0:04:06.46,Bilingual,,0,0,0,,还有一个细节：页面上的示意图显示 8090\N{\fs33\c&H00C8C0B8&\bord1.4}One more detail: the page's diagram shows 8090
+Dialogue: 0,0:04:06.46,0:04:08.84,Bilingual,,0,0,0,,靠的是读取它自己的地址栏\N{\fs33\c&H00C8C0B8&\bord1.4}by reading its own address bar.
+Dialogue: 0,0:04:09.16,0:04:12.51,Bilingual,,0,0,0,,这个 container 没法知道，你在笔记本上给它开的是哪扇门\N{\fs33\c&H00C8C0B8&\bord1.4}The container can't know which door on your laptop you gave it.
+Dialogue: 0,0:04:12.83,0:04:15.58,Bilingual,,0,0,0,,暂停一下，发一条消息，两个都别停\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, send a message, and leave both running.
+Dialogue: 0,0:04:16.63,0:04:18.32,Bilingual,,0,0,0,,第 2 步检查 port\N{\fs33\c&H00C8C0B8&\bord1.4}Step 2 checks the ports.
+Dialogue: 0,0:04:18.64,0:04:25.39,Bilingual,,0,0,0,,用 docker ps 能看到 gateway 的映射，host 那一侧在前\N{\fs33\c&H00C8C0B8&\bord1.4}docker ps shows the gateway's mapping, host side first:
+Dialogue: 0,0:04:25.39,0:04:29.07,Bilingual,,0,0,0,,127.0.0.1，port 8090，到 9100\N{\fs33\c&H00C8C0B8&\bord1.4}127.0.0.1, port 8090, to 9100.
+Dialogue: 0,0:04:29.39,0:04:33.93,Bilingual,,0,0,0,,而 processor 的 PORTS 那一列是空的：在监听，但没有发布\N{\fs33\c&H00C8C0B8&\bord1.4}The processor's PORTS column is empty: listening, but not published.
+Dialogue: 0,0:04:34.18,0:04:38.56,Bilingual,,0,0,0,,额外跑一个只有三列的 docker ps，和 README 里的示例一致\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker ps with three columns matches the README's sample.
+Dialogue: 0,0:04:39.95,0:04:43.71,Bilingual,,0,0,0,,那个 127.0.0.1 有什么用？\N{\fs33\c&H00C8C0B8&\bord1.4}What does the 127.0.0.1 do?
+Dialogue: 0,0:04:44.03,0:04:48.63,Bilingual,,0,0,0,,这次额外的运行把它去掉了，要在所有地址上开 8090 号门\N{\fs33\c&H00C8C0B8&\bord1.4}This extra run leaves it out, asking for door 8090 on every address.
+Dialogue: 0,0:04:48.95,0:04:52.14,Bilingual,,0,0,0,,Docker 拒绝了，报 port is already allocated\N{\fs33\c&H00C8C0B8&\bord1.4}Docker refuses, port is already allocated:
+Dialogue: 0,0:04:52.14,0:04:53.88,Bilingual,,0,0,0,,我们的 gateway 占着 8090\N{\fs33\c&H00C8C0B8&\bord1.4}our gateway holds 8090.
+Dialogue: 0,0:04:54.20,0:04:57.04,Bilingual,,0,0,0,,不过 container 还是创建出来了，所以要把它删掉\N{\fs33\c&H00C8C0B8&\bord1.4}The container was still created, so remove it.
+Dialogue: 0,0:04:57.28,0:05:02.03,Bilingual,,0,0,0,,用 8091 号门就成功了，映射显示 0.0.0.0\N{\fs33\c&H00C8C0B8&\bord1.4}With door 8091 it works, and the mapping shows 0.0.0.0:
+Dialogue: 0,0:05:02.03,0:05:07.46,Bilingual,,0,0,0,,所有地址，所以你所在网络里的其他机器也能连进来\N{\fs33\c&H00C8C0B8&\bord1.4}every address, so other machines on your network could connect.
+Dialogue: 0,0:05:07.78,0:05:15.31,Bilingual,,0,0,0,,把它删掉。所以 README 写的是 127.0.0.1：只限这台笔记本\N{\fs33\c&H00C8C0B8&\bord1.4}Remove it. That's why the README writes 127.0.0.1: this laptop only.
+Dialogue: 0,0:05:15.55,0:05:19.67,Bilingual,,0,0,0,,在笔记本上，用 curl 访问 8090，返回的是 gateway 的页面\N{\fs33\c&H00C8C0B8&\bord1.4}From the laptop, curl on 8090 returns the gateway's page.
+Dialogue: 0,0:05:19.99,0:05:22.26,Bilingual,,0,0,0,,用 curl 访问 9200 就连不上\N{\fs33\c&H00C8C0B8&\bord1.4}curl on 9200 can't connect:
+Dialogue: 0,0:05:22.26,0:05:28.33,Bilingual,,0,0,0,,你的笔记本上没有通向它的门，除非你自己有别的程序在用 9200\N{\fs33\c&H00C8C0B8&\bord1.4}your laptop has no door to it, unless something else of yours uses 9200.
+Dialogue: 0,0:05:28.57,0:05:32.16,Bilingual,,0,0,0,,用 docker exec 在 gateway 里面运行 curl\N{\fs33\c&H00C8C0B8&\bord1.4}From inside the gateway, docker exec runs curl,
+Dialogue: 0,0:05:32.16,0:05:35.52,Bilingual,,0,0,0,,按名字 processor 去问 port 9200\N{\fs33\c&H00C8C0B8&\bord1.4}asking for the name processor, on port 9200.
+Dialogue: 0,0:05:35.84,0:05:37.44,Bilingual,,0,0,0,,回答是：ok\N{\fs33\c&H00C8C0B8&\bord1.4}The answer: ok.
+Dialogue: 0,0:05:37.60,0:05:42.21,Bilingual,,0,0,0,,来想一想。同一条命令，把 processor 换成 localhost\N{\fs33\c&H00C8C0B8&\bord1.4}Ponder this. The same command with localhost instead of processor.
+Dialogue: 0,0:05:42.53,0:05:44.13,Bilingual,,0,0,0,,谁会回答？\N{\fs33\c&H00C8C0B8&\bord1.4}What answers?
+Dialogue: 0,0:05:50.40,0:05:55.56,Bilingual,,0,0,0,,什么都没有。在 gateway 里面，localhost 就是 gateway 自己\N{\fs33\c&H00C8C0B8&\bord1.4}Nothing. Inside the gateway, localhost is the gateway itself,
+Dialogue: 0,0:05:55.56,0:05:58.19,Bilingual,,0,0,0,,而它那里没有任何东西在 9200 上监听\N{\fs33\c&H00C8C0B8&\bord1.4}and nothing there listens on 9200.
+Dialogue: 0,0:05:58.51,0:06:00.13,Bilingual,,0,0,0,,这就是第二个谜题的答案\N{\fs33\c&H00C8C0B8&\bord1.4}That's the second puzzle:
+Dialogue: 0,0:06:00.13,0:06:02.54,Bilingual,,0,0,0,,每个 container 都有自己的 localhost\N{\fs33\c&H00C8C0B8&\bord1.4}each container has its own localhost.
+Dialogue: 0,0:06:02.86,0:06:06.10,Bilingual,,0,0,0,,一个额外检查：换成 9100，也就是它自己的 port\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check: on 9100, its own port,
+Dialogue: 0,0:06:06.10,0:06:08.41,Bilingual,,0,0,0,,localhost 就返回页面\N{\fs33\c&H00C8C0B8&\bord1.4}localhost returns the page.
+Dialogue: 0,0:06:08.65,0:06:10.25,Bilingual,,0,0,0,,那名字又是怎么起作用的？\N{\fs33\c&H00C8C0B8&\bord1.4}So how did the name work?
+Dialogue: 0,0:06:10.53,0:06:12.06,Bilingual,,0,0,0,,从 Handy commands 里拿一条\N{\fs33\c&H00C8C0B8&\bord1.4}From the handy commands,
+Dialogue: 0,0:06:12.06,0:06:15.77,Bilingual,,0,0,0,,docker network inspect 显示每个 container 的地址\N{\fs33\c&H00C8C0B8&\bord1.4}docker network inspect shows an address for each container,
+Dialogue: 0,0:06:15.77,0:06:18.55,Bilingual,,0,0,0,,都来自 toynet 自己的地址范围，也就是它的子网\N{\fs33\c&H00C8C0B8&\bord1.4}from toynet's own address range, its subnet.
+Dialogue: 0,0:06:19.65,0:06:24.11,Bilingual,,0,0,0,,每个 container 都去问 Docker 内置的电话簿\N{\fs33\c&H00C8C0B8&\bord1.4}Each container asks Docker's built-in phone book,
+Dialogue: 0,0:06:24.11,0:06:29.02,Bilingual,,0,0,0,,它在 127.0.0.11，把名字变成这些地址\N{\fs33\c&H00C8C0B8&\bord1.4}at 127.0.0.11, which turns names into those addresses.
+Dialogue: 0,0:06:29.34,0:06:33.03,Bilingual,,0,0,0,,一个 container 重启时，地址可能会变；名字不会变\N{\fs33\c&H00C8C0B8&\bord1.4}Addresses can change when a container restarts; names stay.
+Dialogue: 0,0:06:33.27,0:06:35.14,Bilingual,,0,0,0,,再来一条 Handy commands 里的命令\N{\fs33\c&H00C8C0B8&\bord1.4}Another handy command,
+Dialogue: 0,0:06:35.14,0:06:39.31,Bilingual,,0,0,0,,docker exec -it gateway sh，在里面打开一个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}docker exec -it gateway sh, opens a shell inside;
+Dialogue: 0,0:06:39.31,0:06:42.12,Bilingual,,0,0,0,,它的主机名就是 container ID\N{\fs33\c&H00C8C0B8&\bord1.4}its hostname is the container ID.
+Dialogue: 0,0:06:42.44,0:06:45.28,Bilingual,,0,0,0,,补充一句：processor 的 image 里其实也有 curl\N{\fs33\c&H00C8C0B8&\bord1.4}One aside: the processor image has curl too,
+Dialogue: 0,0:06:45.28,0:06:47.67,Bilingual,,0,0,0,,虽然 README 暗示它没有\N{\fs33\c&H00C8C0B8&\bord1.4}though the README implies it doesn't.
+Dialogue: 0,0:06:47.99,0:06:50.03,Bilingual,,0,0,0,,暂停一下，从两边都试一试\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and test from both sides.
+Dialogue: 0,0:06:51.68,0:06:53.60,Bilingual,,0,0,0,,第 3 步修改 port\N{\fs33\c&H00C8C0B8&\bord1.4}Step 3 changes the ports.
+Dialogue: 0,0:06:53.92,0:06:56.23,Bilingual,,0,0,0,,先改临街的门\N{\fs33\c&H00C8C0B8&\bord1.4}First the street door:
+Dialogue: 0,0:06:56.23,0:07:02.84,Bilingual,,0,0,0,,删掉 gateway，再在 127.0.0.1 的 port 8095 上重新启动它\N{\fs33\c&H00C8C0B8&\bord1.4}remove the gateway, and start it again on 127.0.0.1, port 8095.
+Dialogue: 0,0:07:03.16,0:07:05.76,Bilingual,,0,0,0,,里面的房间还是 9100\N{\fs33\c&H00C8C0B8&\bord1.4}The room inside stays 9100.
+Dialogue: 0,0:07:06.00,0:07:08.28,Bilingual,,0,0,0,,页面在 8095 上能用\N{\fs33\c&H00C8C0B8&\bord1.4}The page works on 8095.
+Dialogue: 0,0:07:08.60,0:07:11.64,Bilingual,,0,0,0,,两个额外检查：8090 已经连不上了\N{\fs33\c&H00C8C0B8&\bord1.4}Two extra checks: 8090 no longer connects,
+Dialogue: 0,0:07:11.64,0:07:14.24,Bilingual,,0,0,0,,docker ps 也显示出新的映射\N{\fs33\c&H00C8C0B8&\bord1.4}and docker ps shows the new mapping.
+Dialogue: 0,0:07:14.56,0:07:16.77,Bilingual,,0,0,0,,暂停一下，把你的 gateway 的门也挪过去\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and move your gateway's door.
+Dialogue: 0,0:07:19.05,0:07:20.32,Bilingual,,0,0,0,,为什么要这么做？\N{\fs33\c&H00C8C0B8&\bord1.4}Why do this?
+Dialogue: 0,0:07:20.37,0:07:23.96,Bilingual,,0,0,0,,你笔记本上可能已经有别的应用占着 8090\N{\fs33\c&H00C8C0B8&\bord1.4}Another app on your laptop might already hold 8090.
+Dialogue: 0,0:07:24.28,0:07:29.31,Bilingual,,0,0,0,,笔记本上的门必须各不相同；container 里的房间永远不会撞车\N{\fs33\c&H00C8C0B8&\bord1.4}Doors on the laptop must be unique; rooms inside containers never collide.
+Dialogue: 0,0:07:29.55,0:07:34.39,Bilingual,,0,0,0,,一个小疏漏：gateway 的日志里还是说打开 localhost:8090\N{\fs33\c&H00C8C0B8&\bord1.4}A small slip: the gateway's log still says open localhost:8090.
+Dialogue: 0,0:07:34.71,0:07:37.29,Bilingual,,0,0,0,,那段文字是写死在第 53 行的\N{\fs33\c&H00C8C0B8&\bord1.4}That text is hard-coded in line 53.
+Dialogue: 0,0:07:37.61,0:07:40.22,Bilingual,,0,0,0,,要以 docker ps 和页面为准\N{\fs33\c&H00C8C0B8&\bord1.4}Trust docker ps and the page instead.
+Dialogue: 0,0:07:40.47,0:07:42.55,Bilingual,,0,0,0,,接下来是 processor 的 port\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the processor's port:
+Dialogue: 0,0:07:42.55,0:07:46.10,Bilingual,,0,0,0,,删掉它，再把 PORT 设为 9300 启动它\N{\fs33\c&H00C8C0B8&\bord1.4}remove it, and start it with PORT set to 9300.
+Dialogue: 0,0:07:46.42,0:07:49.55,Bilingual,,0,0,0,,README 里说：发一条消息，应该会失败\N{\fs33\c&H00C8C0B8&\bord1.4}The README says: send a message, and it should fail.
+Dialogue: 0,0:07:49.95,0:07:51.55,Bilingual,,0,0,0,,确实失败了，只是悄无声息\N{\fs33\c&H00C8C0B8&\bord1.4}It does, but quietly.
+Dialogue: 0,0:07:51.76,0:07:55.66,Bilingual,,0,0,0,,页面没有错误处理，所以上面什么都不会变\N{\fs33\c&H00C8C0B8&\bord1.4}The page has no error handling, so nothing on it changes;
+Dialogue: 0,0:07:55.66,0:07:58.59,Bilingual,,0,0,0,,我们录下的那次请求只拿到 curl 的报错\N{\fs33\c&H00C8C0B8&\bord1.4}the captured request got only curl's error,
+Dialogue: 0,0:07:58.59,0:08:00.23,Bilingual,,0,0,0,,Empty reply from server\N{\fs33\c&H00C8C0B8&\bord1.4}Empty reply from server.
+Dialogue: 0,0:08:00.47,0:08:03.99,Bilingual,,0,0,0,,额外在 gateway 上跑一下 docker logs\N{\fs33\c&H00C8C0B8&\bord1.4}An extra docker logs on the gateway shows why:
+Dialogue: 0,0:08:03.99,0:08:06.36,Bilingual,,0,0,0,,就知道原因：它通过名字找到了 processor\N{\fs33\c&H00C8C0B8&\bord1.4}it found the processor by name,
+Dialogue: 0,0:08:06.36,0:08:11.18,Bilingual,,0,0,0,,但连接被拒绝了，已经没有人在 9200 上监听\N{\fs33\c&H00C8C0B8&\bord1.4}but the connection was refused: nobody listens on 9200 anymore.
+Dialogue: 0,0:08:11.50,0:08:16.13,Bilingual,,0,0,0,,名字写错的话，失败的方式不一样：见练习。来想一想\N{\fs33\c&H00C8C0B8&\bord1.4}A wrong name fails differently: see the exercises. Ponder this.
+Dialogue: 0,0:08:16.45,0:08:20.27,Bilingual,,0,0,0,,改哪一个设置能修好它，又有没有哪个 image 需要重新构建？\N{\fs33\c&H00C8C0B8&\bord1.4}Which one setting fixes it, and does any image need rebuilding?
+Dialogue: 0,0:08:27.12,0:08:29.20,Bilingual,,0,0,0,,改 gateway 的 processor port 变量\N{\fs33\c&H00C8C0B8&\bord1.4}The gateway's processor port.
+Dialogue: 0,0:08:29.25,0:08:32.39,Bilingual,,0,0,0,,删掉 gateway，用 9300 重新启动它\N{\fs33\c&H00C8C0B8&\bord1.4}Remove the gateway and start it with 9300,
+Dialogue: 0,0:08:32.39,0:08:35.61,Bilingual,,0,0,0,,门也换回 8090，消息就能发过去了\N{\fs33\c&H00C8C0B8&\bord1.4}back on 8090, and the message goes through.
+Dialogue: 0,0:08:35.93,0:08:39.36,Bilingual,,0,0,0,,没有重新构建任何 image：这只是配置\N{\fs33\c&H00C8C0B8&\bord1.4}No image was rebuilt: it's only configuration.
+Dialogue: 0,0:08:39.68,0:08:41.28,Bilingual,,0,0,0,,暂停一下，把你的也修好\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and fix yours.
+Dialogue: 0,0:08:42.12,0:08:45.15,Bilingual,,0,0,0,,两个设置必须一致：processor 的 PORT\N{\fs33\c&H00C8C0B8&\bord1.4}The two settings must agree: the processor's PORT
+Dialogue: 0,0:08:45.15,0:08:47.19,Bilingual,,0,0,0,,和 gateway 的 processor port\N{\fs33\c&H00C8C0B8&\bord1.4}and the gateway's processor port.
+Dialogue: 0,0:08:47.43,0:08:52.17,Bilingual,,0,0,0,,最后，用 Compose 之前先清理：删掉两个 container，再删网络\N{\fs33\c&H00C8C0B8&\bord1.4}Finally, clean up before Compose: remove both containers, then the network.
+Dialogue: 0,0:08:52.49,0:08:56.24,Bilingual,,0,0,0,,一个额外检查显示，只剩下 hello-world 那个旧 container\N{\fs33\c&H00C8C0B8&\bord1.4}An extra check shows only hello-world's old container left.
+Dialogue: 0,0:08:56.56,0:08:59.40,Bilingual,,0,0,0,,跳过这一步，Compose 就会遇到名字冲突\N{\fs33\c&H00C8C0B8&\bord1.4}Skip this, and Compose hits a name conflict.
+Dialogue: 0,0:08:59.72,0:09:01.32,Bilingual,,0,0,0,,暂停一下，清理干净\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and clean up.
+Dialogue: 0,0:09:04.32,0:09:07.58,Bilingual,,0,0,0,,第 4 步：Docker Compose，它根据一个配置文件\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: Docker Compose, which builds and starts the whole app from one YAML file.
+Dialogue: 0,0:09:07.58,0:09:09.54,Bilingual,,0,0,0,,把整个应用构建好并启动起来\N{\fs33\c&H00C8C0B8&\bord1.4}Step 4: Docker Compose, which builds and starts the whole app from one YAML file.
+Dialogue: 0,0:09:09.86,0:09:14.34,Bilingual,,0,0,0,,README 里只给了节选；把完整的 docker-compose.yml 打开\N{\fs33\c&H00C8C0B8&\bord1.4}The README shows an excerpt; open the whole docker-compose.yml.
+Dialogue: 0,0:09:14.66,0:09:18.03,Bilingual,,0,0,0,,你手动敲过的参数，几乎每一个都能在里面找到位置\N{\fs33\c&H00C8C0B8&\bord1.4}Almost every flag you typed by hand has a home in it.
+Dialogue: 0,0:09:18.28,0:09:22.87,Bilingual,,0,0,0,,原来的 --name 变成了 container name，构建命令变成了 build\N{\fs33\c&H00C8C0B8&\bord1.4}--name becomes container name, and the build command becomes build.
+Dialogue: 0,0:09:23.19,0:09:24.69,Bilingual,,0,0,0,,原来的 -p 变成了 ports\N{\fs33\c&H00C8C0B8&\bord1.4}-p becomes ports,
+Dialogue: 0,0:09:24.69,0:09:30.00,Bilingual,,0,0,0,,-e 变成了 environment，而网络在文件最下面命名\N{\fs33\c&H00C8C0B8&\bord1.4}-e becomes environment, and the network is named at the bottom of the file.
+Dialogue: 0,0:09:31.88,0:09:33.04,Bilingual,,0,0,0,,有两个键是新的\N{\fs33\c&H00C8C0B8&\bord1.4}Two keys are new:
+Dialogue: 0,0:09:33.04,0:09:36.68,Bilingual,,0,0,0,,volumes 这个键把 gateway 的目录挂载到 /app\N{\fs33\c&H00C8C0B8&\bord1.4}the volumes key mounts the gateway's folder into /app,
+Dialogue: 0,0:09:36.68,0:09:40.05,Bilingual,,0,0,0,,depends on 这个键让 processor 先启动\N{\fs33\c&H00C8C0B8&\bord1.4}and the depends on key starts the processor first.
+Dialogue: 0,0:09:40.37,0:09:44.45,Bilingual,,0,0,0,,整个第 1 步合成了一条命令：docker compose up\N{\fs33\c&H00C8C0B8&\bord1.4}All of step 1 collapses into one command: docker compose up.
+Dialogue: 0,0:09:44.68,0:09:49.13,Bilingual,,0,0,0,,运行它。Compose 构建了两个 image，全部用了缓存\N{\fs33\c&H00C8C0B8&\bord1.4}Run it. Compose builds both images, all from the cache,
+Dialogue: 0,0:09:49.13,0:09:53.75,Bilingual,,0,0,0,,并按目录名和服务名给它们命名：port toy 加上 -gateway\N{\fs33\c&H00C8C0B8&\bord1.4}and names them after the folder and the service: port_toy-gateway.
+Dialogue: 0,0:09:54.00,0:09:56.92,Bilingual,,0,0,0,,然后它创建网络和两个 container\N{\fs33\c&H00C8C0B8&\bord1.4}Then it creates the network and both containers,
+Dialogue: 0,0:09:56.92,0:10:00.63,Bilingual,,0,0,0,,打印出两个横幅，每一行前面都标着它的服务名\N{\fs33\c&H00C8C0B8&\bord1.4}and prints both banners, each line prefixed with its service.
+Dialogue: 0,0:10:00.95,0:10:02.30,Bilingual,,0,0,0,,暂停一下，自己跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and run it.
+Dialogue: 0,0:10:02.35,0:10:04.16,Bilingual,,0,0,0,,打开页面：能用\N{\fs33\c&H00C8C0B8&\bord1.4}Open the page: it works.
+Dialogue: 0,0:10:04.48,0:10:07.61,Bilingual,,0,0,0,,在第二个终端里，先 cd 进 port toy\N{\fs33\c&H00C8C0B8&\bord1.4}In a second terminal, cd into port toy first:
+Dialogue: 0,0:10:07.61,0:10:10.73,Bilingual,,0,0,0,,Compose 读的是当前目录里的文件\N{\fs33\c&H00C8C0B8&\bord1.4}Compose reads the file in the current folder.
+Dialogue: 0,0:10:11.05,0:10:14.19,Bilingual,,0,0,0,,在那里，docker compose ps 显示同样的映射\N{\fs33\c&H00C8C0B8&\bord1.4}There, docker compose ps shows the same mapping.
+Dialogue: 0,0:10:14.43,0:10:18.36,Bilingual,,0,0,0,,额外的 network ls 显示，toynet 是 Compose 创建的\N{\fs33\c&H00C8C0B8&\bord1.4}An extra network ls shows that Compose made toynet,
+Dialogue: 0,0:10:18.36,0:10:22.28,Bilingual,,0,0,0,,而 compose exec 按名字连到了 processor，回复 ok\N{\fs33\c&H00C8C0B8&\bord1.4}and compose exec reaches the processor by name: ok.
+Dialogue: 0,0:10:22.65,0:10:24.91,Bilingual,,0,0,0,,README 的那张表把每条手动敲的命令\N{\fs33\c&H00C8C0B8&\bord1.4}The README's table pairs each by-hand command with its Compose version.
+Dialogue: 0,0:10:24.91,0:10:27.19,Bilingual,,0,0,0,,和它在 Compose 里的写法一一对应\N{\fs33\c&H00C8C0B8&\bord1.4}The README's table pairs each by-hand command with its Compose version.
+Dialogue: 0,0:10:27.51,0:10:30.82,Bilingual,,0,0,0,,在第一个终端里，你的请求现在会出现在日志里\N{\fs33\c&H00C8C0B8&\bord1.4}In the first terminal, your requests now show in the log.
+Dialogue: 0,0:10:31.07,0:10:34.19,Bilingual,,0,0,0,,README 到第 4 步最后才停掉应用\N{\fs33\c&H00C8C0B8&\bord1.4}The README stops the app at the end of step 4;
+Dialogue: 0,0:10:34.19,0:10:37.45,Bilingual,,0,0,0,,我们现在就在前台停掉它：按 Ctrl-C\N{\fs33\c&H00C8C0B8&\bord1.4}we stop it now, in the foreground: press Ctrl+C.
+Dialogue: 0,0:10:37.77,0:10:41.93,Bilingual,,0,0,0,,Compose 说它正在优雅地停止，但要花大约 20 秒\N{\fs33\c&H00C8C0B8&\bord1.4}Compose says it's stopping gracefully, but it takes about 20 seconds.
+Dialogue: 0,0:10:45.13,0:10:47.75,Bilingual,,0,0,0,,作为每个 container 的第一个进程\N{\fs33\c&H00C8C0B8&\bord1.4}Python, each container's first process,
+Dialogue: 0,0:10:47.75,0:10:49.75,Bilingual,,0,0,0,,Python 会忽略这个礼貌的停止信号\N{\fs33\c&H00C8C0B8&\bord1.4}ignores the polite stop signal
+Dialogue: 0,0:10:49.75,0:10:51.90,Bilingual,,0,0,0,,除非程序里专门写了捕获它的代码\N{\fs33\c&H00C8C0B8&\bord1.4}unless it's written to catch it.
+Dialogue: 0,0:10:52.22,0:10:55.76,Bilingual,,0,0,0,,所以 Docker 对每个 container 等 10 秒，然后强行杀掉它\N{\fs33\c&H00C8C0B8&\bord1.4}So Docker waits 10 seconds per container, then kills it.
+Dialogue: 0,0:10:58.67,0:11:01.46,Bilingual,,0,0,0,,退出码 137 表示被强行杀掉\N{\fs33\c&H00C8C0B8&\bord1.4}Exit code 137 means killed.
+Dialogue: 0,0:11:01.78,0:11:03.46,Bilingual,,0,0,0,,用 docker compose ps -a 一看\N{\fs33\c&H00C8C0B8&\bord1.4}docker compose ps -a:
+Dialogue: 0,0:11:03.46,0:11:06.88,Bilingual,,0,0,0,,两个 container 都退出了，但还在那里\N{\fs33\c&H00C8C0B8&\bord1.4}both containers exited, but they're still there.
+Dialogue: 0,0:11:07.12,0:11:10.15,Bilingual,,0,0,0,,输入 docker compose down\N{\fs33\c&H00C8C0B8&\bord1.4}docker compose down removes the containers
+Dialogue: 0,0:11:10.15,0:11:13.47,Bilingual,,0,0,0,,它删掉 container 和网络，ps -a 里什么都不剩\N{\fs33\c&H00C8C0B8&\bord1.4}and the network, and nothing is left in ps -a.
+Dialogue: 0,0:11:13.79,0:11:16.12,Bilingual,,0,0,0,,按 Ctrl-C 是停止；down 才是删除\N{\fs33\c&H00C8C0B8&\bord1.4}Ctrl+C stops; down removes.
+Dialogue: 0,0:11:16.44,0:11:18.38,Bilingual,,0,0,0,,暂停一下，把整个流程跑一遍\N{\fs33\c&H00C8C0B8&\bord1.4}Pause, and run the whole cycle.
+Dialogue: 0,0:11:19.42,0:11:25.20,Bilingual,,0,0,0,,回到 README 的顺序：up -d 在后台启动应用，把提示符还给你\N{\fs33\c&H00C8C0B8&\bord1.4}Back to the README's order: up -d starts the app in the background and returns your prompt.
+Dialogue: 0,0:11:25.43,0:11:27.19,Bilingual,,0,0,0,,两条 Handy commands 里的命令\N{\fs33\c&H00C8C0B8&\bord1.4}Two handy commands.
+Dialogue: 0,0:11:27.24,0:11:30.75,Bilingual,,0,0,0,,用 compose logs -f 持续跟踪 gateway 的日志\N{\fs33\c&H00C8C0B8&\bord1.4}docker compose logs -f follows the gateway's log;
+Dialogue: 0,0:11:30.75,0:11:33.05,Bilingual,,0,0,0,,按 Ctrl-C 只停止跟踪\N{\fs33\c&H00C8C0B8&\bord1.4}Ctrl+C stops only the following.
+Dialogue: 0,0:11:33.37,0:11:36.77,Bilingual,,0,0,0,,用 compose exec gateway sh 打开一个 shell\N{\fs33\c&H00C8C0B8&\bord1.4}docker compose exec gateway sh opens a shell,
+Dialogue: 0,0:11:36.77,0:11:40.32,Bilingual,,0,0,0,,在里面，环境变量显示的是 processor 和 9200\N{\fs33\c&H00C8C0B8&\bord1.4}where the environment shows processor and 9200.
+Dialogue: 0,0:11:41.97,0:11:45.74,Bilingual,,0,0,0,,接下来，README 里说：在文件里重做一遍 port 实验\N{\fs33\c&H00C8C0B8&\bord1.4}Next, the README says to repeat the port experiments in the file.
+Dialogue: 0,0:11:46.06,0:11:49.36,Bilingual,,0,0,0,,把 8090 改成 8095，再运行 up -d\N{\fs33\c&H00C8C0B8&\bord1.4}Change 8090 to 8095 and run up -d:
+Dialogue: 0,0:11:49.36,0:11:52.76,Bilingual,,0,0,0,,Compose 只重新创建 gateway\N{\fs33\c&H00C8C0B8&\bord1.4}Compose recreates only the gateway.
+Dialogue: 0,0:11:53.00,0:11:57.33,Bilingual,,0,0,0,,页面在 8095 上有回应；把它改回去，再让它生效一次\N{\fs33\c&H00C8C0B8&\bord1.4}The page answers on 8095; change it back and apply again.
+Dialogue: 0,0:12:00.18,0:12:02.53,Bilingual,,0,0,0,,我们在 processor 的代码里加了一行注释\N{\fs33\c&H00C8C0B8&\bord1.4}We added a comment to the processor's code.
+Dialogue: 0,0:12:02.85,0:12:06.80,Bilingual,,0,0,0,,复制进 image 的代码改了，就要加 --build\N{\fs33\c&H00C8C0B8&\bord1.4}Changed code that's copied into an image needs --build.
+Dialogue: 0,0:12:07.12,0:12:11.36,Bilingual,,0,0,0,,只有 COPY 那一层是新的，也只有 processor 被重新创建\N{\fs33\c&H00C8C0B8&\bord1.4}Only the copy layer is new, and only the processor is recreated.
+Dialogue: 0,0:12:11.60,0:12:13.66,Bilingual,,0,0,0,,那个 gateway 的目录是挂载进去的\N{\fs33\c&H00C8C0B8&\bord1.4}The gateway's folder is mounted,
+Dialogue: 0,0:12:13.66,0:12:16.04,Bilingual,,0,0,0,,而且它每次加载都会重新读页面\N{\fs33\c&H00C8C0B8&\bord1.4}and it rereads its page on each load:
+Dialogue: 0,0:12:16.04,0:12:19.19,Bilingual,,0,0,0,,改动在下次刷新时就能看到，不用重新构建\N{\fs33\c&H00C8C0B8&\bord1.4}edits show on the next reload, without a rebuild.
+Dialogue: 0,0:12:20.05,0:12:24.61,Bilingual,,0,0,0,,最后，docker compose down；ps -a 里什么都不剩\N{\fs33\c&H00C8C0B8&\bord1.4}To finish, docker compose down; nothing is left in ps -a.
+Dialogue: 0,0:12:24.93,0:12:30.40,Bilingual,,0,0,0,,这些 image 还在，共用大约 200 MB；删掉它们可以腾出空间\N{\fs33\c&H00C8C0B8&\bord1.4}The images remain, sharing about 200 megabytes; remove them to free space.
+Dialogue: 0,0:12:30.72,0:12:32.33,Bilingual,,0,0,0,,这个 port toy 一分钱都不花\N{\fs33\c&H00C8C0B8&\bord1.4}Port toy costs nothing.
+Dialogue: 0,0:12:32.53,0:12:34.13,Bilingual,,0,0,0,,暂停一下，把它关掉\N{\fs33\c&H00C8C0B8&\bord1.4}Pause and shut it down.
+Dialogue: 0,0:12:34.22,0:12:36.99,Bilingual,,0,0,0,,自测一下，每道题之后都暂停一下\N{\fs33\c&H00C8C0B8&\bord1.4}To test yourself, pause after each question.
+Dialogue: 0,0:12:37.31,0:12:40.33,Bilingual,,0,0,0,,第一题：哪些文件定义了一个 mega-pipeline 的 image\N{\fs33\c&H00C8C0B8&\bord1.4}One: which files define a mega-pipeline image,
+Dialogue: 0,0:12:40.33,0:12:43.60,Bilingual,,0,0,0,,本地没有 image 时，run 用的又是什么？\N{\fs33\c&H00C8C0B8&\bord1.4}and what does run use when there's no local image?
+Dialogue: 0,0:12:43.85,0:12:45.83,Bilingual,,0,0,0,,第二题：调用你的 bucket 时\N{\fs33\c&H00C8C0B8&\bord1.4}Two: which three gates must a call
+Dialogue: 0,0:12:45.83,0:12:48.73,Bilingual,,0,0,0,,必须通过哪三道关卡，每一道又在哪里失败？\N{\fs33\c&H00C8C0B8&\bord1.4}to your bucket pass, and where does each one fail?
+Dialogue: 0,0:12:49.05,0:12:51.02,Bilingual,,0,0,0,,第三题：一个被 Git 忽略的密钥\N{\fs33\c&H00C8C0B8&\bord1.4}Three: how does a git-ignored key
+Dialogue: 0,0:12:51.02,0:12:53.34,Bilingual,,0,0,0,,怎么会跑进 image 里，又该怎么修？\N{\fs33\c&H00C8C0B8&\bord1.4}end up in an image, and what's the fix?
+Dialogue: 0,0:12:53.58,0:13:00.54,Bilingual,,0,0,0,,第四题：-p 127.0.0.1:8095:9100\N{\fs33\c&H00C8C0B8&\bord1.4}Four: -p 127.0.0.1:8095:9100.
+Dialogue: 0,0:13:00.86,0:13:06.47,Bilingual,,0,0,0,,浏览器用哪个数字，gateway 绑定哪个\N{\fs33\c&H00C8C0B8&\bord1.4}Which number does the browser use, which does the gateway bind,
+Dialogue: 0,0:13:06.47,0:13:09.41,Bilingual,,0,0,0,,127.0.0.1 又限制了什么？\N{\fs33\c&H00C8C0B8&\bord1.4}and what does 127.0.0.1 restrict?
+Dialogue: 0,0:13:09.73,0:13:12.54,Bilingual,,0,0,0,,第五题：在 gateway 里面，localhost 是什么\N{\fs33\c&H00C8C0B8&\bord1.4}Five: inside the gateway, what is localhost,
+Dialogue: 0,0:13:12.54,0:13:14.90,Bilingual,,0,0,0,,哪个名字能连到 processor？\N{\fs33\c&H00C8C0B8&\bord1.4}and which name reaches the processor?
+Dialogue: 0,0:13:15.13,0:13:18.85,Bilingual,,0,0,0,,下节课，一个命令行 container 会在 Compose 网络上\N{\fs33\c&H00C8C0B8&\bord1.4}Next lecture, a command-line container calls a database
+Dialogue: 0,0:13:18.85,0:13:21.49,Bilingual,,0,0,0,,按名字调用一个数据库 container\N{\fs33\c&H00C8C0B8&\bord1.4}container by name on a Compose network,
+Dialogue: 0,0:13:21.49,0:13:25.01,Bilingual,,0,0,0,,用的还是同样的 secrets 挂载：第一部分和第二部分合在一起\N{\fs33\c&H00C8C0B8&\bord1.4}with the same secrets mount: parts 1 and 2 together.
+Dialogue: 0,0:13:25.33,0:13:27.38,Bilingual,,0,0,0,,答案在练习里\N{\fs33\c&H00C8C0B8&\bord1.4}Answers are in the exercises.

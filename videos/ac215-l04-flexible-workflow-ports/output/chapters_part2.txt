@@ -1,7 +1,7 @@
 00:00 Two little computers, one network
-01:22 Build, start, read the logs
-02:56 Send a message: ports on the wire
-04:09 Who can reach whom
-06:43 Change the ports
-08:53 Compose: the same app, declared
-11:05 Edit, apply, tear down, recap
+01:29 Build, start, read the logs
+03:03 Send a message: ports on the wire
+04:16 Who can reach whom
+06:51 Change the ports
+09:04 Compose: the same app, declared
+11:19 Edit, apply, tear down, recap
