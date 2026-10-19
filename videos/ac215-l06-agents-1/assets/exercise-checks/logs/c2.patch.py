@@ -1,4 +1,4 @@
-# c3.patch.py <cli.py>: the video's fix for the README slip (S07): line 478 prints response.text instead of
+# c2.patch.py <cli.py>: the video's fix for the README slip (S07): line 478 prints response.text instead of
 # the whole response object.
 import sys
 p = sys.argv[1]

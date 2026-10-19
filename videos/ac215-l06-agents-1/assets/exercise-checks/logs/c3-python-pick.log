@@ -1,4 +1,4 @@
-$ bash c4_python_pick.sh
+$ bash c3_python_pick.sh
 $ command -v python3; python3 --version
 /usr/local/bin/python3
 Python 3.12.15
@@ -9,7 +9,7 @@ cpython-3.12.15-linux-x86_64-gnu    /usr/local/bin/python -> python3
 $ uv sync --dry-run 2>&1 | head -4
 Using CPython 3.12.15 interpreter at: /usr/local/bin/python3
 Would create project environment at: .venv
-Resolved 189 packages in 3.57s
+Resolved 189 packages in 4.17s
 Would create lockfile at: uv.lock
 $ uv python install 3.15
  + cpython-3.15.0-linux-x86_64-gnu (python3.15)
@@ -22,7 +22,7 @@ cpython-3.12.15-linux-x86_64-gnu    /usr/local/bin/python -> python3
 $ uv sync --dry-run 2>&1 | grep -v "^ +" | head -6
 Using CPython 3.15.0
 Would create project environment at: .venv
-Resolved 189 packages in 415ms
+Resolved 189 packages in 300ms
 Would create lockfile at: uv.lock
 error: Distribution `onnxruntime==1.31.0 @ registry+https://pypi.org/simple` can't be installed because it doesn't have a source distribution or wheel for the current platform
 

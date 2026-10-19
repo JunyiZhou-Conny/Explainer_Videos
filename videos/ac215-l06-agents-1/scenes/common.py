@@ -72,7 +72,7 @@ Trackers (top-left, YELLOW; the head names the source: "llm-rag", "ADK", "Colab 
     self.play(tr.goto(k))     caption_extra(tr, on) -> Transform " · extra"
     tr = switch_section(self, tr, "Load", 1)   old tracker lifts away, new one drops in
     lref("20–22") = lecture_ref(6, ...) top right;  lref_swap(scene, old, "35–40") -> new
-    CallStrip()  "call 1 → your code → call 2" under the tracker (y 2.25..2.75, x from -6.5);
+    CallStrip()  "call 1 → your code → call 2" under the tracker (x -6.5..-2.48, y 2.28..2.75);
         .light(i) -> anim (0, 1, 2; None = all GREY)
 
 Terminal helpers (term() returns a Terminal that greys MASK and '…' on every line it places)
@@ -139,7 +139,7 @@ Glyphs (small; built at ORIGIN)
     PINK · menu_card(sig) GREEN mono · answer_bars(n) · seal(r) BLUE thought signature · diamond(text)
     decision · calculator_glyph(h) · sticky_note(text) · receipt_token(path) GREEN · notebook_glyph()
     · container_box(title, w, h) TEAL · laptop_zone(w, h) GREY · wheel_glyph(r) · cost_tick() GOLD
-    · mini_envelope(text) · call_card(rows) BLUE {name, args} card with .seal · response_card(text,
+    · mini_envelope(text) · call_card(rows) BLUE {name, args} card, 4.9 x 1.4, with .seal · response_card(text,
     note=None) TEAL · json_card(lines, colour) · one_lap_row() S08's llm-rag lap (.steps)
 
 Set pieces: Piece = VGroup + named parts (as in L05). A part not shown yet is a member at
@@ -150,8 +150,9 @@ Set pieces: Piece = VGroup + named parts (as in L05). A part not shown yet is a 
     ANIMATIONS (play them) or MOBJECTS (not added: FadeIn them yourself). Built centred at ORIGIN
     unless "in place" is said: .move_to(...) them; rescale(k) shrinks shapes, keeps text.
 
-    V1 Anatomy(box_w=7.4, block_h=1.0, bar_h=0.72, ends=True, show=ALL)  slide 27 redrawn,
-       12.2 x 4.1 (box 7.4 x 4.1; ends: "Task / Goal" chip -> box -> dashed "Task completion").
+    V1 Anatomy(box_w=7.2, block_h=1.0, bar_h=0.72, ends=True, show=ALL)  slide 27 redrawn,
+       12.45 x 4.1 (box 7.2 x 4.1; ends: "Task / Goal" chip -> box -> dashed "Task completion").
+       rescale() below ~0.8 makes the end chips touch the box: hide the ends, or use AnatomyMini.
        Parts: task a_in box head core instructions control tools memory a_out done (+ inside
        control: control_dash, control_fill). core BLUE, the others GREY outlines, control dashed.
        .light(name, colour=TURN) -> anim (unlights the previous) .unlight() -> anim
@@ -162,47 +163,48 @@ Set pieces: Piece = VGroup + named parts (as in L05). A part not shown yet is a 
        .block(name) .frames[name] .names[name]. Compact: Anatomy(box_w=4.6, block_h=0.8,
        ends=False, size=20) is 4.6 x 3.5 (S11's labelled map).
        definition_card(): slide 26's sentence (S02, S08)
-    AnatomyMini(center=MINI_CENTER)  the mini-map, 3.2 x 1.6, glyph only (a plain VGroup:
+    AnatomyMini(center=MINI_CENTER)  the mini-map, 3.2 x 1.6 (x 3.38..6.58), glyph only (a plain VGroup:
        FadeIn/FadeOut it, mm.animate.move_to(MINI_ABOVE_STRIP)). .light(name) .unlight()
        .fill_control() -> anims. Names as Anatomy.BLOCKS.
-    V2 Envelope(width=4.6, slots=7, pitch=0.5)  4.6 x 4.4 (slots=3: 2.4 tall): body, flap (closed
+    V2 Envelope(width=4.6, slots=7, pitch=0.5)  4.6 x 4.4 body (+0.6 when the flap is open;
+       slots=3: 2.4 body): body, flap (closed
        V in the top margin), pocket V (bottom margin); sheets stack as rows inside (never crossed
        by a line). .sheet(text, colour=GREY, mono_=False, seal=False) -> a sheet (not added)
        .add_sheet(scene, sheet, start=None) plays it into the next slot (from `start`, default
        2.5 left; a sheet already on screen flies from where it is) and makes it a member
        .remove_sheet(scene, sheet, shift=RIGHT*2.5) slides it out, restacks the rest
        .slot_point(i) .sheets (list) .open() / .close() -> anims (flap) .seal_on(sheet) -> seal
-    V3 MenuColumn(show=ALL)  in place, 8.4 x 5.9 (y -3.13..2.57): strip (slide 8: question ->
+    V3 MenuColumn(show=ALL)  in place, 8.4 wide, y -3.0..2.56: strip (slide 8: question ->
        Retrieval -> LLM -> Response, y 2.3), column (BLUE llm_top, six GREY dashed technique boxes box0..box5 =
        MenuColumn.TECHNIQUES, BLUE llm_bot), chooses (YELLOW), agentic (GREY), menu0 menu1 (GREEN
        menu cards). .fly_in(i, start=None) -> anim  .to_menu() -> [anims] (the five other boxes
        fade, the two menu cards appear, "retrieval decision" stays under them)
        .cross_decision() -> RED line (not added)
-       TrustStage(compact=False, show=ALL)  in place, 12.7 x 4.3 (x -6.35..6.4, y -2.0..2.3): BLUE
+       TrustStage(compact=False, show=ALL)  in place, x -6.11..6.35, y -1.52..2.13: BLUE
        cloud "Google Cloud" + model_box "Gemini · location global" | dashed boundary, PINK "HTTPS"
        | GREY laptop with TEAL llm-rag-cli (cli.py, agent_tools.py) and TEAL llm-rag-chromadb
-       (cylinder, char-split-collection, book · author · year). compact=True: 12.7 x 2.25 (y
-       -1.32..0.93; the containers hold only their names, a small cylinder): shift it up for the
+       (cylinder, char-split-collection, book · author · year). compact=True: x -5.76..6.41, y
+       -0.69..1.13 (the containers hold only their names, a small cylinder): shift it up for the
        upper half above a panel (don't rescale: the text would overflow its boxes). Parts: cloud
        model boundary https laptop cli chroma, hidden: lock gear hl_cli hl_chroma hl_model.
        .send(mob, to="laptop"|"cloud", y=None) -> anim (to that side of the boundary)
        .dip() -> PINK arrow cli -> cylinder (not added) .chunk_cards(n=10) -> GREEN cards under
        the CLI box (not added) .light(name) / .unlight(name) -> [anims] (a YELLOW outline over
        "cli", "chroma" or "model")
-    V4 HubSpokes(show=ALL) 7.3 x 5.1: core (BLUE "LLM core") + sheet (GREY "instructions") over
+    V4 HubSpokes(show=ALL) 8.6 x 5.1: core (BLUE "LLM core") + sheet (GREY "instructions") over
        hub ("decision maker"), nodes planner / tools / memory (GREY), spokes sp_planner sp_tools
        sp_memory (two-way arrows). .merge() -> [anims] (core and sheet sink into the hub)
        .spokes() -> [anims]
-       LoopTrack(cap=12) 7.6 x 3.9: a clockwise track, BLUE "model" station (top), PURPLE "tools"
+       LoopTrack(cap=12) 6.7 x 4.6 (the gate's label on top): a clockwise track, BLUE "model" station (top), PURPLE "tools"
        (bottom), YELLOW token, counter "turn 0 / 12", an exit to a Gate "final response" (.gate).
        .lap(run_time=1.6) -> anim (one lap, then the counter ticks) .set_count(k)
        .reply_card() -> GREY "text · no function call" card at the exit (not added)
        one_lap_row(): llm-rag's run, call 1 -> your code -> call 2 -> end (.steps)
-    V5 VersionLine(first=10, last=16, lo=10, width=11.0)  11.25 x 1.6: Python 3.x ticks, the GREEN
+    V5 VersionLine(first=10, last=16, lo=10, width=11.0)  11.25 x 1.3 (+1.4 above for a drop()): Python 3.x ticks, the GREEN
        band >=3.10 off the right end + its label. .point(minor) .dot(minor, text, colour)
        .drop(minor, text, colour=TOOL) -> arrow + dot + label (not added) .collapse(minor,
        text=None) -> [anims]
-       WheelShelf()  9.5 x 1.7: onnxruntime 1.31.0's wheels cp311 … cp314t + an empty dashed cp315
+       WheelShelf()  8.95 x 1.25: onnxruntime 1.31.0's wheels cp311 … cp314t + an empty dashed cp315
        slot. .wheel(tag) .missing() -> [anims] (cp315 turns RED) .click(tag="cp313") -> [anims]
     V6 Whiteboard(keys=STATE_KEYS)  6.8 x 3.55: GREEN "session state" board with three cells
        (mono key + dashed slot) and a GREY "events" column. .slot(i) .blank_card(i) -> GREEN card
@@ -211,23 +213,25 @@ Set pieces: Piece = VGroup + named parts (as in L05). A part not shown yet is a 
        AgentCard(name, instruction, hole=None)  BLUE mono name chip over a GREY instruction card
        (mono, masked); hole="{itinerary_validation}" draws a PINK hole around it (.hole).
        .fill_hole(card) -> [anims] (.model .card .line)
-    V7 ToolBins()  12.6 x 2.75: bins data / action / orchestration (BINS), each titled name over
+    V7 ToolBins()  12.6 x 2.6: bins data / action / orchestration (BINS), each titled name over
        what (GREY).
        .drop(chip, "data") -> anim (stacks top-down; at most 3, chip <= 3.7 wide) .bin(name)
        mini_bin(text="orchestration") small GREY bin glyph (S13)
-       ServiceFan(show=…)  in place, 12.6 x 5.0: agent box (4 tool pills), ten GREY wires to ten
+       ServiceFan(show=…)  in place, x -6.3..6.55, y -2.46..2.46: agent box (4 tool pills), ten GREY wires to ten
        service boxes (SERVICES, slide 52's labels), hidden customs ("custom code" blocks), host
        (title "MCP host" + client ports), trunk (PINK "same protocol"), adapters ("MCP server").
        .custom_in(i) -> anim .to_mcp() -> [anims]
-       Sieve()  11 x 2.6: the 14 MCP tools as GREY chips (5 named, 9 blank pills) over a
+       Sieve()  11 x 2.3: the 14 MCP tools as GREY chips (5 named, 9 blank pills) over a
        `tool_filter` sieve. .fall() -> [anims] .sift() -> [anims] (3 pass GREEN, write_file and
        edit_file bounce RED, the rest dim)
        plug_line(a, b, text) PINK transport line + label; mini_envelope(text) a small envelope
-    V8 Gate(text="FINAL", colour=TURN, gate_w=1.4, gate_h=1.7, slot=False)  one look for S08's
+    V8 Gate(text="FINAL", colour=TURN, gate_w=1.4, gate_h=1.7, slot=False)  1.85 x 2.05, a low
+       boom on two posts (raised, its tip stays under the label); one look for S08's
        "final response" / MaxTurnsExceeded, S14's turnstile and S15's SUCCESS door. .open()
        .close() -> anim (the bar swings) .slam(colour=ERR, text=None) -> anim .relabel(text,
-       colour) -> anim .stamp_on(card, text, colour) -> stamp (not added) .slot (slot=True)
-       BudgetTape()  S14's calculator: 880 + 1,000 + 600 + 150 + 60 = 2,690 of 6,000 (c27).
+       colour) -> anim .stamp_on(card, text, colour) -> a stamp straddling the card's top edge
+       at the right (not added) .slot (slot=True)
+       BudgetTape()  6.9 x 2.3, S14's calculator: 880 + 1,000 + 600 + 150 + 60 = 2,690 of 6,000 (c27).
        .row_anims() -> [anims] one per row, then the total
     CostDial(radius=0.55) GOLD dial without digits (.run(scene, turns, secs) .freeze())
 
@@ -1513,10 +1517,10 @@ def fix_chip(text: str, color: str = VENV, font: str | None = None) -> VGroup:
 
 
 def concept_box(text: str, size: float = CAPTION, color: str = S.GREY, min_w: float = 0.0,
-                text_color: str = INK) -> VGroup:
+                text_color: str = INK, h: float | None = None) -> VGroup:
     """A GREY dashed box holding a lecture concept (pre-retrieval, Self-RAG, handoffs …). .box .text"""
     t = label(text, size, text_color)
-    h = mono("|", size).height + 0.26
+    h = h or mono("|", size).height + 0.26
     b = box(max(min_w, t.width + 0.5), h, color, dashed=True, radius=h / 2.6)
     bg = RoundedRectangle(width=b.width, height=h, corner_radius=h / 2.6, stroke_width=0).set_fill(S.BG, 0.9)
     t.move_to(b)
@@ -3235,10 +3239,10 @@ class MenuColumn(Piece):
         self.part("strip", strip, "strip" in shown)
         col_x = 0.0
         self.part("llm_top", model_box("LLM", w=2.6, h=0.55).move_to([col_x, 1.5, 0]), "llm_top" in shown)
-        pitch = 0.6
-        self.slot_y = [0.85 - k * pitch for k in range(6)]
+        pitch = 0.58
+        self.slot_y = [0.88 - k * pitch for k in range(6)]
         for k, t in enumerate(self.TECHNIQUES):
-            b = concept_box(t, size, min_w=3.6).move_to([col_x, self.slot_y[k], 0])
+            b = concept_box(t, size, min_w=3.6, h=0.44).move_to([col_x, self.slot_y[k], 0])
             self.part(f"box{k}", b, f"box{k}" in shown)
         self.part("llm_bot", model_box("LLM", w=2.6, h=0.55).move_to([col_x, self.slot_y[-1] - 0.7, 0]),
                   "llm_bot" in shown)
@@ -3539,7 +3543,7 @@ class Gate(VGroup):
     def stamp_on(self, card, text: str = "PENDING", color: str = TURN) -> VGroup:
         """A stamp placed on `card`'s top-right area (not added)."""
         s = stamp(text, color)
-        return s.move_to(card.get_corner(UP + RIGHT) + np.array([-s.width / 2 - 0.1, -s.height / 2 - 0.05, 0]))
+        return s.move_to(card.get_corner(UP + RIGHT) + np.array([-s.width / 2 - 0.15, 0, 0]))
 
 
 class LoopTrack(Piece):
@@ -3565,14 +3569,14 @@ class LoopTrack(Piece):
                            max_tip_length_to_length_ratio=0.5, tip_length=0.2))
         self.part("track", VGroup(tr, tips), "track" in shown)
         self.radius = radius
+        tok = Dot(c + LEFT * radius, radius=0.13, color=TURN)      # under the stations: it enters them
+        self.part("token", tok, "token" in shown)
         st_m = box(1.6, 0.62, CLOUD, fill=S.BG, fill_opacity=1.0, stroke=3).move_to(c + UP * radius)
         st_m_t = sans("model", size).move_to(st_m)
         st_t = box(1.6, 0.62, TOOL, fill=S.BG, fill_opacity=1.0, stroke=3).move_to(c + DOWN * radius)
         st_t_t = sans("tools", size).move_to(st_t)
         self.part("model", VGroup(st_m, st_m_t), "model" in shown)
         self.part("tools", VGroup(st_t, st_t_t), "tools" in shown)
-        tok = Dot(c + radius * np.array([np.cos(PI * 0.75), np.sin(PI * 0.75), 0]), radius=0.13, color=TURN)
-        self.part("token", tok, "token" in shown)
         cnt = self._counter_text(0).move_to(c + RIGHT * 0.0 + DOWN * 0.0)
         self.part("counter", cnt, "counter" in shown)
         ex = _arrow(st_m.get_right(), st_m.get_right() + RIGHT * 2.9, color=S.GREY)

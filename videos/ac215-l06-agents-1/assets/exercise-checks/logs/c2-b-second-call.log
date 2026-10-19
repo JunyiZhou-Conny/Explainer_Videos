@@ -1,4 +1,4 @@
-$ cd /checks && python c3_second_call.py
+$ cd /checks && python c2_second_call.py
 [stand-in] embed_func returns the stored vector of chunk 8440accaceb0ce96-6 ('Tolminc Cheese', its first chunk containing 'curd')
 agent()
 
