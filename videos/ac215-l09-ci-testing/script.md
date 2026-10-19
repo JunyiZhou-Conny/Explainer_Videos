@@ -708,25 +708,25 @@ SHOW: CODE(babykev/tests/unit/test_mask.py: 58–65) with line 10's `shapes` str
 caption chip above it ("a state of 1 to 6 tokens · up to 4 questions of 1 to 5"). The assert line
 highlights GREEN.
 PONDER(8 s, "The wrong fix blocks only the question just before.\nWhat is the smallest request shape\nthat still breaks the rule?")
-SAY: State the rule once instead. The property test lets hypothesis draw any request shape, a state of 1 to 6 tokens and up to 4 questions, and asserts that no allowed pair is ever a sibling pair. Something to ponder: the wrong fix blocks only the question just before. What is the smallest request shape that still breaks the rule?
+SAY: State the rule once instead. The property test lets hypothesis draw any request shape, a state of 1 to 6 tokens and up to 4 questions, and asserts that no allowed pair is ever a sibling pair. Something to ponder before we run it.
 
 SHOW: TRACKER E7. It types `just test -k no_question_sees_another` (walk step-05a) →
 TERM(babykev/s05a-08: 9, 11, 25, 41–45). Line 25 `shape = (1, [1, 1, 1])` highlights YELLOW; V6
 dice roll shapes and a RED counter-example grid shrinks step by step to 4×4; the allowed grid
 overlays the siblings grid, one overlapping cell lit RED.
-SAY: You need a question two steps back, so one state token and three questions of one token each. And hypothesis finds that alone: run the one test, and it fails, then shrinks the counter example down to exactly that shape, 1, then 1 1 1. A property test does not just say no; it hands you the smallest witness.
+SAY: You need a question two steps back, so one state token and three questions of one token each. And hypothesis finds that alone: run the one test, and it fails, then shrinks the counter example to exactly that shape. A property test does not just say no; it hands you the smallest witness.
 
 SHOW: Restore (extra, small). Then the walk's perl line writes step-05's mask back (walk step-05a;
 folds) → (no output), and `just test` → TERM(babykev/s05a-11: 14–17, …, 306–307). Line 307
 `8 failed, 95 passed` RED. Then restore (extra, small) and `sed -n '151p' src/babykev/model.py`
 (walk step-05a) → TERM(babykev/s05a-13: 2), the fixed line GREEN.
-SAY: Proof the gate grew teeth: put step 5's wrong mask line back and run just test. 8 failed, 95 passed; the very code that sailed through before is now refused. A gate refuses only what its tests can see. And the real fix is one line: same question means same segment ID.
+SAY: Proof the gate grew teeth: put step 5's wrong mask line back and run just test. 8 failed, 95 passed; the very code that sailed through before is now refused. A gate refuses only what its tests can see. The real fix is one line: same question means same segment ID.
 
 SHOW: TRACKER E7. It types `just types` (walk step-05a) → TERM(babykev/s05a-14: 2–3), `All checks
 passed!` GREEN; `just --show check` → TERM(babykev/s05a-15: 9–14), the new `just types` line
 YELLOW. V1: the types row joins the gate table. Then `just smoke local` → TERM(babykev/s05a-17: 2,
 4, …, 31–32). `4 of 15 right` YELLOW. Fade out.
-SAY: Types join the gate too: just types now passes, and check has six lines. And the smoke, with the right mask? 4 of 15, lower than before. The 6 was luck. An untrained model's score means nothing, and now we know the mask is not the reason.
+SAY: Types join the gate too: just types now passes, and check has six lines. And the smoke, with the right mask? 4 of 15, lower than before. The 6 was luck; an untrained model's score means nothing.
 
 ---
 
@@ -758,7 +758,7 @@ turnstile. A GREY dashed BLUE server appears above with the same turnstile dupli
 CODE(cheese-app-ci-cd/.github/workflows/ci.yml: 13–17) small and dimmed, caption "Part 5 of this
 same repo · lecture 21". A kind card, tag `erratum`: "here: hook pins black 24.1.1 · image installs
 the newest · README widths vary — one command for everyone is the lesson".
-SAY: The gate table is full: six rows, system outside the turnstile. Now the limit of everything we built. A hook runs on one machine, and git commit, dash dash no verify, walks straight past it. So CI re-runs the same checks on a server nobody can skip: that is part 5 of the cheese repo, in lecture 21. It is also why the hook, CI and the README should spell the checks one way, which the cheese repo does not quite manage yet; one command for everyone is what you take to your milestone. Coverage floors in one line: babykev chose 90, and milestone 5 asks for at least 70.
+SAY: The gate table is full: six rows, system outside the turnstile. Now the limit of everything we built. A hook runs on one machine, and git commit, dash dash no verify, walks straight past it. So CI re-runs the same checks on a server nobody can skip: that is part 5 of the cheese repo, in lecture 21. It is also why the hook, CI and the README should spell the checks one way, which the cheese repo does not quite manage. One command for everyone is the lesson for your milestone. Coverage floors in one line: babykev chose 90, and milestone 5 asks for at least 70.
 
 ---
 
