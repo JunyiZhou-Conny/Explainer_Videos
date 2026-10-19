@@ -772,7 +772,7 @@ GREY chip "nothing to stop here". TRACKER F2: it types `docker system prune` (RE
 of recording`. TRACKER F3: it types `docker image ls` (README.md line 574) → TERM(laptop/clean-03:
 2–4; squeeze; the `python:3.11-slim-bookworm` row is never printed). Then `pre-commit uninstall`
 (extra) → TERM(laptop/clean-04: 2). `▶ your turn` on the prune.
-SAY: Before the recap, clean up. The README's Docker cleanup: docker container ls shows nothing running, so there is nothing to stop. Then docker system prune; type y, and here it reclaims about 95 megabytes of build cache, at the time of recording. A final docker image ls shows the two cheese images, sharing their layers. One extra undoes the hook: pre-commit uninstall. On the babykev side, delete the venv, and the roughly 1 gigabyte model in the Hugging Face cache if you ran the smoke. Nothing today was billable; the whole gate lives on your laptop, and that is the point.
+SAY: Before the recap, clean up. The README's Docker cleanup: docker container ls shows nothing running, so there is nothing to stop. Then docker system prune; type y, and here it reclaims about 95 megabytes of build cache, at the time of recording. A final docker image ls shows the two cheese images. One extra undoes the hook: pre-commit uninstall. On the babykev side, delete the venv, and the roughly 1 gigabyte model in the Hugging Face cache if you ran the smoke. Nothing today was billable; the whole gate lives on your laptop, and that is the point.
 
 SHOW: A card "Test yourself". One question at a time (≥ 24 pt, ≤ 3 lines), each with a text-free
 icon from its set piece: Q1 "What runs in a unit, an integration and a system test of this repo —
