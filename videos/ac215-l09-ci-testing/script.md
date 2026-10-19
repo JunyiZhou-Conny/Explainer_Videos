@@ -631,7 +631,7 @@ small) → (no output), then `git commit -am "try"` (walk step-03) → TERM(baby
 2–3, 6) "no commit". Restore (extra, small). Then `echo X=1 > .env && git add -f .env` (walk
 step-03; folds) → (no output) and `git commit -m "try"` → TERM(babykev/s03-35: 2–10); line 8, the
 config's own sentence, highlights RED; undo (extra, small).
-SAY: Now the gate refuses, live, twice. An unused import goes in, and the commit fails on F401 with no commit made. Then a dot env file is staged, and the refusal is the config's own sentence: a dot env file holds the settings and secrets of one machine, and it is never committed. Secrets never board.
+SAY: Now the gate refuses, twice. An unused import goes in, and the commit fails on F401, with no commit made. Then a dot env file is staged, and the refusal is the config's own sentence: a dot env file holds the settings and secrets of one machine, and it is never committed. Secrets never board.
 
 SHOW: TRACKER E5. Two style cards: GREEN "babykev: check points, you run just fmt yourself" ·
 TEAL "cheese: black rewrites, you look and re-stage". Then two small terminals: `just docs check`
@@ -639,7 +639,7 @@ at step-04 → TERM(babykev/s04-04: 2–7, …, 93), `50 of 88` RED; and at step
 TERM(babykev/s04b-03: 2–9), `88 of 88` GREEN; a chip from TERM(babykev/s04b-09: 5–7, 35–36) "one
 deleted description blocks the commit". V1: the gate table grows rows "docs" and "config files",
 GREEN inside the turnstile. Fade out.
-SAY: Two styles of gate, both fine: this check only points, and you run just fmt yourself; the cheese gate rewrites, and makes you look before re-staging. Steps 4 and 4 b put documentation into the gate: the docs check first counts 50 of 88 functions documented, then, one step later, 88 of 88, and deleting a single description blocks a commit. The gate table grows two rows, docs and config files.
+SAY: Two styles of gate, both fine: this one only points, you run just fmt yourself; the cheese gate rewrites and makes you look. Steps 4 and 4 b put documentation in the gate: first 50 of 88 functions documented, one step later 88 of 88, and deleting one description blocks a commit. Two rows join the gate table.
 
 ---
 
@@ -669,7 +669,7 @@ SHOW: The comparison script types (walk step-05; folds) → TERM(babykev/s05-06:
 grid beside the built one, the two `WRONG` rows RED. A GREY caption: "nothing in just check runs
 this".
 PONDER(8 s, "Every line of branch_mask ran.\nCoverage reads 94%.\nCan any coverage number catch this bug?")
-SAY: A little checker script compares the built mask against the picture we meant, and prints WRONG on those two rows. But nothing in just check runs this script; a printout you read by eye is not a test. Something to ponder: every line of branch mask ran under the tests, and coverage reads 94 percent. Can any coverage number catch this bug?
+SAY: A little checker script compares the built mask against the picture we meant, and prints WRONG on those two rows. But nothing in just check runs this script; a printout you read by eye is not a test. Something to ponder: every line of branch mask ran, and coverage reads 94 percent. Can any coverage number catch this bug?
 
 SHOW: The coverage highlighter sweeps every line of a `branch_mask` panel GREEN while the RED rows
 stay wrong beside it.
@@ -679,7 +679,7 @@ SHOW: TRACKER E6 · extra. It types `uv run ty check` (extra at this step; the w
 too) → TERM(babykev/s05-07: 2–3, …, 55). `Found 6 diagnostics` RED. Then `just check` (walk
 step-05) → TERM(babykev/s05-11: 2–6, 22–23), `92 passed`, `Required test coverage of 90% reached`
 GREEN; a YELLOW bracket pairs the GREEN check with the RED diagnostics.
-SAY: Also green and blind: the type checker. Running ty finds 6 diagnostics, and just check is green anyway, because types are not in the gate yet. A check that is not in the gate protects nobody.
+SAY: Also green and blind: the type checker. Running ty finds 6 diagnostics, and just check is green anyway: types are not in the gate yet, and a check outside the gate protects nobody.
 
 SHOW: TRACKER E6. It types `just smoke local` (walk step-05) → TERM(babykev/s05-12: 2, 5, …,
 22–25, 32–33). Line 5 `503M parameters, 9.3M of them trainable`; line 32 `6 of 15 right` YELLOW;
@@ -696,7 +696,7 @@ SHOW: TRACKER E7. It types `git switch --detach step-05a` → TERM(babykev/s05a-
 `1 failed, 102 passed` prints honestly; beside the terminal a GREY card, tag `recorded · walk.md`:
 "the author's Mac: 103 passed". A two-dot picture: GREEN "same to 4 decimals", RED "last bits
 differ". GREY tag `Lecture 9 · slides 78–84` (top right, whole scene). `▶ your turn`.
-SAY: Step five a answers with tests that could tell. First, honesty about our machine: just test here says 1 failed, 102 passed. The failing test demands bit for bit equal logits, and torch on this Linux CPU sums in a different order than on the author's Mac, where all 103 pass, as the walk records. Hermetic means only your code can make it fail; bit exactness across machines is a stronger promise, and our machine just measured it. On with the lesson.
+SAY: Step five a answers with tests that could tell. First, honesty about our machine: just test here says 1 failed, 102 passed. The failing test demands bit for bit equal logits, and torch on this Linux CPU sums in a different order than on the author's Mac, where all 103 pass, as the walk records. Hermetic means only your code can make it fail; bit exactness across machines is a stronger promise, and this machine just measured it.
 
 SHOW: TRACKER E7. The walk's wrong fix types (walk step-05a, the perl line, shown small; folds) →
 (no output). The six-token checker → TERM(babykev/s05a-05: 8–13), all `ok` — a GREY shrug glyph.
