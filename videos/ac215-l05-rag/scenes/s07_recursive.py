@@ -24,8 +24,9 @@ Beats (script.md "## S07", one voiceover block each):
     labelled "chunk size 350". PONDER (8 s): the card in the lower third, above the strip.
  4  TRACKER Chunk 3 · extra. The bars go; the terminal grows to 12 rows and types the one-liner
     of cli-container/15 (extra; it folds onto 5 rows, the row that continues the file name at
-    column 0, see literal_safe_rows), holds it 0.9 s -> lines 8–16, wrapped (12 rows: the
-    command scrolls away). A GREY row tag on the --- line says which side is chunk 0's end and
+    column 0, see literal_safe_rows) before the narration starts, and holds it ~3 s (to pause on
+    and copy); at "Chunk 1 starts again" -> lines 8–16, wrapped (12 rows: the command scrolls
+    away). A GREY row tag on the --- line says which side is chunk 0's end and
     which is chunk 1; chunk 1's first two lines (line 12's `## Chapter One: The First Slice` and
     line 14's sentence) turn YELLOW, then the same two lines at chunk 0's end (8, 10), joined by
     a PINK bracket "repeated". Top right: the chip "library default: chunk_overlap = 200"
@@ -44,7 +45,8 @@ Beats (script.md "## S07", one voiceover block each):
     part 2" all the way. The mini-map's "chunking" gets a GREEN tick. Fade to an empty frame.
 
 Deviations from SHOW (see the scene report): the cli-container/15 one-liner folds onto 5 rows and
-its 12 output rows scroll it away (the tracker's "· extra" stays); its fold breaks inside the
+its 12 output rows scroll it away (the tracker's "· extra" stays), so it is typed in the quiet after
+the ponder and stays complete on screen ~3 s before they print; its fold breaks inside the
 '...' file name, so that continuation row starts at column 0 (the house 4-space indent would
 put four spaces into the file name); the two arrows of beat 6 start
 at a PURPLE "recursive-split" scissors chip, because the strip at that point holds output, not a
@@ -517,21 +519,25 @@ class RecursiveSplit(VoiceScene):
         err = erratum_tag("the README says overlapping, not how much")
         err.move_to([6.45 - err.width / 2, 2.6, 0])
 
+        # card, bars and the strip's lines leave together (t.clear, folded into one play). The
+        # one-liner is typed before the narration starts: its 12 output rows scroll it away, so it
+        # must stay readable (to pause on and copy) until "Chunk 1 starts again" prints them, about
+        # 3 s after it is complete. Typed inside the block, it ran past that anchor.
+        self.play(FadeOut(card), FadeOut(VGroup(bars, nums, labs, ins)), FadeOut(t.lines), run_time=0.35)
+        for m in list(t.lines):
+            t.lines.remove(m)
+        resize(self, t, 12, run_time=0.45)
+        ol = type_literal_safe(self, t, FIRST.cmd, type_time=1.0)
+        pin(self, ol, beside(extra_tag(), t, ol, buff=0.4), run_time=0.25)
+        self.wait(0.9)
+
         with self.voiceover(SAY[4]) as vo:
-            # card, bars and the strip's lines leave together (t.clear, folded into one play)
-            self.play(FadeOut(card), FadeOut(VGroup(bars, nums, labs, ins)), FadeOut(t.lines), run_time=0.35)
-            for m in list(t.lines):
-                t.lines.remove(m)
-            resize(self, t, 12, run_time=0.45)
-            ol = type_literal_safe(self, t, FIRST.cmd, type_time=1.0)
-            pin(self, ol, beside(extra_tag(), t, ol, buff=0.4), run_time=0.25)
-            self.wait(0.9)                     # let the command read: its output scrolls it away
+            vo.wait_until("Chunk 1 starts again")
             rows = t.print(self, FIRST_OUT, wrap=True, run_time=0.5)
             assert len(rows) == 12 and rows[0].text == HEAD and rows[4].text == HEAD
             assert rows[2].text == SENT and rows[6].text == SENT
             sep_tag = row_tag("above: the end of chunk 0  ·  below: chunk 1")
             beside(sep_tag, t, rows[3], buff=0.4)
-            vo.wait_until("Chunk 1 starts again")
             # chunk 1's start (heading + first sentence), then the same two lines at chunk 0's end
             h1, h0 = substring(rows[4], HEAD), substring(rows[0], HEAD)
             s1, s0 = substring(rows[6], SENT), substring(rows[2], SENT)

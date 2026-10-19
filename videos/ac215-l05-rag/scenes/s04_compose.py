@@ -23,7 +23,8 @@ Beats (script.md "## S04", one voiceover block each):
     llm-rag-chromadb (line 20). CODE(21–22): the GREY street door :8000 and the PINK 8000:8000
     arrow. CODE(23–24): docker-volumes/chromadb/ appears on the laptop with the PINK route to /data.
     The strip becomes an excerpt chip of line 26 with a GREY tag "lets the course's web tools in
-    · S09".
+    · Load, step 3" (script.md writes "· S09": scene numbers are never on screen; the tracker
+    names that moment Load, step 3 of 3: Chroma UI).
  5  The strip leaves; CODE(Dockerfile: 18) and CODE(Dockerfile: 45) as two one-line panels. The
     GREEN /.venv appears inside the CLI box, outside /app; the /app route pulses and a GREY sheet
     "your repo" covers /app only (/.venv stays visible). A pencil edits a cli.py row on the laptop,
@@ -605,7 +606,7 @@ class TwoContainers(VoiceScene):
         bar24 = s23.bar(24, LOOKUP, 0.2)
         cors = excerpt_chip(CORS, f"{COMPOSE} · line 26 (excerpt)", line=excerpt(COMPOSE, 26, 26))
         cors.move_to([0, 0, 0]).shift(np.array([-6.3 - cors.get_left()[0], BOTTOM - cors.get_bottom()[1], 0]))
-        web = grey_tag("lets the course's web tools in · S09")
+        web = grey_tag("lets the course's web tools in · Load, step 3")
         web.move_to([6.3 - web.width / 2, cors.chip.get_top()[1] + 0.32, 0])
 
         with self.voiceover(SAY[4]) as vo:

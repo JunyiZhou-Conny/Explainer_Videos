@@ -173,7 +173,7 @@ Set pieces: Piece = VGroup + named parts (as in L05). A part not shown yet is a 
        .add_sheet(scene, sheet, start=None) plays it into the next slot (from `start`, default
        2.5 left; a sheet already on screen flies from where it is) and makes it a member
        .remove_sheet(scene, sheet, shift=RIGHT*2.5) slides it out, restacks the rest
-       .slot_point(i) .sheets (list) .open() / .close() -> anims (flap) .seal_on(sheet) -> seal
+       .slot_point(i) .sheets (list) .restack() -> anims .open() / .close() -> anims (flap)
     V3 MenuColumn(show=ALL)  in place, 8.4 wide, y -3.0..2.56: strip (slide 8: question ->
        Retrieval -> LLM -> Response, y 2.3), column (BLUE llm_top, six GREY dashed technique boxes box0..box5 =
        MenuColumn.TECHNIQUES, BLUE llm_bot), chooses (YELLOW), agentic (GREY), menu0 menu1 (GREEN
@@ -195,7 +195,7 @@ Set pieces: Piece = VGroup + named parts (as in L05). A part not shown yet is a 
        hub ("decision maker"), nodes planner / tools / memory (GREY), spokes sp_planner sp_tools
        sp_memory (two-way arrows). .merge() -> [anims] (core and sheet sink into the hub)
        .spokes() -> [anims]
-       LoopTrack(cap=12) 6.7 x 4.6 (the gate's label on top): a clockwise track, BLUE "model" station (top), PURPLE "tools"
+       LoopTrack(cap=12) 7.2 x 4.6 (the gate's label on top): a clockwise track, BLUE "model" station (top), PURPLE "tools"
        (bottom), YELLOW token, counter "turn 0 / 12", an exit to a Gate "final response" (.gate).
        .lap(run_time=1.6) -> anim (one lap, then the counter ticks) .set_count(k)
        .reply_card() -> GREY "text · no function call" card at the exit (not added)
@@ -3579,7 +3579,7 @@ class LoopTrack(Piece):
         self.part("tools", VGroup(st_t, st_t_t), "tools" in shown)
         cnt = self._counter_text(0).move_to(c + RIGHT * 0.0 + DOWN * 0.0)
         self.part("counter", cnt, "counter" in shown)
-        ex = _arrow(st_m.get_right(), st_m.get_right() + RIGHT * 2.9, color=S.GREY)
+        ex = _arrow(st_m.get_right(), st_m.get_right() + RIGHT * 3.4, color=S.GREY)
         self.part("exit", ex, "exit" in shown)
         g = Gate("final response", TURN, gate_w=1.2, gate_h=1.5)
         g.shift(ex.get_end() + RIGHT * 0.12 - g.pivot())

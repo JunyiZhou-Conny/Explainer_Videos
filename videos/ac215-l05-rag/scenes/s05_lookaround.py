@@ -44,7 +44,8 @@ Beats (script.md "## S05", one voiceover block each):
  7  The frame leaves; the TEAL container terminal returns as a 3-row strip, GREY caption "back in
     your container". Above: docker-compose.yml · line 19 `image: chromadb/chroma:latest` (latest
     underlined), three version chips "tag 1.5.9" · "chroma 1.4.4" (laptop/11b line 2) · 'API
-    "1.0.0"' (laptop/11 line 2), "at the time of recording", GREY "team tip: pin a tag in
+    "1.0.0"' (laptop/11 line 2), each with its GREY source under it ("Docker Hub: latest = 1.5.9",
+    `chroma --version` "(server)", `GET /api/v2/version`), "at the time of recording", GREY "team tip: pin a tag in
     docker-compose.yml · line 19". Then ▶ your turn on a static GREY card in two groups
     (container: the env check; second terminal, in llm-rag: docker ps · curl · ls) with a GOLD
     note "yours: llm-service-account.json listed" (the env check folded at its "; " so the card's rows
@@ -659,16 +660,32 @@ class NamesAndMounts(VoiceScene):
         i19 = excerpt(COMPOSE, 19, 19).strip()
         img = excerpt_chip(i19, f"{COMPOSE} · line 19", line=excerpt(COMPOSE, 19, 19))
         chips = VGroup(*[chip(s, CTR, size=CAPTION, font=MONO) for s in
-                         (f"tag {HUB_TAG}", VERSION_SERVER, f"API {VERSION_API}")]).arrange(RIGHT, buff=0.35)
+                         (f"tag {HUB_TAG}", VERSION_SERVER, f"API {VERSION_API}")])
+        # where each number comes from (a GREY line under its chip): Docker Hub's tag list (ASSETS.md),
+        # laptop/11b (chroma --version run in the Chroma container) and laptop/11 (the version endpoint)
+        assert "chroma --version" in capture("11b", "laptop").cmd
+        assert capture("11", "laptop").cmd.endswith("/api/v2/version")
+        src_hub = note(f"Docker Hub: latest = {HUB_TAG}")
+        src_cmd, src_srv = mono("chroma --version", CAPTION, S.GREY), note("(server)")
+        src_api = mono("GET /api/v2/version", CAPTION, S.GREY)
+        srcs = VGroup(src_hub, VGroup(src_cmd, src_srv).arrange(RIGHT, buff=0.12), src_api)
+        cols = VGroup(*[VGroup(c, s).arrange(DOWN, buff=0.12) for c, s in zip(chips, srcs)])
+        cols.arrange(RIGHT, buff=0.45, aligned_edge=UP)
+        # one baseline for the three lines (fonts and descenders differ): the bottoms of glyphs that
+        # sit on it ("Docker Hub…", "chroma --version", "server", "GET")
+        base = src_hub.get_bottom()[1]
+        srcs[1].shift(UP * (base - src_cmd.get_bottom()[1]))
+        src_srv.shift(UP * (base - text_sub(src_srv, "server").get_bottom()[1]))
+        src_api.shift(UP * (base - text_sub(src_api, "GET").get_bottom()[1]))
         rec = recording_tag()
         tip = note("team tip: pin a tag in docker-compose.yml · line 19")
-        vcard_rows = VGroup(img, chips, VGroup(rec, tip).arrange(RIGHT, buff=0.4)).arrange(DOWN, buff=0.38)
+        vcard_rows = VGroup(img, cols, VGroup(rec, tip).arrange(RIGHT, buff=0.4)).arrange(DOWN, buff=0.32)
         vcard_rows[1].align_to(vcard_rows[0], LEFT)
         vcard_rows[2].align_to(vcard_rows[0], LEFT)
         vfr = box(vcard_rows.width + 0.7, vcard_rows.height + 0.6, S.GREY, fill_opacity=0.0, radius=0.14)  # no fill:
         # it fades in after the image chip, and nothing lies behind it
         vfr.move_to(vcard_rows)
-        vcard = VGroup(vfr, vcard_rows).move_to([0, 0.55, 0])
+        vcard = VGroup(vfr, vcard_rows).move_to([0, 0.76, 0])   # midway between the tracker (2.97) and the strip
         latest = text_sub(img.text, "latest")
         u_latest = under(latest, TURN)
 
@@ -693,11 +710,13 @@ class NamesAndMounts(VoiceScene):
             self.play(Create(u_latest), latest.animate.set_color(TURN), run_time=0.6)
             vo.wait_until("and three version numbers")
             self.play(FadeIn(vfr), *[FadeIn(c, shift=UP * 0.15) for c in chips], run_time=0.8)
-            self.play(*[Indicate(c, color=TURN, scale_factor=1.08) for c in chips], FadeIn(rec), run_time=0.8)
+            self.play(*[Indicate(c, color=TURN, scale_factor=1.08) for c in chips],
+                      LaggedStart(*[FadeIn(s, shift=UP * 0.1) for s in srcs], lag_ratio=0.3), FadeIn(rec),
+                      run_time=1.0)
             vo.wait_until("a team should pin a tag")
             self.play(FadeIn(tip, shift=UP * 0.1), run_time=0.5)
             vo.wait_until("Pause and try these checks")
-            self.play(FadeOut(VGroup(vcard, u_latest, chips, rec, tip)), run_time=0.4)   # one card leaves, then
+            self.play(FadeOut(VGroup(vcard, u_latest, rec, tip)), run_time=0.4)   # one card leaves, then
             self.play(FadeIn(turn, shift=UP * 0.2), run_time=0.5)                          # the other comes
             vo.wait_until("your key in slash secrets")
             self.play(Indicate(turn.rows[2], color=COST, scale_factor=1.06), run_time=0.8)

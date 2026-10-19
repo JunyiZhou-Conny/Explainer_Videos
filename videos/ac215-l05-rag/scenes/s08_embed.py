@@ -37,8 +37,8 @@ Beats (script.md "## S08", one voiceover block each):
     GREY "with your key, look for" card above it, four items writing in as named (cli.py lines
     240, 256, 259–260, 262–264).
  8  A second GREY card "if it fails (with your key)", rows writing in as named: the retry message
-    (cli.py lines 117–118), key file not found (the strip's error rows flash), PERMISSION_DENIED,
-    SERVICE_DISABLED.
+    (cli.py lines 117–118), key file not found (the strip's error rows flash), PERMISSION_DENIED
+    ("fix GCP_PROJECT in docker-shell.sh, or the role in IAM (console)"), SERVICE_DISABLED.
  9  TRACKER Embed 2. The strip clears (step 1's error does not linger above the new command) and
     types python cli.py --embed --chunk_type recursive-split (no output).
     ▶ your turn on a GREY card listing both embed commands and "each run sleeps 5 s per book"; a
@@ -48,7 +48,8 @@ Beats (script.md "## S08", one voiceover block each):
     outputs/" -> d9ced19 struck RED "reverted · merged in e17a39f" -> "still in every clone's
     history"; 58dd602 "their database removed too"; 22 files · 82 MB (recorded-embeddings/00 lines
     2–3, shown as "embeddings-* · 22 files · 82 MB"); GREEN check "their 22 chunk files = ours, byte
-    for byte". The strip's command flashes.
+    for byte"; a GREY row along the card's foot "no key yet? the study guide shows how to copy these
+    into outputs/" (in the pause after "history"). The strip's command flashes.
 11  TRACKER Embed 2 · extra. GREY card "an extra Python check · in the study guide": "Tolminc's
     vectors: count, first five, lengths" (code not shown); the strip grows to 4 rows ->
     recorded-embeddings/06 lines 9–11 (tag recorded · the staff's vectors (68e0bde), just above the
@@ -76,7 +77,10 @@ prompt row (the command row, folded under the long container prompt, has no room
 11–13 draw only the upper half of the dashed unit circle (every arrow points up; the full circle
 would run into the strip and the ponder card), at a size where 24 arrows of length 0.4 stay
 distinct; a PINK query arrow joins V4 in beat 12, so that beat 13 has a query to measure the angle
-and the distance against.
+and the distance against. QA 2026-10-19: beat 8's PERMISSION_DENIED row names where each fix lives
+(SHOW's "or the role in docker-shell.sh" sent newcomers looking for a role in the script; the role
+is granted in IAM, S03); beat 10's card gets the GREY "no key yet?" pointer to the study guide's copy
+command (the command itself stays untyped, as BRIEF says).
 """
 
 import numpy as np
@@ -231,6 +235,15 @@ def mixed(parts, size: float = CAPTION, color: str = INK) -> VGroup:
         else:
             mobs.append(label(s, size, col))
     return VGroup(*mobs).arrange(RIGHT, buff=0.1)
+
+
+def perm_row() -> VGroup:
+    """Beat 8's PERMISSION_DENIED row; its comma hugs `docker-shell.sh` (mixed() puts a gap before
+    every piece)."""
+    row = mixed(["`PERMISSION_DENIED`", "→ fix", "`GCP_PROJECT`", "in", "`docker-shell.sh`",
+                 ", or the role in IAM (console)"])
+    row[-1].shift(LEFT * 0.08)
+    return row
 
 
 def two_row_tag(rows, color: str = S.GREY) -> VGroup:
@@ -646,7 +659,9 @@ class Embeddings(VoiceScene):
             item(mixed(["`File /secrets/llm-service-account.json was not found`"]),
                  mixed(["→ not in", "`../secrets`", "under that name · check:", "`ls -la /secrets`",
                         "in the container"])),
-            item(mixed(["`PERMISSION_DENIED`", "→ fix", "`GCP_PROJECT`", "or the role in", "`docker-shell.sh`"]),
+            # the Project ID is set in docker-shell.sh, the role in IAM (S03's console path): one row
+            # that put both "in docker-shell.sh" sent newcomers looking for a role in the script
+            item(perm_row(),
                  mixed(["then", "`exit`", "and", "`sh docker-shell.sh`", "again"])),
             mixed(["`SERVICE_DISABLED`", "→ enable the Vertex AI API, wait a minute, rerun"]),
         ]
@@ -719,13 +734,20 @@ class Embeddings(VoiceScene):
         same_files.arrange(RIGHT, buff=0.2)
         right = VGroup(db_chip, size_lab, same_files).arrange(DOWN, aligned_edge=LEFT, buff=0.42)
         content = VGroup(left, right).arrange(RIGHT, buff=0.6, aligned_edge=UP)
+        # the command that copies them stays untyped (BRIEF); a viewer without a key gets a pointer
+        # to it (study guide, §4 Step 6 "No key yet?", recorded-embeddings/00)
+        no_key = mixed(["no key yet? the study guide shows how to copy these into", "`outputs/`"], color=S.GREY)
+        no_key.next_to(content, DOWN, buff=0.32, aligned_edge=LEFT)
+        body = VGroup(content, no_key)
         d1 = Arrow(c1[0].get_bottom(), c2[0].get_top(), buff=0.06, color=S.GREY, stroke_width=3, tip_length=0.12)
         d2 = Arrow(c2[0].get_bottom(), [c2[0].get_center()[0], c3.get_top()[1], 0], buff=0.06, color=S.GREY,
                    stroke_width=3, tip_length=0.12)
-        s_frame = box(content.width + 0.5, content.height + 0.8, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
-        s_card = VGroup(s_frame, content, d1, d2)
-        s_frame.move_to(content)
+        s_frame = box(body.width + 0.5, body.height + 0.6, S.GREY, fill=S.BG, fill_opacity=0.95, radius=0.14)
+        s_card = VGroup(s_frame, body, d1, d2)
+        s_frame.move_to(body)
         s_card.move_to([0, (s4 + 2.75) / 2, 0])
+        assert s_frame.get_top()[1] < 2.72 and s_frame.get_bottom()[1] > s4 + 0.15, (
+            s_frame.get_top()[1], s_frame.get_bottom()[1])          # clear of the tracker and the strip
         stf = staff_tag()
         stf.move_to(s_frame.get_corner(UP + RIGHT) + np.array([-0.3 - stf.width / 2, 0, 0]))
 
@@ -738,6 +760,7 @@ class Embeddings(VoiceScene):
             self.play(GrowArrow(d1), FadeIn(c2_chip), FadeIn(c2[1]), run_time=0.5)
             self.play(Create(c2_strike), run_time=0.3)
             self.play(GrowArrow(d2), FadeIn(c3, shift=DOWN * 0.1), FadeIn(db_chip, shift=LEFT * 0.1), run_time=0.6)
+            self.play(FadeIn(no_key, shift=UP * 0.1), run_time=0.5)     # in the pause after "history"
             vo.wait_until("Their chunk files match ours")
             self.play(FadeIn(size_lab), run_time=0.4)
             self.play(Create(same_files[0]), FadeIn(same_files[1], shift=RIGHT * 0.1), run_time=0.6)
@@ -785,11 +808,16 @@ class Embeddings(VoiceScene):
             out = t.print(self, NORMS_OUT, run_time=0.6)
             bare_prompt(self, t)
             self.play(FadeIn(st), FadeIn(v4), Create(circ), FadeIn(fan_tag), run_time=0.6)
-            vo.wait_until("24 rows of 256 numbers")
+            # ANCHORS: Kokoro gives sentence marks only, and this one-sentence line is interpolated by
+            # character offset; its spoken numbers ("24", "256", "0.369 to 0.402") take far longer
+            # than their characters, so "24 rows of 256 numbers" and "with lengths from" fired 1.8 s
+            # and 1.1 s late (clip pauses: "24" is heard at 2.72 s, "with" at 6.24 s; 2026-10-19).
+            # As in S12, each anchor starts a word or two earlier in the text.
+            vo.wait_until("story's vectors")           # 2.57 s: lands on "24" (the plays above end ≈ 2.8 s)
             self.play(substring(out[0], "24 rows").animate.set_color(TURN),
                       substring(out[0], "256 numbers").animate.set_color(TURN),
                       LaggedStart(*[GrowArrow(a) for a in fan], lag_ratio=0.06), run_time=1.4)
-            vo.wait_until("with lengths from")
+            vo.wait_until("numbers, with lengths")     # 6.30 s: lands on "with lengths from"
             self.play(substring(out[2], "min 0.369, max 0.402").animate.set_color(TURN),
                       Create(ruler), FadeIn(r04), FadeIn(r1), run_time=0.7)
             self.play(Create(mark04), FadeIn(rng_lab, shift=LEFT * 0.1), run_time=0.7)

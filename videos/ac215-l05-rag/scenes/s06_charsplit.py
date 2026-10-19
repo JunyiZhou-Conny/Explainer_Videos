@@ -37,12 +37,13 @@ Beats (script.md "## S06", one voiceover block each):
     (extra; its tag in the title bar) -> cli-container/11 lines 2–13 (names cut); `24` and
     `8248 total` YELLOW.
  7  LECTURE B14–B15. The terminal clears; the one-liner of cli-container/12 (extra; it folds onto
-    5 rows at 65 characters) -> lines 2–4; the terminal shrinks to the 3-row strip. Above it, the
-    two printed lines lift into the seam: `…things she intended to ac` over `s she intended to
-    accomplish…`, aligned by character, each in its PURPLE window, the shared 20 characters in a
-    YELLOW band; `ac` and the lone `s` underline YELLOW; "accomplish" is whole in chunk 1. Under
-    it, the lecture's example: GREY cards "…artificial intelli" | "gence…" end to end, no band
-    (tag "lecture example").
+    5 rows at 65 characters) -> lines 2–4; the terminal shrinks to an 8-row strip that keeps the
+    command and its output on screen until "The lecture's pieces", when it drops to the 3-row
+    strip (the output). Above it, the two printed lines lift into the seam: `…things she
+    intended to ac` over `s she intended to accomplish…`, aligned by character, each in its PURPLE
+    window, the shared 20 characters in a YELLOW band; `ac` and the lone `s` underline YELLOW;
+    "accomplish" is whole in chunk 1. Under it, the lecture's example: GREY cards "…artificial
+    intelli" | "gence…" end to end, no band (tag "lecture example").
  8  The seam and the container strip leave. A second laptop terminal (6 rows, at the bottom; "new
     terminal: cd here first") types `ls -la outputs | head -5` (extra) -> laptop/16 lines 2–6;
     `student student` boxed YELLOW; top right the chip .gitignore · line 4 `/outputs`. Then, above
@@ -51,12 +52,13 @@ Beats (script.md "## S06", one voiceover block each):
     the rest · see part 2". Fade to an empty frame.
 
 Deviations from SHOW (see the scene report): the one-liner of beat 7 folds onto 5 rows, not 3
-(65 characters a row); in beat 5 the book-order tag sits beside line 6 (line 5 is full width) and
-the PermissionError card in the free rows at the bottom right (no room beside the ▶); the wc
-command fills its row, so its `extra` tag sits in the title bar; the terminal clears before the wc
-and the seam commands (a 12-row scroll would sweep over the tracker); in beat 8 the container strip
-leaves so that the second terminal shows all five lines while the panel sits above it; the README
-command is typed with Terminal.type, which keeps `--chunk_type char-split` on one row.
+(65 characters a row), and its strip keeps 8 rows (command + output, so the command can be
+copied) until the lecture's example, then 3; in beat 5 the book-order tag sits beside line 6
+(line 5 is full width) and the PermissionError card in the free rows at the bottom right (no
+room beside the ▶); the wc command fills its row, so its `extra` tag sits in the title bar; the
+terminal clears before the wc and the seam commands (a 12-row scroll would sweep over the
+tracker); in beat 8 the container strip leaves so that the second terminal shows all five lines
+while the panel sits above it; the README command is typed with Terminal.type, which keeps `--chunk_type char-split` on one row.
 """
 
 import re
@@ -710,23 +712,28 @@ class CharSplit(VoiceScene):
         lr2 = lref("B14–B15")
         row_a = mono_line(ROW_A, 24, INK)
         row_b = mono_line(ROW_B, 24, INK)
-        ya, yb = 1.95, 1.05
+        # The folded one-liner (5 rows) and its output (3) stay on screen in an 8-row strip until
+        # "The lecture's pieces", so a viewer can copy the command; the seam sits above that strip.
+        # Then the strip drops to 3 rows (the output) and the lecture's example takes the room.
+        seam_rows = 8
+        ya, yb = 2.05, 1.15
         xa0 = -2.6
         place_col0(row_a, xa0, ya)
         place_col0(row_b, x_of_col(row_a, SHIFT_B), yb)
         cut_x = x_of_col(row_a, len(ROW_A))
         band_x0 = x_of_col(row_a, SHIFT_B)
         h_row = row_a.strut.height
+        win_h = h_row + 0.3
         pad_cut = 0.1           # the window edges at the cut clear the glyphs ("ac", the lone "s")
         a_left, a_right = x_of_col(row_a, 0) - 0.15, cut_x + pad_cut
-        win_a = Rectangle(width=a_right - a_left, height=h_row + 0.3,
+        win_a = Rectangle(width=a_right - a_left, height=win_h,
                           stroke_color=TOOL, stroke_width=3).set_fill(TOOL, 0.06)
         win_a.move_to([(a_left + a_right) / 2, ya, 0])
         b_left, b_right = band_x0 - pad_cut, x_of_col(row_b, len(ROW_B)) + 0.15
-        win_b = Rectangle(width=b_right - b_left, height=h_row + 0.3, stroke_color=TOOL,
+        win_b = Rectangle(width=b_right - b_left, height=win_h, stroke_color=TOOL,
                           stroke_width=3).set_fill(TOOL, 0.06)
         win_b.move_to([(b_right + b_left) / 2, yb, 0])
-        seam_band = Rectangle(width=cut_x - band_x0, height=ya - yb + h_row + 0.3, stroke_width=0)
+        seam_band = Rectangle(width=cut_x - band_x0, height=ya - yb + win_h, stroke_width=0)
         seam_band.set_fill(TURN, 0.22).move_to([(cut_x + band_x0) / 2, (ya + yb) / 2, 0])
         lab_a = label("end of chunk 0", CAPTION, S.GREY)
         lab_a.move_to([win_a.get_left()[0] - 0.25 - lab_a.width / 2, ya, 0])
@@ -742,11 +749,13 @@ class CharSplit(VoiceScene):
         # "gence…" higher in its chip); glyph 1 is an x-height letter in both ('a', 'e')
         lec2.text.shift(UP * (lec1.text[1].get_bottom()[1] - lec1.get_center()[1]
                               - (lec2.text[1].get_bottom()[1] - lec2.get_center()[1])))
-        lec_y = -0.35
+        lec_y = -0.2            # in the 8-row strip's top rows: it shows once the strip is 3 rows
         lec1.move_to([cut_x - lec1.width / 2, lec_y, 0])
         lec2.move_to([cut_x + lec2.width / 2, lec_y, 0])
         lec_tag = example_tag().next_to(lec1, LEFT, buff=0.3)
         lec_note = note("end to end · no overlap").next_to(VGroup(lec1, lec2), DOWN, buff=0.15)
+        assert win_b.get_bottom()[1] > strip_top(seam_rows) + 0.15          # the seam clears the 8 rows
+        assert lec_note.get_bottom()[1] > strip_top(3) + 0.3                # the example clears the 3
 
         with self.voiceover(SAY[7]) as vo:
             self.play(FadeIn(lr2), FadeOut(x_wc), run_time=0.4)
@@ -754,7 +763,8 @@ class CharSplit(VoiceScene):
             sl = type_cmd(self, t, SEAM.cmd, type_time=1.4)
             pin(self, sl, beside(extra_tag(), t, sl, buff=0.4))
             s_lines = t.print(self, SEAM_OUT, run_time=0.4)
-            resize(self, t, 3, run_time=0.6)
+            assert len(t.lines) == seam_rows          # the command's 5 rows + 3 output lines
+            resize(self, t, seam_rows, run_time=0.6)  # nothing drops: the command stays readable
             vo.wait_until("Chunk 0 stops")
             tgt_a = VGroup(*glyph_range(row_a, 1))
             self.play(TransformFromCopy(substring(s_lines[1], ROW_A[1:]), tgt_a),
@@ -776,6 +786,7 @@ class CharSplit(VoiceScene):
             vo.wait_until("so accomplish is whole")
             self.play(Indicate(acc, color=DATA, scale_factor=1.12), run_time=0.8)
             vo.wait_until("The lecture's pieces")
+            resize(self, t, 3, run_time=0.5)          # the command leaves; its output stays
             self.play(FadeIn(lec1, shift=RIGHT * 0.15), FadeIn(lec2, shift=LEFT * 0.15), run_time=0.6)
             self.play(FadeIn(lec_tag), FadeIn(lec_note), run_time=0.5)
 
