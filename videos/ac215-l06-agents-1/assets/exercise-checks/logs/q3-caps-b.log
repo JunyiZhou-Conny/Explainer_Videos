@@ -1,57 +1,11 @@
-$ P=/colab/nl/lib/python3.12/site-packages/agent_framework; grep -n 'DEFAULT_MAX_ITERATIONS' $P/_tools.py | head -3; sed -n 1425,1440p $P/_tools.py; sed -n 3725,3760p $P/_tools.py
+$ P=/colab/nl/lib/python3.12/site-packages/agent_framework; grep -n 'DEFAULT_MAX_ITERATIONS: Final' $P/_tools.py; grep -n 'Phase 3: the iteration budget is exhausted' $P/_tools.py; grep -n 'options\["tool_choice"\] = "none"' $P/_tools.py
 102:DEFAULT_MAX_ITERATIONS: Final[int] = 40
-1499:        "max_iterations": DEFAULT_MAX_ITERATIONS,
-3605:        max_iterations = self.function_invocation_configuration.get("max_iterations", DEFAULT_MAX_ITERATIONS)
-    requests function calls. Key settings:
-
-    - ``enabled``: Master switch for the function invocation loop.
-    - ``max_iterations``: Limits the number of **LLM roundtrips** (iterations).
-      Each iteration may execute one or more function calls in parallel, so
-      this does *not* directly limit the total number of function executions.
-    - ``max_function_calls``: Limits the **total number of individual function
-      invocations** across all iterations within a single request. This is the
-      primary knob for controlling cost and preventing runaway tool usage. When
-      the limit is reached, the loop stops invoking tools and forces the model
-      to produce a text response. Default is ``None`` (unlimited).
-
-      This is a **best-effort** limit: it is checked *after* each batch of
-      parallel tool calls completes, not before. If the model requests 20
-      parallel calls in a single iteration and the limit is 10, all 20 will
-      execute before the loop stops.
-                budget_state,
-                total_function_calls,
-                max_function_calls,
-                max_duration_seconds,
-            )
-            errors_in_a_row = function_processing.errors_in_a_row
-            _reset_required_tool_choice(options)
-            _prepare_messages_for_next_iteration(prepared_messages, response)
-
-        # Phase 3: the iteration budget is exhausted, so request one final response with tools disabled.
-        if response is not None:
-            logger.info(
-                "Maximum iterations reached (%d). Requesting final response without tools.",
-                max_iterations,
-            )
-        options["tool_choice"] = "none"
-        response = cast(
-            ChatResponse[Any],
-            await super_get_response(
-                messages=prepared_messages,
-                stream=False,
-                options=options,
-                compaction_strategy=compaction_strategy,
-                tokenizer=tokenizer,
-                client_kwargs=request_kwargs,
-            ),
-        )
-        _ensure_function_invocation_limit_fallback_response(response)
-        aggregated_usage = add_usage_details(aggregated_usage, response.usage_details)
-        self._update_function_invocation_continuation_state(
-            request_kwargs,
-            response,
-            session=invocation_session,
-            options=options,
-        )
-        response.usage_details = aggregated_usage
+3734:        # Phase 3: the iteration budget is exhausted, so request one final response with tools disabled.
+3990:        # Phase 3: the iteration budget is exhausted, so stream one final response with tools disabled.
+3055:    options["tool_choice"] = "none"
+3097:            options["tool_choice"] = "none"
+3101:        options["tool_choice"] = "none"
+3540:            options["tool_choice"] = "none"
+3740:        options["tool_choice"] = "none"
+3996:        options["tool_choice"] = "none"
 [exit 0]

@@ -1,0 +1,14 @@
+$ grep -n -B4 -A2 'MaxTurnsExceeded(' /colab/cq/lib/python3.12/site-packages/agents/run_internal/run_loop.py | head -40; grep -n 'MaxTurnsExceeded' /colab/tp/lib/python3.12/site-packages/agents/run.py | head
+1783-                        message="Max turns exceeded",
+1784-                        data={"max_turns": max_turns},
+1785-                    ),
+1786-                )
+1787:                max_turns_error = MaxTurnsExceeded(f"Max turns ({max_turns}) exceeded")
+1788-                handler_configured = bool(
+1789-                    error_handlers and error_handlers.get("max_turns") is not None
+34:    MaxTurnsExceeded,
+259:          1. If the max_turns is exceeded, a MaxTurnsExceeded exception is raised.
+339:          1. If the max_turns is exceeded, a MaxTurnsExceeded exception is raised.
+409:          1. If the max_turns is exceeded, a MaxTurnsExceeded exception is raised.
+538:                        raise MaxTurnsExceeded(f"Max turns ({max_turns}) exceeded")
+[exit 0]

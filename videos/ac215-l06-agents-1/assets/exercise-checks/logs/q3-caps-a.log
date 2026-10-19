@@ -1,4 +1,8 @@
-$ python -c 'import agents.run as r, importlib.metadata as m; print("openai-agents", m.version("openai-agents"), "DEFAULT_MAX_TURNS =", r.DEFAULT_MAX_TURNS)'; grep -rn 'class MaxTurnsExceeded' /colab/cq/lib/python3.12/site-packages/agents/exceptions.py; grep -rn 'raise MaxTurnsExceeded' /colab/cq/lib/python3.12/site-packages/agents/ | head -3
+$ python -c 'import agents.run as r, importlib.metadata as m; print("openai-agents", m.version("openai-agents"), "DEFAULT_MAX_TURNS =", r.DEFAULT_MAX_TURNS)'; grep -n 'class MaxTurnsExceeded' /colab/cq/lib/python3.12/site-packages/agents/exceptions.py; grep -rln 'MaxTurnsExceeded(' /colab/cq/lib/python3.12/site-packages/agents/ | head -3; /colab/tp/bin/python -c 'import agents.run as r; print("openai-agents 0.3.2 DEFAULT_MAX_TURNS =", r.DEFAULT_MAX_TURNS)' 2>&1 | tail -1
 openai-agents 0.24.0 DEFAULT_MAX_TURNS = 10
 354:class MaxTurnsExceeded(AgentsException):
+/colab/cq/lib/python3.12/site-packages/agents/run_internal/run_loop.py
+/colab/cq/lib/python3.12/site-packages/agents/result.py
+/colab/cq/lib/python3.12/site-packages/agents/exceptions.py
+openai-agents 0.3.2 DEFAULT_MAX_TURNS = 10
 [exit 0]
