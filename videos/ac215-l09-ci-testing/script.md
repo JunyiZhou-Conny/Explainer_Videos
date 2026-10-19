@@ -183,7 +183,7 @@ SAY: You type git commit. Before that commit exists, who gets to say no, and wha
 
 SHOW: The turnstile shrinks to a corner. A grid of 26 GREY tiles (slides 4–6 redrawn, no tag of its
 own): 9 tiles light GREEN "data and model", the rest stay GREY with the caption "engineering".
-SAY: Step back once. In a machine learning system, the model is a few tiles in a big grid, and everything around it is software engineering. Today is about that engineering: tests, formatters, linters, and the hook that runs them before every commit.
+SAY: Step back once. In a machine learning system, the model is a few tiles in a big grid; the rest is software engineering. Today is that engineering: tests, formatters, linters, and the hook that runs them.
 
 SHOW: A checklist card: "✓ your clone of cheese-app-ci-cd", "✓ Docker Desktop running",
 "✓ Python 3.9 or newer", and GREEN "✗ no cloud, no credentials, no bill".
@@ -207,7 +207,7 @@ CODE(cheese-app-ci-cd-history/git-log-oneline.txt: 1–8), newest left: `91eb786
 class 1" (RED dot, the sqrt bug) → `b8458ff` "demo class 1" (the revert, GREEN). GREY tag
 `Lecture 9 · slides 25, 27–28` (top right, whole scene). Under it a 3-row strip terminal types
 `git log -1 --format='%H %ci'` (extra) → TERM(laptop/02: 2).
-SAY: The bug is real history. This repo's own log tells the story: messy code re-added on purpose, then a crash, then a fix, then the class demo that slipped the wrong square root in, and the revert that took it out. An extra git log confirms the clone we make in a minute sits at that last commit, from November 2025.
+SAY: The bug is real history. This repo's own log tells the story: messy code re-added on purpose, then a crash, then a fix, then the class demo that slipped the wrong square root in, and the revert that took it out. An extra git log confirms the clone sits at that last commit, from November 2025.
 
 SHOW: The chain fades. A plane with the point (3, 4); a GREEN radius sweeps to a circle of radius 5,
 label "5". A RED arrow overshoots the circle to length √50, label "√50 ≈ 7.07". No error icon
@@ -227,7 +227,7 @@ SHOW: Three trays slide in (slide 25 redrawn): "normal", "edge", "invalid". Chip
 `power(2, 3)` into normal; `0`, `inf`, `nan` into edge; then
 CODE(cheese-app-ci-cd/tests/unit/test_utils.py: 69–76) appears above the invalid tray and a chip
 `power("3", 4)` drops in. Fade out.
-SAY: What is worth testing? The lecture sorts inputs into three trays: normal cases, edge cases, and invalid ones. For the power function here, 2 to the power 3 is normal; zero exponents, infinity and not a number are edges. And for invalid input, pytest dot raises inverts the test: it passes only if calling power on a string raises a type error. Keep these trays in mind for your own milestone tests.
+SAY: What is worth testing? The lecture sorts inputs into three trays: normal cases, edge cases, and invalid ones. For the power function here, 2 to the power 3 is normal; zero exponents, infinity and not a number are edges. And for invalid input, pytest dot raises inverts the test: it passes only if calling power on a string raises a type error.
 
 ---
 
@@ -237,12 +237,12 @@ SHOW: No tracker. V2: a glowing PINK token `GET /euclidean_distance/?x=3&y=4` at
 the camera zooms to a GREEN box holding only `power(3, 2)`; the token shrinks to just the numbers
 3 and 2 entering it, a GREEN check pops out. GREY tag `Lecture 9 · slides 66, 95` (top right,
 whole scene).
-SAY: Now the words for the whole lecture. Take one request: get euclidean distance, with x 3 and y 4. A unit test skips the app entirely and calls one function, power of 3 and 2, checking it alone. It is fast, and when it fails you know exactly where to look.
+SAY: Now the lecture's vocabulary. Take one request: get euclidean distance, with x 3 and y 4. A unit test skips the app entirely and calls one function, power of 3 and 2, checking it alone. It is fast, and when it fails you know exactly where to look.
 
 SHOW: Integration beat: a TEAL box `TestClient` wraps the FastAPI router, handler and a small
 `power()` chip; the token passes straight in with no wire, bounces through "routing → validation →
 handler → power", and exits as a JSON chip. Caption "in-process · no socket".
-SAY: An integration test wires several of our parts together. The test client hands the request straight to the FastAPI app, in process: routing, validation, the handler and power all run, but there is no server and no network. Ten of those run here in under a second.
+SAY: An integration test wires several of our parts together. The test client hands the request straight to the FastAPI app, in process: routing, validation, the handler and power all run, but no server and no network. Ten of those run here in under a second.
 
 SHOW: System beat: the token leaves a BLUE test box, travels a PINK wire to "port 9000" on a second
 BLUE box "the running server", and returns `{"distance": 5.0}`.
@@ -252,14 +252,14 @@ SHOW: The three boxes stack into the README's pyramid: wide GREEN base "unit · 
 middle, narrow BLUE top "system · few, slow". Then the pyramid re-draws as nested boxes and a GREEN
 dashed border closes around the unit and integration boxes; the system box sits half outside, its
 wire crossing the border.
-SAY: Stacked up, that is the testing pyramid: many cheap unit tests at the bottom, few expensive system tests at the top. The lecture adds a sharper lens, drawn here as a border. A test is hermetic when only your code can make it fail. Unit and integration tests live inside that border. The system test crosses it: a live server can be down for reasons that are not your bug.
+SAY: Stacked up, that is the testing pyramid: many cheap unit tests at the bottom, few expensive system tests at the top. The lecture adds a sharper lens: a border. A test is hermetic when only your code can make it fail. Unit and integration tests live inside that border. The system test crosses it: a live server can be down for reasons that are not your bug.
 
 SHOW: Two faint extra rows under the pyramid: "smoke · does it answer at all" and "acceptance ·
 none yet". Then two cards side by side, tag `erratum`:
 CODE(cheese-app-ci-cd/tests/system/test_system_api.py: 1–4) with line 2 "Integration tests" struck
 YELLOW and "system" written above it, and CODE(cheese-app-ci-cd/pytest.ini: 19–23) with a GREY
 caption "markers defined, never used".
-SAY: Two more kinds get faint rows: a smoke test, does it answer at all, and acceptance tests, which this project does not have yet. One kind note: a test's kind is named by what runs, not by its folder. This repo's system test file calls itself integration tests in its own docstring, and its pytest config defines markers nobody uses. Name the kind by what runs in it.
+SAY: Two more kinds get faint rows: a smoke test, does it answer at all, and acceptance tests, which this project does not have yet. One kind note: a test's kind is named by what runs, not by its folder. This repo's system test file calls itself integration tests, and its pytest config defines markers nobody uses.
 
 SHOW: The cards fade. V1: the gate table slides in, empty, four column headers lit YELLOW in turn:
 "what is checked" · "how" · "command" · "on every commit?". It shrinks to its resting place. Fade
@@ -290,7 +290,7 @@ SHOW: TRACKER A2. It types `sh docker-shell.sh` (README.md line 73) → TERM(lap
 `▶ your turn`. The prompt is copied large above the terminal and splits: `app` "a user the
 Dockerfile created · not root" · `44b7ce455073` "the container's ID · new every run" · `/app` "the
 working folder".
-SAY: Now the README's first command: sh docker-shell.sh. It builds the image, about a minute the first time, and drops you into a shell inside the container. Pause and run it. Read the prompt: the user is app, not root, created by the Dockerfile, and the ID after the at sign changes every run, so yours will differ.
+SAY: Now the README's first command: sh docker-shell.sh. It builds the image, about a minute the first time, and drops you into a shell inside the container. Pause and run it. Read the prompt: the user is app, not root, and the ID after the at sign changes every run.
 
 SHOW: TRACKER A3. At the container prompt it types
 `uvicorn api.service:app --host 0.0.0.0 --port 9000 --reload` (README.md line 82, the capture's
@@ -299,12 +299,12 @@ TRACKER A4: a schematic browser (tag `illustration`) shows the three README URLs
 it three small terminal cards, each one curl line (extra, "the browser's evidence"):
 TERM(laptop/part1-02: 2), TERM(laptop/part1-03: 2), TERM(laptop/part1-04: 2; wrap). The three
 `GET … 200 OK` access lines print in the server terminal (part1-01: 41–43). `▶ your turn`.
-SAY: Inside, start the server as the README shows: uvicorn api dot service colon app, host 0.0.0.0, port 9000, with reload. When it says application startup complete, open the three README URLs in your browser; pause and do it. Here three curl calls stand in for the browser: the welcome message, a healthy status, and the distance answer.
+SAY: Inside, start the server: uvicorn api dot service colon app, host 0.0.0.0, port 9000, with reload. When it says application startup complete, open the three README URLs in your browser; pause and do it. Here three curl calls stand in for the browser: the welcome message, a healthy status, and the distance answer.
 
 SHOW: The distance card enlarges: `{"x":3.0,"y":4.0,"distance":5.0,"message":…}`; a README card
 (`README.md · line 90`) "returns 5.0" with tag `erratum`; CODE(cheese-app-ci-cd/src/api-service/api/service.py: 45–50)
 beside it, the `"distance": result` row highlighted.
-SAY: One small gap: the README says this endpoint returns 5.0. It actually returns a JSON object whose distance field is 5.0, as the code shows. The integration tests you will meet next know that shape exactly.
+SAY: One small gap: the README says this endpoint returns 5.0. It actually returns a JSON object whose distance field is 5.0, as the code shows.
 
 SHOW: TRACKER A5. The server terminal gets `^C` → TERM(laptop/part1-01: 44–49), then types `exit`
 (line 51) → the laptop prompt returns. TRACKER A5 · extra: it types `docker ps -a` (extra) →
@@ -332,19 +332,19 @@ SHOW: TRACKER B2. It types `docker run --rm cheese-app-api:local flake8 --max-li
 (README.md line 109; folds) → TERM(laptop/part2-02: 2–5), lines 4–5 RED. Beside it
 CODE(cheese-app-ci-cd/src/api-service/api/utils.py: 7–14), the comma of line 7 and the blank lines
 before line 13 highlighted RED. `▶ your turn`.
-SAY: Now the linter, inside the image: flake8 with max line length 120, on the api folder. Two findings in utils.py, a missing space after a comma, and too many blank lines. That mess was left in the repo on purpose. Pause and run it.
+SAY: Now the linter, inside the image: flake8 with max line length 120, on the api folder. Pause and run it. Two findings in utils.py, a missing space after a comma, and too many blank lines: mess left in the repo on purpose.
 
 SHOW: TRACKER B3. It types `docker run --rm cheese-app-api:local black --check --diff api/`
 (README.md line 112; folds) → TERM(laptop/part2-03: 2–3, …, 12–13, …, 21, 39, …, 42). Line 42
 `2 files would be reformatted, 1 file would be left unchanged.` highlights; a YELLOW "2?" beside it.
 `▶ your turn`.
-SAY: Then black, in check and diff mode. Pause and run it. It reports 2 files would be reformatted, not one. This command gives black no line width, so black uses its default of 88, and at 88 it also wants to fold a 95 character line in service.py.
+SAY: Then black, in check and diff mode. Pause and run it. It reports 2 files would be reformatted, not one. This command gives black no line width, so it falls back to its default of 88, and at 88 it also wants to fold a 95 character line in service.py.
 
 SHOW: V4 ribbon: `service.py` line 15 drawn as a ribbon of 95 character cells. A width post at 88:
 the ribbon folds to three lines; the post slides to 120: it unfolds to one. The fold–unfold loops
 twice. Under it a card, tag `erratum`: "hook + CI: 120 (`.pre-commit-config.yaml:34,43`) · this
 README command: black's default 88 · host flake8 default: 79".
-SAY: Here is the trap as a picture. At width 88, black folds that line into three; at width 120, it unfolds it back to one. The hook and the CI in this repo both use 120, but several README commands pass no width at all, so the same file gets different answers. Always pass the same width, 120 here, or set it once in a config file.
+SAY: Watch the trap. At width 88, black folds that line into three; at width 120, it unfolds it back to one. The hook and the CI in this repo both use 120, but several README commands pass no width at all, so the same file gets different answers. Always pass 120, or set the width once in config.
 
 SHOW: TRACKER B4. It types `pip install black flake8` (README.md line 118) → TERM(laptop/part2-04:
 2–5, …, 37; wrap). ORANGE row tag "on the host" beside the command; `black-26.10.1` and
@@ -353,13 +353,13 @@ SHOW: TRACKER B4. It types `pip install black flake8` (README.md line 118) → T
 (95 > 79)` highlights RED, caption "flake8's default: 79". TRACKER B6: it types
 `black --check --diff src/api-service/api/` (README.md line 124) → TERM(laptop/part2-06: …, 19,
 37, …, 40). `▶ your turn` on each.
-SAY: Option B runs the same checks on your laptop. Install black and flake8 with pip; that gives 26.10.1 and 7.4.1 at the time of recording, on the host this time. Pause and run all three. The local flake8, at its default width of 79, now adds a third finding, that same 95 character line. And the local black wants the same two files reformatted.
+SAY: Option B runs the same checks on your laptop. Install black and flake8 with pip; that gives 26.10.1 and 7.4.1 at the time of recording, on the host this time. Pause and run all three. The local flake8, at its default of 79, adds a third finding, that same 95 character line; the local black wants the same two files changed.
 
 SHOW: V4 funnel on the pre-demo file: CODE(cheese-app-ci-cd-history/8eb63fc-service.py: 7–14),
 header `8eb63fc · service.py · lines 7–14`, line 10 `import os` RED. A RED findings bar shrinks as
 a black broom sweeps the panel; 2 RED survivors remain as chips: `F401 'os' imported but unused`
 and `E501 line too long`. GREY caption "the class fixed these two by hand". Fade out.
-SAY: So what can a formatter actually fix? On the messy version of service.py from the repo's history, black sweeps away almost every finding, and exactly 2 survive: an unused import, and a line that is still too long. A formatter cannot delete an import or shorten your sentence. A linter is what tells you they are there; a person fixes them.
+SAY: So what can a formatter actually fix? On the messy version of service.py from the repo's history, black sweeps away almost every finding, and exactly 2 survive: an unused import, and a line that is still too long. A formatter cannot delete an import or shorten your sentence. The class fixed those two by hand.
 
 ---
 
@@ -395,7 +395,7 @@ on the right asking for `client` by name, a `conftest.py` box in the middle buil
 session-scope fixture drawn once and shared, default scope as a stack of fresh copies; then
 `parametrize` folds four identical `power()` test cards into one card with four input chips. Fade
 out.
-SAY: One gift from the lecture this repo does not use yet. The integration tests build their test client once, at the top of the module. A fixture would do it better: a test asks for client by name, pytest builds and injects it, and a scope says whether each test gets a fresh one or the whole run shares one. And parametrize folds four copies of the same test into one function with four inputs. Both return in part 2.
+SAY: One gift from the lecture this repo does not use yet. The integration tests build their test client once, as a module global. A fixture would do it better: a test asks for client by name, pytest builds and injects it, and a scope says whether each test gets a fresh one or the whole run shares one. And parametrize folds four copies into one function with four inputs. Both return in part 2.
 
 ---
 
@@ -408,14 +408,14 @@ layer slabs stack at right, small: a thin `pyproject.toml` slab, a fat ORANGE sl
 `docker-entrypoint.sh`. Then CODE(cheese-app-ci-cd/docker-entrypoint.sh: 5–13) replaces the
 Dockerfile panel; line 5 (PATH) PINK, line 12 `exec "$@"` YELLOW. GREY tag `Lecture 9 ·
 slides 87–90` (top right, until the gate table).
-SAY: Part 3 runs the tests where the app lives: inside the image. Concept before command. The Dockerfile copies pyproject.toml first and installs the dependencies, one fat layer; then four thin copy lines bake in the api code, the tests, the pytest config and the entrypoint. The entrypoint adds one folder to PATH so pytest is findable, and its exec line hands the container over to whatever command you pass, exit code and all. That exit code is how docker run can fail a CI step.
+SAY: Part 3 runs the tests where the app lives: inside the image. The Dockerfile copies pyproject.toml first and installs the dependencies, one fat layer; then four thin copy lines bake in the api code, the tests, the pytest config and the entrypoint. The entrypoint adds one folder to PATH so pytest is findable, and its exec line hands the container over to whatever command you pass. Its exit code is how docker run can fail a CI step.
 
 SHOW: TRACKER C1. Full terminal types `docker build -t cheese-app-api:local .` (README.md line 169)
 → TERM(laptop/part3-opt1-01: 2, …, 23–24, …, 59), all `CACHED`. TRACKER C2: it types
 `docker run --rm cheese-app-api:local pytest tests/unit/ -v` (README.md line 172; folds) →
 TERM(laptop/part3-opt1-02: 2–3, 11, 13, …, 23, 25). Line 25 `11 passed` GREEN. `▶ your turn` on
 both.
-SAY: Build again, all cached, then run the unit tests with docker run, dash dash rm, the image name, pytest tests slash unit. 11 passed, in a twentieth of a second. Pause and run both.
+SAY: Build again, all cached, then run the unit tests with docker run, dash dash rm, the image, pytest tests slash unit. 11 passed. Pause and run both.
 
 SHOW: TRACKER C3. It types `docker run --rm cheese-app-api:local pytest tests/integration/ -v`
 (README.md line 175; folds) → TERM(laptop/part3-opt1-03: 13, …, 22, 24). TRACKER C4: it types
@@ -428,7 +428,7 @@ SHOW: TRACKER C5. It types
 `docker run --rm cheese-app-api:local pytest tests/unit/ --cov=api --cov-report=term` (README.md
 line 181; folds) → TERM(laptop/part3-opt1-05: 28–35). The `api/service.py 17 17 0%` row
 highlights RED. `▶ your turn`.
-SAY: Now the coverage run: the unit tests, measuring the api package. Pause and run it, and look at service.py: 0 percent. The unit tests never import it. Coverage is a list of lines nobody has asked a question about, not a score. Hold that thought for part 2.
+SAY: Now the coverage run: the unit tests, measuring the api package. Pause and run it, and look at service.py: 0 percent. The unit tests never import it. Coverage is a list of lines nobody has asked a question about, not a score. Hold that thought.
 
 SHOW: V1: the gate table slides in and its first row fills (YELLOW, then GREEN): "unit +
 integration tests / pytest in the image / docker run … pytest / yes — hermetic". TRACKER C9. Strip
@@ -438,7 +438,7 @@ TRACKER C10: at the prompt `app@f738c22fed33:/app$` it types the four README com
 → TERM(laptop/part3-opt3-01: 137–138), then `ls htmlcov/ | head -4` (extra) →
 TERM(laptop/part3-opt3-01: 140–143), then `exit`. A RED dashed box around the `htmlcov` listing,
 caption "inside a --rm container · gone on exit".
-SAY: The gate table gets its first row: unit and integration tests, hermetic, one docker command. Option 3 is the same thing interactively: docker-shell again, then the same pytest commands inside; the counts match, so one beat covers it. One trap: the HTML coverage report lands inside a container that dash dash rm deletes, so it is gone the moment you exit. Prefer the terminal report.
+SAY: The gate table gets its first row: unit and integration tests, hermetic, one docker command. Option 3 is the same thing interactively: docker-shell again, then the same pytest commands inside; the counts match. One trap: the HTML coverage report lands inside a container that dash dash rm deletes; it is gone when you exit. Prefer the terminal report.
 
 SHOW: A comparison card, one line each, tag `erratum` on the left column: left, TEAL "this image:
 black, flake8, pytest, pre-commit ship as runtime deps · `>=` pins · no lockfile"
@@ -446,7 +446,7 @@ black, flake8, pytest, pre-commit ship as runtime deps · `>=` pins · no lockfi
 dev tools in groups · one lockfile". Then the S04 warning pays off: the GREY host file `utils.py`
 glows with an edit; the TEAL `api/` slab does not change; a rebuild arrow replaces only the four
 COPY slabs, caption "packages before code". Fade out.
-SAY: Two honest notes. This image ships its dev tools as runtime dependencies, with open ended pins and no lockfile; the guest lecture keeps them in groups behind one lockfile, and we will see why that matters. And the part 1 warning pays off: edit utils.py on your laptop, and this container still tests yesterday's copy. Rebuild, or you test the past; the layer order makes that rebuild cheap.
+SAY: Two honest notes. This image ships its dev tools as runtime dependencies, with open ended pins and no lockfile; the guest lecture keeps them in groups behind one lockfile. And the part 1 warning pays off: edit utils.py on your laptop, and this container still tests yesterday's copy. Rebuild, or you test the past.
 
 ---
 
@@ -461,7 +461,7 @@ SAY: Option 2 is the system test, and the lecture's question for it: can anythin
 SHOW: TRACKER C6 · extra. It types `until curl -sf http://localhost:9000/health; do sleep 1; done; echo`
 (extra; folds) → TERM(laptop/part3-opt2-03: 2), then `docker ps` (extra) →
 TERM(laptop/part3-opt2-04: 2–3; squeeze). A GREY note: "CI waits too · ci.yml:150–154".
-SAY: The README runs the tests immediately. We add one extra line first: a loop that curls the health endpoint until it answers. CI does the same wait, and you will see why in a moment. A second extra, docker ps, shows the server up and the port published.
+SAY: The README runs the tests immediately. We add one extra line first: a loop that curls the health endpoint until it answers. CI does the same wait, and you will see why in a moment. A second extra, docker ps, shows the server up.
 
 SHOW: TRACKER C7. It types `docker run --rm --network host cheese-app-api:local pytest tests/system/ -v`
 (README.md line 196; folds) → TERM(laptop/part3-opt2-05: 13–17, 19). Line 19 `5 passed` GREEN; the
@@ -479,7 +479,7 @@ README command with no server; folds) → TERM(laptop/part3-opt2-07: 13–17, 19
 `SKIPPED` dots above the terminal fade to GREY dashed "s"; the summary line `1 passed, 4 skipped`
 stays GREEN on screen with a YELLOW "still green" bracket. The four `SKIPPED [1] … API not running
 at localhost:9000` lines (20–23) highlight.
-SAY: Here is the answer, as an extra run after stopping the server. 1 passed, 4 skipped, and the headline is still green. Four gray dots, not failures. Only the dash r a, summary tells the truth: skipped, API not running at localhost 9000, four times over.
+SAY: Here is the answer, as an extra run after stopping the server. 1 passed, 4 skipped, and the headline is still green. Four gray dots, not failures. Only the dash r a, summary tells the truth: skipped, API not running at localhost 9000.
 
 SHOW: CODE(cheese-app-ci-cd/tests/system/test_system_api.py: 11–25); line 24's `skipif` highlights,
 a YELLOW clock chip "evaluated once · at collection" beside it. Under it a small smoke-detector
@@ -493,7 +493,7 @@ the terminal types `docker stop api-server && docker rm api-server` (README.md l
 TERM(laptop/part3-opt2-06: 2–3). `▶ your turn`. V1: the gate table's system row fills, GREY
 dashed, drawn outside the turnstile: "system tests / real HTTP / docker run --network host /
 no: not hermetic". Fade out.
-SAY: On the border picture, 21 tests live inside and these 4 stand outside. The honest remedy is a marker the run must select on purpose; the guest lecture shows it in part 2. CI's version is loud: before its system tests, the workflow curls the server and fails the whole job if it is down, instead of skipping. Now stop and remove the server, as the README says; pause and do it. The system row enters the gate table outside the turnstile: not on every commit, because it is not hermetic.
+SAY: On the border picture, 21 tests live inside and these 4 stand outside. The honest remedy is a marker the run must select on purpose; the guest lecture shows it in part 2. CI's version is loud: before its system tests, the workflow curls the server and fails the whole job if it is down. Now stop and remove the server; pause and do it. The system row enters the gate table outside the turnstile: not on every commit, because it is not hermetic.
 
 ---
 
@@ -505,35 +505,35 @@ The terminal types `pip install pre-commit` (README.md line 240) → TERM(laptop
 outside the container". TRACKER D2: it types `pre-commit install` (README.md line 246) →
 TERM(laptop/part4-02: 2). `▶ your turn` on both. GREY tag `Lecture 9 · slides 34, 41–44` (top
 right, until the refusal).
-SAY: Part 4 installs the gate. Outside the container, pip install pre-commit, 4.7.0 at the time of recording. Then, from the repo root, pre-commit install. One line comes back: pre-commit installed at dot git slash hooks slash pre-commit. Pause and run both.
+SAY: Part 4 installs the gate. Outside the container, pip install pre-commit, 4.7.0 at the time of recording; then, from the repo root, pre-commit install. One line comes back: a hook file now sits in dot git. Pause and run both.
 
 SHOW: V5 hand-over chain, left to right: a GREY `git commit` chip → a small file card
 `.git/hooks/pre-commit` (GREY, tag "machine-specific · never committed") → a PURPLE `pre-commit`
 tool chip → a card `.pre-commit-config.yaml` (in the repo, TEAL outline) → nine empty arches.
-SAY: Follow the hand-over chain. Git runs that small hook file before every commit. The file lives in dot git, which is not part of the repository, so every clone must run pre-commit install again. All it does is hand over to the pre-commit tool, which reads the config that is in the repo.
+SAY: Follow the chain. Git runs that hook file before every commit. It lives in dot git, which is not part of the repository, so every clone installs it again. It only hands over to the pre-commit tool, which reads the config in the repo.
 
 SHOW: CODE(cheese-app-ci-cd/.pre-commit-config.yaml: 7–44; the comment lines 28 and 37 cropped to
 their hook names — the stale "L17, Slide" references are never shown). The nine arches take their
 names as the panel scrolls: seven hygiene hooks, then black and flake8. Lines 35 and 44
 `files: ^src/.*\.py$` highlight YELLOW; a GREY dashed chip "tests/ · never matched" beside them.
-SAY: The config names nine hooks. Seven are hygiene guards: whitespace, file endings, YAML and JSON syntax, large files, merge markers, and private keys, which starts earning its keep when credentials arrive next lecture. Then black and flake8, both at width 120, both restricted to Python files under src. That filter means the tests are never linted; it is how a bare except survives in the system test file.
+SAY: The config names nine hooks. Seven are hygiene guards: whitespace, file endings, YAML and JSON syntax, large files, merge markers, and private keys. Then black and flake8, both at width 120, and both only see Python files under src: the tests are never linted, which is how a bare except survives in the system test file.
 
 SHOW: TRACKER D3. It types `git commit -m "Your commit message"` (README.md line 255) →
 TERM(laptop/part4-03: 2–3; wrap, 4–6, …, 15–23, 27). The `[WARNING]` line gets `at the time of
 recording`; the nine `(no files to check)Skipped` rows print in a block; line 27 `nothing to
 commit, working tree clean` highlights. `▶ your turn`.
-SAY: Now the README's commit, on a clean tree. Pause and run it. The first run downloads each hook's pinned environment, and prints a deprecation warning about those pins: harmless version drift, at the time of recording. Then every hook says skipped, no files to check, and git says nothing to commit. Hooks check staged files, and nothing was staged.
+SAY: Now the README's commit, on a clean tree. Pause and run it. The first run downloads each hook's pinned environment and prints a deprecation warning about those pins, harmless at the time of recording. Then every hook says skipped, and git says nothing to commit: hooks check staged files, and nothing was staged.
 
 SHOW: TRACKER D4. It types `pre-commit run --all-files` (README.md line 262) →
 TERM(laptop/part4-04: 2–16). Line 9 `Format Python code with Black…Failed` RED, line 11 `files
 were modified by this hook` YELLOW, line 13 `reformatted src/api-service/api/utils.py`. The black
 arch flashes amber and the envelope bounces back to the GREY staging tray. `▶ your turn`.
 PONDER(6 s, "black just Failed on utils.py.\nflake8 runs next — will it report\nthe E231 and E303 from before?")
-SAY: To exercise the hooks anyway, pre-commit run, dash dash all dash files. Pause and run it. Seven hooks pass, then black says failed, files were modified by this hook: it reformatted utils.py on the spot. Quick ponder: flake8 runs next. Will it report the two findings from part 2?
+SAY: To exercise the hooks anyway, pre-commit run, dash dash all dash files. Pause and run it. Seven pass, then black fails: files were modified by this hook. It reformatted utils.py on the spot. A quick ponder: flake8 runs next. Will it report the two findings from part 2?
 
 SHOW: TERM(laptop/part4-04: 18) prints: `Check Python code with Flake8…Passed` GREEN. A before and
 after utils.py pair beside it, the comma fixed.
-SAY: No. Black had already rewritten the file on disk, so flake8 saw clean code and passed. Failed here does not mean broken; it means look at what I changed. Nothing is committed until you do.
+SAY: No. Black had already rewritten the file on disk, so flake8 saw clean code and passed. Failed here does not mean broken; it means look at what I changed, then re-stage.
 
 SHOW: TRACKER D4 · extra. It types `git diff` (extra) → TERM(laptop/part4-05: 2, …, 10–11, …,
 16–18), then `git add -u` (extra) → (no output). TRACKER D3 (back): it types
@@ -541,7 +541,7 @@ SHOW: TRACKER D4 · extra. It types `git diff` (extra) → TERM(laptop/part4-05:
 All nine arches go GREEN, the envelope passes the turnstile, the vault opens; line 11
 `[main b72d50d] Your commit message` highlights GREEN. TRACKER D5: it types `pre-commit run`
 (README.md line 265) → TERM(laptop/part4-08: 2–10). `▶ your turn`.
-SAY: Close the loop with two extras: git diff shows the one character fix, and git add dash u, re-stages it. Commit again: all nine hooks pass, and a real commit goes through the gate into history. Pause and walk this loop yourself. The README's last variant, pre-commit run without flags, checks staged files only; with nothing staged, everything skips.
+SAY: Two extras close the loop: git diff shows the one character fix, and git add dash u, re-stages it. Commit again: all nine hooks pass, and a real commit enters history. Pause and walk this loop. The README's last variant, pre-commit run without flags, checks only staged files, so everything skips here.
 
 SHOW: TRACKER D5 · extra. It types `sed -i '1i import os' src/api-service/api/service.py && git add -u`
 (extra; folds) → (no output), then `git commit -m "try an unused import"` (extra) →
@@ -550,7 +550,7 @@ TERM(laptop/part4-11: 9–13, 18–22). Both RED: black's `files were modified` 
 "no new commit", and `git restore --staged src/api-service/api/service.py && git restore src/api-service/api/service.py`
 (extra; folds) → (no output). The vault stays shut; a parked YELLOW question card slides to the
 corner: "this gate never ran a test". Fade to an empty frame (end of part 1).
-SAY: One last demo, as an extra: an unused import, added and staged. The commit fails twice over, black re-places the import, and flake8 reports F401, imported but unused; git status confirms no commit was made. Restore the file, and part 1's promise is kept: your machine now says no. But notice what this gate never did. It never ran a single test. Part 2 builds a gate that does, and shows what even that one can miss.
+SAY: One last demo, as an extra: an unused import, added and staged. The commit fails twice, black re-places the import and flake8 reports F401, imported but unused, and git status confirms no commit exists. Restore the file: your machine now says no. But this gate never ran a single test. Part 2 builds one that does, and shows what even that one can miss.
 
 ---
 
@@ -567,14 +567,14 @@ SHOW: It types `git clone https://github.com/rahuldave/babykev` → TERM(babykev
 → (no output), then `git tag -n1 --list 'step-*'` (babykev README.md line 148) →
 TERM(babykev/07: 2–10). The nine tag lines light in turn; a GREY caption "the repo is its own
 slide deck". `▶ your turn`.
-SAY: Clone babykev and list its tags: 9 steps, one per stage of the lecture, each tag carrying a one line message. The repo is its own slide deck, and git switch, dash dash detach, moves you to any step. Pause and run the clone and the listing.
+SAY: Clone babykev and list its tags: 9 steps, one per stage of the lecture, each tag carrying a one line message. The repo is its own slide deck, and git switch, dash dash detach, moves you to any step. Pause and run both.
 
 SHOW: TRACKER E1. It types `git switch --detach step-00` (babykev README.md line 150) →
 TERM(babykev/s00-01: 2), then `uv sync --locked` (walk step-00) → TERM(babykev/s00-02: 2–4, 6;
 wrap, 9–10). `Using CPython 3.13.16` GREEN; the uv-build warning line 6 gets `at the time of
 recording`. A GREEN lock glyph on a `uv.lock` card; beside it a TEAL frost glyph "the cheese way:
 freeze an image" for contrast. Then it types `just` → TERM(babykev/s00-05: 2–6). `▶ your turn`.
-SAY: At step zero zero, one command builds the whole environment: uv sync, dash dash locked. It installs Python 3.13.16 and the project exactly as the lockfile says, and locked means stop rather than silently upgrade; the warning it prints is real and harmless, at the time of recording. The cheese repo froze an image; babykev pins a lockfile. Typing just, alone, lists the recipes: one name per task, the same name for people, for the hook, and later for CI. Pause and run these.
+SAY: At step zero zero, one command builds the whole environment: uv sync, dash dash locked. It installs Python 3.13.16 and the project exactly as the lockfile says, and locked means stop rather than silently upgrade; the warning it prints is harmless, at the time of recording. The cheese repo froze an image; babykev pins a lockfile. Typing just, alone, lists the recipes: one name per task, the same name for people, the hook, and later CI. Pause and run these.
 
 SHOW: TRACKER E2. It types `git switch --detach step-01` → TERM(babykev/s01-01: 3), `just setup` →
 TERM(babykev/s01-02: 2–3, 9, …, 19), then `uv run pytest` (walk step-01) → TERM(babykev/s01-03:
@@ -589,7 +589,7 @@ terminal: `uv run ruff check --statistics` (walk step-02) → TERM(babykev/s02-1
 remaining`; then `just lint --fix --unsafe-fixes` → TERM(babykev/s02-15: 360), `32 fixed, 37
 remaining`. The bar settles at 37 with the caption "the rest need a person". A GREEN card:
 CODE(babykev/pyproject.toml: 60–65), `line-length = 100` highlighted. Fade out.
-SAY: Step 2 is format and lint at scale, with one tool, ruff, in both roles. After formatting, the linter counts 70 findings. Safe automatic fixes remove one. Unsafe fixes, applied deliberately, remove 32 more; 37 remain, and those need a person: docstrings, types, judgment calls. And the width war from part 1 is settled in one line, line length 100, written once in pyproject.toml and read by the formatter and the linter alike.
+SAY: Step 2 is format and lint at scale, with ruff in both roles. After formatting, the linter counts 70 findings. Safe automatic fixes remove one. Unsafe fixes, applied deliberately, remove 32 more; 37 remain, and those need a person. And the width war from part 1 is settled in one line, line length 100, written once in pyproject.toml and read by the formatter and the linter alike.
 
 ---
 
@@ -602,20 +602,20 @@ SHOW: TRACKER E4. It types `git switch --detach step-03` → TERM(babykev/s03-01
 6–9, …, 15). Line 7's venv path highlights YELLOW, caption "this machine's path · why it is never
 committed". GREY tag `Lecture 9 · slides 34–43` (top right, until the refusals). `▶ your turn` on
 the setup.
-SAY: Step 3 installs the gate, and here just setup does it all: it syncs the lockfile and installs the hook in one move. Pause and run it. An extra cat of the hook file shows the same hand-over chain as the cheese repo, with one readable difference: the path of this machine's own virtual environment is baked inside, which is exactly why the file is never committed.
+SAY: Step 3 installs the gate; here just setup does it all, syncing the lockfile and installing the hook in one move. Pause and run it. An extra cat of the hook file shows the same hand-over chain as before, with one difference: this machine's own venv path is baked inside, exactly why the file is never committed.
 
 SHOW: CODE(babykev/.pre-commit-config.yaml: 5–24); the four hooks light as arches beside S09's
 nine (V5 side by side): large files, merge markers, `no-env-file`, and `just check` with
 `always_run: true` and `pass_filenames: false` highlighted. Then a strip terminal types
 `just --show check` (extra) → TERM(babykev/s03-08: 9–12).
-SAY: The config here has four hooks, not nine: large files, merge markers, a policy hook that refuses any dot env file, and one local hook that simply runs just check. The hook runs exactly what you type at the terminal. And at this step, just check means format check, lint, the tests over a 90 percent coverage floor, then config linting, cheapest first, stopping at the first failure.
+SAY: The config here has four hooks, not nine: large files, merge markers, a policy hook that refuses any dot env file, and one local hook that simply runs just check, so the hook runs exactly what you type. At this step, just check means format check, lint, the tests over a 90 percent coverage floor, and config linting.
 
 SHOW: TRACKER E4. It types `just check` (walk step-03) → TERM(babykev/s03-09: 2–7, 18–21). Line 18
 `Required test coverage of 90% reached. Total coverage: 100.00%` GREEN. Then it types
 `just test -k confidence --cov-fail-under=90` (walk step-03) → TERM(babykev/s03-10: 2, 11–12,
 25–26). Line 25 `FAIL Required test coverage of 90% not reached. Total coverage: 49.40%` RED.
 `▶ your turn` on the check.
-SAY: Run just check: everything green, and the floor reads 100 percent coverage. Pause and run it. Now watch the floor bite: ask for only the confidence tests, keeping the floor, and 9 tests pass yet the run fails, total coverage 49.4 percent, required 90. A floor is a gate, not a goal.
+SAY: Run just check: everything green, and the floor reads 100 percent coverage. Pause and run it. Now watch the floor bite: ask for only the confidence tests, keeping the floor, and 9 tests pass yet the run fails at 49.4 percent coverage. A floor is a gate, not a goal.
 
 SHOW: Config beat: it types the walk's sed that mis-indents one line (extra, shown small) →
 TERM(babykev/s03-12: → (no output)), then `uv run yamllint --strict .` (walk step-03) →
@@ -623,7 +623,7 @@ TERM(babykev/s03-13: 2–3), the error line RED with its exact line number; then
 `git restore .pre-commit-config.yaml` (extra) → (no output), and `just lint-config` →
 TERM(babykev/s03-28: 7–8). Three GREY chips beside it: `validate-pyproject` · `uv lock --check` ·
 `just --fmt --check`.
-SAY: Config files are checked too, because a broken hook config would break every commit. Watch one break: a single indent slips into the pre-commit config, and yamllint, in strict mode, names the exact line. Restored, the config lint recipe runs green; the same recipe validates pyproject.toml, checks the lockfile is current, and holds the justfile to its own format.
+SAY: Config files are checked too: a broken hook config would break every commit. Watch one break: one wrong indent in the pre-commit config, and yamllint names the exact line. Restored, the recipe runs green; it also validates pyproject.toml and checks the lockfile is current.
 
 SHOW: TRACKER E4. The refusals: it types the walk's perl line adding `import os` (extra, shown
 small) → (no output), then `git commit -am "try"` (walk step-03) → TERM(babykev/s03-31: 6–9,
