@@ -1,0 +1,1 @@
+rag2: moved the placeholder key out of ~/secrets so cloud steps show the documented DefaultCredentialsError
