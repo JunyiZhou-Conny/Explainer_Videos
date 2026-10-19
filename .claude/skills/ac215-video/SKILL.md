@@ -198,6 +198,11 @@ scene), `exercises.md`, `i18n/zh/` (glossary + sentence-aligned narration), `REA
   returned text from its journal to a file, then run the consumers as a second workflow that reads
   those paths (`ac215-final-review.js` stage `checks`, then stage `write`). L04's single-run review
   got five refusals, and its writer wrote REVIEW.md without the reports.
+  A workflow with parallel tracks (`ac215-video-v2.js`: scenes, subtitles and extras side by side)
+  starts its agents in a different order on every run, so a resume replays only up to the first
+  difference and re-runs finished agents (L06's resume restarted its finished S01 build). After an
+  interruption, save the finished agents' results from the journal and launch a continuation script
+  with only the pending agents (`ac215-l06-rest.js`).
 - **State each workflow's scope in its prompts.** A user message sent mid-run reaches the running
   agents: L04's whole finishing run (28 agents) read a status question about L02/L03 as its task and
   declined every edit. Every agent prompt says what the task is, who assigned it, and that user
